@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -94,70 +94,37 @@ return false;
 <a href="intro.html"><h2>SQLite C Interface</h2></a>
 
 <h2>List Of Objects:</h2>
-<style>
-#listtab24 tr td {vertical-align:top;}
-</style>
-<table id='listtab24' width='100%'></table>
-<script>
-var listitems24 = [{"u":"../c3ref/sqlite3.html","x":"sqlite3","s":0},
-{"u":"../c3ref/api_routines.html","x":"sqlite3_api_routines","s":0},
-{"u":"../c3ref/backup.html","x":"sqlite3_backup","s":0},
-{"u":"../c3ref/blob.html","x":"sqlite3_blob","s":0},
-{"u":"../c3ref/context.html","x":"sqlite3_context","s":0},
-{"u":"../c3ref/data_directory.html","x":"sqlite3_data_directory","s":0},
-{"u":"../c3ref/file.html","x":"sqlite3_file","s":0},
-{"u":"../c3ref/index_info.html","x":"sqlite3_index_info","s":0},
-{"u":"../c3ref/int64.html","x":"sqlite3_int64","s":0},
-{"u":"../c3ref/int64.html","x":"sqlite3_uint64","s":0},
-{"u":"../c3ref/int64.html","x":"sqlite_int64","s":0},
-{"u":"../c3ref/int64.html","x":"sqlite_uint64","s":0},
-{"u":"../c3ref/io_methods.html","x":"sqlite3_io_methods","s":0},
-{"u":"../c3ref/mem_methods.html","x":"sqlite3_mem_methods","s":0},
-{"u":"../c3ref/module.html","x":"sqlite3_module","s":0},
-{"u":"../c3ref/mutex.html","x":"sqlite3_mutex","s":0},
-{"u":"../c3ref/mutex_methods.html","x":"sqlite3_mutex_methods","s":0},
-{"u":"../c3ref/pcache.html","x":"sqlite3_pcache","s":0},
-{"u":"../c3ref/pcache_methods2.html","x":"sqlite3_pcache_methods2","s":0},
-{"u":"../c3ref/pcache_page.html","x":"sqlite3_pcache_page","s":0},
-{"u":"../c3ref/stmt.html","x":"sqlite3_stmt","s":0},
-{"u":"../c3ref/str.html","x":"sqlite3_str","s":0},
-{"u":"../c3ref/temp_directory.html","x":"sqlite3_temp_directory","s":0},
-{"u":"../c3ref/value.html","x":"sqlite3_value","s":0},
-{"u":"../c3ref/vfs.html","x":"sqlite3_vfs","s":0},
-{"u":"../c3ref/vtab.html","x":"sqlite3_vtab","s":0},
-{"u":"../c3ref/vtab_cursor.html","x":"sqlite3_vtab_cursor","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/280);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems24.length+1)/nCol);
-var h="<tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems24.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems24[i].u=="" || listitems24[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems24[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems24[i].s==2 || listitems24[i].s==3) h += "<s>"
-  h += listitems24[i].x;
-  if(listitems24[i].s==2 || listitems24[i].s==3) h += "</s>"
-  h += ea
-  if(listitems24[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems24[i].s==3) h += "&sup1\n";
-  if(listitems24[i].s==4) h += "&sup2\n";
-  if(listitems24[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab24").innerHTML = h;
-</script>
+<div class='columns' style='columns: 14em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='../c3ref/sqlite3.html'>sqlite3</a></li>
+<li><a href='../c3ref/api_routines.html'>sqlite3_api_routines</a></li>
+<li><a href='../c3ref/backup.html'>sqlite3_backup</a></li>
+<li><a href='../c3ref/blob.html'>sqlite3_blob</a></li>
+<li><a href='../c3ref/context.html'>sqlite3_context</a></li>
+<li><a href='../c3ref/data_directory.html'>sqlite3_data_directory</a></li>
+<li><a href='../c3ref/file.html'>sqlite3_file</a></li>
+<li><a href='../c3ref/index_info.html'>sqlite3_index_info</a></li>
+<li><a href='../c3ref/int64.html'>sqlite3_int64</a></li>
+<li><a href='../c3ref/int64.html'>sqlite3_uint64</a></li>
+<li><a href='../c3ref/int64.html'>sqlite_int64</a></li>
+<li><a href='../c3ref/int64.html'>sqlite_uint64</a></li>
+<li><a href='../c3ref/io_methods.html'>sqlite3_io_methods</a></li>
+<li><a href='../c3ref/mem_methods.html'>sqlite3_mem_methods</a></li>
+<li><a href='../c3ref/module.html'>sqlite3_module</a></li>
+<li><a href='../c3ref/mutex.html'>sqlite3_mutex</a></li>
+<li><a href='../c3ref/mutex_methods.html'>sqlite3_mutex_methods</a></li>
+<li><a href='../c3ref/pcache.html'>sqlite3_pcache</a></li>
+<li><a href='../c3ref/pcache_methods2.html'>sqlite3_pcache_methods2</a></li>
+<li><a href='../c3ref/pcache_page.html'>sqlite3_pcache_page</a></li>
+<li><a href='../c3ref/stmt.html'>sqlite3_stmt</a></li>
+<li><a href='../c3ref/str.html'>sqlite3_str</a></li>
+<li><a href='../c3ref/temp_directory.html'>sqlite3_temp_directory</a></li>
+<li><a href='../c3ref/value.html'>sqlite3_value</a></li>
+<li><a href='../c3ref/vfs.html'>sqlite3_vfs</a></li>
+<li><a href='../c3ref/vtab.html'>sqlite3_vtab</a></li>
+<li><a href='../c3ref/vtab_cursor.html'>sqlite3_vtab_cursor</a></li>
+</ul>
+</div>
 <p>Other lists:
 <a href="constlist.html">Constants</a> and
 <a href="funclist.html">Functions</a> and

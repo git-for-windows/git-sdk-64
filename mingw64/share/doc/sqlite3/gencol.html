@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -248,6 +248,12 @@ Every table must have at least one non-generated column.
 </p></li><li><p>
 It is not possible to <a href="lang_altertable.html#altertabaddcol">ALTER TABLE ADD COLUMN</a> a STORED column.
 One can add a VIRTUAL column, however.
+
+</p></li><li><p>
+The datatype and <a href="datatype3.html#collation">collating sequence</a> of the generated column are determined
+only by the datatype and <a href="lang_createtable.html#collateclause">COLLATE clause</a> on the column definition.
+The datatype and collating sequence of the GENERATED ALWAYS AS expression
+have no affect on the datatype and collating sequence of the column itself.
 </p></li></ol>
 
 <h1 id="compatibility"><span>3. </span>Compatibility</h1>

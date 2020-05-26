@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>SQLite Query Language: UPDATE</title>
+<title>UPDATE</title>
 <!-- path= -->
 </head>
 <body>
@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -91,180 +91,216 @@ return false;
 }
 </script>
 </div>
-<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>UPDATE</h2></div><p><b><a href="syntax/update-stmt.html">update-stmt:</a></b>
-<button id='x2131' onclick='hideorshow("x2131","x2132")'>hide</button></p>
- <div id='x2132' class='imgcontainer'>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+UPDATE
+</div>
+<div class="fancy_toc">
+<a onclick="toggle_toc()">
+<span class="fancy_toc_mark" id="toc_mk">&#x25ba;</span>
+Table Of Contents
+</a>
+<div id="toc_sub"><div class="fancy-toc1"><a href="#overview">1. Overview</a></div>
+<div class="fancy-toc1"><a href="#details">2. Details</a></div>
+<div class="fancy-toc2"><a href="#restrictions_on_update_statements_within_create_trigger">2.1. Restrictions on UPDATE Statements Within CREATE TRIGGER</a></div>
+<div class="fancy-toc2"><a href="#optional_limit_and_order_by_clauses">2.2. Optional LIMIT and ORDER BY Clauses</a></div>
+</div>
+</div>
+<script>
+function toggle_toc(){
+var sub = document.getElementById("toc_sub")
+var mk = document.getElementById("toc_mk")
+if( sub.style.display!="block" ){
+sub.style.display = "block";
+mk.innerHTML = "&#x25bc;";
+} else {
+sub.style.display = "none";
+mk.innerHTML = "&#x25ba;";
+}
+}
+</script>
+</div>
+
+
+
+
+<h1 id="overview"><span>1. </span>Overview</h1>
+
+<p><b><a href="syntax/update-stmt.html">update-stmt:</a></b>
+<button id='x2041' onclick='hideorshow("x2041","x2042")'>hide</button></p>
+ <div id='x2042' class='imgcontainer'>
  <img alt="syntax diagram update-stmt" src="images/syntax/update-stmt.gif" />
 <p><b><a href="syntax/column-name-list.html">column-name-list:</a></b>
-<button id='x2133' onclick='hideorshow("x2133","x2134")'>show</button></p>
- <div id='x2134' style='display:none;' class='imgcontainer'>
+<button id='x2043' onclick='hideorshow("x2043","x2044")'>show</button></p>
+ <div id='x2044' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram column-name-list" src="images/syntax/column-name-list.gif" />
 </div>
 <p><b><a href="syntax/expr.html">expr:</a></b>
-<button id='x2135' onclick='hideorshow("x2135","x2136")'>show</button></p>
- <div id='x2136' style='display:none;' class='imgcontainer'>
+<button id='x2045' onclick='hideorshow("x2045","x2046")'>show</button></p>
+ <div id='x2046' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
 <p><b><a href="syntax/filter-clause.html">filter-clause:</a></b>
-<button id='x2137' onclick='hideorshow("x2137","x2138")'>show</button></p>
- <div id='x2138' style='display:none;' class='imgcontainer'>
+<button id='x2047' onclick='hideorshow("x2047","x2048")'>show</button></p>
+ <div id='x2048' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram filter-clause" src="images/syntax/filter-clause.gif" />
 </div>
 <p><b><a href="syntax/literal-value.html">literal-value:</a></b>
-<button id='x2139' onclick='hideorshow("x2139","x2140")'>show</button></p>
- <div id='x2140' style='display:none;' class='imgcontainer'>
+<button id='x2049' onclick='hideorshow("x2049","x2050")'>show</button></p>
+ <div id='x2050' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
 </div>
 <p><b><a href="syntax/over-clause.html">over-clause:</a></b>
-<button id='x2141' onclick='hideorshow("x2141","x2142")'>show</button></p>
- <div id='x2142' style='display:none;' class='imgcontainer'>
+<button id='x2051' onclick='hideorshow("x2051","x2052")'>show</button></p>
+ <div id='x2052' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram over-clause" src="images/syntax/over-clause.gif" />
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x2143' onclick='hideorshow("x2143","x2144")'>show</button></p>
- <div id='x2144' style='display:none;' class='imgcontainer'>
+<button id='x2053' onclick='hideorshow("x2053","x2054")'>show</button></p>
+ <div id='x2054' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x2145' onclick='hideorshow("x2145","x2146")'>show</button></p>
- <div id='x2146' style='display:none;' class='imgcontainer'>
+<button id='x2055' onclick='hideorshow("x2055","x2056")'>show</button></p>
+ <div id='x2056' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
 </div>
 </div>
 <p><b><a href="syntax/raise-function.html">raise-function:</a></b>
-<button id='x2147' onclick='hideorshow("x2147","x2148")'>show</button></p>
- <div id='x2148' style='display:none;' class='imgcontainer'>
+<button id='x2057' onclick='hideorshow("x2057","x2058")'>show</button></p>
+ <div id='x2058' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
 </div>
 <p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
-<button id='x2149' onclick='hideorshow("x2149","x2150")'>show</button></p>
- <div id='x2150' style='display:none;' class='imgcontainer'>
+<button id='x2059' onclick='hideorshow("x2059","x2060")'>show</button></p>
+ <div id='x2060' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
 <p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
-<button id='x2151' onclick='hideorshow("x2151","x2152")'>show</button></p>
- <div id='x2152' style='display:none;' class='imgcontainer'>
+<button id='x2061' onclick='hideorshow("x2061","x2062")'>show</button></p>
+ <div id='x2062' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
 </div>
 <p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
-<button id='x2153' onclick='hideorshow("x2153","x2154")'>show</button></p>
- <div id='x2154' style='display:none;' class='imgcontainer'>
+<button id='x2063' onclick='hideorshow("x2063","x2064")'>show</button></p>
+ <div id='x2064' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
 </div>
 <p><b><a href="syntax/join-clause.html">join-clause:</a></b>
-<button id='x2155' onclick='hideorshow("x2155","x2156")'>show</button></p>
- <div id='x2156' style='display:none;' class='imgcontainer'>
+<button id='x2065' onclick='hideorshow("x2065","x2066")'>show</button></p>
+ <div id='x2066' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
 <p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
-<button id='x2157' onclick='hideorshow("x2157","x2158")'>show</button></p>
- <div id='x2158' style='display:none;' class='imgcontainer'>
+<button id='x2067' onclick='hideorshow("x2067","x2068")'>show</button></p>
+ <div id='x2068' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
 </div>
 <p><b><a href="syntax/join-operator.html">join-operator:</a></b>
-<button id='x2159' onclick='hideorshow("x2159","x2160")'>show</button></p>
- <div id='x2160' style='display:none;' class='imgcontainer'>
+<button id='x2069' onclick='hideorshow("x2069","x2070")'>show</button></p>
+ <div id='x2070' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
 </div>
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x2161' onclick='hideorshow("x2161","x2162")'>show</button></p>
- <div id='x2162' style='display:none;' class='imgcontainer'>
+<button id='x2071' onclick='hideorshow("x2071","x2072")'>show</button></p>
+ <div id='x2072' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
 </div>
 <p><b><a href="syntax/result-column.html">result-column:</a></b>
-<button id='x2163' onclick='hideorshow("x2163","x2164")'>show</button></p>
- <div id='x2164' style='display:none;' class='imgcontainer'>
+<button id='x2073' onclick='hideorshow("x2073","x2074")'>show</button></p>
+ <div id='x2074' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
 </div>
 <p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
-<button id='x2165' onclick='hideorshow("x2165","x2166")'>show</button></p>
- <div id='x2166' style='display:none;' class='imgcontainer'>
+<button id='x2075' onclick='hideorshow("x2075","x2076")'>show</button></p>
+ <div id='x2076' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
 </div>
 <p><b><a href="syntax/window-defn.html">window-defn:</a></b>
-<button id='x2167' onclick='hideorshow("x2167","x2168")'>show</button></p>
- <div id='x2168' style='display:none;' class='imgcontainer'>
+<button id='x2077' onclick='hideorshow("x2077","x2078")'>show</button></p>
+ <div id='x2078' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x2169' onclick='hideorshow("x2169","x2170")'>show</button></p>
- <div id='x2170' style='display:none;' class='imgcontainer'>
+<button id='x2079' onclick='hideorshow("x2079","x2080")'>show</button></p>
+ <div id='x2080' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
 </div>
 </div>
 </div>
 <p><b><a href="syntax/type-name.html">type-name:</a></b>
-<button id='x2171' onclick='hideorshow("x2171","x2172")'>show</button></p>
- <div id='x2172' style='display:none;' class='imgcontainer'>
+<button id='x2081' onclick='hideorshow("x2081","x2082")'>show</button></p>
+ <div id='x2082' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
 <p><b><a href="syntax/signed-number.html">signed-number:</a></b>
-<button id='x2173' onclick='hideorshow("x2173","x2174")'>show</button></p>
- <div id='x2174' style='display:none;' class='imgcontainer'>
+<button id='x2083' onclick='hideorshow("x2083","x2084")'>show</button></p>
+ <div id='x2084' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
 </div>
 </div>
 </div>
 <p><b><a href="syntax/qualified-table-name.html">qualified-table-name:</a></b>
-<button id='x2175' onclick='hideorshow("x2175","x2176")'>show</button></p>
- <div id='x2176' style='display:none;' class='imgcontainer'>
+<button id='x2085' onclick='hideorshow("x2085","x2086")'>show</button></p>
+ <div id='x2086' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram qualified-table-name" src="images/syntax/qualified-table-name.gif" />
 </div>
 <p><b><a href="syntax/with-clause.html">with-clause:</a></b>
-<button id='x2177' onclick='hideorshow("x2177","x2178")'>show</button></p>
- <div id='x2178' style='display:none;' class='imgcontainer'>
+<button id='x2087' onclick='hideorshow("x2087","x2088")'>show</button></p>
+ <div id='x2088' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram with-clause" src="images/syntax/with-clause.gif" />
 <p><b><a href="syntax/cte-table-name.html">cte-table-name:</a></b>
-<button id='x2179' onclick='hideorshow("x2179","x2180")'>show</button></p>
- <div id='x2180' style='display:none;' class='imgcontainer'>
+<button id='x2089' onclick='hideorshow("x2089","x2090")'>show</button></p>
+ <div id='x2090' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram cte-table-name" src="images/syntax/cte-table-name.gif" />
 </div>
 <p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
-<button id='x2181' onclick='hideorshow("x2181","x2182")'>show</button></p>
- <div id='x2182' style='display:none;' class='imgcontainer'>
+<button id='x2091' onclick='hideorshow("x2091","x2092")'>show</button></p>
+ <div id='x2092' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
 <p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
-<button id='x2183' onclick='hideorshow("x2183","x2184")'>show</button></p>
- <div id='x2184' style='display:none;' class='imgcontainer'>
+<button id='x2093' onclick='hideorshow("x2093","x2094")'>show</button></p>
+ <div id='x2094' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
 </div>
 <p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
-<button id='x2185' onclick='hideorshow("x2185","x2186")'>show</button></p>
- <div id='x2186' style='display:none;' class='imgcontainer'>
+<button id='x2095' onclick='hideorshow("x2095","x2096")'>show</button></p>
+ <div id='x2096' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
 </div>
 <p><b><a href="syntax/join-clause.html">join-clause:</a></b>
-<button id='x2187' onclick='hideorshow("x2187","x2188")'>show</button></p>
- <div id='x2188' style='display:none;' class='imgcontainer'>
+<button id='x2097' onclick='hideorshow("x2097","x2098")'>show</button></p>
+ <div id='x2098' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
 <p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
-<button id='x2189' onclick='hideorshow("x2189","x2190")'>show</button></p>
- <div id='x2190' style='display:none;' class='imgcontainer'>
+<button id='x2099' onclick='hideorshow("x2099","x2100")'>show</button></p>
+ <div id='x2100' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
 </div>
 <p><b><a href="syntax/join-operator.html">join-operator:</a></b>
-<button id='x2191' onclick='hideorshow("x2191","x2192")'>show</button></p>
- <div id='x2192' style='display:none;' class='imgcontainer'>
+<button id='x2101' onclick='hideorshow("x2101","x2102")'>show</button></p>
+ <div id='x2102' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
 </div>
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x2193' onclick='hideorshow("x2193","x2194")'>show</button></p>
- <div id='x2194' style='display:none;' class='imgcontainer'>
+<button id='x2103' onclick='hideorshow("x2103","x2104")'>show</button></p>
+ <div id='x2104' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
 </div>
 <p><b><a href="syntax/result-column.html">result-column:</a></b>
-<button id='x2195' onclick='hideorshow("x2195","x2196")'>show</button></p>
- <div id='x2196' style='display:none;' class='imgcontainer'>
+<button id='x2105' onclick='hideorshow("x2105","x2106")'>show</button></p>
+ <div id='x2106' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
 </div>
 <p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
-<button id='x2197' onclick='hideorshow("x2197","x2198")'>show</button></p>
- <div id='x2198' style='display:none;' class='imgcontainer'>
+<button id='x2107' onclick='hideorshow("x2107","x2108")'>show</button></p>
+ <div id='x2108' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
 </div>
 <p><b><a href="syntax/window-defn.html">window-defn:</a></b>
-<button id='x2199' onclick='hideorshow("x2199","x2200")'>show</button></p>
- <div id='x2200' style='display:none;' class='imgcontainer'>
+<button id='x2109' onclick='hideorshow("x2109","x2110")'>show</button></p>
+ <div id='x2110' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x2201' onclick='hideorshow("x2201","x2202")'>show</button></p>
- <div id='x2202' style='display:none;' class='imgcontainer'>
+<button id='x2111' onclick='hideorshow("x2111","x2112")'>show</button></p>
+ <div id='x2112' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
 </div>
 </div>
@@ -277,6 +313,8 @@ return false;
 zero or more rows of the database table identified by the 
 <a href="syntax/qualified-table-name.html">qualified-table-name</a> specified as part of the UPDATE statement.
 
+</p><h1 id="details"><span>2. </span>Details</h1>
+
 <p>If the UPDATE statement does not have a WHERE clause, all rows in the
 table are modified by the UPDATE. Otherwise, the UPDATE affects only those
 rows for which the WHERE clause
@@ -284,7 +322,7 @@ rows for which the WHERE clause
 WHERE clause does not evaluate to true for any row in the table - this just
 means that the UPDATE statement affects zero rows.
 
-<p>The modifications made to each row affected by an UPDATE statement are
+</p><p>The modifications made to each row affected by an UPDATE statement are
 determined by the list of assignments following the SET keyword. Each
 assignment specifies a <span class='yyterm'>column-name</span> to the left of the 
 equals sign and a scalar expression to the right. 
@@ -296,23 +334,23 @@ that do not appear in the list of assignments are left unmodified. The scalar
 expressions may refer to columns of the row being updated. In this case all
 scalar expressions are evaluated before any assignments are made.
 
-<p>Beginning in SQLite <a href="releaselog/3_15_0.html">version 3.15.0</a> (2016-10-14), an assignment in
+</p><p>Beginning in SQLite <a href="releaselog/3_15_0.html">version 3.15.0</a> (2016-10-14), an assignment in
 the SET clause can be a 
 <a href="syntax/column-name-list.html">parenthesized list of column names</a> on the left and a
 <a href="rowvalue.html">row value</a> of the same size on the right.
 
 
-<p>The optional "OR <i>action</i>" conflict clause that follows the
+</p><p>The optional "OR <i>action</i>" conflict clause that follows the
 UPDATE keyword allows the user to nominate a specific
 constraint conflict resolution algorithm to use during this one UPDATE command.
 Refer to the section entitled <a href="lang_conflict.html">ON CONFLICT</a> for additional information.
 
-<h3>Restrictions on UPDATE Statements Within CREATE TRIGGER</h3>
+</p><h2 id="restrictions_on_update_statements_within_create_trigger"><span>2.1. </span>Restrictions on UPDATE Statements Within CREATE TRIGGER</h2>
 
 <p>The following additional syntax restrictions apply to UPDATE statements that
 occur within the body of a <a href="lang_createtrigger.html">CREATE TRIGGER</a> statement.  
 
-<ul>
+</p><ul>
   <li><p>The <span class='yyterm'>table-name</span> specified as part of an UPDATE 
       statement within
       a trigger body must be unqualified. In other words, the
@@ -326,14 +364,14 @@ occur within the body of a <a href="lang_createtrigger.html">CREATE TRIGGER</a> 
       then the main database, then any other databases in the order they were
       attached).
 
-  <li><p>The INDEXED BY and NOT INDEXED clauses are not allowed on UPDATE
+  </p></li><li><p>The INDEXED BY and NOT INDEXED clauses are not allowed on UPDATE
       statements within triggers.</p>
 
-  <li><p>The LIMIT and ORDER BY clauses for UPDATE are unsupported within
+  </li><li><p>The LIMIT and ORDER BY clauses for UPDATE are unsupported within
       triggers, regardless of the compilation options used to build SQLite.
-</ul>
+</p></li></ul>
 
-<h3>Optional LIMIT and ORDER BY Clauses</h3>
+<h2 id="optional_limit_and_order_by_clauses"><span>2.2. </span>Optional LIMIT and ORDER BY Clauses</h2>
 
 <p>If SQLite is built with the <a href="compile.html#enable_update_delete_limit">SQLITE_ENABLE_UPDATE_DELETE_LIMIT</a>
 compile-time option then the syntax of the UPDATE statement is extended
@@ -348,7 +386,7 @@ with optional ORDER BY and LIMIT clauses as follows:</p>
 will be updated is found by evaluating the accompanying expression and casting
 it to an integer value. A negative value is interpreted as "no limit".
 
-<p>If the LIMIT expression evaluates to non-negative value <i>N</i> and the
+</p><p>If the LIMIT expression evaluates to non-negative value <i>N</i> and the
 UPDATE statement has an ORDER BY clause, then all rows that would be updated in
 the absence of the LIMIT clause are sorted according to the ORDER BY and the
 first <i>N</i> updated. If the UPDATE statement also has an OFFSET clause,
@@ -356,13 +394,12 @@ then it is similarly evaluated and cast to an integer value. If the OFFSET
 expression evaluates to a non-negative value <i>M</i>, then the first <i>M</i>
 rows are skipped and the following <i>N</i> rows updated instead.
 
-<p>If the UPDATE statement has no ORDER BY clause, then all rows that
+</p><p>If the UPDATE statement has no ORDER BY clause, then all rows that
 would be updated in the absence of the LIMIT clause are assembled in an
 arbitrary order before applying the LIMIT and OFFSET clauses to determine 
 which are actually updated.
 
-<p>The ORDER BY clause on an UPDATE statement is used only to determine which
+</p><p>The ORDER BY clause on an UPDATE statement is used only to determine which
 rows fall within the LIMIT. The order in which rows are modified is arbitrary
 and is not influenced by the ORDER BY clause.
-
-
+</p>

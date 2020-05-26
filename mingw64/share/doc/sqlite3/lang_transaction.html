@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>SQLite Query Language: BEGIN TRANSACTION</title>
+<title>Transaction</title>
 <!-- path= -->
 </head>
 <body>
@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -91,22 +91,36 @@ return false;
 }
 </script>
 </div>
-<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>BEGIN TRANSACTION</h2></div><p><b><a href="syntax/begin-stmt.html">begin-stmt:</a></b>
-<button id='x1287' onclick='hideorshow("x1287","x1288")'>hide</button></p>
- <div id='x1288' class='imgcontainer'>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+Transaction
+</div>
+</div>
+
+
+
+
+<h1 id="transaction_control_syntax"><span>1. </span>Transaction Control Syntax</h1>
+
+<p><b><a href="syntax/begin-stmt.html">begin-stmt:</a></b>
+<button id='x2035' onclick='hideorshow("x2035","x2036")'>hide</button></p>
+ <div id='x2036' class='imgcontainer'>
  <img alt="syntax diagram begin-stmt" src="images/syntax/begin-stmt.gif" />
 </div>
 <p><b><a href="syntax/commit-stmt.html">commit-stmt:</a></b>
-<button id='x1289' onclick='hideorshow("x1289","x1290")'>hide</button></p>
- <div id='x1290' class='imgcontainer'>
+<button id='x2037' onclick='hideorshow("x2037","x2038")'>hide</button></p>
+ <div id='x2038' class='imgcontainer'>
  <img alt="syntax diagram commit-stmt" src="images/syntax/commit-stmt.gif" />
 </div>
 <p><b><a href="syntax/rollback-stmt.html">rollback-stmt:</a></b>
-<button id='x1291' onclick='hideorshow("x1291","x1292")'>hide</button></p>
- <div id='x1292' class='imgcontainer'>
+<button id='x2039' onclick='hideorshow("x2039","x2040")'>hide</button></p>
+ <div id='x2040' class='imgcontainer'>
  <img alt="syntax diagram rollback-stmt" src="images/syntax/rollback-stmt.gif" />
 </div>
 
+
+<h1 id="transactions"><span>2. </span>Transactions</h1>
 
 <p>
 No reads or writes occur except within a transaction.
@@ -143,14 +157,14 @@ The COMMIT command and the ROLLBACK command without the TO clause
 work the same on <a href="lang_savepoint.html">SAVEPOINT</a> transactions as they do with transactions
 started by BEGIN.</p>
 
-<h3>Read transactions versus write transactions</h3>
+<h2 id="read_transactions_versus_write_transactions"><span>2.1. </span>Read transactions versus write transactions</h2>
 
 <p>SQLite current supports multiple simultaneous read transactions
 coming from separate database connections, possibly in separate
 threads or processes, but only one simultaneous write transaction.
-<p>
+</p><p>
 
-<p>A read transaction is used for reading only.  A write transaction
+</p><p>A read transaction is used for reading only.  A write transaction
 allows both reading and writing.  A read transaction is started
 by a SELECT statement, and a write transaction is started by 
 statements like CREATE, DELETE, DROP, INSERT, or UPDATE (collectively
@@ -177,7 +191,7 @@ the database prior to the changes implemented by Y.
 
 <a name="immediate"></a>
 
-<h3>DEFERRED, IMMEDIATE, and EXCLUSIVE transactions</h3>
+<h2 id="deferred_immediate_and_exclusive_transactions"><span>2.2. </span>DEFERRED, IMMEDIATE, and EXCLUSIVE transactions</h2>
 
 <p>
 Transactions can be DEFERRED, IMMEDIATE, or EXCLUSIVE.
@@ -187,7 +201,7 @@ The default transaction behavior is DEFERRED.
 <p>
 DEFERRED means that the transaction does not actually
 start until the database is first accessed.  Internally,
-the BEGIN DEFERRRED statement merely sets a flag on the database 
+the BEGIN DEFERRED statement merely sets a flag on the database 
 connection that turns off the automatic commit that would normally
 occur when the last statement finishes.  This causes the transaction
 that is automatically started to persist until an explicit
@@ -215,7 +229,7 @@ other database connections from reading the database while the
 transaction is underway.
 </p>
 
-<h3>Implicit versus explicit transactions</h3>
+<h2 id="implicit_versus_explicit_transactions"><span>2.3. </span>Implicit versus explicit transactions</h2>
 
 <p>
 An implicit transaction (a transaction that is started automatically,
@@ -265,7 +279,7 @@ If <a href="pragma.html#pragma_journal_mode">PRAGMA journal_mode</a> is set to O
 file) then the behavior of the ROLLBACK command is undefined.
 </p>
 
-<h3>Response To Errors Within A Transaction</h3>
+<h1 id="response_to_errors_within_a_transaction"><span>3. </span>Response To Errors Within A Transaction</h1>
 
 <p> If certain kinds of errors occur within a transaction, the
 transaction may or may not be rolled back automatically.  The
@@ -273,10 +287,10 @@ errors that can cause an automatic rollback include:</p>
 
 <ul>
 <li> <a href="rescode.html#full">SQLITE_FULL</a>: database or disk full
-<li> <a href="rescode.html#ioerr">SQLITE_IOERR</a>: disk I/O error
-<li> <a href="rescode.html#busy">SQLITE_BUSY</a>: database in use by another process
-<li> <a href="rescode.html#nomem">SQLITE_NOMEM</a>: out or memory
-</ul>
+</li><li> <a href="rescode.html#ioerr">SQLITE_IOERR</a>: disk I/O error
+</li><li> <a href="rescode.html#busy">SQLITE_BUSY</a>: database in use by another process
+</li><li> <a href="rescode.html#nomem">SQLITE_NOMEM</a>: out or memory
+</li></ul>
 
 <p>
 For all of these errors, SQLite attempts to undo just the one statement
@@ -299,5 +313,4 @@ might cause automatic transaction rollback.  Future versions of
 SQLite might change the error response.  In particular, we may
 choose to simplify the interface in future versions of SQLite by
 causing the errors above to force an unconditional rollback.</p>
-
 

@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -146,6 +146,7 @@ non-deterministic functions:
 <li>In the expression of a <a href="lang_createtable.html#ckconst">CHECK constraint</a>.
 </li><li>In the WHERE clause of a <a href="partialindex.html">partial index</a>.
 </li><li>In an expression used as part of an <a href="expridx.html">expression index</a>.
+</li><li>In the expression of a <a href="gencol.html">generated column</a>.
 </li></ul>
 
 <p>

@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -91,7 +91,7 @@ return false;
 }
 </script>
 </div>
-<!-- keywords: SQLITE_FCNTL_BEGIN_ATOMIC_WRITE SQLITE_FCNTL_BUSYHANDLER SQLITE_FCNTL_CHUNK_SIZE SQLITE_FCNTL_CKPT_DONE SQLITE_FCNTL_COMMIT_ATOMIC_WRITE SQLITE_FCNTL_COMMIT_PHASETWO SQLITE_FCNTL_DATA_VERSION SQLITE_FCNTL_FILE_POINTER SQLITE_FCNTL_GET_LOCKPROXYFILE SQLITE_FCNTL_HAS_MOVED SQLITE_FCNTL_JOURNAL_POINTER SQLITE_FCNTL_LAST_ERRNO SQLITE_FCNTL_LOCKSTATE SQLITE_FCNTL_LOCK_TIMEOUT SQLITE_FCNTL_MMAP_SIZE SQLITE_FCNTL_OVERWRITE SQLITE_FCNTL_PDB SQLITE_FCNTL_PERSIST_WAL SQLITE_FCNTL_POWERSAFE_OVERWRITE SQLITE_FCNTL_PRAGMA SQLITE_FCNTL_RBU SQLITE_FCNTL_ROLLBACK_ATOMIC_WRITE SQLITE_FCNTL_SET_LOCKPROXYFILE SQLITE_FCNTL_SIZE_HINT SQLITE_FCNTL_SIZE_LIMIT SQLITE_FCNTL_SYNC SQLITE_FCNTL_SYNC_OMITTED SQLITE_FCNTL_TEMPFILENAME SQLITE_FCNTL_TRACE SQLITE_FCNTL_VFSNAME SQLITE_FCNTL_VFS_POINTER SQLITE_FCNTL_WAL_BLOCK SQLITE_FCNTL_WIN32_AV_RETRY SQLITE_FCNTL_WIN32_GET_HANDLE SQLITE_FCNTL_WIN32_SET_HANDLE SQLITE_FCNTL_ZIPVFS {file control opcode} {file control opcodes} -->
+<!-- keywords: SQLITE_FCNTL_BEGIN_ATOMIC_WRITE SQLITE_FCNTL_BUSYHANDLER SQLITE_FCNTL_CHUNK_SIZE SQLITE_FCNTL_CKPT_DONE SQLITE_FCNTL_CKPT_START SQLITE_FCNTL_COMMIT_ATOMIC_WRITE SQLITE_FCNTL_COMMIT_PHASETWO SQLITE_FCNTL_DATA_VERSION SQLITE_FCNTL_FILE_POINTER SQLITE_FCNTL_GET_LOCKPROXYFILE SQLITE_FCNTL_HAS_MOVED SQLITE_FCNTL_JOURNAL_POINTER SQLITE_FCNTL_LAST_ERRNO SQLITE_FCNTL_LOCKSTATE SQLITE_FCNTL_LOCK_TIMEOUT SQLITE_FCNTL_MMAP_SIZE SQLITE_FCNTL_OVERWRITE SQLITE_FCNTL_PDB SQLITE_FCNTL_PERSIST_WAL SQLITE_FCNTL_POWERSAFE_OVERWRITE SQLITE_FCNTL_PRAGMA SQLITE_FCNTL_RBU SQLITE_FCNTL_RESERVE_BYTES SQLITE_FCNTL_ROLLBACK_ATOMIC_WRITE SQLITE_FCNTL_SET_LOCKPROXYFILE SQLITE_FCNTL_SIZE_HINT SQLITE_FCNTL_SIZE_LIMIT SQLITE_FCNTL_SYNC SQLITE_FCNTL_SYNC_OMITTED SQLITE_FCNTL_TEMPFILENAME SQLITE_FCNTL_TRACE SQLITE_FCNTL_VFSNAME SQLITE_FCNTL_VFS_POINTER SQLITE_FCNTL_WAL_BLOCK SQLITE_FCNTL_WIN32_AV_RETRY SQLITE_FCNTL_WIN32_GET_HANDLE SQLITE_FCNTL_WIN32_SET_HANDLE SQLITE_FCNTL_ZIPVFS {file control opcode} {file control opcodes} -->
 <div class=nosearch>
 <a href="intro.html"><h2>SQLite C Interface</h2></a>
 <h2>Standard File Control Opcodes</h2>
@@ -133,6 +133,8 @@ return false;
 #define SQLITE_FCNTL_DATA_VERSION           35
 #define SQLITE_FCNTL_SIZE_LIMIT             36
 #define SQLITE_FCNTL_CKPT_DONE              37
+#define SQLITE_FCNTL_RESERVE_BYTES          38
+#define SQLITE_FCNTL_CKPT_START             39
 </pre></blockquote>
 <p>
 These integer constants are opcodes for the xFileControl method
@@ -444,10 +446,12 @@ a prior successful call to <a href="../c3ref/c_fcntl_begin_atomic_write.html#sql
 
 <p><li><a name="sqlitefcntllocktimeout"></a>
 
-The <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntllocktimeout">SQLITE_FCNTL_LOCK_TIMEOUT</a> opcode causes attempts to obtain
-a file lock using the xLock or xShmLock methods of the VFS to wait
-for up to M milliseconds before failing, where M is the single
-unsigned integer parameter.</p>
+The <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntllocktimeout">SQLITE_FCNTL_LOCK_TIMEOUT</a> opcode is used to configure a VFS
+to block for up to M milliseconds before failing when attempting to
+obtain a file lock using the xLock or xShmLock methods of the VFS.
+The parameter is a pointer to a 32-bit signed integer that contains
+the value that M is to be set to. Before returning, the 32-bit signed
+integer is overwritten with the previous value of M.</p>
 
 <p><li><a name="sqlitefcntldataversion"></a>
 
@@ -469,6 +473,12 @@ but omits changes implemented by the database connection on which it is
 called.  This file control is the only mechanism to detect changes that
 happen either internally or externally and that are associated with
 a particular attached database.</p>
+
+<p><li><a name="sqlitefcntlckptstart"></a>
+
+The <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlckptstart">SQLITE_FCNTL_CKPT_START</a> opcode is invoked from within a checkpoint
+in wal mode before the client starts to copy pages from the wal
+file to the database file.</p>
 
 <p><li><a name="sqlitefcntlckptdone"></a>
 

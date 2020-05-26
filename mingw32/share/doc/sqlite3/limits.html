@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -117,10 +117,10 @@ it should work.
 <p>
 Unfortunately, the no-limits policy has been shown to create
 problems.  Because the upper bounds were not well
-defined, they were not tested, and bugs (including possible
-security exploits) were often found when pushing SQLite to
-extremes.  For this reason, newer versions of SQLite have
-well-defined limits and those limits are tested as part of
+defined, they were not tested, and bugs were often found
+when pushing SQLite to extremes.  For this reason, versions
+of SQLite since about release 3.5.8 (2008-04-16)
+have well-defined limits, and those limits are tested as part of
 the <a href="testing.html">test suite</a>.
 </p>
 
@@ -256,7 +256,7 @@ INSERT INTO tab1 VALUES(?,?,?);
 Then use the <a href="c3ref/bind_blob.html">sqlite3_bind_XXXX()</a> functions
 to bind your large string values to the SQL statement.  The use of binding
 obviates the need to escape quote characters in the string, reducing the
-risk of SQL injection attacks.  It is also runs faster since the large
+risk of SQL injection attacks.  It also runs faster since the large
 string does not need to be parsed or copied as much.
 </p>
 
@@ -355,7 +355,7 @@ the <a href="c3ref/limit.html">sqlite3_limit</a>(db,<a href="c3ref/c_limit_attac
 
 <p>
 The pattern matching algorithm used in the default <a href="lang_expr.html#like">LIKE</a> and <a href="lang_expr.html#glob">GLOB</a>
-implementation of SQLite can exhibit O(N&sup2) performance (where
+implementation of SQLite can exhibit O(N&sup2;) performance (where
 N is the number of characters in the pattern) for certain pathological
 cases.  To avoid denial-of-service attacks from miscreants who are able
 to specify their own LIKE or GLOB patterns, the length of the LIKE

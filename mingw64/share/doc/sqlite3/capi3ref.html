@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -155,859 +155,768 @@ be removed in some future release.</li>
 
 <hr>
 <h2>List Of Objects:</h2>
-<style>
-#listtab24 tr td {vertical-align:top;}
-</style>
-<table id='listtab24' width='100%'></table>
-<script>
-var listitems24 = [{"u":"#sqlite3","x":"sqlite3","s":0},
-{"u":"#sqlite3_api_routines","x":"sqlite3_api_routines","s":0},
-{"u":"#sqlite3_backup","x":"sqlite3_backup","s":0},
-{"u":"#sqlite3_blob","x":"sqlite3_blob","s":0},
-{"u":"#sqlite3_context","x":"sqlite3_context","s":0},
-{"u":"#sqlite3_data_directory","x":"sqlite3_data_directory","s":0},
-{"u":"#sqlite3_file","x":"sqlite3_file","s":0},
-{"u":"#sqlite3_index_info","x":"sqlite3_index_info","s":0},
-{"u":"#sqlite3_int64","x":"sqlite3_int64","s":0},
-{"u":"#sqlite3_int64","x":"sqlite3_uint64","s":0},
-{"u":"#sqlite3_int64","x":"sqlite_int64","s":0},
-{"u":"#sqlite3_int64","x":"sqlite_uint64","s":0},
-{"u":"#sqlite3_io_methods","x":"sqlite3_io_methods","s":0},
-{"u":"#sqlite3_mem_methods","x":"sqlite3_mem_methods","s":0},
-{"u":"#sqlite3_module","x":"sqlite3_module","s":0},
-{"u":"#sqlite3_mutex","x":"sqlite3_mutex","s":0},
-{"u":"#sqlite3_mutex_methods","x":"sqlite3_mutex_methods","s":0},
-{"u":"#sqlite3_pcache","x":"sqlite3_pcache","s":0},
-{"u":"#sqlite3_pcache_methods2","x":"sqlite3_pcache_methods2","s":0},
-{"u":"#sqlite3_pcache_page","x":"sqlite3_pcache_page","s":0},
-{"u":"#sqlite3_stmt","x":"sqlite3_stmt","s":0},
-{"u":"#sqlite3_str","x":"sqlite3_str","s":0},
-{"u":"#sqlite3_temp_directory","x":"sqlite3_temp_directory","s":0},
-{"u":"#sqlite3_value","x":"sqlite3_value","s":0},
-{"u":"#sqlite3_vfs","x":"sqlite3_vfs","s":0},
-{"u":"#sqlite3_vtab","x":"sqlite3_vtab","s":0},
-{"u":"#sqlite3_vtab_cursor","x":"sqlite3_vtab_cursor","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/280);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems24.length+1)/nCol);
-var h="<tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems24.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems24[i].u=="" || listitems24[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems24[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems24[i].s==2 || listitems24[i].s==3) h += "<s>"
-  h += listitems24[i].x;
-  if(listitems24[i].s==2 || listitems24[i].s==3) h += "</s>"
-  h += ea
-  if(listitems24[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems24[i].s==3) h += "&sup1\n";
-  if(listitems24[i].s==4) h += "&sup2\n";
-  if(listitems24[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab24").innerHTML = h;
-</script>
+<div class='columns' style='columns: 14em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='#sqlite3'>sqlite3</a></li>
+<li><a href='#sqlite3_api_routines'>sqlite3_api_routines</a></li>
+<li><a href='#sqlite3_backup'>sqlite3_backup</a></li>
+<li><a href='#sqlite3_blob'>sqlite3_blob</a></li>
+<li><a href='#sqlite3_context'>sqlite3_context</a></li>
+<li><a href='#sqlite3_data_directory'>sqlite3_data_directory</a></li>
+<li><a href='#sqlite3_file'>sqlite3_file</a></li>
+<li><a href='#sqlite3_index_info'>sqlite3_index_info</a></li>
+<li><a href='#sqlite3_int64'>sqlite3_int64</a></li>
+<li><a href='#sqlite3_int64'>sqlite3_uint64</a></li>
+<li><a href='#sqlite3_int64'>sqlite_int64</a></li>
+<li><a href='#sqlite3_int64'>sqlite_uint64</a></li>
+<li><a href='#sqlite3_io_methods'>sqlite3_io_methods</a></li>
+<li><a href='#sqlite3_mem_methods'>sqlite3_mem_methods</a></li>
+<li><a href='#sqlite3_module'>sqlite3_module</a></li>
+<li><a href='#sqlite3_mutex'>sqlite3_mutex</a></li>
+<li><a href='#sqlite3_mutex_methods'>sqlite3_mutex_methods</a></li>
+<li><a href='#sqlite3_pcache'>sqlite3_pcache</a></li>
+<li><a href='#sqlite3_pcache_methods2'>sqlite3_pcache_methods2</a></li>
+<li><a href='#sqlite3_pcache_page'>sqlite3_pcache_page</a></li>
+<li><a href='#sqlite3_stmt'>sqlite3_stmt</a></li>
+<li><a href='#sqlite3_str'>sqlite3_str</a></li>
+<li><a href='#sqlite3_temp_directory'>sqlite3_temp_directory</a></li>
+<li><a href='#sqlite3_value'>sqlite3_value</a></li>
+<li><a href='#sqlite3_vfs'>sqlite3_vfs</a></li>
+<li><a href='#sqlite3_vtab'>sqlite3_vtab</a></li>
+<li><a href='#sqlite3_vtab_cursor'>sqlite3_vtab_cursor</a></li>
+</ul>
+</div>
 <hr>
 
 <h2>List Of Constants:</h2>
 <p>Also available: <a href="rescode.html">list of error codes</a></p>
-<style>
-#listtab25 tr td {vertical-align:top;}
-</style>
-<table id='listtab25' width='100%'></table>
-<script>
-var listitems25 = [{"u":"#SQLITE_ABORT","x":"SQLITE_ABORT","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_ABORT_ROLLBACK","s":0},
-{"u":"#SQLITE_ACCESS_EXISTS","x":"SQLITE_ACCESS_EXISTS","s":0},
-{"u":"#SQLITE_ACCESS_EXISTS","x":"SQLITE_ACCESS_READ","s":0},
-{"u":"#SQLITE_ACCESS_EXISTS","x":"SQLITE_ACCESS_READWRITE","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_ALTER_TABLE","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_ANALYZE","s":0},
-{"u":"#SQLITE_ANY","x":"SQLITE_ANY","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_ATTACH","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_AUTH","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_AUTH_USER","s":0},
-{"u":"#SQLITE_BLOB","x":"SQLITE_BLOB","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_BUSY","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_BUSY_RECOVERY","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_BUSY_SNAPSHOT","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_CANTOPEN","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CANTOPEN_CONVPATH","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CANTOPEN_DIRTYWAL","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CANTOPEN_FULLPATH","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CANTOPEN_ISDIR","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CANTOPEN_NOTEMPDIR","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CANTOPEN_SYMLINK","s":0},
-{"u":"#SQLITE_CHECKPOINT_FULL","x":"SQLITE_CHECKPOINT_FULL","s":0},
-{"u":"#SQLITE_CHECKPOINT_FULL","x":"SQLITE_CHECKPOINT_PASSIVE","s":0},
-{"u":"#SQLITE_CHECKPOINT_FULL","x":"SQLITE_CHECKPOINT_RESTART","s":0},
-{"u":"#SQLITE_CHECKPOINT_FULL","x":"SQLITE_CHECKPOINT_TRUNCATE","s":0},
-{"u":"#sqliteconfigcoveringindexscan","x":"SQLITE_CONFIG_COVERING_INDEX_SCAN","s":0},
-{"u":"#sqliteconfiggetmalloc","x":"SQLITE_CONFIG_GETMALLOC","s":0},
-{"u":"#sqliteconfiggetmutex","x":"SQLITE_CONFIG_GETMUTEX","s":0},
-{"u":"#sqliteconfiggetpcache","x":"SQLITE_CONFIG_GETPCACHE","s":0},
-{"u":"#sqliteconfiggetpcache2","x":"SQLITE_CONFIG_GETPCACHE2","s":0},
-{"u":"#sqliteconfigheap","x":"SQLITE_CONFIG_HEAP","s":0},
-{"u":"#sqliteconfiglog","x":"SQLITE_CONFIG_LOG","s":0},
-{"u":"#sqliteconfiglookaside","x":"SQLITE_CONFIG_LOOKASIDE","s":0},
-{"u":"#sqliteconfigmalloc","x":"SQLITE_CONFIG_MALLOC","s":0},
-{"u":"#sqliteconfigmemdbmaxsize","x":"SQLITE_CONFIG_MEMDB_MAXSIZE","s":0},
-{"u":"#sqliteconfigmemstatus","x":"SQLITE_CONFIG_MEMSTATUS","s":0},
-{"u":"#sqliteconfigmmapsize","x":"SQLITE_CONFIG_MMAP_SIZE","s":0},
-{"u":"#sqliteconfigmultithread","x":"SQLITE_CONFIG_MULTITHREAD","s":0},
-{"u":"#sqliteconfigmutex","x":"SQLITE_CONFIG_MUTEX","s":0},
-{"u":"#sqliteconfigpagecache","x":"SQLITE_CONFIG_PAGECACHE","s":0},
-{"u":"#sqliteconfigpcache","x":"SQLITE_CONFIG_PCACHE","s":0},
-{"u":"#sqliteconfigpcache2","x":"SQLITE_CONFIG_PCACHE2","s":0},
-{"u":"#sqliteconfigpcachehdrsz","x":"SQLITE_CONFIG_PCACHE_HDRSZ","s":0},
-{"u":"#sqliteconfigpmasz","x":"SQLITE_CONFIG_PMASZ","s":0},
-{"u":"#sqliteconfigscratch","x":"SQLITE_CONFIG_SCRATCH","s":0},
-{"u":"#sqliteconfigserialized","x":"SQLITE_CONFIG_SERIALIZED","s":0},
-{"u":"#sqliteconfigsinglethread","x":"SQLITE_CONFIG_SINGLETHREAD","s":0},
-{"u":"#sqliteconfigsmallmalloc","x":"SQLITE_CONFIG_SMALL_MALLOC","s":0},
-{"u":"#sqliteconfigsorterrefsize","x":"SQLITE_CONFIG_SORTERREF_SIZE","s":0},
-{"u":"#sqliteconfigsqllog","x":"SQLITE_CONFIG_SQLLOG","s":0},
-{"u":"#sqliteconfigstmtjrnlspill","x":"SQLITE_CONFIG_STMTJRNL_SPILL","s":0},
-{"u":"#sqliteconfiguri","x":"SQLITE_CONFIG_URI","s":0},
-{"u":"#sqliteconfigwin32heapsize","x":"SQLITE_CONFIG_WIN32_HEAPSIZE","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_CONSTRAINT","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CONSTRAINT_CHECK","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CONSTRAINT_COMMITHOOK","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CONSTRAINT_FOREIGNKEY","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CONSTRAINT_FUNCTION","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CONSTRAINT_NOTNULL","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CONSTRAINT_PINNED","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CONSTRAINT_PRIMARYKEY","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CONSTRAINT_ROWID","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CONSTRAINT_TRIGGER","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CONSTRAINT_UNIQUE","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CONSTRAINT_VTAB","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_COPY","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_CORRUPT","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CORRUPT_SEQUENCE","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_CORRUPT_VTAB","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_CREATE_INDEX","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_CREATE_TABLE","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_CREATE_TEMP_INDEX","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_CREATE_TEMP_TABLE","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_CREATE_TEMP_TRIGGER","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_CREATE_TEMP_VIEW","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_CREATE_TRIGGER","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_CREATE_VIEW","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_CREATE_VTABLE","s":0},
-{"u":"#sqlitedbconfigdefensive","x":"SQLITE_DBCONFIG_DEFENSIVE","s":0},
-{"u":"#sqlitedbconfigdqsddl","x":"SQLITE_DBCONFIG_DQS_DDL","s":0},
-{"u":"#sqlitedbconfigdqsdml","x":"SQLITE_DBCONFIG_DQS_DML","s":0},
-{"u":"#sqlitedbconfigenablefkey","x":"SQLITE_DBCONFIG_ENABLE_FKEY","s":0},
-{"u":"#sqlitedbconfigenablefts3tokenizer","x":"SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER","s":0},
-{"u":"#sqlitedbconfigenableloadextension","x":"SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION","s":0},
-{"u":"#sqlitedbconfigenableqpsg","x":"SQLITE_DBCONFIG_ENABLE_QPSG","s":0},
-{"u":"#sqlitedbconfigenabletrigger","x":"SQLITE_DBCONFIG_ENABLE_TRIGGER","s":0},
-{"u":"#sqlitedbconfigenableview","x":"SQLITE_DBCONFIG_ENABLE_VIEW","s":0},
-{"u":"#sqlitedbconfiglegacyaltertable","x":"SQLITE_DBCONFIG_LEGACY_ALTER_TABLE","s":0},
-{"u":"#sqlitedbconfiglegacyfileformat","x":"SQLITE_DBCONFIG_LEGACY_FILE_FORMAT","s":0},
-{"u":"#sqlitedbconfiglookaside","x":"SQLITE_DBCONFIG_LOOKASIDE","s":0},
-{"u":"#sqlitedbconfigmaindbname","x":"SQLITE_DBCONFIG_MAINDBNAME","s":0},
-{"u":"#SQLITE_DBCONFIG_DEFENSIVE","x":"SQLITE_DBCONFIG_MAX","s":0},
-{"u":"#sqlitedbconfignockptonclose","x":"SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE","s":0},
-{"u":"#sqlitedbconfigresetdatabase","x":"SQLITE_DBCONFIG_RESET_DATABASE","s":0},
-{"u":"#sqlitedbconfigtriggereqp","x":"SQLITE_DBCONFIG_TRIGGER_EQP","s":0},
-{"u":"#sqlitedbconfigtrustedschema","x":"SQLITE_DBCONFIG_TRUSTED_SCHEMA","s":0},
-{"u":"#sqlitedbconfigwritableschema","x":"SQLITE_DBCONFIG_WRITABLE_SCHEMA","s":0},
-{"u":"#sqlitedbstatuscachehit","x":"SQLITE_DBSTATUS_CACHE_HIT","s":0},
-{"u":"#sqlitedbstatuscachemiss","x":"SQLITE_DBSTATUS_CACHE_MISS","s":0},
-{"u":"#sqlitedbstatuscachespill","x":"SQLITE_DBSTATUS_CACHE_SPILL","s":0},
-{"u":"#sqlitedbstatuscacheused","x":"SQLITE_DBSTATUS_CACHE_USED","s":0},
-{"u":"#sqlitedbstatuscacheusedshared","x":"SQLITE_DBSTATUS_CACHE_USED_SHARED","s":0},
-{"u":"#sqlitedbstatuscachewrite","x":"SQLITE_DBSTATUS_CACHE_WRITE","s":0},
-{"u":"#sqlitedbstatusdeferredfks","x":"SQLITE_DBSTATUS_DEFERRED_FKS","s":0},
-{"u":"#sqlitedbstatuslookasidehit","x":"SQLITE_DBSTATUS_LOOKASIDE_HIT","s":0},
-{"u":"#sqlitedbstatuslookasidemissfull","x":"SQLITE_DBSTATUS_LOOKASIDE_MISS_FULL","s":0},
-{"u":"#sqlitedbstatuslookasidemisssize","x":"SQLITE_DBSTATUS_LOOKASIDE_MISS_SIZE","s":0},
-{"u":"#sqlitedbstatuslookasideused","x":"SQLITE_DBSTATUS_LOOKASIDE_USED","s":0},
-{"u":"#SQLITE_DBSTATUS options","x":"SQLITE_DBSTATUS_MAX","s":0},
-{"u":"#sqlitedbstatusschemaused","x":"SQLITE_DBSTATUS_SCHEMA_USED","s":0},
-{"u":"#sqlitedbstatusstmtused","x":"SQLITE_DBSTATUS_STMT_USED","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_DELETE","s":0},
-{"u":"#SQLITE_DENY","x":"SQLITE_DENY","s":0},
-{"u":"#SQLITE_DESERIALIZE_FREEONCLOSE","x":"SQLITE_DESERIALIZE_FREEONCLOSE","s":0},
-{"u":"#SQLITE_DESERIALIZE_FREEONCLOSE","x":"SQLITE_DESERIALIZE_READONLY","s":0},
-{"u":"#SQLITE_DESERIALIZE_FREEONCLOSE","x":"SQLITE_DESERIALIZE_RESIZEABLE","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_DETACH","s":0},
-{"u":"#sqlitedeterministic","x":"SQLITE_DETERMINISTIC","s":0},
-{"u":"#sqlitedirectonly","x":"SQLITE_DIRECTONLY","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_DONE","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_DROP_INDEX","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_DROP_TABLE","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_DROP_TEMP_INDEX","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_DROP_TEMP_TABLE","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_DROP_TEMP_TRIGGER","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_DROP_TEMP_VIEW","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_DROP_TRIGGER","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_DROP_VIEW","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_DROP_VTABLE","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_EMPTY","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_ERROR","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_ERROR_MISSING_COLLSEQ","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_ERROR_RETRY","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_ERROR_SNAPSHOT","s":0},
-{"u":"#SQLITE_FAIL","x":"SQLITE_FAIL","s":0},
-{"u":"#sqlitefcntlbeginatomicwrite","x":"SQLITE_FCNTL_BEGIN_ATOMIC_WRITE","s":0},
-{"u":"#sqlitefcntlbusyhandler","x":"SQLITE_FCNTL_BUSYHANDLER","s":0},
-{"u":"#sqlitefcntlchunksize","x":"SQLITE_FCNTL_CHUNK_SIZE","s":0},
-{"u":"#sqlitefcntlckptdone","x":"SQLITE_FCNTL_CKPT_DONE","s":0},
-{"u":"#sqlitefcntlcommitatomicwrite","x":"SQLITE_FCNTL_COMMIT_ATOMIC_WRITE","s":0},
-{"u":"#sqlitefcntlcommitphasetwo","x":"SQLITE_FCNTL_COMMIT_PHASETWO","s":0},
-{"u":"#sqlitefcntldataversion","x":"SQLITE_FCNTL_DATA_VERSION","s":0},
-{"u":"#sqlitefcntlfilepointer","x":"SQLITE_FCNTL_FILE_POINTER","s":0},
-{"u":"#SQLITE_FCNTL_BEGIN_ATOMIC_WRITE","x":"SQLITE_FCNTL_GET_LOCKPROXYFILE","s":0},
-{"u":"#sqlitefcntlhasmoved","x":"SQLITE_FCNTL_HAS_MOVED","s":0},
-{"u":"#sqlitefcntljournalpointer","x":"SQLITE_FCNTL_JOURNAL_POINTER","s":0},
-{"u":"#SQLITE_FCNTL_BEGIN_ATOMIC_WRITE","x":"SQLITE_FCNTL_LAST_ERRNO","s":0},
-{"u":"#sqlitefcntllockstate","x":"SQLITE_FCNTL_LOCKSTATE","s":0},
-{"u":"#sqlitefcntllocktimeout","x":"SQLITE_FCNTL_LOCK_TIMEOUT","s":0},
-{"u":"#sqlitefcntlmmapsize","x":"SQLITE_FCNTL_MMAP_SIZE","s":0},
-{"u":"#sqlitefcntloverwrite","x":"SQLITE_FCNTL_OVERWRITE","s":0},
-{"u":"#SQLITE_FCNTL_BEGIN_ATOMIC_WRITE","x":"SQLITE_FCNTL_PDB","s":0},
-{"u":"#sqlitefcntlpersistwal","x":"SQLITE_FCNTL_PERSIST_WAL","s":0},
-{"u":"#sqlitefcntlpowersafeoverwrite","x":"SQLITE_FCNTL_POWERSAFE_OVERWRITE","s":0},
-{"u":"#sqlitefcntlpragma","x":"SQLITE_FCNTL_PRAGMA","s":0},
-{"u":"#sqlitefcntlrbu","x":"SQLITE_FCNTL_RBU","s":0},
-{"u":"#sqlitefcntlrollbackatomicwrite","x":"SQLITE_FCNTL_ROLLBACK_ATOMIC_WRITE","s":0},
-{"u":"#SQLITE_FCNTL_BEGIN_ATOMIC_WRITE","x":"SQLITE_FCNTL_SET_LOCKPROXYFILE","s":0},
-{"u":"#sqlitefcntlsizehint","x":"SQLITE_FCNTL_SIZE_HINT","s":0},
-{"u":"#sqlitefcntlsizelimit","x":"SQLITE_FCNTL_SIZE_LIMIT","s":0},
-{"u":"#sqlitefcntlsync","x":"SQLITE_FCNTL_SYNC","s":0},
-{"u":"#sqlitefcntlsyncomitted","x":"SQLITE_FCNTL_SYNC_OMITTED","s":0},
-{"u":"#sqlitefcntltempfilename","x":"SQLITE_FCNTL_TEMPFILENAME","s":0},
-{"u":"#sqlitefcntltrace","x":"SQLITE_FCNTL_TRACE","s":0},
-{"u":"#sqlitefcntlvfsname","x":"SQLITE_FCNTL_VFSNAME","s":0},
-{"u":"#sqlitefcntlvfspointer","x":"SQLITE_FCNTL_VFS_POINTER","s":0},
-{"u":"#sqlitefcntlwalblock","x":"SQLITE_FCNTL_WAL_BLOCK","s":0},
-{"u":"#sqlitefcntlwin32avretry","x":"SQLITE_FCNTL_WIN32_AV_RETRY","s":0},
-{"u":"#sqlitefcntlwin32gethandle","x":"SQLITE_FCNTL_WIN32_GET_HANDLE","s":0},
-{"u":"#sqlitefcntlwin32sethandle","x":"SQLITE_FCNTL_WIN32_SET_HANDLE","s":0},
-{"u":"#sqlitefcntlzipvfs","x":"SQLITE_FCNTL_ZIPVFS","s":0},
-{"u":"#SQLITE_BLOB","x":"SQLITE_FLOAT","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_FORMAT","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_FULL","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_FUNCTION","s":0},
-{"u":"#SQLITE_DENY","x":"SQLITE_IGNORE","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_EQ","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_FUNCTION","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_GE","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_GLOB","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_GT","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_IS","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_ISNOT","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_ISNOTNULL","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_ISNULL","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_LE","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_LIKE","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_LT","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_MATCH","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_NE","s":0},
-{"u":"#SQLITE_INDEX_CONSTRAINT_EQ","x":"SQLITE_INDEX_CONSTRAINT_REGEXP","s":0},
-{"u":"#SQLITE_INDEX_SCAN_UNIQUE","x":"SQLITE_INDEX_SCAN_UNIQUE","s":0},
-{"u":"#sqliteinnocuous","x":"SQLITE_INNOCUOUS","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_INSERT","s":0},
-{"u":"#SQLITE_BLOB","x":"SQLITE_INTEGER","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_INTERNAL","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_INTERRUPT","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_ATOMIC","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_ATOMIC16K","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_ATOMIC1K","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_ATOMIC2K","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_ATOMIC32K","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_ATOMIC4K","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_ATOMIC512","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_ATOMIC64K","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_ATOMIC8K","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_BATCH_ATOMIC","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_IMMUTABLE","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_POWERSAFE_OVERWRITE","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_SAFE_APPEND","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_SEQUENTIAL","s":0},
-{"u":"#SQLITE_IOCAP_ATOMIC","x":"SQLITE_IOCAP_UNDELETABLE_WHEN_OPEN","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_IOERR","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_ACCESS","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_AUTH","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_BEGIN_ATOMIC","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_BLOCKED","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_CHECKRESERVEDLOCK","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_CLOSE","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_COMMIT_ATOMIC","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_CONVPATH","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_DELETE","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_DELETE_NOENT","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_DIR_CLOSE","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_DIR_FSYNC","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_FSTAT","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_FSYNC","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_GETTEMPPATH","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_LOCK","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_MMAP","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_NOMEM","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_RDLOCK","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_READ","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_ROLLBACK_ATOMIC","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_SEEK","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_SHMLOCK","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_SHMMAP","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_SHMOPEN","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_SHMSIZE","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_SHORT_READ","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_TRUNCATE","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_UNLOCK","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_VNODE","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_IOERR_WRITE","s":0},
-{"u":"#sqlitelimitattached","x":"SQLITE_LIMIT_ATTACHED","s":0},
-{"u":"#sqlitelimitcolumn","x":"SQLITE_LIMIT_COLUMN","s":0},
-{"u":"#sqlitelimitcompoundselect","x":"SQLITE_LIMIT_COMPOUND_SELECT","s":0},
-{"u":"#sqlitelimitexprdepth","x":"SQLITE_LIMIT_EXPR_DEPTH","s":0},
-{"u":"#sqlitelimitfunctionarg","x":"SQLITE_LIMIT_FUNCTION_ARG","s":0},
-{"u":"#sqlitelimitlength","x":"SQLITE_LIMIT_LENGTH","s":0},
-{"u":"#sqlitelimitlikepatternlength","x":"SQLITE_LIMIT_LIKE_PATTERN_LENGTH","s":0},
-{"u":"#sqlitelimitsqllength","x":"SQLITE_LIMIT_SQL_LENGTH","s":0},
-{"u":"#sqlitelimittriggerdepth","x":"SQLITE_LIMIT_TRIGGER_DEPTH","s":0},
-{"u":"#sqlitelimitvariablenumber","x":"SQLITE_LIMIT_VARIABLE_NUMBER","s":0},
-{"u":"#sqlitelimitvdbeop","x":"SQLITE_LIMIT_VDBE_OP","s":0},
-{"u":"#sqlitelimitworkerthreads","x":"SQLITE_LIMIT_WORKER_THREADS","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_LOCKED","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_LOCKED_SHAREDCACHE","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_LOCKED_VTAB","s":0},
-{"u":"#SQLITE_LOCK_EXCLUSIVE","x":"SQLITE_LOCK_EXCLUSIVE","s":0},
-{"u":"#SQLITE_LOCK_EXCLUSIVE","x":"SQLITE_LOCK_NONE","s":0},
-{"u":"#SQLITE_LOCK_EXCLUSIVE","x":"SQLITE_LOCK_PENDING","s":0},
-{"u":"#SQLITE_LOCK_EXCLUSIVE","x":"SQLITE_LOCK_RESERVED","s":0},
-{"u":"#SQLITE_LOCK_EXCLUSIVE","x":"SQLITE_LOCK_SHARED","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_MISMATCH","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_MISUSE","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_FAST","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_RECURSIVE","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_STATIC_APP1","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_STATIC_APP2","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_STATIC_APP3","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_STATIC_LRU","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_STATIC_LRU2","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_STATIC_MASTER","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_STATIC_MEM","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_STATIC_MEM2","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_STATIC_OPEN","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_STATIC_PMEM","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_STATIC_PRNG","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_STATIC_VFS1","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_STATIC_VFS2","s":0},
-{"u":"#SQLITE_MUTEX_FAST","x":"SQLITE_MUTEX_STATIC_VFS3","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_NOLFS","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_NOMEM","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_NOTADB","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_NOTFOUND","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_NOTICE","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_NOTICE_RECOVER_ROLLBACK","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_NOTICE_RECOVER_WAL","s":0},
-{"u":"#SQLITE_BLOB","x":"SQLITE_NULL","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_OK","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_OK_LOAD_PERMANENTLY","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_OK_SYMLINK","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_AUTOPROXY","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_CREATE","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_DELETEONCLOSE","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_EXCLUSIVE","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_FULLMUTEX","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_MAIN_DB","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_MAIN_JOURNAL","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_MASTER_JOURNAL","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_MEMORY","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_NOFOLLOW","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_NOMUTEX","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_PRIVATECACHE","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_READONLY","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_READWRITE","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_SHAREDCACHE","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_SUBJOURNAL","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_TEMP_DB","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_TEMP_JOURNAL","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_TRANSIENT_DB","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_URI","s":0},
-{"u":"#SQLITE_OPEN_AUTOPROXY","x":"SQLITE_OPEN_WAL","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_PERM","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_PRAGMA","s":0},
-{"u":"#sqlitepreparenormalize","x":"SQLITE_PREPARE_NORMALIZE","s":0},
-{"u":"#sqlitepreparenovtab","x":"SQLITE_PREPARE_NO_VTAB","s":0},
-{"u":"#sqlitepreparepersistent","x":"SQLITE_PREPARE_PERSISTENT","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_PROTOCOL","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_RANGE","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_READ","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_READONLY","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_READONLY_CANTINIT","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_READONLY_CANTLOCK","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_READONLY_DBMOVED","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_READONLY_DIRECTORY","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_READONLY_RECOVERY","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_READONLY_ROLLBACK","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_RECURSIVE","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_REINDEX","s":0},
-{"u":"#SQLITE_FAIL","x":"SQLITE_REPLACE","s":0},
-{"u":"#SQLITE_FAIL","x":"SQLITE_ROLLBACK","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_ROW","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_SAVEPOINT","s":0},
-{"u":"#sqlitescanstatest","x":"SQLITE_SCANSTAT_EST","s":0},
-{"u":"#sqlitescanstatexplain","x":"SQLITE_SCANSTAT_EXPLAIN","s":0},
-{"u":"#sqlitescanstatname","x":"SQLITE_SCANSTAT_NAME","s":0},
-{"u":"#sqlitescanstatnloop","x":"SQLITE_SCANSTAT_NLOOP","s":0},
-{"u":"#sqlitescanstatnvisit","x":"SQLITE_SCANSTAT_NVISIT","s":0},
-{"u":"#sqlitescanstatselectid","x":"SQLITE_SCANSTAT_SELECTID","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_SCHEMA","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_SELECT","s":0},
-{"u":"#SQLITE_SERIALIZE_NOCOPY","x":"SQLITE_SERIALIZE_NOCOPY","s":0},
-{"u":"#SQLITE_SHM_EXCLUSIVE","x":"SQLITE_SHM_EXCLUSIVE","s":0},
-{"u":"#SQLITE_SHM_EXCLUSIVE","x":"SQLITE_SHM_LOCK","s":0},
-{"u":"#SQLITE_SHM_NLOCK","x":"SQLITE_SHM_NLOCK","s":0},
-{"u":"#SQLITE_SHM_EXCLUSIVE","x":"SQLITE_SHM_SHARED","s":0},
-{"u":"#SQLITE_SHM_EXCLUSIVE","x":"SQLITE_SHM_UNLOCK","s":0},
-{"u":"#SQLITE_SOURCE_ID","x":"SQLITE_SOURCE_ID","s":0},
-{"u":"#SQLITE_STATIC","x":"SQLITE_STATIC","s":0},
-{"u":"#sqlitestatusmalloccount","x":"SQLITE_STATUS_MALLOC_COUNT","s":0},
-{"u":"#sqlitestatusmallocsize","x":"SQLITE_STATUS_MALLOC_SIZE","s":0},
-{"u":"#sqlitestatusmemoryused","x":"SQLITE_STATUS_MEMORY_USED","s":0},
-{"u":"#sqlitestatuspagecacheoverflow","x":"SQLITE_STATUS_PAGECACHE_OVERFLOW","s":0},
-{"u":"#sqlitestatuspagecachesize","x":"SQLITE_STATUS_PAGECACHE_SIZE","s":0},
-{"u":"#sqlitestatuspagecacheused","x":"SQLITE_STATUS_PAGECACHE_USED","s":0},
-{"u":"#sqlitestatusparserstack","x":"SQLITE_STATUS_PARSER_STACK","s":0},
-{"u":"#sqlitestatusscratchoverflow","x":"SQLITE_STATUS_SCRATCH_OVERFLOW","s":0},
-{"u":"#sqlitestatusscratchsize","x":"SQLITE_STATUS_SCRATCH_SIZE","s":0},
-{"u":"#sqlitestatusscratchused","x":"SQLITE_STATUS_SCRATCH_USED","s":0},
-{"u":"#sqlitestmtstatusautoindex","x":"SQLITE_STMTSTATUS_AUTOINDEX","s":0},
-{"u":"#sqlitestmtstatusfullscanstep","x":"SQLITE_STMTSTATUS_FULLSCAN_STEP","s":0},
-{"u":"#sqlitestmtstatusmemused","x":"SQLITE_STMTSTATUS_MEMUSED","s":0},
-{"u":"#sqlitestmtstatusreprepare","x":"SQLITE_STMTSTATUS_REPREPARE","s":0},
-{"u":"#sqlitestmtstatusrun","x":"SQLITE_STMTSTATUS_RUN","s":0},
-{"u":"#sqlitestmtstatussort","x":"SQLITE_STMTSTATUS_SORT","s":0},
-{"u":"#sqlitestmtstatusvmstep","x":"SQLITE_STMTSTATUS_VM_STEP","s":0},
-{"u":"#sqlitesubtype","x":"SQLITE_SUBTYPE","s":0},
-{"u":"#SQLITE_SYNC_DATAONLY","x":"SQLITE_SYNC_DATAONLY","s":0},
-{"u":"#SQLITE_SYNC_DATAONLY","x":"SQLITE_SYNC_FULL","s":0},
-{"u":"#SQLITE_SYNC_DATAONLY","x":"SQLITE_SYNC_NORMAL","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_ALWAYS","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_ASSERT","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_BENIGN_MALLOC_HOOKS","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_BITVEC_TEST","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_BYTEORDER","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_EXPLAIN_STMT","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_EXTRA_SCHEMA_CHECKS","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_FAULT_INSTALL","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_FIRST","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_IMPOSTER","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_INTERNAL_FUNCTIONS","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_ISINIT","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_ISKEYWORD","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_LAST","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_LOCALTIME_FAULT","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_NEVER_CORRUPT","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_ONCE_RESET_THRESHOLD","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_OPTIMIZATIONS","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_PARSER_COVERAGE","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_PENDING_BYTE","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_PRNG_RESET","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_PRNG_RESTORE","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_PRNG_SAVE","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_PRNG_SEED","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_RESERVE","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_RESULT_INTREAL","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_SCRATCHMALLOC","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_SORTER_MMAP","s":0},
-{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_VDBE_COVERAGE","s":0},
-{"u":"#SQLITE_BLOB","x":"SQLITE_TEXT","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_TOOBIG","s":0},
-{"u":"#SQLITE_TRACE","x":"SQLITE_TRACE","s":0},
-{"u":"#sqlitetraceclose","x":"SQLITE_TRACE_CLOSE","s":0},
-{"u":"#sqlitetraceprofile","x":"SQLITE_TRACE_PROFILE","s":0},
-{"u":"#sqlitetracerow","x":"SQLITE_TRACE_ROW","s":0},
-{"u":"#sqlitetracestmt","x":"SQLITE_TRACE_STMT","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_TRANSACTION","s":0},
-{"u":"#SQLITE_STATIC","x":"SQLITE_TRANSIENT","s":0},
-{"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_UPDATE","s":0},
-{"u":"#SQLITE_ANY","x":"SQLITE_UTF16","s":0},
-{"u":"#SQLITE_ANY","x":"SQLITE_UTF16BE","s":0},
-{"u":"#SQLITE_ANY","x":"SQLITE_UTF16LE","s":0},
-{"u":"#SQLITE_ANY","x":"SQLITE_UTF16_ALIGNED","s":0},
-{"u":"#SQLITE_ANY","x":"SQLITE_UTF8","s":0},
-{"u":"#SQLITE_SOURCE_ID","x":"SQLITE_VERSION","s":0},
-{"u":"#SQLITE_SOURCE_ID","x":"SQLITE_VERSION_NUMBER","s":0},
-{"u":"#sqlitevtabconstraintsupport","x":"SQLITE_VTAB_CONSTRAINT_SUPPORT","s":0},
-{"u":"#sqlitevtabdirectonly","x":"SQLITE_VTAB_DIRECTONLY","s":0},
-{"u":"#sqlitevtabinnocuous","x":"SQLITE_VTAB_INNOCUOUS","s":0},
-{"u":"#SQLITE_ABORT","x":"SQLITE_WARNING","s":0},
-{"u":"#SQLITE_ABORT_ROLLBACK","x":"SQLITE_WARNING_AUTOINDEX","s":0},
-{"u":"#SQLITE_WIN32_DATA_DIRECTORY_TYPE","x":"SQLITE_WIN32_DATA_DIRECTORY_TYPE","s":0},
-{"u":"#SQLITE_WIN32_DATA_DIRECTORY_TYPE","x":"SQLITE_WIN32_TEMP_DIRECTORY_TYPE","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/400);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems25.length+1)/nCol);
-var h="<tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems25.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems25[i].u=="" || listitems25[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems25[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems25[i].s==2 || listitems25[i].s==3) h += "<s>"
-  h += listitems25[i].x;
-  if(listitems25[i].s==2 || listitems25[i].s==3) h += "</s>"
-  h += ea
-  if(listitems25[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems25[i].s==3) h += "&sup1\n";
-  if(listitems25[i].s==4) h += "&sup2\n";
-  if(listitems25[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab25").innerHTML = h;
-</script>
+<div class='columns' style='columns: 20em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='#SQLITE_ABORT'>SQLITE_ABORT</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_ABORT_ROLLBACK</a></li>
+<li><a href='#SQLITE_ACCESS_EXISTS'>SQLITE_ACCESS_EXISTS</a></li>
+<li><a href='#SQLITE_ACCESS_EXISTS'>SQLITE_ACCESS_READ</a></li>
+<li><a href='#SQLITE_ACCESS_EXISTS'>SQLITE_ACCESS_READWRITE</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_ALTER_TABLE</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_ANALYZE</a></li>
+<li><a href='#SQLITE_ANY'>SQLITE_ANY</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_ATTACH</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_AUTH</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_AUTH_USER</a></li>
+<li><a href='#SQLITE_BLOB'>SQLITE_BLOB</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_BUSY</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_BUSY_RECOVERY</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_BUSY_SNAPSHOT</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_BUSY_TIMEOUT</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_CANTOPEN</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CANTOPEN_CONVPATH</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CANTOPEN_DIRTYWAL</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CANTOPEN_FULLPATH</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CANTOPEN_ISDIR</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CANTOPEN_NOTEMPDIR</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CANTOPEN_SYMLINK</a></li>
+<li><a href='#SQLITE_CHECKPOINT_FULL'>SQLITE_CHECKPOINT_FULL</a></li>
+<li><a href='#SQLITE_CHECKPOINT_FULL'>SQLITE_CHECKPOINT_PASSIVE</a></li>
+<li><a href='#SQLITE_CHECKPOINT_FULL'>SQLITE_CHECKPOINT_RESTART</a></li>
+<li><a href='#SQLITE_CHECKPOINT_FULL'>SQLITE_CHECKPOINT_TRUNCATE</a></li>
+<li><a href='#sqliteconfigcoveringindexscan'>SQLITE_CONFIG_COVERING_INDEX_SCAN</a></li>
+<li><a href='#sqliteconfiggetmalloc'>SQLITE_CONFIG_GETMALLOC</a></li>
+<li><a href='#sqliteconfiggetmutex'>SQLITE_CONFIG_GETMUTEX</a></li>
+<li><a href='#sqliteconfiggetpcache'>SQLITE_CONFIG_GETPCACHE</a></li>
+<li><a href='#sqliteconfiggetpcache2'>SQLITE_CONFIG_GETPCACHE2</a></li>
+<li><a href='#sqliteconfigheap'>SQLITE_CONFIG_HEAP</a></li>
+<li><a href='#sqliteconfiglog'>SQLITE_CONFIG_LOG</a></li>
+<li><a href='#sqliteconfiglookaside'>SQLITE_CONFIG_LOOKASIDE</a></li>
+<li><a href='#sqliteconfigmalloc'>SQLITE_CONFIG_MALLOC</a></li>
+<li><a href='#sqliteconfigmemdbmaxsize'>SQLITE_CONFIG_MEMDB_MAXSIZE</a></li>
+<li><a href='#sqliteconfigmemstatus'>SQLITE_CONFIG_MEMSTATUS</a></li>
+<li><a href='#sqliteconfigmmapsize'>SQLITE_CONFIG_MMAP_SIZE</a></li>
+<li><a href='#sqliteconfigmultithread'>SQLITE_CONFIG_MULTITHREAD</a></li>
+<li><a href='#sqliteconfigmutex'>SQLITE_CONFIG_MUTEX</a></li>
+<li><a href='#sqliteconfigpagecache'>SQLITE_CONFIG_PAGECACHE</a></li>
+<li><a href='#sqliteconfigpcache'>SQLITE_CONFIG_PCACHE</a></li>
+<li><a href='#sqliteconfigpcache2'>SQLITE_CONFIG_PCACHE2</a></li>
+<li><a href='#sqliteconfigpcachehdrsz'>SQLITE_CONFIG_PCACHE_HDRSZ</a></li>
+<li><a href='#sqliteconfigpmasz'>SQLITE_CONFIG_PMASZ</a></li>
+<li><a href='#sqliteconfigscratch'>SQLITE_CONFIG_SCRATCH</a></li>
+<li><a href='#sqliteconfigserialized'>SQLITE_CONFIG_SERIALIZED</a></li>
+<li><a href='#sqliteconfigsinglethread'>SQLITE_CONFIG_SINGLETHREAD</a></li>
+<li><a href='#sqliteconfigsmallmalloc'>SQLITE_CONFIG_SMALL_MALLOC</a></li>
+<li><a href='#sqliteconfigsorterrefsize'>SQLITE_CONFIG_SORTERREF_SIZE</a></li>
+<li><a href='#sqliteconfigsqllog'>SQLITE_CONFIG_SQLLOG</a></li>
+<li><a href='#sqliteconfigstmtjrnlspill'>SQLITE_CONFIG_STMTJRNL_SPILL</a></li>
+<li><a href='#sqliteconfiguri'>SQLITE_CONFIG_URI</a></li>
+<li><a href='#sqliteconfigwin32heapsize'>SQLITE_CONFIG_WIN32_HEAPSIZE</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_CONSTRAINT</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_CHECK</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_COMMITHOOK</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_FOREIGNKEY</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_FUNCTION</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_NOTNULL</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_PINNED</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_PRIMARYKEY</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_ROWID</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_TRIGGER</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_UNIQUE</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_VTAB</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_COPY</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_CORRUPT</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CORRUPT_INDEX</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CORRUPT_SEQUENCE</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CORRUPT_VTAB</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_CREATE_INDEX</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_CREATE_TABLE</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_CREATE_TEMP_INDEX</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_CREATE_TEMP_TABLE</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_CREATE_TEMP_TRIGGER</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_CREATE_TEMP_VIEW</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_CREATE_TRIGGER</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_CREATE_VIEW</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_CREATE_VTABLE</a></li>
+<li><a href='#sqlitedbconfigdefensive'>SQLITE_DBCONFIG_DEFENSIVE</a></li>
+<li><a href='#sqlitedbconfigdqsddl'>SQLITE_DBCONFIG_DQS_DDL</a></li>
+<li><a href='#sqlitedbconfigdqsdml'>SQLITE_DBCONFIG_DQS_DML</a></li>
+<li><a href='#sqlitedbconfigenablefkey'>SQLITE_DBCONFIG_ENABLE_FKEY</a></li>
+<li><a href='#sqlitedbconfigenablefts3tokenizer'>SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER</a></li>
+<li><a href='#sqlitedbconfigenableloadextension'>SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION</a></li>
+<li><a href='#sqlitedbconfigenableqpsg'>SQLITE_DBCONFIG_ENABLE_QPSG</a></li>
+<li><a href='#sqlitedbconfigenabletrigger'>SQLITE_DBCONFIG_ENABLE_TRIGGER</a></li>
+<li><a href='#sqlitedbconfigenableview'>SQLITE_DBCONFIG_ENABLE_VIEW</a></li>
+<li><a href='#sqlitedbconfiglegacyaltertable'>SQLITE_DBCONFIG_LEGACY_ALTER_TABLE</a></li>
+<li><a href='#sqlitedbconfiglegacyfileformat'>SQLITE_DBCONFIG_LEGACY_FILE_FORMAT</a></li>
+<li><a href='#sqlitedbconfiglookaside'>SQLITE_DBCONFIG_LOOKASIDE</a></li>
+<li><a href='#sqlitedbconfigmaindbname'>SQLITE_DBCONFIG_MAINDBNAME</a></li>
+<li><a href='#SQLITE_DBCONFIG_DEFENSIVE'>SQLITE_DBCONFIG_MAX</a></li>
+<li><a href='#sqlitedbconfignockptonclose'>SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE</a></li>
+<li><a href='#sqlitedbconfigresetdatabase'>SQLITE_DBCONFIG_RESET_DATABASE</a></li>
+<li><a href='#sqlitedbconfigtriggereqp'>SQLITE_DBCONFIG_TRIGGER_EQP</a></li>
+<li><a href='#sqlitedbconfigtrustedschema'>SQLITE_DBCONFIG_TRUSTED_SCHEMA</a></li>
+<li><a href='#sqlitedbconfigwritableschema'>SQLITE_DBCONFIG_WRITABLE_SCHEMA</a></li>
+<li><a href='#sqlitedbstatuscachehit'>SQLITE_DBSTATUS_CACHE_HIT</a></li>
+<li><a href='#sqlitedbstatuscachemiss'>SQLITE_DBSTATUS_CACHE_MISS</a></li>
+<li><a href='#sqlitedbstatuscachespill'>SQLITE_DBSTATUS_CACHE_SPILL</a></li>
+<li><a href='#sqlitedbstatuscacheused'>SQLITE_DBSTATUS_CACHE_USED</a></li>
+<li><a href='#sqlitedbstatuscacheusedshared'>SQLITE_DBSTATUS_CACHE_USED_SHARED</a></li>
+<li><a href='#sqlitedbstatuscachewrite'>SQLITE_DBSTATUS_CACHE_WRITE</a></li>
+<li><a href='#sqlitedbstatusdeferredfks'>SQLITE_DBSTATUS_DEFERRED_FKS</a></li>
+<li><a href='#sqlitedbstatuslookasidehit'>SQLITE_DBSTATUS_LOOKASIDE_HIT</a></li>
+<li><a href='#sqlitedbstatuslookasidemissfull'>SQLITE_DBSTATUS_LOOKASIDE_MISS_FULL</a></li>
+<li><a href='#sqlitedbstatuslookasidemisssize'>SQLITE_DBSTATUS_LOOKASIDE_MISS_SIZE</a></li>
+<li><a href='#sqlitedbstatuslookasideused'>SQLITE_DBSTATUS_LOOKASIDE_USED</a></li>
+<li><a href='#SQLITE_DBSTATUS options'>SQLITE_DBSTATUS_MAX</a></li>
+<li><a href='#sqlitedbstatusschemaused'>SQLITE_DBSTATUS_SCHEMA_USED</a></li>
+<li><a href='#sqlitedbstatusstmtused'>SQLITE_DBSTATUS_STMT_USED</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_DELETE</a></li>
+<li><a href='#SQLITE_DENY'>SQLITE_DENY</a></li>
+<li><a href='#SQLITE_DESERIALIZE_FREEONCLOSE'>SQLITE_DESERIALIZE_FREEONCLOSE</a></li>
+<li><a href='#SQLITE_DESERIALIZE_FREEONCLOSE'>SQLITE_DESERIALIZE_READONLY</a></li>
+<li><a href='#SQLITE_DESERIALIZE_FREEONCLOSE'>SQLITE_DESERIALIZE_RESIZEABLE</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_DETACH</a></li>
+<li><a href='#sqlitedeterministic'>SQLITE_DETERMINISTIC</a></li>
+<li><a href='#sqlitedirectonly'>SQLITE_DIRECTONLY</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_DONE</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_DROP_INDEX</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_DROP_TABLE</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_DROP_TEMP_INDEX</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_DROP_TEMP_TABLE</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_DROP_TEMP_TRIGGER</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_DROP_TEMP_VIEW</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_DROP_TRIGGER</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_DROP_VIEW</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_DROP_VTABLE</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_EMPTY</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_ERROR</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_ERROR_MISSING_COLLSEQ</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_ERROR_RETRY</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_ERROR_SNAPSHOT</a></li>
+<li><a href='#SQLITE_FAIL'>SQLITE_FAIL</a></li>
+<li><a href='#sqlitefcntlbeginatomicwrite'>SQLITE_FCNTL_BEGIN_ATOMIC_WRITE</a></li>
+<li><a href='#sqlitefcntlbusyhandler'>SQLITE_FCNTL_BUSYHANDLER</a></li>
+<li><a href='#sqlitefcntlchunksize'>SQLITE_FCNTL_CHUNK_SIZE</a></li>
+<li><a href='#sqlitefcntlckptdone'>SQLITE_FCNTL_CKPT_DONE</a></li>
+<li><a href='#sqlitefcntlckptstart'>SQLITE_FCNTL_CKPT_START</a></li>
+<li><a href='#sqlitefcntlcommitatomicwrite'>SQLITE_FCNTL_COMMIT_ATOMIC_WRITE</a></li>
+<li><a href='#sqlitefcntlcommitphasetwo'>SQLITE_FCNTL_COMMIT_PHASETWO</a></li>
+<li><a href='#sqlitefcntldataversion'>SQLITE_FCNTL_DATA_VERSION</a></li>
+<li><a href='#sqlitefcntlfilepointer'>SQLITE_FCNTL_FILE_POINTER</a></li>
+<li><a href='#SQLITE_FCNTL_BEGIN_ATOMIC_WRITE'>SQLITE_FCNTL_GET_LOCKPROXYFILE</a></li>
+<li><a href='#sqlitefcntlhasmoved'>SQLITE_FCNTL_HAS_MOVED</a></li>
+<li><a href='#sqlitefcntljournalpointer'>SQLITE_FCNTL_JOURNAL_POINTER</a></li>
+<li><a href='#SQLITE_FCNTL_BEGIN_ATOMIC_WRITE'>SQLITE_FCNTL_LAST_ERRNO</a></li>
+<li><a href='#sqlitefcntllockstate'>SQLITE_FCNTL_LOCKSTATE</a></li>
+<li><a href='#sqlitefcntllocktimeout'>SQLITE_FCNTL_LOCK_TIMEOUT</a></li>
+<li><a href='#sqlitefcntlmmapsize'>SQLITE_FCNTL_MMAP_SIZE</a></li>
+<li><a href='#sqlitefcntloverwrite'>SQLITE_FCNTL_OVERWRITE</a></li>
+<li><a href='#SQLITE_FCNTL_BEGIN_ATOMIC_WRITE'>SQLITE_FCNTL_PDB</a></li>
+<li><a href='#sqlitefcntlpersistwal'>SQLITE_FCNTL_PERSIST_WAL</a></li>
+<li><a href='#sqlitefcntlpowersafeoverwrite'>SQLITE_FCNTL_POWERSAFE_OVERWRITE</a></li>
+<li><a href='#sqlitefcntlpragma'>SQLITE_FCNTL_PRAGMA</a></li>
+<li><a href='#sqlitefcntlrbu'>SQLITE_FCNTL_RBU</a></li>
+<li><a href='#SQLITE_FCNTL_BEGIN_ATOMIC_WRITE'>SQLITE_FCNTL_RESERVE_BYTES</a></li>
+<li><a href='#sqlitefcntlrollbackatomicwrite'>SQLITE_FCNTL_ROLLBACK_ATOMIC_WRITE</a></li>
+<li><a href='#SQLITE_FCNTL_BEGIN_ATOMIC_WRITE'>SQLITE_FCNTL_SET_LOCKPROXYFILE</a></li>
+<li><a href='#sqlitefcntlsizehint'>SQLITE_FCNTL_SIZE_HINT</a></li>
+<li><a href='#sqlitefcntlsizelimit'>SQLITE_FCNTL_SIZE_LIMIT</a></li>
+<li><a href='#sqlitefcntlsync'>SQLITE_FCNTL_SYNC</a></li>
+<li><a href='#sqlitefcntlsyncomitted'>SQLITE_FCNTL_SYNC_OMITTED</a></li>
+<li><a href='#sqlitefcntltempfilename'>SQLITE_FCNTL_TEMPFILENAME</a></li>
+<li><a href='#sqlitefcntltrace'>SQLITE_FCNTL_TRACE</a></li>
+<li><a href='#sqlitefcntlvfsname'>SQLITE_FCNTL_VFSNAME</a></li>
+<li><a href='#sqlitefcntlvfspointer'>SQLITE_FCNTL_VFS_POINTER</a></li>
+<li><a href='#sqlitefcntlwalblock'>SQLITE_FCNTL_WAL_BLOCK</a></li>
+<li><a href='#sqlitefcntlwin32avretry'>SQLITE_FCNTL_WIN32_AV_RETRY</a></li>
+<li><a href='#sqlitefcntlwin32gethandle'>SQLITE_FCNTL_WIN32_GET_HANDLE</a></li>
+<li><a href='#sqlitefcntlwin32sethandle'>SQLITE_FCNTL_WIN32_SET_HANDLE</a></li>
+<li><a href='#sqlitefcntlzipvfs'>SQLITE_FCNTL_ZIPVFS</a></li>
+<li><a href='#SQLITE_BLOB'>SQLITE_FLOAT</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_FORMAT</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_FULL</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_FUNCTION</a></li>
+<li><a href='#SQLITE_DENY'>SQLITE_IGNORE</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_EQ</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_FUNCTION</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_GE</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_GLOB</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_GT</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_IS</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_ISNOT</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_ISNOTNULL</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_ISNULL</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_LE</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_LIKE</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_LT</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_MATCH</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_NE</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_REGEXP</a></li>
+<li><a href='#SQLITE_INDEX_SCAN_UNIQUE'>SQLITE_INDEX_SCAN_UNIQUE</a></li>
+<li><a href='#sqliteinnocuous'>SQLITE_INNOCUOUS</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_INSERT</a></li>
+<li><a href='#SQLITE_BLOB'>SQLITE_INTEGER</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_INTERNAL</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_INTERRUPT</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_ATOMIC</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_ATOMIC16K</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_ATOMIC1K</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_ATOMIC2K</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_ATOMIC32K</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_ATOMIC4K</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_ATOMIC512</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_ATOMIC64K</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_ATOMIC8K</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_BATCH_ATOMIC</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_IMMUTABLE</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_POWERSAFE_OVERWRITE</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_SAFE_APPEND</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_SEQUENTIAL</a></li>
+<li><a href='#SQLITE_IOCAP_ATOMIC'>SQLITE_IOCAP_UNDELETABLE_WHEN_OPEN</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_IOERR</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_ACCESS</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_AUTH</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_BEGIN_ATOMIC</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_BLOCKED</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_CHECKRESERVEDLOCK</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_CLOSE</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_COMMIT_ATOMIC</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_CONVPATH</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_DATA</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_DELETE</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_DELETE_NOENT</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_DIR_CLOSE</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_DIR_FSYNC</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_FSTAT</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_FSYNC</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_GETTEMPPATH</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_LOCK</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_MMAP</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_NOMEM</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_RDLOCK</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_READ</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_ROLLBACK_ATOMIC</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_SEEK</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_SHMLOCK</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_SHMMAP</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_SHMOPEN</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_SHMSIZE</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_SHORT_READ</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_TRUNCATE</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_UNLOCK</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_VNODE</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_WRITE</a></li>
+<li><a href='#sqlitelimitattached'>SQLITE_LIMIT_ATTACHED</a></li>
+<li><a href='#sqlitelimitcolumn'>SQLITE_LIMIT_COLUMN</a></li>
+<li><a href='#sqlitelimitcompoundselect'>SQLITE_LIMIT_COMPOUND_SELECT</a></li>
+<li><a href='#sqlitelimitexprdepth'>SQLITE_LIMIT_EXPR_DEPTH</a></li>
+<li><a href='#sqlitelimitfunctionarg'>SQLITE_LIMIT_FUNCTION_ARG</a></li>
+<li><a href='#sqlitelimitlength'>SQLITE_LIMIT_LENGTH</a></li>
+<li><a href='#sqlitelimitlikepatternlength'>SQLITE_LIMIT_LIKE_PATTERN_LENGTH</a></li>
+<li><a href='#sqlitelimitsqllength'>SQLITE_LIMIT_SQL_LENGTH</a></li>
+<li><a href='#sqlitelimittriggerdepth'>SQLITE_LIMIT_TRIGGER_DEPTH</a></li>
+<li><a href='#sqlitelimitvariablenumber'>SQLITE_LIMIT_VARIABLE_NUMBER</a></li>
+<li><a href='#sqlitelimitvdbeop'>SQLITE_LIMIT_VDBE_OP</a></li>
+<li><a href='#sqlitelimitworkerthreads'>SQLITE_LIMIT_WORKER_THREADS</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_LOCKED</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_LOCKED_SHAREDCACHE</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_LOCKED_VTAB</a></li>
+<li><a href='#SQLITE_LOCK_EXCLUSIVE'>SQLITE_LOCK_EXCLUSIVE</a></li>
+<li><a href='#SQLITE_LOCK_EXCLUSIVE'>SQLITE_LOCK_NONE</a></li>
+<li><a href='#SQLITE_LOCK_EXCLUSIVE'>SQLITE_LOCK_PENDING</a></li>
+<li><a href='#SQLITE_LOCK_EXCLUSIVE'>SQLITE_LOCK_RESERVED</a></li>
+<li><a href='#SQLITE_LOCK_EXCLUSIVE'>SQLITE_LOCK_SHARED</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_MISMATCH</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_MISUSE</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_FAST</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_RECURSIVE</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_APP1</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_APP2</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_APP3</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_LRU</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_LRU2</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_MASTER</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_MEM</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_MEM2</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_OPEN</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_PMEM</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_PRNG</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_VFS1</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_VFS2</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_VFS3</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_NOLFS</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_NOMEM</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_NOTADB</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_NOTFOUND</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_NOTICE</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_NOTICE_RECOVER_ROLLBACK</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_NOTICE_RECOVER_WAL</a></li>
+<li><a href='#SQLITE_BLOB'>SQLITE_NULL</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_OK</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_OK_LOAD_PERMANENTLY</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_OK_SYMLINK</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_AUTOPROXY</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_CREATE</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_DELETEONCLOSE</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_EXCLUSIVE</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_FULLMUTEX</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_MAIN_DB</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_MAIN_JOURNAL</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_MASTER_JOURNAL</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_MEMORY</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_NOFOLLOW</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_NOMUTEX</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_PRIVATECACHE</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_READONLY</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_READWRITE</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_SHAREDCACHE</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_SUBJOURNAL</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_TEMP_DB</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_TEMP_JOURNAL</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_TRANSIENT_DB</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_URI</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_WAL</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_PERM</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_PRAGMA</a></li>
+<li><a href='#sqlitepreparenormalize'>SQLITE_PREPARE_NORMALIZE</a></li>
+<li><a href='#sqlitepreparenovtab'>SQLITE_PREPARE_NO_VTAB</a></li>
+<li><a href='#sqlitepreparepersistent'>SQLITE_PREPARE_PERSISTENT</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_PROTOCOL</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_RANGE</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_READ</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_READONLY</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_READONLY_CANTINIT</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_READONLY_CANTLOCK</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_READONLY_DBMOVED</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_READONLY_DIRECTORY</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_READONLY_RECOVERY</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_READONLY_ROLLBACK</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_RECURSIVE</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_REINDEX</a></li>
+<li><a href='#SQLITE_FAIL'>SQLITE_REPLACE</a></li>
+<li><a href='#SQLITE_FAIL'>SQLITE_ROLLBACK</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_ROW</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_SAVEPOINT</a></li>
+<li><a href='#sqlitescanstatest'>SQLITE_SCANSTAT_EST</a></li>
+<li><a href='#sqlitescanstatexplain'>SQLITE_SCANSTAT_EXPLAIN</a></li>
+<li><a href='#sqlitescanstatname'>SQLITE_SCANSTAT_NAME</a></li>
+<li><a href='#sqlitescanstatnloop'>SQLITE_SCANSTAT_NLOOP</a></li>
+<li><a href='#sqlitescanstatnvisit'>SQLITE_SCANSTAT_NVISIT</a></li>
+<li><a href='#sqlitescanstatselectid'>SQLITE_SCANSTAT_SELECTID</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_SCHEMA</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_SELECT</a></li>
+<li><a href='#SQLITE_SERIALIZE_NOCOPY'>SQLITE_SERIALIZE_NOCOPY</a></li>
+<li><a href='#SQLITE_SHM_EXCLUSIVE'>SQLITE_SHM_EXCLUSIVE</a></li>
+<li><a href='#SQLITE_SHM_EXCLUSIVE'>SQLITE_SHM_LOCK</a></li>
+<li><a href='#SQLITE_SHM_NLOCK'>SQLITE_SHM_NLOCK</a></li>
+<li><a href='#SQLITE_SHM_EXCLUSIVE'>SQLITE_SHM_SHARED</a></li>
+<li><a href='#SQLITE_SHM_EXCLUSIVE'>SQLITE_SHM_UNLOCK</a></li>
+<li><a href='#SQLITE_SOURCE_ID'>SQLITE_SOURCE_ID</a></li>
+<li><a href='#SQLITE_STATIC'>SQLITE_STATIC</a></li>
+<li><a href='#sqlitestatusmalloccount'>SQLITE_STATUS_MALLOC_COUNT</a></li>
+<li><a href='#sqlitestatusmallocsize'>SQLITE_STATUS_MALLOC_SIZE</a></li>
+<li><a href='#sqlitestatusmemoryused'>SQLITE_STATUS_MEMORY_USED</a></li>
+<li><a href='#sqlitestatuspagecacheoverflow'>SQLITE_STATUS_PAGECACHE_OVERFLOW</a></li>
+<li><a href='#sqlitestatuspagecachesize'>SQLITE_STATUS_PAGECACHE_SIZE</a></li>
+<li><a href='#sqlitestatuspagecacheused'>SQLITE_STATUS_PAGECACHE_USED</a></li>
+<li><a href='#sqlitestatusparserstack'>SQLITE_STATUS_PARSER_STACK</a></li>
+<li><a href='#sqlitestatusscratchoverflow'>SQLITE_STATUS_SCRATCH_OVERFLOW</a></li>
+<li><a href='#sqlitestatusscratchsize'>SQLITE_STATUS_SCRATCH_SIZE</a></li>
+<li><a href='#sqlitestatusscratchused'>SQLITE_STATUS_SCRATCH_USED</a></li>
+<li><a href='#sqlitestmtstatusautoindex'>SQLITE_STMTSTATUS_AUTOINDEX</a></li>
+<li><a href='#sqlitestmtstatusfullscanstep'>SQLITE_STMTSTATUS_FULLSCAN_STEP</a></li>
+<li><a href='#sqlitestmtstatusmemused'>SQLITE_STMTSTATUS_MEMUSED</a></li>
+<li><a href='#sqlitestmtstatusreprepare'>SQLITE_STMTSTATUS_REPREPARE</a></li>
+<li><a href='#sqlitestmtstatusrun'>SQLITE_STMTSTATUS_RUN</a></li>
+<li><a href='#sqlitestmtstatussort'>SQLITE_STMTSTATUS_SORT</a></li>
+<li><a href='#sqlitestmtstatusvmstep'>SQLITE_STMTSTATUS_VM_STEP</a></li>
+<li><a href='#sqlitesubtype'>SQLITE_SUBTYPE</a></li>
+<li><a href='#SQLITE_SYNC_DATAONLY'>SQLITE_SYNC_DATAONLY</a></li>
+<li><a href='#SQLITE_SYNC_DATAONLY'>SQLITE_SYNC_FULL</a></li>
+<li><a href='#SQLITE_SYNC_DATAONLY'>SQLITE_SYNC_NORMAL</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_ALWAYS</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_ASSERT</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_BENIGN_MALLOC_HOOKS</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_BITVEC_TEST</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_BYTEORDER</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_EXPLAIN_STMT</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_EXTRA_SCHEMA_CHECKS</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_FAULT_INSTALL</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_FIRST</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_IMPOSTER</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_INTERNAL_FUNCTIONS</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_ISINIT</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_ISKEYWORD</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_LAST</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_LOCALTIME_FAULT</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_NEVER_CORRUPT</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_ONCE_RESET_THRESHOLD</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_OPTIMIZATIONS</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_PARSER_COVERAGE</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_PENDING_BYTE</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_PRNG_RESET</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_PRNG_RESTORE</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_PRNG_SAVE</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_PRNG_SEED</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_RESERVE</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_RESULT_INTREAL</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_SCRATCHMALLOC</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_SORTER_MMAP</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_VDBE_COVERAGE</a></li>
+<li><a href='#SQLITE_BLOB'>SQLITE_TEXT</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_TOOBIG</a></li>
+<li><a href='#SQLITE_TRACE'>SQLITE_TRACE</a></li>
+<li><a href='#sqlitetraceclose'>SQLITE_TRACE_CLOSE</a></li>
+<li><a href='#sqlitetraceprofile'>SQLITE_TRACE_PROFILE</a></li>
+<li><a href='#sqlitetracerow'>SQLITE_TRACE_ROW</a></li>
+<li><a href='#sqlitetracestmt'>SQLITE_TRACE_STMT</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_TRANSACTION</a></li>
+<li><a href='#SQLITE_STATIC'>SQLITE_TRANSIENT</a></li>
+<li><a href='#SQLITE_ALTER_TABLE'>SQLITE_UPDATE</a></li>
+<li><a href='#SQLITE_ANY'>SQLITE_UTF16</a></li>
+<li><a href='#SQLITE_ANY'>SQLITE_UTF16BE</a></li>
+<li><a href='#SQLITE_ANY'>SQLITE_UTF16LE</a></li>
+<li><a href='#SQLITE_ANY'>SQLITE_UTF16_ALIGNED</a></li>
+<li><a href='#SQLITE_ANY'>SQLITE_UTF8</a></li>
+<li><a href='#SQLITE_SOURCE_ID'>SQLITE_VERSION</a></li>
+<li><a href='#SQLITE_SOURCE_ID'>SQLITE_VERSION_NUMBER</a></li>
+<li><a href='#sqlitevtabconstraintsupport'>SQLITE_VTAB_CONSTRAINT_SUPPORT</a></li>
+<li><a href='#sqlitevtabdirectonly'>SQLITE_VTAB_DIRECTONLY</a></li>
+<li><a href='#sqlitevtabinnocuous'>SQLITE_VTAB_INNOCUOUS</a></li>
+<li><a href='#SQLITE_ABORT'>SQLITE_WARNING</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_WARNING_AUTOINDEX</a></li>
+<li><a href='#SQLITE_WIN32_DATA_DIRECTORY_TYPE'>SQLITE_WIN32_DATA_DIRECTORY_TYPE</a></li>
+<li><a href='#SQLITE_WIN32_DATA_DIRECTORY_TYPE'>SQLITE_WIN32_TEMP_DIRECTORY_TYPE</a></li>
+</ul>
+</div>
 <hr>
 
 <h2>List Of Functions:</h2>
 <p>Note: Functions marked with "<small><i>(exp)</i></small>"
 are <a href="capi3ref.html">experimental</a> and functions whose names are
 <s>struck through</s> are <a href="capi3ref.html">deprecated</a>.</p>
-<!-- number of functions: 269 -->
+<!-- number of functions: 272 -->
 <!-- number of deprecated functions: 7 -->
 <!-- number of experimental functions: 0 -->
-<style>
-#listtab26 tr td {vertical-align:top;}
-</style>
-<table id='listtab26' width='100%'></table>
-<script>
-var listitems26 = [{"u":"#sqlite3_aggregate_context","x":"sqlite3_aggregate_context","s":0},
-{"u":"#sqlite3_aggregate_count","x":"sqlite3_aggregate_count","s":2},
-{"u":"#sqlite3_auto_extension","x":"sqlite3_auto_extension","s":0},
-{"u":"#sqlite3backupfinish","x":"sqlite3_backup_finish","s":0},
-{"u":"#sqlite3backupinit","x":"sqlite3_backup_init","s":0},
-{"u":"#sqlite3backuppagecount","x":"sqlite3_backup_pagecount","s":0},
-{"u":"#sqlite3backupremaining","x":"sqlite3_backup_remaining","s":0},
-{"u":"#sqlite3backupstep","x":"sqlite3_backup_step","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_blob","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_blob64","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_double","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_int","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_int64","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_null","s":0},
-{"u":"#sqlite3_bind_parameter_count","x":"sqlite3_bind_parameter_count","s":0},
-{"u":"#sqlite3_bind_parameter_index","x":"sqlite3_bind_parameter_index","s":0},
-{"u":"#sqlite3_bind_parameter_name","x":"sqlite3_bind_parameter_name","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_pointer","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_text","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_text16","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_text64","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_value","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_zeroblob","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_zeroblob64","s":0},
-{"u":"#sqlite3_blob_bytes","x":"sqlite3_blob_bytes","s":0},
-{"u":"#sqlite3_blob_close","x":"sqlite3_blob_close","s":0},
-{"u":"#sqlite3_blob_open","x":"sqlite3_blob_open","s":0},
-{"u":"#sqlite3_blob_read","x":"sqlite3_blob_read","s":0},
-{"u":"#sqlite3_blob_reopen","x":"sqlite3_blob_reopen","s":0},
-{"u":"#sqlite3_blob_write","x":"sqlite3_blob_write","s":0},
-{"u":"#sqlite3_busy_handler","x":"sqlite3_busy_handler","s":0},
-{"u":"#sqlite3_busy_timeout","x":"sqlite3_busy_timeout","s":0},
-{"u":"#sqlite3_cancel_auto_extension","x":"sqlite3_cancel_auto_extension","s":0},
-{"u":"#sqlite3_changes","x":"sqlite3_changes","s":0},
-{"u":"#sqlite3_clear_bindings","x":"sqlite3_clear_bindings","s":0},
-{"u":"#sqlite3_close","x":"sqlite3_close","s":0},
-{"u":"#sqlite3_close","x":"sqlite3_close_v2","s":0},
-{"u":"#sqlite3_collation_needed","x":"sqlite3_collation_needed","s":0},
-{"u":"#sqlite3_collation_needed","x":"sqlite3_collation_needed16","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_blob","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_bytes","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_bytes16","s":0},
-{"u":"#sqlite3_column_count","x":"sqlite3_column_count","s":0},
-{"u":"#sqlite3_column_database_name","x":"sqlite3_column_database_name","s":0},
-{"u":"#sqlite3_column_database_name","x":"sqlite3_column_database_name16","s":0},
-{"u":"#sqlite3_column_decltype","x":"sqlite3_column_decltype","s":0},
-{"u":"#sqlite3_column_decltype","x":"sqlite3_column_decltype16","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_double","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_int","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_int64","s":0},
-{"u":"#sqlite3_column_name","x":"sqlite3_column_name","s":0},
-{"u":"#sqlite3_column_name","x":"sqlite3_column_name16","s":0},
-{"u":"#sqlite3_column_database_name","x":"sqlite3_column_origin_name","s":0},
-{"u":"#sqlite3_column_database_name","x":"sqlite3_column_origin_name16","s":0},
-{"u":"#sqlite3_column_database_name","x":"sqlite3_column_table_name","s":0},
-{"u":"#sqlite3_column_database_name","x":"sqlite3_column_table_name16","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_text","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_text16","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_type","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_value","s":0},
-{"u":"#sqlite3_commit_hook","x":"sqlite3_commit_hook","s":0},
-{"u":"#sqlite3_compileoption_get","x":"sqlite3_compileoption_get","s":0},
-{"u":"#sqlite3_compileoption_get","x":"sqlite3_compileoption_used","s":0},
-{"u":"#sqlite3_complete","x":"sqlite3_complete","s":0},
-{"u":"#sqlite3_complete","x":"sqlite3_complete16","s":0},
-{"u":"#sqlite3_config","x":"sqlite3_config","s":0},
-{"u":"#sqlite3_context_db_handle","x":"sqlite3_context_db_handle","s":0},
-{"u":"#sqlite3_create_collation","x":"sqlite3_create_collation","s":0},
-{"u":"#sqlite3_create_collation","x":"sqlite3_create_collation16","s":0},
-{"u":"#sqlite3_create_collation","x":"sqlite3_create_collation_v2","s":0},
-{"u":"#sqlite3_create_function","x":"sqlite3_create_function","s":0},
-{"u":"#sqlite3_create_function","x":"sqlite3_create_function16","s":0},
-{"u":"#sqlite3_create_function","x":"sqlite3_create_function_v2","s":0},
-{"u":"#sqlite3_create_module","x":"sqlite3_create_module","s":0},
-{"u":"#sqlite3_create_module","x":"sqlite3_create_module_v2","s":0},
-{"u":"#sqlite3_create_function","x":"sqlite3_create_window_function","s":0},
-{"u":"#sqlite3_data_count","x":"sqlite3_data_count","s":0},
-{"u":"#sqlite3_db_cacheflush","x":"sqlite3_db_cacheflush","s":0},
-{"u":"#sqlite3_db_config","x":"sqlite3_db_config","s":0},
-{"u":"#sqlite3_db_filename","x":"sqlite3_db_filename","s":0},
-{"u":"#sqlite3_db_handle","x":"sqlite3_db_handle","s":0},
-{"u":"#sqlite3_db_mutex","x":"sqlite3_db_mutex","s":0},
-{"u":"#sqlite3_db_readonly","x":"sqlite3_db_readonly","s":0},
-{"u":"#sqlite3_db_release_memory","x":"sqlite3_db_release_memory","s":0},
-{"u":"#sqlite3_db_status","x":"sqlite3_db_status","s":0},
-{"u":"#sqlite3_declare_vtab","x":"sqlite3_declare_vtab","s":0},
-{"u":"#sqlite3_deserialize","x":"sqlite3_deserialize","s":0},
-{"u":"#sqlite3_drop_modules","x":"sqlite3_drop_modules","s":0},
-{"u":"#sqlite3_enable_load_extension","x":"sqlite3_enable_load_extension","s":0},
-{"u":"#sqlite3_enable_shared_cache","x":"sqlite3_enable_shared_cache","s":0},
-{"u":"#sqlite3_errcode","x":"sqlite3_errcode","s":0},
-{"u":"#sqlite3_errcode","x":"sqlite3_errmsg","s":0},
-{"u":"#sqlite3_errcode","x":"sqlite3_errmsg16","s":0},
-{"u":"#sqlite3_errcode","x":"sqlite3_errstr","s":0},
-{"u":"#sqlite3_exec","x":"sqlite3_exec","s":0},
-{"u":"#sqlite3_expanded_sql","x":"sqlite3_expanded_sql","s":0},
-{"u":"#sqlite3_aggregate_count","x":"sqlite3_expired","s":2},
-{"u":"#sqlite3_errcode","x":"sqlite3_extended_errcode","s":0},
-{"u":"#sqlite3_extended_result_codes","x":"sqlite3_extended_result_codes","s":0},
-{"u":"#sqlite3_file_control","x":"sqlite3_file_control","s":0},
-{"u":"#sqlite3_filename_database","x":"sqlite3_filename_database","s":0},
-{"u":"#sqlite3_filename_database","x":"sqlite3_filename_journal","s":0},
-{"u":"#sqlite3_filename_database","x":"sqlite3_filename_wal","s":0},
-{"u":"#sqlite3_finalize","x":"sqlite3_finalize","s":0},
-{"u":"#sqlite3_free","x":"sqlite3_free","s":0},
-{"u":"#sqlite3_free_table","x":"sqlite3_free_table","s":0},
-{"u":"#sqlite3_get_autocommit","x":"sqlite3_get_autocommit","s":0},
-{"u":"#sqlite3_get_auxdata","x":"sqlite3_get_auxdata","s":0},
-{"u":"#sqlite3_free_table","x":"sqlite3_get_table","s":0},
-{"u":"#sqlite3_aggregate_count","x":"sqlite3_global_recover","s":2},
-{"u":"#sqlite3_hard_heap_limit64","x":"sqlite3_hard_heap_limit64","s":0},
-{"u":"#sqlite3_initialize","x":"sqlite3_initialize","s":0},
-{"u":"#sqlite3_interrupt","x":"sqlite3_interrupt","s":0},
-{"u":"#sqlite3_keyword_check","x":"sqlite3_keyword_check","s":0},
-{"u":"#sqlite3_keyword_check","x":"sqlite3_keyword_count","s":0},
-{"u":"#sqlite3_keyword_check","x":"sqlite3_keyword_name","s":0},
-{"u":"#sqlite3_last_insert_rowid","x":"sqlite3_last_insert_rowid","s":0},
-{"u":"#sqlite3_libversion","x":"sqlite3_libversion","s":0},
-{"u":"#sqlite3_libversion","x":"sqlite3_libversion_number","s":0},
-{"u":"#sqlite3_limit","x":"sqlite3_limit","s":0},
-{"u":"#sqlite3_load_extension","x":"sqlite3_load_extension","s":0},
-{"u":"#sqlite3_log","x":"sqlite3_log","s":0},
-{"u":"#sqlite3_free","x":"sqlite3_malloc","s":0},
-{"u":"#sqlite3_free","x":"sqlite3_malloc64","s":0},
-{"u":"#sqlite3_aggregate_count","x":"sqlite3_memory_alarm","s":2},
-{"u":"#sqlite3_memory_highwater","x":"sqlite3_memory_highwater","s":0},
-{"u":"#sqlite3_memory_highwater","x":"sqlite3_memory_used","s":0},
-{"u":"#sqlite3_mprintf","x":"sqlite3_mprintf","s":0},
-{"u":"#sqlite3_free","x":"sqlite3_msize","s":0},
-{"u":"#sqlite3_mutex_alloc","x":"sqlite3_mutex_alloc","s":0},
-{"u":"#sqlite3_mutex_alloc","x":"sqlite3_mutex_enter","s":0},
-{"u":"#sqlite3_mutex_alloc","x":"sqlite3_mutex_free","s":0},
-{"u":"#sqlite3_mutex_held","x":"sqlite3_mutex_held","s":0},
-{"u":"#sqlite3_mutex_alloc","x":"sqlite3_mutex_leave","s":0},
-{"u":"#sqlite3_mutex_held","x":"sqlite3_mutex_notheld","s":0},
-{"u":"#sqlite3_mutex_alloc","x":"sqlite3_mutex_try","s":0},
-{"u":"#sqlite3_next_stmt","x":"sqlite3_next_stmt","s":0},
-{"u":"#sqlite3_expanded_sql","x":"sqlite3_normalized_sql","s":0},
-{"u":"#sqlite3_open","x":"sqlite3_open","s":0},
-{"u":"#sqlite3_open","x":"sqlite3_open16","s":0},
-{"u":"#sqlite3_open","x":"sqlite3_open_v2","s":0},
-{"u":"#sqlite3_initialize","x":"sqlite3_os_end","s":0},
-{"u":"#sqlite3_initialize","x":"sqlite3_os_init","s":0},
-{"u":"#sqlite3_overload_function","x":"sqlite3_overload_function","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare16","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare16_v2","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare16_v3","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare_v2","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare_v3","s":0},
-{"u":"#sqlite3_preupdate_count","x":"sqlite3_preupdate_count","s":0},
-{"u":"#sqlite3_preupdate_count","x":"sqlite3_preupdate_depth","s":0},
-{"u":"#sqlite3_preupdate_count","x":"sqlite3_preupdate_hook","s":0},
-{"u":"#sqlite3_preupdate_count","x":"sqlite3_preupdate_new","s":0},
-{"u":"#sqlite3_preupdate_count","x":"sqlite3_preupdate_old","s":0},
-{"u":"#sqlite3_profile","x":"sqlite3_profile","s":0},
-{"u":"#sqlite3_progress_handler","x":"sqlite3_progress_handler","s":0},
-{"u":"#sqlite3_randomness","x":"sqlite3_randomness","s":0},
-{"u":"#sqlite3_free","x":"sqlite3_realloc","s":0},
-{"u":"#sqlite3_free","x":"sqlite3_realloc64","s":0},
-{"u":"#sqlite3_release_memory","x":"sqlite3_release_memory","s":0},
-{"u":"#sqlite3_reset","x":"sqlite3_reset","s":0},
-{"u":"#sqlite3_reset_auto_extension","x":"sqlite3_reset_auto_extension","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_blob","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_blob64","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_double","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_error","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_error16","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_error_code","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_error_nomem","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_error_toobig","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_int","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_int64","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_null","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_pointer","s":0},
-{"u":"#sqlite3_result_subtype","x":"sqlite3_result_subtype","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_text","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_text16","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_text16be","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_text16le","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_text64","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_value","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_zeroblob","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_zeroblob64","s":0},
-{"u":"#sqlite3_commit_hook","x":"sqlite3_rollback_hook","s":0},
-{"u":"#sqlite3_serialize","x":"sqlite3_serialize","s":0},
-{"u":"#sqlite3_set_authorizer","x":"sqlite3_set_authorizer","s":0},
-{"u":"#sqlite3_get_auxdata","x":"sqlite3_set_auxdata","s":0},
-{"u":"#sqlite3_set_last_insert_rowid","x":"sqlite3_set_last_insert_rowid","s":0},
-{"u":"#sqlite3_initialize","x":"sqlite3_shutdown","s":0},
-{"u":"#sqlite3_sleep","x":"sqlite3_sleep","s":0},
-{"u":"#sqlite3_snapshot_cmp","x":"sqlite3_snapshot_cmp","s":0},
-{"u":"#sqlite3_snapshot_free","x":"sqlite3_snapshot_free","s":0},
-{"u":"#sqlite3_snapshot_get","x":"sqlite3_snapshot_get","s":0},
-{"u":"#sqlite3_snapshot_open","x":"sqlite3_snapshot_open","s":0},
-{"u":"#sqlite3_snapshot_recover","x":"sqlite3_snapshot_recover","s":0},
-{"u":"#sqlite3_mprintf","x":"sqlite3_snprintf","s":0},
-{"u":"#sqlite3_soft_heap_limit","x":"sqlite3_soft_heap_limit","s":2},
-{"u":"#sqlite3_hard_heap_limit64","x":"sqlite3_soft_heap_limit64","s":0},
-{"u":"#sqlite3_libversion","x":"sqlite3_sourceid","s":0},
-{"u":"#sqlite3_expanded_sql","x":"sqlite3_sql","s":0},
-{"u":"#sqlite3_status","x":"sqlite3_status","s":0},
-{"u":"#sqlite3_status","x":"sqlite3_status64","s":0},
-{"u":"#sqlite3_step","x":"sqlite3_step","s":0},
-{"u":"#sqlite3_stmt_busy","x":"sqlite3_stmt_busy","s":0},
-{"u":"#sqlite3_stmt_isexplain","x":"sqlite3_stmt_isexplain","s":0},
-{"u":"#sqlite3_stmt_readonly","x":"sqlite3_stmt_readonly","s":0},
-{"u":"#sqlite3_stmt_scanstatus","x":"sqlite3_stmt_scanstatus","s":0},
-{"u":"#sqlite3_stmt_scanstatus_reset","x":"sqlite3_stmt_scanstatus_reset","s":0},
-{"u":"#sqlite3_stmt_status","x":"sqlite3_stmt_status","s":0},
-{"u":"#sqlite3_str_append","x":"sqlite3_str_append","s":0},
-{"u":"#sqlite3_str_append","x":"sqlite3_str_appendall","s":0},
-{"u":"#sqlite3_str_append","x":"sqlite3_str_appendchar","s":0},
-{"u":"#sqlite3_str_append","x":"sqlite3_str_appendf","s":0},
-{"u":"#sqlite3_str_errcode","x":"sqlite3_str_errcode","s":0},
-{"u":"#sqlite3_str_finish","x":"sqlite3_str_finish","s":0},
-{"u":"#sqlite3_str_errcode","x":"sqlite3_str_length","s":0},
-{"u":"#sqlite3_str_new","x":"sqlite3_str_new","s":0},
-{"u":"#sqlite3_str_append","x":"sqlite3_str_reset","s":0},
-{"u":"#sqlite3_str_errcode","x":"sqlite3_str_value","s":0},
-{"u":"#sqlite3_str_append","x":"sqlite3_str_vappendf","s":0},
-{"u":"#sqlite3_strglob","x":"sqlite3_strglob","s":0},
-{"u":"#sqlite3_stricmp","x":"sqlite3_stricmp","s":0},
-{"u":"#sqlite3_strlike","x":"sqlite3_strlike","s":0},
-{"u":"#sqlite3_stricmp","x":"sqlite3_strnicmp","s":0},
-{"u":"#sqlite3_system_errno","x":"sqlite3_system_errno","s":0},
-{"u":"#sqlite3_table_column_metadata","x":"sqlite3_table_column_metadata","s":0},
-{"u":"#sqlite3_test_control","x":"sqlite3_test_control","s":0},
-{"u":"#sqlite3_aggregate_count","x":"sqlite3_thread_cleanup","s":2},
-{"u":"#sqlite3_threadsafe","x":"sqlite3_threadsafe","s":0},
-{"u":"#sqlite3_total_changes","x":"sqlite3_total_changes","s":0},
-{"u":"#sqlite3_profile","x":"sqlite3_trace","s":0},
-{"u":"#sqlite3_trace_v2","x":"sqlite3_trace_v2","s":0},
-{"u":"#sqlite3_aggregate_count","x":"sqlite3_transfer_bindings","s":2},
-{"u":"#sqlite3_unlock_notify","x":"sqlite3_unlock_notify","s":0},
-{"u":"#sqlite3_update_hook","x":"sqlite3_update_hook","s":0},
-{"u":"#sqlite3_uri_boolean","x":"sqlite3_uri_boolean","s":0},
-{"u":"#sqlite3_uri_boolean","x":"sqlite3_uri_int64","s":0},
-{"u":"#sqlite3_uri_boolean","x":"sqlite3_uri_key","s":0},
-{"u":"#sqlite3_uri_boolean","x":"sqlite3_uri_parameter","s":0},
-{"u":"#sqlite3_user_data","x":"sqlite3_user_data","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_blob","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_bytes","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_bytes16","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_double","s":0},
-{"u":"#sqlite3_value_dup","x":"sqlite3_value_dup","s":0},
-{"u":"#sqlite3_value_dup","x":"sqlite3_value_free","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_frombind","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_int","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_int64","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_nochange","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_numeric_type","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_pointer","s":0},
-{"u":"#sqlite3_value_subtype","x":"sqlite3_value_subtype","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_text","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_text16","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_text16be","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_text16le","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_type","s":0},
-{"u":"#sqlite3_libversion","x":"sqlite3_version","s":0},
-{"u":"#sqlite3_vfs_find","x":"sqlite3_vfs_find","s":0},
-{"u":"#sqlite3_vfs_find","x":"sqlite3_vfs_register","s":0},
-{"u":"#sqlite3_vfs_find","x":"sqlite3_vfs_unregister","s":0},
-{"u":"#sqlite3_mprintf","x":"sqlite3_vmprintf","s":0},
-{"u":"#sqlite3_mprintf","x":"sqlite3_vsnprintf","s":0},
-{"u":"#sqlite3_vtab_collation","x":"sqlite3_vtab_collation","s":0},
-{"u":"#sqlite3_vtab_config","x":"sqlite3_vtab_config","s":0},
-{"u":"#sqlite3_vtab_nochange","x":"sqlite3_vtab_nochange","s":0},
-{"u":"#sqlite3_vtab_on_conflict","x":"sqlite3_vtab_on_conflict","s":0},
-{"u":"#sqlite3_wal_autocheckpoint","x":"sqlite3_wal_autocheckpoint","s":0},
-{"u":"#sqlite3_wal_checkpoint","x":"sqlite3_wal_checkpoint","s":0},
-{"u":"#sqlite3_wal_checkpoint_v2","x":"sqlite3_wal_checkpoint_v2","s":0},
-{"u":"#sqlite3_wal_hook","x":"sqlite3_wal_hook","s":0},
-{"u":"#sqlite3_win32_set_directory","x":"sqlite3_win32_set_directory","s":0},
-{"u":"#sqlite3_win32_set_directory","x":"sqlite3_win32_set_directory16","s":0},
-{"u":"#sqlite3_win32_set_directory","x":"sqlite3_win32_set_directory8","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/315);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems26.length+1)/nCol);
-var h="<tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems26.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems26[i].u=="" || listitems26[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems26[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems26[i].s==2 || listitems26[i].s==3) h += "<s>"
-  h += listitems26[i].x;
-  if(listitems26[i].s==2 || listitems26[i].s==3) h += "</s>"
-  h += ea
-  if(listitems26[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems26[i].s==3) h += "&sup1\n";
-  if(listitems26[i].s==4) h += "&sup2\n";
-  if(listitems26[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab26").innerHTML = h;
-</script>
+<div class='columns' style='columns: 15em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='#sqlite3_aggregate_context'>sqlite3_aggregate_context</a></li>
+<li><s>sqlite3_aggregate_count</s></li>
+<li><a href='#sqlite3_auto_extension'>sqlite3_auto_extension</a></li>
+<li><a href='#sqlite3backupfinish'>sqlite3_backup_finish</a></li>
+<li><a href='#sqlite3backupinit'>sqlite3_backup_init</a></li>
+<li><a href='#sqlite3backuppagecount'>sqlite3_backup_pagecount</a></li>
+<li><a href='#sqlite3backupremaining'>sqlite3_backup_remaining</a></li>
+<li><a href='#sqlite3backupstep'>sqlite3_backup_step</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_blob</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_blob64</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_double</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_int</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_int64</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_null</a></li>
+<li><a href='#sqlite3_bind_parameter_count'>sqlite3_bind_parameter_count</a></li>
+<li><a href='#sqlite3_bind_parameter_index'>sqlite3_bind_parameter_index</a></li>
+<li><a href='#sqlite3_bind_parameter_name'>sqlite3_bind_parameter_name</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_pointer</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_text</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_text16</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_text64</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_value</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_zeroblob</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_zeroblob64</a></li>
+<li><a href='#sqlite3_blob_bytes'>sqlite3_blob_bytes</a></li>
+<li><a href='#sqlite3_blob_close'>sqlite3_blob_close</a></li>
+<li><a href='#sqlite3_blob_open'>sqlite3_blob_open</a></li>
+<li><a href='#sqlite3_blob_read'>sqlite3_blob_read</a></li>
+<li><a href='#sqlite3_blob_reopen'>sqlite3_blob_reopen</a></li>
+<li><a href='#sqlite3_blob_write'>sqlite3_blob_write</a></li>
+<li><a href='#sqlite3_busy_handler'>sqlite3_busy_handler</a></li>
+<li><a href='#sqlite3_busy_timeout'>sqlite3_busy_timeout</a></li>
+<li><a href='#sqlite3_cancel_auto_extension'>sqlite3_cancel_auto_extension</a></li>
+<li><a href='#sqlite3_changes'>sqlite3_changes</a></li>
+<li><a href='#sqlite3_clear_bindings'>sqlite3_clear_bindings</a></li>
+<li><a href='#sqlite3_close'>sqlite3_close</a></li>
+<li><a href='#sqlite3_close'>sqlite3_close_v2</a></li>
+<li><a href='#sqlite3_collation_needed'>sqlite3_collation_needed</a></li>
+<li><a href='#sqlite3_collation_needed'>sqlite3_collation_needed16</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_blob</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_bytes</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_bytes16</a></li>
+<li><a href='#sqlite3_column_count'>sqlite3_column_count</a></li>
+<li><a href='#sqlite3_column_database_name'>sqlite3_column_database_name</a></li>
+<li><a href='#sqlite3_column_database_name'>sqlite3_column_database_name16</a></li>
+<li><a href='#sqlite3_column_decltype'>sqlite3_column_decltype</a></li>
+<li><a href='#sqlite3_column_decltype'>sqlite3_column_decltype16</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_double</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_int</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_int64</a></li>
+<li><a href='#sqlite3_column_name'>sqlite3_column_name</a></li>
+<li><a href='#sqlite3_column_name'>sqlite3_column_name16</a></li>
+<li><a href='#sqlite3_column_database_name'>sqlite3_column_origin_name</a></li>
+<li><a href='#sqlite3_column_database_name'>sqlite3_column_origin_name16</a></li>
+<li><a href='#sqlite3_column_database_name'>sqlite3_column_table_name</a></li>
+<li><a href='#sqlite3_column_database_name'>sqlite3_column_table_name16</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_text</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_text16</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_type</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_value</a></li>
+<li><a href='#sqlite3_commit_hook'>sqlite3_commit_hook</a></li>
+<li><a href='#sqlite3_compileoption_get'>sqlite3_compileoption_get</a></li>
+<li><a href='#sqlite3_compileoption_get'>sqlite3_compileoption_used</a></li>
+<li><a href='#sqlite3_complete'>sqlite3_complete</a></li>
+<li><a href='#sqlite3_complete'>sqlite3_complete16</a></li>
+<li><a href='#sqlite3_config'>sqlite3_config</a></li>
+<li><a href='#sqlite3_context_db_handle'>sqlite3_context_db_handle</a></li>
+<li><a href='#sqlite3_create_collation'>sqlite3_create_collation</a></li>
+<li><a href='#sqlite3_create_collation'>sqlite3_create_collation16</a></li>
+<li><a href='#sqlite3_create_collation'>sqlite3_create_collation_v2</a></li>
+<li><a href='#sqlite3_create_filename'>sqlite3_create_filename</a></li>
+<li><a href='#sqlite3_create_function'>sqlite3_create_function</a></li>
+<li><a href='#sqlite3_create_function'>sqlite3_create_function16</a></li>
+<li><a href='#sqlite3_create_function'>sqlite3_create_function_v2</a></li>
+<li><a href='#sqlite3_create_module'>sqlite3_create_module</a></li>
+<li><a href='#sqlite3_create_module'>sqlite3_create_module_v2</a></li>
+<li><a href='#sqlite3_create_function'>sqlite3_create_window_function</a></li>
+<li><a href='#sqlite3_data_count'>sqlite3_data_count</a></li>
+<li><a href='#sqlite3_database_file_object'>sqlite3_database_file_object</a></li>
+<li><a href='#sqlite3_db_cacheflush'>sqlite3_db_cacheflush</a></li>
+<li><a href='#sqlite3_db_config'>sqlite3_db_config</a></li>
+<li><a href='#sqlite3_db_filename'>sqlite3_db_filename</a></li>
+<li><a href='#sqlite3_db_handle'>sqlite3_db_handle</a></li>
+<li><a href='#sqlite3_db_mutex'>sqlite3_db_mutex</a></li>
+<li><a href='#sqlite3_db_readonly'>sqlite3_db_readonly</a></li>
+<li><a href='#sqlite3_db_release_memory'>sqlite3_db_release_memory</a></li>
+<li><a href='#sqlite3_db_status'>sqlite3_db_status</a></li>
+<li><a href='#sqlite3_declare_vtab'>sqlite3_declare_vtab</a></li>
+<li><a href='#sqlite3_deserialize'>sqlite3_deserialize</a></li>
+<li><a href='#sqlite3_drop_modules'>sqlite3_drop_modules</a></li>
+<li><a href='#sqlite3_enable_load_extension'>sqlite3_enable_load_extension</a></li>
+<li><a href='#sqlite3_enable_shared_cache'>sqlite3_enable_shared_cache</a></li>
+<li><a href='#sqlite3_errcode'>sqlite3_errcode</a></li>
+<li><a href='#sqlite3_errcode'>sqlite3_errmsg</a></li>
+<li><a href='#sqlite3_errcode'>sqlite3_errmsg16</a></li>
+<li><a href='#sqlite3_errcode'>sqlite3_errstr</a></li>
+<li><a href='#sqlite3_exec'>sqlite3_exec</a></li>
+<li><a href='#sqlite3_expanded_sql'>sqlite3_expanded_sql</a></li>
+<li><s>sqlite3_expired</s></li>
+<li><a href='#sqlite3_errcode'>sqlite3_extended_errcode</a></li>
+<li><a href='#sqlite3_extended_result_codes'>sqlite3_extended_result_codes</a></li>
+<li><a href='#sqlite3_file_control'>sqlite3_file_control</a></li>
+<li><a href='#sqlite3_filename_database'>sqlite3_filename_database</a></li>
+<li><a href='#sqlite3_filename_database'>sqlite3_filename_journal</a></li>
+<li><a href='#sqlite3_filename_database'>sqlite3_filename_wal</a></li>
+<li><a href='#sqlite3_finalize'>sqlite3_finalize</a></li>
+<li><a href='#sqlite3_free'>sqlite3_free</a></li>
+<li><a href='#sqlite3_create_filename'>sqlite3_free_filename</a></li>
+<li><a href='#sqlite3_free_table'>sqlite3_free_table</a></li>
+<li><a href='#sqlite3_get_autocommit'>sqlite3_get_autocommit</a></li>
+<li><a href='#sqlite3_get_auxdata'>sqlite3_get_auxdata</a></li>
+<li><a href='#sqlite3_free_table'>sqlite3_get_table</a></li>
+<li><s>sqlite3_global_recover</s></li>
+<li><a href='#sqlite3_hard_heap_limit64'>sqlite3_hard_heap_limit64</a></li>
+<li><a href='#sqlite3_initialize'>sqlite3_initialize</a></li>
+<li><a href='#sqlite3_interrupt'>sqlite3_interrupt</a></li>
+<li><a href='#sqlite3_keyword_check'>sqlite3_keyword_check</a></li>
+<li><a href='#sqlite3_keyword_check'>sqlite3_keyword_count</a></li>
+<li><a href='#sqlite3_keyword_check'>sqlite3_keyword_name</a></li>
+<li><a href='#sqlite3_last_insert_rowid'>sqlite3_last_insert_rowid</a></li>
+<li><a href='#sqlite3_libversion'>sqlite3_libversion</a></li>
+<li><a href='#sqlite3_libversion'>sqlite3_libversion_number</a></li>
+<li><a href='#sqlite3_limit'>sqlite3_limit</a></li>
+<li><a href='#sqlite3_load_extension'>sqlite3_load_extension</a></li>
+<li><a href='#sqlite3_log'>sqlite3_log</a></li>
+<li><a href='#sqlite3_free'>sqlite3_malloc</a></li>
+<li><a href='#sqlite3_free'>sqlite3_malloc64</a></li>
+<li><s>sqlite3_memory_alarm</s></li>
+<li><a href='#sqlite3_memory_highwater'>sqlite3_memory_highwater</a></li>
+<li><a href='#sqlite3_memory_highwater'>sqlite3_memory_used</a></li>
+<li><a href='#sqlite3_mprintf'>sqlite3_mprintf</a></li>
+<li><a href='#sqlite3_free'>sqlite3_msize</a></li>
+<li><a href='#sqlite3_mutex_alloc'>sqlite3_mutex_alloc</a></li>
+<li><a href='#sqlite3_mutex_alloc'>sqlite3_mutex_enter</a></li>
+<li><a href='#sqlite3_mutex_alloc'>sqlite3_mutex_free</a></li>
+<li><a href='#sqlite3_mutex_held'>sqlite3_mutex_held</a></li>
+<li><a href='#sqlite3_mutex_alloc'>sqlite3_mutex_leave</a></li>
+<li><a href='#sqlite3_mutex_held'>sqlite3_mutex_notheld</a></li>
+<li><a href='#sqlite3_mutex_alloc'>sqlite3_mutex_try</a></li>
+<li><a href='#sqlite3_next_stmt'>sqlite3_next_stmt</a></li>
+<li><a href='#sqlite3_expanded_sql'>sqlite3_normalized_sql</a></li>
+<li><a href='#sqlite3_open'>sqlite3_open</a></li>
+<li><a href='#sqlite3_open'>sqlite3_open16</a></li>
+<li><a href='#sqlite3_open'>sqlite3_open_v2</a></li>
+<li><a href='#sqlite3_initialize'>sqlite3_os_end</a></li>
+<li><a href='#sqlite3_initialize'>sqlite3_os_init</a></li>
+<li><a href='#sqlite3_overload_function'>sqlite3_overload_function</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare16</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare16_v2</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare16_v3</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare_v2</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare_v3</a></li>
+<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_count</a></li>
+<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_depth</a></li>
+<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_hook</a></li>
+<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_new</a></li>
+<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_old</a></li>
+<li><a href='#sqlite3_profile'>sqlite3_profile</a></li>
+<li><a href='#sqlite3_progress_handler'>sqlite3_progress_handler</a></li>
+<li><a href='#sqlite3_randomness'>sqlite3_randomness</a></li>
+<li><a href='#sqlite3_free'>sqlite3_realloc</a></li>
+<li><a href='#sqlite3_free'>sqlite3_realloc64</a></li>
+<li><a href='#sqlite3_release_memory'>sqlite3_release_memory</a></li>
+<li><a href='#sqlite3_reset'>sqlite3_reset</a></li>
+<li><a href='#sqlite3_reset_auto_extension'>sqlite3_reset_auto_extension</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_blob</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_blob64</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_double</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_error</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_error16</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_error_code</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_error_nomem</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_error_toobig</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_int</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_int64</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_null</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_pointer</a></li>
+<li><a href='#sqlite3_result_subtype'>sqlite3_result_subtype</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_text</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_text16</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_text16be</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_text16le</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_text64</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_value</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_zeroblob</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_zeroblob64</a></li>
+<li><a href='#sqlite3_commit_hook'>sqlite3_rollback_hook</a></li>
+<li><a href='#sqlite3_serialize'>sqlite3_serialize</a></li>
+<li><a href='#sqlite3_set_authorizer'>sqlite3_set_authorizer</a></li>
+<li><a href='#sqlite3_get_auxdata'>sqlite3_set_auxdata</a></li>
+<li><a href='#sqlite3_set_last_insert_rowid'>sqlite3_set_last_insert_rowid</a></li>
+<li><a href='#sqlite3_initialize'>sqlite3_shutdown</a></li>
+<li><a href='#sqlite3_sleep'>sqlite3_sleep</a></li>
+<li><a href='#sqlite3_snapshot_cmp'>sqlite3_snapshot_cmp</a></li>
+<li><a href='#sqlite3_snapshot_free'>sqlite3_snapshot_free</a></li>
+<li><a href='#sqlite3_snapshot_get'>sqlite3_snapshot_get</a></li>
+<li><a href='#sqlite3_snapshot_open'>sqlite3_snapshot_open</a></li>
+<li><a href='#sqlite3_snapshot_recover'>sqlite3_snapshot_recover</a></li>
+<li><a href='#sqlite3_mprintf'>sqlite3_snprintf</a></li>
+<li><s>sqlite3_soft_heap_limit</s></li>
+<li><a href='#sqlite3_hard_heap_limit64'>sqlite3_soft_heap_limit64</a></li>
+<li><a href='#sqlite3_libversion'>sqlite3_sourceid</a></li>
+<li><a href='#sqlite3_expanded_sql'>sqlite3_sql</a></li>
+<li><a href='#sqlite3_status'>sqlite3_status</a></li>
+<li><a href='#sqlite3_status'>sqlite3_status64</a></li>
+<li><a href='#sqlite3_step'>sqlite3_step</a></li>
+<li><a href='#sqlite3_stmt_busy'>sqlite3_stmt_busy</a></li>
+<li><a href='#sqlite3_stmt_isexplain'>sqlite3_stmt_isexplain</a></li>
+<li><a href='#sqlite3_stmt_readonly'>sqlite3_stmt_readonly</a></li>
+<li><a href='#sqlite3_stmt_scanstatus'>sqlite3_stmt_scanstatus</a></li>
+<li><a href='#sqlite3_stmt_scanstatus_reset'>sqlite3_stmt_scanstatus_reset</a></li>
+<li><a href='#sqlite3_stmt_status'>sqlite3_stmt_status</a></li>
+<li><a href='#sqlite3_str_append'>sqlite3_str_append</a></li>
+<li><a href='#sqlite3_str_append'>sqlite3_str_appendall</a></li>
+<li><a href='#sqlite3_str_append'>sqlite3_str_appendchar</a></li>
+<li><a href='#sqlite3_str_append'>sqlite3_str_appendf</a></li>
+<li><a href='#sqlite3_str_errcode'>sqlite3_str_errcode</a></li>
+<li><a href='#sqlite3_str_finish'>sqlite3_str_finish</a></li>
+<li><a href='#sqlite3_str_errcode'>sqlite3_str_length</a></li>
+<li><a href='#sqlite3_str_new'>sqlite3_str_new</a></li>
+<li><a href='#sqlite3_str_append'>sqlite3_str_reset</a></li>
+<li><a href='#sqlite3_str_errcode'>sqlite3_str_value</a></li>
+<li><a href='#sqlite3_str_append'>sqlite3_str_vappendf</a></li>
+<li><a href='#sqlite3_strglob'>sqlite3_strglob</a></li>
+<li><a href='#sqlite3_stricmp'>sqlite3_stricmp</a></li>
+<li><a href='#sqlite3_strlike'>sqlite3_strlike</a></li>
+<li><a href='#sqlite3_stricmp'>sqlite3_strnicmp</a></li>
+<li><a href='#sqlite3_system_errno'>sqlite3_system_errno</a></li>
+<li><a href='#sqlite3_table_column_metadata'>sqlite3_table_column_metadata</a></li>
+<li><a href='#sqlite3_test_control'>sqlite3_test_control</a></li>
+<li><s>sqlite3_thread_cleanup</s></li>
+<li><a href='#sqlite3_threadsafe'>sqlite3_threadsafe</a></li>
+<li><a href='#sqlite3_total_changes'>sqlite3_total_changes</a></li>
+<li><a href='#sqlite3_profile'>sqlite3_trace</a></li>
+<li><a href='#sqlite3_trace_v2'>sqlite3_trace_v2</a></li>
+<li><s>sqlite3_transfer_bindings</s></li>
+<li><a href='#sqlite3_unlock_notify'>sqlite3_unlock_notify</a></li>
+<li><a href='#sqlite3_update_hook'>sqlite3_update_hook</a></li>
+<li><a href='#sqlite3_uri_boolean'>sqlite3_uri_boolean</a></li>
+<li><a href='#sqlite3_uri_boolean'>sqlite3_uri_int64</a></li>
+<li><a href='#sqlite3_uri_boolean'>sqlite3_uri_key</a></li>
+<li><a href='#sqlite3_uri_boolean'>sqlite3_uri_parameter</a></li>
+<li><a href='#sqlite3_user_data'>sqlite3_user_data</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_blob</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_bytes</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_bytes16</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_double</a></li>
+<li><a href='#sqlite3_value_dup'>sqlite3_value_dup</a></li>
+<li><a href='#sqlite3_value_dup'>sqlite3_value_free</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_frombind</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_int</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_int64</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_nochange</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_numeric_type</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_pointer</a></li>
+<li><a href='#sqlite3_value_subtype'>sqlite3_value_subtype</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_text</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_text16</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_text16be</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_text16le</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_type</a></li>
+<li><a href='#sqlite3_libversion'>sqlite3_version</a></li>
+<li><a href='#sqlite3_vfs_find'>sqlite3_vfs_find</a></li>
+<li><a href='#sqlite3_vfs_find'>sqlite3_vfs_register</a></li>
+<li><a href='#sqlite3_vfs_find'>sqlite3_vfs_unregister</a></li>
+<li><a href='#sqlite3_mprintf'>sqlite3_vmprintf</a></li>
+<li><a href='#sqlite3_mprintf'>sqlite3_vsnprintf</a></li>
+<li><a href='#sqlite3_vtab_collation'>sqlite3_vtab_collation</a></li>
+<li><a href='#sqlite3_vtab_config'>sqlite3_vtab_config</a></li>
+<li><a href='#sqlite3_vtab_nochange'>sqlite3_vtab_nochange</a></li>
+<li><a href='#sqlite3_vtab_on_conflict'>sqlite3_vtab_on_conflict</a></li>
+<li><a href='#sqlite3_wal_autocheckpoint'>sqlite3_wal_autocheckpoint</a></li>
+<li><a href='#sqlite3_wal_checkpoint'>sqlite3_wal_checkpoint</a></li>
+<li><a href='#sqlite3_wal_checkpoint_v2'>sqlite3_wal_checkpoint_v2</a></li>
+<li><a href='#sqlite3_wal_hook'>sqlite3_wal_hook</a></li>
+<li><a href='#sqlite3_win32_set_directory'>sqlite3_win32_set_directory</a></li>
+<li><a href='#sqlite3_win32_set_directory'>sqlite3_win32_set_directory16</a></li>
+<li><a href='#sqlite3_win32_set_directory'>sqlite3_win32_set_directory8</a></li>
+</ul>
+</div>
 <hr>
 <a name="SQLITE_INDEX_SCAN_UNIQUE"></a>
 <h2>Virtual Table Scan Flags</h2>
@@ -1086,70 +995,36 @@ pointer through into calls to <a href="#sqlite3_result_blob">sqlite3_result()</a
 <a href="#sqlite3_aggregate_context">sqlite3_aggregate_context()</a>, <a href="#sqlite3_user_data">sqlite3_user_data()</a>,
 <a href="#sqlite3_context_db_handle">sqlite3_context_db_handle()</a>, <a href="#sqlite3_get_auxdata">sqlite3_get_auxdata()</a>,
 and/or <a href="#sqlite3_get_auxdata">sqlite3_set_auxdata()</a>.
-</p><style>
-#listtab27 tr td {vertical-align:top;}
-</style>
-<table id='listtab27' width='100%'></table>
-<script>
-var listitems27 = [{"u":"#sqlite3_aggregate_context","x":"sqlite3_aggregate_context","s":0},
-{"u":"#sqlite3_context_db_handle","x":"sqlite3_context_db_handle","s":0},
-{"u":"#sqlite3_get_auxdata","x":"sqlite3_get_auxdata","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_blob","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_blob64","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_double","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_error","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_error16","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_error_code","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_error_nomem","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_error_toobig","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_int","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_int64","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_null","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_pointer","s":0},
-{"u":"#sqlite3_result_subtype","x":"sqlite3_result_subtype","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_text","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_text16","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_text16be","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_text16le","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_text64","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_value","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_zeroblob","s":0},
-{"u":"#sqlite3_result_blob","x":"sqlite3_result_zeroblob64","s":0},
-{"u":"#sqlite3_get_auxdata","x":"sqlite3_set_auxdata","s":0},
-{"u":"#sqlite3_user_data","x":"sqlite3_user_data","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/350);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems27.length+1)/nCol);
-var h="<tr><td colspan="+nCol;
-h += ">Methods:</td></tr><tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems27.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems27[i].u=="" || listitems27[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems27[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems27[i].s==2 || listitems27[i].s==3) h += "<s>"
-  h += listitems27[i].x;
-  if(listitems27[i].s==2 || listitems27[i].s==3) h += "</s>"
-  h += ea
-  if(listitems27[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems27[i].s==3) h += "&sup1\n";
-  if(listitems27[i].s==4) h += "&sup2\n";
-  if(listitems27[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab27").innerHTML = h;
-</script>
+</p><div class='columns' style='columns: 17em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='#sqlite3_aggregate_context'>sqlite3_aggregate_context</a></li>
+<li><a href='#sqlite3_context_db_handle'>sqlite3_context_db_handle</a></li>
+<li><a href='#sqlite3_get_auxdata'>sqlite3_get_auxdata</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_blob</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_blob64</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_double</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_error</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_error16</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_error_code</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_error_nomem</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_error_toobig</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_int</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_int64</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_null</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_pointer</a></li>
+<li><a href='#sqlite3_result_subtype'>sqlite3_result_subtype</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_text</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_text16</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_text16be</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_text16le</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_text64</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_value</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_zeroblob</a></li>
+<li><a href='#sqlite3_result_blob'>sqlite3_result_zeroblob64</a></li>
+<li><a href='#sqlite3_get_auxdata'>sqlite3_set_auxdata</a></li>
+<li><a href='#sqlite3_user_data'>sqlite3_user_data</a></li>
+</ul>
+</div>
 </p>
 <hr><a name="sqlite3_data_directory"></a>
 <h2>Name Of The Folder Holding Database Files</h2>
@@ -1987,7 +1862,7 @@ allocate error occurs.</p>
 
 <p>The amount of space allocated by sqlite3_aggregate_context(C,N) is
 determined by the N parameter on first successful call.  Changing the
-value of N in any subsequents call to sqlite3_aggregate_context() within
+value of N in any subsequent call to sqlite3_aggregate_context() within
 the same aggregate function instance will not resize the memory
 allocation.  Within the xFinal callback, it is customary to set
 N=0 in calls to sqlite3_aggregate_context(C,N) so that no
@@ -2523,6 +2398,26 @@ where it always returns zero since each step of that multi-step
 pragma returns 0 columns of data.</p>
 
 <p>See also: <a href="#sqlite3_column_count">sqlite3_column_count()</a>
+</p><hr><a name="sqlite3_database_file_object"></a>
+<h2>Database File Corresponding To A Journal</h2>
+</div>
+<blockquote><pre>
+sqlite3_file *sqlite3_database_file_object(const char*);
+</pre></blockquote>
+<p>
+If X is the name of a rollback or WAL-mode journal file that is
+passed into the xOpen method of <a href="#sqlite3_vfs">sqlite3_vfs</a>, then
+sqlite3_database_file_object(X) returns a pointer to the <a href="#sqlite3_file">sqlite3_file</a>
+object that represents the main database file.</p>
+
+<p>This routine is intended for use in custom <a href="vfs.html">VFS</a> implementations
+only.  It is not a general-purpose interface.
+The argument sqlite3_file_object(X) must be a filename pointer that
+has been passed into <a href="#sqlite3_vfs">sqlite3_vfs</a>.xOpen method where the
+flags parameter to xOpen contains one of the bits
+<a href="#SQLITE_OPEN_AUTOPROXY">SQLITE_OPEN_MAIN_JOURNAL</a> or <a href="#SQLITE_OPEN_AUTOPROXY">SQLITE_OPEN_WAL</a>.  Any other use
+of this routine results in undefined and probably undesirable
+behavior.
 </p><hr><a name="sqlite3_db_cacheflush"></a>
 <h2>Flush caches to disk mid-transaction</h2>
 </div>
@@ -4667,10 +4562,12 @@ here in order to indicate success or failure.</p>
 #define SQLITE_IOERR_BEGIN_ATOMIC      (SQLITE_IOERR | (29&lt;&lt;8))
 #define SQLITE_IOERR_COMMIT_ATOMIC     (SQLITE_IOERR | (30&lt;&lt;8))
 #define SQLITE_IOERR_ROLLBACK_ATOMIC   (SQLITE_IOERR | (31&lt;&lt;8))
+#define SQLITE_IOERR_DATA              (SQLITE_IOERR | (32&lt;&lt;8))
 #define SQLITE_LOCKED_SHAREDCACHE      (SQLITE_LOCKED |  (1&lt;&lt;8))
 #define SQLITE_LOCKED_VTAB             (SQLITE_LOCKED |  (2&lt;&lt;8))
 #define SQLITE_BUSY_RECOVERY           (SQLITE_BUSY   |  (1&lt;&lt;8))
 #define SQLITE_BUSY_SNAPSHOT           (SQLITE_BUSY   |  (2&lt;&lt;8))
+#define SQLITE_BUSY_TIMEOUT            (SQLITE_BUSY   |  (3&lt;&lt;8))
 #define SQLITE_CANTOPEN_NOTEMPDIR      (SQLITE_CANTOPEN | (1&lt;&lt;8))
 #define SQLITE_CANTOPEN_ISDIR          (SQLITE_CANTOPEN | (2&lt;&lt;8))
 #define SQLITE_CANTOPEN_FULLPATH       (SQLITE_CANTOPEN | (3&lt;&lt;8))
@@ -4679,6 +4576,7 @@ here in order to indicate success or failure.</p>
 #define SQLITE_CANTOPEN_SYMLINK        (SQLITE_CANTOPEN | (6&lt;&lt;8))
 #define SQLITE_CORRUPT_VTAB            (SQLITE_CORRUPT | (1&lt;&lt;8))
 #define SQLITE_CORRUPT_SEQUENCE        (SQLITE_CORRUPT | (2&lt;&lt;8))
+#define SQLITE_CORRUPT_INDEX           (SQLITE_CORRUPT | (3&lt;&lt;8))
 #define SQLITE_READONLY_RECOVERY       (SQLITE_READONLY | (1&lt;&lt;8))
 #define SQLITE_READONLY_CANTLOCK       (SQLITE_READONLY | (2&lt;&lt;8))
 #define SQLITE_READONLY_ROLLBACK       (SQLITE_READONLY | (3&lt;&lt;8))
@@ -5753,6 +5651,8 @@ return value from the <a href="#sqlite3_set_authorizer">sqlite3_set_authorizer()
 #define SQLITE_FCNTL_DATA_VERSION           35
 #define SQLITE_FCNTL_SIZE_LIMIT             36
 #define SQLITE_FCNTL_CKPT_DONE              37
+#define SQLITE_FCNTL_RESERVE_BYTES          38
+#define SQLITE_FCNTL_CKPT_START             39
 </pre></blockquote>
 <p>
 These integer constants are opcodes for the xFileControl method
@@ -6064,10 +5964,12 @@ a prior successful call to <a href="#sqlitefcntlbeginatomicwrite">SQLITE_FCNTL_B
 
 <p><li><a name="sqlitefcntllocktimeout"></a>
 
-The <a href="#sqlitefcntllocktimeout">SQLITE_FCNTL_LOCK_TIMEOUT</a> opcode causes attempts to obtain
-a file lock using the xLock or xShmLock methods of the VFS to wait
-for up to M milliseconds before failing, where M is the single
-unsigned integer parameter.</p>
+The <a href="#sqlitefcntllocktimeout">SQLITE_FCNTL_LOCK_TIMEOUT</a> opcode is used to configure a VFS
+to block for up to M milliseconds before failing when attempting to
+obtain a file lock using the xLock or xShmLock methods of the VFS.
+The parameter is a pointer to a 32-bit signed integer that contains
+the value that M is to be set to. Before returning, the 32-bit signed
+integer is overwritten with the previous value of M.</p>
 
 <p><li><a name="sqlitefcntldataversion"></a>
 
@@ -6089,6 +5991,12 @@ but omits changes implemented by the database connection on which it is
 called.  This file control is the only mechanism to detect changes that
 happen either internally or externally and that are associated with
 a particular attached database.</p>
+
+<p><li><a name="sqlitefcntlckptstart"></a>
+
+The <a href="#sqlitefcntlckptstart">SQLITE_FCNTL_CKPT_START</a> opcode is invoked from within a checkpoint
+in wal mode before the client starts to copy pages from the wal
+file to the database file.</p>
 
 <p><li><a name="sqlitefcntlckptdone"></a>
 
@@ -6379,9 +6287,9 @@ and EXCLUSIVE.
 <h2>Compile-Time Library Version Numbers</h2>
 </div>
 <blockquote><pre>
-#define SQLITE_VERSION        "3.31.1"
-#define SQLITE_VERSION_NUMBER 3031001
-#define SQLITE_SOURCE_ID      "2020-01-27 19:55:54 3bfa9cc97da10598521b342961df8f5f68c7388fa117345eeb516eaa837bb4d6"
+#define SQLITE_VERSION        "3.32.0"
+#define SQLITE_VERSION_NUMBER 3032000
+#define SQLITE_SOURCE_ID      "2020-05-22 17:46:16 5998789c9c744bce92e4cff7636bba800a75574243d6977e1fc8281e360f8d5a"
 </pre></blockquote>
 <p>
 The <a href="#SQLITE_SOURCE_ID">SQLITE_VERSION</a> C preprocessor macro in the sqlite3.h header
@@ -6562,7 +6470,7 @@ cares about the difference.)
 #define SQLITE_TESTCTRL_PENDING_BYTE            11
 #define SQLITE_TESTCTRL_ASSERT                  12
 #define SQLITE_TESTCTRL_ALWAYS                  13
-#define SQLITE_TESTCTRL_RESERVE                 14
+#define SQLITE_TESTCTRL_RESERVE                 14  /* NOT USED */
 #define SQLITE_TESTCTRL_OPTIMIZATIONS           15
 #define SQLITE_TESTCTRL_ISKEYWORD               16  /* NOT USED */
 #define SQLITE_TESTCTRL_SCRATCHMALLOC           17  /* NOT USED */
@@ -7172,106 +7080,72 @@ sqlite3 object.
 <p>Destructors:
  <a href="#sqlite3_close">sqlite3_close()</a>,
 <a href="#sqlite3_close">sqlite3_close_v2()</a></p>
-<style>
-#listtab28 tr td {vertical-align:top;}
-</style>
-<table id='listtab28' width='100%'></table>
-<script>
-var listitems28 = [{"u":"#sqlite3_blob_open","x":"sqlite3_blob_open","s":0},
-{"u":"#sqlite3_busy_handler","x":"sqlite3_busy_handler","s":0},
-{"u":"#sqlite3_busy_timeout","x":"sqlite3_busy_timeout","s":0},
-{"u":"#sqlite3_changes","x":"sqlite3_changes","s":0},
-{"u":"#sqlite3_collation_needed","x":"sqlite3_collation_needed","s":0},
-{"u":"#sqlite3_collation_needed","x":"sqlite3_collation_needed16","s":0},
-{"u":"#sqlite3_commit_hook","x":"sqlite3_commit_hook","s":0},
-{"u":"#sqlite3_create_collation","x":"sqlite3_create_collation","s":0},
-{"u":"#sqlite3_create_collation","x":"sqlite3_create_collation16","s":0},
-{"u":"#sqlite3_create_collation","x":"sqlite3_create_collation_v2","s":0},
-{"u":"#sqlite3_create_function","x":"sqlite3_create_function","s":0},
-{"u":"#sqlite3_create_function","x":"sqlite3_create_function16","s":0},
-{"u":"#sqlite3_create_function","x":"sqlite3_create_function_v2","s":0},
-{"u":"#sqlite3_create_module","x":"sqlite3_create_module","s":0},
-{"u":"#sqlite3_create_module","x":"sqlite3_create_module_v2","s":0},
-{"u":"#sqlite3_create_function","x":"sqlite3_create_window_function","s":0},
-{"u":"#sqlite3_db_config","x":"sqlite3_db_config","s":0},
-{"u":"#sqlite3_db_filename","x":"sqlite3_db_filename","s":0},
-{"u":"#sqlite3_db_mutex","x":"sqlite3_db_mutex","s":0},
-{"u":"#sqlite3_db_readonly","x":"sqlite3_db_readonly","s":0},
-{"u":"#sqlite3_db_release_memory","x":"sqlite3_db_release_memory","s":0},
-{"u":"#sqlite3_db_status","x":"sqlite3_db_status","s":0},
-{"u":"#sqlite3_drop_modules","x":"sqlite3_drop_modules","s":0},
-{"u":"#sqlite3_enable_load_extension","x":"sqlite3_enable_load_extension","s":0},
-{"u":"#sqlite3_errcode","x":"sqlite3_errcode","s":0},
-{"u":"#sqlite3_errcode","x":"sqlite3_errmsg","s":0},
-{"u":"#sqlite3_errcode","x":"sqlite3_errmsg16","s":0},
-{"u":"#sqlite3_errcode","x":"sqlite3_errstr","s":0},
-{"u":"#sqlite3_exec","x":"sqlite3_exec","s":0},
-{"u":"#sqlite3_errcode","x":"sqlite3_extended_errcode","s":0},
-{"u":"#sqlite3_extended_result_codes","x":"sqlite3_extended_result_codes","s":0},
-{"u":"#sqlite3_file_control","x":"sqlite3_file_control","s":0},
-{"u":"#sqlite3_free_table","x":"sqlite3_free_table","s":0},
-{"u":"#sqlite3_get_autocommit","x":"sqlite3_get_autocommit","s":0},
-{"u":"#sqlite3_free_table","x":"sqlite3_get_table","s":0},
-{"u":"#sqlite3_interrupt","x":"sqlite3_interrupt","s":0},
-{"u":"#sqlite3_last_insert_rowid","x":"sqlite3_last_insert_rowid","s":0},
-{"u":"#sqlite3_limit","x":"sqlite3_limit","s":0},
-{"u":"#sqlite3_load_extension","x":"sqlite3_load_extension","s":0},
-{"u":"#sqlite3_next_stmt","x":"sqlite3_next_stmt","s":0},
-{"u":"#sqlite3_overload_function","x":"sqlite3_overload_function","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare16","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare16_v2","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare16_v3","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare_v2","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare_v3","s":0},
-{"u":"#sqlite3_profile","x":"sqlite3_profile","s":0},
-{"u":"#sqlite3_progress_handler","x":"sqlite3_progress_handler","s":0},
-{"u":"#sqlite3_commit_hook","x":"sqlite3_rollback_hook","s":0},
-{"u":"#sqlite3_set_authorizer","x":"sqlite3_set_authorizer","s":0},
-{"u":"#sqlite3_set_last_insert_rowid","x":"sqlite3_set_last_insert_rowid","s":0},
-{"u":"#sqlite3_table_column_metadata","x":"sqlite3_table_column_metadata","s":0},
-{"u":"#sqlite3_total_changes","x":"sqlite3_total_changes","s":0},
-{"u":"#sqlite3_profile","x":"sqlite3_trace","s":0},
-{"u":"#sqlite3_trace_v2","x":"sqlite3_trace_v2","s":0},
-{"u":"#sqlite3_unlock_notify","x":"sqlite3_unlock_notify","s":0},
-{"u":"#sqlite3_update_hook","x":"sqlite3_update_hook","s":0},
-{"u":"#sqlite3_wal_autocheckpoint","x":"sqlite3_wal_autocheckpoint","s":0},
-{"u":"#sqlite3_wal_checkpoint","x":"sqlite3_wal_checkpoint","s":0},
-{"u":"#sqlite3_wal_checkpoint_v2","x":"sqlite3_wal_checkpoint_v2","s":0},
-{"u":"#sqlite3_wal_hook","x":"sqlite3_wal_hook","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/350);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems28.length+1)/nCol);
-var h="<tr><td colspan="+nCol;
-h += ">Methods:</td></tr><tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems28.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems28[i].u=="" || listitems28[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems28[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems28[i].s==2 || listitems28[i].s==3) h += "<s>"
-  h += listitems28[i].x;
-  if(listitems28[i].s==2 || listitems28[i].s==3) h += "</s>"
-  h += ea
-  if(listitems28[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems28[i].s==3) h += "&sup1\n";
-  if(listitems28[i].s==4) h += "&sup2\n";
-  if(listitems28[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab28").innerHTML = h;
-</script>
+<div class='columns' style='columns: 17em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='#sqlite3_blob_open'>sqlite3_blob_open</a></li>
+<li><a href='#sqlite3_busy_handler'>sqlite3_busy_handler</a></li>
+<li><a href='#sqlite3_busy_timeout'>sqlite3_busy_timeout</a></li>
+<li><a href='#sqlite3_changes'>sqlite3_changes</a></li>
+<li><a href='#sqlite3_collation_needed'>sqlite3_collation_needed</a></li>
+<li><a href='#sqlite3_collation_needed'>sqlite3_collation_needed16</a></li>
+<li><a href='#sqlite3_commit_hook'>sqlite3_commit_hook</a></li>
+<li><a href='#sqlite3_create_collation'>sqlite3_create_collation</a></li>
+<li><a href='#sqlite3_create_collation'>sqlite3_create_collation16</a></li>
+<li><a href='#sqlite3_create_collation'>sqlite3_create_collation_v2</a></li>
+<li><a href='#sqlite3_create_function'>sqlite3_create_function</a></li>
+<li><a href='#sqlite3_create_function'>sqlite3_create_function16</a></li>
+<li><a href='#sqlite3_create_function'>sqlite3_create_function_v2</a></li>
+<li><a href='#sqlite3_create_module'>sqlite3_create_module</a></li>
+<li><a href='#sqlite3_create_module'>sqlite3_create_module_v2</a></li>
+<li><a href='#sqlite3_create_function'>sqlite3_create_window_function</a></li>
+<li><a href='#sqlite3_db_config'>sqlite3_db_config</a></li>
+<li><a href='#sqlite3_db_filename'>sqlite3_db_filename</a></li>
+<li><a href='#sqlite3_db_mutex'>sqlite3_db_mutex</a></li>
+<li><a href='#sqlite3_db_readonly'>sqlite3_db_readonly</a></li>
+<li><a href='#sqlite3_db_release_memory'>sqlite3_db_release_memory</a></li>
+<li><a href='#sqlite3_db_status'>sqlite3_db_status</a></li>
+<li><a href='#sqlite3_drop_modules'>sqlite3_drop_modules</a></li>
+<li><a href='#sqlite3_enable_load_extension'>sqlite3_enable_load_extension</a></li>
+<li><a href='#sqlite3_errcode'>sqlite3_errcode</a></li>
+<li><a href='#sqlite3_errcode'>sqlite3_errmsg</a></li>
+<li><a href='#sqlite3_errcode'>sqlite3_errmsg16</a></li>
+<li><a href='#sqlite3_errcode'>sqlite3_errstr</a></li>
+<li><a href='#sqlite3_exec'>sqlite3_exec</a></li>
+<li><a href='#sqlite3_errcode'>sqlite3_extended_errcode</a></li>
+<li><a href='#sqlite3_extended_result_codes'>sqlite3_extended_result_codes</a></li>
+<li><a href='#sqlite3_file_control'>sqlite3_file_control</a></li>
+<li><a href='#sqlite3_free_table'>sqlite3_free_table</a></li>
+<li><a href='#sqlite3_get_autocommit'>sqlite3_get_autocommit</a></li>
+<li><a href='#sqlite3_free_table'>sqlite3_get_table</a></li>
+<li><a href='#sqlite3_interrupt'>sqlite3_interrupt</a></li>
+<li><a href='#sqlite3_last_insert_rowid'>sqlite3_last_insert_rowid</a></li>
+<li><a href='#sqlite3_limit'>sqlite3_limit</a></li>
+<li><a href='#sqlite3_load_extension'>sqlite3_load_extension</a></li>
+<li><a href='#sqlite3_next_stmt'>sqlite3_next_stmt</a></li>
+<li><a href='#sqlite3_overload_function'>sqlite3_overload_function</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare16</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare16_v2</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare16_v3</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare_v2</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare_v3</a></li>
+<li><a href='#sqlite3_profile'>sqlite3_profile</a></li>
+<li><a href='#sqlite3_progress_handler'>sqlite3_progress_handler</a></li>
+<li><a href='#sqlite3_commit_hook'>sqlite3_rollback_hook</a></li>
+<li><a href='#sqlite3_set_authorizer'>sqlite3_set_authorizer</a></li>
+<li><a href='#sqlite3_set_last_insert_rowid'>sqlite3_set_last_insert_rowid</a></li>
+<li><a href='#sqlite3_table_column_metadata'>sqlite3_table_column_metadata</a></li>
+<li><a href='#sqlite3_total_changes'>sqlite3_total_changes</a></li>
+<li><a href='#sqlite3_profile'>sqlite3_trace</a></li>
+<li><a href='#sqlite3_trace_v2'>sqlite3_trace_v2</a></li>
+<li><a href='#sqlite3_unlock_notify'>sqlite3_unlock_notify</a></li>
+<li><a href='#sqlite3_update_hook'>sqlite3_update_hook</a></li>
+<li><a href='#sqlite3_wal_autocheckpoint'>sqlite3_wal_autocheckpoint</a></li>
+<li><a href='#sqlite3_wal_checkpoint'>sqlite3_wal_checkpoint</a></li>
+<li><a href='#sqlite3_wal_checkpoint_v2'>sqlite3_wal_checkpoint_v2</a></li>
+<li><a href='#sqlite3_wal_hook'>sqlite3_wal_hook</a></li>
+</ul>
+</div>
 </p>
 <hr><a name="sqlite3_str"></a>
 <h2>Dynamic String Object</h2>
@@ -7293,53 +7167,19 @@ is returned using the <a href="#sqlite3_str_finish">sqlite3_str_finish()</a> int
 </ol>
 </p><p>Constructor: <a href="#sqlite3_str_new">sqlite3_str_new()</a></p>
 <p>Destructor: <a href="#sqlite3_str_finish">sqlite3_str_finish()</a></p>
-<style>
-#listtab29 tr td {vertical-align:top;}
-</style>
-<table id='listtab29' width='100%'></table>
-<script>
-var listitems29 = [{"u":"#sqlite3_str_append","x":"sqlite3_str_append","s":0},
-{"u":"#sqlite3_str_append","x":"sqlite3_str_appendall","s":0},
-{"u":"#sqlite3_str_append","x":"sqlite3_str_appendchar","s":0},
-{"u":"#sqlite3_str_append","x":"sqlite3_str_appendf","s":0},
-{"u":"#sqlite3_str_errcode","x":"sqlite3_str_errcode","s":0},
-{"u":"#sqlite3_str_errcode","x":"sqlite3_str_length","s":0},
-{"u":"#sqlite3_str_append","x":"sqlite3_str_reset","s":0},
-{"u":"#sqlite3_str_errcode","x":"sqlite3_str_value","s":0},
-{"u":"#sqlite3_str_append","x":"sqlite3_str_vappendf","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/350);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems29.length+1)/nCol);
-var h="<tr><td colspan="+nCol;
-h += ">Methods:</td></tr><tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems29.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems29[i].u=="" || listitems29[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems29[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems29[i].s==2 || listitems29[i].s==3) h += "<s>"
-  h += listitems29[i].x;
-  if(listitems29[i].s==2 || listitems29[i].s==3) h += "</s>"
-  h += ea
-  if(listitems29[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems29[i].s==3) h += "&sup1\n";
-  if(listitems29[i].s==4) h += "&sup2\n";
-  if(listitems29[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab29").innerHTML = h;
-</script>
+<div class='columns' style='columns: 17em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='#sqlite3_str_append'>sqlite3_str_append</a></li>
+<li><a href='#sqlite3_str_append'>sqlite3_str_appendall</a></li>
+<li><a href='#sqlite3_str_append'>sqlite3_str_appendchar</a></li>
+<li><a href='#sqlite3_str_append'>sqlite3_str_appendf</a></li>
+<li><a href='#sqlite3_str_errcode'>sqlite3_str_errcode</a></li>
+<li><a href='#sqlite3_str_errcode'>sqlite3_str_length</a></li>
+<li><a href='#sqlite3_str_append'>sqlite3_str_reset</a></li>
+<li><a href='#sqlite3_str_errcode'>sqlite3_str_value</a></li>
+<li><a href='#sqlite3_str_append'>sqlite3_str_vappendf</a></li>
+</ul>
+</div>
 </p>
 <hr><a name="sqlite3_pcache_methods2"></a>
 <h2>Application Defined Page Cache.</h2>
@@ -7554,141 +7394,73 @@ interfaces.
 to step 2.  Do this zero or more times.
 <li> Destroy the object using <a href="#sqlite3_finalize">sqlite3_finalize()</a>.
 </ol>
-</p><style>
-#listtab30 tr td {vertical-align:top;}
-</style>
-<table id='listtab30' width='100%'></table>
-<script>
-var listitems30 = [{"u":"#sqlite3_prepare","x":"sqlite3_prepare","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare16","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare16_v2","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare16_v3","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare_v2","s":0},
-{"u":"#sqlite3_prepare","x":"sqlite3_prepare_v3","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/350);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems30.length+1)/nCol);
-var h="<tr><td colspan="+nCol;
-h += ">Constructors:</td></tr><tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems30.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems30[i].u=="" || listitems30[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems30[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems30[i].s==2 || listitems30[i].s==3) h += "<s>"
-  h += listitems30[i].x;
-  if(listitems30[i].s==2 || listitems30[i].s==3) h += "</s>"
-  h += ea
-  if(listitems30[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems30[i].s==3) h += "&sup1\n";
-  if(listitems30[i].s==4) h += "&sup2\n";
-  if(listitems30[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab30").innerHTML = h;
-</script>
+</p><div class='columns' style='columns: 17em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare16</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare16_v2</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare16_v3</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare_v2</a></li>
+<li><a href='#sqlite3_prepare'>sqlite3_prepare_v3</a></li>
+</ul>
+</div>
 </p>
 <p>Destructor: <a href="#sqlite3_finalize">sqlite3_finalize()</a></p>
-<style>
-#listtab31 tr td {vertical-align:top;}
-</style>
-<table id='listtab31' width='100%'></table>
-<script>
-var listitems31 = [{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_blob","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_blob64","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_double","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_int","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_int64","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_null","s":0},
-{"u":"#sqlite3_bind_parameter_count","x":"sqlite3_bind_parameter_count","s":0},
-{"u":"#sqlite3_bind_parameter_index","x":"sqlite3_bind_parameter_index","s":0},
-{"u":"#sqlite3_bind_parameter_name","x":"sqlite3_bind_parameter_name","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_pointer","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_text","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_text16","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_text64","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_value","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_zeroblob","s":0},
-{"u":"#sqlite3_bind_blob","x":"sqlite3_bind_zeroblob64","s":0},
-{"u":"#sqlite3_clear_bindings","x":"sqlite3_clear_bindings","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_blob","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_bytes","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_bytes16","s":0},
-{"u":"#sqlite3_column_count","x":"sqlite3_column_count","s":0},
-{"u":"#sqlite3_column_database_name","x":"sqlite3_column_database_name","s":0},
-{"u":"#sqlite3_column_database_name","x":"sqlite3_column_database_name16","s":0},
-{"u":"#sqlite3_column_decltype","x":"sqlite3_column_decltype","s":0},
-{"u":"#sqlite3_column_decltype","x":"sqlite3_column_decltype16","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_double","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_int","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_int64","s":0},
-{"u":"#sqlite3_column_name","x":"sqlite3_column_name","s":0},
-{"u":"#sqlite3_column_name","x":"sqlite3_column_name16","s":0},
-{"u":"#sqlite3_column_database_name","x":"sqlite3_column_origin_name","s":0},
-{"u":"#sqlite3_column_database_name","x":"sqlite3_column_origin_name16","s":0},
-{"u":"#sqlite3_column_database_name","x":"sqlite3_column_table_name","s":0},
-{"u":"#sqlite3_column_database_name","x":"sqlite3_column_table_name16","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_text","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_text16","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_type","s":0},
-{"u":"#sqlite3_column_blob","x":"sqlite3_column_value","s":0},
-{"u":"#sqlite3_data_count","x":"sqlite3_data_count","s":0},
-{"u":"#sqlite3_db_handle","x":"sqlite3_db_handle","s":0},
-{"u":"#sqlite3_expanded_sql","x":"sqlite3_expanded_sql","s":0},
-{"u":"#sqlite3_expanded_sql","x":"sqlite3_normalized_sql","s":0},
-{"u":"#sqlite3_reset","x":"sqlite3_reset","s":0},
-{"u":"#sqlite3_expanded_sql","x":"sqlite3_sql","s":0},
-{"u":"#sqlite3_step","x":"sqlite3_step","s":0},
-{"u":"#sqlite3_stmt_busy","x":"sqlite3_stmt_busy","s":0},
-{"u":"#sqlite3_stmt_isexplain","x":"sqlite3_stmt_isexplain","s":0},
-{"u":"#sqlite3_stmt_readonly","x":"sqlite3_stmt_readonly","s":0},
-{"u":"#sqlite3_stmt_scanstatus","x":"sqlite3_stmt_scanstatus","s":0},
-{"u":"#sqlite3_stmt_scanstatus_reset","x":"sqlite3_stmt_scanstatus_reset","s":0},
-{"u":"#sqlite3_stmt_status","x":"sqlite3_stmt_status","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/350);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems31.length+1)/nCol);
-var h="<tr><td colspan="+nCol;
-h += ">Methods:</td></tr><tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems31.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems31[i].u=="" || listitems31[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems31[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems31[i].s==2 || listitems31[i].s==3) h += "<s>"
-  h += listitems31[i].x;
-  if(listitems31[i].s==2 || listitems31[i].s==3) h += "</s>"
-  h += ea
-  if(listitems31[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems31[i].s==3) h += "&sup1\n";
-  if(listitems31[i].s==4) h += "&sup2\n";
-  if(listitems31[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab31").innerHTML = h;
-</script>
+<div class='columns' style='columns: 17em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_blob</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_blob64</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_double</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_int</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_int64</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_null</a></li>
+<li><a href='#sqlite3_bind_parameter_count'>sqlite3_bind_parameter_count</a></li>
+<li><a href='#sqlite3_bind_parameter_index'>sqlite3_bind_parameter_index</a></li>
+<li><a href='#sqlite3_bind_parameter_name'>sqlite3_bind_parameter_name</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_pointer</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_text</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_text16</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_text64</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_value</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_zeroblob</a></li>
+<li><a href='#sqlite3_bind_blob'>sqlite3_bind_zeroblob64</a></li>
+<li><a href='#sqlite3_clear_bindings'>sqlite3_clear_bindings</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_blob</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_bytes</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_bytes16</a></li>
+<li><a href='#sqlite3_column_count'>sqlite3_column_count</a></li>
+<li><a href='#sqlite3_column_database_name'>sqlite3_column_database_name</a></li>
+<li><a href='#sqlite3_column_database_name'>sqlite3_column_database_name16</a></li>
+<li><a href='#sqlite3_column_decltype'>sqlite3_column_decltype</a></li>
+<li><a href='#sqlite3_column_decltype'>sqlite3_column_decltype16</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_double</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_int</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_int64</a></li>
+<li><a href='#sqlite3_column_name'>sqlite3_column_name</a></li>
+<li><a href='#sqlite3_column_name'>sqlite3_column_name16</a></li>
+<li><a href='#sqlite3_column_database_name'>sqlite3_column_origin_name</a></li>
+<li><a href='#sqlite3_column_database_name'>sqlite3_column_origin_name16</a></li>
+<li><a href='#sqlite3_column_database_name'>sqlite3_column_table_name</a></li>
+<li><a href='#sqlite3_column_database_name'>sqlite3_column_table_name16</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_text</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_text16</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_type</a></li>
+<li><a href='#sqlite3_column_blob'>sqlite3_column_value</a></li>
+<li><a href='#sqlite3_data_count'>sqlite3_data_count</a></li>
+<li><a href='#sqlite3_db_handle'>sqlite3_db_handle</a></li>
+<li><a href='#sqlite3_expanded_sql'>sqlite3_expanded_sql</a></li>
+<li><a href='#sqlite3_expanded_sql'>sqlite3_normalized_sql</a></li>
+<li><a href='#sqlite3_reset'>sqlite3_reset</a></li>
+<li><a href='#sqlite3_expanded_sql'>sqlite3_sql</a></li>
+<li><a href='#sqlite3_step'>sqlite3_step</a></li>
+<li><a href='#sqlite3_stmt_busy'>sqlite3_stmt_busy</a></li>
+<li><a href='#sqlite3_stmt_isexplain'>sqlite3_stmt_isexplain</a></li>
+<li><a href='#sqlite3_stmt_readonly'>sqlite3_stmt_readonly</a></li>
+<li><a href='#sqlite3_stmt_scanstatus'>sqlite3_stmt_scanstatus</a></li>
+<li><a href='#sqlite3_stmt_scanstatus_reset'>sqlite3_stmt_scanstatus_reset</a></li>
+<li><a href='#sqlite3_stmt_status'>sqlite3_stmt_status</a></li>
+</ul>
+</div>
 </p>
 <hr><a name="sqlite3_value"></a>
 <h2>Dynamically Typed Value Object</h2>
@@ -7732,62 +7504,28 @@ to <a href="#sqlite3_result_blob">sqlite3_result_value()</a>, <a href="#sqlite3_
 <a href="#sqlite3_value_dup">sqlite3_value_dup()</a>.
 The <a href="#sqlite3_value_blob">sqlite3_value_type()</a> family of
 interfaces require protected sqlite3_value objects.
-</p><style>
-#listtab32 tr td {vertical-align:top;}
-</style>
-<table id='listtab32' width='100%'></table>
-<script>
-var listitems32 = [{"u":"#sqlite3_value_blob","x":"sqlite3_value_blob","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_bytes","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_bytes16","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_double","s":0},
-{"u":"#sqlite3_value_dup","x":"sqlite3_value_dup","s":0},
-{"u":"#sqlite3_value_dup","x":"sqlite3_value_free","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_frombind","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_int","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_int64","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_nochange","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_numeric_type","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_pointer","s":0},
-{"u":"#sqlite3_value_subtype","x":"sqlite3_value_subtype","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_text","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_text16","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_text16be","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_text16le","s":0},
-{"u":"#sqlite3_value_blob","x":"sqlite3_value_type","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/350);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems32.length+1)/nCol);
-var h="<tr><td colspan="+nCol;
-h += ">Methods:</td></tr><tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems32.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems32[i].u=="" || listitems32[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems32[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems32[i].s==2 || listitems32[i].s==3) h += "<s>"
-  h += listitems32[i].x;
-  if(listitems32[i].s==2 || listitems32[i].s==3) h += "</s>"
-  h += ea
-  if(listitems32[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems32[i].s==3) h += "&sup1\n";
-  if(listitems32[i].s==4) h += "&sup2\n";
-  if(listitems32[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab32").innerHTML = h;
-</script>
+</p><div class='columns' style='columns: 17em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_blob</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_bytes</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_bytes16</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_double</a></li>
+<li><a href='#sqlite3_value_dup'>sqlite3_value_dup</a></li>
+<li><a href='#sqlite3_value_dup'>sqlite3_value_free</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_frombind</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_int</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_int64</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_nochange</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_numeric_type</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_pointer</a></li>
+<li><a href='#sqlite3_value_subtype'>sqlite3_value_subtype</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_text</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_text16</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_text16be</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_text16le</a></li>
+<li><a href='#sqlite3_value_blob'>sqlite3_value_type</a></li>
+</ul>
+</div>
 </p>
 <hr><a name="sqlite3_aggregate_count"></a>
 <h2>Deprecated Functions</h2>
@@ -8026,26 +7764,22 @@ Calls to sqlite3_close() and sqlite3_close_v2() return <a href="#SQLITE_ABORT">S
 the <a href="#sqlite3">sqlite3</a> object is successfully destroyed and all associated
 resources are deallocated.</p>
 
-<p>If the database connection is associated with unfinalized prepared
-statements or unfinished sqlite3_backup objects then sqlite3_close()
-will leave the database connection open and return <a href="#SQLITE_ABORT">SQLITE_BUSY</a>.
-If sqlite3_close_v2() is called with unfinalized prepared statements
-and/or unfinished sqlite3_backups, then the database connection becomes
-an unusable "zombie" which will automatically be deallocated when the
-last prepared statement is finalized or the last sqlite3_backup is
-finished.  The sqlite3_close_v2() interface is intended for use with
-host languages that are garbage collected, and where the order in which
-destructors are called is arbitrary.</p>
-
-<p>Applications should <a href="#sqlite3_finalize">finalize</a> all <a href="#sqlite3_stmt">prepared statements</a>,
-<a href="#sqlite3_blob_close">close</a> all <a href="#sqlite3_blob">BLOB handles</a>, and
+<p>Ideally, applications should <a href="#sqlite3_finalize">finalize</a> all
+<a href="#sqlite3_stmt">prepared statements</a>, <a href="#sqlite3_blob_close">close</a> all <a href="#sqlite3_blob">BLOB handles</a>, and
 <a href="#sqlite3backupfinish">finish</a> all <a href="#sqlite3_backup">sqlite3_backup</a> objects associated
-with the <a href="#sqlite3">sqlite3</a> object prior to attempting to close the object.  If
-sqlite3_close_v2() is called on a <a href="#sqlite3">database connection</a> that still has
-outstanding <a href="#sqlite3_stmt">prepared statements</a>, <a href="#sqlite3_blob">BLOB handles</a>, and/or
-<a href="#sqlite3_backup">sqlite3_backup</a> objects then it returns <a href="#SQLITE_ABORT">SQLITE_OK</a> and the deallocation
-of resources is deferred until all <a href="#sqlite3_stmt">prepared statements</a>, <a href="#sqlite3_blob">BLOB handles</a>,
-and <a href="#sqlite3_backup">sqlite3_backup</a> objects are also destroyed.</p>
+with the <a href="#sqlite3">sqlite3</a> object prior to attempting to close the object.
+If the database connection is associated with unfinalized prepared
+statements, BLOB handlers, and/or unfinished sqlite3_backup objects then
+sqlite3_close() will leave the database connection open and return
+<a href="#SQLITE_ABORT">SQLITE_BUSY</a>. If sqlite3_close_v2() is called with unfinalized prepared
+statements, unclosed BLOB handlers, and/or unfinished sqlite3_backups,
+it returns <a href="#SQLITE_ABORT">SQLITE_OK</a> regardless, but instead of deallocating the database
+connection immediately, it marks the database connection as an unusable
+"zombie" and makes arrangements to automatically deallocate the database
+connection after all prepared statements are finalized, all BLOB handles
+are closed, and all backups have finished. The sqlite3_close_v2() interface
+is intended for use with host languages that are garbage collected, and
+where the order in which destructors are called is arbitrary.</p>
 
 <p>If an <a href="#sqlite3">sqlite3</a> object is destroyed while a transaction is open,
 the transaction is automatically rolled back.</p>
@@ -8429,6 +8163,61 @@ is unfortunate but cannot be changed without breaking backwards
 compatibility.</p>
 
 <p>See also:  <a href="#sqlite3_collation_needed">sqlite3_collation_needed()</a> and <a href="#sqlite3_collation_needed">sqlite3_collation_needed16()</a>.
+</p><hr><a name="sqlite3_create_filename"></a>
+<h2>Create and Destroy VFS Filenames</h2>
+</div>
+<blockquote><pre>
+char *sqlite3_create_filename(
+  const char *zDatabase,
+  const char *zJournal,
+  const char *zWal,
+  int nParam,
+  const char **azParam
+);
+void sqlite3_free_filename(char*);
+</pre></blockquote>
+<p>
+These interfces are provided for use by <a href="vfs.html#shim">VFS shim</a> implementations and
+are not useful outside of that context.</p>
+
+<p>The sqlite3_create_filename(D,J,W,N,P) allocates memory to hold a version of
+database filename D with corresponding journal file J and WAL file W and
+with N URI parameters key/values pairs in the array P.  The result from
+sqlite3_create_filename(D,J,W,N,P) is a pointer to a database filename that
+is safe to pass to routines like:
+<ul>
+<li> <a href="#sqlite3_uri_boolean">sqlite3_uri_parameter()</a>,
+<li> <a href="#sqlite3_uri_boolean">sqlite3_uri_boolean()</a>,
+<li> <a href="#sqlite3_uri_boolean">sqlite3_uri_int64()</a>,
+<li> <a href="#sqlite3_uri_boolean">sqlite3_uri_key()</a>,
+<li> <a href="#sqlite3_filename_database">sqlite3_filename_database()</a>,
+<li> <a href="#sqlite3_filename_database">sqlite3_filename_journal()</a>, or
+<li> <a href="#sqlite3_filename_database">sqlite3_filename_wal()</a>.
+</ul>
+If a memory allocation error occurs, sqlite3_create_filename() might
+return a NULL pointer.  The memory obtained from sqlite3_create_filename(X)
+must be released by a corresponding call to sqlite3_free_filename(Y).</p>
+
+<p>The P parameter in sqlite3_create_filename(D,J,W,N,P) should be an array
+of 2*N pointers to strings.  Each pair of pointers in this array corresponds
+to a key and value for a query parameter.  The P parameter may be a NULL
+pointer if N is zero.  None of the 2*N pointers in the P array may be
+NULL pointers and key pointers should not be empty strings.
+None of the D, J, or W parameters to sqlite3_create_filename(D,J,W,N,P) may
+be NULL pointers, though they can be empty strings.</p>
+
+<p>The sqlite3_free_filename(Y) routine releases a memory allocation
+previously obtained from sqlite3_create_filename().  Invoking
+sqlite3_free_filename(Y) where Y is a NULL pointer is a harmless no-op.</p>
+
+<p>If the Y parameter to sqlite3_free_filename(Y) is anything other
+than a NULL pointer or a pointer previously acquired from
+sqlite3_create_filename(), then bad things such as heap
+corruption or segfaults may occur. The value Y should be
+used again after sqlite3_free_filename(Y) has been called.  This means
+that if the <a href="#sqlite3vfsxopen">sqlite3_vfs.xOpen()</a> method of a VFS has been called using Y,
+then the corresponding [sqlite3_module.xClose() method should also be
+invoked prior to calling sqlite3_free_filename(Y).
 </p><hr><a name="sqlite3_create_module"></a>
 <h2>Register A Virtual Table Implementation</h2>
 </div>
@@ -9768,8 +9557,9 @@ SQLite uses the string pointed to by the
 2nd parameter of sqlite3_result_error() or sqlite3_result_error16()
 as the text of an error message.  SQLite interprets the error
 message string from sqlite3_result_error() as UTF-8. SQLite
-interprets the string from sqlite3_result_error16() as UTF-16 in native
-byte order.  If the third parameter to sqlite3_result_error()
+interprets the string from sqlite3_result_error16() as UTF-16 using
+the same <a href="#byteorderdeterminationrules">byte-order determination rules</a> as <a href="#sqlite3_bind_blob">sqlite3_bind_text16()</a>.
+If the third parameter to sqlite3_result_error()
 or sqlite3_result_error16() is negative then SQLite takes as the error
 message all text up through the first zero character.
 If the third parameter to sqlite3_result_error() or
@@ -9836,6 +9626,25 @@ If the 4th parameter to the sqlite3_result_text* interfaces
 or sqlite3_result_blob is the special constant SQLITE_TRANSIENT
 then SQLite makes a copy of the result into space obtained
 from <a href="#sqlite3_free">sqlite3_malloc()</a> before it returns.</p>
+
+<p>For the sqlite3_result_text16(), sqlite3_result_text16le(), and
+sqlite3_result_text16be() routines, and for sqlite3_result_text64()
+when the encoding is not UTF8, if the input UTF16 begins with a
+byte-order mark (BOM, U+FEFF) then the BOM is removed from the
+string and the rest of the string is interpreted according to the
+byte-order specified by the BOM.  The byte-order specified by
+the BOM at the beginning of the text overrides the byte-order
+specified by the interface procedure.  So, for example, if
+sqlite3_result_text16le() is invoked with text that begins
+with bytes 0xfe, 0xff (a big-endian byte-order mark) then the
+first two bytes of input are skipped and the remaining input
+is interpreted as UTF16BE text.</p>
+
+<p>For UTF16 input text to the sqlite3_result_text16(),
+sqlite3_result_text16be(), sqlite3_result_text16le(), and
+sqlite3_result_text64() routines, if the text contains invalid
+UTF16 characters, the invalid characters might be converted
+into the unicode replacement character, U+FFFD.</p>
 
 <p>The sqlite3_result_value() interface sets the result of
 the application-defined function to be a copy of the
@@ -9994,8 +9803,19 @@ These are utility routines, useful to <a href="vfs.html">custom VFS implementati
 that check if a database file was a URI that contained a specific query
 parameter, and if so obtains the value of that query parameter.</p>
 
-<p>If F is the database filename pointer passed into the xOpen() method of
-a VFS implementation or it is the return value of <a href="#sqlite3_db_filename">sqlite3_db_filename()</a>
+<p>The first parameter to these interfaces (hereafter referred to
+as F) must be one of:
+<ul>
+<li> A database filename pointer created by the SQLite core and
+passed into the xOpen() method of a VFS implemention, or
+<li> A filename obtained from <a href="#sqlite3_db_filename">sqlite3_db_filename()</a>, or
+<li> A new filename constructed using <a href="#sqlite3_create_filename">sqlite3_create_filename()</a>.
+</ul>
+If the F parameter is not one of the above, then the behavior is
+undefined and probably undesirable.  Older versions of SQLite were
+more tolerant of invalid F parameters than newer versions.</p>
+
+<p>If F is a suitable filename (as described in the previous paragraph)
 and if P is the name of the query parameter, then
 sqlite3_uri_parameter(F,P) returns the value of the P
 parameter if it exists or a NULL pointer if P does not appear as a
@@ -10313,12 +10133,31 @@ The index for named parameters can be looked up using the
 <a href="#sqlite3_bind_parameter_index">sqlite3_bind_parameter_index()</a> API if desired.  The index
 for "?NNN" parameters is the value of NNN.
 The NNN value must be between 1 and the <a href="#sqlite3_limit">sqlite3_limit()</a>
-parameter <a href="#sqlitelimitvariablenumber">SQLITE_LIMIT_VARIABLE_NUMBER</a> (default value: 999).</p>
+parameter <a href="#sqlitelimitvariablenumber">SQLITE_LIMIT_VARIABLE_NUMBER</a> (default value: 32766).</p>
 
 <p>The third argument is the value to bind to the parameter.
 If the third parameter to sqlite3_bind_text() or sqlite3_bind_text16()
 or sqlite3_bind_blob() is a NULL pointer then the fourth parameter
-is ignored and the end result is the same as sqlite3_bind_null().</p>
+is ignored and the end result is the same as sqlite3_bind_null().
+If the third parameter to sqlite3_bind_text() is not NULL, then
+it should be a pointer to well-formed UTF8 text.
+If the third parameter to sqlite3_bind_text16() is not NULL, then
+it should be a pointer to well-formed UTF16 text.
+If the third parameter to sqlite3_bind_text64() is not NULL, then
+it should be a pointer to a well-formed unicode string that is
+either UTF8 if the sixth parameter is SQLITE_UTF8, or UTF16
+otherwise.</p>
+
+<p><a name="byteorderdeterminationrules"></a>
+ The byte-order of
+UTF16 input text is determined by the byte-order mark (BOM, U+FEFF)
+found in first character, which is removed, or in the absence of a BOM
+the byte order is the native byte order of the host
+machine for sqlite3_bind_text16() or the byte order specified in
+the 6th parameter for sqlite3_bind_text64().
+If UTF16 input text contains invalid unicode
+characters, then SQLite might change those invalid characters
+into the unicode replacement character: U+FFFD.</p>
 
 <p>In those routines that have a fourth argument, its value is the
 number of bytes in the parameter.  To be clear: the value is the
@@ -10332,7 +10171,7 @@ If a non-negative fourth parameter is provided to sqlite3_bind_text()
 or sqlite3_bind_text16() or sqlite3_bind_text64() then
 that parameter must be the byte offset
 where the NUL terminator would occur assuming the string were NUL
-terminated.  If any NUL characters occur at byte offsets less than
+terminated.  If any NUL characters occurs at byte offsets less than
 the value of the fourth parameter then the resulting string value will
 contain embedded NULs.  The result of expressions involving strings
 with embedded NULs is undefined.</p>

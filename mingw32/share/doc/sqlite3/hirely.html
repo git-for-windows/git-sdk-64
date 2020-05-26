@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -109,8 +109,8 @@ problems.  It just works.
 </p><p>
 The high-reliability of SQLite is proven in practice.
 SQLite has been used without problems in multiple billions of smart-phones, 
-IoT devices, and desktop applications, around the world, and for
-over a decade.
+IoT devices, and desktop applications, around the world, and for almost two
+decades.
 
 </p><p>
 SQLite responds gracefully to system errors.  Obscure out-of-memory and
@@ -122,6 +122,7 @@ SQLite is resilient in the face of corrupt inputs, including maliciously
 designed database files and SQL strings.  Extensive fuzz-testing ensures
 that corrupt inputs will not lead to crashes or undefined behavior, but
 will instead cause sensible errors to be reported back to the application.
+(<a href="security.html">More...</a>)
 
 </p><p>
 SQLite is built using a 

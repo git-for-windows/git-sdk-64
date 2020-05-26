@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>The UINT Collating Sequence</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+The UINT Collating Sequence
+</div>
+</div>
+
+
+
+
+
+<h1 id="overview"><span>1. </span>Overview</h1>
+
+<p> The UINT collating sequences is a <a href="loadext.html">loadable extension</a> for
+SQLite that implements a new collating sequence that compares text
+containing unsigned integers in numeric order.
+
+</p><p> The UINT collating sequence is not a standard part of SQLite.
+It must be loaded as a separate extension.  The source code to
+UINT is in the <a href="https://sqlite.org/src/file/ext/misc/uint.c">uint.c source file</a>
+in the <a href="https://sqlite.org/src/file/ext/misc">ext/misc/ folder</a> of the
+SQLite source tree.
+
+</p><p> The UINT collating sequence is not included in standard builds of
+the SQLite library, but it is loaded by default in the <a href="cli.html">CLI</a>.  This
+is typical of the <a href="cli.html">CLI</a> which loads various extensions above and beyond
+what are available in the standard SQLite library.
+
+</p><p> The UINT collating sequence works just like the default
+BINARY collating sequence for text, except that embedded strings
+of digits compare in numeric order.
+
+</p><ul>
+<li><p>
+Leading zeros are handled properly, in the sense that
+they do not mess of the maginitude comparison of embedded
+strings of digits.  "x00123y" is equal to "x123y".
+
+</p></li><li><p>
+Only unsigned integers are recognized.  Plus and minus
+signs are ignored.  Decimal points and exponential notation
+are ignored.
+
+</p></li><li><p>
+Embedded integers can be of arbitrary length.  Comparison
+is not limited to integers that can be expressed as a
+64-bit machine integer.
+</p></li></ul>
+
+<h1 id="example_"><span>2. </span>Example:</h1>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+<tr><th>COLLATE binary</th><th>COLLATE uint</th></tr>
+<tr><td valign="top" align="left"><pre>
+'0000123457'
+'123456'
+'abc0000000010xyz'
+'abc0010xyy'
+'abc10xzz'
+'abc674xyz'
+'abc87xyz'
+'abc9xyz'</pre></td>
+<td valign="top" align="left"><pre>
+'123456'
+'0000123457'
+'abc9xyz'
+'abc0010xyy'
+'abc0000000010xyz'
+'abc10xzz'
+'abc87xyz'
+'abc674xyz'</pre></td>
+</tr></table>
+</blockquote>
+

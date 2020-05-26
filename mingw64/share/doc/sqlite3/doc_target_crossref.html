@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -112,6 +112,7 @@ return false;
 <li><a href="bindptr.html#ptrleak">bindptr.html#ptrleak</a> &rarr; {pointer leak} {pointer leaks}</li>
 <li><a href="bindptr.html#ptrtyp">bindptr.html#ptrtyp</a> &rarr; {pointer types}</li>
 <li><a href="books.html">books.html</a> &rarr; {books about SQLite}</li>
+<li><a href="bytecodevtab.html">bytecodevtab.html</a> &rarr; bcvtab {bytecode and tables_used virtual tables} {bytecode virtual table} {tables_used virtual table}</li>
 <li><a href="c3ref/aggregate_context.html">c3ref/aggregate_context.html</a> &rarr; sqlite3_aggregate_context</li>
 <li><a href="c3ref/aggregate_count.html">c3ref/aggregate_count.html</a> &rarr; sqlite3_aggregate_count sqlite3_expired sqlite3_global_recover sqlite3_memory_alarm sqlite3_thread_cleanup sqlite3_transfer_bindings</li>
 <li><a href="c3ref/api_routines.html">c3ref/api_routines.html</a> &rarr; sqlite3_api_routines</li>
@@ -123,6 +124,7 @@ return false;
 <li><a href="c3ref/backup_finish.html#sqlite3backupremaining">c3ref/backup_finish.html#sqlite3backupremaining</a> &rarr; sqlite3_backup_remaining</li>
 <li><a href="c3ref/backup_finish.html#sqlite3backupstep">c3ref/backup_finish.html#sqlite3backupstep</a> &rarr; sqlite3_backup_step</li>
 <li><a href="c3ref/bind_blob.html">c3ref/bind_blob.html</a> &rarr; {SQL parameter} {SQL parameters} {host parameter} {host parameter name} {host parameters} {parameter binding} sqlite3_bind_blob sqlite3_bind_blob64 sqlite3_bind_double sqlite3_bind_int sqlite3_bind_int64 sqlite3_bind_null sqlite3_bind_pointer sqlite3_bind_text sqlite3_bind_text16 sqlite3_bind_text64 sqlite3_bind_value sqlite3_bind_zeroblob sqlite3_bind_zeroblob64</li>
+<li><a href="c3ref/bind_blob.html#byteorderdeterminationrules">c3ref/bind_blob.html#byteorderdeterminationrules</a> &rarr; {byte-order determination rules}</li>
 <li><a href="c3ref/bind_parameter_count.html">c3ref/bind_parameter_count.html</a> &rarr; sqlite3_bind_parameter_count</li>
 <li><a href="c3ref/bind_parameter_index.html">c3ref/bind_parameter_index.html</a> &rarr; sqlite3_bind_parameter_index</li>
 <li><a href="c3ref/bind_parameter_name.html">c3ref/bind_parameter_name.html</a> &rarr; sqlite3_bind_parameter_name</li>
@@ -136,7 +138,7 @@ return false;
 <li><a href="c3ref/busy_handler.html">c3ref/busy_handler.html</a> &rarr; {busy handler} {busy-handler callback} sqlite3_busy_handler</li>
 <li><a href="c3ref/busy_timeout.html">c3ref/busy_timeout.html</a> &rarr; sqlite3_busy_timeout</li>
 <li><a href="c3ref/c_abort.html">c3ref/c_abort.html</a> &rarr; {result code definitions}</li>
-<li><a href="c3ref/c_abort_rollback.html">c3ref/c_abort_rollback.html</a> &rarr; SQLITE_AUTH_USER SQLITE_CANTOPEN_SYMLINK SQLITE_CONSTRAINT_PINNED SQLITE_IOERR_AUTH SQLITE_IOERR_BEGIN_ATOMIC SQLITE_IOERR_COMMIT_ATOMIC SQLITE_IOERR_ROLLBACK_ATOMIC SQLITE_IOERR_VNODE SQLITE_OK_SYMLINK {extended result code definitions}</li>
+<li><a href="c3ref/c_abort_rollback.html">c3ref/c_abort_rollback.html</a> &rarr; SQLITE_AUTH_USER SQLITE_BUSY_TIMEOUT SQLITE_CANTOPEN_SYMLINK SQLITE_CONSTRAINT_PINNED SQLITE_CORRUPT_INDEX SQLITE_IOERR_AUTH SQLITE_IOERR_BEGIN_ATOMIC SQLITE_IOERR_COMMIT_ATOMIC SQLITE_IOERR_DATA SQLITE_IOERR_ROLLBACK_ATOMIC SQLITE_IOERR_VNODE SQLITE_OK_SYMLINK {extended result code definitions}</li>
 <li><a href="c3ref/c_access_exists.html">c3ref/c_access_exists.html</a> &rarr; SQLITE_ACCESS_EXISTS SQLITE_ACCESS_READ SQLITE_ACCESS_READWRITE</li>
 <li><a href="c3ref/c_alter_table.html">c3ref/c_alter_table.html</a> &rarr; SQLITE_ALTER_TABLE SQLITE_ANALYZE SQLITE_ATTACH SQLITE_COPY SQLITE_CREATE_INDEX SQLITE_CREATE_TABLE SQLITE_CREATE_TEMP_INDEX SQLITE_CREATE_TEMP_TABLE SQLITE_CREATE_TEMP_TRIGGER SQLITE_CREATE_TEMP_VIEW SQLITE_CREATE_TRIGGER SQLITE_CREATE_VIEW SQLITE_CREATE_VTABLE SQLITE_DELETE SQLITE_DETACH SQLITE_DROP_INDEX SQLITE_DROP_TABLE SQLITE_DROP_TEMP_INDEX SQLITE_DROP_TEMP_TABLE SQLITE_DROP_TEMP_TRIGGER SQLITE_DROP_TEMP_VIEW SQLITE_DROP_TRIGGER SQLITE_DROP_VIEW SQLITE_DROP_VTABLE SQLITE_FUNCTION SQLITE_INSERT SQLITE_PRAGMA SQLITE_READ SQLITE_RECURSIVE SQLITE_REINDEX SQLITE_SAVEPOINT SQLITE_SELECT SQLITE_TRANSACTION SQLITE_UPDATE</li>
 <li><a href="c3ref/c_any.html">c3ref/c_any.html</a> &rarr; SQLITE_ANY SQLITE_UTF16 SQLITE_UTF16BE SQLITE_UTF16LE SQLITE_UTF16_ALIGNED SQLITE_UTF8</li>
@@ -211,11 +213,12 @@ return false;
 <li><a href="c3ref/c_deterministic.html#sqliteinnocuous">c3ref/c_deterministic.html#sqliteinnocuous</a> &rarr; SQLITE_INNOCUOUS</li>
 <li><a href="c3ref/c_deterministic.html#sqlitesubtype">c3ref/c_deterministic.html#sqlitesubtype</a> &rarr; SQLITE_SUBTYPE</li>
 <li><a href="c3ref/c_fail.html">c3ref/c_fail.html</a> &rarr; SQLITE_FAIL SQLITE_REPLACE SQLITE_ROLLBACK {conflict resolution mode}</li>
-<li><a href="c3ref/c_fcntl_begin_atomic_write.html">c3ref/c_fcntl_begin_atomic_write.html</a> &rarr; SQLITE_FCNTL_GET_LOCKPROXYFILE SQLITE_FCNTL_LAST_ERRNO SQLITE_FCNTL_PDB SQLITE_FCNTL_SET_LOCKPROXYFILE {file control opcode} {file control opcodes}</li>
+<li><a href="c3ref/c_fcntl_begin_atomic_write.html">c3ref/c_fcntl_begin_atomic_write.html</a> &rarr; SQLITE_FCNTL_GET_LOCKPROXYFILE SQLITE_FCNTL_LAST_ERRNO SQLITE_FCNTL_PDB SQLITE_FCNTL_RESERVE_BYTES SQLITE_FCNTL_SET_LOCKPROXYFILE {file control opcode} {file control opcodes}</li>
 <li><a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlbeginatomicwrite">c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlbeginatomicwrite</a> &rarr; SQLITE_FCNTL_BEGIN_ATOMIC_WRITE</li>
 <li><a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlbusyhandler">c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlbusyhandler</a> &rarr; SQLITE_FCNTL_BUSYHANDLER</li>
 <li><a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlchunksize">c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlchunksize</a> &rarr; SQLITE_FCNTL_CHUNK_SIZE</li>
 <li><a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlckptdone">c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlckptdone</a> &rarr; SQLITE_FCNTL_CKPT_DONE</li>
+<li><a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlckptstart">c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlckptstart</a> &rarr; SQLITE_FCNTL_CKPT_START</li>
 <li><a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlcommitatomicwrite">c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlcommitatomicwrite</a> &rarr; SQLITE_FCNTL_COMMIT_ATOMIC_WRITE</li>
 <li><a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlcommitphasetwo">c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlcommitphasetwo</a> &rarr; SQLITE_FCNTL_COMMIT_PHASETWO</li>
 <li><a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntldataversion">c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntldataversion</a> &rarr; SQLITE_FCNTL_DATA_VERSION</li>
@@ -326,10 +329,12 @@ return false;
 <li><a href="c3ref/context.html">c3ref/context.html</a> &rarr; sqlite3_context</li>
 <li><a href="c3ref/context_db_handle.html">c3ref/context_db_handle.html</a> &rarr; sqlite3_context_db_handle</li>
 <li><a href="c3ref/create_collation.html">c3ref/create_collation.html</a> &rarr; sqlite3_create_collation sqlite3_create_collation16 sqlite3_create_collation_v2</li>
+<li><a href="c3ref/create_filename.html">c3ref/create_filename.html</a> &rarr; sqlite3_create_filename sqlite3_free_filename</li>
 <li><a href="c3ref/create_function.html">c3ref/create_function.html</a> &rarr; {function creation routines} sqlite3_create_function sqlite3_create_function16 sqlite3_create_function_v2 sqlite3_create_window_function</li>
 <li><a href="c3ref/create_module.html">c3ref/create_module.html</a> &rarr; sqlite3_create_module sqlite3_create_module_v2</li>
 <li><a href="c3ref/data_count.html">c3ref/data_count.html</a> &rarr; sqlite3_data_count</li>
 <li><a href="c3ref/data_directory.html">c3ref/data_directory.html</a> &rarr; sqlite3_data_directory</li>
+<li><a href="c3ref/database_file_object.html">c3ref/database_file_object.html</a> &rarr; sqlite3_database_file_object</li>
 <li><a href="c3ref/db_cacheflush.html">c3ref/db_cacheflush.html</a> &rarr; sqlite3_db_cacheflush</li>
 <li><a href="c3ref/db_config.html">c3ref/db_config.html</a> &rarr; sqlite3_db_config</li>
 <li><a href="c3ref/db_filename.html">c3ref/db_filename.html</a> &rarr; sqlite3_db_filename</li>
@@ -471,11 +476,16 @@ return false;
 <li><a href="changes.html">changes.html</a> &rarr; {complete list of SQLite releases} {release history}</li>
 <li><a href="chronology.html">chronology.html</a> &rarr; chronology {prior releases}</li>
 <li><a href="cintro.html">cintro.html</a> &rarr; cintro</li>
+<li><a href="cksumvfs.html">cksumvfs.html</a> &rarr; {checksum VFS} {checksum VFS shim} cksumvfs</li>
 <li><a href="cli.html">cli.html</a> &rarr; CLI {Command Line Interface} {command-line interface} {command-line shell} sqlite3.exe {sqlite3.exe command-line shell}</li>
 <li><a href="cli.html#arinsup">cli.html#arinsup</a> &rarr; {--insert option} {--update option}</li>
 <li><a href="cli.html#csv">cli.html#csv</a> &rarr; .import {CSV import}</li>
 <li><a href="cli.html#csvout">cli.html#csvout</a> &rarr; {CSV export}</li>
 <li><a href="cli.html#dotcmd">cli.html#dotcmd</a> &rarr; dot-commands</li>
+<li><a href="cli.html#dotexcel">cli.html#dotexcel</a> &rarr; .excel</li>
+<li><a href="cli.html#dotmode">cli.html#dotmode</a> &rarr; .mode</li>
+<li><a href="cli.html#dotmodequote">cli.html#dotmodequote</a> &rarr; {.mode quote}</li>
+<li><a href="cli.html#dotoutput">cli.html#dotoutput</a> &rarr; .once .output</li>
 <li><a href="cli.html#dschema">cli.html#dschema</a> &rarr; .schema</li>
 <li><a href="cli.html#dtables">cli.html#dtables</a> &rarr; .tables</li>
 <li><a href="cli.html#dump">cli.html#dump</a> &rarr; .dump</li>
@@ -531,6 +541,7 @@ return false;
 <li><a href="compile.html#enable_api_armor">compile.html#enable_api_armor</a> &rarr; -DSQLITE_ENABLE_API_ARMOR SQLITE_ENABLE_API_ARMOR</li>
 <li><a href="compile.html#enable_atomic_write">compile.html#enable_atomic_write</a> &rarr; -DSQLITE_ENABLE_ATOMIC_WRITE SQLITE_ENABLE_ATOMIC_WRITE</li>
 <li><a href="compile.html#enable_batch_atomic_write">compile.html#enable_batch_atomic_write</a> &rarr; -DSQLITE_ENABLE_BATCH_ATOMIC_WRITE SQLITE_ENABLE_BATCH_ATOMIC_WRITE</li>
+<li><a href="compile.html#enable_bytecode_vtab">compile.html#enable_bytecode_vtab</a> &rarr; -DSQLITE_ENABLE_BYTECODE_VTAB SQLITE_ENABLE_BYTECODE_VTAB</li>
 <li><a href="compile.html#enable_column_metadata">compile.html#enable_column_metadata</a> &rarr; -DSQLITE_ENABLE_COLUMN_METADATA SQLITE_ENABLE_COLUMN_METADATA</li>
 <li><a href="compile.html#enable_dbpage_vtab">compile.html#enable_dbpage_vtab</a> &rarr; -DSQLITE_ENABLE_DBPAGE_VTAB SQLITE_ENABLE_DBPAGE_VTAB</li>
 <li><a href="compile.html#enable_dbstat_vtab">compile.html#enable_dbstat_vtab</a> &rarr; -DSQLITE_ENABLE_DBSTAT_VTAB SQLITE_ENABLE_DBSTAT_VTAB</li>
@@ -691,6 +702,8 @@ return false;
 <li><a href="crew.html#dan">crew.html#dan</a> &rarr; {Dan Kennedy}</li>
 <li><a href="csv.html">csv.html</a> &rarr; {CSV virtual table} csv</li>
 <li><a href="custombuild.html">custombuild.html</a> &rarr; {custom builds} {porting SQLite}</li>
+<li><a href="cves.html">cves.html</a> &rarr; CVEs {reported vulnerabilities} vulnerabilities</li>
+<li><a href="cves.html#cvetab">cves.html#cvetab</a> &rarr; {recent CVEs}</li>
 <li><a href="datatype3.html">datatype3.html</a> &rarr; datatype {dynamic typing}</li>
 <li><a href="datatype3.html#affinity">datatype3.html#affinity</a> &rarr; affinities affinity {column affinity} {type affinity}</li>
 <li><a href="datatype3.html#affname">datatype3.html#affname</a> &rarr; {rules for determining column affinity}</li>
@@ -737,6 +750,7 @@ return false;
 <li><a href="fileformat2.html#lockbyte">fileformat2.html#lockbyte</a> &rarr; {lock-byte page}</li>
 <li><a href="fileformat2.html#ovflpgs">fileformat2.html#ovflpgs</a> &rarr; {overflow page} {overflow pages}</li>
 <li><a href="fileformat2.html#record_format">fileformat2.html#record_format</a> &rarr; {record format}</li>
+<li><a href="fileformat2.html#resbyte">fileformat2.html#resbyte</a> &rarr; {reserve bytes}</li>
 <li><a href="fileformat2.html#rollbackjournal">fileformat2.html#rollbackjournal</a> &rarr; {rollback journal format}</li>
 <li><a href="fileformat2.html#schemaformat">fileformat2.html#schemaformat</a> &rarr; {schema format} {schema format number}</li>
 <li><a href="fileformat2.html#seqtab">fileformat2.html#seqtab</a> &rarr; sqlite_sequence</li>
@@ -790,6 +804,7 @@ return false;
 <li><a href="fts3.html#fts4prefix">fts3.html#fts4prefix</a> &rarr; {FTS4 prefix option}</li>
 <li><a href="fts3.html#full_text_index_queries">fts3.html#full_text_index_queries</a> &rarr; {FTS MATCH}</li>
 <li><a href="fts3.html#hiddencol">fts3.html#hiddencol</a> &rarr; {FTS hidden column}</li>
+<li><a href="fts3.html#limitations">fts3.html#limitations</a> &rarr; bugs</li>
 <li><a href="fts3.html#matchinfo">fts3.html#matchinfo</a> &rarr; matchinfo</li>
 <li><a href="fts3.html#matchinfo-b">fts3.html#matchinfo-b</a> &rarr; {matchinfo b flag}</li>
 <li><a href="fts3.html#matchinfo-x">fts3.html#matchinfo-x</a> &rarr; {matchinfo x flag}</li>
@@ -868,6 +883,7 @@ return false;
 <li><a href="getthecode.html">getthecode.html</a> &rarr; {canonical source code} {get the canonical source code}</li>
 <li><a href="getthecode.html#clone">getthecode.html#clone</a> &rarr; {clone the entire repository}</li>
 <li><a href="hirely.html">hirely.html</a> &rarr; high-reliability</li>
+<li><a href="howitworks.html">howitworks.html</a> &rarr; {How SQL Works} {How SQLite Works}</li>
 <li><a href="howtocompile.html">howtocompile.html</a> &rarr; {How To Compile SQLite} {how to compile}</li>
 <li><a href="howtocompile.html#amal">howtocompile.html#amal</a> &rarr; {building the amalgamation}</li>
 <li><a href="howtocompile.html#cli">howtocompile.html#cli</a> &rarr; {compiling the CLI}</li>
@@ -908,8 +924,6 @@ return false;
 <li><a href="json1.html#jtype">json1.html#jtype</a> &rarr; json_type {json_type SQL function}</li>
 <li><a href="json1.html#jvalid">json1.html#jvalid</a> &rarr; json_valid {json_valid SQL function}</li>
 <li><a href="keyword_index.html">keyword_index.html</a> &rarr; {keyword index}</li>
-<li><a href="lang_UPSERT.html">lang_UPSERT.html</a> &rarr; UPSERT upsert {upsert clause}</li>
-<li><a href="lang_UPSERT.html#parseambig">lang_UPSERT.html#parseambig</a> &rarr; {UPSERT parsing ambiguity}</li>
 <li><a href="lang_aggfunc.html">lang_aggfunc.html</a> &rarr; {Aggregate Functions} aggfunc</li>
 <li><a href="lang_aggfunc.html#aggfilter">lang_aggfunc.html#aggfilter</a> &rarr; {FILTER clause on aggregate functions}</li>
 <li><a href="lang_aggfunc.html#avg">lang_aggfunc.html#avg</a> &rarr; avg {avg aggregate function}</li>
@@ -918,17 +932,19 @@ return false;
 <li><a href="lang_aggfunc.html#maxggunc">lang_aggfunc.html#maxggunc</a> &rarr; agg_max {max aggregate function} maxAggFunc</li>
 <li><a href="lang_aggfunc.html#minggunc">lang_aggfunc.html#minggunc</a> &rarr; agg_min {min aggregate function} minAggFunc</li>
 <li><a href="lang_aggfunc.html#sumunc">lang_aggfunc.html#sumunc</a> &rarr; sum {sum aggregate function} sumFunc total {total aggregate function}</li>
-<li><a href="lang_altertable.html">lang_altertable.html</a> &rarr; ALTER {ALTER TABLE}</li>
+<li><a href="lang_altertable.html">lang_altertable.html</a> &rarr; ALTER {ALTER TABLE} altertable</li>
 <li><a href="lang_altertable.html#altertabaddcol">lang_altertable.html#altertabaddcol</a> &rarr; {ALTER TABLE ADD COLUMN} {add column}</li>
 <li><a href="lang_altertable.html#altertableishard">lang_altertable.html#altertableishard</a> &rarr; {why ALTER TABLE is so difficult}</li>
 <li><a href="lang_altertable.html#altertabmvcol">lang_altertable.html#altertabmvcol</a> &rarr; {ALTER TABLE RENAME COLUMN} {rename column}</li>
 <li><a href="lang_altertable.html#altertabrename">lang_altertable.html#altertabrename</a> &rarr; {ALTER TABLE RENAME} {ALTER TABLE RENAME documentation} {rename table}</li>
 <li><a href="lang_altertable.html#otheralter">lang_altertable.html#otheralter</a> &rarr; {generalized ALTER TABLE procedure}</li>
-<li><a href="lang_analyze.html">lang_analyze.html</a> &rarr; ANALYZE</li>
+<li><a href="lang_analyze.html">lang_analyze.html</a> &rarr; ANALYZE analyze</li>
+<li><a href="lang_analyze.html#approx">lang_analyze.html#approx</a> &rarr; {approximate ANALYZE}</li>
 <li><a href="lang_analyze.html#autoanalyze">lang_analyze.html#autoanalyze</a> &rarr; {automatically running ANALYZE}</li>
-<li><a href="lang_attach.html">lang_attach.html</a> &rarr; ATTACH {ATTACH DATABASE} attached</li>
+<li><a href="lang_analyze.html#req">lang_analyze.html#req</a> &rarr; {recommended ANALYZE usage pattern}</li>
+<li><a href="lang_attach.html">lang_attach.html</a> &rarr; ATTACH {ATTACH DATABASE} attach attached</li>
 <li><a href="lang_comment.html">lang_comment.html</a> &rarr; comment comments</li>
-<li><a href="lang_conflict.html">lang_conflict.html</a> &rarr; {ON CONFLICT} {ON CONFLICT clause} {conflict clause}</li>
+<li><a href="lang_conflict.html">lang_conflict.html</a> &rarr; {ON CONFLICT} {ON CONFLICT clause} conflict {conflict clause}</li>
 <li><a href="lang_corefunc.html">lang_corefunc.html</a> &rarr; {Core Functions} corefunc</li>
 <li><a href="lang_corefunc.html#abs">lang_corefunc.html#abs</a> &rarr; abs {abs SQL function}</li>
 <li><a href="lang_corefunc.html#changes">lang_corefunc.html#changes</a> &rarr; changes {changes SQL function}</li>
@@ -937,6 +953,7 @@ return false;
 <li><a href="lang_corefunc.html#glob">lang_corefunc.html#glob</a> &rarr; glob {glob SQL function}</li>
 <li><a href="lang_corefunc.html#hex">lang_corefunc.html#hex</a> &rarr; hex {hex SQL function}</li>
 <li><a href="lang_corefunc.html#ifnull">lang_corefunc.html#ifnull</a> &rarr; ifnull {ifnull SQL function}</li>
+<li><a href="lang_corefunc.html#iif">lang_corefunc.html#iif</a> &rarr; iif {iif SQL function}</li>
 <li><a href="lang_corefunc.html#instr">lang_corefunc.html#instr</a> &rarr; instr {instr SQL function}</li>
 <li><a href="lang_corefunc.html#last_insert_rowid">lang_corefunc.html#last_insert_rowid</a> &rarr; last_insert_rowid {last_insert_rowid SQL function}</li>
 <li><a href="lang_corefunc.html#length">lang_corefunc.html#length</a> &rarr; length {length SQL function}</li>
@@ -970,13 +987,13 @@ return false;
 <li><a href="lang_corefunc.html#unlikely">lang_corefunc.html#unlikely</a> &rarr; unlikely {unlikely SQL function}</li>
 <li><a href="lang_corefunc.html#upper">lang_corefunc.html#upper</a> &rarr; upper {upper SQL function}</li>
 <li><a href="lang_corefunc.html#zeroblob">lang_corefunc.html#zeroblob</a> &rarr; zeroblob {zeroblob SQL function}</li>
-<li><a href="lang_createindex.html">lang_createindex.html</a> &rarr; {CREATE INDEX}</li>
+<li><a href="lang_createindex.html">lang_createindex.html</a> &rarr; {CREATE INDEX} createindex</li>
 <li><a href="lang_createindex.html#collidx">lang_createindex.html#collidx</a> &rarr; COLLATE</li>
 <li><a href="lang_createindex.html#descidx">lang_createindex.html#descidx</a> &rarr; DESC {descending index} {descending indexes} {descending indices}</li>
 <li><a href="lang_createindex.html#uniqueidx">lang_createindex.html#uniqueidx</a> &rarr; {unique index}</li>
-<li><a href="lang_createtable.html">lang_createtable.html</a> &rarr; {CREATE TABLE}</li>
+<li><a href="lang_createtable.html">lang_createtable.html</a> &rarr; {CREATE TABLE} createtable</li>
 <li><a href="lang_createtable.html#ckconst">lang_createtable.html#ckconst</a> &rarr; CHECK {CHECK constraint} {CHECK constraints}</li>
-<li><a href="lang_createtable.html#constraints">lang_createtable.html#constraints</a> &rarr; constraints</li>
+<li><a href="lang_createtable.html#collateclause">lang_createtable.html#collateclause</a> &rarr; {COLLATE clause} {COLLATE constraint}</li>
 <li><a href="lang_createtable.html#createtabas">lang_createtable.html#createtabas</a> &rarr; {CREATE TABLE AS}</li>
 <li><a href="lang_createtable.html#dfltval">lang_createtable.html#dfltval</a> &rarr; {DEFAULT clauses} {default column value} {default value}</li>
 <li><a href="lang_createtable.html#notnullconst">lang_createtable.html#notnullconst</a> &rarr; {NOT NULL} {NOT NULL constraint}</li>
@@ -984,24 +1001,24 @@ return false;
 <li><a href="lang_createtable.html#rowid">lang_createtable.html#rowid</a> &rarr; {INTEGER PRIMARY KEY} ROWID rowid</li>
 <li><a href="lang_createtable.html#tablecoldef">lang_createtable.html#tablecoldef</a> &rarr; {column definition} {column definitions}</li>
 <li><a href="lang_createtable.html#uniqueconst">lang_createtable.html#uniqueconst</a> &rarr; UNIQUE {UNIQUE constraint} {unique constraint}</li>
-<li><a href="lang_createtrigger.html">lang_createtrigger.html</a> &rarr; {CREATE TRIGGER}</li>
+<li><a href="lang_createtrigger.html">lang_createtrigger.html</a> &rarr; {CREATE TRIGGER} createtrigger</li>
 <li><a href="lang_createtrigger.html#instead_of_trigger">lang_createtrigger.html#instead_of_trigger</a> &rarr; {INSTEAD OF} {INSTEAD OF trigger}</li>
 <li><a href="lang_createtrigger.html#raise">lang_createtrigger.html#raise</a> &rarr; {RAISE function}</li>
 <li><a href="lang_createtrigger.html#temptrig">lang_createtrigger.html#temptrig</a> &rarr; {TEMP triggers on non-TEMP tables}</li>
 <li><a href="lang_createtrigger.html#undef_before">lang_createtrigger.html#undef_before</a> &rarr; {undefined BEFORE trigger behavior}</li>
-<li><a href="lang_createview.html">lang_createview.html</a> &rarr; {CREATE VIEW} VIEW view views</li>
-<li><a href="lang_createvtab.html">lang_createvtab.html</a> &rarr; {CREATE VIRTUAL TABLE}</li>
+<li><a href="lang_createview.html">lang_createview.html</a> &rarr; {CREATE VIEW} VIEW createview view views</li>
+<li><a href="lang_createvtab.html">lang_createvtab.html</a> &rarr; {CREATE VIRTUAL TABLE} createvtab</li>
 <li><a href="lang_datefunc.html">lang_datefunc.html</a> &rarr; {Date And Time Functions} {date SQL function} {date and time functions} datefunc {datetime SQL function} {julianday SQL function} {strftime SQL function} {time SQL function}</li>
 <li><a href="lang_datefunc.html#localtime">lang_datefunc.html#localtime</a> &rarr; {localtime modifier} {utc modifier}</li>
-<li><a href="lang_delete.html">lang_delete.html</a> &rarr; DELETE DELETEs</li>
+<li><a href="lang_delete.html">lang_delete.html</a> &rarr; DELETE DELETEs delete</li>
 <li><a href="lang_delete.html#truncateopt">lang_delete.html#truncateopt</a> &rarr; {truncate optimization}</li>
-<li><a href="lang_detach.html">lang_detach.html</a> &rarr; DETACH {DETACH DATABASE}</li>
-<li><a href="lang_dropindex.html">lang_dropindex.html</a> &rarr; {DROP INDEX}</li>
-<li><a href="lang_droptable.html">lang_droptable.html</a> &rarr; {DROP TABLE}</li>
-<li><a href="lang_droptrigger.html">lang_droptrigger.html</a> &rarr; {DROP TRIGGER}</li>
-<li><a href="lang_dropview.html">lang_dropview.html</a> &rarr; {DROP VIEW}</li>
-<li><a href="lang_explain.html">lang_explain.html</a> &rarr; EXPLAIN</li>
-<li><a href="lang_expr.html">lang_expr.html</a> &rarr; expression {expression syntax}</li>
+<li><a href="lang_detach.html">lang_detach.html</a> &rarr; DETACH {DETACH DATABASE} detach</li>
+<li><a href="lang_dropindex.html">lang_dropindex.html</a> &rarr; {DROP INDEX} dropindex</li>
+<li><a href="lang_droptable.html">lang_droptable.html</a> &rarr; {DROP TABLE} droptable</li>
+<li><a href="lang_droptrigger.html">lang_droptrigger.html</a> &rarr; {DROP TRIGGER} droptrigger</li>
+<li><a href="lang_dropview.html">lang_dropview.html</a> &rarr; {DROP VIEW} dropview</li>
+<li><a href="lang_explain.html">lang_explain.html</a> &rarr; EXPLAIN explain</li>
+<li><a href="lang_expr.html">lang_expr.html</a> &rarr; expression {expression syntax} langexpr</li>
 <li><a href="lang_expr.html#between">lang_expr.html#between</a> &rarr; BETWEEN</li>
 <li><a href="lang_expr.html#binaryops">lang_expr.html#binaryops</a> &rarr; {binary operators}</li>
 <li><a href="lang_expr.html#booleanexpr">lang_expr.html#booleanexpr</a> &rarr; {boolean expression}</li>
@@ -1020,14 +1037,14 @@ return false;
 <li><a href="lang_expr.html#regexp">lang_expr.html#regexp</a> &rarr; REGEXP</li>
 <li><a href="lang_expr.html#subq">lang_expr.html#subq</a> &rarr; Subqueries</li>
 <li><a href="lang_expr.html#varparam">lang_expr.html#varparam</a> &rarr; {bound parameter} {bound parameters} parameter parameters</li>
-<li><a href="lang_indexedby.html">lang_indexedby.html</a> &rarr; {INDEXED BY} {NOT INDEXED}</li>
-<li><a href="lang_insert.html">lang_insert.html</a> &rarr; INSERT INSERTs</li>
-<li><a href="lang_keywords.html">lang_keywords.html</a> &rarr; {SQL keyword} {SQL keywords} {SQLite Keywords}</li>
-<li><a href="lang_naming.html">lang_naming.html</a> &rarr; {Database Object Name Resolution} {object resolution}</li>
-<li><a href="lang_reindex.html">lang_reindex.html</a> &rarr; REINDEX</li>
-<li><a href="lang_replace.html">lang_replace.html</a> &rarr; REPLACE</li>
-<li><a href="lang_savepoint.html">lang_savepoint.html</a> &rarr; RELEASE SAVEPOINT</li>
-<li><a href="lang_select.html">lang_select.html</a> &rarr; SELECT query</li>
+<li><a href="lang_indexedby.html">lang_indexedby.html</a> &rarr; {INDEXED BY} {NOT INDEXED} langindexedby</li>
+<li><a href="lang_insert.html">lang_insert.html</a> &rarr; INSERT INSERTs insert</li>
+<li><a href="lang_keywords.html">lang_keywords.html</a> &rarr; {SQL keyword} {SQL keywords} {SQLite Keywords} keywords langkeywords</li>
+<li><a href="lang_naming.html">lang_naming.html</a> &rarr; naming {object resolution}</li>
+<li><a href="lang_reindex.html">lang_reindex.html</a> &rarr; REINDEX reindex</li>
+<li><a href="lang_replace.html">lang_replace.html</a> &rarr; REPLACE langreplace</li>
+<li><a href="lang_savepoint.html">lang_savepoint.html</a> &rarr; RELEASE SAVEPOINT savepoint</li>
+<li><a href="lang_select.html">lang_select.html</a> &rarr; SELECT {SELECT query} select</li>
 <li><a href="lang_select.html#bareagg">lang_select.html#bareagg</a> &rarr; {bare aggregate terms}</li>
 <li><a href="lang_select.html#compound">lang_select.html#compound</a> &rarr; {compound SELECT} {compound SELECTs} {compound query} {compound select}</li>
 <li><a href="lang_select.html#crossjoin">lang_select.html#crossjoin</a> &rarr; {treats the CROSS JOIN operator specially}</li>
@@ -1041,13 +1058,15 @@ return false;
 <li><a href="lang_select.html#tabfunc1">lang_select.html#tabfunc1</a> &rarr; {table-valued functions in the FROM clause}</li>
 <li><a href="lang_select.html#values">lang_select.html#values</a> &rarr; VALUES {VALUES clause}</li>
 <li><a href="lang_select.html#whereclause">lang_select.html#whereclause</a> &rarr; {WHERE clause}</li>
-<li><a href="lang_transaction.html">lang_transaction.html</a> &rarr; BEGIN {BEGIN TRANSACTION} COMMIT ROLLBACK</li>
+<li><a href="lang_transaction.html">lang_transaction.html</a> &rarr; BEGIN COMMIT ROLLBACK transaction</li>
 <li><a href="lang_transaction.html#immediate">lang_transaction.html#immediate</a> &rarr; {BEGIN EXCLUSIVE} {BEGIN IMMEDIATE}</li>
-<li><a href="lang_update.html">lang_update.html</a> &rarr; UPDATE UPDATEs</li>
-<li><a href="lang_vacuum.html">lang_vacuum.html</a> &rarr; VACUUM</li>
+<li><a href="lang_update.html">lang_update.html</a> &rarr; UPDATE UPDATEs langupdate</li>
+<li><a href="lang_upsert.html">lang_upsert.html</a> &rarr; UPSERT upsert {upsert clause}</li>
+<li><a href="lang_upsert.html#parseambig">lang_upsert.html#parseambig</a> &rarr; {UPSERT parsing ambiguity}</li>
+<li><a href="lang_vacuum.html">lang_vacuum.html</a> &rarr; VACUUM langvacuum vacuum</li>
 <li><a href="lang_vacuum.html#howvacuumworks">lang_vacuum.html#howvacuumworks</a> &rarr; {how vacuum works}</li>
 <li><a href="lang_vacuum.html#vacuuminto">lang_vacuum.html#vacuuminto</a> &rarr; {VACUUM INTO}</li>
-<li><a href="lang_with.html">lang_with.html</a> &rarr; WITH {WITH clause} {common table expressions}</li>
+<li><a href="lang_with.html">lang_with.html</a> &rarr; WITH {WITH clause} {common table expressions} with</li>
 <li><a href="lang_with.html#mandelbrot">lang_with.html#mandelbrot</a> &rarr; {compute the Mandelbrot set}</li>
 <li><a href="lang_with.html#ordinarycte">lang_with.html#ordinarycte</a> &rarr; {ordinary common table expressions}</li>
 <li><a href="lang_with.html#recursivecte">lang_with.html#recursivecte</a> &rarr; {recursive common table expression} {recursive common table expressions} {recursive query}</li>
@@ -1096,6 +1115,7 @@ return false;
 <li><a href="mmap.html">mmap.html</a> &rarr; {memory-mapped I/O} mmap</li>
 <li><a href="mostdeployed.html">mostdeployed.html</a> &rarr; {most used} {most widely deployed} {most widely used}</li>
 <li><a href="np1queryprob.html">np1queryprob.html</a> &rarr; {about 200 SQL statements per webpage}</li>
+<li><a href="nulinstr.html">nulinstr.html</a> &rarr; {NUL characters in strings}</li>
 <li><a href="opcode.html">opcode.html</a> &rarr; VDBE bytecode {bytecode engine} bytecodes opcodes {virtual machine} {virtual machine instructions}</li>
 <li><a href="opcode.html#codes">opcode.html#codes</a> &rarr; {list of current bytecodes} {opcode definitions}</li>
 <li><a href="opcode.html#subprog">opcode.html#subprog</a> &rarr; subprograms</li>
@@ -1118,6 +1138,7 @@ return false;
 <li><a href="partialindex.html">partialindex.html</a> &rarr; {partial index} {partial indexes} {partial indices}</li>
 <li><a href="pgszchng2016.html">pgszchng2016.html</a> &rarr; {increase in the default page size} {version 3.12.0 page size change}</li>
 <li><a href="pragma.html#pragfunc">pragma.html#pragfunc</a> &rarr; {PRAGMA function} {PRAGMA functions}</li>
+<li><a href="pragma.html#pragma_analysis_limit">pragma.html#pragma_analysis_limit</a> &rarr; {PRAGMA analysis_limit} analysis_limit {analysis_limit pragma}</li>
 <li><a href="pragma.html#pragma_application_id">pragma.html#pragma_application_id</a> &rarr; {PRAGMA application_id} application_id {application_id pragma}</li>
 <li><a href="pragma.html#pragma_auto_vacuum">pragma.html#pragma_auto_vacuum</a> &rarr; {PRAGMA auto_vacuum} auto_vacuum {auto_vacuum pragma}</li>
 <li><a href="pragma.html#pragma_automatic_index">pragma.html#pragma_automatic_index</a> &rarr; {PRAGMA automatic_index} automatic_index {automatic_index pragma}</li>
@@ -1293,6 +1314,7 @@ return false;
 <li><a href="releaselog/3_30_1.html">releaselog/3_30_1.html</a> &rarr; {Version 3.30.1} {version 3.30.1}</li>
 <li><a href="releaselog/3_31_0.html">releaselog/3_31_0.html</a> &rarr; {Version 3.31.0} {version 3.31.0}</li>
 <li><a href="releaselog/3_31_1.html">releaselog/3_31_1.html</a> &rarr; {Version 3.31.1} {version 3.31.1}</li>
+<li><a href="releaselog/3_32_0.html">releaselog/3_32_0.html</a> &rarr; {Version 3.32.0} {version 3.32.0}</li>
 <li><a href="releaselog/3_3_0.html">releaselog/3_3_0.html</a> &rarr; {Version 3.3.0} {Version 3.3.0.0} {version 3.3.0} {version 3.3.0.0}</li>
 <li><a href="releaselog/3_3_1.html">releaselog/3_3_1.html</a> &rarr; {Version 3.3.1} {Version 3.3.1.0} {version 3.3.1} {version 3.3.1.0}</li>
 <li><a href="releaselog/3_3_10.html">releaselog/3_3_10.html</a> &rarr; {Version 3.3.10} {Version 3.3.10.0} {version 3.3.10} {version 3.3.10.0}</li>
@@ -1584,6 +1606,7 @@ return false;
 <li><a href="sqlar.html#dbasobj">sqlar.html#dbasobj</a> &rarr; {database as container object} {database as object}</li>
 <li><a href="sqldiff.html">sqldiff.html</a> &rarr; sqldiff sqldiff.exe</li>
 <li><a href="stmt.html">stmt.html</a> &rarr; {SQLITE_STMT virtual table} sqlite_stmt {the SQLITE_STMT extension}</li>
+<li><a href="support.html#fx">support.html#fx</a> &rarr; forum</li>
 <li><a href="support.html#mailinglists">support.html#mailinglists</a> &rarr; {mailing lists}</li>
 <li><a href="swarmvtab.html#advanced_usage">swarmvtab.html#advanced_usage</a> &rarr; advanced</li>
 <li><a href="swarmvtab.html#compiling_and_using_swarmvtab">swarmvtab.html#compiling_and_using_swarmvtab</a> &rarr; compilation</li>
@@ -1729,6 +1752,7 @@ return false;
 <li><a href="th3.html#muttest">th3.html#muttest</a> &rarr; {mutation test script}</li>
 <li><a href="threadsafe.html">threadsafe.html</a> &rarr; {threading mode}</li>
 <li><a href="transactional.html">transactional.html</a> &rarr; power-safe {power-safe transactions} transactional</li>
+<li><a href="uintcseq.html">uintcseq.html</a> &rarr; UINT {UINT collating sequence}</li>
 <li><a href="undoredo.html">undoredo.html</a> &rarr; {automated undo/redo stack} undo/redo undoredo</li>
 <li><a href="unionvtab.html">unionvtab.html</a> &rarr; {UNION virtual table} union-vtab unionvtab</li>
 <li><a href="unlock_notify.html">unlock_notify.html</a> &rarr; {Using the SQLite Unlock Notification Feature}</li>
@@ -1747,7 +1771,7 @@ return false;
 <li><a href="vtab.html">vtab.html</a> &rarr; {virtual table} {virtual tables}</li>
 <li><a href="vtab.html#colUsed">vtab.html#colUsed</a> &rarr; {colUsed field}</li>
 <li><a href="vtab.html#customvtab">vtab.html#customvtab</a> &rarr; {custom virtual tables}</li>
-<li><a href="vtab.html#epoonlyvtab">vtab.html#epoonlyvtab</a> &rarr; {eponymous-only virtual table}</li>
+<li><a href="vtab.html#epoonlyvtab">vtab.html#epoonlyvtab</a> &rarr; {eponymous-only virtual table} {eponymous-only virtual tables}</li>
 <li><a href="vtab.html#epovtab">vtab.html#epovtab</a> &rarr; {eponymous virtual table} {eponymous virtual tables}</li>
 <li><a href="vtab.html#hiddencol">vtab.html#hiddencol</a> &rarr; {hidden column} {hidden columns}</li>
 <li><a href="vtab.html#sqlite3_module.xDestroy">vtab.html#sqlite3_module.xDestroy</a> &rarr; xDestroy</li>

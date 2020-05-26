@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -502,7 +502,7 @@ be good to consider a centralized client/server database.
 <p>For device-local storage with low writer concurrency and less than a
 terabyte of content, SQLite is almost always a better solution.  SQLite
 is fast and reliable and it requires no configuration or maintenance.
-It keeps thing simple.  SQLite "just works".
+It keeps things simple.  SQLite "just works".
 </li>
 </ol>
 

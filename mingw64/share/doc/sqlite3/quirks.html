@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -106,6 +106,7 @@ Table Of Contents
 <div class="fancy-toc1"><a href="#flexible_typing">3. Flexible Typing</a></div>
 <div class="fancy-toc2"><a href="#no_separate_boolean_datatype">3.1. No Separate BOOLEAN Datatype</a></div>
 <div class="fancy-toc2"><a href="#no_separate_datetime_datatype">3.2. No Separate DATETIME Datatype</a></div>
+<div class="fancy-toc2"><a href="#the_datatype_is_optional">3.3. The datatype is optional</a></div>
 <div class="fancy-toc1"><a href="#foreign_key_enforcement_is_off_by_default">4. Foreign Key Enforcement Is Off By Default</a></div>
 <div class="fancy-toc1"><a href="#primary_keys_can_sometimes_contain_nulls">5. PRIMARY KEYs Can Sometimes Contain NULLs</a></div>
 <div class="fancy-toc1"><a href="#aggregate_queries_can_contain_non_aggregate_result_columns_that_are_not_in_the_group_by_clause">6. Aggregate Queries Can Contain Non-Aggregate Result Columns
@@ -115,6 +116,7 @@ That Are Not In The GROUP BY Clause</a></div>
 <div class="fancy-toc1"><a href="#keywords_can_often_be_used_as_identifiers">9. Keywords Can Often Be Used As Identifiers</a></div>
 <div class="fancy-toc1"><a href="#dubious_sql_is_allowed_without_any_error_or_warning">10. Dubious SQL Is Allowed Without Any Error Or Warning</a></div>
 <div class="fancy-toc1"><a href="#autoincrement_does_not_work_the_same_as_mysql">11. AUTOINCREMENT Does Not Work The Same As MySQL</a></div>
+<div class="fancy-toc1"><a href="#nul_characters_are_allowed_in_text_strings">12. NUL Characters Are Allowed In Text Strings</a></div>
 </div>
 </div>
 <script>
@@ -272,7 +274,19 @@ The built-in <a href="lang_datefunc.html">date and time functions</a> of SQLite 
 all of the formats above, and can freely change between them.
 Which format you use, is entirely up to your application.
 
-</p><h1 id="foreign_key_enforcement_is_off_by_default"><span>4. </span>Foreign Key Enforcement Is Off By Default</h1>
+</p><h2 id="the_datatype_is_optional"><span>3.3. </span>The datatype is optional</h2>
+
+<p>
+Because SQLite is flexible and forgiving with regard to datatypes,
+table columns can be created that have no specified datatype at all.
+For example:
+</p><div class="codeblock"><pre>CREATE TABLE t1(a,b,c,d);
+</pre></div>
+<p>The table "t1" has four columns "a", "b", "c", and "d" that have
+no particular datatype assigned.  You can store anything you want in
+any of those columns.</p>
+
+<h1 id="foreign_key_enforcement_is_off_by_default"><span>4. </span>Foreign Key Enforcement Is Off By Default</h1>
 
 <p>SQLite has parsed foreign key constraints for time out of mind,
 but added the ability to actually enforce those constraints much later,
@@ -313,7 +327,7 @@ column in an aggregate query because each output row might be composed
 from two or more rows in the input table(s).
 
 </p><p>
-SQLite does not impose this restriction.
+SQLite does not enforce this restriction.
 The output columns from an aggregate query can be arbitrary expressions
 that include columns not found in GROUP BY clause.
 This feature has two uses:
@@ -336,11 +350,12 @@ will correspond to the row that satisfied the max(salary) condition.
 
 </p></li><li><p>
 If a query contains no aggregate functions at all, then a GROUP BY
-clause can be added as a substitute of DISTINCT ON clause.  In other words,
+clause can be added as a substitute for the DISTINCT ON clause.  In other words,
 output rows are filtered so that only one row is shows for each distinct
 set of values in the GROUP BY clause.  If two or more output rows would
 have otherwise had the same set of values for the GROUP BY columns, then
-one of the rows is chosen arbitrarily.
+one of the rows is chosen arbitrarily.  (SQLite supports DISTINCT but not
+DISTINCT ON, whose functionality is provided instead by GROUP BY.)
 </p></li></ol>
 
 <h1 id="does_not_do_full_unicode_case_folding_by_default"><span>7. </span>Does Not Do Full Unicode Case Folding By Default</h1>
@@ -434,8 +449,29 @@ For example, the following statement is valid in SQLite:
 The same SQL statement will fail on every other SQL implementation that
 we know of due to the use of keywords "union", "true", and "with" as
 identifiers.
+</p><p>
+The ability to use keywords as identifiers promotes backwards compatibility.
+As new keywords are added, legacy schemas that just happen to use those
+keywords as table or column names continue to work.  However, the ability
+to use a keyword as an identifier sometimes leads to surprising outcomes.
+For example:
+</p><div class="codeblock"><pre>CREATE TRIGGER AFTER INSERT ON tableX BEGIN
+  INSERT INTO tableY(b) VALUES(new.a);
+END;
+</pre></div>
+<p>The trigger created by the previous statement is named "AFTER"
+and it is a "BEFORE" trigger.  The "AFTER" token is used as an identifier
+instead of as a keyword, as that is the only way to parse the statement.
+Another example:
+</p><div class="codeblock"><pre>CREATE TABLE tableZ(INTEGER PRIMARY KEY);
+</pre></div>
+<p>The tableZ table has a single column named "INTEGER".  That column
+has no datatype specified, but it is the PRIMARY KEY.
+The column is <em>not</em> the <a href="lang_createtable.html#rowid">INTEGER PRIMARY KEY</a> for the table because
+it has no datatype.  The "INTEGER" token is used as an identifier for the
+column name, not as a datatype keyword.</p>
 
-</p><h1 id="dubious_sql_is_allowed_without_any_error_or_warning"><span>10. </span>Dubious SQL Is Allowed Without Any Error Or Warning</h1>
+<h1 id="dubious_sql_is_allowed_without_any_error_or_warning"><span>10. </span>Dubious SQL Is Allowed Without Any Error Or Warning</h1>
 
 <p>
 The original implementation of SQLite sought to follow
@@ -458,4 +494,10 @@ expect the two systems to work identically.
 </p><p>See the <a href="autoinc.html">SQLite AUTOINCREMENT documentation</a> for
 detailed instructions on what AUTOINCREMENT does and does not do
 in SQLite.
+
+</p><h1 id="nul_characters_are_allowed_in_text_strings"><span>12. </span>NUL Characters Are Allowed In Text Strings</h1>
+
+<p>NUL characters (ASCII code 0x00 and Unicode \u0000) may appear in
+the middle of strings in SQLite.  This can lead to unexpected behavior.
+See the "<a href="nulinstr.html">NUL characters in strings</a>" document for further information.
 </p>

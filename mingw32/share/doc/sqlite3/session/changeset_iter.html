@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -98,52 +98,18 @@ over the elements of a <a href="../sessionintro.html#changeset">changeset</a> or
 </p><p>Constructors:
  <a href="../session/sqlite3changeset_start.html">sqlite3changeset_start()</a>,
 <a href="../session/sqlite3changeset_start.html">sqlite3changeset_start_v2()</a></p>
-<style>
-#listtab42 tr td {vertical-align:top;}
-</style>
-<table id='listtab42' width='100%'></table>
-<script>
-var listitems42 = [{"u":"../session/sqlite3changeset_conflict.html","x":"sqlite3changeset_conflict","s":0},
-{"u":"../session/sqlite3changeset_finalize.html","x":"sqlite3changeset_finalize","s":0},
-{"u":"../session/sqlite3changeset_fk_conflicts.html","x":"sqlite3changeset_fk_conflicts","s":0},
-{"u":"../session/sqlite3changeset_new.html","x":"sqlite3changeset_new","s":0},
-{"u":"../session/sqlite3changeset_next.html","x":"sqlite3changeset_next","s":0},
-{"u":"../session/sqlite3changeset_old.html","x":"sqlite3changeset_old","s":0},
-{"u":"../session/sqlite3changeset_op.html","x":"sqlite3changeset_op","s":0},
-{"u":"../session/sqlite3changeset_pk.html","x":"sqlite3changeset_pk","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/350);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems42.length+1)/nCol);
-var h="<tr><td colspan="+nCol;
-h += ">Methods:</td></tr><tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems42.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems42[i].u=="" || listitems42[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems42[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems42[i].s==2 || listitems42[i].s==3) h += "<s>"
-  h += listitems42[i].x;
-  if(listitems42[i].s==2 || listitems42[i].s==3) h += "</s>"
-  h += ea
-  if(listitems42[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems42[i].s==3) h += "&sup1\n";
-  if(listitems42[i].s==4) h += "&sup2\n";
-  if(listitems42[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab42").innerHTML = h;
-</script>
+<div class='columns' style='columns: 17em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='../session/sqlite3changeset_conflict.html'>sqlite3changeset_conflict</a></li>
+<li><a href='../session/sqlite3changeset_finalize.html'>sqlite3changeset_finalize</a></li>
+<li><a href='../session/sqlite3changeset_fk_conflicts.html'>sqlite3changeset_fk_conflicts</a></li>
+<li><a href='../session/sqlite3changeset_new.html'>sqlite3changeset_new</a></li>
+<li><a href='../session/sqlite3changeset_next.html'>sqlite3changeset_next</a></li>
+<li><a href='../session/sqlite3changeset_old.html'>sqlite3changeset_old</a></li>
+<li><a href='../session/sqlite3changeset_op.html'>sqlite3changeset_op</a></li>
+<li><a href='../session/sqlite3changeset_pk.html'>sqlite3changeset_pk</a></li>
+</ul>
+</div>
 </p>
 <p>See also lists of
   <a href="objlist.html">Objects</a>,

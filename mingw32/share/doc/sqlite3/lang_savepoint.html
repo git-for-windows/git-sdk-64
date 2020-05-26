@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>SQLite Query Language: SAVEPOINT</title>
+<title>Savepoints</title>
 <!-- path= -->
 </head>
 <body>
@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -91,22 +91,36 @@ return false;
 }
 </script>
 </div>
-<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>SAVEPOINT</h2></div><p><b><a href="syntax/savepoint-stmt.html">savepoint-stmt:</a></b>
-<button id='x1293' onclick='hideorshow("x1293","x1294")'>hide</button></p>
- <div id='x1294' class='imgcontainer'>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+Savepoints
+</div>
+</div>
+
+
+
+
+<h1 id="syntax"><span>1. </span>Syntax</h1>
+
+<p><b><a href="syntax/savepoint-stmt.html">savepoint-stmt:</a></b>
+<button id='x1761' onclick='hideorshow("x1761","x1762")'>hide</button></p>
+ <div id='x1762' class='imgcontainer'>
  <img alt="syntax diagram savepoint-stmt" src="images/syntax/savepoint-stmt.gif" />
 </div>
 <p><b><a href="syntax/release-stmt.html">release-stmt:</a></b>
-<button id='x1295' onclick='hideorshow("x1295","x1296")'>hide</button></p>
- <div id='x1296' class='imgcontainer'>
+<button id='x1763' onclick='hideorshow("x1763","x1764")'>hide</button></p>
+ <div id='x1764' class='imgcontainer'>
  <img alt="syntax diagram release-stmt" src="images/syntax/release-stmt.gif" />
 </div>
 <p><b><a href="syntax/rollback-stmt.html">rollback-stmt:</a></b>
-<button id='x1297' onclick='hideorshow("x1297","x1298")'>hide</button></p>
- <div id='x1298' class='imgcontainer'>
+<button id='x1765' onclick='hideorshow("x1765","x1766")'>hide</button></p>
+ <div id='x1766' class='imgcontainer'>
  <img alt="syntax diagram rollback-stmt" src="images/syntax/rollback-stmt.gif" />
 </div>
 
+
+<h1 id="savepoints"><span>2. </span>Savepoints</h1>
 
 <p> SAVEPOINTs are a method of creating transactions, similar to
 <a href="lang_transaction.html">BEGIN</a> and <a href="lang_transaction.html">COMMIT</a>, except that the SAVEPOINT and RELEASE commands
@@ -181,7 +195,7 @@ changes to the database.
 
 
 
-<h3>Transaction Nesting Rules</h3>
+<h1 id="transaction_nesting_rules"><span>3. </span>Transaction Nesting Rules</h1>
 
 <p>The last transaction started will be the first
 transaction committed or rolled back.</p>
@@ -213,5 +227,4 @@ but all database changes that occurred after that SAVEPOINT was created
 are rolled back.  If the savepoint-name in a ROLLBACK TO command does not
 match any SAVEPOINT on the stack, then the ROLLBACK command fails with an
 error and leaves the state of the database unchanged.</p>
-
 

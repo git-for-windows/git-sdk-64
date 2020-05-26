@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -430,7 +430,7 @@ And the declared type of "STRING" has an affinity of NUMERIC, not TEXT.
 </p><h2 id="affinity_of_expressions"><span>3.2. </span>Affinity Of Expressions</h2>
 
 <p>Every table column has a type affinity (one of BLOB, TEXT, INTEGER,
-REAL, or NUMERIC) but expressions do no necessarily have an affinity.
+REAL, or NUMERIC) but expressions do not necessarily have an affinity.
 
 </p><p>Expression affinity is determined by the following rules:
 
@@ -746,13 +746,16 @@ RTRIM.</p>
 <ul>
 <li><b>BINARY</b> - Compares string data using memcmp(), regardless
                    of text encoding.</li>
-<li><b>NOCASE</b> - The same as binary, except the 26 upper case
+<li><b>NOCASE</b> - Similar to binary, except that it uses
+     <a href="c3ref/stricmp.html">sqlite3_strnicmp()</a> for the comparison.  Hence the 26 upper case
      characters of ASCII are folded to their lower case equivalents before
      the comparison is performed.  Note that only ASCII characters
      are case folded.  SQLite does not attempt to do full
-     UTF case folding due to the size of the tables required.</li>
+     UTF case folding due to the size of the tables required.
+     Also note that any U+0000 characters in the string are considered
+     string terminators for comparison purposes.
 
-<li><b>RTRIM</b> - The same as binary, except that trailing space
+</li><li><b>RTRIM</b> - The same as binary, except that trailing space
      characters are ignored.</li>
 </ul>
 
@@ -820,6 +823,9 @@ The expression "x IN (SELECT y ...)" is handled in the same way as the
 expression "x = y" for the purposes of determining the collating sequence.
 The collating sequence used for expressions of the form 
 "x IN (y, z, ...)" is the collating sequence of x.
+If an explicit collating sequence is required on an IN operator
+it should be applied to the left operand, like this: 
+"x COLLATE nocase IN (y,z, ...)".
 </p>  
 
 <p>

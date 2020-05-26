@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -292,11 +292,14 @@ full query syntax is <a href="fts5.html#full_text_query_syntax">described here</
 
 <h2 id="building_fts5_as_part_of_sqlite"><span>2.1. </span>Building FTS5 as part of SQLite</h2>
 
-<p>As of <a href="releaselog/3_9_0.html">version 3.9.0</a> (2015-10-14), 
+<p>As of <a href="releaselog/3_9_0.html">version 3.9.0</a> (2015-10-14),
 FTS5 is included as part of the SQLite <a href="amalgamation.html">amalgamation</a>.
-It is disabled by default. If using the two autoconf build system, it is
+If using one of the two autoconf build system, FTS5 is
 enabled by specifying the "--enable-fts5" option when running the configure
-script. 
+script.  (FTS5 is currently disabled by default for the
+source-tree configure script and enabled by default for
+the amalgamation configure script, but these defaults might
+change in the future.)
 
 </p><p>Or, if sqlite3.c is compiled using some other build system, by arranging for
 the SQLITE_ENABLE_FTS5 pre-processor symbol to be defined.
@@ -826,7 +829,7 @@ unicode61 tokenizer.
   as part of the separators option, they are ignored.  
 
   </li><li> Case-folding is only performed for ASCII characters. So while "A" and
-  "a" are considered to be equivalent, "&#195" and "&#227;" are distinct.
+  "a" are considered to be equivalent, "&#195;" and "&#227;" are distinct.
 
   </li><li> The remove_diacritics option is not supported.
 </li></ul>

@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>SQLite Query Language: EXPLAIN</title>
+<title>EXPLAIN</title>
 <!-- path= -->
 </head>
 <body>
@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -91,10 +91,23 @@ return false;
 }
 </script>
 </div>
-<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>EXPLAIN</h2></div><p><b><a href="syntax/sql-stmt.html">sql-stmt:</a></b></p><div class='imgcontainer'>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+EXPLAIN
+</div>
+</div>
+
+
+
+
+<h1 id="syntax"><span>1. </span>Syntax</h1>
+<p><b><a href="syntax/sql-stmt.html">sql-stmt:</a></b></p><div class='imgcontainer'>
  <img alt="syntax diagram sql-stmt" src="images/syntax/sql-stmt.gif"></img>
  </div>
 
+
+<h1 id="description"><span>2. </span>Description</h1>
 
 <p>An SQL statement can be preceded by the keyword "EXPLAIN" or
 by the phrase "EXPLAIN QUERY PLAN".  Either modification causes the
@@ -115,10 +128,10 @@ the EXPLAIN keyword not been present. When the EXPLAIN QUERY PLAN phrase
 appears, the statement returns high-level information regarding the query
 plan that would have been used.
 
-<p>The EXPLAIN QUERY PLAN command is described in 
+</p><p>The EXPLAIN QUERY PLAN command is described in 
 <a href="eqp.html">more detail here</a>.
 
-<h3>EXPLAIN operates at run-time, not at prepare-time</h3>
+</p><h2 id="explain_operates_at_run_time_not_at_prepare_time"><span>2.1. </span>EXPLAIN operates at run-time, not at prepare-time</h2>
 
 <p>The EXPLAIN and EXPLAIN QUERY PLAN prefixes affect the behavior of
 running a <a href="c3ref/stmt.html">prepared statement</a> using <a href="c3ref/step.html">sqlite3_step()</a>.  The process of
@@ -128,10 +141,10 @@ is that some special opcodes used by EXPLAIN QUERY PLAN are omitted when
 building an EXPLAIN QUERY PLAN prepared statement, as a performance
 optimization.)
 
-<p>This means that actions that occur during sqlite3_prepare() are
+</p><p>This means that actions that occur during sqlite3_prepare() are
 unaffected by EXPLAIN.
 
-<ul>
+</p><ul>
 <li><p>
 Some <a href="pragma.html#syntax">PRAGMA</a> statements do their work during sqlite3_prepare() rather
 than during sqlite3_step().  Those PRAGMA statements are unaffected
@@ -141,8 +154,8 @@ from one release to the next.  Some PRAGMA statements operate during
 sqlite3_prepare() depending on their arguments.  For consistent
 results, avoid using EXPLAIN on PRAGMA statements.
 
-<li><p>
+</p></li><li><p>
 The <a href="c3ref/set_authorizer.html">authorizer callback</a> is invoked regardless of the presence of
 EXPLAIN or EXPLAIN QUERY PLAN.
-</ul>
+</p></li></ul>
 

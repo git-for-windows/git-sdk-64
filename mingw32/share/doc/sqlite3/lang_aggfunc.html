@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>SQLite Query Language: Aggregate Functions</title>
+<title>Built-in Aggregate Functions</title>
 <!-- path= -->
 </head>
 <body>
@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -91,111 +91,120 @@ return false;
 }
 </script>
 </div>
-<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>Aggregate Functions</h2></div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+Built-in Aggregate Functions
+</div>
+</div>
 
 
+
+
+
+<h1 id="syntax"><span>1. </span>Syntax</h1>
 <p><b><a href="syntax/aggregate-function-invocation.html">aggregate-function-invocation:</a></b>
-<button id='x1673' onclick='hideorshow("x1673","x1674")'>hide</button></p>
- <div id='x1674' class='imgcontainer'>
+<button id='x1191' onclick='hideorshow("x1191","x1192")'>hide</button></p>
+ <div id='x1192' class='imgcontainer'>
  <img alt="syntax diagram aggregate-function-invocation" src="images/syntax/aggregate-function-invocation.gif" />
 <p><b><a href="syntax/expr.html">expr:</a></b>
-<button id='x1675' onclick='hideorshow("x1675","x1676")'>show</button></p>
- <div id='x1676' style='display:none;' class='imgcontainer'>
+<button id='x1193' onclick='hideorshow("x1193","x1194")'>show</button></p>
+ <div id='x1194' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
 <p><b><a href="syntax/literal-value.html">literal-value:</a></b>
-<button id='x1677' onclick='hideorshow("x1677","x1678")'>show</button></p>
- <div id='x1678' style='display:none;' class='imgcontainer'>
+<button id='x1195' onclick='hideorshow("x1195","x1196")'>show</button></p>
+ <div id='x1196' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
 </div>
 <p><b><a href="syntax/over-clause.html">over-clause:</a></b>
-<button id='x1679' onclick='hideorshow("x1679","x1680")'>show</button></p>
- <div id='x1680' style='display:none;' class='imgcontainer'>
+<button id='x1197' onclick='hideorshow("x1197","x1198")'>show</button></p>
+ <div id='x1198' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram over-clause" src="images/syntax/over-clause.gif" />
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x1681' onclick='hideorshow("x1681","x1682")'>show</button></p>
- <div id='x1682' style='display:none;' class='imgcontainer'>
+<button id='x1199' onclick='hideorshow("x1199","x1200")'>show</button></p>
+ <div id='x1200' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x1683' onclick='hideorshow("x1683","x1684")'>show</button></p>
- <div id='x1684' style='display:none;' class='imgcontainer'>
+<button id='x1201' onclick='hideorshow("x1201","x1202")'>show</button></p>
+ <div id='x1202' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
 </div>
 </div>
 <p><b><a href="syntax/raise-function.html">raise-function:</a></b>
-<button id='x1685' onclick='hideorshow("x1685","x1686")'>show</button></p>
- <div id='x1686' style='display:none;' class='imgcontainer'>
+<button id='x1203' onclick='hideorshow("x1203","x1204")'>show</button></p>
+ <div id='x1204' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
 </div>
 <p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
-<button id='x1687' onclick='hideorshow("x1687","x1688")'>show</button></p>
- <div id='x1688' style='display:none;' class='imgcontainer'>
+<button id='x1205' onclick='hideorshow("x1205","x1206")'>show</button></p>
+ <div id='x1206' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
 <p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
-<button id='x1689' onclick='hideorshow("x1689","x1690")'>show</button></p>
- <div id='x1690' style='display:none;' class='imgcontainer'>
+<button id='x1207' onclick='hideorshow("x1207","x1208")'>show</button></p>
+ <div id='x1208' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
 </div>
 <p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
-<button id='x1691' onclick='hideorshow("x1691","x1692")'>show</button></p>
- <div id='x1692' style='display:none;' class='imgcontainer'>
+<button id='x1209' onclick='hideorshow("x1209","x1210")'>show</button></p>
+ <div id='x1210' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
 </div>
 <p><b><a href="syntax/join-clause.html">join-clause:</a></b>
-<button id='x1693' onclick='hideorshow("x1693","x1694")'>show</button></p>
- <div id='x1694' style='display:none;' class='imgcontainer'>
+<button id='x1211' onclick='hideorshow("x1211","x1212")'>show</button></p>
+ <div id='x1212' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
 <p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
-<button id='x1695' onclick='hideorshow("x1695","x1696")'>show</button></p>
- <div id='x1696' style='display:none;' class='imgcontainer'>
+<button id='x1213' onclick='hideorshow("x1213","x1214")'>show</button></p>
+ <div id='x1214' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
 </div>
 <p><b><a href="syntax/join-operator.html">join-operator:</a></b>
-<button id='x1697' onclick='hideorshow("x1697","x1698")'>show</button></p>
- <div id='x1698' style='display:none;' class='imgcontainer'>
+<button id='x1215' onclick='hideorshow("x1215","x1216")'>show</button></p>
+ <div id='x1216' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
 </div>
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x1699' onclick='hideorshow("x1699","x1700")'>show</button></p>
- <div id='x1700' style='display:none;' class='imgcontainer'>
+<button id='x1217' onclick='hideorshow("x1217","x1218")'>show</button></p>
+ <div id='x1218' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
 </div>
 <p><b><a href="syntax/result-column.html">result-column:</a></b>
-<button id='x1701' onclick='hideorshow("x1701","x1702")'>show</button></p>
- <div id='x1702' style='display:none;' class='imgcontainer'>
+<button id='x1219' onclick='hideorshow("x1219","x1220")'>show</button></p>
+ <div id='x1220' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
 </div>
 <p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
-<button id='x1703' onclick='hideorshow("x1703","x1704")'>show</button></p>
- <div id='x1704' style='display:none;' class='imgcontainer'>
+<button id='x1221' onclick='hideorshow("x1221","x1222")'>show</button></p>
+ <div id='x1222' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
 </div>
 <p><b><a href="syntax/window-defn.html">window-defn:</a></b>
-<button id='x1705' onclick='hideorshow("x1705","x1706")'>show</button></p>
- <div id='x1706' style='display:none;' class='imgcontainer'>
+<button id='x1223' onclick='hideorshow("x1223","x1224")'>show</button></p>
+ <div id='x1224' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x1707' onclick='hideorshow("x1707","x1708")'>show</button></p>
- <div id='x1708' style='display:none;' class='imgcontainer'>
+<button id='x1225' onclick='hideorshow("x1225","x1226")'>show</button></p>
+ <div id='x1226' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
 </div>
 </div>
 </div>
 <p><b><a href="syntax/type-name.html">type-name:</a></b>
-<button id='x1709' onclick='hideorshow("x1709","x1710")'>show</button></p>
- <div id='x1710' style='display:none;' class='imgcontainer'>
+<button id='x1227' onclick='hideorshow("x1227","x1228")'>show</button></p>
+ <div id='x1228' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
 <p><b><a href="syntax/signed-number.html">signed-number:</a></b>
-<button id='x1711' onclick='hideorshow("x1711","x1712")'>show</button></p>
- <div id='x1712' style='display:none;' class='imgcontainer'>
+<button id='x1229' onclick='hideorshow("x1229","x1230")'>show</button></p>
+ <div id='x1230' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
 </div>
 </div>
 </div>
 <p><b><a href="syntax/filter-clause.html">filter-clause:</a></b>
-<button id='x1713' onclick='hideorshow("x1713","x1714")'>show</button></p>
- <div id='x1714' style='display:none;' class='imgcontainer'>
+<button id='x1231' onclick='hideorshow("x1231","x1232")'>show</button></p>
+ <div id='x1232' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram filter-clause" src="images/syntax/filter-clause.gif" />
 </div>
 </div>
@@ -204,7 +213,7 @@ return false;
 <p>
 The aggregate functions shown below are available by default.  Additional
 aggregate functions written in C may be added using the 
-<a href="c3ref/create_function.html">sqlite3_create_function()</a></a>
+<a href="c3ref/create_function.html">sqlite3_create_function()</a>
 API.</p>
 
 <p>
@@ -223,54 +232,28 @@ If a FILTER clause is provided, then only rows for which the <i>expr</i> is
 true are included in the aggregate.
 </p>
 
-<style>
-#listtab35 tr td {vertical-align:top;}
-</style>
-<table id='listtab35' width='100%'></table>
-<script>
-var listitems35 = [{"u":"lang_aggfunc.html#avg","x":"avg(X)","s":0},
-{"u":"lang_aggfunc.html#count","x":"count(*)","s":0},
-{"u":"lang_aggfunc.html#count","x":"count(X)","s":0},
-{"u":"lang_aggfunc.html#groupconcat","x":"group_concat(X)","s":0},
-{"u":"lang_aggfunc.html#groupconcat","x":"group_concat(X,Y)","s":0},
-{"u":"lang_corefunc.html#maxoreunc","x":"max(X)","s":0},
-{"u":"lang_corefunc.html#minoreunc","x":"min(X)","s":0},
-{"u":"lang_aggfunc.html#sumunc","x":"sum(X)","s":0},
-{"u":"lang_aggfunc.html#sumunc","x":"total(X)","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/225);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems35.length+1)/nCol);
-var h="<tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems35.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems35[i].u=="" || listitems35[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems35[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems35[i].s==2 || listitems35[i].s==3) h += "<s>"
-  h += listitems35[i].x;
-  if(listitems35[i].s==2 || listitems35[i].s==3) h += "</s>"
-  h += ea
-  if(listitems35[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems35[i].s==3) h += "&sup1\n";
-  if(listitems35[i].s==4) h += "&sup2\n";
-  if(listitems35[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab35").innerHTML = h;
-</script>
-<hr class='xhr'>
+<a name="aggfunclist"></a>
+
+<h1 id="list_of_built_in_aggregate_functions"><span>2. </span>List of built-in aggregate functions</h1>
+
+<div class='columns' style='columns: 11em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='lang_aggfunc.html#avg'>avg(X)</a></li>
+<li><a href='lang_aggfunc.html#count'>count(*)</a></li>
+<li><a href='lang_aggfunc.html#count'>count(X)</a></li>
+<li><a href='lang_aggfunc.html#groupconcat'>group_concat(X)</a></li>
+<li><a href='lang_aggfunc.html#groupconcat'>group_concat(X,Y)</a></li>
+<li><a href='lang_corefunc.html#maxoreunc'>max(X)</a></li>
+<li><a href='lang_corefunc.html#minoreunc'>min(X)</a></li>
+<li><a href='lang_aggfunc.html#sumunc'>sum(X)</a></li>
+<li><a href='lang_aggfunc.html#sumunc'>total(X)</a></li>
+</ul>
+</div>
+
+
+<h1 id="descriptions_of_built_in_aggregate_functions"><span>3. </span>Descriptions of built-in aggregate functions</h1>
 <dl>
+
 <a name="avg"></a>
 <dt><p><b>avg(<i>X</i>)</b></dt><dd><p>
   The avg() function
@@ -340,5 +323,6 @@ document.getElementById("listtab35").innerHTML = h;
   and an integer overflow occurs at any point during the computation.
   Total() never throws an integer overflow.
 </dd>
+
 </dl>
 

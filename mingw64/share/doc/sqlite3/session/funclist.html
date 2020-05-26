@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -94,87 +94,54 @@ return false;
 <a href="intro.html"><h2>Session Module C Interface</h2></a>
 
 <h2>Functions:</h2>
-<style>
-#listtab41 tr td {vertical-align:top;}
-</style>
-<table id='listtab41' width='100%'></table>
-<script>
-var listitems41 = [{"u":"../session/sqlite3changegroup_add.html","x":"sqlite3changegroup_add","s":0},
-{"u":"../session/sqlite3changegroup_add_strm.html","x":"sqlite3changegroup_add_strm","s":0},
-{"u":"../session/sqlite3changegroup_delete.html","x":"sqlite3changegroup_delete","s":0},
-{"u":"../session/sqlite3changegroup_new.html","x":"sqlite3changegroup_new","s":0},
-{"u":"../session/sqlite3changegroup_output.html","x":"sqlite3changegroup_output","s":0},
-{"u":"../session/sqlite3changegroup_add_strm.html","x":"sqlite3changegroup_output_strm","s":0},
-{"u":"../session/sqlite3changeset_apply.html","x":"sqlite3changeset_apply","s":0},
-{"u":"../session/sqlite3changegroup_add_strm.html","x":"sqlite3changeset_apply_strm","s":0},
-{"u":"../session/sqlite3changeset_apply.html","x":"sqlite3changeset_apply_v2","s":0},
-{"u":"../session/sqlite3changegroup_add_strm.html","x":"sqlite3changeset_apply_v2_strm","s":0},
-{"u":"../session/sqlite3changeset_concat.html","x":"sqlite3changeset_concat","s":0},
-{"u":"../session/sqlite3changegroup_add_strm.html","x":"sqlite3changeset_concat_strm","s":0},
-{"u":"../session/sqlite3changeset_conflict.html","x":"sqlite3changeset_conflict","s":0},
-{"u":"../session/sqlite3changeset_finalize.html","x":"sqlite3changeset_finalize","s":0},
-{"u":"../session/sqlite3changeset_fk_conflicts.html","x":"sqlite3changeset_fk_conflicts","s":0},
-{"u":"../session/sqlite3changeset_invert.html","x":"sqlite3changeset_invert","s":0},
-{"u":"../session/sqlite3changegroup_add_strm.html","x":"sqlite3changeset_invert_strm","s":0},
-{"u":"../session/sqlite3changeset_new.html","x":"sqlite3changeset_new","s":0},
-{"u":"../session/sqlite3changeset_next.html","x":"sqlite3changeset_next","s":0},
-{"u":"../session/sqlite3changeset_old.html","x":"sqlite3changeset_old","s":0},
-{"u":"../session/sqlite3changeset_op.html","x":"sqlite3changeset_op","s":0},
-{"u":"../session/sqlite3changeset_pk.html","x":"sqlite3changeset_pk","s":0},
-{"u":"../session/sqlite3changeset_start.html","x":"sqlite3changeset_start","s":0},
-{"u":"../session/sqlite3changegroup_add_strm.html","x":"sqlite3changeset_start_strm","s":0},
-{"u":"../session/sqlite3changeset_start.html","x":"sqlite3changeset_start_v2","s":0},
-{"u":"../session/sqlite3changegroup_add_strm.html","x":"sqlite3changeset_start_v2_strm","s":0},
-{"u":"../session/sqlite3rebaser_configure.html","x":"sqlite3rebaser_configure","s":1},
-{"u":"../session/sqlite3rebaser_create.html","x":"sqlite3rebaser_create","s":1},
-{"u":"../session/sqlite3rebaser_delete.html","x":"sqlite3rebaser_delete","s":1},
-{"u":"../session/sqlite3rebaser_rebase.html","x":"sqlite3rebaser_rebase","s":1},
-{"u":"../session/sqlite3changegroup_add_strm.html","x":"sqlite3rebaser_rebase_strm","s":0},
-{"u":"../session/sqlite3session_attach.html","x":"sqlite3session_attach","s":0},
-{"u":"../session/sqlite3session_changeset.html","x":"sqlite3session_changeset","s":0},
-{"u":"../session/sqlite3changegroup_add_strm.html","x":"sqlite3session_changeset_strm","s":0},
-{"u":"../session/sqlite3session_config.html","x":"sqlite3session_config","s":0},
-{"u":"../session/sqlite3session_create.html","x":"sqlite3session_create","s":0},
-{"u":"../session/sqlite3session_delete.html","x":"sqlite3session_delete","s":0},
-{"u":"../session/sqlite3session_diff.html","x":"sqlite3session_diff","s":0},
-{"u":"../session/sqlite3session_enable.html","x":"sqlite3session_enable","s":0},
-{"u":"../session/sqlite3session_indirect.html","x":"sqlite3session_indirect","s":0},
-{"u":"../session/sqlite3session_isempty.html","x":"sqlite3session_isempty","s":0},
-{"u":"../session/sqlite3session_patchset.html","x":"sqlite3session_patchset","s":0},
-{"u":"../session/sqlite3changegroup_add_strm.html","x":"sqlite3session_patchset_strm","s":0},
-{"u":"../session/sqlite3session_table_filter.html","x":"sqlite3session_table_filter","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/300);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems41.length+1)/nCol);
-var h="<tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems41.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems41[i].u=="" || listitems41[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems41[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems41[i].s==2 || listitems41[i].s==3) h += "<s>"
-  h += listitems41[i].x;
-  if(listitems41[i].s==2 || listitems41[i].s==3) h += "</s>"
-  h += ea
-  if(listitems41[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems41[i].s==3) h += "&sup1\n";
-  if(listitems41[i].s==4) h += "&sup2\n";
-  if(listitems41[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab41").innerHTML = h;
-</script>
+<div class='columns' style='columns: 15em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='../session/sqlite3changegroup_add.html'>sqlite3changegroup_add</a></li>
+<li><a href='../session/sqlite3changegroup_add_strm.html'>sqlite3changegroup_add_strm</a></li>
+<li><a href='../session/sqlite3changegroup_delete.html'>sqlite3changegroup_delete</a></li>
+<li><a href='../session/sqlite3changegroup_new.html'>sqlite3changegroup_new</a></li>
+<li><a href='../session/sqlite3changegroup_output.html'>sqlite3changegroup_output</a></li>
+<li><a href='../session/sqlite3changegroup_add_strm.html'>sqlite3changegroup_output_strm</a></li>
+<li><a href='../session/sqlite3changeset_apply.html'>sqlite3changeset_apply</a></li>
+<li><a href='../session/sqlite3changegroup_add_strm.html'>sqlite3changeset_apply_strm</a></li>
+<li><a href='../session/sqlite3changeset_apply.html'>sqlite3changeset_apply_v2</a></li>
+<li><a href='../session/sqlite3changegroup_add_strm.html'>sqlite3changeset_apply_v2_strm</a></li>
+<li><a href='../session/sqlite3changeset_concat.html'>sqlite3changeset_concat</a></li>
+<li><a href='../session/sqlite3changegroup_add_strm.html'>sqlite3changeset_concat_strm</a></li>
+<li><a href='../session/sqlite3changeset_conflict.html'>sqlite3changeset_conflict</a></li>
+<li><a href='../session/sqlite3changeset_finalize.html'>sqlite3changeset_finalize</a></li>
+<li><a href='../session/sqlite3changeset_fk_conflicts.html'>sqlite3changeset_fk_conflicts</a></li>
+<li><a href='../session/sqlite3changeset_invert.html'>sqlite3changeset_invert</a></li>
+<li><a href='../session/sqlite3changegroup_add_strm.html'>sqlite3changeset_invert_strm</a></li>
+<li><a href='../session/sqlite3changeset_new.html'>sqlite3changeset_new</a></li>
+<li><a href='../session/sqlite3changeset_next.html'>sqlite3changeset_next</a></li>
+<li><a href='../session/sqlite3changeset_old.html'>sqlite3changeset_old</a></li>
+<li><a href='../session/sqlite3changeset_op.html'>sqlite3changeset_op</a></li>
+<li><a href='../session/sqlite3changeset_pk.html'>sqlite3changeset_pk</a></li>
+<li><a href='../session/sqlite3changeset_start.html'>sqlite3changeset_start</a></li>
+<li><a href='../session/sqlite3changegroup_add_strm.html'>sqlite3changeset_start_strm</a></li>
+<li><a href='../session/sqlite3changeset_start.html'>sqlite3changeset_start_v2</a></li>
+<li><a href='../session/sqlite3changegroup_add_strm.html'>sqlite3changeset_start_v2_strm</a></li>
+<li><a href='../session/sqlite3rebaser_configure.html'>sqlite3rebaser_configure<small><i>(exp)</i></small></a></li>
+<li><a href='../session/sqlite3rebaser_create.html'>sqlite3rebaser_create<small><i>(exp)</i></small></a></li>
+<li><a href='../session/sqlite3rebaser_delete.html'>sqlite3rebaser_delete<small><i>(exp)</i></small></a></li>
+<li><a href='../session/sqlite3rebaser_rebase.html'>sqlite3rebaser_rebase<small><i>(exp)</i></small></a></li>
+<li><a href='../session/sqlite3changegroup_add_strm.html'>sqlite3rebaser_rebase_strm</a></li>
+<li><a href='../session/sqlite3session_attach.html'>sqlite3session_attach</a></li>
+<li><a href='../session/sqlite3session_changeset.html'>sqlite3session_changeset</a></li>
+<li><a href='../session/sqlite3changegroup_add_strm.html'>sqlite3session_changeset_strm</a></li>
+<li><a href='../session/sqlite3session_config.html'>sqlite3session_config</a></li>
+<li><a href='../session/sqlite3session_create.html'>sqlite3session_create</a></li>
+<li><a href='../session/sqlite3session_delete.html'>sqlite3session_delete</a></li>
+<li><a href='../session/sqlite3session_diff.html'>sqlite3session_diff</a></li>
+<li><a href='../session/sqlite3session_enable.html'>sqlite3session_enable</a></li>
+<li><a href='../session/sqlite3session_indirect.html'>sqlite3session_indirect</a></li>
+<li><a href='../session/sqlite3session_isempty.html'>sqlite3session_isempty</a></li>
+<li><a href='../session/sqlite3session_patchset.html'>sqlite3session_patchset</a></li>
+<li><a href='../session/sqlite3changegroup_add_strm.html'>sqlite3session_patchset_strm</a></li>
+<li><a href='../session/sqlite3session_table_filter.html'>sqlite3session_table_filter</a></li>
+</ul>
+</div>
 <p>Other lists:
 <a href="constlist.html">Constants</a> and
 <a href="objlist.html">Objects</a>.</p>

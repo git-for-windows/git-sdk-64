@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -189,7 +189,7 @@ then measure the maximum instantaneous memory usage with the
 to the maximum observed instantaneous memory usage plus some margin.
 
 </p></li><li><p>
-In extreme cases, consider compiling SQLite with the
+For embedded systems, consider compiling SQLite with the
 <a href="compile.html#enable_memsys5">-DSQLITE_ENABLE_MEMSYS5</a> option and then providing SQLite with
 a fixed chunk of memory to use as its heap via the
 <a href="c3ref/config.html">sqlite3_config</a>(<a href="c3ref/c_config_covering_index_scan.html#sqliteconfigheap">SQLITE_CONFIG_HEAP</a>) interface. This will
@@ -249,7 +249,7 @@ For reading database files that are unusually high-risk, such as database
 files that are received from remote machines, and possibly from anonymous
 contributors, the following extra precautions
 might be justified.  These added defenses come with performance costs,
-however, and so are probably not appropriate in every situation:
+however, and so may not appropriate in every situation:
 
 </p><ol>
 <li value="9"><p>

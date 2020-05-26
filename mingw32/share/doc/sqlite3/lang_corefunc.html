@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>SQLite Query Language: Core Functions</title>
+<title>Built-In Scalar SQL Functions</title>
 <!-- path= -->
 </head>
 <body>
@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -91,7 +91,18 @@ return false;
 }
 </script>
 </div>
-<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>Core Functions</h2></div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+Built-In Scalar SQL Functions
+</div>
+</div>
+
+
+
+
+
+<h1 id="overview"><span>1. </span>Overview</h1>
 
 <p>The core functions shown below are available by default. 
 <a href="lang_datefunc.html">Date &amp; Time functions</a>,
@@ -102,92 +113,64 @@ application may define additional
 functions written in C and added to the database engine using
 the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
 
-<style>
-#listtab34 tr td {vertical-align:top;}
-</style>
-<table id='listtab34' width='100%'></table>
-<script>
-var listitems34 = [{"u":"lang_corefunc.html#abs","x":"abs(X)","s":0},
-{"u":"lang_corefunc.html#changes","x":"changes()","s":0},
-{"u":"lang_corefunc.html#char","x":"char(X1,X2,...,XN)","s":0},
-{"u":"lang_corefunc.html#coalesce","x":"coalesce(X,Y,...)","s":0},
-{"u":"lang_corefunc.html#glob","x":"glob(X,Y)","s":0},
-{"u":"lang_corefunc.html#hex","x":"hex(X)","s":0},
-{"u":"lang_corefunc.html#ifnull","x":"ifnull(X,Y)","s":0},
-{"u":"lang_corefunc.html#instr","x":"instr(X,Y)","s":0},
-{"u":"lang_corefunc.html#last_insert_rowid","x":"last_insert_rowid()","s":0},
-{"u":"lang_corefunc.html#length","x":"length(X)","s":0},
-{"u":"lang_corefunc.html#like","x":"like(X,Y)","s":0},
-{"u":"lang_corefunc.html#like","x":"like(X,Y,Z)","s":0},
-{"u":"lang_corefunc.html#likelihood","x":"likelihood(X,Y)","s":0},
-{"u":"lang_corefunc.html#likely","x":"likely(X)","s":0},
-{"u":"lang_corefunc.html#load_extension","x":"load_extension(X)","s":0},
-{"u":"lang_corefunc.html#load_extension","x":"load_extension(X,Y)","s":0},
-{"u":"lang_corefunc.html#lower","x":"lower(X)","s":0},
-{"u":"lang_corefunc.html#ltrim","x":"ltrim(X)","s":0},
-{"u":"lang_corefunc.html#ltrim","x":"ltrim(X,Y)","s":0},
-{"u":"lang_corefunc.html#maxoreunc","x":"max(X,Y,...)","s":0},
-{"u":"lang_corefunc.html#minoreunc","x":"min(X,Y,...)","s":0},
-{"u":"lang_corefunc.html#nullif","x":"nullif(X,Y)","s":0},
-{"u":"lang_corefunc.html#printf","x":"printf(FORMAT,...)","s":0},
-{"u":"lang_corefunc.html#quote","x":"quote(X)","s":0},
-{"u":"lang_corefunc.html#random","x":"random()","s":0},
-{"u":"lang_corefunc.html#randomblob","x":"randomblob(N)","s":0},
-{"u":"lang_corefunc.html#replace","x":"replace(X,Y,Z)","s":0},
-{"u":"lang_corefunc.html#round","x":"round(X)","s":0},
-{"u":"lang_corefunc.html#round","x":"round(X,Y)","s":0},
-{"u":"lang_corefunc.html#rtrim","x":"rtrim(X)","s":0},
-{"u":"lang_corefunc.html#rtrim","x":"rtrim(X,Y)","s":0},
-{"u":"lang_corefunc.html#soundex","x":"soundex(X)","s":0},
-{"u":"lang_corefunc.html#sqlite_compileoption_get","x":"sqlite_compileoption_get(N)","s":0},
-{"u":"lang_corefunc.html#sqlite_compileoption_used","x":"sqlite_compileoption_used(X)","s":0},
-{"u":"lang_corefunc.html#sqlite_offset","x":"sqlite_offset(X)","s":0},
-{"u":"lang_corefunc.html#sqlite_source_id","x":"sqlite_source_id()","s":0},
-{"u":"lang_corefunc.html#sqlite_version","x":"sqlite_version()","s":0},
-{"u":"lang_corefunc.html#substr","x":"substr(X,Y)","s":0},
-{"u":"lang_corefunc.html#substr","x":"substr(X,Y,Z)","s":0},
-{"u":"lang_corefunc.html#total_changes","x":"total_changes()","s":0},
-{"u":"lang_corefunc.html#trim","x":"trim(X)","s":0},
-{"u":"lang_corefunc.html#trim","x":"trim(X,Y)","s":0},
-{"u":"lang_corefunc.html#typeof","x":"typeof(X)","s":0},
-{"u":"lang_corefunc.html#unicode","x":"unicode(X)","s":0},
-{"u":"lang_corefunc.html#unlikely","x":"unlikely(X)","s":0},
-{"u":"lang_corefunc.html#upper","x":"upper(X)","s":0},
-{"u":"lang_corefunc.html#zeroblob","x":"zeroblob(N)","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/225);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems34.length+1)/nCol);
-var h="<tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems34.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems34[i].u=="" || listitems34[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems34[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems34[i].s==2 || listitems34[i].s==3) h += "<s>"
-  h += listitems34[i].x;
-  if(listitems34[i].s==2 || listitems34[i].s==3) h += "</s>"
-  h += ea
-  if(listitems34[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems34[i].s==3) h += "&sup1\n";
-  if(listitems34[i].s==4) h += "&sup2\n";
-  if(listitems34[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab34").innerHTML = h;
-</script>
-<hr class='xhr'>
+<p>
+<div class='columns' style='columns: 15em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='lang_corefunc.html#abs'>abs(X)</a></li>
+<li><a href='lang_corefunc.html#changes'>changes()</a></li>
+<li><a href='lang_corefunc.html#char'>char(X1,X2,...,XN)</a></li>
+<li><a href='lang_corefunc.html#coalesce'>coalesce(X,Y,...)</a></li>
+<li><a href='lang_corefunc.html#glob'>glob(X,Y)</a></li>
+<li><a href='lang_corefunc.html#hex'>hex(X)</a></li>
+<li><a href='lang_corefunc.html#ifnull'>ifnull(X,Y)</a></li>
+<li><a href='lang_corefunc.html#iif'>iif(X,Y,Z)</a></li>
+<li><a href='lang_corefunc.html#instr'>instr(X,Y)</a></li>
+<li><a href='lang_corefunc.html#last_insert_rowid'>last_insert_rowid()</a></li>
+<li><a href='lang_corefunc.html#length'>length(X)</a></li>
+<li><a href='lang_corefunc.html#like'>like(X,Y)</a></li>
+<li><a href='lang_corefunc.html#like'>like(X,Y,Z)</a></li>
+<li><a href='lang_corefunc.html#likelihood'>likelihood(X,Y)</a></li>
+<li><a href='lang_corefunc.html#likely'>likely(X)</a></li>
+<li><a href='lang_corefunc.html#load_extension'>load_extension(X)</a></li>
+<li><a href='lang_corefunc.html#load_extension'>load_extension(X,Y)</a></li>
+<li><a href='lang_corefunc.html#lower'>lower(X)</a></li>
+<li><a href='lang_corefunc.html#ltrim'>ltrim(X)</a></li>
+<li><a href='lang_corefunc.html#ltrim'>ltrim(X,Y)</a></li>
+<li><a href='lang_corefunc.html#maxoreunc'>max(X,Y,...)</a></li>
+<li><a href='lang_corefunc.html#minoreunc'>min(X,Y,...)</a></li>
+<li><a href='lang_corefunc.html#nullif'>nullif(X,Y)</a></li>
+<li><a href='lang_corefunc.html#printf'>printf(FORMAT,...)</a></li>
+<li><a href='lang_corefunc.html#quote'>quote(X)</a></li>
+<li><a href='lang_corefunc.html#random'>random()</a></li>
+<li><a href='lang_corefunc.html#randomblob'>randomblob(N)</a></li>
+<li><a href='lang_corefunc.html#replace'>replace(X,Y,Z)</a></li>
+<li><a href='lang_corefunc.html#round'>round(X)</a></li>
+<li><a href='lang_corefunc.html#round'>round(X,Y)</a></li>
+<li><a href='lang_corefunc.html#rtrim'>rtrim(X)</a></li>
+<li><a href='lang_corefunc.html#rtrim'>rtrim(X,Y)</a></li>
+<li><a href='lang_corefunc.html#soundex'>soundex(X)</a></li>
+<li><a href='lang_corefunc.html#sqlite_compileoption_get'>sqlite_compileoption_get(N)</a></li>
+<li><a href='lang_corefunc.html#sqlite_compileoption_used'>sqlite_compileoption_used(X)</a></li>
+<li><a href='lang_corefunc.html#sqlite_offset'>sqlite_offset(X)</a></li>
+<li><a href='lang_corefunc.html#sqlite_source_id'>sqlite_source_id()</a></li>
+<li><a href='lang_corefunc.html#sqlite_version'>sqlite_version()</a></li>
+<li><a href='lang_corefunc.html#substr'>substr(X,Y)</a></li>
+<li><a href='lang_corefunc.html#substr'>substr(X,Y,Z)</a></li>
+<li><a href='lang_corefunc.html#total_changes'>total_changes()</a></li>
+<li><a href='lang_corefunc.html#trim'>trim(X)</a></li>
+<li><a href='lang_corefunc.html#trim'>trim(X,Y)</a></li>
+<li><a href='lang_corefunc.html#typeof'>typeof(X)</a></li>
+<li><a href='lang_corefunc.html#unicode'>unicode(X)</a></li>
+<li><a href='lang_corefunc.html#unlikely'>unlikely(X)</a></li>
+<li><a href='lang_corefunc.html#upper'>upper(X)</a></li>
+<li><a href='lang_corefunc.html#zeroblob'>zeroblob(N)</a></li>
+</ul>
+</div>
+
+
+<h1 id="descriptions_of_built_in_scalar_sql_functions"><span>2. </span>Descriptions of built-in scalar SQL functions</h1>
 <dl>
+
 <a name="abs"></a>
 <dt><p><b>abs(<i>X</i>)</b></dt><dd><p>
   The abs(X) function returns the absolute value of the numeric
@@ -243,6 +226,12 @@ document.getElementById("listtab34").innerHTML = h;
   NULL if both arguments are NULL.  Ifnull() must have exactly 2 arguments.
   The ifnull() function is equivalent to <a href="lang_corefunc.html#coalesce">coalesce()</a> with two arguments.
 </dd>
+<a name="iif"></a>
+<dt><p><b>iif(<i>X</i>,<i>Y</i>,<i>Z</i>)</b></dt><dd><p>
+  The iif(X,Y,Z) function returns the value Y if X is true, and Z otherwise.
+  The iff(X,Y,Z) function is logically equivalent to and generates the same
+  <a href="opcode.html">bytecode</a> as the <a href="lang_expr.html#case">CASE expression</a> "CASE WHEN X THEN Y ELSE Z END".
+</dd>
 <a name="instr"></a>
 <dt><p><b>instr(<i>X</i>,<i>Y</i>)</b></dt><dd><p>
   The instr(X,Y) function finds the first occurrence of string Y within 
@@ -288,7 +277,7 @@ document.getElementById("listtab34").innerHTML = h;
      name LIKE '%neon%'
      like('%neon%',name)
   </pre></blockquote>
-  The <a href="c3ref/create_function.html">sqlite3_create_function()</a> interface can be used to override the
+  <p>The <a href="c3ref/create_function.html">sqlite3_create_function()</a> interface can be used to override the
   like() function and thereby change the operation of the
   <a href="lang_expr.html#like">LIKE</a> operator.  When overriding the like() function, it may be important
   to override both the two and three argument versions of the like() 
@@ -571,5 +560,6 @@ document.getElementById("listtab34").innerHTML = h;
   This SQL function is implemented using the <a href="c3ref/result_blob.html">sqlite3_result_zeroblob()</a>
   routine from the C/C++ interface.
 </dd>
+
 </dl>
 

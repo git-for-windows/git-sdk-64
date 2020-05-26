@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>SQLite Query Language: Date And Time Functions</title>
+<title>Date And Time Functions</title>
 <!-- path= -->
 </head>
 <body>
@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -91,14 +91,49 @@ return false;
 }
 </script>
 </div>
-<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>Date And Time Functions</h2></div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+Date And Time Functions
+</div>
+<div class="fancy_toc">
+<a onclick="toggle_toc()">
+<span class="fancy_toc_mark" id="toc_mk">&#x25ba;</span>
+Table Of Contents
+</a>
+<div id="toc_sub"><div class="fancy-toc1"><a href="#overview">1. Overview</a></div>
+<div class="fancy-toc1"><a href="#time_strings">2. Time Strings</a></div>
+<div class="fancy-toc1"><a href="#modifiers">3. Modifiers</a></div>
+<div class="fancy-toc1"><a href="#examples">4. Examples</a></div>
+<div class="fancy-toc1"><a href="#caveats_and_bugs">5. Caveats And Bugs</a></div>
+</div>
+</div>
+<script>
+function toggle_toc(){
+var sub = document.getElementById("toc_sub")
+var mk = document.getElementById("toc_mk")
+if( sub.style.display!="block" ){
+sub.style.display = "block";
+mk.innerHTML = "&#x25bc;";
+} else {
+sub.style.display = "none";
+mk.innerHTML = "&#x25ba;";
+}
+}
+</script>
+</div>
+
+
+
+
+<h1 id="overview"><span>1. </span>Overview</h1>
 
 <p>
 SQLite supports five date and time functions as follows:
 </p>
 
 <p>
-<ol>
+</p><ol>
 <li> <b>date(</b><i>timestring, modifier, modifier, ...</i><b>)</b> </li>
 <li> <b>time(</b><i>timestring, modifier, modifier, ...</i><b>)</b> </li>
 <li> <b>datetime(</b><i>timestring, modifier, modifier, ...</i><b>)</b> </li>
@@ -133,22 +168,22 @@ The following is a complete list of valid strftime() substitutions:
 
 <blockquote>
 <table border="0" cellpadding="0" cellspacing="0">
-<tr><td><td width="10"><td></tr>
+<tr><td></td><td width="10"></td><td></td></tr>
 
-<tr><td> %d <td><td> day of month: 00
-<tr><td> %f <td><td> fractional seconds: SS.SSS
-<tr><td> %H <td><td> hour: 00-24 
-<tr><td> %j <td><td> day of year: 001-366
-<tr><td> %J <td><td> Julian day number
-<tr><td> %m <td><td> month: 01-12
-<tr><td> %M <td><td> minute: 00-59
-<tr><td> %s <td><td> seconds since 1970-01-01
-<tr><td> %S <td><td> seconds: 00-59
-<tr><td> %w <td><td> day of week 0-6 with Sunday==0
-<tr><td> %W <td><td> week of year: 00-53
-<tr><td> %Y <td><td> year: 0000-9999
-<tr><td> %% <td><td> %
-</table>
+<tr><td> %d </td><td></td><td> day of month: 00
+</td></tr><tr><td> %f </td><td></td><td> fractional seconds: SS.SSS
+</td></tr><tr><td> %H </td><td></td><td> hour: 00-24 
+</td></tr><tr><td> %j </td><td></td><td> day of year: 001-366
+</td></tr><tr><td> %J </td><td></td><td> Julian day number
+</td></tr><tr><td> %m </td><td></td><td> month: 01-12
+</td></tr><tr><td> %M </td><td></td><td> minute: 00-59
+</td></tr><tr><td> %s </td><td></td><td> seconds since 1970-01-01
+</td></tr><tr><td> %S </td><td></td><td> seconds: 00-59
+</td></tr><tr><td> %w </td><td></td><td> day of week 0-6 with Sunday==0
+</td></tr><tr><td> %W </td><td></td><td> week of year: 00-53
+</td></tr><tr><td> %Y </td><td></td><td> year: 0000-9999
+</td></tr><tr><td> %% </td><td></td><td> %
+</td></tr></table>
 </blockquote>
 
 <p>
@@ -158,12 +193,12 @@ in terms of strftime():
 
 <blockquote>
 <table border="0" cellpadding="0" cellspacing="0">
-<tr><td><b>Function</b><td width="30"><td><b>Equivalent strftime()</b>
-<tr><td>   date(...)      <td><td>  strftime('%Y-%m-%d', ...)
-<tr><td>   time(...)      <td><td>  strftime('%H:%M:%S', ...)
-<tr><td>   datetime(...)  <td><td>  strftime('%Y-%m-%d %H:%M:%S', ...)
-<tr><td>   julianday(...) <td><td>  strftime('%J', ...)
-</table>
+<tr><td><b>Function</b></td><td width="30"></td><td><b>Equivalent strftime()</b>
+</td></tr><tr><td>   date(...)      </td><td></td><td>  strftime('%Y-%m-%d', ...)
+</td></tr><tr><td>   time(...)      </td><td></td><td>  strftime('%H:%M:%S', ...)
+</td></tr><tr><td>   datetime(...)  </td><td></td><td>  strftime('%Y-%m-%d %H:%M:%S', ...)
+</td></tr><tr><td>   julianday(...) </td><td></td><td>  strftime('%J', ...)
+</td></tr></table>
 </blockquote>
 
 <p>
@@ -171,24 +206,24 @@ The only reasons for providing functions other than strftime() is
 for convenience and for efficiency.
 </p>
 
-<h3>Time Strings</h3>
+<h1 id="time_strings"><span>2. </span>Time Strings</h1>
 
 <p>A time string can be in any of the following formats:</p>
 
 <ol>
 <li> <i>YYYY-MM-DD</i>
-<li> <i>YYYY-MM-DD HH:MM</i>
-<li> <i>YYYY-MM-DD HH:MM:SS</i>
-<li> <i>YYYY-MM-DD HH:MM:SS.SSS</i>
-<li> <i>YYYY-MM-DD</i><b>T</b><i>HH:MM</i>
-<li> <i>YYYY-MM-DD</i><b>T</b><i>HH:MM:SS</i>
-<li> <i>YYYY-MM-DD</i><b>T</b><i>HH:MM:SS.SSS</i>
-<li> <i>HH:MM</i>
-<li> <i>HH:MM:SS</i>
-<li> <i>HH:MM:SS.SSS</i>
-<li> <b>now</b>
-<li> <i>DDDDDDDDDD</i>
-</ol>
+</li><li> <i>YYYY-MM-DD HH:MM</i>
+</li><li> <i>YYYY-MM-DD HH:MM:SS</i>
+</li><li> <i>YYYY-MM-DD HH:MM:SS.SSS</i>
+</li><li> <i>YYYY-MM-DD</i><b>T</b><i>HH:MM</i>
+</li><li> <i>YYYY-MM-DD</i><b>T</b><i>HH:MM:SS</i>
+</li><li> <i>YYYY-MM-DD</i><b>T</b><i>HH:MM:SS.SSS</i>
+</li><li> <i>HH:MM</i>
+</li><li> <i>HH:MM:SS</i>
+</li><li> <i>HH:MM:SS.SSS</i>
+</li><li> <b>now</b>
+</li><li> <i>DDDDDDDDDD</i>
+</li></ol>
 
 <p>
 In formats 5 through 7, the "T" is a literal character separating 
@@ -232,7 +267,7 @@ functions will really accept as many or as few digits as are necessary to
 represent the Julian day number.
 </p>
 
-<h3>Modifiers</h3>
+<h1 id="modifiers"><span>3. </span>Modifiers</h1>
 
 <p>The time string can be followed by zero or more modifiers that 
 alter date and/or time. Each modifier
@@ -242,19 +277,19 @@ The available modifiers are as follows.</p>
 
 <ol>
 <li> NNN days
-<li> NNN hours
-<li> NNN minutes
-<li> NNN.NNNN seconds
-<li> NNN months
-<li> NNN years
-<li> start of month
-<li> start of year
-<li> start of day
-<li> weekday N
-<li> unixepoch
-<li> localtime
-<li> utc 
-</ol>
+</li><li> NNN hours
+</li><li> NNN minutes
+</li><li> NNN.NNNN seconds
+</li><li> NNN months
+</li><li> NNN years
+</li><li> start of month
+</li><li> start of year
+</li><li> start of day
+</li><li> weekday N
+</li><li> unixepoch
+</li><li> localtime
+</li><li> utc 
+</li></ol>
 
 <p>The first six modifiers (1 through 6) 
 simply add the specified amount of time to the date and time 
@@ -304,11 +339,11 @@ to its left is in the local timezone and adjusts that string to be in UTC.
 If the prior string is not in localtime, then the result of "utc" is
 undefined.</p>
 
-<h3>Examples</h3>
+<h1 id="examples"><span>4. </span>Examples</h1>
 
-<p>Compute the current date.<p>
+<p>Compute the current date.</p><p>
 
-<blockquote>SELECT date('now');</blockquote>
+</p><blockquote>SELECT date('now');</blockquote>
 
 <p>Compute the last day of the current month.</p>
 
@@ -363,7 +398,7 @@ for the current year.
   SELECT (julianday('now') - 2440587.5)*86400.0;
 </blockquote>
 
-<h3>Caveats And Bugs</h3>
+<h1 id="caveats_and_bugs"><span>5. </span>Caveats And Bugs</h1>
 
 <p>The computation of local time depends heavily on the whim 
 of politicians and is thus difficult to get correct for 
@@ -393,5 +428,4 @@ getting results correct back to 1986, when the rules were also changed.</p>
 <a href="http://en.wikipedia.org/wiki/Gregorian_calendar">Gregorian calendar</a>
 system.  It is also assumed that every
 day is exactly 86400 seconds in duration.</p>
-
 

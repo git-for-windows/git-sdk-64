@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -303,8 +303,8 @@ capability.
 
 <p>
 If P1 and P2 are both polygons, then the geopoly_within(P1,P2) function returns
-a non-zero integer if P2 is completely contained within P1, or it returns zero
-if any part of P2 is outside of P1.  If P1 and P2 are the same polygon, this routine
+a non-zero integer if P1 is completely contained within P2, or it returns zero
+if any part of P1 is outside of P2.  If P1 and P2 are the same polygon, this routine
 returns non-zero.
 If either P1 or P2 is not a polygon, this routine returns NULL.
 

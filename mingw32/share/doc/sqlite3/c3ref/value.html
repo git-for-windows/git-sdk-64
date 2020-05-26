@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -135,62 +135,28 @@ to <a href="../c3ref/result_blob.html">sqlite3_result_value()</a>, <a href="../c
 <a href="../c3ref/value_dup.html">sqlite3_value_dup()</a>.
 The <a href="../c3ref/value_blob.html">sqlite3_value_type()</a> family of
 interfaces require protected sqlite3_value objects.
-</p><style>
-#listtab32 tr td {vertical-align:top;}
-</style>
-<table id='listtab32' width='100%'></table>
-<script>
-var listitems32 = [{"u":"../c3ref/value_blob.html","x":"sqlite3_value_blob","s":0},
-{"u":"../c3ref/value_blob.html","x":"sqlite3_value_bytes","s":0},
-{"u":"../c3ref/value_blob.html","x":"sqlite3_value_bytes16","s":0},
-{"u":"../c3ref/value_blob.html","x":"sqlite3_value_double","s":0},
-{"u":"../c3ref/value_dup.html","x":"sqlite3_value_dup","s":0},
-{"u":"../c3ref/value_dup.html","x":"sqlite3_value_free","s":0},
-{"u":"../c3ref/value_blob.html","x":"sqlite3_value_frombind","s":0},
-{"u":"../c3ref/value_blob.html","x":"sqlite3_value_int","s":0},
-{"u":"../c3ref/value_blob.html","x":"sqlite3_value_int64","s":0},
-{"u":"../c3ref/value_blob.html","x":"sqlite3_value_nochange","s":0},
-{"u":"../c3ref/value_blob.html","x":"sqlite3_value_numeric_type","s":0},
-{"u":"../c3ref/value_blob.html","x":"sqlite3_value_pointer","s":0},
-{"u":"../c3ref/value_subtype.html","x":"sqlite3_value_subtype","s":0},
-{"u":"../c3ref/value_blob.html","x":"sqlite3_value_text","s":0},
-{"u":"../c3ref/value_blob.html","x":"sqlite3_value_text16","s":0},
-{"u":"../c3ref/value_blob.html","x":"sqlite3_value_text16be","s":0},
-{"u":"../c3ref/value_blob.html","x":"sqlite3_value_text16le","s":0},
-{"u":"../c3ref/value_blob.html","x":"sqlite3_value_type","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/350);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems32.length+1)/nCol);
-var h="<tr><td colspan="+nCol;
-h += ">Methods:</td></tr><tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems32.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems32[i].u=="" || listitems32[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems32[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems32[i].s==2 || listitems32[i].s==3) h += "<s>"
-  h += listitems32[i].x;
-  if(listitems32[i].s==2 || listitems32[i].s==3) h += "</s>"
-  h += ea
-  if(listitems32[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems32[i].s==3) h += "&sup1\n";
-  if(listitems32[i].s==4) h += "&sup2\n";
-  if(listitems32[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab32").innerHTML = h;
-</script>
+</p><div class='columns' style='columns: 17em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_blob</a></li>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_bytes</a></li>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_bytes16</a></li>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_double</a></li>
+<li><a href='../c3ref/value_dup.html'>sqlite3_value_dup</a></li>
+<li><a href='../c3ref/value_dup.html'>sqlite3_value_free</a></li>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_frombind</a></li>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_int</a></li>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_int64</a></li>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_nochange</a></li>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_numeric_type</a></li>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_pointer</a></li>
+<li><a href='../c3ref/value_subtype.html'>sqlite3_value_subtype</a></li>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_text</a></li>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_text16</a></li>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_text16be</a></li>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_text16le</a></li>
+<li><a href='../c3ref/value_blob.html'>sqlite3_value_type</a></li>
+</ul>
+</div>
 </p>
 <p>See also lists of
   <a href="objlist.html">Objects</a>,

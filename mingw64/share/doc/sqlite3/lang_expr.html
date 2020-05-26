@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>SQLite Query Language: expression</title>
+<title>SQL Langauge Expressions</title>
 <!-- path= -->
 </head>
 <body>
@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -91,116 +91,158 @@ return false;
 }
 </script>
 </div>
-<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>expression</h2></div><p><b><a href="syntax/expr.html">expr:</a></b>
-<button id='x1633' onclick='hideorshow("x1633","x1634")'>hide</button></p>
- <div id='x1634' class='imgcontainer'>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+SQL Langauge Expressions
+</div>
+<div class="fancy_toc">
+<a onclick="toggle_toc()">
+<span class="fancy_toc_mark" id="toc_mk">&#x25ba;</span>
+Table Of Contents
+</a>
+<div id="toc_sub"><div class="fancy-toc1"><a href="#syntax">1. Syntax</a></div>
+<div class="fancy-toc1"><a href="#operators">2. Operators</a></div>
+<div class="fancy-toc1"><a href="#literal_values_constants_">3. Literal Values (Constants)</a></div>
+<div class="fancy-toc1"><a href="#parameters">4. Parameters</a></div>
+<div class="fancy-toc1"><a href="#the_like_glob_regexp_and_match_operators">5. The LIKE, GLOB, REGEXP, and MATCH operators</a></div>
+<div class="fancy-toc1"><a href="#the_between_operator">6. The BETWEEN operator</a></div>
+<div class="fancy-toc1"><a href="#the_case_expression">7. The CASE expression</a></div>
+<div class="fancy-toc1"><a href="#the_in_and_not_in_operators">8. The IN and NOT IN operators</a></div>
+<div class="fancy-toc1"><a href="#table_column_names">9. Table Column Names</a></div>
+<div class="fancy-toc1"><a href="#the_exists_operator">10. The EXISTS operator</a></div>
+<div class="fancy-toc1"><a href="#subquery_expressions">11. Subquery Expressions</a></div>
+<div class="fancy-toc1"><a href="#correlated_subqueries">12. Correlated Subqueries</a></div>
+<div class="fancy-toc1"><a href="#cast_expressions">13. CAST expressions</a></div>
+<div class="fancy-toc1"><a href="#boolean_expressions">14. Boolean Expressions</a></div>
+<div class="fancy-toc1"><a href="#functions">15. Functions</a></div>
+</div>
+</div>
+<script>
+function toggle_toc(){
+var sub = document.getElementById("toc_sub")
+var mk = document.getElementById("toc_mk")
+if( sub.style.display!="block" ){
+sub.style.display = "block";
+mk.innerHTML = "&#x25bc;";
+} else {
+sub.style.display = "none";
+mk.innerHTML = "&#x25ba;";
+}
+}
+</script>
+</div>
+
+
+
+
+<h1 id="syntax"><span>1. </span>Syntax</h1>
+
+<p><b><a href="syntax/expr.html">expr:</a></b>
+<button id='x1665' onclick='hideorshow("x1665","x1666")'>hide</button></p>
+ <div id='x1666' class='imgcontainer'>
  <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
 <p><b><a href="syntax/filter-clause.html">filter-clause:</a></b>
-<button id='x1635' onclick='hideorshow("x1635","x1636")'>show</button></p>
- <div id='x1636' style='display:none;' class='imgcontainer'>
+<button id='x1667' onclick='hideorshow("x1667","x1668")'>show</button></p>
+ <div id='x1668' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram filter-clause" src="images/syntax/filter-clause.gif" />
 </div>
 <p><b><a href="syntax/literal-value.html">literal-value:</a></b>
-<button id='x1637' onclick='hideorshow("x1637","x1638")'>show</button></p>
- <div id='x1638' style='display:none;' class='imgcontainer'>
+<button id='x1669' onclick='hideorshow("x1669","x1670")'>show</button></p>
+ <div id='x1670' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
 </div>
 <p><b><a href="syntax/over-clause.html">over-clause:</a></b>
-<button id='x1639' onclick='hideorshow("x1639","x1640")'>show</button></p>
- <div id='x1640' style='display:none;' class='imgcontainer'>
+<button id='x1671' onclick='hideorshow("x1671","x1672")'>show</button></p>
+ <div id='x1672' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram over-clause" src="images/syntax/over-clause.gif" />
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x1641' onclick='hideorshow("x1641","x1642")'>show</button></p>
- <div id='x1642' style='display:none;' class='imgcontainer'>
+<button id='x1673' onclick='hideorshow("x1673","x1674")'>show</button></p>
+ <div id='x1674' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x1643' onclick='hideorshow("x1643","x1644")'>show</button></p>
- <div id='x1644' style='display:none;' class='imgcontainer'>
+<button id='x1675' onclick='hideorshow("x1675","x1676")'>show</button></p>
+ <div id='x1676' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
 </div>
 </div>
 <p><b><a href="syntax/raise-function.html">raise-function:</a></b>
-<button id='x1645' onclick='hideorshow("x1645","x1646")'>show</button></p>
- <div id='x1646' style='display:none;' class='imgcontainer'>
+<button id='x1677' onclick='hideorshow("x1677","x1678")'>show</button></p>
+ <div id='x1678' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
 </div>
 <p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
-<button id='x1647' onclick='hideorshow("x1647","x1648")'>show</button></p>
- <div id='x1648' style='display:none;' class='imgcontainer'>
+<button id='x1679' onclick='hideorshow("x1679","x1680")'>show</button></p>
+ <div id='x1680' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
 <p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
-<button id='x1649' onclick='hideorshow("x1649","x1650")'>show</button></p>
- <div id='x1650' style='display:none;' class='imgcontainer'>
+<button id='x1681' onclick='hideorshow("x1681","x1682")'>show</button></p>
+ <div id='x1682' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
 </div>
 <p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
-<button id='x1651' onclick='hideorshow("x1651","x1652")'>show</button></p>
- <div id='x1652' style='display:none;' class='imgcontainer'>
+<button id='x1683' onclick='hideorshow("x1683","x1684")'>show</button></p>
+ <div id='x1684' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
 </div>
 <p><b><a href="syntax/join-clause.html">join-clause:</a></b>
-<button id='x1653' onclick='hideorshow("x1653","x1654")'>show</button></p>
- <div id='x1654' style='display:none;' class='imgcontainer'>
+<button id='x1685' onclick='hideorshow("x1685","x1686")'>show</button></p>
+ <div id='x1686' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
 <p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
-<button id='x1655' onclick='hideorshow("x1655","x1656")'>show</button></p>
- <div id='x1656' style='display:none;' class='imgcontainer'>
+<button id='x1687' onclick='hideorshow("x1687","x1688")'>show</button></p>
+ <div id='x1688' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
 </div>
 <p><b><a href="syntax/join-operator.html">join-operator:</a></b>
-<button id='x1657' onclick='hideorshow("x1657","x1658")'>show</button></p>
- <div id='x1658' style='display:none;' class='imgcontainer'>
+<button id='x1689' onclick='hideorshow("x1689","x1690")'>show</button></p>
+ <div id='x1690' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
 </div>
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x1659' onclick='hideorshow("x1659","x1660")'>show</button></p>
- <div id='x1660' style='display:none;' class='imgcontainer'>
+<button id='x1691' onclick='hideorshow("x1691","x1692")'>show</button></p>
+ <div id='x1692' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
 </div>
 <p><b><a href="syntax/result-column.html">result-column:</a></b>
-<button id='x1661' onclick='hideorshow("x1661","x1662")'>show</button></p>
- <div id='x1662' style='display:none;' class='imgcontainer'>
+<button id='x1693' onclick='hideorshow("x1693","x1694")'>show</button></p>
+ <div id='x1694' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
 </div>
 <p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
-<button id='x1663' onclick='hideorshow("x1663","x1664")'>show</button></p>
- <div id='x1664' style='display:none;' class='imgcontainer'>
+<button id='x1695' onclick='hideorshow("x1695","x1696")'>show</button></p>
+ <div id='x1696' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
 </div>
 <p><b><a href="syntax/window-defn.html">window-defn:</a></b>
-<button id='x1665' onclick='hideorshow("x1665","x1666")'>show</button></p>
- <div id='x1666' style='display:none;' class='imgcontainer'>
+<button id='x1697' onclick='hideorshow("x1697","x1698")'>show</button></p>
+ <div id='x1698' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x1667' onclick='hideorshow("x1667","x1668")'>show</button></p>
- <div id='x1668' style='display:none;' class='imgcontainer'>
+<button id='x1699' onclick='hideorshow("x1699","x1700")'>show</button></p>
+ <div id='x1700' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
 </div>
 </div>
 </div>
 <p><b><a href="syntax/type-name.html">type-name:</a></b>
-<button id='x1669' onclick='hideorshow("x1669","x1670")'>show</button></p>
- <div id='x1670' style='display:none;' class='imgcontainer'>
+<button id='x1701' onclick='hideorshow("x1701","x1702")'>show</button></p>
+ <div id='x1702' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
 <p><b><a href="syntax/signed-number.html">signed-number:</a></b>
-<button id='x1671' onclick='hideorshow("x1671","x1672")'>show</button></p>
- <div id='x1672' style='display:none;' class='imgcontainer'>
+<button id='x1703' onclick='hideorshow("x1703","x1704")'>show</button></p>
+ <div id='x1704' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
 </div>
 </div>
 </div>
 
 
-<p>This section is different from the others.  Most other sections of
-this document talks about a particular SQL command.  This section does
-not talk about a standalone command but about "expressions" which are 
-subcomponents of most other commands.</p>
-
 <a name="binaryops"></a>
 
-<h3>Operators</h3>
+<h1 id="operators"><span>2. </span>Operators</h1>
 <p>SQLite understands the following binary operators, in order from
 highest to lowest precedence:</p>
 
@@ -266,12 +308,12 @@ It is not possible for an IS or IS NOT expression to evaluate to NULL.
 Operators <font color="#2c2cf0"><big>IS</big></font> and <font color="#2c2cf0"><big>IS NOT</big></font> have the same 
 precedence as <font color="#2c2cf0"><big>=</big></font>.<a name="litvalue"></a>
 
-<h3>Literal Values (Constants)</h3>
+</p><h1 id="literal_values_constants_"><span>3. </span>Literal Values (Constants)</h1>
 <p>
 A literal value represents a constant.
 Literal values may be integers, floating point numbers, strings,
 BLOBs, or NULLs.
-<p>
+</p><p>
 The syntax for integer and floating point literals (collectively
 "numeric literals") is shown by the following diagram:</p>
 
@@ -294,7 +336,7 @@ syntactic ambiguity.
 
 <a name="hexint"></a>
 
-<p>Hexadecimal integer literals follow the C-language notation of
+</p><p>Hexadecimal integer literals follow the C-language notation of
 "0x" or "0X" followed by hexadecimal digits.
 For example, 0x1234 means the same as 4660
 and 0x8000000000000000 means the same as -9223372036854775808.
@@ -319,22 +361,22 @@ SQLite only understands the hexadecimal integer notation when it
 appears in the SQL statement text, not when it appears as
 part of the content of the database.
 
-<p> A string constant is formed by enclosing the
+</p><p> A string constant is formed by enclosing the
 string in single quotes (').  A single quote within the string can
 be encoded by putting two single quotes in a row - as in Pascal.
 C-style escapes using the backslash character are not supported because
 they are not standard SQL.
 
-<p> BLOB literals are string literals containing hexadecimal data and
+</p><p> BLOB literals are string literals containing hexadecimal data and
 preceded by a single "x" or "X" character.  Example: X'53514C697465'
 
-<p>
+</p><p>
 A literal value can also be the token "NULL".
 </p>
 
 <a name="varparam"></a>
 
-<h3>Parameters</h3>
+<h1 id="parameters"><span>4. </span>Parameters</h1>
 <p>
 A "variable" or "parameter" token
 specifies a placeholder in the expression for a 
@@ -404,7 +446,7 @@ using the <a href="c3ref/limit.html">sqlite3_limit</a>(D, <a href="c3ref/c_limit
 
 <a name="like"></a>
 
-<h3>The LIKE, GLOB, REGEXP, and MATCH operators</h3>
+<h1 id="the_like_glob_regexp_and_match_operators"><span>5. </span>The LIKE, GLOB, REGEXP, and MATCH operators</h1>
 <p>The LIKE operator does a pattern matching comparison. The operand
 to the right of the LIKE operator contains the pattern and the left hand
 operand contains the string to match against the pattern.
@@ -433,9 +475,9 @@ instance of the escape character itself matches a
 literal percent symbol, underscore, or a single escape character,
 respectively.
 
-<p>The infix LIKE operator is implemented by calling the
+</p><p>The infix LIKE operator is implemented by calling the
 application-defined SQL functions <a href="lang_corefunc.html#like">like(<i>Y</i>,<i>X</i>)</a> or
-<a href="lang_corefunc.html#like">like(<i>Y</i>,<i>X</i>,<i>Z</i>)</a></a>.</p>
+<a href="lang_corefunc.html#like">like(<i>Y</i>,<i>X</i>,<i>Z</i>)</a>.</p>
 
 <p>The LIKE operator can be made case sensitive using the
 <a href="pragma.html#pragma_case_sensitive_like">case_sensitive_like pragma</a>.</p>
@@ -469,7 +511,7 @@ helpful logic.</p>
 
 <a name="between"></a>
 
-<h3>The BETWEEN operator</h3>
+<h1 id="the_between_operator"><span>6. </span>The BETWEEN operator</h1>
 <p>The BETWEEN operator is logically equivalent to a pair of comparisons.
 "<i>x</i> <b>BETWEEN</b> <i>y</i> <b>AND</b> <i>z</i>" is 
 equivalent to 
@@ -480,15 +522,16 @@ as operators <b>==</b> and <b>!=</b> and <b>LIKE</b> and groups left to right.
 
 <a name="case"></a>
 
-<h3>The CASE expression</h3>
+</p><h1 id="the_case_expression"><span>7. </span>The CASE expression</h1>
 <p>A CASE expression serves a role similar to IF-THEN-ELSE in other
 programming languages.  
 
-<p>The optional expression that occurs in between the CASE keyword and the
-first WHEN keyword is called the "base" expression. There are two basic forms
+</p><p>The optional expression that occurs in between the CASE keyword and the
+first WHEN keyword is called the "base" expression. There are two
+fundamental forms
 of the CASE expression: those with a base expression and those without.
 
-<p>In a CASE without a base expression, each WHEN expression is evaluated
+</p><p>In a CASE without a base expression, each WHEN expression is evaluated
 and the result treated as a boolean, starting with the leftmost and continuing
 to the right. The result of the CASE expression is the evaluation of the THEN
 expression that corresponds to the first WHEN expression that evaluates to
@@ -496,9 +539,9 @@ true. Or, if none of the WHEN expressions evaluate to true, the result of
 evaluating the ELSE expression, if any. If there is no ELSE expression and
 none of the WHEN expressions are true, then the overall result is NULL.
 
-<p>A NULL result is considered untrue when evaluating WHEN terms.
+</p><p>A NULL result is considered untrue when evaluating WHEN terms.
 
-<p>In a CASE with a base expression, the base expression is evaluated just
+</p><p>In a CASE with a base expression, the base expression is evaluated just
 once and the result is compared against the evaluation of each WHEN 
 expression from left to right. The result of the CASE expression is the 
 evaluation of the THEN expression that corresponds to the first WHEN
@@ -508,29 +551,37 @@ of evaluating the ELSE expression, if any. If there is no ELSE expression and
 none of the WHEN expressions produce a result equal to the base expression,
 the overall result is NULL.
 
-<p>When comparing a base expression against a WHEN expression, the same
+</p><p>When comparing a base expression against a WHEN expression, the same
 collating sequence, affinity, and NULL-handling rules apply as if the
 base expression and WHEN expression are respectively the left- and
-right-hand operands of an <big><b>=</b></big> operator.</p> If the base 
+right-hand operands of an <big><b>=</b></big> operator.</p> 
+
+<p>If the base 
 expression is NULL then the result of the CASE is always the result 
 of evaluating the ELSE expression if it exists, or NULL if it does not.
 
-<p>Both forms of the CASE expression use lazy, or short-circuit, 
+</p><p>Both forms of the CASE expression use lazy, or short-circuit, 
 evaluation.
 
-<p>The only difference between the following two CASE expressions is that 
+</p><p>The only difference between the following two CASE expressions is that 
 the <i>x</i> expression is evaluated exactly once in the first example but 
 might be evaluated multiple times in the second:
 
-<ul><pre>
+</p><ul><pre>
 <li>CASE x WHEN w1 THEN r1 WHEN w2 THEN r2 ELSE r3 END
-<li>CASE WHEN x=w1 THEN r1 WHEN x=w2 THEN r2 ELSE r3 END
-</pre></ul>
+</li><li>CASE WHEN x=w1 THEN r1 WHEN x=w2 THEN r2 ELSE r3 END
+</li></pre></ul>
+
+<p>The built-in <a href="lang_corefunc.html#iif">iif(x,y,z) SQL function</a> is logically
+equivalent to "CASE WHEN x THEN y ELSE z END".  The iif() function
+is found in SQL Server and is included in SQLite for compatibility.
+Some developers prefer the iif() function because it is more
+concise.
 
 
 <a name="in_op"></a>
 
-<h3>The IN and NOT IN operators</h3>
+</p><h1 id="the_in_and_not_in_operators"><span>8. </span>The IN and NOT IN operators</h1>
 <p>The IN and NOT IN operators take an expression on the
 left and a list of values or a subquery on the right.
 When the right operand of an IN or NOT IN operator is a subquery, the
@@ -548,62 +599,62 @@ the form "(SELECT * FROM <i>name</i>)".
 When the right operand is an empty set, the result of IN is false and the
 result of NOT IN is true, regardless of the left operand and even if the
 left operand is NULL.
-<p>The result of an IN or NOT IN operator is determined by the following
+</p><p>The result of an IN or NOT IN operator is determined by the following
 matrix:
 
-<center>
-<table border=1>
+</p><blockquote>
+<table border="1">
 <tr>
 <th>Left operand <br>is NULL
-<th>Right operand <br>contains NULL
-<th>Right operand <br>is an empty set
-<th>Left operand found <br>within right operand
-<th>Result of <br>IN operator
-<th>Result of <br>NOT IN operator
-<tr>
+</th><th>Right operand <br>contains NULL
+</th><th>Right operand <br>is an empty set
+</th><th>Left operand found <br>within right operand
+</th><th>Result of <br>IN operator
+</th><th>Result of <br>NOT IN operator
+</th></tr><tr>
 <td align="center">no
-<td align="center">no
-<td align="center">no
-<td align="center">no
-<td align="center">false
-<td align="center">true
-<tr>
+</td><td align="center">no
+</td><td align="center">no
+</td><td align="center">no
+</td><td align="center">false
+</td><td align="center">true
+</td></tr><tr>
 <td align="center">does not matter
+</td><td align="center">no
+</td><td align="center">yes
+</td><td align="center">no
+</td><td align="center">false
+</td><td align="center">true
+</td></tr><tr>
 <td align="center">no
+</td><td align="center">does not matter
+</td><td align="center">no
+</td><td align="center">yes
+</td><td align="center">true
+</td><td align="center">false
+</td></tr><tr>
+<td align="center">no
+</td><td align="center">yes
+</td><td align="center">no
+</td><td align="center">no
+</td><td align="center">NULL
+</td><td align="center">NULL
+</td></tr><tr>
 <td align="center">yes
-<td align="center">no
-<td align="center">false
-<td align="center">true
-<tr>
-<td align="center">no
-<td align="center">does not matter
-<td align="center">no
-<td align="center">yes
-<td align="center">true
-<td align="center">false
-<tr>
-<td align="center">no
-<td align="center">yes
-<td align="center">no
-<td align="center">no
-<td align="center">NULL
-<td align="center">NULL
-<tr>
-<td align="center">yes
-<td align="center">does not matter
-<td align="center">no
-<td align="center">does not matter
-<td align="center">NULL
-<td align="center">NULL
-</table>
-</center>
+</td><td align="center">does not matter
+</td><td align="center">no
+</td><td align="center">does not matter
+</td><td align="center">NULL
+</td><td align="center">NULL
+</td></tr></table>
+</blockquote>
 
 <p>Note that SQLite allows the parenthesized list of scalar values on
 the right-hand side of an IN or NOT IN operator to be an empty list but
 most other SQL database database engines and the SQL92 standard require
 the list to contain at least one element.</p>
 
-<h3>Table Column Names</h3>
+<h1 id="table_column_names"><span>9. </span>Table Column Names</h1>
 
 <p>A column name can be any of the names defined in the <a href="lang_createtable.html">CREATE TABLE</a>
 statement or one of the following special identifiers: "<b>ROWID</b>",
@@ -618,7 +669,7 @@ column can be used.</p>
 
 <a name="exists_op"></a>
 
-<h3>The EXISTS operator</h3>
+<h1 id="the_exists_operator"><span>10. </span>The EXISTS operator</h1>
 
 <p>The EXISTS operator always evaluates to one of the integer values 0 
 and 1. If executing the SELECT statement specified as the right-hand 
@@ -626,14 +677,14 @@ operand of the EXISTS operator would return one or more rows, then the
 EXISTS operator evaluates to 1. If executing the SELECT would return
 no rows at all, then the EXISTS operator evaluates to 0. 
 
-<p>The number of columns in each row returned by the SELECT statement
+</p><p>The number of columns in each row returned by the SELECT statement
 (if any) and the specific values returned have no effect on the results
 of the EXISTS operator. In particular, rows containing NULL values are
 not handled any differently from rows without NULL values.
 
 <a name="subq"></a>
 
-<h3>Subquery Expressions</h3>
+</p><h1 id="subquery_expressions"><span>11. </span>Subquery Expressions</h1>
 
 <p>A <a href="lang_select.html">SELECT</a> statement enclosed in parentheses is a subquery.
 All types of SELECT statement, including
@@ -644,14 +695,14 @@ from the enclosed <a href="lang_select.html">SELECT</a> statement.
 The value of a subquery expression is NULL if the enclosed
 <a href="lang_select.html">SELECT</a> statement returns no rows.
 
-<p>A subquery that returns a single column is a scalar subquery and can
+</p><p>A subquery that returns a single column is a scalar subquery and can
 be used most anywhere.
 A subquery that returns two or more columns is a <a href="rowvalue.html">row value</a>
 subquery and can only be used as the operand of a comparison operator.
 
 <a name="cosub"></a>
 
-<h3>Correlated Subqueries</h3>
+</p><h1 id="correlated_subqueries"><span>12. </span>Correlated Subqueries</h1>
 
 <p>A <a href="lang_select.html">SELECT</a> statement used as either a scalar subquery or as the 
 right-hand operand of an IN, NOT IN or EXISTS expression may contain 
@@ -662,7 +713,7 @@ and the result reused as necessary.
 
 <a name="castexpr"></a>
 
-<h3>CAST expressions</h3>
+</p><h1 id="cast_expressions"><span>13. </span>CAST expressions</h1>
 
 <p>A CAST expression of the form "CAST(<i>expr</i> AS <i>type-name</i>)"
 is used to convert the value of <i>expr</i> to 
@@ -673,35 +724,36 @@ the CAST operator the conversion always takes place even if the conversion
 lossy and irreversible, whereas column affinity only changes the data type
 of a value if the change is lossless and reversible.
 
-<p>If the value of <i>expr</i> is NULL, then the result of the CAST
+</p><p>If the value of <i>expr</i> is NULL, then the result of the CAST
 expression is also NULL. Otherwise, the storage class of the result
 is determined by applying the <a href="datatype3.html#affname">rules for determining column affinity</a> to
 the <span class='yyterm'>type-name</span>.
 
-<table border=1>
+</p><blockquote>
+<table border="1">
 <tr>
   <th> Affinity of <span class='yyterm'><nobr>type-name</nobr></span>
-  <th> Conversion Processing
-<tr>
+  </th><th> Conversion Processing
+</th></tr><tr>
   <td> NONE 
-  <td> Casting a value to a <span class='yyterm'>type-name</span> with no affinity 
+  </td><td> Casting a value to a <span class='yyterm'>type-name</span> with no affinity 
   causes the value to
   be converted into a BLOB.  Casting to a BLOB consists of first casting
   the value to TEXT in the <a href="pragma.html#pragma_encoding">encoding</a> of the database connection, then
   interpreting the resulting byte sequence as a BLOB instead of as TEXT.
 
-<tr>
+</td></tr><tr>
   <td> TEXT
-  <td> To cast a BLOB value to TEXT, the sequence of bytes that make up the
+  </td><td> To cast a BLOB value to TEXT, the sequence of bytes that make up the
   BLOB is interpreted as text encoded using the database encoding.
   <p>
    Casting an INTEGER or REAL value into TEXT renders the value as if via 
     <a href="c3ref/mprintf.html">sqlite3_snprintf()</a> except that the resulting TEXT uses the <a href="pragma.html#pragma_encoding">encoding</a> of
     the database connection.
 
-<tr>
+</p></td></tr><tr>
   <td> REAL
-  <td> When casting a BLOB value to a REAL, the value is first converted to
+  </td><td> When casting a BLOB value to a REAL, the value is first converted to
         TEXT.
        <p>When casting a TEXT value to REAL, the longest possible prefix of
         the value that can be interpreted as a real number is extracted from
@@ -710,9 +762,9 @@ the <span class='yyterm'>type-name</span>.
         no prefix that can be interpreted as a real number, the result of the
         conversion is 0.0.
 
-<tr>
+</p></td></tr><tr>
   <td> INTEGER
-  <td> When casting a BLOB value to INTEGER, the value is first converted to
+  </td><td> When casting a BLOB value to INTEGER, the value is first converted to
         TEXT.
        <p>When casting a TEXT value to INTEGER, the longest possible prefix of
         the value that can be interpreted as an integer number is extracted from
@@ -725,17 +777,17 @@ the <span class='yyterm'>type-name</span>.
         less than -9223372036854775808 then the result of the cast is
         exactly -9223372036854775808.
 
-        <p>When casting to INTEGER, if the text looks like a floating point
+        </p><p>When casting to INTEGER, if the text looks like a floating point
         value with an exponent, the exponent will be ignored because it is
         no part of the integer prefix.  For example,
         "(CAST '123e+5' AS INTEGER)" results in 123, not in 12300000.
 
-        <p> The CAST operator understands decimal
+        </p><p> The CAST operator understands decimal
         integers only &mdash; conversion of <a href="lang_expr.html#hexint">hexadecimal integers</a> stops 
         at the "x" in the "0x" prefix of the hexadecimal integer string 
         and thus result of the CAST is always zero.
 
-      <p>A cast of a REAL value into an INTEGER results in the integer
+      </p><p>A cast of a REAL value into an INTEGER results in the integer
       between the REAL value and zero that is closest to the REAL value.
       If a REAL is greater than the greatest possible signed
       integer (+9223372036854775807) then the result is the greatest possible
@@ -743,15 +795,15 @@ the <span class='yyterm'>type-name</span>.
       integer (-9223372036854775808) then the result is the least possible
       signed integer.
 
-      <p>Prior to SQLite version 3.8.2 (2013-12-06),
+      </p><p>Prior to SQLite version 3.8.2 (2013-12-06),
       casting a REAL value greater than
       +9223372036854775807.0 into an integer resulted in the most negative
       integer, -9223372036854775808.  This behavior was meant to emulate the
       behavior of x86/x64 hardware when doing the equivalent cast.
 
-<tr>
+</p></td></tr><tr>
   <td> NUMERIC
-  <td> Casting a TEXT or BLOB value into NUMERIC yields either an INTEGER or
+  </td><td> Casting a TEXT or BLOB value into NUMERIC yields either an INTEGER or
    a REAL result.
    If the input text looks like an integer (there is no decimal point nor
    exponent) and the value is small enough to fit in a 64-bit signed integer,
@@ -767,10 +819,9 @@ the <span class='yyterm'>type-name</span>.
    signed integer yields a REAL result.
    <p> Casting a REAL or INTEGER value to NUMERIC is a no-op, even if a real
    value could be losslessly converted to an integer.
-
-</tr>
-
+</p></td></tr>
 </table>
+</blockquote>
 
 <p>Note that the result from casting any non-BLOB value into a 
 BLOB and the result from casting any BLOB value into a non-BLOB value
@@ -780,19 +831,19 @@ UTF-16be, or UTF-16le.
 
 <a name="booleanexpr"></a>
 
-<h3>Boolean Expressions</h3>
+</p><h1 id="boolean_expressions"><span>14. </span>Boolean Expressions</h1>
 
 <p>The SQL language features several contexts where an expression is 
 evaluated and the result converted to a boolean (true or false) value. These
 contexts are:
 
-  <ul>
+  </p><ul>
     <li> the WHERE clause of a SELECT, UPDATE or DELETE statement,
-    <li> the ON or USING clause of a join in a SELECT statement,
-    <li> the HAVING clause of a SELECT statement,
-    <li> the WHEN clause of an SQL trigger, and
-    <li> the WHEN clause or clauses of some CASE expressions.
-  </ul>
+    </li><li> the ON or USING clause of a join in a SELECT statement,
+    </li><li> the HAVING clause of a SELECT statement,
+    </li><li> the WHEN clause of an SQL trigger, and
+    </li><li> the WHEN clause or clauses of some CASE expressions.
+  </li></ul>
 
 <p>To convert the results of an SQL expression to a boolean value, SQLite
 first casts the result to a NUMERIC value in the same way as a 
@@ -800,24 +851,24 @@ first casts the result to a NUMERIC value in the same way as a
 value 0.0) is considered to be false.  A NULL value is still NULL.
 All other values are considered true.
 
-<p>For example, the values NULL, 0.0, 0, 'english' and '0' are all considered
+</p><p>For example, the values NULL, 0.0, 0, 'english' and '0' are all considered
 to be false. Values 1, 1.0, 0.1, -0.1 and '1english' are considered to 
 be true.
 
-<p>Beginning with SQLite 3.23.0 (2018-04-02), SQLite recognizes the
+</p><p>Beginning with SQLite 3.23.0 (2018-04-02), SQLite recognizes the
 identifiers "TRUE" and "FALSE" as boolean literals, if and only if those
 identifiers are not already used for some other meaning.  If there already
 exists columns or tables or other objects named TRUE or FALSE, then for
 the sake of backwards compatibility, the TRUE and FALSE identifiers refer
 to those other objects, not to the boolean values.
 
-<p>The boolean identifiers TRUE and FALSE are usually just aliases for
+</p><p>The boolean identifiers TRUE and FALSE are usually just aliases for
 the integer values 1 and 0, respectively.  However, if TRUE or FALSE
 occur on the right-hand side of an IS operator, then they form new
 unary postfix operators "IS TRUE" and "IS FALSE" which test the boolean
 value of the operand on the left.
 
-<h3>Functions</h3>
+</p><h1 id="functions"><span>15. </span>Functions</h1>
 <p>SQLite supports many <a href="lang_corefunc.html">simple</a>, <a href="lang_aggfunc.html">aggregate</a>,
 and <a href="windowfunctions.html">window</a>
 SQL functions.  For presentation purposes, simple functions are further
@@ -845,16 +896,15 @@ expression bubble diagram is the union of the three syntaxes shown here:
  </div>
 
 
-<p>
+</p><p>
 The OVER clause is required for <a href="windowfunctions.html">window functions</a> and is prohibited
 otherwise.  The DISTINCT keyword is only allowed in <a href="lang_aggfunc.html">aggregate functions</a>.
 The FILTER clause may not appear on a <a href="lang_corefunc.html">simple function</a>.
 
-<p>It is possible to have an aggregate function with the same name as a
+</p><p>It is possible to have an aggregate function with the same name as a
 simple function, as long as the number of arguments for the two forms of the
 function are different.  For example, the <a href="lang_aggfunc.html#maxggunc">max()</a> function with a
 single argument is an aggregate and the <a href="lang_corefunc.html#maxoreunc">max()</a> function with two or more
 arguments is a simple function.  Aggregate functions can usually also
 be used as window functions.
-
-
+</p>

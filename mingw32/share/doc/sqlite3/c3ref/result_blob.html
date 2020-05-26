@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -149,8 +149,9 @@ SQLite uses the string pointed to by the
 2nd parameter of sqlite3_result_error() or sqlite3_result_error16()
 as the text of an error message.  SQLite interprets the error
 message string from sqlite3_result_error() as UTF-8. SQLite
-interprets the string from sqlite3_result_error16() as UTF-16 in native
-byte order.  If the third parameter to sqlite3_result_error()
+interprets the string from sqlite3_result_error16() as UTF-16 using
+the same <a href="../c3ref/bind_blob.html#byteorderdeterminationrules">byte-order determination rules</a> as <a href="../c3ref/bind_blob.html">sqlite3_bind_text16()</a>.
+If the third parameter to sqlite3_result_error()
 or sqlite3_result_error16() is negative then SQLite takes as the error
 message all text up through the first zero character.
 If the third parameter to sqlite3_result_error() or
@@ -217,6 +218,25 @@ If the 4th parameter to the sqlite3_result_text* interfaces
 or sqlite3_result_blob is the special constant SQLITE_TRANSIENT
 then SQLite makes a copy of the result into space obtained
 from <a href="../c3ref/free.html">sqlite3_malloc()</a> before it returns.</p>
+
+<p>For the sqlite3_result_text16(), sqlite3_result_text16le(), and
+sqlite3_result_text16be() routines, and for sqlite3_result_text64()
+when the encoding is not UTF8, if the input UTF16 begins with a
+byte-order mark (BOM, U+FEFF) then the BOM is removed from the
+string and the rest of the string is interpreted according to the
+byte-order specified by the BOM.  The byte-order specified by
+the BOM at the beginning of the text overrides the byte-order
+specified by the interface procedure.  So, for example, if
+sqlite3_result_text16le() is invoked with text that begins
+with bytes 0xfe, 0xff (a big-endian byte-order mark) then the
+first two bytes of input are skipped and the remaining input
+is interpreted as UTF16BE text.</p>
+
+<p>For UTF16 input text to the sqlite3_result_text16(),
+sqlite3_result_text16be(), sqlite3_result_text16le(), and
+sqlite3_result_text64() routines, if the text contains invalid
+UTF16 characters, the invalid characters might be converted
+into the unicode replacement character, U+FFFD.</p>
 
 <p>The sqlite3_result_value() interface sets the result of
 the application-defined function to be a copy of the

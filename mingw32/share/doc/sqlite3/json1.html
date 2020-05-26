@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -318,7 +318,7 @@ For functions that accept PATH arguments, that PATH must be well-formed or
 else the function will throw an error.
 A well-formed PATH is a text value that begins with exactly one
 '$' character followed by zero or more instances
-of ".<i>objectlabel</i>" or "&#91<i>arrayindex</i>&#93".
+of ".<i>objectlabel</i>" or "&#91;<i>arrayindex</i>&#93;".
 
 </p><p>
 The <i>arrayindex</i> is usually a non-negative integer <i>N</i>.  In
@@ -534,7 +534,7 @@ the various values.
 <li><span class='jex'>json_extract('{"a":2,"c":[4,5],"f":7}','$.c','$.a')</span>
 <span class='jans'>&rarr; '[[4,5],2]'</span></li>
 
-<li><span class='jex'>json_extract('{"a":2,"c":[4,5],"f":7}','$.c[#-1]'</span>
+<li><span class='jex'>json_extract('{"a":2,"c":[4,5],"f":7}','$.c[#-1]')</span>
 <span class='jans'>&rarr; 5</span></li>
 
 <li><span class='jex'>json_extract('{"a":2,"c":[4,5,{"f":7}]}', '$.x')</span>
@@ -772,7 +772,7 @@ path, or if any argument is a BLOB.
 <p>The json_type(X) function returns the "type" of the outermost element
 of X.  The json_type(X,P) function returns the "type" of the element
 in X that is selected by path P.  The "type" returned by json_type() is
-on of the following an SQL text values:
+one of the following an SQL text values:
 'null', 'true', 'false', 'integer', 'real', 'text', 'array', or 'object'.
 If the path P in json_type(X,P) selects an element that does not exist
 in X, then this function returns NULL.

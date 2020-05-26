@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>SQLite Query Language: upsert</title>
+<title>UPSERT</title>
 <!-- path= -->
 </head>
 <body>
@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -91,122 +91,135 @@ return false;
 }
 </script>
 </div>
-<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>upsert</h2></div><p><b><a href="syntax/upsert-clause.html">upsert-clause:</a></b>
-<button id='x1767' onclick='hideorshow("x1767","x1768")'>hide</button></p>
- <div id='x1768' class='imgcontainer'>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+UPSERT
+</div>
+</div>
+
+
+
+
+<h1 id="syntax"><span>1. </span>Syntax</h1>
+<p><b><a href="syntax/upsert-clause.html">upsert-clause:</a></b>
+<button id='x2113' onclick='hideorshow("x2113","x2114")'>hide</button></p>
+ <div id='x2114' class='imgcontainer'>
  <img alt="syntax diagram upsert-clause" src="images/syntax/upsert-clause.gif" />
 <p><b><a href="syntax/column-name-list.html">column-name-list:</a></b>
-<button id='x1769' onclick='hideorshow("x1769","x1770")'>show</button></p>
- <div id='x1770' style='display:none;' class='imgcontainer'>
+<button id='x2115' onclick='hideorshow("x2115","x2116")'>show</button></p>
+ <div id='x2116' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram column-name-list" src="images/syntax/column-name-list.gif" />
 </div>
 <p><b><a href="syntax/expr.html">expr:</a></b>
-<button id='x1771' onclick='hideorshow("x1771","x1772")'>show</button></p>
- <div id='x1772' style='display:none;' class='imgcontainer'>
+<button id='x2117' onclick='hideorshow("x2117","x2118")'>show</button></p>
+ <div id='x2118' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
 <p><b><a href="syntax/filter-clause.html">filter-clause:</a></b>
-<button id='x1773' onclick='hideorshow("x1773","x1774")'>show</button></p>
- <div id='x1774' style='display:none;' class='imgcontainer'>
+<button id='x2119' onclick='hideorshow("x2119","x2120")'>show</button></p>
+ <div id='x2120' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram filter-clause" src="images/syntax/filter-clause.gif" />
 </div>
 <p><b><a href="syntax/literal-value.html">literal-value:</a></b>
-<button id='x1775' onclick='hideorshow("x1775","x1776")'>show</button></p>
- <div id='x1776' style='display:none;' class='imgcontainer'>
+<button id='x2121' onclick='hideorshow("x2121","x2122")'>show</button></p>
+ <div id='x2122' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
 </div>
 <p><b><a href="syntax/over-clause.html">over-clause:</a></b>
-<button id='x1777' onclick='hideorshow("x1777","x1778")'>show</button></p>
- <div id='x1778' style='display:none;' class='imgcontainer'>
+<button id='x2123' onclick='hideorshow("x2123","x2124")'>show</button></p>
+ <div id='x2124' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram over-clause" src="images/syntax/over-clause.gif" />
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x1779' onclick='hideorshow("x1779","x1780")'>show</button></p>
- <div id='x1780' style='display:none;' class='imgcontainer'>
+<button id='x2125' onclick='hideorshow("x2125","x2126")'>show</button></p>
+ <div id='x2126' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x1781' onclick='hideorshow("x1781","x1782")'>show</button></p>
- <div id='x1782' style='display:none;' class='imgcontainer'>
+<button id='x2127' onclick='hideorshow("x2127","x2128")'>show</button></p>
+ <div id='x2128' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
 </div>
 </div>
 <p><b><a href="syntax/raise-function.html">raise-function:</a></b>
-<button id='x1783' onclick='hideorshow("x1783","x1784")'>show</button></p>
- <div id='x1784' style='display:none;' class='imgcontainer'>
+<button id='x2129' onclick='hideorshow("x2129","x2130")'>show</button></p>
+ <div id='x2130' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
 </div>
 <p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
-<button id='x1785' onclick='hideorshow("x1785","x1786")'>show</button></p>
- <div id='x1786' style='display:none;' class='imgcontainer'>
+<button id='x2131' onclick='hideorshow("x2131","x2132")'>show</button></p>
+ <div id='x2132' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
 <p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
-<button id='x1787' onclick='hideorshow("x1787","x1788")'>show</button></p>
- <div id='x1788' style='display:none;' class='imgcontainer'>
+<button id='x2133' onclick='hideorshow("x2133","x2134")'>show</button></p>
+ <div id='x2134' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
 </div>
 <p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
-<button id='x1789' onclick='hideorshow("x1789","x1790")'>show</button></p>
- <div id='x1790' style='display:none;' class='imgcontainer'>
+<button id='x2135' onclick='hideorshow("x2135","x2136")'>show</button></p>
+ <div id='x2136' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
 </div>
 <p><b><a href="syntax/join-clause.html">join-clause:</a></b>
-<button id='x1791' onclick='hideorshow("x1791","x1792")'>show</button></p>
- <div id='x1792' style='display:none;' class='imgcontainer'>
+<button id='x2137' onclick='hideorshow("x2137","x2138")'>show</button></p>
+ <div id='x2138' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
 <p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
-<button id='x1793' onclick='hideorshow("x1793","x1794")'>show</button></p>
- <div id='x1794' style='display:none;' class='imgcontainer'>
+<button id='x2139' onclick='hideorshow("x2139","x2140")'>show</button></p>
+ <div id='x2140' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
 </div>
 <p><b><a href="syntax/join-operator.html">join-operator:</a></b>
-<button id='x1795' onclick='hideorshow("x1795","x1796")'>show</button></p>
- <div id='x1796' style='display:none;' class='imgcontainer'>
+<button id='x2141' onclick='hideorshow("x2141","x2142")'>show</button></p>
+ <div id='x2142' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
 </div>
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x1797' onclick='hideorshow("x1797","x1798")'>show</button></p>
- <div id='x1798' style='display:none;' class='imgcontainer'>
+<button id='x2143' onclick='hideorshow("x2143","x2144")'>show</button></p>
+ <div id='x2144' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
 </div>
 <p><b><a href="syntax/result-column.html">result-column:</a></b>
-<button id='x1799' onclick='hideorshow("x1799","x1800")'>show</button></p>
- <div id='x1800' style='display:none;' class='imgcontainer'>
+<button id='x2145' onclick='hideorshow("x2145","x2146")'>show</button></p>
+ <div id='x2146' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
 </div>
 <p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
-<button id='x1801' onclick='hideorshow("x1801","x1802")'>show</button></p>
- <div id='x1802' style='display:none;' class='imgcontainer'>
+<button id='x2147' onclick='hideorshow("x2147","x2148")'>show</button></p>
+ <div id='x2148' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
 </div>
 <p><b><a href="syntax/window-defn.html">window-defn:</a></b>
-<button id='x1803' onclick='hideorshow("x1803","x1804")'>show</button></p>
- <div id='x1804' style='display:none;' class='imgcontainer'>
+<button id='x2149' onclick='hideorshow("x2149","x2150")'>show</button></p>
+ <div id='x2150' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x1805' onclick='hideorshow("x1805","x1806")'>show</button></p>
- <div id='x1806' style='display:none;' class='imgcontainer'>
+<button id='x2151' onclick='hideorshow("x2151","x2152")'>show</button></p>
+ <div id='x2152' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
 </div>
 </div>
 </div>
 <p><b><a href="syntax/type-name.html">type-name:</a></b>
-<button id='x1807' onclick='hideorshow("x1807","x1808")'>show</button></p>
- <div id='x1808' style='display:none;' class='imgcontainer'>
+<button id='x2153' onclick='hideorshow("x2153","x2154")'>show</button></p>
+ <div id='x2154' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
 <p><b><a href="syntax/signed-number.html">signed-number:</a></b>
-<button id='x1809' onclick='hideorshow("x1809","x1810")'>show</button></p>
- <div id='x1810' style='display:none;' class='imgcontainer'>
+<button id='x2155' onclick='hideorshow("x2155","x2156")'>show</button></p>
+ <div id='x2156' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
 </div>
 </div>
 </div>
 <p><b><a href="syntax/indexed-column.html">indexed-column:</a></b>
-<button id='x1811' onclick='hideorshow("x1811","x1812")'>show</button></p>
- <div id='x1812' style='display:none;' class='imgcontainer'>
+<button id='x2157' onclick='hideorshow("x2157","x2158")'>show</button></p>
+ <div id='x2158' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram indexed-column" src="images/syntax/indexed-column.gif" />
 </div>
 </div>
 
+
+<h1 id="description"><span>2. </span>Description</h1>
 
 <p>UPSERT is a special syntax addition to <a href="lang_insert.html">INSERT</a> that causes the
 INSERT to behave as an <a href="lang_update.html">UPDATE</a> or a no-op if the INSERT would violate
@@ -215,37 +228,37 @@ UPSERT is not standard SQL.  UPSERT in SQLite follows the
 syntax established by PostgreSQL.
 UPSERT syntax was added to SQLite with version 3.24.0 (2018-06-04).
 
-<p>An UPSERT is an ordinary <a href="lang_insert.html">INSERT</a> statement that is followed by
+</p><p>An UPSERT is an ordinary <a href="lang_insert.html">INSERT</a> statement that is followed by
 the special ON CONFLICT clause shown above.
 
-<p>The syntax that occurs in between the "ON CONFLICT" and "DO" keywords
+</p><p>The syntax that occurs in between the "ON CONFLICT" and "DO" keywords
 is called the "conflict target".  The conflict target specifies a specific
 uniqueness constraint that will trigger the upsert.  The conflict target
 is required for DO UPDATE upserts, but is optional for DO NOTHING.  When
 the conflict target is omitted, the upsert behavior is triggered by a
 violation of any uniqueness constraint on the table of the INSERT.
 
-<p>If the insert operation would cause the uniqueness constraint identified
+</p><p>If the insert operation would cause the uniqueness constraint identified
 by the conflict-target clause to fail, then the insert is omitted and
 either the DO NOTHING or DO UPDATE operation is performed instead.
 In the case of a multi-row insert, this decision is made separately
 for each row of the insert.
 
-<p>The special UPSERT processing happens only for uniqueness constraint on
+</p><p>The special UPSERT processing happens only for uniqueness constraint on
 the table that is receiving the INSERT. A "uniqueness constraint"
 is an explicit UNIQUE or PRIMARY KEY constraint within
 the CREATE TABLE statement, or a <a href="lang_createindex.html#uniqueidx">unique index</a>.
 UPSERT does not intervene for failed NOT NULL or foreign key constraints
 or for constraints that are implemented using triggers.
 
-<p>Column names in the expressions of a DO UPDATE refer to the original
+</p><p>Column names in the expressions of a DO UPDATE refer to the original
 unchanged value of the column, before the attempted INSERT.  To use the
 value that would have been inserted had the constraint not failed,
 add the special "excluded." table qualifier to the column name.
 
-<p>Some examples will help illustrate the difference:
+</p><p>Some examples will help illustrate the difference:
 
-<blockquote><pre>
+</p><blockquote><pre>
 CREATE TABLE vocabulary(word TEXT PRIMARY KEY, count INT DEFAULT 1);
 INSERT INTO vocabulary(word) VALUES('jovial')
   ON CONFLICT(word) DO UPDATE SET count=count+1;
@@ -257,7 +270,7 @@ dictionary, it increments the counter.  The "count+1" expression
 could also be written as "vocabulary.count".  PostgreSQL requires the
 second form, but SQLite accepts either.
 
-<blockquote><pre>
+</p><blockquote><pre>
 CREATE TABLE phonebook(name TEXT PRIMARY KEY, phonenumber TEXT);
 INSERT INTO phonebook(name,phonenumber) VALUES('Alice','704-555-1212')
   ON CONFLICT(name) DO UPDATE SET phonenumber=excluded.phonenumber;
@@ -270,7 +283,7 @@ inserted had there been no conflict.  Hence, the effect of the upsert
 is to insert a phonenumber of Alice if none exists, or to overwrite
 any prior phonenumber for Alice with the new one.
 
-<p>Note that the DO UPDATE clause acts only on the single row
+</p><p>Note that the DO UPDATE clause acts only on the single row
 that experienced the constraint error during INSERT.  It is not
 necessary to include a WHERE clause that restrictions the action
 to that one row.  The only use for the WHERE clause at
@@ -278,7 +291,7 @@ the end of the DO UPDATE is to optionally change the DO UPDATE
 into a no-op depending on the original and/or new values.
 For example:
 
-<blockquote><pre>
+</p><blockquote><pre>
 CREATE TABLE phonebook2(
   name TEXT PRIMARY KEY,
   phonenumber TEXT,
@@ -300,7 +313,8 @@ then the WHERE clause causes the DO UPDATE to become a no-op.
 
 <a name="parseambig"></a>
 
-<h3>Parsing Ambiguity</h3>
+
+</p><h2 id="parsing_ambiguity"><span>2.1. </span>Parsing Ambiguity</h2>
 
 <p>When the <a href="lang_insert.html">INSERT</a> statement to which the UPSERT is attached
 takes its values from a <a href="lang_select.html">SELECT</a> statement, there is a potential
@@ -310,23 +324,21 @@ of a join.  To work around this, the SELECT statement should always
 include a WHERE clause, even if that WHERE clause is just
 "WHERE true".
 
-<p>Ambiguous use of ON:
+</p><p>Ambiguous use of ON:
 
-<blockquote><pre>
+</p><blockquote><pre>
 INSERT INTO t1 SELECT * FROM t2
 ON CONFLICT(x) DO UPDATE SET y=excluded.y;
 </pre></blockquote>
 
 <p>Ambiguity resolved using a WHERE clause:
 
-<blockquote><pre>
+</p><blockquote><pre>
 INSERT INTO t1 SELECT * FROM t2 <font color="blue">WHERE true</font>
 ON CONFLICT(x) DO UPDATE SET y=excluded.y;
 </pre></blockquote>
 
-<h3>Limitations</h3>
+<h1 id="limitations"><span>3. </span>Limitations</h1>
 
 <p>UPSERT does not currently work for <a href="vtab.html">virtual tables</a>.
-
-
-
+</p>

@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -142,6 +142,8 @@ Set Operations Using The Enhanced Query Syntax</a></div>
 <div class="fancy-toc3"><a href="#segment_b_tree_leaf_nodes">9.3.1. Segment B-Tree Leaf Nodes</a></div>
 <div class="fancy-toc3"><a href="#segment_b_tree_interior_nodes">9.3.2. Segment B-Tree Interior Nodes</a></div>
 <div class="fancy-toc2"><a href="#doclist_format">9.4. Doclist Format</a></div>
+<div class="fancy-toc1"><a href="#limitations">10. Limitations</a></div>
+<div class="fancy-toc2"><a href="#_utf_16_byte_order_mark_problem_">10.1.  UTF-16 byte-order-mark problem </a></div>
 <div class="fancy-toc1"><a href="#appendix_a">
 Appendix A: Search Application Tips
 </a></div>
@@ -2943,7 +2945,55 @@ CREATE TABLE %_segdir(
   column 0 (if any) is always first, allowing the first two fields of the
   term-offset list to be omitted in this case.
 
-</p><a name="appendix_a"></a>
+</p><a name="limitations"></a>
+<h1 tags="bugs" id="limitations"><span>10. </span>Limitations</h1>
+
+<h2 id="_utf_16_byte_order_mark_problem_"><span>10.1. </span> UTF-16 byte-order-mark problem </h2>
+
+For UTF-16 databases, when using the "simple" tokenizer, it is possible to use
+malformed unicode strings to cause the 
+<a href="#integcheck">integrity-check special command</a> to falsely report
+corruption, or for <a href="#snippet">auxiliary functions</a> to return
+incorrect results. More specifically, the bug can be triggered by any of the following:
+
+<ul>
+  <li><p>A UTF-16 byte-order-mark (BOM) is embedded at the beginning of an SQL string
+       literal value inserted into an FTS3 table. For example:
+
+</p><div class="codeblock"><pre>INSERT INTO fts_table(col) VALUES(char(0xfeff)||'text...');
+</pre></div>
+
+  </li><li><p>Malformed UTF-8 that SQLite converts to a UTF-16 byte-order-mark is
+       embedded at the beginning of an SQL string literal value inserted 
+       into an FTS3 table.
+
+  </p></li><li><p>A text value created by casting a blob that begins with the two
+       bytes 0xFF and 0xFE, in either possible order, is inserted into an
+       FTS3 table. For example:
+       
+</p><div class="codeblock"><pre>INSERT INTO fts_table(col) VALUES(CAST(X'FEFF' AS TEXT));
+</pre></div>
+</li></ul>
+
+Everything works correctly if any of the following are true:
+<ul>
+<li> The <a href="pragma.html#pragma_encoding">database encoding</a> is UTF-8.
+</li><li> All text strings are insert using one of the
+     <a href="c3ref/bind_blob.html">sqlite3_bind_text()</a> family of functions.
+</li><li> Literal strings contain no byte-order-marks.
+</li><li> A tokenizer is used that recognizes byte-order-marks
+     as whitespace.  (The default "simple" tokenizer for
+     FTS3/4 does not think that BOMs are whitespace, but
+     the unicode tokenizer does.)
+</li></ul>
+All of the above conditions must be false in order for problems
+to occur.  And even if all of the conditiona above are false,
+most things will still operator correctly.  Only the
+<a href="#integcheck">integrity-check</a> command and the
+<a href="#snippet">auxiliary functions</a> might given
+unexpected results.
+
+<a name="appendix_a"></a>
 <h1 id="appendix_a" nonumber="1" tags="search application tips">
   Appendix A: Search Application Tips
 </h1>
@@ -3121,7 +3171,7 @@ ORDER BY ranktable.rank DESC
 <i>** column value in the FTS table. The relevancy of a column value is the</i>
 <i>** sum of the following for each reportable phrase in the FTS query:</i>
 <i>**</i>
-<i>**   (&lt;hit count&gt; / &lt;global hit count&gt) * &lt;column weight&gt;</i>
+<i>**   (&lt;hit count&gt; / &lt;global hit count&gt;) * &lt;column weight&gt;</i>
 <i>**</i>
 <i>** where &lt;hit count&gt; is the number of instances of the phrase in the</i>
 <i>** column value of the current row and &lt;global hit count&gt; is the number</i>
@@ -3183,7 +3233,7 @@ static void rankfunc(sqlite3_context *pCtx, int nVal, sqlite3_value **apVal){
 <i>    /* Now iterate through each column in the users query. For each column,</i>
 <i>    ** increment the relevancy score by:</i>
 <i>    **</i>
-<i>    **   (&lt;hit count&gt; / &lt;global hit count&gt) * &lt;column weight&gt;</i>
+<i>    **   (&lt;hit count&gt; / &lt;global hit count&gt;) * &lt;column weight&gt;</i>
 <i>    **</i>
 <i>    ** aPhraseinfo&#x5B;&#x5D; points to the start of the data for phrase iPhrase. So</i>
 <i>    ** the hit count and global hit counts for each column are found in </i>

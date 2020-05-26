@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -95,7 +95,15 @@ return false;
 
 <h2>Recent News</h2>
 
-<a name="2020_01_27"></a><h3>2020-01-27 - Release 3.31.1</h3><blockquote>
+<a name="2020_05_22"></a><h3>2020-05-22 - Release 3.32.0</h3><blockquote>
+Version 3.32.0 is an ordinary maintenance release of SQLite.
+This release features the ability to run an
+<a href="lang_analyze.html#approx">approximate ANALYZE</a> to gather database statistics for
+use by the query planner, without having to scan every row
+of every index.
+See the <a href="releaselog/3_32_0.html">change log</a> for additional enhancements
+and improvements.
+</blockquote><hr width="50%"><a name="2020_01_27"></a><h3>2020-01-27 - Release 3.31.1</h3><blockquote>
 Applications that use SQLite should only interface with SQLite
 through the officially published APIs.  Applications should not
 depend upon or use the internal data structures of SQLite as those

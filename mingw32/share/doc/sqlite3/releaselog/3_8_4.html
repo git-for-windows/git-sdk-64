@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -107,23 +107,23 @@ return false;
     rather than an "out of memory" error when called with zero arguments. 
 <li>Bug fix: DISTINCT now recognizes that a <a href="../lang_corefunc.html#zeroblob">zeroblob</a> and a blob of all
     0x00 bytes are the same thing. 
-    <a href="http://www.sqlite.org/src/info/fccbde530a">Ticket &#91;fccbde530a&#93</a>
+    <a href="http://www.sqlite.org/src/info/fccbde530a">Ticket &#91;fccbde530a&#93;</a>
 <li>Bug fix: Compute the correct answer for queries that contain an IS NOT NULL
     term in the WHERE clause and also contain an OR term in the WHERE clause and
     are compiled with <a href="../compile.html#enable_stat4">SQLITE_ENABLE_STAT4</a>.
-    <a href="http://www.sqlite.org/src/info/4c86b126f2">Ticket &#91;4c86b126f2&#93</a>
+    <a href="http://www.sqlite.org/src/info/4c86b126f2">Ticket &#91;4c86b126f2&#93;</a>
 <li>Bug fix: Make sure "rowid" columns are correctly resolved in joins between
     normal tables and WITHOUT ROWID tables.
-    <a href="http://www.sqlite.org/src/info/c34d0557f7">Ticket &#91;c34d0557f7&#93</a>
+    <a href="http://www.sqlite.org/src/info/c34d0557f7">Ticket &#91;c34d0557f7&#93;</a>
 <li>Bug fix: Make sure the same temporary registers are not used in concurrent
     co-routines used to implement compound SELECT statements containing ORDER
     BY clauses, as such use can lead to incorrect answers.
-    <a href="http://www.sqlite.org/src/info/8c63ff0eca">Ticket &#91;8c63ff0eca&#93</a>
+    <a href="http://www.sqlite.org/src/info/8c63ff0eca">Ticket &#91;8c63ff0eca&#93;</a>
 <li>Bug fix: Ensure that "ORDER BY random()" clauses do not get optimized out.
-    <a href="http://www.sqlite.org/src/info/65bdeb9739">Ticket &#91;65bdeb9739&#93</a>
+    <a href="http://www.sqlite.org/src/info/65bdeb9739">Ticket &#91;65bdeb9739&#93;</a>
 <li>Bug fix: Repair a name-resolution error that can occur in sub-select statements
     contained within a TRIGGER.
-    <a href="http://www.sqlite.org/src/info/4ef7e3cfca">Ticket &#91;4ef7e3cfca&#93</a>
+    <a href="http://www.sqlite.org/src/info/4ef7e3cfca">Ticket &#91;4ef7e3cfca&#93;</a>
 <li>Bug fix: Fix column default values expressions of the form
     "DEFAULT(-(-9223372036854775808))" so that they work correctly, initializing
     the column to a floating point value approximately equal to

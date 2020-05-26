@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -359,6 +359,8 @@ file format specification encounters a database file where the read
 version is 1 or 2 but the write version is greater than 2, then the database
 file must be treated as read-only.  If a database file with a read version
 greater than 2 is encountered, then that database cannot be read or written.</p>
+
+<a name="resbyte"></a>
 
 <h3 id="reserved_bytes_per_page"><span>1.3.4. </span>Reserved bytes per page</h3>
 
@@ -1357,11 +1359,11 @@ indexed.  The ex25acde example above demonstrates this.  Each entry in
 the ex25acde index consists of only the columns a, c, d, and e, in that
 order.</p>
 
-<p>Each row in ex25ae contains five columns: c, e, d, c, a.  The c
-column is repeated since the first occurrence of c has a collating
+<p>Each row in ex25ae contains five columns: a, e, d, c, a.  The "a"
+column is repeated since the first occurrence of "a" has a collating
 function of "nocase" and the second has a collating sequence of "binary".
-If the c column is not repeated and if the table contains two or more
-entries with the same e value and where c differs only in case, then
+If the "a" column is not repeated and if the table contains two or more
+entries with the same "e" value and where "a" differs only in case, then
 all of those table entries would correspond to a single entry in the
 index, which would break the one-to-one correspondence between the table
 and the index.

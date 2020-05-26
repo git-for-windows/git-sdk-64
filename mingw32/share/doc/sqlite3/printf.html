@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -248,7 +248,7 @@ characters that describe the substitution.  Each substitution has
 the following format:
 
 </p><blockquote>
-<b>%</b><i>&#91;flags&#93;&#91;width&#93;&#91</i><b>.</b><i>precision&#93;&#91;length&#93;type</i>
+<b>%</b><i>&#91;flags&#93;&#91;width&#93;&#91;</i><b>.</b><i>precision&#93;&#91;length&#93;type</i>
 </blockquote>
 
 <p>All substitutions begin with a single "%" and end with a single type character.

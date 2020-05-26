@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -109,81 +109,48 @@ also provided.  The SQL language syntax is described by
 <table width="100%" cellpadding="5" border="0">
 <tr><td valign="top"><ul>
 
-<style>
-#listtab33 tr td {vertical-align:top;}
-</style>
-<table id='listtab33' width='100%'></table>
-<script>
-var listitems33 = [{"u":"lang_aggfunc.html","x":"aggregate functions","s":0},
-{"u":"lang_altertable.html","x":"ALTER TABLE","s":0},
-{"u":"lang_analyze.html","x":"ANALYZE","s":0},
-{"u":"lang_attach.html","x":"ATTACH DATABASE","s":0},
-{"u":"lang_transaction.html","x":"BEGIN TRANSACTION","s":0},
-{"u":"lang_comment.html","x":"comment","s":0},
-{"u":"lang_transaction.html","x":"COMMIT TRANSACTION","s":0},
-{"u":"lang_corefunc.html","x":"core functions","s":0},
-{"u":"lang_createindex.html","x":"CREATE INDEX","s":0},
-{"u":"lang_createtable.html","x":"CREATE TABLE","s":0},
-{"u":"lang_createtrigger.html","x":"CREATE TRIGGER","s":0},
-{"u":"lang_createview.html","x":"CREATE VIEW","s":0},
-{"u":"lang_createvtab.html","x":"CREATE VIRTUAL TABLE","s":0},
-{"u":"lang_datefunc.html","x":"date and time functions","s":0},
-{"u":"lang_delete.html","x":"DELETE","s":0},
-{"u":"lang_detach.html","x":"DETACH DATABASE","s":0},
-{"u":"lang_dropindex.html","x":"DROP INDEX","s":0},
-{"u":"lang_droptable.html","x":"DROP TABLE","s":0},
-{"u":"lang_droptrigger.html","x":"DROP TRIGGER","s":0},
-{"u":"lang_dropview.html","x":"DROP VIEW","s":0},
-{"u":"lang_transaction.html","x":"END TRANSACTION","s":0},
-{"u":"lang_explain.html","x":"EXPLAIN","s":0},
-{"u":"lang_expr.html","x":"expression","s":0},
-{"u":"lang_indexedby.html","x":"INDEXED BY","s":0},
-{"u":"lang_insert.html","x":"INSERT","s":0},
-{"u":"lang_keywords.html","x":"keywords","s":0},
-{"u":"lang_conflict.html","x":"ON CONFLICT clause","s":0},
-{"u":"pragma.html#syntax","x":"PRAGMA","s":0},
-{"u":"lang_reindex.html","x":"REINDEX","s":0},
-{"u":"lang_savepoint.html","x":"RELEASE SAVEPOINT","s":0},
-{"u":"lang_replace.html","x":"REPLACE","s":0},
-{"u":"lang_transaction.html","x":"ROLLBACK TRANSACTION","s":0},
-{"u":"lang_savepoint.html","x":"SAVEPOINT","s":0},
-{"u":"lang_select.html","x":"SELECT","s":0},
-{"u":"lang_update.html","x":"UPDATE","s":0},
-{"u":"lang_UPSERT.html","x":"UPSERT","s":0},
-{"u":"lang_vacuum.html","x":"VACUUM","s":0},
-{"u":"lang_with.html","x":"WITH clause","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/340);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems33.length+1)/nCol);
-var h="<tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems33.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems33[i].u=="" || listitems33[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems33[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems33[i].s==2 || listitems33[i].s==3) h += "<s>"
-  h += listitems33[i].x;
-  if(listitems33[i].s==2 || listitems33[i].s==3) h += "</s>"
-  h += ea
-  if(listitems33[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems33[i].s==3) h += "&sup1\n";
-  if(listitems33[i].s==4) h += "&sup2\n";
-  if(listitems33[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab33").innerHTML = h;
-</script>
+<div class='columns' style='columns: 17em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='lang_aggfunc.html'>aggregate functions</a></li>
+<li><a href='lang_altertable.html'>ALTER TABLE</a></li>
+<li><a href='lang_analyze.html'>ANALYZE</a></li>
+<li><a href='lang_attach.html'>ATTACH DATABASE</a></li>
+<li><a href=''>BEGIN TRANSACTION</a></li>
+<li><a href='lang_comment.html'>comment</a></li>
+<li><a href='lang_transaction.html'>COMMIT TRANSACTION</a></li>
+<li><a href='lang_corefunc.html'>core functions</a></li>
+<li><a href='lang_createindex.html'>CREATE INDEX</a></li>
+<li><a href='lang_createtable.html'>CREATE TABLE</a></li>
+<li><a href='lang_createtrigger.html'>CREATE TRIGGER</a></li>
+<li><a href='lang_createview.html'>CREATE VIEW</a></li>
+<li><a href='lang_createvtab.html'>CREATE VIRTUAL TABLE</a></li>
+<li><a href='lang_datefunc.html'>date and time functions</a></li>
+<li><a href='lang_delete.html'>DELETE</a></li>
+<li><a href='lang_detach.html'>DETACH DATABASE</a></li>
+<li><a href='lang_dropindex.html'>DROP INDEX</a></li>
+<li><a href='lang_droptable.html'>DROP TABLE</a></li>
+<li><a href='lang_droptrigger.html'>DROP TRIGGER</a></li>
+<li><a href='lang_dropview.html'>DROP VIEW</a></li>
+<li><a href='lang_transaction.html'>END TRANSACTION</a></li>
+<li><a href='lang_explain.html'>EXPLAIN</a></li>
+<li><a href='lang_expr.html'>expression</a></li>
+<li><a href='lang_indexedby.html'>INDEXED BY</a></li>
+<li><a href='lang_insert.html'>INSERT</a></li>
+<li><a href='lang_keywords.html'>keywords</a></li>
+<li><a href='lang_conflict.html'>ON CONFLICT clause</a></li>
+<li><a href='pragma.html#syntax'>PRAGMA</a></li>
+<li><a href='lang_reindex.html'>REINDEX</a></li>
+<li><a href='lang_savepoint.html'>RELEASE SAVEPOINT</a></li>
+<li><a href='lang_replace.html'>REPLACE</a></li>
+<li><a href='lang_transaction.html'>ROLLBACK TRANSACTION</a></li>
+<li><a href='lang_savepoint.html'>SAVEPOINT</a></li>
+<li><a href='lang_select.html'>SELECT</a></li>
+<li><a href='lang_update.html'>UPDATE</a></li>
+<li><a href='lang_upsert.html'>UPSERT</a></li>
+<li><a href='lang_vacuum.html'>VACUUM</a></li>
+<li><a href='lang_with.html'>WITH clause</a></li>
+</ul>
+</div>
 
 </ul></td></tr></table>
 
@@ -204,6 +171,5 @@ following:</p>
 <p><b><a href="syntax/sql-stmt.html">sql-stmt:</a></b></p><div class='imgcontainer'>
  <img alt="syntax diagram sql-stmt" src="images/syntax/sql-stmt.gif"></img>
  </div>
-
 
 

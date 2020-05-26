@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>SQLite Query Language: REINDEX</title>
+<title>REINDEX</title>
 <!-- path= -->
 </head>
 <body>
@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -91,32 +91,43 @@ return false;
 }
 </script>
 </div>
-<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>REINDEX</h2></div><p><b><a href="syntax/reindex-stmt.html">reindex-stmt:</a></b>
-<button id='x1815' onclick='hideorshow("x1815","x1816")'>hide</button></p>
- <div id='x1816' class='imgcontainer'>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+REINDEX
+</div>
+</div>
+
+
+
+
+<p><b><a href="syntax/reindex-stmt.html">reindex-stmt:</a></b>
+<button id='x1759' onclick='hideorshow("x1759","x1760")'>hide</button></p>
+ <div id='x1760' class='imgcontainer'>
  <img alt="syntax diagram reindex-stmt" src="images/syntax/reindex-stmt.gif" />
 </div>
 
 
 <p>The REINDEX command is used to delete and recreate indices from scratch.
-This is useful when the definition of a collation sequence has changed.
+This is useful when the definition of a collation sequence has changed, or
+when there are <a href="expridx.html">indexes on expressions</a> involving a function whose definition
+has changed.
 </p>
 
 <p>If the REINDEX keyword is not followed by a collation-sequence or database 
 object identifier, then all indices in all attached databases are rebuilt.
 
-<p>If the REINDEX keyword is followed by a collation-sequence name, then
+</p><p>If the REINDEX keyword is followed by a collation-sequence name, then
 all indices in all attached databases that use the named collation sequences
 are recreated. 
 
-<p>Or, if the argument attached to the REINDEX identifies a specific 
+</p><p>Or, if the argument attached to the REINDEX identifies a specific 
 database table, then all indices attached to the database table are rebuilt. 
 If it identifies a specific database index, then just that index is recreated.
 
-<p>For a command of the form "REINDEX <i>name</i>", a match
+</p><p>For a command of the form "REINDEX <i>name</i>", a match
 against <span class='yyterm'>collation-name</span> takes precedence over a match
 against <span class='yyterm'>index-name</span> or <span class='yyterm'>table-name</span>.
 This ambiguity in the syntax may be avoided by always specifying a
 <span class='yyterm'>schema-name</span> when reindexing a specific table or index.
-
-
+</p>

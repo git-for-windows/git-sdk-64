@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -193,8 +193,8 @@ output from SQLite, you should reference the version of this document
 that corresponds to the version of SQLite that ran the <a href="lang_explain.html">EXPLAIN</a>.
 Otherwise, the description of the opcodes may not be accurate.
 This document is derived from SQLite
- version 3.31.1 check-in
-<a href='https://www.sqlite.org/src/timeline?c=3bfa9cc97da10'>3bfa9cc97da10</a> dated 2020-01-27.
+ version 3.32.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=5998789c9c744'>5998789c9c744</a> dated 2020-05-22.
 
 
 
@@ -349,7 +349,7 @@ of the calling bytecode program.
 
 <p>Some opcodes are self-altering.
 For example, the <a href="opcode.html#Init">Init</a> opcode (which is always the first opcode
-run a bytecode program) increments its P1 operand.  Subsequent
+in every bytecode program) increments its P1 operand.  Subsequent
 <a href="opcode.html#Once">Once</a> opcodes compare their P1 operands to the P1 value for
 the <a href="opcode.html#Init">Init</a> opcode in order to determine if the one-time initialization
 code that follows should be skipped.
@@ -422,15 +422,15 @@ opcodes defined by the virtual machine.
 All currently defined opcodes are described in the table below.
 This table was generated automatically by scanning the source code
 from the file
-<a href="http://www.sqlite.org/src/artifact/e3dd230ece613409507523e68436764cc20638bb77ba2f416097de5b37235ce1">vdbe.c</a>.
+<a href="http://www.sqlite.org/src/artifact/e3dba0dee25bc92e871c13cac655260912b3be4abcc85b439259c9934b208da3">vdbe.c</a>.
 
 
 </p><p>Remember: The VDBE opcodes are <u>not</u> part of the interface 
 definition for SQLite.  The number of opcodes and their names and meanings
 change from one release of SQLite to the next.
 The opcodes shown in the table below are valid for SQLite
- version 3.31.1 check-in
-<a href='https://www.sqlite.org/src/timeline?c=3bfa9cc97da10'>3bfa9cc97da10</a> dated 2020-01-27.
+ version 3.32.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=5998789c9c744'>5998789c9c744</a> dated 2020-05-22.
 
 <a name="codes"></a>
 
@@ -572,12 +572,12 @@ blob in register P2.</td></tr>
 <a name="Checkpoint"></a>Checkpoint
 <td>Checkpoint database P1. This is a no-op if P1 is not currently in
 WAL mode. Parameter P2 is one of SQLITE_CHECKPOINT_PASSIVE, FULL,
-RESTART, or TRUNCATE.  Write 1 or 0 into mem&#91;P3&#93 if the checkpoint returns
+RESTART, or TRUNCATE.  Write 1 or 0 into mem&#91;P3&#93; if the checkpoint returns
 SQLITE_BUSY or not, respectively.  Write the number of pages in the
-WAL after the checkpoint into mem&#91;P3+1&#93 and the number of pages
+WAL after the checkpoint into mem&#91;P3+1&#93; and the number of pages
 in the WAL that have been checkpointed after the checkpoint
-completes into mem&#91;P3+2&#93.  However on an error, mem&#91;P3+1&#93 and
-mem&#91;P3+2&#93 are initialized to -1.</td></tr>
+completes into mem&#91;P3+2&#93;.  However on an error, mem&#91;P3+1&#93; and
+mem&#91;P3+2&#93; are initialized to -1.</td></tr>
 <tr><td valign="top" align="center">
 <a name="Clear"></a>Clear
 <td>Delete all contents of the database table or index whose root page
@@ -678,7 +678,11 @@ is made of any string or blob constant.  See also <a href="opcode.html#SCopy">SC
 <tr><td valign="top" align="center">
 <a name="Count"></a>Count
 <td>Store the number of entries (an integer value) in the table or index
-opened by cursor P1 in register P2</td></tr>
+opened by cursor P1 in register P2.</p>
+
+<p>If P3==0, then an exact count is obtained, which involves visiting
+every btree page of the table.  But if P3 is non-zero, an estimate
+is returned based on the current cursor position.</td></tr>
 <tr><td valign="top" align="center">
 <a name="CreateBtree"></a>CreateBtree
 <td>Allocate a new b-tree in the main database file if P1==0 or in the
@@ -858,8 +862,8 @@ If neither operand is NULL the result is the same as it would be if
 the SQLITE_NULLEQ flag were omitted from P5.</p>
 
 <p>If both SQLITE_STOREP2 and SQLITE_KEEPNULL flags are set then the
-content of r&#91;P2&#93 is only changed if the new value is NULL or 0 (false).
-In other words, a prior r&#91;P2&#93 value will not be overwritten by 1 (true).</td></tr>
+content of r&#91;P2&#93; is only changed if the new value is NULL or 0 (false).
+In other words, a prior r&#91;P2&#93; value will not be overwritten by 1 (true).</td></tr>
 <tr><td valign="top" align="center">
 <a name="Expire"></a>Expire
 <td>Cause precompiled statements to expire.  When an expired statement
@@ -992,7 +996,14 @@ The P5 parameter should be 1.</td></tr>
 <a name="IdxDelete"></a>IdxDelete
 <td>The content of P3 registers starting at register P2 form
 an unpacked index key. This opcode removes that entry from the
-index opened by cursor P1.</td></tr>
+index opened by cursor P1.</p>
+
+<p>If P5 is not zero, then raise an SQLITE_CORRUPT_INDEX error
+if no matching index entry is found.  This happens when running
+an UPDATE or DELETE statement and the index entry to be updated
+or deleted is not found.  For some uses of <a href="opcode.html#IdxDelete">IdxDelete</a>
+(example:  the EXCEPT operator) it does not matter that no matching
+entry is found.  For those cases, P5 is zero.</td></tr>
 <tr><td valign="top" align="center">
 <a name="IdxGE"></a>IdxGE
 <td>The P4 register values beginning with P3 form an unpacked index
@@ -1237,10 +1248,10 @@ is 1.</p>
 <p>The logic is summarized like this:</p>
 
 <p><ul>
-<li> If P3==0 and P4==0  then  r&#91;P2&#93 := r&#91;P1&#93 IS TRUE
-<li> If P3==1 and P4==1  then  r&#91;P2&#93 := r&#91;P1&#93 IS FALSE
-<li> If P3==0 and P4==1  then  r&#91;P2&#93 := r&#91;P1&#93 IS NOT TRUE
-<li> If P3==1 and P4==0  then  r&#91;P2&#93 := r&#91;P1&#93 IS NOT FALSE
+<li> If P3==0 and P4==0  then  r&#91;P2&#93; := r&#91;P1&#93; IS TRUE
+<li> If P3==1 and P4==1  then  r&#91;P2&#93; := r&#91;P1&#93; IS FALSE
+<li> If P3==0 and P4==1  then  r&#91;P2&#93; := r&#91;P1&#93; IS NOT TRUE
+<li> If P3==1 and P4==0  then  r&#91;P2&#93; := r&#91;P1&#93; IS NOT FALSE
 </ul></td></tr>
 <tr><td valign="top" align="center">
 <a name="JournalMode"></a>JournalMode
@@ -1360,8 +1371,8 @@ the operands in registers P1 and P3 are not equal.  See the Eq opcode for
 additional information.</p>
 
 <p>If both SQLITE_STOREP2 and SQLITE_KEEPNULL flags are set then the
-content of r&#91;P2&#93 is only changed if the new value is NULL or 1 (true).
-In other words, a prior r&#91;P2&#93 value will not be overwritten by 0 (false).</td></tr>
+content of r&#91;P2&#93; is only changed if the new value is NULL or 1 (true).
+In other words, a prior r&#91;P2&#93; value will not be overwritten by 0 (false).</td></tr>
 <tr><td valign="top" align="center">
 <a name="NewRowid"></a>NewRowid
 <td>Get a new integer record number (a.k.a "rowid") used as the key to a table.
@@ -1489,7 +1500,7 @@ that occur while the cursor is on the null row will always
 write a NULL.</td></tr>
 <tr><td valign="top" align="center">
 <a name="Offset"></a>Offset
-<td>Store in register r&#91;P3&#93 the byte offset into the database file that is the
+<td>Store in register r&#91;P3&#93; the byte offset into the database file that is the
 start of the payload for the record at which that cursor P1 is currently
 pointing.</p>
 
@@ -1503,19 +1514,19 @@ same as for <a href="opcode.html#Column">Column</a>.</p>
 <tr><td valign="top" align="center">
 <a name="OffsetLimit"></a>OffsetLimit
 <td>This opcode performs a commonly used computation associated with
-LIMIT and OFFSET process.  r&#91;P1&#93 holds the limit counter.  r&#91;P3&#93
+LIMIT and OFFSET process.  r&#91;P1&#93; holds the limit counter.  r&#91;P3&#93;
 holds the offset counter.  The opcode computes the combined value
-of the LIMIT and OFFSET and stores that value in r&#91;P2&#93.  The r&#91;P2&#93
+of the LIMIT and OFFSET and stores that value in r&#91;P2&#93;.  The r&#91;P2&#93;
 value computed is the total number of rows that will need to be
 visited in order to complete the query.</p>
 
-<p>If r&#91;P3&#93 is zero or negative, that means there is no OFFSET
-and r&#91;P2&#93 is set to be the value of the LIMIT, r&#91;P1&#93.</p>
+<p>If r&#91;P3&#93; is zero or negative, that means there is no OFFSET
+and r&#91;P2&#93; is set to be the value of the LIMIT, r&#91;P1&#93;.</p>
 
-<p>if r&#91;P1&#93 is zero or negative, that means there is no LIMIT
-and r&#91;P2&#93 is set to -1.</p>
+<p>if r&#91;P1&#93; is zero or negative, that means there is no LIMIT
+and r&#91;P2&#93; is set to -1.</p>
 
-<p>Otherwise, r&#91;P2&#93 is set to the sum of r&#91;P1&#93 and r&#91;P3&#93.</td></tr>
+<p>Otherwise, r&#91;P2&#93; is set to the sum of r&#91;P1&#93; and r&#91;P3&#93;.</td></tr>
 <tr><td valign="top" align="center">
 <a name="Once"></a>Once
 <td>Fall through to the next instruction the first time this opcode is
@@ -1592,7 +1603,7 @@ It is an error for P1 to be negative.</p>
 <ul>
 <li>  <b>0x02 OPFLAG_SEEKEQ</b>: This cursor will only be used for
 equality lookups (implemented as a pair of opcodes <a href="opcode.html#SeekGE">SeekGE</a>/<a href="opcode.html#IdxGT">IdxGT</a>
-of <a href="opcode.html#SeekLE">SeekLE</a>/<a href="opcode.html#IdxGT">IdxGT</a>)
+of <a href="opcode.html#SeekLE">SeekLE</a>/<a href="opcode.html#IdxLT">IdxLT</a>)
 </ul></p>
 
 <p>The P4 value may be either an integer (P4_INT32) or a pointer to
@@ -1622,7 +1633,7 @@ number of columns no less than the value of P4.</p>
 <ul>
 <li>  <b>0x02 OPFLAG_SEEKEQ</b>: This cursor will only be used for
 equality lookups (implemented as a pair of opcodes <a href="opcode.html#SeekGE">SeekGE</a>/<a href="opcode.html#IdxGT">IdxGT</a>
-of <a href="opcode.html#SeekLE">SeekLE</a>/<a href="opcode.html#IdxGT">IdxGT</a>)
+of <a href="opcode.html#SeekLE">SeekLE</a>/<a href="opcode.html#IdxLT">IdxLT</a>)
 <li>  <b>0x08 OPFLAG_FORDELETE</b>: This cursor is used only to seek
 and subsequently delete entries in an index btree.  This is a
 hint to the storage engine that the storage engine is allowed to
@@ -1813,7 +1824,7 @@ number.</p>
 <ul>
 <li>  <b>0x02 OPFLAG_SEEKEQ</b>: This cursor will only be used for
 equality lookups (implemented as a pair of opcodes <a href="opcode.html#SeekGE">SeekGE</a>/<a href="opcode.html#IdxGT">IdxGT</a>
-of <a href="opcode.html#SeekLE">SeekLE</a>/<a href="opcode.html#IdxGT">IdxGT</a>)
+of <a href="opcode.html#SeekLE">SeekLE</a>/<a href="opcode.html#IdxLT">IdxLT</a>)
 </ul></p>
 
 <p>See also: <a href="opcode.html#OpenRead">OpenRead</a>, <a href="opcode.html#OpenWrite">OpenWrite</a></td></tr>
@@ -1957,11 +1968,13 @@ is greater than or equal to the key value. If there are no records
 greater than or equal to the key and P2 is not zero, then jump to P2.</p>
 
 <p>If the cursor P1 was opened using the OPFLAG_SEEKEQ flag, then this
-opcode will always land on a record that equally equals the key, or
-else jump immediately to P2.  When the cursor is OPFLAG_SEEKEQ, this
-opcode must be followed by an <a href="opcode.html#IdxLE">IdxLE</a> opcode with the same arguments.
-The <a href="opcode.html#IdxLE">IdxLE</a> opcode will be skipped if this opcode succeeds, but the
-<a href="opcode.html#IdxLE">IdxLE</a> opcode will be used on subsequent loop iterations.</p>
+opcode will either land on a record that exactly matches the key, or
+else it will cause a jump to P2.  When the cursor is OPFLAG_SEEKEQ,
+this opcode must be followed by an <a href="opcode.html#IdxLE">IdxLE</a> opcode with the same arguments.
+The <a href="opcode.html#IdxGT">IdxGT</a> opcode will be skipped if this opcode succeeds, but the
+<a href="opcode.html#IdxGT">IdxGT</a> opcode will be used on subsequent loop iterations.  The
+OPFLAG_SEEKEQ flags is a hint to the btree layer to say that this
+is an equality search.</p>
 
 <p>This opcode leaves the cursor configured to move in forward order,
 from the beginning toward the end.  In other words, the cursor is
@@ -1975,7 +1988,7 @@ use the value in register P3 as a key. If cursor P1 refers
 to an SQL index, then P3 is the first in an array of P4 registers
 that are used as an unpacked index key.</p>
 
-<p>Reposition cursor P1 so that  it points to the smallest entry that
+<p>Reposition cursor P1 so that it points to the smallest entry that
 is greater than the key value. If there are no records greater than
 the key and P2 is not zero, then jump to P2.</p>
 
@@ -2003,11 +2016,13 @@ from the end toward the beginning.  In other words, the cursor is
 configured to use <a href="opcode.html#Prev">Prev</a>, not <a href="opcode.html#Next">Next</a>.</p>
 
 <p>If the cursor P1 was opened using the OPFLAG_SEEKEQ flag, then this
-opcode will always land on a record that equally equals the key, or
-else jump immediately to P2.  When the cursor is OPFLAG_SEEKEQ, this
-opcode must be followed by an <a href="opcode.html#IdxGE">IdxGE</a> opcode with the same arguments.
+opcode will either land on a record that exactly matches the key, or
+else it will cause a jump to P2.  When the cursor is OPFLAG_SEEKEQ,
+this opcode must be followed by an <a href="opcode.html#IdxLE">IdxLE</a> opcode with the same arguments.
 The <a href="opcode.html#IdxGE">IdxGE</a> opcode will be skipped if this opcode succeeds, but the
-<a href="opcode.html#IdxGE">IdxGE</a> opcode will be used on subsequent loop iterations.</p>
+<a href="opcode.html#IdxGE">IdxGE</a> opcode will be used on subsequent loop iterations.  The
+OPFLAG_SEEKEQ flags is a hint to the btree layer to say that this
+is an equality search.</p>
 
 <p>See also: <a href="opcode.html#Found">Found</a>, <a href="opcode.html#NotFound">NotFound</a>, SeekGt, SeekGe, SeekLt</td></tr>
 <tr><td valign="top" align="center">
@@ -2102,7 +2117,7 @@ correctly optimizing out sorts.</td></tr>
 <td>P1 is a sorter cursor. This instruction compares a prefix of the
 record blob in register P3 against a prefix of the entry that
 the sorter cursor currently points to.  Only the first P4 fields
-of r&#91;P3&#93 and the sorter record are compared.</p>
+of r&#91;P3&#93; and the sorter record are compared.</p>
 
 <p>If either P3 or the sorter contains a NULL in one of their significant
 fields (not counting the P4 fields at the end which are ignored) then
@@ -2160,7 +2175,7 @@ the datatype of the register P2 is converted to BLOB.  The content is
 the same sequence of bytes, it is merely interpreted as a BLOB instead
 of a string, as if it had been CAST.  In other words:</p>
 
-<p>if( P3!=0 and reg&#91;P3&#93==P5 ) reg&#91;P2&#93 := CAST(reg&#91;P2&#93 as BLOB)</td></tr>
+<p>if( P3!=0 and reg&#91;P3&#93;==P5 ) reg&#91;P2&#93; := CAST(reg&#91;P2&#93; as BLOB)</td></tr>
 <tr><td valign="top" align="center">
 <a name="String8"></a>String8
 <td>P4 points to a nul terminated UTF-8 string. This opcode is transformed

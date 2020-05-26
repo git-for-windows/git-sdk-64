@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -406,6 +406,8 @@ sqlite&gt;
 So you will need repeat the ".separator" command whenever you change
 modes if you want to continue using a non-standard separator.
 
+<a name="dotmodequote"></a>
+
 </p><p>In "quote" mode, the output is formatted as SQL literals.  Strings are
 enclosed in single-quotes and internal single-quotes are escaped by doubling.
 Blobs are displayed in hexadecimal blob literal notation (Ex: x'abcd').
@@ -562,6 +564,8 @@ sending the result of a query to a spreadsheet for easy viewing:
 </p><div class="codeblock"><pre>sqlite3&gt; <b>.once -x</b>
 sqlite3&gt; <b>SELECT * FROM bigTable;</b>
 </pre></div>
+
+<a name="dotexcel"></a>
 
 <p>The ".excel" command is an alias for ".once -x".  It does exactly the same
 thing.
@@ -751,8 +755,7 @@ SQLite table into which the CSV data is to be inserted.
  ".import" command.  This is necessary to prevent the command-line shell
 from trying to interpret the input file text as some other format.
 
-</p><div class="codeblock"><pre>sqlite&gt; <b>.mode csv</b>
-sqlite&gt; <b>.import C:/work/somedata.csv tab1</b>
+</p><div class="codeblock"><pre>sqlite&gt; <b>.import C:/work/somedata.csv tab1</b>
 </pre></div>
 
 <p>There are two cases to consider:  (1) Table "tab1" does not previously
@@ -767,9 +770,10 @@ the second row of the CSV file.
 
 </p><p>For the second case, when the table already exists, every row of the
 CSV file, including the first row, is assumed to be actual content.  If
-the CSV file contains an initial row of column labels, that row will be
-read as data and inserted into the table.  To avoid this, make sure that
-table does not previously exist.
+the CSV file contains an initial row of column labels, you can cause
+the .import command to skip that initial row using the "--skip 1" option.
+
+
 
 <a name="csvout"></a>
 
@@ -1000,7 +1004,7 @@ WITHOUT ROWID table entries.
       contains NULL. Otherwise, it contains the 64-bit integer rowid value for
       the row.
 
-  </td></tr><tr style="text-align:left;background-color:#DDDDDD"><td>c0,&nbsp;c1,&nbspc2...</td><td> The values for each column of the row
+  </td></tr><tr style="text-align:left;background-color:#DDDDDD"><td>c0,&nbsp;c1,&nbsp;c2...</td><td> The values for each column of the row
       are stored in these columns. The ".recover" command creates the
       lost_and_found table with as many columns as required by the longest
       orphaned row.

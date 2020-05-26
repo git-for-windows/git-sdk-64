@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -198,185 +198,120 @@ result codes, might appear in future releases of SQLite.
 
 
 </p><h1 id="primary_result_code_list"><span>4. </span>Primary Result Code List</h1>
-<p>The $nPrimCode result codes are 
+<p>The 31 result codes are 
    <a href="c3ref/c_abort.html">defined in sqlite3.h</a> and are listed in
    alphabetical order below: 
-<style>
-#listtab37 tr td {vertical-align:top;}
-</style>
-<table id='listtab37' width='100%'></table>
-<script>
-var listitems37 = [{"u":"rescode.html#abort","x":"SQLITE_ABORT&nbsp;(4)","s":0},
-{"u":"rescode.html#auth","x":"SQLITE_AUTH&nbsp;(23)","s":0},
-{"u":"rescode.html#busy","x":"SQLITE_BUSY&nbsp;(5)","s":0},
-{"u":"rescode.html#cantopen","x":"SQLITE_CANTOPEN&nbsp;(14)","s":0},
-{"u":"rescode.html#constraint","x":"SQLITE_CONSTRAINT&nbsp;(19)","s":0},
-{"u":"rescode.html#corrupt","x":"SQLITE_CORRUPT&nbsp;(11)","s":0},
-{"u":"rescode.html#done","x":"SQLITE_DONE&nbsp;(101)","s":0},
-{"u":"rescode.html#empty","x":"SQLITE_EMPTY&nbsp;(16)","s":0},
-{"u":"rescode.html#error","x":"SQLITE_ERROR&nbsp;(1)","s":0},
-{"u":"rescode.html#format","x":"SQLITE_FORMAT&nbsp;(24)","s":0},
-{"u":"rescode.html#full","x":"SQLITE_FULL&nbsp;(13)","s":0},
-{"u":"rescode.html#internal","x":"SQLITE_INTERNAL&nbsp;(2)","s":0},
-{"u":"rescode.html#interrupt","x":"SQLITE_INTERRUPT&nbsp;(9)","s":0},
-{"u":"rescode.html#ioerr","x":"SQLITE_IOERR&nbsp;(10)","s":0},
-{"u":"rescode.html#locked","x":"SQLITE_LOCKED&nbsp;(6)","s":0},
-{"u":"rescode.html#mismatch","x":"SQLITE_MISMATCH&nbsp;(20)","s":0},
-{"u":"rescode.html#misuse","x":"SQLITE_MISUSE&nbsp;(21)","s":0},
-{"u":"rescode.html#nolfs","x":"SQLITE_NOLFS&nbsp;(22)","s":0},
-{"u":"rescode.html#nomem","x":"SQLITE_NOMEM&nbsp;(7)","s":0},
-{"u":"rescode.html#notadb","x":"SQLITE_NOTADB&nbsp;(26)","s":0},
-{"u":"rescode.html#notfound","x":"SQLITE_NOTFOUND&nbsp;(12)","s":0},
-{"u":"rescode.html#notice","x":"SQLITE_NOTICE&nbsp;(27)","s":0},
-{"u":"rescode.html#ok","x":"SQLITE_OK&nbsp;(0)","s":0},
-{"u":"rescode.html#perm","x":"SQLITE_PERM&nbsp;(3)","s":0},
-{"u":"rescode.html#protocol","x":"SQLITE_PROTOCOL&nbsp;(15)","s":0},
-{"u":"rescode.html#range","x":"SQLITE_RANGE&nbsp;(25)","s":0},
-{"u":"rescode.html#readonly","x":"SQLITE_READONLY&nbsp;(8)","s":0},
-{"u":"rescode.html#row","x":"SQLITE_ROW&nbsp;(100)","s":0},
-{"u":"rescode.html#schema","x":"SQLITE_SCHEMA&nbsp;(17)","s":0},
-{"u":"rescode.html#toobig","x":"SQLITE_TOOBIG&nbsp;(18)","s":0},
-{"u":"rescode.html#warning","x":"SQLITE_WARNING&nbsp;(28)","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/320);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems37.length+1)/nCol);
-var h="<tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems37.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems37[i].u=="" || listitems37[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems37[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems37[i].s==2 || listitems37[i].s==3) h += "<s>"
-  h += listitems37[i].x;
-  if(listitems37[i].s==2 || listitems37[i].s==3) h += "</s>"
-  h += ea
-  if(listitems37[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems37[i].s==3) h += "&sup1\n";
-  if(listitems37[i].s==4) h += "&sup2\n";
-  if(listitems37[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab37").innerHTML = h;
-</script>
+<div class='columns' style='columns: 16em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='rescode.html#abort'>SQLITE_ABORT&nbsp;(4)</a></li>
+<li><a href='rescode.html#auth'>SQLITE_AUTH&nbsp;(23)</a></li>
+<li><a href='rescode.html#busy'>SQLITE_BUSY&nbsp;(5)</a></li>
+<li><a href='rescode.html#cantopen'>SQLITE_CANTOPEN&nbsp;(14)</a></li>
+<li><a href='rescode.html#constraint'>SQLITE_CONSTRAINT&nbsp;(19)</a></li>
+<li><a href='rescode.html#corrupt'>SQLITE_CORRUPT&nbsp;(11)</a></li>
+<li><a href='rescode.html#done'>SQLITE_DONE&nbsp;(101)</a></li>
+<li><a href='rescode.html#empty'>SQLITE_EMPTY&nbsp;(16)</a></li>
+<li><a href='rescode.html#error'>SQLITE_ERROR&nbsp;(1)</a></li>
+<li><a href='rescode.html#format'>SQLITE_FORMAT&nbsp;(24)</a></li>
+<li><a href='rescode.html#full'>SQLITE_FULL&nbsp;(13)</a></li>
+<li><a href='rescode.html#internal'>SQLITE_INTERNAL&nbsp;(2)</a></li>
+<li><a href='rescode.html#interrupt'>SQLITE_INTERRUPT&nbsp;(9)</a></li>
+<li><a href='rescode.html#ioerr'>SQLITE_IOERR&nbsp;(10)</a></li>
+<li><a href='rescode.html#locked'>SQLITE_LOCKED&nbsp;(6)</a></li>
+<li><a href='rescode.html#mismatch'>SQLITE_MISMATCH&nbsp;(20)</a></li>
+<li><a href='rescode.html#misuse'>SQLITE_MISUSE&nbsp;(21)</a></li>
+<li><a href='rescode.html#nolfs'>SQLITE_NOLFS&nbsp;(22)</a></li>
+<li><a href='rescode.html#nomem'>SQLITE_NOMEM&nbsp;(7)</a></li>
+<li><a href='rescode.html#notadb'>SQLITE_NOTADB&nbsp;(26)</a></li>
+<li><a href='rescode.html#notfound'>SQLITE_NOTFOUND&nbsp;(12)</a></li>
+<li><a href='rescode.html#notice'>SQLITE_NOTICE&nbsp;(27)</a></li>
+<li><a href='rescode.html#ok'>SQLITE_OK&nbsp;(0)</a></li>
+<li><a href='rescode.html#perm'>SQLITE_PERM&nbsp;(3)</a></li>
+<li><a href='rescode.html#protocol'>SQLITE_PROTOCOL&nbsp;(15)</a></li>
+<li><a href='rescode.html#range'>SQLITE_RANGE&nbsp;(25)</a></li>
+<li><a href='rescode.html#readonly'>SQLITE_READONLY&nbsp;(8)</a></li>
+<li><a href='rescode.html#row'>SQLITE_ROW&nbsp;(100)</a></li>
+<li><a href='rescode.html#schema'>SQLITE_SCHEMA&nbsp;(17)</a></li>
+<li><a href='rescode.html#toobig'>SQLITE_TOOBIG&nbsp;(18)</a></li>
+<li><a href='rescode.html#warning'>SQLITE_WARNING&nbsp;(28)</a></li>
+</ul>
+</div>
 <a name="extrc"></a>
 
 </p><h1 id="extended_result_code_list"><span>5. </span>Extended Result Code List</h1>
-<p>The $nExtCode extended result codes
+<p>The 61 extended result codes
   are <a href="c3ref/c_abort_rollback.html">defined in sqlite3.h</a> and are
   listed in alphabetical order below:
-<style>
-#listtab38 tr td {vertical-align:top;}
-</style>
-<table id='listtab38' width='100%'></table>
-<script>
-var listitems38 = [{"u":"rescode.html#abort_rollback","x":"SQLITE_ABORT_ROLLBACK&nbsp;(516)","s":0},
-{"u":"rescode.html#busy_recovery","x":"SQLITE_BUSY_RECOVERY&nbsp;(261)","s":0},
-{"u":"rescode.html#busy_snapshot","x":"SQLITE_BUSY_SNAPSHOT&nbsp;(517)","s":0},
-{"u":"rescode.html#cantopen_convpath","x":"SQLITE_CANTOPEN_CONVPATH&nbsp;(1038)","s":0},
-{"u":"rescode.html#cantopen_dirtywal","x":"SQLITE_CANTOPEN_DIRTYWAL&nbsp;(1294)","s":0},
-{"u":"rescode.html#cantopen_fullpath","x":"SQLITE_CANTOPEN_FULLPATH&nbsp;(782)","s":0},
-{"u":"rescode.html#cantopen_isdir","x":"SQLITE_CANTOPEN_ISDIR&nbsp;(526)","s":0},
-{"u":"rescode.html#cantopen_notempdir","x":"SQLITE_CANTOPEN_NOTEMPDIR&nbsp;(270)","s":0},
-{"u":"rescode.html#constraint_check","x":"SQLITE_CONSTRAINT_CHECK&nbsp;(275)","s":0},
-{"u":"rescode.html#constraint_commithook","x":"SQLITE_CONSTRAINT_COMMITHOOK&nbsp;(531)","s":0},
-{"u":"rescode.html#constraint_foreignkey","x":"SQLITE_CONSTRAINT_FOREIGNKEY&nbsp;(787)","s":0},
-{"u":"rescode.html#constraint_function","x":"SQLITE_CONSTRAINT_FUNCTION&nbsp;(1043)","s":0},
-{"u":"rescode.html#constraint_notnull","x":"SQLITE_CONSTRAINT_NOTNULL&nbsp;(1299)","s":0},
-{"u":"rescode.html#constraint_primarykey","x":"SQLITE_CONSTRAINT_PRIMARYKEY&nbsp;(1555)","s":0},
-{"u":"rescode.html#constraint_rowid","x":"SQLITE_CONSTRAINT_ROWID&nbsp;(2579)","s":0},
-{"u":"rescode.html#constraint_trigger","x":"SQLITE_CONSTRAINT_TRIGGER&nbsp;(1811)","s":0},
-{"u":"rescode.html#constraint_unique","x":"SQLITE_CONSTRAINT_UNIQUE&nbsp;(2067)","s":0},
-{"u":"rescode.html#constraint_vtab","x":"SQLITE_CONSTRAINT_VTAB&nbsp;(2323)","s":0},
-{"u":"rescode.html#corrupt_sequence","x":"SQLITE_CORRUPT_SEQUENCE&nbsp;(523)","s":0},
-{"u":"rescode.html#corrupt_vtab","x":"SQLITE_CORRUPT_VTAB&nbsp;(267)","s":0},
-{"u":"rescode.html#error_missing_collseq","x":"SQLITE_ERROR_MISSING_COLLSEQ&nbsp;(257)","s":0},
-{"u":"rescode.html#error_retry","x":"SQLITE_ERROR_RETRY&nbsp;(513)","s":0},
-{"u":"rescode.html#error_snapshot","x":"SQLITE_ERROR_SNAPSHOT&nbsp;(769)","s":0},
-{"u":"rescode.html#ioerr_access","x":"SQLITE_IOERR_ACCESS&nbsp;(3338)","s":0},
-{"u":"rescode.html#ioerr_blocked","x":"SQLITE_IOERR_BLOCKED&nbsp;(2826)","s":0},
-{"u":"rescode.html#ioerr_checkreservedlock","x":"SQLITE_IOERR_CHECKRESERVEDLOCK&nbsp;(3594)","s":0},
-{"u":"rescode.html#ioerr_close","x":"SQLITE_IOERR_CLOSE&nbsp;(4106)","s":0},
-{"u":"rescode.html#ioerr_convpath","x":"SQLITE_IOERR_CONVPATH&nbsp;(6666)","s":0},
-{"u":"rescode.html#ioerr_delete","x":"SQLITE_IOERR_DELETE&nbsp;(2570)","s":0},
-{"u":"rescode.html#ioerr_delete_noent","x":"SQLITE_IOERR_DELETE_NOENT&nbsp;(5898)","s":0},
-{"u":"rescode.html#ioerr_dir_close","x":"SQLITE_IOERR_DIR_CLOSE&nbsp;(4362)","s":0},
-{"u":"rescode.html#ioerr_dir_fsync","x":"SQLITE_IOERR_DIR_FSYNC&nbsp;(1290)","s":0},
-{"u":"rescode.html#ioerr_fstat","x":"SQLITE_IOERR_FSTAT&nbsp;(1802)","s":0},
-{"u":"rescode.html#ioerr_fsync","x":"SQLITE_IOERR_FSYNC&nbsp;(1034)","s":0},
-{"u":"rescode.html#ioerr_gettemppath","x":"SQLITE_IOERR_GETTEMPPATH&nbsp;(6410)","s":0},
-{"u":"rescode.html#ioerr_lock","x":"SQLITE_IOERR_LOCK&nbsp;(3850)","s":0},
-{"u":"rescode.html#ioerr_mmap","x":"SQLITE_IOERR_MMAP&nbsp;(6154)","s":0},
-{"u":"rescode.html#ioerr_nomem","x":"SQLITE_IOERR_NOMEM&nbsp;(3082)","s":0},
-{"u":"rescode.html#ioerr_rdlock","x":"SQLITE_IOERR_RDLOCK&nbsp;(2314)","s":0},
-{"u":"rescode.html#ioerr_read","x":"SQLITE_IOERR_READ&nbsp;(266)","s":0},
-{"u":"rescode.html#ioerr_seek","x":"SQLITE_IOERR_SEEK&nbsp;(5642)","s":0},
-{"u":"rescode.html#ioerr_shmlock","x":"SQLITE_IOERR_SHMLOCK&nbsp;(5130)","s":0},
-{"u":"rescode.html#ioerr_shmmap","x":"SQLITE_IOERR_SHMMAP&nbsp;(5386)","s":0},
-{"u":"rescode.html#ioerr_shmopen","x":"SQLITE_IOERR_SHMOPEN&nbsp;(4618)","s":0},
-{"u":"rescode.html#ioerr_shmsize","x":"SQLITE_IOERR_SHMSIZE&nbsp;(4874)","s":0},
-{"u":"rescode.html#ioerr_short_read","x":"SQLITE_IOERR_SHORT_READ&nbsp;(522)","s":0},
-{"u":"rescode.html#ioerr_truncate","x":"SQLITE_IOERR_TRUNCATE&nbsp;(1546)","s":0},
-{"u":"rescode.html#ioerr_unlock","x":"SQLITE_IOERR_UNLOCK&nbsp;(2058)","s":0},
-{"u":"rescode.html#ioerr_write","x":"SQLITE_IOERR_WRITE&nbsp;(778)","s":0},
-{"u":"rescode.html#locked_sharedcache","x":"SQLITE_LOCKED_SHAREDCACHE&nbsp;(262)","s":0},
-{"u":"rescode.html#locked_vtab","x":"SQLITE_LOCKED_VTAB&nbsp;(518)","s":0},
-{"u":"rescode.html#notice_recover_rollback","x":"SQLITE_NOTICE_RECOVER_ROLLBACK&nbsp;(539)","s":0},
-{"u":"rescode.html#notice_recover_wal","x":"SQLITE_NOTICE_RECOVER_WAL&nbsp;(283)","s":0},
-{"u":"rescode.html#ok_load_permanently","x":"SQLITE_OK_LOAD_PERMANENTLY&nbsp;(256)","s":0},
-{"u":"rescode.html#readonly_cantinit","x":"SQLITE_READONLY_CANTINIT&nbsp;(1288)","s":0},
-{"u":"rescode.html#readonly_cantlock","x":"SQLITE_READONLY_CANTLOCK&nbsp;(520)","s":0},
-{"u":"rescode.html#readonly_dbmoved","x":"SQLITE_READONLY_DBMOVED&nbsp;(1032)","s":0},
-{"u":"rescode.html#readonly_directory","x":"SQLITE_READONLY_DIRECTORY&nbsp;(1544)","s":0},
-{"u":"rescode.html#readonly_recovery","x":"SQLITE_READONLY_RECOVERY&nbsp;(264)","s":0},
-{"u":"rescode.html#readonly_rollback","x":"SQLITE_READONLY_ROLLBACK&nbsp;(776)","s":0},
-{"u":"rescode.html#warning_autoindex","x":"SQLITE_WARNING_AUTOINDEX&nbsp;(284)","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/450);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems38.length+1)/nCol);
-var h="<tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems38.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems38[i].u=="" || listitems38[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems38[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems38[i].s==2 || listitems38[i].s==3) h += "<s>"
-  h += listitems38[i].x;
-  if(listitems38[i].s==2 || listitems38[i].s==3) h += "</s>"
-  h += ea
-  if(listitems38[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems38[i].s==3) h += "&sup1\n";
-  if(listitems38[i].s==4) h += "&sup2\n";
-  if(listitems38[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab38").innerHTML = h;
-</script>
+<div class='columns' style='columns: 22em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='rescode.html#abort_rollback'>SQLITE_ABORT_ROLLBACK&nbsp;(516)</a></li>
+<li><a href='rescode.html#busy_recovery'>SQLITE_BUSY_RECOVERY&nbsp;(261)</a></li>
+<li><a href='rescode.html#busy_snapshot'>SQLITE_BUSY_SNAPSHOT&nbsp;(517)</a></li>
+<li><a href='rescode.html#cantopen_convpath'>SQLITE_CANTOPEN_CONVPATH&nbsp;(1038)</a></li>
+<li><a href='rescode.html#cantopen_dirtywal'>SQLITE_CANTOPEN_DIRTYWAL&nbsp;(1294)</a></li>
+<li><a href='rescode.html#cantopen_fullpath'>SQLITE_CANTOPEN_FULLPATH&nbsp;(782)</a></li>
+<li><a href='rescode.html#cantopen_isdir'>SQLITE_CANTOPEN_ISDIR&nbsp;(526)</a></li>
+<li><a href='rescode.html#cantopen_notempdir'>SQLITE_CANTOPEN_NOTEMPDIR&nbsp;(270)</a></li>
+<li><a href='rescode.html#constraint_check'>SQLITE_CONSTRAINT_CHECK&nbsp;(275)</a></li>
+<li><a href='rescode.html#constraint_commithook'>SQLITE_CONSTRAINT_COMMITHOOK&nbsp;(531)</a></li>
+<li><a href='rescode.html#constraint_foreignkey'>SQLITE_CONSTRAINT_FOREIGNKEY&nbsp;(787)</a></li>
+<li><a href='rescode.html#constraint_function'>SQLITE_CONSTRAINT_FUNCTION&nbsp;(1043)</a></li>
+<li><a href='rescode.html#constraint_notnull'>SQLITE_CONSTRAINT_NOTNULL&nbsp;(1299)</a></li>
+<li><a href='rescode.html#constraint_primarykey'>SQLITE_CONSTRAINT_PRIMARYKEY&nbsp;(1555)</a></li>
+<li><a href='rescode.html#constraint_rowid'>SQLITE_CONSTRAINT_ROWID&nbsp;(2579)</a></li>
+<li><a href='rescode.html#constraint_trigger'>SQLITE_CONSTRAINT_TRIGGER&nbsp;(1811)</a></li>
+<li><a href='rescode.html#constraint_unique'>SQLITE_CONSTRAINT_UNIQUE&nbsp;(2067)</a></li>
+<li><a href='rescode.html#constraint_vtab'>SQLITE_CONSTRAINT_VTAB&nbsp;(2323)</a></li>
+<li><a href='rescode.html#corrupt_sequence'>SQLITE_CORRUPT_SEQUENCE&nbsp;(523)</a></li>
+<li><a href='rescode.html#corrupt_vtab'>SQLITE_CORRUPT_VTAB&nbsp;(267)</a></li>
+<li><a href='rescode.html#error_missing_collseq'>SQLITE_ERROR_MISSING_COLLSEQ&nbsp;(257)</a></li>
+<li><a href='rescode.html#error_retry'>SQLITE_ERROR_RETRY&nbsp;(513)</a></li>
+<li><a href='rescode.html#error_snapshot'>SQLITE_ERROR_SNAPSHOT&nbsp;(769)</a></li>
+<li><a href='rescode.html#ioerr_access'>SQLITE_IOERR_ACCESS&nbsp;(3338)</a></li>
+<li><a href='rescode.html#ioerr_blocked'>SQLITE_IOERR_BLOCKED&nbsp;(2826)</a></li>
+<li><a href='rescode.html#ioerr_checkreservedlock'>SQLITE_IOERR_CHECKRESERVEDLOCK&nbsp;(3594)</a></li>
+<li><a href='rescode.html#ioerr_close'>SQLITE_IOERR_CLOSE&nbsp;(4106)</a></li>
+<li><a href='rescode.html#ioerr_convpath'>SQLITE_IOERR_CONVPATH&nbsp;(6666)</a></li>
+<li><a href='rescode.html#ioerr_delete'>SQLITE_IOERR_DELETE&nbsp;(2570)</a></li>
+<li><a href='rescode.html#ioerr_delete_noent'>SQLITE_IOERR_DELETE_NOENT&nbsp;(5898)</a></li>
+<li><a href='rescode.html#ioerr_dir_close'>SQLITE_IOERR_DIR_CLOSE&nbsp;(4362)</a></li>
+<li><a href='rescode.html#ioerr_dir_fsync'>SQLITE_IOERR_DIR_FSYNC&nbsp;(1290)</a></li>
+<li><a href='rescode.html#ioerr_fstat'>SQLITE_IOERR_FSTAT&nbsp;(1802)</a></li>
+<li><a href='rescode.html#ioerr_fsync'>SQLITE_IOERR_FSYNC&nbsp;(1034)</a></li>
+<li><a href='rescode.html#ioerr_gettemppath'>SQLITE_IOERR_GETTEMPPATH&nbsp;(6410)</a></li>
+<li><a href='rescode.html#ioerr_lock'>SQLITE_IOERR_LOCK&nbsp;(3850)</a></li>
+<li><a href='rescode.html#ioerr_mmap'>SQLITE_IOERR_MMAP&nbsp;(6154)</a></li>
+<li><a href='rescode.html#ioerr_nomem'>SQLITE_IOERR_NOMEM&nbsp;(3082)</a></li>
+<li><a href='rescode.html#ioerr_rdlock'>SQLITE_IOERR_RDLOCK&nbsp;(2314)</a></li>
+<li><a href='rescode.html#ioerr_read'>SQLITE_IOERR_READ&nbsp;(266)</a></li>
+<li><a href='rescode.html#ioerr_seek'>SQLITE_IOERR_SEEK&nbsp;(5642)</a></li>
+<li><a href='rescode.html#ioerr_shmlock'>SQLITE_IOERR_SHMLOCK&nbsp;(5130)</a></li>
+<li><a href='rescode.html#ioerr_shmmap'>SQLITE_IOERR_SHMMAP&nbsp;(5386)</a></li>
+<li><a href='rescode.html#ioerr_shmopen'>SQLITE_IOERR_SHMOPEN&nbsp;(4618)</a></li>
+<li><a href='rescode.html#ioerr_shmsize'>SQLITE_IOERR_SHMSIZE&nbsp;(4874)</a></li>
+<li><a href='rescode.html#ioerr_short_read'>SQLITE_IOERR_SHORT_READ&nbsp;(522)</a></li>
+<li><a href='rescode.html#ioerr_truncate'>SQLITE_IOERR_TRUNCATE&nbsp;(1546)</a></li>
+<li><a href='rescode.html#ioerr_unlock'>SQLITE_IOERR_UNLOCK&nbsp;(2058)</a></li>
+<li><a href='rescode.html#ioerr_write'>SQLITE_IOERR_WRITE&nbsp;(778)</a></li>
+<li><a href='rescode.html#locked_sharedcache'>SQLITE_LOCKED_SHAREDCACHE&nbsp;(262)</a></li>
+<li><a href='rescode.html#locked_vtab'>SQLITE_LOCKED_VTAB&nbsp;(518)</a></li>
+<li><a href='rescode.html#notice_recover_rollback'>SQLITE_NOTICE_RECOVER_ROLLBACK&nbsp;(539)</a></li>
+<li><a href='rescode.html#notice_recover_wal'>SQLITE_NOTICE_RECOVER_WAL&nbsp;(283)</a></li>
+<li><a href='rescode.html#ok_load_permanently'>SQLITE_OK_LOAD_PERMANENTLY&nbsp;(256)</a></li>
+<li><a href='rescode.html#readonly_cantinit'>SQLITE_READONLY_CANTINIT&nbsp;(1288)</a></li>
+<li><a href='rescode.html#readonly_cantlock'>SQLITE_READONLY_CANTLOCK&nbsp;(520)</a></li>
+<li><a href='rescode.html#readonly_dbmoved'>SQLITE_READONLY_DBMOVED&nbsp;(1032)</a></li>
+<li><a href='rescode.html#readonly_directory'>SQLITE_READONLY_DIRECTORY&nbsp;(1544)</a></li>
+<li><a href='rescode.html#readonly_recovery'>SQLITE_READONLY_RECOVERY&nbsp;(264)</a></li>
+<li><a href='rescode.html#readonly_rollback'>SQLITE_READONLY_ROLLBACK&nbsp;(776)</a></li>
+<li><a href='rescode.html#warning_autoindex'>SQLITE_WARNING_AUTOINDEX&nbsp;(284)</a></li>
+</ul>
+</div>
 
 </p><h1 id="result_code_meanings"><span>6. </span>Result Code Meanings</h1>
 <p>
-The meanings for all $nResCode result code values are shown below,
+The meanings for all 92
+result code values are shown below,
 in numeric order.
 
 <!--------------------------------------------------------------->

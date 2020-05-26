@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>SQLite Query Language: DELETE</title>
+<title>DELETE</title>
 <!-- path= -->
 </head>
 <body>
@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -91,123 +91,79 @@ return false;
 }
 </script>
 </div>
-<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>DELETE</h2></div><p><b><a href="syntax/delete-stmt.html">delete-stmt:</a></b>
-<button id='x1553' onclick='hideorshow("x1553","x1554")'>hide</button></p>
- <div id='x1554' class='imgcontainer'>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+DELETE
+</div>
+<div class="fancy_toc">
+<a onclick="toggle_toc()">
+<span class="fancy_toc_mark" id="toc_mk">&#x25ba;</span>
+Table Of Contents
+</a>
+<div id="toc_sub"><div class="fancy-toc1"><a href="#overview">1. Overview</a></div>
+<div class="fancy-toc1"><a href="#restrictions_on_delete_statements_within_create_trigger">2. Restrictions on DELETE Statements Within CREATE TRIGGER</a></div>
+<div class="fancy-toc1"><a href="#optional_limit_and_order_by_clauses">3. Optional LIMIT and ORDER BY clauses</a></div>
+<div class="fancy-toc1"><a href="#the_truncate_optimization">4. The Truncate Optimization</a></div>
+</div>
+</div>
+<script>
+function toggle_toc(){
+var sub = document.getElementById("toc_sub")
+var mk = document.getElementById("toc_mk")
+if( sub.style.display!="block" ){
+sub.style.display = "block";
+mk.innerHTML = "&#x25bc;";
+} else {
+sub.style.display = "none";
+mk.innerHTML = "&#x25ba;";
+}
+}
+</script>
+</div>
+
+
+
+
+<h1 id="overview"><span>1. </span>Overview</h1>
+
+<p><b><a href="syntax/delete-stmt.html">delete-stmt:</a></b>
+<button id='x1585' onclick='hideorshow("x1585","x1586")'>hide</button></p>
+ <div id='x1586' class='imgcontainer'>
  <img alt="syntax diagram delete-stmt" src="images/syntax/delete-stmt.gif" />
 <p><b><a href="syntax/expr.html">expr:</a></b>
-<button id='x1555' onclick='hideorshow("x1555","x1556")'>show</button></p>
- <div id='x1556' style='display:none;' class='imgcontainer'>
+<button id='x1587' onclick='hideorshow("x1587","x1588")'>show</button></p>
+ <div id='x1588' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
 <p><b><a href="syntax/filter-clause.html">filter-clause:</a></b>
-<button id='x1557' onclick='hideorshow("x1557","x1558")'>show</button></p>
- <div id='x1558' style='display:none;' class='imgcontainer'>
+<button id='x1589' onclick='hideorshow("x1589","x1590")'>show</button></p>
+ <div id='x1590' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram filter-clause" src="images/syntax/filter-clause.gif" />
 </div>
 <p><b><a href="syntax/literal-value.html">literal-value:</a></b>
-<button id='x1559' onclick='hideorshow("x1559","x1560")'>show</button></p>
- <div id='x1560' style='display:none;' class='imgcontainer'>
+<button id='x1591' onclick='hideorshow("x1591","x1592")'>show</button></p>
+ <div id='x1592' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
 </div>
 <p><b><a href="syntax/over-clause.html">over-clause:</a></b>
-<button id='x1561' onclick='hideorshow("x1561","x1562")'>show</button></p>
- <div id='x1562' style='display:none;' class='imgcontainer'>
+<button id='x1593' onclick='hideorshow("x1593","x1594")'>show</button></p>
+ <div id='x1594' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram over-clause" src="images/syntax/over-clause.gif" />
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x1563' onclick='hideorshow("x1563","x1564")'>show</button></p>
- <div id='x1564' style='display:none;' class='imgcontainer'>
+<button id='x1595' onclick='hideorshow("x1595","x1596")'>show</button></p>
+ <div id='x1596' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x1565' onclick='hideorshow("x1565","x1566")'>show</button></p>
- <div id='x1566' style='display:none;' class='imgcontainer'>
+<button id='x1597' onclick='hideorshow("x1597","x1598")'>show</button></p>
+ <div id='x1598' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
 </div>
 </div>
 <p><b><a href="syntax/raise-function.html">raise-function:</a></b>
-<button id='x1567' onclick='hideorshow("x1567","x1568")'>show</button></p>
- <div id='x1568' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
-</div>
-<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
-<button id='x1569' onclick='hideorshow("x1569","x1570")'>show</button></p>
- <div id='x1570' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
-<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
-<button id='x1571' onclick='hideorshow("x1571","x1572")'>show</button></p>
- <div id='x1572' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
-</div>
-<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
-<button id='x1573' onclick='hideorshow("x1573","x1574")'>show</button></p>
- <div id='x1574' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
-</div>
-<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
-<button id='x1575' onclick='hideorshow("x1575","x1576")'>show</button></p>
- <div id='x1576' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
-<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
-<button id='x1577' onclick='hideorshow("x1577","x1578")'>show</button></p>
- <div id='x1578' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
-</div>
-<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
-<button id='x1579' onclick='hideorshow("x1579","x1580")'>show</button></p>
- <div id='x1580' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
-</div>
-</div>
-<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x1581' onclick='hideorshow("x1581","x1582")'>show</button></p>
- <div id='x1582' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
-</div>
-<p><b><a href="syntax/result-column.html">result-column:</a></b>
-<button id='x1583' onclick='hideorshow("x1583","x1584")'>show</button></p>
- <div id='x1584' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
-</div>
-<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
-<button id='x1585' onclick='hideorshow("x1585","x1586")'>show</button></p>
- <div id='x1586' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
-</div>
-<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
-<button id='x1587' onclick='hideorshow("x1587","x1588")'>show</button></p>
- <div id='x1588' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
-<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x1589' onclick='hideorshow("x1589","x1590")'>show</button></p>
- <div id='x1590' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
-</div>
-</div>
-</div>
-<p><b><a href="syntax/type-name.html">type-name:</a></b>
-<button id='x1591' onclick='hideorshow("x1591","x1592")'>show</button></p>
- <div id='x1592' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
-<p><b><a href="syntax/signed-number.html">signed-number:</a></b>
-<button id='x1593' onclick='hideorshow("x1593","x1594")'>show</button></p>
- <div id='x1594' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
-</div>
-</div>
-</div>
-<p><b><a href="syntax/qualified-table-name.html">qualified-table-name:</a></b>
-<button id='x1595' onclick='hideorshow("x1595","x1596")'>show</button></p>
- <div id='x1596' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram qualified-table-name" src="images/syntax/qualified-table-name.gif" />
-</div>
-<p><b><a href="syntax/with-clause.html">with-clause:</a></b>
-<button id='x1597' onclick='hideorshow("x1597","x1598")'>show</button></p>
- <div id='x1598' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram with-clause" src="images/syntax/with-clause.gif" />
-<p><b><a href="syntax/cte-table-name.html">cte-table-name:</a></b>
 <button id='x1599' onclick='hideorshow("x1599","x1600")'>show</button></p>
  <div id='x1600' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram cte-table-name" src="images/syntax/cte-table-name.gif" />
+ <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
 </div>
 <p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
 <button id='x1601' onclick='hideorshow("x1601","x1602")'>show</button></p>
@@ -264,6 +220,86 @@ return false;
 </div>
 </div>
 </div>
+<p><b><a href="syntax/type-name.html">type-name:</a></b>
+<button id='x1623' onclick='hideorshow("x1623","x1624")'>show</button></p>
+ <div id='x1624' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
+<p><b><a href="syntax/signed-number.html">signed-number:</a></b>
+<button id='x1625' onclick='hideorshow("x1625","x1626")'>show</button></p>
+ <div id='x1626' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
+</div>
+</div>
+</div>
+<p><b><a href="syntax/qualified-table-name.html">qualified-table-name:</a></b>
+<button id='x1627' onclick='hideorshow("x1627","x1628")'>show</button></p>
+ <div id='x1628' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram qualified-table-name" src="images/syntax/qualified-table-name.gif" />
+</div>
+<p><b><a href="syntax/with-clause.html">with-clause:</a></b>
+<button id='x1629' onclick='hideorshow("x1629","x1630")'>show</button></p>
+ <div id='x1630' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram with-clause" src="images/syntax/with-clause.gif" />
+<p><b><a href="syntax/cte-table-name.html">cte-table-name:</a></b>
+<button id='x1631' onclick='hideorshow("x1631","x1632")'>show</button></p>
+ <div id='x1632' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram cte-table-name" src="images/syntax/cte-table-name.gif" />
+</div>
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1633' onclick='hideorshow("x1633","x1634")'>show</button></p>
+ <div id='x1634' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
+<button id='x1635' onclick='hideorshow("x1635","x1636")'>show</button></p>
+ <div id='x1636' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
+</div>
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x1637' onclick='hideorshow("x1637","x1638")'>show</button></p>
+ <div id='x1638' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1639' onclick='hideorshow("x1639","x1640")'>show</button></p>
+ <div id='x1640' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1641' onclick='hideorshow("x1641","x1642")'>show</button></p>
+ <div id='x1642' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1643' onclick='hideorshow("x1643","x1644")'>show</button></p>
+ <div id='x1644' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x1645' onclick='hideorshow("x1645","x1646")'>show</button></p>
+ <div id='x1646' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1647' onclick='hideorshow("x1647","x1648")'>show</button></p>
+ <div id='x1648' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1649' onclick='hideorshow("x1649","x1650")'>show</button></p>
+ <div id='x1650' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1651' onclick='hideorshow("x1651","x1652")'>show</button></p>
+ <div id='x1652' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1653' onclick='hideorshow("x1653","x1654")'>show</button></p>
+ <div id='x1654' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+</div>
+</div>
 </div>
 </div>
 
@@ -271,17 +307,17 @@ return false;
 <p>The DELETE command removes records from the table identified by the
    <a href="syntax/qualified-table-name.html">qualified-table-name</a>.
 
-<p>If the WHERE clause is not present, all records in the table are deleted.
+</p><p>If the WHERE clause is not present, all records in the table are deleted.
    If a WHERE clause is supplied, then only those rows for which the
    WHERE clause <a href="lang_expr.html#booleanexpr">boolean expression</a> is true are deleted.
    Rows for which the expression is false or NULL are retained.
 
-<h3>Restrictions on DELETE Statements Within CREATE TRIGGER</h3>
+</p><h1 id="restrictions_on_delete_statements_within_create_trigger"><span>2. </span>Restrictions on DELETE Statements Within CREATE TRIGGER</h1>
 
 <p>The following restrictions apply to DELETE statements that occur within the
    body of a <a href="lang_createtrigger.html">CREATE TRIGGER</a> statement:
 
-<ul>
+</p><ul>
   <li><p>The <span class='yyterm'>table-name</span> specified as part of a 
     DELETE statement within
     a trigger body must be unqualified.  In other words, the
@@ -295,14 +331,14 @@ return false;
     the main database, then any other databases in the order they were
     attached).
     
-  <li><p>The INDEXED BY and NOT INDEXED clauses are not allowed on DELETE
+  </p></li><li><p>The INDEXED BY and NOT INDEXED clauses are not allowed on DELETE
     statements within triggers.</p>
 
-  <li><p>The LIMIT and ORDER BY clauses (described below) are unsupported for
+  </li><li><p>The LIMIT and ORDER BY clauses (described below) are unsupported for
     DELETE statements within triggers.</p>
-</ul>
+</li></ul>
 
-<h3>Optional LIMIT and ORDER BY clauses</h3>
+<h1 id="optional_limit_and_order_by_clauses"><span>3. </span>Optional LIMIT and ORDER BY clauses</h1>
 
 <p>If SQLite is compiled with the <a href="compile.html#enable_update_delete_limit">SQLITE_ENABLE_UPDATE_DELETE_LIMIT</a>
 compile-time option, then the syntax of the DELETE statement is
@@ -323,7 +359,7 @@ integer value. Again, it is an error if the value cannot be losslessly
 converted to an integer. If there is no OFFSET clause, or the calculated
 integer value is negative, the effective OFFSET value is zero.
 
-<p>If the DELETE statement has an ORDER BY clause, then all rows that would 
+</p><p>If the DELETE statement has an ORDER BY clause, then all rows that would 
 be deleted in the absence of the LIMIT clause are sorted according to the 
 ORDER BY. The first <i>M</i> rows, where <i>M</i> is the value found by
 evaluating the OFFSET clause expression, are skipped, and the following 
@@ -332,18 +368,18 @@ If there are less than <i>N</i> rows remaining after taking the OFFSET clause
 into account, or if the LIMIT clause evaluated to a negative value, then all
 remaining rows are deleted.
 
-<p>If the DELETE statement has no ORDER BY clause, then all rows that
+</p><p>If the DELETE statement has no ORDER BY clause, then all rows that
 would be deleted in the absence of the LIMIT clause are assembled in an
 arbitrary order before applying the LIMIT and OFFSET clauses to determine 
 the subset that are actually deleted.
 
-<p>The ORDER BY clause on a DELETE statement is used only to determine which
+</p><p>The ORDER BY clause on a DELETE statement is used only to determine which
 rows fall within the LIMIT. The order in which rows are deleted is arbitrary
 and is not influenced by the ORDER BY clause.
 
 <a name="truncateopt"></a>
 
-<h3>The Truncate Optimization</h3>
+</p><h1 id="the_truncate_optimization"><span>4. </span>The Truncate Optimization</h1>
 
 <p>When the WHERE is omitted from a DELETE statement and the table
 being deleted has no triggers,
@@ -357,7 +393,7 @@ and the <a href="pragma.html#pragma_count_changes">count_changes pragma</a>
 will not actually return the number of deleted rows.  
 That problem has been fixed as of <a href="releaselog/3_6_5.html">version 3.6.5</a> (2008-11-12).
 
-<p>The truncate optimization can be permanently disabled for all queries
+</p><p>The truncate optimization can be permanently disabled for all queries
 by recompiling
 SQLite with the <a href="compile.html#omit_truncate_optimization">SQLITE_OMIT_TRUNCATE_OPTIMIZATION</a> compile-time switch.</p>
 
@@ -366,5 +402,4 @@ the <a href="c3ref/set_authorizer.html">sqlite3_set_authorizer()</a> interface. 
 returns <a href="c3ref/c_deny.html">SQLITE_IGNORE</a> for an <a href="c3ref/c_alter_table.html">SQLITE_DELETE</a> action code, then
 the DELETE operation will proceed but the truncate optimization will
 be bypassed and rows will be deleted one by one.</p>
-
 

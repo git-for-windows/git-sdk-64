@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>The Bytecode() And Tables_Used() Table-Valued Functions</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+The Bytecode() And Tables_Used() Table-Valued Functions
+</div>
+</div>
+
+
+
+
+<h1 id="overview"><span>1. </span>Overview</h1>
+
+<p>
+Bytecode and tables_used are <a href="vtab.html">virtual tables</a> built into SQLite that
+access information about <a href="c3ref/stmt.html">prepared statements</a>.
+Both bytecode and tables_used operate as <a href="vtab.html#tabfunc2">table-valued functions</a>.
+They take a single required argument which is either the text of
+an SQL statement, or a pointer to an existing prepared statement.
+The bytecode function returns one row of result for each <a href="opcode.html">bytecode</a>
+operation in the prepared statement.  The tables_used function returns
+one row for each persistent btree (either a table or an index) accessed
+by the prepared statement.
+
+</p><h1 id="usage"><span>2. </span>Usage</h1>
+
+<p>
+The bytecode and tables_used tables are only available if SQLite has
+been compiled with the <a href="compile.html#enable_bytecode_vtab">-DSQLITE_ENABLE_BYTECODE_VTAB</a> compile-time option.
+The <a href="cli.html">CLI</a> has been compiled that way, and so you can use the standard
+<a href="cli.html">CLI</a> as a test platform to experiement.
+
+</p><p>
+Both virtual tables are read-only <a href="vtab.html#epoonlyvtab">eponymous-only virtual tables</a>.  You use them
+by mentioning them directly in the FROM clause of a SELECT statement.
+They both require a single argument which is the SQL statement to be
+analyzed.  For example:
+
+</p><div class="codeblock"><pre>SELECT * FROM bytecode('SELECT * FROM bytecode(?1)');
+</pre></div>
+
+<p>
+The argument can be either the text of an SQL statement, in which case
+the bytecode (or tables_used) for that statement is returned, or the
+argument can be a parameter such as ?1 or $stmt that is later bound
+to a <a href="c3ref/stmt.html">prepared statement</a> object using the
+<a href="c3ref/bind_blob.html">sqlite3_bind_pointer()</a> interface.  Use a pointer type of
+"stmt-pointer" for the <a href="c3ref/bind_blob.html">sqlite3_bind_pointer()</a> interface.
+
+</p><h2 id="schema"><span>2.1. </span>Schema</h2>
+
+<p>
+The schema of the bytecode table is:
+
+</p><div class="codeblock"><pre>CREATE TABLE bytecode(
+  addr INT,
+  opcode TEXT,
+  p1 INT,
+  p2 INT,
+  p3 INT,
+  p4 TEXT,
+  p5 INT,
+  comment TEXT,
+  subprog TEXT,
+  stmt HIDDEN
+);
+</pre></div>
+
+<p>
+The first eight columns are the address, opcode, and operands for a
+single <a href="opcode.html">bytecode</a> in the virtual machine that implements the statement.
+These columns are the same columns output when using EXPLAIN.  The
+bytecode virtual tables shows all operations in the prepared statement,
+both the main body of the prepared statement and in subprograms used
+to implement triggers or foreign key actions.  The "subprog" field
+is NULL for the main body of the prepared statement, or is the trigger
+name or the string "(FK)" for triggers and foreign key actions.
+
+</p><p>
+The schema for the tables_used table is:
+
+</p><div class="codeblock"><pre>CREATE TABLE tables_used(
+  type TEXT,
+  schema TEXT,
+  name TEXT,
+  wr INT,
+  subprog TEXT,
+  stmt HIDDEN
+);
+</pre></div>
+
+<p>
+The tables_used table is intended to show which btrees of the database file
+are read or written by a prepared statement, both by the main statement
+itself but also by related triggers and foreign key actions.  The columns
+are as follows:
+
+</p><ul>
+<li><p><b>type</b> &rarr; Either "table" or "index", depending on what role
+the btree is serving.
+
+</p></li><li><p><b>schema</b> &rarr; Which database file the btree is located in.
+This will be "main" for the main database (the usual case), or "temp" for
+TEMP tables and indexes, or the name assigned to <a href="lang_attach.html">attached</a> databases by
+the <a href="lang_attach.html">ATTACH</a> statement.
+
+</p></li><li><p><b>name</b> &rarr; The name of the table or index
+
+</p></li><li><p><b>wr</b> &rarr; 0 if the object is read, 1 if the object is written
+
+</p></li><li><p><b>subprog</b> &rarr;  The sub-program in which the object is
+accessed.  NULL means the main body of the prepared statement.  Otherwise
+this field is the name of a trigger or "(FK)" for a foreign key action.
+</p></li></ul>
+

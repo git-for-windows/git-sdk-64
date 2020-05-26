@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -162,7 +162,7 @@ The following table shows the results of the NULL handling experiments.
 </p>
 
 <table border=1 cellpadding=3 width="100%">
-<tr><th>&nbsp&nbsp;</th>
+<tr><th>&nbsp;&nbsp;</th>
 <th>SQLite</th>
 <th>PostgreSQL</th>
 <th>Oracle</th>
@@ -247,7 +247,7 @@ The following table shows the results of the NULL handling experiments.
 </table>
 
 <table border=1 cellpadding=3 width="100%">
-<tr><th>&nbsp&nbsp;</th>
+<tr><th>&nbsp;&nbsp;</th>
 <th>MySQL<br>3.23.41</th>
 <th>MySQL<br>4.0.16</th>
 <th>Firebird</th>

@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>SQLite Query Language: DROP VIEW</title>
+<title>DROP VIEW</title>
 <!-- path= -->
 </head>
 <body>
@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -91,9 +91,19 @@ return false;
 }
 </script>
 </div>
-<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>DROP VIEW</h2></div><p><b><a href="syntax/drop-view-stmt.html">drop-view-stmt:</a></b>
-<button id='x1631' onclick='hideorshow("x1631","x1632")'>hide</button></p>
- <div id='x1632' class='imgcontainer'>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+DROP VIEW
+</div>
+</div>
+
+
+
+
+<p><b><a href="syntax/drop-view-stmt.html">drop-view-stmt:</a></b>
+<button id='x1663' onclick='hideorshow("x1663","x1664")'>hide</button></p>
+ <div id='x1664' class='imgcontainer'>
  <img alt="syntax diagram drop-view-stmt" src="images/syntax/drop-view-stmt.gif" />
 </div>
 
@@ -102,15 +112,15 @@ return false;
   statement. The view definition is removed from the database schema, but 
   no actual data in the underlying base tables is modified.
 
-<p>The view to drop is identified by the view-name and optional 
+</p><p>The view to drop is identified by the view-name and optional 
   schema-name specified as part of the DROP VIEW statement. This 
   reference is resolved using the standard procedure for <a href="lang_naming.html">object resolution</a>.
 
-<p>
+</p><p>
   If the specified view cannot be found and the IF EXISTS clause is not 
   present, it is an error. If the specified view cannot be found and an IF
   EXISTS clause is present in the DROP VIEW statement, then the statement
   is a no-op.
 
 
-
+</p>

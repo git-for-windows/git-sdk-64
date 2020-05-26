@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -93,21 +93,20 @@ return false;
 </div>
 
 
-<h2>Frequently Asked Questions</h2><ol class=nounderline><li><a href="#q1">How do I create an AUTOINCREMENT field?</a></li><li><a href="#q2">What datatypes does SQLite support?</a></li><li><a href="#q3">SQLite lets me insert a string into a database column of type integer!</a></li><li><a href="#q4">Why doesn't SQLite allow me to use '0' and '0.0' as the primary
-  key on two different rows of the same table?</a></li><li><a href="#q5">Can multiple applications or multiple instances of the same
-  application access a single database file at the same time?</a></li><li><a href="#q6">Is SQLite threadsafe?</a></li><li><a href="#q7">How do I list all tables/indices contained in an SQLite database</a></li><li><a href="#q8">Are there any known size limits to SQLite databases?</a></li><li><a href="#q9">What is the maximum size of a VARCHAR in SQLite?</a></li><li><a href="#q10">Does SQLite support a BLOB type?</a></li><li><a href="#q11">How do I add or delete columns from an existing table in SQLite.</a></li><li><a href="#q12">I deleted a lot of data but the database file did not get any
-  smaller.  Is this a bug?</a></li><li><a href="#q13">Can I use SQLite in my commercial product without paying royalties?</a></li><li><a href="#q14">How do I use a string literal that contains an embedded single-quote (')
-  character?</a></li><li><a href="#q15">What is an SQLITE_SCHEMA error, and why am I getting one?</a></li><li><a href="#q16">Why does ROUND(9.95,1)  return 9.9 instead of 10.0?
-  Shouldn't 9.95 round up?</a></li><li><a href="#q17">I get some compiler warnings when I compile SQLite.
-  Isn't this a problem?  Doesn't it indicate poor code quality?</a></li><li><a href="#q18">Case-insensitive matching of Unicode characters does not work.</a></li><li><a href="#q19">INSERT is really slow - I can only do few dozen INSERTs per second</a></li><li><a href="#q20">I accidentally deleted some important information from my SQLite database.
-  How can I recover it?</a></li><li><a href="#q21">What is an SQLITE_CORRUPT error?  What does it mean for the database
-  to be "malformed"? Why am I getting this error?</a></li><li><a href="#q22">Does SQLite support foreign keys?</a></li><li><a href="#q23">I get a compiler error if I use the SQLITE_OMIT_... 
-  compile-time options when building SQLite.</a></li><li><a href="#q24">My WHERE clause expression <tt>column1="column1"</tt> does not work.
+<h2>Frequently Asked Questions</h2><ol class=nounderline><li value='1'><a href="#q1">How do I create an AUTOINCREMENT field?</a></li><li value='2'><a href="#q2">What datatypes does SQLite support?</a></li><li value='3'><a href="#q3">SQLite lets me insert a string into a database column of type integer!</a></li><li value='4'><a href="#q4">Why doesn't SQLite allow me to use '0' and '0.0' as the primary
+  key on two different rows of the same table?</a></li><li value='5'><a href="#q5">Can multiple applications or multiple instances of the same
+  application access a single database file at the same time?</a></li><li value='6'><a href="#q6">Is SQLite threadsafe?</a></li><li value='7'><a href="#q7">How do I list all tables/indices contained in an SQLite database</a></li><li value='8'><a href="#q8">Are there any known size limits to SQLite databases?</a></li><li value='9'><a href="#q9">What is the maximum size of a VARCHAR in SQLite?</a></li><li value='10'><a href="#q10">Does SQLite support a BLOB type?</a></li><li value='11'><a href="#q11">How do I add or delete columns from an existing table in SQLite.</a></li><li value='12'><a href="#q12">I deleted a lot of data but the database file did not get any
+  smaller.  Is this a bug?</a></li><li value='13'><a href="#q13">Can I use SQLite in my commercial product without paying royalties?</a></li><li value='14'><a href="#q14">How do I use a string literal that contains an embedded single-quote (')
+  character?</a></li><li value='15'><a href="#q15">What is an SQLITE_SCHEMA error, and why am I getting one?</a></li><li value='17'><a href="#q17">I get some compiler warnings when I compile SQLite.
+  Isn't this a problem?  Doesn't it indicate poor code quality?</a></li><li value='18'><a href="#q18">Case-insensitive matching of Unicode characters does not work.</a></li><li value='19'><a href="#q19">INSERT is really slow - I can only do few dozen INSERTs per second</a></li><li value='20'><a href="#q20">I accidentally deleted some important information from my SQLite database.
+  How can I recover it?</a></li><li value='21'><a href="#q21">What is an SQLITE_CORRUPT error?  What does it mean for the database
+  to be "malformed"? Why am I getting this error?</a></li><li value='22'><a href="#q22">Does SQLite support foreign keys?</a></li><li value='23'><a href="#q23">I get a compiler error if I use the SQLITE_OMIT_... 
+  compile-time options when building SQLite.</a></li><li value='24'><a href="#q24">My WHERE clause expression <tt>column1="column1"</tt> does not work.
   It causes every row of the table to be returned, not just the rows
-  where column1 has the value "column1".</a></li><li><a href="#q25">How are the syntax diagrams (a.k.a. "railroad" diagrams) for
-  SQLite generated?</a></li><li><a href="#q26">The SQL standard requires that a UNIQUE constraint be enforced even if
+  where column1 has the value "column1".</a></li><li value='25'><a href="#q25">How are the syntax diagrams (a.k.a. "railroad" diagrams) for
+  SQLite generated?</a></li><li value='26'><a href="#q26">The SQL standard requires that a UNIQUE constraint be enforced even if
   one or more of the columns in the constraint are NULL, but SQLite does
-  not do this.  Isn't that a bug?</a></li><li><a href="#q27">What is the Export Control Classification Number (ECCN) for SQLite?</a></li><li><a href="#q28">My query does not return the column name that I expect.  Is this a bug?</a></li></ol><a name="q1"></a>
+  not do this.  Isn't that a bug?</a></li><li value='27'><a href="#q27">What is the Export Control Classification Number (ECCN) for SQLite?</a></li><li value='28'><a href="#q28">My query does not return the column name that I expect.  Is this a bug?</a></li></ol><a name="q1"></a>
 <p><b>(1) How do I create an AUTOINCREMENT field?</b></p>
 <blockquote><p>Short answer: A column declared <a href="lang_createtable.html#rowid">INTEGER PRIMARY KEY</a> will
   autoincrement.</p>
@@ -414,26 +413,6 @@ COMMIT;
   the schema changes.  The easiest way to deal with
   <a href="rescode.html#schema">SQLITE_SCHEMA</a> errors is to always use <a href="c3ref/prepare.html">sqlite3_prepare_v2()</a>
   instead of <a href="c3ref/prepare.html">sqlite3_prepare()</a>.</blockquote></li>
-<a name="q16"></a>
-<p><b>(16) Why does ROUND(9.95,1)  return 9.9 instead of 10.0?
-  Shouldn't 9.95 round up?</b></p>
-<blockquote><p>SQLite uses binary arithmetic and in binary, there is no
-  way to write 9.95 in a finite number of bits.  The closest to
-  you can get to 9.95 in a 64-bit IEEE float (which is what
-  SQLite uses) is 9.949999999999999289457264239899814128875732421875.
-  So when you type "9.95", SQLite really understands the number to be
-  the much longer value shown above.  And that value rounds down.</p>
-
-  <p>This kind of problem comes up all the time when dealing with
-  floating point binary numbers.  The general rule to remember is
-  that most fractional numbers that have a finite representation in decimal
-  (a.k.a "base-10")
-  do not have a finite representation in binary (a.k.a "base-2").
-  And so they are
-  approximated using the closest binary number available.  That
-  approximation is usually very close, but it will be slightly off
-  and in some cases can cause your results to be a little different
-  from what you might expect.</p></blockquote></li>
 <a name="q17"></a>
 <p><b>(17) I get some compiler warnings when I compile SQLite.
   Isn't this a problem?  Doesn't it indicate poor code quality?</b></p>

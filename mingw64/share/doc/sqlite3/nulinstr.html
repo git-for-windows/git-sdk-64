@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>NUL Characters In Strings</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+NUL Characters In Strings
+</div>
+</div>
+
+
+
+
+
+<h1 id="introduction"><span>1. </span>Introduction</h1>
+
+<p>
+SQLite allows NUL characters (ASCII 0x00, Unicode \u0000) in the middle
+of string values stored in the database.  However, the use of NUL within
+strings can lead to surprising behaviors:
+
+</p><ol>
+<li><p>
+The <a href="lang_corefunc.html#length">length() SQL function</a> only counts characters up through and excluding
+the first NUL.
+
+
+</p></li><li><p>
+The <a href="lang_corefunc.html#quote">quote() SQL function</a> only shows characters up through and excluding
+the first NUL.
+
+</p></li><li><p>
+The <a href="cli.html#dump">.dump</a> command in the <a href="cli.html">CLI</a> omits the first NUL character and all
+subsequent text in the SQL output that it generates.  In fact, the
+<a href="cli.html">CLI</a> omits everything past the first NUL character in all contexts.
+</p></li></ol>
+
+<p>
+The use of NUL characters in SQL text strings is not recommended.
+
+</p><h1 id="unexpected_behavior"><span>2. </span>Unexpected Behavior</h1>
+
+<p>
+Consider the following SQL:
+
+</p><div class="codeblock"><pre>CREATE TABLE t1(
+  a INTEGER PRIMARY KEY,
+  b TEXT
+);
+INSERT INTO t1(a,b) VALUES(1, 'abc'||char(0)||'xyz');
+
+SELECT a, b, length(b) FROM t1;
+</pre></div>
+
+<p>
+The SELECT statement above shows output of:
+
+</p><div class="codeblock"><pre>1,'abc',3
+</pre></div>
+
+<p>
+(Through this document, we assume that the <a href="cli.html">CLI</a> has "<a href="cli.html#dotmodequote">.mode quote</a>" set.)
+But if you run:
+
+</p><div class="codeblock"><pre>SELECT * FROM t1 WHERE b='abc';
+</pre></div>
+
+<p>
+Then no rows are returned.  SQLite knows that the t1.b column actually
+holds a 7-character string, and the 7-character string 'abc'||char(0)||'xyz'
+is not equal to the 3-character string 'abc', and so no rows are returned.
+But a user might be easily confused by this because the <a href="cli.html">CLI</a> output
+seems to show that the string has only 3 characters.  This seems like
+a bug.  But it is how SQLite works.
+
+</p><h1 id="how_to_tell_if_you_have_nul_characters_in_your_strings"><span>3. </span>How To Tell If You Have NUL Characters In Your Strings</h1>
+
+<p>
+If you <a href="lang_expr.html#castexpr">CAST</a> a string into a BLOB, then the entire length of the
+string is shown.  For example:
+
+</p><div class="codeblock"><pre>SELECT a, CAST(b AS BLOB) FROM t1;
+</pre></div>
+
+<p>
+Gives this result:
+
+</p><div class="codeblock"><pre>1,X'6162630078797a'
+</pre></div>
+
+<p>
+In the BLOB output, you can clearly see the NUL character as the 4th
+character in the 7-character string.
+
+</p><p>
+Another, more automated, way
+to tell if a string value X contains embedded NUL characters is to
+use an expression like this:
+
+</p><div class="codeblock"><pre>instr(X,char(0))
+</pre></div>
+
+<p>
+If this expression returns a non-zero value N, then there exists an 
+embedded NUL at the N-th character position.  Thus to count the number
+fo rows that contain embedded NUL characters:
+
+</p><div class="codeblock"><pre>SELECT count(*) FROM t1 WHERE instr(b,char(0))>0;
+</pre></div>
+
+<h1 id="removing_nul_characters_from_a_text_field"><span>4. </span>Removing NUL Characters From A Text Field</h1>
+
+<p>
+The following example shows how to remove NUL character, and all text
+that follows, from a column of a table.  So if you have a database file
+that contains embedded NULs and you would like to remove them, running
+UPDATE statements similar to the following might help:
+
+</p><div class="codeblock"><pre>UPDATE t1 SET b=substr(b,1,instr(b,char(0)))
+ WHERE instr(b,char(0));
+</pre></div>
+

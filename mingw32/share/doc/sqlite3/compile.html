@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -165,7 +165,7 @@ Not all of these compile-time options are usable by every application.
 For example, the SQLITE_THREADSAFE=0 option is only usable by applications
 that never access SQLite from more than one thread at a time.  And the
 SQLITE_OMIT_PROGRESS_CALLBACK option is only usable by applications that
-doe not use the <a href="c3ref/progress_handler.html">sqlite3_progress_handler()</a> interface.  And so forth.
+do not use the <a href="c3ref/progress_handler.html">sqlite3_progress_handler()</a> interface.  And so forth.
 
 </p><p>It is impossible to test every possible combination of compile-time
 options for SQLite.  But the following set of compile-time options is
@@ -177,8 +177,11 @@ This setting disables the <a href="quirks.html#dblquote">double-quoted string li
 
 </p></li><li><p><b><a href="compile.html#threadsafe">SQLITE_THREADSAFE=0</a></b>.
 Setting -DSQLITE_THREADSAFE=0 causes all of the mutex and thread-safety logic
-in SQLite to be omitted.  This is the single compile-time option that makes
-the most difference in optimizing the performance of SQLite.
+in SQLite to be omitted.  This is the single compile-time option causes SQLite
+to run about 2% faster and also reduces the size of the library by about 2%.
+But the downside is that using the compile-time option means that SQLite can never
+be used by more than a single thread at a time, even if each thread has its own
+database connection.
 
 </p></li><li><p><b><a href="compile.html#default_memstatus">SQLITE_DEFAULT_MEMSTATUS=0</a></b>.
 This setting causes the <a href="c3ref/status.html">sqlite3_status()</a> interfaces that track memory usage
@@ -236,6 +239,20 @@ give a noticeable improvement in performance.
 Make use of alloca() for dynamically allocating temporary stack space for 
 use within a single function, on systems that support alloca().  Without
 this option, temporary space is allocated from the heap.
+
+</p></li><li><p><b><a href="compile.html#omit_autoinit">SQLITE_OMIT_AUTOINIT</a></b>.
+The SQLite library needs to be initialized using a call to
+<a href="c3ref/initialize.html">sqlite3_initialize()</a> before certain interfaces are used.  
+This initialization normally happens automatically the first time
+it is needed.  However, with the SQLITE_OMIT_AUTOINIT option, the automatic
+initialization is omitted.  This helps many API calls to run a little faster
+(since they do not have to check to see if initialization has already occurred
+and then run initialization if it has not previously been invoked) but it
+also means that the application must call <a href="c3ref/initialize.html">sqlite3_initialize()</a> manually.
+If SQLite is compiled with -DSQLITE_OMIT_AUTOINIT and a routine like
+<a href="c3ref/free.html">sqlite3_malloc()</a> or <a href="c3ref/vfs_find.html">sqlite3_vfs_find()</a> or <a href="c3ref/open.html">sqlite3_open()</a> is invoked
+without first calling <a href="c3ref/initialize.html">sqlite3_initialize()</a>, the likely result will be
+a segfault.
 </p></li></ol>
 
 <p>When all of the recommended compile-time options above are used,
@@ -918,6 +935,9 @@ the available settings:</p>
   Future versions of SQLite might enable the batch-atomic-write
   capability by default, at which point this compile-time option
   will become superfluous.
+</p></blockquote><a name="enable_bytecode_vtab"></a>
+<p><b>SQLITE_ENABLE_BYTECODE_VTAB</b></p><blockquote><p>
+  This option enables the <a href="bytecodevtab.html">bytecode and tables_used virtual tables</a>.
 </p></blockquote><a name="enable_column_metadata"></a>
 <p><b>SQLITE_ENABLE_COLUMN_METADATA</b></p><blockquote><p>
   When this C-preprocessor macro is defined, SQLite includes some
@@ -1505,9 +1525,7 @@ The SQLITE_OMIT_* compile-time options are mostly unsupported.
   an SQL statement using the X'ABCD' syntax.
 </p></blockquote><a name="omit_btreecount"></a>
 <p><b>SQLITE_OMIT_BTREECOUNT</b></p><blockquote><p>
-  When this option is defined, an optimization that accelerates counting
-  all entries in a table (in other words, an optimization that helps
-  "SELECT count(*) FROM table" run faster) is omitted.
+  This option is no longer used for anything.  It is a no-op.
 </p></blockquote><a name="omit_builtin_test"></a>
 <p><b>SQLITE_OMIT_BUILTIN_TEST</b></p><blockquote><p>
   This compile-time option has been renamed to <a href="compile.html#untestable">SQLITE_UNTESTABLE</a>.

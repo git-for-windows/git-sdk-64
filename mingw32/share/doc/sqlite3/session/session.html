@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -97,51 +97,17 @@ An instance of this object is a <a href="../sessionintro.html">session</a> that 
 record changes to a database.
 </p><p>Constructor: <a href="../session/sqlite3session_create.html">sqlite3session_create()</a></p>
 <p>Destructor: <a href="../session/sqlite3session_delete.html">sqlite3session_delete()</a></p>
-<style>
-#listtab43 tr td {vertical-align:top;}
-</style>
-<table id='listtab43' width='100%'></table>
-<script>
-var listitems43 = [{"u":"../session/sqlite3session_attach.html","x":"sqlite3session_attach","s":0},
-{"u":"../session/sqlite3session_changeset.html","x":"sqlite3session_changeset","s":0},
-{"u":"../session/sqlite3session_diff.html","x":"sqlite3session_diff","s":0},
-{"u":"../session/sqlite3session_enable.html","x":"sqlite3session_enable","s":0},
-{"u":"../session/sqlite3session_indirect.html","x":"sqlite3session_indirect","s":0},
-{"u":"../session/sqlite3session_patchset.html","x":"sqlite3session_patchset","s":0},
-{"u":"../session/sqlite3session_table_filter.html","x":"sqlite3session_table_filter","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/350);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems43.length+1)/nCol);
-var h="<tr><td colspan="+nCol;
-h += ">Methods:</td></tr><tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems43.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems43[i].u=="" || listitems43[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems43[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems43[i].s==2 || listitems43[i].s==3) h += "<s>"
-  h += listitems43[i].x;
-  if(listitems43[i].s==2 || listitems43[i].s==3) h += "</s>"
-  h += ea
-  if(listitems43[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems43[i].s==3) h += "&sup1\n";
-  if(listitems43[i].s==4) h += "&sup2\n";
-  if(listitems43[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab43").innerHTML = h;
-</script>
+<div class='columns' style='columns: 17em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='../session/sqlite3session_attach.html'>sqlite3session_attach</a></li>
+<li><a href='../session/sqlite3session_changeset.html'>sqlite3session_changeset</a></li>
+<li><a href='../session/sqlite3session_diff.html'>sqlite3session_diff</a></li>
+<li><a href='../session/sqlite3session_enable.html'>sqlite3session_enable</a></li>
+<li><a href='../session/sqlite3session_indirect.html'>sqlite3session_indirect</a></li>
+<li><a href='../session/sqlite3session_patchset.html'>sqlite3session_patchset</a></li>
+<li><a href='../session/sqlite3session_table_filter.html'>sqlite3session_table_filter</a></li>
+</ul>
+</div>
 </p>
 <p>See also lists of
   <a href="objlist.html">Objects</a>,

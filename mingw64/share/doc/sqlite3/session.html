@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -114,183 +114,84 @@ code file sqlite3session.h.</p>
 
 
 <h2>Objects:</h2>
-<style>
-#listtab39 tr td {vertical-align:top;}
-</style>
-<table id='listtab39' width='100%'></table>
-<script>
-var listitems39 = [{"u":"#sqlite3_changegroup","x":"sqlite3_changegroup","s":0},
-{"u":"#sqlite3_changeset_iter","x":"sqlite3_changeset_iter","s":0},
-{"u":"#sqlite3_rebaser","x":"sqlite3_rebaser","s":1},
-{"u":"#sqlite3_session","x":"sqlite3_session","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/300);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems39.length+1)/nCol);
-var h="<tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems39.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems39[i].u=="" || listitems39[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems39[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems39[i].s==2 || listitems39[i].s==3) h += "<s>"
-  h += listitems39[i].x;
-  if(listitems39[i].s==2 || listitems39[i].s==3) h += "</s>"
-  h += ea
-  if(listitems39[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems39[i].s==3) h += "&sup1\n";
-  if(listitems39[i].s==4) h += "&sup2\n";
-  if(listitems39[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab39").innerHTML = h;
-</script>
+<div class='columns' style='columns: 15em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='#sqlite3_changegroup'>sqlite3_changegroup</a></li>
+<li><a href='#sqlite3_changeset_iter'>sqlite3_changeset_iter</a></li>
+<li><a href='#sqlite3_rebaser'>sqlite3_rebaser<small><i>(exp)</i></small></a></li>
+<li><a href='#sqlite3_session'>sqlite3_session</a></li>
+</ul>
+</div>
 <hr>
 
 <h2>Constants:</h2>
-<style>
-#listtab40 tr td {vertical-align:top;}
-</style>
-<table id='listtab40' width='100%'></table>
-<script>
-var listitems40 = [{"u":"#SQLITE_CHANGESETAPPLY_INVERT","x":"SQLITE_CHANGESETAPPLY_INVERT","s":0},
-{"u":"#SQLITE_CHANGESETAPPLY_INVERT","x":"SQLITE_CHANGESETAPPLY_NOSAVEPOINT","s":0},
-{"u":"#SQLITE_CHANGESETSTART_INVERT","x":"SQLITE_CHANGESETSTART_INVERT","s":0},
-{"u":"#SQLITE_CHANGESET_ABORT","x":"SQLITE_CHANGESET_ABORT","s":0},
-{"u":"#SQLITE_CHANGESET_CONFLICT","x":"SQLITE_CHANGESET_CONFLICT","s":0},
-{"u":"#SQLITE_CHANGESET_CONFLICT","x":"SQLITE_CHANGESET_CONSTRAINT","s":0},
-{"u":"#SQLITE_CHANGESET_CONFLICT","x":"SQLITE_CHANGESET_DATA","s":0},
-{"u":"#SQLITE_CHANGESET_CONFLICT","x":"SQLITE_CHANGESET_FOREIGN_KEY","s":0},
-{"u":"#SQLITE_CHANGESET_CONFLICT","x":"SQLITE_CHANGESET_NOTFOUND","s":0},
-{"u":"#SQLITE_CHANGESET_ABORT","x":"SQLITE_CHANGESET_OMIT","s":0},
-{"u":"#SQLITE_CHANGESET_ABORT","x":"SQLITE_CHANGESET_REPLACE","s":0},
-{"u":"#SQLITE_SESSION_CONFIG_STRMSIZE","x":"SQLITE_SESSION_CONFIG_STRMSIZE","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/400);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems40.length+1)/nCol);
-var h="<tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems40.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems40[i].u=="" || listitems40[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems40[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems40[i].s==2 || listitems40[i].s==3) h += "<s>"
-  h += listitems40[i].x;
-  if(listitems40[i].s==2 || listitems40[i].s==3) h += "</s>"
-  h += ea
-  if(listitems40[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems40[i].s==3) h += "&sup1\n";
-  if(listitems40[i].s==4) h += "&sup2\n";
-  if(listitems40[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab40").innerHTML = h;
-</script>
+<div class='columns' style='columns: 20em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='#SQLITE_CHANGESETAPPLY_INVERT'>SQLITE_CHANGESETAPPLY_INVERT</a></li>
+<li><a href='#SQLITE_CHANGESETAPPLY_INVERT'>SQLITE_CHANGESETAPPLY_NOSAVEPOINT</a></li>
+<li><a href='#SQLITE_CHANGESETSTART_INVERT'>SQLITE_CHANGESETSTART_INVERT</a></li>
+<li><a href='#SQLITE_CHANGESET_ABORT'>SQLITE_CHANGESET_ABORT</a></li>
+<li><a href='#SQLITE_CHANGESET_CONFLICT'>SQLITE_CHANGESET_CONFLICT</a></li>
+<li><a href='#SQLITE_CHANGESET_CONFLICT'>SQLITE_CHANGESET_CONSTRAINT</a></li>
+<li><a href='#SQLITE_CHANGESET_CONFLICT'>SQLITE_CHANGESET_DATA</a></li>
+<li><a href='#SQLITE_CHANGESET_CONFLICT'>SQLITE_CHANGESET_FOREIGN_KEY</a></li>
+<li><a href='#SQLITE_CHANGESET_CONFLICT'>SQLITE_CHANGESET_NOTFOUND</a></li>
+<li><a href='#SQLITE_CHANGESET_ABORT'>SQLITE_CHANGESET_OMIT</a></li>
+<li><a href='#SQLITE_CHANGESET_ABORT'>SQLITE_CHANGESET_REPLACE</a></li>
+<li><a href='#SQLITE_SESSION_CONFIG_STRMSIZE'>SQLITE_SESSION_CONFIG_STRMSIZE</a></li>
+</ul>
+</div>
 <hr>
 
 <h2>Functions:</h2>
-<style>
-#listtab41 tr td {vertical-align:top;}
-</style>
-<table id='listtab41' width='100%'></table>
-<script>
-var listitems41 = [{"u":"#sqlite3changegroup_add","x":"sqlite3changegroup_add","s":0},
-{"u":"#sqlite3changegroup_add_strm","x":"sqlite3changegroup_add_strm","s":0},
-{"u":"#sqlite3changegroup_delete","x":"sqlite3changegroup_delete","s":0},
-{"u":"#sqlite3changegroup_new","x":"sqlite3changegroup_new","s":0},
-{"u":"#sqlite3changegroup_output","x":"sqlite3changegroup_output","s":0},
-{"u":"#sqlite3changegroup_add_strm","x":"sqlite3changegroup_output_strm","s":0},
-{"u":"#sqlite3changeset_apply","x":"sqlite3changeset_apply","s":0},
-{"u":"#sqlite3changegroup_add_strm","x":"sqlite3changeset_apply_strm","s":0},
-{"u":"#sqlite3changeset_apply","x":"sqlite3changeset_apply_v2","s":0},
-{"u":"#sqlite3changegroup_add_strm","x":"sqlite3changeset_apply_v2_strm","s":0},
-{"u":"#sqlite3changeset_concat","x":"sqlite3changeset_concat","s":0},
-{"u":"#sqlite3changegroup_add_strm","x":"sqlite3changeset_concat_strm","s":0},
-{"u":"#sqlite3changeset_conflict","x":"sqlite3changeset_conflict","s":0},
-{"u":"#sqlite3changeset_finalize","x":"sqlite3changeset_finalize","s":0},
-{"u":"#sqlite3changeset_fk_conflicts","x":"sqlite3changeset_fk_conflicts","s":0},
-{"u":"#sqlite3changeset_invert","x":"sqlite3changeset_invert","s":0},
-{"u":"#sqlite3changegroup_add_strm","x":"sqlite3changeset_invert_strm","s":0},
-{"u":"#sqlite3changeset_new","x":"sqlite3changeset_new","s":0},
-{"u":"#sqlite3changeset_next","x":"sqlite3changeset_next","s":0},
-{"u":"#sqlite3changeset_old","x":"sqlite3changeset_old","s":0},
-{"u":"#sqlite3changeset_op","x":"sqlite3changeset_op","s":0},
-{"u":"#sqlite3changeset_pk","x":"sqlite3changeset_pk","s":0},
-{"u":"#sqlite3changeset_start","x":"sqlite3changeset_start","s":0},
-{"u":"#sqlite3changegroup_add_strm","x":"sqlite3changeset_start_strm","s":0},
-{"u":"#sqlite3changeset_start","x":"sqlite3changeset_start_v2","s":0},
-{"u":"#sqlite3changegroup_add_strm","x":"sqlite3changeset_start_v2_strm","s":0},
-{"u":"#sqlite3rebaser_configure","x":"sqlite3rebaser_configure","s":1},
-{"u":"#sqlite3rebaser_create","x":"sqlite3rebaser_create","s":1},
-{"u":"#sqlite3rebaser_delete","x":"sqlite3rebaser_delete","s":1},
-{"u":"#sqlite3rebaser_rebase","x":"sqlite3rebaser_rebase","s":1},
-{"u":"#sqlite3changegroup_add_strm","x":"sqlite3rebaser_rebase_strm","s":0},
-{"u":"#sqlite3session_attach","x":"sqlite3session_attach","s":0},
-{"u":"#sqlite3session_changeset","x":"sqlite3session_changeset","s":0},
-{"u":"#sqlite3changegroup_add_strm","x":"sqlite3session_changeset_strm","s":0},
-{"u":"#sqlite3session_config","x":"sqlite3session_config","s":0},
-{"u":"#sqlite3session_create","x":"sqlite3session_create","s":0},
-{"u":"#sqlite3session_delete","x":"sqlite3session_delete","s":0},
-{"u":"#sqlite3session_diff","x":"sqlite3session_diff","s":0},
-{"u":"#sqlite3session_enable","x":"sqlite3session_enable","s":0},
-{"u":"#sqlite3session_indirect","x":"sqlite3session_indirect","s":0},
-{"u":"#sqlite3session_isempty","x":"sqlite3session_isempty","s":0},
-{"u":"#sqlite3session_patchset","x":"sqlite3session_patchset","s":0},
-{"u":"#sqlite3changegroup_add_strm","x":"sqlite3session_patchset_strm","s":0},
-{"u":"#sqlite3session_table_filter","x":"sqlite3session_table_filter","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/300);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems41.length+1)/nCol);
-var h="<tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems41.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems41[i].u=="" || listitems41[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems41[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems41[i].s==2 || listitems41[i].s==3) h += "<s>"
-  h += listitems41[i].x;
-  if(listitems41[i].s==2 || listitems41[i].s==3) h += "</s>"
-  h += ea
-  if(listitems41[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems41[i].s==3) h += "&sup1\n";
-  if(listitems41[i].s==4) h += "&sup2\n";
-  if(listitems41[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab41").innerHTML = h;
-</script>
+<div class='columns' style='columns: 15em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='#sqlite3changegroup_add'>sqlite3changegroup_add</a></li>
+<li><a href='#sqlite3changegroup_add_strm'>sqlite3changegroup_add_strm</a></li>
+<li><a href='#sqlite3changegroup_delete'>sqlite3changegroup_delete</a></li>
+<li><a href='#sqlite3changegroup_new'>sqlite3changegroup_new</a></li>
+<li><a href='#sqlite3changegroup_output'>sqlite3changegroup_output</a></li>
+<li><a href='#sqlite3changegroup_add_strm'>sqlite3changegroup_output_strm</a></li>
+<li><a href='#sqlite3changeset_apply'>sqlite3changeset_apply</a></li>
+<li><a href='#sqlite3changegroup_add_strm'>sqlite3changeset_apply_strm</a></li>
+<li><a href='#sqlite3changeset_apply'>sqlite3changeset_apply_v2</a></li>
+<li><a href='#sqlite3changegroup_add_strm'>sqlite3changeset_apply_v2_strm</a></li>
+<li><a href='#sqlite3changeset_concat'>sqlite3changeset_concat</a></li>
+<li><a href='#sqlite3changegroup_add_strm'>sqlite3changeset_concat_strm</a></li>
+<li><a href='#sqlite3changeset_conflict'>sqlite3changeset_conflict</a></li>
+<li><a href='#sqlite3changeset_finalize'>sqlite3changeset_finalize</a></li>
+<li><a href='#sqlite3changeset_fk_conflicts'>sqlite3changeset_fk_conflicts</a></li>
+<li><a href='#sqlite3changeset_invert'>sqlite3changeset_invert</a></li>
+<li><a href='#sqlite3changegroup_add_strm'>sqlite3changeset_invert_strm</a></li>
+<li><a href='#sqlite3changeset_new'>sqlite3changeset_new</a></li>
+<li><a href='#sqlite3changeset_next'>sqlite3changeset_next</a></li>
+<li><a href='#sqlite3changeset_old'>sqlite3changeset_old</a></li>
+<li><a href='#sqlite3changeset_op'>sqlite3changeset_op</a></li>
+<li><a href='#sqlite3changeset_pk'>sqlite3changeset_pk</a></li>
+<li><a href='#sqlite3changeset_start'>sqlite3changeset_start</a></li>
+<li><a href='#sqlite3changegroup_add_strm'>sqlite3changeset_start_strm</a></li>
+<li><a href='#sqlite3changeset_start'>sqlite3changeset_start_v2</a></li>
+<li><a href='#sqlite3changegroup_add_strm'>sqlite3changeset_start_v2_strm</a></li>
+<li><a href='#sqlite3rebaser_configure'>sqlite3rebaser_configure<small><i>(exp)</i></small></a></li>
+<li><a href='#sqlite3rebaser_create'>sqlite3rebaser_create<small><i>(exp)</i></small></a></li>
+<li><a href='#sqlite3rebaser_delete'>sqlite3rebaser_delete<small><i>(exp)</i></small></a></li>
+<li><a href='#sqlite3rebaser_rebase'>sqlite3rebaser_rebase<small><i>(exp)</i></small></a></li>
+<li><a href='#sqlite3changegroup_add_strm'>sqlite3rebaser_rebase_strm</a></li>
+<li><a href='#sqlite3session_attach'>sqlite3session_attach</a></li>
+<li><a href='#sqlite3session_changeset'>sqlite3session_changeset</a></li>
+<li><a href='#sqlite3changegroup_add_strm'>sqlite3session_changeset_strm</a></li>
+<li><a href='#sqlite3session_config'>sqlite3session_config</a></li>
+<li><a href='#sqlite3session_create'>sqlite3session_create</a></li>
+<li><a href='#sqlite3session_delete'>sqlite3session_delete</a></li>
+<li><a href='#sqlite3session_diff'>sqlite3session_diff</a></li>
+<li><a href='#sqlite3session_enable'>sqlite3session_enable</a></li>
+<li><a href='#sqlite3session_indirect'>sqlite3session_indirect</a></li>
+<li><a href='#sqlite3session_isempty'>sqlite3session_isempty</a></li>
+<li><a href='#sqlite3session_patchset'>sqlite3session_patchset</a></li>
+<li><a href='#sqlite3changegroup_add_strm'>sqlite3session_patchset_strm</a></li>
+<li><a href='#sqlite3session_table_filter'>sqlite3session_table_filter</a></li>
+</ul>
+</div>
 <hr>
 <a name="SQLITE_CHANGESETSTART_INVERT"></a>
 <h2>Flags for sqlite3changeset_start_v2</h2><blockquote><pre>#define SQLITE_CHANGESETSTART_INVERT        0x0002
@@ -322,52 +223,18 @@ over the elements of a <a href="sessionintro.html#changeset">changeset</a> or <a
 </p><p>Constructors:
  <a href="#sqlite3changeset_start">sqlite3changeset_start()</a>,
 <a href="#sqlite3changeset_start">sqlite3changeset_start_v2()</a></p>
-<style>
-#listtab42 tr td {vertical-align:top;}
-</style>
-<table id='listtab42' width='100%'></table>
-<script>
-var listitems42 = [{"u":"#sqlite3changeset_conflict","x":"sqlite3changeset_conflict","s":0},
-{"u":"#sqlite3changeset_finalize","x":"sqlite3changeset_finalize","s":0},
-{"u":"#sqlite3changeset_fk_conflicts","x":"sqlite3changeset_fk_conflicts","s":0},
-{"u":"#sqlite3changeset_new","x":"sqlite3changeset_new","s":0},
-{"u":"#sqlite3changeset_next","x":"sqlite3changeset_next","s":0},
-{"u":"#sqlite3changeset_old","x":"sqlite3changeset_old","s":0},
-{"u":"#sqlite3changeset_op","x":"sqlite3changeset_op","s":0},
-{"u":"#sqlite3changeset_pk","x":"sqlite3changeset_pk","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/350);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems42.length+1)/nCol);
-var h="<tr><td colspan="+nCol;
-h += ">Methods:</td></tr><tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems42.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems42[i].u=="" || listitems42[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems42[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems42[i].s==2 || listitems42[i].s==3) h += "<s>"
-  h += listitems42[i].x;
-  if(listitems42[i].s==2 || listitems42[i].s==3) h += "</s>"
-  h += ea
-  if(listitems42[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems42[i].s==3) h += "&sup1\n";
-  if(listitems42[i].s==4) h += "&sup2\n";
-  if(listitems42[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab42").innerHTML = h;
-</script>
+<div class='columns' style='columns: 17em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='#sqlite3changeset_conflict'>sqlite3changeset_conflict</a></li>
+<li><a href='#sqlite3changeset_finalize'>sqlite3changeset_finalize</a></li>
+<li><a href='#sqlite3changeset_fk_conflicts'>sqlite3changeset_fk_conflicts</a></li>
+<li><a href='#sqlite3changeset_new'>sqlite3changeset_new</a></li>
+<li><a href='#sqlite3changeset_next'>sqlite3changeset_next</a></li>
+<li><a href='#sqlite3changeset_old'>sqlite3changeset_old</a></li>
+<li><a href='#sqlite3changeset_op'>sqlite3changeset_op</a></li>
+<li><a href='#sqlite3changeset_pk'>sqlite3changeset_pk</a></li>
+</ul>
+</div>
 </p>
 <hr><a name="sqlite3_rebaser"></a>
 <h2>Rebasing changesets</h2><blockquote><pre>typedef struct sqlite3_rebaser sqlite3_rebaser;
@@ -472,51 +339,17 @@ An instance of this object is a <a href="sessionintro.html">session</a> that can
 record changes to a database.
 </p><p>Constructor: <a href="#sqlite3session_create">sqlite3session_create()</a></p>
 <p>Destructor: <a href="#sqlite3session_delete">sqlite3session_delete()</a></p>
-<style>
-#listtab43 tr td {vertical-align:top;}
-</style>
-<table id='listtab43' width='100%'></table>
-<script>
-var listitems43 = [{"u":"#sqlite3session_attach","x":"sqlite3session_attach","s":0},
-{"u":"#sqlite3session_changeset","x":"sqlite3session_changeset","s":0},
-{"u":"#sqlite3session_diff","x":"sqlite3session_diff","s":0},
-{"u":"#sqlite3session_enable","x":"sqlite3session_enable","s":0},
-{"u":"#sqlite3session_indirect","x":"sqlite3session_indirect","s":0},
-{"u":"#sqlite3session_patchset","x":"sqlite3session_patchset","s":0},
-{"u":"#sqlite3session_table_filter","x":"sqlite3session_table_filter","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/350);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems43.length+1)/nCol);
-var h="<tr><td colspan="+nCol;
-h += ">Methods:</td></tr><tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems43.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems43[i].u=="" || listitems43[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems43[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems43[i].s==2 || listitems43[i].s==3) h += "<s>"
-  h += listitems43[i].x;
-  if(listitems43[i].s==2 || listitems43[i].s==3) h += "</s>"
-  h += ea
-  if(listitems43[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems43[i].s==3) h += "&sup1\n";
-  if(listitems43[i].s==4) h += "&sup2\n";
-  if(listitems43[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab43").innerHTML = h;
-</script>
+<div class='columns' style='columns: 17em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='#sqlite3session_attach'>sqlite3session_attach</a></li>
+<li><a href='#sqlite3session_changeset'>sqlite3session_changeset</a></li>
+<li><a href='#sqlite3session_diff'>sqlite3session_diff</a></li>
+<li><a href='#sqlite3session_enable'>sqlite3session_enable</a></li>
+<li><a href='#sqlite3session_indirect'>sqlite3session_indirect</a></li>
+<li><a href='#sqlite3session_patchset'>sqlite3session_patchset</a></li>
+<li><a href='#sqlite3session_table_filter'>sqlite3session_table_filter</a></li>
+</ul>
+</div>
 </p>
 <hr><a name="sqlite3changegroup_add"></a>
 <h2>Add A Changeset To A Changegroup</h2><blockquote><pre>int sqlite3changegroup_add(sqlite3_changegroup*, int nData, void *pData);

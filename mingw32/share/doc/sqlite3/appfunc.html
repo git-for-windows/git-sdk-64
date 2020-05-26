@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -311,69 +311,36 @@ that describes the content from which the SQL function was invoked.  This
 context point becomes the first parameter to many other routines that
 the function implement might to invoke, including:
 
-<style>
-#listtab23 tr td {vertical-align:top;}
-</style>
-<table id='listtab23' width='100%'></table>
-<script>
-var listitems23 = [{"u":"c3ref/aggregate_context.html","x":"sqlite3_aggregate_context","s":0},
-{"u":"c3ref/context_db_handle.html","x":"sqlite3_context_db_handle","s":0},
-{"u":"c3ref/get_auxdata.html","x":"sqlite3_get_auxdata","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_blob","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_blob64","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_double","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_error","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_error16","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_error_code","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_error_nomem","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_error_toobig","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_int","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_int64","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_null","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_pointer","s":0},
-{"u":"c3ref/result_subtype.html","x":"sqlite3_result_subtype","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_text","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_text16","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_text16be","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_text16le","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_text64","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_value","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_zeroblob","s":0},
-{"u":"c3ref/result_blob.html","x":"sqlite3_result_zeroblob64","s":0},
-{"u":"c3ref/get_auxdata.html","x":"sqlite3_set_auxdata","s":0},
-{"u":"c3ref/user_data.html","x":"sqlite3_user_data","s":0}];
-var j = 0;
-var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
-var nCol = Math.floor(w/300);
-if(nCol<=0) nCol=1;
-var nRow = Math.ceil((listitems23.length+1)/nCol);
-var h="<tr><td><ul class='multicol_list'>"
-var ea
-for(var i=0; i<listitems23.length; i++){
-  if( (++j)>nRow ){
-    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
-    j = 1;
-  }
-  if(listitems23[i].u=="" || listitems23[i].s==2){
-    h += "<li>"
-    ea = ""
-  }else{
-    h += "<li><a href='";
-    h += listitems23[i].u;
-    h += "'>";
-    ea = "</a>"
-  }
-  if(listitems23[i].s==2 || listitems23[i].s==3) h += "<s>"
-  h += listitems23[i].x;
-  if(listitems23[i].s==2 || listitems23[i].s==3) h += "</s>"
-  h += ea
-  if(listitems23[i].s==1) h += "<small><i>(exp)</i></small>\n";
-  if(listitems23[i].s==3) h += "&sup1\n";
-  if(listitems23[i].s==4) h += "&sup2\n";
-  if(listitems23[i].s==5) h += "&sup3\n";
-}
-document.getElementById("listtab23").innerHTML = h;
-</script>
+<div class='columns' style='columns: 15em auto;'>
+<ul style='padding-top:0;'>
+<li><a href='c3ref/aggregate_context.html'>sqlite3_aggregate_context</a></li>
+<li><a href='c3ref/context_db_handle.html'>sqlite3_context_db_handle</a></li>
+<li><a href='c3ref/get_auxdata.html'>sqlite3_get_auxdata</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_blob</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_blob64</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_double</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_error</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_error16</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_error_code</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_error_nomem</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_error_toobig</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_int</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_int64</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_null</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_pointer</a></li>
+<li><a href='c3ref/result_subtype.html'>sqlite3_result_subtype</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_text</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_text16</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_text16be</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_text16le</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_text64</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_value</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_zeroblob</a></li>
+<li><a href='c3ref/result_blob.html'>sqlite3_result_zeroblob64</a></li>
+<li><a href='c3ref/get_auxdata.html'>sqlite3_set_auxdata</a></li>
+<li><a href='c3ref/user_data.html'>sqlite3_user_data</a></li>
+</ul>
+</div>
 
 
 </p><p>The <a href="c3ref/result_blob.html">sqlite3_result() family of functions</a> are

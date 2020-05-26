@@ -73,7 +73,7 @@ function div_off(nm){document.getElementById(nm).style.display="none";}
 window.onbeforeunload = function(e){div_off("submenu");}
 /* Disable the Search feature if we are not operating from CGI, since */
 /* Search is accomplished using CGI and will not work without it. */
-if( !location.origin.match || !location.origin.match(/http/) ){
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
 document.getElementById("search_menubutton").style.display = "none";
 }
 /* Used by the Hide/Show button beside syntax diagrams, to toggle the */
@@ -143,12 +143,31 @@ The index for named parameters can be looked up using the
 <a href="../c3ref/bind_parameter_index.html">sqlite3_bind_parameter_index()</a> API if desired.  The index
 for "?NNN" parameters is the value of NNN.
 The NNN value must be between 1 and the <a href="../c3ref/limit.html">sqlite3_limit()</a>
-parameter <a href="../c3ref/c_limit_attached.html#sqlitelimitvariablenumber">SQLITE_LIMIT_VARIABLE_NUMBER</a> (default value: 999).</p>
+parameter <a href="../c3ref/c_limit_attached.html#sqlitelimitvariablenumber">SQLITE_LIMIT_VARIABLE_NUMBER</a> (default value: 32766).</p>
 
 <p>The third argument is the value to bind to the parameter.
 If the third parameter to sqlite3_bind_text() or sqlite3_bind_text16()
 or sqlite3_bind_blob() is a NULL pointer then the fourth parameter
-is ignored and the end result is the same as sqlite3_bind_null().</p>
+is ignored and the end result is the same as sqlite3_bind_null().
+If the third parameter to sqlite3_bind_text() is not NULL, then
+it should be a pointer to well-formed UTF8 text.
+If the third parameter to sqlite3_bind_text16() is not NULL, then
+it should be a pointer to well-formed UTF16 text.
+If the third parameter to sqlite3_bind_text64() is not NULL, then
+it should be a pointer to a well-formed unicode string that is
+either UTF8 if the sixth parameter is SQLITE_UTF8, or UTF16
+otherwise.</p>
+
+<p><a name="byteorderdeterminationrules"></a>
+ The byte-order of
+UTF16 input text is determined by the byte-order mark (BOM, U+FEFF)
+found in first character, which is removed, or in the absence of a BOM
+the byte order is the native byte order of the host
+machine for sqlite3_bind_text16() or the byte order specified in
+the 6th parameter for sqlite3_bind_text64().
+If UTF16 input text contains invalid unicode
+characters, then SQLite might change those invalid characters
+into the unicode replacement character: U+FFFD.</p>
 
 <p>In those routines that have a fourth argument, its value is the
 number of bytes in the parameter.  To be clear: the value is the
@@ -162,7 +181,7 @@ If a non-negative fourth parameter is provided to sqlite3_bind_text()
 or sqlite3_bind_text16() or sqlite3_bind_text64() then
 that parameter must be the byte offset
 where the NUL terminator would occur assuming the string were NUL
-terminated.  If any NUL characters occur at byte offsets less than
+terminated.  If any NUL characters occurs at byte offsets less than
 the value of the fourth parameter then the resulting string value will
 contain embedded NULs.  The result of expressions involving strings
 with embedded NULs is undefined.</p>
