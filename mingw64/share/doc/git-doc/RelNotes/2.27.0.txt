@@ -24,6 +24,10 @@ Backward compatibility notes
    users may find annoying---those who prefer not to rebase need to
    set the variable to false to squelch the warning.
 
+ * The transport protocol version 2, which was promoted to the default
+   in Git 2.26 release, turned out to have some remaining rough edges,
+   so it has been demoted from the default.
+
 
 UI, Workflows & Features
 
@@ -483,6 +487,12 @@ Fixes since v2.26
    to different locations, both files would be written to the working
    tree but both would have the contents from "ours".  This has been
    corrected so that the path from each side gets their original content.
+
+ * Fix for a copy-and-paste error introduced during 2.20 era.
+   (merge e68a5272b1 ds/multi-pack-verify later to maint).
+
+ * Update an unconditional use of "grep -a" with a perl script in a test.
+   (merge 1eb7371236 dd/t5703-grep-a-fix later to maint).
 
  * Other code cleanup, docfix, build fix, etc.
    (merge 564956f358 jc/maintain-doc later to maint).
