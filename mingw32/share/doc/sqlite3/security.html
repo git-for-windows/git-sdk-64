@@ -201,7 +201,20 @@ soaking up memory needed by other parts of the application.
 This also sandboxes SQLite's memory so that a write-after-free
 error in some other part of the application will not cause
 problems for SQLite, or vice versa.
-</p></li></ol>
+
+<a name="precisionlimit"></a>
+</p></li><li><p>
+To prevent excess memory usage in the <a href="lang_corefunc.html#printf">printf() SQL function</a>, compile
+with "<a href="compile.html#printf_precision_limit">-DSQLITE_PRINTF_PRECISION_LIMIT=1000</a>" or some similar small value.
+This #define limits the precision in substitutions specifiers in the
+printf() function, that thus prevents a hostile SQL statement from
+using large amounts of RAM using constructs such as
+"<tt>printf('%1000000000s','hi')</tt>".  (Despite its name, this
+#define limits the maximum size of both the precision and the width
+of each substitution in the format string.)
+</p></li>
+
+</ol>
 
 <h2 id="untrusted_sqlite_database_files"><span>1.2. </span>Untrusted SQLite Database Files</h2>
 
@@ -215,7 +228,7 @@ might have ever been writable by an agent in a different security domain
 should be treated as suspect.
 
 </p><ol>
-<li value="7"><p>
+<li value="8"><p>
 If the application includes any <a href="appfunc.html">custom SQL functions</a> or 
 <a href="vtab.html#customvtab">custom virtual tables</a> that have side effects or that might leak
 privileged information, then the application should use one or more
@@ -232,9 +245,8 @@ virtual tables for nefarious purposes:
      by setting the <a href="c3ref/c_deterministic.html#sqlitedirectonly">SQLITE_DIRECTONLY</a> flag on all custom SQL functions and
      the <a href="c3ref/c_vtab_constraint_support.html#sqlitevtabdirectonly">SQLITE_VTAB_DIRECTONLY</a> flag on all custom virtual tables.
 </li></ol>
-</li>
 
-<li><p>
+</li><li><p>
 If the application does not use triggers or views, consider disabling the
 unused capabilities with:
 </p><blockquote><pre>
@@ -252,7 +264,7 @@ might be justified.  These added defenses come with performance costs,
 however, and so may not appropriate in every situation:
 
 </p><ol>
-<li value="9"><p>
+<li value="10"><p>
 Run <a href="pragma.html#pragma_integrity_check">PRAGMA integrity_check</a> or <a href="pragma.html#pragma_quick_check">PRAGMA quick_check</a> on the database
 as the first SQL statement after opening the database files and
 prior to running any other SQL statements.  Reject and refuse to

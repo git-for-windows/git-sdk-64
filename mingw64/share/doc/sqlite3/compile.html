@@ -640,7 +640,39 @@ some design situations, every little bit helps.
   With SQLITE_POWERSAFE_OVERWRITE set to 0, SQLite assumes that other
   bytes in the same sector with a written byte might be changed or 
   damaged by a power loss.
-</p></blockquote><a name="query_planner_limit"></a>
+</p></blockquote><a name="printf_precision_limit"></a>
+<p><b>SQLITE_PRINTF_PRECISION_LIMIT=<i>N</i></b></p><blockquote><p>
+  This option limits the maximum width and precision of substitutions
+  for the <a href="lang_corefunc.html#printf">printf() SQL function</a> and the other C-language string
+  formatting functions such as <a href="c3ref/mprintf.html">sqlite3_mprintf()</a> and
+  <a href="c3ref/str_append.html">sqlite3_str_appendf()</a>.  This is turn can prevent a hostile or
+  malfunctioning script from using excessive memory by invoking
+  a format such as: "<tt>printf('%*s',2147483647,'hi')</tt>".
+  A value for <i>N</i> of around 1000 is normally sufficient.
+  <p>
+  The <a href="lang_corefunc.html#printf">printf() SQL function</a> is subject to the <a href="c3ref/c_limit_attached.html#sqlitelimitlength">SQLITE_LIMIT_LENGTH</a>
+  limit of <a href="c3ref/limit.html">sqlite3_limit()</a>.  Hence any printf() result with a
+  width or precision more than the SQLITE_LIMIT_LENGTH will cause
+  an <a href="rescode.html#toobig">SQLITE_TOOBIG</a> error.  However, the low-level formatting
+  for the printf() function is done by a subroutine that does not
+  have access to SQLITE_LIMIT_LENGTH.  So the low-level formatting
+  is done into a memory allocation that might be considerably larger
+  than SQLITE_LIMIT_LENGTH and the SQLITE_LIMIT_LENGTH check is only
+  performed after all formatting is complete.  Thus there might be a
+  transient buffer that exceeds SQLITE_LIMIT_LENGTH.  The
+  SQLITE_PRINTF_PRECISION_LIMIT option is an additional check
+  that prevents excess sizes for the transient buffer used inside
+  the low-level formatting subroutine, prior to the
+  SQLITE_LIMIT_LENGTH check.
+  <p>
+  No error is raised if a width or precision exceeds
+  SQLITE_PRINTF_PRECISION_LIMIT.  Instead, the large width or
+  precision is silently truncated.
+  <p>
+  The default value for SQLITE_PRINTF_PRECISION_LIMIT is 2147483647
+  (0x7fffffff).</p>
+
+<p></p></blockquote><a name="query_planner_limit"></a>
 <p><b>SQLITE_QUERY_PLANNER_LIMIT=<i>N</i></b></p><blockquote><p>
   As part of the query planning process, SQLite enumerates all usable
   combinations of indexes and WHERE-clause constraints.  For certain
@@ -1300,7 +1332,7 @@ the available settings:</p>
 <p><b>SQLITE_USE_ALLOCA</b></p><blockquote><p>
   If this option is enabled, then the alloca() memory allocator will be
   used in a few situations where it is appropriate.  This results in a slightly
-  smaller and faster binary.  The SQLITE_USE_ALLOCA compile-time only only 
+  smaller and faster binary.  The SQLITE_USE_ALLOCA compile-time only
   works, of course, on systems that support alloca().
 </p></blockquote><a name="use_fcntl_trace"></a>
 <p><b>SQLITE_USE_FCNTL_TRACE</b></p><blockquote><p>

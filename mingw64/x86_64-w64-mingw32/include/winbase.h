@@ -1524,6 +1524,7 @@ extern "C" {
 #if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP) || defined(WINSTORECOMPAT)
 #define LoadLibrary __MINGW_NAME_AW(LoadLibrary)
   WINBASEAPI HMODULE WINAPI LoadLibraryW (LPCWSTR lpLibFileName);
+  WINBASEAPI HMODULE WINAPI LoadLibraryA (LPCSTR lpLibFileName);
 #endif
 #if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP)
   WINBASEAPI HANDLE WINAPI OpenMutexA (DWORD dwDesiredAccess, WINBOOL bInheritHandle, LPCSTR lpName);
@@ -1537,7 +1538,6 @@ extern "C" {
 #endif
   WINBASEAPI HANDLE WINAPI OpenFileMappingA (DWORD dwDesiredAccess, WINBOOL bInheritHandle, LPCSTR lpName);
   WINBASEAPI DWORD WINAPI GetLogicalDriveStringsA (DWORD nBufferLength, LPSTR lpBuffer);
-  WINBASEAPI HMODULE WINAPI LoadLibraryA (LPCSTR lpLibFileName);
 
 #ifndef UNICODE
 #define OpenMutex OpenMutexA
@@ -1549,7 +1549,6 @@ extern "C" {
 #endif
 
 #define CreateWaitableTimer __MINGW_NAME_AW(CreateWaitableTimer)
-#define LoadLibrary __MINGW_NAME_AW(LoadLibrary)
 
 #if _WIN32_WINNT >= 0x0600
 #ifndef UNICODE
@@ -2409,8 +2408,6 @@ extern "C" {
   WINBASEAPI WINBOOL WINAPI SetComputerNameExA (COMPUTER_NAME_FORMAT NameType, LPCTSTR lpBuffer);
   WINBASEAPI WINBOOL WINAPI DnsHostnameToComputerNameA (LPCSTR Hostname, LPSTR ComputerName, LPDWORD nSize);
   WINBASEAPI WINBOOL WINAPI DnsHostnameToComputerNameW (LPCWSTR Hostname, LPWSTR ComputerName, LPDWORD nSize);
-  WINADVAPI WINBOOL WINAPI GetUserNameA (LPSTR lpBuffer, LPDWORD pcbBuffer);
-  WINADVAPI WINBOOL WINAPI GetUserNameW (LPWSTR lpBuffer, LPDWORD pcbBuffer);
 
 #ifndef UNICODE
 #define SetComputerNameEx SetComputerNameExA
@@ -2418,7 +2415,6 @@ extern "C" {
 
 #define SetComputerName __MINGW_NAME_AW(SetComputerName)
 #define DnsHostnameToComputerName __MINGW_NAME_AW(DnsHostnameToComputerName)
-#define GetUserName __MINGW_NAME_AW(GetUserName)
 
 #define LOGON32_LOGON_INTERACTIVE 2
 #define LOGON32_LOGON_NETWORK 3
@@ -2502,6 +2498,12 @@ extern "C" {
 #define GetCurrentHwProfile __MINGW_NAME_AW(GetCurrentHwProfile)
 
 #define VerifyVersionInfo __MINGW_NAME_AW(VerifyVersionInfo)
+#endif
+
+#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP) || defined(WINSTORECOMPAT)
+  WINADVAPI WINBOOL WINAPI GetUserNameA (LPSTR lpBuffer, LPDWORD pcbBuffer);
+  WINADVAPI WINBOOL WINAPI GetUserNameW (LPWSTR lpBuffer, LPDWORD pcbBuffer);
+#define GetUserName __MINGW_NAME_AW(GetUserName)
 #endif
 
 #if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_APP)
