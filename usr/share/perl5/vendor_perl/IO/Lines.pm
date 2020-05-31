@@ -1,5 +1,15 @@
 package IO::Lines;
 
+use strict;
+use Carp;
+use IO::ScalarArray;
+
+# The package version, both in 1.23 style *and* usable by MakeMaker:
+our $VERSION = '2.113';
+
+# Inheritance:
+our @ISA = qw(IO::ScalarArray);     ### also gets us new_tie  :-)
+
 
 =head1 NAME
 
@@ -10,16 +20,16 @@ IO::Lines - IO:: interface for reading/writing an array of lines
 
     use IO::Lines;
 
-    ### See IO::ScalarArray for details 
+    ### See IO::ScalarArray for details
 
 
 =head1 DESCRIPTION
 
 This class implements objects which behave just like FileHandle
 (or IO::Handle) objects, except that you may use them to write to
-(or read from) an array of lines.  They can be tiehandle'd as well.  
+(or read from) an array of lines.  C<tiehandle> capable as well.
 
-This is a subclass of L<IO::ScalarArray|IO::ScalarArray> 
+This is a subclass of L<IO::ScalarArray|IO::ScalarArray>
 in which the underlying
 array has its data stored in a line-oriented-format: that is,
 every element ends in a C<"\n">, with the possible exception of the
@@ -33,17 +43,6 @@ newlines appropriately.
 See L<IO::ScalarArray> for full usage and warnings.
 
 =cut
-
-use Carp;
-use strict;
-use IO::ScalarArray;
-use vars qw($VERSION @ISA);
-
-# The package version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = "2.111";
-
-# Inheritance:
-@ISA = qw(IO::ScalarArray);     ### also gets us new_tie  :-)
 
 
 #------------------------------
@@ -124,7 +123,7 @@ sub _getlines_for_newlines {
 # print ARGS...
 #
 # Instance method, override.
-# Print ARGS to the underlying line array.  
+# Print ARGS to the underlying line array.
 #
 sub print {
     if (defined $\ && $\ ne "\n") {
@@ -135,7 +134,7 @@ sub print {
     ### print STDERR "\n[[ARRAY WAS...\n", @{*$self->{AR}}, "<<EOF>>\n";
     my @lines = split /^/, join('', @_); @lines or return 1;
 
-    ### Did the previous print not end with a newline?  
+    ### Did the previous print not end with a newline?
     ### If so, append first line:
     if (@{*$self->{AR}} and (*$self->{AR}[-1] !~ /\n\Z/)) {
 	*$self->{AR}[-1] .= shift @lines;
@@ -156,29 +155,20 @@ __END__
 $Id: Lines.pm,v 1.3 2005/02/10 21:21:53 dfs Exp $
 
 
-=head1 AUTHORS
-
-
-=head2 Primary Maintainer
-
-Dianne Skoll (F<dfs@roaringpenguin.com>).
-
-=head2 Principal author
+=head1 AUTHOR
 
 Eryq (F<eryq@zeegee.com>).
 President, ZeeGee Software Inc (F<http://www.zeegee.com>).
 
+=head1 CONTRIBUTORS
 
-=head2 Other contributors 
+Dianne Skoll (F<dfs@roaringpenguin.com>).
 
-Thanks to the following individuals for their invaluable contributions
-(if I've forgotten or misspelled your name, please email me!):
+=head1 COPYRIGHT & LICENSE
 
-I<Morris M. Siegel,>
-for his $/ patch and the new C<getlines()>.
+Copyright (c) 1997 Erik (Eryq) Dorfman, ZeeGee Software, Inc. All rights reserved.
 
-I<Doug Wilson,>
-for the IO::Handle inheritance and automatic tie-ing.
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut
-

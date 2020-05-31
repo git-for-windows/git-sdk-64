@@ -3,7 +3,7 @@ package HTTP::Config;
 use strict;
 use warnings;
 
-our $VERSION = '6.22';
+our $VERSION = '6.24';
 
 use URI;
 
@@ -245,7 +245,7 @@ HTTP::Config - Configuration for request and response objects
 
 =head1 VERSION
 
-version 6.22
+version 6.24
 
 =head1 SYNOPSIS
 
@@ -440,7 +440,7 @@ Gisle Aas <gisle@activestate.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 1994-2017 by Gisle Aas.
+This software is copyright (c) 1994 by Gisle Aas.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

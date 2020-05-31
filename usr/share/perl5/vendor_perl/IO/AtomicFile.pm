@@ -1,27 +1,10 @@
 package IO::AtomicFile;
 
-### DOCUMENTATION AT BOTTOM OF FILE
-
-# Be strict:
 use strict;
+use warnings;
+use parent 'IO::File';
 
-# External modules:
-use IO::File;
-
-
-#------------------------------
-#
-# GLOBALS...
-#
-#------------------------------
-use vars qw($VERSION @ISA);
-
-# The package version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = "2.111";
-
-# Inheritance:
-@ISA = qw(IO::File);
-
+our $VERSION = '2.113';
 
 #------------------------------
 # new ARGS...
@@ -38,7 +21,7 @@ sub new {
 }
 
 #------------------------------
-# DESTROY 
+# DESTROY
 #------------------------------
 # Destructor.
 #
@@ -53,14 +36,14 @@ sub DESTROY {
 #
 sub open {
     my ($self, $path, $mode) = @_;
-    ref($self) or $self = $self->new;    ### now we have an instance! 
+    ref($self) or $self = $self->new;    ### now we have an instance!
 
-    ### Create tmp path, and remember this info: 
+    ### Create tmp path, and remember this info:
     my $temp = "${path}..TMP" . ${*$self}{'io_atomicfile_suffix'};
     ${*$self}{'io_atomicfile_temp'} = $temp;
     ${*$self}{'io_atomicfile_path'} = $path;
 
-    ### Open the file!  Returns filehandle on success, for use as a constructor: 
+    ### Open the file!  Returns filehandle on success, for use as a constructor:
     $self->SUPER::open($temp, $mode) ? $self : undef;
 }
 
@@ -106,7 +89,7 @@ sub close {
 sub delete {
     my $self = shift;
     unless ($self->_closed(1)) {             ### sentinel...
-        $self->SUPER::close();    
+        $self->SUPER::close();
         return unlink(${*$self}{'io_atomicfile_temp'});
     }
     1;
@@ -133,67 +116,92 @@ __END__
 
 IO::AtomicFile - write a file which is updated atomically
 
-
 =head1 SYNOPSIS
 
+    use strict;
+    use warnings;
+    use feature 'say';
     use IO::AtomicFile;
 
-    ### Write a temp file, and have it install itself when closed:
-    my $FH = IO::AtomicFile->open("bar.dat", "w");
-    print $FH "Hello!\n";
-    $FH->close || die "couldn't install atomic file: $!";    
+    # Write a temp file, and have it install itself when closed:
+    my $fh = IO::AtomicFile->open("bar.dat", "w");
+    $fh->say("Hello!");
+    $fh->close || die "couldn't install atomic file: $!";
 
-    ### Write a temp file, but delete it before it gets installed:
-    my $FH = IO::AtomicFile->open("bar.dat", "w");
-    print $FH "Hello!\n";
-    $FH->delete; 
+    # Write a temp file, but delete it before it gets installed:
+    my $fh = IO::AtomicFile->open("bar.dat", "w");
+    $fh->say("Hello!");
+    $fh->delete;
 
-    ### Write a temp file, but neither install it nor delete it:
-    my $FH = IO::AtomicFile->open("bar.dat", "w");
-    print $FH "Hello!\n";
-    $FH->detach;   
-
+    # Write a temp file, but neither install it nor delete it:
+    my $fh = IO::AtomicFile->open("bar.dat", "w");
+    $fh->say("Hello!");
+    $fh->detach;
 
 =head1 DESCRIPTION
 
-This module is intended for people who need to update files 
-reliably in the face of unexpected program termination.  
+This module is intended for people who need to update files
+reliably in the face of unexpected program termination.
 
 For example, you generally don't want to be halfway in the middle of
 writing I</etc/passwd> and have your program terminate!  Even
 the act of writing a single scalar to a filehandle is I<not> atomic.
 
-But this module gives you true atomic updates, via rename().
-When you open a file I</foo/bar.dat> via this module, you are I<actually> 
+But this module gives you true atomic updates, via C<rename>.
+When you open a file I</foo/bar.dat> via this module, you are I<actually>
 opening a temporary file I</foo/bar.dat..TMP>, and writing your
-output there.   The act of closing this file (either explicitly
-via close(), or implicitly via the destruction of the object)
-will cause rename() to be called... therefore, from the point
+output there. The act of closing this file (either explicitly
+via C<close>, or implicitly via the destruction of the object)
+will cause C<rename> to be called... therefore, from the point
 of view of the outside world, the file's contents are updated
 in a single time quantum.
 
-To ensure that problems do not go undetected, the "close" method
-done by the destructor will raise a fatal exception if the rename()
-fails.  The explicit close() just returns undef.   
+To ensure that problems do not go undetected, the C<close> method
+done by the destructor will raise a fatal exception if the C<rename>
+fails.  The explicit C<close> just returns C<undef>.
 
-You can also decide at any point to trash the file you've been 
+You can also decide at any point to trash the file you've been
 building.
 
+=head1 METHODS
+
+L<IO::AtomicFile> inherits all methods from L<IO::File> and
+implements the following new ones.
+
+=head2 close
+
+    $fh->close();
+
+This method calls its parent L<IO::File/"close"> and then renames its temporary file
+as the original file name.
+
+=head2 delete
+
+    $fh->delete();
+
+This method calls its parent L<IO::File/"close"> and then deletes the temporary file.
+
+=head2 detach
+
+    $fh->detach();
+
+This method calls its parent L<IO::File/"close">. Unlike L<IO::AtomicFile/"delete"> it
+does not then delete the temporary file.
 
 =head1 AUTHOR
-
-=head2 Primary Maintainer
-
-Dianne Skoll (F<dfs@roaringpenguin.com>).
-
-=head2 Original Author
 
 Eryq (F<eryq@zeegee.com>).
 President, ZeeGee Software Inc (F<http://www.zeegee.com>).
 
+=head1 CONTRIBUTORS
 
-=head1 REVISION
+Dianne Skoll (F<dfs@roaringpenguin.com>).
 
-$Revision: 1.2 $
+=head1 COPYRIGHT & LICENSE
 
-=cut 
+Copyright (c) 1997 Erik (Eryq) Dorfman, ZeeGee Software, Inc. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut

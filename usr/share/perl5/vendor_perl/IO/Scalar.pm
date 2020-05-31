@@ -1,5 +1,26 @@
 package IO::Scalar;
 
+use strict;
+
+use Carp;
+use IO::Handle;
+
+### Stringification, courtesy of B. K. Oxley (binkley):  :-)
+use overload '""'   => sub { ${*{$_[0]}->{SR}} };
+use overload 'bool' => sub { 1 };      ### have to do this, so object is true!
+
+### The package version, both in 1.23 style *and* usable by MakeMaker:
+our $VERSION = '2.113';
+
+### Inheritance:
+our @ISA = qw(IO::Handle);
+
+### This stuff should be got rid of ASAP.
+require IO::WrapTie and push @ISA, 'IO::WrapTie::Slave' if ($] >= 5.004);
+
+#==============================
+
+
 
 =head1 NAME
 
@@ -119,7 +140,7 @@ see L<IO::Stringy> for change log and general information.
 The IO::Scalar class implements objects which behave just like
 IO::Handle (or FileHandle) objects, except that you may use them
 to write to (or read from) scalars.  These handles are
-automatically tiehandle'd (though please see L<"WARNINGS">
+automatically C<tiehandle>d (though please see L<"WARNINGS">
 for information relevant to your Perl version).
 
 
@@ -143,30 +164,6 @@ Causes $s to be set to:
 
 
 =head1 PUBLIC INTERFACE
-
-=cut
-
-use Carp;
-use strict;
-use vars qw($VERSION @ISA);
-use IO::Handle;
-
-use 5.005;
-
-### Stringification, courtesy of B. K. Oxley (binkley):  :-)
-use overload '""'   => sub { ${*{$_[0]}->{SR}} };
-use overload 'bool' => sub { 1 };      ### have to do this, so object is true!
-
-### The package version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = "2.111";
-
-### Inheritance:
-@ISA = qw(IO::Handle);
-
-### This stuff should be got rid of ASAP.
-require IO::WrapTie and push @ISA, 'IO::WrapTie::Slave' if ($] >= 5.004);
-
-#==============================
 
 =head2 Construction
 
@@ -708,83 +705,20 @@ __END__
 =cut
 
 
-=head1 WARNINGS
-
-Perl's TIEHANDLE spec was incomplete prior to 5.005_57;
-it was missing support for C<seek()>, C<tell()>, and C<eof()>.
-Attempting to use these functions with an IO::Scalar will not work
-prior to 5.005_57. IO::Scalar will not have the relevant methods
-invoked; and even worse, this kind of bug can lie dormant for a while.
-If you turn warnings on (via C<$^W> or C<perl -w>),
-and you see something like this...
-
-    attempt to seek on unopened filehandle
-
-...then you are probably trying to use one of these functions
-on an IO::Scalar with an old Perl.  The remedy is to simply
-use the OO version; e.g.:
-
-    $SH->seek(0,0);    ### GOOD: will work on any 5.005
-    seek($SH,0,0);     ### WARNING: will only work on 5.005_57 and beyond
-
-
-=head1 VERSION
-
-$Id: Scalar.pm,v 1.6 2005/02/10 21:21:53 dfs Exp $
-
-
-=head1 AUTHORS
-
-=head2 Primary Maintainer
-
-Dianne Skoll (F<dfs@roaringpenguin.com>).
-
-=head2 Principal author
+=head1 AUTHOR
 
 Eryq (F<eryq@zeegee.com>).
 President, ZeeGee Software Inc (F<http://www.zeegee.com>).
 
+=head1 CONTRIBUTORS
 
-=head2 Other contributors
+Dianne Skoll (F<dfs@roaringpenguin.com>).
 
-The full set of contributors always includes the folks mentioned
-in L<IO::Stringy/"CHANGE LOG">.  But just the same, special
-thanks to the following individuals for their invaluable contributions
-(if I've forgotten or misspelled your name, please email me!):
+=head1 COPYRIGHT & LICENSE
 
-I<Andy Glew,>
-for contributing C<getc()>.
+Copyright (c) 1997 Erik (Eryq) Dorfman, ZeeGee Software, Inc. All rights reserved.
 
-I<Brandon Browning,>
-for suggesting C<opened()>.
-
-I<David Richter,>
-for finding and fixing the bug in C<PRINTF()>.
-
-I<Eric L. Brine,>
-for his offset-using read() and write() implementations.
-
-I<Richard Jones,>
-for his patches to massively improve the performance of C<getline()>
-and add C<sysread> and C<syswrite>.
-
-I<B. K. Oxley (binkley),>
-for stringification and inheritance improvements,
-and sundry good ideas.
-
-I<Doug Wilson,>
-for the IO::Handle inheritance and automatic tie-ing.
-
-
-=head1 SEE ALSO
-
-L<IO::String>, which is quite similar but which was designed
-more-recently and with an IO::Handle-like interface in mind,
-so you could mix OO- and native-filehandle usage without using tied().
-
-I<Note:> as of version 2.x, these classes all work like
-their IO::Handle counterparts, so we have comparable
-functionality to IO::String.
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut
-

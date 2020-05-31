@@ -1,50 +1,10 @@
 package IO::InnerFile;
 
-=head1 NAME
-
-IO::InnerFile - define a file inside another file
-
-
-=head1 SYNOPSIS
-
-
-    ### Read a subset of a file:
-    $inner = IO::InnerFile->new($fh, $start, $length);
-    while (<$inner>) {
-	...
-    }
-
-
-=head1 DESCRIPTION
-
-If you have a filehandle that can seek() and tell(), then you 
-can open an IO::InnerFile on a range of the underlying file.
-
-
-=head1 PUBLIC INTERFACE
-
-=over
-
-=cut
-
+use strict;
+use warnings;
 use Symbol;
 
-# The package version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = "2.111";
-
-#------------------------------
-
-=item new FILEHANDLE, [START, [LENGTH]]
-
-I<Class method, constructor.>
-Create a new inner-file opened on the given FILEHANDLE,
-from bytes START to START+LENGTH.  Both START and LENGTH
-default to 0; negative values are silently coerced to zero.
-
-Note that FILEHANDLE must be able to seek() and tell(), in addition
-to whatever other methods you may desire for reading it.
-
-=cut
+our $VERSION = '2.113';
 
 sub new {
    my ($class, $fh, $start, $lg) = @_;
@@ -61,86 +21,28 @@ sub new {
 
    ### Create a new filehandle tied to this object:
    $fh = gensym;
-   tie(*$fh, $class, $a); 
+   tie(*$fh, $class, $a);
    return bless($fh, $class);
 }
 
-sub TIEHANDLE { 
+sub TIEHANDLE {
    my ($class, $data) = @_;
    return bless($data, $class);
 }
 
-sub DESTROY { 
+sub DESTROY {
    my ($self) = @_;
-   $self->close() if (ref($self) eq 'SCALAR'); 
+   $self->close() if (ref($self) eq 'SCALAR');
 }
-
-#------------------------------
-
-=item set_length LENGTH
-
-=item get_length 
-
-=item add_length NBYTES
-
-I<Instance methods.>
-Get/set the virtual length of the inner file.
-
-=cut
 
 sub set_length { tied(${$_[0]})->{LG} = $_[1]; }
 sub get_length { tied(${$_[0]})->{LG}; }
 sub add_length { tied(${$_[0]})->{LG} += $_[1]; }
 
-#------------------------------
-
-=item set_start START
-
-=item get_start 
-
-=item add_start NBYTES
-
-I<Instance methods.>
-Get/set the virtual start position of the inner file.
-
-=cut
-
 sub set_start  { tied(${$_[0]})->{START} = $_[1]; }
-sub get_start  { tied(${$_[0]})->{START}; } 
+sub get_start  { tied(${$_[0]})->{START}; }
 sub set_end    { tied(${$_[0]})->{LG} =  $_[1] - tied(${$_[0]})->{START}; }
 sub get_end    { tied(${$_[0]})->{LG} + tied(${$_[0]})->{START}; }
-
-
-#------------------------------
-
-=item binmode
-
-=item close
-
-=item flush
-
-=item getc
-
-=item getline
-
-=item print LIST
-
-=item printf LIST
-
-=item read BUF, NBYTES
-
-=item readline
-
-=item seek OFFFSET, WHENCE
-
-=item tell
-
-=item write ARGS...
-
-I<Instance methods.>
-Standard filehandle methods.
-
-=cut
 
 sub write    { shift->WRITE(@_) }
 sub print    { shift->PRINT(@_) }
@@ -168,11 +70,11 @@ sub seek {
    return 1;
 }
 
-sub tell { 
-    return tied(${$_[0]})->{CRPOS}; 
+sub tell {
+    return tied(${$_[0]})->{CRPOS};
 }
 
-sub WRITE  { 
+sub WRITE  {
     die "inner files can only open for reading\n";
 }
 
@@ -180,11 +82,11 @@ sub PRINT  {
     die "inner files can only open for reading\n";
 }
 
-sub PRINTF { 
+sub PRINTF {
     die "inner files can only open for reading\n";
 }
 
-sub GETC   { 
+sub GETC   {
     my ($self) = @_;
     return 0 if ($self->{CRPOS} >= $self->{LG});
 
@@ -201,11 +103,11 @@ sub GETC   {
     ### ...and restore:
     $self->{FH}->seek($old_pos, 0);
 
-    $self->{LG} = $self->{CRPOS} unless ($lg); 
+    $self->{LG} = $self->{CRPOS} unless ($lg);
     return ($lg ? $data : undef);
 }
 
-sub READ   { 
+sub READ   {
     my ($self, $undefined, $lg, $ofs) = @_;
     $undefined = undef;
 
@@ -224,7 +126,7 @@ sub READ   {
     ### ...and restore:
     $self->{FH}->seek($old_pos, 0);
 
-    $self->{LG} = $self->{CRPOS} unless ($lg); 
+    $self->{LG} = $self->{CRPOS} unless ($lg);
     return $lg;
 }
 
@@ -238,7 +140,7 @@ sub READLINE {
     return @arr;
 }
 
-sub _readline_helper { 
+sub _readline_helper {
     my ($self) = @_;
     return undef if ($self->{CRPOS} >= $self->{LG});
 
@@ -260,7 +162,7 @@ sub _readline_helper {
     $self->{FH}->seek($old_pos, 0);
 
     #### If we detected a new EOF ...
-    unless (defined $text) {  
+    unless (defined $text) {
        $self->{LG} = $self->{CRPOS};
        return undef;
     }
@@ -280,22 +182,154 @@ sub CLOSE { %{$_[0]}=(); }
 1;
 __END__
 
-=back
+__END__
 
 
-=head1 VERSION
+=head1 NAME
 
-$Id: InnerFile.pm,v 1.4 2005/02/10 21:21:53 dfs Exp $
+IO::InnerFile - define a file inside another file
 
+=head1 SYNOPSIS
+
+    use strict;
+    use warnings;
+    use IO::InnerFile;
+
+    # Read a subset of a file:
+    my $fh = _some_file_handle;
+    my $start = 10;
+    my $length = 50;
+    my $inner = IO::InnerFile->new($fh, $start, $length);
+    while (my $line = <$inner>) {
+        # ...
+    }
+
+
+=head1 DESCRIPTION
+
+If you have a file handle that can C<seek> and C<tell>, then you
+can open an L<IO::InnerFile> on a range of the underlying file.
+
+=head1 CONSTRUCTORS
+
+L<IO::InnerFile> implements the following constructors.
+
+=head2 new
+
+    my $inner = IO::InnerFile->new($fh);
+    $inner = IO::InnerFile->new($fh, 10);
+    $inner = IO::InnerFile->new($fh, 10, 50);
+
+Create a new L<IO::InnerFile> opened on the given file handle.
+The file handle supplied B<MUST> be able to both C<seek> and C<tell>.
+
+The second and third parameters are start and length. Both are defaulted
+to zero (C<0>). Negative values are silently coerced to zero.
+
+=head1 METHODS
+
+L<IO::InnerFile> implements the following methods.
+
+=head2 add_length
+
+    $inner->add_length(30);
+
+Add to the virtual length of the inner file by the number given in bytes.
+
+=head2 add_start
+
+    $inner->add_start(30);
+
+Add to the virtual position of the inner file by the number given in bytes.
+
+=head2 binmode
+
+    $inner->binmode();
+
+This is a NOOP method just to satisfy the normal L<IO::File> interface.
+
+=head2 close
+
+=head2 fileno
+
+    $inner->fileno();
+
+This is a NOOP method just to satisfy the normal L<IO::File> interface.
+
+=head2 flush
+
+    $inner->flush();
+
+This is a NOOP method just to satisfy the normal L<IO::File> interface.
+
+=head2 get_end
+
+    my $num_bytes = $inner->get_end();
+
+Get the virtual end position of the inner file in bytes.
+
+=head2 get_length
+
+    my $num_bytes = $inner->get_length();
+
+Get the virtual length of the inner file in bytes.
+
+=head2 get_start
+
+    my $num_bytes = $inner->get_start();
+
+Get the virtual position of the inner file in bytes.
+
+=head2 getc
+
+=head2 getline
+
+=head2 print LIST
+
+=head2 printf
+
+=head2 read
+
+=head2 readline
+
+=head2 seek
+
+=head2 set_end
+
+    $inner->set_end(30);
+
+Set the virtual end of the inner file in bytes (this basically just alters the length).
+
+=head2 set_length
+
+    $inner->set_length(30);
+
+Set the virtual length of the inner file in bytes.
+
+=head2 set_start
+
+    $inner->set_start(30);
+
+Set the virtual start position of the inner file in bytes.
+
+=head2 tell
+
+=head2 write
 
 =head1 AUTHOR
 
-Original version by Doru Petrescu (pdoru@kappa.ro).
+Eryq (F<eryq@zeegee.com>).
+President, ZeeGee Software Inc (F<http://www.zeegee.com>).
 
-Documentation and by Eryq (eryq@zeegee.com).
+=head1 CONTRIBUTORS
 
-Currently maintained by Dianne Skoll (dfs@roaringpenguin.com).
+Dianne Skoll (F<dfs@roaringpenguin.com>).
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright (c) 1997 Erik (Eryq) Dorfman, ZeeGee Software, Inc. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut
-
-
