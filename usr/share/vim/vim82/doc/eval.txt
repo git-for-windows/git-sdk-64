@@ -1,4 +1,4 @@
-*eval.txt*	For Vim version 8.2.  Last change: 2020 Apr 13
+*eval.txt*	For Vim version 8.2.  Last change: 2020 May 25
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -584,6 +584,8 @@ adict.
 Weeding out entries from a Dictionary can be done with |filter()|: >
 	:call filter(dict, 'v:val =~ "x"')
 This removes all entries from "dict" with a value not matching 'x'.
+This can also be used to remove all entries: >
+	call filter(dict, 0)
 
 
 Dictionary function ~
@@ -1351,6 +1353,9 @@ A string constant accepts these special characters:
 	To use the double quote character it must be escaped: "<M-\">".
 	Don't use <Char-xxxx> to get a utf-8 character, use \uxxxx as
 	mentioned above.
+\<*xxx>	Like \<xxx> but prepends a modifier instead of including it in the
+	character.  E.g. "\<C-w>" is one character 0x17 while "\<*C-w>" is four
+	bytes: 3 for the CTRL modifier and then character "W".
 
 Note that "\xff" is stored as the byte 255, which may be invalid in some
 encodings.  Use "\u00ff" to store character 255 according to the current value
@@ -1485,7 +1490,7 @@ the function returns: >
 	:echo Bar(6)
 <	5
 
-Note that the variables must exist in the outer scope before the lamba is
+Note that the variables must exist in the outer scope before the lambda is
 defined for this to work.  See also |:func-closure|.
 
 Lambda and closure support can be checked with: >
@@ -1809,10 +1814,12 @@ v:errors	Errors found by assert functions, such as |assert_true()|.
 v:event		Dictionary containing information about the current
 		|autocommand|.  See the specific event for what it puts in
 		this dictionary.
-		The dictionary is emptied when the |autocommand|
-		finishes, please refer to |dict-identity| for how to get an
-		independent copy of it.
-
+		The dictionary is emptied when the |autocommand| finishes,
+		please refer to |dict-identity| for how to get an independent
+		copy of it.  Use |deepcopy()| if you want to keep the
+		information after the event triggers.  Example: >
+			au TextYankPost * let g:foo = deepcopy(v:event)
+<
 					*v:exception* *exception-variable*
 v:exception	The value of the exception most recently caught and not
 		finished.  See also |v:throwpoint| and |throw-variables|.
@@ -2490,6 +2497,7 @@ getjumplist([{winnr} [, {tabnr}]])
 getline({lnum})			String	line {lnum} of current buffer
 getline({lnum}, {end})		List	lines {lnum} to {end} of current buffer
 getloclist({nr} [, {what}])	List	list of location list items
+getmarklist([{expr}])		List	list of global/local marks
 getmatches([{win}])		List	list of current matches
 getmousepos()			Dict	last known mouse position
 getpid()			Number	process ID of Vim
@@ -2584,6 +2592,8 @@ maparg({name} [, {mode} [, {abbr} [, {dict}]]])
 					rhs of mapping {name} in mode {mode}
 mapcheck({name} [, {mode} [, {abbr}]])
 				String	check for mappings matching {name}
+mapset({mode}, {abbr}, {dict})
+				none	restore mapping from |maparg()| result
 match({expr}, {pat} [, {start} [, {count}]])
 				Number	position where {pat} matches in {expr}
 matchadd({group}, {pattern} [, {priority} [, {id} [, {dict}]]])
@@ -2625,6 +2635,8 @@ popup_findpreview()		Number	get window ID of preview popup window
 popup_getoptions({id})		Dict	get options of popup window {id}
 popup_getpos({id})		Dict	get position of popup window {id}
 popup_hide({id})		none	hide popup menu {id}
+popup_list()			List	get a list of window IDs of al popups
+popup_locate({row}, {col})	Number 	get window ID of popup at position
 popup_menu({what}, {options})	Number	create a popup window used as a menu
 popup_move({id}, {options})	none	set position of popup window {id}
 popup_notification({what}, {options})
@@ -2644,7 +2656,7 @@ prop_clear({lnum} [, {lnum-end} [, {props}]])
 				none	remove all text properties
 prop_find({props} [, {direction}])
 				Dict	search for a text property
-prop_list({lnum} [, {props})	List	text properties in {lnum}
+prop_list({lnum} [, {props}])	List	text properties in {lnum}
 prop_remove({props} [, {lnum} [, {lnum-end}]])
 				Number	remove a text property
 prop_type_add({name}, {props})	none	define a new property type
@@ -2652,7 +2664,7 @@ prop_type_change({name}, {props})
 				none	change an existing property type
 prop_type_delete({name} [, {props}])
 				none	delete a property type
-prop_type_get([{name} [, {props}])
+prop_type_get([{name} [, {props}]])
 				Dict	get property type values
 prop_type_list([{props}])	List	get list of property types
 pum_getpos()			Dict	position and size of pum if visible
@@ -2886,7 +2898,8 @@ tolower({expr})			String	the String {expr} switched to lowercase
 toupper({expr})			String	the String {expr} switched to uppercase
 tr({src}, {fromstr}, {tostr})	String	translate chars of {src} in {fromstr}
 					to chars in {tostr}
-trim({text} [, {mask}])		String	trim characters in {mask} from {text}
+trim({text} [, {mask} [, {dir}]])
+				String	trim characters in {mask} from {text}
 trunc({expr})			Float	truncate Float {expr}
 type({name})			Number	type of variable {name}
 undofile({name})		String	undo file name for {name}
@@ -2901,15 +2914,16 @@ win_execute({id}, {command} [, {silent}])
 				String	execute {command} in window {id}
 win_findbuf({bufnr})		List	find windows containing {bufnr}
 win_getid([{win} [, {tab}]])	Number	get window ID for {win} in {tab}
+win_gettype([{nr}])		String	type of window {nr}
 win_gotoid({expr})		Number	go to window with ID {expr}
 win_id2tabwin({expr})		List	get tab and window nr from window ID
 win_id2win({expr})		Number	get window nr from window ID
 win_screenpos({nr})		List	get screen position of window {nr}
 win_splitmove({nr}, {target} [, {options}])
 				Number	move window {nr} to split of {target}
-win_type([{nr}])		String	type of window {nr}
 winbufnr({nr})			Number	buffer number of window {nr}
 wincol()			Number	window column of the cursor
+windowsversion()		String	MS-Windows OS version
 winheight({nr})			Number	height of window {nr}
 winlayout([{tabnr}])		List	layout of windows in tab {tabnr}
 winline()			Number	window line of the cursor
@@ -3048,7 +3062,7 @@ arglistid([{winnr} [, {tabnr}]])
 		{winnr} can be the window number or the |window-ID|.
 
 							*argv()*
-argv([{nr} [, {winid}])
+argv([{nr} [, {winid}]])
 		The result is the {nr}th file in the argument list.  See
 		|arglist|.  "argv(0)" is the first one.  Example: >
 	:let i = 0
@@ -4025,7 +4039,7 @@ executable({expr})					*executable()*
 		On MS-Windows the ".exe", ".bat", etc. can optionally be
 		included.  Then the extensions in $PATHEXT are tried.  Thus if
 		"foo.exe" does not exist, "foo.exe.bat" can be found.  If
-		$PATHEXT is not set then ".exe;.com;.bat;.cmd" is used.  A dot
+		$PATHEXT is not set then ".com;.exe;.bat;.cmd" is used.  A dot
 		by itself can be used in $PATHEXT to try using the name
 		without an extension.  When 'shell' looks like a Unix shell,
 		then the name is also tried without adding an extension.
@@ -5353,6 +5367,25 @@ getloclist({nr} [, {what}])				*getloclist()*
 					|location-list-file-window| for more
 					details.
 
+getmarklist([{expr}]					*getmarklist()*
+		Without the {expr} argument returns a |List| with information
+		about all the global marks. |mark|
+
+		If the optional {expr} argument is specified, returns the
+		local marks defined in buffer {expr}.  For the use of {expr},
+		see |bufname()|.
+
+		Each item in the retuned List is a |Dict| with the following:
+		    name - name of the mark prefixed by "'"
+		    pos - a |List| with the position of the mark:
+				[bufnum, lnum, col, off]
+			  Refer to |getpos()| for more information.
+		    file - file name
+
+		Refer to |getpos()| for getting information about a specific
+		mark.
+
+
 getmatches([{win}])					*getmatches()*
 		Returns a |List| with all matches previously defined for the
 		current window by |matchadd()| and the |:match| commands.
@@ -5475,8 +5508,9 @@ getqflist([{what}])					*getqflist()*
 			id	get information for the quickfix list with
 				|quickfix-ID|; zero means the id for the
 				current list or the list specified by "nr"
-			idx	index of the current entry in the quickfix
-				list specified by 'id' or 'nr'.
+			idx	get information for the quickfix entry at this
+				index in the list specified by 'id' or 'nr'.
+				If set to zero, then uses the current entry.
 				See |quickfix-index|
 			items	quickfix list entries
 			lines	parse a list of lines using 'efm' and return
@@ -5512,7 +5546,7 @@ getqflist([{what}])					*getqflist()*
 				If not present, set to "".
 			id	quickfix list ID |quickfix-ID|. If not
 				present, set to 0.
-			idx	index of the current entry in the list. If not
+			idx	index of the quickfix entry in the list. If not
 				present, set to 0.
 			items	quickfix list entries. If not present, set to
 				an empty list.
@@ -5852,7 +5886,7 @@ has({feature} [, {check}])
 
 		Note that to skip code that has a syntax error when the
 		feature is not available, Vim may skip the rest of the line
-		and miss a following `endif`.  Therfore put the `endif` on a
+		and miss a following `endif`.  Therefore put the `endif` on a
 		separate line: >
 			if has('feature')
 			  let x = this->breaks->without->the->feature
@@ -6790,6 +6824,7 @@ map({expr1}, {expr2})					*map()*
 		Can also be used as a |method|: >
 			mylist->map(expr2)
 
+
 maparg({name} [, {mode} [, {abbr} [, {dict}]]])			*maparg()*
 		When {dict} is omitted or zero: Return the rhs of mapping
 		{name} in mode {mode}.  The returned String has special
@@ -6822,7 +6857,10 @@ maparg({name} [, {mode} [, {abbr} [, {dict}]]])			*maparg()*
 		When {dict} is there and it is |TRUE| return a dictionary
 		containing all the information of the mapping with the
 		following items:
-		  "lhs"	     The {lhs} of the mapping.
+		  "lhs"	     The {lhs} of the mapping as it would be typed
+		  "lhsraw"   The {lhs} of the mapping as raw bytes
+		  "lhsrawalt" The {lhs} of the mapping as raw bytes, alternate
+		  	      form, only present when it differs from "lhsraw"
 		  "rhs"	     The {rhs} of the mapping as typed.
 		  "silent"   1 for a |:map-silent| mapping, else 0.
 		  "noremap"  1 if the {rhs} of the mapping is not remappable.
@@ -6840,6 +6878,9 @@ maparg({name} [, {mode} [, {abbr} [, {dict}]]])			*maparg()*
 		  "lnum"     The line number in "sid", zero if unknown.
 		  "nowait"   Do not wait for other, longer mappings.
 			     (|:map-<nowait>|).
+
+		The dictionary can be used to restore a mapping with
+		|mapset()|.
 
 		The mappings local to the current buffer are checked first,
 		then the global mappings.
@@ -6885,6 +6926,23 @@ mapcheck({name} [, {mode} [, {abbr}]])			*mapcheck()*
 
 		Can also be used as a |method|: >
 			GetKey()->mapcheck('n')
+
+
+mapset({mode}, {abbr}, {dict})				*mapset()*
+		Restore a mapping from a dictionary returned by |maparg()|.
+		{mode} and {abbr} should be the same as for the call to
+		|maparg()|. *E460*
+		{mode} is used to define the mode in which the mapping is set,
+		not the "mode" entry in {dict}.
+		Example for saving and restoring a mapping: >
+			let save_map = maparg('K', 'n', 0, 1)
+			nnoremap K somethingelse
+			...
+			call mapset('n', 0, save_map)
+<		Note that if you are going to replace a map in several modes,
+		e.g. with `:map!`, you need to save the mapping for all of
+		them, since they can differe.
+
 
 match({expr}, {pat} [, {start} [, {count}]])			*match()*
 		When {expr} is a |List| then this returns the index of the
@@ -7766,7 +7824,7 @@ range({expr} [, {max} [, {stride}]])				*range()*
 			GetExpr()->range()
 <
 
-rand([{expr}])						*rand()*
+rand([{expr}])						*rand()* *random*
 		Return a pseudo-random Number generated with an xoshiro128**
 		algorithm using seed {expr}.  The returned number is 32 bits,
 		also on 64 bits systems, for consistency.
@@ -8639,8 +8697,8 @@ setloclist({nr}, {list} [, {action} [, {what}]])		*setloclist()*
 			GetLoclist()->setloclist(winnr)
 
 setmatches({list} [, {win}])				*setmatches()*
-		Restores a list of matches saved by |getmatches() for the
-		current window|.  Returns 0 if successful, otherwise -1.  All
+		Restores a list of matches saved by |getmatches()| for the
+		current window.  Returns 0 if successful, otherwise -1.  All
 		current matches are cleared before the list is restored.  See
 		example for |getmatches()|.
 		If {win} is specified, use the window with this number or
@@ -8784,6 +8842,11 @@ setqflist({list} [, {action} [, {what}]])		*setqflist()*
 		    nr		list number in the quickfix stack; zero
 				means the current quickfix list and "$" means
 				the last quickfix list.
+		    quickfixtextfunc
+				function to get the text to display in the
+				quickfix window.  Refer to
+				|quickfix-window-function| for an explanation
+				of how to write the function and an example.
 		    title	quickfix list title text. See |quickfix-title|
 		Unsupported keys in {what} are ignored.
 		If the "nr" item is not present, then the current quickfix list
@@ -10189,13 +10252,22 @@ tr({src}, {fromstr}, {tostr})				*tr()*
 		Can also be used as a |method|: >
 			GetText()->tr(from, to)
 
-trim({text} [, {mask}])						*trim()*
+trim({text} [, {mask} [, {dir}]])				*trim()*
 		Return {text} as a String where any character in {mask} is
-		removed from the beginning and  end of {text}.
+		removed from the beginning and/or end of {text}.
+
 		If {mask} is not given, {mask} is all characters up to 0x20,
 		which includes Tab, space, NL and CR, plus the non-breaking
 		space character 0xa0.
-		This code deals with multibyte characters properly.
+
+		The optional {dir} argument specifies where to remove the
+		characters:
+			0	remove from the beginning and end of {text}
+			1	remove only at the beginning of {text}
+			2	remove only at the end of {text}
+		When omitted both ends are trimmed.
+
+		This function deals with multibyte characters properly.
 
 		Examples: >
 			echo trim("   some text ")
@@ -10203,7 +10275,9 @@ trim({text} [, {mask}])						*trim()*
 			echo trim("  \r\t\t\r RESERVE \t\n\x0B\xA0") . "_TAIL"
 <		returns "RESERVE_TAIL" >
 			echo trim("rm<Xrm<>X>rrm", "rm<>")
-<		returns "Xrm<>X" (characters in the middle are not removed)
+<		returns "Xrm<>X" (characters in the middle are not removed) >
+			echo trim("  vim  ", " ", 2)
+<		returns "  vim"
 
 		Can also be used as a |method|: >
 			GetText()->trim()
@@ -11114,6 +11188,8 @@ See |:verbose-cmd| for more information.
 			NOTE: Use ! wisely.  If used without care it can cause
 			an existing function to be replaced unexpectedly,
 			which is hard to debug.
+			NOTE: In Vim9 script script-local functions cannot be
+			deleted or redefined.
 
 			For the {arguments} see |function-argument|.
 
