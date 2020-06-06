@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 #
@@ -21,7 +21,7 @@
 #
 #
 
-# $HeadURL: https://svn.apache.org/repos/asf/subversion/branches/1.13.x/tools/hook-scripts/svnperms.py $
+# $HeadURL: https://svn.apache.org/repos/asf/subversion/branches/1.14.x/tools/hook-scripts/svnperms.py $
 # $LastChangedDate: 2016-04-30 08:16:53 +0000 (Sat, 30 Apr 2016) $
 # $LastChangedBy: stefan2 $
 # $LastChangedRevision: 1741723 $

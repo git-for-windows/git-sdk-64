@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # ====================================================================
 #    Licensed to the Apache Software Foundation (ASF) under one
@@ -70,7 +70,7 @@ Options:
 #   is actually set only on initial feed creation, and thereafter simply
 #   re-used from the pickle each time.
 
-# $HeadURL: https://svn.apache.org/repos/asf/subversion/branches/1.13.x/tools/hook-scripts/svn2feed.py $
+# $HeadURL: https://svn.apache.org/repos/asf/subversion/branches/1.14.x/tools/hook-scripts/svn2feed.py $
 # $LastChangedDate: 2016-04-30 08:16:53 +0000 (Sat, 30 Apr 2016) $
 # $LastChangedBy: stefan2 $
 # $LastChangedRevision: 1741723 $
