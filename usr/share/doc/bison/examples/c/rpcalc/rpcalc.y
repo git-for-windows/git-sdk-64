@@ -39,6 +39,7 @@ exp:
    and tabs, and returns 0 for end-of-input. */
 
 #include <ctype.h>
+#include <stdlib.h>
 
 int
 yylex (void)
@@ -51,7 +52,8 @@ yylex (void)
   if (c == '.' || isdigit (c))
     {
       ungetc (c, stdin);
-      scanf ("%lf", &yylval);
+      if (scanf ("%lf", &yylval) != 1)
+        abort ();
       return NUM;
     }
   /* Return end-of-input. */

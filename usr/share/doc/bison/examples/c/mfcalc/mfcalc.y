@@ -131,7 +131,8 @@ yylex (void)
   if (c == '.' || isdigit (c))
     {
       ungetc (c, stdin);
-      scanf ("%lf", &yylval.NUM);
+      if (scanf ("%lf", &yylval.NUM) != 1)
+        abort ();
       return NUM;
     }
 
@@ -147,10 +148,10 @@ yylex (void)
           if (bufsize <= i)
             {
               bufsize = 2 * bufsize + 40;
-              symbuf = realloc (symbuf, bufsize);
+              symbuf = realloc (symbuf, (size_t) bufsize);
             }
           /* Add this character to the buffer. */
-          symbuf[i++] = c;
+          symbuf[i++] = (char) c;
           /* Get another character. */
           c = getchar ();
         }
