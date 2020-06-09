@@ -105,6 +105,17 @@ http://www.sqlite.org/src/timeline?t=release</a>.
 See the <a href="chronology.html">chronology</a> a succinct listing of releases.
 </p>
 
+<a name="version_3_32_2"></a>
+<h3>2020-06-04 (3.32.2)</h3><p><ol class='lessindent'>
+<li> Fix a long-standing bug in the byte-code engine that can cause a
+     <a href="lang_transaction.html">COMMIT</a> command report as success when in fact it failed
+     to commit.  Ticket
+     <a href="https://www.sqlite.org/src/info/810dc8038872e212">810dc8038872e212</a>
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: 2020-06-04 12:58:43 ec02243ea6ce33b090870ae55ab8aa2534b54d216d45c4aa2fdbb00e86861e8c
+<li>SHA3-256 for sqlite3.c: f17a2a57f7eebc72d405f3b640b4a49bcd02364a9c36e04feeb145eccafa3f8d
+
+</ol></p>
 <a name="version_3_32_1"></a>
 <h3>2020-05-25 (3.32.1)</h3><p><ol class='lessindent'>
 <li> Fix two long-standing bugs that allow malicious SQL statements
@@ -151,7 +162,7 @@ See the <a href="chronology.html">chronology</a> a succinct listing of releases.
      <li> The <a href="uintcseq.html">UINT collating sequence</a> extension is automatically loaded
      </ol>
 <li> The <a href="lang_expr.html#like">ESCAPE</a> clause of a <a href="lang_expr.html#like">LIKE</a> operator now overrides wildcard
-     characters, so that the behavior now matches what PostgreSQL does.
+     characters, so that the behavior matches what PostgreSQL does.
 <li>SQLITE_SOURCE_ID: 2020-05-22 17:46:16 5998789c9c744bce92e4cff7636bba800a75574243d6977e1fc8281e360f8d5a
 <li>SHA3-256 for sqlite3.c: 33ed868b21b62ce1d0352ed88bdbd9880a42f29046497a222df6459fc32a356f
 
@@ -274,24 +285,24 @@ Ticket <a href="https://www.sqlite.org/src/info/1079ad19993d13fa">1079ad19993d13
 <li> <a href="compile.html#dqs">-DSQLITE_DQS=0</a> is now a <a href="compile.html#rcmd">recommended compile-time option</a>.
 <li> Improvements to the <a href="optoverview.html">query planner</a>:
 <ol type="a">
-<li> Improved optimization of AND and OR operators when one or the other
-     operand is a constant.
-<li> Enhancements to the <a href="optoverview.html#like_opt">LIKE optimization</a> for cases when the left-hand
-     side column has numeric affinity.
-</ol>
-<li> Added the "<a href="https://sqlite.org/src/file/ext/misc/dbdata.c">sqlite_dbdata</a>"
-     virtual table for extracting raw low-level content from an SQLite database,
-     even a database that is corrupt.
-<li> Improvements to rounding behavior, so that the results of rounding
-     binary numbers using the <a href="lang_corefunc.html#round">round()</a> function are closer to what people
-     who are used to thinking in decimal actually expect.
-<li> Enhancements to the <a href="cli.html">CLI</a>:
+  <li> Improved optimization of AND and OR operators when one or the other
+       operand is a constant.
+  <li> Enhancements to the <a href="optoverview.html#like_opt">LIKE optimization</a> for cases when the left-hand
+       side column has numeric affinity.
+  </ol>
+  <li> Added the "<a href="https://sqlite.org/src/file/ext/misc/dbdata.c">sqlite_dbdata</a>"
+       virtual table for extracting raw low-level content from an SQLite database,
+       even a database that is corrupt.
+  <li> Improvements to rounding behavior, so that the results of rounding
+       binary numbers using the <a href="lang_corefunc.html#round">round()</a> function are closer to what people
+       who are used to thinking in decimal actually expect.
+  <li> Enhancements to the <a href="cli.html">CLI</a>:
 <ol type="a">
-<li> Add the ".recover" command which tries to recover as much content
-     as possible from a corrupt database file.
-<li> Add the ".filectrl" command useful for testing.
-<li> Add the long-standing ".testctrl" command to the ".help" menu.
-<li> Added the ".dbconfig" command
+  <li> Add the ".recover" command which tries to recover as much content
+       as possible from a corrupt database file.
+  <li> Add the ".filectrl" command useful for testing.
+  <li> Add the long-standing ".testctrl" command to the ".help" menu.
+  <li> Added the ".dbconfig" command
 </ol>
 <p><b>Hashes:</b>
 <li>SQLITE_SOURCE_ID: 2019-07-10 17:32:03 fc82b73eaac8b36950e527f12c4b5dc1e147e6f4ad2217ae43ad82882a88bfa6
@@ -302,41 +313,41 @@ Ticket <a href="https://www.sqlite.org/src/info/1079ad19993d13fa">1079ad19993d13
 <h3>2019-04-16 (3.28.0)</h3><p><ol class='lessindent'>
 <li> Enhanced <a href="windowfunctions.html">window functions</a>:
 <ol type="a">
-<li> Add support the <a href="windowfunctions.html#wexcls">EXCLUDE clause</a>.
-<li> Add support for <a href="windowfunctions.html#wchaining">window chaining</a>.
-<li> Add support for <a href="windowfunctions.html#grouptype">GROUPS frames</a>.
-<li> Add support for "<a href="windowfunctions.html#exprrange">&lt;expr&gt; PRECEDING</a>" and
-     "<a href="windowfunctions.html#exprrange">&lt;expr&gt; FOLLOWING</a>" boundaries
-     in RANGE <a href="windowfunctions.html#framespec">frames</a>.
+  <li> Add support the <a href="windowfunctions.html#wexcls">EXCLUDE clause</a>.
+  <li> Add support for <a href="windowfunctions.html#wchaining">window chaining</a>.
+  <li> Add support for <a href="windowfunctions.html#grouptype">GROUPS frames</a>.
+  <li> Add support for "<a href="windowfunctions.html#exprrange">&lt;expr&gt; PRECEDING</a>" and
+       "<a href="windowfunctions.html#exprrange">&lt;expr&gt; FOLLOWING</a>" boundaries
+       in RANGE <a href="windowfunctions.html#framespec">frames</a>.
 </ol>
 <li> Added the new <a href="c3ref/stmt_isexplain.html">sqlite3_stmt_isexplain(S)</a> interface for determining
      whether or not a <a href="c3ref/stmt.html">prepared statement</a> is an <a href="lang_explain.html">EXPLAIN</a>.
 <li> Enhanced <a href="lang_vacuum.html#vacuuminto">VACUUM INTO</a> so that it works for read-only databases.
 <li> New query optimizations:
 <ol type="a">
-<li> Enable the <a href="optoverview.html#like_opt">LIKE optimization</a> for cases when the ESCAPE keyword
-     is present and <a href="pragma.html#pragma_case_sensitive_like">PRAGMA case_sensitive_like</a> is on.
-<li> In queries that are driven by a <a href="partialindex.html">partial index</a>, avoid unnecessary
-     tests of the constraint named in the WHERE clause of the partial
-     index, since we know that constraint must always be true.
+  <li> Enable the <a href="optoverview.html#like_opt">LIKE optimization</a> for cases when the ESCAPE keyword
+       is present and <a href="pragma.html#pragma_case_sensitive_like">PRAGMA case_sensitive_like</a> is on.
+  <li> In queries that are driven by a <a href="partialindex.html">partial index</a>, avoid unnecessary
+       tests of the constraint named in the WHERE clause of the partial
+       index, since we know that constraint must always be true.
 </ol>
 <li> Enhancements to the <a href="tclsqlite.html">TCL Interface</a>:
 <ol type="a">
-<li> Added the -returntype option to the <a href="tclsqlite.html#function">function method</a>.
-<li> Added the new <a href="tclsqlite.html#bind_fallback">bind_fallback method</a>.
+  <li> Added the -returntype option to the <a href="tclsqlite.html#function">function method</a>.
+  <li> Added the new <a href="tclsqlite.html#bind_fallback">bind_fallback method</a>.
 </ol>
 <li> Enhancements to the <a href="cli.html">CLI</a>:
 <ol type="a">
-<li> Added support for <a href="lang_expr.html#varparam">bound parameters</a> and the <a href="cli.html#param">.parameter command</a>.
-<li> Fix the <a href="cli.html#fileio">readfile()</a> function so that it returns
-     an empty BLOB rather than throwing an out-of-memory error when
-     reading an empty file.
-<li> Fix the <a href="cli.html#fileio">writefile()</a> function so that when it
-     creates new directories along the path of a new file, it gives them
-     umask permissions rather than the same permissions as the file.
-<li> Change <a href="cli.html#arinsup">--update option</a> in the <a href="cli.html#sqlar">.archive command</a> so that it skips
-     files that are already in the archive and are unchanged.  Add the
-     new --insert option that works like --update used to work.
+  <li> Added support for <a href="lang_expr.html#varparam">bound parameters</a> and the <a href="cli.html#param">.parameter command</a>.
+  <li> Fix the <a href="cli.html#fileio">readfile()</a> function so that it returns
+       an empty BLOB rather than throwing an out-of-memory error when
+       reading an empty file.
+  <li> Fix the <a href="cli.html#fileio">writefile()</a> function so that when it
+       creates new directories along the path of a new file, it gives them
+       umask permissions rather than the same permissions as the file.
+  <li> Change <a href="cli.html#arinsup">--update option</a> in the <a href="cli.html#sqlar">.archive command</a> so that it skips
+       files that are already in the archive and are unchanged.  Add the
+       new --insert option that works like --update used to work.
 </ol>
 <li> Added the <a href="https://sqlite.org/src/file/ext/misc/fossildelta.c">fossildelta.c</a>
      extension that can create, apply, and deconstruct the 
@@ -349,15 +360,15 @@ Ticket <a href="https://www.sqlite.org/src/info/1079ad19993d13fa">1079ad19993d13
      to an SQL function is from a <a href="lang_expr.html#varparam">bound parameter</a>.
 <li> Security and compatibilities enhancements to <a href="fts3.html#f3tknzr">fts3_tokenizer()</a>:
 <ol type="a">
-<li> The <a href="fts3.html#f3tknzr">fts3_tokenizer()</a> function always returns NULL
-     unless either the legacy application-defined FTS3 tokenizers interface
-     are enabled using
-     the <a href="c3ref/db_config.html">sqlite3_db_config</a>(<a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfigenablefts3tokenizer">SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER</a>)
-     setting, or unless the first argument to fts3_tokenizer() is a <a href="lang_expr.html#varparam">bound parameter</a>.
-<li> The two-argument version of <a href="fts3.html#f3tknzr">fts3_tokenizer()</a> accepts a pointer to the
-     tokenizer method object even without
-     the <a href="c3ref/db_config.html">sqlite3_db_config</a>(<a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfigenablefts3tokenizer">SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER</a>) setting
-     if the second argument is a <a href="lang_expr.html#varparam">bound parameter</a>
+  <li> The <a href="fts3.html#f3tknzr">fts3_tokenizer()</a> function always returns NULL
+       unless either the legacy application-defined FTS3 tokenizers interface
+       are enabled using
+       the <a href="c3ref/db_config.html">sqlite3_db_config</a>(<a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfigenablefts3tokenizer">SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER</a>)
+       setting, or unless the first argument to fts3_tokenizer() is a <a href="lang_expr.html#varparam">bound parameter</a>.
+  <li> The two-argument version of <a href="fts3.html#f3tknzr">fts3_tokenizer()</a> accepts a pointer to the
+       tokenizer method object even without
+       the <a href="c3ref/db_config.html">sqlite3_db_config</a>(<a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfigenablefts3tokenizer">SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER</a>) setting
+       if the second argument is a <a href="lang_expr.html#varparam">bound parameter</a>
 </ol>     
 <li> Improved robustness against corrupt database files.
 <li> Miscellaneous performance enhancements
@@ -410,35 +421,35 @@ Use that option to prevent circular references to <a href="vtab.html#xshadowname
 causing resource leaks.
 <li>Enhancements to the <a href="c3ref/deserialize.html">sqlite3_deserialize()</a> interface:
 <ol type="a">
-<li> Add the <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlsizelimit">SQLITE_FCNTL_SIZE_LIMIT</a> <a href="c3ref/file_control.html">file-control</a> for
-     setting an upper bound on the size of the in-memory database created
-     by sqlite3_deserialize.  The default upper bound is 1GiB, or whatever
-     alternative value is specified by
-     <a href="c3ref/config.html">sqlite3_config</a>(<a href="c3ref/c_config_covering_index_scan.html#sqliteconfigmemdbmaxsize">SQLITE_CONFIG_MEMDB_MAXSIZE</a>)
-     and/or <a href="compile.html#memdb_default_maxsize">SQLITE_MEMDB_DEFAULT_MAXSIZE</a>.
-<li> Honor the <a href="c3ref/c_deserialize_freeonclose.html">SQLITE_DESERIALIZE_READONLY</a> flag, which was previously described
-     in the documentation, but was previously a no-op.
-<li> Enhance the "deserialize" command of the <a href="tclsqlite.html">TCL Interface</a> to give it
-     new "--maxsize N" and "--readonly BOOLEAN" options.
+  <li> Add the <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlsizelimit">SQLITE_FCNTL_SIZE_LIMIT</a> <a href="c3ref/file_control.html">file-control</a> for
+       setting an upper bound on the size of the in-memory database created
+       by sqlite3_deserialize.  The default upper bound is 1GiB, or whatever
+       alternative value is specified by
+       <a href="c3ref/config.html">sqlite3_config</a>(<a href="c3ref/c_config_covering_index_scan.html#sqliteconfigmemdbmaxsize">SQLITE_CONFIG_MEMDB_MAXSIZE</a>)
+       and/or <a href="compile.html#memdb_default_maxsize">SQLITE_MEMDB_DEFAULT_MAXSIZE</a>.
+  <li> Honor the <a href="c3ref/c_deserialize_freeonclose.html">SQLITE_DESERIALIZE_READONLY</a> flag, which was previously described
+       in the documentation, but was previously a no-op.
+  <li> Enhance the "deserialize" command of the <a href="tclsqlite.html">TCL Interface</a> to give it
+       new "--maxsize N" and "--readonly BOOLEAN" options.
 </ol>
 <li>Enhancements to the <a href="cli.html">CLI</a>, mostly to support testing and debugging
 of the SQLite library itself:
 <ol type="a">
-<li> Add support for ".open --hexdb". The 
-     "<a href="https://sqlite.org/src/doc/trunk/tool/dbtotxt.md">dbtotxt</a>" utility 
-     program used to generate the text for the "hexdb" is added to the 
-     source tree.
-<li> Add support for the "--maxsize N" option on ".open --deserialize".
-<li> Add the "--memtrace" command-line option, to show all memory allocations
-     and deallocations.
-<li> Add the ".eqp trace" option on builds with SQLITE_DEBUG, to enable
-     bytecode program listing with indentation and 
-     <a href="pragma.html#pragma_vdbe_trace">PRAGMA vdbe_trace</a> all in one step.
-<li> Add the ".progress" command for accessing
-     the <a href="c3ref/progress_handler.html">sqlite3_progress_handler()</a> interface.
-<li> Add the "--async" option to the ".backup" command.
-<li> Add options "--expanded", "--normalized", "--plain", "--profile", "--row",
-     "--stmt", and "--close" to the ".trace" command.
+  <li> Add support for ".open --hexdb". The 
+       "<a href="https://sqlite.org/src/doc/trunk/tool/dbtotxt.md">dbtotxt</a>" utility 
+       program used to generate the text for the "hexdb" is added to the 
+       source tree.
+  <li> Add support for the "--maxsize N" option on ".open --deserialize".
+  <li> Add the "--memtrace" command-line option, to show all memory allocations
+       and deallocations.
+  <li> Add the ".eqp trace" option on builds with SQLITE_DEBUG, to enable
+       bytecode program listing with indentation and 
+       <a href="pragma.html#pragma_vdbe_trace">PRAGMA vdbe_trace</a> all in one step.
+  <li> Add the ".progress" command for accessing
+       the <a href="c3ref/progress_handler.html">sqlite3_progress_handler()</a> interface.
+  <li> Add the "--async" option to the ".backup" command.
+  <li> Add options "--expanded", "--normalized", "--plain", "--profile", "--row",
+       "--stmt", and "--close" to the ".trace" command.
 </ol>
 <li> Increased robustness against malicious SQL that is run against a 
      maliciously corrupted database.
@@ -504,29 +515,29 @@ Ticket <a href="https://www.sqlite.org/src/info/bb4bdb9f7f654b0bb9">bb4bdb9f7f65
     exist in schemas other than the schema where the trigger is defined.
 <li>Enhancements to the <a href="cli.html">CLI</a>:
 <ol type="a">
-<li>Improvements to the ".help" command.
-<li>The SQLITE_HISTORY environment variable, if it exists,
-    specifies the name of the command-line editing history file
-<li>The --deserialize option associated with opening a new database cause the
-    database file to be read into memory and accessed using the
-    <a href="c3ref/deserialize.html">sqlite3_deserialize()</a> API. This simplifies running tests on a database
-    without modifying the file on disk.
+  <li>Improvements to the ".help" command.
+  <li>The SQLITE_HISTORY environment variable, if it exists,
+      specifies the name of the command-line editing history file
+  <li>The --deserialize option associated with opening a new database cause the
+      database file to be read into memory and accessed using the
+      <a href="c3ref/deserialize.html">sqlite3_deserialize()</a> API. This simplifies running tests on a database
+      without modifying the file on disk.
 </ol>
 <li>Enhancements to the <a href="geopoly.html">geopoly</a> extension:
 <ol type="a">
-<li>Always stores polygons
-    using the binary format, which is faster and uses less space.
-<li>Added the <a href="geopoly.html#regpoly">geopoly_regular()</a> function.
-<li>Added the <a href="geopoly.html#ccw">geopoly_ccw()</a> function.
+  <li>Always stores polygons
+      using the binary format, which is faster and uses less space.
+  <li>Added the <a href="geopoly.html#regpoly">geopoly_regular()</a> function.
+  <li>Added the <a href="geopoly.html#ccw">geopoly_ccw()</a> function.
 </ol>
 <li>Enhancements to the <a href="sessionintro.html">session</a> extension:
 <ol type="a">
-<li>Added the <a href="session/c_changesetapply_invert.html">SQLITE_CHANGESETAPPLY_INVERT</a> flag
-<li>Added the <a href="session/sqlite3changeset_start.html">sqlite3changeset_start_v2()</a> interface and the
-    <a href="session/c_changesetstart_invert.html">SQLITE_CHANGESETSTART_INVERT</a> flag.
-<li>Added the 
-    <a href="https://sqlite.org/src/file/ext/session/changesetfuzz.c">changesetfuzz.c</a>
-    test-case generator utility.
+  <li>Added the <a href="session/c_changesetapply_invert.html">SQLITE_CHANGESETAPPLY_INVERT</a> flag
+  <li>Added the <a href="session/sqlite3changeset_start.html">sqlite3changeset_start_v2()</a> interface and the
+      <a href="session/c_changesetstart_invert.html">SQLITE_CHANGESETSTART_INVERT</a> flag.
+  <li>Added the 
+      <a href="https://sqlite.org/src/file/ext/session/changesetfuzz.c">changesetfuzz.c</a>
+      test-case generator utility.
 </ol>
 <p><b>Hashes:</b>
 <li>SQLITE_SOURCE_ID: "2018-12-01 12:34:55 bf8c1b2b7a5960c282e543b9c293686dccff272512d08865f4600fb58238b4f9"
@@ -992,31 +1003,31 @@ Ticket <a href="https://www.sqlite.org/src/info/bb4bdb9f7f654b0bb9">bb4bdb9f7f65
 <li> Miscellaneous <a href="cpu.html#microopt">microoptimizations</a> reduce CPU usage by about 2.1%.
 <li> Bug fixes:
 <ol type="a">
-<li> Fix a faulty assert() statement discovered by OSSFuzz.
-     Ticket <a href="https://sqlite.org/src/info/cb91bf4290c211d">cb91bf4290c211d</a>
-<li> Fix an obscure memory leak in <a href="c3ref/result_blob.html">sqlite3_result_pointer()</a>.
-     Ticket <a href="https://sqlite.org/src/info/7486aa54b968e9b">7486aa54b968e9b</a>
-<li> Avoid a possible use-after-free error by deferring schema resets until
-     after the query planner has finished running.
-     Ticket <a href="https://sqlite.org/src/info/be436a7f4587ce5">be436a7f4587ce5</a>
-<li> Only use indexes-on-expressions to optimize ORDER BY or GROUP BY if
-     the COLLATE is correct.
-     Ticket <a href="https://sqlite.org/src/info/e20dd54ab0e4383">e20dd54ab0e4383</a>
-<li> Fix an assertion fault that was coming up when the expression in an
-     index-on-expressions is really a constant.
-     Ticket <a href="https://sqlite.org/src/info/aa98619ad08ddca">aa98619ad08ddca</a>
-<li> Fix an assertion fault that could occur following
-     <a href="pragma.html#pragma_reverse_unordered_selects">PRAGMA reverse_unordered_selects</a>.
-     Ticket <a href="https://sqlite.org/src/info/cb91bf4290c211d">cb91bf4290c211d</a>
-<li> Fix a segfault that can occur for queries that use table-valued functions
-     in an IN or EXISTS subquery.
-     Ticket <a href="https://sqlite.org/src/info/b899b6042f97f5">b899b6042f97f5</a>
-<li> Fix a potential integer overflow problem when compiling a particular
-     horrendous common table expression.  This was another problem discovered
-     by OSSFuzz.  Check-in <a href="https://sqlite.org/src/info/6ee8cb6ae5">6ee8cb6ae5</a>.
-<li> Fix a potential out-of-bound read when querying a corrupt database file,
-     a problem detected by Natalie Silvanovich of Google Project Zero.
-     Check-in <a href="https://sqlite.org/src/info/04925dee41a21f">04925dee41a21f</a>.
+  <li> Fix a faulty assert() statement discovered by OSSFuzz.
+       Ticket <a href="https://sqlite.org/src/info/cb91bf4290c211d">cb91bf4290c211d</a>
+  <li> Fix an obscure memory leak in <a href="c3ref/result_blob.html">sqlite3_result_pointer()</a>.
+       Ticket <a href="https://sqlite.org/src/info/7486aa54b968e9b">7486aa54b968e9b</a>
+  <li> Avoid a possible use-after-free error by deferring schema resets until
+       after the query planner has finished running.
+       Ticket <a href="https://sqlite.org/src/info/be436a7f4587ce5">be436a7f4587ce5</a>
+  <li> Only use indexes-on-expressions to optimize ORDER BY or GROUP BY if
+       the COLLATE is correct.
+       Ticket <a href="https://sqlite.org/src/info/e20dd54ab0e4383">e20dd54ab0e4383</a>
+  <li> Fix an assertion fault that was coming up when the expression in an
+       index-on-expressions is really a constant.
+       Ticket <a href="https://sqlite.org/src/info/aa98619ad08ddca">aa98619ad08ddca</a>
+  <li> Fix an assertion fault that could occur following
+       <a href="pragma.html#pragma_reverse_unordered_selects">PRAGMA reverse_unordered_selects</a>.
+       Ticket <a href="https://sqlite.org/src/info/cb91bf4290c211d">cb91bf4290c211d</a>
+  <li> Fix a segfault that can occur for queries that use table-valued functions
+       in an IN or EXISTS subquery.
+       Ticket <a href="https://sqlite.org/src/info/b899b6042f97f5">b899b6042f97f5</a>
+  <li> Fix a potential integer overflow problem when compiling a particular
+       horrendous common table expression.  This was another problem discovered
+       by OSSFuzz.  Check-in <a href="https://sqlite.org/src/info/6ee8cb6ae5">6ee8cb6ae5</a>.
+  <li> Fix a potential out-of-bound read when querying a corrupt database file,
+       a problem detected by Natalie Silvanovich of Google Project Zero.
+       Check-in <a href="https://sqlite.org/src/info/04925dee41a21f">04925dee41a21f</a>.
 </ol>
 <p><b>Hashes:</b>
 <li>SQLITE_SOURCE_ID: "2017-10-24 18:55:49 1a584e499906b5c87ec7d43d4abce641fdf017c42125b083109bc77c4de48827"
@@ -1067,33 +1078,33 @@ Ticket <a href="https://www.sqlite.org/src/info/bb4bdb9f7f654b0bb9">bb4bdb9f7f65
      the <a href="fileformat2.html#freelist">free-page list</a> but will be purged from all b-tree pages.
 <li> Enhancements to the <a href="cli.html">command-line shell</a>:
 <ol type='a'>
-<li> Add support for tab-completion using the <a href="completion.html">COMPLETION extension</a>, for
-     both readline and linenoise.
-<li> Add the ".cd" command.
-<li> Enhance the "<a href="cli.html#dschema">.schema</a>" command to show the schema of all attached
-     databases.
-<li> Enhance "<a href="cli.html#dtables">.tables</a>" so that it shows the schema names for all attached
-     if the name is anything other than "main".
-<li> The "<a href="cli.html#csv">.import</a>" command ignores an initial UTF-8 BOM.
-<li> Added the "--newlines" option to the "<a href="cli.html#dump">.dump</a>" command to cause U+000a and
-     U+000d characters to be output literally rather than escaped using the
-     <a href="lang_corefunc.html#replace">replace()</a> function.
+  <li> Add support for tab-completion using the <a href="completion.html">COMPLETION extension</a>, for
+       both readline and linenoise.
+  <li> Add the ".cd" command.
+  <li> Enhance the "<a href="cli.html#dschema">.schema</a>" command to show the schema of all attached
+       databases.
+  <li> Enhance "<a href="cli.html#dtables">.tables</a>" so that it shows the schema names for all attached
+       if the name is anything other than "main".
+  <li> The "<a href="cli.html#csv">.import</a>" command ignores an initial UTF-8 BOM.
+  <li> Added the "--newlines" option to the "<a href="cli.html#dump">.dump</a>" command to cause U+000a and
+       U+000d characters to be output literally rather than escaped using the
+       <a href="lang_corefunc.html#replace">replace()</a> function.
 </ol>
 <li> Query planner enhancements:
 <ol type='a'>
-<li> When generating individual loops for each ORed term of an OR scan,
-     move any constant WHERE expressions outside of the loop, as is 
-     done for top-level loops.
-<li> The query planner examines the values of bound parameters to help
-     determine if a partial index is usable.
-<li> When deciding between two plans with the same estimated cost, bias 
-     the selection toward the one that does not use the sorter.
-<li> Evaluate WHERE clause constraints involving correlated subqueries
-     last, in the hope that they never have be evaluated at all.
-<li> Do not use the <a href="optoverview.html#flattening">flattening optimization</a> for a sub-query on the RHS 
-     of a LEFT JOIN if that subquery reads data from a <a href="vtab.html">virtual table</a> as
-     doing so prevents the query planner from creating <a href="optoverview.html#autoindex">automatic indexes</a>
-     on the results of the sub-query, which can slow down the query.
+  <li> When generating individual loops for each ORed term of an OR scan,
+       move any constant WHERE expressions outside of the loop, as is 
+       done for top-level loops.
+  <li> The query planner examines the values of bound parameters to help
+       determine if a partial index is usable.
+  <li> When deciding between two plans with the same estimated cost, bias 
+       the selection toward the one that does not use the sorter.
+  <li> Evaluate WHERE clause constraints involving correlated subqueries
+       last, in the hope that they never have be evaluated at all.
+  <li> Do not use the <a href="optoverview.html#flattening">flattening optimization</a> for a sub-query on the RHS 
+       of a LEFT JOIN if that subquery reads data from a <a href="vtab.html">virtual table</a> as
+       doing so prevents the query planner from creating <a href="optoverview.html#autoindex">automatic indexes</a>
+       on the results of the sub-query, which can slow down the query.
 </ol>
 <li> Add <a href="c3ref/c_stmtstatus_counter.html#sqlitestmtstatusreprepare">SQLITE_STMTSTATUS_REPREPARE</a>, <a href="c3ref/c_stmtstatus_counter.html#sqlitestmtstatusrun">SQLITE_STMTSTATUS_RUN</a>, 
      and <a href="c3ref/c_stmtstatus_counter.html#sqlitestmtstatusmemused">SQLITE_STMTSTATUS_MEMUSED</a> options for the
@@ -1626,97 +1637,31 @@ with a home-baked pie.</center>
 <li>SQLITE_SOURCE_ID: "2016-05-18 10:57:30 fc49f556e48970561d7ab6a2f24fdd7d9eb81ff2"
 <li>SHA1 for sqlite3.c: 9b9171b1e6ce7a980e6b714e9c0d9112657ad552
 
-<p><b>Bug fixes backported into patch release 3.7.17 (2013-05-20):</b></p>
+<p><b>Bug fixes backported into patch release 3.12.2 (2016-04-18):</b></p>
 
-<li>Add support for <a href="mmap.html">memory-mapped I/O</a>.
-<li>Add the <a href="c3ref/strglob.html">sqlite3_strglob()</a> convenience interface.
-<li>Assigned the integer at offset 68 in the <a href="fileformat2.html#database_header">database header</a> as the
-    <a href="fileformat2.html#appid">Application ID</a> for when SQLite is used as an <a href="appfileformat.html">application file-format</a>.
-    Added the <a href="pragma.html#pragma_application_id">PRAGMA application_id</a> command to query and set the Application ID.
-<li>Report rollback recovery in the <a href="errlog.html">error log</a> as SQLITE_NOTICE_RECOVER_ROLLBACK.
-    Change the error log code for WAL recover from 
-    SQLITE_OK to SQLITE_NOTICE_RECOVER_WAL.
-<li>Report the risky uses of <a href="howtocorrupt.html#unlink">unlinked database files</a> and 
-   <a href="howtocorrupt.html#alias">database filename aliasing</a> as SQLITE_WARNING messages in the <a href="errlog.html">error log</a>.
-<li>Added the <a href="compile.html#trace_size_limit">SQLITE_TRACE_SIZE_LIMIT</a> compile-time option.
-<li>Increase the default value of <a href="compile.html#max_schema_retry">SQLITE_MAX_SCHEMA_RETRY</a> to 50 and make sure
-    that it is honored in every place that a schema change might force a statement
-    retry.
-<li>Add a new test harness called "mptester" used to verify correct operation
-    when multiple processes are using the same database file at the same time.
-<li>Enhance the <a href="loadext.html">extension loading</a> mechanism to be more flexible (while
-    still maintaining backwards compatibility) in two ways:
-    <ol>
-    <li>If the default entry point "sqlite3_extension_init" is not present in
-        the loadable extension, also try an entry point "sqlite3_X_init" where
-        "X" is based on the shared library filename.  This allows every extension
-        to have a different entry point, which allows them to be statically linked
-        with no code changes.
-    <li>The shared library filename passed to <a href="c3ref/load_extension.html">sqlite3_load_extension()</a> may
-        omit the filename suffix, and an appropriate architecture-dependent
-        suffix (".so", ".dylib", or ".dll") will be added automatically.
-    </ol>
-<li>Added many new loadable extensions to the source tree, including
-    amatch, closure, fuzzer, ieee754, nextchar, regexp, spellfix,
-    and wholenumber.  See header comments on each extension source file 
-    for further information about what that extension does.
-<li>Enhance <a href="fts3.html">FTS3</a> to avoid using excess stack space when there are a huge
-    number of terms on the right-hand side of the MATCH operator.  A side-effect
-    of this change is that the MATCH operator can only accommodate 12 NEAR
-    operators at a time.
-<li>Enhance the <a href="fts3.html#fts4aux">fts4aux</a> virtual table so that it can be a TEMP table.
-<li>Added the <a href="fts3.html#fts3tok">fts3tokenize virtual table</a> to the <a href="fts3.html">full-text search</a> logic.
-<li>Query planner enhancement: Use the transitive property of constraints
-    to move constraints into the outer loops of a join whenever possible,
-    thereby reducing the amount of work that needs to occur in inner loops.
-<li>Discontinue the use of posix_fallocate() on unix, as it does not work on all
-    filesystems.
-<li>Improved tracing and debugging facilities in the Windows <a href="vfs.html">VFS</a>.
-<li>Bug fix: Fix a potential <b>database corruption bug</b>
-    in <a href="sharedcache.html">shared cache mode</a> when one
-    <a href="c3ref/sqlite3.html">database connection</a> is closed while another is in the middle of a write
-    transaction.
-    Ticket <a href="http://www.sqlite.org/src/info/e636a050b7">e636a050b7</a>
-<li>Bug fix:
-    Only consider AS names from the result set as candidates for resolving
-    identifiers in the WHERE clause if there are no other matches. In the 
-    ORDER BY clause, AS names take priority over any column names.
-    Ticket <a href="http://www.sqlite.org/src/info/2500cdb9be05">2500cdb9be05</a>
-<li>Bug fix: Do not allow a virtual table to cancel the ORDER BY clause unless 
-    all outer loops are guaranteed to return no more than one row result.
-    Ticket <a href="http://www.sqlite.org/src/info/ba82a4a41eac1">ba82a4a41eac1</a>.
-<li>Bug fix: Do not suppress the ORDER BY clause on a virtual table query if
-    an IN constraint is used.
-    Ticket <a href="http://www.sqlite.org/src/info/f69b96e3076e">f69b96e3076e</a>.
-<li>Bug fix: The <a href="cli.html">command-line shell</a> gives an exit code of 0 when terminated
-    using the ".quit" command.
-<li>Bug fix: Make sure <a href="pragma.html#syntax">PRAGMA</a> statements appear in <a href="c3ref/profile.html">sqlite3_trace()</a> output.
-<li>Bug fix: When a <a href="lang_select.html#compound">compound query</a> that uses an ORDER BY clause
-    with a <a href="lang_expr.html#collateop">COLLATE operator</a>, make sure that the sorting occurs
-    according to the specified collation and that the comparisons associate with
-    the compound query use the native collation.  Ticket
-    <a href="http://www.sqlite.org/src/info/6709574d2a8d8">6709574d2a8d8</a>.
-<li>Bug fix: Makes sure the <a href="c3ref/set_authorizer.html">authorizer</a> callback gets
-    a valid pointer to the string "ROWID" for the column-name parameter when
-    doing an <a href="lang_update.html">UPDATE</a> that changes the rowid.  Ticket
-    <a href="http://www.sqlite.org/src/info/0eb70d77cb05bb2272">0eb70d77cb05bb2272</a>
-<li>Bug fix: Do not move WHERE clause terms inside OR expressions that are
-    contained within an ON clause of a LEFT JOIN.  Ticket 
-    <a href="http://www.sqlite.org/src/info/f2369304e4">f2369304e4</a>
-<li>Bug fix: Make sure an error is always reported when attempting to preform
-    an operation that requires a <a href="datatype3.html#collation">collating sequence</a> that is missing.
-    Ticket <a href="http://www.sqlite.org/src/info/0fc59f908b">0fc59f908b</a>
+<li>Fix a backwards compatibility problem in version 3.12.0 and 3.12.1:
+    Columns declared as <tt>"INTEGER" PRIMARY KEY</tt> (with quotes around
+    the datatype keyword) were not being recognized as an
+    <a href="lang_createtable.html#rowid">INTEGER PRIMARY KEY</a>, which resulted in an incompatible database file.
+    Ticket <a href="https://www.sqlite.org/src/info/7d7525cb01b68">7d7525cb01b68</a>
+<li>Fix a bug (present since <a href="#version_3_9_0">version 3.9.0</a>) that can cause the <a href="lang_delete.html">DELETE</a>
+    operation to miss rows if <a href="pragma.html#pragma_reverse_unordered_selects">PRAGMA reverse_unordered_selects</a> is turned on.
+    Ticket <a href="https://www.sqlite.org/src/info/a306e56ff68b8fa5">a306e56ff68b8fa5</a>
+<li>Fix a bug in the code generator that can cause incorrect results if
+    two or more <a href="vtab.html">virtual tables</a> are joined and the virtual table used in
+    outer loop of the join has an <a href="lang_expr.html#in_op">IN operator</a> constraint.
+<li>Correctly interpret negative "PRAGMA cache_size" values when determining
+    the cache size used for sorting large amounts of data.
 
+<p><b>Bug fixes backported into patch release 3.12.1 (2016-04-08):</b></p>
 
-<p><b>Bug fixes backported into patch release 3.7.16.2 (2013-04-12):</b></p>
-
-<li>Fix a bug (present since version 3.7.13) that could result in database corruption
-    on windows if two or more processes try to access the same database file at the
-    same time and immediately after third process crashed in the middle of committing
-    to that same file.  See ticket 
-    <a href="http://www.sqlite.org/src/info/7ff3120e4f">7ff3120e4f</a> for further
-    information.
-
+<li>Fix a boundary condition error introduced by version 3.12.0
+    that can result in a crash during heavy <a href="lang_savepoint.html">SAVEPOINT</a> usage.
+    Ticket <a href="https://www.sqlite.org/src/info/7f7f8026eda38">7f7f8026eda38</a>.
+<li>Fix <a href="lang_createview.html">views</a> so that they inherit column datatypes from the 
+    table that they are defined against, when possible.
+<li>Fix the query planner so that IS and IS NULL operators are able
+    to drive an index on a LEFT OUTER JOIN.
 
 </ol></p>
 <a name="version_3_12_2"></a>
@@ -2666,10 +2611,10 @@ with a home-baked pie.</center>
     as hints to the query planner.
 <li>Enhancements to the query planner:
 <ol type='a'>
-<li>Take into account the fact WHERE clause terms that cannot be used with indices
-    still probably reduce the number of output rows.
-<li>Estimate the sizes of table and index rows and use the smallest applicable B-Tree
-    for full scans and "count(*)" operations.
+  <li>Take into account the fact WHERE clause terms that cannot be used with indices
+      still probably reduce the number of output rows.
+  <li>Estimate the sizes of table and index rows and use the smallest applicable B-Tree
+      for full scans and "count(*)" operations.
 </ol>
 <li>Added the <a href="pragma.html#pragma_soft_heap_limit">soft_heap_limit pragma</a>.
 <li>Added support for <a href="compile.html#enable_stat4">SQLITE_ENABLE_STAT4</a>
@@ -3590,14 +3535,14 @@ CPU operations is achieved (as measured by Valgrind).  Actual performance
 improvements in practice may vary depending on workload.  Changes
 include:
 <ol type='a'>
-<li>The <a href="lang_corefunc.html#ifnull">ifnull()</a> and <a href="lang_corefunc.html#coalesce">coalesce()</a> SQL functions are now implemented
-using in-line VDBE code rather than calling external functions, so that
-unused arguments need never be evaluated.
-<li>The <a href="lang_corefunc.html#substr">substr()</a> SQL function does not bother to measure the length
-its entire input string if it is only computing a prefix
-<li>Unnecessary OP_IsNull, OP_Affinity, and OP_MustBeInt VDBE opcodes
-are suppressed
-<li>Various code refactorizations for performance
+  <li>The <a href="lang_corefunc.html#ifnull">ifnull()</a> and <a href="lang_corefunc.html#coalesce">coalesce()</a> SQL functions are now implemented
+  using in-line VDBE code rather than calling external functions, so that
+  unused arguments need never be evaluated.
+  <li>The <a href="lang_corefunc.html#substr">substr()</a> SQL function does not bother to measure the length
+  its entire input string if it is only computing a prefix
+  <li>Unnecessary OP_IsNull, OP_Affinity, and OP_MustBeInt VDBE opcodes
+  are suppressed
+  <li>Various code refactorizations for performance
 </ol>
 <li>The FTS3 extension has undergone a major rework and cleanup.
 New <a href="fts3.html">FTS3 documentation</a> is now available.
@@ -4293,18 +4238,18 @@ are prefixed with either SQLITE_PRIVATE or SQLITE_API.
     this form and thus runs faster and defragments better.</li>
 <li>Performance enhancements through reductions in disk I/O:
 <ol type='a'>
-<li>Do not read the last page of an overflow chain when
-    deleting the row - just add that page to the freelist.</li>
-<li>Do not store pages being deleted in the 
-    rollback journal.</li>
-<li>Do not read in the (meaningless) content of
-    pages extracted from the freelist.</li>
-<li>Do not flush the page cache (and thus avoiding
-    a cache refill) unless another process changes the underlying
-    database file.</li>
-<li>Truncate rather than delete the rollback journal when committing
-    a transaction in exclusive access mode, or when committing the TEMP
-    database.</li>
+  <li>Do not read the last page of an overflow chain when
+      deleting the row - just add that page to the freelist.</li>
+  <li>Do not store pages being deleted in the 
+      rollback journal.</li>
+  <li>Do not read in the (meaningless) content of
+      pages extracted from the freelist.</li>
+  <li>Do not flush the page cache (and thus avoiding
+      a cache refill) unless another process changes the underlying
+      database file.</li>
+  <li>Truncate rather than delete the rollback journal when committing
+      a transaction in exclusive access mode, or when committing the TEMP
+      database.</li>
 </ol></li>
 <li>Added support for exclusive access mode using
     <a href="pragma.html#pragma_locking_mode">
@@ -4398,13 +4343,13 @@ value if there is no default value</li>
 <li>Support for non-ASCII characters in win95 filenames</li>
 <li>Query optimizer enhancements:
 <ol type='a'>
-<li>Optimizer does a better job of using indices to satisfy ORDER BY
-clauses that sort on the integer primary key</li>
-<li>Use an index to satisfy an IS NULL operator in the WHERE clause</li>
-<li>Fix a bug that was causing the optimizer to miss an OR optimization
-opportunity</li>
-<li>The optimizer has more freedom to reorder tables in the FROM clause
-even in there are LEFT joins.</li>
+  <li>Optimizer does a better job of using indices to satisfy ORDER BY
+  clauses that sort on the integer primary key</li>
+  <li>Use an index to satisfy an IS NULL operator in the WHERE clause</li>
+  <li>Fix a bug that was causing the optimizer to miss an OR optimization
+  opportunity</li>
+  <li>The optimizer has more freedom to reorder tables in the FROM clause
+  even in there are LEFT joins.</li>
 </ol>
 <li>Extension loading supported added to WinCE</li>
 <li>Allow constraint names on the DEFAULT clause in a table definition</li>

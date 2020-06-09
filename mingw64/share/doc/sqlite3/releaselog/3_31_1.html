@@ -91,24 +91,9 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.31.1 On 2020-01-27</h2><p><ol class='lessindent'>
-<li> Revert the data layout for an internal-use-only SQLite data structure.
-     Applications that use SQLite should never reference internal SQLite
-     data structures, but some do anyhow, and a change to one such 
-     data structure in 3.30.0 broke a popular and widely-deployed
-     application.  Reverting that change in SQLite, at least temporarily,
-     gives developers of misbehaving applications time to fix their code.
-<li> Fix a typos in the sqlite3ext.h header file that prevented the
-     <a href="../c3ref/stmt_isexplain.html">sqlite3_stmt_isexplain()</a> and <a href="../c3ref/value_blob.html">sqlite3_value_frombind()</a> interfaces
-     from being called from <a href="../loadext.html">run-time loadable extensions</a>.
-<p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: 2020-01-27 19:55:54 3bfa9cc97da10598521b342961df8f5f68c7388fa117345eeb516eaa837bb4d6
-<li>SHA3-256 for sqlite3.c: de465c64f09529429a38cbdf637acce4dfda6897f93e3db3594009e0fed56d27
-
-</ol></p>
-<p><b>Changes carried forward from version 3.31.0 (2020-01-22):</b></p>
+<h2>SQLite Release 3.31.1 On 2020-01-27</h2><p><b>Changes in version 3.31.0 (2020-01-22):</b></p>
 <p><ol class='lessindent'>
-<li>Add support for <a href="../gencol.html">generated columns</a>.
+<li value='1'>Add support for <a href="../gencol.html">generated columns</a>.
 <li>Add the <a href="../c3ref/hard_heap_limit64.html">sqlite3_hard_heap_limit64()</a> interface and the corresponding
     <a href="../pragma.html#pragma_hard_heap_limit">PRAGMA hard_heap_limit</a> command.
 <li>Enhance the <a href="../pragma.html#pragma_function_list">function_list pragma</a> to show the number of arguments on each
@@ -146,6 +131,21 @@ return false;
     rarely useful and (2) it is incompatible with <a href="../lang_vacuum.html">VACUUM</a> in schemas that have
     tables with both generated columns and descending indexes.
     Ticket <a href="https://www.sqlite.org/src/info/6484e6ce678fffab">6484e6ce678fffab</a>
+</ol>
+<p><b>Additional changes in version 3.31.1:</b></p>
+<p><ol class='lessindent'>
+<li value='17'> Revert the data layout for an internal-use-only SQLite data structure.
+     Applications that use SQLite should never reference internal SQLite
+     data structures, but some do anyhow, and a change to one such 
+     data structure in 3.30.0 broke a popular and widely-deployed
+     application.  Reverting that change in SQLite, at least temporarily,
+     gives developers of misbehaving applications time to fix their code.
+<li> Fix a typos in the sqlite3ext.h header file that prevented the
+     <a href="../c3ref/stmt_isexplain.html">sqlite3_stmt_isexplain()</a> and <a href="../c3ref/value_blob.html">sqlite3_value_frombind()</a> interfaces
+     from being called from <a href="../loadext.html">run-time loadable extensions</a>.
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: 2020-01-27 19:55:54 3bfa9cc97da10598521b342961df8f5f68c7388fa117345eeb516eaa837bb4d6
+<li>SHA3-256 for sqlite3.c: de465c64f09529429a38cbdf637acce4dfda6897f93e3db3594009e0fed56d27
 
 </ol></p>
 

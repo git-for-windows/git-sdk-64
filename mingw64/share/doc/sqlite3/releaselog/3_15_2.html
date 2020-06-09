@@ -91,39 +91,9 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.15.2 On 2016-11-28</h2><p><ol class='lessindent'>
-<li> Multiple bug fixes to the <a href="../rowvalue.html">row value</a> logic that was introduced in version 3.15.0.
-<li> Fix a NULL pointer dereference in ATTACH/DETACH following a maliciously constructed
-     syntax error.  Ticket 
-     <a href="https://www.sqlite.org/src/info/2f1b168ab4d4844">2f1b168ab4d4844</a>.
-<li> Fix a crash that can occur following an out-of-memory condition
-     in the built-in <a href="../lang_corefunc.html#instr">instr()</a> function.
-<li> In the <a href="../json1.html">JSON extension</a>, fix the JSON validator so that it correctly rejects
-     invalid backslash escapes within strings.
-<p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: "2016-11-28 19:13:37 bbd85d235f7037c6a033a9690534391ffeacecc8"
-<li>SHA1 for sqlite3.c: 06d77b42a3e70609f8d4bbb97caf53652f1082cb
-
-</ol></p>
-<p><b>Changes carried forward from version 3.15.1 (2016-11-04):</b></p>
+<h2>SQLite Release 3.15.2 On 2016-11-28</h2><p><b>Changes in version 3.15.0 (2016-10-14):</b></p>
 <p><ol class='lessindent'>
-<li> Added <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlwin32gethandle">SQLITE_FCNTL_WIN32_GET_HANDLE</a> file control opcode.
-<li> Fix the <a href="../lang_vacuum.html">VACUUM</a> command so that it spills excess content to disk rather
-     than holding everything in memory, and possible causing an out-of-memory
-     error for larger database files.  This fixes an issue introduced by
-     version 3.15.0.
-<li> Fix a case (present since 3.8.0 - 2013-08-26) 
-     where OR-connected terms in the ON clause of a LEFT JOIN
-     might cause incorrect results.  Ticket
-     <a href="https://www.sqlite.org/src/info/34a579141b2c5ac">34a579141b2c5ac</a>.
-<li> Fix a case where the use of <a href="../rowvalue.html">row values</a> in the ON clause of a LEFT JOIN
-     might cause incorrect results.  Ticket
-     <a href="https://www.sqlite.org/src/info/fef4bb4bd9185ec8f">fef4bb4bd9185ec8f</a>.
-
-</ol></p>
-<p><b>Changes carried forward from version 3.15.0 (2016-10-14):</b></p>
-<p><ol class='lessindent'>
-<li> Added support for <a href="../rowvalue.html">row values</a>.
+<li value='1'> Added support for <a href="../rowvalue.html">row values</a>.
 <li> Allow <a href="../deterministic.html">deterministic SQL functions</a> in the WHERE clause of a <a href="../partialindex.html">partial index</a>.
 <li> Added the "<a href="../uri.html#urimodeof">modeof=<i>filename</i></a>" URI parameter on the unix VFS
 <li> Added support for <a href="../c3ref/c_dbconfig_defensive.html#sqlitedbconfigmaindbname">SQLITE_DBCONFIG_MAINDBNAME</a>.
@@ -157,6 +127,35 @@ return false;
      (from check-in <a href="https://www.sqlite.org/src/info/559733b09e9630fa">559733b09e</a>)
      works with IN operators on INTEGER PRIMARY KEYs.  Fix for ticket
      <a href="https://www.sqlite.org/src/info/96c1454cbfd9509">96c1454c</a>
+</ol>
+<p><b>Additional changes in version 3.15.1 (2016-11-04):</b></p>
+<p><ol class='lessindent'>
+<li value='14'> Added <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlwin32gethandle">SQLITE_FCNTL_WIN32_GET_HANDLE</a> file control opcode.
+<li> Fix the <a href="../lang_vacuum.html">VACUUM</a> command so that it spills excess content to disk rather
+     than holding everything in memory, and possible causing an out-of-memory
+     error for larger database files.  This fixes an issue introduced by
+     version 3.15.0.
+<li> Fix a case (present since 3.8.0 - 2013-08-26) 
+     where OR-connected terms in the ON clause of a LEFT JOIN
+     might cause incorrect results.  Ticket
+     <a href="https://www.sqlite.org/src/info/34a579141b2c5ac">34a579141b2c5ac</a>.
+<li> Fix a case where the use of <a href="../rowvalue.html">row values</a> in the ON clause of a LEFT JOIN
+     might cause incorrect results.  Ticket
+     <a href="https://www.sqlite.org/src/info/fef4bb4bd9185ec8f">fef4bb4bd9185ec8f</a>.
+</ol>
+<p><b>Additional changes in version 3.15.2:</b></p>
+<p><ol class='lessindent'>
+<li value='18'> Multiple bug fixes to the <a href="../rowvalue.html">row value</a> logic that was introduced in version 3.15.0.
+<li> Fix a NULL pointer dereference in ATTACH/DETACH following a maliciously constructed
+     syntax error.  Ticket 
+     <a href="https://www.sqlite.org/src/info/2f1b168ab4d4844">2f1b168ab4d4844</a>.
+<li> Fix a crash that can occur following an out-of-memory condition
+     in the built-in <a href="../lang_corefunc.html#instr">instr()</a> function.
+<li> In the <a href="../json1.html">JSON extension</a>, fix the JSON validator so that it correctly rejects
+     invalid backslash escapes within strings.
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: "2016-11-28 19:13:37 bbd85d235f7037c6a033a9690534391ffeacecc8"
+<li>SHA1 for sqlite3.c: 06d77b42a3e70609f8d4bbb97caf53652f1082cb
 
 </ol></p>
 

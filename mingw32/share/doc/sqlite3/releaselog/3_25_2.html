@@ -91,41 +91,9 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.25.2 On 2018-09-25</h2><p><ol class='lessindent'>
-<li> Add the <a href="../pragma.html#pragma_legacy_alter_table">PRAGMA legacy_alter_table=ON</a> command that causes the
-     "ALTER TABLE RENAME" command to behave as it did in SQLite versions 3.24.0
-     and earlier: references to the renamed table inside the bodies of triggers
-     and views are not updated.  This new pragma provides a compatibility
-     work around for older programs that expected the older, wonky behavior
-     of ALTER TABLE RENAME.
-<li> Fix a problem with the new <a href="../windowfunctions.html">window functions</a> implementation that caused
-     a malfunction when complicated expressions involving window functions were used
-     inside of a view.
-<li> Fixes for various other compiler warnings and minor problems associated
-     with obscure configurations.
-<p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: "2018-09-25 19:08:10 fb90e7189ae6d62e77ba3a308ca5d683f90bbe633cf681865365b8e92792d1c7"
-<li>SHA3-256 for sqlite3.c: 34c23ff91631ae10354f8c9d62fd7d65732b3d7f3acfd0bbae31ff4a62fe28af
-
-</ol></p>
-<p><b>Changes carried forward from version 3.25.1 (2018-09-18):</b></p>
+<h2>SQLite Release 3.25.2 On 2018-09-25</h2><p><b>Changes in version 3.25.0 (2018-09-15):</b></p>
 <p><ol class='lessindent'>
-<li> Extra sanity checking added to ALTER TABLE in the 3.25.0 release
-     sometimes raises a false-positive
-     when the table being modified has a trigger that
-     updates a virtual table.  The false-positive caused the ALTER
-     TABLE to rollback, thus leaving the schema unchanged.
-     Ticket <a href="https://sqlite.org/src/info/b41031ea2b537237">b41031ea2b537237</a>.
-<li> The fix in the 3.25.0 release for the endless-loop in the byte-code 
-     associated with the ORDER BY LIMIT optimization did not work for
-     some queries involving window functions.  An additional correction
-     is required.  Ticket
-     <a href="https://sqlite.org/src/info/510cde277783b5fb">510cde277783b5fb</a>
-
-</ol></p>
-<p><b>Changes carried forward from version 3.25.0 (2018-09-15):</b></p>
-<p><ol class='lessindent'>
-<li> Add support for <a href="../windowfunctions.html">window functions</a>
+<li value='1'> Add support for <a href="../windowfunctions.html">window functions</a>
 <li> Enhancements the <a href="../lang_altertable.html">ALTER TABLE</a> command:
 <ol type="a">
   <li> Add support for renaming columns within a table using
@@ -177,6 +145,37 @@ return false;
      pattern is '/%' or if the pattern begins with the ESCAPE character.
      Fix for ticket
      <a href="https://www.sqlite.org/src/info/c94369cae9b561b1f996d0054b">c94369cae9b561b1f996d0054b</a>
+</ol>
+<p><b>Additional changes in version 3.25.1 (2018-09-18):</b></p>
+<p><ol class='lessindent'>
+<li value='13'> Extra sanity checking added to ALTER TABLE in the 3.25.0 release
+     sometimes raises a false-positive
+     when the table being modified has a trigger that
+     updates a virtual table.  The false-positive caused the ALTER
+     TABLE to rollback, thus leaving the schema unchanged.
+     Ticket <a href="https://sqlite.org/src/info/b41031ea2b537237">b41031ea2b537237</a>.
+<li> The fix in the 3.25.0 release for the endless-loop in the byte-code 
+     associated with the ORDER BY LIMIT optimization did not work for
+     some queries involving window functions.  An additional correction
+     is required.  Ticket
+     <a href="https://sqlite.org/src/info/510cde277783b5fb">510cde277783b5fb</a>
+</ol>
+<p><b>Additional changes in version 3.25.2:</b></p>
+<p><ol class='lessindent'>
+<li value='15'> Add the <a href="../pragma.html#pragma_legacy_alter_table">PRAGMA legacy_alter_table=ON</a> command that causes the
+     "ALTER TABLE RENAME" command to behave as it did in SQLite versions 3.24.0
+     and earlier: references to the renamed table inside the bodies of triggers
+     and views are not updated.  This new pragma provides a compatibility
+     work around for older programs that expected the older, wonky behavior
+     of ALTER TABLE RENAME.
+<li> Fix a problem with the new <a href="../windowfunctions.html">window functions</a> implementation that caused
+     a malfunction when complicated expressions involving window functions were used
+     inside of a view.
+<li> Fixes for various other compiler warnings and minor problems associated
+     with obscure configurations.
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: "2018-09-25 19:08:10 fb90e7189ae6d62e77ba3a308ca5d683f90bbe633cf681865365b8e92792d1c7"
+<li>SHA3-256 for sqlite3.c: 34c23ff91631ae10354f8c9d62fd7d65732b3d7f3acfd0bbae31ff4a62fe28af
 
 </ol></p>
 

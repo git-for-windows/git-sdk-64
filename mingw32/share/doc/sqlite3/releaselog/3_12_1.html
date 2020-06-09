@@ -91,23 +91,10 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.12.1 On 2016-04-08</h2><p><ol class='lessindent'>
-<li>Fix a boundary condition error introduced by version 3.12.0
-    that can result in a crash during heavy <a href="../lang_savepoint.html">SAVEPOINT</a> usage.
-    Ticket <a href="https://www.sqlite.org/src/info/7f7f8026eda38">7f7f8026eda38</a>.
-<li>Fix <a href="../lang_createview.html">views</a> so that they inherit column datatypes from the 
-    table that they are defined against, when possible.
-<li>Fix the query planner so that IS and IS NULL operators are able
-    to drive an index on a LEFT OUTER JOIN.
-<p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: "2016-04-08 15:09:49 fe7d3b75fe1bde41511b323925af8ae1b910bc4d"
-<li>SHA1 for sqlite3.c: ebb18593350779850e3e1a930eb84a70fca8c1d1
-
-</ol></p>
-<p><b>Changes carried forward from version 3.12.0 (2016-03-29):</b></p>
+<h2>SQLite Release 3.12.1 On 2016-04-08</h2><p><b>Changes in version 3.12.0 (2016-03-29):</b></p>
 <p><ol class='lessindent'>
 <p><b>Potentially Disruptive Change:</b>
-<li>The <a href="../compile.html#default_page_size">SQLITE_DEFAULT_PAGE_SIZE</a> is increased from 1024 to 4096.  
+<li value='1'>The <a href="../compile.html#default_page_size">SQLITE_DEFAULT_PAGE_SIZE</a> is increased from 1024 to 4096.  
     The <a href="../compile.html#default_cache_size">SQLITE_DEFAULT_CACHE_SIZE</a> is changed from 2000 to -2000 so 
     the same amount of cache memory is used by default.
     See the application note on the
@@ -162,6 +149,19 @@ return false;
     the SELECT statement on the RHS is a correlated subquery.
     Ticket <a href="https://www.sqlite.org/src/info/5e3c886796e5512e">5e3c886796e5512e</a>.
 <li>Fix a harmless TSAN warning associated with the <a href="../c3ref/db_readonly.html">sqlite3_db_readonly()</a> interface.
+</ol>
+<p><b>Additional changes in version 3.12.1:</b></p>
+<p><ol class='lessindent'>
+<li value='21'>Fix a boundary condition error introduced by version 3.12.0
+    that can result in a crash during heavy <a href="../lang_savepoint.html">SAVEPOINT</a> usage.
+    Ticket <a href="https://www.sqlite.org/src/info/7f7f8026eda38">7f7f8026eda38</a>.
+<li>Fix <a href="../lang_createview.html">views</a> so that they inherit column datatypes from the 
+    table that they are defined against, when possible.
+<li>Fix the query planner so that IS and IS NULL operators are able
+    to drive an index on a LEFT OUTER JOIN.
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: "2016-04-08 15:09:49 fe7d3b75fe1bde41511b323925af8ae1b910bc4d"
+<li>SHA1 for sqlite3.c: ebb18593350779850e3e1a930eb84a70fca8c1d1
 
 </ol></p>
 

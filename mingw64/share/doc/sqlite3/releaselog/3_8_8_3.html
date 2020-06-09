@@ -91,39 +91,10 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.8.8.3 On 2015-02-25</h2><p><ol class='lessindent'>
-<li>Fix a bug (ticket
-    <a href="https://www.sqlite.org/src/info/2326c258d02ead33">2326c258d02ead33</a>) that can lead
-    to incorrect results if the qualifying constraint of a <a href="../partialindex.html">partial index</a> appears in the
-    ON clause of a LEFT JOIN.
-<li>Added the ability to link against the 
-    "<a href="https://github.com/antirez/linenoise">linenoise</a>"
-    command-line editing library in unix builds of the <a href="../cli.html">command-line shell</a>.
-
-<li>SQLITE_SOURCE_ID: "2015-02-25 13:29:11 9d6c1880fb75660bbabd693175579529785f8a6b"
-<li>SHA1 for sqlite3.c: 74ee38c8c6fd175ec85a47276dfcefe8a262827a
-
-</ol></p>
-<p><b>Changes carried forward from version 3.8.8.2 (2015-01-30):</b></p>
-<p><ol class='lessindent'>
-<li>Enhance <a href="../c3ref/wal_checkpoint_v2.html">sqlite3_wal_checkpoint_v2(TRUNCATE)</a> interface so that it truncates the
-    WAL file even if there is no checkpoint work to be done.
-
-
-</ol></p>
-<p><b>Changes carried forward from version 3.8.8.1 (2015-01-20):</b></p>
-<p><ol class='lessindent'>
-<li>Fix a bug in the sorting logic, present since version 3.8.4, that can cause
-    output to appear in the wrong order on queries that contains an ORDER BY clause,
-    a LIMIT clause, and that have approximately 60 or more columns in the result set.
-    Ticket <a href="https://www.sqlite.org/src/tktview?name=f97c4637102a3ae72b79">f97c4637102a3ae72b79</a>.
-
-
-</ol></p>
-<p><b>Changes carried forward from version 3.8.8 (2015-01-16):</b></p>
+<h2>SQLite Release 3.8.8.3 On 2015-02-25</h2><p><b>Changes in version 3.8.8 (2015-01-16):</b></p>
 <p><ol class='lessindent'>
 <p><b>New Features:</b>
-<li>Added the <a href="../pragma.html#pragma_data_version">PRAGMA data_version</a> command that can be used to determine if
+<li value='1'>Added the <a href="../pragma.html#pragma_data_version">PRAGMA data_version</a> command that can be used to determine if
     a database file has been modified by another process.
 <li>Added the <a href="../c3ref/c_checkpoint_full.html">SQLITE_CHECKPOINT_TRUNCATE</a> option to the
     <a href="../c3ref/wal_checkpoint_v2.html">sqlite3_wal_checkpoint_v2()</a> interface, with corresponding enhancements
@@ -179,6 +150,33 @@ return false;
 <li>Improvements to the effectiveness and accuracy of the
     <a href="../lang_corefunc.html#likelihood">likelihood()</a>, <a href="../lang_corefunc.html#likely">likely()</a>, and <a href="../lang_corefunc.html#unlikely">unlikely()</a> SQL hint functions.
 
+</ol>
+<p><b>Additional changes in version 3.8.8.1 (2015-01-20):</b></p>
+<p><ol class='lessindent'>
+<li value='22'>Fix a bug in the sorting logic, present since version 3.8.4, that can cause
+    output to appear in the wrong order on queries that contains an ORDER BY clause,
+    a LIMIT clause, and that have approximately 60 or more columns in the result set.
+    Ticket <a href="https://www.sqlite.org/src/tktview?name=f97c4637102a3ae72b79">f97c4637102a3ae72b79</a>.
+
+</ol>
+<p><b>Additional changes in version 3.8.8.2 (2015-01-30):</b></p>
+<p><ol class='lessindent'>
+<li value='23'>Enhance <a href="../c3ref/wal_checkpoint_v2.html">sqlite3_wal_checkpoint_v2(TRUNCATE)</a> interface so that it truncates the
+    WAL file even if there is no checkpoint work to be done.
+
+</ol>
+<p><b>Additional changes in version 3.8.8.3:</b></p>
+<p><ol class='lessindent'>
+<li value='24'>Fix a bug (ticket
+    <a href="https://www.sqlite.org/src/info/2326c258d02ead33">2326c258d02ead33</a>) that can lead
+    to incorrect results if the qualifying constraint of a <a href="../partialindex.html">partial index</a> appears in the
+    ON clause of a LEFT JOIN.
+<li>Added the ability to link against the 
+    "<a href="https://github.com/antirez/linenoise">linenoise</a>"
+    command-line editing library in unix builds of the <a href="../cli.html">command-line shell</a>.
+
+<li>SQLITE_SOURCE_ID: "2015-02-25 13:29:11 9d6c1880fb75660bbabd693175579529785f8a6b"
+<li>SHA1 for sqlite3.c: 74ee38c8c6fd175ec85a47276dfcefe8a262827a
 
 </ol></p>
 

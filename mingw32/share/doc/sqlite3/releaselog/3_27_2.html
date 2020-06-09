@@ -91,30 +91,9 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.27.2 On 2019-02-25</h2><p><ol class='lessindent'>
-<li> Fix a bug in the IN operator that was introduced by an 
-     attempted optimization in version 3.27.0. Ticket
-     <a href="https://www.sqlite.org/src/info/df46dfb631f75694">df46dfb631f75694</a>
-<li> Fix a bug causing a crash when a <a href="../windowfunctions.html">window function</a> is misused.  Ticket
-     <a href="https://www.sqlite.org/src/info/4feb3159c6bc3f7e33959">4feb3159c6bc3f7e33959</a>.
-<li> Fix various documentation typos
-<p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: bd49a8271d650fa89e446b42e513b595a717b9212c91dd384aab871fc1d0f6d7
-<li>SHA3-256 for sqlite3.c: 1dbae33bff261f979d0042338f72c9e734b11a80720fb32498bae9150cc576e7
-
-</ol></p>
-<p><b>Changes carried forward from version 3.27.1 (2019-02-08):</b></p>
+<h2>SQLite Release 3.27.2 On 2019-02-25</h2><p><b>Changes in version 3.27.0 (2019-02-07):</b></p>
 <p><ol class='lessindent'>
-<li> Fix a bug in the query optimizer: an adverse interaction between
-the <a href="../optoverview.html#or_opt">OR optimization</a> and the optimization that tries to use values
-read directly from an <a href="../expridx.html">expression index</a> instead of recomputing the
-expression.
-Ticket <a href="https://www.sqlite.org/src/info/4e8e4857d32d401f">4e8e4857d32d401f</a>
-
-</ol></p>
-<p><b>Changes carried forward from version 3.27.0 (2019-02-07):</b></p>
-<p><ol class='lessindent'>
-<li>Added the <a href="../lang_vacuum.html#vacuuminto">VACUUM INTO</a> command
+<li value='1'>Added the <a href="../lang_vacuum.html#vacuuminto">VACUUM INTO</a> command
 <li>Issue an SQLITE_WARNING message on the <a href="../errlog.html">error log</a> if a 
 <a href="../quirks.html#dblquote">double-quoted string literal</a> is used.
 <li>The <a href="../c3ref/expanded_sql.html">sqlite3_normalized_sql()</a> interface works on any prepared statement
@@ -127,35 +106,35 @@ Use that option to prevent circular references to <a href="../vtab.html#xshadown
 causing resource leaks.
 <li>Enhancements to the <a href="../c3ref/deserialize.html">sqlite3_deserialize()</a> interface:
 <ol type="a">
-<li> Add the <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlsizelimit">SQLITE_FCNTL_SIZE_LIMIT</a> <a href="../c3ref/file_control.html">file-control</a> for
-     setting an upper bound on the size of the in-memory database created
-     by sqlite3_deserialize.  The default upper bound is 1GiB, or whatever
-     alternative value is specified by
-     <a href="../c3ref/config.html">sqlite3_config</a>(<a href="../c3ref/c_config_covering_index_scan.html#sqliteconfigmemdbmaxsize">SQLITE_CONFIG_MEMDB_MAXSIZE</a>)
-     and/or <a href="../compile.html#memdb_default_maxsize">SQLITE_MEMDB_DEFAULT_MAXSIZE</a>.
-<li> Honor the <a href="../c3ref/c_deserialize_freeonclose.html">SQLITE_DESERIALIZE_READONLY</a> flag, which was previously described
-     in the documentation, but was previously a no-op.
-<li> Enhance the "deserialize" command of the <a href="../tclsqlite.html">TCL Interface</a> to give it
-     new "--maxsize N" and "--readonly BOOLEAN" options.
+  <li> Add the <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlsizelimit">SQLITE_FCNTL_SIZE_LIMIT</a> <a href="../c3ref/file_control.html">file-control</a> for
+       setting an upper bound on the size of the in-memory database created
+       by sqlite3_deserialize.  The default upper bound is 1GiB, or whatever
+       alternative value is specified by
+       <a href="../c3ref/config.html">sqlite3_config</a>(<a href="../c3ref/c_config_covering_index_scan.html#sqliteconfigmemdbmaxsize">SQLITE_CONFIG_MEMDB_MAXSIZE</a>)
+       and/or <a href="../compile.html#memdb_default_maxsize">SQLITE_MEMDB_DEFAULT_MAXSIZE</a>.
+  <li> Honor the <a href="../c3ref/c_deserialize_freeonclose.html">SQLITE_DESERIALIZE_READONLY</a> flag, which was previously described
+       in the documentation, but was previously a no-op.
+  <li> Enhance the "deserialize" command of the <a href="../tclsqlite.html">TCL Interface</a> to give it
+       new "--maxsize N" and "--readonly BOOLEAN" options.
 </ol>
 <li>Enhancements to the <a href="../cli.html">CLI</a>, mostly to support testing and debugging
 of the SQLite library itself:
 <ol type="a">
-<li> Add support for ".open --hexdb". The 
-     "<a href="https://sqlite.org/src/doc/trunk/tool/dbtotxt.md">dbtotxt</a>" utility 
-     program used to generate the text for the "hexdb" is added to the 
-     source tree.
-<li> Add support for the "--maxsize N" option on ".open --deserialize".
-<li> Add the "--memtrace" command-line option, to show all memory allocations
-     and deallocations.
-<li> Add the ".eqp trace" option on builds with SQLITE_DEBUG, to enable
-     bytecode program listing with indentation and 
-     <a href="../pragma.html#pragma_vdbe_trace">PRAGMA vdbe_trace</a> all in one step.
-<li> Add the ".progress" command for accessing
-     the <a href="../c3ref/progress_handler.html">sqlite3_progress_handler()</a> interface.
-<li> Add the "--async" option to the ".backup" command.
-<li> Add options "--expanded", "--normalized", "--plain", "--profile", "--row",
-     "--stmt", and "--close" to the ".trace" command.
+  <li> Add support for ".open --hexdb". The 
+       "<a href="https://sqlite.org/src/doc/trunk/tool/dbtotxt.md">dbtotxt</a>" utility 
+       program used to generate the text for the "hexdb" is added to the 
+       source tree.
+  <li> Add support for the "--maxsize N" option on ".open --deserialize".
+  <li> Add the "--memtrace" command-line option, to show all memory allocations
+       and deallocations.
+  <li> Add the ".eqp trace" option on builds with SQLITE_DEBUG, to enable
+       bytecode program listing with indentation and 
+       <a href="../pragma.html#pragma_vdbe_trace">PRAGMA vdbe_trace</a> all in one step.
+  <li> Add the ".progress" command for accessing
+       the <a href="../c3ref/progress_handler.html">sqlite3_progress_handler()</a> interface.
+  <li> Add the "--async" option to the ".backup" command.
+  <li> Add options "--expanded", "--normalized", "--plain", "--profile", "--row",
+       "--stmt", and "--close" to the ".trace" command.
 </ol>
 <li> Increased robustness against malicious SQL that is run against a 
      maliciously corrupted database.
@@ -188,6 +167,26 @@ Ticket <a href="https://www.sqlite.org/src/info/bc8d94f0fbd633fd9a">bc8d94f0fbd6
 <li>Fix a bug that caused <a href="../lang_corefunc.html#zeroblob">zeroblob</a> values to be truncated when inserted into
 a table that uses an <a href="../expridx.html">expression index</a>.
 Ticket <a href="https://www.sqlite.org/src/info/bb4bdb9f7f654b0bb9">bb4bdb9f7f654b0bb9</a>
+</ol>
+<p><b>Additional changes in version 3.27.1 (2019-02-08):</b></p>
+<p><ol class='lessindent'>
+<li value='19'> Fix a bug in the query optimizer: an adverse interaction between
+the <a href="../optoverview.html#or_opt">OR optimization</a> and the optimization that tries to use values
+read directly from an <a href="../expridx.html">expression index</a> instead of recomputing the
+expression.
+Ticket <a href="https://www.sqlite.org/src/info/4e8e4857d32d401f">4e8e4857d32d401f</a>
+</ol>
+<p><b>Additional changes in version 3.27.2:</b></p>
+<p><ol class='lessindent'>
+<li value='20'> Fix a bug in the IN operator that was introduced by an 
+     attempted optimization in version 3.27.0. Ticket
+     <a href="https://www.sqlite.org/src/info/df46dfb631f75694">df46dfb631f75694</a>
+<li> Fix a bug causing a crash when a <a href="../windowfunctions.html">window function</a> is misused.  Ticket
+     <a href="https://www.sqlite.org/src/info/4feb3159c6bc3f7e33959">4feb3159c6bc3f7e33959</a>.
+<li> Fix various documentation typos
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: bd49a8271d650fa89e446b42e513b595a717b9212c91dd384aab871fc1d0f6d7
+<li>SHA3-256 for sqlite3.c: 1dbae33bff261f979d0042338f72c9e734b11a80720fb32498bae9150cc576e7
 
 </ol></p>
 

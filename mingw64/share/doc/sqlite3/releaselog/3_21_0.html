@@ -143,31 +143,31 @@ return false;
 <li> Miscellaneous <a href="../cpu.html#microopt">microoptimizations</a> reduce CPU usage by about 2.1%.
 <li> Bug fixes:
 <ol type="a">
-<li> Fix a faulty assert() statement discovered by OSSFuzz.
-     Ticket <a href="https://sqlite.org/src/info/cb91bf4290c211d">cb91bf4290c211d</a>
-<li> Fix an obscure memory leak in <a href="../c3ref/result_blob.html">sqlite3_result_pointer()</a>.
-     Ticket <a href="https://sqlite.org/src/info/7486aa54b968e9b">7486aa54b968e9b</a>
-<li> Avoid a possible use-after-free error by deferring schema resets until
-     after the query planner has finished running.
-     Ticket <a href="https://sqlite.org/src/info/be436a7f4587ce5">be436a7f4587ce5</a>
-<li> Only use indexes-on-expressions to optimize ORDER BY or GROUP BY if
-     the COLLATE is correct.
-     Ticket <a href="https://sqlite.org/src/info/e20dd54ab0e4383">e20dd54ab0e4383</a>
-<li> Fix an assertion fault that was coming up when the expression in an
-     index-on-expressions is really a constant.
-     Ticket <a href="https://sqlite.org/src/info/aa98619ad08ddca">aa98619ad08ddca</a>
-<li> Fix an assertion fault that could occur following
-     <a href="../pragma.html#pragma_reverse_unordered_selects">PRAGMA reverse_unordered_selects</a>.
-     Ticket <a href="https://sqlite.org/src/info/cb91bf4290c211d">cb91bf4290c211d</a>
-<li> Fix a segfault that can occur for queries that use table-valued functions
-     in an IN or EXISTS subquery.
-     Ticket <a href="https://sqlite.org/src/info/b899b6042f97f5">b899b6042f97f5</a>
-<li> Fix a potential integer overflow problem when compiling a particular
-     horrendous common table expression.  This was another problem discovered
-     by OSSFuzz.  Check-in <a href="https://sqlite.org/src/info/6ee8cb6ae5">6ee8cb6ae5</a>.
-<li> Fix a potential out-of-bound read when querying a corrupt database file,
-     a problem detected by Natalie Silvanovich of Google Project Zero.
-     Check-in <a href="https://sqlite.org/src/info/04925dee41a21f">04925dee41a21f</a>.
+  <li> Fix a faulty assert() statement discovered by OSSFuzz.
+       Ticket <a href="https://sqlite.org/src/info/cb91bf4290c211d">cb91bf4290c211d</a>
+  <li> Fix an obscure memory leak in <a href="../c3ref/result_blob.html">sqlite3_result_pointer()</a>.
+       Ticket <a href="https://sqlite.org/src/info/7486aa54b968e9b">7486aa54b968e9b</a>
+  <li> Avoid a possible use-after-free error by deferring schema resets until
+       after the query planner has finished running.
+       Ticket <a href="https://sqlite.org/src/info/be436a7f4587ce5">be436a7f4587ce5</a>
+  <li> Only use indexes-on-expressions to optimize ORDER BY or GROUP BY if
+       the COLLATE is correct.
+       Ticket <a href="https://sqlite.org/src/info/e20dd54ab0e4383">e20dd54ab0e4383</a>
+  <li> Fix an assertion fault that was coming up when the expression in an
+       index-on-expressions is really a constant.
+       Ticket <a href="https://sqlite.org/src/info/aa98619ad08ddca">aa98619ad08ddca</a>
+  <li> Fix an assertion fault that could occur following
+       <a href="../pragma.html#pragma_reverse_unordered_selects">PRAGMA reverse_unordered_selects</a>.
+       Ticket <a href="https://sqlite.org/src/info/cb91bf4290c211d">cb91bf4290c211d</a>
+  <li> Fix a segfault that can occur for queries that use table-valued functions
+       in an IN or EXISTS subquery.
+       Ticket <a href="https://sqlite.org/src/info/b899b6042f97f5">b899b6042f97f5</a>
+  <li> Fix a potential integer overflow problem when compiling a particular
+       horrendous common table expression.  This was another problem discovered
+       by OSSFuzz.  Check-in <a href="https://sqlite.org/src/info/6ee8cb6ae5">6ee8cb6ae5</a>.
+  <li> Fix a potential out-of-bound read when querying a corrupt database file,
+       a problem detected by Natalie Silvanovich of Google Project Zero.
+       Check-in <a href="https://sqlite.org/src/info/04925dee41a21f">04925dee41a21f</a>.
 </ol>
 <p><b>Hashes:</b>
 <li>SQLITE_SOURCE_ID: "2017-10-24 18:55:49 1a584e499906b5c87ec7d43d4abce641fdf017c42125b083109bc77c4de48827"

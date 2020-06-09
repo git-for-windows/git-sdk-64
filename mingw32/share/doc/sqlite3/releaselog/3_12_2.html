@@ -91,40 +91,10 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.12.2 On 2016-04-18</h2><p><ol class='lessindent'>
-<li>Fix a backwards compatibility problem in version 3.12.0 and 3.12.1:
-    Columns declared as <tt>"INTEGER" PRIMARY KEY</tt> (with quotes around
-    the datatype keyword) were not being recognized as an
-    <a href="../lang_createtable.html#rowid">INTEGER PRIMARY KEY</a>, which resulted in an incompatible database file.
-    Ticket <a href="https://www.sqlite.org/src/info/7d7525cb01b68">7d7525cb01b68</a>
-<li>Fix a bug (present since <a href="../releaselog/3_9_0.html">version 3.9.0</a>) that can cause the <a href="../lang_delete.html">DELETE</a>
-    operation to miss rows if <a href="../pragma.html#pragma_reverse_unordered_selects">PRAGMA reverse_unordered_selects</a> is turned on.
-    Ticket <a href="https://www.sqlite.org/src/info/a306e56ff68b8fa5">a306e56ff68b8fa5</a>
-<li>Fix a bug in the code generator that can cause incorrect results if
-    two or more <a href="../vtab.html">virtual tables</a> are joined and the virtual table used in
-    outer loop of the join has an <a href="../lang_expr.html#in_op">IN operator</a> constraint.
-<li>Correctly interpret negative "PRAGMA cache_size" values when determining
-    the cache size used for sorting large amounts of data.
-<p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: "2016-04-18 17:30:31 92dc59fd5ad66f646666042eb04195e3a61a9e8e"
-<li>SHA1 for sqlite3.c: de5a5898ebd3a3477d4652db143746d008b24c83
-
-</ol></p>
-<p><b>Changes carried forward from version 3.12.1 (2016-04-08):</b></p>
-<p><ol class='lessindent'>
-<li>Fix a boundary condition error introduced by version 3.12.0
-    that can result in a crash during heavy <a href="../lang_savepoint.html">SAVEPOINT</a> usage.
-    Ticket <a href="https://www.sqlite.org/src/info/7f7f8026eda38">7f7f8026eda38</a>.
-<li>Fix <a href="../lang_createview.html">views</a> so that they inherit column datatypes from the 
-    table that they are defined against, when possible.
-<li>Fix the query planner so that IS and IS NULL operators are able
-    to drive an index on a LEFT OUTER JOIN.
-
-</ol></p>
-<p><b>Changes carried forward from version 3.12.0 (2016-03-29):</b></p>
+<h2>SQLite Release 3.12.2 On 2016-04-18</h2><p><b>Changes in version 3.12.0 (2016-03-29):</b></p>
 <p><ol class='lessindent'>
 <p><b>Potentially Disruptive Change:</b>
-<li>The <a href="../compile.html#default_page_size">SQLITE_DEFAULT_PAGE_SIZE</a> is increased from 1024 to 4096.  
+<li value='1'>The <a href="../compile.html#default_page_size">SQLITE_DEFAULT_PAGE_SIZE</a> is increased from 1024 to 4096.  
     The <a href="../compile.html#default_cache_size">SQLITE_DEFAULT_CACHE_SIZE</a> is changed from 2000 to -2000 so 
     the same amount of cache memory is used by default.
     See the application note on the
@@ -179,6 +149,35 @@ return false;
     the SELECT statement on the RHS is a correlated subquery.
     Ticket <a href="https://www.sqlite.org/src/info/5e3c886796e5512e">5e3c886796e5512e</a>.
 <li>Fix a harmless TSAN warning associated with the <a href="../c3ref/db_readonly.html">sqlite3_db_readonly()</a> interface.
+</ol>
+<p><b>Additional changes in version 3.12.1 (2016-04-08):</b></p>
+<p><ol class='lessindent'>
+<li value='21'>Fix a boundary condition error introduced by version 3.12.0
+    that can result in a crash during heavy <a href="../lang_savepoint.html">SAVEPOINT</a> usage.
+    Ticket <a href="https://www.sqlite.org/src/info/7f7f8026eda38">7f7f8026eda38</a>.
+<li>Fix <a href="../lang_createview.html">views</a> so that they inherit column datatypes from the 
+    table that they are defined against, when possible.
+<li>Fix the query planner so that IS and IS NULL operators are able
+    to drive an index on a LEFT OUTER JOIN.
+</ol>
+<p><b>Additional changes in version 3.12.2:</b></p>
+<p><ol class='lessindent'>
+<li value='24'>Fix a backwards compatibility problem in version 3.12.0 and 3.12.1:
+    Columns declared as <tt>"INTEGER" PRIMARY KEY</tt> (with quotes around
+    the datatype keyword) were not being recognized as an
+    <a href="../lang_createtable.html#rowid">INTEGER PRIMARY KEY</a>, which resulted in an incompatible database file.
+    Ticket <a href="https://www.sqlite.org/src/info/7d7525cb01b68">7d7525cb01b68</a>
+<li>Fix a bug (present since <a href="../releaselog/3_9_0.html">version 3.9.0</a>) that can cause the <a href="../lang_delete.html">DELETE</a>
+    operation to miss rows if <a href="../pragma.html#pragma_reverse_unordered_selects">PRAGMA reverse_unordered_selects</a> is turned on.
+    Ticket <a href="https://www.sqlite.org/src/info/a306e56ff68b8fa5">a306e56ff68b8fa5</a>
+<li>Fix a bug in the code generator that can cause incorrect results if
+    two or more <a href="../vtab.html">virtual tables</a> are joined and the virtual table used in
+    outer loop of the join has an <a href="../lang_expr.html#in_op">IN operator</a> constraint.
+<li>Correctly interpret negative "PRAGMA cache_size" values when determining
+    the cache size used for sorting large amounts of data.
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: "2016-04-18 17:30:31 92dc59fd5ad66f646666042eb04195e3a61a9e8e"
+<li>SHA1 for sqlite3.c: de5a5898ebd3a3477d4652db143746d008b24c83
 
 </ol></p>
 

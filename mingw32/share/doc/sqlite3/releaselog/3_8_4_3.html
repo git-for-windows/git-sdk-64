@@ -91,8 +91,60 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.8.4.3 On 2014-04-03</h2><p><ol class='lessindent'>
-<li>Add a 
+<h2>SQLite Release 3.8.4.3 On 2014-04-03</h2><p><b>Changes in version 3.8.4 (2014-03-10):</b></p>
+<p><ol class='lessindent'>
+<li value='1'>Code optimization and refactoring for improved performance.
+<li>Add the ".clone" and ".save" commands to the command-line shell.
+<li>Update the banner on the command-line shell to alert novice users when they
+    are using an ephemeral in-memory database.
+<li>Fix editline support in the command-line shell.
+<li>Add support for coverage testing of VDBE programs using the
+    <a href="../c3ref/c_testctrl_always.html">SQLITE_TESTCTRL_VDBE_COVERAGE</a> verb of <a href="../c3ref/test_control.html">sqlite3_test_control()</a>.
+<li>Update the _FILE_OFFSET_BITS macro so that builds work again on QNX.
+<li>Change the datatype of SrcList.nSrc from type u8 to type int to work around 
+    an issue in the C compiler on AIX.
+<li>Get extension loading working on Cygwin.
+<li>Bug fix: Fix the <a href="../lang_corefunc.html#char">char()</a> SQL function so that it returns an empty string
+    rather than an "out of memory" error when called with zero arguments. 
+<li>Bug fix: DISTINCT now recognizes that a <a href="../lang_corefunc.html#zeroblob">zeroblob</a> and a blob of all
+    0x00 bytes are the same thing. 
+    <a href="http://www.sqlite.org/src/info/fccbde530a">Ticket &#91;fccbde530a&#93;</a>
+<li>Bug fix: Compute the correct answer for queries that contain an IS NOT NULL
+    term in the WHERE clause and also contain an OR term in the WHERE clause and
+    are compiled with <a href="../compile.html#enable_stat4">SQLITE_ENABLE_STAT4</a>.
+    <a href="http://www.sqlite.org/src/info/4c86b126f2">Ticket &#91;4c86b126f2&#93;</a>
+<li>Bug fix: Make sure "rowid" columns are correctly resolved in joins between
+    normal tables and WITHOUT ROWID tables.
+    <a href="http://www.sqlite.org/src/info/c34d0557f7">Ticket &#91;c34d0557f7&#93;</a>
+<li>Bug fix: Make sure the same temporary registers are not used in concurrent
+    co-routines used to implement compound SELECT statements containing ORDER
+    BY clauses, as such use can lead to incorrect answers.
+    <a href="http://www.sqlite.org/src/info/8c63ff0eca">Ticket &#91;8c63ff0eca&#93;</a>
+<li>Bug fix: Ensure that "ORDER BY random()" clauses do not get optimized out.
+    <a href="http://www.sqlite.org/src/info/65bdeb9739">Ticket &#91;65bdeb9739&#93;</a>
+<li>Bug fix: Repair a name-resolution error that can occur in sub-select statements
+    contained within a TRIGGER.
+    <a href="http://www.sqlite.org/src/info/4ef7e3cfca">Ticket &#91;4ef7e3cfca&#93;</a>
+<li>Bug fix: Fix column default values expressions of the form
+    "DEFAULT(-(-9223372036854775808))" so that they work correctly, initializing
+    the column to a floating point value approximately equal to
+    +9223372036854775808.0.
+</ol>
+<p><b>Additional changes in version 3.8.4.1 (2014-03-11):</b></p>
+<p><ol class='lessindent'>
+<li value='17'>Work around a C-preprocessor macro conflict that breaks the build for some
+    configurations with Microsoft Visual Studio.
+<li>When computing the cost of the <a href="../optoverview.html#skipscan">skip-scan optimization</a>, take into account the
+    fact that multiple seeks are required.
+</ol>
+<p><b>Additional changes in version 3.8.4.2 (2014-03-26):</b></p>
+<p><ol class='lessindent'>
+<li value='19'>Fix a potential buffer overread that could result when trying to search a
+    corrupt database file.
+</ol>
+<p><b>Additional changes in version 3.8.4.3:</b></p>
+<p><ol class='lessindent'>
+<li value='20'>Add a 
     <a href="http://www.sqlite.org/src/fdiff?sbs=1&v1=7d539cedb1c&v2=ebad891b7494d&smhdr">one-character fix</a>
     for a problem that might cause incorrect query results on a query that mixes
     DISTINCT, GROUP BY in a subquery, and ORDER BY.

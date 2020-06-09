@@ -91,29 +91,9 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.8.10.2 On 2015-05-20</h2><p><ol class='lessindent'>
-<li>Fix an index corruption issue introduced by <a href="../releaselog/3_8_7.html">version 3.8.7</a>.  An index
-    with a TEXT key can be corrupted by an <a href="../lang_insert.html">INSERT</a> into the corresponding 
-    table if the table has two nested triggers that convert the key value to INTEGER
-    and back to TEXT again.
-    Ticket <a href="https://www.sqlite.org/src/info/34cd55d68e0e6e7c9a0711aab81a2ee3c354b4c0">34cd55d68e0</a>
-
-<li>SQLITE_SOURCE_ID: "2015-05-20 18:17:19 2ef4f3a5b1d1d0c4338f8243d40a2452cc1f7fe4"
-<li>SHA1 for sqlite3.c: 638abb77965332c956dbbd2c8e4248e84da4eb63
-
-</ol></p>
-<p><b>Changes carried forward from version 3.8.10.1 (2015-05-09):</b></p>
+<h2>SQLite Release 3.8.10.2 On 2015-05-20</h2><p><b>Changes in version 3.8.10 (2015-05-07):</b></p>
 <p><ol class='lessindent'>
-<li>Make <a href="../c3ref/compileoption_get.html">sqlite3_compileoption_used()</a> responsive to the <a href="../compile.html#enable_dbstat_vtab">SQLITE_ENABLE_DBSTAT_VTAB</a>
-    compile-time option.
-<li>Fix a harmless warning in the <a href="../cli.html">command-line shell</a> on some versions of MSVC.
-<li>Fix minor issues with the <a href="../dbstat.html">dbstat virtual table</a>.
-
-
-</ol></p>
-<p><b>Changes carried forward from version 3.8.10 (2015-05-07):</b></p>
-<p><ol class='lessindent'>
-<li>Added the <a href="../sqldiff.html">sqldiff.exe</a> utility program for computing the differences between two
+<li value='1'>Added the <a href="../sqldiff.html">sqldiff.exe</a> utility program for computing the differences between two
     SQLite database files.
 <li>Added the <a href="../fts3.html#matchinfo-y">matchinfo y flag</a> to the 
     <a href="../fts3.html#matchinfo">matchinfo()</a> function of <a href="../fts3.html">FTS3</a>.
@@ -128,6 +108,25 @@ return false;
 <li>Make the <a href="../dbstat.html">dbstat virtual table</a> part of standard builds when
     compiled with the <a href="../compile.html#enable_dbstat_vtab">SQLITE_ENABLE_DBSTAT_VTAB</a> option.
 
+</ol>
+<p><b>Additional changes in version 3.8.10.1 (2015-05-09):</b></p>
+<p><ol class='lessindent'>
+<li value='9'>Make <a href="../c3ref/compileoption_get.html">sqlite3_compileoption_used()</a> responsive to the <a href="../compile.html#enable_dbstat_vtab">SQLITE_ENABLE_DBSTAT_VTAB</a>
+    compile-time option.
+<li>Fix a harmless warning in the <a href="../cli.html">command-line shell</a> on some versions of MSVC.
+<li>Fix minor issues with the <a href="../dbstat.html">dbstat virtual table</a>.
+
+</ol>
+<p><b>Additional changes in version 3.8.10.2:</b></p>
+<p><ol class='lessindent'>
+<li value='12'>Fix an index corruption issue introduced by <a href="../releaselog/3_8_7.html">version 3.8.7</a>.  An index
+    with a TEXT key can be corrupted by an <a href="../lang_insert.html">INSERT</a> into the corresponding 
+    table if the table has two nested triggers that convert the key value to INTEGER
+    and back to TEXT again.
+    Ticket <a href="https://www.sqlite.org/src/info/34cd55d68e0e6e7c9a0711aab81a2ee3c354b4c0">34cd55d68e0</a>
+
+<li>SQLITE_SOURCE_ID: "2015-05-20 18:17:19 2ef4f3a5b1d1d0c4338f8243d40a2452cc1f7fe4"
+<li>SHA1 for sqlite3.c: 638abb77965332c956dbbd2c8e4248e84da4eb63
 
 </ol></p>
 

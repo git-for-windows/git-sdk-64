@@ -91,24 +91,14 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.14.1 On 2016-08-11</h2><p><ol class='lessindent'>
-<li>A performance enhancement to the page-cache "truncate" operation
-    reduces <a href="../lang_transaction.html">COMMIT</a> time by dozens of milliseconds on systems with a
-    large <a href="../pragma.html#pragma_cache_size">page cache</a>.
-<li>Fix to the --rbu option of <a href="../sqldiff.html">sqldiff</a>.
-<p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: "2016-08-11 18:53:32 a12d8059770df4bca59e321c266410344242bf7b"
-<li>SHA1 for sqlite3.c: d545b24892278272ce4e40e0567d69c8babf12ea
-
-</ol></p>
-<p><b>Changes carried forward from version 3.14 (2016-08-08):</b></p>
+<h2>SQLite Release 3.14.1 On 2016-08-11</h2><p><b>Changes in version 3.14 (2016-08-08):</b></p>
 <p><ol class='lessindent'>
 <div style="width:280px;float:right;padding:10px;margin:0px 10px;">
 <img src='../images/sqlitepie.jpg' width=280 height=250></img><br>
 <center>Celebrating the SQLite "<big>&pi;</big> release"
 with a home-baked pie.</center>
 </div>
-<li>Added support for <a href="../vtab.html#worid">WITHOUT ROWID virtual tables</a>.
+<li value='1'>Added support for <a href="../vtab.html#worid">WITHOUT ROWID virtual tables</a>.
 <li>Improved the query planner so that the <a href="../optoverview.html#or_opt">OR optimization</a> can
     be used on <a href="../vtab.html">virtual tables</a> even if one or more of the disjuncts
     use the <a href="../lang_expr.html#like">LIKE</a>, <a href="../lang_expr.html#glob">GLOB</a>, <a href="../lang_expr.html#regexp">REGEXP</a>, <a href="../lang_expr.html#match">MATCH</a> operators.
@@ -157,6 +147,16 @@ with a home-baked pie.</center>
     having to do a table lookup.  This fixes a performance regression that occurred
     for some obscure queries following the ORDER BY LIMIT optimization introduced
     in <a href="../releaselog/3_12_0.html">version 3.12.0</a>.
+</ol>
+<p><b>Additional changes in version 3.14.1:</b></p>
+<p><ol class='lessindent'>
+<li value='23'>A performance enhancement to the page-cache "truncate" operation
+    reduces <a href="../lang_transaction.html">COMMIT</a> time by dozens of milliseconds on systems with a
+    large <a href="../pragma.html#pragma_cache_size">page cache</a>.
+<li>Fix to the --rbu option of <a href="../sqldiff.html">sqldiff</a>.
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: "2016-08-11 18:53:32 a12d8059770df4bca59e321c266410344242bf7b"
+<li>SHA1 for sqlite3.c: d545b24892278272ce4e40e0567d69c8babf12ea
 
 </ol></p>
 

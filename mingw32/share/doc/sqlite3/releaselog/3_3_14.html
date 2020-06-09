@@ -104,18 +104,18 @@ return false;
     this form and thus runs faster and defragments better.</li>
 <li>Performance enhancements through reductions in disk I/O:
 <ol type='a'>
-<li>Do not read the last page of an overflow chain when
-    deleting the row - just add that page to the freelist.</li>
-<li>Do not store pages being deleted in the 
-    rollback journal.</li>
-<li>Do not read in the (meaningless) content of
-    pages extracted from the freelist.</li>
-<li>Do not flush the page cache (and thus avoiding
-    a cache refill) unless another process changes the underlying
-    database file.</li>
-<li>Truncate rather than delete the rollback journal when committing
-    a transaction in exclusive access mode, or when committing the TEMP
-    database.</li>
+  <li>Do not read the last page of an overflow chain when
+      deleting the row - just add that page to the freelist.</li>
+  <li>Do not store pages being deleted in the 
+      rollback journal.</li>
+  <li>Do not read in the (meaningless) content of
+      pages extracted from the freelist.</li>
+  <li>Do not flush the page cache (and thus avoiding
+      a cache refill) unless another process changes the underlying
+      database file.</li>
+  <li>Truncate rather than delete the rollback journal when committing
+      a transaction in exclusive access mode, or when committing the TEMP
+      database.</li>
 </ol></li>
 <li>Added support for exclusive access mode using
     <a href="../pragma.html#pragma_locking_mode">

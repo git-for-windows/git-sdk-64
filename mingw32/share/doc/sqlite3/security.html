@@ -204,14 +204,12 @@ problems for SQLite, or vice versa.
 
 <a name="precisionlimit"></a>
 </p></li><li><p>
-To prevent excess memory usage in the <a href="lang_corefunc.html#printf">printf() SQL function</a>, compile
+To control memory usage in the <a href="lang_corefunc.html#printf">printf() SQL function</a>, compile
 with "<a href="compile.html#printf_precision_limit">-DSQLITE_PRINTF_PRECISION_LIMIT=1000</a>" or some similar small value.
-This #define limits the precision in substitutions specifiers in the
-printf() function, that thus prevents a hostile SQL statement from
-using large amounts of RAM using constructs such as
-"<tt>printf('%1000000000s','hi')</tt>".  (Despite its name, this
-#define limits the maximum size of both the precision and the width
-of each substitution in the format string.)
+This #define limits the width and precision for %-substitutions in the
+printf() function, and thus prevents a hostile SQL statement from
+consuming large amounts of RAM via constructs such as
+"<tt>printf('%1000000000s','hi')</tt>".
 </p></li>
 
 </ol>
@@ -261,7 +259,7 @@ For reading database files that are unusually high-risk, such as database
 files that are received from remote machines, and possibly from anonymous
 contributors, the following extra precautions
 might be justified.  These added defenses come with performance costs,
-however, and so may not appropriate in every situation:
+however, and so may not be appropriate in every situation:
 
 </p><ol>
 <li value="10"><p>

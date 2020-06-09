@@ -91,26 +91,9 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.25.1 On 2018-09-18</h2><p><ol class='lessindent'>
-<li> Extra sanity checking added to ALTER TABLE in the 3.25.0 release
-     sometimes raises a false-positive
-     when the table being modified has a trigger that
-     updates a virtual table.  The false-positive caused the ALTER
-     TABLE to rollback, thus leaving the schema unchanged.
-     Ticket <a href="https://sqlite.org/src/info/b41031ea2b537237">b41031ea2b537237</a>.
-<li> The fix in the 3.25.0 release for the endless-loop in the byte-code 
-     associated with the ORDER BY LIMIT optimization did not work for
-     some queries involving window functions.  An additional correction
-     is required.  Ticket
-     <a href="https://sqlite.org/src/info/510cde277783b5fb">510cde277783b5fb</a>
-<p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: "2018-09-18 20:20:44 2ac9003de44da7dafa3fbb1915ac5725a9275c86bf2f3b7aa19321bf1460b386"
-<li>SHA3-256 for sqlite3.c: 1b2302e7a54cc99c84ff699a299f61f069a28e1ed090b89e4430ca80ae2aab06
-
-</ol></p>
-<p><b>Changes carried forward from version 3.25.0 (2018-09-15):</b></p>
+<h2>SQLite Release 3.25.1 On 2018-09-18</h2><p><b>Changes in version 3.25.0 (2018-09-15):</b></p>
 <p><ol class='lessindent'>
-<li> Add support for <a href="../windowfunctions.html">window functions</a>
+<li value='1'> Add support for <a href="../windowfunctions.html">window functions</a>
 <li> Enhancements the <a href="../lang_altertable.html">ALTER TABLE</a> command:
 <ol type="a">
   <li> Add support for renaming columns within a table using
@@ -162,6 +145,23 @@ return false;
      pattern is '/%' or if the pattern begins with the ESCAPE character.
      Fix for ticket
      <a href="https://www.sqlite.org/src/info/c94369cae9b561b1f996d0054b">c94369cae9b561b1f996d0054b</a>
+</ol>
+<p><b>Additional changes in version 3.25.1:</b></p>
+<p><ol class='lessindent'>
+<li value='13'> Extra sanity checking added to ALTER TABLE in the 3.25.0 release
+     sometimes raises a false-positive
+     when the table being modified has a trigger that
+     updates a virtual table.  The false-positive caused the ALTER
+     TABLE to rollback, thus leaving the schema unchanged.
+     Ticket <a href="https://sqlite.org/src/info/b41031ea2b537237">b41031ea2b537237</a>.
+<li> The fix in the 3.25.0 release for the endless-loop in the byte-code 
+     associated with the ORDER BY LIMIT optimization did not work for
+     some queries involving window functions.  An additional correction
+     is required.  Ticket
+     <a href="https://sqlite.org/src/info/510cde277783b5fb">510cde277783b5fb</a>
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: "2018-09-18 20:20:44 2ac9003de44da7dafa3fbb1915ac5725a9275c86bf2f3b7aa19321bf1460b386"
+<li>SHA3-256 for sqlite3.c: 1b2302e7a54cc99c84ff699a299f61f069a28e1ed090b89e4430ca80ae2aab06
 
 </ol></p>
 

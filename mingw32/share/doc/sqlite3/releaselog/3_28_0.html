@@ -94,41 +94,41 @@ return false;
 <h2>SQLite Release 3.28.0 On 2019-04-16</h2><p><ol class='lessindent'>
 <li> Enhanced <a href="../windowfunctions.html">window functions</a>:
 <ol type="a">
-<li> Add support the <a href="../windowfunctions.html#wexcls">EXCLUDE clause</a>.
-<li> Add support for <a href="../windowfunctions.html#wchaining">window chaining</a>.
-<li> Add support for <a href="../windowfunctions.html#grouptype">GROUPS frames</a>.
-<li> Add support for "<a href="../windowfunctions.html#exprrange">&lt;expr&gt; PRECEDING</a>" and
-     "<a href="../windowfunctions.html#exprrange">&lt;expr&gt; FOLLOWING</a>" boundaries
-     in RANGE <a href="../windowfunctions.html#framespec">frames</a>.
+  <li> Add support the <a href="../windowfunctions.html#wexcls">EXCLUDE clause</a>.
+  <li> Add support for <a href="../windowfunctions.html#wchaining">window chaining</a>.
+  <li> Add support for <a href="../windowfunctions.html#grouptype">GROUPS frames</a>.
+  <li> Add support for "<a href="../windowfunctions.html#exprrange">&lt;expr&gt; PRECEDING</a>" and
+       "<a href="../windowfunctions.html#exprrange">&lt;expr&gt; FOLLOWING</a>" boundaries
+       in RANGE <a href="../windowfunctions.html#framespec">frames</a>.
 </ol>
 <li> Added the new <a href="../c3ref/stmt_isexplain.html">sqlite3_stmt_isexplain(S)</a> interface for determining
      whether or not a <a href="../c3ref/stmt.html">prepared statement</a> is an <a href="../lang_explain.html">EXPLAIN</a>.
 <li> Enhanced <a href="../lang_vacuum.html#vacuuminto">VACUUM INTO</a> so that it works for read-only databases.
 <li> New query optimizations:
 <ol type="a">
-<li> Enable the <a href="../optoverview.html#like_opt">LIKE optimization</a> for cases when the ESCAPE keyword
-     is present and <a href="../pragma.html#pragma_case_sensitive_like">PRAGMA case_sensitive_like</a> is on.
-<li> In queries that are driven by a <a href="../partialindex.html">partial index</a>, avoid unnecessary
-     tests of the constraint named in the WHERE clause of the partial
-     index, since we know that constraint must always be true.
+  <li> Enable the <a href="../optoverview.html#like_opt">LIKE optimization</a> for cases when the ESCAPE keyword
+       is present and <a href="../pragma.html#pragma_case_sensitive_like">PRAGMA case_sensitive_like</a> is on.
+  <li> In queries that are driven by a <a href="../partialindex.html">partial index</a>, avoid unnecessary
+       tests of the constraint named in the WHERE clause of the partial
+       index, since we know that constraint must always be true.
 </ol>
 <li> Enhancements to the <a href="../tclsqlite.html">TCL Interface</a>:
 <ol type="a">
-<li> Added the -returntype option to the <a href="../tclsqlite.html#function">function method</a>.
-<li> Added the new <a href="../tclsqlite.html#bind_fallback">bind_fallback method</a>.
+  <li> Added the -returntype option to the <a href="../tclsqlite.html#function">function method</a>.
+  <li> Added the new <a href="../tclsqlite.html#bind_fallback">bind_fallback method</a>.
 </ol>
 <li> Enhancements to the <a href="../cli.html">CLI</a>:
 <ol type="a">
-<li> Added support for <a href="../lang_expr.html#varparam">bound parameters</a> and the <a href="../cli.html#param">.parameter command</a>.
-<li> Fix the <a href="../cli.html#fileio">readfile()</a> function so that it returns
-     an empty BLOB rather than throwing an out-of-memory error when
-     reading an empty file.
-<li> Fix the <a href="../cli.html#fileio">writefile()</a> function so that when it
-     creates new directories along the path of a new file, it gives them
-     umask permissions rather than the same permissions as the file.
-<li> Change <a href="../cli.html#arinsup">--update option</a> in the <a href="../cli.html#sqlar">.archive command</a> so that it skips
-     files that are already in the archive and are unchanged.  Add the
-     new --insert option that works like --update used to work.
+  <li> Added support for <a href="../lang_expr.html#varparam">bound parameters</a> and the <a href="../cli.html#param">.parameter command</a>.
+  <li> Fix the <a href="../cli.html#fileio">readfile()</a> function so that it returns
+       an empty BLOB rather than throwing an out-of-memory error when
+       reading an empty file.
+  <li> Fix the <a href="../cli.html#fileio">writefile()</a> function so that when it
+       creates new directories along the path of a new file, it gives them
+       umask permissions rather than the same permissions as the file.
+  <li> Change <a href="../cli.html#arinsup">--update option</a> in the <a href="../cli.html#sqlar">.archive command</a> so that it skips
+       files that are already in the archive and are unchanged.  Add the
+       new --insert option that works like --update used to work.
 </ol>
 <li> Added the <a href="https://sqlite.org/src/file/ext/misc/fossildelta.c">fossildelta.c</a>
      extension that can create, apply, and deconstruct the 
@@ -141,15 +141,15 @@ return false;
      to an SQL function is from a <a href="../lang_expr.html#varparam">bound parameter</a>.
 <li> Security and compatibilities enhancements to <a href="../fts3.html#f3tknzr">fts3_tokenizer()</a>:
 <ol type="a">
-<li> The <a href="../fts3.html#f3tknzr">fts3_tokenizer()</a> function always returns NULL
-     unless either the legacy application-defined FTS3 tokenizers interface
-     are enabled using
-     the <a href="../c3ref/db_config.html">sqlite3_db_config</a>(<a href="../c3ref/c_dbconfig_defensive.html#sqlitedbconfigenablefts3tokenizer">SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER</a>)
-     setting, or unless the first argument to fts3_tokenizer() is a <a href="../lang_expr.html#varparam">bound parameter</a>.
-<li> The two-argument version of <a href="../fts3.html#f3tknzr">fts3_tokenizer()</a> accepts a pointer to the
-     tokenizer method object even without
-     the <a href="../c3ref/db_config.html">sqlite3_db_config</a>(<a href="../c3ref/c_dbconfig_defensive.html#sqlitedbconfigenablefts3tokenizer">SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER</a>) setting
-     if the second argument is a <a href="../lang_expr.html#varparam">bound parameter</a>
+  <li> The <a href="../fts3.html#f3tknzr">fts3_tokenizer()</a> function always returns NULL
+       unless either the legacy application-defined FTS3 tokenizers interface
+       are enabled using
+       the <a href="../c3ref/db_config.html">sqlite3_db_config</a>(<a href="../c3ref/c_dbconfig_defensive.html#sqlitedbconfigenablefts3tokenizer">SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER</a>)
+       setting, or unless the first argument to fts3_tokenizer() is a <a href="../lang_expr.html#varparam">bound parameter</a>.
+  <li> The two-argument version of <a href="../fts3.html#f3tknzr">fts3_tokenizer()</a> accepts a pointer to the
+       tokenizer method object even without
+       the <a href="../c3ref/db_config.html">sqlite3_db_config</a>(<a href="../c3ref/c_dbconfig_defensive.html#sqlitedbconfigenablefts3tokenizer">SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER</a>) setting
+       if the second argument is a <a href="../lang_expr.html#varparam">bound parameter</a>
 </ol>     
 <li> Improved robustness against corrupt database files.
 <li> Miscellaneous performance enhancements

@@ -52,13 +52,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.6.13"
+#define GNUTLS_VERSION "3.6.14"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 6
-#define GNUTLS_VERSION_PATCH 13
+#define GNUTLS_VERSION_PATCH 14
 
-#define GNUTLS_VERSION_NUMBER 0x03060d
+#define GNUTLS_VERSION_NUMBER 0x03060e
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -139,6 +139,13 @@ extern "C" {
  * @GNUTLS_CIPHER_AES192_PGP_CFB: AES in CFB mode with 192-bit keys (placeholder - unsupported).
  * @GNUTLS_CIPHER_AES256_PGP_CFB: AES in CFB mode with 256-bit keys (placeholder - unsupported).
  * @GNUTLS_CIPHER_TWOFISH_PGP_CFB: Twofish in CFB mode (placeholder - unsupported).
+ * @GNUTLS_CIPHER_AES_128_SIV: AES in SIV mode with 128-bit key.
+ * @GNUTLS_CIPHER_AES_256_SIV: AES in SIV mode with 256-bit key.
+ *                             Note that the SIV ciphers can only be used with
+ *                             the AEAD interface, and the IV plays a role as
+ *                             the authentication tag while it is prepended to
+ *                             the cipher text.
+ * @GNUTLS_CIPHER_AES_192_GCM: AES in GCM mode with 192-bit keys (AEAD).
  *
  * Enumeration of different symmetric encryption algorithms.
  */
@@ -180,6 +187,9 @@ typedef enum gnutls_cipher_algorithm {
 	GNUTLS_CIPHER_GOST28147_TC26Z_CNT = 34,
 	GNUTLS_CIPHER_CHACHA20_64 = 35,
 	GNUTLS_CIPHER_CHACHA20_32 = 36,
+	GNUTLS_CIPHER_AES_128_SIV = 37,
+	GNUTLS_CIPHER_AES_256_SIV = 38,
+	GNUTLS_CIPHER_AES_192_GCM = 39,
 
 	/* used only for PGP internals. Ignored in TLS/SSL
 	 */
@@ -463,6 +473,8 @@ typedef enum {
  * @GNUTLS_ENABLE_EARLY_DATA: Under TLS1.3 allow the server to receive early data sent as part of the initial ClientHello (0-RTT). 
  *    This is not enabled by default as early data has weaker security properties than other data. Since 3.6.5.
  * @GNUTLS_ENABLE_RAWPK: Allows raw public-keys to be negotiated during the handshake. Since 3.6.6.
+ * @GNUTLS_NO_AUTO_SEND_TICKET: Under TLS1.3 disable auto-sending of
+ *    session tickets during the handshake.
  *
  * Enumeration of different flags for gnutls_init() function. All the flags
  * can be combined except @GNUTLS_SERVER and @GNUTLS_CLIENT which are mutually
@@ -493,7 +505,8 @@ typedef enum {
 	GNUTLS_ENABLE_EARLY_START = (1<<17),
 	GNUTLS_ENABLE_RAWPK = (1<<18),
 	GNUTLS_AUTO_REAUTH = (1<<19),
-	GNUTLS_ENABLE_EARLY_DATA = (1<<20)
+	GNUTLS_ENABLE_EARLY_DATA = (1<<20),
+	GNUTLS_NO_AUTO_SEND_TICKET = (1<<21)
 } gnutls_init_flags_t;
 
 /* compatibility defines (previous versions of gnutls
@@ -3132,6 +3145,8 @@ int gnutls_session_ext_register(gnutls_session_t, const char *name, int type, gn
 				gnutls_ext_unpack_func unpack_func, unsigned flags);
 
 const char *gnutls_ext_get_name(unsigned int ext);
+const char *gnutls_ext_get_name2(gnutls_session_t session, unsigned int tls_id,
+				 gnutls_ext_parse_type_t parse_point);
 
 /* Public supplemental data related functions */
 

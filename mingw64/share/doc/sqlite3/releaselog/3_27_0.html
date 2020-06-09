@@ -105,35 +105,35 @@ Use that option to prevent circular references to <a href="../vtab.html#xshadown
 causing resource leaks.
 <li>Enhancements to the <a href="../c3ref/deserialize.html">sqlite3_deserialize()</a> interface:
 <ol type="a">
-<li> Add the <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlsizelimit">SQLITE_FCNTL_SIZE_LIMIT</a> <a href="../c3ref/file_control.html">file-control</a> for
-     setting an upper bound on the size of the in-memory database created
-     by sqlite3_deserialize.  The default upper bound is 1GiB, or whatever
-     alternative value is specified by
-     <a href="../c3ref/config.html">sqlite3_config</a>(<a href="../c3ref/c_config_covering_index_scan.html#sqliteconfigmemdbmaxsize">SQLITE_CONFIG_MEMDB_MAXSIZE</a>)
-     and/or <a href="../compile.html#memdb_default_maxsize">SQLITE_MEMDB_DEFAULT_MAXSIZE</a>.
-<li> Honor the <a href="../c3ref/c_deserialize_freeonclose.html">SQLITE_DESERIALIZE_READONLY</a> flag, which was previously described
-     in the documentation, but was previously a no-op.
-<li> Enhance the "deserialize" command of the <a href="../tclsqlite.html">TCL Interface</a> to give it
-     new "--maxsize N" and "--readonly BOOLEAN" options.
+  <li> Add the <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlsizelimit">SQLITE_FCNTL_SIZE_LIMIT</a> <a href="../c3ref/file_control.html">file-control</a> for
+       setting an upper bound on the size of the in-memory database created
+       by sqlite3_deserialize.  The default upper bound is 1GiB, or whatever
+       alternative value is specified by
+       <a href="../c3ref/config.html">sqlite3_config</a>(<a href="../c3ref/c_config_covering_index_scan.html#sqliteconfigmemdbmaxsize">SQLITE_CONFIG_MEMDB_MAXSIZE</a>)
+       and/or <a href="../compile.html#memdb_default_maxsize">SQLITE_MEMDB_DEFAULT_MAXSIZE</a>.
+  <li> Honor the <a href="../c3ref/c_deserialize_freeonclose.html">SQLITE_DESERIALIZE_READONLY</a> flag, which was previously described
+       in the documentation, but was previously a no-op.
+  <li> Enhance the "deserialize" command of the <a href="../tclsqlite.html">TCL Interface</a> to give it
+       new "--maxsize N" and "--readonly BOOLEAN" options.
 </ol>
 <li>Enhancements to the <a href="../cli.html">CLI</a>, mostly to support testing and debugging
 of the SQLite library itself:
 <ol type="a">
-<li> Add support for ".open --hexdb". The 
-     "<a href="https://sqlite.org/src/doc/trunk/tool/dbtotxt.md">dbtotxt</a>" utility 
-     program used to generate the text for the "hexdb" is added to the 
-     source tree.
-<li> Add support for the "--maxsize N" option on ".open --deserialize".
-<li> Add the "--memtrace" command-line option, to show all memory allocations
-     and deallocations.
-<li> Add the ".eqp trace" option on builds with SQLITE_DEBUG, to enable
-     bytecode program listing with indentation and 
-     <a href="../pragma.html#pragma_vdbe_trace">PRAGMA vdbe_trace</a> all in one step.
-<li> Add the ".progress" command for accessing
-     the <a href="../c3ref/progress_handler.html">sqlite3_progress_handler()</a> interface.
-<li> Add the "--async" option to the ".backup" command.
-<li> Add options "--expanded", "--normalized", "--plain", "--profile", "--row",
-     "--stmt", and "--close" to the ".trace" command.
+  <li> Add support for ".open --hexdb". The 
+       "<a href="https://sqlite.org/src/doc/trunk/tool/dbtotxt.md">dbtotxt</a>" utility 
+       program used to generate the text for the "hexdb" is added to the 
+       source tree.
+  <li> Add support for the "--maxsize N" option on ".open --deserialize".
+  <li> Add the "--memtrace" command-line option, to show all memory allocations
+       and deallocations.
+  <li> Add the ".eqp trace" option on builds with SQLITE_DEBUG, to enable
+       bytecode program listing with indentation and 
+       <a href="../pragma.html#pragma_vdbe_trace">PRAGMA vdbe_trace</a> all in one step.
+  <li> Add the ".progress" command for accessing
+       the <a href="../c3ref/progress_handler.html">sqlite3_progress_handler()</a> interface.
+  <li> Add the "--async" option to the ".backup" command.
+  <li> Add options "--expanded", "--normalized", "--plain", "--profile", "--row",
+       "--stmt", and "--close" to the ".trace" command.
 </ol>
 <li> Increased robustness against malicious SQL that is run against a 
      maliciously corrupted database.

@@ -125,33 +125,33 @@ return false;
      the <a href="../fileformat2.html#freelist">free-page list</a> but will be purged from all b-tree pages.
 <li> Enhancements to the <a href="../cli.html">command-line shell</a>:
 <ol type='a'>
-<li> Add support for tab-completion using the <a href="../completion.html">COMPLETION extension</a>, for
-     both readline and linenoise.
-<li> Add the ".cd" command.
-<li> Enhance the "<a href="../cli.html#dschema">.schema</a>" command to show the schema of all attached
-     databases.
-<li> Enhance "<a href="../cli.html#dtables">.tables</a>" so that it shows the schema names for all attached
-     if the name is anything other than "main".
-<li> The "<a href="../cli.html#csv">.import</a>" command ignores an initial UTF-8 BOM.
-<li> Added the "--newlines" option to the "<a href="../cli.html#dump">.dump</a>" command to cause U+000a and
-     U+000d characters to be output literally rather than escaped using the
-     <a href="../lang_corefunc.html#replace">replace()</a> function.
+  <li> Add support for tab-completion using the <a href="../completion.html">COMPLETION extension</a>, for
+       both readline and linenoise.
+  <li> Add the ".cd" command.
+  <li> Enhance the "<a href="../cli.html#dschema">.schema</a>" command to show the schema of all attached
+       databases.
+  <li> Enhance "<a href="../cli.html#dtables">.tables</a>" so that it shows the schema names for all attached
+       if the name is anything other than "main".
+  <li> The "<a href="../cli.html#csv">.import</a>" command ignores an initial UTF-8 BOM.
+  <li> Added the "--newlines" option to the "<a href="../cli.html#dump">.dump</a>" command to cause U+000a and
+       U+000d characters to be output literally rather than escaped using the
+       <a href="../lang_corefunc.html#replace">replace()</a> function.
 </ol>
 <li> Query planner enhancements:
 <ol type='a'>
-<li> When generating individual loops for each ORed term of an OR scan,
-     move any constant WHERE expressions outside of the loop, as is 
-     done for top-level loops.
-<li> The query planner examines the values of bound parameters to help
-     determine if a partial index is usable.
-<li> When deciding between two plans with the same estimated cost, bias 
-     the selection toward the one that does not use the sorter.
-<li> Evaluate WHERE clause constraints involving correlated subqueries
-     last, in the hope that they never have be evaluated at all.
-<li> Do not use the <a href="../optoverview.html#flattening">flattening optimization</a> for a sub-query on the RHS 
-     of a LEFT JOIN if that subquery reads data from a <a href="../vtab.html">virtual table</a> as
-     doing so prevents the query planner from creating <a href="../optoverview.html#autoindex">automatic indexes</a>
-     on the results of the sub-query, which can slow down the query.
+  <li> When generating individual loops for each ORed term of an OR scan,
+       move any constant WHERE expressions outside of the loop, as is 
+       done for top-level loops.
+  <li> The query planner examines the values of bound parameters to help
+       determine if a partial index is usable.
+  <li> When deciding between two plans with the same estimated cost, bias 
+       the selection toward the one that does not use the sorter.
+  <li> Evaluate WHERE clause constraints involving correlated subqueries
+       last, in the hope that they never have be evaluated at all.
+  <li> Do not use the <a href="../optoverview.html#flattening">flattening optimization</a> for a sub-query on the RHS 
+       of a LEFT JOIN if that subquery reads data from a <a href="../vtab.html">virtual table</a> as
+       doing so prevents the query planner from creating <a href="../optoverview.html#autoindex">automatic indexes</a>
+       on the results of the sub-query, which can slow down the query.
 </ol>
 <li> Add <a href="../c3ref/c_stmtstatus_counter.html#sqlitestmtstatusreprepare">SQLITE_STMTSTATUS_REPREPARE</a>, <a href="../c3ref/c_stmtstatus_counter.html#sqlitestmtstatusrun">SQLITE_STMTSTATUS_RUN</a>, 
      and <a href="../c3ref/c_stmtstatus_counter.html#sqlitestmtstatusmemused">SQLITE_STMTSTATUS_MEMUSED</a> options for the

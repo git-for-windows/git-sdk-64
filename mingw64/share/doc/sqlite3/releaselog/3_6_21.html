@@ -100,14 +100,14 @@ CPU operations is achieved (as measured by Valgrind).  Actual performance
 improvements in practice may vary depending on workload.  Changes
 include:
 <ol type='a'>
-<li>The <a href="../lang_corefunc.html#ifnull">ifnull()</a> and <a href="../lang_corefunc.html#coalesce">coalesce()</a> SQL functions are now implemented
-using in-line VDBE code rather than calling external functions, so that
-unused arguments need never be evaluated.
-<li>The <a href="../lang_corefunc.html#substr">substr()</a> SQL function does not bother to measure the length
-its entire input string if it is only computing a prefix
-<li>Unnecessary OP_IsNull, OP_Affinity, and OP_MustBeInt VDBE opcodes
-are suppressed
-<li>Various code refactorizations for performance
+  <li>The <a href="../lang_corefunc.html#ifnull">ifnull()</a> and <a href="../lang_corefunc.html#coalesce">coalesce()</a> SQL functions are now implemented
+  using in-line VDBE code rather than calling external functions, so that
+  unused arguments need never be evaluated.
+  <li>The <a href="../lang_corefunc.html#substr">substr()</a> SQL function does not bother to measure the length
+  its entire input string if it is only computing a prefix
+  <li>Unnecessary OP_IsNull, OP_Affinity, and OP_MustBeInt VDBE opcodes
+  are suppressed
+  <li>Various code refactorizations for performance
 </ol>
 <li>The FTS3 extension has undergone a major rework and cleanup.
 New <a href="../fts3.html">FTS3 documentation</a> is now available.

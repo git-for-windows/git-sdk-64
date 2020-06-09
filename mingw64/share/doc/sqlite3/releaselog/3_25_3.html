@@ -91,56 +91,9 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.25.3 On 2018-11-05</h2><p><ol class='lessindent'>
-<li> Disallow the use of <a href="../windowfunctions.html">window functions</a> in the recursive part of
-     a CTE. Ticket <a href="https://sqlite.org/src/info/e8275b415a2f03bee">e8275b415a2f03bee</a>
-<li> Fix the behavior of typeof() and length() on virtual tables.  Ticket
-     <a href="https://sqlite.org/src/info/69d642332d25aa3b7315a6d385">69d642332d25aa3b7315a6d385</a>
-<li> Strengthen defenses against deliberately corrupted database files.
-<li> Fix a problem in the query planner that results when a row-value expression
-     is used with a PRIMARY KEY with redundant columns.  Ticket
-     <a href="https://sqlite.org/src/info/1a84668dcfdebaf12415d">1a84668dcfdebaf12415d</a>
-<li> Fix the query planner so that it works correctly for IS NOT NULL operators
-     in the ON clause of a LEFT JOIN with the SQLITE_ENABLE_STAT4 compile-time option.
-     <a href="https://sqlite.org/src/info/65eb38f6e46de8c75e188a17ec">65eb38f6e46de8c75e188a17ec</a>
-<p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: "2018-11-05 20:37:38 89e099fbe5e13c33e683bef07361231ca525b88f7907be7092058007b75036f2"
-<li>SHA3-256 for sqlite3.c: 45586e4df74de3a43f3a1f8c7a78c3c3f02edce01af7d10cafe68bb94476a5c5
-
-</ol></p>
-<p><b>Changes carried forward from version 3.25.2 (2018-09-25):</b></p>
+<h2>SQLite Release 3.25.3 On 2018-11-05</h2><p><b>Changes in version 3.25.0 (2018-09-15):</b></p>
 <p><ol class='lessindent'>
-<li> Add the <a href="../pragma.html#pragma_legacy_alter_table">PRAGMA legacy_alter_table=ON</a> command that causes the
-     "ALTER TABLE RENAME" command to behave as it did in SQLite versions 3.24.0
-     and earlier: references to the renamed table inside the bodies of triggers
-     and views are not updated.  This new pragma provides a compatibility
-     work around for older programs that expected the older, wonky behavior
-     of ALTER TABLE RENAME.
-<li> Fix a problem with the new <a href="../windowfunctions.html">window functions</a> implementation that caused
-     a malfunction when complicated expressions involving window functions were used
-     inside of a view.
-<li> Fixes for various other compiler warnings and minor problems associated
-     with obscure configurations.
-
-</ol></p>
-<p><b>Changes carried forward from version 3.25.1 (2018-09-18):</b></p>
-<p><ol class='lessindent'>
-<li> Extra sanity checking added to ALTER TABLE in the 3.25.0 release
-     sometimes raises a false-positive
-     when the table being modified has a trigger that
-     updates a virtual table.  The false-positive caused the ALTER
-     TABLE to rollback, thus leaving the schema unchanged.
-     Ticket <a href="https://sqlite.org/src/info/b41031ea2b537237">b41031ea2b537237</a>.
-<li> The fix in the 3.25.0 release for the endless-loop in the byte-code 
-     associated with the ORDER BY LIMIT optimization did not work for
-     some queries involving window functions.  An additional correction
-     is required.  Ticket
-     <a href="https://sqlite.org/src/info/510cde277783b5fb">510cde277783b5fb</a>
-
-</ol></p>
-<p><b>Changes carried forward from version 3.25.0 (2018-09-15):</b></p>
-<p><ol class='lessindent'>
-<li> Add support for <a href="../windowfunctions.html">window functions</a>
+<li value='1'> Add support for <a href="../windowfunctions.html">window functions</a>
 <li> Enhancements the <a href="../lang_altertable.html">ALTER TABLE</a> command:
 <ol type="a">
   <li> Add support for renaming columns within a table using
@@ -192,6 +145,51 @@ return false;
      pattern is '/%' or if the pattern begins with the ESCAPE character.
      Fix for ticket
      <a href="https://www.sqlite.org/src/info/c94369cae9b561b1f996d0054b">c94369cae9b561b1f996d0054b</a>
+</ol>
+<p><b>Additional changes in version 3.25.1 (2018-09-18):</b></p>
+<p><ol class='lessindent'>
+<li value='13'> Extra sanity checking added to ALTER TABLE in the 3.25.0 release
+     sometimes raises a false-positive
+     when the table being modified has a trigger that
+     updates a virtual table.  The false-positive caused the ALTER
+     TABLE to rollback, thus leaving the schema unchanged.
+     Ticket <a href="https://sqlite.org/src/info/b41031ea2b537237">b41031ea2b537237</a>.
+<li> The fix in the 3.25.0 release for the endless-loop in the byte-code 
+     associated with the ORDER BY LIMIT optimization did not work for
+     some queries involving window functions.  An additional correction
+     is required.  Ticket
+     <a href="https://sqlite.org/src/info/510cde277783b5fb">510cde277783b5fb</a>
+</ol>
+<p><b>Additional changes in version 3.25.2 (2018-09-25):</b></p>
+<p><ol class='lessindent'>
+<li value='15'> Add the <a href="../pragma.html#pragma_legacy_alter_table">PRAGMA legacy_alter_table=ON</a> command that causes the
+     "ALTER TABLE RENAME" command to behave as it did in SQLite versions 3.24.0
+     and earlier: references to the renamed table inside the bodies of triggers
+     and views are not updated.  This new pragma provides a compatibility
+     work around for older programs that expected the older, wonky behavior
+     of ALTER TABLE RENAME.
+<li> Fix a problem with the new <a href="../windowfunctions.html">window functions</a> implementation that caused
+     a malfunction when complicated expressions involving window functions were used
+     inside of a view.
+<li> Fixes for various other compiler warnings and minor problems associated
+     with obscure configurations.
+</ol>
+<p><b>Additional changes in version 3.25.3:</b></p>
+<p><ol class='lessindent'>
+<li value='18'> Disallow the use of <a href="../windowfunctions.html">window functions</a> in the recursive part of
+     a CTE. Ticket <a href="https://sqlite.org/src/info/e8275b415a2f03bee">e8275b415a2f03bee</a>
+<li> Fix the behavior of typeof() and length() on virtual tables.  Ticket
+     <a href="https://sqlite.org/src/info/69d642332d25aa3b7315a6d385">69d642332d25aa3b7315a6d385</a>
+<li> Strengthen defenses against deliberately corrupted database files.
+<li> Fix a problem in the query planner that results when a row-value expression
+     is used with a PRIMARY KEY with redundant columns.  Ticket
+     <a href="https://sqlite.org/src/info/1a84668dcfdebaf12415d">1a84668dcfdebaf12415d</a>
+<li> Fix the query planner so that it works correctly for IS NOT NULL operators
+     in the ON clause of a LEFT JOIN with the SQLITE_ENABLE_STAT4 compile-time option.
+     <a href="https://sqlite.org/src/info/65eb38f6e46de8c75e188a17ec">65eb38f6e46de8c75e188a17ec</a>
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: "2018-11-05 20:37:38 89e099fbe5e13c33e683bef07361231ca525b88f7907be7092058007b75036f2"
+<li>SHA3-256 for sqlite3.c: 45586e4df74de3a43f3a1f8c7a78c3c3f02edce01af7d10cafe68bb94476a5c5
 
 </ol></p>
 

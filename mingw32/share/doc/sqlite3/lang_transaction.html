@@ -159,7 +159,7 @@ started by BEGIN.</p>
 
 <h2 id="read_transactions_versus_write_transactions"><span>2.1. </span>Read transactions versus write transactions</h2>
 
-<p>SQLite current supports multiple simultaneous read transactions
+<p>SQLite supports multiple simultaneous read transactions
 coming from separate database connections, possibly in separate
 threads or processes, but only one simultaneous write transaction.
 </p><p>
@@ -170,7 +170,7 @@ by a SELECT statement, and a write transaction is started by
 statements like CREATE, DELETE, DROP, INSERT, or UPDATE (collectively
 "write statements").  If a write statement occurs while
 a read transaction is active, then the read transaction is upgraded
-to write transaction if possible.  If some other database connection
+to a write transaction if possible.  If some other database connection
 has already modified the database or is already in the process of
 modifying the database, then upgrading to a write transaction is
 not possible and the write statement will fail with <a href="rescode.html#busy">SQLITE_BUSY</a>.
@@ -184,7 +184,7 @@ connection X is holding a read transaction, it is possible that some
 other database connection Y might change the content of the database
 while X's transaction is still open, however X will not be able to see 
 those changes until after the transaction ends.  While its read
-transaction is active, X will continue to see an historic snapshot
+transaction is active, X will continue to see an historic snapshot of
 the database prior to the changes implemented by Y.
 </p>
 
@@ -216,7 +216,7 @@ a write transaction is started.
 
 <p>
 IMMEDIATE cause the database connection to start a new write
-immediately, without waiting for a writes statement.  The 
+immediately, without waiting for a write statement.  The 
 BEGIN IMMEDIATE might fail with <a href="rescode.html#busy">SQLITE_BUSY</a> if another write
 transaction is already active on another database connection.
 </p>

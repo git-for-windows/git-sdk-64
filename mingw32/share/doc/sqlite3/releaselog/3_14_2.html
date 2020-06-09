@@ -91,42 +91,14 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.14.2 On 2016-09-12</h2><p><ol class='lessindent'>
-<li> Improved support for using the STDCALL calling convention in winsqlite3.dll.
-<li> Fix the <a href="../c3ref/trace_v2.html">sqlite3_trace_v2()</a> interface so that it is disabled if either the
-callback or the mask arguments are zero, in accordance with the documentation.
-<li> Fix commenting errors and improve the comments generated on <a href="../lang_explain.html">EXPLAIN</a> listings
-when the <a href="../compile.html#enable_explain_comments">-DSQLITE_ENABLE_EXPLAIN_COMMENTS</a> compile-time option is used.
-<li> Fix the ".read" command in the <a href="../cli.html">command-line shell</a> so that it understands
-that its input is not interactive.
-<li> Correct affinity computations for a SELECT on the RHS of an IN operator.
-Fix for ticket <a href="https://sqlite.org/src/info/199df4168c">199df4168c</a>.
-<li> The ORDER BY LIMIT optimization is not valid unless the inner-most IN operator 
-loop is actually used by the query plan. Fix for
-ticket <a href="https://sqlite.org/src/info/0c4df46116e90f92">0c4df46116e90f92</a>.
-<li> Fix an internal code generator problem that was causing some <a href="../lang_delete.html">DELETE</a> operations
-to no-op.  Ticket <a href="https://sqlite.org/src/info/ef360601">ef360601</a>
-<p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: "2016-09-12 18:50:49 29dbef4b8585f753861a36d6dd102ca634197bd6"
-<li>SHA1 for sqlite3.c: bcc4a1989db45e7f223191f2d0f66c1c28946383
-
-</ol></p>
-<p><b>Changes carried forward from version 3.14.1 (2016-08-11):</b></p>
-<p><ol class='lessindent'>
-<li>A performance enhancement to the page-cache "truncate" operation
-    reduces <a href="../lang_transaction.html">COMMIT</a> time by dozens of milliseconds on systems with a
-    large <a href="../pragma.html#pragma_cache_size">page cache</a>.
-<li>Fix to the --rbu option of <a href="../sqldiff.html">sqldiff</a>.
-
-</ol></p>
-<p><b>Changes carried forward from version 3.14 (2016-08-08):</b></p>
+<h2>SQLite Release 3.14.2 On 2016-09-12</h2><p><b>Changes in version 3.14 (2016-08-08):</b></p>
 <p><ol class='lessindent'>
 <div style="width:280px;float:right;padding:10px;margin:0px 10px;">
 <img src='../images/sqlitepie.jpg' width=280 height=250></img><br>
 <center>Celebrating the SQLite "<big>&pi;</big> release"
 with a home-baked pie.</center>
 </div>
-<li>Added support for <a href="../vtab.html#worid">WITHOUT ROWID virtual tables</a>.
+<li value='1'>Added support for <a href="../vtab.html#worid">WITHOUT ROWID virtual tables</a>.
 <li>Improved the query planner so that the <a href="../optoverview.html#or_opt">OR optimization</a> can
     be used on <a href="../vtab.html">virtual tables</a> even if one or more of the disjuncts
     use the <a href="../lang_expr.html#like">LIKE</a>, <a href="../lang_expr.html#glob">GLOB</a>, <a href="../lang_expr.html#regexp">REGEXP</a>, <a href="../lang_expr.html#match">MATCH</a> operators.
@@ -175,6 +147,33 @@ with a home-baked pie.</center>
     having to do a table lookup.  This fixes a performance regression that occurred
     for some obscure queries following the ORDER BY LIMIT optimization introduced
     in <a href="../releaselog/3_12_0.html">version 3.12.0</a>.
+</ol>
+<p><b>Additional changes in version 3.14.1 (2016-08-11):</b></p>
+<p><ol class='lessindent'>
+<li value='23'>A performance enhancement to the page-cache "truncate" operation
+    reduces <a href="../lang_transaction.html">COMMIT</a> time by dozens of milliseconds on systems with a
+    large <a href="../pragma.html#pragma_cache_size">page cache</a>.
+<li>Fix to the --rbu option of <a href="../sqldiff.html">sqldiff</a>.
+</ol>
+<p><b>Additional changes in version 3.14.2:</b></p>
+<p><ol class='lessindent'>
+<li value='25'> Improved support for using the STDCALL calling convention in winsqlite3.dll.
+<li> Fix the <a href="../c3ref/trace_v2.html">sqlite3_trace_v2()</a> interface so that it is disabled if either the
+callback or the mask arguments are zero, in accordance with the documentation.
+<li> Fix commenting errors and improve the comments generated on <a href="../lang_explain.html">EXPLAIN</a> listings
+when the <a href="../compile.html#enable_explain_comments">-DSQLITE_ENABLE_EXPLAIN_COMMENTS</a> compile-time option is used.
+<li> Fix the ".read" command in the <a href="../cli.html">command-line shell</a> so that it understands
+that its input is not interactive.
+<li> Correct affinity computations for a SELECT on the RHS of an IN operator.
+Fix for ticket <a href="https://sqlite.org/src/info/199df4168c">199df4168c</a>.
+<li> The ORDER BY LIMIT optimization is not valid unless the inner-most IN operator 
+loop is actually used by the query plan. Fix for
+ticket <a href="https://sqlite.org/src/info/0c4df46116e90f92">0c4df46116e90f92</a>.
+<li> Fix an internal code generator problem that was causing some <a href="../lang_delete.html">DELETE</a> operations
+to no-op.  Ticket <a href="https://sqlite.org/src/info/ef360601">ef360601</a>
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: "2016-09-12 18:50:49 29dbef4b8585f753861a36d6dd102ca634197bd6"
+<li>SHA1 for sqlite3.c: bcc4a1989db45e7f223191f2d0f66c1c28946383
 
 </ol></p>
 
