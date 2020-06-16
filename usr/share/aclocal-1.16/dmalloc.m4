@@ -3,7 +3,7 @@
 ## From Franc,ois Pinard               ##
 ## ----------------------------------- ##
 
-# Copyright (C) 1996-2018 Free Software Foundation, Inc.
+# Copyright (C) 1996-2020 Free Software Foundation, Inc.
 #
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,

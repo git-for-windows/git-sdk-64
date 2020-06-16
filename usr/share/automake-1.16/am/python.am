@@ -1,5 +1,5 @@
 ## automake - create Makefile.in from Makefile.am
-## Copyright (C) 1999-2018 Free Software Foundation, Inc.
+## Copyright (C) 1999-2020 Free Software Foundation, Inc.
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ endif %?INSTALL%
 if %?INSTALL%
 
 ?FIRST?am__pep3147_tweak = \
-?FIRST?  sed -e 's|\.py$$||' -e 's|[^/]*$$|&.*.pyc\n&.*.pyo|'
+?FIRST?  sed -e 's|\.py$$||' -e 's|[^/]*$$|__pycache__/&.*.pyc __pycache__/&.*.pyo|'
 
 .PHONY uninstall-am: uninstall-%DIR%PYTHON
 uninstall-%DIR%PYTHON:
@@ -116,7 +116,7 @@ uninstall-%DIR%PYTHON:
 	done; \
 ## This is somewhat tricky, because for newer pythons we have to take PEP-3147
 ## into account.  Avoid exceeding the command-line length limit.
-	dir='$(DESTDIR)$(%NDIR%dir)/__pycache__'; \
+	dir='$(DESTDIR)$(%NDIR%dir)'; \
 	echo "$$py_files" | $(am__pep3147_tweak) | $(am__base_list) | \
 	  while read files; do \
 	    $(am__uninstall_files_from_dir) || st=$$?; \

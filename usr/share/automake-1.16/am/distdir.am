@@ -1,5 +1,5 @@
 ## automake - create Makefile.in from Makefile.am
-## Copyright (C) 2001-2018 Free Software Foundation, Inc.
+## Copyright (C) 2001-2020 Free Software Foundation, Inc.
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -350,6 +350,12 @@ dist-xz: distdir
 	tardir=$(distdir) && $(am__tar) | XZ_OPT=$${XZ_OPT--e} xz -c >$(distdir).tar.xz
 	$(am__post_remove_distdir)
 
+?ZSTD?DIST_ARCHIVES += $(distdir).tar.zst
+.PHONY: dist-zstd
+dist-zstd: distdir
+	tardir=$(distdir) && $(am__tar) | zstd -c $${ZSTD_CLEVEL-$${ZSTD_OPT--19}} >$(distdir).tar.zst
+	$(am__post_remove_distdir)
+
 ?COMPRESS?DIST_ARCHIVES += $(distdir).tar.Z
 .PHONY: dist-tarZ
 dist-tarZ: distdir
@@ -381,6 +387,7 @@ dist-zip: distdir
 ?BZIP2?DIST_TARGETS += dist-bzip2
 ?GZIP?DIST_TARGETS += dist-gzip
 ?ZIP?DIST_TARGETS += dist-zip
+?ZSTD?DIST_TARGETS += dist-zstd
 ?COMPRESS?DIST_TARGETS += dist-tarZ
 
 endif %?TOPDIR_P%
@@ -438,6 +445,8 @@ distcheck: dist
 	  eval GZIP= gzip $(GZIP_ENV) -dc $(distdir).shar.gz | unshar ;;\
 	*.zip*) \
 	  unzip $(distdir).zip ;;\
+	*.tar.zst*) \
+	  zstd -dc $(distdir).tar.zst | $(am__untar) ;;\
 	esac
 ## Make the new source tree read-only.  Distributions ought to work in
 ## this case.  However, make the top-level directory writable so we

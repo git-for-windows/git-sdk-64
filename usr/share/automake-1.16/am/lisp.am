@@ -1,5 +1,5 @@
 ## automake - create Makefile.in from Makefile.am
-## Copyright (C) 1996-2018 Free Software Foundation, Inc.
+## Copyright (C) 1996-2020 Free Software Foundation, Inc.
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -41,10 +41,29 @@ endif %?INSTALL%
 	  $(EMACS) --batch \
 	    $(AM_ELCFLAGS) $(ELCFLAGS) \
 	    $$am__subdir_includes -L $(builddir) -L $(srcdir) \
-	    --eval '(setq byte-compile-dest-file-function (lambda (_) "$@"))' \
+	    --eval '$(am__emacs_byte_compile_setup)' \
 	    -f batch-byte-compile '$<'; \
 	else :; fi
 
+if %?FIRST%
+## In Automake 1.16, byte compilation was changed to use
+## byte-compile-dest-file-function, but that doesn't exist in Emacs
+## versions earlier than 25, which are still widespread (likely
+## permanently). There's no harm in supporting the older versions, which
+## require defining the byte-compile-file defun, so do so.
+## Otherwise, various of our lisp-related tests fail with the older
+## Emacsen, since they would try to byte-compile into a read-only srcdir.
+##
+## This is used, single-quoted, in the shell sequence above.
+## So use (quote) instead of another single quote in the Lisp.
+##
+am__emacs_byte_compile_setup = \
+  (if (boundp (quote byte-compile-dest-file-function)) \
+    (setq byte-compile-dest-file-function (lambda (_) "$@")) \
+    (defun byte-compile-dest-file (_) "$@") \
+  )
+## Just to be clear: that "$@" above is an Elisp string of the make target.
+endif %?FIRST%
 
 ## ------------ ##
 ## Installing.  ##

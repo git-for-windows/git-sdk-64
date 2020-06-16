@@ -1,12 +1,7 @@
 #!/usr/bin/perl -w
-# -*- perl -*-
+# automake - create Makefile.in from Makefile.am            -*- perl -*-
 # Generated from bin/automake.in; do not edit by hand.
-
-eval 'case $# in 0) exec /usr/bin/perl -S "$0";; *) exec /usr/bin/perl -S "$0" "$@";; esac'
-    if 0;
-
-# automake - create Makefile.in from Makefile.am
-# Copyright (C) 1994-2018 Free Software Foundation, Inc.
+# Copyright (C) 1994-2020 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -3088,8 +3083,10 @@ sub scan_texinfo_file
 
   if (! $outfile)
     {
-      err_am "'$filename' missing \@setfilename";
-      return;
+      # Replace a .texi extension with .info
+      $outfile = basename($filename);
+      $outfile =~ s/\.[^.]+$//;
+      $outfile .= '.info';
     }
 
   return ($outfile, $vfile);
@@ -3711,7 +3708,7 @@ sub handle_tags ()
 
     define_variable ('am__tagged_files',
                      '$(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)'
-                     . "@config", INTERNAL);
+                     . " @config", INTERNAL);
 
     if (rvar('am__tagged_files')->value_as_list_recursive
           || var ('ETAGS_ARGS') || var ('SUBDIRS'))
@@ -3809,7 +3806,7 @@ sub handle_dist ()
     {
       my $archive_defined = option 'no-dist-gzip' ? 0 : 1;
       $archive_defined ||=
-	grep { option "dist-$_" } qw(shar zip tarZ bzip2 lzip xz);
+	grep { option "dist-$_" } qw(shar zip tarZ bzip2 lzip xz zstd);
       error (option 'no-dist-gzip',
 	     "no-dist-gzip specified but no dist-* specified,\n"
 	     . "at least one archive format must be enabled")
@@ -6791,6 +6788,7 @@ sub preprocess_file
 		 'GZIP'        =>  ! option 'no-dist-gzip',
 		 'SHAR'        => !! option 'dist-shar',
 		 'ZIP'         => !! option 'dist-zip',
+		 'ZSTD'        => !! option 'dist-zstd',
 
 		 'INSTALL-INFO' =>  ! option 'no-installinfo',
 		 'INSTALL-MAN'  =>  ! option 'no-installman',
@@ -8121,7 +8119,7 @@ Library files:
 
     print '
 Report bugs to <bug-automake@gnu.org>.
-GNU Automake home page: <http://www.gnu.org/software/automake/>.
+GNU Automake home page: <https://www.gnu.org/software/automake/>.
 General help using GNU software: <https://www.gnu.org/gethelp/>.
 ';
 

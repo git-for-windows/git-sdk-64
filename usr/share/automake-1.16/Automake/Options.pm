@@ -1,4 +1,4 @@
-# Copyright (C) 2003-2018 Free Software Foundation, Inc.
+# Copyright (C) 2003-2020 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -277,6 +277,7 @@ sub _is_valid_easy_option ($)
     dist-lzip
     dist-xz
     dist-zip
+    dist-zstd
     info-in-builddir
     no-define
     no-dependencies
