@@ -3,7 +3,7 @@ name: ci-artifacts
 on:
   push:
     branches:
-      - master
+      - main
 
 env:
   LC_CTYPE: C.UTF-8
@@ -22,7 +22,7 @@ jobs:
         env:
           REF: ${{github.ref}}
       - name: clone build-extra
-        run: git clone --depth=1 --single-branch -b master https://github.com/git-for-windows/build-extra
+        run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
       - name: build git-sdk-64-${{matrix.artifact}}
         shell: bash
         run: |
@@ -52,7 +52,7 @@ jobs:
         env:
           REF: ${{github.ref}}
       - name: clone build-extra
-        run: git clone --depth=1 --single-branch -b master https://github.com/git-for-windows/build-extra
+        run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
       - name: build git-sdk-64-minimal-sdk
         shell: bash
         run: sh -x ./build-extra/please.sh create-sdk-artifact --sdk=git-sdk-64.git minimal-sdk
