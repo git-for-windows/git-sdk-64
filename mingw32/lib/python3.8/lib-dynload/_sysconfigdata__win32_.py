@@ -48,6 +48,7 @@ build_time_vars = {'ABIFLAGS': '',
                 "'--build=i686-w64-mingw32' '--enable-shared' "
                 "'--with-nt-threads' '--with-system-expat' '--with-system-ffi' "
                 "'--with-system-libmpdec' '--without-ensurepip' "
+                "'--enable-loadable-sqlite-extensions' "
                 "'--enable-optimizations' '--with-lto' 'OPT=' "
                 "'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' "
                 "'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv "

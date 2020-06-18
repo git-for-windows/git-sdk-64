@@ -48,6 +48,7 @@ build_time_vars = {'ABIFLAGS': '',
                 "'--build=x86_64-w64-mingw32' '--enable-shared' "
                 "'--with-nt-threads' '--with-system-expat' '--with-system-ffi' "
                 "'--with-system-libmpdec' '--without-ensurepip' "
+                "'--enable-loadable-sqlite-extensions' "
                 "'--enable-optimizations' '--with-lto' 'OPT=' "
                 "'build_alias=x86_64-w64-mingw32' "
                 "'host_alias=x86_64-w64-mingw32' 'CFLAGS=-march=x86-64 "

@@ -161,8 +161,8 @@ sdk () {
 			(cd "$src_dir/$2" &&
 			 test -d src/msys2-runtime ||
 			 sdk makepkg --nobuild) &&
-			src_dir="$src_dir/msys2-runtime/src/msys2-runtime" &&
-			src_cdup_dir="$src_dir" ||
+			src_cdup_dir="$src_dir/$2" &&
+			src_dir="$src_cdup_dir/src/msys2-runtime" ||
 			return 1
 			;;
 		git-extra|git-for-windows-keyring|mingw-w64-cv2pdb|\
@@ -232,14 +232,19 @@ sdk () {
 		'')
 			test -n "$(git -C "$src_cdup_dir" rev-parse HEAD 2>/dev/null)" ||
 			# Not checked out yet
-			git -C "$src_cdup_dir" pull origin master
+			git -C "$src_cdup_dir" pull origin main
 			;;
 		refs/heads/master)
+			git -C "$src_cdup_dir" branch -m main &&
+			sdk "$@"
+			return $?
+			;;
+		refs/heads/main)
 			if { git -C "$src_cdup_dir" diff-files --quiet &&
 				git -C "$src_cdup_dir" diff-index --quiet HEAD ||
 				test ! -s "$src_cdup_dir"/.git/index; }
 			then
-				git -C "$src_cdup_dir" pull origin master
+				git -C "$src_cdup_dir" pull origin main
 			fi
 			;;
 		esac &&
@@ -273,7 +278,8 @@ sdk () {
 		then
 			set -- "$1" "$(basename "$PWD")" &&
 			sdk init-lazy "$2" &&
-			test "a$PWD" = "a$src_dir" || {
+			test "a$PWD" = "a$src_dir" ||
+			test "a$PWD" = "a$src_cdup_dir" || {
 				sdk die "$PWD seems not to be a known project"
 				return $?
 			}
@@ -301,9 +307,11 @@ sdk () {
 
 			if test refs/heads/makepkg = \
 				"$(git symbolic-ref HEAD 2>/dev/null)" &&
-				{ git -C diff-files --quiet &&
-				  git -C diff-index --quiet HEAD ||
-				  test ! -s .git/index; }
+				{ git diff-files --quiet &&
+				  git diff-index --quiet HEAD ||
+				  test ! -s .git/index ||
+				  (uname_m="$(uname -m)" &&
+				    test ! -d "../build-$uname_m-pc-msys/$uname_m-pc-msys/winsup/cygwin"); }
 			then
 				# no local changes
 				cd "$src_cdup_dir" &&
