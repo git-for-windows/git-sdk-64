@@ -232,7 +232,7 @@ sdk () {
 		'')
 			test -n "$(git -C "$src_cdup_dir" rev-parse HEAD 2>/dev/null)" ||
 			# Not checked out yet
-			git -C "$src_cdup_dir" pull origin main
+			git -C "$src_cdup_dir" pull origin HEAD
 			;;
 		refs/heads/master)
 			git -C "$src_cdup_dir" branch -m main &&
@@ -240,11 +240,21 @@ sdk () {
 			return $?
 			;;
 		refs/heads/main)
+			case "$(git -C "$src_cdup_dir" rev-parse --symbolic-full-name main@{upstream} 2>/dev/null)" in
+			refs/remotes/origin/master)
+				git -C "$src_cdup_dir" fetch origin &&
+				git -C "$src_cdup_dir" branch --set-upstream-to=origin/main main;;
+			esac &&
+
+			case "$(git -C "$src_cdup_dir" symbolic-ref refs/remotes/origin/HEAD 2>/dev/null)" in
+			''|refs/heads/master) git -C "$src_cdup_dir" remote set-head -a origin;;
+			esac &&
+
 			if { git -C "$src_cdup_dir" diff-files --quiet &&
 				git -C "$src_cdup_dir" diff-index --quiet HEAD ||
 				test ! -s "$src_cdup_dir"/.git/index; }
 			then
-				git -C "$src_cdup_dir" pull origin main
+				git -C "$src_cdup_dir" pull origin HEAD
 			fi
 			;;
 		esac &&
