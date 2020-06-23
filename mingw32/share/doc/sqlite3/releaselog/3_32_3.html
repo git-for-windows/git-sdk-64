@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="../sqlite.css" rel="stylesheet">
+<title>SQLite Release 3.32.3 On 2020-06-18</title>
+<!-- path=../ -->
+</head>
+<body>
+<div class=nosearch>
+<a href="../index.html">
+<img class="logo" src="../images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="../index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='../about.html'>About</a>
+<li class='desktoponly'><a href="../docs.html">Documentation</a>
+<li class='desktoponly'><a href="../download.html">Download</a>
+<li class='wideonly'><a href='../copyright.html'>License</a>
+<li class='desktoponly'><a href="../support.html">Support</a>
+<li class='desktoponly'><a href="../prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='../about.html'>About</a>
+<li><a href='../docs.html'>Documentation</a>
+<li><a href='../download.html'>Download</a>
+<li><a href='../support.html'>Support</a>
+<li><a href='../prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="../search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<h2>SQLite Release 3.32.3 On 2020-06-18</h2><p><b>Changes in version 3.32.0 (2020-05-22):</b></p>
+<p><ol class='lessindent'>
+<li value='1'> Added support for <a href="../lang_analyze.html#approx">approximate ANALYZE</a> using the
+     <a href="../pragma.html#pragma_analysis_limit">PRAGMA analysis_limit</a> command.
+<li> Added the <a href="../bytecodevtab.html">bytecode virtual table</a>.
+<li> Add the <a href="../cksumvfs.html">checksum VFS shim</a> to the set of run-time loadable
+     extensions included in the source tree.
+<li> Added the <a href="../lang_corefunc.html#iif">iif() SQL function</a>.
+<li> INSERT and UPDATE statements now always apply <a href="../datatype3.html#affinity">column affinity</a>
+     before computing <a href="../lang_createtable.html#ckconst">CHECK constraints</a>.  This bug fix could, in
+     theory, cause problems for legacy databases with unorthodox
+     CHECK constraints the require the input type for an INSERT
+     is different from the declared column type. See ticket
+     <a href="https://sqlite.org/src/info/86ba67afafded936">86ba67afafded936</a>
+     for more information.
+<li> Added the <a href="../c3ref/create_filename.html">sqlite3_create_filename()</a>, <a href="../c3ref/create_filename.html">sqlite3_free_filename()</a>,
+     and <a href="../c3ref/database_file_object.html">sqlite3_database_file_object()</a>
+     interfaces to better support of <a href="../vfs.html#shim">VFS shim</a> implementations.
+<li> Increase the <a href="../limits.html#max_variable_number">default upper bound</a>
+     on the number of <a href="../lang_expr.html#varparam">parameters</a> from 999 to 32766.
+<li> Added code for the <a href="../uintcseq.html">UINT collating sequence</a> as an optional
+     <a href="../loadext.html">loadable extension</a>.
+<li> Enhancements to the <a href="../cli.html">CLI</a>:
+     <ol type="a">
+     <li> Add options to the <a href="../cli.html#csv">.import</a> command: --csv, --ascii, --skip
+     <li> The <a href="../cli.html#dump">.dump</a> command now accepts multiple LIKE-pattern arguments
+          and outputs the union of all matching tables.
+     <li> Add the .oom command in debugging builds
+     <li> Add the --bom option to the <a href="../cli.html#dotexcel">.excel</a>, <a href="../cli.html#dotoutput">.output</a>, and <a href="../cli.html#dotoutput">.once</a>
+          commands.
+     <li> Enhance the .filectrl command to support the --schema option.
+     <li> The <a href="../uintcseq.html">UINT collating sequence</a> extension is automatically loaded
+     </ol>
+<li> The <a href="../lang_expr.html#like">ESCAPE</a> clause of a <a href="../lang_expr.html#like">LIKE</a> operator now overrides wildcard
+     characters, so that the behavior matches what PostgreSQL does.
+</ol>
+<p><b>Additional changes in version 3.32.1 (2020-05-25):</b></p>
+<p><ol class='lessindent'>
+<li value='11'> Fix two long-standing bugs that allow malicious SQL statements
+     to crash the process that is running SQLite.  These bugs were announced
+     by a third-party approximately 24 hours after the 3.32.0 release but are
+     not specific to the 3.32.0 release.
+<li> Other minor compiler-warning fixes and whatnot.
+</ol>
+<p><b>Additional changes in version 3.32.2 (2020-06-04):</b></p>
+<p><ol class='lessindent'>
+<li value='13'> Fix a long-standing bug in the byte-code engine that can cause a
+     <a href="../lang_transaction.html">COMMIT</a> command report as success when in fact it failed
+     to commit.  Ticket
+     <a href="https://www.sqlite.org/src/info/810dc8038872e212">810dc8038872e212</a>
+</ol>
+<p><b>Additional changes in version 3.32.3:</b></p>
+<p><ol class='lessindent'>
+<li value='14'> Various minor bug fixes including fixes for tickets
+     <a href="https://www.sqlite.org/src/info/8f157e8010b22af0">8f157e8010b22af0</a>,
+     <a href="https://www.sqlite.org/src/info/9fb26d37cefaba40">9fb26d37cefaba40</a>,
+     <a href="https://www.sqlite.org/src/info/e367f31901ea8700">e367f31901ea8700</a>,
+     <a href="https://www.sqlite.org/src/info/b706351ce2ecf59a">b706351ce2ecf59a</a>,
+     <a href="https://www.sqlite.org/src/info/7c6d876f84e6e7e2">7c6d876f84e6e7e2</a>, and
+     <a href="https://www.sqlite.org/src/info/c8d3b9f0a750a529">c8d3b9f0a750a529</a>.
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: 2020-06-18 14:00:33 7ebdfa80be8e8e73324b8d66b3460222eb74c7e9dfd655b48d6ca7e1933cc8fd
+<li>SHA3-256 for sqlite3.c: b62b77ee1c561a69a71bb557694aaa5141f1714c1ff6cc1ba8aa8733c92d4f52
+
+</ol></p>
+
+      <p>A <a href="../changes.html">complete list of SQLite releases</a>
+      in a single page and a <a href="../chronology.html">chronology</a> are both also available.  
+      A detailed history of every
+      check-in is available at
+      <a href="http://www.sqlite.org/src/timeline">
+      SQLite version control site</a>.</p>
+    

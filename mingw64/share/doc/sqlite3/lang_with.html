@@ -377,7 +377,9 @@ is as follows:
 
 </p><blockquote><pre>
 WITH RECURSIVE
-  cnt(x) AS (VALUES(1) UNION ALL SELECT x+1 FROM cnt WHERE x<1000000) SELECT="1" x="1" FROM="1" cnt;="1" </pre="1"></1000000)></pre></blockquote>
+  cnt(x) AS (VALUES(1) UNION ALL SELECT x+1 FROM cnt WHERE x&lt;1000000)
+SELECT x FROM cnt;
+</pre></blockquote>
 
 <p>Consider how this query works.  The initial-select
 runs first and returns a single row
