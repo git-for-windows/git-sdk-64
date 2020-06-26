@@ -71,7 +71,8 @@ sdk () {
 		x86_64) bitness=" 64-bit";;
 		*) bitness=;;
 		esac &&
-		desktop_icon_path="$USERPROFILE/Desktop/Git SDK$bitness.lnk" &&
+		desktop_icon_path="$(reg query 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders' //v Desktop |
+			sed -ne 'y/\\/\//' -e 's/.*REG_SZ *//p')/Git SDK$bitness.lnk" &&
 		if test -n "$force" || test ! -f "$desktop_icon_path"
 		then
 			create-shortcut.exe --icon-file /msys2.ico --work-dir \
@@ -98,6 +99,7 @@ sdk () {
 			mingw-w64-cv2pdb \
 			mingw-w64-git \
 			mingw-w64-git-credential-manager \
+			mingw-w64-git-credential-manager-core \
 			mingw-w64-git-lfs \
 			mingw-w64-git-sizer \
 			mingw-w64-wintoast \
@@ -167,6 +169,7 @@ sdk () {
 			;;
 		git-extra|git-for-windows-keyring|mingw-w64-cv2pdb|\
 		mingw-w64-git-credential-manager|mingw-w64-git-lfs|\
+		mingw-w64-git-credential-manager-core|\
 		mingw-w64-git-sizer|mingw-w64-wintoast|installer)
 			sdk init-lazy build-extra &&
 			src_dir="$src_dir/$2" ||
