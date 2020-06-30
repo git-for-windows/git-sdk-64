@@ -3,7 +3,7 @@ package HTTP::Headers;
 use strict;
 use warnings;
 
-our $VERSION = '6.24';
+our $VERSION = '6.25';
 
 use Carp ();
 
@@ -475,7 +475,7 @@ HTTP::Headers - Class encapsulating HTTP Message headers
 
 =head1 VERSION
 
-version 6.24
+version 6.25
 
 =head1 SYNOPSIS
 

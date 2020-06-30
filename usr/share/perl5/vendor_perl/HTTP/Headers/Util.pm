@@ -3,7 +3,7 @@ package HTTP::Headers::Util;
 use strict;
 use warnings;
 
-our $VERSION = '6.24';
+our $VERSION = '6.25';
 
 use base 'Exporter';
 
@@ -103,7 +103,7 @@ HTTP::Headers::Util - Header value parsing utility functions
 
 =head1 VERSION
 
-version 6.24
+version 6.25
 
 =head1 SYNOPSIS
 
