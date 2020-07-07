@@ -76,9 +76,9 @@ sub header_files {
 #
 ## Package name      : perl5
 ## Source directory  : .
-## Configuration time: Mon Jul  6 15:25:56 GMT 2020
+## Configuration time: Tue Jul  7 11:21:13 GMT 2020
 ## Configured by     : VssAdministrator
-## Target system     : msys_nt-10.0-14393 fv-az352 3.1.5-340.x86_64 2020-06-08 23:21 utc x86_64 msys 
+## Target system     : msys_nt-10.0-14393 win-gbpnlbrcphj 3.1.5-340.x86_64 2020-06-08 23:21 utc x86_64 msys 
 #
 #: Configure command line arguments.
 #
@@ -236,7 +236,7 @@ ccsymbols=''
 ccversion=''
 cf_by='VssAdministrator'
 cf_email=''
-cf_time='Mon Jul  6 15:25:56 GMT 2020'
+cf_time='Tue Jul  7 11:21:13 GMT 2020'
 charbits='8'
 charsize='1'
 chgrp=''
@@ -258,7 +258,7 @@ config_arg17='-Dman3ext=3perl'
 config_arg18='-Darchname=-msys-threads'
 config_arg19='-Dmyarchname=-msys'
 config_arg2='-Dusethreads'
-config_arg20='-Dlibperl=msys-perl5_30.dll'
+config_arg20='-Dlibperl=msys-perl5_32.dll'
 config_arg21='-Dcc=gcc'
 config_arg22='-Dld=g++'
 config_arg23='-Accflags=-march=x86-64 -mtune=generic -O2 -pipe -fwrapv'
@@ -270,7 +270,7 @@ config_arg7='-Darchlib=/usr/lib/perl5/core_perl'
 config_arg8='-Dsitelib=/usr/share/perl5/site_perl'
 config_arg9='-Dsitearch=/usr/lib/perl5/site_perl'
 config_argc='23'
-config_args='-des -Dusethreads -Doptimize=-march=x86-64 -mtune=generic -O2 -pipe -Dprefix=/usr -Dvendorprefix=/usr -Dprivlib=/usr/share/perl5/core_perl -Darchlib=/usr/lib/perl5/core_perl -Dsitelib=/usr/share/perl5/site_perl -Dsitearch=/usr/lib/perl5/site_perl -Dvendorlib=/usr/share/perl5/vendor_perl -Dvendorarch=/usr/lib/perl5/vendor_perl -Dscriptdir=/usr/bin/core_perl -Dsitescript=/usr/bin/site_perl -Dvendorscript=/usr/bin/vendor_perl -Dinc_version_list=none -Dman1ext=1perl -Dman3ext=3perl -Darchname=-msys-threads -Dmyarchname=-msys -Dlibperl=msys-perl5_30.dll -Dcc=gcc -Dld=g++ -Accflags=-march=x86-64 -mtune=generic -O2 -pipe -fwrapv'
+config_args='-des -Dusethreads -Doptimize=-march=x86-64 -mtune=generic -O2 -pipe -Dprefix=/usr -Dvendorprefix=/usr -Dprivlib=/usr/share/perl5/core_perl -Darchlib=/usr/lib/perl5/core_perl -Dsitelib=/usr/share/perl5/site_perl -Dsitearch=/usr/lib/perl5/site_perl -Dvendorlib=/usr/share/perl5/vendor_perl -Dvendorarch=/usr/lib/perl5/vendor_perl -Dscriptdir=/usr/bin/core_perl -Dsitescript=/usr/bin/site_perl -Dvendorscript=/usr/bin/vendor_perl -Dinc_version_list=none -Dman1ext=1perl -Dman3ext=3perl -Darchname=-msys-threads -Dmyarchname=-msys -Dlibperl=msys-perl5_32.dll -Dcc=gcc -Dld=g++ -Accflags=-march=x86-64 -mtune=generic -O2 -pipe -fwrapv'
 contains='grep'
 cp='cp'
 cpio=''
@@ -1082,7 +1082,7 @@ ldlibpthname='PATH'
 less='less.exe'
 lib_ext='.a'
 libc='/usr/lib/libmsys-2.0.a'
-libperl='msys-perl5_30.dll'
+libperl='msys-perl5_32.dll'
 libpth='/usr/lib'
 libs='-lpthread -ldl -lcrypt'
 libsdirs=' /usr/lib'
@@ -1134,8 +1134,8 @@ multiarch='undef'
 mv=''
 myarchname='x86_64-msys'
 mydomain='.nonet'
-myhostname='fv-az352'
-myuname='msys_nt-10.0-14393 fv-az352 3.1.5-340.x86_64 2020-06-08 23:21 utc x86_64 msys '
+myhostname='win-gbpnlbrcphj'
+myuname='msys_nt-10.0-14393 win-gbpnlbrcphj 3.1.5-340.x86_64 2020-06-08 23:21 utc x86_64 msys '
 n='-n'
 need_va_copy='undef'
 netdb_hlen_type='int'
