@@ -4,7 +4,7 @@ use strict;
 our ( %released, %version, %families, %upstream, %bug_tracker, %deprecated, %delta );
 
 use version;
-our $VERSION = '5.20200314';
+our $VERSION = '5.20200620';
 
 sub PKG_PATTERN () { q#\A[a-zA-Z_][0-9a-zA-Z_]*(?:(::|')[0-9a-zA-Z_]+)*\z# }
 sub _looks_like_invocant ($) { local $@; !!eval { $_[0]->isa(__PACKAGE__) } }
@@ -360,7 +360,12 @@ sub changes_between {
     5.031007 => '2019-12-20',
     5.031008 => '2020-01-20',
     5.031009 => '2020-02-20',
-    5.030002 => '2020-03-07',
+    5.030002 => '2020-03-14',
+    5.031010 => '2020-03-20',
+    5.031011 => '2020-04-28',
+    5.028003 => '2020-06-01',
+    5.030003 => '2020-06-01',
+    5.032000 => '2020-06-20',
   );
 
 for my $version ( sort { $a <=> $b } keys %released ) {
@@ -17355,6 +17360,161 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         removed => {
         }
     },
+    5.031010 => {
+        delta_from => 5.031009,
+        changed => {
+            'B::Op_private'         => '5.031010',
+            'Config'                => '5.03101',
+        },
+        removed => {
+        }
+    },
+    5.031011 => {
+        delta_from => 5.031010,
+        changed => {
+            'B::Deparse'            => '1.53',
+            'B::Op_private'         => '5.031011',
+            'Config'                => '5.031011',
+            'DynaLoader'            => '1.47',
+            'Encode'                => '3.04',
+            'IPC::Open2'            => '1.05',
+            'IPC::Open3'            => '1.21',
+            'Module::CoreList'      => '5.20200428',
+            'Module::CoreList::Utils'=> '5.20200428',
+            'Opcode'                => '1.47',
+            'POSIX'                 => '1.93',
+            'PerlIO'                => '1.11',
+            'Storable'              => '3.20',
+            'Test2'                 => '1.302175',
+            'Test2::API'            => '1.302175',
+            'Test2::API::Breakage'  => '1.302175',
+            'Test2::API::Context'   => '1.302175',
+            'Test2::API::Instance'  => '1.302175',
+            'Test2::API::Stack'     => '1.302175',
+            'Test2::Event'          => '1.302175',
+            'Test2::Event::Bail'    => '1.302175',
+            'Test2::Event::Diag'    => '1.302175',
+            'Test2::Event::Encoding'=> '1.302175',
+            'Test2::Event::Exception'=> '1.302175',
+            'Test2::Event::Fail'    => '1.302175',
+            'Test2::Event::Generic' => '1.302175',
+            'Test2::Event::Note'    => '1.302175',
+            'Test2::Event::Ok'      => '1.302175',
+            'Test2::Event::Pass'    => '1.302175',
+            'Test2::Event::Plan'    => '1.302175',
+            'Test2::Event::Skip'    => '1.302175',
+            'Test2::Event::Subtest' => '1.302175',
+            'Test2::Event::TAP::Version'=> '1.302175',
+            'Test2::Event::V2'      => '1.302175',
+            'Test2::Event::Waiting' => '1.302175',
+            'Test2::EventFacet'     => '1.302175',
+            'Test2::EventFacet::About'=> '1.302175',
+            'Test2::EventFacet::Amnesty'=> '1.302175',
+            'Test2::EventFacet::Assert'=> '1.302175',
+            'Test2::EventFacet::Control'=> '1.302175',
+            'Test2::EventFacet::Error'=> '1.302175',
+            'Test2::EventFacet::Hub'=> '1.302175',
+            'Test2::EventFacet::Info'=> '1.302175',
+            'Test2::EventFacet::Info::Table'=> '1.302175',
+            'Test2::EventFacet::Meta'=> '1.302175',
+            'Test2::EventFacet::Parent'=> '1.302175',
+            'Test2::EventFacet::Plan'=> '1.302175',
+            'Test2::EventFacet::Render'=> '1.302175',
+            'Test2::EventFacet::Trace'=> '1.302175',
+            'Test2::Formatter'      => '1.302175',
+            'Test2::Formatter::TAP' => '1.302175',
+            'Test2::Hub'            => '1.302175',
+            'Test2::Hub::Interceptor'=> '1.302175',
+            'Test2::Hub::Interceptor::Terminator'=> '1.302175',
+            'Test2::Hub::Subtest'   => '1.302175',
+            'Test2::IPC'            => '1.302175',
+            'Test2::IPC::Driver'    => '1.302175',
+            'Test2::IPC::Driver::Files'=> '1.302175',
+            'Test2::Tools::Tiny'    => '1.302175',
+            'Test2::Util'           => '1.302175',
+            'Test2::Util::ExternalMeta'=> '1.302175',
+            'Test2::Util::Facets2Legacy'=> '1.302175',
+            'Test2::Util::HashBase' => '1.302175',
+            'Test2::Util::Trace'    => '1.302175',
+            'Test::Builder'         => '1.302175',
+            'Test::Builder::Formatter'=> '1.302175',
+            'Test::Builder::Module' => '1.302175',
+            'Test::Builder::Tester' => '1.302175',
+            'Test::Builder::Tester::Color'=> '1.302175',
+            'Test::Builder::TodoDiag'=> '1.302175',
+            'Test::More'            => '1.302175',
+            'Test::Simple'          => '1.302175',
+            'Test::Tester'          => '1.302175',
+            'Test::Tester::Capture' => '1.302175',
+            'Test::Tester::CaptureRunner'=> '1.302175',
+            'Test::Tester::Delegate'=> '1.302175',
+            'Test::use::ok'         => '1.302175',
+            'Time::Piece'           => '1.3401',
+            'Time::Seconds'         => '1.3401',
+            'Unicode::UCD'          => '0.75',
+            'XS::APItest'           => '1.09',
+            '_charnames'            => '1.47',
+            'charnames'             => '1.47',
+            'ok'                    => '1.302175',
+            'open'                  => '1.12',
+            're'                    => '0.39',
+            'warnings'              => '1.47',
+        },
+        removed => {
+        }
+    },
+    5.028003 => {
+        delta_from => 5.028002,
+        changed => {
+            'B::Op_private'         => '5.028003',
+            'Config'                => '5.028003',
+            'Module::CoreList'      => '5.20200601_28',
+            'Module::CoreList::Utils'=> '5.20200601_28',
+        },
+        removed => {
+        }
+    },
+    5.030003 => {
+        delta_from => 5.030002,
+        changed => {
+            'B::Op_private'         => '5.030003',
+            'Config'                => '5.030003',
+            'Module::CoreList'      => '5.20200601_30',
+            'Module::CoreList::Utils'=> '5.20200601_30',
+        },
+        removed => {
+        }
+    },
+    5.032000 => {
+        delta_from => 5.031011,
+        changed => {
+            'B::Deparse'            => '1.54',
+            'B::Op_private'         => '5.032000',
+            'Benchmark'             => '1.23',
+            'Config'                => '5.032',
+            'Encode'                => '3.06',
+            'Encode::Guess'         => '2.08',
+            'File::Glob'            => '1.33',
+            'List::Util'            => '1.55',
+            'List::Util::XS'        => '1.55',
+            'Module::CoreList'      => '5.20200620',
+            'Module::CoreList::Utils'=> '5.20200620',
+            'POSIX'                 => '1.94',
+            'Scalar::Util'          => '1.55',
+            'Storable'              => '3.21',
+            'Sub::Util'             => '1.55',
+            'Thread::Queue'         => '3.14',
+            'Tie::Scalar'           => '1.05',
+            '_charnames'            => '1.48',
+            'charnames'             => '1.48',
+            'encoding'              => '3.00',
+            'perlfaq'               => '5.20200523',
+            're'                    => '0.40',
+            'threads'               => '2.25',
+        },
+        removed => {
+        }
+    },
 );
 
 sub is_core
@@ -18441,6 +18601,41 @@ sub is_core
         removed => {
         }
     },
+    5.031010 => {
+        delta_from => 5.031009,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.031011 => {
+        delta_from => 5.03101,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.028003 => {
+        delta_from => 5.028002,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.030003 => {
+        delta_from => 5.030002,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.032000 => {
+        delta_from => 5.031011,
+        changed => {
+        },
+        removed => {
+        }
+    },
 );
 
 %deprecated = _undelta(\%deprecated);
@@ -18664,12 +18859,8 @@ sub is_core
     'PerlIO::via::QuotedPrint'=> 'cpan',
     'Pod::Checker'          => 'cpan',
     'Pod::Escapes'          => 'cpan',
-    'Pod::Find'             => 'cpan',
-    'Pod::InputObjects'     => 'cpan',
     'Pod::Man'              => 'cpan',
     'Pod::ParseLink'        => 'cpan',
-    'Pod::ParseUtils'       => 'cpan',
-    'Pod::Parser'           => 'cpan',
     'Pod::Perldoc'          => 'cpan',
     'Pod::Perldoc::BaseTo'  => 'cpan',
     'Pod::Perldoc::GetOptsOO'=> 'cpan',
@@ -18683,8 +18874,6 @@ sub is_core
     'Pod::Perldoc::ToText'  => 'cpan',
     'Pod::Perldoc::ToTk'    => 'cpan',
     'Pod::Perldoc::ToXml'   => 'cpan',
-    'Pod::PlainText'        => 'cpan',
-    'Pod::Select'           => 'cpan',
     'Pod::Simple'           => 'cpan',
     'Pod::Simple::BlackBox' => 'cpan',
     'Pod::Simple::Checker'  => 'cpan',
@@ -18694,6 +18883,7 @@ sub is_core
     'Pod::Simple::HTML'     => 'cpan',
     'Pod::Simple::HTMLBatch'=> 'cpan',
     'Pod::Simple::HTMLLegacy'=> 'cpan',
+    'Pod::Simple::JustPod'  => 'cpan',
     'Pod::Simple::LinkSection'=> 'cpan',
     'Pod::Simple::Methody'  => 'cpan',
     'Pod::Simple::Progress' => 'cpan',
@@ -19091,12 +19281,8 @@ sub is_core
     'PerlIO::via::QuotedPrint'=> undef,
     'Pod::Checker'          => undef,
     'Pod::Escapes'          => undef,
-    'Pod::Find'             => undef,
-    'Pod::InputObjects'     => undef,
     'Pod::Man'              => 'https://rt.cpan.org/Dist/Display.html?Name=podlators',
     'Pod::ParseLink'        => 'https://rt.cpan.org/Dist/Display.html?Name=podlators',
-    'Pod::ParseUtils'       => undef,
-    'Pod::Parser'           => undef,
     'Pod::Perldoc'          => undef,
     'Pod::Perldoc::BaseTo'  => undef,
     'Pod::Perldoc::GetOptsOO'=> undef,
@@ -19110,8 +19296,6 @@ sub is_core
     'Pod::Perldoc::ToText'  => undef,
     'Pod::Perldoc::ToTk'    => undef,
     'Pod::Perldoc::ToXml'   => undef,
-    'Pod::PlainText'        => undef,
-    'Pod::Select'           => undef,
     'Pod::Simple'           => 'https://github.com/perl-pod/pod-simple/issues',
     'Pod::Simple::BlackBox' => 'https://github.com/perl-pod/pod-simple/issues',
     'Pod::Simple::Checker'  => 'https://github.com/perl-pod/pod-simple/issues',
@@ -19121,6 +19305,7 @@ sub is_core
     'Pod::Simple::HTML'     => 'https://github.com/perl-pod/pod-simple/issues',
     'Pod::Simple::HTMLBatch'=> 'https://github.com/perl-pod/pod-simple/issues',
     'Pod::Simple::HTMLLegacy'=> 'https://github.com/perl-pod/pod-simple/issues',
+    'Pod::Simple::JustPod'  => 'https://github.com/perl-pod/pod-simple/issues',
     'Pod::Simple::LinkSection'=> 'https://github.com/perl-pod/pod-simple/issues',
     'Pod::Simple::Methody'  => 'https://github.com/perl-pod/pod-simple/issues',
     'Pod::Simple::Progress' => 'https://github.com/perl-pod/pod-simple/issues',

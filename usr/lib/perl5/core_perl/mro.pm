@@ -12,7 +12,7 @@ use warnings;
 
 # mro.pm versions < 1.00 reserved for MRO::Compat
 #  for partial back-compat to 5.[68].x
-our $VERSION = '1.22';
+our $VERSION = '1.23';
 
 require XSLoader;
 XSLoader::load('mro');
@@ -312,27 +312,11 @@ works (like C<goto &maybe::next::method>);
 
 =back
 
-=head2 Pugs
-
-The Pugs prototype Perl 6 Object Model uses C3
-
-=head2 Parrot
-
-Parrot now uses C3
+=head2 Python 2.3 MRO
 
 =over 4
 
-=item L<http://use.perl.org/~autrijus/journal/25768>
-
-=back
-
-=head2 Python 2.3 MRO related links
-
-=over 4
-
-=item L<http://www.python.org/2.3/mro.html>
-
-=item L<http://www.python.org/2.2.2/descrintro.html#mro>
+=item L<https://www.python.org/download/releases/2.3/mro/>
 
 =back
 

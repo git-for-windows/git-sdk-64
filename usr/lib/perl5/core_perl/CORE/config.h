@@ -9,9 +9,9 @@
 
 /* Package name      : perl5
  * Source directory  : .
- * Configuration time: Mon May  4 19:54:21 GMT 2020
+ * Configuration time: Mon Jul  6 15:25:56 GMT 2020
  * Configured by     : VssAdministrator
- * Target system     : msys_nt-10.0-14393 fv-az393 3.1.4-340.x86_64 2020-05-01 12:36 utc x86_64 msys 
+ * Target system     : msys_nt-10.0-14393 fv-az352 3.1.5-340.x86_64 2020-06-08 23:21 utc x86_64 msys 
  */
 
 #ifndef _config_h_
@@ -346,7 +346,7 @@
 
 /* HAS_REGCOMP:
  *	This symbol, if defined, indicates that the regcomp() routine is
- *	available to do some regular patern matching (usually on POSIX.2
+ *	available to do some regular pattern matching (usually on POSIX.2
  *	conforming systems).
  */
 #define HAS_REGCOMP		/* POSIX.2 */
@@ -1369,7 +1369,7 @@
  *	feature tests from Configure are generally more reliable.
  */
 #define OSNAME "msys"		/**/
-#define OSVERS "3.1.4-340.x86_64"		/**/
+#define OSVERS "3.1.5-340.x86_64"		/**/
 
 /* CAT2:
  *	This macro concatenates 2 tokens together.
@@ -1456,6 +1456,10 @@
 /* HASATTRIBUTE_WARN_UNUSED_RESULT:
  *	Can we handle GCC attribute for warning on unused results
  */
+/* HASATTRIBUTE_ALWAYS_INLINE:
+ *	Can we handle GCC attribute for functions that should always be
+ *	inlined.
+ */
 #define HASATTRIBUTE_DEPRECATED	/**/
 #define HASATTRIBUTE_FORMAT	/**/
 #define PRINTF_FORMAT_NULL_OK	/**/
@@ -1465,6 +1469,7 @@
 #define HASATTRIBUTE_PURE	/**/
 #define HASATTRIBUTE_UNUSED	/**/
 #define HASATTRIBUTE_WARN_UNUSED_RESULT	/**/
+#define HASATTRIBUTE_ALWAYS_INLINE	/**/
 
 /* HAS_BACKTRACE:
  *	This symbol, if defined, indicates that the backtrace() routine is
@@ -1904,6 +1909,10 @@
  *	This symbol, if defined, indicates the availability of
  *	struct sockaddr_in6;
  */
+/* HAS_SOCKADDR_STORAGE:
+ *	This symbol, if defined, indicates the availability of
+ *	struct sockaddr_storage;
+ */
 /* HAS_SIN6_SCOPE_ID:
  *	This symbol, if defined, indicates that the struct sockaddr_in6
  *	structure has a member called sin6_scope_id.
@@ -1928,6 +1937,7 @@
 #define	HAS_SOCKETPAIR	/**/
 /*#define	HAS_SOCKADDR_SA_LEN	/ **/
 #define	HAS_SOCKADDR_IN6	/**/
+#define	HAS_SOCKADDR_STORAGE	/**/
 #define	HAS_SIN6_SCOPE_ID	/**/
 #define	HAS_IP_MREQ	/**/
 #define	HAS_IP_MREQ_SOURCE	/**/
@@ -2815,7 +2825,7 @@
  *	This symbol, if defined, indicates that the isless routine is
  *	available to do the isless function.
  */
-/*#define HAS_ISLESS		/ **/
+#define HAS_ISLESS		/**/
 
 /* HAS_ISNAN:
  *	This symbol, if defined, indicates that the isnan routine is
@@ -4196,11 +4206,11 @@
 #define	USE_64_BIT_ALL		/**/
 #endif
 
-/* USE_CBACKTRACE:
+/* USE_C_BACKTRACE:
  *	This symbol, if defined, indicates that Perl should
  *	be built with support for backtrace.
  */
-/*#define USE_CBACKTRACE		/ **/
+/*#define USE_C_BACKTRACE		/ **/
 
 /* USE_DTRACE:
  *	This symbol, if defined, indicates that Perl should
@@ -5086,6 +5096,12 @@
  */
 #define HAS_TTYNAME_R	/**/
 #define TTYNAME_R_PROTO REENTRANT_PROTO_I_IBW	/**/
+
+/* HAS_WCRTOMB:
+ *	This symbol, if defined, indicates that the wcrtomb routine is
+ *	available to convert a wide character into a multi-byte character.
+ */
+#define HAS_WCRTOMB	/**/
 
 /* I_MACH_CTHREADS:
  *	This symbol, if defined, indicates to the C program that it should

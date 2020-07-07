@@ -6,7 +6,7 @@ use strict;
 
 our($VERSION, @ISA, @EXPORT_OK);
 
-$VERSION = "1.43";
+$VERSION = "1.47";
 
 use Carp;
 use Exporter ();
@@ -324,6 +324,7 @@ invert_opset function.
 
     lt i_lt gt i_gt le i_le ge i_ge eq i_eq ne i_ne ncmp i_ncmp
     slt sgt sle sge seq sne scmp
+    isa
 
     substr vec stringify study pos length index rindex ord chr
 
@@ -343,6 +344,8 @@ invert_opset function.
     entersub leavesub leavesublv return method method_named
     method_super method_redir method_redir_super
      -- XXX loops via recursion?
+
+    cmpchain_and cmpchain_dup
 
     leaveeval -- needed for Safe to operate, is safe
 		 without entereval
@@ -493,7 +496,7 @@ A handy tag name for a I<reasonable> default set of ops beyond the
 :default optag.  Like :default (and indeed all the other optags) its
 current definition is unstable while development continues. It will change.
 
-The :browse tag represents the next step beyond :default. It it a
+The :browse tag represents the next step beyond :default. It is a
 superset of the :default ops and adds :filesys_read the :sys_db.
 The intent being that scripts can access more (possibly sensitive)
 information about your system but not be able to change it.
