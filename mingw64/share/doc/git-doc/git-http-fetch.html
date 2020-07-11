@@ -449,7 +449,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git http-fetch</em> [-c] [-t] [-a] [-d] [-v] [-w filename] [--recover] [--stdin] &lt;commit&gt; &lt;url&gt;</pre>
+<pre class="content"><em>git http-fetch</em> [-c] [-t] [-a] [-d] [-v] [-w filename] [--recover] [--stdin | --packfile=&lt;hash&gt; | &lt;commit&gt;] &lt;url&gt;</pre>
 </div>
 </div>
 </div>
@@ -499,6 +499,14 @@ case), <em>git http-fetch</em> expects lines on stdin in the format</p>
 </div>
 </div>
 </dd>
+<dt class="hdlist1">--packfile=&lt;hash&gt;</dt>
+<dd>
+<p>Instead of a commit id on the command line (which is not expected in
+this case), <em>git http-fetch</em> fetches the packfile directly at the given
+URL and uses index-pack to generate corresponding .idx and .keep files.
+The hash is used to determine the name of the temporary file and is
+arbitrary. The output of index-pack is printed to stdout.</p>
+</dd>
 <dt class="hdlist1">--recover</dt>
 <dd>
 <p>Verify that everything reachable from target is fetched.  Used after
@@ -519,7 +527,7 @@ an earlier fetch is interrupted.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-06-01 18:38:25 UTC
+Last updated 2020-07-10 13:04:31 UTC
 </div>
 </div>
 </body>

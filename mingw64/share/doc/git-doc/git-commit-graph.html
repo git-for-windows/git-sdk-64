@@ -503,8 +503,10 @@ with <code>--stdin-commits</code> or <code>--reachable</code>.)</p>
 <div class="paragraph">
 <p>With the <code>--stdin-commits</code> option, generate the new commit graph by
 walking commits starting at the commits specified in stdin as a list
-of OIDs in hex, one OID per line. (Cannot be combined with
-<code>--stdin-packs</code> or <code>--reachable</code>.)</p>
+of OIDs in hex, one OID per line. OIDs that resolve to non-commits
+(either directly, or by peeling tags) are silently ignored. OIDs that
+are malformed, or do not exist generate an error. (Cannot be combined
+with <code>--stdin-packs</code> or <code>--reachable</code>.)</p>
 </div>
 <div class="paragraph">
 <p>With the <code>--reachable</code> option, generate the new commit graph by walking
@@ -626,7 +628,7 @@ commit-graph file along with those reachable from <code>HEAD</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-06-01 18:38:25 UTC
+Last updated 2020-07-10 13:04:31 UTC
 </div>
 </div>
 </body>

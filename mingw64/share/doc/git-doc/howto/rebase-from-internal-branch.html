@@ -449,8 +449,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 &gt; where Junio C Hamano &lt;junkio@cox.net&gt; told me that...
 &gt;&gt; Linus Torvalds &lt;torvalds@osdl.org&gt; writes:
 &gt;&gt;
-&gt;&gt; &gt; Junio, maybe you want to talk about how you move patches from your "pu"
-&gt;&gt; &gt; branch to the real branches.
+&gt;&gt; &gt; Junio, maybe you want to talk about how you move patches from your
+&gt;&gt; &gt; "seen" branch to the real branches.
 &gt;&gt;
 &gt; Actually, wouldn't this be also precisely for what StGIT is intended to?</pre>
 </div>
@@ -465,14 +465,14 @@ the kind of task StGIT is designed to do.</p>
 Git tools.</p>
 </div>
 <div class="paragraph">
-<p>I had a handful of commits that were ahead of master in pu, and I
+<p>I had a handful of commits that were ahead of master in <em>seen</em>, and I
 wanted to add some documentation bypassing my usual habit of
-placing new things in pu first.  At the beginning, the commit
+placing new things in <em>seen</em> first.  At the beginning, the commit
 ancestry graph looked like this:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>                         *"pu" head
+<pre>    *"seen" head
 master --&gt; #1 --&gt; #2 --&gt; #3</pre>
 </div>
 </div>
@@ -492,7 +492,7 @@ $ git commit -s</pre>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>                          *"pu" head
+<pre>     *"seen" head
 master^ --&gt; #1 --&gt; #2 --&gt; #3
       \
         \---&gt; master</pre>
@@ -503,39 +503,39 @@ master^ --&gt; #1 --&gt; #2 --&gt; #3
 The new master commit holds my documentation updates.</p>
 </div>
 <div class="paragraph">
-<p>Now I have to deal with "pu" branch.</p>
+<p>Now I have to deal with "seen" branch.</p>
 </div>
 <div class="paragraph">
 <p>This is the kind of situation I used to have all the time when
 Linus was the maintainer and I was a contributor, when you look
-at "master" branch being the "maintainer" branch, and "pu"
+at "master" branch being the "maintainer" branch, and "seen"
 branch being the "contributor" branch.  Your work started at the
 tip of the "maintainer" branch some time ago, you made a lot of
 progress in the meantime, and now the maintainer branch has some
 other commits you do not have yet.  And "git rebase" was written
 with the explicit purpose of helping to maintain branches like
-"pu".  You <em>could</em> merge master to pu and keep going, but if you
+"seen".  You <em>could</em> merge master to <em>seen</em> and keep going, but if you
 eventually want to cherrypick and merge some but not necessarily
 all changes back to the master branch, it often makes later
 operations for <em>you</em> easier if you rebase (i.e. carry forward
-your changes) "pu" rather than merge.  So I ran "git rebase":</p>
+your changes) "seen" rather than merge.  So I ran "git rebase":</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ git checkout pu
-$ git rebase master pu</pre>
+<pre>$ git checkout seen
+$ git rebase master seen</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>What this does is to pick all the commits since the current
-branch (note that I now am on "pu" branch) forked from the
+branch (note that I now am on "seen" branch) forked from the
 master branch, and forward port these changes.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>master^ --&gt; #1 --&gt; #2 --&gt; #3
-      \                                  *"pu" head
-        \---&gt; master --&gt; #1' --&gt; #2' --&gt; #3'</pre>
+<pre> master^ --&gt; #1 --&gt; #2 --&gt; #3
+\                                  *"seen" head
+         \---&gt; master --&gt; #1' --&gt; #2' --&gt; #3'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -547,7 +547,7 @@ commits are made similarly out of #2 and #3 commits.</p>
 <div class="paragraph">
 <p>Old #3 is not recorded in any of the .git/refs/heads/ file
 anymore, so after doing this you will have dangling commit if
-you ran fsck-cache, which is normal.  After testing "pu", you
+you ran fsck-cache, which is normal.  After testing "seen", you
 can run "git prune" to get rid of those original three commits.</p>
 </div>
 <div class="paragraph">
@@ -651,7 +651,7 @@ the #1' commit.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-06-01 18:38:25 UTC
+Last updated 2020-07-10 13:04:31 UTC
 </div>
 </div>
 </body>

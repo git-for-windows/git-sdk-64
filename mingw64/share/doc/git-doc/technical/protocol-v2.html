@@ -502,6 +502,10 @@ commands be executed.</p>
 <li>
 <p><em>0001</em> Delimiter Packet (delim-pkt) - separates sections of a message</p>
 </li>
+<li>
+<p><em>0002</em> Message Packet (response-end-pkt) - indicates the end of a response
+for stateless connections</p>
+</li>
 </ul>
 </div>
 </div>
@@ -900,15 +904,32 @@ indicating its sideband (1, 2, or 3), and the server may send "0005\2"
 </div>
 </div>
 <div class="paragraph">
-<p>The response of <code>fetch</code> is broken into a number of sections separated by
-delimiter packets (0001), with each section beginning with its section
-header.</p>
+<p>If the <em>packfile-uris</em> feature is advertised, the following argument
+can be included in the client&#8217;s request as well as the potential
+addition of the <em>packfile-uris</em> section in the server&#8217;s response as
+explained below.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>output = *section
-section = (acknowledgments | shallow-info | wanted-refs | packfile)
-   (flush-pkt | delim-pkt)</pre>
+<pre>   packfile-uris &lt;comma-separated list of protocols&gt;
+Indicates to the server that the client is willing to receive
+URIs of any of the given protocols in place of objects in the
+sent packfile. Before performing the connectivity check, the
+client should download from all given URIs. Currently, the
+protocols supported are "http" and "https".</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The response of <code>fetch</code> is broken into a number of sections separated by
+delimiter packets (0001), with each section beginning with its section
+header. Most sections are sent only when the packfile is sent.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>output = acknowledgements flush-pkt |
+  [acknowledgments delim-pkt] [shallow-info delim-pkt]
+  [wanted-refs delim-pkt] [packfile-uris delim-pkt]
+  packfile flush-pkt</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -938,6 +959,12 @@ wanted-ref = obj-id SP refname</pre>
 </div>
 <div class="literalblock">
 <div class="content">
+<pre>packfile-uris = PKT-LINE("packfile-uris" LF) *packfile-uri
+packfile-uri = PKT-LINE(40*(HEXDIGIT) SP *%x20-ff LF)</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
 <pre>packfile = PKT-LINE("packfile" LF)
     *PKT-LINE(%x01-03 *%x00-ff)</pre>
 </div>
@@ -945,9 +972,10 @@ wanted-ref = obj-id SP refname</pre>
 <div class="literalblock">
 <div class="content">
 <pre>   acknowledgments section
-* If the client determines that it is finished with negotiations
-  by sending a "done" line, the acknowledgments sections MUST be
-  omitted from the server's response.</pre>
+* If the client determines that it is finished with negotiations by
+  sending a "done" line (thus requiring the server to send a packfile),
+  the acknowledgments sections MUST be omitted from the server's
+  response.</pre>
 </div>
 </div>
 <div class="ulist">
@@ -1014,10 +1042,6 @@ sent in the following packfile).</p>
 <p>The server MUST NOT send any "unshallow" lines for anything
 which the client has not indicated was shallow as a part of
 its request.</p>
-</li>
-<li>
-<p>This section is only included if a packfile section is also
-included in the response.</p>
 <div class="literalblock">
 <div class="content">
 <pre>   wanted-refs section
@@ -1037,6 +1061,26 @@ each reference requested using <em>want-ref</em> lines.</p>
 <li>
 <p>The server MUST NOT send any refs which were not requested
 using <em>want-ref</em> lines.</p>
+<div class="literalblock">
+<div class="content">
+<pre>   packfile-uris section
+* This section is only included if the client sent
+  'packfile-uris' and the server has at least one such URI to
+  send.</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Always begins with the section header "packfile-uris".</p>
+</li>
+<li>
+<p>For each URI the server sends, it sends a hash of the pack&#8217;s
+contents (as output by git index-pack) followed by the URI.</p>
+</li>
+<li>
+<p>The hashes are 40 hex characters long. When Git upgrades to a new
+hash algorithm, this might need to be updated. (It should match
+whatever index-pack outputs after "pack\t" or "keep\t".</p>
 <div class="literalblock">
 <div class="content">
 <pre>   packfile section
@@ -1086,12 +1130,22 @@ a request.</p>
 <p>The provided options must not contain a NUL or LF character.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_object_format"> object-format</h3>
+<div class="paragraph">
+<p>The server can advertise the <code>object-format</code> capability with a value <code>X</code> (in the
+form <code>object-format=X</code>) to notify the client that the server is able to deal
+with objects using hash algorithm X.  If not specified, the server is assumed to
+only handle SHA-1.  If the client would like to use a hash algorithm other than
+SHA-1, it should specify its object-format string.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-06-01 18:38:25 UTC
+Last updated 2020-07-10 13:04:31 UTC
 </div>
 </div>
 </body>

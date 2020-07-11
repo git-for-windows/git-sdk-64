@@ -815,8 +815,16 @@ case a reasonable offset from UTC could be assumed.</p>
 </div>
 <div class="paragraph">
 <p>Unlike the <code>rfc2822</code> format, this format is very strict.  Any
-variation in formatting will cause fast-import to reject the value.</p>
+variation in formatting will cause fast-import to reject the value,
+and some sanity checks on the numeric values may also be performed.</p>
 </div>
+</dd>
+<dt class="hdlist1"><code>raw-permissive</code></dt>
+<dd>
+<p>This is the same as <code>raw</code> except that no sanity checks on
+the numeric epoch and local offset are performed.  This can
+be useful when trying to filter or import an existing history
+with e.g. bogus timezone values.</p>
 </dd>
 <dt class="hdlist1"><code>rfc2822</code></dt>
 <dd>
@@ -2500,7 +2508,7 @@ compression.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-06-01 18:38:25 UTC
+Last updated 2020-07-10 13:04:31 UTC
 </div>
 </div>
 </body>

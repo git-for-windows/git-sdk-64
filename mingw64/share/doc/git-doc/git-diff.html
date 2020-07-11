@@ -451,7 +451,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="verseblock">
 <pre class="content"><em>git diff</em> [&lt;options&gt;] [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]
 <em>git diff</em> [&lt;options&gt;] --cached [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]
-<em>git diff</em> [&lt;options&gt;] &lt;commit&gt; &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]
+<em>git diff</em> [&lt;options&gt;] &lt;commit&gt; [&lt;commit&gt;&#8230;&#8203;] &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]
+<em>git diff</em> [&lt;options&gt;] &lt;commit&gt;&#8230;&#8203;&lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]
 <em>git diff</em> [&lt;options&gt;] &lt;blob&gt; &lt;blob&gt;
 <em>git diff</em> [&lt;options&gt;] --no-index [--] &lt;path&gt; &lt;path&gt;</pre>
 </div>
@@ -462,8 +463,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="paragraph">
 <p>Show changes between the working tree and the index or a tree, changes
-between the index and a tree, changes between two trees, changes between
-two blob objects, or changes between two files on disk.</p>
+between the index and a tree, changes between two trees, changes resulting
+from a merge, changes between two blob objects, or changes between two
+files on disk.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -512,6 +514,15 @@ branch.</p>
 <p>This is synonymous to the previous form.  If &lt;commit&gt; on
 one side is omitted, it will have the same effect as
 using HEAD instead.</p>
+</dd>
+<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;commit&gt; [&lt;commit&gt;&#8230;&#8203;] &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dd>
+<p>This form is to view the results of a merge commit.  The first
+listed &lt;commit&gt; must be the merge itself; the remaining two or
+more commits should be its parents.  A convenient way to produce
+the desired set of revisions is to use the ^@ suffix.
+For instance, if <code>master</code> names a merge commit, <code>git diff master
+master^@</code> gives the same combined diff as <code>git show master</code>.</p>
 </dd>
 <dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;commit&gt;...&lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
@@ -1288,13 +1299,16 @@ matches "<code>fooasdfbar</code>" and "<code>foo/bar/baz/asdf</code>" but not "<
 on-disk file to tree contents.</p>
 </dd>
 <dt class="hdlist1">--relative[=&lt;path&gt;]</dt>
+<dt class="hdlist1">--no-relative</dt>
 <dd>
 <p>When run from a subdirectory of the project, it can be
 told to exclude changes outside the directory and show
 pathnames relative to it with this option.  When you are
 not in a subdirectory (e.g. in a bare repository), you
 can name which subdirectory to make the output relative
-to by giving a &lt;path&gt; as an argument.</p>
+to by giving a &lt;path&gt; as an argument.
+<code>--no-relative</code> can be used to countermand both <code>diff.relative</code> config
+option and previous <code>--relative</code>.</p>
 </dd>
 <dt class="hdlist1">-a</dt>
 <dt class="hdlist1">--text</dt>
@@ -2177,7 +2191,8 @@ rewrites (very expensive).</p>
 <a href="git-log.html">git-log(1)</a>,
 <a href="gitdiffcore.html">gitdiffcore(7)</a>,
 <a href="git-format-patch.html">git-format-patch(1)</a>,
-<a href="git-apply.html">git-apply(1)</a></p>
+<a href="git-apply.html">git-apply(1)</a>,
+<a href="git-show.html">git-show(1)</a></p>
 </div>
 </div>
 </div>
@@ -2192,7 +2207,7 @@ rewrites (very expensive).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-06-01 18:38:25 UTC
+Last updated 2020-07-10 13:04:31 UTC
 </div>
 </div>
 </body>

@@ -526,7 +526,7 @@ demonstrated to be regression free.  New changes are tested
 in <em>next</em> before merged to <em>master</em>.</p>
 </li>
 <li>
-<p><em>pu</em> branch is used to publish other proposed changes that do
+<p><em>seen</em> branch is used to publish other proposed changes that do
 not yet pass the criteria set for <em>next</em>.</p>
 </li>
 <li>
@@ -538,7 +538,7 @@ of the cycle.</p>
 </li>
 <li>
 <p>Usually <em>master</em> contains all of <em>maint</em> and <em>next</em> contains all
-of <em>master</em>.  <em>pu</em> contains all the topics merged to <em>next</em>, but
+of <em>master</em>.  <em>seen</em> contains all the topics merged to <em>next</em>, but
 is rebuilt directly on <em>master</em>.</p>
 </li>
 <li>
@@ -772,16 +772,16 @@ series?)</p>
 </li>
 <li>
 <p>Prepare <em>jch</em> branch, which is used to represent somewhere
-between <em>master</em> and <em>pu</em> and often is slightly ahead of <em>next</em>.</p>
+between <em>master</em> and <em>seen</em> and often is slightly ahead of <em>next</em>.</p>
 <div class="literalblock">
 <div class="content">
-<pre>$ Meta/Reintegrate master..pu &gt;Meta/redo-jch.sh</pre>
+<pre>$ Meta/Reintegrate master..seen &gt;Meta/redo-jch.sh</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
 <pre>The result is a script that lists topics to be merged in order to
-rebuild 'pu' as the input to Meta/Reintegrate script.  Remove
+rebuild 'seen' as the input to Meta/Reintegrate script.  Remove
 later topics that should not be in 'jch' yet.  Add a line that
 consists of '### match next' before the name of the first topic
 in the output that should be in 'jch' but not in 'next' yet.</pre>
@@ -880,32 +880,32 @@ add it again to the appropriate place when it happens.</pre>
 </div>
 </li>
 <li>
-<p>Rebuild <em>pu</em>.</p>
+<p>Rebuild <em>seen</em>.</p>
 <div class="literalblock">
 <div class="content">
-<pre>$ Meta/Reintegrate master..pu &gt;Meta/redo-pu.sh</pre>
+<pre>$ Meta/Reintegrate master..seen &gt;Meta/redo-seen.sh</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>Edit the result by adding new topics that are not still in 'pu'
+<pre>Edit the result by adding new topics that are not still in 'seen'
 in the script.  Then</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ git checkout -B pu jch
-$ sh Meta/redo-pu.sh</pre>
+<pre>$ git checkout -B seen jch
+$ sh Meta/redo-seen.sh</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>When all is well, clean up the redo-pu.sh script with</pre>
+<pre>When all is well, clean up the redo-seen.sh script with</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ sh Meta/redo-pu.sh -u</pre>
+<pre>$ sh Meta/redo-seen.sh -u</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -915,7 +915,7 @@ $ sh Meta/redo-pu.sh</pre>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ git branch --no-merged pu</pre>
+<pre>$ git branch --no-merged seen</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -927,7 +927,7 @@ $ sh Meta/redo-pu.sh</pre>
 <div class="content">
 <pre>At this point, build-test the result for semantic conflicts, and
 if there are, prepare an appropriate merge-fix first (see
-appendix), and rebuild the 'pu' branch from scratch, starting at
+appendix), and rebuild the 'seen' branch from scratch, starting at
 the tip of 'jch'.</pre>
 </div>
 </div>
@@ -947,14 +947,14 @@ existing topics, newly added topics and graduated topics.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>This script inspects the history between master..pu, finds tips
+<pre>This script inspects the history between master..seen, finds tips
 of topic branches, compares what it found with the current
 contents in Meta/whats-cooking.txt, and updates that file.
-Topics not listed in the file but are found in master..pu are
+Topics not listed in the file but are found in master..seen are
 added to the "New topics" section, topics listed in the file that
-are no longer found in master..pu are moved to the "Graduated to
+are no longer found in master..seen are moved to the "Graduated to
 master" section, and topics whose commits changed their states
-(e.g. used to be only in 'pu', now merged to 'next') are updated
+(e.g. used to be only in 'seen', now merged to 'next') are updated
 with change markers "&lt;&lt;" and "&gt;&gt;".</pre>
 </div>
 </div>
@@ -1006,7 +1006,7 @@ script may aid this step.</p>
 <ul>
 <li>
 <p>Each topic is tested individually, and also together with other
-topics cooking first in <em>pu</em>, then in <em>jch</em> and then in <em>next</em>.
+topics cooking first in <em>seen</em>, then in <em>jch</em> and then in <em>next</em>.
 Until it matures, no part of it is merged to <em>master</em>.</p>
 </li>
 <li>
@@ -1068,7 +1068,7 @@ are merged together, the reference to the variable newly added by
 the latter topic will still use the old name in the result.</p>
 </div>
 <div class="paragraph">
-<p>The Meta/Reintegrate script that is used by redo-jch and redo-pu
+<p>The Meta/Reintegrate script that is used by redo-jch and redo-seen
 scripts implements a crude but usable way to work this issue around.
 When the script merges branch $X, it checks if "refs/merge-fix/$X"
 exists, and if so, the effect of it is squashed into the result of
@@ -1097,16 +1097,16 @@ correct semantic conflicts.</p>
 </div>
 <div class="paragraph">
 <p>After finding that the result of merging branch "ai/topic" to an
-integration branch had such a semantic conflict, say pu~4, check the
+integration branch had such a semantic conflict, say seen~4, check the
 problematic merge out on a detached HEAD, edit the working tree to
 fix the semantic conflict, and make a separate commit to record the
 fix-up:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ git checkout pu~4
+<pre>$ git checkout seen~4
 $ git show -s --pretty=%s ;# double check
-Merge branch 'ai/topic' to pu
+Merge branch 'ai/topic' to seen
 $ edit
 $ git commit -m 'merge-fix/ai/topic' -a</pre>
 </div>
@@ -1126,9 +1126,9 @@ merge:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ git checkout pu~5 ;# the parent of the problem merge
+<pre>$ git checkout seen~5 ;# the parent of the problem merge
 $ echo ai/topic | Meta/Reintegrate
-$ git diff pu~4</pre>
+$ git diff seen~4</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1143,7 +1143,7 @@ branch needs this merge-fix is because another branch merged earlier
 to the integration branch changed the underlying assumption ai/topic
 branch made (e.g. ai/topic branch added a site to refer to a
 variable, while the other branch renamed that variable and adjusted
-existing use sites), and if you changed redo-jch (or redo-pu) script
+existing use sites), and if you changed redo-jch (or redo-seen) script
 to merge ai/topic branch before the other branch, then the above
 merge-fix should not be applied while merging ai/topic, but should
 instead be applied while merging the other branch.  You would need
@@ -1162,7 +1162,7 @@ $ git update-ref -d $mf/ai/topic</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-06-01 18:38:25 UTC
+Last updated 2020-07-10 13:04:31 UTC
 </div>
 </div>
 </body>

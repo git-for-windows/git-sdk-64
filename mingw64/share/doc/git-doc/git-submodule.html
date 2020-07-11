@@ -678,7 +678,7 @@ registered submodules, and update any nested submodules within.</p>
 <p>Sets the default remote tracking branch for the submodule. The
 <code>--branch</code> option allows the remote branch to be specified. The
 <code>--default</code> option removes the submodule.&lt;name&gt;.branch configuration
-key, which causes the tracking branch to default to <em>master</em>.</p>
+key, which causes the tracking branch to default to the remote <em>HEAD</em>.</p>
 </dd>
 <dt class="hdlist1">set-url [--] &lt;path&gt; &lt;newurl&gt;</dt>
 <dd>
@@ -802,7 +802,7 @@ The name of the branch is recorded as <code>submodule.&lt;name&gt;.branch</code>
 <code>.gitmodules</code> for <code>update --remote</code>.  A special value of <code>.</code> is used to
 indicate that the name of the branch in the submodule should be the
 same name as the current branch in the current repository.  If the
-option is not specified, it defaults to <em>master</em>.</p>
+option is not specified, it defaults to the remote <em>HEAD</em>.</p>
 </dd>
 <dt class="hdlist1">-f</dt>
 <dt class="hdlist1">--force</dt>
@@ -845,10 +845,10 @@ size is always limited to 1 for added/deleted/typechanged submodules.</p>
 the superproject&#8217;s recorded SHA-1 to update the submodule, use the
 status of the submodule&#8217;s remote-tracking branch.  The remote used
 is branch&#8217;s remote (<code>branch.&lt;name&gt;.remote</code>), defaulting to <code>origin</code>.
-The remote branch used defaults to <code>master</code>, but the branch name may
-be overridden by setting the <code>submodule.&lt;name&gt;.branch</code> option in
-either <code>.gitmodules</code> or <code>.git/config</code> (with <code>.git/config</code> taking
-precedence).</p>
+The remote branch used defaults to the remote <code>HEAD</code>, but the branch
+name may be overridden by setting the <code>submodule.&lt;name&gt;.branch</code>
+option in either <code>.gitmodules</code> or <code>.git/config</code> (with <code>.git/config</code>
+taking precedence).</p>
 <div class="paragraph">
 <p>This works for any of the supported update procedures (<code>--checkout</code>,
 <code>--rebase</code>, etc.).  The only change is the source of the target SHA-1.
@@ -1016,7 +1016,7 @@ for details.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-06-01 18:38:25 UTC
+Last updated 2020-07-10 13:04:31 UTC
 </div>
 </div>
 </body>
