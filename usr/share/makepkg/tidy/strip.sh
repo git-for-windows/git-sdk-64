@@ -2,7 +2,7 @@
 #
 #   strip.sh - Strip debugging symbols from binary files
 #
-#   Copyright (c) 2007-2019 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2007-2020 Pacman Development Team <pacman-dev@archlinux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -47,11 +47,14 @@ strip_file() {
 			fi
 
 			# copy source files to debug directory
-			local f t
+			local file dest t
 			while IFS= read -r t; do
-				f=${t/${dbgsrcdir}/"$srcdir"}
-				mkdir -p "${dbgsrc/"$dbgsrcdir"/}${t%/*}"
-				cp -- "$f" "${dbgsrc/"$dbgsrcdir"/}$t"
+				file=${t/${dbgsrcdir}/"$srcdir"}
+				dest="${dbgsrc/"$dbgsrcdir"/}$t"
+				if ! [[ -f $dest ]]; then
+					mkdir -p "${dest%/*}"
+					cp -- "$file" "$dest"
+				fi
 			done < <(source_files "$binary")
 
 			# copy debug symbols to debug directory
@@ -176,7 +179,7 @@ tidy_strip() {
 			esac
 			chmod 0755 "${binary}";
 
-			case "$(file -bi "$binary")" in
+			case "$(file -S -bi "$binary")" in
 				*application/x-dosexec*) # Windows executables and dlls
 					strip_flags="$STRIP_SHARED";;
 				*application/x-sharedlib*)  # Libraries (.so)

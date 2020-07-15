@@ -42,15 +42,20 @@ AUTHOR
     Written by Stuart Rackham, <srackham@gmail.com>
 
 URLS
-    http://sourceforge.net/projects/asciidoc/
-    http://asciidoc.org/
+    https://github.com/asciidoc/asciidoc-py3
+    https://asciidoc.org/
 
 COPYING
-    Copyright (C) 2002-2006 Stuart Rackham. Free use of this software is
-    granted under the terms of the GNU General Public License (GPL).
+    Copyright (C) 2002-2013 Stuart Rackham.
+    Copyright (C) 2013-2020 AsciiDoc Contributors.
+
+    Free use of this software is granted under the terms of the GNU General
+    Public License version 2 (GPLv2).
 '''
 
-import os, sys, re
+import os
+import sys
+import re
 
 VERSION = '1.1.2'
 
@@ -60,52 +65,58 @@ backend = None
 tabsize = 8
 keywordtags = {
     'html':
-        ('<strong>','</strong>'),
+        ('<strong>', '</strong>'),
     'css':
-        ('<strong>','</strong>'),
+        ('<strong>', '</strong>'),
     'docbook':
-        ('<emphasis role="strong">','</emphasis>'),
+        ('<emphasis role="strong">', '</emphasis>'),
     'linuxdoc':
-        ('','')
+        ('', '')
 }
 commenttags = {
     'html':
-        ('<i>','</i>'),
+        ('<i>', '</i>'),
     'css':
-        ('<i>','</i>'),
+        ('<i>', '</i>'),
     'docbook':
-        ('<emphasis>','</emphasis>'),
+        ('<emphasis>', '</emphasis>'),
     'linuxdoc':
-        ('','')
+        ('', '')
 }
 keywords = {
     'python':
-         ('and', 'del', 'for', 'is', 'raise', 'assert', 'elif', 'from',
-         'lambda', 'return', 'break', 'else', 'global', 'not', 'try', 'class',
-         'except', 'if', 'or', 'while', 'continue', 'exec', 'import', 'pass',
-         'yield', 'def', 'finally', 'in', 'print'),
+        (
+            'and', 'del', 'for', 'is', 'raise', 'assert', 'elif', 'from',
+            'lambda', 'return', 'break', 'else', 'global', 'not', 'try', 'class',
+            'except', 'if', 'or', 'while', 'continue', 'exec', 'import', 'pass',
+            'yield', 'def', 'finally', 'in', 'print'
+        ),
     'ruby':
-        ('__FILE__', 'and', 'def', 'end', 'in', 'or', 'self', 'unless',
-        '__LINE__', 'begin', 'defined?' 'ensure', 'module', 'redo', 'super',
-        'until', 'BEGIN', 'break', 'do', 'false', 'next', 'rescue', 'then',
-        'when', 'END', 'case', 'else', 'for', 'nil', 'retry', 'true', 'while',
-        'alias', 'class', 'elsif', 'if', 'not', 'return', 'undef', 'yield'),
+        (
+            '__FILE__', 'and', 'def', 'end', 'in', 'or', 'self', 'unless',
+            '__LINE__', 'begin', 'defined?' 'ensure', 'module', 'redo', 'super',
+            'until', 'BEGIN', 'break', 'do', 'false', 'next', 'rescue', 'then',
+            'when', 'END', 'case', 'else', 'for', 'nil', 'retry', 'true', 'while',
+            'alias', 'class', 'elsif', 'if', 'not', 'return', 'undef', 'yield'
+        ),
     'c++':
-        ('asm', 'auto', 'bool', 'break', 'case', 'catch', 'char', 'class',
-        'const', 'const_cast', 'continue', 'default', 'delete', 'do', 'double',
-        'dynamic_cast', 'else', 'enum', 'explicit', 'export', 'extern',
-        'false', 'float', 'for', 'friend', 'goto', 'if', 'inline', 'int',
-        'long', 'mutable', 'namespace', 'new', 'operator', 'private',
-        'protected', 'public', 'register', 'reinterpret_cast', 'return',
-        'short', 'signed', 'sizeof', 'static', 'static_cast', 'struct',
-        'switch', 'template', 'this', 'throw', 'true', 'try', 'typedef',
-        'typeid', 'typename', 'union', 'unsigned', 'using', 'virtual', 'void',
-        'volatile', 'wchar_t', 'while')
+        (
+            'asm', 'auto', 'bool', 'break', 'case', 'catch', 'char', 'class',
+            'const', 'const_cast', 'continue', 'default', 'delete', 'do', 'double',
+            'dynamic_cast', 'else', 'enum', 'explicit', 'export', 'extern',
+            'false', 'float', 'for', 'friend', 'goto', 'if', 'inline', 'int',
+            'long', 'mutable', 'namespace', 'new', 'operator', 'private',
+            'protected', 'public', 'register', 'reinterpret_cast', 'return',
+            'short', 'signed', 'sizeof', 'static', 'static_cast', 'struct',
+            'switch', 'template', 'this', 'throw', 'true', 'try', 'typedef',
+            'typeid', 'typename', 'union', 'unsigned', 'using', 'virtual', 'void',
+            'volatile', 'wchar_t', 'while'
+        )
 }
 block_comments = {
-    'python': ("'''","'''"),
+    'python': ("'''", "'''"),
     'ruby': None,
-    'c++': ('/*','*/')
+    'c++': ('/*', '*/')
 }
 inline_comments = {
     'python': '#',
@@ -113,17 +124,20 @@ inline_comments = {
     'c++': '//'
 }
 
+
 def print_stderr(line):
     sys.stderr.write(line+os.linesep)
+
 
 def sub_keyword(mo):
     '''re.subs() argument to tag keywords.'''
     word = mo.group('word')
     if word in keywords[language]:
-        stag,etag = keywordtags[backend]
+        stag, etag = keywordtags[backend]
         return stag+word+etag
     else:
         return word
+
 
 def code_filter():
     '''This function does all the work.'''
@@ -131,36 +145,39 @@ def code_filter():
     inline_comment = inline_comments[language]
     blk_comment = block_comments[language]
     if blk_comment:
-        blk_comment = (re.escape(block_comments[language][0]),
-            re.escape(block_comments[language][1]))
-    stag,etag = commenttags[backend]
+        blk_comment = (
+            re.escape(block_comments[language][0]),
+            re.escape(block_comments[language][1])
+        )
+    stag, etag = commenttags[backend]
     in_comment = 0  # True if we're inside a multi-line block comment.
-    tag_comment = 0 # True if we should tag the current line as a comment.
+    tag_comment = 0  # True if we should tag the current line as a comment.
     line = sys.stdin.readline()
     while line:
         line = line.rstrip()
         line = line.expandtabs(tabsize)
         # Escape special characters.
-        line = line.replace('&','&amp;')
-        line = line.replace('<','&lt;')
-        line = line.replace('>','&gt;')
+        line = line.replace('&', '&amp;')
+        line = line.replace('<', '&lt;')
+        line = line.replace('>', '&gt;')
         # Process block comment.
         if blk_comment:
             if in_comment:
-                if re.match(r'.*'+blk_comment[1]+r'$',line):
+                if re.match(r'.*'+blk_comment[1]+r'$', line):
                     in_comment = 0
             else:
-                if re.match(r'^\s*'+blk_comment[0]+r'.*'+blk_comment[1],line):
+                if re.match(r'^\s*'+blk_comment[0]+r'.*'+blk_comment[1], line):
                     # Single line block comment.
                     tag_comment = 1
-                elif re.match(r'^\s*'+blk_comment[0],line):
+                elif re.match(r'^\s*'+blk_comment[0], line):
                     # Start of multi-line block comment.
                     tag_comment = 1
                     in_comment = 1
                 else:
                     tag_comment = 0
         if tag_comment:
-            if line: line = stag+line+etag
+            if line:
+                line = stag+line+etag
         else:
             if inline_comment:
                 pos = line.find(inline_comment)
@@ -168,12 +185,13 @@ def code_filter():
                 pos = -1
             if pos >= 0:
                 # Process inline comment.
-                line = re.sub(r'\b(?P<word>\w+)\b',sub_keyword,line[:pos]) \
+                line = re.sub(r'\b(?P<word>\w+)\b', sub_keyword, line[:pos]) \
                     + stag + line[pos:] + etag
             else:
-                line = re.sub(r'\b(?P<word>\w+)\b',sub_keyword,line)
+                line = re.sub(r'\b(?P<word>\w+)\b', sub_keyword, line)
         sys.stdout.write(line + os.linesep)
         line = sys.stdin.readline()
+
 
 def usage(msg=''):
     if msg:
@@ -181,32 +199,37 @@ def usage(msg=''):
     print_stderr('Usage: code-filter -b backend -l language [ -t tabsize ]')
     print_stderr('                   [ --help | -h ] [ --version | -v ]')
 
+
 def main():
     global language, backend, tabsize
     # Process command line options.
     import getopt
-    opts,args = getopt.getopt(sys.argv[1:],
+    opts, args = getopt.getopt(
+        sys.argv[1:],
         'b:l:ht:v',
-        ['help','version'])
+        ['help', 'version']
+    )
     if len(args) > 0:
         usage()
         sys.exit(1)
-    for o,v in opts:
-        if o in ('--help','-h'):
+    for o, v in opts:
+        if o in ('--help', '-h'):
             print(__doc__)
             sys.exit(0)
-        if o in ('--version','-v'):
+        if o in ('--version', '-v'):
             print('code-filter version %s' % (VERSION,))
             sys.exit(0)
-        if o == '-b': backend = v
+        if o == '-b':
+            backend = v
         if o == '-l':
             v = v.lower()
-            if v == 'c': v = 'c++'
+            if v == 'c':
+                v = 'c++'
             language = v
         if o == '-t':
             try:
                 tabsize = int(v)
-            except:
+            except BaseException:
                 usage('illegal tabsize')
                 sys.exit(1)
             if tabsize <= 0:
@@ -227,13 +250,16 @@ def main():
     # Do the work.
     code_filter()
 
+
 if __name__ == "__main__":
     try:
         main()
     except (KeyboardInterrupt, SystemExit):
         pass
-    except:
-        print_stderr("%s: unexpected exit status: %s" %
-            (os.path.basename(sys.argv[0]), sys.exc_info()[1]))
+    except BaseException:
+        print_stderr(
+            "%s: unexpected exit status: %s" %
+            (os.path.basename(sys.argv[0]), sys.exc_info()[1])
+        )
     # Exit with previous sys.exit() status or zero if no sys.exit().
     sys.exit(sys.exc_info()[1])

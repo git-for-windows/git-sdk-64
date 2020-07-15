@@ -46,11 +46,16 @@ AUTHOR
     Written by Stuart Rackham, <srackham@gmail.com>
 
 COPYING
-    Copyright (C) 2006 Stuart Rackham. Free use of this software is
-    granted under the terms of the GNU General Public License (GPL).
+    Copyright (C) 2002-2013 Stuart Rackham.
+    Copyright (C) 2013-2020 AsciiDoc Contributors.
+
+    Free use of this software is granted under the terms of the GNU General
+    Public License version 2 (GPLv2).
 '''
 
-import os, sys, tempfile
+import os
+import sys
+import tempfile
 from hashlib import md5
 
 VERSION = '0.1.2'
@@ -58,14 +63,19 @@ VERSION = '0.1.2'
 # Globals.
 verbose = False
 
-class EApp(Exception): pass     # Application specific exception.
+
+class EApp(Exception):
+    pass     # Application specific exception.
+
 
 def print_stderr(line):
     sys.stderr.write(line + os.linesep)
 
+
 def print_verbose(line):
     if verbose:
         print_stderr(line)
+
 
 def write_file(filename, data, mode='w', encoding='utf-8'):
     if 'b' in mode:
@@ -73,11 +83,13 @@ def write_file(filename, data, mode='w', encoding='utf-8'):
     with open(filename, mode, encoding=encoding) as f:
         f.write(data)
 
+
 def read_file(filename, mode='r', encoding='utf-8'):
     if 'b' in mode:
         encoding = None
     with open(filename, mode, encoding=encoding) as f:
         return f.read()
+
 
 def run(cmd):
     global verbose
@@ -86,6 +98,7 @@ def run(cmd):
     print_verbose('executing: %s' % cmd)
     if os.system(cmd):
         raise EApp('failed command: %s' % cmd)
+
 
 def music2png(format, infile, outfile, modified):
     '''Convert ABC notation in file infile to cropped PNG file named outfile.'''
@@ -102,7 +115,7 @@ def music2png(format, infile, outfile, modified):
         filename = os.path.splitext(outfile)[0] + '.md5'
         if modified:
             if os.path.isfile(filename) and os.path.isfile(outfile) and \
-                    checksum == read_file(filename,'rb'):
+                    checksum == read_file(filename, 'rb'):
                 skip = True
             else:
                 write_file(filename, checksum, 'wb')
@@ -122,7 +135,7 @@ def music2png(format, infile, outfile, modified):
         else:
             format = 'abc'
     # Write temporary source file.
-    write_file('%s.%s' % (basefile,format), source)
+    write_file('%s.%s' % (basefile, format), source)
     abc = basefile + '.abc'
     ly = basefile + '.ly'
     png = basefile + '.png'
@@ -130,8 +143,8 @@ def music2png(format, infile, outfile, modified):
     os.chdir(outdir)
     try:
         if format == 'abc':
-            run('abc2ly -o "%s" "%s"' % (ly,abc))
-        run('lilypond --png -o "%s" "%s"' % (basefile,ly))
+            run('abc2ly -o "%s" "%s"' % (ly, abc))
+        run('lilypond --png -o "%s" "%s"' % (basefile, ly))
         os.rename(png, outfile)
     finally:
         os.chdir(saved_pwd)
@@ -144,20 +157,24 @@ def music2png(format, infile, outfile, modified):
             print_verbose('deleting: %s' % f)
             os.remove(f)
 
+
 def usage(msg=''):
     if msg:
         print_stderr(msg)
-    print_stderr('\n'
-                 'usage:\n'
-                 '    music2png [options] INFILE\n'
-                 '\n'
-                 'options:\n'
-                 '    -f FORMAT\n'
-                 '    -o OUTFILE\n'
-                 '    -m\n'
-                 '    -v\n'
-                 '    --help\n'
-                 '    --version')
+    print_stderr(
+        '\n'
+        'usage:\n'
+        '    music2png [options] INFILE\n'
+        '\n'
+        'options:\n'
+        '    -f FORMAT\n'
+        '    -o OUTFILE\n'
+        '    -m\n'
+        '    -v\n'
+        '    --help\n'
+        '    --version'
+    )
+
 
 def main():
     # Process command line options.
@@ -166,18 +183,22 @@ def main():
     outfile = None
     modified = False
     import getopt
-    opts,args = getopt.getopt(sys.argv[1:], 'f:o:mhv', ['help','version'])
-    for o,v in opts:
-        if o in ('--help','-h'):
+    opts, args = getopt.getopt(sys.argv[1:], 'f:o:mhv', ['help', 'version'])
+    for o, v in opts:
+        if o in ('--help', '-h'):
             print(__doc__)
             sys.exit(0)
-        if o =='--version':
+        if o == '--version':
             print(('music2png version %s' % (VERSION,)))
             sys.exit(0)
-        if o == '-f': format = v
-        if o == '-o': outfile = v
-        if o == '-m': modified = True
-        if o == '-v': verbose = True
+        if o == '-f':
+            format = v
+        if o == '-o':
+            outfile = v
+        if o == '-m':
+            modified = True
+        if o == '-v':
+            verbose = True
     if len(args) != 1:
         usage()
         sys.exit(1)
@@ -195,6 +216,7 @@ def main():
     # Print something to suppress asciidoc 'no output from filter' warnings.
     if infile == '-':
         sys.stdout.write(' ')
+
 
 if __name__ == "__main__":
     try:

@@ -3,7 +3,7 @@
 #   makepkg - make packages compatible for use with pacman
 #   Generated from makepkg.sh.in; do not edit by hand.
 #
-#   Copyright (c) 2006-2019 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2006-2020 Pacman Development Team <pacman-dev@archlinux.org>
 #   Copyright (c) 2002-2006 by Judd Vinet <jvinet@zeroflux.org>
 #   Copyright (c) 2005 by Aurelien Foret <orelien@chez.com>
 #   Copyright (c) 2006 by Miklos Vajna <vmiklos@frugalware.org>
@@ -41,7 +41,7 @@ unset CDPATH
 # Ensure GREP_OPTIONS doesn't screw with our grep calls
 unset GREP_OPTIONS
 
-declare -r makepkg_version='5.2.1'
+declare -r makepkg_version='5.2.2'
 declare -r confdir='/etc'
 declare -r BUILDSCRIPT='PKGBUILD'
 declare -r startdir="$(pwd -P)"
@@ -207,7 +207,7 @@ update_pkgver() {
 # Print 'source not found' error message and exit makepkg
 missing_source_file() {
 	error "$(gettext "Unable to find source file %s.")" "$(get_filename "$1")"
-	plain "$(gettext "Aborting...")"
+	plainerr "$(gettext "Aborting...")"
 	exit $E_MISSING_FILE
 }
 
@@ -337,7 +337,7 @@ error_function() {
 	# first exit all subshells, then print the error
 	if (( ! BASH_SUBSHELL )); then
 		error "$(gettext "A failure occurred in %s().")" "$1"
-		plain "$(gettext "Aborting...")"
+		plainerr "$(gettext "Aborting...")"
 	fi
 	exit $E_USER_FUNCTION_FAILED
 }
@@ -650,7 +650,7 @@ create_package() {
 
 	if [[ ! -d $pkgdir ]]; then
 		error "$(gettext "Missing %s directory.")" "\$pkgdir/"
-		plain "$(gettext "Aborting...")"
+		plainerr "$(gettext "Aborting...")"
 		exit $E_MISSING_PKGDIR
 	fi
 
@@ -760,13 +760,16 @@ create_srcpackage() {
 		fi
 	done
 
-	local i
+	# set pkgname the same way we do for running package(), this way we get
+	# the right value in extract_function_variable
+	local pkgname_backup=(${pkgname[@]})
+	local i pkgname
 	for i in 'changelog' 'install'; do
 		local file files
 
 		[[ ${!i} ]] && files+=("${!i}")
-		for name in "${pkgname[@]}"; do
-			if extract_function_variable "package_$name" "$i" 0 file; then
+		for pkgname in "${pkgname_backup[@]}"; do
+			if extract_function_variable "package_$pkgname" "$i" 0 file; then
 				files+=("$file")
 			fi
 		done
@@ -778,6 +781,7 @@ create_srcpackage() {
 			fi
 		done
 	done
+	pkgname=(${pkgname_backup[@]})
 
 	local fullver=$(get_full_version)
 	local pkg_file="$SRCPKGDEST/${pkgbase}-${fullver}${SRCEXT}"
@@ -982,7 +986,7 @@ usage() {
 
 version() {
 	printf "makepkg (pacman) %s\n" "$makepkg_version"
-	printf -- "Copyright (c) 2006-2019 Pacman Development Team <pacman-dev@archlinux.org>.\n"
+	printf -- "Copyright (c) 2006-2020 Pacman Development Team <pacman-dev@archlinux.org>.\n"
 	printf -- "Copyright (C) 2002-2006 Judd Vinet <jvinet@zeroflux.org>.\n"
 	printf '\n'
 	printf -- "$(gettext "\
@@ -1127,23 +1131,23 @@ lint_config || exit $E_CONFIG_ERROR
 
 # check that all settings directories are user-writable
 if ! ensure_writable_dir "BUILDDIR" "$BUILDDIR"; then
-	plain "$(gettext "Aborting...")"
+	plainerr "$(gettext "Aborting...")"
 	exit $E_FS_PERMISSIONS
 fi
 
 if (( ! (NOBUILD || GENINTEG) )) && ! ensure_writable_dir "PKGDEST" "$PKGDEST"; then
-	plain "$(gettext "Aborting...")"
+	plainerr "$(gettext "Aborting...")"
 	exit $E_FS_PERMISSIONS
 fi
 
 if ! ensure_writable_dir "SRCDEST" "$SRCDEST" ; then
-	plain "$(gettext "Aborting...")"
+	plainerr "$(gettext "Aborting...")"
 	exit $E_FS_PERMISSIONS
 fi
 
 if (( SOURCEONLY )); then
 	if ! ensure_writable_dir "SRCPKGDEST" "$SRCPKGDEST"; then
-		plain "$(gettext "Aborting...")"
+		plainerr "$(gettext "Aborting...")"
 		exit $E_FS_PERMISSIONS
 	fi
 
@@ -1153,7 +1157,7 @@ if (( SOURCEONLY )); then
 fi
 
 if (( LOGGING )) && ! ensure_writable_dir "LOGDEST" "$LOGDEST"; then
-	plain "$(gettext "Aborting...")"
+	plainerr "$(gettext "Aborting...")"
 	exit $E_FS_PERMISSIONS
 fi
 
@@ -1253,7 +1257,7 @@ fi
 # check if gpg signature is to be created and if signing key is valid
 if { [[ -z $SIGNPKG ]] && check_buildenv "sign" "y"; } || [[ $SIGNPKG == 'y' ]]; then
 	SIGNPKG='y'
-	if ! gpg --list-key ${GPGKEY} &>/dev/null; then
+	if ! gpg --list-secret-key ${GPGKEY:+"$GPGKEY"} &>/dev/null; then
 		if [[ ! -z $GPGKEY ]]; then
 			error "$(gettext "The key %s does not exist in your keyring.")" "${GPGKEY}"
 		else

@@ -2,7 +2,7 @@
 #
 #   verify_signature.sh - functions for checking PGP signatures
 #
-#   Copyright (c) 2011-2019 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2011-2020 Pacman Development Team <pacman-dev@archlinux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ check_pgpsigs() {
 
 	if (( warnings )); then
 		warning "$(gettext "Warnings have occurred while verifying the signatures.")"
-		plain "$(gettext "Please make sure you really trust them.")"
+		plainerr "$(gettext "Please make sure you really trust them.")"
 	fi
 }
 

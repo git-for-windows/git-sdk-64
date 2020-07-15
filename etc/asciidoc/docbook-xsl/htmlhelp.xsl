@@ -15,14 +15,14 @@
 <xsl:param name="htmlhelp.hhp" select="'asciidoc.hhp'"/>
 <xsl:param name="suppress.navigation" select="1"/>
 
-<!-- Line break --> 
-<xsl:template match="processing-instruction('asciidoc-br')"> 
-  <br/> 
-</xsl:template> 
+<!-- Line break -->
+<xsl:template match="processing-instruction('asciidoc-br')">
+  <br/>
+</xsl:template>
 
-<!-- Horizontal ruler --> 
-<xsl:template match="processing-instruction('asciidoc-hr')"> 
-  <hr/> 
-</xsl:template> 
+<!-- Horizontal ruler -->
+<xsl:template match="processing-instruction('asciidoc-hr')">
+  <hr/>
+</xsl:template>
 
 </xsl:stylesheet>

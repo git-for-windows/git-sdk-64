@@ -2,7 +2,7 @@
 #
 #   config.sh - functions for handling makepkg config files
 #
-#   Copyright (c) 2006-2019 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2006-2020 Pacman Development Team <pacman-dev@archlinux.org>
 #   Copyright (c) 2002-2006 by Judd Vinet <jvinet@zeroflux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -39,7 +39,7 @@ source_makepkg_config() {
 		source_safe "$MAKEPKG_CONF"
 	else
 		error "$(gettext "%s not found.")" "$MAKEPKG_CONF"
-		plain "$(gettext "Aborting...")"
+		plainerr "$(gettext "Aborting...")"
 		exit $E_CONFIG_ERROR
 	fi
 

@@ -54,11 +54,16 @@ AUTHOR
     http://code.google.com/p/latexmath2png/
 
 COPYING
-    Copyright (C) 2010 Stuart Rackham. Free use of this software is
-    granted under the terms of the MIT License.
+    Copyright (C) 2002-2013 Stuart Rackham.
+    Copyright (C) 2013-2020 AsciiDoc Contributors.
+
+    Free use of this software is granted under the terms of the GNU General
+    Public License version 2 (GPLv2).
 '''
 
-import os, sys, tempfile
+import os
+import sys
+import tempfile
 from hashlib import md5
 
 VERSION = '0.2.0'
@@ -80,14 +85,19 @@ TEX_FOOTER = r'''\end{document}'''
 # Globals.
 verbose = False
 
-class EApp(Exception): pass     # Application specific exception.
+
+class EApp(Exception):
+    pass     # Application specific exception.
+
 
 def print_stderr(line):
     sys.stderr.write(line + os.linesep)
 
+
 def print_verbose(line):
     if verbose:
         print_stderr(line)
+
 
 def write_file(filename, data, mode='w', encoding='utf-8'):
     if 'b' in mode:
@@ -95,11 +105,13 @@ def write_file(filename, data, mode='w', encoding='utf-8'):
     with open(filename, mode, encoding=encoding) as f:
         f.write(data)
 
+
 def read_file(filename, mode='r', encoding='utf-8'):
     if 'b' in mode:
         encoding = None
     with open(filename, mode, encoding=encoding) as f:
         return f.read()
+
 
 def run(cmd):
     global verbose
@@ -110,6 +122,7 @@ def run(cmd):
     print_verbose('executing: %s' % cmd)
     if os.system(cmd):
         raise EApp('failed command: %s' % cmd)
+
 
 def latex2img(infile, outfile, imgfmt, dpi, modified):
     '''
@@ -122,7 +135,7 @@ def latex2img(infile, outfile, imgfmt, dpi, modified):
     texfile = tempfile.mktemp(suffix='.tex', dir=os.path.dirname(outfile))
     basefile = os.path.splitext(texfile)[0]
     dvifile = basefile + '.dvi'
-    temps = [basefile + ext for ext in ('.tex','.dvi', '.aux', '.log')]
+    temps = [basefile + ext for ext in ('.tex', '.dvi', '.aux', '.log')]
     skip = False
     if infile == '-':
         tex = sys.stdin.read()
@@ -130,7 +143,7 @@ def latex2img(infile, outfile, imgfmt, dpi, modified):
             checksum = md5((tex + imgfmt + str(dpi)).encode('utf-8')).digest()
             md5_file = os.path.splitext(outfile)[0] + '.md5'
             if os.path.isfile(md5_file) and os.path.isfile(outfile) and \
-                    checksum == read_file(md5_file,'rb'):
+                    checksum == read_file(md5_file, 'rb'):
                 skip = True
     else:
         if not os.path.isfile(infile):
@@ -156,14 +169,14 @@ def latex2img(infile, outfile, imgfmt, dpi, modified):
             cmd += ' --no-fonts'
             cmd += ' --scale=1.4'
             cmd += ' --exact'
-            cmd += ' -o "%s" "%s"' % (outfile,dvifile)
+            cmd += ' -o "%s" "%s"' % (outfile, dvifile)
         else:
             # Convert DVI file to PNG.
             cmd = 'dvipng'
             if dpi:
                 cmd += ' -D %s' % dpi
             cmd += ' -T tight -x 1000 -z 9 -bg Transparent --truecolor'
-            cmd += ' -o "%s" "%s" ' % (outfile,dvifile)
+            cmd += ' -o "%s" "%s" ' % (outfile, dvifile)
         run(cmd)
     finally:
         os.chdir(saved_pwd)
@@ -175,21 +188,25 @@ def latex2img(infile, outfile, imgfmt, dpi, modified):
         print_verbose('writing: %s' % md5_file)
         write_file(md5_file, checksum, 'wb')
 
+
 def usage(msg=''):
     if msg:
         print_stderr(msg)
-    print_stderr('\n'
-                 'usage:\n'
-                 '    latex2img [options] INFILE\n'
-                 '\n'
-                 'options:\n'
-                 '    -D DPI\n'
-                 '    -o OUTFILE\n'
-                 '    -f FORMAT\n'
-                 '    -m\n'
-                 '    -v\n'
-                 '    --help\n'
-                 '    --version')
+    print_stderr(
+        '\n'
+        'usage:\n'
+        '    latex2img [options] INFILE\n'
+        '\n'
+        'options:\n'
+        '    -D DPI\n'
+        '    -o OUTFILE\n'
+        '    -f FORMAT\n'
+        '    -m\n'
+        '    -v\n'
+        '    --help\n'
+        '    --version'
+    )
+
 
 def main():
     # Process command line options.
@@ -199,19 +216,24 @@ def main():
     imgfmt = 'png'
     modified = False
     import getopt
-    opts,args = getopt.getopt(sys.argv[1:], 'D:o:mhvf:', ['help','version'])
-    for o,v in opts:
-        if o in ('--help','-h'):
+    opts, args = getopt.getopt(sys.argv[1:], 'D:o:mhvf:', ['help', 'version'])
+    for o, v in opts:
+        if o in ('--help', '-h'):
             print(__doc__)
             sys.exit(0)
-        if o =='--version':
+        if o == '--version':
             print(('latex2img version %s' % (VERSION,)))
             sys.exit(0)
-        if o == '-D': dpi = v
-        if o == '-o': outfile = v
-        if o == '-m': modified = True
-        if o == '-v': verbose = True
-        if o == '-f': imgfmt = v
+        if o == '-D':
+            dpi = v
+        if o == '-o':
+            outfile = v
+        if o == '-m':
+            modified = True
+        if o == '-v':
+            verbose = True
+        if o == '-f':
+            imgfmt = v
     if len(args) != 1:
         usage()
         sys.exit(1)
@@ -219,7 +241,7 @@ def main():
     if dpi and not dpi.isdigit():
         usage('invalid DPI')
         sys.exit(1)
-    if not imgfmt in {'png', 'svg'}:
+    if imgfmt not in {'png', 'svg'}:
         usage('Invalid image format. Valid values are "png" or "svg".')
         sys.exit(1)
     if outfile is None:
@@ -232,6 +254,7 @@ def main():
     # Print something to suppress asciidoc 'no output from filter' warnings.
     if infile == '-':
         sys.stdout.write(' ')
+
 
 if __name__ == "__main__":
     try:

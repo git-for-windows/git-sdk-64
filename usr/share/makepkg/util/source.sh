@@ -2,7 +2,7 @@
 #
 #   source.sh - functions to extract information from source URLs
 #
-#   Copyright (c) 2010-2019 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2010-2020 Pacman Development Team <pacman-dev@archlinux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -156,7 +156,7 @@ get_downloadclient() {
 	# if we didn't find an agent, return an error
 	if [[ -z $agent ]]; then
 		error "$(gettext "Unknown download protocol: %s")" "$proto"
-		plain "$(gettext "Aborting...")"
+		plainerr "$(gettext "Aborting...")"
 		exit 1 # $E_CONFIG_ERROR
 	fi
 
@@ -165,7 +165,7 @@ get_downloadclient() {
 	if [[ ! -x $program ]]; then
 		local baseprog="${program##*/}"
 		error "$(gettext "The download program %s is not installed.")" "$baseprog"
-		plain "$(gettext "Aborting...")"
+		plainerr "$(gettext "Aborting...")"
 		exit 1 # $E_MISSING_PROGRAM
 	fi
 

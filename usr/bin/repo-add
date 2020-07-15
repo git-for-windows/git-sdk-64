@@ -4,7 +4,7 @@
 #   repo-remove - remove a package entry from a given repo database file
 #   Generated from repo-add.sh.in; do not edit by hand.
 #
-#   Copyright (c) 2006-2019 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2006-2020 Pacman Development Team <pacman-dev@archlinux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ shopt -s extglob
 export TEXTDOMAIN='pacman-scripts'
 export TEXTDOMAINDIR='/usr/share/locale'
 
-declare -r myver='5.2.1'
+declare -r myver='5.2.2'
 declare -r confdir='/etc'
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
@@ -97,7 +97,7 @@ See %s(8) for more details and descriptions of the available options.\n")" $cmd
 version() {
 	cmd=${0##*/}
 	printf "%s (pacman) %s\n\n" "$cmd" "$myver"
-	printf -- "Copyright (c) 2006-2019 Pacman Development Team <pacman-dev@archlinux.org>.\n"
+	printf -- "Copyright (c) 2006-2020 Pacman Development Team <pacman-dev@archlinux.org>.\n"
 	printf '\n'
 	printf -- "$(gettext "\
 This is free software; see the source for copying conditions.\n\
@@ -139,7 +139,7 @@ check_gpg() {
 	fi
 
 	if (( ! VERIFY )); then
-		if ! gpg --list-key ${GPGKEY} &>/dev/null; then
+		if ! gpg --list-secret-key ${GPGKEY:+"$GPGKEY"} &>/dev/null; then
 			if [[ ! -z $GPGKEY ]]; then
 				error "$(gettext "The key ${GPGKEY} does not exist in your keyring.")"
 			elif (( ! KEY )); then
@@ -157,11 +157,11 @@ create_signature() {
 	local ret=0
 	msg "$(gettext "Signing database '%s'...")" "${dbfile##*/.tmp.}"
 
-	local SIGNWITHKEY=""
+	local SIGNWITHKEY=()
 	if [[ -n $GPGKEY ]]; then
-		SIGNWITHKEY="-u ${GPGKEY}"
+		SIGNWITHKEY=(-u "${GPGKEY}")
 	fi
-	gpg --detach-sign --use-agent --no-armor ${SIGNWITHKEY} "$dbfile" &>/dev/null || ret=$?
+	gpg --detach-sign --use-agent --no-armor "${SIGNWITHKEY[@]}" "$dbfile" &>/dev/null || ret=$?
 
 	if (( ! ret )); then
 		msg2 "$(gettext "Created signature file '%s'")" "${dbfile##*/.tmp.}.sig"

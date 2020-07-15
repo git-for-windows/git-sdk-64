@@ -1,19 +1,6 @@
 #!/usr/bin/env python3
 
-import os
-import sys
-import subprocess
-import argparse
-
-__AUTHOR__ = "Gouichi Iisaka <iisaka51@gmail.com>"
-__VERSION__ = '1.1.5'
-
-class EApp(Exception):
-    '''Application specific exception.'''
-    pass
-
-class Application():
-    '''
+'''
 NAME
     graphviz2png - Converts textual graphviz notation to PNG file
 
@@ -63,12 +50,32 @@ LICENSE
     Copyright (C) 2008-2009 Gouichi Iisaka.
     Free use of this software is granted under the terms of
     the GNU General Public License (GPL).
-    '''
+'''
 
+import os
+import sys
+import subprocess
+import argparse
+
+__AUTHOR__ = "Gouichi Iisaka <iisaka51@gmail.com>"
+__VERSION__ = '1.1.5'
+
+
+class EApp(Exception):
+    '''Application specific exception.'''
+    pass
+
+
+class Application():
     def __init__(self, argv=None):
         # Run dot, get the list of supported formats. It's prefixed by some junk.
-        format_output = subprocess.Popen(["dot", "-T?"], stderr=subprocess.PIPE, stdout=subprocess.PIPE).communicate()[1].decode('utf-8')
-        # The junk contains : and ends with :. So we split it, then strip the final endline, then split the list for future usage.
+        format_output = subprocess.Popen(
+            ["dot", "-T?"],
+            stderr=subprocess.PIPE,
+            stdout=subprocess.PIPE
+        ).communicate()[1].decode('utf-8')
+        # The junk contains : and ends with :. So we split it, then strip the
+        # final endline, then split the list for future usage.
         supported_formats = format_output.split(": ")[2][:-1].split(" ")
 
         if not argv:
@@ -79,13 +86,25 @@ LICENSE
         self.version += 'Copyright(c) 2008-2009: %s\n' % __AUTHOR__
 
         self.parser = argparse.ArgumentParser(usage=self.usage)
-        self.parser.add_argument("-o", "--outfile", action="store", dest="outfile", help="Output file")
-        self.parser.add_argument("-L", "--layout", action="store", dest="layout", default="dot",
-                                 choices=['dot', 'neato', 'twopi', 'circo', 'fdp'], help="Layout type")
-        self.parser.add_argument("-F", "--format", action="store", dest="format", default="png",
-                                 choices=supported_formats, help="Format type")
-        self.parser.add_argument("--debug", action="store_true", dest="do_debug", help=argparse.SUPPRESS)
-        self.parser.add_argument("-v", "--verbose", action="store_true", dest="do_verbose", default=False, help="verbose output")
+        self.parser.add_argument(
+            "-o", "--outfile", action="store", dest="outfile", help="Output file"
+        )
+        self.parser.add_argument(
+            "-L", "--layout", action="store", dest="layout", default="dot",
+            choices=['dot', 'neato', 'twopi', 'circo', 'fdp'], help="Layout type"
+        )
+        self.parser.add_argument(
+            "-F", "--format", action="store", dest="format", default="png",
+            choices=supported_formats, help="Format type"
+        )
+        self.parser.add_argument(
+            "--debug", action="store_true", dest="do_debug", help=argparse.SUPPRESS
+        )
+        self.parser.add_argument(
+            "-v", "--verbose",
+            action="store_true", dest="do_verbose", default=False,
+            help="verbose output"
+        )
         self.parser.add_argument("infile", action="store", help="Input file")
         self.parser.add_argument('--version', action='version', version=self.version)
         self.options = self.parser.parse_args()
@@ -112,7 +131,12 @@ LICENSE
         saved_cwd = os.getcwd()
         os.chdir(outdir)
         try:
-            cmd = '%s -T%s "%s" > "%s"' % (self.options.layout, self.options.format, infile, outfile)
+            cmd = '%s -T%s "%s" > "%s"' % (
+                self.options.layout,
+                self.options.format,
+                infile,
+                outfile
+            )
             self.systemcmd(cmd)
         finally:
             os.chdir(saved_cwd)
@@ -146,6 +170,7 @@ LICENSE
         # To suppress asciidoc 'no output from filter' warnings.
         if self.options.infile == '-':
             sys.stdout.write(' ')
+
 
 if __name__ == "__main__":
     app = Application()

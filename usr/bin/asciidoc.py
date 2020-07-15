@@ -3,13 +3,17 @@
 """
 asciidoc - converts an AsciiDoc text file to HTML or DocBook
 
-Copyright (C) 2002-2010 Stuart Rackham. Free use of this software is granted
-under the terms of the GNU General Public License (GPL).
+Copyright (C) 2002-2013 Stuart Rackham.
+Copyright (C) 2013-2020 AsciiDoc Contributors.
+
+Free use of this software is granted under the terms of the GNU General
+Public License version 2 (GPLv2).
 """
 
 import ast
 import copy
 import csv
+from functools import lru_cache
 import getopt
 import io
 import locale
@@ -29,7 +33,7 @@ from ast import literal_eval
 from collections import OrderedDict
 
 # Used by asciidocapi.py #
-VERSION = '9.0.0rc2'           # See CHANGELOG file for version history.
+VERSION = '9.0.1'           # See CHANGELOG file for version history.
 
 MIN_PYTHON_VERSION = '3.5'  # Require this version of Python or better.
 
@@ -2265,7 +2269,11 @@ class Section:
         base_id = re.sub(r'\W+', '_', title).strip('_').lower()
         if 'ascii-ids' in document.attributes:
             # Replace non-ASCII characters with ASCII equivalents.
-            base_id = unicodedata.normalize('NFKD', base_id).encode('ascii', 'ignore').decode('ascii')
+            try:
+                from trans import trans
+                base_id = trans(base_id)
+            except ImportError:
+                base_id = unicodedata.normalize('NFKD', base_id).encode('ascii', 'ignore').decode('ascii')
         # Prefix the ID name with idprefix attribute or underscore if not
         # defined. Prefix ensures the ID does not clash with existing IDs.
         idprefix = document.attributes.get('idprefix', '_')
@@ -3132,6 +3140,10 @@ class DelimitedBlock(AbstractBlock):
         if 'skip' not in self.parameters.options:
             BlockTitle.consume(self.attributes)
             AttributeList.consume()
+        if 'options' in self.attributes:
+            options = parse_options(self.attributes['options'], (), 'illegal option name')
+            for option in options:
+                self.attributes[option + '-option'] = ''
         self.push_blockname()
         options = self.parameters.options
         if 'skip' in options:
@@ -3933,6 +3945,7 @@ class Macros:
                         return m
         return False
 
+    @lru_cache(maxsize=2048)
     def match(self, prefix, name, text):
         """Return re match object matching 'text' with macro type 'prefix',
         macro name 'name'."""

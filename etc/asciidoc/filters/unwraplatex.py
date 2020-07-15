@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''
+"""
 NAME
     unwraplatex - Removes delimiters from LaTeX source text
 
@@ -8,15 +8,15 @@ SYNOPSIS
 
 DESCRIPTION
     This filter reads LaTeX source text from STDIN and removes the
-    surrounding \[ and \] delimiters.
-'''
+    surrounding \\[ and \\] delimiters.
+"""
 
 import re
 import sys
 
 sys.stdout.write(
     re.sub(
-        "(?s)\A(?:\\\\\[\s*)?(.*?)(?:\\\\\])?\Z", "\\1",
+        r"(?s)\A(?:\\\[\s*)?(.*?)(?:\\\])?\Z", "\\1",
         sys.stdin.read().rstrip()
     )
 )

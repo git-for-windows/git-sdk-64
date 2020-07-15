@@ -4,7 +4,7 @@
 #                Based on apt-key, from Debian
 #   Generated from pacman-key.sh.in; do not edit by hand.
 #
-#   Copyright (c) 2010-2019 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2010-2020 Pacman Development Team <pacman-dev@archlinux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 export TEXTDOMAIN='pacman-scripts'
 export TEXTDOMAINDIR='/usr/share/locale'
 
-declare -r myver="5.2.1"
+declare -r myver="5.2.2"
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
@@ -92,7 +92,7 @@ usage() {
 
 version() {
 	printf "pacman-key (pacman) %s\n" "${myver}"
-	printf -- "Copyright (c) 2010-2019 Pacman Development Team <pacman-dev@archlinux.org>.\n"
+	printf -- "Copyright (c) 2010-2020 Pacman Development Team <pacman-dev@archlinux.org>.\n"
 	printf '\n'
 	printf -- "$(gettext "\
 This is free software; see the source for copying conditions.\n\
@@ -148,7 +148,7 @@ generate_master_key() {
 	"${GPG_PACMAN[@]}" --gen-key --batch <<EOF
 %echo Generating pacman keyring master key...
 Key-Type: RSA
-Key-Length: 2048
+Key-Length: 4096
 Key-Usage: sign
 Name-Real: Pacman Keyring Master Key
 Name-Email: pacman@localhost

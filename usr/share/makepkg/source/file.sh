@@ -2,7 +2,7 @@
 #
 #   file.sh - function for handling the download and extraction of source files
 #
-#   Copyright (c) 2015-2019 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2015-2020 Pacman Development Team <pacman-dev@archlinux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ download_file() {
 	# find the client we should use for this URL
 	local -a cmdline
 	IFS=' ' read -a cmdline < <(get_downloadclient "$proto")
-	(( ${#cmdline[@]} )) || exit
+	wait $! || exit
 
 	local filename=$(get_filename "$netfile")
 	local url=$(get_url "$netfile")
@@ -72,7 +72,7 @@ download_file() {
 	if ! command -- "${cmdline[@]}" >&2; then
 		[[ ! -s $dlfile ]] && rm -f -- "$dlfile"
 		error "$(gettext "Failure while downloading %s")" "$url"
-		plain "$(gettext "Aborting...")"
+		plainerr "$(gettext "Aborting...")"
 		exit 1
 	fi
 
@@ -83,8 +83,9 @@ download_file() {
 }
 
 extract_file() {
-	local file=$1
+	local netfile=$1
 
+	local file=$(get_filename "$netfile")
 	local filepath=$(get_filepath "$file")
 	rm -f "$srcdir/${file}"
 	ln -s "$filepath" "$srcdir/"
@@ -136,7 +137,7 @@ extract_file() {
 	fi
 	if (( ret )); then
 		error "$(gettext "Failed to extract %s")" "$file"
-		plain "$(gettext "Aborting...")"
+		plainerr "$(gettext "Aborting...")"
 		exit 1
 	fi
 

@@ -2,7 +2,7 @@
 #
 #   hg.sh - function for handling the download and "extraction" of Mercurial sources
 #
-#   Copyright (c) 2015-2019 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2015-2020 Pacman Development Team <pacman-dev@archlinux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ download_hg() {
 		msg2 "$(gettext "Cloning %s %s repo...")" "${repo}" "hg"
 		if ! hg clone -U "$url" "$dir"; then
 			error "$(gettext "Failure while downloading %s %s repo")" "${repo}" "hg"
-			plain "$(gettext "Aborting...")"
+			plainerr "$(gettext "Aborting...")"
 			exit 1
 		fi
 	elif (( ! HOLDVER )); then
@@ -91,7 +91,7 @@ extract_hg() {
 				;;
 			*)
 				error "$(gettext "Unrecognized reference: %s")" "${fragment}"
-				plain "$(gettext "Aborting...")"
+				plainerr "$(gettext "Aborting...")"
 				exit 1
 		esac
 	fi
@@ -100,12 +100,12 @@ extract_hg() {
 		cd_safe "${dir##*/}"
 		if ! (hg pull && hg update -C -r "$ref"); then
 			error "$(gettext "Failure while updating working copy of %s %s repo")" "${repo}" "hg"
-			plain "$(gettext "Aborting...")"
+			plainerr "$(gettext "Aborting...")"
 			exit 1
 		fi
 	elif ! hg clone -u "$ref" "$dir" "${dir##*/}"; then
 		error "$(gettext "Failure while creating working copy of %s %s repo")" "${repo}" "hg"
-		plain "$(gettext "Aborting...")"
+		plainerr "$(gettext "Aborting...")"
 		exit 1
 	fi
 

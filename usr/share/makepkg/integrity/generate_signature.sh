@@ -2,7 +2,7 @@
 #
 #   generate_signature.sh - functions for generating PGP signatures
 #
-#   Copyright (c) 2008-2019 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2008-2020 Pacman Development Team <pacman-dev@archlinux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@ create_signature() {
 	local ret=0
 	local filename="$1"
 
-	local SIGNWITHKEY=""
+	local SIGNWITHKEY=()
 	if [[ -n $GPGKEY ]]; then
-		SIGNWITHKEY="-u ${GPGKEY}"
+		SIGNWITHKEY=(-u "${GPGKEY}")
 	fi
 
-	gpg --detach-sign --use-agent ${SIGNWITHKEY} --no-armor "$filename" &>/dev/null || ret=$?
+	gpg --detach-sign --use-agent "${SIGNWITHKEY[@]}" --no-armor "$filename" &>/dev/null || ret=$?
 
 
 	if (( ! ret )); then

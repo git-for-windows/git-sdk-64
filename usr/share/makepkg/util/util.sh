@@ -2,7 +2,7 @@
 #
 #   util.sh - general utility functions
 #
-#   Copyright (c) 2006-2019 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2006-2020 Pacman Development Team <pacman-dev@archlinux.org>
 #   Copyright (c) 2002-2006 by Judd Vinet <jvinet@zeroflux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -78,7 +78,7 @@ dir_is_empty() {
 cd_safe() {
 	if ! cd "$1"; then
 		error "$(gettext "Failed to change to directory %s")" "$1"
-		plain "$(gettext "Aborting...")"
+		plainerr "$(gettext "Aborting...")"
 		exit 1
 	fi
 }

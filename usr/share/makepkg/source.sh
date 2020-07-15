@@ -2,7 +2,7 @@
 #
 #   source.sh - functions for downloading and extracting sources
 #
-#   Copyright (c) 2015-2019 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2015-2020 Pacman Development Team <pacman-dev@archlinux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -75,12 +75,11 @@ extract_sources() {
 
 	get_all_sources_for_arch 'all_sources'
 	for netfile in "${all_sources[@]}"; do
-		local file=$(get_filename "$netfile")
 		local proto=$(get_protocol "$netfile")
 		if declare -f extract_$proto > /dev/null; then
 			extract_$proto "$netfile"
 		else
-			extract_file "$file"
+			extract_file "$netfile"
 		fi
 	done
 }

@@ -4,9 +4,28 @@
 a2x - A toolchain manager for AsciiDoc (converts Asciidoc text files to other
       file formats)
 
-Copyright: Stuart Rackham (c) 2009
-License:   MIT
-Email:     srackham@gmail.com
+Free use of this software is granted under the terms of the MIT license.
+
+Copyright (C) 2002-2013 Stuart Rackham.
+Copyright (C) 2013-2020 AsciiDoc Contributors.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 """
 
 import os
@@ -23,7 +42,7 @@ import xml.dom.minidom
 import mimetypes
 
 PROG = os.path.basename(os.path.splitext(__file__)[0])
-VERSION = '9.0.0rc2'
+VERSION = '9.0.1'
 
 # AsciiDoc global configuration file directory.
 # NOTE: CONF_DIR is "fixed up" by Makefile -- don't rename or change syntax.
@@ -284,6 +303,8 @@ def find_resources(files, tagname, attrname, filter=None):
         with open(filename, 'rb') as open_file:
             contents = open_file.read()
         mo = re.search(b'\A<\?xml.* encoding="(.*?)"', contents)
+        if mo is None:
+            mo = re.search(br'<meta http\-equiv="Content\-Type" content="text\/html; charset=(.*?)">', contents)
         contents = contents.decode(mo.group(1).decode('utf-8') if mo else 'utf-8')
         parser.feed(contents)
         parser.close()
@@ -364,11 +385,19 @@ def get_source_options(asciidoc_file):
     result = []
     if os.path.isfile(asciidoc_file):
         options = ''
-        with open(asciidoc_file) as f:
+        with open(asciidoc_file, 'rb') as f:
+            line_number = 0
             for line in f:
-                mo = re.search(r'^//\s*a2x:', line)
+                line_number += 1
+                mo = re.search(b'^//\s*a2x:', line)
                 if mo:
-                    options += ' ' + line[mo.end():].strip()
+                    try:
+                        options += ' ' + line[mo.end():].strip().decode('ascii')
+                    except UnicodeDecodeError as e:
+                        warning(
+                            "Could not decode option to %s " % e.encoding +
+                            "on line %s in %s" % (line_number, asciidoc_file)
+                        )
         parse_options()
     return result
 
