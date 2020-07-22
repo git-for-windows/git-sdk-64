@@ -1,11 +1,11 @@
-package HTTP::Daemon; # git description: v6.09-2-g5d11eea
+package HTTP::Daemon; # git description: v6.11-4-g1c1c9bc
 
 # ABSTRACT: A simple http server class
 
 use strict;
 use warnings;
 
-our $VERSION = '6.10';
+our $VERSION = '6.12';
 
 use Socket ();
 use IO::Socket::IP;
@@ -47,6 +47,7 @@ sub url {
     my $self = shift;
 
     my $host = $self->sockhost;
+    $host =~ s/%/%25/g;
     $host = "127.0.0.1" if $host eq "0.0.0.0";
     $host = "::1"       if $host eq "::";
     $host = "[$host]"   if $self->sockdomain == Socket::AF_INET6;
@@ -602,7 +603,7 @@ HTTP::Daemon - A simple http server class
 
 =head1 VERSION
 
-version 6.10
+version 6.12
 
 =head1 SYNOPSIS
 
@@ -914,7 +915,7 @@ Gisle Aas <gisle@activestate.com>
 
 =head1 CONTRIBUTORS
 
-=for stopwords Olaf Alders Ville Skyttä Mark Stosberg Karen Etheridge Shoichi Kaji Chase Whitener Slaven Rezic Zefram Tom Hukins Petr Písař Alexey Tourbin Mike Schilli Bron Gondwana Ian Kilgore Jacob J Ondrej Hanak Perlover Peter Rabbitson Robert Stone Rolf Grossmann Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban amire80 jefflee john9art murphy phrstbrn ruff Adam Kennedy sasao Sjogren Alex Kapranoff Andreas J. Koenig Bill Mann DAVIDRW Daniel Hedlund David E. Wheeler FWILES Father Chrysostomos Ferenc Erki Gavin Peters Graeme Thompson Hans-H. Froehlich
+=for stopwords Olaf Alders Ville Skyttä Mark Stosberg Karen Etheridge Shoichi Kaji Chase Whitener Slaven Rezic Zefram Petr Písař Tom Hukins Alexey Tourbin Mike Schilli Bron Gondwana Ian Kilgore Jacob J Ondrej Hanak Perlover Peter Rabbitson Robert Stone Rolf Grossmann Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban amire80 jefflee john9art murphy phrstbrn ruff Adam Kennedy sasao Sjogren Alex Kapranoff Andreas J. Koenig Bill Mann DAVIDRW Daniel Hedlund David E. Wheeler FWILES Father Chrysostomos Ferenc Erki Gavin Peters Graeme Thompson Hans-H. Froehlich
 
 =over 4
 
@@ -952,11 +953,11 @@ Zefram <zefram@fysh.org>
 
 =item *
 
-Tom Hukins <tom@eborcom.com>
+Petr Písař <ppisar@redhat.com>
 
 =item *
 
-Petr Písař <ppisar@redhat.com>
+Tom Hukins <tom@eborcom.com>
 
 =item *
 
