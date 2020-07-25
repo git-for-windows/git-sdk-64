@@ -1,6 +1,6 @@
 /* tld.h --- Declarations for TLD restriction checking.
-   Copyright (C) 2004-2016 Simon Josefsson.
-   Copyright (C) 2003-2014, 2016 Free Software Foundation, Inc.
+   Copyright (C) 2004-2020 Simon Josefsson.
+   Copyright (C) 2003-2020 Free Software Foundation, Inc.
 
    Author: Thomas Jacob, Internet24.de
 
@@ -90,8 +90,7 @@ extern "C"
   extern IDNAPI const char *tld_strerror (Tld_rc rc);
 
   /* Extract TLD, as ASCII string, of UCS4 domain name into "out". */
-  extern IDNAPI int tld_get_4 (const uint32_t * in, size_t inlen,
-			       char **out);
+  extern IDNAPI int tld_get_4 (const uint32_t * in, size_t inlen, char **out);
   extern IDNAPI int tld_get_4z (const uint32_t * in, char **out);
   extern IDNAPI int tld_get_z (const char *in, char **out);
 
@@ -104,32 +103,33 @@ extern "C"
   /* Return structure corresponding to the named TLD, first looking
    * thru overrides then thru built-in list, or return NULL if no
    * matching TLD can be found. */
-  extern IDNAPI const Tld_table * tld_default_table (const char *tld,
-						 const Tld_table ** overrides);
+  extern IDNAPI const Tld_table *tld_default_table (const char *tld,
+						    const Tld_table **
+						    overrides);
 
   /* Check NAMEPREPPED domain name for valid characters as defined by
    * the relevant registering body (plus [a-z0-9.-]).  If error is
    * TLD_INVALID, set errpos to position of offending character. */
   extern IDNAPI int tld_check_4t (const uint32_t * in, size_t inlen,
-				  size_t * errpos, const Tld_table * tld);
-  extern IDNAPI int tld_check_4tz (const uint32_t * in, size_t * errpos,
+				  size_t *errpos, const Tld_table * tld);
+  extern IDNAPI int tld_check_4tz (const uint32_t * in, size_t *errpos,
 				   const Tld_table * tld);
 
   /* Utility interfaces that uses tld_get_4* to find TLD of string,
      then tld_default_table (with overrides) to find proper TLD table
      for the string, and then hands over to tld_check_4t*. */
   extern IDNAPI int tld_check_4 (const uint32_t * in, size_t inlen,
-				 size_t * errpos,
+				 size_t *errpos,
 				 const Tld_table ** overrides);
-  extern IDNAPI int tld_check_4z (const uint32_t * in, size_t * errpos,
+  extern IDNAPI int tld_check_4z (const uint32_t * in, size_t *errpos,
 				  const Tld_table ** overrides);
-  extern IDNAPI int tld_check_8z (const char *in, size_t * errpos,
+  extern IDNAPI int tld_check_8z (const char *in, size_t *errpos,
 				  const Tld_table ** overrides);
-  extern IDNAPI int tld_check_lz (const char *in, size_t * errpos,
+  extern IDNAPI int tld_check_lz (const char *in, size_t *errpos,
 				  const Tld_table ** overrides);
 
 # ifdef __cplusplus
 }
 # endif
 
-#endif /* TLD_H */
+#endif				/* TLD_H */

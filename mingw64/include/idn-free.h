@@ -1,5 +1,5 @@
 /* idn-free.h --- Invoke the free function to release memory
-   Copyright (C) 2004-2016 Simon Josefsson
+   Copyright (C) 2004-2020 Simon Josefsson
 
    This file is part of GNU Libidn.
 
@@ -65,10 +65,10 @@ extern "C"
  * information.
  */
 
-extern void IDNAPI idn_free (void *ptr);
+  extern void IDNAPI idn_free (void *ptr);
 
 # ifdef __cplusplus
 }
 # endif
 
-#endif /* IDN_FREE_H */
+#endif				/* IDN_FREE_H */

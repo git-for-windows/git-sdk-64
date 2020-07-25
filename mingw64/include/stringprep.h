@@ -1,5 +1,5 @@
 /* stringprep.h --- Header file for stringprep functions.
-   Copyright (C) 2002-2016 Simon Josefsson
+   Copyright (C) 2002-2020 Simon Josefsson
 
    This file is part of GNU Libidn.
 
@@ -51,7 +51,7 @@ extern "C"
 {
 # endif
 
-# define STRINGPREP_VERSION "1.35"
+# define STRINGPREP_VERSION "1.36"
 
 /* Error codes. */
   typedef enum
@@ -155,7 +155,8 @@ extern "C"
   /* SASL */
 
   extern IDNAPI const Stringprep_profile stringprep_saslprep[];
-  extern IDNAPI const Stringprep_table_element stringprep_saslprep_space_map[];
+  extern IDNAPI const Stringprep_table_element
+    stringprep_saslprep_space_map[];
   extern IDNAPI const Stringprep_profile stringprep_plain[];
   extern IDNAPI const Stringprep_profile stringprep_trace[];
 
@@ -173,7 +174,8 @@ extern "C"
 
   extern IDNAPI const Stringprep_profile stringprep_xmpp_nodeprep[];
   extern IDNAPI const Stringprep_profile stringprep_xmpp_resourceprep[];
-  extern IDNAPI const Stringprep_table_element stringprep_xmpp_nodeprep_prohibit[];
+  extern IDNAPI const Stringprep_table_element
+    stringprep_xmpp_nodeprep_prohibit[];
 
 # define stringprep_xmpp_nodeprep(in, maxlen)		\
   stringprep(in, maxlen, 0, stringprep_xmpp_nodeprep)
@@ -190,7 +192,7 @@ extern "C"
 
   /* API */
 
-  extern IDNAPI int stringprep_4i (uint32_t * ucs4, size_t * len,
+  extern IDNAPI int stringprep_4i (uint32_t * ucs4, size_t *len,
 				   size_t maxucs4len,
 				   Stringprep_profile_flags flags,
 				   const Stringprep_profile * profile);
@@ -218,16 +220,16 @@ extern "C"
 
   extern IDNAPI uint32_t *stringprep_utf8_to_ucs4 (const char *str,
 						   ssize_t len,
-						   size_t * items_written);
+						   size_t *items_written);
   extern IDNAPI char *stringprep_ucs4_to_utf8 (const uint32_t * str,
 					       ssize_t len,
-					       size_t * items_read,
-					       size_t * items_written);
+					       size_t *items_read,
+					       size_t *items_written);
 
   extern IDNAPI char *stringprep_utf8_nfkc_normalize (const char *str,
 						      ssize_t len);
-  extern IDNAPI uint32_t *stringprep_ucs4_nfkc_normalize (const uint32_t * str,
-							  ssize_t len);
+  extern IDNAPI uint32_t *stringprep_ucs4_nfkc_normalize (const uint32_t *
+							  str, ssize_t len);
 
   extern IDNAPI const char *stringprep_locale_charset (void);
   extern IDNAPI char *stringprep_convert (const char *str,
