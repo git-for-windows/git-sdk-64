@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.8
 srcdir=		.
 
-abs_srcdir=	/C/msys64/home/user/MSYS2-packages/python/src/Python-3.8.5
-abs_builddir=	/C/msys64/home/user/MSYS2-packages/python/src/Python-3.8.5
+abs_srcdir=	/d/_/S/python/src/Python-3.8.5
+abs_builddir=	/d/_/S/python/src/Python-3.8.5
 
 
 CC=		x86_64-pc-msys-gcc
@@ -229,7 +229,7 @@ LDLIBRARYDIR=
 INSTSONAME=	$(LDLIBRARY)
 
 
-LIBS=		-lintl -ldl  
+LIBS=		-lcrypt -lintl -ldl  
 LIBM=		
 LIBC=		
 SYSLIBS=	$(LIBM) $(LIBC)

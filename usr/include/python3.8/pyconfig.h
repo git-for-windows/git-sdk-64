@@ -153,10 +153,10 @@
 /* #undef HAVE_COPY_FILE_RANGE */
 
 /* Define to 1 if you have the <crypt.h> header file. */
-/* #undef HAVE_CRYPT_H */
+#define HAVE_CRYPT_H 1
 
 /* Define if you have the crypt_r() function. */
-/* #undef HAVE_CRYPT_R */
+#define HAVE_CRYPT_R 1
 
 /* Define to 1 if you have the `ctermid' function. */
 #define HAVE_CTERMID 1

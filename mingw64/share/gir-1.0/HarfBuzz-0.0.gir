@@ -328,15 +328,15 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
       <source-position filename="../src/hb-version.h" line="39"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="8" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <source-position filename="../src/hb-version.h" line="41"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="6" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="7" c:type="HB_VERSION_MINOR">
       <source-position filename="../src/hb-version.h" line="40"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="2.6.8" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="2.7.0" c:type="HB_VERSION_STRING">
       <source-position filename="../src/hb-version.h" line="43"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -4279,7 +4279,7 @@ and output glyphs and their information after shaping.</doc>
               version="1.9.0">
       <doc xml:space="preserve"
            filename="../src/hb-face.cc"
-           line="704">Add table for @tag with data provided by @blob to the face.  @face must
+           line="709">Add table for @tag with data provided by @blob to the face.  @face must
 be created using hb_face_builder_create().</doc>
       <source-position filename="../src/hb-face.h" line="151"/>
       <return-value transfer-ownership="none">
@@ -4302,14 +4302,14 @@ be created using hb_face_builder_create().</doc>
               version="1.9.0">
       <doc xml:space="preserve"
            filename="../src/hb-face.cc"
-           line="682">Creates a #hb_face_t that can be used with hb_face_builder_add_table().
+           line="687">Creates a #hb_face_t that can be used with hb_face_builder_add_table().
 After tables are added to the face, it can be compiled to a binary
 font file by calling hb_face_reference_blob().</doc>
       <source-position filename="../src/hb-face.h" line="148"/>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-face.cc"
-             line="689">New face.</doc>
+             line="694">New face.</doc>
         <type name="face_t" c:type="hb_face_t*"/>
       </return-value>
     </function>
@@ -4324,13 +4324,13 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="540">font face.</doc>
+               line="545">font face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="out" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="541">set to add Unicode characters covered by @face to.</doc>
+               line="546">set to add Unicode characters covered by @face to.</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
@@ -4346,13 +4346,13 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="553">font face.</doc>
+               line="558">font face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="out" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="554">set to add Variation Selector characters covered by @face to.</doc>
+               line="559">set to add Variation Selector characters covered by @face to.</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
@@ -4368,7 +4368,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="568">font face.</doc>
+               line="573">font face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="variation_selector" transfer-ownership="none">
@@ -4377,7 +4377,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="out" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="569">set to add Unicode characters for @variation_selector covered by @face to.</doc>
+               line="574">set to add Unicode characters for @variation_selector covered by @face to.</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
@@ -4455,7 +4455,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="251">a face.</doc>
+               line="256">a face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
       </parameters>
@@ -4479,7 +4479,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="483">a face.</doc>
+               line="488">a face.</doc>
           <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
       </parameters>
@@ -4495,7 +4495,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="413">a face.</doc>
+               line="418">a face.</doc>
           <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
       </parameters>
@@ -4505,37 +4505,37 @@ font file by calling hb_face_reference_blob().</doc>
               version="1.6.0">
       <doc xml:space="preserve"
            filename="../src/hb-face.cc"
-           line="497">Retrieves table tags for a face, if possible.</doc>
+           line="502">Retrieves table tags for a face, if possible.</doc>
       <source-position filename="../src/hb-face.h" line="119"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-face.cc"
-             line="506">total number of tables, or 0 if not possible to list.</doc>
+             line="511">total number of tables, or 0 if not possible to list.</doc>
         <type name="guint" c:type="unsigned int"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="499">a face.</doc>
+               line="504">a face.</doc>
           <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="500">index of first tag to return.</doc>
+               line="505">index of first tag to return.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="table_count" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="501">input length of @table_tags array, output number of items written.</doc>
+               line="506">input length of @table_tags array, output number of items written.</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="table_tags" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="502">array to write tags into.</doc>
+               line="507">array to write tags into.</doc>
           <type name="tag_t" c:type="hb_tag_t*"/>
         </parameter>
       </parameters>
@@ -4551,7 +4551,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="448">a face.</doc>
+               line="453">a face.</doc>
           <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
       </parameters>
@@ -4568,7 +4568,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="305">a face.</doc>
+               line="310">a face.</doc>
           <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
@@ -4587,7 +4587,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="340">a face.</doc>
+               line="345">a face.</doc>
           <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
       </parameters>
@@ -4603,7 +4603,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="323">a face.</doc>
+               line="328">a face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
       </parameters>
@@ -4620,7 +4620,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="235">a face.</doc>
+               line="240">a face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
       </parameters>
@@ -4636,7 +4636,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="378">a face.</doc>
+               line="383">a face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
       </parameters>
@@ -4652,7 +4652,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="357">a face.</doc>
+               line="362">a face.</doc>
           <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
         <parameter name="tag" transfer-ownership="none">
@@ -4671,7 +4671,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="464">a face.</doc>
+               line="469">a face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="glyph_count" transfer-ownership="none">
@@ -4690,7 +4690,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="394">a face.</doc>
+               line="399">a face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="index" transfer-ownership="none">
@@ -4709,7 +4709,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="429">a face.</doc>
+               line="434">a face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="upem" transfer-ownership="none">
@@ -4729,7 +4729,7 @@ font file by calling hb_face_reference_blob().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-face.cc"
-               line="281">a face.</doc>
+               line="286">a face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
@@ -7575,7 +7575,7 @@ There are 72 points in an inch.</doc>
               introspectable="0">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="660">Creates an #hb_face_t face object from the specified FT_Face.
+           line="661">Creates an #hb_face_t face object from the specified FT_Face.
 
 This variant of the function does not provide any life-cycle management.
 
@@ -7589,7 +7589,7 @@ after the #hb_face_t face object has been destroyed.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-ft.cc"
-             line="676">the new #hb_face_t face object</doc>
+             line="677">the new #hb_face_t face object</doc>
         <type name="face_t" c:type="hb_face_t*"/>
       </return-value>
       <parameters>
@@ -7599,13 +7599,13 @@ after the #hb_face_t face object has been destroyed.</doc>
                    destroy="1">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="662">FT_Face to work upon</doc>
+               line="663">FT_Face to work upon</doc>
           <type c:type="FT_Face"/>
         </parameter>
         <parameter name="destroy" transfer-ownership="none" scope="notified">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="663">A callback to call when the face object is not needed anymore</doc>
+               line="664">A callback to call when the face object is not needed anymore</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
       </parameters>
@@ -7616,7 +7616,7 @@ after the #hb_face_t face object has been destroyed.</doc>
               introspectable="0">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="736">Creates an #hb_face_t face object from the specified FT_Face.
+           line="737">Creates an #hb_face_t face object from the specified FT_Face.
 
 This variant of the function caches the newly created #hb_face_t
 face object, using the @generic pointer of @ft_face. Subsequent function
@@ -7630,14 +7630,14 @@ However, client programs are still responsible for destroying
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-ft.cc"
-             line="751">the new #hb_face_t face object</doc>
+             line="752">the new #hb_face_t face object</doc>
         <type name="face_t" c:type="hb_face_t*"/>
       </return-value>
       <parameters>
         <parameter name="ft_face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="738">FT_Face to work upon</doc>
+               line="739">FT_Face to work upon</doc>
           <type c:type="FT_Face"/>
         </parameter>
       </parameters>
@@ -7648,7 +7648,7 @@ However, client programs are still responsible for destroying
               introspectable="0">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="705">Creates an #hb_face_t face object from the specified FT_Face.
+           line="706">Creates an #hb_face_t face object from the specified FT_Face.
 
 This is the preferred variant of the hb_ft_face_create*
 function family, because it calls FT_Reference_Face() on @ft_face,
@@ -7661,14 +7661,14 @@ Use this version unless you know you have good reasons not to.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-ft.cc"
-             line="719">the new #hb_face_t face object</doc>
+             line="720">the new #hb_face_t face object</doc>
         <type name="face_t" c:type="hb_face_t*"/>
       </return-value>
       <parameters>
         <parameter name="ft_face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="707">FT_Face to work upon</doc>
+               line="708">FT_Face to work upon</doc>
           <type c:type="FT_Face"/>
         </parameter>
       </parameters>
@@ -7690,7 +7690,7 @@ Use this version unless you know you have good reasons not to.</doc>
               introspectable="0">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="770">Creates an #hb_font_t font object from the specified FT_Face.
+           line="771">Creates an #hb_font_t font object from the specified FT_Face.
 
 &lt;note&gt;Note: You must set the face size on @ft_face before calling
 hb_ft_font_create() on it. Otherwise, HarfBuzz will not pick up
@@ -7714,7 +7714,7 @@ destroyed only after the #hb_font_t font object has been destroyed.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-ft.cc"
-             line="796">the new #hb_font_t font object</doc>
+             line="797">the new #hb_font_t font object</doc>
         <type name="font_t" c:type="hb_font_t*"/>
       </return-value>
       <parameters>
@@ -7724,13 +7724,13 @@ destroyed only after the #hb_font_t font object has been destroyed.</doc>
                    destroy="1">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="772">FT_Face to work upon</doc>
+               line="773">FT_Face to work upon</doc>
           <type c:type="FT_Face"/>
         </parameter>
         <parameter name="destroy" transfer-ownership="none" scope="notified">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="773">A callback to call when the font object is not needed anymore</doc>
+               line="774">A callback to call when the font object is not needed anymore</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
       </parameters>
@@ -7741,7 +7741,7 @@ destroyed only after the #hb_font_t font object has been destroyed.</doc>
               introspectable="0">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="878">Creates an #hb_font_t font object from the specified FT_Face.
+           line="880">Creates an #hb_font_t font object from the specified FT_Face.
 
 &lt;note&gt;Note: You must set the face size on @ft_face before calling
 hb_ft_font_create_references() on it. Otherwise, HarfBuzz will not pick up
@@ -7757,14 +7757,14 @@ Use this version unless you know you have good reasons not to.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-ft.cc"
-             line="895">the new #hb_font_t font object</doc>
+             line="897">the new #hb_font_t font object</doc>
         <type name="font_t" c:type="hb_font_t*"/>
       </return-value>
       <parameters>
         <parameter name="ft_face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="880">FT_Face to work upon</doc>
+               line="882">FT_Face to work upon</doc>
           <type c:type="FT_Face"/>
         </parameter>
       </parameters>
@@ -7787,7 +7787,7 @@ Use this version unless you know you have good reasons not to.</doc>
               version="1.0.5">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="159">Fetches the FT_Load_Glyph load flags of the specified #hb_font_t.
+           line="157">Fetches the FT_Load_Glyph load flags of the specified #hb_font_t.
 
 For more information, see
 https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#ft_load_xxx</doc>
@@ -7795,14 +7795,14 @@ https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#ft_loa
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ft.cc"
-             line="168">FT_Load_Glyph flags found</doc>
+             line="166">FT_Load_Glyph flags found</doc>
         <type name="gint" c:type="int"/>
       </return-value>
       <parameters>
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="161">#hb_font_t to work upon</doc>
+               line="159">#hb_font_t to work upon</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
       </parameters>
@@ -7826,7 +7826,7 @@ https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#ft_loa
               version="1.0.5">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="955">Configures the font-functions structure of the specified
+           line="957">Configures the font-functions structure of the specified
 #hb_font_t font object to use FreeType font functions.
 
 In particular, you can use this function to configure an
@@ -7849,7 +7849,7 @@ require this function to be used.
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="957">#hb_font_t to work upon</doc>
+               line="959">#hb_font_t to work upon</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
       </parameters>
@@ -7859,7 +7859,7 @@ require this function to be used.
               version="1.0.5">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="133">Sets the FT_Load_Glyph load flags for the specified #hb_font_t.
+           line="131">Sets the FT_Load_Glyph load flags for the specified #hb_font_t.
 
 For more information, see
 https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#ft_load_xxx</doc>
@@ -7871,13 +7871,13 @@ https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#ft_loa
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="135">#hb_font_t to work upon</doc>
+               line="133">#hb_font_t to work upon</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="load_flags" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="136">The FreeType load flags to set</doc>
+               line="134">The FreeType load flags to set</doc>
           <type name="gint" c:type="int"/>
         </parameter>
       </parameters>
@@ -9091,7 +9091,7 @@ In vertical writing mode when mathematical characters rotated 90 degrees clockwi
               version="1.8.5">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1117">Fetches a list of all feature indexes in the specified face's GSUB table
+           line="1101">Fetches a list of all feature indexes in the specified face's GSUB table
 or GPOS table, underneath the specified scripts, languages, and features.
 If no list of scripts is provided, all scripts will be queried. If no list
 of languages is provided, all languages will be queried. If no list of
@@ -9104,31 +9104,31 @@ features is provided, all features will be queried.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1119">#hb_face_t to work upon</doc>
+               line="1103">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1120">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="1104">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="scripts" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1121">The array of scripts to collect features for</doc>
+               line="1105">The array of scripts to collect features for</doc>
           <type name="tag_t" c:type="const hb_tag_t*"/>
         </parameter>
         <parameter name="languages" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1122">The array of languages to collect features for</doc>
+               line="1106">The array of languages to collect features for</doc>
           <type name="tag_t" c:type="const hb_tag_t*"/>
         </parameter>
         <parameter name="features" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1123">The array of features to collect</doc>
+               line="1107">The array of features to collect</doc>
           <type name="tag_t" c:type="const hb_tag_t*"/>
         </parameter>
         <parameter name="feature_indexes"
@@ -9137,7 +9137,7 @@ features is provided, all features will be queried.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1124">The array of feature indexes found for the query</doc>
+               line="1108">The array of feature indexes found for the query</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
@@ -9147,7 +9147,7 @@ features is provided, all features will be queried.</doc>
               version="0.9.8">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1168">Fetches a list of all feature-lookup indexes in the specified face's GSUB
+           line="1152">Fetches a list of all feature-lookup indexes in the specified face's GSUB
 table or GPOS table, underneath the specified scripts, languages, and
 features. If no list of scripts is provided, all scripts will be queried.
 If no list of languages is provided, all languages will be queried. If no
@@ -9160,31 +9160,31 @@ list of features is provided, all features will be queried.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1170">#hb_face_t to work upon</doc>
+               line="1154">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1171">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="1155">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="scripts" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1172">The array of scripts to collect lookups for</doc>
+               line="1156">The array of scripts to collect lookups for</doc>
           <type name="tag_t" c:type="const hb_tag_t*"/>
         </parameter>
         <parameter name="languages" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1173">The array of languages to collect lookups for</doc>
+               line="1157">The array of languages to collect lookups for</doc>
           <type name="tag_t" c:type="const hb_tag_t*"/>
         </parameter>
         <parameter name="features" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1174">The array of features to collect lookups for</doc>
+               line="1158">The array of features to collect lookups for</doc>
           <type name="tag_t" c:type="const hb_tag_t*"/>
         </parameter>
         <parameter name="lookup_indexes"
@@ -9193,7 +9193,7 @@ list of features is provided, all features will be queried.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1175">The array of lookup indexes found for the query</doc>
+               line="1159">The array of lookup indexes found for the query</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
@@ -9203,38 +9203,38 @@ list of features is provided, all features will be queried.</doc>
               version="2.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1698">Fetches a list of the characters defined as having a variant under the specified
+           line="1682">Fetches a list of the characters defined as having a variant under the specified
 "Character Variant" ("cvXX") feature tag.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="405"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="1713">Number of total sample characters in the cvXX feature.</doc>
+             line="1697">Number of total sample characters in the cvXX feature.</doc>
         <type name="guint" c:type="unsigned int"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1700">#hb_face_t to work upon</doc>
+               line="1684">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1701">table tag to query, "GSUB" or "GPOS".</doc>
+               line="1685">table tag to query, "GSUB" or "GPOS".</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="feature_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1702">index of feature to query.</doc>
+               line="1686">index of feature to query.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1703">offset of the first character to retrieve</doc>
+               line="1687">offset of the first character to retrieve</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="char_count"
@@ -9244,7 +9244,7 @@ list of features is provided, all features will be queried.</doc>
                    nullable="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1704">Input = the maximum number of characters to return;
+               line="1688">Input = the maximum number of characters to return;
              Output = the actual number of characters returned (may be zero)</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
@@ -9254,7 +9254,7 @@ list of features is provided, all features will be queried.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1706">A buffer pointer.
+               line="1690">A buffer pointer.
              The Unicode codepoints of the characters for which this feature provides
               glyph variants.</doc>
           <array length="4" zero-terminated="0" c:type="hb_codepoint_t*">
@@ -9268,7 +9268,7 @@ list of features is provided, all features will be queried.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="926">Fetches a list of all lookups enumerated for the specified feature, in
+           line="910">Fetches a list of all lookups enumerated for the specified feature, in
 the specified face's GSUB table or GPOS table. The list returned will
 begin at the offset provided.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="238"/>
@@ -9279,25 +9279,25 @@ begin at the offset provided.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="928">#hb_face_t to work upon</doc>
+               line="912">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="929">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="913">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="feature_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="930">The index of the requested feature</doc>
+               line="914">The index of the requested feature</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="931">offset of the first lookup to retrieve</doc>
+               line="915">offset of the first lookup to retrieve</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="lookup_count"
@@ -9307,7 +9307,7 @@ begin at the offset provided.</doc>
                    nullable="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="932">Input = the maximum number of lookups to return;
+               line="916">Input = the maximum number of lookups to return;
                Output = the actual number of lookups returned (may be zero)</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
@@ -9317,7 +9317,7 @@ begin at the offset provided.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="934">The array of lookup indexes found for the query</doc>
+               line="918">The array of lookup indexes found for the query</doc>
           <array length="4" zero-terminated="0" c:type="unsigned int*">
             <type name="guint" c:type="unsigned int"/>
           </array>
@@ -9329,32 +9329,32 @@ begin at the offset provided.</doc>
               version="2.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1624">Fetches name indices from feature parameters for "Stylistic Set" ('ssXX') or
+           line="1608">Fetches name indices from feature parameters for "Stylistic Set" ('ssXX') or
 "Character Variant" ('cvXX') features.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="394"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="1644">true if data found, false otherwise</doc>
+             line="1628">true if data found, false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1626">#hb_face_t to work upon</doc>
+               line="1610">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1627">table tag to query, "GSUB" or "GPOS".</doc>
+               line="1611">table tag to query, "GSUB" or "GPOS".</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="feature_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1628">index of feature to query.</doc>
+               line="1612">index of feature to query.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="label_id"
@@ -9365,7 +9365,7 @@ begin at the offset provided.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1629">The ‘name’ table name ID that specifies a string
+               line="1613">The ‘name’ table name ID that specifies a string
            for a user-interface label for this feature. (May be NULL.)</doc>
           <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
         </parameter>
@@ -9377,7 +9377,7 @@ begin at the offset provided.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1631">The ‘name’ table name ID that specifies a string
+               line="1615">The ‘name’ table name ID that specifies a string
              that an application can use for tooltip text for this
              feature. (May be NULL.)</doc>
           <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
@@ -9390,7 +9390,7 @@ begin at the offset provided.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1634">The ‘name’ table name ID that specifies sample text
+               line="1618">The ‘name’ table name ID that specifies sample text
             that illustrates the effect of this feature. (May be NULL.)</doc>
           <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
         </parameter>
@@ -9402,7 +9402,7 @@ begin at the offset provided.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1636">Number of named parameters. (May be zero.)</doc>
+               line="1620">Number of named parameters. (May be zero.)</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="first_param_id"
@@ -9413,7 +9413,7 @@ begin at the offset provided.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1637">The first ‘name’ table name ID used to specify
+               line="1621">The first ‘name’ table name ID used to specify
                  strings for user-interface labels for the feature
                  parameters. (Must be zero if numParameters is zero.)</doc>
           <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
@@ -9424,7 +9424,7 @@ begin at the offset provided.</doc>
               c:identifier="hb_ot_layout_feature_with_variations_get_lookups">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1284">Fetches a list of all lookups enumerated for the specified feature, in
+           line="1268">Fetches a list of all lookups enumerated for the specified feature, in
 the specified face's GSUB table or GPOS table, enabled at the specified
 variations index. The list returned will begin at the offset provided.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="310"/>
@@ -9435,31 +9435,31 @@ variations index. The list returned will begin at the offset provided.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1286">#hb_face_t to work upon</doc>
+               line="1270">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1287">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="1271">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="feature_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1288">The index of the feature to query</doc>
+               line="1272">The index of the feature to query</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="variations_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1289">The index of the feature variation to query</doc>
+               line="1273">The index of the feature variation to query</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1290">offset of the first lookup to retrieve</doc>
+               line="1274">offset of the first lookup to retrieve</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="lookup_count"
@@ -9469,7 +9469,7 @@ variations index. The list returned will begin at the offset provided.</doc>
                    nullable="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1291">Input = the maximum number of lookups to return;
+               line="1275">Input = the maximum number of lookups to return;
                Output = the actual number of lookups returned (may be zero)</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
@@ -9479,7 +9479,7 @@ variations index. The list returned will begin at the offset provided.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1293">The array of lookups found for the query</doc>
+               line="1277">The array of lookups found for the query</doc>
           <array length="5" zero-terminated="0" c:type="unsigned int*">
             <type name="guint" c:type="unsigned int"/>
           </array>
@@ -9490,7 +9490,7 @@ variations index. The list returned will begin at the offset provided.</doc>
               c:identifier="hb_ot_layout_get_attach_points">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="322">Fetches a list of all attachment points for the specified glyph in the GDEF
+           line="320">Fetches a list of all attachment points for the specified glyph in the GDEF
 table of the face. The list returned will begin at the offset provided.
 
 Useful if the client program wishes to cache the list.</doc>
@@ -9502,19 +9502,19 @@ Useful if the client program wishes to cache the list.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="324">The #hb_face_t to work on</doc>
+               line="322">The #hb_face_t to work on</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="glyph" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="325">The #hb_codepoint_t code point to query</doc>
+               line="323">The #hb_codepoint_t code point to query</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="326">offset of the first attachment point to retrieve</doc>
+               line="324">offset of the first attachment point to retrieve</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="point_count"
@@ -9524,7 +9524,7 @@ Useful if the client program wishes to cache the list.</doc>
                    nullable="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="327">Input = the maximum number of attachment points to return;
+               line="325">Input = the maximum number of attachment points to return;
               Output = the actual number of attachment points returned (may be zero)</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
@@ -9534,7 +9534,7 @@ Useful if the client program wishes to cache the list.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="329">The array of attachment points found for the query</doc>
+               line="327">The array of attachment points found for the query</doc>
           <array length="3" zero-terminated="0" c:type="unsigned int*">
             <type name="guint" c:type="unsigned int"/>
           </array>
@@ -9546,44 +9546,44 @@ Useful if the client program wishes to cache the list.</doc>
               version="2.6.0">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1920">Fetches a baseline value from the face.</doc>
+           line="1904">Fetches a baseline value from the face.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="453"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="1931">if found baseline value in the font.</doc>
+             line="1915">if found baseline value in the font.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1922">a font</doc>
+               line="1906">a font</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="baseline_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1923">a baseline tag</doc>
+               line="1907">a baseline tag</doc>
           <type name="ot_layout_baseline_tag_t"
                 c:type="hb_ot_layout_baseline_tag_t"/>
         </parameter>
         <parameter name="direction" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1924">text direction.</doc>
+               line="1908">text direction.</doc>
           <type name="direction_t" c:type="hb_direction_t"/>
         </parameter>
         <parameter name="script_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1925">script tag.</doc>
+               line="1909">script tag.</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="language_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1926">language tag.</doc>
+               line="1910">language tag.</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="coord"
@@ -9592,7 +9592,7 @@ Useful if the client program wishes to cache the list.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1927">baseline value if found.</doc>
+               line="1911">baseline value if found.</doc>
           <type name="position_t" c:type="hb_position_t*"/>
         </parameter>
       </parameters>
@@ -9602,12 +9602,12 @@ Useful if the client program wishes to cache the list.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="282">Fetches the GDEF class of the requested glyph in the specified face.</doc>
+           line="280">Fetches the GDEF class of the requested glyph in the specified face.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="116"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="289">The #hb_ot_layout_glyph_class_t glyph class of the given code
+             line="287">The #hb_ot_layout_glyph_class_t glyph class of the given code
 point in the GDEF table of the face.</doc>
         <type name="ot_layout_glyph_class_t"
               c:type="hb_ot_layout_glyph_class_t"/>
@@ -9616,13 +9616,13 @@ point in the GDEF table of the face.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="284">The #hb_face_t to work on</doc>
+               line="282">The #hb_face_t to work on</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="glyph" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="285">The #hb_codepoint_t code point to query</doc>
+               line="283">The #hb_codepoint_t code point to query</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
       </parameters>
@@ -9632,7 +9632,7 @@ point in the GDEF table of the face.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="301">Retrieves the set of all glyphs from the face that belong to the requested
+           line="299">Retrieves the set of all glyphs from the face that belong to the requested
 glyph class in the face's GDEF table.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="120"/>
       <return-value transfer-ownership="none">
@@ -9642,13 +9642,13 @@ glyph class in the face's GDEF table.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="303">The #hb_face_t to work on</doc>
+               line="301">The #hb_face_t to work on</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="klass" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="304">The #hb_ot_layout_glyph_class_t GDEF class to retrieve</doc>
+               line="302">The #hb_ot_layout_glyph_class_t GDEF class to retrieve</doc>
           <type name="ot_layout_glyph_class_t"
                 c:type="hb_ot_layout_glyph_class_t"/>
         </parameter>
@@ -9658,7 +9658,7 @@ glyph class in the face's GDEF table.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="305">The #hb_set_t set of all glyphs belonging to the requested
+               line="303">The #hb_set_t set of all glyphs belonging to the requested
          class.</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
@@ -9668,7 +9668,7 @@ glyph class in the face's GDEF table.</doc>
               c:identifier="hb_ot_layout_get_ligature_carets">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="349">Fetches a list of the caret positions defined for a ligature glyph in the GDEF
+           line="347">Fetches a list of the caret positions defined for a ligature glyph in the GDEF
 table of the font. The list returned will begin at the offset provided.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="135"/>
       <return-value transfer-ownership="none">
@@ -9678,25 +9678,25 @@ table of the font. The list returned will begin at the offset provided.</doc>
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="351">The #hb_font_t to work on</doc>
+               line="349">The #hb_font_t to work on</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="direction" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="352">The #hb_direction_t text direction to use</doc>
+               line="350">The #hb_direction_t text direction to use</doc>
           <type name="direction_t" c:type="hb_direction_t"/>
         </parameter>
         <parameter name="glyph" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="353">The #hb_codepoint_t code point to query</doc>
+               line="351">The #hb_codepoint_t code point to query</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="354">offset of the first caret position to retrieve</doc>
+               line="352">offset of the first caret position to retrieve</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="caret_count"
@@ -9706,7 +9706,7 @@ table of the font. The list returned will begin at the offset provided.</doc>
                    nullable="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="355">Input = the maximum number of caret positions to return;
+               line="353">Input = the maximum number of caret positions to return;
               Output = the actual number of caret positions returned (may be zero)</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
@@ -9716,7 +9716,7 @@ table of the font. The list returned will begin at the offset provided.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="357">The array of caret positions found for the query</doc>
+               line="355">The array of caret positions found for the query</doc>
           <array length="4" zero-terminated="0" c:type="hb_position_t*">
             <type name="position_t" c:type="hb_position_t"/>
           </array>
@@ -9728,7 +9728,7 @@ table of the font. The list returned will begin at the offset provided.</doc>
               version="0.9.10">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1562">Fetches optical-size feature data (i.e., the `size` feature from GPOS). Note that
+           line="1546">Fetches optical-size feature data (i.e., the `size` feature from GPOS). Note that
 the subfamily_id and the subfamily name string (accessible via the subfamily_name_id)
 as used here are defined as pertaining only to fonts within a font family that differ
 specifically in their respective size ranges; other ways to differentiate fonts within
@@ -9740,14 +9740,14 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="1580">true if data found, false otherwise</doc>
+             line="1564">true if data found, false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1564">#hb_face_t to work upon</doc>
+               line="1548">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="design_size"
@@ -9756,7 +9756,7 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1565">The design size of the face</doc>
+               line="1549">The design size of the face</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="subfamily_id"
@@ -9765,7 +9765,7 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1566">The identifier of the face within the font subfamily</doc>
+               line="1550">The identifier of the face within the font subfamily</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="subfamily_name_id"
@@ -9774,7 +9774,7 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1567">The ‘name’ table name ID of the face within the font subfamily</doc>
+               line="1551">The ‘name’ table name ID of the face within the font subfamily</doc>
           <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
         </parameter>
         <parameter name="range_start"
@@ -9783,7 +9783,7 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1568">The minimum size of the recommended size range for the face</doc>
+               line="1552">The minimum size of the recommended size range for the face</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="range_end"
@@ -9792,7 +9792,7 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1569">The maximum size of the recommended size range for the face</doc>
+               line="1553">The maximum size of the recommended size range for the face</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
       </parameters>
@@ -9849,19 +9849,19 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
               c:identifier="hb_ot_layout_has_glyph_classes">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="267">Tests whether a face has any glyph classes defined in its GDEF table.</doc>
+           line="265">Tests whether a face has any glyph classes defined in its GDEF table.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="94"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="273">true if data found, false otherwise</doc>
+             line="271">true if data found, false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="269">#hb_face_t to work upon</doc>
+               line="267">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
       </parameters>
@@ -9872,14 +9872,14 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="1507">true if the face has GPOS data, false otherwise</doc>
+             line="1491">true if the face has GPOS data, false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1505">#hb_face_t to work upon</doc>
+               line="1489">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
       </parameters>
@@ -9888,19 +9888,19 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
               c:identifier="hb_ot_layout_has_substitution">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1323">Tests whether the specified face includes any GSUB substitutions.</doc>
+           line="1307">Tests whether the specified face includes any GSUB substitutions.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="324"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="1329">true if data found, false otherwise</doc>
+             line="1313">true if data found, false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1325">#hb_face_t to work upon</doc>
+               line="1309">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
       </parameters>
@@ -9909,44 +9909,44 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
               c:identifier="hb_ot_layout_language_find_feature">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="884">Fetches the index of a given feature tag in the specified face's GSUB table
+           line="868">Fetches the index of a given feature tag in the specified face's GSUB table
 or GPOS table, underneath the specified script and language.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="230"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="896">true if the feature is found, false otherwise</doc>
+             line="880">true if the feature is found, false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="886">#hb_face_t to work upon</doc>
+               line="870">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="887">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="871">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="script_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="888">The index of the requested script tag</doc>
+               line="872">The index of the requested script tag</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="language_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="889">The index of the requested language tag</doc>
+               line="873">The index of the requested language tag</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="feature_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="890">#hb_tag_t of the feature tag requested</doc>
+               line="874">#hb_tag_t of the feature tag requested</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="feature_index"
@@ -9955,7 +9955,7 @@ or GPOS table, underneath the specified script and language.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="891">The index of the requested feature</doc>
+               line="875">The index of the requested feature</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
       </parameters>
@@ -9964,7 +9964,7 @@ or GPOS table, underneath the specified script and language.</doc>
               c:identifier="hb_ot_layout_language_get_feature_indexes">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="812">Fetches a list of all features in the specified face's GSUB table
+           line="796">Fetches a list of all features in the specified face's GSUB table
 or GPOS table, underneath the specified script and language. The list
 returned will begin at the offset provided.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="212"/>
@@ -9975,31 +9975,31 @@ returned will begin at the offset provided.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="814">#hb_face_t to work upon</doc>
+               line="798">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="815">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="799">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="script_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="816">The index of the requested script tag</doc>
+               line="800">The index of the requested script tag</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="language_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="817">The index of the requested language tag</doc>
+               line="801">The index of the requested language tag</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="818">offset of the first feature tag to retrieve</doc>
+               line="802">offset of the first feature tag to retrieve</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="feature_count"
@@ -10009,7 +10009,7 @@ returned will begin at the offset provided.</doc>
                    nullable="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="819">Input = the maximum number of feature tags to return;
+               line="803">Input = the maximum number of feature tags to return;
                 Output: the actual number of feature tags returned (may be zero)</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
@@ -10019,7 +10019,7 @@ returned will begin at the offset provided.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="821">The array of feature indexes found for the query</doc>
+               line="805">The array of feature indexes found for the query</doc>
           <array length="5" zero-terminated="0" c:type="unsigned int*">
             <type name="guint" c:type="unsigned int"/>
           </array>
@@ -10030,7 +10030,7 @@ returned will begin at the offset provided.</doc>
               c:identifier="hb_ot_layout_language_get_feature_tags">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="843">Fetches a list of all features in the specified face's GSUB table
+           line="827">Fetches a list of all features in the specified face's GSUB table
 or GPOS table, underneath the specified script and language. The list
 returned will begin at the offset provided.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="221"/>
@@ -10041,31 +10041,31 @@ returned will begin at the offset provided.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="845">#hb_face_t to work upon</doc>
+               line="829">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="846">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="830">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="script_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="847">The index of the requested script tag</doc>
+               line="831">The index of the requested script tag</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="language_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="848">The index of the requested language tag</doc>
+               line="832">The index of the requested language tag</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="849">offset of the first feature tag to retrieve</doc>
+               line="833">offset of the first feature tag to retrieve</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="feature_count"
@@ -10075,7 +10075,7 @@ returned will begin at the offset provided.</doc>
                    nullable="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="850">Input = the maximum number of feature tags to return;
+               line="834">Input = the maximum number of feature tags to return;
                 Output = the actual number of feature tags returned (may be zero)</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
@@ -10085,7 +10085,7 @@ returned will begin at the offset provided.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="852">The array of #hb_tag_t feature tags found for the query</doc>
+               line="836">The array of #hb_tag_t feature tags found for the query</doc>
           <array length="5" zero-terminated="0" c:type="hb_tag_t*">
             <type name="tag_t" c:type="hb_tag_t"/>
           </array>
@@ -10097,38 +10097,38 @@ returned will begin at the offset provided.</doc>
               version="0.9.30">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="777">Fetches the tag of a requested feature index in the given face's GSUB or GPOS table,
+           line="761">Fetches the tag of a requested feature index in the given face's GSUB or GPOS table,
 underneath the specified script and language.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="204"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="789">true if the feature is found, false otherwise</doc>
+             line="773">true if the feature is found, false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="779">#hb_face_t to work upon</doc>
+               line="763">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="780">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="764">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="script_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="781">The index of the requested script tag</doc>
+               line="765">The index of the requested script tag</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="language_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="782">The index of the requested language tag</doc>
+               line="766">The index of the requested language tag</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="feature_index"
@@ -10137,7 +10137,7 @@ underneath the specified script and language.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="783">The index of the requested feature</doc>
+               line="767">The index of the requested feature</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="feature_tag"
@@ -10146,7 +10146,7 @@ underneath the specified script and language.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="784">The #hb_tag_t of the requested feature</doc>
+               line="768">The #hb_tag_t of the requested feature</doc>
           <type name="tag_t" c:type="hb_tag_t*"/>
         </parameter>
       </parameters>
@@ -10155,38 +10155,38 @@ underneath the specified script and language.</doc>
               c:identifier="hb_ot_layout_language_get_required_feature_index">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="747">Fetches the index of a requested feature in the given face's GSUB or GPOS table,
+           line="731">Fetches the index of a requested feature in the given face's GSUB or GPOS table,
 underneath the specified script and language.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="197"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="758">true if the feature is found, false otherwise</doc>
+             line="742">true if the feature is found, false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="749">#hb_face_t to work upon</doc>
+               line="733">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="750">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="734">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="script_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="751">The index of the requested script tag</doc>
+               line="735">The index of the requested script tag</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="language_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="752">The index of the requested language tag</doc>
+               line="736">The index of the requested language tag</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="feature_index"
@@ -10195,7 +10195,7 @@ underneath the specified script and language.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="753">The index of the requested feature</doc>
+               line="737">The index of the requested feature</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
       </parameters>
@@ -10205,7 +10205,7 @@ underneath the specified script and language.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1207">Fetches a list of all glyphs affected by the specified lookup in the
+           line="1191">Fetches a list of all glyphs affected by the specified lookup in the
 specified face's GSUB table or GPOS table.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="266"/>
       <return-value transfer-ownership="none">
@@ -10215,19 +10215,19 @@ specified face's GSUB table or GPOS table.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1209">#hb_face_t to work upon</doc>
+               line="1193">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1210">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="1194">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="lookup_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1211">The index of the feature lookup to query</doc>
+               line="1195">The index of the feature lookup to query</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="glyphs_before"
@@ -10236,7 +10236,7 @@ specified face's GSUB table or GPOS table.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1212">Array of glyphs preceding the substitution range</doc>
+               line="1196">Array of glyphs preceding the substitution range</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
         <parameter name="glyphs_input"
@@ -10245,7 +10245,7 @@ specified face's GSUB table or GPOS table.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1213">Array of input glyphs that would be substituted by the lookup</doc>
+               line="1197">Array of input glyphs that would be substituted by the lookup</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
         <parameter name="glyphs_after"
@@ -10254,7 +10254,7 @@ specified face's GSUB table or GPOS table.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1214">Array of glyphs following the substitution range</doc>
+               line="1198">Array of glyphs following the substitution range</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
         <parameter name="glyphs_output"
@@ -10263,7 +10263,7 @@ specified face's GSUB table or GPOS table.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1215">Array of glyphs that would be the substitued output of the lookup</doc>
+               line="1199">Array of glyphs that would be the substitued output of the lookup</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
@@ -10273,37 +10273,37 @@ specified face's GSUB table or GPOS table.</doc>
               version="2.6.8">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1977">Fetches alternates of a glyph from a given GSUB lookup index.</doc>
+           line="1961">Fetches alternates of a glyph from a given GSUB lookup index.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="327"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="1990">total number of alternates found in the specific lookup index for the given glyph id.</doc>
+             line="1974">total number of alternates found in the specific lookup index for the given glyph id.</doc>
         <type name="guint" c:type="unsigned"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1979">a face.</doc>
+               line="1963">a face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="lookup_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1980">index of the feature lookup to query.</doc>
+               line="1964">index of the feature lookup to query.</doc>
           <type name="guint" c:type="unsigned"/>
         </parameter>
         <parameter name="glyph" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1981">a glyph id.</doc>
+               line="1965">a glyph id.</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1982">starting offset.</doc>
+               line="1966">starting offset.</doc>
           <type name="guint" c:type="unsigned"/>
         </parameter>
         <parameter name="alternate_count"
@@ -10313,7 +10313,7 @@ specified face's GSUB table or GPOS table.</doc>
                    nullable="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1983">Input = the maximum number of alternate glyphs to return;
+               line="1967">Input = the maximum number of alternate glyphs to return;
                   Output = the actual number of alternate glyphs returned (may be zero).</doc>
           <type name="guint" c:type="unsigned*"/>
         </parameter>
@@ -10323,7 +10323,7 @@ specified face's GSUB table or GPOS table.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1985">A glyphs buffer.
+               line="1969">A glyphs buffer.
                    Alternate glyphs associated with the glyph id.</doc>
           <array length="4" zero-terminated="0" c:type="hb_codepoint_t*">
             <type name="codepoint_t" c:type="hb_codepoint_t"/>
@@ -10336,7 +10336,7 @@ specified face's GSUB table or GPOS table.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1435">Compute the transitive closure of glyphs needed for a
+           line="1419">Compute the transitive closure of glyphs needed for a
 specified lookup.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="342"/>
       <return-value transfer-ownership="none">
@@ -10346,13 +10346,13 @@ specified lookup.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1437">#hb_face_t to work upon</doc>
+               line="1421">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="lookup_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1438">index of the feature lookup to query</doc>
+               line="1422">index of the feature lookup to query</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="glyphs"
@@ -10361,7 +10361,7 @@ specified lookup.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1439">Array of glyphs comprising the transitive closure of the lookup</doc>
+               line="1423">Array of glyphs comprising the transitive closure of the lookup</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
@@ -10371,44 +10371,44 @@ specified lookup.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1339">Tests whether a specified lookup in the specified face would
+           line="1323">Tests whether a specified lookup in the specified face would
 trigger a substitution on the given glyph sequence.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="335"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="1350">true if a substitution would be triggered, false otherwise</doc>
+             line="1334">true if a substitution would be triggered, false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1341">#hb_face_t to work upon</doc>
+               line="1325">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="lookup_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1342">The index of the lookup to query</doc>
+               line="1326">The index of the lookup to query</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="glyphs" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1343">The sequence of glyphs to query for substitution</doc>
+               line="1327">The sequence of glyphs to query for substitution</doc>
           <type name="codepoint_t" c:type="const hb_codepoint_t*"/>
         </parameter>
         <parameter name="glyphs_length" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1344">The length of the glyph sequence</doc>
+               line="1328">The length of the glyph sequence</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="zero_context" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1345">#hb_bool_t indicating whether substitutions should be context-free</doc>
+               line="1329">#hb_bool_t indicating whether substitutions should be context-free</doc>
           <type name="bool_t" c:type="hb_bool_t"/>
         </parameter>
       </parameters>
@@ -10418,7 +10418,7 @@ trigger a substitution on the given glyph sequence.</doc>
               version="1.8.1">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1459">Compute the transitive closure of glyphs needed for all of the
+           line="1443">Compute the transitive closure of glyphs needed for all of the
 provided lookups.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="348"/>
       <return-value transfer-ownership="none">
@@ -10428,13 +10428,13 @@ provided lookups.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1461">#hb_face_t to work upon</doc>
+               line="1445">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="lookups" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1462">The set of lookups to query</doc>
+               line="1446">The set of lookups to query</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
         <parameter name="glyphs"
@@ -10443,7 +10443,7 @@ provided lookups.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1463">Array of glyphs comprising the transitive closure of the lookups</doc>
+               line="1447">Array of glyphs comprising the transitive closure of the lookups</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
@@ -10453,7 +10453,7 @@ provided lookups.</doc>
               deprecated="1">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="671">Fetches the index of a given language tag in the specified face's GSUB table
+           line="655">Fetches the index of a given language tag in the specified face's GSUB table
 or GPOS table, underneath the specified script tag.</doc>
       <doc-version xml:space="preserve">??</doc-version>
       <doc-deprecated xml:space="preserve">??</doc-deprecated>
@@ -10461,38 +10461,38 @@ or GPOS table, underneath the specified script tag.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="682">true if the language tag is found, false otherwise</doc>
+             line="666">true if the language tag is found, false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="673">#hb_face_t to work upon</doc>
+               line="657">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="674">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="658">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="script_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="675">The index of the requested script tag</doc>
+               line="659">The index of the requested script tag</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="language_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="676">The #hb_tag_t of the requested language</doc>
+               line="660">The #hb_tag_t of the requested language</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="language_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="677">The index of the requested language</doc>
+               line="661">The index of the requested language</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
       </parameters>
@@ -10501,7 +10501,7 @@ or GPOS table, underneath the specified script tag.</doc>
               c:identifier="hb_ot_layout_script_get_language_tags">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="642">Fetches a list of language tags in the given face's GSUB or GPOS table, underneath
+           line="626">Fetches a list of language tags in the given face's GSUB or GPOS table, underneath
 the specified script index. The list returned will begin at the offset provided.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="181"/>
       <return-value transfer-ownership="none">
@@ -10511,25 +10511,25 @@ the specified script index. The list returned will begin at the offset provided.
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="644">#hb_face_t to work upon</doc>
+               line="628">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="645">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="629">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="script_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="646">The index of the requested script tag</doc>
+               line="630">The index of the requested script tag</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="647">offset of the first language tag to retrieve</doc>
+               line="631">offset of the first language tag to retrieve</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="language_count"
@@ -10539,7 +10539,7 @@ the specified script index. The list returned will begin at the offset provided.
                    nullable="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="648">Input = the maximum number of language tags to return;
+               line="632">Input = the maximum number of language tags to return;
                  Output = the actual number of language tags returned (may be zero)</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
@@ -10549,7 +10549,7 @@ the specified script index. The list returned will begin at the offset provided.
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="650">Array of language tags found in the table</doc>
+               line="634">Array of language tags found in the table</doc>
           <array length="4" zero-terminated="0" c:type="hb_tag_t*">
             <type name="tag_t" c:type="hb_tag_t"/>
           </array>
@@ -10561,44 +10561,44 @@ the specified script index. The list returned will begin at the offset provided.
               version="2.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="704">Fetches the index of a given language tag in the specified face's GSUB table
+           line="688">Fetches the index of a given language tag in the specified face's GSUB table
 or GPOS table, underneath the specified script index.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="189"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="716">true if the language tag is found, false otherwise</doc>
+             line="700">true if the language tag is found, false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="706">#hb_face_t to work upon</doc>
+               line="690">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="707">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="691">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="script_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="708">The index of the requested script tag</doc>
+               line="692">The index of the requested script tag</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="language_count" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="709">The number of languages in the specified script</doc>
+               line="693">The number of languages in the specified script</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="language_tags" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="710">The array of language tags</doc>
+               line="694">The array of language tags</doc>
           <type name="tag_t" c:type="const hb_tag_t*"/>
         </parameter>
         <parameter name="language_index"
@@ -10607,7 +10607,7 @@ or GPOS table, underneath the specified script index.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="711">The index of the requested language</doc>
+               line="695">The index of the requested language</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
       </parameters>
@@ -10616,7 +10616,7 @@ or GPOS table, underneath the specified script index.</doc>
               c:identifier="hb_ot_layout_table_choose_script">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="497">Deprecated since 2.0.0</doc>
+           line="481">Deprecated since 2.0.0</doc>
       <source-position filename="../src/hb-ot-deprecated.h" line="49"/>
       <return-value transfer-ownership="none">
         <type name="bool_t" c:type="hb_bool_t"/>
@@ -10625,19 +10625,19 @@ or GPOS table, underneath the specified script index.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="499">#hb_face_t to work upon</doc>
+               line="483">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="500">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="484">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="script_tags" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="501">Array of #hb_tag_t script tags</doc>
+               line="485">Array of #hb_tag_t script tags</doc>
           <type name="tag_t" c:type="const hb_tag_t*"/>
         </parameter>
         <parameter name="script_index"
@@ -10646,7 +10646,7 @@ or GPOS table, underneath the specified script index.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="502">The index of the requested script tag</doc>
+               line="486">The index of the requested script tag</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="chosen_script"
@@ -10655,7 +10655,7 @@ or GPOS table, underneath the specified script index.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="503">#hb_tag_t of the script tag requested</doc>
+               line="487">#hb_tag_t of the script tag requested</doc>
           <type name="tag_t" c:type="hb_tag_t*"/>
         </parameter>
       </parameters>
@@ -10664,7 +10664,7 @@ or GPOS table, underneath the specified script index.</doc>
               c:identifier="hb_ot_layout_table_find_feature_variations">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1259">Fetches a list of feature variations in the specified face's GSUB table
+           line="1243">Fetches a list of feature variations in the specified face's GSUB table
 or GPOS table, at the specified variation coordinates.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="303"/>
       <return-value transfer-ownership="none">
@@ -10674,25 +10674,25 @@ or GPOS table, at the specified variation coordinates.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1261">#hb_face_t to work upon</doc>
+               line="1245">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1262">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="1246">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="coords" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1263">The variation coordinates to query</doc>
+               line="1247">The variation coordinates to query</doc>
           <type name="gint" c:type="const int*"/>
         </parameter>
         <parameter name="num_coords" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1264">The number of variation coorinates</doc>
+               line="1248">The number of variation coorinates</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="variations_index"
@@ -10701,7 +10701,7 @@ or GPOS table, at the specified variation coordinates.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1265">The array of feature variations found for the query</doc>
+               line="1249">The array of feature variations found for the query</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
       </parameters>
@@ -10710,32 +10710,32 @@ or GPOS table, at the specified variation coordinates.</doc>
               c:identifier="hb_ot_layout_table_find_script">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="453">Fetches the index if a given script tag in the specified face's GSUB table
+           line="437">Fetches the index if a given script tag in the specified face's GSUB table
 or GPOS table.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="160"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="463">true if the script is found, false otherwise</doc>
+             line="447">true if the script is found, false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="455">#hb_face_t to work upon</doc>
+               line="439">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="456">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="440">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="script_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="457">#hb_tag_t of the script tag requested</doc>
+               line="441">#hb_tag_t of the script tag requested</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="script_index"
@@ -10744,7 +10744,7 @@ or GPOS table.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="458">The index of the requested script tag</doc>
+               line="442">The index of the requested script tag</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
       </parameters>
@@ -10753,7 +10753,7 @@ or GPOS table.</doc>
               c:identifier="hb_ot_layout_table_get_feature_tags">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="582">Fetches a list of all feature tags in the given face's GSUB or GPOS table.</doc>
+           line="566">Fetches a list of all feature tags in the given face's GSUB or GPOS table.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="174"/>
       <return-value transfer-ownership="none">
         <type name="guint" c:type="unsigned int"/>
@@ -10762,19 +10762,19 @@ or GPOS table.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="584">#hb_face_t to work upon</doc>
+               line="568">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="585">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="569">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="586">offset of the first feature tag to retrieve</doc>
+               line="570">offset of the first feature tag to retrieve</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="feature_count"
@@ -10784,7 +10784,7 @@ or GPOS table.</doc>
                    nullable="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="587">Input = the maximum number of feature tags to return;
+               line="571">Input = the maximum number of feature tags to return;
                 Output = the actual number of feature tags returned (may be zero)</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
@@ -10794,7 +10794,7 @@ or GPOS table.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="589">Array of feature tags found in the table</doc>
+               line="573">Array of feature tags found in the table</doc>
           <array length="3" zero-terminated="0" c:type="hb_tag_t*">
             <type name="tag_t" c:type="hb_tag_t"/>
           </array>
@@ -10806,7 +10806,7 @@ or GPOS table.</doc>
               version="0.9.22">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="960">Fetches the total number of lookups enumerated in the specified
+           line="944">Fetches the total number of lookups enumerated in the specified
 face's GSUB table or GPOS table.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="246"/>
       <return-value transfer-ownership="none">
@@ -10816,13 +10816,13 @@ face's GSUB table or GPOS table.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="962">#hb_face_t to work upon</doc>
+               line="946">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="963">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="947">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
       </parameters>
@@ -10831,7 +10831,7 @@ face's GSUB table or GPOS table.</doc>
               c:identifier="hb_ot_layout_table_get_script_tags">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="426">Fetches a list of all scripts enumerated in the specified face's GSUB table
+           line="410">Fetches a list of all scripts enumerated in the specified face's GSUB table
 or GPOS table. The list returned will begin at the offset provided.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="153"/>
       <return-value transfer-ownership="none">
@@ -10841,19 +10841,19 @@ or GPOS table. The list returned will begin at the offset provided.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="428">#hb_face_t to work upon</doc>
+               line="412">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="429">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="413">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="430">offset of the first script tag to retrieve</doc>
+               line="414">offset of the first script tag to retrieve</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="script_count"
@@ -10863,7 +10863,7 @@ or GPOS table. The list returned will begin at the offset provided.</doc>
                    nullable="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="431">Input = the maximum number of script tags to return;
+               line="415">Input = the maximum number of script tags to return;
                Output = the actual number of script tags returned (may be zero)</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
@@ -10873,7 +10873,7 @@ or GPOS table. The list returned will begin at the offset provided.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="433">The array of #hb_tag_t script tags found for the query</doc>
+               line="417">The array of #hb_tag_t script tags found for the query</doc>
           <array length="3" zero-terminated="0" c:type="hb_tag_t*">
             <type name="tag_t" c:type="hb_tag_t"/>
           </array>
@@ -10891,25 +10891,25 @@ or GPOS table. The list returned will begin at the offset provided.</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="522">#hb_face_t to work upon</doc>
+               line="506">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="523">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
+               line="507">HB_OT_TAG_GSUB or HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="script_count" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="524">Number of script tags in the array</doc>
+               line="508">Number of script tags in the array</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="script_tags" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="525">Array of #hb_tag_t script tags</doc>
+               line="509">Array of #hb_tag_t script tags</doc>
           <type name="tag_t" c:type="const hb_tag_t*"/>
         </parameter>
         <parameter name="script_index"
@@ -10918,7 +10918,7 @@ or GPOS table. The list returned will begin at the offset provided.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="526">The index of the requested script</doc>
+               line="510">The index of the requested script</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="chosen_script"
@@ -10927,7 +10927,7 @@ or GPOS table. The list returned will begin at the offset provided.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="527">#hb_tag_t of the requested script</doc>
+               line="511">#hb_tag_t of the requested script</doc>
           <type name="tag_t" c:type="hb_tag_t*"/>
         </parameter>
       </parameters>
