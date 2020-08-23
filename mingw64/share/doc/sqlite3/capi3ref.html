@@ -471,7 +471,7 @@ be removed in some future release.</li>
 <li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_APP3</a></li>
 <li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_LRU</a></li>
 <li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_LRU2</a></li>
-<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_MASTER</a></li>
+<li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_MAIN</a></li>
 <li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_MEM</a></li>
 <li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_MEM2</a></li>
 <li><a href='#SQLITE_MUTEX_FAST'>SQLITE_MUTEX_STATIC_OPEN</a></li>
@@ -498,7 +498,6 @@ be removed in some future release.</li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_FULLMUTEX</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_MAIN_DB</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_MAIN_JOURNAL</a></li>
-<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_MASTER_JOURNAL</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_MEMORY</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_NOFOLLOW</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_NOMUTEX</a></li>
@@ -507,6 +506,7 @@ be removed in some future release.</li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_READWRITE</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_SHAREDCACHE</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_SUBJOURNAL</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_SUPER_JOURNAL</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_TEMP_DB</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_TEMP_JOURNAL</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_TRANSIENT_DB</a></li>
@@ -1400,7 +1400,7 @@ structures.  The xShutdown method is invoked (indirectly) by
 by xInit.  The pAppData pointer is used as the only parameter to
 xInit and xShutdown.</p>
 
-<p>SQLite holds the <a href="#SQLITE_MUTEX_FAST">SQLITE_MUTEX_STATIC_MASTER</a> mutex when it invokes
+<p>SQLite holds the <a href="#SQLITE_MUTEX_FAST">SQLITE_MUTEX_STATIC_MAIN</a> mutex when it invokes
 the xInit method, so the xInit method need not be threadsafe.  The
 xShutdown method is only called from <a href="#sqlite3_initialize">sqlite3_shutdown()</a> so it does
 not need to be threadsafe either.  For all other methods, SQLite
@@ -1636,7 +1636,7 @@ struct sqlite3_vfs {
   /*
   ** The methods above are in versions 1 through 3 of the sqlite_vfs object.
   ** New fields may be appended in future versions.  The iVersion
-  ** value will increment whenever this happens. 
+  ** value will increment whenever this happens.
   */
 };
 </pre></blockquote>
@@ -1714,7 +1714,7 @@ call, depending on the object being opened:</p>
 <li>  <a href="#SQLITE_OPEN_AUTOPROXY">SQLITE_OPEN_TEMP_JOURNAL</a>
 <li>  <a href="#SQLITE_OPEN_AUTOPROXY">SQLITE_OPEN_TRANSIENT_DB</a>
 <li>  <a href="#SQLITE_OPEN_AUTOPROXY">SQLITE_OPEN_SUBJOURNAL</a>
-<li>  <a href="#SQLITE_OPEN_AUTOPROXY">SQLITE_OPEN_MASTER_JOURNAL</a>
+<li>  <a href="#SQLITE_OPEN_AUTOPROXY">SQLITE_OPEN_SUPER_JOURNAL</a>
 <li>  <a href="#SQLITE_OPEN_AUTOPROXY">SQLITE_OPEN_WAL</a>
 </ul></p>
 
@@ -4109,7 +4109,7 @@ SQLITE_LOCKED.
 </div>
 <blockquote><pre>
 void *sqlite3_update_hook(
-  sqlite3*, 
+  sqlite3*,
   void(*)(void *,int ,char const *,char const *,sqlite3_int64),
   void*
 );
@@ -4135,7 +4135,7 @@ The final callback parameter is the <a href="lang_createtable.html#rowid">rowid<
 In the case of an update, this is the <a href="lang_createtable.html#rowid">rowid</a> after the update takes place.</p>
 
 <p>The update hook is not invoked when internal system tables are
-modified (i.e. sqlite_master and sqlite_sequence).
+modified (i.e. sqlite_sequence).
 The update hook is not invoked when <a href="withoutrowid.html">WITHOUT ROWID</a> tables are modified.</p>
 
 <p>In the current implementation, the update hook
@@ -4414,7 +4414,7 @@ from SQL.
 </div>
 <blockquote><pre>
 void *sqlite3_wal_hook(
-  sqlite3*, 
+  sqlite3*,
   int(*)(void *,sqlite3*,const char*,int),
   void*
 );
@@ -4771,7 +4771,7 @@ meaning of each of these checkpoint modes.
 #define SQLITE_CONFIG_MEMSTATUS     9  /* boolean */
 #define SQLITE_CONFIG_MUTEX        10  /* sqlite3_mutex_methods* */
 #define SQLITE_CONFIG_GETMUTEX     11  /* sqlite3_mutex_methods* */
-/* previously SQLITE_CONFIG_CHUNKALLOC 12 which is now unused. */ 
+/* previously SQLITE_CONFIG_CHUNKALLOC 12 which is now unused. */
 #define SQLITE_CONFIG_LOOKASIDE    13  /* int int */
 #define SQLITE_CONFIG_PCACHE       14  /* no-op */
 #define SQLITE_CONFIG_GETPCACHE    15  /* no-op */
@@ -5435,8 +5435,7 @@ compile-time option.
 
 <dt>SQLITE_DBCONFIG_TRUSTED_SCHEMA</td>
 <dd>The SQLITE_DBCONFIG_TRUSTED_SCHEMA option tells SQLite to
-assume that database schemas (the contents of the <a href="fileformat2.html#sqlite_master">sqlite_master</a> tables)
-are untainted by malicious content.
+assume that database schemas are untainted by malicious content.
 When the SQLITE_DBCONFIG_TRUSTED_SCHEMA option is disabled, SQLite
 takes additional defensive steps to protect the application from harm
 including:
@@ -5726,7 +5725,7 @@ because the user has configured SQLite with
 of the xSync method. In most cases, the pointer argument passed with
 this file-control is NULL. However, if the database file is being synced
 as part of a multi-database commit, the argument points to a nul-terminated
-string containing the transactions master-journal file name. VFSes that
+string containing the transactions super-journal file name. VFSes that
 do not need this signal should silently ignore this opcode. Applications
 should not call <a href="#sqlite3_file_control">sqlite3_file_control()</a> with this opcode as doing so may
 disrupt the operation of the specialized VFSes that do require it.</p>
@@ -6100,7 +6099,7 @@ of an <a href="#sqlite3_io_methods">sqlite3_io_methods</a> object.
 <blockquote><pre>
 #define SQLITE_MUTEX_FAST             0
 #define SQLITE_MUTEX_RECURSIVE        1
-#define SQLITE_MUTEX_STATIC_MASTER    2
+#define SQLITE_MUTEX_STATIC_MAIN      2
 #define SQLITE_MUTEX_STATIC_MEM       3  /* sqlite3_malloc() */
 #define SQLITE_MUTEX_STATIC_MEM2      4  /* NOT USED */
 #define SQLITE_MUTEX_STATIC_OPEN      4  /* sqlite3BtreeOpen() */
@@ -6140,7 +6139,7 @@ prepared to accommodate additional static mutexes.
 #define SQLITE_OPEN_MAIN_JOURNAL     0x00000800  /* VFS only */
 #define SQLITE_OPEN_TEMP_JOURNAL     0x00001000  /* VFS only */
 #define SQLITE_OPEN_SUBJOURNAL       0x00002000  /* VFS only */
-#define SQLITE_OPEN_MASTER_JOURNAL   0x00004000  /* VFS only */
+#define SQLITE_OPEN_SUPER_JOURNAL    0x00004000  /* VFS only */
 #define SQLITE_OPEN_NOMUTEX          0x00008000  /* Ok for sqlite3_open_v2() */
 #define SQLITE_OPEN_FULLMUTEX        0x00010000  /* Ok for sqlite3_open_v2() */
 #define SQLITE_OPEN_SHAREDCACHE      0x00020000  /* Ok for sqlite3_open_v2() */
@@ -6287,9 +6286,9 @@ and EXCLUSIVE.
 <h2>Compile-Time Library Version Numbers</h2>
 </div>
 <blockquote><pre>
-#define SQLITE_VERSION        "3.32.3"
-#define SQLITE_VERSION_NUMBER 3032003
-#define SQLITE_SOURCE_ID      "2020-06-18 14:00:33 7ebdfa80be8e8e73324b8d66b3460222eb74c7e9dfd655b48d6ca7e1933cc8fd"
+#define SQLITE_VERSION        "3.33.0"
+#define SQLITE_VERSION_NUMBER 3033000
+#define SQLITE_SOURCE_ID      "2020-08-14 13:23:32 fca8dc8b578f215a969cd899336378966156154710873e68b3d9ac5881b0ff3f"
 </pre></blockquote>
 <p>
 The <a href="#SQLITE_SOURCE_ID">SQLITE_VERSION</a> C preprocessor macro in the sqlite3.h header
@@ -6935,7 +6934,7 @@ is ignored when the opcode is SQLITE_STMTSTATUS_MEMUSED.
   typedef SQLITE_INT64_TYPE sqlite_int64;
 # ifdef SQLITE_UINT64_TYPE
     typedef SQLITE_UINT64_TYPE sqlite_uint64;
-# else  
+# else
     typedef unsigned SQLITE_INT64_TYPE sqlite_uint64;
 # endif
 #elif defined(_MSC_VER) || defined(__BORLANDC__)
@@ -6992,7 +6991,7 @@ struct sqlite3_module {
                        void (**pxFunc)(sqlite3_context*,int,sqlite3_value**),
                        void **ppArg);
   int (*xRename)(sqlite3_vtab *pVtab, const char *zNew);
-  /* The methods above are in version 1 of the sqlite_module object. Those 
+  /* The methods above are in version 1 of the sqlite_module object. Those
   ** below are for version 2 and greater. */
   int (*xSavepoint)(sqlite3_vtab *pVTab, int);
   int (*xRelease)(sqlite3_vtab *pVTab, int);
@@ -7196,7 +7195,7 @@ struct sqlite3_pcache_methods2 {
   int (*xPagecount)(sqlite3_pcache*);
   sqlite3_pcache_page *(*xFetch)(sqlite3_pcache*, unsigned key, int createFlag);
   void (*xUnpin)(sqlite3_pcache*, sqlite3_pcache_page*, int discard);
-  void (*xRekey)(sqlite3_pcache*, sqlite3_pcache_page*, 
+  void (*xRekey)(sqlite3_pcache*, sqlite3_pcache_page*,
       unsigned oldKey, unsigned newKey);
   void (*xTruncate)(sqlite3_pcache*, unsigned iLimit);
   void (*xDestroy)(sqlite3_pcache*);
@@ -7796,12 +7795,12 @@ argument is a harmless no-op.
 </div>
 <blockquote><pre>
 int sqlite3_collation_needed(
-  sqlite3*, 
-  void*, 
+  sqlite3*,
+  void*,
   void(*)(void*,sqlite3*,int eTextRep,const char*)
 );
 int sqlite3_collation_needed16(
-  sqlite3*, 
+  sqlite3*,
   void*,
   void(*)(void*,sqlite3*,int eTextRep,const void*)
 );
@@ -8064,24 +8063,24 @@ UTF-16 string in native byte order.
 </div>
 <blockquote><pre>
 int sqlite3_create_collation(
-  sqlite3*, 
-  const char *zName, 
-  int eTextRep, 
+  sqlite3*,
+  const char *zName,
+  int eTextRep,
   void *pArg,
   int(*xCompare)(void*,int,const void*,int,const void*)
 );
 int sqlite3_create_collation_v2(
-  sqlite3*, 
-  const char *zName, 
-  int eTextRep, 
+  sqlite3*,
+  const char *zName,
+  int eTextRep,
   void *pArg,
   int(*xCompare)(void*,int,const void*,int,const void*),
   void(*xDestroy)(void*)
 );
 int sqlite3_create_collation16(
-  sqlite3*, 
+  sqlite3*,
   const void *zName,
-  int eTextRep, 
+  int eTextRep,
   void *pArg,
   int(*xCompare)(void*,int,const void*,int,const void*)
 );
@@ -8983,7 +8982,7 @@ integer constants:</p>
 <p><ul>
 <li>  SQLITE_MUTEX_FAST
 <li>  SQLITE_MUTEX_RECURSIVE
-<li>  SQLITE_MUTEX_STATIC_MASTER
+<li>  SQLITE_MUTEX_STATIC_MAIN
 <li>  SQLITE_MUTEX_STATIC_MEM
 <li>  SQLITE_MUTEX_STATIC_OPEN
 <li>  SQLITE_MUTEX_STATIC_PRNG
@@ -9402,7 +9401,7 @@ the first parameter to callbacks.</p>
 
 <p>The preupdate hook only fires for changes to real database tables; the
 preupdate hook is not invoked for changes to <a href="vtab.html">virtual tables</a> or to
-system tables like sqlite_master or sqlite_stat1.</p>
+system tables like sqlite_sequence or sqlite_stat1.</p>
 
 <p>The second parameter to the preupdate callback is a pointer to
 the <a href="#sqlite3">database connection</a> that registered the preupdate hook.

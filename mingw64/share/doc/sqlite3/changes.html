@@ -105,6 +105,46 @@ http://www.sqlite.org/src/timeline?t=release</a>.
 See the <a href="chronology.html">chronology</a> a succinct listing of releases.
 </p>
 
+<a name="version_3_33_0"></a>
+<h3>2020-08-14 (3.33.0)</h3><p><ol class='lessindent'>
+<li> Support for <a href="lang_update.html#upfrom">UPDATE FROM</a> following the PostgreSQL syntax.
+<li> Increase the maximum size of database files to 281 TB.
+<li> Extended the <a href="pragma.html#pragma_integrity_check">PRAGMA integrity_check</a> statement so that it can optionally be
+     limited to verifying just a single table and its indexes, rather than the
+     entire database file.
+<li> Added the <a href="floatingpoint.html#decext">decimal extension</a> for doing arbitrary-precision decimal arithmetic.
+<li> Enhancements to the <a href="floatingpoint.html#ieee754ext">ieee754 extension</a> for working with IEEE 754 binary64 numbers.
+<li> <a href="cli.html">CLI</a> enhancements:
+    <ol type="a">
+    <li> Added four new <a href="cli.html#dotmode">output modes</a>: "box", "json", "markdown",
+         and "table".
+    <li> The "column" output mode automatically expands columns to
+         contain the longest output row and automatically turns
+         ".header" on if it has not been previously set.
+    <li> The "quote" output mode honors ".separator"
+    <li> The <a href="floatingpoint.html#decext">decimal extension</a> and the <a href="floatingpoint.html#ieee754ext">ieee754 extension</a> are built-in to the CLI
+    </ol>
+<li> Query planner improvements:
+     <ol type="a">
+     <li> Add the ability to find a
+          full-index-scan query plan for queries using <a href="lang_indexedby.html">INDEXED BY</a>
+          which previously would fail with "no query solution".
+     <li> Do a better job of
+          detecting missing, incomplete, and/or dodgy <a href="fileformat2.html#stat1tab">sqlite_stat1</a>
+          data and generates good query plans in spite of the
+          misinformation.
+     <li> Improved performance of queries like "SELECT min(x) FROM t WHERE y IN (?,?,?)"
+          assuming an index on t(x,y).
+     </ol>
+<li> In <a href="wal.html">WAL mode</a>, if a writer crashes and leaves the <a href="walformat.html#shm">shm file</a> in an inconsistent
+     state, subsequent transactions are now able to recover the shm file even if
+     there are active read transactions.  Before this enhancement, shm file recovery
+     that scenario would result in an <a href="rescode.html#protocol">SQLITE_PROTOCOL</a> error.
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: 2020-08-14 13:23:32 fca8dc8b578f215a969cd899336378966156154710873e68b3d9ac5881b0ff3f
+<li>SHA3-256 for sqlite3.c: d00b7fffa6d33af2303430eaf394321da2960604d25a4471c7af566344f2abf9
+
+</ol></p>
 <a name="version_3_32_3"></a>
 <h3>2020-06-18 (3.32.3)</h3><p><ol class='lessindent'>
 <li> Various minor bug fixes including fixes for tickets
@@ -269,7 +309,7 @@ Ticket <a href="https://www.sqlite.org/src/info/1079ad19993d13fa">1079ad19993d13
      it recovers more content from corrupt database files.
 <li> Enhance the <a href="rbu.html">RBU</a> extension to support <a href="expridx.html">indexes on expressions</a>.
 <li> Change the schema parser so that it will error out if any of
-     the type, name, and tbl_name columns of the <a href="fileformat2.html#sqlite_master">sqlite_master table</a>
+     the type, name, and tbl_name columns of the <a href="schematab.html">sqlite_master table</a>
      have been corrupted and the database connection is not in
      <a href="pragma.html#pragma_writable_schema">writable_schema</a> mode.
 <li> The <a href="pragma.html#pragma_function_list">PRAGMA function_list</a>, <a href="pragma.html#pragma_module_list">PRAGMA module_list</a>, and
@@ -1732,7 +1772,7 @@ with a home-baked pie.</center>
 <p><b>Performance enhancements:</b>
 <li>Enhancements to the <a href="lemon.html">Lemon parser generator</a>
     so that it creates a smaller and faster SQL parser.
-<li>Only create <a href="tempfiles.html#masterjrnl">master journal</a> files if two or more attached databases are all
+<li>Only create <font color="red">master journal</font> files if two or more attached databases are all
     modified, do not have <a href="pragma.html#pragma_synchronous">PRAGMA synchronous</a> set to OFF, and
     do not have the <a href="pragma.html#pragma_journal_mode">journal_mode</a> set to OFF, MEMORY, or WAL.
 <li>Only create <a href="tempfiles.html#stmtjrnl">statement journal</a> files when their size exceeds a threshold.
@@ -2053,7 +2093,7 @@ with a home-baked pie.</center>
     holding an INT value.  Ticket
     <a href="https://www.sqlite.org/src/info/f2ad7de056ab1dc9200">f2ad7de056ab1dc9200</a>
 <li>Fix <a href="lang_createtable.html#createtabas">CREATE TABLE AS</a> so that it does not leave NULL entries in the
-    <a href="fileformat2.html#sqlite_master">sqlite_master table</a> if the SELECT statement on the right-hand side
+    <a href="schematab.html">sqlite_master table</a> if the SELECT statement on the right-hand side
     aborts with an error.  Ticket
     <a href="https://www.sqlite.org/src/info/873cae2b6e25b">873cae2b6e25b</a>
 <li>Fix the <a href="optoverview.html#skipscan">skip-scan optimization</a> so that it works correctly when

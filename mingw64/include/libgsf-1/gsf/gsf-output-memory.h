@@ -38,6 +38,7 @@ GType gsf_output_memory_get_type      (void);
 
 GsfOutput *gsf_output_memory_new      (void);
 const guint8* gsf_output_memory_get_bytes (GsfOutputMemory * mem);
+guint8* gsf_output_memory_steal_bytes (GsfOutputMemory * mem);
 
 G_END_DECLS
 

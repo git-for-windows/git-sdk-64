@@ -128,7 +128,7 @@ any corruption created this way can be fixed by running <a href="lang_reindex.ht
 Each table and each index in SQLite is stored in a separate b-tree
 in the database file.  Each b-tree is identified by its root page
 number.  The root page number for any index or table can be found
-by querying the "rootpage" column of the <a href="fileformat2.html#sqlite_master">sqlite_master table</a>.
+by querying the "rootpage" column of the <a href="schematab.html">sqlite_schema table</a>.
 See the <a href="queryplanner.html">indexing tutorial</a> and the <a href="fileformat2.html">file format</a> documentation
 for further background on this design.
 </p>
@@ -150,7 +150,7 @@ were a WITHOUT ROWID table.
 <h2 id="manually_created_imposter_tables"><span>2.1. </span>Manually Created Imposter Tables</h2>
 
 <p>
-One way to create an imposter table is to directly edit the sqlite_master
+One way to create an imposter table is to directly edit the sqlite_schema
 table to insert a new row that describes the table.
 For example, suppose the schema is like this:
 </p>
@@ -169,25 +169,25 @@ would look like this:
 
 <p>
 To create a permanent imposter table "t2" against index "t1bc" one
-should first enable editing of the sqlite_master table by running
+should first enable editing of the sqlite_schema table by running
 "<a href="pragma.html#pragma_writable_schema">PRAGMA writable_schema=ON</a>".
 (Be careful to observe the warnings that accompany this PRAGMA.
 A mistake can cause severe database corruption.)
-Then insert a new entry into the sqlite_master table like this:
+Then insert a new entry into the sqlite_schema table like this:
 </p>
 
-<div class="codeblock"><pre>INSERT INTO sqlite_master(type,name,tbl_name,rootpage,sql)
+<div class="codeblock"><pre>INSERT INTO sqlite_schema(type,name,tbl_name,rootpage,sql)
  SELECT 'table','t2','t2',rootpage,
    'CREATE TABLE t2(b,c,a,PRIMARY KEY(b,c,a))WITHOUT ROWID'
-   FROM sqlite_master
+   FROM sqlite_schema
   WHERE name='t1bc';
 </pre></div>
 
 <p>
-The INSERT statement above adds a new row to the sqlite_master table that
+The INSERT statement above adds a new row to the sqlite_schema table that
 defines a table "t2" having the same on-disk format as index "t1bc" and 
 pointing to the same b-tree.
-After adding this sqlite_master table entry, it is necessary to close and
+After adding this sqlite_schema table entry, it is necessary to close and
 reopen the database in order to get SQLite to reread the schema.
 Then the "t2" table can be queried to see the content of the "t1bc" index.
 </p>
@@ -196,7 +196,7 @@ Then the "t2" table can be queried to see the content of the "t1bc" index.
 
 <p>
 A serious problem with the manual imposter table approach described above
-is that after adding the new "t2" entry to the "sqlite_master" table, the
+is that after adding the new "t2" entry to the "sqlite_schema" table, the
 database file will technically be corrupt.  Both the "t1bc" index and the
 "t2" table will point to the same b-tree.  This will not cause
 any immediate problems, though one should avoid running <a href="lang_vacuum.html">VACUUM</a>.
@@ -223,7 +223,7 @@ especially discouraged because they are permanent.
 <p>
 Another (safer) approach to creating an imposter table is to add an
 entry for the imposter table to SQLite's internal symbol table without
-updating the "sqlite_master" table on disk.
+updating the "sqlite_schema" table on disk.
 That way, the imposter table exists in only a single database connection
 and is automatically removed whenever the schema is reloaded.
 </p>

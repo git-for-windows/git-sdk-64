@@ -11,7 +11,7 @@ and/or use gtk-doc annotations.  -->
   <c:include name="hb-gobject.h"/>
   <namespace name="HarfBuzz"
              version="0.0"
-             shared-library="libharfbuzz-0.dll,libharfbuzz-gobject-0.dll"
+             shared-library="libharfbuzz-gobject-0.dll"
              c:identifier-prefixes="hb_"
              c:symbol-prefixes="hb,hb_gobject">
     <alias name="bool_t" c:type="hb_bool_t">
@@ -328,7 +328,7 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
       <source-position filename="../src/hb-version.h" line="39"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
       <source-position filename="../src/hb-version.h" line="41"/>
       <type name="gint" c:type="gint"/>
     </constant>
@@ -336,7 +336,7 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
       <source-position filename="../src/hb-version.h" line="40"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="2.7.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="2.7.1" c:type="HB_VERSION_STRING">
       <source-position filename="../src/hb-version.h" line="43"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -7920,20 +7920,20 @@ https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#ft_loa
               version="0.9.38">
       <doc xml:space="preserve"
            filename="../src/hb-glib.cc"
-           line="428">Creates an #hb_blob_t blob from the specified
+           line="282">Creates an #hb_blob_t blob from the specified
 GBytes data structure.</doc>
       <source-position filename="../src/hb-glib.h" line="51"/>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-glib.cc"
-             line="435">the new #hb_blob_t blob object</doc>
+             line="289">the new #hb_blob_t blob object</doc>
         <type name="blob_t" c:type="hb_blob_t*"/>
       </return-value>
       <parameters>
         <parameter name="gbytes" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-glib.cc"
-               line="430">the GBytes structure to work upon</doc>
+               line="284">the GBytes structure to work upon</doc>
           <type name="GLib.Bytes" c:type="GBytes*"/>
         </parameter>
       </parameters>
@@ -7943,13 +7943,13 @@ GBytes data structure.</doc>
               version="0.9.38">
       <doc xml:space="preserve"
            filename="../src/hb-glib.cc"
-           line="402">Fetches a Unicode-functions structure that is populated
+           line="256">Fetches a Unicode-functions structure that is populated
 with the appropriate GLib function for each method.</doc>
       <source-position filename="../src/hb-glib.h" line="47"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-glib.cc"
-             line="408">a pointer to the #hb_unicode_funcs_t Unicode-functions structure</doc>
+             line="262">a pointer to the #hb_unicode_funcs_t Unicode-functions structure</doc>
         <type name="unicode_funcs_t" c:type="hb_unicode_funcs_t*"/>
       </return-value>
     </function>
@@ -7958,20 +7958,20 @@ with the appropriate GLib function for each method.</doc>
               version="0.9.38">
       <doc xml:space="preserve"
            filename="../src/hb-glib.cc"
-           line="203">Fetches the GUnicodeScript identifier that corresponds to the
+           line="69">Fetches the GUnicodeScript identifier that corresponds to the
 specified #hb_script_t script.</doc>
       <source-position filename="../src/hb-glib.h" line="43"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-glib.cc"
-             line="210">the GUnicodeScript identifier found</doc>
+             line="76">the GUnicodeScript identifier found</doc>
         <type name="GLib.UnicodeScript" c:type="GUnicodeScript"/>
       </return-value>
       <parameters>
         <parameter name="script" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-glib.cc"
-               line="205">The #hb_script_t to query</doc>
+               line="71">The #hb_script_t to query</doc>
           <type name="script_t" c:type="hb_script_t"/>
         </parameter>
       </parameters>
@@ -7981,20 +7981,20 @@ specified #hb_script_t script.</doc>
               version="0.9.38">
       <doc xml:space="preserve"
            filename="../src/hb-glib.cc"
-           line="176">Fetches the #hb_script_t script that corresponds to the
+           line="52">Fetches the #hb_script_t script that corresponds to the
 specified GUnicodeScript identifier.</doc>
       <source-position filename="../src/hb-glib.h" line="40"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-glib.cc"
-             line="183">the #hb_script_t script found</doc>
+             line="59">the #hb_script_t script found</doc>
         <type name="script_t" c:type="hb_script_t"/>
       </return-value>
       <parameters>
         <parameter name="script" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-glib.cc"
-               line="178">The GUnicodeScript identifier to query</doc>
+               line="54">The GUnicodeScript identifier to query</doc>
           <type name="GLib.UnicodeScript" c:type="GUnicodeScript"/>
         </parameter>
       </parameters>
@@ -14474,7 +14474,7 @@ Set @first to %HB_SET_VALUE_INVALID to get started.</doc>
     <function name="shape" c:identifier="hb_shape" version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-shape.cc"
-           line="147">Shapes @buffer using @font turning its Unicode characters content to
+           line="149">Shapes @buffer using @font turning its Unicode characters content to
 positioned glyphs. If @features is not %NULL, it will be used to control the
 features applied during shaping. If two @features have the same tag but
 overlapping ranges the value of the feature with the higher index takes
@@ -14487,13 +14487,13 @@ precedence.</doc>
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-shape.cc"
-               line="149">an #hb_font_t to use for shaping</doc>
+               line="151">an #hb_font_t to use for shaping</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-shape.cc"
-               line="150">an #hb_buffer_t to shape</doc>
+               line="152">an #hb_buffer_t to shape</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="features"
@@ -14502,7 +14502,7 @@ precedence.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-shape.cc"
-               line="151">an array of user
+               line="153">an array of user
    specified #hb_feature_t or %NULL</doc>
           <array length="3" zero-terminated="0" c:type="const hb_feature_t*">
             <type name="feature_t" c:type="hb_feature_t"/>
@@ -14511,7 +14511,7 @@ precedence.</doc>
         <parameter name="num_features" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-shape.cc"
-               line="153">the length of @features array</doc>
+               line="155">the length of @features array</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
       </parameters>

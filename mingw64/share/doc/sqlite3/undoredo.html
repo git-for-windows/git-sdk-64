@@ -454,7 +454,7 @@ proc _create_triggers {db args} {
 # title:  Drop all of the triggers that _create_triggers created
 #
 proc _drop_triggers {db} {
-  set tlist }; hd_resolve_one {$db eval {SELECT name FROM sqlite_temp_master
+  set tlist }; hd_resolve_one {$db eval {SELECT name FROM sqlite_temp_schema
                        WHERE type='trigger'}}; hd_puts {
   foreach trigger $tlist {
     if {!}; hd_resolve_one {regexp {_.*_(i|u|d)t$} $trigger}; hd_puts {} continue

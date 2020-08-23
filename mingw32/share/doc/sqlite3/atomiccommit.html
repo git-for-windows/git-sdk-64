@@ -125,10 +125,10 @@ Table Of Contents
 <div class="fancy-toc2"><a href="#_continue_as_if_the_uncompleted_writes_had_never_happened">4.6.  Continue As If The Uncompleted Writes Had Never Happened</a></div>
 <div class="fancy-toc1"><a href="#_multi_file_commit">5.  Multi-file Commit</a></div>
 <div class="fancy-toc2"><a href="#_separate_rollback_journals_for_each_database">5.1.  Separate Rollback Journals For Each Database</a></div>
-<div class="fancy-toc2"><a href="#_the_master_journal_file">5.2.  The Master Journal File</a></div>
+<div class="fancy-toc2"><a href="#_the_super_journal_file">5.2.  The Super-Journal File</a></div>
 <div class="fancy-toc2"><a href="#_updating_rollback_journal_headers">5.3.  Updating Rollback Journal Headers</a></div>
 <div class="fancy-toc2"><a href="#_updating_the_database_files">5.4.  Updating The Database Files</a></div>
-<div class="fancy-toc2"><a href="#_delete_the_master_journal_file">5.5.  Delete The Master Journal File</a></div>
+<div class="fancy-toc2"><a href="#_delete_the_super_journal_file">5.5.  Delete The Super-Journal File</a></div>
 <div class="fancy-toc2"><a href="#_clean_up_the_rollback_journals">5.6.  Clean Up The Rollback Journals</a></div>
 <div class="fancy-toc1"><a href="#_additional_details_of_the_commit_process">6.  Additional Details Of The Commit Process</a></div>
 <div class="fancy-toc2"><a href="#_always_journal_complete_sectors">6.1.  Always Journal Complete Sectors</a></div>
@@ -381,7 +381,7 @@ user space is empty.
 <p>Before SQLite can write to a database, it must first read
 the database to see what is there already.  Even if it is just
 appending new data, SQLite still has to read in the database
-schema from the <b>sqlite_master</b> table so that it can know
+schema from the "<a href="schematab.html">sqlite_schema</a>" table so that it can know
 how to parse the INSERT statements and discover where in the
 database file the new information should be stored.</p>
 
@@ -716,9 +716,9 @@ are true:</p>
 </li><li>The header of the rollback journal is well-formed and in particular
     has not been zeroed out.
 </li><li>The rollback journal does not
-contain the name of a master journal file (see
+contain the name of a super-journal file (see
 <a href="#section_5_5">section 5.5</a> below) or if does
-contain the name of a master journal, then that master journal
+contain the name of a super-journal, then that super-journal
 file exists.
 </li></ul>
 
@@ -835,42 +835,42 @@ just take up a lot of space in the diagrams and they do not add
 any new information, so they are omitted here.</p>
 
 <br clear="both">
-<a name="masterjrnl"></a>
+<a name="sprjrnl"></a>
 
-<h2 id="_the_master_journal_file"><span>5.2. </span> The Master Journal File</h2>
+<h2 id="_the_super_journal_file"><span>5.2. </span> The Super-Journal File</h2>
 <img src="images/ac/multi-1.gif" align="right" hspace="15">
 
 <p>The next step in a multi-file commit is the creation of a
-"master journal" file.  The name of the master journal file is
+"super-journal" file.  The name of the super-journal file is
 the same name as the original database filename (the database
 that was opened using the 
 <a href="c3ref/open.html">sqlite3_open()</a> interface,
 not one of the <a href="lang_attach.html">ATTACHed</a> auxiliary
 databases) with the text "<b>-mj</b><i>HHHHHHHH</i>" appended where
 <i>HHHHHHHH</i> is a random 32-bit hexadecimal number.  The
-random <i>HHHHHHHH</i> suffix changes for every new master journal.</p>
+random <i>HHHHHHHH</i> suffix changes for every new super-journal.</p>
 
-<p><i>(Nota bene: The formula for computing the master journal filename
+<p><i>(Nota bene: The formula for computing the super-journal filename
 given in the previous paragraph corresponds to the implementation as
 of SQLite version 3.5.0.  But this formula is not part of the SQLite
 specification and is subject to change in future releases.)</i></p>
 
-<p>Unlike the rollback journals, the master journal does not contain
-any original database page content.  Instead, the master journal contains
+<p>Unlike the rollback journals, the super-journal does not contain
+any original database page content.  Instead, the super-journal contains
 the full pathnames for rollback journals for every database that is
 participating in the transaction.</p>
 
-<p>After the master journal is constructed, its content is flushed
+<p>After the super-journal is constructed, its content is flushed
 to disk before any further actions are taken.  On Unix, the directory
-that contains the master journal is also synced in order to make sure
-the master journal file will appear in the directory following a
+that contains the super-journal is also synced in order to make sure
+the super-journal file will appear in the directory following a
 power failure.</p>
 
-<p>The purpose of the master journal is to ensure that multi-file
+<p>The purpose of the super-journal is to ensure that multi-file
 transactions are atomic across a power-loss.  But if the database files
 have other settings that compromise integrity across a power-loss event
 (such as <a href="pragma.html#pragma_synchronous">PRAGMA synchronous=OFF</a> or <a href="pragma.html#pragma_journal_mode">PRAGMA journal_mode=MEMORY</a>) then
-the creation of the master journal is omitted, as an optimization.
+the creation of the super-journal is omitted, as an optimization.
 
 <br clear="both">
 <a name="multijrnlupdate"></a>
@@ -878,13 +878,13 @@ the creation of the master journal is omitted, as an optimization.
 </p><h2 id="_updating_rollback_journal_headers"><span>5.3. </span> Updating Rollback Journal Headers</h2>
 <img src="images/ac/multi-2.gif" align="right" hspace="15">
 
-<p>The next step is to record the full pathname of the master journal file
-in the header of every rollback journal.  Space to hold the master
-journal filename was reserved at the beginning of each rollback journal
+<p>The next step is to record the full pathname of the super-journal file
+in the header of every rollback journal.  Space to hold the 
+super-journal filename was reserved at the beginning of each rollback journal
 as the rollback journals were created.</p>
 
 <p>The content of each rollback journal is flushed to disk both before
-and after the master journal filename is written into the rollback
+and after the super-journal filename is written into the rollback
 journal header.  It is important to do both of these flushes.  Fortunately,
 the second flush is usually inexpensive since typically only a single
 page of the journal file (the first page) has changed.</p>
@@ -915,10 +915,10 @@ scenario described previously.</p>
 
 <br clear="both">
 <a name="section_5_5"></a>
-<h2 id="_delete_the_master_journal_file"><span>5.5. </span> Delete The Master Journal File</h2>
+<h2 id="_delete_the_super_journal_file"><span>5.5. </span> Delete The Super-Journal File</h2>
 <img src="images/ac/multi-4.gif" align="right" hspace="15">
 
-<p>The next step is to delete the master journal file.
+<p>The next step is to delete the super-journal file.
 This is the point where the multi-file transaction commits.
 This step corresponds to 
 <a href="#section_3_11">step 3.11</a> in the single-file
@@ -927,11 +927,11 @@ commit scenario where the rollback journal is deleted.</p>
 <p>If a power failure or operating system crash occurs at this
 point, the transaction will not rollback when the system reboots
 even though there are rollback journals present.  The
-difference is the master journal pathname in the header of the
+difference is the super-journal pathname in the header of the
 rollback journal.  Upon restart, SQLite only considers a journal
 to be hot and will only playback the journal if there is no
-master journal filename in the header (which is the case for
-a single-file commit) or if the master journal file still
+super-journal filename in the header (which is the case for
+a single-file commit) or if the super-journal file still
 exists on disk.</p>
 
 <br clear="both">

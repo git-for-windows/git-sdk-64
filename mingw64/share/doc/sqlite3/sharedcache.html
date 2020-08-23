@@ -106,7 +106,7 @@ Table Of Contents
 <div class="fancy-toc2"><a href="#transaction_level_locking">2.1. Transaction Level Locking</a></div>
 <div class="fancy-toc2"><a href="#table_level_locking">2.2. Table Level Locking</a></div>
 <div class="fancy-toc3"><a href="#read_uncommitted_isolation_mode">2.2.1. Read-Uncommitted Isolation Mode</a></div>
-<div class="fancy-toc2"><a href="#schema_sqlite_master_level_locking">2.3. Schema (sqlite_master) Level Locking</a></div>
+<div class="fancy-toc2"><a href="#schema_sqlite_schema_level_locking">2.3. Schema (sqlite_schema) Level Locking</a></div>
 <div class="fancy-toc1"><a href="#thread_related_issues">3. Thread Related Issues</a></div>
 <div class="fancy-toc1"><a href="#shared_cache_and_virtual_tables">4. Shared Cache And Virtual Tables</a></div>
 <div class="fancy-toc1"><a href="#enabling_shared_cache_mode">5. Enabling Shared-Cache Mode</a></div>
@@ -207,7 +207,7 @@ read-lock, write-lock or no lock on each database table.
 </p>
 
 <p>At any one time, a single table may have any number of active read-locks
-or a single active write lock. To read data a table, a connection must 
+or a single active write lock. To read data from a table, a connection must 
 first obtain a read-lock. To write to a table, a connection must obtain a 
 write-lock on that table. If a required table lock cannot be obtained,
 the query fails and SQLITE_LOCKED is returned to the caller.
@@ -233,9 +233,9 @@ neither block nor be blocked by any other connection.</p>
 <p>Read-uncommitted mode has no effect on the locks required to write to
 database tables (i.e. read-uncommitted connections must still obtain 
 write-locks and hence database writes may still block or be blocked). 
-Also, read-uncommitted mode has no effect on the <i>sqlite_master</i> 
+Also, read-uncommitted mode has no effect on the <a href="schematab.html">sqlite_schema</a>
 locks required by the rules enumerated below (see section 
-"Schema (sqlite_master) Level Locking").
+"Schema (sqlite_schema) Level Locking").
 </p>
 
 <blockquote><pre>
@@ -250,22 +250,22 @@ locks required by the rules enumerated below (see section
   PRAGMA read_uncommitted;
 </pre></blockquote>
 
-<h2 id="schema_sqlite_master_level_locking"><span>2.3. </span>Schema (sqlite_master) Level Locking</h2>
+<h2 id="schema_sqlite_schema_level_locking"><span>2.3. </span>Schema (sqlite_schema) Level Locking</h2>
 
-<p>The <i>sqlite_master</i> table supports shared-cache read and write 
+<p>The <a href="schematab.html">sqlite_schema table</a> supports shared-cache read and write 
 locks in the same way as all other database tables (see description 
 above). The following special rules also apply:
 </p>
 
 <ul>
-<li>A connection must obtain a read-lock on <i>sqlite_master</i> before 
+<li>A connection must obtain a read-lock on <i>sqlite_schema</i> before 
 accessing any database tables or obtaining any other read or write locks.</li>
 <li>Before executing a statement that modifies the database schema (i.e. 
 a CREATE or DROP TABLE statement), a connection must obtain a write-lock on 
-<i>sqlite_master</i>.
+<i>sqlite_schema</i>.
 </li>
 <li>A connection may not compile an SQL statement if any other connection
-is holding a write-lock on the <i>sqlite_master</i> table of any attached
+is holding a write-lock on the <i>sqlite_schema</i> table of any attached
 database (including the default database, "main"). 
 </li>
 </ul>
@@ -335,7 +335,7 @@ Beginning with SQLite <a href="releaselog/3_7_13.html">version 3.7.13</a> (2012-
 shared cache can be used on
 <a href="inmemorydb.html">in-memory databases</a>, provided that the database is created using
 a <a href="uri.html">URI filename</a>.  For backwards compatibility, shared cache is always
-disable for in-memory
+disabled for in-memory
 databases if the unadorned name ":memory:" is used to open the database.
 Prior to version 3.7.13, shared cache was always
 disabled for in-memory databases regardless of the database name used,

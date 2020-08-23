@@ -458,9 +458,9 @@ SQLITE_FULL.
 </p>
 
 <p>
-The largest possible setting for SQLITE_MAX_PAGE_COUNT is 2147483646.
+The largest possible setting for SQLITE_MAX_PAGE_COUNT is 4294967294.
 When used with the maximum page size of 65536, this gives a maximum
-SQLite database size of about 140 terabytes.</p>
+SQLite database size of about 281 terabytes.</p>
 
 <p>
 The <a href="pragma.html#pragma_max_page_count">
@@ -472,9 +472,9 @@ limit at run-time.
 <p>
 The theoretical maximum number of rows in a table is
 2<sup><small>64</small></sup> (18446744073709551616 or about 1.8e+19).
-This limit is unreachable since the maximum database size of 140 terabytes
-will be reached first.  A 140 terabytes database can hold no more than
-approximately 1e+13 rows, and then only if there are no indices and if
+This limit is unreachable since the maximum database size of 281 terabytes
+will be reached first.  A 281 terabytes database can hold no more than
+approximately 2e+13 rows, and then only if there are no indices and if
 each row contains very little data.
 </li><li><p><b>Maximum Database Size</b></p>
 
@@ -482,10 +482,10 @@ each row contains very little data.
 Every database consists of one or more "pages".  Within a single database,
 every page is the same size, but different database can have page sizes
 that are powers of two between 512 and 65536, inclusive.  The maximum
-size of a database file is 2147483646 pages.  At the maximum page size
+size of a database file is 4294967294 pages.  At the maximum page size
 of 65536 bytes, this translates into a maximum database size of 
-approximately 1.4e+14 bytes (140 terabytes, or 128 tebibytes, or
-140,000 gigabytes or 128,000 gibibytes).
+approximately 1.4e+14 bytes (281 terabytes, or 256 tebibytes, or
+281474 gigabytes or 256,000 gibibytes).
 <p>
 This particular upper bound is untested since the developers do not 
 have access to hardware capable of reaching this limit.  However, tests

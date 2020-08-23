@@ -251,17 +251,17 @@ back to its original size on a rollback.</p>
 <p>If SQLite is working with multiple databases at the same time
 (using the <a href="lang_attach.html">ATTACH</a> command) then each database has its own rollback journal.
 But there is also a separate aggregate journal
-called the <em>master journal</em>.
-The master journal does not contain page data used for rolling back
-changes.  Instead the master journal contains the names of the
+called the <em>super-journal</em>.
+The super-journal does not contain page data used for rolling back
+changes.  Instead the super-journal contains the names of the
 individual database rollback journals for each of the ATTACHed databases. 
 Each of the individual database rollback journals also contain the name 
-of the master journal.
+of the super-journal.
 If there are no ATTACHed databases (or if none of the ATTACHed database
-is participating in the current transaction) no master journal is
+is participating in the current transaction) no super-journal is
 created and the normal rollback journal contains an empty string
-in the place normally reserved for recording the name of the master
-journal.</p>
+in the place normally reserved for recording the name of the
+super-journal.</p>
 
 <p>A rollback journal is said to be <a href="fileformat2.html#hotjrnl">hot</a>
 if it needs to be rolled back
@@ -277,12 +277,12 @@ you will never get a hot journal.
 </p>
 
 <p>
-If no master journal is involved, then
+If no super-journal is involved, then
 a journal is hot if it exists and has a non-zero header
 and its corresponding database file
 does not have a RESERVED lock.
-If a master journal is named in the file journal, then the file journal
-is hot if its master journal exists and there is no RESERVED
+If a super-journal is named in the file journal, then the file journal
+is hot if its super-journal exists and there is no RESERVED
 lock on the corresponding database file.
 It is important to understand when a journal is hot so the
 preceding rules will be repeated in bullets:
@@ -294,7 +294,7 @@ preceding rules will be repeated in bullets:
     <li>It exists, and</li>
     <li>Its size is greater than 512 bytes, and</li>
     <li>The journal header is non-zero and well-formed, and</li>
-    <li>Its master journal exists or the master journal name is an
+    <li>Its super-journal exists or the super-journal name is an
         empty string, and</li>
     <li>There is no RESERVED lock on the corresponding database file.</li>
     </ul>
@@ -336,9 +336,9 @@ the following sequence of steps:
     length if <a href="pragma.html#pragma_journal_mode">PRAGMA journal_mode=TRUNCATE</a> is
     set, or zero the journal header if
     <a href="pragma.html#pragma_journal_mode">PRAGMA journal_mode=PERSIST</a> is set).</li>
-<li>Delete the master journal file if it is safe to do so.
+<li>Delete the super-journal file if it is safe to do so.
     This step is optional.  It is here only to prevent stale
-    master journals from cluttering up the disk drive.
+    super-journals from cluttering up the disk drive.
     See the discussion below for details.</li>
 <li>Drop the EXCLUSIVE and PENDING locks but retain the SHARED lock.</li>
 </ol>
@@ -347,21 +347,21 @@ the following sequence of steps:
 read from the database file.  Once all reading has completed, the
 SHARED lock is dropped.</p>
 
-<a name="stale_master_journals"></a>
-<h3>4.2 Deleting stale master journals</h3>
+<a name="stale_super_journals"></a>
+<h3>4.2 Deleting stale super-journals</h3>
 
-<p>A stale master journal is a master journal that is no longer being
-used for anything.  There is no requirement that stale master journals
+<p>A stale super-journal is a super-journal that is no longer being
+used for anything.  There is no requirement that stale super-journals
 be deleted.  The only reason for doing so is to free up disk space.</p>
 
-<p>A master journal is stale if no individual file journals are pointing
-to it.  To figure out if a master journal is stale, we first read the
-master journal to obtain the names of all of its file journals.  Then
+<p>A super-journal is stale if no individual file journals are pointing
+to it.  To figure out if a super-journal is stale, we first read the
+super-journal to obtain the names of all of its file journals.  Then
 we check each of those file journals.  If any of the file journals named
-in the master journal exists and points back to the master journal, then
-the master journal is not stale.  If all file journals are either missing
-or refer to other master journals or no master journal at all, then the
-master journal we are testing is stale and can be safely deleted.</p>
+in the super-journal exists and points back to the super-journal, then
+the super-journal is not stale.  If all file journals are either missing
+or refer to other super-journals or no super-journal at all, then the
+super-journal we are testing is stale and can be safely deleted.</p>
 
 <a name="writing"></a>
 <h2>5.0 Writing to a database file</h2>
@@ -383,7 +383,7 @@ In that case, the write attempt fails and returns SQLITE_BUSY.</p>
 <p>After obtaining a RESERVED lock, the process that wants to write
 creates a rollback journal.  The header of the journal is initialized
 with the original size of the database file.  Space in the journal header
-is also reserved for a master journal name, though the master journal
+is also reserved for a super-journal name, though the super-journal
 name is initially empty.</p>
 
 <p>Before making changes to any page of the database, the process writes
@@ -463,23 +463,23 @@ commit sequence is used, as follows:</p>
 <li value="4">
    Make sure all individual database files have an EXCLUSIVE lock and a
    valid journal.
-<li>Create a master-journal.  The name of the master-journal is arbitrary.
+<li>Create a super-journal.  The name of the super-journal is arbitrary.
     (The current implementation appends random suffixes to the name of the
     main database file until it finds a name that does not previously exist.)
-    Fill the master journal with the names of all the individual journals
+    Fill the super-journal with the names of all the individual journals
     and flush its contents to disk.
-<li>Write the name of the master journal into
+<li>Write the name of the super-journal into
     all individual journals (in space set aside for that purpose in the
     headers of the individual journals) and flush the contents of the
     individual journals to disk and wait for those changes to reach the
     disk surface.
 <li>Flush all database file changes to the disk.  Wait for those changes
     to actually be written onto the disk surface.</li>
-<li>Delete the master journal file.  This is the instant when the changes are
-    committed.  Prior to deleting the master journal file, if a power failure
+<li>Delete the super-journal file.  This is the instant when the changes are
+    committed.  Prior to deleting the super-journal file, if a power failure
     or crash occurs, the individual file journals will be considered hot
     and will be rolled back by the next process that
-    attempts to read them.  After the master journal has been deleted,
+    attempts to read them.  After the super-journal has been deleted,
     the file journals will no longer be considered hot and the changes
     will persist.
     </li>
@@ -609,12 +609,12 @@ database and journal in a directory by themselves.
 </p>
 
 <p>
-For a commit involving multiple databases and a master journal, if the
+For a commit involving multiple databases and a super-journal, if the
 various databases were on different disk volumes and a power failure occurs
 during the commit, then when the machine comes back up the disks might
 be remounted with different names.  Or some disks might not be mounted
-at all.   When this happens the individual file journals and the master
-journal might not be able to find each other. The worst outcome from
+at all.   When this happens the individual file journals and the
+super-journal might not be able to find each other. The worst outcome from
 this scenario is that the commit ceases to be atomic.  
 Some databases might be rolled back and others might not. 
 All databases will continue to be self-consistent.

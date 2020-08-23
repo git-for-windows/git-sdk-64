@@ -143,17 +143,17 @@ gboolean gsf_doc_meta_data_write_to_odf  (GsfDocMetaData const *md, gpointer out
 /* For 1.15.x s/opendoc/odf/ and s/ooo/odf/ */
 #ifndef GSF_DISABLE_DEPRECATED
 extern GsfXMLInNS gsf_ooo_ns[]; /* use get_gsf_ooo_ns instead */
-GSF_DEPRECATED_FOR (gsf_odf_get_ns)
+G_DEPRECATED_FOR (gsf_odf_get_ns)
 GsfXMLInNS *get_gsf_ooo_ns (void);
-GSF_DEPRECATED_FOR (gsf_odf_get_version_string)
+G_DEPRECATED_FOR (gsf_odf_get_version_string)
 char const *get_gsf_odf_version_string (void);
-GSF_DEPRECATED_FOR (gsf_odf_get_version)
+G_DEPRECATED_FOR (gsf_odf_get_version)
 short get_gsf_odf_version (void);
-GSF_DEPRECATED_FOR (gsf_doc_meta_data_read_from_odf)
+G_DEPRECATED_FOR (gsf_doc_meta_data_read_from_odf)
 GError	*gsf_opendoc_metadata_read    (GsfInput *input, GsfDocMetaData *md);
-GSF_DEPRECATED_FOR (gsf_doc_meta_data_odf_subtree)
+G_DEPRECATED_FOR (gsf_doc_meta_data_odf_subtree)
 void	 gsf_opendoc_metadata_subtree (GsfXMLIn *doc,   GsfDocMetaData *md);
-GSF_DEPRECATED_FOR (gsf_doc_meta_data_write_to_odf)
+G_DEPRECATED_FOR (gsf_doc_meta_data_write_to_odf)
 gboolean gsf_opendoc_metadata_write   (gpointer output, GsfDocMetaData const *md);
 #endif
 

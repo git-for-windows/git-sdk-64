@@ -27,15 +27,8 @@
 
 G_BEGIN_DECLS
 
-/* We need to do this with a version check as this header gets installed.
- *
- * DEPRECATED in favour of G_PARAM_STATIC_STRINGS
- **/
-#if GLIB_CHECK_VERSION(2,7,0)
-#define GSF_PARAM_STATIC (G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB)
-#else
-#define GSF_PARAM_STATIC 0
-#endif
+/* kept for compatibility reasons */
+#define GSF_PARAM_STATIC G_PARAM_STATIC_STRINGS
 
 /*************************************************************************/
 

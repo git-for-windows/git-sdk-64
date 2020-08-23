@@ -291,26 +291,27 @@ The list of available dot-commands follows:
 .databases               List names and files of attached databases
 .dbconfig ?op? ?val?     List or change sqlite3_db_config() options
 .dbinfo ?DB?             Show status information about the database
-.dump ?TABLE? ...        Render all database content as SQL
+.dump ?TABLE?            Render database content as SQL
 .echo on|off             Turn command echo on or off
 .eqp on|off|full|...     Enable or disable automatic EXPLAIN QUERY PLAN
-.excel                   Display the output of next command in a spreadsheet
+.excel                   Display the output of next command in spreadsheet
 .exit ?CODE?             Exit this program with return-code CODE
-.expert                  EXPERIMENTAL. Suggest indexes for specified queries
+.expert                  EXPERIMENTAL. Suggest indexes for queries
+.explain ?on|off|auto?   Change the EXPLAIN formatting mode.  Default: auto
+.filectrl CMD ...        Run various sqlite3_file_control() operations
 .fullschema ?--indent?   Show schema and the content of sqlite_stat tables
 .headers on|off          Turn display of headers on or off
 .help ?-all? ?PATTERN?   Show help text for PATTERN
 .import FILE TABLE       Import data from FILE into TABLE
 .imposter INDEX TABLE    Create imposter table TABLE on index INDEX
 .indexes ?TABLE?         Show names of indexes
-.iotrace FILE            Enable I/O diagnostic logging to FILE
 .limit ?LIMIT? ?VAL?     Display or change the value of an SQLITE_LIMIT
 .lint OPTIONS            Report potential schema issues.
 .load FILE ?ENTRY?       Load an extension library
 .log FILE|off            Turn logging on or off.  FILE can be stderr/stdout
 .mode MODE ?TABLE?       Set output mode
 .nullvalue STRING        Use STRING in place of NULL values
-.once (-e|-x|FILE)       Output for the next SQL command only to FILE
+.once ?OPTIONS? ?FILE?   Output for the next SQL command only to FILE
 .open ?OPTIONS? ?FILE?   Close existing database and reopen FILE
 .output ?FILE?           Send output to FILE or stdout if FILE is omitted
 .parameter CMD ...       Manage SQL parameter bindings
@@ -319,13 +320,13 @@ The list of available dot-commands follows:
 .prompt MAIN CONTINUE    Replace the standard prompts
 .quit                    Exit this program
 .read FILE               Read input from FILE
+.recover                 Recover as much data as possible from corrupt db.
 .restore ?DB? FILE       Restore content of DB (default "main") from FILE
 .save FILE               Write in-memory database into FILE
 .scanstats on|off        Turn sqlite3_stmt_scanstatus() metrics on or off
 .schema ?PATTERN?        Show the CREATE statements matching PATTERN
 .selftest ?OPTIONS?      Run tests defined in the SELFTEST table
 .separator COL ?ROW?     Change the column and row separators
-.session ?NAME? CMD ...  Create or control sessions
 .sha3sum ...             Compute a SHA3 hash of database content
 .shell CMD ARGS...       Run CMD ARGS... in a system shell
 .show                    Show the current values for various settings
@@ -333,13 +334,14 @@ The list of available dot-commands follows:
 .system CMD ARGS...      Run CMD ARGS... in a system shell
 .tables ?TABLE?          List names of tables matching LIKE pattern TABLE
 .testcase NAME           Begin redirecting output to 'testcase-out.txt'
+.testctrl CMD ...        Run various sqlite3_test_control() operations
 .timeout MS              Try opening locked tables for MS milliseconds
 .timer on|off            Turn SQL timer on or off
 .trace ?OPTIONS?         Output each SQL statement as it is run
 .vfsinfo ?AUX?           Information about the top-level VFS
 .vfslist                 List all available VFSes
 .vfsname ?AUX?           Print the name of the VFS stack
-.width NUM1 NUM2 ...     Set column widths for "column" mode
+.width NUM1 NUM2 ...     Set minimum column widths for columnar output
 sqlite&gt;
 </pre></div>
 
@@ -372,12 +374,28 @@ to SQLite interfaces like <a href="c3ref/prepare.html">sqlite3_prepare()</a> or 
 </p><h1 id="changing_output_formats"><span>5. </span>Changing Output Formats</h1>
 
 <p>The sqlite3 program is able to show the results of a query
-in eight different formats: "csv", "column", "html", "insert",
-"line", "list", "quote", "tabs", and "tcl".
-You can use the ".mode" dot command to switch between these output
-formats.</p>
+in 14 different formats:
+</p><div class="columns" style="columns:8em auto;">
+<ul style="padding-top:0;padding-left:4em;">
+<li> ascii
+</li><li> box
+</li><li> csv
+</li><li> column
+</li><li> html
+</li><li> insert
+</li><li> json
+</li><li> line
+</li><li> list
+</li><li> markdown
+</li><li> quote
+</li><li> table
+</li><li> tabs
+</li><li> tcl
+</li></ul></div>
 
-<p>The default output mode is "list".  In
+<p>You can use the ".mode" dot command to switch between these output
+formats.
+>The default output mode is "list".  In
 list mode, each row of a query result is written on one line of
 output and each column within that row is separated by a specific
 separator string.  The default separator is a pipe symbol ("|").
@@ -443,51 +461,60 @@ data aligned in columns.  For example:</p>
 
 <div class="codeblock"><pre>sqlite&gt; <b>.mode column</b>
 sqlite&gt; <b>select * from tbl1;</b>
-one         two       
-----------  ----------
-hello       10        
-goodbye     20        
+one       two       
+--------  ---
+hello     10        
+goodbye   20        
 sqlite&gt;
 </pre></div>
 
-<p>By default, each column is between 1 and 10 characters wide, depending
-on the column header name and the width of the first column of data.
-Data that is too wide to fit in a column is truncated.  Use the
-".width" dot-command to adjust column widths, like this:</p>
+<p>In "column" mode (and also in "box", "table", and "markdown" modes)
+the width of columns adjusts automatically.  But you can override this,
+providing a minimum width for each column using the ".width" command.
+The arguments to ".width" are integers which are the minimum number of
+spaces to devote to each column.  Negative numbers mean right-justify.
+Thus:</p>
 
-<div class="codeblock"><pre>sqlite&gt; <b>.width 12 6</b>
+<div class="codeblock"><pre>sqlite&gt; <b>.width 12 -6</b>
 sqlite&gt; <b>select * from tbl1;</b>
-one           two   
+one              two
 ------------  ------
-hello         10    
-goodbye       20    
+hello!            10
+goodbye           20
 sqlite&gt;
 </pre></div>
 
-<p>The ".width" command in the example above sets the width of the first
-column to 12 and the width of the second column to 6.  All other column
-widths were unaltered.  You can give as many arguments to ".width" as
-necessary to specify the widths of as many columns as are in your
-query results.</p>
+<p>A width of 0 means the column width is chosen automatically.
+Unspecified columns widths to go zero.  Hence, the command
+".width" with no arguments sets all columns widths to zero and
+hence causes all column widths to be determine automatically.
 
-<p>If you specify a column a width of 0, then the column
-width is automatically adjusted to be the maximum of three
-numbers: 10, the width of the header, and the width of the
-first row of data.  This makes the column width self-adjusting.
-The default width setting for every column is this 
-auto-adjusting 0 value.</p>
+</p><p>The "column" mode is a tabular output format.  Other
+tabular output formats as "box", "markdown", and "table":
 
-<p>Use a negative column width for right-justified columns.</p>
-
-<p>The column labels that appear on the first two lines of output
-can be turned on and off using the ".headers" dot command.  In the
-examples above, the column labels are on.  To turn them off you
-could do this:</p>
-
-<div class="codeblock"><pre>sqlite&gt; <b>.headers off</b>
+</p><div class="codeblock"><pre>sqlite&gt; <b>.width</b>
+sqlite&gt; <b>.mode markdown</b>
 sqlite&gt; <b>select * from tbl1;</b>
-hello         10    
-goodbye       20    
+|   one   | two |
+|---------|-----|
+| hello!  | 10  |
+| goodbye | 20  |
+sqlite&gt; <b>.mode table</b>
+sqlite&gt; <b>select * from tbl1;</b>
++---------+-----+
+|   one   | two |
++---------+-----+
+| hello!  | 10  |
+| goodbye | 20  |
++---------+-----+
+sqlite&gt; <b>.mode box</b>
+sqlite&gt; <b>select * from tbl1;</b>
+┌─────────┬─────┐
+│   one   │ two │
+├─────────┼─────┤
+│ hello!  │ 10  │
+│ goodbye │ 20  │
+└─────────┴─────┘
 sqlite&gt;
 </pre></div>
 
@@ -507,12 +534,9 @@ sqlite&gt;
 </pre></div>
 
 
-<p>The last output mode is "html".  In this mode, sqlite3 writes
-the results of the query as an XHTML table.  The beginning
-&lt;TABLE&gt; and the ending &lt;/TABLE&gt; are not written, but
-all of the intervening &lt;TR&gt;s, &lt;TH&gt;s, and &lt;TD&gt;s
-are.  The html output mode is envisioned as being useful for
-CGI.</p>
+<p>Other output modes include "html", "json", and "tcl".  Try these
+yourself to see what they do.
+</p>
 
 <a name="dotoutput"></a>
 
@@ -662,12 +686,12 @@ sqlite&gt;
 <p>The ".tables" command is similar to setting list mode then
 executing the following query:</p>
 
-<div class="codeblock"><pre>SELECT name FROM sqlite_master 
+<div class="codeblock"><pre>SELECT name FROM sqlite_schema 
 WHERE type IN ('table','view') AND name NOT LIKE 'sqlite_%'
 ORDER BY 1
 </pre></div>
 
-<p>But the ".tables" command does more.  It queries the sqlite_master table
+<p>But the ".tables" command does more.  It queries the <a href="schematab.html">sqlite_schema</a> table
 for all <a href="lang_attach.html">attached</a> databases, not just the primary database.  And it arranges
 its output into neat columns.
 
@@ -700,7 +724,7 @@ sqlite&gt;
 <p>The ".schema" command is roughly the same as setting
 list mode, then entering the following query:</p>
 
-<div class="codeblock"><pre>SELECT sql FROM sqlite_master
+<div class="codeblock"><pre>SELECT sql FROM sqlite_schema
 ORDER BY tbl_name, type DESC, name
 </pre></div>
 
@@ -1063,7 +1087,7 @@ or similar data-preserving transformation does not change the hash.
 "--sha3-384", and "--sha3-512" to define which variety of SHA3 to use
 for the hash.  The default is SHA3-256.
 
-</p><p>The database schema (in the <a href="fileformat2.html#sqlite_master">sqlite_master</a> table) is not normally
+</p><p>The database schema (in the <a href="schematab.html">sqlite_schema</a> table) is not normally
 included in the hash, but can be added by the "--schema" option.
 
 </p><p>The ".sha3sum" command takes a single optional argument which is a

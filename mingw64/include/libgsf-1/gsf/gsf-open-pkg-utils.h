@@ -55,9 +55,9 @@ GError	      *gsf_open_pkg_parse_rel_by_id    (GsfXMLIn *xin, char const *id,
 
 /* DEPRECATED in 1.14.6 */
 #ifndef GSF_DISABLE_DEPRECATED
-GSF_DEPRECATED_FOR (gsf_open_pkg_open_rel_by_id)
+G_DEPRECATED_FOR (gsf_open_pkg_open_rel_by_id)
 GsfInput      *gsf_open_pkg_get_rel_by_type    (GsfInput *opkg, char const *type);
-GSF_DEPRECATED_FOR (gsf_open_pkg_open_rel_by_id)
+G_DEPRECATED_FOR (gsf_open_pkg_open_rel_by_id)
 GsfInput      *gsf_open_pkg_get_rel_by_id      (GsfInput *opkg, char const *id);
 #endif
 

@@ -152,7 +152,7 @@ GType	     gsf_xml_in_ns_get_type (void);
 /****************************************************************************/
 /* Simplified GSF based xml export (does not use libxml) */
 
-struct GsfXMLOutClass_ {
+struct _GsfXMLOutClass {
 	GObjectClass  base;
 
 	/*< private >*/

@@ -135,16 +135,16 @@ built-in PRAGMA statements.</p>
 <hr /><a name="syntax"></a>
 <h2>PRAGMA command syntax</h2>
 <p><b><a href="syntax/pragma-stmt.html">pragma-stmt:</a></b>
-<button id='x2251' onclick='hideorshow("x2251","x2252")'>hide</button></p>
- <div id='x2252' class='imgcontainer'>
+<button id='x2231' onclick='hideorshow("x2231","x2232")'>hide</button></p>
+ <div id='x2232' class='imgcontainer'>
  <img alt="syntax diagram pragma-stmt" src="images/syntax/pragma-stmt.gif" />
 <p><b><a href="syntax/pragma-value.html">pragma-value:</a></b>
-<button id='x2253' onclick='hideorshow("x2253","x2254")'>hide</button></p>
- <div id='x2254' class='imgcontainer'>
+<button id='x2233' onclick='hideorshow("x2233","x2234")'>hide</button></p>
+ <div id='x2234' class='imgcontainer'>
  <img alt="syntax diagram pragma-value" src="images/syntax/pragma-value.gif" />
 <p><b><a href="syntax/signed-number.html">signed-number:</a></b>
-<button id='x2255' onclick='hideorshow("x2255","x2256")'>show</button></p>
- <div id='x2256' style='display:none;' class='imgcontainer'>
+<button id='x2235' onclick='hideorshow("x2235","x2236")'>show</button></p>
+ <div id='x2236' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
 </div>
 </div>
@@ -214,7 +214,7 @@ could query:
 
 <blockquote><pre>
 SELECT DISTINCT m.name || '.' || ii.name AS 'indexed-columns'
-  FROM sqlite_master AS m,
+  FROM sqlite_schema AS m,
        pragma_index_list(m.name) AS il,
        pragma_index_info(il.name) AS ii
  WHERE m.type='table'
@@ -787,8 +787,9 @@ for use in application programs.</ol></p>
 
     <p>The foreign_key_check pragma checks the database, or the table
     called "<i>table-name</i>", for 
-    <a href="foreignkeys.html">foreign key constraints</a> that are violated and returns one row of
-    output for each violation.  There are four columns in each result row.
+    <a href="foreignkeys.html">foreign key constraints</a> that are violated.  The foreign_key_check
+    pragma returns one row output for each foreign key violation.
+    There are four columns in each result row.
     The first column is the name of the table that contains the REFERENCES
     clause.  The second column is the <a href="lang_createtable.html#rowid">rowid</a> of the row that
     contains the invalid REFERENCES clause, or NULL if the child table is a
@@ -1009,21 +1010,40 @@ for use in application programs.</ol></p>
 <a name="pragma_integrity_check"></a>
 <h _id=pragma_integrity_check style="display:none"> PRAGMA integrity_check</h><hr>
     <p><b>PRAGMA </b><i>schema.</i><b>integrity_check;
-      <br>PRAGMA </b><i>schema.</i><b>integrity_check(</b><i>N</i><b>)</b></p>
-    <p>This pragma does an integrity check of the entire database.  The
-    integrity_check pragma
-    looks for out-of-order records, missing pages, malformed records, missing
-    index entries, and UNIQUE, CHECK, and NOT NULL constraint errors.
-    If the integrity_check pragma finds problems, strings are returned
+      <br>PRAGMA </b><i>schema.</i><b>integrity_check(</b><i>N</i><b>)
+      <br>PRAGMA </b><i>schema.</i><b>integrity_check(</b><i>TABLENAME</i><b>)</b></p>
+    <p>This pragma does a low-level formatting and consistency check
+    of the database.  The integrity_check pragma look for:
+    <ul>
+    <li> Table or index entries that are out of sequence
+    <li> Misformatted records
+    <li> Missing pages
+    <li> Missing or surplus index entries
+    <li> UNIQUE, CHECK, and NOT NULL constraint errors
+    <li> Integrity of the freelist
+    <li> Sections of the database that are used more than once, or not at all
+    </ul>
+    <p>If the integrity_check pragma finds problems, strings are returned
     (as multiple rows with a single column per row) which describe
     the problems.  Pragma integrity_check will return at most <i>N</i>
     errors before the analysis quits, with N defaulting
     to 100.  If pragma integrity_check finds no errors, a
     single row with the value 'ok' is returned.</p>
 
+    <p>The usual case is that the entire database file is checked.  However,
+    if the argument is <i>TABLENAME</i>, then checking is only performed for the
+    the table named and its associated indexes.
+    This is called a "partial integrity check".  Because only a subset of the
+    database is checked, errors such as unused sections of the file or duplication
+    use of the same section of the file by two or more tables cannot be detected.
+    The freelist is only verified on a
+    partial integrity check if <i>TABLENAME</i> is <a href="schematab.html">sqlite_schema</a> or one of its
+    aliases.  Support for partial integrity checks was added with
+    version 3.33.0 (2020-08-14).
+
     <p>PRAGMA integrity_check does not find
     <a href="foreignkeys.html">FOREIGN KEY</a> errors.  
-    Use the <a href="pragma.html#pragma_foreign_key_check">PRAGMA foreign_key_check</a> command for to find errors in
+    Use the <a href="pragma.html#pragma_foreign_key_check">PRAGMA foreign_key_check</a> command to find errors in
     FOREIGN KEY constraints.</p>
 
     <p>See also the <a href="pragma.html#pragma_quick_check">PRAGMA quick_check</a> command which does most of the
@@ -1442,12 +1462,15 @@ PRAGMA <b>main.</b>locking_mode=EXCLUSIVE;
 <a name="pragma_quick_check"></a>
 <h _id=pragma_quick_check style="display:none"> PRAGMA quick_check</h><hr>
     <p><b>PRAGMA </b><i>schema.</i><b>quick_check;
-      <br>PRAGMA </b><i>schema.</i><b>quick_check(</b><i>N</i><b>)</b></p>
+      <br>PRAGMA </b><i>schema.</i><b>quick_check(</b><i>N</i><b>)</b>
+      <br>PRAGMA </b><i>schema.</i><b>quick_check(</b><i>TABLENAME</i><b>)</b></p>
     <p>The pragma is like <a href="pragma.html#pragma_integrity_check">integrity_check</a> except that it does not verify
     UNIQUE constraints and does not verify
     that index content matches table content.  By skipping UNIQUE
-    and index consistency checks, quick_check is able to run much faster than
-    integrity_check.  Otherwise the two pragmas are the same.
+    and index consistency checks, quick_check is able to run faster.
+    PRAGMA quick_check runs in O(N) time whereas <a href="pragma.html#pragma_integrity_check">PRAGMA integrity_check</a>
+    requires O(NlogN) time where N is the total number of rows in the 
+    database. Otherwise the two pragmas are the same.
     </p>
 <a name="pragma_read_uncommitted"></a>
 <h _id=pragma_read_uncommitted style="display:none"> PRAGMA read_uncommitted</h><hr>
@@ -1539,7 +1562,7 @@ PRAGMA <b>main.</b>locking_mode=EXCLUSIVE;
 
 <p>    For the purposes of this pragma, the <a href="lang_vacuum.html">VACUUM</a> command is considered
        a schema change, since <a href="lang_vacuum.html">VACUUM</a> will usual alter the "rootpage"
-       values for entries in the <a href="fileformat2.html#sqlite_master">sqlite_master table</a>.
+       values for entries in the <a href="schematab.html">sqlite_schema table</a>.
 
 
 <p>    See also the <a href="pragma.html#pragma_application_id">application_id pragma</a> and <a href="pragma.html#pragma_user_version">user_version pragma</a>.
@@ -2042,7 +2065,7 @@ PRAGMA <b>main.</b>locking_mode=EXCLUSIVE;
     <p><b>PRAGMA writable_schema  = </b><i>boolean</i><b>;</b></p>
 
     <p>When this pragma is on, and the <a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfigdefensive">SQLITE_DBCONFIG_DEFENSIVE</a> flag
-    is off, then the <a href="fileformat2.html#sqlite_master">sqlite_master</a> table
+    is off, then the <a href="schematab.html">sqlite_schema</a> table
     can be changed using ordinary <a href="lang_update.html">UPDATE</a>, <a href="lang_insert.html">INSERT</a>, and <a href="lang_delete.html">DELETE</a>
     statements.  <span style='background-color: #ffff60;'><b>Warning:</b>
     misuse of this pragma can easily result in

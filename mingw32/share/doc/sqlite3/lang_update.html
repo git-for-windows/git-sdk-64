@@ -104,7 +104,9 @@ Table Of Contents
 <div id="toc_sub"><div class="fancy-toc1"><a href="#overview">1. Overview</a></div>
 <div class="fancy-toc1"><a href="#details">2. Details</a></div>
 <div class="fancy-toc2"><a href="#restrictions_on_update_statements_within_create_trigger">2.1. Restrictions on UPDATE Statements Within CREATE TRIGGER</a></div>
-<div class="fancy-toc2"><a href="#optional_limit_and_order_by_clauses">2.2. Optional LIMIT and ORDER BY Clauses</a></div>
+<div class="fancy-toc2"><a href="#update_from">2.2. UPDATE FROM</a></div>
+<div class="fancy-toc3"><a href="#update_from_in_other_sql_database_engines">2.2.1. UPDATE FROM in other SQL database engines</a></div>
+<div class="fancy-toc2"><a href="#optional_limit_and_order_by_clauses">2.3. Optional LIMIT and ORDER BY Clauses</a></div>
 </div>
 </div>
 <script>
@@ -128,179 +130,174 @@ mk.innerHTML = "&#x25ba;";
 <h1 id="overview"><span>1. </span>Overview</h1>
 
 <p><b><a href="syntax/update-stmt.html">update-stmt:</a></b>
-<button id='x2041' onclick='hideorshow("x2041","x2042")'>hide</button></p>
- <div id='x2042' class='imgcontainer'>
+<button id='x2023' onclick='hideorshow("x2023","x2024")'>hide</button></p>
+ <div id='x2024' class='imgcontainer'>
  <img alt="syntax diagram update-stmt" src="images/syntax/update-stmt.gif" />
 <p><b><a href="syntax/column-name-list.html">column-name-list:</a></b>
-<button id='x2043' onclick='hideorshow("x2043","x2044")'>show</button></p>
- <div id='x2044' style='display:none;' class='imgcontainer'>
+<button id='x2025' onclick='hideorshow("x2025","x2026")'>show</button></p>
+ <div id='x2026' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram column-name-list" src="images/syntax/column-name-list.gif" />
 </div>
+<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
+<button id='x2027' onclick='hideorshow("x2027","x2028")'>show</button></p>
+ <div id='x2028' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x2029' onclick='hideorshow("x2029","x2030")'>show</button></p>
+ <div id='x2030' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x2031' onclick='hideorshow("x2031","x2032")'>show</button></p>
+ <div id='x2032' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x2033' onclick='hideorshow("x2033","x2034")'>show</button></p>
+ <div id='x2034' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x2035' onclick='hideorshow("x2035","x2036")'>show</button></p>
+ <div id='x2036' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x2037' onclick='hideorshow("x2037","x2038")'>show</button></p>
+ <div id='x2038' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x2039' onclick='hideorshow("x2039","x2040")'>show</button></p>
+ <div id='x2040' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+</div>
+</div>
+</div>
 <p><b><a href="syntax/expr.html">expr:</a></b>
-<button id='x2045' onclick='hideorshow("x2045","x2046")'>show</button></p>
- <div id='x2046' style='display:none;' class='imgcontainer'>
+<button id='x2041' onclick='hideorshow("x2041","x2042")'>show</button></p>
+ <div id='x2042' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
 <p><b><a href="syntax/filter-clause.html">filter-clause:</a></b>
-<button id='x2047' onclick='hideorshow("x2047","x2048")'>show</button></p>
- <div id='x2048' style='display:none;' class='imgcontainer'>
+<button id='x2043' onclick='hideorshow("x2043","x2044")'>show</button></p>
+ <div id='x2044' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram filter-clause" src="images/syntax/filter-clause.gif" />
 </div>
 <p><b><a href="syntax/literal-value.html">literal-value:</a></b>
-<button id='x2049' onclick='hideorshow("x2049","x2050")'>show</button></p>
- <div id='x2050' style='display:none;' class='imgcontainer'>
+<button id='x2045' onclick='hideorshow("x2045","x2046")'>show</button></p>
+ <div id='x2046' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
 </div>
 <p><b><a href="syntax/over-clause.html">over-clause:</a></b>
-<button id='x2051' onclick='hideorshow("x2051","x2052")'>show</button></p>
- <div id='x2052' style='display:none;' class='imgcontainer'>
+<button id='x2047' onclick='hideorshow("x2047","x2048")'>show</button></p>
+ <div id='x2048' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram over-clause" src="images/syntax/over-clause.gif" />
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x2053' onclick='hideorshow("x2053","x2054")'>show</button></p>
- <div id='x2054' style='display:none;' class='imgcontainer'>
+<button id='x2049' onclick='hideorshow("x2049","x2050")'>show</button></p>
+ <div id='x2050' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x2055' onclick='hideorshow("x2055","x2056")'>show</button></p>
- <div id='x2056' style='display:none;' class='imgcontainer'>
+<button id='x2051' onclick='hideorshow("x2051","x2052")'>show</button></p>
+ <div id='x2052' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
 </div>
 </div>
 <p><b><a href="syntax/raise-function.html">raise-function:</a></b>
-<button id='x2057' onclick='hideorshow("x2057","x2058")'>show</button></p>
- <div id='x2058' style='display:none;' class='imgcontainer'>
+<button id='x2053' onclick='hideorshow("x2053","x2054")'>show</button></p>
+ <div id='x2054' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
 </div>
 <p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
-<button id='x2059' onclick='hideorshow("x2059","x2060")'>show</button></p>
- <div id='x2060' style='display:none;' class='imgcontainer'>
+<button id='x2055' onclick='hideorshow("x2055","x2056")'>show</button></p>
+ <div id='x2056' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
-<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
-<button id='x2061' onclick='hideorshow("x2061","x2062")'>show</button></p>
- <div id='x2062' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
-</div>
 <p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
-<button id='x2063' onclick='hideorshow("x2063","x2064")'>show</button></p>
- <div id='x2064' style='display:none;' class='imgcontainer'>
+<button id='x2057' onclick='hideorshow("x2057","x2058")'>show</button></p>
+ <div id='x2058' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
 </div>
-<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
-<button id='x2065' onclick='hideorshow("x2065","x2066")'>show</button></p>
- <div id='x2066' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
-<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
-<button id='x2067' onclick='hideorshow("x2067","x2068")'>show</button></p>
- <div id='x2068' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
-</div>
-<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
-<button id='x2069' onclick='hideorshow("x2069","x2070")'>show</button></p>
- <div id='x2070' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
-</div>
-</div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x2071' onclick='hideorshow("x2071","x2072")'>show</button></p>
- <div id='x2072' style='display:none;' class='imgcontainer'>
+<button id='x2059' onclick='hideorshow("x2059","x2060")'>show</button></p>
+ <div id='x2060' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
 </div>
 <p><b><a href="syntax/result-column.html">result-column:</a></b>
-<button id='x2073' onclick='hideorshow("x2073","x2074")'>show</button></p>
- <div id='x2074' style='display:none;' class='imgcontainer'>
+<button id='x2061' onclick='hideorshow("x2061","x2062")'>show</button></p>
+ <div id='x2062' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
 </div>
-<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
-<button id='x2075' onclick='hideorshow("x2075","x2076")'>show</button></p>
- <div id='x2076' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
-</div>
 <p><b><a href="syntax/window-defn.html">window-defn:</a></b>
-<button id='x2077' onclick='hideorshow("x2077","x2078")'>show</button></p>
- <div id='x2078' style='display:none;' class='imgcontainer'>
+<button id='x2063' onclick='hideorshow("x2063","x2064")'>show</button></p>
+ <div id='x2064' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x2079' onclick='hideorshow("x2079","x2080")'>show</button></p>
- <div id='x2080' style='display:none;' class='imgcontainer'>
+<button id='x2065' onclick='hideorshow("x2065","x2066")'>show</button></p>
+ <div id='x2066' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
 </div>
 </div>
 </div>
 <p><b><a href="syntax/type-name.html">type-name:</a></b>
-<button id='x2081' onclick='hideorshow("x2081","x2082")'>show</button></p>
- <div id='x2082' style='display:none;' class='imgcontainer'>
+<button id='x2067' onclick='hideorshow("x2067","x2068")'>show</button></p>
+ <div id='x2068' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
 <p><b><a href="syntax/signed-number.html">signed-number:</a></b>
-<button id='x2083' onclick='hideorshow("x2083","x2084")'>show</button></p>
- <div id='x2084' style='display:none;' class='imgcontainer'>
+<button id='x2069' onclick='hideorshow("x2069","x2070")'>show</button></p>
+ <div id='x2070' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
 </div>
 </div>
 </div>
-<p><b><a href="syntax/qualified-table-name.html">qualified-table-name:</a></b>
-<button id='x2085' onclick='hideorshow("x2085","x2086")'>show</button></p>
- <div id='x2086' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram qualified-table-name" src="images/syntax/qualified-table-name.gif" />
-</div>
-<p><b><a href="syntax/with-clause.html">with-clause:</a></b>
-<button id='x2087' onclick='hideorshow("x2087","x2088")'>show</button></p>
- <div id='x2088' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram with-clause" src="images/syntax/with-clause.gif" />
-<p><b><a href="syntax/cte-table-name.html">cte-table-name:</a></b>
-<button id='x2089' onclick='hideorshow("x2089","x2090")'>show</button></p>
- <div id='x2090' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram cte-table-name" src="images/syntax/cte-table-name.gif" />
-</div>
-<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
-<button id='x2091' onclick='hideorshow("x2091","x2092")'>show</button></p>
- <div id='x2092' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
-<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
-<button id='x2093' onclick='hideorshow("x2093","x2094")'>show</button></p>
- <div id='x2094' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
-</div>
-<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
-<button id='x2095' onclick='hideorshow("x2095","x2096")'>show</button></p>
- <div id='x2096' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
-</div>
 <p><b><a href="syntax/join-clause.html">join-clause:</a></b>
-<button id='x2097' onclick='hideorshow("x2097","x2098")'>show</button></p>
- <div id='x2098' style='display:none;' class='imgcontainer'>
+<button id='x2071' onclick='hideorshow("x2071","x2072")'>show</button></p>
+ <div id='x2072' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
 <p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
-<button id='x2099' onclick='hideorshow("x2099","x2100")'>show</button></p>
- <div id='x2100' style='display:none;' class='imgcontainer'>
+<button id='x2073' onclick='hideorshow("x2073","x2074")'>show</button></p>
+ <div id='x2074' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
 </div>
 <p><b><a href="syntax/join-operator.html">join-operator:</a></b>
-<button id='x2101' onclick='hideorshow("x2101","x2102")'>show</button></p>
- <div id='x2102' style='display:none;' class='imgcontainer'>
+<button id='x2075' onclick='hideorshow("x2075","x2076")'>show</button></p>
+ <div id='x2076' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
 </div>
 </div>
+<p><b><a href="syntax/qualified-table-name.html">qualified-table-name:</a></b>
+<button id='x2077' onclick='hideorshow("x2077","x2078")'>show</button></p>
+ <div id='x2078' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram qualified-table-name" src="images/syntax/qualified-table-name.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x2079' onclick='hideorshow("x2079","x2080")'>show</button></p>
+ <div id='x2080' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x2081' onclick='hideorshow("x2081","x2082")'>show</button></p>
+ <div id='x2082' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x2083' onclick='hideorshow("x2083","x2084")'>show</button></p>
+ <div id='x2084' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x2103' onclick='hideorshow("x2103","x2104")'>show</button></p>
- <div id='x2104' style='display:none;' class='imgcontainer'>
+<button id='x2085' onclick='hideorshow("x2085","x2086")'>show</button></p>
+ <div id='x2086' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
 </div>
 <p><b><a href="syntax/result-column.html">result-column:</a></b>
-<button id='x2105' onclick='hideorshow("x2105","x2106")'>show</button></p>
- <div id='x2106' style='display:none;' class='imgcontainer'>
+<button id='x2087' onclick='hideorshow("x2087","x2088")'>show</button></p>
+ <div id='x2088' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
 </div>
-<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
-<button id='x2107' onclick='hideorshow("x2107","x2108")'>show</button></p>
- <div id='x2108' style='display:none;' class='imgcontainer'>
- <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
-</div>
 <p><b><a href="syntax/window-defn.html">window-defn:</a></b>
-<button id='x2109' onclick='hideorshow("x2109","x2110")'>show</button></p>
- <div id='x2110' style='display:none;' class='imgcontainer'>
+<button id='x2089' onclick='hideorshow("x2089","x2090")'>show</button></p>
+ <div id='x2090' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x2111' onclick='hideorshow("x2111","x2112")'>show</button></p>
- <div id='x2112' style='display:none;' class='imgcontainer'>
+<button id='x2091' onclick='hideorshow("x2091","x2092")'>show</button></p>
+ <div id='x2092' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
 </div>
 </div>
@@ -371,7 +368,89 @@ occur within the body of a <a href="lang_createtrigger.html">CREATE TRIGGER</a> 
       triggers, regardless of the compilation options used to build SQLite.
 </p></li></ul>
 
-<h2 id="optional_limit_and_order_by_clauses"><span>2.2. </span>Optional LIMIT and ORDER BY Clauses</h2>
+<a name="upfrom"></a>
+
+<h2 id="update_from"><span>2.2. </span>UPDATE FROM</h2>
+
+<p>The UPDATE-FROM idea is an extension to SQL that allows an UPDATE
+statement to be driven by other tables in the database. 
+The "target" table is the specific table that is being
+updated.  With UPDATE-FROM you can join the target table
+against other tables in the database in order to help compute which
+rows need updating and what the new values should be on those rows.
+UPDATE-FROM is supported beginning in SQLite version 3.33.0
+(2020-08-14).
+
+</p><p>Other relation database engines also implement UPDATE-FROM, but
+because the construct is not part of the SQL standards, each product
+implements UPDATE-FROM differently.  The SQLite implementation strives
+to be compatible with PostgreSQL.  The SQL Server and MySQL implementations
+of the same idea work a little differently.
+
+</p><p>As an example of how UPDATE-FROM can be useful, 
+suppose you have a point-of-sale application that accumulates
+purchases in the SALES table.  At the end of the day, you want to adjust
+the INVENTORY table according to the daily sales.  To do this, you can
+run an UPDATE against the INVENTORY table that adjusts the quantity by
+the aggregated sales for the day.  The statement would look like this:
+
+</p><div class="codeblock"><pre>UPDATE inventory
+   SET quantity = quantity - daily.amt
+  FROM (SELECT sum(quantity) AS amt, itemId FROM sales GROUP BY 2) AS daily
+ WHERE inventory.itemId = daily.itemId;
+</pre></div>
+
+<p>
+The subquery in the FROM clause computes the amount by which the
+inventory should be reduced for each itemId.  That subquery is joined
+against the inventory table and the quantity of each affected inventory
+row is reduced by the appropriate amount.
+
+</p><p>
+The target table is not included in the FROM clause, unless the intent
+is to do a self-join against the target table.  In the event of a self-join,
+the table in the FROM clause must be aliased to a different name
+than the target table.
+
+</p><p>
+If the join between the target table and the FROM clause results in
+multiple output rows for the same target table row, then only one of
+those output rows is used for updating the target table.  The output
+row selected is arbitrary and might change from one release of SQLite
+to the next, or from one run to the next.
+
+</p><h3 id="update_from_in_other_sql_database_engines"><span>2.2.1. </span>UPDATE FROM in other SQL database engines</h3>
+
+<p>SQL Server also supports UPDATE FROM, but in SQL Server the target
+table must be included in the FROM clause.  In other words, the
+target table is named twice in the statement.  With SQL Server,
+the inventory adjustment statement demonstrated above would be written
+like this:
+
+</p><div class="codeblock"><pre>UPDATE inventory
+   SET quantity = quantity - daily.amt
+  FROM inventory, 
+       (SELECT sum(quantity) AS amt, itemId FROM sales GROUP BY 2) AS daily
+ WHERE inventory.itemId = daily.itemId;
+</pre></div>
+
+<p>MySQL supports the UPDATE FROM idea, but it does so without using
+a FROM clause.  Instead, the complete join specification is given in between
+the UPDATE and SET keywords.  The equivalent MySQL statement would be
+like this:
+
+</p><div class="codeblock"><pre>UPDATE inventory JOIN
+       (SELECT sum(quantity) AS amt, itemId FROM sales GROUP BY 2) AS daily
+       USING( itemId )
+   SET inventory.quantity = inventory.quantity - daily.amt;
+</pre></div>
+
+<p>The MySQL UPDATE statement does not have just one target table like
+other systems.  Any of the tables that participate in the join can
+be modified in the SET clause.  The MySQL UPDATE syntax allows you to
+update multiple tables at once!
+
+</p><h2 id="optional_limit_and_order_by_clauses"><span>2.3. </span>Optional LIMIT and ORDER BY Clauses</h2>
 
 <p>If SQLite is built with the <a href="compile.html#enable_update_delete_limit">SQLITE_ENABLE_UPDATE_DELETE_LIMIT</a>
 compile-time option then the syntax of the UPDATE statement is extended

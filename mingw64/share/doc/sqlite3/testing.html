@@ -168,15 +168,15 @@ mk.innerHTML = "&#x25ba;";
 <p>The reliability and robustness of SQLite is achieved in part
 by thorough and careful testing.</p>
 
-<p>As of <a href="releaselog/3_32_0.html">version 3.32.0</a> (2020-05-22),
+<p>As of <a href="releaselog/3_33_0.html">version 3.33.0</a> (2020-08-14),
 the SQLite library consists of approximately
-142.7 KSLOC of C code.
+143.4 KSLOC of C code.
 (KSLOC means thousands of "Source Lines Of Code" or, in other words,
 lines of code excluding blank lines and comments.)
 By comparison, the project has
-644 times as much
+640 times as much
 test code and test scripts - 
-91900.0 KSLOC.</p>
+91911.0 KSLOC.</p>
 
 <h2 id="executive_summary"><span>1.1. </span>Executive Summary</h2>
 
@@ -220,9 +220,9 @@ The TCL tests are written using the
 <a href="http://www.tcl-lang.org/">TCL scripting language</a>.
 The TCL test harness itself consists of 27.0 KSLOC 
 of C code used to create the TCL interface.  The test scripts are contained
-in 1292 files totaling 
-21.0MB in size.  There are
-56198 distinct test cases, but many of the test
+in 1272 files totaling 
+21.1MB in size.  There are
+46363 distinct test cases, but many of the test
 cases are parameterized and run multiple times (with different parameters)
 so that on a full test run millions of
 separate tests are performed.
@@ -237,8 +237,8 @@ the core SQLite library.  The TH3 tests are designed to run
 on embedded and specialized platforms that would not easily support
 TCL or other workstation services.  TH3 tests use only the published 
 SQLite interfaces. TH3 consists of about
-70.9 MB or 969.7 KSLOC
-of C code implementing 46410 distinct test cases.
+71.5 MB or 978.3 KSLOC
+of C code implementing 46622 distinct test cases.
 TH3 tests are heavily parameterized, though, so a full-coverage test runs
 about 1.9 million different test
 instances.  The cases that provide 100% branch test coverage constitute
@@ -266,9 +266,9 @@ both the SQL and the database file at the same time, and is thus able
 to reach new error states.  Dbsqlfuzz is built using the
 <a href="http://llvm.org/docs/LibFuzzer.html">libFuzzer</a> framework of LLVM
 with a custom mutator.  Starting from 
-231 seed files, the dbsqlfuzz fuzzer
+236 seed files, the dbsqlfuzz fuzzer
 has examined many tens of millions of mutations, resulting in 
-46214 distinct test cases that form
+63493 distinct test cases that form
 the basis of each new fuzzing session.  Dbsqlfuzz helps ensure
 that SQLite is robust against attack via malicious SQL or database
 inputs.
@@ -830,7 +830,7 @@ testcase( mask & SQLITE_OPEN_TEMP_DB );
 if( (mask & (SQLITE_OPEN_MAIN_DB|SQLITE_OPEN_TEMP_DB))!=0 ){ ... }
 </pre></div>
 
-<p>The SQLite source code contains 1096
+<p>The SQLite source code contains 1084
 uses of the <tt>testcase()</tt> macro.</p>
 
 <a name="mcdc"></a>
@@ -998,7 +998,7 @@ quality of SQLite.</p>
 
 <h2 id="assert"><span>8.1. </span>Assert</h2>
 
-<p>The SQLite core contains 5835 <tt>assert()</tt>
+<p>The SQLite core contains 5855 <tt>assert()</tt>
 statements that verify function preconditions and postconditions and
 loop invariants.  Assert() is a macro which is a standard part of
 ANSI-C.  The argument is a boolean value that is assumed to always be

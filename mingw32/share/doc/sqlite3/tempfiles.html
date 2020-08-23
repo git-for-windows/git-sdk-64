@@ -106,7 +106,7 @@ Table Of Contents
 <div class="fancy-toc2"><a href="#rollback_journals">2.1. Rollback Journals</a></div>
 <div class="fancy-toc2"><a href="#write_ahead_log_wal_files">2.2. Write-Ahead Log (WAL) Files</a></div>
 <div class="fancy-toc2"><a href="#shared_memory_files">2.3. Shared-Memory Files</a></div>
-<div class="fancy-toc2"><a href="#master_journal_files">2.4. Master Journal Files</a></div>
+<div class="fancy-toc2"><a href="#super_journal_files">2.4. Super-Journal Files</a></div>
 <div class="fancy-toc2"><a href="#statement_journal_files">2.5. Statement Journal Files</a></div>
 <div class="fancy-toc2"><a href="#temp_databases">2.6. TEMP Databases</a></div>
 <div class="fancy-toc2"><a href="#materializations_of_views_and_subqueries">2.7. Materializations Of Views And Subqueries</a></div>
@@ -180,7 +180,7 @@ SQLite currently uses nine distinct types of temporary files:
 
 <ol>
 <li>Rollback journals</li>
-<li>Master journals</li>
+<li>Super-journals</li>
 <li>Write-ahead Log (WAL) files</li>
 <li>Shared-memory files</li>
 <li>Statement journals</li>
@@ -338,40 +338,40 @@ shared memory file is recreated from scratch based on the contents of
 the WAL file being recovered.
 </p>
 
-<a name="masterjrnl"></a>
+<a name="superjrnl"></a>
 
-<h2 id="master_journal_files"><span>2.4. </span>Master Journal Files</h2>
+<h2 id="super_journal_files"><span>2.4. </span>Super-Journal Files</h2>
 
 <p>
-The master journal file is used as part of the atomic commit
+The super-journal file is used as part of the atomic commit
 process when a single transaction makes changes to multiple
 databases that have been added to a single <a href="c3ref/sqlite3.html">database connection</a>
-using the <a href="lang_attach.html">ATTACH</a> statement.  The master journal file is always
+using the <a href="lang_attach.html">ATTACH</a> statement.  The super-journal file is always
 located in the same directory as the main database file
 (the main database file is the database that is identified
 in the original <a href="c3ref/open.html">sqlite3_open()</a>, <a href="c3ref/open.html">sqlite3_open16()</a>, or
 <a href="c3ref/open.html">sqlite3_open_v2()</a> call that created the <a href="c3ref/sqlite3.html">database connection</a>)
-with a randomized suffix.  The master journal file contains
+with a randomized suffix.  The super-journal file contains
 the names of all of the various attached auxiliary databases
 that were changed during the transaction.  The multi-database
-transaction commits when the master journal file is deleted.
+transaction commits when the super-journal file is deleted.
 See the documentation titled
 <a href="atomiccommit.html">Atomic Commit In SQLite</a> for
 additional detail.
 </p>
 
 <p>
-Without the master journal, the transaction commit on a multi-database
+Without the super-journal, the transaction commit on a multi-database
 transaction would be atomic for each database individually, but it
 would not be atomic across all databases.  In other words, if the
 commit were interrupted in the middle by a crash or power loss, then
 the changes to one of the databases might complete while the changes
-to another database might roll back.  The master journal causes all
+to another database might roll back.  The super-journal causes all
 changes in all databases to either rollback or commit together.
 </p>
 
 <p>
-The master journal file is only created for <a href="lang_transaction.html">COMMIT</a> operations that
+The super-journal file is only created for <a href="lang_transaction.html">COMMIT</a> operations that
 involve multiple database files where at least two of the databases 
 meet all of the following requirements:
 
@@ -695,12 +695,12 @@ file will be no larger than the original database.
 
 <p>
 The temporary files associated with transaction control, namely
-the rollback journal, master journal, write-ahead log (WAL) files,
+the rollback journal, super-journal, write-ahead log (WAL) files,
 and shared-memory files, are always written to disk.
 But the other kinds of temporary files might be stored in memory
 only and never written to disk.
 Whether or not temporary files other than the rollback,
-master, and statement journals are written to disk or stored only in memory
+super, and statement journals are written to disk or stored only in memory
 depends on the <a href="compile.html#temp_store">SQLITE_TEMP_STORE</a> compile-time parameter, the
 <a href="pragma.html#pragma_temp_store">temp_store pragma</a>,
 and on the size of the temporary file.
@@ -773,8 +773,8 @@ parameter.
 To reiterate, the <a href="compile.html#temp_store">SQLITE_TEMP_STORE</a> compile-time parameter and the 
 <a href="pragma.html#pragma_temp_store">temp_store pragma</a> only
 influence the temporary files other than the rollback journal
-and the master journal.  The rollback journal and the master
-journal are always written to disk regardless of the settings of
+and the super-journal.  The rollback journal and the
+super-journal are always written to disk regardless of the settings of
 the <a href="compile.html#temp_store">SQLITE_TEMP_STORE</a> compile-time parameter and the
 <a href="pragma.html#pragma_temp_store">temp_store pragma</a>.
 </p>

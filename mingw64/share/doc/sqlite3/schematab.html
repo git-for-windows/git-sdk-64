@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>The Schema Table</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+The Schema Table
+</div>
+<div class="fancy_toc">
+<a onclick="toggle_toc()">
+<span class="fancy_toc_mark" id="toc_mk">&#x25ba;</span>
+Table Of Contents
+</a>
+<div id="toc_sub"><div class="fancy-toc1"><a href="#introduction">1. Introduction</a></div>
+<div class="fancy-toc1"><a href="#alternative_names">2. Alternative Names</a></div>
+<div class="fancy-toc1"><a href="#interpretation_of_the_schema_table">3. Interpretation Of The Schema Table</a></div>
+</div>
+</div>
+<script>
+function toggle_toc(){
+var sub = document.getElementById("toc_sub")
+var mk = document.getElementById("toc_mk")
+if( sub.style.display!="block" ){
+sub.style.display = "block";
+mk.innerHTML = "&#x25bc;";
+} else {
+sub.style.display = "none";
+mk.innerHTML = "&#x25ba;";
+}
+}
+</script>
+</div>
+
+
+
+
+
+<h1 id="introduction"><span>1. </span>Introduction</h1>
+
+<p>Every SQLite database contains a single "schema table" that stores the
+schema for that database.  The schema for a database is a description of
+all of the other tables, indexes, triggers, and views that are
+contained within the database.  The schema table looks like this:
+
+</p><blockquote><pre>
+CREATE TABLE sqlite_schema(
+  type text,
+  name text,
+  tbl_name text,
+  rootpage integer,
+  sql text
+);
+</pre></blockquote>
+
+<p>The sqlite_schema table contains one row for each table, index, view,
+and trigger (collectively "objects") in the schema, except there
+is no entry for the sqlite_schema table itself.  See the
+<a href="fileformat2.html#ffschema">schema storage</a> subsection of the <a href="fileformat2.html">file format</a> documentation for
+additional information on how SQLite uses the sqlite_schema table
+internally.
+
+</p><h1 id="alternative_names"><span>2. </span>Alternative Names</h1>
+
+<p>The schema table can always be referenced using the name "sqlite_schema",
+especially if qualifed by the schema name like 
+"main.sqlite_schema" or "temp.sqlite_schema".  But for historical
+compatibility, some alternative names are also recognized, including:
+
+</p><ol>
+<li> sqlite_master
+</li><li> sqlite_temp_schema
+</li><li> sqlite_temp_master
+</li></ol>
+
+<p>
+Alternatives (2) and (3) only work for the TEMP database associated
+with each database connection, but alternative (1) works anywhere.
+For historical reasons, callbacks from the <a href="c3ref/set_authorizer.html">sqlite3_set_authorizer()</a>
+interface always refer to the schema table using names (1) or (3).
+
+</p><h1 id="interpretation_of_the_schema_table"><span>3. </span>Interpretation Of The Schema Table</h1>
+
+<p>The meanings of the fields of the schema table are as follows:
+
+</p><dl>
+<dt><b>type</b></dt>
+<dd>
+<p>The sqlite_schema.type column will be one
+of the following text strings:  'table', 'index', 'view', or 'trigger'
+according to the type of object defined.  The 'table' string is used
+for both ordinary and <a href="vtab.html">virtual tables</a>.</p>
+</dd>
+
+<dt><b>name</b></dt><dt>
+</dt><dd>
+<p>The sqlite_schema.name column will hold the name of the object.
+(<a href="lang_createtable.html#uniqueconst">UNIQUE</a> and <a href="lang_createtable.html#primkeyconst">PRIMARY KEY</a> constraints on tables cause SQLite to create
+<a href="fileformat2.html#intschema">internal indexes</a> with names of the form "sqlite_autoindex_TABLE_N"
+where TABLE is replaced by the name of the table that contains the
+constraint and N is an integer beginning with 1 and increasing by one
+with each constraint seen in the table definition.
+In a <a href="withoutrowid.html">WITHOUT ROWID</a> table, there is no sqlite_schema entry for the
+PRIMARY KEY, but the "sqlite_autoindex_TABLE_N" name is set aside
+for the PRIMARY KEY as if the sqlite_schema entry did exist.  This
+will affect the numbering of subsequent UNIQUE constraints.
+The "sqlite_autoindex_TABLE_N" name is never allocated for an
+<a href="lang_createtable.html#rowid">INTEGER PRIMARY KEY</a>, either in rowid tables or WITHOUT ROWID tables.
+</p>
+</dd>
+
+<dt><b>tbl_name</b></dt>
+<dd>
+<p>The sqlite_schema.tbl_name column holds the name of a table or view
+that the object is associated with.  For a table or view, the
+tbl_name column is a copy of the name column.  For an index, the tbl_name
+is the name of the table that is indexed.  For a trigger, the tbl_name
+column stores the name of the table or view that causes the trigger 
+to fire.</p>
+</dd>
+
+<dt><b>rootpage</b></dt>
+<dd>
+<p>The sqlite_schema.rootpage column stores the page number of the root
+b-tree page for tables and indexes.  For rows that define views, triggers,
+and virtual tables, the rootpage column is 0 or NULL.</p>
+</dd>
+
+<dt><b>sql</b></dt>
+<dd>
+<p>The sqlite_schema.sql column stores SQL text that describes the
+object.  This SQL text is a <a href="lang_createtable.html">CREATE TABLE</a>, <a href="lang_createvtab.html">CREATE VIRTUAL TABLE</a>,
+<a href="lang_createindex.html">CREATE INDEX</a>,
+<a href="lang_createview.html">CREATE VIEW</a>, or <a href="lang_createtrigger.html">CREATE TRIGGER</a> statement that if evaluated against
+the database file when it is the main database of a <a href="c3ref/sqlite3.html">database connection</a>
+would recreate the object.  The text is usually a copy of the original
+statement used to create the object but with normalizations applied so
+that the text conforms to the following rules:
+
+</p><ul>
+<li>The CREATE, TABLE, VIEW, TRIGGER, and INDEX keywords at the beginning
+of the statement are converted to all upper case letters.
+</li><li>The TEMP or TEMPORARY keyword is removed if it occurs after the 
+initial CREATE keyword.
+</li><li>Any database name qualifier that occurs prior to the name of the
+object being created is removed.
+</li><li>Leading spaces are removed.
+</li><li>All spaces following the first two keywords are converted into a single
+space.
+</li></ul>
+
+<p>The text in the sqlite_schema.sql column is a copy of the original
+CREATE statement text that created the object, except normalized as
+described above and as modified by subsequent <a href="lang_altertable.html">ALTER TABLE</a> statements.
+The sqlite_schema.sql is NULL for the <a href="fileformat2.html#intschema">internal indexes</a> that are
+automatically created by <a href="lang_createtable.html#uniqueconst">UNIQUE</a> or <a href="lang_createtable.html#primkeyconst">PRIMARY KEY</a> constraints.</p>
+</dd>
+</dl>
+

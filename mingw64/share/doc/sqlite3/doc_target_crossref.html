@@ -264,8 +264,8 @@ return false;
 <li><a href="c3ref/c_limit_attached.html#sqlitelimitvdbeop">c3ref/c_limit_attached.html#sqlitelimitvdbeop</a> &rarr; SQLITE_LIMIT_VDBE_OP</li>
 <li><a href="c3ref/c_limit_attached.html#sqlitelimitworkerthreads">c3ref/c_limit_attached.html#sqlitelimitworkerthreads</a> &rarr; SQLITE_LIMIT_WORKER_THREADS</li>
 <li><a href="c3ref/c_lock_exclusive.html">c3ref/c_lock_exclusive.html</a> &rarr; SQLITE_LOCK_EXCLUSIVE SQLITE_LOCK_NONE SQLITE_LOCK_PENDING SQLITE_LOCK_RESERVED SQLITE_LOCK_SHARED</li>
-<li><a href="c3ref/c_mutex_fast.html">c3ref/c_mutex_fast.html</a> &rarr; SQLITE_MUTEX_FAST SQLITE_MUTEX_RECURSIVE SQLITE_MUTEX_STATIC_APP1 SQLITE_MUTEX_STATIC_APP2 SQLITE_MUTEX_STATIC_APP3 SQLITE_MUTEX_STATIC_LRU SQLITE_MUTEX_STATIC_LRU2 SQLITE_MUTEX_STATIC_MASTER SQLITE_MUTEX_STATIC_MEM SQLITE_MUTEX_STATIC_MEM2 SQLITE_MUTEX_STATIC_OPEN SQLITE_MUTEX_STATIC_PMEM SQLITE_MUTEX_STATIC_PRNG SQLITE_MUTEX_STATIC_VFS1 SQLITE_MUTEX_STATIC_VFS2 SQLITE_MUTEX_STATIC_VFS3</li>
-<li><a href="c3ref/c_open_autoproxy.html">c3ref/c_open_autoproxy.html</a> &rarr; SQLITE_OPEN_AUTOPROXY SQLITE_OPEN_CREATE SQLITE_OPEN_DELETEONCLOSE SQLITE_OPEN_EXCLUSIVE SQLITE_OPEN_FULLMUTEX SQLITE_OPEN_MAIN_DB SQLITE_OPEN_MAIN_JOURNAL SQLITE_OPEN_MASTER_JOURNAL SQLITE_OPEN_MEMORY SQLITE_OPEN_NOFOLLOW SQLITE_OPEN_NOMUTEX SQLITE_OPEN_PRIVATECACHE SQLITE_OPEN_READONLY SQLITE_OPEN_READWRITE SQLITE_OPEN_SHAREDCACHE SQLITE_OPEN_SUBJOURNAL SQLITE_OPEN_TEMP_DB SQLITE_OPEN_TEMP_JOURNAL SQLITE_OPEN_TRANSIENT_DB SQLITE_OPEN_URI SQLITE_OPEN_WAL</li>
+<li><a href="c3ref/c_mutex_fast.html">c3ref/c_mutex_fast.html</a> &rarr; SQLITE_MUTEX_FAST SQLITE_MUTEX_RECURSIVE SQLITE_MUTEX_STATIC_APP1 SQLITE_MUTEX_STATIC_APP2 SQLITE_MUTEX_STATIC_APP3 SQLITE_MUTEX_STATIC_LRU SQLITE_MUTEX_STATIC_LRU2 SQLITE_MUTEX_STATIC_MAIN SQLITE_MUTEX_STATIC_MEM SQLITE_MUTEX_STATIC_MEM2 SQLITE_MUTEX_STATIC_OPEN SQLITE_MUTEX_STATIC_PMEM SQLITE_MUTEX_STATIC_PRNG SQLITE_MUTEX_STATIC_VFS1 SQLITE_MUTEX_STATIC_VFS2 SQLITE_MUTEX_STATIC_VFS3</li>
+<li><a href="c3ref/c_open_autoproxy.html">c3ref/c_open_autoproxy.html</a> &rarr; SQLITE_OPEN_AUTOPROXY SQLITE_OPEN_CREATE SQLITE_OPEN_DELETEONCLOSE SQLITE_OPEN_EXCLUSIVE SQLITE_OPEN_FULLMUTEX SQLITE_OPEN_MAIN_DB SQLITE_OPEN_MAIN_JOURNAL SQLITE_OPEN_MEMORY SQLITE_OPEN_NOFOLLOW SQLITE_OPEN_NOMUTEX SQLITE_OPEN_PRIVATECACHE SQLITE_OPEN_READONLY SQLITE_OPEN_READWRITE SQLITE_OPEN_SHAREDCACHE SQLITE_OPEN_SUBJOURNAL SQLITE_OPEN_SUPER_JOURNAL SQLITE_OPEN_TEMP_DB SQLITE_OPEN_TEMP_JOURNAL SQLITE_OPEN_TRANSIENT_DB SQLITE_OPEN_URI SQLITE_OPEN_WAL</li>
 <li><a href="c3ref/c_prepare_normalize.html#sqlitepreparenormalize">c3ref/c_prepare_normalize.html#sqlitepreparenormalize</a> &rarr; SQLITE_PREPARE_NORMALIZE</li>
 <li><a href="c3ref/c_prepare_normalize.html#sqlitepreparenovtab">c3ref/c_prepare_normalize.html#sqlitepreparenovtab</a> &rarr; SQLITE_PREPARE_NO_VTAB</li>
 <li><a href="c3ref/c_prepare_normalize.html#sqlitepreparepersistent">c3ref/c_prepare_normalize.html#sqlitepreparepersistent</a> &rarr; SQLITE_PREPARE_PERSISTENT</li>
@@ -744,6 +744,7 @@ return false;
 <li><a href="fileformat2.html#chngctr">fileformat2.html#chngctr</a> &rarr; {change counter}</li>
 <li><a href="fileformat2.html#database_header">fileformat2.html#database_header</a> &rarr; {database header}</li>
 <li><a href="fileformat2.html#enc">fileformat2.html#enc</a> &rarr; {text encoding}</li>
+<li><a href="fileformat2.html#ffschema">fileformat2.html#ffschema</a> &rarr; {schema storage}</li>
 <li><a href="fileformat2.html#filesize">fileformat2.html#filesize</a> &rarr; {in-header database size}</li>
 <li><a href="fileformat2.html#freelist">fileformat2.html#freelist</a> &rarr; {free-page list} freelist</li>
 <li><a href="fileformat2.html#hotjrnl">fileformat2.html#hotjrnl</a> &rarr; {hot journal} {hot journal files}</li>
@@ -756,7 +757,6 @@ return false;
 <li><a href="fileformat2.html#schemaformat">fileformat2.html#schemaformat</a> &rarr; {schema format} {schema format number}</li>
 <li><a href="fileformat2.html#seqtab">fileformat2.html#seqtab</a> &rarr; sqlite_sequence</li>
 <li><a href="fileformat2.html#serialtype">fileformat2.html#serialtype</a> &rarr; {serial type} {serial types}</li>
-<li><a href="fileformat2.html#sqlite_master">fileformat2.html#sqlite_master</a> &rarr; sqlite_master {sqlite_master table}</li>
 <li><a href="fileformat2.html#stat1tab">fileformat2.html#stat1tab</a> &rarr; SQLITE_STAT1 sqlite_stat1</li>
 <li><a href="fileformat2.html#stat2tab">fileformat2.html#stat2tab</a> &rarr; sqlite_stat2</li>
 <li><a href="fileformat2.html#stat3tab">fileformat2.html#stat3tab</a> &rarr; SQLITE_STAT3 sqlite_stat3</li>
@@ -770,6 +770,11 @@ return false;
 <li><a href="fileformat2.html#walread">fileformat2.html#walread</a> &rarr; {WAL read algorithm}</li>
 <li><a href="fileformat2.html#walreset">fileformat2.html#walreset</a> &rarr; {WAL reset} {reset the WAL}</li>
 <li><a href="fileio.html">fileio.html</a> &rarr; {file I/O}</li>
+<li><a href="floatingpoint.html#decext">floatingpoint.html#decext</a> &rarr; {decimal extension}</li>
+<li><a href="floatingpoint.html#ieee754">floatingpoint.html#ieee754</a> &rarr; {ieee754 function}</li>
+<li><a href="floatingpoint.html#ieee754b">floatingpoint.html#ieee754b</a> &rarr; {ieee754_from_blob function} {ieee754_to_blob function}</li>
+<li><a href="floatingpoint.html#ieee754ext">floatingpoint.html#ieee754ext</a> &rarr; {ieee754 extension}</li>
+<li><a href="floatingpoint.html#ieee754m">floatingpoint.html#ieee754m</a> &rarr; {ieee754_exponent function} {ieee754_mantissa function}</li>
 <li><a href="footprint.html">footprint.html</a> &rarr; footprint {library size} relfootprint</li>
 <li><a href="foreignkeys.html">foreignkeys.html</a> &rarr; {FOREIGN KEY constraints} {foreign key constraint} {foreign key constraints}</li>
 <li><a href="foreignkeys.html#fk_actions">foreignkeys.html#fk_actions</a> &rarr; {foreign key actions}</li>
@@ -1062,6 +1067,7 @@ return false;
 <li><a href="lang_transaction.html">lang_transaction.html</a> &rarr; BEGIN COMMIT ROLLBACK transaction</li>
 <li><a href="lang_transaction.html#immediate">lang_transaction.html#immediate</a> &rarr; {BEGIN EXCLUSIVE} {BEGIN IMMEDIATE}</li>
 <li><a href="lang_update.html">lang_update.html</a> &rarr; UPDATE UPDATEs langupdate</li>
+<li><a href="lang_update.html#upfrom">lang_update.html#upfrom</a> &rarr; {UPDATE FROM}</li>
 <li><a href="lang_upsert.html">lang_upsert.html</a> &rarr; UPSERT upsert {upsert clause}</li>
 <li><a href="lang_upsert.html#parseambig">lang_upsert.html#parseambig</a> &rarr; {UPSERT parsing ambiguity}</li>
 <li><a href="lang_vacuum.html">lang_vacuum.html</a> &rarr; VACUUM langvacuum vacuum</li>
@@ -1319,6 +1325,7 @@ return false;
 <li><a href="releaselog/3_32_1.html">releaselog/3_32_1.html</a> &rarr; {Version 3.32.1} {version 3.32.1}</li>
 <li><a href="releaselog/3_32_2.html">releaselog/3_32_2.html</a> &rarr; {Version 3.32.2} {version 3.32.2}</li>
 <li><a href="releaselog/3_32_3.html">releaselog/3_32_3.html</a> &rarr; {Version 3.32.3} {version 3.32.3}</li>
+<li><a href="releaselog/3_33_0.html">releaselog/3_33_0.html</a> &rarr; {Version 3.33.0} {Version 3.33.0.0} {version 3.33.0} {version 3.33.0.0}</li>
 <li><a href="releaselog/3_3_0.html">releaselog/3_3_0.html</a> &rarr; {Version 3.3.0} {Version 3.3.0.0} {version 3.3.0} {version 3.3.0.0}</li>
 <li><a href="releaselog/3_3_1.html">releaselog/3_3_1.html</a> &rarr; {Version 3.3.1} {Version 3.3.1.0} {version 3.3.1} {version 3.3.1.0}</li>
 <li><a href="releaselog/3_3_10.html">releaselog/3_3_10.html</a> &rarr; {Version 3.3.10} {Version 3.3.10.0} {version 3.3.10} {version 3.3.10.0}</li>
@@ -1547,6 +1554,7 @@ return false;
 <li><a href="rtree.html#rtreecheck">rtree.html#rtreecheck</a> &rarr; rtreecheck</li>
 <li><a href="rtree.html#xquery">rtree.html#xquery</a> &rarr; sqlite3_rtree_query_callback {xQueryFunc RTree callback}</li>
 <li><a href="rtree.html#xshadow">rtree.html#xshadow</a> &rarr; {rtree shadow tables}</li>
+<li><a href="schematab.html">schematab.html</a> &rarr; {sqlite_master table} sqlite_schema {sqlite_schema table} sqlite_temp_schema</li>
 <li><a href="security.html">security.html</a> &rarr; {attack resistance} {defense against dark arts} security</li>
 <li><a href="selfcontained.html">selfcontained.html</a> &rarr; low-dependency self-contained</li>
 <li><a href="series.html">series.html</a> &rarr; generate_series series</li>
@@ -1731,8 +1739,8 @@ return false;
 <li><a href="tclsqlite.html#version">tclsqlite.html#version</a> &rarr; {TCL interface version method} {version method}</li>
 <li><a href="tclsqlite.html#wal_hook">tclsqlite.html#wal_hook</a> &rarr; {TCL interface wal_hook method} {wal_hook method}</li>
 <li><a href="tempfiles.html">tempfiles.html</a> &rarr; {temporary disk files}</li>
-<li><a href="tempfiles.html#masterjrnl">tempfiles.html#masterjrnl</a> &rarr; {master journal}</li>
 <li><a href="tempfiles.html#stmtjrnl">tempfiles.html#stmtjrnl</a> &rarr; {Statement journals} {statement journal} {statement journals}</li>
+<li><a href="tempfiles.html#superjrnl">tempfiles.html#superjrnl</a> &rarr; super-journal</li>
 <li><a href="tempfiles.html#tempdir">tempfiles.html#tempdir</a> &rarr; {temporary directory search algorithm}</li>
 <li><a href="tempfiles.html#tempstore">tempfiles.html#tempstore</a> &rarr; tempstore</li>
 <li><a href="testing.html">testing.html</a> &rarr; {test suite} tested testing</li>

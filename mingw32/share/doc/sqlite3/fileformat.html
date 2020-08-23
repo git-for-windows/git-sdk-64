@@ -138,12 +138,13 @@ of WITHOUT ROWID tables</a></div>
 <div class="fancy-toc3"><a href="#suppression_of_redundant_columns_in_without_rowid_secondary_indexes_">2.5.1. Suppression of redundant columns in WITHOUT ROWID secondary indexes
 </a></div>
 <div class="fancy-toc2"><a href="#storage_of_the_sql_database_schema">2.6. Storage Of The SQL Database Schema</a></div>
-<div class="fancy-toc3"><a href="#internal_schema_objects">2.6.1. Internal Schema Objects</a></div>
-<div class="fancy-toc3"><a href="#the_sqlite_sequence_table">2.6.2. The sqlite_sequence table</a></div>
-<div class="fancy-toc3"><a href="#the_sqlite_stat1_table">2.6.3. The sqlite_stat1 table</a></div>
-<div class="fancy-toc3"><a href="#the_sqlite_stat2_table">2.6.4. The sqlite_stat2 table</a></div>
-<div class="fancy-toc3"><a href="#the_sqlite_stat3_table">2.6.5. The sqlite_stat3 table</a></div>
-<div class="fancy-toc3"><a href="#the_sqlite_stat4_table">2.6.6. The sqlite_stat4 table</a></div>
+<div class="fancy-toc3"><a href="#alternative_names_for_the_schema_table">2.6.1. Alternative Names For The Schema Table</a></div>
+<div class="fancy-toc3"><a href="#internal_schema_objects">2.6.2. Internal Schema Objects</a></div>
+<div class="fancy-toc3"><a href="#the_sqlite_sequence_table">2.6.3. The sqlite_sequence table</a></div>
+<div class="fancy-toc3"><a href="#the_sqlite_stat1_table">2.6.4. The sqlite_stat1 table</a></div>
+<div class="fancy-toc3"><a href="#the_sqlite_stat2_table">2.6.5. The sqlite_stat2 table</a></div>
+<div class="fancy-toc3"><a href="#the_sqlite_stat3_table">2.6.6. The sqlite_stat3 table</a></div>
+<div class="fancy-toc3"><a href="#the_sqlite_stat4_table">2.6.7. The sqlite_stat4 table</a></div>
 <div class="fancy-toc1"><a href="#the_rollback_journal">3. The Rollback Journal</a></div>
 <div class="fancy-toc1"><a href="#the_write_ahead_log">4. The Write-Ahead Log</a></div>
 <div class="fancy-toc2"><a href="#wal_file_format">4.1. WAL File Format</a></div>
@@ -211,10 +212,10 @@ is determined by the 2-byte integer located at an offset of
 16 bytes from the beginning of the database file.</p>
 
 <p>Pages are numbered beginning with 1.  The maximum page number is
-2147483646 (2<sup><small>31</small></sup> - 2).  The minimum size
+4294967294 (2<sup><small>32</small></sup> - 2).  The minimum size
 SQLite database is a single 512-byte page.
 The maximum size database would be 2147483646 pages at 65536 bytes per
-page or 140,737,488,224,256 bytes (about 140 terabytes).  Usually SQLite will
+page or 281,474,976,579,584 bytes (about 281 terabytes).  Usually SQLite will
 hit the maximum file size limit of the underlying filesystem or disk
 hardware long before it hits its own internal size limit.</p>
 
@@ -648,14 +649,10 @@ of the file.</p>
 ordered keys on page-oriented storage devices.
 For background information on b-trees, see
 Knuth, <u>The Art Of Computer Programming</u>, Volume 3 "Sorting
-and Searching", pages 471-479.  Two kinds of b-trees are used by
-SQLite.  The algorithm that Knuth calls "B*-Tree" stores all data
-in the leaves of the tree.  SQLite calls this variety of b-tree
-a "table b-tree". The algorithm that Knuth calls simply "B-Tree"
-stores both the key and the data together in both leaves
-and in interior pages.  In the SQLite implementation, the original
-B-Tree algorithm stores keys only, omitting the data entirely, and
-is called an "index b-tree".
+and Searching", pages 471-479.  Two variants of b-trees are used by
+SQLite.  "Table b-trees" use a 64-bit signed integer key and store
+all data in the leaves.  "Index b-trees" use arbitrary keys and store no
+data at all.
 
 </p><p>A b-tree page is either an interior page or a leaf page.
 A leaf page contains keys and in the case of a table b-tree each
@@ -704,7 +701,7 @@ b-trees are identified by their root page number.</p>
 All pages within each complete b-tree are of the same type: either table
 or index.  There is one table b-trees in the database file
 for each rowid table in the database schema, including system tables
-such as sqlite_master.  There is one index b-tree
+such as <a href="schematab.html">sqlite_schema</a>.  There is one index b-tree
 in the database file for each index in the schema, including implied indexes
 created by uniqueness constraints.  There are no b-trees associated with
 <a href="vtab.html">virtual tables</a>.  Specific virtual table implementations might make use
@@ -712,9 +709,9 @@ of <a href="vtab.html#xshadowname">shadow tables</a> for storage, but those shad
 entries in the database schema.  <a href="withoutrowid.html">WITHOUT ROWID</a> tables use index b-trees
 rather than a table b-trees, so there is one
 index b-tree in the database file for each <a href="withoutrowid.html">WITHOUT ROWID</a> table.
-The b-tree corresponding to the sqlite_master table is always a table
+The b-tree corresponding to the sqlite_schema table is always a table
 b-tree and always has a root page of 1.
-The sqlite_master table contains the root page number for every other 
+The sqlite_schema table contains the root page number for every other 
 table and index in the database file.</p>
 
 <p>Each entry in a table b-tree consists of a 64-bit signed integer key
@@ -1081,10 +1078,10 @@ page number is the parent b-tree page.
 must come before any non-root b-tree page, cell payload overflow page, or
 freelist page.  This restriction ensures that a root page will never
 be moved during an auto-vacuum or incremental-vacuum.  The auto-vacuum
-logic does not know how to update the root_page field of the sqlite_master
+logic does not know how to update the root_page field of the sqlite_schema
 table and so it is necessary to prevent root pages from being moved
 during an auto-vacuum in order to preserve the integrity of the
-sqlite_master table.  Root pages are moved to the beginning of the
+sqlite_schema table.  Root pages are moved to the beginning of the
 database file by the CREATE TABLE, CREATE INDEX, DROP TABLE, and
 DROP INDEX operations.</p>
 
@@ -1373,18 +1370,18 @@ entry only occurs in WITHOUT ROWID tables.  In an ordinary rowid table,
 the index entry always ends with the rowid even if the <a href="lang_createtable.html#rowid">INTEGER PRIMARY KEY</a>
 column is one of the columns being indexed.</p>
 
-<a name="sqlite_master"></a>
+<a name="ffschema"></a>
 
 <h2 id="storage_of_the_sql_database_schema"><span>2.6. </span>Storage Of The SQL Database Schema</h2>
 
 <p>Page 1 of a database file is the root page of a table b-tree that
-holds a special table named "sqlite_master" (or "sqlite_temp_master" in
-the case of a TEMP database) which stores the complete
-database schema.  The structure of the sqlite_master table is as
+holds a special table named "<a href="schematab.html">sqlite_schema</a>".  This b-tree is known
+as the "schema table" since it stores the complete
+database schema.  The structure of the sqlite_schema table is as
 if it had been created using the following SQL:</p>
 
 <blockquote><pre>
-CREATE TABLE sqlite_master(
+CREATE TABLE sqlite_schema(
   type text,
   name text,
   tbl_name text,
@@ -1393,44 +1390,44 @@ CREATE TABLE sqlite_master(
 );
 </pre></blockquote>
 
-<p>The sqlite_master table contains one row for each table, index, view,
+<p>The sqlite_schema table contains one row for each table, index, view,
 and trigger (collectively "objects") in the database schema, except there
-is no entry for the sqlite_master table itself.  The sqlite_master table
+is no entry for the sqlite_schema table itself.  The sqlite_schema table
 contains entries for <a href="fileformat2.html#intschema">internal schema objects</a> in addition to application-
 and programmer-defined objects.
 
 
-</p><p>The sqlite_master.type column will be one
+</p><p>The sqlite_schema.type column will be one
 of the following text strings:  'table', 'index', 'view', or 'trigger'
 according to the type of object defined.  The 'table' string is used
 for both ordinary and <a href="vtab.html">virtual tables</a>.</p>
 
-<p>The sqlite_master.name column will hold the name of the object.
+<p>The sqlite_schema.name column will hold the name of the object.
 <a href="lang_createtable.html#uniqueconst">UNIQUE</a> and <a href="lang_createtable.html#primkeyconst">PRIMARY KEY</a> constraints on tables cause SQLite to create
 <a href="fileformat2.html#intschema">internal indexes</a> with names of the form "sqlite_autoindex_TABLE_N"
 where TABLE is replaced by the name of the table that contains the
 constraint and N is an integer beginning with 1 and increasing by one
 with each constraint seen in the table definition.
-In a <a href="withoutrowid.html">WITHOUT ROWID</a> table, there is no sqlite_master entry for the
+In a <a href="withoutrowid.html">WITHOUT ROWID</a> table, there is no sqlite_schema entry for the
 PRIMARY KEY, but the "sqlite_autoindex_TABLE_N" name is set aside
-for the PRIMARY KEY as if the sqlite_master entry did exist.  This
+for the PRIMARY KEY as if the sqlite_schema entry did exist.  This
 will affect the numbering of subsequent UNIQUE constraints.
 The "sqlite_autoindex_TABLE_N" name is never allocated for an
 <a href="lang_createtable.html#rowid">INTEGER PRIMARY KEY</a>, either in rowid tables or WITHOUT ROWID tables.
 </p>
 
-<p>The sqlite_master.tbl_name column holds the name of a table or view
+<p>The sqlite_schema.tbl_name column holds the name of a table or view
 that the object is associated with.  For a table or view, the
 tbl_name column is a copy of the name column.  For an index, the tbl_name
 is the name of the table that is indexed.  For a trigger, the tbl_name
 column stores the name of the table or view that causes the trigger 
 to fire.</p>
 
-<p>The sqlite_master.rootpage column stores the page number of the root
+<p>The sqlite_schema.rootpage column stores the page number of the root
 b-tree page for tables and indexes.  For rows that define views, triggers,
 and virtual tables, the rootpage column is 0 or NULL.</p>
 
-<p>The sqlite_master.sql column stores SQL text that describes the
+<p>The sqlite_schema.sql column stores SQL text that describes the
 object.  This SQL text is a <a href="lang_createtable.html">CREATE TABLE</a>, <a href="lang_createvtab.html">CREATE VIRTUAL TABLE</a>,
 <a href="lang_createindex.html">CREATE INDEX</a>,
 <a href="lang_createview.html">CREATE VIEW</a>, or <a href="lang_createtrigger.html">CREATE TRIGGER</a> statement that if evaluated against
@@ -1451,20 +1448,38 @@ object being created is removed.
 space.
 </li></ul>
 
-<p>The text in the sqlite_master.sql column is a copy of the original
+<p>The text in the sqlite_schema.sql column is a copy of the original
 CREATE statement text that created the object, except normalized as
 described above and as modified by subsequent <a href="lang_altertable.html">ALTER TABLE</a> statements.
-The sqlite_master.sql is NULL for the <a href="fileformat2.html#intschema">internal indexes</a> that are
+The sqlite_schema.sql is NULL for the <a href="fileformat2.html#intschema">internal indexes</a> that are
 automatically created by <a href="lang_createtable.html#uniqueconst">UNIQUE</a> or <a href="lang_createtable.html#primkeyconst">PRIMARY KEY</a> constraints.</p>
 
+<h3 id="alternative_names_for_the_schema_table"><span>2.6.1. </span>Alternative Names For The Schema Table</h3>
+
+<p>The name "sqlite_schema" does not appear anywhere in the file format.
+That name is just a convention used by the database implementation.
+Due to historical and operational considerations, the
+"sqlite_schema" table can also sometimes be called by one of the
+following aliases:
+
+</p><ol>
+<li> sqlite_master
+</li><li> sqlite_temp_schema
+</li><li> sqlite_temp_master
+</li></ol>
+
+<p>Because the name of the schema table does not appear anywhere in
+the file format, the meaning of the database file is not changed if
+the application chooses to refer to the schema table by one of
+these alternative names.
 
 <a name="intschema"></a>
 
-<h3 id="internal_schema_objects"><span>2.6.1. </span>Internal Schema Objects</h3>
+</p><h3 id="internal_schema_objects"><span>2.6.2. </span>Internal Schema Objects</h3>
 
 <p>In addition to the tables, indexes, views, and triggers created by
 the application and/or the developer using CREATE statements SQL, the
-sqlite_master table may contain zero or more entries for 
+sqlite_schema table may contain zero or more entries for 
 <i>internal schema objects</i> that are created by SQLite for its 
 own internal use.  The names of internal schema objects
 always begin with "sqlite_" and any table, index, view, or trigger
@@ -1494,13 +1509,13 @@ may be added to the SQLite file format in future releases.
 
 <a name="seqtab"></a>
 
-</p><h3 id="the_sqlite_sequence_table"><span>2.6.2. </span>The sqlite_sequence table</h3>
+</p><h3 id="the_sqlite_sequence_table"><span>2.6.3. </span>The sqlite_sequence table</h3>
 
 <p>The sqlite_sequence table is an internal table used to help implement
 <a href="autoinc.html">AUTOINCREMENT</a>.  The sqlite_sequence table is created automatically
 whenever any ordinary table with an AUTOINCREMENT integer primary
 key is created.  Once created, the sqlite_sequence table exists in the
-sqlite_master table forever; it cannot be dropped.
+sqlite_schema table forever; it cannot be dropped.
 The schema for the sqlite_sequence table is:
 
 </p><blockquote><pre>
@@ -1509,7 +1524,7 @@ CREATE TABLE sqlite_sequence(name,seq);
 
 <p>There is a single row in the sqlite_sequence table for each ordinary
 table that uses AUTOINCREMENT.  The name of the table (as it appears in
-sqlite_master.name) is in the sqlite_sequence.main field and the largest
+sqlite_schema.name) is in the sqlite_sequence.main field and the largest
 <a href="lang_createtable.html#rowid">INTEGER PRIMARY KEY</a> ever inserted into that table is 
 in the sqlite_sequence.seq field.  
 New automatically generated integer primary keys for AUTOINCREMENT
@@ -1537,7 +1552,7 @@ but application code cannot drop the sqlite_sequence table.
 
 <a name="stat1tab"></a>
 
-</p><h3 id="the_sqlite_stat1_table"><span>2.6.3. </span>The sqlite_stat1 table</h3>
+</p><h3 id="the_sqlite_stat1_table"><span>2.6.4. </span>The sqlite_stat1 table</h3>
 
 <p>The sqlite_stat1 is an internal table created by the <a href="lang_analyze.html">ANALYZE</a> command
 and used to hold supplemental information about tables and indexes that the
@@ -1601,7 +1616,7 @@ WITHOUT ROWID table.
 
 <a name="stat2tab"></a>
 
-</p><h3 id="the_sqlite_stat2_table"><span>2.6.4. </span>The sqlite_stat2 table</h3>
+</p><h3 id="the_sqlite_stat2_table"><span>2.6.5. </span>The sqlite_stat2 table</h3>
 
 <p>The sqlite_stat2 is only created and is only used if SQLite is compiled
 with SQLITE_ENABLE_STAT2 and if the SQLite version number is between
@@ -1641,7 +1656,7 @@ sqlite_stat2 table, if is exists, is simply ignored.
 
 <a name="stat3tab"></a>
 
-</p><h3 id="the_sqlite_stat3_table"><span>2.6.5. </span>The sqlite_stat3 table</h3>
+</p><h3 id="the_sqlite_stat3_table"><span>2.6.6. </span>The sqlite_stat3 table</h3>
 
 <p>The sqlite_stat3 is only used if SQLite is compiled
 with <a href="compile.html#enable_stat3">SQLITE_ENABLE_STAT3</a> or <a href="compile.html#enable_stat4">SQLITE_ENABLE_STAT4</a>
@@ -1686,7 +1701,7 @@ sample S1 must have a smaller rowid than sample S2.
 
 <a name="stat4tab"></a>
 
-</p><h3 id="the_sqlite_stat4_table"><span>2.6.6. </span>The sqlite_stat4 table</h3>
+</p><h3 id="the_sqlite_stat4_table"><span>2.6.7. </span>The sqlite_stat4 table</h3>
 
 <p>The sqlite_stat4 is only created and is only used if SQLite is compiled
 with <a href="compile.html#enable_stat4">SQLITE_ENABLE_STAT4</a> and if the SQLite version number is

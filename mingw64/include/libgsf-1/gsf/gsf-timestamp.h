@@ -57,11 +57,11 @@ void gsf_timestamp_to_value (GsfTimestamp const *stamp, GValue *value);
 
 /* Deprecated */
 #ifndef GSF_DISABLE_DEPRECATED
-GSF_DEPRECATED_FOR(gsf_timestamp_to_value)
+G_DEPRECATED_FOR(gsf_timestamp_to_value)
 void gsf_value_set_timestamp (GValue *value, GsfTimestamp const *stamp);
-GSF_DEPRECATED_FOR(gsf_timestamp_load_from_string)
+G_DEPRECATED_FOR(gsf_timestamp_load_from_string)
 int	      gsf_timestamp_from_string (char const *spec, GsfTimestamp *stamp);
-GSF_DEPRECATED_FOR(gsf_timestamp_load_from_string)
+G_DEPRECATED_FOR(gsf_timestamp_load_from_string)
 int           gsf_timestamp_parse	(char const *spec, GsfTimestamp *stamp);
 #endif
 

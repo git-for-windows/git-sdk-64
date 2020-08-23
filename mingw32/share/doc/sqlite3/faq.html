@@ -267,11 +267,11 @@ INSERT INTO t1 VALUES((SELECT max(a) FROM t1)+1,123);
 
   <p>From within a C/C++ program (or a script using Tcl/Ruby/Perl/Python
   bindings) you can get access to table and index names by doing a SELECT
-  on a special table named "<b>SQLITE_MASTER</b>".  Every SQLite database
-  has an SQLITE_MASTER table that defines the schema for the database.
-  The SQLITE_MASTER table looks like this:</p>
+  on a special table named "<b>SQLITE_SCHEMA</b>".  Every SQLite database
+  has an SQLITE_SCHEMA table that defines the schema for the database.
+  The SQLITE_SCHEMA table looks like this:</p>
 <blockquote><pre>
-CREATE TABLE sqlite_master (
+CREATE TABLE sqlite_schema (
   type TEXT,
   name TEXT,
   tbl_name TEXT,
@@ -283,7 +283,7 @@ CREATE TABLE sqlite_master (
   <b>name</b> field will be the name of the table.  So to get a list of
   all tables in the database, use the following SELECT command:</p>
 <blockquote><pre>
-SELECT name FROM sqlite_master
+SELECT name FROM sqlite_schema
 WHERE type='table'
 ORDER BY name;
 </pre></blockquote>
@@ -295,22 +295,22 @@ ORDER BY name;
   to implement the PRIMARY KEY or UNIQUE constraints) the <b>sql</b> field
   is NULL.</p>
 
-  <p>The SQLITE_MASTER table cannot be modified using UPDATE, INSERT, 
+  <p>The SQLITE_SCHEMA table cannot be modified using UPDATE, INSERT, 
   or DELETE (except under
   <a href="pragma.html#pragma_writable_schema">extraordinary conditions</a>).  
-  The SQLITE_MASTER table is automatically updated by commands like
+  The SQLITE_SCHEMA table is automatically updated by commands like
   CREATE TABLE, CREATE INDEX, DROP TABLE, and DROP INDEX.</p>
 
-  <p>Temporary tables do not appear in the SQLITE_MASTER table.  Temporary
+  <p>Temporary tables do not appear in the SQLITE_SCHEMA table.  Temporary
   tables and their indices and triggers occur in another special table
-  named SQLITE_TEMP_MASTER.  SQLITE_TEMP_MASTER works just like SQLITE_MASTER
+  named SQLITE_TEMP_SCHEMA.  SQLITE_TEMP_SCHEMA works just like SQLITE_SCHEMA
   except that it is only visible to the application that created the 
   temporary tables.  To get a list of all tables, both permanent and
   temporary, one can use a command similar to the following:
 <blockquote><pre>
 SELECT name FROM 
-   (SELECT * FROM sqlite_master UNION ALL
-    SELECT * FROM sqlite_temp_master)
+   (SELECT * FROM sqlite_schema UNION ALL
+    SELECT * FROM sqlite_temp_schema)
 WHERE type='table'
 ORDER BY name
 </pre></blockquote></blockquote></li>

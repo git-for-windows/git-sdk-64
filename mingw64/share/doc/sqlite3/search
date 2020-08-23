@@ -1083,6 +1083,7 @@ proc searchchanges {} {
     append x " \"[string map [list "\"" "\"\""] $word]\""
   }
   set q [string trim $x]
+  regsub --all {[^a-zA-Z0-9_]} $q { } q
   set open {<span style="background-color:#d9f2e6">}
   set close {</span>}
   set query {

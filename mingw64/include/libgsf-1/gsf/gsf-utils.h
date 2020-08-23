@@ -299,21 +299,27 @@ extern int libgsf_micro_version;
 char const *gsf_extension_pointer (char const * path);
 void	    gsf_iconv_close (GIConv handle);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+G_DEPRECATED
 void        gsf_property_settings_collect_valist (GType object_type,
 						  GParameter **p_params,
 						  size_t *p_n_params,
 						  const gchar *first_property_name,
 						  va_list var_args);
+G_DEPRECATED
 void        gsf_property_settings_collect (GType object_type,
 					   GParameter **p_params,
 					   size_t *p_n_params,
 					   const gchar *first_property_name,
 					   ...);
+G_DEPRECATED
 const GParameter *gsf_property_settings_find (const char *name,
 					      const GParameter *params,
 					      size_t n_params);
+G_DEPRECATED
 void        gsf_property_settings_free (GParameter *params,
 					size_t n_params);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 
 

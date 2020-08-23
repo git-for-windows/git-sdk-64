@@ -33,10 +33,10 @@ gboolean gsf_doc_meta_data_write_to_msole (GsfDocMetaData const *meta_data,
 					   gboolean doc_not_component);
 
 #ifndef GSF_DISABLE_DEPRECATED
-GSF_DEPRECATED_FOR (gsf_doc_meta_data_read_from_msole)
+G_DEPRECATED_FOR (gsf_doc_meta_data_read_from_msole)
 GError	   *gsf_msole_metadata_read	  (GsfInput *in,
 					   GsfDocMetaData *accum);
-GSF_DEPRECATED_FOR (gsf_doc_meta_data_write_to_msole)
+G_DEPRECATED_FOR (gsf_doc_meta_data_write_to_msole)
 gboolean    gsf_msole_metadata_write	  (GsfOutput *out,
 					   GsfDocMetaData const *meta_data,
 					   gboolean doc_not_component);

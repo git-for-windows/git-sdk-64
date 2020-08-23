@@ -193,8 +193,8 @@ output from SQLite, you should reference the version of this document
 that corresponds to the version of SQLite that ran the <a href="lang_explain.html">EXPLAIN</a>.
 Otherwise, the description of the opcodes may not be accurate.
 This document is derived from SQLite
- version 3.32.3 check-in
-<a href='https://www.sqlite.org/src/timeline?c=7ebdfa80be8e8'>7ebdfa80be8e8</a> dated 2020-06-18.
+ version 3.33.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=fca8dc8b578f2'>fca8dc8b578f2</a> dated 2020-08-14.
 
 
 
@@ -422,15 +422,15 @@ opcodes defined by the virtual machine.
 All currently defined opcodes are described in the table below.
 This table was generated automatically by scanning the source code
 from the file
-<a href="http://www.sqlite.org/src/artifact/907af2a69df180eb2127eb888db7d456a32e137a12786de4f977cf06a74b35a2">vdbe.c</a>.
+<a href="http://www.sqlite.org/src/artifact/e9f7f818f128c8600058c0eabb6b3975974c95153a104d340f419adabbc15b9f">vdbe.c</a>.
 
 
 </p><p>Remember: The VDBE opcodes are <u>not</u> part of the interface 
 definition for SQLite.  The number of opcodes and their names and meanings
 change from one release of SQLite to the next.
 The opcodes shown in the table below are valid for SQLite
- version 3.32.3 check-in
-<a href='https://www.sqlite.org/src/timeline?c=7ebdfa80be8e8'>7ebdfa80be8e8</a> dated 2020-06-18.
+ version 3.33.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=fca8dc8b578f2'>fca8dc8b578f2</a> dated 2020-08-14.
 
 <a name="codes"></a>
 
@@ -1329,7 +1329,18 @@ field of the index key.</p>
 <p>The mapping from character to affinity is given by the SQLITE_AFF_
 macros defined in sqliteInt.h.</p>
 
-<p>If P4 is NULL then all index fields have the affinity BLOB.</td></tr>
+<p>If P4 is NULL then all index fields have the affinity BLOB.</p>
+
+<p>The meaning of P5 depends on whether or not the SQLITE_ENABLE_NULL_TRIM
+compile-time option is enabled:</p>
+
+<p>* If SQLITE_ENABLE_NULL_TRIM is enabled, then the P5 is the index
+of the right-most table that can be null-trimmed.</p>
+
+<p>* If SQLITE_ENABLE_NULL_TRIM is omitted, then P5 has the value
+OPFLAG_NOCHNG_MAGIC if the <a href="opcode.html#MakeRecord">MakeRecord</a> opcode is allowed to
+accept no-change records with serial_type 10.  This value is
+only used inside an assert() and does not affect the end result.</td></tr>
 <tr><td valign="top" align="center">
 <a name="MaxPgcnt"></a>MaxPgcnt
 <td>Try to set the maximum page count for database P1 to the value in P3.
@@ -1671,7 +1682,7 @@ the value of the P1 argument to the value of the P1 argument to the
 calling <a href="opcode.html#Program">Program</a> instruction.</td></tr>
 <tr><td valign="top" align="center">
 <a name="ParseSchema"></a>ParseSchema
-<td>Read and parse all entries from the SQLITE_MASTER table of database P1
+<td>Read and parse all entries from the schema table of database P1
 that match the WHERE clause P4.  If P4 is a NULL pointer, then the
 entire schema for P1 is reparsed.</p>
 
@@ -1999,7 +2010,11 @@ configured to use <a href="opcode.html#Next">Next</a>, not <a href="opcode.html#
 <p>See also: <a href="opcode.html#Found">Found</a>, <a href="opcode.html#NotFound">NotFound</a>, SeekLt, SeekGe, SeekLe</td></tr>
 <tr><td valign="top" align="center">
 <a name="SeekHit"></a>SeekHit
-<td>Set the seekHit flag on cursor P1 to the value in P2.</td></tr>
+<td>Set the seekHit flag on cursor P1 to the value in P2.
+The seekHit flag is used by the <a href="opcode.html#IfNoHope">IfNoHope</a> opcode.</p>
+
+<p>P1 must be a valid b-tree cursor.  P2 must be a boolean value,
+either 0 or 1.</td></tr>
 <tr><td valign="top" align="center">
 <a name="SeekLE"></a>SeekLE
 <td>If cursor P1 refers to an SQL table (B-Tree that uses integer keys),
@@ -2082,7 +2097,12 @@ P2==3 is the recommended pager cache
 size, and so forth.  P1==0 is the main database file and P1==1 is the
 database file used to store temporary tables.</p>
 
-<p>A transaction must be started before executing this opcode.</td></tr>
+<p>A transaction must be started before executing this opcode.</p>
+
+<p>If P2 is the SCHEMA_VERSION cookie (cookie number 1) then the internal
+schema version is set to P3-P5.  The "PRAGMA schema_version=N" statement
+has P5 set to 1, so that the internal schema version will be different
+from the database schema version, resulting in a schema reset.</td></tr>
 <tr><td valign="top" align="center">
 <a name="ShiftLeft"></a>ShiftLeft
 <td>Shift the integer value in register P2 to the left by the

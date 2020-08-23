@@ -108,7 +108,7 @@ struct sqlite3_pcache_methods2 {
   int (*xPagecount)(sqlite3_pcache*);
   sqlite3_pcache_page *(*xFetch)(sqlite3_pcache*, unsigned key, int createFlag);
   void (*xUnpin)(sqlite3_pcache*, sqlite3_pcache_page*, int discard);
-  void (*xRekey)(sqlite3_pcache*, sqlite3_pcache_page*, 
+  void (*xRekey)(sqlite3_pcache*, sqlite3_pcache_page*,
       unsigned oldKey, unsigned newKey);
   void (*xTruncate)(sqlite3_pcache*, unsigned iLimit);
   void (*xDestroy)(sqlite3_pcache*);

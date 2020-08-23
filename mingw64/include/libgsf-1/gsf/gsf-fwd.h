@@ -35,7 +35,7 @@ G_BEGIN_DECLS
 typedef struct _GsfInput	GsfInput;
 
 /**
- * GsfInfil:
+ * GsfInfile:
  *
  * Class representing an input file.
  */
@@ -106,15 +106,9 @@ typedef struct _GsfXMLInNode		GsfXMLInNode;
 typedef struct _GsfXMLInNS		GsfXMLInNS;
 typedef struct _GsfXMLBlob		GsfXMLBlob;
 typedef struct _GsfXMLOut		GsfXMLOut;
-typedef struct GsfXMLOutClass_		GsfXMLOutClass;
+typedef struct _GsfXMLOutClass		GsfXMLOutClass;
 
 typedef struct _GsfBlob GsfBlob;
-
-#if GLIB_CHECK_VERSION(2,32,0)
-#define GSF_DEPRECATED_FOR(f) G_DEPRECATED_FOR(f)
-#else
-#define GSF_DEPRECATED_FOR(f)
-#endif
 
 G_END_DECLS
 

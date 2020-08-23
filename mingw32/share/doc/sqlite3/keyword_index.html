@@ -396,6 +396,7 @@ Other Documentation Indexes:
 <li> <a href="dbstat.html">dbstat virtual table</a> </li>
 <li> <a href="debugging.html">debugging hints</a> </li>
 <li> <a href="malloc.html#memdebug">debugging memory allocator</a> </li>
+<li> <a href="floatingpoint.html#decext">decimal extension</a> </li>
 <li> <a href="whentouse.html#dbcklst">decision checklist</a> </li>
 <li> <a href="lang_createtable.html#dfltval">DEFAULT clauses</a> </li>
 <li> <a href="lang_createtable.html#dfltval">default column value</a> </li>
@@ -823,6 +824,12 @@ Other Documentation Indexes:
 <li> <a href="howtocorrupt.html">how to corrupt</a> </li>
 <li> <a href="lockingv3.html#how_to_corrupt">How To Corrupt Your Database Files</a> </li>
 <li> <a href="lang_vacuum.html#howvacuumworks">how vacuum works</a> </li>
+<li> <a href="floatingpoint.html#ieee754ext">ieee754 extension</a> </li>
+<li> <a href="floatingpoint.html#ieee754">ieee754() function</a> </li>
+<li> <a href="floatingpoint.html#ieee754m">ieee754_exponent() function</a> </li>
+<li> <a href="floatingpoint.html#ieee754b">ieee754_from_blob() function</a> </li>
+<li> <a href="floatingpoint.html#ieee754m">ieee754_mantissa() function</a> </li>
+<li> <a href="floatingpoint.html#ieee754b">ieee754_to_blob() function</a> </li>
 <li> <a href="lang_corefunc.html#ifnull">ifnull() SQL function</a> </li>
 <li> <a href="pragma.html#pragma_ignore_check_constraints">ignore_check_constraints pragma</a> </li>
 <li> <a href="lang_corefunc.html#iif">iif() SQL function</a> </li>
@@ -958,7 +965,6 @@ Other Documentation Indexes:
 <li> <a href="sqlar.html#cltools">managing SQLite Archives from the command-line</a> </li>
 <li> <a href="optoverview.html#crossjoin">Manual Control Of Query Plans Using CROSS JOIN</a> </li>
 <li> <a href="optoverview.html#manctrl">Manual Control Of Query Plans Using SQLITE_STAT Tables</a> </li>
-<li> <a href="tempfiles.html#masterjrnl">master journal</a> </li>
 <li> <a href="lang_expr.html#match">MATCH</a> </li>
 <li> <a href="fts3.html#matchinfo">matchinfo</a> </li>
 <li> <a href="fts3.html#matchinfo-b">matchinfo b flag</a> </li>
@@ -1261,6 +1267,7 @@ Other Documentation Indexes:
 <li> <a href="cli.html#dschema">.schema</a> </li>
 <li> <a href="fileformat2.html#schemaformat">schema format</a> </li>
 <li> <a href="fileformat2.html#schemaformat">schema format number</a> </li>
+<li> <a href="fileformat2.html#ffschema">schema storage</a> </li>
 <li> <a href="pragma.html#pragma_schema_version">schema_version pragma</a> </li>
 <li> <a href="fts3.html#appendix_a">search application tips</a> </li>
 <li> <a href="fileformat2.html">second edition file format document</a> </li>
@@ -2089,8 +2096,7 @@ Other Documentation Indexes:
 <li> <a href="c3ref/c_abort.html">SQLITE_LOCKED</a> </li>
 <li> <a href="c3ref/c_abort_rollback.html">SQLITE_LOCKED_SHAREDCACHE</a> </li>
 <li> <a href="c3ref/c_abort_rollback.html">SQLITE_LOCKED_VTAB</a> </li>
-<li> <a href="fileformat2.html#sqlite_master">sqlite_master</a> </li>
-<li> <a href="fileformat2.html#sqlite_master">sqlite_master table</a> </li>
+<li> <a href="schematab.html">sqlite_master table</a> </li>
 <li> <a href="limits.html#max_attached">SQLITE_MAX_ATTACHED</a> </li>
 <li> <a href="limits.html#max_column">SQLITE_MAX_COLUMN</a> </li>
 <li> <a href="limits.html#max_compound_select">SQLITE_MAX_COMPOUND_SELECT</a> </li>
@@ -2120,7 +2126,7 @@ Other Documentation Indexes:
 <li> <a href="c3ref/c_mutex_fast.html">SQLITE_MUTEX_STATIC_APP3</a> </li>
 <li> <a href="c3ref/c_mutex_fast.html">SQLITE_MUTEX_STATIC_LRU</a> </li>
 <li> <a href="c3ref/c_mutex_fast.html">SQLITE_MUTEX_STATIC_LRU2</a> </li>
-<li> <a href="c3ref/c_mutex_fast.html">SQLITE_MUTEX_STATIC_MASTER</a> </li>
+<li> <a href="c3ref/c_mutex_fast.html">SQLITE_MUTEX_STATIC_MAIN</a> </li>
 <li> <a href="c3ref/c_mutex_fast.html">SQLITE_MUTEX_STATIC_MEM</a> </li>
 <li> <a href="c3ref/c_mutex_fast.html">SQLITE_MUTEX_STATIC_MEM2</a> </li>
 <li> <a href="c3ref/c_mutex_fast.html">SQLITE_MUTEX_STATIC_OPEN</a> </li>
@@ -2209,7 +2215,6 @@ Other Documentation Indexes:
 <li> <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_FULLMUTEX</a> </li>
 <li> <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_MAIN_DB</a> </li>
 <li> <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_MAIN_JOURNAL</a> </li>
-<li> <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_MASTER_JOURNAL</a> </li>
 <li> <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_MEMORY</a> </li>
 <li> <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_NOFOLLOW</a> </li>
 <li> <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_NOMUTEX</a> </li>
@@ -2218,6 +2223,7 @@ Other Documentation Indexes:
 <li> <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_READWRITE</a> </li>
 <li> <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_SHAREDCACHE</a> </li>
 <li> <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_SUBJOURNAL</a> </li>
+<li> <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_SUPER_JOURNAL</a> </li>
 <li> <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_TEMP_DB</a> </li>
 <li> <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_TEMP_JOURNAL</a> </li>
 <li> <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_TRANSIENT_DB</a> </li>
@@ -2258,6 +2264,7 @@ Other Documentation Indexes:
 <li> <a href="c3ref/c_scanstat_est.html#sqlitescanstatnvisit">SQLITE_SCANSTAT_NVISIT</a> </li>
 <li> <a href="c3ref/c_scanstat_est.html#sqlitescanstatselectid">SQLITE_SCANSTAT_SELECTID</a> </li>
 <li> <a href="c3ref/c_abort.html">SQLITE_SCHEMA</a> </li>
+<li> <a href="schematab.html">sqlite_schema table</a> </li>
 <li> <a href="compile.html#secure_delete">SQLITE_SECURE_DELETE</a> </li>
 <li> <a href="c3ref/c_alter_table.html">SQLITE_SELECT</a> </li>
 <li> <a href="fileformat2.html#seqtab">sqlite_sequence</a> </li>
@@ -2304,6 +2311,7 @@ Other Documentation Indexes:
 <li> <a href="c3ref/c_sync_dataonly.html">SQLITE_SYNC_NORMAL</a> </li>
 <li> <a href="compile.html#syscall">SQLITE_SYSCALL</a> </li>
 <li> <a href="compile.html#tclapi">SQLITE_TCLAPI</a> </li>
+<li> <a href="schematab.html">sqlite_temp_schema</a> </li>
 <li> <a href="compile.html#temp_store">SQLITE_TEMP_STORE</a> </li>
 <li> <a href="c3ref/c_testctrl_always.html">SQLITE_TESTCTRL_ALWAYS</a> </li>
 <li> <a href="c3ref/c_testctrl_always.html">SQLITE_TESTCTRL_ASSERT</a> </li>
@@ -2385,6 +2393,7 @@ Other Documentation Indexes:
 <li> <a href="optoverview.html#coroutines">subquery co-routines</a> </li>
 <li> <a href="lang_corefunc.html#substr">substr() SQL function</a> </li>
 <li> <a href="lang_aggfunc.html#sumunc">sum() aggregate function</a> </li>
+<li> <a href="tempfiles.html#superjrnl">super-journal</a> </li>
 <li> <a href="swarmvtab.html#overview">swarmvtab</a> </li>
 <li> <a href="swarmvtab.html#component_table_context_values">swarmvtab context</a> </li>
 <li> <a href="pragma.html#pragma_synchronous">synchronous pragma</a> </li>
@@ -2521,6 +2530,7 @@ Other Documentation Indexes:
 <li> <a href="tclsqlite.html#unlock_notify">unlock_notify method</a> </li>
 <li> <a href="c3ref/value.html">unprotected sqlite3_value</a> </li>
 <li> <a href="lang_update.html">UPDATE</a> </li>
+<li> <a href="lang_update.html#upfrom">UPDATE FROM</a> </li>
 <li> <a href="cli.html#arinsup">--update option</a> </li>
 <li> <a href="syntax/update-stmt.html">update-stmt</a> </li>
 <li> <a href="syntax/update-stmt.html">update-stmt syntax diagram</a> </li>
@@ -2675,6 +2685,8 @@ Other Documentation Indexes:
 <li> <a href="releaselog/3_32_1.html">Version 3.32.1</a> </li>
 <li> <a href="releaselog/3_32_2.html">Version 3.32.2</a> </li>
 <li> <a href="releaselog/3_32_3.html">Version 3.32.3</a> </li>
+<li> <a href="releaselog/3_33_0.html">Version 3.33.0</a> </li>
+<li> <a href="releaselog/3_33_0.html">Version 3.33.0.0</a> </li>
 <li> <a href="releaselog/3_4_0.html">Version 3.4.0</a> </li>
 <li> <a href="releaselog/3_4_1.html">Version 3.4.1</a> </li>
 <li> <a href="releaselog/3_4_2.html">Version 3.4.2</a> </li>
