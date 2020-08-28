@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.8
 srcdir=		.
 
-abs_srcdir=	/d/_/S/python/src/Python-3.8.5
-abs_builddir=	/d/_/S/python/src/Python-3.8.5
+abs_srcdir=	/c/_/S/python/src/Python-3.8.5
+abs_builddir=	/c/_/S/python/src/Python-3.8.5
 
 
 CC=		x86_64-pc-msys-gcc
@@ -1266,7 +1266,7 @@ altbininstall: $(BUILDPYTHON)
 			$(DESTDIR)$(BINDIR)/python$(VERSION)$(EXE); \
 	fi
 
-bininstall: altbininstall
+bininstall: altbininstall commoninstall
 	if test ! -d $(DESTDIR)$(LIBPC); then \
 		echo "Creating directory $(LIBPC)"; \
 		$(INSTALL) -d -m $(DIRMODE) $(DESTDIR)$(LIBPC); \

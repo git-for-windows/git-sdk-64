@@ -1,4 +1,4 @@
-*syntax.txt*	For Vim version 8.2.  Last change: 2020 Feb 29
+*syntax.txt*	For Vim version 8.2.  Last change: 2020 Jul 28
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -1214,11 +1214,13 @@ DESKTOP					   *desktop.vim* *ft-desktop-syntax*
 
 Primary goal of this syntax file is to highlight .desktop and .directory files
 according to freedesktop.org standard:
-http://standards.freedesktop.org/desktop-entry-spec/latest/
-But actually almost none implements this standard fully.  Thus it will
-highlight all Unix ini files.  But you can force strict highlighting according
-to standard by placing this in your vimrc file: >
-	:let enforce_freedesktop_standard = 1
+https://specifications.freedesktop.org/desktop-entry-spec/latest/
+To highlight nonstandard extensions that does not begin with X-, set >
+	let g:desktop_enable_nonstd = 1
+Note that this may cause wrong highlight.
+To highlight KDE-reserved features, set >
+	let g:desktop_enable_kde = 1
+g:desktop_enable_kde follows g:desktop_enable_nonstd if not supplied
 
 
 DIFF							*diff.vim*
@@ -1401,7 +1403,7 @@ to your startup file.
 
 EUPHORIA	    *euphoria3.vim* *euphoria4.vim* *ft-euphoria-syntax*
 
-Two syntax highlighting files exists for Euphoria. One for Euphoria
+Two syntax highlighting files exist for Euphoria. One for Euphoria
 version 3.1.1, which is the default syntax highlighting file, and one for
 Euphoria version 4.0.5 or later.
 
@@ -1935,7 +1937,7 @@ new highlightings for the following groups.:
     Debug, DebugSpecial, DebugString, DebugBoolean, DebugType
 which are used for the statement itself, special characters used in debug
 strings, strings, boolean constants and types (this, super) respectively.  I
-have opted to chose another background for those statements.
+have opted to choose another background for those statements.
 
 Javadoc is a program that takes special comments out of Java program files and
 creates HTML pages.  The standard configuration will highlight this HTML code
@@ -3646,7 +3648,7 @@ DEFINING FOLDLEVEL					*:syn-foldlevel*
 	start:		Use level of item containing start of line.
 	minimum:	Use lowest local-minimum level of items on line.
 
-	The default is 'start'.  Use 'minimum' to search a line horizontally
+	The default is "start".  Use "minimum" to search a line horizontally
 	for the lowest level contained on the line that is followed by a
 	higher level.  This produces more natural folds when syntax items
 	may close and open horizontally within a line.
@@ -3793,9 +3795,9 @@ DEFINING REGIONS	*:syn-region* *:syn-start* *:syn-skip* *:syn-end*
 		[keepend]
 		[extend]
 		[excludenl]
-		start={start_pattern} ..
-		[skip={skip_pattern}]
-		end={end_pattern} ..
+		start={start-pattern} ..
+		[skip={skip-pattern}]
+		end={end-pattern} ..
 		[{options}]
 
 	This defines one region.  It may span several lines.
@@ -3817,12 +3819,12 @@ DEFINING REGIONS	*:syn-region* *:syn-start* *:syn-skip* *:syn-end*
 				extend a containing match or item.  Only
 				useful for end patterns.  Must be given before
 				the patterns it applies to. |:syn-excludenl|
-	start={start_pattern}	The search pattern that defines the start of
+	start={start-pattern}	The search pattern that defines the start of
 				the region.  See |:syn-pattern| below.
-	skip={skip_pattern}	The search pattern that defines text inside
+	skip={skip-pattern}	The search pattern that defines text inside
 				the region where not to look for the end
 				pattern.  See |:syn-pattern| below.
-	end={end_pattern}	The search pattern that defines the end of
+	end={end-pattern}	The search pattern that defines the end of
 				the region.  See |:syn-pattern| below.
 
 	Example: >
@@ -4879,7 +4881,12 @@ term={attr-list}			*attr-list* *highlight-term* *E418*
 	have the same effect.
 	"undercurl" is a curly underline.  When "undercurl" is not possible
 	then "underline" is used.  In general "undercurl" and "strikethrough"
-	is only available in the GUI.  The color is set with |highlight-guisp|.
+	are only available in the GUI and some terminals.  The color is set
+	with |highlight-guisp| or |highlight-ctermul|.  You can try these
+	termcap entries to make undercurl work in a terminal: >
+	    let &t_Cs = "\e[4:3m"
+	    let &t_Ce = "\e[4:0m"
+
 
 start={term-list}				*highlight-start* *E422*
 stop={term-list}				*term-list* *highlight-stop*
@@ -5011,7 +5018,7 @@ ctermul={color-nr}				*highlight-ctermul*
 	console.  Example, for reverse video: >
 	    :highlight Visual ctermfg=bg ctermbg=fg
 <	Note that the colors are used that are valid at the moment this
-	command are given.  If the Normal group colors are changed later, the
+	command is given.  If the Normal group colors are changed later, the
 	"fg" and "bg" colors will not be adjusted.
 
 

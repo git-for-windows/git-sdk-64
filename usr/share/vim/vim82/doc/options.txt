@@ -1,4 +1,4 @@
-*options.txt*	For Vim version 8.2.  Last change: 2020 May 03
+*options.txt*	For Vim version 8.2.  Last change: 2020 Aug 13
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -727,8 +727,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 'antialias' 'anti'	boolean (default: off)
 			global
 			{only available when compiled with GUI enabled
-			on Mac OS X}
-	This option only has an effect in the GUI version of Vim on Mac OS X
+			on macOS}
+	This option only has an effect in the GUI version of Vim on macOS
 	v10.2 or later.  When on, Vim will use smooth ("antialiased") fonts,
 	which can be easier to read at certain sizes on certain displays.
 	Setting this option can sometimes cause problems if 'guifont' is set
@@ -1951,9 +1951,11 @@ A jump table for the options with a short description can be found at |Q_op|.
 			{not available when compiled without the |+textprop|
 			or |+quickfix| feature}
 	When 'completeopt' contains "popup" then this option is used for the
-	properties of the info popup when it is created.  You can also use
-	|popup_findinfo()| and then set properties for an existing info popup
-	with |popup_setoptions()|.  See |complete-popup|.
+	properties of the info popup when it is created.  If an info popup
+	window already exists it is closed, so that the option value is
+	applied when it is created again.
+	You can also use |popup_findinfo()| and then set properties for an
+	existing info popup with |popup_setoptions()|.  See |complete-popup|.
 
 
 						*'concealcursor'* *'cocu'*
@@ -2713,6 +2715,11 @@ A jump table for the options with a short description can be found at |Q_op|.
 				 for Unix: ".,~/tmp,/var/tmp,/tmp")
 			global
 	List of directory names for the swap file, separated with commas.
+	Recommended value:  ".,~/vimswap//" - this will put the swap file next
+	to the edited file if possible, and in your personal swap directory
+	otherwise.  Make sure "~/vimswap//" is only readable for you.
+
+	Possible items:
 	- The swap file will be created in the first directory where this is
 	  possible.
 	- Empty means that no swap file will be used (recovery is
@@ -2747,9 +2754,10 @@ A jump table for the options with a short description can be found at |Q_op|.
 	the same file twice will result in a warning.  Using "/tmp" on Unix is
 	discouraged: When the system crashes you lose the swap file.
 	"/var/tmp" is often not cleared when rebooting, thus is a better
-	choice than "/tmp".  But it can contain a lot of files, your swap
-	files get lost in the crowd.  That is why a "tmp" directory in your
-	home directory is tried first.
+	choice than "/tmp".  But others on the computer may be able to see the
+	files, and it can contain a lot of files, your swap files get lost in
+	the crowd.  That is why a "tmp" directory in your home directory is
+	tried first.
 	The use of |:set+=| and |:set-=| is preferred when adding or removing
 	directories from the list.  This avoids problems when a future version
 	uses another default.
@@ -4133,7 +4141,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 			global
 	This option specifies a function that will be called to
 	activate or deactivate the Input Method.
-	It is not used in the GUI.
+	It is not used in the MS-Windows GUI version.
 	The expression will be evaluated in the |sandbox| when set from a
 	modeline, see |sandbox-option|.
 
@@ -4242,7 +4250,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 			global
 	This option specifies a function that is called to obtain the status
 	of Input Method.  It must return a positive number when IME is active.
-	It is not used in the GUI.
+	It is not used in the MS-Windows GUI version.
 
 	Example: >
 		function ImStatusFunc()
@@ -4538,7 +4546,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	set and to the Vim default value when 'compatible' is reset.
 
 						*'isprint'* *'isp'*
-'isprint' 'isp'	string	(default for Win32 and Macintosh:
+'isprint' 'isp'	string	(default for Win32 and macOS:
 				"@,~-255"; otherwise: "@,161-255")
 			global
 	The characters given by this option are displayed directly on the
@@ -4915,18 +4923,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 						*'macatsui'* *'nomacatsui'*
 'macatsui'		boolean	(default on)
 			global
-			{only available in Mac GUI version}
-	This is a workaround for when drawing doesn't work properly.  When set
-	and compiled with multi-byte support ATSUI text drawing is used.  When
-	not set ATSUI text drawing is not used.  Switch this option off when
-	you experience drawing problems.  In a future version the problems may
-	be solved and this option becomes obsolete.  Therefore use this method
-	to unset it: >
-		if exists('&macatsui')
-		   set nomacatsui
-		endif
-<	Another option to check if you have drawing problems is
-	'termencoding'.
+			{not supported}
+	No longer supported, as the Mac OS X GUI code was removed.
 
 						*'magic'* *'nomagic'*
 'magic'			boolean	(default on)
@@ -5232,7 +5230,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 <	If your terminal can't overrule the mouse events going to the
 	application, use: >
 		:set mouse=nvi
-<	The you can press ":", select text for the system, and press Esc to go
+<	Then you can press ":", select text for the system, and press Esc to go
 	back to Vim using the mouse events.
 	In |defaults.vim| "nvi" is used if the 'term' option is not matching
 	"xterm".
@@ -5434,8 +5432,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 		    (without "unsigned" it would become "9-2021").
 		    Using CTRL-A on "2020" in "9-2020" results in "9-2021"
 		    (without "unsigned" it would become "9-2019").
-		    Using CTRL-X on "0" or "18446744073709551615" (2^64) has
-		    no effect, overflow is prevented.
+		    Using CTRL-X on "0" or CTRL-A on "18446744073709551615"
+		    (2^64 - 1) has no effect, overflow is prevented.
 	Numbers which simply begin with a digit in the range 1-9 are always
 	considered decimal.  This also happens for numbers that are not
 	recognized as octal or hex.
@@ -5911,7 +5909,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	customize the information displayed in the quickfix or location window
 	for each entry in the corresponding quickfix or location list.  See
 	|quickfix-window-function| for an explanation of how to write the
-	function and an example.
+	function and an example. The value can be the name of a function or a
+	lambda.
 
 	This option cannot be set from a |modeline| or in the |sandbox|, for
 	security reasons.
@@ -6231,7 +6230,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 						$VIMRUNTIME,
 						$VIM/vimfiles/after,
 						$HOME/vimfiles/after"
-					Macintosh: "$VIM:vimfiles,
+					macOS: "$VIM:vimfiles,
 						$VIMRUNTIME,
 						$VIM:vimfiles:after"
 					Haiku: "$BE_USER_SETTINGS/vim,
@@ -6730,7 +6729,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	 flag	meaning when present	~
 	  f	use "(3 of 5)" instead of "(file 3 of 5)"
 	  i	use "[noeol]" instead of "[Incomplete last line]"
-	  l	use "999L, 888C" instead of "999 lines, 888 characters"
+	  l	use "999L, 888B" instead of "999 lines, 888 bytes"
 	  m	use "[+]" instead of "[Modified]"
 	  n	use "[New]" instead of "[New File]"
 	  r	use "[RO]" instead of "[readonly]"
@@ -7105,6 +7104,16 @@ A jump table for the options with a short description can be found at |Q_op|.
 	up to the first character that is not an ASCII letter or number and
 	not a dash.  Also see |set-spc-auto|.
 
+						*'spelloptions'* *'spo'*
+'spelloptions' 'spo'	string	(default "")
+			local to buffer
+			{not available when compiled without the |+syntax|
+			feature}
+	A comma separated list of options for spell checking:
+	   camel	When a word is CamelCased, assume "Cased" is a
+			separate word: every upper-case character in a word
+			that comes after a lower case character indicates the
+			start of a new word.
 
 						*'spellsuggest'* *'sps'*
 'spellsuggest' 'sps'	string	(default "best")
@@ -7696,10 +7705,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 'term'			string	(default is $TERM, if that fails:
 				      in the GUI: "builtin_gui"
 					on Amiga: "amiga"
-					 on BeOS: "beos-ansi"
 					on Haiku: "xterm"
 					  on Mac: "mac-ansi"
-					 on MiNT: "vt52"
 					 on Unix: "ansi"
 					  on VMS: "ansi"
 				       on Win 32: "win32")
@@ -7727,14 +7734,12 @@ A jump table for the options with a short description can be found at |Q_op|.
 	For further details see |arabic.txt|.
 
 					*'termencoding'* *'tenc'*
-'termencoding' 'tenc'	string	(default ""; with GTK+ GUI: "utf-8"; with
-						    Macintosh GUI: "macroman")
+'termencoding' 'tenc'	string	(default ""; with GTK+ GUI: "utf-8")
 			global
 	Encoding used for the terminal.  This specifies what character
 	encoding the keyboard produces and the display will understand.  For
 	the GUI it only applies to the keyboard ('encoding' is used for the
-	display).  Except for the Mac when 'macatsui' is off, then
-	'termencoding' should be "macroman".
+	display).
 								*E617* *E950*
 	Note: This does not apply to the GTK+ GUI.  After the GUI has been
 	successfully initialized, 'termencoding' is forcibly set to "utf-8".
@@ -8357,7 +8362,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	>= 14	Anything pending in a ":finally" clause.
 	>= 15	Every executed Ex command from a script (truncated at 200
 		characters).
-	>= 16	Every executed Ex command
+	>= 16	Every executed Ex command.
 
 	This option can also be set with the "-V" argument.  See |-V|.
 	This option is also set by the |:verbose| command.
@@ -8380,7 +8385,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 'viewdir' 'vdir'	string	(default for Amiga and Win32:
 							 "$VIM/vimfiles/view",
 				 for Unix: "~/.vim/view",
-				 for Macintosh: "$VIM:vimfiles:view"
+				 for macOS: "$VIM:vimfiles:view"
 				 for VMS: "sys$login:vimfiles/view")
 			global
 			{not available when compiled without the |+mksession|
@@ -8547,8 +8552,6 @@ A jump table for the options with a short description can be found at |Q_op|.
 					    *'virtualedit'* *'ve'*
 'virtualedit' 've'	string	(default "")
 			global
-			{not available when compiled without the
-			|+virtualedit| feature}
 	A comma separated list of these words:
 	    block	Allow virtual editing in Visual block mode.
 	    insert	Allow virtual editing in Insert mode.
@@ -8898,7 +8901,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 			{only available when compiled with the |terminal|
 			feature on MS-Windows}
 	Specifies the name of the winpty shared library, used for the
-	|:terminal| command. The default depends on whether was build as a
+	|:terminal| command. The default depends on whether Vim was built as a
 	32-bit or 64-bit executable.  If not found, "winpty.dll" is tried as
 	a fallback.
 	Environment variables are expanded |:set_env|.
