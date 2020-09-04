@@ -270,9 +270,20 @@ enum report_method
      allowed to set the value.  */
   RM_NOT_YET_SET = 0,
   RM_IGNORE,
-  RM_GENERATE_WARNING,
-  RM_GENERATE_ERROR
+  RM_DIAGNOSE,
 };
+
+/* How to handle DT_TEXTREL.  */
+
+enum textrel_check_method
+{
+  textrel_check_none,
+  textrel_check_warning,
+  textrel_check_error
+};
+
+#define bfd_link_textrel_check(info) \
+  (info->textrel_check != textrel_check_none)
 
 typedef enum {with_flags, without_flags} flag_type;
 
@@ -350,6 +361,9 @@ struct bfd_link_info
   /* TRUE if the LTO plugin is active.  */
   unsigned int lto_plugin_active: 1;
 
+  /* TRUE if all LTO IR symbols have been read.  */
+  unsigned int lto_all_symbols_read : 1;
+
   /* TRUE if global symbols in discarded sections should be stripped.  */
   unsigned int strip_discarded: 1;
 
@@ -373,7 +387,7 @@ struct bfd_link_info
   ENUM_BITFIELD (bfd_link_elf_stt_common) elf_stt_common : 2;
 
   /* Criteria for skipping symbols when determining
-     whether to include an object from an archive. */
+     whether to include an object from an archive.  */
   ENUM_BITFIELD (bfd_link_common_skip_ar_symbols) common_skip_ar_symbols : 2;
 
   /* What to do with unresolved symbols in an object file.
@@ -386,6 +400,9 @@ struct bfd_link_info
   /* What to do with unresolved symbols in a shared library.
      The same defaults apply.  */
   ENUM_BITFIELD (report_method) unresolved_syms_in_shared_libs : 2;
+
+  /* TRUE if unresolved symbols are to be warned, rather than errored.  */
+  unsigned int warn_unresolved_syms: 1;
 
   /* TRUE if shared objects should be linked directly, not shared.  */
   unsigned int static_link: 1;
@@ -408,11 +425,8 @@ struct bfd_link_info
      should be created.  1 for DWARF2 tables, 2 for compact tables.  */
   unsigned int eh_frame_hdr_type: 2;
 
-  /* TRUE if we should warn when adding a DT_TEXTREL to a shared object.  */
-  unsigned int warn_shared_textrel: 1;
-
-  /* TRUE if we should error when adding a DT_TEXTREL.  */
-  unsigned int error_textrel: 1;
+  /* What to do with DT_TEXTREL in output.  */
+  ENUM_BITFIELD (textrel_check_method) textrel_check: 2;
 
   /* TRUE if .hash section should be created.  */
   unsigned int emit_hash: 1;
@@ -501,6 +515,14 @@ struct bfd_link_info
   /* TRUE if "-Map map" is passed to linker.  */
   unsigned int has_map_file : 1;
 
+  /* TRUE if "--enable-non-contiguous-regions" is passed to the
+     linker.  */
+  unsigned int non_contiguous_regions : 1;
+
+  /* TRUE if "--enable-non-contiguous-regions-warnings" is passed to
+     the linker.  */
+  unsigned int non_contiguous_regions_warnings : 1;
+
   /* Char that may appear as the first char of a symbol, but should be
      skipped (like symbol_leading_char) when looking up symbols in
      wrap_hash.  Used by PowerPC Linux for 'dot' symbols.  */
@@ -523,10 +545,10 @@ struct bfd_link_info
      Normally these optimizations are disabled by default but some targets
      prefer to enable them by default.  So this field is a tri-state variable.
      The values are:
-     
+
      zero: Enable the optimizations (either from --relax being specified on
        the command line or the backend's before_allocation emulation function.
-       
+
      positive: The user has requested that these optimizations be disabled.
        (Via the --no-relax command line option).
 
@@ -629,6 +651,9 @@ struct bfd_link_info
 
   /* May be used to set DT_FLAGS_1 for ELF. */
   bfd_vma flags_1;
+
+  /* May be used to set ELF visibility for __start_* / __stop_.  */
+  unsigned int start_stop_visibility;
 
   /* Start and end of RELRO region.  */
   bfd_vma relro_start, relro_end;
@@ -801,9 +826,9 @@ struct bfd_link_order
   struct bfd_link_order *next;
   /* Type of link_order.  */
   enum bfd_link_order_type type;
-  /* Offset within output section.  */
+  /* Offset within output section in bytes.  */
   bfd_vma offset;
-  /* Size within output section.  */
+  /* Size within output section in octets.  */
   bfd_size_type size;
   /* Type specific information.  */
   union
