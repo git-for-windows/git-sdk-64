@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.8
 srcdir=		../Python-3.8.5
 VPATH=		../Python-3.8.5
-abs_srcdir=	/mingwdev/mingw-w64-python/src/build-i686/../Python-3.8.5
-abs_builddir=	/mingwdev/mingw-w64-python/src/build-i686
+abs_srcdir=	/c/_/M/mingw-w64-python/src/build-i686/../Python-3.8.5
+abs_builddir=	/c/_/M/mingw-w64-python/src/build-i686
 
 
 CC=		i686-w64-mingw32-gcc
@@ -90,8 +90,8 @@ CONFIGURE_CFLAGS_NODIST= -flto -fuse-linker-plugin -ffat-lto-objects -flto-parti
 # Use it when a linker flag should _not_ be part of the distutils LDFLAGS
 # once Python is installed (bpo-35257)
 CONFIGURE_LDFLAGS_NODIST= -flto -fuse-linker-plugin -ffat-lto-objects -flto-partition=none -g
-CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -ID:/msys64/mingw32/include/ncurses  -I.
-CONFIGURE_LDFLAGS=	-pipe -s 
+CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -ID:/a/_temp/msys/msys64/mingw32/include/ncurses  -I.
+CONFIGURE_LDFLAGS=	-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -s 
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
 # values.
@@ -139,11 +139,11 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		D:/mingwbuild/mingw-w64-python/src/Python-3.8.5
-VPATH_b2h=		D:/mingwbuild/mingw-w64-python/src/Python-3.8.5
-abs_srcdir_b2h=		D:/mingwbuild/mingw-w64-python/src/Python-3.8.5
-abs_builddir_b2h=	D:/mingwbuild/mingw-w64-python/src/build-i686
-prefix_b2h=		D:/msys64/mingw32
+srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.5
+VPATH_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.5
+abs_srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.5
+abs_builddir_b2h=	C:/_/M/mingw-w64-python/src/build-i686
+prefix_b2h=		D:/a/_temp/msys/msys64/mingw32
 
 # Expanded directories
 BINDIR=		${exec_prefix}/bin
@@ -200,9 +200,9 @@ RUNSHARED=
 ENSUREPIP=      no
 
 # OpenSSL options for setup.py so sysconfig can pick up AC_SUBST() vars.
-OPENSSL_INCLUDES=-ID:/msys64/mingw32/include
+OPENSSL_INCLUDES=-ID:/a/_temp/msys/msys64/mingw32/include
 OPENSSL_LIBS=-lssl -lcrypto
-OPENSSL_LDFLAGS=-LD:/msys64/mingw32/lib
+OPENSSL_LDFLAGS=-LD:/a/_temp/msys/msys64/mingw32/lib
 
 # Modes for directories, executables and data files created by the
 # install process.  Default to user-only-writable for all file types.
@@ -211,7 +211,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-nt-threads' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-loadable-sqlite-extensions' '--enable-optimizations' '--with-lto' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' 'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -ID:/msys64/mingw32/include/ncurses ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-nt-threads' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-loadable-sqlite-extensions' '--enable-optimizations' '--with-lto' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' 'LDFLAGS=-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -s ' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -ID:/a/_temp/msys/msys64/mingw32/include/ncurses ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
 
 
 # Subdirectories with code
@@ -310,7 +310,7 @@ IO_OBJS=	\
 
 ##########################################################################
 
-LIBFFI_INCLUDEDIR=	D:/msys64/mingw32/include
+LIBFFI_INCLUDEDIR=	D:/a/_temp/msys/msys64/mingw32/include
 
 ##########################################################################
 # Parser

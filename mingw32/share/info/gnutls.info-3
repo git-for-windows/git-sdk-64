@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.7 from gnutls.texi.
 
-This manual is last updated 1 June 2020 for version 3.6.14 of GnuTLS.
+This manual is last updated 1 June 2020 for version 3.6.15 of GnuTLS.
 
 Copyright (C) 2001-2020 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2020 Nikos Mavrogiannopoulos
@@ -1266,7 +1266,7 @@ file are skipped unless the environment variable
 cause the library to exit on unknown options.
 
 The location of the default configuration file is '/etc/gnutls/config',
-but its actual location may be overriden during compile time or at
+but its actual location may be overridden during compile time or at
 run-time using the 'GNUTLS_SYSTEM_PRIORITY_FILE' environment variable.
 The file used can be queried using *note
 gnutls_get_system_config_file::.
@@ -2328,7 +2328,7 @@ to 'more'.  Both will exit with a status code of 0.
             --alpn=str             Application layer protocol
                                      - may appear multiple times
         -b, --heartbeat            Activate heartbeat support
-            --recordsize=num       The maximum record size to advertize
+            --recordsize=num       The maximum record size to advertise
                                      - it must be in the range:
                                        0 to 4096
             --disable-sni          Do not send a Server Name Indication (SNI)
@@ -2842,7 +2842,7 @@ to 'more'.  Both will exit with a status code of 0.
             --earlydata            Accept early data
             --maxearlydata=num     The maximum early data size to accept
                                      - it must be in the range:
-                                       1 to 4294967295
+                                       greater than or equal to 1
             --nocookie             Don't require cookie on DTLS sessions
         -g, --generate             Generate Diffie-Hellman parameters
         -q, --quiet                Suppress some messages
@@ -8629,7 +8629,7 @@ gnutls_est_record_overhead_size
      This function will return the set size in bytes of the overhead due
      to TLS (or DTLS) per record.
 
-     Note that this function may provide inacurate values when TLS
+     Note that this function may provide inaccurate values when TLS
      extensions that modify the record format are negotiated.  In these
      cases a more accurate value can be obtained using
      'gnutls_record_overhead_size()' after a completed handshake.
@@ -12305,7 +12305,7 @@ gnutls_session_get_data2
      ticket is received by the client.  To ensure that such a ticket has
      been received use 'gnutls_session_get_flags()' and check for flag
      'GNUTLS_SFLAGS_SESSION_TICKET' ; if this flag is not set, this
-     function will wait for a new ticket within an estimated rountrip,
+     function will wait for a new ticket within an estimated roundtrip,
      and if not received will return dummy data which cannot lead to
      resumption.
 
