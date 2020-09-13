@@ -14,10 +14,8 @@ build_time_vars = {'ABIFLAGS': '',
  'BINLIBDEST': '/mingw64/lib/python3.8',
  'BLDLIBRARY': '-L. -lpython3.8',
  'BLDSHARED': 'x86_64-w64-mingw32-gcc -shared -Wl,--enable-auto-image-base '
-              '-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat '
-              '-Wl,--disable-high-entropy-va -s -pipe '
-              '-Wl,--dynamicbase,--high-entropy-va,--nxcompat '
-              '-Wl,--disable-high-entropy-va -s',
+              '-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat -s -pipe '
+              '-Wl,--dynamicbase,--high-entropy-va,--nxcompat -s',
  'BUILDEXE': '.exe',
  'BUILDPYTHON': 'python.exe',
  'BUILDPYTHONW': 'pythonw.exe',
@@ -44,8 +42,7 @@ build_time_vars = {'ABIFLAGS': '',
                             '-Werror=implicit-function-declaration',
  'CONFIGURE_CPPFLAGS': '-I../Python-3.8.5/PC -D__USE_MINGW_ANSI_STDIO=1 '
                        '-ID:/a/_temp/msys/msys64/mingw64/include/ncurses  -I.',
- 'CONFIGURE_LDFLAGS': '-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat '
-                      '-Wl,--disable-high-entropy-va -s',
+ 'CONFIGURE_LDFLAGS': '-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat -s',
  'CONFIGURE_LDFLAGS_NODIST': '-flto -fuse-linker-plugin -ffat-lto-objects '
                              '-flto-partition=none -g',
  'CONFIG_ARGS': "'--prefix=/mingw64' '--host=x86_64-w64-mingw32' "
@@ -58,8 +55,7 @@ build_time_vars = {'ABIFLAGS': '',
                 "'host_alias=x86_64-w64-mingw32' 'CFLAGS=-march=x86-64 "
                 '-mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 '
                 "-D_WIN32_WINNT=0x0601 -DNDEBUG ' 'LDFLAGS=-pipe "
-                '-Wl,--dynamicbase,--high-entropy-va,--nxcompat '
-                "-Wl,--disable-high-entropy-va -s ' "
+                "-Wl,--dynamicbase,--high-entropy-va,--nxcompat -s ' "
                 "'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 "
                 "-ID:/a/_temp/msys/msys64/mingw64/include/ncurses ' "
                 "'PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig'",
@@ -554,18 +550,14 @@ build_time_vars = {'ABIFLAGS': '',
  'IO_H': 'Modules/_io/_iomodule.h',
  'IO_OBJS': '\\',
  'LDCXXSHARED': 'x86_64-w64-mingw32-c++ -shared -Wl,--enable-auto-image-base',
- 'LDFLAGS': '-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat '
-            '-Wl,--disable-high-entropy-va -s -pipe '
-            '-Wl,--dynamicbase,--high-entropy-va,--nxcompat '
-            '-Wl,--disable-high-entropy-va -s',
+ 'LDFLAGS': '-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat -s -pipe '
+            '-Wl,--dynamicbase,--high-entropy-va,--nxcompat -s',
  'LDFLAGS_NODIST': '',
  'LDLIBRARY': 'libpython3.8.dll.a',
  'LDLIBRARYDIR': '',
  'LDSHARED': 'x86_64-w64-mingw32-gcc -shared -Wl,--enable-auto-image-base '
-             '-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat '
-             '-Wl,--disable-high-entropy-va -s -pipe '
-             '-Wl,--dynamicbase,--high-entropy-va,--nxcompat '
-             '-Wl,--disable-high-entropy-va -s',
+             '-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat -s -pipe '
+             '-Wl,--dynamicbase,--high-entropy-va,--nxcompat -s',
  'LDVERSION': '3.8',
  'LIBC': '',
  'LIBDEST': '/mingw64/lib/python3.8',
@@ -708,11 +700,9 @@ build_time_vars = {'ABIFLAGS': '',
                    '-D__USE_MINGW_ANSI_STDIO=1 '
                    '-ID:/a/_temp/msys/msys64/mingw64/include/ncurses '
                    '-DPy_BUILD_CORE',
- 'PY_CORE_LDFLAGS': '-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat '
-                    '-Wl,--disable-high-entropy-va -s -pipe '
-                    '-Wl,--dynamicbase,--high-entropy-va,--nxcompat '
-                    '-Wl,--disable-high-entropy-va -s -flto '
-                    '-fuse-linker-plugin -ffat-lto-objects '
+ 'PY_CORE_LDFLAGS': '-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat -s '
+                    '-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat -s '
+                    '-flto -fuse-linker-plugin -ffat-lto-objects '
                     '-flto-partition=none -g',
  'PY_CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.8.5/Include '
                 '-I../Python-3.8.5/PC -D__USE_MINGW_ANSI_STDIO=1 '
@@ -720,10 +710,8 @@ build_time_vars = {'ABIFLAGS': '',
                 '-D__USE_MINGW_ANSI_STDIO=1 '
                 '-ID:/a/_temp/msys/msys64/mingw64/include/ncurses',
  'PY_FORMAT_SIZE_T': '"z"',
- 'PY_LDFLAGS': '-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat '
-               '-Wl,--disable-high-entropy-va -s -pipe '
-               '-Wl,--dynamicbase,--high-entropy-va,--nxcompat '
-               '-Wl,--disable-high-entropy-va -s',
+ 'PY_LDFLAGS': '-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat -s -pipe '
+               '-Wl,--dynamicbase,--high-entropy-va,--nxcompat -s',
  'PY_LDFLAGS_NODIST': '-flto -fuse-linker-plugin -ffat-lto-objects '
                       '-flto-partition=none -g',
  'PY_SSL_DEFAULT_CIPHERS': 1,
