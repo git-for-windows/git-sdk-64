@@ -31,7 +31,7 @@
 <pre><code> #include &lt;openssl/hmac.h&gt;
 
  unsigned char *HMAC(const EVP_MD *evp_md, const void *key,
-                     int key_len, const unsigned char *d, int n,
+                     int key_len, const unsigned char *d, size_t n,
                      unsigned char *md, unsigned int *md_len);
 
  HMAC_CTX *HMAC_CTX_new(void);
@@ -39,7 +39,7 @@
 
  int HMAC_Init_ex(HMAC_CTX *ctx, const void *key, int key_len,
                   const EVP_MD *md, ENGINE *impl);
- int HMAC_Update(HMAC_CTX *ctx, const unsigned char *data, int len);
+ int HMAC_Update(HMAC_CTX *ctx, const unsigned char *data, size_t len);
  int HMAC_Final(HMAC_CTX *ctx, unsigned char *md, unsigned int *len);
 
  void HMAC_CTX_free(HMAC_CTX *ctx);
@@ -69,7 +69,7 @@
 
 <p>HMAC_CTX_new() creates a new HMAC_CTX in heap memory.</p>
 
-<p>HMAC_CTX_reset() zeroes an existing <b>HMAC_CTX</b> and associated resources, making it suitable for new computations as if it was newly created with HMAC_CTX_new().</p>
+<p>HMAC_CTX_reset() zeros an existing <b>HMAC_CTX</b> and associated resources, making it suitable for new computations as if it was newly created with HMAC_CTX_new().</p>
 
 <p>HMAC_CTX_free() erases the key and other data from the <b>HMAC_CTX</b>, releases any associated resources and finally frees the <b>HMAC_CTX</b> itself.</p>
 
@@ -125,7 +125,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
