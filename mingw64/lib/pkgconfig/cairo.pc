@@ -1,13 +1,11 @@
 prefix=/mingw64
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
+libdir=${prefix}/lib
 includedir=${prefix}/include
 
 Name: cairo
 Description: Multi-platform 2D graphics library
-Version: 1.16.0
-
-Requires.private:  gobject-2.0 glib-2.0 >= 2.14       pixman-1 >= 0.30.0    fontconfig >= 2.2.95 freetype2 >= 9.7.3   libpng   
+Version: 1.17.3
+Requires.private: lzo2, zlib, libpng, freetype2 >=  9.7.3, fontconfig >=  2.2.95, pixman-1 >=  0.36.0
 Libs: -L${libdir} -lcairo
-Libs.private:           -lz -lz   -lz    
+Libs.private: -lm -lgdi32 -lmsimg32
 Cflags: -I${includedir}/cairo

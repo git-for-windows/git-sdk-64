@@ -36,7 +36,7 @@ LANGUAGE=C;	export LANGUAGE
 LC_ALL=C;	export LC_ALL
 LC_CTYPE=C;	export LC_CTYPE
 
-prefix="/mingw32"
+prefix="$(cygpath -m "/mingw32")"
 exec_prefix="${prefix}"
 
 bindir="${exec_prefix}/bin"
@@ -44,7 +44,7 @@ includedir="${prefix}/include"
 libdir="${exec_prefix}/lib"
 datarootdir="${prefix}/share"
 datadir="${datarootdir}"
-mandir="/mingw32/share/man"
+mandir="$(cygpath -m "/mingw32/share/man")"
 
 THIS="ncursesw"
 TINFO_LIB="ncursesw"
@@ -101,7 +101,7 @@ fi
 # There is no portable way to find the list of standard library directories. 
 # Require a POSIX shell anyway, to keep this simple.
 lib_flags=
-for opt in -L$libdir -pipe  $LIBS
+for opt in -L$libdir -pipe -Wl,--dynamicbase,--nxcompat,--no-seh  $LIBS
 do
 	case $opt in
 	-specs*) # ignore linker specs-files which were used to build library
@@ -114,6 +114,9 @@ do
 		[ -d ${opt##-L} ] || continue
 		case ${opt##-L} in
 		/mingw32/i686-w64-mingw32/lib|/mingw32/lib|/usr/lib) # skip standard libdir
+			continue
+			;;
+		$libdir) # skip standard libdir
 			continue
 			;;
 		*)
@@ -241,13 +244,13 @@ ENDECHO
 		echo "${mandir}"
 		;;
 	--terminfo)
-		echo "/mingw32/share/terminfo"
+		echo "$(cygpath -m "/mingw32/share/terminfo")"
 		;;
 	--terminfo-dirs)
-		echo "/mingw32/share/terminfo"
+		echo "$(cygpath -m "/mingw32/share/terminfo")"
 		;;
 	--termpath)
-		echo ""
+		echo "$(cygpath -m "")"
 		;;
 	# general info
 	--help)

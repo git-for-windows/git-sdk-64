@@ -8,7 +8,7 @@
 
 G_BEGIN_DECLS
 
-/* enumerations from "../glib-2.64.5/gio/gioenums.h" */
+/* enumerations from "../glib-2.66.0/gio/gioenums.h" */
 GLIB_AVAILABLE_IN_ALL GType g_app_info_create_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_APP_INFO_CREATE_FLAGS (g_app_info_create_flags_get_type ())
 GLIB_AVAILABLE_IN_ALL GType g_converter_flags_get_type (void) G_GNUC_CONST;
@@ -129,6 +129,10 @@ GLIB_AVAILABLE_IN_ALL GType g_tls_certificate_flags_get_type (void) G_GNUC_CONST
 #define G_TYPE_TLS_CERTIFICATE_FLAGS (g_tls_certificate_flags_get_type ())
 GLIB_AVAILABLE_IN_ALL GType g_tls_authentication_mode_get_type (void) G_GNUC_CONST;
 #define G_TYPE_TLS_AUTHENTICATION_MODE (g_tls_authentication_mode_get_type ())
+GLIB_AVAILABLE_IN_ALL GType g_tls_channel_binding_type_get_type (void) G_GNUC_CONST;
+#define G_TYPE_TLS_CHANNEL_BINDING_TYPE (g_tls_channel_binding_type_get_type ())
+GLIB_AVAILABLE_IN_ALL GType g_tls_channel_binding_error_get_type (void) G_GNUC_CONST;
+#define G_TYPE_TLS_CHANNEL_BINDING_ERROR (g_tls_channel_binding_error_get_type ())
 GLIB_AVAILABLE_IN_ALL GType g_tls_rehandshake_mode_get_type (void) G_GNUC_CONST;
 #define G_TYPE_TLS_REHANDSHAKE_MODE (g_tls_rehandshake_mode_get_type ())
 GLIB_AVAILABLE_IN_ALL GType g_tls_password_flags_get_type (void) G_GNUC_CONST;
@@ -164,11 +168,11 @@ GLIB_AVAILABLE_IN_ALL GType g_pollable_return_get_type (void) G_GNUC_CONST;
 GLIB_AVAILABLE_IN_ALL GType g_memory_monitor_warning_level_get_type (void) G_GNUC_CONST;
 #define G_TYPE_MEMORY_MONITOR_WARNING_LEVEL (g_memory_monitor_warning_level_get_type ())
 
-/* enumerations from "../glib-2.64.5/gio/gresolver.h" */
+/* enumerations from "../glib-2.66.0/gio/gresolver.h" */
 GLIB_AVAILABLE_IN_ALL GType g_resolver_name_lookup_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_RESOLVER_NAME_LOOKUP_FLAGS (g_resolver_name_lookup_flags_get_type ())
 
-/* enumerations from "../glib-2.64.5/gio/gsettings.h" */
+/* enumerations from "../glib-2.66.0/gio/gsettings.h" */
 GLIB_AVAILABLE_IN_ALL GType g_settings_bind_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_SETTINGS_BIND_FLAGS (g_settings_bind_flags_get_type ())
 G_END_DECLS

@@ -108,7 +108,8 @@ typedef struct _GFileInfoClass   GFileInfoClass;
  *
  * A key in the "standard" namespace for getting the name of the file.
  * The name is the on-disk filename which may not be in any known encoding,
- * and can thus not be generally displayed as is.
+ * and can thus not be generally displayed as is. It is guaranteed to be set on
+ * every file.
  * Use #G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME if you need to display the
  * name in a user interface.
  * Corresponding #GFileAttributeType is %G_FILE_ATTRIBUTE_TYPE_BYTE_STRING.
@@ -119,8 +120,8 @@ typedef struct _GFileInfoClass   GFileInfoClass;
  * G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME:
  *
  * A key in the "standard" namespace for getting the display name of the file.
- * A display name is guaranteed to be in UTF8 and can thus be displayed in
- * the UI.
+ * A display name is guaranteed to be in UTF-8 and can thus be displayed in
+ * the UI. It is guaranteed to be set on every file.
  * Corresponding #GFileAttributeType is %G_FILE_ATTRIBUTE_TYPE_STRING.
  **/
 #define G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME "standard::display-name"     /* string */
@@ -157,7 +158,7 @@ typedef struct _GFileInfoClass   GFileInfoClass;
  *
  * A key in the "standard" namespace for getting the description of the file.
  * The description is a utf8 string that describes the file, generally containing
- * the filename, but can also contain furter information. Example descriptions
+ * the filename, but can also contain further information. Example descriptions
  * could be "filename (on hostname)" for a remote file or "filename (in trash)"
  * for a file in the trash. This is useful for instance as the window title
  * when displaying a directory or for a bookmarks menu.
@@ -539,7 +540,8 @@ typedef struct _GFileInfoClass   GFileInfoClass;
  * and contains the time since the file was created, in seconds since the UNIX
  * epoch.
  *
- * This corresponds to the NTFS ctime.
+ * This may correspond to Linux stx_btime, FreeBSD st_birthtim, NetBSD
+ * st_birthtime or NTFS ctime.
  **/
 #define G_FILE_ATTRIBUTE_TIME_CREATED "time::created"             /* uint64 */
 

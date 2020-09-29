@@ -89,7 +89,7 @@
  * in a compatible way before this feature was supported in all
  * compilers.  These days, GLib requires inlining support from the
  * compiler, so your GLib-using programs can safely assume that the
- * "inline" keywork works properly.
+ * "inline" keyword works properly.
  *
  * Never use this macro anymore.  Just say "static inline".
  *
@@ -532,7 +532,7 @@
 /**
  * G_GNUC_FALLTHROUGH:
  *
- * Expands to the GNU C `fallthrough` statement attribute if the compiler is gcc.
+ * Expands to the GNU C `fallthrough` statement attribute if the compiler supports it.
  * This allows declaring case statement to explicitly fall through in switch
  * statements. To enable this feature, use `-Wimplicit-fallthrough` during
  * compilation.
@@ -558,6 +558,8 @@
  * Since: 2.60
  */
 #if    __GNUC__ > 6
+#define G_GNUC_FALLTHROUGH __attribute__((fallthrough))
+#elif g_macro__has_attribute (fallthrough)
 #define G_GNUC_FALLTHROUGH __attribute__((fallthrough))
 #else
 #define G_GNUC_FALLTHROUGH
@@ -976,10 +978,12 @@
 #define GLIB_DEPRECATED _GLIB_EXTERN
 #define GLIB_DEPRECATED_FOR(f) _GLIB_EXTERN
 #define GLIB_UNAVAILABLE(maj,min) _GLIB_EXTERN
+#define GLIB_UNAVAILABLE_STATIC_INLINE(maj,min)
 #else
 #define GLIB_DEPRECATED G_DEPRECATED _GLIB_EXTERN
 #define GLIB_DEPRECATED_FOR(f) G_DEPRECATED_FOR(f) _GLIB_EXTERN
 #define GLIB_UNAVAILABLE(maj,min) G_UNAVAILABLE(maj,min) _GLIB_EXTERN
+#define GLIB_UNAVAILABLE_STATIC_INLINE(maj,min) G_UNAVAILABLE(maj,min)
 #endif
 
 #if !defined(GLIB_DISABLE_DEPRECATION_WARNINGS) && \
