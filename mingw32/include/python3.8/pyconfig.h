@@ -1393,7 +1393,7 @@
 /* #undef PYLONG_BITS_IN_DIGIT */
 
 /* Define if you want to coerce the C locale to a UTF-8 based locale */
-#define PY_COERCE_C_LOCALE 1
+/* #undef PY_COERCE_C_LOCALE */
 
 /* Define to printf format modifier for Py_ssize_t */
 #define PY_FORMAT_SIZE_T "z"

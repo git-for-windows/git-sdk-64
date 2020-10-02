@@ -28,9 +28,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.8
-srcdir=		../Python-3.8.5
-VPATH=		../Python-3.8.5
-abs_srcdir=	/c/_/M/mingw-w64-python/src/build-x86_64/../Python-3.8.5
+srcdir=		../Python-3.8.6
+VPATH=		../Python-3.8.6
+abs_srcdir=	/c/_/M/mingw-w64-python/src/build-x86_64/../Python-3.8.6
 abs_builddir=	/c/_/M/mingw-w64-python/src/build-x86_64
 
 
@@ -91,7 +91,7 @@ CONFIGURE_CFLAGS_NODIST= -flto -fuse-linker-plugin -ffat-lto-objects -flto-parti
 # once Python is installed (bpo-35257)
 CONFIGURE_LDFLAGS_NODIST= -flto -fuse-linker-plugin -ffat-lto-objects -flto-partition=none -g
 CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -ID:/a/_temp/msys/msys64/mingw64/include/ncurses  -I.
-CONFIGURE_LDFLAGS=	-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat -s 
+CONFIGURE_LDFLAGS=	-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high -s 
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
 # values.
@@ -139,9 +139,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.5
-VPATH_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.5
-abs_srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.5
+srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.6
+VPATH_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.6
+abs_srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.6
 abs_builddir_b2h=	C:/_/M/mingw-w64-python/src/build-x86_64
 prefix_b2h=		D:/a/_temp/msys/msys64/mingw64
 
@@ -211,7 +211,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw64' '--host=x86_64-w64-mingw32' '--build=x86_64-w64-mingw32' '--enable-shared' '--with-nt-threads' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-loadable-sqlite-extensions' '--enable-optimizations' '--with-lto' 'OPT=' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' 'LDFLAGS=-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat -s ' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -ID:/a/_temp/msys/msys64/mingw64/include/ncurses ' 'PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw64' '--host=x86_64-w64-mingw32' '--build=x86_64-w64-mingw32' '--enable-shared' '--with-nt-threads' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--without-c-locale-coercion' '--enable-loadable-sqlite-extensions' '--enable-optimizations' '--with-lto' 'OPT=' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' 'LDFLAGS=-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high -s ' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -ID:/a/_temp/msys/msys64/mingw64/include/ncurses ' 'PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig'
 
 
 # Subdirectories with code
@@ -1318,7 +1318,6 @@ bininstall: altbininstall
 	else true; \
 	fi
 	(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)$(EXE) python3$(EXE))
-	(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)$(EXE) python$(EXE))
 	-if test "$(VERSION)" != "$(LDVERSION)"; then \
 		rm -f $(DESTDIR)$(BINDIR)/python$(VERSION)-config; \
 		(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(LDVERSION)-config python$(VERSION)-config); \
@@ -1327,8 +1326,6 @@ bininstall: altbininstall
 		rm -f $(DESTDIR)$(LIBPC)/python-$(LDVERSION)-embed.pc; \
 		(cd $(DESTDIR)$(LIBPC); $(LN) -s python-$(VERSION)-embed.pc python-$(LDVERSION)-embed.pc); \
 	fi
-	-rm -f $(DESTDIR)$(BINDIR)/python-config
-	(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)-config python-config)
 	-rm -f $(DESTDIR)$(BINDIR)/python3-config
 	(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)-config python3-config)
 	-rm -f $(DESTDIR)$(LIBPC)/python3.pc
