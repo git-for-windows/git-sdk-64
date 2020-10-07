@@ -1089,8 +1089,8 @@ that transport is unauthenticated.</p>
 fetching protocol. Each reference obj-id and name on the server is sent
 in packet-line format to the client, followed by a flush-pkt.  The only
 real difference is that the capability listing is different - the only
-possible values are <em>report-status</em>, <em>delete-refs</em>, <em>ofs-delta</em> and
-<em>push-options</em>.</p>
+possible values are <em>report-status</em>, <em>report-status-v2</em>, <em>delete-refs</em>,
+<em>ofs-delta</em>, <em>atomic</em> and <em>push-options</em>.</p>
 </div>
 </div>
 </div>
@@ -1241,7 +1241,7 @@ given by the pusher, who must be the signer.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>After receiving the pack data from the sender, the receiver sends a
-report if <em>report-status</em> capability is in effect.
+report if <em>report-status</em> or <em>report-status-v2</em> capability is in effect.
 It is a short listing of what happened in that update.  It will first
 list the status of the packfile unpacking as either <em>unpack ok</em> or
 <em>unpack [error]</em>.  Then it will list the status for each of the references
@@ -1262,6 +1262,42 @@ update was successful, or <em>ng [refname] [error]</em> if the update was not.</
   command-fail      = PKT-LINE("ng" SP refname SP error-msg)
 
   error-msg         = 1*(OCTET) ; where not "ok"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <em>report-status-v2</em> capability extends the protocol by adding new option
+lines in order to support reporting of reference rewritten by the
+<em>proc-receive</em> hook.  The <em>proc-receive</em> hook may handle a command for a
+pseudo-reference which may create or update one or more references, and each
+reference may have different name, different new-oid, and different old-oid.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  report-status-v2  = unpack-status
+                      1*(command-status-v2)
+                      flush-pkt
+
+  unpack-status     = PKT-LINE("unpack" SP unpack-result)
+  unpack-result     = "ok" / error-msg
+
+  command-status-v2 = command-ok-v2 / command-fail
+  command-ok-v2     = command-ok
+                      *option-line
+
+  command-ok        = PKT-LINE("ok" SP refname)
+  command-fail      = PKT-LINE("ng" SP refname SP error-msg)
+
+  error-msg         = 1*(OCTET) ; where not "ok"
+
+  option-line       = *1(option-refname)
+                      *1(option-old-oid)
+                      *1(option-new-oid)
+                      *1(option-forced-update)
+
+  option-refname    = PKT-LINE("option" SP "refname" SP refname)
+  option-old-oid    = PKT-LINE("option" SP "old-oid" SP obj-id)
+  option-new-oid    = PKT-LINE("option" SP "new-oid" SP obj-id)
+  option-force      = PKT-LINE("option" SP "forced-update")</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1298,7 +1334,7 @@ can be rejected.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-07-28 08:59:54 UTC
+Last updated 2020-10-06 08:35:29 UTC
 </div>
 </div>
 </body>

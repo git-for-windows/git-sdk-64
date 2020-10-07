@@ -479,9 +479,9 @@ and server advertised.  As a consequence of these rules, server MUST
 NOT advertise capabilities it does not understand.</p>
 </div>
 <div class="paragraph">
-<p>The <em>atomic</em>, <em>report-status</em>, <em>delete-refs</em>, <em>quiet</em>, and <em>push-cert</em>
-capabilities are sent and recognized by the receive-pack (push to server)
-process.</p>
+<p>The <em>atomic</em>, <em>report-status</em>, <em>report-status-v2</em>, <em>delete-refs</em>, <em>quiet</em>,
+and <em>push-cert</em> capabilities are sent and recognized by the receive-pack
+(push to server) process.</p>
 </div>
 <div class="paragraph">
 <p>The <em>ofs-delta</em> and <em>side-band-64k</em> capabilities are sent and recognized
@@ -824,6 +824,20 @@ for example messages.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_report_status_v2">report-status-v2</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Capability <em>report-status-v2</em> extends capability <em>report-status</em> by
+adding new "option" directives in order to support reference rewritten by
+the "proc-receive" hook.  The "proc-receive" hook may handle a command
+for a pseudo-reference which may create or update a reference with
+different name, new-oid, and old-oid.  While the capability
+<em>report-status</em> cannot report for such case.  See pack-protocol.txt
+for details.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_delete_refs">delete-refs</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -876,8 +890,10 @@ that process this push request.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>If the upload-pack server advertises this capability, fetch-pack may
-send "want" lines with SHA-1s that exist at the server but are not
-advertised by upload-pack.</p>
+send "want" lines with object names that exist at the server but are not
+advertised by upload-pack. For historical reasons, the name of this
+capability contains "sha1". Object names are always given using the
+object format negotiated through the <em>object-format</em> capability.</p>
 </div>
 </div>
 </div>
@@ -886,8 +902,10 @@ advertised by upload-pack.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>If the upload-pack server advertises this capability, fetch-pack may
-send "want" lines with SHA-1s that exist at the server but are not
-advertised by upload-pack.</p>
+send "want" lines with object names that exist at the server but are not
+advertised by upload-pack. For historical reasons, the name of this
+capability contains "sha1". Object names are always given using the
+object format negotiated through the <em>object-format</em> capability.</p>
 </div>
 </div>
 </div>
@@ -917,7 +935,7 @@ from the packfile.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-07-28 08:59:54 UTC
+Last updated 2020-10-06 08:35:29 UTC
 </div>
 </div>
 </body>

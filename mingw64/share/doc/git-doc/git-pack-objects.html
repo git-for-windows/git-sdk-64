@@ -755,17 +755,20 @@ the resulting packfile.  See <a href="git-rev-list.html">git-rev-list(1)</a> for
 This option specifies how missing objects are handled.</p>
 <div class="paragraph">
 <p>The form <em>--missing=error</em> requests that pack-objects stop with an error if
-a missing object is encountered.  This is the default action.</p>
+a missing object is encountered.  If the repository is a partial clone, an
+attempt to fetch missing objects will be made before declaring them missing.
+This is the default action.</p>
 </div>
 <div class="paragraph">
 <p>The form <em>--missing=allow-any</em> will allow object traversal to continue
-if a missing object is encountered.  Missing objects will silently be
-omitted from the results.</p>
+if a missing object is encountered.  No fetch of a missing object will occur.
+Missing objects will silently be omitted from the results.</p>
 </div>
 <div class="paragraph">
 <p>The form <em>--missing=allow-promisor</em> is like <em>allow-any</em>, but will only
 allow object traversal to continue for EXPECTED promisor missing objects.
-Unexpected missing object will raise an error.</p>
+No fetch of a missing object will occur.  An unexpected missing object will
+raise an error.</p>
 </div>
 </dd>
 <dt class="hdlist1">--exclude-promisor-objects</dt>
@@ -930,7 +933,7 @@ over user-wide config, and so forth).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-07-28 08:59:54 UTC
+Last updated 2020-10-06 08:35:29 UTC
 </div>
 </div>
 </body>

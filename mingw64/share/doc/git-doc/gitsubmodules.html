@@ -753,13 +753,13 @@ presence of the .url field.</p>
 <div class="sectionbody">
 <div class="literalblock">
 <div class="content">
-<pre># add a submodule
+<pre># Add a submodule
 git submodule add &lt;url&gt; &lt;path&gt;</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre># occasionally update the submodule to a new version:
+<pre># Occasionally update the submodule to a new version:
 git -C &lt;path&gt; checkout &lt;new version&gt;
 git add &lt;path&gt;
 git commit -m "update submodule to new version"</pre>
@@ -790,7 +790,7 @@ git config --global submodule.recurse true</pre>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre># Unlike the other commands below clone still needs
+<pre># Unlike most other commands below, clone still needs
 # its own recurse flag:
 git clone --recurse &lt;URL&gt; &lt;directory&gt;
 cd &lt;directory&gt;</pre>
@@ -800,8 +800,20 @@ cd &lt;directory&gt;</pre>
 <div class="content">
 <pre># Get to know the code:
 git grep foo
-git ls-files</pre>
+git ls-files --recurse-submodules</pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<code>git ls-files</code> also requires its own <code>--recurse-submodules</code> flag.
+</td>
+</tr>
+</table>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -812,7 +824,7 @@ git pull --rebase</pre>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre># change worktree
+<pre># Change worktree
 git checkout
 git reset</pre>
 </div>
@@ -824,12 +836,12 @@ git reset</pre>
 <div class="sectionbody">
 <div class="paragraph">
 <p>When cloning or pulling a repository containing submodules the submodules
-will not be checked out by default; You can instruct <em>clone</em> to recurse
-into submodules. The <em>init</em> and <em>update</em> subcommands of <em>git submodule</em>
+will not be checked out by default; you can instruct <code>clone</code> to recurse
+into submodules. The <code>init</code> and <code>update</code> subcommands of <code>git submodule</code>
 will maintain submodules checked out and at an appropriate revision in
-your working tree. Alternatively you can set <em>submodule.recurse</em> to have
-<em>checkout</em> recursing into submodules (note that <em>submodule.recurse</em> also
-affects other git commands, see <a href="git-config.html">git-config(1)</a> for a complete list).</p>
+your working tree. Alternatively you can set <code>submodule.recurse</code> to have
+<code>checkout</code> recursing into submodules (note that <code>submodule.recurse</code> also
+affects other Git commands, see <a href="git-config.html">git-config(1)</a> for a complete list).</p>
 </div>
 </div>
 </div>
@@ -852,7 +864,7 @@ affects other git commands, see <a href="git-config.html">git-config(1)</a> for 
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-07-28 08:59:54 UTC
+Last updated 2020-10-06 08:35:29 UTC
 </div>
 </div>
 </body>

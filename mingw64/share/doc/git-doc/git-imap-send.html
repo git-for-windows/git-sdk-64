@@ -507,11 +507,9 @@ set.</p>
 <h2 id="_configuration">CONFIGURATION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To use the tool, imap.folder and either imap.tunnel or imap.host must be set
+<p>To use the tool, <code>imap.folder</code> and either <code>imap.tunnel</code> or <code>imap.host</code> must be set
 to appropriate values.</p>
 </div>
-<div class="sect2">
-<h3 id="_variables">Variables</h3>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">imap.folder</dt>
@@ -571,8 +569,10 @@ then <em>git imap-send</em> uses the basic IMAP plaintext LOGIN command.</p>
 </dl>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_examples">Examples</h3>
+</div>
+<div class="sect1">
+<h2 id="_examples">EXAMPLES</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Using tunnel mode:</p>
 </div>
@@ -606,18 +606,27 @@ then <em>git imap-send</em> uses the basic IMAP plaintext LOGIN command.</p>
     user = bob
     pass = p4ssw0rd
     port = 123
-    sslverify = false</pre>
+    ; sslVerify = false</pre>
 </div>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+You may want to use <code>sslVerify=false</code>
+while troubleshooting, if you suspect that the reason you are
+having trouble connecting is because the certificate you use at
+the private server <code>example.com</code> you are trying to set up (or
+have set up) may not be verified correctly.
+</td>
+</tr>
+</table>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_examples_2">EXAMPLES</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>To submit patches using GMail&#8217;s IMAP interface, first, edit your ~/.gitconfig
-to specify your account settings:</p>
+<p>Using Gmail&#8217;s IMAP interface:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -625,13 +634,34 @@ to specify your account settings:</p>
         folder = "[Gmail]/Drafts"
         host = imaps://imap.gmail.com
         user = user@gmail.com
-        port = 993
-        sslverify = false</pre>
+        port = 993</pre>
 </div>
 </div>
-<div class="paragraph">
-<p>You might need to instead use: folder = "[Google Mail]/Drafts" if you get an error
-that the "Folder doesn&#8217;t exist".</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+You might need to instead use: <code>folder = "[Google Mail]/Drafts"</code> if you get an error
+that the "Folder doesn&#8217;t exist".
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+If your Gmail account is set to another language than English, the name of the "Drafts"
+folder will be localized.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Once the commits are ready to be sent, run the following command:</p>
@@ -642,7 +672,7 @@ that the "Folder doesn&#8217;t exist".</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Just make sure to disable line wrapping in the email client (GMail&#8217;s web
+<p>Just make sure to disable line wrapping in the email client (Gmail&#8217;s web
 interface will wrap lines no matter what, so you need to use a real
 IMAP client).</p>
 </div>
@@ -685,7 +715,7 @@ users may wish to visit this web page for more information:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-07-28 08:59:54 UTC
+Last updated 2020-10-06 08:35:29 UTC
 </div>
 </div>
 </body>

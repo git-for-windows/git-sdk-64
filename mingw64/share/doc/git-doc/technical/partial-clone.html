@@ -675,23 +675,15 @@ additional flag.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Fetching of objects is done using the existing transport mechanism using
-transport_fetch_refs(), setting a new transport option
-TRANS_OPT_NO_DEPENDENTS to indicate that only the objects themselves are
-desired, not any object that they refer to.</p>
-<div class="paragraph">
-<p>Because some transports invoke fetch_pack() in the same process, fetch_pack()
-has been updated to not use any object flags when the corresponding argument
-(no_dependents) is set.</p>
-</div>
+<p>Fetching of objects is done by invoking a "git fetch" subprocess.</p>
 </li>
 <li>
 <p>The local repository sends a request with the hashes of all requested
-objects as "want" lines, and does not perform any packfile negotiation.
+objects, and does not perform any packfile negotiation.
 It then receives a packfile.</p>
 </li>
 <li>
-<p>Because we are reusing the existing fetch-pack mechanism, fetching
+<p>Because we are reusing the existing fetch mechanism, fetching
 currently fetches all objects referred to by the requested objects, even
 though they are not necessary.</p>
 </li>
@@ -957,7 +949,7 @@ type of packfile that references it.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-07-28 08:59:54 UTC
+Last updated 2020-10-06 08:35:29 UTC
 </div>
 </div>
 </body>

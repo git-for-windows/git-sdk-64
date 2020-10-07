@@ -1329,6 +1329,20 @@ most the specified number of one-line descriptions from the
 actual commits that are being merged.  Defaults to false, and
 true is a synonym for 20.</p>
 </dd>
+<dt class="hdlist1">merge.suppressDest</dt>
+<dd>
+<p>By adding a glob that matches the names of integration
+branches to this multi-valued configuration variable, the
+default merge message computed for merges into these
+integration branches will omit "into &lt;branch name&gt;" from
+its title.</p>
+<div class="paragraph">
+<p>An element with an empty value can be used to clear the list
+of globs accumulated from previous configuration entries.
+When there is no <code>merge.suppressDest</code> variable defined, the
+default value of <code>master</code> is used for backward compatibility.</p>
+</div>
+</dd>
 <dt class="hdlist1">merge.renameLimit</dt>
 <dd>
 <p>The number of files to consider when performing rename detection
@@ -1399,39 +1413,6 @@ corresponding mergetool.&lt;guitool&gt;.cmd variable is defined.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>araxis</p>
-</li>
-<li>
-<p>bc</p>
-</li>
-<li>
-<p>bc3</p>
-</li>
-<li>
-<p>codecompare</p>
-</li>
-<li>
-<p>deltawalker</p>
-</li>
-<li>
-<p>diffmerge</p>
-</li>
-<li>
-<p>diffuse</p>
-</li>
-<li>
-<p>ecmerge</p>
-</li>
-<li>
-<p>emerge</p>
-</li>
-<li>
-<p>examdiff</p>
-</li>
-<li>
-<p>guiffy</p>
-</li>
-<li>
 <p>gvimdiff</p>
 </li>
 <li>
@@ -1441,40 +1422,16 @@ corresponding mergetool.&lt;guitool&gt;.cmd variable is defined.</p>
 <p>gvimdiff3</p>
 </li>
 <li>
-<p>kdiff3</p>
+<p>nvimdiff</p>
 </li>
 <li>
-<p>meld</p>
-</li>
-<li>
-<p>opendiff</p>
-</li>
-<li>
-<p>p4merge</p>
-</li>
-<li>
-<p>smerge</p>
-</li>
-<li>
-<p>tkdiff</p>
-</li>
-<li>
-<p>tortoisemerge</p>
-</li>
-<li>
-<p>vimdiff</p>
+<p>nvimdiff2</p>
 </li>
 <li>
 <p>vimdiff2</p>
 </li>
 <li>
 <p>vimdiff3</p>
-</li>
-<li>
-<p>winmerge</p>
-</li>
-<li>
-<p>xxdiff</p>
 </li>
 </ul>
 </div>
@@ -1538,7 +1495,7 @@ values containing whitespace characters are currently not supported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-07-28 08:59:54 UTC
+Last updated 2020-10-06 08:35:29 UTC
 </div>
 </div>
 </body>

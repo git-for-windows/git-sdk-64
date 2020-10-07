@@ -446,8 +446,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="literalblock">
 <div class="content">
-<pre>All binary numbers are in network byte order. Version 2 is described
-here unless stated otherwise.</pre>
+<pre>All binary numbers are in network byte order.
+In a repository using the traditional SHA-1, checksums and object IDs
+(object names) mentioned below are all computed using SHA-1.  Similarly,
+in SHA-256 repositories, these values are computed using SHA-256.
+Version 2 is described here unless stated otherwise.</pre>
 </div>
 </div>
 <div class="ulist">
@@ -506,8 +509,7 @@ extension is optional and can be ignored.</pre>
 </div>
 </li>
 <li>
-<p>160-bit SHA-1 over the content of the index file before this
-checksum.</p>
+<p>Hash checksum over the content of the index file before this checksum.</p>
 </li>
 </ul>
 </div>
@@ -603,7 +605,7 @@ Symbolic links and gitlinks have value 0 in this field.</pre>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>160-bit SHA-1 for the represented object</pre>
+<pre>Object name for the represented object</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -755,8 +757,8 @@ tree has;</p>
 <p>A newline (ASCII 10); and</p>
 </li>
 <li>
-<p>160-bit object name for the object that would result from writing
-this span of index as a tree.</p>
+<p>Object name for the object that would result from writing this span
+of index as a tree.</p>
 <div class="literalblock">
 <div class="content">
 <pre>An entry can be in an invalidated state and is represented by having
@@ -819,7 +821,7 @@ stage 1 to 3 (a missing stage is represented by "0" in this field);
 and</p>
 </li>
 <li>
-<p>At most three 160-bit object names of the entry in stages from 1 to 3
+<p>At most three object names of the entry in stages from 1 to 3
 (nothing is written for a missing stage).</p>
 </li>
 </ul>
@@ -847,8 +849,8 @@ top of that to produce the final index.</pre>
 <div class="ulist">
 <ul>
 <li>
-<p>160-bit SHA-1 of the shared index file. The shared index file path
-is $GIT_DIR/sharedindex.&lt;SHA-1&gt;. If all 160 bits are zero, the
+<p>Hash of the shared index file. The shared index file path
+is $GIT_DIR/sharedindex.&lt;hash&gt;. If all bits are zero, the
 index does not require a shared index file.</p>
 </li>
 <li>
@@ -913,11 +915,11 @@ ctime field until "file size".</p>
 <p>32-bit dir_flags (see struct dir_struct)</p>
 </li>
 <li>
-<p>160-bit SHA-1 of $GIT_DIR/info/exclude. Null SHA-1 means the file
+<p>Hash of $GIT_DIR/info/exclude. A null hash means the file
 does not exist.</p>
 </li>
 <li>
-<p>160-bit SHA-1 of core.excludesfile. Null SHA-1 means the file does
+<p>Hash of core.excludesfile. A null hash means the file does
 not exist.</p>
 </li>
 <li>
@@ -961,7 +963,7 @@ valid untracked cache entries.</p>
 read_directory_recursive() for the n-th directory.</p>
 </li>
 <li>
-<p>An ewah bitmap, the n-th bit indicates whether SHA-1 and stat data
+<p>An ewah bitmap, the n-th bit indicates whether hash and stat data
 is valid for the n-th directory and exists in the next data.</p>
 </li>
 <li>
@@ -969,7 +971,7 @@ is valid for the n-th directory and exists in the next data.</p>
 "one" bit in the previous ewah bitmap.</p>
 </li>
 <li>
-<p>An array of SHA-1. The n-th SHA-1 corresponds with the n-th "one" bit
+<p>An array of hashes. The n-th hash corresponds with the n-th "one" bit
 in the previous ewah bitmap.</p>
 </li>
 <li>
@@ -1044,13 +1046,13 @@ The signature for this extension is { 'E', 'O', 'I', 'E' }.</pre>
 <p>32-bit offset to the end of the index entries</p>
 </li>
 <li>
-<p>160-bit SHA-1 over the extension types and their sizes (but not
+<p>Hash over the extension types and their sizes (but not
 their contents).  E.g. if we have "TREE" extension that is N-bytes
 long, "REUC" extension that is M-bytes long, followed by "EOIE",
 then the hash would be:</p>
 <div class="literalblock">
 <div class="content">
-<pre>SHA-1("TREE" + &lt;binary representation of N&gt; +
+<pre>Hash("TREE" + &lt;binary representation of N&gt; +
 	"REUC" + &lt;binary representation of M&gt;)</pre>
 </div>
 </div>
@@ -1097,7 +1099,7 @@ in this block of entries.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-07-28 08:59:54 UTC
+Last updated 2020-10-06 08:35:29 UTC
 </div>
 </div>
 </body>

@@ -521,7 +521,18 @@ existing commit-graph file.</p>
 <p>With the <code>--changed-paths</code> option, compute and write information about the
 paths changed between a commit and its first parent. This operation can
 take a while on large repositories. It provides significant performance gains
-for getting history of a directory or a file with <code>git log -- &lt;path&gt;</code>.</p>
+for getting history of a directory or a file with <code>git log -- &lt;path&gt;</code>. If
+this option is given, future commit-graph writes will automatically assume
+that this option was intended. Use <code>--no-changed-paths</code> to stop storing this
+data.</p>
+</div>
+<div class="paragraph">
+<p>With the <code>--max-new-filters=&lt;n&gt;</code> option, generate at most <code>n</code> new Bloom
+filters (if <code>--changed-paths</code> is specified). If <code>n</code> is <code>-1</code>, no limit is
+enforced. Only commits present in the new layer count against this
+limit. To retroactively compute Bloom filters over earlier layers, it is
+advised to use <code>--split=replace</code>.  Overrides the <code>commitGraph.maxNewFilters</code>
+configuration.</p>
 </div>
 <div class="paragraph">
 <p>With the <code>--split[=&lt;strategy&gt;]</code> option, write the commit-graph as a
@@ -628,7 +639,7 @@ commit-graph file along with those reachable from <code>HEAD</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-07-28 08:59:54 UTC
+Last updated 2020-10-06 08:35:29 UTC
 </div>
 </div>
 </body>

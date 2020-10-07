@@ -442,6 +442,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
+<h2 id="_checksums_and_object_ids">Checksums and object IDs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a repository using the traditional SHA-1, pack checksums, index checksums,
+and object IDs (object names) mentioned below are all computed using SHA-1.
+Similarly, in SHA-256 repositories, these values are computed using SHA-256.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_pack_pack_files_have_the_following_format">pack-*.pack files have the following format:</h2>
 <div class="sectionbody">
 <div class="ulist">
@@ -487,7 +497,7 @@ compressed data</pre>
 <div class="content">
 <pre>   (deltified representation)
    n-byte type and length (3-bit type, (n-1)*7+4-bit length)
-   20-byte base object name if OBJ_REF_DELTA or a negative relative
+   base object name if OBJ_REF_DELTA or a negative relative
 offset from the delta object's position in the pack if this
 is an OBJ_OFS_DELTA object
    compressed delta data</pre>
@@ -501,7 +511,7 @@ length format and is not constrained to 32-bit or anything.</pre>
 </div>
 </li>
 <li>
-<p>The trailer records 20-byte SHA-1 checksum of all of the above.</p>
+<p>The trailer records a pack checksum of all of the above.</p>
 </li>
 </ul>
 </div>
@@ -547,8 +557,8 @@ ofs-delta and ref-delta, which is only valid in a pack file.</p>
 <div class="paragraph">
 <p>Both ofs-delta and ref-delta store the "delta" to be applied to
 another object (called <em>base object</em>) to reconstruct the object. The
-difference between them is, ref-delta directly encodes 20-byte base
-object name. If the base object is in the same pack, ofs-delta encodes
+difference between them is, ref-delta directly encodes base object
+name. If the base object is in the same pack, ofs-delta encodes
 the offset of the base object in the pack instead.</p>
 </div>
 <div class="paragraph">
@@ -668,7 +678,7 @@ beginning.</pre>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>20-byte object name.</pre>
+<pre>one object name of the appropriate size.</pre>
 </div>
 </div>
 </li>
@@ -676,13 +686,13 @@ beginning.</pre>
 <p>The file is concluded with a trailer:</p>
 <div class="literalblock">
 <div class="content">
-<pre>A copy of the 20-byte SHA-1 checksum at the end of
-corresponding packfile.</pre>
+<pre>A copy of the pack checksum at the end of the corresponding
+packfile.</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>20-byte SHA-1-checksum of all of the above.</pre>
+<pre>Index checksum of all of the above.</pre>
 </div>
 </div>
 </li>
@@ -740,7 +750,7 @@ Pack file entry: &lt;+</pre>
        If it is not DELTA, then deflated bytes (the size above
 	is the size before compression).
 If it is REF_DELTA, then
-  20-byte base object name SHA-1 (the size above is the
+  base object name (the size above is the
 	size of the delta data that follows).
          delta data, deflated.
 If it is OFS_DELTA, then
@@ -784,9 +794,9 @@ fanout[0] value.</p>
 <p>A 256-entry fan-out table just like v1.</p>
 </li>
 <li>
-<p>A table of sorted 20-byte SHA-1 object names.  These are
-packed together without offset values to reduce the cache
-footprint of the binary search for a specific object name.</p>
+<p>A table of sorted object names.  These are packed together
+without offset values to reduce the cache footprint of the
+binary search for a specific object name.</p>
 </li>
 <li>
 <p>A table of 4-byte CRC32 values of the packed object data.
@@ -810,13 +820,13 @@ not need to refer to this table.</p>
 <p>The same trailer as a v1 pack file:</p>
 <div class="literalblock">
 <div class="content">
-<pre>A copy of the 20-byte SHA-1 checksum at the end of
+<pre>A copy of the pack checksum at the end of
 corresponding packfile.</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>20-byte SHA-1-checksum of all of the above.</pre>
+<pre>Index checksum of all of the above.</pre>
 </div>
 </div>
 </li>
@@ -857,7 +867,12 @@ the number of base MIDX files, hash lengths and types.</p>
 <div class="literalblock">
 <div class="content">
 <pre>1-byte Object Id Version
-    Git only writes or recognizes version 1 (SHA1).</pre>
+    We infer the length of object IDs (OIDs) from this value:
+	1 =&gt; SHA-1
+	2 =&gt; SHA-256
+    If the hash type does not match the repository's hash algorithm,
+    the multi-pack-index file should be ignored with a warning
+    presented to the user.</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -949,7 +964,7 @@ otherwise specified.</pre>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>20-byte SHA1-checksum of the above contents.</pre>
+<pre>Index checksum of the above contents.</pre>
 </div>
 </div>
 </div>
@@ -957,7 +972,7 @@ otherwise specified.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-07-28 08:59:54 UTC
+Last updated 2020-10-06 08:35:29 UTC
 </div>
 </div>
 </body>
