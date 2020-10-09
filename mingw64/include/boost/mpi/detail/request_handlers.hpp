@@ -456,7 +456,7 @@ public:
       // Resize our buffer and get ready to receive its data
       this->extra::m_values.resize(this->extra::m_count);
       BOOST_MPI_CHECK_RESULT(MPI_Irecv,
-                             (&(this->extra::m_values[0]), this->extra::m_values.size(), get_mpi_datatype<T>(),
+                             (detail::c_data(this->extra::m_values), this->extra::m_values.size(), get_mpi_datatype<T>(),
                               stat.source(), stat.tag(), 
                               MPI_Comm(m_comm), m_requests + 1));
     }
@@ -478,7 +478,7 @@ public:
         // Resize our buffer and get ready to receive its data
         this->extra::m_values.resize(this->extra::m_count);
         BOOST_MPI_CHECK_RESULT(MPI_Irecv,
-                               (&(this->extra::m_values[0]), this->extra::m_values.size(), get_mpi_datatype<T>(),
+                               (detail::c_data(this->extra::m_values), this->extra::m_values.size(), get_mpi_datatype<T>(),
                                 stat.source(), stat.tag(), 
                                 MPI_Comm(m_comm), m_requests + 1));
       } else

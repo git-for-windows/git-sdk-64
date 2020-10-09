@@ -127,8 +127,6 @@ operator>>(basic_istream<CharType> &is, boost::uint64_t & t){
     return is;
 }
 
-//#endif
-
 template<>
 class back_insert_iterator<basic_string<char> > : public
     iterator<output_iterator_tag, char>

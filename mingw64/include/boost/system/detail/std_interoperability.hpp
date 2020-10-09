@@ -47,23 +47,23 @@ public:
         }
     }
 
-    virtual const char * name() const BOOST_NOEXCEPT
+    const char * name() const BOOST_NOEXCEPT BOOST_OVERRIDE
     {
         return pc_->name();
     }
 
-    virtual std::string message( int ev ) const
+    std::string message( int ev ) const BOOST_OVERRIDE
     {
         return pc_->message( ev );
     }
 
-    virtual std::error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT
+    std::error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT BOOST_OVERRIDE
     {
         return pc_->default_error_condition( ev );
     }
 
-    virtual bool equivalent( int code, const std::error_condition & condition ) const BOOST_NOEXCEPT;
-    virtual bool equivalent( const std::error_code & code, int condition ) const BOOST_NOEXCEPT;
+    bool equivalent( int code, const std::error_condition & condition ) const BOOST_NOEXCEPT BOOST_OVERRIDE;
+    bool equivalent( const std::error_code & code, int condition ) const BOOST_NOEXCEPT BOOST_OVERRIDE;
 };
 
 #if !defined(__SUNPRO_CC) // trailing __global is not supported

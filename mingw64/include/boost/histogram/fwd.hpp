@@ -14,6 +14,8 @@
 
 #include <boost/config.hpp> // BOOST_ATTRIBUTE_NODISCARD
 #include <boost/core/use_default.hpp>
+#include <tuple>
+#include <type_traits>
 #include <vector>
 
 namespace boost {
@@ -68,6 +70,9 @@ class variable;
 template <class Value = int, class MetaData = use_default, class Options = use_default,
           class Allocator = std::allocator<Value>>
 class category;
+
+template <class MetaData = use_default>
+class boolean;
 
 template <class... Ts>
 class variant;
@@ -144,6 +149,33 @@ template <class Axes, class Storage = default_storage>
 class BOOST_ATTRIBUTE_NODISCARD histogram;
 
 #endif // BOOST_HISTOGRAM_DOXYGEN_INVOKED
+
+namespace detail {
+
+/* Most of the histogram code is generic and works for any number of axes. Buffers with a
+ * fixed maximum capacity are used in some places, which have a size equal to the rank of
+ * a histogram. The buffers are statically allocated to improve performance, which means
+ * that they need a preset maximum capacity. 32 seems like a safe upper limit for the rank
+ * (you can nevertheless increase it here if necessary): the simplest non-trivial axis has
+ * 2 bins; even if counters are used which need only a byte of storage per bin, 32 axes
+ * would generate of 4 GB.
+ */
+#ifndef BOOST_HISTOGRAM_DETAIL_AXES_LIMIT
+#define BOOST_HISTOGRAM_DETAIL_AXES_LIMIT 32
+#endif
+
+template <class T>
+struct buffer_size_impl
+    : std::integral_constant<std::size_t, BOOST_HISTOGRAM_DETAIL_AXES_LIMIT> {};
+
+template <class... Ts>
+struct buffer_size_impl<std::tuple<Ts...>>
+    : std::integral_constant<std::size_t, sizeof...(Ts)> {};
+
+template <class T>
+using buffer_size = typename buffer_size_impl<T>::type;
+
+} // namespace detail
 
 } // namespace histogram
 } // namespace boost

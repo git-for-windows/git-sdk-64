@@ -16,6 +16,8 @@
 /* Force MPICH not to define SEEK_SET, SEEK_CUR, and SEEK_END, which
    conflict with the versions in <stdio.h> and <cstdio>. */
 #define MPICH_IGNORE_CXX_SEEK 1
+/* We do not want to link in the OpenMPI CXX stuff */
+#define OMPI_SKIP_MPICXX
 
 #include <mpi.h>
 #include <boost/config.hpp>
@@ -123,8 +125,7 @@
 #endif
 
 #if defined(OPEN_MPI)
-// We do not want to import C++ binding
-#define OMPI_BUILD_CXX_BINDINGS 1
+// Configuration for Open MPI
 #endif
 
 #if BOOST_MPI_VERSION >= 3 

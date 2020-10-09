@@ -1,5 +1,5 @@
 /*
- *             Copyright Andrey Semashev 2018.
+ *          Copyright Andrey Semashev 2018 - 2020.
  * Distributed under the Boost Software License, Version 1.0.
  *    (See accompanying file LICENSE_1_0.txt or copy at
  *          https://www.boost.org/LICENSE_1_0.txt)
@@ -26,8 +26,23 @@
 #pragma once
 #endif
 
-// Visual Studio 14 supports N4152 std::uncaught_exceptions()
-#if (defined(__cpp_lib_uncaught_exceptions) && __cpp_lib_uncaught_exceptions >= 201411) || \
+#if defined(__APPLE__)
+#include <Availability.h>
+// Apple systems only support std::uncaught_exceptions starting with specific versions:
+// - Mac OS >= 10.12
+// - iOS >= 10.0
+// - tvOS >= 10.0
+// - watchOS >= 3.0
+// https://github.com/boostorg/core/issues/80
+#if (defined(__cpp_lib_uncaught_exceptions) && __cpp_lib_uncaught_exceptions >= 201411) && \
+    ( \
+        (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || \
+        (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000) \
+    )
+#define BOOST_CORE_HAS_UNCAUGHT_EXCEPTIONS
+#endif
+// Visual Studio 14.0 supports N4152 std::uncaught_exceptions() but doesn't define __cpp_lib_uncaught_exceptions
+#elif (defined(__cpp_lib_uncaught_exceptions) && __cpp_lib_uncaught_exceptions >= 201411) || \
     (defined(_MSC_VER) && _MSC_VER >= 1900)
 #define BOOST_CORE_HAS_UNCAUGHT_EXCEPTIONS
 #endif
@@ -46,7 +61,11 @@
 #if defined(BOOST_CORE_HAS_CXXABI_H)
 // MinGW GCC 4.4 seem to not work the same way the newer GCC versions do. As a result, __cxa_get_globals based implementation will always return 0.
 // Just disable it for now and fall back to std::uncaught_exception().
-#if !(defined(__MINGW32__) && (defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__) < 405))
+// On AIX, xlclang++ does have cxxabi.h but doesn't have __cxa_get_globals (https://github.com/boostorg/core/issues/78).
+#if !( \
+        (defined(__MINGW32__) && (defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__) < 405)) || \
+        defined(__ibmxl__) \
+    )
 #include <cxxabi.h>
 #include <cstring>
 #define BOOST_CORE_HAS_CXA_GET_GLOBALS
@@ -76,7 +95,7 @@ extern "C" __cxa_eh_globals* __cxa_get_globals() BOOST_NOEXCEPT_OR_NOTHROW __att
 #endif
 } // namespace __cxxabiv1
 #endif
-#endif // !(defined(__MINGW32__) && (defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__) < 405))
+#endif
 #endif // defined(BOOST_CORE_HAS_CXXABI_H)
 
 #if defined(_MSC_VER) && _MSC_VER >= 1400

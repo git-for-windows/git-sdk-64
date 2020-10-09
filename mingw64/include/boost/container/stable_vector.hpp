@@ -434,13 +434,13 @@ class stable_vector_iterator
 
    #if defined(STABLE_VECTOR_ENABLE_INVARIANT_CHECKING)
 
-      #define STABLE_VECTOR_CHECK_INVARIANT \
+      #define BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT \
                invariant_checker BOOST_JOIN(check_invariant_,__LINE__)(*this); \
                BOOST_JOIN(check_invariant_,__LINE__).touch();
 
    #else //STABLE_VECTOR_ENABLE_INVARIANT_CHECKING
 
-      #define STABLE_VECTOR_CHECK_INVARIANT
+      #define BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT
 
    #endif   //#if defined(STABLE_VECTOR_ENABLE_INVARIANT_CHECKING)
 
@@ -604,7 +604,7 @@ class stable_vector
    BOOST_CONTAINER_FORCEINLINE stable_vector() BOOST_NOEXCEPT_IF(dtl::is_nothrow_default_constructible<ValueAllocator>::value)
       : internal_data(), index()
    {
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
    }
 
    //! <b>Effects</b>: Constructs a stable_vector taking the allocator as parameter.
@@ -615,7 +615,7 @@ class stable_vector
    BOOST_CONTAINER_FORCEINLINE explicit stable_vector(const allocator_type& al) BOOST_NOEXCEPT_OR_NOTHROW
       : internal_data(al), index(al)
    {
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
    }
 
    //! <b>Effects</b>: Constructs a stable_vector
@@ -630,7 +630,7 @@ class stable_vector
    {
       stable_vector_detail::clear_on_destroy<stable_vector> cod(*this);
       this->resize(n);
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       cod.release();
    }
 
@@ -648,7 +648,7 @@ class stable_vector
    {
       stable_vector_detail::clear_on_destroy<stable_vector> cod(*this);
       this->resize(n, default_init);
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       cod.release();
    }
 
@@ -664,7 +664,7 @@ class stable_vector
    {
       stable_vector_detail::clear_on_destroy<stable_vector> cod(*this);
       this->resize(n);
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       cod.release();
    }
 
@@ -682,7 +682,7 @@ class stable_vector
    {
       stable_vector_detail::clear_on_destroy<stable_vector> cod(*this);
       this->resize(n, default_init);
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       cod.release();
    }
 
@@ -698,7 +698,7 @@ class stable_vector
    {
       stable_vector_detail::clear_on_destroy<stable_vector> cod(*this);
       this->insert(this->cend(), n, t);
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       cod.release();
    }
 
@@ -715,7 +715,7 @@ class stable_vector
    {
       stable_vector_detail::clear_on_destroy<stable_vector> cod(*this);
       this->insert(this->cend(), first, last);
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       cod.release();
    }
 
@@ -732,7 +732,7 @@ class stable_vector
    {
       stable_vector_detail::clear_on_destroy<stable_vector> cod(*this);
       this->insert(this->cend(), x.begin(), x.end());
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       cod.release();
    }
 
@@ -749,7 +749,7 @@ class stable_vector
    {
       stable_vector_detail::clear_on_destroy<stable_vector> cod(*this);
       insert(cend(), il.begin(), il.end());
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       cod.release();
    }
 #endif
@@ -775,7 +775,7 @@ class stable_vector
    {
       stable_vector_detail::clear_on_destroy<stable_vector> cod(*this);
       this->insert(this->cend(), x.begin(), x.end());
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       cod.release();
    }
 
@@ -795,7 +795,7 @@ class stable_vector
       else{
          stable_vector_detail::clear_on_destroy<stable_vector> cod(*this);
          this->insert(this->cend(), boost::make_move_iterator(x.begin()), boost::make_move_iterator(x.end()));
-         STABLE_VECTOR_CHECK_INVARIANT;
+         BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
          cod.release();
       }
    }
@@ -822,7 +822,7 @@ class stable_vector
    //! <b>Complexity</b>: Linear to the number of elements in x.
    stable_vector& operator=(BOOST_COPY_ASSIGN_REF(stable_vector) x)
    {
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       if (BOOST_LIKELY(this != &x)) {
          node_allocator_type &this_alloc     = this->priv_node_alloc();
          const node_allocator_type &x_alloc  = x.priv_node_alloc();
@@ -865,7 +865,7 @@ class stable_vector
          //Resources can be transferred if both allocators are
          //going to be equal after this function (either propagated or already equal)
          if(propagate_alloc || allocators_equal){
-            STABLE_VECTOR_CHECK_INVARIANT
+            BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT
             //Destroy objects but retain memory in case x reuses it in the future
             this->clear();
             //Move allocator if needed
@@ -889,7 +889,7 @@ class stable_vector
    //! <b>Complexity</b>: Linear to the range [il.begin(), il.end()).
    stable_vector& operator=(std::initializer_list<value_type> il)
    {
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       assign(il.begin(), il.end());
       return *this;
    }
@@ -920,7 +920,7 @@ class stable_vector
    #endif
       assign(InputIterator first,InputIterator last)
    {
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       iterator first1   = this->begin();
       iterator last1    = this->end();
       for ( ; first1 != last1 && first != last; ++first1, ++first)
@@ -941,7 +941,7 @@ class stable_vector
    //!
    BOOST_CONTAINER_FORCEINLINE void assign(std::initializer_list<value_type> il)
    {
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       assign(il.begin(), il.end());
    }
 #endif
@@ -1124,7 +1124,7 @@ class stable_vector
    void resize(size_type n)
    {
       typedef value_init_construct_iterator<value_type, difference_type> value_init_iterator;
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       if(n > this->size())
          this->insert(this->cend(), value_init_iterator(n - this->size()), value_init_iterator());
       else if(n < this->size())
@@ -1142,7 +1142,7 @@ class stable_vector
    void resize(size_type n, default_init_t)
    {
       typedef default_init_construct_iterator<value_type, difference_type> default_init_iterator;
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       if(n > this->size())
          this->insert(this->cend(), default_init_iterator(n - this->size()), default_init_iterator());
       else if(n < this->size())
@@ -1157,7 +1157,7 @@ class stable_vector
    //! <b>Complexity</b>: Linear to the difference between size() and new_size.
    void resize(size_type n, const T& t)
    {
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       if(n > this->size())
          this->insert(this->cend(), n - this->size(), t);
       else if(n < this->size())
@@ -1190,7 +1190,7 @@ class stable_vector
    //! <b>Throws</b>: If memory allocation allocation throws.
    void reserve(size_type n)
    {
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       if(n > this->max_size()){
          throw_length_error("stable_vector::reserve max_size() exceeded");
       }
@@ -1562,7 +1562,7 @@ class stable_vector
    iterator insert(const_iterator p, size_type n, const T& t)
    {
       BOOST_ASSERT(this->priv_in_range_or_end(p));
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       typedef constant_iterator<value_type, difference_type> cvalue_iterator;
       return this->insert(p, cvalue_iterator(t, n), cvalue_iterator());
    }
@@ -1579,7 +1579,7 @@ class stable_vector
    BOOST_CONTAINER_FORCEINLINE iterator insert(const_iterator p, std::initializer_list<value_type> il)
    {
       //Position checks done by insert()
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       return insert(p, il.begin(), il.end());
    }
 #endif
@@ -1608,7 +1608,7 @@ class stable_vector
          )
    {
       BOOST_ASSERT(this->priv_in_range_or_end(p));
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       const size_type pos_n = p - this->cbegin();
       for(; first != last; ++first){
          this->emplace(p, *first);
@@ -1678,7 +1678,7 @@ class stable_vector
    BOOST_CONTAINER_FORCEINLINE iterator erase(const_iterator p) BOOST_NOEXCEPT_OR_NOTHROW
    {
       BOOST_ASSERT(this->priv_in_range(p));
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       const size_type d = p - this->cbegin();
       index_iterator it = this->index.begin() + d;
       this->priv_delete_node(p.node_pointer());
@@ -1697,7 +1697,7 @@ class stable_vector
    {
       BOOST_ASSERT(first == last ||
          (first < last && this->priv_in_range(first) && this->priv_in_range_or_end(last)));
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       const const_iterator cbeg(this->cbegin());
       const size_type d1 = static_cast<size_type>(first - cbeg),
                       d2 = static_cast<size_type>(last  - cbeg);
@@ -1733,7 +1733,7 @@ class stable_vector
       BOOST_ASSERT(allocator_traits_type::propagate_on_container_swap::value ||
                    allocator_traits_type::is_always_equal::value ||
                    this->get_stored_allocator() == x.get_stored_allocator());
-      STABLE_VECTOR_CHECK_INVARIANT;
+      BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT;
       dtl::bool_<allocator_traits_type::propagate_on_container_swap::value> flag;
       dtl::swap_alloc(this->priv_node_alloc(), x.priv_node_alloc(), flag);
       //vector's allocator is swapped here
@@ -2174,7 +2174,7 @@ stable_vector(InputIterator, InputIterator, Allocator const&) ->
 
 #ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
 
-#undef STABLE_VECTOR_CHECK_INVARIANT
+#undef BOOST_CONTAINER_STABLE_VECTOR_CHECK_INVARIANT
 
 }  //namespace container {
 

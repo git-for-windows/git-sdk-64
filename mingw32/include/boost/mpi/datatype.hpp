@@ -80,7 +80,7 @@ struct is_mpi_logical_datatype
  *  complex MPI data type for a given C++ type.
  *
  *  This type trait determines when there is a direct mapping from a
- *  C++ type to an MPI data type that is classified as an complex data
+ *  C++ type to an MPI data type that is classified as a complex data
  *  type. See @c is_mpi_builtin_datatype for general information about
  *  built-in MPI data types.
  */

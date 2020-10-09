@@ -162,18 +162,26 @@ private:
 //  - a conversion to 'path' using 'operator const boost::filesystem::path&()',
 //  - then a call to 'is_directory(const path& p)' which recomputes the status with 'detail::status(p)'.
 //
-//  These functions avoid a costly recomputation of the status if one calls 'is_directory(e)' instead of 'is_directory(e.status)'
+//  These functions avoid a costly recomputation of the status if one calls 'is_directory(e)' instead of 'is_directory(e.status())'
 
-inline file_status status         (const directory_entry& e) BOOST_NOEXCEPT { return e.status(); }
-inline bool        type_present   (const directory_entry& e) BOOST_NOEXCEPT { return filesystem::type_present(e.status()); }
-inline bool        status_known   (const directory_entry& e) BOOST_NOEXCEPT { return filesystem::status_known(e.status()); }
-inline bool        exists         (const directory_entry& e) BOOST_NOEXCEPT { return filesystem::exists(e.status()); }
-inline bool        is_regular_file(const directory_entry& e) BOOST_NOEXCEPT { return filesystem::is_regular_file(e.status()); }
-inline bool        is_directory   (const directory_entry& e) BOOST_NOEXCEPT { return filesystem::is_directory(e.status()); }
-inline bool        is_symlink     (const directory_entry& e) BOOST_NOEXCEPT { return filesystem::is_symlink(e.status()); }
-inline bool        is_other       (const directory_entry& e) BOOST_NOEXCEPT { return filesystem::is_other(e.status()); }
+inline file_status status         (const directory_entry& e) { return e.status(); }
+inline file_status status         (const directory_entry& e, system::error_code& ec) BOOST_NOEXCEPT { return e.status(ec); }
+inline bool        type_present   (const directory_entry& e) { return filesystem::type_present(e.status()); }
+inline bool        type_present   (const directory_entry& e, system::error_code& ec) BOOST_NOEXCEPT { return filesystem::type_present(e.status(ec)); }
+inline bool        status_known   (const directory_entry& e) { return filesystem::status_known(e.status()); }
+inline bool        status_known   (const directory_entry& e, system::error_code& ec) BOOST_NOEXCEPT { return filesystem::status_known(e.status(ec)); }
+inline bool        exists         (const directory_entry& e) { return filesystem::exists(e.status()); }
+inline bool        exists         (const directory_entry& e, system::error_code& ec) BOOST_NOEXCEPT { return filesystem::exists(e.status(ec)); }
+inline bool        is_regular_file(const directory_entry& e) { return filesystem::is_regular_file(e.status()); }
+inline bool        is_regular_file(const directory_entry& e, system::error_code& ec) BOOST_NOEXCEPT { return filesystem::is_regular_file(e.status(ec)); }
+inline bool        is_directory   (const directory_entry& e) { return filesystem::is_directory(e.status()); }
+inline bool        is_directory   (const directory_entry& e, system::error_code& ec) BOOST_NOEXCEPT { return filesystem::is_directory(e.status(ec)); }
+inline bool        is_symlink     (const directory_entry& e) { return filesystem::is_symlink(e.symlink_status()); }
+inline bool        is_symlink     (const directory_entry& e, system::error_code& ec) BOOST_NOEXCEPT { return filesystem::is_symlink(e.symlink_status(ec)); }
+inline bool        is_other       (const directory_entry& e) { return filesystem::is_other(e.status()); }
+inline bool        is_other       (const directory_entry& e, system::error_code& ec) BOOST_NOEXCEPT { return filesystem::is_other(e.status(ec)); }
 #ifndef BOOST_FILESYSTEM_NO_DEPRECATED
-inline bool        is_regular     (const directory_entry& e) BOOST_NOEXCEPT { return filesystem::is_regular(e.status()); }
+inline bool        is_regular     (const directory_entry& e) { return filesystem::is_regular(e.status()); }
 #endif
 
 //--------------------------------------------------------------------------------------//

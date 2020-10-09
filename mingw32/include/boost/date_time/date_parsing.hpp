@@ -96,18 +96,18 @@ namespace date_time {
         }
 #else  //c+11 and beyond
         static std::map<std::string, unsigned short> month_map =
-          { { "jan", 1 },  { "january", 1 },
-            { "feb", 2 },  { "february", 2 },
-            { "mar", 3 },  { "march", 3 },
-            { "apr", 4 },  { "april", 4 },
-            { "may", 5 },
-            { "jun", 6 },  { "june", 6 },
-            { "jul", 7 },  { "july", 7 },
-            { "aug", 8 },  { "august", 8 },
-            { "sep", 9 },  { "september", 9 },
-            { "oct", 10 }, { "october", 10 },
-            { "nov", 11 }, { "november", 11 },
-            { "dec", 12 }, { "december", 12 }
+          { { "jan", static_cast<unsigned short>(1) },  { "january",   static_cast<unsigned short>(1) },
+            { "feb", static_cast<unsigned short>(2) },  { "february",  static_cast<unsigned short>(2) },
+            { "mar", static_cast<unsigned short>(3) },  { "march",     static_cast<unsigned short>(3) },
+            { "apr", static_cast<unsigned short>(4) },  { "april",     static_cast<unsigned short>(4) },
+            { "may", static_cast<unsigned short>(5) },
+            { "jun", static_cast<unsigned short>(6) },  { "june",      static_cast<unsigned short>(6) },
+            { "jul", static_cast<unsigned short>(7) },  { "july",      static_cast<unsigned short>(7) },
+            { "aug", static_cast<unsigned short>(8) },  { "august",    static_cast<unsigned short>(8) },
+            { "sep", static_cast<unsigned short>(9) },  { "september", static_cast<unsigned short>(9) },
+            { "oct", static_cast<unsigned short>(10) }, { "october",   static_cast<unsigned short>(10)},
+            { "nov", static_cast<unsigned short>(11) }, { "november",  static_cast<unsigned short>(11)},
+            { "dec", static_cast<unsigned short>(12) }, { "december",  static_cast<unsigned short>(12)}
           };
 #endif
         std::map<std::string, unsigned short>::const_iterator mitr = month_map.find( str );

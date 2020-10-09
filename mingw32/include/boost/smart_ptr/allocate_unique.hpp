@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/smart_ptr/detail/sp_noexcept.hpp>
 #include <boost/smart_ptr/detail/sp_nullptr_t.hpp>
+#include <boost/core/allocator_access.hpp>
 #include <boost/core/alloc_construct.hpp>
 #include <boost/core/empty_value.hpp>
 #include <boost/core/first_scalar.hpp>
@@ -60,30 +61,6 @@ struct sp_alloc_value {
     typedef typename boost::remove_cv<typename
         boost::remove_extent<T>::type>::type type;
 };
-
-#if !defined(BOOST_NO_CXX11_ALLOCATOR)
-template<class A, class T>
-struct sp_alloc_to {
-    typedef typename std::allocator_traits<A>::template rebind_alloc<T> type;
-};
-#else
-template<class A, class T>
-struct sp_alloc_to {
-    typedef typename A::template rebind<T>::other type;
-};
-#endif
-
-#if !defined(BOOST_NO_CXX11_ALLOCATOR)
-template<class A>
-struct sp_alloc_type {
-    typedef typename std::allocator_traits<A>::pointer type;
-};
-#else
-template<class A>
-struct sp_alloc_type {
-    typedef typename A::pointer type;
-};
-#endif
 
 template<class T, class P>
 class sp_alloc_ptr {
@@ -296,7 +273,7 @@ operator!=(detail::sp_nullptr_t,
 
 template<class A>
 inline void
-sp_alloc_clear(A& a, typename sp_alloc_type<A>::type p, std::size_t,
+sp_alloc_clear(A& a, typename boost::allocator_pointer<A>::type p, std::size_t,
     boost::false_type)
 {
     boost::alloc_destroy(a, boost::to_address(p));
@@ -304,8 +281,8 @@ sp_alloc_clear(A& a, typename sp_alloc_type<A>::type p, std::size_t,
 
 template<class A>
 inline void
-sp_alloc_clear(A& a, typename sp_alloc_type<A>::type p, std::size_t n,
-    boost::true_type)
+sp_alloc_clear(A& a, typename boost::allocator_pointer<A>::type p,
+    std::size_t n, boost::true_type)
 {
 #if defined(BOOST_MSVC) && BOOST_MSVC < 1800
     if (!p) {
@@ -320,15 +297,15 @@ sp_alloc_clear(A& a, typename sp_alloc_type<A>::type p, std::size_t n,
 
 template<class T, class A>
 class alloc_deleter
-    : empty_value<typename detail::sp_alloc_to<A,
+    : empty_value<typename allocator_rebind<A,
         typename detail::sp_alloc_value<T>::type>::type> {
-    typedef typename detail::sp_alloc_to<A,
+    typedef typename allocator_rebind<A,
         typename detail::sp_alloc_value<T>::type>::type allocator;
     typedef empty_value<allocator> base;
 
 public:
     typedef detail::sp_alloc_ptr<T,
-        typename detail::sp_alloc_type<allocator>::type> pointer;
+        typename allocator_pointer<allocator>::type> pointer;
 
     explicit alloc_deleter(const allocator& a) BOOST_SP_NOEXCEPT
         : base(empty_init_t(), a) { }
@@ -349,7 +326,7 @@ namespace detail {
 template<class T, class A>
 class sp_alloc_make {
 public:
-    typedef typename sp_alloc_to<A,
+    typedef typename boost::allocator_rebind<A,
         typename sp_alloc_value<T>::type>::type allocator;
 
 private:
@@ -384,7 +361,7 @@ public:
     }
 
 private:
-    typedef typename sp_alloc_type<allocator>::type pointer;
+    typedef typename boost::allocator_pointer<allocator>::type pointer;
 
     allocator a_;
     std::size_t n_;

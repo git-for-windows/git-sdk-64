@@ -111,19 +111,19 @@ private:
 class BOOST_TEST_DECL unit_test_log_t : public test_observer {
 public:
     // test_observer interface implementation
-    virtual void        test_start( counter_t test_cases_amount, test_unit_id );
-    virtual void        test_finish();
-    virtual void        test_aborted();
+    void        test_start( counter_t test_cases_amount, test_unit_id ) BOOST_OVERRIDE;
+    void        test_finish() BOOST_OVERRIDE;
+    void        test_aborted() BOOST_OVERRIDE;
 
-    virtual void        test_unit_start( test_unit const& );
-    virtual void        test_unit_finish( test_unit const&, unsigned long elapsed );
-    virtual void        test_unit_skipped( test_unit const&, const_string );
-    virtual void        test_unit_aborted( test_unit const& );
-    virtual void        test_unit_timed_out( test_unit const& );
+    void        test_unit_start( test_unit const& ) BOOST_OVERRIDE;
+    void        test_unit_finish( test_unit const&, unsigned long elapsed ) BOOST_OVERRIDE;
+    void        test_unit_skipped( test_unit const&, const_string ) BOOST_OVERRIDE;
+    void        test_unit_aborted( test_unit const& ) BOOST_OVERRIDE;
+    void        test_unit_timed_out( test_unit const& ) BOOST_OVERRIDE;
 
-    virtual void        exception_caught( execution_exception const& ex );
+    void        exception_caught( execution_exception const& ex ) BOOST_OVERRIDE;
 
-    virtual int         priority() { return 2; }
+    int         priority() BOOST_OVERRIDE { return 2; }
 
     // log configuration methods
     //! Sets the stream for all loggers
@@ -185,7 +185,7 @@ public:
     //! several loggers are active, the order of priority is CUSTOM, HRF, XML, and JUNIT.
     //! If (unit_test_log_formatter*)0 is given as argument, the custom logger (if any) is removed.
     //!
-    //! @note The ownership of the pointer is transfered to the Boost.Test framework. This call is equivalent to
+    //! @note The ownership of the pointer is transferred to the Boost.Test framework. This call is equivalent to
     //! - a call to @c add_formatter
     //! - a call to @c set_format(OF_CUSTOM_LOGGER)
     //! - a configuration of the newly added logger with a previously configured stream and log level.
@@ -201,7 +201,7 @@ public:
     //! If (unit_test_log_formatter*)0 is given as argument, the custom logger (if any) is removed and
     //! no other action is performed.
     //!
-    //! @note The ownership of the pointer is transfered to the Boost.Test framework.
+    //! @note The ownership of the pointer is transferred to the Boost.Test framework.
     //! @par Since Boost 1.62
     void                add_formatter( unit_test_log_formatter* the_formatter );
 

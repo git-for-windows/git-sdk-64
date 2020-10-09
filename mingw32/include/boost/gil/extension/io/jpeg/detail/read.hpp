@@ -276,8 +276,8 @@ public:
               )
     {}
 
-    template< typename Images >
-    void apply( any_image< Images >& images )
+    template< typename ...Images >
+    void apply( any_image< Images... >& images )
     {
         detail::jpeg_type_format_checker format_checker( this->_info._color_space != JCS_YCbCr
                                                        ? this->_info._color_space

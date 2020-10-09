@@ -48,7 +48,7 @@ basic_binary_iarchive<Archive>::load_override(class_name_type & t){
 
 template<class Archive>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL void
-basic_binary_iarchive<Archive>::init(void){
+basic_binary_iarchive<Archive>::init() {
     // read signature in an archive version independent manner
     std::string file_signature;
     
@@ -84,7 +84,7 @@ basic_binary_iarchive<Archive>::init(void){
 
     // make sure the version of the reading archive library can
     // support the format of the archive being read
-    library_version_type input_library_version;
+    boost::serialization::library_version_type input_library_version;
     //* this->This() >> input_library_version;
     {
         int v = 0;
@@ -115,7 +115,7 @@ basic_binary_iarchive<Archive>::init(void){
         if(v == 0)
             v = this->This()->m_sb.sbumpc();
         #endif
-        input_library_version = static_cast<library_version_type>(v);
+        input_library_version = static_cast<boost::serialization::library_version_type>(v);
     }
     
     #if BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3205))

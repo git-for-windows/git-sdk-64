@@ -108,8 +108,7 @@ public:
                 net::post(std::move(*this));
                 BOOST_ASSERT(impl.rd_block.is_locked(this));
 
-                // VFALCO Is this check correct here?
-                BOOST_ASSERT(! ec && impl.check_stop_now(ec));
+                BOOST_ASSERT(!ec);
                 if(impl.check_stop_now(ec))
                 {
                     BOOST_ASSERT(ec == net::error::operation_aborted);
@@ -804,7 +803,7 @@ read(DynamicBuffer& buffer, error_code& ec)
 }
 
 template<class NextLayer, bool deflateSupported>
-template<class DynamicBuffer, class ReadHandler>
+template<class DynamicBuffer, BOOST_BEAST_ASYNC_TPARAM2 ReadHandler>
 BOOST_BEAST_ASYNC_RESULT2(ReadHandler)
 stream<NextLayer, deflateSupported>::
 async_read(DynamicBuffer& buffer, ReadHandler&& handler)
@@ -878,7 +877,7 @@ read_some(
 }
 
 template<class NextLayer, bool deflateSupported>
-template<class DynamicBuffer, class ReadHandler>
+template<class DynamicBuffer, BOOST_BEAST_ASYNC_TPARAM2 ReadHandler>
 BOOST_BEAST_ASYNC_RESULT2(ReadHandler)
 stream<NextLayer, deflateSupported>::
 async_read_some(
@@ -1263,7 +1262,7 @@ loop:
 }
 
 template<class NextLayer, bool deflateSupported>
-template<class MutableBufferSequence, class ReadHandler>
+template<class MutableBufferSequence, BOOST_BEAST_ASYNC_TPARAM2 ReadHandler>
 BOOST_BEAST_ASYNC_RESULT2(ReadHandler)
 stream<NextLayer, deflateSupported>::
 async_read_some(

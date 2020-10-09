@@ -45,16 +45,8 @@ inline void save_collection(
     const item_version_type item_version(
         version<typename Container::value_type>::value
     );
-    #if 0
-        boost::archive::library_version_type library_version(
-            ar.get_library_version()
-        );
-        if(boost::archive::library_version_type(3) < library_version){
-            ar << BOOST_SERIALIZATION_NVP(item_version);
-        }
-    #else
-        ar << BOOST_SERIALIZATION_NVP(item_version);
-    #endif
+
+    ar << BOOST_SERIALIZATION_NVP(item_version);
 
     typename Container::const_iterator it = s.begin();
     while(count-- > 0){

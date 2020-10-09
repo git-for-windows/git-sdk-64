@@ -69,12 +69,6 @@ namespace boost { namespace date_time {
       delimiters.push_back(string_type(period_closed_range_end_delimeter));
     }
 
-    period_parser(const period_parser<date_type,CharT>& p_parser)
-    {
-      this->delimiters = p_parser.delimiters;
-      this->m_range_option = p_parser.m_range_option;
-    }
-
     period_range_option range_option() const
     {
       return m_range_option;

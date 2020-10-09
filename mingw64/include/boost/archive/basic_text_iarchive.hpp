@@ -54,7 +54,7 @@ public:
 #else
 protected:
     #if BOOST_WORKAROUND(BOOST_MSVC, < 1500)
-        // for some inexplicable reason insertion of "class" generates compile erro
+        // for some inexplicable reason insertion of "class" generates compile error
         // on msvc 7.1
         friend detail::interface_iarchive<Archive>;
     #else
@@ -76,12 +76,12 @@ protected:
     load_override(class_name_type & t);
 
     BOOST_ARCHIVE_OR_WARCHIVE_DECL void
-    init(void);
+    init();
 
     basic_text_iarchive(unsigned int flags) :
         detail::common_iarchive<Archive>(flags)
     {}
-    ~basic_text_iarchive(){}
+    ~basic_text_iarchive() BOOST_OVERRIDE {}
 };
 
 } // namespace archive

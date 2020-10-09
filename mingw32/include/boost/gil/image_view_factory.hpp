@@ -64,7 +64,7 @@ interleaved_view(std::size_t width, std::size_t height,
 /// \ingroup ImageViewConstructors
 /// \brief Constructing image views from raw interleaved pixel data
 template <typename Iterator>
-auto interleaved_view(point<std::size_t> dim, Iterator pixels,
+auto interleaved_view(point<std::ptrdiff_t> dim, Iterator pixels,
                       std::ptrdiff_t rowsize_in_bytes)
     -> typename type_from_x_iterator<Iterator>::view_t
 {

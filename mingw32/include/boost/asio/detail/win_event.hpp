@@ -19,6 +19,7 @@
 
 #if defined(BOOST_ASIO_WINDOWS)
 
+#include <cstddef>
 #include <boost/asio/detail/assert.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/socket_types.hpp>
@@ -66,6 +67,18 @@ public:
     lock.unlock();
     if (have_waiters)
       ::SetEvent(events_[1]);
+  }
+
+  // Unlock the mutex and signal one waiter who may destroy us.
+  template <typename Lock>
+  void unlock_and_signal_one_for_destruction(Lock& lock)
+  {
+    BOOST_ASIO_ASSERT(lock.locked());
+    state_ |= 1;
+    bool have_waiters = (state_ > 1);
+    if (have_waiters)
+      ::SetEvent(events_[1]);
+    lock.unlock();
   }
 
   // If there's a waiter, unlock the mutex and signal it.

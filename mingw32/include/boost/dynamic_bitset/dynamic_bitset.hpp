@@ -23,6 +23,7 @@
 #include <string>
 #include <stdexcept>
 #include <algorithm>
+#include <iterator>     // used to implement append(Iter, Iter)
 #include <vector>
 #include <climits>      // for CHAR_BIT
 
@@ -43,12 +44,11 @@
 #include "boost/dynamic_bitset_fwd.hpp"
 #include "boost/dynamic_bitset/detail/dynamic_bitset.hpp"
 #include "boost/dynamic_bitset/detail/lowest_bit.hpp"
-#include "boost/detail/iterator.hpp" // used to implement append(Iter, Iter)
 #include "boost/move/move.hpp"
 #include "boost/limits.hpp"
 #include "boost/static_assert.hpp"
-#include "boost/utility/addressof.hpp"
-#include "boost/detail/no_exceptions_support.hpp"
+#include "boost/core/addressof.hpp"
+#include "boost/core/no_exceptions_support.hpp"
 #include "boost/throw_exception.hpp"
 #include "boost/functional/hash/hash.hpp"
 
@@ -247,7 +247,7 @@ public:
     {
         assert(first != last);
         block_width_type r = count_extra_bits();
-        std::size_t d = boost::detail::distance(first, last);
+        std::size_t d = std::distance(first, last);
         m_bits.reserve(num_blocks() + d);
         if (r == 0) {
             for( ; first != last; ++first)
@@ -267,7 +267,7 @@ public:
     void append(BlockInputIterator first, BlockInputIterator last) // strong guarantee
     {
         if (first != last) {
-            typename detail::iterator_traits<BlockInputIterator>::iterator_category cat;
+            typename std::iterator_traits<BlockInputIterator>::iterator_category cat;
             m_append(first, last, cat);
         }
     }
@@ -375,6 +375,7 @@ private:
     void m_zero_unused_bits();
     bool m_check_invariants() const;
 
+    static bool m_not_empty(Block x){ return x != Block(0); };
     size_type m_do_find_from(size_type first_block) const;
 
     block_width_type count_extra_bits() const BOOST_NOEXCEPT { return bit_index(size()); }
@@ -1441,15 +1442,14 @@ bool dynamic_bitset<Block, Allocator>::intersects(const dynamic_bitset & b) cons
 // look for the first bit "on", starting
 // from the block with index first_block
 //
+
 template <typename Block, typename Allocator>
 typename dynamic_bitset<Block, Allocator>::size_type
 dynamic_bitset<Block, Allocator>::m_do_find_from(size_type first_block) const
 {
-    size_type i = first_block;
 
-    // skip null blocks
-    while (i < num_blocks() && m_bits[i] == 0)
-        ++i;
+    size_type i = std::distance(m_bits.begin(),
+        std::find_if(m_bits.begin() + first_block, m_bits.end(), m_not_empty) );
 
     if (i >= num_blocks())
         return npos; // not found

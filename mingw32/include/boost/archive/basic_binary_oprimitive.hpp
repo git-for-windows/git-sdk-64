@@ -43,7 +43,6 @@ namespace std{
 #include <boost/scoped_ptr.hpp>
 #include <boost/serialization/throw_exception.hpp>
 
-//#include <boost/mpl/placeholders.hpp>
 #include <boost/serialization/is_bitwise_serializable.hpp>
 #include <boost/serialization/array_wrapper.hpp>
 

@@ -124,7 +124,7 @@ public:
 // typedef text_oarchive_impl<text_oarchive_impl<...> > text_oarchive;
 
 // do not derive from this class.  If you want to extend this functionality
-// via inhertance, derived from text_oarchive_impl instead.  This will
+// via inheritance, derived from text_oarchive_impl instead.  This will
 // preserve correct static polymorphism.
 class BOOST_SYMBOL_VISIBLE text_woarchive :
     public text_woarchive_impl<text_woarchive>
@@ -136,7 +136,7 @@ public:
         if(0 == (flags & no_header))
             init();
     }
-    ~text_woarchive(){}
+    ~text_woarchive() BOOST_OVERRIDE {}
 };
 
 } // namespace archive

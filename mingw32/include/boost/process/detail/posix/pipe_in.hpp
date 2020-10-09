@@ -27,7 +27,7 @@ struct pipe_in : handler_base_ext, ::boost::process::detail::uses_handles
 
     std::array<int, 3> get_used_handles()
     {
-        return {STDIN_FILENO, source, sink};
+        return {{STDIN_FILENO, source, sink}};
     }
 
 

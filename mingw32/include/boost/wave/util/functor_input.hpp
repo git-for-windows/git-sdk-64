@@ -8,8 +8,8 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(FUNCTOR_INPUT_HPP_ED3A4C21_8F8A_453F_B438_08214FAC106A_INCLUDED)
-#define FUNCTOR_INPUT_HPP_ED3A4C21_8F8A_453F_B438_08214FAC106A_INCLUDED
+#if !defined(BOOST_FUNCTOR_INPUT_HPP_ED3A4C21_8F8A_453F_B438_08214FAC106A_INCLUDED)
+#define BOOST_FUNCTOR_INPUT_HPP_ED3A4C21_8F8A_453F_B438_08214FAC106A_INCLUDED
 
 #include <boost/assert.hpp>
 #include <boost/spirit/include/classic_multi_pass.hpp>
@@ -152,4 +152,4 @@ struct functor_input {
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(FUNCTOR_INPUT_HPP_ED3A4C21_8F8A_453F_B438_08214FAC106A_INCLUDED)
+#endif // !defined(BOOST_FUNCTOR_INPUT_HPP_ED3A4C21_8F8A_453F_B438_08214FAC106A_INCLUDED)

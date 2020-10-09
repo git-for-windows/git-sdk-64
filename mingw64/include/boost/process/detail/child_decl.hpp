@@ -73,7 +73,7 @@ public:
 
     template<typename ...Args>
     explicit child(Args&&...args);
-    child() {}
+    child() { } // Must be kept non defaulted for MSVC 14.1 & 14.2 #113
     child& operator=(const child&) = delete;
     child& operator=(child && lhs)
     {

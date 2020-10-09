@@ -23,7 +23,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/align/detail/alignment_of_cxx11.hpp>
 #elif defined(__ghs__) && (__GHS_VERSION_NUMBER >= 600)
 #include <boost/align/detail/alignment_of_gcc.hpp>
-#elif defined(__CODEGEARC__)
+#elif defined(BOOST_CODEGEARC)
 #include <boost/align/detail/alignment_of_codegear.hpp>
 #elif defined(BOOST_CLANG)
 #include <boost/align/detail/alignment_of_clang.hpp>

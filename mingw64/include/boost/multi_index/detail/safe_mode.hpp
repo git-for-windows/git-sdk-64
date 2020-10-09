@@ -105,10 +105,14 @@
     safe_mode::check_different_container(cont0,cont1),                       \
     safe_mode::same_container);
 
+#define BOOST_MULTI_INDEX_CHECK_EQUAL_ALLOCATORS(cont0,cont1)                 \
+  BOOST_MULTI_INDEX_SAFE_MODE_ASSERT(                                        \
+    safe_mode::check_equal_allocators(cont0,cont1),                           \
+    safe_mode::unequal_allocators);
+
 #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
 #include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
 #include <algorithm>
-#include <boost/detail/iterator.hpp>
 #include <boost/multi_index/detail/access_specifier.hpp>
 #include <boost/multi_index/detail/iter_adaptor.hpp>
 #include <boost/multi_index/safe_mode_errors.hpp>
@@ -227,6 +231,13 @@ inline bool check_different_container(
   const Container& cont0,const Container& cont1)
 {
   return &cont0!=&cont1;
+}
+
+template<typename Container0,typename Container1>
+inline bool check_equal_allocators(
+  const Container0& cont0,const Container1& cont1)
+{
+  return cont0.get_allocator()==cont1.get_allocator();
 }
 
 /* Invalidates all iterators equivalent to that given. Safe containers

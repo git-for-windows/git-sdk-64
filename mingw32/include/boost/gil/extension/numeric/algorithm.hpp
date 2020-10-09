@@ -267,7 +267,7 @@ namespace detail
 
 template <typename SrcView, typename RltView>
 void extend_row_impl(
-    SrcView src_view,
+    SrcView const& src_view,
     RltView result_view,
     std::size_t extend_count,
     boundary_option option)
@@ -281,8 +281,8 @@ void extend_row_impl(
             if(i >= extend_count_ && i < extend_count_ + src_view.height())
             {
                 assign_pixels(
-                    src_view.row_begin(i - extend_count_), 
-                    src_view.row_end(i - extend_count_), 
+                    src_view.row_begin(i - extend_count_),
+                    src_view.row_end(i - extend_count_),
                     result_view.row_begin(i)
                 );
             }
@@ -293,12 +293,12 @@ void extend_row_impl(
             else
             {
                 assign_pixels(
-                    src_view.row_begin(src_view.height() - 1), 
-                    src_view.row_end(src_view.height() - 1), 
+                    src_view.row_begin(src_view.height() - 1),
+                    src_view.row_end(src_view.height() - 1),
                     result_view.row_begin(i)
                 );
             }
-            
+
         }
     }
     else if (option == boundary_option::extend_zero)
@@ -316,7 +316,7 @@ void extend_row_impl(
                     result_view.row_begin(i)
                 );
             }
-            else 
+            else
             {
                 std::fill_n(result_view.row_begin(i), result_view.width(), acc_zero);
             }
@@ -357,7 +357,7 @@ void extend_row_impl(
 /// \tparam option - TODO
 template <typename SrcView>
 auto extend_row(
-    SrcView src_view,
+    SrcView const& src_view,
     std::size_t extend_count,
     boundary_option option
 ) -> typename gil::image<typename SrcView::value_type>
@@ -372,14 +372,14 @@ auto extend_row(
 
 
 /// \brief adds new column at left and right.
-/// Image padding introduces new pixels around the edges of an image. 
+/// Image padding introduces new pixels around the edges of an image.
 /// The border provides space for annotations or acts as a boundary when using advanced filtering techniques.
 /// \tparam SrcView Models ImageViewConcept
 /// \tparam extend_count number of columns to be added each side
 /// \tparam option - TODO
 template <typename SrcView>
 auto extend_col(
-    SrcView src_view,
+    SrcView const& src_view,
     std::size_t extend_count,
     boundary_option option
 ) -> typename gil::image<typename SrcView::value_type>
@@ -395,14 +395,14 @@ auto extend_col(
 }
 
 /// \brief adds new row and column at all sides.
-/// Image padding introduces new pixels around the edges of an image. 
+/// Image padding introduces new pixels around the edges of an image.
 /// The border provides space for annotations or acts as a boundary when using advanced filtering techniques.
 /// \tparam SrcView Models ImageViewConcept
 /// \tparam extend_count number of rows/column to be added each side
 /// \tparam option - TODO
 template <typename SrcView>
 auto extend_boundary(
-    SrcView src_view,
+    SrcView const& src_view,
     std::size_t extend_count,
     boundary_option option
 ) -> typename gil::image<typename SrcView::value_type>

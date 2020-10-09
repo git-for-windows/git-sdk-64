@@ -34,7 +34,7 @@ template<class Archive>
 class interface_iarchive
 {
 protected:
-    interface_iarchive(){};
+    interface_iarchive() {}
 public:
     /////////////////////////////////////////////////////////
     // archive public interface

@@ -29,7 +29,6 @@
 #include <boost/archive/basic_xml_iarchive.hpp>
 #include <boost/archive/detail/register_archive.hpp>
 #include <boost/serialization/item_version_type.hpp>
-// #include <boost/archive/detail/utf8_codecvt_facet.hpp>
 
 #include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
@@ -105,9 +104,9 @@ protected:
     BOOST_WARCHIVE_DECL void
     init();
     BOOST_WARCHIVE_DECL
-    xml_wiarchive_impl(std::wistream & is, unsigned int flags) ;
+    xml_wiarchive_impl(std::wistream & is, unsigned int flags);
     BOOST_WARCHIVE_DECL
-    ~xml_wiarchive_impl();
+    ~xml_wiarchive_impl() BOOST_OVERRIDE;
 };
 
 } // namespace archive
@@ -136,7 +135,7 @@ public:
     if(0 == (flags & no_header))
         init();
     }
-    ~xml_wiarchive(){}
+    ~xml_wiarchive() BOOST_OVERRIDE {}
 };
 
 } // namespace archive

@@ -21,7 +21,7 @@
 #include <boost/atomic/detail/storage_traits.hpp>
 #include <boost/atomic/detail/extra_operations_fwd.hpp>
 #include <boost/atomic/detail/extra_ops_generic.hpp>
-#include <boost/atomic/capabilities.hpp>
+#include <boost/atomic/detail/header.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #pragma once
@@ -33,9 +33,9 @@ namespace detail {
 
 template< typename Base, bool Signed >
 struct extra_operations< Base, 1u, Signed, true > :
-    public generic_extra_operations< Base, 1u, Signed >
+    public extra_operations_generic< Base, 1u, Signed >
 {
-    typedef generic_extra_operations< Base, 1u, Signed > base_type;
+    typedef extra_operations_generic< Base, 1u, Signed > base_type;
     typedef typename base_type::storage_type storage_type;
     typedef typename storage_traits< 4u >::type temp_storage_type;
 
@@ -415,9 +415,9 @@ struct extra_operations< Base, 1u, Signed, true > :
 
 template< typename Base, bool Signed >
 struct extra_operations< Base, 2u, Signed, true > :
-    public generic_extra_operations< Base, 2u, Signed >
+    public extra_operations_generic< Base, 2u, Signed >
 {
-    typedef generic_extra_operations< Base, 2u, Signed > base_type;
+    typedef extra_operations_generic< Base, 2u, Signed > base_type;
     typedef typename base_type::storage_type storage_type;
     typedef typename storage_traits< 4u >::type temp_storage_type;
 
@@ -869,9 +869,9 @@ struct extra_operations< Base, 2u, Signed, true > :
 
 template< typename Base, bool Signed >
 struct extra_operations< Base, 4u, Signed, true > :
-    public generic_extra_operations< Base, 4u, Signed >
+    public extra_operations_generic< Base, 4u, Signed >
 {
-    typedef generic_extra_operations< Base, 4u, Signed > base_type;
+    typedef extra_operations_generic< Base, 4u, Signed > base_type;
     typedef typename base_type::storage_type storage_type;
 
 #define BOOST_ATOMIC_DETAIL_CAS_LOOP(op, original, result)\
@@ -1324,9 +1324,9 @@ struct extra_operations< Base, 4u, Signed, true > :
 
 template< typename Base, bool Signed >
 struct extra_operations< Base, 8u, Signed, true > :
-    public generic_extra_operations< Base, 8u, Signed >
+    public extra_operations_generic< Base, 8u, Signed >
 {
-    typedef generic_extra_operations< Base, 8u, Signed > base_type;
+    typedef extra_operations_generic< Base, 8u, Signed > base_type;
     typedef typename base_type::storage_type storage_type;
 
 #define BOOST_ATOMIC_DETAIL_CAS_LOOP(op, original, result)\
@@ -1780,5 +1780,7 @@ struct extra_operations< Base, 8u, Signed, true > :
 } // namespace detail
 } // namespace atomics
 } // namespace boost
+
+#include <boost/atomic/detail/footer.hpp>
 
 #endif // BOOST_ATOMIC_DETAIL_EXTRA_OPS_GCC_X86_HPP_INCLUDED_

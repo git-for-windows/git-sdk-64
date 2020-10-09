@@ -48,7 +48,6 @@ namespace std{
 #include <boost/integer.hpp>
 #include <boost/integer_traits.hpp>
 
-//#include <boost/mpl/placeholders.hpp>
 #include <boost/serialization/is_bitwise_serializable.hpp>
 #include <boost/serialization/array_wrapper.hpp>
 

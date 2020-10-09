@@ -8,8 +8,8 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(CPP_DEFINED_GRAMMAR_HPP_F48287B2_DC67_40A8_B4A1_800EFBD67869_INCLUDED)
-#define CPP_DEFINED_GRAMMAR_HPP_F48287B2_DC67_40A8_B4A1_800EFBD67869_INCLUDED
+#if !defined(BOOST_CPP_DEFINED_GRAMMAR_HPP_F48287B2_DC67_40A8_B4A1_800EFBD67869_INCLUDED)
+#define BOOST_CPP_DEFINED_GRAMMAR_HPP_F48287B2_DC67_40A8_B4A1_800EFBD67869_INCLUDED
 
 #include <boost/wave/wave_config.hpp>
 
@@ -182,4 +182,4 @@ defined_grammar_gen<LexIteratorT>::parse_operator_defined (
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(CPP_DEFINED_GRAMMAR_HPP_F48287B2_DC67_40A8_B4A1_800EFBD67869_INCLUDED)
+#endif // !defined(BOOST_CPP_DEFINED_GRAMMAR_HPP_F48287B2_DC67_40A8_B4A1_800EFBD67869_INCLUDED)

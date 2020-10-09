@@ -10,11 +10,8 @@
 
 #include <boost/histogram/accumulators/ostream.hpp>
 #include <boost/histogram/axis/ostream.hpp>
-#include <boost/histogram/axis/variant.hpp>
-#include <boost/histogram/detail/axes.hpp>
 #include <boost/histogram/detail/counting_streambuf.hpp>
-#include <boost/histogram/detail/detect.hpp>
-#include <boost/histogram/detail/static_if.hpp>
+#include <boost/histogram/detail/priority.hpp>
 #include <boost/histogram/indexed.hpp>
 #include <cmath>
 #include <iomanip>
@@ -33,7 +30,7 @@
   header is not included by any other header and must be explicitly included to use the
   streaming operator.
 
-  To you use your own, simply include your own implementation instead of this header.
+  To use your own, simply include your own implementation instead of this header.
  */
 
 namespace boost {
@@ -50,17 +47,17 @@ public:
   template <class T>
   tabular_ostream_wrapper& operator<<(const T& t) {
     if (collect_) {
-      if (static_cast<std::size_t>(iter_ - base_t::begin()) == size_) {
+      if (static_cast<unsigned>(iter_ - base_t::begin()) == size_) {
         ++size_;
-        BOOST_ASSERT(size_ <= N);
-        BOOST_ASSERT(iter_ != end());
+        assert(size_ <= N);
+        assert(iter_ != end());
         *iter_ = 0;
       }
-      cbuf_.count = 0;
+      count_ = 0;
       os_ << t;
-      *iter_ = std::max(*iter_, static_cast<int>(cbuf_.count));
+      *iter_ = std::max(*iter_, static_cast<int>(count_));
     } else {
-      BOOST_ASSERT(iter_ != end());
+      assert(iter_ != end());
       os_ << std::setw(*iter_) << t;
     }
     ++iter_;
@@ -82,21 +79,23 @@ public:
     return *this;
   }
 
-  explicit tabular_ostream_wrapper(OStream& os) : os_(os), orig_(os_.rdbuf(&cbuf_)) {}
+  explicit tabular_ostream_wrapper(OStream& os)
+      : os_(os), cbuf_(count_), orig_(os_.rdbuf(&cbuf_)) {}
 
   auto end() { return base_t::begin() + size_; }
   auto end() const { return base_t::begin() + size_; }
   auto cend() const { return base_t::cbegin() + size_; }
 
   void complete() {
-    BOOST_ASSERT(collect_); // only call this once
+    assert(collect_); // only call this once
     collect_ = false;
     os_.rdbuf(orig_);
   }
 
 private:
   typename base_t::iterator iter_ = base_t::begin();
-  std::size_t size_ = 0;
+  unsigned size_ = 0;
+  std::streamsize count_ = 0;
   bool collect_ = true;
   OStream& os_;
   counting_streambuf<char_type, traits_type> cbuf_;
@@ -104,53 +103,63 @@ private:
 };
 
 template <class OStream, class T>
-void ostream_value(OStream& os, const T& val) {
-  // a value from bin or histogram cell
-  os << std::left;
-  static_if_c<(std::is_convertible<T, double>::value && !std::is_integral<T>::value)>(
-      [](auto& os, const auto& val) {
-        const auto d = static_cast<double>(val);
-        if (std::isfinite(d)) {
-          const auto i = static_cast<std::int64_t>(d);
-          if (i == d) {
-            os << i;
-            return;
-          }
-        }
-        os << std::defaultfloat << std::setprecision(4) << d;
-      },
-      [](auto& os, const auto& val) { os << val; }, os, val);
+void ostream_value_impl(OStream& os, const T& t,
+                        decltype(static_cast<double>(t), priority<1>{})) {
+  // a value from histogram cell
+  const auto d = static_cast<double>(t);
+  if (std::numeric_limits<int>::min() <= d && d <= std::numeric_limits<int>::max()) {
+    const auto i = static_cast<int>(d);
+    if (i == d) {
+      os << i;
+      return;
+    }
+  }
+  os << std::defaultfloat << std::setprecision(4) << d;
+}
+
+template <class OStream, class T>
+void ostream_value_impl(OStream& os, const T& t, priority<0>) {
+  os << t;
+}
+
+template <class OStream, class T>
+void ostream_value(OStream& os, const T& t) {
+  ostream_value_impl(os << std::left, t, priority<1>{});
 }
 
 template <class OStream, class Axis>
-void ostream_bin(OStream& os, const Axis& ax, const int i) {
+auto ostream_bin(OStream& os, const Axis& ax, axis::index_type i, std::true_type,
+                 priority<1>) -> decltype((void)ax.value(i)) {
+  auto a = ax.value(i), b = ax.value(i + 1);
+  os << std::right << std::defaultfloat << std::setprecision(4);
+  // round edges to zero if deviation from zero is small
+  const auto eps = 1e-8 * std::abs(b - a);
+  if (std::abs(a) < 1e-14 && std::abs(a) < eps) a = 0;
+  if (std::abs(b) < 1e-14 && std::abs(b) < eps) b = 0;
+  os << "[" << a << ", " << b << ")";
+}
+
+template <class OStream, class Axis>
+auto ostream_bin(OStream& os, const Axis& ax, axis::index_type i, std::false_type,
+                 priority<1>) -> decltype((void)ax.value(i)) {
   os << std::right;
-  static_if<has_method_value<Axis>>(
-      [&](const auto& ax) {
-        static_if<axis::traits::is_continuous<Axis>>(
-            [&](const auto& ax) {
-              os << std::defaultfloat << std::setprecision(4);
-              auto a = ax.value(i);
-              auto b = ax.value(i + 1);
-              // round bin edge to zero if deviation from zero is absolut and relatively
-              // small
-              const auto eps = 1e-8 * std::abs(b - a);
-              if (std::abs(a) < 1e-14 && std::abs(a) < eps) a = 0;
-              if (std::abs(b) < 1e-14 && std::abs(b) < eps) b = 0;
-              os << "[" << a << ", " << b << ")";
-            },
-            [&](const auto& ax) { os << ax.value(i); }, ax);
-      },
-      [&](const auto&) { os << i; }, ax);
+  os << ax.value(i);
 }
 
 template <class OStream, class... Ts>
-void ostream_bin(OStream& os, const axis::category<Ts...>& ax, const int i) {
+void ostream_bin(OStream& os, const axis::category<Ts...>& ax, axis::index_type i,
+                 std::false_type, priority<1>) {
   os << std::right;
   if (i < ax.size())
     os << ax.value(i);
   else
     os << "other";
+}
+
+template <class OStream, class Axis, class B>
+void ostream_bin(OStream& os, const Axis&, axis::index_type i, B, priority<0>) {
+  os << std::right;
+  os << i;
 }
 
 template <class CharT>
@@ -170,19 +179,24 @@ std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& os, line_t<C>&& l
   return os;
 }
 
-template <class OStream, class Axis, class T>
-void stream_head(OStream& os, const Axis& ax, int index, const T& val) {
+template <class OStream, class Axis>
+void ostream_head(OStream& os, const Axis& ax, int index, double val) {
   axis::visit(
       [&](const auto& ax) {
-        ostream_bin(os, ax, index);
+        using A = std::decay_t<decltype(ax)>;
+        ostream_bin(os, ax, index, axis::traits::is_continuous<A>{}, priority<1>{});
         os << ' ';
         ostream_value(os, val);
       },
       ax);
 }
 
+// cannot display generalized histograms yet; line not reachable by coverage tests
 template <class OStream, class Histogram>
-void ascii_plot(OStream& os, const Histogram& h, int w_total) {
+void ascii_plot(OStream&, const Histogram&, int, std::false_type) {} // LCOV_EXCL_LINE
+
+template <class OStream, class Histogram>
+void ascii_plot(OStream& os, const Histogram& h, int w_total, std::true_type) {
   if (w_total == 0) w_total = 78; // TODO detect actual width of terminal
 
   const auto& ax = h.axis();
@@ -193,7 +207,7 @@ void ascii_plot(OStream& os, const Histogram& h, int w_total) {
   tabular_ostream_wrapper<OStream, 7> tos(os);
   // first pass to get widths
   for (auto&& v : indexed(h, coverage::all)) {
-    stream_head(tos.row(), ax, v.index(), *v);
+    ostream_head(tos.row(), ax, v.index(), *v);
     vmin = std::min(vmin, static_cast<double>(*v));
     vmax = std::max(vmax, static_cast<double>(*v));
   }
@@ -203,8 +217,8 @@ void ascii_plot(OStream& os, const Histogram& h, int w_total) {
   // calculate width useable by bar (notice extra space at top)
   // <-- head --> |<--- bar ---> |
   // w_head + 2 + 2
-  const int w_head = std::accumulate(tos.begin(), tos.end(), 0);
-  const int w_bar = w_total - 4 - w_head;
+  const auto w_head = std::accumulate(tos.begin(), tos.end(), 0);
+  const auto w_bar = w_total - 4 - w_head;
   if (w_bar < 0) return;
 
   // draw upper line
@@ -212,7 +226,7 @@ void ascii_plot(OStream& os, const Histogram& h, int w_total) {
 
   const int zero_offset = static_cast<int>(std::lround((-vmin) / (vmax - vmin) * w_bar));
   for (auto&& v : indexed(h, coverage::all)) {
-    stream_head(tos.row(), ax, v.index(), *v);
+    ostream_head(tos.row(), ax, v.index(), *v);
     // rest uses os, not tos
     os << " |";
     const int k = static_cast<int>(std::lround(*v / (vmax - vmin) * w_bar));
@@ -235,10 +249,8 @@ void ostream(OStream& os, const Histogram& h, const bool show_values = true) {
   unsigned iaxis = 0;
   const auto rank = h.rank();
   h.for_each_axis([&](const auto& ax) {
-    using A = std::decay_t<decltype(ax)>;
     if ((show_values && rank > 0) || rank > 1) os << "\n  ";
-    static_if<is_streamable<A>>([&](const auto& ax) { os << ax; },
-                                [&](const auto&) { os << "<unstreamable>"; }, ax);
+    ostream_any(os, ax);
   });
 
   if (show_values && rank > 0) {
@@ -287,15 +299,15 @@ std::basic_ostream<CharT, Traits>& operator<<(std::basic_ostream<CharT, Traits>&
   os.width(0);
 
   using value_type = typename histogram<A, S>::value_type;
-  detail::static_if<std::is_convertible<value_type, double>>(
-      [&os, w](const auto& h) {
-        if (h.rank() == 1) {
-          detail::ostream(os, h, false);
-          detail::ascii_plot(os, h, w);
-        } else
-          detail::ostream(os, h);
-      },
-      [&os](const auto& h) { detail::ostream(os, h); }, h);
+
+  // must be non-const to avoid a msvc warning about possible use of if constexpr
+  bool show_ascii = std::is_convertible<value_type, double>::value && h.rank() == 1;
+  if (show_ascii) {
+    detail::ostream(os, h, false);
+    detail::ascii_plot(os, h, w, std::is_convertible<value_type, double>{});
+  } else {
+    detail::ostream(os, h);
+  }
 
   // restore fmt
   os.flags(flags);

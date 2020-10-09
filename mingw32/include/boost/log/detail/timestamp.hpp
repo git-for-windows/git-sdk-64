@@ -41,7 +41,7 @@ class duration
     int64_t m_ticks;
 
 public:
-    explicit duration(int64_t ticks = 0) : m_ticks(ticks) {}
+    explicit duration(int64_t ticks = 0) BOOST_NOEXCEPT : m_ticks(ticks) {}
 
 #if defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
     int64_t milliseconds() const { return m_ticks; }
@@ -58,7 +58,7 @@ class timestamp
     uint64_t m_ticks;
 
 public:
-    explicit timestamp(uint64_t ticks = 0) : m_ticks(ticks) {}
+    explicit timestamp(uint64_t ticks = 0) BOOST_NOEXCEPT : m_ticks(ticks) {}
 
     duration operator- (timestamp that) const
     {

@@ -10,8 +10,8 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(CPP_ITERATOR_HPP_175CA88F_7273_43FA_9039_BCF7459E1F29_INCLUDED)
-#define CPP_ITERATOR_HPP_175CA88F_7273_43FA_9039_BCF7459E1F29_INCLUDED
+#if !defined(BOOST_CPP_ITERATOR_HPP_175CA88F_7273_43FA_9039_BCF7459E1F29_INCLUDED)
+#define BOOST_CPP_ITERATOR_HPP_175CA88F_7273_43FA_9039_BCF7459E1F29_INCLUDED
 
 #include <string>
 #include <vector>
@@ -1680,23 +1680,6 @@ char const *current_name = 0;   // never try to match current file name
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-namespace impl {
-
-    // trim all whitespace from the beginning and the end of the given string
-    template <typename StringT>
-    inline StringT
-    trim_whitespace(StringT const &s)
-    {
-        typedef typename StringT::size_type size_type;
-
-        size_type first = s.find_first_not_of(" \t\v\f");
-        if (StringT::npos == first)
-            return StringT();
-        size_type last = s.find_last_not_of(" \t\v\f");
-        return s.substr(first, last-first+1);
-    }
-}
-
 template <typename ContextT>
 inline void
 pp_iterator_functor<ContextT>::on_include(
@@ -1715,12 +1698,14 @@ token_sequence_type toexpand;
         std::inserter(toexpand, toexpand.end()));
 
     typename token_sequence_type::iterator begin2 = toexpand.begin();
+    // expanding the computed include
     ctx.expand_whole_tokensequence(begin2, toexpand.end(), expanded,
-        false);
+                                   false, false);
 
-// now, include the file
-string_type s (impl::trim_whitespace(boost::wave::util::impl::as_string(expanded)));
-bool is_system = '<' == s[0] && '>' == s[s.size()-1];
+    // now, include the file
+    using namespace boost::wave::util::impl;
+    string_type s (trim_whitespace(as_string(expanded)));
+    bool is_system = '<' == s[0] && '>' == s[s.size()-1];
 
     if (!is_system && !('\"' == s[0] && '\"' == s[s.size()-1])) {
     // should resolve into something like <...> or "..."
@@ -1789,6 +1774,17 @@ position_type pos(act_token.get_position());
                         macroname.get_value().c_str(), (*pit).get_position());
                     return;
                 }
+
+#if BOOST_WAVE_SUPPORT_VA_OPT != 0
+                // can't use __VA_OPT__ either
+                if (boost::wave::need_va_opt(ctx.get_language()) &&
+                    ("__VA_OPT__" == (*pit).get_value())) {
+                    BOOST_WAVE_THROW_CTX(ctx, preprocess_exception,
+                        bad_define_statement_va_opt,
+                        macroname.get_value().c_str(), (*pit).get_position());
+                    return;
+                }
+#endif
             }
 
         // if there wasn't an ellipsis, then there shouldn't be a __VA_ARGS__
@@ -1797,6 +1793,9 @@ position_type pos(act_token.get_position());
                 typedef typename token_sequence_type::iterator definition_iterator_t;
 
                 bool seen_va_args = false;
+#if BOOST_WAVE_SUPPORT_VA_OPT != 0
+                bool seen_va_opt = false;
+#endif
                 definition_iterator_t pend = macrodefinition.end();
                 for (definition_iterator_t dit = macrodefinition.begin();
                      dit != pend; ++dit)
@@ -1806,6 +1805,13 @@ position_type pos(act_token.get_position());
                     {
                         seen_va_args = true;
                     }
+#if BOOST_WAVE_SUPPORT_VA_OPT != 0
+                    if (T_IDENTIFIER == token_id(*dit) &&
+                        "__VA_OPT__" == (*dit).get_value())
+                    {
+                        seen_va_opt = true;
+                    }
+#endif
                 }
                 if (seen_va_args) {
                 // must not have seen __VA_ARGS__ placeholder
@@ -1814,6 +1820,14 @@ position_type pos(act_token.get_position());
                         macroname.get_value().c_str(), act_token.get_position());
                     return;
                 }
+#if BOOST_WAVE_SUPPORT_VA_OPT != 0
+                if (seen_va_opt) {
+                    BOOST_WAVE_THROW_CTX(ctx, preprocess_exception,
+                        bad_define_statement_va_opt,
+                        macroname.get_value().c_str(), act_token.get_position());
+                    return;
+                }
+#endif
             }
         }
         else
@@ -2293,7 +2307,7 @@ token_sequence_type toexpand;
     // preprocess the body of this #line message
         typename token_sequence_type::iterator begin2 = toexpand.begin();
         ctx.expand_whole_tokensequence(begin2, toexpand.end(),
-            expanded, false);
+                                       expanded, false, false);
 
         error = preprocess_exception::no_error;
         if (!impl::retrieve_line_info(expanded.begin(), expanded.end(),
@@ -2375,7 +2389,7 @@ token_sequence_type toexpand;
 
     typename token_sequence_type::iterator begin2 = toexpand.begin();
     ctx.expand_whole_tokensequence(begin2, toexpand.end(), expanded,
-        false);
+                                   false, false);
     if (!ctx.get_hooks().found_error_directive(ctx.derived(), toexpand))
 #else
 // simply copy the body of this #error message to the issued diagnostic
@@ -2424,7 +2438,7 @@ token_sequence_type toexpand;
 
     typename token_sequence_type::iterator begin2 = toexpand.begin();
     ctx.expand_whole_tokensequence(begin2, toexpand.end(), expanded,
-        false);
+                                   false, false);
     if (!ctx.get_hooks().found_warning_directive(ctx.derived(), toexpand))
 #else
 // simply copy the body of this #warning message to the issued diagnostic
@@ -2494,7 +2508,7 @@ const_tree_iterator_t last = make_ref_transform_iterator(end, get_value);
 
             typename token_sequence_type::iterator begin2 = toexpand.begin();
             ctx.expand_whole_tokensequence(begin2, toexpand.end(),
-                expanded, false);
+                                           expanded, false, false);
 #else
         // do _not_ preprocess the token sequence
             std::copy(first, last, std::inserter(expanded, expanded.end()));
@@ -2606,4 +2620,4 @@ public:
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(CPP_ITERATOR_HPP_175CA88F_7273_43FA_9039_BCF7459E1F29_INCLUDED)
+#endif // !defined(BOOST_CPP_ITERATOR_HPP_175CA88F_7273_43FA_9039_BCF7459E1F29_INCLUDED)

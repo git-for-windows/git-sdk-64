@@ -86,14 +86,14 @@ protected:
     text_oarchive_impl(std::ostream & os, unsigned int flags);
     // don't import inline definitions! leave this as a reminder.
     //BOOST_ARCHIVE_DECL
-    ~text_oarchive_impl(){};
+    ~text_oarchive_impl() BOOST_OVERRIDE {}
 public:
     BOOST_ARCHIVE_DECL void
     save_binary(const void *address, std::size_t count);
 };
 
 // do not derive from this class.  If you want to extend this functionality
-// via inhertance, derived from text_oarchive_impl instead.  This will
+// via inheritance, derived from text_oarchive_impl instead.  This will
 // preserve correct static polymorphism.
 class BOOST_SYMBOL_VISIBLE text_oarchive :
     public text_oarchive_impl<text_oarchive>
@@ -106,7 +106,7 @@ public:
         if(0 == (flags & no_header))
             init();
     }
-    ~text_oarchive(){}
+    ~text_oarchive() BOOST_OVERRIDE {}
 };
 
 } // namespace archive

@@ -38,7 +38,7 @@ DEALINGS IN THE SOFTWARE.
 #include <atomic>
 #include <cassert>
 
-#if __cpp_coroutines
+#if __cpp_impl_coroutine || (defined(_MSC_VER) && __cpp_coroutines) || (defined(__clang__) && __cpp_coroutines)
 #if __has_include(<coroutine>)
 #include <coroutine>
 BOOST_OUTCOME_V2_NAMESPACE_BEGIN
@@ -87,15 +87,15 @@ namespace awaitables
     template <class T> constexpr inline type_found<exception_type_not_found> extract_exception_type(...) { return {}; }
 
     BOOST_OUTCOME_TEMPLATE(class T, class U)
-    BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(std::is_constructible<U, T>::value))
-    inline bool try_set_error(T &e, U *result)
+    BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(BOOST_OUTCOME_V2_NAMESPACE::detail::is_constructible<U, T>))
+    inline bool try_set_error(T &&e, U *result)
     {
-      new(result) U(e);
+      new(result) U(static_cast<T&&>(e));
       return true;
     }
-    template <class T> inline bool try_set_error(T & /*unused*/, ...) { return false; }
+    template <class T> inline bool try_set_error(T && /*unused*/, ...) { return false; }
     BOOST_OUTCOME_TEMPLATE(class T, class U)
-    BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(std::is_constructible<U, T>::value))
+    BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(BOOST_OUTCOME_V2_NAMESPACE::detail::is_constructible<U, T>))
     inline void set_or_rethrow(T &e, U *result) { new(result) U(e); }
     template <class T> inline void set_or_rethrow(T &e, ...) { rethrow_exception(e); }
     template <class T> class fake_atomic
@@ -167,7 +167,7 @@ namespace awaitables
         auto e = std::current_exception();
         auto ec = detail::error_from_exception(static_cast<decltype(e) &&>(e), {});
         // Try to set error code first
-        if(!detail::error_is_set(ec) || !detail::try_set_error(ec, &result))
+        if(!detail::error_is_set(ec) || !detail::try_set_error(static_cast<decltype(ec) &&>(ec), &result))
         {
           detail::set_or_rethrow(e, &result);
         }

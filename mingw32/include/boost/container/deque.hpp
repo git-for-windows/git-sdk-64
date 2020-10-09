@@ -234,6 +234,8 @@ class deque_iterator
 
    deque_iterator& operator+=(difference_type n) BOOST_NOEXCEPT_OR_NOTHROW
    {
+      if (!n)
+         return *this;
       BOOST_ASSERT(!!m_cur);
       difference_type offset = n + (this->m_cur - this->m_first);
       const difference_type block_size = this->m_last - this->m_first;

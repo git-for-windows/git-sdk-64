@@ -362,8 +362,8 @@ public:
               )
     {}
 
-    template< typename Images >
-    void apply( any_image< Images >& images )
+    template< typename ...Images >
+    void apply( any_image< Images... >& images )
     {
         detail::targa_type_format_checker format_checker( this->_info._bits_per_pixel );
 

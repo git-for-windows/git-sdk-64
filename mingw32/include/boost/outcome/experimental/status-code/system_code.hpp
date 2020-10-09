@@ -33,6 +33,8 @@ DEALINGS IN THE SOFTWARE.
 
 #ifndef BOOST_OUTCOME_SYSTEM_ERROR2_NOT_POSIX
 #include "posix_code.hpp"
+#else
+#include "quick_status_code_from_enum.hpp"
 #endif
 
 #if defined(_WIN32) || defined(BOOST_OUTCOME_STANDARDESE_IS_IN_THE_HOUSE)

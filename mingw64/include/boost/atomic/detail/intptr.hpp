@@ -19,6 +19,7 @@
 #include <cstddef>
 #endif
 #include <boost/atomic/detail/config.hpp>
+#include <boost/atomic/detail/header.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #pragma once
@@ -39,5 +40,7 @@ typedef std::ptrdiff_t intptr_t;
 } // namespace detail
 } // namespace atomics
 } // namespace boost
+
+#include <boost/atomic/detail/footer.hpp>
 
 #endif // BOOST_ATOMIC_DETAIL_INTPTR_HPP_INCLUDED_

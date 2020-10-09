@@ -229,7 +229,7 @@ inline long double get_current_process_creation_time()
 
 inline unsigned int get_num_cores()
 {
-   winapi::system_info sysinfo;
+   winapi::interprocess_system_info sysinfo;
    winapi::get_system_info( &sysinfo );
    //in Windows dw is long which is equal in bits to int
    return static_cast<unsigned>(sysinfo.dwNumberOfProcessors);

@@ -22,7 +22,7 @@ struct close_out : handler_base_ext
     template <class Executor>
     inline void on_exec_setup(Executor &e) const;
 
-    std::array<int, 2> get_used_handles() {return {p1 != -1 ? p1 : p2, p2 != -1 ? p2 : p1};}
+    std::array<int, 2> get_used_handles() {return {{p1 != -1 ? p1 : p2, p2 != -1 ? p2 : p1}};}
 };
 
 template<>

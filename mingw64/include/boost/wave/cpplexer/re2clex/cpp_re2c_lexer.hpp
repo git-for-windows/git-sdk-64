@@ -10,8 +10,8 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(CPP_RE2C_LEXER_HPP_B81A2629_D5B1_4944_A97D_60254182B9A8_INCLUDED)
-#define CPP_RE2C_LEXER_HPP_B81A2629_D5B1_4944_A97D_60254182B9A8_INCLUDED
+#if !defined(BOOST_CPP_RE2C_LEXER_HPP_B81A2629_D5B1_4944_A97D_60254182B9A8_INCLUDED)
+#define BOOST_CPP_RE2C_LEXER_HPP_B81A2629_D5B1_4944_A97D_60254182B9A8_INCLUDED
 
 #include <string>
 #include <cstdio>
@@ -343,10 +343,10 @@ public:
     virtual ~lex_functor() {}
 
 // get the next token from the input stream
-    token_type& get(token_type& result) { return re2c_lexer.get(result); }
-    void set_position(PositionT const &pos) { re2c_lexer.set_position(pos); }
+    token_type& get(token_type& result) BOOST_OVERRIDE { return re2c_lexer.get(result); }
+    void set_position(PositionT const &pos) BOOST_OVERRIDE { re2c_lexer.set_position(pos); }
 #if BOOST_WAVE_SUPPORT_PRAGMA_ONCE != 0
-    bool has_include_guards(std::string& guard_name) const
+    bool has_include_guards(std::string& guard_name) const BOOST_OVERRIDE
         { return re2c_lexer.has_include_guards(guard_name); }
 #endif
 
@@ -420,4 +420,4 @@ new_lexer_gen<IteratorT, PositionT, TokenT>::new_lexer(IteratorT const &first,
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(CPP_RE2C_LEXER_HPP_B81A2629_D5B1_4944_A97D_60254182B9A8_INCLUDED)
+#endif // !defined(BOOST_CPP_RE2C_LEXER_HPP_B81A2629_D5B1_4944_A97D_60254182B9A8_INCLUDED)

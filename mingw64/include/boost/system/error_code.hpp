@@ -287,13 +287,13 @@ public:
     {
     }
 
-    const char * name() const BOOST_NOEXCEPT
+    const char * name() const BOOST_NOEXCEPT BOOST_OVERRIDE
     {
         return "generic";
     }
 
-    std::string message( int ev ) const;
-    char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT;
+    std::string message( int ev ) const BOOST_OVERRIDE;
+    char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT BOOST_OVERRIDE;
 };
 
 class BOOST_SYMBOL_VISIBLE system_error_category: public error_category
@@ -305,15 +305,15 @@ public:
     {
     }
 
-    const char * name() const BOOST_NOEXCEPT
+    const char * name() const BOOST_NOEXCEPT BOOST_OVERRIDE
     {
         return "system";
     }
 
-    error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT;
+    error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT BOOST_OVERRIDE;
 
-    std::string message( int ev ) const;
-    char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT;
+    std::string message( int ev ) const BOOST_OVERRIDE;
+    char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT BOOST_OVERRIDE;
 };
 
 } // namespace detail
@@ -515,7 +515,7 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR explicit operator bool() const BOOST_NOEXCEPT  // true if error
     {
-        return val_ != 0;
+        return failed_;
     }
 
 #else
@@ -525,12 +525,12 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR operator unspecified_bool_type() const BOOST_NOEXCEPT  // true if error
     {
-        return val_ != 0? unspecified_bool_true: 0;
+        return failed_? unspecified_bool_true: 0;
     }
 
     BOOST_SYSTEM_CONSTEXPR bool operator!() const BOOST_NOEXCEPT  // true if no error
     {
-        return val_ == 0;
+        return !failed_;
     }
 
 #endif
@@ -656,7 +656,7 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR explicit operator bool() const BOOST_NOEXCEPT  // true if error
     {
-        return val_ != 0;
+        return failed_;
     }
 
 #else
@@ -666,12 +666,12 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR operator unspecified_bool_type() const  BOOST_NOEXCEPT // true if error
     {
-        return val_ != 0? unspecified_bool_true: 0;
+        return failed_? unspecified_bool_true: 0;
     }
 
     BOOST_SYSTEM_CONSTEXPR bool operator!() const BOOST_NOEXCEPT // true if no error
     {
-        return val_ == 0;
+        return !failed_;
     }
 
 #endif

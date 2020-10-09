@@ -24,6 +24,7 @@
 #include <cstddef>
 #include <climits>
 #include <boost/intrusive/detail/mpl.hpp>
+#include <cstring>
 
 namespace boost {
 namespace intrusive {
@@ -208,19 +209,13 @@ namespace detail {
 //http://www.flipcode.com/archives/Fast_log_Function.shtml
 inline float fast_log2 (float val)
 {
-   union caster_t
-   {
-      unsigned x;
-      float val;
-   } caster;
-
-   caster.val = val;
-   unsigned x = caster.x;
+   float f = val;
+   unsigned x;
+   std::memcpy(&x, &val, sizeof(f));
    const int log_2 = int((x >> 23) & 255) - 128;
    x &= ~(unsigned(255u) << 23u);
    x += unsigned(127) << 23u;
-   caster.x = x;
-   val = caster.val;
+   std::memcpy(&val, &x, sizeof(f));
    //1+log2(m), m ranging from 1 to 2
    //3rd degree polynomial keeping first derivate continuity.
    //For less precision the line can be commented out

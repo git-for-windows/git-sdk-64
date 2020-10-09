@@ -103,7 +103,7 @@ namespace detail
 #endif
     virtual void _do_erased_copy(status_code<void> &dst, const status_code<void> &src, size_t /*unused*/) const override  // NOLINT
     {
-      assert(dst.domain() == *this);
+      // Note that dst will not have its domain set
       assert(src.domain() == *this);
       auto &d = static_cast<_mycode &>(dst);               // NOLINT
       const auto &_s = static_cast<const _mycode &>(src);  // NOLINT

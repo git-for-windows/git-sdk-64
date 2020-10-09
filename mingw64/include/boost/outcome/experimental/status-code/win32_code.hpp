@@ -35,7 +35,7 @@ DEALINGS IN THE SOFTWARE.
 #error This file should only be included on Windows
 #endif
 
-#include "generic_code.hpp"
+#include "quick_status_code_from_enum.hpp"
 
 BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE_BEGIN
 
@@ -68,6 +68,17 @@ class _com_code_domain;
 using win32_code = status_code<_win32_code_domain>;
 //! (Windows only) A specialisation of `status_error` for the Win32 error code domain.
 using win32_error = status_error<_win32_code_domain>;
+
+namespace mixins
+{
+  template <class Base> struct mixin<Base, _win32_code_domain> : public Base
+  {
+    using Base::Base;
+
+    //! Returns a `win32_code` for the current value of `GetLastError()`.
+    static inline win32_code current() noexcept;
+  };
+}  // namespace mixins
 
 /*! (Windows only) The implementation of the domain for Win32 error codes, those returned by `GetLastError()`.
  */
@@ -199,6 +210,11 @@ inline constexpr const _win32_code_domain &_win32_code_domain::get()
 {
   return win32_code_domain;
 }
+
+namespace mixins
+{
+  template <class Base> inline win32_code mixin<Base, _win32_code_domain>::current() noexcept { return win32_code(win32::GetLastError()); }
+}  // namespace mixins
 
 BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE_END
 

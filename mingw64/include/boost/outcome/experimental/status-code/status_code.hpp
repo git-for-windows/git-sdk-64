@@ -70,6 +70,51 @@ struct erased
   using value_type = ErasedType;
 };
 
+/*! Specialise this template to quickly wrap a third party enumeration into a
+custom status code domain.
+
+Use like this:
+
+```c++
+BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE_BEGIN
+template <> struct quick_status_code_from_enum<AnotherCode> : quick_status_code_from_enum_defaults<AnotherCode>
+{
+  // Text name of the enum
+  static constexpr const auto domain_name = "Another Code";
+  // Unique UUID for the enum. PLEASE use https://www.random.org/cgi-bin/randbyte?nbytes=16&format=h
+  static constexpr const auto domain_uuid = "{be201f65-3962-dd0e-1266-a72e63776a42}";
+  // Map of each enum value to its text string, and list of semantically equivalent errc's
+  static const std::initializer_list<mapping> &value_mappings()
+  {
+    static const std::initializer_list<mapping<AnotherCode>> v = {
+    // Format is: { enum value, "string representation", { list of errc mappings ... } }
+    {AnotherCode::success1, "Success 1", {errc::success}},        //
+    {AnotherCode::goaway, "Go away", {errc::permission_denied}},  //
+    {AnotherCode::success2, "Success 2", {errc::success}},        //
+    {AnotherCode::error2, "Error 2", {}},                         //
+    };
+    return v;
+  }
+  // Completely optional definition of mixin for the status code synthesised from `Enum`. It can be omitted.
+  template <class Base> struct mixin : Base
+  {
+    using Base::Base;
+    constexpr int custom_method() const { return 42; }
+  };
+};
+BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE_END
+```
+
+Note that if the `errc` mapping contains `errc::success`, then
+the enumeration value is considered to be a successful value.
+Otherwise it is considered to be a failure value.
+
+The first value in the `errc` mapping is the one chosen as the
+`generic_code` conversion. Other values are used during equivalence
+comparisons.
+*/
+template <class Enum> struct quick_status_code_from_enum;
+
 namespace detail
 {
   template <class T> struct is_status_code
@@ -161,8 +206,6 @@ protected:
       : _domain(v)
   {
   }
-
-  constexpr const status_code_domain *_domain_ptr() const noexcept { return _domain; }
 
 public:
   //! Return the status code domain.
@@ -257,12 +300,12 @@ namespace detail
     //! Return a reference to the `value_type`.
     constexpr value_type &value() & noexcept { return this->_value; }
     //! Return a reference to the `value_type`.
-    constexpr value_type &&value() && noexcept { return this->_value; }
+    constexpr value_type &&value() && noexcept { return static_cast<value_type &&>(this->_value); }
 #endif
     //! Return a reference to the `value_type`.
     constexpr const value_type &value() const &noexcept { return this->_value; }
     //! Return a reference to the `value_type`.
-    constexpr const value_type &&value() const &&noexcept { return this->_value; }
+    constexpr const value_type &&value() const &&noexcept { return static_cast<const value_type &&>(this->_value); }
 
   protected:
     status_code_storage() = default;
@@ -319,6 +362,9 @@ public:
   //! The type of a reference to a message string.
   using string_ref = typename domain_type::string_ref;
 
+protected:
+  using _base::_base;
+
 public:
   //! Default construction to empty
   status_code() = default;
@@ -349,24 +395,34 @@ public:
       : status_code(make_status_code(static_cast<T &&>(v), static_cast<Args &&>(args)...))
   {
   }
-  //! Explicit in-place construction.
+  //! Implicit construction from any `quick_status_code_from_enum<Enum>` enumerated type.
+  template <class Enum,                                                                              //
+            class QuickStatusCodeType = typename quick_status_code_from_enum<Enum>::code_type,       // Enumeration has been activated
+            typename std::enable_if<std::is_constructible<status_code, QuickStatusCodeType>::value,  // Its status code is compatible
+
+                                    bool>::type = true>
+  constexpr status_code(Enum &&v) noexcept(std::is_nothrow_constructible<status_code, QuickStatusCodeType>::value)  // NOLINT
+      : status_code(QuickStatusCodeType(static_cast<Enum &&>(v)))
+  {
+  }
+  //! Explicit in-place construction. Disables if `domain_type::get()` is not a valid expression.
   template <class... Args>
   constexpr explicit status_code(in_place_t /*unused */, Args &&... args) noexcept(std::is_nothrow_constructible<value_type, Args &&...>::value)
       : _base(typename _base::_value_type_constructor{}, &domain_type::get(), static_cast<Args &&>(args)...)
   {
   }
-  //! Explicit in-place construction from initialiser list.
+  //! Explicit in-place construction from initialiser list. Disables if `domain_type::get()` is not a valid expression.
   template <class T, class... Args>
   constexpr explicit status_code(in_place_t /*unused */, std::initializer_list<T> il, Args &&... args) noexcept(std::is_nothrow_constructible<value_type, std::initializer_list<T>, Args &&...>::value)
       : _base(typename _base::_value_type_constructor{}, &domain_type::get(), il, static_cast<Args &&>(args)...)
   {
   }
-  //! Explicit copy construction from a `value_type`.
+  //! Explicit copy construction from a `value_type`. Disables if `domain_type::get()` is not a valid expression.
   constexpr explicit status_code(const value_type &v) noexcept(std::is_nothrow_copy_constructible<value_type>::value)
       : _base(typename _base::_value_type_constructor{}, &domain_type::get(), v)
   {
   }
-  //! Explicit move construction from a `value_type`.
+  //! Explicit move construction from a `value_type`. Disables if `domain_type::get()` is not a valid expression.
   constexpr explicit status_code(value_type &&v) noexcept(std::is_nothrow_move_constructible<value_type>::value)
       : _base(typename _base::_value_type_constructor{}, &domain_type::get(), static_cast<value_type &&>(v))
   {
@@ -383,13 +439,6 @@ public:
 #if __cplusplus >= 201400
     assert(v.domain() == this->domain());
 #endif
-  }
-
-  //! Assignment from a `value_type`.
-  BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR14 status_code &operator=(const value_type &v) noexcept(std::is_nothrow_copy_assignable<value_type>::value)
-  {
-    this->_value = v;
-    return *this;
   }
 
   //! Return a reference to a string textually representing a code.
@@ -460,20 +509,19 @@ public:
 
   /***** KEEP THESE IN SYNC WITH ERRORED_STATUS_CODE *****/
   //! Implicit copy construction from any other status code if its value type is trivially copyable and it would fit into our storage
-  template <class DomainType,                                                                              //
-            typename std::enable_if<!detail::is_erased_status_code<status_code<DomainType>>::value         //
-                                    && std::is_trivially_copyable<typename DomainType::value_type>::value  //
+  template <class DomainType,                                                                           //
+            typename std::enable_if<std::is_trivially_copyable<typename DomainType::value_type>::value  //
                                     && detail::type_erasure_is_safe<value_type, typename DomainType::value_type>::value,
                                     bool>::type = true>
   constexpr status_code(const status_code<DomainType> &v) noexcept  // NOLINT
-      : _base(typename _base::_value_type_constructor{}, v._domain_ptr(), detail::erasure_cast<value_type>(v.value()))
+      : _base(typename _base::_value_type_constructor{}, &v.domain(), detail::erasure_cast<value_type>(v.value()))
   {
   }
   //! Implicit move construction from any other status code if its value type is trivially copyable or move bitcopying and it would fit into our storage
   template <class DomainType,  //
             typename std::enable_if<detail::type_erasure_is_safe<value_type, typename DomainType::value_type>::value, bool>::type = true>
   BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR14 status_code(status_code<DomainType> &&v) noexcept  // NOLINT
-      : _base(typename _base::_value_type_constructor{}, v._domain_ptr(), detail::erasure_cast<value_type>(v.value()))
+      : _base(typename _base::_value_type_constructor{}, &v.domain(), detail::erasure_cast<value_type>(v.value()))
   {
     v._domain = nullptr;
   }
@@ -487,6 +535,16 @@ public:
                                     bool>::type = true>
   constexpr status_code(T &&v, Args &&... args) noexcept(noexcept(make_status_code(std::declval<T>(), std::declval<Args>()...)))  // NOLINT
       : status_code(make_status_code(static_cast<T &&>(v), static_cast<Args &&>(args)...))
+  {
+  }
+  //! Implicit construction from any `quick_status_code_from_enum<Enum>` enumerated type.
+  template <class Enum,                                                                              //
+            class QuickStatusCodeType = typename quick_status_code_from_enum<Enum>::code_type,       // Enumeration has been activated
+            typename std::enable_if<std::is_constructible<status_code, QuickStatusCodeType>::value,  // Its status code is compatible
+
+                                    bool>::type = true>
+  constexpr status_code(Enum &&v) noexcept(std::is_nothrow_constructible<status_code, QuickStatusCodeType>::value)  // NOLINT
+      : status_code(QuickStatusCodeType(static_cast<Enum &&>(v)))
   {
   }
 

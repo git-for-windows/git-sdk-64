@@ -1,4 +1,4 @@
-#ifndef  BOOST_SERIALIZATION_VOID_CAST_HPP
+#ifndef BOOST_SERIALIZATION_VOID_CAST_HPP
 #define BOOST_SERIALIZATION_VOID_CAST_HPP
 
 // MS compatible compilers support #pragma once
@@ -122,7 +122,7 @@ public:
     // member extended type info records - NOT their
     // addresses.  This is necessary in order for the
     // void cast operations to work across dll and exe
-    // module boundries.
+    // module boundaries.
     bool operator<(const void_caster & rhs) const;
 
     const void_caster & operator*(){
@@ -155,26 +155,26 @@ template <class Derived, class Base>
 class BOOST_SYMBOL_VISIBLE void_caster_primitive :
     public void_caster
 {
-    virtual void const * downcast(void const * const t) const {
+    void const * downcast(void const * const t) const BOOST_OVERRIDE {
         const Derived * d =
             boost::serialization::smart_cast<const Derived *, const Base *>(
                 static_cast<const Base *>(t)
             );
         return d;
     }
-    virtual void const * upcast(void const * const t) const {
+    void const * upcast(void const * const t) const BOOST_OVERRIDE {
         const Base * b =
             boost::serialization::smart_cast<const Base *, const Derived *>(
                 static_cast<const Derived *>(t)
             );
         return b;
     }
-    virtual bool has_virtual_base() const {
+    bool has_virtual_base() const BOOST_OVERRIDE {
         return false;
     }
 public:
     void_caster_primitive();
-    virtual ~void_caster_primitive();
+    ~void_caster_primitive() BOOST_OVERRIDE;
 
 private:
     static std::ptrdiff_t base_offset() {
@@ -206,18 +206,18 @@ template <class Derived, class Base>
 class BOOST_SYMBOL_VISIBLE void_caster_virtual_base :
     public void_caster
 {
-    virtual bool has_virtual_base() const {
+    bool has_virtual_base() const BOOST_OVERRIDE {
         return true;
     }
 public:
-    virtual void const * downcast(void const * const t) const {
+    void const * downcast(void const * const t) const BOOST_OVERRIDE {
         const Derived * d =
             dynamic_cast<const Derived *>(
                 static_cast<const Base *>(t)
             );
         return d;
     }
-    virtual void const * upcast(void const * const t) const {
+    void const * upcast(void const * const t) const BOOST_OVERRIDE {
         const Base * b =
             dynamic_cast<const Base *>(
                 static_cast<const Derived *>(t)
@@ -225,7 +225,7 @@ public:
         return b;
     }
     void_caster_virtual_base();
-    virtual ~void_caster_virtual_base();
+    ~void_caster_virtual_base() BOOST_OVERRIDE;
 };
 
 #ifdef BOOST_MSVC

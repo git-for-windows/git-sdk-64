@@ -36,14 +36,13 @@
 
 #include <boost/variant/detail/move.hpp>
 
-#include <boost/detail/no_exceptions_support.hpp>
 #include <boost/detail/reference_content.hpp>
-#include <boost/aligned_storage.hpp>
 #include <boost/blank.hpp>
 #include <boost/integer/common_factor_ct.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/repeat.hpp>
+#include <boost/type_traits/aligned_storage.hpp>
 #include <boost/type_traits/alignment_of.hpp>
 #include <boost/type_traits/add_const.hpp>
 #include <boost/type_traits/has_nothrow_constructor.hpp>
@@ -55,8 +54,9 @@
 #include <boost/type_traits/is_rvalue_reference.hpp>
 #include <boost/type_traits/is_constructible.hpp>
 #include <boost/type_traits/add_lvalue_reference.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/utility/declval.hpp>
+#include <boost/type_traits/declval.hpp>
+#include <boost/core/no_exceptions_support.hpp>
+#include <boost/core/enable_if.hpp>
 #include <boost/variant/recursive_wrapper_fwd.hpp>
 #include <boost/variant/static_visitor.hpp>
 
@@ -347,7 +347,7 @@ private: // helpers, for metafunction result (below)
           types, mpl::sizeof_<mpl::_1>
         >::type max_size;
 
-#if !BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x0551))
+#if !BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x0551))
 
     typedef typename mpl::fold<
           types
@@ -385,7 +385,7 @@ public: // visitor interfaces
     {
         operand.~T(); // must be noexcept
 
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x0551)) || \
+#if BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x0551)) || \
     BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1600))
         (void)operand; // suppresses warnings
 #endif
@@ -1018,7 +1018,7 @@ public: // internal visitor interfaces
     template <typename T>
     typename enable_if_c<MoveSemantics && is_same<T, T>::value, result_type>::type internal_visit(T&& operand, int)
     {
-        return visitor_(::boost::move<T>(operand));
+        return visitor_(::boost::move(operand));
     }
 
     //using workaround with is_same<T, T> to prenvent compilation error, because we need to use T in enable_if to make SFINAE work
@@ -1036,7 +1036,7 @@ public: // internal visitor interfaces
         return visitor_(operand);
     }
 
-#   if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x0564))
+#   if BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x0564))
     template <typename T>
     result_type internal_visit(const T& operand, int)
     {
@@ -1423,7 +1423,7 @@ private: // helpers, for structors, cont. (below)
             return initializer::initialize(storage_, operand);
         }
 
-#   if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x0564))
+#   if BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x0564))
         template <typename T>
         result_type internal_visit(const T& operand, int) const
         {

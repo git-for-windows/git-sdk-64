@@ -21,6 +21,7 @@
 #include <memory>
 #include <vector>
 #include <cmath>
+#include <stdexcept>
 
 namespace boost { namespace gil {
 
@@ -328,17 +329,32 @@ public:
 template <typename T, std::size_t Size>
 constexpr std::size_t kernel_2d_fixed<T, Size>::static_size;
 
-} //namespace detail
+template <typename Kernel>
+inline Kernel reverse_kernel_2d(Kernel const& kernel)
+{
+    Kernel result(kernel);
+    result.center_x() = kernel.lower_size();
+    result.center_y() = kernel.right_size();
+    std::reverse(result.begin(), result.end());
+    return result;
+}
 
-/// \brief reverse a kernel
-//template <typename Kernel>
-//inline Kernel reverse_kernel(Kernel const& kernel)
-//{
-//    Kernel result(kernel);
-//    result.center() = kernel.right_size();
-//    std::reverse(result.begin(), result.end());
-//    return result;
-//}
+
+/// \brief reverse a kernel_2d
+template<typename T, typename Allocator>
+inline kernel_2d<T, Allocator>  reverse_kernel(kernel_2d<T, Allocator> const& kernel)
+{
+   return reverse_kernel_2d(kernel);
+}
+
+/// \brief reverse a kernel_2d
+template<typename T, std::size_t Size>
+inline kernel_2d_fixed<T, Size> reverse_kernel(kernel_2d_fixed<T, Size> const& kernel)
+{
+   return reverse_kernel_2d(kernel);
+}
+
+} //namespace detail
 
 }} // namespace boost::gil
 

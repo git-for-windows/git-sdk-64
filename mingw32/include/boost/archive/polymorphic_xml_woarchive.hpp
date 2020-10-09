@@ -34,7 +34,7 @@ public:
     polymorphic_xml_woarchive(std::wostream & os, unsigned int flags = 0) :
         detail::polymorphic_oarchive_route<xml_woarchive>(os, flags)
     {}
-    ~polymorphic_xml_woarchive(){}
+    ~polymorphic_xml_woarchive() BOOST_OVERRIDE {}
 };
 
 } // namespace archive
@@ -47,4 +47,3 @@ BOOST_SERIALIZATION_REGISTER_ARCHIVE(
 
 #endif // BOOST_NO_STD_WSTREAMBUF
 #endif // BOOST_ARCHIVE_POLYMORPHIC_XML_WOARCHIVE_HPP
-

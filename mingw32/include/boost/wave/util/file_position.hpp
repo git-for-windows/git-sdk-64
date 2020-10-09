@@ -10,8 +10,8 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(FILE_POSITION_H_52BDEDF7_DAD3_4F24_802F_E66BB8098F68_INCLUDED)
-#define FILE_POSITION_H_52BDEDF7_DAD3_4F24_802F_E66BB8098F68_INCLUDED
+#if !defined(BOOST_FILE_POSITION_H_52BDEDF7_DAD3_4F24_802F_E66BB8098F68_INCLUDED)
+#define BOOST_FILE_POSITION_H_52BDEDF7_DAD3_4F24_802F_E66BB8098F68_INCLUDED
 
 #include <string>
 #include <ostream>
@@ -192,4 +192,4 @@ namespace spirit { namespace classic {
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(FILE_POSITION_H_52BDEDF7_DAD3_4F24_802F_E66BB8098F68_INCLUDED)
+#endif // !defined(BOOST_FILE_POSITION_H_52BDEDF7_DAD3_4F24_802F_E66BB8098F68_INCLUDED)

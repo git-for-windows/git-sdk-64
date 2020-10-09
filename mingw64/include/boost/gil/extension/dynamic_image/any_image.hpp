@@ -1,5 +1,6 @@
 //
 // Copyright 2005-2007 Adobe Systems Incorporated
+// Copyright 2020 Samuel Debionne
 //
 // Distributed under the Boost Software License, Version 1.0
 // See accompanying file LICENSE_1_0.txt or copy at
@@ -15,7 +16,7 @@
 #include <boost/gil/detail/mp11.hpp>
 
 #include <boost/config.hpp>
-#include <boost/variant.hpp>
+#include <boost/variant2/variant.hpp>
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
 #pragma warning(push)
@@ -84,13 +85,13 @@ struct any_image_get_const_view
 /// In particular, its \p view and \p const_view methods return \p any_image_view, which does not fully model ImageViewConcept. See \p any_image_view for more.
 ////////////////////////////////////////////////////////////////////////////////////////
 
-template <typename Images>
-class any_image : public make_variant_over<Images>::type
+template <typename ...Images>
+class any_image : public variant2::variant<Images...>
 {
-    using parent_t = typename make_variant_over<Images>::type;
-public:
-    using view_t = any_image_view<detail::images_get_views_t<Images>>;
-    using const_view_t = any_image_view<detail::images_get_const_views_t<Images>>;
+    using parent_t = variant2::variant<Images...>;
+public:    
+    using view_t = mp11::mp_rename<detail::images_get_views_t<any_image>, any_image_view>;
+    using const_view_t = mp11::mp_rename<detail::images_get_const_views_t<any_image>, any_image_view>;
     using x_coord_t = std::ptrdiff_t;
     using y_coord_t = std::ptrdiff_t;
     using point_t = point<std::ptrdiff_t>;
@@ -100,13 +101,16 @@ public:
 
     template <typename Image>
     explicit any_image(Image const& img) : parent_t(img) {}
+    
+    template <typename Image>
+    any_image(Image&& img) : parent_t(std::move(img)) {}
 
     template <typename Image>
     explicit any_image(Image& img, bool do_swap) : parent_t(img, do_swap) {}
 
-    template <typename OtherImages>
-    any_image(any_image<OtherImages> const& img)
-        : parent_t((typename make_variant_over<OtherImages>::type const&)img)
+    template <typename ...OtherImages>
+    any_image(any_image<OtherImages...> const& img)
+        : parent_t((variant2::variant<OtherImages...> const&)img)
     {}
 
     any_image& operator=(any_image const& img)
@@ -122,10 +126,10 @@ public:
         return *this;
     }
 
-    template <typename OtherImages>
-    any_image& operator=(any_image<OtherImages> const& img)
+    template <typename ...OtherImages>
+    any_image& operator=(any_image<OtherImages...> const& img)
     {
-            parent_t::operator=((typename make_variant_over<OtherImages>::type const&)img);
+            parent_t::operator=((typename variant2::variant<OtherImages...> const&)img);
             return *this;
     }
 
@@ -160,22 +164,22 @@ public:
 /// \ingroup ImageModel
 
 /// \brief Returns the non-constant-pixel view of any image. The returned view is any view.
-/// \tparam Types Models ImageVectorConcept
-template <typename Types>
+/// \tparam Images Models ImageVectorConcept
+template <typename ...Images>
 BOOST_FORCEINLINE
-auto view(any_image<Types>& img) -> typename any_image<Types>::view_t
+auto view(any_image<Images...>& img) -> typename any_image<Images...>::view_t
 {
-    using view_t = typename any_image<Types>::view_t;
+    using view_t = typename any_image<Images...>::view_t;
     return apply_operation(img, detail::any_image_get_view<view_t>());
 }
 
 /// \brief Returns the constant-pixel view of any image. The returned view is any view.
 /// \tparam Types Models ImageVectorConcept
-template <typename Types>
+template <typename ...Images>
 BOOST_FORCEINLINE
-auto const_view(any_image<Types> const& img) -> typename any_image<Types>::const_view_t
+auto const_view(any_image<Images...> const& img) -> typename any_image<Images...>::const_view_t
 {
-    using view_t = typename any_image<Types>::const_view_t;
+    using view_t = typename any_image<Images...>::const_view_t;
     return apply_operation(img, detail::any_image_get_const_view<view_t>());
 }
 ///@}

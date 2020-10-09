@@ -354,14 +354,14 @@ public:
     /*!
      * Default constructor. Creates an empty settings container.
      */
-    basic_settings_section() : m_ptree(NULL)
+    basic_settings_section() BOOST_NOEXCEPT : m_ptree(NULL)
     {
     }
 
     /*!
      * Copy constructor.
      */
-    basic_settings_section(basic_settings_section const& that) : m_ptree(that.m_ptree)
+    basic_settings_section(basic_settings_section const& that) BOOST_NOEXCEPT : m_ptree(that.m_ptree)
     {
     }
 
@@ -517,7 +517,7 @@ public:
     /*!
      * Swaps two references to settings sections.
      */
-    void swap(basic_settings_section& that)
+    void swap(basic_settings_section& that) BOOST_NOEXCEPT
     {
         property_tree_type* const p = m_ptree;
         m_ptree = that.m_ptree;
@@ -525,13 +525,13 @@ public:
     }
 
 protected:
-    explicit basic_settings_section(property_tree_type* tree) : m_ptree(tree)
+    explicit basic_settings_section(property_tree_type* tree) BOOST_NOEXCEPT : m_ptree(tree)
     {
     }
 };
 
 template< typename CharT >
-inline void swap(basic_settings_section< CharT >& left, basic_settings_section< CharT >& right)
+inline void swap(basic_settings_section< CharT >& left, basic_settings_section< CharT >& right) BOOST_NOEXCEPT
 {
     left.swap(right);
 }
@@ -584,7 +584,7 @@ public:
     /*!
      * Move constructor.
      */
-    basic_settings(BOOST_RV_REF(this_type) that)
+    basic_settings(BOOST_RV_REF(this_type) that) BOOST_NOEXCEPT
     {
         this->swap(that);
     }
@@ -598,7 +598,7 @@ public:
     /*!
      * Destructor
      */
-    ~basic_settings()
+    ~basic_settings() BOOST_NOEXCEPT
     {
         delete this->m_ptree;
     }
@@ -618,7 +618,7 @@ public:
     /*!
      * Move assignment operator.
      */
-    basic_settings& operator= (BOOST_RV_REF(basic_settings) that)
+    basic_settings& operator= (BOOST_RV_REF(basic_settings) that) BOOST_NOEXCEPT
     {
         this->swap(that);
         return *this;

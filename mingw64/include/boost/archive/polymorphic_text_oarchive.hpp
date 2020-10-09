@@ -30,7 +30,7 @@ public:
     polymorphic_text_oarchive(std::ostream & os, unsigned int flags = 0) :
         detail::polymorphic_oarchive_route<text_oarchive>(os, flags)
     {}
-    ~polymorphic_text_oarchive(){}
+    ~polymorphic_text_oarchive() BOOST_OVERRIDE {}
 };
 
 } // namespace archive
@@ -42,4 +42,3 @@ BOOST_SERIALIZATION_REGISTER_ARCHIVE(
 )
 
 #endif // BOOST_ARCHIVE_POLYMORPHIC_TEXT_OARCHIVE_HPP
-

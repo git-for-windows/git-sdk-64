@@ -10,13 +10,14 @@
 /*!
  * \file   atomic/detail/ops_msvc_common.hpp
  *
- * This header contains common tools for MSVC implementation of the \c operations template.
+ * This header contains common tools for MSVC implementation of the atomic operations.
  */
 
 #ifndef BOOST_ATOMIC_DETAIL_OPS_MSVC_COMMON_HPP_INCLUDED_
 #define BOOST_ATOMIC_DETAIL_OPS_MSVC_COMMON_HPP_INCLUDED_
 
 #include <boost/atomic/detail/config.hpp>
+#include <boost/atomic/detail/header.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #pragma once
@@ -36,5 +37,7 @@ extern "C" void _ReadWriteBarrier(void);
 #ifndef BOOST_ATOMIC_DETAIL_COMPILER_BARRIER
 #define BOOST_ATOMIC_DETAIL_COMPILER_BARRIER()
 #endif
+
+#include <boost/atomic/detail/footer.hpp>
 
 #endif // BOOST_ATOMIC_DETAIL_OPS_MSVC_COMMON_HPP_INCLUDED_

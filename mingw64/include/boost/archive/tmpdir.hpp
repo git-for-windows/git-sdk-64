@@ -18,7 +18,6 @@
 
 #include <cstdlib> // getenv
 #include <cstddef> // NULL
-//#include <boost/assert.hpp>
 
 #include <boost/config.hpp>
 #ifdef BOOST_NO_STDC_NAMESPACE

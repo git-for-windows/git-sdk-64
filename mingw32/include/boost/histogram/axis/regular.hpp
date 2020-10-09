@@ -7,7 +7,6 @@
 #ifndef BOOST_HISTOGRAM_AXIS_REGULAR_HPP
 #define BOOST_HISTOGRAM_AXIS_REGULAR_HPP
 
-#include <boost/assert.hpp>
 #include <boost/core/nvp.hpp>
 #include <boost/histogram/axis/interval_view.hpp>
 #include <boost/histogram/axis/iterator.hpp>
@@ -19,6 +18,7 @@
 #include <boost/histogram/fwd.hpp>
 #include <boost/mp11/utility.hpp>
 #include <boost/throw_exception.hpp>
+#include <cassert>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
@@ -178,11 +178,12 @@ step_type<T> step(T t) {
 template <class Value, class Transform, class MetaData, class Options>
 class regular : public iterator_mixin<regular<Value, Transform, MetaData, Options>>,
                 protected detail::replace_default<Transform, transform::id>,
-                public metadata_base<MetaData> {
+                public metadata_base_t<MetaData> {
   // these must be private, so that they are not automatically inherited
   using value_type = Value;
   using transform_type = detail::replace_default<Transform, transform::id>;
-  using metadata_type = typename metadata_base<MetaData>::metadata_type;
+  using metadata_base = metadata_base_t<MetaData>;
+  using metadata_type = typename metadata_base::metadata_type;
   using options_type =
       detail::replace_default<Options, decltype(option::underflow | option::overflow)>;
 
@@ -216,7 +217,7 @@ public:
   regular(transform_type trans, unsigned n, value_type start, value_type stop,
           metadata_type meta = {})
       : transform_type(std::move(trans))
-      , metadata_base<MetaData>(std::move(meta))
+      , metadata_base(std::move(meta))
       , size_(static_cast<index_type>(n))
       , min_(this->forward(detail::get_scale(start)))
       , delta_(this->forward(detail::get_scale(stop)) - min_) {
@@ -279,7 +280,7 @@ public:
   regular(const regular& src, index_type begin, index_type end, unsigned merge)
       : regular(src.transform(), (end - begin) / merge, src.value(begin), src.value(end),
                 src.metadata()) {
-    BOOST_ASSERT((end - begin) % merge == 0);
+    assert((end - begin) % merge == 0);
     if (options_type::test(option::circular) && !(begin == 0 && end == src.size()))
       BOOST_THROW_EXCEPTION(std::invalid_argument("cannot shrink circular axis"));
   }
@@ -309,7 +310,7 @@ public:
 
   /// Returns index and shift (if axis has grown) for the passed argument.
   std::pair<index_type, index_type> update(value_type x) noexcept {
-    BOOST_ASSERT(options_type::test(option::growth));
+    assert(options_type::test(option::growth));
     const auto z = (this->forward(x / unit_type{}) - min_) / delta_;
     if (z < 1) { // don't use i here!
       if (z >= 0) {
@@ -366,8 +367,9 @@ public:
 
   template <class V, class T, class M, class O>
   bool operator==(const regular<V, T, M, O>& o) const noexcept {
-    return detail::relaxed_equal(transform(), o.transform()) && size() == o.size() &&
-           min_ == o.min_ && delta_ == o.delta_ && metadata_base<MetaData>::operator==(o);
+    return detail::relaxed_equal{}(transform(), o.transform()) && size() == o.size() &&
+           min_ == o.min_ && delta_ == o.delta_ &&
+           detail::relaxed_equal{}(this->metadata(), o.metadata());
   }
   template <class V, class T, class M, class O>
   bool operator!=(const regular<V, T, M, O>& o) const noexcept {

@@ -26,7 +26,7 @@ struct file_in : handler_base_ext, ::boost::process::detail::uses_handles
 
     std::array<int, 2> get_used_handles()
     {
-        return {STDIN_FILENO, handle};
+        return {{STDIN_FILENO, handle}};
     }
 
     template<typename T>

@@ -137,9 +137,9 @@ void write_view(
 ////////////////////////////////////// dynamic_image
 
 // without image_write_info
-template <typename Writer, typename Views>
+template <typename Writer, typename ...Views>
 inline
-void write_view(Writer& writer, any_image_view<Views> const& view,
+void write_view(Writer& writer, any_image_view<Views...> const& view,
     typename std::enable_if
     <
         mp11::mp_and
@@ -153,10 +153,10 @@ void write_view(Writer& writer, any_image_view<Views> const& view,
 }
 
 // without image_write_info
-template <typename Device, typename Views, typename FormatTag>
+template <typename Device, typename ...Views, typename FormatTag>
 inline
 void write_view(
-    Device& device, any_image_view<Views> const& views, FormatTag const& tag,
+    Device& device, any_image_view<Views...> const& views, FormatTag const& tag,
     typename std::enable_if
     <
         mp11::mp_and
@@ -171,10 +171,10 @@ void write_view(
     write_view(writer, views);
 }
 
-template <typename String, typename Views, typename FormatTag>
+template <typename String, typename ...Views, typename FormatTag>
 inline
 void write_view(
-    String const& file_name, any_image_view<Views> const& views, FormatTag const& tag,
+    String const& file_name, any_image_view<Views...> const& views, FormatTag const& tag,
     typename std::enable_if
     <
         mp11::mp_and
@@ -191,10 +191,10 @@ void write_view(
 
 // with image_write_info
 /// \ingroup IO
-template <typename Device, typename Views, typename FormatTag, typename Log>
+template <typename Device, typename ...Views, typename FormatTag, typename Log>
 inline
 void write_view(
-    Device& device, any_image_view<Views> const& views, image_write_info<FormatTag, Log> const& info,
+    Device& device, any_image_view<Views...> const& views, image_write_info<FormatTag, Log> const& info,
     typename std::enable_if
     <
         mp11::mp_and
@@ -209,10 +209,10 @@ void write_view(
     write_view(writer, views);
 }
 
-template <typename String, typename Views, typename FormatTag, typename Log>
+template <typename String, typename ...Views, typename FormatTag, typename Log>
 inline
 void write_view(
-    String const& file_name, any_image_view<Views> const& views, image_write_info<FormatTag, Log> const& info,
+    String const& file_name, any_image_view<Views...> const& views, image_write_info<FormatTag, Log> const& info,
     typename std::enable_if
     <
         mp11::mp_and

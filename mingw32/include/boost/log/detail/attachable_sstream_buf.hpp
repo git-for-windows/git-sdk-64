@@ -244,7 +244,7 @@ public:
 
 protected:
     //! Puts all buffered data to the string
-    int sync()
+    int sync() BOOST_OVERRIDE
     {
         char_type* pBase = this->pbase();
         char_type* pPtr = this->pptr();
@@ -256,7 +256,7 @@ protected:
         return 0;
     }
     //! Puts an unbuffered character to the string
-    int_type overflow(int_type c)
+    int_type overflow(int_type c) BOOST_OVERRIDE
     {
         this_type::sync();
         if (!traits_type::eq_int_type(c, traits_type::eof()))
@@ -268,7 +268,7 @@ protected:
             return traits_type::not_eof(c);
     }
     //! Puts a character sequence to the string
-    std::streamsize xsputn(const char_type* s, std::streamsize n)
+    std::streamsize xsputn(const char_type* s, std::streamsize n) BOOST_OVERRIDE
     {
         this_type::sync();
         return static_cast< std::streamsize >(this->append(s, static_cast< size_type >(n)));

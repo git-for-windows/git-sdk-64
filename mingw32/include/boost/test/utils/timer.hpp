@@ -18,7 +18,7 @@
 
 # if defined(_WIN32) || defined(__CYGWIN__)
 #   define BOOST_TEST_TIMER_WINDOWS_API
-# elif defined(__MACH__)// && !defined(CLOCK_MONOTONIC)
+# elif defined(__MACH__) && defined(__APPLE__)// && !defined(CLOCK_MONOTONIC)
 #   // we compile for all macs the same, CLOCK_MONOTONIC introduced in 10.12
 #   define BOOST_TEST_TIMER_MACH_API
 # else

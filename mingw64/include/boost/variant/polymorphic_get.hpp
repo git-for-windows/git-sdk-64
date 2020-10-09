@@ -132,7 +132,7 @@ public: // visitor interfaces
 }} // namespace detail::variant
 
 #ifndef BOOST_VARIANT_AUX_GET_EXPLICIT_TEMPLATE_TYPE
-#   if !BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x0551))
+#   if !BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x0551))
 #       define BOOST_VARIANT_AUX_GET_EXPLICIT_TEMPLATE_TYPE(t)
 #   else
 #       if defined(BOOST_NO_NULLPTR)

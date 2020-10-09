@@ -460,6 +460,7 @@ class small_vector_base
          this->assign( boost::make_move_iterator(boost::movelib::iterator_to_raw_pointer(x.begin()))
                      , boost::make_move_iterator(boost::movelib::iterator_to_raw_pointer(x.end  ()))
                      );
+         x.clear();
       }
    }
    #endif   //#ifndef BOOST_CONTAINER_DOXYGEN_INVOKED

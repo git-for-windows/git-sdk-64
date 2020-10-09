@@ -35,7 +35,7 @@
 #endif
 
 //
-// ensure that visibility macros are always defined, thus symplifying use
+// ensure that visibility macros are always defined, thus simplifying use
 //
 #ifndef BOOST_SYMBOL_EXPORT
 # define BOOST_SYMBOL_EXPORT
@@ -54,7 +54,7 @@
 // no namespace issues from this.
 //
 #if !defined(BOOST_HAS_LONG_LONG) && !defined(BOOST_NO_LONG_LONG)                                              \
-   && !defined(BOOST_MSVC) && !defined(__BORLANDC__)
+   && !defined(BOOST_MSVC) && !defined(BOOST_BORLANDC)
 # include <limits.h>
 # if (defined(ULLONG_MAX) || defined(ULONG_LONG_MAX) || defined(ULONGLONG_MAX))
 #   define BOOST_HAS_LONG_LONG
@@ -634,7 +634,7 @@ namespace std{ using ::type_info; }
 #if !defined(BOOST_NORETURN)
 #  if defined(_MSC_VER)
 #    define BOOST_NORETURN __declspec(noreturn)
-#  elif defined(__GNUC__)
+#  elif defined(__GNUC__) || defined(__CODEGEARC__) && defined(__clang__)
 #    define BOOST_NORETURN __attribute__ ((__noreturn__))
 #  elif defined(__has_attribute) && defined(__SUNPRO_CC) && (__SUNPRO_CC > 0x5130)
 #    if __has_attribute(noreturn)
@@ -665,6 +665,12 @@ namespace std{ using ::type_info; }
 #endif
 #if !defined(BOOST_UNLIKELY)
 #  define BOOST_UNLIKELY(x) x
+#endif
+
+#if !defined(BOOST_NO_CXX11_OVERRIDE)
+#  define BOOST_OVERRIDE override
+#else
+#  define BOOST_OVERRIDE
 #endif
 
 // Type and data alignment specification

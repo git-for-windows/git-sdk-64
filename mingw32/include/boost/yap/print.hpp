@@ -123,9 +123,9 @@ namespace boost { namespace yap {
         std::ostream & print_type(std::ostream & os, hana::tuple<T> const &)
         {
             os << typeindex::type_id<T>().pretty_name();
-            if (std::is_const<T>::value)
+            if (std::is_const<std::remove_reference_t<T>>::value)
                 os << " const";
-            if (std::is_volatile<T>::value)
+            if (std::is_volatile<std::remove_reference_t<T>>::value)
                 os << " volatile";
             if (std::is_lvalue_reference<T>::value)
                 os << " &";

@@ -31,7 +31,7 @@ DEALINGS IN THE SOFTWARE.
 #ifndef BOOST_OUTCOME_SYSTEM_ERROR2_GETADDRINFO_CODE_HPP
 #define BOOST_OUTCOME_SYSTEM_ERROR2_GETADDRINFO_CODE_HPP
 
-#include "generic_code.hpp"
+#include "quick_status_code_from_enum.hpp"
 
 #ifdef _WIN32
 #error Not available for Microsoft Windows

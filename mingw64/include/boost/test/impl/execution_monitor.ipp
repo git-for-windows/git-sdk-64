@@ -79,11 +79,11 @@ using std::va_list;
 #    include <eh.h>
 #  endif
 
-#  if defined(__BORLANDC__) && __BORLANDC__ >= 0x560 || defined(__MWERKS__)
+#  if defined(BOOST_BORLANDC) && BOOST_BORLANDC >= 0x560 || defined(__MWERKS__)
 #    include <stdint.h>
 #  endif
 
-#  if defined(__BORLANDC__) && __BORLANDC__ < 0x560
+#  if defined(BOOST_BORLANDC) && BOOST_BORLANDC < 0x560
     typedef unsigned uintptr_t;
 #  endif
 
@@ -123,7 +123,7 @@ _set_invalid_parameter_handler( _invalid_parameter_handler arg )
 
 #  endif
 
-#  if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x0564)) || defined(UNDER_CE)
+#  if BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x0564)) || defined(UNDER_CE)
 
 namespace { void _set_se_translator( void* ) {} }
 
@@ -214,7 +214,7 @@ void throw_exception( std::exception const & e ) { abort(); }
 
 namespace detail {
 
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #  define BOOST_TEST_VSNPRINTF( a1, a2, a3, a4 ) std::vsnprintf( (a1), (a2), (a3), (a4) )
 #elif BOOST_WORKAROUND(_MSC_VER, <= 1310) || \
       BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3000)) || \
@@ -223,6 +223,14 @@ namespace detail {
 #  define BOOST_TEST_VSNPRINTF( a1, a2, a3, a4 ) _vsnprintf( (a1), (a2), (a3), (a4) )
 #else
 #  define BOOST_TEST_VSNPRINTF( a1, a2, a3, a4 ) vsnprintf( (a1), (a2), (a3), (a4) )
+#endif
+
+
+/* checks the printf formatting by adding a decorator to the function */
+#if __GNUC__ >= 3 || defined(BOOST_EMBTC)
+#define BOOST_TEST_PRINTF_ATTRIBUTE_CHECK(x, y) __attribute__((__format__ (__printf__, x, y)))
+#else
+#define BOOST_TEST_PRINTF_ATTRIBUTE_CHECK(x, y)
 #endif
 
 #ifndef BOOST_NO_EXCEPTIONS
@@ -242,9 +250,7 @@ extract( boost::exception const* ex )
 //____________________________________________________________________________//
 
 static void
-#if __GNUC__ >= 3
-__attribute__((__format__ (__printf__, 3, 0)))
-#endif
+BOOST_TEST_PRINTF_ATTRIBUTE_CHECK(3, 0)
 report_error( execution_exception::error_code ec, boost::exception const* be, char const* format, va_list* args )
 {
     static const int REPORT_ERROR_BUFFER_SIZE = 4096;
@@ -263,9 +269,7 @@ report_error( execution_exception::error_code ec, boost::exception const* be, ch
 //____________________________________________________________________________//
 
 static void
-#if __GNUC__ >= 3
-__attribute__((__format__ (__printf__, 3, 4)))
-#endif
+BOOST_TEST_PRINTF_ATTRIBUTE_CHECK(3, 4)
 report_error( execution_exception::error_code ec, boost::exception const* be, char const* format, ... )
 {
     va_list args;
@@ -279,9 +283,7 @@ report_error( execution_exception::error_code ec, boost::exception const* be, ch
 //____________________________________________________________________________//
 
 static void
-#if __GNUC__ >= 3
-__attribute__((__format__ (__printf__, 2, 3)))
-#endif
+BOOST_TEST_PRINTF_ATTRIBUTE_CHECK(2, 3)
 report_error( execution_exception::error_code ec, char const* format, ... )
 {
     va_list args;
@@ -911,7 +913,7 @@ execution_monitor::catch_signals( boost::function<int ()> const& F )
 // **************   Microsoft structured exception handling    ************** //
 // ************************************************************************** //
 
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x0564))
+#if BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x0564))
 namespace { void _set_se_translator( void* ) {} }
 #endif
 

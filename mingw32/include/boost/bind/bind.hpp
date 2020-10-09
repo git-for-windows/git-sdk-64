@@ -38,7 +38,7 @@
 
 // Borland-specific bug, visit_each() silently fails to produce code
 
-#if defined(__BORLANDC__)
+#if defined(BOOST_BORLANDC)
 #  define BOOST_BIND_VISIT_EACH boost::visit_each
 #else
 #  define BOOST_BIND_VISIT_EACH visit_each
@@ -1422,7 +1422,7 @@ public:
 
     template<class V> void accept( V & v ) const
     {
-#if !defined( BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP ) && !defined( __BORLANDC__ )
+#if !defined( BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP ) && !defined( BOOST_BORLANDC )
         using boost::visit_each;
 #endif
 
@@ -1559,7 +1559,7 @@ namespace _bi
 
 #if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) || (__SUNPRO_CC >= 0x530)
 
-#if defined( __BORLANDC__ ) && BOOST_WORKAROUND( __BORLANDC__, BOOST_TESTED_AT(0x582) )
+#if defined( BOOST_BORLANDC ) && BOOST_WORKAROUND( BOOST_BORLANDC, BOOST_TESTED_AT(0x582) )
 
 template<class T> struct add_value
 {
@@ -1811,7 +1811,7 @@ BOOST_BIND_OPERATOR( >=, greater_equal )
 
 // visit_each, ADL
 
-#if !defined( BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP ) && !defined( __BORLANDC__ ) \
+#if !defined( BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP ) && !defined( BOOST_BORLANDC ) \
    && !(defined(__GNUC__) && __GNUC__ == 3 && __GNUC_MINOR__ <= 3)
 
 template<class V, class T> void visit_each( V & v, value<T> const & t, int )
@@ -1831,7 +1831,7 @@ template<class V, class R, class F, class L> void visit_each( V & v, bind_t<R, F
 
 // visit_each, no ADL
 
-#if defined( BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP ) || defined( __BORLANDC__ ) \
+#if defined( BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP ) || defined( BOOST_BORLANDC ) \
   || (defined(__GNUC__) && __GNUC__ == 3 && __GNUC_MINOR__ <= 3)
 
 template<class V, class T> void visit_each( V & v, _bi::value<T> const & t, int )
@@ -2245,7 +2245,7 @@ template<class F, class A1, class A2, class A3, class A4, class A5, class A6, cl
 // data member pointers
 
 #if defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) || defined(BOOST_NO_FUNCTION_TEMPLATE_ORDERING) \
-    || ( defined(__BORLANDC__) && BOOST_WORKAROUND( __BORLANDC__, BOOST_TESTED_AT( 0x620 ) ) )
+    || ( defined(BOOST_BORLANDC) && BOOST_WORKAROUND( BOOST_BORLANDC, BOOST_TESTED_AT( 0x620 ) ) )
 
 template<class R, class T, class A1>
 _bi::bind_t< R, _mfi::dm<R, T>, typename _bi::list_av_1<A1>::type >

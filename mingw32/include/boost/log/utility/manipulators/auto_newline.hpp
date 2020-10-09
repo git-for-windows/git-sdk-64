@@ -32,7 +32,7 @@ BOOST_LOG_OPEN_NAMESPACE
  * inserted into the stream is already a newline.
  */
 struct auto_newline_manip {}
-const auto_newline = {};
+BOOST_INLINE_VARIABLE const auto_newline = {};
 
 /*!
  * Stream output operator for the \c auto_newline manipulator

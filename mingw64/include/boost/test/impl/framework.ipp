@@ -274,13 +274,13 @@ private:
     }
 
     // test_tree_visitor interface
-    virtual void    visit( test_case const& tc )
+    void    visit( test_case const& tc ) BOOST_OVERRIDE
     {
         // make sure we only accept test cases if we match last component of the filter
         if( m_depth == m_components.size() && filter_unit( tc ) )
             m_targ_list.push_back( tc.p_id ); // found a test case
     }
-    virtual bool    test_suite_start( test_suite const& ts )
+    bool    test_suite_start( test_suite const& ts ) BOOST_OVERRIDE
     {
         if( !filter_unit( ts ) )
             return false;
@@ -294,7 +294,7 @@ private:
 
         return false;
     }
-    virtual void    test_suite_finish( test_suite const& /*ts*/ )
+    void    test_suite_finish( test_suite const& /*ts*/ ) BOOST_OVERRIDE
     {
         --m_depth;
     }
@@ -320,7 +320,7 @@ public:
 
 private:
     // test_tree_visitor interface
-    virtual bool    visit( test_unit const& tu )
+    bool    visit( test_unit const& tu ) BOOST_OVERRIDE
     {
         if( tu.has_label( m_label ) ) {
             // found a test unit; add it to list of tu to enable with children and stop recursion in case of suites
@@ -348,7 +348,7 @@ public:
     {}
 
     // test_tree_visitor interface
-    virtual bool    visit( test_unit const& tu )
+    bool    visit( test_unit const& tu ) BOOST_OVERRIDE
     {
         const_cast<test_unit&>(tu).p_run_status.value = m_new_status == test_unit::RS_INVALID ? tu.p_default_status : m_new_status;
         if( m_dep_collector ) {
@@ -460,12 +460,12 @@ void random_shuffle( RandomIt first, RandomIt last, RandomFunc &r )
 class global_fixture_handle : public test_unit_fixture {
 public:
     global_fixture_handle(test_unit_fixture* fixture) : m_global_fixture(fixture) {}
-    ~global_fixture_handle() {}
+    ~global_fixture_handle() BOOST_OVERRIDE {}
 
-    virtual void    setup() {
+    void    setup() BOOST_OVERRIDE {
         m_global_fixture->setup();
     }
-    virtual void    teardown() {
+    void    teardown() BOOST_OVERRIDE {
         m_global_fixture->teardown();
     }
 
@@ -521,7 +521,7 @@ public:
     {
         test_unit& tu = framework::get( tu_id, TUT_ANY );
 
-        // collect all sibling dependancy from tu own list
+        // collect all sibling dependencies from tu own list
         BOOST_TEST_FOREACH( test_unit_id, dep_id, tu.p_dependencies.get() )
             collect_dependant_siblings( tu_id, dep_id, master_tu_id, tuoi );
 
@@ -618,7 +618,7 @@ public:
             while(   parent_id != INV_TEST_UNIT_ID
                   && parent_id != master_tu_id )
             {
-                // we do not use the traverse_test_tree as otherwise it would enable the sibblings and subtree
+                // we do not use the traverse_test_tree as otherwise it would enable the siblings and subtree
                 // of the test case we want to enable (we need to enable the parent suites and their dependencies only)
                 // the parent_id needs to be enabled in order to be properly parsed by finalize_run_status, the visit
                 // does the job
@@ -1226,14 +1226,14 @@ finalize_setup_phase( test_unit_id master_tu_id )
     private:
         // test_tree_visitor interface
 
-        virtual bool    test_suite_start( test_suite const& ts)
+        bool    test_suite_start( test_suite const& ts) BOOST_OVERRIDE
         {
             const_cast<test_suite&>(ts).generate();
             const_cast<test_suite&>(ts).check_for_duplicate_test_cases();
             return test_tree_visitor::test_suite_start(ts);
         }
 
-        virtual bool    visit( test_unit const& tu )
+        bool    visit( test_unit const& tu ) BOOST_OVERRIDE
         {
             BOOST_TEST_FOREACH( decorator::base_ptr, d, tu.p_decorators.get() )
                 d->apply( const_cast<test_unit&>(tu) );

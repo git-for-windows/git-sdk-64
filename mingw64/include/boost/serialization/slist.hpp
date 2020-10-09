@@ -22,7 +22,6 @@
 
 #include <boost/serialization/collections_save_imp.hpp>
 #include <boost/serialization/collections_load_imp.hpp>
-#include <boost/archive/detail/basic_iarchive.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/collection_size_type.hpp>
 #include <boost/serialization/item_version_type.hpp>
@@ -88,14 +87,14 @@ inline void load(
     BOOST_STD_EXTENSION_NAMESPACE::slist<U, Allocator> &t,
     const unsigned int file_version
 ){
-    const boost::archive::library_version_type library_version(
+    const boost::serialization::library_version_type library_version(
         ar.get_library_version()
     );
     // retrieve number of elements
     item_version_type item_version(0);
     collection_size_type count;
     ar >> BOOST_SERIALIZATION_NVP(count);
-    if(boost::archive::library_version_type(3) < library_version){
+    if(boost::serialization::library_version_type(3) < library_version){
         ar >> BOOST_SERIALIZATION_NVP(item_version);
     }
     if(detail::is_default_constructible<U>()){

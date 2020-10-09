@@ -235,8 +235,8 @@ graph_communicator::setup_graph(const communicator& comm, const Graph& graph,
   BOOST_MPI_CHECK_RESULT(MPI_Graph_create,
                          ((MPI_Comm)comm, 
                           nvertices,
-                          &indices[0],
-                          edges.empty()? (int*)0 : &edges[0],
+                          detail::c_data(indices),
+                          detail::c_data(edges),
                           reorder,
                           &newcomm));
   this->comm_ptr.reset(new MPI_Comm(newcomm), comm_free());

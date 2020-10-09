@@ -73,7 +73,7 @@ namespace boost { namespace yap { namespace detail {
     {
         using tuple_t = hana::tuple<rvalue_ref_to_value_t<PlaceholderArgs>...>;
 
-        placeholder_transform_t(PlaceholderArgs &&... args) :
+        constexpr placeholder_transform_t(PlaceholderArgs &&... args) :
             placeholder_args_(static_cast<PlaceholderArgs &&>(args)...)
         {}
 

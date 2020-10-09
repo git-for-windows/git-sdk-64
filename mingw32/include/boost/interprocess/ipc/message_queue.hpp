@@ -709,7 +709,7 @@ inline bool message_queue_t<VoidPointer>::timed_send
    (const void *buffer, size_type buffer_size
    ,unsigned int priority, const boost::posix_time::ptime &abs_time)
 {
-   if(abs_time == boost::posix_time::pos_infin){
+   if(abs_time.is_pos_infinity()){
       this->send(buffer, buffer_size, priority);
       return true;
    }
@@ -834,7 +834,7 @@ inline bool
                                 size_type &recvd_size,   unsigned int &priority,
                                 const boost::posix_time::ptime &abs_time)
 {
-   if(abs_time == boost::posix_time::pos_infin){
+   if(abs_time.is_pos_infinity()){
       this->receive(buffer, buffer_size, recvd_size, priority);
       return true;
    }

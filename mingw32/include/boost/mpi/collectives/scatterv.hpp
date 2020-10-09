@@ -142,7 +142,7 @@ void
 scatterv(const communicator& comm, const std::vector<T>& in_values,
          const std::vector<int>& sizes, T* out_values, int root)
 {
-  ::boost::mpi::scatterv(comm, &in_values[0], sizes, out_values, root);
+  ::boost::mpi::scatterv(comm, detail::c_data(in_values), sizes, out_values, root);
 }
 
 template<typename T>
@@ -159,7 +159,7 @@ void
 scatterv(const communicator& comm, const std::vector<T>& in_values,
          T* out_values, int out_size, int root)
 {
-  ::boost::mpi::scatterv(comm, &in_values[0], out_values, out_size, root);
+  ::boost::mpi::scatterv(comm, detail::c_data(in_values), out_values, out_size, root);
 }
 
 } } // end namespace boost::mpi

@@ -104,7 +104,7 @@ namespace container {
 namespace dtl {
 
 #ifdef BOOST_PLAT_WINDOWS_UWP
-extern "C" __declspec(dllimport) void __stdcall InitializeCriticalSectionEx(::_RTL_CRITICAL_SECTION *, unsigned long, unsigned long);
+extern "C" __declspec(dllimport) int __stdcall InitializeCriticalSectionEx(::_RTL_CRITICAL_SECTION *, unsigned long, unsigned long);
 #else
 extern "C" __declspec(dllimport) void __stdcall InitializeCriticalSection(::_RTL_CRITICAL_SECTION *);
 #endif

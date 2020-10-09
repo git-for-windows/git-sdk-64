@@ -52,7 +52,7 @@ protected:
 public:
     typedef enum {
         no_exception,       // initialized without code
-        other_exception,    // any excepton not listed below
+        other_exception,    // any exception not listed below
         unregistered_class, // attempt to serialize a pointer of
                             // an unregistered class
         invalid_signature,  // first line of archive does not contain
@@ -63,7 +63,7 @@ public:
                             // serialize an object which has
                             // already been serialized through a pointer.
                             // Were this permitted, the archive load would result
-                            // in the creation of an extra copy of the obect.
+                            // in the creation of an extra copy of the object.
         incompatible_native_format, // attempt to read native binary format
                             // on incompatible platform
         array_size_too_short,// array being loaded doesn't fit in array allocated
@@ -87,9 +87,9 @@ public:
         const char * e1 = NULL,
         const char * e2 = NULL
     ) BOOST_NOEXCEPT;
-    BOOST_ARCHIVE_DECL archive_exception(archive_exception const &) BOOST_NOEXCEPT ;
-    virtual BOOST_ARCHIVE_DECL ~archive_exception() BOOST_NOEXCEPT_OR_NOTHROW ;
-    virtual BOOST_ARCHIVE_DECL const char * what() const BOOST_NOEXCEPT_OR_NOTHROW ;
+    BOOST_ARCHIVE_DECL archive_exception(archive_exception const &) BOOST_NOEXCEPT;
+    BOOST_ARCHIVE_DECL ~archive_exception() BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE;
+    BOOST_ARCHIVE_DECL const char * what() const BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE;
 };
 
 }// namespace archive

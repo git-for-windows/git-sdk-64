@@ -2,7 +2,7 @@
 //  Copyright (c) 2012 Artyom Beilis (Tonkikh)
 //
 //  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE_1_0.txt or copy at
+//  accompanying file LICENSE or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #ifndef BOOST_NOWIDE_ARGS_HPP_INCLUDED
@@ -26,27 +26,34 @@ namespace nowide {
         {}
         args(int&, char**&, char**&)
         {}
-        ~args()
-        {}
     };
 
 #else
 
     ///
-    /// \brief args is a class that fixes standard main() function arguments and changes them to UTF-8 under
-    /// Microsoft Windows.
+    /// \brief \c args is a class that temporarily replaces standard main() function arguments with their
+    /// equal, but UTF-8 encoded values under Microsoft Windows for the lifetime of the instance.
     ///
     /// The class uses \c GetCommandLineW(), \c CommandLineToArgvW() and \c GetEnvironmentStringsW()
-    /// in order to obtain the information. It does not relate to actual values of argc,argv and env
-    /// under Windows.
+    /// in order to obtain Unicode-encoded values.
+    /// It does not relate to actual values of argc, argv and env under Windows.
     ///
-    /// It restores the original values in its destructor
+    /// It restores the original values in its destructor (usually at the end of the \c main function).
     ///
     /// If any of the system calls fails, an exception of type std::runtime_error will be thrown
     /// and argc, argv, env remain unchanged.
     ///
-    /// \note the class owns the memory of the newly allocated strings
+    /// \note The class owns the memory of the newly allocated strings.
+    /// So you need to keep it alive as long as you use the values.
     ///
+    /// Usage:
+    /// \code
+    /// int main(int argc, char** argv, char** env) {
+    ///   boost::nowide::args _(argc, argv, env); // Note the _ as a "don't care" name for the instance
+    ///   // Use argv and env as usual, they are now UTF-8 encoded on Windows
+    ///   return 0; // Memory held by args is released
+    /// }
+    /// \endcode
     class args
     {
     public:
@@ -69,7 +76,7 @@ namespace nowide {
             fix_env(env);
         }
         ///
-        /// Restore original argc,argv,env values, if changed
+        /// Restore original argc, argv, env values, if changed
         ///
         ~args()
         {
@@ -86,9 +93,6 @@ namespace nowide {
         {
             wchar_t** p;
             int argc;
-            // Non-copyable
-            wargv_ptr(const wargv_ptr&);
-            wargv_ptr& operator=(const wargv_ptr&);
 
         public:
             wargv_ptr()
@@ -100,6 +104,9 @@ namespace nowide {
                 if(p)
                     LocalFree(p);
             }
+            wargv_ptr(const wargv_ptr&) = delete;
+            wargv_ptr& operator=(const wargv_ptr&) = delete;
+
             int size() const
             {
                 return argc;
@@ -116,9 +123,6 @@ namespace nowide {
         class wenv_ptr
         {
             wchar_t* p;
-            // Non-copyable
-            wenv_ptr(const wenv_ptr&);
-            wenv_ptr& operator=(const wenv_ptr&);
 
         public:
             wenv_ptr() : p(GetEnvironmentStringsW())
@@ -128,6 +132,9 @@ namespace nowide {
                 if(p)
                     FreeEnvironmentStringsW(p);
             }
+            wenv_ptr(const wenv_ptr&) = delete;
+            wenv_ptr& operator=(const wenv_ptr&) = delete;
+
             operator const wchar_t*() const
             {
                 return p;

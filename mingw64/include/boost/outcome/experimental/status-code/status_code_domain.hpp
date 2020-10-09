@@ -89,12 +89,13 @@ namespace detail
            ((parse_hex_byte(s[19]) << 0) | (parse_hex_byte(s[20]) << 4) | (parse_hex_byte(s[21]) << 8) | (parse_hex_byte(s[22]) << 12) | (parse_hex_byte(s[24]) << 16) | (parse_hex_byte(s[25]) << 20) | (parse_hex_byte(s[26]) << 24) | (parse_hex_byte(s[27]) << 28) | (parse_hex_byte(s[28]) << 32) |
             (parse_hex_byte(s[29]) << 36) | (parse_hex_byte(s[30]) << 40) | (parse_hex_byte(s[31]) << 44) | (parse_hex_byte(s[32]) << 48) | (parse_hex_byte(s[33]) << 52) | (parse_hex_byte(s[34]) << 56) | (parse_hex_byte(s[35]) << 60));
   }
-  template <size_t N> constexpr inline unsigned long long parse_uuid(const char (&uuid)[N]) { return (N == 37) ? parse_uuid2(uuid) : ((N == 39) ? parse_uuid2(uuid + 1) : BOOST_OUTCOME_SYSTEM_ERROR2_FAIL_CONSTEXPR("UUID does not have correct length")); }
+  template <size_t N> constexpr inline unsigned long long parse_uuid_from_array(const char (&uuid)[N]) { return (N == 37) ? parse_uuid2(uuid) : ((N == 39) ? parse_uuid2(uuid + 1) : BOOST_OUTCOME_SYSTEM_ERROR2_FAIL_CONSTEXPR("UUID does not have correct length")); }
+  template <size_t N> constexpr inline unsigned long long parse_uuid_from_pointer(const char *uuid) { return (N == 36) ? parse_uuid2(uuid) : ((N == 38) ? parse_uuid2(uuid + 1) : BOOST_OUTCOME_SYSTEM_ERROR2_FAIL_CONSTEXPR("UUID does not have correct length")); }
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
 #endif
-  static constexpr unsigned long long test_uuid_parse = parse_uuid("430f1201-94fc-06c7-430f-120194fc06c7");
-  //static constexpr unsigned long long test_uuid_parse2 = parse_uuid("x30f1201-94fc-06c7-430f-120194fc06c7");
+  static constexpr unsigned long long test_uuid_parse = parse_uuid_from_array("430f1201-94fc-06c7-430f-120194fc06c7");
+  //static constexpr unsigned long long test_uuid_parse2 = parse_uuid_from_array("x30f1201-94fc-06c7-430f-120194fc06c7");
 }  // namespace detail
 
 /*! Abstract base class for a coding domain of a status code.
@@ -359,7 +360,16 @@ protected:
    */
   template <size_t N>
   constexpr explicit status_code_domain(const char (&uuid)[N]) noexcept
-      : _id(detail::parse_uuid<N>(uuid))
+      : _id(detail::parse_uuid_from_array<N>(uuid))
+  {
+  }
+  template <size_t N> struct _uuid_size
+  {
+  };
+  //! Alternative UUID constructor
+  template <size_t N>
+  constexpr explicit status_code_domain(const char *uuid, _uuid_size<N> /*unused*/) noexcept
+      : _id(detail::parse_uuid_from_pointer<N>(uuid))
   {
   }
   //! No public copying at type erased level

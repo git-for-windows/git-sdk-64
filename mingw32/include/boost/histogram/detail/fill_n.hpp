@@ -8,23 +8,24 @@
 #define BOOST_HISTOGRAM_DETAIL_FILL_N_HPP
 
 #include <algorithm>
-#include <boost/assert.hpp>
 #include <boost/histogram/axis/option.hpp>
 #include <boost/histogram/axis/traits.hpp>
 #include <boost/histogram/detail/axes.hpp>
 #include <boost/histogram/detail/detect.hpp>
 #include <boost/histogram/detail/fill.hpp>
 #include <boost/histogram/detail/linearize.hpp>
-#include <boost/histogram/detail/non_member_container_access.hpp>
+#include <boost/histogram/detail/nonmember_container_access.hpp>
 #include <boost/histogram/detail/optional_index.hpp>
 #include <boost/histogram/detail/span.hpp>
 #include <boost/histogram/detail/static_if.hpp>
-#include <boost/variant2/variant.hpp>
 #include <boost/histogram/fwd.hpp>
 #include <boost/mp11/algorithm.hpp>
 #include <boost/mp11/bind.hpp>
 #include <boost/mp11/utility.hpp>
 #include <boost/throw_exception.hpp>
+#include <boost/variant2/variant.hpp>
+#include <cassert>
+#include <initializer_list>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
@@ -38,9 +39,6 @@ namespace dtl = boost::histogram::detail;
 template <class Axes, class T>
 using is_convertible_to_any_value_type =
     mp11::mp_any_of_q<value_types<Axes>, mp11::mp_bind_front<std::is_convertible, T>>;
-
-template <class... Ts>
-void fold(Ts&&...) noexcept {} // helper to enable operator folding
 
 template <class T>
 auto to_ptr_size(const T& x) {
@@ -158,20 +156,22 @@ void fill_n_indices(Index* indices, const std::size_t start, const std::size_t s
 template <class S, class Index, class... Ts>
 void fill_n_storage(S& s, const Index idx, Ts&&... p) noexcept {
   if (is_valid(idx)) {
-    BOOST_ASSERT(idx < s.size());
+    assert(idx < s.size());
     fill_storage_element(s[idx], *p.first...);
   }
-  fold((p.second ? ++p.first : 0)...);
+  // operator folding emulation
+  (void)std::initializer_list<int>{(p.second ? (++p.first, 0) : 0)...};
 }
 
 template <class S, class Index, class T, class... Ts>
 void fill_n_storage(S& s, const Index idx, weight_type<T>&& w, Ts&&... ps) noexcept {
   if (is_valid(idx)) {
-    BOOST_ASSERT(idx < s.size());
+    assert(idx < s.size());
     fill_storage_element(s[idx], weight(*w.value.first), *ps.first...);
   }
   if (w.value.second) ++w.value.first;
-  fold((ps.second ? ++ps.first : 0)...);
+  // operator folding emulation
+  (void)std::initializer_list<int>{(ps.second ? (++ps.first, 0) : 0)...};
 }
 
 // general Nd treatment
@@ -255,7 +255,7 @@ std::size_t get_total_size(const A& axes, const dtl::span<const T, N>& values) {
   // supported cases (T = value type; CT = containter of T; V<T, CT, ...> = variant):
   // - span<CT, N>: for any histogram, N == rank
   // - span<V<T, CT>, N>: for any histogram, N == rank
-  BOOST_ASSERT(axes_rank(axes) == values.size());
+  assert(axes_rank(axes) == values.size());
   constexpr auto unset = static_cast<std::size_t>(-1);
   std::size_t size = unset;
   for_each_axis(axes, [&size, vit = values.begin()](const auto& ax) mutable {

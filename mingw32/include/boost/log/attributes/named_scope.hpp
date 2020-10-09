@@ -20,9 +20,9 @@
 #include <memory>
 #include <iterator>
 #include <cstddef>
-#include <boost/log/detail/config.hpp>
 #include <boost/current_function.hpp>
 #include <boost/type_traits/conditional.hpp>
+#include <boost/log/detail/config.hpp>
 #include <boost/log/utility/string_literal.hpp>
 #include <boost/log/utility/unique_identifier_name.hpp>
 #include <boost/log/utility/unused_variable.hpp>

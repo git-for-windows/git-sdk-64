@@ -16,8 +16,9 @@
 #include <boost/config.hpp> // compilers workarounds
 #include <boost/detail/workaround.hpp>
 
-#if defined(_WIN32) && !defined(BOOST_DISABLE_WIN32) &&                  \
-    (!defined(__COMO__) && !defined(__MWERKS__) && !defined(__GNUC__) || \
+#if defined(_WIN32) && !defined(BOOST_DISABLE_WIN32) && \
+    (!defined(__COMO__) && !defined(__MWERKS__)      && \
+     !defined(__GNUC__) && !defined(BOOST_EMBTC)     || \
     BOOST_WORKAROUND(__MWERKS__, >= 0x3000))
 #  define BOOST_SEH_BASED_SIGNAL_HANDLING
 #endif
@@ -30,7 +31,7 @@ class type_info;
 
 //____________________________________________________________________________//
 
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570)) || \
+#if BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x570)) || \
     BOOST_WORKAROUND(__IBMCPP__, BOOST_TESTED_AT(600))     || \
     (defined __sgi && BOOST_WORKAROUND(_COMPILER_VERSION, BOOST_TESTED_AT(730)))
 #  define BOOST_TEST_SHIFTED_LINE
@@ -52,7 +53,7 @@ class type_info;
 
 //____________________________________________________________________________//
 
-#if BOOST_WORKAROUND(__BORLANDC__, <= 0x570)            || \
+#if BOOST_WORKAROUND(BOOST_BORLANDC, <= 0x570)            || \
     BOOST_WORKAROUND( __COMO__, <= 0x433 )              || \
     BOOST_WORKAROUND( __INTEL_COMPILER, <= 800 )        || \
     defined(__sgi) && _COMPILER_VERSION <= 730          || \
@@ -72,7 +73,7 @@ class type_info;
 
 //____________________________________________________________________________//
 
-#if !defined(__BORLANDC__) && !BOOST_WORKAROUND( __SUNPRO_CC, < 0x5100 )
+#if !defined(BOOST_BORLANDC) && !BOOST_WORKAROUND( __SUNPRO_CC, < 0x5100 )
 #define BOOST_TEST_SUPPORT_TOKEN_ITERATOR 1
 #endif
 

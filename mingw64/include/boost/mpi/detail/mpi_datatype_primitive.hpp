@@ -133,7 +133,7 @@ private:
     template <class T>
     static T* get_data(std::vector<T>& v)
     {
-      return v.empty() ? 0 : &(v[0]);
+      return detail::c_data(v);
     }
 
     std::vector<MPI_Aint> addresses;

@@ -10,8 +10,8 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(CPP_TOKEN_HPP_53A13BD2_FBAA_444B_9B8B_FCB225C2BBA8_INCLUDED)
-#define CPP_TOKEN_HPP_53A13BD2_FBAA_444B_9B8B_FCB225C2BBA8_INCLUDED
+#if !defined(BOOST_CPP_TOKEN_HPP_53A13BD2_FBAA_444B_9B8B_FCB225C2BBA8_INCLUDED)
+#define BOOST_CPP_TOKEN_HPP_53A13BD2_FBAA_444B_9B8B_FCB225C2BBA8_INCLUDED
 
 #include <boost/wave/wave_config.hpp>
 #if BOOST_WAVE_SERIALIZATION != 0
@@ -332,4 +332,4 @@ operator<< (std::ostream &stream, lex_token<PositionT> const &object)
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(CPP_TOKEN_HPP_53A13BD2_FBAA_444B_9B8B_FCB225C2BBA8_INCLUDED)
+#endif // !defined(BOOST_CPP_TOKEN_HPP_53A13BD2_FBAA_444B_9B8B_FCB225C2BBA8_INCLUDED)

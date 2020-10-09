@@ -71,7 +71,7 @@ private:
         ++(this->base_reference());
         dereference_impl();
         m_full = false;
-    };
+    }
 
 public:
 

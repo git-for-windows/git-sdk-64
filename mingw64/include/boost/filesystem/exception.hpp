@@ -69,7 +69,7 @@ public:
     return m_imp_ptr.get() ? m_imp_ptr->m_path2 : get_empty_path();
   }
 
-  const char* what() const BOOST_NOEXCEPT_OR_NOTHROW;
+  const char* what() const BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE;
 
 private:
   static const path& get_empty_path() BOOST_NOEXCEPT;

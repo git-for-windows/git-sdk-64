@@ -274,10 +274,10 @@ class executor
         if ((prepare_cmd_style_fn.find('/') == std::string::npos) && ::access(prepare_cmd_style_fn.c_str(), X_OK))
         {
             auto e = ::environ;
-            while ((*e != nullptr) && !boost::starts_with(*e, "PATH="))
+            while ((e != nullptr) && (*e != nullptr) && !boost::starts_with(*e, "PATH="))
                 e++;
 
-            if (e != nullptr)
+            if ((e != nullptr) && (*e != nullptr))
             {
                 std::vector<std::string> path;
                 boost::split(path, *e, boost::is_any_of(":"));

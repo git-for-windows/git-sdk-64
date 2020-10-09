@@ -153,7 +153,7 @@ public:
     {}
 
 private:
-    virtual bool visit( test_unit const& tu)
+    bool visit( test_unit const& tu) BOOST_OVERRIDE
     {
       typedef std::map<test_unit_id,test_results>::iterator iterator;
       iterator found = m_store.m_results_store.find(tu.p_id);
@@ -201,7 +201,7 @@ class results_collect_helper : public test_tree_visitor {
 public:
     explicit results_collect_helper( test_results& tr, test_unit const& ts ) : m_tr( tr ), m_ts( ts ) {}
 
-    void    visit( test_case const& tc )
+    void    visit( test_case const& tc ) BOOST_OVERRIDE
     {
         test_results const& tr = results_collector.results( tc.p_id );
         m_tr += tr;
@@ -225,7 +225,7 @@ public:
             m_tr.p_test_cases_failed.value++;
         }
     }
-    bool    test_suite_start( test_suite const& ts )
+    bool    test_suite_start( test_suite const& ts ) BOOST_OVERRIDE
     {
         if( m_ts.p_id == ts.p_id )
             return true;

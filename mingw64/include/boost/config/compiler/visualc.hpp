@@ -144,6 +144,7 @@
 #  define BOOST_NO_CXX11_FINAL
 #  define BOOST_NO_CXX11_RANGE_BASED_FOR
 #  define BOOST_NO_CXX11_SCOPED_ENUMS
+#  define BOOST_NO_CXX11_OVERRIDE
 #endif // _MSC_VER < 1700
 
 // C++11 features supported by VC++ 12 (aka 2013).

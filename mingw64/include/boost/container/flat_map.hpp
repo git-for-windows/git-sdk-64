@@ -713,7 +713,7 @@ class flat_map
    //!
    //! Returns: A reference to the mapped_type corresponding to x in *this.
    //!
-   //! Complexity: Logarithmic.
+   //! Complexity: Logarithmic search time plus linear insertion time in case no equivalent key is present.
    mapped_type &operator[](const key_type& k);
 
    //! Effects: If there is no key equivalent to x in the flat_map, inserts
@@ -721,8 +721,8 @@ class flat_map
    //!
    //! Returns: A reference to the mapped_type corresponding to x in *this.
    //!
-   //! Complexity: Logarithmic.
-   mapped_type &operator[](key_type &&k) ;
+   //! Complexity: Logarithmic search time plus linear insertion time in case no equivalent key is present.
+   mapped_type &operator[](key_type &&k);
    #elif defined(BOOST_MOVE_HELPERS_RETURN_SFINAE_BROKEN)
       //in compilers like GCC 3.4, we can't catch temporaries
       BOOST_CONTAINER_FORCEINLINE mapped_type& operator[](const key_type &k)         {  return this->priv_subscript(k);  }
@@ -742,7 +742,7 @@ class flat_map
    //! Returns: The bool component is true if the insertion took place and false if the assignment
    //!   took place. The iterator component is pointing at the element that was inserted or updated.
    //!
-   //! Complexity: Logarithmic in the size of the container.
+   //! Complexity: Logarithmic search time plus linear insertion time in case no equivalent key is present.
    template <class M>
    BOOST_CONTAINER_FORCEINLINE std::pair<iterator, bool> insert_or_assign(const key_type& k, BOOST_FWD_REF(M) obj)
    {
@@ -955,7 +955,7 @@ class flat_map
    //! <b>Returns</b>: The bool component of the returned pair is true if and only if the
    //! insertion took place. The returned iterator points to the map element whose key is equivalent to k.
    //! 
-   //! <b>Complexity</b>: Logarithmic.
+   //! <b>Complexity</b>: Logarithmic search time plus linear insertion time in case the key is not present.
    template <class... Args>
    BOOST_CONTAINER_FORCEINLINE std::pair<iterator, bool> try_emplace(BOOST_RV_REF(key_type) k, BOOST_FWD_REF(Args)... args)
    {
@@ -973,7 +973,7 @@ class flat_map
    //! <b>Returns</b>: The returned iterator points to the map element whose key is equivalent to k.
    //! 
    //! <b>Complexity</b>: Logarithmic in general, but amortized constant if value
-   //!   is inserted right before p.
+   //!   is inserted right before p. Linear insertion time in case no equivalent key is present.
    template <class... Args>
    BOOST_CONTAINER_FORCEINLINE iterator try_emplace(const_iterator hint, BOOST_RV_REF(key_type) k, BOOST_FWD_REF(Args)... args)
    {

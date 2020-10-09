@@ -22,7 +22,7 @@
 #if defined(_CPPLIB_VER) && (_CPPLIB_VER >= 306)
    // full dinkumware 3.06 and above
    // fully conforming provided the compiler supports it:
-#  if !(defined(_GLOBAL_USING) && (_GLOBAL_USING+0 > 0)) && !defined(__BORLANDC__) && !defined(_STD) && !(defined(__ICC) && (__ICC >= 700))   // can be defined in yvals.h
+#  if !(defined(_GLOBAL_USING) && (_GLOBAL_USING+0 > 0)) && !defined(BOOST_BORLANDC) && !defined(_STD) && !(defined(__ICC) && (__ICC >= 700))   // can be defined in yvals.h
 #     define BOOST_NO_STDC_NAMESPACE
 #  endif
 #  if !(defined(_HAS_MEMBER_TEMPLATES_REBIND) && (_HAS_MEMBER_TEMPLATES_REBIND+0 > 0)) && !(defined(_MSC_VER) && (_MSC_VER > 1300)) && defined(BOOST_MSVC)
@@ -68,12 +68,12 @@
 // the same applies to other compilers that sit on top
 // of vc7.1 (Intel and Comeau):
 //
-#if defined(_MSC_VER) && (_MSC_VER >= 1310) && !defined(__BORLANDC__)
+#if defined(_MSC_VER) && (_MSC_VER >= 1310) && !defined(BOOST_BORLANDC)
 #  define BOOST_STD_EXTENSION_NAMESPACE stdext
 #endif
 
 
-#if (defined(_MSC_VER) && (_MSC_VER <= 1300) && !defined(__BORLANDC__)) || !defined(_CPPLIB_VER) || (_CPPLIB_VER < 306)
+#if (defined(_MSC_VER) && (_MSC_VER <= 1300) && !defined(BOOST_BORLANDC)) || !defined(_CPPLIB_VER) || (_CPPLIB_VER < 306)
    // if we're using a dinkum lib that's
    // been configured for VC6/7 then there is
    // no iterator traits (true even for icl)
@@ -98,7 +98,7 @@
 #endif
 #include <typeinfo>
 #if ( (!_HAS_EXCEPTIONS && !defined(__ghs__)) || (defined(__ghs__) && !_HAS_NAMESPACE) ) && !defined(__TI_COMPILER_VERSION__) && !defined(__VISUALDSPVERSION__) \
-   && !defined(__VXWORKS__)
+   && !defined(__VXWORKS__) && !defined(BOOST_EMBTC_WINDOWS)
 #  define BOOST_NO_STD_TYPEINFO
 #endif  
 #endif

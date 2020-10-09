@@ -8,7 +8,6 @@
 #define BOOST_HISTOGRAM_DETAIL_FILL_HPP
 
 #include <algorithm>
-#include <boost/assert.hpp>
 #include <boost/config/workaround.hpp>
 #include <boost/histogram/axis/traits.hpp>
 #include <boost/histogram/axis/variant.hpp>
@@ -24,6 +23,7 @@
 #include <boost/mp11/integral.hpp>
 #include <boost/mp11/tuple.hpp>
 #include <boost/mp11/utility.hpp>
+#include <cassert>
 #include <mutex>
 #include <tuple>
 #include <type_traits>
@@ -195,7 +195,7 @@ void fill_storage_2(mp11::mp_int<-1>, mp11::mp_int<-1>, T&& t, const U&) noexcep
 template <class IW, class IS, class Storage, class Index, class Args>
 auto fill_storage(IW, IS, Storage& s, const Index idx, const Args& a) noexcept {
   if (is_valid(idx)) {
-    BOOST_ASSERT(idx < s.size());
+    assert(idx < s.size());
     fill_storage_2(IW{}, IS{}, s[idx], a);
     return s.begin() + idx;
   }
@@ -230,7 +230,7 @@ struct linearize_args<S, 1> {
 
 template <class A>
 constexpr unsigned min(const unsigned n) noexcept {
-  constexpr unsigned a = static_cast<unsigned>(buffer_size<A>::value);
+  constexpr unsigned a = buffer_size<A>::value;
   return a < n ? a : n;
 }
 
@@ -325,9 +325,9 @@ auto fill(std::true_type, ArgTraits, const std::size_t offset, S& storage, A& ax
         growing{}, offset, storage, axes,
         pack_args<ArgTraits::start::value, ArgTraits::nargs::value>(
             typename ArgTraits::wpos{}, typename ArgTraits::spos{}, args));
-  return (BOOST_THROW_EXCEPTION(
-              std::invalid_argument("number of arguments != histogram rank")),
-          storage.end());
+  return BOOST_THROW_EXCEPTION(
+             std::invalid_argument("number of arguments != histogram rank")),
+         storage.end();
 }
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 0)

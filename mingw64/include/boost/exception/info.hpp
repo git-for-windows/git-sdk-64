@@ -57,7 +57,7 @@ boost
     exception_detail
         {
         class
-        error_info_container_impl:
+        error_info_container_impl BOOST_FINAL:
             public error_info_container
             {
             public:

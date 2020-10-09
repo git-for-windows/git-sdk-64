@@ -1,5 +1,5 @@
 // Copyright 2014 Renato Tegon Forti, Antony Polukhin.
-// Copyright 2015-2019 Antony Polukhin.
+// Copyright 2015-2020 Antony Polukhin.
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt
@@ -16,6 +16,7 @@
 
 #include <cstring>
 #include <fstream>
+#include <string> // for std::getline
 
 #include <boost/assert.hpp>
 #include <boost/cstdint.hpp>
@@ -206,12 +207,17 @@ private:
 
         return h;
     }
-    
-    static exports_t exports(std::ifstream& fs, const header_t& h) {
-        exports_t exports;
 
+    static exports_t exports(std::ifstream& fs, const header_t& h) {
         static const unsigned int IMAGE_DIRECTORY_ENTRY_EXPORT_ = 0;
         const std::size_t exp_virtual_address = h.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT_].VirtualAddress;
+        exports_t exports;
+
+        if (exp_virtual_address == 0) {
+            // The virtual address can be 0 in case there are no exported symbols
+            std::memset(&exports, 0, sizeof(exports));
+            return exports;
+        }
 
         const std::size_t real_offset = get_file_offset(fs, exp_virtual_address, h);
         BOOST_ASSERT(real_offset);
@@ -223,6 +229,8 @@ private:
     }
 
     static std::size_t get_file_offset(std::ifstream& fs, std::size_t virtual_address, const header_t& h) {
+        BOOST_ASSERT(virtual_address);
+
         section_t image_section_header;
         
         {   // fs.seekg to the beginning on section headers
@@ -279,6 +287,11 @@ public:
         const header_t h = header(fs);
         const exports_t exprt = exports(fs, h);
         const std::size_t exported_symbols = exprt.NumberOfNames;
+
+        if (exported_symbols == 0) {
+            return ret;
+        }
+
         const std::size_t fixed_names_addr = get_file_offset(fs, exprt.AddressOfNames, h);
 
         ret.reserve(exported_symbols);
@@ -288,7 +301,7 @@ public:
             fs.seekg(fixed_names_addr + i * sizeof(name_offset));
             read_raw(fs, name_offset);
             fs.seekg(get_file_offset(fs, name_offset, h));
-            getline(fs, symbol_name, '\0');
+            std::getline(fs, symbol_name, '\0');
             ret.push_back(symbol_name);
         }
 
@@ -349,7 +362,7 @@ public:
             fs.seekg(fixed_names_addr + i * sizeof(ptr));
             read_raw(fs, ptr);
             fs.seekg(get_file_offset(fs, ptr, h));
-            getline(fs, symbol_name, '\0');
+            std::getline(fs, symbol_name, '\0');
             ret.push_back(symbol_name);
         }
 

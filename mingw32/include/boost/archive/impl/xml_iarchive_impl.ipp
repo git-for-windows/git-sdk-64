@@ -165,7 +165,7 @@ BOOST_ARCHIVE_DECL void
 xml_iarchive_impl<Archive>::init(){
     gimpl->init(is);
     this->set_library_version(
-        library_version_type(gimpl->rv.version)
+        boost::serialization::library_version_type(gimpl->rv.version)
     );
 }
 

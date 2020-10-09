@@ -28,7 +28,7 @@ private:
     base_type t;
 public:
     // should be private - but MPI fails if it's not!!!
-    item_version_type(): t(0) {};
+    item_version_type(): t(0) {}
     explicit item_version_type(const unsigned int t_) : t(t_){
         BOOST_ASSERT(t_ <= boost::integer_traits<base_type>::const_max);
     }

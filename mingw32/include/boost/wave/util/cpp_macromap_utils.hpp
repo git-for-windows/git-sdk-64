@@ -10,14 +10,15 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(CPP_MACROMAP_UTIL_HPP_HK041119)
-#define CPP_MACROMAP_UTIL_HPP_HK041119
+#if !defined(BOOST_CPP_MACROMAP_UTIL_HPP_HK041119)
+#define BOOST_CPP_MACROMAP_UTIL_HPP_HK041119
 
 #include <boost/assert.hpp>
 
 #include <boost/wave/wave_config.hpp>
 #include <boost/wave/token_ids.hpp>
 #include <boost/wave/util/unput_queue_iterator.hpp>
+#include <boost/wave/language_support.hpp>
 
 // this must occur after all of the includes and before any code appears
 #ifdef BOOST_HAS_ABI_HEADERS
@@ -135,15 +136,21 @@ namespace impl {
 //  Test, whether a given identifier resolves to a predefined name
 //
 ///////////////////////////////////////////////////////////////////////////////
-template <typename StringT>
+template <typename ContextT, typename StringT>
 inline bool
-is_special_macroname (StringT const &name)
+is_special_macroname (ContextT const & ctx, StringT const &name)
 {
     if (name.size() < 7)
         return false;
 
     if ("defined" == name)
         return true;
+
+#if BOOST_WAVE_SUPPORT_HAS_INCLUDE != 0
+    if (boost::wave::need_has_include(ctx.get_language()) &&
+        ("__has_include" == name))
+        return true;
+#endif
 
     if ('_' == name[0] && '_' == name[1]) {
     StringT str = name.substr(2);
@@ -338,6 +345,27 @@ is_whitespace_only (ContainerT const &argument)
           it != end; ++it)
     {
         if (!IS_CATEGORY(*it, WhiteSpaceTokenType))
+            return false;
+    }
+    return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//  Tests whether the given token sequence consists only of whitespace
+//  and placemarkers
+//
+///////////////////////////////////////////////////////////////////////////////
+template <typename ContainerT>
+inline bool
+is_blank_only (ContainerT const &argument)
+{
+    typename ContainerT::const_iterator end = argument.end();
+    for (typename ContainerT::const_iterator it = argument.begin();
+          it != end; ++it)
+    {
+        if (!IS_CATEGORY(*it, WhiteSpaceTokenType) &&
+            (T_PLACEMARKER != token_id(*it)))
             return false;
     }
     return true;
@@ -572,4 +600,4 @@ to_string(Src const& src)
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(CPP_MACROMAP_UTIL_HPP_HK041119)
+#endif // !defined(BOOST_CPP_MACROMAP_UTIL_HPP_HK041119)

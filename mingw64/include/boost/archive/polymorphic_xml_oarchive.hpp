@@ -30,7 +30,7 @@ public:
     polymorphic_xml_oarchive(std::ostream & os, unsigned int flags = 0) :
         detail::polymorphic_oarchive_route<xml_oarchive>(os, flags)
     {}
-    ~polymorphic_xml_oarchive(){}
+    ~polymorphic_xml_oarchive() BOOST_OVERRIDE {}
 };
 } // namespace archive
 } // namespace boost
@@ -41,4 +41,3 @@ BOOST_SERIALIZATION_REGISTER_ARCHIVE(
 )
 
 #endif // BOOST_ARCHIVE_POLYMORPHIC_XML_OARCHIVE_HPP
-

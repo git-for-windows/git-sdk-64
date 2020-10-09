@@ -34,13 +34,13 @@ namespace unit_test {
 class BOOST_TEST_DECL framework_init_observer_t : public test_observer {
 public:
 
-    virtual void        test_start( counter_t, test_unit_id );
+    void        test_start( counter_t, test_unit_id ) BOOST_OVERRIDE;
 
-    virtual void        assertion_result( unit_test::assertion_result );
-    virtual void        exception_caught( execution_exception const& );
-    virtual void        test_aborted();
+    void        assertion_result( unit_test::assertion_result ) BOOST_OVERRIDE;
+    void        exception_caught( execution_exception const& ) BOOST_OVERRIDE;
+    void        test_aborted() BOOST_OVERRIDE;
 
-    virtual int         priority() { return 0; }
+    int         priority() BOOST_OVERRIDE { return 0; }
 
     void                clear();
 

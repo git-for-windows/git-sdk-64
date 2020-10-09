@@ -681,7 +681,12 @@ basic_stream(basic_stream&& other)
     : impl_(boost::make_shared<impl_type>(
         std::move(*other.impl_)))
 {
-    // VFALCO I'm not sure this implementation is correct...
+    // Explainer: Asio's sockets provide the guarantee that a moved-from socket
+    // will be in a state as-if newly created. i.e.:
+    // * having the same (valid) executor
+    // * the socket shall not be open
+    // We provide the same guarantee by moving the impl rather than the pointer
+    // controlling its lifetime.
 }
 
 //------------------------------------------------------------------------------
@@ -699,7 +704,7 @@ release_socket() ->
 template<class Protocol, class Executor, class RatePolicy>
 void
 basic_stream<Protocol, Executor, RatePolicy>::
-expires_after(std::chrono::nanoseconds expiry_time)
+expires_after(net::steady_timer::duration expiry_time)
 {
     // If assert goes off, it means that there are
     // already read or write (or connect) operations
@@ -776,7 +781,7 @@ close()
 //------------------------------------------------------------------------------
 
 template<class Protocol, class Executor, class RatePolicy>
-template<class ConnectHandler>
+template<BOOST_BEAST_ASYNC_TPARAM1 ConnectHandler>
 BOOST_BEAST_ASYNC_RESULT1(ConnectHandler)
 basic_stream<Protocol, Executor, RatePolicy>::
 async_connect(
@@ -795,7 +800,7 @@ async_connect(
 template<class Protocol, class Executor, class RatePolicy>
 template<
     class EndpointSequence,
-    class RangeConnectHandler,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void(error_code, typename Protocol::endpoint)) RangeConnectHandler,
     class>
 BOOST_ASIO_INITFN_RESULT_TYPE(RangeConnectHandler,void(error_code, typename Protocol::endpoint))
 basic_stream<Protocol, Executor, RatePolicy>::
@@ -817,7 +822,7 @@ template<class Protocol, class Executor, class RatePolicy>
 template<
     class EndpointSequence,
     class ConnectCondition,
-    class RangeConnectHandler,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void(error_code, typename Protocol::endpoint)) RangeConnectHandler,
     class>
 BOOST_ASIO_INITFN_RESULT_TYPE(RangeConnectHandler,void (error_code, typename Protocol::endpoint))
 basic_stream<Protocol, Executor, RatePolicy>::
@@ -839,7 +844,7 @@ async_connect(
 template<class Protocol, class Executor, class RatePolicy>
 template<
     class Iterator,
-    class IteratorConnectHandler>
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void(error_code, Iterator)) IteratorConnectHandler>
 BOOST_ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,void (error_code, Iterator))
 basic_stream<Protocol, Executor, RatePolicy>::
 async_connect(
@@ -860,7 +865,7 @@ template<class Protocol, class Executor, class RatePolicy>
 template<
     class Iterator,
     class ConnectCondition,
-    class IteratorConnectHandler>
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void(error_code, Iterator)) IteratorConnectHandler>
 BOOST_ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,void (error_code, Iterator))
 basic_stream<Protocol, Executor, RatePolicy>::
 async_connect(
@@ -881,7 +886,7 @@ async_connect(
 //------------------------------------------------------------------------------
 
 template<class Protocol, class Executor, class RatePolicy>
-template<class MutableBufferSequence, class ReadHandler>
+template<class MutableBufferSequence, BOOST_BEAST_ASYNC_TPARAM2 ReadHandler>
 BOOST_BEAST_ASYNC_RESULT2(ReadHandler)
 basic_stream<Protocol, Executor, RatePolicy>::
 async_read_some(
@@ -901,7 +906,7 @@ async_read_some(
 }
 
 template<class Protocol, class Executor, class RatePolicy>
-template<class ConstBufferSequence, class WriteHandler>
+template<class ConstBufferSequence, BOOST_BEAST_ASYNC_TPARAM2 WriteHandler>
 BOOST_BEAST_ASYNC_RESULT2(WriteHandler)
 basic_stream<Protocol, Executor, RatePolicy>::
 async_write_some(

@@ -149,13 +149,24 @@ namespace traits
 
 namespace detail
 {
-  inline BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR14 size_t cstrlen(const char *str)
+#if __cplusplus >= 201400 || _MSC_VER >= 1910 /* VS2017 */
+  inline constexpr size_t cstrlen(const char *str)
   {
     const char *end = nullptr;
     for(end = str; *end != 0; ++end)  // NOLINT
       ;
     return end - str;
   }
+#else
+  inline constexpr size_t cstrlen_(const char *str, size_t acc)
+  {
+    return (str[0] == 0) ? acc : cstrlen_(str + 1, acc + 1);
+  }
+  inline constexpr size_t cstrlen(const char *str)
+  {
+    return cstrlen_(str, 0);
+  }
+#endif
 
   /* A partially compliant implementation of C++20's std::bit_cast function contributed
   by Jesse Towner. TODO FIXME Replace with C++ 20 bit_cast when available.

@@ -1,5 +1,5 @@
 /* Proposed SG14 status_code
-(C) 2018 - 2019 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
+(C) 2018 - 2020 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
 File Created: Feb 2018
 
 
@@ -303,7 +303,10 @@ public:
 
 public:
   //! Default constructor
-  constexpr explicit _generic_code_domain(typename _base::unique_id_type id = 0x746d6354f4f733e9) noexcept : _base(id) {}
+  constexpr explicit _generic_code_domain(typename _base::unique_id_type id = 0x746d6354f4f733e9) noexcept
+      : _base(id)
+  {
+  }
   _generic_code_domain(const _generic_code_domain &) = default;
   _generic_code_domain(_generic_code_domain &&) = default;
   _generic_code_domain &operator=(const _generic_code_domain &) = default;
@@ -437,6 +440,39 @@ inline bool operator!=(const T &a, const status_code<DomainType1> &b)
 {
   return !b.equivalent(make_status_code(a));
 }
+//! True if the status code's are semantically equal via `equivalent()` to `quick_status_code_from_enum<T>::code_type(b)`.
+template <class DomainType1, class T,                                                     //
+          class QuickStatusCodeType = typename quick_status_code_from_enum<T>::code_type  // Enumeration has been activated
+          >
+inline bool operator==(const status_code<DomainType1> &a, const T &b)
+{
+  return a.equivalent(QuickStatusCodeType(b));
+}
+//! True if the status code's are semantically equal via `equivalent()` to `quick_status_code_from_enum<T>::code_type(a)`.
+template <class T, class DomainType1,                                                     //
+          class QuickStatusCodeType = typename quick_status_code_from_enum<T>::code_type  // Enumeration has been activated
+          >
+inline bool operator==(const T &a, const status_code<DomainType1> &b)
+{
+  return b.equivalent(QuickStatusCodeType(a));
+}
+//! True if the status code's are not semantically equal via `equivalent()` to `quick_status_code_from_enum<T>::code_type(b)`.
+template <class DomainType1, class T,                                                     //
+          class QuickStatusCodeType = typename quick_status_code_from_enum<T>::code_type  // Enumeration has been activated
+          >
+inline bool operator!=(const status_code<DomainType1> &a, const T &b)
+{
+  return !a.equivalent(QuickStatusCodeType(b));
+}
+//! True if the status code's are not semantically equal via `equivalent()` to `quick_status_code_from_enum<T>::code_type(a)`.
+template <class T, class DomainType1,                                                     //
+          class QuickStatusCodeType = typename quick_status_code_from_enum<T>::code_type  // Enumeration has been activated
+          >
+inline bool operator!=(const T &a, const status_code<DomainType1> &b)
+{
+  return !b.equivalent(QuickStatusCodeType(a));
+}
+
 
 BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE_END
 

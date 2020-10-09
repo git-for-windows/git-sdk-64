@@ -18,6 +18,7 @@
 #include <boost/atomic/detail/type_traits/is_integral.hpp>
 #include <boost/atomic/detail/type_traits/is_function.hpp>
 #include <boost/atomic/detail/type_traits/is_floating_point.hpp>
+#include <boost/atomic/detail/header.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #pragma once
@@ -74,5 +75,7 @@ struct classify< T U::*, false, false > { typedef void type; };
 } // namespace detail
 } // namespace atomics
 } // namespace boost
+
+#include <boost/atomic/detail/footer.hpp>
 
 #endif // BOOST_ATOMIC_DETAIL_CLASSIFY_HPP_INCLUDED_

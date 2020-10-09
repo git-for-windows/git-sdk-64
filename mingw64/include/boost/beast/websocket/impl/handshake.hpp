@@ -268,7 +268,7 @@ do_handshake(
 //------------------------------------------------------------------------------
 
 template<class NextLayer, bool deflateSupported>
-template<class HandshakeHandler>
+template<BOOST_BEAST_ASYNC_TPARAM1 HandshakeHandler>
 BOOST_BEAST_ASYNC_RESULT1(HandshakeHandler)
 stream<NextLayer, deflateSupported>::
 async_handshake(
@@ -293,7 +293,7 @@ async_handshake(
 }
 
 template<class NextLayer, bool deflateSupported>
-template<class HandshakeHandler>
+template<BOOST_BEAST_ASYNC_TPARAM1 HandshakeHandler>
 BOOST_BEAST_ASYNC_RESULT1(HandshakeHandler)
 stream<NextLayer, deflateSupported>::
 async_handshake(
@@ -372,165 +372,6 @@ handshake(response_type& res,
         "SyncStream type requirements not met");
     do_handshake(&res,
         host, target, &default_decorate_req, ec);
-}
-
-//------------------------------------------------------------------------------
-
-template<class NextLayer, bool deflateSupported>
-template<class RequestDecorator>
-void
-stream<NextLayer, deflateSupported>::
-handshake_ex(string_view host,
-    string_view target,
-        RequestDecorator const& decorator)
-{
-#ifndef BOOST_BEAST_ALLOW_DEPRECATED
-    static_assert(sizeof(RequestDecorator) == 0,
-        BOOST_BEAST_DEPRECATION_STRING);
-#endif
-    static_assert(is_sync_stream<next_layer_type>::value,
-        "SyncStream type requirements not met");
-    static_assert(detail::is_request_decorator<
-            RequestDecorator>::value,
-        "RequestDecorator requirements not met");
-    error_code ec;
-    handshake_ex(host, target, decorator, ec);
-    if(ec)
-        BOOST_THROW_EXCEPTION(system_error{ec});
-}
-
-template<class NextLayer, bool deflateSupported>
-template<class RequestDecorator>
-void
-stream<NextLayer, deflateSupported>::
-handshake_ex(response_type& res,
-    string_view host,
-        string_view target,
-            RequestDecorator const& decorator)
-{
-#ifndef BOOST_BEAST_ALLOW_DEPRECATED
-    static_assert(sizeof(RequestDecorator) == 0,
-        BOOST_BEAST_DEPRECATION_STRING);
-#endif
-    static_assert(is_sync_stream<next_layer_type>::value,
-        "SyncStream type requirements not met");
-    static_assert(detail::is_request_decorator<
-            RequestDecorator>::value,
-        "RequestDecorator requirements not met");
-    error_code ec;
-    handshake_ex(res, host, target, decorator, ec);
-    if(ec)
-        BOOST_THROW_EXCEPTION(system_error{ec});
-}
-
-template<class NextLayer, bool deflateSupported>
-template<class RequestDecorator>
-void
-stream<NextLayer, deflateSupported>::
-handshake_ex(string_view host,
-    string_view target,
-        RequestDecorator const& decorator,
-            error_code& ec)
-{
-#ifndef BOOST_BEAST_ALLOW_DEPRECATED
-    static_assert(sizeof(RequestDecorator) == 0,
-        BOOST_BEAST_DEPRECATION_STRING);
-#endif
-    static_assert(is_sync_stream<next_layer_type>::value,
-        "SyncStream type requirements not met");
-    static_assert(detail::is_request_decorator<
-            RequestDecorator>::value,
-        "RequestDecorator requirements not met");
-    do_handshake(nullptr,
-        host, target, decorator, ec);
-}
-
-template<class NextLayer, bool deflateSupported>
-template<class RequestDecorator>
-void
-stream<NextLayer, deflateSupported>::
-handshake_ex(response_type& res,
-    string_view host,
-        string_view target,
-            RequestDecorator const& decorator,
-                error_code& ec)
-{
-#ifndef BOOST_BEAST_ALLOW_DEPRECATED
-    static_assert(sizeof(RequestDecorator) == 0,
-        BOOST_BEAST_DEPRECATION_STRING);
-#endif
-    static_assert(is_sync_stream<next_layer_type>::value,
-        "SyncStream type requirements not met");
-    static_assert(detail::is_request_decorator<
-            RequestDecorator>::value,
-        "RequestDecorator requirements not met");
-    do_handshake(&res,
-        host, target, decorator, ec);
-}
-
-template<class NextLayer, bool deflateSupported>
-template<class RequestDecorator, class HandshakeHandler>
-BOOST_BEAST_ASYNC_RESULT1(HandshakeHandler)
-stream<NextLayer, deflateSupported>::
-async_handshake_ex(string_view host,
-    string_view target,
-        RequestDecorator const& decorator,
-            HandshakeHandler&& handler)
-{
-#ifndef BOOST_BEAST_ALLOW_DEPRECATED
-    static_assert(sizeof(RequestDecorator) == 0,
-        BOOST_BEAST_DEPRECATION_STRING);
-#endif
-    static_assert(is_async_stream<next_layer_type>::value,
-        "AsyncStream type requirements not met");
-    static_assert(detail::is_request_decorator<
-            RequestDecorator>::value,
-        "RequestDecorator requirements not met");
-    detail::sec_ws_key_type key;
-    auto req = impl_->build_request(
-        key, host, target, decorator);
-    return net::async_initiate<
-        HandshakeHandler,
-        void(error_code)>(
-            run_handshake_op{},
-            handler,
-            impl_,
-            std::move(req),
-            key,
-            nullptr);
-}
-
-template<class NextLayer, bool deflateSupported>
-template<class RequestDecorator, class HandshakeHandler>
-BOOST_BEAST_ASYNC_RESULT1(HandshakeHandler)
-stream<NextLayer, deflateSupported>::
-async_handshake_ex(response_type& res,
-    string_view host,
-        string_view target,
-            RequestDecorator const& decorator,
-                HandshakeHandler&& handler)
-{
-#ifndef BOOST_BEAST_ALLOW_DEPRECATED
-    static_assert(sizeof(RequestDecorator) == 0,
-        BOOST_BEAST_DEPRECATION_STRING);
-#endif
-    static_assert(is_async_stream<next_layer_type>::value,
-        "AsyncStream type requirements not met");
-    static_assert(detail::is_request_decorator<
-            RequestDecorator>::value,
-        "RequestDecorator requirements not met");
-    detail::sec_ws_key_type key;
-    auto req = impl_->build_request(
-        key, host, target, decorator);
-    return net::async_initiate<
-        HandshakeHandler,
-        void(error_code)>(
-            run_handshake_op{},
-            handler,
-            impl_,
-            std::move(req),
-            key,
-            &res);
 }
 
 } // websocket

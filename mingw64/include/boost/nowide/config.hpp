@@ -1,9 +1,9 @@
 //
 //  Copyright (c) 2012 Artyom Beilis (Tonkikh)
-//  Copyright (c) 2019 Alexander Grund
+//  Copyright (c) 2019 - 2020 Alexander Grund
 //
 //  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE_1_0.txt or copy at
+//  accompanying file LICENSE or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #ifndef BOOST_NOWIDE_CONFIG_HPP_INCLUDED
@@ -16,6 +16,13 @@
 #include <boost/version.hpp>
 
 //! @cond Doxygen_Suppress
+
+// MinGW32 requires a __MSVCRT_VERSION__ defined to make some functions available, e.g. _stat64
+// Hence define this here to target MSVC 7.0 which has the required functions and do it as early as possible
+// as including a system header might default this to 0x0600 which is to low
+#if defined(__MINGW32__) && !defined(__MSVCRT_VERSION__)
+#define __MSVCRT_VERSION__ 0x0700
+#endif
 
 #if defined(BOOST_ALL_DYN_LINK) || defined(BOOST_NOWIDE_DYN_LINK)
 #ifdef BOOST_NOWIDE_SOURCE
@@ -83,15 +90,6 @@
 #define BOOST_NOWIDE_FALLTHROUGH __attribute__((fallthrough))
 #else
 #define BOOST_NOWIDE_FALLTHROUGH BOOST_FALLTHROUGH
-#endif
-
-// MSVC 2015 (1900) has reasonable C++11 support (especially auto-generated move ctors)
-// libstdc++ < 5 does not support movable streams
-#if(__cplusplus >= 201103L || (defined(BOOST_MSVC) && BOOST_MSVC >= 1900)) \
-  && (!defined(BOOST_LIBSTDCXX_VERSION) || BOOST_LIBSTDCXX_VERSION >= 50000)
-#define BOOST_NOWIDE_CXX11 1
-#else
-#define BOOST_NOWIDE_CXX11 0
 #endif
 
 //! @endcond

@@ -587,8 +587,10 @@ inline typename dtl::enable_if_memzero_initializable<F, F>::type
    uninitialized_value_init_alloc_n(Allocator &, typename boost::container::allocator_traits<Allocator>::size_type n, F r)
 {
    typedef typename boost::container::iterator_traits<F>::value_type value_type;
-   std::memset((void*)boost::movelib::iterator_to_raw_pointer(r), 0, sizeof(value_type)*n);
-   boost::container::iterator_advance(r, n);
+   if (BOOST_LIKELY(n)){
+      std::memset((void*)boost::movelib::iterator_to_raw_pointer(r), 0, sizeof(value_type)*n);
+      boost::container::iterator_advance(r, n);
+   }
    return r;
 }
 
@@ -892,8 +894,10 @@ inline typename dtl::enable_if_memtransfer_copy_assignable<I, F, F>::type
 {
    typedef typename boost::container::iterator_traits<I>::value_type value_type;
    const typename boost::container::iterator_traits<I>::difference_type n = boost::container::iterator_distance(f, l);
-   r -= n;
-   std::memmove((boost::movelib::iterator_to_raw_pointer)(r), (boost::movelib::iterator_to_raw_pointer)(f), sizeof(value_type)*n);
+   if (BOOST_LIKELY(n)){
+      r -= n;
+      std::memmove((boost::movelib::iterator_to_raw_pointer)(r), (boost::movelib::iterator_to_raw_pointer)(f), sizeof(value_type)*n);
+   }
    return r;
 }
 

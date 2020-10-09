@@ -85,8 +85,8 @@ public:
     );
     // real public API starts here
     BOOST_ARCHIVE_DECL void
-    set_library_version(library_version_type archive_library_version);
-    BOOST_ARCHIVE_DECL library_version_type
+    set_library_version(boost::serialization::library_version_type archive_library_version);
+    BOOST_ARCHIVE_DECL boost::serialization::library_version_type
     get_library_version() const;
     BOOST_ARCHIVE_DECL unsigned int
     get_flags() const;

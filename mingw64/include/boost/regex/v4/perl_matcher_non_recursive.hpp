@@ -600,7 +600,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_rep()
 #pragma warning(push)
 #pragma warning(disable:4127 4244)
 #endif
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option push -w-8008 -w-8066 -w-8004
 #endif
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
@@ -691,7 +691,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_rep()
       }
    }
    return false;
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option pop
 #endif
 #ifdef BOOST_MSVC
@@ -790,7 +790,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
 #pragma warning(push)
 #pragma warning(disable:4127)
 #endif
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option push -w-8008 -w-8066 -w-8004
 #endif
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
@@ -850,7 +850,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
       pstate = rep->alt.p;
       return (position == last) ? (rep->can_be_null & mask_skip) : can_start(*position, rep->_map, mask_skip);
    }
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option pop
 #endif
 #ifdef BOOST_MSVC
@@ -865,7 +865,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat()
 #pragma warning(push)
 #pragma warning(disable:4127)
 #endif
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option push -w-8008 -w-8066 -w-8004
 #endif
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
@@ -924,7 +924,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat()
       pstate = rep->alt.p;
       return (position == last) ? (rep->can_be_null & mask_skip) : can_start(*position, rep->_map, mask_skip);
    }
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option pop
 #endif
 #ifdef BOOST_MSVC
@@ -939,7 +939,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
 #pragma warning(push)
 #pragma warning(disable:4127)
 #endif
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option push -w-8008 -w-8066 -w-8004
 #endif
    typedef typename traits::char_class_type m_type;
@@ -999,7 +999,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
       pstate = rep->alt.p;
       return (position == last) ? (rep->can_be_null & mask_skip) : can_start(*position, rep->_map, mask_skip);
    }
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option pop
 #endif
 #ifdef BOOST_MSVC

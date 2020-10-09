@@ -20,6 +20,7 @@
 #include <boost/atomic/detail/type_traits/is_signed.hpp>
 #include <boost/atomic/detail/type_traits/make_signed.hpp>
 #include <boost/atomic/detail/type_traits/make_unsigned.hpp>
+#include <boost/atomic/detail/header.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #pragma once
@@ -101,5 +102,7 @@ BOOST_FORCEINLINE Output integral_extend(Input input) BOOST_NOEXCEPT
 } // namespace detail
 } // namespace atomics
 } // namespace boost
+
+#include <boost/atomic/detail/footer.hpp>
 
 #endif // BOOST_ATOMIC_DETAIL_INTEGRAL_CONVERSIONS_HPP_INCLUDED_

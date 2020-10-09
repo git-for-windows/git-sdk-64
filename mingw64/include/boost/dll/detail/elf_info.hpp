@@ -16,8 +16,10 @@
 
 #include <cstring>
 #include <fstream>
+#include <limits>
 
 #include <boost/cstdint.hpp>
+#include <boost/throw_exception.hpp>
 
 namespace boost { namespace dll { namespace detail {
 
@@ -144,6 +146,19 @@ public:
     }
 
 private:
+    template <class Integer>
+    static void checked_seekg(std::ifstream& fs, Integer pos) {
+        /* TODO: use cmp_less, cmp_greater
+        if ((std::numeric_limits<std::streamoff>::max)() < pos) {
+            boost::throw_exception(std::runtime_error("Integral overflow while getting info from ELF file"));
+        }
+        if ((std::numeric_limits<std::streamoff>::min)() > pos){
+            boost::throw_exception(std::runtime_error("Integral underflow while getting info from ELF file"));
+        }
+        */
+        fs.seekg(static_cast<std::streamoff>(pos));
+    }
+
     template <class T>
     static void read_raw(std::ifstream& fs, T& value, std::size_t size = sizeof(T)) {
         fs.read(reinterpret_cast<char*>(&value), size);
@@ -162,17 +177,17 @@ private:
         const header_t elf = header(fs);
 
         section_t section_names_section;
-        fs.seekg(elf.e_shoff + elf.e_shstrndx * sizeof(section_t));
+        checked_seekg(fs, elf.e_shoff + elf.e_shstrndx * sizeof(section_t));
         read_raw(fs, section_names_section);
 
         sections.resize(static_cast<std::size_t>(section_names_section.sh_size));
-        fs.seekg(section_names_section.sh_offset);
+        checked_seekg(fs, section_names_section.sh_offset);
         read_raw(fs, sections[0], static_cast<std::size_t>(section_names_section.sh_size));
     }
 
     static void symbols_text(std::ifstream& fs, std::vector<symbol_t>& symbols, std::vector<char>& text) {
         const header_t elf = header(fs);
-        fs.seekg(elf.e_shoff);
+        checked_seekg(fs, elf.e_shoff);
 
         for (std::size_t i = 0; i < elf.e_shnum; ++i) {
             section_t section;
@@ -182,16 +197,16 @@ private:
                 symbols.resize(static_cast<std::size_t>(section.sh_size / sizeof(symbol_t)));
 
                 const std::ifstream::pos_type pos = fs.tellg();
-                fs.seekg(section.sh_offset);
+                checked_seekg(fs, section.sh_offset);
                 read_raw(fs, symbols[0], static_cast<std::size_t>(section.sh_size - (section.sh_size % sizeof(symbol_t))) );
-                fs.seekg(pos);
+                checked_seekg(fs, pos);
             } else if (section.sh_type == SHT_STRTAB_) {
                 text.resize(static_cast<std::size_t>(section.sh_size));
 
                 const std::ifstream::pos_type pos = fs.tellg();
-                fs.seekg(section.sh_offset);
+                checked_seekg(fs, section.sh_offset);
                 read_raw(fs, text[0], static_cast<std::size_t>(section.sh_size));
-                fs.seekg(pos);
+                checked_seekg(fs, pos);
             }
         }
     }
@@ -236,7 +251,7 @@ public:
 
             for (; index < elf.e_shnum; ++index) {
                 section_t section;
-                fs.seekg(elf.e_shoff + index * sizeof(section_t));
+                checked_seekg(fs, elf.e_shoff + index * sizeof(section_t));
                 read_raw(fs, section);
             
                 if (!std::strcmp(&names[0] + section.sh_name, section_name)) {

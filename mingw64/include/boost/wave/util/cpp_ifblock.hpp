@@ -8,8 +8,8 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(CPP_IFBLOCK_HPP_D4676B36_00C5_41F4_BC9F_9CBBAE3B8006_INCLUDED)
-#define CPP_IFBLOCK_HPP_D4676B36_00C5_41F4_BC9F_9CBBAE3B8006_INCLUDED
+#if !defined(BOOST_CPP_IFBLOCK_HPP_D4676B36_00C5_41F4_BC9F_9CBBAE3B8006_INCLUDED)
+#define BOOST_CPP_IFBLOCK_HPP_D4676B36_00C5_41F4_BC9F_9CBBAE3B8006_INCLUDED
 
 #include <stack>
 #include <boost/wave/wave_config.hpp>
@@ -158,4 +158,4 @@ protected:
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(CPP_IFBLOCK_HPP_D4676B36_00C5_41F4_BC9F_9CBBAE3B8006_INCLUDED)
+#endif // !defined(BOOST_CPP_IFBLOCK_HPP_D4676B36_00C5_41F4_BC9F_9CBBAE3B8006_INCLUDED)

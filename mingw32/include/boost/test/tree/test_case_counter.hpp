@@ -43,8 +43,8 @@ public:
     BOOST_READONLY_PROPERTY( counter_t, (test_case_counter)) p_count;
 private:
     // test tree visitor interface
-    virtual void    visit( test_case const& tc )                { if( m_ignore_status || tc.is_enabled() ) ++p_count.value; }
-    virtual bool    test_suite_start( test_suite const& ts )    { return m_ignore_status || ts.is_enabled(); }
+    void    visit( test_case const& tc ) BOOST_OVERRIDE                { if( m_ignore_status || tc.is_enabled() ) ++p_count.value; }
+    bool    test_suite_start( test_suite const& ts ) BOOST_OVERRIDE    { return m_ignore_status || ts.is_enabled(); }
   
     bool m_ignore_status;
 };

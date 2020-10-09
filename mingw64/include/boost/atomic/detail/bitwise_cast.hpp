@@ -21,6 +21,7 @@
 #include <boost/atomic/detail/addressof.hpp>
 #include <boost/atomic/detail/string_ops.hpp>
 #include <boost/atomic/detail/type_traits/integral_constant.hpp>
+#include <boost/atomic/detail/header.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #pragma once
@@ -80,5 +81,7 @@ BOOST_FORCEINLINE To bitwise_cast(From const& from) BOOST_NOEXCEPT
 #if defined(BOOST_GCC) && BOOST_GCC >= 80000
 #pragma GCC diagnostic pop
 #endif
+
+#include <boost/atomic/detail/footer.hpp>
 
 #endif // BOOST_ATOMIC_DETAIL_BITWISE_CAST_HPP_INCLUDED_

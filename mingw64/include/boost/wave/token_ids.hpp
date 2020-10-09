@@ -10,8 +10,8 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(TOKEN_IDS_HPP_414E9A58_F079_4789_8AFF_513815CE475B_INCLUDED)
-#define TOKEN_IDS_HPP_414E9A58_F079_4789_8AFF_513815CE475B_INCLUDED
+#if !defined(BOOST_TOKEN_IDS_HPP_414E9A58_F079_4789_8AFF_513815CE475B_INCLUDED)
+#define BOOST_TOKEN_IDS_HPP_414E9A58_F079_4789_8AFF_513815CE475B_INCLUDED
 
 #include <string>
 
@@ -47,6 +47,7 @@ enum token_category {
     IdentifierTokenType         = 0x08040000,
     ParameterTokenType          = 0x08840000,
     ExtParameterTokenType       = 0x088C0000,
+    OptParameterTokenType       = 0x08940000,
     KeywordTokenType            = 0x10040000,
     OperatorTokenType           = 0x18040000,
     LiteralTokenType            = 0x20040000,
@@ -311,7 +312,8 @@ enum token_id {
     T_PLACEHOLDER = TOKEN_FROM_ID(T_LAST_TOKEN+2, WhiteSpaceTokenType),
     T_PLACEMARKER = TOKEN_FROM_ID(T_LAST_TOKEN+3, InternalTokenType),
     T_PARAMETERBASE = TOKEN_FROM_ID(T_LAST_TOKEN+4, ParameterTokenType),
-    T_EXTPARAMETERBASE = TOKEN_FROM_ID(T_LAST_TOKEN+4, ExtParameterTokenType)
+    T_EXTPARAMETERBASE = TOKEN_FROM_ID(T_LAST_TOKEN+4, ExtParameterTokenType),
+    T_OPTPARAMETERBASE = TOKEN_FROM_ID(T_LAST_TOKEN+4, OptParameterTokenType)
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -376,5 +378,5 @@ char const *get_token_value(token_id tokid);
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(TOKEN_IDS_HPP_414E9A58_F079_4789_8AFF_513815CE475B_INCLUDED)
+#endif // !defined(BOOST_TOKEN_IDS_HPP_414E9A58_F079_4789_8AFF_513815CE475B_INCLUDED)
 

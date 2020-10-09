@@ -118,11 +118,11 @@ public:
         save_end(t.name());
     }
 protected:
-    virtual ~polymorphic_oarchive_impl(){};
+    virtual ~polymorphic_oarchive_impl() {}
 public:
     // utility functions implemented by all legal archives
     virtual unsigned int get_flags() const = 0;
-    virtual library_version_type get_library_version() const = 0;
+    virtual boost::serialization::library_version_type get_library_version() const = 0;
     virtual void save_binary(const void * t, std::size_t size) = 0;
 
     virtual void save_object(
@@ -140,7 +140,7 @@ class BOOST_SYMBOL_VISIBLE polymorphic_oarchive :
     public polymorphic_oarchive_impl
 {
 public:
-    virtual ~polymorphic_oarchive(){};
+    ~polymorphic_oarchive() BOOST_OVERRIDE {}
 };
 
 } // namespace archive

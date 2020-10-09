@@ -69,8 +69,6 @@ const int version<T>::value;
  * ALL the serialization traits are available.  Included the implementation
  * here with this comment as a reminder not to do this!
  */
-//#include <boost/serialization/level.hpp>
-//#include <boost/mpl/equal_to.hpp>
 
 #include <boost/mpl/less.hpp>
 #include <boost/mpl/comparison.hpp>

@@ -23,8 +23,8 @@
 #   pragma once
 #endif
 
-#include <typeinfo>
 #include <exception>
+#include <typeinfo>
 #include <boost/throw_exception.hpp>
 
 namespace boost
@@ -38,7 +38,7 @@ namespace boost
         public std::bad_cast 
 #endif 
 
-#if defined(__BORLANDC__) && BOOST_WORKAROUND( __BORLANDC__, < 0x560 )
+#if defined(BOOST_BORLANDC) && BOOST_WORKAROUND( BOOST_BORLANDC, < 0x560 )
         // under bcc32 5.5.1 bad_cast doesn't derive from exception
         , public std::exception
 #endif
@@ -51,12 +51,12 @@ namespace boost
 #endif
         {}
 
-        virtual const char *what() const BOOST_NOEXCEPT_OR_NOTHROW {
+        const char *what() const BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE {
             return "bad lexical cast: "
                    "source type value could not be interpreted as target";
         }
 
-        virtual ~bad_lexical_cast() BOOST_NOEXCEPT_OR_NOTHROW
+        ~bad_lexical_cast() BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE
         {}
 
 #ifndef BOOST_NO_TYPEID
@@ -101,8 +101,6 @@ namespace boost
 #endif
     }} // namespace conversion::detail
 
-
 } // namespace boost
 
 #endif // BOOST_LEXICAL_CAST_BAD_LEXICAL_CAST_HPP
-

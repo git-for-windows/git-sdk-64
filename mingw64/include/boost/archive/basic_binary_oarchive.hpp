@@ -97,11 +97,11 @@ protected:
     #if 0
     void save_override(const boost::archive::version_type & t){
         library_version_type lvt = this->get_library_version();
-        if(boost::archive::library_version_type(7) < lvt){
+        if(boost::serialization::library_version_type(7) < lvt){
             this->detail_common_oarchive::save_override(t);
         }
         else
-        if(boost::archive::library_version_type(6) < lvt){
+        if(boost::serialization::library_version_type(6) < lvt){
             const boost::uint_least16_t x = t;
             * this->This() << x;
         }
@@ -112,11 +112,11 @@ protected:
     }
     void save_override(const boost::serialization::item_version_type & t){
         library_version_type lvt = this->get_library_version();
-        if(boost::archive::library_version_type(7) < lvt){
+        if(boost::serialization::library_version_type(7) < lvt){
             this->detail_common_oarchive::save_override(t);
         }
         else
-        if(boost::archive::library_version_type(6) < lvt){
+        if(boost::serialization::library_version_type(6) < lvt){
             const boost::uint_least16_t x = t;
             * this->This() << x;
         }
@@ -128,11 +128,11 @@ protected:
 
     void save_override(class_id_type & t){
         library_version_type lvt = this->get_library_version();
-        if(boost::archive::library_version_type(7) < lvt){
+        if(boost::serialization::library_version_type(7) < lvt){
             this->detail_common_oarchive::save_override(t);
         }
         else
-        if(boost::archive::library_version_type(6) < lvt){
+        if(boost::serialization::library_version_type(6) < lvt){
             const boost::int_least16_t x = t;
             * this->This() << x;
         }
@@ -155,7 +155,7 @@ protected:
 
     #if 0
     void save_override(const serialization::collection_size_type & t){
-        if (get_library_version() < boost::archive::library_version_type(6)){
+        if (get_library_version() < boost::serialization::library_version_type(6)){
             unsigned int x=0;
             * this->This() >> x;
             t = serialization::collection_size_type(x);

@@ -89,7 +89,7 @@ protected:
     text_iarchive_impl(std::istream & is, unsigned int flags);
     // don't import inline definitions! leave this as a reminder.
     //BOOST_ARCHIVE_DECL
-    ~text_iarchive_impl(){};
+    ~text_iarchive_impl() BOOST_OVERRIDE {}
 };
 
 } // namespace archive
@@ -119,7 +119,7 @@ public:
         if(0 == (flags & no_header))
              init();
     }
-    ~text_iarchive(){}
+    ~text_iarchive() BOOST_OVERRIDE {}
 };
 
 } // namespace archive

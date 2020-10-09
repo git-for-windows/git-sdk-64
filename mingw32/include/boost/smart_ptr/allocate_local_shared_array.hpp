@@ -21,11 +21,12 @@ public:
         count_ = shared_count(base);
     }
 
-    virtual void local_cb_destroy() BOOST_SP_NOEXCEPT {
+    void local_cb_destroy() BOOST_SP_NOEXCEPT BOOST_OVERRIDE {
         shared_count().swap(count_);
     }
 
-    virtual shared_count local_cb_get_shared_count() const BOOST_SP_NOEXCEPT {
+    shared_count local_cb_get_shared_count() const
+        BOOST_SP_NOEXCEPT BOOST_OVERRIDE {
         return count_;
     }
 
@@ -73,7 +74,7 @@ inline typename enable_if_<is_unbounded_array<T>::value,
 allocate_local_shared(const A& allocator, std::size_t count)
 {
     typedef typename detail::sp_array_element<T>::type element;
-    typedef typename detail::sp_bind_allocator<A, element>::type other;
+    typedef typename allocator_rebind<A, element>::type other;
     typedef detail::lsp_array_state<other> state;
     typedef detail::sp_array_base<state> base;
     detail::sp_array_result<other, base> result(allocator, count);
@@ -96,7 +97,7 @@ allocate_local_shared(const A& allocator)
         count = extent<T>::value
     };
     typedef typename detail::sp_array_element<T>::type element;
-    typedef typename detail::sp_bind_allocator<A, element>::type other;
+    typedef typename allocator_rebind<A, element>::type other;
     typedef detail::lsp_size_array_state<other, count> state;
     typedef detail::sp_array_base<state> base;
     detail::sp_array_result<other, base> result(allocator, count);
@@ -117,7 +118,7 @@ allocate_local_shared(const A& allocator, std::size_t count,
     const typename remove_extent<T>::type& value)
 {
     typedef typename detail::sp_array_element<T>::type element;
-    typedef typename detail::sp_bind_allocator<A, element>::type other;
+    typedef typename allocator_rebind<A, element>::type other;
     typedef detail::lsp_array_state<other> state;
     typedef detail::sp_array_base<state> base;
     detail::sp_array_result<other, base> result(allocator, count);
@@ -141,7 +142,7 @@ allocate_local_shared(const A& allocator,
         count = extent<T>::value
     };
     typedef typename detail::sp_array_element<T>::type element;
-    typedef typename detail::sp_bind_allocator<A, element>::type other;
+    typedef typename allocator_rebind<A, element>::type other;
     typedef detail::lsp_size_array_state<other, count> state;
     typedef detail::sp_array_base<state> base;
     detail::sp_array_result<other, base> result(allocator, count);

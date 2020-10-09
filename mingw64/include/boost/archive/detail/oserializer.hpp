@@ -116,26 +116,26 @@ public:
             >::get_const_instance()
         )
     {}
-    virtual BOOST_DLLEXPORT void save_object_data(
+    BOOST_DLLEXPORT void save_object_data(
         basic_oarchive & ar,
         const void *x
-    ) const BOOST_USED;
-    virtual bool class_info() const {
+    ) const BOOST_OVERRIDE BOOST_USED;
+    bool class_info() const BOOST_OVERRIDE {
         return boost::serialization::implementation_level< T >::value
             >= boost::serialization::object_class_info;
     }
-    virtual bool tracking(const unsigned int /* flags */) const {
+    bool tracking(const unsigned int /* flags */) const BOOST_OVERRIDE {
         return boost::serialization::tracking_level< T >::value == boost::serialization::track_always
             || (boost::serialization::tracking_level< T >::value == boost::serialization::track_selectively
                 && serialized_as_pointer());
     }
-    virtual version_type version() const {
+    version_type version() const BOOST_OVERRIDE {
         return version_type(::boost::serialization::version< T >::value);
     }
-    virtual bool is_polymorphic() const {
+    bool is_polymorphic() const BOOST_OVERRIDE {
         return boost::is_polymorphic< T >::value;
     }
-    virtual ~oserializer(){}
+    ~oserializer() BOOST_OVERRIDE {}
 };
 
 #ifdef BOOST_MSVC
@@ -168,18 +168,18 @@ class pointer_oserializer :
 {
 private:
     const basic_oserializer &
-    get_basic_serializer() const {
+    get_basic_serializer() const BOOST_OVERRIDE {
         return boost::serialization::singleton<
             oserializer<Archive, T>
         >::get_const_instance();
     }
-    virtual BOOST_DLLEXPORT void save_object_ptr(
+    BOOST_DLLEXPORT void save_object_ptr(
         basic_oarchive & ar,
         const void * x
-    ) const BOOST_USED;
+    ) const BOOST_OVERRIDE BOOST_USED;
 public:
     pointer_oserializer();
-    ~pointer_oserializer();
+    ~pointer_oserializer() BOOST_OVERRIDE;
 };
 
 #ifdef BOOST_MSVC

@@ -2,13 +2,13 @@
 //  Copyright (c) 2012 Artyom Beilis (Tonkikh)
 //
 //  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE_1_0.txt or copy at
+//  accompanying file LICENSE or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #ifndef BOOST_NOWIDE_CONVERT_HPP_INCLUDED
 #define BOOST_NOWIDE_CONVERT_HPP_INCLUDED
 
-#include <boost/nowide/detail/convert.hpp>
+#include <boost/nowide/utf/convert.hpp>
 #include <string>
 
 namespace boost {
@@ -23,7 +23,7 @@ namespace nowide {
     ///
     inline char* narrow(char* output, size_t output_size, const wchar_t* begin, const wchar_t* end)
     {
-        return detail::convert_buffer(output, output_size, begin, end);
+        return utf::convert_buffer(output, output_size, begin, end);
     }
     ///
     /// Convert NULL terminated wide string (UTF-16/32) to NULL terminated narrow string (UTF-8)
@@ -34,7 +34,7 @@ namespace nowide {
     ///
     inline char* narrow(char* output, size_t output_size, const wchar_t* source)
     {
-        return narrow(output, output_size, source, source + detail::strlen(source));
+        return narrow(output, output_size, source, source + utf::strlen(source));
     }
 
     ///
@@ -46,7 +46,7 @@ namespace nowide {
     ///
     inline wchar_t* widen(wchar_t* output, size_t output_size, const char* begin, const char* end)
     {
-        return detail::convert_buffer(output, output_size, begin, end);
+        return utf::convert_buffer(output, output_size, begin, end);
     }
     ///
     /// Convert NULL terminated narrow string (UTF-8) to NULL terminated wide string (UTF-16/32)
@@ -57,7 +57,7 @@ namespace nowide {
     ///
     inline wchar_t* widen(wchar_t* output, size_t output_size, const char* source)
     {
-        return widen(output, output_size, source, source + detail::strlen(source));
+        return widen(output, output_size, source, source + utf::strlen(source));
     }
 
     ///
@@ -69,7 +69,7 @@ namespace nowide {
     ///
     inline std::string narrow(const wchar_t* s, size_t count)
     {
-        return detail::convert_string<char>(s, s + count);
+        return utf::convert_string<char>(s, s + count);
     }
     ///
     /// Convert wide string (UTF-16/32) to narrow string (UTF-8).
@@ -79,7 +79,7 @@ namespace nowide {
     ///
     inline std::string narrow(const wchar_t* s)
     {
-        return narrow(s, detail::strlen(s));
+        return narrow(s, utf::strlen(s));
     }
     ///
     /// Convert wide string (UTF-16/32) to narrow string (UTF-8).
@@ -101,7 +101,7 @@ namespace nowide {
     ///
     inline std::wstring widen(const char* s, size_t count)
     {
-        return detail::convert_string<wchar_t>(s, s + count);
+        return utf::convert_string<wchar_t>(s, s + count);
     }
     ///
     /// Convert narrow string (UTF-8) to wide string (UTF-16/32).
@@ -111,7 +111,7 @@ namespace nowide {
     ///
     inline std::wstring widen(const char* s)
     {
-        return widen(s, detail::strlen(s));
+        return widen(s, utf::strlen(s));
     }
     ///
     /// Convert narrow string (UTF-8) to wide string (UTF-16/32).
