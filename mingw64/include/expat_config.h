@@ -64,9 +64,6 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
 
-/* Define if running the test suite so that test #27 works on MinGW. */
-/* #undef LT_MINGW_STATIC_TESTSUITE_HACK */
-
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #define LT_OBJDIR ".libs/"
 
@@ -80,7 +77,7 @@
 #define PACKAGE_NAME "expat"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "expat 2.2.9"
+#define PACKAGE_STRING "expat 2.2.10"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "expat"
@@ -89,13 +86,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.2.9"
+#define PACKAGE_VERSION "2.2.10"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "2.2.9"
+#define VERSION "2.2.10"
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */
