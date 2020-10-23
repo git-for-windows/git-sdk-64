@@ -59,15 +59,21 @@
  * __END_OF_JASPER_LICENSE__
  */
 
+/*!
+ * @file jas_tmr.h
+ * @brief Timer Code
+ */
+
 #ifndef JAS_TMR_H
 #define JAS_TMR_H
 
 /* The configuration header file should be included first. */
 #include <jasper/jas_config.h>
 
-#include<time.h>
 #if defined(JAS_HAVE_SYS_TIME_H)
 #include <sys/time.h>
+#else
+#include <time.h>
 #endif
 
 #ifdef __cplusplus

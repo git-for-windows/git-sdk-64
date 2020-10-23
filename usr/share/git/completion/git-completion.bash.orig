@@ -39,6 +39,11 @@
 #     When set to "1", do not include "DWIM" suggestions in git-checkout
 #     and git-switch completion (e.g., completing "foo" when "origin/foo"
 #     exists).
+#
+#   GIT_COMPLETION_SHOW_ALL
+#
+#     When set to "1" suggest all options, including options which are
+#     typically hidden (e.g. '--allow-empty' for 'git commit').
 
 case "$COMP_WORDBREAKS" in
 *:*) : great ;;
@@ -411,10 +416,17 @@ __gitcomp_builtin ()
 	local options
 	eval "options=\${$var-}"
 
+	local completion_helper
+	if [ "$GIT_COMPLETION_SHOW_ALL" = "1" ]; then
+		completion_helper="--git-completion-helper-all"
+	else
+		completion_helper="--git-completion-helper"
+	fi
+
 	if [ -z "$options" ]; then
 		# leading and trailing spaces are significant to make
 		# option removal work correctly.
-		options=" $incl $(__git ${cmd/_/ } --git-completion-helper) " || return
+		options=" $incl $(__git ${cmd/_/ } $completion_helper) " || return
 
 		for i in $excl; do
 			options="${options/ $i / }"
@@ -1496,6 +1508,22 @@ _git_checkout ()
 {
 	__git_has_doubledash && return
 
+	local dwim_opt="$(__git_checkout_default_dwim_mode)"
+
+	case "$prev" in
+	-b|-B|--orphan)
+		# Complete local branches (and DWIM branch
+		# remote branch names) for an option argument
+		# specifying a new branch name. This is for
+		# convenience, assuming new branches are
+		# possibly based on pre-existing branch names.
+		__git_complete_refs $dwim_opt --mode="heads"
+		return
+		;;
+	*)
+		;;
+	esac
+
 	case "$cur" in
 	--conflict=*)
 		__gitcomp "diff3 merge" "" "${cur##--conflict=}"
@@ -1504,23 +1532,6 @@ _git_checkout ()
 		__gitcomp_builtin checkout
 		;;
 	*)
-		local dwim_opt="$(__git_checkout_default_dwim_mode)"
-		local prevword prevword="${words[cword-1]}"
-
-		case "$prevword" in
-			-b|-B|--orphan)
-				# Complete local branches (and DWIM branch
-				# remote branch names) for an option argument
-				# specifying a new branch name. This is for
-				# convenience, assuming new branches are
-				# possibly based on pre-existing branch names.
-				__git_complete_refs $dwim_opt --mode="heads"
-				return
-				;;
-			*)
-				;;
-		esac
-
 		# At this point, we've already handled special completion for
 		# the arguments to -b/-B, and --orphan. There are 3 main
 		# things left we can possibly complete:
@@ -1712,8 +1723,8 @@ _git_diff ()
 }
 
 __git_mergetools_common="diffuse diffmerge ecmerge emerge kdiff3 meld opendiff
-			tkdiff vimdiff gvimdiff xxdiff araxis p4merge bc
-			codecompare smerge
+			tkdiff vimdiff nvimdiff gvimdiff xxdiff araxis p4merge
+			bc codecompare smerge
 "
 
 _git_difftool ()
@@ -1770,6 +1781,10 @@ _git_format_patch ()
 		__gitcomp "
 			deep shallow
 			" "" "${cur##--thread=}"
+		return
+		;;
+	--base=*|--interdiff=*|--range-diff=*)
+		__git_complete_refs --cur="${cur#--*=}"
 		return
 		;;
 	--*)
@@ -2376,6 +2391,22 @@ _git_status ()
 
 _git_switch ()
 {
+	local dwim_opt="$(__git_checkout_default_dwim_mode)"
+
+	case "$prev" in
+	-c|-C|--orphan)
+		# Complete local branches (and DWIM branch
+		# remote branch names) for an option argument
+		# specifying a new branch name. This is for
+		# convenience, assuming new branches are
+		# possibly based on pre-existing branch names.
+		__git_complete_refs $dwim_opt --mode="heads"
+		return
+		;;
+	*)
+		;;
+	esac
+
 	case "$cur" in
 	--conflict=*)
 		__gitcomp "diff3 merge" "" "${cur##--conflict=}"
@@ -2384,23 +2415,6 @@ _git_switch ()
 		__gitcomp_builtin switch
 		;;
 	*)
-		local dwim_opt="$(__git_checkout_default_dwim_mode)"
-		local prevword prevword="${words[cword-1]}"
-
-		case "$prevword" in
-			-c|-C|--orphan)
-				# Complete local branches (and DWIM branch
-				# remote branch names) for an option argument
-				# specifying a new branch name. This is for
-				# convenience, assuming new branches are
-				# possibly based on pre-existing branch names.
-				__git_complete_refs $dwim_opt --mode="heads"
-				return
-				;;
-			*)
-				;;
-		esac
-
 		# Unlike in git checkout, git switch --orphan does not take
 		# a start point. Thus we really have nothing to complete after
 		# the branch name.
@@ -2827,6 +2841,13 @@ _git_reset ()
 
 _git_restore ()
 {
+	case "$prev" in
+	-s)
+		__git_complete_refs
+		return
+		;;
+	esac
+
 	case "$cur" in
 	--conflict=*)
 		__gitcomp "diff3 merge" "" "${cur##--conflict=}"
@@ -2905,6 +2926,14 @@ _git_show ()
 		;;
 	--submodule=*)
 		__gitcomp "$__git_diff_submodule_formats" "" "${cur##--submodule=}"
+		return
+		;;
+	--color-moved=*)
+		__gitcomp "$__git_color_moved_opts" "" "${cur##--color-moved=}"
+		return
+		;;
+	--color-moved-ws=*)
+		__gitcomp "$__git_color_moved_ws_opts" "" "${cur##--color-moved-ws=}"
 		return
 		;;
 	--*)

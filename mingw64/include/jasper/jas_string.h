@@ -61,10 +61,9 @@
  * __END_OF_JASPER_LICENSE__
  */
 
-/*
- * String Library
- *
- * $Id$
+/*!
+ * @file jas_string.h
+ * @brief String Library
  */
 
 #ifndef	JAS_STRING_H
@@ -76,8 +75,6 @@
 
 /* The configuration header file should be included first. */
 #include <jasper/jas_config.h>
-
-#include <string.h>
 
 #ifdef __cplusplus
 extern "C" {

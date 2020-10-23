@@ -5,75 +5,57 @@
 #define JAS_DLL 1
 #endif
 
+#include <jasper/jas_compiler.h>
 #include <jasper/jas_dll.h>
 
-#define JAS_CONFIGURE
-
-#if defined(_MSC_VER)
-#undef JAS_CONFIGURE
-#endif
-
-#if defined(JAS_CONFIGURE)
-
 /* This preprocessor symbol identifies the version of JasPer. */
-#define	JAS_VERSION "2.0.16"
+#define	JAS_VERSION "2.0.22"
+
+/* #undef JAS_ENABLE_32BIT */
 
 #define JAS_HAVE_FCNTL_H 1
 #define JAS_HAVE_IO_H 1
 #define JAS_HAVE_UNISTD_H 1
-#define JAS_HAVE_WINDOWS_H 1
 #define JAS_HAVE_SYS_TIME_H 1
 #define JAS_HAVE_SYS_TYPES_H 1
 
+/* #undef JAS_HAVE_MKOSTEMP */
 #define JAS_HAVE_GETTIMEOFDAY 1
 /* #undef JAS_HAVE_GETRUSAGE */
 
 /* #undef JAS_HAVE_GL_GLUT_H */
 /* #undef JAS_HAVE_GLUT_H */
 
-#define JAS_HAVE_SNPRINTF	1
+#define JAS_INCLUDE_PNM_CODEC 1
+#define JAS_INCLUDE_BMP_CODEC 1
+#define JAS_INCLUDE_RAS_CODEC 1
+#define JAS_INCLUDE_JP2_CODEC 1
+#define JAS_INCLUDE_JPC_CODEC 1
+#define JAS_INCLUDE_JPG_CODEC 1
+#define JAS_INCLUDE_PGX_CODEC 1
+#define JAS_INCLUDE_MIF_CODEC 1
+/* #undef JAS_ENABLE_DANGEROUS_INTERNAL_TESTING_MODE */
 
+#if defined(JAS_ENABLE_DANGEROUS_INTERNAL_TESTING_MODE)
+#define JAS_ENABLE_MIF_CODEC 1
 #else
+#undef JAS_ENABLE_MIF_CODEC
+#endif
 
-/* We are not using a configure-based build. */
-/* This probably means we are building with MSVC under Windows. */
+/*
+#if defined(JAS_INCLUDE_JP2_CODEC) && !defined(JAS_INCLUDE_JPC_CODEC)
+#undef JAS_INCLUDE_JPC_CODEC
+#endif
+*/
 
-#define JAS_VERSION "unknown"
-#define JAS_HAVE_FCNTL_H		1
-#define JAS_HAVE_IO_H			1
-#undef JAS_HAVE_UNISTD_H
-#define JAS_HAVE_WINDOWS_H		1
-#undef JAS_HAVE_SYS_TIME_H
-#define JAS_HAVE_SYS_TYPES_H	1
-#undef JAS_HAVE_GETTIMEOFDAY
-#undef JAS_HAVE_GETRUSAGE
-
+#ifdef _MSC_VER
 #undef JAS_HAVE_SNPRINTF
-
-// I don't think that this should be needed anymore.
-#if 1
-#ifndef __cplusplus
-#undef inline
-#define inline __inline
-#endif
-#endif
-
-#define ssize_t long long
-
+#else
+#define JAS_HAVE_SNPRINTF 1
 #endif
 
 #if !defined(JAS_DEC_DEFAULT_MAX_SAMPLES)
 #define JAS_DEC_DEFAULT_MAX_SAMPLES (64 * ((size_t) 1048576))
-#endif
-
-#if defined(__GNUC__) && !defined(__clang__)
-#define JAS_ATTRIBUTE_DISABLE_USAN \
-  __attribute__((no_sanitize_undefined))
-#elif defined(__clang__)
-#define JAS_ATTRIBUTE_DISABLE_USAN \
-  __attribute__((no_sanitize("undefined")))
-#else
-#define JAS_ATTRIBUTE_DISABLE_USAN
 #endif
 
 #endif

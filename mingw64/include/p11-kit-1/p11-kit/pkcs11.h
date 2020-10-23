@@ -956,6 +956,7 @@ typedef struct ck_otp_signature_info
 #define CKG_MGF1_SHA512 0x00000004UL
 
 typedef unsigned long ck_rsa_pkcs_mgf_type_t;
+typedef ck_rsa_pkcs_mgf_type_t * CK_RSA_PKCS_MGF_TYPE_PTR;
 
 struct ck_rsa_pkcs_pss_params {
   ck_mechanism_type_t hash_alg;
@@ -1514,6 +1515,7 @@ struct ck_c_initialize_args
 #define CKR_RANDOM_SEED_NOT_SUPPORTED		(0x120UL)
 #define CKR_RANDOM_NO_RNG			(0x121UL)
 #define CKR_DOMAIN_PARAMS_INVALID		(0x130UL)
+#define CKR_CURVE_NOT_SUPPORTED			(0x140UL)
 #define CKR_BUFFER_TOO_SMALL			(0x150UL)
 #define CKR_SAVED_STATE_INVALID			(0x160UL)
 #define CKR_INFORMATION_SENSITIVE		(0x170UL)
