@@ -189,9 +189,9 @@ b4_glr_cc_if([],
 [b4_output_begin([b4_spec_header_file])
 b4_copyright([Skeleton interface for Bison GLR parsers in C],
              [2002-2015, 2018-2020])[
-]b4_cpp_guard_open([b4_spec_header_file])[
+]b4_cpp_guard_open([b4_spec_mapped_header_file])[
 ]b4_shared_declarations[
-]b4_cpp_guard_close([b4_spec_header_file])[
+]b4_cpp_guard_close([b4_spec_mapped_header_file])[
 ]b4_output_end[
 ]])])
 
@@ -333,8 +333,8 @@ static YYLTYPE yyloc_default][]b4_yyloc_default;])[
    accessed by $0, $-1, etc., in any rule.  */
 #define YYMAXLEFT ]b4_max_left_semantic_context[
 
-/* YYMAXUTOK -- Last valid token number (for yychar).  */
-#define YYMAXUTOK   ]b4_user_token_number_max[
+/* YYMAXUTOK -- Last valid token kind.  */
+#define YYMAXUTOK   ]b4_code_max[
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
    as returned by yylex, with out-of-bounds checking.  */
@@ -2733,7 +2733,8 @@ m4_if(b4_prefix, [yy], [],
 #define yynerrs ]b4_prefix[nerrs]b4_locations_if([[
 #define yylloc  ]b4_prefix[lloc]])])[
 
-]b4_glr_cc_if([b4_glr_cc_cleanup])[
+]b4_glr_cc_if([b4_glr_cc_pre_epilogue
+b4_glr_cc_cleanup])[
 ]b4_percent_code_get([[epilogue]])[]dnl
 b4_epilogue[]dnl
 b4_output_end

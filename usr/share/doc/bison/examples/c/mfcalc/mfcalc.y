@@ -1,3 +1,23 @@
+/* Parser for mfcalc.   -*- C -*-
+
+   Copyright (C) 1988-1993, 1995, 1998-2015, 2018-2020 Free Software
+   Foundation, Inc.
+
+   This file is part of Bison, the GNU Compiler Compiler.
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+
 %{
   #include <stdio.h>  /* For printf, etc. */
   #include <math.h>   /* For pow, used in the grammar. */
@@ -88,6 +108,7 @@ init_table (void)
    always succeed, and that integer calculations
    never overflow.  Production-quality code should
    not make these assumptions.  */
+#include <assert.h>
 #include <stdlib.h> /* malloc, realloc. */
 #include <string.h> /* strlen. */
 

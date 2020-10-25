@@ -1,4 +1,5 @@
 %code top {
+  #include <assert.h>
   #include <ctype.h>  /* isdigit. */
   #include <stdio.h>  /* printf. */
   #include <stdlib.h> /* abort. */

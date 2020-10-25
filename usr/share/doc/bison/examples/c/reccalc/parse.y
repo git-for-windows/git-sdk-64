@@ -1,3 +1,22 @@
+/* Parser for reccalc.   -*- C -*-
+
+   Copyright (C) 2019-2020 Free Software Foundation, Inc.
+
+   This file is part of Bison, the GNU Compiler Compiler.
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+
 // Prologue (directives).
 %expect 0
 
@@ -46,14 +65,29 @@
   result parse (void);
 }
 
+// Include the header in the implementation rather than duplicating it.
+%define api.header.include {"parse.h"}
+
+// Don't share global variables between the scanner and the parser.
 %define api.pure full
+
+// To avoid name clashes (e.g., with C's EOF) prefix token definitions
+// with TOK_ (e.g., TOK_EOF).
 %define api.token.prefix {TOK_}
+
+// Generate YYSTYPE from the types assigned to symbols.
 %define api.value.type union
-%define parse.error verbose
+
+// Error messages with "unexpected XXX, expected XXX...".
+%define parse.error detailed
+
+// Enable run-time traces (yydebug).
 %define parse.trace
+
+// Generate the parser description file (parse.output).
 %verbose
 
- // Scanner and error count are exchanged between main, yyparse and yylex.
+// Scanner and error count are exchanged between main, yyparse and yylex.
 %param {yyscan_t scanner}{result *res}
 
 %token

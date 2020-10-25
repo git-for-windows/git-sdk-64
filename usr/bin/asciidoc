@@ -33,7 +33,7 @@ from ast import literal_eval
 from collections import OrderedDict
 
 # Used by asciidocapi.py #
-VERSION = '9.0.1'           # See CHANGELOG file for version history.
+VERSION = '9.0.3'           # See CHANGELOG file for version history.
 
 MIN_PYTHON_VERSION = '3.5'  # Require this version of Python or better.
 
@@ -54,7 +54,7 @@ SUBS_VERBATIM = ('specialcharacters', 'callouts')
 
 NAME_RE = r'[^\W\d][-\w]*'  # Valid section or attribute name.
 OR, AND = ',', '+'              # Attribute list separators.
-
+DEFAULT_NEWLINE = '\r\n'
 
 # ---------------------------------------------------------------------------
 # Utility functions and classes.
@@ -969,7 +969,7 @@ def system(name, args, is_macro=False, attrs=None):
                 line = subs_attrs(line)
                 if line is not None:
                     result.append(line)
-            result = '\n'.join(result)
+            result = DEFAULT_NEWLINE.join(result)
     else:
         assert False
     if result and name in ('eval3', 'sys3'):
@@ -3634,7 +3634,7 @@ class Table(AbstractBlock):
         is a list of Cells.
         """
         rows = []
-        rdr = csv.reader(io.StringIO('\r\n'.join(text)),
+        rdr = csv.reader(io.StringIO(DEFAULT_NEWLINE.join(text)),
                          delimiter=self.parameters.separator, skipinitialspace=True)
         try:
             for row in rdr:
@@ -4579,7 +4579,7 @@ class Reader(Reader1):
 class Writer:
     """Writes lines to output file."""
     def __init__(self):
-        self.newline = '\r\n'            # End of line terminator.
+        self.newline = DEFAULT_NEWLINE   # End of line terminator.
         self.f = None                    # Output file object.
         self.fname = None                # Output file name.
         self.lines_out = 0               # Number of lines written.
@@ -4594,7 +4594,7 @@ class Writer:
         if fname == '<stdout>':
             self.f = sys.stdout
         else:
-            self.f = open(fname, 'w+', encoding='utf-8')
+            self.f = open(fname, 'w+', encoding='utf-8', newline="")
         message.verbose('writing: ' + writer.fname, False)
         if bom:
             self.f.write(bom)
@@ -4690,7 +4690,7 @@ class Config:
         # [miscellaneous] section.
         self.tabsize = 8
         self.textwidth = 70             # DEPRECATED: Old tables only.
-        self.newline = '\r\n'
+        self.newline = DEFAULT_NEWLINE
         self.pagewidth = None
         self.pageunits = None
         self.outfilesuffix = ''
@@ -5659,7 +5659,7 @@ class Table_OLD(AbstractBlock):
         """Parse the list of source table rows. Each row item in the returned
         list contains a list of cell data elements."""
         result = []
-        rdr = csv.reader(io.StringIO('\r\n'.join(rows)), skipinitialspace=True)
+        rdr = csv.reader(io.StringIO(DEFAULT_NEWLINE.join(rows)), skipinitialspace=True)
         try:
             for row in rdr:
                 result.append(row)

@@ -355,15 +355,23 @@ m4_define([b4_attribute_define],
 #endif
 
 ]m4_bmatch([$1], [\bnoreturn\b], [[/* The _Noreturn keyword of C11.  */
-]dnl This is an exact copy of lib/_Noreturn.h.
+]dnl This is close to lib/_Noreturn.h, except that we do enable
+dnl the use of [[noreturn]], because _Noreturn is used in places
+dnl where [[noreturn]] works in C++.  We need this in particular
+dnl because of glr.cc which compiles code from glr.c in C++.
+dnl And the C++ compiler chokes on _Noreturn.  Also, we do not
+dnl use C' _Noreturn in C++, to avoid -Wc11-extensions warnings.
 [#ifndef _Noreturn
 # if (defined __cplusplus \
       && ((201103 <= __cplusplus && !(__GNUC__ == 4 && __GNUC_MINOR__ == 7)) \
           || (defined _MSC_VER && 1900 <= _MSC_VER)))
 #  define _Noreturn [[noreturn]]
-# elif ((!defined __cplusplus || defined __clang__) \
+# elif (!defined __cplusplus                     \
         && (201112 <= (defined __STDC_VERSION__ ? __STDC_VERSION__ : 0)  \
-            || 4 < __GNUC__ + (7 <= __GNUC_MINOR__)))
+            || 4 < __GNUC__ + (7 <= __GNUC_MINOR__) \
+            || (defined __apple_build_version__ \
+                ? 6000000 <= __apple_build_version__ \
+                : 3 < __clang_major__ + (5 <= __clang_minor__))))
    /* _Noreturn works as-is.  */
 # elif 2 < __GNUC__ + (8 <= __GNUC_MINOR__) || 0x5110 <= __SUNPRO_C
 #  define _Noreturn __attribute__ ((__noreturn__))
@@ -515,7 +523,7 @@ m4_define([b4_token_enum],
     [m4_format([    %-30s %s],
                m4_format([[%s = %s%s%s]],
                          b4_symbol([$1], [id]),
-                         b4_symbol([$1], b4_api_token_raw_if([[number]], [[user_number]])),
+                         b4_symbol([$1], b4_api_token_raw_if([[number]], [[code]])),
                          m4_if([$1], b4_last_enum_token, [], [[,]])),
                [b4_symbol_tag_comment([$1])])])])
 
@@ -564,7 +572,7 @@ m4_define([b4_symbol_translate],
 m4_define([b4_symbol_enum],
 [m4_format([  %-40s %s],
            m4_format([[%s = %s%s%s]],
-                     b4_symbol([$1], [kind]),
+                     b4_symbol([$1], [kind_base]),
                      [$1],
                      m4_if([$1], b4_last_symbol, [], [[,]])),
            [b4_symbol_tag_comment([$1])])])
@@ -579,7 +587,7 @@ m4_define([b4_declare_symbol_enum],
 [[/* Symbol kind.  */
 enum yysymbol_kind_t
 {
-  ]b4_symbol_kind([-2])[ = -2,
+  ]b4_symbol([-2], kind_base)[ = -2,
 ]b4_symbol_foreach([b4_symbol_enum])dnl
 [};
 typedef enum yysymbol_kind_t yysymbol_kind_t;
@@ -658,10 +666,10 @@ m4_define([b4_sync_start], [[#]line $1 $2])
 ## User actions.  ##
 ## -------------- ##
 
-# b4_case(LABEL, STATEMENTS)
-# --------------------------
+# b4_case(LABEL, STATEMENTS, [COMMENTS])
+# --------------------------------------
 m4_define([b4_case],
-[  case $1:
+[  case $1:m4_ifval([$3], [ b4_comment([$3])])
 $2
 b4_syncline([@oline@], [@ofile@])dnl
     break;])

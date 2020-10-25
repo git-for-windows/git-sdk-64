@@ -143,7 +143,7 @@ m4_define([b4_token_enum],
 ]],
                b4_symbol([$1], [tag]),
                b4_symbol([$1], [id]),
-               b4_symbol([$1], b4_api_token_raw_if([[number]], [[user_number]])))])])
+               b4_symbol([$1], b4_api_token_raw_if([[number]], [[code]])))])])
 
 
 # b4_token_enums
@@ -159,13 +159,20 @@ b4_symbol_foreach([b4_token_enum])])])
 ## Symbol kinds.  ##
 ## -------------- ##
 
+
+# b4_symbol_kind(NUM)
+# -------------------
+m4_define([b4_symbol_kind],
+[SymbolKind.b4_symbol_kind_base($@)])
+
+
 # b4_symbol_enum(SYMBOL-NUM)
 # --------------------------
 # Output the definition of this symbol as an enum.
 m4_define([b4_symbol_enum],
 [m4_format([    %-30s %s],
            m4_format([[%s(%s)%s]],
-                     b4_symbol([$1], [kind]),
+                     b4_symbol([$1], [kind_base]),
                      [$1],
                      m4_if([$1], b4_last_symbol, [[;]], [[,]])),
            [b4_symbol_tag_comment([$1])])])
@@ -255,11 +262,11 @@ m4_define([b4_declare_symbol_enum],
 
 
 
-# b4_case(ID, CODE)
-# -----------------
+# b4_case(ID, CODE, [COMMENTS])
+# -----------------------------
 # We need to fool Java's stupid unreachable code detection.
 m4_define([b4_case],
-[  case $1:
+[  case $1:m4_ifval([$3], [ b4_comment([$3])])
   if (yyn == $1)
     $2;
   break;

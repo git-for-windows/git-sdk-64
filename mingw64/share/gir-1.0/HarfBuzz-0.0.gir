@@ -8198,6 +8198,196 @@ glyph in both horizontal and vertical directions. All positions in
         </parameter>
       </parameters>
     </function>
+    <docsection name="hb-aat-layout">
+      <doc xml:space="preserve"
+           filename="../src/hb-aat-layout.cc"
+           line="76">Functions for querying OpenType Layout features in the font face.</doc>
+    </docsection>
+    <docsection name="hb-blob">
+      <doc xml:space="preserve"
+           filename="../src/hb-blob.cc"
+           line="42">Blobs wrap a chunk of binary data to handle lifecycle management of data
+while it is passed between client and HarfBuzz.  Blobs are primarily used
+to create font faces, but also to access font face tables, as well as
+pass around other binary data.</doc>
+    </docsection>
+    <docsection name="hb-buffer">
+      <doc xml:space="preserve"
+           filename="../src/hb-buffer.cc"
+           line="34">Buffers serve dual role in HarfBuzz; they hold the input characters that are
+passed to hb_shape(), and after shaping they hold the output glyphs.</doc>
+    </docsection>
+    <docsection name="hb-common">
+      <doc xml:space="preserve"
+           filename="../src/hb-common.cc"
+           line="38">Common data types used across HarfBuzz are defined here.</doc>
+    </docsection>
+    <docsection name="hb-deprecated">
+      <doc xml:space="preserve"
+           filename="../src/hb-deprecated.h"
+           line="40">These API have been deprecated in favor of newer API, or because they
+were deemed unnecessary.</doc>
+    </docsection>
+    <docsection name="hb-face">
+      <doc xml:space="preserve"
+           filename="../src/hb-face.cc"
+           line="38">Font face is objects represent a single face in a font family.
+More exactly, a font face represents a single face in a binary font file.
+Font faces are typically built from a binary blob and a face index.
+Font faces are used to create fonts.</doc>
+    </docsection>
+    <docsection name="hb-font">
+      <doc xml:space="preserve"
+           filename="../src/hb-font.cc"
+           line="40">Font objects represent a font face at a certain size and other
+parameters (pixels per EM, points per EM, variation settings.)
+Fonts are created from font faces, and are used as input to
+hb_shape() among other things.</doc>
+    </docsection>
+    <docsection name="hb-ft">
+      <doc xml:space="preserve"
+           filename="../src/hb-ft.cc"
+           line="45">Functions for using HarfBuzz with the FreeType library.
+
+HarfBuzz supports using FreeType to provide face and
+font data.
+
+&lt;note&gt;Note that FreeType is not thread-safe, therefore these
+functions are not thread-safe either.&lt;/note&gt;</doc>
+    </docsection>
+    <docsection name="hb-glib">
+      <doc xml:space="preserve"
+           filename="../src/hb-glib.cc"
+           line="38">Functions for using HarfBuzz with the GLib library.
+
+HarfBuzz supports using GLib to provide Unicode data, by attaching
+GLib functions to the virtual methods in a #hb_unicode_funcs_t function
+structure.</doc>
+    </docsection>
+    <docsection name="hb-gobject">
+      <doc xml:space="preserve"
+           filename="../src/hb-gobject-structs.cc"
+           line="32">Support for using HarfBuzz with the GObject library to provide
+type data.
+
+The types and functions listed here are solely a linkage between
+HarfBuzz's public data types and the GTypes used by the GObject framework.
+HarfBuzz uses GObject introspection to generate its Python bindings
+(and potentially other language bindings); client programs should never need
+to access the GObject-integration mechanics.
+
+For client programs using the GNOME and GTK software stack, please see the
+GLib and FreeType integration pages.</doc>
+    </docsection>
+    <docsection name="hb-graphite2">
+      <doc xml:space="preserve"
+           filename="../src/hb-graphite2.cc"
+           line="42">Functions for using HarfBuzz with fonts that include Graphite features.
+
+For Graphite features to work, you must be sure that HarfBuzz was compiled
+with the `graphite2` shaping engine enabled. Currently, the default is to
+not enable `graphite2` shaping.</doc>
+    </docsection>
+    <docsection name="hb-map">
+      <doc xml:space="preserve"
+           filename="../src/hb-map.cc"
+           line="30">Map objects are integer-to-integer hash-maps.  Currently they are
+not used in the HarfBuzz public API, but are provided for client's
+use if desired.</doc>
+    </docsection>
+    <docsection name="hb-ot-color">
+      <doc xml:space="preserve"
+           filename="../src/hb-ot-color.cc"
+           line="44">Functions for fetching color-font information from OpenType font faces.
+
+HarfBuzz supports `COLR`/`CPAL`, `sbix`, `CBDT`, and `SVG` color fonts.</doc>
+    </docsection>
+    <docsection name="hb-ot-font">
+      <doc xml:space="preserve"
+           filename="../src/hb-ot-font.cc"
+           line="50">Functions for using OpenType fonts with hb_shape().  Note that fonts returned
+by hb_font_create() default to using these functions, so most clients would
+never need to call these functions directly.</doc>
+    </docsection>
+    <docsection name="hb-ot-layout">
+      <doc xml:space="preserve"
+           filename="../src/hb-ot-layout.cc"
+           line="57">Functions for querying OpenType Layout features in the font face.</doc>
+    </docsection>
+    <docsection name="hb-ot-math">
+      <doc xml:space="preserve"
+           filename="../src/hb-ot-math.cc"
+           line="34">Functions for fetching mathematics layout data from OpenType fonts.
+
+HarfBuzz itself does not implement a math layout solution. The
+functions and types provided can be used by client programs to access
+the font data necessary for typesetting OpenType Math layout.</doc>
+    </docsection>
+    <docsection name="hb-ot-meta">
+      <doc xml:space="preserve"
+           filename="../src/hb-ot-meta.cc"
+           line="31">Functions for fetching metadata from fonts.</doc>
+    </docsection>
+    <docsection name="hb-ot-name">
+      <doc xml:space="preserve"
+           filename="../src/hb-ot-name.cc"
+           line="36">Functions for fetching name strings from OpenType fonts.</doc>
+    </docsection>
+    <docsection name="hb-ot-shape">
+      <doc xml:space="preserve"
+           filename="../src/hb-ot-shape.cc"
+           line="61">Support functions for OpenType shaping related queries.</doc>
+    </docsection>
+    <docsection name="hb-ot-var">
+      <doc xml:space="preserve"
+           filename="../src/hb-ot-var.cc"
+           line="38">Functions for fetching information about OpenType Variable Fonts.</doc>
+    </docsection>
+    <docsection name="hb-set">
+      <doc xml:space="preserve"
+           filename="../src/hb-set.cc"
+           line="30">Set objects represent a mathematical set of integer values.  They are
+used in non-shaping API to query certain set of characters or glyphs,
+or other integer values.</doc>
+    </docsection>
+    <docsection name="hb-shape">
+      <doc xml:space="preserve"
+           filename="../src/hb-shape.cc"
+           line="38">Shaping is the central operation of HarfBuzz. Shaping operates on buffers,
+which are sequences of Unicode characters that use the same font and have
+the same text direction, script, and language. After shaping the buffer
+contains the output glyphs and their positions.</doc>
+    </docsection>
+    <docsection name="hb-shape-plan">
+      <doc xml:space="preserve"
+           filename="../src/hb-shape-plan.cc"
+           line="34">Shape plans are not used for shaping directly, but can be access to query
+certain information about how shaping will perform given a set of input
+parameters (script, language, direction, features, etc.)
+Most client would not need to deal with shape plans directly.</doc>
+    </docsection>
+    <docsection name="hb-unicode">
+      <doc xml:space="preserve"
+           filename="../src/hb-unicode.cc"
+           line="36">Unicode functions are used to access Unicode character properties.
+Client can pass its own Unicode functions to HarfBuzz, or access
+the built-in Unicode functions that come with HarfBuzz.
+
+With the Unicode functions, one can query variour Unicode character
+properties, such as General Category, Script, Combining Class, etc.</doc>
+    </docsection>
+    <docsection name="hb-uniscribe">
+      <doc xml:space="preserve"
+           filename="../src/hb-uniscribe.cc"
+           line="52">Functions for using HarfBuzz with Windows fonts.</doc>
+    </docsection>
+    <docsection name="hb-version">
+      <doc xml:space="preserve"
+           filename="../src/hb-common.cc"
+           line="602">These functions and macros allow accessing version of the HarfBuzz
+library used at compile- as well as run-time, and to direct code
+conditionally based on those versions, again, at compile- or run-time.</doc>
+    </docsection>
     <function name="language_from_string"
               c:identifier="hb_language_from_string"
               version="0.9.2">
