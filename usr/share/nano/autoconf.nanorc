@@ -1,11 +1,14 @@
-## Here is an example for Autoconf.
+## Syntax highlighting for Autoconf.
+
+## Original author:  Benno Schulenberg
+## License:  GPL version 3 or newer
 
 syntax autoconf "\.(ac|m4)$"
 comment "#"
 
 # Keywords:
 color yellow "\<(if|test|then|elif|else|fi|for|in|do|done)\>"
-color yellow "(=|!=|&&|\|\|)"
+color yellow "=|!=|&&|\|\|"
 
 # Macros:
 color cyan "\<[[:upper:]_[:digit:]]+\>"
@@ -14,7 +17,7 @@ color cyan "\<[[:upper:]_[:digit:]]+\>"
 color red "\<[-_.0-9]+\>"
 
 # Strings:
-color red "\"[^"]*\""  "\'[^']*\'"
+color red ""[^"]*""  "'[^']*'"
 
 # Backticks:
 color green "`[^`]*`"

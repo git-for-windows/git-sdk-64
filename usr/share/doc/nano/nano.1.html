@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.4 -->
-<!-- CreationDate: Sat May 23 17:02:45 2020 -->
+<!-- CreationDate: Wed Oct  7 10:58:51 2020 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -268,13 +268,11 @@ text is justified.</p>
 files from DOS/Mac format.</p>
 
 <p style="margin-left:11%;"><b>&minus;O</b>,
-<b>&minus;&minus;morespace</b></p>
+<b>&minus;&minus;bookstyle</b></p>
 
-<p style="margin-left:22%;">Obsolete and ignored option,
-since the line below the title bar is included into the
-editing space by default. If you prefer to keep this line
-blank, use <b>&minus;e</b> or
-<b>&minus;&minus;emptyline</b>.</p>
+<p style="margin-left:22%;">When justifying, treat any line
+that starts with whitespace as the beginning of a paragraph
+(unless auto-indenting is on).</p>
 
 <p style="margin-left:11%;"><b>&minus;P</b>,
 <b>&minus;&minus;positionlog</b></p>
@@ -289,7 +287,7 @@ position again upon reopening such a file.</p>
 
 <p style="margin-left:22%;">Set the regular expression for
 matching the quoting part of a line. The default value is
-<b>&quot;^([&nbsp;\t]*([!#%:;&gt;|}]|//))+&quot;</b>. (Note
+&quot;<b>^([&nbsp;\t]*([!#%:;&gt;|}]|//))+</b>&quot;. (Note
 that <b>\t</b> stands for an actual Tab.) This makes it
 possible to rejustify blocks of quoted text when composing
 email, and to rewrap blocks of line comments when writing
@@ -309,12 +307,14 @@ can also be activated by invoking <b>nano</b> with any name
 beginning with &rsquo;r&rsquo; (e.g. &quot;rnano&quot;).</p>
 
 <p style="margin-left:11%;"><b>&minus;S</b>,
-<b>&minus;&minus;smooth</b></p>
+<b>&minus;&minus;softwrap</b></p>
 
-<p style="margin-left:22%;">Obsolete and ignored option,
-since smooth scrolling has become the default. If you prefer
-the chunk-by-chunk scrolling behavior, use <b>&minus;j</b>
-or <b>&minus;&minus;jumpyscrolling</b>.</p>
+<p style="margin-left:22%;">Display over multiple screen
+rows lines that exceed the screen&rsquo;s width. (You can
+make this soft-wrapping occur at whitespace instead of
+rudely at the screen&rsquo;s edge, by using also
+<b>&minus;&minus;atblanks</b>.) (The old short option,
+<b>&minus;$</b>, is deprecated.)</p>
 
 
 <p style="margin-left:11%;"><b>&minus;T&nbsp;</b><i>number</i>,
@@ -322,7 +322,7 @@ or <b>&minus;&minus;jumpyscrolling</b>.</p>
 
 <p style="margin-left:22%;">Set the size (width) of a tab
 to <i>number</i> columns. The value of <i>number</i> must be
-greater than 0. The default value is 8.</p>
+greater than 0. The default value is <b>8</b>.</p>
 
 <p style="margin-left:11%;"><b>&minus;U</b>,
 <b>&minus;&minus;quickblank</b></p>
@@ -351,7 +351,8 @@ word.</p>
 
 <p style="margin-left:22%;">Specify which other characters
 (besides the normal alphanumeric ones) should be considered
-as part of a word. This overrides option <b>&minus;W</b>
+as part of a word. When using this option, you probably want
+to omit <b>&minus;W</b>
 (<b>&minus;&minus;wordbounds</b>).</p>
 
 
@@ -454,7 +455,8 @@ entire line.</p>
 <b>&minus;&minus;linenumbers</b></p>
 
 <p style="margin-left:22%;">Display line numbers to the
-left of the text area.</p>
+left of the text area. (Any line with an anchor additionally
+gets a mark in the margin.)</p>
 
 <p style="margin-left:11%;"><b>&minus;m</b>,
 <b>&minus;&minus;mouse</b></p>
@@ -493,6 +495,14 @@ chroot.</p>
 sequences (<b>^Q</b> and <b>^S</b>) so they will be caught
 by the terminal.</p>
 
+<p style="margin-left:11%;"><b>&minus;q</b>,
+<b>&minus;&minus;indicator</b></p>
+
+<p style="margin-left:22%;">Display a &quot;scrollbar&quot;
+on the righthand side of the edit window. It shows the
+position of the viewport in the buffer and how much of the
+buffer is covered by the viewport.</p>
+
 
 <p style="margin-left:11%;"><b>&minus;r&nbsp;</b><i>number</i>,
 <b>&minus;&minus;fill=</b><i>number</i></p>
@@ -503,7 +513,7 @@ of columns. If the value is 0 or less, wrapping will occur
 at the width of the screen minus <i>number</i> columns,
 allowing the wrap point to vary along with the width of the
 screen if the screen is resized. The default value is
-&minus;8.</p>
+<b>&minus;8</b>.</p>
 
 <p style="margin-left:11%;"><b>&minus;s
 &quot;</b><i>program</i> [<i>argument</i> ...]<b>&quot;</b>,
@@ -512,14 +522,16 @@ screen if the screen is resized. The default value is
 
 <p style="margin-left:22%;">Use this command to perform
 spell checking and correcting, instead of using the built-in
-corrector that calls <b>hunspell</b> or GNU
-<b>spell</b>.</p>
+corrector that calls <b>hunspell</b>(1) or
+<b>spell</b>(1).</p>
 
 <p style="margin-left:11%;"><b>&minus;t</b>,
-<b>&minus;&minus;tempfile</b></p>
+<b>&minus;&minus;saveonexit</b></p>
 
 <p style="margin-left:22%;">Save a changed buffer without
-prompting (when exiting with <b>^X</b>).</p>
+prompting (when exiting with <b>^X</b>). (The old form of
+the long option, <b>&minus;&minus;tempfile</b>, is
+deprecated.)</p>
 
 <p style="margin-left:11%;"><b>&minus;u</b>,
 <b>&minus;&minus;unix</b></p>
@@ -556,8 +568,8 @@ lines at the bottom of the screen.</p>
 <p style="margin-left:11%;"><b>&minus;y</b>,
 <b>&minus;&minus;afterends</b></p>
 
-<p style="margin-left:22%;">Make Ctrl+Right stop at word
-ends instead of beginnings.</p>
+<p style="margin-left:22%;">Make Ctrl+Right and Ctrl+Delete
+stop at word ends instead of beginnings.</p>
 
 <p style="margin-left:11%;"><b>&minus;z</b>,
 <b>&minus;&minus;suspendable</b></p>
@@ -565,18 +577,23 @@ ends instead of beginnings.</p>
 <p style="margin-left:22%;">Allow the user to suspend the
 editor (with <b>^Z</b> by default).</p>
 
-<p style="margin-left:11%;"><b>&minus;$</b>,
-<b>&minus;&minus;softwrap</b></p>
+<p style="margin-left:11%;"><b>&minus;%</b>,
+<b>&minus;&minus;stateflags</b></p>
 
-<p style="margin-left:22%;">Display lines that exceed the
-screen&rsquo;s width over multiple screen lines. (You can
-make this soft-wrapping occur at whitespace instead of
-rudely at the screen&rsquo;s edge, by using also
-<b>&minus;&minus;atblanks</b>.) Since &rsquo;$&rsquo;
-normally refers to a variable in the Unix shell, you should
-specify this option last when using other options (e.g.
-&rsquo;nano &minus;wS$&rsquo;) or pass it separately (e.g.
-&rsquo;nano &minus;wS &minus;$&rsquo;).</p>
+<p style="margin-left:22%;">Use the top-right corner of the
+screen for showing some state flags: <b>I</b> when
+auto-indenting, <b>M</b> when the mark is on, <b>L</b> when
+hard-wrapping (breaking long lines), <b>R</b> when recording
+a macro, and <b>S</b> when soft-wrapping. When the buffer is
+modified, a star (<b>*</b>) is shown after the filename in
+the center of the title bar.</p>
+
+<p style="margin-left:11%;"><b>&minus;!</b>,
+<b>&minus;&minus;magic</b></p>
+
+<p style="margin-left:22%;">When neither the file&rsquo;s
+name nor its first line give a clue, try using libmagic to
+determine the applicable syntax.</p>
 
 <h2>TOGGLES
 <a name="TOGGLES"></a>
@@ -592,6 +609,11 @@ numbers, <b>M&minus;M</b> toggles the mouse,
 <b>M&minus;I</b> auto-indentation, and <b>M&minus;X</b> the
 help lines. See at the end of the <b>^G</b> help text for a
 complete list.</p>
+
+<p style="margin-left:11%; margin-top: 1em">The
+<b>M&minus;X</b> toggle is special: it works in all menus
+except the help viewer and the linter. All other toggles
+work in the main menu only.</p>
 
 <h2>FILES
 <a name="FILES"></a>
@@ -609,6 +631,10 @@ two configuration files: first the system&rsquo;s
 <i>~/.config/nano/nanorc</i>, whichever is encountered
 first. See <b>nanorc</b>(5) for more information on the
 possible contents of those files.</p>
+
+<p style="margin-left:11%; margin-top: 1em">See
+<i>/usr/share/nano/</i> and <i>/usr/share/nano/extra/</i>
+for available syntax-coloring definitions.</p>
 
 <h2>NOTES
 <a name="NOTES"></a>
