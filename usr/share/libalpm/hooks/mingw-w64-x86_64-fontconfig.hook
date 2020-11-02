@@ -1,0 +1,11 @@
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Target = mingw64/share/fonts/*
+
+[Action]
+Description = Updating fontconfig cache...
+When = PostTransaction
+Exec = /mingw64/bin/fc-cache -s

@@ -157,7 +157,7 @@ class EnvBuilder:
             if self.prompt is not None:
                 f.write(f'prompt = {self.prompt!r}\n')
 
-    if os.name != 'nt' or _POSIX_BUILD:
+    if os.name != 'nt':
         def symlink_or_copy(self, src, dst, relative_symlinks_ok=False):
             """
             Try symlinking a file, and if that fails, fall back to copying.
@@ -231,11 +231,11 @@ class EnvBuilder:
         path = context.env_exe
         copier = self.symlink_or_copy
         dirname = context.python_dir
-        if os.name != 'nt' or _POSIX_BUILD:
+        if os.name != 'nt':
             copier(context.executable, path)
             if not os.path.islink(path):
                 os.chmod(path, 0o755)
-            for suffix in ('python.exe', 'python3.exe'):
+            for suffix in ('python', 'python3'):
                 path = os.path.join(binpath, suffix)
                 if not os.path.exists(path):
                     # Issue 18807: make copies if
@@ -244,7 +244,7 @@ class EnvBuilder:
                     if not os.path.islink(path):
                         os.chmod(path, 0o755)
         else:
-            if self.symlinks:
+            if self.symlinks and not _POSIX_BUILD:
                 # For symlinking, we need a complete copy of the root directory
                 # If symlinks fail, you'll get unnecessary copies of files, but
                 # we assume that if you've opted into symlinks on Windows then
@@ -267,7 +267,10 @@ class EnvBuilder:
                 if os.path.lexists(src):
                     copier(src, os.path.join(binpath, suffix))
 
-            if sysconfig.is_python_build(True):
+            if _POSIX_BUILD:
+                copier(os.path.join(dirname, 'python.exe'), os.path.join(binpath, 'python3.exe'))
+
+            if sysconfig.is_python_build(True) and not _POSIX_BUILD:
                 # copy init.tcl
                 for root, dirs, files in os.walk(context.python_dir):
                     if 'init.tcl' in files:
