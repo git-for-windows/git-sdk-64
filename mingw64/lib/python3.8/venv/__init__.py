@@ -268,7 +268,10 @@ class EnvBuilder:
                     copier(src, os.path.join(binpath, suffix))
 
             if _POSIX_BUILD:
+                # copy from python/pythonw so the venvlauncher magic in symlink_or_copy triggers
                 copier(os.path.join(dirname, 'python.exe'), os.path.join(binpath, 'python3.exe'))
+                copier(os.path.join(dirname, 'python.exe'), os.path.join(binpath, 'python%d.%d.exe' % sys.version_info[:2]))
+                copier(os.path.join(dirname, 'pythonw.exe'), os.path.join(binpath, 'python3w.exe'))
 
             if sysconfig.is_python_build(True) and not _POSIX_BUILD:
                 # copy init.tcl
