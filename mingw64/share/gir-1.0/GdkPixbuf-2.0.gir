@@ -21,7 +21,7 @@ and/or use gtk-doc annotations.  -->
                  c:type="GdkColorspace">
       <doc xml:space="preserve"
            filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-           line="132">This enumeration defines the color spaces that are supported by
+           line="65">This enumeration defines the color spaces that are supported by
 the gdk-pixbuf library.  Currently only RGB is supported.</doc>
       <member name="rgb"
               value="0"
@@ -29,13 +29,13 @@ the gdk-pixbuf library.  Currently only RGB is supported.</doc>
               glib:nick="rgb">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-             line="134">Indicates a red/green/blue additive color space.</doc>
+             line="67">Indicates a red/green/blue additive color space.</doc>
       </member>
     </enumeration>
     <function-macro name="IS_PIXBUF"
                     c:identifier="GDK_IS_PIXBUF"
                     introspectable="0">
-      <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h" line="161"/>
+      <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h" line="94"/>
       <parameters>
         <parameter name="object">
         </parameter>
@@ -184,7 +184,7 @@ interpolation is just as fast and results in higher quality.</doc>
       </member>
     </enumeration>
     <function-macro name="PIXBUF" c:identifier="GDK_PIXBUF" introspectable="0">
-      <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h" line="160"/>
+      <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h" line="93"/>
       <parameters>
         <parameter name="object">
         </parameter>
@@ -538,7 +538,7 @@ interpolation is just as fast and results in higher quality.</doc>
                        line="47"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="PIXBUF_MINOR" value="40" c:type="GDK_PIXBUF_MINOR">
+    <constant name="PIXBUF_MINOR" value="42" c:type="GDK_PIXBUF_MINOR">
       <doc xml:space="preserve"
            filename="../gdk-pixbuf/gdk-pixbuf-features.h"
            line="25">Minor version of gdk-pixbuf library, that is the "8" in
@@ -577,7 +577,7 @@ interpolation is just as fast and results in higher quality.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <constant name="PIXBUF_VERSION" value="2.40.0" c:type="GDK_PIXBUF_VERSION">
+    <constant name="PIXBUF_VERSION" value="2.42.0" c:type="GDK_PIXBUF_VERSION">
       <doc xml:space="preserve"
            filename="../gdk-pixbuf/gdk-pixbuf-features.h"
            line="37">Contains the full version of the gdk-pixbuf header as a string.
@@ -595,7 +595,7 @@ This is the version being compiled against; contrast with
            glib:get-type="gdk_pixbuf_get_type">
       <doc xml:space="preserve"
            filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-           line="148">This is the main structure in the gdk-pixbuf library.  It is
+           line="81">This is the main structure in the gdk-pixbuf library.  It is
 used to represent images.  It contains information about the
 image's pixel data, its color space, bits per sample, width and
 height, and the rowstride (the number of bytes between the start of
@@ -605,15 +605,15 @@ one row and the start of the next).</doc>
       <constructor name="new" c:identifier="gdk_pixbuf_new">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="495">Creates a new #GdkPixbuf structure and allocates a buffer for it.  The
+             line="563">Creates a new #GdkPixbuf structure and allocates a buffer for it.  The
 buffer has an optimal rowstride.  Note that the buffer is not cleared;
 you will have to fill it completely yourself.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="270"/>
+                         line="203"/>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="507">A newly-created #GdkPixbuf with a reference count of 1, or
+               line="575">A newly-created #GdkPixbuf with a reference count of 1, or
 %NULL if not enough memory could be allocated for the image buffer.</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
         </return-value>
@@ -621,31 +621,31 @@ you will have to fill it completely yourself.</doc>
           <parameter name="colorspace" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="497">Color space for image</doc>
+                 line="565">Color space for image</doc>
             <type name="Colorspace" c:type="GdkColorspace"/>
           </parameter>
           <parameter name="has_alpha" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="498">Whether the image should have transparency information</doc>
+                 line="566">Whether the image should have transparency information</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
           <parameter name="bits_per_sample" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="499">Number of bits per color sample</doc>
+                 line="567">Number of bits per color sample</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="500">Width of image in pixels, must be &gt; 0</doc>
+                 line="568">Width of image in pixels, must be &gt; 0</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="height" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="501">Height of image in pixels, must be &gt; 0</doc>
+                 line="569">Height of image in pixels, must be &gt; 0</doc>
             <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
@@ -659,7 +659,7 @@ you will have to fill it completely yourself.</doc>
 Currently only RGB images with 8 bits per sample are supported.
 This is the #GBytes variant of gdk_pixbuf_new_from_data().</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="350"/>
+                         line="283"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-data.c"
@@ -726,7 +726,7 @@ it is its responsibility to free the pixel array.
 
 See also gdk_pixbuf_new_from_bytes().</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="340"/>
+                         line="273"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-data.c"
@@ -806,15 +806,15 @@ drops to zero, or %NULL if the data should not be freed</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="1082">Creates a new pixbuf by loading an image from a file.  The file format is
+             line="1092">Creates a new pixbuf by loading an image from a file.  The file format is
 detected automatically. If %NULL is returned, then @error will be set.
 Possible errors are in the #GDK_PIXBUF_ERROR and #G_FILE_ERROR domains.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="316"/>
+                         line="249"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="1092">A newly-created pixbuf with a reference count of 1, or %NULL if
+               line="1102">A newly-created pixbuf with a reference count of 1, or %NULL if
 any of several error conditions occurred:  the file could not be opened,
 there was no loader for the file's format, there was not enough memory to
 allocate the image buffer, or the image file contained invalid data.</doc>
@@ -824,7 +824,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1084">Name of file to load, in the GLib file
+                 line="1094">Name of file to load, in the GLib file
     name encoding</doc>
             <type name="filename" c:type="const char*"/>
           </parameter>
@@ -836,7 +836,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="1320">Creates a new pixbuf by loading an image from a file.  The file format is
+             line="1330">Creates a new pixbuf by loading an image from a file.  The file format is
 detected automatically. If %NULL is returned, then @error will be set.
 Possible errors are in the #GDK_PIXBUF_ERROR and #G_FILE_ERROR domains.
 The image will be scaled to fit in the requested size, optionally preserving
@@ -849,11 +849,11 @@ aspect ratio, a @width or @height of -1 means to not scale the image
 at all in that dimension. Negative values for @width and @height are
 allowed since 2.8.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="324"/>
+                         line="257"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="1342">A newly-created pixbuf with a reference count of 1, or %NULL
+               line="1352">A newly-created pixbuf with a reference count of 1, or %NULL
 if any of several error conditions occurred:  the file could not be opened,
 there was no loader for the file's format, there was not enough memory to
 allocate the image buffer, or the image file contained invalid data.</doc>
@@ -863,26 +863,26 @@ allocate the image buffer, or the image file contained invalid data.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1322">Name of file to load, in the GLib file
+                 line="1332">Name of file to load, in the GLib file
     name encoding</doc>
             <type name="filename" c:type="const char*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1324">The width the image should have or -1 to not constrain the width</doc>
+                 line="1334">The width the image should have or -1 to not constrain the width</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="height" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1325">The height the image should have or -1 to not constrain the height</doc>
+                 line="1335">The height the image should have or -1 to not constrain the height</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="preserve_aspect_ratio" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1326">%TRUE to preserve the image's aspect ratio</doc>
+                 line="1336">%TRUE to preserve the image's aspect ratio</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
         </parameters>
@@ -893,13 +893,13 @@ allocate the image buffer, or the image file contained invalid data.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="1445">Same as gdk_pixbuf_new_from_file_at_scale().</doc>
+             line="1455">Same as gdk_pixbuf_new_from_file_at_scale().</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="308"/>
+                         line="241"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="1455">A newly-created pixbuf with a reference count of 1, or %NULL
+               line="1465">A newly-created pixbuf with a reference count of 1, or %NULL
 if any of several error conditions occurred:  the file could not be opened,
 there was no loader for the file's format, there was not enough memory to
 allocate the image buffer, or the image file contained invalid data.</doc>
@@ -909,25 +909,25 @@ allocate the image buffer, or the image file contained invalid data.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1447">Name of file to load, in the GLib file name encoding</doc>
+                 line="1457">Name of file to load, in the GLib file name encoding</doc>
             <type name="filename" c:type="const char*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1448">The width the image should have or -1 to not constrain the width</doc>
+                 line="1458">The width the image should have or -1 to not constrain the width</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="height" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1449">The height the image should have or -1 to not constrain the height</doc>
+                 line="1459">The height the image should have or -1 to not constrain the height</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="preserve_aspect_ratio" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1450">%TRUE to preserve the image's aspect ratio</doc>
+                 line="1460">%TRUE to preserve the image's aspect ratio</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
         </parameters>
@@ -938,7 +938,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="1197">Creates a new pixbuf by loading an image from a file.
+             line="1207">Creates a new pixbuf by loading an image from a file.
 The file format is detected automatically. If %NULL is returned, then
 @error will be set. Possible errors are in the #GDK_PIXBUF_ERROR and
 #G_FILE_ERROR domains.
@@ -949,11 +949,11 @@ than @width x @height, if the aspect ratio requires it. To load
 and image at the requested size, regardless of aspect ratio, use
 gdk_pixbuf_new_from_file_at_scale().</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="319"/>
+                         line="252"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="1216">A newly-created pixbuf with a reference count of 1, or
+               line="1226">A newly-created pixbuf with a reference count of 1, or
 %NULL if any of several error conditions occurred:  the file could not
 be opened, there was no loader for the file's format, there was not
 enough memory to allocate the image buffer, or the image file contained
@@ -964,20 +964,20 @@ invalid data.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1199">Name of file to load, in the GLib file
+                 line="1209">Name of file to load, in the GLib file
     name encoding</doc>
             <type name="filename" c:type="const char*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1201">The width the image should have or -1 to not constrain the width</doc>
+                 line="1211">The width the image should have or -1 to not constrain the width</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="height" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1202">The height the image should have or -1 to not constrain the height</doc>
+                 line="1212">The height the image should have or -1 to not constrain the height</doc>
             <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
@@ -988,13 +988,13 @@ invalid data.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="1237">Same as gdk_pixbuf_new_from_file_at_size()</doc>
+             line="1247">Same as gdk_pixbuf_new_from_file_at_size()</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="303"/>
+                         line="236"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="1246">A newly-created pixbuf with a reference count of 1, or
+               line="1256">A newly-created pixbuf with a reference count of 1, or
 %NULL if any of several error conditions occurred:  the file could not
 be opened, there was no loader for the file's format, there was not
 enough memory to allocate the image buffer, or the image file contained
@@ -1005,19 +1005,19 @@ invalid data.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1239">Name of file to load, in the GLib file name encoding</doc>
+                 line="1249">Name of file to load, in the GLib file name encoding</doc>
             <type name="filename" c:type="const char*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1240">The width the image should have or -1 to not constrain the width</doc>
+                 line="1250">The width the image should have or -1 to not constrain the width</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="height" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1241">The height the image should have or -1 to not constrain the height</doc>
+                 line="1251">The height the image should have or -1 to not constrain the height</doc>
             <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
@@ -1027,13 +1027,13 @@ invalid data.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="1175">Same as gdk_pixbuf_new_from_file()</doc>
+             line="1185">Same as gdk_pixbuf_new_from_file()</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="300"/>
+                         line="233"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="1182">A newly-created pixbuf with a reference count of 1, or %NULL if
+               line="1192">A newly-created pixbuf with a reference count of 1, or %NULL if
 any of several error conditions occurred:  the file could not be opened,
 there was no loader for the file's format, there was not enough memory to
 allocate the image buffer, or the image file contained invalid data.</doc>
@@ -1043,7 +1043,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1177">Name of file to load, in the GLib file name encoding</doc>
+                 line="1187">Name of file to load, in the GLib file name encoding</doc>
             <type name="filename" c:type="const char*"/>
           </parameter>
         </parameters>
@@ -1087,7 +1087,7 @@ inline data located at runtime, you could have corrupt inline data in
 addition.</doc>
         <doc-deprecated xml:space="preserve">Use #GResource instead.</doc-deprecated>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="362"/>
+                         line="295"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixdata.c"
@@ -1127,16 +1127,16 @@ addition.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="1772">Creates a new pixbuf by loading an image from an resource.
+             line="1782">Creates a new pixbuf by loading an image from an resource.
 
 The file format is detected automatically. If %NULL is returned, then
 @error will be set.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="330"/>
+                         line="263"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="1782">A newly-created pixbuf, or %NULL if any of several error
+               line="1792">A newly-created pixbuf, or %NULL if any of several error
 conditions occurred: the file could not be opened, the image format is
 not supported, there was not enough memory to allocate the image buffer,
 the stream contained invalid data, or the operation was cancelled.</doc>
@@ -1146,7 +1146,7 @@ the stream contained invalid data, or the operation was cancelled.</doc>
           <parameter name="resource_path" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1774">the path of the resource file</doc>
+                 line="1784">the path of the resource file</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
         </parameters>
@@ -1157,7 +1157,7 @@ the stream contained invalid data, or the operation was cancelled.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="1809">Creates a new pixbuf by loading an image from an resource.
+             line="1819">Creates a new pixbuf by loading an image from an resource.
 
 The file format is detected automatically. If %NULL is returned, then
 @error will be set.
@@ -1171,11 +1171,11 @@ exact given width. When not preserving aspect ratio, a @width or
 
 The stream is not closed.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="333"/>
+                         line="266"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="1831">A newly-created pixbuf, or %NULL if any of several error
+               line="1841">A newly-created pixbuf, or %NULL if any of several error
 conditions occurred: the file could not be opened, the image format is
 not supported, there was not enough memory to allocate the image buffer,
 the stream contained invalid data, or the operation was cancelled.</doc>
@@ -1185,25 +1185,25 @@ the stream contained invalid data, or the operation was cancelled.</doc>
           <parameter name="resource_path" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1811">the path of the resource file</doc>
+                 line="1821">the path of the resource file</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1812">The width the image should have or -1 to not constrain the width</doc>
+                 line="1822">The width the image should have or -1 to not constrain the width</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="height" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1813">The height the image should have or -1 to not constrain the height</doc>
+                 line="1823">The height the image should have or -1 to not constrain the height</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="preserve_aspect_ratio" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1814">%TRUE to preserve the image's aspect ratio</doc>
+                 line="1824">%TRUE to preserve the image's aspect ratio</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
         </parameters>
@@ -1214,7 +1214,7 @@ the stream contained invalid data, or the operation was cancelled.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="1696">Creates a new pixbuf by loading an image from an input stream.
+             line="1706">Creates a new pixbuf by loading an image from an input stream.
 
 The file format is detected automatically. If %NULL is returned, then
 @error will be set. The @cancellable can be used to abort the operation
@@ -1224,11 +1224,11 @@ the #GDK_PIXBUF_ERROR and %G_IO_ERROR domains.
 
 The stream is not closed.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="470"/>
+                         line="403"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="1712">A newly-created pixbuf, or %NULL if any of several error
+               line="1722">A newly-created pixbuf, or %NULL if any of several error
 conditions occurred: the file could not be opened, the image format is
 not supported, there was not enough memory to allocate the image buffer,
 the stream contained invalid data, or the operation was cancelled.</doc>
@@ -1238,7 +1238,7 @@ the stream contained invalid data, or the operation was cancelled.</doc>
           <parameter name="stream" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1698">a #GInputStream to load the pixbuf from</doc>
+                 line="1708">a #GInputStream to load the pixbuf from</doc>
             <type name="Gio.InputStream" c:type="GInputStream*"/>
           </parameter>
           <parameter name="cancellable"
@@ -1247,7 +1247,7 @@ the stream contained invalid data, or the operation was cancelled.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1699">optional #GCancellable object, %NULL to ignore</doc>
+                 line="1709">optional #GCancellable object, %NULL to ignore</doc>
             <type name="Gio.Cancellable" c:type="GCancellable*"/>
           </parameter>
         </parameters>
@@ -1258,7 +1258,7 @@ the stream contained invalid data, or the operation was cancelled.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="1519">Creates a new pixbuf by loading an image from an input stream.
+             line="1529">Creates a new pixbuf by loading an image from an input stream.
 
 The file format is detected automatically. If %NULL is returned, then
 @error will be set. The @cancellable can be used to abort the operation
@@ -1280,11 +1280,11 @@ scale the image at all in that dimension.
 
 The stream is not closed.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="485"/>
+                         line="418"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="1550">A newly-created pixbuf, or %NULL if any of several error
+               line="1560">A newly-created pixbuf, or %NULL if any of several error
 conditions occurred: the file could not be opened, the image format is
 not supported, there was not enough memory to allocate the image buffer,
 the stream contained invalid data, or the operation was cancelled.</doc>
@@ -1294,25 +1294,25 @@ the stream contained invalid data, or the operation was cancelled.</doc>
           <parameter name="stream" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1521">a #GInputStream to load the pixbuf from</doc>
+                 line="1531">a #GInputStream to load the pixbuf from</doc>
             <type name="Gio.InputStream" c:type="GInputStream*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1522">The width the image should have or -1 to not constrain the width</doc>
+                 line="1532">The width the image should have or -1 to not constrain the width</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="height" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1523">The height the image should have or -1 to not constrain the height</doc>
+                 line="1533">The height the image should have or -1 to not constrain the height</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="preserve_aspect_ratio" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1524">%TRUE to preserve the image's aspect ratio</doc>
+                 line="1534">%TRUE to preserve the image's aspect ratio</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
           <parameter name="cancellable"
@@ -1321,7 +1321,7 @@ the stream contained invalid data, or the operation was cancelled.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1525">optional #GCancellable object, %NULL to ignore</doc>
+                 line="1535">optional #GCancellable object, %NULL to ignore</doc>
             <type name="Gio.Cancellable" c:type="GCancellable*"/>
           </parameter>
         </parameters>
@@ -1332,14 +1332,14 @@ the stream contained invalid data, or the operation was cancelled.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="1898">Finishes an asynchronous pixbuf creation operation started with
+             line="1908">Finishes an asynchronous pixbuf creation operation started with
 gdk_pixbuf_new_from_stream_async().</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="481"/>
+                         line="414"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="1906">a #GdkPixbuf or %NULL on error. Free the returned
+               line="1916">a #GdkPixbuf or %NULL on error. Free the returned
 object with g_object_unref().</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
         </return-value>
@@ -1347,7 +1347,7 @@ object with g_object_unref().</doc>
           <parameter name="async_result" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1900">a #GAsyncResult</doc>
+                 line="1910">a #GAsyncResult</doc>
             <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
           </parameter>
         </parameters>
@@ -1356,21 +1356,21 @@ object with g_object_unref().</doc>
                    c:identifier="gdk_pixbuf_new_from_xpm_data">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="2139">Creates a new pixbuf by parsing XPM data in memory.  This data is commonly
+             line="2149">Creates a new pixbuf by parsing XPM data in memory.  This data is commonly
 the result of including an XPM file into a program's C source.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="358"/>
+                         line="291"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="2146">A newly-created pixbuf with a reference count of 1.</doc>
+               line="2156">A newly-created pixbuf with a reference count of 1.</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
         </return-value>
         <parameters>
           <parameter name="data" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2141">Pointer to inline XPM data.</doc>
+                 line="2151">Pointer to inline XPM data.</doc>
             <array c:type="const char**">
               <type name="utf8" c:type="char*"/>
             </array>
@@ -1382,46 +1382,46 @@ the result of including an XPM file into a program's C source.</doc>
                 version="2.36.8">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="455">Calculates the rowstride that an image created with those values would
+             line="523">Calculates the rowstride that an image created with those values would
 have. This is useful for front-ends and backends that want to sanity
 check image values without needing to create them.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="274"/>
+                         line="207"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="467">the rowstride for the given values, or -1 in case of error.</doc>
+               line="535">the rowstride for the given values, or -1 in case of error.</doc>
           <type name="gint" c:type="gint"/>
         </return-value>
         <parameters>
           <parameter name="colorspace" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="457">Color space for image</doc>
+                 line="525">Color space for image</doc>
             <type name="Colorspace" c:type="GdkColorspace"/>
           </parameter>
           <parameter name="has_alpha" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="458">Whether the image should have transparency information</doc>
+                 line="526">Whether the image should have transparency information</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
           <parameter name="bits_per_sample" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="459">Number of bits per color sample</doc>
+                 line="527">Number of bits per color sample</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="460">Width of image in pixels, must be &gt; 0</doc>
+                 line="528">Width of image in pixels, must be &gt; 0</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="height" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="461">Height of image in pixels, must be &gt; 0</doc>
+                 line="529">Height of image in pixels, must be &gt; 0</doc>
             <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
@@ -1431,12 +1431,12 @@ check image values without needing to create them.</doc>
                 version="2.4">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="1949">Parses an image file far enough to determine its format and size.</doc>
+             line="1959">Parses an image file far enough to determine its format and size.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-io.h" line="77"/>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="1959">A #GdkPixbufFormat describing
+               line="1969">A #GdkPixbufFormat describing
    the image format of the file or %NULL if the image format wasn't
    recognized. The return value is owned by #GdkPixbuf and should
    not be freed.</doc>
@@ -1446,7 +1446,7 @@ check image values without needing to create them.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1951">The name of the file to identify.</doc>
+                 line="1961">The name of the file to identify.</doc>
             <type name="filename" c:type="const gchar*"/>
           </parameter>
           <parameter name="width"
@@ -1457,7 +1457,7 @@ check image values without needing to create them.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1952">Return location for the width of the
+                 line="1962">Return location for the width of the
     image, or %NULL</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
@@ -1469,7 +1469,7 @@ check image values without needing to create them.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1954">Return location for the height of the
+                 line="1964">Return location for the height of the
     image, or %NULL</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
@@ -1480,7 +1480,7 @@ check image values without needing to create them.</doc>
                 version="2.32">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="2051">Asynchronously parses an image file far enough to determine its
+             line="2061">Asynchronously parses an image file far enough to determine its
 format and size.
 
 For more details see gdk_pixbuf_get_file_info(), which is the synchronous
@@ -1497,7 +1497,7 @@ get the result of the operation.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2053">The name of the file to identify</doc>
+                 line="2063">The name of the file to identify</doc>
             <type name="filename" c:type="const gchar*"/>
           </parameter>
           <parameter name="cancellable"
@@ -1506,7 +1506,7 @@ get the result of the operation.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2054">optional #GCancellable object, %NULL to ignore</doc>
+                 line="2064">optional #GCancellable object, %NULL to ignore</doc>
             <type name="Gio.Cancellable" c:type="GCancellable*"/>
           </parameter>
           <parameter name="callback"
@@ -1517,7 +1517,7 @@ get the result of the operation.</doc>
                      closure="3">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2055">a #GAsyncReadyCallback to call when the file info is available</doc>
+                 line="2065">a #GAsyncReadyCallback to call when the file info is available</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
           <parameter name="user_data"
@@ -1526,7 +1526,7 @@ get the result of the operation.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2056">the data to pass to the callback function</doc>
+                 line="2066">the data to pass to the callback function</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
         </parameters>
@@ -1537,13 +1537,13 @@ get the result of the operation.</doc>
                 throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="2094">Finishes an asynchronous pixbuf parsing operation started with
+             line="2104">Finishes an asynchronous pixbuf parsing operation started with
 gdk_pixbuf_get_file_info_async().</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-io.h" line="86"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="2104">A #GdkPixbufFormat describing the image
+               line="2114">A #GdkPixbufFormat describing the image
    format of the file or %NULL if the image format wasn't
    recognized. The return value is owned by GdkPixbuf and should
    not be freed.</doc>
@@ -1553,7 +1553,7 @@ gdk_pixbuf_get_file_info_async().</doc>
           <parameter name="async_result" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2096">a #GAsyncResult</doc>
+                 line="2106">a #GAsyncResult</doc>
             <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
           </parameter>
           <parameter name="width"
@@ -1562,7 +1562,7 @@ gdk_pixbuf_get_file_info_async().</doc>
                      transfer-ownership="full">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2097">Return location for the width of the image, or %NULL</doc>
+                 line="2107">Return location for the width of the image, or %NULL</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="height"
@@ -1571,7 +1571,7 @@ gdk_pixbuf_get_file_info_async().</doc>
                      transfer-ownership="full">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2098">Return location for the height of the image, or %NULL</doc>
+                 line="2108">Return location for the height of the image, or %NULL</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
         </parameters>
@@ -1581,13 +1581,13 @@ gdk_pixbuf_get_file_info_async().</doc>
                 version="2.2">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3377">Obtains the available information about the image formats supported
+             line="3387">Obtains the available information about the image formats supported
 by GdkPixbuf.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-io.h" line="52"/>
         <return-value transfer-ownership="container">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="3383">A list of
+               line="3393">A list of
 #GdkPixbufFormats describing the supported image formats. The list should
 be freed when it is no longer needed, but the structures themselves are
 owned by #GdkPixbuf and should not be freed.</doc>
@@ -1633,7 +1633,7 @@ provided modules.</doc>
                 version="2.24">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="1857">Creates a new pixbuf by asynchronously loading an image from an input stream.
+             line="1867">Creates a new pixbuf by asynchronously loading an image from an input stream.
 
 For more details see gdk_pixbuf_new_from_stream(), which is the synchronous
 version of this function.
@@ -1641,7 +1641,7 @@ version of this function.
 When the operation is finished, @callback will be called in the main thread.
 You can then call gdk_pixbuf_new_from_stream_finish() to get the result of the operation.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="475"/>
+                         line="408"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1649,7 +1649,7 @@ You can then call gdk_pixbuf_new_from_stream_finish() to get the result of the o
           <parameter name="stream" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1859">a #GInputStream from which to load the pixbuf</doc>
+                 line="1869">a #GInputStream from which to load the pixbuf</doc>
             <type name="Gio.InputStream" c:type="GInputStream*"/>
           </parameter>
           <parameter name="cancellable"
@@ -1658,7 +1658,7 @@ You can then call gdk_pixbuf_new_from_stream_finish() to get the result of the o
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1860">optional #GCancellable object, %NULL to ignore</doc>
+                 line="1870">optional #GCancellable object, %NULL to ignore</doc>
             <type name="Gio.Cancellable" c:type="GCancellable*"/>
           </parameter>
           <parameter name="callback"
@@ -1669,7 +1669,7 @@ You can then call gdk_pixbuf_new_from_stream_finish() to get the result of the o
                      closure="3">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1861">a #GAsyncReadyCallback to call when the pixbuf is loaded</doc>
+                 line="1871">a #GAsyncReadyCallback to call when the pixbuf is loaded</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
           <parameter name="user_data"
@@ -1678,7 +1678,7 @@ You can then call gdk_pixbuf_new_from_stream_finish() to get the result of the o
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1862">the data to pass to the callback function</doc>
+                 line="1872">the data to pass to the callback function</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
         </parameters>
@@ -1688,7 +1688,7 @@ You can then call gdk_pixbuf_new_from_stream_finish() to get the result of the o
                 version="2.24">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="1634">Creates a new pixbuf by asynchronously loading an image from an input stream.
+             line="1644">Creates a new pixbuf by asynchronously loading an image from an input stream.
 
 For more details see gdk_pixbuf_new_from_stream_at_scale(), which is the synchronous
 version of this function.
@@ -1696,7 +1696,7 @@ version of this function.
 When the operation is finished, @callback will be called in the main thread.
 You can then call gdk_pixbuf_new_from_stream_finish() to get the result of the operation.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="493"/>
+                         line="426"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1704,25 +1704,25 @@ You can then call gdk_pixbuf_new_from_stream_finish() to get the result of the o
           <parameter name="stream" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1636">a #GInputStream from which to load the pixbuf</doc>
+                 line="1646">a #GInputStream from which to load the pixbuf</doc>
             <type name="Gio.InputStream" c:type="GInputStream*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1637">the width the image should have or -1 to not constrain the width</doc>
+                 line="1647">the width the image should have or -1 to not constrain the width</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="height" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1638">the height the image should have or -1 to not constrain the height</doc>
+                 line="1648">the height the image should have or -1 to not constrain the height</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="preserve_aspect_ratio" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1639">%TRUE to preserve the image's aspect ratio</doc>
+                 line="1649">%TRUE to preserve the image's aspect ratio</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
           <parameter name="cancellable"
@@ -1731,7 +1731,7 @@ You can then call gdk_pixbuf_new_from_stream_finish() to get the result of the o
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1640">optional #GCancellable object, %NULL to ignore</doc>
+                 line="1650">optional #GCancellable object, %NULL to ignore</doc>
             <type name="Gio.Cancellable" c:type="GCancellable*"/>
           </parameter>
           <parameter name="callback"
@@ -1742,7 +1742,7 @@ You can then call gdk_pixbuf_new_from_stream_finish() to get the result of the o
                      closure="6">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1641">a #GAsyncReadyCallback to call when the pixbuf is loaded</doc>
+                 line="1651">a #GAsyncReadyCallback to call when the pixbuf is loaded</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
           <parameter name="user_data"
@@ -1751,7 +1751,7 @@ You can then call gdk_pixbuf_new_from_stream_finish() to get the result of the o
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="1642">the data to pass to the callback function</doc>
+                 line="1652">the data to pass to the callback function</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
         </parameters>
@@ -1762,21 +1762,21 @@ You can then call gdk_pixbuf_new_from_stream_finish() to get the result of the o
                 throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3154">Finishes an asynchronous pixbuf save operation started with
+             line="3164">Finishes an asynchronous pixbuf save operation started with
 gdk_pixbuf_save_to_stream_async().</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="519"/>
+                         line="452"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="3162">%TRUE if the pixbuf was saved successfully, %FALSE if an error was set.</doc>
+               line="3172">%TRUE if the pixbuf was saved successfully, %FALSE if an error was set.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <parameter name="async_result" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3156">a #GAsyncResult</doc>
+                 line="3166">a #GAsyncResult</doc>
             <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
           </parameter>
         </parameters>
@@ -1793,7 +1793,7 @@ If @substitute_color is %TRUE, then the color specified by (@r, @g, @b) will be
 assigned zero opacity. That is, if you pass (255, 255, 255) for the
 substitute color, all white pixels will become fully transparent.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="543"/>
+                         line="476"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-util.c"
@@ -1848,7 +1848,7 @@ libtiff). If an orientation option/tag is present, the
 appropriate transform will be performed so that the pixbuf
 is oriented correctly.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="563"/>
+                         line="496"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-util.c"
@@ -2156,15 +2156,15 @@ allocated for it.</doc>
       <method name="copy" c:identifier="gdk_pixbuf_copy">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="537">Creates a new #GdkPixbuf with a copy of the information in the specified
+             line="605">Creates a new #GdkPixbuf with a copy of the information in the specified
 @pixbuf. Note that this does not copy the options set on the original #GdkPixbuf,
 use gdk_pixbuf_copy_options() for this.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="282"/>
+                         line="215"/>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="545">A newly-created pixbuf with a reference count of 1, or %NULL if
+               line="613">A newly-created pixbuf with a reference count of 1, or %NULL if
 not enough memory could be allocated.</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
         </return-value>
@@ -2172,7 +2172,7 @@ not enough memory could be allocated.</doc>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="539">A pixbuf.</doc>
+                 line="607">A pixbuf.</doc>
             <type name="Pixbuf" c:type="const GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -2187,7 +2187,7 @@ If the source rectangle overlaps the destination rectangle on the
 same pixbuf, it will be overwritten during the copy operation.
 Therefore, you can not use this function to scroll a pixbuf.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="548"/>
+                         line="481"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2247,29 +2247,29 @@ Therefore, you can not use this function to scroll a pixbuf.</doc>
               version="2.36">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="1199">Copy the key/value pair options attached to a #GdkPixbuf to another.
+             line="1267">Copy the key/value pair options attached to a #GdkPixbuf to another.
 This is useful to keep original metadata after having manipulated
 a file. However be careful to remove metadata which you've already
 applied, such as the "orientation" option after rotating the image.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="579"/>
+                         line="512"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="1209">%TRUE on success.</doc>
+               line="1277">%TRUE on success.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="src_pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="1201">a #GdkPixbuf to copy options from</doc>
+                 line="1269">a #GdkPixbuf to copy options from</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="dest_pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="1202">the #GdkPixbuf to copy options to</doc>
+                 line="1270">the #GdkPixbuf to copy options to</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </parameter>
         </parameters>
@@ -2277,11 +2277,11 @@ applied, such as the "orientation" option after rotating the image.</doc>
       <method name="fill" c:identifier="gdk_pixbuf_fill">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="931">Clears a pixbuf to the given RGBA value, converting the RGBA value into
+             line="999">Clears a pixbuf to the given RGBA value, converting the RGBA value into
 the pixbuf's pixel format. The alpha will be ignored if the pixbuf
 doesn't have an alpha channel.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="370"/>
+                         line="303"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2289,13 +2289,13 @@ doesn't have an alpha channel.</doc>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="933">a #GdkPixbuf</doc>
+                 line="1001">a #GdkPixbuf</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="pixel" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="934">RGBA pixel to clear to
+                 line="1002">RGBA pixel to clear to
         (0xffffffff is opaque white, 0x00000000 transparent black)</doc>
             <type name="guint32" c:type="guint32"/>
           </parameter>
@@ -2334,20 +2334,20 @@ if not enough memory could be allocated for it.</doc>
               c:identifier="gdk_pixbuf_get_bits_per_sample">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="687">Queries the number of bits per color sample in a pixbuf.</doc>
+             line="755">Queries the number of bits per color sample in a pixbuf.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="244"/>
+                         line="177"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="693">Number of bits per color sample.</doc>
+               line="761">Number of bits per color sample.</doc>
           <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="689">A pixbuf.</doc>
+                 line="757">A pixbuf.</doc>
             <type name="Pixbuf" c:type="const GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -2357,20 +2357,20 @@ if not enough memory could be allocated for it.</doc>
               version="2.26">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="896">Returns the length of the pixel data, in bytes.</doc>
+             line="964">Returns the length of the pixel data, in bytes.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="254"/>
+                         line="187"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="902">The length of the pixel data.</doc>
+               line="970">The length of the pixel data.</doc>
           <type name="gsize" c:type="gsize"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="898">A pixbuf</doc>
+                 line="966">A pixbuf</doc>
             <type name="Pixbuf" c:type="const GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -2378,20 +2378,20 @@ if not enough memory could be allocated for it.</doc>
       <method name="get_colorspace" c:identifier="gdk_pixbuf_get_colorspace">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="639">Queries the color space of a pixbuf.</doc>
+             line="707">Queries the color space of a pixbuf.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="238"/>
+                         line="171"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="645">Color space.</doc>
+               line="713">Color space.</doc>
           <type name="Colorspace" c:type="GdkColorspace"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="641">A pixbuf.</doc>
+                 line="709">A pixbuf.</doc>
             <type name="Pixbuf" c:type="const GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -2399,20 +2399,20 @@ if not enough memory could be allocated for it.</doc>
       <method name="get_has_alpha" c:identifier="gdk_pixbuf_get_has_alpha">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="671">Queries whether a pixbuf has an alpha channel (opacity information).</doc>
+             line="739">Queries whether a pixbuf has an alpha channel (opacity information).</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="242"/>
+                         line="175"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="677">%TRUE if it has an alpha channel, %FALSE otherwise.</doc>
+               line="745">%TRUE if it has an alpha channel, %FALSE otherwise.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="673">A pixbuf.</doc>
+                 line="741">A pixbuf.</doc>
             <type name="Pixbuf" c:type="const GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -2420,20 +2420,20 @@ if not enough memory could be allocated for it.</doc>
       <method name="get_height" c:identifier="gdk_pixbuf_get_height">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="863">Queries the height of a pixbuf.</doc>
+             line="931">Queries the height of a pixbuf.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="250"/>
+                         line="183"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="869">Height in pixels.</doc>
+               line="937">Height in pixels.</doc>
           <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="865">A pixbuf.</doc>
+                 line="933">A pixbuf.</doc>
             <type name="Pixbuf" c:type="const GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -2441,20 +2441,20 @@ if not enough memory could be allocated for it.</doc>
       <method name="get_n_channels" c:identifier="gdk_pixbuf_get_n_channels">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="655">Queries the number of channels of a pixbuf.</doc>
+             line="723">Queries the number of channels of a pixbuf.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="240"/>
+                         line="173"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="661">Number of channels.</doc>
+               line="729">Number of channels.</doc>
           <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="657">A pixbuf.</doc>
+                 line="725">A pixbuf.</doc>
             <type name="Pixbuf" c:type="const GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -2462,7 +2462,7 @@ if not enough memory could be allocated for it.</doc>
       <method name="get_option" c:identifier="gdk_pixbuf_get_option">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="998">Looks up @key in the list of options that may have been attached to the
+             line="1066">Looks up @key in the list of options that may have been attached to the
 @pixbuf when it was loaded, or that may have been attached by another
 function using gdk_pixbuf_set_option().
 
@@ -2478,11 +2478,11 @@ contains image density information in dots per inch.
 Since 2.36.6, the JPEG loader sets the "comment" option with the comment
 EXIF tag.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="571"/>
+                         line="504"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="1019">the value associated with @key. This is a nul-terminated
+               line="1087">the value associated with @key. This is a nul-terminated
 string that should not be freed or %NULL if @key was not found.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
@@ -2490,13 +2490,13 @@ string that should not be freed or %NULL if @key was not found.</doc>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="1000">a #GdkPixbuf</doc>
+                 line="1068">a #GdkPixbuf</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="key" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="1001">a nul-terminated string.</doc>
+                 line="1069">a nul-terminated string.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
@@ -2506,17 +2506,17 @@ string that should not be freed or %NULL if @key was not found.</doc>
               version="2.32">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="1044">Returns a #GHashTable with a list of all the options that may have been
+             line="1112">Returns a #GHashTable with a list of all the options that may have been
 attached to the @pixbuf when it was loaded, or that may have been
 attached by another function using gdk_pixbuf_set_option().
 
 See gdk_pixbuf_get_option() for more details.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="577"/>
+                         line="510"/>
         <return-value transfer-ownership="container">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="1054">a #GHashTable of key/values</doc>
+               line="1122">a #GHashTable of key/values</doc>
           <type name="GLib.HashTable" c:type="GHashTable*">
             <type name="utf8"/>
             <type name="utf8"/>
@@ -2526,7 +2526,7 @@ See gdk_pixbuf_get_option() for more details.</doc>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="1046">a #GdkPixbuf</doc>
+                 line="1114">a #GdkPixbuf</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -2536,13 +2536,13 @@ See gdk_pixbuf_get_option() for more details.</doc>
               shadowed-by="get_pixels_with_length">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="703">Queries a pointer to the pixel data of a pixbuf.</doc>
+             line="771">Queries a pointer to the pixel data of a pixbuf.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="246"/>
+                         line="179"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="709">A pointer to the pixbuf's pixel data.
+               line="777">A pointer to the pixbuf's pixel data.
 Please see the section on [image data][image-data] for information
 about how the pixel data is stored in memory.
 
@@ -2556,7 +2556,7 @@ pixbuf was created from read-only data.</doc>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="705">A pixbuf.</doc>
+                 line="773">A pixbuf.</doc>
             <type name="Pixbuf" c:type="const GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -2567,13 +2567,13 @@ pixbuf was created from read-only data.</doc>
               version="2.26">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="748">Queries a pointer to the pixel data of a pixbuf.</doc>
+             line="816">Queries a pointer to the pixel data of a pixbuf.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="257"/>
+                         line="190"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="755">A pointer to the pixbuf's
+               line="823">A pointer to the pixbuf's
 pixel data.  Please see the section on [image data][image-data]
 for information about how the pixel data is stored in memory.
 
@@ -2587,7 +2587,7 @@ pixbuf was created from read-only data.</doc>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="750">A pixbuf.</doc>
+                 line="818">A pixbuf.</doc>
             <type name="Pixbuf" c:type="const GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="length"
@@ -2596,7 +2596,7 @@ pixbuf was created from read-only data.</doc>
                      transfer-ownership="full">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="751">The length of the binary data.</doc>
+                 line="819">The length of the binary data.</doc>
             <type name="guint" c:type="guint*"/>
           </parameter>
         </parameters>
@@ -2604,21 +2604,21 @@ pixbuf was created from read-only data.</doc>
       <method name="get_rowstride" c:identifier="gdk_pixbuf_get_rowstride">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="879">Queries the rowstride of a pixbuf, which is the number of bytes between
+             line="947">Queries the rowstride of a pixbuf, which is the number of bytes between
 the start of a row and the start of the next row.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="252"/>
+                         line="185"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="886">Distance between row starts.</doc>
+               line="954">Distance between row starts.</doc>
           <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="881">A pixbuf.</doc>
+                 line="949">A pixbuf.</doc>
             <type name="Pixbuf" c:type="const GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -2626,20 +2626,20 @@ the start of a row and the start of the next row.</doc>
       <method name="get_width" c:identifier="gdk_pixbuf_get_width">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="847">Queries the width of a pixbuf.</doc>
+             line="915">Queries the width of a pixbuf.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="248"/>
+                         line="181"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="853">Width in pixels.</doc>
+               line="921">Width in pixels.</doc>
           <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="849">A pixbuf.</doc>
+                 line="917">A pixbuf.</doc>
             <type name="Pixbuf" c:type="const GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -2647,7 +2647,7 @@ the start of a row and the start of the next row.</doc>
       <method name="new_subpixbuf" c:identifier="gdk_pixbuf_new_subpixbuf">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="578">Creates a new pixbuf which represents a sub-region of @src_pixbuf.
+             line="646">Creates a new pixbuf which represents a sub-region of @src_pixbuf.
 The new pixbuf shares its pixels with the original pixbuf, so
 writing to one affects both.  The new pixbuf holds a reference to
 @src_pixbuf, so @src_pixbuf will not be finalized until the new
@@ -2656,42 +2656,42 @@ pixbuf is finalized.
 Note that if @src_pixbuf is read-only, this function will force it
 to be mutable.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="286"/>
+                         line="219"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="595">a new pixbuf</doc>
+               line="663">a new pixbuf</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
         </return-value>
         <parameters>
           <instance-parameter name="src_pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="580">a #GdkPixbuf</doc>
+                 line="648">a #GdkPixbuf</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="src_x" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="581">X coord in @src_pixbuf</doc>
+                 line="649">X coord in @src_pixbuf</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="src_y" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="582">Y coord in @src_pixbuf</doc>
+                 line="650">Y coord in @src_pixbuf</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="583">width of region in @src_pixbuf</doc>
+                 line="651">width of region in @src_pixbuf</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="height" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="584">height of region in @src_pixbuf</doc>
+                 line="652">height of region in @src_pixbuf</doc>
             <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
@@ -2701,16 +2701,16 @@ to be mutable.</doc>
               version="2.32">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="813">Provides a #GBytes buffer containing the raw pixel data; the data
+             line="881">Provides a #GBytes buffer containing the raw pixel data; the data
 must not be modified.  This function allows skipping the implicit
 copy that must be made if gdk_pixbuf_get_pixels() is called on a
 read-only pixbuf.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="263"/>
+                         line="196"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="822">A new reference to a read-only copy of
+               line="890">A new reference to a read-only copy of
   the pixel data.  Note that for mutable pixbufs, this function will
   incur a one-time copy of the pixel data for conversion into the
   returned #GBytes.</doc>
@@ -2720,7 +2720,7 @@ read-only pixbuf.</doc>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="815">A pixbuf</doc>
+                 line="883">A pixbuf</doc>
             <type name="Pixbuf" c:type="const GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -2730,23 +2730,23 @@ read-only pixbuf.</doc>
               version="2.32">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="779">Provides a read-only pointer to the raw pixel data; must not be
+             line="847">Provides a read-only pointer to the raw pixel data; must not be
 modified.  This function allows skipping the implicit copy that
 must be made if gdk_pixbuf_get_pixels() is called on a read-only
 pixbuf.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="261"/>
+                         line="194"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="788">a read-only pointer to the raw pixel data</doc>
+               line="856">a read-only pointer to the raw pixel data</doc>
           <type name="guint8" c:type="const guint8*"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="781">A pixbuf</doc>
+                 line="849">A pixbuf</doc>
             <type name="Pixbuf" c:type="const GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -2758,21 +2758,21 @@ pixbuf.</doc>
               deprecated-version="2.0">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="312">Adds a reference to a pixbuf.</doc>
+             line="380">Adds a reference to a pixbuf.</doc>
         <doc-deprecated xml:space="preserve">Use g_object_ref().</doc-deprecated>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="230"/>
+                         line="163"/>
         <return-value>
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="318">The same as the @pixbuf argument.</doc>
+               line="386">The same as the @pixbuf argument.</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="314">A pixbuf.</doc>
+                 line="382">A pixbuf.</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -2782,26 +2782,26 @@ pixbuf.</doc>
               version="2.36">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="1080">Remove the key/value pair option attached to a #GdkPixbuf.</doc>
+             line="1148">Remove the key/value pair option attached to a #GdkPixbuf.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="574"/>
+                         line="507"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="1087">%TRUE if an option was removed, %FALSE if not.</doc>
+               line="1155">%TRUE if an option was removed, %FALSE if not.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="1082">a #GdkPixbuf</doc>
+                 line="1150">a #GdkPixbuf</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="key" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="1083">a nul-terminated string representing the key to remove.</doc>
+                 line="1151">a nul-terminated string representing the key to remove.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
@@ -2852,7 +2852,7 @@ is %TRUE, then pixels are faded in a checkerboard pattern to create a
 pixelated image. @src and @dest must have the same image format, size, and
 rowstride.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="556"/>
+                         line="489"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2889,7 +2889,7 @@ rowstride.</doc>
               introspectable="0">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="2722">Saves pixbuf to a new buffer in format @type, which is currently "jpeg",
+             line="2732">Saves pixbuf to a new buffer in format @type, which is currently "jpeg",
 "png", "tiff", "ico" or "bmp".  This is a convenience function that uses
 gdk_pixbuf_save_to_callback() to do the real work. Note that the buffer
 is not nul-terminated and may contain embedded  nuls.
@@ -2899,18 +2899,18 @@ domain.
 
 See gdk_pixbuf_save() for more details.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="453"/>
+                         line="386"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="2742">whether an error was set</doc>
+               line="2752">whether an error was set</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2724">a #GdkPixbuf.</doc>
+                 line="2734">a #GdkPixbuf.</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="buffer"
@@ -2919,7 +2919,7 @@ See gdk_pixbuf_save() for more details.</doc>
                      transfer-ownership="full">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2725">location to receive a pointer
+                 line="2735">location to receive a pointer
   to the new buffer.</doc>
             <array length="1" zero-terminated="0" c:type="gchar**">
               <type name="guint8"/>
@@ -2931,13 +2931,13 @@ See gdk_pixbuf_save() for more details.</doc>
                      transfer-ownership="full">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2727">location to receive the size of the new buffer.</doc>
+                 line="2737">location to receive the size of the new buffer.</doc>
             <type name="gsize" c:type="gsize*"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2728">name of file format.</doc>
+                 line="2738">name of file format.</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="error"
@@ -2946,13 +2946,13 @@ See gdk_pixbuf_save() for more details.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2729">return location for error, or %NULL</doc>
+                 line="2739">return location for error, or %NULL</doc>
             <type name="GLib.Error" c:type="GError**"/>
           </parameter>
           <parameter name="..." transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2730">list of key-value save options</doc>
+                 line="2740">list of key-value save options</doc>
             <varargs/>
           </parameter>
         </parameters>
@@ -2963,22 +2963,22 @@ See gdk_pixbuf_save() for more details.</doc>
               throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="2810">Saves pixbuf to a new buffer in format @type, which is currently "jpeg",
+             line="2820">Saves pixbuf to a new buffer in format @type, which is currently "jpeg",
 "tiff", "png", "ico" or "bmp".  See gdk_pixbuf_save_to_buffer()
 for more details.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="461"/>
+                         line="394"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="2825">whether an error was set</doc>
+               line="2835">whether an error was set</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2812">a #GdkPixbuf.</doc>
+                 line="2822">a #GdkPixbuf.</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="buffer"
@@ -2987,7 +2987,7 @@ for more details.</doc>
                      transfer-ownership="full">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2813">
+                 line="2823">
   location to receive a pointer to the new buffer.</doc>
             <array length="1" zero-terminated="0" c:type="gchar**">
               <type name="guint8"/>
@@ -2999,19 +2999,19 @@ for more details.</doc>
                      transfer-ownership="full">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2815">location to receive the size of the new buffer.</doc>
+                 line="2825">location to receive the size of the new buffer.</doc>
             <type name="gsize" c:type="gsize*"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2816">name of file format.</doc>
+                 line="2826">name of file format.</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="option_keys" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2817">name of options to set, %NULL-terminated</doc>
+                 line="2827">name of options to set, %NULL-terminated</doc>
             <array c:type="char**">
               <type name="utf8" c:type="char*"/>
             </array>
@@ -3019,7 +3019,7 @@ for more details.</doc>
           <parameter name="option_values" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2818">values for named options</doc>
+                 line="2828">values for named options</doc>
             <array c:type="char**">
               <type name="utf8" c:type="char*"/>
             </array>
@@ -3032,7 +3032,7 @@ for more details.</doc>
               introspectable="0">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="2617">Saves pixbuf in format @type by feeding the produced data to a
+             line="2627">Saves pixbuf in format @type by feeding the produced data to a
 callback. Can be used when you want to store the image to something
 other than a file, such as an in-memory buffer or a socket.
 If @error is set, %FALSE will be returned. Possible errors
@@ -3041,18 +3041,18 @@ function generates.
 
 See gdk_pixbuf_save() for more details.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="434"/>
+                         line="367"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="2636">whether an error was set</doc>
+               line="2646">whether an error was set</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2619">a #GdkPixbuf.</doc>
+                 line="2629">a #GdkPixbuf.</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="save_func"
@@ -3061,7 +3061,7 @@ See gdk_pixbuf_save() for more details.</doc>
                      closure="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2620">a function that is called to save each block of data that
+                 line="2630">a function that is called to save each block of data that
   the save routine generates.</doc>
             <type name="PixbufSaveFunc" c:type="GdkPixbufSaveFunc"/>
           </parameter>
@@ -3071,13 +3071,13 @@ See gdk_pixbuf_save() for more details.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2622">user data to pass to the save function.</doc>
+                 line="2632">user data to pass to the save function.</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2623">name of file format.</doc>
+                 line="2633">name of file format.</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="error"
@@ -3086,13 +3086,13 @@ See gdk_pixbuf_save() for more details.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2624">return location for error, or %NULL</doc>
+                 line="2634">return location for error, or %NULL</doc>
             <type name="GLib.Error" c:type="GError**"/>
           </parameter>
           <parameter name="..." transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2625">list of key-value save options</doc>
+                 line="2635">list of key-value save options</doc>
             <varargs/>
           </parameter>
         </parameters>
@@ -3103,22 +3103,22 @@ See gdk_pixbuf_save() for more details.</doc>
               throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="2671">Saves pixbuf to a callback in format @type, which is currently "jpeg",
+             line="2681">Saves pixbuf to a callback in format @type, which is currently "jpeg",
 "png", "tiff", "ico" or "bmp".  If @error is set, %FALSE will be returned. See
 gdk_pixbuf_save_to_callback () for more details.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="442"/>
+                         line="375"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="2686">whether an error was set</doc>
+               line="2696">whether an error was set</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2673">a #GdkPixbuf.</doc>
+                 line="2683">a #GdkPixbuf.</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="save_func"
@@ -3127,7 +3127,7 @@ gdk_pixbuf_save_to_callback () for more details.</doc>
                      closure="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2674">a function that is called to save each block of data that
+                 line="2684">a function that is called to save each block of data that
   the save routine generates.</doc>
             <type name="PixbufSaveFunc" c:type="GdkPixbufSaveFunc"/>
           </parameter>
@@ -3137,19 +3137,19 @@ gdk_pixbuf_save_to_callback () for more details.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2676">user data to pass to the save function.</doc>
+                 line="2686">user data to pass to the save function.</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2677">name of file format.</doc>
+                 line="2687">name of file format.</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="option_keys" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2678">name of options to set, %NULL-terminated</doc>
+                 line="2688">name of options to set, %NULL-terminated</doc>
             <array c:type="char**">
               <type name="utf8"/>
             </array>
@@ -3157,7 +3157,7 @@ gdk_pixbuf_save_to_callback () for more details.</doc>
           <parameter name="option_values" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2679">values for named options</doc>
+                 line="2689">values for named options</doc>
             <array c:type="char**">
               <type name="utf8"/>
             </array>
@@ -3170,7 +3170,7 @@ gdk_pixbuf_save_to_callback () for more details.</doc>
               introspectable="0">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="2949">Saves @pixbuf to an output stream.
+             line="2959">Saves @pixbuf to an output stream.
 
 Supported file formats are currently "jpeg", "tiff", "png", "ico" or
 "bmp". See gdk_pixbuf_save_to_buffer() for more details.
@@ -3182,11 +3182,11 @@ and %G_IO_ERROR domains.
 
 The stream is not closed.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="502"/>
+                         line="435"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="2970">%TRUE if the pixbuf was saved successfully, %FALSE if an
+               line="2980">%TRUE if the pixbuf was saved successfully, %FALSE if an
     error was set.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -3194,19 +3194,19 @@ The stream is not closed.</doc>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2951">a #GdkPixbuf</doc>
+                 line="2961">a #GdkPixbuf</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="stream" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2952">a #GOutputStream to save the pixbuf to</doc>
+                 line="2962">a #GOutputStream to save the pixbuf to</doc>
             <type name="Gio.OutputStream" c:type="GOutputStream*"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2953">name of file format</doc>
+                 line="2963">name of file format</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="cancellable"
@@ -3215,7 +3215,7 @@ The stream is not closed.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2954">optional #GCancellable object, %NULL to ignore</doc>
+                 line="2964">optional #GCancellable object, %NULL to ignore</doc>
             <type name="Gio.Cancellable" c:type="GCancellable*"/>
           </parameter>
           <parameter name="error"
@@ -3224,13 +3224,13 @@ The stream is not closed.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2955">return location for error, or %NULL</doc>
+                 line="2965">return location for error, or %NULL</doc>
             <type name="GLib.Error" c:type="GError**"/>
           </parameter>
           <parameter name="..." transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2956">list of key-value save options</doc>
+                 line="2966">list of key-value save options</doc>
             <varargs/>
           </parameter>
         </parameters>
@@ -3241,7 +3241,7 @@ The stream is not closed.</doc>
               introspectable="0">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3101">Saves @pixbuf to an output stream asynchronously.
+             line="3111">Saves @pixbuf to an output stream asynchronously.
 
 For more details see gdk_pixbuf_save_to_stream(), which is the synchronous
 version of this function.
@@ -3249,7 +3249,7 @@ version of this function.
 When the operation is finished, @callback will be called in the main thread.
 You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the operation.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="510"/>
+                         line="443"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3257,19 +3257,19 @@ You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the op
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3103">a #GdkPixbuf</doc>
+                 line="3113">a #GdkPixbuf</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="stream" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3104">a #GOutputStream to which to save the pixbuf</doc>
+                 line="3114">a #GOutputStream to which to save the pixbuf</doc>
             <type name="Gio.OutputStream" c:type="GOutputStream*"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3105">name of file format</doc>
+                 line="3115">name of file format</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
           <parameter name="cancellable"
@@ -3278,7 +3278,7 @@ You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the op
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3106">optional #GCancellable object, %NULL to ignore</doc>
+                 line="3116">optional #GCancellable object, %NULL to ignore</doc>
             <type name="Gio.Cancellable" c:type="GCancellable*"/>
           </parameter>
           <parameter name="callback"
@@ -3289,7 +3289,7 @@ You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the op
                      closure="4">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3107">a #GAsyncReadyCallback to call when the pixbuf is saved</doc>
+                 line="3117">a #GAsyncReadyCallback to call when the pixbuf is saved</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
           <parameter name="user_data"
@@ -3298,13 +3298,13 @@ You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the op
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3108">the data to pass to the callback function</doc>
+                 line="3118">the data to pass to the callback function</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
           <parameter name="..." transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3109">list of key-value save options</doc>
+                 line="3119">list of key-value save options</doc>
             <varargs/>
           </parameter>
         </parameters>
@@ -3315,16 +3315,16 @@ You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the op
               throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="2909">Saves @pixbuf to an output stream.
+             line="2919">Saves @pixbuf to an output stream.
 
 Supported file formats are currently "jpeg", "tiff", "png", "ico" or
 "bmp". See gdk_pixbuf_save_to_stream() for more details.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="533"/>
+                         line="466"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="2924">%TRUE if the pixbuf was saved successfully, %FALSE if an
+               line="2934">%TRUE if the pixbuf was saved successfully, %FALSE if an
     error was set.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -3332,25 +3332,25 @@ Supported file formats are currently "jpeg", "tiff", "png", "ico" or
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2911">a #GdkPixbuf</doc>
+                 line="2921">a #GdkPixbuf</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="stream" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2912">a #GOutputStream to save the pixbuf to</doc>
+                 line="2922">a #GOutputStream to save the pixbuf to</doc>
             <type name="Gio.OutputStream" c:type="GOutputStream*"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2913">name of file format</doc>
+                 line="2923">name of file format</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="option_keys" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2914">name of options to set, %NULL-terminated</doc>
+                 line="2924">name of options to set, %NULL-terminated</doc>
             <array c:type="char**">
               <type name="utf8" c:type="char*"/>
             </array>
@@ -3358,7 +3358,7 @@ Supported file formats are currently "jpeg", "tiff", "png", "ico" or
           <parameter name="option_values" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2915">values for named options</doc>
+                 line="2925">values for named options</doc>
             <array c:type="char**">
               <type name="utf8" c:type="char*"/>
             </array>
@@ -3369,7 +3369,7 @@ Supported file formats are currently "jpeg", "tiff", "png", "ico" or
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2916">optional #GCancellable object, %NULL to ignore</doc>
+                 line="2926">optional #GCancellable object, %NULL to ignore</doc>
             <type name="Gio.Cancellable" c:type="GCancellable*"/>
           </parameter>
         </parameters>
@@ -3379,7 +3379,7 @@ Supported file formats are currently "jpeg", "tiff", "png", "ico" or
               version="2.36">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3045">Saves @pixbuf to an output stream asynchronously.
+             line="3055">Saves @pixbuf to an output stream asynchronously.
 
 For more details see gdk_pixbuf_save_to_streamv(), which is the synchronous
 version of this function.
@@ -3387,7 +3387,7 @@ version of this function.
 When the operation is finished, @callback will be called in the main thread.
 You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the operation.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="523"/>
+                         line="456"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3395,25 +3395,25 @@ You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the op
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3047">a #GdkPixbuf</doc>
+                 line="3057">a #GdkPixbuf</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="stream" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3048">a #GOutputStream to which to save the pixbuf</doc>
+                 line="3058">a #GOutputStream to which to save the pixbuf</doc>
             <type name="Gio.OutputStream" c:type="GOutputStream*"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3049">name of file format</doc>
+                 line="3059">name of file format</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
           <parameter name="option_keys" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3050">name of options to set, %NULL-terminated</doc>
+                 line="3060">name of options to set, %NULL-terminated</doc>
             <array c:type="gchar**">
               <type name="utf8" c:type="gchar*"/>
             </array>
@@ -3421,7 +3421,7 @@ You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the op
           <parameter name="option_values" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3051">values for named options</doc>
+                 line="3061">values for named options</doc>
             <array c:type="gchar**">
               <type name="utf8" c:type="gchar*"/>
             </array>
@@ -3432,7 +3432,7 @@ You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the op
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3052">optional #GCancellable object, %NULL to ignore</doc>
+                 line="3062">optional #GCancellable object, %NULL to ignore</doc>
             <type name="Gio.Cancellable" c:type="GCancellable*"/>
           </parameter>
           <parameter name="callback"
@@ -3443,7 +3443,7 @@ You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the op
                      closure="6">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3053">a #GAsyncReadyCallback to call when the pixbuf is saved</doc>
+                 line="3063">a #GAsyncReadyCallback to call when the pixbuf is saved</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
           <parameter name="user_data"
@@ -3452,7 +3452,7 @@ You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the op
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3054">the data to pass to the callback function</doc>
+                 line="3064">the data to pass to the callback function</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
         </parameters>
@@ -3461,7 +3461,7 @@ You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the op
               c:identifier="gdk_pixbuf_save_utf8"
               introspectable="0">
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="383"/>
+                         line="316"/>
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -3486,40 +3486,40 @@ You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the op
       <method name="savev" c:identifier="gdk_pixbuf_savev" throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="2509">Saves pixbuf to a file in @type, which is currently "jpeg", "png", "tiff", "ico" or "bmp".
+             line="2519">Saves pixbuf to a file in @type, which is currently "jpeg", "png", "tiff", "ico" or "bmp".
 If @error is set, %FALSE will be returned.
 See gdk_pixbuf_save () for more details.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="390"/>
+                         line="323"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="2522">whether an error was set</doc>
+               line="2532">whether an error was set</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2511">a #GdkPixbuf.</doc>
+                 line="2521">a #GdkPixbuf.</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2512">name of file to save.</doc>
+                 line="2522">name of file to save.</doc>
             <type name="filename" c:type="const char*"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2513">name of file format.</doc>
+                 line="2523">name of file format.</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="option_keys" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2514">name of options to set, %NULL-terminated</doc>
+                 line="2524">name of options to set, %NULL-terminated</doc>
             <array c:type="char**">
               <type name="utf8" c:type="char*"/>
             </array>
@@ -3527,7 +3527,7 @@ See gdk_pixbuf_save () for more details.</doc>
           <parameter name="option_values" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2515">values for named options</doc>
+                 line="2525">values for named options</doc>
             <array c:type="char**">
               <type name="utf8" c:type="char*"/>
             </array>
@@ -3539,38 +3539,38 @@ See gdk_pixbuf_save () for more details.</doc>
               throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="2590">Same as gdk_pixbuf_savev()</doc>
+             line="2600">Same as gdk_pixbuf_savev()</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="399"/>
+                         line="332"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="2601">whether an error was set</doc>
+               line="2611">whether an error was set</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2592">a #GdkPixbuf.</doc>
+                 line="2602">a #GdkPixbuf.</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2593">name of file to save.</doc>
+                 line="2603">name of file to save.</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2594">name of file format.</doc>
+                 line="2604">name of file format.</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="option_keys" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2595">name of options to set, %NULL-terminated</doc>
+                 line="2605">name of options to set, %NULL-terminated</doc>
             <array c:type="char**">
               <type name="utf8" c:type="char*"/>
             </array>
@@ -3578,7 +3578,7 @@ See gdk_pixbuf_save () for more details.</doc>
           <parameter name="option_values" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="2596">values for named options</doc>
+                 line="2606">values for named options</doc>
             <array c:type="char**">
               <type name="utf8" c:type="char*"/>
             </array>
@@ -3734,34 +3734,34 @@ allocated for it.</doc>
               version="2.2">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="1146">Attaches a key/value pair as an option to a #GdkPixbuf. If @key already
+             line="1214">Attaches a key/value pair as an option to a #GdkPixbuf. If @key already
 exists in the list of options attached to @pixbuf, the new value is
 ignored and %FALSE is returned.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="567"/>
+                         line="500"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf.c"
-               line="1156">%TRUE on success.</doc>
+               line="1224">%TRUE on success.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="1148">a #GdkPixbuf</doc>
+                 line="1216">a #GdkPixbuf</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="key" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="1149">a nul-terminated string.</doc>
+                 line="1217">a nul-terminated string.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
           <parameter name="value" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="1150">a nul-terminated string.</doc>
+                 line="1218">a nul-terminated string.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
@@ -3773,10 +3773,10 @@ ignored and %FALSE is returned.</doc>
               deprecated-version="2.0">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="328">Removes a reference from a pixbuf.</doc>
+             line="396">Removes a reference from a pixbuf.</doc>
         <doc-deprecated xml:space="preserve">Use g_object_unref().</doc-deprecated>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-                         line="232"/>
+                         line="165"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3784,7 +3784,7 @@ ignored and %FALSE is returned.</doc>
           <instance-parameter name="pixbuf" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf.c"
-                 line="330">A pixbuf.</doc>
+                 line="398">A pixbuf.</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
         </parameters>
@@ -3795,7 +3795,7 @@ ignored and %FALSE is returned.</doc>
                 transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="193">The number of bits per sample.
+             line="261">The number of bits per sample.
 Currently only 8 bit per sample are supported.</doc>
         <type name="gint" c:type="gint"/>
       </property>
@@ -3823,7 +3823,7 @@ Currently only 8 bit per sample are supported.</doc>
                 transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="160">The number of samples per pixel.
+             line="228">The number of samples per pixel.
 Currently, only 3 or 4 samples per pixel are supported.</doc>
         <type name="gint" c:type="gint"/>
       </property>
@@ -3845,7 +3845,7 @@ Currently, only 3 or 4 samples per pixel are supported.</doc>
                 transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf.c"
-             line="229">The number of bytes between the start of a row and
+             line="297">The number of bytes between the start of a row and
 the start of the next row. This number must (obviously)
 be at least as large as the width of the pixbuf.</doc>
         <type name="gint" c:type="gint"/>
@@ -3858,12 +3858,13 @@ be at least as large as the width of the pixbuf.</doc>
       </property>
     </class>
     <enumeration name="PixbufAlphaMode"
+                 deprecated="1"
                  glib:type-name="GdkPixbufAlphaMode"
                  glib:get-type="gdk_pixbuf_alpha_mode_get_type"
                  c:type="GdkPixbufAlphaMode">
       <doc xml:space="preserve"
            filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-           line="108">These values can be passed to
+           line="39">These values can be passed to
 gdk_pixbuf_xlib_render_to_drawable_alpha() to control how the alpha
 channel of an image should be handled.  This function can create a
 bilevel clipping mask (black and white) and use it while painting
@@ -3871,13 +3872,14 @@ the image.  In the future, when the X Window System gets an alpha
 channel extension, it will be possible to do full alpha
 compositing onto arbitrary drawables.  For now both cases fall
 back to a bilevel clipping mask.</doc>
+      <doc-deprecated xml:space="preserve">it is unused since 2.42.</doc-deprecated>
       <member name="bilevel"
               value="0"
               c:identifier="GDK_PIXBUF_ALPHA_BILEVEL"
               glib:nick="bilevel">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-             line="110">A bilevel clipping mask (black and white)
+             line="41">A bilevel clipping mask (black and white)
  will be created and used to draw the image.  Pixels below 0.5 opacity
  will be considered fully transparent, and all others will be
  considered fully opaque.</doc>
@@ -3888,7 +3890,7 @@ back to a bilevel clipping mask.</doc>
               glib:nick="full">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-             line="114">For now falls back to #GDK_PIXBUF_ALPHA_BILEVEL.
+             line="45">For now falls back to #GDK_PIXBUF_ALPHA_BILEVEL.
  In the future it will do full alpha compositing.</doc>
       </member>
     </enumeration>
@@ -3906,7 +3908,7 @@ back to a bilevel clipping mask.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="121">Creates a new animation by loading it from a file. The file format is
+             line="138">Creates a new animation by loading it from a file. The file format is
 detected automatically. If the file's format does not support multi-frame
 images, then an animation with a single frame will be created. Possible errors
 are in the #GDK_PIXBUF_ERROR and #G_FILE_ERROR domains.</doc>
@@ -3915,7 +3917,7 @@ are in the #GDK_PIXBUF_ERROR and #G_FILE_ERROR domains.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="132">A newly-created animation with a reference count of 1, or %NULL
+               line="149">A newly-created animation with a reference count of 1, or %NULL
 if any of several error conditions ocurred:  the file could not be opened,
 there was no loader for the file's format, there was not enough memory to
 allocate the image buffer, or the image file contained invalid data.</doc>
@@ -3925,7 +3927,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="123">Name of file to load, in the GLib file
+                 line="140">Name of file to load, in the GLib file
     name encoding</doc>
             <type name="filename" c:type="const char*"/>
           </parameter>
@@ -3936,13 +3938,13 @@ allocate the image buffer, or the image file contained invalid data.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="299">Same as gdk_pixbuf_animation_new_from_file()</doc>
+             line="316">Same as gdk_pixbuf_animation_new_from_file()</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-animation.h"
                          line="69"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="306">A newly-created animation with a reference count of 1, or %NULL
+               line="323">A newly-created animation with a reference count of 1, or %NULL
 if any of several error conditions ocurred:  the file could not be opened,
 there was no loader for the file's format, there was not enough memory to
 allocate the image buffer, or the image file contained invalid data.</doc>
@@ -3952,7 +3954,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="301">Name of file to load, in the GLib file name encoding</doc>
+                 line="318">Name of file to load, in the GLib file name encoding</doc>
             <type name="filename" c:type="const char*"/>
           </parameter>
         </parameters>
@@ -3963,7 +3965,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="478">Creates a new pixbuf animation by loading an image from an resource.
+             line="495">Creates a new pixbuf animation by loading an image from an resource.
 
 The file format is detected automatically. If %NULL is returned, then
 @error will be set.</doc>
@@ -3972,7 +3974,7 @@ The file format is detected automatically. If %NULL is returned, then
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="488">A newly-created animation, or %NULL if any of several error
+               line="505">A newly-created animation, or %NULL if any of several error
 conditions occurred: the file could not be opened, the image format is
 not supported, there was not enough memory to allocate the image buffer,
 the stream contained invalid data, or the operation was cancelled.</doc>
@@ -3982,7 +3984,7 @@ the stream contained invalid data, or the operation was cancelled.</doc>
           <parameter name="resource_path" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="480">the path of the resource file</doc>
+                 line="497">the path of the resource file</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
         </parameters>
@@ -3993,7 +3995,7 @@ the stream contained invalid data, or the operation was cancelled.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="319">Creates a new animation by loading it from an input stream.
+             line="336">Creates a new animation by loading it from an input stream.
 
 The file format is detected automatically. If %NULL is returned, then
 @error will be set. The @cancellable can be used to abort the operation
@@ -4007,7 +4009,7 @@ The stream is not closed.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="335">A newly-created pixbuf, or %NULL if any of several error
+               line="352">A newly-created pixbuf, or %NULL if any of several error
 conditions occurred: the file could not be opened, the image format is
 not supported, there was not enough memory to allocate the image buffer,
 the stream contained invalid data, or the operation was cancelled.</doc>
@@ -4017,7 +4019,7 @@ the stream contained invalid data, or the operation was cancelled.</doc>
           <parameter name="stream" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="321">a #GInputStream to load the pixbuf from</doc>
+                 line="338">a #GInputStream to load the pixbuf from</doc>
             <type name="Gio.InputStream" c:type="GInputStream*"/>
           </parameter>
           <parameter name="cancellable"
@@ -4026,7 +4028,7 @@ the stream contained invalid data, or the operation was cancelled.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="322">optional #GCancellable object, %NULL to ignore</doc>
+                 line="339">optional #GCancellable object, %NULL to ignore</doc>
             <type name="Gio.Cancellable" c:type="GCancellable*"/>
           </parameter>
         </parameters>
@@ -4037,14 +4039,14 @@ the stream contained invalid data, or the operation was cancelled.</doc>
                    throws="1">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="452">Finishes an asynchronous pixbuf animation creation operation started with
+             line="469">Finishes an asynchronous pixbuf animation creation operation started with
 gdk_pixbuf_animation_new_from_stream_async().</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-animation.h"
                          line="86"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="460">a #GdkPixbufAnimation or %NULL on error. Free the returned
+               line="477">a #GdkPixbufAnimation or %NULL on error. Free the returned
 object with g_object_unref().</doc>
           <type name="PixbufAnimation" c:type="GdkPixbufAnimation*"/>
         </return-value>
@@ -4052,7 +4054,7 @@ object with g_object_unref().</doc>
           <parameter name="async_result" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="454">a #GAsyncResult</doc>
+                 line="471">a #GAsyncResult</doc>
             <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
           </parameter>
         </parameters>
@@ -4062,7 +4064,7 @@ object with g_object_unref().</doc>
                 version="2.28">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="416">Creates a new animation by asynchronously loading an image from an input stream.
+             line="433">Creates a new animation by asynchronously loading an image from an input stream.
 
 For more details see gdk_pixbuf_new_from_stream(), which is the synchronous
 version of this function.
@@ -4079,7 +4081,7 @@ result of the operation.</doc>
           <parameter name="stream" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="418">a #GInputStream from which to load the animation</doc>
+                 line="435">a #GInputStream from which to load the animation</doc>
             <type name="Gio.InputStream" c:type="GInputStream*"/>
           </parameter>
           <parameter name="cancellable"
@@ -4088,7 +4090,7 @@ result of the operation.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="419">optional #GCancellable object, %NULL to ignore</doc>
+                 line="436">optional #GCancellable object, %NULL to ignore</doc>
             <type name="Gio.Cancellable" c:type="GCancellable*"/>
           </parameter>
           <parameter name="callback"
@@ -4099,7 +4101,7 @@ result of the operation.</doc>
                      closure="3">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="420">a #GAsyncReadyCallback to call when the pixbuf is loaded</doc>
+                 line="437">a #GAsyncReadyCallback to call when the pixbuf is loaded</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
           <parameter name="user_data"
@@ -4108,7 +4110,7 @@ result of the operation.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="421">the data to pass to the callback function</doc>
+                 line="438">the data to pass to the callback function</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
         </parameters>
@@ -4116,20 +4118,20 @@ result of the operation.</doc>
       <method name="get_height" c:identifier="gdk_pixbuf_animation_get_height">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="611">Queries the height of the bounding box of a pixbuf animation.</doc>
+             line="628">Queries the height of the bounding box of a pixbuf animation.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-animation.h"
                          line="103"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="617">Height of the bounding box of the animation.</doc>
+               line="634">Height of the bounding box of the animation.</doc>
           <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="animation" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="613">An animation.</doc>
+                 line="630">An animation.</doc>
             <type name="PixbufAnimation" c:type="GdkPixbufAnimation*"/>
           </instance-parameter>
         </parameters>
@@ -4137,7 +4139,7 @@ result of the operation.</doc>
       <method name="get_iter" c:identifier="gdk_pixbuf_animation_get_iter">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="634">Get an iterator for displaying an animation. The iterator provides
+             line="651">Get an iterator for displaying an animation. The iterator provides
 the frames that should be displayed at a given time. It should be
 freed after use with g_object_unref().
 
@@ -4175,14 +4177,14 @@ A delay time of -1 is possible, indicating "infinite."</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="673">an iterator to move over the animation</doc>
+               line="690">an iterator to move over the animation</doc>
           <type name="PixbufAnimationIter" c:type="GdkPixbufAnimationIter*"/>
         </return-value>
         <parameters>
           <instance-parameter name="animation" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="636">a #GdkPixbufAnimation</doc>
+                 line="653">a #GdkPixbufAnimation</doc>
             <type name="PixbufAnimation" c:type="GdkPixbufAnimation*"/>
           </instance-parameter>
           <parameter name="start_time"
@@ -4191,7 +4193,7 @@ A delay time of -1 is possible, indicating "infinite."</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="637">time when the animation starts playing</doc>
+                 line="654">time when the animation starts playing</doc>
             <type name="GLib.TimeVal" c:type="const GTimeVal*"/>
           </parameter>
         </parameters>
@@ -4200,7 +4202,7 @@ A delay time of -1 is possible, indicating "infinite."</doc>
               c:identifier="gdk_pixbuf_animation_get_static_image">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="568">If an animation is really just a plain image (has only one frame),
+             line="585">If an animation is really just a plain image (has only one frame),
 this function returns that image. If the animation is an animation,
 this function returns a reasonable thing to display as a static
 unanimated image, which might be the first frame, or something more
@@ -4211,14 +4213,14 @@ function will return %NULL.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="579">unanimated image representing the animation</doc>
+               line="596">unanimated image representing the animation</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
         </return-value>
         <parameters>
           <instance-parameter name="animation" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="570">a #GdkPixbufAnimation</doc>
+                 line="587">a #GdkPixbufAnimation</doc>
             <type name="PixbufAnimation" c:type="GdkPixbufAnimation*"/>
           </instance-parameter>
         </parameters>
@@ -4226,20 +4228,20 @@ function will return %NULL.</doc>
       <method name="get_width" c:identifier="gdk_pixbuf_animation_get_width">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="589">Queries the width of the bounding box of a pixbuf animation.</doc>
+             line="606">Queries the width of the bounding box of a pixbuf animation.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-animation.h"
                          line="101"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="595">Width of the bounding box of the animation.</doc>
+               line="612">Width of the bounding box of the animation.</doc>
           <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="animation" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="591">An animation.</doc>
+                 line="608">An animation.</doc>
             <type name="PixbufAnimation" c:type="GdkPixbufAnimation*"/>
           </instance-parameter>
         </parameters>
@@ -4248,7 +4250,7 @@ function will return %NULL.</doc>
               c:identifier="gdk_pixbuf_animation_is_static_image">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="549">If you load a file with gdk_pixbuf_animation_new_from_file() and it
+             line="566">If you load a file with gdk_pixbuf_animation_new_from_file() and it
 turns out to be a plain, unanimated image, then this function will
 return %TRUE. Use gdk_pixbuf_animation_get_static_image() to retrieve
 the image.</doc>
@@ -4257,14 +4259,14 @@ the image.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="558">%TRUE if the "animation" was really just an image</doc>
+               line="575">%TRUE if the "animation" was really just an image</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="animation" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="551">a #GdkPixbufAnimation</doc>
+                 line="568">a #GdkPixbufAnimation</doc>
             <type name="PixbufAnimation" c:type="GdkPixbufAnimation*"/>
           </instance-parameter>
         </parameters>
@@ -4276,21 +4278,21 @@ the image.</doc>
               deprecated-version="2.0">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="519">Adds a reference to an animation.</doc>
+             line="536">Adds a reference to an animation.</doc>
         <doc-deprecated xml:space="preserve">Use g_object_ref().</doc-deprecated>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-animation.h"
                          line="95"/>
         <return-value>
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="525">The same as the @animation argument.</doc>
+               line="542">The same as the @animation argument.</doc>
           <type name="PixbufAnimation" c:type="GdkPixbufAnimation*"/>
         </return-value>
         <parameters>
           <instance-parameter name="animation" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="521">An animation.</doc>
+                 line="538">An animation.</doc>
             <type name="PixbufAnimation" c:type="GdkPixbufAnimation*"/>
           </instance-parameter>
         </parameters>
@@ -4302,7 +4304,7 @@ the image.</doc>
               deprecated-version="2.0">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="535">Removes a reference from an animation.</doc>
+             line="552">Removes a reference from an animation.</doc>
         <doc-deprecated xml:space="preserve">Use g_object_unref().</doc-deprecated>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-animation.h"
                          line="97"/>
@@ -4313,7 +4315,7 @@ the image.</doc>
           <instance-parameter name="animation" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="537">An animation.</doc>
+                 line="554">An animation.</doc>
             <type name="PixbufAnimation" c:type="GdkPixbufAnimation*"/>
           </instance-parameter>
         </parameters>
@@ -4332,7 +4334,7 @@ certain position in an animation.</doc>
       <method name="advance" c:identifier="gdk_pixbuf_animation_iter_advance">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="776">Possibly advances an animation to a new frame. Chooses the frame based
+             line="793">Possibly advances an animation to a new frame. Chooses the frame based
 on the start time passed to gdk_pixbuf_animation_get_iter().
 
 @current_time would normally come from g_get_current_time(), and
@@ -4356,14 +4358,14 @@ and update the display with the new pixbuf.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="801">%TRUE if the image may need updating</doc>
+               line="818">%TRUE if the image may need updating</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="iter" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="778">a #GdkPixbufAnimationIter</doc>
+                 line="795">a #GdkPixbufAnimationIter</doc>
             <type name="PixbufAnimationIter" c:type="GdkPixbufAnimationIter*"/>
           </instance-parameter>
           <parameter name="current_time"
@@ -4372,7 +4374,7 @@ and update the display with the new pixbuf.</doc>
                      allow-none="1">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="779">current time</doc>
+                 line="796">current time</doc>
             <type name="GLib.TimeVal" c:type="const GTimeVal*"/>
           </parameter>
         </parameters>
@@ -4381,7 +4383,7 @@ and update the display with the new pixbuf.</doc>
               c:identifier="gdk_pixbuf_animation_iter_get_delay_time">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="704">Gets the number of milliseconds the current pixbuf should be displayed,
+             line="721">Gets the number of milliseconds the current pixbuf should be displayed,
 or -1 if the current pixbuf should be displayed forever. g_timeout_add()
 conveniently takes a timeout in milliseconds, so you can use a timeout
 to schedule the next update.
@@ -4394,14 +4396,14 @@ for GIF images is currently 20 milliseconds.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="717">delay time in milliseconds (thousandths of a second)</doc>
+               line="734">delay time in milliseconds (thousandths of a second)</doc>
           <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="iter" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="706">an animation iterator</doc>
+                 line="723">an animation iterator</doc>
             <type name="PixbufAnimationIter" c:type="GdkPixbufAnimationIter*"/>
           </instance-parameter>
         </parameters>
@@ -4410,7 +4412,7 @@ for GIF images is currently 20 milliseconds.</doc>
               c:identifier="gdk_pixbuf_animation_iter_get_pixbuf">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="728">Gets the current pixbuf which should be displayed; the pixbuf might not
+             line="745">Gets the current pixbuf which should be displayed; the pixbuf might not
 be the same size as the animation itself
 (gdk_pixbuf_animation_get_width(), gdk_pixbuf_animation_get_height()).
 This pixbuf should be displayed for
@@ -4426,14 +4428,14 @@ the iterator.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="744">the pixbuf to be displayed</doc>
+               line="761">the pixbuf to be displayed</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
         </return-value>
         <parameters>
           <instance-parameter name="iter" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="730">an animation iterator</doc>
+                 line="747">an animation iterator</doc>
             <type name="PixbufAnimationIter" c:type="GdkPixbufAnimationIter*"/>
           </instance-parameter>
         </parameters>
@@ -4442,7 +4444,7 @@ the iterator.</doc>
               c:identifier="gdk_pixbuf_animation_iter_on_currently_loading_frame">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-             line="755">Used to determine how to respond to the area_updated signal on
+             line="772">Used to determine how to respond to the area_updated signal on
 #GdkPixbufLoader when loading an animation. area_updated is emitted
 for an area of the frame currently streaming in to the loader. So if
 you're on the currently loading frame, you need to redraw the screen for
@@ -4452,14 +4454,14 @@ the updated area.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-               line="765">%TRUE if the frame we're on is partially loaded, or the last frame</doc>
+               line="782">%TRUE if the frame we're on is partially loaded, or the last frame</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="iter" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-animation.c"
-                 line="757">a #GdkPixbufAnimationIter</doc>
+                 line="774">a #GdkPixbufAnimationIter</doc>
             <type name="PixbufAnimationIter" c:type="GdkPixbufAnimationIter*"/>
           </instance-parameter>
         </parameters>
@@ -4468,13 +4470,13 @@ the updated area.</doc>
     <callback name="PixbufDestroyNotify" c:type="GdkPixbufDestroyNotify">
       <doc xml:space="preserve"
            filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-           line="164">A function of this type is responsible for freeing the pixel array
+           line="97">A function of this type is responsible for freeing the pixel array
 of a pixbuf.  The gdk_pixbuf_new_from_data() function lets you
 pass in a pre-allocated pixel array so that a pixbuf can be
 created from it; in this case you will need to pass in a function
 of #GdkPixbufDestroyNotify so that the pixel data can be freed
 when the pixbuf is finalized.</doc>
-      <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h" line="177"/>
+      <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h" line="110"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -4482,7 +4484,7 @@ when the pixbuf is finalized.</doc>
         <parameter name="pixels" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-               line="166">The pixel array of the pixbuf
+               line="99">The pixel array of the pixbuf
   that is being finalized.</doc>
           <array zero-terminated="0" c:type="guchar*">
             <type name="guint8"/>
@@ -4495,7 +4497,7 @@ when the pixbuf is finalized.</doc>
                    closure="1">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-               line="168">User closure data.</doc>
+               line="101">User closure data.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -4507,7 +4509,7 @@ when the pixbuf is finalized.</doc>
                  glib:error-domain="gdk-pixbuf-error-quark">
       <doc xml:space="preserve"
            filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-           line="188">An error code in the #GDK_PIXBUF_ERROR domain. Many gdk-pixbuf
+           line="121">An error code in the #GDK_PIXBUF_ERROR domain. Many gdk-pixbuf
 operations can cause errors in this domain, or in the #G_FILE_ERROR
 domain.</doc>
       <member name="corrupt_image"
@@ -4516,7 +4518,7 @@ domain.</doc>
               glib:nick="corrupt-image">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-             line="190">An image file was broken somehow.</doc>
+             line="123">An image file was broken somehow.</doc>
       </member>
       <member name="insufficient_memory"
               value="1"
@@ -4524,7 +4526,7 @@ domain.</doc>
               glib:nick="insufficient-memory">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-             line="191">Not enough memory.</doc>
+             line="124">Not enough memory.</doc>
       </member>
       <member name="bad_option"
               value="2"
@@ -4532,7 +4534,7 @@ domain.</doc>
               glib:nick="bad-option">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-             line="192">A bad option was passed to a pixbuf save module.</doc>
+             line="125">A bad option was passed to a pixbuf save module.</doc>
       </member>
       <member name="unknown_type"
               value="3"
@@ -4540,7 +4542,7 @@ domain.</doc>
               glib:nick="unknown-type">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-             line="193">Unknown image type.</doc>
+             line="126">Unknown image type.</doc>
       </member>
       <member name="unsupported_operation"
               value="4"
@@ -4548,7 +4550,7 @@ domain.</doc>
               glib:nick="unsupported-operation">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-             line="194">Don't know how to perform the
+             line="127">Don't know how to perform the
  given operation on the type of image at hand.</doc>
       </member>
       <member name="failed"
@@ -4557,7 +4559,7 @@ domain.</doc>
               glib:nick="failed">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-             line="196">Generic failure code, something went wrong.</doc>
+             line="129">Generic failure code, something went wrong.</doc>
       </member>
       <member name="incomplete_animation"
               value="6"
@@ -4565,7 +4567,7 @@ domain.</doc>
               glib:nick="incomplete-animation">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-             line="197">Only part of the animation was loaded.</doc>
+             line="130">Only part of the animation was loaded.</doc>
       </member>
       <function name="quark" c:identifier="gdk_pixbuf_error_quark">
         <return-value transfer-ownership="none">
@@ -4582,12 +4584,12 @@ domain.</doc>
       <method name="copy" c:identifier="gdk_pixbuf_format_copy" version="2.22">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3405">Creates a copy of @format</doc>
+             line="3415">Creates a copy of @format</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-io.h" line="92"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="3411">the newly allocated copy of a #GdkPixbufFormat. Use
+               line="3421">the newly allocated copy of a #GdkPixbufFormat. Use
   gdk_pixbuf_format_free() to free the resources when done</doc>
           <type name="PixbufFormat" c:type="GdkPixbufFormat*"/>
         </return-value>
@@ -4595,7 +4597,7 @@ domain.</doc>
           <instance-parameter name="format" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3407">a #GdkPixbufFormat</doc>
+                 line="3417">a #GdkPixbufFormat</doc>
             <type name="PixbufFormat" c:type="const GdkPixbufFormat*"/>
           </instance-parameter>
         </parameters>
@@ -4603,7 +4605,7 @@ domain.</doc>
       <method name="free" c:identifier="gdk_pixbuf_format_free" version="2.22">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3425">Frees the resources allocated when copying a #GdkPixbufFormat
+             line="3435">Frees the resources allocated when copying a #GdkPixbufFormat
 using gdk_pixbuf_format_copy()</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-io.h" line="94"/>
         <return-value transfer-ownership="none">
@@ -4613,7 +4615,7 @@ using gdk_pixbuf_format_copy()</doc>
           <instance-parameter name="format" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3427">a #GdkPixbufFormat</doc>
+                 line="3437">a #GdkPixbufFormat</doc>
             <type name="PixbufFormat" c:type="GdkPixbufFormat*"/>
           </instance-parameter>
         </parameters>
@@ -4623,19 +4625,19 @@ using gdk_pixbuf_format_copy()</doc>
               version="2.2">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3204">Returns a description of the format.</doc>
+             line="3214">Returns a description of the format.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-io.h" line="56"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="3210">a description of the format.</doc>
+               line="3220">a description of the format.</doc>
           <type name="utf8" c:type="gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="format" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3206">a #GdkPixbufFormat</doc>
+                 line="3216">a #GdkPixbufFormat</doc>
             <type name="PixbufFormat" c:type="GdkPixbufFormat*"/>
           </instance-parameter>
         </parameters>
@@ -4645,13 +4647,13 @@ using gdk_pixbuf_format_copy()</doc>
               version="2.2">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3249">Returns the filename extensions typically used for files in the
+             line="3259">Returns the filename extensions typically used for files in the
 given format.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-io.h" line="60"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="3256">a %NULL-terminated array of filename extensions which must be
+               line="3266">a %NULL-terminated array of filename extensions which must be
 freed with g_strfreev() when it is no longer needed.</doc>
           <array c:type="gchar**">
             <type name="utf8"/>
@@ -4661,7 +4663,7 @@ freed with g_strfreev() when it is no longer needed.</doc>
           <instance-parameter name="format" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3251">a #GdkPixbufFormat</doc>
+                 line="3261">a #GdkPixbufFormat</doc>
             <type name="PixbufFormat" c:type="GdkPixbufFormat*"/>
           </instance-parameter>
         </parameters>
@@ -4671,7 +4673,7 @@ freed with g_strfreev() when it is no longer needed.</doc>
               version="2.6">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3348">Returns information about the license of the image loader for the format. The
+             line="3358">Returns information about the license of the image loader for the format. The
 returned string should be a shorthand for a wellknown license, e.g. "LGPL",
 "GPL", "QPL", "GPL/QPL", or "other" to indicate some other license.  This
 string should be freed with g_free() when it's no longer needed.</doc>
@@ -4679,14 +4681,14 @@ string should be freed with g_free() when it's no longer needed.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="3357">a string describing the license of @format.</doc>
+               line="3367">a string describing the license of @format.</doc>
           <type name="utf8" c:type="gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="format" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3350">a #GdkPixbufFormat</doc>
+                 line="3360">a #GdkPixbufFormat</doc>
             <type name="PixbufFormat" c:type="GdkPixbufFormat*"/>
           </instance-parameter>
         </parameters>
@@ -4696,12 +4698,12 @@ string should be freed with g_free() when it's no longer needed.</doc>
               version="2.2">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3230">Returns the mime types supported by the format.</doc>
+             line="3240">Returns the mime types supported by the format.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-io.h" line="58"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="3236">a %NULL-terminated array of mime types which must be freed with
+               line="3246">a %NULL-terminated array of mime types which must be freed with
 g_strfreev() when it is no longer needed.</doc>
           <array c:type="gchar**">
             <type name="utf8"/>
@@ -4711,7 +4713,7 @@ g_strfreev() when it is no longer needed.</doc>
           <instance-parameter name="format" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3232">a #GdkPixbufFormat</doc>
+                 line="3242">a #GdkPixbufFormat</doc>
             <type name="PixbufFormat" c:type="GdkPixbufFormat*"/>
           </instance-parameter>
         </parameters>
@@ -4721,19 +4723,19 @@ g_strfreev() when it is no longer needed.</doc>
               version="2.2">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3186">Returns the name of the format.</doc>
+             line="3196">Returns the name of the format.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-io.h" line="54"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="3192">the name of the format.</doc>
+               line="3202">the name of the format.</doc>
           <type name="utf8" c:type="gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="format" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3188">a #GdkPixbufFormat</doc>
+                 line="3198">a #GdkPixbufFormat</doc>
             <type name="PixbufFormat" c:type="GdkPixbufFormat*"/>
           </instance-parameter>
         </parameters>
@@ -4743,20 +4745,20 @@ g_strfreev() when it is no longer needed.</doc>
               version="2.6">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3308">Returns whether this image format is disabled. See
+             line="3318">Returns whether this image format is disabled. See
 gdk_pixbuf_format_set_disabled().</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-io.h" line="69"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="3315">whether this image format is disabled.</doc>
+               line="3325">whether this image format is disabled.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="format" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3310">a #GdkPixbufFormat</doc>
+                 line="3320">a #GdkPixbufFormat</doc>
             <type name="PixbufFormat" c:type="GdkPixbufFormat*"/>
           </instance-parameter>
         </parameters>
@@ -4766,27 +4768,27 @@ gdk_pixbuf_format_set_disabled().</doc>
               version="2.36">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3441">Returns %TRUE if the save option specified by @option_key is supported when
+             line="3451">Returns %TRUE if the save option specified by @option_key is supported when
 saving a pixbuf using the module implementing @format.
 See gdk_pixbuf_save() for more information about option keys.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-io.h" line="62"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="3450">%TRUE if the specified option is supported</doc>
+               line="3460">%TRUE if the specified option is supported</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="format" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3443">a #GdkPixbufFormat</doc>
+                 line="3453">a #GdkPixbufFormat</doc>
             <type name="PixbufFormat" c:type="GdkPixbufFormat*"/>
           </instance-parameter>
           <parameter name="option_key" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3444">the name of an option</doc>
+                 line="3454">the name of an option</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
@@ -4796,7 +4798,7 @@ See gdk_pixbuf_save() for more information about option keys.</doc>
               version="2.6">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3287">Returns whether this image format is scalable. If a file is in a
+             line="3297">Returns whether this image format is scalable. If a file is in a
 scalable format, it is preferable to load it at the desired size,
 rather than loading it at the default size and scaling the
 resulting pixbuf to the desired size.</doc>
@@ -4804,14 +4806,14 @@ resulting pixbuf to the desired size.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="3296">whether this image format is scalable.</doc>
+               line="3306">whether this image format is scalable.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="format" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3289">a #GdkPixbufFormat</doc>
+                 line="3299">a #GdkPixbufFormat</doc>
             <type name="PixbufFormat" c:type="GdkPixbufFormat*"/>
           </instance-parameter>
         </parameters>
@@ -4821,19 +4823,19 @@ resulting pixbuf to the desired size.</doc>
               version="2.2">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3269">Returns whether pixbufs can be saved in the given format.</doc>
+             line="3279">Returns whether pixbufs can be saved in the given format.</doc>
         <source-position filename="../gdk-pixbuf/gdk-pixbuf-io.h" line="65"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-               line="3275">whether pixbufs can be saved in the given format.</doc>
+               line="3285">whether pixbufs can be saved in the given format.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="format" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3271">a #GdkPixbufFormat</doc>
+                 line="3281">a #GdkPixbufFormat</doc>
             <type name="PixbufFormat" c:type="GdkPixbufFormat*"/>
           </instance-parameter>
         </parameters>
@@ -4843,7 +4845,7 @@ resulting pixbuf to the desired size.</doc>
               version="2.6">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-             line="3327">Disables or enables an image format. If a format is disabled,
+             line="3337">Disables or enables an image format. If a format is disabled,
 gdk-pixbuf won't use the image loader for this format to load
 images. Applications can use this to avoid using image loaders
 with an inappropriate license, see gdk_pixbuf_format_get_license().</doc>
@@ -4855,13 +4857,13 @@ with an inappropriate license, see gdk_pixbuf_format_get_license().</doc>
           <instance-parameter name="format" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3329">a #GdkPixbufFormat</doc>
+                 line="3339">a #GdkPixbufFormat</doc>
             <type name="PixbufFormat" c:type="GdkPixbufFormat*"/>
           </instance-parameter>
           <parameter name="disabled" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="../gdk-pixbuf/gdk-pixbuf-io.c"
-                 line="3330">%TRUE to disable the format @format</doc>
+                 line="3340">%TRUE to disable the format @format</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
         </parameters>
@@ -5482,24 +5484,24 @@ To make them easier to use, their numerical values are the actual degrees.</doc>
     <callback name="PixbufSaveFunc" c:type="GdkPixbufSaveFunc" version="2.4">
       <doc xml:space="preserve"
            filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-           line="410">Specifies the type of the function passed to
+           line="343">Specifies the type of the function passed to
 gdk_pixbuf_save_to_callback().  It is called once for each block of
 bytes that is "written" by gdk_pixbuf_save_to_callback().  If
 successful it should return %TRUE.  If an error occurs it should set
 @error and return %FALSE, in which case gdk_pixbuf_save_to_callback()
 will fail with the same error.</doc>
-      <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h" line="428"/>
+      <source-position filename="../gdk-pixbuf/gdk-pixbuf-core.h" line="361"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-             line="425">%TRUE if successful, %FALSE (with @error set) if failed.</doc>
+             line="358">%TRUE if successful, %FALSE (with @error set) if failed.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="buf" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-               line="412">bytes to be written.</doc>
+               line="345">bytes to be written.</doc>
           <array length="1" zero-terminated="0" c:type="const gchar*">
             <type name="guint8"/>
           </array>
@@ -5507,7 +5509,7 @@ will fail with the same error.</doc>
         <parameter name="count" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-               line="413">number of bytes in @buf.</doc>
+               line="346">number of bytes in @buf.</doc>
           <type name="gsize" c:type="gsize"/>
         </parameter>
         <parameter name="error"
@@ -5516,7 +5518,7 @@ will fail with the same error.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-               line="414">A location to return an error.</doc>
+               line="347">A location to return an error.</doc>
           <type name="GLib.Error" c:type="GError**"/>
         </parameter>
         <parameter name="data"
@@ -5526,7 +5528,7 @@ will fail with the same error.</doc>
                    closure="3">
           <doc xml:space="preserve"
                filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-               line="415">user data passed to gdk_pixbuf_save_to_callback().</doc>
+               line="348">user data passed to gdk_pixbuf_save_to_callback().</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -5744,8 +5746,8 @@ to a socket or store it in a database.</doc>
     </docsection>
     <docsection name="gdk-pixbuf">
       <doc xml:space="preserve"
-           filename="../gdk-pixbuf/gdk-pixbuf-core.h"
-           line="39">The #GdkPixbuf structure contains
+           filename="../gdk-pixbuf/gdk-pixbuf.c"
+           line="102">The #GdkPixbuf structure contains
 information that describes an image in memory.
 
 ## Image Data ## {#image-data}

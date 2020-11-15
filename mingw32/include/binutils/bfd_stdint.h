@@ -1,4 +1,4 @@
-/* generated for  i686-w64-mingw32-gcc.exe (Rev3, Built by MSYS2 project) 10.2.0 */
+/* generated for  i686-w64-mingw32-gcc.exe (Rev5, Built by MSYS2 project) 10.2.0 */
 
 #ifndef GCC_GENERATED_STDINT_H
 #define GCC_GENERATED_STDINT_H 1

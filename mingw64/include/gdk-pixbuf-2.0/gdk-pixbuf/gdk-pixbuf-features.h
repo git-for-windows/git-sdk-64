@@ -43,9 +43,9 @@
  */
 
 #define GDK_PIXBUF_MAJOR (2)
-#define GDK_PIXBUF_MINOR (40)
+#define GDK_PIXBUF_MINOR (42)
 #define GDK_PIXBUF_MICRO (0)
-#define GDK_PIXBUF_VERSION "2.40.0"
+#define GDK_PIXBUF_VERSION "2.42.0"
 
 #ifndef _GDK_PIXBUF_EXTERN
 #define _GDK_PIXBUF_EXTERN extern

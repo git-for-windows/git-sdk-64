@@ -250,8 +250,8 @@ struct _GdkPixbufModule {
         /* Incremental loading */
 
         gpointer (* begin_load)     (GdkPixbufModuleSizeFunc size_func,
-                                     GdkPixbufModulePreparedFunc prepare_func,
-                                     GdkPixbufModuleUpdatedFunc update_func,
+                                     GdkPixbufModulePreparedFunc prepared_func,
+                                     GdkPixbufModuleUpdatedFunc updated_func,
                                      gpointer user_data,
                                      GError **error);
         gboolean (* stop_load)      (gpointer context,

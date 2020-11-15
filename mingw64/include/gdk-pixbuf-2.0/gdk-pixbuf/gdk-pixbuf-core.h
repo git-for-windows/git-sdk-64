@@ -37,75 +37,6 @@
 G_BEGIN_DECLS
 
 /**
- * SECTION:gdk-pixbuf
- * @Short_description: Information that describes an image.
- * @Title: The GdkPixbuf Structure
- * 
- * The #GdkPixbuf structure contains
- * information that describes an image in memory.
- * 
- * ## Image Data ## {#image-data}
- *
- * Image data in a pixbuf is stored in memory in uncompressed,
- * packed format.  Rows in the image are stored top to bottom, and
- * in each row pixels are stored from left to right.  There may be
- * padding at the end of a row.  The "rowstride" value of a pixbuf,
- * as returned by gdk_pixbuf_get_rowstride(), indicates the number
- * of bytes between rows.
- * 
- * ## put_pixel() Example ## {#put-pixel}
- * 
- * The following code illustrates a simple put_pixel()
- * function for RGB pixbufs with 8 bits per channel with an alpha
- * channel.  It is not included in the gdk-pixbuf library for
- * performance reasons; rather than making several function calls
- * for each pixel, your own code can take shortcuts.
- * 
- * |[<!-- language="C" -->
- * static void
- * put_pixel (GdkPixbuf *pixbuf, int x, int y, guchar red, guchar green, guchar blue, guchar alpha)
- * {
- *   int width, height, rowstride, n_channels;
- *   guchar *pixels, *p;
- * 
- *   n_channels = gdk_pixbuf_get_n_channels (pixbuf);
- * 
- *   g_assert (gdk_pixbuf_get_colorspace (pixbuf) == GDK_COLORSPACE_RGB);
- *   g_assert (gdk_pixbuf_get_bits_per_sample (pixbuf) == 8);
- *   g_assert (gdk_pixbuf_get_has_alpha (pixbuf));
- *   g_assert (n_channels == 4);
- * 
- *   width = gdk_pixbuf_get_width (pixbuf);
- *   height = gdk_pixbuf_get_height (pixbuf);
- * 
- *   g_assert (x >= 0 && x < width);
- *   g_assert (y >= 0 && y < height);
- * 
- *   rowstride = gdk_pixbuf_get_rowstride (pixbuf);
- *   pixels = gdk_pixbuf_get_pixels (pixbuf);
- * 
- *   p = pixels + y * rowstride + x * n_channels;
- *   p[0] = red;
- *   p[1] = green;
- *   p[2] = blue;
- *   p[3] = alpha;
- * }
- * ]|
- * 
- * This function will not work for pixbufs with images that are
- * other than 8 bits per sample or channel, but it will work for
- * most of the pixbufs that GTK+ uses.
- * 
- * If you are doing memcpy() of raw pixbuf data, note that the last row
- * in the pixbuf may not be as wide as the full rowstride, but rather
- * just as wide as the pixel data needs to be. That is, it is unsafe to
- * do `memcpy (dest, pixels, rowstride * height)` to copy a whole pixbuf.
- * Use gdk_pixbuf_copy() instead, or compute the width in bytes of the
- * last row as `width * ((n_channels * bits_per_sample + 7) / 8)`.
- */
-
-
-/**
  * GdkPixbufAlphaMode:
  * @GDK_PIXBUF_ALPHA_BILEVEL: A bilevel clipping mask (black and white)
  *  will be created and used to draw the image.  Pixels below 0.5 opacity
@@ -122,6 +53,8 @@ G_BEGIN_DECLS
  * channel extension, it will be possible to do full alpha
  * compositing onto arbitrary drawables.  For now both cases fall
  * back to a bilevel clipping mask.
+ *
+ * Deprecated: it is unused since 2.42.
  */
 typedef enum
 {
