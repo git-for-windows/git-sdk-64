@@ -68,7 +68,7 @@ jobs:
         run: git clone --depth=1 --branch master https://github.com/git/git ..\git
       - name: build current `master` of git.git
         run: |
-          & .\minimal-sdk\usr\bin\bash.exe -lc "make -C ../git NO_PERL=1 -j8 all strip"
+          & .\minimal-sdk\usr\bin\bash.exe -lc "make -C ../git NO_PERL=1 SKIP_DASHED_BUILT_INS=YesPlease -j8 all strip"
       - name: compress git artifacts
         shell: bash
         run: tar -C .. -cf - --exclude '*.a' --exclude '*.o' --exclude .git --exclude .depend git | xz -9 >git-artifacts.tar.xz
