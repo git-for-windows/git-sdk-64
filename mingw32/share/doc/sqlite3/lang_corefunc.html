@@ -156,6 +156,8 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
 <li><a href='lang_corefunc.html#sqlite_version'>sqlite_version()</a></li>
 <li><a href='lang_corefunc.html#substr'>substr(X,Y)</a></li>
 <li><a href='lang_corefunc.html#substr'>substr(X,Y,Z)</a></li>
+<li><a href='lang_corefunc.html#substr'>substring(X,Y)</a></li>
+<li><a href='lang_corefunc.html#substr'>substring(X,Y,Z)</a></li>
 <li><a href='lang_corefunc.html#total_changes'>total_changes()</a></li>
 <li><a href='lang_corefunc.html#trim'>trim(X)</a></li>
 <li><a href='lang_corefunc.html#trim'>trim(X,Y)</a></li>
@@ -498,7 +500,7 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
   wrapper around the <a href="c3ref/libversion.html">sqlite3_libversion()</a> C-interface.
 </dd>
 <a name="substr"></a>
-<dt><p><b>substr(<i>X</i>,<i>Y</i>,<i>Z</i>)<br />substr(<i>X</i>,<i>Y</i>)</b></dt><dd><p>
+<dt><p><b>substr(<i>X</i>,<i>Y</i>,<i>Z</i>)<br />substr(<i>X</i>,<i>Y</i>)<br />substring(<i>X</i>,<i>Y</i>,<i>Z</i>)<br />substring(<i>X</i>,<i>Y</i>)</b></dt><dd><p>
   The substr(X,Y,Z) function returns a substring of input string X that begins
   with the Y-th character and which is Z characters long.
   If Z is omitted then substr(X,Y) returns all characters through the end
@@ -509,6 +511,8 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
   the abs(Z) characters preceding the Y-th character are returned.
   If X is a string then characters indices refer to actual UTF-8 
   characters.  If X is a BLOB then the indices refer to bytes.
+  <p>
+  "substring()" is an alias for "substr()" beginning with SQLite version 3.34.
 </dd>
 <a name="total_changes"></a>
 <dt><p><b>total_changes()</b></dt><dd><p>

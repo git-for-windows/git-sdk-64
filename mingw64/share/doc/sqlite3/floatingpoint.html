@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>Floating Pointer Numbers</title>
+<title>Floating Point Numbers</title>
 <!-- path= -->
 </head>
 <body>
@@ -94,7 +94,7 @@ return false;
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
-Floating Pointer Numbers
+Floating Point Numbers
 </div>
 <div class="fancy_toc">
 <a onclick="toggle_toc()">
@@ -156,7 +156,7 @@ values are approximate.
 </p><p>
 Pay close attention to the last sentence in the previous paragraph:
 </p><blockquote><b>
-Floating point values are approximate &larr; <u>Always</u> remember this!
+Floating point values are approximate.
 </b></blockquote>
 
 <p>
@@ -190,7 +190,7 @@ computations as part of your program, the errors add up so that your final
 result might be completely meaningless.
 
 </p><p>The error arises because only about the first 15 significant digits of
-each number are stored accurately, and first the difference between the two numbers
+each number are stored accurately, and the first difference between the two numbers
 being subtracted is in the 16th digit.  
 
 </p><h2 id="floating_point_numbers"><span>1.2. </span>Floating Point Numbers</h2>
@@ -214,7 +214,7 @@ of two:
 <p>The M value is the "mantissa" and E is the "exponent".  Both
 M and E are integers.
 
-</p><p>For Binary64, M is a 53-bit integer and E is an 11-bit integer that
+</p><p>For Binary64, M is a 53-bit integer and E is an 11-bit integer that is
 offset so that represents a range of values between -1074 and +972, inclusive.
 
 </p><p><i>(NB:  The usual description of IEEE 754 is more complex, and it is important
@@ -225,7 +225,7 @@ the purposes of this article.)</i></p>
 
 <h3 id="unrepresentable_numbers"><span>1.2.1. </span>Unrepresentable numbers</h3>
 
-<p>Not ever decimal number with fewer than 16 significant digits can be
+<p>Not every decimal number with fewer than 16 significant digits can be
 represented exactly as a binary64 number.  In fact, most decimal numbers
 with digits to the right of the decimal point lack an exact binary64
 equivalent.  For example, if you have a database column that is intended
@@ -340,8 +340,8 @@ the M and E values and converts them into the corresponding F value:
 <h3 id="the_ieee754_mantissa_and_ieee754_exponent_functions"><span>2.1.2. </span>The ieee754_mantissa() and ieee754_exponent() functions</h3>
 
 <p>The text output of the one-argument form of ieee754() is great for human
-readability, but it awkward to use as part of a larger expression.  Hence
-The ieee754_mantissa() and ieee754_exponent() routines were added to return
+readability, but it is awkward to use as part of a larger expression.  Hence
+the ieee754_mantissa() and ieee754_exponent() routines were added to return
 the M and E values corresponding to their single argument F
 value.
 For example:

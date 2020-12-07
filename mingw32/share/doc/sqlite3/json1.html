@@ -436,7 +436,7 @@ Example:
 returns a well-formed JSON array that is composed from those arguments.
 If any argument to json_array() is a BLOB then an error is thrown.
 
-</p><p>An argument with SQL type TEXT it is normally converted into a quoted 
+</p><p>An argument with SQL type TEXT is normally converted into a quoted 
 JSON string.  However, if the argument is the output from another json1
 function, then it is stored as JSON.  This allows calls to json_array()
 and <a href="json1.html#jobj">json_object()</a> to be nested.  The <a href="json1.html#jmini">json()</a> function can also
@@ -579,7 +579,7 @@ JSON to be edited.  Subsequent arguments occur in pairs with the first
 element of each pair being a path and the second element being the value
 to insert or replace or set on that path.
 
-</p><p>Edits occurs sequentially from left to right.  Changes caused by
+</p><p>Edits occur sequentially from left to right.  Changes caused by
 prior edits can affect the path search for subsequent edits.
 
 </p><p>If the value of a path/value pair is an SQLite TEXT value, then it
@@ -720,7 +720,7 @@ especially Arrays with lots of substructure.
 <p>The json_remove(X,P,...) function takes a single JSON value as its
 first argument followed by zero or more path arguments.
 The json_remove(X,P,...) function returns
-a new JSON value that is the X with all the elements 
+a copy of the X parameter with all the elements 
 identified by path arguments removed.  Paths that select elements
 not found in X are silently ignored.
 

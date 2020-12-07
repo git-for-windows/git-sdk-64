@@ -53,7 +53,7 @@ typedef int		FcBool;
 
 #define FC_MAJOR	2
 #define FC_MINOR	13
-#define FC_REVISION	92
+#define FC_REVISION	93
 
 #define FC_VERSION	((FC_MAJOR * 10000) + (FC_MINOR * 100) + (FC_REVISION))
 
@@ -127,6 +127,7 @@ typedef int		FcBool;
 #define FC_HASH		    "hash"		/* String (deprecated) */
 #define FC_POSTSCRIPT_NAME  "postscriptname"	/* String */
 #define FC_FONT_HAS_HINT    "fonthashint"	/* Bool - true if font has hinting */
+#define FC_ORDER	    "order"		/* Integer */
 
 #define FC_CACHE_SUFFIX		    ".cache-" FC_CACHE_VERSION
 #define FC_DIR_CACHE_FILE	    "fonts.cache-" FC_CACHE_VERSION
@@ -375,7 +376,7 @@ FcPublic FcBool
 FcDirCacheClean (const FcChar8 *cache_dir, FcBool verbose);
 
 FcPublic void
-FcCacheCreateTagFile (const FcConfig *config);
+FcCacheCreateTagFile (FcConfig *config);
 
 FcPublic FcBool
 FcDirCacheCreateUUID (FcChar8  *dir,
@@ -392,6 +393,10 @@ FcConfigHome (void);
 
 FcPublic FcBool
 FcConfigEnableHome (FcBool enable);
+
+FcPublic FcChar8 *
+FcConfigGetFilename (FcConfig      *config,
+		     const FcChar8 *url);
 
 FcPublic FcChar8 *
 FcConfigFilename (const FcChar8 *url);
@@ -433,7 +438,7 @@ FcPublic FcBlanks *
 FcConfigGetBlanks (FcConfig *config);
 
 FcPublic FcStrList *
-FcConfigGetCacheDirs (const FcConfig	*config);
+FcConfigGetCacheDirs (FcConfig	*config);
 
 FcPublic int
 FcConfigGetRescanInterval (FcConfig *config);

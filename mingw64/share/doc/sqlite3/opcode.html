@@ -193,8 +193,8 @@ output from SQLite, you should reference the version of this document
 that corresponds to the version of SQLite that ran the <a href="lang_explain.html">EXPLAIN</a>.
 Otherwise, the description of the opcodes may not be accurate.
 This document is derived from SQLite
- version 3.33.0 check-in
-<a href='https://www.sqlite.org/src/timeline?c=fca8dc8b578f2'>fca8dc8b578f2</a> dated 2020-08-14.
+ version 3.34.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=a26b6597e3ae2'>a26b6597e3ae2</a> dated 2020-12-01.
 
 
 
@@ -417,20 +417,20 @@ pragmas include:
 
 <h1 id="the_opcodes"><span>4. </span>The Opcodes</h1>
 
-<p>There are currently 175
+<p>There are currently 176
 opcodes defined by the virtual machine.
 All currently defined opcodes are described in the table below.
 This table was generated automatically by scanning the source code
 from the file
-<a href="http://www.sqlite.org/src/artifact/e9f7f818f128c8600058c0eabb6b3975974c95153a104d340f419adabbc15b9f">vdbe.c</a>.
+<a href="http://www.sqlite.org/src/artifact/d24a43b6b1ed2dba893636a14f5e56001444ab3fd5465e3bca8ab01799840acd">vdbe.c</a>.
 
 
 </p><p>Remember: The VDBE opcodes are <u>not</u> part of the interface 
 definition for SQLite.  The number of opcodes and their names and meanings
 change from one release of SQLite to the next.
 The opcodes shown in the table below are valid for SQLite
- version 3.33.0 check-in
-<a href='https://www.sqlite.org/src/timeline?c=fca8dc8b578f2'>fca8dc8b578f2</a> dated 2020-08-14.
+ version 3.34.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=a26b6597e3ae2'>a26b6597e3ae2</a> dated 2020-12-01.
 
 <a name="codes"></a>
 
@@ -1081,16 +1081,20 @@ in P1 is NULL then take the jump if and only if P3 is non-zero.</td></tr>
 <tr><td valign="top" align="center">
 <a name="IfNoHope"></a>IfNoHope
 <td>Register P3 is the first of P4 registers that form an unpacked
-record.</p>
+record.  Cursor P1 is an index btree.  P2 is a jump destination.
+In other words, the operands to this opcode are the same as the
+operands to <a href="opcode.html#NotFound">NotFound</a> and <a href="opcode.html#IdxGT">IdxGT</a>.</p>
 
-<p>Cursor P1 is on an index btree.  If the seekHit flag is set on P1, then
-this opcode is a no-op.  But if the seekHit flag of P1 is clear, then
-check to see if there is any entry in P1 that matches the
-prefix identified by P3 and P4.  If no entry matches the prefix,
-jump to P2.  Otherwise fall through.</p>
+<p>This opcode is an optimization attempt only.  If this opcode always
+falls through, the correct answer is still obtained, but extra works
+is performed.</p>
 
-<p>This opcode behaves like <a href="opcode.html#NotFound">NotFound</a> if the seekHit
-flag is clear and it behaves like <a href="opcode.html#Noop">Noop</a> if the seekHit flag is set.</p>
+<p>A value of N in the seekHit flag of cursor P1 means that there exists
+a key P3:N that will match some record in the index.  We want to know
+if it is possible for a record P3:P4 to match some record in the
+index.  If it is not possible, we can skips some work.  So if seekHit
+is less than P4, attempt to find out if a match is possible by running
+<a href="opcode.html#NotFound">NotFound</a>.</p>
 
 <p>This opcode is used in IN clause processing for a multi-column key.
 If an IN clause is attached to an element of the key other than the
@@ -1585,7 +1589,11 @@ that defines the format of keys in the index.</p>
 <p>The P5 parameter can be a mask of the BTREE_* flags defined
 in btree.h.  These flags control aspects of the operation of
 the btree.  The BTREE_OMIT_JOURNAL and BTREE_SINGLE flags are
-added automatically.</td></tr>
+added automatically.</p>
+
+<p>If P3 is positive, then reg&#91;P3&#93; is modified slightly so that it
+can be used as zero-length data for <a href="opcode.html#Insert">Insert</a>.  This is an optimization
+that avoids an extra <a href="opcode.html#Blob">Blob</a> opcode to initialize that register.</td></tr>
 <tr><td valign="top" align="center">
 <a name="OpenPseudo"></a>OpenPseudo
 <td>Open a new cursor that points to a fake table that contains a single
@@ -2010,11 +2018,16 @@ configured to use <a href="opcode.html#Next">Next</a>, not <a href="opcode.html#
 <p>See also: <a href="opcode.html#Found">Found</a>, <a href="opcode.html#NotFound">NotFound</a>, SeekLt, SeekGe, SeekLe</td></tr>
 <tr><td valign="top" align="center">
 <a name="SeekHit"></a>SeekHit
-<td>Set the seekHit flag on cursor P1 to the value in P2.
-The seekHit flag is used by the <a href="opcode.html#IfNoHope">IfNoHope</a> opcode.</p>
+<td>Increase or decrease the seekHit value for cursor P1, if necessary,
+so that it is no less than P2 and no greater than P3.</p>
 
-<p>P1 must be a valid b-tree cursor.  P2 must be a boolean value,
-either 0 or 1.</td></tr>
+<p>The seekHit integer represents the maximum of terms in an index for which
+there is known to be at least one match.  If the seekHit value is smaller
+than the total number of equality terms in an index lookup, then the
+<a href="opcode.html#IfNoHope">IfNoHope</a> opcode might run to see if the IN loop can be abandoned
+early, thus saving work.  This is part of the IN-early-out optimization.</p>
+
+<p>P1 must be a valid b-tree cursor.</td></tr>
 <tr><td valign="top" align="center">
 <a name="SeekLE"></a>SeekLE
 <td>If cursor P1 refers to an SQL table (B-Tree that uses integer keys),
@@ -2078,6 +2091,50 @@ in either direction.  In other words, the <a href="opcode.html#Next">Next</a> an
 not work following this opcode.</p>
 
 <p>See also: <a href="opcode.html#Found">Found</a>, <a href="opcode.html#NotFound">NotFound</a>, <a href="opcode.html#NoConflict">NoConflict</a>, <a href="opcode.html#SeekRowid">SeekRowid</a></td></tr>
+<tr><td valign="top" align="center">
+<a name="SeekScan"></a>SeekScan
+<td>This opcode is a prefix opcode to <a href="opcode.html#SeekGE">SeekGE</a>.  In other words, this
+opcode must be immediately followed by <a href="opcode.html#SeekGE">SeekGE</a>. This constraint is
+checked by assert() statements.</p>
+
+<p>This opcode uses the P1 through P4 operands of the subsequent
+<a href="opcode.html#SeekGE">SeekGE</a>.  In the text that follows, the operands of the subsequent
+<a href="opcode.html#SeekGE">SeekGE</a> opcode are denoted as SeekOP.P1 through SeekOP.P4.   Only
+the P1 and P2 operands of this opcode are also used, and  are called
+This.P1 and This.P2.</p>
+
+<p>This opcode helps to optimize IN operators on a multi-column index
+where the IN operator is on the later terms of the index by avoiding
+unnecessary seeks on the btree, substituting steps to the next row
+of the b-tree instead.  A correct answer is obtained if this opcode
+is omitted or is a no-op.</p>
+
+<p>The <a href="opcode.html#SeekGE">SeekGE</a>.P3 and <a href="opcode.html#SeekGE">SeekGE</a>.P4 operands identify an unpacked key which
+is the desired entry that we want the cursor <a href="opcode.html#SeekGE">SeekGE</a>.P1 to be pointing
+to.  Call this <a href="opcode.html#SeekGE">SeekGE</a>.P4/P5 row the "target".</p>
+
+<p>If the <a href="opcode.html#SeekGE">SeekGE</a>.P1 cursor is not currently pointing to a valid row,
+then this opcode is a no-op and control passes through into the <a href="opcode.html#SeekGE">SeekGE</a>.</p>
+
+<p>If the <a href="opcode.html#SeekGE">SeekGE</a>.P1 cursor is pointing to a valid row, then that row
+might be the target row, or it might be near and slightly before the
+target row.  This opcode attempts to position the cursor on the target
+row by, perhaps by invoking sqlite3BtreeStep() on the cursor
+between 0 and This.P1 times.</p>
+
+<p>There are three possible outcomes from this opcode:<ol></p>
+
+<p><li> If after This.P1 steps, the cursor is still point to a place that
+is earlier in the btree than the target row,
+then fall through into the subsquence <a href="opcode.html#SeekGE">SeekGE</a> opcode.</p>
+
+<p><li> If the cursor is successfully moved to the target row by 0 or more
+sqlite3BtreeNext() calls, then jump to This.P2, which will land just
+past the <a href="opcode.html#IdxGT">IdxGT</a> opcode that follows the <a href="opcode.html#SeekGE">SeekGE</a>.</p>
+
+<p><li> If the cursor ends up past the target row (indicating the the target
+row does not exist in the btree) then jump to SeekOP.P2.
+</ol></td></tr>
 <tr><td valign="top" align="center">
 <a name="Sequence"></a>Sequence
 <td>Find the next available sequence number for cursor P1.
@@ -2232,7 +2289,8 @@ enabled.</p>
 active.
 If P2 is non-zero, then a write-transaction is started, or if a
 read-transaction is already active, it is upgraded to a write-transaction.
-If P2 is zero, then a read-transaction is started.</p>
+If P2 is zero, then a read-transaction is started.  If P2 is 2 or more
+then an exclusive transaction is started.</p>
 
 <p>P1 is the index of the database file on which the transaction is
 started.  Index 0 is the main database file and index 1 is the

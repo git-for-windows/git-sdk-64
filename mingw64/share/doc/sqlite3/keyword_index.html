@@ -381,6 +381,8 @@ Other Documentation Indexes:
 <li> <a href="howtocorrupt.html#alias">database filename aliasing</a> </li>
 <li> <a href="fileformat2.html#database_header">database header</a> </li>
 <li> <a href="pragma.html#pragma_database_list">database_list pragma</a> </li>
+<li> <a href="cli.html#dotdatabases">.databases</a> </li>
+<li> <a href="cli.html#dotdatabases">.databases command</a> </li>
 <li> <a href="datatype3.html">datatype</a> </li>
 <li> <a href="datatype3.html#datetime">date and time datatype</a> </li>
 <li> <a href="lang_datefunc.html">date and time functions</a> </li>
@@ -965,6 +967,7 @@ Other Documentation Indexes:
 <li> <a href="sqlar.html#cltools">managing SQLite Archives from the command-line</a> </li>
 <li> <a href="optoverview.html#crossjoin">Manual Control Of Query Plans Using CROSS JOIN</a> </li>
 <li> <a href="optoverview.html#manctrl">Manual Control Of Query Plans Using SQLITE_STAT Tables</a> </li>
+<li> <a href="tempfiles.html#superjrnl">master journal</a> </li>
 <li> <a href="lang_expr.html#match">MATCH</a> </li>
 <li> <a href="fts3.html#matchinfo">matchinfo</a> </li>
 <li> <a href="fts3.html#matchinfo-b">matchinfo b flag</a> </li>
@@ -1175,6 +1178,7 @@ Other Documentation Indexes:
 <li> <a href="queryplanner-ng.html#qpstab">QPSG</a> </li>
 <li> <a href="syntax/qualified-table-name.html">qualified-table-name</a> </li>
 <li> <a href="syntax/qualified-table-name.html">qualified-table-name syntax diagram</a> </li>
+<li> <a href="lang_with.html#rcex3">queries against graphs</a> </li>
 <li> <a href="optoverview.html#flattening">query flattener</a> </li>
 <li> <a href="uri.html#coreqp">query parameters with special meaning to SQLite</a> </li>
 <li> <a href="optoverview.html">query planner</a> </li>
@@ -1203,6 +1207,7 @@ Other Documentation Indexes:
 <li> <a href="rbu.html#fts4_tables">RBU FTS3/4 Tables</a> </li>
 <li> <a href="rbu.html#rbu_updates">RBU Update</a> </li>
 <li> <a href="rbu.html#rbu_vacuum">RBU Vacuum</a> </li>
+<li> <a href="cli.html#dotread">.read</a> </li>
 <li> <a href="wal.html#readonly">read-only WAL databases</a> </li>
 <li> <a href="pragma.html#pragma_read_uncommitted">read_uncommitted pragma</a> </li>
 <li> <a href="rtree.html#readwrite">reading and writing an rtree at the same time</a> </li>
@@ -1310,6 +1315,7 @@ Other Documentation Indexes:
 <li> <a href="syntax/simple-function-invocation.html">simple-function-invocation syntax diagram</a> </li>
 <li> <a href="syntax/simple-select-stmt.html">simple-select-stmt</a> </li>
 <li> <a href="syntax/simple-select-stmt.html">simple-select-stmt syntax diagram</a> </li>
+<li> <a href="carray.html#onearg">single-argument carray</a> </li>
 <li> <a href="optoverview.html#skipscan">skip-scan</a> </li>
 <li> <a href="optoverview.html#skipscan">skip-scan optimization</a> </li>
 <li> <a href="testing.html#slt">SLT</a> </li>
@@ -1388,6 +1394,7 @@ Other Documentation Indexes:
 <li> <a href="c3ref/busy_handler.html">sqlite3_busy_handler</a> </li>
 <li> <a href="c3ref/busy_timeout.html">sqlite3_busy_timeout</a> </li>
 <li> <a href="c3ref/cancel_auto_extension.html">sqlite3_cancel_auto_extension</a> </li>
+<li> <a href="carray.html#onearg">sqlite3_carray_bind</a> </li>
 <li> <a href="session/changegroup.html">sqlite3_changegroup</a> </li>
 <li> <a href="c3ref/changes.html">sqlite3_changes</a> </li>
 <li> <a href="session/changeset_iter.html">sqlite3_changeset_iter</a> </li>
@@ -1634,6 +1641,7 @@ Other Documentation Indexes:
 <li> <a href="c3ref/profile.html">sqlite3_trace</a> </li>
 <li> <a href="c3ref/trace_v2.html">sqlite3_trace_v2</a> </li>
 <li> <a href="c3ref/aggregate_count.html">sqlite3_transfer_bindings</a> </li>
+<li> <a href="c3ref/txn_state.html">sqlite3_txn_state</a> </li>
 <li> <a href="c3ref/int64.html">sqlite3_uint64</a> </li>
 <li> <a href="c3ref/unlock_notify.html">sqlite3_unlock_notify</a> </li>
 <li> <a href="c3ref/update_hook.html">sqlite3_update_hook</a> </li>
@@ -2051,6 +2059,7 @@ Other Documentation Indexes:
 <li> <a href="c3ref/c_abort_rollback.html">SQLITE_IOERR_CLOSE</a> </li>
 <li> <a href="c3ref/c_abort_rollback.html">SQLITE_IOERR_COMMIT_ATOMIC</a> </li>
 <li> <a href="c3ref/c_abort_rollback.html">SQLITE_IOERR_CONVPATH</a> </li>
+<li> <a href="c3ref/c_abort_rollback.html">SQLITE_IOERR_CORRUPTFS</a> </li>
 <li> <a href="c3ref/c_abort_rollback.html">SQLITE_IOERR_DATA</a> </li>
 <li> <a href="c3ref/c_abort_rollback.html">SQLITE_IOERR_DELETE</a> </li>
 <li> <a href="c3ref/c_abort_rollback.html">SQLITE_IOERR_DELETE_NOENT</a> </li>
@@ -2340,6 +2349,7 @@ Other Documentation Indexes:
 <li> <a href="c3ref/c_testctrl_always.html">SQLITE_TESTCTRL_RESERVE</a> </li>
 <li> <a href="c3ref/c_testctrl_always.html">SQLITE_TESTCTRL_RESULT_INTREAL</a> </li>
 <li> <a href="c3ref/c_testctrl_always.html">SQLITE_TESTCTRL_SCRATCHMALLOC</a> </li>
+<li> <a href="c3ref/c_testctrl_always.html">SQLITE_TESTCTRL_SEEK_COUNT</a> </li>
 <li> <a href="c3ref/c_testctrl_always.html">SQLITE_TESTCTRL_SORTER_MMAP</a> </li>
 <li> <a href="c3ref/c_testctrl_always.html">SQLITE_TESTCTRL_VDBE_COVERAGE</a> </li>
 <li> <a href="c3ref/c_blob.html">SQLITE_TEXT</a> </li>
@@ -2354,6 +2364,9 @@ Other Documentation Indexes:
 <li> <a href="c3ref/c_alter_table.html">SQLITE_TRANSACTION</a> </li>
 <li> <a href="c3ref/c_static.html">SQLITE_TRANSIENT</a> </li>
 <li> <a href="compile.html#trusted_schema">SQLITE_TRUSTED_SCHEMA</a> </li>
+<li> <a href="c3ref/c_txn_none.html#sqlitetxnnone">SQLITE_TXN_NONE</a> </li>
+<li> <a href="c3ref/c_txn_none.html#sqlitetxnread">SQLITE_TXN_READ</a> </li>
+<li> <a href="c3ref/c_txn_none.html#sqlitetxnwrite">SQLITE_TXN_WRITE</a> </li>
 <li> <a href="c3ref/int64.html">sqlite_uint64</a> </li>
 <li> <a href="compile.html#untestable">SQLITE_UNTESTABLE</a> </li>
 <li> <a href="c3ref/c_alter_table.html">SQLITE_UPDATE</a> </li>
@@ -2501,8 +2514,12 @@ Other Documentation Indexes:
 <li> <a href="tclsqlite.html#trace_v2">trace_v2 method</a> </li>
 <li> <a href="lang_transaction.html">transaction</a> </li>
 <li> <a href="tclsqlite.html#transaction">transaction method</a> </li>
+<li> <a href="c3ref/c_txn_none.html">transaction state</a> </li>
 <li> <a href="transactional.html">transactional</a> </li>
 <li> <a href="lang_select.html#crossjoin">treats the CROSS JOIN operator specially</a> </li>
+<li> <a href="lang_createtrigger.html">trigger</a> </li>
+<li> <a href="fts5.html#trigramidx">trigram indexes</a> </li>
+<li> <a href="fts5.html#trigramidx">trigram tokenizer</a> </li>
 <li> <a href="lang_corefunc.html#trim">trim() SQL function</a> </li>
 <li> <a href="lang_delete.html#truncateopt">truncate optimization</a> </li>
 <li> <a href="pragma.html#pragma_trusted_schema">trusted_schema pragma</a> </li>
@@ -2532,6 +2549,7 @@ Other Documentation Indexes:
 <li> <a href="lang_update.html">UPDATE</a> </li>
 <li> <a href="lang_update.html#upfrom">UPDATE FROM</a> </li>
 <li> <a href="cli.html#arinsup">--update option</a> </li>
+<li> <a href="lang_createtrigger.html">UPDATE trigger</a> </li>
 <li> <a href="syntax/update-stmt.html">update-stmt</a> </li>
 <li> <a href="syntax/update-stmt.html">update-stmt syntax diagram</a> </li>
 <li> <a href="syntax/update-stmt-limited.html">update-stmt-limited</a> </li>
@@ -2687,6 +2705,7 @@ Other Documentation Indexes:
 <li> <a href="releaselog/3_32_3.html">Version 3.32.3</a> </li>
 <li> <a href="releaselog/3_33_0.html">Version 3.33.0</a> </li>
 <li> <a href="releaselog/3_33_0.html">Version 3.33.0.0</a> </li>
+<li> <a href="releaselog/3_34_0.html">Version 3.34.0</a> </li>
 <li> <a href="releaselog/3_4_0.html">Version 3.4.0</a> </li>
 <li> <a href="releaselog/3_4_1.html">Version 3.4.1</a> </li>
 <li> <a href="releaselog/3_4_2.html">Version 3.4.2</a> </li>

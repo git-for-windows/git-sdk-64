@@ -387,7 +387,7 @@ struct CountCtx {
 static void countStep(sqlite3_context *context, int argc, sqlite3_value **argv){
   CountCtx *p;
   p = sqlite3_aggregate_context(context, sizeof(*p));
-  if( (argc==0 || SQLITE_NULL!=sqlite3_value_type(argv}; hd_resolve_one {0}; hd_puts {)) && p ){
+  if( (argc==0 || SQLITE_NULL!=sqlite3_value_type(argv&#91;0&#93;)) && p ){
     p->n++;
   }
 }   
@@ -457,7 +457,7 @@ returns the integer result code.  Perhaps the implementation is like this:
   int argc,
   sqlite3_value **argv
 ){
-  const char *zCmd = (const char*)sqlite3_value_text(argv}; hd_resolve_one {0}; hd_puts {);
+  const char *zCmd = (const char*)sqlite3_value_text(argv&#91;0&#93;);
   if( zCmd!=0 ){
     int rc = system(zCmd);
     sqlite3_result_int(context, rc);

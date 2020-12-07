@@ -658,8 +658,22 @@ data at all.
 A leaf page contains keys and in the case of a table b-tree each
 key has associated data.  An interior page contains
 K keys together with K+1 pointers to child b-tree pages.
-A "pointer" in an interior b-tree page is just the 31-bit integer
-page number of the child page.</p>
+A "pointer" in an interior b-tree page is just the 32-bit 
+unsigned integer page number of the child page.</p><p>
+
+</p><p>The number of keys on an interior b-tree page, K,
+is almost always at least 2 and is usually much more than 2.
+The only exception is when page 1 is an interior b-tree page.
+Page 1 has 100 fewer bytes of storage space available,
+due to the presence of the database header at the beginning of that page,
+and so sometimes (rarely) if page 1 is an interior b-tree page, it can
+end up holding just a a single key.  In all other cases, K is 2 or more.
+The upper bound on K is as many keys as will fit on the page. Large keys
+on index b-trees are split up into <a href="fileformat2.html#ovflpgs">overflow pages</a> so that no single key
+uses more than one fourth of the available storage space on the page
+and hence every internal page is able to store at least 4 keys.
+The integer keys of table b-trees are never large enough to
+require overflow, so key overflow only occurs on index b-trees.</p>
 
 <p>Define the depth
 of a leaf b-tree to be 1 and the depth of any interior b-tree to be one

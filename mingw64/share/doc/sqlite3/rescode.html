@@ -239,7 +239,7 @@ result codes, might appear in future releases of SQLite.
 <a name="extrc"></a>
 
 </p><h1 id="extended_result_code_list"><span>5. </span>Extended Result Code List</h1>
-<p>The 61 extended result codes
+<p>The 71 extended result codes
   are <a href="c3ref/c_abort_rollback.html">defined in sqlite3.h</a> and are
   listed in alphabetical order below:
 <div class='columns' style='columns: 22em auto;'>
@@ -247,31 +247,39 @@ result codes, might appear in future releases of SQLite.
 <li><a href='rescode.html#abort_rollback'>SQLITE_ABORT_ROLLBACK&nbsp;(516)</a></li>
 <li><a href='rescode.html#busy_recovery'>SQLITE_BUSY_RECOVERY&nbsp;(261)</a></li>
 <li><a href='rescode.html#busy_snapshot'>SQLITE_BUSY_SNAPSHOT&nbsp;(517)</a></li>
+<li><a href='rescode.html#busy_timeout'>SQLITE_BUSY_TIMEOUT&nbsp;(773)</a></li>
 <li><a href='rescode.html#cantopen_convpath'>SQLITE_CANTOPEN_CONVPATH&nbsp;(1038)</a></li>
 <li><a href='rescode.html#cantopen_dirtywal'>SQLITE_CANTOPEN_DIRTYWAL&nbsp;(1294)</a></li>
 <li><a href='rescode.html#cantopen_fullpath'>SQLITE_CANTOPEN_FULLPATH&nbsp;(782)</a></li>
 <li><a href='rescode.html#cantopen_isdir'>SQLITE_CANTOPEN_ISDIR&nbsp;(526)</a></li>
 <li><a href='rescode.html#cantopen_notempdir'>SQLITE_CANTOPEN_NOTEMPDIR&nbsp;(270)</a></li>
+<li><a href='rescode.html#cantopen_symlink'>SQLITE_CANTOPEN_SYMLINK&nbsp;(1550)</a></li>
 <li><a href='rescode.html#constraint_check'>SQLITE_CONSTRAINT_CHECK&nbsp;(275)</a></li>
 <li><a href='rescode.html#constraint_commithook'>SQLITE_CONSTRAINT_COMMITHOOK&nbsp;(531)</a></li>
 <li><a href='rescode.html#constraint_foreignkey'>SQLITE_CONSTRAINT_FOREIGNKEY&nbsp;(787)</a></li>
 <li><a href='rescode.html#constraint_function'>SQLITE_CONSTRAINT_FUNCTION&nbsp;(1043)</a></li>
 <li><a href='rescode.html#constraint_notnull'>SQLITE_CONSTRAINT_NOTNULL&nbsp;(1299)</a></li>
+<li><a href='rescode.html#constraint_pinned'>SQLITE_CONSTRAINT_PINNED&nbsp;(2835)</a></li>
 <li><a href='rescode.html#constraint_primarykey'>SQLITE_CONSTRAINT_PRIMARYKEY&nbsp;(1555)</a></li>
 <li><a href='rescode.html#constraint_rowid'>SQLITE_CONSTRAINT_ROWID&nbsp;(2579)</a></li>
 <li><a href='rescode.html#constraint_trigger'>SQLITE_CONSTRAINT_TRIGGER&nbsp;(1811)</a></li>
 <li><a href='rescode.html#constraint_unique'>SQLITE_CONSTRAINT_UNIQUE&nbsp;(2067)</a></li>
 <li><a href='rescode.html#constraint_vtab'>SQLITE_CONSTRAINT_VTAB&nbsp;(2323)</a></li>
+<li><a href='rescode.html#corrupt_index'>SQLITE_CORRUPT_INDEX&nbsp;(779)</a></li>
 <li><a href='rescode.html#corrupt_sequence'>SQLITE_CORRUPT_SEQUENCE&nbsp;(523)</a></li>
 <li><a href='rescode.html#corrupt_vtab'>SQLITE_CORRUPT_VTAB&nbsp;(267)</a></li>
 <li><a href='rescode.html#error_missing_collseq'>SQLITE_ERROR_MISSING_COLLSEQ&nbsp;(257)</a></li>
 <li><a href='rescode.html#error_retry'>SQLITE_ERROR_RETRY&nbsp;(513)</a></li>
 <li><a href='rescode.html#error_snapshot'>SQLITE_ERROR_SNAPSHOT&nbsp;(769)</a></li>
 <li><a href='rescode.html#ioerr_access'>SQLITE_IOERR_ACCESS&nbsp;(3338)</a></li>
+<li><a href='rescode.html#ioerr_auth'>SQLITE_IOERR_AUTH&nbsp;(7178)</a></li>
+<li><a href='rescode.html#ioerr_begin_atomic'>SQLITE_IOERR_BEGIN_ATOMIC&nbsp;(7434)</a></li>
 <li><a href='rescode.html#ioerr_blocked'>SQLITE_IOERR_BLOCKED&nbsp;(2826)</a></li>
 <li><a href='rescode.html#ioerr_checkreservedlock'>SQLITE_IOERR_CHECKRESERVEDLOCK&nbsp;(3594)</a></li>
 <li><a href='rescode.html#ioerr_close'>SQLITE_IOERR_CLOSE&nbsp;(4106)</a></li>
+<li><a href='rescode.html#ioerr_commit_atomic'>SQLITE_IOERR_COMMIT_ATOMIC&nbsp;(7690)</a></li>
 <li><a href='rescode.html#ioerr_convpath'>SQLITE_IOERR_CONVPATH&nbsp;(6666)</a></li>
+<li><a href='rescode.html#ioerr_data'>SQLITE_IOERR_DATA&nbsp;(8202)</a></li>
 <li><a href='rescode.html#ioerr_delete'>SQLITE_IOERR_DELETE&nbsp;(2570)</a></li>
 <li><a href='rescode.html#ioerr_delete_noent'>SQLITE_IOERR_DELETE_NOENT&nbsp;(5898)</a></li>
 <li><a href='rescode.html#ioerr_dir_close'>SQLITE_IOERR_DIR_CLOSE&nbsp;(4362)</a></li>
@@ -284,6 +292,7 @@ result codes, might appear in future releases of SQLite.
 <li><a href='rescode.html#ioerr_nomem'>SQLITE_IOERR_NOMEM&nbsp;(3082)</a></li>
 <li><a href='rescode.html#ioerr_rdlock'>SQLITE_IOERR_RDLOCK&nbsp;(2314)</a></li>
 <li><a href='rescode.html#ioerr_read'>SQLITE_IOERR_READ&nbsp;(266)</a></li>
+<li><a href='rescode.html#ioerr_rollback_atomic'>SQLITE_IOERR_ROLLBACK_ATOMIC&nbsp;(7946)</a></li>
 <li><a href='rescode.html#ioerr_seek'>SQLITE_IOERR_SEEK&nbsp;(5642)</a></li>
 <li><a href='rescode.html#ioerr_shmlock'>SQLITE_IOERR_SHMLOCK&nbsp;(5130)</a></li>
 <li><a href='rescode.html#ioerr_shmmap'>SQLITE_IOERR_SHMMAP&nbsp;(5386)</a></li>
@@ -292,6 +301,7 @@ result codes, might appear in future releases of SQLite.
 <li><a href='rescode.html#ioerr_short_read'>SQLITE_IOERR_SHORT_READ&nbsp;(522)</a></li>
 <li><a href='rescode.html#ioerr_truncate'>SQLITE_IOERR_TRUNCATE&nbsp;(1546)</a></li>
 <li><a href='rescode.html#ioerr_unlock'>SQLITE_IOERR_UNLOCK&nbsp;(2058)</a></li>
+<li><a href='rescode.html#ioerr_vnode'>SQLITE_IOERR_VNODE&nbsp;(6922)</a></li>
 <li><a href='rescode.html#ioerr_write'>SQLITE_IOERR_WRITE&nbsp;(778)</a></li>
 <li><a href='rescode.html#locked_sharedcache'>SQLITE_LOCKED_SHAREDCACHE&nbsp;(262)</a></li>
 <li><a href='rescode.html#locked_vtab'>SQLITE_LOCKED_VTAB&nbsp;(518)</a></li>
@@ -310,7 +320,7 @@ result codes, might appear in future releases of SQLite.
 
 </p><h1 id="result_code_meanings"><span>6. </span>Result Code Meanings</h1>
 <p>
-The meanings for all 92
+The meanings for all 102
 result code values are shown below,
 in numeric order.
 
@@ -772,24 +782,14 @@ in numeric order.
 <a name="locked_sharedcache"></a>
 <h3>(262) SQLITE_LOCKED_SHAREDCACHE</h3>
 <p>
-  The SQLITE_LOCKED_SHAREDCACHE error code is
-  an <a href="rescode.html#pve">extended error code</a> for <a href="rescode.html#locked">SQLITE_LOCKED</a>
-  indicating that the locking conflict has occurred due to contention
-  with a different <a href="c3ref/sqlite3.html">database connection</a> that happens to hold a 
-  <a href="sharedcache.html">shared cache</a> with the database connection to which the error was
-  returned.  For example, if the other database connection is holding
-  an <a href="lockingv3.html#excl_lock">exclusive lock</a> on the database, then the database connection
-  that receives this error will be unable to read or write any part
-  of the database file unless it has the <a href="pragma.html#pragma_read_uncommitted">read_uncommitted pragma</a>
-  enabled.
-  <p>
-  The SQLITE_LOCKED_SHARECACHE error code works very much like the
-  <a href="rescode.html#busy">SQLITE_BUSY</a> error code except that SQLITE_LOCKED_SHARECACHE is
-  for separate database connections that share a cache whereas 
-  SQLITE_BUSY is for the much more common case of separate database
-  connections that do not share the same cache.  Also, the
-  <a href="c3ref/busy_handler.html">sqlite3_busy_handler()</a> and <a href="c3ref/busy_timeout.html">sqlite3_busy_timeout()</a> interfaces
-  do not help in resolving SQLITE_LOCKED_SHAREDCACHE conflicts.
+  The SQLITE_LOCKED_SHAREDCACHE result code indicates that access to
+  an SQLite data record is blocked by another database connection that
+  is using the same record in <a href="sharedcache.html">shared cache mode</a>.  When two or more
+  database connections share the same cache and one of the connections is
+  in the middle of modifying a record in that cache, then other connections
+  are blocked from accessing that data while the modifications are on-going
+  in order to prevent the readers from seeing a corrupt or partially
+  completed change.
 
 
 <!--------------------------------------------------------------->
@@ -1000,6 +1000,18 @@ in numeric order.
 
 
 <!--------------------------------------------------------------->
+<a name="busy_timeout"></a>
+<h3>(773) SQLITE_BUSY_TIMEOUT</h3>
+<p>
+  The SQLITE_BUSY_TIMEOUT error code indicates that a blocking Posix
+  advisory file lock request in the VFS layer failed due to a timeout.
+  Blocking Posix advisory locks are only
+  available as a proprietary SQLite extension and even then are only
+  supported if SQLite is compiled with the SQLITE_EANBLE_SETLK_TIMEOUT
+  compile-time option.
+
+
+<!--------------------------------------------------------------->
 <a name="readonly_rollback"></a>
 <h3>(776) SQLITE_READONLY_ROLLBACK</h3>
 <p>
@@ -1019,6 +1031,17 @@ in numeric order.
   from a hardware malfunction or because a filesystem came unmounted
   while the file was open.  This error should not occur if the filesystem
   is full as there is a separate error code (SQLITE_FULL) for that purpose.
+
+
+<!--------------------------------------------------------------->
+<a name="corrupt_index"></a>
+<h3>(779) SQLITE_CORRUPT_INDEX</h3>
+<p>
+  The SQLITE_CORRUPT_INDEX result code means that SQLite detected
+  an entry is or was missing from an index.  This is a special case of
+  the <a href="rescode.html#corrupt">SQLITE_CORRUPT</a> error code that suggests that the problem might
+  be resolved by running the <a href="lang_reindex.html">REINDEX</a> command, assuming no other
+  problems exist elsewhere in the database file.
 
 
 <!--------------------------------------------------------------->
@@ -1150,6 +1173,16 @@ in numeric order.
 
 
 <!--------------------------------------------------------------->
+<a name="cantopen_symlink"></a>
+<h3>(1550) SQLITE_CANTOPEN_SYMLINK</h3>
+<p>
+  The SQLITE_CANTOPEN_SYMLINK result code is returned by the
+  <a href="c3ref/open.html">sqlite3_open()</a> interface and its siblings when the
+  <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_NOFOLLOW</a> flag is used and the database file is
+  a symbolic link.
+
+
+<!--------------------------------------------------------------->
 <a name="constraint_primarykey"></a>
 <h3>(1555) SQLITE_CONSTRAINT_PRIMARYKEY</h3>
 <p>
@@ -1238,6 +1271,16 @@ in numeric order.
 <h3>(2826) SQLITE_IOERR_BLOCKED</h3>
 <p>
   The SQLITE_IOERR_BLOCKED error code is no longer used.
+
+
+<!--------------------------------------------------------------->
+<a name="constraint_pinned"></a>
+<h3>(2835) SQLITE_CONSTRAINT_PINNED</h3>
+<p>
+  The SQLITE_CONSTRAINT_PINNED error code
+  is an <a href="rescode.html#pve">extended error code</a>
+  for <a href="rescode.html#constraint">SQLITE_CONSTRAINT</a> indicating that an <a href="lang_createtrigger.html">UPDATE trigger</a> attempted
+  do delete the row that was being updated in the middle of the update.
 
 
 <!--------------------------------------------------------------->
@@ -1387,6 +1430,64 @@ in numeric order.
   for <a href="rescode.html#ioerr">SQLITE_IOERR</a> used only by Cygwin <a href="vfs.html">VFS</a> and indicating that
   the cygwin_conv_path() system call failed.
   See also: <a href="rescode.html#cantopen_convpath">SQLITE_CANTOPEN_CONVPATH</a>
+
+
+<!--------------------------------------------------------------->
+<a name="ioerr_vnode"></a>
+<h3>(6922) SQLITE_IOERR_VNODE</h3>
+<p>
+  The SQLITE_IOERR_VNODE error code is a code reserved for use
+  by extensions.  It is not used by the SQLite core.
+
+
+<!--------------------------------------------------------------->
+<a name="ioerr_auth"></a>
+<h3>(7178) SQLITE_IOERR_AUTH</h3>
+<p>
+  The SQLITE_IOERR_AUTH error code is a code reserved for use
+  by extensions.  It is not used by the SQLite core.
+
+
+<!--------------------------------------------------------------->
+<a name="ioerr_begin_atomic"></a>
+<h3>(7434) SQLITE_IOERR_BEGIN_ATOMIC</h3>
+<p>
+  The SQLITE_IOERR_BEGIN_ATOMIC error code indicates that the
+  underlying operating system reported and error on the
+  <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlbeginatomicwrite">SQLITE_FCNTL_BEGIN_ATOMIC_WRITE</a> file-control.  This only comes
+  up when <a href="compile.html#enable_atomic_write">SQLITE_ENABLE_ATOMIC_WRITE</a> is enabled and the database
+  is hosted on a filesystem that supports atomic writes.
+
+
+<!--------------------------------------------------------------->
+<a name="ioerr_commit_atomic"></a>
+<h3>(7690) SQLITE_IOERR_COMMIT_ATOMIC</h3>
+<p>
+  The SQLITE_IOERR_COMMIT_ATOMIC error code indicates that the
+  underlying operating system reported and error on the
+  <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlcommitatomicwrite">SQLITE_FCNTL_COMMIT_ATOMIC_WRITE</a> file-control.  This only comes
+  up when <a href="compile.html#enable_atomic_write">SQLITE_ENABLE_ATOMIC_WRITE</a> is enabled and the database
+  is hosted on a filesystem that supports atomic writes.
+
+
+<!--------------------------------------------------------------->
+<a name="ioerr_rollback_atomic"></a>
+<h3>(7946) SQLITE_IOERR_ROLLBACK_ATOMIC</h3>
+<p>
+  The SQLITE_IOERR_ROLLBACK_ATOMIC error code indicates that the
+  underlying operating system reported and error on the
+  <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlrollbackatomicwrite">SQLITE_FCNTL_ROLLBACK_ATOMIC_WRITE</a> file-control.  This only comes
+  up when <a href="compile.html#enable_atomic_write">SQLITE_ENABLE_ATOMIC_WRITE</a> is enabled and the database
+  is hosted on a filesystem that supports atomic writes.
+
+
+<!--------------------------------------------------------------->
+<a name="ioerr_data"></a>
+<h3>(8202) SQLITE_IOERR_DATA</h3>
+<p>
+  The SQLITE_IOERR_DATA error code is an <a href="rescode.html#pve">extended error code</a>
+  for <a href="rescode.html#ioerr">SQLITE_IOERR</a> used only by <a href="cksumvfs.html">checksum VFS shim</a> to indicate that
+  the checksum on a page of the database file is incorrect.
 
 
 

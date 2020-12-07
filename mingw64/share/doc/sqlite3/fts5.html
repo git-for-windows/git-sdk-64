@@ -120,6 +120,7 @@ Table Of Contents
 <div class="fancy-toc3"><a href="#unicode61_tokenizer">4.3.1. Unicode61 Tokenizer</a></div>
 <div class="fancy-toc3"><a href="#ascii_tokenizer">4.3.2. Ascii Tokenizer</a></div>
 <div class="fancy-toc3"><a href="#porter_tokenizer">4.3.3. Porter Tokenizer</a></div>
+<div class="fancy-toc3"><a href="#the_experimental_trigram_tokenizer">4.3.4. The Experimental Trigram Tokenizer</a></div>
 <div class="fancy-toc2"><a href="#external_content_and_contentless_tables">4.4. External Content and Contentless Tables</a></div>
 <div class="fancy-toc3"><a href="#contentless_tables">4.4.1. Contentless Tables</a></div>
 <div class="fancy-toc3"><a href="#external_content_tables">4.4.2. External Content Tables</a></div>
@@ -868,6 +869,63 @@ CREATE VIRTUAL TABLE t1 USING fts5(x, tokenize = 'porter unicode61');
 CREATE VIRTUAL TABLE t1 USING fts5(x, tokenize = 'porter unicode61 remove_diacritics 1');
 </pre></div>
 
+<a name="trigramidx"></a>
+
+<h3 id="the_experimental_trigram_tokenizer"><span>4.3.4. </span>The Experimental Trigram Tokenizer</h3>
+
+<p>
+The <b>experimental</b> trigram tokenizer extends FTS5 to support substring
+matching in general, instead of the usual token matching. When using the
+trigram tokenizer, a query or phrase token may match any sequence of characters
+within a row, not just a complete token. For example:
+
+</p><div class="codeblock"><pre>CREATE VIRTUAL TABLE tri USING fts5(a, tokenize="trigram");
+INSERT INTO tri VALUES('abcdefghij KLMNOPQRST uvwxyz');
+
+<i>-- The following queries all match the single row in the table</i>
+SELECT * FROM tri('cdefg');
+SELECT * FROM tri('cdefg AND pqr');
+SELECT * FROM tri('"hij klm" NOT stuv');
+</pre></div>
+
+<p>
+The trigram tokenizer supports a single option - "case_sensitive". With the default 
+value, 0, matching is case-insensitive. If this value is set to 1, then all matches
+are case-sensitive.
+
+</p><div class="codeblock"><pre><i>-- A case-sensitive trigram index</i>
+CREATE VIRTUAL TABLE tri USING fts5(a, tokenize="trigram case_sensitive 1");
+</pre></div>
+
+<p>
+FTS5 tables that use the trigram tokenizer also support indexed GLOB and LIKE
+pattern matching. For example:
+
+</p><div class="codeblock"><pre>SELECT * FROM tri WHERE a LIKE '%cdefg%';
+SELECT * FROM tri WHERE a GLOB '*ij klm*xyz';
+</pre></div>
+
+<p>
+If an FTS5 trigram tokenizer is created with the case_sensitive option set to 1,
+it may only index GLOB queries, not LIKE.
+
+</p><p>
+Notes:
+
+</p><ul>
+  <li> Substrings consisting of fewer than 3 unicode characters do not match any
+       rows when used with a full-text query. If a LIKE or GLOB pattern does not
+       contain at least one sequence of non-wildcard unicode characters, FTS5
+       falls back to a linear scan of the entire table.
+
+  </li><li> If the FTS5 table is created with the detail=none or detail=column option
+       specified, full-text queries may not contain any tokens longer than 3
+       unicode characters. LIKE and GLOB pattern matching may be slightly slower,
+       but still works. If the index is to be used only for LIKE and/or GLOB
+       pattern matching, these options are worth experimenting with to reduce
+       the index size.
+</li></ul>
+
 <a name="external_content_and_contentless_tables"></a>
 <h2 tags="FTS5 content option" id="external_content_and_contentless_tables"><span>4.4. </span>External Content and Contentless Tables</h2>
 
@@ -1450,20 +1508,31 @@ deletes all entries from the full-text index.
 
 <h2 id="the_integrity_check_command"><span>6.5. </span>The 'integrity-check' Command</h2>
 
-<p> This command is used to verify that the full-text index is consistent 
-with the contents of the FTS5 table or <a href="fts5.html#external_content_tables">content 
-table</a>. It is not available with <a href="fts5.html#contentless_tables">contentless tables</a>.
+<p> This command is used to verify that the full-text index is internally
+consistent, and, optionally, that it is consistent with any 
+<a href="fts5.html#external_content_tables">external content</a> table.
 
 </p><p>The integrity-check command is invoked by inserting the text value
 'integrity-check' into the special column with the same name as the FTS5
-table. For example:
+table. If a value is supplied for the "rank" column, it must be either
+0 or 1. For example:
 
 </p><div class="codeblock"><pre>INSERT INTO ft(ft) VALUES('integrity-check');
+INSERT INTO ft(ft, rank) VALUES('integrity-check', 0);
+INSERT INTO ft(ft, rank) VALUES('integrity-check', 1);
 </pre></div>
 
-<p>If the full-text index is consistent with the contents of the table, the
-INSERT used to invoke the integrity-check command succeeds. Or, if any
-discrepancy is found, it fails with an <a href="rescode.html#corrupt_vtab">SQLITE_CORRUPT_VTAB</a> error.
+<p>The three forms above are equivalent for all FTS tables that are
+not external content tables. They check that the index data structures are 
+not corrupt, and, if the FTS table is not contentless, that the contents of
+the index match the contents of the table itself.
+
+</p><p>For an external content table, the contents of the index are only
+compared to the contents of the external content table if the value 
+specified for the rank column is 1.
+
+</p><p>In all cases, if if any discrepancies are found, the command fails 
+with an <a href="rescode.html#corrupt_vtab">SQLITE_CORRUPT_VTAB</a> error.
 
 </p><a name="the_merge_command"></a>
 <h2 tags="FTS5 merge command" id="the_merge_command"><span>6.6. </span>The 'merge' Command</h2>

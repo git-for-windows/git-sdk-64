@@ -103,10 +103,10 @@ The Carray() Table-Valued Function
 
 <h1 id="overview"><span>1. </span>Overview</h1>
 
-<p>Carray($PTR,$N) is a <a href="vtab.html#tabfunc2">table-valued function</a> with a single column (named
+<p>Carray() is a <a href="vtab.html#tabfunc2">table-valued function</a> with a single column (named
 "value") and zero or more rows.
 The "value" of each row in the carray() is taken from a C-language array
-that is $N elements long.  $PTR is a pointer to the beginning of the array.
+supplied by the application via <a href="c3ref/bind_blob.html">parameter binding</a>.
 In this way, the carray() function provides a convenient mechanism to
 bind C-language arrays to SQL queries.
 
@@ -114,13 +114,20 @@ bind C-language arrays to SQL queries.
 
 <p>The carray() function is not compiled into SQLite by default.
 It is available as a <a href="loadext.html">loadable extension</a> in the
-<a href="https://www.sqlite.org/src/artifact?ci=trunk&filename=ext/misc/carray.c">ext/misc/carray.c</a>
+<a href="https://www.sqlite.org/src/file/ext/misc/carray.c">ext/misc/carray.c</a>
 source file.
+
+</p><p>The carray() function was first added to SQLite in version 3.14
+(2016-08-08).  The sqlite3_carray_bind() interface and the
+single-argument variant of carray() was added in SQLite version 3.34.0
+(2020-12-01).
 
 </p><h1 id="details"><span>3. </span>Details</h1>
 
-<p>The carray() function takes two or three arguments.
-The first argument is a pointer to an array.  Since pointer values cannot
+<p>The carray() function takes one, two, or three arguments.
+
+</p><p>For the two- and three-argument versions of carray(),
+the first argument is a pointer to an array.  Since pointer values cannot
 be specified directly in SQL, the first argument must be a <a href="lang_expr.html#varparam">parameter</a> that
 is bound to a pointer value using the <a href="c3ref/bind_blob.html">sqlite3_bind_pointer()</a> interface
 using a pointer-type of "carray".
@@ -137,7 +144,63 @@ in the C-language array.  Allowed values for the third argument are:
 
 <p>The default datatype is 'int32'.
 
-</p><p>The carray() function can be used in the FROM clause of a query.
+<a name="onearg"></a>
+
+</p><h2 id="single_argument_carray"><span>3.1. </span>Single-Argument CARRAY</h2>
+
+<p>The single-argument form of carray() requires a special C-language
+interface named "sqlite3_carray_bind()" in order to attach values:
+
+</p><blockquote><pre>
+  int sqlite3_carray_bind(
+    sqlite3_stmt *pStmt,         /* Statement containing the CARRAY */
+    int idx,                     /* Parameter number for CARRAY argument */
+    void *aData,                 /* Data array */
+    int nData,                   /* Number of entries in the array */
+    int mFlags,                  /* Datatype flag */
+    void (*xDestroy)(void*)      /* Destructor for aData */
+  );
+</pre></blockquote>
+
+<p>The mFlags parameter to sqlite3_carray_bind() must be one of:
+
+</p><blockquote><pre>
+  #define CARRAY_INT32   0
+  #define CARRAY_INT64   1
+  #define CARRAY_DOUBLE  2
+  #define CARRAY_TEXT    3
+</pre></blockquote>
+
+<p>Higher order bits of the mFlags parameter must all be zero for now,
+though they may be used in future enhancements.  The definitions for the
+constants that specify the datatype and a prototype for the
+sqlite3_carray_bind() function are both available in the auxiliary
+header file
+<a href="https://www.sqlite.org/src/file/ext/misc/carray.h">ext/misc/carray.h</a>.
+
+</p><p>The xDestroy argument to sqlite3_carray_bind() routine is a pointer
+to a function that frees the input array.  SQLite will invoke this
+function after it has finished with the data.  The xDestroy argument
+may optionally be one of the following constants defined in
+"sqlite3.h":
+
+</p><ul>
+<li><p>
+     <a href="c3ref/c_static.html">SQLITE_STATIC</a> &rarr;  This means that the application that invokes
+     sqlite3_carray_bind() maintains ownership of the data array and that
+     the application promises SQLite that it will not change or deallocate
+     the data until after the prepared statement is finialized.
+
+</p></li><li><p>
+     <a href="c3ref/c_static.html">SQLITE_TRANSIENT</a> &rarr;  This special value instructs SQLite to make
+     its own private copy of the data before the 
+     sqlite3_carray_bind() interface returns.
+</p></li></ul>
+
+
+<h1 id="usage"><span>4. </span>Usage</h1>
+
+<p>The carray() function can be used in the FROM clause of a query.
 For example, to query two entries from the OBJ table using rowids
 taken from a C-language array at address $PTR.
 

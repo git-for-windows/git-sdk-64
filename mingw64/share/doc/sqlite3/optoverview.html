@@ -1134,14 +1134,12 @@ SELECT z FROM ex3 WHERE w=5 AND x BETWEEN 1 AND 100 AND y BETWEEN 1 AND 100;
   the outer query that refer to the result set of the subquery.
   For example:
 
-</p><div class="codeblock"><pre>  SELECT t1.a, t2.b FROM t2, (SELECT x+y AS a FROM t1 WHERE z<100) WHERE="1" a="1">5
-</100)>
+</p><div class="codeblock"><pre>SELECT t1.a, t2.b FROM t2, (SELECT x+y AS a FROM t1 WHERE z&lt;100) WHERE a&gt;5
 </pre></div>
 <p>
   Would be rewritten using query flattening as:
 
-</p><div class="codeblock"><pre>  SELECT t1.x+t1.y AS a, t2.b FROM t2, t1 WHERE z<100 AND="1" a="1">5
-</100>
+</p><div class="codeblock"><pre>SELECT t1.x+t1.y AS a, t2.b FROM t2, t1 WHERE z&lt;100 AND a&gt;5
 </pre></div>
 <p>
   There is a long list of conditions that must all be met in order for

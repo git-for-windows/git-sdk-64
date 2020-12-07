@@ -294,6 +294,9 @@ literals are not considered well-formed and are stored as TEXT.
 (This is done for historical compatibility with versions of SQLite
 prior to <a href="releaselog/3_8_6.html">version 3.8.6</a> 2014-08-15 where hexadecimal integer
 literals were first introduced into SQLite.)
+If a floating point value that can be represented exactly as an integer
+is inserted into a column with NUMERIC affinity, the value is
+converted into an integer.
 No attempt is made to convert NULL or BLOB values.</p>
 
 <p>A string might look like a floating-point literal with
@@ -305,7 +308,9 @@ point value 300000.0.</p>
 
 <p>A column that uses INTEGER affinity behaves the same as a column
 with NUMERIC affinity.  The difference between INTEGER and NUMERIC affinity
-is only evident in a <a href="lang_expr.html#castexpr">CAST expression</a>.</p>
+is only evident in a <a href="lang_expr.html#castexpr">CAST expression</a>:  The expression
+"CAST(4.0 AS INT)" returns an integer 4, whereas
+"CAST(4.0 AS NUMERIC)" leaves the value as a floating-point 4.0.</p>
 
 <p>A column with REAL affinity behaves like a column with NUMERIC
 affinity except that it forces integer values into floating point
@@ -494,9 +499,15 @@ the compound.
 However, it is indeterminate which of the SELECT statements will 
 be used to determine affinity.
 Different constituent SELECT statements might be used to determine 
-affinity at different times during query evaluation.
-Best practice is to avoid mixing affinities in a compound SELECT.
-
+affinity at different times during query evaluation.  The choice
+might vary across different versions of SQLite.  The choice might
+change between one query and the next in the same version of SQLite.
+The choice might be different at different times within the same
+query.  Hence, you can never be sure what affinity will be used
+for columns of a compound SELECT that have different affinities in
+the constituent subqueries.
+Best practice is to avoid mixing affinities in a compound SELECT
+if you care about the datatype of the result.
 
 </p><h2 id="column_affinity_behavior_example"><span>3.4. </span>Column Affinity Behavior Example</h2>
 

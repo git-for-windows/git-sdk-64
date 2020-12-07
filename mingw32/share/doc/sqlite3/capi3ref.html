@@ -418,6 +418,7 @@ be removed in some future release.</li>
 <li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_CLOSE</a></li>
 <li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_COMMIT_ATOMIC</a></li>
 <li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_CONVPATH</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_CORRUPTFS</a></li>
 <li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_DATA</a></li>
 <li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_DELETE</a></li>
 <li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_IOERR_DELETE_NOENT</a></li>
@@ -597,6 +598,7 @@ be removed in some future release.</li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_RESERVE</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_RESULT_INTREAL</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_SCRATCHMALLOC</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_SEEK_COUNT</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_SORTER_MMAP</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_VDBE_COVERAGE</a></li>
 <li><a href='#SQLITE_BLOB'>SQLITE_TEXT</a></li>
@@ -608,6 +610,9 @@ be removed in some future release.</li>
 <li><a href='#sqlitetracestmt'>SQLITE_TRACE_STMT</a></li>
 <li><a href='#SQLITE_ALTER_TABLE'>SQLITE_TRANSACTION</a></li>
 <li><a href='#SQLITE_STATIC'>SQLITE_TRANSIENT</a></li>
+<li><a href='#sqlitetxnnone'>SQLITE_TXN_NONE</a></li>
+<li><a href='#sqlitetxnread'>SQLITE_TXN_READ</a></li>
+<li><a href='#sqlitetxnwrite'>SQLITE_TXN_WRITE</a></li>
 <li><a href='#SQLITE_ALTER_TABLE'>SQLITE_UPDATE</a></li>
 <li><a href='#SQLITE_ANY'>SQLITE_UTF16</a></li>
 <li><a href='#SQLITE_ANY'>SQLITE_UTF16BE</a></li>
@@ -631,7 +636,7 @@ be removed in some future release.</li>
 <p>Note: Functions marked with "<small><i>(exp)</i></small>"
 are <a href="capi3ref.html">experimental</a> and functions whose names are
 <s>struck through</s> are <a href="capi3ref.html">deprecated</a>.</p>
-<!-- number of functions: 272 -->
+<!-- number of functions: 273 -->
 <!-- number of deprecated functions: 7 -->
 <!-- number of experimental functions: 0 -->
 <div class='columns' style='columns: 15em auto;'>
@@ -873,6 +878,7 @@ are <a href="capi3ref.html">experimental</a> and functions whose names are
 <li><a href='#sqlite3_profile'>sqlite3_trace</a></li>
 <li><a href='#sqlite3_trace_v2'>sqlite3_trace_v2</a></li>
 <li><s>sqlite3_transfer_bindings</s></li>
+<li><a href='#sqlite3_txn_state'>sqlite3_txn_state</a></li>
 <li><a href='#sqlite3_unlock_notify'>sqlite3_unlock_notify</a></li>
 <li><a href='#sqlite3_update_hook'>sqlite3_update_hook</a></li>
 <li><a href='#sqlite3_uri_boolean'>sqlite3_uri_boolean</a></li>
@@ -995,7 +1001,8 @@ pointer through into calls to <a href="#sqlite3_result_blob">sqlite3_result()</a
 <a href="#sqlite3_aggregate_context">sqlite3_aggregate_context()</a>, <a href="#sqlite3_user_data">sqlite3_user_data()</a>,
 <a href="#sqlite3_context_db_handle">sqlite3_context_db_handle()</a>, <a href="#sqlite3_get_auxdata">sqlite3_get_auxdata()</a>,
 and/or <a href="#sqlite3_get_auxdata">sqlite3_set_auxdata()</a>.
-</p><div class='columns' style='columns: 17em auto;'>
+</p><p>26 Methods:
+<div class='columns' style='columns: 17em auto;'>
 <ul style='padding-top:0;'>
 <li><a href='#sqlite3_aggregate_context'>sqlite3_aggregate_context</a></li>
 <li><a href='#sqlite3_context_db_handle'>sqlite3_context_db_handle</a></li>
@@ -3983,6 +3990,24 @@ The P and X arguments are pointers whose meanings depend on T.</p>
 <p>The sqlite3_trace_v2() interface is intended to replace the legacy
 interfaces <a href="#sqlite3_profile">sqlite3_trace()</a> and <a href="#sqlite3_profile">sqlite3_profile()</a>, both of which
 are deprecated.
+</p><hr><a name="sqlite3_txn_state"></a>
+<h2>Determine the transaction state of a database</h2>
+</div>
+<blockquote><pre>
+int sqlite3_txn_state(sqlite3*,const char *zSchema);
+</pre></blockquote>
+<p>
+The sqlite3_txn_state(D,S) interface returns the current
+<a href="#SQLITE_TXN_NONE">transaction state</a> of schema S in database connection D.  If S is NULL,
+then the highest transaction state of any schema on database connection D
+is returned.  Transaction states are (in order of lowest to highest):
+<ol>
+<li value="0"> SQLITE_TXN_NONE
+<li value="1"> SQLITE_TXN_READ
+<li value="2"> SQLITE_TXN_WRITE
+</ol>
+If the S argument to sqlite3_txn_state(D,S) is not the name of
+a valid schema, then -1 is returned.
 </p><hr><a name="sqlite3_unlock_notify"></a>
 <h2>Unlock Notification</h2>
 </div>
@@ -4231,10 +4256,11 @@ int sqlite3_vtab_nochange(sqlite3_context*);
 </pre></blockquote>
 <p>
 If the sqlite3_vtab_nochange(X) routine is called within the <a href="vtab.html#xcolumn">xColumn</a>
-method of a <a href="vtab.html">virtual table</a>, then it returns true if and only if the
+method of a <a href="vtab.html">virtual table</a>, then it might return true if the
 column is being fetched as part of an UPDATE operation during which the
-column value will not change.  Applications might use this to substitute
-a return value that is less expensive to compute and that the corresponding
+column value will not change.  The virtual table implementation can use
+this hint as permission to substitute a return value that is less
+expensive to compute and that the corresponding
 <a href="vtab.html#xupdate">xUpdate</a> method understands as a "no-change" value.</p>
 
 <p>If the <a href="vtab.html#xcolumn">xColumn</a> method calls sqlite3_vtab_nochange() and finds that
@@ -4242,7 +4268,13 @@ the column is not changed by the UPDATE statement, then the xColumn
 method can optionally return without setting a result, without calling
 any of the <a href="#sqlite3_result_blob">sqlite3_result_xxxxx() interfaces</a>.
 In that case, <a href="#sqlite3_value_blob">sqlite3_value_nochange(X)</a> will return true for the
-same column in the <a href="vtab.html#xupdate">xUpdate</a> method.
+same column in the <a href="vtab.html#xupdate">xUpdate</a> method.</p>
+
+<p>The sqlite3_vtab_nochange() routine is an optimization.  Virtual table
+implementations should continue to give a correct answer even if the
+sqlite3_vtab_nochange() interface were to always return false.  In the
+current implementation, the sqlite3_vtab_nochange() interface does always
+returns false for the enhanced <a href="lang_update.html#upfrom">UPDATE FROM</a> statement.
 </p><hr><a name="sqlite3_vtab_on_conflict"></a>
 <h2>Determine The Virtual Table Conflict Policy</h2>
 </div>
@@ -4473,9 +4505,9 @@ by the reader until a new read transaction is started.</p>
 version of the database file so that it is possible to later open a new read
 transaction that sees that historical version of the database rather than
 the most recent version.
-</p><p>Constructor: <a href="#sqlite3_snapshot_get">sqlite3_snapshot_get()</a></p>
-<p>Destructor: <a href="#sqlite3_snapshot_free">sqlite3_snapshot_free()</a></p>
-<p>Methods:
+</p><p>1 Constructor: <a href="#sqlite3_snapshot_get">sqlite3_snapshot_get()</a></p>
+<p>1 Destructor: <a href="#sqlite3_snapshot_free">sqlite3_snapshot_free()</a></p>
+<p>3 Methods:
  <a href="#sqlite3_snapshot_cmp">sqlite3_snapshot_cmp()</a>,
 <a href="#sqlite3_snapshot_open">sqlite3_snapshot_open()</a>,
 <a href="#sqlite3_snapshot_recover">sqlite3_snapshot_recover()</a></p>
@@ -4563,6 +4595,7 @@ here in order to indicate success or failure.</p>
 #define SQLITE_IOERR_COMMIT_ATOMIC     (SQLITE_IOERR | (30&lt;&lt;8))
 #define SQLITE_IOERR_ROLLBACK_ATOMIC   (SQLITE_IOERR | (31&lt;&lt;8))
 #define SQLITE_IOERR_DATA              (SQLITE_IOERR | (32&lt;&lt;8))
+#define SQLITE_IOERR_CORRUPTFS         (SQLITE_IOERR | (33&lt;&lt;8))
 #define SQLITE_LOCKED_SHAREDCACHE      (SQLITE_LOCKED |  (1&lt;&lt;8))
 #define SQLITE_LOCKED_VTAB             (SQLITE_LOCKED |  (2&lt;&lt;8))
 #define SQLITE_BUSY_RECOVERY           (SQLITE_BUSY   |  (1&lt;&lt;8))
@@ -6286,9 +6319,9 @@ and EXCLUSIVE.
 <h2>Compile-Time Library Version Numbers</h2>
 </div>
 <blockquote><pre>
-#define SQLITE_VERSION        "3.33.0"
-#define SQLITE_VERSION_NUMBER 3033000
-#define SQLITE_SOURCE_ID      "2020-08-14 13:23:32 fca8dc8b578f215a969cd899336378966156154710873e68b3d9ac5881b0ff3f"
+#define SQLITE_VERSION        "3.34.0"
+#define SQLITE_VERSION_NUMBER 3034000
+#define SQLITE_SOURCE_ID      "2020-12-01 16:14:00 a26b6597e3ae272231b96f9982c3bcc17ddec2f2b6eb4df06a224b91089fed5b"
 </pre></blockquote>
 <p>
 The <a href="#SQLITE_SOURCE_ID">SQLITE_VERSION</a> C preprocessor macro in the sqlite3.h header
@@ -6487,7 +6520,8 @@ cares about the difference.)
 #define SQLITE_TESTCTRL_RESULT_INTREAL          27
 #define SQLITE_TESTCTRL_PRNG_SEED               28
 #define SQLITE_TESTCTRL_EXTRA_SCHEMA_CHECKS     29
-#define SQLITE_TESTCTRL_LAST                    29  /* Largest TESTCTRL */
+#define SQLITE_TESTCTRL_SEEK_COUNT              30
+#define SQLITE_TESTCTRL_LAST                    30  /* Largest TESTCTRL */
 </pre></blockquote>
 <p>
 These constants are the valid operation code parameters used
@@ -6558,6 +6592,42 @@ connection closes.
 The P argument is a pointer to the <a href="#sqlite3">database connection</a> object
 and the X argument is unused.
 </dl>
+</p><hr><a name="SQLITE_TXN_NONE"></a>
+<h2>Allowed return values from [sqlite3_txn_state()]</h2>
+</div>
+<blockquote><pre>
+#define SQLITE_TXN_NONE  0
+#define SQLITE_TXN_READ  1
+#define SQLITE_TXN_WRITE 2
+</pre></blockquote>
+<p>
+These constants define the current transaction state of a database file.
+The <a href="#sqlite3_txn_state">sqlite3_txn_state(D,S)</a> interface returns one of these
+constants in order to describe the transaction state of schema S
+in <a href="#sqlite3">database connection</a> D.</p>
+
+<p><dl>
+<a name="sqlitetxnnone"></a>
+ <dt>SQLITE_TXN_NONE</dt>
+<dd>The SQLITE_TXN_NONE state means that no transaction is currently
+pending.</dd></p>
+
+<p><a name="sqlitetxnread"></a>
+ <dt>SQLITE_TXN_READ</dt>
+<dd>The SQLITE_TXN_READ state means that the database is currently
+in a read transaction.  Content has been read from the database file
+but nothing in the database file has changed.  The transaction state
+will advanced to SQLITE_TXN_WRITE if any changes occur and there are
+no other conflicting concurrent write transactions.  The transaction
+state will revert to SQLITE_TXN_NONE following a <a href="lang_transaction.html">ROLLBACK</a> or
+<a href="lang_transaction.html">COMMIT</a>.</dd></p>
+
+<p><a name="sqlitetxnwrite"></a>
+ <dt>SQLITE_TXN_WRITE</dt>
+<dd>The SQLITE_TXN_WRITE state means that the database is currently
+in a write transaction.  Content has been written to the database file
+but has not yet committed.  The transaction state will change to
+to SQLITE_TXN_NONE at the next <a href="lang_transaction.html">ROLLBACK</a> or <a href="lang_transaction.html">COMMIT</a>.</dd>
 </p><hr><a name="SQLITE_VTAB_CONSTRAINT_SUPPORT"></a>
 <h2>Virtual Table Configuration Options</h2>
 </div>
@@ -7049,9 +7119,9 @@ and destroyed by <a href="#sqlite3_blob_close">sqlite3_blob_close()</a>.
 The <a href="#sqlite3_blob_read">sqlite3_blob_read()</a> and <a href="#sqlite3_blob_write">sqlite3_blob_write()</a> interfaces
 can be used to read or write small subsections of the BLOB.
 The <a href="#sqlite3_blob_bytes">sqlite3_blob_bytes()</a> interface returns the size of the BLOB in bytes.
-</p><p>Constructor: <a href="#sqlite3_blob_open">sqlite3_blob_open()</a></p>
-<p>Destructor: <a href="#sqlite3_blob_close">sqlite3_blob_close()</a></p>
-<p>Methods:
+</p><p>1 Constructor: <a href="#sqlite3_blob_open">sqlite3_blob_open()</a></p>
+<p>1 Destructor: <a href="#sqlite3_blob_close">sqlite3_blob_close()</a></p>
+<p>4 Methods:
  <a href="#sqlite3_blob_bytes">sqlite3_blob_bytes()</a>,
 <a href="#sqlite3_blob_read">sqlite3_blob_read()</a>,
 <a href="#sqlite3_blob_reopen">sqlite3_blob_reopen()</a>,
@@ -7072,13 +7142,14 @@ interfaces (such as
 <a href="#sqlite3_prepare">sqlite3_prepare_v2()</a>, <a href="#sqlite3_create_function">sqlite3_create_function()</a>, and
 <a href="#sqlite3_busy_timeout">sqlite3_busy_timeout()</a> to name but three) that are methods on an
 sqlite3 object.
-</p><p>Constructors:
+</p><p>3 Constructors:
  <a href="#sqlite3_open">sqlite3_open()</a>,
 <a href="#sqlite3_open">sqlite3_open16()</a>,
 <a href="#sqlite3_open">sqlite3_open_v2()</a></p>
-<p>Destructors:
+<p>2 Destructors:
  <a href="#sqlite3_close">sqlite3_close()</a>,
 <a href="#sqlite3_close">sqlite3_close_v2()</a></p>
+<p>70 Methods:
 <div class='columns' style='columns: 17em auto;'>
 <ul style='padding-top:0;'>
 <li><a href='#sqlite3_blob_open'>sqlite3_blob_open</a></li>
@@ -7097,6 +7168,7 @@ sqlite3 object.
 <li><a href='#sqlite3_create_module'>sqlite3_create_module</a></li>
 <li><a href='#sqlite3_create_module'>sqlite3_create_module_v2</a></li>
 <li><a href='#sqlite3_create_function'>sqlite3_create_window_function</a></li>
+<li><a href='#sqlite3_db_cacheflush'>sqlite3_db_cacheflush</a></li>
 <li><a href='#sqlite3_db_config'>sqlite3_db_config</a></li>
 <li><a href='#sqlite3_db_filename'>sqlite3_db_filename</a></li>
 <li><a href='#sqlite3_db_mutex'>sqlite3_db_mutex</a></li>
@@ -7128,15 +7200,22 @@ sqlite3 object.
 <li><a href='#sqlite3_prepare'>sqlite3_prepare16_v3</a></li>
 <li><a href='#sqlite3_prepare'>sqlite3_prepare_v2</a></li>
 <li><a href='#sqlite3_prepare'>sqlite3_prepare_v3</a></li>
+<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_count</a></li>
+<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_depth</a></li>
+<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_hook</a></li>
+<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_new</a></li>
+<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_old</a></li>
 <li><a href='#sqlite3_profile'>sqlite3_profile</a></li>
 <li><a href='#sqlite3_progress_handler'>sqlite3_progress_handler</a></li>
 <li><a href='#sqlite3_commit_hook'>sqlite3_rollback_hook</a></li>
 <li><a href='#sqlite3_set_authorizer'>sqlite3_set_authorizer</a></li>
 <li><a href='#sqlite3_set_last_insert_rowid'>sqlite3_set_last_insert_rowid</a></li>
+<li><a href='#sqlite3_system_errno'>sqlite3_system_errno</a></li>
 <li><a href='#sqlite3_table_column_metadata'>sqlite3_table_column_metadata</a></li>
 <li><a href='#sqlite3_total_changes'>sqlite3_total_changes</a></li>
 <li><a href='#sqlite3_profile'>sqlite3_trace</a></li>
 <li><a href='#sqlite3_trace_v2'>sqlite3_trace_v2</a></li>
+<li><a href='#sqlite3_txn_state'>sqlite3_txn_state</a></li>
 <li><a href='#sqlite3_unlock_notify'>sqlite3_unlock_notify</a></li>
 <li><a href='#sqlite3_update_hook'>sqlite3_update_hook</a></li>
 <li><a href='#sqlite3_wal_autocheckpoint'>sqlite3_wal_autocheckpoint</a></li>
@@ -7164,8 +7243,9 @@ methods, such as <a href="#sqlite3_str_append">sqlite3_str_appendf()</a>.
 <li> The sqlite3_str object is destroyed and the string it created
 is returned using the <a href="#sqlite3_str_finish">sqlite3_str_finish()</a> interface.
 </ol>
-</p><p>Constructor: <a href="#sqlite3_str_new">sqlite3_str_new()</a></p>
-<p>Destructor: <a href="#sqlite3_str_finish">sqlite3_str_finish()</a></p>
+</p><p>1 Constructor: <a href="#sqlite3_str_new">sqlite3_str_new()</a></p>
+<p>1 Destructor: <a href="#sqlite3_str_finish">sqlite3_str_finish()</a></p>
+<p>9 Methods:
 <div class='columns' style='columns: 17em auto;'>
 <ul style='padding-top:0;'>
 <li><a href='#sqlite3_str_append'>sqlite3_str_append</a></li>
@@ -7393,7 +7473,8 @@ interfaces.
 to step 2.  Do this zero or more times.
 <li> Destroy the object using <a href="#sqlite3_finalize">sqlite3_finalize()</a>.
 </ol>
-</p><div class='columns' style='columns: 17em auto;'>
+</p><p>6 Constructors:
+<div class='columns' style='columns: 17em auto;'>
 <ul style='padding-top:0;'>
 <li><a href='#sqlite3_prepare'>sqlite3_prepare</a></li>
 <li><a href='#sqlite3_prepare'>sqlite3_prepare16</a></li>
@@ -7404,7 +7485,8 @@ to step 2.  Do this zero or more times.
 </ul>
 </div>
 </p>
-<p>Destructor: <a href="#sqlite3_finalize">sqlite3_finalize()</a></p>
+<p>1 Destructor: <a href="#sqlite3_finalize">sqlite3_finalize()</a></p>
+<p>51 Methods:
 <div class='columns' style='columns: 17em auto;'>
 <ul style='padding-top:0;'>
 <li><a href='#sqlite3_bind_blob'>sqlite3_bind_blob</a></li>
@@ -7503,7 +7585,8 @@ to <a href="#sqlite3_result_blob">sqlite3_result_value()</a>, <a href="#sqlite3_
 <a href="#sqlite3_value_dup">sqlite3_value_dup()</a>.
 The <a href="#sqlite3_value_blob">sqlite3_value_type()</a> family of
 interfaces require protected sqlite3_value objects.
-</p><div class='columns' style='columns: 17em auto;'>
+</p><p>18 Methods:
+<div class='columns' style='columns: 17em auto;'>
 <ul style='padding-top:0;'>
 <li><a href='#sqlite3_value_blob'>sqlite3_value_blob</a></li>
 <li><a href='#sqlite3_value_blob'>sqlite3_value_bytes</a></li>
@@ -9424,7 +9507,7 @@ parameter is undefined. For an INSERT or UPDATE on a rowid table the
 seventh parameter is the final rowid value of the row being inserted
 or updated. The value of the seventh parameter passed to the callback
 function is not defined for operations on WITHOUT ROWID tables, or for
-INSERT operations on rowid tables.</p>
+DELETE operations on rowid tables.</p>
 
 <p>The <a href="#sqlite3_preupdate_count">sqlite3_preupdate_old()</a>, <a href="#sqlite3_preupdate_count">sqlite3_preupdate_new()</a>,
 <a href="#sqlite3_preupdate_count">sqlite3_preupdate_count()</a>, and <a href="#sqlite3_preupdate_count">sqlite3_preupdate_depth()</a> interfaces
