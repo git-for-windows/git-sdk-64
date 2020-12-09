@@ -312,7 +312,7 @@
 
 <p>The third operation is to check the trust settings on the root CA. The root CA should be trusted for the supplied purpose. For compatibility with previous versions of OpenSSL, a certificate with no trust settings is considered to be valid for all purposes.</p>
 
-<p>The final operation is to check the validity of the certificate chain. The validity period is checked against the current system time and the notBefore and notAfter dates in the certificate. The certificate signatures are also checked at this point.</p>
+<p>The final operation is to check the validity of the certificate chain. For each element in the chain, including the root CA certificate, the validity period as specified by the <code>notBefore</code> and <code>notAfter</code> fields is checked against the current system time. The <b>-attime</b> flag may be used to use a reference time other than &quot;now.&quot; The certificate signature is checked as well (except for the signature of the typically self-signed root CA certificate, which is verified only if the <b>-check_ss_sig</b> option is given).</p>
 
 <p>If all operations complete successfully then certificate is considered valid. If any operation fails then the certificate is not valid.</p>
 
