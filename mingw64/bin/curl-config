@@ -10,7 +10,7 @@
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution. The terms
-# are also available at https://curl.haxx.se/docs/copyright.html.
+# are also available at https://curl.se/docs/copyright.html.
 #
 # You may opt to use, copy, modify, merge, publish, distribute and/or sell
 # copies of the Software, and permit persons to whom the Software is
@@ -84,7 +84,7 @@ while test $# -gt 0; do
         ;;
 
     --feature|--features)
-        for feature in AsynchDNS HTTP2 HTTPS-proxy IDN IPv6 Kerberos MultiSSL NTLM SPNEGO SSL SSPI TLS-SRP brotli libz zstd ""; do
+        for feature in AsynchDNS HTTP2 HTTPS-proxy IDN IPv6 Kerberos MultiSSL NTLM SPNEGO SSL SSPI TLS-SRP alt-svc brotli libz zstd ""; do
             test -n "$feature" && echo "$feature"
         done
         ;;
@@ -96,7 +96,7 @@ while test $# -gt 0; do
         ;;
 
     --version)
-        echo libcurl 7.73.0
+        echo libcurl 7.74.0
         exit 0
         ;;
 
@@ -108,11 +108,11 @@ while test $# -gt 0; do
         # dash as that's used for things like version 1.2.3-CVS
         cpatch=`echo $checkfor | cut -d. -f3 | cut -d- -f1`
 
-        vmajor=`echo 7.73.0 | cut -d. -f1`
-        vminor=`echo 7.73.0 | cut -d. -f2`
+        vmajor=`echo 7.74.0 | cut -d. -f1`
+        vminor=`echo 7.74.0 | cut -d. -f2`
         # when extracting the patch part we strip off everything after a
         # dash as that's used for things like version 1.2.3-CVS
-        vpatch=`echo 7.73.0 | cut -d. -f3 | cut -d- -f1`
+        vpatch=`echo 7.74.0 | cut -d. -f3 | cut -d- -f1`
 
         if test "$vmajor" -gt "$cmajor"; then
             exit 0;
@@ -128,12 +128,12 @@ while test $# -gt 0; do
             fi
         fi
 
-        echo "requested version $checkfor is newer than existing 7.73.0"
+        echo "requested version $checkfor is newer than existing 7.74.0"
         exit 1
         ;;
 
     --vernum)
-        echo 074900
+        echo 074a00
         exit 0
         ;;
 
