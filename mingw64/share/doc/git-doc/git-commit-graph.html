@@ -494,7 +494,9 @@ shown if standard error is connected to a terminal.</p>
 <dl>
 <dt class="hdlist1"><em>write</em></dt>
 <dd>
-<p>Write a commit-graph file based on the commits found in packfiles.</p>
+<p>Write a commit-graph file based on the commits found in packfiles. If
+the config option <code>core.commitGraph</code> is disabled, then this command will
+output a warning, then return success without writing a commit-graph file.</p>
 <div class="paragraph">
 <p>With the <code>--stdin-packs</code> option, generate the new commit graph by
 walking objects only in the specified pack-indexes. (Cannot be combined
@@ -639,7 +641,7 @@ commit-graph file along with those reachable from <code>HEAD</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-12-08 11:54:05 UTC
+Last updated 2020-12-14 21:56:12 UTC
 </div>
 </div>
 </body>

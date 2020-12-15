@@ -582,6 +582,11 @@ annotated tag that points at a commit).  To make sure that <code>$VAR</code>
 names an existing object of any type, <code>git rev-parse "$VAR^{object}"</code>
 can be used.</p>
 </div>
+<div class="paragraph">
+<p>Note that if you are verifying a name from an untrusted source, it is
+wise to use <code>--end-of-options</code> so that the name argument is not mistaken
+for another option.</p>
+</div>
 </dd>
 <dt class="hdlist1">-q</dt>
 <dt class="hdlist1">--quiet</dt>
@@ -1480,7 +1485,7 @@ $ sh your-git-script.sh "a b'c"</pre>
 <p>Print the commit object name from the revision in the $REV shell variable:</p>
 <div class="listingblock">
 <div class="content">
-<pre>$ git rev-parse --verify $REV^{commit}</pre>
+<pre>$ git rev-parse --verify --end-of-options $REV^{commit}</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1491,7 +1496,7 @@ $ sh your-git-script.sh "a b'c"</pre>
 <p>Similar to above:</p>
 <div class="listingblock">
 <div class="content">
-<pre>$ git rev-parse --default master --verify $REV</pre>
+<pre>$ git rev-parse --default master --verify --end-of-options $REV</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1513,7 +1518,7 @@ $ sh your-git-script.sh "a b'c"</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-12-08 11:54:05 UTC
+Last updated 2020-12-14 21:56:12 UTC
 </div>
 </div>
 </body>

@@ -485,8 +485,8 @@ show the patch by default, or to cancel the effect of <code>--patch</code>.</p>
 <dt class="hdlist1">--unified=&lt;n&gt;</dt>
 <dd>
 <p>Generate diffs with &lt;n&gt; lines of context instead of
-the usual three. Implies <code>--patch</code>.
-Implies <code>-p</code>.</p>
+the usual three.
+Implies <code>--patch</code>.</p>
 </dd>
 <dt class="hdlist1">--output=&lt;file&gt;</dt>
 <dd>
@@ -961,13 +961,15 @@ line when generating patch format output.</p>
 <dt class="hdlist1">--binary</dt>
 <dd>
 <p>In addition to <code>--full-index</code>, output a binary diff that
-can be applied with <code>git-apply</code>. Implies <code>--patch</code>.</p>
+can be applied with <code>git-apply</code>.
+Implies <code>--patch</code>.</p>
 </dd>
 <dt class="hdlist1">--abbrev[=&lt;n&gt;]</dt>
 <dd>
 <p>Instead of showing the full 40-byte hexadecimal object
 name in diff-raw format output and diff-tree header
-lines, show only a partial prefix.
+lines, show the shortest prefix that is at least <em>&lt;n&gt;</em>
+hexdigits long that uniquely refers the object.
 In diff-patch output format, <code>--full-index</code> takes higher
 precedence, i.e. if <code>--full-index</code> is specified, full blob
 names will be shown regardless of <code>--abbrev</code>.
@@ -1242,6 +1244,12 @@ line has none.</p>
 <dd>
 <p>Ignore changes whose lines are all blank.</p>
 </dd>
+<dt class="hdlist1">-I&lt;regex&gt;</dt>
+<dt class="hdlist1">--ignore-matching-lines=&lt;regex&gt;</dt>
+<dd>
+<p>Ignore changes whose all lines match &lt;regex&gt;.  This option may
+be specified more than once.</p>
+</dd>
 <dt class="hdlist1">--inter-hunk-context=&lt;lines&gt;</dt>
 <dd>
 <p>Show the context between diff hunks, up to the specified number
@@ -1252,7 +1260,10 @@ is unset.</p>
 <dt class="hdlist1">-W</dt>
 <dt class="hdlist1">--function-context</dt>
 <dd>
-<p>Show whole surrounding functions of changes.</p>
+<p>Show whole function as context lines for each change.
+The function names are determined in the same way as
+<code>git diff</code> works out patch hunk headers (see <em>Defining a
+custom hunk-header</em> in <a href="gitattributes.html">gitattributes(5)</a>).</p>
 </dd>
 <dt class="hdlist1">--exit-code</dt>
 <dd>
@@ -1970,7 +1981,7 @@ the pathname, but if that is <code>NUL</code>, the record will show two paths.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-12-08 11:54:05 UTC
+Last updated 2020-12-14 21:56:12 UTC
 </div>
 </div>
 </body>

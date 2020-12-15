@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="generator" content="Asciidoctor 2.0.10"/>
-<title>git-parse-remote(1)</title>
+<title>git-for-each-repo(1)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -438,10 +438,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="manpage">
 <div id="header">
-<h1>git-parse-remote(1) Manual Page</h1>
+<h1>git-for-each-repo(1) Manual Page</h1>
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<p>git-parse-remote - Routines to help parsing remote repository access parameters</p>
+<p>git-for-each-repo - Run a Git command on a list of repositories</p>
 </div>
 </div>
 <div id="content">
@@ -449,7 +449,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>. "$(git --exec-path)/git-parse-remote"</em></pre>
+<pre class="content"><em>git for-each-repo</em> --config=&lt;config&gt; [--] &lt;arguments&gt;</pre>
 </div>
 </div>
 </div>
@@ -457,10 +457,59 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This script is included in various scripts to supply
-routines to parse files under $GIT_DIR/remotes/ and
-$GIT_DIR/branches/ and configuration variables that are related
-to fetching, pulling and pushing.</p>
+<p>Run a Git command on a list of repositories. The arguments after the
+known options or <code>--</code> indicator are used as the arguments for the Git
+subprocess.</p>
+</div>
+<div class="paragraph">
+<p>THIS COMMAND IS EXPERIMENTAL. THE BEHAVIOR MAY CHANGE.</p>
+</div>
+<div class="paragraph">
+<p>For example, we could run maintenance on each of a list of repositories
+stored in a <code>maintenance.repo</code> config variable using</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>git for-each-repo --config=maintenance.repo maintenance run</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will run <code>git -C &lt;repo&gt; maintenance run</code> for each value <code>&lt;repo&gt;</code>
+in the multi-valued config variable <code>maintenance.repo</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_options">OPTIONS</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">--config=&lt;config&gt;</dt>
+<dd>
+<p>Use the given config variable as a multi-valued list storing
+absolute path names. Iterate on that list of paths to run
+the given arguments.</p>
+<div class="paragraph">
+<p>These config values are loaded from system, global, and local Git config,
+as available. If <code>git for-each-repo</code> is run in a directory that is not a
+Git repository, then only the system and global config is used.</p>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_subprocess_behavior">SUBPROCESS BEHAVIOR</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If any <code>git -C &lt;repo&gt; &lt;arguments&gt;</code> subprocess returns a non-zero exit code,
+then the <code>git for-each-repo</code> process returns that exit code without running
+more subprocesses.</p>
+</div>
+<div class="paragraph">
+<p>Each <code>git -C &lt;repo&gt; &lt;arguments&gt;</code> subprocess inherits the standard file
+descriptors <code>stdin</code>, <code>stdout</code>, and <code>stderr</code>.</p>
 </div>
 </div>
 </div>
@@ -475,7 +524,7 @@ to fetching, pulling and pushing.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-12-08 11:54:05 UTC
+Last updated 2020-12-14 21:56:12 UTC
 </div>
 </div>
 </body>

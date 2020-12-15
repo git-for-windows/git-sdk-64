@@ -450,8 +450,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git diff</em> [&lt;options&gt;] [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]
-<em>git diff</em> [&lt;options&gt;] --cached [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]
-<em>git diff</em> [&lt;options&gt;] &lt;commit&gt; [&lt;commit&gt;&#8230;&#8203;] &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]
+<em>git diff</em> [&lt;options&gt;] --cached [--merge-base] [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]
+<em>git diff</em> [&lt;options&gt;] [--merge-base] &lt;commit&gt; [&lt;commit&gt;&#8230;&#8203;] &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]
 <em>git diff</em> [&lt;options&gt;] &lt;commit&gt;&#8230;&#8203;&lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]
 <em>git diff</em> [&lt;options&gt;] &lt;blob&gt; &lt;blob&gt;
 <em>git diff</em> [&lt;options&gt;] --no-index [--] &lt;path&gt; &lt;path&gt;</pre>
@@ -486,7 +486,7 @@ at least one of the paths points outside the working tree,
 or when running the command outside a working tree
 controlled by Git. This form implies <code>--exit-code</code>.</p>
 </dd>
-<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] --cached [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] --cached [--merge-base] [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>This form is to view the changes you staged for the next
 commit relative to the named &lt;commit&gt;.  Typically you
@@ -495,6 +495,11 @@ do not give &lt;commit&gt;, it defaults to HEAD.
 If HEAD does not exist (e.g. unborn branches) and
 &lt;commit&gt; is not given, it shows all staged changes.
 --staged is a synonym of --cached.</p>
+<div class="paragraph">
+<p>If --merge-base is given, instead of using &lt;commit&gt;, use the merge base
+of &lt;commit&gt; and HEAD.  <code>git diff --merge-base A</code> is equivalent to
+<code>git diff $(git merge-base A HEAD)</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
@@ -504,23 +509,28 @@ use HEAD to compare it with the latest commit, or a
 branch name to compare with the tip of a different
 branch.</p>
 </dd>
-<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;commit&gt; &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] [--merge-base] &lt;commit&gt; &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>This is to view the changes between two arbitrary
 &lt;commit&gt;.</p>
+<div class="paragraph">
+<p>If --merge-base is given, use the merge base of the two commits for the
+"before" side.  <code>git diff --merge-base A B</code> is equivalent to
+<code>git diff $(git merge-base A B) B</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;commit&gt; &lt;commit&gt;&#8230;&#8203; &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>This form is to view the results of a merge commit.  The first
 listed &lt;commit&gt; must be the merge itself; the remaining two or
 more commits should be its parents.  A convenient way to produce
-the desired set of revisions is to use the ^@ suffix.
+the desired set of revisions is to use the <code>^@</code> suffix.
 For instance, if <code>master</code> names a merge commit, <code>git diff master
 master^@</code> gives the same combined diff as <code>git show master</code>.</p>
 </dd>
 <dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;commit&gt;..&lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
-<p>This is synonymous to the earlier form (without the "..") for
+<p>This is synonymous to the earlier form (without the <code>..</code>) for
 viewing the changes between two arbitrary &lt;commit&gt;.  If &lt;commit&gt; on
 one side is omitted, it will have the same effect as
 using HEAD instead.</p>
@@ -529,8 +539,8 @@ using HEAD instead.</p>
 <dd>
 <p>This form is to view the changes on the branch containing
 and up to the second &lt;commit&gt;, starting at a common ancestor
-of both &lt;commit&gt;.  "git diff A...B" is equivalent to
-"git diff $(git merge-base A B) B".  You can omit any one
+of both &lt;commit&gt;.  <code>git diff A...B</code> is equivalent to
+<code>git diff $(git merge-base A B) B</code>.  You can omit any one
 of &lt;commit&gt;, which has the same effect as using HEAD instead.</p>
 </dd>
 </dl>
@@ -538,15 +548,15 @@ of &lt;commit&gt;, which has the same effect as using HEAD instead.</p>
 <div class="paragraph">
 <p>Just in case you are doing something exotic, it should be
 noted that all of the &lt;commit&gt; in the above description, except
-in the last two forms that use ".." notations, can be any
-&lt;tree&gt;.</p>
+in the <code>--merge-base</code> case and in the last two forms that use <code>..</code>
+notations, can be any &lt;tree&gt;.</p>
 </div>
 <div class="paragraph">
 <p>For a more complete list of ways to spell &lt;commit&gt;, see
 "SPECIFYING REVISIONS" section in <a href="gitrevisions.html">gitrevisions(7)</a>.
 However, "diff" is about comparing two <em>endpoints</em>, not ranges,
-and the range notations ("&lt;commit&gt;..&lt;commit&gt;" and
-"&lt;commit&gt;...&lt;commit&gt;") do not mean a range as defined in the
+and the range notations (<code>&lt;commit&gt;..&lt;commit&gt;</code> and
+<code>&lt;commit&gt;...&lt;commit&gt;</code>) do not mean a range as defined in the
 "SPECIFYING RANGES" section in <a href="gitrevisions.html">gitrevisions(7)</a>.</p>
 </div>
 <div class="dlist">
@@ -582,8 +592,8 @@ show the patch by default, or to cancel the effect of <code>--patch</code>.</p>
 <dt class="hdlist1">--unified=&lt;n&gt;</dt>
 <dd>
 <p>Generate diffs with &lt;n&gt; lines of context instead of
-the usual three. Implies <code>--patch</code>.
-Implies <code>-p</code>.</p>
+the usual three.
+Implies <code>--patch</code>.</p>
 </dd>
 <dt class="hdlist1">--output=&lt;file&gt;</dt>
 <dd>
@@ -1062,13 +1072,15 @@ line when generating patch format output.</p>
 <dt class="hdlist1">--binary</dt>
 <dd>
 <p>In addition to <code>--full-index</code>, output a binary diff that
-can be applied with <code>git-apply</code>. Implies <code>--patch</code>.</p>
+can be applied with <code>git-apply</code>.
+Implies <code>--patch</code>.</p>
 </dd>
 <dt class="hdlist1">--abbrev[=&lt;n&gt;]</dt>
 <dd>
 <p>Instead of showing the full 40-byte hexadecimal object
 name in diff-raw format output and diff-tree header
-lines, show only a partial prefix.
+lines, show the shortest prefix that is at least <em>&lt;n&gt;</em>
+hexdigits long that uniquely refers the object.
 In diff-patch output format, <code>--full-index</code> takes higher
 precedence, i.e. if <code>--full-index</code> is specified, full blob
 names will be shown regardless of <code>--abbrev</code>.
@@ -1343,6 +1355,12 @@ line has none.</p>
 <dd>
 <p>Ignore changes whose lines are all blank.</p>
 </dd>
+<dt class="hdlist1">-I&lt;regex&gt;</dt>
+<dt class="hdlist1">--ignore-matching-lines=&lt;regex&gt;</dt>
+<dd>
+<p>Ignore changes whose all lines match &lt;regex&gt;.  This option may
+be specified more than once.</p>
+</dd>
 <dt class="hdlist1">--inter-hunk-context=&lt;lines&gt;</dt>
 <dd>
 <p>Show the context between diff hunks, up to the specified number
@@ -1353,7 +1371,10 @@ is unset.</p>
 <dt class="hdlist1">-W</dt>
 <dt class="hdlist1">--function-context</dt>
 <dd>
-<p>Show whole surrounding functions of changes.</p>
+<p>Show whole function as context lines for each change.
+The function names are determined in the same way as
+<code>git diff</code> works out patch hunk headers (see <em>Defining a
+custom hunk-header</em> in <a href="gitattributes.html">gitattributes(5)</a>).</p>
 </dd>
 <dt class="hdlist1">--exit-code</dt>
 <dd>
@@ -2077,11 +2098,11 @@ $ git diff HEAD       <b class="conum">(3)</b></pre>
 </li>
 <li>
 <p>Changes between the index and your last commit; what you
-would be committing if you run "git commit" without "-a" option.</p>
+would be committing if you run <code>git commit</code> without <code>-a</code> option.</p>
 </li>
 <li>
 <p>Changes in the working tree since your last commit; what you
-would be committing if you run "git commit -a"</p>
+would be committing if you run <code>git commit -a</code></p>
 </li>
 </ol>
 </div>
@@ -2210,7 +2231,7 @@ rewrites (very expensive).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-12-08 11:54:05 UTC
+Last updated 2020-12-14 21:56:12 UTC
 </div>
 </div>
 </body>

@@ -490,51 +490,54 @@ controlled via the <code>blame.showRoot</code> config option.</p>
 <dt class="hdlist1">-L &lt;start&gt;,&lt;end&gt;</dt>
 <dt class="hdlist1">-L :&lt;funcname&gt;</dt>
 <dd>
-<p>Annotate only the given line range. May be specified multiple times.
-Overlapping ranges are allowed.</p>
+<p>Annotate only the line range given by <em>&lt;start&gt;,&lt;end&gt;</em>,
+or by the function name regex <em>&lt;funcname&gt;</em>.
+May be specified multiple times. Overlapping ranges are allowed.</p>
 <div class="paragraph">
-<p>&lt;start&gt; and &lt;end&gt; are optional. &#8220;-L &lt;start&gt;&#8221; or &#8220;-L &lt;start&gt;,&#8221; spans from
-&lt;start&gt; to end of file. &#8220;-L ,&lt;end&gt;&#8221; spans from start of file to &lt;end&gt;.</p>
+<p><em>&lt;start&gt;</em> and <em>&lt;end&gt;</em> are optional. <code>-L &lt;start&gt;</code> or <code>-L &lt;start&gt;,</code> spans from
+<em>&lt;start&gt;</em> to end of file. <code>-L ,&lt;end&gt;</code> spans from start of file to <em>&lt;end&gt;</em>.</p>
 </div>
 <div class="paragraph">
-<p>&lt;start&gt; and &lt;end&gt; can take one of these forms:</p>
+<p><em>&lt;start&gt;</em> and <em>&lt;end&gt;</em> can take one of these forms:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
 <p>number</p>
 <div class="paragraph">
-<p>If &lt;start&gt; or &lt;end&gt; is a number, it specifies an
+<p>If <em>&lt;start&gt;</em> or <em>&lt;end&gt;</em> is a number, it specifies an
 absolute line number (lines count from 1).</p>
 </div>
 </li>
 <li>
-<p>/regex/</p>
+<p><code>/regex/</code></p>
 <div class="paragraph">
 <p>This form will use the first line matching the given
-POSIX regex. If &lt;start&gt; is a regex, it will search from the end of
+POSIX regex. If <em>&lt;start&gt;</em> is a regex, it will search from the end of
 the previous <code>-L</code> range, if any, otherwise from the start of file.
-If &lt;start&gt; is &#8220;^/regex/&#8221;, it will search from the start of file.
-If &lt;end&gt; is a regex, it will search
-starting at the line given by &lt;start&gt;.</p>
+If <em>&lt;start&gt;</em> is <code>^/regex/</code>, it will search from the start of file.
+If <em>&lt;end&gt;</em> is a regex, it will search
+starting at the line given by <em>&lt;start&gt;</em>.</p>
 </div>
 </li>
 <li>
 <p>+offset or -offset</p>
 <div class="paragraph">
-<p>This is only valid for &lt;end&gt; and will specify a number
-of lines before or after the line given by &lt;start&gt;.</p>
+<p>This is only valid for <em>&lt;end&gt;</em> and will specify a number
+of lines before or after the line given by <em>&lt;start&gt;</em>.</p>
 </div>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>If &#8220;:&lt;funcname&gt;&#8221; is given in place of &lt;start&gt; and &lt;end&gt;, it is a
+<p>If <code>:&lt;funcname&gt;</code> is given in place of <em>&lt;start&gt;</em> and <em>&lt;end&gt;</em>, it is a
 regular expression that denotes the range from the first funcname line
-that matches &lt;funcname&gt;, up to the next funcname line. &#8220;:&lt;funcname&gt;&#8221;
+that matches <em>&lt;funcname&gt;</em>, up to the next funcname line. <code>:&lt;funcname&gt;</code>
 searches from the end of the previous <code>-L</code> range, if any, otherwise
-from the start of file. &#8220;^:&lt;funcname&gt;&#8221; searches from the start of
-file.</p>
+from the start of file. <code>^:&lt;funcname&gt;</code> searches from the start of
+file. The function names are determined in the same way as <code>git diff</code>
+works out patch hunk headers (see <em>Defining a custom hunk-header</em>
+in <a href="gitattributes.html">gitattributes(5)</a>).</p>
 </div>
 </dd>
 <dt class="hdlist1">-l</dt>
@@ -698,7 +701,7 @@ previously processed files.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-12-08 11:54:05 UTC
+Last updated 2020-12-14 21:56:12 UTC
 </div>
 </div>
 </body>
