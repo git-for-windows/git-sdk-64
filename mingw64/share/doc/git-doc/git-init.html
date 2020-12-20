@@ -462,8 +462,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>This command creates an empty Git repository - basically a <code>.git</code>
 directory with subdirectories for <code>objects</code>, <code>refs/heads</code>,
-<code>refs/tags</code>, and template files.  An initial <code>HEAD</code> file that
-references the HEAD of the master branch is also created.</p>
+<code>refs/tags</code>, and template files.  An initial branch without any
+commits will be created (see the <code>--initial-branch</code> option below
+for its name).</p>
 </div>
 <div class="paragraph">
 <p>If the <code>$GIT_DIR</code> environment variable is set then it specifies a path
@@ -529,8 +530,10 @@ repository.</p>
 <dt class="hdlist1">-b &lt;branch-name&gt;</dt>
 <dt class="hdlist1">--initial-branch=&lt;branch-name&gt;</dt>
 <dd>
-<p>Use the specified name for the initial branch in the newly created repository.
-If not specified, fall back to the default name: <code>master</code>.</p>
+<p>Use the specified name for the initial branch in the newly created
+repository.  If not specified, fall back to the default name (currently
+<code>master</code>, but this is subject to change in the future; the name can be
+customized via the <code>init.defaultBranch</code> configuration variable).</p>
 </dd>
 <dt class="hdlist1">--shared[=(false|true|umask|group|all|world|everybody|0xxx)]</dt>
 <dd>
@@ -675,7 +678,7 @@ $ git commit    <b class="conum">(3)</b></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-12-14 21:56:12 UTC
+Last updated 2020-12-19 14:02:08 UTC
 </div>
 </div>
 </body>
