@@ -91,7 +91,7 @@ use warnings;
 
 use Exporter 5.57 'import';
 our @EXPORT_OK = qw(uf_uri uf_uristr uf_url uf_urlstr);
-our $VERSION = "4.20";
+our $VERSION = '5.05';
 
 our ($MY_COUNTRY, $DEBUG);
 

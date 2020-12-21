@@ -7,7 +7,7 @@ use parent 'URI::_generic';
 
 use URI::Escape qw(uri_unescape);
 
-our $VERSION = '1.76';
+our $VERSION = '5.05';
 
 sub _uric_escape {
     my($class, $str) = @_;

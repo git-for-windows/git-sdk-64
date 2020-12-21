@@ -1,7 +1,7 @@
 #---------------------------------------------------------------------
 package IO::HTML;
 #
-# Copyright 2014 Christopher J. Madsen
+# Copyright 2020 Christopher J. Madsen
 #
 # Author: Christopher J. Madsen <perl@cjmweb.net>
 # Created: 14 Jan 2012
@@ -25,9 +25,11 @@ use Carp 'croak';
 use Encode 2.10 qw(decode find_encoding); # need utf-8-strict encoding
 use Exporter 5.57 'import';
 
-our $VERSION = '1.001';
-# This file is part of IO-HTML 1.001 (June 28, 2014)
+our $VERSION = '1.004';
+# This file is part of IO-HTML 1.004 (September 26, 2020)
 
+
+our $bytes_to_check   ||= 1024;
 our $default_encoding ||= 'cp1252';
 
 our @EXPORT    = qw(html_file);
@@ -110,7 +112,8 @@ sub sniff_encoding
   my $pos = tell $in;
   croak "Could not seek $filename: $!" if $pos < 0;
 
-  croak "Could not read $filename: $!" unless defined read $in, my $buf, 1024;
+  croak "Could not read $filename: $!"
+      unless defined read $in, my($buf), $bytes_to_check;
 
   seek $in, $pos, 0 or croak "Could not seek $filename: $!";
 
@@ -166,11 +169,22 @@ sub _get_attribute
 
   my ($name, $value) = (lc $1, '');
 
-  if (/\G[\x09\x0A\x0C\x0D ]*=[\x09\x0A\x0C\x0D ]*/gc
-      and (/\G"([^"]*)"?/gc or
-           /\G'([^']*)'?/gc or
-           /\G([^\x09\x0A\x0C\x0D >]*)/gc)) {
-    $value = lc $1;
+  if (/\G[\x09\x0A\x0C\x0D ]*=[\x09\x0A\x0C\x0D ]*/gc) {
+    if (/\G"/gc) {
+      # Double-quoted attribute value
+      /\G([^"]*)("?)/gc;
+      return unless $2; # Incomplete attribute (missing closing quote)
+      $value = lc $1;
+    } elsif (/\G'/gc) {
+      # Single-quoted attribute value
+      /\G([^']*)('?)/gc;
+      return unless $2; # Incomplete attribute (missing closing quote)
+      $value = lc $1;
+    } else {
+      # Unquoted attribute value
+      /\G([^\x09\x0A\x0C\x0D >]*)/gc;
+      $value = lc $1;
+    }
   } # end if attribute has value
 
   return wantarray ? ($name, $value) : 1;
@@ -196,7 +210,8 @@ sub find_charset_in
 {
   for (shift) {
     my $options = shift || {};
-    my $stop = length > 1024 ? 1024 : length; # search first 1024 bytes
+    # search only the first $bytes_to_check bytes (default 1024)
+    my $stop = length > $bytes_to_check ? $bytes_to_check : length;
 
     my $expect_pragma = (defined $options->{need_pragma}
                          ? $options->{need_pragma} : 1);
@@ -264,8 +279,8 @@ IO::HTML - Open an HTML file with automatic charset detection
 
 =head1 VERSION
 
-This document describes version 1.001 of
-IO::HTML, released June 28, 2014.
+This document describes version 1.004 of
+IO::HTML, released September 26, 2020.
 
 =head1 SYNOPSIS
 
@@ -297,7 +312,7 @@ UTF-16BE, or UTF-8, then that is the encoding.
 
 =item 2.
 
-If the first 1024 bytes of the file contain a C<< <meta> >> tag that
+If the first C<$bytes_to_check> bytes of the file contain a C<< <meta> >> tag that
 indicates the charset, and Encode recognizes the specified charset
 name, then that is the encoding.  (This portion of the algorithm is
 implemented by C<find_charset_in>.)
@@ -313,7 +328,7 @@ The first matching tag with a recognized encoding ends the search.
 
 =item 3.
 
-If the first 1024 bytes of the file are valid UTF-8 (with at least 1
+If the first C<$bytes_to_check> bytes of the file are valid UTF-8 (with at least 1
 non-ASCII character), then the encoding is UTF-8.
 
 =item 4.
@@ -348,7 +363,9 @@ to C<$IO::HTML::default_encoding>, which is set to C<cp1252>
 default should be locale dependent, but that is not currently
 implemented.
 
-It dies if the file cannot be opened.
+It dies if the file cannot be opened, or if C<sniff_encoding> cannot
+determine the encoding and C<$IO::HTML::default_encoding> has been set
+to C<undef>.
 
 
 =head2 html_file_and_encoding
@@ -366,8 +383,12 @@ BOM).  This may be useful if you want to write the file out again
 The optional second argument is a hashref containing options.  The
 possible keys are described under C<find_charset_in>.
 
-It dies if the file cannot be opened.  The result of calling it in
-scalar context is undefined.
+It dies if the file cannot be opened, or if C<sniff_encoding> cannot
+determine the encoding and C<$IO::HTML::default_encoding> has been set
+to C<undef>.
+
+The result of calling C<html_file_and_encoding> in scalar context is undefined
+(in the C sense of there is no guarantee what you'll get).
 
 
 =head2 html_outfile
@@ -379,7 +400,8 @@ using C<$encoding>, and writes a BOM to it if C<$bom> is true.
 If C<$encoding> is C<undef>, it defaults to C<$IO::HTML::default_encoding>.
 C<$encoding> may be either an encoding name or an Encode::Encoding object.
 
-It dies if the file cannot be opened.
+It dies if the file cannot be opened, or if both C<$encoding> and
+C<$IO::HTML::default_encoding> are C<undef>.
 
 
 =head2 sniff_encoding
@@ -420,9 +442,10 @@ that handle:
   $encoding = find_charset_in($string_containing_HTML, \%options);
 
 This function (exported only by request) looks for charset information
-in a C<< <meta> >> tag in a possibly incomplete HTML document using
+in a C<< <meta> >> tag in a possibly-incomplete HTML document using
 the "two step" algorithm specified by HTML5.  It does not look for a BOM.
-Only the first 1024 bytes of the string are checked.
+The C<< <meta> >> tag must begin within the first C<$IO::HTML::bytes_to_check>
+bytes of the string.
 
 It returns Perl's canonical name for the encoding, which is not
 necessarily the same as the MIME or IANA charset name.  It returns
@@ -512,7 +535,38 @@ you set C<$IO::HTML::default_encoding> to C<undef>.
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
-IO::HTML requires no configuration files or environment variables.
+There are two global variables that affect IO::HTML.  If you need to
+change them, you should do so using C<local> if possible:
+
+  my $file = do {
+    # This file may define the charset later in the header
+    local $IO::HTML::bytes_to_check = 4096;
+    html_file(...);
+  };
+
+=over
+
+=item C<$bytes_to_check>
+
+This is the number of bytes that C<sniff_encoding> will read from the
+stream.  It is also the number of bytes that C<find_charset_in> will
+search for a C<< <meta> >> tag containing charset information.
+It must be a positive integer.
+
+The HTML 5 specification recommends using the default value of 1024,
+but some pages do not follow the specification.
+
+=item C<$default_encoding>
+
+This is the encoding that C<html_file> and C<html_file_and_encoding>
+will use if no encoding can be detected by C<sniff_encoding>.
+The default value is C<cp1252> (a.k.a. Windows-1252).
+
+Setting it to C<undef> will cause the file subroutines to croak if
+C<sniff_encoding> fails to determine the encoding.  (C<sniff_encoding>
+itself does not use C<$default_encoding>).
+
+=back
 
 =head1 DEPENDENCIES
 
@@ -544,7 +598,7 @@ L<< https://github.com/madsen/io-html >>.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by Christopher J. Madsen.
+This software is copyright (c) 2020 by Christopher J. Madsen.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

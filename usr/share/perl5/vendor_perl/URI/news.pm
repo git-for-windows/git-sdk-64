@@ -3,7 +3,7 @@ package URI::news;  # draft-gilman-news-url-01
 use strict;
 use warnings;
 
-our $VERSION = '1.76';
+our $VERSION = '5.05';
 
 use parent 'URI::_server';
 

@@ -3,7 +3,7 @@ package URI::mailto;  # RFC 2368
 use strict;
 use warnings;
 
-our $VERSION = '1.76';
+our $VERSION = '5.05';
 
 use parent qw(URI URI::_query);
 
