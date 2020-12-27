@@ -22,7 +22,7 @@ import os
 import re
 import sys
 
-VERSION_STR = '''glib-genmarshal version 2.66.3
+VERSION_STR = '''glib-genmarshal version 2.66.4
 glib-genmarshal comes with ABSOLUTELY NO WARRANTY.
 You may redistribute copies of glib-genmarshal under the terms of
 the GNU General Public License which can be found in the

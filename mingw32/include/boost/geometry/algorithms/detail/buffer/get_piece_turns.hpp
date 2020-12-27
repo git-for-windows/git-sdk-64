@@ -3,8 +3,8 @@
 // Copyright (c) 2012-2014 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2017, 2018.
-// Modifications copyright (c) 2017-2018 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017-2020.
+// Modifications copyright (c) 2017-2020 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -15,7 +15,9 @@
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_BUFFER_GET_PIECE_TURNS_HPP
 
 #include <boost/core/ignore_unused.hpp>
-#include <boost/range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/value_type.hpp>
 
 #include <boost/geometry/core/assert.hpp>
 #include <boost/geometry/algorithms/equals.hpp>
@@ -149,7 +151,6 @@ class piece_turn_visitor
         return ! m_rings[piece1.first_seg_id.multi_index].has_concave;
     }
 
-
     template <std::size_t Dimension, typename Iterator, typename Box>
     inline void move_begin_iterator(Iterator& it_begin, Iterator it_beyond,
                                     signed_size_type& index, int dir,
@@ -265,7 +266,7 @@ class piece_turn_visitor
 
                 typedef detail::overlay::get_turn_info
                     <
-                        detail::overlay::assign_null_policy
+                        detail::overlay::assign_policy_only_start_turns
                     > turn_policy;
 
                 turn_policy::apply(unique_sub_range1, unique_sub_range2,

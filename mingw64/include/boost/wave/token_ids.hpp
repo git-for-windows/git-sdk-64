@@ -301,6 +301,19 @@ enum token_id {
     T_THREADLOCAL  = TOKEN_FROM_ID(431, KeywordTokenType),
     T_RAWSTRINGLIT = TOKEN_FROM_ID(432, StringLiteralTokenType),
 
+// C++20 keywords
+    T_CHAR8_T      = TOKEN_FROM_ID(433, KeywordTokenType),
+    T_CONCEPT      = TOKEN_FROM_ID(434, KeywordTokenType),
+    T_CONSTEVAL    = TOKEN_FROM_ID(435, KeywordTokenType),
+    T_CONSTINIT    = TOKEN_FROM_ID(436, KeywordTokenType),
+    T_CO_AWAIT     = TOKEN_FROM_ID(437, KeywordTokenType),
+    T_CO_RETURN    = TOKEN_FROM_ID(438, KeywordTokenType),
+    T_CO_YIELD     = TOKEN_FROM_ID(439, KeywordTokenType),
+    T_REQUIRES     = TOKEN_FROM_ID(440, KeywordTokenType),
+
+// C++20 operators
+    T_SPACESHIP    = TOKEN_FROM_ID(441, OperatorTokenType),
+
     T_LAST_TOKEN_ID,
     T_LAST_TOKEN = ID_FROM_TOKEN(T_LAST_TOKEN_ID & ~PPTokenFlag),
 

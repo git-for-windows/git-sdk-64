@@ -38,7 +38,7 @@ BOOST_OUTCOME_V2_NAMESPACE_EXPORT_BEGIN
 namespace concepts
 {
 #if defined(__cpp_concepts)
-#if !defined(_MSC_VER) && !defined(__clang__) && __GNUC__ < 10
+#if !defined(_MSC_VER) && !defined(__clang__) && (__GNUC__ < 9 || __cplusplus < 202000L)
 #define BOOST_OUTCOME_GCC6_CONCEPT_BOOL bool
 #else
 #define BOOST_OUTCOME_GCC6_CONCEPT_BOOL

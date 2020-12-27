@@ -447,8 +447,7 @@ class sgtree_impl
    iterator insert_equal(reference value)
    {
       node_ptr to_insert(this->get_value_traits().to_node_ptr(value));
-      if(safemode_or_autounlink)
-         BOOST_INTRUSIVE_SAFE_HOOK_DEFAULT_ASSERT(node_algorithms::unique(to_insert));
+      BOOST_INTRUSIVE_SAFE_HOOK_DEFAULT_ASSERT(!safemode_or_autounlink || node_algorithms::unique(to_insert));
       std::size_t max_tree_size = (std::size_t)this->max_tree_size_;
       node_ptr p = node_algorithms::insert_equal_upper_bound
          (this->tree_type::header_ptr(), to_insert, this->key_node_comp(this->key_comp())
@@ -462,8 +461,7 @@ class sgtree_impl
    iterator insert_equal(const_iterator hint, reference value)
    {
       node_ptr to_insert(this->get_value_traits().to_node_ptr(value));
-      if(safemode_or_autounlink)
-         BOOST_INTRUSIVE_SAFE_HOOK_DEFAULT_ASSERT(node_algorithms::unique(to_insert));
+      BOOST_INTRUSIVE_SAFE_HOOK_DEFAULT_ASSERT(!safemode_or_autounlink || node_algorithms::unique(to_insert));
       std::size_t max_tree_size = (std::size_t)this->max_tree_size_;
       node_ptr p = node_algorithms::insert_equal
          ( this->tree_type::header_ptr(), hint.pointed_node(), to_insert, this->key_node_comp(this->key_comp())
@@ -545,8 +543,7 @@ class sgtree_impl
    iterator insert_unique_commit(reference value, const insert_commit_data &commit_data)
    {
       node_ptr to_insert(this->get_value_traits().to_node_ptr(value));
-      if(safemode_or_autounlink)
-         BOOST_INTRUSIVE_SAFE_HOOK_DEFAULT_ASSERT(node_algorithms::unique(to_insert));
+      BOOST_INTRUSIVE_SAFE_HOOK_DEFAULT_ASSERT(!safemode_or_autounlink || node_algorithms::unique(to_insert));
       std::size_t max_tree_size = (std::size_t)this->max_tree_size_;
       node_algorithms::insert_unique_commit
          ( this->tree_type::header_ptr(), to_insert, commit_data
@@ -575,8 +572,7 @@ class sgtree_impl
    iterator insert_before(const_iterator pos, reference value)
    {
       node_ptr to_insert(this->get_value_traits().to_node_ptr(value));
-      if(safemode_or_autounlink)
-         BOOST_INTRUSIVE_SAFE_HOOK_DEFAULT_ASSERT(node_algorithms::unique(to_insert));
+      BOOST_INTRUSIVE_SAFE_HOOK_DEFAULT_ASSERT(!safemode_or_autounlink || node_algorithms::unique(to_insert));
       std::size_t max_tree_size = (std::size_t)this->max_tree_size_;
       node_ptr p = node_algorithms::insert_before
          ( this->tree_type::header_ptr(), pos.pointed_node(), to_insert
@@ -590,8 +586,7 @@ class sgtree_impl
    void push_back(reference value)
    {
       node_ptr to_insert(this->get_value_traits().to_node_ptr(value));
-      if(safemode_or_autounlink)
-         BOOST_INTRUSIVE_SAFE_HOOK_DEFAULT_ASSERT(node_algorithms::unique(to_insert));
+      BOOST_INTRUSIVE_SAFE_HOOK_DEFAULT_ASSERT(!safemode_or_autounlink || node_algorithms::unique(to_insert));
       std::size_t max_tree_size = (std::size_t)this->max_tree_size_;
       node_algorithms::push_back
          ( this->tree_type::header_ptr(), to_insert
@@ -604,8 +599,7 @@ class sgtree_impl
    void push_front(reference value)
    {
       node_ptr to_insert(this->get_value_traits().to_node_ptr(value));
-      if(safemode_or_autounlink)
-         BOOST_INTRUSIVE_SAFE_HOOK_DEFAULT_ASSERT(node_algorithms::unique(to_insert));
+      BOOST_INTRUSIVE_SAFE_HOOK_DEFAULT_ASSERT(!safemode_or_autounlink || node_algorithms::unique(to_insert));
       std::size_t max_tree_size = (std::size_t)this->max_tree_size_;
       node_algorithms::push_front
          ( this->tree_type::header_ptr(), to_insert
@@ -621,8 +615,7 @@ class sgtree_impl
       const_iterator ret(i);
       ++ret;
       node_ptr to_erase(i.pointed_node());
-      if(safemode_or_autounlink)
-         BOOST_INTRUSIVE_SAFE_HOOK_DEFAULT_ASSERT(!node_algorithms::unique(to_erase));
+      BOOST_INTRUSIVE_SAFE_HOOK_DEFAULT_ASSERT(!safemode_or_autounlink || !node_algorithms::unique(to_erase));
       std::size_t max_tree_size = this->max_tree_size_;
       node_algorithms::erase
          ( this->tree_type::header_ptr(), to_erase, (std::size_t)this->size()

@@ -18,7 +18,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 %skeleton "lalr1.cc" // -*- C++ -*-
-%require "3.7.2"
+%require "3.7.4"
 %defines
 
 %define api.token.raw

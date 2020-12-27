@@ -387,13 +387,14 @@ class RecyclingCloner
       :  m_holder(holder), m_icont(itree)
    {}
 
-   BOOST_CONTAINER_FORCEINLINE static void do_assign(node_ptr_type &p, const node_t &other, bool_<true>)
-   {  p->do_move_assign(const_cast<node_t &>(other).get_real_data());   }
+   BOOST_CONTAINER_FORCEINLINE static void do_assign(node_ptr_type &p, node_t &other, bool_<true>)
+   {  p->do_move_assign(other.get_real_data());   }
 
    BOOST_CONTAINER_FORCEINLINE static void do_assign(node_ptr_type &p, const node_t &other, bool_<false>)
    {  p->do_assign(other.get_real_data());   }
 
-   node_ptr_type operator()(const node_t &other) const
+   node_ptr_type operator()
+      (typename dtl::if_c<DoMove, node_t &, const node_t&>::type other) const
    {
       if(node_ptr_type p = m_icont.unlink_leftmost_without_rebalance()){
          //First recycle a node (this can't throw)
@@ -413,7 +414,7 @@ class RecyclingCloner
          BOOST_CATCH_END
       }
       else{
-         return m_holder.create_node(other.get_real_data());
+         return m_holder.create_node(boost::move(other.get_real_data()));
       }
    }
 

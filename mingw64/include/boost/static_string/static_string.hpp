@@ -5845,7 +5845,7 @@ to_static_wstring(long double value) noexcept
 
 #ifdef BOOST_STATIC_STRING_USE_DEDUCT
 template<std::size_t N, typename CharT>
-basic_static_string(CharT(&)[N]) -> 
+basic_static_string(const CharT(&)[N]) -> 
   basic_static_string<N, CharT, std::char_traits<CharT>>;
 #endif
 

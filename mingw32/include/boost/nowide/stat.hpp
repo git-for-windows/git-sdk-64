@@ -20,8 +20,11 @@ struct __stat64;
 namespace boost {
 namespace nowide {
 #if !defined(BOOST_WINDOWS) && !defined(BOOST_NOWIDE_DOXYGEN)
-    using stat_t = struct stat;
-    using posix_stat_t = struct stat;
+    // Note: `using x = struct ::stat` causes a bogus warning in GCC < 11
+    // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66159
+
+    typedef struct ::stat stat_t;
+    typedef struct ::stat posix_stat_t;
 
     using ::stat;
 #else

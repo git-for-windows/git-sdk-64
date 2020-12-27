@@ -425,12 +425,7 @@ class segment_manager
       (void)this_addr;  (void)segm_addr;
       BOOST_ASSERT( this_addr == segm_addr);
       const std::size_t void_ptr_alignment = boost::move_detail::alignment_of<void_pointer>::value; (void)void_ptr_alignment;
-      BOOST_ASSERT((0 == (std::size_t)this_addr % void_ptr_alignment));
-      BOOST_ASSERT((0 == (std::size_t)segm_addr % void_ptr_alignment));
-      BOOST_ASSERT((0 == (std::size_t)&m_header % void_ptr_alignment));
-      BOOST_STATIC_ASSERT((boost::move_detail::alignment_of<segment_manager>::value >= void_ptr_alignment));
-      BOOST_STATIC_ASSERT((boost::move_detail::alignment_of<segment_manager_base_t>::value >= void_ptr_alignment));
-      BOOST_STATIC_ASSERT((boost::move_detail::alignment_of<header_t>::value >= void_ptr_alignment));
+      BOOST_ASSERT((0 == (std::size_t)this_addr % boost::move_detail::alignment_of<segment_manager>::value));
    }
 
    //!Tries to find a previous named/unique allocation. Returns the address

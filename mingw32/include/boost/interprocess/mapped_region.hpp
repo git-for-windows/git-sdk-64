@@ -190,7 +190,7 @@ class mapped_region
    //!mapped memory page, accessing that page can trigger a segmentation fault.
    //!Depending on the OS, this operation might fail (XSI shared memory), it can decommit storage
    //!and free a portion of the virtual address space (e.g.POSIX) or this
-   //!function can release some physical memory wihout freeing any virtual address space(Windows).
+   //!function can release some physical memory without freeing any virtual address space(Windows).
    //!Returns true on success. Never throws.
    bool shrink_by(std::size_t bytes, bool from_back = true);
 

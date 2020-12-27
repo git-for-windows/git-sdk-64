@@ -43,7 +43,7 @@ namespace nowide {
     /// it is implemented and specialized for CharType = char, it
     /// implements std::filebuf over standard C I/O
     ///
-    template<typename CharType, typename Traits = std::char_traits<CharType> >
+    template<typename CharType, typename Traits = std::char_traits<CharType>>
     class basic_filebuf;
 
     ///
@@ -55,7 +55,7 @@ namespace nowide {
     template<>
     class basic_filebuf<char> : public std::basic_streambuf<char>
     {
-        typedef std::char_traits<char> Traits;
+        using Traits = std::char_traits<char>;
 
     public:
 #ifdef BOOST_MSVC
@@ -195,7 +195,7 @@ namespace nowide {
         }
         void validate_cvt(const std::locale& loc)
         {
-            if(!std::use_facet<std::codecvt<char, char, std::mbstate_t> >(loc).always_noconv())
+            if(!std::use_facet<std::codecvt<char, char, std::mbstate_t>>(loc).always_noconv())
                 throw std::runtime_error("Converting codecvts are not supported");
         }
 
@@ -461,7 +461,7 @@ namespace nowide {
     ///
     /// \brief Convenience typedef
     ///
-    typedef basic_filebuf<char> filebuf;
+    using filebuf = basic_filebuf<char>;
 
 #endif // windows
 

@@ -1,5 +1,5 @@
-#ifndef BOOST_NUMERIC_INTERVAL_HPP
-#define BOOST_NUMERIC_INTERVAL_HPP
+#ifndef BOOST_SAFE_NUMERICS_INTERVAL_HPP
+#define BOOST_SAFE_NUMERICS_INTERVAL_HPP
 
 //  Copyright (c) 2012 Robert Ramey
 //
@@ -16,6 +16,8 @@
 #include <boost/logic/tribool.hpp>
 
 #include "utility.hpp" // log
+
+#include "concept/integer.hpp"
 
 // from stack overflow
 // http://stackoverflow.com/questions/23815138/implementing-variadic-min-max-functions
@@ -45,9 +47,10 @@ struct interval {
         l(rhs.l),
         u(rhs.u)
     {}
-
-    constexpr interval();
-
+    constexpr interval() :
+        l(std::numeric_limits<R>::min()),
+        u(std::numeric_limits<R>::max())
+    {}
     // return true if this interval contains the given point
     constexpr tribool includes(const R & t) const {
         return l <= t && t <= u;
@@ -79,14 +82,10 @@ constexpr interval<R> make_interval(){
     return interval<R>();
 }
 template<class R>
-constexpr interval<R> make_interval(const R & r){
-    return interval<R>(r, r);
+constexpr interval<R> make_interval(const R &){
+    return interval<R>();
 }
-template<class R>
-constexpr interval<R>::interval() :
-    l(std::numeric_limits<R>::lowest()),
-    u(std::numeric_limits<R>::max())
-{}
+
 // account for the fact that for floats and doubles
 // the most negative value is called "lowest" rather
 // than min
@@ -158,7 +157,10 @@ constexpr interval<T> operator%(const interval<T> & t, const interval<T> & u){
 
 template<typename T>
 constexpr interval<T> operator<<(const interval<T> & t, const interval<T> & u){
-//    static_assert(std::is_integral<T>::value, "left shift only defined for integral type");
+    static_assert(
+        boost::safe_numerics::Integer<T>::value,
+        "left shift only defined for integral type"
+    );
     //return interval<T>{t.l << u.l, t.u << u.u};
     return utility::minmax<T>(
         std::initializer_list<T> {
@@ -172,7 +174,10 @@ constexpr interval<T> operator<<(const interval<T> & t, const interval<T> & u){
 
 template<typename T>
 constexpr interval<T> operator>>(const interval<T> & t, const interval<T> & u){
-//    static_assert(std::is_integral<T>::value, "right shift only defined for integral type");
+    static_assert(
+        boost::safe_numerics::Integer<T>::value,
+        "right shift only defined for integral type"
+    );
     //return interval<T>{t.l >> u.u, t.u >> u.l};
     return utility::minmax<T>(
         std::initializer_list<T> {
@@ -306,5 +311,4 @@ operator<<(
 
 } // std
 
-
-#endif // BOOST_NUMERIC_INTERVAL_HPP
+#endif // BOOST_SAFE_NUMERICS_INTERVAL_HPP

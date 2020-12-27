@@ -1937,8 +1937,7 @@ class slist_impl
       BOOST_INTRUSIVE_INVARIANT_ASSERT(node_traits::get_next(header_ptr));
       if (node_traits::get_next(header_ptr) == header_ptr)
       {
-         if (constant_time_size)
-            BOOST_INTRUSIVE_INVARIANT_ASSERT(this->priv_size_traits().get_size() == 0);
+         BOOST_INTRUSIVE_INVARIANT_ASSERT(!constant_time_size || this->priv_size_traits().get_size() == 0);
          return;
       }
       size_t node_count = 0;
@@ -1956,15 +1955,13 @@ class slist_impl
          }
          if ((!linear && next_p == header_ptr) || (linear && !next_p))
          {
-            if (cache_last)
-               BOOST_INTRUSIVE_INVARIANT_ASSERT(get_last_node() == p);
+            BOOST_INTRUSIVE_INVARIANT_ASSERT(!cache_last || get_last_node() == p);
             break;
          }
          p = next_p;
          ++node_count;
       }
-      if (constant_time_size)
-         BOOST_INTRUSIVE_INVARIANT_ASSERT(this->priv_size_traits().get_size() == node_count);
+      BOOST_INTRUSIVE_INVARIANT_ASSERT(!constant_time_size || this->priv_size_traits().get_size() == node_count);
    }
 
 

@@ -57,20 +57,15 @@ struct checked_result {
             m_msg = r.m_msg;
     }
     #endif
+
     checked_result(const checked_result & r) = default;
     checked_result(checked_result && r) = default;
     
-    constexpr /*explicit*/ checked_result(const R & r) :
+    constexpr /*explicit*/ checked_result(const R & r) noexcept :
         m_e(safe_numerics_error::success),
         m_r(r)
     {}
-    #if 0
-    template<typename T>
-    constexpr /*explicit*/ checked_result(const T & t) noexcept :
-        m_e(safe_numerics_error::success),
-        m_r(t)
-    {}
-    #endif
+
     constexpr /*explicit*/ checked_result(
         const safe_numerics_error & e,
         const char * msg = ""
@@ -80,6 +75,7 @@ struct checked_result {
     {
         assert(m_e != safe_numerics_error::success);
     }
+
     // permit construct from another checked result type
     template<typename T>
     constexpr /*explicit*/ checked_result(const checked_result<T> & t) noexcept :
@@ -94,6 +90,7 @@ struct checked_result {
         else
             m_msg = t.m_msg;
     }
+
     constexpr bool exception() const {
         return m_e != safe_numerics_error::success;
     }
@@ -101,7 +98,7 @@ struct checked_result {
     // accesors
     constexpr operator R() const  noexcept{
         // don't assert here.  Let the library catch these errors
-        assert(! exception());
+        // assert(! exception());
         return m_r;
     }
     
@@ -118,16 +115,6 @@ struct checked_result {
     // disallow assignment
     checked_result & operator=(const checked_result &) = delete;
 };
-
-#if 0
-template<typename R>
-constexpr checked_result<R> make_checked_result(
-    const safe_numerics_error & e,
-    char const * const & m
-)  noexcept {
-    return checked_result<R>(e, m);
-}
-#endif
 
 template <class R>
 class make_checked_result {

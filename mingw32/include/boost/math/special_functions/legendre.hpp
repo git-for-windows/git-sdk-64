@@ -1,4 +1,3 @@
-
 //  (C) Copyright John Maddock 2006.
 //  Use, modification and distribution are subject to the
 //  Boost Software License, Version 1.0. (See accompanying file
@@ -149,7 +148,7 @@ struct legendre_p_zero_func
       T Pn;
       T Pn_prime = detail::legendre_p_prime_imp(n, x, pol, &Pn);
       return std::pair<T, T>(Pn, Pn_prime); 
-   };
+   }
 };
 
 template <class T, class Policy>
@@ -302,6 +301,7 @@ namespace detail{
 template <class T, class Policy>
 T legendre_p_imp(int l, int m, T x, T sin_theta_power, const Policy& pol)
 {
+   BOOST_MATH_STD_USING
    // Error handling:
    if((x < -1) || (x > 1))
       return policies::raise_domain_error<T>(
@@ -311,6 +311,18 @@ T legendre_p_imp(int l, int m, T x, T sin_theta_power, const Policy& pol)
    // Handle negative arguments first:
    if(l < 0)
       return legendre_p_imp(-l-1, m, x, sin_theta_power, pol);
+   if ((l == 0) && (m == -1))
+   {
+      return sqrt((1 - x) / (1 + x));
+   }
+   if ((l == 1) && (m == 0))
+   {
+      return x;
+   }
+   if (-m == l)
+   {
+      return pow((1 - x * x) / 4, T(l) / 2) / boost::math::tgamma(l + 1, pol);
+   }
    if(m < 0)
    {
       int sign = (m&1) ? -1 : 1;

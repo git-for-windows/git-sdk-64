@@ -35,7 +35,7 @@ namespace nowide {
             buffer_size--;
             while(source_begin != source_end)
             {
-                code_point c = utf_traits<CharIn>::template decode(source_begin, source_end);
+                code_point c = utf_traits<CharIn>::decode(source_begin, source_end);
                 if(c == illegal || c == incomplete)
                 {
                     c = BOOST_NOWIDE_REPLACEMENT_CHARACTER;
@@ -46,7 +46,7 @@ namespace nowide {
                     rv = NULL;
                     break;
                 }
-                buffer = utf_traits<CharOut>::template encode(c, buffer);
+                buffer = utf_traits<CharOut>::encode(c, buffer);
                 buffer_size -= width;
             }
             *buffer++ = 0;
@@ -64,17 +64,17 @@ namespace nowide {
         {
             std::basic_string<CharOut> result;
             result.reserve(end - begin);
-            typedef std::back_insert_iterator<std::basic_string<CharOut> > inserter_type;
+            using inserter_type = std::back_insert_iterator<std::basic_string<CharOut>>;
             inserter_type inserter(result);
             code_point c;
             while(begin != end)
             {
-                c = utf_traits<CharIn>::template decode(begin, end);
+                c = utf_traits<CharIn>::decode(begin, end);
                 if(c == illegal || c == incomplete)
                 {
                     c = BOOST_NOWIDE_REPLACEMENT_CHARACTER;
                 }
-                utf_traits<CharOut>::template encode(c, inserter);
+                utf_traits<CharOut>::encode(c, inserter);
             }
             return result;
         }

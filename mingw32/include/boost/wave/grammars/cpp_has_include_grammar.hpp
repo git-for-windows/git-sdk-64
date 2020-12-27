@@ -128,7 +128,7 @@ struct has_include_grammar :
             BOOST_SPIRIT_DEBUG_TRACE_RULE(computed_include, TRACE_CPP_HAS_INCLUDE_GRAMMAR);
         }
 
-    // start rule of this grammar
+        // start rule of this grammar
         rule_t const& start() const
         { return has_include_op; }
     };

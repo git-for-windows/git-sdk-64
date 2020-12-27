@@ -27,6 +27,7 @@
 #include <boost/move/detail/to_raw_pointer.hpp>
 #include <boost/container/detail/transform_iterator.hpp>
 #include <boost/container/detail/type_traits.hpp>
+#include <boost/container/detail/placement_new.hpp>
 // intrusive
 #include <boost/intrusive/slist.hpp>
 #include <boost/intrusive/pointer_traits.hpp>
@@ -152,7 +153,7 @@ class basic_multiallocation_chain
          char_ptr prev_elem = elem;
          elem += unit_bytes;
          for(size_type i = 0; i != num_units-1; ++i, elem += unit_bytes){
-            ::new (boost::movelib::to_raw_pointer(prev_elem)) void_pointer(elem);
+            ::new (boost::movelib::to_raw_pointer(prev_elem), boost_container_new_t()) void_pointer(elem);
             prev_elem = elem;
          }
          slist_impl_.incorporate_after(after_this, to_node_ptr(b), to_node_ptr(prev_elem), num_units);

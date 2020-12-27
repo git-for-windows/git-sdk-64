@@ -2035,7 +2035,7 @@ private:
             i2 - i1;
         BOOST_ASSERT(n1 >= 0);
         const typename std::iterator_traits<FwdIterator>::difference_type n2 =
-        std::distance(s1, s2);
+            std::distance(s1, s2);
         BOOST_ASSERT(n2 >= 0);
 
         if (IsAliasedRange(s1, s2))

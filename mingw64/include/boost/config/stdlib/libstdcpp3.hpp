@@ -125,7 +125,9 @@
 //
 #ifdef __clang__
 
-#if __has_include(<memory_resource>)
+#if __has_include(<compare>)
+#  define BOOST_LIBSTDCXX_VERSION 100100
+#elif __has_include(<memory_resource>)
 #  define BOOST_LIBSTDCXX_VERSION 90100
 #elif __has_include(<charconv>)
 #  define BOOST_LIBSTDCXX_VERSION 80100

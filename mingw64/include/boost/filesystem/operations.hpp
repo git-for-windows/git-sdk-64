@@ -137,6 +137,8 @@ boost::uintmax_t file_size(const path& p, system::error_code* ec=0);
 BOOST_FILESYSTEM_DECL
 boost::uintmax_t hard_link_count(const path& p, system::error_code* ec=0);
 BOOST_FILESYSTEM_DECL
+std::time_t creation_time(const path& p, system::error_code* ec=0);
+BOOST_FILESYSTEM_DECL
 std::time_t last_write_time(const path& p, system::error_code* ec=0);
 BOOST_FILESYSTEM_DECL
 void last_write_time(const path& p, const std::time_t new_time,
@@ -421,6 +423,12 @@ boost::uintmax_t hard_link_count(const path& p) {return detail::hard_link_count(
 inline
 boost::uintmax_t hard_link_count(const path& p, system::error_code& ec) BOOST_NOEXCEPT
                                      {return detail::hard_link_count(p, &ec);}
+inline
+std::time_t creation_time(const path& p) { return detail::creation_time(p); }
+
+inline
+std::time_t creation_time(const path& p, system::error_code& ec) BOOST_NOEXCEPT
+                                     { return detail::creation_time(p, &ec); }
 inline
 std::time_t last_write_time(const path& p) {return detail::last_write_time(p);}
 

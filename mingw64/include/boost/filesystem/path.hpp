@@ -432,7 +432,7 @@ namespace path_detail // intentionally don't use filesystem::detail to not bring
     String string(const codecvt_type& cvt) const;
 
 #   ifdef BOOST_WINDOWS_API
-    const std::string string() const
+    std::string string() const
     {
       std::string tmp;
       if (!m_pathname.empty())
@@ -440,7 +440,7 @@ namespace path_detail // intentionally don't use filesystem::detail to not bring
         tmp);
       return tmp;
     }
-    const std::string string(const codecvt_type& cvt) const
+    std::string string(const codecvt_type& cvt) const
     {
       std::string tmp;
       if (!m_pathname.empty())
@@ -457,7 +457,7 @@ namespace path_detail // intentionally don't use filesystem::detail to not bring
     const std::string& string() const { return m_pathname; }
     const std::string& string(const codecvt_type&) const { return m_pathname; }
 
-    const std::wstring wstring() const
+    std::wstring wstring() const
     {
       std::wstring tmp;
       if (!m_pathname.empty())
@@ -465,7 +465,7 @@ namespace path_detail // intentionally don't use filesystem::detail to not bring
           tmp);
       return tmp;
     }
-    const std::wstring wstring(const codecvt_type& cvt) const
+    std::wstring wstring(const codecvt_type& cvt) const
     {
       std::wstring tmp;
       if (!m_pathname.empty())
@@ -493,16 +493,16 @@ namespace path_detail // intentionally don't use filesystem::detail to not bring
     String generic_string(const codecvt_type& cvt) const;
 
 #   ifdef BOOST_WINDOWS_API
-    const std::string   generic_string() const { return generic_path().string(); }
-    const std::string   generic_string(const codecvt_type& cvt) const { return generic_path().string(cvt); }
-    const std::wstring  generic_wstring() const { return generic_path().wstring(); }
-    const std::wstring  generic_wstring(const codecvt_type&) const { return generic_wstring(); }
+    std::string   generic_string() const { return generic_path().string(); }
+    std::string   generic_string(const codecvt_type& cvt) const { return generic_path().string(cvt); }
+    std::wstring  generic_wstring() const { return generic_path().wstring(); }
+    std::wstring  generic_wstring(const codecvt_type&) const { return generic_wstring(); }
 #   else // BOOST_POSIX_API
     //  On POSIX-like systems, the generic format is the same as the native format
     const std::string&  generic_string() const  { return m_pathname; }
     const std::string&  generic_string(const codecvt_type&) const  { return m_pathname; }
-    const std::wstring  generic_wstring() const { return this->wstring(); }
-    const std::wstring  generic_wstring(const codecvt_type& cvt) const { return this->wstring(cvt); }
+    std::wstring  generic_wstring() const { return this->wstring(); }
+    std::wstring  generic_wstring(const codecvt_type& cvt) const { return this->wstring(cvt); }
 #   endif
 
     //  -----  compare  -----
@@ -599,12 +599,12 @@ namespace path_detail // intentionally don't use filesystem::detail to not bring
 # if defined(BOOST_FILESYSTEM_DEPRECATED)
     //  deprecated functions with enough signature or semantic changes that they are
     //  not supplied by default
-    const std::string file_string() const               { return string(); }
-    const std::string directory_string() const          { return string(); }
-    const std::string native_file_string() const        { return string(); }
-    const std::string native_directory_string() const   { return string(); }
-    const string_type external_file_string() const      { return native(); }
-    const string_type external_directory_string() const { return native(); }
+    std::string file_string() const               { return string(); }
+    std::string directory_string() const          { return string(); }
+    std::string native_file_string() const        { return string(); }
+    std::string native_directory_string() const   { return string(); }
+    string_type external_file_string() const      { return native(); }
+    string_type external_directory_string() const { return native(); }
 
     //  older functions no longer supported
     //typedef bool (*name_check)(const std::string & name);
@@ -997,32 +997,28 @@ namespace path_detail // intentionally don't use filesystem::detail to not bring
 namespace path_traits
 {  //  without codecvt
 
-  inline
-    void convert(const char* from,
+  inline void convert(const char* from,
     const char* from_end,    // 0 for null terminated MBCS
     std::wstring & to)
   {
     convert(from, from_end, to, path::codecvt());
   }
 
-  inline
-    void convert(const wchar_t* from,
+  inline void convert(const wchar_t* from,
     const wchar_t* from_end,  // 0 for null terminated MBCS
     std::string & to)
   {
     convert(from, from_end, to, path::codecvt());
   }
 
-  inline
-    void convert(const char* from,
+  inline void convert(const char* from,
     std::wstring & to)
   {
     BOOST_ASSERT(!!from);
     convert(from, 0, to, path::codecvt());
   }
 
-  inline
-    void convert(const wchar_t* from,
+  inline void convert(const wchar_t* from,
     std::string & to)
   {
     BOOST_ASSERT(!!from);

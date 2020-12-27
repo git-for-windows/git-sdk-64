@@ -64,18 +64,11 @@ struct heterogeneous_checked_operation<
             // INT32-C Ensure that operations on signed
             // integers do not overflow
             return
-            boost::safe_numerics::safe_compare::greater_than(
-                t,
-                Max
-            ) ?
+            boost::safe_numerics::safe_compare::greater_than(t, Max) ?
                 F::template invoke<safe_numerics_error::positive_overflow_error>(
                     "converted signed value too large"
                 )
-            :
-            boost::safe_numerics::safe_compare::less_than(
-                t,
-                Min
-            ) ?
+            : boost::safe_numerics::safe_compare::less_than(t, Min) ?
                 F::template invoke<safe_numerics_error::negative_overflow_error>(
                     "converted signed value too small"
                 )
@@ -92,12 +85,14 @@ struct heterogeneous_checked_operation<
             // INT30-C Ensure that unsigned integer operations
             // do not wrap
             return
-            boost::safe_numerics::safe_compare::greater_than(
-                t,
-                Max
-            ) ?
+            boost::safe_numerics::safe_compare::greater_than(t, Max) ?
                 F::template invoke<safe_numerics_error::positive_overflow_error>(
                     "converted unsigned value too large"
+                )
+            :
+            boost::safe_numerics::safe_compare::less_than(t, Min) ?
+                F::template invoke<safe_numerics_error::positive_overflow_error>(
+                    "converted unsigned value too small"
                 )
             :
                 checked_result<R>(static_cast<R>(t))
@@ -112,12 +107,14 @@ struct heterogeneous_checked_operation<
             // INT32-C Ensure that operations on unsigned
             // integers do not overflow
             return
-            boost::safe_numerics::safe_compare::greater_than(
-                t,
-                Max
-            ) ?
+            boost::safe_numerics::safe_compare::greater_than(t, Max) ?
                 F::template invoke<safe_numerics_error::positive_overflow_error>(
                     "converted unsigned value too large"
+                )
+            :
+            boost::safe_numerics::safe_compare::less_than(t, Min) ?
+                F::template invoke<safe_numerics_error::positive_overflow_error>(
+                    "converted unsigned value too small"
                 )
             :
                 checked_result<R>(static_cast<R>(t))
@@ -130,15 +127,12 @@ struct heterogeneous_checked_operation<
             std::true_type   // T is signed
         ){
             return
-            boost::safe_numerics::safe_compare::less_than(t, 0) ?
+            boost::safe_numerics::safe_compare::less_than(t, Min) ?
                 F::template invoke<safe_numerics_error::domain_error>(
-                    "converted negative value to unsigned"
+                    "converted value to low or negative"
                 )
             :
-            boost::safe_numerics::safe_compare::greater_than(
-                t,
-                Max
-            ) ?
+            boost::safe_numerics::safe_compare::greater_than(t, Max) ?
                 F::template invoke<safe_numerics_error::positive_overflow_error>(
                     "converted signed value too large"
                 )

@@ -86,21 +86,23 @@
 #  define BOOST_NO_STD_LOCALE
 #endif
 
-#if BOOST_MSVC < 1800
+#if ((defined(BOOST_MSVC) && BOOST_MSVC >= 1400) || (defined(__clang__) && defined(_MSC_VER))) && (_MSC_VER < 1800)
 // Fix for VC++ 8.0 on up ( I do not have a previous version to test )
 // or clang-cl. If exceptions are off you must manually include the 
 // <exception> header before including the <typeinfo> header. Admittedly 
 // trying to use Boost libraries or the standard C++ libraries without 
 // exception support is not suggested but currently clang-cl ( v 3.4 ) 
 // does not support exceptions and must be compiled with exceptions off.
-#if !_HAS_EXCEPTIONS && ((defined(BOOST_MSVC) && BOOST_MSVC >= 1400) || (defined(__clang__) && defined(_MSC_VER)))
+#if !_HAS_EXCEPTIONS
 #include <exception>
 #endif
 #include <typeinfo>
-#if ( (!_HAS_EXCEPTIONS && !defined(__ghs__)) || (defined(__ghs__) && !_HAS_NAMESPACE) ) && !defined(__TI_COMPILER_VERSION__) && !defined(__VISUALDSPVERSION__) \
-   && !defined(__VXWORKS__) && !defined(BOOST_EMBTC_WINDOWS)
+#if !_HAS_EXCEPTIONS
 #  define BOOST_NO_STD_TYPEINFO
 #endif  
+#endif
+#if defined(__ghs__) && !_HAS_NAMESPACE
+#  define BOOST_NO_STD_TYPEINFO
 #endif
 
 //  C++0x headers implemented in 520 (as shipped by Microsoft)

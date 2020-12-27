@@ -20,6 +20,7 @@
 #include <boost/core/demangle.hpp>
 #endif
 #include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 #include <stdexcept>
 #include <new>
 #include <ios>
@@ -76,20 +77,22 @@ boost
             }
         };
 
+    template <class E>
+    inline
+    exception_ptr
+    copy_exception( E const & e )
+        {
+        E cp = e;
+        exception_detail::copy_boost_exception(&cp, &e);
+        return exception_ptr(boost::make_shared<wrapexcept<E> >(cp));
+        }
+
     template <class T>
     inline
     exception_ptr
-    copy_exception( T const & e )
+    make_exception_ptr( T const & e )
         {
-        try
-            {
-            throw enable_current_exception(e);
-            }
-        catch(
-        ... )
-            {
-            return current_exception();
-            }
+        return copy_exception(e);
         }
 
 #ifndef BOOST_NO_RTTI

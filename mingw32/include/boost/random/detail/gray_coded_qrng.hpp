@@ -15,7 +15,7 @@
 
 #include <functional> // bit_xor
 
-#include <boost/mpl/if.hpp>
+#include <boost/type_traits/conditional.hpp>
 
 #include <boost/integer/integer_mask.hpp>
 
@@ -70,7 +70,7 @@ private:
   // is narrower than the size_type, otherwise checks compile to nothing.
   BOOST_STATIC_ASSERT(LatticeT::bit_count <= std::numeric_limits<size_type>::digits);
 
-  typedef typename mpl::if_c<
+  typedef typename conditional<
       ((LatticeT::bit_count) < std::numeric_limits<size_type>::digits)
     , check_bit_range
     , check_nothing

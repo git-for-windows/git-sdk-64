@@ -136,13 +136,13 @@ struct file_name_param_traits< T, false >
 #ifndef BOOST_LOG_DOXYGEN_PASS
 
 #define BOOST_LOG_INIT_LOG_TO_FILE_INTERNAL(z, n, data)\
-    template< BOOST_PP_ENUM_PARAMS(n, typename T) >\
-    inline shared_ptr< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< sinks::text_file_backend > > add_file_log(BOOST_PP_ENUM_BINARY_PARAMS(n, T, const& arg))\
+    template< BOOST_PP_ENUM_PARAMS_Z(z, n, typename T) >\
+    inline shared_ptr< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< sinks::text_file_backend > > add_file_log(BOOST_PP_ENUM_BINARY_PARAMS_Z(z, n, T, const& arg))\
     {\
         return aux::file_name_param_traits< T0 >::wrap_add_file_log(\
             arg0\
             BOOST_PP_COMMA_IF(BOOST_PP_GREATER(n, 1))\
-            BOOST_PP_EXPR_IF(BOOST_PP_GREATER(n, 1), (BOOST_PP_ENUM_SHIFTED_PARAMS(n, arg)))\
+            BOOST_PP_EXPR_IF(BOOST_PP_GREATER(n, 1), (BOOST_PP_ENUM_SHIFTED_PARAMS_Z(z, n, arg)))\
         );\
     }
 

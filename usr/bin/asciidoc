@@ -33,9 +33,9 @@ from ast import literal_eval
 from collections import OrderedDict
 
 # Used by asciidocapi.py #
-VERSION = '9.0.3'           # See CHANGELOG file for version history.
+VERSION = '9.0.4'           # See CHANGELOG file for version history.
 
-MIN_PYTHON_VERSION = '3.5'  # Require this version of Python or better.
+MIN_PYTHON_VERSION = (3, 5)  # Require this version of Python or better.
 
 # ---------------------------------------------------------------------------
 # Program constants.
@@ -4719,8 +4719,8 @@ class Config:
         directory.
         cmd is the asciidoc command or asciidoc.py path.
         """
-        if float(sys.version[:3]) < float(MIN_PYTHON_VERSION):
-            message.stderr('FAILED: Python %s or better required' % MIN_PYTHON_VERSION)
+        if sys.version_info[:2] < MIN_PYTHON_VERSION:
+            message.stderr('FAILED: Python %d.%d or better required' % MIN_PYTHON_VERSION)
             sys.exit(1)
         if not os.path.exists(cmd):
             message.stderr('FAILED: Missing asciidoc command: %s' % cmd)
@@ -6028,7 +6028,7 @@ class Plugin:
         """
         for d in [os.path.join(d, Plugin.type + 's') for d in config.get_load_dirs()]:
             if os.path.isdir(d):
-                for f in os.walk(d).next()[1]:
+                for f in sorted(filter(os.path.isdir, [os.path.join(d, o) for o in os.listdir(d)])):
                     message.stdout(os.path.join(d, f))
 
     @staticmethod
