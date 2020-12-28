@@ -48,7 +48,7 @@
 /* #undef HAVE_GLUT_GLUT_H */
 
 /* Define to 1 if you have the <GL/glut.h> header file. */
-#define HAVE_GL_GLUT_H 1
+/* #undef HAVE_GL_GLUT_H */
 
 /* Define to 1 if you have the <GL/glu.h> header file. */
 #define HAVE_GL_GLU_H 1
@@ -154,6 +154,9 @@
 /* Support JPEG compression (requires IJG JPEG library) */
 #define JPEG_SUPPORT 1
 
+/* Support libdeflate enhanced compression */
+#define LIBDEFLATE_SUPPORT 1
+
 /* 12bit libjpeg primary include file with path */
 /* #undef LIBJPEG_12_PATH */
 
@@ -188,7 +191,7 @@
 #define PACKAGE_NAME "LibTIFF Software"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "LibTIFF Software 4.1.0"
+#define PACKAGE_STRING "LibTIFF Software 4.2.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "tiff"
@@ -197,7 +200,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "4.1.0"
+#define PACKAGE_VERSION "4.2.0"
 
 /* Support Macintosh PackBits algorithm */
 #define PACKBITS_SUPPORT 1
@@ -313,10 +316,10 @@
 #define USE_WIN32_FILEIO 1
 
 /* Version number of package */
-#define VERSION "4.1.0"
+#define VERSION "4.2.0"
 
 /* Support webp compression */
-/* #undef WEBP_SUPPORT */
+#define WEBP_SUPPORT 1
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */
