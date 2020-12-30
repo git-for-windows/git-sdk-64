@@ -16,7 +16,6 @@ namespace Windows {
   namespace Foundation {
     interface IAsyncAction;
     interface TypedEventHandler;
-    //struct DateTime;
     //struct EventRegistrationToken;
 
     namespace Collections {
@@ -31,63 +30,63 @@ namespace Windows {
     interface IApplicationDataStatics;
     interface IApplicationDataSetVersionHandler;
     interface ApplicationDataContainer;
-    interface ApplicationDataSetVersionHandler; //delegate
+    // delegate  ApplicationDataSetVersionHandler;
     interface ISetVersionRequest;
     interface ISetVersionDeferral;
-    enum StorageDeleteOption;
-    enum NameCollisionOption;
-    enum StorageItemTypes;
-    enum ApplicationDataLocality;
-    enum ApplicationDataCreateDisposition;
-    enum FileAttributes;
-    enum CreationCollisionOption;
+    typedef enum StorageDeleteOption StorageDeleteOption;
+    typedef enum NameCollisionOption NameCollisionOption;
+    typedef enum StorageItemTypes StorageItemTypes;
+    typedef enum ApplicationDataLocality ApplicationDataLocality;
+    typedef enum ApplicationDataCreateDisposition ApplicationDataCreateDisposition;
+    typedef enum FileAttributes FileAttributes;
+    typedef enum CreationCollisionOption CreationCollisionOption;
   }
 }
 
 namespace Windows {
   namespace Storage {
-    typedef enum NameCollisionoption {
-      NameCollisionoption_GenerateUniqueName,
-      NameCollisionoption_ReplaceExisting,
-      NameCollisionoption_FailIfExists
-    } NameCollisionOption;
+    enum NameCollisionOption {
+      GenerateUniqueName,
+      ReplaceExisting,
+      FailIfExists
+    };
 
-    typedef enum StorageDeleteOption {
-      StorageDeleteOption_Default,
-      StorageDeleteOption_PermanentDelete
-    } StorageDeleteOption;
+    enum StorageDeleteOption {
+      Default,
+      PermanentDelete
+    };
 
-    typedef enum StorageItemTypes {
-      StorageItemTypes_None,
-      StorageItemTypes_File,
-      StorageItemTypes_Folder
-    } StorageItemTypes;
+    enum StorageItemTypes {
+      None,
+      File,
+      Folder
+    };
 
-    typedef enum ApplicationDataCreateDisposition {
-      ApplicationDataCreateDisposition_Always,
-      ApplicationDataCreateDisposition_Existing
-    } ApplicationDataCreateDisposition;
+    enum ApplicationDataCreateDisposition {
+      Always,
+      Existing
+    };
 
-    typedef enum ApplicationDataLocality {
-      ApplicationDataLocality_Local,
-      ApplicationDataLocality_Roaming,
-      ApplicationDataLocality_Temporary
-    } ApplicationDataLocality;
+    enum ApplicationDataLocality {
+      Local,
+      Roaming,
+      Temporary
+    };
 
-    typedef enum FileAttributes {
-      FileAttributes_Normal,
-      FileAttributes_ReadOnly,
-      FileAttributes_Directory,
-      FileAttributes_Archive,
-      FileAttributes_Temporary
-    } FileAttributes;
+    enum FileAttributes {
+      Normal,
+      ReadOnly,
+      Directory,
+      Archive,
+      Temporary
+    };
 
-    typedef enum CreationCollisionOption {
-      CreationCollisionOption_GenerateUniqueName,
-      CreationCollisionOption_ReplaceExisting,
-      CreationCollisionOption_FailIfExists,
-      CreationCollisionOption_OpenIfExists
-    } CreationCollisionOption;
+    enum CreationCollisionOption {
+      GenerateUniqueName,
+      ReplaceExisting,
+      FailIfExists,
+      OpenIfExists
+    };
 
     [uuid(4207A996-CA2F-42F7-BDE8-8B10457A7F30)]
     interface IStorageItem : IInspectable
@@ -100,7 +99,7 @@ namespace Windows {
       [propget] HRESULT Name(HSTRING *value);
       [propget] HRESULT Path(HSTRING *value);
       [propget] HRESULT Attributes(FileAttributes* value);
-      [propget] HRESULT DateCreated(DateTime* value);
+      [propget] HRESULT DateCreated(Windows.Foundation.DateTime* value);
       HRESULT IsOfType(StorageItemTypes itemType, boolean* value);
     }
 
@@ -144,7 +143,7 @@ namespace Windows {
     [uuid(C3DA6FB7-B744-4B45-B0B8-223A0938D0DC)]
     interface IApplicationData : IInspectable {
       [propget] HRESULT Version(int* value);
-      HRESULT SetVersionAsync(int desiredVersion, ApplicationDataSetVersionHandler* handler, /*IAsyncAction*/ IInspectable** setVersionOperation);
+      HRESULT SetVersionAsync(int desiredVersion, IApplicationDataSetVersionHandler* handler, /*IAsyncAction*/ IInspectable** setVersionOperation);
       HRESULT ClearAllAsync(/*IAsyncAction*/ IInspectable** clearOperation);
       HRESULT ClearAsync(ApplicationDataLocality locality, /*IAsyncAction*/ IInspectable** clearOperation);
       [propget] HRESULT LocalSettings(IApplicationDataContainer** value);
@@ -169,8 +168,8 @@ namespace Windows {
     }
 
     [uuid(A05791E6-CC9F-4687-ACAB-A364FD785463)]
-    interface ApplicationDataSetVersionHandler : IUnknown {
-      HRESULT ApplicationDataSetVersionHandler(ISetVersionRequest* setVersionRequest);
+    interface IApplicationDataSetVersionHandler : IUnknown {
+      HRESULT Invoke(ISetVersionRequest* setVersionRequest);
     }
 
     [uuid(B9C76B9B-1056-4E69-8330-162619956F9B)]
