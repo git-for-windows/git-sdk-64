@@ -28,9 +28,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.8
-srcdir=		../Python-3.8.6
-VPATH=		../Python-3.8.6
-abs_srcdir=	/c/_/M/mingw-w64-python/src/build-i686/../Python-3.8.6
+srcdir=		../Python-3.8.7
+VPATH=		../Python-3.8.7
+abs_srcdir=	/c/_/M/mingw-w64-python/src/build-i686/../Python-3.8.7
 abs_builddir=	/c/_/M/mingw-w64-python/src/build-i686
 
 
@@ -139,9 +139,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.6
-VPATH_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.6
-abs_srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.6
+srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.7
+VPATH_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.7
+abs_srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.8.7
 abs_builddir_b2h=	C:/_/M/mingw-w64-python/src/build-i686
 prefix_b2h=		D:/a/_temp/msys/msys64/mingw32
 
@@ -200,9 +200,9 @@ RUNSHARED=
 ENSUREPIP=      no
 
 # OpenSSL options for setup.py so sysconfig can pick up AC_SUBST() vars.
-OPENSSL_INCLUDES=-ID:/a/_temp/msys/msys64/mingw32/include
-OPENSSL_LIBS=-lssl -lcrypto
-OPENSSL_LDFLAGS=-LD:/a/_temp/msys/msys64/mingw32/lib
+OPENSSL_INCLUDES=-ID:/a/_temp/msys/msys64/mingw32/include 
+OPENSSL_LIBS=-lssl -lcrypto 
+OPENSSL_LDFLAGS=-LD:/a/_temp/msys/msys64/mingw32/lib 
 
 # Modes for directories, executables and data files created by the
 # install process.  Default to user-only-writable for all file types.

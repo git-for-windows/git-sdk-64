@@ -1,7 +1,7 @@
 /* dbm.h  -  The include file for dbm users.  */
 
 /*  This file is part of GDBM, the GNU data base manager, by Philip A. Nelson.
-    Copyright (C) 1990-2011, 2017-2018 Free Software Foundation, Inc.
+    Copyright (C) 1990-2011, 2017-2020 Free Software Foundation, Inc.
 
     GDBM is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
