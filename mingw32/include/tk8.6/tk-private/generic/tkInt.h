@@ -59,6 +59,41 @@
 #   endif
 #endif
 
+#ifndef JOIN
+#  define JOIN(a,b) JOIN1(a,b)
+#  define JOIN1(a,b) a##b
+#endif
+
+#ifndef TCL_UNUSED
+#   if defined(__cplusplus)
+#	define TCL_UNUSED(T) T
+#   elif defined(__GNUC__) && (__GNUC__ > 2)
+#	define TCL_UNUSED(T) T JOIN(dummy, __LINE__) __attribute__((unused))
+#   else
+#	define TCL_UNUSED(T) T JOIN(dummy, __LINE__)
+#   endif
+#endif
+
+#if defined(_WIN32) && (TCL_MAJOR_VERSION < 9) && (TCL_MINOR_VERSION < 7)
+# if TCL_UTF_MAX > 3
+#   define Tcl_WCharToUtfDString(a,b,c) Tcl_WinTCharToUtf((TCHAR *)(a),(b)*sizeof(WCHAR),c)
+#   define Tcl_UtfToWCharDString(a,b,c) (WCHAR *)Tcl_WinUtfToTChar(a,b,c)
+# else
+#   define Tcl_WCharToUtfDString ((char * (*)(const WCHAR *, int len, Tcl_DString *))Tcl_UniCharToUtfDString)
+#   define Tcl_UtfToWCharDString ((WCHAR * (*)(const char *, int len, Tcl_DString *))Tcl_UtfToUniCharDString)
+# endif
+#endif
+
+#if defined(__GNUC__) && (__GNUC__ > 2)
+#   define TKFLEXARRAY 0
+#else
+#   define TKFLEXARRAY 1
+#endif
+
+#ifndef Tcl_GetParent
+#   define Tcl_GetParent Tcl_GetMaster
+#endif
+
 /*
  * Macros used to cast between pointers and integers (e.g. when storing an int
  * in ClientData), on 64-bit architectures they avoid gcc warning about "cast
@@ -328,12 +363,12 @@ typedef struct TkDisplay {
      */
 
     Tcl_HashTable maintainHashTable;
-				/* Hash table that maps from a master's
-				 * Tk_Window token to a list of slaves managed
-				 * by that master. */
+				/* Hash table that maps from a container's
+				 * Tk_Window token to a list of windows managed
+				 * by that container. */
     int geomInit;
 
-#define TkGetGeomMaster(tkwin) (((TkWindow *)tkwin)->maintainerPtr != NULL ? \
+#define TkGetContainer(tkwin) (((TkWindow *)tkwin)->maintainerPtr != NULL ? \
     ((TkWindow *)tkwin)->maintainerPtr : ((TkWindow *)tkwin)->parentPtr)
 
     /*
@@ -635,7 +670,7 @@ typedef struct TkMainInfo {
 				/* Top level of option hierarchy for this main
 				 * window. NULL means uninitialized. Managed
 				 * by tkOption.c. */
-    Tcl_HashTable imageTable;	/* Maps from image names to Tk_ImageMaster
+    Tcl_HashTable imageTable;	/* Maps from image names to Tk_ImageModel
 				 * structures. Managed by tkImage.c. */
     int strictMotif;		/* This is linked to the tk_strictMotif global
 				 * variable. */
@@ -682,7 +717,7 @@ typedef struct TkWindow {
     Visual *visual;		/* Visual to use for window. If not default,
 				 * MUST be set before X window is created. */
     int depth;			/* Number of bits/pixel. */
-    Window window;		/* X's id for window. NULL means window hasn't
+    Window window;		/* X's id for window. None means window hasn't
 				 * actually been created yet, or it's been
 				 * deleted. */
     struct TkWindow *childList;	/* First in list of child windows, or NULL if
@@ -830,9 +865,9 @@ typedef struct TkWindow {
 #endif /* TK_USE_INPUT_METHODS */
     char *geomMgrName;          /* Records the name of the geometry manager. */
     struct TkWindow *maintainerPtr;
-				/* The geometry master for this window. The
-				 * value is NULL if the window has no master or
-				 * if its master is its parent. */
+				/* The geometry container for this window. The
+				 * value is NULL if the window has no container or
+				 * if its container is its parent. */
 } TkWindow;
 
 /*
@@ -842,6 +877,11 @@ typedef struct TkWindow {
 
 typedef struct {
     XKeyEvent keyEvent;		/* The real event from X11. */
+#ifdef _WIN32
+    char trans_chars[XMaxTransChars];
+                            /* translated characters */
+    unsigned char nbytes;
+#elif !defined(MAC_OSX_TK)
     char *charValuePtr;		/* A pointer to a string that holds the key's
 				 * %A substitution text (before backslash
 				 * adding), or NULL if that has not been
@@ -851,6 +891,7 @@ typedef struct {
 				 * is non-NULL. */
     KeySym keysym;		/* Key symbol computed after input methods
 				 * have been invoked */
+#endif
 } TkKeyEvent;
 
 /*
@@ -950,7 +991,7 @@ typedef struct TkpClipMask {
 	(Button1Mask|Button2Mask|Button3Mask|Button4Mask|Button5Mask)
 
 
-MODULE_SCOPE unsigned long TkGetButtonMask(unsigned int);
+MODULE_SCOPE unsigned TkGetButtonMask(unsigned);
 
 /*
  * Object types not declared in tkObj.c need to be mentioned here so they can
@@ -1024,6 +1065,10 @@ void Tcl_Panic(const char *, ...) __attribute__((analyzer_noreturn));
  */
 
 #include "tkIntDecls.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
  * Themed widget set init function:
@@ -1180,10 +1225,12 @@ MODULE_SCOPE int	Tk_WmObjCmd(ClientData clientData, Tcl_Interp *interp,
 MODULE_SCOPE int	Tk_GetDoublePixelsFromObj(Tcl_Interp *interp,
 			    Tk_Window tkwin, Tcl_Obj *objPtr,
 			    double *doublePtr);
-MODULE_SCOPE int	TkSetGeometryMaster(Tcl_Interp *interp,
-			    Tk_Window tkwin, const char *master);
-MODULE_SCOPE void	TkFreeGeometryMaster(Tk_Window tkwin,
-			    const char *master);
+#define TkSetGeometryContainer TkSetGeometryMaster
+MODULE_SCOPE int	TkSetGeometryContainer(Tcl_Interp *interp,
+			    Tk_Window tkwin, const char *name);
+#define TkFreeGeometryContainer TkFreeGeometryMaster
+MODULE_SCOPE void	TkFreeGeometryContainer(Tk_Window tkwin,
+			    const char *name);
 
 MODULE_SCOPE void	TkEventInit(void);
 MODULE_SCOPE void	TkRegisterObjTypes(void);
@@ -1221,6 +1268,10 @@ MODULE_SCOPE void	TkpDrawCharsInContext(Display * display,
 			    Drawable drawable, GC gc, Tk_Font tkfont,
 			    const char *source, int numBytes, int rangeStart,
 			    int rangeLength, int x, int y);
+MODULE_SCOPE void	TkpDrawAngledCharsInContext(Display * display,
+			    Drawable drawable, GC gc, Tk_Font tkfont,
+			    const char *source, int numBytes, int rangeStart,
+			    int rangeLength, double x, double y, double angle);
 MODULE_SCOPE int	TkpMeasureCharsInContext(Tk_Font tkfont,
 			    const char *source, int numBytes, int rangeStart,
 			    int rangeLength, int maxLength, int flags,
@@ -1274,9 +1325,13 @@ MODULE_SCOPE void	TkUnixSetXftClipRegion(TkRegion clipRegion);
 #if TCL_UTF_MAX > 4
 #   define TkUtfToUniChar Tcl_UtfToUniChar
 #   define TkUniCharToUtf Tcl_UniCharToUtf
+#   define TkUtfPrev Tcl_UtfPrev
+#   define TkUtfAtIndex Tcl_UtfAtIndex
 #else
     MODULE_SCOPE int TkUtfToUniChar(const char *, int *);
     MODULE_SCOPE int TkUniCharToUtf(int, char *);
+    MODULE_SCOPE const char *TkUtfPrev(const char *, const char *);
+    MODULE_SCOPE const char *TkUtfAtIndex(const char *src, int index);
 #endif
 
 /*
@@ -1298,6 +1353,10 @@ MODULE_SCOPE int	TkOldTestInit(Tcl_Interp *interp);
 #define TkplatformtestInit(x) TCL_OK
 #else
 MODULE_SCOPE int	TkplatformtestInit(Tcl_Interp *interp);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* _TKINT */

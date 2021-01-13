@@ -69,7 +69,7 @@ typedef SQLSMALLINT SQLRETURN;
 /* TODO - Check how the SQLLEN and SQLULEN types are handled on
  *        64-bit Unix. */
 
-#if defined(__WIN64)
+#if defined(_WIN64)
 typedef Tcl_WideInt SQLLEN;
 typedef Tcl_WideUInt SQLULEN;
 #else

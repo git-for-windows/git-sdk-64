@@ -85,7 +85,7 @@ extern "C" {
 #define ITCL_RELEASE_SERIAL     0
 
 #define ITCL_VERSION            "4.2"
-#define ITCL_PATCH_LEVEL        "4.2.0"
+#define ITCL_PATCH_LEVEL        "4.2.1"
 
 
 /*

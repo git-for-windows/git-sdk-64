@@ -148,16 +148,32 @@ __isl_export
 __isl_give isl_union_map *isl_union_map_gist_range(
 	__isl_take isl_union_map *umap, __isl_take isl_union_set *uset);
 
-__isl_export
+__isl_overload
+__isl_give isl_union_map *isl_union_map_intersect_domain_union_set(
+	__isl_take isl_union_map *umap, __isl_take isl_union_set *uset);
+__isl_overload
+__isl_give isl_union_map *isl_union_map_intersect_domain_space(
+	__isl_take isl_union_map *umap, __isl_take isl_space *space);
 __isl_give isl_union_map *isl_union_map_intersect_domain(
 	__isl_take isl_union_map *umap, __isl_take isl_union_set *uset);
-__isl_export
+__isl_overload
+__isl_give isl_union_map *isl_union_map_intersect_range_union_set(
+	__isl_take isl_union_map *umap, __isl_take isl_union_set *uset);
+__isl_overload
+__isl_give isl_union_map *isl_union_map_intersect_range_space(
+	__isl_take isl_union_map *umap, __isl_take isl_space *space);
 __isl_give isl_union_map *isl_union_map_intersect_range(
 	__isl_take isl_union_map *umap, __isl_take isl_union_set *uset);
+__isl_export
+__isl_give isl_union_map *isl_union_map_intersect_domain_factor_domain(
+	__isl_take isl_union_map *umap, __isl_take isl_union_map *factor);
+__isl_export
 __isl_give isl_union_map *isl_union_map_intersect_domain_factor_range(
 	__isl_take isl_union_map *umap, __isl_take isl_union_map *factor);
+__isl_export
 __isl_give isl_union_map *isl_union_map_intersect_range_factor_domain(
 	__isl_take isl_union_map *umap, __isl_take isl_union_map *factor);
+__isl_export
 __isl_give isl_union_map *isl_union_map_intersect_range_factor_range(
 	__isl_take isl_union_map *umap, __isl_take isl_union_map *factor);
 
@@ -199,6 +215,7 @@ __isl_give isl_union_map *isl_union_map_preimage_range_union_pw_multi_aff(
 	__isl_take isl_union_pw_multi_aff *upma);
 __isl_export
 __isl_give isl_union_map *isl_union_map_reverse(__isl_take isl_union_map *umap);
+__isl_export
 __isl_give isl_union_map *isl_union_map_range_reverse(
 	__isl_take isl_union_map *umap);
 __isl_export
@@ -271,7 +288,7 @@ isl_bool isl_union_map_contains(__isl_keep isl_union_map *umap,
 	__isl_keep isl_space *space);
 __isl_export
 __isl_give isl_map *isl_union_map_extract_map(__isl_keep isl_union_map *umap,
-	__isl_take isl_space *dim);
+	__isl_take isl_space *space);
 __isl_export
 isl_bool isl_union_map_isa_map(__isl_keep isl_union_map *umap);
 __isl_give isl_map *isl_map_from_union_map(__isl_take isl_union_map *umap);
@@ -299,7 +316,13 @@ __isl_overload
 __isl_give isl_union_map *isl_union_map_eq_at_multi_union_pw_aff(
 	__isl_take isl_union_map *umap,
 	__isl_take isl_multi_union_pw_aff *mupa);
+__isl_give isl_union_map *isl_union_map_lex_le_at_multi_union_pw_aff(
+	__isl_take isl_union_map *umap,
+	__isl_take isl_multi_union_pw_aff *mupa);
 __isl_give isl_union_map *isl_union_map_lex_lt_at_multi_union_pw_aff(
+	__isl_take isl_union_map *umap,
+	__isl_take isl_multi_union_pw_aff *mupa);
+__isl_give isl_union_map *isl_union_map_lex_ge_at_multi_union_pw_aff(
 	__isl_take isl_union_map *umap,
 	__isl_take isl_multi_union_pw_aff *mupa);
 __isl_give isl_union_map *isl_union_map_lex_gt_at_multi_union_pw_aff(

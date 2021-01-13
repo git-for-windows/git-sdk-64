@@ -19,6 +19,9 @@ const char *isl_options_get_ast_iterator_type(isl_ctx *ctx);
 isl_stat isl_options_set_ast_always_print_block(isl_ctx *ctx, int val);
 int isl_options_get_ast_always_print_block(isl_ctx *ctx);
 
+isl_stat isl_options_set_ast_print_outermost_block(isl_ctx *ctx, int val);
+int isl_options_get_ast_print_outermost_block(isl_ctx *ctx);
+
 __isl_give isl_ast_expr *isl_ast_expr_from_val(__isl_take isl_val *v);
 __isl_give isl_ast_expr *isl_ast_expr_from_id(__isl_take isl_id *id);
 __isl_give isl_ast_expr *isl_ast_expr_neg(__isl_take isl_ast_expr *expr);
@@ -228,6 +231,9 @@ __isl_give isl_printer *isl_ast_node_if_print(__isl_keep isl_ast_node *node,
 
 __isl_export
 __isl_give char *isl_ast_node_to_C_str(__isl_keep isl_ast_node *node);
+
+ISL_DECLARE_LIST_FN(ast_expr)
+ISL_DECLARE_EXPORTED_LIST_FN(ast_node)
 
 #if defined(__cplusplus)
 }
