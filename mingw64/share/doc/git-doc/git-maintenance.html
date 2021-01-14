@@ -721,6 +721,143 @@ Further, the <code>git gc</code> command should not be combined with
 but does not take the lock in the same way as <code>git maintenance run</code>. If
 possible, use <code>git maintenance run --task=gc</code> instead of <code>git gc</code>.</p>
 </div>
+<div class="paragraph">
+<p>The following sections describe the mechanisms put in place to run
+background maintenance by <code>git maintenance start</code> and how to customize
+them.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_background_maintenance_on_posix_systems">BACKGROUND MAINTENANCE ON POSIX SYSTEMS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The standard mechanism for scheduling background tasks on POSIX systems
+is cron(8). This tool executes commands based on a given schedule. The
+current list of user-scheduled tasks can be found by running <code>crontab -l</code>.
+The schedule written by <code>git maintenance start</code> is similar to this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># BEGIN GIT MAINTENANCE SCHEDULE
+# The following schedule was created by Git
+# Any edits made in this region might be
+# replaced in the future by a Git command.
+
+0 1-23 * * * "/&lt;path&gt;/git" --exec-path="/&lt;path&gt;" for-each-repo --config=maintenance.repo maintenance run --schedule=hourly
+0 0 * * 1-6 "/&lt;path&gt;/git" --exec-path="/&lt;path&gt;" for-each-repo --config=maintenance.repo maintenance run --schedule=daily
+0 0 * * 0 "/&lt;path&gt;/git" --exec-path="/&lt;path&gt;" for-each-repo --config=maintenance.repo maintenance run --schedule=weekly
+
+# END GIT MAINTENANCE SCHEDULE</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The comments are used as a region to mark the schedule as written by Git.
+Any modifications within this region will be completely deleted by
+<code>git maintenance stop</code> or overwritten by <code>git maintenance start</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>crontab</code> entry specifies the full path of the <code>git</code> executable to
+ensure that the executed <code>git</code> command is the same one with which
+<code>git maintenance start</code> was issued independent of <code>PATH</code>. If the same user
+runs <code>git maintenance start</code> with multiple Git executables, then only the
+latest executable is used.</p>
+</div>
+<div class="paragraph">
+<p>These commands use <code>git for-each-repo --config=maintenance.repo</code> to run
+<code>git maintenance run --schedule=&lt;frequency&gt;</code> on each repository listed in
+the multi-valued <code>maintenance.repo</code> config option. These are typically
+loaded from the user-specific global config. The <code>git maintenance</code> process
+then determines which maintenance tasks are configured to run on each
+repository with each <code>&lt;frequency&gt;</code> using the <code>maintenance.&lt;task&gt;.schedule</code>
+config options. These values are loaded from the global or repository
+config values.</p>
+</div>
+<div class="paragraph">
+<p>If the config values are insufficient to achieve your desired background
+maintenance schedule, then you can create your own schedule. If you run
+<code>crontab -e</code>, then an editor will load with your user-specific <code>cron</code>
+schedule. In that editor, you can add your own schedule lines. You could
+start by adapting the default schedule listed earlier, or you could read
+the crontab(5) documentation for advanced scheduling techniques. Please
+do use the full path and <code>--exec-path</code> techniques from the default
+schedule to ensure you are executing the correct binaries in your
+schedule.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_background_maintenance_on_macos_systems">BACKGROUND MAINTENANCE ON MACOS SYSTEMS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>While macOS technically supports <code>cron</code>, using <code>crontab -e</code> requires
+elevated privileges and the executed process does not have a full user
+context. Without a full user context, Git and its credential helpers
+cannot access stored credentials, so some maintenance tasks are not
+functional.</p>
+</div>
+<div class="paragraph">
+<p>Instead, <code>git maintenance start</code> interacts with the <code>launchctl</code> tool,
+which is the recommended way to schedule timed jobs in macOS. Scheduling
+maintenance through <code>git maintenance (start|stop)</code> requires some
+<code>launchctl</code> features available only in macOS 10.11 or later.</p>
+</div>
+<div class="paragraph">
+<p>Your user-specific scheduled tasks are stored as XML-formatted <code>.plist</code>
+files in <code>~/Library/LaunchAgents/</code>. You can see the currently-registered
+tasks using the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ ls ~/Library/LaunchAgents/org.git-scm.git*
+org.git-scm.git.daily.plist
+org.git-scm.git.hourly.plist
+org.git-scm.git.weekly.plist</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>One task is registered for each <code>--schedule=&lt;frequency&gt;</code> option. To
+inspect how the XML format describes each schedule, open one of these
+<code>.plist</code> files in an editor and inspect the <code>&lt;array&gt;</code> element following
+the <code>&lt;key&gt;StartCalendarInterval&lt;/key&gt;</code> element.</p>
+</div>
+<div class="paragraph">
+<p><code>git maintenance start</code> will overwrite these files and register the
+tasks again with <code>launchctl</code>, so any customizations should be done by
+creating your own <code>.plist</code> files with distinct names. Similarly, the
+<code>git maintenance stop</code> command will unregister the tasks with <code>launchctl</code>
+and delete the <code>.plist</code> files.</p>
+</div>
+<div class="paragraph">
+<p>To create more advanced customizations to your background tasks, see
+launchctl.plist(5) for more information.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_background_maintenance_on_windows_systems">BACKGROUND MAINTENANCE ON WINDOWS SYSTEMS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Windows does not support <code>cron</code> and instead has its own system for
+scheduling background tasks. The <code>git maintenance start</code> command uses
+the <code>schtasks</code> command to submit tasks to this system. You can inspect
+all background tasks using the Task Scheduler application. The tasks
+added by Git have names of the form <code>Git Maintenance (&lt;frequency&gt;)</code>.
+The Task Scheduler GUI has ways to inspect these tasks, but you can also
+export the tasks to XML files and view the details there.</p>
+</div>
+<div class="paragraph">
+<p>Note that since Git is a console application, these background tasks
+create a console window visible to the current user. This can be changed
+manually by selecting the "Run whether user is logged in or not" option
+in Task Scheduler. This change requires a password input, which is why
+<code>git maintenance start</code> does not select it by default.</p>
+</div>
+<div class="paragraph">
+<p>If you want to customize the background tasks, please rename the tasks
+so future calls to <code>git maintenance (start|stop)</code> do not overwrite your
+custom tasks.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -734,7 +871,7 @@ possible, use <code>git maintenance run --task=gc</code> instead of <code>git gc
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-12-28 18:38:50 UTC
+Last updated 2021-01-14 07:21:38 UTC
 </div>
 </div>
 </body>
