@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.8
 srcdir=		.
 
-abs_srcdir=	/c/_/S/python/src/Python-3.8.6
-abs_builddir=	/c/_/S/python/src/Python-3.8.6
+abs_srcdir=	/c/_/S/python/src/Python-3.8.7
+abs_builddir=	/c/_/S/python/src/Python-3.8.7
 
 
 CC=		x86_64-pc-msys-gcc
@@ -194,7 +194,7 @@ ENSUREPIP=      no
 
 # OpenSSL options for setup.py so sysconfig can pick up AC_SUBST() vars.
 OPENSSL_INCLUDES=
-OPENSSL_LIBS=-lssl -lcrypto -lz
+OPENSSL_LIBS=-lssl -lcrypto 
 OPENSSL_LDFLAGS=
 
 # Modes for directories, executables and data files created by the
@@ -621,6 +621,7 @@ sharedmods: $(BUILDPYTHON) pybuilddir.txt Modules/_math.o
 	$(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' \
 		_TCLTK_INCLUDES='$(TCLTK_INCLUDES)' _TCLTK_LIBS='$(TCLTK_LIBS)' \
 		$(PYTHON_FOR_BUILD) $(srcdir)/setup.py $$quiet build
+	[[ `uname -m` == i?86 ]] && find . -name \*.dll | rebase -sOT - || true
 
 libpython$(LDVERSION).so: $(LIBRARY_OBJS) $(DTRACE_OBJS)
 	if test $(INSTSONAME) != $(LDLIBRARY); then \
@@ -679,6 +680,10 @@ $(DLLLIBRARY) libpython$(LDVERSION).dll.a: $(LIBRARY_OBJS)
 	if test -n "$(DLLLIBRARY)"; then \
 		$(LDSHARED) -Wl,--out-implib=$@ -o $(DLLLIBRARY) $^ \
 			$(LIBS) $(MODLIBS) $(SYSLIBS); \
+		if [[ `uname -m` == i?86 ]]; then \
+			rebase -sO $(DLLLIBRARY); \
+		else true; \
+		fi; \
 	else true; \
 	fi
 

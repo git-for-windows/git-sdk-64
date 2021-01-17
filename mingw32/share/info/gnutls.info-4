@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.7 from gnutls.texi.
 
-This manual is last updated 1 June 2020 for version 3.6.15 of GnuTLS.
+This manual is last updated 1 June 2020 for version 3.7.0 of GnuTLS.
 
 Copyright (C) 2001-2020 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2020 Nikos Mavrogiannopoulos
@@ -393,6 +393,35 @@ gnutls_pkcs_schema_get_oid
      *Returns:* a constraint string or 'NULL' on error.
 
      *Since:* 3.4.0
+
+gnutls_session_set_verify_output_function
+-----------------------------------------
+
+ -- Function: void gnutls_session_set_verify_output_function
+          (gnutls_session_t SESSION, gnutls_verify_output_function *
+          FUNC)
+     SESSION: is a 'gnutls_x509_trust_list_t' type.
+
+     FUNC: is the callback function
+
+     This function sets a callback to be called when the peer's
+     certificate chain has to be verified and full path to the trusted
+     root has to be printed.
+
+     The callback's function prototype is defined in 'x509.h': int
+     (*callback)( gnutls_x509_crt_t cert, gnutls_x509_crt_t issuer,
+     gnutls_x509_crl_t crl, unsigned int verification_output);
+
+     If the callback function is provided then gnutls will call it, in
+     the certificate verification procedure.  To verify the certificate
+     chain and print its path uptp the trusted root, functions such as
+     'gnutls_certificate_verify_peers()' ,
+     'gnutls_x509_trust_list_verify_crt()' , and
+     'gnutls_x509_trust_list_verify_crt2()' can be used.  The callback
+     is set in '_gnutls_verify_crt_status()' and
+     '_gnutls_pkcs11_verify_crt_status()' .
+
+     *Since:* 3.7.0
 
 gnutls_subject_alt_names_deinit
 -------------------------------
@@ -1123,7 +1152,8 @@ gnutls_x509_crl_get_issuer_dn2
           gnutls_datum_t * DN)
      CRL: should contain a 'gnutls_x509_crl_t' type
 
-     DN: a pointer to a structure to hold the name
+     DN: a pointer to a structure to hold the name; must be freed using
+     'gnutls_free()'
 
      This function will allocate buffer and copy the name of the CRL
      issuer.  The name will be in the form "C=xxxx,O=yyyy,CN=zzzz" as
@@ -1145,7 +1175,8 @@ gnutls_x509_crl_get_issuer_dn3
           gnutls_datum_t * DN, unsigned FLAGS)
      CRL: should contain a 'gnutls_x509_crl_t' type
 
-     DN: a pointer to a structure to hold the name
+     DN: a pointer to a structure to hold the name; must be freed using
+     'gnutls_free()'
 
      FLAGS: zero or 'GNUTLS_X509_DN_FLAG_COMPAT'
 
@@ -1925,7 +1956,8 @@ gnutls_x509_crq_get_dn2
           gnutls_datum_t * DN)
      CRQ: should contain a 'gnutls_x509_crq_t' type
 
-     DN: a pointer to a structure to hold the name
+     DN: a pointer to a structure to hold the name; must be freed using
+     'gnutls_free()'
 
      This function will allocate buffer and copy the name of the
      Certificate request.  The name will be in the form
@@ -1948,7 +1980,8 @@ gnutls_x509_crq_get_dn3
           gnutls_datum_t * DN, unsigned FLAGS)
      CRQ: should contain a 'gnutls_x509_crq_t' type
 
-     DN: a pointer to a structure to hold the name
+     DN: a pointer to a structure to hold the name; must be freed using
+     'gnutls_free()'
 
      FLAGS: zero or 'GNUTLS_X509_DN_FLAG_COMPAT'
 
@@ -3497,7 +3530,8 @@ gnutls_x509_crt_get_dn2
           gnutls_datum_t * DN)
      CERT: should contain a 'gnutls_x509_crt_t' type
 
-     DN: a pointer to a structure to hold the name
+     DN: a pointer to a structure to hold the name; must be freed using
+     'gnutls_free()'
 
      This function will allocate buffer and copy the name of the
      Certificate.  The name will be in the form "C=xxxx,O=yyyy,CN=zzzz"
@@ -3519,7 +3553,8 @@ gnutls_x509_crt_get_dn3
           gnutls_datum_t * DN, unsigned FLAGS)
      CERT: should contain a 'gnutls_x509_crt_t' type
 
-     DN: a pointer to a structure to hold the name
+     DN: a pointer to a structure to hold the name; must be freed using
+     'gnutls_free()'
 
      FLAGS: zero or 'GNUTLS_X509_DN_FLAG_COMPAT'
 
@@ -4005,7 +4040,8 @@ gnutls_x509_crt_get_issuer_dn2
           CERT, gnutls_datum_t * DN)
      CERT: should contain a 'gnutls_x509_crt_t' type
 
-     DN: a pointer to a structure to hold the name
+     DN: a pointer to a structure to hold the name; must be freed using
+     'gnutls_free()'
 
      This function will allocate buffer and copy the name of issuer of
      the Certificate.  The name will be in the form
@@ -4027,7 +4063,8 @@ gnutls_x509_crt_get_issuer_dn3
           CERT, gnutls_datum_t * DN, unsigned FLAGS)
      CERT: should contain a 'gnutls_x509_crt_t' type
 
-     DN: a pointer to a structure to hold the name
+     DN: a pointer to a structure to hold the name; must be freed using
+     'gnutls_free()'
 
      FLAGS: zero or 'GNUTLS_X509_DN_FLAG_COMPAT'
 
@@ -7783,7 +7820,7 @@ gnutls_x509_privkey_import_dsa_raw
 
      G: holds the g
 
-     Y: holds the y
+     Y: holds the y (optional)
 
      X: holds the x
 
@@ -8695,6 +8732,22 @@ gnutls_x509_trust_list_get_issuer_by_subject_key_id
 
      *Since:* 3.4.2
 
+gnutls_x509_trust_list_get_ptr
+------------------------------
+
+ -- Function: void * gnutls_x509_trust_list_get_ptr
+          (gnutls_x509_trust_list_t TLIST)
+     TLIST: is a 'gnutls_x509_trust_list_t' type.
+
+     Get user pointer for tlist.  Useful in callback function
+     gnutls_x509_trust_list_set_getissuer_function.  This is the pointer
+     set with 'gnutls_x509_trust_list_set_ptr()' .
+
+     *Returns:* the user given pointer from the tlist structure, or
+     'NULL' if it was never set.
+
+     *Since:* 3.7.0
+
 gnutls_x509_trust_list_init
 ---------------------------
 
@@ -8822,6 +8875,62 @@ gnutls_x509_trust_list_remove_trust_mem
      *Returns:* The number of removed elements is returned.
 
      *Since:* 3.1.10
+
+gnutls_x509_trust_list_set_getissuer_function
+---------------------------------------------
+
+ -- Function: void gnutls_x509_trust_list_set_getissuer_function
+          (gnutls_x509_trust_list_t TLIST,
+          gnutls_x509_trust_list_getissuer_function * FUNC)
+     TLIST: is a 'gnutls_x509_trust_list_t' type.
+
+     FUNC: is the callback function
+
+     This function sets a callback to be called when the peer's
+     certificate chain is incomplete due a missing intermediate
+     certificate.  The callback may provide the missing certificate for
+     use during verification.
+
+     The callback's function prototype is defined in <gnutls/x509.h> as:
+
+     int (*callback)(gnutls_x509_trust_list_t list, const
+     gnutls_x509_crt_t cert, gnutls_x509_crt_t **issuers, unsigned int
+     *issuers_size);
+
+     If the callback function is provided then gnutls will call it
+     during the certificate verification procedure.  The callback may
+     wish to use 'gnutls_x509_crt_get_authority_info_access()' to get a
+     URI from which to attempt to download the missing issuer
+     certificate, if available.
+
+     On a successful call, the callback shall allocate the 'issuers'
+     array with 'gnutls_x509_crt_list_import2()' .  The ownership of
+     both the array and the elements is transferred to the caller and
+     thus the application does not need to maintain the memory after the
+     call.
+
+     The callback function should return 0 if the missing issuer
+     certificate for 'crt' was properly populated and added to the
+     'issuers', or non-zero to continue the certificate list
+     verification but with issuer as 'NULL' .
+
+     *Since:* 3.7.0
+
+gnutls_x509_trust_list_set_ptr
+------------------------------
+
+ -- Function: void gnutls_x509_trust_list_set_ptr
+          (gnutls_x509_trust_list_t TLIST, void * PTR)
+     TLIST: is a 'gnutls_x509_trust_list_t' type.
+
+     PTR: is the user pointer
+
+     This function will set (associate) the user given pointer 'ptr' to
+     the tlist structure.  This pointer can be accessed with
+     'gnutls_x509_trust_list_get_ptr()' .  Useful in the callback
+     function gnutls_x509_trust_list_set_getissuer_function.
+
+     *Since:* 3.7.0
 
 gnutls_x509_trust_list_verify_crt
 ---------------------------------

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GNUTLSXX_H
-#define GNUTLSXX_H
+#ifndef GNUTLS_GNUTLSXX_H
+#define GNUTLS_GNUTLSXX_H
 
 #include <exception>
 #include <vector>
@@ -428,4 +428,4 @@ namespace gnutls {
 
 }				/* namespace */
 
-#endif				/* GNUTLSXX_H */
+#endif /* GNUTLS_GNUTLSXX_H */

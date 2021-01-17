@@ -48,4 +48,5 @@ void gnutls_transport_set_fastopen(gnutls_session_t session,
 }
 #endif
 /* *INDENT-ON* */
-#endif				/* GNUTLS_SOCKET_H */
+
+#endif /* GNUTLS_SOCKET_H */

@@ -297,4 +297,5 @@ int gnutls_decode_gost_rs_value(const gnutls_datum_t * sig_value, gnutls_datum_t
 }
 #endif
 /* *INDENT-ON* */
-#endif
+
+#endif /* GNUTLS_CRYPTO_H */

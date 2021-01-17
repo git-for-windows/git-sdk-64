@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.7 from gnutls.texi.
 
-This manual is last updated 1 June 2020 for version 3.6.15 of GnuTLS.
+This manual is last updated 1 June 2020 for version 3.7.0 of GnuTLS.
 
 Copyright (C) 2001-2020 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2020 Nikos Mavrogiannopoulos
@@ -616,6 +616,10 @@ int main(int argc, char *argv[])
                                tmp.data);
 
                         hostname = malloc(tmp.size + 1);
+                        if (!hostname) {
+                                fprintf(stderr, "error: cannot allocate memory\n");
+                                exit(1);
+                        }
                         memcpy(hostname, tmp.data, tmp.size);
                         hostname[tmp.size] = 0;
 
@@ -1580,6 +1584,10 @@ cryptographic primitives.
      the authentication tag while it is prepended to the cipher text.
 'GNUTLS_CIPHER_AES_192_GCM'
      AES in GCM mode with 192-bit keys (AEAD).
+'GNUTLS_CIPHER_MAGMA_CTR_ACPKM'
+     GOST R 34.12-2015 (Magma) cipher in CTR-ACPKM mode.
+'GNUTLS_CIPHER_KUZNYECHIK_CTR_ACPKM'
+     GOST R 34.12-2015 (Kuznyechik) cipher in CTR-ACPKM mode.
 'GNUTLS_CIPHER_IDEA_PGP_CFB'
      IDEA in CFB mode (placeholder - unsupported).
 'GNUTLS_CIPHER_3DES_PGP_CFB'
@@ -1942,6 +1950,10 @@ either for HMAC or MAC operations.
      Reserved; unimplemented.
 'GNUTLS_MAC_SHAKE_256'
      Reserved; unimplemented.
+'GNUTLS_MAC_MAGMA_OMAC'
+     GOST R 34.12-2015 (Magma) in OMAC (CMAC) mode.
+'GNUTLS_MAC_KUZNYECHIK_OMAC'
+     GOST R 34.12-2015 (Kuznyechik) in OMAC (CMAC) mode.
 
 Figure 9.3: The supported MAC and HMAC algorithms.
 
@@ -2100,6 +2112,9 @@ To override public key operations see *note Abstract private keys::.
      introduced in GnuTLS 3.4.0.  Internally GnuTLS uses the new AEAD
      API.
 
+     *Deprecated:* since 3.7.0 it is no longer possible to override
+     cipher implementation
+
      *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
      error code.
 
@@ -2139,6 +2154,9 @@ To override public key operations see *note Abstract private keys::.
      introduced in GnuTLS 3.4.0.  Internally GnuTLS uses the new AEAD
      API.
 
+     *Deprecated:* since 3.7.0 it is no longer possible to override
+     cipher implementation
+
      *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
      error code.
 
@@ -2175,6 +2193,9 @@ To override public key operations see *note Abstract private keys::.
      CPU-assisted of 80.  The algorithm with the lowest priority will be
      used by gnutls.
 
+     *Deprecated:* since 3.7.0 it is no longer possible to override
+     cipher implementation
+
      *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
      error code.
 
@@ -2204,6 +2225,9 @@ To override public key operations see *note Abstract private keys::.
      algorithms and by convention kernel implemented algorithms have
      priority of 90 and CPU-assisted of 80.  The algorithm with the
      lowest priority will be used by gnutls.
+
+     *Deprecated:* since 3.7.0 it is no longer possible to override
+     cipher implementation
 
      *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
      error code.
@@ -2343,6 +2367,8 @@ to 'more'.  Both will exit with a status code of 0.
             --keymatexport=str     Label used for exporting keying material
             --keymatexportsize=num Size of the exported keying material
             --waitresumption       Block waiting for the resumption data under TLS1.3
+            --ca-auto-retrieve     Enable automatic retrieval of missing CA certificates
+                                     - disabled as '--no-ca-auto-retrieve'
         -v, --version[=arg]        output version information and exit
         -h, --help                 display extended usage information and exit
         -!, --more-help            extended usage information passed thru pager
@@ -2678,6 +2704,19 @@ This is the "block waiting for the resumption data under tls1.3" option.
 This option makes the client to block waiting for the resumption data
 under TLS1.3.  The option has effect only when -resume is provided.
 
+ca-auto-retrieve option
+-----------------------
+
+This is the "enable automatic retrieval of missing ca certificates"
+option.
+
+This option has some usage constraints.  It:
+   * can be disabled with -no-ca-auto-retrieve.
+
+This option enables the client to automatically retrieve the missing
+intermediate CA certificates in the certificate chain, based on the
+Authority Information Access (AIA) extension.
+
 gnutls-cli exit status
 ----------------------
 
@@ -2849,6 +2888,7 @@ to 'more'.  Both will exit with a status code of 0.
             --nodb                 Do not use a resumption database
             --http                 Act as an HTTP server
             --echo                 Act as an Echo server
+            --crlf                 Do not replace CRLF by LF in Echo server mode
         -u, --udp                  Use DTLS (datagram TLS) over UDP
             --mtu=num              Set MTU for datagram TLS
                                      - it must be in the range:
@@ -5297,6 +5337,8 @@ Ciphers
 'AES-128-SIV'
 'AES-256-SIV'
 'GOST28147-TC26Z-CNT'
+'MAGMA-CTR-ACPKM'
+'KUZNYECHIK-CTR-ACPKM'
 '3DES-CBC'
 'DES-CBC'
 'RC2-40'
@@ -5323,6 +5365,8 @@ MAC algorithms
 'AES-GMAC-192'
 'AES-GMAC-256'
 'GOST28147-TC26Z-IMIT'
+'OMAC-MAGMA'
+'OMAC-KUZNYECHIK'
 
 Key exchange methods
 ====================
@@ -5551,6 +5595,20 @@ gnutls_alert_send_appropriate
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise an error code is returned.
+
+gnutls_alert_set_read_function
+------------------------------
+
+ -- Function: void gnutls_alert_set_read_function (gnutls_session_t
+          SESSION, gnutls_alert_read_func FUNC)
+     SESSION: is 'gnutls_session_t' type
+
+     FUNC: is the function to be called
+
+     This function will set a callback to be called when an alert
+     message is being sent.
+
+     *Since:* 3.7.0
 
 gnutls_alpn_get_selected_protocol
 ---------------------------------
@@ -9313,6 +9371,34 @@ gnutls_handshake_set_random
 
      Since 3.1.9
 
+gnutls_handshake_set_read_function
+----------------------------------
+
+ -- Function: void gnutls_handshake_set_read_function (gnutls_session_t
+          SESSION, gnutls_handshake_read_func FUNC)
+     SESSION: is 'gnutls_session_t' type
+
+     FUNC: is the function to be called
+
+     This function will set a callback to be called when a handshake
+     message is being sent.
+
+     *Since:* 3.7.0
+
+gnutls_handshake_set_secret_function
+------------------------------------
+
+ -- Function: void gnutls_handshake_set_secret_function
+          (gnutls_session_t SESSION, gnutls_handshake_secret_func FUNC)
+     SESSION: is a 'gnutls_session_t' type.
+
+     FUNC: the secret func
+
+     This function will set a callback to be called when a new traffic
+     secret is installed.
+
+     *Since:* 3.7.0
+
 gnutls_handshake_set_timeout
 ----------------------------
 
@@ -9332,6 +9418,27 @@ gnutls_handshake_set_timeout
      'gnutls_transport_set_pull_timeout_function()' .
 
      *Since:* 3.1.0
+
+gnutls_handshake_write
+----------------------
+
+ -- Function: int gnutls_handshake_write (gnutls_session_t SESSION,
+          gnutls_record_encryption_level_t LEVEL, const void * DATA,
+          size_t DATA_SIZE)
+     SESSION: is a 'gnutls_session_t' type.
+
+     LEVEL: the current encryption level for reading a handshake message
+
+     DATA: the (const) handshake data to be processed
+
+     DATA_SIZE: the size of data
+
+     This function processes a handshake message in the encryption level
+     specified with 'level' .  Prior to calling this function, a
+     handshake read callback must be set on 'session' .  Use
+     'gnutls_handshake_set_read_function()' to do this.
+
+     *Since:* 3.7.0
 
 gnutls_heartbeat_allowed
 ------------------------
@@ -11147,6 +11254,11 @@ gnutls_psk_set_server_credentials_file
      This function sets the password file, in a
      'gnutls_psk_server_credentials_t' type.  This password file holds
      usernames and keys and will be used for PSK authentication.
+
+     Each entry in the file consists of a username, followed by a colon
+     (':') and a hex-encoded key.  If the username contains a colon or
+     any other special character, it can be hex-encoded preceded by a
+     '#'.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise an error code is returned.

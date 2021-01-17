@@ -33,9 +33,8 @@
  * The low level cipher functionality is in gnutls/crypto.h.
  */
 
-
-#ifndef GNUTLS_H
-#define GNUTLS_H
+#ifndef GNUTLS_GNUTLS_H
+#define GNUTLS_GNUTLS_H
 
 /* Get ssize_t. */
 #include <sys/types.h>
@@ -52,13 +51,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.6.15"
+#define GNUTLS_VERSION "3.7.0"
 
 #define GNUTLS_VERSION_MAJOR 3
-#define GNUTLS_VERSION_MINOR 6
-#define GNUTLS_VERSION_PATCH 15
+#define GNUTLS_VERSION_MINOR 7
+#define GNUTLS_VERSION_PATCH 0
 
-#define GNUTLS_VERSION_NUMBER 0x03060f
+#define GNUTLS_VERSION_NUMBER 0x030700
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -130,6 +129,8 @@ extern "C" {
  *                             cipher-stealing requires to know where the message actually terminates
  *                             in order to be able to compute where the stealing occurs.
  * @GNUTLS_CIPHER_GOST28147_TC26Z_CNT: GOST 28147-89 (Magma) cipher in CNT mode with TC26 Z S-box.
+ * @GNUTLS_CIPHER_MAGMA_CTR_ACPKM: GOST R 34.12-2015 (Magma) cipher in CTR-ACPKM mode.
+ * @GNUTLS_CIPHER_KUZNYECHIK_CTR_ACPKM: GOST R 34.12-2015 (Kuznyechik) cipher in CTR-ACPKM mode.
  * @GNUTLS_CIPHER_IDEA_PGP_CFB: IDEA in CFB mode (placeholder - unsupported).
  * @GNUTLS_CIPHER_3DES_PGP_CFB: 3DES in CFB mode (placeholder - unsupported).
  * @GNUTLS_CIPHER_CAST5_PGP_CFB: CAST5 in CFB mode (placeholder - unsupported).
@@ -190,6 +191,8 @@ typedef enum gnutls_cipher_algorithm {
 	GNUTLS_CIPHER_AES_128_SIV = 37,
 	GNUTLS_CIPHER_AES_256_SIV = 38,
 	GNUTLS_CIPHER_AES_192_GCM = 39,
+	GNUTLS_CIPHER_MAGMA_CTR_ACPKM = 40,
+	GNUTLS_CIPHER_KUZNYECHIK_CTR_ACPKM = 41,
 
 	/* used only for PGP internals. Ignored in TLS/SSL
 	 */
@@ -312,6 +315,8 @@ typedef enum {
  * @GNUTLS_MAC_GOST28147_TC26Z_IMIT: The GOST 28147-89 working in IMIT mode with TC26 Z S-box.
  * @GNUTLS_MAC_SHAKE_128: Reserved; unimplemented.
  * @GNUTLS_MAC_SHAKE_256: Reserved; unimplemented.
+ * @GNUTLS_MAC_MAGMA_OMAC: GOST R 34.12-2015 (Magma) in OMAC (CMAC) mode.
+ * @GNUTLS_MAC_KUZNYECHIK_OMAC: GOST R 34.12-2015 (Kuznyechik) in OMAC (CMAC) mode.
  *
  * Enumeration of different Message Authentication Code (MAC)
  * algorithms.
@@ -347,7 +352,9 @@ typedef enum {
 	GNUTLS_MAC_AES_GMAC_256 = 207,
 	GNUTLS_MAC_GOST28147_TC26Z_IMIT = 208,
 	GNUTLS_MAC_SHAKE_128 = 209,
-	GNUTLS_MAC_SHAKE_256 = 210
+	GNUTLS_MAC_SHAKE_256 = 210,
+	GNUTLS_MAC_MAGMA_OMAC = 211,
+	GNUTLS_MAC_KUZNYECHIK_OMAC = 212
 } gnutls_mac_algorithm_t;
 
 /**
@@ -3190,6 +3197,101 @@ void gnutls_anti_replay_set_add_function(gnutls_anti_replay_t,
 void gnutls_anti_replay_set_ptr(gnutls_anti_replay_t, void *ptr);
 
 
+/**
+ * gnutls_record_encryption_level_t:
+ * @GNUTLS_ENCRYPTION_LEVEL_INITIAL: initial level that doesn't involve any
+ *    encryption
+ * @GNUTLS_ENCRYPTION_LEVEL_EARLY: early traffic secret is installed
+ * @GNUTLS_ENCRYPTION_LEVEL_HANDSHAKE: handshake traffic secret is installed
+ * @GNUTLS_ENCRYPTION_LEVEL_APPLICATION: application traffic secret is installed
+ *
+ * Enumeration of different levels of record encryption currently in place.
+ * This is used by gnutls_handshake_set_read_function() and
+ * gnutls_handshake_write().
+ *
+ * Since: 3.7.0
+ */
+typedef enum {
+	GNUTLS_ENCRYPTION_LEVEL_INITIAL,
+	GNUTLS_ENCRYPTION_LEVEL_EARLY,
+	GNUTLS_ENCRYPTION_LEVEL_HANDSHAKE,
+	GNUTLS_ENCRYPTION_LEVEL_APPLICATION
+} gnutls_record_encryption_level_t;
+
+  /**
+   * gnutls_handshake_read_func:
+   * @session: the current session
+   * @htype: the type of the handshake message (#gnutls_handshake_description_t)
+   * @level: #gnutls_record_encryption_level_t
+   * @data: the (const) data that was being sent
+   * @data_size: the size of data
+   *
+   * Function prototype for handshake intercepting hooks. It is set using
+   * gnutls_handshake_set_read_function().
+   *
+   * Returns: Non zero on error.
+   * Since: 3.7.0
+   */
+typedef int (*gnutls_handshake_read_func) (gnutls_session_t session,
+					   gnutls_record_encryption_level_t level,
+					   gnutls_handshake_description_t htype,
+					   const void *data, size_t data_size);
+
+void
+gnutls_handshake_set_read_function(gnutls_session_t session,
+				   gnutls_handshake_read_func func);
+
+int
+gnutls_handshake_write(gnutls_session_t session,
+		       gnutls_record_encryption_level_t level,
+		       const void *data, size_t data_size);
+
+  /**
+   * gnutls_handshake_secret_func:
+   * @session: the current session
+   * @level: the encryption level
+   * @secret_read: the secret used for reading, can be %NULL if not set
+   * @secret_write: the secret used for writing, can be %NULL if not set
+   * @secret_size: the size of the secrets
+   *
+   * Function prototype for secret hooks. It is set using
+   * gnutls_handshake_set_secret_function().
+   *
+   * Returns: Non zero on error.
+   * Since: 3.7.0
+   */
+typedef int (*gnutls_handshake_secret_func) (gnutls_session_t session,
+					     gnutls_record_encryption_level_t level,
+					     const void *secret_read,
+					     const void *secret_write,
+					     size_t secret_size);
+
+void
+gnutls_handshake_set_secret_function(gnutls_session_t session,
+				     gnutls_handshake_secret_func func);
+
+  /**
+   * gnutls_alert_read_func:
+   * @session: the current session
+   * @level: #gnutls_record_encryption_level_t
+   * @alert_level: the level of the alert
+   * @alert_desc: the alert description
+   *
+   * Function prototype for alert intercepting hooks. It is set using
+   * gnutls_alert_set_read_function().
+   *
+   * Returns: Non zero on error.
+   * Since: 3.7.0
+   */
+typedef int (*gnutls_alert_read_func) (gnutls_session_t session,
+				       gnutls_record_encryption_level_t level,
+				       gnutls_alert_level_t alert_level,
+				       gnutls_alert_description_t alert_desc);
+
+void
+gnutls_alert_set_read_function(gnutls_session_t session,
+			       gnutls_alert_read_func func);
+
 /* FIPS140-2 related functions */
 unsigned gnutls_fips140_mode_enabled(void);
 
@@ -3492,4 +3594,4 @@ void gnutls_fips140_set_mode(gnutls_fips_mode_t mode, unsigned flags);
 
 #include <gnutls/compat.h>
 
-#endif				/* GNUTLS_H */
+#endif /* GNUTLS_GNUTLS_H */

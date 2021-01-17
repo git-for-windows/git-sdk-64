@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.7 from gnutls.texi.
 
-This manual is last updated 1 June 2020 for version 3.6.15 of GnuTLS.
+This manual is last updated 1 June 2020 for version 3.7.0 of GnuTLS.
 
 Copyright (C) 2001-2020 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2020 Nikos Mavrogiannopoulos
@@ -801,6 +801,9 @@ gnutls_ocsp_req_get_extension
      The caller needs to deallocate memory by calling 'gnutls_free()' on
      'oid' ->data and 'data' ->data.
 
+     Since 3.7.0 'oid' ->size does not account for the terminating null
+     byte.
+
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error code is returned.  If you have reached
      the last extension available
@@ -1057,6 +1060,9 @@ gnutls_ocsp_resp_get_extension
      The caller needs to deallocate memory by calling 'gnutls_free()' on
      'oid' ->data and 'data' ->data.
 
+     Since 3.7.0 'oid' ->size does not account for the terminating null
+     byte.
+
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error code is returned.  If you have reached
      the last extension available
@@ -1199,6 +1205,9 @@ gnutls_ocsp_resp_get_response
      response type OID of an response for diagnostic purposes.
      Otherwise 'gnutls_ocsp_resp_import()' will decode the basic OCSP
      response part and the caller need not worry about that aspect.
+
+     Since 3.7.0 'response_type_oid' ->size does not account for the
+     terminating null byte.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.

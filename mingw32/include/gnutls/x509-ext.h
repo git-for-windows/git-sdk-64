@@ -204,4 +204,5 @@ int gnutls_x509_tlsfeatures_add(gnutls_x509_tlsfeatures_t f, unsigned int featur
 }
 #endif
 /* *INDENT-ON* */
-#endif				/* GNUTLS_X509_H */
+
+#endif /* GNUTLS_X509_EXT_H */
