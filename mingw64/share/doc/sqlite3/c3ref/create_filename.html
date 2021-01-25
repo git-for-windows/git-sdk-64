@@ -143,7 +143,7 @@ sqlite3_free_filename(Y) where Y is a NULL pointer is a harmless no-op.</p>
 <p>If the Y parameter to sqlite3_free_filename(Y) is anything other
 than a NULL pointer or a pointer previously acquired from
 sqlite3_create_filename(), then bad things such as heap
-corruption or segfaults may occur. The value Y should be
+corruption or segfaults may occur. The value Y should not be
 used again after sqlite3_free_filename(Y) has been called.  This means
 that if the <a href="../c3ref/vfs.html#sqlite3vfsxopen">sqlite3_vfs.xOpen()</a> method of a VFS has been called using Y,
 then the corresponding [sqlite3_module.xClose() method should also be

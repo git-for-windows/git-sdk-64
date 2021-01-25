@@ -2238,6 +2238,10 @@ comments in the source code.
 <dd><p>The operand to the right of the LIKE operator contains the pattern and the left hand operand contains the string to match against the pattern.
 <i>(source: <a href="lang_expr.html">lang_expr.html</a>, checked-by: tcl/e_expr.test, matrix: <a href='matrix/lang_expr.html#R-11295-04657-09653-04480-53801-04231-56338-07604'>context</a>, <a href='matrix/matrix_dlang_expr.html#R-11295-04657-09653-04480-53801-04231-56338-07604'>detail</a>)</i></p></dd>
 
+<dt><b>R-11295-25445-59994-09653-28177-15735-56007-21495</b></dt>
+<dd><p>If the S argument to sqlite3_txn_state(D,S) is not the name of a valid schema, then -1 is returned.
+<i>(source: <a href="c3ref/txn_state.html">c3ref/txn_state.html</a>, matrix: <a href='matrix/c3ref/txn_state.html#R-11295-25445-59994-09653-28177-15735-56007-21495'>context</a>, <a href='matrix/matrix_dtxn_state.html#R-11295-25445-59994-09653-28177-15735-56007-21495'>detail</a>)</i></p></dd>
+
 <dt><b>R-11315-64212-00710-49784-05093-45690-30554-02549</b></dt>
 <dd><p>The default busy callback is NULL.
 <i>(source: <a href="c3ref/busy_handler.html">c3ref/busy_handler.html</a>, checked-by: th3/req1/busy01.test, matrix: <a href='matrix/c3ref/busy_handler.html#R-11315-64212-00710-49784-05093-45690-30554-02549'>context</a>, <a href='matrix/matrix_dbusy_handler.html#R-11315-64212-00710-49784-05093-45690-30554-02549'>detail</a>)</i></p></dd>
@@ -3733,6 +3737,10 @@ comments in the source code.
 <dt><b>R-18968-56672-08189-06837-25504-50513-21713-31862</b></dt>
 <dd><p>The ROWID chosen for the new row is at least one larger than the largest ROWID that has ever before existed in that same table.
 <i>(source: <a href="autoinc.html">autoinc.html</a>, checked-by: th3/req1/autoinc01.test, matrix: <a href='matrix/autoinc.html#R-18968-56672-08189-06837-25504-50513-21713-31862'>context</a>, <a href='matrix/matrix_dautoinc.html#R-18968-56672-08189-06837-25504-50513-21713-31862'>detail</a>)</i></p></dd>
+
+<dt><b>R-18977-48537-51631-02692-14706-00961-61427-62208</b></dt>
+<dd><p>The sqlite3_txn_state(D,S) interface returns one of these constants in order to describe the transaction state of schema S in database connection D.
+<i>(source: <a href="c3ref/c_txn_none.html">c3ref/c_txn_none.html</a>, matrix: <a href='matrix/c3ref/c_txn_none.html#R-18977-48537-51631-02692-14706-00961-61427-62208'>context</a>, <a href='matrix/matrix_dc_txn_none.html#R-18977-48537-51631-02692-14706-00961-61427-62208'>detail</a>)</i></p></dd>
 
 <dt><b>R-18978-08031-62088-38924-17278-52934-19628-35993</b></dt>
 <dd><p>The memory pointed to by the character pointers returned for the declaration type and collation sequence is valid until the next call to any SQLite API function.
@@ -7674,6 +7682,10 @@ comments in the source code.
 <dd><p>The szExtra parameter will a number less than 250.
 <i>(source: <a href="c3ref/pcache_methods2.html">c3ref/pcache_methods2.html</a>, matrix: <a href='matrix/c3ref/pcache_methods2.html#R-38989-21359-13709-49366-18905-24783-41677-06526'>context</a>, <a href='matrix/matrix_dpcache_methods2.html#R-38989-21359-13709-49366-18905-24783-41677-06526'>detail</a>)</i></p></dd>
 
+<dt><b>R-39000-44986-06007-27676-18826-64674-54503-26539</b></dt>
+<dd><p>If S is NULL, then the highest transaction state of any schema on database connection D is returned.
+<i>(source: <a href="c3ref/txn_state.html">c3ref/txn_state.html</a>, matrix: <a href='matrix/c3ref/txn_state.html#R-39000-44986-06007-27676-18826-64674-54503-26539'>context</a>, <a href='matrix/matrix_dtxn_state.html#R-39000-44986-06007-27676-18826-64674-54503-26539'>detail</a>)</i></p></dd>
+
 <dt><b>R-39009-25596-33829-41361-38484-11658-48369-57903</b></dt>
 <dd><p>The result of the CASE expression is the evaluation of the THEN expression that corresponds to the first WHEN expression that evaluates to true.
 <i>(source: <a href="lang_expr.html">lang_expr.html</a>, checked-by: tcl/e_expr.test, matrix: <a href='matrix/lang_expr.html#R-39009-25596-33829-41361-38484-11658-48369-57903'>context</a>, <a href='matrix/matrix_dlang_expr.html#R-39009-25596-33829-41361-38484-11658-48369-57903'>detail</a>)</i></p></dd>
@@ -10644,7 +10656,7 @@ comments in the source code.
 
 <dt><b>R-53431-59159-09911-22042-14613-41147-21418-31229</b></dt>
 <dd><p>The % operator casts both of its operands to type INTEGER and then computes the remainder after dividing the left integer by the right integer.
-<i>(source: <a href="lang_expr.html">lang_expr.html</a>, matrix: <a href='matrix/lang_expr.html#R-53431-59159-09911-22042-14613-41147-21418-31229'>context</a>, <a href='matrix/matrix_dlang_expr.html#R-53431-59159-09911-22042-14613-41147-21418-31229'>detail</a>)</i></p></dd>
+<i>(source: <a href="lang_expr.html">lang_expr.html</a>, checked-by: tcl/e_expr.test, matrix: <a href='matrix/lang_expr.html#R-53431-59159-09911-22042-14613-41147-21418-31229'>context</a>, <a href='matrix/matrix_dlang_expr.html#R-53431-59159-09911-22042-14613-41147-21418-31229'>detail</a>)</i></p></dd>
 
 <dt><b>R-53436-40973-13105-02748-62500-49771-13394-01786</b></dt>
 <dd><p>The likely(X) function is equivalent to likelihood(X,0.9375).
@@ -11557,6 +11569,10 @@ comments in the source code.
 <dt><b>R-58297-14483-40146-32998-13341-07144-06303-13895</b></dt>
 <dd><p>WAL databases can be created, read, and written even if shared memory is unavailable as long as the locking_mode is set to EXCLUSIVE before the first attempted access.
 <i>(source: <a href="wal.html">wal.html</a>, checked-by: tcl/e_wal.test, th3/req1/pragma05.test, matrix: <a href='matrix/wal.html#R-58297-14483-40146-32998-13341-07144-06303-13895'>context</a>, <a href='matrix/matrix_dwal.html#R-58297-14483-40146-32998-13341-07144-06303-13895'>detail</a>)</i></p></dd>
+
+<dt><b>R-58299-29950-41859-14969-07677-61632-11301-17744</b></dt>
+<dd><p>The sqlite3_txn_state(D,S) interface returns the current transaction state of schema S in database connection D.
+<i>(source: <a href="c3ref/txn_state.html">c3ref/txn_state.html</a>, matrix: <a href='matrix/c3ref/txn_state.html#R-58299-29950-41859-14969-07677-61632-11301-17744'>context</a>, <a href='matrix/matrix_dtxn_state.html#R-58299-29950-41859-14969-07677-61632-11301-17744'>detail</a>)</i></p></dd>
 
 <dt><b>R-58312-28618-40592-62073-31662-38591-25433-11093</b></dt>
 <dd><p>If the Y argument is omitted, rtrim(X) removes spaces from the right side of X.

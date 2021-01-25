@@ -179,11 +179,7 @@ improvements to Git itself.
 <p>
 This article has been revised multiple times in an attempt
 to improve clarity, address concerns and misgivings,
-and to fix errors identified on
-<a href="https://news.ycombinator.com/item?id=16806114">Hacker News</a>,
-<a href="https://www.reddit.com/r/programming/comments/8c2niw/why_sqlite_does_not_use_git/">Reddit</a>
-and
-<a href="https://lobste.rs/s/slcntl/why_sqlite_does_not_use_git">Lobsters</a>.
+and to fix errors.
 The complete edit history for this document can be seen at
 <a href="https://sqlite.org/docsrc/finfo/pages/whynotgit.in">https://sqlite.org/docsrc/finfo/pages/whynotgit.in</a>.
 (Usage hint: Click on any two nodes of the graph for a diff.
@@ -237,8 +233,8 @@ Git allows you to go backwards in time easily.  Given the latest
 check-in on a branch, Git lets you see all the ancestors of that
 check-in.  But Git makes it difficult to move in the other
 direction.  Given some historical check-in, it is quite challenging
-in Git to find out what came next.  It can be done, but it is sufficiently
-difficult that people rarely do it.  Common interfaces for Git,
+in Git to find out what came next. It can be done, but it is sufficiently
+difficult that people rarely do it. Common interfaces for Git,
 such as GitHub, do not support the ability.
 
 </p><p>It is not impossible to find the descendents of a check-in
@@ -257,10 +253,16 @@ This command sequence is a lot to memorize and type.  (One would want
 to create a bash alias or short shell script if it were used frequently.)
 Furthermore, it is not quite the same thing.  The command above gives
 one a list of descendents without showing the branching structure, which
-is important for understanding what happened.
+is important for understanding what happened.  And the command only works
+if you have a local clone of the repository; finding the descendents of
+a check-in is not something you can do with common web interfaces such
+as GitHub or GitLab.
+
+</p><p>
 In contrast, Fossil offers displays such as
-<a href="https://sqlite.org/src/timeline?d=8a439a6dda390d74&n=15">https://sqlite.org/src/timeline?d=8a439a6dda390d74&n=15</a>, which
-is a tremendous help in analyzing the aftermath of historical changes.
+<a href="https://sqlite.org/src/timeline?df=release">https://sqlite.org/src/timeline?df=release</a>
+to show all check-ins that are derived from the most
+recent release.
 
 </p><p>
 And it is not really about just finding the descendents of a check-in
@@ -275,10 +277,12 @@ click forward to the next check-in in sequence.  Another example:
 Fossil easily shows the context around a specific check-in
 (<a href="https://www.sqlite.org/src/timeline?c=2018-03-16&n=10">example</a>)
 which again helps to promote situational awareness and a deeper
-understanding of what is happening in the code.
+understanding of what is happening in the code.  There is a
+<a href="https://fossil-scm.org/fossil/doc/trunk/www/webpage-ex.md">whole page of additional examples</a>
+in the <a href="https://fossil-scm.org/fossil">Fossil documentation</a>.
 
 </p><p>
-All of the above is possible with Git, given the right extensions
+All of the above is theoretically possible with Git, given the right extensions
 and tools and using the right commands.  But it is not easy to do,
 and so it rarely gets done.  Consequently, developers have less awareness
 of what is happening in the code.
@@ -297,7 +301,7 @@ needs to keep all of the following in mind:
 </li><li> The actual remote head
 </li></ol>
 <p>
-Git commands (and/or options on commands) for moving and
+Git has commands (and/or options on commands) for moving and
 comparing content between all of these locations. 
 
 </p><p>In contrast,

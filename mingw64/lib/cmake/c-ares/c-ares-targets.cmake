@@ -4,7 +4,7 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.5)
    message(FATAL_ERROR "CMake >= 2.6.0 required")
 endif()
 cmake_policy(PUSH)
-cmake_policy(VERSION 2.6)
+cmake_policy(VERSION 2.6...3.17)
 #----------------------------------------------------------------
 # Generated CMake target import file.
 #----------------------------------------------------------------
@@ -16,7 +16,7 @@ set(CMAKE_IMPORT_FILE_VERSION 1)
 set(_targetsDefined)
 set(_targetsNotDefined)
 set(_expectedTargets)
-foreach(_expectedTarget c-ares::cares c-ares::cares_static)
+foreach(_expectedTarget c-ares::cares)
   list(APPEND _expectedTargets ${_expectedTarget})
   if(NOT TARGET ${_expectedTarget})
     list(APPEND _targetsNotDefined ${_expectedTarget})
@@ -54,15 +54,6 @@ endif()
 add_library(c-ares::cares SHARED IMPORTED)
 
 set_target_properties(c-ares::cares PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "ws2_32;Advapi32"
-)
-
-# Create imported target c-ares::cares_static
-add_library(c-ares::cares_static STATIC IMPORTED)
-
-set_target_properties(c-ares::cares_static PROPERTIES
-  INTERFACE_COMPILE_DEFINITIONS "CARES_STATICLIB"
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
   INTERFACE_LINK_LIBRARIES "ws2_32;Advapi32"
 )

@@ -102,26 +102,26 @@ The SQLite Query Optimizer Overview
 Table Of Contents
 </a>
 <div id="toc_sub"><div class="fancy-toc1"><a href="#introduction">1. Introduction</a></div>
-<div class="fancy-toc1"><a href="#where_clause_analysis">2. WHERE clause analysis</a></div>
-<div class="fancy-toc2"><a href="#index_term_usage_examples">2.1. Index term usage examples</a></div>
-<div class="fancy-toc1"><a href="#the_between_optimization">3. The BETWEEN optimization</a></div>
-<div class="fancy-toc1"><a href="#or_optimizations">4. OR optimizations</a></div>
-<div class="fancy-toc1"><a href="#the_like_optimization">5. The LIKE optimization</a></div>
+<div class="fancy-toc1"><a href="#where_clause_analysis">2. WHERE Clause Analysis</a></div>
+<div class="fancy-toc2"><a href="#index_term_usage_examples">2.1. Index Term Usage Examples</a></div>
+<div class="fancy-toc1"><a href="#the_between_optimization">3. The BETWEEN Optimization</a></div>
+<div class="fancy-toc1"><a href="#or_optimizations">4. OR Optimizations</a></div>
+<div class="fancy-toc1"><a href="#the_like_optimization">5. The LIKE Optimization</a></div>
 <div class="fancy-toc1"><a href="#the_skip_scan_optimization">6. The Skip-Scan Optimization</a></div>
 <div class="fancy-toc1"><a href="#joins">7. Joins</a></div>
-<div class="fancy-toc2"><a href="#order_of_tables_in_a_join">7.1. Order of tables in a join</a></div>
+<div class="fancy-toc2"><a href="#order_of_tables_in_a_join">7.1. Order of Tables in a Join</a></div>
 <div class="fancy-toc2"><a href="#manual_control_of_query_plans_using_sqlite_stat_tables">7.2. Manual Control Of Query Plans Using SQLITE_STAT Tables</a></div>
-<div class="fancy-toc2"><a href="#manual_control_of_query_plans_using_cross_join">7.3. Manual Control Of Query Plans Using CROSS JOIN</a></div>
-<div class="fancy-toc1"><a href="#choosing_between_multiple_indices">8. Choosing between multiple indices</a></div>
-<div class="fancy-toc2"><a href="#disqualifying_where_clause_terms_using_unary_">8.1. Disqualifying WHERE Clause Terms Using Unary-"+"</a></div>
+<div class="fancy-toc2"><a href="#manual_control_of_query_plans_using_cross_join">7.3. Manual Control of Query Plans using CROSS JOIN</a></div>
+<div class="fancy-toc1"><a href="#choosing_between_multiple_indexes">8. Choosing Between Multiple Indexes</a></div>
+<div class="fancy-toc2"><a href="#disqualifying_where_clause_terms_using_unary_">8.1. Disqualifying WHERE Clause Terms using Unary-"+"</a></div>
 <div class="fancy-toc2"><a href="#range_queries">8.2. Range Queries</a></div>
-<div class="fancy-toc1"><a href="#covering_indices">9. Covering Indices</a></div>
-<div class="fancy-toc1"><a href="#order_by_optimizations">10. ORDER BY optimizations</a></div>
-<div class="fancy-toc2"><a href="#partial_order_by_via_index">10.1. Partial ORDER BY Via Index</a></div>
-<div class="fancy-toc1"><a href="#subquery_flattening">11. Subquery flattening</a></div>
+<div class="fancy-toc1"><a href="#covering_indexes">9. Covering Indexes</a></div>
+<div class="fancy-toc1"><a href="#order_by_optimizations">10. ORDER BY Optimizations</a></div>
+<div class="fancy-toc2"><a href="#partial_order_by_via_index">10.1. Partial ORDER BY via Index</a></div>
+<div class="fancy-toc1"><a href="#subquery_flattening">11. Subquery Flattening</a></div>
 <div class="fancy-toc1"><a href="#subquery_co_routines">12. Subquery Co-routines</a></div>
-<div class="fancy-toc2"><a href="#using_co_routines_to_defer_work_until_after_the_sorting">12.1. Using Co-routines To Defer Work Until After The Sorting</a></div>
-<div class="fancy-toc1"><a href="#the_min_max_optimization">13. The MIN/MAX optimization</a></div>
+<div class="fancy-toc2"><a href="#using_co_routines_to_defer_work_until_after_the_sorting">12.1. Using Co-routines to Defer Work until after the Sorting</a></div>
+<div class="fancy-toc1"><a href="#the_min_max_optimization">13. The MIN/MAX Optimization</a></div>
 <div class="fancy-toc1"><a href="#automatic_indexes">14. Automatic Indexes</a></div>
 <div class="fancy-toc1"><a href="#the_push_down_optimization">15. The Push-Down Optimization</a></div>
 <div class="fancy-toc1"><a href="#the_left_join_strength_reduction_optimization">16. The LEFT JOIN Strength Reduction Optimization</a></div>
@@ -181,18 +181,18 @@ mk.innerHTML = "&#x25ba;";
 
 <a name="where_clause"></a>
 
-</p><h1 id="where_clause_analysis"><span>2. </span>WHERE clause analysis</h1>
+</p><h1 id="where_clause_analysis"><span>2. </span>WHERE Clause Analysis</h1>
 
 <p>
   The WHERE clause on a query is broken up into "terms" where each term
   is separated from the others by an AND operator.
-  If the WHERE clause is composed of constraints separate by the OR
+  If the WHERE clause is composed of constraints separated by the OR
   operator then the entire clause is considered to be a single "term"
   to which the <a href="#or_opt">OR-clause optimization</a> is applied.
 
 </p><p>
   All terms of the WHERE clause are analyzed to see if they can be
-  satisfied using indices.
+  satisfied using indexes.
   To be usable by an index a term must be of one of the following
   forms:
 
@@ -223,7 +223,7 @@ mk.innerHTML = "&#x25ba;";
   Then the index might be used if the initial columns of the index
   (columns a, b, and so forth) appear in WHERE clause terms.
   The initial columns of the index must be used with
-  the *=* or *IN* or *IS* operators.  
+  the <b>=</b> or <b>IN</b> or <b>IS</b> operators.  
   The right-most column that is used can employ inequalities.  
   For the right-most
   column of an index that is used, there can be up to two inequalities
@@ -232,10 +232,10 @@ mk.innerHTML = "&#x25ba;";
 </p><p>
   It is not necessary for every column of an index to appear in a
   WHERE clause term in order for that index to be used. 
-  But there cannot be gaps in the columns of the index that are used.
+  However, there cannot be gaps in the columns of the index that are used.
   Thus for the example index above, if there is no WHERE clause term
-  that constraints column c, then terms that constrain columns a and b can
-  be used with the index but not terms that constraint columns d through z.
+  that constrains column c, then terms that constrain columns a and b can
+  be used with the index but not terms that constrain columns d through z.
   Similarly, index columns will not normally be used (for indexing purposes)
   if they are to the right of a 
   column that is constrained only by inequalities.
@@ -249,7 +249,7 @@ mk.innerHTML = "&#x25ba;";
 
 <a name="idxexamp"></a>
 
-</p><h2 id="index_term_usage_examples"><span>2.1. </span>Index term usage examples</h2>
+</p><h2 id="index_term_usage_examples"><span>2.1. </span>Index Term Usage Examples</h2>
 <p>
   For the index above and WHERE clause like this:
 
@@ -288,7 +288,7 @@ mk.innerHTML = "&#x25ba;";
 <p>
   The index is not usable at all because the left-most column of the
   index (column "a") is not constrained.  Assuming there are no other
-  indices, the query above would result in a full table scan.
+  indexes, the query above would result in a full table scan.
 
 </p><p>
   For the index above and WHERE clause like this:
@@ -298,14 +298,14 @@ mk.innerHTML = "&#x25ba;";
 <p>
   The index is not usable because the WHERE clause terms are connected
   by OR instead of AND. This query would result in a full table scan.
-  However, if three additional indices where added that contained columns
+  However, if three additional indexes where added that contained columns
   b, c, and d as their left-most columns, then the
   <a href="#or_opt">OR-clause optimization</a> might apply.
 
 
 <a name="between_opt"></a>
 
-</p><h1 id="the_between_optimization"><span>3. </span>The BETWEEN optimization</h1>
+</p><h1 id="the_between_optimization"><span>3. </span>The BETWEEN Optimization</h1>
 
 <p>
   If a term of the WHERE clause is of the following form:
@@ -336,7 +336,7 @@ mk.innerHTML = "&#x25ba;";
 
 <a name="or_opt"></a>
 
-</p><h1 id="or_optimizations"><span>4. </span>OR optimizations</h1>
+</p><h1 id="or_optimizations"><span>4. </span>OR Optimizations</h1>
 
 <p>
   WHERE clause constraints that are connected by OR instead of AND can
@@ -355,10 +355,10 @@ mk.innerHTML = "&#x25ba;";
 </b></pre></blockquote>
 </p><p>
   The rewritten term then might go on to constrain an index using the
-  normal rules for *IN* operators.  Note that <i>column</i> must be
+  normal rules for <b>IN</b> operators.  Note that <i>column</i> must be
   the same column in every OR-connected subterm,
   although the column can occur on either the left or the right side of
-  the *=* operator.
+  the <b>=</b> operator.
 
 </p><p>
   If and only if the previously described conversion of OR to an IN operator
@@ -370,14 +370,15 @@ mk.innerHTML = "&#x25ba;";
 </b></pre></blockquote>
 </p><p>
   Individual subterms might be a single comparison expression like
-  *a=5* or *x>y* or they can be LIKE or BETWEEN expressions, or a subterm
+  <b>a=5</b> or <b>x&gt;y</b> or they can be 
+  LIKE or BETWEEN expressions, or a subterm
   can be a parenthesized list of AND-connected sub-subterms.
   Each subterm is analyzed as if it were itself the entire WHERE clause
   in order to see if the subterm is indexable by itself.
   If <u>every</u> subterm of an OR clause is separately indexable
   then the OR clause might be coded such that a separate index is used
   to evaluate each term of the OR clause.  One way to think about how
-  SQLite uses separate indices for each OR clause term is to imagine
+  SQLite uses separate indexes for each OR clause term is to imagine
   that the WHERE clause where rewritten as follows:
 
 <blockquote><pre><b>
@@ -390,9 +391,9 @@ mk.innerHTML = "&#x25ba;";
   OR are not really rewritten this way.
   The actual implementation of the OR clause uses a mechanism that is
   more efficient and that works even for <a href="withoutrowid.html">WITHOUT ROWID</a> tables or 
-  tables in which the "rowid" is inaccessible.
-  But the essence of the implementation is captured by the statement
-  above:  Separate indices are used to find candidate result rows
+  tables in which the "rowid" is inaccessible.  Nevertheless,
+  the essence of the implementation is captured by the statement
+  above:  Separate indexes are used to find candidate result rows
   from each OR clause term and the final result is the union of
   those rows.
 
@@ -408,7 +409,7 @@ mk.innerHTML = "&#x25ba;";
   SQLite uses a cost-based query planner that estimates the CPU and
   disk I/O costs of various competing query plans and chooses the plan
   that it thinks will be the fastest.  If there are many OR terms in
-  the WHERE clause or if some of the indices on individual OR-clause 
+  the WHERE clause or if some of the indexes on individual OR-clause 
   subterms are not very selective, then SQLite might decide that it is
   faster to use a different query algorithm, or even a full-table scan.
   Application developers can use the
@@ -417,7 +418,7 @@ mk.innerHTML = "&#x25ba;";
 
 <a name="like_opt"></a>
 
-</p><h1 id="the_like_optimization"><span>5. </span>The LIKE optimization</h1>
+</p><h1 id="the_like_optimization"><span>5. </span>The LIKE Optimization</h1>
 
 <p>
   A WHERE-clause term that uses the <a href="lang_expr.html#like">LIKE</a> or <a href="lang_expr.html#glob">GLOB</a> operator
@@ -464,7 +465,7 @@ mk.innerHTML = "&#x25ba;";
 </p><div class="codeblock"><pre>'a' LIKE 'A'
 </pre></div>
 <p>
-  But if the case_sensitive_like pragma is enabled as follows:
+  If the case_sensitive_like pragma is enabled as follows:
 
 </p><div class="codeblock"><pre>PRAGMA case_sensitive_like=ON;
 </pre></div>
@@ -476,7 +477,7 @@ mk.innerHTML = "&#x25ba;";
   are case sensitive in SQLite unless an application-defined
   <a href="datatype3.html#collation">collating sequence</a> and <a href="lang_corefunc.html#like">like() SQL function</a> are provided that
   take non-ASCII characters into account.
-  But if an application-defined collating sequence and/or like() SQL
+  If an application-defined collating sequence and/or like() SQL
   function are provided, the LIKE optimization described here will never
   be taken.
 
@@ -497,7 +498,7 @@ mk.innerHTML = "&#x25ba;";
 </p><p>
   The GLOB operator is always case sensitive.  The column on the left side
   of the GLOB operator must always use the built-in BINARY collating sequence
-  or no attempt will be made to optimize that operator with indices.
+  or no attempt will be made to optimize that operator with indexes.
 
 </p><p>
   The LIKE optimization will only be attempted if
@@ -519,8 +520,9 @@ mk.innerHTML = "&#x25ba;";
   character to denote this non-wildcard prefix but the reader should
   understand that the prefix can consist of more than 1 character.
   Let <i>y</i> be the smallest string that is the same length as /x/ but which
-  compares greater than <i>x</i>.  For example, if <i>x</i> is *hello* then
-  <i>y</i> would be *hellp*.
+  compares greater than <i>x</i>.  For example, if <i>x</i> is
+  <tt>'hello'</tt> then
+  <i>y</i> would be <tt>'hellp'</tt>.
   The LIKE and GLOB optimizations consist of adding two virtual terms
   like this:
 
@@ -586,7 +588,7 @@ CREATE INDEX people_idx1 ON people(role, height);
 <p>
   The people table has one entry for each person in a large
   organization.  Each person is either a "student" or a "teacher",
-  as determined by the "role" field.  And we record the height in
+  as determined by the "role" field.  The table also records the height in
   centimeters of each person.  The role and height are indexed.
   Notice that the left-most column of the index is not very
   selective - it only contains two possible values.
@@ -603,7 +605,7 @@ CREATE INDEX people_idx1 ON people(role, height);
 <p>
   Because the left-most column of the index does not appear in the
   WHERE clause of the query, one is tempted to conclude that the
-  index is not usable here.  But SQLite is able to use the index.
+  index is not usable here.  However, SQLite is able to use the index.
   Conceptually, SQLite uses the index as if the query were more
   like the following:
 
@@ -654,13 +656,14 @@ SELECT name FROM people WHERE role='student' AND height>=180;
   the next left-column value.
 
 </p><p>
-  The only way that SQLite can know that the left-most columns of an index
-  have many duplicate is if the <a href="lang_analyze.html">ANALYZE</a> command has been run
+  The only way that SQLite can know that there are many duplicates
+  in the left-most columns of an index
+  is if the <a href="lang_analyze.html">ANALYZE</a> command has been run
   on the database.
   Without the results of ANALYZE, SQLite has to guess at the "shape" of
   the data in the table, and the default guess is that there are an average
   of 10 duplicates for every value in the left-most column of the index.
-  But skip-scan only becomes profitable (it only gets to be faster than
+  Skip-scan only becomes profitable (it only gets to be faster than
   a full table scan) when the number of duplicates is about 18 or more.
   Hence, a skip-scan is never used on a database that has not been analyzed.
 
@@ -671,7 +674,8 @@ SELECT name FROM people WHERE role='student' AND height>=180;
 <p>
   The ON and USING clauses of an inner join are converted into additional
   terms of the WHERE clause prior to WHERE clause analysis described
-  above in paragraph 1.0.  Thus with SQLite, there is no computational
+  <a href="#where_clause">above in paragraph 2.0</a>.
+  Thus with SQLite, there is no computational
   advantage to use the newer SQL92 join syntax
   over the older SQL89 comma-join syntax.  They both end up accomplishing
   exactly the same thing on inner joins.
@@ -684,7 +688,7 @@ SELECT name FROM people WHERE role='student' AND height>=180;
 SELECT * FROM tab1 LEFT JOIN tab2 WHERE tab1.x=tab2.y;
 </pre></div>
 <p>
-  For an inner join, the two queries above would be identical.  But
+  For an inner join, the two queries above would be identical.  However,
   special processing applies to the ON and USING clauses of an OUTER join:
   specifically, the constraints in an ON or USING clause do not apply if
   the right table of the join is on a null row, but the constraints do apply
@@ -695,7 +699,7 @@ SELECT * FROM tab1 LEFT JOIN tab2 WHERE tab1.x=tab2.y;
 
 <a name="table_order"></a>
 
-</p><h2 id="order_of_tables_in_a_join"><span>7.1. </span>Order of tables in a join</h2>
+</p><h2 id="order_of_tables_in_a_join"><span>7.1. </span>Order of Tables in a Join</h2>
 
 <p>
   The current implementation of 
@@ -707,7 +711,7 @@ SELECT * FROM tab1 LEFT JOIN tab2 WHERE tab1.x=tab2.y;
   table in the FROM clause to form the outer loop and the right-most
   table to form the inner loop.
   However, SQLite will nest the loops in a different order if doing so
-  will help it to select better indices.
+  will help it to select better indexes.
 
 </p><p>
   Inner joins can be freely reordered.  However a left outer join is
@@ -718,7 +722,7 @@ SELECT * FROM tab1 LEFT JOIN tab2 WHERE tab1.x=tab2.y;
 
 </p><p>
   SQLite <a href="lang_select.html#crossjoin">treats the CROSS JOIN operator specially</a>.
-  The CROSS JOIN operator is commutative in theory.  But SQLite chooses to
+  The CROSS JOIN operator is commutative, in theory.  However, SQLite chooses to
   never reorder tables in a CROSS JOIN.  This provides a mechanism
   by which the programmer can force SQLite to choose a particular loop nesting
   order.  
@@ -732,8 +736,8 @@ SELECT * FROM tab1 LEFT JOIN tab2 WHERE tab1.x=tab2.y;
 </p><p>
   Join reordering is automatic and usually works well enough that
   programmers do not have to think about it, especially if <a href="lang_analyze.html">ANALYZE</a>
-  has been used to gather statistics about the available indices.
-  But occasionally some hints from the programmer are needed.
+  has been used to gather statistics about the available indexes,
+  though occasionally some hints from the programmer are needed.
   Consider, for example, the following schema:
 
 </p><div class="codeblock"><pre>CREATE TABLE node(
@@ -792,7 +796,7 @@ end
 end
 </pre></div>
 <p>
-  The same indices are used to speed up every loop in both implementation
+  The same indexes are used to speed up every loop in both implementation
   options.
   The only difference in these two query plans is the order in which
   the loops are nested.
@@ -807,8 +811,8 @@ end
   there are thousands of edges on each node. In this case, option 1 is
   preferred. With option 1, the inner loop checks for the existence of
   an edge between a pair of nodes and outputs the result if found. 
-  But because there are only 2 alice and bob nodes each, the inner loop
-  only has to run 4 times and the query is very quick. Option 2 would
+  Because there are only 2 alice and bob nodes each, the inner loop
+  only has to run four times and the query is very quick. Option 2 would
   take much longer here. The outer loop of option 2 only executes twice,
   but because there are a large number of edges leaving each alice node,
   the middle loop has to iterate many thousands of times. It will be
@@ -816,8 +820,8 @@ end
 
 </p><p>
   Now consider the case where M and N are both 3500. Alice nodes are
-  abundant. But suppose each of these nodes is connected by only one
-  or two edges. In this case, option 2 is preferred. With option 2,
+  abundant.  This time suppose each of these nodes is connected by only one
+  or two edges. Now option 2 is preferred. With option 2,
   the outer loop still has to run 3500 times, but the middle loop only
   runs once or twice for each outer loop and the inner loop will only
   run once for each middle loop, if at all. So the total number of
@@ -832,7 +836,7 @@ end
   either query plan 1 or query plan 2 might be better.  Which plan does
   SQLite choose by default?  As of version 3.6.18, without running <a href="lang_analyze.html">ANALYZE</a>,
   SQLite will choose option 2.
-  But if the <a href="lang_analyze.html">ANALYZE</a> command is run in order to gather statistics,
+  If the <a href="lang_analyze.html">ANALYZE</a> command is run in order to gather statistics,
   a different choice might be made if the statistics indicate that the
   alternative is likely to run faster.
 
@@ -844,28 +848,12 @@ end
   SQLite provides the ability for advanced programmers to exercise control
   over the query plan chosen by the optimizer. One method for doing this
   is to fudge the <a href="lang_analyze.html">ANALYZE</a> results in the <a href="fileformat2.html#stat1tab">sqlite_stat1</a>, 
-  <a href="fileformat2.html#stat3tab">sqlite_stat3</a>, and/or <a href="fileformat2.html#stat4tab">sqlite_stat4</a> tables.  That approach is not 
-  recommended except for the one scenario described in the next paragraph.
-
-</p><p>
-  For a program that uses an SQLite database as its 
-  <a href="appfileformat.html">application file-format</a>,
-  when a new database instance is first created the <a href="lang_analyze.html">ANALYZE</a>
-  command is ineffective because the database contain no data from which
-  to gather statistics.  In that case, one could construct a large prototype
-  database containing typical data during development and run the 
-  <a href="lang_analyze.html">ANALYZE</a> command on this prototype database to gather statistics,
-  then save the prototype statistics as part of the application.
-  After deployment, when the application goes to create a new database file,
-  it can run the <a href="lang_analyze.html">ANALYZE</a> command in order to create the statistics
-  tables, then copy the precomputed statistics obtained
-  from the prototype database into these new statistics tables.
-  In that way, statistics from large working data sets can be preloaded
-  into newly created application files.
+  <a href="fileformat2.html#stat3tab">sqlite_stat3</a>, and/or <a href="fileformat2.html#stat4tab">sqlite_stat4</a> tables.  This is not
+  recommended for most situations.
 
 <a name="crossjoin"></a>
 
-</p><h2 id="manual_control_of_query_plans_using_cross_join"><span>7.3. </span>Manual Control Of Query Plans Using CROSS JOIN</h2>
+</p><h2 id="manual_control_of_query_plans_using_cross_join"><span>7.3. </span>Manual Control of Query Plans using CROSS JOIN</h2>
 
 <p>
   Programmers can force SQLite to use a particular loop nesting order
@@ -877,7 +865,7 @@ end
 
 </p><p>
   In the following query, the optimizer is free to reorder the 
-  tables of FROM clause anyway it sees fit:
+  tables of FROM clause any way it sees fit:
 
 </p><div class="codeblock"><pre>SELECT *
   FROM node AS n1,
@@ -889,7 +877,7 @@ end
    AND e.dest = n2.id;
 </pre></div>
 <p>
-  But in the following logically equivalent formulation of the same query,
+  In the following logically equivalent formulation of the same query,
   the substitution of "CROSS JOIN" for the "," means that the order
   of tables must be N1, E, N2.
 
@@ -921,14 +909,14 @@ end
 
 <a name="multi_index"></a>
 
-</p><h1 id="choosing_between_multiple_indices"><span>8. </span>Choosing between multiple indices</h1>
+</p><h1 id="choosing_between_multiple_indexes"><span>8. </span>Choosing Between Multiple Indexes</h1>
 
 <p>
   Each table in the FROM clause of a query can use at most one index
   (except when the <a href="#or_opt">OR-clause optimization</a> comes into
   play)
   and SQLite strives to use at least one index on each table.  Sometimes,
-  two or more indices might be candidates for use on a single table.
+  two or more indexes might be candidates for use on a single table.
   For example:
 
 </p><div class="codeblock"><pre>CREATE TABLE ex2(x,y,z);
@@ -944,16 +932,16 @@ SELECT z FROM ex2 WHERE x=5 AND y=6;
   x=5 term.
 
 </p><p>
-  When faced with a choice of two or more indices, SQLite tries to estimate
+  When faced with a choice of two or more indexes, SQLite tries to estimate
   the total amount of work needed to perform the query using each option.
   It then selects the option that gives the least estimated work.
 
 </p><p>
   To help the optimizer get a more accurate estimate of the work involved
-  in using various indices, the user may optionally run the <a href="lang_analyze.html">ANALYZE</a> command.
-  The <a href="lang_analyze.html">ANALYZE</a> command scans all indices of database where there might
-  be a choice between two or more indices and gathers statistics on the
-  selectiveness of those indices.  The statistics gathered by
+  in using various indexes, the user may optionally run the <a href="lang_analyze.html">ANALYZE</a> command.
+  The <a href="lang_analyze.html">ANALYZE</a> command scans all indexes of database where there might
+  be a choice between two or more indexes and gathers statistics on the
+  selectiveness of those indexes.  The statistics gathered by
   this scan are stored in special database tables names shows names all
   begin with "<b>sqlite_stat</b>".
   The content of these tables is not updated as the database
@@ -964,7 +952,7 @@ SELECT z FROM ex2 WHERE x=5 AND y=6;
 
 </p><p>
   The various <b>sqlite_stat</b><i>N</i> tables contain information on how
-  selective the various indices are.  For example, the <a href="fileformat2.html#stat1tab">sqlite_stat1</a>
+  selective the various indexes are.  For example, the <a href="fileformat2.html#stat1tab">sqlite_stat1</a>
   table might indicate that an equality constraint on column x reduces the
   search space to 10 rows on average, whereas an equality constraint on
   column y reduces the search space to 3 rows on average.  In that case,
@@ -972,32 +960,33 @@ SELECT z FROM ex2 WHERE x=5 AND y=6;
 
 <a name="uplus"></a>
 
-</p><h2 id="disqualifying_where_clause_terms_using_unary_"><span>8.1. </span>Disqualifying WHERE Clause Terms Using Unary-"+"</h2>
+</p><h2 id="disqualifying_where_clause_terms_using_unary_"><span>8.1. </span>Disqualifying WHERE Clause Terms using Unary-"+"</h2>
 
 <p>
   Terms of the WHERE clause can be manually disqualified for use with
-  indices by prepending a unary *+* operator to the column name.  The
-  unary *+* is a no-op and will not generate any byte code in the prepared
+  indexes by prepending a unary <b>+</b> operator to the column name.  The
+  unary <b>+</b> is a no-op and will not generate any byte code in the prepared
   statement.
-  But the unary *+* operator will prevent the term from constraining an index.
+  However, the unary <b>+</b> operator will prevent the term from
+  constraining an index.
   So, in the example above, if the query were rewritten as:
 
 </p><div class="codeblock"><pre>SELECT z FROM ex2 WHERE +x=5 AND y=6;
 </pre></div>
 <p>
-  The *+* operator on the *x* column will prevent that term from 
+  The <b>+</b> operator on the <b>x</b> column will prevent that term from 
   constraining an index.  This would force the use of the ex2i2 index.
 
 </p><p>
-  Note that the unary *+* operator also removes 
+  Note that the unary <b>+</b> operator also removes 
   <a href="datatype3.html#affinity">type affinity</a> from
   an expression, and in some cases this can cause subtle changes in
   the meaning of an expression.
   In the example above,
-  if column *x* has <a href="datatype3.html#affinity">TEXT affinity</a>
-  then the comparison "x=5" will be done as text.  But the *+* operator
-  removes the affinity.  So the comparison "+x=5" will compare the text
-  in column *x* with the numeric value 5 and will always be false.
+  if column <b>x</b> has <a href="datatype3.html#affinity">TEXT affinity</a>
+  then the comparison "x=5" will be done as text.  The <b>+</b> operator
+  removes the affinity.  So the comparison "<b>+x=5</b>" will compare the text
+  in column <b>x</b> with the numeric value 5 and will always be false.
 
 <a name="rangequery"></a>
 
@@ -1048,12 +1037,12 @@ SELECT z FROM ex3 WHERE w=5 AND x BETWEEN 1 AND 100 AND y BETWEEN 1 AND 100;
 <p>
   Here the inequalities are on columns x and y which are not the
   left-most index columns.  Hence, the histogram data which is collected no
-  left-most column of indices is useless in helping to choose between the
+  left-most column of indexes is useless in helping to choose between the
   range constraints on columns x and y.
 
 <a name="covidx"></a>
 
-</p><h1 id="covering_indices"><span>9. </span>Covering Indices</h1>
+</p><h1 id="covering_indexes"><span>9. </span>Covering Indexes</h1>
 
 <p>
   When doing an indexed lookup of a row, the usual procedure is to
@@ -1074,7 +1063,7 @@ SELECT z FROM ex3 WHERE w=5 AND x BETWEEN 1 AND 100 AND y BETWEEN 1 AND 100;
 
 <a name="order_by"></a>
 
-</p><h1 id="order_by_optimizations"><span>10. </span>ORDER BY optimizations</h1>
+</p><h1 id="order_by_optimizations"><span>10. </span>ORDER BY Optimizations</h1>
 
 <p>
   SQLite attempts to use an index to satisfy the ORDER BY clause of a
@@ -1085,7 +1074,7 @@ SELECT z FROM ex3 WHERE w=5 AND x BETWEEN 1 AND 100 AND y BETWEEN 1 AND 100;
   and chooses the index that it believes will result in the fastest answer.
 
 </p><p>
-  SQLite will also attempt to use indices to help satisfy GROUP BY clauses
+  SQLite will also attempt to use indexes to help satisfy GROUP BY clauses
   and the DISTINCT keyword.  If the nested loops of the join can be arranged
   such that rows that are equivalent for the GROUP BY or for the DISTINCT are
   consecutive, then the GROUP BY or DISTINCT logic can determine if the 
@@ -1096,11 +1085,11 @@ SELECT z FROM ex3 WHERE w=5 AND x BETWEEN 1 AND 100 AND y BETWEEN 1 AND 100;
 
 <a name="partsort"></a>
 
-</p><h2 id="partial_order_by_via_index"><span>10.1. </span>Partial ORDER BY Via Index</h2>
+</p><h2 id="partial_order_by_via_index"><span>10.1. </span>Partial ORDER BY via Index</h2>
 
 <p>
   If a query contains an ORDER BY clause with multiple terms, it might
-  be that SQLite can use indices to cause rows to come out in the order
+  be that SQLite can use indexes to cause rows to come out in the order
   of some prefix of the terms in the ORDER BY but that later terms in
   the ORDER BY are not satisfied.  In that case, SQLite does block sorting.
   Suppose the ORDER BY clause has four terms and the natural order of the
@@ -1109,20 +1098,20 @@ SELECT z FROM ex3 WHERE w=5 AND x BETWEEN 1 AND 100 AND y BETWEEN 1 AND 100;
   outputs in the current row corresponding to the first two terms of 
   the ORDER BY are compared against the previous row.  If they have
   changed, the current sort is finished and output and a new sort is
-  started.  This results in a slightly faster sort.  But the bigger
+  started.  This results in a slightly faster sort.  Event bigger
   advantages are that many fewer rows need to be held in memory,
   reducing memory requirements, and outputs can begin to appear before
   the core query has run to completion.
 
 <a name="flattening"></a>
 
-</p><h1 id="subquery_flattening"><span>11. </span>Subquery flattening</h1>
+</p><h1 id="subquery_flattening"><span>11. </span>Subquery Flattening</h1>
 
 <p>
   When a subquery occurs in the FROM clause of a SELECT, the simplest
   behavior is to evaluate the subquery into a transient table, then run
-  the outer SELECT against the transient table.  But such a plan
-  can be suboptimal since the transient table will not have any indices
+  the outer SELECT against the transient table.  Such a plan
+  can be suboptimal since the transient table will not have any indexes
   and the outer query (which is likely a join) will be forced to do a
   full table scan on the transient table.
 
@@ -1150,7 +1139,7 @@ SELECT z FROM ex3 WHERE w=5 AND x BETWEEN 1 AND 100 AND y BETWEEN 1 AND 100;
 </p><p>
   Casual readers are not expected to understand all of these rules.
   A key take-away from this section is that the rules for determining
-  when query flatting is safe and when it is unsafe are subtle and
+  if query flatting is safe or unsafe are subtle and
   complex.  There have been multiple bugs over the years caused by
   over-aggressive query flattening.  On the other hand, performance
   of complex queries and/or queries involving views tends to suffer
@@ -1246,12 +1235,8 @@ SELECT z FROM ex3 WHERE w=5 AND x BETWEEN 1 AND 100 AND y BETWEEN 1 AND 100;
                       attempted for aggregate subqueries.)</i>
   </li></ol>
 
-<p>
-  The casual reader is not expected to understand or remember any part of
-  the list above.  The point of this list is to demonstrate
-  that the decision of whether or not to flatten a query is complex.
 
-</p><p>
+<p>
   Query flattening is an important optimization when views are used as
   each use of a view is translated into a subquery.
 
@@ -1302,7 +1287,7 @@ SELECT z FROM ex3 WHERE w=5 AND x BETWEEN 1 AND 100 AND y BETWEEN 1 AND 100;
 
 <a name="deferred_work"></a>
 
-</p><h2 id="using_co_routines_to_defer_work_until_after_the_sorting"><span>12.1. </span>Using Co-routines To Defer Work Until After The Sorting</h2>
+</p><h2 id="using_co_routines_to_defer_work_until_after_the_sorting"><span>12.1. </span>Using Co-routines to Defer Work until after the Sorting</h2>
 
 <p>
   As of SQLite version 3.21.0 (2017-10-24), the query planner will
@@ -1317,7 +1302,7 @@ SELECT z FROM ex3 WHERE w=5 AND x BETWEEN 1 AND 100 AND y BETWEEN 1 AND 100;
 </pre></div>
 <p>
   The goal of this query is to compute some value for the five most
-  recent entries in the table.  But in the query above, the
+  recent entries in the table.  In the query above, the
   "expensive_function()" is invoked prior to the sort and thus is
   invoked on every row of the table, even
   rows that are ultimately omitted due to the LIMIT clause.
@@ -1346,7 +1331,7 @@ SELECT z FROM ex3 WHERE w=5 AND x BETWEEN 1 AND 100 AND y BETWEEN 1 AND 100;
 
 <a name="minmax"></a>
 
-</p><h1 id="the_min_max_optimization"><span>13. </span>The MIN/MAX optimization</h1>
+</p><h1 id="the_min_max_optimization"><span>13. </span>The MIN/MAX Optimization</h1>
 
 <p>
   Queries that contain a single MIN() or MAX() aggregate function whose
@@ -1363,7 +1348,7 @@ SELECT MAX(x)+1 FROM table;
 <h1 id="automatic_indexes"><span>14. </span>Automatic Indexes</h1>
 
 <p>
-  When no indices are available to aid the evaluation of a query, SQLite
+  When no indexes are available to aid the evaluation of a query, SQLite
   might create an automatic index that lasts only for the duration
   of a single SQL statement.
   Since the cost of constructing the automatic index is
@@ -1379,8 +1364,8 @@ SELECT * FROM t1, t2 WHERE a=c;
 </pre></div>
 <p>
   In the query above, if both t1 and t2 have approximately N rows, then
-  without any indices the query will require O(N*N) time.  On the other
-  hand, creating an index on table t2 requires O(NlogN) time and then use
+  without any indexes the query will require O(N*N) time.  On the other
+  hand, creating an index on table t2 requires O(NlogN) time and using
   that index to evaluate the query requires an additional O(NlogN) time.
   In the absence of <a href="lang_analyze.html">ANALYZE</a> information, SQLite guesses that N is one
   million and hence it believes that constructing the automatic index will
@@ -1406,7 +1391,7 @@ SELECT a, (SELECT d FROM t2 WHERE c=b) FROM t1;
   the <a href="pragma.html#pragma_automatic_index">automatic_index pragma</a>.  Automatic indexing is turned on by
   default, but this can be changed so that automatic indexing is off
   by default using the <a href="compile.html#default_automatic_index">SQLITE_DEFAULT_AUTOMATIC_INDEX</a> compile-time option.
-  The ability to create automatic indices can be completely disabled by
+  The ability to create automatic indexes can be completely disabled by
   compiling with the <a href="compile.html#omit_automatic_index">SQLITE_OMIT_AUTOMATIC_INDEX</a> compile-time option.
 
 </p><p>
@@ -1414,7 +1399,7 @@ SELECT a, (SELECT d FROM t2 WHERE c=b) FROM t1;
   an <a href="rescode.html#warning_autoindex">SQLITE_WARNING_AUTOINDEX</a> message is sent
   to the <a href="errlog.html">error log</a> every time a statement is prepared that uses an
   automatic index.  Application developers can and should use these warnings
-  to identify the need for new persistent indices in the schema.
+  to identify the need for new persistent indexes in the schema.
 
 </p><p>
   Do not confuse automatic indexes with the <a href="fileformat2.html#intschema">internal indexes</a> (having names
@@ -1474,7 +1459,7 @@ SELECT x, y, b
 </p><h1 id="the_left_join_strength_reduction_optimization"><span>16. </span>The LEFT JOIN Strength Reduction Optimization</h1>
 
 <p>
-  Sometimes a LEFT JOIN can be converted into an ordinary JOIN,
+  A LEFT JOIN can sometimes be converted into an ordinary JOIN
   if there are terms in the WHERE clause that guarantee that the
   two joins will give identical results.  In particular, if any
   column in the right-hand table of the LEFT JOIN must be non-NULL
@@ -1507,7 +1492,7 @@ SELECT x, y, b
 <p>
   It is possible that future enhancements to the prover might enable it
   to recognize that NULL inputs to certain built-in functions
-  always result in a NULL answer.  But not all built-in
+  always result in a NULL answer.  However, not all built-in
   functions have that property (for example <a href="lang_corefunc.html#coalesce">coalesce()</a>) and, of
   course, the prover will never be able to reason about
   <a href="appfunc.html">application-defined SQL functions</a>.
@@ -1546,8 +1531,8 @@ CREATE TABLE t2(ipk INTEGER PRIMARY KEY, v2);
 CREATE TABLE t3(ipk INTEGER PRIMARY KEY, v3);
 
 SELECT v1, v3 FROM t1 
-  LEFT JOIN t2 USING (t1.ipk=t2.ipk)
-  LEFT JOIN t3 USING (t1.ipk=t3.ipk)
+  LEFT JOIN t2 ON (t1.ipk=t2.ipk)
+  LEFT JOIN t3 ON (t1.ipk=t3.ipk)
 </pre></div>
 
 <p>
@@ -1555,6 +1540,6 @@ SELECT v1, v3 FROM t1
   query planner is able to implement the query as if it were written:
 
 </p><div class="codeblock"><pre>SELECT v1, v3 FROM t1 
-  LEFT JOIN t3 USING (t1.ipk=t3.ipk)
+  LEFT JOIN t3 ON (t1.ipk=t3.ipk)
 </pre></div>
 

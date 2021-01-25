@@ -105,6 +105,18 @@ http://www.sqlite.org/src/timeline?t=release</a>.
 See the <a href="chronology.html">chronology</a> a succinct listing of releases.
 </p>
 
+<a name="version_3_34_1"></a>
+<h3>2021-01-20 (3.34.1)</h3><p><ol class='lessindent'>
+<li> Fix a potential use-after-free bug when processing a a subquery with both
+     a correlated WHERE clause and a "HAVING 0" clause and where the parent
+     query is an aggregate.
+<li> Fix documentation typos
+<li> Fix minor problems in extensions.
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: 2021-01-20 14:10:07 10e20c0b43500cfb9bbc0eaa061c57514f715d87238f4d835880cd846b9ebd1f
+<li>SHA3-256 for sqlite3.c: 799a7be90651fc7296113b641a70b028c142d767b25af1d0a78f93dcf1a2bf20
+
+</ol></p>
 <a name="version_3_34_0"></a>
 <h3>2020-12-01 (3.34.0)</h3><p><ol class='lessindent'>
 <li> Added the <a href="c3ref/txn_state.html">sqlite3_txn_state()</a> interface for reporting on the current
@@ -122,7 +134,7 @@ See the <a href="chronology.html">chronology</a> a succinct listing of releases.
      <li> Table name quoting works correctly for the <a href="cli.html#csv">.import</a> dot-command.
      <li> The <a href="series.html">generate_series(START,END,STEP)</a> table-valued function
           extension is now built into the CLI.
-     <li> The <a href="cli.html#dotdatabases">.databases</a> dot-command now show the status of each database
+     <li> The <a href="cli.html#dotdatabases">.databases</a> dot-command now shows the status of each database
           file as determined by <a href="c3ref/db_readonly.html">sqlite3_db_readonly()</a> and
           <a href="c3ref/txn_state.html">sqlite3_txn_state()</a>.
      <li> Added the --tabs command-line option that sets

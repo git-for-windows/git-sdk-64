@@ -102,7 +102,7 @@ Date And Time Functions
 Table Of Contents
 </a>
 <div id="toc_sub"><div class="fancy-toc1"><a href="#overview">1. Overview</a></div>
-<div class="fancy-toc1"><a href="#time_strings">2. Time Strings</a></div>
+<div class="fancy-toc1"><a href="#time_values">2. Time Values</a></div>
 <div class="fancy-toc1"><a href="#modifiers">3. Modifiers</a></div>
 <div class="fancy-toc1"><a href="#examples">4. Examples</a></div>
 <div class="fancy-toc1"><a href="#caveats_and_bugs">5. Caveats And Bugs</a></div>
@@ -134,16 +134,16 @@ SQLite supports five date and time functions as follows:
 
 <p>
 </p><ol>
-<li> <b>date(</b><i>timestring, modifier, modifier, ...</i><b>)</b> </li>
-<li> <b>time(</b><i>timestring, modifier, modifier, ...</i><b>)</b> </li>
-<li> <b>datetime(</b><i>timestring, modifier, modifier, ...</i><b>)</b> </li>
-<li> <b>julianday(</b><i>timestring, modifier, modifier, ...</i><b>)</b> </li>
-<li> <b>strftime(</b><i>format, timestring, modifier, modifier, ...</i><b>)</b> </li>
+<li> <b>date(</b><i>time-value, modifier, modifier, ...</i><b>)</b> </li>
+<li> <b>time(</b><i>time-value, modifier, modifier, ...</i><b>)</b> </li>
+<li> <b>datetime(</b><i>time-value, modifier, modifier, ...</i><b>)</b> </li>
+<li> <b>julianday(</b><i>time-value, modifier, modifier, ...</i><b>)</b> </li>
+<li> <b>strftime(</b><i>format, time-value, modifier, modifier, ...</i><b>)</b> </li>
 </ol>
 
 <p>
-All five date and time functions take a time string as an argument. 
-The time string is followed by zero or more modifiers. 
+All five date and time functions take a time value as an argument. 
+The time value is followed by zero or more modifiers. 
 The strftime() function also takes a format string as its first argument.
 </p>
 
@@ -206,11 +206,13 @@ The only reasons for providing functions other than strftime() is
 for convenience and for efficiency.
 </p>
 
-<h1 id="time_strings"><span>2. </span>Time Strings</h1>
+<h1 id="time_values"><span>2. </span>Time Values</h1>
 
-<p>A time string can be in any of the following formats:</p>
+<p>A time value can be in any of the following formats shown below.
+The value is usually a string, though it can be an integer or floating
+point number in the case of format 12.
 
-<ol>
+</p><ol>
 <li> <i>YYYY-MM-DD</i>
 </li><li> <i>YYYY-MM-DD HH:MM</i>
 </li><li> <i>YYYY-MM-DD HH:MM:SS</i>
@@ -238,7 +240,7 @@ same value for multiple invocations within the same <a href="c3ref/step.html">sq
 <a href="http://en.wikipedia.org/wiki/Coordinated_Universal_Time">Universal Coordinated Time (UTC)</a> is used. 
 Format 12 is the 
 <a href="http://en.wikipedia.org/wiki/Julian_day">Julian day number</a>
-expressed as a floating point value.
+expressed as an integer or floating point value.
 </p>
 
 <p>
@@ -246,7 +248,7 @@ Formats 2 through 10 may be optionally followed by a timezone indicator of the f
 "<i>&#91;+-&#93;HH:MM</i>" or just "<i>Z</i>".  The date and time functions use UTC or "zulu"
 time internally, and so the "Z" suffix is a no-op.  Any non-zero "HH:MM" suffix is
 subtracted from the indicated date and time in order to compute zulu time.
-For example, all of the following time strings are equivalent:
+For example, all of the following time values are equivalent:
 </p>
 
 <blockquote>
@@ -269,7 +271,7 @@ represent the Julian day number.
 
 <h1 id="modifiers"><span>3. </span>Modifiers</h1>
 
-<p>The time string can be followed by zero or more modifiers that 
+<p>The time value can be followed by zero or more modifiers that 
 alter date and/or time. Each modifier
 is a transformation that is applied to the time value to its left.
 Modifiers are applied from left to right; order is important.
@@ -293,7 +295,7 @@ The available modifiers are as follows.</p>
 
 <p>The first six modifiers (1 through 6) 
 simply add the specified amount of time to the date and time 
-specified by the preceding timestring and modifiers.
+specified by the arguments to the left.
 The 's' character at the end of the modifier names is optional.
 Note that "&plusmn;NNN months" works by rendering the original date into
 the YYYY-MM-DD format, adding the &plusmn;NNN to the MM month value, then
@@ -313,12 +315,12 @@ If the date is already on the desired weekday, the "weekday" modifier
 leaves the date unchanged.  </p>
 
 <p>The "unixepoch" modifier (11) only works if it immediately follows 
-a timestring in the DDDDDDDDDD format. 
+a time value in the DDDDDDDDDD format. 
 This modifier causes the DDDDDDDDDD to be interpreted not 
 as a Julian day number as it normally would be, but as
 <a href="http://en.wikipedia.org/wiki/Unix_time">Unix Time</a> - the 
 number of seconds since 1970.  If the "unixepoch" modifier does not
-follow a timestring of the form DDDDDDDDDD which expresses the number
+follow a time value of the form DDDDDDDDDD which expresses the number
 of seconds since 1970 or if other modifiers
 separate the "unixepoch" modifier from prior DDDDDDDDDD then the
 behavior is undefined.
@@ -329,14 +331,14 @@ of -62167219200 through 106751991167).</p>
 
 <a name="localtime"></a>
 
-<p>The "localtime" modifier (12) assumes the time string to its left is in
-Universal Coordinated Time (UTC) and adjusts the time
-string so that it displays localtime.  If "localtime"
+<p>The "localtime" modifier (12) assumes the time value to its left is in
+Universal Coordinated Time (UTC) and adjusts that time
+value so that it is in localtime.  If "localtime"
 follows a time that is not UTC, then the behavior is undefined.
 The "utc" modifier is the opposite of "localtime".  
-"utc" assumes that the string
-to its left is in the local timezone and adjusts that string to be in UTC.
-If the prior string is not in localtime, then the result of "utc" is
+"utc" assumes that the time value
+to its left is in the local timezone and adjusts that time value to be in UTC.
+If the time to the left is not in localtime, then the result of "utc" is
 undefined.</p>
 
 <h1 id="examples"><span>4. </span>Examples</h1>

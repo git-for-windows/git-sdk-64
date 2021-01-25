@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="../sqlite.css" rel="stylesheet">
-<title>SQLite Release 3.34.0 On 2020-12-01</title>
+<title>SQLite Release 3.34.1 On 2021-01-20</title>
 <!-- path=../ -->
 </head>
 <body>
@@ -91,8 +91,9 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.34.0 On 2020-12-01</h2><p><ol class='lessindent'>
-<li> Added the <a href="../c3ref/txn_state.html">sqlite3_txn_state()</a> interface for reporting on the current
+<h2>SQLite Release 3.34.1 On 2021-01-20</h2><p><b>Changes in version 3.34.0 (2020-12-01):</b></p>
+<p><ol class='lessindent'>
+<li value='1'> Added the <a href="../c3ref/txn_state.html">sqlite3_txn_state()</a> interface for reporting on the current
      transaction state of the database connection.
 <li> Enhance <a href="../lang_with.html#recursivecte">recursive common table expressions</a> to support two or more
      recursive terms as is done by SQL Server, since this helps make
@@ -107,7 +108,7 @@ return false;
      <li> Table name quoting works correctly for the <a href="../cli.html#csv">.import</a> dot-command.
      <li> The <a href="../series.html">generate_series(START,END,STEP)</a> table-valued function
           extension is now built into the CLI.
-     <li> The <a href="../cli.html#dotdatabases">.databases</a> dot-command now show the status of each database
+     <li> The <a href="../cli.html#dotdatabases">.databases</a> dot-command now shows the status of each database
           file as determined by <a href="../c3ref/db_readonly.html">sqlite3_db_readonly()</a> and
           <a href="../c3ref/txn_state.html">sqlite3_txn_state()</a>.
      <li> Added the --tabs command-line option that sets
@@ -141,10 +142,17 @@ return false;
 <li> The <a href="../syntaxdiagrams.html">syntax diagrams</a> are now implemented as
      <a href='https://pikchr.org/'>Pikchr</a> scripts and rendered
      as SVG for improved legibility and ease of maintenance.
+</ol>
+<p><b>Additional changes in version 3.34.1:</b></p>
+<p><ol class='lessindent'>
+<li value='12'> Fix a potential use-after-free bug when processing a a subquery with both
+     a correlated WHERE clause and a "HAVING 0" clause and where the parent
+     query is an aggregate.
+<li> Fix documentation typos
+<li> Fix minor problems in extensions.
 <p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: 2020-12-01 16:14:00 a26b6597e3ae272231b96f9982c3bcc17ddec2f2b6eb4df06a224b91089fed5b
-<li>SHA3-256 for sqlite3.c: fbd895b0655a337b2cd657675f314188a4e9fe614444cc63dfeb3f066f674514
-
+<li>SQLITE_SOURCE_ID: 2021-01-20 14:10:07 10e20c0b43500cfb9bbc0eaa061c57514f715d87238f4d835880cd846b9ebd1f
+<li>SHA3-256 for sqlite3.c: 799a7be90651fc7296113b641a70b028c142d767b25af1d0a78f93dcf1a2bf20
 
 </ol></p>
 

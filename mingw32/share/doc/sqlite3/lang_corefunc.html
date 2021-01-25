@@ -221,6 +221,13 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
   The hex() function interprets its argument as a BLOB and returns
   a string which is the upper-case hexadecimal rendering of the content of
   that blob.
+  <p>
+  If the argument <i>X</i> in "hex(<i>X</i>)" is an
+  integer or floating point number, then "interprets its argument as a BLOB" means
+  that the binary number is first converted into a UTF8 text representation, then
+  that text is interpreted as a BLOB.  Hence, "hex(12345678)" renders
+  as "3132333435363738" not the binary representation of the integer value
+  "0000000000BC614E".
 </dd>
 <a name="ifnull"></a>
 <dt><p><b>ifnull(<i>X</i>,<i>Y</i>)</b></dt><dd><p>
