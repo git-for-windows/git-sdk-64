@@ -7,7 +7,7 @@
 
 /* Main header file for the bfd library -- portable access to object files.
 
-   Copyright (C) 1990-2020 Free Software Foundation, Inc.
+   Copyright (C) 1990-2021 Free Software Foundation, Inc.
 
    Contributed by Cygnus Support.
 
@@ -587,6 +587,8 @@ bfd *bfd_fopen (const char *filename, const char *target,
 bfd *bfd_openr (const char *filename, const char *target);
 
 bfd *bfd_fdopenr (const char *filename, const char *target, int fd);
+
+bfd *bfd_fdopenw (const char *filename, const char *target, int fd);
 
 bfd *bfd_openstreamr (const char * filename, const char * target,
     void * stream);
@@ -1182,6 +1184,9 @@ typedef struct bfd_section
   struct bfd_symbol *symbol;
   struct bfd_symbol **symbol_ptr_ptr;
 
+  /* The matching section name pattern in linker script.  */
+  const char *pattern;
+
   /* Early in the link process, map_head and map_tail are used to build
      a list of input sections attached to an output section.  Later,
      output sections use these fields for a list of bfd_link_order
@@ -1375,8 +1380,8 @@ discarded_section (const asection *sec)
   /* target_index, used_by_bfd, constructor_chain, owner,           */ \
      0,            NULL,        NULL,              NULL,               \
                                                                        \
-  /* symbol,                    symbol_ptr_ptr,                     */ \
-     (struct bfd_symbol *) SYM, &SEC.symbol,                           \
+  /* symbol,                    symbol_ptr_ptr, pattern,            */ \
+     (struct bfd_symbol *) SYM, &SEC.symbol,    NULL,                  \
                                                                        \
   /* map_head, map_tail, already_assigned                           */ \
      { NULL }, { NULL }, NULL                                          \
@@ -1930,6 +1935,7 @@ enum bfd_architecture
 #define bfd_mach_tilegx32      2
   bfd_arch_aarch64,   /* AArch64.  */
 #define bfd_mach_aarch64 0
+#define bfd_mach_aarch64_8R    1
 #define bfd_mach_aarch64_ilp32 32
   bfd_arch_nios2,     /* Nios II.  */
 #define bfd_mach_nios2         0
@@ -1953,6 +1959,7 @@ enum bfd_architecture
 #define bfd_mach_ck803         5
 #define bfd_mach_ck807         6
 #define bfd_mach_ck810         7
+#define bfd_mach_ck860         8
   bfd_arch_last
   };
 
@@ -5112,6 +5119,8 @@ then it may be truncated to 8 bits.  */
   BFD_RELOC_MSP430_ABS_HI16,
   BFD_RELOC_MSP430_PREL31,
   BFD_RELOC_MSP430_SYM_DIFF,
+  BFD_RELOC_MSP430_SET_ULEB128,
+  BFD_RELOC_MSP430_SUB_ULEB128,
 
 /* Relocations used by the Altera Nios II core.  */
   BFD_RELOC_NIOS2_S16,
@@ -6407,6 +6416,9 @@ typedef struct bfd_symbol
      with this name and type in use.  BSF_OBJECT must also be set.  */
 #define BSF_GNU_UNIQUE          (1 << 23)
 
+  /* This section symbol should be included in the symbol table.  */
+#define BSF_SECTION_SYM_USED    (1 << 24)
+
   flagword flags;
 
   /* A pointer to the section to which this symbol is
@@ -6678,6 +6690,10 @@ struct bfd
 
   /* Set if this is a slim LTO object not loaded with a compiler plugin.  */
   unsigned int lto_slim_object : 1;
+
+  /* Do not attempt to modify this file.  Set when detecting errors
+     that BFD is not prepared to handle for objcopy/strip.  */
+  unsigned int read_only : 1;
 
   /* Set to dummy BFD created when claimed by a compiler plug-in
      library.  */
@@ -7214,11 +7230,7 @@ bfd_boolean bfd_alt_mach_code (bfd *abfd, int alternative);
 
 bfd_vma bfd_emul_get_maxpagesize (const char *);
 
-void bfd_emul_set_maxpagesize (const char *, bfd_vma);
-
 bfd_vma bfd_emul_get_commonpagesize (const char *, bfd_boolean);
-
-void bfd_emul_set_commonpagesize (const char *, bfd_vma);
 
 char *bfd_demangle (bfd *, const char *, int);
 
@@ -7280,6 +7292,11 @@ bfd_boolean generic_core_file_matches_executable_p
   (((bfd) && (bfd)->xvec && (bfd)->xvec->message) ? \
    (((bfd)->xvec->message[(int) ((bfd)->format)]) arglist) : \
    (bfd_assert (__FILE__,__LINE__), NULL))
+#endif
+
+/* Defined to TRUE if unused section symbol should be kept.  */
+#ifndef TARGET_KEEP_UNUSED_SECTION_SYMBOLS
+#define TARGET_KEEP_UNUSED_SECTION_SYMBOLS TRUE
 #endif
 
 enum bfd_flavour
@@ -7354,6 +7371,9 @@ typedef struct bfd_target
   /* How well this target matches, used to select between various
      possible targets when more than one target matches.  */
   unsigned char match_priority;
+
+ /* TRUE if unused section symbols should be kept.  */
+  bfd_boolean keep_unused_section_symbols;
 
   /* Entries for byte swapping for data. These are different from the
      other entry points, since they don't take a BFD as the first argument.
@@ -7783,6 +7803,12 @@ bfd_asymbol_flavour (const asymbol *sy)
   if ((sy->flags & BSF_SYNTHETIC) != 0)
     return bfd_target_unknown_flavour;
   return sy->the_bfd->xvec->flavour;
+}
+
+static inline bfd_boolean
+bfd_keep_unused_section_symbols (const bfd *abfd)
+{
+  return abfd->xvec->keep_unused_section_symbols;
 }
 
 bfd_boolean bfd_set_default_target (const char *name);

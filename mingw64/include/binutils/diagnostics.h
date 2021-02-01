@@ -1,4 +1,4 @@
-/* Copyright (C) 2017-2020 Free Software Foundation, Inc.
+/* Copyright (C) 2017-2021 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -62,6 +62,11 @@
   DIAGNOSTIC_IGNORE ("-Wformat-nonliteral")
 
 #elif defined (__GNUC__) /* GCC */
+
+# if __GNUC__ >= 7
+#  define DIAGNOSTIC_IGNORE_DEPRECATED_REGISTER \
+   DIAGNOSTIC_IGNORE ("-Wregister")
+# endif
 
 # define DIAGNOSTIC_IGNORE_STRINGOP_TRUNCATION \
   DIAGNOSTIC_IGNORE ("-Wstringop-truncation")
