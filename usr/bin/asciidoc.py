@@ -33,7 +33,7 @@ from ast import literal_eval
 from collections import OrderedDict
 
 # Used by asciidocapi.py #
-VERSION = '9.0.4'           # See CHANGELOG file for version history.
+VERSION = '9.0.5'           # See CHANGELOG file for version history.
 
 MIN_PYTHON_VERSION = (3, 5)  # Require this version of Python or better.
 
@@ -903,8 +903,9 @@ def system(name, args, is_macro=False, attrs=None):
         value = document.attributes.get(attr)
         if value:
             if not re.match(r'^\d+$', value) and len(value) > 1:
-                message.warning('%s: illegal counter value: %s'
-                                % (syntax, value))
+                message.warning(
+                    '%s: illegal counter value: %s' % (syntax, value)
+                )
                 return None
             if re.match(r'^\d+$', value):
                 expr = value + '+1'
@@ -969,7 +970,7 @@ def system(name, args, is_macro=False, attrs=None):
                 line = subs_attrs(line)
                 if line is not None:
                     result.append(line)
-            result = DEFAULT_NEWLINE.join(result)
+            result = config.newline.join(result)
     else:
         assert False
     if result and name in ('eval3', 'sys3'):
@@ -1056,13 +1057,17 @@ def subs_attrs(lines, dictionary=None):
                 pos = mo.start() + len(s)
         # Expand conditional attributes.
         # Single name -- higher precedence.
-        reo1 = re.compile(r'(?s)\{(?P<name>[^\\\W][-\w]*?)'
-                          r'(?P<op>\=|\?|!|#|%|@|\$)'
-                          r'(?P<value>.*?)\}(?!\\)')
+        reo1 = re.compile(
+            r'(?s)\{(?P<name>[^\\\W][-\w]*?)'
+            r'(?P<op>\=|\?|!|#|%|@|\$)'
+            r'(?P<value>.*?)\}(?!\\)'
+        )
         # Multiple names (n1,n2,... or n1+n2+...) -- lower precedence.
-        reo2 = re.compile(r'(?s)\{(?P<name>[^\\\W][-\w' + OR + AND + r']*?)'
-                          r'(?P<op>\=|\?|!|#|%|@|\$)'
-                          r'(?P<value>.*?)\}(?!\\)')
+        reo2 = re.compile(
+            r'(?s)\{(?P<name>[^\\\W][-\w' + OR + AND + r']*?)'
+            r'(?P<op>\=|\?|!|#|%|@|\$)'
+            r'(?P<value>.*?)\}(?!\\)'
+        )
         for reo in [reo1, reo2]:
             pos = 0
             while True:
@@ -1213,12 +1218,14 @@ def subs_attrs(lines, dictionary=None):
         return tuple(result)
 
 
-east_asian_widths = {'W': 2,   # Wide
-                     'F': 2,   # Full-width (wide)
-                     'Na': 1,  # Narrow
-                     'H': 1,   # Half-width (narrow)
-                     'N': 1,   # Neutral (not East Asian, treated as narrow)
-                     'A': 1}   # Ambiguous (s/b wide in East Asian context, narrow otherwise, but that doesn't work)
+east_asian_widths = {
+    'W': 2,   # Wide
+    'F': 2,   # Full-width (wide)
+    'Na': 1,  # Narrow
+    'H': 1,   # Half-width (narrow)
+    'N': 1,   # Neutral (not East Asian, treated as narrow)
+    'A': 1,   # Ambiguous (s/b wide in East Asian context, narrow otherwise, but that doesn't work)
+}
 """Mapping of result codes from `unicodedata.east_asian_width()` to character
 column widths."""
 
