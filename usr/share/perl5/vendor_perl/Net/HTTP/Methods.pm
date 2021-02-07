@@ -1,5 +1,5 @@
 package Net::HTTP::Methods;
-our $VERSION = '6.19';
+our $VERSION = '6.20';
 use strict;
 use warnings;
 use URI;
@@ -649,7 +649,7 @@ Net::HTTP::Methods - Methods shared by Net::HTTP and Net::HTTPS
 
 =head1 VERSION
 
-version 6.19
+version 6.20
 
 =head1 AUTHOR
 

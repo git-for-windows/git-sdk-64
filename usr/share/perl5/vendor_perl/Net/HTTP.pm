@@ -1,9 +1,9 @@
 package Net::HTTP;
-our $VERSION = '6.19';
+our $VERSION = '6.20';
 use strict;
 use warnings;
 
-use vars qw($SOCKET_CLASS);
+our $SOCKET_CLASS;
 unless ($SOCKET_CLASS) {
     # Try several, in order of capability and preference
     if (eval { require IO::Socket::IP }) {
@@ -50,7 +50,7 @@ Net::HTTP - Low-level HTTP connection (client)
 
 =head1 VERSION
 
-version 6.19
+version 6.20
 
 =head1 SYNOPSIS
 
@@ -75,7 +75,7 @@ HTTP protocol is described in RFC 2616.  The C<Net::HTTP> class
 supports C<HTTP/1.0> and C<HTTP/1.1>.
 
 C<Net::HTTP> is a sub-class of one of C<IO::Socket::IP> (IPv6+IPv4),
-C<IO::Socket::INET6> (IPv6+IPv4), or C<IO::Socket::INET> (IPv4 only).  
+C<IO::Socket::INET6> (IPv6+IPv4), or C<IO::Socket::INET> (IPv4 only).
 You can mix the methods described below with reading and writing from the
 socket directly.  This is not necessary a good idea, unless you know what
 you are doing.
@@ -172,7 +172,7 @@ format_request().  Returns true if successful.
 
 =item $s->format_chunk( $data )
 
-Returns the string to be written for the given chunk of data.  
+Returns the string to be written for the given chunk of data.
 
 =item $s->write_chunk($data)
 

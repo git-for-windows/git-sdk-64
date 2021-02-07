@@ -2,7 +2,7 @@ package HTTP::Cookies::Microsoft;
 
 use strict;
 
-our $VERSION = '6.09';
+our $VERSION = '6.10';
 
 require HTTP::Cookies;
 our @ISA=qw(HTTP::Cookies);
@@ -244,7 +244,7 @@ HTTP::Cookies::Microsoft - Access to Microsoft cookies files
 
 =head1 VERSION
 
-version 6.09
+version 6.10
 
 =head1 SYNOPSIS
 

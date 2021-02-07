@@ -5,7 +5,7 @@ use HTTP::Date qw(str2time parse_date time2str);
 use HTTP::Headers::Util qw(_split_header_words join_header_words);
 
 our $EPOCH_OFFSET;
-our $VERSION = '6.09';
+our $VERSION = '6.10';
 
 # Legacy: because "use "HTTP::Cookies" used be the ONLY way
 #  to load the class HTTP::Cookies::Netscape.
@@ -262,6 +262,9 @@ sub extract_cookies
 			}
 		    }
 		}
+                elsif (!$first_param && lc($k) eq 'max-age') {
+                    $expires++;
+                }
                 elsif (!$first_param && lc($k) =~ /^(?:version|discard|ns-cookie)/) {
                     # ignore
                 }
@@ -679,7 +682,7 @@ HTTP::Cookies - HTTP cookie jars
 
 =head1 VERSION
 
-version 6.09
+version 6.10
 
 =head1 SYNOPSIS
 

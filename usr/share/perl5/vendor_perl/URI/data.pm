@@ -5,10 +5,10 @@ use warnings;
 
 use parent 'URI';
 
-our $VERSION = '5.05';
+our $VERSION = '5.07';
 
-use MIME::Base64 qw(encode_base64 decode_base64);
-use URI::Escape  qw(uri_unescape);
+use MIME::Base64 qw(decode_base64 encode_base64);
+use URI::Escape qw(uri_unescape);
 
 sub media_type
 {

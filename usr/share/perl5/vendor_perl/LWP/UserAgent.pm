@@ -15,7 +15,7 @@ use LWP::Protocol ();
 use Scalar::Util qw(blessed);
 use Try::Tiny qw(try catch);
 
-our $VERSION = '6.50';
+our $VERSION = '6.52';
 
 sub new
 {
@@ -1265,21 +1265,21 @@ The following options correspond to attribute methods described below:
    KEY                     DEFAULT
    -----------             --------------------
    agent                   "libwww-perl/#.###"
-   from                    undef
    conn_cache              undef
    cookie_jar              undef
    default_headers         HTTP::Headers->new
+   from                    undef
    local_address           undef
-   ssl_opts                { verify_hostname => 1 }
-   max_size                undef
    max_redirect            7
+   max_size                undef
+   no_proxy                []
    parse_head              1
    protocols_allowed       undef
    protocols_forbidden     undef
-   requests_redirectable   ['GET', 'HEAD']
-   timeout                 180
    proxy                   undef
-   no_proxy                []
+   requests_redirectable   ['GET', 'HEAD']
+   ssl_opts                { verify_hostname => 1 }
+   timeout                 180
 
 The following additional options are also accepted: If the C<env_proxy> option
 is passed in with a true value, then proxy settings are read from environment

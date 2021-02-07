@@ -3,9 +3,9 @@ package URI::file::Base;
 use strict;
 use warnings;
 
-use URI::Escape qw();
+use URI::Escape ();
 
-our $VERSION = '5.05';
+our $VERSION = '5.07';
 
 sub new
 {

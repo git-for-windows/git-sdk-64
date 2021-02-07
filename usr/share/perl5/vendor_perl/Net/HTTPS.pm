@@ -1,10 +1,10 @@
 package Net::HTTPS;
-our $VERSION = '6.19';
+our $VERSION = '6.20';
 use strict;
 use warnings;
 
 # Figure out which SSL implementation to use
-use vars qw($SSL_SOCKET_CLASS);
+our $SSL_SOCKET_CLASS;
 if ($SSL_SOCKET_CLASS) {
     # somebody already set it
 }
@@ -90,7 +90,7 @@ Net::HTTPS - Low-level HTTP over SSL/TLS connection (client)
 
 =head1 VERSION
 
-version 6.19
+version 6.20
 
 =head1 DESCRIPTION
 

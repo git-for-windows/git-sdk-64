@@ -13,7 +13,7 @@
 
 package IO::Socket::SSL;
 
-our $VERSION = '2.068';
+our $VERSION = '2.069';
 
 use IO::Socket;
 use Net::SSLeay 1.46;
@@ -2989,11 +2989,11 @@ sub new {
 	    my $snictx = $ctx{lc($host)} || $ctx{''} or do {
 		$DEBUG>1 and DEBUG(
 		    "cannot get context from servername '$host'");
-		return 0;
+		return 2; # SSL_TLSEXT_ERR_ALERT_FATAL
 	    };
 	    $DEBUG>1 and DEBUG("set context from servername $host");
 	    Net::SSLeay::set_SSL_CTX($ssl,$snictx) if $snictx != $ctx;
-	    return 1;
+	    return 0; # SSL_TLSEXT_ERR_OK
 	});
     }
 

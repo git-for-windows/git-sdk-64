@@ -149,16 +149,27 @@ sub CERT_asHash {
 	    $cert,$digest_name),
     );
 
-    my $subj = Net::SSLeay::X509_get_subject_name($cert);
-    my %subj;
-    for ( 0..Net::SSLeay::X509_NAME_entry_count($subj)-1 ) {
-	my $e = Net::SSLeay::X509_NAME_get_entry($subj,$_);
-	my $o = Net::SSLeay::X509_NAME_ENTRY_get_object($e);
-	$subj{ Net::SSLeay::OBJ_obj2txt($o) } =
-	    Net::SSLeay::P_ASN1_STRING_get(
-		Net::SSLeay::X509_NAME_ENTRY_get_data($e));
+    for([ subject => Net::SSLeay::X509_get_subject_name($cert) ],
+	[ issuer => Net::SSLeay::X509_get_issuer_name($cert) ]) {
+	my ($what,$subj) = @$_;
+	my %subj;
+	for ( 0..Net::SSLeay::X509_NAME_entry_count($subj)-1 ) {
+	    my $e = Net::SSLeay::X509_NAME_get_entry($subj,$_);
+	    my $k = Net::SSLeay::OBJ_obj2txt(
+		Net::SSLeay::X509_NAME_ENTRY_get_object($e));
+	    my $v = Net::SSLeay::P_ASN1_STRING_get(
+		    Net::SSLeay::X509_NAME_ENTRY_get_data($e));
+	    if (!exists $subj{$k}) {
+		$subj{$k} = $v;
+	    } elsif (!ref $subj{$k}) {
+		$subj{$k} = [ $subj{$k}, $v ];
+	    } else {
+		push @{$subj{$k}}, $v;
+	    }
+	}
+	$hash{$what} = \%subj;
     }
-    $hash{subject} = \%subj;
+
 
     if ( my @names = Net::SSLeay::X509_get_subjectAltNames($cert) ) {
 	my $alt = $hash{subjectAltNames} = [];
@@ -197,17 +208,6 @@ sub CERT_asHash {
 	    push @$alt,[$t,$v]
 	}
     }
-
-    my $issuer = Net::SSLeay::X509_get_issuer_name($cert);
-    my %issuer;
-    for ( 0..Net::SSLeay::X509_NAME_entry_count($issuer)-1 ) {
-	my $e = Net::SSLeay::X509_NAME_get_entry($issuer,$_);
-	my $o = Net::SSLeay::X509_NAME_ENTRY_get_object($e);
-	$issuer{ Net::SSLeay::OBJ_obj2txt($o) } =
-	    Net::SSLeay::P_ASN1_STRING_get(
-		Net::SSLeay::X509_NAME_ENTRY_get_data($e));
-    }
-    $hash{issuer} = \%issuer;
 
     my @ext;
     for( 0..Net::SSLeay::X509_get_ext_count($cert)-1 ) {
@@ -271,14 +271,17 @@ sub CERT_create {
 	organizationName => 'IO::Socket::SSL',
 	commonName => 'IO::Socket::SSL Test'
     };
+
     while ( my ($k,$v) = each %$subj ) {
 	# Not everything we get is nice - try with MBSTRING_UTF8 first and if it
 	# fails try V_ASN1_T61STRING and finally V_ASN1_OCTET_STRING
-	Net::SSLeay::X509_NAME_add_entry_by_txt($subj_e,$k,0x1000,$v,-1,0)
-	    or Net::SSLeay::X509_NAME_add_entry_by_txt($subj_e,$k,20,$v,-1,0)
-	    or Net::SSLeay::X509_NAME_add_entry_by_txt($subj_e,$k,4,$v,-1,0)
-	    or croak("failed to add entry for $k - ".
-	    Net::SSLeay::ERR_error_string(Net::SSLeay::ERR_get_error()));
+	for (ref($v) ? @$v : ($v)) {
+	    Net::SSLeay::X509_NAME_add_entry_by_txt($subj_e,$k,0x1000,$_,-1,0)
+		or Net::SSLeay::X509_NAME_add_entry_by_txt($subj_e,$k,20,$_,-1,0)
+		or Net::SSLeay::X509_NAME_add_entry_by_txt($subj_e,$k,4,$_,-1,0)
+		or croak("failed to add entry for $k - ".
+		Net::SSLeay::ERR_error_string(Net::SSLeay::ERR_get_error()));
+	}
     }
 
     my @ext = (
@@ -544,7 +547,9 @@ The resulting hash contains:
 =item subject
 
 Hash with the parts of the subject, e.g. commonName, countryName,
-organizationName, stateOrProvinceName, localityName.
+organizationName, stateOrProvinceName, localityName. If there are multiple
+values for any of these parts the hash value will be an array ref with the
+values in order instead of just a scalar.
 
 =item subjectAltNames
 
@@ -555,7 +560,9 @@ EDIPARTY, URI, IP or RID.
 =item issuer
 
 Hash with the parts of the issuer, e.g. commonName, countryName,
-organizationName, stateOrProvinceName, localityName.
+organizationName, stateOrProvinceName, localityName. If there are multiple
+values for any of these parts the hash value will be an array ref with the
+values in order instead of just a scalar.
 
 =item not_before, not_after
 

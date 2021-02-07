@@ -3,7 +3,7 @@ package HTTP::Status;
 use strict;
 use warnings;
 
-our $VERSION = '6.26';
+our $VERSION = '6.27';
 
 require 5.002;   # because we use prototypes
 
@@ -117,35 +117,21 @@ die if $@;
 *RC_MOVED_TEMPORARILY = \&RC_FOUND;  # 302 was renamed in the standard
 push(@EXPORT, "RC_MOVED_TEMPORARILY");
 
-*RC_REQUEST_ENTITY_TOO_LARGE = \&RC_PAYLOAD_TOO_LARGE;
-push(@EXPORT, "RC_REQUEST_ENTITY_TOO_LARGE");
+my %compat = (
+    REQUEST_ENTITY_TOO_LARGE      => \&HTTP_PAYLOAD_TOO_LARGE,
+    REQUEST_URI_TOO_LARGE         => \&HTTP_URI_TOO_LONG,
+    REQUEST_RANGE_NOT_SATISFIABLE => \&HTTP_RANGE_NOT_SATISFIABLE,
+    NO_CODE                       => \&HTTP_TOO_EARLY,
+    UNORDERED_COLLECTION          => \&HTTP_TOO_EARLY,
+);
 
-*RC_REQUEST_URI_TOO_LARGE = \&RC_URI_TOO_LONG;
-push(@EXPORT, "RC_REQUEST_URI_TOO_LARGE");
-
-*RC_REQUEST_RANGE_NOT_SATISFIABLE = \&RC_RANGE_NOT_SATISFIABLE;
-push(@EXPORT, "RC_REQUEST_RANGE_NOT_SATISFIABLE");
-
-*RC_NO_CODE = \&RC_TOO_EARLY;
-push(@EXPORT, "RC_NO_CODE");
-
-*RC_UNORDERED_COLLECTION = \&RC_TOO_EARLY;
-push(@EXPORT, "RC_UNORDERED_COLLECTION");
-
-*HTTP_REQUEST_ENTITY_TOO_LARGE = \&HTTP_PAYLOAD_TOO_LARGE;
-push(@EXPORT_OK, "HTTP_REQUEST_ENTITY_TOO_LARGE");
-
-*HTTP_REQUEST_URI_TOO_LARGE = \&HTTP_URI_TOO_LONG;
-push(@EXPORT_OK, "HTTP_REQUEST_URI_TOO_LARGE");
-
-*HTTP_REQUEST_RANGE_NOT_SATISFIABLE = \&HTTP_RANGE_NOT_SATISFIABLE;
-push(@EXPORT_OK, "HTTP_REQUEST_RANGE_NOT_SATISFIABLE");
-
-*HTTP_NO_CODE = \&HTTP_TOO_EARLY;
-push(@EXPORT_OK, "HTTP_NO_CODE");
-
-*HTTP_UNORDERED_COLLECTION = \&HTTP_TOO_EARLY;
-push(@EXPORT_OK, "HTTP_UNORDERED_COLLECTION");
+foreach my $name (keys %compat) {
+    push(@EXPORT, "RC_$name");
+    push(@EXPORT_OK, "HTTP_$name");
+    no strict 'refs';
+    *{"RC_$name"} = $compat{$name};
+    *{"HTTP_$name"} = $compat{$name};
+}
 
 our %EXPORT_TAGS = (
    constants => [grep /^HTTP_/, @EXPORT_OK],
@@ -167,6 +153,7 @@ sub is_cacheable_by_default ($) { $_[0] && ( $_[0] == 200 # OK
                                           || $_[0] == 206 # Not Acceptable
                                           || $_[0] == 300 # Multiple Choices
                                           || $_[0] == 301 # Moved Permanently
+                                          || $_[0] == 308 # Permanent Redirect
                                           || $_[0] == 404 # Not Found
                                           || $_[0] == 405 # Method Not Allowed
                                           || $_[0] == 410 # Gone
@@ -188,7 +175,7 @@ HTTP::Status - HTTP Status code processing
 
 =head1 VERSION
 
-version 6.26
+version 6.27
 
 =head1 SYNOPSIS
 
@@ -296,7 +283,7 @@ The status_message() function will translate status codes to human
 readable strings. The string is the same as found in the constant
 names above. If the $code is not registered in the L<list of IANA HTTP Status
 Codes|https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml>
-then C<undef> is returned. 
+then C<undef> is returned.
 
 =item is_info( $code )
 

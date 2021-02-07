@@ -3,7 +3,7 @@ package URI;
 use strict;
 use warnings;
 
-our $VERSION = '5.05';
+our $VERSION = '5.07';
 
 our ($ABS_REMOTE_LEADING_DOTS, $ABS_ALLOW_RELATIVE_SCHEME, $DEFAULT_QUERY_FORM_DELIMITER);
 
@@ -357,13 +357,13 @@ URI - Uniform Resource Identifiers (absolute and relative)
 
 =head1 SYNOPSIS
 
- use URI;
+ use URI ();
 
- $u1 = URI->new("http://www.perl.com");
+ $u1 = URI->new("http://www.example.com");
  $u2 = URI->new("foo", "http");
  $u3 = $u2->abs($u1);
  $u4 = $u3->clone;
- $u5 = URI->new("HTTP://WWW.perl.com:80")->canonical;
+ $u5 = URI->new("HTTP://WWW.example.com:80")->canonical;
 
  $str = $u->as_string;
  $str = "$u";
@@ -374,7 +374,7 @@ URI - Uniform Resource Identifiers (absolute and relative)
  $frag   = $u->fragment;
 
  $u->scheme("ftp");
- $u->host("ftp.perl.com");
+ $u->host("ftp.example.com");
  $u->path("cpan/");
 
 =head1 DESCRIPTION
