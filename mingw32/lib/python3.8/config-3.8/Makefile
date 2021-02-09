@@ -91,7 +91,7 @@ CONFIGURE_CFLAGS_NODIST= -flto -fuse-linker-plugin -ffat-lto-objects -flto-parti
 # once Python is installed (bpo-35257)
 CONFIGURE_LDFLAGS_NODIST= -flto -fuse-linker-plugin -ffat-lto-objects -flto-partition=none -g
 CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -ID:/a/_temp/msys/msys64/mingw32/include/ncurses  -I.
-CONFIGURE_LDFLAGS=	-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -s 
+CONFIGURE_LDFLAGS=	-pipe -Wl,--dynamicbase,--nxcompat,--no-seh
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
 # values.
@@ -211,7 +211,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-nt-threads' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--without-c-locale-coercion' '--enable-loadable-sqlite-extensions' '--enable-optimizations' '--with-lto' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' 'LDFLAGS=-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -s ' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -ID:/a/_temp/msys/msys64/mingw32/include/ncurses ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-nt-threads' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--without-c-locale-coercion' '--enable-loadable-sqlite-extensions' '--enable-optimizations' '--with-lto' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' 'LDFLAGS=-pipe -Wl,--dynamicbase,--nxcompat,--no-seh' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -ID:/a/_temp/msys/msys64/mingw32/include/ncurses ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
 
 
 # Subdirectories with code

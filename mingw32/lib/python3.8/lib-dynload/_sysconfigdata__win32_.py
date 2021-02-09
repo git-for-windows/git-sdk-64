@@ -14,8 +14,8 @@ build_time_vars = {'ABIFLAGS': '',
  'BINLIBDEST': '/mingw32/lib/python3.8',
  'BLDLIBRARY': '-L. -lpython3.8',
  'BLDSHARED': 'i686-w64-mingw32-gcc -shared -Wl,--enable-auto-image-base -pipe '
-              '-Wl,--dynamicbase,--nxcompat,--no-seh -s -pipe '
-              '-Wl,--dynamicbase,--nxcompat,--no-seh -s',
+              '-Wl,--dynamicbase,--nxcompat,--no-seh -pipe '
+              '-Wl,--dynamicbase,--nxcompat,--no-seh',
  'BUILDEXE': '.exe',
  'BUILDPYTHON': 'python.exe',
  'BUILDPYTHONW': 'pythonw.exe',
@@ -42,7 +42,7 @@ build_time_vars = {'ABIFLAGS': '',
                             '-Werror=implicit-function-declaration',
  'CONFIGURE_CPPFLAGS': '-I../Python-3.8.7/PC -D__USE_MINGW_ANSI_STDIO=1 '
                        '-ID:/a/_temp/msys/msys64/mingw32/include/ncurses  -I.',
- 'CONFIGURE_LDFLAGS': '-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -s',
+ 'CONFIGURE_LDFLAGS': '-pipe -Wl,--dynamicbase,--nxcompat,--no-seh',
  'CONFIGURE_LDFLAGS_NODIST': '-flto -fuse-linker-plugin -ffat-lto-objects '
                              '-flto-partition=none -g',
  'CONFIG_ARGS': "'--prefix=/mingw32' '--host=i686-w64-mingw32' "
@@ -55,7 +55,7 @@ build_time_vars = {'ABIFLAGS': '',
                 "'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' "
                 "'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv "
                 "-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' "
-                "'LDFLAGS=-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -s ' "
+                "'LDFLAGS=-pipe -Wl,--dynamicbase,--nxcompat,--no-seh' "
                 "'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 "
                 "-ID:/a/_temp/msys/msys64/mingw32/include/ncurses ' "
                 "'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'",
@@ -550,14 +550,14 @@ build_time_vars = {'ABIFLAGS': '',
  'IO_H': 'Modules/_io/_iomodule.h',
  'IO_OBJS': '\\',
  'LDCXXSHARED': 'i686-w64-mingw32-c++ -shared -Wl,--enable-auto-image-base',
- 'LDFLAGS': '-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -s -pipe '
-            '-Wl,--dynamicbase,--nxcompat,--no-seh -s',
+ 'LDFLAGS': '-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -pipe '
+            '-Wl,--dynamicbase,--nxcompat,--no-seh',
  'LDFLAGS_NODIST': '',
  'LDLIBRARY': 'libpython3.8.dll.a',
  'LDLIBRARYDIR': '',
  'LDSHARED': 'i686-w64-mingw32-gcc -shared -Wl,--enable-auto-image-base -pipe '
-             '-Wl,--dynamicbase,--nxcompat,--no-seh -s -pipe '
-             '-Wl,--dynamicbase,--nxcompat,--no-seh -s',
+             '-Wl,--dynamicbase,--nxcompat,--no-seh -pipe '
+             '-Wl,--dynamicbase,--nxcompat,--no-seh',
  'LDVERSION': '3.8',
  'LIBC': '',
  'LIBDEST': '/mingw32/lib/python3.8',
@@ -700,8 +700,8 @@ build_time_vars = {'ABIFLAGS': '',
                    '-D__USE_MINGW_ANSI_STDIO=1 '
                    '-ID:/a/_temp/msys/msys64/mingw32/include/ncurses '
                    '-DPy_BUILD_CORE',
- 'PY_CORE_LDFLAGS': '-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -s -pipe '
-                    '-Wl,--dynamicbase,--nxcompat,--no-seh -s -flto '
+ 'PY_CORE_LDFLAGS': '-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -pipe '
+                    '-Wl,--dynamicbase,--nxcompat,--no-seh -flto '
                     '-fuse-linker-plugin -ffat-lto-objects '
                     '-flto-partition=none -g',
  'PY_CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.8.7/Include '
@@ -710,8 +710,8 @@ build_time_vars = {'ABIFLAGS': '',
                 '-D__USE_MINGW_ANSI_STDIO=1 '
                 '-ID:/a/_temp/msys/msys64/mingw32/include/ncurses',
  'PY_FORMAT_SIZE_T': '"z"',
- 'PY_LDFLAGS': '-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -s -pipe '
-               '-Wl,--dynamicbase,--nxcompat,--no-seh -s',
+ 'PY_LDFLAGS': '-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -pipe '
+               '-Wl,--dynamicbase,--nxcompat,--no-seh',
  'PY_LDFLAGS_NODIST': '-flto -fuse-linker-plugin -ffat-lto-objects '
                       '-flto-partition=none -g',
  'PY_SSL_DEFAULT_CIPHERS': 1,
