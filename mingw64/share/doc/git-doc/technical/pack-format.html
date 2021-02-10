@@ -547,6 +547,21 @@ length format and is not constrained to 32-bit or anything.</pre>
 </div>
 </div>
 <div class="sect2">
+<h3 id="_size_encoding">Size encoding</h3>
+<div class="paragraph">
+<p>This document uses the following "size encoding" of non-negative
+integers: From each byte, the seven least significant bits are
+used to form the resulting integer. As long as the most significant
+bit is 1, this process continues; the byte with MSB 0 provides the
+last seven bits.  The seven-bit chunks are concatenated. Later
+values are more significant.</p>
+</div>
+<div class="paragraph">
+<p>This size encoding should not be confused with the "offset encoding",
+which is also used in this document.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_deltified_representation">Deltified representation</h3>
 <div class="paragraph">
 <p>Conceptually there are only four object types: commit, tree, tag and
@@ -568,7 +583,10 @@ so-called "thin pack"). When stored on disk however, the pack should
 be self contained to avoid cyclic dependency.</p>
 </div>
 <div class="paragraph">
-<p>The delta data is a sequence of instructions to reconstruct an object
+<p>The delta data starts with the size of the base object and the
+size of the object to be reconstructed. These sizes are
+encoded using the size encoding from above.  The remainder of
+the delta data is a sequence of instructions to reconstruct the object
 from the base object. If the base object is deltified, it must be
 converted to canonical form first. Each instruction appends more and
 more data to the target object until it&#8217;s complete. There are two
@@ -972,7 +990,7 @@ otherwise specified.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-01-14 07:21:38 UTC
+Last updated 2021-02-09 12:57:53 UTC
 </div>
 </div>
 </body>
