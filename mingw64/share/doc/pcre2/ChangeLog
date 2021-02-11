@@ -1,6 +1,417 @@
 Change Log for PCRE2
 --------------------
 
+Version 10.36-RC1 04-December-2020
+----------------------------------
+
+1. Add CET_CFLAGS so that when Intel CET is enabled, pass -mshstk to
+compiler. This fixes https://bugs.exim.org/show_bug.cgi?id=2578. Patch for
+Makefile.am and configure.ac by H.J. Lu. Equivalent patch for CMakeLists.txt
+invented by PH.
+
+2. Fix inifinite loop when a single byte newline is searched in JIT when
+invalid utf8 mode is enabled.
+
+3. Updated CMakeLists.txt with patch from Wolfgang Stöggl (Bugzilla #2584):
+
+  - Include GNUInstallDirs and use ${CMAKE_INSTALL_LIBDIR} instead of hardcoded
+    lib. This allows differentiation between lib and lib64.
+    CMAKE_INSTALL_LIBDIR is used for installation of libraries and also for
+    pkgconfig file generation.
+
+  - Add the version of PCRE2 to the configuration summary like ./configure
+    does.
+
+  - Fix typo: MACTHED_STRING->MATCHED_STRING
+
+4. Updated CMakeLists.txt with another patch from Wolfgang Stöggl (Bugzilla
+#2588):
+
+  - Add escaped double quotes around include directory in CMakeLists.txt to
+    allow spaces in directory names.
+
+  - This fixes a cmake error, if the path of the pcre2 source contains a space.
+
+5. Updated CMakeLists.txt with a patch from B. Scott Michel: CMake's
+documentation suggests using CHECK_SYMBOL_EXISTS over CHECK_FUNCTION_EXIST.
+Moreover, these functions come from specific header files, which need to be
+specified (and, thankfully, are the same on both the Linux and WinXX
+platforms.)
+
+6. Added a (uint32_t) cast to prevent a compiler warning in pcre2_compile.c.
+
+7. Applied a patch from Wolfgang Stöggl (Bugzilla #2600) to fix postfix for
+debug Windows builds using CMake. This also updated configure so that it
+generates *.pc files and pcre2-config with the same content, as in the past.
+
+8. If a pattern ended with (?(VERSION=n.d where n is any number but d is just a
+single digit, the code unit beyond d was being read (i.e. there was a read
+buffer overflow). Fixes ClusterFuzz 23779.
+
+9. After the rework in r1235, certain character ranges were incorrectly
+handled by an optimization in JIT. Furthermore a wrong offset was used to
+read a value from a buffer which could lead to memory overread.
+
+10. Unnoticed for many years was the fact that delimiters other than / in the
+testinput1 and testinput4 files could cause incorrect behaviour when these
+files were processed by perltest.sh. There were several tests that used quotes
+as delimiters, and it was just luck that they didn't go wrong with perltest.sh.
+All the patterns in testinput1 and testinput4 now use / as their delimiter.
+This fixes Bugzilla #2641.
+
+11. Perl has started to give an error for \K within lookarounds (though there
+are cases where it doesn't). PCRE2 still allows this, so the tests that include
+this case have been moved from test 1 to test 2.
+
+12. Further to 10 above, pcre2test has been updated to detect and grumble if a
+delimiter other than / is used after #perltest.
+
+13. Fixed a bug with PCRE2_MATCH_INVALID_UTF in 8-bit mode when PCRE2_CASELESS
+was set and PCRE2_NO_START_OPTIMIZE was not set. The optimization for finding
+the start of a match was not resetting correctly after a failed match on the
+first valid fragment of the subject, possibly causing incorrect "no match"
+returns on subsequent fragments. For example, the pattern /A/ failed to match
+the subject \xe5A. Fixes Bugzilla #2642.
+
+14. Fixed a bug in character set matching when JIT is enabled and both unicode
+scripts and unicode classes are present at the same time.
+
+15. Added GNU grep's -m (aka --max-count) option to pcre2grep.
+
+16. Refactored substitution processing in pcre2grep strings, both for the -O
+option and when dealing with callouts. There is now a single function that
+handles $ expansion in all cases (instead of multiple copies of almost
+identical code). This means that the same escape sequences are available
+everywhere, which was not previously the case. At the same time, the escape
+sequences $x{...} and $o{...} have been introduced, to allow for characters
+whose code points are greater than 255 in Unicode mode.
+
+17. Applied the patch from Bugzilla #2628 to RunGrepTest. This does an explicit
+test for a version of sed that can handle binary zero, instead of assuming that
+any Linux version will work. Later: replaced $(...) by `...` because not all
+shells recognize the former.
+
+18. Fixed a word boundary check bug in JIT when partial matching is enabled.
+
+19. Fix ARM64 compilation warning in JIT. Patch by Carlo.
+
+20. A bug in the RunTest script meant that if the first part of test 2 failed,
+the failure was not reported.
+
+21. Test 2 was failing when run from a directory other than the source
+directory. This failure was previously missed in RunTest because of 20 above.
+Fixes added to both RunTest and RunTest.bat.
+
+22. Patch to CMakeLists.txt from Daniel to fix problem with testing under
+Windows.
+
+
+Version 10.35 09-May-2020
+---------------------------
+
+1. Use PCRE2_MATCH_EMPTY flag to detect empty matches in JIT.
+
+2. Fix ARMv5 JIT improper handling of labels right after a constant pool.
+
+3. A JIT bug is fixed which allowed to read the fields of the compiled
+pattern before its existence is checked.
+
+4. Back in the PCRE1 day, capturing groups that contained recursive back
+references to themselves were made atomic (version 8.01, change 18) because
+after the end a repeated group, the captured substrings had their values from
+the final repetition, not from an earlier repetition that might be the
+destination of a backtrack. This feature was documented, and was carried over
+into PCRE2. However, it has now been realized that the major refactoring that
+was done for 10.30 has made this atomicizing unnecessary, and it is confusing
+when users are unaware of it, making some patterns appear not to be working as
+expected. Capture values of recursive back references in repeated groups are
+now correctly backtracked, so this unnecessary restriction has been removed.
+
+5. Added PCRE2_SUBSTITUTE_LITERAL.
+
+6. Avoid some VS compiler warnings.
+
+7. Added PCRE2_SUBSTITUTE_MATCHED.
+
+8. Added (?* and (?<* as synonms for (*napla: and (*naplb: to match another
+regex engine. The Perl regex folks are aware of this usage and have made a note
+about it.
+
+9. When an assertion is repeated, PCRE2 used to limit the maximum repetition to
+1, believing that repeating an assertion is pointless. However, if a positive
+assertion contains capturing groups, repetition can be useful. In any case, an
+assertion could always be wrapped in a repeated group. The only restriction
+that is now imposed is that an unlimited maximum is changed to one more than
+the minimum.
+
+10. Fix *THEN verbs in lookahead assertions in JIT.
+
+11. Added PCRE2_SUBSTITUTE_REPLACEMENT_ONLY.
+
+12. The JIT stack should be freed when the low-level stack allocation fails.
+
+13. In pcre2grep, if the final line in a scanned file is output but does not
+end with a newline sequence, add a newline according to the --newline setting.
+
+14. (?(DEFINE)...) groups were not being handled correctly when checking for
+the fixed length of a lookbehind assertion. Such a group within a lookbehind
+should be skipped, as it does not contribute to the length of the group.
+Instead, the (DEFINE) group was being processed, and if at the end of the
+lookbehind, that end was not correctly recognized. Errors such as "lookbehind
+assertion is not fixed length" and also "internal error: bad code value in
+parsed_skip()" could result.
+
+15. Put a limit of 1000 on recursive calls in pcre2_study() when searching
+nested groups for starting code units, in order to avoid stack overflow issues.
+If the limit is reached, it just gives up trying for this optimization.
+
+16. The control verb chain list must always be restored when exiting from a
+recurse function in JIT.
+
+17. Fix a crash which occurs when the character type of an invalid UTF
+character is decoded in JIT.
+
+18. Changes in many areas of the code so that when Unicode is supported and
+PCRE2_UCP is set without PCRE2_UTF, Unicode character properties are used for
+upper/lower case computations on characters whose code points are greater than
+127.
+
+19. The function for checking UTF-16 validity was returning an incorrect offset
+for the start of the error when a high surrogate was not followed by a valid
+low surrogate. This caused incorrect behaviour, for example when
+PCRE2_MATCH_INVALID_UTF was set and a match started immediately following the
+invalid high surrogate, such as /aa/ matching "\x{d800}aa".
+
+20. If a DEFINE group immediately preceded a lookbehind assertion, the pattern
+could be mis-compiled and therefore not match correctly. This is the example
+that found this: /(?(DEFINE)(?<foo>bar))(?<![-a-z0-9])word/ which failed to
+match "word" because the "move back" value was set to zero.
+
+21. Following a request from a user, some extensions and tidies to the
+character tables handling have been done:
+
+  (a) The dftables auxiliary program is renamed pcre2_dftables, but it is still
+  not installed for public use.
+
+  (b) There is now a -b option for pcre2_dftables, which causes the tables to
+  be written in binary. There is also a -help option.
+
+  (c) PCRE2_CONFIG_TABLES_LENGTH is added to pcre2_config() so that an
+  application that wants to save tables in binary knows how long they are.
+
+22. Changed setting of CMAKE_MODULE_PATH in CMakeLists.txt from SET to
+LIST(APPEND...) to allow a setting from the command line to be included.
+
+23. Updated to Unicode 13.0.0.
+
+24. CMake build now checks for secure_getenv() and strerror(). Patch by Carlo.
+
+25. Avoid using [-1] as a suffix in pcre2test because it can provoke a compiler
+warning.
+
+26. Added tests for __attribute__((uninitialized)) to both the configure and
+CMake build files, and then applied this attribute to the variable called
+stack_frames_vector[] in pcre2_match(). When implemented, this disables
+automatic initialization (a facility in clang), which can take time on big
+variables.
+
+27. Updated CMakeLists.txt (patches by Uwe Korn) to add support for
+pcre2-config, the libpcre*.pc files, SOVERSION, VERSION and the
+MACHO_*_VERSIONS settings for CMake builds.
+
+28. Another patch to CMakeLists.txt to check for mkostemp (configure already
+does). Patch by Carlo Marcelo Arenas Belon.
+
+29. Check for the existence of memfd_create in both CMake and configure
+configurations. Patch by Carlo Marcelo Arenas Belon.
+
+30. Restrict the configuration setting for the SELinux compatible execmem
+allocator (change 10.30/44) to Linux and NetBSD.
+
+
+Version 10.34 21-November-2019
+------------------------------
+
+1. The maximum number of capturing subpatterns is 65535 (documented), but no
+check on this was ever implemented. This omission has been rectified; it fixes
+ClusterFuzz 14376.
+
+2. Improved the invalid utf32 support of the JIT compiler. Now it correctly
+detects invalid characters in the 0xd800-0xdfff range.
+
+3. Fix minor typo bug in JIT compile when \X is used in a non-UTF string.
+
+4. Add support for matching in invalid UTF strings to the pcre2_match()
+interpreter, and integrate with the existing JIT support via the new
+PCRE2_MATCH_INVALID_UTF compile-time option.
+
+5. Give more error detail for invalid UTF-8 when detected in pcre2grep.
+
+6. Add support for invalid UTF-8 to pcre2grep.
+
+7. Adjust the limit for "must have" code unit searching, in particular,
+increase it substantially for non-anchored patterns.
+
+8. Allow (*ACCEPT) to be quantified, because an ungreedy quantifier with a zero
+minimum is potentially useful.
+
+9. Some changes to the way the minimum subject length is handled:
+
+   * When PCRE2_NO_START_OPTIMIZE is set, no minimum length is computed;
+     pcre2test now omits this item instead of showing a value of zero.
+
+   * An incorrect minimum length could be calculated for a pattern that
+     contained (*ACCEPT) inside a qualified group whose minimum repetition was
+     zero, for example /A(?:(*ACCEPT))?B/, which incorrectly computed a minimum
+     of 2. The minimum length scan no longer happens for a pattern that
+     contains (*ACCEPT).
+
+   * When no minimum length is set by the normal scan, but a first and/or last
+     code unit is recorded, set the minimum to 1 or 2 as appropriate.
+
+   * When a pattern contains multiple groups with the same number, a back
+     reference cannot know which one to scan for a minimum length. This used to
+     cause the minimum length finder to give up with no result. Now it treats
+     such references as not adding to the minimum length (which it should have
+     done all along).
+
+   * Furthermore, the above action now happens only if the back reference is to
+     a group that exists more than once in a pattern instead of any back
+     reference in a pattern with duplicate numbers.
+
+10. A (*MARK) value inside a successful condition was not being returned by the
+interpretive matcher (it was returned by JIT). This bug has been mended.
+
+11. A bug in pcre2grep meant that -o without an argument (or -o0) didn't work
+if the pattern had more than 32 capturing parentheses. This is fixed. In
+addition (a) the default limit for groups requested by -o<n> has been raised to
+50, (b) the new --om-capture option changes the limit, (c) an error is raised
+if -o asks for a group that is above the limit.
+
+12. The quantifier {1} was always being ignored, but this is incorrect when it
+is made possessive and applied to an item in parentheses, because a
+parenthesized item may contain multiple branches or other backtracking points,
+for example /(a|ab){1}+c/ or /(a+){1}+a/.
+
+13. For partial matches, pcre2test was always showing the maximum lookbehind
+characters, flagged with "<", which is misleading when the lookbehind didn't
+actually look behind the start (because it was later in the pattern). Showing
+all consulted preceding characters for partial matches is now controlled by the
+existing "allusedtext" modifier and, as for complete matches, this facility is
+available only for non-JIT matching, because JIT does not maintain the first
+and last consulted characters.
+
+14. DFA matching (using pcre2_dfa_match()) was not recognising a partial match
+if the end of the subject was encountered in a lookahead (conditional or
+otherwise), an atomic group, or a recursion.
+
+15. Give error if pcre2test -t, -T, -tm or -TM is given an argument of zero.
+
+16. Check for integer overflow when computing lookbehind lengths. Fixes
+Clusterfuzz issue 15636.
+
+17. Implemented non-atomic positive lookaround assertions.
+
+18. If a lookbehind contained a lookahead that contained another lookbehind
+within it, the nested lookbehind was not correctly processed. For example, if
+/(?<=(?=(?<=a)))b/ was matched to "ab" it gave no match instead of matching
+"b".
+
+19. Implemented pcre2_get_match_data_size().
+
+20. Two alterations to partial matching:
+
+    (a) The definition of a partial match is slightly changed: if a pattern
+    contains any lookbehinds, an empty partial match may be given, because this
+    is another situation where adding characters to the current subject can
+    lead to a full match. Example: /c*+(?<=[bc])/ with subject "ab".
+
+    (b) Similarly, if a pattern could match an empty string, an empty partial
+    match may be given. Example: /(?![ab]).*/ with subject "ab". This case
+    applies only to PCRE2_PARTIAL_HARD.
+
+    (c) An empty string partial hard match can be returned for \z and \Z as it
+    is documented that they shouldn't match.
+
+21. A branch that started with (*ACCEPT) was not being recognized as one that
+could match an empty string.
+
+22. Corrected pcre2_set_character_tables() tables data type: was const unsigned
+char * instead of const uint8_t *, as generated by pcre2_maketables().
+
+23. Upgraded to Unicode 12.1.0.
+
+24. Add -jitfast command line option to pcre2test (to make all the jit options
+available directly).
+
+25. Make pcre2test -C show if libreadline or libedit is supported.
+
+26. If the length of one branch of a group exceeded 65535 (the maximum value
+that is remembered as a minimum length), the whole group's length was
+incorrectly recorded as 65535, leading to incorrect "no match" when start-up
+optimizations were in force.
+
+27. The "rightmost consulted character" value was not always correct; in
+particular, if a pattern ended with a negative lookahead, characters that were
+inspected in that lookahead were not included.
+
+28. Add the pcre2_maketables_free() function.
+
+29. The start-up optimization that looks for a unique initial matching
+code unit in the interpretive engines uses memchr() in 8-bit mode. When the
+search is caseless, it was doing so inefficiently, which ended up slowing down
+the match drastically when the subject was very long. The revised code (a)
+remembers if one case is not found, so it never repeats the search for that
+case after a bumpalong and (b) when one case has been found, it searches only
+up to that position for an earlier occurrence of the other case. This fix
+applies to both interpretive pcre2_match() and to pcre2_dfa_match().
+
+30. While scanning to find the minimum length of a group, if any branch has
+minimum length zero, there is no need to scan any subsequent branches (a small
+compile-time performance improvement).
+
+31. Installed a .gitignore file on a user's suggestion. When using the svn
+repository with git (through git svn) this helps keep it tidy.
+
+32. Add underflow check in JIT which may occur when the value of subject
+string pointer is close to 0.
+
+33. Arrange for classes such as [Aa] which contain just the two cases of the
+same character, to be treated as a single caseless character. This causes the
+first and required code unit optimizations to kick in where relevant.
+
+34. Improve the bitmap of starting bytes for positive classes that include wide
+characters, but no property types, in UTF-8 mode. Previously, on encountering
+such a class, the bits for all bytes greater than \xc4 were set, thus
+specifying any character with codepoint >= 0x100. Now the only bits that are
+set are for the relevant bytes that start the wide characters. This can give a
+noticeable performance improvement.
+
+35. If the bitmap of starting code units contains only 1 or 2 bits, replace it
+with a single starting code unit (1 bit) or a caseless single starting code
+unit if the two relevant characters are case-partners. This is particularly
+relevant to the 8-bit library, though it applies to all. It can give a
+performance boost for patterns such as [Ww]ord and (word|WORD). However, this
+optimization doesn't happen if there is a "required" code unit of the same
+value (because the search for a "required" code unit starts at the match start
+for non-unique first code unit patterns, but after a unique first code unit,
+and patterns such as a*a need the former action).
+
+36. Small patch to pcre2posix.c to set the erroroffset field to -1 immediately
+after a successful compile, instead of at the start of matching to avoid a
+sanitizer complaint (regexec is supposed to be thread safe).
+
+37. Add NEON vectorization to JIT to speed up matching of first character and
+pairs of characters on ARM64 CPUs.
+
+38. If a non-ASCII character was the first in a starting assertion in a
+caseless match, the "first code unit" optimization did not get the casing
+right, and the assertion failed to match a character in the other case if it
+did not start with the same code unit.
+
+39. Fixed the incorrect computation of jump sizes on x86 CPUs in JIT. A masking
+operation was incorrectly removed in r1136. Reported by Ralf Junker.
+
 
 Version 10.33 16-April-2019
 ---------------------------

@@ -5,11 +5,11 @@ PCRE2 is a re-working of the original PCRE1 library to provide an entirely new
 API. Since its initial release in 2015, there has been further development of
 the code and it now differs from PCRE1 in more than just the API. There are new
 features and the internals have been improved. The latest release of PCRE2 is
-always available in three alternative formats from:
+available in three alternative formats from:
 
-  ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre2-xxx.tar.gz
-  ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre2-xxx.tar.bz2
-  ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre2-xxx.zip
+https://ftp.pcre.org/pub/pcre/pcre2-10.xx.tar.gz
+https://ftp.pcre.org/pub/pcre/pcre2-10.xx.tar.bz2
+https://ftp.pcre.org/pub/pcre/pcre2-10.xx.tar.zip
 
 There is a mailing list for discussion about the development of PCRE (both the
 original and new APIs) at pcre-dev@exim.org. You can access the archives and
@@ -164,9 +164,11 @@ library. They are also documented in the pcre2build man page.
   will be a compile time error. If in doubt, use --enable-jit=auto, which
   enables JIT only if the current hardware is supported.
 
-. If you are enabling JIT under SELinux you may also want to add
-  --enable-jit-sealloc, which enables the use of an execmem allocator in JIT
-  that is compatible with SELinux. This has no effect if JIT is not enabled.
+. If you are enabling JIT under SELinux environment you may also want to add
+  --enable-jit-sealloc, which enables the use of an executable memory allocator
+  that is compatible with SELinux. Warning: this allocator is experimental!
+  It does not support fork() operation and may crash when no disk space is
+  available. This option has no effect if JIT is disabled.
 
 . If you do not want to make use of the default support for UTF-8 Unicode
   character strings in the 8-bit library, UTF-16 Unicode character strings in
@@ -267,9 +269,9 @@ library. They are also documented in the pcre2build man page.
 
   --enable-rebuild-chartables
 
-  a program called dftables is compiled and run in the default C locale when
-  you obey "make". It builds a source file called pcre2_chartables.c. If you do
-  not specify this option, pcre2_chartables.c is created as a copy of
+  a program called pcre2_dftables is compiled and run in the default C locale
+  when you obey "make". It builds a source file called pcre2_chartables.c. If
+  you do not specify this option, pcre2_chartables.c is created as a copy of
   pcre2_chartables.c.dist. See "Character tables" below for further
   information.
 
@@ -295,8 +297,8 @@ library. They are also documented in the pcre2build man page.
   unaddressable. This allows it to detect invalid memory accesses, and is
   mostly useful for debugging PCRE2 itself.
 
-. In environments where the gcc compiler is used and lcov version 1.6 or above
-  is installed, if you specify
+. In environments where the gcc compiler is used and lcov is installed, if you
+  specify
 
   --enable-coverage
 
@@ -546,11 +548,11 @@ Cross-compiling using autotools
 
 You can specify CC and CFLAGS in the normal way to the "configure" command, in
 order to cross-compile PCRE2 for some other host. However, you should NOT
-specify --enable-rebuild-chartables, because if you do, the dftables.c source
-file is compiled and run on the local host, in order to generate the inbuilt
-character tables (the pcre2_chartables.c file). This will probably not work,
-because dftables.c needs to be compiled with the local compiler, not the cross
-compiler.
+specify --enable-rebuild-chartables, because if you do, the pcre2_dftables.c
+source file is compiled and run on the local host, in order to generate the
+inbuilt character tables (the pcre2_chartables.c file). This will probably not
+work, because pcre2_dftables.c needs to be compiled with the local compiler,
+not the cross compiler.
 
 When --enable-rebuild-chartables is not specified, pcre2_chartables.c is
 created by making a copy of pcre2_chartables.c.dist, which is a default set of
@@ -558,9 +560,10 @@ tables that assumes ASCII code. Cross-compiling with the default tables should
 not be a problem.
 
 If you need to modify the character tables when cross-compiling, you should
-move pcre2_chartables.c.dist out of the way, then compile dftables.c by hand
-and run it on the local host to make a new version of pcre2_chartables.c.dist.
-Then when you cross-compile PCRE2 this new version of the tables will be used.
+move pcre2_chartables.c.dist out of the way, then compile pcre2_dftables.c by
+hand and run it on the local host to make a new version of
+pcre2_chartables.c.dist. See the pcre2build section "Creating character tables
+at build time" for more details.
 
 
 Making new tarballs
@@ -719,8 +722,8 @@ compile context.
 The source file called pcre2_chartables.c contains the default set of tables.
 By default, this is created as a copy of pcre2_chartables.c.dist, which
 contains tables for ASCII coding. However, if --enable-rebuild-chartables is
-specified for ./configure, a different version of pcre2_chartables.c is built
-by the program dftables (compiled from dftables.c), which uses the ANSI C
+specified for ./configure, a new version of pcre2_chartables.c is built by the
+program pcre2_dftables (compiled from pcre2_dftables.c), which uses the ANSI C
 character handling functions such as isalnum(), isalpha(), isupper(),
 islower(), etc. to build the table sources. This means that the default C
 locale that is set for your system will control the contents of these default
@@ -730,32 +733,40 @@ file does not get automatically re-generated. The best way to do this is to
 move pcre2_chartables.c.dist out of the way and replace it with your customized
 tables.
 
-When the dftables program is run as a result of --enable-rebuild-chartables,
-it uses the default C locale that is set on your system. It does not pay
-attention to the LC_xxx environment variables. In other words, it uses the
-system's default locale rather than whatever the compiling user happens to have
-set. If you really do want to build a source set of character tables in a
-locale that is specified by the LC_xxx variables, you can run the dftables
-program by hand with the -L option. For example:
+When the pcre2_dftables program is run as a result of specifying
+--enable-rebuild-chartables, it uses the default C locale that is set on your
+system. It does not pay attention to the LC_xxx environment variables. In other
+words, it uses the system's default locale rather than whatever the compiling
+user happens to have set. If you really do want to build a source set of
+character tables in a locale that is specified by the LC_xxx variables, you can
+run the pcre2_dftables program by hand with the -L option. For example:
 
-  ./dftables -L pcre2_chartables.c.special
+  ./pcre2_dftables -L pcre2_chartables.c.special
 
-The first two 256-byte tables provide lower casing and case flipping functions,
-respectively. The next table consists of three 32-byte bit maps which identify
-digits, "word" characters, and white space, respectively. These are used when
-building 32-byte bit maps that represent character classes for code points less
-than 256. The final 256-byte table has bits indicating various character types,
-as follows:
+The second argument names the file where the source code for the tables is
+written. The first two 256-byte tables provide lower casing and case flipping
+functions, respectively. The next table consists of a number of 32-byte bit
+maps which identify certain character classes such as digits, "word"
+characters, white space, etc. These are used when building 32-byte bit maps
+that represent character classes for code points less than 256. The final
+256-byte table has bits indicating various character types, as follows:
 
     1   white space character
     2   letter
-    4   decimal digit
-    8   hexadecimal digit
+    4   lower case letter
+    8   decimal digit
    16   alphanumeric or '_'
-  128   regular expression metacharacter or binary zero
 
-You should not alter the set of characters that contain the 128 bit, as that
-will cause PCRE2 to malfunction.
+You can also specify -b (with or without -L) when running pcre2_dftables. This
+causes the tables to be written in binary instead of as source code. A set of
+binary tables can be loaded into memory by an application and passed to
+pcre2_compile() in the same way as tables created dynamically by calling
+pcre2_maketables(). The tables are just a string of bytes, independent of
+hardware characteristics such as endianness. This means they can be bundled
+with an application that runs in different environments, to ensure consistent
+behaviour.
+
+See also the pcre2build section "Creating character tables at build time".
 
 
 File manifest
@@ -766,7 +777,7 @@ The distribution should contain the files listed below.
 (A) Source files for the PCRE2 library functions and their headers are found in
     the src directory:
 
-  src/dftables.c           auxiliary program for building pcre2_chartables.c
+  src/pcre2_dftables.c     auxiliary program for building pcre2_chartables.c
                            when --enable-rebuild-chartables is specified
 
   src/pcre2_chartables.c.dist  a default set of character tables that assume
@@ -890,6 +901,6 @@ The distribution should contain the files listed below.
                           )   environments
 
 Philip Hazel
-Email local part: ph10
-Email domain: cam.ac.uk
-Last updated: 16 April 2019
+Email local part: Philip.Hazel
+Email domain: gmail.com
+Last updated: 04 December 2020
