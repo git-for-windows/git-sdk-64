@@ -1,5 +1,6 @@
 # autoconf -- create `configure' using m4 macros
-# Copyright (C) 2001-2003, 2009-2012 Free Software Foundation, Inc.
+# Copyright (C) 2001-2003, 2009-2017, 2020-2021 Free Software
+# Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,7 +13,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 package Autom4te::Request;
 
@@ -31,9 +32,12 @@ used in several executables of the Autoconf and Automake packages.
 
 =cut
 
+use 5.006;
 use strict;
-use Class::Struct;
+use warnings FATAL => 'all';
+
 use Carp;
+use Class::Struct;
 use Data::Dumper;
 
 struct

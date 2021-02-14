@@ -1,13 +1,13 @@
-#! /usr/bin/perl -w
+#! /usr/bin/perl
 # -*- perl -*-
-# Generated from ifnames.in; do not edit by hand.
+# Generated from bin/ifnames.in; do not edit by hand.
 
 eval 'case $# in 0) exec /usr/bin/perl -S "$0";; *) exec /usr/bin/perl -S "$0" "$@";; esac'
     if 0;
 
 # ifnames - print the identifiers used in C preprocessor conditionals
 
-# Copyright (C) 1994-1995, 1999-2003, 2005-2012 Free Software
+# Copyright (C) 1994-1995, 1999-2003, 2005-2017, 2020-2021 Free Software
 # Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
@@ -21,13 +21,17 @@ eval 'case $# in 0) exec /usr/bin/perl -S "$0";; *) exec /usr/bin/perl -S "$0" "
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Reads from stdin if no files are given.
 # Writes to stdout.
 
 # Written by David MacKenzie <djm@gnu.ai.mit.edu>
 # and Paul Eggert <eggert@twinsun.com>.
+
+use 5.006;
+use strict;
+use warnings FATAL => 'all';
 
 BEGIN
 {
@@ -51,25 +55,25 @@ $help = "Usage: $0 [OPTION]... [FILE]...
 
 Scan all of the C source FILES (or the standard input, if none are
 given) and write to the standard output a sorted list of all the
-identifiers that appear in those files in `#if', `#elif', `#ifdef', or
-`#ifndef' directives.  Print each identifier on a line, followed by a
+identifiers that appear in those files in '#if', '#elif', '#ifdef', or
+'#ifndef' directives.  Print each identifier on a line, followed by a
 space-separated list of the files in which that identifier occurs.
 
   -h, --help      print this help, then exit
   -V, --version   print version number, then exit
 
 Report bugs to <bug-autoconf\@gnu.org>.
-GNU Autoconf home page: <http://www.gnu.org/software/autoconf/>.
-General help using GNU software: <http://www.gnu.org/gethelp/>.
+GNU Autoconf home page: <https://www.gnu.org/software/autoconf/>.
+General help using GNU software: <https://www.gnu.org/gethelp/>.
 ";
 
 
 # $VERSION
 # --------
-$version = "ifnames (GNU Autoconf) 2.69
-Copyright (C) 2012 Free Software Foundation, Inc.
+$version = "ifnames (GNU Autoconf) 2.71
+Copyright (C) 2021 Free Software Foundation, Inc.
 License GPLv3+/Autoconf: GNU GPL version 3 or later
-<http://gnu.org/licenses/gpl.html>, <http://gnu.org/licenses/exceptions.html>
+<https://gnu.org/licenses/gpl.html>, <https://gnu.org/licenses/exceptions.html>
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
@@ -96,7 +100,7 @@ my %occurrence;
 sub scan_file ($)
 {
   my ($file_name) = @_;
-  my $file = new Autom4te::XFile ("< " . open_quote ($file_name));
+  my $file = new Autom4te::XFile ($file_name, "<");
   while ($_ = $file->getline)
     {
       # Continuation lines.

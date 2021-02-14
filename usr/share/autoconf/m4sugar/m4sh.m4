@@ -2,7 +2,7 @@
 # M4 sugar for common shell constructs.
 # Requires GNU M4 and M4sugar.
 #
-# Copyright (C) 2000-2012 Free Software Foundation, Inc.
+# Copyright (C) 2000-2017, 2020-2021 Free Software Foundation, Inc.
 
 # This file is part of Autoconf.  This program is free
 # software; you can redistribute it and/or modify it under the
@@ -22,7 +22,7 @@
 # You should have received a copy of the GNU General Public License
 # and a copy of the Autoconf Configure Script Exception along with
 # this program; see the files COPYINGv3 and COPYING.EXCEPTION
-# respectively.  If not, see <http://www.gnu.org/licenses/>.
+# respectively.  If not, see <https://www.gnu.org/licenses/>.
 
 # Written by Akim Demaille, Pavel Roskin, Alexandre Oliva, Lars J. Aas
 # and many other people.
@@ -85,10 +85,10 @@ m4_copy([_m4_divert(M4SH-INIT)], [_m4_divert(NOTICE)])
 # Try to be as Bourne and/or POSIX as possible.
 #
 # This does not set BIN_SH, due to the problems described in
-# <http://lists.gnu.org/archive/html/autoconf-patches/2006-03/msg00081.html>.
+# <https://lists.gnu.org/archive/html/autoconf-patches/2006-03/msg00081.html>.
 # People who need BIN_SH should set it in their environment before invoking
 # configure; apparently this would include UnixWare, as described in
-# <http://lists.gnu.org/archive/html/bug-autoconf/2006-06/msg00025.html>.
+# <https://lists.gnu.org/archive/html/bug-autoconf/2006-06/msg00025.html>.
 m4_define([AS_BOURNE_COMPATIBLE],
 [# Be more Bourne compatible
 DUALCASE=1; export DUALCASE # for MKS sh
@@ -98,9 +98,10 @@ _$0
 # _AS_BOURNE_COMPATIBLE
 # ---------------------
 # This is the part of AS_BOURNE_COMPATIBLE which has to be repeated inside
-# each instance.
+# each instance.  See _AS_EMPTY_ELSE_PREPARE for explanation of as_nop.
 m4_define([_AS_BOURNE_COMPATIBLE],
-[AS_IF([test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1],
+[as_nop=:
+AS_IF([test ${ZSH_VERSION+y} && (emulate sh) >/dev/null 2>&1],
  [emulate sh
   NULLCMD=:
   [#] Pre-4.2 versions of Zsh do word splitting on ${1+"$[@]"}, which
@@ -183,12 +184,12 @@ m4_define([_AS_DETECT_SUGGESTED_PRUNE],
 #
 # In previous versions, we prepended /usr/posix/bin to the path, but that
 # caused a regression on OpenServer 6.0.0
-# <http://lists.gnu.org/archive/html/bug-autoconf/2006-06/msg00017.html>
+# <https://lists.gnu.org/archive/html/bug-autoconf/2006-06/msg00017.html>
 # and on HP-UX 11.11, see the failure of test 120 in
-# <http://lists.gnu.org/archive/html/bug-autoconf/2006-10/msg00003.html>
+# <https://lists.gnu.org/archive/html/bug-autoconf/2006-10/msg00003.html>
 #
 # FIXME: The code should test for the OSF bug described in
-# <http://lists.gnu.org/archive/html/autoconf-patches/2006-03/msg00081.html>.
+# <https://lists.gnu.org/archive/html/autoconf-patches/2006-03/msg00081.html>.
 #
 # This code is run outside any trap 0 context, hence we can simplify AS_EXIT.
 m4_defun([_AS_DETECT_BETTER_SHELL],
@@ -231,7 +232,7 @@ dnl Remove any tests from suggested that are also required
 	 /*)
 	   for as_base in sh bash ksh sh5; do
 	     # Try only shells that exist, to save several forks.
-	     as_shell=$as_dir/$as_base
+	     as_shell=$as_dir$as_base
 	     AS_IF([{ test -f "$as_shell" || test -f "$as_shell.exe"; } &&
 		    _AS_RUN(["$as_required"], ["$as_shell"])],
 		   [CONFIG_SHELL=$as_shell as_have_required=yes
@@ -252,7 +253,7 @@ dnl Unfortunately, $as_me isn't available here.
     AS_IF([test x$as_have_required = xno],
       [AS_ECHO(["$[]0: This script requires a shell more modern than all"])
   AS_ECHO(["$[]0: the shells that I found on your system."])
-  if test x${ZSH_VERSION+set} = xset ; then
+  if test ${ZSH_VERSION+y} ; then
     AS_ECHO(["$[]0: In particular, zsh $ZSH_VERSION has bugs and should"])
     AS_ECHO(["$[]0: be upgraded to zsh 4.3.4 or later."])
   else
@@ -294,7 +295,32 @@ exec $1 $as_opts "$as_myself" ${1+"$[@]"}
 # Admittedly, this is quite paranoid, since all the known shells bail
 # out after a failed `exec'.
 AS_ECHO(["$[]0: could not re-execute with $1"]) >&2
-AS_EXIT([255])])# _AS_REEXEC_WITH_SHELL
+dnl AS_EXIT cannot be used here because as_fn_exit is not yet defined;
+dnl code inserted by AS_REQUIRE_SHELL_FN will appear _after_ this point.
+dnl We shouldn't have to worry about any traps being active at this point.
+exit 255])# _AS_REEXEC_WITH_SHELL
+
+
+# _AS_ENSURE_STANDARD_FDS
+# -----------------------
+# Ensure that file descriptors 0, 1, and 2 are open, as a defensive
+# measure against weird environments that run configure scripts
+# with these descriptors closed.
+# `exec m>&n` fails in POSIX sh when fd N is closed, but succeeds
+# regardless of whether fd N is open in some old shells, e.g. Solaris
+# /bin/sh.  This is OK because those shells will be rejected by
+# _AS_DETECT_BETTER_SHELL anyway.
+# TODO post-2.70: use "backward" redirections when opening these fds,
+# so we preserve their unusable state.  Needs downstream logic to
+# stop on the first failed attempt to write to fd 1 or 2, so we don't
+# run through an entire configure script spewing "write error"
+# messages when fd 1 is closed.
+m4_defun([_AS_ENSURE_STANDARD_FDS], [dnl
+# Ensure that fds 0, 1, and 2 are open.
+if (exec 3>&0) 2>/dev/null; then :; else exec 0</dev/null; fi
+if (exec 3>&1) 2>/dev/null; then :; else exec 1>/dev/null; fi
+if (exec 3>&2)            ; then :; else exec 2>/dev/null; fi
+])
 
 
 # _AS_PREPARE
@@ -326,7 +352,8 @@ m4_defun([_AS_PREPARE],
 [m4_pushdef([AS_MESSAGE_LOG_FD], [-1])]dnl
 [_AS_ERROR_PREPARE
 _m4_popdef([AS_MESSAGE_LOG_FD])]dnl
-[_AS_EXIT_PREPARE
+[_AS_EMPTY_ELSE_PREPARE
+_AS_EXIT_PREPARE
 _AS_UNSET_PREPARE
 _AS_VAR_APPEND_PREPARE
 _AS_VAR_ARITH_PREPARE
@@ -362,6 +389,7 @@ AS_REQUIRE([_AS_CR_PREPARE])
 AS_REQUIRE([_AS_LINENO_PREPARE])
 AS_REQUIRE([_AS_ECHO_N_PREPARE])
 AS_REQUIRE([_AS_EXIT_PREPARE])
+AS_REQUIRE([_AS_EMPTY_ELSE_PREPARE])
 AS_REQUIRE([_AS_LN_S_PREPARE])
 AS_REQUIRE([_AS_MKDIR_P_PREPARE])
 AS_REQUIRE([_AS_TEST_PREPARE])
@@ -418,7 +446,7 @@ m4_default_quoted([$4], [M4SH-INIT-FN]))])])
 # or under the given SHELL, protecting it from syntax errors.
 # Set as_run in order to assist _AS_LINENO_WORKS.
 m4_define([_AS_RUN],
-[m4_ifval([$2], [{ $as_echo "$as_bourne_compatible"$1 | as_run=a $2; }],
+[m4_ifval([$2], [as_run=a $2 -c "$as_bourne_compatible"$1],
 		[(eval $1)]) 2>/dev/null])
 
 
@@ -443,6 +471,15 @@ AS_IF([( set x; as_fn_ret_success y && test x = "[$]1" )], [],
 test x$exitcode = x0[]])# _AS_SHELL_FN_WORK
 
 
+# _AS_MODERN_CMDSUBST_WORKS
+# -------------------------
+# This is a spy to detect "in the wild" shells that do not support
+# the newer $(...) form of command substitutions.
+m4_define([_AS_MODERN_CMDSUBST_WORKS],
+[blah=$(echo $(echo blah))
+test x"$blah" = xblah])
+
+
 # _AS_SHELL_SANITIZE
 # ------------------
 # This is the prolog that is emitted by AS_INIT and AS_INIT_GENERATED;
@@ -453,22 +490,48 @@ m4_defun([_AS_SHELL_SANITIZE],
 [m4_text_box([M4sh Initialization.])
 
 AS_BOURNE_COMPATIBLE
-_AS_ECHO_PREPARE
-_AS_PATH_SEPARATOR_PREPARE
 
-# IFS
-# We need space, tab and new line, in precisely that order.  Quoting is
-# there to prevent editors from complaining about space-tab.
-# (If _AS_PATH_WALK were called with IFS unset, it would disable word
-# splitting by setting IFS to empty value.)
+# Reset variables that may have inherited troublesome values from
+# the environment.
+
+# IFS needs to be set, to space, tab, and newline, in precisely that order.
+# (If _AS_PATH_WALK were called with IFS unset, it would have the
+# side effect of setting IFS to empty, thus disabling word splitting.)
+# Quoting is to prevent editors from complaining about space-tab.
+as_nl='
+'
+export as_nl
 IFS=" ""	$as_nl"
+
+PS1='$ '
+PS2='> '
+PS4='+ '
+
+# Ensure predictable behavior from utilities with locale-dependent output.
+LC_ALL=C
+export LC_ALL
+LANGUAGE=C
+export LANGUAGE
+
+# We cannot yet rely on "unset" to work, but we need these variables
+# to be unset--not just set to an empty or harmless value--now, to
+# avoid bugs in old shells (e.g. pre-3.0 UWIN ksh).  This construct
+# also avoids known problems related to "unset" and subshell syntax
+# in other old shells (e.g. bash 2.01 and pdksh 5.2.14).
+for as_var in BASH_ENV ENV MAIL MAILPATH CDPATH
+do eval test \${$as_var+y} \
+  && ( (unset $as_var) || exit 1) >/dev/null 2>&1 && unset $as_var || :
+done
+
+_AS_ENSURE_STANDARD_FDS
+_AS_PATH_SEPARATOR_PREPARE
 
 # Find who we are.  Look in the path if we contain no directory separator.
 as_myself=
 case $[0] in @%:@((
   *[[\\/]]* ) as_myself=$[0] ;;
   *) _AS_PATH_WALK([],
-		   [test -r "$as_dir/$[0]" && as_myself=$as_dir/$[0] && break])
+		   [test -r "$as_dir$[0]" && as_myself=$as_dir$[0] && break])
      ;;
 esac
 # We did not find ourselves, most probably we were run as `sh COMMAND'
@@ -481,26 +544,6 @@ if test ! -f "$as_myself"; then
   AS_EXIT
 fi
 
-# Unset variables that we do not need and which cause bugs (e.g. in
-# pre-3.0 UWIN ksh).  But do not cause bugs in bash 2.01; the "|| exit 1"
-# suppresses any "Segmentation fault" message there.  '((' could
-# trigger a bug in pdksh 5.2.14.
-for as_var in BASH_ENV ENV MAIL MAILPATH
-do eval test x\${$as_var+set} = xset \
-  && ( (unset $as_var) || exit 1) >/dev/null 2>&1 && unset $as_var || :
-done
-PS1='$ '
-PS2='> '
-PS4='+ '
-
-# NLS nuisances.
-LC_ALL=C
-export LC_ALL
-LANGUAGE=C
-export LANGUAGE
-
-# CDPATH.
-(unset CDPATH) >/dev/null 2>&1 && unset CDPATH
 _m4_popdef([AS_EXIT])])# _AS_SHELL_SANITIZE
 
 
@@ -513,6 +556,7 @@ m4_define([AS_SHELL_SANITIZE],
 m4_provide_if([AS_INIT], [],
 [m4_provide([AS_INIT])
 _AS_DETECT_REQUIRED([_AS_SHELL_FN_WORK])
+_AS_DETECT_REQUIRED([_AS_MODERN_CMDSUBST_WORKS])
 _AS_DETECT_REQUIRED([_AS_TEST_X_WORKS])
 _AS_DETECT_BETTER_SHELL
 _AS_UNSET_PREPARE
@@ -616,9 +660,11 @@ done[]_m4_popdef([$1])])
 # AS_IF(TEST1, [IF-TRUE1 = :]...[IF-FALSE = :])
 # ---------------------------------------------
 # Expand into
-# | if TEST1; then
+# | if TEST1
+# | then
 # |   IF-TRUE1
-# | elif TEST2; then
+# | elif TEST2
+# | then
 # |   IF-TRUE2
 # [...]
 # | else
@@ -626,21 +672,46 @@ done[]_m4_popdef([$1])])
 # | fi
 # with simplifications when IF-TRUE1 and/or IF-FALSE are empty.
 #
+# Note: IF-TRUEn and IF_FALSE may be nonempty but, after further macro
+# expansion, leave no actual shell code.  We can't detect this, so we
+# include a no-op statement in each clause to prevent it becoming a shell
+# syntax error.  For the IF-TRUEn this can simply be `:' at the beginning of
+# the clause.  IF-FALSE is harder because it must preserve the value of $?
+# from the conditional expression.  The most practical way to do this is
+# with a shell function whose body is `return $?' but AS_IF is used before
+# it's safe to use shell functions.  To deal with *that*, there is a shell
+# variable $as_fn_nop that expands to `:' before the nop shell function is
+# defined, and invokes the nop shell function afterward.  Early uses of
+# AS_IF (which are all under our control) must not use the value of $? from
+# the conditional expression in an else clause.
 m4_define([_AS_IF],
-[elif $1; then :
+[elif $1
+then :
   $2
 ])
-m4_define([_AS_IF_ELSE],
+m4_defun([_AS_IF_ELSE],
 [m4_ifnblank([$1],
-[else
+[m4_append_uniq([_AS_CLEANUP], [AS_REQUIRE([_AS_EMPTY_ELSE_PREPARE])])]dnl
+[else $as_nop
   $1
 ])])
 
 m4_defun([AS_IF],
-[if $1; then :
+[if $1
+then :
   $2
 m4_map_args_pair([_$0], [_$0_ELSE], m4_shift2($@))]dnl
 [fi[]])# AS_IF
+
+m4_defun([_AS_EMPTY_ELSE_PREPARE],
+[m4_divert_text([M4SH-INIT-FN],
+[AS_FUNCTION_DESCRIBE([as_fn_nop], [],
+  [Do nothing but, unlike ":", preserve the value of $][?.])
+as_fn_nop ()
+{
+  return $[]?
+}
+as_nop=as_fn_nop])])
 
 
 # AS_SET_STATUS(STATUS)
@@ -660,7 +731,8 @@ as_fn_unset ()
 {
   AS_UNSET([$[1]])
 }
-as_unset=as_fn_unset])
+as_unset=as_fn_unset
+])
 
 
 # AS_UNSET(VAR)
@@ -804,8 +876,11 @@ m4_defun_init([_AS_ECHO_LOG],
 # in a command substitution prints only the first character of the output
 # with ksh version M-11/16/88f on AIX 6.1; it needs to be reset by another
 # backquoted echo.
-m4_defun([_AS_ECHO_N_PREPARE],
-[ECHO_C= ECHO_N= ECHO_T=
+m4_defun([_AS_ECHO_N_PREPARE], [
+# Determine whether it's possible to make 'echo' print without a newline.
+# These variables are no longer used directly by Autoconf, but are AC_SUBSTed
+# for compatibility with existing Makefiles.
+ECHO_C= ECHO_N= ECHO_T=
 case `echo -n x` in @%:@(((((
 -n*)
   case `echo 'xy\c'` in
@@ -817,6 +892,16 @@ case `echo -n x` in @%:@(((((
 *)
   ECHO_N='-n';;
 esac
+
+# For backward compatibility with old third-party macros, we provide
+# the shell variables $as_echo and $as_echo_n.  New code should use
+# AS_ECHO(["message"]) and AS_ECHO_N(["message"]), respectively.
+dnl The @&t@ prevents a spurious deprecation diagnostic.
+dnl Extra quoting in case `s' or `n' are user-defined macros when this
+dnl is expanded; they almost certainly aren't meant to be used here.
+dnl See bug 110377.
+as_@&t@echo='printf [%s\n]'
+as_@&t@echo_n='printf [%s]'
 ])# _AS_ECHO_N_PREPARE
 
 
@@ -1023,63 +1108,31 @@ fi
 # Output WORD followed by a newline.  WORD must be a single shell word
 # (typically a quoted string).  The bytes of WORD are output as-is, even
 # if it starts with "-" or contains "\".
-m4_defun_init([AS_ECHO],
-[AS_REQUIRE([_$0_PREPARE])],
-[$as_echo $1])
+m4_define([AS_ECHO],
+dnl Extra quoting in case `s' or `n' are user-defined macros when this
+dnl is expanded; they almost certainly aren't meant to be used here.
+dnl See bug 110377.
+[printf "[%s\n]" $1])
+
+# Deprecation warning for the former internal shell variable $as_echo.
+m4_define([as_echo],
+[m4_warn([obsolete],
+   [$as_echo is obsolete; use AS_ECHO(["message"]) instead])as_@&t@echo])
 
 
 # AS_ECHO_N(WORD)
 # ---------------
 # Like AS_ECHO(WORD), except do not output the trailing newline.
-m4_defun_init([AS_ECHO_N],
-[AS_REQUIRE([_AS_ECHO_PREPARE])],
-[$as_echo_n $1])
+m4_define([AS_ECHO_N],
+dnl Extra quoting in case `s' is a user-defined macro when this
+dnl is expanded; it almost certainly isn't meant to be used here.
+dnl See bug 110377.
+[printf [%s] $1])
 
-
-# _AS_ECHO_PREPARE
-# ----------------
-# Arrange for $as_echo 'FOO' to echo FOO without escape-interpretation;
-# and similarly for $as_echo_n, which omits the trailing newline.
-# 'FOO' is an optional single argument; a missing FOO is treated as empty.
-m4_defun([_AS_ECHO_PREPARE],
-[[as_nl='
-'
-export as_nl
-# Printing a long string crashes Solaris 7 /usr/bin/printf.
-as_echo='\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'
-as_echo=$as_echo$as_echo$as_echo$as_echo$as_echo
-as_echo=$as_echo$as_echo$as_echo$as_echo$as_echo$as_echo
-# Prefer a ksh shell builtin over an external printf program on Solaris,
-# but without wasting forks for bash or zsh.
-if test -z "$BASH_VERSION$ZSH_VERSION" \
-    && (test "X`print -r -- $as_echo`" = "X$as_echo") 2>/dev/null; then
-  as_echo='print -r --'
-  as_echo_n='print -rn --'
-elif (test "X`printf %s $as_echo`" = "X$as_echo") 2>/dev/null; then
-  as_echo='printf %s\n'
-  as_echo_n='printf %s'
-else
-  if test "X`(/usr/ucb/echo -n -n $as_echo) 2>/dev/null`" = "X-n $as_echo"; then
-    as_echo_body='eval /usr/ucb/echo -n "$][1$as_nl"'
-    as_echo_n='/usr/ucb/echo -n'
-  else
-    as_echo_body='eval expr "X$][1" : "X\\(.*\\)"'
-    as_echo_n_body='eval
-      arg=$][1;
-      case $arg in @%:@(
-      *"$as_nl"*)
-	expr "X$arg" : "X\\(.*\\)$as_nl";
-	arg=`expr "X$arg" : ".*$as_nl\\(.*\\)"`;;
-      esac;
-      expr "X$arg" : "X\\(.*\\)" | tr -d "$as_nl"
-    '
-    export as_echo_n_body
-    as_echo_n='sh -c $as_echo_n_body as_echo'
-  fi
-  export as_echo_body
-  as_echo='sh -c $as_echo_body as_echo'
-fi
-]])# _AS_ECHO_PREPARE
+# Deprecation warning for the former internal shell variable $as_echo_n.
+m4_define([as_echo_n],
+[m4_warn([obsolete],
+   [$as_echo_n is obsolete; use AS_ECHO_N(["message"]) instead])as_@&t@echo_n])
 
 
 # AS_TEST_X
@@ -1314,7 +1367,7 @@ fi
 # Compute the path separator.
 m4_defun([_AS_PATH_SEPARATOR_PREPARE],
 [# The user is always right.
-if test "${PATH_SEPARATOR+set}" != set; then
+if ${PATH_SEPARATOR+false} :; then
   PATH_SEPARATOR=:
   (PATH='/bin;/bin'; FPATH=$PATH; sh -c :) >/dev/null 2>&1 && {
     (PATH='/bin:/bin'; FPATH=$PATH; sh -c :) >/dev/null 2>&1 ||
@@ -1326,8 +1379,8 @@ fi
 
 # _AS_PATH_WALK([PATH = $PATH], BODY, [IF-NOT-FOUND])
 # ---------------------------------------------------
-# Walk through PATH running BODY for each `as_dir'.  If BODY never does a
-# `break', evaluate IF-NOT-FOUND.
+# Walk through PATH running BODY for each `as_dir', with a trailing slash
+# already present.  If BODY never does a `break', evaluate IF-NOT-FOUND.
 #
 # Still very private as its interface looks quite bad.
 #
@@ -1340,19 +1393,23 @@ m4_defun_init([_AS_PATH_WALK],
 [AS_REQUIRE([_AS_PATH_SEPARATOR_PREPARE])],
 [as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
 m4_ifvaln([$3], [as_found=false])dnl
-m4_bmatch([$1], [[:;]],
+m4_if([$1], m4_translit([[$1]], [:;]),
+[for as_dir in m4_default([$1], [$PATH])],
 [as_dummy="$1"
-for as_dir in $as_dummy],
-[for as_dir in m4_default([$1], [$PATH])])
+for as_dir in $as_dummy])
 do
   IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
   m4_ifvaln([$3], [as_found=:])dnl
   $2
   m4_ifvaln([$3], [as_found=false])dnl
 done
-m4_ifvaln([$3], [$as_found || { $3; }])dnl
 IFS=$as_save_IFS
+m4_ifvaln([$3], [AS_IF([$as_found], [], [$3])])dnl
 ])
 
 
@@ -1431,7 +1488,8 @@ _ASBOX])
 # Remove all contents from within DIR, including any unwritable
 # subdirectories, but leave DIR itself untouched.
 m4_define([_AS_CLEAN_DIR],
-[if test -d $1; then
+[if test -d $1
+then
   find $1 -type d ! -perm -700 -exec chmod u+rwx {} \;
   rm -fr $1/* $1/.[[!.]] $1/.??*
 fi])
@@ -2099,9 +2157,9 @@ m4_define([AS_VAR_SET_IF],
 # is set.  Polymorphic.
 m4_define([AS_VAR_TEST_SET],
 [AS_LITERAL_WORD_IF([$1],
-  [${$1+:} false],
-  [{ as_var=$1; eval \${$as_var+:} false; }],
-  [eval \${$1+:} false])])
+  [test ${$1+y}],
+  [{ as_var=$1; eval test \${$as_var+y}; }],
+  [eval test \${$1+y}])])
 
 
 ## -------------------- ##
@@ -2153,9 +2211,11 @@ m4_provide([AS_INIT])
 m4_pattern_forbid([^_?AS_])
 
 # Bangshe and minimal initialization.
+# Put only the basename of __file__ into HEADER-COMMENT, so that the
+# path to the source directory is not embedded in the output file.
 m4_divert_text([BINSH], [@%:@! /bin/sh])
 m4_divert_text([HEADER-COMMENT],
-	       [@%:@ Generated from __file__ by m4_PACKAGE_STRING.])
+	       [@%:@ Generated from m4_bpatsubst(__file__,[^.*/\([^/]*\)$],[[\1]]) by m4_PACKAGE_STRING.])
 m4_divert_text([M4SH-SANITIZE], [_AS_SHELL_SANITIZE])
 m4_divert_text([M4SH-INIT-FN], [m4_text_box([M4sh Shell Functions.])])
 
@@ -2163,6 +2223,7 @@ m4_divert_text([M4SH-INIT-FN], [m4_text_box([M4sh Shell Functions.])])
 m4_divert([BODY])dnl
 m4_text_box([Main body of script.])
 _AS_DETECT_REQUIRED([_AS_SHELL_FN_WORK])dnl
+_AS_DETECT_REQUIRED([_AS_MODERN_CMDSUBST_WORKS])dnl
 _AS_DETECT_REQUIRED([_AS_TEST_X_WORKS])dnl
 AS_REQUIRE([_AS_UNSET_PREPARE], [], [M4SH-INIT-FN])dnl
 ])

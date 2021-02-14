@@ -15,6 +15,42 @@
 
 package Automake::ChannelDefs;
 
+=head1 NAME
+
+Automake::ChannelDefs - channel definitions for Automake and helper functions
+
+=head1 SYNOPSIS
+
+  use Automake::ChannelDefs;
+
+  print Automake::ChannelDefs::usage (), "\n";
+  prog_error ($MESSAGE, [%OPTIONS]);
+  error ($WHERE, $MESSAGE, [%OPTIONS]);
+  error ($MESSAGE);
+  fatal ($WHERE, $MESSAGE, [%OPTIONS]);
+  fatal ($MESSAGE);
+  verb ($MESSAGE, [%OPTIONS]);
+  switch_warning ($CATEGORY);
+  parse_WARNINGS ();
+  parse_warnings ($OPTION, @ARGUMENT);
+  Automake::ChannelDefs::set_strictness ($STRICTNESS_NAME);
+
+=head1 DESCRIPTION
+
+This package defines channels that can be used in Automake to
+output diagnostics and other messages (via C<msg()>).  It also defines
+some helper function to enable or disable these channels, and some
+shorthand function to output on specific channels.
+
+=cut
+
+use 5.006;
+use strict;
+use warnings FATAL => 'all';
+
+use Exporter;
+
+use Automake::Channels;
 use Automake::Config;
 BEGIN
 {
@@ -24,46 +60,11 @@ BEGIN
       import threads;
     }
 }
-use Automake::Channels;
 
-=head1 NAME
-
-Automake::ChannelDefs - channel definitions for Automake and helper functions
-
-=head1 SYNOPSIS
-
-  use Automake::ChannelDefs;
-
-  Automake::ChannelDefs::usage ();
-  prog_error ($MESSAGE, [%OPTIONS]);
-  error ($WHERE, $MESSAGE, [%OPTIONS]);
-  error ($MESSAGE);
-  fatal ($WHERE, $MESSAGE, [%OPTIONS]);
-  fatal ($MESSAGE);
-  verb ($MESSAGE, [%OPTIONS]);
-  switch_warning ($CATEGORY);
-  parse_WARNINGS ();
-  parse_warnings ($OPTION, $ARGUMENT);
-  Automake::ChannelDefs::set_strictness ($STRICTNESS_NAME);
-
-=head1 DESCRIPTION
-
-This packages defines channels that can be used in Automake to
-output diagnostics and other messages (via C<msg()>).  It also defines
-some helper function to enable or disable these channels, and some
-shorthand function to output on specific channels.
-
-=cut
-
-use 5.006;
-use strict;
-use Exporter;
-
-use vars qw (@ISA @EXPORT);
-
-@ISA = qw (Exporter);
-@EXPORT = qw (&prog_error &error &fatal &verb
-	      &switch_warning &parse_WARNINGS &parse_warnings);
+our @ISA = qw (Exporter);
+our @EXPORT = qw (&prog_error &error &fatal &verb
+		  &switch_warning &parse_WARNINGS &parse_warnings
+		  &merge_WARNINGS);
 
 =head2 CHANNELS
 
@@ -97,13 +98,17 @@ Errors related to GNITS Standards (silent by default).
 
 Internal errors.  Use C<&prog_error> to send messages over this channel.
 
+=item C<cross>
+
+Constructs compromising the cross-compilation of the package.
+
 =item C<gnu>
 
 Warnings related to GNU Coding Standards.
 
 =item C<obsolete>
 
-Warnings about obsolete features (silent by default).
+Warnings about obsolete features.
 
 =item C<override>
 
@@ -113,6 +118,14 @@ variables (silent by default).
 =item C<portability>
 
 Warnings about non-portable constructs.
+
+=item C<portability-recursive>
+
+Warnings about recursive variable expansions (C<$(foo$(x))>).
+These are not universally supported, but are more portable than
+the other non-portable constructs diagnosed by C<-Wportability>.
+These warnings are turned on by C<-Wportability> but can then be
+turned off separately by C<-Wno-portability-recursive>.
 
 =item C<extra-portability>
 
@@ -154,11 +167,12 @@ register_channel 'automake', type => 'fatal', backtrace => 1,
   footer => "\nPlease contact <$PACKAGE_BUGREPORT>.",
   uniq_part => UP_NONE, ordered => 0;
 
-register_channel 'extra-portability', type => 'warning', silent => 1;
+register_channel 'cross', type => 'warning', silent => 1;
 register_channel 'gnu', type => 'warning';
 register_channel 'obsolete', type => 'warning';
 register_channel 'override', type => 'warning', silent => 1;
 register_channel 'portability', type => 'warning', silent => 1;
+register_channel 'extra-portability', type => 'warning', silent => 1;
 register_channel 'portability-recursive', type => 'warning', silent => 1;
 register_channel 'syntax', type => 'warning';
 register_channel 'unsupported', type => 'warning';
@@ -177,26 +191,26 @@ setup_channel_type 'fatal', header => 'error: ';
 
 =item C<usage ()>
 
-Display warning categories.
+Return the warning category descriptions.
 
 =cut
 
 sub usage ()
 {
-  print <<EOF;
-Warning categories include:
-  gnu                GNU coding standards (default in gnu and gnits modes)
-  obsolete           obsolete features or constructions
-  override           user redefinitions of Automake rules or variables
-  portability        portability issues (default in gnu and gnits modes)
-  extra-portability  extra portability issues related to obscure tools
-  syntax             dubious syntactic constructs (default)
-  unsupported        unsupported or incomplete features (default)
-  all                all the warnings
-  no-CATEGORY        turn off warnings in CATEGORY
-  none               turn off all the warnings
-  error              treat warnings as errors
-EOF
+  return "Warning categories include:
+  cross                  cross compilation issues
+  gnu                    GNU coding standards (default in gnu and gnits modes)
+  obsolete               obsolete features or constructions (default)
+  override               user redefinitions of Automake rules or variables
+  portability            portability issues (default in gnu and gnits modes)
+  portability-recursive  nested Make variables (default with -Wportability)
+  extra-portability      extra portability issues related to obscure tools
+  syntax                 dubious syntactic constructs (default)
+  unsupported            unsupported or incomplete features (default)
+  all                    all the warnings
+  no-CATEGORY            turn off warnings in CATEGORY
+  none                   turn off all the warnings
+  error                  treat warnings as errors";
 }
 
 =item C<prog_error ($MESSAGE, [%OPTIONS])>
@@ -257,7 +271,7 @@ sub verb ($;%)
 =item C<switch_warning ($CATEGORY)>
 
 If C<$CATEGORY> is C<mumble>, turn on channel C<mumble>.
-If it's C<no-mumble>, turn C<mumble> off.
+If it is C<no-mumble>, turn C<mumble> off.
 Else handle C<all> and C<none> for completeness.
 
 =cut
@@ -338,35 +352,124 @@ Parse the WARNINGS environment variable.
 
 =cut
 
+# Used to communicate from parse_WARNINGS to parse_warnings.
+our $_werror = 0;
+
 sub parse_WARNINGS ()
 {
   if (exists $ENV{'WARNINGS'})
     {
       # Ignore unknown categories.  This is required because WARNINGS
       # should be honored by many tools.
-      switch_warning $_ foreach (split (',', $ENV{'WARNINGS'}));
+      # For the same reason, do not turn on -Werror at this point, just
+      # record that we saw it; parse_warnings will turn on -Werror after
+      # the command line has been processed.
+      foreach (split (',', $ENV{'WARNINGS'}))
+        {
+          if (/^(no-)?error$/)
+            {
+              $_werror = !defined $1;
+            }
+          else
+            {
+              switch_warning $_;
+            }
+        }
     }
 }
 
-=item C<parse_warnings ($OPTION, $ARGUMENT)>
+=item C<parse_warnings (@CATEGORIES)>
 
 Parse the argument of C<--warning=CATEGORY> or C<-WCATEGORY>.
+C<@CATEGORIES> is the accumulated set of warnings categories.
+Use like this:
 
-C<$OPTIONS> is C<"--warning"> or C<"-W">, C<$ARGUMENT> is C<CATEGORY>.
-
-This is meant to be used as an argument to C<Getopt>.
+    Automake::GetOpt::parse_options (
+        # ...
+        'W|warnings=s' => \@warnings,
+    )
+    # possibly call set_strictness here
+    parse_warnings @warnings;
 
 =cut
 
-sub parse_warnings ($$)
+sub parse_warnings (@)
 {
-  my ($opt, $categories) = @_;
-
-  foreach my $cat (split (',', $categories))
+  foreach my $cat (map { split ',' } @_)
     {
-      msg 'unsupported', "unknown warning category '$cat'"
-	if switch_warning $cat;
+      if ($cat =~ /^(no-)?error$/)
+        {
+          $_werror = !defined $1;
+        }
+      elsif (switch_warning $cat)
+        {
+          msg 'unsupported', "unknown warning category '$cat'";
+        }
     }
+
+  switch_warning ($_werror ? 'error' : 'no-error');
+}
+
+=item C<merge_WARNINGS (@CATEGORIES)>
+
+Merge the warnings categories in the environment variable C<WARNINGS>
+with the warnings categories in C<@CATEGORIES>, and return a new
+value for C<WARNINGS>.  Values in C<@CATEGORIES> take precedence.
+Use like this:
+
+    local $ENV{WARNINGS} = merge_WARNINGS @additional_warnings;
+
+=cut
+
+sub merge_WARNINGS (@)
+{
+  my $werror = '';
+  my $all_or_none = '';
+  my %warnings;
+
+  my @categories = split /,/, $ENV{WARNINGS} || '';
+  push @categories, @_;
+
+  foreach (@categories)
+    {
+      if (/^(?:no-)?error$/)
+        {
+          $werror = $_;
+        }
+      elsif (/^(?:all|none)$/)
+        {
+          $all_or_none = $_;
+        }
+      else
+        {
+          # The character class in the second match group is ASCII \S minus
+          # comma.  We are generous with this because category values may come
+          # from WARNINGS and we don't want to assume what other programs'
+          # syntaxes for warnings categories are.
+          /^(no-|)([\w\[\]\/\\!"#$%&'()*+-.:;<=>?@^`{|}~]+)$/
+            or die "Invalid warnings category: $_";
+          $warnings{$2} = $1;
+        }
+    }
+
+  my @final_warnings;
+  if ($all_or_none)
+    {
+      push @final_warnings, $all_or_none;
+    }
+  else
+    {
+      foreach (sort keys %warnings)
+        {
+          push @final_warnings, $warnings{$_} . $_;
+        }
+    }
+  if ($werror)
+    {
+      push @final_warnings, $werror;
+    }
+
+  return join (',', @final_warnings);
 }
 
 =item C<set_strictness ($STRICTNESS_NAME)>
@@ -425,3 +528,20 @@ Written by Alexandre Duret-Lutz E<lt>F<adl@gnu.org>E<gt>.
 =cut
 
 1;
+
+### Setup "GNU" style for perl-mode and cperl-mode.
+## Local Variables:
+## perl-indent-level: 2
+## perl-continued-statement-offset: 2
+## perl-continued-brace-offset: 0
+## perl-brace-offset: 0
+## perl-brace-imaginary-offset: 0
+## perl-label-offset: -2
+## cperl-indent-level: 2
+## cperl-brace-offset: 0
+## cperl-continued-brace-offset: 0
+## cperl-label-offset: -2
+## cperl-extra-newline-before-brace: t
+## cperl-merge-trailing-else: nil
+## cperl-continued-statement-offset: 2
+## End:

@@ -71,23 +71,19 @@ and C<getlines> methods to translate C<\r\n> to C<\n>.
 
 use 5.006;
 use strict;
-use vars qw($VERSION @EXPORT @EXPORT_OK $AUTOLOAD @ISA);
-use Carp;
+use warnings FATAL => 'all';
+
 use Errno;
+use Exporter;
 use IO::File;
-use File::Basename;
+
 use Automake::ChannelDefs;
-use Automake::Channels qw(msg);
+use Automake::Channels qw (msg);
 use Automake::FileUtils;
 
-require Exporter;
-require DynaLoader;
-
-@ISA = qw(IO::File Exporter DynaLoader);
-
-$VERSION = "1.2";
-
-@EXPORT = @IO::File::EXPORT;
+our @ISA = qw(Exporter IO::File);
+our @EXPORT = @IO::File::EXPORT;
+our $VERSION = "1.2";
 
 eval {
   # Make all Fcntl O_XXX and LOCK_XXX constants available for importing
@@ -232,7 +228,8 @@ sub lock
 
   # Unless explicitly configured otherwise, Perl implements its 'flock' with the
   # first of flock(2), fcntl(2), or lockf(3) that works.  These can fail on
-  # NFS-backed files, with ENOLCK (GNU/Linux) or EOPNOTSUPP (FreeBSD); we
+  # NFS-backed files, with ENOLCK (GNU/Linux) or EOPNOTSUPP (FreeBSD) or
+  # EINVAL (OpenIndiana, as per POSIX 1003.1-2017 fcntl spec); we
   # usually ignore these errors.  If $ENV{MAKEFLAGS} suggests that a parallel
   # invocation of 'make' has invoked the tool we serve, report all locking
   # failures and abort.
@@ -251,7 +248,7 @@ sub lock
 
       msg ($make_j ? 'fatal' : 'unsupported',
 	   "cannot lock $file with mode $mode: $!" . ($make_j ? $note : ""))
-	if $make_j || !($!{ENOLCK} || $!{EOPNOTSUPP});
+	if $make_j || !($!{EINVAL} || $!{ENOLCK} || $!{EOPNOTSUPP});
     }
 }
 

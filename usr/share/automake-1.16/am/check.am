@@ -243,6 +243,9 @@ am--fnord $(TEST_LOGS) $(TEST_LOGS:.log=.trs): $(am__force_recheck)
 am--force-recheck:
 	@:
 
+## Exists only to be overridden.  See bug#11745.
+AM_TESTSUITE_SUMMARY_HEADER = ' for $(PACKAGE_STRING)'
+
 $(TEST_SUITE_LOG): $(TEST_LOGS)
 	@$(am__set_TESTS_bases); \
 ## Helper shell function, tells whether a path refers to an existing,
@@ -375,7 +378,7 @@ $(TEST_SUITE_LOG): $(TEST_LOGS)
 ## Multi line coloring is problematic with "less -R", so we really need
 ## to color each line individually.
 	echo "$${col}$$br$${std}"; 					\
-	echo "$${col}Testsuite summary for $(PACKAGE_STRING)$${std}";	\
+	echo "$${col}Testsuite summary"$(AM_TESTSUITE_SUMMARY_HEADER)"$${std}";	\
 	echo "$${col}$$br$${std}"; 					\
 ## This is expected to go to the console, so it might have to be colorized.
 	create_testsuite_report --maybe-color;				\

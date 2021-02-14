@@ -16,10 +16,12 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 package Automake::Config;
-use strict;
 
 use 5.006;
-require Exporter;
+use strict;
+use warnings FATAL => 'all';
+
+use Exporter;
 
 our @ISA = qw (Exporter);
 our @EXPORT = qw ($APIVERSION $PACKAGE $PACKAGE_BUGREPORT $VERSION
@@ -30,7 +32,7 @@ our @EXPORT = qw ($APIVERSION $PACKAGE $PACKAGE_BUGREPORT $VERSION
 our $APIVERSION = '1.16';
 our $PACKAGE = 'automake';
 our $PACKAGE_BUGREPORT = 'bug-automake@gnu.org';
-our $VERSION = '1.16.2';
+our $VERSION = '1.16.3';
 our $RELEASE_YEAR = '2020';
 our $libdir = $ENV{"AUTOMAKE_LIBDIR"} || '/usr/share/automake-1.16';
 

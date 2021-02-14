@@ -1,5 +1,5 @@
 # autoconf -- create `configure' using m4 macros
-# Copyright (C) 2001-2004, 2006-2007, 2009-2012 Free Software
+# Copyright (C) 2001-2004, 2006-2007, 2009-2017, 2020-2021 Free Software
 # Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 package Autom4te::General;
 
@@ -33,20 +33,22 @@ used in several executables of the Autoconf package.
 =cut
 
 use 5.006;
+use strict;
+use warnings FATAL => 'all';
+
+use Carp;
 use Exporter;
+use File::Basename;
+use File::Spec ();
+use File::stat;
+use File::Temp ();
+use IO::File;
+
 use Autom4te::ChannelDefs;
 use Autom4te::Channels;
 use Autom4te::Getopt ();
-use File::Basename;
-use File::Path ();
-use File::stat;
-use IO::File;
-use Carp;
-use strict;
 
-use vars qw (@ISA @EXPORT);
-
-@ISA = qw (Exporter);
+our @ISA = qw (Exporter);
 
 # Variables we define and export.
 my @export_vars =
@@ -62,7 +64,7 @@ my @export_subs =
 my @export_forward_subs =
   qw (&basename &dirname &fileparse);
 
-@EXPORT = (@export_vars, @export_subs, @export_forward_subs);
+our @EXPORT = (@export_vars, @export_subs, @export_forward_subs);
 
 
 # Variable we share with the main package.  Be sure to have a single
@@ -81,8 +83,7 @@ incorrect execution.
 
 =cut
 
-use vars qw ($debug);
-$debug = 0;
+our $debug = 0;
 
 =item C<$force>
 
@@ -91,8 +92,7 @@ the output files are obsolete.
 
 =cut
 
-use vars qw ($force);
-$force = undef;
+our $force = undef;
 
 =item C<$help>
 
@@ -100,8 +100,7 @@ Set to the help message associated with the option C<--help>.
 
 =cut
 
-use vars qw ($help);
-$help = undef;
+our $help = undef;
 
 =item C<$me>
 
@@ -109,8 +108,7 @@ The name of this application, for diagnostic messages.
 
 =cut
 
-use vars qw ($me);
-$me = basename ($0);
+our $me = basename ($0);
 
 =item C<$tmp>
 
@@ -120,8 +118,7 @@ C<undef> otherwise.
 =cut
 
 # Our tmp dir.
-use vars qw ($tmp);
-$tmp = undef;
+our $tmp = undef;
 
 =item C<$verbose>
 
@@ -130,8 +127,7 @@ users, and typically make explicit the steps being performed.
 
 =cut
 
-use vars qw ($verbose);
-$verbose = 0;
+our $verbose = 0;
 
 =item C<$version>
 
@@ -139,8 +135,7 @@ Set to the version message associated to the option C<--version>.
 
 =cut
 
-use vars qw ($version);
-$version = undef;
+our $version = undef;
 
 =back
 
@@ -158,8 +153,7 @@ $version = undef;
 
 =item C<END>
 
-Filter Perl's exit codes, delete any temporary directory (unless
-C<$debug>), and exit nonzero whenever closing C<STDOUT> fails.
+Filter Perl's exit codes and exit nonzero whenever closing C<STDOUT> fails.
 
 =cut
 
@@ -189,12 +183,6 @@ sub END
   # (Note that we cannot safely distinguish calls to `exit (n)'
   # from calls to die when `$! = n'.  It's not big deal because
   # we only call `exit (0)' or `exit (1)'.)
-
-  if (!$debug && defined $tmp && -d $tmp)
-    {
-      local $SIG{__WARN__} = sub { $status = 1; warn $_[0] };
-      File::Path::rmtree $tmp;
-    }
 
   # This is required if the code might send any output to stdout
   # E.g., even --version or --help.  So it's best to do it unconditionally.
@@ -290,8 +278,8 @@ sub shell_quote($)
 =item C<mktmpdir ($signature)>
 
 Create a temporary directory which name is based on C<$signature>.
-Store its name in C<$tmp>.  C<END> is in charge of removing it, unless
-C<$debug>.
+Store its name in C<$tmp>.  It will be removed at program exit,
+unless C<$debug> is true.
 
 =cut
 
@@ -300,23 +288,22 @@ C<$debug>.
 sub mktmpdir ($)
 {
   my ($signature) = @_;
-  my $TMPDIR = $ENV{'TMPDIR'} || '/tmp';
-  my $quoted_tmpdir = shell_quote ($TMPDIR);
 
-  # If mktemp supports dirs, use it.
-  $tmp = `(umask 077 &&
-	   mktemp -d $quoted_tmpdir/"${signature}XXXXXX") 2>/dev/null`;
-  chomp $tmp;
-
-  if (!$tmp || ! -d $tmp)
-    {
-      $tmp = "$TMPDIR/$signature" . int (rand 10000) . ".$$";
-      mkdir $tmp, 0700
-	or croak "$me: cannot create $tmp: $!\n";
-    }
+  # Ensure that we refer to the temporary directory by absolute
+  # pathname; most importantly, this ensures that C<do FILE> will
+  # work whenever FILE is in $tmp, even when '.' is not in @INC
+  # (perl 5.26 and later).
+  my $TMPDIR = File::Spec->rel2abs (File::Spec->tmpdir ());
+  $tmp = File::Temp::tempdir (
+    $signature . "XXXXXX",
+    DIR => $TMPDIR,
+    CLEANUP => !$debug
+  );
 
   print STDERR "$me:$$: working in $tmp\n"
     if $debug;
+
+  return $tmp;
 }
 
 

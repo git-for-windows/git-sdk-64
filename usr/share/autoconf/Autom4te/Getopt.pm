@@ -1,4 +1,4 @@
-# Copyright (C) 2012 Free Software Foundation, Inc.
+# Copyright (C) 2012-2020 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -11,7 +11,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 package Autom4te::Getopt;
 
@@ -33,14 +33,15 @@ line options in conformance to the GNU Coding standards.
 use 5.006;
 use strict;
 use warnings FATAL => 'all';
+
+use Carp qw (confess croak);
 use Exporter ();
 use Getopt::Long ();
-use Autom4te::ChannelDefs qw/fatal/;
-use Carp qw/croak confess/;
 
-use vars qw (@ISA @EXPORT);
-@ISA = qw (Exporter);
-@EXPORT= qw/getopt/;
+use Autom4te::ChannelDefs qw (fatal);
+
+our @ISA = qw (Exporter);
+our @EXPORT = qw (getopt);
 
 =item C<parse_options (%option)>
 
@@ -96,20 +97,3 @@ L<Getopt::Long>
 =cut
 
 1; # for require
-
-### Setup "GNU" style for perl-mode and cperl-mode.
-## Local Variables:
-## perl-indent-level: 2
-## perl-continued-statement-offset: 2
-## perl-continued-brace-offset: 0
-## perl-brace-offset: 0
-## perl-brace-imaginary-offset: 0
-## perl-label-offset: -2
-## cperl-indent-level: 2
-## cperl-brace-offset: 0
-## cperl-continued-brace-offset: 0
-## cperl-label-offset: -2
-## cperl-extra-newline-before-brace: t
-## cperl-merge-trailing-else: nil
-## cperl-continued-statement-offset: 2
-## End:

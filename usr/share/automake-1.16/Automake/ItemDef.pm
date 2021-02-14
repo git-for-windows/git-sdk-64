@@ -17,6 +17,8 @@ package Automake::ItemDef;
 
 use 5.006;
 use strict;
+use warnings FATAL => 'all';
+
 use Carp;
 
 =head1 NAME

@@ -36,21 +36,24 @@ This perl module provides various general purpose file handling functions.
 
 use 5.006;
 use strict;
+use warnings FATAL => 'all';
+
 use Exporter;
 use File::stat;
 use IO::File;
+
 use Automake::Channels;
 use Automake::ChannelDefs;
 
-use vars qw (@ISA @EXPORT);
+our @ISA = qw (Exporter);
+our @EXPORT = qw (&contents
+		  &find_file &mtime
+		  &update_file
+		  &xsystem &xsystem_hint &xqx
+		  &dir_has_case_matching_file &reset_dir_cache
+		  &set_dir_cache_file);
 
-@ISA = qw (Exporter);
-@EXPORT = qw (&contents
-	      &find_file &mtime
-	      &update_file &up_to_date_p
-	      &xsystem &xsystem_hint &xqx
-	      &dir_has_case_matching_file &reset_dir_cache
-	      &set_dir_cache_file);
+=over 4
 
 =item C<find_file ($file_name, @include)>
 
@@ -176,34 +179,6 @@ sub update_file ($$;$)
 	or fatal "cannot rename $from as $to: $!";
       msg 'note', "'$to' is created";
     }
-}
-
-
-=item C<up_to_date_p ($file, @dep)>
-
-Is C<$file> more recent than C<@dep>?
-
-=cut
-
-# $BOOLEAN
-# &up_to_date_p ($FILE, @DEP)
-# ---------------------------
-sub up_to_date_p ($@)
-{
-  my ($file, @dep) = @_;
-  my $mtime = mtime ($file);
-
-  foreach my $dep (@dep)
-    {
-      if ($mtime < mtime ($dep))
-	{
-	  verb "up_to_date ($file): outdated: $dep";
-	  return 0;
-	}
-    }
-
-  verb "up_to_date ($file): up to date";
-  return 1;
 }
 
 
@@ -356,7 +331,7 @@ same file).
 
 =cut
 
-use vars '%_directory_cache';
+our %_directory_cache;
 sub dir_has_case_matching_file ($$)
 {
   # Note that print File::Spec->case_tolerant returns 0 even on MacOS
@@ -404,5 +379,9 @@ sub set_dir_cache_file ($$)
   $_directory_cache{$dirname}{$file_name} = 1
     if exists $_directory_cache{$dirname};
 }
+
+=back
+
+=cut
 
 1; # for require

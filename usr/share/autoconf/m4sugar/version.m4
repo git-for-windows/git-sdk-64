@@ -5,8 +5,8 @@
 
 m4_define([m4_PACKAGE_NAME],      [GNU Autoconf])
 m4_define([m4_PACKAGE_TARNAME],   [autoconf])
-m4_define([m4_PACKAGE_VERSION],   [2.69])
-m4_define([m4_PACKAGE_STRING],    [GNU Autoconf 2.69])
+m4_define([m4_PACKAGE_VERSION],   [2.71])
+m4_define([m4_PACKAGE_STRING],    [GNU Autoconf 2.71])
 m4_define([m4_PACKAGE_BUGREPORT], [bug-autoconf@gnu.org])
-m4_define([m4_PACKAGE_URL],       [http://www.gnu.org/software/autoconf/])
-m4_define([m4_PACKAGE_YEAR],      [2012])
+m4_define([m4_PACKAGE_URL],       [https://www.gnu.org/software/autoconf/])
+m4_define([m4_PACKAGE_YEAR],      [2021])

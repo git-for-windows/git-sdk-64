@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 # aclocal - create aclocal.m4 by scanning configure.ac      -*- perl -*-
 # Generated from bin/aclocal.in; do not edit by hand.
 # Copyright (C) 1996-2020 Free Software Foundation, Inc.
@@ -19,13 +19,18 @@
 # Written by Tom Tromey <tromey@redhat.com>, and
 # Alexandre Duret-Lutz <adl@gnu.org>.
 
+use 5.006;
+use strict;
+use warnings FATAL => 'all';
+
 BEGIN
 {
   unshift (@INC, '/usr/share/automake-1.16')
     unless $ENV{AUTOMAKE_UNINSTALLED};
 }
 
-use strict;
+use File::Basename;
+use File::Path ();
 
 use Automake::Config;
 use Automake::General;
@@ -34,8 +39,6 @@ use Automake::Channels;
 use Automake::ChannelDefs;
 use Automake::XFile;
 use Automake::FileUtils;
-use File::Basename;
-use File::Path ();
 
 # Some globals.
 
@@ -284,7 +287,7 @@ sub install_file ($$)
 	    {
 	      # $dest does not exist.  We create an empty one just to
 	      # run diff, and we erase it afterward.  Using the real
-	      # the destination file (rather than a temporary file) is
+	      # destination file (rather than a temporary file) is
 	      # good when diff is run with options that display the
 	      # file name.
 	      #
@@ -759,22 +762,19 @@ sub trace_used_macros ()
   my %files = map { $map{$_} => 1 } keys %macro_seen;
   %files = strip_redundant_includes %files;
 
-  # When AC_CONFIG_MACRO_DIRS is used, avoid possible spurious warnings
-  # from autom4te about macros being "m4_require'd but not m4_defun'd";
-  # for more background, see:
-  # https://lists.gnu.org/archive/html/autoconf-patches/2012-11/msg00004.html
-  # as well as autoconf commit 'v2.69-44-g1ed0548', "warn: allow aclocal
-  # to silence m4_require warnings".
-  my $early_m4_code .= "m4_define([m4_require_silent_probe], [-])";
+  # Suppress all warnings from this invocation of autom4te.
+  # In particular we want to avoid spurious warnings about
+  # macros being "m4_require'd but not m4_defun'd" because
+  # aclocal.m4 is not yet available.
+  local $ENV{WARNINGS} = 'none';
 
   my $traces = ($ENV{AUTOM4TE} || 'autom4te');
   $traces .= " --language Autoconf-without-aclocal-m4 ";
-  $traces = "echo '$early_m4_code' | $traces - ";
 
   # Support AC_CONFIG_MACRO_DIRS also with older autoconf.
   # Note that we can't use '$ac_config_macro_dirs_fallback' here, because
-  # a bug in option parsing code of autom4te 2.68 and earlier will cause
-  # it to read standard input last, even if the "-" argument is specified
+  # a bug in option parsing code of autom4te 2.68 and earlier would cause
+  # it to read standard input last, even if the "-" argument was specified
   # early.
   # FIXME: To be removed in Automake 2.0, once we can assume autoconf
   #        2.70 or later.
@@ -804,7 +804,7 @@ sub trace_used_macros ()
 		   # characters (like newlines).
 		   (map { "--trace='$_:\$f::\$n'" } (keys %macro_seen)));
 
-  verb "running $traces $configure_ac";
+  verb "running WARNINGS=$ENV{WARNINGS} $traces $configure_ac";
 
   my $tracefh = new Automake::XFile ("$traces $configure_ac |");
 
@@ -1045,15 +1045,11 @@ Options:
       --verbose             don't be silent
       --version             print version number, then exit
   -W, --warnings=CATEGORY   report the warnings falling in CATEGORY
+EOF
 
-Warning categories include:
-  syntax        dubious syntactic constructs (default)
-  unsupported   unknown macros (default)
-  all           all the warnings (default)
-  no-CATEGORY   turn off warnings in CATEGORY
-  none          turn off all the warnings
-  error         treat warnings as errors
+  print Automake::ChannelDefs::usage (), "\n";
 
+  print <<'EOF';
 Report bugs to <bug-automake@gnu.org>.
 GNU Automake home page: <https://www.gnu.org/software/automake/>.
 General help using GNU software: <https://www.gnu.org/gethelp/>.
@@ -1082,6 +1078,7 @@ sub parse_arguments ()
 {
   my $print_and_exit = 0;
   my $diff_command;
+  my @warnings = ();
 
   my %cli_options =
     (
@@ -1097,11 +1094,12 @@ sub parse_arguments ()
      'output=s'		=> \$output_file,
      'print-ac-dir'     => \$print_and_exit,
      'verbose'		=> sub { setup_channel 'verb', silent => 0; },
-     'W|warnings=s'     => \&parse_warnings,
+     'W|warnings=s'     => \@warnings,
      );
 
   use Automake::Getopt ();
   Automake::Getopt::parse_options %cli_options;
+  parse_warnings @warnings;
 
   if (@ARGV > 0)
     {

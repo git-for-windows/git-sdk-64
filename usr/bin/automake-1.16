@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 # automake - create Makefile.in from Makefile.am            -*- perl -*-
 # Generated from bin/automake.in; do not edit by hand.
 # Copyright (C) 1994-2020 Free Software Foundation, Inc.
@@ -22,7 +22,9 @@
 
 package Automake;
 
+use 5.006;
 use strict;
+use warnings FATAL => 'all';
 
 BEGIN
 {
@@ -38,6 +40,10 @@ BEGIN
   # the user's SHELL (which may be something like tcsh).
   $ENV{'SHELL'} = '/bin/sh' if exists $ENV{'DJDIR'};
 }
+
+use Carp;
+use File::Basename;
+use File::Spec;
 
 use Automake::Config;
 BEGIN
@@ -66,9 +72,6 @@ use Automake::Rule;
 use Automake::RuleDef;
 use Automake::Wrap 'makefile_wrap';
 use Automake::Language;
-use File::Basename;
-use File::Spec;
-use Carp;
 
 ## ----------------------- ##
 ## Subroutine prototypes.  ##
@@ -4255,6 +4258,9 @@ sub handle_configure
       # Use $(install_sh), not $(MKDIR_P) because the latter requires
       # at least one argument, and $(mkinstalldirs) used to work
       # even without arguments (e.g. $(mkinstalldirs) $(conditional_dir)).
+      # Also, $(MKDIR_P) uses the umask for any intermediate directories
+      # created, whereas we want them to be created with umask 022
+      # so that they are mode 755.
       define_variable ('mkinstalldirs', '$(install_sh) -d', INTERNAL);
     }
 
@@ -4951,7 +4957,7 @@ sub handle_tests ()
 	  if ($handle_exeext)
 	    {
 	      unshift (@test_suffixes, $at_exeext)
-	        unless $test_suffixes[0] eq $at_exeext;
+	        unless @test_suffixes && $test_suffixes[0] eq $at_exeext;
 	    }
 	  unshift (@test_suffixes, '');
 
@@ -5243,6 +5249,11 @@ sub scan_autoconf_traces
 		sinclude => 1,
 	      );
 
+  # Suppress all warnings from this invocation of autoconf.
+  # The user is presumably about to run autoconf themselves
+  # and will see its warnings then.
+  local $ENV{WARNINGS} = 'none';
+
   my $traces = ($ENV{AUTOCONF} || 'autoconf') . " ";
 
   # Use a separator unlikely to be used, not ':', the default, which
@@ -5251,8 +5262,8 @@ sub scan_autoconf_traces
 		   map { "--trace=$_" . ':\$f:\$l::\$d::\$n::\${::}%' }
 		   (keys %traced));
 
+  verb "running WARNINGS=$ENV{WARNINGS} $traces";
   my $tracefh = new Automake::XFile ("$traces $filename |");
-  verb "reading $traces";
 
   @cond_stack = ();
   my $where;
@@ -5719,13 +5730,18 @@ sub lang_vala_finish_target
       my $c_file = $vala_file;
       if ($c_file =~ s/(.*)\.vala$/$1.c/)
         {
-          $c_file = "\$(srcdir)/$c_file";
-          $output_rules .= "$c_file: \$(srcdir)/${derived}_vala.stamp\n"
-            . "\t\@if test -f \$@; then :; else rm -f \$(srcdir)/${derived}_vala.stamp; fi\n"
+          my $built_c_file = "\$(builddir)/$c_file";
+          my $built_dir = dirname $built_c_file;
+          my $base_c_file = basename $c_file;
+          $output_rules .= "$built_c_file: \$(builddir)/${derived}_vala.stamp\n"
+            . "\t\@if test ! -f \$@ && test \$(srcdir) != \$(builddir) && test -n \"\$\$(find -L \$(srcdir)/$c_file -prune -newer \$(srcdir)/$vala_file)\"; then cp -p \$(srcdir)/$c_file $built_c_file; fi\n"
+            . "\t\@if test -f \$@; then :; else rm -f \$(builddir)/${derived}_vala.stamp; fi\n"
             . "\t\@if test -f \$@; then :; else \\\n"
-            . "\t  \$(MAKE) \$(AM_MAKEFLAGS) \$(srcdir)/${derived}_vala.stamp; \\\n"
+            . "\t  \$(MAKE) \$(AM_MAKEFLAGS) \$(builddir)/${derived}_vala.stamp; \\\n"
+            . "\t  if test $built_dir != .; then mv $base_c_file $built_dir/; fi \\\n"
             . "\tfi\n";
-	  $clean_files{$c_file} = MAINTAINER_CLEAN;
+	  $clean_files{$built_c_file} = DIST_CLEAN;
+	  $clean_files{"\$(srcdir)/$c_file"} = MAINTAINER_CLEAN;
         }
     }
 
@@ -5736,20 +5752,35 @@ sub lang_vala_finish_target
       my $lastflag = '';
       foreach my $flag ($flags->value_as_list_recursive)
 	{
-	  if (grep (/$lastflag/, ('-H', '-h', '--header', '--internal-header',
-	                          '--vapi', '--internal-vapi', '--gir')))
+	  if (grep (/^$lastflag$/, ('-H', '-h', '--header', '--internal-header',
+	                            '--vapi', '--internal-vapi', '--gir')))
 	    {
-	      my $headerfile = "\$(srcdir)/$flag";
-	      $output_rules .= "$headerfile: \$(srcdir)/${derived}_vala.stamp\n"
-		. "\t\@if test -f \$@; then :; else rm -f \$(srcdir)/${derived}_vala.stamp; fi\n"
+	      my $headerfile = "\$(builddir)/$flag";
+	      $output_rules .= "$headerfile: \$(builddir)/${derived}_vala.stamp\n"
+		. "\t\@if test -f \$@; then :; else rm -f \$(builddir)/${derived}_vala.stamp; fi\n"
 		. "\t\@if test -f \$@; then :; else \\\n"
-		. "\t  \$(MAKE) \$(AM_MAKEFLAGS) \$(srcdir)/${derived}_vala.stamp; \\\n"
+		. "\t  \$(MAKE) \$(AM_MAKEFLAGS) \$(builddir)/${derived}_vala.stamp; \\\n"
 		. "\tfi\n";
 
 	      # valac is not used when building from dist tarballs
 	      # distribute the generated files
 	      push_dist_common ($headerfile);
 	      $clean_files{$headerfile} = MAINTAINER_CLEAN;
+	    }
+	  if (grep (/$lastflag/, ('--library')))
+	    {
+	      my $headerfile = "\$(builddir)/$flag";
+	      $output_rules .= "$headerfile.vapi: \$(builddir)/${derived}_vala.stamp\n"
+		. "\t\@if test -f \$@; then :; else rm -f \$(builddir)/${derived}_vala.stamp; fi\n"
+		. "\t\@if test -f \$@; then :; else \\\n"
+		. "\t  \$(MAKE) \$(AM_MAKEFLAGS) \$(builddir)/${derived}_vala.stamp; \\\n"
+		. "\tfi\n";
+
+	      # valac is not used when building from dist tarballs
+	      # distribute the generated files
+	      my $vapi = "$headerfile.vapi";
+	      push_dist_common ($vapi);
+	      $clean_files{$headerfile.'.vapi'} = MAINTAINER_CLEAN;
 	    }
 	  $lastflag = $flag;
 	}
@@ -5774,10 +5805,10 @@ sub lang_vala_finish_target
 
   my $verbose = verbose_flag ('VALAC');
   my $silent = silent_flag ();
-  my $stampfile = "\$(srcdir)/${derived}_vala.stamp";
+  my $stampfile = "\$(builddir)/${derived}_vala.stamp";
 
   $output_rules .=
-    "\$(srcdir)/${derived}_vala.stamp: @vala_sources\n".
+    "\$(builddir)/${derived}_vala.stamp: @vala_sources\n".
 # Since the C files generated from the vala sources depend on the
 # ${derived}_vala.stamp file, we must ensure its timestamp is older than
 # those of the C files generated by the valac invocation below (this is
@@ -5785,7 +5816,7 @@ sub lang_vala_finish_target
 # Thus we need to create the stamp file *before* invoking valac, and to
 # move it to its final location only after valac has been invoked.
     "\t${silent}rm -f \$\@ && echo stamp > \$\@-t\n".
-    "\t${verbose}\$(am__cd) \$(srcdir) && $compile @vala_sources\n".
+    "\t${verbose}$compile \$^\n".
     "\t${silent}mv -f \$\@-t \$\@\n";
 
   push_dist_common ($stampfile);
@@ -8108,7 +8139,7 @@ Library files:
   -f, --force-missing    force update of standard files
 
 ";
-    Automake::ChannelDefs::usage;
+    print Automake::ChannelDefs::usage (), "\n";
 
     print "\nFiles automatically distributed if found " .
           "(always):\n";
@@ -8178,10 +8209,7 @@ sub parse_arguments ()
   set_strictness ($strict);
   my $cli_where = new Automake::Location;
   set_global_option ('no-dependencies', $cli_where) if $ignore_deps;
-  for my $warning (@warnings)
-    {
-      parse_warnings ('-W', $warning);
-    }
+  parse_warnings @warnings;
 
   return unless @ARGV;
 

@@ -17,8 +17,10 @@ package Automake::Language;
 
 use 5.006;
 use strict;
+use warnings FATAL => 'all';
 
 use Class::Struct ();
+
 Class::Struct::struct (
 	# Short name of the language (c, f77...).
 	'name' => "\$",

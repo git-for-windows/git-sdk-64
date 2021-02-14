@@ -17,7 +17,10 @@ package Automake::Rule;
 
 use 5.006;
 use strict;
+use warnings FATAL => 'all';
+
 use Carp;
+use Exporter;
 
 use Automake::Item;
 use Automake::RuleDef;
@@ -26,15 +29,14 @@ use Automake::Channels;
 use Automake::Options;
 use Automake::Condition qw (TRUE FALSE);
 use Automake::DisjConditions;
-require Exporter;
-use vars '@ISA', '@EXPORT', '@EXPORT_OK';
-@ISA = qw/Automake::Item Exporter/;
-@EXPORT = qw (reset register_suffix_rule next_in_suffix_chain
-	      suffixes rules $KNOWN_EXTENSIONS_PATTERN
-	      depend %dependencies %actions register_action
-	      accept_extensions
-	      reject_rule msg_rule msg_cond_rule err_rule err_cond_rule
-	      rule rrule ruledef rruledef);
+
+our @ISA = qw (Automake::Item Exporter);
+our @EXPORT = qw (reset register_suffix_rule next_in_suffix_chain
+		  suffixes rules $KNOWN_EXTENSIONS_PATTERN
+		  depend %dependencies %actions register_action
+		  accept_extensions
+		  reject_rule msg_rule msg_cond_rule err_rule err_cond_rule
+		  rule rrule ruledef rruledef);
 
 =head1 NAME
 
@@ -120,7 +122,7 @@ Makefile: keeping related stuff altogether.
 
 =cut
 
-use vars '%dependencies';
+our %dependencies;
 
 =item <%actions>
 
@@ -129,7 +131,7 @@ only when keys exists in C<%dependencies>.
 
 =cut
 
-use vars '%actions';
+our %actions;
 
 =item C<$KNOWN_EXTENSIONS_PATTERN>
 
@@ -142,8 +144,7 @@ New extensions should be registered with C<accept_extensions>.
 
 =cut
 
-use vars qw ($KNOWN_EXTENSIONS_PATTERN);
-$KNOWN_EXTENSIONS_PATTERN = "";
+our $KNOWN_EXTENSIONS_PATTERN = "";
 
 =back
 

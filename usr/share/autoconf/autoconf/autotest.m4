@@ -1,6 +1,6 @@
 # This file is part of Autoconf.                       -*- Autoconf -*-
 # Interface with Autotest.
-# Copyright (C) 1992-1996, 1998-2005, 2009-2012 Free Software
+# Copyright (C) 1992-1996, 1998-2005, 2009-2017, 2020-2021 Free Software
 # Foundation, Inc.
 
 # This file is part of Autoconf.  This program is free
@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # and a copy of the Autoconf Configure Script Exception along with
 # this program; see the files COPYINGv3 and COPYING.EXCEPTION
-# respectively.  If not, see <http://www.gnu.org/licenses/>.
+# respectively.  If not, see <https://www.gnu.org/licenses/>.
 
 # Written by David MacKenzie, with help from
 # Franc,ois Pinard, Karl Berry, Richard Pixley, Ian Lance Taylor,
@@ -59,6 +59,9 @@ abs_top_builddir='$ac_abs_top_builddir'
 # Backward compatibility with Autotest <= 2.59b:
 at_top_builddir=\$at_top_build_prefix
 
+m4_provide_if([_AC_COMPILER_EXEEXT], [
+EXEEXT='$ac_cv_exeext'
+])dnl
 AUTOTEST_PATH='m4_default([$2], [$1])'
 
 SHELL=\${CONFIG_SHELL-'$SHELL'}
@@ -71,7 +74,8 @@ ERLCFLAGS='$ERLCFLAGS'
 ])dnl
 ATEOF
 ],
-[m4_provide_if([AC_ERLANG_PATH_ERL], [ERL="$ERL"
+[m4_provide_if([_AC_COMPILER_EXEEXT], [ac_cv_exeext="$ac_cv_exeext"
+])m4_provide_if([AC_ERLANG_PATH_ERL], [ERL="$ERL"
 ])m4_provide_if([AC_ERLANG_PATH_ERLC], [ERLC="$ERLC"
 ERLCFLAGS="$ERLCFLAGS"
 ])])])# AC_CONFIG_TESTDIR

@@ -1,6 +1,7 @@
 # This file is part of Autoconf.                       -*- Autoconf -*-
 # Parameterizing and creating config.status.
-# Copyright (C) 1992-1996, 1998-2012 Free Software Foundation, Inc.
+# Copyright (C) 1992-1996, 1998-2017, 2020-2021 Free Software
+# Foundation, Inc.
 
 # This file is part of Autoconf.  This program is free
 # software; you can redistribute it and/or modify it under the
@@ -20,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # and a copy of the Autoconf Configure Script Exception along with
 # this program; see the files COPYINGv3 and COPYING.EXCEPTION
-# respectively.  If not, see <http://www.gnu.org/licenses/>.
+# respectively.  If not, see <https://www.gnu.org/licenses/>.
 
 
 # Written by David MacKenzie, with help from
@@ -441,7 +442,7 @@ dnl
 dnl Notes to the main part of the awk script:
 dnl - the unusual FS value helps prevent running into the limit of 99 fields,
 dnl - we avoid sub/gsub because of the \& quoting issues, see
-dnl   http://www.gnu.org/software/gawk/manual/html_node/Gory-Details.html
+dnl   https://www.gnu.org/software/gawk/manual/html_node/Gory-Details.html
 dnl - Writing `$ 0' prevents expansion by both the shell and m4 here.
 dnl
 dnl m4-double-quote most of the scripting for readability.
@@ -713,11 +714,9 @@ dnl  fi
 AC_DEFUN([AC_CONFIG_HEADERS], [_AC_CONFIG_FOOS([HEADERS], $@)])
 
 
-# AC_CONFIG_HEADER(HEADER-TO-CREATE ...)
+# AU::AC_CONFIG_HEADER(HEADER-TO-CREATE ...)
 # --------------------------------------
-# FIXME: Make it obsolete?
-AC_DEFUN([AC_CONFIG_HEADER],
-[AC_CONFIG_HEADERS([$1])])
+AU_ALIAS([AC_CONFIG_HEADER], [AC_CONFIG_HEADERS])
 
 
 # _AC_OUTPUT_HEADERS_PREPARE
@@ -881,7 +880,7 @@ m4_define([_AC_OUTPUT_HEADER],
   #
   if test x"$ac_file" != x-; then
     {
-      AS_ECHO(["/* $configure_input  */"]) \
+      AS_ECHO(["/* $configure_input  */"]) >&1 \
       && eval '$AWK -f "$ac_tmp/defines.awk"' "$ac_file_inputs"
     } >"$ac_tmp/config.h" \
       || AC_MSG_ERROR([could not create $ac_file])
@@ -893,7 +892,7 @@ m4_define([_AC_OUTPUT_HEADER],
 	|| AC_MSG_ERROR([could not create $ac_file])
     fi
   else
-    AS_ECHO(["/* $configure_input  */"]) \
+    AS_ECHO(["/* $configure_input  */"]) >&1 \
       && eval '$AWK -f "$ac_tmp/defines.awk"' "$ac_file_inputs" \
       || AC_MSG_ERROR([could not create -])
   fi
@@ -1095,15 +1094,17 @@ m4_define([AC_OUTPUT_COMMANDS_POST])
 #   included, if for instance the user refused a part of the tree.
 #   This is used in _AC_OUTPUT_SUBDIRS.
 AC_DEFUN([AC_CONFIG_SUBDIRS],
-[AC_REQUIRE([AC_CONFIG_AUX_DIR_DEFAULT])]dnl
+[_$0(m4_validate_w([$1]))])
+
+m4_define([_AC_CONFIG_SUBDIRS],
 [AC_REQUIRE([AC_DISABLE_OPTION_CHECKING])]dnl
+[AS_LITERAL_IF([$1], [],
+	       [m4_warn([syntax], [$0: you should use literals])])]dnl
 [m4_map_args_w([$1], [_AC_CONFIG_UNIQUE([SUBDIRS],
   _AC_CONFIG_COMPUTE_DEST(], [))])]dnl
 [m4_append([_AC_LIST_SUBDIRS], [$1], [
 ])]dnl
-[AS_LITERAL_IF([$1], [],
-	       [AC_DIAGNOSE([syntax], [$0: you should use literals])])]dnl
-[AC_SUBST([subdirs], ["$subdirs m4_normalize([$1])"])])
+[AC_SUBST([subdirs], ["$subdirs $1"])])
 
 
 # _AC_OUTPUT_SUBDIRS
@@ -1189,14 +1190,12 @@ if test "$no_recursion" != yes; then
 
     cd "$ac_dir"
 
-    # Check for guested configure; otherwise get Cygnus style configure.
+    # Check for configure.gnu first; this name is used for a wrapper for
+    # Metaconfig's "Configure" on case-insensitive file systems.
     if test -f "$ac_srcdir/configure.gnu"; then
       ac_sub_configure=$ac_srcdir/configure.gnu
     elif test -f "$ac_srcdir/configure"; then
       ac_sub_configure=$ac_srcdir/configure
-    elif test -f "$ac_srcdir/configure.in"; then
-      # This should be Cygnus configure.
-      ac_sub_configure=$ac_aux_dir/configure
     else
       AC_MSG_WARN([no configuration information is in $ac_dir])
       ac_sub_configure=
@@ -1256,8 +1255,8 @@ m4_ifvaln([$1],
 m4_ifvaln([$2$3],
 	  [AC_CONFIG_COMMANDS(default, [$2], [$3])])dnl
 m4_ifval([$1$2$3],
-	 [AC_DIAGNOSE([obsolete],
-		      [$0 should be used without arguments.
+	 [m4_warn([obsolete],
+		  [$0 should be used without arguments.
 You should run autoupdate.])])dnl
 AC_CACHE_SAVE
 
@@ -1308,6 +1307,12 @@ AC_PROVIDE_IFELSE([AC_CONFIG_SUBDIRS], [_AC_OUTPUT_SUBDIRS()])dnl
 if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   AC_MSG_WARN([unrecognized options: $ac_unrecognized_opts])
 fi
+dnl
+dnl Record that AC_OUTPUT has been called.  It doesn't make sense to
+dnl AC_REQUIRE AC_OUTPUT, but it _does_ make sense for macros to say
+dnl AC_BEFORE([self], [AC_OUTPUT]).  Also, _AC_FINALIZE checks
+dnl for AC_OUTPUT having been called.
+m4_provide([AC_OUTPUT])dnl
 ])# AC_OUTPUT
 
 
@@ -1428,11 +1433,13 @@ Report bugs to m4_ifset([AC_PACKAGE_BUGREPORT], [<AC_PACKAGE_BUGREPORT>],
 m4_ifdef([AC_PACKAGE_NAME], [m4_ifset([AC_PACKAGE_URL], [
 AC_PACKAGE_NAME home page: <AC_PACKAGE_URL>.])dnl
 m4_if(m4_index(m4_defn([AC_PACKAGE_NAME]), [GNU ]), [0], [
-General help using GNU software: <http://www.gnu.org/gethelp/>.])])"
+General help using GNU software: <https://www.gnu.org/gethelp/>.])])"
 
 _ACEOF
+ac_cs_config=`AS_ECHO(["$ac_configure_args"]) | sed "$ac_safe_unquote"`
+ac_cs_config_escaped=`AS_ECHO(["$ac_cs_config"]) | sed "s/^ //; s/'/'\\\\\\\\''/g"`
 cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
-ac_cs_config="`AS_ECHO(["$ac_configure_args"]) | sed 's/^ //; s/[[\\""\`\$]]/\\\\&/g'`"
+ac_cs_config='$ac_cs_config_escaped'
 ac_cs_version="\\
 m4_ifset([AC_PACKAGE_NAME], [AC_PACKAGE_NAME ])config.status[]dnl
 m4_ifset([AC_PACKAGE_VERSION], [ AC_PACKAGE_VERSION])
@@ -1604,16 +1611,16 @@ AC_DEFUN([_AC_OUTPUT_MAIN_LOOP],
 # bizarre bug on SunOS 4.1.3.
 if $ac_need_defaults; then
 m4_ifdef([_AC_SEEN_CONFIG(FILES)],
-[  test "${CONFIG_FILES+set}" = set || CONFIG_FILES=$config_files
+[  test ${CONFIG_FILES+y} || CONFIG_FILES=$config_files
 ])dnl
 m4_ifdef([_AC_SEEN_CONFIG(HEADERS)],
-[  test "${CONFIG_HEADERS+set}" = set || CONFIG_HEADERS=$config_headers
+[  test ${CONFIG_HEADERS+y} || CONFIG_HEADERS=$config_headers
 ])dnl
 m4_ifdef([_AC_SEEN_CONFIG(LINKS)],
-[  test "${CONFIG_LINKS+set}" = set || CONFIG_LINKS=$config_links
+[  test ${CONFIG_LINKS+y} || CONFIG_LINKS=$config_links
 ])dnl
 m4_ifdef([_AC_SEEN_CONFIG(COMMANDS)],
-[  test "${CONFIG_COMMANDS+set}" = set || CONFIG_COMMANDS=$config_commands
+[  test ${CONFIG_COMMANDS+y} || CONFIG_COMMANDS=$config_commands
 ])dnl
 fi
 

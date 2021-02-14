@@ -17,14 +17,16 @@ package Automake::RuleDef;
 
 use 5.006;
 use strict;
+use warnings FATAL => 'all';
+
 use Carp;
+use Exporter;
+
 use Automake::ChannelDefs;
 use Automake::ItemDef;
 
-require Exporter;
-use vars '@ISA', '@EXPORT';
-@ISA = qw/Automake::ItemDef Exporter/;
-@EXPORT = qw (&RULE_AUTOMAKE &RULE_USER);
+our @ISA = qw (Automake::ItemDef Exporter);
+our @EXPORT = qw (&RULE_AUTOMAKE &RULE_USER);
 
 =head1 NAME
 

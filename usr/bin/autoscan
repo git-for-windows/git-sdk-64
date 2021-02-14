@@ -1,9 +1,10 @@
-#! /usr/bin/perl -w
+#! /usr/bin/perl
 # -*- perl -*-
-# Generated from autoscan.in; do not edit by hand.
+# Generated from bin/autoscan.in; do not edit by hand.
 
 # autoscan - Create configure.scan (a preliminary configure.ac) for a package.
-# Copyright (C) 1994, 1999-2012 Free Software Foundation, Inc.
+# Copyright (C) 1994, 1999-2017, 2020-2021 Free Software Foundation,
+# Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,12 +17,16 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Written by David MacKenzie <djm@gnu.ai.mit.edu>.
 
 eval 'case $# in 0) exec /usr/bin/perl -S "$0";; *) exec /usr/bin/perl -S "$0" "$@";; esac'
     if 0;
+
+use 5.006;
+use strict;
+use warnings FATAL => 'all';
 
 BEGIN
 {
@@ -35,16 +40,16 @@ BEGIN
   $ENV{'SHELL'} = '/bin/sh' if ($^O eq 'dos');
 }
 
-use Autom4te::ChannelDefs;
-use Autom4te::Configure_ac;
-use Autom4te::General;
-use Autom4te::FileUtils;
-use Autom4te::XFile;
 use File::Basename;
 use File::Find;
-use strict;
 
-use vars qw(@cfiles @makefiles @shfiles @subdirs %printed);
+use Autom4te::ChannelDefs;
+use Autom4te::Configure_ac;
+use Autom4te::FileUtils;
+use Autom4te::General;
+use Autom4te::XFile;
+
+my (@cfiles, @makefiles, @shfiles, @subdirs, %printed);
 
 # The kind of the words we are looking for.
 my @kinds = qw (function header identifier program
@@ -68,10 +73,10 @@ my %kind_comment =
    'program'    => 'Checks for programs.',
   );
 
-# $USED{KIND}{ITEM} is the list of locations where the ITEM (of KIND) was used
-# in the user package.
-# For instance $USED{function}{alloca} is the list of `file:line' where
-# `alloca (...)' appears.
+# $USED{KIND}{ITEM} is the list of locations where the ITEM (of KIND) was
+# used in the user package.
+# For instance $USED{function}{alloca} is the list of 'file:line' where
+# 'alloca (...)' appears.
 my %used = ();
 
 # $MACRO{KIND}{ITEM} is the list of macros to use to test ITEM.
@@ -80,14 +85,13 @@ my %used = ();
 my %macro = ();
 
 # $NEEDED_MACROS{MACRO} is an array of locations requiring MACRO.
-# E.g., $NEEDED_MACROS{AC_FUNC_ALLOC} the list of `file:line' containing
-# `alloca (...)'.
+# E.g., $NEEDED_MACROS{AC_FUNC_ALLOC} the list of 'file:line' containing
+# 'alloca (...)'.
 my %needed_macros =
   (
    'AC_PREREQ' => [$me],
   );
 
-my $configure_scan = 'configure.scan';
 my $log;
 
 # Autoconf and lib files.
@@ -103,8 +107,8 @@ $help = "Usage: $0 [OPTION]... [SRCDIR]
 Examine source files in the directory tree rooted at SRCDIR, or the
 current directory if none is given.  Search the source files for
 common portability problems, check for incompleteness of
-`configure.ac', and create a file `$configure_scan' which is a
-preliminary `configure.ac' for that package.
+'configure.ac', and create a file 'configure.scan' which is a
+preliminary 'configure.ac' for that package.
 
   -h, --help          print this help, then exit
   -V, --version       print version number, then exit
@@ -116,16 +120,16 @@ Library directories:
   -I, --include=DIR          append directory DIR to search path
 
 Report bugs to <bug-autoconf\@gnu.org>.
-GNU Autoconf home page: <http://www.gnu.org/software/autoconf/>.
-General help using GNU software: <http://www.gnu.org/gethelp/>.
+GNU Autoconf home page: <https://www.gnu.org/software/autoconf/>.
+General help using GNU software: <https://www.gnu.org/gethelp/>.
 ";
 
 # $version
 # --------
-$version = "autoscan (GNU Autoconf) 2.69
-Copyright (C) 2012 Free Software Foundation, Inc.
+$version = "autoscan (GNU Autoconf) 2.71
+Copyright (C) 2021 Free Software Foundation, Inc.
 License GPLv3+/Autoconf: GNU GPL version 3 or later
-<http://gnu.org/licenses/gpl.html>, <http://gnu.org/licenses/exceptions.html>
+<https://gnu.org/licenses/gpl.html>, <https://gnu.org/licenses/exceptions.html>
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
@@ -148,7 +152,7 @@ sub parse_args ()
 	  'B|prepend-include=s' => \@prepend_include);
 
   die "$me: too many arguments
-Try `$me --help' for more information.\n"
+Try '$me --help' for more information.\n"
     if @ARGV > 1;
 
   my $srcdir = $ARGV[0] || ".";
@@ -169,7 +173,7 @@ sub init_tables ()
   # instead of duplicating the code in lots of configure.ac files.
   my $file = find_file ("autoscan/autoscan.list",
 			reverse (@prepend_include), @include);
-  my $table = new Autom4te::XFile "< " . open_quote ($file);
+  my $table = new Autom4te::XFile ($file, "<");
   my $tables_are_consistent = 1;
 
   while ($_ = $table->getline)
@@ -215,8 +219,8 @@ sub used ($$;$)
   my ($kind, $word, $where) = @_;
   $where ||= "$File::Find::name:$.";
   if (
-      # Check for all the libraries.  But `-links' is certainly a
-      # `find' argument, and `-le', a `test' argument.
+      # Check for all the libraries.  But '-links' is certainly a
+      # 'find' argument, and '-le', a 'test' argument.
       ($kind eq 'library' && $word !~ /^(e|inks)$/)
       # Other than libraries are to be checked only if listed in
       # the Autoscan library files.
@@ -244,7 +248,7 @@ sub scan_c_file ($)
   # Nonzero if in a multiline comment.
   my $in_comment = 0;
 
-  my $file = new Autom4te::XFile "< " . open_quote ($file_name);
+  my $file = new Autom4te::XFile ($file_name, "<");
 
   while ($_ = $file->getline)
     {
@@ -310,7 +314,7 @@ sub scan_makefile ($)
   my ($file_name) = @_;
   push @makefiles, $File::Find::name;
 
-  my $file = new Autom4te::XFile "< " . open_quote ($file_name);
+  my $file = new Autom4te::XFile ($file_name, "<");
 
   while ($_ = $file->getline)
     {
@@ -322,8 +326,8 @@ sub scan_makefile ($)
 	{
 	  used ('makevar', $1);
 	}
-      # Be sure to catch a whole word.  For instance `lex$U.$(OBJEXT)'
-      # is a single token.  Otherwise we might believe `lex' is needed.
+      # Be sure to catch a whole word.  For instance 'lex$U.$(OBJEXT)'
+      # is a single token.  Otherwise we might believe 'lex' is needed.
       foreach my $word (split (/\s+/))
 	{
 	  # Libraries.
@@ -332,8 +336,8 @@ sub scan_makefile ($)
 	      used ('library', $1);
 	    }
 	  # Tokens in the code.
-	  # We allow some additional characters, e.g., `+', since
-	  # autoscan/programs includes `c++'.
+	  # We allow some additional characters, e.g., '+', since
+	  # autoscan/programs includes 'c++'.
 	  if ($word =~ /^[a-zA-Z_][\w+]*$/)
 	    {
 	      used ('program', $word);
@@ -352,13 +356,13 @@ sub scan_sh_file ($)
   my ($file_name) = @_;
   push @shfiles, $File::Find::name;
 
-  my $file = new Autom4te::XFile "< " . open_quote ($file_name);
+  my $file = new Autom4te::XFile ($file_name, "<");
 
   while ($_ = $file->getline)
     {
       # Strip out comments and variable references.
       s/#.*//;
-      s/\${[^\}]*}//g;
+      s/\$\{[^\}]*}//g;
       s/@[^@]*@//g;
 
       # Tokens in the code.
@@ -385,7 +389,7 @@ sub scan_file ()
   # Save $_ as Find::File requires it to be preserved.
   local $_ = $_;
 
-  # Strip a useless leading `./'.
+  # Strip a useless leading './'.
   $File::Find::name =~ s,^\./,,;
 
   if ($_ ne '.' and -d $_ and
@@ -462,7 +466,7 @@ sub output_kind ($$)
     if exists $kind_comment{$kind};
   foreach my $word (sort keys %{$used{$kind}})
     {
-      # Output the needed macro invocations in $configure_scan if not
+      # Output the needed macro invocations in configure.scan if not
       # already printed, and remember these macros are needed.
       foreach my $macro (@{$macro{$kind}{$word}})
 	{
@@ -507,7 +511,7 @@ sub output_libraries ($)
   print $file "\n# Checks for libraries.\n";
   foreach my $word (sort keys %{$used{'library'}})
     {
-      print $file "# FIXME: Replace `main' with a function in `-l$word':\n";
+      print $file "# FIXME: Replace 'main' with a function in '-l$word':\n";
       print $file "AC_CHECK_LIB([$word], [main])\n";
     }
 }
@@ -521,13 +525,13 @@ sub output ($)
   my $configure_scan = shift;
   my %unique_makefiles;
 
-  my $file = new Autom4te::XFile "> " . open_quote ($configure_scan);
+  my $file = new Autom4te::XFile ($configure_scan, ">");
 
   print $file
     ("#                                               -*- Autoconf -*-\n" .
      "# Process this file with autoconf to produce a configure script.\n" .
      "\n" .
-     "AC_PREREQ([2.69])\n" .
+     "AC_PREREQ([2.71])\n" .
      "AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])\n");
   if (defined $cfiles[0])
     {
@@ -583,12 +587,15 @@ sub check_configure_ac ($)
 
   # Find what needed macros are invoked in CONFIGURE_AC.
   # I'd be very happy if someone could explain to me why sort (uniq ...)
-  # doesn't work properly: I need `uniq (sort ...)'.  --akim
+  # doesn't work properly: I need 'uniq (sort ...)'.  --akim
   my $trace_option =
     join (' --trace=', '',
 	  uniq (sort (map { s/\(.*//; $_ } keys %needed_macros)));
 
-  verb "running: $autoconf $trace_option $configure_ac";
+  # Suppress all warnings from the subsidiary autoconf invocation.
+  local $ENV{WARNINGS} = 'none';
+
+  verb "running: WARNINGS=none $autoconf $trace_option $configure_ac";
   my $traces =
     new Autom4te::XFile "$autoconf $trace_option $configure_ac |";
 
@@ -602,7 +609,7 @@ sub check_configure_ac ($)
 	  # separated macros.  But there is no point.
 	  foreach my $word (split (/\s|,/, $args[0]))
 	    {
-	      # AC_CHECK_MEMBERS wants `struct' or `union'.
+	      # AC_CHECK_MEMBERS wants 'struct' or 'union'.
 	      if ($macro eq "AC_CHECK_MEMBERS"
 		  && $word =~ /^stat.st_/)
 		{
@@ -639,7 +646,7 @@ sub check_configure_ac ($)
 ## -------------- ##
 
 parse_args;
-$log = new Autom4te::XFile "> " . open_quote ("$me.log");
+$log = new Autom4te::XFile ("$me.log", ">");
 
 $autoconf .= " --debug" if $debug;
 $autoconf .= " --verbose" if $verbose;

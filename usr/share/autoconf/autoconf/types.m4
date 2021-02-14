@@ -1,7 +1,8 @@
 # This file is part of Autoconf.			-*- Autoconf -*-
 # Type related macros: existence, sizeof, and structure members.
 #
-# Copyright (C) 2000-2002, 2004-2012 Free Software Foundation, Inc.
+# Copyright (C) 2000-2002, 2004-2017, 2020-2021 Free Software
+# Foundation, Inc.
 
 # This file is part of Autoconf.  This program is free
 # software; you can redistribute it and/or modify it under the
@@ -21,7 +22,7 @@
 # You should have received a copy of the GNU General Public License
 # and a copy of the Autoconf Configure Script Exception along with
 # this program; see the files COPYINGv3 and COPYING.EXCEPTION
-# respectively.  If not, see <http://www.gnu.org/licenses/>.
+# respectively.  If not, see <https://www.gnu.org/licenses/>.
 
 # Written by David MacKenzie, with help from
 # Franc,ois Pinard, Karl Berry, Richard Pixley, Ian Lance Taylor,
@@ -237,8 +238,8 @@ AC_DEFUN([AC_CHECK_TYPE],
 	 [_AC_CHECK_TYPE_REPLACEMENT_TYPE_P([$2])], [1],
   [_AC_CHECK_TYPE_OLD],
 	 [_AC_CHECK_TYPE_MAYBE_TYPE_P([$2])], [1],
-  [AC_DIAGNOSE([syntax],
-	       [$0: assuming `$2' is not a type])_AC_CHECK_TYPE_NEW],
+  [m4_warn([syntax],
+	   [$0: assuming `$2' is not a type])_AC_CHECK_TYPE_NEW],
   [_AC_CHECK_TYPE_NEW])($@)])# AC_CHECK_TYPE
 
 
@@ -267,7 +268,7 @@ AC_CACHE_CHECK(type of array argument to getgroups, ac_cv_type_getgroups,
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
 int
-main ()
+main (void)
 {
   gid_t gidset[NGID];
   int i, n;
@@ -505,36 +506,38 @@ AC_DEFUN([AC_TYPE_LONG_LONG_INT],
   AC_REQUIRE([AC_TYPE_UNSIGNED_LONG_LONG_INT])
   AC_CACHE_CHECK([for long long int], [ac_cv_type_long_long_int],
      [ac_cv_type_long_long_int=yes
-      if test "x${ac_cv_prog_cc_c99-no}" = xno; then
-	ac_cv_type_long_long_int=$ac_cv_type_unsigned_long_long_int
-	if test $ac_cv_type_long_long_int = yes; then
-	  dnl Catch a bug in Tandem NonStop Kernel (OSS) cc -O circa 2004.
-	  dnl If cross compiling, assume the bug is not important, since
-	  dnl nobody cross compiles for this platform as far as we know.
-	  AC_RUN_IFELSE(
-	    [AC_LANG_PROGRAM(
-	       [[@%:@include <limits.h>
-		 @%:@ifndef LLONG_MAX
-		 @%:@ define HALF \
-			  (1LL << (sizeof (long long int) * CHAR_BIT - 2))
-		 @%:@ define LLONG_MAX (HALF - 1 + HALF)
-		 @%:@endif]],
-	       [[long long int n = 1;
-		 int i;
-		 for (i = 0; ; i++)
-		   {
-		     long long int m = n << i;
-		     if (m >> i != n)
-		       return 1;
-		     if (LLONG_MAX / 2 < m)
-		       break;
-		   }
-		 return 0;]])],
-	    [],
-	    [ac_cv_type_long_long_int=no],
-	    [:])
-	fi
-      fi])
+      case $ac_prog_cc_stdc in
+	no | c89) ;;
+	*)
+	  ac_cv_type_long_long_int=$ac_cv_type_unsigned_long_long_int
+	  if test $ac_cv_type_long_long_int = yes; then
+	    dnl Catch a bug in Tandem NonStop Kernel (OSS) cc -O circa 2004.
+	    dnl If cross compiling, assume the bug is not important, since
+	    dnl nobody cross compiles for this platform as far as we know.
+	    AC_RUN_IFELSE(
+	      [AC_LANG_PROGRAM(
+		 [[@%:@include <limits.h>
+		   @%:@ifndef LLONG_MAX
+		   @%:@ define HALF \
+			    (1LL << (sizeof (long long int) * CHAR_BIT - 2))
+		   @%:@ define LLONG_MAX (HALF - 1 + HALF)
+		   @%:@endif]],
+		 [[long long int n = 1;
+		   int i;
+		   for (i = 0; ; i++)
+		     {
+		       long long int m = n << i;
+		       if (m >> i != n)
+			 return 1;
+		       if (LLONG_MAX / 2 < m)
+			 break;
+		     }
+		   return 0;]])],
+	      [],
+	      [ac_cv_type_long_long_int=no],
+	      [:])
+	  fi;;
+      esac])
   if test $ac_cv_type_long_long_int = yes; then
     AC_DEFINE([HAVE_LONG_LONG_INT], [1],
       [Define to 1 if the system has the type `long long int'.])
@@ -549,12 +552,14 @@ AC_DEFUN([AC_TYPE_UNSIGNED_LONG_LONG_INT],
   AC_CACHE_CHECK([for unsigned long long int],
     [ac_cv_type_unsigned_long_long_int],
     [ac_cv_type_unsigned_long_long_int=yes
-     if test "x${ac_cv_prog_cc_c99-no}" = xno; then
-       AC_LINK_IFELSE(
-	 [_AC_TYPE_LONG_LONG_SNIPPET],
-	 [],
-	 [ac_cv_type_unsigned_long_long_int=no])
-     fi])
+     case $ac_prog_cc_stdc in
+       no | c89) ;;
+       *)
+	 AC_LINK_IFELSE(
+	   [_AC_TYPE_LONG_LONG_SNIPPET],
+	   [],
+	   [ac_cv_type_unsigned_long_long_int=no]);;
+     esac])
   if test $ac_cv_type_unsigned_long_long_int = yes; then
     AC_DEFINE([HAVE_UNSIGNED_LONG_LONG_INT], [1],
       [Define to 1 if the system has the type `unsigned long long int'.])
@@ -605,7 +610,32 @@ AN_IDENTIFIER([ssize_t], [AC_TYPE_SSIZE_T])
 AC_DEFUN([AC_TYPE_SSIZE_T], [AC_CHECK_TYPE(ssize_t, int)])
 
 AN_IDENTIFIER([pid_t], [AC_TYPE_PID_T])
-AC_DEFUN([AC_TYPE_PID_T],  [AC_CHECK_TYPE(pid_t,  int)])
+AC_DEFUN([AC_TYPE_PID_T],
+[
+  AC_CHECK_TYPE([pid_t],
+    [],
+    [dnl On 64-bit native Microsoft Windows, define it to the equivalent of
+     dnl 'intptr_t' (= 'long long' = '__int64'), because that is the return type
+     dnl of the _spawnv* functions
+     dnl <https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/spawnvp-wspawnvp>
+     dnl and the argument type of the _cwait function
+     dnl <https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/cwait>.
+     dnl Otherwise (on 32-bit Microsoft Windows and on old Unix platforms),
+     dnl define it to 'int'.
+     AC_COMPILE_IFELSE(
+       [AC_LANG_PROGRAM([[
+          #if defined _WIN64 && !defined __CYGWIN__
+          LLP64
+          #endif
+          ]])
+       ],
+       [ac_pid_type='int'],
+       [ac_pid_type='__int64'])
+     AC_DEFINE_UNQUOTED([pid_t], [$ac_pid_type],
+       [Define as a signed integer type capable of holding a process identifier.])
+    ],
+    [AC_INCLUDES_DEFAULT])
+])
 
 AN_IDENTIFIER([off_t], [AC_TYPE_OFF_T])
 AC_DEFUN([AC_TYPE_OFF_T],  [AC_CHECK_TYPE(off_t,  long int)])
@@ -808,9 +838,6 @@ m4_define([_AC_CHECK_ALIGNOF],
 _AC_CACHE_CHECK_INT([alignment of $1], [AS_TR_SH([ac_cv_alignof_$3])],
   [(long int) offsetof (ac__type_alignof_, y)],
   [AC_INCLUDES_DEFAULT([$2])
-#ifndef offsetof
-# define offsetof(type, member) ((char *) &((type *) 0)->member - (char *) 0)
-#endif
 typedef struct { char x; $1 y; } ac__type_alignof_;],
   [if test "$AS_TR_SH([ac_cv_type_$3])" = yes; then
      AC_MSG_FAILURE([cannot compute alignment of $1], 77)

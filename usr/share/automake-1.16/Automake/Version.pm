@@ -17,6 +17,8 @@ package Automake::Version;
 
 use 5.006;
 use strict;
+use warnings FATAL => 'all';
+
 use Automake::ChannelDefs;
 
 =head1 NAME

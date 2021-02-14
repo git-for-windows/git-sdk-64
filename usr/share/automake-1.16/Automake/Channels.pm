@@ -68,24 +68,25 @@ etc.) that can also be overridden on a per-message basis.
 
 use 5.006;
 use strict;
-use Exporter;
+use warnings FATAL => 'all';
+
 use Carp;
+use Exporter;
 use File::Basename;
 
-use vars qw (@ISA @EXPORT %channels $me);
+our @ISA = qw (Exporter);
+our @EXPORT = qw ($exit_code $warnings_are_errors
+		  &reset_local_duplicates &reset_global_duplicates
+		  &register_channel &msg &exists_channel &channel_type
+		  &setup_channel &setup_channel_type
+		  &dup_channel_setup &drop_channel_setup
+		  &buffer_messages &flush_messages
+		  &setup_channel_queue &pop_channel_queue
+		  US_GLOBAL US_LOCAL
+		  UP_NONE UP_TEXT UP_LOC_TEXT);
 
-@ISA = qw (Exporter);
-@EXPORT = qw ($exit_code $warnings_are_errors
-	      &reset_local_duplicates &reset_global_duplicates
-	      &register_channel &msg &exists_channel &channel_type
-	      &setup_channel &setup_channel_type
-	      &dup_channel_setup &drop_channel_setup
-	      &buffer_messages &flush_messages
-	      &setup_channel_queue &pop_channel_queue
-	      US_GLOBAL US_LOCAL
-	      UP_NONE UP_TEXT UP_LOC_TEXT);
-
-$me = basename $0;
+our %channels;
+our $me = basename $0;
 
 =head2 Global Variables
 
@@ -98,8 +99,7 @@ the C<exit_code> options of C<fatal> and C<error> channels.
 
 =cut
 
-use vars qw ($exit_code);
-$exit_code = 0;
+our $exit_code = 0;
 
 =item C<$warnings_are_errors>
 
@@ -108,8 +108,7 @@ errors (i.e. if they should update C<$exit_code>).
 
 =cut
 
-use vars qw ($warnings_are_errors);
-$warnings_are_errors = 0;
+our $warnings_are_errors = 0;
 
 =back
 
@@ -259,11 +258,8 @@ be ignored.
 
 =cut
 
-use vars qw (%_default_options %_global_duplicate_messages
-	     %_local_duplicate_messages);
-
 # Default options for a channel.
-%_default_options =
+our %_default_options =
   (
    type => 'warning',
    exit_code => 1,
@@ -283,8 +279,8 @@ use vars qw (%_default_options %_global_duplicate_messages
 # Filled with output messages as keys, to detect duplicates.
 # The value associated with each key is the number of occurrences
 # filtered out.
-%_local_duplicate_messages = ();
-%_global_duplicate_messages = ();
+our %_local_duplicate_messages = ();
+our %_global_duplicate_messages = ();
 
 sub _reset_duplicates (\%)
 {
@@ -403,8 +399,7 @@ sub _format_sub_message ($$)
 }
 
 # Store partial messages here. (See the 'partial' option.)
-use vars qw ($partial);
-$partial = '';
+our $partial = '';
 
 # _format_message ($LOCATION, $MESSAGE, %OPTIONS)
 # -----------------------------------------------
@@ -619,11 +614,9 @@ both print
 =cut
 
 
-use vars qw (@backlog %buffering);
-
 # See buffer_messages() and flush_messages() below.
-%buffering = ();	# The map of channel types to buffer.
-@backlog = ();		# The buffer of messages.
+our %buffering = ();	# The map of channel types to buffer.
+our @backlog = ();		# The buffer of messages.
 
 sub msg ($$;$%)
 {
@@ -715,9 +708,8 @@ entry, while C<drop_channel_setup ()> just deletes it.
 
 =cut
 
-use vars qw (@_saved_channels @_saved_werrors);
-@_saved_channels = ();
-@_saved_werrors = ();
+our @_saved_channels = ();
+our @_saved_werrors = ();
 
 sub dup_channel_setup ()
 {

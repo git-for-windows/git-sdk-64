@@ -17,7 +17,10 @@ package Automake::Variable;
 
 use 5.006;
 use strict;
+use warnings FATAL => 'all';
+
 use Carp;
+use Exporter;
 
 use Automake::Channels;
 use Automake::ChannelDefs;
@@ -29,20 +32,18 @@ use Automake::DisjConditions;
 use Automake::General 'uniq';
 use Automake::Wrap 'makefile_wrap';
 
-require Exporter;
-use vars '@ISA', '@EXPORT', '@EXPORT_OK';
-@ISA = qw/Automake::Item Exporter/;
-@EXPORT = qw (err_var msg_var msg_cond_var reject_var
-	      var rvar vardef rvardef
-	      variables
-	      scan_variable_expansions check_variable_expansions
-	      variable_delete
-	      variables_dump
-	      set_seen
-	      require_variables
-	      variable_value
-	      output_variables
-	      transform_variable_recursively);
+our @ISA = qw (Automake::Item Exporter);
+our @EXPORT = qw (err_var msg_var msg_cond_var reject_var
+		  var rvar vardef rvardef
+		  variables
+		  scan_variable_expansions check_variable_expansions
+		  variable_delete
+		  variables_dump
+		  set_seen
+		  require_variables
+		  variable_value
+		  output_variables
+		  transform_variable_recursively);
 
 =head1 NAME
 
@@ -198,7 +199,8 @@ my $configure_ac;
 
 # Variables that can be overridden without complaint from -Woverride
 my %_silent_variable_override =
-  (AM_MAKEINFOHTMLFLAGS => 1,
+  (AM_DISTCHECK_DVI_TARGET => 1,
+   AM_MAKEINFOHTMLFLAGS => 1,
    AR => 1,
    ARFLAGS => 1,
    DEJATOOL => 1,
@@ -298,7 +300,7 @@ is the value being appended to  C<$varname>.
 
 =cut
 
-use vars '%_hooks';
+our %_hooks;
 sub hook ($$)
 {
   my ($var, $fun) = @_;
@@ -313,7 +315,7 @@ the L<Automake::Variable> instances that ends with C<_$suffix>.
 
 =cut
 
-use vars '%_variable_dict', '%_primary_dict';
+our (%_variable_dict, %_primary_dict);
 sub variables (;$)
 {
   my ($suffix) = @_;

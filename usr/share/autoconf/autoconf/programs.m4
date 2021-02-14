@@ -1,7 +1,8 @@
 # This file is part of Autoconf.                       -*- Autoconf -*-
 # Checking for programs.
 
-# Copyright (C) 1992-1996, 1998-2012 Free Software Foundation, Inc.
+# Copyright (C) 1992-1996, 1998-2017, 2020-2021 Free Software
+# Foundation, Inc.
 
 # This file is part of Autoconf.  This program is free
 # software; you can redistribute it and/or modify it under the
@@ -21,7 +22,7 @@
 # You should have received a copy of the GNU General Public License
 # and a copy of the Autoconf Configure Script Exception along with
 # this program; see the files COPYINGv3 and COPYING.EXCEPTION
-# respectively.  If not, see <http://www.gnu.org/licenses/>.
+# respectively.  If not, see <https://www.gnu.org/licenses/>.
 
 # Written by David MacKenzie, with help from
 # Franc,ois Pinard, Karl Berry, Richard Pixley, Ian Lance Taylor,
@@ -49,14 +50,14 @@ m4_ifvaln([$6],
 [  ac_prog_rejected=no])dnl
 _AS_PATH_WALK([$5],
 [for ac_exec_ext in '' $ac_executable_extensions; do
-  if AS_EXECUTABLE_P(["$as_dir/$ac_word$ac_exec_ext"]); then
+  if AS_EXECUTABLE_P(["$as_dir$ac_word$ac_exec_ext"]); then
 m4_ifvaln([$6],
-[    if test "$as_dir/$ac_word$ac_exec_ext" = "$6"; then
+[    if test "$as_dir$ac_word$ac_exec_ext" = "$6"; then
        ac_prog_rejected=yes
        continue
      fi])dnl
     ac_cv_prog_$1="$3"
-    _AS_ECHO_LOG([found $as_dir/$ac_word$ac_exec_ext])
+    _AS_ECHO_LOG([found $as_dir$ac_word$ac_exec_ext])
     break 2
   fi
 done])
@@ -70,7 +71,7 @@ m4_ifvaln([$6],
     # However, it has the same basename, so the bogon will be chosen
     # first if we set $1 to just the basename; use the full file name.
     shift
-    ac_cv_prog_$1="$as_dir/$ac_word${1+' '}$[@]"
+    ac_cv_prog_$1="$as_dir$ac_word${1+' '}$[@]"
 m4_if([$2], [$4],
 [  else
     # Default is a loser.
@@ -129,9 +130,9 @@ AC_CACHE_VAL([ac_cv_path_$1],
   *)
   _AS_PATH_WALK([$4],
 [for ac_exec_ext in '' $ac_executable_extensions; do
-  if AS_EXECUTABLE_P(["$as_dir/$ac_word$ac_exec_ext"]); then
-    ac_cv_path_$1="$as_dir/$ac_word$ac_exec_ext"
-    _AS_ECHO_LOG([found $as_dir/$ac_word$ac_exec_ext])
+  if AS_EXECUTABLE_P(["$as_dir$ac_word$ac_exec_ext"]); then
+    ac_cv_path_$1="$as_dir$ac_word$ac_exec_ext"
+    _AS_ECHO_LOG([found $as_dir$ac_word$ac_exec_ext])
     break 2
   fi
 done])
@@ -421,9 +422,10 @@ m4_define([_AC_PATH_PROGS_FEATURE_CHECK],
   ac_path_$1_found=false
   # Loop through the user's path and test for each of PROGNAME-LIST
   _AS_PATH_WALK([$5],
-  [for ac_prog in $2; do
+  [for ac_prog in $2
+   do
     for ac_exec_ext in '' $ac_executable_extensions; do
-      ac_path_$1="$as_dir/$ac_prog$ac_exec_ext"
+      ac_path_$1="$as_dir$ac_prog$ac_exec_ext"
       AS_EXECUTABLE_P(["$ac_path_$1"]) || continue
 $3
       $ac_path_$1_found && break 3
@@ -522,8 +524,7 @@ m4_ifval([$3],
 AN_MAKEVAR([INSTALL], [AC_PROG_INSTALL])
 AN_PROGRAM([install], [AC_PROG_INSTALL])
 AC_DEFUN_ONCE([AC_PROG_INSTALL],
-[AC_REQUIRE([AC_CONFIG_AUX_DIR_DEFAULT])dnl
-AC_REQUIRE_AUX_FILE([install-sh])dnl
+[AC_REQUIRE_AUX_FILE([install-sh])dnl
 # Find a good install program.  We prefer a C program (faster),
 # so one script is as good as another.  But avoid the broken or
 # incompatible versions:
@@ -542,9 +543,9 @@ AC_MSG_CHECKING([for a BSD-compatible install])
 if test -z "$INSTALL"; then
 AC_CACHE_VAL(ac_cv_path_install,
 [_AS_PATH_WALK([$PATH],
-[[# Account for people who put trailing slashes in PATH elements.
-case $as_dir/ in @%:@((
-  ./ | .// | /[cC]/* | \
+[[# Account for fact that we put trailing slashes in our PATH walk.
+case $as_dir in @%:@((
+  ./ | /[cC]/* | \
   /etc/* | /usr/sbin/* | /usr/etc/* | /sbin/* | /usr/afsws/bin/* | \
   ?:[\\/]os2[\\/]install[\\/]* | ?:[\\/]OS2[\\/]INSTALL[\\/]* | \
   /usr/ucb/* ) ;;
@@ -554,13 +555,13 @@ case $as_dir/ in @%:@((
     # by default.
     for ac_prog in ginstall scoinst install; do
       for ac_exec_ext in '' $ac_executable_extensions; do
-	if AS_EXECUTABLE_P(["$as_dir/$ac_prog$ac_exec_ext"]); then
+	if AS_EXECUTABLE_P(["$as_dir$ac_prog$ac_exec_ext"]); then
 	  if test $ac_prog = install &&
-	    grep dspmsg "$as_dir/$ac_prog$ac_exec_ext" >/dev/null 2>&1; then
+	    grep dspmsg "$as_dir$ac_prog$ac_exec_ext" >/dev/null 2>&1; then
 	    # AIX install.  It has an incompatible calling convention.
 	    :
 	  elif test $ac_prog = install &&
-	    grep pwplus "$as_dir/$ac_prog$ac_exec_ext" >/dev/null 2>&1; then
+	    grep pwplus "$as_dir$ac_prog$ac_exec_ext" >/dev/null 2>&1; then
 	    # program-specific install script used by HP pwplus--don't use.
 	    :
 	  else
@@ -568,12 +569,12 @@ case $as_dir/ in @%:@((
 	    echo one > conftest.one
 	    echo two > conftest.two
 	    mkdir conftest.dir
-	    if "$as_dir/$ac_prog$ac_exec_ext" -c conftest.one conftest.two "`pwd`/conftest.dir" &&
+	    if "$as_dir$ac_prog$ac_exec_ext" -c conftest.one conftest.two "`pwd`/conftest.dir/" &&
 	      test -s conftest.one && test -s conftest.two &&
 	      test -s conftest.dir/conftest.one &&
 	      test -s conftest.dir/conftest.two
 	    then
-	      ac_cv_path_install="$as_dir/$ac_prog$ac_exec_ext -c"
+	      ac_cv_path_install="$as_dir$ac_prog$ac_exec_ext -c"
 	      break 3
 	    fi
 	  fi
@@ -585,7 +586,7 @@ esac
 ])
 rm -rf conftest.one conftest.two conftest.dir
 ])dnl
-  if test "${ac_cv_path_install+set}" = set; then
+  if test ${ac_cv_path_install+y}; then
     INSTALL=$ac_cv_path_install
   else
     # As a last resort, use the slow shell script.  Don't cache a
@@ -614,7 +615,7 @@ AC_SUBST(INSTALL_DATA)dnl
 
 # AC_PROG_MKDIR_P
 # ---------------
-# Check whether `mkdir -p' is known to be thread-safe, and fall back to
+# Check whether `mkdir -p' is known to be race-free, and fall back to
 # install-sh -d otherwise.
 #
 # Automake 1.8 used `mkdir -m 0755 -p --' to ensure that directories
@@ -660,26 +661,25 @@ AC_SUBST(INSTALL_DATA)dnl
 # directories to create.
 AN_MAKEVAR([MKDIR_P], [AC_PROG_MKDIR_P])
 AC_DEFUN_ONCE([AC_PROG_MKDIR_P],
-[AC_REQUIRE([AC_CONFIG_AUX_DIR_DEFAULT])dnl
-AC_REQUIRE_AUX_FILE([install-sh])dnl
-AC_MSG_CHECKING([for a thread-safe mkdir -p])
+[AC_REQUIRE_AUX_FILE([install-sh])dnl
+AC_MSG_CHECKING([for a race-free mkdir -p])
 if test -z "$MKDIR_P"; then
   AC_CACHE_VAL([ac_cv_path_mkdir],
     [_AS_PATH_WALK([$PATH$PATH_SEPARATOR/opt/sfw/bin],
       [for ac_prog in mkdir gmkdir; do
 	 for ac_exec_ext in '' $ac_executable_extensions; do
-	   AS_EXECUTABLE_P(["$as_dir/$ac_prog$ac_exec_ext"]) || continue
-	   case `"$as_dir/$ac_prog$ac_exec_ext" --version 2>&1` in #(
-	     'mkdir (GNU coreutils) '* | \
-	     'mkdir (coreutils) '* | \
+	   AS_EXECUTABLE_P(["$as_dir$ac_prog$ac_exec_ext"]) || continue
+	   case `"$as_dir$ac_prog$ac_exec_ext" --version 2>&1` in #(
+	     'mkdir ('*'coreutils) '* | \
+	     'BusyBox '* | \
 	     'mkdir (fileutils) '4.1*)
-	       ac_cv_path_mkdir=$as_dir/$ac_prog$ac_exec_ext
+	       ac_cv_path_mkdir=$as_dir$ac_prog$ac_exec_ext
 	       break 3;;
 	   esac
 	 done
        done])])
   test -d ./--version && rmdir ./--version
-  if test "${ac_cv_path_mkdir+set}" = set; then
+  if test ${ac_cv_path_mkdir+y}; then
     MKDIR_P="$ac_cv_path_mkdir -p"
   else
     # As a last resort, use the slow shell script.  Don't cache a
@@ -706,26 +706,64 @@ AC_MSG_RESULT([$MKDIR_P])
 AN_MAKEVAR([LEX],  [AC_PROG_LEX])
 AN_PROGRAM([lex],  [AC_PROG_LEX])
 AN_PROGRAM([flex], [AC_PROG_LEX])
-AC_DEFUN_ONCE([AC_PROG_LEX],
-[AC_CHECK_PROGS(LEX, flex lex, :)
-if test "x$LEX" != "x:"; then
-  _AC_PROG_LEX_YYTEXT_DECL
-fi])
+AC_DEFUN([AC_PROG_LEX],
+[m4_case($#,
+  [0], [],
+  [1], [],
+  [m4_fatal([too many arguments to $0])])]dnl
+[_$0(m4_normalize([$1]))])
+
+AC_DEFUN([_AC_PROG_LEX],
+[m4_case([$1],
+  [yywrap], [],
+  [noyywrap], [],
+  [yywrap noyywrap],
+    [m4_fatal([AC_PROG_LEX: yywrap and noyywrap are mutually exclusive])],
+  [noyywrap yywrap],
+    [m4_fatal([AC_PROG_LEX: yywrap and noyywrap are mutually exclusive])],
+  [],
+    [m4_warn([obsolete],
+      [AC_PROG_LEX without either yywrap or noyywrap is obsolete])],
+  [m4_fatal([AC_PROG_LEX: unrecognized argument: $1])])]dnl
+dnl We can't use AC_DEFUN_ONCE because this macro takes arguments.
+dnl Silently skip a second invocation if the options match;
+dnl warn if they don't.
+[m4_ifdef([_AC_PROG_LEX_options],
+  [m4_if([$1], m4_defn([_AC_PROG_LEX_options]), [],
+    [m4_warn([syntax], [AC_PROG_LEX used twice with mismatched options])])],
+[dnl
+dnl _AC_PROG_LEX_options not defined: first use
+m4_define([_AC_PROG_LEX_options], [$1])dnl
+AC_CHECK_PROGS(LEX, flex lex, :)
+  if test "x$LEX" != "x:"; then
+    _AC_PROG_LEX_YYTEXT_DECL([$1])
+fi])])
 
 
 # _AC_PROG_LEX_YYTEXT_DECL
 # ------------------------
 # Check for the Lex output root, the Lex library, and whether Lex
 # declares yytext as a char * by default.
-m4_define([_AC_PROG_LEX_YYTEXT_DECL],
+AC_DEFUN([_AC_PROG_LEX_YYTEXT_DECL],
 [cat >conftest.l <<_ACEOF[
+%{
+#ifdef __cplusplus
+extern "C"
+#endif
+int yywrap(void);
+%}
 %%
 a { ECHO; }
 b { REJECT; }
 c { yymore (); }
 d { yyless (1); }
 e { /* IRIX 6.5 flex 2.5.4 underquotes its yyless argument.  */
-    yyless ((input () != 0)); }
+#ifdef __cplusplus
+    yyless ((yyinput () != 0));
+#else
+    yyless ((input () != 0));
+#endif
+  }
 f { unput (yytext[0]); }
 . { BEGIN INITIAL; }
 %%
@@ -733,50 +771,97 @@ f { unput (yytext[0]); }
 extern char *yytext;
 #endif
 int
+yywrap (void)
+{
+  return 1;
+}
+int
 main (void)
 {
-  return ! yylex () + ! yywrap ();
+  return ! yylex ();
 }
 ]_ACEOF
-_AC_DO_VAR(LEX conftest.l)
-AC_CACHE_CHECK([lex output file root], [ac_cv_prog_lex_root], [
+AC_CACHE_CHECK([for lex output file root], [ac_cv_prog_lex_root], [
+ac_cv_prog_lex_root=unknown
+_AC_DO_VAR(LEX conftest.l) &&
 if test -f lex.yy.c; then
   ac_cv_prog_lex_root=lex.yy
 elif test -f lexyy.c; then
   ac_cv_prog_lex_root=lexyy
-else
-  AC_MSG_ERROR([cannot find output from $LEX; giving up])
 fi])
+AS_IF([test "$ac_cv_prog_lex_root" = unknown],
+  [AC_MSG_WARN([cannot find output from $LEX; giving up on $LEX])
+   LEX=: LEXLIB=])
 AC_SUBST([LEX_OUTPUT_ROOT], [$ac_cv_prog_lex_root])dnl
 
-if test -z "${LEXLIB+set}"; then
-  AC_CACHE_CHECK([lex library], [ac_cv_lib_lex], [
-    ac_save_LIBS=$LIBS
-    ac_cv_lib_lex='none needed'
-    for ac_lib in '' -lfl -ll; do
-      LIBS="$ac_lib $ac_save_LIBS"
+AS_VAR_SET_IF([LEXLIB], [], [
+  AC_CACHE_CHECK([for lex library], [ac_cv_lib_lex], [
+    ac_save_LIBS="$LIBS"
+    ac_found=false
+    for ac_cv_lib_lex in 'none needed' -lfl -ll 'not found'; do
+      AS_CASE([$ac_cv_lib_lex],
+        ['none needed'], [],
+        ['not found'],   [break],
+        [*],             [LIBS="$ac_cv_lib_lex $ac_save_LIBS"])
+
       AC_LINK_IFELSE([AC_LANG_DEFINES_PROVIDED[`cat $LEX_OUTPUT_ROOT.c`]],
-	[ac_cv_lib_lex=$ac_lib])
-      test "$ac_cv_lib_lex" != 'none needed' && break
+	[ac_found=:])
+      if $ac_found; then
+        break
+      fi
     done
-    LIBS=$ac_save_LIBS
+    LIBS="$ac_save_LIBS"
   ])
-  test "$ac_cv_lib_lex" != 'none needed' && LEXLIB=$ac_cv_lib_lex
-fi
+  AS_IF(
+     [test "$ac_cv_lib_lex" = 'not found'],
+	[AC_MSG_WARN([required lex library not found; giving up on $LEX])
+	 LEX=: LEXLIB=],
+     [test "$ac_cv_lib_lex" = 'none needed'],
+        [LEXLIB=''],
+	[LEXLIB=$ac_cv_lib_lex])
+dnl
+dnl For compatibility with autoconf 2.69 and prior, if $1 is not `noyywrap',
+dnl and we didn't already set LEXLIB to -ll or -lfl, see if one of those
+dnl libraries provides yywrap and set LEXLIB to it if so.  If $1 is `yywrap',
+dnl and we don't find a library that provides yywrap, we fail.
+  m4_case([$1],
+    [noyywrap],
+      [],
+    [yywrap],
+      [ac_save_LIBS="$LIBS"
+      AS_IF([test -n "$LEXLIB"],
+        [LIBS="$LEXLIB"
+        AC_CHECK_FUNC([yywrap],
+          [:],
+          [AC_MSG_WARN([$LEXLIB does not contain yywrap; giving up on $LEX])
+          LEX=: LEXLIB=])
+        ],
+        [LIBS=
+        AC_SEARCH_LIBS([yywrap], [fl l], [LEXLIB="$LIBS"])
+        AS_IF([test x"$ac_cv_search_yywrap" = xno],
+          [AC_MSG_WARN([yywrap not found; giving up on $LEX])
+          LEX=: LEXLIB=])])
+      LIBS="$ac_save_LIBS"],
+    [],
+      [ac_save_LIBS="$LIBS"
+      LIBS=
+      AC_SEARCH_LIBS([yywrap], [fl l], [LEXLIB="$LIBS"])
+      LIBS="$ac_save_LIBS"])dnl
+])
 AC_SUBST(LEXLIB)
 
+dnl This test is done last so that we don't define YYTEXT_POINTER if
+dnl any of the above tests gave up on lex.
+AS_IF([test "$LEX" != :], [
 AC_CACHE_CHECK(whether yytext is a pointer, ac_cv_prog_lex_yytext_pointer,
 [# POSIX says lex can declare yytext either as a pointer or an array; the
 # default is implementation-dependent.  Figure out which it is, since
 # not all implementations provide the %pointer and %array declarations.
 ac_cv_prog_lex_yytext_pointer=no
-ac_save_LIBS=$LIBS
-LIBS="$LEXLIB $ac_save_LIBS"
-AC_LINK_IFELSE([AC_LANG_DEFINES_PROVIDED
+AC_COMPILE_IFELSE([AC_LANG_DEFINES_PROVIDED
   [#define YYTEXT_POINTER 1
 `cat $LEX_OUTPUT_ROOT.c`]],
   [ac_cv_prog_lex_yytext_pointer=yes])
-LIBS=$ac_save_LIBS
 ])
 dnl
 if test $ac_cv_prog_lex_yytext_pointer = yes; then
@@ -784,6 +869,7 @@ if test $ac_cv_prog_lex_yytext_pointer = yes; then
 	    [Define to 1 if `lex' declares `yytext' as a `char *' by default,
 	     not a `char[]'.])
 fi
+])
 rm -f conftest.l $LEX_OUTPUT_ROOT.c
 ])# _AC_PROG_LEX_YYTEXT_DECL
 

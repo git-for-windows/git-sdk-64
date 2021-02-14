@@ -1,4 +1,4 @@
 var namespaces_dup =
 [
-    [ "srchilite", "namespacesrchilite.html", null ]
+    [ "srchilite", "namespacesrchilite.html", "namespacesrchilite" ]
 ];

@@ -17,21 +17,22 @@ package Automake::Options;
 
 use 5.006;
 use strict;
+use warnings FATAL => 'all';
+
 use Exporter;
+
 use Automake::Config;
 use Automake::ChannelDefs;
 use Automake::Channels;
 use Automake::Version;
 
-use vars qw (@ISA @EXPORT);
-
-@ISA = qw (Exporter);
-@EXPORT = qw (option global_option
-              set_option set_global_option
-              unset_option unset_global_option
-              process_option_list process_global_option_list
-              set_strictness $strictness $strictness_name
-              &FOREIGN &GNU &GNITS);
+our @ISA = qw (Exporter);
+our @EXPORT = qw (option global_option
+		  set_option set_global_option
+		  unset_option unset_global_option
+		  process_option_list process_global_option_list
+		  set_strictness $strictness $strictness_name
+		  &FOREIGN &GNU &GNITS);
 
 =head1 NAME
 
@@ -72,14 +73,14 @@ F<Makefile.am>s.
 =cut
 
 # Values are the Automake::Location of the definition.
-use vars '%_options';        # From AUTOMAKE_OPTIONS
-use vars '%_global_options'; # From AM_INIT_AUTOMAKE or the command line.
+our %_options;        # From AUTOMAKE_OPTIONS
+our %_global_options; # From AM_INIT_AUTOMAKE or the command line.
 
 # Whether process_option_list has already been called for the current
 # Makefile.am.
-use vars '$_options_processed';
+our $_options_processed;
 # Whether process_global_option_list has already been called.
-use vars '$_global_options_processed';
+our $_global_options_processed;
 
 =head2 Constants
 
@@ -119,10 +120,10 @@ The current strictness name.  One of C<'foreign'>, C<'gnu'>, or C<'gnits'>.
 =cut
 
 # Strictness levels.
-use vars qw ($strictness $strictness_name);
+our ($strictness, $strictness_name);
 
 # Strictness level as set on command line.
-use vars qw ($_default_strictness $_default_strictness_name);
+our ($_default_strictness, $_default_strictness_name);
 
 
 =head2 Functions

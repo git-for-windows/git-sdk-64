@@ -1,4 +1,4 @@
-#!C:/git-sdk-64-ci/mingw64/bin/python3.exe
+
 
 # If the code below looks horrible and unpythonic, do not panic.
 #
@@ -19,7 +19,7 @@ import errno
 import codecs
 import locale
 
-VERSION_STR = '''glib-mkenums version 2.66.6
+VERSION_STR = '''glib-mkenums version 2.66.7
 glib-mkenums comes with ABSOLUTELY NO WARRANTY.
 You may redistribute copies of glib-mkenums under the terms of
 the GNU General Public License which can be found in the

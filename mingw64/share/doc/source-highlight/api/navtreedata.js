@@ -60,8 +60,8 @@ var NAVTREEINDEX =
 "classsrchilite_1_1HighlightStateBuilder.html#a8b972b6eecb589b5171dec0fa0bd6223",
 "classsrchilite_1_1Settings.html#a29e2beaa3824aae15a8837b0e863fec5",
 "classsrchilite_1_1StringListLangElem.html#a62eab1e2ed14c7d68d9139e80726aa48",
-"regexrulefactory_8h_source.html",
-"unionYYSTYPE.html#ad6a64129b9a6d8604fc6c09d9363fba1"
+"namespacesrchilite.html#a31518a7d0e6d695a118d6bc3a81d3b53",
+"structsrchilite_1_1ParseStruct.html#aceaad201cbd24e22e983894c752d8108"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

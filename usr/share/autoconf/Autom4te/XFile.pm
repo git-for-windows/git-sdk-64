@@ -1,4 +1,4 @@
-# Copyright (C) 2001-2012 Free Software Foundation, Inc.
+# Copyright (C) 2001-2020 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -11,7 +11,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Written by Akim Demaille <akim@freefriends.org>.
 
@@ -31,13 +31,13 @@ Autom4te::XFile - supply object methods for filehandles with error handling
     use Autom4te::XFile;
 
     $fh = new Autom4te::XFile;
-    $fh->open ("< file");
+    $fh->open ("file", "<");
     # No need to check $FH: we died if open failed.
     print <$fh>;
     $fh->close;
     # No need to check the return value of close: we died if it failed.
 
-    $fh = new Autom4te::XFile "> file";
+    $fh = new Autom4te::XFile "file", ">";
     # No need to check $FH: we died if new failed.
     print $fh "bar\n";
     $fh->close;
@@ -71,23 +71,19 @@ and C<getlines> methods to translate C<\r\n> to C<\n>.
 
 use 5.006;
 use strict;
-use vars qw($VERSION @EXPORT @EXPORT_OK $AUTOLOAD @ISA);
-use Carp;
+use warnings FATAL => 'all';
+
 use Errno;
+use Exporter;
 use IO::File;
-use File::Basename;
+
 use Autom4te::ChannelDefs;
-use Autom4te::Channels qw(msg);
+use Autom4te::Channels qw (msg);
 use Autom4te::FileUtils;
 
-require Exporter;
-require DynaLoader;
-
-@ISA = qw(IO::File Exporter DynaLoader);
-
-$VERSION = "1.2";
-
-@EXPORT = @IO::File::EXPORT;
+our @ISA = qw(Exporter IO::File);
+our @EXPORT = @IO::File::EXPORT;
+our $VERSION = "1.2";
 
 eval {
   # Make all Fcntl O_XXX and LOCK_XXX constants available for importing
@@ -130,7 +126,7 @@ Die if opening fails.  Store the name of the file.  Use binmode for writing.
 sub open
 {
   my $fh = shift;
-  my ($file) = @_;
+  my ($file, $mode) = @_;
 
   # WARNING: Gross hack: $FH is a typeglob: use its hash slot to store
   # the 'name' of the file we are opening.  See the example with
@@ -147,7 +143,12 @@ sub open
   # (This circumvents a bug in at least Cygwin bash where the shell
   # parsing fails on lines ending with the continuation character '\'
   # and CRLF).
-  binmode $fh if $file =~ /^\s*>/;
+  # Correctly recognize usages like:
+  #  - open ($file, "w")
+  #  - open ($file, "+<")
+  #  - open (" >$file")
+  binmode $fh
+    if (defined $mode && $mode =~ /^[+>wa]/ or $file =~ /^\s*>/);
 }
 
 =item C<$fh-E<gt>close>
@@ -227,7 +228,8 @@ sub lock
 
   # Unless explicitly configured otherwise, Perl implements its 'flock' with the
   # first of flock(2), fcntl(2), or lockf(3) that works.  These can fail on
-  # NFS-backed files, with ENOLCK (GNU/Linux) or EOPNOTSUPP (FreeBSD); we
+  # NFS-backed files, with ENOLCK (GNU/Linux) or EOPNOTSUPP (FreeBSD) or
+  # EINVAL (OpenIndiana, as per POSIX 1003.1-2017 fcntl spec); we
   # usually ignore these errors.  If $ENV{MAKEFLAGS} suggests that a parallel
   # invocation of 'make' has invoked the tool we serve, report all locking
   # failures and abort.
@@ -246,7 +248,7 @@ sub lock
 
       msg ($make_j ? 'fatal' : 'unsupported',
 	   "cannot lock $file with mode $mode: $!" . ($make_j ? $note : ""))
-	if $make_j || !($!{ENOLCK} || $!{EOPNOTSUPP});
+	if $make_j || !($!{EINVAL} || $!{ENOLCK} || $!{EOPNOTSUPP});
     }
 }
 
@@ -300,20 +302,3 @@ Derived from IO::File.pm by Akim Demaille E<lt>F<akim@freefriends.org>E<gt>.
 =cut
 
 1;
-
-### Setup "GNU" style for perl-mode and cperl-mode.
-## Local Variables:
-## perl-indent-level: 2
-## perl-continued-statement-offset: 2
-## perl-continued-brace-offset: 0
-## perl-brace-offset: 0
-## perl-brace-imaginary-offset: 0
-## perl-label-offset: -2
-## cperl-indent-level: 2
-## cperl-brace-offset: 0
-## cperl-continued-brace-offset: 0
-## cperl-label-offset: -2
-## cperl-extra-newline-before-brace: t
-## cperl-merge-trailing-else: nil
-## cperl-continued-statement-offset: 2
-## End:

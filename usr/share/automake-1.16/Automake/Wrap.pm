@@ -17,11 +17,12 @@ package Automake::Wrap;
 
 use 5.006;
 use strict;
+use warnings FATAL => 'all';
 
-require Exporter;
-use vars '@ISA', '@EXPORT_OK';
-@ISA = qw/Exporter/;
-@EXPORT_OK = qw/wrap makefile_wrap/;
+use Exporter;
+
+our @ISA = qw (Exporter);
+our @EXPORT_OK = qw (wrap makefile_wrap);
 
 =head1 NAME
 

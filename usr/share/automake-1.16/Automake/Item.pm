@@ -17,7 +17,10 @@ package Automake::Item;
 
 use 5.006;
 use strict;
+use warnings FATAL => 'all';
+
 use Carp;
+
 use Automake::ChannelDefs;
 use Automake::DisjConditions;
 

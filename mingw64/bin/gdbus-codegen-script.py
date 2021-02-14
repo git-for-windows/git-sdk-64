@@ -1,4 +1,4 @@
-#!/mingw64/bin/python3.exe
+
 
 # GDBus - GLib D-Bus Library
 #
@@ -47,7 +47,7 @@ path = os.path.abspath(path)
 # In these cases our installation cannot be relocatable, but at least we should
 # be able to find the codegen module.
 if not os.path.isfile(os.path.join(path, 'codegen', 'codegen_main.py')):
-    path = os.path.join('C:/git-sdk-64-ci/mingw64/share', 'glib-2.0')
+    path = os.path.join('/mingw64/share', 'glib-2.0')
 
 sys.path.insert(0, path)
 from codegen import codegen_main

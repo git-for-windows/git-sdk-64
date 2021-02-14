@@ -47,10 +47,12 @@ var hierarchy =
     [ "srchilite::LineNumGenerator", "classsrchilite_1_1LineNumGenerator.html", null ],
     [ "srchilite::LineRanges", "classsrchilite_1_1LineRanges.html", null ],
     [ "std::list< T >", null, [
-      [ "ElementNamesList", "structElementNamesList.html", null ],
       [ "srchilite::LangElems", "classsrchilite_1_1LangElems.html", null ],
       [ "srchilite::StringDefs", "classsrchilite_1_1StringDefs.html", null ],
       [ "srchilite::StringTable", "classsrchilite_1_1StringTable.html", null ]
+    ] ],
+    [ "std::list< std::string >", null, [
+      [ "ElementNamesList", "structElementNamesList.html", null ]
     ] ],
     [ "std::map< K, T >", null, [
       [ "srchilite::ColorMap", "classsrchilite_1_1ColorMap.html", null ],

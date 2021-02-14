@@ -1,7 +1,8 @@
 # This file is part of Autoconf.                       -*- Autoconf -*-
 # Parameterized macros.
 m4_define([_AC_COPYRIGHT_YEARS], [
-Copyright (C) 1992-1996, 1998-2012 Free Software Foundation, Inc.
+Copyright (C) 1992-1996, 1998-2017, 2020-2021 Free Software Foundation,
+Inc.
 ])
 
 # This file is part of Autoconf.  This program is free
@@ -22,7 +23,7 @@ Copyright (C) 1992-1996, 1998-2012 Free Software Foundation, Inc.
 # You should have received a copy of the GNU General Public License
 # and a copy of the Autoconf Configure Script Exception along with
 # this program; see the files COPYINGv3 and COPYING.EXCEPTION
-# respectively.  If not, see <http://www.gnu.org/licenses/>.
+# respectively.  If not, see <https://www.gnu.org/licenses/>.
 
 # Written by David MacKenzie, with help from
 # Franc,ois Pinard, Karl Berry, Richard Pixley, Ian Lance Taylor,
@@ -162,13 +163,6 @@ m4_copy([m4_provide],     [AC_PROVIDE])
 m4_copy([m4_provide_if],  [AC_PROVIDE_IFELSE])
 
 
-# AC_OBSOLETE(THIS-MACRO-NAME, [SUGGESTION])
-# ------------------------------------------
-m4_define([AC_OBSOLETE],
-[AC_DIAGNOSE([obsolete], [$1 is obsolete$2])])
-
-
-
 ## ----------------------------- ##
 ## Implementing shell functions. ##
 ## ----------------------------- ##
@@ -190,9 +184,12 @@ AC_DEFUN([AC_REQUIRE_SHELL_FN],
 
 # AU::AC_FOREACH(VARIABLE, LIST, EXPRESSION)
 # ------------------------------------------
+# The double definition is necessary because autoupdate expands m4_
+# macros, so we have to double-quote the replacement, but then it
+# won't work in a normal autoconf run.
 AU_DEFUN([AC_FOREACH], [[m4_foreach_w($@)]])
 AC_DEFUN([AC_FOREACH], [m4_foreach_w($@)dnl
-AC_DIAGNOSE([obsolete], [The macro `AC_FOREACH' is obsolete.
+m4_warn([obsolete], [The macro `AC_FOREACH' is obsolete.
 You should run autoupdate.])])
 
 
@@ -224,40 +221,59 @@ AU_ALIAS([AC_HELP_STRING], [AS_HELP_STRING])
 
 # _AC_INIT_LITERAL(STRING)
 # ------------------------
-# Reject STRING if it contains newline, or if it cannot be used as-is
-# in single-quoted strings, double-quoted strings, and quoted and
-# unquoted here-docs.
+# Reject STRING if it cannot be used as-is in single-quoted strings,
+# double-quoted strings, and quoted and unquoted here-docs.
 m4_define([_AC_INIT_LITERAL],
-[m4_if(m4_index(m4_translit([[$1]], [
-""], ['']), ['])AS_LITERAL_HEREDOC_IF([$1], [-]), [-1-], [],
-  [m4_warn([syntax], [AC_INIT: not a literal: $1])])])
+[m4_if(m4_index(m4_translit([[$1]], [""], ['']),
+                ['])AS_LITERAL_HEREDOC_IF([$1], [-]),
+       [-1-], [],
+  [m4_warn([syntax], [AC_INIT: not a literal: "$1"])])])
 
 # _AC_INIT_PACKAGE(PACKAGE-NAME, VERSION, BUG-REPORT, [TARNAME], [URL])
 # ---------------------------------------------------------------------
+# Set the values of AC_PACKAGE_{NAME,VERSION,STRING,BUGREPORT,TARNAME,URL}
+# from the arguments.
 m4_define([_AC_INIT_PACKAGE],
-[_AC_INIT_LITERAL([$1])
+[_AC_INIT_PACKAGE_N(m4_normalize([$1]), m4_normalize([$2]), m4_normalize([$3]),
+                    m4_normalize([$4]), m4_normalize([$5]))])
+
+# _AC_INIT_PACKAGE_N(PACKAGE-NAME, VERSION, BUG-REPORT, [TARNAME], [URL])
+# -----------------------------------------------------------------------
+# Subroutine of _AC_INIT_PACKAGE.
+m4_define([_AC_INIT_PACKAGE_N],
+[# PACKAGE-NAME, VERSION, BUGREPORT, and URL should all be safe for use
+# in shell strings of all kinds.
+_AC_INIT_LITERAL([$1])
 _AC_INIT_LITERAL([$2])
 _AC_INIT_LITERAL([$3])
-m4_ifndef([AC_PACKAGE_NAME],
-	  [m4_define([AC_PACKAGE_NAME],     [$1])])
-m4_ifndef([AC_PACKAGE_TARNAME],
-	  [m4_define([AC_PACKAGE_TARNAME],
-		     m4_default([$4],
-				[m4_bpatsubst(m4_tolower(m4_bpatsubst([[$1]],
-								     [GNU ])),
-				 [[^_abcdefghijklmnopqrstuvwxyz0123456789]],
-				 [-])]))])
-m4_ifndef([AC_PACKAGE_VERSION],
-	  [m4_define([AC_PACKAGE_VERSION],   [$2])])
-m4_ifndef([AC_PACKAGE_STRING],
-	  [m4_define([AC_PACKAGE_STRING],    [$1 $2])])
-m4_ifndef([AC_PACKAGE_BUGREPORT],
-	  [m4_define([AC_PACKAGE_BUGREPORT], [$3])])
-m4_ifndef([AC_PACKAGE_URL],
-	  [m4_define([AC_PACKAGE_URL],
-  m4_if([$5], [], [m4_if(m4_index([$1], [GNU ]), [0],
-	  [[http://www.gnu.org/software/]m4_defn([AC_PACKAGE_TARNAME])[/]])],
-	[[$5]]))])
+_AC_INIT_LITERAL([$5])
+
+# TARNAME is even more constrained: it should not contain any shell
+# metacharacters or whitespace, because it is used to construct
+# filenames.
+AS_LITERAL_WORD_IF([$4], [],
+  [m4_warn([syntax],
+	   [AC_INIT: unsafe as a filename: "$4"])])
+
+m4_define_default([AC_PACKAGE_NAME],      [$1])
+m4_define_default([AC_PACKAGE_VERSION],   [$2])
+
+# The m4_strip makes AC_PACKAGE_STRING be [], not [ ], when
+# both $1 and $2 are empty.
+m4_define_default([AC_PACKAGE_STRING],    m4_strip([$1 $2]))
+m4_define_default([AC_PACKAGE_BUGREPORT], [$3])
+
+# N.B. m4_ifnblank strips one layer of quotation from whichever of its
+# second and third argument it evaluates to.
+m4_define_default([AC_PACKAGE_TARNAME],
+  m4_ifnblank([$4], [[$4]],
+    [m4_quote(m4_bpatsubst(m4_tolower(m4_bpatsubst([$1], [^GNU ], [])),
+      [[^_abcdefghijklmnopqrstuvwxyz0123456789]], [-]))]))
+m4_define_default([AC_PACKAGE_URL],
+  m4_ifnblank([$5], [[$5]],
+    [m4_if(m4_index([$1], [GNU ]), [0],
+      [[https://www.gnu.org/software/]m4_defn([AC_PACKAGE_TARNAME])[/]],
+      [])]))
 ])
 
 
@@ -586,6 +602,7 @@ AC_SUBST([datadir],        ['${datarootdir}'])dnl
 AC_SUBST([sysconfdir],     ['${prefix}/etc'])dnl
 AC_SUBST([sharedstatedir], ['${prefix}/com'])dnl
 AC_SUBST([localstatedir],  ['${prefix}/var'])dnl
+AC_SUBST([runstatedir],    ['${localstatedir}/run'])dnl
 AC_SUBST([includedir],     ['${prefix}/include'])dnl
 AC_SUBST([oldincludedir],  ['/usr/include'])dnl
 AC_SUBST([docdir],         [m4_ifset([AC_PACKAGE_TARNAME],
@@ -616,8 +633,6 @@ do
   *=)   ac_optarg= ;;
   *)    ac_optarg=yes ;;
   esac
-
-  # Accept the important Cygnus configure options, so we can diagnose typos.
 
   case $ac_dashdash$ac_option in
   --)
@@ -812,6 +827,15 @@ do
   | -silent | --silent | --silen | --sile | --sil)
     silent=yes ;;
 
+  -runstatedir | --runstatedir | --runstatedi | --runstated \
+  | --runstate | --runstat | --runsta | --runst | --runs \
+  | --run | --ru | --r)
+    ac_prev=runstatedir ;;
+  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
+  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
+  | --run=* | --ru=* | --r=*)
+    runstatedir=$ac_optarg ;;
+
   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
     ac_prev=sbindir ;;
   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
@@ -921,7 +945,7 @@ fi
 for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
 		datadir sysconfdir sharedstatedir localstatedir includedir \
 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
-		libdir localedir mandir
+		libdir localedir mandir runstatedir
 do
   eval ac_val=\$$ac_var
   # Remove trailing slashes.
@@ -988,8 +1012,8 @@ m4_define([_AC_INIT_PARSE_ENABLE2],
     ac_useropt=`expr "x$ac_option" : 'x-*$1-\(m4_if([$1], [$2], [[[^=]]], [.])*\)'`
     # Reject names that are not valid shell variable names.
     expr "x$ac_useropt" : "[.*[^-+._$as_cr_alnum]]" >/dev/null &&
-      AC_MSG_ERROR(
-	[invalid ]m4_if([$2], [with], [package], [feature])[ name: $ac_useropt])
+      AC_MSG_ERROR([invalid ]m4_if([$2], [with],
+        [package], [feature])[ name: `$ac_useropt'])
     ac_useropt_orig=$ac_useropt
     ac_useropt=`AS_ECHO(["$ac_useropt"]) | sed 's/[[-+.]]/_/g'`
     case $ac_user_opts in
@@ -1058,6 +1082,7 @@ Fine tuning of the installation directories:
   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
+  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --includedir=DIR        C header files [PREFIX/include]
   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
@@ -1117,7 +1142,7 @@ Report bugs to m4_ifset([AC_PACKAGE_BUGREPORT], [<AC_PACKAGE_BUGREPORT>],
 m4_ifdef([AC_PACKAGE_NAME], [m4_ifset([AC_PACKAGE_URL], [
 AC_PACKAGE_NAME home page: <AC_PACKAGE_URL>.])dnl
 m4_if(m4_index(m4_defn([AC_PACKAGE_NAME]), [GNU ]), [0], [
-General help using GNU software: <http://www.gnu.org/gethelp/>.])])
+General help using GNU software: <https://www.gnu.org/gethelp/>.])])
 _ACEOF
 ac_status=$?
 fi
@@ -1130,7 +1155,8 @@ if test "$ac_init_help" = "recursive"; then
       continue
     _AC_SRCDIRS(["$ac_dir"])
     cd "$ac_dir" || { ac_status=$?; continue; }
-    # Check for guested configure.
+    # Check for configure.gnu first; this name is used for a wrapper for
+    # Metaconfig's "Configure" on case-insensitive file systems.
     if test -f "$ac_srcdir/configure.gnu"; then
       echo &&
       $SHELL "$ac_srcdir/configure.gnu" --help=recursive
@@ -1172,6 +1198,27 @@ fi])dnl
 m4_define([_AC_INIT_CONFIG_LOG],
 [m4_divert_text([INIT_PREPARE],
 [m4_define([AS_MESSAGE_LOG_FD], 5)dnl
+ac_configure_args_raw=
+for ac_arg
+do
+  case $ac_arg in
+  *\'*)
+    ac_arg=`AS_ECHO(["$ac_arg"]) | sed "s/'/'\\\\\\\\''/g"` ;;
+  esac
+  AS_VAR_APPEND([ac_configure_args_raw], [" '$ac_arg'"])
+done
+
+case $ac_configure_args_raw in
+  *$as_nl*)
+    ac_safe_unquote= ;;
+  *)
+    ac_unsafe_z='|&;<>()$`\\"*?@<:@ ''	' # This string ends in space, tab.
+    ac_unsafe_a="$ac_unsafe_z#~"
+    ac_safe_unquote="s/ '\\([[^$ac_unsafe_a]][[^$ac_unsafe_z]]*\\)'/ \\1/g"
+    ac_configure_args_raw=`dnl
+      AS_ECHO(["$ac_configure_args_raw"]) | sed "$ac_safe_unquote"`;;
+esac
+
 cat >config.log <<_ACEOF
 This file contains any messages produced by compilers while
 running configure, to aid debugging if configure makes a mistake.
@@ -1180,7 +1227,7 @@ It was created by m4_ifset([AC_PACKAGE_NAME], [AC_PACKAGE_NAME ])dnl
 $as_me[]m4_ifset([AC_PACKAGE_VERSION], [ AC_PACKAGE_VERSION]), which was
 generated by m4_PACKAGE_STRING.  Invocation command line was
 
-  $ $[0] $[@]
+  $ $[0]$ac_configure_args_raw
 
 _ACEOF
 exec AS_MESSAGE_LOG_FD>>config.log
@@ -1266,6 +1313,8 @@ AS_UNSET(ac_configure_args1)
 # WARNING: Use '\'' to represent an apostrophe within the trap.
 # WARNING: Do not start the trap code with a newline, due to a FreeBSD 4.0 bug.
 trap 'exit_status=$?
+  # Sanitize IFS.
+  IFS=" ""	$as_nl"
   # Save into config.log some information that might help in debugging.
   {
     echo
@@ -1371,7 +1420,7 @@ AC_CONFIG_SRCDIR([$1])], [[AC_INIT]])])[]dnl
 # If BUG-REPORT is omitted, do without (unless the user previously
 # defined the m4 macro AC_PACKAGE_BUGREPORT).  If TARNAME is omitted,
 # use PACKAGE to seed it.  If URL is omitted, use
-# `http://www.gnu.org/software/TARNAME/' if PACKAGE begins with `GNU',
+# `https://www.gnu.org/software/TARNAME/' if PACKAGE begins with `GNU',
 # otherwise, do without.
 #
 # Note that the order is important: first initialize, then set the
@@ -1390,7 +1439,7 @@ m4_define([_AS_FORCE_REEXEC_WITH_CONFIG_SHELL], [yes])
 AS_INIT[]dnl
 AS_PREPARE[]dnl
 m4_divert_push([KILL])
-m4_ifval([$2], [_AC_INIT_PACKAGE($@)])
+m4_ifval([$2], [_AC_INIT_PACKAGE($@)], [_AC_INIT_PACKAGE()])
 _AC_INIT_DEFAULTS
 _AC_INIT_PARSE_ARGS
 _AC_INIT_DIRCHECK
@@ -1417,9 +1466,32 @@ _AC_ARG_VAR_PRECIOUS([host_alias])AC_SUBST([host_alias])dnl
 _AC_ARG_VAR_PRECIOUS([target_alias])AC_SUBST([target_alias])dnl
 dnl
 AC_LANG_PUSH(C)
+dnl
+dnl Record that AC_INIT has been called.  It doesn't make sense to
+dnl AC_REQUIRE AC_INIT, but it _does_ make sense for macros to say
+dnl AC_BEFORE([self], [AC_INIT]) sometimes.  Also, _AC_FINALIZE checks
+dnl for AC_INIT having been called.
+m4_provide([AC_INIT])dnl
 ])
 
 
+# _AC_FINALIZE
+# ------------
+# Code to be run after the entire configure.ac is processed, but only
+# when generating configure.  This macro should only be called from
+# trailer.m4, which is fed to m4 after configure.ac by autoconf (the
+# program).  We don't just call m4_wrap([_AC_FINALIZE]), because then
+# it would run at freeze time and when tracing configure.ac for
+# autoheader etc.
+#
+# Currently this doesn't emit anything; it just checks that AC_INIT
+# and AC_OUTPUT were expanded at some point.  Leaving either of these
+# out of a configure script is likely to be a bug.
+m4_define([_AC_FINALIZE],
+  [m4_provide_if([AC_INIT], [],
+    [m4_warn([syntax], [AC_INIT was never used])])dnl
+   m4_provide_if([AC_OUTPUT], [],
+    [m4_warn([syntax], [AC_OUTPUT was never used])])])
 
 
 ## ------------------------------------------------------------- ##
@@ -1454,7 +1526,7 @@ _AC_ENABLE_IF_ACTION([$1], m4_translit([$2], [-+.], [___]), [$3], [$4])
 m4_define([_AC_ENABLE_IF_ACTION],
 [m4_append_uniq([_AC_USER_OPTS], [$1_$2], [
 ])dnl
-AS_IF([test "${$1_$2+set}" = set], [$1val=$$1_$2; $3], [$4])dnl
+AS_IF([test ${$1_$2+y}], [$1val=$$1_$2; $3], [$4])dnl
 ])
 
 # AC_ARG_ENABLE(FEATURE, HELP-STRING, [ACTION-IF-TRUE], [ACTION-IF-FALSE])
@@ -1616,7 +1688,8 @@ done
 if $ac_cache_corrupted; then
   AS_MESSAGE([error: in `$ac_pwd':], 2)
   AS_MESSAGE([error: changes in the environment can compromise the build], 2)
-  AS_ERROR([run `make distclean' and/or `rm $cache_file' and start over])
+  AS_ERROR([run `${MAKE-make} distclean' and/or `rm $cache_file'
+	    and start over])
 fi])dnl
 ])# _AC_ARG_VAR_VALIDATE
 
@@ -1664,59 +1737,188 @@ program_transform_name=`AS_ECHO(["$program_transform_name"]) | sed "$ac_script"`
 
 # AC_CONFIG_AUX_DIR(DIR)
 # ----------------------
-# Find install-sh, config.sub, config.guess, and Cygnus configure
-# in directory DIR.  These are auxiliary files used in configuration.
-# DIR can be either absolute or relative to $srcdir.
+# Find auxiliary scripts (e.g. install-sh, config.sub, config.guess)
+# in DIR.  If DIR is a literal shell word and not an absolute path,
+# it is interpreted relative to $srcdir; otherwise it is assumed to be
+# usable as-is.  If this macro is used more than once, it builds up a
+# list of directories to search, first to last.  If this macro is not
+# used at all, the default is to look in $srcdir and two levels of
+# parent directories above $srcdir; see _AC_INIT_SRCDIR.
+#
+# This macro may be used as a trace hook by tools that wish to know
+# where the auxiliary files should be.
+#
+# Note: paths starting with a DOS drive letter count as absolute, but
+# we do *not* check for backslash as a directory separator, because
+# anything with a backslash in it will be considered non-literal by
+# AS_LITERAL_WORD_IF and won't reach the m4_bmatch.  This is correct
+# behavior, because DIR will wind up inside a double-quoted shell string.
 AC_DEFUN([AC_CONFIG_AUX_DIR],
-[AC_CONFIG_AUX_DIRS($1 "$srcdir"/$1)])
+  [m4_append_uniq([_AC_AUX_DIR_CANDIDATES],
+    AS_LITERAL_WORD_IF([$1],
+      [m4_bmatch([$1],
+                 [^/],       [$1],
+                 [^[a-z]:/], [$1],
+                            [${srcdir}/$1])],
+      [$1]),
+    [${PATH_SEPARATOR}])])
+
+
+# AC_CONFIG_AUX_DIRS(DIRS)
+# ------------------------
+# Find auxiliary scripts (e.g. install-sh, config.sub, config.guess)
+# in any of the whitespace-separated directories named DIRS.
+# This macro is not documented; it used to be an internal subroutine,
+# but its name didn't begin with an underscore, so we're preserving it
+# for the small number of configure scripts that used it themselves.
+# It might be promoted to an official interface in the future.
+AC_DEFUN([AC_CONFIG_AUX_DIRS],
+[m4_map_args_w(m4_validate_w([$1]), [AC_CONFIG_AUX_DIR(], [)])])
+
+
+# AC_REQUIRE_AUX_FILE(FILE)
+# -------------------------
+# Declare that FILE is a required auxiliary file.  FILE must be literal.
+# At configure time, if we cannot locate a directory containing all of the
+# required auxiliary files, the script will bomb out.  This macro may also
+# be used as a trace hook by tools that wish to identify all of the required
+# auxiliary files.
+AC_DEFUN([AC_REQUIRE_AUX_FILE],
+[AS_LITERAL_WORD_IF([$1],
+  [m4_do(
+    [AC_REQUIRE([_AC_INIT_AUX_DIR])],
+    [m4_set_add([_AC_AUX_FILES], [$1])]
+  )],
+  [m4_fatal([$0: requires a literal argument])])])
 
 
 # AC_CONFIG_AUX_DIR_DEFAULT
 # -------------------------
-# The default is `$srcdir' or `$srcdir/..' or `$srcdir/../..'.
-# There's no need to call this macro explicitly; just AC_REQUIRE it.
+# No longer needed (AC_REQUIRE_AUX_FILE now does the whole job) but
+# preserved for backward compatibility with third-party macros.
+# Not yet being removed by autoupdate, because we don't know if any
+# third-party macros used this without also using AC_REQUIRE_AUX_FILE.
+# That usage is now considered incorrect, but removing it would break
+# those macros.
 AC_DEFUN([AC_CONFIG_AUX_DIR_DEFAULT],
-[AC_CONFIG_AUX_DIRS("$srcdir" "$srcdir/.." "$srcdir/../..")])
+[AC_REQUIRE([_AC_INIT_AUX_DIR])])
 
 
-# AC_CONFIG_AUX_DIRS(DIR ...)
-# ---------------------------
-# Internal subroutine.
-# Search for the configuration auxiliary files in directory list $1.
-# We look only for install-sh, so users of AC_PROG_INSTALL
-# do not automatically need to distribute the other auxiliary files.
-AC_DEFUN([AC_CONFIG_AUX_DIRS],
-[ac_aux_dir=
-for ac_dir in $1; do
-  if test -f "$ac_dir/install-sh"; then
-    ac_aux_dir=$ac_dir
-    ac_install_sh="$ac_aux_dir/install-sh -c"
-    break
-  elif test -f "$ac_dir/install.sh"; then
-    ac_aux_dir=$ac_dir
-    ac_install_sh="$ac_aux_dir/install.sh -c"
-    break
-  elif test -f "$ac_dir/shtool"; then
-    ac_aux_dir=$ac_dir
-    ac_install_sh="$ac_aux_dir/shtool install -c"
+# _AC_INIT_AUX_DIR
+# ----------------
+# Internal subroutine: AC_REQUIREd by AC_REQUIRE_AUX_FILE and
+# AC_CONFIG_AUX_DIR_DEFAULT.  Emits the shell code that actually
+# searches for the aux directory.  If AC_REQUIRE_AUX_FILE has
+# been used at least once, the aux directory must contain all
+# of the files that were AC_REQUIRE_AUX_FILE'd.  If it was never
+# used, fall back to the old behavior of looking only for install-sh.
+# (This fallback can be removed once we drop AC_CONFIG_AUX_DIR_DEFAULT.)
+AC_DEFUN([_AC_INIT_AUX_DIR],
+[m4_wrap_lifo(
+  [m4_do(
+    [m4_set_empty([_AC_AUX_FILES],
+      [m4_do(
+        [m4_warn([syntax],
+          [AC_CONFIG_AUX_DIR_DEFAULT used without AC_REQUIRE_AUX_FILE])],
+        [m4_set_add([_AC_AUX_FILES], [install-sh])])])],
+  [m4_divert_text([INIT_PREPARE],
+[
+# Auxiliary files required by this configure script.
+ac_aux_files="m4_set_dump([_AC_AUX_FILES], [ ])"
+
+# Locations in which to look for auxiliary files.
+ac_aux_dir_candidates="m4_ifset([_AC_AUX_DIR_CANDIDATES],
+  [m4_defn([_AC_AUX_DIR_CANDIDATES])],
+  [${srcdir}${PATH_SEPARATOR}${srcdir}/..${PATH_SEPARATOR}${srcdir}/../..])"
+
+# Search for a directory containing all of the required auxiliary files,
+# $ac_aux_files, from the $PATH-style list $ac_aux_dir_candidates.
+# If we don't find one directory that contains all the files we need,
+# we report the set of missing files from the *first* directory in
+# $ac_aux_dir_candidates and give up.
+ac_missing_aux_files=""
+ac_first_candidate=:
+_AS_ECHO_LOG([looking for aux files: $ac_aux_files])
+_AS_PATH_WALK([$ac_aux_dir_candidates], [
+  _AS_ECHO_LOG([ trying $as_dir])
+  ac_aux_dir_found=yes
+  ac_install_sh=
+  for ac_aux in $ac_aux_files
+  do
+    # As a special case, if "install-sh" is required, that requirement
+    # can be satisfied by any of "install-sh", "install.sh", or "shtool",
+    # and $ac_install_sh is set appropriately for whichever one is found.
+    if test x"$ac_aux" = x"install-sh"
+    then
+      if test -f "${as_dir}install-sh"; then
+        _AS_ECHO_LOG([  ${as_dir}install-sh found])
+        ac_install_sh="${as_dir}install-sh -c"
+      elif test -f "${as_dir}install.sh"; then
+        _AS_ECHO_LOG([  ${as_dir}install.sh found])
+        ac_install_sh="${as_dir}install.sh -c"
+      elif test -f "${as_dir}shtool"; then
+        _AS_ECHO_LOG([  ${as_dir}shtool found])
+        ac_install_sh="${as_dir}shtool install -c"
+      else
+        ac_aux_dir_found=no
+        if $ac_first_candidate; then
+          ac_missing_aux_files="${ac_missing_aux_files} install-sh"
+        else
+          break
+        fi
+      fi
+    else
+      if test -f "${as_dir}${ac_aux}"; then
+        _AS_ECHO_LOG([  ${as_dir}${ac_aux} found])
+      else
+        ac_aux_dir_found=no
+        if $ac_first_candidate; then
+          ac_missing_aux_files="${ac_missing_aux_files} ${ac_aux}"
+        else
+          break
+        fi
+      fi
+    fi
+  done
+  if test "$ac_aux_dir_found" = yes; then
+    ac_aux_dir="$as_dir"
     break
   fi
-done
-if test -z "$ac_aux_dir"; then
-  AC_MSG_ERROR([cannot find install-sh, install.sh, or shtool in $1])
-fi
+  ac_first_candidate=false
+],
+  [AC_MSG_ERROR([cannot find required auxiliary files:$ac_missing_aux_files])])
 
 # These three variables are undocumented and unsupported,
 # and are intended to be withdrawn in a future Autoconf release.
 # They can cause serious problems if a builder's source tree is in a directory
 # whose full name contains unusual characters.
-ac_config_guess="$SHELL $ac_aux_dir/config.guess"  # Please don't use this var.
-ac_config_sub="$SHELL $ac_aux_dir/config.sub"  # Please don't use this var.
-ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
+dnl The quadrigraphs prevent spurious deprecation warnings.
+if test -f "${ac_aux_dir}config.guess"; then
+  ac_@&t@config_guess="$SHELL ${ac_aux_dir}config.guess"
+fi
+if test -f "${ac_aux_dir}config.sub"; then
+  ac_@&t@config_sub="$SHELL ${ac_aux_dir}config.sub"
+fi
+if test -f "$ac_aux_dir/configure"; then
+  ac_@&t@configure="$SHELL ${ac_aux_dir}configure"
+fi
+])])])])
 
-AC_PROVIDE([AC_CONFIG_AUX_DIR_DEFAULT])dnl
-])# AC_CONFIG_AUX_DIRS
+# Deprecation warnings for the unsupported variables above.
+m4_define([ac_config_guess],
+[m4_warn([obsolete],
+ [$ac_config_guess is obsolete and unsafe.  Please stop using it.
+Contact autoconf@gnu.org if you really need it.])ac_@&t@config_guess])
 
+m4_define([ac_config_sub],
+[m4_warn([obsolete],
+ [$ac_config_sub is obsolete and unsafe.  Please stop using it.
+Contact autoconf@gnu.org if you really need it.])ac_@&t@config_sub])
+
+m4_define([ac_configure],
+[m4_warn([obsolete],
+ [$ac_configure is obsolete and unsafe.  Please stop using it.
+Contact autoconf@gnu.org if you really need it.])ac_@&t@config_sub])
 
 
 
@@ -1725,25 +1927,48 @@ AC_PROVIDE([AC_CONFIG_AUX_DIR_DEFAULT])dnl
 ## ------------------------ ##
 
 
+# AC_CONFIG_MACRO_DIR_TRACE(DIR)
+# ------------------------------
+# This macro exists solely for tracing - never invoke it directly.
+# It will be called once per directory listed in either form of
+# AC_CONFIG_MACRO_DIR[S].
+m4_define([AC_CONFIG_MACRO_DIR_TRACE],
+[m4_fatal([Do not invoke $0 directly])])
+
+# _AC_CONFIG_MACRO_DIRS_USED
+# --------------------------
+# Internal witness macro, redefined to empty after first directory is traced.
+m4_define([_AC_CONFIG_MACRO_DIRS_USED], [-])
+
+# _AC_CONFIG_MACRO_DIRS(CALLER, DIR)
+# ----------------------------------
+# Internal workhorse macro to ensure a sane calling pattern of CALLER, and
+# eventually trace DIR through the documented public trace point.
+m4_define([_AC_CONFIG_MACRO_DIRS],
+[m4_if([$1], [-AC_CONFIG_MACRO_DIRS], [AC_CONFIG_MACRO_DIR([$2])],
+       [$1], [AC_CONFIG_MACRO_DIR], [m4_fatal([$1 can only be used once])],
+  [m4_define([$0_USED])m4_pushdef([AC_CONFIG_MACRO_DIR_TRACE])]]dnl
+[[AC_CONFIG_MACRO_DIR_TRACE([$2])m4_popdef([AC_CONFIG_MACRO_DIR_TRACE])])])
+
+# AC_CONFIG_MACRO_DIRS(DIR-1 [DIR-2 ... DIR-n])
+# --------------------------------------------
+# Declare directories containing additional macros for aclocal.
+# This macro can be called multiple times, and with multiple arguments.
+# Do not trace this macro; instead trace AC_CONFIG_MACRO_DIR_TRACE.
+# If no directory has been traced yet, then this macro also triggers
+# a trace of AC_CONFIG_MACRO_DIR on the first directory.
+AC_DEFUN([AC_CONFIG_MACRO_DIRS],
+[m4_map_args_w(m4_validate_w([$1]),
+  [_$0(_$0_USED()[$0], ], [)])])
+
 # AC_CONFIG_MACRO_DIR(DIR)
 # ------------------------
 # Declare directory containing additional macros for aclocal.
-AC_DEFUN([AC_CONFIG_MACRO_DIR], [])
-
-
-
-## --------------------- ##
-## Requiring aux files.  ##
-## --------------------- ##
-
-# AC_REQUIRE_AUX_FILE(FILE)
-# -------------------------
-# This macro does nothing, it's a hook to be read with `autoconf --trace'.
-# It announces FILE is required in the auxdir.
-m4_define([AC_REQUIRE_AUX_FILE],
-[AS_LITERAL_WORD_IF([$1], [],
-	       [m4_fatal([$0: requires a literal argument])])])
-
+# This macro exists for backward compatibility; while tools can trace this,
+# we recommend tracing AC_CONFIG_MACRO_DIR_TRACE instead.  This macro can
+# only be used once, and must not be used after AC_CONFIG_MACRO_DIRS.
+AC_DEFUN([AC_CONFIG_MACRO_DIR],
+[_$0S(_$0S_USED()[$0], [$1])])
 
 
 ## ----------------------------------- ##
@@ -1786,25 +2011,24 @@ AC_SUBST([$1_os])dnl
 # AC_CANONICAL_BUILD
 # ------------------
 AC_DEFUN_ONCE([AC_CANONICAL_BUILD],
-[AC_REQUIRE([AC_CONFIG_AUX_DIR_DEFAULT])dnl
-AC_REQUIRE_AUX_FILE([config.sub])dnl
+[AC_REQUIRE_AUX_FILE([config.sub])dnl
 AC_REQUIRE_AUX_FILE([config.guess])dnl
 m4_divert_once([HELP_CANON],
 [[
 System types:
   --build=BUILD     configure for building on BUILD [guessed]]])dnl
 # Make sure we can run config.sub.
-$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
-  AC_MSG_ERROR([cannot run $SHELL $ac_aux_dir/config.sub])
+$SHELL "${ac_aux_dir}config.sub" sun4 >/dev/null 2>&1 ||
+  AC_MSG_ERROR([cannot run $SHELL ${ac_aux_dir}config.sub])
 
 AC_CACHE_CHECK([build system type], [ac_cv_build],
 [ac_build_alias=$build_alias
 test "x$ac_build_alias" = x &&
-  ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
+  ac_build_alias=`$SHELL "${ac_aux_dir}config.guess"`
 test "x$ac_build_alias" = x &&
   AC_MSG_ERROR([cannot guess build type; you must specify one])
-ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
-  AC_MSG_ERROR([$SHELL $ac_aux_dir/config.sub $ac_build_alias failed])
+ac_cv_build=`$SHELL "${ac_aux_dir}config.sub" $ac_build_alias` ||
+  AC_MSG_ERROR([$SHELL ${ac_aux_dir}config.sub $ac_build_alias failed])
 ])
 _AC_CANONICAL_SPLIT(build)
 ])# AC_CANONICAL_BUILD
@@ -1820,8 +2044,8 @@ AC_CACHE_CHECK([host system type], [ac_cv_host],
 [if test "x$host_alias" = x; then
   ac_cv_host=$ac_cv_build
 else
-  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
-    AC_MSG_ERROR([$SHELL $ac_aux_dir/config.sub $host_alias failed])
+  ac_cv_host=`$SHELL "${ac_aux_dir}config.sub" $host_alias` ||
+    AC_MSG_ERROR([$SHELL ${ac_aux_dir}config.sub $host_alias failed])
 fi
 ])
 _AC_CANONICAL_SPLIT([host])
@@ -1839,8 +2063,8 @@ AC_CACHE_CHECK([target system type], [ac_cv_target],
 [if test "x$target_alias" = x; then
   ac_cv_target=$ac_cv_host
 else
-  ac_cv_target=`$SHELL "$ac_aux_dir/config.sub" $target_alias` ||
-    AC_MSG_ERROR([$SHELL $ac_aux_dir/config.sub $target_alias failed])
+  ac_cv_target=`$SHELL "${ac_aux_dir}config.sub" $target_alias` ||
+    AC_MSG_ERROR([$SHELL ${ac_aux_dir}config.sub $target_alias failed])
 fi
 ])
 _AC_CANONICAL_SPLIT([target])
@@ -1875,26 +2099,20 @@ AU_DEFUN([AC_VALIDATE_CACHED_SYSTEM_TUPLE], [])
 # Look for site- or system-specific initialization scripts.
 m4_define([AC_SITE_LOAD],
 [# Prefer an explicitly selected file to automatically selected ones.
-ac_site_file1=NONE
-ac_site_file2=NONE
 if test -n "$CONFIG_SITE"; then
-  # We do not want a PATH search for config.site.
-  case $CONFIG_SITE in @%:@((
-    -*)  ac_site_file1=./$CONFIG_SITE;;
-    */*) ac_site_file1=$CONFIG_SITE;;
-    *)   ac_site_file1=./$CONFIG_SITE;;
-  esac
+  ac_site_files="$CONFIG_SITE"
 elif test "x$prefix" != xNONE; then
-  ac_site_file1=$prefix/share/config.site
-  ac_site_file2=$prefix/etc/config.site
+  ac_site_files="$prefix/share/config.site $prefix/etc/config.site"
 else
-  ac_site_file1=$ac_default_prefix/share/config.site
-  ac_site_file2=$ac_default_prefix/etc/config.site
+  ac_site_files="$ac_default_prefix/share/config.site $ac_default_prefix/etc/config.site"
 fi
-for ac_site_file in "$ac_site_file1" "$ac_site_file2"
+
+for ac_site_file in $ac_site_files
 do
-  test "x$ac_site_file" = xNONE && continue
-  if test /dev/null != "$ac_site_file" && test -r "$ac_site_file"; then
+  AS_CASE([$ac_site_file],
+    [*/*], [],
+    [ac_site_file=./$ac_site_file])
+  if test -f "$ac_site_file" && test -r "$ac_site_file"; then
     AC_MSG_NOTICE([loading site script $ac_site_file])
     sed 's/^/| /' "$ac_site_file" >&AS_MESSAGE_LOG_FD
     . "$ac_site_file" \
@@ -1994,7 +2212,7 @@ _AC_CACHE_DUMP() |
      /^ac_cv_env_/b end
      t clear
      :clear
-     s/^\([^=]*\)=\(.*[{}].*\)$/test "${\1+set}" = set || &/
+     s/^\([^=]*\)=\(.*[{}].*\)$/test ${\1+y} || &/
      t end
      s/^\([^=]*\)=\(.*\)$/\1=${\1=\2}/
      :end'] >>confcache
@@ -2030,14 +2248,14 @@ rm -f confcache[]dnl
 # Should be dnl'ed.  Try to catch common mistakes.
 m4_defun([AC_CACHE_VAL],
 [AS_LITERAL_WORD_IF([$1], [m4_if(m4_index(m4_quote($1), [_cv_]), [-1],
-			    [AC_DIAGNOSE([syntax],
+			    [m4_warn([syntax],
 [$0($1, ...): suspicious cache-id, must contain _cv_ to be cached])])])dnl
 m4_if(m4_index([$2], [AC_DEFINE]), [-1], [],
-      [AC_DIAGNOSE([syntax],
+      [m4_warn([syntax],
 [$0($1, ...): suspicious presence of an AC_DEFINE in the second argument, ]dnl
 [where no actions should be taken])])dnl
 m4_if(m4_index([$2], [AC_SUBST]), [-1], [],
-      [AC_DIAGNOSE([syntax],
+      [m4_warn([syntax],
 [$0($1, ...): suspicious presence of an AC_SUBST in the second argument, ]dnl
 [where no actions should be taken])])dnl
 AS_VAR_SET_IF([$1],
@@ -2117,9 +2335,11 @@ m4_define([AC_DEFINE_UNQUOTED], [_AC_DEFINE_Q([_$0], $@)])
 # Append the pre-expanded STRING and a newline to confdefs.h, as if
 # with an unquoted here-doc, but avoiding a fork in the common case of
 # no backslash, no command substitution, no complex variable
-# substitution, and no quadrigraphs.
+# substitution (taking into account quadrigraphs as well).  Also
+# avoid AS_ECHO if "#" is present to avoid confusing m4 with comments,
+# but quadrigraphs are fine in that case.
 m4_define([_AC_DEFINE_UNQUOTED],
-[m4_if(m4_bregexp([$1], [\\\|`\|\$(\|\${\|@]), [-1],
+[m4_if(m4_bregexp([$1], [#\|\\\|`\|\(\$\|@S|@\)\((|{|@{:@\)]), [-1],
        [AS_ECHO(["AS_ESCAPE([$1], [""])"]) >>confdefs.h],
        [cat >>confdefs.h <<_ACEOF
 [$1]
@@ -2178,7 +2398,7 @@ m4_define([AC_SUBST],
   [m4_fatal([$0: `$1' is not a valid shell variable name])])]dnl
 [AC_SUBST_TRACE([$1])]dnl
 [m4_pattern_allow([^$1$])]dnl
-[m4_ifvaln([$2], [$1=$2])[]]dnl
+[m4_ifvaln([$2], [[$1]=$2])[]]dnl
 [m4_set_add([_AC_SUBST_VARS], [$1])])# AC_SUBST
 
 
@@ -2196,25 +2416,38 @@ m4_append_uniq([_AC_SUBST_FILES], [$1], [
 ## Printing messages at autoconf runtime.  ##
 ## --------------------------------------- ##
 
-# In fact, I think we should promote the use of m4_warn and m4_fatal
-# directly.  This will also avoid to some people to get it wrong
-# between AC_FATAL and AC_MSG_ERROR.
-
-
-# AC_DIAGNOSE(CATEGORY, MESSAGE)
-# AC_FATAL(MESSAGE, [EXIT-STATUS])
+# AU::AC_DIAGNOSE(CATEGORY, MESSAGE)
+# AU::AC_FATAL(MESSAGE, [EXIT-STATUS])
+# AU::AC_WARNING(MESSAGE)
+# AU::AC_OBSOLETE(THIS-MACRO, [SUGGESTION])
 # --------------------------------
-m4_define([AC_DIAGNOSE], [m4_warn($@)])
-m4_define([AC_FATAL],    [m4_fatal($@)])
+# The double definitions are necessary because autoupdate expands m4_
+# macros, so we have to double-quote the replacements, but then they
+# won't work in a normal autoconf run.
 
+# 2020-10-06 / autoconf 2.70: Widely used third-party macros
+# (among others, from automake, libtool, and gettext) use AC_DIAGNOSE,
+# so we temporarily don't issue an obsoletion warning for it.
+# Revisit after third parties have had a chance to update their macros
+# and make releases.
+AU_DEFUN([AC_DIAGNOSE], [[m4_warn($@)]], [], [silent])
+AC_DEFUN([AC_DIAGNOSE], [m4_warn($@)])
 
-# AC_WARNING(MESSAGE)
-# -------------------
-# Report a MESSAGE to the user of autoconf if `-W' or `-W all' was
-# specified.
-m4_define([AC_WARNING],
-[AC_DIAGNOSE([syntax], [$1])])
+AU_DEFUN([AC_FATAL], [[m4_fatal($@)]])
+AC_DEFUN([AC_FATAL], [m4_fatal($@)dnl
+m4_warn([obsolete], [The macro `$0' is obsolete.
+You should run autoupdate.])])
 
+AU_DEFUN([AC_WARNING],  [[m4_warn([syntax], [$1])]])
+AC_DEFUN([AC_WARNING], [m4_warn([syntax], [$1])dnl
+m4_warn([obsolete], [The macro `$0' is obsolete.
+You should run autoupdate.])])
+
+AU_DEFUN([AC_OBSOLETE], [[m4_warn([obsolete], [$1 is obsolete$2])]],
+[if possible, define this macro using AU_DEFUN.])
+AC_DEFUN([AC_OBSOLETE], [m4_warn([obsolete], [$1 is obsolete$2])dnl
+m4_warn([obsolete], [The macro `$0' is obsolete.
+You should run autoupdate.])])
 
 
 
@@ -2546,7 +2779,7 @@ dnl Quote $1 to prevent m4 from eating character classes
   $EGREP "[$1]" >/dev/null 2>&1],
   [$3],
   [$4])
-rm -f conftest*
+rm -rf conftest*
 ])# AC_EGREP_CPP
 
 
@@ -2570,7 +2803,7 @@ AC_DEFUN([AC_EGREP_HEADER],
 # Shell function body for _AC_COMPILE_IFELSE.
 m4_define([_AC_COMPILE_IFELSE_BODY],
 [  AS_LINENO_PUSH([$[]1])
-  rm -f conftest.$ac_objext
+  rm -f conftest.$ac_objext conftest.beam
   AS_IF([_AC_DO_STDERR($ac_compile) && {
 	 test -z "$ac_[]_AC_LANG_ABBREV[]_werror_flag" ||
 	 test ! -s conftest.err
@@ -2594,7 +2827,7 @@ AC_DEFUN([_AC_COMPILE_IFELSE],
   [$0_BODY])]dnl
 [m4_ifvaln([$1], [AC_LANG_CONFTEST([$1])])]dnl
 [AS_IF([ac_fn_[]_AC_LANG_ABBREV[]_try_compile "$LINENO"], [$2], [$3])
-rm -f core conftest.err conftest.$ac_objext[]m4_ifval([$1], [ conftest.$ac_ext])[]dnl
+rm -f core conftest.err conftest.$ac_objext conftest.beam[]m4_ifval([$1], [ conftest.$ac_ext])[]dnl
 ])# _AC_COMPILE_IFELSE
 
 
@@ -2626,7 +2859,7 @@ AU_DEFUN([AC_TRY_COMPILE],
 # Shell function body for _AC_LINK_IFELSE.
 m4_define([_AC_LINK_IFELSE_BODY],
 [  AS_LINENO_PUSH([$[]1])
-  rm -f conftest.$ac_objext conftest$ac_exeext
+  rm -f conftest.$ac_objext conftest.beam conftest$ac_exeext
   AS_IF([_AC_DO_STDERR($ac_link) && {
 	 test -z "$ac_[]_AC_LANG_ABBREV[]_werror_flag" ||
 	 test ! -s conftest.err
@@ -2653,10 +2886,10 @@ m4_define([_AC_LINK_IFELSE_BODY],
 # This macro can be used during the selection of a compiler.
 #
 # Test that resulting file is executable; see the problem reported by mwoehlke
-# in <http://lists.gnu.org/archive/html/bug-coreutils/2006-10/msg00048.html>.
+# in <https://lists.gnu.org/archive/html/bug-coreutils/2006-10/msg00048.html>.
 # But skip the test when cross-compiling, to prevent problems like the one
 # reported by Chris Johns in
-# <http://lists.gnu.org/archive/html/autoconf/2007-03/msg00085.html>.
+# <https://lists.gnu.org/archive/html/autoconf/2007-03/msg00085.html>.
 #
 AC_DEFUN([_AC_LINK_IFELSE],
 [AC_REQUIRE_SHELL_FN([ac_fn_]_AC_LANG_ABBREV[_try_link],
@@ -2665,7 +2898,7 @@ AC_DEFUN([_AC_LINK_IFELSE],
   [$0_BODY])]dnl
 [m4_ifvaln([$1], [AC_LANG_CONFTEST([$1])])]dnl
 [AS_IF([ac_fn_[]_AC_LANG_ABBREV[]_try_link "$LINENO"], [$2], [$3])
-rm -f core conftest.err conftest.$ac_objext \
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
     conftest$ac_exeext[]m4_ifval([$1], [ conftest.$ac_ext])[]dnl
 ])# _AC_LINK_IFELSE
 
@@ -2729,7 +2962,7 @@ m4_define([_AC_RUN_IFELSE_BODY],
 AC_DEFUN([_AC_RUN_IFELSE],
 [AC_REQUIRE_SHELL_FN([ac_fn_]_AC_LANG_ABBREV[_try_run],
   [AS_FUNCTION_DESCRIBE([ac_fn_]_AC_LANG_ABBREV[_try_run], [LINENO],
-    [Try to link conftest.$ac_ext, and return whether this succeeded.
+    [Try to run conftest.$ac_ext, and return whether this succeeded.
      Assumes that executables *can* be run.])],
   [$0_BODY])]dnl
 [m4_ifvaln([$1], [AC_LANG_CONFTEST([$1])])]dnl
@@ -2748,8 +2981,8 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
 AC_DEFUN([AC_RUN_IFELSE],
 [AC_LANG_COMPILER_REQUIRE()dnl
 m4_ifval([$4], [],
-	 [AC_DIAGNOSE([cross],
-		     [$0 called without default to allow cross compiling])])dnl
+	 [m4_warn([cross],
+		  [$0 called without default to allow cross compiling])])dnl
 AS_IF([test "$cross_compiling" = yes],
   [m4_default([$4],
 	   [AC_MSG_FAILURE([cannot run test program while cross compiling])])],
@@ -2775,8 +3008,8 @@ AU_DEFUN([AC_TRY_RUN],
 #
 # Check for the existence of FILE.
 AC_DEFUN([AC_CHECK_FILE],
-[AC_DIAGNOSE([cross],
-	     [cannot check for file existence when cross compiling])dnl
+[m4_warn([cross],
+	 [cannot check for file existence when cross compiling])dnl
 AS_VAR_PUSHDEF([ac_File], [ac_cv_file_$1])dnl
 AC_CACHE_CHECK([for $1], [ac_File],
 [test "$cross_compiling" = yes &&
@@ -2806,33 +3039,97 @@ m4_define([_AC_CHECK_FILES],
 # ACTION-IF-FOUND or ACTION-IF-NOT-FOUND.  For files that exist, also
 # provide the preprocessor variable HAVE_FILE.
 AC_DEFUN([AC_CHECK_FILES],
-[m4_map_args_w([$1], [AC_CHECK_FILE(_$0(], [)[$2], [$3])])])
+[m4_map_args_w(m4_validate_w([$1]),
+  [AC_CHECK_FILE(_$0(], [)[$2], [$3])])])
 
 
 ## ------------------------------- ##
 ## Checking for declared symbols.  ##
 ## ------------------------------- ##
 
+# _AC_UNDECLARED_BUILTIN
+# ----------------------
+# Set ac_[]_AC_LANG_ABBREV[]_undeclared_builtin_options to any options
+# needed to make the compiler issue a hard error, not a warning, when
+# an undeclared function is used whose declaration happens to be
+# built into the compiler (e.g. 'strchr' is often known in advance to
+# the C compiler).  These options should not cause any other unrelated
+# warnings to become errors.  If no such options can be found, or if
+# they make the compiler error out on a correct program of the form
+# used by AC_CHECK_DECL, report failure.
+AC_DEFUN([_AC_UNDECLARED_BUILTIN],
+[AC_CACHE_CHECK(
+  [for $[]_AC_CC options needed to detect all undeclared functions],
+  [ac_cv_[]_AC_LANG_ABBREV[]_undeclared_builtin_options],
+  [ac_save_CFLAGS=$CFLAGS
+   ac_cv_[]_AC_LANG_ABBREV[]_undeclared_builtin_options='cannot detect'
+   for ac_arg in '' -fno-builtin; do
+     CFLAGS="$ac_save_CFLAGS $ac_arg"
+     # This test program should *not* compile successfully.
+     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [(void) strchr;])],
+       [],
+       [# This test program should compile successfully.
+        # No library function is consistently available on
+        # freestanding implementations, so test against a dummy
+        # declaration.  Include always-available headers on the
+        # off chance that they somehow elicit warnings.
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+[[#include <float.h>
+#include <limits.h>
+#include <stdarg.h>
+#include <stddef.h>
+extern void ac_decl (int, char *);
+]],
+[[(void) ac_decl (0, (char *) 0);
+  (void) ac_decl;
+]])],
+         [AS_IF([test x"$ac_arg" = x],
+           [ac_cv_[]_AC_LANG_ABBREV[]_undeclared_builtin_options='none needed'],
+           [ac_cv_[]_AC_LANG_ABBREV[]_undeclared_builtin_options=$ac_arg])
+          break],
+         [])])
+    done
+    CFLAGS=$ac_save_CFLAGS
+  ])
+  AS_CASE([$ac_cv_[]_AC_LANG_ABBREV[]_undeclared_builtin_options],
+    ['cannot detect'],
+      [AC_MSG_FAILURE([cannot make $[]_AC_CC report undeclared builtins])],
+    ['none needed'],
+      [ac_[]_AC_LANG_ABBREV[]_undeclared_builtin_options=''],
+      [ac_[]_AC_LANG_ABBREV[]_undeclared_builtin_options=$ac_cv_[]_AC_LANG_ABBREV[]_undeclared_builtin_options])
+])
 
 # _AC_CHECK_DECL_BODY
 # -------------------
 # Shell function body for AC_CHECK_DECL.
+# If we are compiling C, just refer to the name of the function, so we
+# don't implicitly declare it.  However, if we are compiling C++,
+# `(void) function_name;' won't work when function_name has more than one
+# overload, we need to fabricate a function call.  Fortunately, there is
+# no such thing as an implicit function declaration in C++.
+# If the function is defined as a macro, we cannot verify its signature
+# without calling it, and it might not expand to a construct that's valid
+# as the only statement in a function body; just report it as available.
 m4_define([_AC_CHECK_DECL_BODY],
 [  AS_LINENO_PUSH([$[]1])
-  [as_decl_name=`echo $][2|sed 's/ *(.*//'`]
-  [as_decl_use=`echo $][2|sed -e 's/(/((/' -e 's/)/) 0&/' -e 's/,/) 0& (/g'`]
-  AC_CACHE_CHECK([whether $as_decl_name is declared], [$[]3],
-  [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$[]4],
-[@%:@ifndef $[]as_decl_name
-@%:@ifdef __cplusplus
-  (void) $[]as_decl_use;
-@%:@else
-  (void) $[]as_decl_name;
-@%:@endif
-@%:@endif
-])],
+  as_decl_name=`echo $[]2|sed 's/ *(.*//'`
+  AC_CACHE_CHECK([whether $][as_decl_name is declared], [$[]3],
+  [as_decl_use=`echo $[]2|sed -e 's/(/((/' -e 's/)/) 0&/' -e 's/,/) 0& (/g'`
+  AS_VAR_COPY([ac_save_FLAGS], [$[]6])
+  AS_VAR_APPEND([$[]6], [" $[]5"])
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[$][4]],
+[[#ifndef $][as_decl_name
+#ifdef __cplusplus
+  (void) $][as_decl_use;
+#else
+  (void) $][as_decl_name;
+#endif
+#endif
+]])],
 		   [AS_VAR_SET([$[]3], [yes])],
-		   [AS_VAR_SET([$[]3], [no])])])
+		   [AS_VAR_SET([$[]3], [no])])
+  AS_VAR_COPY([$[]6], [ac_save_FLAGS])
+])
   AS_LINENO_POP
 ])# _AC_CHECK_DECL_BODY
 
@@ -2842,18 +3139,23 @@ m4_define([_AC_CHECK_DECL_BODY],
 # -------------------------------------------------------
 # Check whether SYMBOL (a function, variable, or constant) is declared.
 AC_DEFUN([AC_CHECK_DECL],
-[AC_REQUIRE_SHELL_FN([ac_fn_]_AC_LANG_ABBREV[_check_decl],
-  [AS_FUNCTION_DESCRIBE([ac_fn_]_AC_LANG_ABBREV[_check_decl],
-    [LINENO SYMBOL VAR INCLUDES],
+[AC_REQUIRE_SHELL_FN([ac_fn_check_decl],
+  [AS_FUNCTION_DESCRIBE([ac_fn_check_decl],
+    [LINENO SYMBOL VAR INCLUDES EXTRA-OPTIONS FLAG-VAR],
     [Tests whether SYMBOL is declared in INCLUDES, setting cache variable
-     VAR accordingly.])],
+     VAR accordingly.  Pass EXTRA-OPTIONS to the compiler, using FLAG-VAR.])],
   [_$0_BODY])]dnl
+dnl Initialize each $ac_[]_AC_LANG_ABBREV[]_undeclared_builtin_options once.
+[AC_DEFUN([_AC_UNDECLARED_BUILTIN_]_AC_LANG_ABBREV,
+          [_AC_UNDECLARED_BUILTIN])]dnl
+[AC_REQUIRE([_AC_UNDECLARED_BUILTIN_]_AC_LANG_ABBREV)]dnl
 [AS_VAR_PUSHDEF([ac_Symbol], [ac_cv_have_decl_$1])]dnl
-[ac_fn_[]_AC_LANG_ABBREV[]_check_decl ]dnl
-["$LINENO" "$1" "ac_Symbol" "AS_ESCAPE([AC_INCLUDES_DEFAULT([$4])], [""])"
-AS_VAR_IF([ac_Symbol], [yes], [$2], [$3])
-AS_VAR_POPDEF([ac_Symbol])dnl
-])# AC_CHECK_DECL
+[ac_fn_check_decl ]dnl
+["$LINENO" "$1" "ac_Symbol" "AS_ESCAPE([AC_INCLUDES_DEFAULT([$4])], [""])" ]dnl
+["$ac_[]_AC_LANG_ABBREV[]_undeclared_builtin_options" "_AC_LANG_PREFIX[]FLAGS"]
+[AS_VAR_IF([ac_Symbol], [yes], [$2], [$3])]dnl
+[AS_VAR_POPDEF([ac_Symbol])]dnl
+)# AC_CHECK_DECL
 
 
 # _AC_CHECK_DECLS(SYMBOL, ACTION-IF_FOUND, ACTION-IF-NOT-FOUND,
@@ -2938,7 +3240,7 @@ esac
 AC_DEFUN([AC_LIBOBJ],
 [_AC_LIBOBJ([$1])]dnl
 [AS_LITERAL_WORD_IF([$1], [AC_LIBSOURCE([$1.c])],
-  [AC_DIAGNOSE([syntax], [$0($1): you should use literals])])])
+  [m4_warn([syntax], [$0($1): you should use literals])])])
 
 
 # _AC_LIBOBJS_NORMALIZE
@@ -3067,15 +3369,8 @@ AC_DEFUN([AC_COMPUTE_INT],
        [], [$4])
 ])# AC_COMPUTE_INT
 
-# _AC_COMPUTE_INT(EXPRESSION, VARIABLE, PROLOGUE, [IF-FAILS])
+# AU::_AC_COMPUTE_INT(EXPRESSION, VARIABLE, PROLOGUE, [IF-FAILS])
 # -----------------------------------------------------------
 # FIXME: this private interface was used by several packages.
 # Give them time to transition to AC_COMPUTE_INT and then delete this one.
-AC_DEFUN([_AC_COMPUTE_INT],
-[AC_COMPUTE_INT([$2], [$1], [$3], [$4])
-AC_DIAGNOSE([obsolete],
-[The macro `_AC_COMPUTE_INT' is obsolete and will be deleted in a
-future version or Autoconf.  Hence, it is suggested that you use
-instead the public AC_COMPUTE_INT macro.  Note that the arguments are
-slightly different between the two.])dnl
-])# _AC_COMPUTE_INT
+AU_DEFUN([_AC_COMPUTE_INT], [AC_COMPUTE_INT([$2], [$1], [$3], [$4])])

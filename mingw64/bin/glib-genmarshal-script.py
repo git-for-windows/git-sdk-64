@@ -1,4 +1,4 @@
-#!C:/git-sdk-64-ci/mingw64/bin/python3.exe
+
 
 # pylint: disable=too-many-lines, missing-docstring, invalid-name
 
@@ -22,7 +22,7 @@ import os
 import re
 import sys
 
-VERSION_STR = '''glib-genmarshal version 2.66.6
+VERSION_STR = '''glib-genmarshal version 2.66.7
 glib-genmarshal comes with ABSOLUTELY NO WARRANTY.
 You may redistribute copies of glib-genmarshal under the terms of
 the GNU General Public License which can be found in the

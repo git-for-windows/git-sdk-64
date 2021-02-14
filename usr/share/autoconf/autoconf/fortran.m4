@@ -1,6 +1,7 @@
 # This file is part of Autoconf.                       -*- Autoconf -*-
 # Fortran languages support.
-# Copyright (C) 2001, 2003-2012 Free Software Foundation, Inc.
+# Copyright (C) 2001, 2003-2017, 2020-2021 Free Software Foundation,
+# Inc.
 
 # This file is part of Autoconf.  This program is free
 # software; you can redistribute it and/or modify it under the
@@ -20,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # and a copy of the Autoconf Configure Script Exception along with
 # this program; see the files COPYINGv3 and COPYING.EXCEPTION
-# respectively.  If not, see <http://www.gnu.org/licenses/>.
+# respectively.  If not, see <https://www.gnu.org/licenses/>.
 
 # Written by David MacKenzie, with help from
 # Franc,ois Pinard, Karl Berry, Richard Pixley, Ian Lance Taylor,
@@ -398,7 +399,7 @@ AC_LANG_POP(Fortran)dnl
 # versions of a library), tasteless as that idea is.
 m4_define([_AC_PROG_FC_G],
 [_AC_FORTRAN_ASSERT()dnl
-ac_test_[]_AC_LANG_PREFIX[]FLAGS=${[]_AC_LANG_PREFIX[]FLAGS+set}
+ac_test_[]_AC_LANG_PREFIX[]FLAGS=${[]_AC_LANG_PREFIX[]FLAGS+y}
 ac_save_[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
 _AC_LANG_PREFIX[]FLAGS=
 AC_CACHE_CHECK(whether $[]_AC_FC[] accepts -g, ac_cv_prog_[]_AC_LANG_ABBREV[]_g,
@@ -407,7 +408,7 @@ _AC_COMPILE_IFELSE([AC_LANG_PROGRAM()],
 [ac_cv_prog_[]_AC_LANG_ABBREV[]_g=yes],
 [ac_cv_prog_[]_AC_LANG_ABBREV[]_g=no])
 ])
-if test "$ac_test_[]_AC_LANG_PREFIX[]FLAGS" = set; then
+if test $ac_test_[]_AC_LANG_PREFIX[]FLAGS; then
   _AC_LANG_PREFIX[]FLAGS=$ac_save_[]_AC_LANG_PREFIX[]FLAGS
 elif test $ac_cv_prog_[]_AC_LANG_ABBREV[]_g = yes; then
   if test "x$ac_cv_[]_AC_LANG_ABBREV[]_compiler_gnu" = xyes; then
@@ -451,7 +452,7 @@ if _AC_DO_VAR(ac_try) &&
 else
   ac_cv_prog_[]_AC_LANG_ABBREV[]_c_o=no
 fi
-rm -f conftest*])
+rm -rf conftest*])
 if test $ac_cv_prog_[]_AC_LANG_ABBREV[]_c_o = no; then
   AC_DEFINE([]_AC_FC[]_NO_MINUS_C_MINUS_O, 1,
 	    [Define to 1 if your Fortran compiler doesn't accept
@@ -665,9 +666,12 @@ while test $[@%:@] != 1; do
 	  |-LANG:=* | -LIST:* | -LNO:* | -link)
 	  ;;
 	-lkernel32)
+	  # Ignore this library only on Windows-like systems.
 	  case $host_os in
-	  *cygwin* | *msys*) ;;
-	  *) ac_cv_[]_AC_LANG_ABBREV[]_libs="$ac_cv_[]_AC_LANG_ABBREV[]_libs $ac_arg"
+	  cygwin* | msys* ) ;;
+	  *)
+	  _AC_LIST_MEMBER_IF($ac_arg, $ac_cv_[]_AC_LANG_ABBREV[]_libs, ,
+			     ac_cv_[]_AC_LANG_ABBREV[]_libs="$ac_cv_[]_AC_LANG_ABBREV[]_libs $ac_arg")
 	    ;;
 	  esac
 	  ;;
@@ -698,6 +702,7 @@ while test $[@%:@] != 1; do
 	-zallextract*| -zdefaultextract)
 	  ac_cv_[]_AC_LANG_ABBREV[]_libs="$ac_cv_[]_AC_LANG_ABBREV[]_libs $ac_arg"
 	  ;;
+	-mllvm) ${2+shift};; # Defend against 'clang -mllvm -loopopt=0'.
 	  # Ignore everything else.
   esac
 done
@@ -1455,7 +1460,7 @@ AC_LANG_POP([Fortran])dnl
 # Look for a compiler flag to make the Fortran (FC) compiler accept long lines
 # in the current (free- or fixed-format) source code, and adds it to FCFLAGS.
 # The optional LENGTH may be 80, 132 (default), or `unlimited' for longer
-# lines.  Note that line lengths above 254 columns are not portable, and some
+# lines.  Note that line lengths above 250 columns are not portable, and some
 # compilers (hello ifort) do not accept more than 132 columns at least for
 # fixed format.  Call ACTION-IF-SUCCESS (defaults to nothing) if successful
 # (i.e. can compile code using new extension) and ACTION-IF-FAILURE (defaults
@@ -1818,7 +1823,7 @@ ac_cv_fc_module_output_flag=unknown
 ac_fc_module_output_flag_FCFLAGS_save=$FCFLAGS
 # Flag ordering is significant: put flags late which some compilers use
 # for the search path.
-for ac_flag in -J '-J ' -fmod= -moddir= +moddir= -qmoddir= '-mod ' \
+for ac_flag in -J '-J ' -fmod= -moddir= +moddir= -qmoddir= '-mdir ' '-mod ' \
 	      '-module ' -M '-Am -M' '-e m -J '; do
   FCFLAGS="$ac_fc_module_output_flag_FCFLAGS_save ${ac_flag}sub"
   AC_COMPILE_IFELSE([[
@@ -1834,25 +1839,21 @@ for ac_flag in -J '-J ' -fmod= -moddir= +moddir= -qmoddir= '-mod ' \
       use conftest_module
       call conftest_routine
       end program]],
-       [ac_cv_fc_module_output_flag="$ac_flag"])
+       [ac_cv_fc_module_output_flag=$ac_flag])
      cd ..
-     if test "$ac_cv_fc_module_output_flag" != unknown; then
-       break
-     fi])
+     AS_IF([test x"$ac_cv_fc_module_output_flag" != xunknown],[break])])
 done
 FCFLAGS=$ac_fc_module_output_flag_FCFLAGS_save
 cd ..
 rm -rf conftest.dir
 AC_LANG_POP([Fortran])
 ])
-if test "$ac_cv_fc_module_output_flag" != unknown; then
-  FC_MODOUT=$ac_cv_fc_module_output_flag
-  $1
-else
-  FC_MODOUT=
-  m4_default([$2],
-    [AC_MSG_ERROR([unable to find compiler flag to write module information to])])
-fi
+AS_IF([test x"$ac_cv_fc_module_output_flag" != xunknown],
+  [FC_MODOUT=$ac_cv_fc_module_output_flag
+   $1],
+  [FC_MODOUT=
+   m4_default([$2],
+    [AC_MSG_ERROR([unable to find compiler flag to write module information to])])])
 AC_SUBST([FC_MODOUT])
 # Ensure trailing whitespace is preserved in a Makefile.
 AC_SUBST([ac_empty], [""])

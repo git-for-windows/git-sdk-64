@@ -1,6 +1,7 @@
 # This file is part of Autoconf.                       -*- Autoconf -*-
 # Programming languages support.
-# Copyright (C) 2000-2002, 2004-2012 Free Software Foundation, Inc.
+# Copyright (C) 2000-2002, 2004-2017, 2020-2021 Free Software
+# Foundation, Inc.
 
 # This file is part of Autoconf.  This program is free
 # software; you can redistribute it and/or modify it under the
@@ -20,7 +21,7 @@
 # You should have received a copy of the GNU General Public License
 # and a copy of the Autoconf Configure Script Exception along with
 # this program; see the files COPYINGv3 and COPYING.EXCEPTION
-# respectively.  If not, see <http://www.gnu.org/licenses/>.
+# respectively.  If not, see <https://www.gnu.org/licenses/>.
 
 # Written by David MacKenzie, with help from
 # Franc,ois Pinard, Karl Berry, Richard Pixley, Ian Lance Taylor,
@@ -118,20 +119,25 @@ m4_popdef([$0 OLD])dnl
 # AC_LANG_SAVE
 # ------------
 # Save the current language, but don't change language.
-AU_DEFUN([AC_LANG_SAVE],
-[[AC_LANG_SAVE]],
-[Instead of using `AC_LANG', `AC_LANG_SAVE', and `AC_LANG_RESTORE',
-you should use `AC_LANG_PUSH' and `AC_LANG_POP'.])
+# XXX 2020-11-15: This macro is obsolete, but we do not define it with
+# AU_DEFUN because autoupdate can't fix it, and we don't issue an
+# obsoletion warning yet either, because it is used in the most
+# recently released version of libtool.m4, which is not fair to expect
+# packagers to tinker with.  Revisit after libtool makes a release
+# with their code updated.
 AC_DEFUN([AC_LANG_SAVE],
-[m4_pushdef([_AC_LANG], _AC_LANG)dnl
-AC_DIAGNOSE([obsolete], [The macro `AC_LANG_SAVE' is obsolete.
-You should run autoupdate.])])
+[m4_pushdef([_AC_LANG], _AC_LANG)])
 
 
 # AC_LANG_RESTORE
 # ---------------
 # Restore the current language from the stack.
-AU_DEFUN([AC_LANG_RESTORE], [AC_LANG_POP($@)])
+# XXX 2020-11-15: This macro is obsolete, but we do not define it with
+# AU_DEFUN because autoupdate can't fix it properly, and we don't issue
+# an obsoletion warning because it, like AC_LANG_SAVE, is used by the
+# most recently released version of libtool.m4.
+AC_DEFUN([AC_LANG_RESTORE],
+[AC_LANG_POP($@)])
 
 
 # _AC_LANG_ABBREV
@@ -343,7 +349,7 @@ AC_DEFUN([AC_LANG_COMPILER_REQUIRE],
 # some Fortran compilers (e.g., SGI) might consider it's a
 # continuation line, and warn instead of reporting an error.
 m4_define([_AC_LANG_COMPILER_GNU],
-[AC_CACHE_CHECK([whether we are using the GNU _AC_LANG compiler],
+[AC_CACHE_CHECK([whether the compiler supports GNU _AC_LANG],
 		[ac_cv_[]_AC_LANG_ABBREV[]_compiler_gnu],
 [_AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[#ifndef __GNUC__
        choke me
@@ -352,7 +358,9 @@ m4_define([_AC_LANG_COMPILER_GNU],
 		   [ac_compiler_gnu=yes],
 		   [ac_compiler_gnu=no])
 ac_cv_[]_AC_LANG_ABBREV[]_compiler_gnu=$ac_compiler_gnu
-])])# _AC_LANG_COMPILER_GNU
+])
+ac_compiler_gnu=$ac_cv_[]_AC_LANG_ABBREV[]_compiler_gnu
+])# _AC_LANG_COMPILER_GNU
 
 
 # AC_LANG_PREPROC
@@ -553,7 +561,7 @@ do
 	# certainly right.
 	break;;
     *.* )
-	if test "${ac_cv_exeext+set}" = set && test "$ac_cv_exeext" != no;
+	if test ${ac_cv_exeext+y} && test "$ac_cv_exeext" != no;
 	then :; else
 	   ac_cv_exeext=`expr "$ac_file" : ['[^.]*\(\..*\)']`
 	fi
@@ -605,7 +613,7 @@ if test "$cross_compiling" != yes; then
 	cross_compiling=yes
     else
 	AC_MSG_FAILURE([cannot run _AC_LANG compiled programs.
-If you meant to cross compile, use `--host'.])
+If you meant to cross compile, use `--host'.], 77)
     fi
   fi
 fi
@@ -656,7 +664,7 @@ AC_MSG_RESULT([$ac_cv_exeext])
 # by checking whether `_AC_COMPILER_EXEEXT' has been expanded.
 #
 # See _AC_COMPILER_EXEEXT_CROSS for why we need _AC_LANG_IO_PROGRAM.
-m4_define([_AC_COMPILER_EXEEXT],
+AC_DEFUN([_AC_COMPILER_EXEEXT],
 [AC_LANG_CONFTEST([_AC_LANG_NULL_PROGRAM])
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files a.out a.out.dSYM a.exe b.out"
