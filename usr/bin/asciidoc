@@ -33,7 +33,7 @@ from ast import literal_eval
 from collections import OrderedDict
 
 # Used by asciidocapi.py #
-VERSION = '9.0.5'           # See CHANGELOG file for version history.
+VERSION = '9.1.0'           # See CHANGELOG file for version history.
 
 MIN_PYTHON_VERSION = (3, 5)  # Require this version of Python or better.
 
@@ -4247,6 +4247,7 @@ class Reader1:
         self.tabsize = 8        # Tab expansion number of spaces.
         self.parent = None      # Included reader's parent reader.
         self._lineno = 0        # The last line read from file object f.
+        self.line_ranges = None # line ranges to include
         self.current_depth = 0  # Current include depth.
         self.max_depth = 10     # Initial maxiumum allowed include depth.
         self.bom = None         # Byte order mark (BOM).
@@ -4285,15 +4286,34 @@ class Reader1:
         self.closefile()
         self.__init__()
 
+    def readline(self):
+        while True:
+            s = self.f.readline()
+            if s:
+                self._lineno = self._lineno + 1
+            else:
+                break
+
+            if self.line_ranges is not None:
+                for line_range in self.line_ranges:
+                    if len(line_range) == 1 and self._lineno == line_range[0]:
+                        break
+                    elif len(line_range) == 2 and line_range[0] <= self._lineno and (line_range[1] == -1 or self._lineno <= line_range[1]):
+                        break
+                else:
+                    continue
+                break
+            else:
+                break
+        return s
+
     def read(self, skip=False):
         """Read next line. Return None if EOF. Expand tabs. Strip trailing
         white space. Maintain self.next read ahead buffer. If skip=True then
         conditional exclusion is active (ifdef and ifndef macros)."""
         # Top up buffer.
         if len(self.next) <= self.READ_BUFFER_MIN:
-            s = self.f.readline()
-            if s:
-                self._lineno = self._lineno + 1
+            s = self.readline()
             while s:
                 if self.tabsize != 0:
                     s = s.expandtabs(self.tabsize)
@@ -4301,9 +4321,7 @@ class Reader1:
                 self.next.append([self.fname, self._lineno, s])
                 if len(self.next) > self.READ_BUFFER_MIN:
                     break
-                s = self.f.readline()
-                if s:
-                    self._lineno = self._lineno + 1
+                s = self.readline()
         # Return first (oldest) buffer entry.
         if len(self.next) > 0:
             self.cursor = self.next[0]
@@ -4369,6 +4387,17 @@ class Reader1:
                         self.max_depth = self.current_depth + val
                     except ValueError:
                         raise EAsciiDoc("include macro: illegal 'depth' argument")
+                if 'lines' in attrs:
+                    try:
+                        if ';' in attrs['lines']:
+                            ranges = attrs['lines'].split(';')
+                        else:
+                            ranges = attrs['lines'].split(',')
+                        for idx in range(len(ranges)):
+                            ranges[idx] = [int(x) for x in ranges[idx].split('..')]
+                        self.line_ranges = ranges
+                    except ValueError:
+                        raise EAsciiDoc("include macro: illegal 'lines' argument")
                 # Process included file.
                 message.verbose('include: ' + fname, linenos=False)
                 self.open(fname)
