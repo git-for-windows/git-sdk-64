@@ -41,6 +41,7 @@ build_time_vars = {'ABIFLAGS': '',
                             '-flto-partition=none -g -std=c99 -Wextra '
                             '-Wno-unused-result -Wno-unused-parameter '
                             '-Wno-missing-field-initializers '
+                            '-Wstrict-prototypes '
                             '-Werror=implicit-function-declaration',
  'CONFIGURE_CPPFLAGS': '-I../Python-3.8.7/PC -D__USE_MINGW_ANSI_STDIO=1 '
                        '-ID:/a/_temp/msys/msys64/mingw64/include/ncurses  -I.',
@@ -320,8 +321,8 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_MAKEDEV': 0,
  'HAVE_MBRTOWC': 1,
  'HAVE_MEMFD_CREATE': 0,
- 'HAVE_MEMORY_H': 1,
  'HAVE_MEMRCHR': 0,
+ 'HAVE_MINIX_CONFIG_H': 0,
  'HAVE_MKDIRAT': 0,
  'HAVE_MKFIFO': 0,
  'HAVE_MKFIFOAT': 0,
@@ -434,6 +435,7 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_STAT_TV_NSEC2': 0,
  'HAVE_STDARG_PROTOTYPES': 1,
  'HAVE_STDINT_H': 1,
+ 'HAVE_STDIO_H': 1,
  'HAVE_STDLIB_H': 1,
  'HAVE_STD_ATOMIC': 1,
  'HAVE_STRDUP': 1,
@@ -670,6 +672,7 @@ build_time_vars = {'ABIFLAGS': '',
                              '-flto-partition=none -g -std=c99 -Wextra '
                              '-Wno-unused-result -Wno-unused-parameter '
                              '-Wno-missing-field-initializers '
+                             '-Wstrict-prototypes '
                              '-Werror=implicit-function-declaration '
                              '-fprofile-use -fprofile-correction '
                              '-I../Python-3.8.7/Include/internal -IObjects '
@@ -687,7 +690,7 @@ build_time_vars = {'ABIFLAGS': '',
  'PY_CFLAGS_NODIST': '-flto -fuse-linker-plugin -ffat-lto-objects '
                      '-flto-partition=none -g -std=c99 -Wextra '
                      '-Wno-unused-result -Wno-unused-parameter '
-                     '-Wno-missing-field-initializers '
+                     '-Wno-missing-field-initializers -Wstrict-prototypes '
                      '-Werror=implicit-function-declaration -fprofile-use '
                      '-fprofile-correction -I../Python-3.8.7/Include/internal',
  'PY_COERCE_C_LOCALE': 0,
@@ -699,7 +702,7 @@ build_time_vars = {'ABIFLAGS': '',
                    '-flto -fuse-linker-plugin -ffat-lto-objects '
                    '-flto-partition=none -g -std=c99 -Wextra '
                    '-Wno-unused-result -Wno-unused-parameter '
-                   '-Wno-missing-field-initializers '
+                   '-Wno-missing-field-initializers -Wstrict-prototypes '
                    '-Werror=implicit-function-declaration -fprofile-use '
                    '-fprofile-correction -I../Python-3.8.7/Include/internal '
                    '-IObjects -IInclude -IPython -I. -I../Python-3.8.7/Include '
@@ -737,7 +740,7 @@ build_time_vars = {'ABIFLAGS': '',
                         '-fuse-linker-plugin -ffat-lto-objects '
                         '-flto-partition=none -g -std=c99 -Wextra '
                         '-Wno-unused-result -Wno-unused-parameter '
-                        '-Wno-missing-field-initializers '
+                        '-Wno-missing-field-initializers -Wstrict-prototypes '
                         '-Werror=implicit-function-declaration -fprofile-use '
                         '-fprofile-correction '
                         '-I../Python-3.8.7/Include/internal -IObjects '
@@ -811,6 +814,7 @@ build_time_vars = {'ABIFLAGS': '',
  'VPATH': 'C:/_/M/mingw-w64-python/src/Python-3.8.7',
  'VPATH_b2h': 'C:/_/M/mingw-w64-python/src/Python-3.8.7',
  'WINDOW_HAS_FLAGS': 1,
+ 'WINDRES': 'windres',
  'WITH_DECIMAL_CONTEXTVAR': 1,
  'WITH_DOC_STRINGS': 1,
  'WITH_DTRACE': 0,

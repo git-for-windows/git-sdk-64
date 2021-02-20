@@ -39,6 +39,7 @@ CXX=		i686-w64-mingw32-c++
 MAINCC=		$(CC)
 LINKCC=		$(PURIFY) $(MAINCC)
 AR=		ar
+WINDRES=	windres
 READELF=	readelf
 SOABI=		cpython-38
 LDVERSION=	$(VERSION)$(ABIFLAGS)
@@ -85,7 +86,7 @@ CONFIGURE_CFLAGS=	-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANS
 # CFLAGS_NODIST is used for building the interpreter and stdlib C extensions.
 # Use it when a compiler flag should _not_ be part of the distutils CFLAGS
 # once Python is installed (Issue #21121).
-CONFIGURE_CFLAGS_NODIST= -flto -fuse-linker-plugin -ffat-lto-objects -flto-partition=none -g -std=c99 -Wextra -Wno-unused-result -Wno-unused-parameter -Wno-missing-field-initializers -Werror=implicit-function-declaration
+CONFIGURE_CFLAGS_NODIST= -flto -fuse-linker-plugin -ffat-lto-objects -flto-partition=none -g -std=c99 -Wextra -Wno-unused-result -Wno-unused-parameter -Wno-missing-field-initializers -Wstrict-prototypes -Werror=implicit-function-declaration
 # LDFLAGS_NODIST is used in the same manner as CFLAGS_NODIST.
 # Use it when a linker flag should _not_ be part of the distutils LDFLAGS
 # once Python is installed (bpo-35257)
@@ -589,13 +590,13 @@ pythonnt_rc.h:
 	@echo '#define PYTHON_DLL_NAME "$(DLLLIBRARY)"' >> $@
 
 python_exe.o: pythonnt_rc.h $(srcdir)/PC/python_exe.rc
-	windres -I$(srcdir)/Include -I$(srcdir)/PC -I. $(srcdir)/PC/python_exe.rc $@
+	$(WINDRES) -I$(srcdir)/Include -I$(srcdir)/PC -I. $(srcdir)/PC/python_exe.rc $@
 
 pythonw_exe.o: pythonnt_rc.h $(srcdir)/PC/pythonw_exe.rc
-	windres -I$(srcdir)/Include -I$(srcdir)/PC -I. $(srcdir)/PC/pythonw_exe.rc $@
+	$(WINDRES) -I$(srcdir)/Include -I$(srcdir)/PC -I. $(srcdir)/PC/pythonw_exe.rc $@
 
 python_nt.o: pythonnt_rc.h $(srcdir)/PC/python_nt.rc
-	windres -I$(srcdir)/Include -I$(srcdir)/PC -I. $(srcdir)/PC/python_nt.rc $@
+	$(WINDRES) -I$(srcdir)/Include -I$(srcdir)/PC -I. $(srcdir)/PC/python_nt.rc $@
 
 $(BUILDPYTHONW): Programs/python.o $(LIBRARY) $(LDLIBRARY) $(PY3LIBRARY) pythonw_exe.o
 	$(LINKCC) $(PY_CORE_LDFLAGS) $(LINKFORSHARED) -municode -mwindows -o $@ Programs/python.o $(BLDLIBRARY) $(LIBS) $(MODLIBS) $(SYSLIBS) pythonw_exe.o
