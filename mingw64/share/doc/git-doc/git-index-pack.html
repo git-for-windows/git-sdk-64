@@ -449,9 +449,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git index-pack</em> [-v] [-o &lt;index-file&gt;] &lt;pack-file&gt;
+<pre class="content"><em>git index-pack</em> [-v] [-o &lt;index-file&gt;] [--[no-]rev-index] &lt;pack-file&gt;
 <em>git index-pack</em> --stdin [--fix-thin] [--keep] [-v] [-o &lt;index-file&gt;]
-                 [&lt;pack-file&gt;]</pre>
+                  [--[no-]rev-index] [&lt;pack-file&gt;]</pre>
 </div>
 </div>
 </div>
@@ -460,9 +460,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="paragraph">
 <p>Reads a packed archive (.pack) from the specified file, and
-builds a pack index file (.idx) for it.  The packed archive
-together with the pack index can then be placed in the
-objects/pack/ directory of a Git repository.</p>
+builds a pack index file (.idx) for it. Optionally writes a
+reverse-index (.rev) for the specified pack. The packed
+archive together with the pack index can then be placed in
+the objects/pack/ directory of a Git repository.</p>
 </div>
 </div>
 </div>
@@ -483,6 +484,14 @@ file is constructed from the name of packed archive
 file by replacing .pack with .idx (and the program
 fails if the name of packed archive does not end
 with .pack).</p>
+</dd>
+<dt class="hdlist1">--[no-]rev-index</dt>
+<dd>
+<p>When this flag is provided, generate a reverse index
+(a <code>.rev</code> file) corresponding to the given pack. If
+<code>--verify</code> is given, ensure that the existing
+reverse index is correct. Takes precedence over
+<code>pack.writeReverseIndex</code>.</p>
 </dd>
 <dt class="hdlist1">--stdin</dt>
 <dd>
@@ -598,7 +607,7 @@ mentioned above.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-09 12:57:53 UTC
+Last updated 2021-02-26 09:54:54 UTC
 </div>
 </div>
 </body>

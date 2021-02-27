@@ -897,6 +897,28 @@ $(prefix)/etc/gitconfig file. See <a href="git.html">git(1)</a> for details.</p>
 <div class="paragraph">
 <p>See also <a href="#FILES">FILES</a>.</p>
 </div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">GIT_CONFIG_COUNT</dt>
+<dt class="hdlist1">GIT_CONFIG_KEY_&lt;n&gt;</dt>
+<dt class="hdlist1">GIT_CONFIG_VALUE_&lt;n&gt;</dt>
+<dd>
+<p>If GIT_CONFIG_COUNT is set to a positive number, all environment pairs
+GIT_CONFIG_KEY_&lt;n&gt; and GIT_CONFIG_VALUE_&lt;n&gt; up to that number will be
+added to the process&#8217;s runtime configuration. The config pairs are
+zero-indexed. Any missing key or value is treated as an error. An empty
+GIT_CONFIG_COUNT is treated the same as GIT_CONFIG_COUNT=0, namely no
+pairs are processed. These environment variables will override values
+in configuration files, but will be overridden by any explicit options
+passed via <code>git -c</code>.</p>
+<div class="paragraph">
+<p>This is useful for cases where you want to spawn multiple git commands
+with a common configuration but cannot depend on a configuration file,
+for example when writing scripts.</p>
+</div>
+</dd>
+</dl>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2387,6 +2409,8 @@ unspecified or set to "auto", an appropriate value is
 computed based on the approximate number of packed objects
 in your repository, which hopefully is enough for
 abbreviated object names to stay unique for some time.
+If set to "no", no abbreviation is made and the object names
+are shown in their full length.
 The minimum length is 4.</p>
 </dd>
 <dt class="hdlist1">add.ignoreErrors</dt>
@@ -3236,7 +3260,9 @@ this setting when reporting uncommitted changes. Setting it to
 <em>all</em> disables the submodule summary normally shown by <em>git commit</em>
 and <em>git status</em> when <code>status.submoduleSummary</code> is set unless it is
 overridden by using the --ignore-submodules command-line option.
-The <em>git submodule</em> commands are not affected by this setting.</p>
+The <em>git submodule</em> commands are not affected by this setting.
+By default this is set to untracked so that any untracked
+submodules are ignored.</p>
 </dd>
 <dt class="hdlist1">diff.mnemonicPrefix</dt>
 <dd>
@@ -3414,6 +3440,9 @@ is defined.</p>
 <p>gvimdiff</p>
 </li>
 <li>
+<p>gvimdiff1</p>
+</li>
+<li>
 <p>gvimdiff2</p>
 </li>
 <li>
@@ -3430,6 +3459,9 @@ is defined.</p>
 </li>
 <li>
 <p>nvimdiff</p>
+</li>
+<li>
+<p>nvimdiff1</p>
 </li>
 <li>
 <p>nvimdiff2</p>
@@ -3451,6 +3483,9 @@ is defined.</p>
 </li>
 <li>
 <p>vimdiff</p>
+</li>
+<li>
+<p>vimdiff1</p>
 </li>
 <li>
 <p>vimdiff2</p>
@@ -4992,7 +5027,7 @@ If <code>feature.manyFiles</code> is enabled, then the default is 4.</p>
 <dt class="hdlist1">init.defaultBranch</dt>
 <dd>
 <p>Allows overriding the default branch name e.g. when initializing
-a new repository or when cloning an empty repository.</p>
+a new repository.</p>
 </dd>
 <dt class="hdlist1">instaweb.browser</dt>
 <dd>
@@ -5100,6 +5135,17 @@ normally hide the root commit will now show it. True by default.</p>
 <a href="git-whatchanged.html">git-whatchanged(1)</a> assume <code>--use-mailmap</code>, otherwise
 assume <code>--no-use-mailmap</code>. True by default.</p>
 </dd>
+<dt class="hdlist1">lsrefs.unborn</dt>
+<dd>
+<p>May be "advertise" (the default), "allow", or "ignore". If "advertise",
+the server will respond to the client sending "unborn" (as described in
+protocol-v2.txt) and will advertise support for this feature during the
+protocol v2 capability advertisement. "allow" is the same as
+"advertise" except that the server will not advertise support for this
+feature; this is useful for load-balanced servers that cannot be
+updated atomically (for example), since the administrator could
+configure "allow", then after a delay, configure "advertise".</p>
+</dd>
 <dt class="hdlist1">mailinfo.scissors</dt>
 <dd>
 <p>If true, makes <a href="git-mailinfo.html">git-mailinfo(1)</a> (and therefore
@@ -5149,8 +5195,9 @@ then that value is used instead of the one provided by
 <li>
 <p><code>incremental</code>: This setting optimizes for performing small maintenance
 activities that do not delete any data. This does not schedule the <code>gc</code>
-task, but runs the <code>prefetch</code> and <code>commit-graph</code> tasks hourly and the
-<code>loose-objects</code> and <code>incremental-repack</code> tasks daily.</p>
+task, but runs the <code>prefetch</code> and <code>commit-graph</code> tasks hourly, the
+<code>loose-objects</code> and <code>incremental-repack</code> tasks daily, and the <code>pack-refs</code>
+task weekly.</p>
 </li>
 </ul>
 </div>
@@ -5388,6 +5435,9 @@ corresponding mergetool.&lt;guitool&gt;.cmd variable is defined.</p>
 <p>gvimdiff</p>
 </li>
 <li>
+<p>gvimdiff1</p>
+</li>
+<li>
 <p>gvimdiff2</p>
 </li>
 <li>
@@ -5401,6 +5451,9 @@ corresponding mergetool.&lt;guitool&gt;.cmd variable is defined.</p>
 </li>
 <li>
 <p>nvimdiff</p>
+</li>
+<li>
+<p>nvimdiff1</p>
 </li>
 <li>
 <p>nvimdiff2</p>
@@ -5425,6 +5478,9 @@ corresponding mergetool.&lt;guitool&gt;.cmd variable is defined.</p>
 </li>
 <li>
 <p>vimdiff</p>
+</li>
+<li>
+<p>vimdiff1</p>
 </li>
 <li>
 <p>vimdiff2</p>
@@ -5483,6 +5539,12 @@ file containing the contents of the file from the branch being
 merged; <em>MERGED</em> contains the name of the file to which the merge
 tool should write the results of a successful merge.</p>
 </dd>
+<dt class="hdlist1">mergetool.&lt;tool&gt;.hideResolved</dt>
+<dd>
+<p>Allows the user to override the global <code>mergetool.hideResolved</code> value
+for a specific tool. See <code>mergetool.hideResolved</code> for the full
+description.</p>
+</dd>
 <dt class="hdlist1">mergetool.&lt;tool&gt;.trustExitCode</dt>
 <dd>
 <p>For a custom merge command, specify whether the exit code of
@@ -5512,6 +5574,17 @@ Setting this value to <code>auto</code> makes git detect whether <code>--auto-me
 is supported and will only use <code>--auto-merge</code> when available.  A
 value of <code>false</code> avoids using <code>--auto-merge</code> altogether, and is the
 default value.</p>
+</dd>
+<dt class="hdlist1">mergetool.hideResolved</dt>
+<dd>
+<p>During a merge Git will automatically resolve as many conflicts as
+possible and write the <em>MERGED</em> file containing conflict markers around
+any conflicts that it cannot resolve; <em>LOCAL</em> and <em>REMOTE</em> normally
+represent the versions of the file from before Git&#8217;s conflict
+resolution. This flag causes <em>LOCAL</em> and <em>REMOTE</em> to be overwriten so
+that only the unresolved conflicts are presented to the merge tool. Can
+be configured per-tool via the <code>mergetool.&lt;tool&gt;.hideResolved</code>
+configuration variable. Defaults to <code>true</code>.</p>
 </dd>
 <dt class="hdlist1">mergetool.keepBackup</dt>
 <dd>
@@ -5763,6 +5836,14 @@ bitmapped and non-bitmapped objects (e.g., when serving a fetch
 between an older, bitmapped pack and objects that have been
 pushed since the last gc). The downside is that it consumes 4
 bytes per object of disk space. Defaults to true.</p>
+</dd>
+<dt class="hdlist1">pack.writeReverseIndex</dt>
+<dd>
+<p>When true, git will write a corresponding .rev file (see:
+<a href="../technical/pack-format.html">Documentation/technical/pack-format.txt</a>)
+for each new packfile that it writes in all places except for
+<a href="git-fast-import.html">git-fast-import(1)</a> and in the bulk checkin mechanism.
+Defaults to false.</p>
 </dd>
 <dt class="hdlist1">pager.&lt;cmd&gt;</dt>
 <dd>
@@ -6150,6 +6231,10 @@ todo list resulting in something like this:</p>
 <p>Automatically reschedule <code>exec</code> commands that failed. This only makes
 sense in interactive mode (or when an <code>--exec</code> option was provided).
 This is the same as specifying the <code>--reschedule-failed-exec</code> option.</p>
+</dd>
+<dt class="hdlist1">rebase.forkPoint</dt>
+<dd>
+<p>If set to false set <code>--no-fork-point</code> option by default.</p>
 </dd>
 <dt class="hdlist1">receive.advertiseAtomic</dt>
 <dd>
@@ -7392,7 +7477,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-09 12:57:53 UTC
+Last updated 2021-02-26 09:54:54 UTC
 </div>
 </div>
 </body>

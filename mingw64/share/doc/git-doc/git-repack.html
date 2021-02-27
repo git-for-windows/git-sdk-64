@@ -640,8 +640,12 @@ be packed (and their loose counterparts removed).</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_configuration">Configuration</h2>
+<h2 id="_configuration">CONFIGURATION</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Various configuration variables affect packing, see
+<a href="git-config.html">git-config(1)</a> (search for "pack" and "delta").</p>
+</div>
 <div class="paragraph">
 <p>By default, the command passes <code>--delta-base-offset</code> option to
 <em>git pack-objects</em>; this typically results in slightly smaller packs,
@@ -652,6 +656,11 @@ need to set the configuration variable <code>repack.UseDeltaBaseOffset</code> to
 "false" and repack. Access from old Git versions over the native protocol
 is unaffected by this option as the conversion is performed on the fly
 as needed in that case.</p>
+</div>
+<div class="paragraph">
+<p>Delta compression is not used on objects larger than the
+<code>core.bigFileThreshold</code> configuration variable and on files with the
+attribute <code>delta</code> set to false.</p>
 </div>
 </div>
 </div>
@@ -675,7 +684,7 @@ as needed in that case.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-09 12:57:53 UTC
+Last updated 2021-02-26 09:54:54 UTC
 </div>
 </div>
 </body>

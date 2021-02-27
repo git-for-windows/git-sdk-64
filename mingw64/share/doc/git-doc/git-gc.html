@@ -750,12 +750,14 @@ The default is 15 days.  See <a href="git-rerere.html">git-rerere(1)</a>.</p>
 <p><em>git gc</em> tries very hard not to delete objects that are referenced
 anywhere in your repository. In particular, it will keep not only
 objects referenced by your current set of branches and tags, but also
-objects referenced by the index, remote-tracking branches, notes saved
-by <em>git notes</em> under refs/notes/, reflogs (which may reference commits
-in branches that were later amended or rewound), and anything else in
-the refs/* namespace.  If you are expecting some objects to be deleted
-and they aren&#8217;t, check all of those locations and decide whether it
-makes sense in your case to remove those references.</p>
+objects referenced by the index, remote-tracking branches, reflogs
+(which may reference commits in branches that were later amended or
+rewound), and anything else in the refs/* namespace. Note that a note
+(of the kind created by <em>git notes</em>) attached to an object does not
+contribute in keeping the object alive. If you are expecting some
+objects to be deleted and they aren&#8217;t, check all of those locations
+and decide whether it makes sense in your case to remove those
+references.</p>
 </div>
 <div class="paragraph">
 <p>On the other hand, when <em>git gc</em> runs concurrently with another process,
@@ -816,7 +818,7 @@ seems to be low in practice).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-09 12:57:53 UTC
+Last updated 2021-02-26 09:54:54 UTC
 </div>
 </div>
 </body>

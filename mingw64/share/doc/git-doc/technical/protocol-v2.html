@@ -503,8 +503,8 @@ commands be executed.</p>
 <p><em>0001</em> Delimiter Packet (delim-pkt) - separates sections of a message</p>
 </li>
 <li>
-<p><em>0002</em> Message Packet (response-end-pkt) - indicates the end of a response
-for stateless connections</p>
+<p><em>0002</em> Response End Packet (response-end-pkt) - indicates the end of a
+response for stateless connections</p>
 </li>
 </ul>
 </div>
@@ -715,13 +715,26 @@ the provided prefixes are displayed.</pre>
 </div>
 </div>
 <div class="paragraph">
+<p>If the <em>unborn</em> feature is advertised the following argument can be
+included in the client&#8217;s request.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>   unborn
+The server will send information about HEAD even if it is a symref
+pointing to an unborn branch in the form "unborn HEAD
+symref-target:&lt;target&gt;".</pre>
+</div>
+</div>
+<div class="paragraph">
 <p>The output of ls-refs is as follows:</p>
 </div>
 <div class="literalblock">
 <div class="content">
 <pre>output = *ref
   flush-pkt
-ref = PKT-LINE(obj-id SP refname *(SP ref-attribute) LF)
+obj-id-or-unborn = (obj-id | "unborn")
+ref = PKT-LINE(obj-id-or-unborn SP refname *(SP ref-attribute) LF)
 ref-attribute = (symref | peeled)
 symref = "symref-target:" symref-target
 peeled = "peeled:" obj-id</pre>
@@ -1160,7 +1173,7 @@ the session ID should not rely on this fact.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-09 12:57:53 UTC
+Last updated 2021-02-26 09:54:54 UTC
 </div>
 </div>
 </body>

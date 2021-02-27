@@ -1196,6 +1196,15 @@ components matches the pattern.  For example, the pattern "<code>foo*bar</code>"
 matches "<code>fooasdfbar</code>" and "<code>foo/bar/baz/asdf</code>" but not "<code>foobarx</code>".</p>
 </div>
 </dd>
+<dt class="hdlist1">--skip-to=&lt;file&gt;</dt>
+<dt class="hdlist1">--rotate-to=&lt;file&gt;</dt>
+<dd>
+<p>Discard the files before the named &lt;file&gt; from the output
+(i.e. <em>skip to</em>), or move them to the end of the output
+(i.e. <em>rotate to</em>).  These were invented primarily for use
+of the <code>git difftool</code> command, and may not be very useful
+otherwise.</p>
+</dd>
 <dt class="hdlist1">-R</dt>
 <dd>
 <p>Swap two inputs; that is, show differences from index or
@@ -1703,9 +1712,9 @@ rename to a</pre>
 <p>Any diff-generating command can take the <code>-c</code> or <code>--cc</code> option to
 produce a <em>combined diff</em> when showing a merge. This is the default
 format when showing merges with <a href="git-diff.html">git-diff(1)</a> or
-<a href="git-show.html">git-show(1)</a>. Note also that you can give the <code>-m</code> option to any
-of these commands to force generation of diffs with individual parents
-of a merge.</p>
+<a href="git-show.html">git-show(1)</a>. Note also that you can give suitable
+<code>--diff-merges</code> option to any of these commands to force generation of
+diffs in specific format.</p>
 </div>
 <div class="paragraph">
 <p>A "combined diff" format looks like this:</p>
@@ -1981,7 +1990,7 @@ the pathname, but if that is <code>NUL</code>, the record will show two paths.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-09 12:57:53 UTC
+Last updated 2021-02-26 09:54:54 UTC
 </div>
 </div>
 </body>

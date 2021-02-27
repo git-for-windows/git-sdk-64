@@ -853,6 +853,45 @@ corresponding packfile.</pre>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_pack_rev_files_have_the_format">pack-*.rev files have the format:</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>A 4-byte magic number <em>0x52494458</em> (<em>RIDX</em>).</p>
+</li>
+<li>
+<p>A 4-byte version identifier (= 1).</p>
+</li>
+<li>
+<p>A 4-byte hash function identifier (= 1 for SHA-1, 2 for SHA-256).</p>
+</li>
+<li>
+<p>A table of index positions (one per packed object, num_objects in
+total, each a 4-byte unsigned integer in network order), sorted by
+their corresponding offsets in the packfile.</p>
+</li>
+<li>
+<p>A trailer, containing a:</p>
+<div class="literalblock">
+<div class="content">
+<pre>checksum of the corresponding packfile, and</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>a checksum of all of the above.</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>All 4-byte numbers are in network order.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_multi_pack_index_midx_files_have_the_following_format">multi-pack-index (MIDX) files have the following format:</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -990,7 +1029,7 @@ otherwise specified.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-09 12:57:53 UTC
+Last updated 2021-02-26 09:54:54 UTC
 </div>
 </div>
 </body>

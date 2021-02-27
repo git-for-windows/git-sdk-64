@@ -496,18 +496,10 @@ researchers. On 23 February 2017 the SHAttered attack
 <div class="paragraph">
 <p>Git v2.13.0 and later subsequently moved to a hardened SHA-1
 implementation by default, which isn&#8217;t vulnerable to the SHAttered
-attack.</p>
+attack, but SHA-1 is still weak.</p>
 </div>
 <div class="paragraph">
-<p>Thus Git has in effect already migrated to a new hash that isn&#8217;t SHA-1
-and doesn&#8217;t share its vulnerabilities, its new hash function just
-happens to produce exactly the same output for all known inputs,
-except two PDFs published by the SHAttered researchers, and the new
-implementation (written by those researchers) claims to detect future
-cryptanalytic collision attacks.</p>
-</div>
-<div class="paragraph">
-<p>Regardless, it&#8217;s considered prudent to move past any variant of SHA-1
+<p>Thus it&#8217;s considered prudent to move past any variant of SHA-1
 to a new hash. There&#8217;s no guarantee that future attacks on SHA-1 won&#8217;t
 be published in the future, and those attacks may not have viable
 mitigations.</p>
@@ -523,6 +515,54 @@ that the speaker intended.</p>
 <p>SHA-1 still possesses the other properties such as fast object lookup
 and safe error checking, but other hash functions are equally suitable
 that are believed to be cryptographically secure.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_choice_of_hash">Choice of Hash</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The hash to replace the hardened SHA-1 should be stronger than SHA-1
+was: we would like it to be trustworthy and useful in practice for at
+least 10 years.</p>
+</div>
+<div class="paragraph">
+<p>Some other relevant properties:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>A 256-bit hash (long enough to match common security practice; not
+excessively long to hurt performance and disk usage).</p>
+</li>
+<li>
+<p>High quality implementations should be widely available (e.g., in
+OpenSSL and Apple CommonCrypto).</p>
+</li>
+<li>
+<p>The hash function&#8217;s properties should match Git&#8217;s needs (e.g. Git
+requires collision and 2nd preimage resistance and does not require
+length extension resistance).</p>
+</li>
+<li>
+<p>As a tiebreaker, the hash should be fast to compute (fortunately
+many contenders are faster than SHA-1).</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>There were several contenders for a successor hash to SHA-1, including
+SHA-256, SHA-512/256, SHA-256x16, K12, and BLAKE2bp-256.</p>
+</div>
+<div class="paragraph">
+<p>In late 2018 the project picked SHA-256 as its successor hash.</p>
+</div>
+<div class="paragraph">
+<p>See 0ed8d8da374 (doc hash-function-transition: pick SHA-256 as
+NewHash, 2018-08-04) and numerous mailing list threads at the time,
+particularly the one starting at
+<a href="https://lore.kernel.org/git/20180609224913.GC38834@genre.crustytoothpaste.net/" class="bare">https://lore.kernel.org/git/20180609224913.GC38834@genre.crustytoothpaste.net/</a>
+for more information.</p>
 </div>
 </div>
 </div>
@@ -621,7 +661,7 @@ protocol.)</p>
 <div class="paragraph">
 <p>We introduce a new repository format extension. Repositories with this
 extension enabled use SHA-256 instead of SHA-1 to name their objects.
-This affects both object names and object content --- both the names
+This affects both object names and object content&#8201;&#8212;&#8201;both the names
 of objects and all references to other objects within an object are
 switched to the new hash function.</p>
 </div>
@@ -637,7 +677,7 @@ interchangeably.</p>
 </div>
 <div class="paragraph">
 <p>"git cat-file" and "git hash-object" gain options to display an object
-in its sha1 form and write an object given its sha1 form. This
+in its SHA-1 form and write an object given its SHA-1 form. This
 requires all objects referenced by that object to be present in the
 object database so that they can be named using the appropriate name
 (using the bidirectional hash mapping).</p>
@@ -646,7 +686,7 @@ object database so that they can be named using the appropriate name
 <p>Fetches from a SHA-1 based server convert the fetched objects into
 SHA-256 form and record the mapping in the bidirectional mapping table
 (see below for details). Pushes to a SHA-1 based server convert the
-objects being pushed into sha1 form so the server does not have to be
+objects being pushed into SHA-1 form so the server does not have to be
 aware of the hash function the client is using.</p>
 </div>
 </div>
@@ -696,37 +736,37 @@ repository extensions.</p>
 <div class="sect2">
 <h3 id="_object_names">Object names</h3>
 <div class="paragraph">
-<p>Objects can be named by their 40 hexadecimal digit sha1-name or 64
-hexadecimal digit sha256-name, plus names derived from those (see
+<p>Objects can be named by their 40 hexadecimal digit SHA-1 name or 64
+hexadecimal digit SHA-256 name, plus names derived from those (see
 gitrevisions(7)).</p>
 </div>
 <div class="paragraph">
-<p>The sha1-name of an object is the SHA-1 of the concatenation of its
-type, length, a nul byte, and the object&#8217;s sha1-content. This is the
+<p>The SHA-1 name of an object is the SHA-1 of the concatenation of its
+type, length, a nul byte, and the object&#8217;s SHA-1 content. This is the
 traditional &lt;sha1&gt; used in Git to name objects.</p>
 </div>
 <div class="paragraph">
-<p>The sha256-name of an object is the SHA-256 of the concatenation of its
-type, length, a nul byte, and the object&#8217;s sha256-content.</p>
+<p>The SHA-256 name of an object is the SHA-256 of the concatenation of its
+type, length, a nul byte, and the object&#8217;s SHA-256 content.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_object_format">Object format</h3>
 <div class="paragraph">
 <p>The content as a byte sequence of a tag, commit, or tree object named
-by sha1 and sha256 differ because an object named by sha256-name refers to
-other objects by their sha256-names and an object named by sha1-name
-refers to other objects by their sha1-names.</p>
+by SHA-1 and SHA-256 differ because an object named by SHA-256 name refers to
+other objects by their SHA-256 names and an object named by SHA-1 name
+refers to other objects by their SHA-1 names.</p>
 </div>
 <div class="paragraph">
-<p>The sha256-content of an object is the same as its sha1-content, except
-that objects referenced by the object are named using their sha256-names
-instead of sha1-names. Because a blob object does not refer to any
-other object, its sha1-content and sha256-content are the same.</p>
+<p>The SHA-256 content of an object is the same as its SHA-1 content, except
+that objects referenced by the object are named using their SHA-256 names
+instead of SHA-1 names. Because a blob object does not refer to any
+other object, its SHA-1 content and SHA-256 content are the same.</p>
 </div>
 <div class="paragraph">
-<p>The format allows round-trip conversion between sha256-content and
-sha1-content.</p>
+<p>The format allows round-trip conversion between SHA-256 content and
+SHA-1 content.</p>
 </div>
 </div>
 <div class="sect2">
@@ -734,8 +774,8 @@ sha1-content.</p>
 <div class="paragraph">
 <p>Loose objects use zlib compression and packed objects use the packed
 format described in Documentation/technical/pack-format.txt, just like
-today. The content that is compressed and stored uses sha256-content
-instead of sha1-content.</p>
+today. The content that is compressed and stored uses SHA-256 content
+instead of SHA-1 content.</p>
 </div>
 </div>
 <div class="sect2">
@@ -749,7 +789,8 @@ network byte order):</p>
 <ul>
 <li>
 <p>A header appears at the beginning and consists of the following:</p>
-</li>
+<div class="ulist">
+<ul>
 <li>
 <p>The 4-byte pack index signature: <em>\377t0c</em></p>
 </li>
@@ -768,7 +809,8 @@ version number</p>
 </li>
 <li>
 <p>For each object format:</p>
-</li>
+<div class="ulist">
+<ul>
 <li>
 <p>4-byte format identifier (e.g., <em>sha1</em> for SHA-1)</p>
 </li>
@@ -781,6 +823,9 @@ object name table unambiguous.</p>
 <p>4-byte integer, recording where tables relating to this format
 are stored in this index file, as an offset from the beginning.</p>
 </li>
+</ul>
+</div>
+</li>
 <li>
 <p>4-byte offset to the trailer from the beginning of this file.</p>
 </li>
@@ -791,13 +836,17 @@ and unreachable objects" section for supported values and how this
 is used.  All other keys are reserved. Readers must ignore
 unrecognized keys.</p>
 </li>
+</ul>
+</div>
+</li>
 <li>
 <p>Zero or more NUL bytes. This can optionally be used to improve the
 alignment of the full object name table below.</p>
 </li>
 <li>
 <p>Tables for the first object format:</p>
-</li>
+<div class="ulist">
+<ul>
 <li>
 <p>A sorted table of shortened object names.  These are prefixes of
 the names of all objects in this pack file, packed together
@@ -814,13 +863,9 @@ format) to its object name.</p>
 <p>A table of 4-byte values mapping object name order to pack order.
 For an object in the table of sorted shortened object names, the
 value at the corresponding index in this table is the index in the
-previous table for that same object.</p>
-<div class="literalblock">
-<div class="content">
-<pre>This can be used to look up the object in reachability bitmaps or
-to look up its name in another object format.</pre>
-</div>
-</div>
+previous table for that same object.
+This can be used to look up the object in reachability bitmaps or
+to look up its name in another object format.</p>
 </li>
 <li>
 <p>A table of 4-byte CRC32 values of the packed object data, in the
@@ -842,6 +887,9 @@ most significant bit set.</p>
 the front, so most object references should not need to refer to
 this table.</p>
 </li>
+</ul>
+</div>
+</li>
 <li>
 <p>Zero or more NUL bytes.</p>
 </li>
@@ -854,13 +902,17 @@ up to and not including the table of CRC32 values.</p>
 </li>
 <li>
 <p>The trailer consists of the following:</p>
-</li>
+<div class="ulist">
+<ul>
 <li>
 <p>A copy of the 20-byte SHA-256 checksum at the end of the
 corresponding packfile.</p>
 </li>
 <li>
 <p>20-byte SHA-256 checksum of all of the above.</p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -929,28 +981,28 @@ lock.</p>
 <div class="sect2">
 <h3 id="_translation_table">Translation table</h3>
 <div class="paragraph">
-<p>The index files support a bidirectional mapping between sha1-names
-and sha256-names. The lookup proceeds similarly to ordinary object
-lookups. For example, to convert a sha1-name to a sha256-name:</p>
+<p>The index files support a bidirectional mapping between SHA-1 names
+and SHA-256 names. The lookup proceeds similarly to ordinary object
+lookups. For example, to convert a SHA-1 name to a SHA-256 name:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
 <p>Look for the object in idx files. If a match is present in the
-idx&#8217;s sorted list of truncated sha1-names, then:</p>
+idx&#8217;s sorted list of truncated SHA-1 names, then:</p>
 <div class="olist loweralpha">
 <ol class="loweralpha">
 <li>
-<p>Read the corresponding entry in the sha1-name order to pack
+<p>Read the corresponding entry in the SHA-1 name order to pack
 name order mapping.</p>
 </li>
 <li>
-<p>Read the corresponding entry in the full sha1-name table to
+<p>Read the corresponding entry in the full SHA-1 name table to
 verify we found the right object. If it is, then</p>
 </li>
 <li>
-<p>Read the corresponding entry in the full sha256-name table.
-That is the object&#8217;s sha256-name.</p>
+<p>Read the corresponding entry in the full SHA-256 name table.
+That is the object&#8217;s SHA-256 name.</p>
 </li>
 </ol>
 </div>
@@ -975,10 +1027,10 @@ for all objects in the object store.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_reading_an_objects_sha1_content">Reading an object&#8217;s sha1-content</h3>
+<h3 id="_reading_an_objects_sha_1_content">Reading an object&#8217;s SHA-1 content</h3>
 <div class="paragraph">
-<p>The sha1-content of an object can be read by converting all sha256-names
-its sha256-content references to sha1-names using the translation table.</p>
+<p>The SHA-1 content of an object can be read by converting all SHA-256 names
+of its SHA-256 content references to SHA-1 names using the translation table.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1009,7 +1061,7 @@ the following steps:</p>
 <p>index-pack: inflate each object in the packfile and compute its
 SHA-1. Objects can contain deltas in OBJ_REF_DELTA format against
 objects the client has locally. These objects can be looked up
-using the translation table and their sha1-content read as
+using the translation table and their SHA-1 content read as
 described above to resolve the deltas.</p>
 </li>
 <li>
@@ -1022,14 +1074,14 @@ pack from the server contained additional extraneous objects, then
 they will be discarded.)</p>
 </li>
 <li>
-<p>convert to sha256: open a new (sha256) packfile. Read the topologically
+<p>convert to SHA-256: open a new SHA-256 packfile. Read the topologically
 sorted list just generated. For each object, inflate its
-sha1-content, convert to sha256-content, and write it to the sha256
-pack. Record the new sha1&lt;&#8594;sha256 mapping entry for use in the idx.</p>
+SHA-1 content, convert to SHA-256 content, and write it to the SHA-256
+pack. Record the new SHA-1&#8592;&#8594;SHA-256 mapping entry for use in the idx.</p>
 </li>
 <li>
 <p>sort: reorder entries in the new pack to match the order of objects
-in the pack the server generated and include blobs. Write a sha256 idx
+in the pack the server generated and include blobs. Write a SHA-256 idx
 file</p>
 </li>
 <li>
@@ -1064,9 +1116,9 @@ experimenting to get this to perform well.</p>
 <h3 id="_push">Push</h3>
 <div class="paragraph">
 <p>Push is simpler than fetch because the objects referenced by the
-pushed objects are already in the translation table. The sha1-content
+pushed objects are already in the translation table. The SHA-1 content
 of each object being pushed can be read as described in the "Reading
-an object&#8217;s sha1-content" section to generate the pack written by git
+an object&#8217;s SHA-1 content" section to generate the pack written by git
 send-pack.</p>
 </div>
 </div>
@@ -1075,15 +1127,25 @@ send-pack.</p>
 <div class="paragraph">
 <p>We add a new field "gpgsig-sha256" to the commit object format to allow
 signing commits without relying on SHA-1. It is similar to the
-existing "gpgsig" field. Its signed payload is the sha256-content of the
+existing "gpgsig" field. Its signed payload is the SHA-256 content of the
 commit object with any "gpgsig" and "gpgsig-sha256" fields removed.</p>
 </div>
 <div class="paragraph">
-<p>This means commits can be signed
-1. using SHA-1 only, as in existing signed commit objects
-2. using both SHA-1 and SHA-256, by using both gpgsig-sha256 and gpgsig
-   fields.
-3. using only SHA-256, by only using the gpgsig-sha256 field.</p>
+<p>This means commits can be signed</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>using SHA-1 only, as in existing signed commit objects</p>
+</li>
+<li>
+<p>using both SHA-1 and SHA-256, by using both gpgsig-sha256 and gpgsig
+fields.</p>
+</li>
+<li>
+<p>using only SHA-256, by only using the gpgsig-sha256 field.</p>
+</li>
+</ol>
 </div>
 <div class="paragraph">
 <p>Old versions of "git verify-commit" can verify the gpgsig signature in
@@ -1096,26 +1158,36 @@ ordinary unsigned commit.</p>
 <div class="paragraph">
 <p>We add a new field "gpgsig-sha256" to the tag object format to allow
 signing tags without relying on SHA-1. Its signed payload is the
-sha256-content of the tag with its gpgsig-sha256 field and "-----BEGIN PGP
+SHA-256 content of the tag with its gpgsig-sha256 field and "-----BEGIN PGP
 SIGNATURE-----" delimited in-body signature removed.</p>
 </div>
 <div class="paragraph">
-<p>This means tags can be signed
-1. using SHA-1 only, as in existing signed tag objects
-2. using both SHA-1 and SHA-256, by using gpgsig-sha256 and an in-body
-   signature.
-3. using only SHA-256, by only using the gpgsig-sha256 field.</p>
+<p>This means tags can be signed</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>using SHA-1 only, as in existing signed tag objects</p>
+</li>
+<li>
+<p>using both SHA-1 and SHA-256, by using gpgsig-sha256 and an in-body
+signature.</p>
+</li>
+<li>
+<p>using only SHA-256, by only using the gpgsig-sha256 field.</p>
+</li>
+</ol>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_mergetag_embedding">Mergetag embedding</h3>
 <div class="paragraph">
-<p>The mergetag field in the sha1-content of a commit contains the
-sha1-content of a tag that was merged by that commit.</p>
+<p>The mergetag field in the SHA-1 content of a commit contains the
+SHA-1 content of a tag that was merged by that commit.</p>
 </div>
 <div class="paragraph">
-<p>The mergetag field in the sha256-content of the same commit contains the
-sha256-content of the same tag.</p>
+<p>The mergetag field in the SHA-256 content of the same commit contains the
+SHA-256 content of the same tag.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1220,7 +1292,7 @@ make appropriate choices about which packs to coalesce.</p>
 <div class="sect2">
 <h3 id="_invalid_objects">Invalid objects</h3>
 <div class="paragraph">
-<p>The conversion from sha1-content to sha256-content retains any
+<p>The conversion from SHA-1 content to SHA-256 content retains any
 brokenness in the original object (e.g., tree entry modes encoded with
 leading 0, tree objects whose paths are not sorted correctly, and
 commit objects without an author or committer). This is a deliberate
@@ -1244,17 +1316,17 @@ allow lifting this restriction.</p>
 <div class="sect2">
 <h3 id="_alternates">Alternates</h3>
 <div class="paragraph">
-<p>For the same reason, a sha256 repository cannot borrow objects from a
-sha1 repository using objects/info/alternates or
+<p>For the same reason, a SHA-256 repository cannot borrow objects from a
+SHA-1 repository using objects/info/alternates or
 $GIT_ALTERNATE_OBJECT_REPOSITORIES.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_git_notes">git notes</h3>
 <div class="paragraph">
-<p>The "git notes" tool annotates objects using their sha1-name as key.
+<p>The "git notes" tool annotates objects using their SHA-1 name as key.
 This design does not describe a way to migrate notes trees to use
-sha256-names. That migration is expected to happen separately (for
+SHA-256 names. That migration is expected to happen separately (for
 example using a file at the root of the notes tree to describe which
 hash it uses).</p>
 </div>
@@ -1300,7 +1372,7 @@ tagger Junio C Hamano &lt;gitster@pobox.com&gt; 1487962205 -0800</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Does this mean Git v2.12.0 is the commit with sha1-name
+<p>Does this mean Git v2.12.0 is the commit with SHA-1 name
 e7e07d5a4fcc2a203d9873968ad3e6bd4d7419d7 or the commit with
 new-40-digit-hash-name e7e07d5a4fcc2a203d9873968ad3e6bd4d7419d7?</p>
 </div>
@@ -1356,58 +1428,11 @@ using the wrong hash function.</p>
 particular revision specifier and for output, overriding the mode. For
 example:</p>
 </div>
-<div class="paragraph">
-<p>git --output-format=sha1 log abac87a<sup>{sha1}..f787cac</sup>{sha256}</p>
+<div class="literalblock">
+<div class="content">
+<pre>git --output-format=sha1 log abac87a^{sha1}..f787cac^{sha256}</pre>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_choice_of_hash">Choice of Hash</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>In early 2005, around the time that Git was written, Xiaoyun Wang,
-Yiqun Lisa Yin, and Hongbo Yu announced an attack finding SHA-1
-collisions in 2^69 operations. In August they published details.
-Luckily, no practical demonstrations of a collision in full SHA-1 were
-published until 10 years later, in 2017.</p>
-</div>
-<div class="paragraph">
-<p>Git v2.13.0 and later subsequently moved to a hardened SHA-1
-implementation by default that mitigates the SHAttered attack, but
-SHA-1 is still believed to be weak.</p>
-</div>
-<div class="paragraph">
-<p>The hash to replace this hardened SHA-1 should be stronger than SHA-1
-was: we would like it to be trustworthy and useful in practice for at
-least 10 years.</p>
-</div>
-<div class="paragraph">
-<p>Some other relevant properties:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>A 256-bit hash (long enough to match common security practice; not
-excessively long to hurt performance and disk usage).</p>
-</li>
-<li>
-<p>High quality implementations should be widely available (e.g., in
-OpenSSL and Apple CommonCrypto).</p>
-</li>
-<li>
-<p>The hash function&#8217;s properties should match Git&#8217;s needs (e.g. Git
-requires collision and 2nd preimage resistance and does not require
-length extension resistance).</p>
-</li>
-<li>
-<p>As a tiebreaker, the hash should be fast to compute (fortunately
-many contenders are faster than SHA-1).</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>We choose SHA-256.</p>
 </div>
 </div>
 </div>
@@ -1415,48 +1440,110 @@ many contenders are faster than SHA-1).</p>
 <h2 id="_transition_plan">Transition plan</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Some initial steps can be implemented independently of one another:
-- adding a hash function API (vtable)
-- teaching fsck to tolerate the gpgsig-sha256 field
-- excluding gpgsig-* from the fields copied by "git commit --amend"
-- annotating tests that depend on SHA-1 values with a SHA1 test
-  prerequisite
-- using "struct object_id", GIT_MAX_RAWSZ, and GIT_MAX_HEXSZ
-  consistently instead of "unsigned char *" and the hardcoded
-  constants 20 and 40.
-- introducing index v3
-- adding support for the PSRC field and safer object pruning</p>
+<p>Some initial steps can be implemented independently of one another:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>adding a hash function API (vtable)</p>
+</li>
+<li>
+<p>teaching fsck to tolerate the gpgsig-sha256 field</p>
+</li>
+<li>
+<p>excluding gpgsig-* from the fields copied by "git commit --amend"</p>
+</li>
+<li>
+<p>annotating tests that depend on SHA-1 values with a SHA1 test
+prerequisite</p>
+</li>
+<li>
+<p>using "struct object_id", GIT_MAX_RAWSZ, and GIT_MAX_HEXSZ
+consistently instead of "unsigned char *" and the hardcoded
+constants 20 and 40.</p>
+</li>
+<li>
+<p>introducing index v3</p>
+</li>
+<li>
+<p>adding support for the PSRC field and safer object pruning</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>The first user-visible change is the introduction of the objectFormat
-extension (without compatObjectFormat). This requires:
-- teaching fsck about this mode of operation
-- using the hash function API (vtable) when computing object names
-- signing objects and verifying signatures
-- rejecting attempts to fetch from or push to an incompatible
-  repository</p>
+extension (without compatObjectFormat). This requires:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>teaching fsck about this mode of operation</p>
+</li>
+<li>
+<p>using the hash function API (vtable) when computing object names</p>
+</li>
+<li>
+<p>signing objects and verifying signatures</p>
+</li>
+<li>
+<p>rejecting attempts to fetch from or push to an incompatible
+repository</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>Next comes introduction of compatObjectFormat:
-- implementing the loose-object-idx
-- translating object names between object formats
-- translating object content between object formats
-- generating and verifying signatures in the compat format
-- adding appropriate index entries when adding a new object to the
-  object store
-- --output-format option
-- ^{sha1} and ^{sha256} revision notation
-- configuration to specify default input and output format (see
-  "Object names on the command line" above)</p>
+<p>Next comes introduction of compatObjectFormat:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>implementing the loose-object-idx</p>
+</li>
+<li>
+<p>translating object names between object formats</p>
+</li>
+<li>
+<p>translating object content between object formats</p>
+</li>
+<li>
+<p>generating and verifying signatures in the compat format</p>
+</li>
+<li>
+<p>adding appropriate index entries when adding a new object to the
+object store</p>
+</li>
+<li>
+<p>--output-format option</p>
+</li>
+<li>
+<p>^{sha1} and ^{sha256} revision notation</p>
+</li>
+<li>
+<p>configuration to specify default input and output format (see
+"Object names on the command line" above)</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>The next step is supporting fetches and pushes to SHA-1 repositories:
-- allow pushes to a repository using the compat format
-- generate a topologically sorted list of the SHA-1 names of fetched
-  objects
-- convert the fetched packfile to sha256 format and generate an idx
-  file
-- re-sort to match the order of objects in the fetched packfile</p>
+<p>The next step is supporting fetches and pushes to SHA-1 repositories:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>allow pushes to a repository using the compat format</p>
+</li>
+<li>
+<p>generate a topologically sorted list of the SHA-1 names of fetched
+objects</p>
+</li>
+<li>
+<p>convert the fetched packfile to SHA-256 format and generate an idx
+file</p>
+</li>
+<li>
+<p>re-sort to match the order of objects in the fetched packfile</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>The infrastructure supporting fetch also allows converting an existing
@@ -1529,43 +1616,69 @@ adoption.</p>
 <p>(e.g. <a href="https://lore.kernel.org/git/22708.8913.864049.452252@chiark.greenend.org.uk/" class="bare">https://lore.kernel.org/git/22708.8913.864049.452252@chiark.greenend.org.uk/</a> )
 Objects newly created would be addressed by the new hash, but inside
 such an object (e.g. commit) it is still possible to address objects
-using the old hash function.
-* You cannot trust its history (needed for bisectability) in the
-  future without further work
-* Maintenance burden as the number of supported hash functions grows
-  (they will never go away, so they accumulate). In this proposal, by
-  comparison, converted objects lose all references to SHA-1.</p>
+using the old hash function.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You cannot trust its history (needed for bisectability) in the
+future without further work</p>
+</li>
+<li>
+<p>Maintenance burden as the number of supported hash functions grows
+(they will never go away, so they accumulate). In this proposal, by
+comparison, converted objects lose all references to SHA-1.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_signed_objects_with_multiple_hashes">Signed objects with multiple hashes</h3>
 <div class="paragraph">
 <p>Instead of introducing the gpgsig-sha256 field in commit and tag objects
-for sha256-content based signatures, an earlier version of this design
-added "hash sha256 &lt;sha256-name&gt;" fields to strengthen the existing
-sha1-content based signatures.</p>
+for SHA-256 content based signatures, an earlier version of this design
+added "hash sha256 &lt;SHA-256 name&gt;" fields to strengthen the existing
+SHA-1 content based signatures.</p>
 </div>
 <div class="paragraph">
 <p>In other words, a single signature was used to attest to the object
-content using both hash functions. This had some advantages:
-* Using one signature instead of two speeds up the signing process.
-* Having one signed payload with both hashes allows the signer to
-  attest to the sha1-name and sha256-name referring to the same object.
-* All users consume the same signature. Broken signatures are likely
-  to be detected quickly using current versions of git.</p>
+content using both hash functions. This had some advantages:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Using one signature instead of two speeds up the signing process.</p>
+</li>
+<li>
+<p>Having one signed payload with both hashes allows the signer to
+attest to the SHA-1 name and SHA-256 name referring to the same object.</p>
+</li>
+<li>
+<p>All users consume the same signature. Broken signatures are likely
+to be detected quickly using current versions of git.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>However, it also came with disadvantages:
-* Verifying a signed object requires access to the sha1-names of all
-  objects it references, even after the transition is complete and
-  translation table is no longer needed for anything else. To support
-  this, the design added fields such as "hash sha1 tree &lt;sha1-name&gt;"
-  and "hash sha1 parent &lt;sha1-name&gt;" to the sha256-content of a signed
-  commit, complicating the conversion process.
-* Allowing signed objects without a sha1 (for after the transition is
-  complete) complicated the design further, requiring a "nohash sha1"
-  field to suppress including "hash sha1" fields in the sha256-content
-  and signed payload.</p>
+<p>However, it also came with disadvantages:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Verifying a signed object requires access to the SHA-1 names of all
+objects it references, even after the transition is complete and
+translation table is no longer needed for anything else. To support
+this, the design added fields such as "hash sha1 tree &lt;SHA-1 name&gt;"
+and "hash sha1 parent &lt;SHA-1 name&gt;" to the SHA-256 content of a signed
+commit, complicating the conversion process.</p>
+</li>
+<li>
+<p>Allowing signed objects without a SHA-1 (for after the transition is
+complete) complicated the design further, requiring a "nohash sha1"
+field to suppress including "hash sha1" fields in the SHA-256 content
+and signed payload.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
@@ -1573,8 +1686,8 @@ content using both hash functions. This had some advantages:
 <div class="paragraph">
 <p>Some of the work of building the translation table could be deferred to
 push time, but that would significantly complicate and slow down pushes.
-Calculating the sha1-name at object creation time at the same time it is
-being streamed to disk and having its sha256-name calculated should be
+Calculating the SHA-1 name at object creation time at the same time it is
+being streamed to disk and having its SHA-256 name calculated should be
 an acceptable cost.</p>
 </div>
 </div>
@@ -1588,65 +1701,113 @@ an acceptable cost.</p>
 <a href="mailto:bmwill@google.com">bmwill@google.com</a>, <a href="mailto:jonathantanmy@google.com">jonathantanmy@google.com</a>, <a href="mailto:jrnieder@gmail.com">jrnieder@gmail.com</a>,
 <a href="mailto:sbeller@google.com">sbeller@google.com</a></p>
 </div>
-<div class="paragraph">
-<p>Initial version sent to
-<a href="http://lore.kernel.org/git/20170304011251.GA26789@aiede.mtv.corp.google.com" class="bare">http://lore.kernel.org/git/20170304011251.GA26789@aiede.mtv.corp.google.com</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Initial version sent to <a href="https://lore.kernel.org/git/20170304011251.GA26789@aiede.mtv.corp.google.com" class="bare">https://lore.kernel.org/git/20170304011251.GA26789@aiede.mtv.corp.google.com</a></p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>2017-03-03 <a href="mailto:jrnieder@gmail.com">jrnieder@gmail.com</a>
-Incorporated suggestions from jonathantanmy and sbeller:
-* describe purpose of signed objects with each hash type
-* redefine signed object verification using object content under the
-  first hash function</p>
+Incorporated suggestions from jonathantanmy and sbeller:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Describe purpose of signed objects with each hash type</p>
+</li>
+<li>
+<p>Redefine signed object verification using object content under the
+first hash function</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>2017-03-06 <a href="mailto:jrnieder@gmail.com">jrnieder@gmail.com</a>
-* Use SHA3-256 instead of SHA2 (thanks, Linus and brian m. carlson).[1][2]
-* Make sha3-based signatures a separate field, avoiding the need for
-  "hash" and "nohash" fields (thanks to peff[3]).
-* Add a sorting phase to fetch (thanks to Junio for noticing the need
-  for this).
-* Omit blobs from the topological sort during fetch (thanks to peff).
-* Discuss alternates, git notes, and git servers in the caveats
-  section (thanks to Junio Hamano, brian m. carlson[4], and Shawn
-  Pearce).
-* Clarify language throughout (thanks to various commenters,
-  especially Junio).</p>
+<p>2017-03-06 <a href="mailto:jrnieder@gmail.com">jrnieder@gmail.com</a></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use SHA3-256 instead of SHA2 (thanks, Linus and brian m. carlson).[1][2]</p>
+</li>
+<li>
+<p>Make SHA3-based signatures a separate field, avoiding the need for
+"hash" and "nohash" fields (thanks to peff[3]).</p>
+</li>
+<li>
+<p>Add a sorting phase to fetch (thanks to Junio for noticing the need
+for this).</p>
+</li>
+<li>
+<p>Omit blobs from the topological sort during fetch (thanks to peff).</p>
+</li>
+<li>
+<p>Discuss alternates, git notes, and git servers in the caveats
+section (thanks to Junio Hamano, brian m. carlson[4], and Shawn
+Pearce).</p>
+</li>
+<li>
+<p>Clarify language throughout (thanks to various commenters,
+especially Junio).</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>2017-09-27 <a href="mailto:jrnieder@gmail.com">jrnieder@gmail.com</a>, <a href="mailto:sbeller@google.com">sbeller@google.com</a>
-* use placeholder NewHash instead of SHA3-256
-* describe criteria for picking a hash function.
-* include a transition plan (thanks especially to Brandon Williams
-  for fleshing these ideas out)
-* define the translation table (thanks, Shawn Pearce[5], Jonathan
-  Tan, and Masaya Suzuki)
-* avoid loose object overhead by packing more aggressively in
-  "git gc --auto"</p>
+<p>2017-09-27 <a href="mailto:jrnieder@gmail.com">jrnieder@gmail.com</a>, <a href="mailto:sbeller@google.com">sbeller@google.com</a></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use placeholder NewHash instead of SHA3-256</p>
+</li>
+<li>
+<p>Describe criteria for picking a hash function.</p>
+</li>
+<li>
+<p>Include a transition plan (thanks especially to Brandon Williams
+for fleshing these ideas out)</p>
+</li>
+<li>
+<p>Define the translation table (thanks, Shawn Pearce[5], Jonathan
+Tan, and Masaya Suzuki)</p>
+</li>
+<li>
+<p>Avoid loose object overhead by packing more aggressively in
+"git gc --auto"</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>Later history:</p>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>See the history of this file in git.git for the history of subsequent
+<div class="ulist">
+<ul>
+<li>
+<p>See the history of this file in git.git for the history of subsequent
 edits. This document history is no longer being maintained as it
-would now be superfluous to the commit log</pre>
-</div>
+would now be superfluous to the commit log</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>[1] <a href="http://lore.kernel.org/git/CA+55aFzJtejiCjV0e43+9oR3QuJK2PiFiLQemytoLpyJWe6P9w@mail.gmail.com/" class="bare">http://lore.kernel.org/git/CA+55aFzJtejiCjV0e43+9oR3QuJK2PiFiLQemytoLpyJWe6P9w@mail.gmail.com/</a>
-[2] <a href="http://lore.kernel.org/git/CA+55aFz+gkAsDZ24zmePQuEs1XPS9BP_s8O7Q4wQ7LV7X5-oDA@mail.gmail.com/" class="bare">http://lore.kernel.org/git/CA+55aFz+gkAsDZ24zmePQuEs1XPS9BP_s8O7Q4wQ7LV7X5-oDA@mail.gmail.com/</a>
-[3] <a href="http://lore.kernel.org/git/20170306084353.nrns455dvkdsfgo5@sigill.intra.peff.net/" class="bare">http://lore.kernel.org/git/20170306084353.nrns455dvkdsfgo5@sigill.intra.peff.net/</a>
-[4] <a href="http://lore.kernel.org/git/20170304224936.rqqtkdvfjgyezsht@genre.crustytoothpaste.net" class="bare">http://lore.kernel.org/git/20170304224936.rqqtkdvfjgyezsht@genre.crustytoothpaste.net</a>
-[5] <a href="https://lore.kernel.org/git/CAJo=hJtoX9=<a href="mailto:AyLHHpUJS7fueV9ciZ_MNpnEPHUz8Whui6g9F0A@mail.gmail.com">AyLHHpUJS7fueV9ciZ_MNpnEPHUz8Whui6g9F0A@mail.gmail.com</a>/" class="bare">https://lore.kernel.org/git/CAJo=hJtoX9=<a href="mailto:AyLHHpUJS7fueV9ciZ_MNpnEPHUz8Whui6g9F0A@mail.gmail.com">AyLHHpUJS7fueV9ciZ_MNpnEPHUz8Whui6g9F0A@mail.gmail.com</a>/</a></p>
+<p>References:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>[1] https://lore.kernel.org/git/CA+55aFzJtejiCjV0e43+9oR3QuJK2PiFiLQemytoLpyJWe6P9w@mail.gmail.com/
+[2] https://lore.kernel.org/git/CA+55aFz+gkAsDZ24zmePQuEs1XPS9BP_s8O7Q4wQ7LV7X5-oDA@mail.gmail.com/
+[3] https://lore.kernel.org/git/20170306084353.nrns455dvkdsfgo5@sigill.intra.peff.net/
+[4] https://lore.kernel.org/git/20170304224936.rqqtkdvfjgyezsht@genre.crustytoothpaste.net
+[5] https://lore.kernel.org/git/CAJo=hJtoX9=AyLHHpUJS7fueV9ciZ_MNpnEPHUz8Whui6g9F0A@mail.gmail.com/</pre>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-09 12:57:53 UTC
+Last updated 2021-02-26 09:54:54 UTC
 </div>
 </div>
 </body>

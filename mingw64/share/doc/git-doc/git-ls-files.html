@@ -453,6 +453,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
                 (--[cached|deleted|others|ignored|stage|unmerged|killed|modified])*
                 (-[c|d|o|i|s|u|k|m])*
                 [--eol]
+                [--deduplicate]
                 [-x &lt;pattern&gt;|--exclude=&lt;pattern&gt;]
                 [-X &lt;file&gt;|--exclude-from=&lt;file&gt;]
                 [--exclude-per-directory=&lt;file&gt;]
@@ -540,6 +541,14 @@ succeed.</p>
 <dd>
 <p>\0 line termination on output and do not quote filenames.
 See OUTPUT below for more information.</p>
+</dd>
+<dt class="hdlist1">--deduplicate</dt>
+<dd>
+<p>When only filenames are shown, suppress duplicates that may
+come from having multiple stages during a merge, or giving
+<code>--deleted</code> and <code>--modified</code> option at the same time.
+When any of the <code>-t</code>, <code>--unmerged</code>, or <code>--stage</code> option is
+in use, this option has no effect.</p>
 </dd>
 <dt class="hdlist1">-x &lt;pattern&gt;</dt>
 <dt class="hdlist1">--exclude=&lt;pattern&gt;</dt>
@@ -793,7 +802,7 @@ pattern file appears in.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-09 12:57:53 UTC
+Last updated 2021-02-26 09:54:54 UTC
 </div>
 </div>
 </body>
