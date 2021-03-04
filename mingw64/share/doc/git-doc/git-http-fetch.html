@@ -501,11 +501,18 @@ case), <em>git http-fetch</em> expects lines on stdin in the format</p>
 </dd>
 <dt class="hdlist1">--packfile=&lt;hash&gt;</dt>
 <dd>
-<p>Instead of a commit id on the command line (which is not expected in
+<p>For internal use only. Instead of a commit id on the command
+line (which is not expected in
 this case), <em>git http-fetch</em> fetches the packfile directly at the given
 URL and uses index-pack to generate corresponding .idx and .keep files.
 The hash is used to determine the name of the temporary file and is
-arbitrary. The output of index-pack is printed to stdout.</p>
+arbitrary. The output of index-pack is printed to stdout. Requires
+--index-pack-args.</p>
+</dd>
+<dt class="hdlist1">--index-pack-args=&lt;args&gt;</dt>
+<dd>
+<p>For internal use only. The command to run on the contents of the
+downloaded pack. Arguments are URL-encoded separated by spaces.</p>
 </dd>
 <dt class="hdlist1">--recover</dt>
 <dd>
@@ -527,7 +534,7 @@ an earlier fetch is interrupted.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-26 09:54:54 UTC
+Last updated 2021-03-03 16:11:58 UTC
 </div>
 </div>
 </body>

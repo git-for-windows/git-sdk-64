@@ -1635,19 +1635,11 @@ sorted descending by update index.</p>
 <div class="sect3">
 <h4 id="_layout">Layout</h4>
 <div class="paragraph">
-<p>A collection of reftable files are stored in the <code>$GIT_DIR/reftable/</code>
-directory:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>00000001-00000001.log
-00000002-00000002.ref
-00000003-00000003.ref</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where reftable files are named by a unique name such as produced by the
-function <code>${min_update_index}-${max_update_index}.ref</code>.</p>
+<p>A collection of reftable files are stored in the <code>$GIT_DIR/reftable/</code> directory.
+Their names should have a random element, such that each filename is globally
+unique; this helps avoid spurious failures on Windows, where open files cannot
+be removed or overwritten. It suggested to use
+<code>${min_update_index}-${max_update_index}-${random}.ref</code> as a naming convention.</p>
 </div>
 <div class="paragraph">
 <p>Log-only files use the <code>.log</code> extension, while ref-only and mixed ref
@@ -1661,9 +1653,9 @@ current files, one per line, in order, from oldest (base) to newest
 <div class="literalblock">
 <div class="content">
 <pre>$ cat .git/reftable/tables.list
-00000001-00000001.log
-00000002-00000002.ref
-00000003-00000003.ref</pre>
+00000001-00000001-RANDOM1.log
+00000002-00000002-RANDOM2.ref
+00000003-00000003-RANDOM3.ref</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1744,7 +1736,7 @@ new reftable and atomically appending it to the stack:</p>
 <p>Prepare temp reftable <code>tmp_XXXXXX</code>, including log entries.</p>
 </li>
 <li>
-<p>Rename <code>tmp_XXXXXX</code> to <code>${update_index}-${update_index}.ref</code>.</p>
+<p>Rename <code>tmp_XXXXXX</code> to <code>${update_index}-${update_index}-${random}.ref</code>.</p>
 </li>
 <li>
 <p>Copy <code>tables.list</code> to <code>tables.list.lock</code>, appending file from (5).</p>
@@ -1824,7 +1816,7 @@ the locking protocol.</p>
 </li>
 <li>
 <p>Rename <code>${min_update_index}-${max_update_index}_XXXXXX</code> to
-<code>${min_update_index}-${max_update_index}.ref</code>.</p>
+<code>${min_update_index}-${max_update_index}-${random}.ref</code>.</p>
 </li>
 <li>
 <p>Write the new stack to <code>tables.list.lock</code>, replacing <code>B</code> and <code>C</code>
@@ -1845,6 +1837,24 @@ readers to backtrack.</p>
 <div class="paragraph">
 <p>Each reftable (compacted or not) is uniquely identified by its name, so
 open reftables can be cached by their name.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_windows">Windows</h4>
+<div class="paragraph">
+<p>On windows, and other systems that do not allow deleting or renaming to open
+files, compaction may succeed, but other readers may prevent obsolete tables
+from being deleted.</p>
+</div>
+<div class="paragraph">
+<p>On these platforms, the following strategy can be followed: on closing a
+reftable stack, reload <code>tables.list</code>, and delete any tables no longer mentioned
+in <code>tables.list</code>.</p>
+</div>
+<div class="paragraph">
+<p>Irregular program exit may still leave about unused files. In this case, a
+cleanup operation can read <code>tables.list</code>, note its modification timestamp, and
+delete any unreferenced <code>*.ref</code> files that are older.</p>
 </div>
 </div>
 </div>
@@ -1964,7 +1974,7 @@ impossible.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-26 09:54:54 UTC
+Last updated 2021-03-03 16:11:58 UTC
 </div>
 </div>
 </body>
