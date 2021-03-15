@@ -94,6 +94,16 @@ return false;
 
 
 <h2 align="center">Documentation</h1>
+<div class="docsearch" id="docsearch">
+   <form method="GET" action="./search">
+    <select name="s" id="searchtype">
+       <option value="d">Search Documentation</option>
+       <option value="c">Search Changelog</option>
+     </select>
+     <input type="text" name="q" id="searchbox">
+     <input type="submit" value="Go">
+   </form>
+</div>
 <style>
 .showhide {
   margin-left: 0;
@@ -127,6 +137,11 @@ return false;
 .sh_link {
   font-weight: bold;
 }
+.docsearch {
+  margin: auto;
+  width: 450px;
+  padding-bottom: 1.5em;
+}
 </style>
 <script>
 function showhide(n){
@@ -139,6 +154,9 @@ function showhide(n){
     ul.style.display = "none";
     mk.innerHTML = "&#x25ba;";
   }
+}
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
+  document.getElementById("docsearch").style.display = "none";
 }
 </script>
 <ul class="showhide">

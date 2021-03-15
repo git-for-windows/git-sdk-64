@@ -1,4 +1,4 @@
-# Sqlite Extensions - Usage (Sqlite 3.34.1)
+# Sqlite Extensions - Usage (Sqlite 3.35.0)
 
 This folder contains shared libraries (dll files) `sqlite3.exe` can be
 instructed to load at run-time in order to add functions usable in `sqlite3` SQL code.

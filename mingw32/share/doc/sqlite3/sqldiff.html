@@ -144,7 +144,7 @@ altered using command-line switches:
 <dt><b>--changeset FILE</b></dt>
 <dd><p>Do not write changes to standard output.  Instead, write a (binary)
        changeset file into FILE.  The changeset can be interpreted using
-       the sessions extension to SQLite.</p></dd>
+       the <a href="sessionintro.html">session extension</a> to SQLite.</p></dd>
 <dt><b>--lib LIBRARY</b></dt>
 <dt><b>-L LIBRARY</b></dt>
 <dd><p>Load the shared library or DLL file LIBRARY into SQLite prior to
@@ -193,17 +193,38 @@ NULL.</p>
 
 <ol>
 <li>
-<p>The sqldiff.exe utility is unable to compute differences for
-rowid tables for which the rowid is inaccessible.  An example of
-a table with an inaccessible rowid is:
+<p>The sqldiff.exe utility does not compute changesets for
+either: rowid tables for which the rowid is inaccessible;
+or tables which have no explicit primary key.
+Given the --changeset option, sqldiff omits them from the comparison.
+Examples of such tables are:
 
-</p><div class="codeblock"><pre>CREATE TABLE inaccessible_rowid(
+</p><div class="codeblock"><pre>CREATE TABLE NilChangeset (
+   -- inaccessible rowid due to hiding its aliases
    "rowid" TEXT,
    "oid" TEXT,
    "_rowid_" TEXT
 );
 </pre></div>
 
+and
+
+<div class="codeblock"><pre>CREATE TABLE NilChangeset (
+   -- no explicit primary key
+   "authorId" TEXT,
+   "bookId" TEXT
+);
+</pre></div>
+
+
+When sqldiff is made to compare only such tables, no error occurs.
+However, the result may be unexpected.
+For example, the effect of this invocation:
+
+<div class="codeblock"><pre>sqldiff --changeset CHANGESET_OUT --table NilChangeset db1.sdb db2.sdb
+</pre></div>
+
+will be to produce an empty file named "CHANGESET_OUT". See  <a href="session/intro.html#limitations">session limitations</a> for details.
 </li><li><p>
 The sqldiff.exe utility does not (currently) display differences in
 <a href="lang_createtrigger.html">TRIGGERs</a> or <a href="lang_createview.html">VIEWs</a>.

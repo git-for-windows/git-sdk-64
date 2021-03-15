@@ -193,8 +193,8 @@ output from SQLite, you should reference the version of this document
 that corresponds to the version of SQLite that ran the <a href="lang_explain.html">EXPLAIN</a>.
 Otherwise, the description of the opcodes may not be accurate.
 This document is derived from SQLite
- version 3.34.1 check-in
-<a href='https://www.sqlite.org/src/timeline?c=10e20c0b43500'>10e20c0b43500</a> dated 2021-01-20.
+ version 3.35.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=acd63062eb067'>acd63062eb067</a> dated 2021-03-12.
 
 
 
@@ -417,20 +417,20 @@ pragmas include:
 
 <h1 id="the_opcodes"><span>4. </span>The Opcodes</h1>
 
-<p>There are currently 176
+<p>There are currently 178
 opcodes defined by the virtual machine.
 All currently defined opcodes are described in the table below.
 This table was generated automatically by scanning the source code
 from the file
-<a href="http://www.sqlite.org/src/artifact/d24a43b6b1ed2dba893636a14f5e56001444ab3fd5465e3bca8ab01799840acd">vdbe.c</a>.
+<a href="http://www.sqlite.org/src/artifact/b79b222f07690874d436eef4ad5e76845b2796e7094b1d0545cc94333f0d8e50">vdbe.c</a>.
 
 
 </p><p>Remember: The VDBE opcodes are <u>not</u> part of the interface 
 definition for SQLite.  The number of opcodes and their names and meanings
 change from one release of SQLite to the next.
 The opcodes shown in the table below are valid for SQLite
- version 3.34.1 check-in
-<a href='https://www.sqlite.org/src/timeline?c=10e20c0b43500'>10e20c0b43500</a> dated 2021-01-20.
+ version 3.35.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=acd63062eb067'>acd63062eb067</a> dated 2021-03-12.
 
 <a name="codes"></a>
 
@@ -578,6 +578,15 @@ WAL after the checkpoint into mem&#91;P3+1&#93; and the number of pages
 in the WAL that have been checkpointed after the checkpoint
 completes into mem&#91;P3+2&#93;.  However on an error, mem&#91;P3+1&#93; and
 mem&#91;P3+2&#93; are initialized to -1.</td></tr>
+<tr><td valign="top" align="center">
+<a name="ChngCntRow"></a>ChngCntRow
+<td>Output value in register P1 as the chance count for a DML statement,
+due to the "PRAGMA count_changes=ON" setting.  Or, if there was a
+foreign key error in the statement, trigger the error now.</p>
+
+<p>This opcode is a variant of <a href="opcode.html#ResultRow">ResultRow</a> that checks the foreign key
+immediate constraint count and throws an error if the count is
+non-zero.  The P2 opcode must be 1.</td></tr>
 <tr><td valign="top" align="center">
 <a name="Clear"></a>Clear
 <td>Delete all contents of the database table or index whose root page
@@ -1882,6 +1891,16 @@ instruction.</p>
 <p>This opcode leaves the cursor configured to move in forward order,
 from the beginning toward the end.  In other words, the cursor is
 configured to use <a href="opcode.html#Next">Next</a>, not <a href="opcode.html#Prev">Prev</a>.</td></tr>
+<tr><td valign="top" align="center">
+<a name="RowCell"></a>RowCell
+<td>P1 and P2 are both open cursors. Both must be opened on the same type
+of table - intkey or index. This opcode is used as part of copying
+the current row from P2 into P1. If the cursors are opened on intkey
+tables, register P3 contains the rowid to use with the new record in
+P1. If they are opened on index tables, P3 is not used.</p>
+
+<p>This opcode must be followed by either an <a href="opcode.html#Insert">Insert</a> or InsertIdx opcode
+with the OPFLAG_PREFORMAT flag set to complete the insert operation.</td></tr>
 <tr><td valign="top" align="center">
 <a name="RowData"></a>RowData
 <td>Write into register P2 the complete row content for the row at

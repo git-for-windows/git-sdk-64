@@ -600,6 +600,7 @@ be removed in some future release.</li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_SCRATCHMALLOC</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_SEEK_COUNT</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_SORTER_MMAP</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_TRACEFLAGS</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_VDBE_COVERAGE</a></li>
 <li><a href='#SQLITE_BLOB'>SQLITE_TEXT</a></li>
 <li><a href='#SQLITE_ABORT'>SQLITE_TOOBIG</a></li>
@@ -5282,7 +5283,13 @@ positive to enable triggers or negative to leave the setting unchanged.
 The second parameter is a pointer to an integer into which
 is written 0 or 1 to indicate whether triggers are disabled or enabled
 following this call.  The second parameter may be a NULL pointer, in
-which case the trigger setting is not reported back. </dd></p>
+which case the trigger setting is not reported back.</p>
+
+<p><p>Originally this option disabled all triggers.  However, since
+SQLite version 3.35.0, TEMP triggers are still allowed even if
+this option is off.  So, in other words, this option now only disables
+triggers in the main database schema or in the schemas of ATTACH-ed
+databases. </dd></p>
 
 <p><a name="sqlitedbconfigenableview"></a>
 
@@ -5294,7 +5301,13 @@ positive to enable views or negative to leave the setting unchanged.
 The second parameter is a pointer to an integer into which
 is written 0 or 1 to indicate whether views are disabled or enabled
 following this call.  The second parameter may be a NULL pointer, in
-which case the view setting is not reported back. </dd></p>
+which case the view setting is not reported back.</p>
+
+<p><p>Originally this option disabled all views.  However, since
+SQLite version 3.35.0, TEMP views are still allowed even if
+this option is off.  So, in other words, this option now only disables
+views in the main database schema or in the schemas of ATTACH-ed
+databases. </dd></p>
 
 <p><a name="sqlitedbconfigenablefts3tokenizer"></a>
 
@@ -6319,9 +6332,9 @@ and EXCLUSIVE.
 <h2>Compile-Time Library Version Numbers</h2>
 </div>
 <blockquote><pre>
-#define SQLITE_VERSION        "3.34.1"
-#define SQLITE_VERSION_NUMBER 3034001
-#define SQLITE_SOURCE_ID      "2021-01-20 14:10:07 10e20c0b43500cfb9bbc0eaa061c57514f715d87238f4d835880cd846b9ebd1f"
+#define SQLITE_VERSION        "3.35.0"
+#define SQLITE_VERSION_NUMBER 3035000
+#define SQLITE_SOURCE_ID      "2021-03-12 15:10:09 acd63062eb06748bfe9e4886639e4f2b54ea6a496a83f10716abbaba4115500b"
 </pre></blockquote>
 <p>
 The <a href="#SQLITE_SOURCE_ID">SQLITE_VERSION</a> C preprocessor macro in the sqlite3.h header
@@ -6521,7 +6534,8 @@ cares about the difference.)
 #define SQLITE_TESTCTRL_PRNG_SEED               28
 #define SQLITE_TESTCTRL_EXTRA_SCHEMA_CHECKS     29
 #define SQLITE_TESTCTRL_SEEK_COUNT              30
-#define SQLITE_TESTCTRL_LAST                    30  /* Largest TESTCTRL */
+#define SQLITE_TESTCTRL_TRACEFLAGS              31
+#define SQLITE_TESTCTRL_LAST                    31  /* Largest TESTCTRL */
 </pre></blockquote>
 <p>
 These constants are the valid operation code parameters used
@@ -9421,6 +9435,7 @@ Open file "/home/fred/data.db". Use the special VFS "unix-dotfile"
 that uses dot-files in place of posix advisory locking.
 <tr><td> file:data.db?mode=readonly <td>
 An error. "readonly" is not a valid option for the "mode" parameter.
+Use "ro" instead:  "file:data.db?mode=ro".
 </table></p>
 
 <p>URI hexadecimal escape sequences (%HH) are supported within the path and

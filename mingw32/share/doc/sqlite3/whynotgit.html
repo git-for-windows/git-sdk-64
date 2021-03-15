@@ -191,19 +191,17 @@ capability?)
 <h2 id="git_does_not_provide_good_situational_awareness"><span>2.1. </span>Git does not provide good situational awareness</h2>
 
 <p>
-When I want to see what has been happening on SQLite (or any of
-about a dozen other projects that I work on) I visit the
+When I want to see what has been happening on SQLite, I visit the
 <a href="https://sqlite.org/src/timeline">timeline</a> and in a single
-screen I can see a quick summary of all the latest changes,
-on all branches.
-In a few clicks, I can drill down to see as much detail as I
+screen I see a summary of the latest changes, on all branches.
+In a few clicks, I can drill down as much detail as I
 want.  I can even do this from a phone.
 
 </p><p>
 GitHub and GitLab offer nothing comparable.  The closest I have
 found is the <a href="https://github.com/sqlite/sqlite/network">network</a>,
 which is slow to render (unless it is already cached), does not 
-offer nearly as much details, and scarcely works on mobile.
+offer nearly as much details, and scarcely works at all on mobile.
 The <a href="https://github.com/sqlite/sqlite/commits/master">commits</a> view
 of GitHub provides more detail, renders quickly,
 and works on mobile, but only shows a single branch at a time,
@@ -229,15 +227,25 @@ a phone while away from the office is not an option.
 of a check-in</h2>
 
 <p>
-Git allows you to go backwards in time easily.  Given the latest
-check-in on a branch, Git lets you see all the ancestors of that
-check-in.  But Git makes it difficult to move in the other
-direction.  Given some historical check-in, it is quite challenging
-in Git to find out what came next. It can be done, but it is sufficiently
-difficult that people rarely do it. Common interfaces for Git,
-such as GitHub, do not support the ability.
+Git lets you look backwards in time, but not forwards.
+Given some historical check-in, you can see what came before,
+but it is challenging see what came next.
 
-</p><p>It is not impossible to find the descendents of a check-in
+</p><p>
+In contrast, Fossil offers helpful displays such as
+<a href="https://sqlite.org/src/timeline?df=major-release">https://sqlite.org/src/timeline?df=major-release</a>
+to show all check-ins that are derived from the most
+recent major release.
+
+</p><p>
+</p><ul>
+<li>
+<a href="https://sqlite.org/src/timeline?df=major-release">
+All SQLite check-ins derived from the most recent major release</a>
+</li></ul>
+
+
+<p>It is not impossible to find the descendents of a check-in
 in Git.  It is merely difficult.  For example,
 there is a 
 <a href="https://stackoverflow.com/questions/27960605/find-all-the-direct-descendants-of-a-given-commit#27962018">stackoverflow page</a>
@@ -249,23 +257,15 @@ in unix:
 </pre></div>
 
 <p>
-This command sequence is a lot to memorize and type.  (One would want
-to create a bash alias or short shell script if it were used frequently.)
-Furthermore, it is not quite the same thing.  The command above gives
-one a list of descendents without showing the branching structure, which
+But this is not the same thing.  The command above gives
+a list of descendents without showing the branching structure, which
 is important for understanding what happened.  And the command only works
 if you have a local clone of the repository; finding the descendents of
-a check-in is not something you can do with common web interfaces such
+a check-in is not something you can do with web interfaces such
 as GitHub or GitLab.
 
 </p><p>
-In contrast, Fossil offers displays such as
-<a href="https://sqlite.org/src/timeline?df=release">https://sqlite.org/src/timeline?df=release</a>
-to show all check-ins that are derived from the most
-recent release.
-
-</p><p>
-And it is not really about just finding the descendents of a check-in
+This is not really about just finding the descendents of a check-in
 from time to time.  The fact that descendents are readily available in
 Fossil means that the information pervades the web pages provided by
 Fossil.  One example: Every Fossil check-in information page
@@ -330,10 +330,10 @@ This makes review of historical
 branches tedious.
 
 </p><p>
-As an example, suppose someone (perhaps a customer) asks you:
+As an example, suppose a customer asks you:
 "What ever became of that 'prefer-coroutine-sort-subquery' branch
 from two years ago?"
-You might try to answer the query by consulting the history in
+You might try to answer by consulting the history in
 your version control system, thusly:
 
 </p><ul>
@@ -362,10 +362,9 @@ desired does not speak well of the core system.
 Git is complex software.
 One needs an installer of some kind to put Git on a developer
 workstation, or to upgrade to a newer version of Git.
-Setting up a Git server is non-trivial, and so most users
-have to use a third-party service such as GitHub or GitLab,
-and thus introduce additional (unnecessary) dependencies
-into the project.
+Standing up a Git server is non-trivial, and so most developers
+use a third-party service such as GitHub or GitLab,
+and thus introduce additional dependencies.
 
 </p><p>
 In contrast, Fossil is a single standalone binary which is
@@ -373,7 +372,10 @@ installed by putting it on $PATH.  That one binary contains all
 the functionality of core Git and also GitHub and/or GitLab.  It
 manages a community server with wiki, bug tracking, and forums, 
 provides packaged downloads for consumers, login managements, 
-and so forth, with no extra software required.
+and so forth, with no extra software required.  Standing up a
+community server for Fossil takes minutes.  And Fossil is efficient.
+A Fossil server will run fine on a $5/month VPS or a Raspberry Pi,
+whereas GitLab and similar require beefier hardware.
 
 </p><p>
 Less administration means that programmers spend more time working
@@ -388,7 +390,7 @@ exaggeration, yet hits close to home:
 </p><p>
 <img src="https://www.fossil-scm.org/fossil/doc/trunk/www/xkcd-git.gif">
 
-</p><p>Let's be real.  Few people seriously dispute that Git provides
+</p><p>Let's be real.  Few people dispute that Git provides
 a suboptimal user experience.  A lot of 
 the underlying implementation shows through into the user
 interface.  The interface is so bad that there is even a

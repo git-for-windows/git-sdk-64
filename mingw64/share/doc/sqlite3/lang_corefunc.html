@@ -107,7 +107,8 @@ Built-In Scalar SQL Functions
 <p>The core functions shown below are available by default. 
 <a href="lang_datefunc.html">Date &amp; Time functions</a>,
 <a href="lang_aggfunc.html">aggregate functions</a>,
-<a href="windowfunctions.html#biwinfunc">window functions</a>, and
+<a href="windowfunctions.html#biwinfunc">window functions</a>,
+<a href="lang_mathfunc.html">math functions</a>, and
 <a href="json1.html">JSON functions</a> are documented separately.  An
 application may define additional
 functions written in C and added to the database engine using
@@ -136,8 +137,8 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
 <li><a href='lang_corefunc.html#lower'>lower(X)</a></li>
 <li><a href='lang_corefunc.html#ltrim'>ltrim(X)</a></li>
 <li><a href='lang_corefunc.html#ltrim'>ltrim(X,Y)</a></li>
-<li><a href='lang_corefunc.html#maxoreunc'>max(X,Y,...)</a></li>
-<li><a href='lang_corefunc.html#minoreunc'>min(X,Y,...)</a></li>
+<li><a href='lang_corefunc.html#max_scalar'>max(X,Y,...)</a></li>
+<li><a href='lang_corefunc.html#min_scalar'>min(X,Y,...)</a></li>
 <li><a href='lang_corefunc.html#nullif'>nullif(X,Y)</a></li>
 <li><a href='lang_corefunc.html#printf'>printf(FORMAT,...)</a></li>
 <li><a href='lang_corefunc.html#quote'>quote(X)</a></li>
@@ -148,6 +149,7 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
 <li><a href='lang_corefunc.html#round'>round(X,Y)</a></li>
 <li><a href='lang_corefunc.html#rtrim'>rtrim(X)</a></li>
 <li><a href='lang_corefunc.html#rtrim'>rtrim(X,Y)</a></li>
+<li><a href='lang_corefunc.html#sign'>sign(X)</a></li>
 <li><a href='lang_corefunc.html#soundex'>soundex(X)</a></li>
 <li><a href='lang_corefunc.html#sqlite_compileoption_get'>sqlite_compileoption_get(N)</a></li>
 <li><a href='lang_corefunc.html#sqlite_compileoption_used'>sqlite_compileoption_used(X)</a></li>
@@ -353,7 +355,7 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
   If the Y argument is omitted, ltrim(X) removes spaces from the left side
   of X.
 </dd>
-<a name="maxoreunc"></a>
+<a name="max_scalar"></a>
 <dt><p><b>max(<i>X</i>,<i>Y</i>,...)</b></dt><dd><p>
   The multi-argument max() function returns the argument with the 
   maximum value, or return NULL if any argument is NULL. 
@@ -363,9 +365,9 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
   define a collating function, then the BINARY collating function is used.
   Note that <b>max()</b> is a simple function when
   it has 2 or more arguments but operates as an
-  <a href="lang_aggfunc.html#maxggunc">aggregate function</a> if given only a single argument.
+  <a href="lang_aggfunc.html#max_agg">aggregate function</a> if given only a single argument.
 </dd>
-<a name="minoreunc"></a>
+<a name="min_scalar"></a>
 <dt><p><b>min(<i>X</i>,<i>Y</i>,...)</b></dt><dd><p>
   The multi-argument min() function returns the argument with the
   minimum value.
@@ -375,7 +377,7 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
   define a collating function, then the BINARY collating function is used.
   Note that <b>min()</b> is a simple function when
   it has 2 or more arguments but operates as an 
-  <a href="lang_aggfunc.html#minggunc">aggregate function</a> if given
+  <a href="lang_aggfunc.html#min_agg">aggregate function</a> if given
   only a single argument.
 </dd>
 <a name="nullif"></a>
@@ -450,6 +452,13 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
   If the Y argument is omitted, rtrim(X) removes spaces from the right
   side of X.
 </dd>
+<a name="sign"></a>
+<dt><p><b>sign(<i>X</i>)</b></dt><dd><p>
+  The sign(X) function returns -1, 0, or +1 if the argument X is a numeric
+  value that is negative, zero, or positive, respectively.  If the argument
+  to sign(X) is NULL or is a string or blob that cannot be losslessly converted
+  into a number, then sign(X) return NULL.
+</dd>
 <a name="soundex"></a>
 <dt><p><b>soundex(<i>X</i>)</b></dt><dd><p>
   The soundex(X) function returns a string that is the soundex encoding 
@@ -497,7 +506,7 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
   specific version of the source code that was used to build the SQLite
   library.  The string returned by sqlite_source_id() is
   the date and time that the source code was checked in followed by
-  the SHA1 hash for that check-in.  This function is
+  the SHA3-256 hash for that check-in.  This function is
   an SQL wrapper around the <a href="c3ref/libversion.html">sqlite3_sourceid()</a> C interface.
 </dd>
 <a name="sqlite_version"></a>

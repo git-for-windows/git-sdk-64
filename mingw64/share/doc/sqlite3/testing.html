@@ -266,9 +266,9 @@ both the SQL and the database file at the same time, and is thus able
 to reach new error states.  Dbsqlfuzz is built using the
 <a href="http://llvm.org/docs/LibFuzzer.html">libFuzzer</a> framework of LLVM
 with a custom mutator.  Starting from 
-236 seed files, the dbsqlfuzz fuzzer
-has examined many tens of millions of mutations, resulting in 
-63493 distinct test cases that form
+252 seed files, the dbsqlfuzz fuzzer
+has tried literally billions of mutations, resulting in 
+58497 distinct test cases that form
 the basis of each new fuzzing session.  Dbsqlfuzz helps ensure
 that SQLite is robust against attack via malicious SQL or database
 inputs.
@@ -505,13 +505,13 @@ Examples:
 
 </p><h3 id="the_dbsqlfuzz_fuzzer"><span>4.1.3. </span>The dbsqlfuzz fuzzer</h3>
 
-<p>Beginning in late 2018, SQLite has been fuzzed using a new proprietary
+<p>Beginning in late 2018, SQLite has been fuzzed using a proprietary
 fuzzer called "dbsqlfuzz".  Dbsqlfuzz is built using the 
 <a href="http://llvm.org/docs/LibFuzzer.html">libFuzzer</a> framework of LLVM.
 
 </p><p>The dbsqlfuzz fuzzer mutates both the SQL input and the database file
 at the same time.  Dbsqlfuzz uses a custom
-<a href="https://github.com/google/fuzzer-test-suite/blob/master/tutorial/structure-aware-fuzzing.md">Structure-Aware Mutator</a>
+<a href="https://github.com/google/fuzzing/blob/master/docs/structure-aware-fuzzing.md">Structure-Aware Mutator</a>
 on a specialized input file that defines both an input database and SQL
 text to be run against that database. Because it mutates both the input
 database and the input SQL at the same time, dbsqlfuzz has been able to
@@ -524,6 +524,16 @@ the office for an extended period, such as overnight.</p>
 <p>The dbsqlfuzz fuzzer has been so successful at hardening the
 SQLite code base against malicious attack that it is now considered
 one of the four primary test harnesses for SQLite.
+
+</p><p>Note that dbsqlfuzz is <i>not</i> the Protobuf-based structure-aware
+fuzzer for SQLite that is used by Chromium and described in the
+<a href="https://github.com/google/fuzzing/blob/master/docs/structure-aware-fuzzing.md#user-content-example-sqlite">Structure-Aware Mutator article</a>.
+There is no connection between these two fuzzers, other than the fact that they
+are both based on <a href="http://llvm.org/docs/LibFuzzer.html">libFuzzer</a>
+The Protobuf fuzzer for SQLite is written and maintained by the Chromium
+team at Google, whereas dbsqlfuzz is written and maintained by the original
+SQLite developers.  Having multiple independently-developed fuzzers for SQLite
+is good, as it means that obscure issues are more likely to be uncovered.
 
 <a name="3pfuzz"></a>
 
@@ -547,7 +557,7 @@ or other easily detected anomalies.  Dr. Rigger's fuzzers, on the other hand,
 are able to find cases where SQLite computes an incorrect answer.
 Rigger has found
 <a href="https://www.sqlite.org/src/timeline?y=t&u=mrigger&n=all">many such cases</a>.
-Most of these finds are fairly obscure corner cases involving type
+Most of these finds are obscure corner cases involving type
 conversions and affinity transformations, and a good number of the finds
 are against unreleased features.  Nevertheless, his finds are still important
 as they are real bugs,
@@ -564,7 +574,7 @@ and profile-guided fuzzing.
 collected in a set of database files in the main SQLite source tree
 and then rerun by the "fuzzcheck" utility program whenever one runs
 "make test".  Fuzzcheck only runs a few thousand "interesting" cases
-out of the hundreds of millions of cases that the various fuzzers have
+out of the billions of cases that the various fuzzers have
 examined over the years.  "Interesting" cases are cases that exhibit
 previously unseen behavior.  Actual bugs found by fuzzers are always
 included among the interesting test cases, but most of the cases run
@@ -583,7 +593,7 @@ well during fuzz testing will tend to have (much) less than
 This is because MC/DC testing discourages <a href="testing.html#defcode">defensive code</a> with
 unreachable branches, but without defensive code, a fuzzer is
 more likely to find a path that causes problems.  MC/DC testing
-seems to work well for building code that is robust during typical
+seems to work well for building code that is robust during
 normal use, whereas fuzz testing is good for building code that is
 robust against malicious attack.
 

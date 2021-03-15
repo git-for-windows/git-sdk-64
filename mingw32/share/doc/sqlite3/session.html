@@ -187,6 +187,7 @@ code file sqlite3session.h.</p>
 <li><a href='#sqlite3session_enable'>sqlite3session_enable</a></li>
 <li><a href='#sqlite3session_indirect'>sqlite3session_indirect</a></li>
 <li><a href='#sqlite3session_isempty'>sqlite3session_isempty</a></li>
+<li><a href='#sqlite3session_memory_used'>sqlite3session_memory_used</a></li>
 <li><a href='#sqlite3session_patchset'>sqlite3session_patchset</a></li>
 <li><a href='#sqlite3changegroup_add_strm'>sqlite3session_patchset_strm</a></li>
 <li><a href='#sqlite3session_table_filter'>sqlite3session_table_filter</a></li>
@@ -707,18 +708,23 @@ created by <a href="#sqlite3changeset_start">sqlite3changeset_start()</a>. In th
 call to <a href="#sqlite3changeset_next">sqlite3changeset_next()</a> must have returned <a href="rescode.html#row">SQLITE_ROW</a>. If this
 is not the case, this function returns <a href="rescode.html#misuse">SQLITE_MISUSE</a>.</p>
 
-<p>If argument pzTab is not NULL, then *pzTab is set to point to a
-nul-terminated utf-8 encoded string containing the name of the table
-affected by the current change. The buffer remains valid until either
-sqlite3changeset_next() is called on the iterator or until the 
-conflict-handler function returns. If pnCol is not NULL, then *pnCol is 
-set to the number of columns in the table affected by the change. If
-pbIndirect is not NULL, then *pbIndirect is set to true (1) if the change
+<p>Arguments pOp, pnCol and pzTab may not be NULL. Upon return, three
+outputs are set through these pointers: </p>
+
+<p>*pOp is set to one of <a href="c3ref/c_alter_table.html">SQLITE_INSERT</a>, <a href="c3ref/c_alter_table.html">SQLITE_DELETE</a> or <a href="c3ref/c_alter_table.html">SQLITE_UPDATE</a>,
+depending on the type of change that the iterator currently points to;</p>
+
+<p>*pnCol is set to the number of columns in the table affected by the change; and</p>
+
+<p>*pzTab is set to point to a nul-terminated utf-8 encoded string containing
+the name of the table affected by the current change. The buffer remains
+valid until either sqlite3changeset_next() is called on the iterator
+or until the conflict-handler function returns.</p>
+
+<p>If pbIndirect is not NULL, then *pbIndirect is set to true (1) if the change
 is an indirect change, or false (0) otherwise. See the documentation for
 <a href="#sqlite3session_indirect">sqlite3session_indirect()</a> for a description of direct and indirect
-changes. Finally, if pOp is not NULL, then *pOp is set to one of 
-<a href="c3ref/c_alter_table.html">SQLITE_INSERT</a>, <a href="c3ref/c_alter_table.html">SQLITE_DELETE</a> or <a href="c3ref/c_alter_table.html">SQLITE_UPDATE</a>, depending on the 
-type of change that the iterator currently points to.</p>
+changes.</p>
 
 <p>If no error occurs, SQLITE_OK is returned. If an error does occur, an
 SQLite error code is returned. The values of the output variables may not
@@ -1148,6 +1154,11 @@ an attached table is modified and then later on the original values
 are restored. However, if this function returns non-zero, then it is
 guaranteed that a call to sqlite3session_changeset() will return a 
 changeset containing zero changes.
+</p><hr><a name="sqlite3session_memory_used"></a>
+<h2>Query for the amount of heap memory used by a session object.</h2><blockquote><pre>sqlite3_int64 sqlite3session_memory_used(sqlite3_session *pSession);
+</pre></blockquote><p>
+This API returns the total amount of heap memory in bytes currently 
+used by the session object passed as the only argument.
 </p><hr><a name="sqlite3session_patchset"></a>
 <h2>Generate A Patchset From A Session Object</h2><blockquote><pre>int sqlite3session_patchset(
   sqlite3_session *pSession,      /* Session object */

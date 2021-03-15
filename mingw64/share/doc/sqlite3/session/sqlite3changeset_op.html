@@ -105,18 +105,23 @@ created by <a href="../session/sqlite3changeset_start.html">sqlite3changeset_sta
 call to <a href="../session/sqlite3changeset_next.html">sqlite3changeset_next()</a> must have returned <a href="../rescode.html#row">SQLITE_ROW</a>. If this
 is not the case, this function returns <a href="../rescode.html#misuse">SQLITE_MISUSE</a>.</p>
 
-<p>If argument pzTab is not NULL, then *pzTab is set to point to a
-nul-terminated utf-8 encoded string containing the name of the table
-affected by the current change. The buffer remains valid until either
-sqlite3changeset_next() is called on the iterator or until the 
-conflict-handler function returns. If pnCol is not NULL, then *pnCol is 
-set to the number of columns in the table affected by the change. If
-pbIndirect is not NULL, then *pbIndirect is set to true (1) if the change
+<p>Arguments pOp, pnCol and pzTab may not be NULL. Upon return, three
+outputs are set through these pointers: </p>
+
+<p>*pOp is set to one of <a href="../c3ref/c_alter_table.html">SQLITE_INSERT</a>, <a href="../c3ref/c_alter_table.html">SQLITE_DELETE</a> or <a href="../c3ref/c_alter_table.html">SQLITE_UPDATE</a>,
+depending on the type of change that the iterator currently points to;</p>
+
+<p>*pnCol is set to the number of columns in the table affected by the change; and</p>
+
+<p>*pzTab is set to point to a nul-terminated utf-8 encoded string containing
+the name of the table affected by the current change. The buffer remains
+valid until either sqlite3changeset_next() is called on the iterator
+or until the conflict-handler function returns.</p>
+
+<p>If pbIndirect is not NULL, then *pbIndirect is set to true (1) if the change
 is an indirect change, or false (0) otherwise. See the documentation for
 <a href="../session/sqlite3session_indirect.html">sqlite3session_indirect()</a> for a description of direct and indirect
-changes. Finally, if pOp is not NULL, then *pOp is set to one of 
-<a href="../c3ref/c_alter_table.html">SQLITE_INSERT</a>, <a href="../c3ref/c_alter_table.html">SQLITE_DELETE</a> or <a href="../c3ref/c_alter_table.html">SQLITE_UPDATE</a>, depending on the 
-type of change that the iterator currently points to.</p>
+changes.</p>
 
 <p>If no error occurs, SQLITE_OK is returned. If an error does occur, an
 SQLite error code is returned. The values of the output variables may not

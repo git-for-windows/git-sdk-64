@@ -135,8 +135,8 @@ built-in PRAGMA statements.</p>
 <hr /><a name="syntax"></a>
 <h2>PRAGMA command syntax</h2>
 <p><b><a href="syntax/pragma-stmt.html">pragma-stmt:</a></b>
-<button id='x2009' onclick='hideorshow("x2009","x2010")'>hide</button></p>
- <div id='x2010' class='imgcontainer'>
+<button id='x2109' onclick='hideorshow("x2109","x2110")'>hide</button></p>
+ <div id='x2110' class='imgcontainer'>
  <div style="max-width:824px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 824.352 99.576">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -190,8 +190,8 @@ built-in PRAGMA statements.</p>
 </svg>
 </div>
 <p><b><a href="syntax/pragma-value.html">pragma-value:</a></b>
-<button id='x2011' onclick='hideorshow("x2011","x2012")'>hide</button></p>
- <div id='x2012' class='imgcontainer'>
+<button id='x2111' onclick='hideorshow("x2111","x2112")'>hide</button></p>
+ <div id='x2112' class='imgcontainer'>
  <div style="max-width:264px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 264.499 110.16">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="63,17 51,21 51,12" style="fill:rgb(0,0,0)"/>
@@ -218,8 +218,8 @@ built-in PRAGMA statements.</p>
 </svg>
 </div>
 <p><b><a href="syntax/signed-number.html">signed-number:</a></b>
-<button id='x2013' onclick='hideorshow("x2013","x2014")'>show</button></p>
- <div id='x2014' style='display:none;' class='imgcontainer'>
+<button id='x2113' onclick='hideorshow("x2113","x2114")'>show</button></p>
+ <div id='x2114' style='display:none;' class='imgcontainer'>
  <div style="max-width:292px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 292.013 99.576">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,44 39,48 39,40" style="fill:rgb(0,0,0)"/>
@@ -448,7 +448,7 @@ for use in application programs.</ol></p>
       If the limit is zero, then the analysis limit is disabled and
       the ANALYZE command will examine all rows of each index.
       If N is greater than zero, then the analysis limit is set to N
-      and subsequent ANALYZE commands will breaks off processing
+      and subsequent ANALYZE commands will stop analyzing
       each index after it has examined approximately N rows.
       If N is a negative number or something other than an integer value,
       then the pragma behaves as if the N argument was omitted.
@@ -871,6 +871,11 @@ for use in application programs.</ol></p>
     as "UTF-16 encoding using native machine byte-ordering".  It is not
     possible to change the text encoding of a database after it has been
     created and any attempt to do so will be silently ignored.</p>
+
+    <p>If no encoding is first set with this pragma,
+    then the encoding with which the main database will be created
+    defaults to one determined by the
+    <a href="c3ref/open.html">API used to open the connection</a>.</p>
 
     <p>Once an encoding has been set for a database, it cannot be changed.</p>
 

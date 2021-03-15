@@ -541,8 +541,8 @@ SQLite uses the fsync() system call to flush data to the disk under Unix and
 it uses the FlushFileBuffers() to do the same under Windows.  Once again,
 SQLite assumes that these operating system services function as advertised.
 But it has been reported that fsync() and FlushFileBuffers() do not always
-work correctly, especially with inexpensive IDE disks.  Apparently some
-manufactures of IDE disks have controller chips that report
+work correctly, especially with some network filesystems or inexpensive IDE disks.
+Apparently some manufactures of IDE disks have controller chips that report
 that data has reached the disk surface when in fact the data is still
 in volatile cache memory in the disk drive electronics.  There are also
 reports that Windows sometimes chooses to ignore FlushFileBuffers() for
