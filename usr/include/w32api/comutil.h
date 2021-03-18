@@ -7,6 +7,7 @@
 #define _INC_COMUTIL
 
 #include <ole2.h>
+#include <stdio.h>
 
 #ifndef _COM_ASSERT
 #define _COM_ASSERT(x) ((void)0)
@@ -44,7 +45,7 @@ class _bstr_t;
 class _variant_t;
 
 namespace _com_util {
-  inline void CheckError(HRESULT hr) throw() {
+  inline void CheckError(HRESULT hr) {
     if(FAILED(hr)) { _com_issue_error(hr); }
   }
 }

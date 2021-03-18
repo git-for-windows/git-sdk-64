@@ -2,7 +2,7 @@
 
 # Language-independent M4 Macros for Bison.
 
-# Copyright (C) 2002, 2004-2015, 2018-2020 Free Software Foundation,
+# Copyright (C) 2002, 2004-2015, 2018-2021 Free Software Foundation,
 # Inc.
 
 # This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 
@@ -74,7 +74,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.])
+along with this program.  If not, see <https://www.gnu.org/licenses/>.])
 
 b4_comment([As a special exception, you may create a larger work that contains
 part or all of the Bison parser skeleton and distribute that work
@@ -465,6 +465,19 @@ m4_case([$1],
 # but are S_YYEMPTY and symbol_kind::S_YYEMPTY in C++.
 m4_copy([b4_symbol_kind_base], [b4_symbol_kind])
 
+
+# b4_symbol_slot(NUM)
+# -------------------
+# The name of union member that contains the value of these symbols.
+# Currently, we are messy, this should actually be type_tag, but type_tag
+# has several meanings.
+m4_define([b4_symbol_slot],
+[m4_case(b4_percent_define_get([[api.value.type]]),
+         [union],   [b4_symbol([$1], [type_tag])],
+         [variant], [b4_symbol([$1], [type_tag])],
+         [b4_symbol([$1], [type])])])
+
+
 # b4_symbol(NUM, FIELD)
 # ---------------------
 # Fetch FIELD of symbol #NUM (or "orig NUM").  Fail if undefined.
@@ -475,6 +488,7 @@ m4_define([b4_symbol],
          [id],        [b4_symbol_token_kind([$1])],
          [kind_base], [b4_symbol_kind_base([$1])],
          [kind],      [b4_symbol_kind([$1])],
+         [slot],      [b4_symbol_slot([$1])],
          [_b4_symbol($@)])])
 
 
@@ -537,7 +551,7 @@ m4_defn([b4_actions_])[]dnl
         break;
     }dnl
 ],
-[YYUSE (m4_default([$2], [yykind]));])dnl
+[YY_USE (m4_default([$2], [yykind]));])dnl
 m4_popdef([b4_actions_])dnl
 ])
 

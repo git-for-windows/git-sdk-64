@@ -2,7 +2,7 @@
 
 # C++ skeleton for Bison
 
-# Copyright (C) 2002-2020 Free Software Foundation, Inc.
+# Copyright (C) 2002-2021 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Sanity checks, before defaults installed by c.m4.
 b4_percent_define_ifdef([[api.value.union.name]],
@@ -340,7 +340,7 @@ m4_define([b4_symbol_type_define],
       }
 
       /// Destroy contents, and record that is empty.
-      void clear ()
+      void clear () YY_NOEXCEPT
       {]b4_variant_if([[
         // User destructor.
         symbol_kind_type yykind = this->kind ();
@@ -424,7 +424,7 @@ m4_define([b4_symbol_type_define],
       by_kind (kind_type t);
 
       /// Record that this symbol is empty.
-      void clear ();
+      void clear () YY_NOEXCEPT;
 
       /// Steal the symbol kind from \a that.
       void move (by_kind& that);
@@ -544,7 +544,7 @@ m4_define([b4_public_types_define],
   {}
 
   ]b4_inline([$1])[void
-  ]b4_parser_class[::by_kind::clear ()
+  ]b4_parser_class[::by_kind::clear () YY_NOEXCEPT
   {
     kind_ = ]b4_symbol(-2, kind)[;
   }

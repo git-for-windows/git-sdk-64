@@ -142,10 +142,16 @@ The macro `b4_symbol(NUM, FIELD)` gives access to the following FIELDS:
   When api.value.type=union, the generated name for the union member.
   yytype_INT etc. for symbols that has_id, otherwise yytype_1 etc.
 
-- `type`
+- `type`: string
   If it has a semantic value, its type tag, or, if variant are used,
   its type.
   In the case of api.value.type=union, type is the real type (e.g. int).
+
+- `slot`: string
+  If it has a semantic value, the name of the union member (i.e., bounces to
+  either `type_tag` or `type`).  It would be better to fix our mess and
+  always use `type` for the true type of the member, and `type_tag` for the
+  name of the union member.
 
 - `has_printer`: 0, 1
 - `printer`: string
@@ -187,7 +193,7 @@ fill-column: 76
 ispell-dictionary: "american"
 End:
 
-Copyright (C) 2002, 2008-2015, 2018-2020 Free Software Foundation, Inc.
+Copyright (C) 2002, 2008-2015, 2018-2021 Free Software Foundation, Inc.
 
 This file is part of GNU Bison.
 
@@ -202,6 +208,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 -->

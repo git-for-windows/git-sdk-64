@@ -346,6 +346,8 @@ extern "C" {
 #define LOCALE_IDEFAULTANSICODEPAGE 0x00001004
 #define LOCALE_IDEFAULTMACCODEPAGE 0x00001011
 
+#define LOCALE_IDIALINGCODE 0x00000005
+
 #define LOCALE_SLIST 0x0000000c
 #define LOCALE_IMEASURE 0x0000000d
 
@@ -372,6 +374,8 @@ extern "C" {
 #define LOCALE_SSHORTDATE 0x0000001f
 #define LOCALE_SLONGDATE 0x00000020
 #define LOCALE_STIMEFORMAT 0x00001003
+#define LOCALE_SAM 0x00000028
+#define LOCALE_SPM 0x00000029
 #define LOCALE_IDATE 0x00000021
 #define LOCALE_ILDATE 0x00000022
 #define LOCALE_ITIME 0x00000023
@@ -485,6 +489,15 @@ extern "C" {
 #define LOCALE_SSORTLOCALE 0x0000007b
 #endif
 
+#if WINVER >= _WIN32_WINNT_WIN8
+#define LOCALE_SRELATIVELONGDATE 0x0000007c
+#endif
+
+#if WINVER >= _WIN32_WINNT_WIN10
+#define LOCALE_SSHORTESTAM 0x0000007e
+#define LOCALE_SSHORTESTPM 0x0000007f
+#endif
+
 #define TIME_NOMINUTESORSECONDS 0x00000001
 #define TIME_NOSECONDS 0x00000002
 #define TIME_NOTIMEMARKER 0x00000004
@@ -499,6 +512,9 @@ extern "C" {
 #define DATE_RTLREADING 0x00000020
 #if WINVER >= 0x0601
 #define DATE_AUTOLAYOUT 0x00000040
+#endif
+#if WINVER >= _WIN32_WINNT_WINTHRESHOLD
+#define DATE_MONTHDAY 0x00000080
 #endif
 
 #define CAL_NOUSEROVERRIDE LOCALE_NOUSEROVERRIDE
@@ -570,6 +586,14 @@ extern "C" {
 #define CAL_SMONTHDAY 0x00000038
 #define CAL_SABBREVERASTRING 0x00000039
 #endif
+#if WINVER >= _WIN32_WINNT_WIN8
+#define CAL_SRELATIVELONGDATE 0x0000003a
+#endif
+#if NTDDI_VERSION >= NTDDI_WIN10_RS2
+#define CAL_SENGLISHERANAME 0x0000003b
+#define CAL_SENGLISHABBREVERANAME 0x0000003c
+#endif
+#define CAL_SJAPANESEERAFIRSTYEAR 0x0000003d
 
 #define ENUM_ALL_CALENDARS 0xffffffff
 
@@ -766,7 +790,14 @@ extern "C" {
     GEO_TIMEZONES = 0x000a,
     GEO_OFFICIALLANGUAGES = 0x000b,
     GEO_ISO_UN_NUMBER = 0x000c,
-    GEO_PARENT = 0x000d
+    GEO_PARENT = 0x000d,
+    GEO_DIALINGCODE = 0x000e,
+    GEO_CURRENCYCODE= 0x000f,
+    GEO_CURRENCYSYMBOL= 0x0010,
+#if NTDDI_VERSION >= NTDDI_WIN10_RS3
+    GEO_NAME = 0x0011,
+    GEO_ID = 0x0012
+#endif
   };
 
   enum SYSGEOCLASS {
@@ -816,6 +847,9 @@ extern "C" {
   typedef WINBOOL (CALLBACK *CALINFO_ENUMPROCW) (LPWSTR);
   typedef WINBOOL (CALLBACK *CALINFO_ENUMPROCEXW) (LPWSTR, CALID);
   typedef WINBOOL (CALLBACK *GEO_ENUMPROC) (GEOID);
+  #if NTDDI_VERSION >= NTDDI_WIN10_RS3
+  typedef WINBOOL (CALLBACK *GEO_ENUMNAMEPROC) (PWSTR, LPARAM);
+  #endif
 #else
   typedef FARPROC LANGUAGEGROUP_ENUMPROCA;
   typedef FARPROC LANGGROUPLOCALE_ENUMPROCA;
@@ -838,6 +872,9 @@ extern "C" {
   typedef FARPROC TIMEFMT_ENUMPROCW;
   typedef FARPROC CALINFO_ENUMPROCW;
   typedef FARPROC CALINFO_ENUMPROCEXW;
+  #if NTDDI_VERSION >= NTDDI_WIN10_RS3
+  typedef FARPROC GEO_ENUMNAMEPROC;
+  #endif
 #endif
 
 #ifdef UNICODE
@@ -901,9 +938,20 @@ extern "C" {
   WINBASEAPI WINBOOL WINAPI IsValidCodePage (UINT CodePage);
 #endif
 
-#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP) || defined(WINSTORECOMPAT)
+#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_APP)
   WINBASEAPI UINT WINAPI GetACP (void);
+  WINBASEAPI WINBOOL WINAPI IsDBCSLeadByte (BYTE TestChar);
   WINBASEAPI WINBOOL WINAPI IsDBCSLeadByteEx (UINT CodePage, BYTE TestChar);
+  WINBASEAPI WINBOOL WINAPI IsNLSDefinedString (NLS_FUNCTION Function, DWORD dwFlags, LPNLSVERSIONINFO lpVersionInformation, LPCWSTR lpString, INT cchStr);
+  WINBASEAPI int WINAPI GetLocaleInfoW (LCID Locale, LCTYPE LCType, LPWSTR lpLCData, int cchData);
+  WINBASEAPI int WINAPI GetLocaleInfoA (LCID Locale, LCTYPE LCType, LPSTR lpLCData, int cchData);
+
+#ifndef UNICODE
+#define GetLocaleInfo GetLocaleInfoA
+#else
+#define GetLocaleInfo GetLocaleInfoW
+#endif
+
 #endif
 
 #if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP)
@@ -911,9 +959,6 @@ extern "C" {
   WINBASEAPI int WINAPI CompareStringA (LCID Locale, DWORD dwCmpFlags, PCNZCH lpString1, int cchCount1, PCNZCH lpString2, int cchCount2);
   WINBASEAPI int WINAPI LCMapStringW (LCID Locale, DWORD dwMapFlags, LPCWSTR lpSrcStr, int cchSrc, LPWSTR lpDestStr, int cchDest);
   WINBASEAPI int WINAPI LCMapStringA (LCID Locale, DWORD dwMapFlags, LPCSTR lpSrcStr, int cchSrc, LPSTR lpDestStr, int cchDest);
-  WINBASEAPI int WINAPI GetLocaleInfoW (LCID Locale, LCTYPE LCType, LPWSTR lpLCData, int cchData);
-  WINBASEAPI int WINAPI GetLocaleInfoA (LCID Locale, LCTYPE LCType, LPSTR lpLCData, int cchData);
-  WINBASEAPI WINBOOL WINAPI IsDBCSLeadByte (BYTE TestChar);
   WINBASEAPI int WINAPI GetNumberFormatA (LCID Locale, DWORD dwFlags, LPCSTR lpValue, CONST NUMBERFMTA *lpFormat, LPSTR lpNumberStr, int cchNumber);
   WINBASEAPI int WINAPI GetNumberFormatW (LCID Locale, DWORD dwFlags, LPCWSTR lpValue, CONST NUMBERFMTW *lpFormat, LPWSTR lpNumberStr, int cchNumber);
   WINBASEAPI int WINAPI GetCurrencyFormatA (LCID Locale, DWORD dwFlags, LPCSTR lpValue, CONST CURRENCYFMTA *lpFormat, LPSTR lpCurrencyStr, int cchCurrency);
@@ -930,7 +975,6 @@ extern "C" {
   WINBASEAPI WINBOOL WINAPI EnumDateFormatsExW (DATEFMT_ENUMPROCEXW lpDateFmtEnumProcEx, LCID Locale, DWORD dwFlags);
   WINBASEAPI WINBOOL WINAPI IsValidLanguageGroup (LGRPID LanguageGroup, DWORD dwFlags);
   WINBASEAPI WINBOOL WINAPI GetNLSVersion (NLS_FUNCTION Function, LCID Locale, LPNLSVERSIONINFO lpVersionInformation);
-  WINBASEAPI WINBOOL WINAPI IsNLSDefinedString (NLS_FUNCTION Function, DWORD dwFlags, LPNLSVERSIONINFO lpVersionInformation, LPCWSTR lpString, INT cchStr);
   WINBASEAPI WINBOOL WINAPI IsValidLocale (LCID Locale, DWORD dwFlags);
   WINBASEAPI WINBOOL WINAPI SetLocaleInfoA (LCID Locale, LCTYPE LCType, LPCSTR lpLCData);
   WINBASEAPI WINBOOL WINAPI SetLocaleInfoW (LCID Locale, LCTYPE LCType, LPCWSTR lpLCData);
@@ -961,10 +1005,8 @@ extern "C" {
 #ifndef UNICODE
 #define CompareString CompareStringA
 #define LCMapString LCMapStringA
-#define GetLocaleInfo GetLocaleInfoA
 #else
 #define LCMapString LCMapStringW
-#define GetLocaleInfo GetLocaleInfoW
 #endif
 
 #define GetNumberFormat __MINGW_NAME_AW(GetNumberFormat)
@@ -982,6 +1024,7 @@ extern "C" {
   WINBASEAPI int WINAPI GetGeoInfoW (GEOID Location, GEOTYPE GeoType, LPWSTR lpGeoData, int cchData, LANGID LangId);
   WINBASEAPI WINBOOL WINAPI EnumSystemGeoID (GEOCLASS GeoClass, GEOID ParentGeoId, GEO_ENUMPROC lpGeoEnumProc);
   WINBASEAPI GEOID WINAPI GetUserGeoID (GEOCLASS GeoClass);
+  WINBASEAPI int WINAPI GetUserDefaultGeoName (LPWSTR geoName, int geoNameCount);
   WINBASEAPI WINBOOL WINAPI GetCPInfo (UINT CodePage, LPCPINFO lpCPInfo);
   WINBASEAPI WINBOOL WINAPI GetCPInfoExA (UINT CodePage, DWORD dwFlags, LPCPINFOEXA lpCPInfoEx);
   WINBASEAPI WINBOOL WINAPI GetCPInfoExW (UINT CodePage, DWORD dwFlags, LPCPINFOEXW lpCPInfoEx);
@@ -989,6 +1032,11 @@ extern "C" {
 #if WINVER >= 0x0600
   WINBASEAPI int WINAPI LCIDToLocaleName (LCID Locale, LPWSTR lpName, int cchName, DWORD dwFlags);
   WINBASEAPI LCID WINAPI LocaleNameToLCID (LPCWSTR lpName, DWORD dwFlags);
+#endif
+
+#if NTDDI_VERSION >= NTDDI_WIN10_RS3
+  WINBASEAPI int WINAPI GetGeoInfoEx (PWSTR location, GEOTYPE geoType, PWSTR geoData, int geoDataCount);
+  WINBASEAPI WINBOOL WINAPI SetUserGeoName (PWSTR geoName);
 #endif
 
 #define GetGeoInfo __MINGW_NAME_AW(GetGeoInfo)
@@ -1002,13 +1050,10 @@ extern "C" {
   WINBASEAPI LCID WINAPI GetThreadLocale (void);
   WINBASEAPI WINBOOL WINAPI SetThreadLocale (LCID Locale);
   WINBASEAPI LANGID WINAPI GetSystemDefaultUILanguage (void);
-  WINBASEAPI LANGID WINAPI GetUserDefaultUILanguage (void);
   WINBASEAPI LANGID WINAPI GetSystemDefaultLangID (void);
-  WINBASEAPI LANGID WINAPI GetUserDefaultLangID (void);
   WINBASEAPI LCID WINAPI GetSystemDefaultLCID (void);
   WINBASEAPI LCID WINAPI GetUserDefaultLCID (void);
   WINBASEAPI LANGID WINAPI SetThreadUILanguage (LANGID LangId);
-  WINBASEAPI WINBOOL WINAPI GetStringTypeExA (LCID Locale, DWORD dwInfoType, LPCSTR lpSrcStr, int cchSrc, LPWORD lpCharType);
   WINBASEAPI WINBOOL WINAPI GetStringTypeA (LCID Locale, DWORD dwInfoType, LPCSTR lpSrcStr, int cchSrc, LPWORD lpCharType);
   WINBASEAPI int WINAPI FoldStringA (DWORD dwMapFlags, LPCSTR lpSrcStr, int cchSrc, LPSTR lpDestStr, int cchDest);
   WINBASEAPI WINBOOL WINAPI EnumSystemLocalesA (LOCALE_ENUMPROCA lpLocaleEnumProc, DWORD dwFlags);
@@ -1017,8 +1062,6 @@ extern "C" {
   WINBASEAPI WINBOOL WINAPI EnumSystemLanguageGroupsW (LANGUAGEGROUP_ENUMPROCW lpLanguageGroupEnumProc, DWORD dwFlags, LONG_PTR lParam);
   WINBASEAPI WINBOOL WINAPI EnumLanguageGroupLocalesA (LANGGROUPLOCALE_ENUMPROCA lpLangGroupLocaleEnumProc, LGRPID LanguageGroup, DWORD dwFlags, LONG_PTR lParam);
   WINBASEAPI WINBOOL WINAPI EnumLanguageGroupLocalesW (LANGGROUPLOCALE_ENUMPROCW lpLangGroupLocaleEnumProc, LGRPID LanguageGroup, DWORD dwFlags, LONG_PTR lParam);
-  WINBASEAPI WINBOOL WINAPI EnumUILanguagesA (UILANGUAGE_ENUMPROCA lpUILanguageEnumProc, DWORD dwFlags, LONG_PTR lParam);
-  WINBASEAPI WINBOOL WINAPI EnumUILanguagesW (UILANGUAGE_ENUMPROCW lpUILanguageEnumProc, DWORD dwFlags, LONG_PTR lParam);
 #if WINVER >= 0x0600
   WINBASEAPI LANGID WINAPI GetThreadUILanguage (void);
   WINBASEAPI WINBOOL WINAPI GetProcessPreferredUILanguages (DWORD dwFlags, PULONG pulNumLanguages, PZZWSTR pwszLanguagesBuffer, PULONG pcchLanguagesBuffer);
@@ -1035,7 +1078,6 @@ extern "C" {
 
 #ifndef UNICODE
 #define FoldString FoldStringA
-#define GetStringTypeEx GetStringTypeExA
 #endif
 
 #define EnumSystemLocales __MINGW_NAME_AW(EnumSystemLocales)
@@ -1043,11 +1085,30 @@ extern "C" {
 #define EnumLanguageGroupLocales __MINGW_NAME_AW(EnumLanguageGroupLocales)
 #define EnumUILanguages __MINGW_NAME_AW(EnumUILanguages)
 
+#if NTDDI_VERSION >= NTDDI_WIN10_RS3
+  WINBASEAPI WINBOOL WINAPI EnumSystemGeoNames (GEOCLASS geoClass, GEO_ENUMNAMEPROC geoEnumProc, LPARAM data);
+#endif
+
+#if NTDDI_VERSION >= NTDDI_WIN10_VB
+  DECLARE_HANDLE(HSAVEDUILANGUAGES);
+  WINBASEAPI WINBOOL WINAPI SetThreadPreferredUILanguages2 (ULONG flags, PCZZWSTR languages, PULONG numLanguagesSet, HSAVEDUILANGUAGES *snapshot);
+  WINBASEAPI void WINAPI RestoreThreadPreferredUILanguages (const HSAVEDUILANGUAGES snapshot);
+#endif /* NTDDI_WIN10_VB */
+
 #endif
 
 #if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_APP)
+  WINBASEAPI WINBOOL WINAPI GetStringTypeExA (LCID Locale, DWORD dwInfoType, LPCSTR lpSrcStr, int cchSrc, LPWORD lpCharType);
+  WINBASEAPI LANGID WINAPI GetUserDefaultUILanguage (void);
+  WINBASEAPI WINBOOL WINAPI EnumUILanguagesA (UILANGUAGE_ENUMPROCA lpUILanguageEnumProc, DWORD dwFlags, LONG_PTR lParam);
+  WINBASEAPI WINBOOL WINAPI EnumUILanguagesW (UILANGUAGE_ENUMPROCW lpUILanguageEnumProc, DWORD dwFlags, LONG_PTR lParam);
   WINBASEAPI WINBOOL WINAPI EnumSystemCodePagesA (CODEPAGE_ENUMPROCA lpCodePageEnumProc, DWORD dwFlags);
   WINBASEAPI WINBOOL WINAPI EnumSystemCodePagesW (CODEPAGE_ENUMPROCW lpCodePageEnumProc, DWORD dwFlags);
+  WINBASEAPI LANGID WINAPI GetUserDefaultLangID (void);
+
+#ifndef UNICODE
+#define GetStringTypeEx GetStringTypeExA
+#endif
 
 #define EnumSystemCodePages __MINGW_NAME_AW(EnumSystemCodePages)
 

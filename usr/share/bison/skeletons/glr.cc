@@ -1,6 +1,6 @@
 # C++ GLR skeleton for Bison
 
-# Copyright (C) 2002-2015, 2018-2020 Free Software Foundation, Inc.
+# Copyright (C) 2002-2015, 2018-2021 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 # This skeleton produces a C++ class that encapsulates a C glr parser.
@@ -144,7 +144,7 @@ m4_pushdef([b4_parse_param], m4_defn([b4_parse_param_orig]))dnl
   int
   ]b4_parser_class[::parse ()
   {
-    return ::yyparse (*this]b4_user_args[);
+    return ::yy_parse_impl (*this]b4_user_args[);
   }
 
 #if ]b4_api_PREFIX[DEBUG
@@ -157,11 +157,11 @@ m4_pushdef([b4_parse_param], m4_defn([b4_parse_param_orig]))dnl
                            const semantic_type* yyvaluep]b4_locations_if([[,
                            const location_type* yylocationp]])[) const
   {]b4_locations_if([[
-    YYUSE (yylocationp);]])[
-    YYUSE (yyvaluep);
+    YY_USE (yylocationp);]])[
+    YY_USE (yyvaluep);
     std::ostream& yyo = debug_stream ();
     std::ostream& yyoutput = yyo;
-    YYUSE (yyoutput);
+    YY_USE (yyoutput);
     ]b4_symbol_actions([printer])[
   }
 
@@ -381,7 +381,7 @@ b4_percent_code_get([[requires]])[
 ]b4_defines_if(
 [b4_output_begin([b4_spec_header_file])
 b4_copyright([Skeleton interface for Bison GLR parsers in C++],
-             [2002-2015, 2018-2020])[
+             [2002-2015, 2018-2021])[
 // C++ GLR parser skeleton written by Akim Demaille.
 
 ]b4_disclaimer[

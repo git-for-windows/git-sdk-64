@@ -1,8 +1,8 @@
-                                                                    -*- C -*-
+#                                                             -*- C -*-
 
 # GLR skeleton for Bison
 
-# Copyright (C) 2002-2015, 2018-2020 Free Software Foundation, Inc.
+# Copyright (C) 2002-2015, 2018-2021 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 # If we are loaded by glr.cc, do not override c++.m4 definitions by
@@ -145,6 +145,15 @@ m4_define([b4_rhs_location],
 [(b4_rhs_data([$1], [$2]).yyloc)])
 
 
+# b4_call_merger(MERGER-NUM, MERGER-NAME, SYMBOL-SUM)
+# ---------------------------------------------------
+m4_define([b4_call_merger],
+[b4_case([$1],
+         [    b4_symbol_if([$3], [has_type],
+                           [yy0->b4_symbol($3, slot) = $2 (*yy0, *yy1);],
+                           [*yy0 = $2 (*yy0, *yy1);])])])
+
+
 ## -------------- ##
 ## Declarations.  ##
 ## -------------- ##
@@ -188,7 +197,7 @@ b4_glr_cc_if([],
 [b4_defines_if(
 [b4_output_begin([b4_spec_header_file])
 b4_copyright([Skeleton interface for Bison GLR parsers in C],
-             [2002-2015, 2018-2020])[
+             [2002-2015, 2018-2021])[
 ]b4_cpp_guard_open([b4_spec_mapped_header_file])[
 ]b4_shared_declarations[
 ]b4_cpp_guard_close([b4_spec_mapped_header_file])[
@@ -202,7 +211,7 @@ b4_copyright([Skeleton interface for Bison GLR parsers in C],
 
 b4_output_begin([b4_parser_file_name])
 b4_copyright([Skeleton implementation for Bison GLR parsers in C],
-             [2002-2015, 2018-2020])[
+             [2002-2015, 2018-2021])[
 /* C GLR parser skeleton written by Paul Hilfinger.  */
 
 ]b4_disclaimer[
@@ -215,7 +224,7 @@ b4_copyright([Skeleton implementation for Bison GLR parsers in C],
 #define YYLTYPE ]b4_api_PREFIX[LTYPE]])])[
 ]m4_if(b4_prefix, [yy], [],
 [[/* Substitute the variable and function names.  */
-#define yyparse ]b4_prefix[parse
+#define ]b4_glr_cc_if([yy_parse_impl], [yyparse])[ ]b4_prefix[]b4_glr_cc_if([_parse_impl], [parse])[
 #define yylex   ]b4_prefix[lex
 #define yyerror ]b4_prefix[error
 #define yydebug ]b4_prefix[debug]]b4_pure_if([], [[
@@ -875,7 +884,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   yybool yynormal YY_ATTRIBUTE_UNUSED = yystackp->yysplitPoint == YY_NULLPTR;
   int yylow;
 ]b4_parse_param_use([yyvalp], [yylocp])dnl
-[  YYUSE (yyrhslen);
+[  YY_USE (yyrhslen);
 # undef yyerrok
 # define yyerrok (yystackp->yyerrState = 0)
 # undef YYACCEPT
@@ -939,8 +948,8 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 static void
 yyuserMerge (int yyn, YYSTYPE* yy0, YYSTYPE* yy1)
 {
-  YYUSE (yy0);
-  YYUSE (yy1);
+  YY_USE (yy0);
+  YY_USE (yy1);
 
   switch (yyn)
     {
@@ -1795,8 +1804,8 @@ static YYRESULTTAG
 yyreportAmbiguity (yySemanticOption* yyx0,
                    yySemanticOption* yyx1]b4_pure_formals[)
 {
-  YYUSE (yyx0);
-  YYUSE (yyx1);
+  YY_USE (yyx0);
+  YY_USE (yyx1);
 
 #if ]b4_api_PREFIX[DEBUG
   YY_FPRINTF ((stderr, "Ambiguity detected.\n"));
@@ -2140,7 +2149,7 @@ yypcontext_token (const yyGLRStack *yystackp) YY_ATTRIBUTE_UNUSED;
 static yysymbol_kind_t
 yypcontext_token (const yyGLRStack *yystackp)
 {
-  YYUSE (yystackp);
+  YY_USE (yystackp);
   yysymbol_kind_t yytoken = yychar == ]b4_symbol(-2, id)[ ? ]b4_symbol(-2, kind)[ : YYTRANSLATE (yychar);
   return yytoken;
 }
@@ -2152,7 +2161,7 @@ yypcontext_location (const yyGLRStack *yystackp) YY_ATTRIBUTE_UNUSED;
 static YYLTYPE *
 yypcontext_location (const yyGLRStack *yystackp)
 {
-  YYUSE (yystackp);
+  YY_USE (yystackp);
   return &yylloc;
 }]])],
          [detailed\|verbose],
@@ -2420,7 +2429,7 @@ yyrecoverSyntaxError (yyGLRStack* yystackp]b4_user_formals[)
 `----------*/
 
 int
-yyparse (]m4_ifset([b4_parse_param], [b4_formals(b4_parse_param)], [void])[)
+]b4_glr_cc_if([yy_parse_impl], [yyparse])[ (]m4_ifset([b4_parse_param], [b4_formals(b4_parse_param)], [void])[)
 {
   int yyresult;
   yyGLRStack yystack;

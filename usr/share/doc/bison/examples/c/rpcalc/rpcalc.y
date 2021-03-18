@@ -1,6 +1,6 @@
 /* Parser for rpcalc.   -*- C -*-
 
-   Copyright (C) 1988-1993, 1995, 1998-2015, 2018-2020 Free Software
+   Copyright (C) 1988-1993, 1995, 1998-2015, 2018-2021 Free Software
    Foundation, Inc.
 
    This file is part of Bison, the GNU Compiler Compiler.
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* Reverse Polish Notation calculator. */
 

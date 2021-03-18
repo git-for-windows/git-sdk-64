@@ -228,6 +228,10 @@ typedef struct IDirectDrawGammaControl *LPDIRECTDRAWGAMMACONTROL;
 #define DDBLT_WAIT				0x01000000
 #define DDBLT_DEPTHFILL				0x02000000
 #define DDBLT_DONOTWAIT                         0x08000000
+#define DDBLT_PRESENTATION                      0x10000000
+#define DDBLT_LAST_PRESENTATION                 0x20000000
+#define DDBLT_EXTENDED_FLAGS                    0x40000000
+#define DDBLT_EXTENDED_LINEAR_CONTENT           0x00000004
 
 /* dwTrans for BltFast */
 #define DDBLTFAST_NOCOLORKEY			0x00000000
@@ -253,12 +257,12 @@ typedef struct IDirectDrawGammaControl *LPDIRECTDRAWGAMMACONTROL;
 #define DDGBS_ISBLTDONE				0x00000002
 
 /* dwFlags for IDirectDrawSurface7::GetFlipStatus */
-#define DDGFS_CANFLIP		1L
-#define DDGFS_ISFLIPDONE	2L
+#define DDGFS_CANFLIP           __MSABI_LONG(1)
+#define DDGFS_ISFLIPDONE        __MSABI_LONG(2)
 
 /* dwFlags for IDirectDrawSurface7::SetPrivateData */
-#define DDSPD_IUNKNOWNPOINTER	1L
-#define DDSPD_VOLATILE		2L
+#define DDSPD_IUNKNOWNPOINTER   __MSABI_LONG(1)
+#define DDSPD_VOLATILE          __MSABI_LONG(2)
 
 /* DDSCAPS.dwCaps */
 /* reserved1, was 3d capable */
@@ -367,6 +371,30 @@ typedef struct _DDSCAPS {
 /* indicates surface is part of a stereo flipping chain */
 #define DDSCAPS2_STEREOSURFACELEFT      0x00080000
 #define DDSCAPS2_VOLUME                 0x00200000
+#define DDSCAPS2_NOTUSERLOCKABLE        0x00400000
+#define DDSCAPS2_POINTS                 0x00800000
+#define DDSCAPS2_RTPATCHES              0x01000000
+#define DDSCAPS2_NPATCHES               0x02000000
+#define DDSCAPS2_RESERVED3              0x04000000
+#define DDSCAPS2_DISCARDBACKBUFFER      0x10000000
+#define DDSCAPS2_ENABLEALPHACHANNEL     0x20000000
+#define DDSCAPS2_EXTENDEDFORMATPRIMARY  0x40000000
+#define DDSCAPS2_ADDITIONALPRIMARY      0x80000000
+
+/* DDSCAPS2.dwCaps3 */
+#define DDSCAPS3_MULTISAMPLE_MASK               0x0000001f
+#define DDSCAPS3_MULTISAMPLE_QUALITY_MASK       0x000000e0
+#define DDSCAPS3_MULTISAMPLE_QUALITY_SHIFT      5
+#define DDSCAPS3_RESERVED1                      0x00000100
+#define DDSCAPS3_RESERVED2                      0x00000200
+#define DDSCAPS3_LIGHTWEIGHTMIPMAP              0x00000400
+#define DDSCAPS3_AUTOGENMIPMAP                  0x00000800
+#define DDSCAPS3_DMAP                           0x00001000
+#ifndef D3D_DISABLE_9EX
+#define DDSCAPS3_CREATESHAREDRESOURCE           0x00002000
+#define DDSCAPS3_READONLYRESOURCE               0x00004000
+#define DDSCAPS3_OPENSHAREDRESOURCE             0x00008000
+#endif /* !D3D_DISABLE_9EX */
 
 typedef struct _DDSCAPS2 {
 	DWORD	dwCaps;	/* capabilities of surface wanted */
@@ -753,6 +781,7 @@ typedef struct _DDPIXELFORMAT {
 	DWORD	dwAlphaBitDepth;        /* C: how many bits for alpha channels*/
 	DWORD	dwLuminanceBitCount;
 	DWORD	dwBumpBitCount;
+	DWORD	dwPrivateFormatBitCount;
     } DUMMYUNIONNAME1;
     __GNU_EXTENSION union {
 	DWORD	dwRBitMask;             /* 10: mask for red bit*/
@@ -760,12 +789,17 @@ typedef struct _DDPIXELFORMAT {
 	DWORD	dwStencilBitDepth;
 	DWORD	dwLuminanceBitMask;
 	DWORD	dwBumpDuBitMask;
+	DWORD	dwOperations;
     } DUMMYUNIONNAME2;
     __GNU_EXTENSION union {
 	DWORD	dwGBitMask;             /* 14: mask for green bits*/
 	DWORD	dwUBitMask;             /* 14: mask for U bits*/
 	DWORD	dwZBitMask;
 	DWORD	dwBumpDvBitMask;
+	struct {
+		WORD	wFlipMSTypes;
+		WORD	wBltMSTypes;
+	} MultiSampleCaps;
     } DUMMYUNIONNAME3;
     __GNU_EXTENSION union {
 	DWORD   dwBBitMask;             /* 18: mask for blue bits*/
@@ -899,6 +933,9 @@ typedef struct _DDPIXELFORMAT {
 #define DDOVER_BOB                              0x00200000
 #define DDOVER_OVERRIDEBOBWEAVE                 0x00400000
 #define DDOVER_INTERLEAVED                      0x00800000
+#define DDOVER_BOBHARDWARE                      0x01000000
+#define DDOVER_ARGBSCALEFACTORS                 0x02000000
+#define DDOVER_DEGRADEARGBSCALING               0x04000000
 
 /* DDPIXELFORMAT.dwFlags */
 #define DDPF_ALPHAPIXELS		0x00000001
@@ -1088,8 +1125,8 @@ typedef struct {
 	WORD	blue[256];
 } DDGAMMARAMP,*LPDDGAMMARAMP;
 
-typedef BOOL (CALLBACK *LPDDENUMCALLBACKA)(GUID *, LPSTR, LPSTR, LPVOID);
-typedef BOOL (CALLBACK *LPDDENUMCALLBACKW)(GUID *, LPWSTR, LPWSTR, LPVOID);
+typedef WINBOOL (CALLBACK *LPDDENUMCALLBACKA)(GUID *, LPSTR, LPSTR, LPVOID);
+typedef WINBOOL (CALLBACK *LPDDENUMCALLBACKW)(GUID *, LPWSTR, LPWSTR, LPVOID);
 DECL_WINELIB_TYPE_AW(LPDDENUMCALLBACK)
 
 typedef HRESULT (CALLBACK *LPDDENUMMODESCALLBACK)(LPDDSURFACEDESC, LPVOID);
@@ -1098,8 +1135,12 @@ typedef HRESULT (CALLBACK *LPDDENUMSURFACESCALLBACK)(LPDIRECTDRAWSURFACE, LPDDSU
 typedef HRESULT (CALLBACK *LPDDENUMSURFACESCALLBACK2)(LPDIRECTDRAWSURFACE4, LPDDSURFACEDESC2, LPVOID);
 typedef HRESULT (CALLBACK *LPDDENUMSURFACESCALLBACK7)(LPDIRECTDRAWSURFACE7, LPDDSURFACEDESC2, LPVOID);
 
-typedef BOOL (CALLBACK *LPDDENUMCALLBACKEXA)(GUID *, LPSTR, LPSTR, LPVOID, HMONITOR);
-typedef BOOL (CALLBACK *LPDDENUMCALLBACKEXW)(GUID *, LPWSTR, LPWSTR, LPVOID, HMONITOR);
+#if (WINVER < 0x0500) && !defined(HMONITOR_DECLARED)
+DECLARE_HANDLE(HMONITOR);
+#define HMONITOR_DECLARED 1
+#endif
+typedef WINBOOL (CALLBACK *LPDDENUMCALLBACKEXA)(GUID *, LPSTR, LPSTR, LPVOID, HMONITOR);
+typedef WINBOOL (CALLBACK *LPDDENUMCALLBACKEXW)(GUID *, LPWSTR, LPWSTR, LPVOID, HMONITOR);
 DECL_WINELIB_TYPE_AW(LPDDENUMCALLBACKEX)
 
 HRESULT WINAPI DirectDrawEnumerateA(LPDDENUMCALLBACKA,LPVOID);
@@ -1120,8 +1161,8 @@ DECL_WINELIB_TYPE_AW(LPDIRECTDRAWENUMERATEEX)
 #define DDENUM_NONDISPLAYDEVICES	0x00000004
 
 /* flags for DirectDrawCreate or IDirectDraw::Initialize */
-#define DDCREATE_HARDWAREONLY	1L
-#define DDCREATE_EMULATIONONLY	2L
+#define DDCREATE_HARDWAREONLY   __MSABI_LONG(1)
+#define DDCREATE_EMULATIONONLY  __MSABI_LONG(2)
 
 typedef struct _DDBLTFX
 {
@@ -1301,7 +1342,7 @@ DECLARE_INTERFACE_(IDirectDrawClipper,IUnknown)
     STDMETHOD(GetClipList)(THIS_ LPRECT lpRect, LPRGNDATA lpClipList, LPDWORD lpdwSize) PURE;
     STDMETHOD(GetHWnd)(THIS_ HWND *lphWnd) PURE;
     STDMETHOD(Initialize)(THIS_ LPDIRECTDRAW lpDD, DWORD dwFlags) PURE;
-    STDMETHOD(IsClipListChanged)(THIS_ BOOL *lpbChanged) PURE;
+    STDMETHOD(IsClipListChanged)(THIS_ WINBOOL *lpbChanged) PURE;
     STDMETHOD(SetClipList)(THIS_ LPRGNDATA lpClipList, DWORD dwFlags) PURE;
     STDMETHOD(SetHWnd)(THIS_ DWORD dwFlags, HWND hWnd) PURE;
 };
@@ -1359,7 +1400,7 @@ DECLARE_INTERFACE_(IDirectDraw,IUnknown)
     STDMETHOD(GetGDISurface)(THIS_ LPDIRECTDRAWSURFACE *lplpGDIDDSurface) PURE;
     STDMETHOD(GetMonitorFrequency)(THIS_ LPDWORD lpdwFrequency) PURE;
     STDMETHOD(GetScanLine)(THIS_ LPDWORD lpdwScanLine) PURE;
-    STDMETHOD(GetVerticalBlankStatus)(THIS_ BOOL *lpbIsInVB) PURE;
+    STDMETHOD(GetVerticalBlankStatus)(THIS_ WINBOOL *lpbIsInVB) PURE;
     STDMETHOD(Initialize)(THIS_ GUID *lpGUID) PURE;
     STDMETHOD(RestoreDisplayMode)(THIS) PURE;
     STDMETHOD(SetCooperativeLevel)(THIS_ HWND hWnd, DWORD dwFlags) PURE;
@@ -1424,18 +1465,18 @@ DECLARE_INTERFACE_(IDirectDraw,IUnknown)
 
 
 /* flags for Lock() */
-#define DDLOCK_SURFACEMEMORYPTR	0x00000000
-#define DDLOCK_WAIT		0x00000001
-#define DDLOCK_EVENT		0x00000002
-#define DDLOCK_READONLY		0x00000010
-#define DDLOCK_WRITEONLY	0x00000020
-#define DDLOCK_NOSYSLOCK	0x00000800
-#define DDLOCK_NOOVERWRITE      0x00001000
-#define DDLOCK_DISCARDCONTENTS  0x00002000
-#define DDLOCK_OKTOSWAP		0x00002000
-#define DDLOCK_DONOTWAIT	0x00004000
-#define DDLOCK_HASVOLUMETEXTUREBOXRECT  0x00008000
-#define DDLOCK_NODIRTYUPDATE	0x00010000
+#define DDLOCK_SURFACEMEMORYPTR         __MSABI_LONG(0x00000000)
+#define DDLOCK_WAIT                     __MSABI_LONG(0x00000001)
+#define DDLOCK_EVENT                    __MSABI_LONG(0x00000002)
+#define DDLOCK_READONLY                 __MSABI_LONG(0x00000010)
+#define DDLOCK_WRITEONLY                __MSABI_LONG(0x00000020)
+#define DDLOCK_NOSYSLOCK                __MSABI_LONG(0x00000800)
+#define DDLOCK_NOOVERWRITE              __MSABI_LONG(0x00001000)
+#define DDLOCK_DISCARDCONTENTS          __MSABI_LONG(0x00002000)
+#define DDLOCK_OKTOSWAP                 __MSABI_LONG(0x00002000)
+#define DDLOCK_DONOTWAIT                __MSABI_LONG(0x00004000)
+#define DDLOCK_HASVOLUMETEXTUREBOXRECT  __MSABI_LONG(0x00008000)
+#define DDLOCK_NODIRTYUPDATE            __MSABI_LONG(0x00010000)
 
 
 /*****************************************************************************
@@ -1466,7 +1507,7 @@ DECLARE_INTERFACE_(IDirectDraw2,IUnknown)
 /*38*/    STDMETHOD(GetGDISurface)(THIS_ LPDIRECTDRAWSURFACE *lplpGDIDDSurface) PURE;
 /*3c*/    STDMETHOD(GetMonitorFrequency)(THIS_ LPDWORD lpdwFrequency) PURE;
 /*40*/    STDMETHOD(GetScanLine)(THIS_ LPDWORD lpdwScanLine) PURE;
-/*44*/    STDMETHOD(GetVerticalBlankStatus)(THIS_ BOOL *lpbIsInVB) PURE;
+/*44*/    STDMETHOD(GetVerticalBlankStatus)(THIS_ WINBOOL *lpbIsInVB) PURE;
 /*48*/    STDMETHOD(Initialize)(THIS_ GUID *lpGUID) PURE;
 /*4c*/    STDMETHOD(RestoreDisplayMode)(THIS) PURE;
 /*50*/    STDMETHOD(SetCooperativeLevel)(THIS_ HWND hWnd, DWORD dwFlags) PURE;
@@ -1561,7 +1602,7 @@ DECLARE_INTERFACE_(IDirectDraw3,IUnknown)
 /*38*/    STDMETHOD(GetGDISurface)(THIS_ LPDIRECTDRAWSURFACE *lplpGDIDDSurface) PURE;
 /*3c*/    STDMETHOD(GetMonitorFrequency)(THIS_ LPDWORD lpdwFrequency) PURE;
 /*40*/    STDMETHOD(GetScanLine)(THIS_ LPDWORD lpdwScanLine) PURE;
-/*44*/    STDMETHOD(GetVerticalBlankStatus)(THIS_ BOOL *lpbIsInVB) PURE;
+/*44*/    STDMETHOD(GetVerticalBlankStatus)(THIS_ WINBOOL *lpbIsInVB) PURE;
 /*48*/    STDMETHOD(Initialize)(THIS_ GUID *lpGUID) PURE;
 /*4c*/    STDMETHOD(RestoreDisplayMode)(THIS) PURE;
 /*50*/    STDMETHOD(SetCooperativeLevel)(THIS_ HWND hWnd, DWORD dwFlags) PURE;
@@ -1662,7 +1703,7 @@ DECLARE_INTERFACE_(IDirectDraw4,IUnknown)
 /*38*/    STDMETHOD(GetGDISurface)(THIS_ LPDIRECTDRAWSURFACE4 *lplpGDIDDSurface) PURE;
 /*3c*/    STDMETHOD(GetMonitorFrequency)(THIS_ LPDWORD lpdwFrequency) PURE;
 /*40*/    STDMETHOD(GetScanLine)(THIS_ LPDWORD lpdwScanLine) PURE;
-/*44*/    STDMETHOD(GetVerticalBlankStatus)(THIS_ BOOL *lpbIsInVB) PURE;
+/*44*/    STDMETHOD(GetVerticalBlankStatus)(THIS_ WINBOOL *lpbIsInVB) PURE;
 /*48*/    STDMETHOD(Initialize)(THIS_ GUID *lpGUID) PURE;
 /*4c*/    STDMETHOD(RestoreDisplayMode)(THIS) PURE;
 /*50*/    STDMETHOD(SetCooperativeLevel)(THIS_ HWND hWnd, DWORD dwFlags) PURE;
@@ -1775,7 +1816,7 @@ DECLARE_INTERFACE_(IDirectDraw7,IUnknown)
 /*38*/    STDMETHOD(GetGDISurface)(THIS_ LPDIRECTDRAWSURFACE7 *lplpGDIDDSurface) PURE;
 /*3c*/    STDMETHOD(GetMonitorFrequency)(THIS_ LPDWORD lpdwFrequency) PURE;
 /*40*/    STDMETHOD(GetScanLine)(THIS_ LPDWORD lpdwScanLine) PURE;
-/*44*/    STDMETHOD(GetVerticalBlankStatus)(THIS_ BOOL *lpbIsInVB) PURE;
+/*44*/    STDMETHOD(GetVerticalBlankStatus)(THIS_ WINBOOL *lpbIsInVB) PURE;
 /*48*/    STDMETHOD(Initialize)(THIS_ GUID *lpGUID) PURE;
 /*4c*/    STDMETHOD(RestoreDisplayMode)(THIS) PURE;
 /*50*/    STDMETHOD(SetCooperativeLevel)(THIS_ HWND hWnd, DWORD dwFlags) PURE;
