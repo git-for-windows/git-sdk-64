@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="../sqlite.css" rel="stylesheet">
-<title>SQLite Release 3.35.1 On 2021-03-15</title>
+<title>SQLite Release 3.35.2 On 2021-03-17</title>
 <!-- path=../ -->
 </head>
 <body>
@@ -91,7 +91,7 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.35.1 On 2021-03-15</h2><p><b>Changes in version 3.35.0 (2021-03-12):</b></p>
+<h2>SQLite Release 3.35.2 On 2021-03-17</h2><p><b>Changes in version 3.35.0 (2021-03-12):</b></p>
 <p><ol class='lessindent'>
 <li value='1'> Added <a href="../lang_mathfunc.html">built-in SQL math functions()</a>. (Requires the
      <a href="../compile.html#enable_math_functions">-DSQLITE_ENABLE_MATH_FUNCTIONS</a> compile-time option.)
@@ -157,15 +157,31 @@ return false;
           is an "ESCAPE '_'" clause.
      </ol>
 </ol>
-<p><b>Additional changes in version 3.35.1:</b></p>
+<p><b>Additional changes in version 3.35.1 (2021-03-15):</b></p>
 <p><ol class='lessindent'>
 <li value='11'> Fix <a href="https://www.sqlite.org/src/info/1c24a659e6d7f3a1">a bug</a> in the new DROP COLUMN
      feature when used on columns that are indexed and that are quoted in the index
      definition.
-<li> Documentation improvements.
+<li> Improve the built-in documentation for the <a href="../cli.html#dump">.dump</a> command in the <a href="../cli.html">CLI</a>.
+</ol>
+<p><b>Additional changes in version 3.35.2:</b></p>
+<p><ol class='lessindent'>
+<li value='13'> Fix a problem in the 
+     <a href="http://www.sqlite.org/src/file/ext/misc/appendvfs.c">appendvfs.c</a>
+     extension that was introduced into version 3.35.0.
+<li> Ensure that date/time functions with no arguments (which generate
+     responses that depend on the current time) are treated as
+     <a href="../deterministic.html">non-deterministic functions</a>. Ticket
+     <a href="https://sqlite.org/src/info/2c6c8689fb5f3d2f">2c6c8689fb5f3d2f</a>
+<li> Fix a problem in the <a href="../sqldiff.html">sqldiff</a> utility program having to do with
+     unusual whitespace characters in a <a href="../vtab.html">virtual table</a> definition.
+<li> Limit the new UNION ALL optimization described by item 8c in the
+     3.35.0 release so that it does not try to make too many new subqueries.
+     See <a href="https://sqlite.org/forum/forumpost/140a67d3d2">forum thread 140a67d3d2</a>
+     for details.
 <p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: 2021-03-15 16:53:57 aea12399bf1fdc76af43499d4624c3afa17c3e6c2459b71c195804bb98def66a
-<li>SHA3-256 for sqlite3.c: fc79e27fd030226c07691b7d7c23aa81c8d46bc3bef5af39060e1507c82b0523
+<li>SQLITE_SOURCE_ID: 2021-03-17 19:07:21 ea80f3002f4120f5dcee76e8779dfdc88e1e096c5cdd06904c20fd26d50c3827
+<li>SHA3-256 for sqlite3.c: e8edc7b1512a2e050d548d0840bec6eef83cc297af1426c34c0ee8720f378a11
 
 </ol></p>
 
