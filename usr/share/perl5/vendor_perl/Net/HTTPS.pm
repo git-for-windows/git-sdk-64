@@ -1,5 +1,5 @@
 package Net::HTTPS;
-our $VERSION = '6.20';
+our $VERSION = '6.21';
 use strict;
 use warnings;
 
@@ -90,7 +90,7 @@ Net::HTTPS - Low-level HTTP over SSL/TLS connection (client)
 
 =head1 VERSION
 
-version 6.20
+version 6.21
 
 =head1 DESCRIPTION
 

@@ -3,7 +3,7 @@ package HTTP::Status;
 use strict;
 use warnings;
 
-our $VERSION = '6.27';
+our $VERSION = '6.29';
 
 require 5.002;   # because we use prototypes
 
@@ -175,7 +175,7 @@ HTTP::Status - HTTP Status code processing
 
 =head1 VERSION
 
-version 6.27
+version 6.29
 
 =head1 SYNOPSIS
 
