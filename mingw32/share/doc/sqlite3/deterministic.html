@@ -181,6 +181,27 @@ always considered non-deterministic.  The ability for date/time functions
 to be deterministic sometimes and non-deterministic at other times,
 depending on their arguments, was added for the 3.20.0 release.
 
+</p><h2 id="bug_fix_in_version_3_35_2"><span>3.1. </span>Bug fix in version 3.35.2</h2>
+
+<p>
+When the enhancement was made to SQLite 3.20.0 such that date/time
+functions would be considered deterministic they do not depend
+on the current time, one case was overlooked:
+Many of the date/time functions can be called
+with no arguments at all.  These no-argument date/time functions
+behave as if they had a single "<tt>'now'</tt>" argument.
+Thus "<tt>datetime()</tt>" and
+"<tt>datetime('now')</tt>" both yield the current date and time.
+However, only the second form was recognized as non-deterministic.
+This meant that developers could sneak the non-deterministic
+"<tt>datetime()</tt>" form into CHECK constraints, index
+expressions, generated column expressions, and similar places
+where non-deterministic functions make no sense.
+This oversight was fixed in version 3.35.2 (2021-03-17).
+However, there may be legacy databases in circulation that were created
+by SQLite version 3.20.0 through 3.35.1 that have non-deterministic
+date/time functions in their schemas.
+
 </p><h1 id="application_defined_deterministic_functions"><span>4. </span>Application-defined deterministic functions</h1>
 
 <p>

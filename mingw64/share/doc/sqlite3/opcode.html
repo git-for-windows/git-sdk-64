@@ -193,8 +193,8 @@ output from SQLite, you should reference the version of this document
 that corresponds to the version of SQLite that ran the <a href="lang_explain.html">EXPLAIN</a>.
 Otherwise, the description of the opcodes may not be accurate.
 This document is derived from SQLite
- version 3.35.2 check-in
-<a href='https://www.sqlite.org/src/timeline?c=ea80f3002f412'>ea80f3002f412</a> dated 2021-03-17.
+ version 3.35.3 check-in
+<a href='https://www.sqlite.org/src/timeline?c=4c5e6c200adc8'>4c5e6c200adc8</a> dated 2021-03-26.
 
 
 
@@ -422,15 +422,15 @@ opcodes defined by the virtual machine.
 All currently defined opcodes are described in the table below.
 This table was generated automatically by scanning the source code
 from the file
-<a href="http://www.sqlite.org/src/artifact/b79b222f07690874d436eef4ad5e76845b2796e7094b1d0545cc94333f0d8e50">vdbe.c</a>.
+<a href="http://www.sqlite.org/src/artifact/5001a0d3003d3664615dd7ac3cedab1d51e2391b5bdd0878f40a41fdcd942e13">vdbe.c</a>.
 
 
 </p><p>Remember: The VDBE opcodes are <u>not</u> part of the interface 
 definition for SQLite.  The number of opcodes and their names and meanings
 change from one release of SQLite to the next.
 The opcodes shown in the table below are valid for SQLite
- version 3.35.2 check-in
-<a href='https://www.sqlite.org/src/timeline?c=ea80f3002f412'>ea80f3002f412</a> dated 2021-03-17.
+ version 3.35.3 check-in
+<a href='https://www.sqlite.org/src/timeline?c=4c5e6c200adc8'>4c5e6c200adc8</a> dated 2021-03-26.
 
 <a name="codes"></a>
 
@@ -2143,13 +2143,13 @@ between 0 and This.P1 times.</p>
 
 <p>There are three possible outcomes from this opcode:<ol></p>
 
-<p><li> If after This.P1 steps, the cursor is still point to a place that
-is earlier in the btree than the target row,
-then fall through into the subsquence <a href="opcode.html#SeekGE">SeekGE</a> opcode.</p>
+<p><li> If after This.P1 steps, the cursor is still pointing to a place that
+is earlier in the btree than the target row, then fall through
+into the subsquence <a href="opcode.html#SeekGE">SeekGE</a> opcode.</p>
 
 <p><li> If the cursor is successfully moved to the target row by 0 or more
 sqlite3BtreeNext() calls, then jump to This.P2, which will land just
-past the <a href="opcode.html#IdxGT">IdxGT</a> opcode that follows the <a href="opcode.html#SeekGE">SeekGE</a>.</p>
+past the <a href="opcode.html#IdxGT">IdxGT</a> or <a href="opcode.html#IdxGE">IdxGE</a> opcode that follows the <a href="opcode.html#SeekGE">SeekGE</a>.</p>
 
 <p><li> If the cursor ends up past the target row (indicating the the target
 row does not exist in the btree) then jump to SeekOP.P2.
