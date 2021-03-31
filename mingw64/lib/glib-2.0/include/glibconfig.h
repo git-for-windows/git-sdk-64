@@ -109,8 +109,8 @@ typedef unsigned long long guintptr;
 #define G_GUINTPTR_FORMAT       "llu"
 
 #define GLIB_MAJOR_VERSION 2
-#define GLIB_MINOR_VERSION 66
-#define GLIB_MICRO_VERSION 7
+#define GLIB_MINOR_VERSION 68
+#define GLIB_MICRO_VERSION 0
 
 #define G_OS_WIN32
 #define G_PLATFORM_WIN32

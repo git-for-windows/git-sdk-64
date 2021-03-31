@@ -231,9 +231,21 @@
  *
  * This symbol is private.
  */
-#undef g_has_typeof
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)) && !defined(__cplusplus)
-#define g_has_typeof
+#undef glib_typeof
+#if !defined(__cplusplus) && \
+     ((defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8))) || \
+      defined(__clang__))
+#define glib_typeof(t) __typeof__ (t)
+#elif defined(__cplusplus) && __cplusplus >= 201103L
+/* C++11 decltype() is close enough for our usage */
+/* This needs `#include <type_traits>`, but we have guarded this feature with a
+ * `GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_68` check, and such a check
+ * cannot be enforced in this header due to include ordering requirements.
+ * Within GLib itself, which use `glib_typeof` need to add the include
+ * themselves. See other examples in GLib for how to do this.
+ */
+#define glib_typeof(t) typename std::remove_reference<decltype (t)>::type
+#define glib_typeof_2_68
 #endif
 
 /*
@@ -420,6 +432,12 @@
  * Expands to the GNU C `noreturn` function attribute if the compiler is gcc.
  * It is used for declaring functions which never return. It enables
  * optimization of the function, and avoids possible compiler warnings.
+ *
+ * Since 2.68, it is recommended that code uses %G_NORETURN instead of
+ * %G_GNUC_NORETURN, as that works on more platforms and compilers (in
+ * particular, MSVC and C++11) than %G_GNUC_NORETURN, which works with GCC and
+ * Clang only. %G_GNUC_NORETURN continues to work, so has not been deprecated
+ * yet.
  *
  * Place the attribute after the declaration, just before the semicolon.
  *
@@ -913,6 +931,76 @@
 #define G_CONST_RETURN GLIB_DEPRECATED_MACRO_IN_2_30_FOR(const)
 #else
 #define G_CONST_RETURN const GLIB_DEPRECATED_MACRO_IN_2_30_FOR(const)
+#endif
+
+/**
+ * G_NORETURN:
+ *
+ * Expands to the GNU C or MSVC `noreturn` function attribute depending on
+ * the compiler. It is used for declaring functions which never return.
+ * Enables optimization of the function, and avoids possible compiler warnings.
+ *
+ * Note that %G_NORETURN supersedes the previous %G_GNUC_NORETURN macro, which
+ * will eventually be deprecated. %G_NORETURN supports more platforms.
+ *
+ * Place the attribute before the function declaration as follows:
+ *
+ * |[<!-- language="C" -->
+ * G_NORETURN void g_abort (void);
+ * ]|
+ *
+ * Since: 2.68
+ */
+/* Note: We can’t annotate this with GLIB_AVAILABLE_MACRO_IN_2_68 because it’s
+ * used within the GLib headers in function declarations which are always
+ * evaluated when a header is included. This results in warnings in third party
+ * code which includes glib.h, even if the third party code doesn’t use the new
+ * macro itself. */
+#if (3 <= __GNUC__ || (__GNUC__ == 2 && 8 <= __GNUC_MINOR__)) || (0x5110 <= __SUNPRO_C)
+  /* For compatibility with G_NORETURN_FUNCPTR on clang, use
+     __attribute__((__noreturn__)), not _Noreturn.  */
+# define G_NORETURN __attribute__ ((__noreturn__))
+#elif 1200 <= _MSC_VER
+  /* Use MSVC specific syntax.  */
+# define G_NORETURN __declspec (noreturn)
+  /* Use ISO C++11 syntax when the compiler supports it.  */
+#elif (__cplusplus >= 201103 && !(__GNUC__ == 4 && __GNUC_MINOR__ == 7)) || (_MSC_VER >= 1900)
+# define G_NORETURN [[noreturn]]
+  /* Use ISO C11 syntax when the compiler supports it.  */
+#elif __STDC_VERSION__ >= 201112 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7)
+# define G_NORETURN _Noreturn
+#else
+# define G_NORETURN /* empty */
+#endif
+
+/**
+ * G_NORETURN_FUNCPTR:
+ *
+ * Expands to the GNU C or MSVC `noreturn` function attribute depending on
+ * the compiler. It is used for declaring function pointers which never return.
+ * Enables optimization of the function, and avoids possible compiler warnings.
+ *
+ * Place the attribute before the function declaration as follows:
+ *
+ * |[<!-- language="C" -->
+ * G_NORETURN_FUNCPTR void (*funcptr) (void);
+ * ]|
+ *
+ * Note that if the function is not a function pointer, you can simply use
+ * the %G_NORETURN macro as follows:
+ *
+ * |[<!-- language="C" -->
+ * G_NORETURN void g_abort (void);
+ * ]|
+ *
+ * Since: 2.68
+ */
+#if (3 <= __GNUC__ || (__GNUC__ == 2 && 8 <= __GNUC_MINOR__)) || (0x5110 <= __SUNPRO_C)
+# define G_NORETURN_FUNCPTR __attribute__ ((__noreturn__))      \
+  GLIB_AVAILABLE_MACRO_IN_2_68
+#else
+# define G_NORETURN_FUNCPTR /* empty */         \
+  GLIB_AVAILABLE_MACRO_IN_2_68
 #endif
 
 /*

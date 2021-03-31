@@ -8,7 +8,7 @@
 
 G_BEGIN_DECLS
 
-/* enumerations from "../glib-2.66.7/gio/gioenums.h" */
+/* enumerations from "../glib-2.68.0/gio/gioenums.h" */
 GLIB_AVAILABLE_IN_ALL GType g_app_info_create_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_APP_INFO_CREATE_FLAGS (g_app_info_create_flags_get_type ())
 GLIB_AVAILABLE_IN_ALL GType g_converter_flags_get_type (void) G_GNUC_CONST;
@@ -168,11 +168,11 @@ GLIB_AVAILABLE_IN_ALL GType g_pollable_return_get_type (void) G_GNUC_CONST;
 GLIB_AVAILABLE_IN_ALL GType g_memory_monitor_warning_level_get_type (void) G_GNUC_CONST;
 #define G_TYPE_MEMORY_MONITOR_WARNING_LEVEL (g_memory_monitor_warning_level_get_type ())
 
-/* enumerations from "../glib-2.66.7/gio/gresolver.h" */
+/* enumerations from "../glib-2.68.0/gio/gresolver.h" */
 GLIB_AVAILABLE_IN_ALL GType g_resolver_name_lookup_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_RESOLVER_NAME_LOOKUP_FLAGS (g_resolver_name_lookup_flags_get_type ())
 
-/* enumerations from "../glib-2.66.7/gio/gsettings.h" */
+/* enumerations from "../glib-2.68.0/gio/gsettings.h" */
 GLIB_AVAILABLE_IN_ALL GType g_settings_bind_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_SETTINGS_BIND_FLAGS (g_settings_bind_flags_get_type ())
 G_END_DECLS

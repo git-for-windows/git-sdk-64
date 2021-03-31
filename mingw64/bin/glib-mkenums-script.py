@@ -19,7 +19,7 @@ import errno
 import codecs
 import locale
 
-VERSION_STR = '''glib-mkenums version 2.66.7
+VERSION_STR = '''glib-mkenums version 2.68.0
 glib-mkenums comes with ABSOLUTELY NO WARRANTY.
 You may redistribute copies of glib-mkenums under the terms of
 the GNU General Public License which can be found in the
@@ -131,17 +131,18 @@ option_lowercase_name = ''  # DEPRECATED.  A lower case name to use as part
                             # uses abnormal capitalization and we can not
                             # guess where to put the underscores.
 option_since = ''           # User provided version info for the enum.
-seenbitshift = 0        # Have we seen bitshift operators?
-enum_prefix = None        # Prefix for this enumeration
-enumname = ''            # Name for this enumeration
-enumshort = ''           # $enumname without prefix
-enumname_prefix = ''       # prefix of $enumname
-enumindex = 0        # Global enum counter
-firstenum = 1        # Is this the first enumeration per file?
-entries = []            # [ name, val ] for each entry
-sandbox = None      # sandbox for safe evaluation of expressions
+seenbitshift = 0            # Have we seen bitshift operators?
+seenprivate = False         # Have we seen a private option?
+enum_prefix = None          # Prefix for this enumeration
+enumname = ''               # Name for this enumeration
+enumshort = ''              # $enumname without prefix
+enumname_prefix = ''        # prefix of $enumname
+enumindex = 0               # Global enum counter
+firstenum = 1               # Is this the first enumeration per file?
+entries = []                # [ name, val ] for each entry
+sandbox = None              # sandbox for safe evaluation of expressions
 
-output = ''            # Filename to write result into
+output = ''                 # Filename to write result into
 
 def parse_trigraph(opts):
     result = {}
@@ -161,7 +162,7 @@ def parse_trigraph(opts):
     return result
 
 def parse_entries(file, file_name):
-    global entries, enumindex, enumname, seenbitshift, flags
+    global entries, enumindex, enumname, seenbitshift, seenprivate, flags
     looking_for_name = False
 
     while True:
@@ -218,6 +219,7 @@ def parse_entries(file, file_name):
 
         m = re.match(r'''\s*
               (\w+)\s*                   # name
+              (\s+[A-Z]+_(?:AVAILABLE|DEPRECATED)_ENUMERATOR_IN_[0-9_]+(?:_FOR\s*\(\s*\w+\s*\))?\s*)?    # availability
               (?:=(                      # value
                    \s*\w+\s*\(.*\)\s*       # macro with multiple args
                    |                        # OR
@@ -230,14 +232,20 @@ def parse_entries(file, file_name):
         if m:
             groups = m.groups()
             name = groups[0]
+            availability = None
             value = None
             options = None
             if len(groups) > 1:
-                value = groups[1]
+                availability = groups[1]
             if len(groups) > 2:
-                options = groups[2]
+                value = groups[2]
+            if len(groups) > 3:
+                options = groups[3]
             if flags is None and value is not None and '<<' in value:
                 seenbitshift = 1
+
+            if seenprivate:
+                continue
 
             if options is not None:
                 options = parse_trigraph(options)
@@ -245,10 +253,24 @@ def parse_entries(file, file_name):
                     entries.append((name, value, options.get('nick')))
             else:
                 entries.append((name, value))
-        elif re.match(r's*\#', line):
-            pass
         else:
-            print_warning('Failed to parse "{}" in {}'.format(line, file_name))
+            m = re.match(r'''\s*
+                         /\*< (([^*]|\*(?!/))*) >\s*\*/
+                         \s*$''', line, flags=re.X)
+            if m:
+                options = m.groups()[0]
+                if options is not None:
+                    options = parse_trigraph(options)
+                    if 'private' in options:
+                        seenprivate = True
+                        continue
+                    if 'public' in options:
+                        seenprivate = False
+                        continue
+            if re.match(r's*\#', line):
+                pass
+            else:
+                print_warning('Failed to parse "{}" in {}'.format(line, file_name))
     return False
 
 help_epilog = '''Production text substitutions:
@@ -464,7 +486,7 @@ if len(fhead) > 0:
     write_output(prod)
 
 def process_file(curfilename):
-    global entries, flags, seenbitshift, enum_prefix
+    global entries, flags, seenbitshift, seenprivate, enum_prefix
     firstenum = True
 
     try:
@@ -542,6 +564,7 @@ def process_file(curfilename):
                         break
 
             seenbitshift = 0
+            seenprivate = False
             entries = []
 
             # Now parse the entries

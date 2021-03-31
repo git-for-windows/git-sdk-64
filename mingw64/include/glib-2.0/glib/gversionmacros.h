@@ -245,8 +245,26 @@
  */
 #define GLIB_VERSION_2_66       (G_ENCODE_VERSION (2, 66))
 
-/* evaluates to the current stable version; for development cycles,
- * this means the next stable target
+/**
+ * GLIB_VERSION_2_68:
+ *
+ * A macro that evaluates to the 2.68 version of GLib, in a format
+ * that can be used by the C pre-processor.
+ *
+ * Since: 2.68
+ */
+#define GLIB_VERSION_2_68       (G_ENCODE_VERSION (2, 68))
+
+/**
+ * GLIB_VERSION_CUR_STABLE:
+ *
+ * A macro that evaluates to the current stable version of GLib, in a format
+ * that can be used by the C pre-processor.
+ *
+ * During an unstable development cycle, this evaluates to the next stable
+ * (unreleased) version which will be the result of the development cycle.
+ *
+ * Since: 2.32
  */
 #if (GLIB_MINOR_VERSION % 2)
 #define GLIB_VERSION_CUR_STABLE         (G_ENCODE_VERSION (GLIB_MAJOR_VERSION, GLIB_MINOR_VERSION + 1))
@@ -254,7 +272,17 @@
 #define GLIB_VERSION_CUR_STABLE         (G_ENCODE_VERSION (GLIB_MAJOR_VERSION, GLIB_MINOR_VERSION))
 #endif
 
-/* evaluates to the previous stable version */
+/**
+ * GLIB_VERSION_PREV_STABLE:
+ *
+ * A macro that evaluates to the previous stable version of GLib, in a format
+ * that can be used by the C pre-processor.
+ *
+ * During an unstable development cycle, this evaluates to the most recent
+ * released stable release, which preceded this development cycle.
+ *
+ * Since: 2.32
+ */
 #if (GLIB_MINOR_VERSION % 2)
 #define GLIB_VERSION_PREV_STABLE        (G_ENCODE_VERSION (GLIB_MAJOR_VERSION, GLIB_MINOR_VERSION - 1))
 #else
@@ -1012,6 +1040,40 @@
 # define GLIB_AVAILABLE_MACRO_IN_2_66
 # define GLIB_AVAILABLE_ENUMERATOR_IN_2_66
 # define GLIB_AVAILABLE_TYPE_IN_2_66
+#endif
+
+#if GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_68
+# define GLIB_DEPRECATED_IN_2_68                GLIB_DEPRECATED
+# define GLIB_DEPRECATED_IN_2_68_FOR(f)         GLIB_DEPRECATED_FOR(f)
+# define GLIB_DEPRECATED_MACRO_IN_2_68          GLIB_DEPRECATED_MACRO
+# define GLIB_DEPRECATED_MACRO_IN_2_68_FOR(f)   GLIB_DEPRECATED_MACRO_FOR(f)
+# define GLIB_DEPRECATED_ENUMERATOR_IN_2_68          GLIB_DEPRECATED_ENUMERATOR
+# define GLIB_DEPRECATED_ENUMERATOR_IN_2_68_FOR(f)   GLIB_DEPRECATED_ENUMERATOR_FOR(f)
+# define GLIB_DEPRECATED_TYPE_IN_2_68           GLIB_DEPRECATED_TYPE
+# define GLIB_DEPRECATED_TYPE_IN_2_68_FOR(f)    GLIB_DEPRECATED_TYPE_FOR(f)
+#else
+# define GLIB_DEPRECATED_IN_2_68                _GLIB_EXTERN
+# define GLIB_DEPRECATED_IN_2_68_FOR(f)         _GLIB_EXTERN
+# define GLIB_DEPRECATED_MACRO_IN_2_68
+# define GLIB_DEPRECATED_MACRO_IN_2_68_FOR(f)
+# define GLIB_DEPRECATED_ENUMERATOR_IN_2_68
+# define GLIB_DEPRECATED_ENUMERATOR_IN_2_68_FOR(f)
+# define GLIB_DEPRECATED_TYPE_IN_2_68
+# define GLIB_DEPRECATED_TYPE_IN_2_68_FOR(f)
+#endif
+
+#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_68
+# define GLIB_AVAILABLE_IN_2_68                 GLIB_UNAVAILABLE(2, 68)
+# define GLIB_AVAILABLE_STATIC_INLINE_IN_2_68   GLIB_UNAVAILABLE_STATIC_INLINE(2, 68)
+# define GLIB_AVAILABLE_MACRO_IN_2_68           GLIB_UNAVAILABLE_MACRO(2, 68)
+# define GLIB_AVAILABLE_ENUMERATOR_IN_2_68      GLIB_UNAVAILABLE_ENUMERATOR(2, 68)
+# define GLIB_AVAILABLE_TYPE_IN_2_68            GLIB_UNAVAILABLE_TYPE(2, 68)
+#else
+# define GLIB_AVAILABLE_IN_2_68                 _GLIB_EXTERN
+# define GLIB_AVAILABLE_STATIC_INLINE_IN_2_68
+# define GLIB_AVAILABLE_MACRO_IN_2_68
+# define GLIB_AVAILABLE_ENUMERATOR_IN_2_68
+# define GLIB_AVAILABLE_TYPE_IN_2_68
 #endif
 
 #endif /*  __G_VERSION_MACROS_H__ */

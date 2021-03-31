@@ -28,6 +28,11 @@
 #include        <gobject/gsignal.h>
 #include        <gobject/gboxed.h>
 
+#if defined(glib_typeof_2_68) && GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_68
+/* for glib_typeof */
+#include <type_traits>
+#endif
+
 G_BEGIN_DECLS
 
 /* --- type macros --- */
@@ -227,11 +232,11 @@ typedef void (*GObjectFinalizeFunc)     (GObject      *object);
 /**
  * GWeakNotify:
  * @data: data that was provided when the weak reference was established
- * @where_the_object_was: the object being finalized
+ * @where_the_object_was: the object being disposed
  * 
  * A #GWeakNotify function can be added to an object as a callback that gets
  * triggered when the object is finalized. Since the object is already being
- * finalized when the #GWeakNotify is called, there's not much you could do 
+ * disposed when the #GWeakNotify is called, there's not much you could do 
  * with the object, apart from e.g. using its address as hash-index or the like. 
  */
 typedef void (*GWeakNotify)		(gpointer      data,
@@ -247,7 +252,7 @@ struct  _GObject
   GTypeInstance  g_type_instance;
   
   /*< private >*/
-  volatile guint ref_count;
+  guint          ref_count;  /* (atomic) */
   GData         *qdata;
 };
 /**
@@ -513,10 +518,10 @@ GLIB_AVAILABLE_IN_ALL
 void        g_object_remove_weak_pointer      (GObject        *object, 
                                                gpointer       *weak_pointer_location);
 
-#if defined(g_has_typeof) && GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_56
+#if defined(glib_typeof) && GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_56 && (!defined(glib_typeof_2_68) || GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_68)
 /* Make reference APIs type safe with macros */
-#define g_object_ref(Obj)      ((__typeof__(Obj)) (g_object_ref) (Obj))
-#define g_object_ref_sink(Obj) ((__typeof__(Obj)) (g_object_ref_sink) (Obj))
+#define g_object_ref(Obj) ((glib_typeof (Obj)) (g_object_ref) (Obj))
+#define g_object_ref_sink(Obj) ((glib_typeof (Obj)) (g_object_ref_sink) (Obj))
 #endif
 
 /**
@@ -679,16 +684,16 @@ void    g_clear_object (GObject **object_ptr);
 
 /**
  * g_set_object: (skip)
- * @object_ptr: a pointer to a #GObject reference
+ * @object_ptr: (inout) (not optional) (nullable): a pointer to a #GObject reference
  * @new_object: (nullable) (transfer none): a pointer to the new #GObject to
- *   assign to it, or %NULL to clear the pointer
+ *   assign to @object_ptr, or %NULL to clear the pointer
  *
  * Updates a #GObject pointer to refer to @new_object. It increments the
  * reference count of @new_object (if non-%NULL), decrements the reference
  * count of the current value of @object_ptr (if non-%NULL), and assigns
  * @new_object to @object_ptr. The assignment is not atomic.
  *
- * @object_ptr must not be %NULL.
+ * @object_ptr must not be %NULL, but can point to a %NULL value.
  *
  * A macro is also included that allows this function to be used without
  * pointer casts. The function itself is static inline, so its address may vary

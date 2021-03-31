@@ -981,7 +981,7 @@ typedef void     (*GTypeInterfaceCheckFunc)  (gpointer	       check_data,
 /**
  * GTypeFundamentalFlags:
  * @G_TYPE_FLAG_CLASSED: Indicates a classed type
- * @G_TYPE_FLAG_INSTANTIATABLE: Indicates an instantiable type (implies classed)
+ * @G_TYPE_FLAG_INSTANTIATABLE: Indicates an instantiatable type (implies classed)
  * @G_TYPE_FLAG_DERIVABLE: Indicates a flat derivable type
  * @G_TYPE_FLAG_DEEP_DERIVABLE: Indicates a deep derivable type (implies derivable)
  * 
@@ -1300,6 +1300,9 @@ void  g_type_interface_add_prerequisite (GType			     interface_type,
 GLIB_AVAILABLE_IN_ALL
 GType*g_type_interface_prerequisites    (GType                       interface_type,
 					 guint                      *n_prerequisites);
+GLIB_AVAILABLE_IN_2_68
+GType g_type_interface_instantiatable_prerequisite
+                                        (GType                       interface_type);
 GLIB_DEPRECATED_IN_2_58
 void     g_type_class_add_private       (gpointer                    g_class,
                                          gsize                       private_size);
@@ -1331,12 +1334,12 @@ guint     g_type_get_type_registration_serial (void);
 /* --- GType boilerplate --- */
 /**
  * G_DECLARE_FINAL_TYPE:
- * @ModuleObjName: The name of the new type, in camel case (like GtkWidget)
+ * @ModuleObjName: The name of the new type, in camel case (like `GtkWidget`)
  * @module_obj_name: The name of the new type in lowercase, with words
- *  separated by '_' (like 'gtk_widget')
- * @MODULE: The name of the module, in all caps (like 'GTK')
- * @OBJ_NAME: The bare name of the type, in all caps (like 'WIDGET')
- * @ParentName: the name of the parent type, in camel case (like GtkWidget)
+ *  separated by `_` (like `gtk_widget`)
+ * @MODULE: The name of the module, in all caps (like `GTK`)
+ * @OBJ_NAME: The bare name of the type, in all caps (like `WIDGET`)
+ * @ParentName: the name of the parent type, in camel case (like `GtkWidget`)
  *
  * A convenience macro for emitting the usual declarations in the header file for a type which is not (at the
  * present time) intended to be subclassed.
@@ -1361,15 +1364,15 @@ guint     g_type_get_type_registration_serial (void);
  *
  * This results in the following things happening:
  *
- * - the usual my_app_window_get_type() function is declared with a return type of #GType
+ * - the usual `my_app_window_get_type()` function is declared with a return type of #GType
  *
- * - the MyAppWindow types is defined as a typedef of struct _MyAppWindow.  The struct itself is not
+ * - the `MyAppWindow` type is defined as a `typedef` of `struct _MyAppWindow`.  The struct itself is not
  *   defined and should be defined from the .c file before G_DEFINE_TYPE() is used.
  *
- * - the MY_APP_WINDOW() cast is emitted as static inline function along with the MY_APP_IS_WINDOW() type
+ * - the `MY_APP_WINDOW()` cast is emitted as `static inline` function along with the `MY_APP_IS_WINDOW()` type
  *   checking function
  *
- * - the MyAppWindowClass type is defined as a struct containing GtkWindowClass.  This is done for the
+ * - the `MyAppWindowClass` type is defined as a struct containing `GtkWindowClass`.  This is done for the
  *   convenience of the person defining the type and should not be considered to be part of the ABI.  In
  *   particular, without a firm declaration of the instance structure, it is not possible to subclass the type
  *   and therefore the fact that the size of the class structure is exposed is not a concern and it can be
@@ -1379,10 +1382,10 @@ guint     g_type_get_type_registration_serial (void);
  *
  * You can only use this function if your parent type also supports g_autoptr().
  *
- * Because the type macro (MY_APP_TYPE_WINDOW in the above example) is not a callable, you must continue to
+ * Because the type macro (`MY_APP_TYPE_WINDOW` in the above example) is not a callable, you must continue to
  * manually define this as a macro for yourself.
  *
- * The declaration of the _get_type() function is the first thing emitted by the macro.  This allows this macro
+ * The declaration of the `_get_type()` function is the first thing emitted by the macro.  This allows this macro
  * to be used in the usual way with export control and API versioning macros.
  *
  * If you want to declare your own class structure, use G_DECLARE_DERIVABLE_TYPE().
@@ -1412,12 +1415,12 @@ guint     g_type_get_type_registration_serial (void);
 
 /**
  * G_DECLARE_DERIVABLE_TYPE:
- * @ModuleObjName: The name of the new type, in camel case (like GtkWidget)
+ * @ModuleObjName: The name of the new type, in camel case (like `GtkWidget`)
  * @module_obj_name: The name of the new type in lowercase, with words
- *  separated by '_' (like 'gtk_widget')
- * @MODULE: The name of the module, in all caps (like 'GTK')
- * @OBJ_NAME: The bare name of the type, in all caps (like 'WIDGET')
- * @ParentName: the name of the parent type, in camel case (like GtkWidget)
+ *  separated by `_` (like `gtk_widget`)
+ * @MODULE: The name of the module, in all caps (like `GTK`)
+ * @OBJ_NAME: The bare name of the type, in all caps (like `WIDGET`)
+ * @ParentName: the name of the parent type, in camel case (like `GtkWidget`)
  *
  * A convenience macro for emitting the usual declarations in the
  * header file for a type which is intended to be subclassed.
@@ -1451,26 +1454,26 @@ guint     g_type_get_type_registration_serial (void);
  *
  * This results in the following things happening:
  *
- * - the usual gtk_frobber_get_type() function is declared with a return type of #GType
+ * - the usual `gtk_frobber_get_type()` function is declared with a return type of #GType
  *
- * - the GtkFrobber struct is created with GtkWidget as the first and only item.  You are expected to use
+ * - the `GtkFrobber` struct is created with `GtkWidget` as the first and only item.  You are expected to use
  *   a private structure from your .c file to store your instance variables.
  *
- * - the GtkFrobberClass type is defined as a typedef to struct _GtkFrobberClass, which is left undefined.
+ * - the `GtkFrobberClass` type is defined as a typedef to `struct _GtkFrobberClass`, which is left undefined.
  *   You should do this from the header file directly after you use the macro.
  *
- * - the GTK_FROBBER() and GTK_FROBBER_CLASS() casts are emitted as static inline functions along with
- *   the GTK_IS_FROBBER() and GTK_IS_FROBBER_CLASS() type checking functions and GTK_FROBBER_GET_CLASS()
+ * - the `GTK_FROBBER()` and `GTK_FROBBER_CLASS()` casts are emitted as `static inline` functions along with
+ *   the `GTK_IS_FROBBER()` and `GTK_IS_FROBBER_CLASS()` type checking functions and `GTK_FROBBER_GET_CLASS()`
  *   function.
  *
  * - g_autoptr() support being added for your type, based on the type of your parent class
  *
  * You can only use this function if your parent type also supports g_autoptr().
  *
- * Because the type macro (GTK_TYPE_FROBBER in the above example) is not a callable, you must continue to
+ * Because the type macro (`GTK_TYPE_FROBBER` in the above example) is not a callable, you must continue to
  * manually define this as a macro for yourself.
  *
- * The declaration of the _get_type() function is the first thing emitted by the macro.  This allows this macro
+ * The declaration of the `_get_type()` function is the first thing emitted by the macro.  This allows this macro
  * to be used in the usual way with export control and API versioning macros.
  *
  * If you are writing a library, it is important to note that it is possible to convert a type from using
@@ -1510,14 +1513,14 @@ guint     g_type_get_type_registration_serial (void);
 
 /**
  * G_DECLARE_INTERFACE:
- * @ModuleObjName: The name of the new type, in camel case (like GtkWidget)
+ * @ModuleObjName: The name of the new type, in camel case (like `GtkWidget`)
  * @module_obj_name: The name of the new type in lowercase, with words
- *  separated by '_' (like 'gtk_widget')
- * @MODULE: The name of the module, in all caps (like 'GTK')
- * @OBJ_NAME: The bare name of the type, in all caps (like 'WIDGET')
- * @PrerequisiteName: the name of the prerequisite type, in camel case (like GtkWidget)
+ *  separated by `_` (like `gtk_widget`)
+ * @MODULE: The name of the module, in all caps (like `GTK`)
+ * @OBJ_NAME: The bare name of the type, in all caps (like `WIDGET`)
+ * @PrerequisiteName: the name of the prerequisite type, in camel case (like `GtkWidget`)
  *
- * A convenience macro for emitting the usual declarations in the header file for a GInterface type.
+ * A convenience macro for emitting the usual declarations in the header file for a #GInterface type.
  *
  * You might use it in a header as follows:
  *
@@ -1545,23 +1548,23 @@ guint     g_type_get_type_registration_serial (void);
  *
  * This results in the following things happening:
  *
- * - the usual my_model_get_type() function is declared with a return type of #GType
+ * - the usual `my_model_get_type()` function is declared with a return type of #GType
  *
- * - the MyModelInterface type is defined as a typedef to struct _MyModelInterface,
+ * - the `MyModelInterface` type is defined as a typedef to `struct _MyModelInterface`,
  *   which is left undefined. You should do this from the header file directly after
  *   you use the macro.
  *
- * - the MY_MODEL() cast is emitted as static inline functions along with
- *   the MY_IS_MODEL() type checking function and MY_MODEL_GET_IFACE() function.
+ * - the `MY_MODEL()` cast is emitted as `static inline` functions along with
+ *   the `MY_IS_MODEL()` type checking function and `MY_MODEL_GET_IFACE()` function.
  *
  * - g_autoptr() support being added for your type, based on your prerequisite type.
  *
  * You can only use this function if your prerequisite type also supports g_autoptr().
  *
- * Because the type macro (MY_TYPE_MODEL in the above example) is not a callable, you must continue to
+ * Because the type macro (`MY_TYPE_MODEL` in the above example) is not a callable, you must continue to
  * manually define this as a macro for yourself.
  *
- * The declaration of the _get_type() function is the first thing emitted by the macro.  This allows this macro
+ * The declaration of the `_get_type()` function is the first thing emitted by the macro.  This allows this macro
  * to be used in the usual way with export control and API versioning macros.
  *
  * Since: 2.44
@@ -1586,13 +1589,13 @@ guint     g_type_get_type_registration_serial (void);
  * G_DEFINE_TYPE:
  * @TN: The name of the new type, in Camel case.
  * @t_n: The name of the new type, in lowercase, with words 
- *  separated by '_'.
+ *  separated by `_`.
  * @T_P: The #GType of the parent type.
  * 
  * A convenience macro for type implementations, which declares a class
  * initialization function, an instance initialization function (see #GTypeInfo
  * for information about these) and a static variable named `t_n_parent_class`
- * pointing to the parent class. Furthermore, it defines  a *_get_type() function.
+ * pointing to the parent class. Furthermore, it defines a `*_get_type()` function.
  * See G_DEFINE_TYPE_EXTENDED() for an example.
  * 
  * Since: 2.4
@@ -1601,13 +1604,13 @@ guint     g_type_get_type_registration_serial (void);
 /**
  * G_DEFINE_TYPE_WITH_CODE:
  * @TN: The name of the new type, in Camel case.
- * @t_n: The name of the new type in lowercase, with words separated by '_'.
+ * @t_n: The name of the new type in lowercase, with words separated by `_`.
  * @T_P: The #GType of the parent type.
- * @_C_: Custom code that gets inserted in the *_get_type() function.
+ * @_C_: Custom code that gets inserted in the `*_get_type()` function.
  * 
  * A convenience macro for type implementations.  
  * Similar to G_DEFINE_TYPE(), but allows you to insert custom code into the 
- * *_get_type() function, e.g. interface implementations via G_IMPLEMENT_INTERFACE().
+ * `*_get_type()` function, e.g. interface implementations via G_IMPLEMENT_INTERFACE().
  * See G_DEFINE_TYPE_EXTENDED() for an example.
  * 
  * Since: 2.4
@@ -1617,18 +1620,18 @@ guint     g_type_get_type_registration_serial (void);
  * G_DEFINE_TYPE_WITH_PRIVATE:
  * @TN: The name of the new type, in Camel case.
  * @t_n: The name of the new type, in lowercase, with words 
- *  separated by '_'.
+ *  separated by `_`.
  * @T_P: The #GType of the parent type.
  * 
  * A convenience macro for type implementations, which declares a class
  * initialization function, an instance initialization function (see #GTypeInfo
  * for information about these), a static variable named `t_n_parent_class`
  * pointing to the parent class, and adds private instance data to the type.
- * Furthermore, it defines a *_get_type() function. See G_DEFINE_TYPE_EXTENDED()
+ * Furthermore, it defines a `*_get_type()` function. See G_DEFINE_TYPE_EXTENDED()
  * for an example.
  * 
  * Note that private structs added with this macros must have a struct
- * name of the form @TN Private.
+ * name of the form `TN ## Private`.
  *
  * The private instance data can be retrieved using the automatically generated
  * getter function `t_n_get_instance_private()`.
@@ -1642,7 +1645,7 @@ guint     g_type_get_type_registration_serial (void);
  * G_DEFINE_ABSTRACT_TYPE:
  * @TN: The name of the new type, in Camel case.
  * @t_n: The name of the new type, in lowercase, with words 
- *  separated by '_'.
+ *  separated by `_`.
  * @T_P: The #GType of the parent type.
  * 
  * A convenience macro for type implementations. 
@@ -1656,13 +1659,13 @@ guint     g_type_get_type_registration_serial (void);
  * G_DEFINE_ABSTRACT_TYPE_WITH_CODE:
  * @TN: The name of the new type, in Camel case.
  * @t_n: The name of the new type, in lowercase, with words 
- *  separated by '_'.
+ *  separated by `_`.
  * @T_P: The #GType of the parent type.
- * @_C_: Custom code that gets inserted in the @type_name_get_type() function.
+ * @_C_: Custom code that gets inserted in the `type_name_get_type()` function.
  * 
  * A convenience macro for type implementations.
  * Similar to G_DEFINE_TYPE_WITH_CODE(), but defines an abstract type and
- * allows you to insert custom code into the *_get_type() function, e.g.
+ * allows you to insert custom code into the `*_get_type()` function, e.g.
  * interface implementations  via G_IMPLEMENT_INTERFACE().
  * See G_DEFINE_TYPE_EXTENDED() for an example.
  * 
@@ -1673,7 +1676,7 @@ guint     g_type_get_type_registration_serial (void);
  * G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE:
  * @TN: The name of the new type, in Camel case.
  * @t_n: The name of the new type, in lowercase, with words 
- *  separated by '_'.
+ *  separated by `_`.
  * @T_P: The #GType of the parent type.
  *
  * Similar to G_DEFINE_TYPE_WITH_PRIVATE(), but defines an abstract type. 
@@ -1686,10 +1689,10 @@ guint     g_type_get_type_registration_serial (void);
  * G_DEFINE_TYPE_EXTENDED:
  * @TN: The name of the new type, in Camel case.
  * @t_n: The name of the new type, in lowercase, with words
- *    separated by '_'.
+ *    separated by `_`.
  * @T_P: The #GType of the parent type.
  * @_f_: #GTypeFlags to pass to g_type_register_static()
- * @_C_: Custom code that gets inserted in the *_get_type() function.
+ * @_C_: Custom code that gets inserted in the `*_get_type()` function.
  *
  * The most general convenience macro for type implementations, on which
  * G_DEFINE_TYPE(), etc are based.
@@ -1724,8 +1727,8 @@ guint     g_type_get_type_registration_serial (void);
  * GType
  * gtk_gadget_get_type (void)
  * {
- *   static volatile gsize g_define_type_id__volatile = 0;
- *   if (g_once_init_enter (&g_define_type_id__volatile))
+ *   static gsize static_g_define_type_id = 0;
+ *   if (g_once_init_enter (&static_g_define_type_id))
  *     {
  *       GType g_define_type_id =
  *         g_type_register_static_simple (GTK_TYPE_WIDGET,
@@ -1745,9 +1748,9 @@ guint     g_type_get_type_registration_serial (void);
  *         };
  *         g_type_add_interface_static (g_define_type_id, TYPE_GIZMO, &g_implement_interface_info);
  *       }
- *       g_once_init_leave (&g_define_type_id__volatile, g_define_type_id);
+ *       g_once_init_leave (&static_g_define_type_id, g_define_type_id);
  *     }
- *   return g_define_type_id__volatile;
+ *   return static_g_define_type_id;
  * }
  * ]|
  * The only pieces which have to be manually provided are the definitions of
@@ -1761,12 +1764,12 @@ guint     g_type_get_type_registration_serial (void);
 /**
  * G_DEFINE_INTERFACE:
  * @TN: The name of the new type, in Camel case.
- * @t_n: The name of the new type, in lowercase, with words separated by '_'.
- * @T_P: The #GType of the prerequisite type for the interface, or 0
- * (%G_TYPE_INVALID) for no prerequisite type.
+ * @t_n: The name of the new type, in lowercase, with words separated by `_`.
+ * @T_P: The #GType of the prerequisite type for the interface, or %G_TYPE_INVALID
+ * for no prerequisite type.
  *
  * A convenience macro for #GTypeInterface definitions, which declares
- * a default vtable initialization function and defines a *_get_type()
+ * a default vtable initialization function and defines a `*_get_type()`
  * function.
  *
  * The macro expects the interface initialization function to have the
@@ -1786,14 +1789,14 @@ guint     g_type_get_type_registration_serial (void);
 /**
  * G_DEFINE_INTERFACE_WITH_CODE:
  * @TN: The name of the new type, in Camel case.
- * @t_n: The name of the new type, in lowercase, with words separated by '_'.
- * @T_P: The #GType of the prerequisite type for the interface, or 0
- * (%G_TYPE_INVALID) for no prerequisite type.
- * @_C_: Custom code that gets inserted in the *_get_type() function.
+ * @t_n: The name of the new type, in lowercase, with words separated by `_`.
+ * @T_P: The #GType of the prerequisite type for the interface, or %G_TYPE_INVALID
+ * for no prerequisite type.
+ * @_C_: Custom code that gets inserted in the `*_get_type()` function.
  *
  * A convenience macro for #GTypeInterface definitions. Similar to
  * G_DEFINE_INTERFACE(), but allows you to insert custom code into the
- * *_get_type() function, e.g. additional interface implementations
+ * `*_get_type()` function, e.g. additional interface implementations
  * via G_IMPLEMENT_INTERFACE(), or additional prerequisite types. See
  * G_DEFINE_TYPE_EXTENDED() for a similar example using
  * G_DEFINE_TYPE_WITH_CODE().
@@ -1811,7 +1814,7 @@ guint     g_type_get_type_registration_serial (void);
  * of G_DEFINE_TYPE_WITH_CODE() or G_DEFINE_ABSTRACT_TYPE_WITH_CODE().
  * See G_DEFINE_TYPE_EXTENDED() for an example.
  *
- * Note that this macro can only be used together with the G_DEFINE_TYPE_*
+ * Note that this macro can only be used together with the `G_DEFINE_TYPE_*`
  * macros, since it depends on variable names from those macros.
  *
  * Since: 2.4
@@ -1846,10 +1849,10 @@ guint     g_type_get_type_registration_serial (void);
  *                            G_ADD_PRIVATE (MyObject))
  * ]|
  *
- * Will add MyObjectPrivate as the private data to any instance of the MyObject
- * type.
+ * Will add `MyObjectPrivate` as the private data to any instance of the
+ * `MyObject` type.
  *
- * G_DEFINE_TYPE_* macros will automatically create a private function
+ * `G_DEFINE_TYPE_*` macros will automatically create a private function
  * based on the arguments to this macro, which can be used to safely
  * retrieve the private data from an instance of the type; for instance:
  *
@@ -1877,7 +1880,7 @@ guint     g_type_get_type_registration_serial (void);
  *   }
  * ]|
  *
- * Note that this macro can only be used together with the G_DEFINE_TYPE_*
+ * Note that this macro can only be used together with the `G_DEFINE_TYPE_*`
  * macros, since it depends on variable names from those macros.
  *
  * Also note that private structs added with these macros must have a struct
@@ -1902,7 +1905,7 @@ guint     g_type_get_type_registration_serial (void);
  * Evaluates to the offset of the @field inside the instance private data
  * structure for @TypeName.
  *
- * Note that this macro can only be used together with the G_DEFINE_TYPE_*
+ * Note that this macro can only be used together with the `G_DEFINE_TYPE_*`
  * and G_ADD_PRIVATE() macros, since it depends on variable names from
  * those macros.
  *
@@ -1920,7 +1923,7 @@ guint     g_type_get_type_registration_serial (void);
  * Evaluates to a pointer to the @field_name inside the @inst private data
  * structure for @TypeName.
  *
- * Note that this macro can only be used together with the G_DEFINE_TYPE_*
+ * Note that this macro can only be used together with the `G_DEFINE_TYPE_*`
  * and G_ADD_PRIVATE() macros, since it depends on variable names from
  * those macros.
  *
@@ -1939,7 +1942,7 @@ guint     g_type_get_type_registration_serial (void);
  * Evaluates to the @field_name inside the @inst private data
  * structure for @TypeName.
  *
- * Note that this macro can only be used together with the G_DEFINE_TYPE_*
+ * Note that this macro can only be used together with the `G_DEFINE_TYPE_*`
  * and G_ADD_PRIVATE() macros, since it depends on variable names from
  * those macros.
  *
@@ -1992,17 +1995,17 @@ type_name##_get_instance_private (TypeName *self) \
 GType \
 type_name##_get_type (void) \
 { \
-  static volatile gsize g_define_type_id__volatile = 0;
+  static gsize static_g_define_type_id = 0;
   /* Prelude goes here */
 
 /* Added for _G_DEFINE_TYPE_EXTENDED_WITH_PRELUDE */
 #define _G_DEFINE_TYPE_EXTENDED_BEGIN_REGISTER(TypeName, type_name, TYPE_PARENT, flags) \
-  if (g_once_init_enter (&g_define_type_id__volatile))  \
+  if (g_once_init_enter (&static_g_define_type_id)) \
     { \
       GType g_define_type_id = type_name##_get_type_once (); \
-      g_once_init_leave (&g_define_type_id__volatile, g_define_type_id); \
+      g_once_init_leave (&static_g_define_type_id, g_define_type_id); \
     }					\
-  return g_define_type_id__volatile;	\
+  return static_g_define_type_id; \
 } /* closes type_name##_get_type() */ \
 \
 G_GNUC_NO_INLINE \
@@ -2038,8 +2041,8 @@ static void     type_name##_default_init        (TypeName##Interface *klass); \
 GType \
 type_name##_get_type (void) \
 { \
-  static volatile gsize g_define_type_id__volatile = 0; \
-  if (g_once_init_enter (&g_define_type_id__volatile))  \
+  static gsize static_g_define_type_id = 0; \
+  if (g_once_init_enter (&static_g_define_type_id)) \
     { \
       GType g_define_type_id = \
         g_type_register_static_simple (G_TYPE_INTERFACE, \
@@ -2055,16 +2058,16 @@ type_name##_get_type (void) \
 #define _G_DEFINE_INTERFACE_EXTENDED_END()	\
         /* following custom code */		\
       }						\
-      g_once_init_leave (&g_define_type_id__volatile, g_define_type_id); \
+      g_once_init_leave (&static_g_define_type_id, g_define_type_id); \
     }						\
-  return g_define_type_id__volatile;			\
+  return static_g_define_type_id; \
 } /* closes type_name##_get_type() */
 
 /**
  * G_DEFINE_BOXED_TYPE:
  * @TypeName: The name of the new type, in Camel case
  * @type_name: The name of the new type, in lowercase, with words
- *  separated by '_'
+ *  separated by `_`
  * @copy_func: the #GBoxedCopyFunc for the new type
  * @free_func: the #GBoxedFreeFunc for the new type
  *
@@ -2078,14 +2081,14 @@ type_name##_get_type (void) \
  * G_DEFINE_BOXED_TYPE_WITH_CODE:
  * @TypeName: The name of the new type, in Camel case
  * @type_name: The name of the new type, in lowercase, with words
- *  separated by '_'
+ *  separated by `_`
  * @copy_func: the #GBoxedCopyFunc for the new type
  * @free_func: the #GBoxedFreeFunc for the new type
- * @_C_: Custom code that gets inserted in the *_get_type() function
+ * @_C_: Custom code that gets inserted in the `*_get_type()` function
  *
  * A convenience macro for boxed type implementations.
  * Similar to G_DEFINE_BOXED_TYPE(), but allows to insert custom code into the
- * type_name_get_type() function, e.g. to register value transformations with
+ * `type_name_get_type()` function, e.g. to register value transformations with
  * g_value_register_transform_func(), for instance:
  *
  * |[<!-- language="C" -->
@@ -2112,13 +2115,13 @@ static GType type_name##_get_type_once (void); \
 GType \
 type_name##_get_type (void) \
 { \
-  static volatile gsize g_define_type_id__volatile = 0; \
-  if (g_once_init_enter (&g_define_type_id__volatile))  \
+  static gsize static_g_define_type_id = 0; \
+  if (g_once_init_enter (&static_g_define_type_id)) \
     { \
       GType g_define_type_id = type_name##_get_type_once (); \
-      g_once_init_leave (&g_define_type_id__volatile, g_define_type_id); \
+      g_once_init_leave (&static_g_define_type_id, g_define_type_id); \
     } \
-  return g_define_type_id__volatile; \
+  return static_g_define_type_id; \
 } \
 \
 G_GNUC_NO_INLINE \
@@ -2149,13 +2152,13 @@ static GType type_name##_get_type_once (void); \
 GType \
 type_name##_get_type (void) \
 { \
-  static volatile gsize g_define_type_id__volatile = 0; \
-  if (g_once_init_enter (&g_define_type_id__volatile))  \
+  static gsize static_g_define_type_id = 0; \
+  if (g_once_init_enter (&static_g_define_type_id)) \
     { \
       GType g_define_type_id = type_name##_get_type_once (); \
-      g_once_init_leave (&g_define_type_id__volatile, g_define_type_id); \
+      g_once_init_leave (&static_g_define_type_id, g_define_type_id); \
     } \
-  return g_define_type_id__volatile; \
+  return static_g_define_type_id; \
 } \
 \
 G_GNUC_NO_INLINE \
@@ -2173,10 +2176,10 @@ type_name##_get_type_once (void) \
  * G_DEFINE_POINTER_TYPE:
  * @TypeName: The name of the new type, in Camel case
  * @type_name: The name of the new type, in lowercase, with words
- *  separated by '_'
+ *  separated by `_`
  *
  * A convenience macro for pointer type implementations, which defines a
- * type_name_get_type() function registering the pointer type.
+ * `type_name_get_type()` function registering the pointer type.
  *
  * Since: 2.26
  */
@@ -2185,12 +2188,12 @@ type_name##_get_type_once (void) \
  * G_DEFINE_POINTER_TYPE_WITH_CODE:
  * @TypeName: The name of the new type, in Camel case
  * @type_name: The name of the new type, in lowercase, with words
- *  separated by '_'
- * @_C_: Custom code that gets inserted in the *_get_type() function
+ *  separated by `_`
+ * @_C_: Custom code that gets inserted in the `*_get_type()` function
  *
  * A convenience macro for pointer type implementations.
  * Similar to G_DEFINE_POINTER_TYPE(), but allows to insert
- * custom code into the type_name_get_type() function.
+ * custom code into the `type_name_get_type()` function.
  *
  * Since: 2.26
  */
@@ -2202,13 +2205,13 @@ static GType type_name##_get_type_once (void); \
 GType \
 type_name##_get_type (void) \
 { \
-  static volatile gsize g_define_type_id__volatile = 0; \
-  if (g_once_init_enter (&g_define_type_id__volatile))  \
+  static gsize static_g_define_type_id = 0; \
+  if (g_once_init_enter (&static_g_define_type_id)) \
     { \
       GType g_define_type_id = type_name##_get_type_once (); \
-      g_once_init_leave (&g_define_type_id__volatile, g_define_type_id); \
+      g_once_init_leave (&static_g_define_type_id, g_define_type_id); \
     } \
-  return g_define_type_id__volatile; \
+  return static_g_define_type_id; \
 } \
 \
 G_GNUC_NO_INLINE \
