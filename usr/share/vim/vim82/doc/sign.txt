@@ -1,4 +1,4 @@
-*sign.txt*      For Vim version 8.2.  Last change: 2020 Aug 31
+*sign.txt*      For Vim version 8.2.  Last change: 2021 Mar 07
 
 
 		  VIM REFERENCE MANUAL    by Gordon Prieur
@@ -81,6 +81,10 @@ on the same line, the attributes of the sign with the highest priority is used
 independently of the sign group. The default priority for a sign is 10. The
 priority is assigned at the time of placing a sign.
 
+When two signs with the same priority are present, and one has an icon or text
+in the signcolumn while the other has line highlighting, then both are
+displayed.
+
 When the line on which the sign is placed is deleted, the sign is moved to the
 next line (or the last line of the buffer, if there is no next line).  When
 the delete is undone the sign does not move back.
@@ -142,6 +146,9 @@ See |sign_define()| for the equivalent Vim script function.
 	texthl={group}
 		Highlighting group used for the text item.
 
+	Example: >
+		:sign define MySign text=>> texthl=Search linehl=DiffText
+<
 
 DELETING A SIGN						*:sign-undefine* *E155*
 
@@ -151,7 +158,9 @@ See |sign_undefine()| for the equivalent Vim script function.
 		Deletes a previously defined sign.  If signs with this {name}
 		are still placed this will cause trouble.
 
-
+		Example: >
+			:sign undefine MySign
+<
 
 LISTING SIGNS						*:sign-list* *E156*
 
@@ -205,6 +214,10 @@ See |sign_place()| for the equivalent Vim script function.
 		Same, but use buffer {nr}.  If the buffer argument is not
 		given, place the sign in the current buffer.
 
+		Example: >
+			:sign place 10 line=99 name=sign3
+			:sign place 10 line=99 name=sign3 buffer=3
+<
 							*E885*
 :sign place {id} name={name} file={fname}
 		Change the placed sign {id} in file {fname} to use the defined
@@ -217,10 +230,17 @@ See |sign_place()| for the equivalent Vim script function.
 		"priority={prio}" attribute can be used to change the priority
 		of an existing sign.
 
+		Example: >
+			:sign place 23 name=sign1 file=/path/to/edit.py
+<
 :sign place {id} name={name} [buffer={nr}]
 		Same, but use buffer {nr}.  If the buffer argument is not
 		given, use the current buffer.
 
+		Example: >
+			:sign place 23 name=sign1
+			:sign place 23 name=sign1 buffer=7
+<
 
 REMOVING SIGNS						*:sign-unplace* *E159*
 
@@ -458,11 +478,11 @@ sign_getplaced([{expr} [, {dict}]])			*sign_getplaced()*
 				entries
 
 		The dictionary for each sign contains the following entries:
-			group	sign group. Set to '' for the global group.
-			id	identifier of the sign
-			lnum	line number where the sign is placed
-			name	name of the defined sign
-			priority	sign priority
+			group	 sign group. Set to '' for the global group.
+			id	 identifier of the sign
+			lnum	 line number where the sign is placed
+			name	 name of the defined sign
+			priority sign priority
 
 		The returned signs in a buffer are ordered by their line
 		number and priority.
