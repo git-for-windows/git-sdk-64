@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="../sqlite.css" rel="stylesheet">
-<title>SQLite Release 3.35.3 On 2021-03-26</title>
+<title>SQLite Release 3.35.4 On 2021-04-02</title>
 <!-- path=../ -->
 </head>
 <body>
@@ -91,7 +91,7 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.35.3 On 2021-03-26</h2><p><b>Changes in version 3.35.0 (2021-03-12):</b></p>
+<h2>SQLite Release 3.35.4 On 2021-04-02</h2><p><b>Changes in version 3.35.0 (2021-03-12):</b></p>
 <p><ol class='lessindent'>
 <li value='1'> Added <a href="../lang_mathfunc.html">built-in SQL math functions()</a>. (Requires the
      <a href="../compile.html#enable_math_functions">-DSQLITE_ENABLE_MATH_FUNCTIONS</a> compile-time option.)
@@ -180,7 +180,7 @@ return false;
      See <a href="https://sqlite.org/forum/forumpost/140a67d3d2">forum thread 140a67d3d2</a>
      for details.
 </ol>
-<p><b>Additional changes in version 3.35.3:</b></p>
+<p><b>Additional changes in version 3.35.3 (2021-03-26):</b></p>
 <p><ol class='lessindent'>
 <li value='17'> Enhance the OP_OpenDup opcode of the <a href="../opcode.html">bytecode engine</a> so that it works even if the
      cursor being duplicated itself came from OP_OpenDup.  Fix for
@@ -206,9 +206,22 @@ return false;
      extension so that it does a better job of convincing the query planner to
      avoid trying to materialize a table with an infinite number of rows.
      <a href="https://sqlite.org/forum/forumpost/b52a020ce4">Forum post b52a020ce4</a>.
+</ol>
+<p><b>Additional changes in version 3.35.4 (2021-04-02):</b></p>
+<p><ol class='lessindent'>
+<li value='26'> Fix a defect in the query planner optimization identified by 
+     item 8b above.  Ticket
+     <a href="https://sqlite.org/src/info/de7db14784a08053">de7db14784a08053</a>.
+<li> Fix a defect in the new <a href="../lang_returning.html">RETURNING</a> syntax.  Ticket
+     <a href="https://sqlite.org/src/info/132994c8b1063bfb">132994c8b1063bfb</a>.
+<li> Fix the new <a href="../lang_returning.html">RETURNING</a> feature so that it raises an error if one of
+     the terms in the RETURNING clause references a unknown table, instead
+     of silently ignoring that error.
+<li> Fix an assertion associated with aggregate function processing that
+     was incorrectly triggered by the <a href="../optoverview.html#pushdown">push-down optimization</a>.
 <p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: 2021-03-26 12:12:52 4c5e6c200adc8afe0814936c67a971efc516d1bd739cb620235592f18f40be2a
-<li>SHA3-256 for sqlite3.c: 91ca6c0a30ebfdba4420bb35f4fd9149d13e45fc853d86ad7527db363e282683
+<li>SQLITE_SOURCE_ID: 2021-04-02 15:20:15 5d4c65779dab868b285519b19e4cf9d451d50c6048f06f653aa701ec212df45e
+<li>SHA3-256 for sqlite3.c: 528b8a26bf5ffd4c7b4647b5b799f86e8fb1a075f715b87a414e94fba3d09dbe
 
 </ol></p>
 

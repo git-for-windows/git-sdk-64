@@ -105,6 +105,23 @@ http://www.sqlite.org/src/timeline?t=release</a>.
 See the <a href="chronology.html">chronology</a> a succinct listing of releases.
 </p>
 
+<a name="version_3_35_4"></a>
+<h3>2021-04-02 (3.35.4)</h3><p><ol class='lessindent'>
+<li> Fix a defect in the query planner optimization identified by 
+     item 8b above.  Ticket
+     <a href="https://sqlite.org/src/info/de7db14784a08053">de7db14784a08053</a>.
+<li> Fix a defect in the new <a href="lang_returning.html">RETURNING</a> syntax.  Ticket
+     <a href="https://sqlite.org/src/info/132994c8b1063bfb">132994c8b1063bfb</a>.
+<li> Fix the new <a href="lang_returning.html">RETURNING</a> feature so that it raises an error if one of
+     the terms in the RETURNING clause references a unknown table, instead
+     of silently ignoring that error.
+<li> Fix an assertion associated with aggregate function processing that
+     was incorrectly triggered by the <a href="optoverview.html#pushdown">push-down optimization</a>.
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: 2021-04-02 15:20:15 5d4c65779dab868b285519b19e4cf9d451d50c6048f06f653aa701ec212df45e
+<li>SHA3-256 for sqlite3.c: 528b8a26bf5ffd4c7b4647b5b799f86e8fb1a075f715b87a414e94fba3d09dbe
+
+</ol></p>
 <a name="version_3_35_3"></a>
 <h3>2021-03-26 (3.35.3)</h3><p><ol class='lessindent'>
 <li> Enhance the OP_OpenDup opcode of the <a href="opcode.html">bytecode engine</a> so that it works even if the
