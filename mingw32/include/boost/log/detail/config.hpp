@@ -17,12 +17,6 @@
 #ifndef BOOST_LOG_DETAIL_CONFIG_HPP_INCLUDED_
 #define BOOST_LOG_DETAIL_CONFIG_HPP_INCLUDED_
 
-// This check must be before any system headers are included, or __MSVCRT_VERSION__ may get defined to 0x0600
-#if defined(__MINGW32__) && !defined(__MSVCRT_VERSION__)
-// Target MinGW headers to at least MSVC 7.0 runtime by default. This will enable some useful functions.
-#define __MSVCRT_VERSION__ 0x0700
-#endif
-
 #include <boost/predef/os.h>
 
 // Try including WinAPI config as soon as possible so that any other headers don't include Windows SDK headers

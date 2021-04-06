@@ -17,13 +17,6 @@
 
 //! @cond Doxygen_Suppress
 
-// MinGW32 requires a __MSVCRT_VERSION__ defined to make some functions available, e.g. _stat64
-// Hence define this here to target MSVC 7.0 which has the required functions and do it as early as possible
-// as including a system header might default this to 0x0600 which is to low
-#if defined(__MINGW32__) && !defined(__MSVCRT_VERSION__)
-#define __MSVCRT_VERSION__ 0x0700
-#endif
-
 #if defined(BOOST_ALL_DYN_LINK) || defined(BOOST_NOWIDE_DYN_LINK)
 #ifdef BOOST_NOWIDE_SOURCE
 #define BOOST_NOWIDE_DECL BOOST_SYMBOL_EXPORT
