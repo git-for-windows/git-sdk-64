@@ -1,6 +1,6 @@
 #! /bin/sh
 # Generated automatically by config.status (libtool) 2.4.6
-# Libtool was configured on host DEVADMIN:
+# Libtool was configured on host fv-az177-440:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 
 # Provide generalized library-building support services.
@@ -295,7 +295,7 @@ finish_eval=""
 hardcode_into_libs=no
 
 # Compile-time system search path for libraries.
-sys_lib_search_path_spec="/usr/lib/gcc/x86_64-pc-msys/9.3.0 /usr/x86_64-pc-msys/lib /usr/lib  /usr/lib/w32api"
+sys_lib_search_path_spec="/usr/lib/gcc/x86_64-pc-msys/10.2.0 /usr/x86_64-pc-msys/lib /usr/lib  /usr/lib/w32api"
 
 # Detected run-time system search path for libraries.
 sys_lib_dlsearch_path_spec="/usr/lib /lib"
@@ -5029,7 +5029,7 @@ func_mode_install ()
 	# remove .exe since cygwin /usr/bin/install will append another
 	# one anyway
 	case $install_prog,$host in
-	*/usr/bin/install*,*cygwin*|*/usr/bin/install*,*msys*)
+	*/usr/bin/install*,*cygwin* | */usr/bin/install*,*msys*)
 	  case $file:$destfile in
 	  *.exe:*.exe)
 	    # this is ok
@@ -5459,7 +5459,7 @@ func_win32_libid ()
   *ar\ archive*) # could be an import, or static
     # Keep the egrep pattern in sync with the one in _LT_CHECK_MAGIC_METHOD.
     if eval $OBJDUMP -f $1 | $SED -e '10q' 2>/dev/null |
-       $EGREP 'file format (pei*-i386(.*architecture: i386)?|pe-arm-wince|pe-x86-64)' >/dev/null; then
+       $EGREP 'file format (pei*-i386(.*architecture: i386)?|pe-arm-wince|pe-x86-64|coff-arm|coff-arm64|coff-i386|coff-x86-64)' >/dev/null; then
       case $nm_interface in
       "MS dumpbin")
 	if func_cygming_ms_implib_p "$1" ||
@@ -6083,7 +6083,7 @@ EOF
 
 /* declarations of non-ANSI functions */
 #if defined __MINGW32__
-# if defined(__STRICT_ANSI__) && !defined(__MINGW64_VERSION_MAJOR) || defined(_POSIX_)
+# ifdef __STRICT_ANSI__
 int _putenv (const char *);
 # endif
 #elif defined __CYGWIN__
@@ -6984,41 +6984,6 @@ D'
 EOF
 }
 # end: func_emit_cwrapperexe_src
-
-# func_emit_exe_manifest
-# emit a Win32 UAC manifest for executable on stdout
-# Must ONLY be called from within func_mode_link because
-# it depends on a number of variable set therein.
-func_emit_exe_manifest ()
-{
-    cat <<EOF
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-  <assemblyIdentity version="1.0.0.0"
-EOF
-
-    case $host in
-    i?86-*-* )   echo '     processorArchitecture="x86"' ;;
-    ia64-*-* )   echo '     processorArchitecture="ia64"' ;;
-    x86_64-*-* ) echo '     processorArchitecture="amd64"' ;;
-    *)           echo '     processorArchitecture="*"' ;;
-    esac
-
-    cat <<EOF
-     name="$host_os.$PROGRAM.$outputname"
-     type="win32"/>
-
-  <!-- Identify the application security requirements. -->
-  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
-    <security>
-      <requestedPrivileges>
-        <requestedExecutionLevel level="asInvoker" uiAccess="false"/>
-      </requestedPrivileges>
-    </security>
-  </trustInfo>
-</assembly>
-EOF
-}
 
 # func_win32_import_lib_p ARG
 # True if ARG is an import lib, as indicated by $file_magic_cmd
@@ -8331,15 +8296,8 @@ func_mode_link ()
 	  fi
 	  case $linkmode in
 	  lib)
-	    # Linking convenience modules and compiler provided static libraries
-	    # into shared libraries is allowed, but linking other static
-	    # libraries is non-portable.
-	    case $deplib in
-	      */libgcc*.$libext | */libclang_rt*.$libext)
-		deplibs="$deplib $deplibs"
-		continue
-	      ;;
-	    esac
+	    # Linking convenience modules into shared libraries is allowed,
+	    # but linking other static libraries is non-portable.
 	    case " $dlpreconveniencelibs " in
 	    *" $deplib "*) ;;
 	    *)
@@ -9099,9 +9057,7 @@ func_mode_link ()
 		  eval libdir=`$SED -n -e 's/^libdir=\(.*\)$/\1/p' $deplib`
 		  test -z "$libdir" && \
 		    func_fatal_error "'$deplib' is not a valid libtool archive"
-		  abs_inode=`ls -i "$deplib" | awk '{print $1}'`
-		    lib_inode=`ls -i "$libdir/$(basename $deplib)" | awk '{print $1}'`
-		  test "$abs_inode" != "$lib_inode" && \
+		  test "$absdir" != "$libdir" && \
 		    func_warning "'$deplib' seems to be moved"
 
 		  path=-L$absdir
@@ -10204,7 +10160,7 @@ EOF
 
 	orig_export_symbols=
 	case $host_os in
-	cygwin* | msys* | mingw* | cegcc*)
+	cygwin* | *msys* | mingw* | cegcc*)
 	  if test -n "$export_symbols" && test -z "$export_symbols_regex"; then
 	    # exporting using user supplied symfile
 	    func_dll_def_p "$export_symbols" || {
@@ -10402,7 +10358,20 @@ EOF
 	  last_robj=
 	  k=1
 
-	  if test -n "$save_libobjs" && test : != "$skipped_export" && test -n "$file_list_spec"; then
+	  if test -n "$save_libobjs" && test : != "$skipped_export" && test yes = "$with_gnu_ld"; then
+	    output=$output_objdir/$output_la.lnkscript
+	    func_verbose "creating GNU ld script: $output"
+	    echo 'INPUT (' > $output
+	    for obj in $save_libobjs
+	    do
+	      func_to_tool_file "$obj"
+	      $ECHO "$func_to_tool_file_result" >> $output
+	    done
+	    echo ')' >> $output
+	    func_append delfiles " $output"
+	    func_to_tool_file "$output"
+	    output=$func_to_tool_file_result
+	  elif test -n "$save_libobjs" && test : != "$skipped_export" && test -n "$file_list_spec"; then
 	    output=$output_objdir/$output_la.lnk
 	    func_verbose "creating linker input file list: $output"
 	    : > $output
@@ -10421,19 +10390,6 @@ EOF
 	    func_append delfiles " $output"
 	    func_to_tool_file "$output"
 	    output=$firstobj\"$file_list_spec$func_to_tool_file_result\"
-	  elif test -n "$save_libobjs" && test : != "$skipped_export" && test yes = "$with_gnu_ld"; then
-	    output=$output_objdir/$output_la.lnkscript
-	    func_verbose "creating GNU ld script: $output"
-	    echo 'INPUT (' > $output
-	    for obj in $save_libobjs
-	    do
-	      func_to_tool_file "$obj"
-	      $ECHO "$func_to_tool_file_result" >> $output
-	    done
-	    echo ')' >> $output
-	    func_append delfiles " $output"
-	    func_to_tool_file "$output"
-	    output=$func_to_tool_file_result
 	  else
 	    if test -n "$save_libobjs"; then
 	      func_verbose "creating reloadable object files..."
@@ -11112,7 +11068,7 @@ EOF
 	    cwrappersource=$output_path/$objdir/lt-$output_name.c
 	    cwrapper=$output_path/$output_name.exe
 	    $RM $cwrappersource $cwrapper
-	    trap "$RM $cwrappersource $cwrapper $cwrapper.manifest; exit $EXIT_FAILURE" 1 2 15
+	    trap "$RM $cwrappersource $cwrapper; exit $EXIT_FAILURE" 1 2 15
 
 	    func_emit_cwrapperexe_src > $cwrappersource
 
@@ -11132,16 +11088,6 @@ EOF
 	    $opt_dry_run || {
 	      # note: this script will not be executed, so do not chmod.
 	      if test "x$build" = "x$host"; then
-		# Create the UAC manifests first if necessary (but the
-		# manifest files must have executable permission regardless).
-		case $output_name in
-		  *instal*|*patch*|*setup*|*update*)
-		    func_emit_exe_manifest > $cwrapper.manifest
-		    func_emit_exe_manifest > $output_path/$objdir/$output_name.exe.manifest
-		    chmod +x $cwrapper.manifest
-		    chmod +x $output_path/$objdir/$output_name.exe.manifest
-		  ;;
-		esac
 		$cwrapper --lt-dump-script > $func_ltwrapper_scriptname_result
 	      else
 		func_emit_wrapper no > $func_ltwrapper_scriptname_result
@@ -11666,9 +11612,8 @@ func_mode_uninstall ()
 	    # note $name still contains .exe if it was in $file originally
 	    # as does the version of $file that was added into $rmfiles
 	    func_append rmfiles " $odir/$name $odir/${name}S.$objext"
-	    func_append rmfiles " ${name}.manifest $objdir/${name}.manifest"
 	    if test yes = "$fast_install" && test -n "$relink_command"; then
-	      func_append rmfiles " $odir/lt-$name $objdir/lt-${name}.manifest"
+	      func_append rmfiles " $odir/lt-$name"
 	    fi
 	    if test "X$noexename" != "X$name"; then
 	      func_append rmfiles " $odir/lt-$noexename.c"
@@ -11875,18 +11820,18 @@ file_list_spec="@"
 hardcode_action=immediate
 
 # The directories searched by this compiler when creating a shared library.
-compiler_lib_search_dirs="/usr/lib/gcc/x86_64-pc-msys/9.3.0 /usr/lib/gcc/x86_64-pc-msys/9.3.0/../../../../x86_64-pc-msys/lib/../lib /usr/lib/gcc/x86_64-pc-msys/9.3.0/../../../../lib /usr/lib/../lib /usr/lib/gcc/x86_64-pc-msys/9.3.0/../../../../x86_64-pc-msys/lib /usr/lib/gcc/x86_64-pc-msys/9.3.0/../../.."
+compiler_lib_search_dirs="/usr/lib/gcc/x86_64-pc-msys/10.2.0 /usr/lib/gcc/x86_64-pc-msys/10.2.0/../../../../x86_64-pc-msys/lib/../lib /usr/lib/gcc/x86_64-pc-msys/10.2.0/../../../../lib /usr/lib/../lib /usr/lib/gcc/x86_64-pc-msys/10.2.0/../../../../x86_64-pc-msys/lib /usr/lib/gcc/x86_64-pc-msys/10.2.0/../../.."
 
 # Dependencies to place before and after the objects being linked to
 # create a shared library.
-predep_objects="/usr/lib/gcc/x86_64-pc-msys/9.3.0/crtbeginS.o"
-postdep_objects="/usr/lib/gcc/x86_64-pc-msys/9.3.0/crtend.o"
+predep_objects="/usr/lib/gcc/x86_64-pc-msys/10.2.0/crtbeginS.o"
+postdep_objects="/usr/lib/gcc/x86_64-pc-msys/10.2.0/crtend.o"
 predeps=""
 postdeps="-lstdc++ -lgcc_s -lgcc -lmsys-2.0 -ladvapi32 -lshell32 -luser32 -lkernel32 -lgcc_s -lgcc"
 
 # The library search path used internally by the compiler when linking
 # a shared library.
-compiler_lib_search_path="-L/usr/lib/gcc/x86_64-pc-msys/9.3.0 -L/usr/lib/gcc/x86_64-pc-msys/9.3.0/../../../../x86_64-pc-msys/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/9.3.0/../../../../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/9.3.0/../../../../x86_64-pc-msys/lib -L/usr/lib/gcc/x86_64-pc-msys/9.3.0/../../.."
+compiler_lib_search_path="-L/usr/lib/gcc/x86_64-pc-msys/10.2.0 -L/usr/lib/gcc/x86_64-pc-msys/10.2.0/../../../../x86_64-pc-msys/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/10.2.0/../../../../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/10.2.0/../../../../x86_64-pc-msys/lib -L/usr/lib/gcc/x86_64-pc-msys/10.2.0/../../.."
 
 # ### END LIBTOOL TAG CONFIG: CXX
 
@@ -12185,18 +12130,18 @@ file_list_spec="@"
 hardcode_action=immediate
 
 # The directories searched by this compiler when creating a shared library.
-compiler_lib_search_dirs="/usr/lib/gcc/x86_64-pc-msys/9.3.0 /usr/lib/gcc/x86_64-pc-msys/9.3.0/../../../../x86_64-pc-msys/lib/../lib /usr/lib/gcc/x86_64-pc-msys/9.3.0/../../../../lib /usr/lib/../lib /usr/lib/gcc/x86_64-pc-msys/9.3.0/../../../../x86_64-pc-msys/lib /usr/lib/gcc/x86_64-pc-msys/9.3.0/../../.."
+compiler_lib_search_dirs="/usr/lib/gcc/x86_64-pc-msys/10.2.0 /usr/lib/gcc/x86_64-pc-msys/10.2.0/../../../../x86_64-pc-msys/lib/../lib /usr/lib/gcc/x86_64-pc-msys/10.2.0/../../../../lib /usr/lib/../lib /usr/lib/gcc/x86_64-pc-msys/10.2.0/../../../../x86_64-pc-msys/lib /usr/lib/gcc/x86_64-pc-msys/10.2.0/../../.."
 
 # Dependencies to place before and after the objects being linked to
 # create a shared library.
-predep_objects="/usr/lib/gcc/x86_64-pc-msys/9.3.0/crtbeginS.o"
-postdep_objects="/usr/lib/gcc/x86_64-pc-msys/9.3.0/crtend.o"
+predep_objects="/usr/lib/gcc/x86_64-pc-msys/10.2.0/crtbeginS.o"
+postdep_objects="/usr/lib/gcc/x86_64-pc-msys/10.2.0/crtend.o"
 predeps=""
 postdeps="-lgfortran -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lmsys-2.0 -ladvapi32 -lshell32 -luser32 -lkernel32 -lgcc_s -lgcc"
 
 # The library search path used internally by the compiler when linking
 # a shared library.
-compiler_lib_search_path="-L/usr/lib/gcc/x86_64-pc-msys/9.3.0 -L/usr/lib/gcc/x86_64-pc-msys/9.3.0/../../../../x86_64-pc-msys/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/9.3.0/../../../../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/9.3.0/../../../../x86_64-pc-msys/lib -L/usr/lib/gcc/x86_64-pc-msys/9.3.0/../../.."
+compiler_lib_search_path="-L/usr/lib/gcc/x86_64-pc-msys/10.2.0 -L/usr/lib/gcc/x86_64-pc-msys/10.2.0/../../../../x86_64-pc-msys/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/10.2.0/../../../../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/10.2.0/../../../../x86_64-pc-msys/lib -L/usr/lib/gcc/x86_64-pc-msys/10.2.0/../../.."
 
 # ### END LIBTOOL TAG CONFIG: FC
 

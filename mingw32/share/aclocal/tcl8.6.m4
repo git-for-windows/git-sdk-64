@@ -758,6 +758,10 @@ AC_DEFUN([SC_CONFIG_CFLAGS], [
 		MACHINE="AMD64" ; # assume AMD64 as default 64-bit build
 		AC_MSG_RESULT([   Using 64-bit $MACHINE mode])
 		;;
+	    arm64)
+		MACHINE="ARM64"
+		AC_MSG_RESULT([   Using 64-bit $MACHINE mode])
+		;;
 	    ia64)
 		MACHINE="IA64"
 		AC_MSG_RESULT([   Using 64-bit $MACHINE mode])
