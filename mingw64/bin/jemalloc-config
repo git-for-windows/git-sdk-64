@@ -39,7 +39,7 @@ case "$1" in
 	echo "2"
 	;;
 --config)
-	echo "--prefix=/mingw64 --build=x86_64-w64-mingw32 --host=x86_64-w64-mingw32 --enable-autogen --with-xslroot=/mingw64/share/xml/docbook/xsl-stylesheets-nons-1.79.2-nons build_alias=x86_64-w64-mingw32 host_alias=x86_64-w64-mingw32 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -std=gnu11' LDFLAGS=-pipe 'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1' 'CXXFLAGS=-march=x86-64 -mtune=generic -O2 -pipe'"
+	echo "--prefix=/mingw64 --build=x86_64-w64-mingw32 --host=x86_64-w64-mingw32 --enable-autogen --with-xslroot=/mingw64/share/xml/docbook/xsl-stylesheets-nons-1.79.2 build_alias=x86_64-w64-mingw32 host_alias=x86_64-w64-mingw32 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -std=gnu11' 'LDFLAGS=-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high' CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 'CXXFLAGS=-march=x86-64 -mtune=generic -O2 -pipe'"
 	;;
 --prefix)
 	echo "/mingw64"
@@ -66,13 +66,13 @@ case "$1" in
 	echo "-std=gnu11 -Wall -Wextra -Wsign-compare -Wundef -Wno-format-zero-length -pipe -g3 -O3 -funroll-loops -march=x86-64 -mtune=generic -O2 -pipe -std=gnu11"
 	;;
 --cppflags)
-	echo "-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -D_REENTRANT"
+	echo "-D__USE_MINGW_ANSI_STDIO=1 -D_REENTRANT"
 	;;
 --cxxflags)
 	echo "-Wall -Wextra -g3 -O3 -march=x86-64 -mtune=generic -O2 -pipe"
 	;;
 --ldflags)
-	echo "-pipe "
+	echo "-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high "
 	;;
 --libs)
 	echo "-lstdc++"

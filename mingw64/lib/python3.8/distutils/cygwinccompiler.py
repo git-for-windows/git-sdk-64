@@ -396,7 +396,7 @@ def check_config_h():
         return (CONFIG_H_UNCERTAIN,
                 "couldn't read '%s': %s" % (fn, exc.strerror))
 
-RE_VERSION = re.compile(br'[\D\s]*(\d+\.\d+(\.\d+)*)[\D\s]*$')
+RE_VERSION = re.compile(br'[\D\s]*(\d+\.\d+(\.\d+)*)[\D\s]*')
 
 def _find_exe_version(cmd):
     """Find the version of an executable by running `cmd` in the shell.
