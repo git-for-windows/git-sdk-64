@@ -41,7 +41,7 @@
    for the "fast" types and macros, which we recommend against using
    in public interfaces due to compiler differences.  */
 
-#if 1
+#if defined __MINGW32__ || defined __HAIKU__ || ((__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5)) && !defined __NetBSD__)
 # if defined __sgi && ! defined __c99
    /* Bypass IRIX's <stdint.h> if in C89 mode, since it merely annoys users
       with "This header file is to be used only for c99 mode compilations"
@@ -75,7 +75,7 @@
 /* Get LONG_MIN, LONG_MAX, ULONG_MAX.  */
 #include <limits.h>
 
-#if 1
+#if defined __MINGW32__ || defined __HAIKU__
   /* In OpenBSD 3.8, <inttypes.h> includes <machine/types.h>, which defines
      int{8,16,32,64}_t, uint{8,16,32,64}_t and __BIT_TYPES_DEFINED__.
      <inttypes.h> also defines intptr_t and uintptr_t.  */
