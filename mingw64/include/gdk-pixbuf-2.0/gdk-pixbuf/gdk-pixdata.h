@@ -47,7 +47,9 @@ G_BEGIN_DECLS
  *
  * An enumeration containing three sets of flags for a #GdkPixdata struct: 
  * one for the used colorspace, one for the width of the samples and one 
- * for the encoding of the pixel data.  
+ * for the encoding of the pixel data.
+ *
+ * Deprecated: 2.32
  **/
 typedef enum
 {
@@ -64,23 +66,6 @@ typedef enum
   GDK_PIXDATA_ENCODING_MASK     = 0x0f << 24
 } GdkPixdataType;
 
-/**
- * GdkPixdata:
- * @magic: magic number. A valid #GdkPixdata structure must have 
- *    #GDK_PIXBUF_MAGIC_NUMBER here.
- * @length: less than 1 to disable length checks, otherwise 
- *    #GDK_PIXDATA_HEADER_LENGTH + length of @pixel_data. 
- * @pixdata_type: information about colorspace, sample width and 
- *    encoding, in a #GdkPixdataType. 
- * @rowstride: Distance in bytes between rows.
- * @width: Width of the image in pixels.
- * @height: Height of the image in pixels.
- * @pixel_data: (array) (element-type guint8): @width x @height pixels, encoded according to @pixdata_type
- *   and @rowstride.
- *
- * A #GdkPixdata contains pixbuf information in a form suitable for 
- * serialization and streaming.
- **/
 typedef struct _GdkPixdata GdkPixdata;
 struct _GdkPixdata
 {
@@ -99,6 +84,8 @@ struct _GdkPixdata
  * GDK_PIXDATA_HEADER_LENGTH:
  *
  * The length of a #GdkPixdata structure without the @pixel_data pointer.
+ *
+ * Deprecated: 2.32
  **/
 #define	GDK_PIXDATA_HEADER_LENGTH	(4 + 4 + 4 + 4 + 4 + 4)
 
@@ -145,7 +132,9 @@ GdkPixbuf*	gdk_pixbuf_from_pixdata	(const GdkPixdata	*pixdata,
  * @GDK_PIXDATA_DUMP_PIXDATA_STREAM, @GDK_PIXDATA_DUMP_PIXDATA_STRUCT
  * and @GDK_PIXDATA_DUMP_MACROS are mutually exclusive, as are
  * @GDK_PIXBUF_DUMP_GTYPES and @GDK_PIXBUF_DUMP_CTYPES. The remaining
- * elements are optional flags that can be freely added. 
+ * elements are optional flags that can be freely added.
+ *
+ * Deprecated: 2.32
  **/
 typedef enum
 {

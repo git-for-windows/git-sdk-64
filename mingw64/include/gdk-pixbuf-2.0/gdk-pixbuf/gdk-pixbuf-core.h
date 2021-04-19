@@ -44,17 +44,23 @@ G_BEGIN_DECLS
  *  considered fully opaque.
  * @GDK_PIXBUF_ALPHA_FULL: For now falls back to #GDK_PIXBUF_ALPHA_BILEVEL.
  *  In the future it will do full alpha compositing.
- * 
- * These values can be passed to
- * gdk_pixbuf_xlib_render_to_drawable_alpha() to control how the alpha
- * channel of an image should be handled.  This function can create a
- * bilevel clipping mask (black and white) and use it while painting
- * the image.  In the future, when the X Window System gets an alpha
- * channel extension, it will be possible to do full alpha
- * compositing onto arbitrary drawables.  For now both cases fall
- * back to a bilevel clipping mask.
  *
- * Deprecated: it is unused since 2.42.
+ * Control the alpha channel for drawables.
+ *
+ * These values can be passed to gdk_pixbuf_xlib_render_to_drawable_alpha()
+ * in gdk-pixbuf-xlib to control how the alpha channel of an image should
+ * be handled.
+ *
+ * This function can create a bilevel clipping mask (black and white) and use
+ * it while painting the image.
+ *
+ * In the future, when the X Window System gets an alpha channel extension,
+ * it will be possible to do full alpha compositing onto arbitrary drawables.
+ * For now both cases fall back to a bilevel clipping mask.
+ *
+ * Deprecated: 2.42: There is no user of GdkPixbufAlphaMode in GdkPixbuf,
+ *   and the Xlib utility functions have been split out to their own
+ *   library, gdk-pixbuf-xlib
  */
 typedef enum
 {
@@ -67,7 +73,9 @@ typedef enum
  * @GDK_COLORSPACE_RGB: Indicates a red/green/blue additive color space.
  * 
  * This enumeration defines the color spaces that are supported by
- * the gdk-pixbuf library.  Currently only RGB is supported.
+ * the gdk-pixbuf library.
+ *
+ * Currently only RGB is supported.
  */
 /* Note that these values are encoded in inline pixbufs
  * as ints, so don't reorder them
@@ -78,15 +86,6 @@ typedef enum {
 
 /* All of these are opaque structures */
 
-/**
- * GdkPixbuf:
- * 
- * This is the main structure in the gdk-pixbuf library.  It is
- * used to represent images.  It contains information about the
- * image's pixel data, its color space, bits per sample, width and
- * height, and the rowstride (the number of bytes between the start of
- * one row and the start of the next). 
- */
 typedef struct _GdkPixbuf GdkPixbuf;
 
 #define GDK_TYPE_PIXBUF              (gdk_pixbuf_get_type ())
@@ -101,20 +100,23 @@ typedef struct _GdkPixbuf GdkPixbuf;
  * @data: (closure): User closure data.
  * 
  * A function of this type is responsible for freeing the pixel array
- * of a pixbuf.  The gdk_pixbuf_new_from_data() function lets you
- * pass in a pre-allocated pixel array so that a pixbuf can be
- * created from it; in this case you will need to pass in a function
- * of #GdkPixbufDestroyNotify so that the pixel data can be freed
- * when the pixbuf is finalized.
+ * of a pixbuf.
+ *
+ * The gdk_pixbuf_new_from_data() function lets you pass in a pre-allocated
+ * pixel array so that a pixbuf can be created from it; in this case you
+ * will need to pass in a function of type `GdkPixbufDestroyNotify` so that
+ * the pixel data can be freed when the pixbuf is finalized.
  */
 typedef void (* GdkPixbufDestroyNotify) (guchar *pixels, gpointer data);
 
 /**
  * GDK_PIXBUF_ERROR:
  * 
- * Error domain used for pixbuf operations. Indicates that the error code
- * will be in the #GdkPixbufError enumeration. See #GError for
- * information on error domains and error codes.
+ * Error domain used for pixbuf operations.
+ *
+ * Indicates that the error code will be in the `GdkPixbufError` enumeration.
+ *
+ * See the `GError` for information on error domains and error codes.
  */
 #define GDK_PIXBUF_ERROR gdk_pixbuf_error_quark ()
 
@@ -129,9 +131,10 @@ typedef void (* GdkPixbufDestroyNotify) (guchar *pixels, gpointer data);
  * @GDK_PIXBUF_ERROR_FAILED: Generic failure code, something went wrong.
  * @GDK_PIXBUF_ERROR_INCOMPLETE_ANIMATION: Only part of the animation was loaded.
  * 
- * An error code in the #GDK_PIXBUF_ERROR domain. Many gdk-pixbuf
- * operations can cause errors in this domain, or in the #G_FILE_ERROR
- * domain.
+ * An error code in the `GDK_PIXBUF_ERROR` domain.
+ *
+ * Many gdk-pixbuf operations can cause errors in this domain, or in
+ * the `G_FILE_ERROR` domain.
  */
 typedef enum {
         /* image data hosed */
@@ -347,15 +350,18 @@ gboolean gdk_pixbuf_savev_utf8     (GdkPixbuf  *pixbuf,
  * @error: (out): A location to return an error.
  * @data: (closure): user data passed to gdk_pixbuf_save_to_callback(). 
  * 
- * Specifies the type of the function passed to
- * gdk_pixbuf_save_to_callback().  It is called once for each block of
- * bytes that is "written" by gdk_pixbuf_save_to_callback().  If
- * successful it should return %TRUE.  If an error occurs it should set
- * @error and return %FALSE, in which case gdk_pixbuf_save_to_callback()
+ * Save functions used by [method@GdkPixbuf.Pixbuf.save_to_callback].
+ *
+ * This function is called once for each block of bytes that is "written"
+ * by `gdk_pixbuf_save_to_callback()`.
+ *
+ * If successful it should return `TRUE`; if an error occurs it should set
+ * `error` and return `FALSE`, in which case `gdk_pixbuf_save_to_callback()`
  * will fail with the same error.
+ *
+ * Returns: `TRUE` if successful, `FALSE` otherwise
  * 
  * Since: 2.4
- * Returns: %TRUE if successful, %FALSE (with @error set) if failed.
  */
 
 typedef gboolean (*GdkPixbufSaveFunc)   (const gchar *buf,

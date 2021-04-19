@@ -59,12 +59,13 @@ G_BEGIN_DECLS
  *  **Deprecated**: this interpolation filter is deprecated, as in reality
  *  it has a lower quality than the @GDK_INTERP_BILINEAR filter
  *  (Since: 2.38)
- * 
- * This enumeration describes the different interpolation modes that
- * can be used with the scaling functions. @GDK_INTERP_NEAREST is
- * the fastest scaling method, but has horrible quality when
- * scaling down. @GDK_INTERP_BILINEAR is the best choice if you
- * aren't sure what to choose, it has a good speed/quality balance.
+ *
+ * Interpolation modes for scaling functions.
+ *
+ * The `GDK_INTERP_NEAREST` mode is the fastest scaling method, but has
+ * horrible quality when scaling down; `GDK_INTERP_BILINEAR` is the best
+ * choice if you aren't sure what to choose, it has a good speed/quality
+ * balance.
  * 
  * **Note**: Cubic filtering is missing from the list; hyperbolic
  * interpolation is just as fast and results in higher quality.
@@ -84,6 +85,7 @@ typedef enum {
  * @GDK_PIXBUF_ROTATE_CLOCKWISE: Rotate by 270 degrees.
  * 
  * The possible rotations which can be passed to gdk_pixbuf_rotate_simple().
+ *
  * To make them easier to use, their numerical values are the actual degrees.
  */
 typedef enum {

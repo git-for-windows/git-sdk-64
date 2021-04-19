@@ -1,20 +1,11 @@
+#ifndef __GDK_PIXBUF_FEATURES_H__
+#define __GDK_PIXBUF_FEATURES_H__
+
 #if defined(GDK_PIXBUF_DISABLE_SINGLE_INCLUDES) && !defined (GDK_PIXBUF_H_INSIDE) && !defined (GDK_PIXBUF_COMPILATION)
 #error "Only <gdk-pixbuf/gdk-pixbuf.h> can be included directly."
 #endif
 
-#ifndef GDK_PIXBUF_FEATURES_H
-#define GDK_PIXBUF_FEATURES_H 1
-
 #include <glib.h>
-
-/**
- * SECTION:initialization_versions
- * @Short_description: Library version numbers.
- * @Title: Initialization and Versions
- * 
- * These macros and variables let you check the version of gdk-pixbuf
- * you're linking against.
- */
 
 /**
  * GDK_PIXBUF_MAJOR:
@@ -37,15 +28,16 @@
 /**
  * GDK_PIXBUF_VERSION:
  * 
- * Contains the full version of the gdk-pixbuf header as a string.
+ * Contains the full version of GdkPixbuf as a string.
+ *
  * This is the version being compiled against; contrast with
- * #gdk_pixbuf_version.
+ * `gdk_pixbuf_version`.
  */
 
 #define GDK_PIXBUF_MAJOR (2)
 #define GDK_PIXBUF_MINOR (42)
-#define GDK_PIXBUF_MICRO (2)
-#define GDK_PIXBUF_VERSION "2.42.2"
+#define GDK_PIXBUF_MICRO (4)
+#define GDK_PIXBUF_VERSION "2.42.4"
 
 #ifndef _GDK_PIXBUF_EXTERN
 #define _GDK_PIXBUF_EXTERN extern
@@ -81,7 +73,7 @@
  * 
  * This variable is in the library, so represents the
  * gdk-pixbuf library you have linked against. Contrast with the
- * #GDK_PIXBUF_MAJOR macro, which represents the major version of the
+ * `GDK_PIXBUF_MAJOR` macro, which represents the major version of the
  * gdk-pixbuf headers you have included.
  */
 /**
@@ -93,7 +85,7 @@
  * 
  * This variable is in the library, so represents the
  * gdk-pixbuf library you have linked against. Contrast with the
- * #GDK_PIXBUF_MINOR macro, which represents the minor version of the
+ * `GDK_PIXBUF_MINOR` macro, which represents the minor version of the
  * gdk-pixbuf headers you have included.
  */
 /**
@@ -105,7 +97,7 @@
  * 
  * This variable is in the library, so represents the
  * gdk-pixbuf library you have linked against. Contrast with the
- * #GDK_PIXBUF_MICRO macro, which represents the micro version of the
+ * `GDK_PIXBUF_MICRO` macro, which represents the micro version of the
  * gdk-pixbuf headers you have included.
  */
 /**
@@ -120,4 +112,4 @@ GDK_PIXBUF_VAR const guint gdk_pixbuf_minor_version;
 GDK_PIXBUF_VAR const guint gdk_pixbuf_micro_version;
 GDK_PIXBUF_VAR const char *gdk_pixbuf_version;
 
-#endif /* GDK_PIXBUF_FEATURES_H */
+#endif /* __GDK_PIXBUF_FEATURES_H__ */

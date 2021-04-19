@@ -36,20 +36,9 @@ G_BEGIN_DECLS
 
 /* Animation support */
 
-/**
- * GdkPixbufAnimation:
- *
- * An opaque struct representing an animation.
- */
 typedef struct _GdkPixbufAnimation GdkPixbufAnimation;
 
 
-/**
- * GdkPixbufAnimationIter:
- *
- * An opaque struct representing an iterator which points to a
- * certain position in an animation.
- */
 typedef struct _GdkPixbufAnimationIter GdkPixbufAnimationIter;
 
 #define GDK_TYPE_PIXBUF_ANIMATION              (gdk_pixbuf_animation_get_type ())
@@ -161,17 +150,16 @@ struct _GdkPixbufAnimationClass {
 
         /*< public >*/
 
-        gboolean                (*is_static_image)  (GdkPixbufAnimation *anim);
+        gboolean                (*is_static_image)  (GdkPixbufAnimation *animation);
 
-        GdkPixbuf*              (*get_static_image) (GdkPixbufAnimation *anim);
-        
-        void                    (*get_size) (GdkPixbufAnimation *anim,
+        GdkPixbuf*              (*get_static_image) (GdkPixbufAnimation *animation);
+
+        void                    (*get_size) (GdkPixbufAnimation *animation,
                                              int                 *width,
                                              int                 *height);
-        
-        GdkPixbufAnimationIter* (*get_iter) (GdkPixbufAnimation *anim,
-                                             const GTimeVal     *start_time);
 
+        GdkPixbufAnimationIter* (*get_iter) (GdkPixbufAnimation *animation,
+                                             const GTimeVal     *start_time);
 };
 G_GNUC_END_IGNORE_DEPRECATIONS
 
