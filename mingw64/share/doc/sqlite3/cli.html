@@ -366,7 +366,14 @@ more restrictive:
 </li><li>Dot-commands do not recognize comments.
 </li></ul>
 
-<p>The dot-commands
+<p>The arguments passed to dot-commands are parsed from the command tail, 
+per these rules: Arguments are delimited by whitespace (excluding newline); 
+Text bounded by a pair of single-quotes or double-quotes is treated as a 
+single argument, with the quotes stripped; 
+and, Within a double-quoted argument, traditional C-string literal, 
+backslash escape sequence translation is done.
+
+</p><p>The dot-commands
 are interpreted by the sqlite3.exe command-line program, not by
 SQLite itself.  So none of the dot-commands will work as an argument
 to SQLite interfaces like <a href="c3ref/prepare.html">sqlite3_prepare()</a> or <a href="c3ref/exec.html">sqlite3_exec()</a>.
@@ -406,7 +413,7 @@ of a query to another program (such as AWK) for additional processing.</p>
 
 <div class="codeblock"><pre>sqlite&gt; <b>.mode list</b>
 sqlite&gt; <b>select * from tbl1;</b>
-hello|10
+hello!|10
 goodbye|20
 sqlite&gt;
 </pre></div>
@@ -417,7 +424,7 @@ a space, you could do this:</p>
 
 <div class="codeblock"><pre>sqlite&gt; <b>.separator ", "</b>
 sqlite&gt; <b>select * from tbl1;</b>
-hello, 10
+hello!, 10
 goodbye, 20
 sqlite&gt;
 </pre></div>
@@ -556,8 +563,7 @@ can enter ".tables".</p>
 
 
 <div class="codeblock"><pre>sqlite&gt; <b>.tables</b>
-tbl1
-tbl2
+tbl1 tbl2
 sqlite&gt;
 </pre></div>
 
@@ -589,13 +595,13 @@ CREATE TABLE tbl2 (
   f1 varchar(30) primary key,
   f2 text,
   f3 real
-)
+);
 sqlite&gt; <b>.schema tbl2</b>
 CREATE TABLE tbl2 (
   f1 varchar(30) primary key,
   f2 text,
   f3 real
-)
+);
 sqlite&gt;
 </pre></div>
 
@@ -813,8 +819,10 @@ return value.  For example, to merely look at the image above, you might run:
 
 <p>Use the ".import" command to import CSV (comma separated value) data into
 an SQLite table.  The ".import" command takes two arguments which are the
-name of the disk file from which CSV data is to be read and the name of the
-SQLite table into which the CSV data is to be inserted.
+source from which CSV data is to be read and the name of the
+SQLite table into which the CSV data is to be inserted. The source argument
+is the name of a file to be read or, if it begins with a "|" character,
+specifies a command which will be run to produce the input CSV data.
 
 </p><p>Note that it is important to set the "mode" to "csv" before running the
  ".import" command.  This is necessary to prevent the command-line shell
