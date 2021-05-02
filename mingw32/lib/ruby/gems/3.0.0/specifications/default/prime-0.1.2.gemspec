@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Marc-Andre Lafortune".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-04-14"
+  s.date = "2021-05-01"
   s.description = "Prime numbers and factorization library.".freeze
   s.email = ["ruby-core@marc-andre.ca".freeze]
   s.files = ["prime.rb".freeze]

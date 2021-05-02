@@ -159,7 +159,7 @@ module RbConfig
   CONFIG["ASFLAGS"] = ""
   CONFIG["ARFLAGS"] = "rcD "
   CONFIG["try_header"] = ""
-  CONFIG["CC_VERSION_MESSAGE"] = "i686-w64-mingw32-gcc.exe (Rev10, Built by MSYS2 project) 10.2.0\nCopyright (C) 2020 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  CONFIG["CC_VERSION_MESSAGE"] = "i686-w64-mingw32-gcc.exe (Rev11, Built by MSYS2 project) 10.2.0\nCopyright (C) 2020 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
   CONFIG["CC_VERSION"] = "$(CC) --version"
   CONFIG["MJIT_CC"] = "D:/a/_temp/msys/msys64/mingw32/bin/i686-w64-mingw32-gcc.exe"
   CONFIG["CSRCFLAG"] = ""

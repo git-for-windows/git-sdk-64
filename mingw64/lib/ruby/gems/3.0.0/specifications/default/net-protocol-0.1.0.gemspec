@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yukihiro Matsumoto".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-04-14"
+  s.date = "2021-05-01"
   s.description = "The abstruct interface for net-* client.".freeze
   s.email = ["matz@ruby-lang.org".freeze]
   s.files = ["net/ftp.rb".freeze, "net/http.rb".freeze, "net/http/backward.rb".freeze, "net/http/exceptions.rb".freeze, "net/http/generic_request.rb".freeze, "net/http/header.rb".freeze, "net/http/proxy_delta.rb".freeze, "net/http/request.rb".freeze, "net/http/requests.rb".freeze, "net/http/response.rb".freeze, "net/http/responses.rb".freeze, "net/http/status.rb".freeze, "net/https.rb".freeze, "net/imap.rb".freeze, "net/pop.rb".freeze, "net/protocol.rb".freeze, "net/smtp.rb".freeze]

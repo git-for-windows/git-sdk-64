@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Tanaka Akira".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-04-14"
+  s.date = "2021-05-01"
   s.description = "Replace Socket DNS with Resolv.".freeze
   s.email = ["akr@fsij.org".freeze]
   s.files = ["resolv-replace.rb".freeze]

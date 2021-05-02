@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["WATANABE Hirofumi".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-04-14"
+  s.date = "2021-05-01"
   s.description = "Utilities to replace common UNIX commands".freeze
   s.email = ["eban@ruby-lang.org".freeze]
   s.files = ["un.rb".freeze]
