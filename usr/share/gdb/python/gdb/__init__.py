@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2020 Free Software Foundation, Inc.
+# Copyright (C) 2010-2021 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -210,3 +210,17 @@ def find_pc_line(pc):
     """find_pc_line (pc) -> Symtab_and_line.
 Return the gdb.Symtab_and_line object corresponding to the pc value."""
     return current_progspace().find_pc_line(pc)
+
+try:
+    from pygments import formatters, lexers, highlight
+    def colorize(filename, contents):
+        # Don't want any errors.
+        try:
+            lexer = lexers.get_lexer_for_filename(filename, stripnl=False)
+            formatter = formatters.TerminalFormatter()
+            return highlight(contents, lexer, formatter)
+        except:
+            return None
+except:
+    def colorize(filename, contents):
+        return None
