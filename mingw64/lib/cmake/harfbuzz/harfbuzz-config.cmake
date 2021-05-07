@@ -26,7 +26,7 @@ set(_harfbuzz_includedir "${prefix}/include")
 string(REPLACE "${_harfbuzz_remove_string}/" "" _harfbuzz_includedir "${_harfbuzz_includedir}")
 
 # Extract version information from libtool.
-set(_harfbuzz_version_info "20800:0:20800")
+set(_harfbuzz_version_info "20801:0:20801")
 string(REPLACE ":" ";" _harfbuzz_version_info "${_harfbuzz_version_info}")
 list(GET _harfbuzz_version_info 0
   _harfbuzz_current)
