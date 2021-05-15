@@ -1413,7 +1413,7 @@ class BaseEventLoop(events.AbstractEventLoop):
                     'host/port and sock can not be specified at the same time')
 
             if reuse_address is None:
-                reuse_address = os.name == 'posix' and sys.platform != 'cygwin' and sys.platform != 'msys'
+                reuse_address = os.name == 'posix' and sys.platform != 'cygwin'
             sockets = []
             if host == '':
                 hosts = [None]

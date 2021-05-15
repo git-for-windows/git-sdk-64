@@ -69,7 +69,7 @@ def isabs(s):
     sep = _get_sep(s)
     altsep = _get_altsep(s)
     return s.startswith(sep) or \
-	       (sys.platform == 'msys' and \
+	       (sys.platform == 'cygwin' and \
 		    len(s) > 2 and \
 			s[1] == ':' and \
 			(s[2] == sep or s[2] == altsep))

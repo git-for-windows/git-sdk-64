@@ -89,7 +89,7 @@ elif sys.platform.startswith("aix"):
 
     from ctypes._aix import find_library
 
-elif sys.platform in ["cygwin", "msys"]:
+elif sys.platform == "cygwin":
     def find_library(name):
         for libdir in ['/usr/lib', '/usr/local/lib']:
             for libext in ['lib%s.dll.a' % name, 'lib%s.a' % name]:
@@ -387,10 +387,6 @@ def test():
             print(f"crypto\t:: {find_library('crypto')}")
             print(f"crypto\t:: {cdll.LoadLibrary(find_library('crypto'))}")
         elif sys.platform == "cygwin":
-            print(cdll.LoadLibrary("cygbz2-1.dll"))
-            print(cdll.LoadLibrary("cygcrypt-0.dll"))
-            print(find_library("crypt"))
-        elif sys.platform == "msys":
             print(cdll.LoadLibrary("msys-bz2-1.dll"))
             print(cdll.LoadLibrary("msys-crypt-0.dll"))
             print(find_library("crypt"))

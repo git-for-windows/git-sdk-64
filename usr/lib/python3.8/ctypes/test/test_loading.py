@@ -15,8 +15,6 @@ def setUpModule():
     if os.name == "nt":
         libc_name = find_library("c")
     elif sys.platform == "cygwin":
-        libc_name = "cygwin1.dll"
-    elif sys.platform == "msys":
         libc_name = "msys-2.0.dll"
     else:
         libc_name = find_library("c")

@@ -927,7 +927,6 @@ _default_compilers = (
     # on a cygwin built python we can use gcc like an ordinary UNIXish
     # compiler
     ('cygwin.*', 'unix'),
-    ('msys.*', 'unix'),
 
     # OS name mappings
     ('posix', 'unix'),
@@ -964,8 +963,6 @@ compiler_class = { 'unix':    ('unixccompiler', 'UnixCCompiler',
                    'msvc':    ('_msvccompiler', 'MSVCCompiler',
                                "Microsoft Visual C++"),
                    'cygwin':  ('cygwinccompiler', 'CygwinCCompiler',
-                               "Cygwin port of GNU C Compiler for Win32"),
-                   'msys':    ('cygwinccompiler', 'CygwinCCompiler',
                                "Cygwin port of GNU C Compiler for Win32"),
                    'mingw32': ('cygwinccompiler', 'Mingw32CCompiler',
                                "Mingw32 port of GNU C Compiler for Win32"),

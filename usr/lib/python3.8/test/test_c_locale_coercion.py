@@ -44,7 +44,7 @@ elif sys.platform.startswith("aix"):
 elif sys.platform == "darwin":
     # FS encoding is UTF-8 on macOS
     EXPECTED_C_LOCALE_FS_ENCODING = "utf-8"
-elif sys.platform == "cygwin" or sys.platform == "msys":
+elif sys.platform == "cygwin":
     # Cygwin defaults to using C.UTF-8
     # TODO: Work out a robust dynamic test for this that doesn't rely on
     #       CPython's own locale handling machinery

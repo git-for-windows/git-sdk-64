@@ -79,7 +79,7 @@ class UnixCCompiler(CCompiler):
     xcode_stub_lib_extension = ".tbd"
     static_lib_format = shared_lib_format = dylib_lib_format = "lib%s%s"
     xcode_stub_lib_format = dylib_lib_format
-    if sys.platform in ["cygwin", "msys"]:
+    if sys.platform == "cygwin":
         exe_extension = ".exe"
         dylib_lib_extension = ".dll.a"
 
@@ -242,7 +242,7 @@ class UnixCCompiler(CCompiler):
         # the configuration data stored in the Python installation, so
         # we use this hack.
         compiler = os.path.basename(sysconfig.get_config_var("CC"))
-        if sys.platform[:6] == "darwin" or sys.platform[:6] == "cygwin" or sys.platform[:4] == "msys":
+        if sys.platform[:6] == "darwin" or sys.platform[:6] == "cygwin":
             # MacOSX's linker doesn't understand the -R flag at all
             return "-L" + dir
         elif sys.platform[:7] == "freebsd":

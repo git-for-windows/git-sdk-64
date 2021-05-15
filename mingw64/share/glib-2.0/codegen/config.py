@@ -19,6 +19,6 @@
 #
 # Author: David Zeuthen <davidz@redhat.com>
 
-VERSION = "2.68.1"
+VERSION = "2.68.2"
 MAJOR_VERSION = 2
 MINOR_VERSION = 68

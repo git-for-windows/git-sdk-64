@@ -7,7 +7,7 @@ class NetrcTestCase(unittest.TestCase):
     def make_nrc(self, test_data):
         test_data = textwrap.dedent(test_data)
         mode = 'w'
-        if sys.platform not in ['cygwin', 'msys']:
+        if sys.platform != 'cygwin':
             mode += 't'
         temp_fd, temp_filename = tempfile.mkstemp()
         with os.fdopen(temp_fd, mode=mode) as fp:

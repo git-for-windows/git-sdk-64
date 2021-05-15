@@ -218,7 +218,7 @@ class build_ext(Command):
 
         # For extensions under Cygwin, Python's library directory must be
         # appended to library_dirs
-        if sys.platform[:6] == 'cygwin' or sys.platform[:4] == 'msys':
+        if sys.platform[:6] == 'cygwin':
             if sys.executable.startswith(os.path.join(sys.exec_prefix, "bin")):
                 # building third party extensions
                 self.library_dirs.append(os.path.join(sys.prefix, "lib",
@@ -739,15 +739,11 @@ class build_ext(Command):
                     link_libpython = True
                 elif sys.platform == 'cygwin':
                     link_libpython = True
-                elif sys.platform == 'msys':
-                    link_libpython = True
                 elif '_PYTHON_HOST_PLATFORM' in os.environ:
                     # We are cross-compiling for one of the relevant platforms
                     if get_config_var('ANDROID_API_LEVEL') != 0:
                         link_libpython = True
                     elif get_config_var('MACHDEP') == 'cygwin':
-                        link_libpython = True
-                    elif get_config_var('MACHDEP') == 'msys':
                         link_libpython = True
 
             if link_libpython:

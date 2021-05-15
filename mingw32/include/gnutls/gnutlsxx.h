@@ -42,7 +42,7 @@ namespace gnutls {
 
 	class exception:public std::exception {
 	      public:
-		exception(int x);
+		explicit exception(int x);
 		const char *what() const throw();
 		int get_code();
 	      protected:
@@ -104,7 +104,7 @@ namespace gnutls {
 	      protected:
 		gnutls_session_t s;
 	      public:
-		session(unsigned int);
+		explicit session(unsigned int);
 		 virtual ~ session();
 
 		gnutls_session_t ptr();
@@ -173,7 +173,7 @@ namespace gnutls {
 		void set_max_handshake_packet_length(size_t max);
 
 		void clear_credentials();
-		void set_credentials(class credentials & cred);
+		void set_credentials(const class credentials & cred);
 
 		void set_transport_ptr(gnutls_transport_ptr_t ptr);
 		void set_transport_ptr(gnutls_transport_ptr_t recv_ptr,
@@ -239,7 +239,7 @@ namespace gnutls {
 	class server_session:public session {
 	      public:
 		server_session();
-		server_session(int flags);
+		explicit server_session(int flags);
 		~server_session();
 		void db_remove() const;
 
@@ -247,7 +247,7 @@ namespace gnutls {
 		void set_db(const DB & db);
 
 		// returns true if session is expired
-		bool db_check_entry(gnutls_datum_t & session_data) const;
+		bool db_check_entry(const gnutls_datum_t & session_data) const;
 
 		// server side only
 		const char *get_srp_username() const;
@@ -264,7 +264,7 @@ namespace gnutls {
 	class client_session:public session {
 	      public:
 		client_session();
-		client_session(int flags);
+		explicit client_session(int flags);
 		~client_session();
 
 		void set_verify_cert(const char *hostname, unsigned flags);
@@ -281,7 +281,7 @@ namespace gnutls {
 		} gnutls_credentials_type_t get_type() const;
 	      protected:
 		friend class session;
-		credentials(gnutls_credentials_type_t t);
+		explicit credentials(gnutls_credentials_type_t t);
 		void *ptr() const;
 		void set_ptr(void *ptr);
 		gnutls_credentials_type_t type;

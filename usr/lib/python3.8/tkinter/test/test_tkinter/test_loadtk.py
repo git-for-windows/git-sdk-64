@@ -18,7 +18,7 @@ class TkLoadTest(unittest.TestCase):
 
     def testLoadTkFailure(self):
         old_display = None
-        if sys.platform.startswith(('win', 'darwin', 'cygwin', 'msys')):
+        if sys.platform.startswith(('win', 'darwin', 'cygwin')):
             # no failure possible on windows?
 
             # XXX Maybe on tk older than 8.4.13 it would be possible,

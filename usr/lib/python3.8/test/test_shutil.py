@@ -169,7 +169,7 @@ class TestShutil(unittest.TestCase):
         super(TestShutil, self).tearDown()
         while self.tempdirs:
             d = self.tempdirs.pop()
-            shutil.rmtree(d, os.name in ('nt', 'cygwin', 'msys'))
+            shutil.rmtree(d, os.name in ('nt', 'cygwin'))
 
 
     def mkdtemp(self):
@@ -311,7 +311,7 @@ class TestShutil(unittest.TestCase):
         self.assertIn(errors[1][2][1].filename, possible_args)
 
 
-    @unittest.skipIf(sys.platform[:6] == 'cygwin' or sys.platform[:4] == 'msys',
+    @unittest.skipIf(sys.platform[:6] == 'cygwin',
                      "This test can't be run on Cygwin (issue #1071513).")
     @unittest.skipIf(hasattr(os, 'geteuid') and os.geteuid() == 0,
                      "This test can't be run reliably as root (issue #1076467).")

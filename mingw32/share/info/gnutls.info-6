@@ -1,9 +1,10 @@
 This is gnutls.info, produced by makeinfo version 6.7 from gnutls.texi.
 
-This manual is last updated 1 June 2020 for version 3.7.0 of GnuTLS.
+This manual is last updated 24 February 2021 for version 3.7.1 of
+GnuTLS.
 
-Copyright (C) 2001-2020 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2020 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2021 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2021 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -2230,7 +2231,7 @@ gnutls_certificate_set_retrieve_function3
 
      int gnutls_certificate_retrieve_function3( gnutls_session_t, const
      struct gnutls_cert_retr_st *info, gnutls_pcert_st **certs, unsigned
-     int *pcert_length, gnutls_ocsp_data_st **ocsp, unsigned int
+     int *certs_length, gnutls_ocsp_data_st **ocsp, unsigned int
      *ocsp_length, gnutls_privkey_t *privkey, unsigned int *flags);
 
      The info field of the callback contains: 'req_ca_dn' which is a
@@ -2242,12 +2243,12 @@ gnutls_certificate_set_retrieve_function3
      acceptable public key algorithms.  The certificate returned should
      support the server's given algorithms.
 
-     The callback should fill-in the following values.
+     The callback should fill-in the following values:
 
-     'pcert' should contain an allocated list of certificates and public
-     keys.  'pcert_length' is the size of the previous list.  'ocsp'
+     'certs' should contain an allocated list of certificates and public
+     keys.  'certs_length' is the size of the previous list.  'ocsp'
      should contain an allocated list of OCSP responses.  'ocsp_length'
-     is the size of the previous list.  'pkey' is the private key.
+     is the size of the previous list.  'privkey' is the private key.
 
      If flags in the callback are set to 'GNUTLS_CERT_RETR_DEINIT_ALL'
      then all provided values must be allocated using 'gnutls_malloc()'
@@ -2256,10 +2257,17 @@ gnutls_certificate_set_retrieve_function3
 
      The callback function should set the certificate and OCSP response
      list to be sent, and return 0 on success.  If no certificates are
-     available, the 'pcert_length' and 'ocsp_length' should be set to
+     available, the 'certs_length' and 'ocsp_length' should be set to
      zero.  The return value (-1) indicates error and the handshake will
      be terminated.  If both certificates are set in the credentials and
      a callback is available, the callback takes predence.
+
+     Raw public-keys: In case raw public-keys are negotiated as
+     certificate type, certificates that would normally hold the
+     public-key material are not available.  In that case, 'certs'
+     contains an allocated list with only the public key.  Since there
+     is no certificate, there is also no certificate status.  Therefore,
+     OCSP information should not be set.
 
      *Since:* 3.6.3
 
@@ -6748,7 +6756,7 @@ gnutls_priority_compression_list
 
  -- Function: int gnutls_priority_compression_list (gnutls_priority_t
           PCACHE, const unsigned int ** LIST)
-     PCACHE: is a 'gnutls_prioritity_t' type.
+     PCACHE: is a 'gnutls_priority_t' type.
 
      LIST: will point to an integer list
 
@@ -8017,18 +8025,18 @@ Function and Data Index
 * gnutls_packet_deinit:                  Core TLS API.       (line 4648)
 * gnutls_packet_get:                     Core TLS API.       (line 4659)
 * gnutls_pbkdf2:                         Cryptographic API.  (line 1083)
-* gnutls_pcert_deinit:                   Abstract key API.   (line  169)
-* gnutls_pcert_export_openpgp:           Abstract key API.   (line  179)
-* gnutls_pcert_export_x509:              Abstract key API.   (line  194)
-* gnutls_pcert_import_openpgp:           Abstract key API.   (line  214)
-* gnutls_pcert_import_openpgp_raw:       Abstract key API.   (line  231)
-* gnutls_pcert_import_rawpk:             Abstract key API.   (line  253)
-* gnutls_pcert_import_rawpk_raw:         Abstract key API.   (line  277)
-* gnutls_pcert_import_x509:              Abstract key API.   (line  311)
-* gnutls_pcert_import_x509_list:         Abstract key API.   (line  331)
-* gnutls_pcert_import_x509_raw:          Abstract key API.   (line  363)
-* gnutls_pcert_list_import_x509_file:    Abstract key API.   (line  386)
-* gnutls_pcert_list_import_x509_raw:     Abstract key API.   (line  423)
+* gnutls_pcert_deinit:                   Abstract key API.   (line  176)
+* gnutls_pcert_export_openpgp:           Abstract key API.   (line  186)
+* gnutls_pcert_export_x509:              Abstract key API.   (line  201)
+* gnutls_pcert_import_openpgp:           Abstract key API.   (line  221)
+* gnutls_pcert_import_openpgp_raw:       Abstract key API.   (line  238)
+* gnutls_pcert_import_rawpk:             Abstract key API.   (line  260)
+* gnutls_pcert_import_rawpk_raw:         Abstract key API.   (line  284)
+* gnutls_pcert_import_x509:              Abstract key API.   (line  318)
+* gnutls_pcert_import_x509_list:         Abstract key API.   (line  338)
+* gnutls_pcert_import_x509_raw:          Abstract key API.   (line  370)
+* gnutls_pcert_list_import_x509_file:    Abstract key API.   (line  393)
+* gnutls_pcert_list_import_x509_raw:     Abstract key API.   (line  430)
 * gnutls_pem_base64_decode:              Core TLS API.       (line 4677)
 * gnutls_pem_base64_decode2:             Core TLS API.       (line 4701)
 * gnutls_pem_base64_encode:              Core TLS API.       (line 4729)
@@ -8208,64 +8216,64 @@ Function and Data Index
 * gnutls_priority_sign_list:             Core TLS API.       (line 5443)
 * gnutls_priority_string_list:           Core TLS API.       (line 5459)
 * gnutls_privkey_decrypt_data:           Operations.         (line  144)
-* gnutls_privkey_decrypt_data <1>:       Abstract key API.   (line  458)
-* gnutls_privkey_decrypt_data2:          Abstract key API.   (line  481)
-* gnutls_privkey_deinit:                 Abstract key API.   (line  508)
-* gnutls_privkey_export_dsa_raw:         Abstract key API.   (line  518)
-* gnutls_privkey_export_dsa_raw2:        Abstract key API.   (line  545)
-* gnutls_privkey_export_ecc_raw:         Abstract key API.   (line  574)
-* gnutls_privkey_export_ecc_raw2:        Abstract key API.   (line  602)
-* gnutls_privkey_export_gost_raw2:       Abstract key API.   (line  632)
-* gnutls_privkey_export_openpgp:         Abstract key API.   (line  668)
-* gnutls_privkey_export_pkcs11:          Abstract key API.   (line  683)
-* gnutls_privkey_export_rsa_raw:         Abstract key API.   (line  702)
-* gnutls_privkey_export_rsa_raw2:        Abstract key API.   (line  737)
-* gnutls_privkey_export_x509:            Abstract key API.   (line  773)
-* gnutls_privkey_generate:               Abstract key API.   (line  793)
+* gnutls_privkey_decrypt_data <1>:       Abstract key API.   (line  465)
+* gnutls_privkey_decrypt_data2:          Abstract key API.   (line  488)
+* gnutls_privkey_deinit:                 Abstract key API.   (line  515)
+* gnutls_privkey_export_dsa_raw:         Abstract key API.   (line  525)
+* gnutls_privkey_export_dsa_raw2:        Abstract key API.   (line  552)
+* gnutls_privkey_export_ecc_raw:         Abstract key API.   (line  581)
+* gnutls_privkey_export_ecc_raw2:        Abstract key API.   (line  609)
+* gnutls_privkey_export_gost_raw2:       Abstract key API.   (line  639)
+* gnutls_privkey_export_openpgp:         Abstract key API.   (line  675)
+* gnutls_privkey_export_pkcs11:          Abstract key API.   (line  690)
+* gnutls_privkey_export_rsa_raw:         Abstract key API.   (line  709)
+* gnutls_privkey_export_rsa_raw2:        Abstract key API.   (line  744)
+* gnutls_privkey_export_x509:            Abstract key API.   (line  780)
+* gnutls_privkey_generate:               Abstract key API.   (line  800)
 * gnutls_privkey_generate2:              Public key algorithms.
                                                              (line   43)
-* gnutls_privkey_generate2 <1>:          Abstract key API.   (line  834)
-* gnutls_privkey_get_pk_algorithm:       Abstract key API.   (line  885)
-* gnutls_privkey_get_seed:               Abstract key API.   (line  904)
-* gnutls_privkey_get_spki:               Abstract key API.   (line  929)
-* gnutls_privkey_get_type:               Abstract key API.   (line  949)
-* gnutls_privkey_import_dsa_raw:         Abstract key API.   (line  964)
-* gnutls_privkey_import_ecc_raw:         Abstract key API.   (line  990)
-* gnutls_privkey_import_ext:             Abstract key API.   (line 1018)
-* gnutls_privkey_import_ext2:            Abstract key API.   (line 1053)
-* gnutls_privkey_import_ext3:            Abstract key API.   (line 1092)
+* gnutls_privkey_generate2 <1>:          Abstract key API.   (line  841)
+* gnutls_privkey_get_pk_algorithm:       Abstract key API.   (line  892)
+* gnutls_privkey_get_seed:               Abstract key API.   (line  911)
+* gnutls_privkey_get_spki:               Abstract key API.   (line  936)
+* gnutls_privkey_get_type:               Abstract key API.   (line  956)
+* gnutls_privkey_import_dsa_raw:         Abstract key API.   (line  971)
+* gnutls_privkey_import_ecc_raw:         Abstract key API.   (line  997)
+* gnutls_privkey_import_ext:             Abstract key API.   (line 1025)
+* gnutls_privkey_import_ext2:            Abstract key API.   (line 1060)
+* gnutls_privkey_import_ext3:            Abstract key API.   (line 1099)
 * gnutls_privkey_import_ext4:            Abstract private keys.
                                                              (line   50)
-* gnutls_privkey_import_ext4 <1>:        Abstract key API.   (line 1135)
-* gnutls_privkey_import_gost_raw:        Abstract key API.   (line 1200)
-* gnutls_privkey_import_openpgp:         Abstract key API.   (line 1236)
-* gnutls_privkey_import_openpgp_raw:     Abstract key API.   (line 1253)
-* gnutls_privkey_import_pkcs11:          Abstract key API.   (line 1276)
-* gnutls_privkey_import_pkcs11_url:      Abstract key API.   (line 1302)
-* gnutls_privkey_import_rsa_raw:         Abstract key API.   (line 1319)
-* gnutls_privkey_import_tpm_raw:         Abstract key API.   (line 1352)
+* gnutls_privkey_import_ext4 <1>:        Abstract key API.   (line 1142)
+* gnutls_privkey_import_gost_raw:        Abstract key API.   (line 1207)
+* gnutls_privkey_import_openpgp:         Abstract key API.   (line 1243)
+* gnutls_privkey_import_openpgp_raw:     Abstract key API.   (line 1260)
+* gnutls_privkey_import_pkcs11:          Abstract key API.   (line 1283)
+* gnutls_privkey_import_pkcs11_url:      Abstract key API.   (line 1309)
+* gnutls_privkey_import_rsa_raw:         Abstract key API.   (line 1326)
+* gnutls_privkey_import_tpm_raw:         Abstract key API.   (line 1359)
 * gnutls_privkey_import_tpm_url:         Using keys.         (line   16)
-* gnutls_privkey_import_tpm_url <1>:     Abstract key API.   (line 1382)
+* gnutls_privkey_import_tpm_url <1>:     Abstract key API.   (line 1389)
 * gnutls_privkey_import_url:             Abstract private keys.
                                                              (line   24)
-* gnutls_privkey_import_url <1>:         Abstract key API.   (line 1413)
-* gnutls_privkey_import_x509:            Abstract key API.   (line 1433)
+* gnutls_privkey_import_url <1>:         Abstract key API.   (line 1420)
+* gnutls_privkey_import_x509:            Abstract key API.   (line 1440)
 * gnutls_privkey_import_x509_raw:        Managing encrypted keys.
                                                              (line   27)
-* gnutls_privkey_import_x509_raw <1>:    Abstract key API.   (line 1459)
-* gnutls_privkey_init:                   Abstract key API.   (line 1486)
-* gnutls_privkey_set_flags:              Abstract key API.   (line 1509)
-* gnutls_privkey_set_pin_function:       Abstract key API.   (line 1525)
-* gnutls_privkey_set_spki:               Abstract key API.   (line 1545)
+* gnutls_privkey_import_x509_raw <1>:    Abstract key API.   (line 1466)
+* gnutls_privkey_init:                   Abstract key API.   (line 1493)
+* gnutls_privkey_set_flags:              Abstract key API.   (line 1516)
+* gnutls_privkey_set_pin_function:       Abstract key API.   (line 1532)
+* gnutls_privkey_set_spki:               Abstract key API.   (line 1552)
 * gnutls_privkey_sign_data:              Operations.         (line   80)
-* gnutls_privkey_sign_data <1>:          Abstract key API.   (line 1565)
-* gnutls_privkey_sign_data2:             Abstract key API.   (line 1596)
+* gnutls_privkey_sign_data <1>:          Abstract key API.   (line 1572)
+* gnutls_privkey_sign_data2:             Abstract key API.   (line 1603)
 * gnutls_privkey_sign_hash:              Operations.         (line  108)
-* gnutls_privkey_sign_hash <1>:          Abstract key API.   (line 1624)
-* gnutls_privkey_sign_hash2:             Abstract key API.   (line 1663)
-* gnutls_privkey_status:                 Abstract key API.   (line 1698)
-* gnutls_privkey_verify_params:          Abstract key API.   (line 1714)
-* gnutls_privkey_verify_seed:            Abstract key API.   (line 1727)
+* gnutls_privkey_sign_hash <1>:          Abstract key API.   (line 1631)
+* gnutls_privkey_sign_hash2:             Abstract key API.   (line 1670)
+* gnutls_privkey_status:                 Abstract key API.   (line 1705)
+* gnutls_privkey_verify_params:          Abstract key API.   (line 1721)
+* gnutls_privkey_verify_seed:            Abstract key API.   (line 1734)
 * gnutls_protocol_get_id:                Core TLS API.       (line 5479)
 * gnutls_protocol_get_name:              Core TLS API.       (line 5491)
 * gnutls_protocol_get_version:           Core TLS API.       (line 5503)
@@ -8293,55 +8301,55 @@ Function and Data Index
 * gnutls_psk_set_server_dh_params:       Core TLS API.       (line 5844)
 * gnutls_psk_set_server_known_dh_params: Core TLS API.       (line 5862)
 * gnutls_psk_set_server_params_function: Core TLS API.       (line 5886)
-* gnutls_pubkey_deinit:                  Abstract key API.   (line 1751)
+* gnutls_pubkey_deinit:                  Abstract key API.   (line 1758)
 * gnutls_pubkey_encrypt_data:            Operations.         (line   60)
-* gnutls_pubkey_encrypt_data <1>:        Abstract key API.   (line 1761)
-* gnutls_pubkey_export:                  Abstract key API.   (line 1784)
+* gnutls_pubkey_encrypt_data <1>:        Abstract key API.   (line 1768)
+* gnutls_pubkey_export:                  Abstract key API.   (line 1791)
 * gnutls_pubkey_export2:                 Abstract public keys.
                                                              (line   24)
-* gnutls_pubkey_export2 <1>:             Abstract key API.   (line 1815)
-* gnutls_pubkey_export_dsa_raw:          Abstract key API.   (line 1840)
-* gnutls_pubkey_export_dsa_raw2:         Abstract key API.   (line 1867)
-* gnutls_pubkey_export_ecc_raw:          Abstract key API.   (line 1896)
-* gnutls_pubkey_export_ecc_raw2:         Abstract key API.   (line 1924)
-* gnutls_pubkey_export_ecc_x962:         Abstract key API.   (line 1954)
-* gnutls_pubkey_export_gost_raw2:        Abstract key API.   (line 1974)
-* gnutls_pubkey_export_rsa_raw:          Abstract key API.   (line 2008)
-* gnutls_pubkey_export_rsa_raw2:         Abstract key API.   (line 2030)
-* gnutls_pubkey_get_key_id:              Abstract key API.   (line 2054)
-* gnutls_pubkey_get_key_usage:           Abstract key API.   (line 2083)
-* gnutls_pubkey_get_openpgp_key_id:      Abstract key API.   (line 2100)
-* gnutls_pubkey_get_pk_algorithm:        Abstract key API.   (line 2123)
+* gnutls_pubkey_export2 <1>:             Abstract key API.   (line 1822)
+* gnutls_pubkey_export_dsa_raw:          Abstract key API.   (line 1847)
+* gnutls_pubkey_export_dsa_raw2:         Abstract key API.   (line 1874)
+* gnutls_pubkey_export_ecc_raw:          Abstract key API.   (line 1903)
+* gnutls_pubkey_export_ecc_raw2:         Abstract key API.   (line 1931)
+* gnutls_pubkey_export_ecc_x962:         Abstract key API.   (line 1961)
+* gnutls_pubkey_export_gost_raw2:        Abstract key API.   (line 1981)
+* gnutls_pubkey_export_rsa_raw:          Abstract key API.   (line 2015)
+* gnutls_pubkey_export_rsa_raw2:         Abstract key API.   (line 2037)
+* gnutls_pubkey_get_key_id:              Abstract key API.   (line 2061)
+* gnutls_pubkey_get_key_usage:           Abstract key API.   (line 2090)
+* gnutls_pubkey_get_openpgp_key_id:      Abstract key API.   (line 2107)
+* gnutls_pubkey_get_pk_algorithm:        Abstract key API.   (line 2130)
 * gnutls_pubkey_get_preferred_hash_algorithm: Abstract key API.
-                                                             (line 2142)
-* gnutls_pubkey_get_spki:                Abstract key API.   (line 2170)
-* gnutls_pubkey_import:                  Abstract key API.   (line 2190)
-* gnutls_pubkey_import_dsa_raw:          Abstract key API.   (line 2211)
-* gnutls_pubkey_import_ecc_raw:          Abstract key API.   (line 2236)
-* gnutls_pubkey_import_ecc_x962:         Abstract key API.   (line 2261)
-* gnutls_pubkey_import_gost_raw:         Abstract key API.   (line 2281)
-* gnutls_pubkey_import_openpgp:          Abstract key API.   (line 2315)
-* gnutls_pubkey_import_openpgp_raw:      Abstract key API.   (line 2332)
-* gnutls_pubkey_import_pkcs11:           Abstract key API.   (line 2355)
-* gnutls_pubkey_import_privkey:          Abstract key API.   (line 2374)
-* gnutls_pubkey_import_rsa_raw:          Abstract key API.   (line 2398)
-* gnutls_pubkey_import_tpm_raw:          Abstract key API.   (line 2418)
+                                                             (line 2149)
+* gnutls_pubkey_get_spki:                Abstract key API.   (line 2177)
+* gnutls_pubkey_import:                  Abstract key API.   (line 2197)
+* gnutls_pubkey_import_dsa_raw:          Abstract key API.   (line 2218)
+* gnutls_pubkey_import_ecc_raw:          Abstract key API.   (line 2243)
+* gnutls_pubkey_import_ecc_x962:         Abstract key API.   (line 2268)
+* gnutls_pubkey_import_gost_raw:         Abstract key API.   (line 2288)
+* gnutls_pubkey_import_openpgp:          Abstract key API.   (line 2322)
+* gnutls_pubkey_import_openpgp_raw:      Abstract key API.   (line 2339)
+* gnutls_pubkey_import_pkcs11:           Abstract key API.   (line 2362)
+* gnutls_pubkey_import_privkey:          Abstract key API.   (line 2381)
+* gnutls_pubkey_import_rsa_raw:          Abstract key API.   (line 2405)
+* gnutls_pubkey_import_tpm_raw:          Abstract key API.   (line 2425)
 * gnutls_pubkey_import_tpm_url:          Using keys.         (line   44)
-* gnutls_pubkey_import_tpm_url <1>:      Abstract key API.   (line 2445)
-* gnutls_pubkey_import_url:              Abstract key API.   (line 2473)
-* gnutls_pubkey_import_x509:             Abstract key API.   (line 2491)
-* gnutls_pubkey_import_x509_crq:         Abstract key API.   (line 2510)
-* gnutls_pubkey_import_x509_raw:         Abstract key API.   (line 2529)
-* gnutls_pubkey_init:                    Abstract key API.   (line 2551)
-* gnutls_pubkey_print:                   Abstract key API.   (line 2564)
-* gnutls_pubkey_set_key_usage:           Abstract key API.   (line 2589)
-* gnutls_pubkey_set_pin_function:        Abstract key API.   (line 2607)
-* gnutls_pubkey_set_spki:                Abstract key API.   (line 2627)
+* gnutls_pubkey_import_tpm_url <1>:      Abstract key API.   (line 2452)
+* gnutls_pubkey_import_url:              Abstract key API.   (line 2480)
+* gnutls_pubkey_import_x509:             Abstract key API.   (line 2498)
+* gnutls_pubkey_import_x509_crq:         Abstract key API.   (line 2517)
+* gnutls_pubkey_import_x509_raw:         Abstract key API.   (line 2536)
+* gnutls_pubkey_init:                    Abstract key API.   (line 2558)
+* gnutls_pubkey_print:                   Abstract key API.   (line 2571)
+* gnutls_pubkey_set_key_usage:           Abstract key API.   (line 2596)
+* gnutls_pubkey_set_pin_function:        Abstract key API.   (line 2614)
+* gnutls_pubkey_set_spki:                Abstract key API.   (line 2634)
 * gnutls_pubkey_verify_data2:            Operations.         (line    9)
-* gnutls_pubkey_verify_data2 <1>:        Abstract key API.   (line 2647)
+* gnutls_pubkey_verify_data2 <1>:        Abstract key API.   (line 2654)
 * gnutls_pubkey_verify_hash2:            Operations.         (line   33)
-* gnutls_pubkey_verify_hash2 <1>:        Abstract key API.   (line 2674)
-* gnutls_pubkey_verify_params:           Abstract key API.   (line 2704)
+* gnutls_pubkey_verify_hash2 <1>:        Abstract key API.   (line 2681)
+* gnutls_pubkey_verify_params:           Abstract key API.   (line 2711)
 * gnutls_random_art:                     Core TLS API.       (line 5904)
 * gnutls_range_split:                    Core TLS API.       (line 5931)
 * gnutls_reauth:                         Core TLS API.       (line 5957)
@@ -8388,7 +8396,7 @@ Function and Data Index
 * gnutls_record_uncork <1>:              Core TLS API.       (line 6546)
 * gnutls_register_custom_url:            Application-specific keys.
                                                              (line   69)
-* gnutls_register_custom_url <1>:        Abstract key API.   (line 2717)
+* gnutls_register_custom_url <1>:        Abstract key API.   (line 2724)
 * gnutls_rehandshake:                    TLS 1.2 re-authentication.
                                                              (line   70)
 * gnutls_rehandshake <1>:                Core TLS API.       (line 6571)
@@ -8517,12 +8525,12 @@ Function and Data Index
 * gnutls_supplemental_recv:              Core TLS API.       (line 8361)
 * gnutls_supplemental_register:          Core TLS API.       (line 8376)
 * gnutls_supplemental_send:              Core TLS API.       (line 8407)
-* gnutls_system_key_add_x509:            Abstract key API.   (line 2743)
-* gnutls_system_key_delete:              Abstract key API.   (line 2769)
-* gnutls_system_key_iter_deinit:         Abstract key API.   (line 2785)
+* gnutls_system_key_add_x509:            Abstract key API.   (line 2750)
+* gnutls_system_key_delete:              Abstract key API.   (line 2776)
+* gnutls_system_key_iter_deinit:         Abstract key API.   (line 2792)
 * gnutls_system_key_iter_get_info:       Application-specific keys.
                                                              (line   20)
-* gnutls_system_key_iter_get_info <1>:   Abstract key API.   (line 2796)
+* gnutls_system_key_iter_get_info <1>:   Abstract key API.   (line 2803)
 * gnutls_system_recv_timeout:            Core TLS API.       (line 8421)
 * gnutls_tdb_deinit:                     Core TLS API.       (line 8444)
 * gnutls_tdb_init:                       Core TLS API.       (line 8453)
@@ -8673,7 +8681,7 @@ Function and Data Index
                                                              (line 1251)
 * gnutls_x509_crl_privkey_sign:          PKIX certificate revocation lists.
                                                              (line  132)
-* gnutls_x509_crl_privkey_sign <1>:      Abstract key API.   (line 2834)
+* gnutls_x509_crl_privkey_sign <1>:      Abstract key API.   (line 2841)
 * gnutls_x509_crl_set_authority_key_id:  X509 certificate API.
                                                              (line 1271)
 * gnutls_x509_crl_set_crt:               X509 certificate API.
@@ -8766,7 +8774,7 @@ Function and Data Index
                                                              (line 2315)
 * gnutls_x509_crq_print:                 X509 certificate API.
                                                              (line 2327)
-* gnutls_x509_crq_privkey_sign:          Abstract key API.   (line 2870)
+* gnutls_x509_crq_privkey_sign:          Abstract key API.   (line 2877)
 * gnutls_x509_crq_set_attribute_by_oid:  X509 certificate API.
                                                              (line 2349)
 * gnutls_x509_crq_set_basic_constraints: X509 certificate API.
@@ -8792,7 +8800,7 @@ Function and Data Index
 * gnutls_x509_crq_set_private_key_usage_period: X509 certificate API.
                                                              (line 2554)
 * gnutls_x509_crq_set_pubkey:            Operations.         (line  168)
-* gnutls_x509_crq_set_pubkey <1>:        Abstract key API.   (line 2907)
+* gnutls_x509_crq_set_pubkey <1>:        Abstract key API.   (line 2914)
 * gnutls_x509_crq_set_spki:              X509 certificate API.
                                                              (line 2571)
 * gnutls_x509_crq_set_subject_alt_name:  X509 certificate API.
@@ -8979,7 +8987,7 @@ Function and Data Index
                                                              (line 4767)
 * gnutls_x509_crt_print:                 X509 certificate API.
                                                              (line 4807)
-* gnutls_x509_crt_privkey_sign:          Abstract key API.   (line 2924)
+* gnutls_x509_crt_privkey_sign:          Abstract key API.   (line 2931)
 * gnutls_x509_crt_set_activation_time:   X509 certificate API.
                                                              (line 4832)
 * gnutls_x509_crt_set_authority_info_access: X509 certificate API.
@@ -9041,7 +9049,7 @@ Function and Data Index
 * gnutls_x509_crt_set_proxy_dn:          X509 certificate API.
                                                              (line 5443)
 * gnutls_x509_crt_set_pubkey:            Operations.         (line  182)
-* gnutls_x509_crt_set_pubkey <1>:        Abstract key API.   (line 2958)
+* gnutls_x509_crt_set_pubkey <1>:        Abstract key API.   (line 2965)
 * gnutls_x509_crt_set_serial:            X509 certificate API.
                                                              (line 5469)
 * gnutls_x509_crt_set_spki:              X509 certificate API.

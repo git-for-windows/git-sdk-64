@@ -591,7 +591,7 @@ class TestMaildir(TestMailbox, unittest.TestCase):
 
     def setUp(self):
         TestMailbox.setUp(self)
-        if (os.name == 'nt') or (sys.platform == 'cygwin') or (sys.platform == 'msys'):
+        if (os.name == 'nt') or (sys.platform == 'cygwin'):
             self._box.colon = '!'
 
     def assertMailboxEmpty(self):

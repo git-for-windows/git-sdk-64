@@ -43,8 +43,6 @@ term = os.environ.get('TERM')
                  "$TERM=%r, calling initscr() may cause exit" % term)
 @unittest.skipIf(sys.platform == "cygwin",
                  "cygwin's curses mostly just hangs")
-@unittest.skipIf(sys.platform == "msys",
-                 "msys's curses mostly just hangs")
 class TestCurses(unittest.TestCase):
 
     @classmethod

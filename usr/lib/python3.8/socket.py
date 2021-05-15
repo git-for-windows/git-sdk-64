@@ -866,7 +866,7 @@ def create_server(address, *, family=AF_INET, backlog=None, reuse_port=False,
         # connections. Also, it may set the process in a state where
         # it'll no longer respond to any signals or graceful kills.
         # See: msdn2.microsoft.com/en-us/library/ms740621(VS.85).aspx
-        if os.name not in ('nt', 'cygwin', 'msys') and \
+        if os.name not in ('nt', 'cygwin') and \
                 hasattr(_socket, 'SO_REUSEADDR'):
             try:
                 sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)

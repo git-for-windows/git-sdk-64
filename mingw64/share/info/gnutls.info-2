@@ -1,9 +1,10 @@
 This is gnutls.info, produced by makeinfo version 6.7 from gnutls.texi.
 
-This manual is last updated 1 June 2020 for version 3.7.0 of GnuTLS.
+This manual is last updated 24 February 2021 for version 3.7.1 of
+GnuTLS.
 
-Copyright (C) 2001-2020 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2020 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2021 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2021 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -2892,15 +2893,15 @@ Ciphers        Examples are AES-128-GCM, AES-256-GCM,
                shortcut for secure GOST algorithms is
                CIPHER-GOST-ALL.
                
-Key exchange   RSA, DHE-RSA, DHE-DSS, SRP, SRP-RSA, SRP-DSS,
-               PSK, DHE-PSK, ECDHE-PSK, ECDHE-RSA, ECDHE-ECDSA,
-               VKO-GOST-12, ANON-ECDH, ANON-DH. Catch all name
-               is KX-ALL which will add all the algorithms from
-               NORMAL priority.  Under TLS1.3, the DHE-PSK and
-               ECDHE-PSK strings are equivalent and instruct
-               for a Diffie-Hellman key exchange using the
-               enabled groups.  The shortcut for secure GOST
-               algorithms is KX-GOST-ALL.
+Key exchange   RSA, RSA-PSK, RSA-EXPORT, DHE-RSA, DHE-DSS, SRP,
+               SRP-RSA, SRP-DSS, PSK, DHE-PSK, ECDHE-PSK,
+               ECDHE-RSA, ECDHE-ECDSA, VKO-GOST-12, ANON-ECDH,
+               ANON-DH. Catch all name is KX-ALL which will add
+               all the algorithms from NORMAL priority.  Under
+               TLS1.3, the DHE-PSK and ECDHE-PSK strings are
+               equivalent and instruct for a Diffie-Hellman key
+               exchange using the enabled groups.  The shortcut
+               for secure GOST algorithms is KX-GOST-ALL.
                
 MAC            MD5, SHA1, SHA256, SHA384, GOST28147-TC26Z-IMIT,
                AEAD (used with GCM ciphers only).  All
@@ -2911,18 +2912,19 @@ MAC            MD5, SHA1, SHA256, SHA384, GOST28147-TC26Z-IMIT,
 Compression    COMP-NULL, COMP-DEFLATE. Catch all is COMP-ALL.
 algorithms     
 TLS versions   VERS-TLS1.0, VERS-TLS1.1, VERS-TLS1.2,
-               VERS-TLS1.3, VERS-DTLS1.0, VERS-DTLS1.2.  Catch
-               all are VERS-ALL, and will enable all protocols
-               from NORMAL priority.  To distinguish between
-               TLS and DTLS versions you can use VERS-TLS-ALL
-               and VERS-DTLS-ALL.
+               VERS-TLS1.3, VERS-DTLS0.9, VERS-DTLS1.0,
+               VERS-DTLS1.2.  Catch all are VERS-ALL, and will
+               enable all protocols from NORMAL priority.  To
+               distinguish between TLS and DTLS versions you
+               can use VERS-TLS-ALL and VERS-DTLS-ALL.
                
 Signature      SIGN-RSA-SHA1, SIGN-RSA-SHA224, SIGN-RSA-SHA256,
 algorithms     SIGN-RSA-SHA384, SIGN-RSA-SHA512, SIGN-DSA-SHA1,
                SIGN-DSA-SHA224, SIGN-DSA-SHA256, SIGN-RSA-MD5,
                SIGN-ECDSA-SHA1, SIGN-ECDSA-SHA224,
                SIGN-ECDSA-SHA256, SIGN-ECDSA-SHA384,
-               SIGN-ECDSA-SHA512, SIGN-RSA-PSS-SHA256,
+               SIGN-ECDSA-SHA512, SIGN-EdDSA-Ed25519,
+               SIGN-EdDSA-Ed448, SIGN-RSA-PSS-SHA256,
                SIGN-RSA-PSS-SHA384, SIGN-RSA-PSS-SHA512,
                SIGN-GOSTR341001, SIGN-GOSTR341012-256,
                SIGN-GOSTR341012-512.  Catch all which enables
@@ -2931,19 +2933,20 @@ algorithms     SIGN-RSA-SHA384, SIGN-RSA-SHA512, SIGN-DSA-SHA1,
                SIGN-GOST-ALL. This option is only considered
                for TLS 1.2 and later.
                
-Groups         GROUP-SECP256R1, GROUP-SECP384R1,
+Groups         GROUP-SECP192R1, GROUP-SECP224R1,
+               GROUP-SECP256R1, GROUP-SECP384R1,
                GROUP-SECP521R1, GROUP-X25519, GROUP-X448,
-               GROUP-FFDHE2048, GROUP-FFDHE3072,
-               GROUP-FFDHE4096, GROUP-FFDHE6144, and
-               GROUP-FFDHE8192.  Groups include both elliptic
-               curve groups, e.g., SECP256R1, as well as finite
-               field groups such as FFDHE2048.  Catch all which
-               enables all groups from NORMAL priority is
-               GROUP-ALL. The helper keywords GROUP-DH-ALL,
-               GROUP-GOST-ALL and GROUP-EC-ALL are also
-               available, restricting the groups to finite
-               fields (DH), GOST curves and generic elliptic
-               curves.
+               GROUP-GC256B, GROUP-GC512A, GROUP-FFDHE2048,
+               GROUP-FFDHE3072, GROUP-FFDHE4096,
+               GROUP-FFDHE6144, and GROUP-FFDHE8192.  Groups
+               include both elliptic curve groups, e.g.,
+               SECP256R1, as well as finite field groups such
+               as FFDHE2048.  Catch all which enables all
+               groups from NORMAL priority is GROUP-ALL. The
+               helper keywords GROUP-DH-ALL, GROUP-GOST-ALL and
+               GROUP-EC-ALL are also available, restricting the
+               groups to finite fields (DH), GOST curves and
+               generic elliptic curves.
                
 Elliptic       CURVE-SECP192R1, CURVE-SECP224R1,
 curves         CURVE-SECP256R1, CURVE-SECP384R1,

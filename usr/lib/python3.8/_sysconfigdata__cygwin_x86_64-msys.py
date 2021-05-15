@@ -31,6 +31,7 @@ build_time_vars = {'ABIFLAGS': '',
  'CONFIGURE_CFLAGS_NODIST': '-std=c99 -Wextra -Wno-unused-result '
                             '-Wno-unused-parameter '
                             '-Wno-missing-field-initializers '
+                            '-Wstrict-prototypes '
                             '-Werror=implicit-function-declaration',
  'CONFIGURE_CPPFLAGS': '-I/usr/include/ncursesw',
  'CONFIGURE_LDFLAGS': '-pipe -L.',
@@ -295,8 +296,8 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_MAKEDEV': 1,
  'HAVE_MBRTOWC': 1,
  'HAVE_MEMFD_CREATE': 0,
- 'HAVE_MEMORY_H': 1,
  'HAVE_MEMRCHR': 1,
+ 'HAVE_MINIX_CONFIG_H': 0,
  'HAVE_MKDIRAT': 1,
  'HAVE_MKFIFO': 1,
  'HAVE_MKFIFOAT': 1,
@@ -409,6 +410,7 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_STAT_TV_NSEC2': 0,
  'HAVE_STDARG_PROTOTYPES': 1,
  'HAVE_STDINT_H': 1,
+ 'HAVE_STDIO_H': 1,
  'HAVE_STDLIB_H': 1,
  'HAVE_STD_ATOMIC': 1,
  'HAVE_STRDUP': 1,
@@ -556,13 +558,13 @@ build_time_vars = {'ABIFLAGS': '',
  'LLVM_PROF_MERGER': 'true',
  'LN': 'ln -s',
  'LOCALMODLIBS': '',
- 'MACHDEP': 'msys',
+ 'MACHDEP': 'cygwin',
  'MACHDEP_OBJS': '',
  'MACHDESTLIB': '/usr/lib/python3.8',
  'MACOSX_DEPLOYMENT_TARGET': '',
  'MAINCC': 'x86_64-pc-msys-gcc',
  'MAJOR_IN_MKDEV': 0,
- 'MAJOR_IN_SYSMACROS': 0,
+ 'MAJOR_IN_SYSMACROS': 1,
  'MAKESETUP': './Modules/makesetup',
  'MANDIR': '/usr/share/man',
  'MKDIR_P': '/usr/bin/mkdir -p',
@@ -630,6 +632,7 @@ build_time_vars = {'ABIFLAGS': '',
                              '-march=x86-64 -mtune=generic -O2 -pipe -std=c99 '
                              '-Wextra -Wno-unused-result -Wno-unused-parameter '
                              '-Wno-missing-field-initializers '
+                             '-Wstrict-prototypes '
                              '-Werror=implicit-function-declaration  '
                              '-I./Include/internal -I. -I./Include '
                              '-I/usr/include/ncursesw  -I/usr/include/ncursesw '
@@ -639,6 +642,7 @@ build_time_vars = {'ABIFLAGS': '',
               '-mtune=generic -O2 -pipe -march=x86-64 -mtune=generic -O2 -pipe',
  'PY_CFLAGS_NODIST': '-std=c99 -Wextra -Wno-unused-result '
                      '-Wno-unused-parameter -Wno-missing-field-initializers '
+                     '-Wstrict-prototypes '
                      '-Werror=implicit-function-declaration  '
                      '-I./Include/internal',
  'PY_COERCE_C_LOCALE': 1,
@@ -647,7 +651,7 @@ build_time_vars = {'ABIFLAGS': '',
                    '-mtune=generic -O2 -pipe -march=x86-64 -mtune=generic -O2 '
                    '-pipe -std=c99 -Wextra -Wno-unused-result '
                    '-Wno-unused-parameter -Wno-missing-field-initializers '
-                   '-Werror=implicit-function-declaration  '
+                   '-Wstrict-prototypes -Werror=implicit-function-declaration  '
                    '-I./Include/internal -I. -I./Include '
                    '-I/usr/include/ncursesw  -I/usr/include/ncursesw '
                    '-DPy_BUILD_CORE',
@@ -664,7 +668,7 @@ build_time_vars = {'ABIFLAGS': '',
                         '-march=x86-64 -mtune=generic -O2 -pipe -march=x86-64 '
                         '-mtune=generic -O2 -pipe -std=c99 -Wextra '
                         '-Wno-unused-result -Wno-unused-parameter '
-                        '-Wno-missing-field-initializers '
+                        '-Wno-missing-field-initializers -Wstrict-prototypes '
                         '-Werror=implicit-function-declaration  '
                         '-I./Include/internal -I. -I./Include '
                         '-I/usr/include/ncursesw  -I/usr/include/ncursesw',
