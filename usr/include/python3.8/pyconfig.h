@@ -282,6 +282,9 @@
 /* Define to 1 if you have the `dup3' function. */
 #define HAVE_DUP3 1
 
+/* Define if you have the '_dyld_shared_cache_contains_path' function. */
+/* #undef HAVE_DYLD_SHARED_CACHE_CONTAINS_PATH */
+
 /* Defined when any dynamic module loading is enabled. */
 #define HAVE_DYNAMIC_LOADING 1
 

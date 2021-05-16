@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.8
 srcdir=		.
 
-abs_srcdir=	/c/_/S/python/src/Python-3.8.7
-abs_builddir=	/c/_/S/python/src/Python-3.8.7
+abs_srcdir=	/c/_/S/python/src/Python-3.8.10
+abs_builddir=	/c/_/S/python/src/Python-3.8.10
 
 
 CC=		x86_64-pc-msys-gcc
@@ -182,6 +182,9 @@ STRIPFLAG=-s
 
 # Flags to lipo to produce a 32-bit-only universal executable
 LIPO_32BIT_FLAGS=
+
+# Flags to lipo to produce an intel-64-only universal executable
+LIPO_INTEL64_FLAGS=
 
 # Options to enable prebinding (for fast startup prior to Mac OS X 10.3)
 OTHER_LIBTOOL_OPT=
@@ -736,6 +739,15 @@ regen-importlib: Programs/_freeze_importlib
 	    $(srcdir)/Python/importlib_zipimport.h.new
 	$(UPDATE_FILE) $(srcdir)/Python/importlib_zipimport.h $(srcdir)/Python/importlib_zipimport.h.new
 
+regen-abidump: all
+	@$(MKDIR_P) $(srcdir)/Doc/data/
+	abidw "libpython$(LDVERSION).so" --no-architecture --out-file $(srcdir)/Doc/data/python$(LDVERSION).abi.new
+	@$(UPDATE_FILE) $(srcdir)/Doc/data/python$(LDVERSION).abi $(srcdir)/Doc/data/python$(LDVERSION).abi.new
+
+check-abidump: all
+		abidiff "libpython$(LDVERSION).so" $(srcdir)/Doc/data/python$(LDVERSION).abi --drop-private-types \
+		--suppressions $(srcdir)/Doc/data/python$(LDVERSION).abi.ignorefile \
+		--no-architecture --no-added-syms
 
 ############################################################################
 # Regenerate all generated files
@@ -1270,6 +1282,12 @@ altbininstall: $(BUILDPYTHON)
 			-output $(DESTDIR)$(BINDIR)/python$(VERSION)-32$(EXE) \
 			$(DESTDIR)$(BINDIR)/python$(VERSION)$(EXE); \
 	fi
+	if test "x$(LIPO_INTEL64_FLAGS)" != "x" ; then \
+		rm -f $(DESTDIR)$(BINDIR)python$(VERSION)-intel64$(EXE); \
+		lipo $(LIPO_INTEL64_FLAGS) \
+			-output $(DESTDIR)$(BINDIR)/python$(VERSION)-intel64$(EXE) \
+			$(DESTDIR)$(BINDIR)/python$(VERSION)$(EXE); \
+	fi
 
 bininstall: altbininstall commoninstall
 	if test ! -d $(DESTDIR)$(LIBPC); then \
@@ -1304,6 +1322,10 @@ bininstall: altbininstall commoninstall
 	if test "x$(LIPO_32BIT_FLAGS)" != "x" ; then \
 		rm -f $(DESTDIR)$(BINDIR)/python3-32$(EXE); \
 		(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)-32$(EXE) python3-32$(EXE)) \
+	fi
+	if test "x$(LIPO_INTEL64_FLAGS)" != "x" ; then \
+		rm -f $(DESTDIR)$(BINDIR)/python3-intel64$(EXE); \
+		(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)-intel64$(EXE) python3-intel64$(EXE)) \
 	fi
 
 # Install the versioned manual page
