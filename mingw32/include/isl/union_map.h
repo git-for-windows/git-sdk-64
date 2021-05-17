@@ -23,6 +23,8 @@ __isl_give isl_id *isl_union_map_get_dim_id(__isl_keep isl_union_map *umap,
 __isl_constructor
 __isl_give isl_union_map *isl_union_map_from_basic_map(
 	__isl_take isl_basic_map *bmap);
+__isl_export
+__isl_give isl_union_map *isl_map_to_union_map(__isl_take isl_map *map);
 __isl_constructor
 __isl_give isl_union_map *isl_union_map_from_map(__isl_take isl_map *map);
 __isl_overload
@@ -291,6 +293,8 @@ __isl_give isl_map *isl_union_map_extract_map(__isl_keep isl_union_map *umap,
 	__isl_take isl_space *space);
 __isl_export
 isl_bool isl_union_map_isa_map(__isl_keep isl_union_map *umap);
+__isl_export
+__isl_give isl_map *isl_union_map_as_map(__isl_take isl_union_map *umap);
 __isl_give isl_map *isl_map_from_union_map(__isl_take isl_union_map *umap);
 
 __isl_give isl_basic_map *isl_union_map_sample(__isl_take isl_union_map *umap);

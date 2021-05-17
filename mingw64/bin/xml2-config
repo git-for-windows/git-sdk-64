@@ -4,6 +4,8 @@ prefix=/mingw64
 exec_prefix=${prefix}
 includedir=${prefix}/include
 libdir=${exec_prefix}/lib
+cflags=
+libs=
 
 usage()
 {
@@ -56,7 +58,7 @@ while test $# -gt 0; do
       ;;
 
     --version)
-	echo 2.9.10
+	echo 2.9.12
 	exit 0
 	;;
 
@@ -95,14 +97,13 @@ while test $# -gt 0; do
         ;;
 
     *)
-	usage
-	exit 1
+	usage 1
 	;;
     esac
     shift
 done
 
-if test "$cflags" -o "$libs"; then
+if test -n "$cflags$libs"; then
     echo $cflags $libs
 fi
 

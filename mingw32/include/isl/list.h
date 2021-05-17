@@ -27,6 +27,8 @@ typedef struct isl_##EL##_list isl_##EL##_list;
 	ISL_DECLARE_LIST_TYPE2(EL,__isl_export)
 #define ISL_DECLARE_LIST_FN3(EL,CONSTRUCTOR,EXPORT)			\
 isl_ctx *isl_##EL##_list_get_ctx(__isl_keep isl_##EL##_list *list);	\
+EXPORT									\
+__isl_give isl_##EL##_list *isl_##EL##_to_list(__isl_take isl_##EL *el);\
 CONSTRUCTOR								\
 __isl_give isl_##EL##_list *isl_##EL##_list_from_##EL(			\
 	__isl_take isl_##EL *el);					\
