@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="generator" content="Asciidoctor 2.0.10"/>
+<meta name="generator" content="Asciidoctor 2.0.13"/>
 <title>git-subtree(1)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
@@ -47,7 +47,7 @@ textarea{overflow:auto;vertical-align:top}
 table{border-collapse:collapse;border-spacing:0}
 *,*::before,*::after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
 html,body{font-size:100%}
-body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;word-wrap:anywhere;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
 a:hover{cursor:pointer}
 img,object,embed{max-width:100%;height:auto}
 object,embed{height:100%}
@@ -62,10 +62,8 @@ img{-ms-interpolation-mode:bicubic}
 img,object,svg{display:inline-block;vertical-align:middle}
 textarea{height:auto;min-height:50px}
 select{width:100%}
-.center{margin-left:auto;margin-right:auto}
-.stretch{width:100%}
 .subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
-div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0;direction:ltr}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0}
 a{color:#2156a5;text-decoration:underline;line-height:inherit}
 a:hover,a:focus{color:#1d4b8f}
 a img{border:0}
@@ -96,28 +94,28 @@ dl dd{margin-bottom:1.25em}
 abbr,acronym{text-transform:uppercase;font-size:90%;color:rgba(0,0,0,.8);border-bottom:1px dotted #ddd;cursor:help}
 abbr{text-transform:none}
 blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
-blockquote cite{display:block;font-size:.9375em;color:rgba(0,0,0,.6)}
-blockquote cite::before{content:"\2014 \0020"}
-blockquote cite a,blockquote cite a:visited{color:rgba(0,0,0,.6)}
 blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
 @media screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
 h1{font-size:2.75em}
 h2{font-size:2.3125em}
 h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
 h4{font-size:1.4375em}}
-table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede}
+table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede;word-wrap:normal}
 table thead,table tfoot{background:#f7f8f7}
 table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
 table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
 table tr.even,table tr.alt{background:#f8f8f7}
-table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{display:table-cell;line-height:1.6}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{line-height:1.6}
 h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
 h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.center{margin-left:auto;margin-right:auto}
+.stretch{width:100%}
 .clearfix::before,.clearfix::after,.float-group::before,.float-group::after{content:" ";display:table}
 .clearfix::after,.float-group::after{clear:both}
-:not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed;word-wrap:break-word}
-:not(pre)>code.nobreak{word-wrap:normal}
-:not(pre)>code.nowrap{white-space:nowrap}
+:not(pre).nobreak{word-wrap:normal}
+:not(pre).nowrap{white-space:nowrap}
+:not(pre).pre-wrap{white-space:pre-wrap}
+:not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
 pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
 pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
 pre>code{display:block}
@@ -182,7 +180,7 @@ body.toc2.toc-right{padding-left:0;padding-right:20em}}
 #content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
 #content #toc>:first-child{margin-top:0}
 #content #toc>:last-child{margin-bottom:0}
-#footer{max-width:100%;background:rgba(0,0,0,.8);padding:1.25em}
+#footer{max-width:none;background:rgba(0,0,0,.8);padding:1.25em}
 #footer-text{color:rgba(255,255,255,.8);line-height:1.44}
 #content{margin-bottom:.625em}
 .sect1{padding-bottom:.625em}
@@ -205,7 +203,7 @@ table.tableblock #preamble>.sectionbody>[class="paragraph"]:first-of-type p{font
 .admonitionblock>table td.icon{text-align:center;width:80px}
 .admonitionblock>table td.icon img{max-width:none}
 .admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
-.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6)}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
 .admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
 .exampleblock>.content{border-style:solid;border-width:1px;border-color:#e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;-webkit-border-radius:4px;border-radius:4px}
 .exampleblock>.content>:first-child{margin-top:0}
@@ -215,7 +213,7 @@ table.tableblock #preamble>.sectionbody>[class="paragraph"]:first-of-type p{font
 .sidebarblock>:last-child{margin-bottom:0}
 .sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
 .exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
-.literalblock pre,.listingblock>.content>pre{-webkit-border-radius:4px;border-radius:4px;word-wrap:break-word;overflow-x:auto;padding:1em;font-size:.8125em}
+.literalblock pre,.listingblock>.content>pre{-webkit-border-radius:4px;border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
 @media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
 @media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
 .literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class="highlight"],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
@@ -260,22 +258,21 @@ pre.pygments .lineno::before{content:"";margin-right:-.125em}
 .quoteblock.excerpt>blockquote,.quoteblock .quoteblock{padding:0 0 .25em 1em;border-left:.25em solid #dddddf}
 .quoteblock.excerpt,.quoteblock .quoteblock{margin-left:0}
 .quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{color:inherit;font-size:1.0625rem}
-.quoteblock.excerpt .attribution,.quoteblock .quoteblock .attribution{color:inherit;text-align:left;margin-right:0}
-table.tableblock{max-width:100%;border-collapse:separate}
+.quoteblock.excerpt .attribution,.quoteblock .quoteblock .attribution{color:inherit;font-size:.85rem;text-align:left;margin-right:0}
 p.tableblock:last-child{margin-bottom:0}
+td.tableblock>.content{margin-bottom:1.25em;word-wrap:anywhere}
 td.tableblock>.content>:last-child{margin-bottom:-1.25em}
-td.tableblock>.content>:last-child.sidebarblock{margin-bottom:0}
 table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
-table.grid-all>thead>tr>.tableblock,table.grid-all>tbody>tr>.tableblock{border-width:0 1px 1px 0}
-table.grid-all>tfoot>tr>.tableblock{border-width:1px 1px 0 0}
-table.grid-cols>*>tr>.tableblock{border-width:0 1px 0 0}
-table.grid-rows>thead>tr>.tableblock,table.grid-rows>tbody>tr>.tableblock{border-width:0 0 1px}
-table.grid-rows>tfoot>tr>.tableblock{border-width:1px 0 0}
-table.grid-all>*>tr>.tableblock:last-child,table.grid-cols>*>tr>.tableblock:last-child{border-right-width:0}
-table.grid-all>tbody>tr:last-child>.tableblock,table.grid-all>thead:last-child>tr>.tableblock,table.grid-rows>tbody>tr:last-child>.tableblock,table.grid-rows>thead:last-child>tr>.tableblock{border-bottom-width:0}
+table.grid-all>*>tr>*{border-width:1px}
+table.grid-cols>*>tr>*{border-width:0 1px}
+table.grid-rows>*>tr>*{border-width:1px 0}
 table.frame-all{border-width:1px}
+table.frame-ends{border-width:1px 0}
 table.frame-sides{border-width:0 1px}
-table.frame-topbot,table.frame-ends{border-width:1px 0}
+table.frame-none>colgroup+*>:first-child>*,table.frame-sides>colgroup+*>:first-child>*{border-top-width:0}
+table.frame-none>:last-child>:last-child>*,table.frame-sides>:last-child>:last-child>*{border-bottom-width:0}
+table.frame-none>*>tr>:first-child,table.frame-ends>*>tr>:first-child{border-left-width:0}
+table.frame-none>*>tr>:last-child,table.frame-ends>*>tr>:last-child{border-right-width:0}
 table.stripes-all tr,table.stripes-odd tr:nth-of-type(odd),table.stripes-even tr:nth-of-type(even),table.stripes-hover tr:hover{background:#f8f8f7}
 th.halign-left,td.halign-left{text-align:left}
 th.halign-right,td.halign-right{text-align:right}
@@ -284,7 +281,7 @@ th.valign-top,td.valign-top{vertical-align:top}
 th.valign-bottom,td.valign-bottom{vertical-align:bottom}
 th.valign-middle,td.valign-middle{vertical-align:middle}
 table thead th,table tfoot th{font-weight:bold}
-tbody tr th{display:table-cell;line-height:1.6;background:#f7f8f7}
+tbody tr th{background:#f7f8f7}
 tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
 p.tableblock>code:only-child{background:none;padding:0}
 p.tableblock{font-size:1em}
@@ -313,6 +310,7 @@ ol.lowergreek{list-style-type:lower-greek}
 .hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
 td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
 td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+td.hdlist2{word-wrap:anywhere}
 .literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
 .colist td:not([class]):first-child{padding:.4em .75em 0;line-height:1;vertical-align:top}
 .colist td:not([class]):first-child img{max-width:none}
@@ -385,7 +383,7 @@ a span.icon>.fa{cursor:inherit}
 .admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
 .admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
 .admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
-.conum[data-value]{display:inline-block;color:#fff!important;background:rgba(0,0,0,.8);-webkit-border-radius:100px;border-radius:100px;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value]{display:inline-block;color:#fff!important;background:rgba(0,0,0,.8);-webkit-border-radius:50%;border-radius:50%;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
 .conum[data-value] *{color:#fff!important}
 .conum[data-value]+b{display:none}
 .conum[data-value]::after{content:attr(data-value)}
@@ -412,6 +410,7 @@ thead{display:table-header-group}
 svg{max-width:100%}
 p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
 h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#header,#content,#footnotes,#footer{max-width:none}
 #toc,.sidebarblock,.exampleblock>.content{background:none!important}
 #toc{border-bottom:1px solid #dddddf!important;padding-bottom:0!important}
 body.book #header{text-align:center}
@@ -449,12 +448,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git subtree</em> add   -P &lt;prefix&gt; &lt;commit&gt;
-<em>git subtree</em> add   -P &lt;prefix&gt; &lt;repository&gt; &lt;ref&gt;
-<em>git subtree</em> pull  -P &lt;prefix&gt; &lt;repository&gt; &lt;ref&gt;
-<em>git subtree</em> push  -P &lt;prefix&gt; &lt;repository&gt; &lt;ref&gt;
-<em>git subtree</em> merge -P &lt;prefix&gt; &lt;commit&gt;
-<em>git subtree</em> split -P &lt;prefix&gt; [OPTIONS] [&lt;commit&gt;]</pre>
+<pre class="content"><em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; add &lt;local-commit&gt;
+<em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; add &lt;repository&gt; &lt;remote-ref&gt;
+<em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; merge &lt;local-commit&gt;
+<em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; split [&lt;local-commit&gt;]</pre>
+</div>
+<div class="verseblock">
+<pre class="content"><em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; pull &lt;repository&gt; &lt;remote-ref&gt;
+<em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; push &lt;repository&gt; &lt;refspec&gt;</pre>
 </div>
 </div>
 </div>
@@ -473,7 +474,7 @@ as a subdirectory of your application.</p>
 <div class="paragraph">
 <p>Subtrees are not to be confused with submodules, which are meant for
 the same task. Unlike submodules, subtrees do not need any special
-constructions (like .gitmodules files or gitlinks) be present in
+constructions (like <em>.gitmodules</em> files or gitlinks) be present in
 your repository, and do not force end-users of your
 repository to do anything special or to understand how subtrees
 work. A subtree is just a subdirectory that can be
@@ -512,7 +513,7 @@ project as much as possible.  That is, if you make a change that
 affects both the library and the main application, commit it in
 two pieces.  That way, when you split the library commits out
 later, their descriptions will still make sense.  But if this
-isn&#8217;t important to you, it&#8217;s not <strong>necessary</strong>.  git subtree will
+isn&#8217;t important to you, it&#8217;s not <strong>necessary</strong>.  <em>git subtree</em> will
 simply leave out the non-library-related parts of the commit
 when it splits it out into the subproject later.
 </td>
@@ -526,22 +527,23 @@ when it splits it out into the subproject later.
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">add</dt>
+<dt class="hdlist1">add &lt;local-commit&gt;</dt>
+<dt class="hdlist1">add &lt;repository&gt; &lt;remote-ref&gt;</dt>
 <dd>
 <p>Create the &lt;prefix&gt; subtree by importing its contents
-from the given &lt;commit&gt; or &lt;repository&gt; and remote &lt;ref&gt;.
+from the given &lt;local-commit&gt; or &lt;repository&gt; and &lt;remote-ref&gt;.
 A new commit is created	automatically, joining the imported
-project&#8217;s history with your own.  With <em>--squash</em>, imports
+project&#8217;s history with your own.  With <em>--squash</em>, import
 only a single commit from the subproject, rather than its
 entire history.</p>
 </dd>
-<dt class="hdlist1">merge</dt>
+<dt class="hdlist1">merge &lt;local-commit&gt;</dt>
 <dd>
-<p>Merge recent changes up to &lt;commit&gt; into the &lt;prefix&gt;
+<p>Merge recent changes up to &lt;local-commit&gt; into the &lt;prefix&gt;
 subtree.  As with normal <em>git merge</em>, this doesn&#8217;t
 remove your own local changes; it just merges those
-changes into the latest &lt;commit&gt;.  With <em>--squash</em>,
-creates only one commit that contains all the changes,
+changes into the latest &lt;local-commit&gt;.  With <em>--squash</em>,
+create only one commit that contains all the changes,
 rather than merging in the entire history.</p>
 <div class="paragraph">
 <p>If you use <em>--squash</em>, the merge direction doesn&#8217;t always have to be
@@ -550,51 +552,51 @@ for example.  If your merge introduces a conflict, you can resolve it in
 the usual ways.</p>
 </div>
 </dd>
-<dt class="hdlist1">pull</dt>
-<dd>
-<p>Exactly like <em>merge</em>, but parallels <em>git pull</em> in that
-it fetches the given ref from the specified remote
-repository.</p>
-</dd>
-<dt class="hdlist1">push</dt>
-<dd>
-<p>Does a <em>split</em> (see below) using the &lt;prefix&gt; supplied
-and then does a <em>git push</em> to push the result to the
-repository and ref. This can be used to push your
-subtree to different branches of the remote repository.</p>
-</dd>
-<dt class="hdlist1">split</dt>
+<dt class="hdlist1">split [&lt;local-commit&gt;]</dt>
 <dd>
 <p>Extract a new, synthetic project history from the
-history of the &lt;prefix&gt; subtree.  The new history
+history of the &lt;prefix&gt; subtree of &lt;local-commit&gt;, or of
+HEAD if no &lt;local-commit&gt; is given.  The new history
 includes only the commits (including merges) that
 affected &lt;prefix&gt;, and each of those commits now has the
 contents of &lt;prefix&gt; at the root of the project instead
 of in a subdirectory.  Thus, the newly created history
 is suitable for export as a separate git repository.</p>
 <div class="paragraph">
-<p>After splitting successfully, a single commit id is printed to stdout.
+<p>After splitting successfully, a single commit ID is printed to stdout.
 This corresponds to the HEAD of the newly created tree, which you can
 manipulate however you want.</p>
 </div>
 <div class="paragraph">
 <p>Repeated splits of exactly the same history are guaranteed to be
-identical (i.e. to produce the same commit ids).  Because of this, if
-you add new commits and then re-split, the new commits will be attached
-as commits on top of the history you generated last time, so <em>git merge</em>
-and friends will work as expected.</p>
+identical (i.e. to produce the same commit IDs) as long as the
+settings passed to <em>split</em> (such as <em>--annotate</em>) are the same.
+Because of this, if you add new commits and then re-split, the new
+commits will be attached as commits on top of the history you
+generated last time, so <em>git merge</em> and friends will work as expected.</p>
 </div>
-<div class="paragraph">
-<p>Note that if you use <em>--squash</em> when you merge, you should usually not
-just <em>--rejoin</em> when you split.</p>
-</div>
+</dd>
+<dt class="hdlist1">pull &lt;repository&gt; &lt;remote-ref&gt;</dt>
+<dd>
+<p>Exactly like <em>merge</em>, but parallels <em>git pull</em> in that
+it fetches the given ref from the specified remote
+repository.</p>
+</dd>
+<dt class="hdlist1">push &lt;repository&gt; [+][&lt;local-commit&gt;:]&lt;remote-ref&gt;</dt>
+<dd>
+<p>Does a <em>split</em> using the &lt;prefix&gt; subtree of &lt;local-commit&gt;
+and then does a <em>git push</em> to push the result to the
+&lt;repository&gt; and &lt;remote-ref&gt;.  This can be used to push your
+subtree to different branches of the remote repository.  Just
+as with <em>split</em>, if no &lt;local-commit&gt; is given, then HEAD is
+used.  The optional leading <em>+</em> is ignored.</p>
 </dd>
 </dl>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_options">OPTIONS</h2>
+<h2 id="_options_for_all_commands">OPTIONS FOR ALL COMMANDS</h2>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
@@ -615,30 +617,25 @@ just <em>--rejoin</em> when you split.</p>
 want to manipulate.  This option is mandatory
 for all commands.</p>
 </dd>
-<dt class="hdlist1">-m &lt;message&gt;</dt>
-<dt class="hdlist1">--message=&lt;message&gt;</dt>
-<dd>
-<p>This option is only valid for add, merge, pull, and split --rejoin.
-Specify &lt;message&gt; as the commit message for the merge commit.</p>
-</dd>
 </dl>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_options_for_add_merge_and_pull">OPTIONS FOR add, merge, and pull</h2>
+<h2 id="_options_for_add_and_merge_also_pull_split_rejoin_and_push_rejoin">OPTIONS FOR <em>add</em> AND <em>merge</em> (ALSO: <em>pull</em>, <em>split --rejoin</em>, AND <em>push --rejoin</em>)</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>These options for <em>add</em> and <em>merge</em> may also be given to <em>pull</em> (which
+wraps <em>merge</em>), <em>split --rejoin</em> (which wraps either <em>add</em> or <em>merge</em>
+as appropriate), and <em>push --rejoin</em> (which wraps <em>split --rejoin</em>).</p>
+</div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">--squash</dt>
 <dd>
-<p>This option is only valid for add, merge, and pull
-commands.</p>
-<div class="paragraph">
 <p>Instead of merging the entire history from the subtree project, produce
 only a single commit that contains all the differences you want to
 merge, and then merge that new commit into your project.</p>
-</div>
 <div class="paragraph">
 <p>Using this option helps to reduce log clutter. People rarely want to see
 every change that happened between v1.0 and v1.1 of the library they&#8217;re
@@ -665,75 +662,69 @@ remain intact and can be later split and send upstream to the
 subproject.</p>
 </div>
 </dd>
+<dt class="hdlist1">-m &lt;message&gt;</dt>
+<dt class="hdlist1">--message=&lt;message&gt;</dt>
+<dd>
+<p>Specify &lt;message&gt; as the commit message for the merge commit.</p>
+</dd>
 </dl>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_options_for_split">OPTIONS FOR split</h2>
+<h2 id="_options_for_split_also_push">OPTIONS FOR <em>split</em> (ALSO: <em>push</em>)</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>These options for <em>split</em> may also be given to <em>push</em> (which wraps
+<em>split</em>).</p>
+</div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">--annotate=&lt;annotation&gt;</dt>
 <dd>
-<p>This option is only valid for the split command.</p>
-<div class="paragraph">
 <p>When generating synthetic history, add &lt;annotation&gt; as a prefix to each
 commit message.  Since we&#8217;re creating new commits with the same commit
 message, but possibly different content, from the original commits, this
 can help to differentiate them and avoid confusion.</p>
-</div>
 <div class="paragraph">
 <p>Whenever you split, you need to use the same &lt;annotation&gt;, or else you
 don&#8217;t have a guarantee that the new re-created history will be identical
 to the old one.  That will prevent merging from working correctly.  git
-subtree tries to make it work anyway, particularly if you use --rejoin,
+subtree tries to make it work anyway, particularly if you use <em>--rejoin</em>,
 but it may not always be effective.</p>
 </div>
 </dd>
 <dt class="hdlist1">-b &lt;branch&gt;</dt>
 <dt class="hdlist1">--branch=&lt;branch&gt;</dt>
 <dd>
-<p>This option is only valid for the split command.</p>
-<div class="paragraph">
 <p>After generating the synthetic history, create a new branch called
 &lt;branch&gt; that contains the new history.  This is suitable for immediate
 pushing upstream.  &lt;branch&gt; must not already exist.</p>
-</div>
 </dd>
 <dt class="hdlist1">--ignore-joins</dt>
 <dd>
-<p>This option is only valid for the split command.</p>
-<div class="paragraph">
 <p>If you use <em>--rejoin</em>, git subtree attempts to optimize its history
 reconstruction to generate only the new commits since the last
-<em>--rejoin</em>.  <em>--ignore-join</em> disables this behaviour, forcing it to
+<em>--rejoin</em>.  <em>--ignore-joins</em> disables this behavior, forcing it to
 regenerate the entire history.  In a large project, this can take a long
 time.</p>
-</div>
 </dd>
 <dt class="hdlist1">--onto=&lt;onto&gt;</dt>
 <dd>
-<p>This option is only valid for the split command.</p>
-<div class="paragraph">
 <p>If your subtree was originally imported using something other than git
 subtree, its history may not match what git subtree is expecting.  In
-that case, you can specify the commit id &lt;onto&gt; that corresponds to the
+that case, you can specify the commit ID &lt;onto&gt; that corresponds to the
 first revision of the subproject&#8217;s history that was imported into your
 project, and git subtree will attempt to build its history from there.</p>
-</div>
 <div class="paragraph">
 <p>If you used <em>git subtree add</em>, you should never need this option.</p>
 </div>
 </dd>
 <dt class="hdlist1">--rejoin</dt>
 <dd>
-<p>This option is only valid for the split command.</p>
-<div class="paragraph">
 <p>After splitting, merge the newly created synthetic history back into
 your main project.  That way, future splits can search only the part of
-history that has been added since the most recent --rejoin.</p>
-</div>
+history that has been added since the most recent <em>--rejoin</em>.</p>
 <div class="paragraph">
 <p>If your split commits end up merged into the upstream subproject, and
 then you want to get the latest upstream version, this will allow git&#8217;s
@@ -746,9 +737,8 @@ copy of every new commit that was created (the original, and the
 synthetic one).</p>
 </div>
 <div class="paragraph">
-<p>If you do all your merges with <em>--squash</em>, don&#8217;t use <em>--rejoin</em> when you
-split, because you don&#8217;t want the subproject&#8217;s history to be part of
-your project anyway.</p>
+<p>If you do all your merges with <em>--squash</em>, make sure you also use
+<em>--squash</em> when you <em>split --rejoin</em>.</p>
 </div>
 </dd>
 </dl>
@@ -756,7 +746,7 @@ your project anyway.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_example_1_add_command">EXAMPLE 1. Add command</h2>
+<h2 id="_example_1_add_command">EXAMPLE 1. <em>add</em> command</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Let&#8217;s assume that you have a local repository that you would like
@@ -775,7 +765,7 @@ git-extensions repository in ~/git-extensions/:</p>
 name</p>
 </div>
 <div class="paragraph">
-<p>You can omit the --squash flag, but doing so will increase the number
+<p>You can omit the <em>--squash</em> flag, but doing so will increase the number
 of commits that are included in your local repository.</p>
 </div>
 <div class="paragraph">
@@ -786,7 +776,7 @@ in our git-extensions repository.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_example_2_extract_a_subtree_using_commit_merge_and_pull">EXAMPLE 2. Extract a subtree using commit, merge and pull</h2>
+<h2 id="_example_2_extract_a_subtree_using_commit_merge_and_pull">EXAMPLE 2. Extract a subtree using <em>commit</em>, <em>merge</em> and <em>pull</em></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Let&#8217;s use the repository for the git source code as an example.
@@ -820,9 +810,9 @@ the upstream.  You could do this:</p>
 </div>
 <div class="paragraph">
 <p>If gitweb had originally been merged using <em>git subtree add</em> (or
-a previous split had already been done with --rejoin specified)
+a previous split had already been done with <em>--rejoin</em> specified)
 then you can do all your splits without having to remember any
-weird commit ids:</p>
+weird commit IDs:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -887,7 +877,7 @@ the standard gitweb:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_example_3_extract_a_subtree_using_branch">EXAMPLE 3. Extract a subtree using branch</h2>
+<h2 id="_example_3_extract_a_subtree_using_a_branch">EXAMPLE 3. Extract a subtree using a branch</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Suppose you have a source directory with many files and
@@ -940,7 +930,7 @@ $ git init --bare</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-03-27 09:47:30 UTC
+Last updated 2021-05-17 10:38:17 UTC
 </div>
 </div>
 </body>
