@@ -3,11 +3,10 @@ package HTTP::Status;
 use strict;
 use warnings;
 
-our $VERSION = '6.29';
+our $VERSION = '6.30';
 
-require 5.002;   # because we use prototypes
+use Exporter 5.57 'import';
 
-use base 'Exporter';
 our @EXPORT = qw(is_info is_success is_redirect is_error status_message);
 our @EXPORT_OK = qw(is_client_error is_server_error is_cacheable_by_default);
 
@@ -175,7 +174,7 @@ HTTP::Status - HTTP Status code processing
 
 =head1 VERSION
 
-version 6.29
+version 6.30
 
 =head1 SYNOPSIS
 
