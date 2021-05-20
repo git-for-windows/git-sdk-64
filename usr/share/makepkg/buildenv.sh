@@ -36,5 +36,5 @@ prepare_buildenv() {
 	done
 
 	# ensure all necessary build variables are exported
-	export CPPFLAGS CFLAGS CXXFLAGS LDFLAGS RUSTFLAGS MAKEFLAGS CHOST
+	export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS RUSTFLAGS MAKEFLAGS CHOST
 }
