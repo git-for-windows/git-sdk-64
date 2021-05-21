@@ -8,39 +8,42 @@
 #ifndef _TIFFCONF_
 #define _TIFFCONF_
 
+
+#include <stddef.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+
 /* Signed 16-bit type */
-#define TIFF_INT16_T signed short
+/* #undef TIFF_INT16_T */
 
 /* Signed 32-bit type */
-#define TIFF_INT32_T signed int
+/* #undef TIFF_INT32_T */
 
 /* Signed 64-bit type */
-#define TIFF_INT64_T signed long long
+/* #undef TIFF_INT64_T */
 
 /* Signed 8-bit type */
-#define TIFF_INT8_T signed char
+/* #undef TIFF_INT8_T */
 
 /* Unsigned 16-bit type */
-#define TIFF_UINT16_T unsigned short
+/* #undef TIFF_UINT16_T */
 
 /* Unsigned 32-bit type */
-#define TIFF_UINT32_T unsigned int
+/* #undef TIFF_UINT32_T */
 
 /* Unsigned 64-bit type */
-#define TIFF_UINT64_T unsigned long long
+/* #undef TIFF_UINT64_T */
 
 /* Unsigned 8-bit type */
-#define TIFF_UINT8_T unsigned char
+/* #undef TIFF_UINT8_T */
 
 /* Signed size type */
-#define TIFF_SSIZE_T signed long long
-
-/* Pointer difference type */
-#define TIFF_PTRDIFF_T ptrdiff_t
+#define TIFF_SSIZE_T int64_t
 
 /* Compatibility stuff. */
 
-/* Define as 0 or 1 according to the floating point format suported by the
+/* Define as 0 or 1 according to the floating point format supported by the
    machine */
 #define HAVE_IEEEFP 1
 
@@ -58,7 +61,10 @@
 #define JPEG_SUPPORT 1
 
 /* Support JBIG compression (requires JBIG-KIT library) */
-/* #undef JBIG_SUPPORT */
+#define JBIG_SUPPORT 1
+
+/* Support LERC compression */
+/* #undef LERC_SUPPORT */
 
 /* Support LogLuv high dynamic range encoding */
 #define LOGLUV_SUPPORT 1
@@ -89,7 +95,7 @@
 #define LIBDEFLATE_SUPPORT 1
 
 /* Support strip chopping (whether or not to convert single-strip uncompressed
-   images to mutiple strips of ~8Kb to reduce memory usage) */
+   images to multiple strips of ~8Kb to reduce memory usage) */
 #define STRIPCHOP_DEFAULT TIFF_STRIPCHOP
 
 /* Enable SubIFD tag (330) support */
