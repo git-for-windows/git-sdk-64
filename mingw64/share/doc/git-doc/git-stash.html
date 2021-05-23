@@ -543,8 +543,10 @@ created.
 By default, the command shows the diffstat, but it will accept any
 format known to <em>git diff</em> (e.g., <code>git stash show -p stash@{1}</code>
 to view the second most recent entry in patch form).
-You can use stash.showIncludeUntracked, stash.showStat, and
-stash.showPatch config variables to change the default behavior.</p>
+If no <code>&lt;diff-option&gt;</code> is provided, the default behavior will be given
+by the <code>stash.showStat</code>, and <code>stash.showPatch</code> config variables. You
+can also use <code>stash.showIncludeUntracked</code> to set whether
+<code>--include-untracked</code> is enabled by default.</p>
 </dd>
 <dt class="hdlist1">pop [--index] [-q|--quiet] [&lt;stash&gt;]</dt>
 <dd>
@@ -886,7 +888,7 @@ xargs git log --merges --no-walk --grep=WIP</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-05-17 10:38:17 UTC
+Last updated 2021-05-22 13:36:45 UTC
 </div>
 </div>
 </body>
