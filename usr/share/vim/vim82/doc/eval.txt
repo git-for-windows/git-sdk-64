@@ -1,4 +1,4 @@
-*eval.txt*	For Vim version 8.2.  Last change: 2021 Mar 28
+*eval.txt*	For Vim version 8.2.  Last change: 2021 May 07
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -1550,8 +1550,11 @@ the following ways:
 
 The arguments are optional.  Example: >
 	:let F = {-> 'error function'}
-	:echo F()
+	:echo F('ignored')
 <	error function
+
+Note that in Vim9 script another kind of lambda can be used: |vim9-lambda|.
+
 							*closure*
 Lambda expressions can access outer scope variables and arguments.  This is
 often called a closure.  Example where "i" and "a:arg" are used in a lambda
@@ -1586,7 +1589,7 @@ The lambda expression is also useful for Channel, Job and timer: >
 	Handler called
 
 Note how execute() is used to execute an Ex command.  That's ugly though.
-
+In Vim9 script you can use a command block, see |inline-function|.
 
 Lambda expressions have internal names like '<lambda>42'.  If you get an error
 for a lambda expression, you can find what it is with the following command: >
@@ -1958,6 +1961,9 @@ v:fcs_choice	What should happen after a |FileChangedShell| event was
 					everything that needs to be done.
 		The default is empty.  If another (invalid) value is used then
 		Vim behaves like it is empty, there is no warning message.
+
+					*v:fname* *fname-variable*
+v:fname		The file name set by 'includeexpr'.  Empty otherwise.
 
 					*v:fname_in* *fname_in-variable*
 v:fname_in	The name of the input file.  Valid while evaluating:
@@ -2440,6 +2446,7 @@ assert_inrange({lower}, {upper}, {actual} [, {msg}])
 				Number	assert {actual} is inside the range
 assert_match({pat}, {text} [, {msg}])
 				Number	assert {pat} matches {text}
+assert_nobeep({cmd})		Number	assert {cmd} does not cause a beep
 assert_notequal({exp}, {act} [, {msg}])
 				Number	assert {exp} is not equal {act}
 assert_notmatch({pat}, {text} [, {msg}])
@@ -5771,7 +5778,6 @@ getmousepos()						*getmousepos()*
 
 		If the mouse is over a popup window then that window is used.
 
-
 		When using |getchar()| the Vim variables |v:mouse_lnum|,
 		|v:mouse_col| and |v:mouse_winid| also provide these values.
 
@@ -6086,7 +6092,7 @@ getwininfo([{winid}])					*getwininfo()*
 		tab pages is returned.
 
 		Each List item is a |Dictionary| with the following entries:
-			botline		last displayed buffer line
+			botline		last complete displayed buffer line
 			bufnr		number of buffer in the window
 			height		window height (excluding winbar)
 			loclist		1 if showing a location list
@@ -6717,6 +6723,7 @@ islocked({expr})					*islocked()* *E786*
 
 <		When {expr} is a variable that does not exist you get an error
 		message.  Use |exists()| to check for existence.
+		In Vim9 script it does not work for local variables.
 
 		Can also be used as a |method|: >
 			GetName()->islocked()
@@ -7583,6 +7590,9 @@ matchfuzzy({list}, {str} [, {dict}])			*matchfuzzy()*
 		If there are no matching strings or there is an error, then an
 		empty list is returned. If length of {str} is greater than
 		256, then returns an empty list.
+
+		Refer to |fuzzy-match| for more information about fuzzy
+		matching strings.
 
 		Example: >
 		   :echo matchfuzzy(["clay", "crow"], "cay")
@@ -9181,6 +9191,8 @@ searchpair({start}, {middle}, {end} [, {flags} [, {skip}
 		and -1 returned.
 		{skip} can be a string, a lambda, a funcref or a partial.
 		Anything else makes the function fail.
+		In a `:def` function when the {skip} argument is a string
+		constant it is compiled into instructions.
 
 		For {stopline} and {timeout} see |search()|.
 
@@ -11865,7 +11877,7 @@ gui_mac			Compiled with Macintosh GUI.
 gui_motif		Compiled with Motif GUI.
 gui_photon		Compiled with Photon GUI.
 gui_running		Vim is running in the GUI, or it will start soon.
-gui_win32		Compiled with MS Windows Win32 GUI.
+gui_win32		Compiled with MS-Windows Win32 GUI.
 gui_win32s		idem, and Win32s system being used (Windows 3.1)
 haiku			Haiku version of Vim.
 hangul_input		Compiled with Hangul input support. |hangul|
