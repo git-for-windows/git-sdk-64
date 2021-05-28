@@ -440,7 +440,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>git-fsmonitor&#8212;&#8203;daemon(1) Manual Page</h1>
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<p>git-fsmonitor--daemon - (EXPERIMENTAL) Builtin file system monitor daemon</p>
+<p>git-fsmonitor--daemon - (EXPERIMENTAL) A Built-in File System Monitor</p>
 </div>
 </div>
 <div id="content">
@@ -448,14 +448,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git fsmonitor&#8212;&#8203;daemon</em> --start
-<em>git fsmonitor&#8212;&#8203;daemon</em> --run
-<em>git fsmonitor&#8212;&#8203;daemon</em> --stop
-<em>git fsmonitor&#8212;&#8203;daemon</em> --is-running
-<em>git fsmonitor&#8212;&#8203;daemon</em> --is-supported
-<em>git fsmonitor&#8212;&#8203;daemon</em> --query &lt;token&gt;
-<em>git fsmonitor&#8212;&#8203;daemon</em> --query-index
-<em>git fsmonitor&#8212;&#8203;daemon</em> --flush</pre>
+<pre class="content"><em>git fsmonitor&#8212;&#8203;daemon</em> start
+<em>git fsmonitor&#8212;&#8203;daemon</em> run
+<em>git fsmonitor&#8212;&#8203;daemon</em> stop
+<em>git fsmonitor&#8212;&#8203;daemon</em> status</pre>
 </div>
 </div>
 </div>
@@ -467,13 +463,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 (or even to be abandoned).</p>
 </div>
 <div class="paragraph">
-<p>Monitors files and directories in the working directory for changes using
-platform-specific file system notification facilities.</p>
+<p>A daemon to watch the working directory for file and directory
+changes using platform-specific file system notification facilities.</p>
 </div>
 <div class="paragraph">
-<p>It communicates directly with commands like <code>git status</code> using the
-<a href="technical/api-simple-ipc.html">simple IPC</a> interface instead of
-the slower <a href="githooks.html">githooks(5)</a> interface.</p>
+<p>This daemon communicates directly with commands like <code>git status</code>
+using the <a href="technical/api-simple-ipc.html">simple IPC</a> interface
+instead of the slower <a href="githooks.html">githooks(5)</a> interface.</p>
+</div>
+<div class="paragraph">
+<p>This daemon is built into Git so that no third-party tools are
+required.</p>
 </div>
 </div>
 </div>
@@ -482,47 +482,23 @@ the slower <a href="githooks.html">githooks(5)</a> interface.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--start</dt>
+<dt class="hdlist1">start</dt>
 <dd>
-<p>Starts the fsmonitor daemon in the background.</p>
+<p>Starts a daemon in the background.</p>
 </dd>
-<dt class="hdlist1">--run</dt>
+<dt class="hdlist1">run</dt>
 <dd>
-<p>Runs the fsmonitor daemon in the foreground.</p>
+<p>Runs a daemon in the foreground.</p>
 </dd>
-<dt class="hdlist1">--stop</dt>
+<dt class="hdlist1">stop</dt>
 <dd>
-<p>Stops the fsmonitor daemon running for the current working
+<p>Stops the daemon running in the current working
 directory, if present.</p>
 </dd>
-<dt class="hdlist1">--is-running</dt>
+<dt class="hdlist1">status</dt>
 <dd>
-<p>Exits with zero status if the fsmonitor daemon is watching the
+<p>Exits with zero status if a daemon is watching the
 current working directory.</p>
-</dd>
-<dt class="hdlist1">--is-supported</dt>
-<dd>
-<p>Exits with zero status if the fsmonitor daemon feature is supported
-on this platform.</p>
-</dd>
-<dt class="hdlist1">--query &lt;token&gt;</dt>
-<dd>
-<p>Connects to the fsmonitor daemon (starting it if necessary) and
-requests the list of changed files and directories since the
-given token.
-This is intended for testing purposes.</p>
-</dd>
-<dt class="hdlist1">--query-index</dt>
-<dd>
-<p>Read the current <code>&lt;token&gt;</code> from the File System Monitor index
-extension (if present) and use it to query the fsmonitor daemon.
-This is intended for testing purposes.</p>
-</dd>
-<dt class="hdlist1">--flush</dt>
-<dd>
-<p>Force the fsmonitor daemon to flush its in-memory cache and
-re-sync with the file system.
-This is intended for testing purposes.</p>
 </dd>
 </dl>
 </div>
@@ -532,27 +508,16 @@ This is intended for testing purposes.</p>
 <h2 id="_remarks">REMARKS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The fsmonitor daemon is a long running process that will watch a single
-working directory.  Commands, such as <code>git status</code>, should automatically
-start it (if necessary) when <code>core.useBuiltinFSMonitor</code> is set to <code>true</code>
-(see <a href="git-config.html">git-config(1)</a>).</p>
+<p>This daemon is a long running process used to watch a single working
+directory and maintain a list of the recently changed files and
+directories.  Performance of commands such as <code>git status</code> can be
+increased if they just ask for a summary of changes to the working
+directory and can avoid scanning the disk.</p>
 </div>
 <div class="paragraph">
-<p>Configure the built-in FSMonitor via <code>core.useBuiltinFSMonitor</code> in each
-working directory separately, or globally via <code>git config --global
-core.useBuiltinFSMonitor true</code>.</p>
-</div>
-<div class="paragraph">
-<p>Tokens are opaque strings.  They are used by the fsmonitor daemon to
-mark a point in time and the associated internal state.  Callers should
-make no assumptions about the content of the token.  In particular,
-the should not assume that it is a timestamp.</p>
-</div>
-<div class="paragraph">
-<p>Query commands send a request-token to the daemon and it responds with
-a summary of the changes that have occurred since that token was
-created.  The daemon also returns a response-token that the client can
-use in a future query.</p>
+<p>When <code>core.useBuiltinFSMonitor</code> is set to <code>true</code> (see
+<a href="git-config.html">git-config(1)</a>) commands, such as <code>git status</code>, will ask the
+daemon for changes and automatically start it (if necessary).</p>
 </div>
 <div class="paragraph">
 <p>For more information see the "File System Monitor" section in
@@ -569,8 +534,8 @@ not know to filter out file system events that happen within a
 submodule.  If fsmonitor daemon is watching a super repo and a file is
 modified within the working directory of a submodule, it will report
 the change (as happening against the super repo).  However, the client
-should properly ignore these extra events, so performance may be affected
-but it should not cause an incorrect result.</p>
+will properly ignore these extra events, so performance may be affected
+but it will not cause an incorrect result.</p>
 </div>
 </div>
 </div>
@@ -585,7 +550,7 @@ but it should not cause an incorrect result.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-05-22 13:36:45 UTC
+Last updated 2021-05-28 11:46:17 UTC
 </div>
 </div>
 </body>

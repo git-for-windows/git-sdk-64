@@ -1738,57 +1738,59 @@ Defaults to <code>true</code> on Windows, and <code>false</code> elsewhere.</p>
 </dd>
 <dt class="hdlist1">core.fsmonitor</dt>
 <dd>
-<p>If set, the value of this variable is used as a command which
-will identify all files that may have changed since the
-requested date/time. This information is used to speed up git by
-avoiding unnecessary processing of files that have not changed.</p>
+<p>If set, this variable contains the pathname of the "fsmonitor"
+hook command.</p>
+<div class="paragraph">
+<p>This hook command is used to identify all files that may have changed
+since the requested date/time. This information is used to speed up
+git by avoiding unnecessary scanning of files that have not changed.</p>
+</div>
 <div class="paragraph">
 <p>See the "fsmonitor-watchman" section of <a href="githooks.html">githooks(5)</a>.</p>
 </div>
 <div class="paragraph">
-<p>Note: FSMonitor hooks (and this config setting) are ignored if the
-(experimental) built-in FSMonitor is enabled (see
-<code>core.useBuiltinFSMonitor</code>).</p>
+<p>Note: The value of this config setting is ignored if the (experimental)
+built-in file system monitor is enabled (see <code>core.useBuiltinFSMonitor</code>).</p>
 </div>
 </dd>
 <dt class="hdlist1">core.fsmonitorHookVersion</dt>
 <dd>
-<p>Sets the version of hook that is to be used when calling the
-FSMonitor hook (as configured via <code>core.fsmonitor</code>).</p>
+<p>Sets the protocol version to be used when invoking the
+"fsmonitor" hook.</p>
 <div class="paragraph">
 <p>There are currently versions 1 and 2. When this is not set,
 version 2 will be tried first and if it fails then version 1
 will be tried. Version 1 uses a timestamp as input to determine
 which files have changes since that time but some monitors
-like watchman have race conditions when used with a timestamp.
+like Watchman have race conditions when used with a timestamp.
 Version 2 uses an opaque string so that the monitor can return
 something that can be used to determine what files have changed
 without race conditions.</p>
 </div>
 <div class="paragraph">
-<p>Note: FSMonitor hooks (and this config setting) are ignored if the
-built-in FSMonitor is enabled (see <code>core.useBuiltinFSMonitor</code>).</p>
+<p>Note: The value of this config setting is ignored if the
+built-in file system monitor is enabled (see <code>core.useBuiltinFSMonitor</code>).</p>
 </div>
 </dd>
 <dt class="hdlist1">core.useBuiltinFSMonitor</dt>
 <dd>
-<p>(EXPERIMENTAL) If set to true, enable the built-in filesystem
-event watcher (for technical details, see
-<a href="git-fsmonitor&#8212;&#8203;daemon.html">git-fsmonitor&#8212;&#8203;daemon(1)</a>).</p>
+<p>(EXPERIMENTAL) If set to true, enable the built-in file system monitor
+daemon for this working directory (<a href="git-fsmonitor&#8212;&#8203;daemon.html">git-fsmonitor&#8212;&#8203;daemon(1)</a>).</p>
 <div class="paragraph">
-<p>Like external (hook-based) FSMonitors, the built-in FSMonitor can speed up
-Git commands that need to refresh the Git index (e.g. <code>git status</code>) in a
-worktree with many files. The built-in FSMonitor facility eliminates the
-need to install and maintain an external third-party monitoring tool.</p>
+<p>Like hook-based file system monitors, the built-in file system monitor
+can speed up Git commands that need to refresh the Git index
+(e.g. <code>git status</code>) in a working directory with many files.  The
+built-in monitor eliminates the need to install and maintain an
+external third-party tool.</p>
 </div>
 <div class="paragraph">
-<p>The built-in FSMonitor is currently available only on a limited set of
-supported platforms.</p>
+<p>The built-in file system monitor is currently available only on a
+limited set of supported platforms.  Currently, this includes Windows
+and MacOS.</p>
 </div>
 <div class="paragraph">
-<p>Note: if this config setting is set to <code>true</code>, any FSMonitor hook
-configured via <code>core.fsmonitor</code> (and possibly <code>core.fsmonitorHookVersion</code>)
-is ignored.</p>
+<p>Note: if this config setting is set to <code>true</code>, the values of
+<code>core.fsmonitor</code> and <code>core.fsmonitorHookVersion</code> are ignored.</p>
 </div>
 </dd>
 <dt class="hdlist1">core.trustctime</dt>
@@ -7596,7 +7598,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-05-22 13:36:45 UTC
+Last updated 2021-05-28 11:46:17 UTC
 </div>
 </div>
 </body>
