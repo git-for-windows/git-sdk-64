@@ -1,7 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.7 from gnutls.texi.
 
-This manual is last updated 24 February 2021 for version 3.7.1 of
-GnuTLS.
+This manual is last updated 19 April 2021 for version 3.7.2 of GnuTLS.
 
 Copyright (C) 2001-2021 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2021 Nikos Mavrogiannopoulos
@@ -872,7 +871,7 @@ that, to ensure they don't disrupt GnuTLS' operation.
    ---------- Footnotes ----------
 
    (1) The original behavior of requiring explicit initialization can
-obtained by setting the GNUTLS_NO_EXPLICIT_INIT environment variable to
+obtained by setting the GNUTLS_NO_IMPLICIT_INIT environment variable to
 1, or by using the macro GNUTLS_SKIP_GLOBAL_INIT in a global section of
 your program -the latter works in systems with support for weak symbols
 only.
@@ -1074,12 +1073,15 @@ underlying protocol type, i.e., datagram (UDP) or reliable (TCP).
      the same session for sending and receiving in different threads.
 'GNUTLS_ENABLE_EARLY_DATA'
      Under TLS1.3 allow the server to receive early data sent as part of
-     the initial ClientHello (0-RTT). This is not enabled by default as
-     early data has weaker security properties than other data.  Since
-     3.6.5.
+     the initial ClientHello (0-RTT). This can also be used to
+     explicitly indicate that the client will send early data.  This is
+     not enabled by default as early data has weaker security properties
+     than other data.  Since 3.6.5.
 'GNUTLS_NO_AUTO_SEND_TICKET'
      Under TLS1.3 disable auto-sending of session tickets during the
      handshake.
+'GNUTLS_NO_END_OF_EARLY_DATA'
+     Under TLS1.3 suppress sending EndOfEarlyData message.  Since 3.7.2.
 
 Figure 6.2: The 'gnutls_init_flags_t' enumeration.
 
@@ -3127,6 +3129,11 @@ Keyword                          Description
                                  that try to reconnect with a
                                  downgraded protocol version.
                                  See RFC7507 for details.
+                                 
+%DISABLE_TLS13_COMPAT_MODE       will disable TLS 1.3 middlebox
+                                 compatibility mode (RFC8446,
+                                 Appendix D.4) for
+                                 non-compliant middleboxes.
                                  
 %VERIFY_ALLOW_BROKEN             will allow signatures with
                                  known to be broken algorithms
@@ -6236,7 +6243,7 @@ verify_certificate_chain(const char *hostname,
         CHECK(gnutls_x509_trust_list_add_crls(tlist, crl_list, crl_list_size,
                                               GNUTLS_TL_VERIFY_CRL, 0));
 
-        cert = malloc(sizeof(*cert) * cert_chain_length);
+        cert = gnutls_calloc(cert_chain_length, sizeof(*cert));
         assert(cert != NULL);
 
         /* Import all the certificates in the chain to
@@ -6285,6 +6292,11 @@ verify_certificate_chain(const char *hostname,
                     ("The certificate's owner does not match hostname '%s'\n",
                      hostname);
         }
+
+        for (i = 0; i < cert_chain_length; i++) {
+                gnutls_x509_crt_deinit(cert[i]);
+        }
+	gnutls_free(cert);
 
         gnutls_x509_trust_list_deinit(tlist, 1);
 

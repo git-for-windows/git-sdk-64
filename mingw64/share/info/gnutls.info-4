@@ -1,7 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.7 from gnutls.texi.
 
-This manual is last updated 24 February 2021 for version 3.7.1 of
-GnuTLS.
+This manual is last updated 19 April 2021 for version 3.7.2 of GnuTLS.
 
 Copyright (C) 2001-2021 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2021 Nikos Mavrogiannopoulos
@@ -3513,7 +3512,9 @@ gnutls_x509_crt_get_dn
      described in RFC4514.  The output string will be ASCII or UTF-8
      encoded, depending on the certificate data.
 
-     If 'buf' is null then only the size will be filled.
+     The 'buf' returned will be null terminated and the 'buf_size' will
+     account for the trailing null.  If 'buf' is null then only the size
+     will be filled.
 
      This function does not output a fully RFC4514 compliant string, if
      that is required see 'gnutls_x509_crt_get_dn3()' .
@@ -5728,8 +5729,7 @@ gnutls_x509_crt_set_serial
      opaque field by several CAs.  For this reason this function accepts
      any kind of data as a serial number.  To be consistent with the
      X.509/PKIX specifications the provided 'serial' should be a
-     big-endian positive number (i.e.  it's leftmost bit should be
-     zero).
+     big-endian positive number (i.e.  its leftmost bit should be zero).
 
      The size of the serial is restricted to 20 bytes maximum by
      RFC5280.  This function allows writing more than 20 bytes but the

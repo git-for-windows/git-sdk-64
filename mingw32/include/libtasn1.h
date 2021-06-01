@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2014 Free Software Foundation, Inc.
+ * Copyright (C) 2002-2021 Free Software Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -21,12 +21,8 @@
  */
 
 /**
- * libtasn1:Short_Description:
- *
- * GNU ASN.1 library
- */
-/**
- * libtasn1:Long_Description:
+ * SECTION:libtasn1
+ * @short_description: GNU ASN.1 library
  *
  * The Libtasn1 library provides Abstract Syntax Notation One (ASN.1, as
  * specified by the X.680 ITU-T recommendation) parsing and structures
@@ -72,7 +68,7 @@ extern "C"
  *
  * Version of the library as a string.
  */
-#define ASN1_VERSION "4.16.0"
+#define ASN1_VERSION "4.17.0"
 
 /**
  * ASN1_VERSION_MAJOR:
@@ -86,7 +82,7 @@ extern "C"
  *
  * Minor version number of the library.
  */
-#define ASN1_VERSION_MINOR 16
+#define ASN1_VERSION_MINOR 17
 
 /**
  * ASN1_VERSION_PATCH:
@@ -100,7 +96,7 @@ extern "C"
  *
  * Version number of the library as a number.
  */
-#define ASN1_VERSION_NUMBER 0x041000
+#define ASN1_VERSION_NUMBER 0x041100
 
 
 #if defined __GNUC__ && !defined ASN1_INTERNAL_BUILD
@@ -207,15 +203,14 @@ typedef const asn1_node_st *asn1_node_const;
  *
  * For the on-disk format of ASN.1 trees, created by asn1_parser2array().
  */
-struct asn1_static_node_st
+typedef struct asn1_static_node_st
 {
   const char *name;		/* Node name */
   unsigned int type;		/* Node type */
   const void *value;		/* Node value */
-};
-typedef struct asn1_static_node_st asn1_static_node;
+} asn1_static_node;
 
-/* List of constants for field type of node_asn  */
+/* List of constants for field type of asn1_static_node */
 #define ASN1_ETYPE_INVALID        0
 #define ASN1_ETYPE_CONSTANT       1
 #define ASN1_ETYPE_IDENTIFIER     2
@@ -498,7 +493,7 @@ extern ASN1_API int
  *
  * Deprecated: 3.0: Use int instead.
  */
-typedef int asn1_retCode;
+typedef int asn1_retCode _ASN1_GCC_ATTR_DEPRECATED;
 
 /**
  * node_asn_struct:
@@ -507,7 +502,13 @@ typedef int asn1_retCode;
  *
  * Deprecated: 3.0: Use #asn1_node instead.
  */
+#ifndef ASN1_DISABLE_DEPRECATED
+#if _ASN1_GCC_VERSION >= 30100
+#define node_asn_struct _Pragma ("GCC warning \"'node_asn_struct' macro is deprecated, use 'asn1_node' instead.\"") asn1_node_st
+#else
 #define node_asn_struct asn1_node_st
+#endif
+#endif /* !ASN1_DISABLE_DEPRECATED */
 
 /**
  * node_asn:
@@ -516,7 +517,13 @@ typedef int asn1_retCode;
  *
  * Deprecated: 3.0: Use #asn1_node instead.
  */
+#ifndef ASN1_DISABLE_DEPRECATED
+#if _ASN1_GCC_VERSION >= 30100
+#define node_asn _Pragma ("GCC warning \"'node_asn' macro is deprecated, use 'asn1_node' instead.\"") asn1_node_st
+#else
 #define node_asn asn1_node_st
+#endif
+#endif /* !ASN1_DISABLE_DEPRECATED */
 
 /**
  * ASN1_TYPE:
@@ -525,7 +532,13 @@ typedef int asn1_retCode;
  *
  * Deprecated: 3.0: Use #asn1_node instead.
  */
+#ifndef ASN1_DISABLE_DEPRECATED
+#if _ASN1_GCC_VERSION >= 30100
+#define ASN1_TYPE _Pragma ("GCC warning \"'ASN1_TYPE' macro is deprecated, use 'asn1_node' instead.\"") asn1_node
+#else
 #define ASN1_TYPE asn1_node
+#endif
+#endif /* !ASN1_DISABLE_DEPRECATED */
 
 /**
  * ASN1_TYPE_EMPTY:
@@ -534,7 +547,13 @@ typedef int asn1_retCode;
  *
  * Deprecated: 3.0: Use NULL instead.
  */
+#ifndef ASN1_DISABLE_DEPRECATED
+#if _ASN1_GCC_VERSION >= 30100
+#define ASN1_TYPE_EMPTY _Pragma ("GCC warning \"'ASN1_TYPE_EMPTY' macro is deprecated, use 'NULL' instead.\"") NULL
+#else
 #define ASN1_TYPE_EMPTY NULL
+#endif
+#endif /* !ASN1_DISABLE_DEPRECATED */
 
 /**
  * static_struct_asn:
@@ -543,7 +562,13 @@ typedef int asn1_retCode;
  *
  * Deprecated: 3.0: Use #asn1_static_node instead.
  */
+#ifndef ASN1_DISABLE_DEPRECATED
+#if _ASN1_GCC_VERSION >= 30100
+#define static_struct_asn _Pragma ("GCC warning \"'static_struct_asn' macro is deprecated, use 'asn1_static_node_st' instead.\"") asn1_static_node_st
+#else
 #define static_struct_asn asn1_static_node_st
+#endif
+#endif /* !ASN1_DISABLE_DEPRECATED */
 
 /**
  * ASN1_ARRAY_TYPE:
@@ -552,7 +577,13 @@ typedef int asn1_retCode;
  *
  * Deprecated: 3.0: Use #asn1_static_node instead.
  */
+#ifndef ASN1_DISABLE_DEPRECATED
+#if _ASN1_GCC_VERSION >= 30100
+#define ASN1_ARRAY_TYPE _Pragma ("GCC warning \"'ASN1_ARRAY_TYPE' macro is deprecated, use 'asn1_static_node' instead.\"") asn1_static_node
+#else
 #define ASN1_ARRAY_TYPE asn1_static_node
+#endif
+#endif /* !ASN1_DISABLE_DEPRECATED */
 
 /**
  * asn1_static_node_t:
@@ -561,7 +592,13 @@ typedef int asn1_retCode;
  *
  * Deprecated: 3.0: Use #asn1_static_node instead.
  */
+#ifndef ASN1_DISABLE_DEPRECATED
+#if _ASN1_GCC_VERSION >= 30100
+#define asn1_static_node_t _Pragma ("GCC warning \"'asn1_static_node_t' macro is deprecated, use 'asn1_static_node' instead.\"") asn1_static_node
+#else
 #define asn1_static_node_t asn1_static_node
+#endif
+#endif /* !ASN1_DISABLE_DEPRECATED */
 
 /**
  * node_data_struct:
@@ -570,7 +607,13 @@ typedef int asn1_retCode;
  *
  * Deprecated: 3.0: Use #asn1_data_node_st instead.
  */
+#ifndef ASN1_DISABLE_DEPRECATED
+#if _ASN1_GCC_VERSION >= 30100
+#define node_data_struct _Pragma ("GCC warning \"'node_data_struct' macro is deprecated, use 'asn1_data_node_st' instead.\"") asn1_data_node_st
+#else
 #define node_data_struct asn1_data_node_st
+#endif
+#endif /* !ASN1_DISABLE_DEPRECATED */
 
 /**
  * ASN1_DATA_NODE:
@@ -579,7 +622,13 @@ typedef int asn1_retCode;
  *
  * Deprecated: 3.0: Use #asn1_data_node_st instead.
  */
+#ifndef ASN1_DISABLE_DEPRECATED
+#if _ASN1_GCC_VERSION >= 30100
+#define ASN1_DATA_NODE _Pragma ("GCC warning \"'asn1_static_node_t' macro is deprecated, use 'asn1_static_node' instead.\"") asn1_data_node_st
+#else
 #define ASN1_DATA_NODE asn1_data_node_st
+#endif
+#endif /* !ASN1_DISABLE_DEPRECATED */
 
 #ifdef __cplusplus
 }

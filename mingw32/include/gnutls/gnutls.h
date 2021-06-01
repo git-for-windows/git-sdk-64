@@ -51,13 +51,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.7.1"
+#define GNUTLS_VERSION "3.7.2"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 7
-#define GNUTLS_VERSION_PATCH 1
+#define GNUTLS_VERSION_PATCH 2
 
-#define GNUTLS_VERSION_NUMBER 0x030701
+#define GNUTLS_VERSION_NUMBER 0x030702
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -445,7 +445,9 @@ typedef enum {
  *   finish; similarly to false start the handshake will be completed once data are received by the
  *   client, while the server is able to transmit sooner. This is not enabled by default as it could
  *   break certain existing server assumptions and use-cases. Since 3.6.4.
- * @GNUTLS_ENABLE_EARLY_DATA: Under TLS1.3 allow the server to receive early data sent as part of the initial ClientHello (0-RTT). This is not enabled by default as early data has weaker security properties than other data. Since 3.6.5.
+ * @GNUTLS_ENABLE_EARLY_DATA: Under TLS1.3 allow the server to receive early data sent as part of the initial ClientHello (0-RTT).
+ *   This can also be used to explicitly indicate that the client will send early data.
+ *   This is not enabled by default as early data has weaker security properties than other data. Since 3.6.5.
  * @GNUTLS_FORCE_CLIENT_CERT: When in client side and only a single cert is specified, send that certificate irrespective of the issuers expected by the server. Since 3.5.0.
  * @GNUTLS_NO_TICKETS: Flag to indicate that the session should not use resumption with session tickets.
  * @GNUTLS_KEY_SHARE_TOP3: Generate key shares for the top-3 different groups which are enabled.
@@ -475,11 +477,10 @@ typedef enum {
  *    since gnutls_record_recv() could be interrupted when sending when this flag is enabled.
  *    Note this flag may not be used if you are using the same session for sending and receiving
  *    in different threads.
- * @GNUTLS_ENABLE_EARLY_DATA: Under TLS1.3 allow the server to receive early data sent as part of the initial ClientHello (0-RTT). 
- *    This is not enabled by default as early data has weaker security properties than other data. Since 3.6.5.
  * @GNUTLS_ENABLE_RAWPK: Allows raw public-keys to be negotiated during the handshake. Since 3.6.6.
  * @GNUTLS_NO_AUTO_SEND_TICKET: Under TLS1.3 disable auto-sending of
  *    session tickets during the handshake.
+ * @GNUTLS_NO_END_OF_EARLY_DATA: Under TLS1.3 suppress sending EndOfEarlyData message. Since 3.7.2.
  *
  * Enumeration of different flags for gnutls_init() function. All the flags
  * can be combined except @GNUTLS_SERVER and @GNUTLS_CLIENT which are mutually
@@ -511,7 +512,8 @@ typedef enum {
 	GNUTLS_ENABLE_RAWPK = (1<<18),
 	GNUTLS_AUTO_REAUTH = (1<<19),
 	GNUTLS_ENABLE_EARLY_DATA = (1<<20),
-	GNUTLS_NO_AUTO_SEND_TICKET = (1<<21)
+	GNUTLS_NO_AUTO_SEND_TICKET = (1<<21),
+	GNUTLS_NO_END_OF_EARLY_DATA = (1<<22)
 } gnutls_init_flags_t;
 
 /* compatibility defines (previous versions of gnutls
@@ -1158,11 +1160,15 @@ typedef enum {
 /**
  * gnutls_channel_binding_t:
  * @GNUTLS_CB_TLS_UNIQUE: "tls-unique" (RFC 5929) channel binding
+ * @GNUTLS_CB_TLS_SERVER_END_POINT: "tls-server-end-point" (RFC 5929) channel binding
+ * @GNUTLS_CB_TLS_EXPORTER: "tls-exporter" (draft-ietf-kitten-tls-channel-bindings-for-tls13-03)
  *
- * Enumeration of support channel binding types.
+ * Enumeration of supported channel binding types.
  */
 typedef enum {
-	GNUTLS_CB_TLS_UNIQUE
+	GNUTLS_CB_TLS_UNIQUE,
+	GNUTLS_CB_TLS_SERVER_END_POINT,
+	GNUTLS_CB_TLS_EXPORTER
 } gnutls_channel_binding_t;
 
 /**
@@ -1293,14 +1299,17 @@ gnutls_group_t gnutls_group_get(gnutls_session_t session);
 
 /* get information on the current session */
 gnutls_cipher_algorithm_t gnutls_cipher_get(gnutls_session_t session);
+gnutls_cipher_algorithm_t gnutls_early_cipher_get(gnutls_session_t session);
 gnutls_kx_algorithm_t gnutls_kx_get(gnutls_session_t session);
 gnutls_mac_algorithm_t gnutls_mac_get(gnutls_session_t session);
 gnutls_digest_algorithm_t gnutls_prf_hash_get(const gnutls_session_t session);
+gnutls_digest_algorithm_t
+gnutls_early_prf_hash_get(const gnutls_session_t session);
 gnutls_certificate_type_t
 gnutls_certificate_type_get(gnutls_session_t session);
 gnutls_certificate_type_t
 gnutls_certificate_type_get2(gnutls_session_t session,
-								gnutls_ctype_target_t target);
+			     gnutls_ctype_target_t target);
 
 int gnutls_sign_algorithm_get(gnutls_session_t session);
 int gnutls_sign_algorithm_get_client(gnutls_session_t session);

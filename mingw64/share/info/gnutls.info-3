@@ -1,7 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.7 from gnutls.texi.
 
-This manual is last updated 24 February 2021 for version 3.7.1 of
-GnuTLS.
+This manual is last updated 19 April 2021 for version 3.7.2 of GnuTLS.
 
 Copyright (C) 2001-2021 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2021 Nikos Mavrogiannopoulos
@@ -8539,6 +8538,35 @@ gnutls_digest_list
      'gnutls_digest_algorithm_t' integers indicating the available
      digests.
 
+gnutls_early_cipher_get
+-----------------------
+
+ -- Function: gnutls_cipher_algorithm_t gnutls_early_cipher_get
+          (gnutls_session_t SESSION)
+     SESSION: is a 'gnutls_session_t' type.
+
+     Get the cipher algorithm used for encrypting early data.
+
+     *Returns:* the cipher used for early data, a
+     'gnutls_cipher_algorithm_t' type.
+
+     *Since:* 3.7.2
+
+gnutls_early_prf_hash_get
+-------------------------
+
+ -- Function: gnutls_digest_algorithm_t gnutls_early_prf_hash_get (const
+          gnutls_session_t SESSION)
+     SESSION: is a 'gnutls_session_t' type.
+
+     Get the hash algorithm used as a PRF to derive keys for encrypting
+     early data in TLS 1.3.
+
+     *Returns:* the hash algorithm used for early data, a
+     'gnutls_digest_algorithm_t' value.
+
+     *Since:* 3.7.2
+
 gnutls_ecc_curve_get
 --------------------
 
@@ -8961,7 +8989,7 @@ gnutls_global_init
      Since GnuTLS 3.3.0 this function is no longer necessary to be
      explicitly called.  To disable the implicit call (in a library
      constructor) of this function set the environment variable
-     'GNUTLS_NO_EXPLICIT_INIT' to 1.
+     'GNUTLS_NO_IMPLICIT_INIT' to 1.
 
      This function performs any required precalculations, detects the
      supported CPU capabilities and initializes the underlying
@@ -11727,7 +11755,7 @@ gnutls_record_recv_early_data
 
      DATA_SIZE: the number of requested bytes
 
-     This function can be used by a searver to retrieve data sent early
+     This function can be used by a server to retrieve data sent early
      in the handshake processes when resuming a session.  This is used
      to implement a zero-roundtrip (0-RTT) mode.  It has the same
      semantics as 'gnutls_record_recv()' .
