@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yukihiro Matsumoto".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-05-01"
+  s.date = "2021-06-16"
   s.description = "Ruby client library for POP3.".freeze
   s.email = ["matz@ruby-lang.org".freeze]
   s.files = ["net/ftp.rb".freeze, "net/http.rb".freeze, "net/http/backward.rb".freeze, "net/http/exceptions.rb".freeze, "net/http/generic_request.rb".freeze, "net/http/header.rb".freeze, "net/http/proxy_delta.rb".freeze, "net/http/request.rb".freeze, "net/http/requests.rb".freeze, "net/http/response.rb".freeze, "net/http/responses.rb".freeze, "net/http/status.rb".freeze, "net/https.rb".freeze, "net/imap.rb".freeze, "net/pop.rb".freeze, "net/protocol.rb".freeze, "net/smtp.rb".freeze]
