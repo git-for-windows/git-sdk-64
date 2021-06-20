@@ -265,6 +265,12 @@ include "/usr/share/nano/sh.nanorc"
 ## <Ctrl+Backspace> delete the word to the left of the cursor with:
 # bind ^H chopwordleft main
 
+## For quickly uppercasing or lowercasing the word under the cursor.
+## (These effectively do a Ctrl+Right followed by a Shift+Ctrl+Left,
+## and then pipe the selected text through a sed command.)
+#bind Sh-M-U "Oc[1;6D|sed 's/.*/\U&/'" main
+#bind Sh-M-L "Oc[1;6D|sed 's/.*/\L&/'" main
+
 ## If you would like nano to have keybindings that are more "usual",
 ## such as ^O for Open, ^F for Find, ^H for Help, and ^Q for Quit,
 ## then uncomment these:
@@ -279,11 +285,11 @@ include "/usr/share/nano/sh.nanorc"
 #bind ^B wherewas all
 #bind ^D findprevious all
 #bind ^R replace main
-#bind M-X flipnewbuffer all
-#bind ^X cut all
+#bind ^X cut main
 #bind ^C copy main
 #bind ^V paste all
 #bind ^P location main
+#bind ^E execute main
 #bind ^A mark main
 #unbind ^K main
 #unbind ^U all
@@ -293,9 +299,10 @@ include "/usr/share/nano/sh.nanorc"
 #unbind M-T main
 #bind ^T gotoline main
 #bind ^T gotodir browser
-#bind ^Y speller main
+#bind ^T cutrestoffile execute
+#bind ^L linter execute
 #bind M-U undo main
 #bind M-R redo main
-#bind ^U undo main
-#bind ^E redo main
+#bind ^Z undo main
+#bind ^Y redo main
 #set multibuffer
