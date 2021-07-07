@@ -198,8 +198,7 @@ flag, which if present prevents the function from being invoked from
 within VIEWs, TRIGGERs, CHECK constraints, generated column expressions,
 index expressions, or the WHERE clause of partial indexes.</p>
 
-<p><span style="background-color:#ffff90;">
-For best security, the <a href="../c3ref/c_deterministic.html#sqlitedirectonly">SQLITE_DIRECTONLY</a> flag is recommended for
+<p>For best security, the <a href="../c3ref/c_deterministic.html#sqlitedirectonly">SQLITE_DIRECTONLY</a> flag is recommended for
 all application-defined SQL functions that do not need to be
 used inside of triggers, view, CHECK constraints, or other elements of
 the database schema.  This flags is especially recommended for SQL
@@ -207,8 +206,7 @@ functions that have side effects or reveal internal application state.
 Without this flag, an attacker might be able to modify the schema of
 a database file to include invocations of the function with parameters
 chosen by the attacker, which the application will then execute when
-the database file is opened and read.
-</span></p>
+the database file is opened and read.</p>
 
 <p>The fifth parameter is an arbitrary pointer.  The implementation of the
 function can gain access to this pointer using <a href="../c3ref/user_data.html">sqlite3_user_data()</a>.</p>

@@ -21,6 +21,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _CPUID_H_INCLUDED
+#define _CPUID_H_INCLUDED
+
 /* %eax */
 #define bit_AVX512BF16	(1 << 5)
 
@@ -310,3 +313,5 @@ __get_cpuid_count (unsigned int __leaf, unsigned int __subleaf,
   __cpuid_count (__leaf, __subleaf, *__eax, *__ebx, *__ecx, *__edx);
   return 1;
 }
+
+#endif /* _CPUID_H_INCLUDED */

@@ -120,6 +120,7 @@ Other Documentation Indexes:
 <li> <a href="swarmvtab.html#advanced_usage">advanced</a> </li>
 <li> <a href="wal.html#advantages">advantages of WAL-mode</a> </li>
 <li> <a href="datatype3.html#affinity">affinity</a> </li>
+<li> <a href="datatype3.html#affcompoundview">affinity in compound VIEWs</a> </li>
 <li> <a href="datatype3.html#expraff">Affinity Of Expressions</a> </li>
 <li> <a href="testing.html#aflfuzz">AFL</a> </li>
 <li> <a href="lang_aggfunc.html">Aggregate Functions</a> </li>
@@ -338,6 +339,7 @@ Other Documentation Indexes:
 <li> <a href="c3ref/c_fail.html">conflict resolution mode</a> </li>
 <li> <a href="syntax/conflict-clause.html">conflict-clause</a> </li>
 <li> <a href="syntax/conflict-clause.html">conflict-clause syntax diagram</a> </li>
+<li> <a href="optoverview.html#constprop">constant-propagation optimization</a> </li>
 <li> <a href="fts3.html#_contentless_fts4_tables_">contentless fts4 tables</a> </li>
 <li> <a href="tclsqlite.html#copy">copy method</a> </li>
 <li> <a href="copyright.html">copyright</a> </li>
@@ -581,6 +583,7 @@ Other Documentation Indexes:
 <li> <a href="compile.html#omit_datetime_funcs">-DSQLITE_OMIT_DATETIME_FUNCS</a> </li>
 <li> <a href="compile.html#omit_decltype">-DSQLITE_OMIT_DECLTYPE</a> </li>
 <li> <a href="compile.html#omit_deprecated">-DSQLITE_OMIT_DEPRECATED</a> </li>
+<li> <a href="compile.html#omit_deserialize">-DSQLITE_OMIT_DESERIALIZE</a> </li>
 <li> <a href="compile.html#omit_diskio">-DSQLITE_OMIT_DISKIO</a> </li>
 <li> <a href="compile.html#omit_explain">-DSQLITE_OMIT_EXPLAIN</a> </li>
 <li> <a href="compile.html#omit_flag_pragmas">-DSQLITE_OMIT_FLAG_PRAGMAS</a> </li>
@@ -1592,11 +1595,12 @@ Other Documentation Indexes:
 <li> <a href="c3ref/prepare.html">sqlite3_prepare16_v3</a> </li>
 <li> <a href="c3ref/prepare.html">sqlite3_prepare_v2</a> </li>
 <li> <a href="c3ref/prepare.html">sqlite3_prepare_v3</a> </li>
-<li> <a href="c3ref/preupdate_count.html">sqlite3_preupdate_count</a> </li>
-<li> <a href="c3ref/preupdate_count.html">sqlite3_preupdate_depth</a> </li>
-<li> <a href="c3ref/preupdate_count.html">sqlite3_preupdate_hook</a> </li>
-<li> <a href="c3ref/preupdate_count.html">sqlite3_preupdate_new</a> </li>
-<li> <a href="c3ref/preupdate_count.html">sqlite3_preupdate_old</a> </li>
+<li> <a href="c3ref/preupdate_blobwrite.html">sqlite3_preupdate_blobwrite</a> </li>
+<li> <a href="c3ref/preupdate_blobwrite.html">sqlite3_preupdate_count</a> </li>
+<li> <a href="c3ref/preupdate_blobwrite.html">sqlite3_preupdate_depth</a> </li>
+<li> <a href="c3ref/preupdate_blobwrite.html">sqlite3_preupdate_hook</a> </li>
+<li> <a href="c3ref/preupdate_blobwrite.html">sqlite3_preupdate_new</a> </li>
+<li> <a href="c3ref/preupdate_blobwrite.html">sqlite3_preupdate_old</a> </li>
 <li> <a href="c3ref/profile.html">sqlite3_profile</a> </li>
 <li> <a href="c3ref/progress_handler.html">sqlite3_progress_handler</a> </li>
 <li> <a href="c3ref/randomness.html">sqlite3_randomness</a> </li>
@@ -1766,6 +1770,7 @@ Other Documentation Indexes:
 <li> <a href="session/sqlite3changegroup_add_strm.html">sqlite3rebaser_rebase_strm</a> </li>
 <li> <a href="session/sqlite3session_attach.html">sqlite3session_attach</a> </li>
 <li> <a href="session/sqlite3session_changeset.html">sqlite3session_changeset</a> </li>
+<li> <a href="session/sqlite3session_changeset_size.html">sqlite3session_changeset_size</a> </li>
 <li> <a href="session/sqlite3changegroup_add_strm.html">sqlite3session_changeset_strm</a> </li>
 <li> <a href="session/sqlite3session_config.html">sqlite3session_config</a> </li>
 <li> <a href="session/sqlite3session_create.html">sqlite3session_create</a> </li>
@@ -2015,9 +2020,11 @@ Other Documentation Indexes:
 <li> <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlchunksize">SQLITE_FCNTL_CHUNK_SIZE</a> </li>
 <li> <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlckptdone">SQLITE_FCNTL_CKPT_DONE</a> </li>
 <li> <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlckptstart">SQLITE_FCNTL_CKPT_START</a> </li>
+<li> <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlcksmfile">SQLITE_FCNTL_CKSM_FILE</a> </li>
 <li> <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlcommitatomicwrite">SQLITE_FCNTL_COMMIT_ATOMIC_WRITE</a> </li>
 <li> <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlcommitphasetwo">SQLITE_FCNTL_COMMIT_PHASETWO</a> </li>
 <li> <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntldataversion">SQLITE_FCNTL_DATA_VERSION</a> </li>
+<li> <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlexternalreader">SQLITE_FCNTL_EXTERNAL_READER</a> </li>
 <li> <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlfilepointer">SQLITE_FCNTL_FILE_POINTER</a> </li>
 <li> <a href="c3ref/c_fcntl_begin_atomic_write.html">SQLITE_FCNTL_GET_LOCKPROXYFILE</a> </li>
 <li> <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlhasmoved">SQLITE_FCNTL_HAS_MOVED</a> </li>
@@ -2223,6 +2230,7 @@ Other Documentation Indexes:
 <li> <a href="compile.html#omit_datetime_funcs">SQLITE_OMIT_DATETIME_FUNCS</a> </li>
 <li> <a href="compile.html#omit_decltype">SQLITE_OMIT_DECLTYPE</a> </li>
 <li> <a href="compile.html#omit_deprecated">SQLITE_OMIT_DEPRECATED</a> </li>
+<li> <a href="compile.html#omit_deserialize">SQLITE_OMIT_DESERIALIZE</a> </li>
 <li> <a href="compile.html#omit_diskio">SQLITE_OMIT_DISKIO</a> </li>
 <li> <a href="compile.html#omit_explain">SQLITE_OMIT_EXPLAIN</a> </li>
 <li> <a href="compile.html#omit_flag_pragmas">SQLITE_OMIT_FLAG_PRAGMAS</a> </li>
@@ -2396,6 +2404,7 @@ Other Documentation Indexes:
 <li> <a href="c3ref/c_testctrl_always.html">SQLITE_TESTCTRL_SEEK_COUNT</a> </li>
 <li> <a href="c3ref/c_testctrl_always.html">SQLITE_TESTCTRL_SORTER_MMAP</a> </li>
 <li> <a href="c3ref/c_testctrl_always.html">SQLITE_TESTCTRL_TRACEFLAGS</a> </li>
+<li> <a href="c3ref/c_testctrl_always.html">SQLITE_TESTCTRL_TUNE</a> </li>
 <li> <a href="c3ref/c_testctrl_always.html">SQLITE_TESTCTRL_VDBE_COVERAGE</a> </li>
 <li> <a href="c3ref/c_blob.html">SQLITE_TEXT</a> </li>
 <li> <a href="compile.html#threadsafe">SQLITE_THREADSAFE</a> </li>
@@ -2762,6 +2771,7 @@ Other Documentation Indexes:
 <li> <a href="releaselog/3_35_3.html">Version 3.35.3</a> </li>
 <li> <a href="releaselog/3_35_4.html">Version 3.35.4</a> </li>
 <li> <a href="releaselog/3_35_5.html">Version 3.35.5</a> </li>
+<li> <a href="releaselog/3_36_0.html">Version 3.36.0</a> </li>
 <li> <a href="releaselog/3_4_0.html">Version 3.4.0</a> </li>
 <li> <a href="releaselog/3_4_1.html">Version 3.4.1</a> </li>
 <li> <a href="releaselog/3_4_2.html">Version 3.4.2</a> </li>

@@ -126,6 +126,7 @@ Table Of Contents
 <div class="fancy-toc1"><a href="#the_push_down_optimization">15. The Push-Down Optimization</a></div>
 <div class="fancy-toc1"><a href="#the_left_join_strength_reduction_optimization">16. The LEFT JOIN Strength Reduction Optimization</a></div>
 <div class="fancy-toc1"><a href="#the_omit_left_join_optimization">17. The Omit LEFT JOIN Optimization</a></div>
+<div class="fancy-toc1"><a href="#the_constant_propagation_optimization">18. The Constant Propagation Optimization</a></div>
 </div>
 </div>
 <script>
@@ -1543,3 +1544,29 @@ SELECT v1, v3 FROM t1
   LEFT JOIN t3 ON (t1.ipk=t3.ipk)
 </pre></div>
 
+
+<a name="constprop"></a>
+
+<h1 id="the_constant_propagation_optimization"><span>18. </span>The Constant Propagation Optimization</h1>
+
+<p>
+  When a WHERE clause contains two or more equality constraints connected
+  by the AND operator such that all of the <a href="datatype3.html#affinity">affinities</a> of the various
+  constraints are the same, then SQLite might use the transitive property
+  of equality to construct new "virtual" constraints that can be used to
+  simplify expressions and/or improve performance.  This is called the
+  "constant-propagation optimization".
+
+</p><p>
+  For example, consider the following schema and query:
+
+</p><div class="codeblock"><pre>CREATE TABLE t1(a INTEGER PRIMARY KEY, b INT, c INT);
+SELECT * FROM t1 WHERE a=b AND b=5;
+</pre></div>
+
+<p>
+  SQLite looks at the "a=b" and "b=5" constraints and deduces that
+  if those two constraints are true, then it must also be the case
+  that "a=5" is true.  This means that the desired row can be looked up
+  quickly using a value of 5 for the INTEGER PRIMARY KEY.
+</p>

@@ -1,0 +1,36 @@
+circle "P" big big bold fit rad 110%
+circlerad = P.rad
+movewid = P.diameter*0.8
+move
+circle "T" big big bold
+spline -> from 0.5mm above P.e \
+  then to 2mm above 0.5 between P and T \
+  then to 0.5mm above T.w
+text "4.8" small above at 2nd vertex of previous
+spline -> from 0.5mm below T.w \
+  then to 2mm below 0.5 between T and P \
+  then to 0.5mm below P.e
+text "4.4" small below at 2nd vertex of previous
+circle "*" bold rad 0.5*circlerad with .s at movewid above P.n
+arrow from previous.s to P.n " 4.9" small ljust
+circle "*" bold rad 0.5*circlerad with .s at movewid above T.n
+arrow from previous.s to T.n " 5.2" small ljust
+text "without ANALYZE" big bold at movewid*1.5 below 0.5 between P and T
+
+
+P: circle "P" big big bold at movewid*5.0 right of T
+move
+T: circle "T" big big bold
+spline -> from 0.5mm above P.e \
+  then to 2mm above 0.5 between P and T \
+  then to 0.5mm above T.w
+text "4.4" small above at 2nd vertex of previous
+spline -> from 0.5mm below T.w \
+  then to 2mm below 0.5 between T and P \
+  then to 0.5mm below P.e
+text "3.8" small below at 2nd vertex of previous
+circle "*" bold rad 0.5*circlerad with .s at movewid above P.n
+arrow from previous.s to P.n " 3.9" small ljust
+circle "*" bold rad 0.5*circlerad with .s at movewid above T.n
+arrow from previous.s to T.n " 6.1" small ljust
+text "with ANALYZE" big bold at movewid*1.5 below 0.5 between P and T

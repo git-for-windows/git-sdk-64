@@ -128,7 +128,16 @@ changes to the content of the database files on disk.
 The sqlite3_stmt_readonly() interface returns true for <a href="../lang_transaction.html">BEGIN</a> since
 <a href="../lang_transaction.html">BEGIN</a> merely sets internal flags, but the <a href="../lang_transaction.html">BEGIN IMMEDIATE</a> and
 <a href="../lang_transaction.html">BEGIN EXCLUSIVE</a> commands do touch the database and so
-sqlite3_stmt_readonly() returns false for those commands.
+sqlite3_stmt_readonly() returns false for those commands.</p>
+
+<p>This routine returns false if there is any possibility that the
+statement might change the database file.  A false return does
+not guarantee that the statement will change the database file.
+For example, an UPDATE statement might have a WHERE clause that
+makes it a no-op, but the sqlite3_stmt_readonly() result would still
+be false.  Similarly, a CREATE TABLE IF NOT EXISTS statement is a
+read-only no-op if the table already exists, but
+sqlite3_stmt_readonly() still returns false for such a statement.
 </p><p>See also lists of
   <a href="objlist.html">Objects</a>,
   <a href="constlist.html">Constants</a>, and

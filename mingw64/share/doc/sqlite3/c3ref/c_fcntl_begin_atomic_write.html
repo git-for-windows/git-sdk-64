@@ -91,7 +91,7 @@ return false;
 }
 </script>
 </div>
-<!-- keywords: SQLITE_FCNTL_BEGIN_ATOMIC_WRITE SQLITE_FCNTL_BUSYHANDLER SQLITE_FCNTL_CHUNK_SIZE SQLITE_FCNTL_CKPT_DONE SQLITE_FCNTL_CKPT_START SQLITE_FCNTL_COMMIT_ATOMIC_WRITE SQLITE_FCNTL_COMMIT_PHASETWO SQLITE_FCNTL_DATA_VERSION SQLITE_FCNTL_FILE_POINTER SQLITE_FCNTL_GET_LOCKPROXYFILE SQLITE_FCNTL_HAS_MOVED SQLITE_FCNTL_JOURNAL_POINTER SQLITE_FCNTL_LAST_ERRNO SQLITE_FCNTL_LOCKSTATE SQLITE_FCNTL_LOCK_TIMEOUT SQLITE_FCNTL_MMAP_SIZE SQLITE_FCNTL_OVERWRITE SQLITE_FCNTL_PDB SQLITE_FCNTL_PERSIST_WAL SQLITE_FCNTL_POWERSAFE_OVERWRITE SQLITE_FCNTL_PRAGMA SQLITE_FCNTL_RBU SQLITE_FCNTL_RESERVE_BYTES SQLITE_FCNTL_ROLLBACK_ATOMIC_WRITE SQLITE_FCNTL_SET_LOCKPROXYFILE SQLITE_FCNTL_SIZE_HINT SQLITE_FCNTL_SIZE_LIMIT SQLITE_FCNTL_SYNC SQLITE_FCNTL_SYNC_OMITTED SQLITE_FCNTL_TEMPFILENAME SQLITE_FCNTL_TRACE SQLITE_FCNTL_VFSNAME SQLITE_FCNTL_VFS_POINTER SQLITE_FCNTL_WAL_BLOCK SQLITE_FCNTL_WIN32_AV_RETRY SQLITE_FCNTL_WIN32_GET_HANDLE SQLITE_FCNTL_WIN32_SET_HANDLE SQLITE_FCNTL_ZIPVFS {file control opcode} {file control opcodes} -->
+<!-- keywords: SQLITE_FCNTL_BEGIN_ATOMIC_WRITE SQLITE_FCNTL_BUSYHANDLER SQLITE_FCNTL_CHUNK_SIZE SQLITE_FCNTL_CKPT_DONE SQLITE_FCNTL_CKPT_START SQLITE_FCNTL_CKSM_FILE SQLITE_FCNTL_COMMIT_ATOMIC_WRITE SQLITE_FCNTL_COMMIT_PHASETWO SQLITE_FCNTL_DATA_VERSION SQLITE_FCNTL_EXTERNAL_READER SQLITE_FCNTL_FILE_POINTER SQLITE_FCNTL_GET_LOCKPROXYFILE SQLITE_FCNTL_HAS_MOVED SQLITE_FCNTL_JOURNAL_POINTER SQLITE_FCNTL_LAST_ERRNO SQLITE_FCNTL_LOCKSTATE SQLITE_FCNTL_LOCK_TIMEOUT SQLITE_FCNTL_MMAP_SIZE SQLITE_FCNTL_OVERWRITE SQLITE_FCNTL_PDB SQLITE_FCNTL_PERSIST_WAL SQLITE_FCNTL_POWERSAFE_OVERWRITE SQLITE_FCNTL_PRAGMA SQLITE_FCNTL_RBU SQLITE_FCNTL_RESERVE_BYTES SQLITE_FCNTL_ROLLBACK_ATOMIC_WRITE SQLITE_FCNTL_SET_LOCKPROXYFILE SQLITE_FCNTL_SIZE_HINT SQLITE_FCNTL_SIZE_LIMIT SQLITE_FCNTL_SYNC SQLITE_FCNTL_SYNC_OMITTED SQLITE_FCNTL_TEMPFILENAME SQLITE_FCNTL_TRACE SQLITE_FCNTL_VFSNAME SQLITE_FCNTL_VFS_POINTER SQLITE_FCNTL_WAL_BLOCK SQLITE_FCNTL_WIN32_AV_RETRY SQLITE_FCNTL_WIN32_GET_HANDLE SQLITE_FCNTL_WIN32_SET_HANDLE SQLITE_FCNTL_ZIPVFS {file control opcode} {file control opcodes} -->
 <div class=nosearch>
 <a href="intro.html"><h2>SQLite C Interface</h2></a>
 <h2>Standard File Control Opcodes</h2>
@@ -135,6 +135,8 @@ return false;
 #define SQLITE_FCNTL_CKPT_DONE              37
 #define SQLITE_FCNTL_RESERVE_BYTES          38
 #define SQLITE_FCNTL_CKPT_START             39
+#define SQLITE_FCNTL_EXTERNAL_READER        40
+#define SQLITE_FCNTL_CKSM_FILE              41
 </pre></blockquote>
 <p>
 These integer constants are opcodes for the xFileControl method
@@ -486,6 +488,25 @@ The <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlckptdone">SQLIT
 in wal mode after the client has finished copying pages from the wal
 file to the database file, but before the *-shm file is updated to
 record the fact that the pages have been checkpointed.
+</ul></p>
+
+<p><li><a name="sqlitefcntlexternalreader"></a>
+
+The EXPERIMENTAL <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlexternalreader">SQLITE_FCNTL_EXTERNAL_READER</a> opcode is used to detect
+whether or not there is a database client in another process with a wal-mode
+transaction open on the database or not. It is only available on unix.The
+(void*) argument passed with this file-control should be a pointer to a
+value of type (int). The integer value is set to 1 if the database is a wal
+mode database and there exists at least one client in another process that
+currently has an SQL transaction open on the database. It is set to 0 if
+the database is not a wal-mode db, or if there is no such connection in any
+other process. This opcode cannot be used to detect transactions opened
+by clients within the current process, only within other processes.
+</ul></p>
+
+<p><li><a name="sqlitefcntlcksmfile"></a>
+
+Used by the cksmvfs VFS module only.
 </ul>
 </p><p>See also lists of
   <a href="objlist.html">Objects</a>,

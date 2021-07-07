@@ -193,8 +193,8 @@ output from SQLite, you should reference the version of this document
 that corresponds to the version of SQLite that ran the <a href="lang_explain.html">EXPLAIN</a>.
 Otherwise, the description of the opcodes may not be accurate.
 This document is derived from SQLite
- version 3.35.5 check-in
-<a href='https://www.sqlite.org/src/timeline?c=1b256d97b553a'>1b256d97b553a</a> dated 2021-04-19.
+ version 3.36.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=5c9a6c06871cb'>5c9a6c06871cb</a> dated 2021-06-18.
 
 
 
@@ -417,20 +417,20 @@ pragmas include:
 
 <h1 id="the_opcodes"><span>4. </span>The Opcodes</h1>
 
-<p>There are currently 178
+<p>There are currently 179
 opcodes defined by the virtual machine.
 All currently defined opcodes are described in the table below.
 This table was generated automatically by scanning the source code
 from the file
-<a href="http://www.sqlite.org/src/artifact/5001a0d3003d3664615dd7ac3cedab1d51e2391b5bdd0878f40a41fdcd942e13">vdbe.c</a>.
+<a href="http://www.sqlite.org/src/artifact/6ece0ee94fa3a95601372efdc4ec6d068cd6cc58e28af8852f3407b90be4b7f8">vdbe.c</a>.
 
 
 </p><p>Remember: The VDBE opcodes are <u>not</u> part of the interface 
 definition for SQLite.  The number of opcodes and their names and meanings
 change from one release of SQLite to the next.
 The opcodes shown in the table below are valid for SQLite
- version 3.35.5 check-in
-<a href='https://www.sqlite.org/src/timeline?c=1b256d97b553a'>1b256d97b553a</a> dated 2021-04-19.
+ version 3.36.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=5c9a6c06871cb'>5c9a6c06871cb</a> dated 2021-06-18.
 
 <a name="codes"></a>
 
@@ -597,11 +597,10 @@ remove the table or index from the database file.</p>
 P2==1 then the table to be clear is in the auxiliary database file
 that is used to store tables create using CREATE TEMPORARY TABLE.</p>
 
-<p>If the P3 value is non-zero, then the table referred to must be an
-intkey table (an SQL table, not an index). In this case the row change
-count is incremented by the number of rows in the table being cleared.
-If P3 is greater than zero, then the value stored in register P3 is
-also incremented by the number of rows in the table being cleared.</p>
+<p>If the P3 value is non-zero, then the row change count is incremented
+by the number of rows in the table being cleared. If P3 is greater
+than zero, then the value stored in register P3 is also incremented
+by the number of rows in the table being cleared.</p>
 
 <p>See also: <a href="opcode.html#Destroy">Destroy</a></td></tr>
 <tr><td valign="top" align="center">
@@ -822,17 +821,16 @@ is dropped from disk (using the <a href="opcode.html#Destroy">Destroy</a> opcode
 the internal representation of the
 schema consistent with what is on disk.</td></tr>
 <tr><td valign="top" align="center">
-<a name="ElseNotEq"></a>ElseNotEq
+<a name="ElseEq"></a>ElseEq
 <td>This opcode must follow an <a href="opcode.html#Lt">Lt</a> or <a href="opcode.html#Gt">Gt</a> comparison operator.  There
 can be zero or more OP_ReleaseReg opcodes intervening, but no other
 opcodes are allowed to occur between this instruction and the previous
-<a href="opcode.html#Lt">Lt</a> or <a href="opcode.html#Gt">Gt</a>.  Furthermore, the prior <a href="opcode.html#Lt">Lt</a> or <a href="opcode.html#Gt">Gt</a> must have the
-SQLITE_STOREP2 bit set in the P5 field.</p>
+<a href="opcode.html#Lt">Lt</a> or <a href="opcode.html#Gt">Gt</a>.</p>
 
 <p>If result of an <a href="opcode.html#Eq">Eq</a> comparison on the same two operands as the
-prior <a href="opcode.html#Lt">Lt</a> or <a href="opcode.html#Gt">Gt</a> would have been NULL or false (0), then then
-jump to P2.  If the result of an <a href="opcode.html#Eq">Eq</a> comparison on the two previous
-operands would have been true (1), then fall through.</td></tr>
+prior <a href="opcode.html#Lt">Lt</a> or <a href="opcode.html#Gt">Gt</a> would have been true, then jump to P2.
+If the result of an <a href="opcode.html#Eq">Eq</a> comparison on the two previous
+operands would have been false or NULL, then fall through.</td></tr>
 <tr><td valign="top" align="center">
 <a name="EndCoroutine"></a>EndCoroutine
 <td>The instruction at the address in register P1 is a <a href="opcode.html#Yield">Yield</a>.
@@ -843,8 +841,7 @@ After the jump, register P1 becomes undefined.</p>
 <tr><td valign="top" align="center">
 <a name="Eq"></a>Eq
 <td>Compare the values in register P1 and P3.  If reg(P3)==reg(P1) then
-jump to address P2.  Or if the SQLITE_STOREP2 flag is set in P5, then
-store the result of comparison in register P2.</p>
+jump to address P2.</p>
 
 <p>The SQLITE_AFF_MASK portion of P5 must be an affinity character -
 SQLITE_AFF_TEXT, SQLITE_AFF_INTEGER, and so forth. An attempt is made
@@ -870,9 +867,8 @@ of comparison is true.  If either operand is NULL then the result is false.
 If neither operand is NULL the result is the same as it would be if
 the SQLITE_NULLEQ flag were omitted from P5.</p>
 
-<p>If both SQLITE_STOREP2 and SQLITE_KEEPNULL flags are set then the
-content of r&#91;P2&#93; is only changed if the new value is NULL or 0 (false).
-In other words, a prior r&#91;P2&#93; value will not be overwritten by 1 (true).</td></tr>
+<p>This opcode saves the result of comparison for use by the new
+<a href="opcode.html#Jump">Jump</a> opcode.</td></tr>
 <tr><td valign="top" align="center">
 <a name="Expire"></a>Expire
 <td>Cause precompiled statements to expire.  When an expired statement
@@ -1305,8 +1301,7 @@ the analysis to be used when preparing all subsequent queries.</td></tr>
 <tr><td valign="top" align="center">
 <a name="Lt"></a>Lt
 <td>Compare the values in register P1 and P3.  If reg(P3)&lt;reg(P1) then
-jump to address P2.  Or if the SQLITE_STOREP2 flag is set in P5 store
-the result of comparison (0 or 1 or NULL) into register P2.</p>
+jump to address P2.</p>
 
 <p>If the SQLITE_JUMPIFNULL bit of P5 is set and either reg(P1) or
 reg(P3) is NULL then the take the jump.  If the SQLITE_JUMPIFNULL
@@ -1328,7 +1323,10 @@ P4 is  used to do the comparison.  If P4 is not specified then
 memcmp() is used to compare text string.  If both values are
 numeric, then a numeric comparison is used. If the two values
 are of different types, then numbers are considered less than
-strings and strings are considered less than blobs.</td></tr>
+strings and strings are considered less than blobs.</p>
+
+<p>This opcode saves the result of comparison for use by the new
+<a href="opcode.html#Jump">Jump</a> opcode.</td></tr>
 <tr><td valign="top" align="center">
 <a name="MakeRecord"></a>MakeRecord
 <td>Convert P2 registers beginning with P1 into the <a href="fileformat2.html#record_format">record format</a>
@@ -1392,11 +1390,7 @@ raise an SQLITE_MISMATCH exception.</td></tr>
 <a name="Ne"></a>Ne
 <td>This works just like the Eq opcode except that the jump is taken if
 the operands in registers P1 and P3 are not equal.  See the Eq opcode for
-additional information.</p>
-
-<p>If both SQLITE_STOREP2 and SQLITE_KEEPNULL flags are set then the
-content of r&#91;P2&#93; is only changed if the new value is NULL or 1 (true).
-In other words, a prior r&#91;P2&#93; value will not be overwritten by 0 (false).</td></tr>
+additional information.</td></tr>
 <tr><td valign="top" align="center">
 <a name="NewRowid"></a>NewRowid
 <td>Get a new integer record number (a.k.a "rowid") used as the key to a table.
@@ -2447,6 +2441,11 @@ the coroutine launched by this instruction ends with
 next instruction.</p>
 
 <p>See also: <a href="opcode.html#InitCoroutine">InitCoroutine</a></td></tr>
+<tr><td valign="top" align="center">
+<a name="ZeroOrNull"></a>ZeroOrNull
+<td>If all both registers P1 and P3 are NOT NULL, then store a zero in
+register P2.  If either registers P1 or P3 are NULL then put
+a NULL in register P2.</td></tr>
 
   </table></blockquote>
   </div>

@@ -113,6 +113,7 @@ Table Of Contents
 <div class="fancy-toc1"><a href="#_hazards_of_upgrading_to_ngqp">4.  Hazards Of Upgrading To NGQP</a></div>
 <div class="fancy-toc2"><a href="#_case_study_upgrading_fossil_to_the_ngqp">4.1.  Case Study: Upgrading Fossil to the NGQP</a></div>
 <div class="fancy-toc2"><a href="#_fixing_the_problem">4.2.  Fixing The Problem</a></div>
+<div class="fancy-toc2"><a href="#update_2017_a_better_fix">4.3. Update 2017: A Better Fix</a></div>
 <div class="fancy-toc1"><a href="#_checklist_for_avoiding_or_fixing_query_planner_problems">5.  Checklist For Avoiding Or Fixing Query Planner Problems</a></div>
 <div class="fancy-toc1"><a href="#_summary">6.  Summary</a></div>
 </div>
@@ -295,7 +296,107 @@ by the following diagram:
 </p>
 
 <center>
-<img src="images/qp/tpchq8.gif">
+<div style="max-width:677px;"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 677.503 310.031">
+<circle cx="132" cy="104" r="28.3066"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="132" y="104" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">S</text>
+<circle cx="234" cy="104" r="28.3066"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="234" y="104" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">L</text>
+<circle cx="336" cy="104" r="28.3066"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="336" y="104" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">O</text>
+<circle cx="438" cy="104" r="28.3066"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="438" y="104" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">C</text>
+<circle cx="539" cy="104" r="28.3066"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="539" y="104" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">N1</text>
+<circle cx="641" cy="104" r="28.3066"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="641" y="104" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">R</text>
+<circle cx="234" cy="205" r="28.3066"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="234" y="205" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">P</text>
+<circle cx="30" cy="104" r="28.3066"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="30" y="104" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">N2</text>
+<polygon points="104,101 91,101 94,93" style="fill:rgb(0,0,0)"/>
+<path d="M58,101 L 70,96 Q 81,92 90,95 L 98,99"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="81" y="84" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">6.00</text>
+<polygon points="58,106 71,106 68,114" style="fill:rgb(0,0,0)"/>
+<path d="M104,106 L 92,111 Q 81,115 72,112 L 64,108"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="81" y="123" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">2.08</text>
+<polygon points="205,101 193,101 196,93" style="fill:rgb(0,0,0)"/>
+<path d="M160,101 L 171,96 Q 183,92 191,95 L 200,99"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="183" y="84" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">9.17</text>
+<polygon points="160,106 172,106 169,114" style="fill:rgb(0,0,0)"/>
+<path d="M205,106 L 194,111 Q 183,115 174,112 L 166,108"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="183" y="123" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">2.30</text>
+<polygon points="307,101 295,101 298,93" style="fill:rgb(0,0,0)"/>
+<path d="M262,101 L 273,96 Q 285,92 293,95 L 302,99"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="285" y="84" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">2.77</text>
+<polygon points="262,106 274,106 271,114" style="fill:rgb(0,0,0)"/>
+<path d="M307,106 L 296,111 Q 285,115 276,112 L 267,108"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="285" y="123" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">4.03</text>
+<polygon points="409,101 397,101 400,93" style="fill:rgb(0,0,0)"/>
+<path d="M364,101 L 375,96 Q 387,92 395,95 L 404,99"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="387" y="84" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">2.64</text>
+<polygon points="364,106 376,106 373,114" style="fill:rgb(0,0,0)"/>
+<path d="M409,106 L 398,111 Q 387,115 378,112 L 369,108"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="387" y="123" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">5.30</text>
+<polygon points="511,101 499,101 502,93" style="fill:rgb(0,0,0)"/>
+<path d="M466,101 L 477,96 Q 489,92 497,95 L 506,99"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="489" y="84" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">2.08</text>
+<polygon points="466,106 478,106 475,114" style="fill:rgb(0,0,0)"/>
+<path d="M511,106 L 500,111 Q 489,115 480,112 L 471,108"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="489" y="123" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">6.40</text>
+<polygon points="613,101 601,101 604,93" style="fill:rgb(0,0,0)"/>
+<path d="M568,101 L 579,96 Q 590,92 599,95 L 608,99"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="590" y="84" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">1.79</text>
+<polygon points="568,106 580,106 577,114" style="fill:rgb(0,0,0)"/>
+<path d="M613,106 L 602,111 Q 590,115 582,112 L 573,108"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="590" y="123" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">3.47</text>
+<polygon points="237,177 237,165 245,168" style="fill:rgb(0,0,0)"/>
+<path d="M237,132 L 241,143 Q 245,155 242,163 L 239,172"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="245" y="155" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">2.64</text>
+<polygon points="231,132 231,144 223,141" style="fill:rgb(0,0,0)"/>
+<path d="M231,177 L 227,166 Q 222,155 226,146 L 229,137"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="222" y="155" text-anchor="end" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">6.01</text>
+<circle cx="30" cy="16" r="14.1533"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="30" y="16" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">*</text>
+<polygon points="30,75 26,64 34,64" style="fill:rgb(0,0,0)"/>
+<path d="M30,30L30,69"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="30" y="53" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central"> 5.52</text>
+<circle cx="132" cy="16" r="14.1533"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="132" y="16" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">*</text>
+<polygon points="132,75 128,64 136,64" style="fill:rgb(0,0,0)"/>
+<path d="M132,30L132,69"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="132" y="53" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central"> 9.47</text>
+<circle cx="234" cy="16" r="14.1533"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="234" y="16" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">*</text>
+<polygon points="234,75 229,64 238,64" style="fill:rgb(0,0,0)"/>
+<path d="M234,30L234,69"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="234" y="53" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central"> 16.40</text>
+<circle cx="336" cy="16" r="14.1533"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="336" y="16" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">*</text>
+<polygon points="336,75 331,64 340,64" style="fill:rgb(0,0,0)"/>
+<path d="M336,30L336,69"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="336" y="53" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central"> 13.87</text>
+<circle cx="438" cy="16" r="14.1533"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="438" y="16" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">*</text>
+<polygon points="438,75 433,64 442,64" style="fill:rgb(0,0,0)"/>
+<path d="M438,30L438,69"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="438" y="53" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central"> 12.56</text>
+<circle cx="539" cy="16" r="14.1533"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="539" y="16" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">*</text>
+<polygon points="539,75 535,64 544,64" style="fill:rgb(0,0,0)"/>
+<path d="M539,30L539,69"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="539" y="53" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central"> 5.52</text>
+<circle cx="641" cy="16" r="14.1533"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="641" y="16" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">*</text>
+<polygon points="641,75 637,64 646,64" style="fill:rgb(0,0,0)"/>
+<path d="M641,30L641,69"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="641" y="53" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central"> 3.56</text>
+<circle cx="234" cy="293" r="14.1533"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="234" y="293" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">*</text>
+<polygon points="234,234 238,245 229,245" style="fill:rgb(0,0,0)"/>
+<path d="M234,279L234,240"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="234" y="256" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central"> 7.71</text>
+</svg>
+</div>
 </center>
 
 <p>
@@ -692,7 +793,51 @@ never even considered algorithm-2.  Graphs of the planning
 problem look like this:</p>
 
 <center>
-<img src="images/qp/fqp1.gif">
+<div style="max-width:523px;"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 523.232 186.76">
+<circle cx="55" cy="104" r="28.3066"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="55" y="104" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">P</text>
+<circle cx="157" cy="104" r="28.3066"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="157" y="104" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">T</text>
+<polygon points="129,101 117,101 120,93" style="fill:rgb(0,0,0)"/>
+<path d="M84,101 L 95,96 Q 106,92 115,95 L 124,99"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="106" y="84" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">4.8</text>
+<polygon points="84,106 96,106 93,114" style="fill:rgb(0,0,0)"/>
+<path d="M129,106 L 118,111 Q 106,115 98,112 L 89,108"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="106" y="123" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">4.4</text>
+<circle cx="55" cy="16" r="14.1533"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="55" y="16" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">*</text>
+<polygon points="55,75 51,64 60,64" style="fill:rgb(0,0,0)"/>
+<path d="M55,30L55,69"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="55" y="53" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central"> 4.9</text>
+<circle cx="157" cy="16" r="14.1533"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="157" y="16" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">*</text>
+<polygon points="157,75 153,64 162,64" style="fill:rgb(0,0,0)"/>
+<path d="M157,30L157,69"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="157" y="53" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central"> 5.2</text>
+<text x="106" y="171" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" font-size="125%" dominant-baseline="central">without ANALYZE</text>
+<circle cx="384" cy="104" r="28.3066"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="384" y="104" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">P</text>
+<circle cx="486" cy="104" r="28.3066"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="486" y="104" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">T</text>
+<polygon points="457,101 445,101 448,93" style="fill:rgb(0,0,0)"/>
+<path d="M412,101 L 423,96 Q 435,92 443,95 L 452,99"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="435" y="84" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">4.4</text>
+<polygon points="412,106 424,106 421,114" style="fill:rgb(0,0,0)"/>
+<path d="M457,106 L 446,111 Q 435,115 426,112 L 417,108"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="435" y="123" text-anchor="middle" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">3.8</text>
+<circle cx="384" cy="16" r="14.1533"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="384" y="16" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">*</text>
+<polygon points="384,75 379,64 388,64" style="fill:rgb(0,0,0)"/>
+<path d="M384,30L384,69"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="384" y="53" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central"> 3.9</text>
+<circle cx="486" cy="16" r="14.1533"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="486" y="16" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">*</text>
+<polygon points="486,75 481,64 490,64" style="fill:rgb(0,0,0)"/>
+<path d="M486,30L486,69"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="486" y="53" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central"> 6.1</text>
+<text x="435" y="171" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" font-size="125%" dominant-baseline="central">with ANALYZE</text>
+</svg>
+</div>
 </center>
 
 <p>
@@ -746,9 +891,36 @@ practice and so hard-coding the loop nested order using the
 CROSS JOIN syntax is a reasonable solution
 to the problem in this case.</p>
 
+<h2 id="update_2017_a_better_fix"><span>4.3. </span>Update 2017: A Better Fix</h2>
+
+<p>The prior text was written in early 2013, before the first release of
+SQLite version 3.8.0.  This paragraph was added in mid 2021.
+While all of the previous discussion remains true, a lot of improvements
+have been made to the query planner, making this whole section largely moot.
+
+</p><p>In 2017, Fossil was enhanced to make use of the new
+<a href="pragma.html#pragma_optimize">PRAGMA optimize</a> statement.  Whenever Fossil is about to close the
+database connection to its repository, it first runs
+"PRAGMA optimize", which will in turn cause ANALYZE to be run if it
+is needed.  Usually an ANALYZE is not needed, and so there is no
+measurable performance penalty for doing this.  But every now and
+then ANALYZE might be run on a few of the tables in the repository
+database.  Because if this, query planning issues such as the one
+described here no longer come up in Fossil.  The fact that ANALYZE
+is run periodically to keep the <a href="fileformat2.html#stat1tab">sqlite_stat1</a> table up-to-date means
+that hand-tuning of queries is no longer required.  We have not had
+to tweak a query in Fossil in ages.
+
+</p><p>Therefore, the current recommendation for avoiding problems such
+as this one is to simply run "PRAGMA optimize" (possibly preceded by
+"<a href="pragma.html#pragma_analysis_limit">PRAGMA analysis_limit=200</a>") just prior to closing each database
+connection.  The CROSS JOIN hack is still available, but if you keep
+the query planner statistics in the <a href="fileformat2.html#stat1tab">sqlite_stat1</a> table up-to-date,
+it usually won't be necessary.
+
 <a name="howtofix"></a>
 
-<h1 id="_checklist_for_avoiding_or_fixing_query_planner_problems"><span>5. </span> Checklist For Avoiding Or Fixing Query Planner Problems</h1>
+</p><h1 id="_checklist_for_avoiding_or_fixing_query_planner_problems"><span>5. </span> Checklist For Avoiding Or Fixing Query Planner Problems</h1>
 
 <ol>
 <li><p><b>Don't panic!</b>
@@ -785,12 +957,15 @@ which is computed by the ANALYZE command.</p>
 amount of content in your database in the first place.  When creating a 
 new database that you expect to accumulate a lot of data, you can run 
 the command "ANALYZE sqlite_schema" to create the SQLITE_STAT1 table,
-then prepopulate the SQLITE_STAT1 table (using ordinary INSERT statements)
+then prepopulate the <a href="fileformat2.html#stat1tab">sqlite_stat1</a> table (using ordinary INSERT statements)
 with content that describes a typical
 database for your application - perhaps content that you extracted after
-running ANALYZE on a well-populated template database in the lab.</p>
+running ANALYZE on a well-populated template database in the lab.
+Or, you could just run "<a href="pragma.html#pragma_optimize">PRAGMA optimize</a>" before shutting down
+database connections so that ANALYZE will be run automatically as
+needed to keep the <a href="fileformat2.html#stat1tab">sqlite_stat1</a> table current.</p></li>
 
-</li><li><p><b>Instrument your code.</b>
+<li><p><b>Instrument your code.</b>
 Add logic that lets you know quickly and easily which queries are taking
 too much time.  Then work on just those specific queries.</p>
 

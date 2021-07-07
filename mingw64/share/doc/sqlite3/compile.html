@@ -648,7 +648,7 @@ some design situations, every little bit helps.
   <a href="c3ref/str_append.html">sqlite3_str_appendf()</a>.  This is turn can prevent a hostile or
   malfunctioning script from using excessive memory by invoking
   a format such as: "<tt>printf('%*s',2147483647,'hi')</tt>".
-  A value for <i>N</i> of around 1000 is normally sufficient.
+  A value for <i>N</i> of around 100000 is normally sufficient.
   <p>
   The <a href="lang_corefunc.html#printf">printf() SQL function</a> is subject to the <a href="c3ref/c_limit_attached.html#sqlitelimitlength">SQLITE_LIMIT_LENGTH</a>
   limit of <a href="c3ref/limit.html">sqlite3_limit()</a>.  Hence any printf() result with a
@@ -664,6 +664,13 @@ some design situations, every little bit helps.
   that prevents excess sizes for the transient buffer used inside
   the low-level formatting subroutine, prior to the
   SQLITE_LIMIT_LENGTH check.
+  <p>
+  Be careful not to set SQLITE_PRINTF_PRECISION_LIMIT too low.
+  SQLite uses its <a href="printf.html">built-in printf()</a> functionality to format the text
+  of CREATE statements stored in the <a href="schematab.html">sqlite_schema table</a>.  So
+  SQLITE_PRINTF_PRECISION_LIMIT should be at least as big as the largest
+  table, index, view, or trigger definition that you are likely to
+  encounter.
   <p>
   No error is raised if a width or precision exceeds
   SQLITE_PRINTF_PRECISION_LIMIT.  Instead, the large width or
@@ -992,11 +999,12 @@ the available settings:</p>
   This option enables the <a href="dbstat.html">dbstat virtual table</a>.
 </p></blockquote><a name="enable_deserialize"></a>
 <p><b>SQLITE_ENABLE_DESERIALIZE</b></p><blockquote><p>
-  This option enables the <a href="c3ref/serialize.html">sqlite3_serialize()</a> and <a href="c3ref/deserialize.html">sqlite3_deserialize()</a>
-  interfaces.
-  <p>
-  Future releases of SQLite might enable those interfaces by default and
-  instead offer an SQLITE_OMIT_DESERIALIZE option to leave them out.
+  This option was formerly used to enable
+  the <a href="c3ref/serialize.html">sqlite3_serialize()</a> and <a href="c3ref/deserialize.html">sqlite3_deserialize()</a>
+  interfaces.  However, as of SQLite 3.36.0 (2021-06-18)
+  those interfaces are enabled by default and a new
+  compile-time option <a href="compile.html#omit_deserialize">SQLITE_OMIT_DESERIALIZE</a> is added
+  to omit them.
 </p></blockquote><a name="enable_explain_comments"></a>
 <p><b>SQLITE_ENABLE_EXPLAIN_COMMENTS</b></p><blockquote><p>
   This option adds extra logic to SQLite that inserts comment text into the
@@ -1159,7 +1167,7 @@ the available settings:</p>
 </p></blockquote><a name="enable_preupdate_hook"></a>
 <p><b>SQLITE_ENABLE_PREUPDATE_HOOK</b></p><blockquote><p>
   This option enables 
-  <a href="c3ref/preupdate_count.html">several new APIs</a> that provide callbacks
+  <a href="c3ref/preupdate_blobwrite.html">several new APIs</a> that provide callbacks
   prior to any change to a <a href="rowidtable.html">rowid table</a>.  The callbacks can be used
   to record the state of the row before the change occurs.
   <p>The action of the preupdate hook is similar to the
@@ -1633,6 +1641,11 @@ The SQLITE_OMIT_* compile-time options are mostly unsupported.
   <a href="pragma.html#pragma_full_column_names">PRAGMA full_column_names</a>,
   <a href="pragma.html#pragma_short_column_names">PRAGMA short_column_names</a>, and
   <a href="pragma.html#pragma_temp_store_directory">PRAGMA temp_store_directory</a>.
+</p></blockquote><a name="omit_deserialize"></a>
+<p><b>SQLITE_OMIT_DESERIALIZE</b></p><blockquote><p>
+  This option causes the
+  the <a href="c3ref/serialize.html">sqlite3_serialize()</a> and <a href="c3ref/deserialize.html">sqlite3_deserialize()</a>
+  interfaces to be omitted from the build.
 </p></blockquote><a name="omit_diskio"></a>
 <p><b>SQLITE_OMIT_DISKIO</b></p><blockquote><p>
   This option omits all support for writing to the disk and forces

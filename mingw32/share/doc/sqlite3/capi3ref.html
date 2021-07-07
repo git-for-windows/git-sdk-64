@@ -335,9 +335,11 @@ be removed in some future release.</li>
 <li><a href='#sqlitefcntlchunksize'>SQLITE_FCNTL_CHUNK_SIZE</a></li>
 <li><a href='#sqlitefcntlckptdone'>SQLITE_FCNTL_CKPT_DONE</a></li>
 <li><a href='#sqlitefcntlckptstart'>SQLITE_FCNTL_CKPT_START</a></li>
+<li><a href='#sqlitefcntlcksmfile'>SQLITE_FCNTL_CKSM_FILE</a></li>
 <li><a href='#sqlitefcntlcommitatomicwrite'>SQLITE_FCNTL_COMMIT_ATOMIC_WRITE</a></li>
 <li><a href='#sqlitefcntlcommitphasetwo'>SQLITE_FCNTL_COMMIT_PHASETWO</a></li>
 <li><a href='#sqlitefcntldataversion'>SQLITE_FCNTL_DATA_VERSION</a></li>
+<li><a href='#sqlitefcntlexternalreader'>SQLITE_FCNTL_EXTERNAL_READER</a></li>
 <li><a href='#sqlitefcntlfilepointer'>SQLITE_FCNTL_FILE_POINTER</a></li>
 <li><a href='#SQLITE_FCNTL_BEGIN_ATOMIC_WRITE'>SQLITE_FCNTL_GET_LOCKPROXYFILE</a></li>
 <li><a href='#sqlitefcntlhasmoved'>SQLITE_FCNTL_HAS_MOVED</a></li>
@@ -601,6 +603,7 @@ be removed in some future release.</li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_SEEK_COUNT</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_SORTER_MMAP</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_TRACEFLAGS</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_TUNE</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_VDBE_COVERAGE</a></li>
 <li><a href='#SQLITE_BLOB'>SQLITE_TEXT</a></li>
 <li><a href='#SQLITE_ABORT'>SQLITE_TOOBIG</a></li>
@@ -637,7 +640,7 @@ be removed in some future release.</li>
 <p>Note: Functions marked with "<small><i>(exp)</i></small>"
 are <a href="capi3ref.html">experimental</a> and functions whose names are
 <s>struck through</s> are <a href="capi3ref.html">deprecated</a>.</p>
-<!-- number of functions: 273 -->
+<!-- number of functions: 274 -->
 <!-- number of deprecated functions: 7 -->
 <!-- number of experimental functions: 0 -->
 <div class='columns' style='columns: 15em auto;'>
@@ -795,11 +798,12 @@ are <a href="capi3ref.html">experimental</a> and functions whose names are
 <li><a href='#sqlite3_prepare'>sqlite3_prepare16_v3</a></li>
 <li><a href='#sqlite3_prepare'>sqlite3_prepare_v2</a></li>
 <li><a href='#sqlite3_prepare'>sqlite3_prepare_v3</a></li>
-<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_count</a></li>
-<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_depth</a></li>
-<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_hook</a></li>
-<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_new</a></li>
-<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_old</a></li>
+<li><a href='#sqlite3_preupdate_blobwrite'>sqlite3_preupdate_blobwrite</a></li>
+<li><a href='#sqlite3_preupdate_blobwrite'>sqlite3_preupdate_count</a></li>
+<li><a href='#sqlite3_preupdate_blobwrite'>sqlite3_preupdate_depth</a></li>
+<li><a href='#sqlite3_preupdate_blobwrite'>sqlite3_preupdate_hook</a></li>
+<li><a href='#sqlite3_preupdate_blobwrite'>sqlite3_preupdate_new</a></li>
+<li><a href='#sqlite3_preupdate_blobwrite'>sqlite3_preupdate_old</a></li>
 <li><a href='#sqlite3_profile'>sqlite3_profile</a></li>
 <li><a href='#sqlite3_progress_handler'>sqlite3_progress_handler</a></li>
 <li><a href='#sqlite3_randomness'>sqlite3_randomness</a></li>
@@ -2632,8 +2636,8 @@ operation.</p>
 SQLITE_DESERIALIZE_FREEONCLOSE bit is set in argument F, then
 <a href="#sqlite3_free">sqlite3_free()</a> is invoked on argument P prior to returning.</p>
 
-<p>This interface is only available if SQLite is compiled with the
-<a href="compile.html#enable_deserialize">SQLITE_ENABLE_DESERIALIZE</a> option.
+<p>This interface is omitted if SQLite is compiled with the
+<a href="compile.html#omit_deserialize">SQLITE_OMIT_DESERIALIZE</a> option.
 </p><hr><a name="sqlite3_drop_modules"></a>
 <h2>Remove Unnecessary Virtual Table Implementations</h2>
 </div>
@@ -3246,8 +3250,8 @@ of the database exists.</p>
 SQLITE_SERIALIZE_NOCOPY bit is omitted from argument F if a memory
 allocation error occurs.</p>
 
-<p>This interface is only available if SQLite is compiled with the
-<a href="compile.html#enable_deserialize">SQLITE_ENABLE_DESERIALIZE</a> option.
+<p>This interface is omitted if SQLite is compiled with the
+<a href="compile.html#omit_deserialize">SQLITE_OMIT_DESERIALIZE</a> option.
 </p><hr><a name="sqlite3_set_last_insert_rowid"></a>
 <h2>Set the Last Insert Rowid value.</h2>
 </div>
@@ -3607,7 +3611,16 @@ changes to the content of the database files on disk.
 The sqlite3_stmt_readonly() interface returns true for <a href="lang_transaction.html">BEGIN</a> since
 <a href="lang_transaction.html">BEGIN</a> merely sets internal flags, but the <a href="lang_transaction.html">BEGIN IMMEDIATE</a> and
 <a href="lang_transaction.html">BEGIN EXCLUSIVE</a> commands do touch the database and so
-sqlite3_stmt_readonly() returns false for those commands.
+sqlite3_stmt_readonly() returns false for those commands.</p>
+
+<p>This routine returns false if there is any possibility that the
+statement might change the database file.  A false return does
+not guarantee that the statement will change the database file.
+For example, an UPDATE statement might have a WHERE clause that
+makes it a no-op, but the sqlite3_stmt_readonly() result would still
+be false.  Similarly, a CREATE TABLE IF NOT EXISTS statement is a
+read-only no-op if the table already exists, but
+sqlite3_stmt_readonly() still returns false for such a statement.
 </p><hr><a name="sqlite3_stmt_scanstatus"></a>
 <h2>Prepared Statement Scan Status</h2>
 </div>
@@ -4184,7 +4197,7 @@ on the same <a href="#sqlite3">database connection</a> D, or NULL for
 the first call on D.</p>
 
 <p>See also the <a href="#sqlite3_commit_hook">sqlite3_commit_hook()</a>, <a href="#sqlite3_commit_hook">sqlite3_rollback_hook()</a>,
-and <a href="#sqlite3_preupdate_count">sqlite3_preupdate_hook()</a> interfaces.
+and <a href="#sqlite3_preupdate_blobwrite">sqlite3_preupdate_hook()</a> interfaces.
 </p><hr><a name="sqlite3_user_data"></a>
 <h2>User Data For Functions</h2>
 </div>
@@ -5698,6 +5711,8 @@ return value from the <a href="#sqlite3_set_authorizer">sqlite3_set_authorizer()
 #define SQLITE_FCNTL_CKPT_DONE              37
 #define SQLITE_FCNTL_RESERVE_BYTES          38
 #define SQLITE_FCNTL_CKPT_START             39
+#define SQLITE_FCNTL_EXTERNAL_READER        40
+#define SQLITE_FCNTL_CKSM_FILE              41
 </pre></blockquote>
 <p>
 These integer constants are opcodes for the xFileControl method
@@ -6049,6 +6064,25 @@ The <a href="#sqlitefcntlckptdone">SQLITE_FCNTL_CKPT_DONE</a> opcode is invoked 
 in wal mode after the client has finished copying pages from the wal
 file to the database file, but before the *-shm file is updated to
 record the fact that the pages have been checkpointed.
+</ul></p>
+
+<p><li><a name="sqlitefcntlexternalreader"></a>
+
+The EXPERIMENTAL <a href="#sqlitefcntlexternalreader">SQLITE_FCNTL_EXTERNAL_READER</a> opcode is used to detect
+whether or not there is a database client in another process with a wal-mode
+transaction open on the database or not. It is only available on unix.The
+(void*) argument passed with this file-control should be a pointer to a
+value of type (int). The integer value is set to 1 if the database is a wal
+mode database and there exists at least one client in another process that
+currently has an SQL transaction open on the database. It is set to 0 if
+the database is not a wal-mode db, or if there is no such connection in any
+other process. This opcode cannot be used to detect transactions opened
+by clients within the current process, only within other processes.
+</ul></p>
+
+<p><li><a name="sqlitefcntlcksmfile"></a>
+
+Used by the cksmvfs VFS module only.
 </ul>
 </p><hr><a name="SQLITE_INDEX_CONSTRAINT_EQ"></a>
 <h2>Virtual Table Constraint Operator Codes</h2>
@@ -6332,9 +6366,9 @@ and EXCLUSIVE.
 <h2>Compile-Time Library Version Numbers</h2>
 </div>
 <blockquote><pre>
-#define SQLITE_VERSION        "3.35.5"
-#define SQLITE_VERSION_NUMBER 3035005
-#define SQLITE_SOURCE_ID      "2021-04-19 18:32:05 1b256d97b553a9611efca188a3d995a2fff712759044ba480f9a0c9e98fae886"
+#define SQLITE_VERSION        "3.36.0"
+#define SQLITE_VERSION_NUMBER 3036000
+#define SQLITE_SOURCE_ID      "2021-06-18 18:36:39 5c9a6c06871cb9fe42814af9c039eb6da5427a6ec28f187af7ebfb62eafa66e5"
 </pre></blockquote>
 <p>
 The <a href="#SQLITE_SOURCE_ID">SQLITE_VERSION</a> C preprocessor macro in the sqlite3.h header
@@ -6535,7 +6569,8 @@ cares about the difference.)
 #define SQLITE_TESTCTRL_EXTRA_SCHEMA_CHECKS     29
 #define SQLITE_TESTCTRL_SEEK_COUNT              30
 #define SQLITE_TESTCTRL_TRACEFLAGS              31
-#define SQLITE_TESTCTRL_LAST                    31  /* Largest TESTCTRL */
+#define SQLITE_TESTCTRL_TUNE                    32
+#define SQLITE_TESTCTRL_LAST                    32  /* Largest TESTCTRL */
 </pre></blockquote>
 <p>
 These constants are the valid operation code parameters used
@@ -7163,7 +7198,7 @@ sqlite3 object.
 <p>2 Destructors:
  <a href="#sqlite3_close">sqlite3_close()</a>,
 <a href="#sqlite3_close">sqlite3_close_v2()</a></p>
-<p>70 Methods:
+<p>71 Methods:
 <div class='columns' style='columns: 17em auto;'>
 <ul style='padding-top:0;'>
 <li><a href='#sqlite3_blob_open'>sqlite3_blob_open</a></li>
@@ -7214,11 +7249,12 @@ sqlite3 object.
 <li><a href='#sqlite3_prepare'>sqlite3_prepare16_v3</a></li>
 <li><a href='#sqlite3_prepare'>sqlite3_prepare_v2</a></li>
 <li><a href='#sqlite3_prepare'>sqlite3_prepare_v3</a></li>
-<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_count</a></li>
-<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_depth</a></li>
-<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_hook</a></li>
-<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_new</a></li>
-<li><a href='#sqlite3_preupdate_count'>sqlite3_preupdate_old</a></li>
+<li><a href='#sqlite3_preupdate_blobwrite'>sqlite3_preupdate_blobwrite</a></li>
+<li><a href='#sqlite3_preupdate_blobwrite'>sqlite3_preupdate_count</a></li>
+<li><a href='#sqlite3_preupdate_blobwrite'>sqlite3_preupdate_depth</a></li>
+<li><a href='#sqlite3_preupdate_blobwrite'>sqlite3_preupdate_hook</a></li>
+<li><a href='#sqlite3_preupdate_blobwrite'>sqlite3_preupdate_new</a></li>
+<li><a href='#sqlite3_preupdate_blobwrite'>sqlite3_preupdate_old</a></li>
 <li><a href='#sqlite3_profile'>sqlite3_profile</a></li>
 <li><a href='#sqlite3_progress_handler'>sqlite3_progress_handler</a></li>
 <li><a href='#sqlite3_commit_hook'>sqlite3_rollback_hook</a></li>
@@ -9458,7 +9494,7 @@ prior to calling sqlite3_open() or sqlite3_open_v2().  Otherwise, various
 features that require the use of temporary files may fail.</p>
 
 <p>See also: <a href="#sqlite3_temp_directory">sqlite3_temp_directory</a>
-</p><hr><a name="sqlite3_preupdate_count"></a>
+</p><hr><a name="sqlite3_preupdate_blobwrite"></a>
 <h2>The pre-update hook.</h2>
 </div>
 <blockquote><pre>
@@ -9480,21 +9516,22 @@ int sqlite3_preupdate_old(sqlite3 *, int, sqlite3_value **);
 int sqlite3_preupdate_count(sqlite3 *);
 int sqlite3_preupdate_depth(sqlite3 *);
 int sqlite3_preupdate_new(sqlite3 *, int, sqlite3_value **);
+int sqlite3_preupdate_blobwrite(sqlite3 *);
 #endif
 </pre></blockquote>
 <p>
 These interfaces are only available if SQLite is compiled using the
 <a href="compile.html#enable_preupdate_hook">SQLITE_ENABLE_PREUPDATE_HOOK</a> compile-time option.</p>
 
-<p>The <a href="#sqlite3_preupdate_count">sqlite3_preupdate_hook()</a> interface registers a callback function
+<p>The <a href="#sqlite3_preupdate_blobwrite">sqlite3_preupdate_hook()</a> interface registers a callback function
 that is invoked prior to each <a href="lang_insert.html">INSERT</a>, <a href="lang_update.html">UPDATE</a>, and <a href="lang_delete.html">DELETE</a> operation
 on a database table.
 At most one preupdate hook may be registered at a time on a single
-<a href="#sqlite3">database connection</a>; each call to <a href="#sqlite3_preupdate_count">sqlite3_preupdate_hook()</a> overrides
+<a href="#sqlite3">database connection</a>; each call to <a href="#sqlite3_preupdate_blobwrite">sqlite3_preupdate_hook()</a> overrides
 the previous setting.
-The preupdate hook is disabled by invoking <a href="#sqlite3_preupdate_count">sqlite3_preupdate_hook()</a>
+The preupdate hook is disabled by invoking <a href="#sqlite3_preupdate_blobwrite">sqlite3_preupdate_hook()</a>
 with a NULL pointer as the second parameter.
-The third parameter to <a href="#sqlite3_preupdate_count">sqlite3_preupdate_hook()</a> is passed through as
+The third parameter to <a href="#sqlite3_preupdate_blobwrite">sqlite3_preupdate_hook()</a> is passed through as
 the first parameter to callbacks.</p>
 
 <p>The preupdate hook only fires for changes to real database tables; the
@@ -9524,8 +9561,8 @@ or updated. The value of the seventh parameter passed to the callback
 function is not defined for operations on WITHOUT ROWID tables, or for
 DELETE operations on rowid tables.</p>
 
-<p>The <a href="#sqlite3_preupdate_count">sqlite3_preupdate_old()</a>, <a href="#sqlite3_preupdate_count">sqlite3_preupdate_new()</a>,
-<a href="#sqlite3_preupdate_count">sqlite3_preupdate_count()</a>, and <a href="#sqlite3_preupdate_count">sqlite3_preupdate_depth()</a> interfaces
+<p>The <a href="#sqlite3_preupdate_blobwrite">sqlite3_preupdate_old()</a>, <a href="#sqlite3_preupdate_blobwrite">sqlite3_preupdate_new()</a>,
+<a href="#sqlite3_preupdate_blobwrite">sqlite3_preupdate_count()</a>, and <a href="#sqlite3_preupdate_blobwrite">sqlite3_preupdate_depth()</a> interfaces
 provide additional information about a preupdate event. These routines
 may only be called from within a preupdate callback.  Invoking any of
 these routines from outside of a preupdate callback or with a
@@ -9533,10 +9570,10 @@ these routines from outside of a preupdate callback or with a
 to the preupdate callback results in undefined and probably undesirable
 behavior.</p>
 
-<p>The <a href="#sqlite3_preupdate_count">sqlite3_preupdate_count(D)</a> interface returns the number of columns
+<p>The <a href="#sqlite3_preupdate_blobwrite">sqlite3_preupdate_count(D)</a> interface returns the number of columns
 in the row that is being inserted, updated, or deleted.</p>
 
-<p>The <a href="#sqlite3_preupdate_count">sqlite3_preupdate_old(D,N,P)</a> interface writes into P a pointer to
+<p>The <a href="#sqlite3_preupdate_blobwrite">sqlite3_preupdate_old(D,N,P)</a> interface writes into P a pointer to
 a <a href="#sqlite3_value">protected sqlite3_value</a> that contains the value of the Nth column of
 the table row before it is updated.  The N parameter must be between 0
 and one less than the number of columns or the behavior will be
@@ -9545,7 +9582,7 @@ preupdate callbacks; if it is used by an SQLITE_INSERT callback then the
 behavior is undefined.  The <a href="#sqlite3_value">sqlite3_value</a> that P points to
 will be destroyed when the preupdate callback returns.</p>
 
-<p>The <a href="#sqlite3_preupdate_count">sqlite3_preupdate_new(D,N,P)</a> interface writes into P a pointer to
+<p>The <a href="#sqlite3_preupdate_blobwrite">sqlite3_preupdate_new(D,N,P)</a> interface writes into P a pointer to
 a <a href="#sqlite3_value">protected sqlite3_value</a> that contains the value of the Nth column of
 the table row after it is updated.  The N parameter must be between 0
 and one less than the number of columns or the behavior will be
@@ -9554,11 +9591,20 @@ preupdate callbacks; if it is used by an SQLITE_DELETE callback then the
 behavior is undefined.  The <a href="#sqlite3_value">sqlite3_value</a> that P points to
 will be destroyed when the preupdate callback returns.</p>
 
-<p>The <a href="#sqlite3_preupdate_count">sqlite3_preupdate_depth(D)</a> interface returns 0 if the preupdate
+<p>The <a href="#sqlite3_preupdate_blobwrite">sqlite3_preupdate_depth(D)</a> interface returns 0 if the preupdate
 callback was invoked as a result of a direct insert, update, or delete
 operation; or 1 for inserts, updates, or deletes invoked by top-level
 triggers; or 2 for changes resulting from triggers called by top-level
 triggers; and so forth.</p>
+
+<p>When the <a href="#sqlite3_blob_write">sqlite3_blob_write()</a> API is used to update a blob column,
+the pre-update hook is invoked with SQLITE_DELETE. This is because the
+in this case the new values are not available. In this case, when a
+callback made with op==SQLITE_DELETE is actuall a write using the
+sqlite3_blob_write() API, the <a href="#sqlite3_preupdate_blobwrite">sqlite3_preupdate_blobwrite()</a> returns
+the index of the column being written. In other cases, where the
+pre-update hook is being invoked for some other reason, including a
+regular DELETE, sqlite3_preupdate_blobwrite() returns -1.</p>
 
 <p>See also:  <a href="#sqlite3_update_hook">sqlite3_update_hook()</a>
 </p><hr><a name="sqlite3_profile"></a>
@@ -10273,18 +10319,22 @@ the value of the fourth parameter then the resulting string value will
 contain embedded NULs.  The result of expressions involving strings
 with embedded NULs is undefined.</p>
 
-<p>The fifth argument to the BLOB and string binding interfaces
-is a destructor used to dispose of the BLOB or
-string after SQLite has finished with it.  The destructor is called
-to dispose of the BLOB or string even if the call to the bind API fails,
-except the destructor is not called if the third parameter is a NULL
-pointer or the fourth parameter is negative.
-If the fifth argument is
-the special value <a href="#SQLITE_STATIC">SQLITE_STATIC</a>, then SQLite assumes that the
-information is in static, unmanaged space and does not need to be freed.
-If the fifth argument has the value <a href="#SQLITE_STATIC">SQLITE_TRANSIENT</a>, then
-SQLite makes its own private copy of the data immediately, before
-the sqlite3_bind_*() routine returns.</p>
+<p>The fifth argument to the BLOB and string binding interfaces controls
+or indicates the lifetime of the object referenced by the third parameter.
+These three options exist:
+ (1) A destructor to dispose of the BLOB or string after SQLite has finished
+with it may be passed. It is called to dispose of the BLOB or string even
+if the call to the bind API fails, except the destructor is not called if
+the third parameter is a NULL pointer or the fourth parameter is negative.
+ (2) The special constant, <a href="#SQLITE_STATIC">SQLITE_STATIC</a>, may be passsed to indicate that
+the application remains responsible for disposing of the object. In this
+case, the object and the provided pointer to it must remain valid until
+either the prepared statement is finalized or the same SQL parameter is
+bound to something else, whichever occurs sooner.
+ (3) The constant, <a href="#SQLITE_STATIC">SQLITE_TRANSIENT</a>, may be passed to indicate that the
+object is to be copied prior to the return from sqlite3_bind_*(). The
+object and pointer to it must remain valid until then. SQLite will then
+manage the lifetime of its private copy.</p>
 
 <p>The sixth argument to sqlite3_bind_text64() must be one of
 <a href="#SQLITE_ANY">SQLITE_UTF8</a>, <a href="#SQLITE_ANY">SQLITE_UTF16</a>, <a href="#SQLITE_ANY">SQLITE_UTF16BE</a>, or <a href="#SQLITE_ANY">SQLITE_UTF16LE</a>
@@ -11017,8 +11067,7 @@ flag, which if present prevents the function from being invoked from
 within VIEWs, TRIGGERs, CHECK constraints, generated column expressions,
 index expressions, or the WHERE clause of partial indexes.</p>
 
-<p><span style="background-color:#ffff90;">
-For best security, the <a href="#sqlitedirectonly">SQLITE_DIRECTONLY</a> flag is recommended for
+<p>For best security, the <a href="#sqlitedirectonly">SQLITE_DIRECTONLY</a> flag is recommended for
 all application-defined SQL functions that do not need to be
 used inside of triggers, view, CHECK constraints, or other elements of
 the database schema.  This flags is especially recommended for SQL
@@ -11026,8 +11075,7 @@ functions that have side effects or reveal internal application state.
 Without this flag, an attacker might be able to modify the schema of
 a database file to include invocations of the function with parameters
 chosen by the attacker, which the application will then execute when
-the database file is opened and read.
-</span></p>
+the database file is opened and read.</p>
 
 <p>The fifth parameter is an arbitrary pointer.  The implementation of the
 function can gain access to this pointer using <a href="#sqlite3_user_data">sqlite3_user_data()</a>.</p>

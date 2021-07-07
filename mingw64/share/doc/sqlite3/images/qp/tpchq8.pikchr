@@ -1,0 +1,53 @@
+circle "S" big big bold fit rad 110%
+circlerad = S.rad
+movewid = S.diameter*0.8
+move
+circle "L" big big bold
+move
+circle "O" big big bold
+move
+circle "C" big big bold
+move
+circle "N1" big big bold
+move
+circle "R" big big bold
+circle "P" big big bold with .n at movewid below L.s
+circle "N2" big big bold with .e at movewid left of S.w
+
+define double_arrow {
+  spline -> from 0.5mm above $1.e \
+    then to 2mm above 0.5<$1,$2> \
+    then to 0.5mm above $2.w
+  text $3 small above at 2nd vertex of previous
+  spline <- from 0.5mm below $1.e \
+    then to 2mm below 0.5<$1,$2> \
+    then to 0.5mm below $2.w
+  text $4 small below at 2nd vertex of previous
+}
+double_arrow(N2,S,"6.00","2.08")
+double_arrow(S,L,"9.17","2.30")
+double_arrow(L,O,"2.77","4.03")
+double_arrow(O,C,"2.64","5.30")
+double_arrow(C,N1,"2.08","6.40")
+double_arrow(N1,R,"1.79","3.47")
+spline -> from 0.5mm right of L.s \
+   then to 2mm right of 0.5<L,P> \
+   then to 0.5mm right of P.n
+text "2.64" small ljust at 2nd vertex of previous
+spline <- from 0.5mm left of L.s \
+   then to 2mm left of 0.5<L,P> \
+   then to 0.5mm left of P.n
+text "6.01" small rjust at 2nd vertex of previous
+define any_down {
+  circle "*" bold rad 0.5*circlerad with .s at movewid above $1.n
+  arrow from previous.s to $1.n $2 small ljust
+}
+any_down(N2," 5.52")
+any_down(S, " 9.47")
+any_down(L, " 16.40")
+any_down(O, " 13.87")
+any_down(C, " 12.56")
+any_down(N1," 5.52")
+any_down(R, " 3.56")
+circle "*" bold rad 0.5*circlerad with .n at movewid below P.s
+arrow from previous.n to P.s " 7.71" small ljust

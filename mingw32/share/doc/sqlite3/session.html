@@ -179,6 +179,7 @@ code file sqlite3session.h.</p>
 <li><a href='#sqlite3changegroup_add_strm'>sqlite3rebaser_rebase_strm</a></li>
 <li><a href='#sqlite3session_attach'>sqlite3session_attach</a></li>
 <li><a href='#sqlite3session_changeset'>sqlite3session_changeset</a></li>
+<li><a href='#sqlite3session_changeset_size'>sqlite3session_changeset_size</a></li>
 <li><a href='#sqlite3changegroup_add_strm'>sqlite3session_changeset_strm</a></li>
 <li><a href='#sqlite3session_config'>sqlite3session_config</a></li>
 <li><a href='#sqlite3session_create'>sqlite3session_create</a></li>
@@ -344,6 +345,7 @@ record changes to a database.
 <ul style='padding-top:0;'>
 <li><a href='#sqlite3session_attach'>sqlite3session_attach</a></li>
 <li><a href='#sqlite3session_changeset'>sqlite3session_changeset</a></li>
+<li><a href='#sqlite3session_changeset_size'>sqlite3session_changeset_size</a></li>
 <li><a href='#sqlite3session_diff'>sqlite3session_diff</a></li>
 <li><a href='#sqlite3session_enable'>sqlite3session_enable</a></li>
 <li><a href='#sqlite3session_indirect'>sqlite3session_indirect</a></li>
@@ -962,6 +964,18 @@ changeset, even though the delete took place while the session was disabled.
 Or, if one field of a row is updated while a session is disabled, and 
 another field of the same row is updated while the session is enabled, the
 resulting changeset will contain an UPDATE change that updates both fields.
+</p><hr><a name="sqlite3session_changeset_size"></a>
+<h2>Return An Upper-limit For The Size Of The Changeset</h2><blockquote><pre>sqlite3_int64 sqlite3session_changeset_size(sqlite3_session *pSession);
+</pre></blockquote><p>
+By default, this function always returns 0. For it to return
+a useful result, the sqlite3_session object must have been configured
+to enable this API using sqlite3session_object_config() with the
+SQLITE_SESSION_OBJCONFIG_SIZE verb.</p>
+
+<p>When enabled, this function returns an upper limit, in bytes, for the size 
+of the changeset that might be produced if sqlite3session_changeset() were
+called. The final changeset size might be equal to or smaller than the
+size in bytes returned by this function.
 </p><hr><a name="sqlite3session_config"></a>
 <h2>Configure global parameters</h2><blockquote><pre>int sqlite3session_config(int op, void *pArg);
 </pre></blockquote><p>
@@ -1016,7 +1030,7 @@ the session object is deleted, then the results of calling any session
 module function, including <a href="#sqlite3session_delete">sqlite3session_delete()</a> on the session object
 are undefined.</p>
 
-<p>Because the session module uses the <a href="c3ref/preupdate_count.html">sqlite3_preupdate_hook()</a> API, it
+<p>Because the session module uses the <a href="c3ref/preupdate_blobwrite.html">sqlite3_preupdate_hook()</a> API, it
 is not possible for an application to register a pre-update hook on a
 database handle that has one or more session objects attached. Nor is
 it possible to create a session object attached to a database handle for

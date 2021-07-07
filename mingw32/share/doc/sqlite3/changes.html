@@ -105,6 +105,37 @@ http://www.sqlite.org/src/timeline?t=release</a>.
 See the <a href="chronology.html">chronology</a> a succinct listing of releases.
 </p>
 
+<a name="version_3_36_0"></a>
+<h3>2021-06-18 (3.36.0)</h3><p><ol class='lessindent'>
+<li> Improvement to the <a href="eqp.html">EXPLAIN QUERY PLAN</a> output to make it easier to
+     understand.
+<li> Byte-order marks at the start of a token are skipped as if they
+     were whitespace.
+<li> An error is raised on any attempt to access the <a href="lang_createtable.html#rowid">rowid</a> of a VIEW or subquery.
+     Formerly, the rowid of a VIEW would be indeterminate and often would be NULL.
+     The -DSQLITE_ALLOW_ROWID_IN_VIEW compile-time option is available to restore
+     the legacy behavior for applications that need it.
+<li> The <a href="c3ref/deserialize.html">sqlite3_deserialize()</a> and <a href="c3ref/serialize.html">sqlite3_serialize()</a> interfaces are now
+     enabled by default.  The -DSQLITE_ENABLE_DESERIALIZE compile-time option is
+     no longer required.  Instead, there is is a new <a href="compile.html#omit_deserialize">-DSQLITE_OMIT_DESERIALIZE</a>
+     compile-time option to omit those interfaces.
+<li> The "memdb" VFS now allows the same in-memory database to be shared among
+     multiple database connections in the same process as long as the
+     database name begins with "/".
+<li> Back out the EXISTS-to-IN optimization (item 8b in the
+     <a href="#version_3_35_0">SQLite 3.35.0 change log</a>)
+     as it was found to slow down queries more often than speed them up.
+<li> Improve the <a href="optoverview.html#constprop">constant-propagation optimization</a> so that it works on
+     non-join queries.
+<li> The <a href="https://sqlite.org/src/file/ext/misc/regexp.c">REGEXP extension</a> is
+     now included in <a href="cli.html">CLI</a> builds.
+
+ 
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: 2021-06-18 18:36:39 5c9a6c06871cb9fe42814af9c039eb6da5427a6ec28f187af7ebfb62eafa66e5
+<li>SHA3-256 for sqlite3.c: 2a8e87aaa414ac2d45ace8eb74e710935423607a8de0fafcb36bbde5b952d157
+
+</ol></p>
 <a name="version_3_35_5"></a>
 <h3>2021-04-19 (3.35.5)</h3><p><ol class='lessindent'>
 <li> Fix defects in the new ALTER TABLE DROP COLUMN feature that could

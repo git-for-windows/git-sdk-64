@@ -110,6 +110,7 @@ Table Of Contents
 <div class="fancy-toc3"><a href="#affinity_name_examples">3.1.1. Affinity Name Examples</a></div>
 <div class="fancy-toc2"><a href="#affinity_of_expressions">3.2. Affinity Of Expressions</a></div>
 <div class="fancy-toc2"><a href="#column_affinity_for_views_and_subqueries">3.3. Column Affinity For Views And Subqueries</a></div>
+<div class="fancy-toc3"><a href="#column_affinity_for_compound_views">3.3.1. Column Affinity For Compound Views</a></div>
 <div class="fancy-toc2"><a href="#column_affinity_behavior_example">3.4. Column Affinity Behavior Example</a></div>
 <div class="fancy-toc1"><a href="#comparison_expressions">4. Comparison Expressions</a></div>
 <div class="fancy-toc2"><a href="#sort_order">4.1. Sort Order</a></div>
@@ -490,9 +491,13 @@ columns v1.y and v1.z both have no affinity, since those columns
 map into expression a+c and 42, and expressions always have no
 affinity.
 
-</p><p>When the <a href="lang_select.html">SELECT</a> statement that implements a <a href="lang_createview.html">VIEW</a> or 
+<a name="affcompoundview"></a>
+
+</p><h3 id="column_affinity_for_compound_views"><span>3.3.1. </span>Column Affinity For Compound Views</h3>
+
+<p>When the <a href="lang_select.html">SELECT</a> statement that implements a <a href="lang_createview.html">VIEW</a> or 
 FROM-clause subquery is a <a href="lang_select.html#compound">compound SELECT</a> then the affinity of 
-each supposed column of the VIEW or subquery will
+each column of the VIEW or subquery will
 be the affinity of the corresponding result column for
 one of the individual SELECT statements that make up 
 the compound.  
@@ -506,8 +511,11 @@ The choice might be different at different times within the same
 query.  Hence, you can never be sure what affinity will be used
 for columns of a compound SELECT that have different affinities in
 the constituent subqueries.
-Best practice is to avoid mixing affinities in a compound SELECT
-if you care about the datatype of the result.
+
+</p><p>Best practice is to avoid mixing affinities in a compound SELECT
+if you care about the datatype of the result.  Mixing affinities in
+a compound SELECT can lead to surprising and unintuitive results.
+See, for example, <a href="https://sqlite.org/forum/forumpost/02d7be94d7">forum post 02d7be94d7</a>.
 
 </p><h2 id="column_affinity_behavior_example"><span>3.4. </span>Column Affinity Behavior Example</h2>
 
