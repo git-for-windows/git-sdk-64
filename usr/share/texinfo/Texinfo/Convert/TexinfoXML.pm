@@ -45,12 +45,12 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.7';
+$VERSION = '6.8';
 
 # XML specific
 my %defaults = (
   'ENABLE_ENCODING'      => 0,
-  'SHOW_MENU'            => 1,
+  'FORMAT_MENU'          => 'menu',
   'EXTENSION'            => 'xml',
   #'output_perl_encoding' => 'utf8',
   'OUTPUT_ENCODING_NAME' => 'utf-8',
@@ -107,6 +107,13 @@ our %commands_formatting = (
            'rbracechar'   => 'rbracechar',
            'backslashchar' => 'backslashchar',
            'hashchar'      => 'hashchar',
+           # in Texinfo::Convert::Converter::default_xml_commands_formatting,
+           # guillemotleft and guillemotright are mapped to laquo and raquo,
+           # but guillemetleft and guillemetright are also mapped to those
+           # entities.  To make sure that it is possible to go back to the
+           # @-command from the entity, we use specific entities here
+           'guillemotleft'   => 'guillemotleft',
+           'guillemotright'  => 'guillemotright',
 );
 
 # use default XML formatting to complete the hash, removing XML
@@ -328,6 +335,8 @@ our %commands_args_elements = (
   'inforef' => ['inforefnodename', 'inforefrefname', 'inforefinfoname'],
   'image' => ['imagefile', 'imagewidth', 'imageheight', 
               'alttext', 'imageextension'],
+  # * means that the previous element is variadic, ie can appear indefinitely
+  'example' => ['examplelanguage', 'examplearg', '*'],
   'quotation' => ['quotationtype'],
   'float' => ['floattype', 'floatname'],
   'itemize' => ['itemprepend'],
@@ -1321,7 +1330,20 @@ sub _convert($$;$)
         if ($root->{'args'}) {
           if ($commands_args_elements{$root->{'cmdname'}}) {
             my $arg_index = 0;
-            foreach my $element (@{$commands_args_elements{$root->{'cmdname'}}}) {
+            my $variadic_element = undef;
+            while (defined($commands_args_elements{$root->{'cmdname'}}->[$arg_index])
+                   or defined($variadic_element)) {
+              my $element;
+              if (defined($variadic_element)) {
+                $element = $variadic_element;
+              } else {
+                if ($commands_args_elements{$root->{'cmdname'}}->[$arg_index] eq '*') {
+                  $variadic_element = $commands_args_elements{$root->{'cmdname'}}->[$arg_index-1];
+                  $element = $variadic_element;
+                } else {
+                  $element = $commands_args_elements{$root->{'cmdname'}}->[$arg_index];
+                }
+              }
               if (defined($root->{'args'}->[$arg_index])) {
                 my $in_code;
                  $in_code = 1
@@ -1548,7 +1570,8 @@ sub _convert($$;$)
   if ($root->{'contents'}) {
     my $in_code;
     if ($root->{'cmdname'} 
-        and $Texinfo::Common::preformatted_code_commands{$root->{'cmdname'}}) {
+        and ($Texinfo::Common::preformatted_code_commands{$root->{'cmdname'}}
+             or $Texinfo::Common::math_commands{$root->{'cmdname'}})) {
       $in_code = 1;
     }
     push @{$self->{'document_context'}->[-1]->{'monospace'}}, 1 

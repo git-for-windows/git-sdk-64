@@ -49,7 +49,7 @@ foreach my $type ('empty_line_after_command', 'preamble',
 }
 
 my %defaults = (
-  'SHOW_MENU'            => 1,
+  'FORMAT_MENU'          => 'menu',
   'OUTFILE'              => '-',
 );
 
@@ -104,7 +104,7 @@ sub _convert($$)
                  or ($Texinfo::Common::inline_format_commands{$root->{'cmdname'}}
                      and (!$root->{'extra'}->{'format'}
                           or !$self->{'expanded_formats_hash'}->{$root->{'extra'}->{'format'}}))
-                 or ($root->{'cmdname'} eq 'menu' and !$self->get_conf('SHOW_MENU'))
+                 or ($root->{'cmdname'} eq 'menu' and $self->get_conf('FORMAT_MENU') eq 'nomenu')
              # here ignore most of the misc commands
                  or ($root->{'args'} and $root->{'args'}->[0]
                      and $root->{'args'}->[0]->{'type'}

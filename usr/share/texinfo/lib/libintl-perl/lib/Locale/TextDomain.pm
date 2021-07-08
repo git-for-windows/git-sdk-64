@@ -1,26 +1,23 @@
 #! /bin/false
 
 # vim: set autoindent shiftwidth=4 tabstop=4:
-# $Id: TextDomain.pm,v 1.1 2011-10-12 23:51:27 pertusus Exp $
 
 # High-level interface to Perl i18n.
-# Copyright (C) 2002-2009 Guido Flohr <guido@imperia.net>,
+# Copyright (C) 2002-2017 Guido Flohr <guido.flohr@cantanea.com>,
 # all rights reserved.
 
-# This program is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Library General Public License as published
-# by the Free Software Foundation; either version 2, or (at your option)
-# any later version.
-                                                                                
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Library General Public License for more details.
-                                                                                
-# You should have received a copy of the GNU Library General Public 
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
-# USA.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package __TiedTextDomain;
 
@@ -69,7 +66,7 @@ use Cwd qw (abs_path);
 
 use vars qw ($VERSION);
 
-$VERSION = '1.20';
+$VERSION = '1.32';
 
 require Exporter;
 
@@ -101,6 +98,68 @@ BEGIN {
             last;
         }
     }
+}
+
+# Class methods.
+sub keywords {
+    join ' ', (
+        '--keyword=__',
+        '--keyword=%__',
+        '--keyword=$__',
+        '--keyword=__x',
+        '--keyword=__n:1,2',
+        '--keyword=__nx:1,2',
+        '--keyword=__xn:1,2',
+        '--keyword=__p:1c,2',
+        '--keyword=__px:1c,2',
+        '--keyword=__np:1c,2,3',
+        '--keyword=__npx:1c,2,3',
+        '--keyword=N__',
+        '--keyword=N__n:1,2',
+        '--keyword=N__p:1c,2',
+        '--keyword=N__np:1c,2,3',
+    );
+}
+
+sub flags {
+    join ' ', (
+        '--flag=__:1:pass-perl-format',
+        '--flag=%__:1:pass-perl-format',
+        '--flag=$__:1:pass-perl-format',
+        '--flag=__x:1:perl-brace-format',
+        '--flag=__x:1:pass-perl-format',
+        '--flag=__n:1:pass-perl-format',
+        '--flag=__n:2:pass-perl-format',
+        '--flag=__nx:1:perl-brace-format',
+        '--flag=__nx:1:pass-perl-format',
+        '--flag=__nx:2:perl-brace-format',
+        '--flag=__nx:2:pass-perl-format',
+        '--flag=__xn:1:perl-brace-format',
+        '--flag=__xn:1:pass-perl-format',
+        '--flag=__xn:2:perl-brace-format',
+        '--flag=__xn:2:pass-perl-format',
+        '--flag=__p:2:pass-perl-format',
+        '--flag=__px:2:perl-brace-format',
+        '--flag=__px:2:pass-perl-format',
+        '--flag=__np:2:pass-perl-format',
+        '--flag=__np:3:pass-perl-format',
+        '--flag=__npx:2:perl-brace-format',
+        '--flag=__npx:2:pass-perl-format',
+        '--flag=__npx:3:perl-brace-format',
+        '--flag=__npx:3:pass-perl-format',
+        '--flag=N__:1:pass-perl-format',
+        '--flag=N__n:1:pass-perl-format',
+        '--flag=N__n:2:pass-perl-format',
+        '--flag=N__p:2:pass-perl-format',
+        '--flag=N__np:2:pass-perl-format',
+        '--flag=N__np:3:pass-perl-format',
+    );
+}
+
+sub options {
+    my ($class) = @_;
+
+    join ' ', $class->keywords, $class->flags;
 }
 
 # Normal gettext.
@@ -300,9 +359,19 @@ sub import
     # Remember that we still have to bind that textdomain to
     # a directory.
     unless (exists $bound_dirs{$textdomain}) {
-		@search_dirs = map $_ . '/LocaleData', @INC, @default_dirs
-			unless @search_dirs;
-		$bound_dirs{$textdomain} = [@search_dirs];
+		unless (@search_dirs) {
+			@search_dirs = ((map $_ . '/LocaleData', @INC), @default_dirs)
+				unless @search_dirs;
+			if (my $share = eval {
+				require File::ShareDir;
+				File::ShareDir::dist_dir ($textdomain);
+			}) {
+				unshift @search_dirs, 
+                        map { "$share/$_" }
+                        qw (locale LocaleData);
+            }
+		}
+		$bound_dirs{$textdomain} = [grep { -d $_ } @search_dirs];
     }
 	
     Locale::TextDomain->export_to_level (1, $package, @EXPORT);
@@ -320,7 +389,7 @@ sub __find_domain ($)
 	if (defined $try_dirs) {
 		my $found_dir = '';
 		
-		TRYDIR: foreach my $dir (map { abs_path $_ } grep { -d $_ } @$try_dirs) {
+		TRYDIR: foreach my $dir (grep { -d $_ } @$try_dirs) {
 			# Is there a message catalog?  We have to search recursively
 			# for it.  Since globbing is reported to be buggy under
 			# MS-DOS, we roll our own version.
@@ -343,7 +412,7 @@ sub __find_domain ($)
 		
 		# If there was no success, this will fall back to the default search
 		# directories.
-		bindtextdomain $domain => $found_dir;
+		bindtextdomain $domain => abs_path $found_dir;
     }
     
     # The search has completed.
@@ -495,18 +564,27 @@ to search other directories prior to the default directories.  Specifying
 a differnt search directory is called I<binding> a textdomain to a 
 directory.
 
-B<Locale::TextDomain> extends the default strategy by a Perl
-specific approach.  Unless told otherwise, it will look for a
-directory F<LocaleData> in every component found in the standard
-include path C<@INC> and check for a database containing the message
-for your textdomain there.  Example: If the path 
-F</usr/lib/perl/5.8.0/site_perl> is in your C<@INC>, you can
-install your translation files in F</usr/lib/perl/5.8.0/site_perl/LocaleData>, 
-and they will be found at run-time.
+Beginning with version 1.20, B<Locale::TextDomain> extends the default 
+strategy by a Perl-specific approach.  If L<File::ShareDir> is installed, it 
+will look in the subdirectories named F<locale> and F<LocaleData> (in that 
+order) in the directory returned by C<File::ShareDir::dist_dir ($textdomain)>
+(if L<File::ShareDir> is installed),
+and check for a database containing the message for your textdomain there.
+This allows you to install your database in the Perl-specific shared directory
+using L<Module::Install>'s C<install_share> directive or the Dist::Zilla
+L<ShareDir plugin|Dist::Zilla::Plugin::ShareDir>.
+
+If L<File::ShareDir> is not availabe, or if Locale::TextDomain fails to find
+the translation files in the L<File::ShareDir> directory, it will next look in
+every directory found in the standard include path C<@INC>, and check for a
+database containing the message for your textdomain there. Example: If the
+path F</usr/lib/perl/5.8.0/site_perl> is in your C<@INC>, you can install your
+translation files in F</usr/lib/perl/5.8.0/site_perl/LocaleData>, and they
+will be found at run-time.
 
 =head1 USAGE
 
-It is crucial to remember that you use Locale::TextDoamin(3) as 
+It is crucial to remember that you use Locale::TextDomain(3) as
 specified in the section L</SYNOPSIS>, that means you have to 
 B<use> it, not B<require> it.  The module behaves quite differently 
 compared to other modules.
@@ -519,7 +597,7 @@ as an argument to the use() function.  It actually works like this:
 The first argument (the first string passed to use()) is the textdomain
 of your package, optionally followed by a list of directories to search
 I<instead> of the Perl-specific directories (see above: F</LocaleData>
-appended to every part of C<@INC>).
+appended to a F<File::ShareDir> directory and every path in C<@INC>).
 
 If you are the author of a package 'barfoos', you will probably put
 the line
@@ -535,10 +613,11 @@ your module has been installed properly, including the message catalogs,
 it will then be able to retrieve these translations at run-time.
 
 If you have not installed the translation database in a directory
-F<LocaleData> in the standard include path C<@INC> (or in the system
-directories F</usr/share/locale> resp. F</usr/local/share/locale>), you 
-have to explicitely specify a search path by giving the names of
-directories (as strings!) as additional arguments to use():
+F<LocaleData> in the L<File::ShareDir> directory or the standard include
+path C<@INC> (or in the system directories F</usr/share/locale> resp.
+F</usr/local/share/locale>), you have to explicitely specify a search
+path by giving the names of directories (as strings!) as additional
+arguments to use():
 
     use Locale::TextDomain qw (barfoos ./dir1 ./dir2);
 
@@ -672,10 +751,9 @@ if she has to reorder the color and the thing like in French:
     msgid "This is the red car.\n";
     msgstr "Cela est la voiture rouge.\n"
 
-Zut alors! No way! You cannot portably reorder the arguments to 
-printf() and friends in Perl (it is possible in C, but at the 
-time of this writing not supported in Perl, and it would lead to
-other problems anyway).
+Zut alors! While it is possible to reorder the arguments to printf()
+and friends, it requires a syntax that is is nothing that you want to 
+learn.
 
 So what? The Perl backend to GNU gettext has defined an alternative
 format for interpolatable strings:
@@ -824,18 +902,18 @@ into the string to the previous method, __np().
 
 It's usage would be like so:
 
-    print __nx ("Files being permenantly removed",
-                "One file has been deleted.\n",
-                "{count} files have been deleted.\n",
-                $num_files,
-                count => $num_files);
+    print __npx ("Files being permenantly removed",
+                 "One file has been deleted.\n",
+                 "{count} files have been deleted.\n",
+                 $num_files,
+                 count => $num_files);
 
 I cannot think of any situations requiring this, but we can easily 
 support it, so here it is.
 
 This function was introduced in libintl-perl 1.17.
 
-=item B<N__ (ARG1, ARG2, ...)>
+=item B<N__(ARG1)>
 
 A no-op function that simply echoes its arguments to the caller.  Take
 the following piece of Perl:
@@ -946,6 +1024,55 @@ A reference to C<%__>, in case you prefer:
 
 =back
 
+=head1 CLASS METHODS
+
+The following class methods are defined:
+
+=over 4
+
+=item B<options>
+
+Returns a space-separated list of all '--keyword' and all '--flag' options
+for B<xgettext(1)>, when extracing strings from Perl source files localized
+with B<Locale::TextDomain>.
+
+The option should rather be called B<xgettextDefaultOptions>.  With regard
+to the typical use-case, a shorter name has been picked:
+
+    xgettext `perl -MLocale::TextDomain -e 'print Locale::TextDomain->options'`
+
+See L<https://www.gnu.org/software/gettext/manual/html_node/xgettext-Invocation.html>
+for more information about the xgettext options '--keyword' and '--flag'.
+
+If you want to disable the use of the xgettext default keywords, you
+should pass an option '--keyword=""' to xgettext before the options returned
+by this method.
+
+If you doubt the usefulness of this method, check the output on the
+command-line:
+
+    perl -MLocale::TextDomain -e 'print Locale::TextDomain->options'
+
+Nothing that you want to type yourself.
+
+This method was added in libintl-perl 1.28.
+
+=item B<keywords>
+
+Returns a space-separated list of all '--keyword' options for B<xgettext(1)> 
+so that all translatable strings are properly extracted.
+
+This method was added in libintl-perl 1.28.
+
+=item B<flags>
+
+Returns a space-separated list of all '--flag' options for B<xgettext(1)> 
+so that extracted strings are properly flagged.
+
+This method was added in libintl-perl 1.28.
+
+=back
+
 =head1 PERFORMANCE
 
 Message translation can be a time-consuming task.  Take this little
@@ -1024,11 +1151,9 @@ overhead for the function calls.
 
 =head1 AUTHOR
 
-Copyright (C) 2002-2009, Guido Flohr E<lt>guido@imperia.netE<gt>, all
-rights reserved.  See the source code for details.
-
-This software is contributed to the Perl community by Imperia 
-(L<http://www.imperia.net/>).
+Copyright (C) 2002-2017 L<Guido Flohr|http://www.guido-flohr.net/>
+(L<mailto:guido.flohr@cantanea.com>), all rights reserved.  See the source
+code for details!code for details!
 
 =head1 SEE ALSO
 

@@ -558,9 +558,14 @@
 <!ELEMENT documentdescription (%block;)*>
 <!ATTLIST documentdescription
           %spacesblockattr;>
-<!ELEMENT example      (%block; | exdent)*>
+<!ELEMENT example      (examplelanguage?, examplearg*, (%block; | exdent)*)>
 <!ATTLIST example
           %spacesblockattr;>
+<!ELEMENT examplelanguage (#PCDATA | %Inline.line;)*>
+<!ELEMENT examplearg (#PCDATA | %Inline.line;)*>
+<!ATTLIST examplearg
+          %spacesattr;>
+
 <!ELEMENT smallexample (%block; | exdent)*>
 <!ATTLIST smallexample
           %spacesblockattr;>
@@ -1290,6 +1295,8 @@
 <!ENTITY bdquo      "&#x201e;">
 <!ENTITY laquo      "&#xab;">
 <!ENTITY raquo      "&#xbb;">
+<!ENTITY guillemotleft   "&#xab;">
+<!ENTITY guillemotright  "&#xbb;">
 <!ENTITY lsaquo     "&#x2039;">
 <!ENTITY rsaquo     "&#x203a;">
 <!ENTITY textmdash      "&#x2014;">

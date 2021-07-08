@@ -1,6 +1,6 @@
 # Plaintext.pm: output tree as text with filling.
 #
-# Copyright 2010-2019 Free Software Foundation, Inc.
+# Copyright 2010-2020 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ sub import {
 @EXPORT = qw(
 );
 
-$VERSION = '6.7';
+$VERSION = '6.8';
 
 # misc commands that are of use for formatting.
 my %formatting_misc_commands = %Texinfo::Convert::Text::formatting_misc_commands;
@@ -92,6 +92,7 @@ my %block_commands = %Texinfo::Common::block_commands;
 my %menu_commands = %Texinfo::Common::menu_commands;
 my %root_commands = %Texinfo::Common::root_commands;
 my %preformatted_commands = %Texinfo::Common::preformatted_commands;
+my %math_commands = %Texinfo::Common::math_commands;
 my %explained_commands = %Texinfo::Common::explained_commands;
 my %inline_format_commands = %Texinfo::Common::inline_format_commands;
 my %inline_commands = %Texinfo::Common::inline_commands;
@@ -157,6 +158,13 @@ foreach my $preformatted_command ('verbatim', keys(%menu_commands)) {
   $default_preformatted_context_commands{$preformatted_command} = 1;
 }
 
+my %block_math_commands;
+foreach my $block_math_command (keys(%math_commands)) {
+  if (exists($block_commands{$block_math_command})) {
+    $block_math_commands{$block_math_command} = 1;
+  }
+}
+
 my %ignored_misc_commands;
 foreach my $misc_command (keys(%misc_commands)) {
   $ignored_misc_commands{$misc_command} = 1 
@@ -193,6 +201,8 @@ foreach my $non_indented('format', 'smallformat') {
   delete $indented_commands{$non_indented};
 }
 
+# FIXME should keys(%math_brace_commands) be added here?
+# How can this be tested?
 foreach my $format_context_command (keys(%menu_commands), 'verbatim',
  'flushleft', 'flushright', 'multitable', 'float') {
   $default_format_context_commands{$format_context_command} = 1;
@@ -315,7 +325,7 @@ foreach my $command ('var', 'cite', 'dmn', keys(%code_style_commands)) {
 
 my %defaults = (
   'ENABLE_ENCODING'      => 1,
-  'SHOW_MENU'            => 0,
+  'FORMAT_MENU'          => 'nomenu',
   #'EXTENSION'            => 'info',
   'EXTENSION'            => 'txt',
   #'USE_SETFILENAME_EXTENSION' => 1,
@@ -652,10 +662,12 @@ sub new_formatter($$;$)
       if ($menu_commands{$context}) {
         last;
       } elsif ($preformatted_code_commands{$context}
-               or $format_raw_commands{$context}) {
+               or $format_raw_commands{$context}
+               or $math_commands{$context}) {
         $formatter->{'font_type_stack'}->[-1]->{'monospace'} = 1;
         $formatter->{'font_type_stack'}->[-1]->{'code_command'} = 1 
-          if ($preformatted_code_commands{$context});
+          if ($preformatted_code_commands{$context}
+              or $math_commands{$context});
         last;
       }
     }
@@ -1167,8 +1179,8 @@ sub _printindex_formatted($$;$)
     my $merged_index_entries 
       = Texinfo::Structuring::merge_indices($index_names);
     $self->{'index_entries'} 
-      = $self->Texinfo::Structuring::sort_indices($merged_index_entries,
-                                                  $index_names);
+      = Texinfo::Structuring::sort_indices($self->{'parser'},
+                                $merged_index_entries, $index_names);
     $self->{'index_names'} = $index_names;
   }
   if (!$self->{'index_entries'} or !$self->{'index_entries'}->{$index_name}
@@ -1562,6 +1574,10 @@ sub _convert($$)
       } elsif ($root->{'text'} =~ /\S/) {
         $self->_bug_message("ignored text not empty `$root->{'text'}'", $root);
         return '';
+      } else {
+        # miscellaneous top-level whitespace - possibly after an @image
+        return _count_added($self, $formatter->{'container'},
+                  add_text($formatter->{'container'}, $root->{'text'}));
       }
     } else {
       my $tree = $self->gdt($root->{'text'});
@@ -1677,14 +1693,12 @@ sub _convert($$)
         add_end_sentence($formatter->{'container'}, 1);
       } elsif ($command eq 'tie') {
         $formatter->{'w'}++;
-        $result .= _count_added($self, $formatter->{'container'},
-            set_space_protection($formatter->{'container'}, 1, undef))
+        set_space_protection($formatter->{'container'}, 1, undef)
           if ($formatter->{'w'} == 1);
         $result .= _count_added($self, $formatter->{'container'}, 
                        add_text($formatter->{'container'}, $text));
         $formatter->{'w'}--;
-        $result .= _count_added($self, $formatter->{'container'},
-            set_space_protection($formatter->{'container'}, 0, undef))
+        set_space_protection($formatter->{'container'}, 0, undef)
           if ($formatter->{'w'} == 0);
       } else {
         $result .= _count_added($self, $formatter->{'container'}, 
@@ -1765,8 +1779,7 @@ sub _convert($$)
       }
       if ($command eq 'w') {
         $formatter->{'w'}++;
-        $result .= _count_added($self, $formatter->{'container'},
-            set_space_protection($formatter->{'container'}, 1,undef))
+        set_space_protection($formatter->{'container'}, 1,undef)
           if ($formatter->{'w'} == 1);
       }
       my ($text_before, $text_after);
@@ -1811,8 +1824,7 @@ sub _convert($$)
          if ($text_after ne '');
       if ($command eq 'w') {
         $formatter->{'w'}--;
-        $result .= _count_added($self, $formatter->{'container'},
-            set_space_protection($formatter->{'container'},0,undef))
+        set_space_protection($formatter->{'container'},0,undef)
           if ($formatter->{'w'} == 0);
       }
       if ($code_style_commands{$command}) {
@@ -2008,15 +2020,14 @@ sub _convert($$)
         if ($self->{'document_context'}->[-1]->{'in_multitable'}) {
           $in_multitable = 1;
           $formatter->{'w'}++;
-          $result .= _count_added($self, $formatter->{'container'},
-            set_space_protection($formatter->{'container'},1,undef))
-          if ($formatter->{'w'} == 1);
+          set_space_protection($formatter->{'container'}, 1, undef)
+            if ($formatter->{'w'} == 1);
         }
         # Disallow breaks in runs of Chinese text in node names, because a 
         # break would be normalized to a single space by the Info reader, and 
         # the node wouldn't be found.
         set_space_protection($formatter->{'container'},
-                    undef,undef,undef,undef,1); # double_width_no_break
+                    undef, undef, undef, undef, 1);
 
         if ($command eq 'xref') {
           $result = _convert($self, {'contents' => [{'text' => '*Note '}]});
@@ -2187,8 +2198,7 @@ sub _convert($$)
 
         if ($in_multitable) {
           $formatter->{'w'}--;
-          $result .= _count_added($self, $formatter->{'container'},
-              set_space_protection($formatter->{'container'},0,undef))
+          set_space_protection($formatter->{'container'}, 0, undef)
             if ($formatter->{'w'} == 0);
         }
         set_space_protection($formatter->{'container'},
@@ -2243,15 +2253,16 @@ sub _convert($$)
         unshift @{$self->{'current_contents'}->[-1]}, ($argument);
       }
       return '';
-    } elsif ($command eq 'math') {
-      push @{$self->{'context'}}, 'math';
+      # condition should actually be that the $command is inline
+    } elsif ($math_commands{$command} and not exists($block_commands{$command})) {
+      push @{$self->{'context'}}, $command;
       if ($root->{'args'}) {
         $result .= _convert($self, {'type' => 'frenchspacing',
              'contents' => [{'type' => '_code',
                             'contents' => [$root->{'args'}->[0]]}]});
       }
       my $old_context = pop @{$self->{'context'}};
-      die if ($old_context ne 'math');
+      die if ($old_context ne $command);
       return $result;
     } elsif ($command eq 'titlefont') {
       push @{$self->{'count_context'}}, {'lines' => 0, 'bytes' => 0};
@@ -2262,9 +2273,10 @@ sub _convert($$)
         'cmdname' => 'titlefont'}, $result, $self, 
         $self->get_conf('NUMBER_SECTIONS'),
         ($self->{'format_context'}->[-1]->{'indent_level'}) * $indent_length);
+      $result =~ s/\n$//; # final newline has its own tree element
       $self->{'empty_lines_count'} = 0 unless ($result eq '');
       _add_text_count($self, $result);
-      _add_lines_count($self, 2);
+      _add_lines_count($self, 1);
       return $result;
 
     } elsif ($command eq 'U') {
@@ -2345,7 +2357,7 @@ sub _convert($$)
       # remark:
       # cartouche group and raggedright -> nothing on format stack
 
-      if ($menu_commands{$command} and !$self->get_conf('SHOW_MENU')) {
+      if ($menu_commands{$command} and $self->get_conf('FORMAT_MENU') eq 'nomenu') {
         return '';
       }
       if ($self->{'preformatted_context_commands'}->{$command}
@@ -2360,7 +2372,7 @@ sub _convert($$)
         push @{$self->{'context'}}, $command;
       } elsif ($flush_commands{$command}) {
         push @{$self->{'context'}}, $command;
-      } elsif ($raw_commands{$command}) {
+      } elsif ($raw_commands{$command} or $block_math_commands{$command}) {
         if (!$self->{'formatters'}->[-1]->{'_top_formatter'}) {
           # reuse the current formatter if not in top level
           $result .= _count_added($self, $formatter->{'container'},
@@ -2942,7 +2954,9 @@ sub _convert($$)
 
         my $def_paragraph = $self->new_formatter('paragraph', 
          { 'indent_length' => ($self->{'format_context'}->[-1]->{'indent_level'} -1) *$indent_length,
-           'indent_length_next' => (1+$self->{'format_context'}->[-1]->{'indent_level'})*$indent_length});
+           'indent_length_next' => (1+$self->{'format_context'}->[-1]->{'indent_level'})*$indent_length,
+           'suppress_styles' => 1
+         });
         push @{$self->{'formatters'}}, $def_paragraph;
 
         $result .= _convert($self, {'type' => '_code', 'contents' => [$tree]});
@@ -3038,8 +3052,7 @@ sub _convert($$)
 
     } elsif ($root->{'type'} eq 'frenchspacing') {
       push @{$formatter->{'frenchspacing_stack'}}, 'on';
-      set_space_protection($formatter->{'container'}, undef,
-        undef,undef,1);
+      set_space_protection($formatter->{'container'}, undef, undef, undef, 1);
     } elsif ($root->{'type'} eq '_code') {
       if (!$formatter->{'font_type_stack'}->[-1]->{'monospace'}) {
         push @{$formatter->{'font_type_stack'}}, {'monospace' => 1};
@@ -3047,8 +3060,7 @@ sub _convert($$)
         $formatter->{'font_type_stack'}->[-1]->{'monospace'}++;
       }
       push @{$formatter->{'frenchspacing_stack'}}, 'on';
-      set_space_protection($formatter->{'container'},undef,
-        undef,undef,1);
+      set_space_protection($formatter->{'container'}, undef, undef, undef, 1);
     } elsif ($root->{'type'} eq 'bracketed') {
       $result .= _count_added($self, $formatter->{'container'}, 
                    add_text($formatter->{'container'}, '{'));
@@ -3077,8 +3089,8 @@ sub _convert($$)
       pop @{$formatter->{'frenchspacing_stack'}};
       my $frenchspacing = 0;
       $frenchspacing = 1 if ($formatter->{'frenchspacing_stack'}->[-1] eq 'on');
-      set_space_protection($formatter->{'container'},undef,
-        undef, undef, $frenchspacing);
+      set_space_protection($formatter->{'container'}, undef,
+                           undef, undef, $frenchspacing);
     } elsif ($root->{'type'} eq '_code') {
       $formatter->{'font_type_stack'}->[-1]->{'monospace'}--;
       pop @{$formatter->{'font_type_stack'}}
@@ -3086,8 +3098,8 @@ sub _convert($$)
       pop @{$formatter->{'frenchspacing_stack'}};
       my $frenchspacing = 0;
       $frenchspacing = 1 if ($formatter->{'frenchspacing_stack'}->[-1] eq 'on');
-      set_space_protection($formatter->{'container'},undef,
-        undef, undef, $frenchspacing);
+      set_space_protection($formatter->{'container'}, undef,
+                           undef, undef, $frenchspacing);
     } elsif ($root->{'type'} eq 'bracketed') {
       $result .= _count_added($self, $formatter->{'container'}, 
                                      add_text($formatter->{'container'}, '}'));
@@ -3267,16 +3279,19 @@ sub _convert($$)
         and $command ne 'part') {
       # add menu if missing
       my $node = $self->{'node'};
-      if ($node) {
-        if (!$self->{'seenmenus'}->{$node}) {
-          $self->{'seenmenus'}->{$node} = 1;
-          my $menu_node
-            = Texinfo::Structuring::node_menu_of_node (undef, $node);
-          if ($menu_node) {
-            my $menu_text = $self->_convert ($menu_node);
-            if ($menu_text) {
-              $result .= $menu_text;
-            }
+      my $automatic_directions;
+      if ($node and defined($node->{'extra'}->{'nodes_manuals'})) {
+        $automatic_directions =
+            (scalar(@{$node->{'extra'}->{'nodes_manuals'}}) == 1);
+      }
+      if ($node and $automatic_directions
+            and !$self->{'seenmenus'}->{$node}) {
+        $self->{'seenmenus'}->{$node} = 1;
+        my $menu_node = Texinfo::Structuring::new_complete_node_menu(undef, $node);
+        if ($menu_node) {
+          my $menu_text = $self->_convert($menu_node);
+          if ($menu_text) {
+            $result .= $menu_text;
           }
         }
       }

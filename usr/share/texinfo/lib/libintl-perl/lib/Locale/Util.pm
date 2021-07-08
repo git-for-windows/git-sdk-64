@@ -1,26 +1,23 @@
 #! /bin/false
 
 # vim: set autoindent shiftwidth=4 tabstop=4:
-# $Id: Util.pm,v 1.1 2011-10-12 23:51:27 pertusus Exp $
 
 # Portable methods for locale handling.
-# Copyright (C) 2002-2009 Guido Flohr <guido@imperia.net>,
+# Copyright (C) 2002-2017 Guido Flohr <guido.flohr@cantanea.com>,
 # all rights reserved.
 
-# This program is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Library General Public License as published
-# by the Free Software Foundation; either version 2, or (at your option)
-# any later version.
-                                         
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Library General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 
-# You should have received a copy of the GNU Library General Public 
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
-# USA.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package Locale::Util;
 
@@ -73,7 +70,13 @@ use constant LANG2COUNTRY => {
     da => 'DK', # Danish => Denmark
     de => 'DE', # German => Germany
     dz => 'BT', # Dzongkha => Bhutan
+    el => 'GR', # Greek => Greece
     en => 'US', # English => United States
+    es => 'ES', # Actually Mexico and the US have more Spanish speakers
+                # than Spain.  But it can be assumed that they either add
+                # the country to their browser settings or will not care
+                # to much.
+    et => 'EE', # Estonian => Estonia
     fa => 'IR', # Iran, Islamic Republic of
     fi => 'FI', # Finnish => Finland
     fj => 'FJ', # Fijian => Fiji
@@ -171,7 +174,7 @@ use constant LANG2COUNTRY => {
     sg => '??', # Sango => Central African Republic
     si => 'LK', # Sinhalese => Sri Lanka
     sk => 'SK', # Slovakian => Slovakia
-    sl => 'SL', # Slovenian => Slovenia
+    sl => 'SI', # Slovenian => Slovenia
     sm => 'WS', # Samoan => Samoa
     sh => 'ZW', # Shona => Zimbabwe (FIXME: Rather Mozambique?)
     so => 'SO', # Somali => Somalia
@@ -1182,11 +1185,9 @@ production code.
 
 =head1 AUTHOR
 
-Copyright (C) 2002-2009, Guido Flohr E<lt>guido@imperia.netE<gt>, all
-rights reserved.  See the source code for details.
-
-This software is contributed to the Perl community by Imperia 
-(L<http://www.imperia.net/>).
+Copyright (C) 2002-2017 L<Guido Flohr|http://www.guido-flohr.net/>
+(L<mailto:guido.flohr@cantanea.com>), all rights reserved.  See the source
+code for details!code for details!
 
 =head1 SEE ALSO
 

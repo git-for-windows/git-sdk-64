@@ -1,7 +1,6 @@
 # Report.pm: prepare error messages and translate strings.
 #
-# Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Free Software 
-# Foundation, Inc.
+# Copyright 2010-2020 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,6 +39,7 @@ use strict;
 # for fileparse
 use File::Basename;
 
+use POSIX qw(setlocale LC_ALL);
 use Locale::Messages;
 # to be able to load a parser if none was given to gdt.
 use Texinfo::Parser;
@@ -241,12 +241,24 @@ sub gdt($$;$$)
   my $re = join '|', map { quotemeta $_ } keys %$context
       if (defined($context) and ref($context));
 
-  my $saved_env_LC_ALL = $ENV{'LC_ALL'};
+  my $saved_LC_ALL = POSIX::setlocale(LC_ALL);
   my $saved_LANGUAGE = $ENV{'LANGUAGE'};
+
+  # The following is necessary when the locale is "C" (as is the case
+  # when the tests are run), due to the fix for
+  #   https://rt.cpan.org/Public/Bug/Display.html?id=81315
+  # Translation is not done if LC_MESSAGES is "C" or "POSIX".
+  # This may not work if a locale named here doesn't exist on the system.
+  # Set LC_ALL rather than LC_MESSAGES as LC_MESSAGES may not be supported
+  # on Perl for MS-Windows.
+  for my $try ('en_US.UTF-8', 'en_US') {
+    my $locale = POSIX::setlocale(LC_ALL, $try);
+    last if $locale;
+  }
 
   Locale::Messages::textdomain($strings_textdomain);
 
-  # FIXME do that only once when encoding is seen (or at beginning)
+  # FIXME do this only once when encoding is seen (or at beginning)
   # instead of here, each time that gdt is called?
   my $encoding;
   if ($self->get_conf('OUTPUT_ENCODING_NAME')) {
@@ -265,7 +277,7 @@ sub gdt($$;$$)
     }
   }
 
-  # FIXME do that once when @documentlanguage changes (or at beginning)
+  # FIXME do this once when @documentlanguage changes (or at beginning)
   # instead of here, each time that gdt is called?
   my $lang = $self->get_conf('documentlanguage');
   $lang = $DEFAULT_LANGUAGE if (!defined($lang));
@@ -292,7 +304,6 @@ sub gdt($$;$$)
     }
   }
   $locales =~ s/:$//;
-  # print STDERR "$locales $message\n";
   # END FIXME
 
   Locale::Messages::nl_putenv("LANGUAGE=$locales");
@@ -300,16 +311,15 @@ sub gdt($$;$$)
   my $translation_result = Locale::Messages::gettext($message);
 
   Locale::Messages::textdomain($messages_textdomain);
-  # old perl complains 'Use of uninitialized value in scalar assignment'
   if (!defined($saved_LANGUAGE)) {
     delete ($ENV{'LANGUAGE'});
   } else {
     $ENV{'LANGUAGE'} = $saved_LANGUAGE;
   }
-  if (!defined($saved_env_LC_ALL)) {
-    delete ($ENV{'LC_ALL'});
+  if (defined($saved_LC_ALL)) {
+    POSIX::setlocale(LC_ALL, $saved_LC_ALL);
   } else {
-    $ENV{'LC_ALL'} = $saved_env_LC_ALL;
+    POSIX::setlocale(LC_ALL, '');
   }
 
   if ($type and $type eq 'translated_text') {
@@ -329,7 +339,6 @@ sub gdt($$;$$)
     # next line taken from libintl perl, copyright Guido. sub __expand
     $translation_result =~ s/\{($re)\}/\@value\{_$1\}/g;
     foreach my $substitution(keys %$context) {
-      #print STDERR "$translation_result $substitution $context->{$substitution}\n";
       # Only pass simple string @values to parser.
       if (!ref($context->{$substitution})) {
         $parser_conf->{'values'}->{'_'.$substitution}

@@ -23,7 +23,7 @@ use warnings;
 
 our $TEXINFO_XS;
 
-our $VERSION = '6.7';
+our $VERSION = '6.8';
 
 our $disable_XS;
 
@@ -60,18 +60,17 @@ sub _find_file($) {
   return undef;
 }
  
-# Make symbols accessible under
-# namespace $FULL_MODULE_NAME (e.g. Texinfo::Convert::Paragraph),
-# either from XS implementation in $MODULE, or non-XS implementation 
-# $FALLBACK_MODULE.  $MODULE_NAME is the name of a Libtool file used for
+# Load either from XS implementation in $MODULE along with Perl file 
+# $PERL_EXTRA_FILE, or non-XS implementation $FALLBACK_MODULE.
+# $MODULE_NAME is the name of a Libtool file used for
 # loading the XS subroutines.
 # $INTERFACE_VERSION is a module interface number, to be changed when the XS 
 # interface changes.  
 sub init {
- my ($full_module_name,
-     $module,
+ my ($module,
      $fallback_module,
      $module_name,
+     $perl_extra_file,
      $interface_version,
      $warning_message,
      $fatal_message
@@ -80,12 +79,8 @@ sub init {
  # Possible values for TEXINFO_XS environment variable:
  #
  # TEXINFO_XS=omit         # don't try loading xs at all
- # TEXINFO_XS=default      # try xs, libtool and then perl paths,
- #                         # silent fallback
- # TEXINFO_XS=libtool      # try xs, libtool only, silent fallback
- # TEXINFO_XS=standalone   # try xs, perl paths only, silent fallback
- # TEXINFO_XS=warn         # try xs, libtool and then perl paths, warn
- #                         # on failure
+ # TEXINFO_XS=default      # try xs, libtool, silent fallback
+ # TEXINFO_XS=warn         # try xs, libtool warn on failure
  # TEXINFO_XS=required     # abort if not loadable, no fallback
  # TEXINFO_XS=debug        # voluminuous debugging
  #
@@ -119,36 +114,18 @@ sub init {
    goto FALLBACK;
  }
  
- my ($libtool_dir, $libtool_archive);
- if ($TEXINFO_XS ne 'standalone') {
-   ($libtool_dir, $libtool_archive) = _find_file("$module_name.la");
-   if (!$libtool_archive) {
-     if ($TEXINFO_XS eq 'libtool') {
-       _fatal "$module_name: couldn't find Libtool archive file";
-       goto FALLBACK;
-     }
-     _debug "$module_name: couldn't find Libtool archive file";
+ my ($libtool_dir, $libtool_archive) = _find_file("$module_name.la");
+ if (!$libtool_archive) {
+   if ($TEXINFO_XS eq 'libtool') {
+     _fatal "$module_name: couldn't find Libtool archive file";
+     goto FALLBACK;
    }
+   _debug "$module_name: couldn't find Libtool archive file";
+   goto FALLBACK;
  }
  
  my $dlname = undef;
  my $dlpath = undef;
- 
- # Try perl paths
- if (!$libtool_archive) {
-   my @modparts = split(/::/,$module);
-   my $dlname = $modparts[-1];
-   my $modpname = join('/',@modparts);
-   # the directories with -L prepended setup directories to
-   # be in the search path. Then $dlname is prepended as it is
-   # the name really searched for.
-   $dlpath = DynaLoader::dl_findfile(map("-L$_/auto/$modpname", @INC), $dlname);
-   if (!$dlpath) {
-     _fatal "$module_name:  couldn't find $module";
-     goto FALLBACK;
-   }
-   goto LOAD;
- }
  
  my $fh;
  open $fh, $libtool_archive;
@@ -179,8 +156,6 @@ sub init {
    goto FALLBACK;
  }
  
-LOAD:
-  
   #my $flags = dl_load_flags $module; # This is 0 in DynaLoader
   my $flags = 0;
   my $libref = DynaLoader::dl_load_file($dlpath, $flags);
@@ -228,8 +203,9 @@ LOAD:
     goto FALLBACK;
   }
   
-  *{"${full_module_name}::"} = \%{"${module}::"};
-
+  if ($perl_extra_file) {
+    eval "require $perl_extra_file";
+  }
   
   return $module;
   
@@ -238,10 +214,10 @@ FALLBACK:
     die "unset the TEXINFO_XS environment variable to use the "
        ."pure Perl modules\n";
   } elsif ($TEXINFO_XS eq 'warn' or $TEXINFO_XS eq 'debug') {
-    warn "falling back to pure Perl module\n";
+    warn "falling back to pure Perl module $fallback_module\n";
   }
   if (!defined $fallback_module) {
-    warn "no fallback module for $full_module_name\n";
+    warn "no fallback module for $module\n";
     die "unset the TEXINFO_XS and TEXINFO_XS_PARSER environment variables "
        ."to use the pure Perl modules\n";
   }
@@ -249,8 +225,10 @@ FALLBACK:
   # Fall back to using the Perl code.
   # Use eval here to interpret :: properly in module name.
   eval "require $fallback_module";
-
-  *{"${full_module_name}::"} = \%{"${fallback_module}::"};
+  if ($@) {
+    warn();
+    die "Error loading $fallback_module\n";
+  }
 
   return  $fallback_module;
 } # end init

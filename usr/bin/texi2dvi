@@ -1,7 +1,7 @@
 #! /bin/sh
 # texi2dvi --- produce DVI (or PDF) files from Texinfo (or (La)TeX) sources.
 #
-# Copyright 1992-2019 Free Software Foundation, Inc.
+# Copyright 1992-2021 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -198,9 +198,9 @@ EOF
 version ()
 {
   cat <<EOF
-texi2dvi (GNU Texinfo 6.7)
+texi2dvi (GNU Texinfo 6.8)
 
-Copyright (C) 2019 Free Software Foundation, Inc.
+Copyright (C) 2021 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
@@ -767,6 +767,8 @@ xref_files_save ()
 # since the previous run.
 xref_files_changed ()
 {
+  xref_files_new=`generated_files_get`
+
   # LaTeX (and the package changebar) report in the LOG file if it
   # should be rerun.  This is needed for files included from
   # subdirs, since texi2dvi does not try to compare xref files in
@@ -782,7 +784,6 @@ xref_files_changed ()
 
   # If old and new lists don't have the same file list,
   # then something has definitely changed.
-  xref_files_new=`generated_files_get`
   verbose "Original xref files = $xref_files_orig"
   verbose "New xref files      = $xref_files_new"
   if test "x$xref_files_orig" != "x$xref_files_new"; then
@@ -884,11 +885,8 @@ make_tex_cmd ()
   # Tell TeX to allow running external executables
   test -n "$shell_escape" && tex_cmd="$tex_cmd $shell_escape"
 
-  # Run without interaction.
-  # \batchmode does not show terminal output at all, so we don't
-  # want that.  And even in batch mode, TeX insists on having input
-  # from the user.  Close its stdin to make it impossible.
-  tex_cmd="$tex_cmd </dev/null '${escape}nonstopmode'"
+  # Run without interaction, stopping at the first error.
+  tex_cmd="$tex_cmd </dev/null"
 }
 
 
@@ -1697,7 +1695,7 @@ cleanup ()
 input_file_name_decode ()
 {
   case $command_line_filename in
-    *\\input{*}*)
+    *\\input\{*\}*)
       # Let AUC-TeX error parser deal with line numbers.
       line_error=false
       command_line_filename=`\

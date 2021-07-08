@@ -28,7 +28,7 @@
 # and/or change
 # $Texinfo::TeX4HT::tex4ht_command_math 
 #    and $Texinfo::TeX4HT::tex4ht_options_math
-# $Texinfo::TeX4HT::tex4ht_command_tex 
+# $Texinfo::TeX4HT::tex4ht_command_tex, $Texinfo::TeX4HT::tex4ht_command_displaymath
 #    and $Texinfo::TeX4HT::tex4ht_options_tex
 
 use strict;
@@ -42,6 +42,7 @@ texinfo_register_handler('finish', \&tex4ht_finish);
 
 texinfo_register_command_formatting('math', \&tex4ht_do_tex);
 texinfo_register_command_formatting('tex', \&tex4ht_do_tex);
+texinfo_register_command_formatting('displaymath', \&tex4ht_do_tex);
 
 {
 use Cwd;
@@ -53,11 +54,12 @@ $STYLE_MATH
 $STYLE_TEX
 $tex4ht_command_math
 $tex4ht_command_tex
+$tex4ht_command_displaymath
 $tex4ht_options_math
 $tex4ht_options_tex
 );
 
-$STYLE_MATH = 'texi' if (!defined($STYLE_MATH));
+$STYLE_MATH = 'tex' if (!defined($STYLE_MATH));
 $STYLE_TEX = 'tex' if (!defined($STYLE_TEX));
 
 if (!defined($tex4ht_command_math)) {
@@ -69,6 +71,9 @@ if (!defined($tex4ht_command_tex)) {
   $tex4ht_command_tex = 'httex';
   $tex4ht_command_tex = 'htlatex' if ($STYLE_TEX eq 'latex');
   $tex4ht_command_tex = 'httexi' if ($STYLE_TEX eq 'texi');
+}
+if (!defined($tex4ht_command_displaymath)) {
+  $tex4ht_command_displaymath = $tex4ht_command_tex;
 }
 
 }
@@ -101,6 +106,8 @@ sub tex4ht_prepare($$)
   $commands{'tex'}->{'style'} = $Texinfo::TeX4HT::STYLE_TEX;
   $commands{'math'}->{'exec'} = $Texinfo::TeX4HT::tex4ht_command_math;
   $commands{'tex'}->{'exec'} = $Texinfo::TeX4HT::tex4ht_command_tex;
+  $commands{'displaymath'}->{'style'} = $Texinfo::TeX4HT::STYLE_TEX;
+  $commands{'displaymath'}->{'exec'} = $Texinfo::TeX4HT::tex4ht_command_displaymath;
   my @replaced_commands = sort(keys(%commands));
   my $collected_commands = Texinfo::Common::collect_commands_in_tree($document_root, \@replaced_commands);
   foreach my $command (@replaced_commands) {
@@ -116,8 +123,6 @@ sub tex4ht_prepare($$)
     $commands{$command}->{'counter'} = 0;
     $commands{$command}->{'output_counter'} = 0;
 
-    ## we rely on 'math' and 'tex' being recorded as global commands
-    #if ($self->{'extra'}->{$command}) {
     if (scalar(@{$collected_commands->{$command}}) > 0) {
       
       local *TEX4HT_TEXFILE;
@@ -145,7 +150,6 @@ sub tex4ht_prepare($$)
           print $fh "\\csname tex4ht\\endcsname\n";
         }
       }
-      #foreach my $root (@{$self->{'extra'}->{$command}}) {
       foreach my $root (@{$collected_commands->{$command}}) {
         $commands{$command}->{'counter'}++;
         my $counter = $commands{$command}->{'counter'};
@@ -193,6 +197,8 @@ sub tex4ht_prepare($$)
           } else {
             print $fh "\\IgnorePar \$" . $text . "\$";
           }
+        } elsif ($command eq 'displaymath') {
+          print $fh "\n\$\$" . $text . "\$\$\n";
         }
         my $end_comment = "<!-- tex4ht_end $commands{$command}->{'basename'} $command $counter -->";
         print $fh "$before_comment_close$end_comment$after_comment_close";
@@ -258,9 +264,20 @@ sub tex4ht_process_command($$) {
 
   my $cmd = "$commands{$command}->{'exec'} $commands{$command}->{'basefile'} $options";
   print STDERR "tex4ht command: $cmd\n" if ($self->get_conf('VERBOSE'));
-  if (system($cmd)) {
+  # do not use system in order to be sure that tex STDIN is not
+  # mixed up with the main script STDIN.  It is important because
+  # if tex fails, it will read from STDIN and the input may trigger
+  # diverse actions by tex.
+  #if (system($cmd)) {
+  if (not(open(TEX4HT, "|-", $cmd))) {
     $self->document_warn(sprintf(__(
                          "tex4ht.pm: command failed: %s"), $cmd));
+    return 1;
+  }
+  if (!close (TEX4HT)) {
+    $self->document_warn(sprintf(__(
+                         "tex4ht.pm: closing communication failed: %s: %s"),
+                         $cmd, $!));
     return 1;
   }
 

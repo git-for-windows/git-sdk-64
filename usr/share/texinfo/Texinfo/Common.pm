@@ -1,6 +1,6 @@
 # Common.pm: definition of commands. Common code of other Texinfo modules.
 #
-# Copyright 2010-2019 Free Software Foundation, Inc.
+# Copyright 2010-2020 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ valid_tree_transformation
 __ __p print_tree
 );
 
-$VERSION = '6.7';
+$VERSION = '6.8';
 
 # i18n
 sub N__($)
@@ -110,7 +110,6 @@ our %default_parser_state_configuration = (
   'indices' => [],
   # the following are dynamically modified during the document parsing.
   'aliases' => {},            # key is a command name value is the alias
-  'clickstyle' => 'arrow',
   'documentlanguage' => undef,
                               # Current documentlanguage set by 
                               # @documentlanguage
@@ -120,7 +119,6 @@ our %default_parser_state_configuration = (
                               # corresponding command, the value is the 
                               # contents array of the previous command with
                               # this first arg and a second arg.
-  'kbdinputstyle' => 'distinct',
   'labels'          => {},    # keys are normalized label names, as described
                               # in the `HTML Xref' node.  Value should be
                               # a node/anchor or float in the tree.
@@ -129,7 +127,6 @@ our %default_parser_state_configuration = (
                               # value is the reference on a macro element 
                               # as obtained by parsing the @macro
   'merged_indices' => {},     # the key is merged in the value
-  'validatemenus' => 0,       # same as setting @validatemenus.
   'sections_level' => 0,      # modified by raise/lowersections
   'values' => {'txicommandconditionals' => 1},
                               # the key is the name, the value the @set name 
@@ -143,13 +140,11 @@ our %default_parser_state_configuration = (
 );
 
 
-# Customization variables obeyed by the parser and other modules, and the 
-# default values.
-our %default_customization_values = (
-  'TEST' => 0,
+# Customization variables obeyed by the parser, and the default values.
+our %default_parser_customization_values = (
   'DEBUG' => 0,     # if >= 10, tree is printed in texi2any.pl after parsing.
                     # If >= 100 tree is printed every line.
-  'SHOW_MENU' => 1,             # if false no menu error related.
+  'FORMAT_MENU' => 'menu',           # if not 'menu' no menu error related.
   'IGNORE_BEFORE_SETFILENAME' => 1,
   'IGNORE_SPACE_AFTER_BRACED_COMMAND_NAME' => 1,
   'CPP_LINE_DIRECTIVES' => 1, # handle cpp like synchronization lines
@@ -158,10 +153,18 @@ our %default_customization_values = (
   # Texinfo::Common::_convert_text_options
   'ENABLE_ENCODING' => 1,     # output accented and special characters
                               # based on @documentencoding
+);
+
+# Customization variables set in the parser for other modules, and the
+# default values.
+our %default_structure_customization_values = (
   # following are used in Texinfo::Structuring
-  'SIMPLE_MENU' => 0,         # not used in the parser but in structuring
   'USE_UP_NODE_FOR_ELEMENT_UP' => 0, # Use node up for Up if there is no 
                                      # section up.
+  'CHECK_NORMAL_MENU_STRUCTURE' => 0, # output warnings when node with
+            # automatic direction does directions in menu are not consistent
+            # with sectionning, and when node directions are not consistent
+            # with menu directions
 );
 
 
@@ -199,7 +202,6 @@ our %document_settable_unique_at_commands = (
   'fonttextsize' => 11, 
   'footnotestyle' => 'end', 
   'novalidate' => 0,
-  'validatemenus' => 0,
   'oddfootingmarks' => undef,
   'oddheadingmarks' => undef,
   # FIXME not clear here.
@@ -214,73 +216,141 @@ our %document_settable_unique_at_commands = (
   'oddfooting'        => undef,
 );
 
-my @command_line_settables = ('FILLCOLUMN', 'SPLIT', 'SPLIT_SIZE',
-  'HEADERS',
-  'MACRO_EXPAND', 'NUMBER_SECTIONS',
-  'NUMBER_FOOTNOTES', 'NODE_FILES',
-  'NO_WARN', 'VERBOSE',
-  'TRANSLITERATE_FILE_NAMES', 'ERROR_LIMIT', 'ENABLE_ENCODING',
-  'FORCE', 'INTERNAL_LINKS', 'OUTFILE', 'SUBDIR',
-  'SILENT', 'CASE_INSENSITIVE_FILENAMES',
+my @command_line_settables = (
+  'CASE_INSENSITIVE_FILENAMES', 'ENABLE_ENCODING', 'ERROR_LIMIT',
+  'FILLCOLUMN', 'FORCE', 'HEADERS', 'INTERNAL_LINKS', 'MACRO_EXPAND',
+  'NODE_FILES', 'NO_WARN', 'NUMBER_FOOTNOTES', 'NUMBER_SECTIONS',
+  'OUTFILE', 'SPLIT', 'SPLIT_SIZE', 'SUBDIR', 'TRANSLITERATE_FILE_NAMES',
+  'VERBOSE'
 );
 
 # documented in the Texinfo::Parser pod section
 # all are lower cased in texi2any.pl
 my @parser_options = map {uc($_)} (keys(%default_parser_state_configuration));
 
-my @variable_settables_not_used = ('COMPLETE_IMAGE_PATHS', 'TOC_FILE',
-  'SPLIT_INDEX');
-
-my @formats_settable = (
+our @variable_string_settables = (
+'AFTER_ABOUT',
+'AFTER_BODY_OPEN',
+'AFTER_OVERVIEW',
+'AFTER_TOC_LINES',
+'AVOID_MENU_REDUNDANCY',
+'BASEFILENAME_LENGTH',
+'BEFORE_OVERVIEW',
+'BEFORE_TOC_LINES',
+'BIG_RULE',
+'BODYTEXT',
+'COPIABLE_ANCHORS',
+'CHAPTER_HEADER_LEVEL',
+'CHECK_HTMLXREF',
+'CHECK_NORMAL_MENU_STRUCTURE',
+'CLOSE_QUOTE_SYMBOL',
+'COMPLEX_FORMAT_IN_TABLE',
+'CONTENTS_OUTPUT_LOCATION',
+'CPP_LINE_DIRECTIVES',
+'CSS_LINES',
+'DATE_IN_HEADER',
+'DEBUG',
+'DEFAULT_RULE',
+'DEF_TABLE',
+'DO_ABOUT',
+'DOCTYPE',
+'DUMP_TEXI',
+'DUMP_TREE',
+'ENABLE_ENCODING_USE_ENTITY',
+'EXTENSION',
+'EXTERNAL_CROSSREF_SPLIT',
+'EXTERNAL_DIR',
+'EXTRA_HEAD',
+'FOOTNOTE_END_HEADER_LEVEL',
+'FOOTNOTE_SEPARATE_HEADER_LEVEL',
+'FRAMES',
+'FRAMESET_DOCTYPE',
+'HEADER_IN_TABLE',
+'HTML_MATH',
+'HTMLXREF',
+'ICONS',
+'IGNORE_BEFORE_SETFILENAME',
+'IGNORE_SPACE_AFTER_BRACED_COMMAND_NAME',
+'IMAGE_LINK_PREFIX',
+'INDEX_ENTRY_COLON',
+'INDEX_SPECIAL_CHARS_WARNING',
+'INFO_JS_DIR',
+'INFO_SPECIAL_CHARS_QUOTE',
+'INFO_SPECIAL_CHARS_WARNING',
+'INLINE_CSS_STYLE',
+'JS_WEBLABELS',
+'JS_WEBLABELS_FILE',
+'KEEP_TOP_EXTERNAL_REF',
+'L2H',
+'L2H_CLEAN',
+'L2H_FILE',
+'L2H_HTML_VERSION',
+'L2H_L2H',
+'L2H_SKIP',
+'L2H_TMP',
+'MATHJAX_SCRIPT',
+'MATHJAX_SOURCE',
+'MAX_HEADER_LEVEL',
+'MAX_MACRO_CALL_NESTING',
+'MENU_ENTRY_COLON',
+'MENU_SYMBOL',
+'MONOLITHIC',
+'NO_CSS',
+'NODE_FILE_EXTENSION',
+'NODE_FILENAMES',
+'NODE_NAME_IN_INDEX',
+'NODE_NAME_IN_MENU',
+'NO_USE_SETFILENAME',
+'OPEN_QUOTE_SYMBOL',
+'OUTPUT_ENCODING_NAME',
+'OUTPUT_PERL_ENCODING',
+'OVERVIEW_LINK_TO_TOC',
+'PACKAGE',
+'PACKAGE_AND_VERSION',
+'PACKAGE_NAME',
+'PACKAGE_URL',
+'PACKAGE_VERSION',
+'PRE_ABOUT',
+'PRE_BODY_CLOSE',
+'PREFIX',
+'PROGRAM',
+'PROGRAM_NAME_IN_FOOTER',
+'SECTION_NAME_IN_TITLE',
+'SHORTEXTN',
+'FORMAT_MENU',
+'SHOW_TITLE',
+'SIMPLE_MENU',
+'SORT_ELEMENT_COUNT',
+'SORT_ELEMENT_COUNT_WORDS',
+'TEST',
+'TEXI2DVI',
+'TEXI2HTML',
+'TEXINFO_DTD_VERSION',
+'TEXINFO_OUTPUT_FORMAT',
+'TEXTCONTENT_COMMENT',
+'TOC_LINKS',
+'TOP_FILE',
+'TOP_NODE_FILE_TARGET',
+'TOP_NODE_UP',
+'TOP_NODE_UP_URL',
+'TREE_TRANSFORMATIONS',
+'USE_ACCESSKEY',
+'USE_ISO',
+'USE_LINKS',
+'USE_NODES',
+'USE_NODE_DIRECTIONS',
+'USE_NUMERIC_ENTITY',
+'USE_REL_REV',
+'USE_SETFILENAME_EXTENSION',
+'USE_TITLEPAGE_FOR_TITLE',
+'USE_UNIDECODE',
+'USE_UP_NODE_FOR_ELEMENT_UP',
+'VERTICAL_HEAD_NAVIGATION',
+'WORDS_IN_PAGE',
+'XREF_USE_FLOAT_LABEL',
+'XREF_USE_NODE_NAME_ARG',
 );
 
-my @variable_string_settables = (
-  'DEBUG', 'FRAMES', 'FRAMESET_DOCTYPE', 'DOCTYPE', 'TEST', 'DUMP_TEXI',
-  'TOP_FILE', 'SHOW_MENU', 'USE_NODES', 'TOC_LINKS', 'SHORTEXTN',
-  'PREFIX', 'DEF_TABLE', 'L2H', 'MONOLITHIC',
-  'L2H_L2H', 'L2H_SKIP', 'L2H_TMP', 'L2H_FILE', 'L2H_CLEAN',
-  'L2H_HTML_VERSION', 'EXTERNAL_DIR', 'USE_ISO',
-  'VERTICAL_HEAD_NAVIGATION', 'INLINE_CONTENTS', 'NODE_FILE_EXTENSION',
-  'NO_CSS', 'INLINE_CSS_STYLE', 'USE_TITLEPAGE_FOR_TITLE',
-  'SIMPLE_MENU', 'EXTENSION', 'USE_NUMERIC_ENTITY',
-  'ENABLE_ENCODING_USE_ENTITY', 'ICONS',
-  'USE_UNIDECODE', 'DATE_IN_HEADER', 'OPEN_QUOTE_SYMBOL',
-  'CLOSE_QUOTE_SYMBOL', 'TOP_NODE_UP', 'TOP_NODE_UP_URL',
-  'TOP_NODE_FILE_TARGET', 'SECTION_NAME_IN_TITLE',
-  'SHOW_TITLE', 'WORDS_IN_PAGE',
-  'HEADER_IN_TABLE', 'USE_ACCESSKEY', 'USE_REL_REV', 'USE_LINKS',
-  'OVERVIEW_LINK_TO_TOC', 'AVOID_MENU_REDUNDANCY', 'NODE_NAME_IN_MENU',
-  'NODE_NAME_IN_INDEX', 'NO_USE_SETFILENAME', 'USE_SETFILENAME_EXTENSION',
-  'COMPLEX_FORMAT_IN_TABLE',
-  'IGNORE_BEFORE_SETFILENAME', 'IGNORE_SPACE_AFTER_BRACED_COMMAND_NAME',
-  'USE_NODE_TARGET',
-  'PROGRAM_NAME_IN_FOOTER', 'NODE_FILENAMES',
-  'EXTERNAL_CROSSREF_SPLIT', 'BODYTEXT',
-  'CSS_LINES', 'CPP_LINE_DIRECTIVES',
-  'TEXI2DVI', 'DUMP_TREE', 'MAX_MACRO_CALL_NESTING',
-  'OUTPUT_ENCODING_NAME', 'OUTPUT_PERL_ENCODING', 
-  'PACKAGE_VERSION',
-  'PACKAGE_AND_VERSION', 'PACKAGE_URL', 'PACKAGE', 'PACKAGE_NAME', 'PROGRAM',
-  'PRE_BODY_CLOSE', 'AFTER_BODY_OPEN', 'PRE_ABOUT', 'AFTER_ABOUT',
-  'EXTRA_HEAD', 'DO_ABOUT',
-  'DEFAULT_RULE', 'BIG_RULE',
-  'MENU_ENTRY_COLON', 'INDEX_ENTRY_COLON', 'MENU_SYMBOL',
-  'MAX_HEADER_LEVEL', 'CHAPTER_HEADER_LEVEL',
-  'FOOTNOTE_END_HEADER_LEVEL', 'FOOTNOTE_SEPARATE_HEADER_LEVEL',
-  'USE_UP_NODE_FOR_ELEMENT_UP',
-  'BEFORE_OVERVIEW', 'AFTER_OVERVIEW',
-  'BEFORE_TOC_LINES', 'AFTER_TOC_LINES',
-  'SORT_ELEMENT_COUNT', 'SORT_ELEMENT_COUNT_WORDS',
-  'KEEP_TOP_EXTERNAL_REF',
-  'TEXI2HTML', 'IMAGE_LINK_PREFIX',
-  'TREE_TRANSFORMATIONS', 'BASEFILENAME_LENGTH',
-  'TEXTCONTENT_COMMENT', 'XREF_USE_FLOAT_LABEL',
-  'XREF_USE_NODE_NAME_ARG', 'CHECK_HTMLXREF',
-  'TEXINFO_DTD_VERSION', 'TEXINFO_OUTPUT_FORMAT',
-  'INFO_SPECIAL_CHARS_WARNING',
-  'INDEX_SPECIAL_CHARS_WARNING', 'INFO_SPECIAL_CHARS_QUOTE',
-  'HTMLXREF'
-);
 # Not strings. 
 # FIXME To be documented somewhere, but where?
 my @variable_other_settables = (
@@ -299,8 +369,7 @@ my %valid_options;
 foreach my $var (keys(%document_settable_at_commands), 
          keys(%document_settable_unique_at_commands),
          @command_line_settables, @variable_string_settables, 
-         @variable_other_settables, @parser_options,
-         @formats_settable, @variable_settables_not_used) {
+         @variable_other_settables, @parser_options) {
   $valid_options{$var} = 1;
 }
 
@@ -310,6 +379,16 @@ sub valid_option($)
   return $valid_options{$option};
 }
 
+sub add_valid_option($)
+{
+  my $option = shift;
+  if ($option =~ /^[A-Z][A-Z_]{2,}$/) {
+    $valid_options{$option} = 1;
+    return 1;
+  }
+  return 0;
+}
+
 my %customization_variable_classes = (
   'document_settable_at_commands' => [ sort(keys(%document_settable_at_commands)) ],
   'document_settable_unique_at_commands' => [ sort(keys(%document_settable_unique_at_commands)) ],
@@ -317,27 +396,7 @@ my %customization_variable_classes = (
   'variable_string_settables' => \@variable_string_settables,
   'variable_other_settables' => \@variable_other_settables,
   'parser_options' => \@parser_options,
-  #'formats_settable' => \@formats_settable,
-  #'obsolete_variables' => \@obsolete_variables,
-  'variable_settables_not_used' => \@variable_settables_not_used,
 );
-
-my @secondary_customization_variables = (
-  'obsolete_variables', 'variable_settables_not_used'
-);
-sub _customization_variable_classes(;$)
-{
-  my $print_all = shift;
-  my $result = '';
-  foreach my $type (sort(keys(%customization_variable_classes))) {
-    next if (!$print_all 
-             and grep {$_ eq $type} @secondary_customization_variables);
-    foreach my $variable (@{$customization_variable_classes{$type}}) {
-      $result .= "$variable\t$type\n";
-    }
-  }
-  return $result;
-}
 
 my %valid_tree_transformations;
 foreach my $valid_transformation ('simple_menus', 
@@ -429,7 +488,6 @@ our %line_commands = (
   # more relevant in preamble
   'documentencoding'  => 'text', # or 1?
   'novalidate'        => 'skipline', # no arg
-  'validatemenus'     => 1, # on off
   'dircategory'       => 'line', # line. Position with regard 
                                  # with direntry is significant
   'pagesizes'         => 'line', # can have 2 args 
@@ -452,6 +510,7 @@ our %line_commands = (
   'afivepaper'        => 'skipline', # no arg
   'afourlatex'        => 'skipline', # no arg
   'afourwide'         => 'skipline', # no arg
+  'bsixpaper'         => 'skipline', # no arg
   'headings'          => 1, #off on single double singleafter doubleafter
                             # interacts with setchapternewpage
   'setchapternewpage' => 1, # off on odd
@@ -498,9 +557,6 @@ our %line_commands = (
   'itemx'             => 'line',
   # not valid for info (should be in @iftex)
   'vskip'             => 'lineraw', # arg line in TeX
-  # obsolete @-commands.
-  'setcontentsaftertitlepage'      => 'skipline', # no arg
-  'setshortcontentsaftertitlepage' => 'skipline', # no arg
   'subentry'          => 'line', 
 );
 
@@ -531,7 +587,7 @@ foreach my $in_heading_command ('thischapter', 'thischaptername',
 
 # only valid in index entries
 our %in_index_commands;
-foreach my $in_index_command ('sortas', 'seeentry', 'seealso') {
+foreach my $in_index_command ('sortas', 'seeentry', 'seealso', 'subentry') {
   $in_index_commands{$in_index_command} = 1;
 }
 
@@ -634,9 +690,18 @@ $brace_commands{'indicateurl'} = 1;
 # Commands that enclose full texts, that can contain multiple paragraphs.
 our %context_brace_commands;
 foreach my $context_brace_command ('footnote', 'caption',
-    'shortcaption', 'math') {
+    'shortcaption') {
   $context_brace_commands{$context_brace_command} = $context_brace_command;
   $brace_commands{$context_brace_command} = 'context';
+}
+
+our %math_commands;
+# Commands that enclose full texts, that can contain multiple paragraphs
+# and contain maths
+foreach my $math_brace_command ('math') {
+  $context_brace_commands{$math_brace_command} = $math_brace_command;
+  $brace_commands{$math_brace_command} = 'context';
+  $math_commands{$math_brace_command} = 1;
 }
 
 our %explained_commands;
@@ -694,7 +759,8 @@ foreach my $unformatted_brace_command ('anchor', 'shortcaption',
 
 # commands delimiting blocks, with an @end.
 # Value is either the number of arguments on the line separated by
-# commas or the type of command, 'raw', 'def' or 'multitable'.
+# commas or the type of command, 'raw', 'def', 'conditional',
+# or 'multitable'.
 our %block_commands;
 
 # commands that have a possible content before an item
@@ -805,11 +871,17 @@ foreach my $preformatted_command(
   $preformatted_commands{$preformatted_command} = 1;
   $preformatted_code_commands{$preformatted_command} = 1;
 }
+$block_commands{'example'} = 'variadic'; # unlimited arguments
 
 foreach my $preformatted_command(
     'display', 'smalldisplay', 'format', 'smallformat') {
   $block_commands{$preformatted_command} = 0;
   $preformatted_commands{$preformatted_command} = 1;
+}
+
+foreach my $block_math_command('displaymath') {
+  $block_commands{$block_math_command} = 0;
+  $math_commands{$block_math_command} = 1;
 }
 
 our %format_raw_commands;
@@ -883,12 +955,10 @@ foreach my $item_line_command ('table', 'ftable', 'vtable') {
 }
 
 our %deprecated_commands = (
-  'setcontentsaftertitlepage' =>
-N__('move your @contents command if you want the contents after the title page'),
-
-  'setshortcontentsaftertitlepage' =>
-N__('move your @shortcontents and @contents commands if you want the contents after the title page'),
-
+  'definfoenclose' => '',
+  'refill' => '',
+  'inforef' => '',
+  'centerchap' => '',
 );
 
 my %unformatted_block_commands;
@@ -1127,8 +1197,6 @@ sub open_out($$;$$)
   if ($self) {
     push @{$self->{'opened_files'}}, $file;
     $self->{'unclosed_files'}->{$file} = $filehandle;
-    #print STDERR "OOOOOOO $file ".join('|',@{$self->{'opened_files'}})."\n";
-    #cluck;
   }
   return $filehandle;
 }
@@ -1682,6 +1750,7 @@ sub normalize_top_node_name($)
   return $node;
 }
 
+# Argument is a converter object
 sub _convert_text_options($)
 {
   my $self = shift;
@@ -2415,6 +2484,63 @@ sub move_index_entries_after_items_in_tree($)
   return modify_tree(undef, $tree, \&_move_index_entries_after_items);
 }
 
+sub _relate_index_entry_to_table_entry($)
+{
+  my $current = shift; # table_entry
+
+  my ($table_term, $table_item, $item);
+
+  if ($current->{'contents'}
+        and $current->{'contents'}->[0]
+        and $current->{'contents'}->[0]->{'type'} eq 'table_term') {
+    $table_term = $current->{'contents'}->[0];
+  }
+
+  if ($current->{'contents'}
+        and $current->{'contents'}->[1]
+        and $current->{'contents'}->[1]->{'type'} eq 'table_item') {
+    $table_item = $current->{'contents'}->[1];
+  }
+
+  if ($table_term->{'contents'}
+    and $table_term->{'contents'}->[0]
+    and (!$table_term->{'contents'}->[0]->{'extra'}
+          or !$table_term->{'contents'}->[0]->{'extra'}->{'index_entry'})) {
+    $item = $table_term->{'contents'}->[0];
+  }
+
+  return if !$table_term or !$table_item or !$item;
+
+  if ($table_item->{'contents'}
+    and $table_item->{'contents'}->[0]
+    and $table_item->{'contents'}->[0]->{'type'}
+    and $table_item->{'contents'}->[0]->{'type'} eq 'index_entry_command') {
+      my $index_command = shift @{$table_item->{'contents'}};
+      delete $index_command->{'parent'};
+      $item->{'extra'}->{'index_entry'}
+        = $index_command->{'extra'}->{'index_entry'};
+      $item->{'extra'}->{'index_entry'}->{'command'} = $item;
+  }
+}
+
+sub _relate_index_entries_to_table_entries_in_tree($$$)
+{
+  my ($self, $type, $current) = @_;
+
+  if ($current->{'type'} and ($current->{'type'} eq 'table_entry')) {
+    _relate_index_entry_to_table_entry($current);
+  }
+  return ($current);
+}
+
+sub relate_index_entries_to_table_entries_in_tree($)
+{
+  my $tree = shift;  
+  return modify_tree(undef, $tree,
+                     \&_relate_index_entries_to_table_entries_in_tree);
+}
+
+
 sub debug_list
 {
   my ($label) = shift;
@@ -2755,6 +2881,10 @@ as C<@macro>, C<@verbatim> or C<@ignore>.
 
 @-commands associated with raw output format, like C<@html>, or
 C<@docbook>.
+
+=item %math_commands
+
+@-commands which contains math, like C<@math> or C<@displaymath>.
 
 =item %texinfo_output_formats
 

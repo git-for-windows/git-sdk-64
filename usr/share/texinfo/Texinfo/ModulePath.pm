@@ -20,6 +20,12 @@ our $texinfo_uninstalled = 0;
 # data.
 our $builddir = '';
 
+our $top_builddir;
+our $top_srcdir;
+
+our $lib_dir;
+our $libexec_dir;
+
 # If $LIB_DIR and $LIBEXEC_DIR are given,
 # (likely the installation directories)
 # use them to add directories
@@ -31,14 +37,13 @@ our $builddir = '';
 # otherwise use 'top_srcdir'
 # and 'top_builddir' environment variables.
 sub init {
-  my $lib_dir = shift;
-  my $libexec_dir = shift;
+  $lib_dir = shift;
+  $libexec_dir = shift;
   my %named_args = @_;
 
   if (!$named_args{'installed'}) {
     $texinfo_uninstalled = 1;
 
-    my $top_srcdir;
     if ($ENV{'top_srcdir'}) {
       $top_srcdir = $ENV{'top_srcdir'};
     } elsif (defined $named_args{'updirs'}) {
@@ -62,7 +67,6 @@ sub init {
     }
 
     # Find XS modules in the build directory
-    my $top_builddir;
     if (defined($ENV{'top_builddir'})) {
       $top_builddir = $ENV{'top_builddir'};
     } else {
@@ -96,33 +100,6 @@ sub init {
   if (defined($libexec_dir)) {
     unshift @INC, $libexec_dir;
   }
-
-  unshift @INC, sub { 
-    my ($coderef, $filename) = @_;
-    if ($filename eq 'Texinfo/Parser.pm') {
-      my $replacement;
-      if ($ENV{TEXINFO_XS_PARSER}) {
-        $replacement = 'Texinfo/XS/parsetexi/Parsetexi.pm';
-      } else {
-        $replacement = 'Texinfo/ParserNonXS.pm';
-      }
-      foreach my $prefix (@INC) {
-        if (ref($prefix)) {
-          next;
-        }
-        my $realfilename = File::Spec->catdir($prefix, $replacement);
-        if (-f $realfilename) {
-          my $fh;
-          open ($fh, '<', $realfilename);
-          if ($fh) {
-            $INC{$filename} = $realfilename;
-            return $fh;
-          }
-        }
-      }
-    }
-    return;
-  };
 }
 
 sub import { 

@@ -46,11 +46,11 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.7';
+$VERSION = '6.8';
 
 my %defaults = (
   'ENABLE_ENCODING'      => 0,
-  'SHOW_MENU'            => 1,
+  'FORMAT_MENU'          => 'menu',
   'EXTENSION'            => 'ixin',
   #'output_perl_encoding' => 'utf8',
   'OUTPUT_ENCODING_NAME' => 'utf-8',

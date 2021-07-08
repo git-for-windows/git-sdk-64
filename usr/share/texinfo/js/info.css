@@ -1,0 +1,254 @@
+/*-----------.
+| Sub pages  |
+`-----------*/
+
+body.in-iframe, div[node]#index {
+    padding: 0px 0.5em 0px 1em;
+}
+
+header > a {
+    width: 90%;
+    display: inline-block;
+}
+
+#sub-pages {
+    box-sizing: border-box;
+    left: 25%;     width: 75%;
+    height: auto;
+    top: 0pt;
+    bottom: 0pt;
+    position: absolute;
+}
+
+div[node] {
+    height: 100%;
+    overflow: auto;
+}
+body[show-sidebar="no"] div#sub-pages {
+    left: 0px;
+    width: 100%;
+}
+
+div[node][hidden] {
+    display: none;
+}
+
+/* Non-iframed main page */
+body.in-iframe {
+    margin: 0px;
+}
+
+div.toc-sidebar {
+    bottom: 2.8ex;
+}
+
+.toc-sidebar header {
+    display: flex;
+    align-items: flex-start;
+}
+
+.sidebar-hider span.hide-icon {
+    display: block;
+}
+.sidebar-hider span.hide-text {
+    display: block;
+    writing-mode: vertical-rl
+}
+
+.sidebar-hider {
+    display: inline;
+    padding: 2px;
+    vertical-align: top;
+    text-align: start;
+}
+.sidebar-hider span.hide-icon {
+    font-size: x-large;
+}
+
+/* Iframed sub pages */
+iframe.node {
+    width: 100%;
+    height: 100%;
+    border: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+#sub-pages.blurred {
+    opacity: 0.2;
+}
+
+.highlight {
+    background: lightgrey;
+}
+
+/*--------------------------.
+| Lateral table of content  |
+`--------------------------*/
+
+#slider {
+    position: fixed;
+    top: 0em;
+    bottom: 0em;
+    height: 100%;
+    width: 25%;
+    margin: 0px;
+    padding: 0px;
+}
+
+#slider, body[show-sidebar="yes"] .sidebar-hider {
+    box-sizing: border-box;
+    left: 0em;
+}
+body[show-sidebar="yes"] .sidebar-hider {
+}
+body[show-sidebar="no"] #slider {
+    width: 0px; /* so mouse events don't get captured */
+}
+body[show-sidebar="no"] .sidebar-hider {
+    width: auto;
+    position: fixed;
+}
+
+body[show-sidebar="no"] div.toc, body[show-sidebar="no"] header > a {
+    display: none }
+
+div.toc-sidebar {
+    position: absolute;
+    top: 0px;
+    overflow: auto;
+}
+
+div.toc-sidebar header {
+    font-size: xx-large;
+}
+
+div.toc-sidebar div {
+    padding: 0.25em;
+    overflow: auto;
+}
+
+div.toc ul[toc-detail] {
+    display: none
+}
+
+div.toc ul, div toc nav {
+    margin: 0px;
+    padding: 0px;
+}
+
+div.toc ul ul {
+    margin-left: 1em;
+}
+
+div.toc a[toc-current] {
+    font-weight: bold
+}
+
+/*-------------.
+| Help screen  |
+`-------------*/
+
+table#keyboard-shortcuts {
+    margin: 20px;
+}
+
+table#keyboard-shortcuts td {
+    padding: 5px;
+}
+
+table#keyboard-shortcuts th {
+    text-align: left;
+}
+
+/* The Modal (background) hidden by default */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 25%;
+    top: 0;
+    width: 75%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: white;
+    margin: auto;
+    padding: 20px;
+    width: 80%;
+}
+
+/*-------.
+| Icons  |
+`-------*/
+
+/* The Close Button */
+.close {
+    color: darkgrey;
+    float: right;
+    font-size: xx-large;
+}
+
+#icon-bar {
+    float: right;
+}
+
+.icon {
+    color: darkgrey;
+    font-size: x-large;
+}
+
+.icon:hover, .icon:focus, .close:hover, .close:focus {
+    color: black;
+    cursor: pointer;
+}
+
+/*--------.
+| popups  |
+`--------*/
+
+.text-input, .echo-area, .error {
+    background: lightgrey;
+    z-index: 10;
+    position: fixed;
+    right: 0;
+}
+
+.error .text-input {
+    top: 0;
+    right: 0;
+}
+
+.error {
+    background-color: orange;
+    padding: 5px;
+}
+
+.echo-area {
+    bottom: 0;
+}
+div.header { text-align: right }
+#slider {
+    background: #f0f0f0c0;
+}
+div.toc-sidebar nav, div.toc-sidebar header, .sidebar-hider {
+    background: #f0f0f0d0;
+}
+body[show-sidebar="yes"] .sidebar-hider {
+    border-width: thin;
+}
+body[show-sidebar="no"] .sidebar-hider {
+    border-width: thin;
+}
+@media (max-width: 60em) {
+    div#sub-pages { left: 0px; width: 100% }
+    body[show-sidebar="yes"] div#sub-pages { opacity: 0.4 }
+    body[show-sidebar="yes"] div#slider {width: 20em }
+    div.logo img { max-width: 80%; width: 2em; }
+}

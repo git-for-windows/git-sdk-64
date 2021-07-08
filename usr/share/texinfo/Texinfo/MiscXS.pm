@@ -1,4 +1,4 @@
-# Copyright 2016, 2017 Free Software Foundation, Inc.
+# Copyright 2016-2019 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,16 +22,16 @@ use 5.00405;
 use strict;
 use warnings;
 
-our $VERSION = '6.7';
+our $VERSION = '6.8';
 
 use Texinfo::XSLoader;
 
 BEGIN {
   Texinfo::XSLoader::init (
     "Texinfo::MiscXS",
-    "Texinfo::MiscXSXS",
     "Texinfo::MiscXS",
     "MiscXS",
+    undef,
     0,
     undef,
     undef,

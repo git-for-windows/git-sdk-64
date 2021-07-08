@@ -82,7 +82,7 @@ foreach my $context ('preformatted', 'normal') {
 }
 
 # &quot; is not in html 3.2
-sub html32_protect_text($$)
+sub html32_format_protect_text($$)
 {
   my $converter = shift;
   my $text = shift;
@@ -94,7 +94,7 @@ sub html32_protect_text($$)
   return $text;
 }
 
-texinfo_register_formatting_function('protect_text', \&html32_protect_text);
+texinfo_register_formatting_function('format_protect_text', \&html32_format_protect_text);
 
 sub html32_convert_text($$$$)
 {

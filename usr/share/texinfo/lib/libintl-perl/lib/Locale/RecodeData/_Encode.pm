@@ -1,25 +1,22 @@
 #! /bin/false
 # vim: set autoindent shiftwidth=4 tabstop=4:
-# $Id: _Encode.pm,v 1.1 2011-10-12 23:51:50 pertusus Exp $
 
 # Interface to Encode.
-# Copyright (C) 2002-2009 Guido Flohr <guido@imperia.net>,
+# Copyright (C) 2002-2017 Guido Flohr <guido.flohr@cantanea.com>,
 # all rights reserved.
 
-# This program is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Library General Public License as published
-# by the Free Software Foundation; either version 2, or (at your option)
-# any later version.
-                                                                                
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Library General Public License for more details.
-                                                                                
-# You should have received a copy of the GNU Library General Public 
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
-# USA.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package Locale::RecodeData::_Encode;
 
@@ -74,11 +71,9 @@ of Encode.
 
 =head1 AUTHOR
 
-Copyright (C) 2002-2009, Guido Flohr E<lt>guido@imperia.netE<gt>, all
-rights reserved.  See the source code for details.
-
-This software is contributed to the Perl community by Imperia 
-(L<http://www.imperia.net/>).
+Copyright (C) 2002-2017 L<Guido Flohr|http://www.guido-flohr.net/>
+(L<mailto:guido.flohr@cantanea.com>), all rights reserved.  See the source
+code for details!code for details!
 
 =head1 SEE ALSO
 

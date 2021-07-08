@@ -39,6 +39,7 @@ texinfo_register_handler('finish', \&l2h_finish);
 
 texinfo_register_command_formatting('math', \&l2h_do_tex);
 texinfo_register_command_formatting('tex', \&l2h_do_tex);
+texinfo_register_command_formatting('displaymath', \&l2h_do_tex);
 
 # name/location of latex2html program
 set_from_init_file('L2H_L2H', 'latex2html');
@@ -206,7 +207,7 @@ sub l2h_process($$)
   l2h_init_cache($self) if (!defined($self->get_conf('L2H_SKIP')) 
                    or $self->get_conf('L2H_SKIP'));
 
-  my @replaced_commands = ('tex', 'math');
+  my @replaced_commands = ('tex', 'math', 'displaymath');
   my $collected_commands = Texinfo::Common::collect_commands_in_tree($document_root, \@replaced_commands);
   foreach my $command (@replaced_commands) {
     ## we rely on @tex and @math being recorded as 'global commands'
@@ -265,6 +266,8 @@ sub l2h_to_latex($$$$)
     $text .= ' ';
   } elsif ($command eq 'math') {
     $text = "\$".$text."\$";
+  } elsif ($command eq 'displaymath') {
+    $text = "\$\$".$text."\$\$";
   }
   $to_latex_count++;
   $text =~ s/(\s*)$//;

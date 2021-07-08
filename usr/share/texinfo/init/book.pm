@@ -13,7 +13,7 @@ use strict;
 use vars qw($element_file_name);
 
 set_from_init_file('contents', 1);
-set_from_init_file('INLINE_CONTENTS', 1);
+set_from_init_file('CONTENTS_OUTPUT_LOCATION', 'inline');
 set_from_init_file('USE_TITLEPAGE_FOR_TITLE', 1);
 
 my @book_buttons = ('Back', 'Forward', ' ', 'Contents', 'Index', 'About');
@@ -23,7 +23,8 @@ foreach my $buttons ('SECTION_BUTTONS', 'CHAPTER_BUTTONS', 'TOP_BUTTONS') {
 }
 
 my @book_footer_buttons = ('Contents', 'Index', 'About');
-foreach my $buttons ('MISC_BUTTONS', 'SECTION_FOOTER_BUTTONS') {
+foreach my $buttons ('MISC_BUTTONS', 'SECTION_FOOTER_BUTTONS',
+                     'CHAPTER_FOOTER_BUTTONS') {
   set_from_init_file($buttons, \@book_footer_buttons);
 }
 
@@ -32,7 +33,7 @@ set_from_init_file('LINKS_BUTTONS',
     ['Top', 'Index', 'Contents', 'About', 'Up', 'NextFile', 'PrevFile']);
 
 set_from_init_file('WORDS_IN_PAGE', undef);
-set_from_init_file('SHOW_MENU', 0);
+set_from_init_file('FORMAT_MENU', 'nomenu');
 set_from_init_file('USE_NODES', undef);
 
 set_from_init_file('BIG_RULE', '<hr>');
@@ -89,7 +90,7 @@ sub book_print_up_toc($$)
   return $result;
 }
 
-sub book_navigation_header($$$$)
+sub book_format_navigation_header($$$$)
 {
   my $self = shift;
   my $buttons = shift;
@@ -106,17 +107,17 @@ sub book_navigation_header($$$$)
       and $self->{'counter_in_file'}->{$element->{'filename'}} == 1) {
     
     return book_print_up_toc($self, $element->{'extra'}->{'section'}) .
-       &{$self->default_formatting_function('navigation_header')}($self,
+       &{$self->default_formatting_function('format_navigation_header')}($self,
                                  $buttons, $cmdname, $command);
 
   } else {
-    return &{$self->default_formatting_function('navigation_header')}($self, 
+    return &{$self->default_formatting_function('format_navigation_header')}($self, 
              $buttons, $cmdname, $command);
   }
 }
 
-texinfo_register_formatting_function('navigation_header', 
-                                     \&book_navigation_header);
+texinfo_register_formatting_function('format_navigation_header', 
+                                     \&book_format_navigation_header);
 
 sub book_print_sub_toc($$$);
 
@@ -164,9 +165,27 @@ sub book_convert_heading_command($$$$$)
     $result .= $content if (defined($content));
     return $result;
   }
+  my $section = $command->{'extra'}->{'associated_section'};
+  my $node;
+  if ($section) {
+      my $level = $section->{'level'};
+      $result .= join('', $self->close_registered_sections_level($level));
+      $self->register_opened_section_level($level, "</div>\n");
+  } else {
+      $node = $command->{'extra'}->{'associated_node'};
+  }
+  $result .= '<div';
+  if ($section) {
+      $result .= ' class="'.$section->{'cmdname'}.'"';
+  } elsif ($node) {
+      $result .= ' class="node"';
+  } else {
+      $result .= " class=\"$cmdname\"";
+  }
   my $element_id = $self->command_id($command);
-  $result .= "<a name=\"$element_id\"></a>\n"
-    if (defined($element_id) and $element_id ne '');
+  $result .= " id=\"$element_id\""
+      if (defined($element_id) and $element_id ne '');
+  $result .= ">\n";
 
   print STDERR "Process $command "
         .Texinfo::Structuring::_print_root_command_texi($command)."\n"
@@ -238,6 +257,7 @@ sub book_convert_heading_command($$$$$)
     $result .= "</ul>\n";
   }
   $result .= $content if (defined($content));
+  $result .= '</div>' if (! $section);
   return $result;
 }
 

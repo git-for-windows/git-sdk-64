@@ -1,6 +1,6 @@
 # Text.pm: output tree as simple text.
 #
-# Copyright 2010-2018 Free Software Foundation, Inc., 
+# Copyright 2010-2020 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ package Texinfo::Convert::Text;
 use 5.00405;
 use strict;
 
+use Texinfo::Convert::Converter;
 # accent commands list.
 use Texinfo::Common;
 use Texinfo::Convert::Unicode;
@@ -47,7 +48,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.7';
+$VERSION = '6.8';
 
 # this is in fact not needed for 'footnote', 'shortcaption', 'caption'
 # when they have no brace_command_arg, see below.
@@ -252,7 +253,7 @@ sub brace_no_arg_command($;$)
     $result = Texinfo::Convert::Unicode::unicode_for_brace_no_arg_command(
                        $command, $encoding);
   }
-  if (!defined($result and $options and $options->{'converter'})) {
+  if (!defined($result) and $options and $options->{'converter'}) {
     my $tree = Texinfo::Common::translated_command_tree(
                   $options->{'converter'}, $command);
     if ($tree) {
@@ -475,12 +476,12 @@ sub _convert($;$)
     } elsif ($root->{'args'} and $root->{'args'}->[0] 
            and (($root->{'args'}->[0]->{'type'}
                 and $root->{'args'}->[0]->{'type'} eq 'brace_command_arg')
-                or $root->{'cmdname'} eq 'math')) {
+                or $Texinfo::Common::math_commands{$root->{'cmdname'}})) {
       my $result;
       if ($root->{'cmdname'} eq 'sc') {
         $options = {%$options, 'sc' => 1};
       } elsif ($Texinfo::Common::code_style_commands{$root->{'cmdname'}}
-               or $root->{'cmdname'} eq 'math') {
+               or $Texinfo::Common::math_commands{$root->{'cmdname'}}) {
         $options = _code_options($options);
       }
       $result = _convert($root->{'args'}->[0], $options);
@@ -575,7 +576,10 @@ sub _convert($;$)
   }
   if ($root->{'contents'}) {
     if ($root->{'cmdname'} 
-        and $Texinfo::Common::preformatted_code_commands{$root->{'cmdname'}}) {
+        and ($Texinfo::Common::preformatted_code_commands{$root->{'cmdname'}}
+             or $Texinfo::Common::math_commands{$root->{'cmdname'}}
+             or (defined($Texinfo::Common::block_commands{$root->{'cmdname'}}) 
+                 and $Texinfo::Common::block_commands{$root->{'cmdname'}} eq 'raw'))) {
       $options = _code_options($options);
     }
     if (ref($root->{'contents'}) ne 'ARRAY') {
@@ -822,7 +826,7 @@ L<Texinfo::Report> objet.  See also L<Texinfo::Convert::Converter>.
 =item expanded_formats_hash
 
 A reference on a hash.  The keys should be format names (like C<html>, 
-C<tex>), and if thecorresponding  value is set, the format is expanded.
+C<tex>), and if the corresponding  value is set, the format is expanded.
 
 =back
 

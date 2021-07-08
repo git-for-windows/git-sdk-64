@@ -1,6 +1,6 @@
 # DocBook.pm: output tree as DocBook.
 #
-# Copyright 2011-2019 Free Software Foundation, Inc.
+# Copyright 2011-2020 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.7';
+$VERSION = '6.8';
 
 my $nbsp = '&#'.hex('00A0').';';
 my $mdash = '&#'.hex('2014').';';
@@ -59,7 +59,7 @@ my $rsquo = '&#'.hex('2019').';';
 
 my %defaults = (
   #'ENABLE_ENCODING'      => 0,
-  'SHOW_MENU'            => 0,
+  'FORMAT_MENU'          => 'nomenu',
   'EXTENSION'            => 'xml', # dbk?
   'OUTPUT_ENCODING_NAME' => 'utf-8',
   'OUTFILE'              => undef,
@@ -427,15 +427,14 @@ sub _index_entry($$)
       $result .= "</$level>";
       $level = "tertiary";
     }
-
     if ($index_entry->{'command'}->{'extra'}->{'seeentry'}) {
       $result .= "<see>";
-      $result .= $index_entry->{'command'}->{'extra'}->{'seeentry'};
+      $result .= $self->_convert({'contents' => $index_entry->{'command'}->{'extra'}->{'seeentry'}->{'args'}});
       $result .= "</see>";
     }
     if ($index_entry->{'command'}->{'extra'}->{'seealso'}) {
       $result .= "<seealso>";
-      $result .= $index_entry->{'command'}->{'extra'}->{'seealso'};
+      $result .= $self->_convert({'contents' => $index_entry->{'command'}->{'extra'}->{'seealso'}->{'args'}});
       $result .= "</seealso>";
     }
 
@@ -1260,6 +1259,9 @@ sub _convert($$;$)
         }
       } elsif ($root->{'cmdname'} eq 'verbatim') {
         push @elements, 'screen';
+      } elsif ($root->{'cmdname'} eq 'displaymath') {
+        push @elements, 'informalequation';
+        push @elements, 'mathphrase';
       } elsif ($root->{'cmdname'} eq 'quotation' 
                or $root->{'cmdname'} eq 'smallquotation') {
         my $element;
@@ -1377,7 +1379,8 @@ sub _convert($$;$)
     #warn " have contents $root->{'contents'}\n";
     my $in_code;
     if ($root->{'cmdname'} 
-        and $Texinfo::Common::preformatted_code_commands{$root->{'cmdname'}}) {
+        and ($Texinfo::Common::preformatted_code_commands{$root->{'cmdname'}}
+             or $Texinfo::Common::math_commands{$root->{'cmdname'}})) {
       $in_code = 1;
     }
     push @{$self->{'document_context'}->[-1]->{'monospace'}}, 1

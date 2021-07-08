@@ -1,6 +1,6 @@
 # Converter.pm: Common code for Converters.
 #
-# Copyright 2011-2019 Free Software Foundation, Inc.
+# Copyright 2011-2020 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ xml_accents
 @EXPORT = qw(
 );
 
-$VERSION = '6.7';
+$VERSION = '6.8';
 
 my %defaults = (
   'ENABLE_ENCODING'      => 1,
@@ -242,20 +242,6 @@ sub converter(;$)
       = Encode::resolve_alias($converter->get_conf('OUTPUT_ENCODING_NAME'));
     if ($perl_encoding) {
       $converter->set_conf('OUTPUT_PERL_ENCODING', $perl_encoding);
-    }
-  }
-  if (!defined($converter->{'expanded_formats'})) {
-    if ($converter->{'parser'}) {
-      $converter->{'expanded_formats'} = $converter->{'parser'}->{'expanded_formats'};
-    } else {
-      $converter->{'expanded_formats'} = [];
-    }
-  }
-  if (!defined($converter->{'include_directories'})) {
-    if ($converter->{'parser'}) {
-      $converter->{'include_directories'} = $converter->{'parser'}->{'include_directories'};
-    } else {
-      $converter->{'include_directories'} = [ '.' ];
     }
   }
 

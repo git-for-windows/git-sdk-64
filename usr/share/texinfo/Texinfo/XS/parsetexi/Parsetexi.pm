@@ -1,4 +1,4 @@
-# Copyright 2014-2019 Free Software Foundation, Inc.
+# Copyright 2014-2020 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,12 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# File to be loaded in conjunction with Parsetexi.xs module
+
 package Texinfo::Parser;
 
-use Texinfo::XSLoader;
-
-# same as texi2any.pl, although I don't know what the real requirement
-# is for this module.
 use 5.00405;
 use strict;
 use warnings;
@@ -53,12 +51,7 @@ sub get_conf($$)
 
 my %parser_default_configuration =
   (%Texinfo::Common::default_parser_state_configuration,
-   %Texinfo::Common::default_customization_values);
-
-my %tree_informations;
-foreach my $tree_information ('values', 'macros', 'explained_commands', 'labels') {
-  $tree_informations{$tree_information} = 1;
-}
+   %Texinfo::Common::default_parser_customization_values);
 
 use Storable qw(dclone); # standard in 5.007003
 
@@ -66,7 +59,7 @@ sub simple_parser {
   goto &parser;
 }
 
-# Stub for Texinfo::Parser::parser (line 574)
+# Stub for Texinfo::Parser::parser
 sub parser (;$$)
 {
   my $conf = shift;
@@ -74,9 +67,11 @@ sub parser (;$$)
   my $parser = dclone(\%parser_default_configuration);
 
   reset_parser ();
-  # fixme: these are overwritten immediately after
   if (defined($conf)) {
     foreach my $key (keys (%$conf)) {
+      # Copy conf to parser object.  Not used in parser module itself
+      # but some settings may be used elsewhere, especially in
+      # Structuring.pm.
       if ($key ne 'values' and ref($conf->{$key})) {
         $parser->{$key} = dclone($conf->{$key});
       } else {
@@ -103,21 +98,35 @@ sub parser (;$$)
       } elsif ($key eq 'expanded_formats') {
         clear_expanded_formats ();
 
-        for my $f (@{$parser->{$key}}) {
+        for my $f (@{$conf->{$key}}) {
           add_expanded_format ($f);
         }
       } elsif ($key eq 'documentlanguage') {
         if (defined ($conf->{$key})) {
           set_documentlanguage ($conf->{$key});
         }
-      } elsif ($key eq 'SHOW_MENU') {
-        conf_set_show_menu ($conf->{$key});
+      } elsif ($key eq 'info') {
+        if (defined($conf->{$key}->{'novalidate'})) { 
+          set_novalidate($conf->{$key}->{'novalidate'});
+        }
+      } elsif ($key eq 'FORMAT_MENU') {
+        if ($conf->{$key} eq 'menu') {
+          conf_set_show_menu (1);
+        } else {
+          conf_set_show_menu (0);
+        }
       } elsif ($key eq 'IGNORE_SPACE_AFTER_BRACED_COMMAND_NAME') {
         conf_set_IGNORE_SPACE_AFTER_BRACED_COMMAND_NAME ($conf->{$key});
       } elsif ($key eq 'CPP_LINE_DIRECTIVES') {
         conf_set_CPP_LINE_DIRECTIVES($conf->{$key});
+      } elsif ($key eq 'DEBUG') {
+        set_debug($conf->{$key}) if $conf->{'key'};
+      } elsif ($key eq 'in_gdt'
+               or $key eq 'ENABLE_ENCODING'
+               or defined($Texinfo::Common::default_structure_customization_values{$key})) {
+        # no action needed
       } else {
-        #warn "ignoring parser configuration value \"$key\"\n";
+        warn "ignoring parser configuration value \"$key\"\n";
       }
     }
   }
@@ -185,6 +194,16 @@ sub get_parser_info {
   $self->{'info'} = $GLOBAL_INFO;
   $self->{'extra'} = $GLOBAL_INFO2;
 
+  # Propagate these settings from 'info' hash to 'values' hash.
+  # The 'values' hash is not otherwise used.  Maybe we should use
+  # the 'info' hash for this instead in the pure Perl code.
+  for my $txi_flag ('txiindexatsignignore', 'txiindexbackslashignore',
+                    'txiindexhyphenignore', 'txiindexlessthanignore') {
+    if ($self->{'info'}->{$txi_flag}) {
+      $self->{'values'}->{$txi_flag} = 1;
+    }
+  }
+
   _get_errors ($self);
   Texinfo::Common::complete_indices ($self);
 }
@@ -221,7 +240,7 @@ sub _maybe_ignore_before_setfilename {
   }
 }
 
-# Replacement for Texinfo::Parser::parse_texi_file (line 835)
+# Replacement for Texinfo::Parser::parse_texi_file
 sub parse_texi_file ($$)
 {
   my $self = shift;
@@ -239,7 +258,6 @@ sub parse_texi_file ($$)
   get_parser_info ($self);
   _complete_node_menus ($self, $TREE);
 
-  # line 899
   my $text_root;
   if ($TREE->{'type'} eq 'text_root') {
     $text_root = $TREE;
@@ -277,7 +295,7 @@ sub _get_errors($)
   }
 }
 
-# Replacement for Texinfo::Parser::parse_texi_text (line 757)
+# Replacement for Texinfo::Parser::parse_texi_text
 #
 # Used in tests under tp/t.
 sub parse_texi_text($$;$$$$)
@@ -314,7 +332,7 @@ sub parse_texi_text($$;$$$$)
     return $tree;
 }
 
-# Replacement for Texinfo::Parser::parse_texi_line (line 918)
+# Replacement for Texinfo::Parser::parse_texi_line
 sub parse_texi_line($$;$$$$)
 {
     my $self = shift;
@@ -333,7 +351,7 @@ sub parse_texi_line($$;$$$$)
     return $tree;
 }
 
-# Public interfaces of Texinfo::Parser (starting line 942)
+# Public interfaces of Texinfo::Parser
 sub indices_information($)
 {
   my $self = shift;
@@ -374,19 +392,6 @@ sub global_informations($)
 sub labels_information($)
 {
   goto &Texinfo::Common::labels_information;
-}
-
-BEGIN {
-  Texinfo::XSLoader::init (
-    "Texinfo::Parser",
-    "Texinfo::Parser",
-    "Texinfo::ParserNonXS",
-    "Parsetexi",
-    0);
-} # end BEGIN
-
-END {
-  #reset_parser (); # for debugging memory leaks
 }
 
 1;

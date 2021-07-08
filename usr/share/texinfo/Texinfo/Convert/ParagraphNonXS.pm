@@ -1,7 +1,6 @@
 # ParagraphNonXS.pm: handle paragraph text.
 #
-# Copyright 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 Free Software 
-# Foundation, Inc.
+# Copyright 2010-2019 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +21,7 @@
 # modules Text::Wrap, Text::Format, it keeps a state of the paragraph 
 # and waits for text to be fed into it.
 
-package Texinfo::Convert::ParagraphNonXS;
+package Texinfo::Convert::Paragraph;
 
 use 5.006;
 use strict;
@@ -201,22 +200,6 @@ sub _add_next($;$$$)
     }
     $word =~ s/\x08//g;
 
-    if (!defined($paragraph->{'word'})) {
-      $paragraph->{'word'} = '';
-      $paragraph->{'last_char'} = '';
-      if ($paragraph->{'end_sentence'} 
-           and $paragraph->{'end_sentence'} > 0
-           and !$paragraph->{'frenchspacing'}
-           and $paragraph->{'counter'} != 0 and $paragraph->{'space'}) {
-        # do not double space if there are leading spaces in word
-        if ($word !~ /^\s/) {
-          #$paragraph->{'space'} = '  ';
-          $paragraph->{'space'} .= ' ' x (2 - length($paragraph->{'space'}));
-        }
-        delete $paragraph->{'end_sentence'};
-      }
-    }
-    
     $paragraph->{'word'} .= $word;
 
     if (!$transparent) {
@@ -312,7 +295,6 @@ sub set_space_protection($$;$$$$)
   if ($space_protection) {
     _add_next($paragraph, '');
   }
-  return '';
 }
 
 # Wrap $TEXT, returning the wrapped text, taking into account the current state 
@@ -375,19 +357,7 @@ sub add_text($$)
               and $paragraph->{'end_sentence'} > 0
               and !$paragraph->{'frenchspacing'}
               and !$paragraph->{'unfilled'}) {
-            if (length($paragraph->{'space'}) >= 1 or length($spaces) > 1) {
-              # more than one space, we can make sure tht there are only 
-              # 2 spaces
-              my $all_spaces = substr($paragraph->{'space'} . $spaces, 0, 2);
-              $all_spaces =~ s/[\n\r]/ /g;
-              $all_spaces .= ' ' x (2 - length($all_spaces));
-              $paragraph->{'space'} = $all_spaces;
-            } else {
-              # if there is only one space, we let it accumulate
-              my $new_space = $spaces;
-              $new_space =~ s/^[\n\r]/ /;
-              $paragraph->{'space'} = $new_space;
-            }
+            $paragraph->{'space'} = '  ';
           } else {
             # Only save the first space
             if ($paragraph->{'unfilled'}

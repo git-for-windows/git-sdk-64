@@ -4,7 +4,7 @@
 #
 # chm.pm: convert to chm intermediate formats hhp, hhc, hhk and html files
 #
-#    Copyright 2004, 2006, 2009, 2011, 2012, 2013, 2018 Free Software
+#    Copyright 2004, 2006, 2009, 2011, 2012, 2013, 2018, 2020 Free Software
 #    Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -36,10 +36,9 @@ main::set_global_format('html');
 set_from_init_file('TOP_FILE', undef);
 
 #$SECTION_NAVIGATION = 0; # to avoid headers in normal elements
-set_from_init_file('SHOW_MENU', 0);
+set_from_init_file('FORMAT_MENU', 'nomenu');
 set_from_init_file('SPLIT', 'node');
 set_from_init_file('contents', 1);
-#set_from_init_file('SPLIT_INDEX', undef);
 
 set_from_init_file('DEFAULT_RULE', '');
 set_from_init_file('BIG_RULE', '');
@@ -51,9 +50,9 @@ set_from_init_file('footnotestyle', 'end');
 set_from_init_file('USE_NODES', 0);
 
 use vars qw(%commands_formatting);
-texinfo_register_formatting_function('end_file', \&chm_end_file);
-texinfo_register_formatting_function('navigation_header', \&chm_noop);
-texinfo_register_formatting_function('navigation_header_panel', \&chm_noop);
+texinfo_register_formatting_function('format_end_file', \&chm_format_end_file);
+texinfo_register_formatting_function('format_navigation_header', \&chm_noop);
+texinfo_register_formatting_function('format_navigation_header_panel', \&chm_noop);
 
 my %chm_languages = (
     'en'         => '0x409 English (United States)',
@@ -175,7 +174,7 @@ foreach my $thing ('OE', 'oe', 'euro') {
     = $Texinfo::Convert::Unicode::unicode_entities{$thing};
 }
 
-sub chm_end_file($)
+sub chm_format_end_file($)
 {
   my $self = shift;
   my $pre_body_close = $self->get_conf('PRE_BODY_CLOSE');

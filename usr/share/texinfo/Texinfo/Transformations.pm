@@ -27,6 +27,8 @@ use strict;
 use Texinfo::Common;
 use Texinfo::Structuring;
 
+use Carp qw(cluck);
+
 # Add raise/lowersections to be back at the normal level
 sub _correct_level($$;$)
 {
@@ -138,6 +140,11 @@ sub fill_gaps_in_sectioning($)
   return (\@contents, \@added_sections);
 }
 
+# This converts a reference @-command to simple text using one of the 
+# arguments.  This is used to remove reference @-command from 
+# constructed node names trees, as node names cannot contain
+# reference @-command while there could be some in the tree used in 
+# input for the node name tree.
 sub _reference_to_arg($$$)
 {
   my $self = shift;
@@ -343,39 +350,30 @@ sub insert_nodes_for_sectioning_commands($$)
   return (\@contents, \@added_nodes);
 }
 
-sub complete_node_menu($$)
+sub _prepend_new_menu_in_node_section($$$)
+{
+  my $node = shift;
+  my $section = shift;
+  my $current_menu = shift;
+
+  if (not defined($current_menu)) {
+    cluck "input menu undef";
+  }
+  push @{$section->{'contents'}}, $current_menu;
+  push @{$section->{'contents'}}, {'type' => 'empty_line',
+                                   'text' => "\n",
+                                   'parent' => $section};
+  push @{$node->{'menus'}}, $current_menu;
+}
+
+sub complete_node_menu($$;$)
 {
   my $self = shift;
   my $node = shift;
+  my $use_sections = shift;
 
-  my @node_childs;
-  if ($node->{'extra'}->{'associated_section'}->{'section_childs'}) {
-    foreach my $child (@{$node->{'extra'}->{'associated_section'}->{'section_childs'}}) {
-      if ($child->{'extra'} and $child->{'extra'}->{'associated_node'}) {
-        push @node_childs, $child->{'extra'}->{'associated_node'};
-      }
-    }
-  }
-  # Special case for @top.  Gather all the children of the @part following
-  # @top.
-  if ($node->{'extra'}->{'associated_section'}->{'cmdname'} eq 'top') {
-    my $current = $node->{'extra'}->{'associated_section'};
-    while ($current->{'section_next'}) {
-      $current = $current->{'section_next'};
-      if ($current->{'cmdname'} and $current->{'cmdname'} eq 'part'
-          and $current->{'section_childs'}) {
-        foreach my $child (@{$current->{'section_childs'}}) {
-          if ($child->{'extra'} and $child->{'extra'}->{'associated_node'}) {
-            push @node_childs, $child->{'extra'}->{'associated_node'};
-          }
-        }
-      } elsif ($current->{'extra'}->{'associated_node'}) {
-        # for @appendix, and what follows, as it stops a @part, but is 
-        # not below @top
-        push @node_childs, $current->{'extra'}->{'associated_node'};
-      }
-    }
-  }
+  my @node_childs = Texinfo::Structuring::get_node_node_childs($node);
+
   if (scalar(@node_childs)) {
     my %existing_entries;
     if ($node->{'menus'} and @{$node->{'menus'}}) {
@@ -414,7 +412,7 @@ sub complete_node_menu($$)
         }
       } else {
         my $entry = Texinfo::Structuring::new_node_menu_entry($self, 
-                              $node_entry, 0);
+                              $node_entry, $use_sections);
         push @pending, $entry;
       }
     }
@@ -423,11 +421,7 @@ sub complete_node_menu($$)
         my $section = $node->{'extra'}->{'associated_section'};
         $current_menu =
        Texinfo::Structuring::new_block_command (\@pending, $section, 'menu');
-        push @{$section->{'contents'}}, $current_menu;
-        push @{$section->{'contents'}}, {'type' => 'empty_line',
-                                         'text' => "\n", 
-                                         'parent' => $section};
-        push @{$node->{'menus'}}, $current_menu;
+        _prepend_new_menu_in_node_section($node, $section, $current_menu);
       } else {
         foreach my $entry (@pending) {
           $entry->{'parent'} = $current_menu;
@@ -444,21 +438,60 @@ sub complete_node_menu($$)
   }
 }
 
-# This should be called after Texinfo::Structuring::sectioning_structure.
-sub complete_tree_nodes_menus($$)
+sub _get_non_automatic_nodes_with_sections($)
 {
-  my $self = shift;
   my $root = shift;
+
   if (!$root->{'type'} or $root->{'type'} ne 'document_root'
       or !$root->{'contents'}) {
     return undef;
   }
+  my @non_automatic_nodes;
   foreach my $content (@{$root->{'contents'}}) {
     if ($content->{'cmdname'} and $content->{'cmdname'} eq 'node'
         and (scalar(@{$content->{'extra'}->{'nodes_manuals'}}) == 1)
         and $content->{'extra'} 
         and $content->{'extra'}->{'associated_section'}) {
-      complete_node_menu($self, $content);
+      push @non_automatic_nodes, $content;
+    }
+  }
+  return [ @non_automatic_nodes ];
+}
+
+# This should be called after Texinfo::Structuring::sectioning_structure.
+sub complete_tree_nodes_menus($$;$)
+{
+  my $self = shift;
+  my $root = shift;
+  my $use_sections = shift;
+
+  my $non_automatic_nodes = _get_non_automatic_nodes_with_sections($root);
+  if (not defined($non_automatic_nodes)) {
+    return undef;
+  }
+  foreach my $node (@{$non_automatic_nodes}) {
+    complete_node_menu($self, $node, $use_sections);
+  }
+}
+
+# this only complete menus if there was no menu
+sub complete_tree_nodes_missing_menu($$;$)
+{
+  my $self = shift;
+  my $root = shift;
+  my $use_sections = shift;
+
+  my $non_automatic_nodes = _get_non_automatic_nodes_with_sections($root);
+  if (not defined($non_automatic_nodes)) {
+    return undef;
+  }
+  foreach my $node (@{$non_automatic_nodes}) {
+    if (not $node->{'menus'} or not scalar(@{$node->{'menus'}})) {
+      my $section = $node->{'extra'}->{'associated_section'};
+      my $current_menu = Texinfo::Structuring::new_complete_node_menu($self, $node, $use_sections);
+      if (defined($current_menu)) {
+        _prepend_new_menu_in_node_section($node, $section, $current_menu);
+      }
     }
   }
 }
@@ -730,7 +763,8 @@ Includes miscellaneous methods C<set_menus_to_simple_menu> and
 C<menu_to_simple_menu> to change the menu texinfo tree, as well
 as C<insert_nodes_for_sectioning_commands> that adds nodes for 
 sectioning commands without nodes and C<complete_tree_nodes_menus>
-that completes the node menus based on the sectioning tree.
+and C<complete_tree_nodes_missing_menu> that completes the 
+node menus based on the sectioning tree.
 
 
 
@@ -776,10 +810,20 @@ An array reference is returned, containing the root contents
 with added nodes, as well as an array reference containing the 
 added nodes.
 
-=item complete_tree_nodes_menus ($parser, $tree)
+=item complete_tree_nodes_menus ($parser, $tree, $add_section_names_in_entries)
 
 Add menu entries or whole menus for nodes associated with sections,
-based on the sectioning tree.  This function should therefore be
+based on the sectioning tree.  If the optional 
+C<$add_section_names_in_entries> argument is set, a menu entry 
+name is added using the section name.  This function should be
+called after L<sectioning_structure>.
+
+=item complete_tree_nodes_missing_menu ($parser, $tree, $use_section_names_in_entries)
+
+Add whole menus for nodes associated with sections and without menu,
+based on the sectioning tree.  If the optional 
+C<$add_section_names_in_entries> argument is set, a menu entry 
+name is added using the section name.  This function should be
 called after L<sectioning_structure>.
 
 =item $detailmenu = new_master_menu ($parser)

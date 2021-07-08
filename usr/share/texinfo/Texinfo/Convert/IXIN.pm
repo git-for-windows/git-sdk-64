@@ -1,6 +1,6 @@
 # IXIN.pm: output tree as IXIN.
 #
-# Copyright 2013, 2014, 2015, 2016, 2017, 2018 Free Software Foundation, Inc.
+# Copyright 2013-2020 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.7';
+$VERSION = '6.8';
 
 my $ixin_version = 1;
 
@@ -616,8 +616,8 @@ sub output_ixin($$)
     my $merged_index_entries
         = Texinfo::Structuring::merge_indices($index_names);
     my $entries 
-      = $self->Texinfo::Structuring::sort_indices($merged_index_entries,
-                                                  $index_names);
+      = $self->Texinfo::Structuring::sort_indices($self->{'parser'},
+                                      $merged_index_entries, $index_names);
     # first do the dts_text as the counts are needed for the dts index
     foreach my $index_name (sort(keys(%$entries))) {
       my $dts_text_result = '';
