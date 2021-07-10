@@ -1558,7 +1558,6 @@ class Gem::Specification < Gem::BasicSpecification
   def build_extensions # :nodoc:
     return if default_gem?
     return if extensions.empty?
-    return if installed_by_version < Gem::Version.new('2.2.0.preview.2')
     return if File.exist? gem_build_complete_path
     return if !File.writable?(base_dir)
     return if !File.exist?(File.join(base_dir, 'extensions'))
@@ -2129,7 +2128,6 @@ class Gem::Specification < Gem::BasicSpecification
   def missing_extensions?
     return false if default_gem?
     return false if extensions.empty?
-    return false if installed_by_version < Gem::Version.new('2.2.0.preview.2')
     return false if File.exist? gem_build_complete_path
 
     true
@@ -2423,7 +2421,6 @@ class Gem::Specification < Gem::BasicSpecification
   # still have their default values are omitted.
 
   def to_ruby
-    require_relative 'openssl'
     mark_version
     result = []
     result << "# -*- encoding: utf-8 -*-"
@@ -2457,14 +2454,19 @@ class Gem::Specification < Gem::BasicSpecification
       :has_rdoc,
       :default_executable,
       :metadata,
+      :signing_key,
     ]
 
     @@attributes.each do |attr_name|
       next if handled.include? attr_name
       current_value = self.send(attr_name)
       if current_value != default_value(attr_name) || self.class.required_attribute?(attr_name)
-        result << "  s.#{attr_name} = #{ruby_code current_value}" unless defined?(OpenSSL::PKey::RSA) && current_value.is_a?(OpenSSL::PKey::RSA)
+        result << "  s.#{attr_name} = #{ruby_code current_value}"
       end
+    end
+
+    if String === signing_key
+      result << "  s.signing_key = #{signing_key.dump}.freeze"
     end
 
     if @installed_by_version

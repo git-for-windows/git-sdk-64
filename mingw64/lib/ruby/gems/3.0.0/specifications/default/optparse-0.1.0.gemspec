@@ -10,13 +10,13 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Nobu Nakada".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-06-16"
+  s.date = "2021-07-09"
   s.description = "OptionParser is a class for command-line option analysis.".freeze
   s.email = ["nobu@ruby-lang.org".freeze]
   s.files = ["optparse.rb".freeze, "optparse/ac.rb".freeze, "optparse/date.rb".freeze, "optparse/kwargs.rb".freeze, "optparse/shellwords.rb".freeze, "optparse/time.rb".freeze, "optparse/uri.rb".freeze, "optparse/version.rb".freeze]
   s.homepage = "https://github.com/ruby/optparse".freeze
   s.licenses = ["Ruby".freeze, "BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.5.0".freeze)
-  s.rubygems_version = "3.2.15".freeze
+  s.rubygems_version = "3.2.22".freeze
   s.summary = "OptionParser is a class for command-line option analysis.".freeze
 end

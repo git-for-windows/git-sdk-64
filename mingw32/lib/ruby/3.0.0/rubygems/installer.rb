@@ -484,8 +484,11 @@ class Gem::Installer
       bin_path = File.join gem_dir, spec.bindir, filename
 
       unless File.exist? bin_path
-        # TODO change this to a more useful warning
-        warn "`#{bin_path}` does not exist, maybe `gem pristine #{spec.name}` will fix it?"
+        if File.symlink? bin_path
+          alert_warning "`#{bin_path}` is dangling symlink pointing to `#{File.readlink bin_path}`"
+        else
+          alert_warning "`#{bin_path}` does not exist, maybe `gem pristine #{spec.name}` will fix it?"
+        end
         next
       end
 
@@ -723,6 +726,10 @@ class Gem::Installer
 
     if spec.extensions.any?{|ext| ext =~ /\R/ }
       raise Gem::InstallError, "#{spec} has an invalid extensions"
+    end
+
+    if spec.platform.to_s =~ /\R/
+      raise Gem::InstallError, "#{spec.platform} is an invalid platform"
     end
 
     unless spec.specification_version.to_s =~ /\A\d+\z/

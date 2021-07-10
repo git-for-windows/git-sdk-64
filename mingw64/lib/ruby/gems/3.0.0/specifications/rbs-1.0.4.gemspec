@@ -18,8 +18,8 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/ruby/rbs".freeze
   s.licenses = ["BSD-2-Clause".freeze, "Ruby".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.6".freeze)
-  s.rubygems_version = "3.2.15".freeze
+  s.rubygems_version = "3.2.22".freeze
   s.summary = "Type signature for Ruby.".freeze
 
-  s.installed_by_version = "3.2.15" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.2.22" if s.respond_to? :installed_by_version
 end

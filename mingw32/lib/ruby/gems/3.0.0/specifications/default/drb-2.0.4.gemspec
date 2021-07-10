@@ -10,13 +10,13 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Masatoshi SEKI".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-06-16"
+  s.date = "2021-07-09"
   s.description = "Distributed object system for Ruby".freeze
   s.email = ["seki@ruby-lang.org".freeze]
   s.files = ["drb.rb".freeze, "drb/acl.rb".freeze, "drb/drb.rb".freeze, "drb/eq.rb".freeze, "drb/extserv.rb".freeze, "drb/extservm.rb".freeze, "drb/gw.rb".freeze, "drb/invokemethod.rb".freeze, "drb/observer.rb".freeze, "drb/ssl.rb".freeze, "drb/timeridconv.rb".freeze, "drb/unix.rb".freeze, "drb/version.rb".freeze, "drb/weakidconv.rb".freeze]
   s.homepage = "https://github.com/ruby/drb".freeze
   s.licenses = ["Ruby".freeze, "BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.3.0".freeze)
-  s.rubygems_version = "3.2.15".freeze
+  s.rubygems_version = "3.2.22".freeze
   s.summary = "Distributed object system for Ruby".freeze
 end

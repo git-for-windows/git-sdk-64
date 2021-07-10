@@ -10,7 +10,7 @@
 
 module RbConfig
   RUBY_VERSION.start_with?("3.0.") or
-    raise "ruby lib version (3.0.1) doesn't match executable version (#{RUBY_VERSION})"
+    raise "ruby lib version (3.0.2) doesn't match executable version (#{RUBY_VERSION})"
 
   # Ruby installed directory.
   TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/3.0.0/i386-mingw32")
@@ -21,8 +21,8 @@ module RbConfig
   CONFIG["DESTDIR"] = DESTDIR
   CONFIG["MAJOR"] = "3"
   CONFIG["MINOR"] = "0"
-  CONFIG["TEENY"] = "1"
-  CONFIG["PATCHLEVEL"] = "64"
+  CONFIG["TEENY"] = "2"
+  CONFIG["PATCHLEVEL"] = "107"
   CONFIG["INSTALL"] = '/usr/bin/install -c'
   CONFIG["EXEEXT"] = ".exe"
   CONFIG["prefix"] = (TOPDIR || DESTDIR + "/mingw32")
@@ -44,7 +44,7 @@ module RbConfig
   CONFIG["RUBY_SEARCH_PATH"] = ""
   CONFIG["UNIVERSAL_INTS"] = ""
   CONFIG["UNIVERSAL_ARCHNAMES"] = ""
-  CONFIG["configure_args"] = " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' '--disable-werror' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CC=gcc' 'CXX=g++' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -ID:/a/_temp/msys/msys64/mingw32/include ' 'LDFLAGS=-pipe -Wl,--dynamicbase,--nxcompat,--no-seh' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048 -ID:/a/_temp/msys/msys64/mingw32/include  -I/mingw32/include/pdcurses' 'CXXFLAGS=-march=i686 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -ID:/a/_temp/msys/msys64/mingw32/include '"
+  CONFIG["configure_args"] = " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' '--disable-werror' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CC=gcc' 'CXX=g++' 'CXXFLAGS=-march=i686 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -ID:/a/_temp/msys/msys64/mingw32/include ' 'LDFLAGS=-pipe -Wl,--dynamicbase,--nxcompat,--no-seh' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048 -ID:/a/_temp/msys/msys64/mingw32/include  -I/mingw32/include/pdcurses' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -ID:/a/_temp/msys/msys64/mingw32/include '"
   CONFIG["CONFIGURE"] = "configure"
   CONFIG["vendorarchdir"] = "$(vendorlibdir)/$(sitearch)"
   CONFIG["vendorlibdir"] = "$(vendordir)/$(ruby_version)"
@@ -159,7 +159,7 @@ module RbConfig
   CONFIG["ASFLAGS"] = ""
   CONFIG["ARFLAGS"] = "rcD "
   CONFIG["try_header"] = ""
-  CONFIG["CC_VERSION_MESSAGE"] = "gcc.exe (Rev2, Built by MSYS2 project) 10.3.0\nCopyright (C) 2020 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  CONFIG["CC_VERSION_MESSAGE"] = "gcc.exe (Rev5, Built by MSYS2 project) 10.3.0\nCopyright (C) 2020 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
   CONFIG["CC_VERSION"] = "$(CC) --version"
   CONFIG["MJIT_CC"] = "D:/a/_temp/msys/msys64/mingw32/bin/gcc.exe"
   CONFIG["CSRCFLAG"] = ""
@@ -169,11 +169,11 @@ module RbConfig
   CONFIG["GNU_LD"] = "yes"
   CONFIG["GCC"] = "yes"
   CONFIG["CPP"] = "$(CC) -E"
-  CONFIG["CXXFLAGS"] = "-march=i686 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -ID:/a/_temp/msys/msys64/mingw32/include "
+  CONFIG["CFLAGS"] = "-march=i686 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -ID:/a/_temp/msys/msys64/mingw32/include "
   CONFIG["OBJEXT"] = "o"
   CONFIG["CPPFLAGS"] = "-D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048 -ID:/a/_temp/msys/msys64/mingw32/include  -I/mingw32/include/pdcurses -D_WIN32_WINNT=0x0600 -D__MINGW_USE_VC2005_COMPAT $(DEFS) $(cppflags)"
   CONFIG["LDFLAGS"] = "-L. -pipe -Wl,--dynamicbase,--nxcompat,--no-seh"
-  CONFIG["CFLAGS"] = "-march=i686 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -ID:/a/_temp/msys/msys64/mingw32/include "
+  CONFIG["CXXFLAGS"] = "-march=i686 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -ID:/a/_temp/msys/msys64/mingw32/include "
   CONFIG["STRIP"] = "strip -S -x"
   CONFIG["RANLIB"] = "i686-w64-mingw32-gcc-ranlib"
   CONFIG["OBJDUMP"] = "objdump"
