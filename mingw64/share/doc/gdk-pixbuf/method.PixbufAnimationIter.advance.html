@@ -1,0 +1,240 @@
+<!--
+SPDX-FileCopyrightText: 2021 GNOME Foundation
+
+SPDX-License-Identifier: Apache-2.0 OR GPL-3.0-or-later
+-->
+
+<!--
+SPDX-FileCopyrightText: 2021 GNOME Foundation
+
+SPDX-License-Identifier: Apache-2.0 OR GPL-3.0-or-later
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>GdkPixbuf.PixbufAnimationIter.advance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta charset="utf-8" />
+
+  
+  <meta property="og:type" content="website"/>
+
+  
+
+  
+  <meta priority="og:title" content="GdkPixbuf.PixbufAnimationIter.advance"/>
+  <meta priority="og:description" content="Reference for GdkPixbuf.PixbufAnimationIter.advance"/>
+  <meta name="twitter:title" content="GdkPixbuf.PixbufAnimationIter.advance"/>
+  <meta name="twitter:description" content="Reference for GdkPixbuf.PixbufAnimationIter.advance"/>
+
+
+  
+  <meta name="twitter:card" content="summary"/>
+
+  
+
+  <link rel="stylesheet" href="style.css" type="text/css" />
+
+  
+
+  
+  <script src="urlmap.js"></script>
+  
+  
+  <script src="fzy.js"></script>
+  <script src="search.js"></script>
+  
+  <script src="main.js"></script>
+  <!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body>
+  <div id="body-wrapper" tabindex="-1">
+
+    <nav class="sidebar devhelp-hidden">
+      
+      
+      <div class="search section">
+        <form id="search-form" autocomplete="off">
+          <input id="search-input" type="text" name="do-not-autocomplete" placeholder="Click, or press 's' to search" autocomplete="off"/>
+        </form>
+      </div>
+      
+      <div class="section namespace">
+        <h3><a href="index.html">GdkPixbuf</a></h3>
+        <p>API Version: 2.0</p>
+        
+        <p>Library Version: 2.42.6</p>
+        
+      </div>
+      
+<div class="section">
+  <h5>Type</h5>
+  <div class="links">
+    <a href="class.PixbufAnimationIter.html">PixbufAnimationIter</a>
+  </div>
+</div>
+<div class="section">
+  <h5>Methods</h5>
+  <div class="links">
+  
+    <a class="method current" href="method.PixbufAnimationIter.advance.html">advance</a>
+  
+    <a class="method" href="method.PixbufAnimationIter.get_delay_time.html">get_delay_time</a>
+  
+    <a class="method" href="method.PixbufAnimationIter.get_pixbuf.html">get_pixbuf</a>
+  
+    <a class="method" href="method.PixbufAnimationIter.on_currently_loading_frame.html">on_currently_loading_frame</a>
+  
+  </div>
+</div>
+
+    </nav>
+
+    
+    <button id="btn-to-top" class="hidden"><span class="up-arrow"></span></button>
+    
+
+    
+<section id="main" class="content">
+  <header>
+    <h3>Method</h3>
+    <h1><a href="index.html">GdkPixbuf</a><span class="sep"></span><a href="class.PixbufAnimationIter.html">PixbufAnimationIter</a><span class="sep"></span>advance</h1>
+  </header>
+
+  <section>
+    <div class="declaration toggle-wrapper">
+      <h4 style="display:flex;" id="declaration">
+        Declaration
+        <a class="anchor" href="#declaration"></a>
+        
+        <a class="srclink" title="go to source location" href="https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/blob/master/gdk-pixbuf/gdk-pixbuf-animation.h#L114">[src]</a>
+        
+      </h4>
+
+      <div class="docblock c-decl">
+        <pre><code><div class="highlight"><pre><span></span><span class="n">gboolean</span>
+<span class="n">gdk_pixbuf_animation_iter_advance</span> <span class="p">(</span>
+  <span class="n">GdkPixbufAnimationIter</span><span class="o">*</span> <span class="n">iter</span><span class="p">,</span>
+  <span class="k">const</span> <span class="n">GTimeVal</span><span class="o">*</span> <span class="n">current_time</span>
+<span class="p">)</span>
+</pre></div>
+</code></pre>
+      </div>
+    </div>
+
+    <div class="description toggle-wrapper">
+      <h4 style="display:flex;" id="description">
+        Description
+        <a class="anchor" href="#description"></a>
+        
+        <a class="srclink" title="go to source location" href="https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/blob/master/gdk-pixbuf/gdk-pixbuf-animation.c#L813">[src]</a>
+        
+      </h4>
+
+      <div class="docblock">
+        <p>Possibly advances an animation to a new&nbsp;frame.</p>
+<p>Chooses the frame based on the start time passed to&nbsp;gdk_pixbuf_animation_get_iter().</p>
+<p><code>current_time</code> would normally come from g_get_current_time(), and
+must be greater than or equal to the time passed to
+gdk_pixbuf_animation_get_iter(), and must increase or remain
+unchanged each time gdk_pixbuf_animation_iter_get_pixbuf() is
+called. That is, you can&#8217;t go backward in time; animations only
+play&nbsp;forward.</p>
+<p>As a shortcut, pass <code>NULL</code> for the current time and g_get_current_time()
+will be invoked on your behalf. So you only need to explicitly pass
+<code>current_time</code> if you&#8217;re doing something odd like playing the animation
+at double&nbsp;speed.</p>
+<p>If this function returns <code>FALSE</code>, there&#8217;s no need to update the animation
+display, assuming the display had been rendered prior to advancing;
+if <code>TRUE</code>, you need to call gdk_pixbuf_animation_iter_get_pixbuf()
+and update the display with the new&nbsp;pixbuf.</p>
+      </div>
+
+      <div class="docblock">
+        <table>
+          
+          
+          
+        </table>
+      </div>
+
+      
+    </div>
+
+    
+    <div class="parameters toggle-wrapper">
+      <h4 id="parameters">
+        Parameters
+        <a href="#parameters" class="anchor"></a>
+      </h4>
+
+      <div class="docblock">
+        <table class="arguments">
+          
+          <tr class="arg-name">
+            <td><code>current_time</code></td>
+            <td><code>const GTimeVal*</code></td>
+          </tr>
+          <tr class="arg-description">
+            <td>&nbsp;</td>
+            <td><p>Current&nbsp;time.</p></td>
+          </tr>
+          
+          <tr><td>&nbsp;</td><td>The argument can be <code>NULL</code>.</td></tr>
+          
+          
+          
+          
+          
+          <tr><td>&nbsp;</td><td title="transfer: none">The data is owned by the caller of the function.</td></tr>
+          
+          
+          
+        </table>
+      </div>
+    </div>
+    
+
+    
+    <div class="return-value toggle-wrapper">
+      <h4 id="return-value">
+        Return value
+        <a href="#return-value" class="anchor"></a>
+      </h4>
+
+      <div class="docblock">
+        <table class="returns">
+          <tr class="arg-name">
+            <td>Returns:</td>
+            <td><code>gboolean</code></td>
+          </tr>
+          <tr class="arg-description">
+            <td>&nbsp;</td>
+            <td><p><code>TRUE</code> if the image may need&nbsp;updating.</p></td>
+          </tr>
+          
+          
+          
+          
+          
+          
+        </table>
+      </div>
+    </div>
+    
+
+  </section>
+</section>
+
+
+    <section id="search" class="content hidden"></section>
+
+    <footer>
+    
+    </footer>
+  </div>
+</body>
+</html>

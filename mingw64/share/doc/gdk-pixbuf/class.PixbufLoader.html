@@ -1,0 +1,619 @@
+<!--
+SPDX-FileCopyrightText: 2021 GNOME Foundation
+
+SPDX-License-Identifier: Apache-2.0 OR GPL-3.0-or-later
+-->
+
+<!--
+SPDX-FileCopyrightText: 2021 GNOME Foundation
+
+SPDX-License-Identifier: Apache-2.0 OR GPL-3.0-or-later
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>GdkPixbuf.PixbufLoader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta charset="utf-8" />
+
+  
+  <meta property="og:type" content="website"/>
+
+  
+
+  
+  <meta property="og:title" content="GdkPixbuf.PixbufLoader"/>
+  <meta property="og:description" content="Reference for GdkPixbuf.PixbufLoader"/>
+  <meta name="twitter:title" content="GdkPixbuf.PixbufLoader"/>
+  <meta name="twitter:description" content="Reference for GdkPixbuf.PixbufLoader"/>
+
+
+  
+  <meta name="twitter:card" content="summary"/>
+
+  
+
+  <link rel="stylesheet" href="style.css" type="text/css" />
+
+  
+
+  
+  <script src="urlmap.js"></script>
+  
+  
+  <script src="fzy.js"></script>
+  <script src="search.js"></script>
+  
+  <script src="main.js"></script>
+  <!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body>
+  <div id="body-wrapper" tabindex="-1">
+
+    <nav class="sidebar devhelp-hidden">
+      
+      
+      <div class="search section">
+        <form id="search-form" autocomplete="off">
+          <input id="search-input" type="text" name="do-not-autocomplete" placeholder="Click, or press 's' to search" autocomplete="off"/>
+        </form>
+      </div>
+      
+      <div class="section namespace">
+        <h3><a href="index.html">GdkPixbuf</a></h3>
+        <p>API Version: 2.0</p>
+        
+        <p>Library Version: 2.42.6</p>
+        
+      </div>
+      
+<div class="section">
+  <h5>Type</h5>
+  <div class="links">
+    <a class="current" href="class.PixbufLoader.html#description">PixbufLoader</a>
+  </div>
+</div>
+
+
+<div class="section">
+  <h5>Constructors</h5>
+  <div class="links">
+  
+    <a class="ctor" href="ctor.PixbufLoader.new.html">new</a>
+  
+    <a class="ctor" href="ctor.PixbufLoader.new_with_mime_type.html">new_with_mime_type</a>
+  
+    <a class="ctor" href="ctor.PixbufLoader.new_with_type.html">new_with_type</a>
+  
+  </div>
+</div>
+
+
+
+<div class="section">
+  <h5>Instance methods</h5>
+  <div class="links">
+  
+    <a class="method" href="method.PixbufLoader.close.html">close</a>
+  
+    <a class="method" href="method.PixbufLoader.get_animation.html">get_animation</a>
+  
+    <a class="method" href="method.PixbufLoader.get_format.html">get_format</a>
+  
+    <a class="method" href="method.PixbufLoader.get_pixbuf.html">get_pixbuf</a>
+  
+    <a class="method" href="method.PixbufLoader.set_size.html">set_size</a>
+  
+    <a class="method" href="method.PixbufLoader.write.html">write</a>
+  
+    <a class="method" href="method.PixbufLoader.write_bytes.html">write_bytes</a>
+  
+  </div>
+</div>
+
+
+
+
+
+<div class="section">
+  <h5>Signals</h5>
+  <div class="links">
+  
+    <a class="signal" href="signal.PixbufLoader.area-prepared.html">area-prepared</a>
+  
+    <a class="signal" href="signal.PixbufLoader.area-updated.html">area-updated</a>
+  
+    <a class="signal" href="signal.PixbufLoader.closed.html">closed</a>
+  
+    <a class="signal" href="signal.PixbufLoader.size-prepared.html">size-prepared</a>
+  
+  </div>
+</div>
+
+
+
+
+
+
+
+<div class="section">
+  <h5>Virtual methods</h5>
+  <div class="links">
+  
+    <a class="method" href="vfunc.PixbufLoader.area_prepared.html">area_prepared</a>
+  
+    <a class="method" href="vfunc.PixbufLoader.area_updated.html">area_updated</a>
+  
+    <a class="method" href="vfunc.PixbufLoader.closed.html">closed</a>
+  
+    <a class="method" href="vfunc.PixbufLoader.size_prepared.html">size_prepared</a>
+  
+  </div>
+</div>
+
+
+
+    </nav>
+
+    
+    <button id="btn-to-top" class="hidden"><span class="up-arrow"></span></button>
+    
+
+    
+<section id="main" class="content">
+  <header>
+    <h3>Class</h3>
+    <h1 aria-label="Name"><a href="index.html">GdkPixbuf</a><span class="sep" role="presentation"></span>PixbufLoader</h1>
+  </header>
+
+  <section>
+    <summary>
+      <div class="toggle-wrapper">
+        <h4 id="description" style="display:flex;">
+          Description
+          <a href="#description" class="anchor"></a>
+          
+          <a class="srclink" title="go to source location" href="https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/blob/master/gdk-pixbuf/gdk-pixbuf-loader.c#L34">[src]</a>
+          
+        </h4>
+
+        <pre><code>class GdkPixbuf.PixbufLoader : GObject.Object {
+  /* No available fields */
+}</pre></code>
+
+        <div class="docblock">
+          <p>Incremental image&nbsp;loader.</p>
+<p><code>GdkPixbufLoader</code> provides a way for applications to drive the
+process of loading an image, by letting them send the image data
+directly to the loader instead of having the loader read the data
+from a file. Applications can use this functionality instead of
+<code>gdk_pixbuf_new_from_file()</code> or <code>gdk_pixbuf_animation_new_from_file()</code>
+when they need to parse image data in small chunks. For example,
+it should be used when reading an image from a (potentially) slow
+network connection, or when loading an extremely large&nbsp;file.</p>
+<p>To use <code>GdkPixbufLoader</code> to load an image, create a new instance,
+and call <a href="method.PixbufLoader.write.html">gdk_pixbuf_loader_write()</a> to send the data
+to it. When done, <a href="method.PixbufLoader.close.html">gdk_pixbuf_loader_close()</a> should be
+called to end the stream and finalize&nbsp;everything.</p>
+<p>The loader will emit three important signals throughout the&nbsp;process:</p>
+<ul>
+<li><a href="signal.PixbufLoader.size-prepared.html"><code>GdkPixbufLoader::size-prepared</code></a> will be emitted as
+   soon as the image has enough information to determine the size of
+   the image to be used. If you want to scale the image while loading
+   it, you can call <a href="method.PixbufLoader.set_size.html">gdk_pixbuf_loader_set_size()</a> in
+   response to this&nbsp;signal.</li>
+<li><a href="signal.PixbufLoader.area-prepared.html"><code>GdkPixbufLoader::area-prepared</code></a> will be emitted as
+   soon as the pixbuf of the desired has been allocated. You can obtain
+   the <code>GdkPixbuf</code> instance by calling <a href="method.PixbufLoader.get_pixbuf.html">gdk_pixbuf_loader_get_pixbuf()</a>.
+   If you want to use it, simply acquire a reference to it. You can
+   also call <code>gdk_pixbuf_loader_get_pixbuf()</code> later to get the same&nbsp;pixbuf.</li>
+<li><a href="signal.PixbufLoader.area-updated.html"><code>GdkPixbufLoader::area-updated</code></a> will be emitted every
+   time a region is updated. This way you can update a partially
+   completed image. Note that you do not know anything about the
+   completeness of an image from the updated area. For example, in an
+   interlaced image you will need to make several passes before the
+   image is done&nbsp;loading.</li>
+</ul>
+<h2 id="loading-an-animation">Loading an animation<a class="md-anchor" href="#loading-an-animation" title="Permanent link"></a></h2>
+<p>Loading an animation is almost as easy as loading an image. Once the
+first <a href="signal.PixbufLoader.area-prepared.html"><code>GdkPixbufLoader::area-prepared</code></a> signal has been
+emitted, you can call <a href="method.PixbufLoader.get_animation.html">gdk_pixbuf_loader_get_animation()</a> to
+get the <a href="class.PixbufAnimation.html"><code>GdkPixbufAnimation</code></a> instance, and then call
+and <a href="method.PixbufAnimation.get_iter.html">gdk_pixbuf_animation_get_iter()</a> to get a
+<a href="class.PixbufAnimationIter.html"><code>GdkPixbufAnimationIter</code></a> to retrieve the pixbuf for the
+desired time&nbsp;stamp.</p>
+        </div>
+
+        <div class="docblock">
+          <table class="attributes">
+            
+            
+            
+          </table>
+        </div>
+
+        
+      </div>
+    </summary>
+
+    
+
+    
+    <div class="toggle-wrapper ancestors">
+      <h4 id="ancestors">
+        Ancestors
+        <a href="#ancestors" class="anchor"></a>
+      </h4>
+
+      <div class="docblock">
+        <ul>
+        
+          
+          <li class="class">GObject</a></li>
+          
+        
+        </ul>
+      </div>
+    </div>
+    
+
+    
+
+    
+    <div class="toggle-wrapper constructors">
+      <h4 id="constructors">
+        Constructors
+        <a href="#constructors" class="anchor"></a>
+      </h4>
+
+      <div class="docblock">
+      
+        <div class="">
+          <h6><a href="ctor.PixbufLoader.new.html">gdk_pixbuf_loader_new</a></h6>
+
+          <div class="docblock">
+            <p>Creates a new pixbuf loader&nbsp;object.</p>
+          </div>
+
+          
+        </div>
+      
+        <div class="">
+          <h6><a href="ctor.PixbufLoader.new_with_mime_type.html">gdk_pixbuf_loader_new_with_mime_type</a></h6>
+
+          <div class="docblock">
+            <p>Creates a new pixbuf loader object that always attempts to parse
+image data as if it were an image of <span class="caps">MIME</span> type <code>mime_type</code>, instead of
+identifying the type&nbsp;automatically.</p>
+          </div>
+
+          <div class="docblock"><p>Available since: 2.4</p></div>
+        </div>
+      
+        <div class="">
+          <h6><a href="ctor.PixbufLoader.new_with_type.html">gdk_pixbuf_loader_new_with_type</a></h6>
+
+          <div class="docblock">
+            <p>Creates a new pixbuf loader object that always attempts to parse
+image data as if it were an image of type <code>image_type</code>, instead of
+identifying the type&nbsp;automatically.</p>
+          </div>
+
+          
+        </div>
+      
+      </div>
+    </div>
+    
+
+    
+    <div class="toggle-wrapper methods">
+      <h4 id="methods">
+        Instance methods
+        <a href="#methods" class="anchor"></a>
+      </h4>
+
+      <div class="docblock">
+      
+        <div class="">
+          <h6><a href="method.PixbufLoader.close.html">gdk_pixbuf_loader_close</a></h6>
+          <div class="docblock">
+            <p>Informs a pixbuf loader that no further writes with
+gdk_pixbuf_loader_write() will occur, so that it can free its
+internal loading&nbsp;structures.</p>
+          </div>
+          
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufLoader.get_animation.html">gdk_pixbuf_loader_get_animation</a></h6>
+          <div class="docblock">
+            <p>Queries the <code>GdkPixbufAnimation</code> that a pixbuf loader is currently&nbsp;creating.</p>
+          </div>
+          
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufLoader.get_format.html">gdk_pixbuf_loader_get_format</a></h6>
+          <div class="docblock">
+            <p>Obtains the available information about the format of the
+currently loading image&nbsp;file.</p>
+          </div>
+          <div class="docblock"><p>Available since: 2.2</p></div>
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufLoader.get_pixbuf.html">gdk_pixbuf_loader_get_pixbuf</a></h6>
+          <div class="docblock">
+            <p>Queries the <code>GdkPixbuf</code> that a pixbuf loader is currently&nbsp;creating.</p>
+          </div>
+          
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufLoader.set_size.html">gdk_pixbuf_loader_set_size</a></h6>
+          <div class="docblock">
+            <p>Causes the image to be scaled while it is&nbsp;loaded.</p>
+          </div>
+          <div class="docblock"><p>Available since: 2.2</p></div>
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufLoader.write.html">gdk_pixbuf_loader_write</a></h6>
+          <div class="docblock">
+            <p>Parses the next <code>count</code> bytes in the given image&nbsp;buffer.</p>
+          </div>
+          
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufLoader.write_bytes.html">gdk_pixbuf_loader_write_bytes</a></h6>
+          <div class="docblock">
+            <p>Parses the next contents of the given image&nbsp;buffer.</p>
+          </div>
+          <div class="docblock"><p>Available since: 2.30</p></div>
+        </div>
+      
+      </div>
+
+      
+        
+      
+
+      
+    </div>
+    
+
+    
+
+    
+    <div class="signals toggle-wrapper">
+      <h4 id="signals">
+        Signals
+        <a href="#signals" class="anchor"></a>
+      </h4>
+
+      <div class="docblock">
+      
+        <div class="">
+          <h6><a href="signal.PixbufLoader.area-prepared.html">GdkPixbuf.PixbufLoader::area-prepared</a></h6>
+          <div class="docblock">
+            <p>This signal is emitted when the pixbuf loader has allocated the
+pixbuf in the desired&nbsp;size.</p>
+          </div>
+          
+        </div>
+      
+        <div class="">
+          <h6><a href="signal.PixbufLoader.area-updated.html">GdkPixbuf.PixbufLoader::area-updated</a></h6>
+          <div class="docblock">
+            <p>This signal is emitted when a significant area of the image being
+loaded has been&nbsp;updated.</p>
+          </div>
+          
+        </div>
+      
+        <div class="">
+          <h6><a href="signal.PixbufLoader.closed.html">GdkPixbuf.PixbufLoader::closed</a></h6>
+          <div class="docblock">
+            <p>This signal is emitted when gdk_pixbuf_loader_close() is&nbsp;called.</p>
+          </div>
+          
+        </div>
+      
+        <div class="">
+          <h6><a href="signal.PixbufLoader.size-prepared.html">GdkPixbuf.PixbufLoader::size-prepared</a></h6>
+          <div class="docblock">
+            <p>This signal is emitted when the pixbuf loader has been fed the
+initial amount of data that is required to figure out the size
+of the image that it will&nbsp;create.</p>
+          </div>
+          
+        </div>
+      
+      </div>
+
+      
+        
+      
+
+      
+
+    </div>
+    
+
+    
+    <div class="class toggle-wrapper default-hide">
+      <h4 id="class-struct">
+        Class structure
+        <a href="#class-struct" class="anchor"></a>
+      </h4>
+
+      <div class="docblock">
+        <pre><code>struct GdkPixbufPixbufLoaderClass {
+  GObjectClass parent_class;
+  void (* size_prepared) (
+    GdkPixbufLoader* loader,
+    int width,
+    int height
+  );
+  void (* area_prepared) (
+    GdkPixbufLoader* loader
+  );
+  void (* area_updated) (
+    GdkPixbufLoader* loader,
+    int x,
+    int y,
+    int width,
+    int height
+  );
+  void (* closed) (
+    GdkPixbufLoader* loader
+  );
+  
+}</code></pre>
+      </div>
+
+      
+      <div class="docblock">
+        <h6>Class members</h6>
+
+        <table class="members">
+        
+        <tr>
+          <td style="vertical-align:top"><code>parent_class</code></td>
+          <td style="vertical-align:top"><pre><code>GObjectClass</code></pre></td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td style="vertical-align:top">No description available.</td>
+        </td>
+        
+        <tr>
+          <td style="vertical-align:top"><code>size_prepared</code></td>
+          <td style="vertical-align:top"><pre><code>void (* size_prepared) (
+    GdkPixbufLoader* loader,
+    int width,
+    int height
+  )</code></pre></td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td style="vertical-align:top">No description available.</td>
+        </td>
+        
+        <tr>
+          <td style="vertical-align:top"><code>area_prepared</code></td>
+          <td style="vertical-align:top"><pre><code>void (* area_prepared) (
+    GdkPixbufLoader* loader
+  )</code></pre></td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td style="vertical-align:top">No description available.</td>
+        </td>
+        
+        <tr>
+          <td style="vertical-align:top"><code>area_updated</code></td>
+          <td style="vertical-align:top"><pre><code>void (* area_updated) (
+    GdkPixbufLoader* loader,
+    int x,
+    int y,
+    int width,
+    int height
+  )</code></pre></td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td style="vertical-align:top">No description available.</td>
+        </td>
+        
+        <tr>
+          <td style="vertical-align:top"><code>closed</code></td>
+          <td style="vertical-align:top"><pre><code>void (* closed) (
+    GdkPixbufLoader* loader
+  )</code></pre></td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td style="vertical-align:top">No description available.</td>
+        </td>
+        
+        </table>
+      </div>
+      
+    </div>
+    
+
+    
+    <div class="toggle-wrapper methods">
+      <h4 id="virtual-methods">
+        Virtual methods
+        <a href="#virtual-methods" class="anchor"></a>
+      </h4>
+
+      <div class="docblock">
+      
+      <div class="">
+        <h6 id="vfunc-area_prepared"><a href="vfunc.PixbufLoader.area_prepared.html">GdkPixbuf.PixbufLoaderClass.area_prepared</a></h6>
+
+        <div class="docblock">
+          No description available.
+        </div>
+
+          
+      </div>
+      
+      <div class="">
+        <h6 id="vfunc-area_updated"><a href="vfunc.PixbufLoader.area_updated.html">GdkPixbuf.PixbufLoaderClass.area_updated</a></h6>
+
+        <div class="docblock">
+          No description available.
+        </div>
+
+          
+      </div>
+      
+      <div class="">
+        <h6 id="vfunc-closed"><a href="vfunc.PixbufLoader.closed.html">GdkPixbuf.PixbufLoaderClass.closed</a></h6>
+
+        <div class="docblock">
+          No description available.
+        </div>
+
+          
+      </div>
+      
+      <div class="">
+        <h6 id="vfunc-size_prepared"><a href="vfunc.PixbufLoader.size_prepared.html">GdkPixbuf.PixbufLoaderClass.size_prepared</a></h6>
+
+        <div class="docblock">
+          No description available.
+        </div>
+
+          
+      </div>
+      
+      </div>
+    </div>
+    
+
+     
+
+    
+
+  </section>
+</section>
+
+
+    <section id="search" class="content hidden"></section>
+
+    <footer>
+    
+    </footer>
+  </div>
+</body>
+</html>

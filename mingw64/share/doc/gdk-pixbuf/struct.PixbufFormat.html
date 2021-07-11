@@ -1,0 +1,391 @@
+<!--
+SPDX-FileCopyrightText: 2021 GNOME Foundation
+
+SPDX-License-Identifier: Apache-2.0 OR GPL-3.0-or-later
+-->
+
+<!--
+SPDX-FileCopyrightText: 2021 GNOME Foundation
+
+SPDX-License-Identifier: Apache-2.0 OR GPL-3.0-or-later
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>GdkPixbuf.PixbufFormat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta charset="utf-8" />
+
+  
+  <meta property="og:type" content="website"/>
+
+  
+
+  
+  <meta property="og:title" content="GdkPixbuf.PixbufFormat"/>
+  <meta property="og:description" content="Reference for GdkPixbuf.PixbufFormat"/>
+  <meta name="twitter:title" content="GdkPixbuf.PixbufFormat"/>
+  <meta name="twitter:description" content="Reference for GdkPixbuf.PixbufFormat"/>
+
+
+  
+  <meta name="twitter:card" content="summary"/>
+
+  
+
+  <link rel="stylesheet" href="style.css" type="text/css" />
+
+  
+
+  
+  <script src="urlmap.js"></script>
+  
+  
+  <script src="fzy.js"></script>
+  <script src="search.js"></script>
+  
+  <script src="main.js"></script>
+  <!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body>
+  <div id="body-wrapper" tabindex="-1">
+
+    <nav class="sidebar devhelp-hidden">
+      
+      
+      <div class="search section">
+        <form id="search-form" autocomplete="off">
+          <input id="search-input" type="text" name="do-not-autocomplete" placeholder="Click, or press 's' to search" autocomplete="off"/>
+        </form>
+      </div>
+      
+      <div class="section namespace">
+        <h3><a href="index.html">GdkPixbuf</a></h3>
+        <p>API Version: 2.0</p>
+        
+        <p>Library Version: 2.42.6</p>
+        
+      </div>
+      
+<div class="section">
+  <h5>Type</h5>
+  <div class="links">
+    <a class="current" href="struct.PixbufFormat.html#description">PixbufFormat</a>
+  </div>
+</div>
+
+
+
+
+<div class="section">
+  <h5>Instance methods</h5>
+  <div class="links">
+  
+    <a class="method" href="method.PixbufFormat.copy.html">copy</a>
+  
+    <a class="method" href="method.PixbufFormat.free.html">free</a>
+  
+    <a class="method" href="method.PixbufFormat.get_description.html">get_description</a>
+  
+    <a class="method" href="method.PixbufFormat.get_extensions.html">get_extensions</a>
+  
+    <a class="method" href="method.PixbufFormat.get_license.html">get_license</a>
+  
+    <a class="method" href="method.PixbufFormat.get_mime_types.html">get_mime_types</a>
+  
+    <a class="method" href="method.PixbufFormat.get_name.html">get_name</a>
+  
+    <a class="method" href="method.PixbufFormat.is_disabled.html">is_disabled</a>
+  
+    <a class="method" href="method.PixbufFormat.is_save_option_supported.html">is_save_option_supported</a>
+  
+    <a class="method" href="method.PixbufFormat.is_scalable.html">is_scalable</a>
+  
+    <a class="method" href="method.PixbufFormat.is_writable.html">is_writable</a>
+  
+    <a class="method" href="method.PixbufFormat.set_disabled.html">set_disabled</a>
+  
+  </div>
+</div>
+
+
+
+
+
+    </nav>
+
+    
+    <button id="btn-to-top" class="hidden"><span class="up-arrow"></span></button>
+    
+
+    
+<section id="main" class="content">
+  <header>
+    <h3>Struct</h3>
+    <h1><a href="index.html">GdkPixbuf</a><span class="sep"></span>PixbufFormat</h1>
+  </header>
+
+  <section>
+    <summary>
+      <div class="toggle-wrapper">
+        <h4 style="display:flex;" id="description">
+          Description
+          <a href="#description" class="anchor"></a>
+          
+          <a class="srclink" title="go to source location" href="https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/blob/master/gdk-pixbuf/gdk-pixbuf-io.h#L311">[src]</a>
+          
+        </h4>
+
+        <pre><code><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nc">GdkPixbufFormat</span> <span class="p">{</span>
+  <span class="n">gchar</span><span class="o">*</span> <span class="n">name</span><span class="p">;</span>
+  <span class="n">GdkPixbufModulePattern</span><span class="o">*</span> <span class="n">signature</span><span class="p">;</span>
+  <span class="n">gchar</span><span class="o">*</span> <span class="n">domain</span><span class="p">;</span>
+  <span class="n">gchar</span><span class="o">*</span> <span class="n">description</span><span class="p">;</span>
+  <span class="n">gchar</span><span class="o">**</span> <span class="n">mime_types</span><span class="p">;</span>
+  <span class="n">gchar</span><span class="o">**</span> <span class="n">extensions</span><span class="p">;</span>
+  <span class="n">guint32</span> <span class="n">flags</span><span class="p">;</span>
+  <span class="n">gboolean</span> <span class="n">disabled</span><span class="p">;</span>
+  <span class="n">gchar</span><span class="o">*</span> <span class="n">license</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</code></pre>
+
+        <div class="docblock">
+          <p>A <code>GdkPixbufFormat</code> contains information about the image format accepted
+by a&nbsp;module.</p>
+<p>Only modules should access the fields directly, applications should
+use the <code>gdk_pixbuf_format_*</code> family of&nbsp;functions.</p>
+        </div>
+
+        
+        <div class="toggle-wrapper">
+          <h6 style="display:flex;">
+            Structure members
+            
+          </h6>
+
+          <div class="docblock">
+            <table>
+            
+              <tr>
+                <td><code>name</code></td>
+                <td><p>The name of the image&nbsp;format.</p></td>
+              </tr>
+            
+              <tr>
+                <td><code>signature</code></td>
+                <td><p>The signature of the&nbsp;module.</p></td>
+              </tr>
+            
+              <tr>
+                <td><code>domain</code></td>
+                <td><p>The message domain for the <code>description</code></p></td>
+              </tr>
+            
+              <tr>
+                <td><code>description</code></td>
+                <td><p>A description of the image&nbsp;format.</p></td>
+              </tr>
+            
+              <tr>
+                <td><code>mime_types</code></td>
+                <td><p>The <span class="caps">MIME</span> types for the image&nbsp;format.</p></td>
+              </tr>
+            
+              <tr>
+                <td><code>extensions</code></td>
+                <td><p>Typical filename extensions for the
+  image&nbsp;format.</p></td>
+              </tr>
+            
+              <tr>
+                <td><code>flags</code></td>
+                <td><p>A combination of <code>GdkPixbufFormatFlags</code></p></td>
+              </tr>
+            
+              <tr>
+                <td><code>disabled</code></td>
+                <td><p>A boolean determining whether the loader is&nbsp;disabled`</p></td>
+              </tr>
+            
+              <tr>
+                <td><code>license</code></td>
+                <td><p>A string containing license information, typically set to
+  shorthands like &#8220;<span class="caps">GPL</span>&#8221;, &#8220;<span class="caps">LGPL</span>&#8221;,&nbsp;etc.</p></td>
+              </tr>
+            
+            </table>
+          </div>
+        </div>
+        
+
+        <div class="docblock">
+          <table class="attributes">
+            
+            
+            <tr><td>Available since:</td><td>2.2</td></tr>
+            
+            
+          </table>
+        </div>
+
+        
+      </div>
+    </summary>
+
+    
+
+    
+    <div class="toggle-wrapper methods">
+      <h4 id="methods">
+        Instance methods
+        <a href="#methods" class="anchor"></a>
+      </h4>
+
+      <div class="docblock">
+      
+        <div class="">
+          <h6><a href="method.PixbufFormat.copy.html">gdk_pixbuf_format_copy</a></h6>
+
+          <div class="docblock">
+            <p>Creates a copy of <code>format</code>.</p>
+          </div>
+
+          <div class="docblock"><p>Available since: 2.22</p></div>
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufFormat.free.html">gdk_pixbuf_format_free</a></h6>
+
+          <div class="docblock">
+            <p>Frees the resources allocated when copying a <code>GdkPixbufFormat</code>
+using&nbsp;gdk_pixbuf_format_copy()</p>
+          </div>
+
+          <div class="docblock"><p>Available since: 2.22</p></div>
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufFormat.get_description.html">gdk_pixbuf_format_get_description</a></h6>
+
+          <div class="docblock">
+            <p>Returns a description of the&nbsp;format.</p>
+          </div>
+
+          <div class="docblock"><p>Available since: 2.2</p></div>
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufFormat.get_extensions.html">gdk_pixbuf_format_get_extensions</a></h6>
+
+          <div class="docblock">
+            <p>Returns the filename extensions typically used for files in the
+given&nbsp;format.</p>
+          </div>
+
+          <div class="docblock"><p>Available since: 2.2</p></div>
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufFormat.get_license.html">gdk_pixbuf_format_get_license</a></h6>
+
+          <div class="docblock">
+            <p>Returns information about the license of the image loader for the&nbsp;format.</p>
+          </div>
+
+          <div class="docblock"><p>Available since: 2.6</p></div>
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufFormat.get_mime_types.html">gdk_pixbuf_format_get_mime_types</a></h6>
+
+          <div class="docblock">
+            <p>Returns the mime types supported by the&nbsp;format.</p>
+          </div>
+
+          <div class="docblock"><p>Available since: 2.2</p></div>
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufFormat.get_name.html">gdk_pixbuf_format_get_name</a></h6>
+
+          <div class="docblock">
+            <p>Returns the name of the&nbsp;format.</p>
+          </div>
+
+          <div class="docblock"><p>Available since: 2.2</p></div>
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufFormat.is_disabled.html">gdk_pixbuf_format_is_disabled</a></h6>
+
+          <div class="docblock">
+            <p>Returns whether this image format is&nbsp;disabled.</p>
+          </div>
+
+          <div class="docblock"><p>Available since: 2.6</p></div>
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufFormat.is_save_option_supported.html">gdk_pixbuf_format_is_save_option_supported</a></h6>
+
+          <div class="docblock">
+            <p>Returns <code>TRUE</code> if the save option specified by <code>option_key</code> is supported when
+saving a pixbuf using the module implementing <code>format</code>.</p>
+          </div>
+
+          <div class="docblock"><p>Available since: 2.36</p></div>
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufFormat.is_scalable.html">gdk_pixbuf_format_is_scalable</a></h6>
+
+          <div class="docblock">
+            <p>Returns whether this image format is&nbsp;scalable.</p>
+          </div>
+
+          <div class="docblock"><p>Available since: 2.6</p></div>
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufFormat.is_writable.html">gdk_pixbuf_format_is_writable</a></h6>
+
+          <div class="docblock">
+            <p>Returns whether pixbufs can be saved in the given&nbsp;format.</p>
+          </div>
+
+          <div class="docblock"><p>Available since: 2.2</p></div>
+        </div>
+      
+        <div class="">
+          <h6><a href="method.PixbufFormat.set_disabled.html">gdk_pixbuf_format_set_disabled</a></h6>
+
+          <div class="docblock">
+            <p>Disables or enables an image&nbsp;format.</p>
+          </div>
+
+          <div class="docblock"><p>Available since: 2.6</p></div>
+        </div>
+      
+      </div>
+
+    </div>
+    
+
+    
+
+  </section>
+</section>
+
+
+    <section id="search" class="content hidden"></section>
+
+    <footer>
+    
+    </footer>
+  </div>
+</body>
+</html>

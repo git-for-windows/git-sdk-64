@@ -1,0 +1,258 @@
+<!--
+SPDX-FileCopyrightText: 2021 GNOME Foundation
+
+SPDX-License-Identifier: Apache-2.0 OR GPL-3.0-or-later
+-->
+
+<!--
+SPDX-FileCopyrightText: 2021 GNOME Foundation
+
+SPDX-License-Identifier: Apache-2.0 OR GPL-3.0-or-later
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>GdkPixbuf.PixbufAnimation.get_iter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta charset="utf-8" />
+
+  
+  <meta property="og:type" content="website"/>
+
+  
+
+  
+  <meta priority="og:title" content="GdkPixbuf.PixbufAnimation.get_iter"/>
+  <meta priority="og:description" content="Reference for GdkPixbuf.PixbufAnimation.get_iter"/>
+  <meta name="twitter:title" content="GdkPixbuf.PixbufAnimation.get_iter"/>
+  <meta name="twitter:description" content="Reference for GdkPixbuf.PixbufAnimation.get_iter"/>
+
+
+  
+  <meta name="twitter:card" content="summary"/>
+
+  
+
+  <link rel="stylesheet" href="style.css" type="text/css" />
+
+  
+
+  
+  <script src="urlmap.js"></script>
+  
+  
+  <script src="fzy.js"></script>
+  <script src="search.js"></script>
+  
+  <script src="main.js"></script>
+  <!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body>
+  <div id="body-wrapper" tabindex="-1">
+
+    <nav class="sidebar devhelp-hidden">
+      
+      
+      <div class="search section">
+        <form id="search-form" autocomplete="off">
+          <input id="search-input" type="text" name="do-not-autocomplete" placeholder="Click, or press 's' to search" autocomplete="off"/>
+        </form>
+      </div>
+      
+      <div class="section namespace">
+        <h3><a href="index.html">GdkPixbuf</a></h3>
+        <p>API Version: 2.0</p>
+        
+        <p>Library Version: 2.42.6</p>
+        
+      </div>
+      
+<div class="section">
+  <h5>Type</h5>
+  <div class="links">
+    <a href="class.PixbufAnimation.html">PixbufAnimation</a>
+  </div>
+</div>
+<div class="section">
+  <h5>Methods</h5>
+  <div class="links">
+  
+    <a class="method" href="method.PixbufAnimation.get_height.html">get_height</a>
+  
+    <a class="method current" href="method.PixbufAnimation.get_iter.html">get_iter</a>
+  
+    <a class="method" href="method.PixbufAnimation.get_static_image.html">get_static_image</a>
+  
+    <a class="method" href="method.PixbufAnimation.get_width.html">get_width</a>
+  
+    <a class="method" href="method.PixbufAnimation.is_static_image.html">is_static_image</a>
+  
+    <a class="method" href="method.PixbufAnimation.ref.html">ref</a>
+  
+    <a class="method" href="method.PixbufAnimation.unref.html">unref</a>
+  
+  </div>
+</div>
+
+    </nav>
+
+    
+    <button id="btn-to-top" class="hidden"><span class="up-arrow"></span></button>
+    
+
+    
+<section id="main" class="content">
+  <header>
+    <h3>Method</h3>
+    <h1><a href="index.html">GdkPixbuf</a><span class="sep"></span><a href="class.PixbufAnimation.html">PixbufAnimation</a><span class="sep"></span>get_iter</h1>
+  </header>
+
+  <section>
+    <div class="declaration toggle-wrapper">
+      <h4 style="display:flex;" id="declaration">
+        Declaration
+        <a class="anchor" href="#declaration"></a>
+        
+        <a class="srclink" title="go to source location" href="https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/blob/master/gdk-pixbuf/gdk-pixbuf-animation.h#L100">[src]</a>
+        
+      </h4>
+
+      <div class="docblock c-decl">
+        <pre><code><div class="highlight"><pre><span></span><span class="n">GdkPixbufAnimationIter</span><span class="o">*</span>
+<span class="n">gdk_pixbuf_animation_get_iter</span> <span class="p">(</span>
+  <span class="n">GdkPixbufAnimation</span><span class="o">*</span> <span class="n">animation</span><span class="p">,</span>
+  <span class="k">const</span> <span class="n">GTimeVal</span><span class="o">*</span> <span class="n">start_time</span>
+<span class="p">)</span>
+</pre></div>
+</code></pre>
+      </div>
+    </div>
+
+    <div class="description toggle-wrapper">
+      <h4 style="display:flex;" id="description">
+        Description
+        <a class="anchor" href="#description"></a>
+        
+        <a class="srclink" title="go to source location" href="https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/blob/master/gdk-pixbuf/gdk-pixbuf-animation.c#L664">[src]</a>
+        
+      </h4>
+
+      <div class="docblock">
+        <p>Get an iterator for displaying an&nbsp;animation.</p>
+<p>The iterator provides the frames that should be displayed at a
+given&nbsp;time.</p>
+<p><code>start_time</code> would normally come from g_get_current_time(), and marks
+the beginning of animation playback. After creating an iterator, you
+should immediately display the pixbuf returned by
+gdk_pixbuf_animation_iter_get_pixbuf(). Then, you should install
+a timeout (with g_timeout_add()) or by some other mechanism ensure
+that you&#8217;ll update the image after
+gdk_pixbuf_animation_iter_get_delay_time() milliseconds. Each time
+the image is updated, you should reinstall the timeout with the new,
+possibly-changed delay&nbsp;time.</p>
+<p>As a shortcut, if <code>start_time</code> is <code>NULL</code>, the result of
+g_get_current_time() will be used&nbsp;automatically.</p>
+<p>To update the image (i.e. possibly change the result of
+gdk_pixbuf_animation_iter_get_pixbuf() to a new frame of the animation),
+call&nbsp;gdk_pixbuf_animation_iter_advance().</p>
+<p>If you&#8217;re using <code>GdkPixbufLoader</code>, in addition to updating the image
+after the delay time, you should also update it whenever you
+receive the area_updated signal and
+gdk_pixbuf_animation_iter_on_currently_loading_frame() returns
+<code>TRUE</code>. In this case, the frame currently being fed into the loader
+has received new data, so needs to be refreshed. The delay time for
+a frame may also be modified after an area_updated signal, for
+example if the delay time for a frame is encoded in the data after
+the frame itself. So your timeout should be reinstalled after any
+area_updated&nbsp;signal.</p>
+<p>A delay time of -1 is possible, indicating&nbsp;&#8220;infinite&#8221;.</p>
+      </div>
+
+      <div class="docblock">
+        <table>
+          
+          
+          
+        </table>
+      </div>
+
+      
+    </div>
+
+    
+    <div class="parameters toggle-wrapper">
+      <h4 id="parameters">
+        Parameters
+        <a href="#parameters" class="anchor"></a>
+      </h4>
+
+      <div class="docblock">
+        <table class="arguments">
+          
+          <tr class="arg-name">
+            <td><code>start_time</code></td>
+            <td><code>const GTimeVal*</code></td>
+          </tr>
+          <tr class="arg-description">
+            <td>&nbsp;</td>
+            <td><p>Time when the animation starts&nbsp;playing.</p></td>
+          </tr>
+          
+          <tr><td>&nbsp;</td><td>The argument can be <code>NULL</code>.</td></tr>
+          
+          
+          
+          
+          
+          <tr><td>&nbsp;</td><td title="transfer: none">The data is owned by the caller of the function.</td></tr>
+          
+          
+          
+        </table>
+      </div>
+    </div>
+    
+
+    
+    <div class="return-value toggle-wrapper">
+      <h4 id="return-value">
+        Return value
+        <a href="#return-value" class="anchor"></a>
+      </h4>
+
+      <div class="docblock">
+        <table class="returns">
+          <tr class="arg-name">
+            <td>Returns:</td>
+            <td><a href="class.PixbufAnimationIter.html"><code>GdkPixbufAnimationIter</code></a></td>
+          </tr>
+          <tr class="arg-description">
+            <td>&nbsp;</td>
+            <td><p>An iterator to move over the&nbsp;animation.</p></td>
+          </tr>
+          
+          
+          
+          <tr><td>&nbsp;</td><td title="transfer: full">The caller of the function takes ownership of the data, and is responsible for freeing it.</td></tr>
+          
+          
+        </table>
+      </div>
+    </div>
+    
+
+  </section>
+</section>
+
+
+    <section id="search" class="content hidden"></section>
+
+    <footer>
+    
+    </footer>
+  </div>
+</body>
+</html>
