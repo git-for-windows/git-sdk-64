@@ -14,30 +14,30 @@
 
 #ifdef VMS
 #  define PERL_FILE_IS_ABSOLUTE(f) \
-	(*(f) == '/'							\
-	 || (strchr(f,':')						\
-	     || ((*(f) == '[' || *(f) == '<')				\
-		 && (isWORDCHAR((f)[1]) || memCHRs("$-_]>",(f)[1])))))
+        (*(f) == '/'							\
+         || (strchr(f,':')						\
+             || ((*(f) == '[' || *(f) == '<')				\
+                 && (isWORDCHAR((f)[1]) || memCHRs("$-_]>",(f)[1])))))
 
 #elif defined(WIN32) || defined(__CYGWIN__)
 #  define PERL_FILE_IS_ABSOLUTE(f) \
-	(*(f) == '/' || *(f) == '\\'		/* UNC/rooted path */	\
-	 || ((f)[0] && (f)[1] == ':'))		/* drive name */
+        (*(f) == '/' || *(f) == '\\'		/* UNC/rooted path */	\
+         || ((f)[0] && (f)[1] == ':'))		/* drive name */
 #elif defined(NETWARE)
 #  define PERL_FILE_IS_ABSOLUTE(f) \
-	(((f)[0] && (f)[1] == ':')		/* drive name */	\
-	 || ((f)[0] == '\\' && (f)[1] == '\\')	/* UNC path */	\
-	 ||	((f)[3] == ':'))				/* volume name, currently only sys */
-#elif defined(DOSISH) || defined(__SYMBIAN32__)
+        (((f)[0] && (f)[1] == ':')		/* drive name */	\
+         || ((f)[0] == '\\' && (f)[1] == '\\')	/* UNC path */	\
+         ||	((f)[3] == ':'))				/* volume name, currently only sys */
+#elif defined(DOSISH)
 #  define PERL_FILE_IS_ABSOLUTE(f) \
-	(*(f) == '/'							\
-	 || ((f)[0] && (f)[1] == ':'))		/* drive name */
-#else	/* NEITHER DOSISH NOR SYMBIANISH */
+        (*(f) == '/'							\
+         || ((f)[0] && (f)[1] == ':'))		/* drive name */
+#else	/* NOT DOSISH */
 #  define PERL_FILE_IS_ABSOLUTE(f)	(*(f) == '/')
 #endif
 
 /*
-=head1 Miscellaneous Functions
+=for apidoc_section $string
 
 =for apidoc ibcmp
 
@@ -47,10 +47,16 @@ This is a synonym for S<C<(! foldEQ())>>
 
 This is a synonym for S<C<(! foldEQ_locale())>>
 
+=for apidoc ibcmp_utf8
+
+This is a synonym for S<C<(! foldEQ_utf8())>>
+
 =cut
 */
 #define ibcmp(s1, s2, len)         cBOOL(! foldEQ(s1, s2, len))
 #define ibcmp_locale(s1, s2, len)  cBOOL(! foldEQ_locale(s1, s2, len))
+#define ibcmp_utf8(s1, pe1, l1, u1, s2, pe2, l2, u2) \
+                    cBOOL(! foldEQ_utf8(s1, pe1, l1, u1, s2, pe2, l2, u2))
 
 /* outside the core, perl.h undefs HAS_QUAD if IV isn't 64-bit
    We can't swap this to HAS_QUAD, because the logic here affects the type of
@@ -242,7 +248,7 @@ returning NULL if not found.  The terminating NUL bytes are not compared.
 */
 
 
-#define instr(haystack, needle) strstr(haystack, needle)
+#define instr(haystack, needle) strstr((char *) haystack, (char *) needle)
 
 #ifdef HAS_MEMMEM
 #   define ninstr(big, bigend, little, lend)                                \

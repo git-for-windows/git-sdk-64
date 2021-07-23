@@ -13,7 +13,7 @@ use Config;
 "x86_64-msys-thread-multi-3.1.7-340.x86_64" or
 	die "Errno architecture (x86_64-msys-thread-multi-3.1.7-340.x86_64) does not match executable architecture ($Config{'archname'}-$Config{'osvers'})";
 
-our $VERSION = "1.30";
+our $VERSION = "1.33";
 $VERSION = eval $VERSION;
 our @ISA = 'Exporter';
 

@@ -39,25 +39,41 @@ SOFTWARE.
 
 /* ------------------------------- av.h ------------------------------- */
 
-PERL_STATIC_INLINE SSize_t
-Perl_av_top_index(pTHX_ AV *av)
+/*
+=for apidoc_section $AV
+=for apidoc av_count
+Returns the number of elements in the array C<av>.  This is the true length of
+the array, including any undefined elements.  It is always the same as
+S<C<av_top_index(av) + 1>>.
+
+=cut
+*/
+PERL_STATIC_INLINE Size_t
+Perl_av_count(pTHX_ AV *av)
 {
-    PERL_ARGS_ASSERT_AV_TOP_INDEX;
+    PERL_ARGS_ASSERT_AV_COUNT;
     assert(SvTYPE(av) == SVt_PVAV);
 
-    return AvFILL(av);
+    return AvFILL(av) + 1;
 }
 
 /* ------------------------------- cv.h ------------------------------- */
 
+/*
+=for apidoc_section $CV
+=for apidoc CvGV
+Returns the GV associated with the CV C<sv>, reifying it if necessary.
+
+=cut
+*/
 PERL_STATIC_INLINE GV *
 Perl_CvGV(pTHX_ CV *sv)
 {
     PERL_ARGS_ASSERT_CVGV;
 
     return CvNAMED(sv)
-	? Perl_cvgv_from_hek(aTHX_ sv)
-	: ((XPVCV*)MUTABLE_PTR(SvANY(sv)))->xcv_gv_u.xcv_gv;
+        ? Perl_cvgv_from_hek(aTHX_ sv)
+        : ((XPVCV*)MUTABLE_PTR(SvANY(sv)))->xcv_gv_u.xcv_gv;
 }
 
 PERL_STATIC_INLINE I32 *
@@ -89,13 +105,13 @@ S_strip_spaces(pTHX_ const char * orig, STRLEN * const len)
     tmpsv = newSVpvn_flags(orig, *len, SVs_TEMP);
     tmps = SvPVX(tmpsv);
     while ((*len)--) {
-	if (!isSPACE(*orig))
-	    *tmps++ = *orig;
-	orig++;
+        if (!isSPACE(*orig))
+            *tmps++ = *orig;
+        orig++;
     }
     *tmps = '\0';
     *len = tmps - SvPVX(tmpsv);
-		return SvPVX(tmpsv);
+                return SvPVX(tmpsv);
 }
 #endif
 
@@ -109,12 +125,12 @@ S_MgBYTEPOS(pTHX_ MAGIC *mg, SV *sv, const char *s, STRLEN len)
     assert(mg->mg_type == PERL_MAGIC_regex_global);
     assert(mg->mg_len != -1);
     if (mg->mg_flags & MGf_BYTES || !DO_UTF8(sv))
-	return (STRLEN)mg->mg_len;
+        return (STRLEN)mg->mg_len;
     else {
-	const STRLEN pos = (STRLEN)mg->mg_len;
-	/* Without this check, we may read past the end of the buffer: */
-	if (pos > sv_or_pv_len_utf8(sv, s, len)) return len+1;
-	return sv_or_pv_pos_u2b(sv, s, pos, NULL);
+        const STRLEN pos = (STRLEN)mg->mg_len;
+        /* Without this check, we may read past the end of the buffer: */
+        if (pos > sv_or_pv_len_utf8(sv, s, len)) return len+1;
+        return sv_or_pv_pos_u2b(sv, s, pos, NULL);
     }
 }
 #endif
@@ -131,27 +147,27 @@ S_PadnameIN_SCOPE(const PADNAME * const pn, const U32 seq)
      * This is complicated by the fact that PL_cop_seqmax
      * may have wrapped around at some point */
     if (COP_SEQ_RANGE_LOW(pn) == PERL_PADSEQ_INTRO)
-	return FALSE; /* not yet introduced */
+        return FALSE; /* not yet introduced */
 
     if (COP_SEQ_RANGE_HIGH(pn) == PERL_PADSEQ_INTRO) {
     /* in compiling scope */
-	if (
-	    (seq >  COP_SEQ_RANGE_LOW(pn))
-	    ? (seq - COP_SEQ_RANGE_LOW(pn) < (U32_MAX >> 1))
-	    : (COP_SEQ_RANGE_LOW(pn) - seq > (U32_MAX >> 1))
-	)
-	    return TRUE;
+        if (
+            (seq >  COP_SEQ_RANGE_LOW(pn))
+            ? (seq - COP_SEQ_RANGE_LOW(pn) < (U32_MAX >> 1))
+            : (COP_SEQ_RANGE_LOW(pn) - seq > (U32_MAX >> 1))
+        )
+            return TRUE;
     }
     else if (
-	(COP_SEQ_RANGE_LOW(pn) > COP_SEQ_RANGE_HIGH(pn))
-	?
-	    (  seq >  COP_SEQ_RANGE_LOW(pn)
-	    || seq <= COP_SEQ_RANGE_HIGH(pn))
+        (COP_SEQ_RANGE_LOW(pn) > COP_SEQ_RANGE_HIGH(pn))
+        ?
+            (  seq >  COP_SEQ_RANGE_LOW(pn)
+            || seq <= COP_SEQ_RANGE_HIGH(pn))
 
-	:    (  seq >  COP_SEQ_RANGE_LOW(pn)
-	     && seq <= COP_SEQ_RANGE_HIGH(pn))
+        :    (  seq >  COP_SEQ_RANGE_LOW(pn)
+             && seq <= COP_SEQ_RANGE_HIGH(pn))
     )
-	return TRUE;
+        return TRUE;
     return FALSE;
 }
 #endif
@@ -162,9 +178,9 @@ PERL_STATIC_INLINE I32
 Perl_TOPMARK(pTHX)
 {
     DEBUG_s(DEBUG_v(PerlIO_printf(Perl_debug_log,
-				 "MARK top  %p %" IVdf "\n",
-				  PL_markstack_ptr,
-				  (IV)*PL_markstack_ptr)));
+                                 "MARK top  %p %" IVdf "\n",
+                                  PL_markstack_ptr,
+                                  (IV)*PL_markstack_ptr)));
     return *PL_markstack_ptr;
 }
 
@@ -172,9 +188,9 @@ PERL_STATIC_INLINE I32
 Perl_POPMARK(pTHX)
 {
     DEBUG_s(DEBUG_v(PerlIO_printf(Perl_debug_log,
-				 "MARK pop  %p %" IVdf "\n",
-				  (PL_markstack_ptr-1),
-				  (IV)*(PL_markstack_ptr-1))));
+                                 "MARK pop  %p %" IVdf "\n",
+                                  (PL_markstack_ptr-1),
+                                  (IV)*(PL_markstack_ptr-1))));
     assert((PL_markstack_ptr > PL_markstack) || !"MARK underflow");
     return *PL_markstack_ptr--;
 }
@@ -196,18 +212,67 @@ Perl_ReANY(const REGEXP * const re)
 /* ------------------------------- sv.h ------------------------------- */
 
 PERL_STATIC_INLINE bool
-Perl_SvTRUE(pTHX_ SV *sv) {
-    if (!LIKELY(sv))
+Perl_SvTRUE(pTHX_ SV *sv)
+{
+    PERL_ARGS_ASSERT_SVTRUE;
+
+    if (UNLIKELY(sv == NULL))
         return FALSE;
     SvGETMAGIC(sv);
     return SvTRUE_nomg_NN(sv);
 }
 
+PERL_STATIC_INLINE bool
+Perl_SvTRUE_nomg(pTHX_ SV *sv)
+{
+    PERL_ARGS_ASSERT_SVTRUE_NOMG;
+
+    if (UNLIKELY(sv == NULL))
+        return FALSE;
+    return SvTRUE_nomg_NN(sv);
+}
+
+PERL_STATIC_INLINE bool
+Perl_SvTRUE_NN(pTHX_ SV *sv)
+{
+    PERL_ARGS_ASSERT_SVTRUE_NN;
+
+    SvGETMAGIC(sv);
+    return SvTRUE_nomg_NN(sv);
+}
+
+PERL_STATIC_INLINE bool
+Perl_SvTRUE_common(pTHX_ SV * sv, const bool sv_2bool_is_fallback)
+{
+    PERL_ARGS_ASSERT_SVTRUE_COMMON;
+
+    if (UNLIKELY(SvIMMORTAL_INTERP(sv)))
+        return SvIMMORTAL_TRUE(sv);
+
+    if (! SvOK(sv))
+        return FALSE;
+
+    if (SvPOK(sv))
+        return SvPVXtrue(sv);
+
+    if (SvIOK(sv))
+        return SvIVX(sv) != 0; /* casts to bool */
+
+    if (SvROK(sv) && !(SvOBJECT(SvRV(sv)) && HvAMAGIC(SvSTASH(SvRV(sv)))))
+        return TRUE;
+
+    if (sv_2bool_is_fallback)
+        return sv_2bool_nomg(sv);
+
+    return isGV_with_GP(sv);
+}
+
+
 PERL_STATIC_INLINE SV *
 Perl_SvREFCNT_inc(SV *sv)
 {
     if (LIKELY(sv != NULL))
-	SvREFCNT(sv)++;
+        SvREFCNT(sv)++;
     return sv;
 }
 PERL_STATIC_INLINE SV *
@@ -222,17 +287,17 @@ PERL_STATIC_INLINE void
 Perl_SvREFCNT_inc_void(SV *sv)
 {
     if (LIKELY(sv != NULL))
-	SvREFCNT(sv)++;
+        SvREFCNT(sv)++;
 }
 PERL_STATIC_INLINE void
 Perl_SvREFCNT_dec(pTHX_ SV *sv)
 {
     if (LIKELY(sv != NULL)) {
-	U32 rc = SvREFCNT(sv);
-	if (LIKELY(rc > 1))
-	    SvREFCNT(sv) = rc - 1;
-	else
-	    Perl_sv_free2(aTHX_ sv, rc);
+        U32 rc = SvREFCNT(sv);
+        if (LIKELY(rc > 1))
+            SvREFCNT(sv) = rc - 1;
+        else
+            Perl_sv_free2(aTHX_ sv, rc);
     }
 }
 
@@ -244,9 +309,9 @@ Perl_SvREFCNT_dec_NN(pTHX_ SV *sv)
     PERL_ARGS_ASSERT_SVREFCNT_DEC_NN;
 
     if (LIKELY(rc > 1))
-	SvREFCNT(sv) = rc - 1;
+        SvREFCNT(sv) = rc - 1;
     else
-	Perl_sv_free2(aTHX_ sv, rc);
+        Perl_sv_free2(aTHX_ sv, rc);
 }
 
 PERL_STATIC_INLINE void
@@ -263,7 +328,7 @@ Perl_SvAMAGIC_off(SV *sv)
     PERL_ARGS_ASSERT_SVAMAGIC_OFF;
 
     if (SvROK(sv) && SvOBJECT(SvRV(sv)))
-	HvAMAGIC_off(SvSTASH(SvRV(sv)));
+        HvAMAGIC_off(SvSTASH(SvRV(sv)));
 }
 
 PERL_STATIC_INLINE U32
@@ -284,9 +349,9 @@ S_sv_or_pv_pos_u2b(pTHX_ SV *sv, const char *pv, STRLEN pos, STRLEN *lenp)
 {
     PERL_ARGS_ASSERT_SV_OR_PV_POS_U2B;
     if (SvGAMAGIC(sv)) {
-	U8 *hopped = utf8_hop((U8 *)pv, pos);
-	if (lenp) *lenp = (STRLEN)(utf8_hop(hopped, *lenp) - hopped);
-	return (STRLEN)(hopped - (U8 *)pv);
+        U8 *hopped = utf8_hop((U8 *)pv, pos);
+        if (lenp) *lenp = (STRLEN)(utf8_hop(hopped, *lenp) - hopped);
+        return (STRLEN)(hopped - (U8 *)pv);
     }
     return sv_pos_u2b_flags(sv,pos,lenp,SV_CONST_RETURN);
 }
@@ -295,7 +360,7 @@ S_sv_or_pv_pos_u2b(pTHX_ SV *sv, const char *pv, STRLEN pos, STRLEN *lenp)
 /* ------------------------------- utf8.h ------------------------------- */
 
 /*
-=head1 Unicode Support
+=for apidoc_section $unicode
 */
 
 PERL_STATIC_INLINE void
@@ -340,7 +405,7 @@ Perl_valid_utf8_to_uvchr(const U8 *s, STRLEN *retlen)
 
     /* An invariant is trivially returned */
     if (expectlen == 1) {
-	return uv;
+        return uv;
     }
 
     /* Remove the leading bits that indicate the number of bytes, leaving just
@@ -502,7 +567,7 @@ Perl_is_utf8_invariant_string_loc(const U8* const s, STRLEN len, const U8 ** ep)
 
     /* Process per-byte */
     while (x < send) {
-	if (! UTF8_IS_INVARIANT(*x)) {
+        if (! UTF8_IS_INVARIANT(*x)) {
             if (ep) {
                 *ep = x;
             }
@@ -677,7 +742,7 @@ S_variant_under_utf8_count(const U8* const s, const U8* const e)
 
     /* Process per-byte */
     while (x < e) {
-	if (! UTF8_IS_INVARIANT(*x)) {
+        if (! UTF8_IS_INVARIANT(*x)) {
             count++;
         }
 
@@ -1506,15 +1571,15 @@ Perl_utf8_hop(const U8 *s, SSize_t off)
      * In other words: in Perl UTF-8 is not just for Unicode. */
 
     if (off >= 0) {
-	while (off--)
-	    s += UTF8SKIP(s);
+        while (off--)
+            s += UTF8SKIP(s);
     }
     else {
-	while (off++) {
-	    s--;
-	    while (UTF8_IS_CONTINUATION(*s))
-		s--;
-	}
+        while (off++) {
+            s--;
+            while (UTF8_IS_CONTINUATION(*s))
+                s--;
+        }
     }
     GCC_DIAG_IGNORE(-Wcast-qual)
     return (U8 *)s;
@@ -1868,7 +1933,7 @@ Perl_utf8_to_uvchr_buf_helper(pTHX_ const U8 *s, const U8 *send, STRLEN *retlen)
 /* ------------------------------- perl.h ----------------------------- */
 
 /*
-=head1 Miscellaneous Functions
+=for apidoc_section $utility
 
 =for apidoc is_safe_syscall
 
@@ -1954,15 +2019,17 @@ S_lossless_NV_to_IV(const NV nv, IV *ivp)
 
     PERL_ARGS_ASSERT_LOSSLESS_NV_TO_IV;
 
-#  if  defined(Perl_isnan)
-
+#  if defined(NAN_COMPARE_BROKEN) && defined(Perl_isnan)
+    /* Normally any comparison with a NaN returns false; if we can't rely
+     * on that behaviour, check explicitly */
     if (UNLIKELY(Perl_isnan(nv))) {
         return FALSE;
     }
-
 #  endif
 
-    if (UNLIKELY(nv < IV_MIN) || UNLIKELY(nv > IV_MAX)) {
+    /* Written this way so that with an always-false NaN comparison we
+     * return false */
+    if (!(LIKELY(nv >= (NV) IV_MIN) && LIKELY(nv < IV_MAX_P1))) {
         return FALSE;
     }
 
@@ -1972,36 +2039,6 @@ S_lossless_NV_to_IV(const NV nv, IV *ivp)
 
     *ivp = (IV) nv;
     return TRUE;
-}
-
-#endif
-
-/* ------------------ regcomp.c, toke.c ------------ */
-
-#if defined(PERL_IN_REGCOMP_C) || defined(PERL_IN_TOKE_C)
-
-/*
- - regcurly - a little FSA that accepts {\d+,?\d*}
-    Pulled from reg.c.
- */
-PERL_STATIC_INLINE bool
-S_regcurly(const char *s)
-{
-    PERL_ARGS_ASSERT_REGCURLY;
-
-    if (*s++ != '{')
-	return FALSE;
-    if (!isDIGIT(*s))
-	return FALSE;
-    while (isDIGIT(*s))
-	s++;
-    if (*s == ',') {
-	s++;
-	while (isDIGIT(*s))
-	    s++;
-    }
-
-    return *s == '}';
 }
 
 #endif
@@ -2026,10 +2063,10 @@ S_get_regex_charset_name(const U32 flags, STRLEN* const lenp)
         case REGEX_DEPENDS_CHARSET: return DEPENDS_PAT_MODS;
         case REGEX_LOCALE_CHARSET:  return LOCALE_PAT_MODS;
         case REGEX_UNICODE_CHARSET: return UNICODE_PAT_MODS;
-	case REGEX_ASCII_RESTRICTED_CHARSET: return ASCII_RESTRICT_PAT_MODS;
-	case REGEX_ASCII_MORE_RESTRICTED_CHARSET:
-	    *lenp = 2;
-	    return ASCII_MORE_RESTRICT_PAT_MODS;
+        case REGEX_ASCII_RESTRICTED_CHARSET: return ASCII_RESTRICT_PAT_MODS;
+        case REGEX_ASCII_MORE_RESTRICTED_CHARSET:
+            *lenp = 2;
+            return ASCII_MORE_RESTRICT_PAT_MODS;
     }
     /* The NOT_REACHED; hides an assert() which has a rather complex
      * definition in perl.h. */
@@ -2078,7 +2115,7 @@ Perl_gimme_V(pTHX)
         return gimme;
     cxix = PL_curstackinfo->si_cxsubix;
     if (cxix < 0)
-        return G_VOID;
+        return PL_curstackinfo->si_type == PERLSI_SORT ? G_SCALAR: G_VOID;
     assert(cxstack[cxix].blk_gimme & G_WANT);
     return (cxstack[cxix].blk_gimme & G_WANT);
 }
@@ -2276,12 +2313,8 @@ Perl_cx_popformat(pTHX_ PERL_CONTEXT *cx)
 
 
 PERL_STATIC_INLINE void
-Perl_cx_pusheval(pTHX_ PERL_CONTEXT *cx, OP *retop, SV *namesv)
+Perl_push_evalortry_common(pTHX_ PERL_CONTEXT *cx, OP *retop, SV *namesv)
 {
-    PERL_ARGS_ASSERT_CX_PUSHEVAL;
-
-    cx->blk_eval.old_cxsubix   = PL_curstackinfo->si_cxsubix;
-    PL_curstackinfo->si_cxsubix= cx - PL_curstackinfo->si_cxstack;
     cx->blk_eval.retop         = retop;
     cx->blk_eval.old_namesv    = namesv;
     cx->blk_eval.old_eval_root = PL_eval_root;
@@ -2292,6 +2325,29 @@ Perl_cx_pusheval(pTHX_ PERL_CONTEXT *cx, OP *retop, SV *namesv)
     assert(!(PL_in_eval     & ~ 0x3F));
     assert(!(PL_op->op_type & ~0x1FF));
     cx->blk_u16 = (PL_in_eval & 0x3F) | ((U16)PL_op->op_type << 7);
+}
+
+PERL_STATIC_INLINE void
+Perl_cx_pusheval(pTHX_ PERL_CONTEXT *cx, OP *retop, SV *namesv)
+{
+    PERL_ARGS_ASSERT_CX_PUSHEVAL;
+
+    Perl_push_evalortry_common(aTHX_ cx, retop, namesv);
+
+    cx->blk_eval.old_cxsubix    = PL_curstackinfo->si_cxsubix;
+    PL_curstackinfo->si_cxsubix = cx - PL_curstackinfo->si_cxstack;
+}
+
+PERL_STATIC_INLINE void
+Perl_cx_pushtry(pTHX_ PERL_CONTEXT *cx, OP *retop)
+{
+    PERL_ARGS_ASSERT_CX_PUSHTRY;
+
+    Perl_push_evalortry_common(aTHX_ cx, retop, NULL);
+
+    /* Don't actually change it, just store the current value so it's restored
+     * by the common popeval */
+    cx->blk_eval.old_cxsubix = PL_curstackinfo->si_cxsubix;
 }
 
 
@@ -2439,7 +2495,7 @@ Perl_cx_popgiven(pTHX_ PERL_CONTEXT *cx)
 /* ------------------ util.h ------------------------------------------- */
 
 /*
-=head1 Miscellaneous Functions
+=for apidoc_section $string
 
 =for apidoc foldEQ
 
@@ -2463,9 +2519,9 @@ Perl_foldEQ(const char *s1, const char *s2, I32 len)
     assert(len >= 0);
 
     while (len--) {
-	if (*a != *b && *a != PL_fold[*b])
-	    return 0;
-	a++,b++;
+        if (*a != *b && *a != PL_fold[*b])
+            return 0;
+        a++,b++;
     }
     return 1;
 }
@@ -2486,15 +2542,16 @@ Perl_foldEQ_latin1(const char *s1, const char *s2, I32 len)
     assert(len >= 0);
 
     while (len--) {
-	if (*a != *b && *a != PL_fold_latin1[*b]) {
-	    return 0;
-	}
-	a++, b++;
+        if (*a != *b && *a != PL_fold_latin1[*b]) {
+            return 0;
+        }
+        a++, b++;
     }
     return 1;
 }
 
 /*
+=for apidoc_section $locale
 =for apidoc foldEQ_locale
 
 Returns true if the leading C<len> bytes of the strings C<s1> and C<s2> are the
@@ -2506,7 +2563,6 @@ same case-insensitively in the current locale; false otherwise.
 PERL_STATIC_INLINE I32
 Perl_foldEQ_locale(const char *s1, const char *s2, I32 len)
 {
-    dVAR;
     const U8 *a = (const U8 *)s1;
     const U8 *b = (const U8 *)s2;
 
@@ -2515,14 +2571,15 @@ Perl_foldEQ_locale(const char *s1, const char *s2, I32 len)
     assert(len >= 0);
 
     while (len--) {
-	if (*a != *b && *a != PL_fold_locale[*b])
-	    return 0;
-	a++,b++;
+        if (*a != *b && *a != PL_fold_locale[*b])
+            return 0;
+        a++,b++;
     }
     return 1;
 }
 
 /*
+=for apidoc_section $string
 =for apidoc my_strnlen
 
 The C library C<strnlen> if available, or a Perl implementation of it.
@@ -2580,23 +2637,31 @@ Perl_mortal_getenv(const char * str)
 {
     /* This implements a (mostly) thread-safe, sequential-call-safe getenv().
      *
-     * It's (mostly) thread-safe because it uses a mutex to prevent
-     * simultaneous access from other threads that use the same mutex, and
-     * makes a copy of the result before releasing that mutex.  All of the Perl
-     * core uses that mutex, but, like all mutexes, everything has to cooperate
-     * for it to completely work.  It is possible for code from, say XS, to not
-     * use this mutex, defeating the safety.
+     * It's (mostly) thread-safe because it uses a mutex to prevent other
+     * threads (that look at this mutex) from destroying the result before this
+     * routine has a chance to copy the result to a place that won't be
+     * destroyed before the caller gets a chance to handle it.  That place is a
+     * mortal SV.  khw chose this over SAVEFREEPV because he is under the
+     * impression that the SV will hang around longer under more circumstances
      *
-     * On some platforms, getenv() is not sequential-call-safe, because
-     * subsequent calls destroy the static storage inside the C library
-     * returned by an earlier call.  The result must be copied or completely
-     * acted upon before a subsequent getenv call.  Those calls could come from
-     * another thread.  Again, making a copy while controlling the mutex
-     * prevents these problems..
+     * The reason it isn't completely thread-safe is that other code could
+     * simply not pay attention to the mutex.  All of the Perl core uses the
+     * mutex, but it is possible for code from, say XS, to not use this mutex,
+     * defeating the safety.
      *
-     * To prevent leaks, the copy is made by creating a new SV containing it,
-     * mortalizing the SV, and returning the SV's string (the copy).  Thus this
-     * is a drop-in replacement for getenv().
+     * getenv() returns, in some implementations, a pointer to a spot in the
+     * **environ array, which could be invalidated at any time by this or
+     * another thread changing the environment.  Other implementations copy the
+     * **environ value to a static buffer, returning a pointer to that.  That
+     * buffer might or might not be invalidated by a getenv() call in another
+     * thread.  If it does get zapped, we need an exclusive lock.  Otherwise,
+     * many getenv() calls can safely be running simultaneously, so a
+     * many-reader (but no simultaneous writers) lock is ok.  There is a
+     * Configure probe to see if another thread destroys the buffer, and the
+     * mutex is defined accordingly.
+     *
+     * But in all cases, using the mutex prevents these problems, as long as
+     * all code uses the same mutex..
      *
      * A complication is that this can be called during phases where the
      * mortalization process isn't available.  These are in interpreter
@@ -2616,15 +2681,152 @@ Perl_mortal_getenv(const char * str)
         return getenv(str);
     }
 
-    ENV_LOCK;
+#ifdef PERL_MEM_LOG
 
+    /* A major complication arises under PERL_MEM_LOG.  When that is active,
+     * every memory allocation may result in logging, depending on the value of
+     * ENV{PERL_MEM_LOG} at the moment.  That means, as we create the SV for
+     * saving ENV{foo}'s value (but before saving it), the logging code will
+     * call us recursively to find out what ENV{PERL_MEM_LOG} is.  Without some
+     * care that could lead to: 1) infinite recursion; or 2) deadlock (trying to
+     * lock a boolean mutex recursively); 3) destroying the getenv() static
+     * buffer; or 4) destroying the temporary created by this for the copy
+     * causes a log entry to be made which could cause a new temporary to be
+     * created, which will need to be destroyed at some point, leading to an
+     * infinite loop.
+     *
+     * The solution adopted here (after some gnashing of teeth) is to detect
+     * the recursive calls and calls from the logger, and treat them specially.
+     * Let's say we want to do getenv("foo").  We first find
+     * getenv(PERL_MEM_LOG) and save it to a fixed-length per-interpreter
+     * variable, so no temporary is required.  Then we do getenv(foo}, and in
+     * the process of creating a temporary to save it, this function will be
+     * called recursively to do a getenv(PERL_MEM_LOG).  On the recursed call,
+     * we detect that it is such a call and return our saved value instead of
+     * locking and doing a new getenv().  This solves all of problems 1), 2),
+     * and 3).  Because all the getenv()s are done while the mutex is locked,
+     * the state cannot have changed.  To solve 4), we don't create a temporary
+     * when this is called from the logging code.  That code disposes of the
+     * return value while the mutex is still locked.
+     *
+     * The value of getenv(PERL_MEM_LOG) can be anything, but only initial
+     * digits and 3 particular letters are significant; the rest are ignored by
+     * the memory logging code.  Thus the per-interpreter variable only needs
+     * to be large enough to save the significant information, the size of
+     * which is known at compile time.  The first byte is extra, reserved for
+     * flags for our use.  To protect against overflowing, only the reserved
+     * byte, as many digits as don't overflow, and the three letters are
+     * stored.
+     *
+     * The reserved byte has two bits:
+     *      0x1 if set indicates that if we get here, it is a recursive call of
+     *          getenv()
+     *      0x2 if set indicates that the call is from the logging code.
+     *
+     * If the flag indicates this is a recursive call, just return the stored
+     * value of PL_mem_log;  An empty value gets turned into NULL. */
+    if (strEQ(str, "PERL_MEM_LOG") && PL_mem_log[0] & 0x1) {
+        if (PL_mem_log[1] == '\0') {
+            return NULL;
+        } else {
+            return PL_mem_log + 1;
+        }
+    }
+
+#endif
+
+    GETENV_LOCK;
+
+#ifdef PERL_MEM_LOG
+
+    /* Here we are in a critical section.  As explained above, we do our own
+     * getenv(PERL_MEM_LOG), saving the result safely. */
+    ret = getenv("PERL_MEM_LOG");
+    if (ret == NULL) {  /* No logging active */
+
+        /* Return that immediately if called from the logging code */
+        if (PL_mem_log[0] & 0x2) {
+            GETENV_UNLOCK;
+            return NULL;
+        }
+
+        PL_mem_log[1] = '\0';
+    }
+    else {
+        char *mem_log_meat = PL_mem_log + 1;    /* first byte reserved */
+
+        /* There is nothing to prevent the value of PERL_MEM_LOG from being an
+         * extremely long string.  But we want only a few characters from it.
+         * PL_mem_log has been made large enough to hold just the ones we need.
+         * First the file descriptor. */
+        if (isDIGIT(*ret)) {
+            const char * s = ret;
+            if (UNLIKELY(*s == '0')) {
+
+                /* Reduce multiple leading zeros to a single one.  This is to
+                 * allow the caller to change what to do with leading zeros. */
+                *mem_log_meat++ = '0';
+                s++;
+                while (*s == '0') {
+                    s++;
+                }
+            }
+
+            /* If the input overflows, copy just enough for the result to also
+             * overflow, plus 1 to make sure */
+            while (isDIGIT(*s) && s < ret + TYPE_DIGITS(UV) + 1) {
+                *mem_log_meat++ = *s++;
+            }
+        }
+
+        /* Then each of the three significant characters */
+        if (strchr(ret, 'm')) {
+            *mem_log_meat++ = 'm';
+        }
+        if (strchr(ret, 's')) {
+            *mem_log_meat++ = 's';
+        }
+        if (strchr(ret, 't')) {
+            *mem_log_meat++ = 't';
+        }
+        *mem_log_meat = '\0';
+
+        assert(mem_log_meat < PL_mem_log + sizeof(PL_mem_log));
+    }
+
+    /* If we are being called from the logger, it only needs the significant
+     * portion of PERL_MEM_LOG, and doesn't need a safe copy */
+    if (PL_mem_log[0] & 0x2) {
+        assert(strEQ(str, "PERL_MEM_LOG"));
+        GETENV_UNLOCK;
+        return PL_mem_log + 1;
+    }
+
+    /* Here is a generic getenv().  This could be a getenv("PERL_MEM_LOG") that
+     * is coming from other than the logging code, so it should be treated the
+     * same as any other getenv(), returning the full value, not just the
+     * significant part, and having its value saved.  Set the flag that
+     * indicates any call to this routine will be a recursion from here */
+    PL_mem_log[0] = 0x1;
+
+#endif
+
+    /* Now get the value of the real desired variable, and save a copy */
     ret = getenv(str);
 
     if (ret != NULL) {
         ret = SvPVX(sv_2mortal(newSVpv(ret, 0)));
     }
 
-    ENV_UNLOCK;
+    GETENV_UNLOCK;
+
+#ifdef PERL_MEM_LOG
+
+    /* Clear the buffer */
+    Zero(PL_mem_log, sizeof(PL_mem_log), char);
+
+#endif
+
     return ret;
 }
 

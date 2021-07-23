@@ -1,10 +1,10 @@
 #!/usr/bin/perl
     eval 'exec /usr/bin/perl -S $0 ${1+"$@"}'
-	if $running_under_some_shell;
+	if 0; # ^ Run only under a shell
 
-my $config_tag1 = '5.32.1 - Sun Jan 24 14:39:15 GMT 2021';
+my $config_tag1 = '5.34.0 - Thu Jul 22 12:32:41 GMT 2021';
 
-my $patchlevel_date = 1611499142;
+my $patchlevel_date = 1626957146;
 my @patches = Config::local_patches();
 my $patch_tags = join "", map /(\S+)/ ? "+$1 " : (), @patches;
 
@@ -1263,9 +1263,6 @@ those which indicate you haven't also tested the current stable
 release of Perl, are likely to receive less attention from the
 volunteers who build and maintain Perl than reports about bugs in
 the current release.
-
-This tool isn't appropriate for reporting bugs in any version
-prior to Perl 5.0.
 
 =item Are you sure what you have is a bug?
 

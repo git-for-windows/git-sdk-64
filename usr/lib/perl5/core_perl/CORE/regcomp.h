@@ -8,7 +8,8 @@
  *
  */
 
-#ifndef PERL_REGCOMP_H_
+#if ! defined(PERL_REGCOMP_H_) && (   defined(PERL_CORE)            \
+                                   || defined(PERL_EXT_RE_BUILD))
 #define PERL_REGCOMP_H_
 
 #include "regcharclass.h"
@@ -66,7 +67,7 @@
 
  typedef struct regexp_internal {
         union {
-	    U32 *offsets;           /* offset annotations 20001228 MJD
+            U32 *offsets;           /* offset annotations 20001228 MJD
                                        data about mapping the program to the
                                        string -
                                        offsets[0] is proglen when this is used
@@ -80,9 +81,9 @@
                                    Used to make it easier to clone and free arbitrary
                                    data that the regops need. Often the ARG field of
                                    a regop is an index into this structure */
-	struct reg_code_blocks *code_blocks;/* positions of literal (?{}) */
+        struct reg_code_blocks *code_blocks;/* positions of literal (?{}) */
         int name_list_idx;	/* Optional data index of an array of paren names */
-	regnode program[1];	/* Unwarranted chumminess with compiler. */
+        regnode program[1];	/* Unwarranted chumminess with compiler. */
 } regexp_internal;
 
 #define RXi_SET(x,y) (x)->pprivate = (void*)(y)
@@ -255,11 +256,11 @@ struct regnode_ssc {
    ((1<<32)-1), while on the Cray T90, sizeof(short)==8 and U16_MAX is
    ((1<<64)-1).  To limit stack growth to reasonable sizes, supply a
    smaller default.
-	--Andy Dougherty  11 June 1998
+        --Andy Dougherty  11 June 1998
 */
 #if SHORTSIZE > 2
 #  ifndef REG_INFTY
-#    define REG_INFTY ((1<<16)-1)
+#    define REG_INFTY  nBIT_UMAX(16)
 #  endif
 #endif
 
@@ -310,8 +311,8 @@ struct regnode_ssc {
 
 #define	OP(p)		((p)->type)
 #define FLAGS(p)	((p)->flags)	/* Caution: Doesn't apply to all      \
-					   regnode types.  For some, it's the \
-					   character set of the regnode */
+                                           regnode types.  For some, it's the \
+                                           character set of the regnode */
 #define	STR_LENs(p)	(__ASSERT_(OP(p) != LEXACT && OP(p) != LEXACT_REQ8)  \
                                     ((struct regnode_string *)p)->str_len)
 #define	STRINGs(p)	(__ASSERT_(OP(p) != LEXACT && OP(p) != LEXACT_REQ8)  \
@@ -359,7 +360,7 @@ struct regnode_ssc {
     } STMT_END
 
 #define ANYOFR_BASE_BITS    20
-#define ANYOFRbase(p)   (ARG(p) & ((1 << ANYOFR_BASE_BITS) - 1))
+#define ANYOFRbase(p)   (ARG(p) & nBIT_MASK(ANYOFR_BASE_BITS))
 #define ANYOFRdelta(p)  (ARG(p) >> ANYOFR_BASE_BITS)
 
 #undef NODE_ALIGN
@@ -697,12 +698,12 @@ struct regnode_ssc {
      } STMT_END
 
 /* Shifts a bit to get, eg. 0x4000_0000, then subtracts 1 to get 0x3FFF_FFFF */
-#define ANYOF_POSIXL_SETALL(ret) STMT_START { ((regnode_charclass_posixl*) (ret))->classflags = ((1U << ((ANYOF_POSIXL_MAX) - 1))) - 1; } STMT_END
+#define ANYOF_POSIXL_SETALL(ret) STMT_START { ((regnode_charclass_posixl*) (ret))->classflags = nBIT_MASK(ANYOF_POSIXL_MAX); } STMT_END
 #define ANYOF_CLASS_SETALL(ret) ANYOF_POSIXL_SETALL(ret)
 
 #define ANYOF_POSIXL_TEST_ANY_SET(p)                               \
         ((ANYOF_FLAGS(p) & ANYOF_MATCHES_POSIXL)                           \
-	 && (((regnode_charclass_posixl*)(p))->classflags))
+         && (((regnode_charclass_posixl*)(p))->classflags))
 #define ANYOF_CLASS_TEST_ANY_SET(p) ANYOF_POSIXL_TEST_ANY_SET(p)
 
 /* Since an SSC always has this field, we don't have to test for that; nor do
@@ -711,12 +712,12 @@ struct regnode_ssc {
                             cBOOL(((regnode_ssc*)(p))->classflags)
 #define ANYOF_POSIXL_SSC_TEST_ALL_SET(p) /* Are all bits set? */       \
         (((regnode_ssc*) (p))->classflags                              \
-                        == ((1U << ((ANYOF_POSIXL_MAX) - 1))) - 1)
+                                        == nBIT_MASK(ANYOF_POSIXL_MAX))
 
 #define ANYOF_POSIXL_TEST_ALL_SET(p)                                   \
-        ((ANYOF_FLAGS(p) & ANYOF_MATCHES_POSIXL)                               \
+        ((ANYOF_FLAGS(p) & ANYOF_MATCHES_POSIXL)                       \
          && ((regnode_charclass_posixl*) (p))->classflags              \
-                        == ((1U << ((ANYOF_POSIXL_MAX) - 1))) - 1)
+                                    == nBIT_MASK(ANYOF_POSIXL_MAX))
 
 #define ANYOF_POSIXL_OR(source, dest) STMT_START { (dest)->classflags |= (source)->classflags ; } STMT_END
 #define ANYOF_CLASS_OR(source, dest) ANYOF_POSIXL_OR((source), (dest))
@@ -731,9 +732,9 @@ struct regnode_ssc {
 #define ANYOF_BITMAP_TEST(p, c)	cBOOL(ANYOF_BITMAP_BYTE(p, c) &   ANYOF_BIT(c))
 
 #define ANYOF_BITMAP_SETALL(p)		\
-	memset (ANYOF_BITMAP(p), 255, ANYOF_BITMAP_SIZE)
+        memset (ANYOF_BITMAP(p), 255, ANYOF_BITMAP_SIZE)
 #define ANYOF_BITMAP_CLEARALL(p)	\
-	Zero (ANYOF_BITMAP(p), ANYOF_BITMAP_SIZE)
+        Zero (ANYOF_BITMAP(p), ANYOF_BITMAP_SIZE)
 
 /*
  * Utility definitions.
@@ -883,9 +884,9 @@ struct _reg_trie_state {
 /* info per word; indexed by wordnum */
 typedef struct {
     U16  prev;	/* previous word in acceptance chain; eg in
-		 * zzz|abc|ab/ after matching the chars abc, the
-		 * accepted word is #2, and the previous accepted
-		 * word is #3 */
+                 * zzz|abc|ab/ after matching the chars abc, the
+                 * accepted word is #2, and the previous accepted
+                 * word is #3 */
     U32 len;	/* how many chars long is this word? */
     U32 accept;	/* accept state for this word */
 } reg_trie_wordinfo;
@@ -1120,7 +1121,7 @@ re.pm, especially to the documentation.
  * the defaults if not done already */
 #define DECLARE_AND_GET_RE_DEBUG_FLAGS                                         \
     volatile IV re_debug_flags = 0;  PERL_UNUSED_VAR(re_debug_flags);          \
-    STMT_START {                                                               \
+    DEBUG_r({                              \
         SV * re_debug_flags_sv = NULL;                                         \
                      /* get_sv() can return NULL during global destruction. */ \
         re_debug_flags_sv = PL_curcop ? get_sv(RE_DEBUG_FLAGS, GV_ADD) : NULL; \
@@ -1131,7 +1132,7 @@ re.pm, especially to the documentation.
                             RE_DEBUG_COMPILE_DUMP | RE_DEBUG_EXECUTE_MASK );   \
             re_debug_flags=SvIV(re_debug_flags_sv);                            \
         }                                                                      \
-    } STMT_END
+    })
 
 #define isDEBUG_WILDCARD (DEBUG_v_TEST || RE_DEBUG_FLAG(RE_DEBUG_EXTRA_WILDCARD))
 
@@ -1175,11 +1176,11 @@ re.pm, especially to the documentation.
 #define FIRST_NON_ASCII_DECIMAL_DIGIT 0x660  /* ARABIC_INDIC_DIGIT_ZERO */
 
 typedef enum {
-	TRADITIONAL_BOUND = _CC_WORDCHAR,
-	GCB_BOUND,
-	LB_BOUND,
-	SB_BOUND,
-	WB_BOUND
+        TRADITIONAL_BOUND = _CC_WORDCHAR,
+        GCB_BOUND,
+        LB_BOUND,
+        SB_BOUND,
+        WB_BOUND
 } bound_type;
 
 /* This unpacks the FLAGS field of ANYOF[HR]x nodes.  The value it contains

@@ -10,7 +10,7 @@ use 5.006;
 use Exporter;
 use XSLoader ();
 
-our $VERSION   = '1.32';
+our $VERSION   = '1.34';
 our @EXPORT    = qw( Dump Load DumpFile LoadFile );
 our @EXPORT_OK = qw( DumpInto );
 our @ISA       = qw( Exporter );

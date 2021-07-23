@@ -1032,6 +1032,8 @@ also accepted.
     }
     # %hash is back to its original state
 
+This construct is supported since Perl v5.12.
+
 =head2 Lvalue subroutines
 X<lvalue> X<subroutine, lvalue>
 
@@ -1467,7 +1469,7 @@ corresponding built-in.
    sub myjoin ($@)	   myjoin ":", $a, $b, $c
    sub mypop (\@)	   mypop @array
    sub mysplice (\@$$@)	   mysplice @array, 0, 2, @pushme
-   sub mykeys (\[%@])	   mykeys %{$hashref}
+   sub mykeys (\[%@])	   mykeys $hashref->%*
    sub myopen (*;$)	   myopen HANDLE, $name
    sub mypipe (**)	   mypipe READHANDLE, WRITEHANDLE
    sub mygrep (&@)	   mygrep { /foo/ } $a, $b, $c
@@ -1652,7 +1654,7 @@ inlining.  If the result after optimization and constant folding
 is either a constant or a lexically-scoped scalar which has no other
 references, then it will be used in place of function calls made
 without C<&>.  Calls made using C<&> are never inlined.  (See
-F<constant.pm> for an easy way to declare most constants.)
+L<constant> for an easy way to declare most constants.)
 
 The following functions would all be inlined:
 

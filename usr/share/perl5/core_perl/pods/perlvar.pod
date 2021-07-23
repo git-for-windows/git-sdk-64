@@ -715,10 +715,6 @@ X<$^V> X<$PERL_VERSION>
 These are documented in the generated file lib/Config.pod.  This looks
 like as good a place as any to give notice that they are documented.
 
-=for apidoc hAmn|int|PERL_VERSION
-=for apidoc hAmn|int|PERL_REVISION
-=for apidoc hAmn|int|PERL_SUBVERSION
-
 The revision, version, and subversion of the Perl interpreter,
 represented as a L<version> object.
 
@@ -754,18 +750,9 @@ Mnemonic: use ^V for a version object.
 =item ${^WIN32_SLOPPY_STAT}
 X<${^WIN32_SLOPPY_STAT}> X<sitecustomize> X<sitecustomize.pl>
 
-If this variable is set to a true value, then C<stat()> on Windows will
-not try to open the file.  This means that the link count cannot be
-determined and file attributes may be out of date if additional
-hardlinks to the file exist.  On the other hand, not opening the file
-is considerably faster, especially for files on network drives.
+This variable no longer has any function.
 
-This variable could be set in the F<sitecustomize.pl> file to
-configure the local Perl installation to use "sloppy" C<stat()> by
-default.  See the documentation for B<-f> in L<perlrun|perlrun/-f>
-for more information about site customization.
-
-This variable was added in Perl v5.10.0.
+This variable was added in Perl v5.10.0 and removed in Perl v5.34.0.
 
 =item $EXECUTABLE_NAME
 
@@ -1519,7 +1506,7 @@ be better for something. :-)
 
 Setting C<$/> to an empty string -- the so-called I<paragraph mode> -- merits
 special attention.  When C<$/> is set to C<""> and the entire file is read in
-with that setting, any sequence of consecutive newlines C<"\n\n"> at the
+with that setting, any sequence of one or more consecutive newlines at the
 beginning of the file is discarded.  With the exception of the final record in
 the file, each sequence of characters ending in two or more newlines is
 treated as one record and is read in to end in exactly two newlines.  If the
@@ -1811,8 +1798,8 @@ X<$^CHILD_ERROR_NATIVE>
 The native status returned by the last pipe close, backtick (C<``>)
 command, successful call to C<wait()> or C<waitpid()>, or from the
 C<system()> operator.  On POSIX-like systems this value can be decoded
-with the WIFEXITED, WEXITSTATUS, WIFSIGNALED, WTERMSIG, WIFSTOPPED,
-WSTOPSIG and WIFCONTINUED functions provided by the L<POSIX> module.
+with the WIFEXITED, WEXITSTATUS, WIFSIGNALED, WTERMSIG, WIFSTOPPED, and
+WSTOPSIG functions provided by the L<POSIX> module.
 
 Under VMS this reflects the actual VMS exit status; i.e. it is the
 same as C<$?> when the pragma C<use vmsish 'status'> is in effect.
@@ -1909,8 +1896,9 @@ corresponding to C<errno>.
 
 Many system or library calls set C<errno> if they fail,
 to indicate the cause of failure.  They usually do B<not>
-set C<errno> to zero if they succeed.  This means C<errno>,
-hence C<$!>, is meaningful only I<immediately> after a B<failure>:
+set C<errno> to zero if they succeed and may set C<errno> to a
+non-zero value on success.  This means C<errno>, hence C<$!>, is
+meaningful only I<immediately> after a B<failure>:
 
     if (open my $fh, "<", $filename) {
 		# Here $! is meaningless.
@@ -1929,6 +1917,9 @@ of the C<open()> operator.  Assignment to C<$!> is similarly ephemeral.
 It can be used immediately before invoking the C<die()> operator,
 to set the exit value, or to inspect the system error string
 corresponding to error I<n>, or to restore C<$!> to a meaningful state.
+
+Perl itself may set C<errno> to a non-zero on failure even if no
+system call is performed.
 
 Mnemonic: What just went bang?
 

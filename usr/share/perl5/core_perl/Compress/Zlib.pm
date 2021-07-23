@@ -7,17 +7,17 @@ use Carp ;
 use IO::Handle ;
 use Scalar::Util qw(dualvar);
 
-use IO::Compress::Base::Common 2.093 ;
-use Compress::Raw::Zlib 2.093 ;
-use IO::Compress::Gzip 2.093 ;
-use IO::Uncompress::Gunzip 2.093 ;
+use IO::Compress::Base::Common 2.101 ;
+use Compress::Raw::Zlib 2.101 ;
+use IO::Compress::Gzip 2.101 ;
+use IO::Uncompress::Gunzip 2.101 ;
 
 use strict ;
 use warnings ;
 use bytes ;
 our ($VERSION, $XS_VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-$VERSION = '2.093';
+$VERSION = '2.102';
 $XS_VERSION = $VERSION;
 $VERSION = eval $VERSION;
 
@@ -134,12 +134,12 @@ sub gzopen($$)
     _set_gzerr(0) ;
 
     if ($writing) {
-        $gz = new IO::Compress::Gzip($file, Minimal => 1, AutoClose => 1,
+        $gz = IO::Compress::Gzip->new($file, Minimal => 1, AutoClose => 1,
                                      %defOpts)
             or $Compress::Zlib::gzerrno = $IO::Compress::Gzip::GzipError;
     }
     else {
-        $gz = new IO::Uncompress::Gunzip($file,
+        $gz = IO::Uncompress::Gunzip->new($file,
                                          Transparent => 1,
                                          Append => 0,
                                          AutoClose => 1,
@@ -461,7 +461,7 @@ sub inflate
 
 package Compress::Zlib ;
 
-use IO::Compress::Gzip::Constants 2.093 ;
+use IO::Compress::Gzip::Constants 2.101 ;
 
 sub memGzip($)
 {
@@ -1506,8 +1506,7 @@ See the Changes file.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 1995-2019 Paul Marquess. All rights reserved.
+Copyright (c) 1995-2021 Paul Marquess. All rights reserved.
 
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
-

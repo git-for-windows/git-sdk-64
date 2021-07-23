@@ -14,19 +14,25 @@
 /* first, some documentation for xsubpp-generated items */
 
 /*
-=head1 C<xsubpp> variables and internal functions
+=for apidoc_section $XS
 
-=for apidoc Amn|char*|CLASS
+F<xsubpp> compiles XS code into C.  See L<perlutil/xsubpp>.
+
+=for comment
+Some variables below are flagged with 'u' because Devel::PPPort can't currently
+readily test them as they spring into existence by compiling with xsubpp.
+
+=for apidoc Amnu|char*|CLASS
 Variable which is setup by C<xsubpp> to indicate the
 class name for a C++ XS constructor.  This is always a C<char*>.  See
 C<L</THIS>>.
 
-=for apidoc Amn|(whatever)|RETVAL
+=for apidoc Amnu|type|RETVAL
 Variable which is setup by C<xsubpp> to hold the return value for an
 XSUB.  This is always the proper type for the XSUB.  See
 L<perlxs/"The RETVAL Variable">.
 
-=for apidoc Amn|(whatever)|THIS
+=for apidoc Amnu|type|THIS
 Variable which is setup by C<xsubpp> to designate the object in a C++
 XSUB.  This is always the proper type for the C++ object.  See C<L</CLASS>> and
 L<perlxs/"Using XS With C++">.
@@ -47,17 +53,26 @@ XSUB's aliases was used to invoke it.  See L<perlxs/"The ALIAS: Keyword">.
 =for apidoc Am|SV*|ST|int ix
 Used to access elements on the XSUB's stack.
 
-=for apidoc AmnU||XS
+=for apidoc Ay||XS|name
 Macro to declare an XSUB and its C parameter list.  This is handled by
-C<xsubpp>.  It is the same as using the more explicit C<XS_EXTERNAL> macro.
+C<xsubpp>.  It is the same as using the more explicit C<XS_EXTERNAL> macro; the
+latter is preferred.
 
-=for apidoc AmU||XS_INTERNAL
+=for apidoc Ayu||XS_INTERNAL|name
 Macro to declare an XSUB and its C parameter list without exporting the symbols.
 This is handled by C<xsubpp> and generally preferable over exporting the XSUB
 symbols unnecessarily.
 
-=for apidoc AmnU||XS_EXTERNAL
+=for comment
+XS_INTERNAL marked 'u' because declaring a function static within our test
+function doesn't work
+
+=for apidoc Ay||XS_EXTERNAL|name
 Macro to declare an XSUB and its C parameter list explicitly exporting the symbols.
+
+=for apidoc Ay||XSPROTO|name
+Macro used by C<L</XS_INTERNAL>> and C<L</XS_EXTERNAL>> to declare a function
+prototype.  You probably shouldn't be using this directly yourself.
 
 =for apidoc Amns||dAX
 Sets up the C<ax> variable.
@@ -93,10 +108,10 @@ is a lexical C<$_> in scope.
 */
 
 #ifndef PERL_UNUSED_ARG
-#  define PERL_UNUSED_ARG(x) ((void)x)
+#  define PERL_UNUSED_ARG(x) ((void)sizeof(x))
 #endif
 #ifndef PERL_UNUSED_VAR
-#  define PERL_UNUSED_VAR(x) ((void)x)
+#  define PERL_UNUSED_VAR(x) ((void)sizeof(x))
 #endif
 
 #define ST(off) PL_stack_base[ax + (off)]
@@ -127,9 +142,6 @@ is a lexical C<$_> in scope.
 #if defined(__CYGWIN__) && defined(USE_DYNAMIC_LOADING)
 #  define XS_EXTERNAL(name) __declspec(dllexport) XSPROTO(name)
 #  define XS_INTERNAL(name) STATIC XSPROTO(name)
-#elif defined(__SYMBIAN32__)
-#  define XS_EXTERNAL(name) EXPORT_C XSPROTO(name)
-#  define XS_INTERNAL(name) EXPORT_C STATIC XSPROTO(name)
 #elif defined(__cplusplus)
 #  define XS_EXTERNAL(name) extern "C" XSPROTO(name)
 #  define XS_INTERNAL(name) static XSPROTO(name)
@@ -163,16 +175,16 @@ is a lexical C<$_> in scope.
    PL_xsubfilename. */
 #define dXSBOOTARGSXSAPIVERCHK  \
 	I32 ax = XS_BOTHVERSION_SETXSUBFN_POPMARK_BOOTCHECK;	\
-	SV **mark = PL_stack_base + ax; dSP; dITEMS
+	SV **mark = PL_stack_base + ax - 1; dSP; dITEMS
 #define dXSBOOTARGSAPIVERCHK  \
 	I32 ax = XS_APIVERSION_SETXSUBFN_POPMARK_BOOTCHECK;	\
-	SV **mark = PL_stack_base + ax; dSP; dITEMS
+	SV **mark = PL_stack_base + ax - 1; dSP; dITEMS
 /* dXSBOOTARGSNOVERCHK has no API in xsubpp to choose it so do
 #undef dXSBOOTARGSXSAPIVERCHK
 #define dXSBOOTARGSXSAPIVERCHK dXSBOOTARGSNOVERCHK */
 #define dXSBOOTARGSNOVERCHK  \
 	I32 ax = XS_SETXSUBFN_POPMARK;  \
-	SV **mark = PL_stack_base + ax; dSP; dITEMS
+	SV **mark = PL_stack_base + ax - 1; dSP; dITEMS
 
 #define dXSTARG SV * const targ = ((PL_op->op_private & OPpENTERSUB_HASTARG) \
 			     ? PAD_SV(PL_op->op_targ) : sv_newmortal())
@@ -203,7 +215,7 @@ is a lexical C<$_> in scope.
 /* Typically used to return values from XS functions.       */
 
 /*
-=head1 Stack Manipulation Macros
+=for apidoc_section $stack
 
 =for apidoc Am|void|XST_mIV|int pos|IV iv
 Place an integer into the specified position C<pos> on the stack.  The
@@ -261,8 +273,6 @@ Return C<&PL_sv_undef> from an XSUB immediately.  Uses C<XST_mUNDEF>.
 =for apidoc Amns||XSRETURN_EMPTY
 Return an empty list from an XSUB immediately.
 
-=head1 Variables created by C<xsubpp> and C<xsubpp> internal functions
-
 =for apidoc AmU||newXSproto|char* name|XSUBADDR_t f|char* filename|const char *proto
 Used by C<xsubpp> to hook up XSUBs as Perl subs.  Adds Perl prototypes to
 the subs.
@@ -281,7 +291,7 @@ C<xsubpp>.  See L<perlxs/"The VERSIONCHECK: Keyword">.
 Macro to verify that the perl api version an XS module has been compiled against
 matches the api version of the perl interpreter it's being loaded into.
 
-=head1 Exception Handling (simple) Macros
+=for apidoc_section $exceptions
 
 =for apidoc Amns||dXCPT
 Set up necessary local variables for exception handling.
@@ -473,8 +483,6 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 #  define VTBL_amagic		&PL_vtbl_amagic
 #  define VTBL_amagicelem	&PL_vtbl_amagicelem
 #endif
-
-#include "perlapi.h"
 
 #if defined(PERL_IMPLICIT_CONTEXT) && !defined(PERL_NO_GET_CONTEXT) && !defined(PERL_CORE)
 #  undef aTHX

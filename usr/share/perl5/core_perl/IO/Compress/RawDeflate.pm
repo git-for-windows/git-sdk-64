@@ -6,15 +6,16 @@ use strict ;
 use warnings;
 use bytes;
 
-use IO::Compress::Base 2.093 ;
-use IO::Compress::Base::Common  2.093 qw(:Status );
-use IO::Compress::Adapter::Deflate 2.093 ;
+use IO::Compress::Base 2.101 ;
+use IO::Compress::Base::Common  2.101 qw(:Status :Parse);
+use IO::Compress::Adapter::Deflate 2.101 ;
+use Compress::Raw::Zlib  2.101 qw(Z_DEFLATED Z_DEFAULT_COMPRESSION Z_DEFAULT_STRATEGY);
 
 require Exporter ;
 
 our ($VERSION, @ISA, @EXPORT_OK, %DEFLATE_CONSTANTS, %EXPORT_TAGS, $RawDeflateError);
 
-$VERSION = '2.093';
+$VERSION = '2.102';
 $RawDeflateError = '';
 
 @ISA = qw(IO::Compress::Base Exporter);
@@ -116,8 +117,6 @@ sub getExtraParams
     return getZlibParams();
 }
 
-use IO::Compress::Base::Common  2.093 qw(:Parse);
-use Compress::Raw::Zlib  2.093 qw(Z_DEFLATED Z_DEFAULT_COMPRESSION Z_DEFAULT_STRATEGY);
 our %PARAMS = (
             #'method'   => [IO::Compress::Base::Common::Parse_unsigned,  Z_DEFLATED],
             'level'     => [IO::Compress::Base::Common::Parse_signed,    Z_DEFAULT_COMPRESSION],
@@ -135,6 +134,7 @@ sub getZlibParams
 
 sub getInverseClass
 {
+    no warnings 'once';
     return ('IO::Uncompress::RawInflate',
                 \$IO::Uncompress::RawInflate::RawInflateError);
 }
@@ -178,7 +178,7 @@ sub createMerge
     *$self->{UnCompSize} = *$inf->{UnCompSize}->clone();
     *$self->{CompSize} = *$inf->{CompSize}->clone();
     # TODO -- fix this
-    #*$self->{CompSize} = new U64(0, *$self->{UnCompSize_32bit});
+    #*$self->{CompSize} = U64->new(0, *$self->{UnCompSize_32bit});
 
 
     if ( $outType eq 'buffer')
@@ -231,7 +231,7 @@ IO::Compress::RawDeflate - Write RFC 1951 files/buffers
     my $status = rawdeflate $input => $output [,OPTS]
         or die "rawdeflate failed: $RawDeflateError\n";
 
-    my $z = new IO::Compress::RawDeflate $output [,OPTS]
+    my $z = IO::Compress::RawDeflate->new( $output [,OPTS] )
         or die "rawdeflate failed: $RawDeflateError\n";
 
     $z->print($string);
@@ -511,7 +511,7 @@ compressed data to a buffer, C<$buffer>.
     use IO::Compress::RawDeflate qw(rawdeflate $RawDeflateError) ;
     use IO::File ;
 
-    my $input = new IO::File "<file1.txt"
+    my $input = IO::File->new( "<file1.txt" )
         or die "Cannot open 'file1.txt': $!\n" ;
     my $buffer ;
     rawdeflate $input => \$buffer
@@ -548,7 +548,7 @@ and if you want to compress each file one at a time, this will do the trick
 
 The format of the constructor for C<IO::Compress::RawDeflate> is shown below
 
-    my $z = new IO::Compress::RawDeflate $output [,OPTS]
+    my $z = IO::Compress::RawDeflate->new( $output [,OPTS] )
         or die "IO::Compress::RawDeflate failed: $RawDeflateError\n";
 
 It returns an C<IO::Compress::RawDeflate> object on success and undef on failure.
@@ -1007,8 +1007,7 @@ See the Changes file.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2005-2019 Paul Marquess. All rights reserved.
+Copyright (c) 2005-2021 Paul Marquess. All rights reserved.
 
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
-

@@ -8,12 +8,12 @@ use bytes;
 
 require Exporter ;
 
-use IO::Compress::RawDeflate 2.093 () ;
-use IO::Compress::Adapter::Deflate 2.093 ;
+use IO::Compress::RawDeflate 2.101 () ;
+use IO::Compress::Adapter::Deflate 2.101 ;
 
-use IO::Compress::Base::Common  2.093 qw(:Status );
-use IO::Compress::Gzip::Constants 2.093 ;
-use IO::Compress::Zlib::Extra 2.093 ;
+use IO::Compress::Base::Common  2.101 qw(:Status );
+use IO::Compress::Gzip::Constants 2.101 ;
+use IO::Compress::Zlib::Extra 2.101 ;
 
 BEGIN
 {
@@ -25,7 +25,7 @@ BEGIN
 
 our ($VERSION, @ISA, @EXPORT_OK, %EXPORT_TAGS, %DEFLATE_CONSTANTS, $GzipError);
 
-$VERSION = '2.093';
+$VERSION = '2.102';
 $GzipError = '' ;
 
 @ISA    = qw(IO::Compress::RawDeflate Exporter);
@@ -167,6 +167,7 @@ sub mkTrailer
 
 sub getInverseClass
 {
+    no warnings 'once';
     return ('IO::Uncompress::Gunzip',
                 \$IO::Uncompress::Gunzip::GunzipError);
 }
@@ -285,7 +286,7 @@ IO::Compress::Gzip - Write RFC 1952 files/buffers
     my $status = gzip $input => $output [,OPTS]
         or die "gzip failed: $GzipError\n";
 
-    my $z = new IO::Compress::Gzip $output [,OPTS]
+    my $z = IO::Compress::Gzip->new( $output [,OPTS] )
         or die "gzip failed: $GzipError\n";
 
     $z->print($string);
@@ -573,7 +574,7 @@ compressed data to a buffer, C<$buffer>.
     use IO::Compress::Gzip qw(gzip $GzipError) ;
     use IO::File ;
 
-    my $input = new IO::File "<file1.txt"
+    my $input = IO::File->new( "<file1.txt" )
         or die "Cannot open 'file1.txt': $!\n" ;
     my $buffer ;
     gzip $input => \$buffer
@@ -610,7 +611,7 @@ and if you want to compress each file one at a time, this will do the trick
 
 The format of the constructor for C<IO::Compress::Gzip> is shown below
 
-    my $z = new IO::Compress::Gzip $output [,OPTS]
+    my $z = IO::Compress::Gzip->new( $output [,OPTS] )
         or die "IO::Compress::Gzip failed: $GzipError\n";
 
 It returns an C<IO::Compress::Gzip> object on success and undef on failure.
@@ -1263,8 +1264,7 @@ See the Changes file.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2005-2019 Paul Marquess. All rights reserved.
+Copyright (c) 2005-2021 Paul Marquess. All rights reserved.
 
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
-

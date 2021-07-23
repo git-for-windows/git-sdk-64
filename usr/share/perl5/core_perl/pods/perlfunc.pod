@@ -989,6 +989,11 @@ L<C<undef>|/undef EXPR> if L<C<%^H>|perlvar/%^H> was empty.  Do not
 modify the values of this hash, as they are the actual values stored in
 the optree.
 
+Note that the only types of call frames that are visible are subroutine
+calls and C<eval>. Other forms of context, such as C<while> or C<foreach>
+loops or C<try> blocks are not considered interesting to C<caller>, as they
+do not alter the behaviour of the C<return> expression.
+
 Furthermore, when called from within the DB package in
 list context, and with an argument, caller returns more
 detailed information: it sets the list variable C<@DB::args> to be the
@@ -1675,10 +1680,10 @@ The EXPR can be arbitrarily complicated provided its
 final operation is an element or slice of an aggregate:
 
     delete $ref->[$x][$y]{$key};
-    delete @{$ref->[$x][$y]}{$key1, $key2, @morekeys};
+    delete $ref->[$x][$y]->@{$key1, $key2, @morekeys};
 
     delete $ref->[$x][$y][$index];
-    delete @{$ref->[$x][$y]}[$index1, $index2, @moreindices];
+    delete $ref->[$x][$y]->@[$index1, $index2, @moreindices];
 
 =item die LIST
 X<die> X<throw> X<exception> X<raise> X<$@> X<abort>
@@ -3419,7 +3424,7 @@ X<gmtime> X<UTC> X<Greenwich>
 
 =for Pod::Functions convert UNIX time into record or string using Greenwich time
 
-Works just like L<C<localtime>|/localtime EXPR> but the returned values
+Works just like L<C<localtime>|/localtime EXPR>, but the returned values
 are localized for the standard Greenwich time zone.
 
 Note: When called in list context, $isdst, the last value
@@ -3584,6 +3589,20 @@ or after its end is treated as if it were the beginning or the end,
 respectively.  POSITION and the return value are based at zero.
 If the substring is not found, L<C<index>|/index STR,SUBSTR,POSITION>
 returns -1.
+
+Find characters or strings:
+
+    index("Perl is great", "P");     # Returns 0
+    index("Perl is great", "g");     # Returns 8
+    index("Perl is great", "great"); # Also returns 8
+
+Attempting to find something not there:
+
+    index("Perl is great", "Z");     # Returns -1 (not found)
+
+Using an offset to find the I<second> occurrence:
+
+    index("Perl is great", "e", 5);  # Returns 10
 
 =item int EXPR
 X<int> X<integer> X<truncate> X<trunc> X<floor>
@@ -4041,8 +4060,8 @@ C<$wday> is the day of the week, with 0 indicating Sunday and 3 indicating
 Wednesday.  C<$yday> is the day of the year, in the range C<0..364>
 (or C<0..365> in leap years.)
 
-C<$isdst> is true if the specified time occurs during Daylight Saving
-Time, false otherwise.
+C<$isdst> is true if the specified time occurs when Daylight Saving
+Time is in effect, false otherwise.
 
 If EXPR is omitted, L<C<localtime>|/localtime EXPR> uses the current
 time (as returned by L<C<time>|/time>).
@@ -4050,27 +4069,21 @@ time (as returned by L<C<time>|/time>).
 In scalar context, L<C<localtime>|/localtime EXPR> returns the
 L<ctime(3)> value:
 
-    my $now_string = localtime;  # e.g., "Thu Oct 13 04:54:34 1994"
+ my $now_string = localtime;  # e.g., "Thu Oct 13 04:54:34 1994"
 
-The format of this scalar value is B<not> locale-dependent but built
-into Perl.  For GMT instead of local time use the
-L<C<gmtime>|/gmtime EXPR> builtin.  See also the
-L<C<Time::Local>|Time::Local> module (for converting seconds, minutes,
-hours, and such back to the integer value returned by L<C<time>|/time>),
-and the L<POSIX> module's L<C<strftime>|POSIX/C<strftime>> and
-L<C<mktime>|POSIX/C<mktime>> functions.
+This scalar value is always in English, and is B<not> locale-dependent.
+To get similar but locale-dependent date strings, try for example:
 
-To get somewhat similar but locale-dependent date strings, set up your
-locale environment variables appropriately (please see L<perllocale>) and
-try for example:
+ use POSIX qw(strftime);
+ my $now_string = strftime "%a %b %e %H:%M:%S %Y", localtime;
+ # or for GMT formatted appropriately for your locale:
+ my $now_string = strftime "%a %b %e %H:%M:%S %Y", gmtime;
 
-    use POSIX qw(strftime);
-    my $now_string = strftime "%a %b %e %H:%M:%S %Y", localtime;
-    # or for GMT formatted appropriately for your locale:
-    my $now_string = strftime "%a %b %e %H:%M:%S %Y", gmtime;
-
-Note that C<%a> and C<%b>, the short forms of the day of the week
-and the month of the year, may not necessarily be three characters wide.
+C$now_string> will be formatted according to the current LC_TIME locale
+the program or thread is running in.  See L<perllocale> for how to set
+up and change that locale.  Note that C<%a> and C<%b>, the short forms
+of the day of the week and the month of the year, may not necessarily be
+three characters wide.
 
 The L<Time::gmtime> and L<Time::localtime> modules provide a convenient,
 by-name access mechanism to the L<C<gmtime>|/gmtime EXPR> and
@@ -4078,6 +4091,13 @@ L<C<localtime>|/localtime EXPR> functions, respectively.
 
 For a comprehensive date and time representation look at the
 L<DateTime> module on CPAN.
+
+For GMT instead of local time use the L<C<gmtime>|/gmtime EXPR> builtin.
+
+See also the L<C<Time::Local>|Time::Local> module (for converting
+seconds, minutes, hours, and such back to the integer value returned by
+L<C<time>|/time>), and the L<POSIX> module's
+L<C<mktime>|POSIX/C<mktime>> function.
 
 Portability issues: L<perlport/localtime>.
 
@@ -4312,9 +4332,8 @@ X<msgsnd>
 
 Calls the System V IPC function msgsnd to send the message MSG to the
 message queue ID.  MSG must begin with the native long integer message
-type, be followed by the length of the actual message, and then finally
-the message itself.  This kind of packing can be achieved with
-C<pack("l! a*", $type, $message)>.  Returns true if successful,
+type, followed by the message itself.  This kind of packing can be achieved
+with C<pack("l! a*", $type, $message)>.  Returns true if successful,
 false on error.  See also L<perlipc/"SysV IPC"> and the documentation
 for L<C<IPC::SysV>|IPC::SysV> and L<C<IPC::Msg>|IPC::Msg>.
 
@@ -4336,6 +4355,17 @@ A L<C<my>|/my VARLIST> declares the listed variables to be local
 more than one variable is listed, the list must be placed in
 parentheses.
 
+Note that with a parenthesised list, L<C<undef>|/undef EXPR> can be used
+as a dummy placeholder, for example to skip assignment of initial
+values:
+
+    my ( undef, $min, $hour ) = localtime;
+
+Redeclaring a variable in the same scope or statement will "shadow" the
+previous declaration, creating a new instance and preventing access to
+the previous one. This is usually undesired and, if warnings are enabled,
+will result in a warning in the C<shadow> category.
+
 The exact semantics and interface of TYPE and ATTRS are still
 evolving.  TYPE may be a bareword, a constant declared
 with L<C<use constant>|constant>, or L<C<__PACKAGE__>|/__PACKAGE__>.  It
@@ -4344,12 +4374,6 @@ currently bound to the use of the L<fields> pragma,
 and attributes are handled using the L<attributes> pragma, or starting
 from Perl 5.8.0 also via the L<Attribute::Handlers> module.  See
 L<perlsub/"Private Variables via my()"> for details.
-
-Note that with a parenthesised list, L<C<undef>|/undef EXPR> can be used
-as a dummy placeholder, for example to skip assignment of initial
-values:
-
-    my ( undef, $min, $hour ) = localtime;
 
 =item next LABEL
 X<next> X<continue>
@@ -4419,8 +4443,11 @@ X<oct> X<octal> X<hex> X<hexadecimal> X<binary> X<bin>
 =for Pod::Functions convert a string to an octal number
 
 Interprets EXPR as an octal string and returns the corresponding
-value.  (If EXPR happens to start off with C<0x>, interprets it as a
-hex string.  If EXPR starts off with C<0b>, it is interpreted as a
+value.  An octal string consists of octal digits and, as of Perl 5.33.5,
+an optional C<0o> or C<o> prefix.  Each octal digit may be preceded by
+a single underscore, which will be ignored.
+(If EXPR happens to start off with C<0x> or C<x>, interprets it as a
+hex string.  If EXPR starts off with C<0b> or C<b>, it is interpreted as a
 binary string.  Leading whitespace is ignored in all three cases.)
 The following will handle decimal, binary, octal, and hex in standard
 Perl notation:
@@ -5183,8 +5210,7 @@ of values, as follows:
     F  A Perl internal floating-point value (NV) in native format
     D  A float of long-double precision in native format.
          (Long doubles are available only if your system supports
-          long double values _and_ if Perl has been compiled to
-          support those.  Raises an exception otherwise.
+          long double values. Raises an exception otherwise.
           Note that there are different long double formats.)
 
     p  A pointer to a null-terminated string.
@@ -5842,7 +5868,7 @@ symbol table the compiler uses for the rest of that block.  You can refer to
 identifiers in other packages than the current one by prefixing the identifier
 with the package name and a double colon, as in C<$SomePack::var>
 or C<ThatPack::INPUT_HANDLE>.  If package name is omitted, the C<main>
-package as assumed.  That is, C<$::sail> is equivalent to
+package is assumed.  That is, C<$::sail> is equivalent to
 C<$main::sail> (as well as to C<$main'sail>, still seen in ancient
 code, mostly from Perl 4).
 
@@ -6135,6 +6161,18 @@ Or:
 Will both leave the sentence as is.
 Normally, when accepting literal string input from the user,
 L<C<quotemeta>|/quotemeta EXPR> or C<\Q> must be used.
+
+Beware that if you put literal backslashes (those not inside
+interpolated variables) between C<\Q> and C<\E>, double-quotish
+backslash interpolation may lead to confusing results.  If you
+I<need> to use literal backslashes within C<\Q...\E>,
+consult L<perlop/"Gory details of parsing quoted constructs">.
+
+Because the result of S<C<"\Q I<STRING> \E">> has all metacharacters
+quoted, there is no way to insert a literal C<$> or C<@> inside a
+C<\Q\E> pair.  If protected by C<\>, C<$> will be quoted to become
+C<"\\\$">; if not, it is interpreted as the start of an interpolated
+scalar.
 
 In Perl v5.14, all non-ASCII characters are quoted in non-UTF-8-encoded
 strings, but not quoted in UTF-8 strings.
@@ -6526,7 +6564,8 @@ X<rename> X<move> X<mv> X<ren>
 =for Pod::Functions change a filename
 
 Changes the name of a file; an existing file NEWNAME will be
-clobbered.  Returns true for success, false otherwise.
+clobbered.  Returns true for success; on failure returns false and sets
+L<C<$!>|perlvar/$!>.
 
 Behavior of this function varies wildly depending on your system
 implementation.  For example, it will usually not work across file system
@@ -6957,7 +6996,7 @@ is the moral equivalent of these two:
     print(uc($bar), $baz);
 
 See L<perlop> for more details on unary operators and the comma operator,
-and L<perldata> for details on evaluating a hash in scalar contex.
+and L<perldata> for details on evaluating a hash in scalar context.
 
 =item seek FILEHANDLE,POSITION,WHENCE
 X<seek> X<fseek> X<filehandle, position>
@@ -7389,6 +7428,14 @@ X<sleep> X<pause>
 Causes the script to sleep for (integer) EXPR seconds, or forever if no
 argument is given.  Returns the integer number of seconds actually slept.
 
+EXPR should be a positive integer. If called with a negative integer,
+L<C<sleep>|/sleep EXPR> does not sleep but instead emits a warning, sets
+$! (C<errno>), and returns zero.
+
+C<sleep 0> is permitted, but a function call to the underlying platform
+implementation still occurs, with any side effects that may have.
+C<sleep 0> is therefore not exactly identical to not sleeping at all.
+
 May be interrupted if the process receives a signal such as C<SIGALRM>.
 
     eval {
@@ -7692,6 +7739,9 @@ eliminate any C<NaN>s from the input list.
 
     my @result = sort { $a <=> $b } grep { $_ == $_ } @input;
 
+In this version of F<perl>, the C<sort> function is implemented via the
+mergesort algorithm.
+
 =item splice ARRAY,OFFSET,LENGTH,LIST
 X<splice>
 
@@ -7776,16 +7826,15 @@ to specify a pattern that varies at runtime.
 If PATTERN matches the empty string, the EXPR is split at the match
 position (between characters).  As an example, the following:
 
-    print join(':', split(/b/, 'abc')), "\n";
+    my @x = split(/b/, "abc"); # ("a", "c")
 
-uses the C<b> in C<'abc'> as a separator to produce the output C<a:c>.
+uses the C<b> in C<'abc'> as a separator to produce the list ("a", "c").
 However, this:
 
-    print join(':', split(//, 'abc')), "\n";
+    my @x = split(//, "abc"); # ("a", "b", "c")
 
-uses empty string matches as separators to produce the output
-C<a:b:c>; thus, the empty string may be used to split EXPR into a
-list of its component characters.
+uses empty string matches as separators; thus, the empty string
+may be used to split EXPR into a list of its component characters.
 
 As a special case for L<C<split>|/split E<sol>PATTERNE<sol>,EXPR,LIMIT>,
 the empty pattern given in
@@ -7810,7 +7859,18 @@ S<C<"\x20">>, but not e.g. S<C</ />>).  In this case, any leading
 whitespace in EXPR is removed before splitting occurs, and the PATTERN is
 instead treated as if it were C</\s+/>; in particular, this means that
 I<any> contiguous whitespace (not just a single space character) is used as
-a separator.  However, this special treatment can be avoided by specifying
+a separator.
+
+    my @x = split(" ", "  Quick brown fox\n");
+    # ("Quick", "brown", "fox")
+
+    my @x = split(" ", "RED\tGREEN\tBLUE");
+    # ("RED", "GREEN", "BLUE")
+
+Using split in this fashion is very similar to how
+L<C<qwE<sol>E<sol>>|/qwE<sol>STRINGE<sol>> works.
+
+However, this special treatment can be avoided by specifying
 the pattern S<C</ />> instead of the string S<C<" ">>, thereby allowing
 only a single space character to be a separator.  In earlier Perls this
 special case was restricted to the use of a plain S<C<" ">> as the
@@ -7818,7 +7878,7 @@ pattern argument to split; in Perl 5.18.0 and later this special case is
 triggered by any expression which evaluates to the simple string S<C<" ">>.
 
 As of Perl 5.28, this special-cased whitespace splitting works as expected in
-the scope of L<< S<C<"use feature 'unicode_strings">>|feature/The
+the scope of L<< S<C<"use feature 'unicode_strings'">>|feature/The
 'unicode_strings' feature >>. In previous versions, and outside the scope of
 that feature, it exhibits L<perlunicode/The "Unicode Bug">: characters that are
 whitespace according to Unicode rules but not according to ASCII rules can be
@@ -7835,18 +7895,10 @@ the LIMIT value C<1> means that EXPR may be split a maximum of zero
 times, producing a maximum of one field (namely, the entire value of
 EXPR).  For instance:
 
-    print join(':', split(//, 'abc', 1)), "\n";
-
-produces the output C<abc>, and this:
-
-    print join(':', split(//, 'abc', 2)), "\n";
-
-produces the output C<a:bc>, and each of these:
-
-    print join(':', split(//, 'abc', 3)), "\n";
-    print join(':', split(//, 'abc', 4)), "\n";
-
-produces the output C<a:b:c>.
+    my @x = split(//, "abc", 1); # ("abc")
+    my @x = split(//, "abc", 2); # ("a", "bc")
+    my @x = split(//, "abc", 3); # ("a", "b", "c")
+    my @x = split(//, "abc", 4); # ("a", "b", "c")
 
 If LIMIT is negative, it is treated as if it were instead arbitrarily
 large; as many fields as possible are produced.
@@ -7857,13 +7909,13 @@ trailing empty fields are stripped (empty leading fields are always
 preserved); if all fields are empty, then all fields are considered to
 be trailing (and are thus stripped in this case).  Thus, the following:
 
-    print join(':', split(/,/, 'a,b,c,,,')), "\n";
+    my @x = split(/,/, "a,b,c,,,"); # ("a", "b", "c")
 
-produces the output C<a:b:c>, but the following:
+produces only a three element list.
 
-    print join(':', split(/,/, 'a,b,c,,,', -1)), "\n";
+    my @x = split(/,/, "a,b,c,,,", -1); # ("a", "b", "c", "", "", "")
 
-produces the output C<a:b:c:::>.
+produces a six element list.
 
 In time-critical applications, it is worthwhile to avoid splitting
 into more fields than necessary.  Thus, when assigning to a list,
@@ -7879,23 +7931,21 @@ produces zero fields, regardless of the LIMIT specified.
 An empty leading field is produced when there is a positive-width
 match at the beginning of EXPR.  For instance:
 
-    print join(':', split(/ /, ' abc')), "\n";
+    my @x = split(/ /, " abc"); # ("", "abc")
 
-produces the output C<:abc>.  However, a zero-width match at the
+splits into two elements.  However, a zero-width match at the
 beginning of EXPR never produces an empty field, so that:
 
-    print join(':', split(//, ' abc'));
+    my @x = split(//, " abc"); # (" ", "a", "b", "c")
 
-produces the output S<C< :a:b:c>> (rather than S<C<: :a:b:c>>).
+splits into four elements instead of five.
 
 An empty trailing field, on the other hand, is produced when there is a
 match at the end of EXPR, regardless of the length of the match
 (of course, unless a non-zero LIMIT is given explicitly, such fields are
 removed, as in the last example).  Thus:
 
-    print join(':', split(//, ' abc', -1)), "\n";
-
-produces the output S<C< :a:b:c:>>.
+    my @x = split(//, " abc", -1); # (" ", "a", "b", "c", "")
 
 If the PATTERN contains
 L<capturing groups|perlretut/Grouping things and hierarchical matching>,
@@ -7910,20 +7960,20 @@ does B<not> count towards the LIMIT.  Consider the following expressions
 evaluated in list context (each returned list is provided in the associated
 comment):
 
-    split(/-|,/, "1-10,20", 3)
-    # ('1', '10', '20')
+    my @x = split(/-|,/    , "1-10,20", 3);
+    # ("1", "10", "20")
 
-    split(/(-|,)/, "1-10,20", 3)
-    # ('1', '-', '10', ',', '20')
+    my @x = split(/(-|,)/  , "1-10,20", 3);
+    # ("1", "-", "10", ",", "20")
 
-    split(/-|(,)/, "1-10,20", 3)
-    # ('1', undef, '10', ',', '20')
+    my @x = split(/-|(,)/  , "1-10,20", 3);
+    # ("1", undef, "10", ",", "20")
 
-    split(/(-)|,/, "1-10,20", 3)
-    # ('1', '-', '10', undef, '20')
+    my @x = split(/(-)|,/  , "1-10,20", 3);
+    # ("1", "-", "10", undef, "20")
 
-    split(/(-)|(,)/, "1-10,20", 3)
-    # ('1', '-', undef, '10', undef, ',', '20')
+    my @x = split(/(-)|(,)/, "1-10,20", 3);
+    # ("1", "-", undef, "10", undef, ",", "20")
 
 =item sprintf FORMAT, LIST
 X<sprintf>
@@ -8201,6 +8251,11 @@ as supported by the compiler used to build Perl:
                5.14 or later
    z           interpret integer as C types "size_t" or
                "ssize_t" on Perl 5.14 or later
+
+Note that, in general, using the C<l> modifier (for example, when writing
+C<"%ld"> or C<"%lu"> instead of C<"%d"> and C<"%u">) is unnecessary
+when used from Perl code.  Moreover, it may be harmful, for example on
+Windows 64-bit where a long is 32-bits.
 
 As of 5.14, none of these raises an exception if they are not supported on
 your platform.  However, if warnings are enabled, a warning of the
@@ -8536,6 +8591,11 @@ parentheses.  With a parenthesised list, L<C<undef>|/undef EXPR> can be
 used as a
 dummy placeholder.  However, since initialization of state variables in
 such lists is currently not possible this would serve no purpose.
+
+Redeclaring a variable in the same scope or statement will "shadow" the
+previous declaration, creating a new instance and preventing access to
+the previous one. This is usually undesired and, if warnings are enabled,
+will result in a warning in the C<shadow> category.
 
 L<C<state>|/state VARLIST> is available only if the
 L<C<"state"> feature|feature/The 'state' feature> is enabled or if it is

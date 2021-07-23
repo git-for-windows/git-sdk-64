@@ -9,9 +9,9 @@
 
 /* Package name      : perl5
  * Source directory  : .
- * Configuration time: Sun Jan 24 14:39:15 GMT 2021
+ * Configuration time: Thu Jul 22 12:32:41 GMT 2021
  * Configured by     : VssAdministrator
- * Target system     : msys_nt-10.0-14393 fv-az242-691 3.1.7-340.x86_64 2020-10-23 13:08 utc x86_64 msys 
+ * Target system     : msys_nt-10.0-14393 fv-az123-95 3.1.7-340.x86_64 2021-03-26 22:17 utc x86_64 msys 
  */
 
 #ifndef _config_h_
@@ -220,7 +220,7 @@
 
 /* HAS_MBLEN:
  *	This symbol, if defined, indicates that the mblen routine is available
- *	to find the number of bytes in a multibye character.
+ *	to find the number of bytes in a multibyte character.
  */
 #define HAS_MBLEN		/**/
 
@@ -1732,6 +1732,8 @@
  *	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BE_BE
  *	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_LE_BE
  *	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BE_LE
+ *	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_LITTLE_ENDIAN
+ *	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BIG_ENDIAN
  *	LONG_DOUBLE_IS_VAX_H_FLOAT
  *	LONG_DOUBLE_IS_UNKNOWN_FORMAT
  *	It is only defined if the system supports long doubles.
@@ -1969,11 +1971,11 @@
  *	This symbol, if defined, indicates that the union semun is
  *	defined by including <sys/sem.h>.  If not, the user code
  *	probably needs to define it as:
- *	union semun {
+ *	 union semun {
  *	    int val;
  *	    struct semid_ds *buf;
  *	    unsigned short *array;
- *	}
+ *	 }
  */
 /* USE_SEMCTL_SEMUN:
  *	This symbol, if defined, indicates that union semun is
@@ -2984,7 +2986,7 @@
 
 /* HAS_MEMMEM:
  *	This symbol, if defined, indicates that the memmem routine is
- *	available to return a pointer to the start of the first occurance
+ *	available to return a pointer to the start of the first occurrence
  *	of a substring in a memory area (or NULL if not found).
  *	In glibc, memmem is a GNU extension.  The function is visible in
  *	libc, but the prototype is only visible if _GNU_SOURCE is #defined.
@@ -4212,6 +4214,12 @@
  */
 /*#define USE_C_BACKTRACE		/ **/
 
+/* USE_STRICT_BY_DEFAULT:
+ *	This symbol, if defined, enables additional defaults.
+ *	At this time it only enables implicit strict by default.
+ */
+/*#define USE_STRICT_BY_DEFAULT	/ * use strict by default */
+
 /* USE_DTRACE:
  *	This symbol, if defined, indicates that Perl should
  *	be built with support for DTrace.
@@ -4532,6 +4540,19 @@
 /*#define HAS_ENDSERVENT_R	/ **/
 #define ENDSERVENT_R_PROTO 0	/**/
 
+/* GETENV_PRESERVES_OTHER_THREAD:
+ *	This symbol, if defined, indicates that the getenv system call doesn't
+ *	zap the static buffer of getenv() in a different thread.
+ *
+ *	The typical getenv() implementation will return a pointer to the proper
+ *	position in **environ.  But some may instead copy them to a static
+ *	buffer in getenv().  If there is a per-thread instance of that buffer,
+ *	or the return points to **environ, then a many-reader/1-writer mutex
+ *	will work; otherwise an exclusive locking mutex is required to prevent
+ *	races.
+ */
+#define GETENV_PRESERVES_OTHER_THREAD	/**/
+
 /* HAS_GETGRENT_R:
  *	This symbol, if defined, indicates that the getgrent_r routine
  *	is available to getgrent re-entrantly.
@@ -4828,6 +4849,9 @@
 #define L_R_TZSET
 #endif
 
+/* L_R_TZSET:
+ *	If localtime_r() needs tzset, it is defined in this define
+ */
 /* LOCALTIME_R_PROTO:
  *	This symbol encodes the prototype of localtime_r.
  *	It is zero if d_localtime_r is undef, and one of the
@@ -5119,10 +5143,11 @@
  *	This symbol, if defined, indicates that Perl should be built to
  *	use the interpreter-based threading implementation.
  */
-/* USE_5005THREADS:
- *	This symbol, if defined, indicates that Perl should be built to
- *	use the 5.005-based threading implementation.
- *	Only valid up to 5.8.x.
+/* USE_THREADS:
+ *	This symbol, if defined, indicates that Perl should
+ *	be built to use threads.  At present, it is a synonym for
+ *	and USE_ITHREADS, but eventually the source ought to be
+ *	changed to use this to mean _any_ threading implementation.
  */
 /* OLD_PTHREADS_API:
  *	This symbol, if defined, indicates that Perl should
@@ -5133,11 +5158,8 @@
  *	try to use the various _r versions of library functions.
  *	This is extremely experimental.
  */
-/*#define	USE_5005THREADS		/ **/
 #define	USE_ITHREADS		/**/
-#if defined(USE_5005THREADS) && !defined(USE_ITHREADS)
-#define		USE_THREADS		/* until src is revised*/
-#endif
+#define		USE_THREADS		/**/
 /*#define	OLD_PTHREADS_API		/ **/
 /*#define	USE_REENTRANT_API	/ **/
 
