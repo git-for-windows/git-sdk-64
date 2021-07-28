@@ -734,6 +734,10 @@
 /* Define to 1 if you have the `nice' function. */
 #define HAVE_NICE 1
 
+/* Define if the internal form of wchar_t in non-Unicode locales is not
+   Unicode. */
+/* #undef HAVE_NON_UNICODE_WCHAR_T_REPRESENTATION */
+
 /* Define to 1 if you have the `openat' function. */
 #define HAVE_OPENAT 1
 

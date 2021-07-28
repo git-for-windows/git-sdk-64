@@ -30,11 +30,11 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.9
 srcdir=		.
 
-abs_srcdir=	/c/_/S/python/src/Python-3.9.5
-abs_builddir=	/c/_/S/python/src/Python-3.9.5
+abs_srcdir=	/c/_/S/python/src/Python-3.9.6
+abs_builddir=	/c/_/S/python/src/Python-3.9.6
 
 
-CC=		x86_64-pc-msys-gcc
+CC=		gcc
 CXX=		/usr/bin/g++
 MAINCC=		$(CC)
 LINKCC=		$(PURIFY) $(MAINCC)
@@ -215,7 +215,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/usr' '--build=x86_64-pc-msys' '--host=x86_64-pc-msys' '--enable-shared' '--enable-ipv6' '--with-dbmliborder=gdbm' '--with-libc=' '--with-libm=' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--enable-loadable-sqlite-extensions' '--without-ensurepip' 'ac_cv_func_bind_textdomain_codeset=yes' 'build_alias=x86_64-pc-msys' 'host_alias=x86_64-pc-msys' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe -L.' 'CPPFLAGS= -I/usr/include/ncursesw' 'PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/lib/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/usr' '--build=x86_64-pc-msys' '--host=x86_64-pc-msys' '--enable-shared' '--enable-ipv6' '--with-dbmliborder=gdbm' '--with-libc=' '--with-libm=' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--enable-loadable-sqlite-extensions' '--without-ensurepip' 'ac_cv_func_bind_textdomain_codeset=yes' 'build_alias=x86_64-pc-msys' 'host_alias=x86_64-pc-msys' 'CC=gcc' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe -L.' 'CPPFLAGS= -I/usr/include/ncursesw' 'PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/lib/pkgconfig'
 
 
 # Subdirectories with code
@@ -255,8 +255,8 @@ LIBOBJS=
 PYTHON=		python$(EXE)
 BUILDPYTHON=	python$(BUILDEXE)
 
-PYTHON_FOR_REGEN?=python3
-UPDATE_FILE=python3 $(srcdir)/Tools/scripts/update_file.py
+PYTHON_FOR_REGEN?=python3.9
+UPDATE_FILE=python3.9 $(srcdir)/Tools/scripts/update_file.py
 PYTHON_FOR_BUILD=./$(BUILDPYTHON) -E
 _PYTHON_HOST_PLATFORM=
 BUILD_GNU_TYPE=	x86_64-pc-msys
@@ -1662,7 +1662,7 @@ LIBPL=		$(prefix)/lib/python3.9/config-$(VERSION)$(ABIFLAGS)-x86_64-msys
 LIBPC=		$(LIBDIR)/pkgconfig
 
 libainstall:	all python-config
-	@for i in $(LIBDIR) $(LIBPL) $(LIBPC); \
+	@for i in $(LIBDIR) $(LIBPL) $(LIBPC) $(BINDIR); \
 	do \
 		if test ! -d $(DESTDIR)$$i; then \
 			echo "Creating directory $$i"; \
