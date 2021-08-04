@@ -1174,6 +1174,10 @@ any of the given commits.</p>
 <p>A commit&#8217;s reachable set is the commit itself and the commits in
 its ancestry chain.</p>
 </div>
+<div class="paragraph">
+<p>There are several notations to specify a set of connected commits
+(called a "revision range"), illustrated below.</p>
+</div>
 <div class="sect2">
 <h3 id="_commit_exclusions">Commit Exclusions</h3>
 <div class="dlist">
@@ -1217,6 +1221,34 @@ did I do since I forked from the origin branch?"  Similarly, <em>..origin</em>
 is a shorthand for <em>HEAD..origin</em> and asks "What did the origin do since
 I forked from them?"  Note that <em>..</em> would mean <em>HEAD..HEAD</em> which is an
 empty range that is both reachable and unreachable from HEAD.</p>
+</div>
+<div class="paragraph">
+<p>Commands that are specifically designed to take two distinct ranges
+(e.g. "git range-diff R1 R2" to compare two ranges) do exist, but
+they are exceptions.  Unless otherwise noted, all "git" commands
+that operate on a set of commits work on a single revision range.
+In other words, writing two "two-dot range notation" next to each
+other, e.g.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ git log A..B C..D</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>does <strong>not</strong> specify two revision ranges for most commands.  Instead
+it will name a single connected set of commits, i.e. those that are
+reachable from either B or D but are reachable from neither A or C.
+In a linear history like this:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>---A---B---o---o---C---D</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>because A and B are reachable from C, the revision range specified
+by these two dotted ranges is a single commit D.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1543,7 +1575,7 @@ $ sh your-git-script.sh "a b'c"</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-07-06 19:00:22 UTC
+Last updated 2021-08-03 16:07:56 UTC
 </div>
 </div>
 </body>

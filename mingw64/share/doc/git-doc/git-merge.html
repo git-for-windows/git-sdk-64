@@ -1302,7 +1302,7 @@ The values of the <code>branch.&lt;current branch&gt;.merge</code> that name the
 branches at the remote named by <code>branch.&lt;current branch&gt;.remote</code>
 are consulted, and then they are mapped via <code>remote.&lt;remote&gt;.fetch</code>
 to their corresponding remote-tracking branches, and the tips of
-these tracking branches are merged.</p>
+these tracking branches are merged. Defaults to true.</p>
 </dd>
 <dt class="hdlist1">merge.ff</dt>
 <dd>
@@ -1349,10 +1349,12 @@ default value of <code>master</code> is used for backward compatibility.</p>
 </dd>
 <dt class="hdlist1">merge.renameLimit</dt>
 <dd>
-<p>The number of files to consider when performing rename detection
-during a merge; if not specified, defaults to the value of
-diff.renameLimit. This setting has no effect if rename detection
-is turned off.</p>
+<p>The number of files to consider in the exhaustive portion of
+rename detection during a merge.  If not specified, defaults
+to the value of diff.renameLimit.  If neither
+merge.renameLimit nor diff.renameLimit are specified,
+currently defaults to 7000.  This setting has no effect if
+rename detection is turned off.</p>
 </dd>
 <dt class="hdlist1">merge.renames</dt>
 <dd>
@@ -1577,7 +1579,7 @@ values containing whitespace characters are currently not supported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-07-06 19:00:22 UTC
+Last updated 2021-08-03 16:07:56 UTC
 </div>
 </div>
 </body>

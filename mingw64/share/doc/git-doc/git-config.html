@@ -540,7 +540,7 @@ codes are:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_options">OPTIONS</h2>
+<h2 id="OPTIONS">OPTIONS</h2>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
@@ -630,7 +630,15 @@ present. If not it&#8217;s the same as <code>--local</code>.</p>
 <dt class="hdlist1">-f config-file</dt>
 <dt class="hdlist1">--file config-file</dt>
 <dd>
-<p>Use the given config file instead of the one specified by GIT_CONFIG.</p>
+<p>For writing options: write to the specified file rather than the
+repository <code>.git/config</code>.</p>
+<div class="paragraph">
+<p>For reading options: read only from the specified file rather than from all
+available files.</p>
+</div>
+<div class="paragraph">
+<p>See also <a href="#FILES">FILES</a>.</p>
+</div>
 </dd>
 <dt class="hdlist1">--blob blob</dt>
 <dd>
@@ -867,11 +875,9 @@ configuration file. Note that this also affects options like <code>--replace-all
 and <code>--unset</code>. <strong><em>git config</em> will only ever change one file at a time</strong>.</p>
 </div>
 <div class="paragraph">
-<p>You can override these rules either by command-line options or by environment
-variables. The <code>--global</code>, <code>--system</code> and <code>--worktree</code> options will limit
-the file used to the global, system-wide or per-worktree file respectively.
-The <code>GIT_CONFIG</code> environment variable has a similar effect, but you
-can specify any filename you want.</p>
+<p>You can override these rules using the <code>--global</code>, <code>--system</code>,
+<code>--local</code>, <code>--worktree</code>, and <code>--file</code> command-line options; see
+<a href="#OPTIONS">OPTIONS</a> above.</p>
 </div>
 </div>
 </div>
@@ -880,12 +886,6 @@ can specify any filename you want.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">GIT_CONFIG</dt>
-<dd>
-<p>Take the configuration from the given file instead of .git/config.
-Using the "--global" option forces this to ~/.gitconfig. Using the
-"--system" option forces this to $(prefix)/etc/gitconfig.</p>
-</dd>
 <dt class="hdlist1">GIT_CONFIG_GLOBAL</dt>
 <dt class="hdlist1">GIT_CONFIG_SYSTEM</dt>
 <dd>
@@ -921,6 +921,14 @@ passed via <code>git -c</code>.</p>
 with a common configuration but cannot depend on a configuration file,
 for example when writing scripts.</p>
 </div>
+</dd>
+<dt class="hdlist1">GIT_CONFIG</dt>
+<dd>
+<p>If no <code>--file</code> option is provided to <code>git config</code>, use the file
+given by <code>GIT_CONFIG</code> as if it were provided via <code>--file</code>. This
+variable has no effect on other Git commands, and is mostly for
+historical compatibility; there is generally no reason to use it
+instead of the <code>--file</code> option.</p>
 </dd>
 </dl>
 </div>
@@ -2574,7 +2582,7 @@ line, in <a href="git-blame.html">git-blame(1)</a>.  Whitespace and comments beg
 file names will reset the list of ignored revisions.  This option will
 be handled before the command line option <code>--ignore-revs-file</code>.</p>
 </dd>
-<dt class="hdlist1">blame.markUnblamables</dt>
+<dt class="hdlist1">blame.markUnblamableLines</dt>
 <dd>
 <p>Mark lines that were changed by an ignored revision that we could not
 attribute to another commit with a <em>*</em> in the output of
@@ -2952,8 +2960,9 @@ interactive commands.</p>
 </dd>
 <dt class="hdlist1">color.pager</dt>
 <dd>
-<p>A boolean to enable/disable colored output when the pager is in
-use (default is true).</p>
+<p>A boolean to specify whether <code>auto</code> color modes should colorize
+output going to the pager. Defaults to true; set this to false
+if your pager does not understand ANSI color codes.</p>
 </dd>
 <dt class="hdlist1">color.push</dt>
 <dd>
@@ -3397,9 +3406,10 @@ relative to the top of the working tree.</p>
 </dd>
 <dt class="hdlist1">diff.renameLimit</dt>
 <dd>
-<p>The number of files to consider when performing the copy/rename
-detection; equivalent to the <em>git diff</em> option <code>-l</code>. This setting
-has no effect if rename detection is turned off.</p>
+<p>The number of files to consider in the exhaustive portion of
+copy/rename detection; equivalent to the <em>git diff</em> option
+<code>-l</code>.  If not set, the default value is currently 1000.  This
+setting has no effect if rename detection is turned off.</p>
 </dd>
 <dt class="hdlist1">diff.renames</dt>
 <dd>
@@ -3805,7 +3815,8 @@ of its descendants). If <code>feature.experimental</code> is enabled, then this
 setting defaults to "skipping".
 Unknown values will cause <em>git fetch</em> to error out.</p>
 <div class="paragraph">
-<p>See also the <code>--negotiation-tip</code> option for <a href="git-fetch.html">git-fetch(1)</a>.</p>
+<p>See also the <code>--negotiate-only</code> and <code>--negotiation-tip</code> options to
+<a href="git-fetch.html">git-fetch(1)</a>.</p>
 </div>
 </dd>
 <dt class="hdlist1">fetch.showForcedUpdates</dt>
@@ -5383,7 +5394,7 @@ The values of the <code>branch.&lt;current branch&gt;.merge</code> that name the
 branches at the remote named by <code>branch.&lt;current branch&gt;.remote</code>
 are consulted, and then they are mapped via <code>remote.&lt;remote&gt;.fetch</code>
 to their corresponding remote-tracking branches, and the tips of
-these tracking branches are merged.</p>
+these tracking branches are merged. Defaults to true.</p>
 </dd>
 <dt class="hdlist1">merge.ff</dt>
 <dd>
@@ -5430,10 +5441,12 @@ default value of <code>master</code> is used for backward compatibility.</p>
 </dd>
 <dt class="hdlist1">merge.renameLimit</dt>
 <dd>
-<p>The number of files to consider when performing rename detection
-during a merge; if not specified, defaults to the value of
-diff.renameLimit. This setting has no effect if rename detection
-is turned off.</p>
+<p>The number of files to consider in the exhaustive portion of
+rename detection during a merge.  If not specified, defaults
+to the value of diff.renameLimit.  If neither
+merge.renameLimit nor diff.renameLimit are specified,
+currently defaults to 7000.  This setting has no effect if
+rename detection is turned off.</p>
 </dd>
 <dt class="hdlist1">merge.renames</dt>
 <dd>
@@ -5900,12 +5913,26 @@ the <code>*.idx</code> file.</p>
 packing to a file when repacking, i.e. the git:// protocol
 is unaffected.  It can be overridden by the <code>--max-pack-size</code>
 option of <a href="git-repack.html">git-repack(1)</a>.  Reaching this limit results
-in the creation of multiple packfiles; which in turn prevents
-bitmaps from being created.
-The minimum size allowed is limited to 1 MiB.
-The default is unlimited.
-Common unit suffixes of <em>k</em>, <em>m</em>, or <em>g</em> are
-supported.</p>
+in the creation of multiple packfiles.</p>
+<div class="paragraph">
+<p>Note that this option is rarely useful, and may result in a larger total
+on-disk size (because Git will not store deltas between packs), as well
+as worse runtime performance (object lookup within multiple packs is
+slower than a single pack, and optimizations like reachability bitmaps
+cannot cope with multiple packs).</p>
+</div>
+<div class="paragraph">
+<p>If you need to actively run Git using smaller packfiles (e.g., because your
+filesystem does not support large files), this option may help. But if
+your goal is to transmit a packfile over a medium that supports limited
+sizes (e.g., removable media that cannot store the whole repository),
+you are likely better off creating a single large packfile and splitting
+it using a generic multi-volume archive tool (e.g., Unix <code>split</code>).</p>
+</div>
+<div class="paragraph">
+<p>The minimum size allowed is limited to 1 MiB. The default is unlimited.
+Common unit suffixes of <em>k</em>, <em>m</em>, or <em>g</em> are supported.</p>
+</div>
 </dd>
 <dt class="hdlist1">pack.useBitmaps</dt>
 <dd>
@@ -6158,16 +6185,15 @@ pushing to the same repository you would normally pull from
 <p><code>tracking</code> - This is a deprecated synonym for <code>upstream</code>.</p>
 </li>
 <li>
-<p><code>simple</code> - in centralized workflow, work like <code>upstream</code> with an
-added safety to refuse to push if the upstream branch&#8217;s name is
-different from the local one.</p>
+<p><code>simple</code> - pushes the current branch with the same name on the remote.</p>
 <div class="paragraph">
-<p>When pushing to a remote that is different from the remote you normally
-pull from, work as <code>current</code>.  This is the safest option and is suited
-for beginners.</p>
+<p>If you are working on a centralized workflow (pushing to the same repository you
+pull from, which is typically <code>origin</code>), then you need to configure an upstream
+branch with the same name.</p>
 </div>
 <div class="paragraph">
-<p>This mode has become the default in Git 2.0.</p>
+<p>This mode is the default since Git 2.0, and is the safest option suited for
+beginners.</p>
 </div>
 </li>
 <li>
@@ -6702,10 +6728,6 @@ the value of <code>sendemail.identity</code>.</p>
 <p>See <a href="git-send-email.html">git-send-email(1)</a> for description.  Note that this
 setting is not subject to the <em>identity</em> mechanism.</p>
 </dd>
-<dt class="hdlist1">sendemail.smtpssl (deprecated)</dt>
-<dd>
-<p>Deprecated alias for <em>sendemail.smtpEncryption = ssl</em>.</p>
-</dd>
 <dt class="hdlist1">sendemail.smtpsslcertpath</dt>
 <dd>
 <p>Path to ca-certificates (either a directory or a single file).
@@ -7057,8 +7079,9 @@ commands. See <a href="gitsubmodules.html">gitsubmodules(7)</a> for details.</p>
 </dd>
 <dt class="hdlist1">submodule.recurse</dt>
 <dd>
-<p>Specifies if commands recurse into submodules by default. This
-applies to all commands that have a <code>--recurse-submodules</code> option
+<p>A boolean indicating if commands should enable the <code>--recurse-submodules</code>
+option by default.
+Applies to all commands that support this option
 (<code>checkout</code>, <code>fetch</code>, <code>grep</code>, <code>pull</code>, <code>push</code>, <code>read-tree</code>, <code>reset</code>,
 <code>restore</code> and <code>switch</code>) except <code>clone</code> and <code>ls-files</code>.
 Defaults to false.
@@ -7604,7 +7627,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-07-06 19:00:22 UTC
+Last updated 2021-08-03 16:07:56 UTC
 </div>
 </div>
 </body>

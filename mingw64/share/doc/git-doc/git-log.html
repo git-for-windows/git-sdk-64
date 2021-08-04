@@ -533,7 +533,9 @@ specified, the ref name prefixes <em>refs/heads/</em>, <em>refs/tags/</em> and
 full ref name (including prefix) will be printed. If <em>auto</em> is
 specified, then if the output is going to a terminal, the ref names
 are shown as if <em>short</em> were given, otherwise no ref names are
-shown. The default option is <em>short</em>.</p>
+shown. The option <code>--decorate</code> is short-hand for <code>--decorate=short</code>.
+Default to configuration value of <code>log.decorate</code> if configured,
+otherwise, <code>auto</code>.</p>
 </dd>
 <dt class="hdlist1">--decorate-refs=&lt;pattern&gt;</dt>
 <dt class="hdlist1">--decorate-refs-exclude=&lt;pattern&gt;</dt>
@@ -2658,10 +2660,9 @@ implied value.</p>
 <dt class="hdlist1">-m</dt>
 <dd>
 <p>This option makes diff output for merge commits to be shown in
-the default format. <code>-m</code> will produce the output only if <code>-p</code>
-is given as well. The default format could be changed using
+the default format. The default format could be changed using
 <code>log.diffMerges</code> configuration parameter, which default value
-is <code>separate</code>.</p>
+is <code>separate</code>. <code>-m</code> implies <code>-p</code>.</p>
 </dd>
 <dt class="hdlist1">--diff-merges=first-parent</dt>
 <dt class="hdlist1">--diff-merges=1</dt>
@@ -2673,7 +2674,8 @@ respect to the first parent only.</p>
 <dd>
 <p>This makes merge commits show the full diff with respect to
 each of the parents. Separate log entry and diff is generated
-for each parent.</p>
+for each parent. This is the format that <code>-m</code> produced
+historically.</p>
 </dd>
 <dt class="hdlist1">--diff-merges=combined</dt>
 <dt class="hdlist1">--diff-merges=c</dt>
@@ -3289,11 +3291,17 @@ of a delete/create pair.</p>
 </dd>
 <dt class="hdlist1">-l&lt;num&gt;</dt>
 <dd>
-<p>The <code>-M</code> and <code>-C</code> options require O(n^2) processing time where n
-is the number of potential rename/copy targets.  This
-option prevents rename/copy detection from running if
-the number of rename/copy targets exceeds the specified
-number.</p>
+<p>The <code>-M</code> and <code>-C</code> options involve some preliminary steps that
+can detect subsets of renames/copies cheaply, followed by an
+exhaustive fallback portion that compares all remaining
+unpaired destinations to all relevant sources.  (For renames,
+only remaining unpaired sources are relevant; for copies, all
+original sources are relevant.)  For N sources and
+destinations, this exhaustive check is O(N^2).  This option
+prevents the exhaustive portion of rename/copy detection from
+running if the number of source/destination files involved
+exceeds the specified number.  Defaults to diff.renameLimit.
+Note that a value of 0 is treated as unlimited.</p>
 </dd>
 <dt class="hdlist1">--diff-filter=[(A|C|D|M|R|T|U|X|B)&#8230;&#8203;[*]]</dt>
 <dd>
@@ -4106,7 +4114,7 @@ and overridden by the <code>--notes=&lt;ref&gt;</code> option.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-07-06 19:00:22 UTC
+Last updated 2021-08-03 16:07:56 UTC
 </div>
 </div>
 </body>

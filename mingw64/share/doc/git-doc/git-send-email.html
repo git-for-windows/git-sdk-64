@@ -652,6 +652,15 @@ suitable privileges for the -f parameter.  Default is the value of the
 <code>sendemail.envelopeSender</code> configuration variable; if that is
 unspecified, choosing the envelope sender is left to your MTA.</p>
 </dd>
+<dt class="hdlist1">--sendmail-cmd=&lt;command&gt;</dt>
+<dd>
+<p>Specify a command to run to send the email. The command should
+be sendmail-like; specifically, it must support the <code>-i</code> option.
+The command will be executed in the shell if necessary.  Default
+is the value of <code>sendemail.sendmailcmd</code>.  If unspecified, and if
+--smtp-server is also unspecified, git-send-email will search
+for <code>sendmail</code> in <code>/usr/sbin</code>, <code>/usr/lib</code> and $PATH.</p>
+</dd>
 <dt class="hdlist1">--smtp-encryption=&lt;encryption&gt;</dt>
 <dd>
 <p>Specify the encryption to use, either <em>ssl</em> or <em>tls</em>.  Any other
@@ -705,13 +714,17 @@ a password is obtained using <em>git-credential</em>.</p>
 <dt class="hdlist1">--smtp-server=&lt;host&gt;</dt>
 <dd>
 <p>If set, specifies the outgoing SMTP server to use (e.g.
-<code>smtp.example.com</code> or a raw IP address).  Alternatively it can
-specify a full pathname of a sendmail-like program instead;
-the program must support the <code>-i</code> option.  Default value can
-be specified by the <code>sendemail.smtpServer</code> configuration
-option; the built-in default is to search for <code>sendmail</code> in
-<code>/usr/sbin</code>, <code>/usr/lib</code> and $PATH if such program is
-available, falling back to <code>localhost</code> otherwise.</p>
+<code>smtp.example.com</code> or a raw IP address).  If unspecified, and if
+<code>--sendmail-cmd</code> is also unspecified, the default is to search
+for <code>sendmail</code> in <code>/usr/sbin</code>, <code>/usr/lib</code> and $PATH if such a
+program is available, falling back to <code>localhost</code> otherwise.</p>
+<div class="paragraph">
+<p>For backward compatibility, this option can also specify a full pathname
+of a sendmail-like program instead; the program must support the <code>-i</code>
+option.  This method does not support passing arguments or using plain
+command names.  For those use cases, consider using <code>--sendmail-cmd</code>
+instead.</p>
+</div>
 </dd>
 <dt class="hdlist1">--smtp-server-port=&lt;port&gt;</dt>
 <dd>
@@ -1171,7 +1184,7 @@ Authen::SASL and Mail::Address.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-07-06 19:00:22 UTC
+Last updated 2021-08-03 16:07:56 UTC
 </div>
 </div>
 </body>
