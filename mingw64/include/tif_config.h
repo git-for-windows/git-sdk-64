@@ -81,7 +81,7 @@
 /* #undef JPEG_DUAL_MODE_8_12 */
 
 /* Support LERC compression */
-/* #undef LERC_SUPPORT */
+#define LERC_SUPPORT 1
 
 /* 12bit libjpeg primary include file with path */
 /* #undef LIBJPEG_12_PATH */

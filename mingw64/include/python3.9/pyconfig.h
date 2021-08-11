@@ -129,13 +129,13 @@
 #define HAVE_CLOCK 1
 
 /* Define to 1 if you have the `clock_getres' function. */
-#define HAVE_CLOCK_GETRES 1
+/* #undef HAVE_CLOCK_GETRES */
 
 /* Define to 1 if you have the `clock_gettime' function. */
-#define HAVE_CLOCK_GETTIME 1
+/* #undef HAVE_CLOCK_GETTIME */
 
 /* Define to 1 if you have the `clock_settime' function. */
-#define HAVE_CLOCK_SETTIME 1
+/* #undef HAVE_CLOCK_SETTIME */
 
 /* Define if the C compiler supports computed gotos. */
 #define HAVE_COMPUTED_GOTOS 1
@@ -214,35 +214,35 @@
 
 /* Define to 1 if you have the declaration of `RTLD_DEEPBIND', and to 0 if you
    don't. */
-#define HAVE_DECL_RTLD_DEEPBIND 0
+/* #undef HAVE_DECL_RTLD_DEEPBIND */
 
 /* Define to 1 if you have the declaration of `RTLD_GLOBAL', and to 0 if you
    don't. */
-#define HAVE_DECL_RTLD_GLOBAL 0
+/* #undef HAVE_DECL_RTLD_GLOBAL */
 
 /* Define to 1 if you have the declaration of `RTLD_LAZY', and to 0 if you
    don't. */
-#define HAVE_DECL_RTLD_LAZY 0
+/* #undef HAVE_DECL_RTLD_LAZY */
 
 /* Define to 1 if you have the declaration of `RTLD_LOCAL', and to 0 if you
    don't. */
-#define HAVE_DECL_RTLD_LOCAL 0
+/* #undef HAVE_DECL_RTLD_LOCAL */
 
 /* Define to 1 if you have the declaration of `RTLD_MEMBER', and to 0 if you
    don't. */
-#define HAVE_DECL_RTLD_MEMBER 0
+/* #undef HAVE_DECL_RTLD_MEMBER */
 
 /* Define to 1 if you have the declaration of `RTLD_NODELETE', and to 0 if you
    don't. */
-#define HAVE_DECL_RTLD_NODELETE 0
+/* #undef HAVE_DECL_RTLD_NODELETE */
 
 /* Define to 1 if you have the declaration of `RTLD_NOLOAD', and to 0 if you
    don't. */
-#define HAVE_DECL_RTLD_NOLOAD 0
+/* #undef HAVE_DECL_RTLD_NOLOAD */
 
 /* Define to 1 if you have the declaration of `RTLD_NOW', and to 0 if you
    don't. */
-#define HAVE_DECL_RTLD_NOW 0
+/* #undef HAVE_DECL_RTLD_NOW */
 
 /* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
    */

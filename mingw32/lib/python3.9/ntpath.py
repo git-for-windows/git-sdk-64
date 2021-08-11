@@ -319,7 +319,7 @@ def expanduser(path):
     if 'USERPROFILE' in os.environ:
         userhome = os.environ['USERPROFILE']
     elif not 'HOMEPATH' in os.environ:
-        return path
+        return os.path.normpath(path)
     else:
         try:
             drive = os.environ['HOMEDRIVE']
@@ -333,7 +333,7 @@ def expanduser(path):
     if i != 1: #~user
         userhome = join(dirname(userhome), path[1:i])
 
-    return userhome + path[i:]
+    return os.path.normpath(userhome) + path[i:]
 
 
 # Expand paths containing shell variable substitutions.

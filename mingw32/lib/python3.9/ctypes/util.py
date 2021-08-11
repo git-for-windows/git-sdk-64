@@ -31,6 +31,12 @@ if os.name == "nt":
         # else we don't know what version of the compiler this is
         return None
 
+    def find_msvcrt_mingw():
+        is_ucrt = 'clang' in sys.version.lower() or 'ucrt' in sys.version.lower()
+        if is_ucrt:
+            return None
+        return 'msvcrt.dll'
+
     def find_msvcrt():
         """Return the name of the VC runtime dll"""
         version = _get_build_version()
@@ -54,6 +60,9 @@ if os.name == "nt":
 
     def find_library(name):
         if name in ('c', 'm'):
+            import sysconfig
+            if sysconfig.get_platform().startswith('mingw'):
+                return find_msvcrt_mingw()
             return find_msvcrt()
         # See MSDN for the REAL search order.
         for directory in os.environ['PATH'].split(os.pathsep):

@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Masatoshi SEKI".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-07-09"
+  s.date = "2021-08-07"
   s.description = "The Linda distributed computing paradigm in Ruby.".freeze
   s.email = ["seki@ruby-lang.org".freeze]
   s.files = ["rinda/rinda.rb".freeze, "rinda/ring.rb".freeze, "rinda/tuplespace.rb".freeze]

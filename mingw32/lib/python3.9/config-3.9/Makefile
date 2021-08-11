@@ -79,19 +79,19 @@ MKDIR_P=	/usr/bin/mkdir -p
 MAKESETUP=      $(srcdir)/Modules/makesetup
 
 # Compiler options
-OPT=		-DNDEBUG 
+OPT=		-DNDEBUG -g -fwrapv -O3 -Wall
 BASECFLAGS=	 -Wno-unused-result -Wsign-compare
 BASECPPFLAGS=	-IObjects -IInclude -IPython
-CONFIGURE_CFLAGS=	-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG 
+CONFIGURE_CFLAGS=	-march=i686 -mtune=generic -O2 -pipe
 # CFLAGS_NODIST is used for building the interpreter and stdlib C extensions.
 # Use it when a compiler flag should _not_ be part of the distutils CFLAGS
 # once Python is installed (Issue #21121).
-CONFIGURE_CFLAGS_NODIST= -std=c99 -Wextra -Wno-unused-result -Wno-unused-parameter -Wno-missing-field-initializers -Wstrict-prototypes -Werror=implicit-function-declaration -fvisibility=hidden -DMS_DLL_ID='"3.9"'
+CONFIGURE_CFLAGS_NODIST= -std=c99 -Wextra -Wno-unused-result -Wno-unused-parameter -Wno-missing-field-initializers -Wstrict-prototypes -Werror=implicit-function-declaration -fvisibility=hidden -D_WIN32_WINNT=0x0601 -DMS_DLL_ID='"3.9"'
 # LDFLAGS_NODIST is used in the same manner as CFLAGS_NODIST.
 # Use it when a linker flag should _not_ be part of the distutils LDFLAGS
 # once Python is installed (bpo-35257)
 CONFIGURE_LDFLAGS_NODIST=
-CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -ID:/a/_temp/msys/msys64/mingw32/include/ncurses  -I.
+CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -I.
 CONFIGURE_LDFLAGS=	-pipe -Wl,--dynamicbase,--nxcompat,--no-seh
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
@@ -125,7 +125,7 @@ RCFLAGS= -DFIELD3=6150 -O COFF --target=pe-i386
 
 
 # Machine-dependent subdirectories
-MACHDEP=	win
+MACHDEP=	win32
 
 # Multiarch directory (may be empty)
 MULTIARCH=	
@@ -162,6 +162,7 @@ BINLIBDEST=	$(LIBDIR)/python$(VERSION)
 LIBDEST=	$(SCRIPTDIR)/python$(VERSION)
 INCLUDEPY=	$(INCLUDEDIR)/python$(LDVERSION)
 CONFINCLUDEPY=	$(CONFINCLUDEDIR)/python$(LDVERSION)
+VENVLAUNCHERDIR=	$(BINLIBDEST)/venv/scripts/nt
 
 # Symbols used for using shared libraries
 SHLIB_SUFFIX=	.pyd
@@ -225,7 +226,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-nt-threads' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--without-c-locale-coercion' '--enable-loadable-sqlite-extensions' '--enable-optimizations' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' 'LDFLAGS=-pipe -Wl,--dynamicbase,--nxcompat,--no-seh' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -ID:/a/_temp/msys/msys64/mingw32/include/ncurses ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--without-c-locale-coercion' '--enable-loadable-sqlite-extensions' '--enable-optimizations' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe -Wl,--dynamicbase,--nxcompat,--no-seh' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
 
 
 # Subdirectories with code
@@ -265,6 +266,8 @@ LIBOBJS=
 PYTHON=		python$(EXE)
 BUILDPYTHON=	python$(BUILDEXE)
 BUILDPYTHONW=	pythonw$(BUILDEXE)
+BUILDVENVLAUNCHER=	venvlauncher$(BUILDEXE)
+BUILDVENVWLAUNCHER=	venvwlauncher$(BUILDEXE)
 
 PYTHON_FOR_REGEN?=python3.9
 UPDATE_FILE=python3.9 $(srcdir)/Tools/scripts/update_file.py
@@ -325,6 +328,7 @@ IO_OBJS=	\
 ##########################################################################
 
 LIBFFI_INCLUDEDIR=	D:/a/_temp/msys/msys64/mingw32/include
+NCURSESW_INCLUDEDIR=	D:/a/_temp/msys/msys64/mingw32/include/ncursesw
 
 ##########################################################################
 # Parser
@@ -498,7 +502,7 @@ DTRACE_DEPS = \
 
 # Default target
 all:		profile-opt
-build_all:	check-clean-src $(BUILDPYTHON) $(BUILDPYTHONW) oldsharedmods sharedmods gdbhooks \
+build_all:	check-clean-src $(BUILDPYTHON) $(BUILDPYTHONW) $(BUILDVENVLAUNCHER) $(BUILDVENVWLAUNCHER) oldsharedmods sharedmods gdbhooks \
 		Programs/_testembed python-config
 
 # Check that the source is clean when building out of source.
@@ -627,6 +631,14 @@ $(BUILDPYTHONW): Programs/python.o $(LIBRARY) $(LDLIBRARY) $(PY3LIBRARY) pythonw
 # Build the interpreter
 $(BUILDPYTHON):	Programs/python.o $(LIBRARY) $(LDLIBRARY) $(PY3LIBRARY) python_exe.o
 	$(LINKCC) $(PY_CORE_LDFLAGS) $(LINKFORSHARED) -municode -o $@ Programs/python.o $(BLDLIBRARY) $(LIBS) $(MODLIBS) $(SYSLIBS) python_exe.o
+
+# FIXME: build these from PC/launcher.c instead
+$(BUILDVENVLAUNCHER): $(BUILDPYTHON)
+	cp $(BUILDPYTHON) $(BUILDVENVLAUNCHER)
+
+# FIXME: build these from PC/launcher.c instead
+$(BUILDVENVWLAUNCHER): $(BUILDPYTHONW)
+	cp $(BUILDPYTHONW) $(BUILDVENVWLAUNCHER)
 
 platform: $(BUILDPYTHON) pybuilddir.txt
 	$(RUNSHARED) $(PYTHON_FOR_BUILD) -c 'import sys ; from sysconfig import get_platform ; print("%s-%d.%d" % (get_platform(), *sys.version_info[:2]))' >platform
@@ -1342,7 +1354,7 @@ $(DESTSHARED):
 # Install the interpreter with $(VERSION) affixed
 # This goes into $(exec_prefix)
 altbininstall: $(BUILDPYTHON) 
-	@for i in $(BINDIR) $(LIBDIR); \
+	@for i in $(BINDIR) $(LIBDIR) $(VENVLAUNCHERDIR); \
 	do \
 		if test ! -d $(DESTDIR)$$i; then \
 			echo "Creating directory $$i"; \
@@ -1353,6 +1365,8 @@ altbininstall: $(BUILDPYTHON)
 	if test "$(PYTHONFRAMEWORKDIR)" = "no-framework" ; then \
 		$(INSTALL_PROGRAM) $(BUILDPYTHON) $(DESTDIR)$(BINDIR)/python$(LDVERSION)$(EXE); \
 		$(INSTALL_PROGRAM) $(BUILDPYTHONW) $(DESTDIR)$(BINDIR)/python3w$(EXE); \
+		$(INSTALL_PROGRAM) $(BUILDPYTHON) $(DESTDIR)$(VENVLAUNCHERDIR)/python$(EXE); \
+		$(INSTALL_PROGRAM) $(BUILDPYTHONW) $(DESTDIR)$(VENVLAUNCHERDIR)/pythonw$(EXE); \
 	else \
 		$(INSTALL_PROGRAM) $(STRIPFLAG) Mac/pythonw $(DESTDIR)$(BINDIR)/python$(LDVERSION)$(EXE); \
 	fi
@@ -1701,7 +1715,7 @@ libainstall:	build_all python-config
 	@if test -d $(LIBRARY); then :; else \
 		if test "$(PYTHONFRAMEWORKDIR)" = no-framework; then \
 			if test "$(SHLIB_SUFFIX)" = .dll -o "$(SHLIB_SUFFIX)" = .pyd; then \
-				$(INSTALL_DATA) $(LDLIBRARY) $(DESTDIR)$(LIBPL) ; \
+				$(INSTALL_DATA) $(LDLIBRARY) $(DESTDIR)$(LIBDIR) ; \
 			else \
 				$(INSTALL_DATA) $(LIBRARY) $(DESTDIR)$(LIBPL)/$(LIBRARY) ; \
 			fi; \
@@ -1747,6 +1761,7 @@ endif
 # Install the dynamically loadable modules
 # This goes into $(exec_prefix)
 sharedinstall: sharedmods
+	MSYS2_ARG_CONV_EXCL="--prefix=;--install-scripts=;--install-platlib=" \
 	$(RUNSHARED) $(PYTHON_FOR_BUILD) $(srcdir)/setup.py install \
 	   	--prefix=$(prefix) \
 		--install-scripts=$(BINDIR) \

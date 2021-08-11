@@ -64,7 +64,7 @@
 #define JBIG_SUPPORT 1
 
 /* Support LERC compression */
-/* #undef LERC_SUPPORT */
+#define LERC_SUPPORT 1
 
 /* Support LogLuv high dynamic range encoding */
 #define LOGLUV_SUPPORT 1

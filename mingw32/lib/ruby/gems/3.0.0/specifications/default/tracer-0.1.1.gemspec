@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Keiju ISHITSUKA".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-07-09"
+  s.date = "2021-08-07"
   s.description = "Outputs a source level execution trace of a Ruby program.".freeze
   s.email = ["keiju@ruby-lang.org".freeze]
   s.files = ["tracer.rb".freeze]
