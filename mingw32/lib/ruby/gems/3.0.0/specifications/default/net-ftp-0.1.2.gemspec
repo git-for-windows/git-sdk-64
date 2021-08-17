@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Shugo Maeda".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-08-07"
+  s.date = "2021-08-16"
   s.description = "Support for the File Transfer Protocol.".freeze
   s.email = ["shugo@ruby-lang.org".freeze]
   s.files = ["net/ftp.rb".freeze]

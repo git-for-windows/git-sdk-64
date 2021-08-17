@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Tanaka Akira".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-08-07"
+  s.date = "2021-08-15"
   s.description = "Thread-aware DNS resolver library in Ruby.".freeze
   s.email = ["akr@fsij.org".freeze]
   s.files = ["resolv.rb".freeze]

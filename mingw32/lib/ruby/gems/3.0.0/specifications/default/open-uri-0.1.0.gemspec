@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Tanaka Akira".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-08-07"
+  s.date = "2021-08-16"
   s.description = "An easy-to-use wrapper for Net::HTTP, Net::HTTPS and Net::FTP.".freeze
   s.email = ["akr@fsij.org".freeze]
   s.files = ["open-uri.rb".freeze]
