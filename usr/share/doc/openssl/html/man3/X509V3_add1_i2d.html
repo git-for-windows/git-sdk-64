@@ -37,31 +37,31 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/x509v3.h&gt;
+<pre><code>#include &lt;openssl/x509v3.h&gt;
 
- void *X509V3_get_d2i(const STACK_OF(X509_EXTENSION) *x, int nid, int *crit,
-                      int *idx);
- int X509V3_add1_i2d(STACK_OF(X509_EXTENSION) **x, int nid, void *value,
-                     int crit, unsigned long flags);
+void *X509V3_get_d2i(const STACK_OF(X509_EXTENSION) *x, int nid, int *crit,
+                     int *idx);
+int X509V3_add1_i2d(STACK_OF(X509_EXTENSION) **x, int nid, void *value,
+                    int crit, unsigned long flags);
 
- void *X509V3_EXT_d2i(X509_EXTENSION *ext);
- X509_EXTENSION *X509V3_EXT_i2d(int ext_nid, int crit, void *ext);
+void *X509V3_EXT_d2i(X509_EXTENSION *ext);
+X509_EXTENSION *X509V3_EXT_i2d(int ext_nid, int crit, void *ext);
 
- void *X509_get_ext_d2i(const X509 *x, int nid, int *crit, int *idx);
- int X509_add1_ext_i2d(X509 *x, int nid, void *value, int crit,
-                       unsigned long flags);
+void *X509_get_ext_d2i(const X509 *x, int nid, int *crit, int *idx);
+int X509_add1_ext_i2d(X509 *x, int nid, void *value, int crit,
+                      unsigned long flags);
 
- void *X509_CRL_get_ext_d2i(const X509_CRL *crl, int nid, int *crit, int *idx);
- int X509_CRL_add1_ext_i2d(X509_CRL *crl, int nid, void *value, int crit,
-                           unsigned long flags);
+void *X509_CRL_get_ext_d2i(const X509_CRL *crl, int nid, int *crit, int *idx);
+int X509_CRL_add1_ext_i2d(X509_CRL *crl, int nid, void *value, int crit,
+                          unsigned long flags);
 
- void *X509_REVOKED_get_ext_d2i(const X509_REVOKED *r, int nid, int *crit, int *idx);
- int X509_REVOKED_add1_ext_i2d(X509_REVOKED *r, int nid, void *value, int crit,
-                               unsigned long flags);
+void *X509_REVOKED_get_ext_d2i(const X509_REVOKED *r, int nid, int *crit, int *idx);
+int X509_REVOKED_add1_ext_i2d(X509_REVOKED *r, int nid, void *value, int crit,
+                              unsigned long flags);
 
- const STACK_OF(X509_EXTENSION) *X509_get0_extensions(const X509 *x);
- const STACK_OF(X509_EXTENSION) *X509_CRL_get0_extensions(const X509_CRL *crl);
- const STACK_OF(X509_EXTENSION) *X509_REVOKED_get0_extensions(const X509_REVOKED *r);</code></pre>
+const STACK_OF(X509_EXTENSION) *X509_get0_extensions(const X509 *x);
+const STACK_OF(X509_EXTENSION) *X509_CRL_get0_extensions(const X509_CRL *crl);
+const STACK_OF(X509_EXTENSION) *X509_REVOKED_get0_extensions(const X509_REVOKED *r);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -111,80 +111,80 @@
 
 <p>The following certificate extensions are defined in PKIX standards such as RFC5280.</p>
 
-<pre><code> Basic Constraints                  NID_basic_constraints
- Key Usage                          NID_key_usage
- Extended Key Usage                 NID_ext_key_usage
+<pre><code>Basic Constraints                  NID_basic_constraints
+Key Usage                          NID_key_usage
+Extended Key Usage                 NID_ext_key_usage
 
- Subject Key Identifier             NID_subject_key_identifier
- Authority Key Identifier           NID_authority_key_identifier
+Subject Key Identifier             NID_subject_key_identifier
+Authority Key Identifier           NID_authority_key_identifier
 
- Private Key Usage Period           NID_private_key_usage_period
+Private Key Usage Period           NID_private_key_usage_period
 
- Subject Alternative Name           NID_subject_alt_name
- Issuer Alternative Name            NID_issuer_alt_name
+Subject Alternative Name           NID_subject_alt_name
+Issuer Alternative Name            NID_issuer_alt_name
 
- Authority Information Access       NID_info_access
- Subject Information Access         NID_sinfo_access
+Authority Information Access       NID_info_access
+Subject Information Access         NID_sinfo_access
 
- Name Constraints                   NID_name_constraints
+Name Constraints                   NID_name_constraints
 
- Certificate Policies               NID_certificate_policies
- Policy Mappings                    NID_policy_mappings
- Policy Constraints                 NID_policy_constraints
- Inhibit Any Policy                 NID_inhibit_any_policy
+Certificate Policies               NID_certificate_policies
+Policy Mappings                    NID_policy_mappings
+Policy Constraints                 NID_policy_constraints
+Inhibit Any Policy                 NID_inhibit_any_policy
 
- TLS Feature                        NID_tlsfeature</code></pre>
+TLS Feature                        NID_tlsfeature</code></pre>
 
 <h2 id="Netscape-Certificate-Extensions">Netscape Certificate Extensions</h2>
 
 <p>The following are (largely obsolete) Netscape certificate extensions.</p>
 
-<pre><code> Netscape Cert Type                 NID_netscape_cert_type
- Netscape Base Url                  NID_netscape_base_url
- Netscape Revocation Url            NID_netscape_revocation_url
- Netscape CA Revocation Url         NID_netscape_ca_revocation_url
- Netscape Renewal Url               NID_netscape_renewal_url
- Netscape CA Policy Url             NID_netscape_ca_policy_url
- Netscape SSL Server Name           NID_netscape_ssl_server_name
- Netscape Comment                   NID_netscape_comment</code></pre>
+<pre><code>Netscape Cert Type                 NID_netscape_cert_type
+Netscape Base Url                  NID_netscape_base_url
+Netscape Revocation Url            NID_netscape_revocation_url
+Netscape CA Revocation Url         NID_netscape_ca_revocation_url
+Netscape Renewal Url               NID_netscape_renewal_url
+Netscape CA Policy Url             NID_netscape_ca_policy_url
+Netscape SSL Server Name           NID_netscape_ssl_server_name
+Netscape Comment                   NID_netscape_comment</code></pre>
 
 <h2 id="Miscellaneous-Certificate-Extensions">Miscellaneous Certificate Extensions</h2>
 
-<pre><code> Strong Extranet ID                 NID_sxnet
- Proxy Certificate Information      NID_proxyCertInfo</code></pre>
+<pre><code>Strong Extranet ID                 NID_sxnet
+Proxy Certificate Information      NID_proxyCertInfo</code></pre>
 
 <h2 id="PKIX-CRL-Extensions">PKIX CRL Extensions</h2>
 
 <p>The following are CRL extensions from PKIX standards such as RFC5280.</p>
 
-<pre><code> CRL Number                         NID_crl_number
- CRL Distribution Points            NID_crl_distribution_points
- Delta CRL Indicator                NID_delta_crl
- Freshest CRL                       NID_freshest_crl
- Invalidity Date                    NID_invalidity_date
- Issuing Distribution Point         NID_issuing_distribution_point</code></pre>
+<pre><code>CRL Number                         NID_crl_number
+CRL Distribution Points            NID_crl_distribution_points
+Delta CRL Indicator                NID_delta_crl
+Freshest CRL                       NID_freshest_crl
+Invalidity Date                    NID_invalidity_date
+Issuing Distribution Point         NID_issuing_distribution_point</code></pre>
 
 <p>The following are CRL entry extensions from PKIX standards such as RFC5280.</p>
 
-<pre><code> CRL Reason Code                    NID_crl_reason
- Certificate Issuer                 NID_certificate_issuer</code></pre>
+<pre><code>CRL Reason Code                    NID_crl_reason
+Certificate Issuer                 NID_certificate_issuer</code></pre>
 
 <h2 id="OCSP-Extensions">OCSP Extensions</h2>
 
-<pre><code> OCSP Nonce                         NID_id_pkix_OCSP_Nonce
- OCSP CRL ID                        NID_id_pkix_OCSP_CrlID
- Acceptable OCSP Responses          NID_id_pkix_OCSP_acceptableResponses
- OCSP No Check                      NID_id_pkix_OCSP_noCheck
- OCSP Archive Cutoff                NID_id_pkix_OCSP_archiveCutoff
- OCSP Service Locator               NID_id_pkix_OCSP_serviceLocator
- Hold Instruction Code              NID_hold_instruction_code</code></pre>
+<pre><code>OCSP Nonce                         NID_id_pkix_OCSP_Nonce
+OCSP CRL ID                        NID_id_pkix_OCSP_CrlID
+Acceptable OCSP Responses          NID_id_pkix_OCSP_acceptableResponses
+OCSP No Check                      NID_id_pkix_OCSP_noCheck
+OCSP Archive Cutoff                NID_id_pkix_OCSP_archiveCutoff
+OCSP Service Locator               NID_id_pkix_OCSP_serviceLocator
+Hold Instruction Code              NID_hold_instruction_code</code></pre>
 
 <h2 id="Certificate-Transparency-Extensions">Certificate Transparency Extensions</h2>
 
 <p>The following extensions are used by certificate transparency, RFC6962</p>
 
-<pre><code> CT Precertificate SCTs             NID_ct_precert_scts
- CT Certificate SCTs                NID_ct_cert_scts</code></pre>
+<pre><code>CT Precertificate SCTs             NID_ct_precert_scts
+CT Certificate SCTs                NID_ct_cert_scts</code></pre>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 

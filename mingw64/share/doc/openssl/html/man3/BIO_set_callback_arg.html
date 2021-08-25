@@ -27,24 +27,24 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/bio.h&gt;
+<pre><code>#include &lt;openssl/bio.h&gt;
 
- typedef long (*BIO_callback_fn_ex)(BIO *b, int oper, const char *argp,
-                                    size_t len, int argi,
-                                    long argl, int ret, size_t *processed);
- typedef long (*BIO_callback_fn)(BIO *b, int oper, const char *argp, int argi,
-                                 long argl, long ret);
+typedef long (*BIO_callback_fn_ex)(BIO *b, int oper, const char *argp,
+                                   size_t len, int argi,
+                                   long argl, int ret, size_t *processed);
+typedef long (*BIO_callback_fn)(BIO *b, int oper, const char *argp, int argi,
+                                long argl, long ret);
 
- void BIO_set_callback_ex(BIO *b, BIO_callback_fn_ex callback);
- BIO_callback_fn_ex BIO_get_callback_ex(const BIO *b);
+void BIO_set_callback_ex(BIO *b, BIO_callback_fn_ex callback);
+BIO_callback_fn_ex BIO_get_callback_ex(const BIO *b);
 
- void BIO_set_callback(BIO *b, BIO_callback_fn cb);
- BIO_callback_fn BIO_get_callback(BIO *b);
- void BIO_set_callback_arg(BIO *b, char *arg);
- char *BIO_get_callback_arg(const BIO *b);
+void BIO_set_callback(BIO *b, BIO_callback_fn cb);
+BIO_callback_fn BIO_get_callback(BIO *b);
+void BIO_set_callback_arg(BIO *b, char *arg);
+char *BIO_get_callback_arg(const BIO *b);
 
- long BIO_debug_callback(BIO *bio, int cmd, const char *argp, int argi,
-                         long argl, long ret);</code></pre>
+long BIO_debug_callback(BIO *bio, int cmd, const char *argp, int argi,
+                        long argl, long ret);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -109,11 +109,11 @@
 <dt id="BIO_free-b"><b>BIO_free(b)</b></dt>
 <dd>
 
-<pre><code> callback_ex(b, BIO_CB_FREE, NULL, 0, 0, 0L, 1L, NULL)</code></pre>
+<pre><code>callback_ex(b, BIO_CB_FREE, NULL, 0, 0, 0L, 1L, NULL)</code></pre>
 
 <p>or</p>
 
-<pre><code> callback(b, BIO_CB_FREE, NULL, 0L, 0L, 1L)</code></pre>
+<pre><code>callback(b, BIO_CB_FREE, NULL, 0L, 0L, 1L)</code></pre>
 
 <p>is called before the free operation.</p>
 
@@ -121,20 +121,20 @@
 <dt id="BIO_read_ex-b-data-dlen-readbytes"><b>BIO_read_ex(b, data, dlen, readbytes)</b></dt>
 <dd>
 
-<pre><code> callback_ex(b, BIO_CB_READ, data, dlen, 0, 0L, 1L, NULL)</code></pre>
+<pre><code>callback_ex(b, BIO_CB_READ, data, dlen, 0, 0L, 1L, NULL)</code></pre>
 
 <p>or</p>
 
-<pre><code> callback(b, BIO_CB_READ, data, dlen, 0L, 1L)</code></pre>
+<pre><code>callback(b, BIO_CB_READ, data, dlen, 0L, 1L)</code></pre>
 
 <p>is called before the read and</p>
 
-<pre><code> callback_ex(b, BIO_CB_READ | BIO_CB_RETURN, data, dlen, 0, 0L, retvalue,
-             &amp;readbytes)</code></pre>
+<pre><code>callback_ex(b, BIO_CB_READ | BIO_CB_RETURN, data, dlen, 0, 0L, retvalue,
+            &amp;readbytes)</code></pre>
 
 <p>or</p>
 
-<pre><code> callback(b, BIO_CB_READ|BIO_CB_RETURN, data, dlen, 0L, retvalue)</code></pre>
+<pre><code>callback(b, BIO_CB_READ|BIO_CB_RETURN, data, dlen, 0L, retvalue)</code></pre>
 
 <p>after.</p>
 
@@ -142,20 +142,20 @@
 <dt id="BIO_write-b-data-dlen-written"><b>BIO_write(b, data, dlen, written)</b></dt>
 <dd>
 
-<pre><code> callback_ex(b, BIO_CB_WRITE, data, dlen, 0, 0L, 1L, NULL)</code></pre>
+<pre><code>callback_ex(b, BIO_CB_WRITE, data, dlen, 0, 0L, 1L, NULL)</code></pre>
 
 <p>or</p>
 
-<pre><code> callback(b, BIO_CB_WRITE, datat, dlen, 0L, 1L)</code></pre>
+<pre><code>callback(b, BIO_CB_WRITE, datat, dlen, 0L, 1L)</code></pre>
 
 <p>is called before the write and</p>
 
-<pre><code> callback_ex(b, BIO_CB_WRITE | BIO_CB_RETURN, data, dlen, 0, 0L, retvalue,
-             &amp;written)</code></pre>
+<pre><code>callback_ex(b, BIO_CB_WRITE | BIO_CB_RETURN, data, dlen, 0, 0L, retvalue,
+            &amp;written)</code></pre>
 
 <p>or</p>
 
-<pre><code> callback(b, BIO_CB_WRITE|BIO_CB_RETURN, data, dlen, 0L, retvalue)</code></pre>
+<pre><code>callback(b, BIO_CB_WRITE|BIO_CB_RETURN, data, dlen, 0L, retvalue)</code></pre>
 
 <p>after.</p>
 
@@ -163,20 +163,20 @@
 <dt id="BIO_gets-b-buf-size"><b>BIO_gets(b, buf, size)</b></dt>
 <dd>
 
-<pre><code> callback_ex(b, BIO_CB_GETS, buf, size, 0, 0L, 1, NULL, NULL)</code></pre>
+<pre><code>callback_ex(b, BIO_CB_GETS, buf, size, 0, 0L, 1, NULL, NULL)</code></pre>
 
 <p>or</p>
 
-<pre><code> callback(b, BIO_CB_GETS, buf, size, 0L, 1L)</code></pre>
+<pre><code>callback(b, BIO_CB_GETS, buf, size, 0L, 1L)</code></pre>
 
 <p>is called before the operation and</p>
 
-<pre><code> callback_ex(b, BIO_CB_GETS | BIO_CB_RETURN, buf, size, 0, 0L, retvalue,
-             &amp;readbytes)</code></pre>
+<pre><code>callback_ex(b, BIO_CB_GETS | BIO_CB_RETURN, buf, size, 0, 0L, retvalue,
+            &amp;readbytes)</code></pre>
 
 <p>or</p>
 
-<pre><code> callback(b, BIO_CB_GETS|BIO_CB_RETURN, buf, size, 0L, retvalue)</code></pre>
+<pre><code>callback(b, BIO_CB_GETS|BIO_CB_RETURN, buf, size, 0L, retvalue)</code></pre>
 
 <p>after.</p>
 
@@ -184,19 +184,19 @@
 <dt id="BIO_puts-b-buf"><b>BIO_puts(b, buf)</b></dt>
 <dd>
 
-<pre><code> callback_ex(b, BIO_CB_PUTS, buf, 0, 0, 0L, 1L, NULL);</code></pre>
+<pre><code>callback_ex(b, BIO_CB_PUTS, buf, 0, 0, 0L, 1L, NULL);</code></pre>
 
 <p>or</p>
 
-<pre><code> callback(b, BIO_CB_PUTS, buf, 0, 0L, 1L)</code></pre>
+<pre><code>callback(b, BIO_CB_PUTS, buf, 0, 0L, 1L)</code></pre>
 
 <p>is called before the operation and</p>
 
-<pre><code> callback_ex(b, BIO_CB_PUTS | BIO_CB_RETURN, buf, 0, 0, 0L, retvalue, &amp;written)</code></pre>
+<pre><code>callback_ex(b, BIO_CB_PUTS | BIO_CB_RETURN, buf, 0, 0, 0L, retvalue, &amp;written)</code></pre>
 
 <p>or</p>
 
-<pre><code> callback(b, BIO_CB_PUTS|BIO_CB_RETURN, buf, 0, 0L, retvalue)</code></pre>
+<pre><code>callback(b, BIO_CB_PUTS|BIO_CB_RETURN, buf, 0, 0L, retvalue)</code></pre>
 
 <p>after.</p>
 
@@ -204,19 +204,19 @@
 <dt id="BIO_ctrl-BIO-b-int-cmd-long-larg-void-parg"><b>BIO_ctrl(BIO *b, int cmd, long larg, void *parg)</b></dt>
 <dd>
 
-<pre><code> callback_ex(b, BIO_CB_CTRL, parg, 0, cmd, larg, 1L, NULL)</code></pre>
+<pre><code>callback_ex(b, BIO_CB_CTRL, parg, 0, cmd, larg, 1L, NULL)</code></pre>
 
 <p>or</p>
 
-<pre><code> callback(b, BIO_CB_CTRL, parg, cmd, larg, 1L)</code></pre>
+<pre><code>callback(b, BIO_CB_CTRL, parg, cmd, larg, 1L)</code></pre>
 
 <p>is called before the call and</p>
 
-<pre><code> callback_ex(b, BIO_CB_CTRL | BIO_CB_RETURN, parg, 0, cmd, larg, ret, NULL)</code></pre>
+<pre><code>callback_ex(b, BIO_CB_CTRL | BIO_CB_RETURN, parg, 0, cmd, larg, ret, NULL)</code></pre>
 
 <p>or</p>
 
-<pre><code> callback(b, BIO_CB_CTRL|BIO_CB_RETURN, parg, cmd, larg, ret)</code></pre>
+<pre><code>callback(b, BIO_CB_CTRL|BIO_CB_RETURN, parg, cmd, larg, ret)</code></pre>
 
 <p>after.</p>
 

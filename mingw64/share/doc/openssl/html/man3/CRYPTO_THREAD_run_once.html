@@ -29,18 +29,18 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/crypto.h&gt;
+<pre><code>#include &lt;openssl/crypto.h&gt;
 
- CRYPTO_ONCE CRYPTO_ONCE_STATIC_INIT;
- int CRYPTO_THREAD_run_once(CRYPTO_ONCE *once, void (*init)(void));
+CRYPTO_ONCE CRYPTO_ONCE_STATIC_INIT;
+int CRYPTO_THREAD_run_once(CRYPTO_ONCE *once, void (*init)(void));
 
- CRYPTO_RWLOCK *CRYPTO_THREAD_lock_new(void);
- int CRYPTO_THREAD_read_lock(CRYPTO_RWLOCK *lock);
- int CRYPTO_THREAD_write_lock(CRYPTO_RWLOCK *lock);
- int CRYPTO_THREAD_unlock(CRYPTO_RWLOCK *lock);
- void CRYPTO_THREAD_lock_free(CRYPTO_RWLOCK *lock);
+CRYPTO_RWLOCK *CRYPTO_THREAD_lock_new(void);
+int CRYPTO_THREAD_read_lock(CRYPTO_RWLOCK *lock);
+int CRYPTO_THREAD_write_lock(CRYPTO_RWLOCK *lock);
+int CRYPTO_THREAD_unlock(CRYPTO_RWLOCK *lock);
+void CRYPTO_THREAD_lock_free(CRYPTO_RWLOCK *lock);
 
- int CRYPTO_atomic_add(int *val, int amount, int *ret, CRYPTO_RWLOCK *lock);</code></pre>
+int CRYPTO_atomic_add(int *val, int amount, int *ret, CRYPTO_RWLOCK *lock);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -91,42 +91,42 @@
 
 <p>This example safely initializes and uses a lock.</p>
 
-<pre><code> #ifdef _WIN32
- # include &lt;windows.h&gt;
- #endif
- #include &lt;openssl/crypto.h&gt;
+<pre><code>#ifdef _WIN32
+# include &lt;windows.h&gt;
+#endif
+#include &lt;openssl/crypto.h&gt;
 
- static CRYPTO_ONCE once = CRYPTO_ONCE_STATIC_INIT;
- static CRYPTO_RWLOCK *lock;
+static CRYPTO_ONCE once = CRYPTO_ONCE_STATIC_INIT;
+static CRYPTO_RWLOCK *lock;
 
- static void myinit(void)
- {
-     lock = CRYPTO_THREAD_lock_new();
- }
+static void myinit(void)
+{
+    lock = CRYPTO_THREAD_lock_new();
+}
 
- static int mylock(void)
- {
-     if (!CRYPTO_THREAD_run_once(&amp;once, void init) || lock == NULL)
-         return 0;
-     return CRYPTO_THREAD_write_lock(lock);
- }
+static int mylock(void)
+{
+    if (!CRYPTO_THREAD_run_once(&amp;once, void init) || lock == NULL)
+        return 0;
+    return CRYPTO_THREAD_write_lock(lock);
+}
 
- static int myunlock(void)
- {
-     return CRYPTO_THREAD_unlock(lock);
- }
+static int myunlock(void)
+{
+    return CRYPTO_THREAD_unlock(lock);
+}
 
- int serialized(void)
- {
-     int ret = 0;
+int serialized(void)
+{
+    int ret = 0;
 
-     if (mylock()) {
-         /* Your code here, do not return without releasing the lock! */
-         ret = ... ;
-     }
-     myunlock();
-     return ret;
- }</code></pre>
+    if (mylock()) {
+        /* Your code here, do not return without releasing the lock! */
+        ret = ... ;
+    }
+    myunlock();
+    return ret;
+}</code></pre>
 
 <p>Finalization of locks is an advanced topic, not covered in this example. This can only be done at process exit or when a dynamically loaded library is no longer in use and is unloaded. The simplest solution is to just &quot;leak&quot; the lock in applications and not repeatedly load/unload shared libraries that allocate locks.</p>
 
@@ -134,12 +134,12 @@
 
 <p>You can find out if OpenSSL was configured with thread support:</p>
 
-<pre><code> #include &lt;openssl/opensslconf.h&gt;
- #if defined(OPENSSL_THREADS)
-     /* thread support enabled */
- #else
-     /* no thread support */
- #endif</code></pre>
+<pre><code>#include &lt;openssl/opensslconf.h&gt;
+#if defined(OPENSSL_THREADS)
+    /* thread support enabled */
+#else
+    /* no thread support */
+#endif</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

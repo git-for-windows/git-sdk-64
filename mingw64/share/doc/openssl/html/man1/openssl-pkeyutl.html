@@ -290,28 +290,28 @@
 
 <p>Sign some data using a private key:</p>
 
-<pre><code> openssl pkeyutl -sign -in file -inkey key.pem -out sig</code></pre>
+<pre><code>openssl pkeyutl -sign -in file -inkey key.pem -out sig</code></pre>
 
 <p>Recover the signed data (e.g. if an RSA key is used):</p>
 
-<pre><code> openssl pkeyutl -verifyrecover -in sig -inkey key.pem</code></pre>
+<pre><code>openssl pkeyutl -verifyrecover -in sig -inkey key.pem</code></pre>
 
 <p>Verify the signature (e.g. a DSA key):</p>
 
-<pre><code> openssl pkeyutl -verify -in file -sigfile sig -inkey key.pem</code></pre>
+<pre><code>openssl pkeyutl -verify -in file -sigfile sig -inkey key.pem</code></pre>
 
 <p>Sign data using a message digest value (this is currently only valid for RSA):</p>
 
-<pre><code> openssl pkeyutl -sign -in file -inkey key.pem -out sig -pkeyopt digest:sha256</code></pre>
+<pre><code>openssl pkeyutl -sign -in file -inkey key.pem -out sig -pkeyopt digest:sha256</code></pre>
 
 <p>Derive a shared secret value:</p>
 
-<pre><code> openssl pkeyutl -derive -inkey key.pem -peerkey pubkey.pem -out secret</code></pre>
+<pre><code>openssl pkeyutl -derive -inkey key.pem -peerkey pubkey.pem -out secret</code></pre>
 
 <p>Hexdump 48 bytes of TLS1 PRF using digest <b>SHA256</b> and shared secret and seed consisting of the single byte 0xFF:</p>
 
-<pre><code> openssl pkeyutl -kdf TLS1-PRF -kdflen 48 -pkeyopt md:SHA256 \
-    -pkeyopt hexsecret:ff -pkeyopt hexseed:ff -hexdump</code></pre>
+<pre><code>openssl pkeyutl -kdf TLS1-PRF -kdflen 48 -pkeyopt md:SHA256 \
+   -pkeyopt hexsecret:ff -pkeyopt hexseed:ff -hexdump</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

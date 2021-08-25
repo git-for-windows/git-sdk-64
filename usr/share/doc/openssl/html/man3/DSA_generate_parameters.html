@@ -28,20 +28,20 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/dsa.h&gt;
+<pre><code>#include &lt;openssl/dsa.h&gt;
 
- int DSA_generate_parameters_ex(DSA *dsa, int bits,
-                                const unsigned char *seed, int seed_len,
-                                int *counter_ret, unsigned long *h_ret,
-                                BN_GENCB *cb);</code></pre>
+int DSA_generate_parameters_ex(DSA *dsa, int bits,
+                               const unsigned char *seed, int seed_len,
+                               int *counter_ret, unsigned long *h_ret,
+                               BN_GENCB *cb);</code></pre>
 
 <p>Deprecated:</p>
 
-<pre><code> #if OPENSSL_API_COMPAT &lt; 0x00908000L
- DSA *DSA_generate_parameters(int bits, unsigned char *seed, int seed_len,
-                              int *counter_ret, unsigned long *h_ret,
-                              void (*callback)(int, int, void *), void *cb_arg);
- #endif</code></pre>
+<pre><code>#if OPENSSL_API_COMPAT &lt; 0x00908000L
+DSA *DSA_generate_parameters(int bits, unsigned char *seed, int seed_len,
+                             int *counter_ret, unsigned long *h_ret,
+                             void (*callback)(int, int, void *), void *cb_arg);
+#endif</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 

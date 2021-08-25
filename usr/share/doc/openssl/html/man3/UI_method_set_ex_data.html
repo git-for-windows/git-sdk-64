@@ -27,39 +27,39 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ui.h&gt;
+<pre><code>#include &lt;openssl/ui.h&gt;
 
- typedef struct ui_method_st UI_METHOD;
+typedef struct ui_method_st UI_METHOD;
 
- UI_METHOD *UI_create_method(const char *name);
- void UI_destroy_method(UI_METHOD *ui_method);
- int UI_method_set_opener(UI_METHOD *method, int (*opener) (UI *ui));
- int UI_method_set_writer(UI_METHOD *method,
-                          int (*writer) (UI *ui, UI_STRING *uis));
- int UI_method_set_flusher(UI_METHOD *method, int (*flusher) (UI *ui));
- int UI_method_set_reader(UI_METHOD *method,
-                          int (*reader) (UI *ui, UI_STRING *uis));
- int UI_method_set_closer(UI_METHOD *method, int (*closer) (UI *ui));
- int UI_method_set_data_duplicator(UI_METHOD *method,
-                                   void *(*duplicator) (UI *ui, void *ui_data),
-                                   void (*destructor)(UI *ui, void *ui_data));
- int UI_method_set_prompt_constructor(UI_METHOD *method,
-                                      char *(*prompt_constructor) (UI *ui,
-                                                                   const char
-                                                                   *object_desc,
-                                                                   const char
-                                                                   *object_name));
- int UI_method_set_ex_data(UI_METHOD *method, int idx, void *data);
- int (*UI_method_get_opener(const UI_METHOD *method)) (UI *);
- int (*UI_method_get_writer(const UI_METHOD *method)) (UI *, UI_STRING *);
- int (*UI_method_get_flusher(const UI_METHOD *method)) (UI *);
- int (*UI_method_get_reader(const UI_METHOD *method)) (UI *, UI_STRING *);
- int (*UI_method_get_closer(const UI_METHOD *method)) (UI *);
- char *(*UI_method_get_prompt_constructor(const UI_METHOD *method))
-     (UI *, const char *, const char *);
- void *(*UI_method_get_data_duplicator(const UI_METHOD *method)) (UI *, void *);
- void (*UI_method_get_data_destructor(const UI_METHOD *method)) (UI *, void *);
- const void *UI_method_get_ex_data(const UI_METHOD *method, int idx);</code></pre>
+UI_METHOD *UI_create_method(const char *name);
+void UI_destroy_method(UI_METHOD *ui_method);
+int UI_method_set_opener(UI_METHOD *method, int (*opener) (UI *ui));
+int UI_method_set_writer(UI_METHOD *method,
+                         int (*writer) (UI *ui, UI_STRING *uis));
+int UI_method_set_flusher(UI_METHOD *method, int (*flusher) (UI *ui));
+int UI_method_set_reader(UI_METHOD *method,
+                         int (*reader) (UI *ui, UI_STRING *uis));
+int UI_method_set_closer(UI_METHOD *method, int (*closer) (UI *ui));
+int UI_method_set_data_duplicator(UI_METHOD *method,
+                                  void *(*duplicator) (UI *ui, void *ui_data),
+                                  void (*destructor)(UI *ui, void *ui_data));
+int UI_method_set_prompt_constructor(UI_METHOD *method,
+                                     char *(*prompt_constructor) (UI *ui,
+                                                                  const char
+                                                                  *object_desc,
+                                                                  const char
+                                                                  *object_name));
+int UI_method_set_ex_data(UI_METHOD *method, int idx, void *data);
+int (*UI_method_get_opener(const UI_METHOD *method)) (UI *);
+int (*UI_method_get_writer(const UI_METHOD *method)) (UI *, UI_STRING *);
+int (*UI_method_get_flusher(const UI_METHOD *method)) (UI *);
+int (*UI_method_get_reader(const UI_METHOD *method)) (UI *, UI_STRING *);
+int (*UI_method_get_closer(const UI_METHOD *method)) (UI *);
+char *(*UI_method_get_prompt_constructor(const UI_METHOD *method))
+    (UI *, const char *, const char *);
+void *(*UI_method_get_data_duplicator(const UI_METHOD *method)) (UI *, void *);
+void (*UI_method_get_data_destructor(const UI_METHOD *method)) (UI *, void *);
+const void *UI_method_get_ex_data(const UI_METHOD *method, int idx);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 

@@ -30,9 +30,9 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/pkcs12.h&gt;
+<pre><code>#include &lt;openssl/pkcs12.h&gt;
 
- int PKCS12_newpass(PKCS12 *p12, const char *oldpass, const char *newpass);</code></pre>
+int PKCS12_newpass(PKCS12 *p12, const char *oldpass, const char *newpass);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -54,48 +54,48 @@
 
 <p>This example loads a PKCS#12 file, changes its password and writes out the result to a new file.</p>
 
-<pre><code> #include &lt;stdio.h&gt;
- #include &lt;stdlib.h&gt;
- #include &lt;openssl/pem.h&gt;
- #include &lt;openssl/err.h&gt;
- #include &lt;openssl/pkcs12.h&gt;
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;openssl/pem.h&gt;
+#include &lt;openssl/err.h&gt;
+#include &lt;openssl/pkcs12.h&gt;
 
- int main(int argc, char **argv)
- {
-     FILE *fp;
-     PKCS12 *p12;
+int main(int argc, char **argv)
+{
+    FILE *fp;
+    PKCS12 *p12;
 
-     if (argc != 5) {
-         fprintf(stderr, &quot;Usage: pkread p12file password newpass opfile\n&quot;);
-         return 1;
-     }
-     if ((fp = fopen(argv[1], &quot;rb&quot;)) == NULL) {
-         fprintf(stderr, &quot;Error opening file %s\n&quot;, argv[1]);
-         return 1;
-     }
-     p12 = d2i_PKCS12_fp(fp, NULL);
-     fclose(fp);
-     if (p12 == NULL) {
-         fprintf(stderr, &quot;Error reading PKCS#12 file\n&quot;);
-         ERR_print_errors_fp(stderr);
-         return 1;
-     }
-     if (PKCS12_newpass(p12, argv[2], argv[3]) == 0) {
-         fprintf(stderr, &quot;Error changing password\n&quot;);
-         ERR_print_errors_fp(stderr);
-         PKCS12_free(p12);
-         return 1;
-     }
-     if ((fp = fopen(argv[4], &quot;wb&quot;)) == NULL) {
-         fprintf(stderr, &quot;Error opening file %s\n&quot;, argv[4]);
-         PKCS12_free(p12);
-         return 1;
-     }
-     i2d_PKCS12_fp(fp, p12);
-     PKCS12_free(p12);
-     fclose(fp);
-     return 0;
- }</code></pre>
+    if (argc != 5) {
+        fprintf(stderr, &quot;Usage: pkread p12file password newpass opfile\n&quot;);
+        return 1;
+    }
+    if ((fp = fopen(argv[1], &quot;rb&quot;)) == NULL) {
+        fprintf(stderr, &quot;Error opening file %s\n&quot;, argv[1]);
+        return 1;
+    }
+    p12 = d2i_PKCS12_fp(fp, NULL);
+    fclose(fp);
+    if (p12 == NULL) {
+        fprintf(stderr, &quot;Error reading PKCS#12 file\n&quot;);
+        ERR_print_errors_fp(stderr);
+        return 1;
+    }
+    if (PKCS12_newpass(p12, argv[2], argv[3]) == 0) {
+        fprintf(stderr, &quot;Error changing password\n&quot;);
+        ERR_print_errors_fp(stderr);
+        PKCS12_free(p12);
+        return 1;
+    }
+    if ((fp = fopen(argv[4], &quot;wb&quot;)) == NULL) {
+        fprintf(stderr, &quot;Error opening file %s\n&quot;, argv[4]);
+        PKCS12_free(p12);
+        return 1;
+    }
+    i2d_PKCS12_fp(fp, p12);
+    PKCS12_free(p12);
+    fclose(fp);
+    return 0;
+}</code></pre>
 
 <h1 id="NOTES1">NOTES</h1>
 

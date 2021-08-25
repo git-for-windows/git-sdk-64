@@ -50,7 +50,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/rand_drbg.h&gt;</code></pre>
+<pre><code>#include &lt;openssl/rand_drbg.h&gt;</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -115,24 +115,24 @@
 
 <p>The following picture gives an overview over how the DRBG instances work together and are being used.</p>
 
-<pre><code>               +--------------------+
-               | os entropy sources |
-               +--------------------+
-                        |
-                        v           +-----------------------------+
-      RAND_add() ==&gt; &lt;master&gt;     &lt;-| shared DRBG (with locking)  |
-                      /   \         +-----------------------------+
-                     /     \              +---------------------------+
-              &lt;public&gt;     &lt;private&gt;   &lt;- | per-thread DRBG instances |
-                 |             |          +---------------------------+
-                 v             v
-               RAND_bytes()   RAND_priv_bytes()
-                    |               ^
-                    |               |
-    +------------------+      +------------------------------------+
-    | general purpose  |      | used for secrets like session keys |
-    | random generator |      | and private keys for certificates  |
-    +------------------+      +------------------------------------+</code></pre>
+<pre><code>           +--------------------+
+           | os entropy sources |
+           +--------------------+
+                    |
+                    v           +-----------------------------+
+  RAND_add() ==&gt; &lt;master&gt;     &lt;-| shared DRBG (with locking)  |
+                  /   \         +-----------------------------+
+                 /     \              +---------------------------+
+          &lt;public&gt;     &lt;private&gt;   &lt;- | per-thread DRBG instances |
+             |             |          +---------------------------+
+             v             v
+           RAND_bytes()   RAND_priv_bytes()
+                |               ^
+                |               |
++------------------+      +------------------------------------+
+| general purpose  |      | used for secrets like session keys |
+| random generator |      | and private keys for certificates  |
++------------------+      +------------------------------------+</code></pre>
 
 <p>The usual way to obtain random bytes is to call RAND_bytes(...) or RAND_priv_bytes(...). These calls are roughly equivalent to calling RAND_DRBG_bytes(&lt;public&gt;, ...) and RAND_DRBG_bytes(&lt;private&gt;, ...), respectively. The method <a href="../man3/RAND_DRBG_bytes.html">RAND_DRBG_bytes(3)</a> is a convenience method wrapping the <a href="../man3/RAND_DRBG_generate.html">RAND_DRBG_generate(3)</a> function, which serves the actual request for random data.</p>
 

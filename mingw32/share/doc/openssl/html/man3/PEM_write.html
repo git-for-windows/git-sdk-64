@@ -27,21 +27,21 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/pem.h&gt;
+<pre><code>#include &lt;openssl/pem.h&gt;
 
- int PEM_write(FILE *fp, const char *name, const char *header,
-               const unsigned char *data, long len)
- int PEM_write_bio(BIO *bp, const char *name, const char *header,
-                   const unsigned char *data, long len)
+int PEM_write(FILE *fp, const char *name, const char *header,
+              const unsigned char *data, long len)
+int PEM_write_bio(BIO *bp, const char *name, const char *header,
+                  const unsigned char *data, long len)
 
- int PEM_read(FILE *fp, char **name, char **header,
-              unsigned char **data, long *len);
- int PEM_read_bio(BIO *bp, char **name, char **header,
-                  unsigned char **data, long *len);
+int PEM_read(FILE *fp, char **name, char **header,
+             unsigned char **data, long *len);
+int PEM_read_bio(BIO *bp, char **name, char **header,
+                 unsigned char **data, long *len);
 
- int PEM_get_EVP_CIPHER_INFO(char *header, EVP_CIPHER_INFO *cinfo);
- int PEM_do_header(EVP_CIPHER_INFO *cinfo, unsigned char *data, long *len,
-                   pem_password_cb *cb, void *u);</code></pre>
+int PEM_get_EVP_CIPHER_INFO(char *header, EVP_CIPHER_INFO *cinfo);
+int PEM_do_header(EVP_CIPHER_INFO *cinfo, unsigned char *data, long *len,
+                  pem_password_cb *cb, void *u);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -49,10 +49,10 @@
 
 <p>PEM is the term used for binary content encoding first defined in IETF RFC 1421. The content is a series of base64-encoded lines, surrounded by begin/end markers each on their own line. For example:</p>
 
-<pre><code> -----BEGIN PRIVATE KEY-----
- MIICdg....
- ... bhTQ==
- -----END PRIVATE KEY-----</code></pre>
+<pre><code>-----BEGIN PRIVATE KEY-----
+MIICdg....
+... bhTQ==
+-----END PRIVATE KEY-----</code></pre>
 
 <p>Optional header line(s) may appear after the begin line, and their existence depends on the type of object being written or read.</p>
 

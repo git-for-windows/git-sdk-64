@@ -27,30 +27,30 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/bio.h&gt;
+<pre><code>#include &lt;openssl/bio.h&gt;
 
- const BIO_METHOD *BIO_s_accept(void);
+const BIO_METHOD *BIO_s_accept(void);
 
- long BIO_set_accept_name(BIO *b, char *name);
- char *BIO_get_accept_name(BIO *b);
+long BIO_set_accept_name(BIO *b, char *name);
+char *BIO_get_accept_name(BIO *b);
 
- long BIO_set_accept_port(BIO *b, char *port);
- char *BIO_get_accept_port(BIO *b);
+long BIO_set_accept_port(BIO *b, char *port);
+char *BIO_get_accept_port(BIO *b);
 
- BIO *BIO_new_accept(char *host_port);
+BIO *BIO_new_accept(char *host_port);
 
- long BIO_set_nbio_accept(BIO *b, int n);
- long BIO_set_accept_bios(BIO *b, char *bio);
+long BIO_set_nbio_accept(BIO *b, int n);
+long BIO_set_accept_bios(BIO *b, char *bio);
 
- char *BIO_get_peer_name(BIO *b);
- char *BIO_get_peer_port(BIO *b);
- long BIO_get_accept_ip_family(BIO *b);
- long BIO_set_accept_ip_family(BIO *b, long family);
+char *BIO_get_peer_name(BIO *b);
+char *BIO_get_peer_port(BIO *b);
+long BIO_get_accept_ip_family(BIO *b);
+long BIO_set_accept_ip_family(BIO *b, long family);
 
- long BIO_set_bind_mode(BIO *b, long mode);
- long BIO_get_bind_mode(BIO *b);
+long BIO_set_bind_mode(BIO *b, long mode);
+long BIO_get_bind_mode(BIO *b);
 
- int BIO_do_accept(BIO *b);</code></pre>
+int BIO_do_accept(BIO *b);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -92,7 +92,7 @@
 
 <p>If a server wishes to process multiple connections (as is normally the case) then the accept BIO must be made available for further incoming connections. This can be done by waiting for a connection and then calling:</p>
 
-<pre><code> connection = BIO_pop(accept);</code></pre>
+<pre><code>connection = BIO_pop(accept);</code></pre>
 
 <p>After this call <b>connection</b> will contain a BIO for the recently established connection and <b>accept</b> will now be a single BIO again which can be used to await further incoming connections. If no further connections will be accepted the <b>accept</b> can be freed using BIO_free().</p>
 
@@ -118,48 +118,48 @@
 
 <p>This example accepts two connections on port 4444, sends messages down each and finally closes both down.</p>
 
-<pre><code> BIO *abio, *cbio, *cbio2;
+<pre><code>BIO *abio, *cbio, *cbio2;
 
- /* First call to BIO_accept() sets up accept BIO */
- abio = BIO_new_accept(&quot;4444&quot;);
- if (BIO_do_accept(abio) &lt;= 0) {
-     fprintf(stderr, &quot;Error setting up accept\n&quot;);
-     ERR_print_errors_fp(stderr);
-     exit(1);
- }
+/* First call to BIO_accept() sets up accept BIO */
+abio = BIO_new_accept(&quot;4444&quot;);
+if (BIO_do_accept(abio) &lt;= 0) {
+    fprintf(stderr, &quot;Error setting up accept\n&quot;);
+    ERR_print_errors_fp(stderr);
+    exit(1);
+}
 
- /* Wait for incoming connection */
- if (BIO_do_accept(abio) &lt;= 0) {
-     fprintf(stderr, &quot;Error accepting connection\n&quot;);
-     ERR_print_errors_fp(stderr);
-     exit(1);
- }
- fprintf(stderr, &quot;Connection 1 established\n&quot;);
+/* Wait for incoming connection */
+if (BIO_do_accept(abio) &lt;= 0) {
+    fprintf(stderr, &quot;Error accepting connection\n&quot;);
+    ERR_print_errors_fp(stderr);
+    exit(1);
+}
+fprintf(stderr, &quot;Connection 1 established\n&quot;);
 
- /* Retrieve BIO for connection */
- cbio = BIO_pop(abio);
- BIO_puts(cbio, &quot;Connection 1: Sending out Data on initial connection\n&quot;);
- fprintf(stderr, &quot;Sent out data on connection 1\n&quot;);
+/* Retrieve BIO for connection */
+cbio = BIO_pop(abio);
+BIO_puts(cbio, &quot;Connection 1: Sending out Data on initial connection\n&quot;);
+fprintf(stderr, &quot;Sent out data on connection 1\n&quot;);
 
- /* Wait for another connection */
- if (BIO_do_accept(abio) &lt;= 0) {
-     fprintf(stderr, &quot;Error accepting connection\n&quot;);
-     ERR_print_errors_fp(stderr);
-     exit(1);
- }
- fprintf(stderr, &quot;Connection 2 established\n&quot;);
+/* Wait for another connection */
+if (BIO_do_accept(abio) &lt;= 0) {
+    fprintf(stderr, &quot;Error accepting connection\n&quot;);
+    ERR_print_errors_fp(stderr);
+    exit(1);
+}
+fprintf(stderr, &quot;Connection 2 established\n&quot;);
 
- /* Close accept BIO to refuse further connections */
- cbio2 = BIO_pop(abio);
- BIO_free(abio);
- BIO_puts(cbio2, &quot;Connection 2: Sending out Data on second\n&quot;);
- fprintf(stderr, &quot;Sent out data on connection 2\n&quot;);
+/* Close accept BIO to refuse further connections */
+cbio2 = BIO_pop(abio);
+BIO_free(abio);
+BIO_puts(cbio2, &quot;Connection 2: Sending out Data on second\n&quot;);
+fprintf(stderr, &quot;Sent out data on connection 2\n&quot;);
 
- BIO_puts(cbio, &quot;Connection 1: Second connection established\n&quot;);
+BIO_puts(cbio, &quot;Connection 1: Second connection established\n&quot;);
 
- /* Close the two established connections */
- BIO_free(cbio);
- BIO_free(cbio2);</code></pre>
+/* Close the two established connections */
+BIO_free(cbio);
+BIO_free(cbio2);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

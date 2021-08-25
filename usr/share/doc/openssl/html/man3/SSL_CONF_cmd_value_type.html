@@ -32,10 +32,10 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ssl.h&gt;
+<pre><code>#include &lt;openssl/ssl.h&gt;
 
- int SSL_CONF_cmd(SSL_CONF_CTX *cctx, const char *cmd, const char *value);
- int SSL_CONF_cmd_value_type(SSL_CONF_CTX *cctx, const char *cmd);</code></pre>
+int SSL_CONF_cmd(SSL_CONF_CTX *cctx, const char *cmd, const char *value);
+int SSL_CONF_cmd_value_type(SSL_CONF_CTX *cctx, const char *cmd);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -455,13 +455,13 @@
 
 <p>The order of operations is significant. This can be used to set either defaults or values which cannot be overridden. For example if an application calls:</p>
 
-<pre><code> SSL_CONF_cmd(ctx, &quot;Protocol&quot;, &quot;-SSLv3&quot;);
- SSL_CONF_cmd(ctx, userparam, uservalue);</code></pre>
+<pre><code>SSL_CONF_cmd(ctx, &quot;Protocol&quot;, &quot;-SSLv3&quot;);
+SSL_CONF_cmd(ctx, userparam, uservalue);</code></pre>
 
 <p>it will disable SSLv3 support by default but the user can override it. If however the call sequence is:</p>
 
-<pre><code> SSL_CONF_cmd(ctx, userparam, uservalue);
- SSL_CONF_cmd(ctx, &quot;Protocol&quot;, &quot;-SSLv3&quot;);</code></pre>
+<pre><code>SSL_CONF_cmd(ctx, userparam, uservalue);
+SSL_CONF_cmd(ctx, &quot;Protocol&quot;, &quot;-SSLv3&quot;);</code></pre>
 
 <p>SSLv3 is <b>always</b> disabled and attempt to override this by the user are ignored.</p>
 
@@ -489,42 +489,42 @@
 
 <p>Set supported signature algorithms:</p>
 
-<pre><code> SSL_CONF_cmd(ctx, &quot;SignatureAlgorithms&quot;, &quot;ECDSA+SHA256:RSA+SHA256:DSA+SHA256&quot;);</code></pre>
+<pre><code>SSL_CONF_cmd(ctx, &quot;SignatureAlgorithms&quot;, &quot;ECDSA+SHA256:RSA+SHA256:DSA+SHA256&quot;);</code></pre>
 
 <p>There are various ways to select the supported protocols.</p>
 
 <p>This set the minimum protocol version to TLSv1, and so disables SSLv3. This is the recommended way to disable protocols.</p>
 
-<pre><code> SSL_CONF_cmd(ctx, &quot;MinProtocol&quot;, &quot;TLSv1&quot;);</code></pre>
+<pre><code>SSL_CONF_cmd(ctx, &quot;MinProtocol&quot;, &quot;TLSv1&quot;);</code></pre>
 
 <p>The following also disables SSLv3:</p>
 
-<pre><code> SSL_CONF_cmd(ctx, &quot;Protocol&quot;, &quot;-SSLv3&quot;);</code></pre>
+<pre><code>SSL_CONF_cmd(ctx, &quot;Protocol&quot;, &quot;-SSLv3&quot;);</code></pre>
 
 <p>The following will first enable all protocols, and then disable SSLv3. If no protocol versions were disabled before this has the same effect as &quot;-SSLv3&quot;, but if some versions were disables this will re-enable them before disabling SSLv3.</p>
 
-<pre><code> SSL_CONF_cmd(ctx, &quot;Protocol&quot;, &quot;ALL,-SSLv3&quot;);</code></pre>
+<pre><code>SSL_CONF_cmd(ctx, &quot;Protocol&quot;, &quot;ALL,-SSLv3&quot;);</code></pre>
 
 <p>Only enable TLSv1.2:</p>
 
-<pre><code> SSL_CONF_cmd(ctx, &quot;MinProtocol&quot;, &quot;TLSv1.2&quot;);
- SSL_CONF_cmd(ctx, &quot;MaxProtocol&quot;, &quot;TLSv1.2&quot;);</code></pre>
+<pre><code>SSL_CONF_cmd(ctx, &quot;MinProtocol&quot;, &quot;TLSv1.2&quot;);
+SSL_CONF_cmd(ctx, &quot;MaxProtocol&quot;, &quot;TLSv1.2&quot;);</code></pre>
 
 <p>This also only enables TLSv1.2:</p>
 
-<pre><code> SSL_CONF_cmd(ctx, &quot;Protocol&quot;, &quot;-ALL,TLSv1.2&quot;);</code></pre>
+<pre><code>SSL_CONF_cmd(ctx, &quot;Protocol&quot;, &quot;-ALL,TLSv1.2&quot;);</code></pre>
 
 <p>Disable TLS session tickets:</p>
 
-<pre><code> SSL_CONF_cmd(ctx, &quot;Options&quot;, &quot;-SessionTicket&quot;);</code></pre>
+<pre><code>SSL_CONF_cmd(ctx, &quot;Options&quot;, &quot;-SessionTicket&quot;);</code></pre>
 
 <p>Enable compression:</p>
 
-<pre><code> SSL_CONF_cmd(ctx, &quot;Options&quot;, &quot;Compression&quot;);</code></pre>
+<pre><code>SSL_CONF_cmd(ctx, &quot;Options&quot;, &quot;Compression&quot;);</code></pre>
 
 <p>Set supported curves to P-256, P-384:</p>
 
-<pre><code> SSL_CONF_cmd(ctx, &quot;Curves&quot;, &quot;P-256:P-384&quot;);</code></pre>
+<pre><code>SSL_CONF_cmd(ctx, &quot;Curves&quot;, &quot;P-256:P-384&quot;);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

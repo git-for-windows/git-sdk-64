@@ -29,11 +29,11 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/bio.h&gt;
+<pre><code>#include &lt;openssl/bio.h&gt;
 
- BIO *BIO_push(BIO *b, BIO *append);
- BIO *BIO_pop(BIO *b);
- void BIO_set_next(BIO *b, BIO *next);</code></pre>
+BIO *BIO_push(BIO *b, BIO *append);
+BIO *BIO_pop(BIO *b);
+void BIO_set_next(BIO *b, BIO *next);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -61,18 +61,18 @@
 
 <p>If the call:</p>
 
-<pre><code> BIO_push(b64, f);</code></pre>
+<pre><code>BIO_push(b64, f);</code></pre>
 
 <p>is made then the new chain will be <b>b64-f</b>. After making the calls</p>
 
-<pre><code> BIO_push(md2, b64);
- BIO_push(md1, md2);</code></pre>
+<pre><code>BIO_push(md2, b64);
+BIO_push(md1, md2);</code></pre>
 
 <p>the new chain is <b>md1-md2-b64-f</b>. Data written to <b>md1</b> will be digested by <b>md1</b> and <b>md2</b>, <b>base64</b> encoded and written to <b>f</b>.</p>
 
-<p>It should be noted that reading causes data to pass in the reverse direction, that is data is read from <b>f</b>, base64 <b>decoded</b> and digested by <b>md1</b> and <b>md2</b>. If the call:</p>
+<p>It should be noted that reading causes data to pass in the reverse direction, that is data is read from <b>f</b>, <b>base64</b> decoded and digested by <b>md2</b> and <b>md1</b>. If the call:</p>
 
-<pre><code> BIO_pop(md2);</code></pre>
+<pre><code>BIO_pop(md2);</code></pre>
 
 <p>The call will return <b>b64</b> and the new chain will be <b>md1-b64-f</b> data can be written to <b>md1</b> as before.</p>
 
@@ -86,7 +86,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

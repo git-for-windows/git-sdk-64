@@ -28,10 +28,10 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/bio.h&gt;
- #include &lt;openssl/evp.h&gt;
+<pre><code>#include &lt;openssl/bio.h&gt;
+#include &lt;openssl/evp.h&gt;
 
- const BIO_METHOD *BIO_f_base64(void);</code></pre>
+const BIO_METHOD *BIO_f_base64(void);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -55,32 +55,32 @@
 
 <p>Base64 encode the string &quot;Hello World\n&quot; and write the result to standard output:</p>
 
-<pre><code> BIO *bio, *b64;
- char message[] = &quot;Hello World \n&quot;;
+<pre><code>BIO *bio, *b64;
+char message[] = &quot;Hello World \n&quot;;
 
- b64 = BIO_new(BIO_f_base64());
- bio = BIO_new_fp(stdout, BIO_NOCLOSE);
- BIO_push(b64, bio);
- BIO_write(b64, message, strlen(message));
- BIO_flush(b64);
+b64 = BIO_new(BIO_f_base64());
+bio = BIO_new_fp(stdout, BIO_NOCLOSE);
+BIO_push(b64, bio);
+BIO_write(b64, message, strlen(message));
+BIO_flush(b64);
 
- BIO_free_all(b64);</code></pre>
+BIO_free_all(b64);</code></pre>
 
 <p>Read Base64 encoded data from standard input and write the decoded data to standard output:</p>
 
-<pre><code> BIO *bio, *b64, *bio_out;
- char inbuf[512];
- int inlen;
+<pre><code>BIO *bio, *b64, *bio_out;
+char inbuf[512];
+int inlen;
 
- b64 = BIO_new(BIO_f_base64());
- bio = BIO_new_fp(stdin, BIO_NOCLOSE);
- bio_out = BIO_new_fp(stdout, BIO_NOCLOSE);
- BIO_push(b64, bio);
- while ((inlen = BIO_read(b64, inbuf, 512)) &gt; 0)
-     BIO_write(bio_out, inbuf, inlen);
+b64 = BIO_new(BIO_f_base64());
+bio = BIO_new_fp(stdin, BIO_NOCLOSE);
+bio_out = BIO_new_fp(stdout, BIO_NOCLOSE);
+BIO_push(b64, bio);
+while ((inlen = BIO_read(b64, inbuf, 512)) &gt; 0)
+    BIO_write(bio_out, inbuf, inlen);
 
- BIO_flush(bio_out);
- BIO_free_all(b64);</code></pre>
+BIO_flush(bio_out);
+BIO_free_all(b64);</code></pre>
 
 <h1 id="BUGS">BUGS</h1>
 

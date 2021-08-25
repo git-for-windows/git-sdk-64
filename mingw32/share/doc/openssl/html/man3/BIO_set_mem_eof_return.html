@@ -28,17 +28,17 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/bio.h&gt;
+<pre><code>#include &lt;openssl/bio.h&gt;
 
- const BIO_METHOD *BIO_s_mem(void);
- const BIO_METHOD *BIO_s_secmem(void);
+const BIO_METHOD *BIO_s_mem(void);
+const BIO_METHOD *BIO_s_secmem(void);
 
- BIO_set_mem_eof_return(BIO *b, int v)
- long BIO_get_mem_data(BIO *b, char **pp)
- BIO_set_mem_buf(BIO *b, BUF_MEM *bm, int c)
- BIO_get_mem_ptr(BIO *b, BUF_MEM **pp)
+BIO_set_mem_eof_return(BIO *b, int v)
+long BIO_get_mem_data(BIO *b, char **pp)
+BIO_set_mem_buf(BIO *b, BUF_MEM *bm, int c)
+BIO_get_mem_ptr(BIO *b, BUF_MEM **pp)
 
- BIO *BIO_new_mem_buf(const void *buf, int len);</code></pre>
+BIO *BIO_new_mem_buf(const void *buf, int len);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -106,22 +106,22 @@
 
 <p>Create a memory BIO and write some data to it:</p>
 
-<pre><code> BIO *mem = BIO_new(BIO_s_mem());
+<pre><code>BIO *mem = BIO_new(BIO_s_mem());
 
- BIO_puts(mem, &quot;Hello World\n&quot;);</code></pre>
+BIO_puts(mem, &quot;Hello World\n&quot;);</code></pre>
 
 <p>Create a read only memory BIO:</p>
 
-<pre><code> char data[] = &quot;Hello World&quot;;
- BIO *mem = BIO_new_mem_buf(data, -1);</code></pre>
+<pre><code>char data[] = &quot;Hello World&quot;;
+BIO *mem = BIO_new_mem_buf(data, -1);</code></pre>
 
 <p>Extract the BUF_MEM structure from a memory BIO and then free up the BIO:</p>
 
-<pre><code> BUF_MEM *bptr;
+<pre><code>BUF_MEM *bptr;
 
- BIO_get_mem_ptr(mem, &amp;bptr);
- BIO_set_close(mem, BIO_NOCLOSE); /* So BIO_free() leaves BUF_MEM alone */
- BIO_free(mem);</code></pre>
+BIO_get_mem_ptr(mem, &amp;bptr);
+BIO_set_close(mem, BIO_NOCLOSE); /* So BIO_free() leaves BUF_MEM alone */
+BIO_free(mem);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

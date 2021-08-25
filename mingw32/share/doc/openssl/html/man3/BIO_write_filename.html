@@ -29,19 +29,19 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/bio.h&gt;
+<pre><code>#include &lt;openssl/bio.h&gt;
 
- const BIO_METHOD *BIO_s_file(void);
- BIO *BIO_new_file(const char *filename, const char *mode);
- BIO *BIO_new_fp(FILE *stream, int flags);
+const BIO_METHOD *BIO_s_file(void);
+BIO *BIO_new_file(const char *filename, const char *mode);
+BIO *BIO_new_fp(FILE *stream, int flags);
 
- BIO_set_fp(BIO *b, FILE *fp, int flags);
- BIO_get_fp(BIO *b, FILE **fpp);
+BIO_set_fp(BIO *b, FILE *fp, int flags);
+BIO_get_fp(BIO *b, FILE **fpp);
 
- int BIO_read_filename(BIO *b, char *name)
- int BIO_write_filename(BIO *b, char *name)
- int BIO_append_filename(BIO *b, char *name)
- int BIO_rw_filename(BIO *b, char *name)</code></pre>
+int BIO_read_filename(BIO *b, char *name)
+int BIO_write_filename(BIO *b, char *name)
+int BIO_append_filename(BIO *b, char *name)
+int BIO_rw_filename(BIO *b, char *name)</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -99,43 +99,43 @@
 
 <p>File BIO &quot;hello world&quot;:</p>
 
-<pre><code> BIO *bio_out;
+<pre><code>BIO *bio_out;
 
- bio_out = BIO_new_fp(stdout, BIO_NOCLOSE);
- BIO_printf(bio_out, &quot;Hello World\n&quot;);</code></pre>
+bio_out = BIO_new_fp(stdout, BIO_NOCLOSE);
+BIO_printf(bio_out, &quot;Hello World\n&quot;);</code></pre>
 
 <p>Alternative technique:</p>
 
-<pre><code> BIO *bio_out;
+<pre><code>BIO *bio_out;
 
- bio_out = BIO_new(BIO_s_file());
- if (bio_out == NULL)
-     /* Error */
- if (!BIO_set_fp(bio_out, stdout, BIO_NOCLOSE))
-     /* Error */
- BIO_printf(bio_out, &quot;Hello World\n&quot;);</code></pre>
+bio_out = BIO_new(BIO_s_file());
+if (bio_out == NULL)
+    /* Error */
+if (!BIO_set_fp(bio_out, stdout, BIO_NOCLOSE))
+    /* Error */
+BIO_printf(bio_out, &quot;Hello World\n&quot;);</code></pre>
 
 <p>Write to a file:</p>
 
-<pre><code> BIO *out;
+<pre><code>BIO *out;
 
- out = BIO_new_file(&quot;filename.txt&quot;, &quot;w&quot;);
- if (!out)
-     /* Error */
- BIO_printf(out, &quot;Hello World\n&quot;);
- BIO_free(out);</code></pre>
+out = BIO_new_file(&quot;filename.txt&quot;, &quot;w&quot;);
+if (!out)
+    /* Error */
+BIO_printf(out, &quot;Hello World\n&quot;);
+BIO_free(out);</code></pre>
 
 <p>Alternative technique:</p>
 
-<pre><code> BIO *out;
+<pre><code>BIO *out;
 
- out = BIO_new(BIO_s_file());
- if (out == NULL)
-     /* Error */
- if (!BIO_write_filename(out, &quot;filename.txt&quot;))
-     /* Error */
- BIO_printf(out, &quot;Hello World\n&quot;);
- BIO_free(out);</code></pre>
+out = BIO_new(BIO_s_file());
+if (out == NULL)
+    /* Error */
+if (!BIO_write_filename(out, &quot;filename.txt&quot;))
+    /* Error */
+BIO_printf(out, &quot;Hello World\n&quot;);
+BIO_free(out);</code></pre>
 
 <h1 id="BUGS">BUGS</h1>
 

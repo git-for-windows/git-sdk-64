@@ -28,14 +28,14 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/bio.h&gt;
+<pre><code>#include &lt;openssl/bio.h&gt;
 
- const BIO_METHOD *BIO_s_fd(void);
+const BIO_METHOD *BIO_s_fd(void);
 
- int BIO_set_fd(BIO *b, int fd, int c);
- int BIO_get_fd(BIO *b, int *c);
+int BIO_set_fd(BIO *b, int fd, int c);
+int BIO_get_fd(BIO *b, int *c);
 
- BIO *BIO_new_fd(int fd, int close_flag);</code></pre>
+BIO *BIO_new_fd(int fd, int close_flag);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -79,11 +79,11 @@
 
 <p>This is a file descriptor BIO version of &quot;Hello World&quot;:</p>
 
-<pre><code> BIO *out;
+<pre><code>BIO *out;
 
- out = BIO_new_fd(fileno(stdout), BIO_NOCLOSE);
- BIO_printf(out, &quot;Hello World\n&quot;);
- BIO_free(out);</code></pre>
+out = BIO_new_fd(fileno(stdout), BIO_NOCLOSE);
+BIO_printf(out, &quot;Hello World\n&quot;);
+BIO_free(out);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

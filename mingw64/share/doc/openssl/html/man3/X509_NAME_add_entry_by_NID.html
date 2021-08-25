@@ -29,20 +29,20 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/x509.h&gt;
+<pre><code>#include &lt;openssl/x509.h&gt;
 
- int X509_NAME_add_entry_by_txt(X509_NAME *name, const char *field, int type,
-                                const unsigned char *bytes, int len, int loc, int set);
+int X509_NAME_add_entry_by_txt(X509_NAME *name, const char *field, int type,
+                               const unsigned char *bytes, int len, int loc, int set);
 
- int X509_NAME_add_entry_by_OBJ(X509_NAME *name, const ASN1_OBJECT *obj, int type,
-                                const unsigned char *bytes, int len, int loc, int set);
+int X509_NAME_add_entry_by_OBJ(X509_NAME *name, const ASN1_OBJECT *obj, int type,
+                               const unsigned char *bytes, int len, int loc, int set);
 
- int X509_NAME_add_entry_by_NID(X509_NAME *name, int nid, int type,
-                                const unsigned char *bytes, int len, int loc, int set);
+int X509_NAME_add_entry_by_NID(X509_NAME *name, int nid, int type,
+                               const unsigned char *bytes, int len, int loc, int set);
 
- int X509_NAME_add_entry(X509_NAME *name, const X509_NAME_ENTRY *ne, int loc, int set);
+int X509_NAME_add_entry(X509_NAME *name, const X509_NAME_ENTRY *ne, int loc, int set);
 
- X509_NAME_ENTRY *X509_NAME_delete_entry(X509_NAME *name, int loc);</code></pre>
+X509_NAME_ENTRY *X509_NAME_delete_entry(X509_NAME *name, int loc);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -82,20 +82,20 @@
 
 <p>&quot;C=UK, O=Disorganized Organization, CN=Joe Bloggs&quot;</p>
 
-<pre><code> X509_NAME *nm;
+<pre><code>X509_NAME *nm;
 
- nm = X509_NAME_new();
- if (nm == NULL)
-     /* Some error */
- if (!X509_NAME_add_entry_by_txt(nm, &quot;C&quot;, MBSTRING_ASC,
-                                 &quot;UK&quot;, -1, -1, 0))
-     /* Error */
- if (!X509_NAME_add_entry_by_txt(nm, &quot;O&quot;, MBSTRING_ASC,
-                                 &quot;Disorganized Organization&quot;, -1, -1, 0))
-     /* Error */
- if (!X509_NAME_add_entry_by_txt(nm, &quot;CN&quot;, MBSTRING_ASC,
-                                 &quot;Joe Bloggs&quot;, -1, -1, 0))
-     /* Error */</code></pre>
+nm = X509_NAME_new();
+if (nm == NULL)
+    /* Some error */
+if (!X509_NAME_add_entry_by_txt(nm, &quot;C&quot;, MBSTRING_ASC,
+                                &quot;UK&quot;, -1, -1, 0))
+    /* Error */
+if (!X509_NAME_add_entry_by_txt(nm, &quot;O&quot;, MBSTRING_ASC,
+                                &quot;Disorganized Organization&quot;, -1, -1, 0))
+    /* Error */
+if (!X509_NAME_add_entry_by_txt(nm, &quot;CN&quot;, MBSTRING_ASC,
+                                &quot;Joe Bloggs&quot;, -1, -1, 0))
+    /* Error */</code></pre>
 
 <h1 id="BUGS">BUGS</h1>
 

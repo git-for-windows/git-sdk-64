@@ -34,30 +34,30 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/store.h&gt;
+<pre><code>#include &lt;openssl/store.h&gt;
 
- typedef struct ossl_store_search_st OSSL_STORE_SEARCH;
+typedef struct ossl_store_search_st OSSL_STORE_SEARCH;
 
- OSSL_STORE_SEARCH *OSSL_STORE_SEARCH_by_name(X509_NAME *name);
- OSSL_STORE_SEARCH *OSSL_STORE_SEARCH_by_issuer_serial(X509_NAME *name,
-                                                       const ASN1_INTEGER
-                                                       *serial);
- OSSL_STORE_SEARCH *OSSL_STORE_SEARCH_by_key_fingerprint(const EVP_MD *digest,
-                                                         const unsigned char
-                                                         *bytes, int len);
- OSSL_STORE_SEARCH *OSSL_STORE_SEARCH_by_alias(const char *alias);
+OSSL_STORE_SEARCH *OSSL_STORE_SEARCH_by_name(X509_NAME *name);
+OSSL_STORE_SEARCH *OSSL_STORE_SEARCH_by_issuer_serial(X509_NAME *name,
+                                                      const ASN1_INTEGER
+                                                      *serial);
+OSSL_STORE_SEARCH *OSSL_STORE_SEARCH_by_key_fingerprint(const EVP_MD *digest,
+                                                        const unsigned char
+                                                        *bytes, int len);
+OSSL_STORE_SEARCH *OSSL_STORE_SEARCH_by_alias(const char *alias);
 
- void OSSL_STORE_SEARCH_free(OSSL_STORE_SEARCH *search);
+void OSSL_STORE_SEARCH_free(OSSL_STORE_SEARCH *search);
 
- int OSSL_STORE_SEARCH_get_type(const OSSL_STORE_SEARCH *criterion);
- X509_NAME *OSSL_STORE_SEARCH_get0_name(OSSL_STORE_SEARCH *criterion);
- const ASN1_INTEGER *OSSL_STORE_SEARCH_get0_serial(const OSSL_STORE_SEARCH
-                                                   *criterion);
- const unsigned char *OSSL_STORE_SEARCH_get0_bytes(const OSSL_STORE_SEARCH
-                                                   *criterion, size_t *length);
- const char *OSSL_STORE_SEARCH_get0_string(const OSSL_STORE_SEARCH *criterion);
- const EVP_MD *OSSL_STORE_SEARCH_get0_digest(const OSSL_STORE_SEARCH
-                                             *criterion);</code></pre>
+int OSSL_STORE_SEARCH_get_type(const OSSL_STORE_SEARCH *criterion);
+X509_NAME *OSSL_STORE_SEARCH_get0_name(OSSL_STORE_SEARCH *criterion);
+const ASN1_INTEGER *OSSL_STORE_SEARCH_get0_serial(const OSSL_STORE_SEARCH
+                                                  *criterion);
+const unsigned char *OSSL_STORE_SEARCH_get0_bytes(const OSSL_STORE_SEARCH
+                                                  *criterion, size_t *length);
+const char *OSSL_STORE_SEARCH_get0_string(const OSSL_STORE_SEARCH *criterion);
+const EVP_MD *OSSL_STORE_SEARCH_get0_digest(const OSSL_STORE_SEARCH
+                                            *criterion);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 

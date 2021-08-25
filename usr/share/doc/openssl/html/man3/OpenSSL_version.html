@@ -26,37 +26,37 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/opensslv.h&gt;
- #define OPENSSL_VERSION_NUMBER 0xnnnnnnnnnL
- #define OPENSSL_VERSION_TEXT &quot;OpenSSL x.y.z xx XXX xxxx&quot;
+<pre><code>#include &lt;openssl/opensslv.h&gt;
+#define OPENSSL_VERSION_NUMBER 0xnnnnnnnnnL
+#define OPENSSL_VERSION_TEXT &quot;OpenSSL x.y.z xx XXX xxxx&quot;
 
- #include &lt;openssl/crypto.h&gt;
+#include &lt;openssl/crypto.h&gt;
 
- unsigned long OpenSSL_version_num();
- const char *OpenSSL_version(int t);</code></pre>
+unsigned long OpenSSL_version_num();
+const char *OpenSSL_version(int t);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>OPENSSL_VERSION_NUMBER is a numeric release version identifier:</p>
 
-<pre><code> MNNFFPPS: major minor fix patch status</code></pre>
+<pre><code>MNNFFPPS: major minor fix patch status</code></pre>
 
 <p>The status nibble has one of the values 0 for development, 1 to e for betas 1 to 14, and f for release.</p>
 
 <p>for example</p>
 
-<pre><code> 0x000906000 == 0.9.6 dev
- 0x000906023 == 0.9.6b beta 3
- 0x00090605f == 0.9.6e release</code></pre>
+<pre><code>0x000906000 == 0.9.6 dev
+0x000906023 == 0.9.6b beta 3
+0x00090605f == 0.9.6e release</code></pre>
 
 <p>Versions prior to 0.9.3 have identifiers &lt; 0x0930. Versions between 0.9.3 and 0.9.5 had a version identifier with this interpretation:</p>
 
-<pre><code> MMNNFFRBB major minor fix final beta/patch</code></pre>
+<pre><code>MMNNFFRBB major minor fix final beta/patch</code></pre>
 
 <p>for example</p>
 
-<pre><code> 0x000904100 == 0.9.4 release
- 0x000905000 == 0.9.5 dev</code></pre>
+<pre><code>0x000904100 == 0.9.4 release
+0x000905000 == 0.9.5 dev</code></pre>
 
 <p>Version 0.9.5a had an interim interpretation that is like the current one, except the patch level got the highest bit set, to keep continuity. The number was therefore 0x0090581f.</p>
 

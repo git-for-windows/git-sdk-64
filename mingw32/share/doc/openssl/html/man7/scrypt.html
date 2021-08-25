@@ -37,7 +37,7 @@
 
 <p>A context for scrypt can be obtained by calling:</p>
 
-<pre><code> EVP_PKEY_CTX *pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_SCRYPT, NULL);</code></pre>
+<pre><code>EVP_PKEY_CTX *pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_SCRYPT, NULL);</code></pre>
 
 <p>The output length of an scrypt key derivation is specified via the length parameter to the <a href="../man3/EVP_PKEY_derive.html">EVP_PKEY_derive(3)</a> function.</p>
 
@@ -45,50 +45,50 @@
 
 <p>This example derives a 64-byte long test vector using scrypt using the password &quot;password&quot;, salt &quot;NaCl&quot; and N = 1024, r = 8, p = 16.</p>
 
-<pre><code> EVP_PKEY_CTX *pctx;
- unsigned char out[64];
+<pre><code>EVP_PKEY_CTX *pctx;
+unsigned char out[64];
 
- size_t outlen = sizeof(out);
- pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_SCRYPT, NULL);
+size_t outlen = sizeof(out);
+pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_SCRYPT, NULL);
 
- if (EVP_PKEY_derive_init(pctx) &lt;= 0) {
-     error(&quot;EVP_PKEY_derive_init&quot;);
- }
- if (EVP_PKEY_CTX_set1_pbe_pass(pctx, &quot;password&quot;, 8) &lt;= 0) {
-     error(&quot;EVP_PKEY_CTX_set1_pbe_pass&quot;);
- }
- if (EVP_PKEY_CTX_set1_scrypt_salt(pctx, &quot;NaCl&quot;, 4) &lt;= 0) {
-     error(&quot;EVP_PKEY_CTX_set1_scrypt_salt&quot;);
- }
- if (EVP_PKEY_CTX_set_scrypt_N(pctx, 1024) &lt;= 0) {
-     error(&quot;EVP_PKEY_CTX_set_scrypt_N&quot;);
- }
- if (EVP_PKEY_CTX_set_scrypt_r(pctx, 8) &lt;= 0) {
-     error(&quot;EVP_PKEY_CTX_set_scrypt_r&quot;);
- }
- if (EVP_PKEY_CTX_set_scrypt_p(pctx, 16) &lt;= 0) {
-     error(&quot;EVP_PKEY_CTX_set_scrypt_p&quot;);
- }
- if (EVP_PKEY_derive(pctx, out, &amp;outlen) &lt;= 0) {
-     error(&quot;EVP_PKEY_derive&quot;);
- }
+if (EVP_PKEY_derive_init(pctx) &lt;= 0) {
+    error(&quot;EVP_PKEY_derive_init&quot;);
+}
+if (EVP_PKEY_CTX_set1_pbe_pass(pctx, &quot;password&quot;, 8) &lt;= 0) {
+    error(&quot;EVP_PKEY_CTX_set1_pbe_pass&quot;);
+}
+if (EVP_PKEY_CTX_set1_scrypt_salt(pctx, &quot;NaCl&quot;, 4) &lt;= 0) {
+    error(&quot;EVP_PKEY_CTX_set1_scrypt_salt&quot;);
+}
+if (EVP_PKEY_CTX_set_scrypt_N(pctx, 1024) &lt;= 0) {
+    error(&quot;EVP_PKEY_CTX_set_scrypt_N&quot;);
+}
+if (EVP_PKEY_CTX_set_scrypt_r(pctx, 8) &lt;= 0) {
+    error(&quot;EVP_PKEY_CTX_set_scrypt_r&quot;);
+}
+if (EVP_PKEY_CTX_set_scrypt_p(pctx, 16) &lt;= 0) {
+    error(&quot;EVP_PKEY_CTX_set_scrypt_p&quot;);
+}
+if (EVP_PKEY_derive(pctx, out, &amp;outlen) &lt;= 0) {
+    error(&quot;EVP_PKEY_derive&quot;);
+}
 
- {
-     const unsigned char expected[sizeof(out)] = {
-         0xfd, 0xba, 0xbe, 0x1c, 0x9d, 0x34, 0x72, 0x00,
-         0x78, 0x56, 0xe7, 0x19, 0x0d, 0x01, 0xe9, 0xfe,
-         0x7c, 0x6a, 0xd7, 0xcb, 0xc8, 0x23, 0x78, 0x30,
-         0xe7, 0x73, 0x76, 0x63, 0x4b, 0x37, 0x31, 0x62,
-         0x2e, 0xaf, 0x30, 0xd9, 0x2e, 0x22, 0xa3, 0x88,
-         0x6f, 0xf1, 0x09, 0x27, 0x9d, 0x98, 0x30, 0xda,
-         0xc7, 0x27, 0xaf, 0xb9, 0x4a, 0x83, 0xee, 0x6d,
-         0x83, 0x60, 0xcb, 0xdf, 0xa2, 0xcc, 0x06, 0x40
-     };
+{
+    const unsigned char expected[sizeof(out)] = {
+        0xfd, 0xba, 0xbe, 0x1c, 0x9d, 0x34, 0x72, 0x00,
+        0x78, 0x56, 0xe7, 0x19, 0x0d, 0x01, 0xe9, 0xfe,
+        0x7c, 0x6a, 0xd7, 0xcb, 0xc8, 0x23, 0x78, 0x30,
+        0xe7, 0x73, 0x76, 0x63, 0x4b, 0x37, 0x31, 0x62,
+        0x2e, 0xaf, 0x30, 0xd9, 0x2e, 0x22, 0xa3, 0x88,
+        0x6f, 0xf1, 0x09, 0x27, 0x9d, 0x98, 0x30, 0xda,
+        0xc7, 0x27, 0xaf, 0xb9, 0x4a, 0x83, 0xee, 0x6d,
+        0x83, 0x60, 0xcb, 0xdf, 0xa2, 0xcc, 0x06, 0x40
+    };
 
-     assert(!memcmp(out, expected, sizeof(out)));
- }
+    assert(!memcmp(out, expected, sizeof(out)));
+}
 
- EVP_PKEY_CTX_free(pctx);</code></pre>
+EVP_PKEY_CTX_free(pctx);</code></pre>
 
 <h1 id="CONFORMING-TO">CONFORMING TO</h1>
 

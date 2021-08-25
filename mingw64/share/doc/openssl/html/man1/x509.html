@@ -700,75 +700,75 @@
 
 <p>Display the contents of a certificate:</p>
 
-<pre><code> openssl x509 -in cert.pem -noout -text</code></pre>
+<pre><code>openssl x509 -in cert.pem -noout -text</code></pre>
 
 <p>Display the &quot;Subject Alternative Name&quot; extension of a certificate:</p>
 
-<pre><code> openssl x509 -in cert.pem -noout -ext subjectAltName</code></pre>
+<pre><code>openssl x509 -in cert.pem -noout -ext subjectAltName</code></pre>
 
 <p>Display more extensions of a certificate:</p>
 
-<pre><code> openssl x509 -in cert.pem -noout -ext subjectAltName,nsCertType</code></pre>
+<pre><code>openssl x509 -in cert.pem -noout -ext subjectAltName,nsCertType</code></pre>
 
 <p>Display the certificate serial number:</p>
 
-<pre><code> openssl x509 -in cert.pem -noout -serial</code></pre>
+<pre><code>openssl x509 -in cert.pem -noout -serial</code></pre>
 
 <p>Display the certificate subject name:</p>
 
-<pre><code> openssl x509 -in cert.pem -noout -subject</code></pre>
+<pre><code>openssl x509 -in cert.pem -noout -subject</code></pre>
 
 <p>Display the certificate subject name in RFC2253 form:</p>
 
-<pre><code> openssl x509 -in cert.pem -noout -subject -nameopt RFC2253</code></pre>
+<pre><code>openssl x509 -in cert.pem -noout -subject -nameopt RFC2253</code></pre>
 
 <p>Display the certificate subject name in oneline form on a terminal supporting UTF8:</p>
 
-<pre><code> openssl x509 -in cert.pem -noout -subject -nameopt oneline,-esc_msb</code></pre>
+<pre><code>openssl x509 -in cert.pem -noout -subject -nameopt oneline,-esc_msb</code></pre>
 
 <p>Display the certificate SHA1 fingerprint:</p>
 
-<pre><code> openssl x509 -sha1 -in cert.pem -noout -fingerprint</code></pre>
+<pre><code>openssl x509 -sha1 -in cert.pem -noout -fingerprint</code></pre>
 
 <p>Convert a certificate from PEM to DER format:</p>
 
-<pre><code> openssl x509 -in cert.pem -inform PEM -out cert.der -outform DER</code></pre>
+<pre><code>openssl x509 -in cert.pem -inform PEM -out cert.der -outform DER</code></pre>
 
 <p>Convert a certificate to a certificate request:</p>
 
-<pre><code> openssl x509 -x509toreq -in cert.pem -out req.pem -signkey key.pem</code></pre>
+<pre><code>openssl x509 -x509toreq -in cert.pem -out req.pem -signkey key.pem</code></pre>
 
 <p>Convert a certificate request into a self signed certificate using extensions for a CA:</p>
 
-<pre><code> openssl x509 -req -in careq.pem -extfile openssl.cnf -extensions v3_ca \
-        -signkey key.pem -out cacert.pem</code></pre>
+<pre><code>openssl x509 -req -in careq.pem -extfile openssl.cnf -extensions v3_ca \
+       -signkey key.pem -out cacert.pem</code></pre>
 
 <p>Sign a certificate request using the CA certificate above and add user certificate extensions:</p>
 
-<pre><code> openssl x509 -req -in req.pem -extfile openssl.cnf -extensions v3_usr \
-        -CA cacert.pem -CAkey key.pem -CAcreateserial</code></pre>
+<pre><code>openssl x509 -req -in req.pem -extfile openssl.cnf -extensions v3_usr \
+       -CA cacert.pem -CAkey key.pem -CAcreateserial</code></pre>
 
 <p>Set a certificate to be trusted for SSL client use and change set its alias to &quot;Steve&#39;s Class 1 CA&quot;</p>
 
-<pre><code> openssl x509 -in cert.pem -addtrust clientAuth \
-        -setalias &quot;Steve&#39;s Class 1 CA&quot; -out trust.pem</code></pre>
+<pre><code>openssl x509 -in cert.pem -addtrust clientAuth \
+       -setalias &quot;Steve&#39;s Class 1 CA&quot; -out trust.pem</code></pre>
 
 <h1 id="NOTES">NOTES</h1>
 
 <p>The PEM format uses the header and footer lines:</p>
 
-<pre><code> -----BEGIN CERTIFICATE-----
- -----END CERTIFICATE-----</code></pre>
+<pre><code>-----BEGIN CERTIFICATE-----
+-----END CERTIFICATE-----</code></pre>
 
 <p>it will also handle files containing:</p>
 
-<pre><code> -----BEGIN X509 CERTIFICATE-----
- -----END X509 CERTIFICATE-----</code></pre>
+<pre><code>-----BEGIN X509 CERTIFICATE-----
+-----END X509 CERTIFICATE-----</code></pre>
 
 <p>Trusted certificates have the lines</p>
 
-<pre><code> -----BEGIN TRUSTED CERTIFICATE-----
- -----END TRUSTED CERTIFICATE-----</code></pre>
+<pre><code>-----BEGIN TRUSTED CERTIFICATE-----
+-----END TRUSTED CERTIFICATE-----</code></pre>
 
 <p>The conversion to UTF8 format used with the name options assumes that T61Strings use the ISO8859-1 character set. This is wrong but Netscape and MSIE do this as do many certificates. So although this is incorrect it is more likely to display the majority of certificates correctly.</p>
 

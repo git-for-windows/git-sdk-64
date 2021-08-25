@@ -29,51 +29,51 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/crypto.h&gt;
+<pre><code>#include &lt;openssl/crypto.h&gt;
 
- int CRYPTO_get_ex_new_index(int class_index,
-                             long argl, void *argp,
-                             CRYPTO_EX_new *new_func,
-                             CRYPTO_EX_dup *dup_func,
-                             CRYPTO_EX_free *free_func);
+int CRYPTO_get_ex_new_index(int class_index,
+                            long argl, void *argp,
+                            CRYPTO_EX_new *new_func,
+                            CRYPTO_EX_dup *dup_func,
+                            CRYPTO_EX_free *free_func);
 
- typedef void CRYPTO_EX_new(void *parent, void *ptr, CRYPTO_EX_DATA *ad,
+typedef void CRYPTO_EX_new(void *parent, void *ptr, CRYPTO_EX_DATA *ad,
+                           int idx, long argl, void *argp);
+typedef void CRYPTO_EX_free(void *parent, void *ptr, CRYPTO_EX_DATA *ad,
                             int idx, long argl, void *argp);
- typedef void CRYPTO_EX_free(void *parent, void *ptr, CRYPTO_EX_DATA *ad,
-                             int idx, long argl, void *argp);
- typedef int CRYPTO_EX_dup(CRYPTO_EX_DATA *to, const CRYPTO_EX_DATA *from,
-                           void *from_d, int idx, long argl, void *argp);
+typedef int CRYPTO_EX_dup(CRYPTO_EX_DATA *to, const CRYPTO_EX_DATA *from,
+                          void *from_d, int idx, long argl, void *argp);
 
- int CRYPTO_new_ex_data(int class_index, void *obj, CRYPTO_EX_DATA *ad)
+int CRYPTO_new_ex_data(int class_index, void *obj, CRYPTO_EX_DATA *ad)
 
- int CRYPTO_set_ex_data(CRYPTO_EX_DATA *r, int idx, void *arg);
+int CRYPTO_set_ex_data(CRYPTO_EX_DATA *r, int idx, void *arg);
 
- void *CRYPTO_get_ex_data(CRYPTO_EX_DATA *r, int idx);
+void *CRYPTO_get_ex_data(CRYPTO_EX_DATA *r, int idx);
 
- void CRYPTO_free_ex_data(int class_index, void *obj, CRYPTO_EX_DATA *r);
+void CRYPTO_free_ex_data(int class_index, void *obj, CRYPTO_EX_DATA *r);
 
- int CRYPTO_free_ex_index(int class_index, int idx);</code></pre>
+int CRYPTO_free_ex_index(int class_index, int idx);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>Several OpenSSL structures can have application-specific data attached to them, known as &quot;exdata.&quot; The specific structures are:</p>
 
-<pre><code>    APP
-    BIO
-    DH
-    DRBG
-    DSA
-    EC_KEY
-    ENGINE
-    RSA
-    SSL
-    SSL_CTX
-    SSL_SESSION
-    UI
-    UI_METHOD
-    X509
-    X509_STORE
-    X509_STORE_CTX</code></pre>
+<pre><code>APP
+BIO
+DH
+DRBG
+DSA
+EC_KEY
+ENGINE
+RSA
+SSL
+SSL_CTX
+SSL_SESSION
+UI
+UI_METHOD
+X509
+X509_STORE
+X509_STORE_CTX</code></pre>
 
 <p>Each is identified by an <b>CRYPTO_EX_INDEX_xxx</b> define in the <b>crypto.h</b> header file. In addition, <b>CRYPTO_EX_INDEX_APP</b> is reserved for applications to use this facility for their own structures.</p>
 

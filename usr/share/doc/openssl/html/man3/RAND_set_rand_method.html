@@ -27,13 +27,13 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/rand.h&gt;
+<pre><code>#include &lt;openssl/rand.h&gt;
 
- RAND_METHOD *RAND_OpenSSL(void);
+RAND_METHOD *RAND_OpenSSL(void);
 
- int RAND_set_rand_method(const RAND_METHOD *meth);
+int RAND_set_rand_method(const RAND_METHOD *meth);
 
- const RAND_METHOD *RAND_get_rand_method(void);</code></pre>
+const RAND_METHOD *RAND_get_rand_method(void);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -49,14 +49,14 @@
 
 <h1 id="THE-RAND_METHOD-STRUCTURE">THE RAND_METHOD STRUCTURE</h1>
 
-<pre><code> typedef struct rand_meth_st {
-     int (*seed)(const void *buf, int num);
-     int (*bytes)(unsigned char *buf, int num);
-     void (*cleanup)(void);
-     int (*add)(const void *buf, int num, double entropy);
-     int (*pseudorand)(unsigned char *buf, int num);
-     int (*status)(void);
- } RAND_METHOD;</code></pre>
+<pre><code>typedef struct rand_meth_st {
+    int (*seed)(const void *buf, int num);
+    int (*bytes)(unsigned char *buf, int num);
+    void (*cleanup)(void);
+    int (*add)(const void *buf, int num, double entropy);
+    int (*pseudorand)(unsigned char *buf, int num);
+    int (*status)(void);
+} RAND_METHOD;</code></pre>
 
 <p>The fields point to functions that are used by, in order, RAND_seed(), RAND_bytes(), internal RAND cleanup, RAND_add(), RAND_pseudo_rand() and RAND_status(). Each pointer may be NULL if the function is not implemented.</p>
 

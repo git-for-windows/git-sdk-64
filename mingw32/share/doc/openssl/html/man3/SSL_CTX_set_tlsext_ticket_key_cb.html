@@ -28,12 +28,12 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/tls1.h&gt;
+<pre><code>#include &lt;openssl/tls1.h&gt;
 
- long SSL_CTX_set_tlsext_ticket_key_cb(SSL_CTX sslctx,
-     int (*cb)(SSL *s, unsigned char key_name[16],
-               unsigned char iv[EVP_MAX_IV_LENGTH],
-               EVP_CIPHER_CTX *ctx, HMAC_CTX *hctx, int enc));</code></pre>
+long SSL_CTX_set_tlsext_ticket_key_cb(SSL_CTX sslctx,
+    int (*cb)(SSL *s, unsigned char key_name[16],
+              unsigned char iv[EVP_MAX_IV_LENGTH],
+              EVP_CIPHER_CTX *ctx, HMAC_CTX *hctx, int enc));</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -107,58 +107,58 @@
 
 <p>Reference Implementation:</p>
 
-<pre><code> SSL_CTX_set_tlsext_ticket_key_cb(SSL, ssl_tlsext_ticket_key_cb);
- ...
+<pre><code>SSL_CTX_set_tlsext_ticket_key_cb(SSL, ssl_tlsext_ticket_key_cb);
+...
 
- static int ssl_tlsext_ticket_key_cb(SSL *s, unsigned char key_name[16],
-                                     unsigned char *iv, EVP_CIPHER_CTX *ctx,
-                                     HMAC_CTX *hctx, int enc)
- {
-     your_type_t *key; /* something that you need to implement */
+static int ssl_tlsext_ticket_key_cb(SSL *s, unsigned char key_name[16],
+                                    unsigned char *iv, EVP_CIPHER_CTX *ctx,
+                                    HMAC_CTX *hctx, int enc)
+{
+    your_type_t *key; /* something that you need to implement */
 
-     if (enc) { /* create new session */
-         if (RAND_bytes(iv, EVP_MAX_IV_LENGTH) &lt;= 0)
-             return -1; /* insufficient random */
+    if (enc) { /* create new session */
+        if (RAND_bytes(iv, EVP_MAX_IV_LENGTH) &lt;= 0)
+            return -1; /* insufficient random */
 
-         key = currentkey(); /* something that you need to implement */
-         if (key == NULL) {
-             /* current key doesn&#39;t exist or isn&#39;t valid */
-             key = createkey(); /*
-                                 * Something that you need to implement.
-                                 * createkey needs to initialise a name,
-                                 * an aes_key, a hmac_key and optionally
-                                 * an expire time.
-                                 */
-             if (key == NULL) /* key couldn&#39;t be created */
-                 return 0;
-         }
-         memcpy(key_name, key-&gt;name, 16);
+        key = currentkey(); /* something that you need to implement */
+        if (key == NULL) {
+            /* current key doesn&#39;t exist or isn&#39;t valid */
+            key = createkey(); /*
+                                * Something that you need to implement.
+                                * createkey needs to initialise a name,
+                                * an aes_key, a hmac_key and optionally
+                                * an expire time.
+                                */
+            if (key == NULL) /* key couldn&#39;t be created */
+                return 0;
+        }
+        memcpy(key_name, key-&gt;name, 16);
 
-         EVP_EncryptInit_ex(&amp;ctx, EVP_aes_256_cbc(), NULL, key-&gt;aes_key, iv);
-         HMAC_Init_ex(&amp;hctx, key-&gt;hmac_key, 32, EVP_sha256(), NULL);
+        EVP_EncryptInit_ex(&amp;ctx, EVP_aes_256_cbc(), NULL, key-&gt;aes_key, iv);
+        HMAC_Init_ex(&amp;hctx, key-&gt;hmac_key, 32, EVP_sha256(), NULL);
 
-         return 1;
+        return 1;
 
-     } else { /* retrieve session */
-         time_t t = time(NULL);
-         key = findkey(key_name); /* something that you need to implement */
+    } else { /* retrieve session */
+        time_t t = time(NULL);
+        key = findkey(key_name); /* something that you need to implement */
 
-         if (key == NULL || key-&gt;expire &lt; t)
-             return 0;
+        if (key == NULL || key-&gt;expire &lt; t)
+            return 0;
 
-         HMAC_Init_ex(&amp;hctx, key-&gt;hmac_key, 32, EVP_sha256(), NULL);
-         EVP_DecryptInit_ex(&amp;ctx, EVP_aes_256_cbc(), NULL, key-&gt;aes_key, iv);
+        HMAC_Init_ex(&amp;hctx, key-&gt;hmac_key, 32, EVP_sha256(), NULL);
+        EVP_DecryptInit_ex(&amp;ctx, EVP_aes_256_cbc(), NULL, key-&gt;aes_key, iv);
 
-         if (key-&gt;expire &lt; t - RENEW_TIME) { /* RENEW_TIME: implement */
-             /*
-              * return 2 - This session will get a new ticket even though the
-              * current one is still valid.
-              */
-             return 2;
-         }
-         return 1;
-     }
- }</code></pre>
+        if (key-&gt;expire &lt; t - RENEW_TIME) { /* RENEW_TIME: implement */
+            /*
+             * return 2 - This session will get a new ticket even though the
+             * current one is still valid.
+             */
+            return 2;
+        }
+        return 1;
+    }
+}</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

@@ -72,21 +72,21 @@
 
 <p>The configuration section should consist of a set of name value pairs which contain specific module configuration information. The <b>name</b> represents the name of the <i>configuration module</i>. The meaning of the <b>value</b> is module specific: it may, for example, represent a further configuration section containing configuration module specific information. E.g.:</p>
 
-<pre><code> # This must be in the default section
- openssl_conf = openssl_init
+<pre><code># This must be in the default section
+openssl_conf = openssl_init
 
- [openssl_init]
+[openssl_init]
 
- oid_section = new_oids
- engines = engine_section
+oid_section = new_oids
+engines = engine_section
 
- [new_oids]
+[new_oids]
 
- ... new oids here ...
+... new oids here ...
 
- [engine_section]
+[engine_section]
 
- ... engine stuff here ...</code></pre>
+... engine stuff here ...</code></pre>
 
 <p>The features of each configuration module are described below.</p>
 
@@ -94,14 +94,14 @@
 
 <p>This module has the name <b>oid_section</b>. The value of this variable points to a section containing name value pairs of OIDs: the name is the OID short and long name, the value is the numerical form of the OID. Although some of the <b>openssl</b> utility sub commands already have their own ASN1 OBJECT section functionality not all do. By using the ASN1 OBJECT configuration module <b>all</b> the <b>openssl</b> utility sub commands can see the new objects as well as any compliant applications. For example:</p>
 
-<pre><code> [new_oids]
+<pre><code>[new_oids]
 
- some_new_oid = 1.2.3.4
- some_other_oid = 1.2.3.5</code></pre>
+some_new_oid = 1.2.3.4
+some_other_oid = 1.2.3.5</code></pre>
 
 <p>It is also possible to set the value to the long name followed by a comma and the numerical OID form. For example:</p>
 
-<pre><code> shortName = some object long name, 1.2.3.4</code></pre>
+<pre><code>shortName = some object long name, 1.2.3.4</code></pre>
 
 <h2 id="Engine-Configuration-Module">Engine Configuration Module</h2>
 
@@ -113,28 +113,28 @@
 
 <p>For example:</p>
 
-<pre><code> [engine_section]
+<pre><code>[engine_section]
 
- # Configure ENGINE named &quot;foo&quot;
- foo = foo_section
- # Configure ENGINE named &quot;bar&quot;
- bar = bar_section
+# Configure ENGINE named &quot;foo&quot;
+foo = foo_section
+# Configure ENGINE named &quot;bar&quot;
+bar = bar_section
 
- [foo_section]
- ... foo ENGINE specific commands ...
+[foo_section]
+... foo ENGINE specific commands ...
 
- [bar_section]
- ... &quot;bar&quot; ENGINE specific commands ...</code></pre>
+[bar_section]
+... &quot;bar&quot; ENGINE specific commands ...</code></pre>
 
 <p>The command <b>engine_id</b> is used to give the ENGINE name. If used this command must be first. For example:</p>
 
-<pre><code> [engine_section]
- # This would normally handle an ENGINE named &quot;foo&quot;
- foo = foo_section
+<pre><code>[engine_section]
+# This would normally handle an ENGINE named &quot;foo&quot;
+foo = foo_section
 
- [foo_section]
- # Override default name and use &quot;myfoo&quot; instead.
- engine_id = myfoo</code></pre>
+[foo_section]
+# Override default name and use &quot;myfoo&quot; instead.
+engine_id = myfoo</code></pre>
 
 <p>The command <b>dynamic_path</b> loads and adds an ENGINE from the given path. It is equivalent to sending the ctrls <b>SO_PATH</b> with the path argument followed by <b>LIST_ADD</b> with value 2 and <b>LOAD</b> to the dynamic ENGINE. If this is not the required behaviour then alternative ctrls can be sent directly to the dynamic ENGINE using ctrl commands.</p>
 
@@ -146,20 +146,20 @@
 
 <p>For example:</p>
 
-<pre><code> [engine_section]
+<pre><code>[engine_section]
 
- # Configure ENGINE named &quot;foo&quot;
- foo = foo_section
+# Configure ENGINE named &quot;foo&quot;
+foo = foo_section
 
- [foo_section]
- # Load engine from DSO
- dynamic_path = /some/path/fooengine.so
- # A foo specific ctrl.
- some_ctrl = some_value
- # Another ctrl that doesn&#39;t take a value.
- other_ctrl = EMPTY
- # Supply all default algorithms
- default_algorithms = ALL</code></pre>
+[foo_section]
+# Load engine from DSO
+dynamic_path = /some/path/fooengine.so
+# A foo specific ctrl.
+some_ctrl = some_value
+# Another ctrl that doesn&#39;t take a value.
+other_ctrl = EMPTY
+# Supply all default algorithms
+default_algorithms = ALL</code></pre>
 
 <h2 id="EVP-Configuration-Module">EVP Configuration Module</h2>
 
@@ -179,30 +179,30 @@
 
 <p>For example:</p>
 
-<pre><code> ssl_conf = ssl_sect
+<pre><code>ssl_conf = ssl_sect
 
- [ssl_sect]
+[ssl_sect]
 
- server = server_section
+server = server_section
 
- [server_section]
+[server_section]
 
- RSA.Certificate = server-rsa.pem
- ECDSA.Certificate = server-ecdsa.pem
- Ciphers = ALL:!RC4</code></pre>
+RSA.Certificate = server-rsa.pem
+ECDSA.Certificate = server-ecdsa.pem
+Ciphers = ALL:!RC4</code></pre>
 
 <p>The system default configuration with name <b>system_default</b> if present will be applied during any creation of the <b>SSL_CTX</b> structure.</p>
 
 <p>Example of a configuration with the system default:</p>
 
-<pre><code> ssl_conf = ssl_sect
+<pre><code>ssl_conf = ssl_sect
 
- [ssl_sect]
- system_default = system_default_sect
+[ssl_sect]
+system_default = system_default_sect
 
- [system_default_sect]
- MinProtocol = TLSv1.2
- MinProtocol = DTLSv1.2</code></pre>
+[system_default_sect]
+MinProtocol = TLSv1.2
+MinProtocol = DTLSv1.2</code></pre>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -212,111 +212,111 @@
 
 <p>If the same variable exists in the same section then all but the last value will be silently ignored. In certain circumstances such as with DNs the same field may occur multiple times. This is usually worked around by ignoring any characters before an initial <b>.</b> e.g.</p>
 
-<pre><code> 1.OU=&quot;My first OU&quot;
- 2.OU=&quot;My Second OU&quot;</code></pre>
+<pre><code>1.OU=&quot;My first OU&quot;
+2.OU=&quot;My Second OU&quot;</code></pre>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
 <p>Here is a sample configuration file using some of the features mentioned above.</p>
 
-<pre><code> # This is the default section.
+<pre><code># This is the default section.
 
- HOME=/temp
- RANDFILE= ${ENV::HOME}/.rnd
- configdir=$ENV::HOME/config
+HOME=/temp
+RANDFILE= ${ENV::HOME}/.rnd
+configdir=$ENV::HOME/config
 
- [ section_one ]
+[ section_one ]
 
- # We are now in section one.
+# We are now in section one.
 
- # Quotes permit leading and trailing whitespace
- any = &quot; any variable name &quot;
+# Quotes permit leading and trailing whitespace
+any = &quot; any variable name &quot;
 
- other = A string that can \
- cover several lines \
- by including \\ characters
+other = A string that can \
+cover several lines \
+by including \\ characters
 
- message = Hello World\n
+message = Hello World\n
 
- [ section_two ]
+[ section_two ]
 
- greeting = $section_one::message</code></pre>
+greeting = $section_one::message</code></pre>
 
 <p>This next example shows how to expand environment variables safely.</p>
 
 <p>Suppose you want a variable called <b>tmpfile</b> to refer to a temporary filename. The directory it is placed in can determined by the <b>TEMP</b> or <b>TMP</b> environment variables but they may not be set to any value at all. If you just include the environment variable names and the variable doesn&#39;t exist then this will cause an error when an attempt is made to load the configuration file. By making use of the default section both values can be looked up with <b>TEMP</b> taking priority and <b>/tmp</b> used if neither is defined:</p>
 
-<pre><code> TMP=/tmp
- # The above value is used if TMP isn&#39;t in the environment
- TEMP=$ENV::TMP
- # The above value is used if TEMP isn&#39;t in the environment
- tmpfile=${ENV::TEMP}/tmp.filename</code></pre>
+<pre><code>TMP=/tmp
+# The above value is used if TMP isn&#39;t in the environment
+TEMP=$ENV::TMP
+# The above value is used if TEMP isn&#39;t in the environment
+tmpfile=${ENV::TEMP}/tmp.filename</code></pre>
 
 <p>Simple OpenSSL library configuration example to enter FIPS mode:</p>
 
-<pre><code> # Default appname: should match &quot;appname&quot; parameter (if any)
- # supplied to CONF_modules_load_file et al.
- openssl_conf = openssl_conf_section
+<pre><code># Default appname: should match &quot;appname&quot; parameter (if any)
+# supplied to CONF_modules_load_file et al.
+openssl_conf = openssl_conf_section
 
- [openssl_conf_section]
- # Configuration module list
- alg_section = evp_sect
+[openssl_conf_section]
+# Configuration module list
+alg_section = evp_sect
 
- [evp_sect]
- # Set to &quot;yes&quot; to enter FIPS mode if supported
- fips_mode = yes</code></pre>
+[evp_sect]
+# Set to &quot;yes&quot; to enter FIPS mode if supported
+fips_mode = yes</code></pre>
 
 <p>Note: in the above example you will get an error in non FIPS capable versions of OpenSSL.</p>
 
 <p>Simple OpenSSL library configuration to make TLS 1.2 and DTLS 1.2 the system-default minimum TLS and DTLS versions, respectively:</p>
 
-<pre><code> # Toplevel section for openssl (including libssl)
- openssl_conf = default_conf_section
+<pre><code># Toplevel section for openssl (including libssl)
+openssl_conf = default_conf_section
 
- [default_conf_section]
- # We only specify configuration for the &quot;ssl module&quot;
- ssl_conf = ssl_section
+[default_conf_section]
+# We only specify configuration for the &quot;ssl module&quot;
+ssl_conf = ssl_section
 
- [ssl_section]
- system_default = system_default_section
+[ssl_section]
+system_default = system_default_section
 
- [system_default_section]
- MinProtocol = TLSv1.2
- MinProtocol = DTLSv1.2</code></pre>
+[system_default_section]
+MinProtocol = TLSv1.2
+MinProtocol = DTLSv1.2</code></pre>
 
 <p>The minimum TLS protocol is applied to <b>SSL_CTX</b> objects that are TLS-based, and the minimum DTLS protocol to those are DTLS-based. The same applies also to maximum versions set with <b>MaxProtocol</b>.</p>
 
 <p>More complex OpenSSL library configuration. Add OID and don&#39;t enter FIPS mode:</p>
 
-<pre><code> # Default appname: should match &quot;appname&quot; parameter (if any)
- # supplied to CONF_modules_load_file et al.
- openssl_conf = openssl_conf_section
+<pre><code># Default appname: should match &quot;appname&quot; parameter (if any)
+# supplied to CONF_modules_load_file et al.
+openssl_conf = openssl_conf_section
 
- [openssl_conf_section]
- # Configuration module list
- alg_section = evp_sect
- oid_section = new_oids
+[openssl_conf_section]
+# Configuration module list
+alg_section = evp_sect
+oid_section = new_oids
 
- [evp_sect]
- # This will have no effect as FIPS mode is off by default.
- # Set to &quot;yes&quot; to enter FIPS mode, if supported
- fips_mode = no
+[evp_sect]
+# This will have no effect as FIPS mode is off by default.
+# Set to &quot;yes&quot; to enter FIPS mode, if supported
+fips_mode = no
 
- [new_oids]
- # New OID, just short name
- newoid1 = 1.2.3.4.1
- # New OID shortname and long name
- newoid2 = New OID 2 long name, 1.2.3.4.2</code></pre>
+[new_oids]
+# New OID, just short name
+newoid1 = 1.2.3.4.1
+# New OID shortname and long name
+newoid2 = New OID 2 long name, 1.2.3.4.2</code></pre>
 
 <p>The above examples can be used with any application supporting library configuration if &quot;openssl_conf&quot; is modified to match the appropriate &quot;appname&quot;.</p>
 
 <p>For example if the second sample file above is saved to &quot;example.cnf&quot; then the command line:</p>
 
-<pre><code> OPENSSL_CONF=example.cnf openssl asn1parse -genstr OID:1.2.3.4.1</code></pre>
+<pre><code>OPENSSL_CONF=example.cnf openssl asn1parse -genstr OID:1.2.3.4.1</code></pre>
 
 <p>will output:</p>
 
-<pre><code>    0:d=0  hl=2 l=   4 prim: OBJECT            :newoid1</code></pre>
+<pre><code>0:d=0  hl=2 l=   4 prim: OBJECT            :newoid1</code></pre>
 
 <p>showing that the OID &quot;newoid1&quot; has been added as &quot;1.2.3.4.1&quot;.</p>
 

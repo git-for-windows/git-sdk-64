@@ -28,25 +28,25 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/evp.h&gt;
+<pre><code>#include &lt;openssl/evp.h&gt;
 
- EVP_PKEY *EVP_PKEY_new(void);
- int EVP_PKEY_up_ref(EVP_PKEY *key);
- void EVP_PKEY_free(EVP_PKEY *key);
+EVP_PKEY *EVP_PKEY_new(void);
+int EVP_PKEY_up_ref(EVP_PKEY *key);
+void EVP_PKEY_free(EVP_PKEY *key);
 
- EVP_PKEY *EVP_PKEY_new_raw_private_key(int type, ENGINE *e,
-                                        const unsigned char *key, size_t keylen);
- EVP_PKEY *EVP_PKEY_new_raw_public_key(int type, ENGINE *e,
+EVP_PKEY *EVP_PKEY_new_raw_private_key(int type, ENGINE *e,
                                        const unsigned char *key, size_t keylen);
- EVP_PKEY *EVP_PKEY_new_CMAC_key(ENGINE *e, const unsigned char *priv,
-                                 size_t len, const EVP_CIPHER *cipher);
- EVP_PKEY *EVP_PKEY_new_mac_key(int type, ENGINE *e, const unsigned char *key,
-                                int keylen);
+EVP_PKEY *EVP_PKEY_new_raw_public_key(int type, ENGINE *e,
+                                      const unsigned char *key, size_t keylen);
+EVP_PKEY *EVP_PKEY_new_CMAC_key(ENGINE *e, const unsigned char *priv,
+                                size_t len, const EVP_CIPHER *cipher);
+EVP_PKEY *EVP_PKEY_new_mac_key(int type, ENGINE *e, const unsigned char *key,
+                               int keylen);
 
- int EVP_PKEY_get_raw_private_key(const EVP_PKEY *pkey, unsigned char *priv,
-                                  size_t *len);
- int EVP_PKEY_get_raw_public_key(const EVP_PKEY *pkey, unsigned char *pub,
-                                 size_t *len);</code></pre>
+int EVP_PKEY_get_raw_private_key(const EVP_PKEY *pkey, unsigned char *priv,
+                                 size_t *len);
+int EVP_PKEY_get_raw_public_key(const EVP_PKEY *pkey, unsigned char *pub,
+                                size_t *len);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 

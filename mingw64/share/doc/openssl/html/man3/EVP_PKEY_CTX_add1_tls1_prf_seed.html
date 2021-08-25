@@ -29,13 +29,13 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/kdf.h&gt;
+<pre><code>#include &lt;openssl/kdf.h&gt;
 
- int EVP_PKEY_CTX_set_tls1_prf_md(EVP_PKEY_CTX *pctx, const EVP_MD *md);
- int EVP_PKEY_CTX_set1_tls1_prf_secret(EVP_PKEY_CTX *pctx,
-                                       unsigned char *sec, int seclen);
- int EVP_PKEY_CTX_add1_tls1_prf_seed(EVP_PKEY_CTX *pctx,
-                                     unsigned char *seed, int seedlen);</code></pre>
+int EVP_PKEY_CTX_set_tls1_prf_md(EVP_PKEY_CTX *pctx, const EVP_MD *md);
+int EVP_PKEY_CTX_set1_tls1_prf_secret(EVP_PKEY_CTX *pctx,
+                                      unsigned char *sec, int seclen);
+int EVP_PKEY_CTX_add1_tls1_prf_seed(EVP_PKEY_CTX *pctx,
+                                    unsigned char *seed, int seedlen);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -57,7 +57,7 @@
 
 <p>A context for the TLS PRF can be obtained by calling:</p>
 
-<pre><code> EVP_PKEY_CTX *pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_TLS1_PRF, NULL);</code></pre>
+<pre><code>EVP_PKEY_CTX *pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_TLS1_PRF, NULL);</code></pre>
 
 <p>The digest, secret value and seed must be set before a key is derived or an error occurs.</p>
 
@@ -75,21 +75,21 @@
 
 <p>This example derives 10 bytes using SHA-256 with the secret key &quot;secret&quot; and seed value &quot;seed&quot;:</p>
 
-<pre><code> EVP_PKEY_CTX *pctx;
- unsigned char out[10];
- size_t outlen = sizeof(out);
+<pre><code>EVP_PKEY_CTX *pctx;
+unsigned char out[10];
+size_t outlen = sizeof(out);
 
- pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_TLS1_PRF, NULL);
- if (EVP_PKEY_derive_init(pctx) &lt;= 0)
-     /* Error */
- if (EVP_PKEY_CTX_set_tls1_prf_md(pctx, EVP_sha256()) &lt;= 0)
-     /* Error */
- if (EVP_PKEY_CTX_set1_tls1_prf_secret(pctx, &quot;secret&quot;, 6) &lt;= 0)
-     /* Error */
- if (EVP_PKEY_CTX_add1_tls1_prf_seed(pctx, &quot;seed&quot;, 4) &lt;= 0)
-     /* Error */
- if (EVP_PKEY_derive(pctx, out, &amp;outlen) &lt;= 0)
-     /* Error */</code></pre>
+pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_TLS1_PRF, NULL);
+if (EVP_PKEY_derive_init(pctx) &lt;= 0)
+    /* Error */
+if (EVP_PKEY_CTX_set_tls1_prf_md(pctx, EVP_sha256()) &lt;= 0)
+    /* Error */
+if (EVP_PKEY_CTX_set1_tls1_prf_secret(pctx, &quot;secret&quot;, 6) &lt;= 0)
+    /* Error */
+if (EVP_PKEY_CTX_add1_tls1_prf_seed(pctx, &quot;seed&quot;, 4) &lt;= 0)
+    /* Error */
+if (EVP_PKEY_derive(pctx, out, &amp;outlen) &lt;= 0)
+    /* Error */</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

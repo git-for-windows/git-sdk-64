@@ -27,19 +27,19 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/evp.h&gt;
+<pre><code>#include &lt;openssl/evp.h&gt;
 
- EVP_PKEY *d2i_PrivateKey(int type, EVP_PKEY **a, const unsigned char **pp,
-                          long length);
- EVP_PKEY *d2i_PublicKey(int type, EVP_PKEY **a, const unsigned char **pp,
+EVP_PKEY *d2i_PrivateKey(int type, EVP_PKEY **a, const unsigned char **pp,
                          long length);
- EVP_PKEY *d2i_AutoPrivateKey(EVP_PKEY **a, const unsigned char **pp,
-                              long length);
- int i2d_PrivateKey(EVP_PKEY *a, unsigned char **pp);
- int i2d_PublicKey(EVP_PKEY *a, unsigned char **pp);
+EVP_PKEY *d2i_PublicKey(int type, EVP_PKEY **a, const unsigned char **pp,
+                        long length);
+EVP_PKEY *d2i_AutoPrivateKey(EVP_PKEY **a, const unsigned char **pp,
+                             long length);
+int i2d_PrivateKey(EVP_PKEY *a, unsigned char **pp);
+int i2d_PublicKey(EVP_PKEY *a, unsigned char **pp);
 
- EVP_PKEY *d2i_PrivateKey_bio(BIO *bp, EVP_PKEY **a);
- EVP_PKEY *d2i_PrivateKey_fp(FILE *fp, EVP_PKEY **a)</code></pre>
+EVP_PKEY *d2i_PrivateKey_bio(BIO *bp, EVP_PKEY **a);
+EVP_PKEY *d2i_PrivateKey_fp(FILE *fp, EVP_PKEY **a)</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -52,6 +52,8 @@
 <p>These functions are similar to the d2i_X509() functions; see <a href="../man3/d2i_X509.html">d2i_X509(3)</a>.</p>
 
 <h1 id="NOTES">NOTES</h1>
+
+<p>All the functions that operate on data in memory update the data pointer <i>*pp</i> after a successful operation, just like the other d2i and i2d functions; see <a href="../man3/d2i_X509.html">d2i_X509(3)</a>.</p>
 
 <p>All these functions use DER format and unencrypted keys. Applications wishing to encrypt or decrypt private keys should use other functions such as d2i_PKCS8PrivateKey() instead.</p>
 
@@ -71,7 +73,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2017-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2017-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

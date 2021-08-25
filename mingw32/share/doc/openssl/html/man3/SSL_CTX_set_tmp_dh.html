@@ -28,17 +28,17 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ssl.h&gt;
+<pre><code>#include &lt;openssl/ssl.h&gt;
 
- void SSL_CTX_set_tmp_dh_callback(SSL_CTX *ctx,
-                                  DH *(*tmp_dh_callback)(SSL *ssl, int is_export,
-                                                         int keylength));
- long SSL_CTX_set_tmp_dh(SSL_CTX *ctx, DH *dh);
+void SSL_CTX_set_tmp_dh_callback(SSL_CTX *ctx,
+                                 DH *(*tmp_dh_callback)(SSL *ssl, int is_export,
+                                                        int keylength));
+long SSL_CTX_set_tmp_dh(SSL_CTX *ctx, DH *dh);
 
- void SSL_set_tmp_dh_callback(SSL *ctx,
-                              DH *(*tmp_dh_callback)(SSL *ssl, int is_export,
-                                                     int keylength));
- long SSL_set_tmp_dh(SSL *ssl, DH *dh)</code></pre>
+void SSL_set_tmp_dh_callback(SSL *ctx,
+                             DH *(*tmp_dh_callback)(SSL *ssl, int is_export,
+                                                    int keylength));
+long SSL_set_tmp_dh(SSL *ssl, DH *dh)</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -80,26 +80,26 @@
 
 <p>Command-line parameter generation:</p>
 
-<pre><code> $ openssl dhparam -out dh_param_2048.pem 2048</code></pre>
+<pre><code>$ openssl dhparam -out dh_param_2048.pem 2048</code></pre>
 
 <p>Code for setting up parameters during server initialization:</p>
 
-<pre><code> SSL_CTX ctx = SSL_CTX_new();
+<pre><code>SSL_CTX ctx = SSL_CTX_new();
 
- DH *dh_2048 = NULL;
- FILE *paramfile = fopen(&quot;dh_param_2048.pem&quot;, &quot;r&quot;);
+DH *dh_2048 = NULL;
+FILE *paramfile = fopen(&quot;dh_param_2048.pem&quot;, &quot;r&quot;);
 
- if (paramfile) {
-     dh_2048 = PEM_read_DHparams(paramfile, NULL, NULL, NULL);
-     fclose(paramfile);
- } else {
-     /* Error. */
- }
- if (dh_2048 == NULL)
-     /* Error. */
- if (SSL_CTX_set_tmp_dh(ctx, dh_2048) != 1)
-     /* Error. */
- ...</code></pre>
+if (paramfile) {
+    dh_2048 = PEM_read_DHparams(paramfile, NULL, NULL, NULL);
+    fclose(paramfile);
+} else {
+    /* Error. */
+}
+if (dh_2048 == NULL)
+    /* Error. */
+if (SSL_CTX_set_tmp_dh(ctx, dh_2048) != 1)
+    /* Error. */
+...</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

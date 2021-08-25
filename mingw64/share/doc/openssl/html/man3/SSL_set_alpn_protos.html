@@ -27,43 +27,43 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ssl.h&gt;
+<pre><code>#include &lt;openssl/ssl.h&gt;
 
- int SSL_CTX_set_alpn_protos(SSL_CTX *ctx, const unsigned char *protos,
-                             unsigned int protos_len);
- int SSL_set_alpn_protos(SSL *ssl, const unsigned char *protos,
-                         unsigned int protos_len);
- void SSL_CTX_set_alpn_select_cb(SSL_CTX *ctx,
-                                 int (*cb) (SSL *ssl,
-                                            const unsigned char **out,
-                                            unsigned char *outlen,
-                                            const unsigned char *in,
-                                            unsigned int inlen,
-                                            void *arg), void *arg);
- void SSL_get0_alpn_selected(const SSL *ssl, const unsigned char **data,
-                             unsigned int *len);
+int SSL_CTX_set_alpn_protos(SSL_CTX *ctx, const unsigned char *protos,
+                            unsigned int protos_len);
+int SSL_set_alpn_protos(SSL *ssl, const unsigned char *protos,
+                        unsigned int protos_len);
+void SSL_CTX_set_alpn_select_cb(SSL_CTX *ctx,
+                                int (*cb) (SSL *ssl,
+                                           const unsigned char **out,
+                                           unsigned char *outlen,
+                                           const unsigned char *in,
+                                           unsigned int inlen,
+                                           void *arg), void *arg);
+void SSL_get0_alpn_selected(const SSL *ssl, const unsigned char **data,
+                            unsigned int *len);
 
- void SSL_CTX_set_next_protos_advertised_cb(SSL_CTX *ctx,
-                                            int (*cb)(SSL *ssl,
-                                                      const unsigned char **out,
-                                                      unsigned int *outlen,
-                                                      void *arg),
-                                            void *arg);
- void SSL_CTX_set_next_proto_select_cb(SSL_CTX *ctx,
-                               int (*cb)(SSL *s,
-                                         unsigned char **out,
-                                         unsigned char *outlen,
-                                         const unsigned char *in,
-                                         unsigned int inlen,
-                                         void *arg),
-                               void *arg);
- int SSL_select_next_proto(unsigned char **out, unsigned char *outlen,
-                           const unsigned char *server,
-                           unsigned int server_len,
-                           const unsigned char *client,
-                           unsigned int client_len)
- void SSL_get0_next_proto_negotiated(const SSL *s, const unsigned char **data,
-                             unsigned *len);</code></pre>
+void SSL_CTX_set_next_protos_advertised_cb(SSL_CTX *ctx,
+                                           int (*cb)(SSL *ssl,
+                                                     const unsigned char **out,
+                                                     unsigned int *outlen,
+                                                     void *arg),
+                                           void *arg);
+void SSL_CTX_set_next_proto_select_cb(SSL_CTX *ctx,
+                              int (*cb)(SSL *s,
+                                        unsigned char **out,
+                                        unsigned char *outlen,
+                                        const unsigned char *in,
+                                        unsigned int inlen,
+                                        void *arg),
+                              void *arg);
+int SSL_select_next_proto(unsigned char **out, unsigned char *outlen,
+                          const unsigned char *server,
+                          unsigned int server_len,
+                          const unsigned char *client,
+                          unsigned int client_len)
+void SSL_get0_next_proto_negotiated(const SSL *s, const unsigned char **data,
+                            unsigned *len);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -89,11 +89,11 @@
 
 <p>Example:</p>
 
-<pre><code> unsigned char vector[] = {
-     6, &#39;s&#39;, &#39;p&#39;, &#39;d&#39;, &#39;y&#39;, &#39;/&#39;, &#39;1&#39;,
-     8, &#39;h&#39;, &#39;t&#39;, &#39;t&#39;, &#39;p&#39;, &#39;/&#39;, &#39;1&#39;, &#39;.&#39;, &#39;1&#39;
- };
- unsigned int length = sizeof(vector);</code></pre>
+<pre><code>unsigned char vector[] = {
+    6, &#39;s&#39;, &#39;p&#39;, &#39;d&#39;, &#39;y&#39;, &#39;/&#39;, &#39;1&#39;,
+    8, &#39;h&#39;, &#39;t&#39;, &#39;t&#39;, &#39;p&#39;, &#39;/&#39;, &#39;1&#39;, &#39;.&#39;, &#39;1&#39;
+};
+unsigned int length = sizeof(vector);</code></pre>
 
 <p>The ALPN callback is executed after the servername callback; as that servername callback may update the SSL_CTX, and subsequently, the ALPN callback.</p>
 

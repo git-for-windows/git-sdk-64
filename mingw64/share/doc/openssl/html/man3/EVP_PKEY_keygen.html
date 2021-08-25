@@ -29,26 +29,26 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/evp.h&gt;
+<pre><code>#include &lt;openssl/evp.h&gt;
 
- int EVP_PKEY_keygen_init(EVP_PKEY_CTX *ctx);
- int EVP_PKEY_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY **ppkey);
- int EVP_PKEY_paramgen_init(EVP_PKEY_CTX *ctx);
- int EVP_PKEY_paramgen(EVP_PKEY_CTX *ctx, EVP_PKEY **ppkey);
+int EVP_PKEY_keygen_init(EVP_PKEY_CTX *ctx);
+int EVP_PKEY_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY **ppkey);
+int EVP_PKEY_paramgen_init(EVP_PKEY_CTX *ctx);
+int EVP_PKEY_paramgen(EVP_PKEY_CTX *ctx, EVP_PKEY **ppkey);
 
- typedef int EVP_PKEY_gen_cb(EVP_PKEY_CTX *ctx);
+typedef int EVP_PKEY_gen_cb(EVP_PKEY_CTX *ctx);
 
- void EVP_PKEY_CTX_set_cb(EVP_PKEY_CTX *ctx, EVP_PKEY_gen_cb *cb);
- EVP_PKEY_gen_cb *EVP_PKEY_CTX_get_cb(EVP_PKEY_CTX *ctx);
+void EVP_PKEY_CTX_set_cb(EVP_PKEY_CTX *ctx, EVP_PKEY_gen_cb *cb);
+EVP_PKEY_gen_cb *EVP_PKEY_CTX_get_cb(EVP_PKEY_CTX *ctx);
 
- int EVP_PKEY_CTX_get_keygen_info(EVP_PKEY_CTX *ctx, int idx);
+int EVP_PKEY_CTX_get_keygen_info(EVP_PKEY_CTX *ctx, int idx);
 
- void EVP_PKEY_CTX_set_app_data(EVP_PKEY_CTX *ctx, void *data);
- void *EVP_PKEY_CTX_get_app_data(EVP_PKEY_CTX *ctx);
+void EVP_PKEY_CTX_set_app_data(EVP_PKEY_CTX *ctx, void *data);
+void *EVP_PKEY_CTX_get_app_data(EVP_PKEY_CTX *ctx);
 
- int EVP_PKEY_check(EVP_PKEY_CTX *ctx);
- int EVP_PKEY_public_check(EVP_PKEY_CTX *ctx);
- int EVP_PKEY_param_check(EVP_PKEY_CTX *ctx);</code></pre>
+int EVP_PKEY_check(EVP_PKEY_CTX *ctx);
+int EVP_PKEY_public_check(EVP_PKEY_CTX *ctx);
+int EVP_PKEY_param_check(EVP_PKEY_CTX *ctx);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -94,68 +94,68 @@
 
 <p>Generate a 2048 bit RSA key:</p>
 
-<pre><code> #include &lt;openssl/evp.h&gt;
- #include &lt;openssl/rsa.h&gt;
+<pre><code>#include &lt;openssl/evp.h&gt;
+#include &lt;openssl/rsa.h&gt;
 
- EVP_PKEY_CTX *ctx;
- EVP_PKEY *pkey = NULL;
+EVP_PKEY_CTX *ctx;
+EVP_PKEY *pkey = NULL;
 
- ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
- if (!ctx)
-     /* Error occurred */
- if (EVP_PKEY_keygen_init(ctx) &lt;= 0)
-     /* Error */
- if (EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, 2048) &lt;= 0)
-     /* Error */
+ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
+if (!ctx)
+    /* Error occurred */
+if (EVP_PKEY_keygen_init(ctx) &lt;= 0)
+    /* Error */
+if (EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, 2048) &lt;= 0)
+    /* Error */
 
- /* Generate key */
- if (EVP_PKEY_keygen(ctx, &amp;pkey) &lt;= 0)
-     /* Error */</code></pre>
+/* Generate key */
+if (EVP_PKEY_keygen(ctx, &amp;pkey) &lt;= 0)
+    /* Error */</code></pre>
 
 <p>Generate a key from a set of parameters:</p>
 
-<pre><code> #include &lt;openssl/evp.h&gt;
- #include &lt;openssl/rsa.h&gt;
+<pre><code>#include &lt;openssl/evp.h&gt;
+#include &lt;openssl/rsa.h&gt;
 
- EVP_PKEY_CTX *ctx;
- ENGINE *eng;
- EVP_PKEY *pkey = NULL, *param;
+EVP_PKEY_CTX *ctx;
+ENGINE *eng;
+EVP_PKEY *pkey = NULL, *param;
 
- /* Assumed param, eng are set up already */
- ctx = EVP_PKEY_CTX_new(param, eng);
- if (!ctx)
-     /* Error occurred */
- if (EVP_PKEY_keygen_init(ctx) &lt;= 0)
-     /* Error */
+/* Assumed param, eng are set up already */
+ctx = EVP_PKEY_CTX_new(param, eng);
+if (!ctx)
+    /* Error occurred */
+if (EVP_PKEY_keygen_init(ctx) &lt;= 0)
+    /* Error */
 
- /* Generate key */
- if (EVP_PKEY_keygen(ctx, &amp;pkey) &lt;= 0)
-     /* Error */</code></pre>
+/* Generate key */
+if (EVP_PKEY_keygen(ctx, &amp;pkey) &lt;= 0)
+    /* Error */</code></pre>
 
 <p>Example of generation callback for OpenSSL public key implementations:</p>
 
-<pre><code> /* Application data is a BIO to output status to */
+<pre><code>/* Application data is a BIO to output status to */
 
- EVP_PKEY_CTX_set_app_data(ctx, status_bio);
+EVP_PKEY_CTX_set_app_data(ctx, status_bio);
 
- static int genpkey_cb(EVP_PKEY_CTX *ctx)
- {
-     char c = &#39;*&#39;;
-     BIO *b = EVP_PKEY_CTX_get_app_data(ctx);
-     int p = EVP_PKEY_CTX_get_keygen_info(ctx, 0);
+static int genpkey_cb(EVP_PKEY_CTX *ctx)
+{
+    char c = &#39;*&#39;;
+    BIO *b = EVP_PKEY_CTX_get_app_data(ctx);
+    int p = EVP_PKEY_CTX_get_keygen_info(ctx, 0);
 
-     if (p == 0)
-         c = &#39;.&#39;;
-     if (p == 1)
-         c = &#39;+&#39;;
-     if (p == 2)
-         c = &#39;*&#39;;
-     if (p == 3)
-         c = &#39;\n&#39;;
-     BIO_write(b, &amp;c, 1);
-     (void)BIO_flush(b);
-     return 1;
- }</code></pre>
+    if (p == 0)
+        c = &#39;.&#39;;
+    if (p == 1)
+        c = &#39;+&#39;;
+    if (p == 2)
+        c = &#39;*&#39;;
+    if (p == 3)
+        c = &#39;\n&#39;;
+    BIO_write(b, &amp;c, 1);
+    (void)BIO_flush(b);
+    return 1;
+}</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

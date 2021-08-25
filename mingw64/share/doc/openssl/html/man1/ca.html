@@ -534,82 +534,82 @@
 
 <p>Sign a certificate request:</p>
 
-<pre><code> openssl ca -in req.pem -out newcert.pem</code></pre>
+<pre><code>openssl ca -in req.pem -out newcert.pem</code></pre>
 
 <p>Sign a certificate request, using CA extensions:</p>
 
-<pre><code> openssl ca -in req.pem -extensions v3_ca -out newcert.pem</code></pre>
+<pre><code>openssl ca -in req.pem -extensions v3_ca -out newcert.pem</code></pre>
 
 <p>Generate a CRL</p>
 
-<pre><code> openssl ca -gencrl -out crl.pem</code></pre>
+<pre><code>openssl ca -gencrl -out crl.pem</code></pre>
 
 <p>Sign several requests:</p>
 
-<pre><code> openssl ca -infiles req1.pem req2.pem req3.pem</code></pre>
+<pre><code>openssl ca -infiles req1.pem req2.pem req3.pem</code></pre>
 
 <p>Certify a Netscape SPKAC:</p>
 
-<pre><code> openssl ca -spkac spkac.txt</code></pre>
+<pre><code>openssl ca -spkac spkac.txt</code></pre>
 
 <p>A sample SPKAC file (the SPKAC line has been truncated for clarity):</p>
 
-<pre><code> SPKAC=MIG0MGAwXDANBgkqhkiG9w0BAQEFAANLADBIAkEAn7PDhCeV/xIxUg8V70YRxK2A5
- CN=Steve Test
- emailAddress=steve@openssl.org
- 0.OU=OpenSSL Group
- 1.OU=Another Group</code></pre>
+<pre><code>SPKAC=MIG0MGAwXDANBgkqhkiG9w0BAQEFAANLADBIAkEAn7PDhCeV/xIxUg8V70YRxK2A5
+CN=Steve Test
+emailAddress=steve@openssl.org
+0.OU=OpenSSL Group
+1.OU=Another Group</code></pre>
 
 <p>A sample configuration file with the relevant sections for <b>ca</b>:</p>
 
-<pre><code> [ ca ]
- default_ca      = CA_default            # The default ca section
+<pre><code>[ ca ]
+default_ca      = CA_default            # The default ca section
 
- [ CA_default ]
+[ CA_default ]
 
- dir            = ./demoCA              # top dir
- database       = $dir/index.txt        # index file.
- new_certs_dir  = $dir/newcerts         # new certs dir
+dir            = ./demoCA              # top dir
+database       = $dir/index.txt        # index file.
+new_certs_dir  = $dir/newcerts         # new certs dir
 
- certificate    = $dir/cacert.pem       # The CA cert
- serial         = $dir/serial           # serial no file
- #rand_serial    = yes                  # for random serial#&#39;s
- private_key    = $dir/private/cakey.pem# CA private key
- RANDFILE       = $dir/private/.rand    # random number file
+certificate    = $dir/cacert.pem       # The CA cert
+serial         = $dir/serial           # serial no file
+#rand_serial    = yes                  # for random serial#&#39;s
+private_key    = $dir/private/cakey.pem# CA private key
+RANDFILE       = $dir/private/.rand    # random number file
 
- default_days   = 365                   # how long to certify for
- default_crl_days= 30                   # how long before next CRL
- default_md     = md5                   # md to use
+default_days   = 365                   # how long to certify for
+default_crl_days= 30                   # how long before next CRL
+default_md     = md5                   # md to use
 
- policy         = policy_any            # default policy
- email_in_dn    = no                    # Don&#39;t add the email into cert DN
+policy         = policy_any            # default policy
+email_in_dn    = no                    # Don&#39;t add the email into cert DN
 
- name_opt       = ca_default            # Subject name display option
- cert_opt       = ca_default            # Certificate display option
- copy_extensions = none                 # Don&#39;t copy extensions from request
+name_opt       = ca_default            # Subject name display option
+cert_opt       = ca_default            # Certificate display option
+copy_extensions = none                 # Don&#39;t copy extensions from request
 
- [ policy_any ]
- countryName            = supplied
- stateOrProvinceName    = optional
- organizationName       = optional
- organizationalUnitName = optional
- commonName             = supplied
- emailAddress           = optional</code></pre>
+[ policy_any ]
+countryName            = supplied
+stateOrProvinceName    = optional
+organizationName       = optional
+organizationalUnitName = optional
+commonName             = supplied
+emailAddress           = optional</code></pre>
 
 <h1 id="FILES">FILES</h1>
 
 <p>Note: the location of all files can change either by compile time options, configuration file entries, environment variables or command line options. The values below reflect the default values.</p>
 
-<pre><code> /usr/local/ssl/lib/openssl.cnf - master configuration file
- ./demoCA                       - main CA directory
- ./demoCA/cacert.pem            - CA certificate
- ./demoCA/private/cakey.pem     - CA private key
- ./demoCA/serial                - CA serial number file
- ./demoCA/serial.old            - CA serial number backup file
- ./demoCA/index.txt             - CA text database file
- ./demoCA/index.txt.old         - CA text database backup file
- ./demoCA/certs                 - certificate output file
- ./demoCA/.rnd                  - CA random seed information</code></pre>
+<pre><code>/usr/local/ssl/lib/openssl.cnf - master configuration file
+./demoCA                       - main CA directory
+./demoCA/cacert.pem            - CA certificate
+./demoCA/private/cakey.pem     - CA private key
+./demoCA/serial                - CA serial number file
+./demoCA/serial.old            - CA serial number backup file
+./demoCA/index.txt             - CA text database file
+./demoCA/index.txt.old         - CA text database backup file
+./demoCA/certs                 - certificate output file
+./demoCA/.rnd                  - CA random seed information</code></pre>
 
 <h1 id="RESTRICTIONS">RESTRICTIONS</h1>
 
@@ -645,7 +645,7 @@
 
 <p>Additional restrictions can be placed on the CA certificate itself. For example if the CA certificate has:</p>
 
-<pre><code> basicConstraints = CA:TRUE, pathlen:0</code></pre>
+<pre><code>basicConstraints = CA:TRUE, pathlen:0</code></pre>
 
 <p>then even if a certificate is issued with CA:TRUE it will not be valid.</p>
 

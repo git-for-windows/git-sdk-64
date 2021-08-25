@@ -152,8 +152,8 @@
 
 <p>PEM format EC parameters use the header and footer lines:</p>
 
-<pre><code> -----BEGIN EC PARAMETERS-----
- -----END EC PARAMETERS-----</code></pre>
+<pre><code>-----BEGIN EC PARAMETERS-----
+-----END EC PARAMETERS-----</code></pre>
 
 <p>OpenSSL is currently not able to generate new groups and therefore <b>ecparam</b> can only create EC parameters from known (named) curves.</p>
 
@@ -161,27 +161,27 @@
 
 <p>To create EC parameters with the group &#39;prime192v1&#39;:</p>
 
-<pre><code>  openssl ecparam -out ec_param.pem -name prime192v1</code></pre>
+<pre><code>openssl ecparam -out ec_param.pem -name prime192v1</code></pre>
 
 <p>To create EC parameters with explicit parameters:</p>
 
-<pre><code>  openssl ecparam -out ec_param.pem -name prime192v1 -param_enc explicit</code></pre>
+<pre><code>openssl ecparam -out ec_param.pem -name prime192v1 -param_enc explicit</code></pre>
 
 <p>To validate given EC parameters:</p>
 
-<pre><code>  openssl ecparam -in ec_param.pem -check</code></pre>
+<pre><code>openssl ecparam -in ec_param.pem -check</code></pre>
 
 <p>To create EC parameters and a private key:</p>
 
-<pre><code>  openssl ecparam -out ec_key.pem -name prime192v1 -genkey</code></pre>
+<pre><code>openssl ecparam -out ec_key.pem -name prime192v1 -genkey</code></pre>
 
 <p>To change the point encoding to &#39;compressed&#39;:</p>
 
-<pre><code>  openssl ecparam -in ec_in.pem -out ec_out.pem -conv_form compressed</code></pre>
+<pre><code>openssl ecparam -in ec_in.pem -out ec_out.pem -conv_form compressed</code></pre>
 
 <p>To print out the EC parameters to standard output:</p>
 
-<pre><code>  openssl ecparam -in ec_param.pem -noout -text</code></pre>
+<pre><code>openssl ecparam -in ec_param.pem -noout -text</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

@@ -28,21 +28,21 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ocsp.h&gt;
+<pre><code>#include &lt;openssl/ocsp.h&gt;
 
- OCSP_REQUEST *OCSP_REQUEST_new(void);
- void OCSP_REQUEST_free(OCSP_REQUEST *req);
+OCSP_REQUEST *OCSP_REQUEST_new(void);
+void OCSP_REQUEST_free(OCSP_REQUEST *req);
 
- OCSP_ONEREQ *OCSP_request_add0_id(OCSP_REQUEST *req, OCSP_CERTID *cid);
+OCSP_ONEREQ *OCSP_request_add0_id(OCSP_REQUEST *req, OCSP_CERTID *cid);
 
- int OCSP_request_sign(OCSP_REQUEST *req,
-                       X509 *signer, EVP_PKEY *key, const EVP_MD *dgst,
-                       STACK_OF(X509) *certs, unsigned long flags);
+int OCSP_request_sign(OCSP_REQUEST *req,
+                      X509 *signer, EVP_PKEY *key, const EVP_MD *dgst,
+                      STACK_OF(X509) *certs, unsigned long flags);
 
- int OCSP_request_add1_cert(OCSP_REQUEST *req, X509 *cert);
+int OCSP_request_add1_cert(OCSP_REQUEST *req, X509 *cert);
 
- int OCSP_request_onereq_count(OCSP_REQUEST *req);
- OCSP_ONEREQ *OCSP_request_onereq_get0(OCSP_REQUEST *req, int i);</code></pre>
+int OCSP_request_onereq_count(OCSP_REQUEST *req);
+OCSP_ONEREQ *OCSP_request_onereq_get0(OCSP_REQUEST *req, int i);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -82,22 +82,22 @@
 
 <p>Create an <b>OCSP_REQUEST</b> structure for certificate <b>cert</b> with issuer <b>issuer</b>:</p>
 
-<pre><code> OCSP_REQUEST *req;
- OCSP_ID *cid;
+<pre><code>OCSP_REQUEST *req;
+OCSP_ID *cid;
 
- req = OCSP_REQUEST_new();
- if (req == NULL)
-    /* error */
- cid = OCSP_cert_to_id(EVP_sha1(), cert, issuer);
- if (cid == NULL)
-    /* error */
+req = OCSP_REQUEST_new();
+if (req == NULL)
+   /* error */
+cid = OCSP_cert_to_id(EVP_sha1(), cert, issuer);
+if (cid == NULL)
+   /* error */
 
- if (OCSP_REQUEST_add0_id(req, cid) == NULL)
-    /* error */
+if (OCSP_REQUEST_add0_id(req, cid) == NULL)
+   /* error */
 
- /* Do something with req, e.g. query responder */
+/* Do something with req, e.g. query responder */
 
- OCSP_REQUEST_free(req);</code></pre>
+OCSP_REQUEST_free(req);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

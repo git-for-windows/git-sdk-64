@@ -26,13 +26,13 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/bio.h&gt;
+<pre><code>#include &lt;openssl/bio.h&gt;
 
- enum BIO_hostserv_priorities {
-     BIO_PARSE_PRIO_HOST, BIO_PARSE_PRIO_SERV
- };
- int BIO_parse_hostserv(const char *hostserv, char **host, char **service,
-                        enum BIO_hostserv_priorities hostserv_prio);</code></pre>
+enum BIO_hostserv_priorities {
+    BIO_PARSE_PRIO_HOST, BIO_PARSE_PRIO_SERV
+};
+int BIO_parse_hostserv(const char *hostserv, char **host, char **service,
+                       enum BIO_hostserv_priorities hostserv_prio);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -40,13 +40,13 @@
 
 <p>The syntax the BIO_parse_hostserv() recognises is:</p>
 
-<pre><code> host + &#39;:&#39; + service
- host + &#39;:&#39; + &#39;*&#39;
- host + &#39;:&#39;
-        &#39;:&#39; + service
- &#39;*&#39;  + &#39;:&#39; + service
- host
- service</code></pre>
+<pre><code>host + &#39;:&#39; + service
+host + &#39;:&#39; + &#39;*&#39;
+host + &#39;:&#39;
+       &#39;:&#39; + service
+&#39;*&#39;  + &#39;:&#39; + service
+host
+service</code></pre>
 
 <p>The host part can be a name or an IP address. If it&#39;s a IPv6 address, it MUST be enclosed in brackets, such as &#39;[::1]&#39;.</p>
 
@@ -54,20 +54,20 @@
 
 <p>The returned values will depend on the given <b>hostserv</b> string and <b>hostserv_prio</b>, as follows:</p>
 
-<pre><code> host + &#39;:&#39; + service  =&gt; *host = &quot;host&quot;, *service = &quot;service&quot;
- host + &#39;:&#39; + &#39;*&#39;      =&gt; *host = &quot;host&quot;, *service = NULL
- host + &#39;:&#39;            =&gt; *host = &quot;host&quot;, *service = NULL
-        &#39;:&#39; + service  =&gt; *host = NULL, *service = &quot;service&quot;
-  &#39;*&#39; + &#39;:&#39; + service  =&gt; *host = NULL, *service = &quot;service&quot;
+<pre><code>host + &#39;:&#39; + service  =&gt; *host = &quot;host&quot;, *service = &quot;service&quot;
+host + &#39;:&#39; + &#39;*&#39;      =&gt; *host = &quot;host&quot;, *service = NULL
+host + &#39;:&#39;            =&gt; *host = &quot;host&quot;, *service = NULL
+       &#39;:&#39; + service  =&gt; *host = NULL, *service = &quot;service&quot;
+ &#39;*&#39; + &#39;:&#39; + service  =&gt; *host = NULL, *service = &quot;service&quot;
 
- in case no &#39;:&#39; is present in the string, the result depends on
- hostserv_prio, as follows:
+in case no &#39;:&#39; is present in the string, the result depends on
+hostserv_prio, as follows:
 
- when hostserv_prio == BIO_PARSE_PRIO_HOST
- host                 =&gt; *host = &quot;host&quot;, *service untouched
+when hostserv_prio == BIO_PARSE_PRIO_HOST
+host                 =&gt; *host = &quot;host&quot;, *service untouched
 
- when hostserv_prio == BIO_PARSE_PRIO_SERV
- service              =&gt; *host untouched, *service = &quot;service&quot;</code></pre>
+when hostserv_prio == BIO_PARSE_PRIO_SERV
+service              =&gt; *host untouched, *service = &quot;service&quot;</code></pre>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 

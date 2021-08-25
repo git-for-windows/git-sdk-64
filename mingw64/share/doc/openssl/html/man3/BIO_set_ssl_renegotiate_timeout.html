@@ -28,25 +28,25 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/bio.h&gt;
- #include &lt;openssl/ssl.h&gt;
+<pre><code>#include &lt;openssl/bio.h&gt;
+#include &lt;openssl/ssl.h&gt;
 
- const BIO_METHOD *BIO_f_ssl(void);
+const BIO_METHOD *BIO_f_ssl(void);
 
- long BIO_set_ssl(BIO *b, SSL *ssl, long c);
- long BIO_get_ssl(BIO *b, SSL **sslp);
- long BIO_set_ssl_mode(BIO *b, long client);
- long BIO_set_ssl_renegotiate_bytes(BIO *b, long num);
- long BIO_set_ssl_renegotiate_timeout(BIO *b, long seconds);
- long BIO_get_num_renegotiates(BIO *b);
+long BIO_set_ssl(BIO *b, SSL *ssl, long c);
+long BIO_get_ssl(BIO *b, SSL **sslp);
+long BIO_set_ssl_mode(BIO *b, long client);
+long BIO_set_ssl_renegotiate_bytes(BIO *b, long num);
+long BIO_set_ssl_renegotiate_timeout(BIO *b, long seconds);
+long BIO_get_num_renegotiates(BIO *b);
 
- BIO *BIO_new_ssl(SSL_CTX *ctx, int client);
- BIO *BIO_new_ssl_connect(SSL_CTX *ctx);
- BIO *BIO_new_buffer_ssl_connect(SSL_CTX *ctx);
- int BIO_ssl_copy_session_id(BIO *to, BIO *from);
- void BIO_ssl_shutdown(BIO *bio);
+BIO *BIO_new_ssl(SSL_CTX *ctx, int client);
+BIO *BIO_new_ssl_connect(SSL_CTX *ctx);
+BIO *BIO_new_buffer_ssl_connect(SSL_CTX *ctx);
+int BIO_ssl_copy_session_id(BIO *to, BIO *from);
+void BIO_ssl_shutdown(BIO *bio);
 
- long BIO_do_handshake(BIO *b);</code></pre>
+long BIO_do_handshake(BIO *b);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -112,138 +112,133 @@
 
 <p>This SSL/TLS client example attempts to retrieve a page from an SSL/TLS web server. The I/O routines are identical to those of the unencrypted example in <a href="../man3/BIO_s_connect.html">BIO_s_connect(3)</a>.</p>
 
-<pre><code> BIO *sbio, *out;
- int len;
- char tmpbuf[1024];
- SSL_CTX *ctx;
- SSL *ssl;
+<pre><code>BIO *sbio, *out;
+int len;
+char tmpbuf[1024];
+SSL_CTX *ctx;
+SSL *ssl;
 
- /* XXX Seed the PRNG if needed. */
+/* XXX Seed the PRNG if needed. */
 
- ctx = SSL_CTX_new(TLS_client_method());
+ctx = SSL_CTX_new(TLS_client_method());
 
- /* XXX Set verify paths and mode here. */
+/* XXX Set verify paths and mode here. */
 
- sbio = BIO_new_ssl_connect(ctx);
- BIO_get_ssl(sbio, &amp;ssl);
- if (ssl == NULL) {
-     fprintf(stderr, &quot;Can&#39;t locate SSL pointer\n&quot;);
-     ERR_print_errors_fp(stderr);
-     exit(1);
- }
+sbio = BIO_new_ssl_connect(ctx);
+BIO_get_ssl(sbio, &amp;ssl);
+if (ssl == NULL) {
+    fprintf(stderr, &quot;Can&#39;t locate SSL pointer\n&quot;);
+    ERR_print_errors_fp(stderr);
+    exit(1);
+}
 
- /* Don&#39;t want any retries */
- SSL_set_mode(ssl, SSL_MODE_AUTO_RETRY);
+/* Don&#39;t want any retries */
+SSL_set_mode(ssl, SSL_MODE_AUTO_RETRY);
 
- /* XXX We might want to do other things with ssl here */
+/* XXX We might want to do other things with ssl here */
 
- /* An empty host part means the loopback address */
- BIO_set_conn_hostname(sbio, &quot;:https&quot;);
+/* An empty host part means the loopback address */
+BIO_set_conn_hostname(sbio, &quot;:https&quot;);
 
- out = BIO_new_fp(stdout, BIO_NOCLOSE);
- if (BIO_do_connect(sbio) &lt;= 0) {
-     fprintf(stderr, &quot;Error connecting to server\n&quot;);
-     ERR_print_errors_fp(stderr);
-     exit(1);
- }
- if (BIO_do_handshake(sbio) &lt;= 0) {
-     fprintf(stderr, &quot;Error establishing SSL connection\n&quot;);
-     ERR_print_errors_fp(stderr);
-     exit(1);
- }
+out = BIO_new_fp(stdout, BIO_NOCLOSE);
+if (BIO_do_connect(sbio) &lt;= 0) {
+    fprintf(stderr, &quot;Error connecting to server\n&quot;);
+    ERR_print_errors_fp(stderr);
+    exit(1);
+}
 
- /* XXX Could examine ssl here to get connection info */
+/* XXX Could examine ssl here to get connection info */
 
- BIO_puts(sbio, &quot;GET / HTTP/1.0\n\n&quot;);
- for (;;) {
-     len = BIO_read(sbio, tmpbuf, 1024);
-     if (len &lt;= 0)
-         break;
-     BIO_write(out, tmpbuf, len);
- }
- BIO_free_all(sbio);
- BIO_free(out);</code></pre>
+BIO_puts(sbio, &quot;GET / HTTP/1.0\n\n&quot;);
+for (;;) {
+    len = BIO_read(sbio, tmpbuf, 1024);
+    if (len &lt;= 0)
+        break;
+    BIO_write(out, tmpbuf, len);
+}
+BIO_free_all(sbio);
+BIO_free(out);</code></pre>
 
 <p>Here is a simple server example. It makes use of a buffering BIO to allow lines to be read from the SSL BIO using BIO_gets. It creates a pseudo web page containing the actual request from a client and also echoes the request to standard output.</p>
 
-<pre><code> BIO *sbio, *bbio, *acpt, *out;
- int len;
- char tmpbuf[1024];
- SSL_CTX *ctx;
- SSL *ssl;
+<pre><code>BIO *sbio, *bbio, *acpt, *out;
+int len;
+char tmpbuf[1024];
+SSL_CTX *ctx;
+SSL *ssl;
 
- /* XXX Seed the PRNG if needed. */
+/* XXX Seed the PRNG if needed. */
 
- ctx = SSL_CTX_new(TLS_server_method());
- if (!SSL_CTX_use_certificate_file(ctx, &quot;server.pem&quot;, SSL_FILETYPE_PEM)
-         || !SSL_CTX_use_PrivateKey_file(ctx, &quot;server.pem&quot;, SSL_FILETYPE_PEM)
-         || !SSL_CTX_check_private_key(ctx)) {
-     fprintf(stderr, &quot;Error setting up SSL_CTX\n&quot;);
-     ERR_print_errors_fp(stderr);
-     exit(1);
- }
+ctx = SSL_CTX_new(TLS_server_method());
+if (!SSL_CTX_use_certificate_file(ctx, &quot;server.pem&quot;, SSL_FILETYPE_PEM)
+        || !SSL_CTX_use_PrivateKey_file(ctx, &quot;server.pem&quot;, SSL_FILETYPE_PEM)
+        || !SSL_CTX_check_private_key(ctx)) {
+    fprintf(stderr, &quot;Error setting up SSL_CTX\n&quot;);
+    ERR_print_errors_fp(stderr);
+    exit(1);
+}
 
- /* XXX Other things like set verify locations, EDH temp callbacks. */
+/* XXX Other things like set verify locations, EDH temp callbacks. */
 
- /* New SSL BIO setup as server */
- sbio = BIO_new_ssl(ctx, 0);
- BIO_get_ssl(sbio, &amp;ssl);
- if (ssl == NULL) {
-     fprintf(stderr, &quot;Can&#39;t locate SSL pointer\n&quot;);
-     ERR_print_errors_fp(stderr);
-     exit(1);
- }
+/* New SSL BIO setup as server */
+sbio = BIO_new_ssl(ctx, 0);
+BIO_get_ssl(sbio, &amp;ssl);
+if (ssl == NULL) {
+    fprintf(stderr, &quot;Can&#39;t locate SSL pointer\n&quot;);
+    ERR_print_errors_fp(stderr);
+    exit(1);
+}
 
- SSL_set_mode(ssl, SSL_MODE_AUTO_RETRY);
- bbio = BIO_new(BIO_f_buffer());
- sbio = BIO_push(bbio, sbio);
- acpt = BIO_new_accept(&quot;4433&quot;);
+SSL_set_mode(ssl, SSL_MODE_AUTO_RETRY);
+bbio = BIO_new(BIO_f_buffer());
+sbio = BIO_push(bbio, sbio);
+acpt = BIO_new_accept(&quot;4433&quot;);
 
- /*
-  * By doing this when a new connection is established
-  * we automatically have sbio inserted into it. The
-  * BIO chain is now &#39;swallowed&#39; by the accept BIO and
-  * will be freed when the accept BIO is freed.
-  */
- BIO_set_accept_bios(acpt, sbio);
- out = BIO_new_fp(stdout, BIO_NOCLOSE);
+/*
+ * By doing this when a new connection is established
+ * we automatically have sbio inserted into it. The
+ * BIO chain is now &#39;swallowed&#39; by the accept BIO and
+ * will be freed when the accept BIO is freed.
+ */
+BIO_set_accept_bios(acpt, sbio);
+out = BIO_new_fp(stdout, BIO_NOCLOSE);
 
- /* Setup accept BIO */
- if (BIO_do_accept(acpt) &lt;= 0) {
-     fprintf(stderr, &quot;Error setting up accept BIO\n&quot;);
-     ERR_print_errors_fp(stderr);
-     exit(1);
- }
+/* Setup accept BIO */
+if (BIO_do_accept(acpt) &lt;= 0) {
+    fprintf(stderr, &quot;Error setting up accept BIO\n&quot;);
+    ERR_print_errors_fp(stderr);
+    exit(1);
+}
 
- /* We only want one connection so remove and free accept BIO */
- sbio = BIO_pop(acpt);
- BIO_free_all(acpt);
+/* We only want one connection so remove and free accept BIO */
+sbio = BIO_pop(acpt);
+BIO_free_all(acpt);
 
- if (BIO_do_handshake(sbio) &lt;= 0) {
-     fprintf(stderr, &quot;Error in SSL handshake\n&quot;);
-     ERR_print_errors_fp(stderr);
-     exit(1);
- }
+if (BIO_do_handshake(sbio) &lt;= 0) {
+    fprintf(stderr, &quot;Error in SSL handshake\n&quot;);
+    ERR_print_errors_fp(stderr);
+    exit(1);
+}
 
- BIO_puts(sbio, &quot;HTTP/1.0 200 OK\r\nContent-type: text/plain\r\n\r\n&quot;);
- BIO_puts(sbio, &quot;\r\nConnection Established\r\nRequest headers:\r\n&quot;);
- BIO_puts(sbio, &quot;--------------------------------------------------\r\n&quot;);
+BIO_puts(sbio, &quot;HTTP/1.0 200 OK\r\nContent-type: text/plain\r\n\r\n&quot;);
+BIO_puts(sbio, &quot;\r\nConnection Established\r\nRequest headers:\r\n&quot;);
+BIO_puts(sbio, &quot;--------------------------------------------------\r\n&quot;);
 
- for (;;) {
-     len = BIO_gets(sbio, tmpbuf, 1024);
-     if (len &lt;= 0)
-         break;
-     BIO_write(sbio, tmpbuf, len);
-     BIO_write(out, tmpbuf, len);
-     /* Look for blank line signifying end of headers*/
-     if (tmpbuf[0] == &#39;\r&#39; || tmpbuf[0] == &#39;\n&#39;)
-         break;
- }
+for (;;) {
+    len = BIO_gets(sbio, tmpbuf, 1024);
+    if (len &lt;= 0)
+        break;
+    BIO_write(sbio, tmpbuf, len);
+    BIO_write(out, tmpbuf, len);
+    /* Look for blank line signifying end of headers*/
+    if (tmpbuf[0] == &#39;\r&#39; || tmpbuf[0] == &#39;\n&#39;)
+        break;
+}
 
- BIO_puts(sbio, &quot;--------------------------------------------------\r\n&quot;);
- BIO_puts(sbio, &quot;\r\n&quot;);
- BIO_flush(sbio);
- BIO_free_all(sbio);</code></pre>
+BIO_puts(sbio, &quot;--------------------------------------------------\r\n&quot;);
+BIO_puts(sbio, &quot;\r\n&quot;);
+BIO_flush(sbio);
+BIO_free_all(sbio);</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -251,7 +246,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -29,13 +29,13 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/bio.h&gt;
- #include &lt;openssl/evp.h&gt;
+<pre><code>#include &lt;openssl/bio.h&gt;
+#include &lt;openssl/evp.h&gt;
 
- const BIO_METHOD *BIO_f_md(void);
- int BIO_set_md(BIO *b, EVP_MD *md);
- int BIO_get_md(BIO *b, EVP_MD **mdp);
- int BIO_get_md_ctx(BIO *b, EVP_MD_CTX **mdcp);</code></pre>
+const BIO_METHOD *BIO_f_md(void);
+int BIO_set_md(BIO *b, EVP_MD *md);
+int BIO_get_md(BIO *b, EVP_MD **mdp);
+int BIO_get_md_ctx(BIO *b, EVP_MD_CTX **mdcp);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -75,64 +75,64 @@
 
 <p>The following example creates a BIO chain containing an SHA1 and MD5 digest BIO and passes the string &quot;Hello World&quot; through it. Error checking has been omitted for clarity.</p>
 
-<pre><code> BIO *bio, *mdtmp;
- char message[] = &quot;Hello World&quot;;
+<pre><code>BIO *bio, *mdtmp;
+char message[] = &quot;Hello World&quot;;
 
- bio = BIO_new(BIO_s_null());
- mdtmp = BIO_new(BIO_f_md());
- BIO_set_md(mdtmp, EVP_sha1());
- /*
-  * For BIO_push() we want to append the sink BIO and keep a note of
-  * the start of the chain.
-  */
- bio = BIO_push(mdtmp, bio);
- mdtmp = BIO_new(BIO_f_md());
- BIO_set_md(mdtmp, EVP_md5());
- bio = BIO_push(mdtmp, bio);
- /* Note: mdtmp can now be discarded */
- BIO_write(bio, message, strlen(message));</code></pre>
+bio = BIO_new(BIO_s_null());
+mdtmp = BIO_new(BIO_f_md());
+BIO_set_md(mdtmp, EVP_sha1());
+/*
+ * For BIO_push() we want to append the sink BIO and keep a note of
+ * the start of the chain.
+ */
+bio = BIO_push(mdtmp, bio);
+mdtmp = BIO_new(BIO_f_md());
+BIO_set_md(mdtmp, EVP_md5());
+bio = BIO_push(mdtmp, bio);
+/* Note: mdtmp can now be discarded */
+BIO_write(bio, message, strlen(message));</code></pre>
 
 <p>The next example digests data by reading through a chain instead:</p>
 
-<pre><code> BIO *bio, *mdtmp;
- char buf[1024];
- int rdlen;
+<pre><code>BIO *bio, *mdtmp;
+char buf[1024];
+int rdlen;
 
- bio = BIO_new_file(file, &quot;rb&quot;);
- mdtmp = BIO_new(BIO_f_md());
- BIO_set_md(mdtmp, EVP_sha1());
- bio = BIO_push(mdtmp, bio);
- mdtmp = BIO_new(BIO_f_md());
- BIO_set_md(mdtmp, EVP_md5());
- bio = BIO_push(mdtmp, bio);
- do {
-     rdlen = BIO_read(bio, buf, sizeof(buf));
-     /* Might want to do something with the data here */
- } while (rdlen &gt; 0);</code></pre>
+bio = BIO_new_file(file, &quot;rb&quot;);
+mdtmp = BIO_new(BIO_f_md());
+BIO_set_md(mdtmp, EVP_sha1());
+bio = BIO_push(mdtmp, bio);
+mdtmp = BIO_new(BIO_f_md());
+BIO_set_md(mdtmp, EVP_md5());
+bio = BIO_push(mdtmp, bio);
+do {
+    rdlen = BIO_read(bio, buf, sizeof(buf));
+    /* Might want to do something with the data here */
+} while (rdlen &gt; 0);</code></pre>
 
 <p>This next example retrieves the message digests from a BIO chain and outputs them. This could be used with the examples above.</p>
 
-<pre><code> BIO *mdtmp;
- unsigned char mdbuf[EVP_MAX_MD_SIZE];
- int mdlen;
- int i;
+<pre><code>BIO *mdtmp;
+unsigned char mdbuf[EVP_MAX_MD_SIZE];
+int mdlen;
+int i;
 
- mdtmp = bio;   /* Assume bio has previously been set up */
- do {
-     EVP_MD *md;
+mdtmp = bio;   /* Assume bio has previously been set up */
+do {
+    EVP_MD *md;
 
-     mdtmp = BIO_find_type(mdtmp, BIO_TYPE_MD);
-     if (!mdtmp)
-         break;
-     BIO_get_md(mdtmp, &amp;md);
-     printf(&quot;%s digest&quot;, OBJ_nid2sn(EVP_MD_type(md)));
-     mdlen = BIO_gets(mdtmp, mdbuf, EVP_MAX_MD_SIZE);
-     for (i = 0; i &lt; mdlen; i++) printf(&quot;:%02X&quot;, mdbuf[i]);
-     printf(&quot;\n&quot;);
-     mdtmp = BIO_next(mdtmp);
- } while (mdtmp);
+    mdtmp = BIO_find_type(mdtmp, BIO_TYPE_MD);
+    if (!mdtmp)
+        break;
+    BIO_get_md(mdtmp, &amp;md);
+    printf(&quot;%s digest&quot;, OBJ_nid2sn(EVP_MD_type(md)));
+    mdlen = BIO_gets(mdtmp, mdbuf, EVP_MAX_MD_SIZE);
+    for (i = 0; i &lt; mdlen; i++) printf(&quot;:%02X&quot;, mdbuf[i]);
+    printf(&quot;\n&quot;);
+    mdtmp = BIO_next(mdtmp);
+} while (mdtmp);
 
- BIO_free_all(bio);</code></pre>
+BIO_free_all(bio);</code></pre>
 
 <h1 id="BUGS">BUGS</h1>
 

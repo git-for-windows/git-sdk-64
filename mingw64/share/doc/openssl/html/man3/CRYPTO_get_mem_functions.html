@@ -26,65 +26,65 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/crypto.h&gt;
+<pre><code>#include &lt;openssl/crypto.h&gt;
 
- int OPENSSL_malloc_init(void)
+int OPENSSL_malloc_init(void)
 
- void *OPENSSL_malloc(size_t num)
- void *OPENSSL_zalloc(size_t num)
- void *OPENSSL_realloc(void *addr, size_t num)
- void OPENSSL_free(void *addr)
- char *OPENSSL_strdup(const char *str)
- char *OPENSSL_strndup(const char *str, size_t s)
- size_t OPENSSL_strlcat(char *dst, const char *src, size_t size);
- size_t OPENSSL_strlcpy(char *dst, const char *src, size_t size);
- void *OPENSSL_memdup(void *data, size_t s)
- void *OPENSSL_clear_realloc(void *p, size_t old_len, size_t num)
- void OPENSSL_clear_free(void *str, size_t num)
- void OPENSSL_cleanse(void *ptr, size_t len);
+void *OPENSSL_malloc(size_t num)
+void *OPENSSL_zalloc(size_t num)
+void *OPENSSL_realloc(void *addr, size_t num)
+void OPENSSL_free(void *addr)
+char *OPENSSL_strdup(const char *str)
+char *OPENSSL_strndup(const char *str, size_t s)
+size_t OPENSSL_strlcat(char *dst, const char *src, size_t size);
+size_t OPENSSL_strlcpy(char *dst, const char *src, size_t size);
+void *OPENSSL_memdup(void *data, size_t s)
+void *OPENSSL_clear_realloc(void *p, size_t old_len, size_t num)
+void OPENSSL_clear_free(void *str, size_t num)
+void OPENSSL_cleanse(void *ptr, size_t len);
 
- unsigned char *OPENSSL_hexstr2buf(const char *str, long *len);
- char *OPENSSL_buf2hexstr(const unsigned char *buffer, long len);
- int OPENSSL_hexchar2int(unsigned char c);
+unsigned char *OPENSSL_hexstr2buf(const char *str, long *len);
+char *OPENSSL_buf2hexstr(const unsigned char *buffer, long len);
+int OPENSSL_hexchar2int(unsigned char c);
 
- void *CRYPTO_malloc(size_t num, const char *file, int line)
- void *CRYPTO_zalloc(size_t num, const char *file, int line)
- void *CRYPTO_realloc(void *p, size_t num, const char *file, int line)
- void CRYPTO_free(void *str, const char *, int)
- char *CRYPTO_strdup(const char *p, const char *file, int line)
- char *CRYPTO_strndup(const char *p, size_t num, const char *file, int line)
- void *CRYPTO_clear_realloc(void *p, size_t old_len, size_t num,
-                            const char *file, int line)
- void CRYPTO_clear_free(void *str, size_t num, const char *, int)
+void *CRYPTO_malloc(size_t num, const char *file, int line)
+void *CRYPTO_zalloc(size_t num, const char *file, int line)
+void *CRYPTO_realloc(void *p, size_t num, const char *file, int line)
+void CRYPTO_free(void *str, const char *, int)
+char *CRYPTO_strdup(const char *p, const char *file, int line)
+char *CRYPTO_strndup(const char *p, size_t num, const char *file, int line)
+void *CRYPTO_clear_realloc(void *p, size_t old_len, size_t num,
+                           const char *file, int line)
+void CRYPTO_clear_free(void *str, size_t num, const char *, int)
 
- void CRYPTO_get_mem_functions(
-         void *(**m)(size_t, const char *, int),
-         void *(**r)(void *, size_t, const char *, int),
-         void (**f)(void *, const char *, int))
- int CRYPTO_set_mem_functions(
-         void *(*m)(size_t, const char *, int),
-         void *(*r)(void *, size_t, const char *, int),
-         void (*f)(void *, const char *, int))
+void CRYPTO_get_mem_functions(
+        void *(**m)(size_t, const char *, int),
+        void *(**r)(void *, size_t, const char *, int),
+        void (**f)(void *, const char *, int))
+int CRYPTO_set_mem_functions(
+        void *(*m)(size_t, const char *, int),
+        void *(*r)(void *, size_t, const char *, int),
+        void (*f)(void *, const char *, int))
 
- void CRYPTO_get_alloc_counts(int *m, int *r, int *f)
+void CRYPTO_get_alloc_counts(int *m, int *r, int *f)
 
- int CRYPTO_set_mem_debug(int onoff)
+int CRYPTO_set_mem_debug(int onoff)
 
- env OPENSSL_MALLOC_FAILURES=... &lt;application&gt;
- env OPENSSL_MALLOC_FD=... &lt;application&gt;
+env OPENSSL_MALLOC_FAILURES=... &lt;application&gt;
+env OPENSSL_MALLOC_FD=... &lt;application&gt;
 
- int CRYPTO_mem_ctrl(int mode);
+int CRYPTO_mem_ctrl(int mode);
 
- int OPENSSL_mem_debug_push(const char *info)
- int OPENSSL_mem_debug_pop(void);
+int OPENSSL_mem_debug_push(const char *info)
+int OPENSSL_mem_debug_pop(void);
 
- int CRYPTO_mem_debug_push(const char *info, const char *file, int line);
- int CRYPTO_mem_debug_pop(void);
+int CRYPTO_mem_debug_push(const char *info, const char *file, int line);
+int CRYPTO_mem_debug_pop(void);
 
- int CRYPTO_mem_leaks(BIO *b);
- int CRYPTO_mem_leaks_fp(FILE *fp);
- int CRYPTO_mem_leaks_cb(int (*cb)(const char *str, size_t len, void *u),
-                         void *u);</code></pre>
+int CRYPTO_mem_leaks(BIO *b);
+int CRYPTO_mem_leaks_fp(FILE *fp);
+int CRYPTO_mem_leaks_cb(int (*cb)(const char *str, size_t len, void *u),
+                        void *u);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -126,11 +126,11 @@
 
 <p>If the variable <b>OPENSSL_MALLOC_FD</b> is parsed as a positive integer, then it is taken as an open file descriptor, and a record of all allocations is written to that descriptor. If an allocation will fail, and the platform supports it, then a backtrace will be written to the descriptor. This can be useful because a malloc may fail but not be checked, and problems will only occur later. The following example in classic shell syntax shows how to use this (will not work on all platforms):</p>
 
-<pre><code>  OPENSSL_MALLOC_FAILURES=&#39;200;@10&#39;
-  export OPENSSL_MALLOC_FAILURES
-  OPENSSL_MALLOC_FD=3
-  export OPENSSL_MALLOC_FD
-  ...app invocation... 3&gt;/tmp/log$$</code></pre>
+<pre><code>OPENSSL_MALLOC_FAILURES=&#39;200;@10&#39;
+export OPENSSL_MALLOC_FAILURES
+OPENSSL_MALLOC_FD=3
+export OPENSSL_MALLOC_FD
+...app invocation... 3&gt;/tmp/log$$</code></pre>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 

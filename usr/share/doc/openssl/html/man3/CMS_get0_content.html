@@ -27,12 +27,12 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/cms.h&gt;
+<pre><code>#include &lt;openssl/cms.h&gt;
 
- const ASN1_OBJECT *CMS_get0_type(const CMS_ContentInfo *cms);
- int CMS_set1_eContentType(CMS_ContentInfo *cms, const ASN1_OBJECT *oid);
- const ASN1_OBJECT *CMS_get0_eContentType(CMS_ContentInfo *cms);
- ASN1_OCTET_STRING **CMS_get0_content(CMS_ContentInfo *cms);</code></pre>
+const ASN1_OBJECT *CMS_get0_type(const CMS_ContentInfo *cms);
+int CMS_set1_eContentType(CMS_ContentInfo *cms, const ASN1_OBJECT *oid);
+const ASN1_OBJECT *CMS_get0_eContentType(CMS_ContentInfo *cms);
+ASN1_OCTET_STRING **CMS_get0_content(CMS_ContentInfo *cms);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -50,16 +50,16 @@
 
 <p>The <b>ASN1_OBJECT</b> values returned can be converted to an integer <b>NID</b> value using OBJ_obj2nid(). For the currently supported content types the following values are returned:</p>
 
-<pre><code> NID_pkcs7_data
- NID_pkcs7_signed
- NID_pkcs7_digest
- NID_id_smime_ct_compressedData:
- NID_pkcs7_encrypted
- NID_pkcs7_enveloped</code></pre>
+<pre><code>NID_pkcs7_data
+NID_pkcs7_signed
+NID_pkcs7_digest
+NID_id_smime_ct_compressedData:
+NID_pkcs7_encrypted
+NID_pkcs7_enveloped</code></pre>
 
 <p>The return value of CMS_get0_content() is a pointer to the <b>ASN1_OCTET_STRING</b> content pointer. That means that for example:</p>
 
-<pre><code> ASN1_OCTET_STRING **pconf = CMS_get0_content(cms);</code></pre>
+<pre><code>ASN1_OCTET_STRING **pconf = CMS_get0_content(cms);</code></pre>
 
 <p><b>*pconf</b> could be NULL if there is no embedded content. Applications can access, modify or create the embedded content in a <b>CMS_ContentInfo</b> structure using this function. Applications usually will not need to modify the embedded content as it is normally set by higher level functions.</p>
 

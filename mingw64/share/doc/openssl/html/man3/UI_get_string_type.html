@@ -26,30 +26,30 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ui.h&gt;
+<pre><code>#include &lt;openssl/ui.h&gt;
 
- typedef struct ui_string_st UI_STRING;
+typedef struct ui_string_st UI_STRING;
 
- enum UI_string_types {
-     UIT_NONE = 0,
-     UIT_PROMPT,                 /* Prompt for a string */
-     UIT_VERIFY,                 /* Prompt for a string and verify */
-     UIT_BOOLEAN,                /* Prompt for a yes/no response */
-     UIT_INFO,                   /* Send info to the user */
-     UIT_ERROR                   /* Send an error message to the user */
- };
+enum UI_string_types {
+    UIT_NONE = 0,
+    UIT_PROMPT,                 /* Prompt for a string */
+    UIT_VERIFY,                 /* Prompt for a string and verify */
+    UIT_BOOLEAN,                /* Prompt for a yes/no response */
+    UIT_INFO,                   /* Send info to the user */
+    UIT_ERROR                   /* Send an error message to the user */
+};
 
- enum UI_string_types UI_get_string_type(UI_STRING *uis);
- int UI_get_input_flags(UI_STRING *uis);
- const char *UI_get0_output_string(UI_STRING *uis);
- const char *UI_get0_action_string(UI_STRING *uis);
- const char *UI_get0_result_string(UI_STRING *uis);
- int UI_get_result_string_length(UI_STRING *uis);
- const char *UI_get0_test_string(UI_STRING *uis);
- int UI_get_result_minsize(UI_STRING *uis);
- int UI_get_result_maxsize(UI_STRING *uis);
- int UI_set_result(UI *ui, UI_STRING *uis, const char *result);
- int UI_set_result_ex(UI *ui, UI_STRING *uis, const char *result, int len);</code></pre>
+enum UI_string_types UI_get_string_type(UI_STRING *uis);
+int UI_get_input_flags(UI_STRING *uis);
+const char *UI_get0_output_string(UI_STRING *uis);
+const char *UI_get0_action_string(UI_STRING *uis);
+const char *UI_get0_result_string(UI_STRING *uis);
+int UI_get_result_string_length(UI_STRING *uis);
+const char *UI_get0_test_string(UI_STRING *uis);
+int UI_get_result_minsize(UI_STRING *uis);
+int UI_get_result_maxsize(UI_STRING *uis);
+int UI_set_result(UI *ui, UI_STRING *uis, const char *result);
+int UI_set_result_ex(UI *ui, UI_STRING *uis, const char *result, int len);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 

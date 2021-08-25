@@ -26,11 +26,11 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/bio.h&gt;
+<pre><code>#include &lt;openssl/bio.h&gt;
 
- BIO *BIO_find_type(BIO *b, int bio_type);
- BIO *BIO_next(BIO *b);
- int BIO_method_type(const BIO *b);</code></pre>
+BIO *BIO_find_type(BIO *b, int bio_type);
+BIO *BIO_next(BIO *b);
+int BIO_method_type(const BIO *b);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -56,18 +56,18 @@
 
 <p>Traverse a chain looking for digest BIOs:</p>
 
-<pre><code> BIO *btmp;
+<pre><code>BIO *btmp;
 
- btmp = in_bio; /* in_bio is chain to search through */
- do {
-     btmp = BIO_find_type(btmp, BIO_TYPE_MD);
-     if (btmp == NULL)
-         break; /* Not found */
-     /* btmp is a digest BIO, do something with it ...*/
-     ...
+btmp = in_bio; /* in_bio is chain to search through */
+do {
+    btmp = BIO_find_type(btmp, BIO_TYPE_MD);
+    if (btmp == NULL)
+        break; /* Not found */
+    /* btmp is a digest BIO, do something with it ...*/
+    ...
 
-     btmp = BIO_next(btmp);
- } while (btmp);</code></pre>
+    btmp = BIO_next(btmp);
+} while (btmp);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

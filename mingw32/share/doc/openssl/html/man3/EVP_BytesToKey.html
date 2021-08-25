@@ -28,12 +28,12 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/evp.h&gt;
+<pre><code>#include &lt;openssl/evp.h&gt;
 
- int EVP_BytesToKey(const EVP_CIPHER *type, const EVP_MD *md,
-                    const unsigned char *salt,
-                    const unsigned char *data, int datal, int count,
-                    unsigned char *key, unsigned char *iv);</code></pre>
+int EVP_BytesToKey(const EVP_CIPHER *type, const EVP_MD *md,
+                   const unsigned char *salt,
+                   const unsigned char *data, int datal, int count,
+                   unsigned char *key, unsigned char *iv);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -53,7 +53,7 @@
 
 <p>The key and IV is derived by concatenating D_1, D_2, etc until enough data is available for the key and IV. D_i is defined as:</p>
 
-<pre><code>        D_i = HASH^count(D_(i-1) || data || salt)</code></pre>
+<pre><code>D_i = HASH^count(D_(i-1) || data || salt)</code></pre>
 
 <p>where || denotes concatenation, D_0 is empty, HASH is the digest algorithm in use, HASH^1(data) is simply HASH(data), HASH^2(data) is HASH(HASH(data)) and so on.</p>
 

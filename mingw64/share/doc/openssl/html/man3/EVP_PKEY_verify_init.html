@@ -29,12 +29,12 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/evp.h&gt;
+<pre><code>#include &lt;openssl/evp.h&gt;
 
- int EVP_PKEY_verify_init(EVP_PKEY_CTX *ctx);
- int EVP_PKEY_verify(EVP_PKEY_CTX *ctx,
-                     const unsigned char *sig, size_t siglen,
-                     const unsigned char *tbs, size_t tbslen);</code></pre>
+int EVP_PKEY_verify_init(EVP_PKEY_CTX *ctx);
+int EVP_PKEY_verify(EVP_PKEY_CTX *ctx,
+                    const unsigned char *sig, size_t siglen,
+                    const unsigned char *tbs, size_t tbslen);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -58,35 +58,35 @@
 
 <p>Verify signature using PKCS#1 and SHA256 digest:</p>
 
-<pre><code> #include &lt;openssl/evp.h&gt;
- #include &lt;openssl/rsa.h&gt;
+<pre><code>#include &lt;openssl/evp.h&gt;
+#include &lt;openssl/rsa.h&gt;
 
- EVP_PKEY_CTX *ctx;
- unsigned char *md, *sig;
- size_t mdlen, siglen;
- EVP_PKEY *verify_key;
+EVP_PKEY_CTX *ctx;
+unsigned char *md, *sig;
+size_t mdlen, siglen;
+EVP_PKEY *verify_key;
 
- /*
-  * NB: assumes verify_key, sig, siglen md and mdlen are already set up
-  * and that verify_key is an RSA public key
-  */
- ctx = EVP_PKEY_CTX_new(verify_key, NULL /* no engine */);
- if (!ctx)
-     /* Error occurred */
- if (EVP_PKEY_verify_init(ctx) &lt;= 0)
-     /* Error */
- if (EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PADDING) &lt;= 0)
-     /* Error */
- if (EVP_PKEY_CTX_set_signature_md(ctx, EVP_sha256()) &lt;= 0)
-     /* Error */
+/*
+ * NB: assumes verify_key, sig, siglen md and mdlen are already set up
+ * and that verify_key is an RSA public key
+ */
+ctx = EVP_PKEY_CTX_new(verify_key, NULL /* no engine */);
+if (!ctx)
+    /* Error occurred */
+if (EVP_PKEY_verify_init(ctx) &lt;= 0)
+    /* Error */
+if (EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PADDING) &lt;= 0)
+    /* Error */
+if (EVP_PKEY_CTX_set_signature_md(ctx, EVP_sha256()) &lt;= 0)
+    /* Error */
 
- /* Perform operation */
- ret = EVP_PKEY_verify(ctx, sig, siglen, md, mdlen);
+/* Perform operation */
+ret = EVP_PKEY_verify(ctx, sig, siglen, md, mdlen);
 
- /*
-  * ret == 1 indicates success, 0 verify failure and &lt; 0 for some
-  * other error.
-  */</code></pre>
+/*
+ * ret == 1 indicates success, 0 verify failure and &lt; 0 for some
+ * other error.
+ */</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

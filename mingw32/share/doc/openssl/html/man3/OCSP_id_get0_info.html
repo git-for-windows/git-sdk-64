@@ -27,24 +27,24 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ocsp.h&gt;
+<pre><code>#include &lt;openssl/ocsp.h&gt;
 
- OCSP_CERTID *OCSP_cert_to_id(const EVP_MD *dgst,
-                              X509 *subject, X509 *issuer);
+OCSP_CERTID *OCSP_cert_to_id(const EVP_MD *dgst,
+                             X509 *subject, X509 *issuer);
 
- OCSP_CERTID *OCSP_cert_id_new(const EVP_MD *dgst,
-                               X509_NAME *issuerName,
-                               ASN1_BIT_STRING *issuerKey,
-                               ASN1_INTEGER *serialNumber);
+OCSP_CERTID *OCSP_cert_id_new(const EVP_MD *dgst,
+                              X509_NAME *issuerName,
+                              ASN1_BIT_STRING *issuerKey,
+                              ASN1_INTEGER *serialNumber);
 
- void OCSP_CERTID_free(OCSP_CERTID *id);
+void OCSP_CERTID_free(OCSP_CERTID *id);
 
- int OCSP_id_issuer_cmp(const OCSP_CERTID *a, const OCSP_CERTID *b);
- int OCSP_id_cmp(const OCSP_CERTID *a, const OCSP_CERTID *b);
+int OCSP_id_issuer_cmp(const OCSP_CERTID *a, const OCSP_CERTID *b);
+int OCSP_id_cmp(const OCSP_CERTID *a, const OCSP_CERTID *b);
 
- int OCSP_id_get0_info(ASN1_OCTET_STRING **piNameHash, ASN1_OBJECT **pmd,
-                       ASN1_OCTET_STRING **pikeyHash,
-                       ASN1_INTEGER **pserial, OCSP_CERTID *cid);</code></pre>
+int OCSP_id_get0_info(ASN1_OCTET_STRING **piNameHash, ASN1_OBJECT **pmd,
+                      ASN1_OCTET_STRING **pikeyHash,
+                      ASN1_INTEGER **pserial, OCSP_CERTID *cid);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 

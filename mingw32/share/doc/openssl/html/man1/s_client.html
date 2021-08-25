@@ -233,18 +233,18 @@
 
 <p>Use one or more times to specify the RRDATA fields of the DANE TLSA RRset associated with the target service. The <b>rrdata</b> value is specified in &quot;presentation form&quot;, that is four whitespace separated fields that specify the usage, selector, matching type and associated data, with the last of these encoded in hexadecimal. Optional whitespace is ignored in the associated data field. For example:</p>
 
-<pre><code>  $ openssl s_client -brief -starttls smtp \
-    -connect smtp.example.com:25 \
-    -dane_tlsa_domain smtp.example.com \
-    -dane_tlsa_rrdata &quot;2 1 1
-      B111DD8A1C2091A89BD4FD60C57F0716CCE50FEEFF8137CDBEE0326E 02CF362B&quot; \
-    -dane_tlsa_rrdata &quot;2 1 1
-      60B87575447DCBA2A36B7D11AC09FB24A9DB406FEE12D2CC90180517 616E8A18&quot;
-  ...
-  Verification: OK
-  Verified peername: smtp.example.com
-  DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
-  ...</code></pre>
+<pre><code>$ openssl s_client -brief -starttls smtp \
+  -connect smtp.example.com:25 \
+  -dane_tlsa_domain smtp.example.com \
+  -dane_tlsa_rrdata &quot;2 1 1
+    B111DD8A1C2091A89BD4FD60C57F0716CCE50FEEFF8137CDBEE0326E 02CF362B&quot; \
+  -dane_tlsa_rrdata &quot;2 1 1
+    60B87575447DCBA2A36B7D11AC09FB24A9DB406FEE12D2CC90180517 616E8A18&quot;
+...
+Verification: OK
+Verified peername: smtp.example.com
+DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
+...</code></pre>
 
 </dd>
 <dt id="dane_ee_no_namechecks"><b>-dane_ee_no_namechecks</b></dt>
@@ -456,7 +456,7 @@
 
 <p>Specifies the list of supported curves to be sent by the client. The curve is ultimately selected by the server. For a list of all curves, use:</p>
 
-<pre><code>    $ openssl ecparam -list_curves</code></pre>
+<pre><code>$ openssl ecparam -list_curves</code></pre>
 
 </dd>
 <dt id="cipher-cipherlist"><b>-cipher cipherlist</b></dt>
@@ -637,7 +637,7 @@
 
 <p><b>s_client</b> can be used to debug SSL servers. To connect to an SSL HTTP server the command:</p>
 
-<pre><code> openssl s_client -connect servername:443</code></pre>
+<pre><code>openssl s_client -connect servername:443</code></pre>
 
 <p>would typically be used (https uses port 443). If the connection succeeds then an HTTP command can be given such as &quot;GET /&quot; to retrieve a web page.</p>
 
@@ -649,7 +649,7 @@
 
 <p>If there are problems verifying a server certificate then the <b>-showcerts</b> option can be used to show all the certificates sent by the server.</p>
 
-<p>The <b>s_client</b> utility is a test tool and is designed to continue the handshake after any certificate verification errors. As a result it will accept any certificate chain (trusted or not) sent by the peer. None test applications should <b>not</b> do this as it makes them vulnerable to a MITM attack. This behaviour can be changed by with the <b>-verify_return_error</b> option: any verify errors are then returned aborting the handshake.</p>
+<p>The <b>s_client</b> utility is a test tool and is designed to continue the handshake after any certificate verification errors. As a result it will accept any certificate chain (trusted or not) sent by the peer. Non-test applications should <b>not</b> do this as it makes them vulnerable to a MITM attack. This behaviour can be changed by with the <b>-verify_return_error</b> option: any verify errors are then returned aborting the handshake.</p>
 
 <p>The <b>-bind</b> option may be useful if the server or a firewall requires connections to come from some particular address and or port.</p>
 

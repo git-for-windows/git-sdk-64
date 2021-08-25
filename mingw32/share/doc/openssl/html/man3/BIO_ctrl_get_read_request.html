@@ -29,24 +29,24 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/bio.h&gt;
+<pre><code>#include &lt;openssl/bio.h&gt;
 
- const BIO_METHOD *BIO_s_bio(void);
+const BIO_METHOD *BIO_s_bio(void);
 
- int BIO_make_bio_pair(BIO *b1, BIO *b2);
- int BIO_destroy_bio_pair(BIO *b);
- int BIO_shutdown_wr(BIO *b);
+int BIO_make_bio_pair(BIO *b1, BIO *b2);
+int BIO_destroy_bio_pair(BIO *b);
+int BIO_shutdown_wr(BIO *b);
 
- int BIO_set_write_buf_size(BIO *b, long size);
- size_t BIO_get_write_buf_size(BIO *b, long size);
+int BIO_set_write_buf_size(BIO *b, long size);
+size_t BIO_get_write_buf_size(BIO *b, long size);
 
- int BIO_new_bio_pair(BIO **bio1, size_t writebuf1, BIO **bio2, size_t writebuf2);
+int BIO_new_bio_pair(BIO **bio1, size_t writebuf1, BIO **bio2, size_t writebuf2);
 
- int BIO_get_write_guarantee(BIO *b);
- size_t BIO_ctrl_get_write_guarantee(BIO *b);
- int BIO_get_read_request(BIO *b);
- size_t BIO_ctrl_get_read_request(BIO *b);
- int BIO_ctrl_reset_read_request(BIO *b);</code></pre>
+int BIO_get_write_guarantee(BIO *b);
+size_t BIO_ctrl_get_write_guarantee(BIO *b);
+int BIO_get_read_request(BIO *b);
+size_t BIO_ctrl_get_read_request(BIO *b);
+int BIO_ctrl_reset_read_request(BIO *b);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -104,32 +104,32 @@
 
 <p>The BIO pair can be used to have full control over the network access of an application. The application can call select() on the socket as required without having to go through the SSL-interface.</p>
 
-<pre><code> BIO *internal_bio, *network_bio;
+<pre><code>BIO *internal_bio, *network_bio;
+
+...
+BIO_new_bio_pair(&amp;internal_bio, 0, &amp;network_bio, 0);
+SSL_set_bio(ssl, internal_bio, internal_bio);
+SSL_operations(); /* e.g. SSL_read and SSL_write */
+...
+
+application |   TLS-engine
+   |        |
+   +----------&gt; SSL_operations()
+            |     /\    ||
+            |     ||    \/
+            |   BIO-pair (internal_bio)
+            |   BIO-pair (network_bio)
+            |     ||     /\
+            |     \/     ||
+   +-----------&lt; BIO_operations()
+   |        |
+   |        |
+  socket
 
  ...
- BIO_new_bio_pair(&amp;internal_bio, 0, &amp;network_bio, 0);
- SSL_set_bio(ssl, internal_bio, internal_bio);
- SSL_operations(); /* e.g. SSL_read and SSL_write */
- ...
-
- application |   TLS-engine
-    |        |
-    +----------&gt; SSL_operations()
-             |     /\    ||
-             |     ||    \/
-             |   BIO-pair (internal_bio)
-             |   BIO-pair (network_bio)
-             |     ||     /\
-             |     \/     ||
-    +-----------&lt; BIO_operations()
-    |        |
-    |        |
-   socket
-
-  ...
-  SSL_free(ssl);                /* implicitly frees internal_bio */
-  BIO_free(network_bio);
-  ...</code></pre>
+ SSL_free(ssl);                /* implicitly frees internal_bio */
+ BIO_free(network_bio);
+ ...</code></pre>
 
 <p>As the BIO pair will only buffer the data and never directly access the connection, it behaves nonblocking and will return as soon as the write buffer is full or the read buffer is drained. Then the application has to flush the write buffer and/or fill the read buffer.</p>
 

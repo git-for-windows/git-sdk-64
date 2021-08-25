@@ -30,12 +30,12 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/err.h&gt;
+<pre><code>#include &lt;openssl/err.h&gt;
 
- void ERR_put_error(int lib, int func, int reason, const char *file, int line);
+void ERR_put_error(int lib, int func, int reason, const char *file, int line);
 
- void ERR_add_error_data(int num, ...);
- void ERR_add_error_vdata(int num, va_list arg);</code></pre>
+void ERR_add_error_data(int num, ...);
+void ERR_add_error_vdata(int num, va_list arg);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -49,7 +49,7 @@
 
 <p>Each sub-library has a specific macro XXXerr() that is used to report errors. Its first argument is a function code <b>XXX_F_...</b>, the second argument is a reason code <b>XXX_R_...</b>. Function codes are derived from the function names; reason codes consist of textual error descriptions. For example, the function ssl3_read_bytes() reports a &quot;handshake failure&quot; as follows:</p>
 
-<pre><code> SSLerr(SSL_F_SSL3_READ_BYTES, SSL_R_SSL_HANDSHAKE_FAILURE);</code></pre>
+<pre><code>SSLerr(SSL_F_SSL3_READ_BYTES, SSL_R_SSL_HANDSHAKE_FAILURE);</code></pre>
 
 <p>Function and reason codes should consist of uppercase characters, numbers and underscores only. The error file generation script translates function codes into function names by looking in the header files for an appropriate function name, if none is found it just uses the capitalized form such as &quot;SSL3_READ_BYTES&quot; in the above example.</p>
 

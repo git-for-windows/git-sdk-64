@@ -29,16 +29,16 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ssl.h&gt;
+<pre><code>#include &lt;openssl/ssl.h&gt;
 
- int SSL_CTX_load_verify_locations(SSL_CTX *ctx, const char *CAfile,
-                                   const char *CApath);
+int SSL_CTX_load_verify_locations(SSL_CTX *ctx, const char *CAfile,
+                                  const char *CApath);
 
- int SSL_CTX_set_default_verify_paths(SSL_CTX *ctx);
+int SSL_CTX_set_default_verify_paths(SSL_CTX *ctx);
 
- int SSL_CTX_set_default_verify_dir(SSL_CTX *ctx);
+int SSL_CTX_set_default_verify_dir(SSL_CTX *ctx);
 
- int SSL_CTX_set_default_verify_file(SSL_CTX *ctx);</code></pre>
+int SSL_CTX_set_default_verify_file(SSL_CTX *ctx);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -54,9 +54,9 @@
 
 <p>If <b>CAfile</b> is not NULL, it points to a file of CA certificates in PEM format. The file can contain several CA certificates identified by</p>
 
-<pre><code> -----BEGIN CERTIFICATE-----
- ... (CA certificate in base64 encoding) ...
- -----END CERTIFICATE-----</code></pre>
+<pre><code>-----BEGIN CERTIFICATE-----
+... (CA certificate in base64 encoding) ...
+-----END CERTIFICATE-----</code></pre>
 
 <p>sequences. Before, between, and after the certificates text is allowed which can be used e.g. for descriptions of the certificates.</p>
 
@@ -102,16 +102,16 @@
 
 <p>Generate a CA certificate file with descriptive text from the CA certificates ca1.pem ca2.pem ca3.pem:</p>
 
-<pre><code> #!/bin/sh
- rm CAfile.pem
- for i in ca1.pem ca2.pem ca3.pem ; do
-     openssl x509 -in $i -text &gt;&gt; CAfile.pem
- done</code></pre>
+<pre><code>#!/bin/sh
+rm CAfile.pem
+for i in ca1.pem ca2.pem ca3.pem ; do
+    openssl x509 -in $i -text &gt;&gt; CAfile.pem
+done</code></pre>
 
 <p>Prepare the directory /some/where/certs containing several CA certificates for use as <b>CApath</b>:</p>
 
-<pre><code> cd /some/where/certs
- c_rehash .</code></pre>
+<pre><code>cd /some/where/certs
+c_rehash .</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

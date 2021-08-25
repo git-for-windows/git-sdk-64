@@ -29,13 +29,13 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> TYPE *d2i_TYPE(TYPE **a, const unsigned char **ppin, long length);
- TYPE *d2i_TYPE_bio(BIO *bp, TYPE **a);
- TYPE *d2i_TYPE_fp(FILE *fp, TYPE **a);
+<pre><code>TYPE *d2i_TYPE(TYPE **a, const unsigned char **ppin, long length);
+TYPE *d2i_TYPE_bio(BIO *bp, TYPE **a);
+TYPE *d2i_TYPE_fp(FILE *fp, TYPE **a);
 
- int i2d_TYPE(TYPE *a, unsigned char **ppout);
- int i2d_TYPE_fp(FILE *fp, TYPE *a);
- int i2d_TYPE_bio(BIO *bp, TYPE *a);</code></pre>
+int i2d_TYPE(TYPE *a, unsigned char **ppout);
+int i2d_TYPE_fp(FILE *fp, TYPE *a);
+int i2d_TYPE_bio(BIO *bp, TYPE *a);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -157,63 +157,63 @@
 
 <p>Allocate and encode the DER encoding of an X509 structure:</p>
 
-<pre><code> int len;
- unsigned char *buf;
+<pre><code>int len;
+unsigned char *buf;
 
- buf = NULL;
- len = i2d_X509(x, &amp;buf);
- if (len &lt; 0)
-     /* error */</code></pre>
+buf = NULL;
+len = i2d_X509(x, &amp;buf);
+if (len &lt; 0)
+    /* error */</code></pre>
 
 <p>Attempt to decode a buffer:</p>
 
-<pre><code> X509 *x;
- unsigned char *buf;
- const unsigned char *p;
- int len;
+<pre><code>X509 *x;
+unsigned char *buf;
+const unsigned char *p;
+int len;
 
- /* Set up buf and len to point to the input buffer. */
- p = buf;
- x = d2i_X509(NULL, &amp;p, len);
- if (x == NULL)
-     /* error */</code></pre>
+/* Set up buf and len to point to the input buffer. */
+p = buf;
+x = d2i_X509(NULL, &amp;p, len);
+if (x == NULL)
+    /* error */</code></pre>
 
 <p>Alternative technique:</p>
 
-<pre><code> X509 *x;
- unsigned char *buf;
- const unsigned char *p;
- int len;
+<pre><code>X509 *x;
+unsigned char *buf;
+const unsigned char *p;
+int len;
 
- /* Set up buf and len to point to the input buffer. */
- p = buf;
- x = NULL;
+/* Set up buf and len to point to the input buffer. */
+p = buf;
+x = NULL;
 
- if (d2i_X509(&amp;x, &amp;p, len) == NULL)
-     /* error */</code></pre>
+if (d2i_X509(&amp;x, &amp;p, len) == NULL)
+    /* error */</code></pre>
 
 <h1 id="WARNINGS">WARNINGS</h1>
 
 <p>Using a temporary variable is mandatory. A common mistake is to attempt to use a buffer directly as follows:</p>
 
-<pre><code> int len;
- unsigned char *buf;
+<pre><code>int len;
+unsigned char *buf;
 
- len = i2d_X509(x, NULL);
- buf = OPENSSL_malloc(len);
- ...
- i2d_X509(x, &amp;buf);
- ...
- OPENSSL_free(buf);</code></pre>
+len = i2d_X509(x, NULL);
+buf = OPENSSL_malloc(len);
+...
+i2d_X509(x, &amp;buf);
+...
+OPENSSL_free(buf);</code></pre>
 
 <p>This code will result in <b>buf</b> apparently containing garbage because it was incremented after the call to point after the data just written. Also <b>buf</b> will no longer contain the pointer allocated by OPENSSL_malloc() and the subsequent call to OPENSSL_free() is likely to crash.</p>
 
 <p>Another trap to avoid is misuse of the <b>a</b> argument to d2i_TYPE():</p>
 
-<pre><code> X509 *x;
+<pre><code>X509 *x;
 
- if (d2i_X509(&amp;x, &amp;p, len) == NULL)
-     /* error */</code></pre>
+if (d2i_X509(&amp;x, &amp;p, len) == NULL)
+    /* error */</code></pre>
 
 <p>This will probably crash somewhere in d2i_X509(). The reason for this is that the variable <b>x</b> is uninitialized and an attempt will be made to interpret its (invalid) value as an <b>X509</b> structure, typically causing a segmentation violation. If <b>x</b> is set to NULL first then this will not happen.</p>
 

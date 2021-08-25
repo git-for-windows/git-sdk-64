@@ -29,17 +29,17 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ssl.h&gt;
+<pre><code>#include &lt;openssl/ssl.h&gt;
 
- void SSL_CTX_set_default_passwd_cb(SSL_CTX *ctx, pem_password_cb *cb);
- void SSL_CTX_set_default_passwd_cb_userdata(SSL_CTX *ctx, void *u);
- pem_password_cb *SSL_CTX_get_default_passwd_cb(SSL_CTX *ctx);
- void *SSL_CTX_get_default_passwd_cb_userdata(SSL_CTX *ctx);
+void SSL_CTX_set_default_passwd_cb(SSL_CTX *ctx, pem_password_cb *cb);
+void SSL_CTX_set_default_passwd_cb_userdata(SSL_CTX *ctx, void *u);
+pem_password_cb *SSL_CTX_get_default_passwd_cb(SSL_CTX *ctx);
+void *SSL_CTX_get_default_passwd_cb_userdata(SSL_CTX *ctx);
 
- void SSL_set_default_passwd_cb(SSL *s, pem_password_cb *cb);
- void SSL_set_default_passwd_cb_userdata(SSL *s, void *u);
- pem_password_cb *SSL_get_default_passwd_cb(SSL *s);
- void *SSL_get_default_passwd_cb_userdata(SSL *s);</code></pre>
+void SSL_set_default_passwd_cb(SSL *s, pem_password_cb *cb);
+void SSL_set_default_passwd_cb_userdata(SSL *s, void *u);
+pem_password_cb *SSL_get_default_passwd_cb(SSL *s);
+void *SSL_get_default_passwd_cb_userdata(SSL *s);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -71,12 +71,12 @@
 
 <p>The following example returns the password provided as userdata to the calling function. The password is considered to be a &#39;\0&#39; terminated string. If the password does not fit into the buffer, the password is truncated.</p>
 
-<pre><code> int my_cb(char *buf, int size, int rwflag, void *u)
- {
-     strncpy(buf, (char *)u, size);
-     buf[size - 1] = &#39;\0&#39;;
-     return strlen(buf);
- }</code></pre>
+<pre><code>int my_cb(char *buf, int size, int rwflag, void *u)
+{
+    strncpy(buf, (char *)u, size);
+    buf[size - 1] = &#39;\0&#39;;
+    return strlen(buf);
+}</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

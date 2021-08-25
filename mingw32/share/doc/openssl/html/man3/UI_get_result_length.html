@@ -27,56 +27,56 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ui.h&gt;
+<pre><code>#include &lt;openssl/ui.h&gt;
 
- typedef struct ui_st UI;
+typedef struct ui_st UI;
 
- UI *UI_new(void);
- UI *UI_new_method(const UI_METHOD *method);
- void UI_free(UI *ui);
+UI *UI_new(void);
+UI *UI_new_method(const UI_METHOD *method);
+void UI_free(UI *ui);
 
- int UI_add_input_string(UI *ui, const char *prompt, int flags,
-                         char *result_buf, int minsize, int maxsize);
- int UI_dup_input_string(UI *ui, const char *prompt, int flags,
-                         char *result_buf, int minsize, int maxsize);
- int UI_add_verify_string(UI *ui, const char *prompt, int flags,
-                          char *result_buf, int minsize, int maxsize,
-                          const char *test_buf);
- int UI_dup_verify_string(UI *ui, const char *prompt, int flags,
-                          char *result_buf, int minsize, int maxsize,
-                          const char *test_buf);
- int UI_add_input_boolean(UI *ui, const char *prompt, const char *action_desc,
-                          const char *ok_chars, const char *cancel_chars,
-                          int flags, char *result_buf);
- int UI_dup_input_boolean(UI *ui, const char *prompt, const char *action_desc,
-                          const char *ok_chars, const char *cancel_chars,
-                          int flags, char *result_buf);
- int UI_add_info_string(UI *ui, const char *text);
- int UI_dup_info_string(UI *ui, const char *text);
- int UI_add_error_string(UI *ui, const char *text);
- int UI_dup_error_string(UI *ui, const char *text);
+int UI_add_input_string(UI *ui, const char *prompt, int flags,
+                        char *result_buf, int minsize, int maxsize);
+int UI_dup_input_string(UI *ui, const char *prompt, int flags,
+                        char *result_buf, int minsize, int maxsize);
+int UI_add_verify_string(UI *ui, const char *prompt, int flags,
+                         char *result_buf, int minsize, int maxsize,
+                         const char *test_buf);
+int UI_dup_verify_string(UI *ui, const char *prompt, int flags,
+                         char *result_buf, int minsize, int maxsize,
+                         const char *test_buf);
+int UI_add_input_boolean(UI *ui, const char *prompt, const char *action_desc,
+                         const char *ok_chars, const char *cancel_chars,
+                         int flags, char *result_buf);
+int UI_dup_input_boolean(UI *ui, const char *prompt, const char *action_desc,
+                         const char *ok_chars, const char *cancel_chars,
+                         int flags, char *result_buf);
+int UI_add_info_string(UI *ui, const char *text);
+int UI_dup_info_string(UI *ui, const char *text);
+int UI_add_error_string(UI *ui, const char *text);
+int UI_dup_error_string(UI *ui, const char *text);
 
- char *UI_construct_prompt(UI *ui_method,
-        const char *object_desc, const char *object_name);
+char *UI_construct_prompt(UI *ui_method,
+       const char *object_desc, const char *object_name);
 
- void *UI_add_user_data(UI *ui, void *user_data);
- int UI_dup_user_data(UI *ui, void *user_data);
- void *UI_get0_user_data(UI *ui);
+void *UI_add_user_data(UI *ui, void *user_data);
+int UI_dup_user_data(UI *ui, void *user_data);
+void *UI_get0_user_data(UI *ui);
 
- const char *UI_get0_result(UI *ui, int i);
- int UI_get_result_length(UI *ui, int i);
+const char *UI_get0_result(UI *ui, int i);
+int UI_get_result_length(UI *ui, int i);
 
- int UI_process(UI *ui);
+int UI_process(UI *ui);
 
- int UI_ctrl(UI *ui, int cmd, long i, void *p, void (*f)());
+int UI_ctrl(UI *ui, int cmd, long i, void *p, void (*f)());
 
- void UI_set_default_method(const UI_METHOD *meth);
- const UI_METHOD *UI_get_default_method(void);
- const UI_METHOD *UI_get_method(UI *ui);
- const UI_METHOD *UI_set_method(UI *ui, const UI_METHOD *meth);
+void UI_set_default_method(const UI_METHOD *meth);
+const UI_METHOD *UI_get_default_method(void);
+const UI_METHOD *UI_get_method(UI *ui);
+const UI_METHOD *UI_set_method(UI *ui, const UI_METHOD *meth);
 
- UI_METHOD *UI_OpenSSL(void);
- const UI_METHOD *UI_null(void);</code></pre>
+UI_METHOD *UI_OpenSSL(void);
+const UI_METHOD *UI_null(void);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 

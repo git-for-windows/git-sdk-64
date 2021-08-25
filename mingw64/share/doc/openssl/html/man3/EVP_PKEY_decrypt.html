@@ -29,12 +29,12 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/evp.h&gt;
+<pre><code>#include &lt;openssl/evp.h&gt;
 
- int EVP_PKEY_decrypt_init(EVP_PKEY_CTX *ctx);
- int EVP_PKEY_decrypt(EVP_PKEY_CTX *ctx,
-                      unsigned char *out, size_t *outlen,
-                      const unsigned char *in, size_t inlen);</code></pre>
+int EVP_PKEY_decrypt_init(EVP_PKEY_CTX *ctx);
+int EVP_PKEY_decrypt(EVP_PKEY_CTX *ctx,
+                     unsigned char *out, size_t *outlen,
+                     const unsigned char *in, size_t inlen);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -56,40 +56,40 @@
 
 <p>Decrypt data using OAEP (for RSA keys):</p>
 
-<pre><code> #include &lt;openssl/evp.h&gt;
- #include &lt;openssl/rsa.h&gt;
+<pre><code>#include &lt;openssl/evp.h&gt;
+#include &lt;openssl/rsa.h&gt;
 
- EVP_PKEY_CTX *ctx;
- ENGINE *eng;
- unsigned char *out, *in;
- size_t outlen, inlen;
- EVP_PKEY *key;
+EVP_PKEY_CTX *ctx;
+ENGINE *eng;
+unsigned char *out, *in;
+size_t outlen, inlen;
+EVP_PKEY *key;
 
- /*
-  * NB: assumes key, eng, in, inlen are already set up
-  * and that key is an RSA private key
-  */
- ctx = EVP_PKEY_CTX_new(key, eng);
- if (!ctx)
-     /* Error occurred */
- if (EVP_PKEY_decrypt_init(ctx) &lt;= 0)
-     /* Error */
- if (EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_OAEP_PADDING) &lt;= 0)
-     /* Error */
+/*
+ * NB: assumes key, eng, in, inlen are already set up
+ * and that key is an RSA private key
+ */
+ctx = EVP_PKEY_CTX_new(key, eng);
+if (!ctx)
+    /* Error occurred */
+if (EVP_PKEY_decrypt_init(ctx) &lt;= 0)
+    /* Error */
+if (EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_OAEP_PADDING) &lt;= 0)
+    /* Error */
 
- /* Determine buffer length */
- if (EVP_PKEY_decrypt(ctx, NULL, &amp;outlen, in, inlen) &lt;= 0)
-     /* Error */
+/* Determine buffer length */
+if (EVP_PKEY_decrypt(ctx, NULL, &amp;outlen, in, inlen) &lt;= 0)
+    /* Error */
 
- out = OPENSSL_malloc(outlen);
+out = OPENSSL_malloc(outlen);
 
- if (!out)
-     /* malloc failure */
+if (!out)
+    /* malloc failure */
 
- if (EVP_PKEY_decrypt(ctx, out, &amp;outlen, in, inlen) &lt;= 0)
-     /* Error */
+if (EVP_PKEY_decrypt(ctx, out, &amp;outlen, in, inlen) &lt;= 0)
+    /* Error */
 
- /* Decrypted data is outlen bytes written to buffer out */</code></pre>
+/* Decrypted data is outlen bytes written to buffer out */</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

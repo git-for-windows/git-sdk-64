@@ -28,13 +28,13 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ct.h&gt;
+<pre><code>#include &lt;openssl/ct.h&gt;
 
- CTLOG_STORE *CTLOG_STORE_new(void);
- void CTLOG_STORE_free(CTLOG_STORE *store);
+CTLOG_STORE *CTLOG_STORE_new(void);
+void CTLOG_STORE_free(CTLOG_STORE *store);
 
- int CTLOG_STORE_load_default_file(CTLOG_STORE *store);
- int CTLOG_STORE_load_file(CTLOG_STORE *store, const char *file);</code></pre>
+int CTLOG_STORE_load_default_file(CTLOG_STORE *store);
+int CTLOG_STORE_load_file(CTLOG_STORE *store, const char *file);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -44,15 +44,15 @@
 
 <p>The expected format of the file is:</p>
 
-<pre><code> enabled_logs=foo,bar
+<pre><code>enabled_logs=foo,bar
 
- [foo]
- description = Log 1
- key = &lt;base64-encoded DER SubjectPublicKeyInfo here&gt;
+[foo]
+description = Log 1
+key = &lt;base64-encoded DER SubjectPublicKeyInfo here&gt;
 
- [bar]
- description = Log 2
- key = &lt;base64-encoded DER SubjectPublicKeyInfo here&gt;</code></pre>
+[bar]
+description = Log 2
+key = &lt;base64-encoded DER SubjectPublicKeyInfo here&gt;</code></pre>
 
 <p>Once a CTLOG_STORE is no longer required, it should be passed to CTLOG_STORE_free(). This will delete all of the CTLOGs stored within, along with the CTLOG_STORE itself.</p>
 

@@ -424,18 +424,18 @@
 
 <p>There are two separate formats for the distinguished name and attribute sections. If the <b>prompt</b> option is set to <b>no</b> then these sections just consist of field names and values: for example,</p>
 
-<pre><code> CN=My Name
- OU=My Organization
- emailAddress=someone@somewhere.org</code></pre>
+<pre><code>CN=My Name
+OU=My Organization
+emailAddress=someone@somewhere.org</code></pre>
 
 <p>This allows external programs (e.g. GUI based) to generate a template file with all the field names and values and just pass it to <b>req</b>. An example of this kind of configuration file is contained in the <b>EXAMPLES</b> section.</p>
 
 <p>Alternatively if the <b>prompt</b> option is absent or not set to <b>no</b> then the file contains field prompting information. It consists of lines of the form:</p>
 
-<pre><code> fieldName=&quot;prompt&quot;
- fieldName_default=&quot;default field value&quot;
- fieldName_min= 2
- fieldName_max= 4</code></pre>
+<pre><code>fieldName=&quot;prompt&quot;
+fieldName_default=&quot;default field value&quot;
+fieldName_min= 2
+fieldName_max= 4</code></pre>
 
 <p>&quot;fieldName&quot; is the field name being used, for example commonName (or CN). The &quot;prompt&quot; string is used to ask the user to enter the relevant details. If the user enters nothing then the default value is used if no default value is present then the field is omitted. A field can still be omitted if a default value is present if the user just enters the &#39;.&#39; character.</p>
 
@@ -451,111 +451,111 @@
 
 <p>Examine and verify certificate request:</p>
 
-<pre><code> openssl req -in req.pem -text -verify -noout</code></pre>
+<pre><code>openssl req -in req.pem -text -verify -noout</code></pre>
 
 <p>Create a private key and then generate a certificate request from it:</p>
 
-<pre><code> openssl genrsa -out key.pem 2048
- openssl req -new -key key.pem -out req.pem</code></pre>
+<pre><code>openssl genrsa -out key.pem 2048
+openssl req -new -key key.pem -out req.pem</code></pre>
 
 <p>The same but just using req:</p>
 
-<pre><code> openssl req -newkey rsa:2048 -keyout key.pem -out req.pem</code></pre>
+<pre><code>openssl req -newkey rsa:2048 -keyout key.pem -out req.pem</code></pre>
 
 <p>Generate a self signed root certificate:</p>
 
-<pre><code> openssl req -x509 -newkey rsa:2048 -keyout key.pem -out req.pem</code></pre>
+<pre><code>openssl req -x509 -newkey rsa:2048 -keyout key.pem -out req.pem</code></pre>
 
 <p>Example of a file pointed to by the <b>oid_file</b> option:</p>
 
-<pre><code> 1.2.3.4        shortName       A longer Name
- 1.2.3.6        otherName       Other longer Name</code></pre>
+<pre><code>1.2.3.4        shortName       A longer Name
+1.2.3.6        otherName       Other longer Name</code></pre>
 
 <p>Example of a section pointed to by <b>oid_section</b> making use of variable expansion:</p>
 
-<pre><code> testoid1=1.2.3.5
- testoid2=${testoid1}.6</code></pre>
+<pre><code>testoid1=1.2.3.5
+testoid2=${testoid1}.6</code></pre>
 
 <p>Sample configuration file prompting for field values:</p>
 
-<pre><code> [ req ]
- default_bits           = 2048
- default_keyfile        = privkey.pem
- distinguished_name     = req_distinguished_name
- attributes             = req_attributes
- req_extensions         = v3_ca
+<pre><code>[ req ]
+default_bits           = 2048
+default_keyfile        = privkey.pem
+distinguished_name     = req_distinguished_name
+attributes             = req_attributes
+req_extensions         = v3_ca
 
- dirstring_type = nobmp
+dirstring_type = nobmp
 
- [ req_distinguished_name ]
- countryName                    = Country Name (2 letter code)
- countryName_default            = AU
- countryName_min                = 2
- countryName_max                = 2
+[ req_distinguished_name ]
+countryName                    = Country Name (2 letter code)
+countryName_default            = AU
+countryName_min                = 2
+countryName_max                = 2
 
- localityName                   = Locality Name (eg, city)
+localityName                   = Locality Name (eg, city)
 
- organizationalUnitName         = Organizational Unit Name (eg, section)
+organizationalUnitName         = Organizational Unit Name (eg, section)
 
- commonName                     = Common Name (eg, YOUR name)
- commonName_max                 = 64
+commonName                     = Common Name (eg, YOUR name)
+commonName_max                 = 64
 
- emailAddress                   = Email Address
- emailAddress_max               = 40
+emailAddress                   = Email Address
+emailAddress_max               = 40
 
- [ req_attributes ]
- challengePassword              = A challenge password
- challengePassword_min          = 4
- challengePassword_max          = 20
+[ req_attributes ]
+challengePassword              = A challenge password
+challengePassword_min          = 4
+challengePassword_max          = 20
 
- [ v3_ca ]
+[ v3_ca ]
 
- subjectKeyIdentifier=hash
- authorityKeyIdentifier=keyid:always,issuer:always
- basicConstraints = critical, CA:true</code></pre>
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid:always,issuer:always
+basicConstraints = critical, CA:true</code></pre>
 
 <p>Sample configuration containing all field values:</p>
 
-<pre><code> RANDFILE               = $ENV::HOME/.rnd
+<pre><code>RANDFILE               = $ENV::HOME/.rnd
 
- [ req ]
- default_bits           = 2048
- default_keyfile        = keyfile.pem
- distinguished_name     = req_distinguished_name
- attributes             = req_attributes
- prompt                 = no
- output_password        = mypass
+[ req ]
+default_bits           = 2048
+default_keyfile        = keyfile.pem
+distinguished_name     = req_distinguished_name
+attributes             = req_attributes
+prompt                 = no
+output_password        = mypass
 
- [ req_distinguished_name ]
- C                      = GB
- ST                     = Test State or Province
- L                      = Test Locality
- O                      = Organization Name
- OU                     = Organizational Unit Name
- CN                     = Common Name
- emailAddress           = test@email.address
+[ req_distinguished_name ]
+C                      = GB
+ST                     = Test State or Province
+L                      = Test Locality
+O                      = Organization Name
+OU                     = Organizational Unit Name
+CN                     = Common Name
+emailAddress           = test@email.address
 
- [ req_attributes ]
- challengePassword              = A challenge password</code></pre>
+[ req_attributes ]
+challengePassword              = A challenge password</code></pre>
 
 <p>Example of giving the most common attributes (subject and extensions) on the command line:</p>
 
-<pre><code> openssl req -new -subj &quot;/C=GB/CN=foo&quot; \
-                  -addext &quot;subjectAltName = DNS:foo.co.uk&quot; \
-                  -addext &quot;certificatePolicies = 1.2.3.4&quot; \
-                  -newkey rsa:2048 -keyout key.pem -out req.pem</code></pre>
+<pre><code>openssl req -new -subj &quot;/C=GB/CN=foo&quot; \
+                 -addext &quot;subjectAltName = DNS:foo.co.uk&quot; \
+                 -addext &quot;certificatePolicies = 1.2.3.4&quot; \
+                 -newkey rsa:2048 -keyout key.pem -out req.pem</code></pre>
 
 <h1 id="NOTES">NOTES</h1>
 
 <p>The header and footer lines in the <b>PEM</b> format are normally:</p>
 
-<pre><code> -----BEGIN CERTIFICATE REQUEST-----
- -----END CERTIFICATE REQUEST-----</code></pre>
+<pre><code>-----BEGIN CERTIFICATE REQUEST-----
+-----END CERTIFICATE REQUEST-----</code></pre>
 
 <p>some software (some versions of Netscape certificate server) instead needs:</p>
 
-<pre><code> -----BEGIN NEW CERTIFICATE REQUEST-----
- -----END NEW CERTIFICATE REQUEST-----</code></pre>
+<pre><code>-----BEGIN NEW CERTIFICATE REQUEST-----
+-----END NEW CERTIFICATE REQUEST-----</code></pre>
 
 <p>which is produced with the <b>-newhdr</b> option but is otherwise compatible. Either form is accepted transparently on input.</p>
 
@@ -565,24 +565,24 @@
 
 <p>The following messages are frequently asked about:</p>
 
-<pre><code>        Using configuration from /some/path/openssl.cnf
-        Unable to load config info</code></pre>
+<pre><code>Using configuration from /some/path/openssl.cnf
+Unable to load config info</code></pre>
 
 <p>This is followed some time later by...</p>
 
-<pre><code>        unable to find &#39;distinguished_name&#39; in config
-        problems making Certificate Request</code></pre>
+<pre><code>unable to find &#39;distinguished_name&#39; in config
+problems making Certificate Request</code></pre>
 
 <p>The first error message is the clue: it can&#39;t find the configuration file! Certain operations (like examining a certificate request) don&#39;t need a configuration file so its use isn&#39;t enforced. Generation of certificates or requests however does need a configuration file. This could be regarded as a bug.</p>
 
 <p>Another puzzling message is this:</p>
 
-<pre><code>        Attributes:
-            a0:00</code></pre>
+<pre><code>Attributes:
+    a0:00</code></pre>
 
 <p>this is displayed when no attributes are present and the request includes the correct empty <b>SET OF</b> structure (the DER encoding of which is 0xa0 0x00). If you just see:</p>
 
-<pre><code>        Attributes:</code></pre>
+<pre><code>Attributes:</code></pre>
 
 <p>then the <b>SET OF</b> is missing and the encoding is technically invalid (but it is tolerated). See the description of the command line option <b>-asn1-kludge</b> for more information.</p>
 

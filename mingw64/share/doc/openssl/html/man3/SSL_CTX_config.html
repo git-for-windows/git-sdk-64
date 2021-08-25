@@ -29,10 +29,10 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ssl.h&gt;
+<pre><code>#include &lt;openssl/ssl.h&gt;
 
- int SSL_CTX_config(SSL_CTX *ctx, const char *name);
- int SSL_config(SSL *s, const char *name);</code></pre>
+int SSL_CTX_config(SSL_CTX *ctx, const char *name);
+int SSL_config(SSL *s, const char *name);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -52,34 +52,34 @@
 
 <p>If the file &quot;config.cnf&quot; contains the following:</p>
 
-<pre><code> testapp = test_sect
+<pre><code>testapp = test_sect
 
- [test_sect]
- # list of configuration modules
+[test_sect]
+# list of configuration modules
 
- ssl_conf = ssl_sect
+ssl_conf = ssl_sect
 
- [ssl_sect]
- server = server_section
+[ssl_sect]
+server = server_section
 
- [server_section]
- RSA.Certificate = server-rsa.pem
- ECDSA.Certificate = server-ecdsa.pem
- Ciphers = ALL:!RC4</code></pre>
+[server_section]
+RSA.Certificate = server-rsa.pem
+ECDSA.Certificate = server-ecdsa.pem
+Ciphers = ALL:!RC4</code></pre>
 
 <p>An application could call:</p>
 
-<pre><code> if (CONF_modules_load_file(&quot;config.cnf&quot;, &quot;testapp&quot;, 0) &lt;= 0) {
-     fprintf(stderr, &quot;Error processing config file\n&quot;);
-     goto err;
- }
+<pre><code>if (CONF_modules_load_file(&quot;config.cnf&quot;, &quot;testapp&quot;, 0) &lt;= 0) {
+    fprintf(stderr, &quot;Error processing config file\n&quot;);
+    goto err;
+}
 
- ctx = SSL_CTX_new(TLS_server_method());
+ctx = SSL_CTX_new(TLS_server_method());
 
- if (SSL_CTX_config(ctx, &quot;server&quot;) == 0) {
-     fprintf(stderr, &quot;Error configuring server.\n&quot;);
-     goto err;
- }</code></pre>
+if (SSL_CTX_config(ctx, &quot;server&quot;) == 0) {
+    fprintf(stderr, &quot;Error configuring server.\n&quot;);
+    goto err;
+}</code></pre>
 
 <p>In this example two certificates and the cipher list are configured without the need for any additional application code.</p>
 

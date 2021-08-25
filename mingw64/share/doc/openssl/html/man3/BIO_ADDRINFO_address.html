@@ -27,27 +27,27 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;sys/types.h&gt;
- #include &lt;openssl/bio.h&gt;
+<pre><code>#include &lt;sys/types.h&gt;
+#include &lt;openssl/bio.h&gt;
 
- typedef union bio_addrinfo_st BIO_ADDRINFO;
+typedef union bio_addrinfo_st BIO_ADDRINFO;
 
- enum BIO_lookup_type {
-     BIO_LOOKUP_CLIENT, BIO_LOOKUP_SERVER
- };
+enum BIO_lookup_type {
+    BIO_LOOKUP_CLIENT, BIO_LOOKUP_SERVER
+};
 
- int BIO_lookup_ex(const char *host, const char *service, int lookup_type,
-                   int family, int socktype, int protocol, BIO_ADDRINFO **res);
- int BIO_lookup(const char *node, const char *service,
-                enum BIO_lookup_type lookup_type,
-                int family, int socktype, BIO_ADDRINFO **res);
+int BIO_lookup_ex(const char *host, const char *service, int lookup_type,
+                  int family, int socktype, int protocol, BIO_ADDRINFO **res);
+int BIO_lookup(const char *node, const char *service,
+               enum BIO_lookup_type lookup_type,
+               int family, int socktype, BIO_ADDRINFO **res);
 
- const BIO_ADDRINFO *BIO_ADDRINFO_next(const BIO_ADDRINFO *bai);
- int BIO_ADDRINFO_family(const BIO_ADDRINFO *bai);
- int BIO_ADDRINFO_socktype(const BIO_ADDRINFO *bai);
- int BIO_ADDRINFO_protocol(const BIO_ADDRINFO *bai);
- const BIO_ADDR *BIO_ADDRINFO_address(const BIO_ADDRINFO *bai);
- void BIO_ADDRINFO_free(BIO_ADDRINFO *bai);</code></pre>
+const BIO_ADDRINFO *BIO_ADDRINFO_next(const BIO_ADDRINFO *bai);
+int BIO_ADDRINFO_family(const BIO_ADDRINFO *bai);
+int BIO_ADDRINFO_socktype(const BIO_ADDRINFO *bai);
+int BIO_ADDRINFO_protocol(const BIO_ADDRINFO *bai);
+const BIO_ADDR *BIO_ADDRINFO_address(const BIO_ADDRINFO *bai);
+void BIO_ADDRINFO_free(BIO_ADDRINFO *bai);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 

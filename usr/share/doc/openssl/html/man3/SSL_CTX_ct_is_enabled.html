@@ -28,22 +28,22 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ssl.h&gt;
+<pre><code>#include &lt;openssl/ssl.h&gt;
 
- typedef int (*ssl_ct_validation_cb)(const CT_POLICY_EVAL_CTX *ctx,
-                                    const STACK_OF(SCT) *scts, void *arg);
+typedef int (*ssl_ct_validation_cb)(const CT_POLICY_EVAL_CTX *ctx,
+                                   const STACK_OF(SCT) *scts, void *arg);
 
- int SSL_enable_ct(SSL *s, int validation_mode);
- int SSL_CTX_enable_ct(SSL_CTX *ctx, int validation_mode);
- int SSL_set_ct_validation_callback(SSL *s, ssl_ct_validation_cb callback,
-                                    void *arg);
- int SSL_CTX_set_ct_validation_callback(SSL_CTX *ctx,
-                                        ssl_ct_validation_cb callback,
-                                        void *arg);
- void SSL_disable_ct(SSL *s);
- void SSL_CTX_disable_ct(SSL_CTX *ctx);
- int SSL_ct_is_enabled(const SSL *s);
- int SSL_CTX_ct_is_enabled(const SSL_CTX *ctx);</code></pre>
+int SSL_enable_ct(SSL *s, int validation_mode);
+int SSL_CTX_enable_ct(SSL_CTX *ctx, int validation_mode);
+int SSL_set_ct_validation_callback(SSL *s, ssl_ct_validation_cb callback,
+                                   void *arg);
+int SSL_CTX_set_ct_validation_callback(SSL_CTX *ctx,
+                                       ssl_ct_validation_cb callback,
+                                       void *arg);
+void SSL_disable_ct(SSL *s);
+void SSL_CTX_disable_ct(SSL_CTX *ctx);
+int SSL_ct_is_enabled(const SSL *s);
+int SSL_CTX_ct_is_enabled(const SSL_CTX *ctx);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 

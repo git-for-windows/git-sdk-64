@@ -30,25 +30,25 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/x509_vfy.h&gt;
+<pre><code>#include &lt;openssl/x509_vfy.h&gt;
 
- typedef int (*X509_STORE_CTX_verify_cb)(int, X509_STORE_CTX *);
+typedef int (*X509_STORE_CTX_verify_cb)(int, X509_STORE_CTX *);
 
- X509_STORE_CTX_verify_cb X509_STORE_CTX_get_verify_cb(X509_STORE_CTX *ctx);
+X509_STORE_CTX_verify_cb X509_STORE_CTX_get_verify_cb(X509_STORE_CTX *ctx);
 
- void X509_STORE_CTX_set_verify_cb(X509_STORE_CTX *ctx,
-                                   X509_STORE_CTX_verify_cb verify_cb);
+void X509_STORE_CTX_set_verify_cb(X509_STORE_CTX *ctx,
+                                  X509_STORE_CTX_verify_cb verify_cb);
 
- X509_STORE_CTX_get_issuer_fn X509_STORE_CTX_get_get_issuer(X509_STORE_CTX *ctx);
- X509_STORE_CTX_check_issued_fn X509_STORE_CTX_get_check_issued(X509_STORE_CTX *ctx);
- X509_STORE_CTX_check_revocation_fn X509_STORE_CTX_get_check_revocation(X509_STORE_CTX *ctx);
- X509_STORE_CTX_get_crl_fn X509_STORE_CTX_get_get_crl(X509_STORE_CTX *ctx);
- X509_STORE_CTX_check_crl_fn X509_STORE_CTX_get_check_crl(X509_STORE_CTX *ctx);
- X509_STORE_CTX_cert_crl_fn X509_STORE_CTX_get_cert_crl(X509_STORE_CTX *ctx);
- X509_STORE_CTX_check_policy_fn X509_STORE_CTX_get_check_policy(X509_STORE_CTX *ctx);
- X509_STORE_CTX_lookup_certs_fn X509_STORE_CTX_get_lookup_certs(X509_STORE_CTX *ctx);
- X509_STORE_CTX_lookup_crls_fn X509_STORE_CTX_get_lookup_crls(X509_STORE_CTX *ctx);
- X509_STORE_CTX_cleanup_fn X509_STORE_CTX_get_cleanup(X509_STORE_CTX *ctx);</code></pre>
+X509_STORE_CTX_get_issuer_fn X509_STORE_CTX_get_get_issuer(X509_STORE_CTX *ctx);
+X509_STORE_CTX_check_issued_fn X509_STORE_CTX_get_check_issued(X509_STORE_CTX *ctx);
+X509_STORE_CTX_check_revocation_fn X509_STORE_CTX_get_check_revocation(X509_STORE_CTX *ctx);
+X509_STORE_CTX_get_crl_fn X509_STORE_CTX_get_get_crl(X509_STORE_CTX *ctx);
+X509_STORE_CTX_check_crl_fn X509_STORE_CTX_get_check_crl(X509_STORE_CTX *ctx);
+X509_STORE_CTX_cert_crl_fn X509_STORE_CTX_get_cert_crl(X509_STORE_CTX *ctx);
+X509_STORE_CTX_check_policy_fn X509_STORE_CTX_get_check_policy(X509_STORE_CTX *ctx);
+X509_STORE_CTX_lookup_certs_fn X509_STORE_CTX_get_lookup_certs(X509_STORE_CTX *ctx);
+X509_STORE_CTX_lookup_crls_fn X509_STORE_CTX_get_lookup_crls(X509_STORE_CTX *ctx);
+X509_STORE_CTX_cleanup_fn X509_STORE_CTX_get_cleanup(X509_STORE_CTX *ctx);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -82,85 +82,85 @@
 
 <p>Default callback operation:</p>
 
-<pre><code> int verify_callback(int ok, X509_STORE_CTX *ctx) {
-     return ok;
- }</code></pre>
+<pre><code>int verify_callback(int ok, X509_STORE_CTX *ctx) {
+    return ok;
+}</code></pre>
 
 <p>Simple example, suppose a certificate in the chain is expired and we wish to continue after this error:</p>
 
-<pre><code> int verify_callback(int ok, X509_STORE_CTX *ctx) {
-     /* Tolerate certificate expiration */
-     if (X509_STORE_CTX_get_error(ctx) == X509_V_ERR_CERT_HAS_EXPIRED)
-         return 1;
-     /* Otherwise don&#39;t override */
-     return ok;
- }</code></pre>
+<pre><code>int verify_callback(int ok, X509_STORE_CTX *ctx) {
+    /* Tolerate certificate expiration */
+    if (X509_STORE_CTX_get_error(ctx) == X509_V_ERR_CERT_HAS_EXPIRED)
+        return 1;
+    /* Otherwise don&#39;t override */
+    return ok;
+}</code></pre>
 
 <p>More complex example, we don&#39;t wish to continue after <b>any</b> certificate has expired just one specific case:</p>
 
-<pre><code> int verify_callback(int ok, X509_STORE_CTX *ctx)
- {
-     int err = X509_STORE_CTX_get_error(ctx);
-     X509 *err_cert = X509_STORE_CTX_get_current_cert(ctx);
+<pre><code>int verify_callback(int ok, X509_STORE_CTX *ctx)
+{
+    int err = X509_STORE_CTX_get_error(ctx);
+    X509 *err_cert = X509_STORE_CTX_get_current_cert(ctx);
 
-     if (err == X509_V_ERR_CERT_HAS_EXPIRED) {
-         if (check_is_acceptable_expired_cert(err_cert)
-             return 1;
-     }
-     return ok;
- }</code></pre>
+    if (err == X509_V_ERR_CERT_HAS_EXPIRED) {
+        if (check_is_acceptable_expired_cert(err_cert)
+            return 1;
+    }
+    return ok;
+}</code></pre>
 
 <p>Full featured logging callback. In this case the <b>bio_err</b> is assumed to be a global logging <b>BIO</b>, an alternative would to store a BIO in <b>ctx</b> using <b>ex_data</b>.</p>
 
-<pre><code> int verify_callback(int ok, X509_STORE_CTX *ctx)
- {
-     X509 *err_cert;
-     int err, depth;
+<pre><code>int verify_callback(int ok, X509_STORE_CTX *ctx)
+{
+    X509 *err_cert;
+    int err, depth;
 
-     err_cert = X509_STORE_CTX_get_current_cert(ctx);
-     err = X509_STORE_CTX_get_error(ctx);
-     depth = X509_STORE_CTX_get_error_depth(ctx);
+    err_cert = X509_STORE_CTX_get_current_cert(ctx);
+    err = X509_STORE_CTX_get_error(ctx);
+    depth = X509_STORE_CTX_get_error_depth(ctx);
 
-     BIO_printf(bio_err, &quot;depth=%d &quot;, depth);
-     if (err_cert) {
-         X509_NAME_print_ex(bio_err, X509_get_subject_name(err_cert),
-                            0, XN_FLAG_ONELINE);
-         BIO_puts(bio_err, &quot;\n&quot;);
-     }
-     else
-         BIO_puts(bio_err, &quot;&lt;no cert&gt;\n&quot;);
-     if (!ok)
-         BIO_printf(bio_err, &quot;verify error:num=%d:%s\n&quot;, err,
-                    X509_verify_cert_error_string(err));
-     switch (err) {
-     case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
-         BIO_puts(bio_err, &quot;issuer= &quot;);
-         X509_NAME_print_ex(bio_err, X509_get_issuer_name(err_cert),
-                            0, XN_FLAG_ONELINE);
-         BIO_puts(bio_err, &quot;\n&quot;);
-         break;
-     case X509_V_ERR_CERT_NOT_YET_VALID:
-     case X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD:
-         BIO_printf(bio_err, &quot;notBefore=&quot;);
-         ASN1_TIME_print(bio_err, X509_get_notBefore(err_cert));
-         BIO_printf(bio_err, &quot;\n&quot;);
-         break;
-     case X509_V_ERR_CERT_HAS_EXPIRED:
-     case X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD:
-         BIO_printf(bio_err, &quot;notAfter=&quot;);
-         ASN1_TIME_print(bio_err, X509_get_notAfter(err_cert));
-         BIO_printf(bio_err, &quot;\n&quot;);
-         break;
-     case X509_V_ERR_NO_EXPLICIT_POLICY:
-         policies_print(bio_err, ctx);
-         break;
-     }
-     if (err == X509_V_OK &amp;&amp; ok == 2)
-         /* print out policies */
+    BIO_printf(bio_err, &quot;depth=%d &quot;, depth);
+    if (err_cert) {
+        X509_NAME_print_ex(bio_err, X509_get_subject_name(err_cert),
+                           0, XN_FLAG_ONELINE);
+        BIO_puts(bio_err, &quot;\n&quot;);
+    }
+    else
+        BIO_puts(bio_err, &quot;&lt;no cert&gt;\n&quot;);
+    if (!ok)
+        BIO_printf(bio_err, &quot;verify error:num=%d:%s\n&quot;, err,
+                   X509_verify_cert_error_string(err));
+    switch (err) {
+    case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
+        BIO_puts(bio_err, &quot;issuer= &quot;);
+        X509_NAME_print_ex(bio_err, X509_get_issuer_name(err_cert),
+                           0, XN_FLAG_ONELINE);
+        BIO_puts(bio_err, &quot;\n&quot;);
+        break;
+    case X509_V_ERR_CERT_NOT_YET_VALID:
+    case X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD:
+        BIO_printf(bio_err, &quot;notBefore=&quot;);
+        ASN1_TIME_print(bio_err, X509_get_notBefore(err_cert));
+        BIO_printf(bio_err, &quot;\n&quot;);
+        break;
+    case X509_V_ERR_CERT_HAS_EXPIRED:
+    case X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD:
+        BIO_printf(bio_err, &quot;notAfter=&quot;);
+        ASN1_TIME_print(bio_err, X509_get_notAfter(err_cert));
+        BIO_printf(bio_err, &quot;\n&quot;);
+        break;
+    case X509_V_ERR_NO_EXPLICIT_POLICY:
+        policies_print(bio_err, ctx);
+        break;
+    }
+    if (err == X509_V_OK &amp;&amp; ok == 2)
+        /* print out policies */
 
-     BIO_printf(bio_err, &quot;verify return:%d\n&quot;, ok);
-     return(ok);
- }</code></pre>
+    BIO_printf(bio_err, &quot;verify return:%d\n&quot;, ok);
+    return(ok);
+}</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

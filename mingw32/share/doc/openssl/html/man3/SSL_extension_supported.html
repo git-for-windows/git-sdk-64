@@ -29,62 +29,62 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ssl.h&gt;
+<pre><code>#include &lt;openssl/ssl.h&gt;
 
- typedef int (*SSL_custom_ext_add_cb_ex) (SSL *s, unsigned int ext_type,
-                                          unsigned int context,
-                                          const unsigned char **out,
-                                          size_t *outlen, X509 *x,
-                                          size_t chainidx, int *al,
-                                          void *add_arg);
+typedef int (*SSL_custom_ext_add_cb_ex) (SSL *s, unsigned int ext_type,
+                                         unsigned int context,
+                                         const unsigned char **out,
+                                         size_t *outlen, X509 *x,
+                                         size_t chainidx, int *al,
+                                         void *add_arg);
 
- typedef void (*SSL_custom_ext_free_cb_ex) (SSL *s, unsigned int ext_type,
-                                            unsigned int context,
-                                            const unsigned char *out,
-                                            void *add_arg);
+typedef void (*SSL_custom_ext_free_cb_ex) (SSL *s, unsigned int ext_type,
+                                           unsigned int context,
+                                           const unsigned char *out,
+                                           void *add_arg);
 
- typedef int (*SSL_custom_ext_parse_cb_ex) (SSL *s, unsigned int ext_type,
-                                            unsigned int context,
-                                            const unsigned char *in,
-                                            size_t inlen, X509 *x,
-                                            size_t chainidx, int *al,
-                                            void *parse_arg);
+typedef int (*SSL_custom_ext_parse_cb_ex) (SSL *s, unsigned int ext_type,
+                                           unsigned int context,
+                                           const unsigned char *in,
+                                           size_t inlen, X509 *x,
+                                           size_t chainidx, int *al,
+                                           void *parse_arg);
 
- int SSL_CTX_add_custom_ext(SSL_CTX *ctx, unsigned int ext_type,
-                            unsigned int context,
-                            SSL_custom_ext_add_cb_ex add_cb,
-                            SSL_custom_ext_free_cb_ex free_cb,
-                            void *add_arg,
-                            SSL_custom_ext_parse_cb_ex parse_cb,
-                            void *parse_arg);
+int SSL_CTX_add_custom_ext(SSL_CTX *ctx, unsigned int ext_type,
+                           unsigned int context,
+                           SSL_custom_ext_add_cb_ex add_cb,
+                           SSL_custom_ext_free_cb_ex free_cb,
+                           void *add_arg,
+                           SSL_custom_ext_parse_cb_ex parse_cb,
+                           void *parse_arg);
 
- typedef int (*custom_ext_add_cb)(SSL *s, unsigned int ext_type,
-                                  const unsigned char **out,
-                                  size_t *outlen, int *al,
-                                  void *add_arg);
+typedef int (*custom_ext_add_cb)(SSL *s, unsigned int ext_type,
+                                 const unsigned char **out,
+                                 size_t *outlen, int *al,
+                                 void *add_arg);
 
- typedef void (*custom_ext_free_cb)(SSL *s, unsigned int ext_type,
-                                    const unsigned char *out,
-                                    void *add_arg);
+typedef void (*custom_ext_free_cb)(SSL *s, unsigned int ext_type,
+                                   const unsigned char *out,
+                                   void *add_arg);
 
- typedef int (*custom_ext_parse_cb)(SSL *s, unsigned int ext_type,
-                                    const unsigned char *in,
-                                    size_t inlen, int *al,
-                                    void *parse_arg);
-
- int SSL_CTX_add_client_custom_ext(SSL_CTX *ctx, unsigned int ext_type,
-                                   custom_ext_add_cb add_cb,
-                                   custom_ext_free_cb free_cb, void *add_arg,
-                                   custom_ext_parse_cb parse_cb,
+typedef int (*custom_ext_parse_cb)(SSL *s, unsigned int ext_type,
+                                   const unsigned char *in,
+                                   size_t inlen, int *al,
                                    void *parse_arg);
 
- int SSL_CTX_add_server_custom_ext(SSL_CTX *ctx, unsigned int ext_type,
-                                   custom_ext_add_cb add_cb,
-                                   custom_ext_free_cb free_cb, void *add_arg,
-                                   custom_ext_parse_cb parse_cb,
-                                   void *parse_arg);
+int SSL_CTX_add_client_custom_ext(SSL_CTX *ctx, unsigned int ext_type,
+                                  custom_ext_add_cb add_cb,
+                                  custom_ext_free_cb free_cb, void *add_arg,
+                                  custom_ext_parse_cb parse_cb,
+                                  void *parse_arg);
 
- int SSL_extension_supported(unsigned int ext_type);</code></pre>
+int SSL_CTX_add_server_custom_ext(SSL_CTX *ctx, unsigned int ext_type,
+                                  custom_ext_add_cb add_cb,
+                                  custom_ext_free_cb free_cb, void *add_arg,
+                                  custom_ext_parse_cb parse_cb,
+                                  void *parse_arg);
+
+int SSL_extension_supported(unsigned int ext_type);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -92,8 +92,8 @@
 
 <p>SSL_CTX_add_client_custom_ext() adds a custom extension for a TLS/DTLS client with extension type <b>ext_type</b> and callbacks <b>add_cb</b>, <b>free_cb</b> and <b>parse_cb</b>. This function is similar to SSL_CTX_add_custom_ext() except it only applies to clients, uses the older style of callbacks, and implicitly sets the <b>context</b> value to:</p>
 
-<pre><code> SSL_EXT_TLS1_2_AND_BELOW_ONLY | SSL_EXT_CLIENT_HELLO
- | SSL_EXT_TLS1_2_SERVER_HELLO | SSL_EXT_IGNORE_ON_RESUMPTION</code></pre>
+<pre><code>SSL_EXT_TLS1_2_AND_BELOW_ONLY | SSL_EXT_CLIENT_HELLO
+| SSL_EXT_TLS1_2_SERVER_HELLO | SSL_EXT_IGNORE_ON_RESUMPTION</code></pre>
 
 <p>SSL_CTX_add_server_custom_ext() adds a custom extension for a TLS/DTLS server with extension type <b>ext_type</b> and callbacks <b>add_cb</b>, <b>free_cb</b> and <b>parse_cb</b>. This function is similar to SSL_CTX_add_custom_ext() except it only applies to servers, uses the older style of callbacks, and implicitly sets the <b>context</b> value to the same as for SSL_CTX_add_client_custom_ext() above.</p>
 

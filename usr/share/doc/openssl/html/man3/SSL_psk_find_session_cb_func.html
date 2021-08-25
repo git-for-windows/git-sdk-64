@@ -29,28 +29,28 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/ssl.h&gt;
+<pre><code>#include &lt;openssl/ssl.h&gt;
 
- typedef int (*SSL_psk_find_session_cb_func)(SSL *ssl,
-                                             const unsigned char *identity,
-                                             size_t identity_len,
-                                             SSL_SESSION **sess);
+typedef int (*SSL_psk_find_session_cb_func)(SSL *ssl,
+                                            const unsigned char *identity,
+                                            size_t identity_len,
+                                            SSL_SESSION **sess);
 
 
- void SSL_CTX_set_psk_find_session_callback(SSL_CTX *ctx,
-                                            SSL_psk_find_session_cb_func cb);
- void SSL_set_psk_find_session_callback(SSL *s, SSL_psk_find_session_cb_func cb);
+void SSL_CTX_set_psk_find_session_callback(SSL_CTX *ctx,
+                                           SSL_psk_find_session_cb_func cb);
+void SSL_set_psk_find_session_callback(SSL *s, SSL_psk_find_session_cb_func cb);
 
- typedef unsigned int (*SSL_psk_server_cb_func)(SSL *ssl,
-                                                const char *identity,
-                                                unsigned char *psk,
-                                                unsigned int max_psk_len);
+typedef unsigned int (*SSL_psk_server_cb_func)(SSL *ssl,
+                                               const char *identity,
+                                               unsigned char *psk,
+                                               unsigned int max_psk_len);
 
- int SSL_CTX_use_psk_identity_hint(SSL_CTX *ctx, const char *hint);
- int SSL_use_psk_identity_hint(SSL *ssl, const char *hint);
+int SSL_CTX_use_psk_identity_hint(SSL_CTX *ctx, const char *hint);
+int SSL_use_psk_identity_hint(SSL *ssl, const char *hint);
 
- void SSL_CTX_set_psk_server_callback(SSL_CTX *ctx, SSL_psk_server_cb_func cb);
- void SSL_set_psk_server_callback(SSL *ssl, SSL_psk_server_cb_func cb);</code></pre>
+void SSL_CTX_set_psk_server_callback(SSL_CTX *ctx, SSL_psk_server_cb_func cb);
+void SSL_set_psk_server_callback(SSL *ssl, SSL_psk_server_cb_func cb);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 

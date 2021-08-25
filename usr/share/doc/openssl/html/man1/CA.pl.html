@@ -131,14 +131,14 @@
 
 <p>Create a CA hierarchy:</p>
 
-<pre><code> CA.pl -newca</code></pre>
+<pre><code>CA.pl -newca</code></pre>
 
 <p>Complete certificate creation example: create a CA, create a request, sign the request and finally create a PKCS#12 file containing it.</p>
 
-<pre><code> CA.pl -newca
- CA.pl -newreq
- CA.pl -sign
- CA.pl -pkcs12 &quot;My Test Certificate&quot;</code></pre>
+<pre><code>CA.pl -newca
+CA.pl -newreq
+CA.pl -sign
+CA.pl -pkcs12 &quot;My Test Certificate&quot;</code></pre>
 
 <h1 id="DSA-CERTIFICATES">DSA CERTIFICATES</h1>
 
@@ -146,25 +146,25 @@
 
 <p>Create some DSA parameters:</p>
 
-<pre><code> openssl dsaparam -out dsap.pem 1024</code></pre>
+<pre><code>openssl dsaparam -out dsap.pem 1024</code></pre>
 
 <p>Create a DSA CA certificate and private key:</p>
 
-<pre><code> openssl req -x509 -newkey dsa:dsap.pem -keyout cacert.pem -out cacert.pem</code></pre>
+<pre><code>openssl req -x509 -newkey dsa:dsap.pem -keyout cacert.pem -out cacert.pem</code></pre>
 
 <p>Create the CA directories and files:</p>
 
-<pre><code> CA.pl -newca</code></pre>
+<pre><code>CA.pl -newca</code></pre>
 
 <p>enter cacert.pem when prompted for the CA filename.</p>
 
 <p>Create a DSA certificate request and private key (a different set of parameters can optionally be created first):</p>
 
-<pre><code> openssl req -out newreq.pem -newkey dsa:dsap.pem</code></pre>
+<pre><code>openssl req -out newreq.pem -newkey dsa:dsap.pem</code></pre>
 
 <p>Sign the request:</p>
 
-<pre><code> CA.pl -sign</code></pre>
+<pre><code>CA.pl -sign</code></pre>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -174,7 +174,7 @@
 
 <p>Under some environments it may not be possible to run the <b>CA.pl</b> script directly (for example Win32) and the default configuration file location may be wrong. In this case the command:</p>
 
-<pre><code> perl -S CA.pl</code></pre>
+<pre><code>perl -S CA.pl</code></pre>
 
 <p>can be used and the <b>OPENSSL_CONF</b> environment variable changed to point to the correct path of the configuration file.</p>
 

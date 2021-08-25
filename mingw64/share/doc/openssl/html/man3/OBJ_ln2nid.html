@@ -30,36 +30,36 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code> #include &lt;openssl/objects.h&gt;
+<pre><code>#include &lt;openssl/objects.h&gt;
 
- ASN1_OBJECT *OBJ_nid2obj(int n);
- const char *OBJ_nid2ln(int n);
- const char *OBJ_nid2sn(int n);
+ASN1_OBJECT *OBJ_nid2obj(int n);
+const char *OBJ_nid2ln(int n);
+const char *OBJ_nid2sn(int n);
 
- int OBJ_obj2nid(const ASN1_OBJECT *o);
- int OBJ_ln2nid(const char *ln);
- int OBJ_sn2nid(const char *sn);
+int OBJ_obj2nid(const ASN1_OBJECT *o);
+int OBJ_ln2nid(const char *ln);
+int OBJ_sn2nid(const char *sn);
 
- int OBJ_txt2nid(const char *s);
+int OBJ_txt2nid(const char *s);
 
- ASN1_OBJECT *OBJ_txt2obj(const char *s, int no_name);
- int OBJ_obj2txt(char *buf, int buf_len, const ASN1_OBJECT *a, int no_name);
+ASN1_OBJECT *OBJ_txt2obj(const char *s, int no_name);
+int OBJ_obj2txt(char *buf, int buf_len, const ASN1_OBJECT *a, int no_name);
 
- int i2t_ASN1_OBJECT(char *buf, int buf_len, const ASN1_OBJECT *a);
+int i2t_ASN1_OBJECT(char *buf, int buf_len, const ASN1_OBJECT *a);
 
- int OBJ_cmp(const ASN1_OBJECT *a, const ASN1_OBJECT *b);
- ASN1_OBJECT *OBJ_dup(const ASN1_OBJECT *o);
+int OBJ_cmp(const ASN1_OBJECT *a, const ASN1_OBJECT *b);
+ASN1_OBJECT *OBJ_dup(const ASN1_OBJECT *o);
 
- int OBJ_create(const char *oid, const char *sn, const char *ln);
+int OBJ_create(const char *oid, const char *sn, const char *ln);
 
- size_t OBJ_length(const ASN1_OBJECT *obj);
- const unsigned char *OBJ_get0_data(const ASN1_OBJECT *obj);</code></pre>
+size_t OBJ_length(const ASN1_OBJECT *obj);
+const unsigned char *OBJ_get0_data(const ASN1_OBJECT *obj);</code></pre>
 
 <p>Deprecated:</p>
 
-<pre><code> #if OPENSSL_API_COMPAT &lt; 0x10100000L
- void OBJ_cleanup(void)
- #endif</code></pre>
+<pre><code>#if OPENSSL_API_COMPAT &lt; 0x10100000L
+void OBJ_cleanup(void)
+#endif</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -95,9 +95,9 @@
 
 <p>For example the OID for commonName has the following definitions:</p>
 
-<pre><code> #define SN_commonName                   &quot;CN&quot;
- #define LN_commonName                   &quot;commonName&quot;
- #define NID_commonName                  13</code></pre>
+<pre><code>#define SN_commonName                   &quot;CN&quot;
+#define LN_commonName                   &quot;commonName&quot;
+#define NID_commonName                  13</code></pre>
 
 <p>New objects can be added by calling OBJ_create().</p>
 
@@ -123,21 +123,21 @@
 
 <p>Create an object for <b>commonName</b>:</p>
 
-<pre><code> ASN1_OBJECT *o = OBJ_nid2obj(NID_commonName);</code></pre>
+<pre><code>ASN1_OBJECT *o = OBJ_nid2obj(NID_commonName);</code></pre>
 
 <p>Check if an object is <b>commonName</b></p>
 
-<pre><code> if (OBJ_obj2nid(obj) == NID_commonName)
-     /* Do something */</code></pre>
+<pre><code>if (OBJ_obj2nid(obj) == NID_commonName)
+    /* Do something */</code></pre>
 
 <p>Create a new NID and initialize an object from it:</p>
 
-<pre><code> int new_nid = OBJ_create(&quot;1.2.3.4&quot;, &quot;NewOID&quot;, &quot;New Object Identifier&quot;);
- ASN1_OBJECT *obj = OBJ_nid2obj(new_nid);</code></pre>
+<pre><code>int new_nid = OBJ_create(&quot;1.2.3.4&quot;, &quot;NewOID&quot;, &quot;New Object Identifier&quot;);
+ASN1_OBJECT *obj = OBJ_nid2obj(new_nid);</code></pre>
 
 <p>Create a new object directly:</p>
 
-<pre><code> obj = OBJ_txt2obj(&quot;1.2.3.4&quot;, 1);</code></pre>
+<pre><code>obj = OBJ_txt2obj(&quot;1.2.3.4&quot;, 1);</code></pre>
 
 <h1 id="BUGS">BUGS</h1>
 
