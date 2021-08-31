@@ -36,10 +36,10 @@
 
 #include <algorithm>
 #include <atomic>
-#include <exception>
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -47,14 +47,27 @@
 #include "mpdecimal.h"
 
 
+#undef iscanonical /* math.h */
 #undef isfinite    /* math.h */
+#undef isinf       /* math.h */
 #undef isnan       /* math.h */
+#undef isnormal    /* math.h */
 #undef issubnormal /* math.h */
+#undef iszero      /* math.h */
 #undef isspecial   /* ctype.h */
 
+#undef IMPORTEXPORT
 #ifdef _MSC_VER
+  #if defined (BUILD_LIBMPDECXX)
+    #define IMPORTEXPORT __declspec(dllexport)
+  #elif defined(_DLL)
+    #define IMPORTEXPORT __declspec(dllimport)
+  #else
+    #define IMPORTEXPORT
+  #endif
   #define ALWAYS_INLINE __forceinline
 #else
+  #define IMPORTEXPORT
   #define ALWAYS_INLINE inline __attribute__ ((always_inline))
 #endif
 
@@ -128,16 +141,8 @@ constexpr int IEEE_CONTEXT_MAX_BITS = MPD_IEEE_CONTEXT_MAX_BITS;
 /*                             Decimal Exceptions                             */
 /******************************************************************************/
 
-class DecimalException: public std::exception {
- private:
-  std::string m_msg;
- public:
-  DecimalException() : m_msg("") {}
-  explicit DecimalException(const std::string& msg) : m_msg(msg) {}
-
-  virtual const char* what() const throw() {
-    return m_msg.c_str();
-  }
+class DecimalException : public std::runtime_error {
+  using std::runtime_error::runtime_error;
 };
 
 /* Signals */
@@ -196,40 +201,16 @@ class DivisionUndefined : public IEEEInvalidOperation {
 /*                               Other Exceptions                             */
 /******************************************************************************/
 
-class ValueError: public std::exception {
- private:
-  std::string m_msg;
- public:
-  ValueError() : m_msg("") {}
-  explicit ValueError(const std::string& msg) : m_msg(msg) {}
-
-  virtual const char* what() const throw() {
-    return m_msg.c_str();
-  }
+class MallocError : public DecimalException {
+  using DecimalException::DecimalException;
 };
 
-class RuntimeError: public std::exception {
- private:
-  std::string m_msg;
- public:
-  RuntimeError() : m_msg("") {}
-  explicit RuntimeError(const std::string& msg) : m_msg(msg) {}
-
-  virtual const char* what() const throw() {
-    return m_msg.c_str();
-  }
+class RuntimeError : public DecimalException {
+  using DecimalException::DecimalException;
 };
 
-class MallocError: public std::exception {
- private:
-  std::string m_msg;
- public:
-  MallocError() : m_msg("") {}
-  explicit MallocError(const std::string& msg) : m_msg(msg) {}
-
-  virtual const char* what() const throw() {
-    return m_msg.c_str();
-  }
+class ValueError : public DecimalException {
+  using DecimalException::DecimalException;
 };
 
 
@@ -239,23 +220,35 @@ class MallocError: public std::exception {
 
 class Context;
 
-extern Context context_template;
+IMPORTEXPORT extern Context context_template;
+#if defined(__OpenBSD__) || defined(__sun) || defined(_MSC_VER) && defined(_DLL)
+IMPORTEXPORT Context& getcontext();
+static thread_local Context& context{getcontext()};
+#else
 extern thread_local Context context;
+#endif
 
 class Context {
  private:
   mpd_context_t ctx;
-  static void raiseit(const uint32_t status);
+  IMPORTEXPORT static void raiseit(uint32_t status);
 
  public:
-  /* Constructors and destructors */
-  Context(mpd_ssize_t prec=context_template.prec(),
-          mpd_ssize_t emax=context_template.emax(),
-          mpd_ssize_t emin=context_template.emin(),
-          int round=context_template.round(),
-          uint32_t traps=context_template.traps(),
-          int clamp=context_template.clamp(),
-          int allcr=context_template.allcr()) {
+  /***********************************************************************/
+  /*                             Constructors                            */
+  /***********************************************************************/
+  Context(const Context& c) = default;
+  Context(Context&& c) = default;
+
+  explicit Context(const mpd_context_t &m) noexcept : ctx(m) {}
+
+  explicit Context(mpd_ssize_t prec=context_template.prec(),
+                   mpd_ssize_t emax=context_template.emax(),
+                   mpd_ssize_t emin=context_template.emin(),
+                   int round=context_template.round(),
+                   uint32_t traps=context_template.traps(),
+                   int clamp=context_template.clamp(),
+                   int allcr=context_template.allcr()) {
     this->prec(prec);
     this->emax(emax);
     this->emin(emin);
@@ -267,21 +260,20 @@ class Context {
     this->ctx.newtrap = 0;
   }
 
-  Context(const Context& c) noexcept { *this = c; }
-  Context(const Context&& c) noexcept { *this = c; }
-  explicit Context(const mpd_context_t &c) noexcept { ctx = c; }
+  /***********************************************************************/
+  /*                             Destructor                              */
+  /***********************************************************************/
   ~Context() noexcept = default;
 
-  Context& operator= (const Context& c) noexcept {
-    ctx = *c.getconst();
-    return *this;
-  }
+  /***********************************************************************/
+  /*                         Assignment operators                        */
+  /***********************************************************************/
+  Context& operator= (const Context& c) = default;
+  Context& operator= (Context&& c) = default;
 
-  Context& operator= (const Context&& c) noexcept {
-    ctx = *c.getconst();
-    return *this;
-  }
-
+  /***********************************************************************/
+  /*                         Comparison operators                        */
+  /***********************************************************************/
   bool operator== (const Context& other) const noexcept {
     return ctx.prec == other.ctx.prec &&
            ctx.emax == other.ctx.emax &&
@@ -298,11 +290,14 @@ class Context {
     return !(*this == other);
   }
 
-  /* get pointers to the full context */
+  /***********************************************************************/
+  /*                               Accessors                             */
+  /***********************************************************************/
+  /* Get pointers to the full context */
   ALWAYS_INLINE mpd_context_t *get() { return &ctx; }
   ALWAYS_INLINE const mpd_context_t *getconst() const { return &ctx; }
 
-  /* get individual fields */
+  /* Get individual fields */
   ALWAYS_INLINE mpd_ssize_t prec() const { return ctx.prec; }
   ALWAYS_INLINE mpd_ssize_t emax() const { return ctx.emax; }
   ALWAYS_INLINE mpd_ssize_t emin() const { return ctx.emin; }
@@ -314,7 +309,7 @@ class Context {
   ALWAYS_INLINE int64_t etiny() const { return mpd_etiny(&ctx); }
   ALWAYS_INLINE int64_t etop() const { return mpd_etop(&ctx); }
 
-  /* set individual fields */
+  /* Set individual fields */
   ALWAYS_INLINE void prec(mpd_ssize_t v) {
     if (!mpd_qsetprec(&ctx, v)) {
       throw ValueError("valid range for prec is [1, MAX_PREC]");
@@ -366,7 +361,10 @@ class Context {
     }
   }
 
-  /* add flags to status and raise an exception if a relevant trap is active */
+  /***********************************************************************/
+  /*                     Status and exception handling                   */
+  /***********************************************************************/
+  /* Add flags to status and raise an exception if a relevant trap is active */
   ALWAYS_INLINE void raise(uint32_t flags) {
     ctx.status |= (flags & ~MPD_Malloc_error);
     const uint32_t active_traps = flags & (ctx.traps|MPD_Malloc_error);
@@ -375,7 +373,7 @@ class Context {
     }
   }
 
-  /* add selected status flags */
+  /* Add selected status flags */
   ALWAYS_INLINE void add_status(uint32_t flags) {
     if (flags > MPD_Max_status) {
       throw ValueError("invalid flags");
@@ -383,12 +381,12 @@ class Context {
     ctx.status |= flags;
   }
 
-  /* clear all status flags */
+  /* Clear all status flags */
   ALWAYS_INLINE void clear_status() {
     ctx.status = 0;
   }
 
-  /* clear selected status flags */
+  /* Clear selected status flags */
   ALWAYS_INLINE void clear_status(uint32_t flags) {
     if (flags > MPD_Max_status) {
       throw ValueError("invalid flags");
@@ -396,7 +394,7 @@ class Context {
     ctx.status &= ~flags;
   }
 
-  /* add selected traps */
+  /* Add selected traps */
   ALWAYS_INLINE void add_traps(uint32_t flags) {
     if (flags > MPD_Max_status) {
       throw ValueError("invalid flags");
@@ -404,12 +402,12 @@ class Context {
     ctx.traps |= flags;
   }
 
-  /* clear all traps */
+  /* Clear all traps */
   ALWAYS_INLINE void clear_traps() {
     ctx.traps = 0;
   }
 
-  /* clear selected traps */
+  /* Clear selected traps */
   ALWAYS_INLINE void clear_traps(uint32_t flags) {
     if (flags > MPD_Max_status) {
       throw ValueError("invalid flags");
@@ -417,12 +415,15 @@ class Context {
     ctx.traps &= ~flags;
   }
 
-  std::string repr() const;
-  friend std::ostream& operator<<(std::ostream& os, const Context& c);
+  /***********************************************************************/
+  /*                          String conversion                          */
+  /***********************************************************************/
+  IMPORTEXPORT std::string repr() const;
+  IMPORTEXPORT friend std::ostream& operator<<(std::ostream& os, const Context& c);
 };
 
-Context MaxContext();
-Context IEEEContext(int bits);
+IMPORTEXPORT Context MaxContext();
+IMPORTEXPORT Context IEEEContext(int bits);
 
 
 /******************************************************************************/
@@ -436,7 +437,7 @@ inline dest_t
 safe_downcast(src_t v) {
   if (v < std::numeric_limits<dest_t>::min() ||
       v > std::numeric_limits<dest_t>::max()) {
-    throw ValueError();
+    throw ValueError("cast changes the original value");
   }
 
   return static_cast<dest_t>(v);
@@ -444,8 +445,8 @@ safe_downcast(src_t v) {
 
 inline std::shared_ptr<const char>
 shared_cp(const char *cp) {
-  if (cp == NULL) {
-    throw MallocError("out of memory");
+  if (cp == nullptr) {
+    throw RuntimeError("util::shared_cp: invalid nullptr argument");
   }
 
   return std::shared_ptr<const char>(cp, [](const char *s){ mpd_free(const_cast<char *>(s)); });
@@ -598,7 +599,7 @@ class Decimal {
     else {
       assert(mpd_isdynamic_data(src));
       if (mpd_isdynamic_data(&value)) {
-        free(value.data);
+        mpd_free(value.data);
       }
       value = *src;
       assert(mpd_isstatic(&value));
@@ -688,7 +689,7 @@ class Decimal {
   /***********************************************************************/
 
   /* Implicit */
-  Decimal() {}
+  Decimal() noexcept = default;
   Decimal(const Decimal& other) { *this = other; }
   Decimal(Decimal&& other) noexcept { *this = std::move(other); }
 
@@ -722,6 +723,13 @@ class Decimal {
     uint32_t status = 0;
     mpd_qset_string_exact(&value, s.c_str(), &status);
     context.raise(status);
+  }
+
+  explicit Decimal(const mpd_uint128_triple_t& triple) {
+    uint32_t status = 0;
+    if (mpd_from_uint128_triple(&value, &triple, &status) < 0) {
+      context.raise(status);
+    }
   }
 
   /***********************************************************************/
@@ -834,7 +842,7 @@ class Decimal {
       other.reset();
     }
     return *this;
-  };
+  }
 
   ALWAYS_INLINE Decimal& operator+= (const Decimal& other) { return inplace_binary_func(mpd_qadd, other); }
   ALWAYS_INLINE Decimal& operator-= (const Decimal& other) { return inplace_binary_func(mpd_qsub, other); }
@@ -1114,10 +1122,10 @@ class Decimal {
     return result;
   }
 
-  static Decimal exact(const char * const s, Context& c);
-  static Decimal exact(const std::string& s, Context& c);
-  static Decimal ln10(int64_t n, Context& c=context);
-  static int32_t radix();
+  IMPORTEXPORT static Decimal exact(const char *s, Context& c);
+  IMPORTEXPORT static Decimal exact(const std::string& s, Context& c);
+  IMPORTEXPORT static Decimal ln10(int64_t n, Context& c=context);
+  IMPORTEXPORT static int32_t radix();
 
   /***********************************************************************/
   /*                          Integer conversion                         */
@@ -1159,14 +1167,21 @@ class Decimal {
   }
 
   /***********************************************************************/
+  /*                           Triple conversion                         */
+  /***********************************************************************/
+  ALWAYS_INLINE mpd_uint128_triple_t as_uint128_triple() const {
+    return mpd_as_uint128_triple(getconst());
+  }
+
+  /***********************************************************************/
   /*                          String conversion                          */
   /***********************************************************************/
   /* String representations */
-  std::string repr(bool capitals=true) const;
+  IMPORTEXPORT std::string repr(bool capitals=true) const;
 
   inline std::string to_sci(bool capitals=true) const {
     const char *cp = mpd_to_sci(getconst(), capitals);
-    if (cp == NULL) {
+    if (cp == nullptr) {
       throw MallocError("out of memory");
     }
 
@@ -1175,7 +1190,7 @@ class Decimal {
 
   inline std::string to_eng(bool capitals=true) const {
     const char *cp = mpd_to_eng(getconst(), capitals);
-    if (cp == NULL) {
+    if (cp == nullptr) {
       throw MallocError("out of memory");
     }
 
@@ -1186,7 +1201,7 @@ class Decimal {
     uint32_t status = 0;
     mpd_context_t ctx;
 
-    if (fmt == NULL) {
+    if (fmt == nullptr) {
       throw ValueError("Decimal.format: fmt argument is NULL");
     }
 
@@ -1195,7 +1210,7 @@ class Decimal {
     ctx.traps = 0;
 
     const char *cp = mpd_qformat(getconst(), fmt, &ctx, &status);
-    if (cp == NULL) {
+    if (cp == nullptr) {
       if (status & MPD_Malloc_error) {
         throw MallocError("out of memory");
       }
@@ -1214,7 +1229,7 @@ class Decimal {
     return format(s.c_str(), c);
   }
 
-  friend std::ostream& operator<< (std::ostream& os, const Decimal& self);
+  IMPORTEXPORT friend std::ostream& operator<< (std::ostream& os, const Decimal& dec);
 };
 
 /***********************************************************************/
@@ -1237,6 +1252,8 @@ ENABLE_IF_INTEGRAL(T) ALWAYS_INLINE Decimal operator/ (const T& other, const Dec
 ENABLE_IF_INTEGRAL(T) ALWAYS_INLINE Decimal operator% (const T& other, const Decimal& self) { ASSERT_INTEGRAL(T); return Decimal(other) % self; }
 
 
+#undef IMPORTEXPORT
+#undef ALWAYS_INLINE
 #undef INT64_SUBSET
 #undef UINT64_SUBSET
 #undef ENABLE_IF_SIGNED

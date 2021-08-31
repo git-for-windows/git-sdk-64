@@ -8,7 +8,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="index,follow" name="robots" />
 <meta content="libmpdec++ documentation" name="description" />
 
-    <title>Decimal class &#8212; mpdecimal 2.5.0 documentation</title>
+    <title>Decimal class &#8212; mpdecimal 2.5.1 documentation</title>
     <link rel="stylesheet" href="_static/mpdecimal-doc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -56,6 +56,7 @@
 <li><a class="reference internal" href="#ternary-functions">Ternary functions</a></li>
 <li><a class="reference internal" href="#irregular-functions">Irregular functions</a></li>
 <li><a class="reference internal" href="#exact-integer-conversion">Exact integer conversion</a></li>
+<li><a class="reference internal" href="#exact-triple-conversion">Exact triple conversion</a></li>
 <li><a class="reference internal" href="#exact-string-conversion">Exact string conversion</a></li>
 <li><a class="reference internal" href="#inexact-string-conversion">Inexact string conversion</a></li>
 <li><a class="reference internal" href="#streams">Streams</a></li>
@@ -170,6 +171,16 @@ and the result is <cite>NaN</cite>.</p>
 <dd><p>Exact conversion from a <cite>std::string</cite>.  If an internal limit is exceeded
 (e.g. the exponent exceeds <cite>MAX_EMAX</cite>), <cite>InvalidOperation</cite> is set
 and the result is <cite>NaN</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv4N7decimal7Decimal7DecimalERK20mpd_uint128_triple_t">
+<span id="_CPPv3N7decimal7Decimal7DecimalERK20mpd_uint128_triple_t"></span><span id="_CPPv2N7decimal7Decimal7DecimalERK20mpd_uint128_triple_t"></span><span id="decimal::Decimal::Decimal__mpd_uint128_triple_tCR"></span><em class="property">explicit</em> <code class="descname">Decimal</code><span class="sig-paren">(</span><em class="property">const</em> mpd_uint128_triple_t &amp;<em>triple</em><span class="sig-paren">)</span><br /></dt>
+<dd><p>Exact conversion from an <cite>mpd_uint128_triple_t</cite>.  The triple can represent
+Decimals with a coefficient up to 38 decimal digits. Refer to the <cite>libmpdec</cite>
+documentation for details (See: <cite>mpd_from_uint128_triple</cite>).</p>
+<p>Raises <cite>InvalidOperation</cite> for invalid input and <cite>MemoryError</cite> for allocation
+failures.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1233,6 +1244,21 @@ failure, raise <cite>ValueError</cite>.</p>
 
 </div></blockquote>
 </div>
+<div class="section" id="exact-triple-conversion">
+<h2>Exact triple conversion</h2>
+<blockquote>
+<div><dl class="function">
+<dt id="_CPPv4NK7decimal17as_uint128_tripleEv">
+<span id="_CPPv3NK7decimal17as_uint128_tripleEv"></span><span id="_CPPv2NK7decimal17as_uint128_tripleEv"></span><span id="decimal::as_uint128_tripleC"></span>mpd_uint128_triple_t <code class="descname">as_uint128_triple</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><br /></dt>
+<dd><p>Exact conversion to an <cite>mpd_uint128_triple_t</cite>.  The triple can represent
+Decimals with a coefficient up to 38 decimal digits. Refer to the <cite>libmpdec</cite>
+documentation for details on how to handle the return value and errors
+(See: <cite>mpd_as_uint128_triple</cite>).</p>
+<p>Raises <cite>InvalidOperation</cite> if the coefficient is too large.</p>
+</dd></dl>
+
+</div></blockquote>
+</div>
 <div class="section" id="exact-string-conversion">
 <h2>Exact string conversion</h2>
 <blockquote>
@@ -1278,6 +1304,10 @@ the C <code class="xref cpp cpp-func docutils literal notranslate"><span class="
 the rest of the format string must be ASCII.</p>
 <p>The function raises <cite>ValueError</cite> for an invalid format string or <cite>MallocError</cite>
 in case of an allocation failure.</p>
+<p>If the “n” format specifier is used, the function calls <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">localeconv</span></code>.
+Depending on the guarantees of the system’s <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">localeconv</span></code>, this method
+may require a lock.</p>
+<p>All other format specifiers are thread-safe.</p>
 </dd></dl>
 
 <dl class="function">

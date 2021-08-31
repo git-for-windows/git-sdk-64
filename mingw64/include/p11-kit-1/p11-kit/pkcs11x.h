@@ -125,7 +125,7 @@ typedef CK_ULONG                        CK_TRUST;
 #define CKO_X_VENDOR   (CKA_VENDOR_DEFINED | 0x58444700UL)
 
 /* -------------------------------------------------------------------
- * BLACKLISTS
+ * BLOCKLISTS
  */
 
 #define CKA_X_DISTRUSTED                             (CKA_X_VENDOR + 100)

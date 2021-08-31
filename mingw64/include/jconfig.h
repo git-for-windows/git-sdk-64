@@ -1,6 +1,6 @@
 #define JPEG_LIB_VERSION  80
-#define LIBJPEG_TURBO_VERSION  2.0.6
-#define LIBJPEG_TURBO_VERSION_NUMBER  2000006
+#define LIBJPEG_TURBO_VERSION  2.1.1
+#define LIBJPEG_TURBO_VERSION_NUMBER  2001001
 
 #define C_ARITH_CODING_SUPPORTED
 #define D_ARITH_CODING_SUPPORTED
@@ -18,7 +18,6 @@
 #define HAVE_UNSIGNED_SHORT
 #undef INCOMPLETE_TYPES_BROKEN
 #undef RIGHT_SHIFT_IS_UNSIGNED
-#undef __CHAR_UNSIGNED__
 
 /* Define "boolean" as unsigned char, not int, per Windows custom */
 #ifndef __RPCNDR_H__            /* don't conflict if rpcndr.h already read */

@@ -8,7 +8,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="index,follow" name="robots" />
 <meta content="libmpdec++ documentation" name="description" />
 
-    <title>Context &#8212; mpdecimal 2.5.0 documentation</title>
+    <title>Context &#8212; mpdecimal 2.5.1 documentation</title>
     <link rel="stylesheet" href="_static/mpdecimal-doc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -45,7 +45,6 @@
 <li><a class="reference internal" href="#factory-functions">Factory functions</a></li>
 <li><a class="reference internal" href="#tls-context-caveats">TLS context caveats</a><ul>
 <li><a class="reference internal" href="#main-thread">Main thread</a></li>
-<li><a class="reference internal" href="#linking">Linking</a></li>
 </ul>
 </li>
 </ul>
@@ -80,8 +79,17 @@
 <h1>Context</h1>
 <div class="section" id="implicit-thread-local-context">
 <h2>Implicit thread local context</h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">extern</span> <span class="n">Context</span> <span class="n">context_template</span><span class="p">;</span>      <span class="cm">/* template for new thread local contexts */</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">extern</span> <span class="n">Context</span> <span class="n">context_template</span><span class="p">;</span>  <span class="cm">/* template for new thread local contexts */</span>
+
+<span class="cp">#if defined(__OpenBSD__) || defined(__sun) || defined(_MSC_VER) &amp;&amp; defined(_DLL)</span>
+<span class="cm">/* Each translation unit gets its own static reference to the thread local</span>
+<span class="cm">   context.  The semantics should be identical to the regular C++11 extern</span>
+<span class="cm">   thread local context below. */</span>
+<span class="n">IMPORTEXPORT</span> <span class="n">Context</span><span class="o">&amp;</span> <span class="n">getcontext</span><span class="p">();</span>
+<span class="k">static</span> <span class="k">thread_local</span> <span class="n">Context</span><span class="o">&amp;</span> <span class="n">context</span><span class="p">{</span><span class="n">getcontext</span><span class="p">()};</span>
+<span class="cp">#else</span>
 <span class="k">extern</span> <span class="k">thread_local</span> <span class="n">Context</span> <span class="n">context</span><span class="p">;</span>  <span class="cm">/* thread local context */</span>
+<span class="cp">#endif</span>
 </pre></div>
 </div>
 <p>Most functions use a context. If the context is not passed explicitly as an
@@ -137,7 +145,7 @@ from <cite>context_template</cite>.</p>
 </pre></div>
 </div>
 <p>Return a pointer to the underlying <cite>mpd_t</cite> context.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">mpd_context_t</span> <span class="o">*</span><span class="nf">getconst</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">mpd_context_t</span> <span class="o">*</span><span class="n">getconst</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>Return a const pointer to the underlying <cite>mpd_t</cite> context.</p>
@@ -277,14 +285,6 @@ than <cite>IEEE_CONTEXT_MAX_BITS</cite>.  For the most common values, the consta
 <p>On Linux/FreeBSD/OpenBSD automatic initialization of <cite>context</cite> on first access
 also works for the main thread.  However, this is not guaranteed by the standard,
 so <cite>context</cite> should be initialized explicitly if it is used in the main thread.</p>
-</div>
-<div class="section" id="linking">
-<h3>Linking</h3>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">On Windows and OpenBSD the thread local context feature of libmpdec++
-does not work with shared libraries. Use the static library.</p>
-</div>
 </div>
 </div>
 </div>

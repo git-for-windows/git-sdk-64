@@ -8,7 +8,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="index,follow" name="robots" />
 <meta content="libmpdec documentation" name="description" />
 
-    <title>Assignment, Conversions, I/O &#8212; mpdecimal 2.5.0 documentation</title>
+    <title>Assignment, Conversions, I/O &#8212; mpdecimal 2.5.1 documentation</title>
     <link rel="stylesheet" href="_static/mpdecimal-doc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -44,6 +44,7 @@
 <li><a class="reference internal" href="#from-string">From String</a></li>
 <li><a class="reference internal" href="#from-integer">From Integer</a></li>
 <li><a class="reference internal" href="#from-special-values">From Special Values</a></li>
+<li><a class="reference internal" href="#from-triple">From Triple</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#create-static-decimal">Create Static Decimal</a><ul>
@@ -53,6 +54,7 @@
 <li><a class="reference internal" href="#convert-decimal">Convert Decimal</a><ul>
 <li><a class="reference internal" href="#to-string">To String</a></li>
 <li><a class="reference internal" href="#to-integer">To Integer</a></li>
+<li><a class="reference internal" href="#to-triple">To Triple</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#copy-decimal">Copy Decimal</a></li>
@@ -107,7 +109,7 @@ condition is added to <em>status</em> and <em>result</em> is set to NaN.</p>
 conversion, the <code class="xref c c-macro docutils literal notranslate"><span class="pre">MPD_Invalid_operation</span></code> condition is added to <em>status</em>
 and <em>result</em> is set to NaN.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 2.5.</span></p>
+<p><span class="versionmodified added">New in version 2.5.0.</span></p>
 </div>
 <span class="target" id="std:topic-mpd_qset_ssize"></span><span class="target" id="std:topic-mpd_qset_i32"></span><span class="target" id="std:topic-mpd_qset_i64"></span><span class="target" id="std:topic-mpd_qset_i64_exact"></span><span class="target" id="std:topic-mpd_qset_uint"></span><span class="target" id="std:topic-mpd_qset_u32"></span><span class="target" id="std:topic-mpd_qset_u64"></span><span class="target" id="std:topic-mpd_qset_u64_exact"></span><span class="target" id="std:topic-mpd_set_ssize"></span><span class="target" id="std:topic-mpd_set_i32"></span><span class="target" id="std:topic-mpd_set_i64"></span><span class="target" id="std:topic-mpd_set_uint"></span><span class="target" id="std:topic-mpd_set_u32"></span></div>
 <div class="section" id="from-integer">
@@ -142,7 +144,7 @@ and <em>result</em> is set to NaN.</p>
 is not possible, the <code class="xref c c-macro docutils literal notranslate"><span class="pre">MPD_Invalid_operation</span></code> condition is added to <em>status</em>
 and <em>result</em> is set to NaN.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 2.5.</span></p>
+<p><span class="versionmodified added">New in version 2.5.0.</span></p>
 </div>
 </div>
 <div class="section" id="from-special-values">
@@ -169,6 +171,48 @@ be used inside quiet functions.</p>
 </div>
 <p>Set the coefficient of <em>result</em> to the maximum value allowed by <em>ctx-&gt;prec</em>.
 The function can fail with <code class="xref c c-macro docutils literal notranslate"><span class="pre">MPD_Malloc_error</span></code>.</p>
+</div>
+<div class="section" id="from-triple">
+<span id="std:topic-mpd_from_uint128_triple"></span><h3>From Triple</h3>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">mpd_triple_class</span> <span class="p">{</span>
+  <span class="n">MPD_TRIPLE_NORMAL</span><span class="p">,</span>
+  <span class="n">MPD_TRIPLE_INF</span><span class="p">,</span>
+  <span class="n">MPD_TRIPLE_QNAN</span><span class="p">,</span>
+  <span class="n">MPD_TRIPLE_SNAN</span><span class="p">,</span>
+  <span class="n">MPD_TRIPLE_ERROR</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+  <span class="k">enum</span> <span class="n">mpd_triple_class</span> <span class="n">tag</span><span class="p">;</span>
+  <span class="kt">uint8_t</span> <span class="n">sign</span><span class="p">;</span>  <span class="cm">/* 0 for positive and 1 for negative */</span>
+  <span class="kt">uint64_t</span> <span class="n">hi</span><span class="p">;</span>   <span class="cm">/* ((uint128_t)hi &lt;&lt; 64) + lo is the coefficient */</span>
+  <span class="kt">uint64_t</span> <span class="n">lo</span><span class="p">;</span>
+  <span class="kt">int64_t</span> <span class="n">exp</span><span class="p">;</span>   <span class="cm">/* exponent */</span>
+<span class="p">}</span> <span class="n">mpd_uint128_triple_t</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">mpd_from_uint128_triple</span><span class="p">(</span><span class="n">mpd_t</span> <span class="o">*</span><span class="n">result</span><span class="p">,</span> <span class="k">const</span> <span class="n">mpd_uint128_triple_t</span> <span class="o">*</span><span class="n">triple</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="o">*</span><span class="n">status</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Create a decimal from a triple.  The following rules must be observed for
+initializing the triple:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">sign</span></code> must always be 0 (for positive) or 1 (for negative).</li>
+<li><code class="docutils literal notranslate"><span class="pre">MPD_TRIPLE_QNAN</span></code>: <code class="docutils literal notranslate"><span class="pre">exp</span></code> must be 0.  If <code class="docutils literal notranslate"><span class="pre">hi</span></code> or <code class="docutils literal notranslate"><span class="pre">lo</span></code> are nonzero,
+create a <code class="docutils literal notranslate"><span class="pre">NaN</span></code> with a payload.</li>
+<li><code class="docutils literal notranslate"><span class="pre">MPD_TRIPLE_SNAN</span></code>: <code class="docutils literal notranslate"><span class="pre">exp</span></code> must be 0. If <code class="docutils literal notranslate"><span class="pre">hi</span></code> or <code class="docutils literal notranslate"><span class="pre">lo</span></code>
+are nonzero,  create an <code class="docutils literal notranslate"><span class="pre">sNaN</span></code> with a payload.</li>
+<li><code class="docutils literal notranslate"><span class="pre">MPD_TRIPLE_INF</span></code>: <code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">hi</span></code> and <code class="docutils literal notranslate"><span class="pre">lo</span></code> must be zero.</li>
+<li><code class="docutils literal notranslate"><span class="pre">MPD_TRIPLE_NORMAL</span></code>: <code class="docutils literal notranslate"><span class="pre">MPD_MIN_ETINY</span> <span class="pre">+</span> <span class="pre">38</span> <span class="pre">&lt;</span> <span class="pre">exp</span> <span class="pre">&lt;</span> <span class="pre">MPD_MAX_EMAX</span> <span class="pre">-</span> <span class="pre">38</span></code>.
+<code class="docutils literal notranslate"><span class="pre">hi</span></code> and <code class="docutils literal notranslate"><span class="pre">lo</span></code> can be chosen freely.</li>
+<li><code class="docutils literal notranslate"><span class="pre">MPD_TRIPLE_ERROR</span></code>: It is always an error to set this tag.</li>
+</ul>
+<p>If one of the above conditions is not met, the function sets
+<code class="xref c c-macro docutils literal notranslate"><span class="pre">MPD_Invalid_operation</span></code> and <em>result</em> is <code class="docutils literal notranslate"><span class="pre">NaN</span></code>.</p>
+<p>Additionally, though extremely unlikely give the small allocation sizes,
+the function can set <code class="xref c c-macro docutils literal notranslate"><span class="pre">MPD_Malloc_error</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 2.5.1.</span></p>
+</div>
 </div>
 </div>
 <div class="section" id="create-static-decimal">
@@ -219,7 +263,7 @@ This operation is not context sensitive. If <em>fmt</em> is zero, the exponent
 character is lower case, otherwise it is upper case. If allocating memory
 for the string fails, <code class="xref c c-macro docutils literal notranslate"><span class="pre">NULL</span></code> is returned.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 2.4: </span><code class="xref c c-func docutils literal notranslate"><span class="pre">mpd_to_sci_size</span></code> and <code class="xref c c-func docutils literal notranslate"><span class="pre">mpd_to_eng_size</span></code> additionally return the
+<p><span class="versionmodified added">New in version 2.4.0: </span><code class="xref c c-func docutils literal notranslate"><span class="pre">mpd_to_sci_size</span></code> and <code class="xref c c-func docutils literal notranslate"><span class="pre">mpd_to_eng_size</span></code> additionally return the
 size of the result string, without counting the terminating NUL.
 The goal is to avoid an unnecessary call to <code class="xref c c-func docutils literal notranslate"><span class="pre">strlen</span></code>.</p>
 </div>
@@ -237,6 +281,10 @@ the rest of the format string must be ASCII.</p>
 <p>The function can fail with <code class="xref c c-macro docutils literal notranslate"><span class="pre">MPD_Invalid_operation</span></code> for an invalid format
 string or <code class="xref c c-macro docutils literal notranslate"><span class="pre">MPD_Malloc_error</span></code>. In both cases, the return value is
 <code class="xref c c-macro docutils literal notranslate"><span class="pre">NULL</span></code>.</p>
+<p>If the “n” format specifier is used, the function calls <code class="xref c c-func docutils literal notranslate"><span class="pre">localeconv</span></code>.
+Depending on the guarantees of the system’s <code class="xref c c-func docutils literal notranslate"><span class="pre">localeconv</span></code>, calls to
+<code class="xref c c-func docutils literal notranslate"><span class="pre">mpd_qformat</span></code> may require a lock.</p>
+<p>All other format specifiers are thread-safe.</p>
 <span class="target" id="std:topic-mpd_qget_ssize"></span><span class="target" id="std:topic-mpd_qget_uint"></span><span class="target" id="std:topic-mpd_get_ssize"></span><span class="target" id="std:topic-mpd_get_uint"></span><span class="target" id="std:topic-mpd_qget_i32"></span><span class="target" id="std:topic-mpd_qget_u32"></span><span class="target" id="std:topic-mpd_get_i32"></span><span class="target" id="std:topic-mpd_get_u32"></span><span class="target" id="std:topic-mpd_qget_u64"></span><span class="target" id="std:topic-mpd_qget_i64"></span><span class="target" id="std:topic-mpd_get_i64"></span></div>
 <div class="section" id="to-integer">
 <span id="std:topic-mpd_get_u64"></span><h3>To Integer</h3>
@@ -269,7 +317,74 @@ the only reliable way to check for errors is to check the status.</p>
 <p>Return the absolute of numbers in the range [<code class="xref c c-macro docutils literal notranslate"><span class="pre">-MPD_UINT_MAX</span></code>, <code class="xref c c-macro docutils literal notranslate"><span class="pre">MPD_UINT_MAX</span></code>].
 Error handling as above.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 2.4: </span>All functions are available in both the 64-bit and the 32-bit builds.</p>
+<p><span class="versionmodified added">New in version 2.4.0: </span>All functions are available in both the 64-bit and the 32-bit builds.</p>
+</div>
+</div>
+<div class="section" id="to-triple">
+<span id="std:topic-mpd_as_uint128_triple"></span><h3>To Triple</h3>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">mpd_triple_class</span> <span class="p">{</span>
+  <span class="n">MPD_TRIPLE_NORMAL</span><span class="p">,</span>
+  <span class="n">MPD_TRIPLE_INF</span><span class="p">,</span>
+  <span class="n">MPD_TRIPLE_QNAN</span><span class="p">,</span>
+  <span class="n">MPD_TRIPLE_SNAN</span><span class="p">,</span>
+  <span class="n">MPD_TRIPLE_ERROR</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+  <span class="k">enum</span> <span class="n">mpd_triple_class</span> <span class="n">tag</span><span class="p">;</span>
+  <span class="kt">uint8_t</span> <span class="n">sign</span><span class="p">;</span>  <span class="cm">/* 0 for positive and 1 for negative */</span>
+  <span class="kt">uint64_t</span> <span class="n">hi</span><span class="p">;</span>   <span class="cm">/* ((uint128_t)hi &lt;&lt; 64) + lo is the coefficient */</span>
+  <span class="kt">uint64_t</span> <span class="n">lo</span><span class="p">;</span>
+  <span class="kt">int64_t</span> <span class="n">exp</span><span class="p">;</span>   <span class="cm">/* exponent */</span>
+<span class="p">}</span> <span class="n">mpd_uint128_triple_t</span><span class="p">;</span>
+
+<span class="n">mpd_uint128_triple_t</span> <span class="nf">mpd_as_uint128_triple</span><span class="p">(</span><span class="k">const</span> <span class="n">mpd_t</span> <span class="o">*</span><span class="n">a</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Convert a decimal with up to 38 decimal digits to a triple.</p>
+<p>For simplicity, the usage of the function and all special cases are explained
+in code form and comments:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">triple</span> <span class="o">=</span> <span class="n">mpd_as_uint128_triple</span><span class="p">(</span><span class="n">dec</span><span class="p">);</span>
+<span class="k">switch</span> <span class="p">(</span><span class="n">triple</span><span class="p">.</span><span class="n">tag</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">case</span> <span class="nl">MPD_TRIPLE_QNAN</span><span class="p">:</span>
+    <span class="cm">/*</span>
+<span class="cm">     * Success: handle a quiet NaN.</span>
+<span class="cm">     *   1) sign is 0 or 1.</span>
+<span class="cm">     *   2) exp is always 0.</span>
+<span class="cm">     *   3) If hi or lo are nonzero, the NaN has a payload.</span>
+<span class="cm">     */</span>
+    <span class="k">break</span><span class="p">;</span>
+
+<span class="k">case</span> <span class="nl">MPD_TRIPLE_SNAN</span><span class="p">:</span>
+    <span class="cm">/*</span>
+<span class="cm">     * Success: handle a signaling NaN.</span>
+<span class="cm">     *   1) sign is 0 or 1.</span>
+<span class="cm">     *   2) exp is always 0.</span>
+<span class="cm">     *   3) If hi or lo are nonzero, the sNaN has a payload.</span>
+<span class="cm">     */</span>
+    <span class="k">break</span><span class="p">;</span>
+
+<span class="k">case</span> <span class="nl">MPD_TRIPLE_INF</span><span class="p">:</span>
+    <span class="cm">/*</span>
+<span class="cm">     * Success: handle Infinity.</span>
+<span class="cm">     *   1) sign is 0 or 1.</span>
+<span class="cm">     *   2) exp is always 0.</span>
+<span class="cm">     *   3) hi and lo are always zero.</span>
+<span class="cm">     */</span>
+    <span class="k">break</span><span class="p">;</span>
+
+<span class="k">case</span> <span class="nl">MPD_TRIPLE_NORMAL</span><span class="p">:</span>
+    <span class="cm">/* Success: handle a finite value. */</span>
+    <span class="k">break</span><span class="p">;</span>
+
+<span class="k">case</span> <span class="nl">MPD_TRIPLE_ERROR</span><span class="p">:</span>
+    <span class="cm">/* The coefficient is too large for conversion. Handle the error. */</span>
+    <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 2.5.1.</span></p>
 </div>
 </div>
 </div>
