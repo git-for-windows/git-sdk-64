@@ -16,7 +16,7 @@ use LWP::Protocol ();
 use Scalar::Util qw(blessed);
 use Try::Tiny qw(try catch);
 
-our $VERSION = '6.55';
+our $VERSION = '6.56';
 
 sub new
 {
@@ -445,38 +445,41 @@ sub get {
     return $self->request( HTTP::Request::Common::GET( @parameters ), @suff );
 }
 
-sub _has_raw_content {
+sub _maybe_copy_default_content_type {
     my $self = shift;
-    shift; # drop url
+    my $req  = shift;
 
-    # taken from HTTP::Request::Common::request_type_with_data
+    my $default_ct = $self->default_header('Content-Type');
+    return unless defined $default_ct;
+
+    # drop url
+    shift;
+
+    # adapted from HTTP::Request::Common::request_type_with_data
     my $content;
     $content = shift if @_ and ref $_[0];
-    my($k, $v);
-    while (($k,$v) = splice(@_, 0, 2)) {
+
+    # We only care about the final value, really
+    my $ct;
+
+    my ($k, $v);
+    while (($k, $v) = splice(@_, 0, 2)) {
         if (lc($k) eq 'content') {
             $content = $v;
         }
+        elsif (lc($k) eq 'content-type') {
+            $ct = $v;
+        }
     }
 
-    # We were given Content => 'string' ...
-    if (defined $content && ! ref ($content)) {
-        return 1;
-    }
+    # Content-type provided and truthy? skip
+    return if $ct;
 
-    return;
-}
+    # Content is not just a string? Then it must be x-www-form-urlencoded
+    return if defined $content && ref($content);
 
-sub _maybe_copy_default_content_type {
-    my ($self, $req, @parameters) = @_;
-
-    # If we have a default Content-Type and someone passes in a POST/PUT
-    # with Content => 'some-string-value', use that Content-Type instead
-    # of x-www-form-urlencoded
-    my $ct = $self->default_header('Content-Type');
-    return unless defined $ct && $self->_has_raw_content(@parameters);
-
-    $req->header('Content-Type' => $ct);
+    # Provide default
+    $req->header('Content-Type' => $default_ct);
 }
 
 sub post {

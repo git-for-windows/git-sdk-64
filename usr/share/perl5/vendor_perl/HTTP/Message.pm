@@ -3,7 +3,7 @@ package HTTP::Message;
 use strict;
 use warnings;
 
-our $VERSION = '6.32';
+our $VERSION = '6.33';
 
 require HTTP::Headers;
 require Carp;
@@ -640,23 +640,42 @@ sub _stale_content {
     }
 }
 
-
 # delegate all other method calls to the headers object.
 our $AUTOLOAD;
-sub AUTOLOAD
-{
-    my $method = substr($AUTOLOAD, rindex($AUTOLOAD, '::')+2);
 
-    # We create the function here so that it will not need to be
-    # autoloaded the next time.
-    no strict 'refs';
-    *$method = sub { local $Carp::Internal{+__PACKAGE__} = 1; shift->headers->$method(@_) };
-    goto &$method;
+sub AUTOLOAD {
+    my ( $package, $method ) = $AUTOLOAD =~ m/\A(.+)::([^:]*)\z/;
+    my $code = $_[0]->can($method);
+    Carp::croak(
+        qq(Can't locate object method "$method" via package "$package"))
+        unless $code;
+    goto &$code;
 }
 
+sub can {
+    my ( $self, $method ) = @_;
 
-sub DESTROY {}  # avoid AUTOLOADing it
+    if ( my $own_method = $self->SUPER::can($method) ) {
+        return $own_method;
+    }
 
+    my $headers = ref($self) ? $self->headers : 'HTTP::Headers';
+    if ( $headers->can($method) ) {
+
+        # We create the function here so that it will not need to be
+        # autoloaded or recreated the next time.
+        no strict 'refs';
+        *$method = sub {
+            local $Carp::Internal{ +__PACKAGE__ } = 1;
+            shift->headers->$method(@_);
+        };
+        return \&$method;
+    }
+
+    return undef;
+}
+
+sub DESTROY { }    # avoid AUTOLOADing it
 
 # Private method to access members in %$self
 sub _elem
@@ -782,7 +801,7 @@ HTTP::Message - HTTP style message (base class)
 
 =head1 VERSION
 
-version 6.32
+version 6.33
 
 =head1 SYNOPSIS
 

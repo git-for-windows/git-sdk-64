@@ -205,6 +205,8 @@ tidy_strip() {
 					strip_flags="$STRIP_SHARED";;
 				*application/x-sharedlib*)  # Libraries (.so)
 					strip_flags="$STRIP_SHARED";;
+				*Type:*'DYN (Position-Independent Executable file)'*) # Relocatable binaries
+					strip_flags="$STRIP_SHARED";;
 				*Type:*'EXEC (Executable file)'*) # Binaries
 					strip_flags="$STRIP_BINARIES";;
 				*Type:*'REL (Relocatable file)'*) # Libraries (.a) or objects
