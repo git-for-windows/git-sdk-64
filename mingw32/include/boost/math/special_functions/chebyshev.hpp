@@ -6,8 +6,10 @@
 #ifndef BOOST_MATH_SPECIAL_CHEBYSHEV_HPP
 #define BOOST_MATH_SPECIAL_CHEBYSHEV_HPP
 #include <cmath>
+#include <boost/math/special_functions/math_fwd.hpp>
 #include <boost/math/policies/error_handling.hpp>
 #include <boost/math/constants/constants.hpp>
+#include <boost/math/tools/promotion.hpp>
 
 #if (__cplusplus > 201103) || (defined(_CPPLIB_VER) && (_CPPLIB_VER >= 610))
 #  define BOOST_MATH_CHEB_USE_STD_ACOSH
@@ -197,7 +199,7 @@ inline Real unchecked_chebyshev_clenshaw_recurrence(const Real* const c, size_t 
     Real u;
     // This cutoff is not super well defined, but it's a good estimate.
     // See "An Error Analysis of the Modified Clenshaw Method for Evaluating Chebyshev and Fourier Series"
-    // J. OLIVER, IMA Journal of Applied Mathematics, Volume 20, Issue 3, November 1977, Pages 379–391
+    // J. OLIVER, IMA Journal of Applied Mathematics, Volume 20, Issue 3, November 1977, Pages 379-391
     // https://doi.org/10.1093/imamat/20.3.379
     const Real cutoff = 0.6;
     if (x - a < b - x)

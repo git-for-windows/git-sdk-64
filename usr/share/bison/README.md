@@ -73,15 +73,29 @@ skeletons.  If you are to write a new skeleton, please, implement them for
 your language.  Overall, be sure to follow the same patterns as the existing
 skeletons.
 
+## Vocabulary
+
+We use "formal arguments", or "formals" for short, to denote the declared
+parameters of a function (e.g., `int argc, const char **argv`).  Yes, this
+is somewhat contradictory with `param` in the `%param` directives.
+
+We use "effective arguments", or "args" for short, to denote the values
+passed in function calls (e.g., `argc, argv`).
+
 ## Symbols
 
 ### `b4_symbol(NUM, FIELD)`
 In order to unify the handling of the various aspects of symbols (tag, type
 name, whether terminal, etc.), bison.exe defines one macro per (token,
 field), where field can `has_id`, `id`, etc.: see
-`prepare_symbols_definitions()` in `src/output.c`.
+`prepare_symbol_definitions()` in `src/output.c`.
 
-The macro `b4_symbol(NUM, FIELD)` gives access to the following FIELDS:
+NUM can be:
+- `empty` to denote the "empty" pseudo-symbol when it exists,
+- `eof`, `error`, or `undef`
+- a symbol number.
+
+FIELD can be:
 
 - `has_id`: 0 or 1
   Whether the symbol has an `id`.

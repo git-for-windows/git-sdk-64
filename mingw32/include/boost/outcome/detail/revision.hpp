@@ -1,5 +1,5 @@
 /* UPDATED BY SCRIPT
-(C) 2017-2020 Niall Douglas <http://www.nedproductions.biz/> (225 commits)
+(C) 2017-2021 Niall Douglas <http://www.nedproductions.biz/> (225 commits)
 
 
 Boost Software License - Version 1.0 - August 17th, 2003
@@ -28,6 +28,6 @@ DEALINGS IN THE SOFTWARE.
 */
 
 // Note the second line of this file must ALWAYS be the git SHA, third line ALWAYS the git SHA update time
-#define BOOST_OUTCOME_PREVIOUS_COMMIT_REF a853fc09bb9590204a33c62bd3fd32f9b212c69f
-#define BOOST_OUTCOME_PREVIOUS_COMMIT_DATE "2020-10-09 09:46:07 +00:00"
-#define BOOST_OUTCOME_PREVIOUS_COMMIT_UNIQUE a853fc09
+#define BOOST_OUTCOME_PREVIOUS_COMMIT_REF 35644f5cdeb90f6f29d80714a371098d311cbd47
+#define BOOST_OUTCOME_PREVIOUS_COMMIT_DATE "2021-02-26 10:38:25 +00:00"
+#define BOOST_OUTCOME_PREVIOUS_COMMIT_UNIQUE 35644f5c

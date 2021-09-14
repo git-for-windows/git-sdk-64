@@ -236,7 +236,7 @@ private:
   // and preserves the position of the element-to-read
   void discard_vector(boost::uintmax_t z)
   {
-    const boost::uintmax_t max_z = std::numeric_limits<size_type>::max() - seq_count;
+    const boost::uintmax_t max_z = (std::numeric_limits<size_type>::max)() - seq_count;
 
     // Don't allow seq_count + z overflows here
     if (max_z < z)

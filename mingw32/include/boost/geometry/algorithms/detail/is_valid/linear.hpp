@@ -1,6 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014-2020, Oracle and/or its affiliates.
+// Copyright (c) 2014-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -64,15 +64,8 @@ struct is_valid_linestring
 
         std::size_t num_distinct = detail::num_distinct_consecutive_points
             <
-                Linestring,
-                3u,
-                true,
-                not_equal_to
-                    <
-                        typename point_type<Linestring>::type,
-                        typename Strategy::equals_point_point_strategy_type
-                    >
-            >::apply(linestring);
+                Linestring, 3u, true
+            >::apply(linestring, strategy);
 
         if (num_distinct < 2u)
         {
@@ -90,11 +83,7 @@ struct is_valid_linestring
         //   is done regardless of VisitPolicy.
         //   An obvious improvement is to avoid calling the algorithm at all if
         //   spikes are allowed which is the default.
-        return ! has_spikes
-                    <
-                        Linestring, closed
-                    >::apply(linestring, visitor,
-                             strategy.get_side_strategy());
+        return ! has_spikes<Linestring>::apply(linestring, visitor, strategy);
     }
 };
 

@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2020, Oracle and/or its affiliates.
+// Copyright (c) 2020-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -31,14 +31,13 @@ template
     typename Spheroid = srs::spheroid<double>,
     typename CalculationType = void
 >
-class geographic : strategies::detail::geographic_base<Spheroid>
+class geographic
+    : public strategies::detail::geographic_base<Spheroid>
 {
     using base_t = strategies::detail::geographic_base<Spheroid>;
 
 public:
-    geographic()
-        : base_t()
-    {}
+    geographic() = default;
 
     explicit geographic(Spheroid const& spheroid)
         : base_t(spheroid)

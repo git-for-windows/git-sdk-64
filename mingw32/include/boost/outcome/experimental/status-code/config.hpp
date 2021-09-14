@@ -1,5 +1,5 @@
 /* Proposed SG14 status_code
-(C) 2018 - 2020 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
+(C) 2018 - 2021 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
 File Created: Feb 2018
 
 
@@ -43,6 +43,26 @@ http://www.boost.org/LICENSE_1_0.txt)
 
 // 0.01
 #include <initializer_list>
+
+#ifndef BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST
+#ifdef __has_include
+#if __has_include(<bit>) && (__cplusplus >= 202002L || _HAS_CXX20)
+#define BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST 1
+#endif
+#elif __cplusplus >= 202002L
+#define BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST 1
+#endif
+#ifndef BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST
+#define BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST 0
+#endif
+#endif
+#if BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST
+#include <bit>
+#if __cpp_lib_bit_cast < 201806L
+#undef BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST
+#define BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST 0
+#endif
+#endif
 
 #ifndef BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR14
 #if defined(BOOST_OUTCOME_STANDARDESE_IS_IN_THE_HOUSE) || __cplusplus >= 201400 || _MSC_VER >= 1910 /* VS2017 */
@@ -158,18 +178,12 @@ namespace detail
     return end - str;
   }
 #else
-  inline constexpr size_t cstrlen_(const char *str, size_t acc)
-  {
-    return (str[0] == 0) ? acc : cstrlen_(str + 1, acc + 1);
-  }
-  inline constexpr size_t cstrlen(const char *str)
-  {
-    return cstrlen_(str, 0);
-  }
+  inline constexpr size_t cstrlen_(const char *str, size_t acc) { return (str[0] == 0) ? acc : cstrlen_(str + 1, acc + 1); }
+  inline constexpr size_t cstrlen(const char *str) { return cstrlen_(str, 0); }
 #endif
 
   /* A partially compliant implementation of C++20's std::bit_cast function contributed
-  by Jesse Towner. TODO FIXME Replace with C++ 20 bit_cast when available.
+  by Jesse Towner.
 
   Our bit_cast is only guaranteed to be constexpr when both the input and output
   arguments are either integrals or enums. However, this covers most use cases
@@ -187,11 +201,37 @@ namespace detail
 
   template <class To, class From> using is_bit_castable = std::integral_constant<bool, sizeof(To) == sizeof(From) && traits::is_move_bitcopying<To>::value && traits::is_move_bitcopying<From>::value>;
 
-  template <class To, class From> union bit_cast_union {
+  template <class To, class From> union bit_cast_union
+  {
     From source;
     To target;
   };
 
+#if BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST
+  using std::bit_cast;  // available for all trivially copyable types
+
+  // For move bit copying types
+  template <class To, class From>
+  requires(is_bit_castable<To, From>::value             //
+           &&is_union_castable<To, From>::value         //
+           && (!std::is_trivially_copyable_v<From>      //
+               || !std::is_trivially_copyable_v<To>) )  //
+  constexpr To bit_cast(const From &from) noexcept
+  {
+    return bit_cast_union<To, From>{from}.target;
+  }
+  template <class To, class From>
+  requires(is_bit_castable<To, From>::value             //
+           && !is_union_castable<To, From>::value       //
+           && (!std::is_trivially_copyable_v<From>      //
+               || !std::is_trivially_copyable_v<To>) )  //
+  To bit_cast(const From &from) noexcept
+  {
+    bit_cast_union<To, From> ret;
+    memmove(&ret.source, &from, sizeof(ret.source));
+    return ret.target;
+  }
+#else
   template <class To, class From,
             typename std::enable_if<                 //
             is_bit_castable<To, From>::value         //
@@ -233,6 +273,7 @@ namespace detail
     memmove(&ret.source, &from, sizeof(ret.source));
     return ret.target;
   }
+#endif
 
   /* erasure_cast performs a bit_cast with additional rules to handle types
   of differing sizes. For integral & enum types, it may perform a narrowing
@@ -304,10 +345,12 @@ namespace detail
     extern "C" ptrdiff_t write(int, const void *, size_t);
 #elif defined(_MSC_VER)
     extern ptrdiff_t write(int, const void *, size_t);
-#if defined(_WIN64)
+#if(defined(__x86_64__) || defined(_M_X64)) || (defined(__aarch64__) || defined(_M_ARM64)) || (defined(__arm__) || defined(_M_ARM))
 #pragma comment(linker, "/alternatename:?write@avoid_stdio_include@detail@system_error2@@YA_JHPEBX_K@Z=write")
-#else
+#elif defined(__x86__) || defined(_M_IX86) || defined(__i386__)
 #pragma comment(linker, "/alternatename:?write@avoid_stdio_include@detail@system_error2@@YAHHPBXI@Z=_write")
+#else
+#error Unknown architecture
 #endif
 #endif
   }  // namespace avoid_stdio_include

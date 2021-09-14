@@ -194,7 +194,8 @@ class robust_spin_mutex
    robust_spin_mutex();
    void lock();
    bool try_lock();
-   bool timed_lock(const boost::posix_time::ptime &abs_time);
+   template<class TimePoint>
+   bool timed_lock(const TimePoint &abs_time);
    void unlock();
    void consistent();
    bool previous_owner_dead();
@@ -250,8 +251,9 @@ inline bool robust_spin_mutex<Mutex>::try_lock()
 }
 
 template<class Mutex>
+template<class TimePoint>
 inline bool robust_spin_mutex<Mutex>::timed_lock
-   (const boost::posix_time::ptime &abs_time)
+   (const TimePoint &abs_time)
 {  return try_based_timed_lock(*this, abs_time);   }
 
 template<class Mutex>

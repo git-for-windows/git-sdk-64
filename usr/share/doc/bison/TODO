@@ -1,11 +1,41 @@
 * Soon
-** gnulib
-Bruno notes:
+** scan-code
+The default case is scanning char-per-char.
 
-> I haven't looked deeply, but it strikes me that gnulib/lib/bitset/array.c
-> does not make use of the 'ffsl' function, nor or the 'integer_length_l'
-> function. Maybe because in Bison, all bitsets are so dense that it does
-> not give a performance advantage?
+    /* By default, grow the string obstack with the input.  */
+    .|\n        STRING_GROW ();
+
+make it more eager?
+
+** Missing tests
+commit 2c294c132528ede23d8ae4959783a67e9ff05ac5
+Author: Vincent Imbimbo <vmi6@cornell.edu>
+Date:   Sat Jan 23 13:25:18 2021 -0500
+
+    cex: fix state-item pruning
+
+See https://lists.gnu.org/r/bug-bison/2021-01/msg00002.html
+
+** pos_set_set
+The current approach is correct, but with poor performances.  Bitsets need
+to support 'assign' and 'shift'.  And instead of extending POS_SET just for
+the out-of-range new values, we need something like doubling the size.
+
+** glr
+There is no test with "Parse on stack %ld rejected by rule %d" in it.
+
+** yyrline etc.
+Clarify that rule numbers in the skeletons are 1-based.
+
+** Macros in C++
+There are many macros that should obey api.prefix: YY_CPLUSPLUS, YY_MOVE,
+etc.
+
+** yyerrok in Java
+And add tests in calc.at, to prepare work for D.
+
+** YYERROR and yynerrs
+We are missing some cases.  Write a test case, and check all the skeletons.
 
 ** Cex
 *** Improve gnulib
@@ -65,10 +95,6 @@ enough.
 ** Java
 *** calc.at
 Stop hard-coding "Calc".  Adjust local.at (look for FIXME).
-
-** A dev warning for b4_
-Maybe we should check for m4_ and b4_ leaking out of the m4 processing, as
-Autoconf does.  It would have caught over-quotation issues.
 
 ** doc
 I feel it's ugly to use the GNU style to declare functions in the doc.  It
@@ -157,10 +183,48 @@ Les catégories d'avertissements incluent :
 
 Line -1 and -3 should mention CATEGORIE, not CATEGORY.
 
-* Bison 3.8
-** Rewrite glr.cc
-Get rid of scaffolding in glr.c.
+* Bison 3.9
+** Rewrite glr.cc (currently glr2.cc)
+*** custom error messages
 
+*** Remove jumps
+We can probably replace setjmp/longjmp with exceptions.  That would help
+tremendously other languages such as D and Java that probably have no
+similar feature.  If we remove jumps, we probably no longer need _Noreturn,
+so simplify `b4_attribute_define([noreturn])` into `b4_attribute_define`.
+
+After discussing with Valentin, it was decided that it's better to stay with
+jumps, since in some places exceptions are ruled out from C++.
+
+*** Coding style
+Move to our coding conventions.  In particular names such as yy_glr_stack,
+not yyGLRStack.
+
+*** yydebug
+It should be a member of the parser object, see lalr1.cc.  Let the parser
+object decide what the debug stream is, rather than open coding std::cerr.
+
+*** Avoid pointers
+There are many places where pointers should be replaced with references.
+Some occurrences were fixed, but now some have improper names:
+
+-yygetToken (int *yycharp, ]b4_namespace_ref[::]b4_parser_class[& yyparser][]b4_pure_if([, glr_stack* yystackp])[]b4_user_formals[)
++yygetToken (int& yycharp, ]b4_namespace_ref[::]b4_parser_class[& yyparser][]b4_pure_if([, glr_stack* yystackp])[]b4_user_formals[)
+
+yycharp is no longer a Pointer.  And yystackp should probably also be a reference.
+
+*** parse.assert
+Currently all the assertions are enabled.  Once we are confident in glr2.cc,
+let parse.assert use the same approach as in lalr1.cc.
+
+*** debug_stream
+Stop using std::cerr everywhere.
+
+*** glr.c
+When glr2.cc fully replaces glr.cc, get rid of the glr.cc scaffolding in
+glr.c.
+
+* Chains
 ** Unit rules / Injection rules (Akim Demaille)
 Maybe we could expand unit rules (or "injections", see
 https://homepages.cwi.nl/~daybuild/daily-books/syntax/2-sdf/sdf.html), i.e.,
@@ -215,6 +279,10 @@ functions.
 states/nstates, rules/nrules, ..., ritem/nritems
 Fix the latter.
 
+*** m4: slot, type, type_tag
+The meaning of type_tag varies depending on api.value.type.  We should avoid
+that and using clear definitions with stable semantics.
+
 * D programming language
 There's a number of features that are missing, here sorted in _suggested_
 order of implementation.
@@ -224,240 +292,8 @@ are.  Keep the same variable names.  If you change the wording in one place,
 do it in the others too.  In other words: make sure to keep the
 maintenance *simple* by avoiding any gratuitous difference.
 
-** Rename the D example
-Move the current content of examples/d into examples/d/simple.
-
-** Create a second example
-Duplicate examples/d/simple into examples/d/calc.
-
-** Add location tracking to d/calc
-Look at the examples in the other languages to see how to do that.
-
-** yysymbol_name
-The SymbolKind is an enum.  For a given SymbolKind we want to get its string
-representation.  Currently it's a separate table in the parser that does
-that:
-
-  /* Symbol kinds.  */
-  public enum SymbolKind
-  {
-    S_YYEMPTY = -2,  /* No symbol.  */
-    S_YYEOF = 0,                   /* "end of file"  */
-    S_YYerror = 1,                 /* error  */
-    S_YYUNDEF = 2,                 /* "invalid token"  */
-    S_EQ = 3,                      /* "="  */
-    ...
-    S_input = 14,                  /* input  */
-    S_line = 15,                   /* line  */
-    S_exp = 16,                    /* exp  */
-  };
-
-  ...
-
-  /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
-     First, the terminals, then, starting at \a yyntokens_, nonterminals.  */
-  private static immutable string[] yytname_ =
-  [
-  "\"end of file\"", "error", "\"invalid token\"", "\"=\"", "\"+\"",
-  "\"-\"", "\"*\"", "\"/\"", "\"(\"", "\")\"", "\"end of line\"",
-  "\"number\"", "UNARY", "$accept", "input", "line", "exp", null
-  ];
-
-  ...
-
-So to get a symbol kind, one runs `yytname_[yykind]`.
-
-Is there a way to attach this conversion to string to SymbolKind?  In Java
-for instance, we have:
-
-  public enum SymbolKind
-  {
-    S_YYEOF(0),                    /* "end of file"  */
-    S_YYerror(1),                  /* error  */
-    S_YYUNDEF(2),                  /* "invalid token"  */
-    ...
-    S_input(16),                   /* input  */
-    S_line(17),                    /* line  */
-    S_exp(18);                     /* exp  */
-
-    private final int yycode_;
-
-    SymbolKind (int n) {
-      this.yycode_ = n;
-    }
-    ...
-    /* YYNAMES_[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
-       First, the terminals, then, starting at \a YYNTOKENS_, nonterminals.  */
-    private static final String[] yynames_ = yynames_init();
-    private static final String[] yynames_init()
-    {
-      return new String[]
-      {
-        i18n("end of file"), i18n("error"), i18n("invalid token"), "!", "+", "-", "*",
-        "/", "^", "(", ")", "=", i18n("end of line"), i18n("number"), "NEG",
-        "$accept", "input", "line", "exp", null
-      };
-    }
-
-    /* The user-facing name of this symbol.  */
-    public final String getName() {
-      return yynames_[yycode_];
-    }
-  };
-
-which allows to write more naturally `yykind.getName()` rather than
-`yytname_[yykind]`.  Is there something comparable in (idiomatic) D?
-
-** Change the return value of yylex
-Historically people were allowed to return any int from the scanner (which
-is convenient and allows `return '+'` from the scanner).  Akim tends to see
-this as an error, we should restrict the return values to TokenKind (not to
-be confused with SymbolKind).
-
-In the case of D, without the history, we have the choice to support or not
-`int`.  If we want to _keep_ `int`, is there a way, say via introspection,
-to support both signatures of yylex?  If we don't keep `int`, just move to
-TokenKind.
-
-** Documentation
-Write documentation about D support in doc/bison.texi.  Imitate the Java
-documentation.  You should be more succinct IMHO.
-
-** Complete Symbols
-The current interface from the scanner to the parser is somewhat clumsy: the
-token kind is returned by yylex, but the value and location are stored in
-the scanner.  This reflects the fact that the implementation of the parser
-uses three variables to deal with each parsed symbol: its kind, its value,
-its location.
-
-So today the scanner of examples/d/calc.d (no locations) looks like:
-
-    if (input.front.isNumber)
-      {
-        import std.conv : parse;
-        semanticVal_.ival = input.parse!int;
-        return TokenKind.NUM;
-      }
-
-and the generated parser:
-
-    /* Read a lookahead token.  */
-    if (yychar == TokenKind.YYEMPTY)
-    {
-      yychar = yylex ();
-      yylval = yylexer.semanticVal;
-    }
-
-The parser class should feature a `Symbol` type which binds together kind,
-value and location, and the scanner should be able to return an instance of
-that type.  Something like
-
-    if (input.front.isNumber)
-      {
-        import std.conv : parse;
-        return parser.Symbol (TokenKind.NUM, input.parse!int);
-      }
-
-** Token Constructors
-In the previous example it is possible to mix incorrectly kinds and values,
-and for instance:
-
-        return parser.Symbol (TokenKind.NUM, "Hello, World!\n");
-
-attaches a string value to NUM kind (wrong, of course).  When
-api.token.constructor is set, in C++, Bison generated "token constructors":
-parser.make_NUM. parser.make_PLUS, parser.make_STRING, etc.  The previous
-example becomes
-
-        return parser.make_NUM ("Hello, World!\n");
-
-which would easily be caught by the type checker.
-
-** Lookahead Correction
-Add support for LAC to the D skeleton.  It should not be too hard: look how
-this is done in lalr1.cc, and mock it.
-
-** Push Parser
-Add support for push parser.  Do not start a nice skeleton, just enhance the
-current one to support push parsers.  This is going to be a tougher nut to
-crack.
-
-First, you need to understand well how the push parser is expected to work.
-To this end:
-- read the doc
-- look at examples/c/pushcalc
-- create an example of a Java push parser.
-- have a look at the generated parser in Java, which has the advantage of
-  being already based on a parser object, instead of just a function.
-
-The C case is harder to read, but it may help too.  Keep in mind that
-because there's no object to maintain state, the C push parser uses some
-struct (yypstate) to preserve this state.  We don't need this in D, the
-parser object will suffice.
-
-I think working directly on the skeleton to add push-parser support is not
-the simplest path.  I suggest that you (1) transform a generated parser into
-a push parser by hand, and then (2) transform lalr1.d to generate such a
-parser.
-
-Use `git commit` frequently to make sure you keep track of your progress.
-
-*** (1.a) Prepare pull parser by hand
-Copy again one of the D examples into say examples/d/pushcalc.  Also
-check-in the generated parser to facilitate experimentation.
-
-- find local variables of yyparse should become members of the parser object
-  (so that we preserve state from one call to the next).
-
-- do it in your generated D parser.  We don't need an equivalent for
-  yypstate, because we already have it: that the parser object itself.
-
-- have your *pull*-parser (i.e., the good old yy::parser::parse()) work
-  properly this way.  Write and run tests.  That's one of the reasons I
-  suggest using examples/d/calc as a starting point: it already has tests,
-  you can/should add more.
-
-At this point you have a pull-parser which you prepared to turn into a
-push-parser.
-
-*** (1.b) Turn pull parser into push parser by hand
-
-- look again at how push parsers are implemented in Java/C to see what needs
-  to change in yyparse so that the control is inverted: parse() will
-  be *given* the tokens, instead of having to call yylex itself.  When I say
-  "look at C", I think your best option are (i) yacc.c (look for b4_push_if)
-  and (ii) examples/c/pushcalc.
-
-- rename parse() as push_parse(Symbol yyla) (or push_parse(TokenKind, Value,
-  Location)) that takes the symbol as argument.  That's the push parser we
-  are looking for.
-
-- define a new parse() function which has the same signature as the usual
-  pull-parser, that repeatedly calls the push_parse function.  Something
-  like this:
-
-int parse ()
-{
- int status = 0;
- do {
-  status = this->push_parse (yylex());
- } while (status == YYPUSH_MORE);
- return status;
-}
-
-- show me that parser, so that we can validate the approach.
-
-*** (2) Port that into the skeleton
-- once we agree on the API of the push parser, implement it into lalr1.d.
-  You will probaby need help on this regard, but imitation, again, should
-  help.
-
-- have example/d/pushcalc work properly and pass tests
-
-- add tests in the "real" test suite.  Do that in tests/calc.at.  I can
-  help.
-
-- document
+** CI
+Check when gdc and ldc.
 
 ** GLR Parser
 This is very ambitious.  That's the final boss.  There are currently no
@@ -498,7 +334,6 @@ define it to the same type as the C ptrdiff_t type.
 * Completion
 Several features are not available in all the back-ends.
 
-- lac: D, Java (easy)
 - push parsers: glr.c, glr.cc, lalr1.cc (not very difficult)
 - token constructors: Java, C, D (a bit difficult)
 - glr: D, Java (super difficult)
@@ -513,9 +348,6 @@ $ ./tests/testsuite -l | grep errors | sed q
   38: input.at:1730      errors
 
 * Short term
-** Get rid of YYPRINT and b4_toknum
-Besides yytoknum is wrong when api.token.raw is defined.
-
 ** Better design for diagnostics
 The current implementation of diagnostics is ad hoc, it grew organically.
 It works as a series of calls to several functions, with dependency of the
@@ -633,23 +465,6 @@ It would be a very nice source of inspiration for the other languages.
 
 Valentin Tolmer is working on this.
 
-** yychar == YYEMPTY
-The code in yyerrlab reads:
-
-      if (yychar <= YYEOF)
-        {
-          /* Return failure if at end of input.  */
-          if (yychar == YYEOF)
-            YYABORT;
-        }
-
-There are only two yychar that can be <= YYEOF: YYEMPTY and YYEOF.
-But I can't produce the situation where yychar is YYEMPTY here, is it
-really possible?  The test suite does not exercise this case.
-
-This shows that it would be interesting to manage to install skeleton
-coverage analysis to the test suite.
-
 * From lalr1.cc to yacc.c
 ** Single stack
 Merging the three stacks in lalr1.cc simplified the code, prompted for
@@ -702,6 +517,9 @@ https://github.com/scfc/bison-php/blob/master/data/lalr1.php
 https://lists.gnu.org/r/bison-patches/2013-09/msg00000.html and following
 
 ** Multiple start symbols
+Revert a70e75b8a41755ab96ab211a0ea111ac68a4aadd.
+Revert tests: disable "Multistart reports".
+
 Would be very useful when parsing closely related languages.  The idea is to
 declare several start symbols, for instance
 
@@ -723,6 +541,21 @@ happen with yy_start: stmt | expr).  Then adjust the skeletons so that this
 initial token (YY_START_STMT, YY_START_EXPR) be shifted first in the
 corresponding parse function.
 
+*** Number of useless symbols
+AT_TEST(
+[[%start exp;
+exp: exp;]],
+[[input.y: warning: 2 nonterminals useless in grammar [-Wother]
+input.y: warning: 2 rules useless in grammar [-Wother]
+input.y:2.8-10: error: start symbol exp does not derive any sentence]])
+
+We should say "1 nonterminal": the other one is $accept, which should not
+participate in the count.
+
+*** Tokens
+Do we want to disallow terminal start symbols?  The limitation is not
+technical.  Can it be useful to someone to "parse" a token?
+
 ** %include
 This is a popular demand.  We already made many changes in the parser that
 should make this reasonably easy to implement.
@@ -737,7 +570,7 @@ them together, paying attention to keep separate bits separated, in pseudo
 name spaces.
 
 ** Push parsers
-There is demand for push parsers in Java and C++.  And GLR I guess.
+There is demand for push parsers in C++.
 
 ** Generate code instead of tables
 This is certainly quite a lot of work.  See
@@ -860,8 +693,8 @@ Equip the parser with a means to create the (visual) parse tree.
 # LocalWords:  nterm bitsetv ielr ritem nstates nrules nritems yysymbol EQ
 # LocalWords:  SymbolKind YYEMPTY YYUNDEF YYTNAME NUM yyntokens yytname sed
 # LocalWords:  nonterminals yykind yycode YYNAMES yynames init getName conv
-# LocalWords:  TokenKind semanticVal ival yychar yylval yylexer Tolmer hoc
-# LocalWords:  Sobisch YYPTRDIFF ptrdiff Autotest YYPRINT toknum yytoknum
+# LocalWords:  TokenKind ival yychar yylval yylexer Tolmer hoc
+# LocalWords:  Sobisch YYPTRDIFF ptrdiff Autotest toknum yytoknum
 # LocalWords:  sym Wother stderr FP fixits xgettext fdiagnostics Graphviz
 # LocalWords:  graphviz VCG bitset xml bw maint yytoken YYABORT deps
 # LocalWords:  YYACCEPT yytranslate nonnegative destructors yyerrlab repo

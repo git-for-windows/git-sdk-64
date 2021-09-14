@@ -182,10 +182,35 @@
 #  define BOOST_NO_CXX17_HDR_STRING_VIEW
 #  define BOOST_NO_CXX17_HDR_OPTIONAL
 #  define BOOST_NO_CXX17_HDR_VARIANT
+#  define BOOST_NO_CXX17_HDR_ANY
+#  define BOOST_NO_CXX17_HDR_MEMORY_RESOURCE
+#  define BOOST_NO_CXX17_HDR_CHARCONV
+#  define BOOST_NO_CXX17_HDR_EXECUTION
+#  define BOOST_NO_CXX17_HDR_FILESYSTEM
 #endif
 #if !defined(_CPPLIB_VER) || (_CPPLIB_VER < 650) || !defined(_HAS_CXX17) || (_HAS_CXX17 == 0) || !defined(_MSVC_STL_UPDATE) || (_MSVC_STL_UPDATE < 201709)
 #  define BOOST_NO_CXX17_STD_INVOKE
 #endif
+
+// C++20 features
+#if !defined(_MSVC_STL_UPDATE) || (_MSVC_STL_UPDATE < 202008L) || !defined(_HAS_CXX20) || (_HAS_CXX20 == 0)
+#  define BOOST_NO_CXX20_HDR_BARRIER
+#  define BOOST_NO_CXX20_HDR_BIT
+#  define BOOST_NO_CXX20_HDR_LATCH
+#  define BOOST_NO_CXX20_HDR_SPAN
+#  define BOOST_NO_CXX20_HDR_COMPARE
+#  define BOOST_NO_CXX20_HDR_NUMBERS
+#  define BOOST_NO_CXX20_HDR_CONCEPTS
+#  define BOOST_NO_CXX20_HDR_COROUTINE
+#  define BOOST_NO_CXX20_HDR_SEMAPHORE
+#endif
+// C++20 features not yet implemented:
+#  define BOOST_NO_CXX20_HDR_FORMAT
+#  define BOOST_NO_CXX20_HDR_SOURCE_LOCATION
+#  define BOOST_NO_CXX20_HDR_STOP_TOKEN
+#  define BOOST_NO_CXX20_HDR_SYNCSTREAM
+// Incomplete:
+#  define BOOST_NO_CXX20_HDR_RANGES
 
 #if !(!defined(_CPPLIB_VER) || (_CPPLIB_VER < 650) || !defined(BOOST_MSVC) || (BOOST_MSVC < 1912) || !defined(_HAS_CXX17) || (_HAS_CXX17 == 0))
 // Deprecated std::iterator:
@@ -221,6 +246,12 @@
 #    define BOOST_NO_CXX98_FUNCTION_BASE
 #    define BOOST_NO_CXX98_BINDERS
 #  endif
+#endif
+//
+// Things deprecated in C++20:
+//
+#if defined(_HAS_CXX20)
+#  define BOOST_NO_CXX11_ATOMIC_SMART_PTR
 #endif
 
 

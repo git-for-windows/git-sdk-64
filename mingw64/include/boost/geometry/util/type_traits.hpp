@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2020, Oracle and/or its affiliates.
+// Copyright (c) 2020-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -108,6 +108,11 @@ struct is_areal
 
 
 template <typename T>
+struct is_segmental
+    : bool_constant<is_linear<T>::value || is_polygonal<T>::value>
+{};
+
+template <typename T>
 struct is_polysegmental
     : bool_constant<is_polylinear<T>::value || is_polygonal<T>::value>
 {};
@@ -130,6 +135,17 @@ struct is_single
     : std::is_base_of<single_tag, typename tag<T>::type>
 {};
 
+
+template <typename T>
+struct is_geometry_collection
+    : std::is_same<geometry_collection_tag, typename tag<T>::type>
+{};
+
+
+template <typename T>
+struct is_dynamic_geometry
+    : std::is_same<dynamic_geometry_tag, typename tag<T>::type>
+{};
 
 
 template <typename Geometry, typename T = void>

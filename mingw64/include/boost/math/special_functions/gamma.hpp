@@ -1,7 +1,7 @@
-//  Copyright John Maddock 2006-7, 2013-14.
+//  Copyright John Maddock 2006-7, 2013-20.
 //  Copyright Paul A. Bristow 2007, 2013-14.
 //  Copyright Nikhar Agrawal 2013-14
-//  Copyright Christopher Kormanyos 2013-14
+//  Copyright Christopher Kormanyos 2013-14, 2020
 
 //  Use, modification and distribution are subject to the
 //  Boost Software License, Version 1.0. (See accompanying file
@@ -14,11 +14,12 @@
 #pragma once
 #endif
 
-#include <boost/config.hpp>
 #include <boost/math/tools/series.hpp>
 #include <boost/math/tools/fraction.hpp>
 #include <boost/math/tools/precision.hpp>
 #include <boost/math/tools/promotion.hpp>
+#include <boost/math/tools/assert.hpp>
+#include <boost/math/tools/config.hpp>
 #include <boost/math/policies/error_handling.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <boost/math/special_functions/math_fwd.hpp>
@@ -33,16 +34,12 @@
 #include <boost/math/special_functions/detail/lgamma_small.hpp>
 #include <boost/math/special_functions/bernoulli.hpp>
 #include <boost/math/special_functions/polygamma.hpp>
-#include <boost/type_traits/is_convertible.hpp>
-#include <boost/assert.hpp>
-#include <boost/mpl/greater.hpp>
-#include <boost/mpl/equal_to.hpp>
-#include <boost/mpl/greater.hpp>
 
-#include <boost/config/no_tr1/cmath.hpp>
+#include <cmath>
 #include <algorithm>
+#include <type_traits>
 
-#ifdef BOOST_MSVC
+#ifdef _MSC_VER
 # pragma warning(push)
 # pragma warning(disable: 4702) // unreachable code (return after domain_error throw).
 # pragma warning(disable: 4127) // conditional expression is constant.
@@ -58,13 +55,13 @@ namespace boost{ namespace math{
 namespace detail{
 
 template <class T>
-inline bool is_odd(T v, const boost::true_type&)
+inline bool is_odd(T v, const std::true_type&)
 {
    int i = static_cast<int>(v);
    return i&1;
 }
 template <class T>
-inline bool is_odd(T v, const boost::false_type&)
+inline bool is_odd(T v, const std::false_type&)
 {
    // Oh dear can't cast T to int!
    BOOST_MATH_STD_USING
@@ -74,7 +71,7 @@ inline bool is_odd(T v, const boost::false_type&)
 template <class T>
 inline bool is_odd(T v)
 {
-   return is_odd(v, ::boost::is_convertible<T, int>());
+   return is_odd(v, ::std::is_convertible<T, int>());
 }
 
 template <class T>
@@ -100,7 +97,7 @@ T sinpx(T z)
    {
       dist = z - fl;
    }
-   BOOST_ASSERT(fl >= 0);
+   BOOST_MATH_ASSERT(fl >= 0);
    if(dist > 0.5)
       dist = 1 - dist;
    T result = sin(dist*boost::math::constants::pi<T>());
@@ -250,7 +247,7 @@ T lgamma_imp(T z, const Policy& pol, const Lanczos& l, int* sign = 0)
    else if(z < 15)
    {
       typedef typename policies::precision<T, Policy>::type precision_type;
-      typedef boost::integral_constant<int,
+      typedef std::integral_constant<int,
          precision_type::value <= 0 ? 0 :
          precision_type::value <= 64 ? 64 :
          precision_type::value <= 113 ? 113 : 0
@@ -341,7 +338,7 @@ inline T lower_gamma_series(T a, T z, const Policy& pol, T init_value = 0)
    // lower incomplete integral. Then divide by tgamma(a)
    // to get the normalised value.
    lower_incomplete_gamma_series<T> s(a, z);
-   boost::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
+   std::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
    T factor = policies::get_epsilon<T, Policy>();
    T result = boost::math::tools::sum_series(s, factor, max_iter, init_value);
    policies::check_series_iterations<T>("boost::math::detail::lower_gamma_series<%1%>(%1%)", max_iter, pol);
@@ -366,13 +363,35 @@ std::size_t highest_bernoulli_index()
 template<class T>
 int minimum_argument_for_bernoulli_recursion()
 {
+   BOOST_MATH_STD_USING
+
    const float digits10_of_type = (std::numeric_limits<T>::is_specialized
-                                      ? static_cast<float>(std::numeric_limits<T>::digits10)
-                                      : static_cast<float>(boost::math::tools::digits<T>() * 0.301F));
+                                    ? (float) std::numeric_limits<T>::digits10
+                                    : (float) (boost::math::tools::digits<T>() * 0.301F));
 
-   const float limit = std::ceil(std::pow(1.0f / std::ldexp(1.0f, 1-boost::math::tools::digits<T>()), 1.0f / 20.0f));
+   int min_arg = (int) (digits10_of_type * 1.7F);
 
-   return (int)((std::min)(digits10_of_type * 1.7F, limit));
+   if(digits10_of_type < 50.0F)
+   {
+      // The following code sequence has been modified
+      // within the context of issue 396.
+
+      // The calculation of the test-variable limit has now
+      // been protected against overflow/underflow dangers.
+
+      // The previous line looked like this and did, in fact,
+      // underflow ldexp when using certain multiprecision types.
+
+      // const float limit = std::ceil(std::pow(1.0f / std::ldexp(1.0f, 1-boost::math::tools::digits<T>()), 1.0f / 20.0f));
+
+      // The new safe version of the limit check is now here.
+      const float d2_minus_one = ((digits10_of_type / 0.301F) - 1.0F);
+      const float limit        = ceil(exp((d2_minus_one * log(2.0F)) / 20.0F));
+
+      min_arg = (int) ((std::min)(digits10_of_type * 1.7F, limit));
+   }
+
+   return min_arg;
 }
 
 template <class T, class Policy>
@@ -384,7 +403,7 @@ T scaled_tgamma_no_lanczos(const T& z, const Policy& pol, bool islog = false)
    // Requires that our argument is large enough for Sterling's approximation to hold.
    // Used internally when combining gamma's of similar magnitude without logarithms.
    //
-   BOOST_ASSERT(minimum_argument_for_bernoulli_recursion<T>() <= z);
+   BOOST_MATH_ASSERT(minimum_argument_for_bernoulli_recursion<T>() <= z);
 
    // Perform the Bernoulli series expansion of Stirling's approximation.
 
@@ -566,7 +585,7 @@ inline T log_gamma_near_1(const T& z, Policy const& pol)
    //
    BOOST_MATH_STD_USING // ADL of std names
 
-   BOOST_ASSERT(fabs(z) < 1);
+   BOOST_MATH_ASSERT(fabs(z) < 1);
 
    T result = -constants::euler<T>() * z;
 
@@ -706,7 +725,7 @@ T tgammap1m1_imp(T dz, Policy const& pol, const Lanczos& l)
 
    typedef typename policies::precision<T,Policy>::type precision_type;
 
-   typedef boost::integral_constant<int,
+   typedef std::integral_constant<int,
       precision_type::value <= 0 ? 0 :
       precision_type::value <= 64 ? 64 :
       precision_type::value <= 113 ? 113 : 0
@@ -1009,7 +1028,7 @@ inline T tgamma_small_upper_part(T a, T x, const Policy& pol, T* pgam = 0, bool 
    result -= p;
    result /= a;
    detail::small_gamma2_series<T> s(a, x);
-   boost::uintmax_t max_iter = policies::get_max_series_iterations<Policy>() - 10;
+   std::uintmax_t max_iter = policies::get_max_series_iterations<Policy>() - 10;
    p += 1;
    if(pderivative)
       *pderivative = p / (*pgam * exp(x));
@@ -1109,7 +1128,7 @@ T incomplete_tgamma_large_x(const T& a, const T& x, const Policy& pol)
 {
    BOOST_MATH_STD_USING
    incomplete_tgamma_large_x_series<T> s(a, x);
-   boost::uintmax_t max_iter = boost::math::policies::get_max_series_iterations<Policy>();
+   std::uintmax_t max_iter = boost::math::policies::get_max_series_iterations<Policy>();
    T result = boost::math::tools::sum_series(s, boost::math::policies::get_epsilon<T, Policy>(), max_iter);
    boost::math::policies::check_series_iterations<T>("boost::math::tgamma<%1%>(%1%,%1%)", max_iter, pol);
    return result;
@@ -1199,7 +1218,7 @@ T gamma_incomplete_imp(T a, T x, bool normalised, bool invert,
       return exp(result);
    }
 
-   BOOST_ASSERT((p_derivative == 0) || normalised);
+   BOOST_MATH_ASSERT((p_derivative == 0) || normalised);
 
    bool is_int, is_half_int;
    bool is_small_a = (a < 30) && (a <= x + 1) && (x < tools::log_max_value<T>());
@@ -1424,7 +1443,7 @@ T gamma_incomplete_imp(T a, T x, bool normalised, bool invert,
          //
          typedef typename policies::precision<T, Policy>::type precision_type;
 
-         typedef boost::integral_constant<int,
+         typedef std::integral_constant<int,
             precision_type::value <= 0 ? 0 :
             precision_type::value <= 53 ? 53 :
             precision_type::value <= 64 ? 64 :
@@ -1446,7 +1465,6 @@ T gamma_incomplete_imp(T a, T x, bool normalised, bool invert,
             result = pow(x, a) / (a);
          else
          {
-#ifndef BOOST_NO_EXCEPTIONS
             try 
             {
                result = pow(x, a) / boost::math::tgamma(a + 1, pol);
@@ -1455,9 +1473,6 @@ T gamma_incomplete_imp(T a, T x, bool normalised, bool invert,
             {
                result = 0;
             }
-#else
-            result = pow(x, a) / boost::math::tgamma(a + 1, pol);
-#endif
          }
          result *= 1 - a * x / (a + 1);
          if (p_derivative)
@@ -1536,9 +1551,17 @@ T tgamma_delta_ratio_imp_lanczos(T z, T delta, const Policy& pol, const Lanczos&
    T result;
    if(z + delta == z)
    {
-      if(fabs(delta) < 10)
-         result = exp((constants::half<T>() - z) * boost::math::log1p(delta / zgh, pol));
+      if (fabs(delta / zgh) < boost::math::tools::epsilon<T>())
+      {
+         // We have:
+         // result = exp((constants::half<T>() - z) * boost::math::log1p(delta / zgh, pol));
+         // 0.5 - z == -z
+         // log1p(delta / zgh) = delta / zgh = delta / z
+         // multiplying we get -delta.
+         result = exp(-delta);
+      }
       else
+         // from the pow formula below... but this may actually be wrong, we just can't really calculate it :(
          result = 1;
    }
    else
@@ -1786,7 +1809,7 @@ T gamma_p_derivative_imp(T a, T x, const Policy& pol)
 
 template <class T, class Policy>
 inline typename tools::promote_args<T>::type 
-   tgamma(T z, const Policy& /* pol */, const boost::true_type)
+   tgamma(T z, const Policy& /* pol */, const std::true_type)
 {
    BOOST_FPU_EXCEPTION_GUARD
    typedef typename tools::promote_args<T>::type result_type;
@@ -1810,7 +1833,7 @@ struct igamma_initializer
       {
          typedef typename policies::precision<T, Policy>::type precision_type;
 
-         typedef boost::integral_constant<int,
+         typedef std::integral_constant<int,
             precision_type::value <= 0 ? 0 :
             precision_type::value <= 53 ? 53 :
             precision_type::value <= 64 ? 64 :
@@ -1820,7 +1843,7 @@ struct igamma_initializer
          do_init(tag_type());
       }
       template <int N>
-      static void do_init(const boost::integral_constant<int, N>&)
+      static void do_init(const std::integral_constant<int, N>&)
       {
          // If std::numeric_limits<T>::digits is zero, we must not call
          // our initialization code here as the precision presumably
@@ -1831,7 +1854,7 @@ struct igamma_initializer
             boost::math::gamma_p(static_cast<T>(400), static_cast<T>(400), Policy());
          }
       }
-      static void do_init(const boost::integral_constant<int, 53>&){}
+      static void do_init(const std::integral_constant<int, 53>&){}
       void force_instantiate()const{}
    };
    static const init initializer;
@@ -1852,7 +1875,7 @@ struct lgamma_initializer
       init()
       {
          typedef typename policies::precision<T, Policy>::type precision_type;
-         typedef boost::integral_constant<int,
+         typedef std::integral_constant<int,
             precision_type::value <= 0 ? 0 :
             precision_type::value <= 64 ? 64 :
             precision_type::value <= 113 ? 113 : 0
@@ -1860,20 +1883,20 @@ struct lgamma_initializer
 
          do_init(tag_type());
       }
-      static void do_init(const boost::integral_constant<int, 64>&)
+      static void do_init(const std::integral_constant<int, 64>&)
       {
          boost::math::lgamma(static_cast<T>(2.5), Policy());
          boost::math::lgamma(static_cast<T>(1.25), Policy());
          boost::math::lgamma(static_cast<T>(1.75), Policy());
       }
-      static void do_init(const boost::integral_constant<int, 113>&)
+      static void do_init(const std::integral_constant<int, 113>&)
       {
          boost::math::lgamma(static_cast<T>(2.5), Policy());
          boost::math::lgamma(static_cast<T>(1.25), Policy());
          boost::math::lgamma(static_cast<T>(1.5), Policy());
          boost::math::lgamma(static_cast<T>(1.75), Policy());
       }
-      static void do_init(const boost::integral_constant<int, 0>&)
+      static void do_init(const std::integral_constant<int, 0>&)
       {
       }
       void force_instantiate()const{}
@@ -1890,7 +1913,7 @@ const typename lgamma_initializer<T, Policy>::init lgamma_initializer<T, Policy>
 
 template <class T1, class T2, class Policy>
 inline typename tools::promote_args<T1, T2>::type
-   tgamma(T1 a, T2 z, const Policy&, const boost::false_type)
+   tgamma(T1 a, T2 z, const Policy&, const std::false_type)
 {
    BOOST_FPU_EXCEPTION_GUARD
    typedef typename tools::promote_args<T1, T2>::type result_type;
@@ -1913,7 +1936,7 @@ inline typename tools::promote_args<T1, T2>::type
 
 template <class T1, class T2>
 inline typename tools::promote_args<T1, T2>::type
-   tgamma(T1 a, T2 z, const boost::false_type& tag)
+   tgamma(T1 a, T2 z, const std::false_type& tag)
 {
    return tgamma(a, z, policies::policy<>(), tag);
 }
@@ -1984,7 +2007,7 @@ inline typename tools::promote_args<T>::type
       policies::discrete_quantile<>,
       policies::assert_undefined<> >::type forwarding_policy;
 
-   return policies::checked_narrowing_cast<typename remove_cv<result_type>::type, forwarding_policy>(detail::tgammap1m1_imp(static_cast<value_type>(z), forwarding_policy(), evaluation_type()), "boost::math::tgamma1pm1<%!%>(%1%)");
+   return policies::checked_narrowing_cast<typename std::remove_cv<result_type>::type, forwarding_policy>(detail::tgammap1m1_imp(static_cast<value_type>(z), forwarding_policy(), evaluation_type()), "boost::math::tgamma1pm1<%!%>(%1%)");
 }
 
 template <class T>
@@ -2012,7 +2035,7 @@ template <class T1, class T2, class Policy>
 inline typename tools::promote_args<T1, T2>::type
    tgamma(T1 a, T2 z, const Policy& pol)
 {
-   return detail::tgamma(a, z, pol, boost::false_type());
+   return detail::tgamma(a, z, pol, std::false_type());
 }
 //
 // Full lower incomplete gamma:
@@ -2179,7 +2202,7 @@ inline typename tools::promote_args<T1, T2>::type
 } // namespace math
 } // namespace boost
 
-#ifdef BOOST_MSVC
+#ifdef _MSC_VER
 # pragma warning(pop)
 #endif
 

@@ -1590,7 +1590,7 @@ private:
      }
 
      // Construct with the default initial states
-     state_machine<A0,A1,A2,A3,A4 >()
+     state_machine()
          :Derived()
          ,m_events_queue()
          ,m_deferred_events_queue()
@@ -1608,7 +1608,7 @@ private:
          fill_states(this);
      }
      template <class Expr>
-     state_machine<A0,A1,A2,A3,A4 >
+     state_machine
          (Expr const& expr,typename ::boost::enable_if<typename ::boost::proto::is_expr<Expr>::type >::type* =0)
          :Derived()
          ,m_events_queue()
@@ -1686,8 +1686,7 @@ private:
 
 #else
     template <class ARG0,class... ARG,class=typename ::boost::disable_if<typename ::boost::proto::is_expr<ARG0>::type >::type>
-    state_machine<A0,A1,A2,A3,A4
-    >(ARG0&& t0,ARG&&... t)
+    state_machine(ARG0&& t0,ARG&&... t)
     :Derived(std::forward<ARG0>(t0), std::forward<ARG>(t)...)
      ,m_events_queue()
      ,m_deferred_events_queue()
@@ -1703,8 +1702,7 @@ private:
          fill_states(this);
      }
     template <class Expr,class... ARG,class=typename ::boost::enable_if<typename ::boost::proto::is_expr<Expr>::type >::type>
-    state_machine<A0,A1,A2,A3,A4
-    >(Expr const& expr,ARG&&... t)
+    state_machine(Expr const& expr,ARG&&... t)
     :Derived(std::forward<ARG>(t)...)
      ,m_events_queue()
      ,m_deferred_events_queue()
@@ -1737,8 +1735,7 @@ private:
          }
         return *this;
      }
-     state_machine<A0,A1,A2,A3,A4>
-         (library_sm const& rhs)
+     state_machine(library_sm const& rhs)
          : Derived(rhs)
      {
         if (this != &rhs)

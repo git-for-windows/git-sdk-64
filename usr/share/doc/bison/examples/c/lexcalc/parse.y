@@ -28,7 +28,7 @@
   yytoken_kind_t yylex (YYSTYPE* yylval, YYLTYPE *yylloc, int *nerrs)
   YY_DECL;
 
-  void yyerror (YYLTYPE *loc, int *nerrs, const char *msg);
+  void yyerror (const YYLTYPE *loc, int *nerrs, const char *msg);
 }
 
 // Emitted on top of the implementation file.
@@ -36,6 +36,7 @@
 {
 #include <stdio.h>  // printf.
 #include <stdlib.h> // getenv.
+#include <string.h> // strcmp.
 }
 
 // Include the header in the implementation rather than duplicating it.
@@ -114,18 +115,23 @@ exp:
 %%
 // Epilogue (C code).
 
-void yyerror (YYLTYPE *loc, int *nerrs, const char *msg)
+void yyerror (const YYLTYPE *loc, int *nerrs, const char *msg)
 {
-  YY_LOCATION_PRINT (stderr, *loc);
+  YYLOCATION_PRINT (stderr, loc);
   fprintf (stderr, ": %s\n", msg);
   ++*nerrs;
 }
 
-int main (void)
+int main (int argc, const char *argv[])
 {
-  int nerrs = 0;
   // Possibly enable parser runtime debugging.
   yydebug = !!getenv ("YYDEBUG");
+  // Enable parse traces on option -p.
+  for (int i = 1; i < argc; ++i)
+    if (strcmp (argv[i], "-p") == 0)
+      yydebug = 1;
+
+  int nerrs = 0;
   yyparse (&nerrs);
   // Exit on failure if there were errors.
   return !!nerrs;

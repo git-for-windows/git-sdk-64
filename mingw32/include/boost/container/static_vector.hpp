@@ -137,10 +137,10 @@ struct get_static_vector_allocator
 //!possible.
 //!
 //!@par Error Handling
-//! Insertion beyond the capacity result in throwing std::bad_alloc() if exceptions are enabled or
+//! Insertion beyond the capacity result in throwing bad_alloc() if exceptions are enabled or
 //! calling throw_bad_alloc() if not enabled.
 //!
-//! std::out_of_range is thrown if out of bounds access is performed in <code>at()</code> if exceptions are
+//! out_of_range is thrown if out of bounds access is performed in <code>at()</code> if exceptions are
 //! enabled, throw_out_of_range() if not enabled.
 //!
 //!@tparam T    The type of element that will be stored.
@@ -788,7 +788,7 @@ public:
     //!   from the beginning of the container.
     //!
     //! @par Throws
-    //!   \c std::out_of_range exception by default.
+    //!   \c out_of_range exception by default.
     //!
     //! @par Complexity
     //!   Constant O(1).
@@ -804,7 +804,7 @@ public:
     //!   from the beginning of the container.
     //!
     //! @par Throws
-    //!   \c std::out_of_range exception by default.
+    //!   \c out_of_range exception by default.
     //!
     //! @par Complexity
     //!   Constant O(1).
@@ -1169,6 +1169,7 @@ public:
 #else
 
    BOOST_CONTAINER_FORCEINLINE friend void swap(static_vector &x, static_vector &y)
+       BOOST_NOEXCEPT_IF(BOOST_NOEXCEPT(x.swap(y)))
    {
       x.swap(y);
    }
@@ -1275,13 +1276,15 @@ bool operator>= (static_vector<V, C1, O1> const& x, static_vector<V, C2, O2> con
 //! @par Complexity
 //!   Linear O(N).
 template<typename V, std::size_t C1, std::size_t C2, class O1, class O2>
-inline void swap(static_vector<V, C1, O1> & x, static_vector<V, C2, O2> & y);
+inline void swap(static_vector<V, C1, O1> & x, static_vector<V, C2, O2> & y)
+    BOOST_NOEXCEPT_IF(BOOST_NOEXCEPT(x.swap(y)));
 
 #else
 
 template<typename V, std::size_t C1, std::size_t C2, class O1, class O2>
 inline void swap(static_vector<V, C1, O1> & x, static_vector<V, C2, O2> & y
       , typename dtl::enable_if_c< C1 != C2>::type * = 0)
+    BOOST_NOEXCEPT_IF(BOOST_NOEXCEPT(x.swap(y)))
 {
    x.swap(y);
 }

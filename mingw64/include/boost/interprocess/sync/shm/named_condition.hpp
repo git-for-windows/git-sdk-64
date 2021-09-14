@@ -28,7 +28,6 @@
 #include <boost/interprocess/shared_memory_object.hpp>
 #include <boost/interprocess/sync/interprocess_condition.hpp>
 #include <boost/interprocess/detail/managed_open_or_create_impl.hpp>
-#include <boost/interprocess/detail/posix_time_types_wrk.hpp>
 #include <boost/interprocess/sync/shm/named_creation_functor.hpp>
 #include <boost/interprocess/sync/named_mutex.hpp>
 #include <boost/interprocess/permissions.hpp>
@@ -81,6 +80,36 @@ class shm_named_condition
    //!interprocess_exception.
    shm_named_condition(open_only_t open_only, const char *name);
 
+   #if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
+   //!Creates a global condition with a name.
+   //!If the condition can't be created throws interprocess_exception
+   //! 
+   //!Note: This function is only available on operating systems with
+   //!      native wchar_t APIs (e.g. Windows).
+   shm_named_condition(create_only_t create_only, const wchar_t *name, const permissions &perm = permissions());
+
+   //!Opens or creates a global condition with a name.
+   //!If the condition is created, this call is equivalent to
+   //!shm_named_condition(create_only_t, ... )
+   //!If the condition is already created, this call is equivalent
+   //!shm_named_condition(open_only_t, ... )
+   //!Does not throw
+   //! 
+   //!Note: This function is only available on operating systems with
+   //!      native wchar_t APIs (e.g. Windows).
+   shm_named_condition(open_or_create_t open_or_create, const wchar_t *name, const permissions &perm = permissions());
+
+   //!Opens a global condition with a name if that condition is previously
+   //!created. If it is not previously created this function throws
+   //!interprocess_exception.
+   //! 
+   //!Note: This function is only available on operating systems with
+   //!      native wchar_t APIs (e.g. Windows).
+   shm_named_condition(open_only_t open_only, const wchar_t *name);
+
+   #endif //defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
    //!Destroys *this and indicates that the calling process is finished using
    //!the resource. The destructor function will deallocate
    //!any system resources allocated by the system for use by this process for
@@ -113,18 +142,29 @@ class shm_named_condition
    //!this->notify_one() or this->notify_all(), or until time abs_time is reached,
    //!and then reacquires the lock.
    //!Returns: false if time abs_time is reached, otherwise true.
-   template <typename L>
-   bool timed_wait(L& lock, const boost::posix_time::ptime &abs_time);
+   template <typename L, typename TimePoint>
+   bool timed_wait(L& lock, const TimePoint &abs_time);
 
    //!The same as:   while (!pred()) {
    //!                  if (!timed_wait(lock, abs_time)) return pred();
    //!               } return true;
-   template <typename L, typename Pr>
-   bool timed_wait(L& lock, const boost::posix_time::ptime &abs_time, Pr pred);
+   template <typename L, typename TimePoint, typename Pr>
+   bool timed_wait(L& lock, const TimePoint &abs_time, Pr pred);
 
    //!Erases a named condition from the system.
    //!Returns false on error. Never throws.
    static bool remove(const char *name);
+
+   #if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
+   //!Erases a named condition from the system.
+   //!Returns false on error. Never throws.
+   //! 
+   //!Note: This function is only available on operating systems with
+   //!      native wchar_t APIs (e.g. Windows).
+   static bool remove(const wchar_t *name);
+
+   #endif //defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 
    #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
    private:
@@ -198,6 +238,40 @@ inline shm_named_condition::shm_named_condition(open_only_t, const char *name)
                ,construct_func_t(DoOpen))
 {}
 
+#if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
+inline shm_named_condition::shm_named_condition(create_only_t, const wchar_t *name, const permissions &perm)
+   :  m_shmem  (create_only
+               ,name
+               ,sizeof(internal_condition) +
+                  open_create_impl_t::ManagedOpenOrCreateUserOffset
+               ,read_write
+               ,0
+               ,construct_func_t(DoCreate)
+               ,perm)
+{}
+
+inline shm_named_condition::shm_named_condition(open_or_create_t, const wchar_t *name, const permissions &perm)
+   :  m_shmem  (open_or_create
+               ,name
+               ,sizeof(internal_condition) +
+                  open_create_impl_t::ManagedOpenOrCreateUserOffset
+               ,read_write
+               ,0
+               ,construct_func_t(DoOpenOrCreate)
+               ,perm)
+{}
+
+inline shm_named_condition::shm_named_condition(open_only_t, const wchar_t *name)
+   :  m_shmem  (open_only
+               ,name
+               ,read_write
+               ,0
+               ,construct_func_t(DoOpen))
+{}
+
+#endif //defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
 inline void shm_named_condition::dont_close_on_destruction()
 {  interprocess_tester::dont_close_on_destruction(m_shmem);  }
 
@@ -215,18 +289,26 @@ template <typename L, typename Pr>
 inline void shm_named_condition::wait(L& lock, Pr pred)
 {  this->internal_cond().wait(lock, pred); }
 
-template <typename L>
+template <typename L, typename TimePoint>
 inline bool shm_named_condition::timed_wait
-   (L& lock, const boost::posix_time::ptime &abs_time)
+   (L& lock, const TimePoint &abs_time)
 {  return this->internal_cond().timed_wait(lock, abs_time); }
 
-template <typename L, typename Pr>
+template <typename L, typename TimePoint, typename Pr>
 inline bool shm_named_condition::timed_wait
-   (L& lock, const boost::posix_time::ptime &abs_time, Pr pred)
+   (L& lock, const TimePoint &abs_time, Pr pred)
 {  return this->internal_cond().timed_wait(lock, abs_time, pred); }
 
 inline bool shm_named_condition::remove(const char *name)
 {  return shared_memory_object::remove(name); }
+
+#if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
+inline bool shm_named_condition::remove(const wchar_t *name)
+{  return shared_memory_object::remove(name); }
+
+#endif
+
 
 #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 

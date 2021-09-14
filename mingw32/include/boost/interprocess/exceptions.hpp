@@ -36,7 +36,7 @@ namespace interprocess {
 class BOOST_SYMBOL_VISIBLE interprocess_exception : public std::exception
 {
    public:
-   interprocess_exception(const char *err)
+   interprocess_exception(const char *err) BOOST_NOEXCEPT
       :  m_err(other_error)
    {
       try   {  m_str = err; }
@@ -65,10 +65,10 @@ class BOOST_SYMBOL_VISIBLE interprocess_exception : public std::exception
    const char * what() const BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE
    {  return m_str.c_str();  }
 
-   native_error_t get_native_error()const { return m_err.get_native_error(); }
+   native_error_t get_native_error() const BOOST_NOEXCEPT { return m_err.get_native_error(); }
 
    // Note: a value of other_error implies a library (rather than system) error
-   error_code_t   get_error_code()  const { return m_err.get_error_code(); }
+   error_code_t   get_error_code()  const BOOST_NOEXCEPT { return m_err.get_error_code(); }
 
    #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
    private:
@@ -82,7 +82,7 @@ class BOOST_SYMBOL_VISIBLE interprocess_exception : public std::exception
 class BOOST_SYMBOL_VISIBLE lock_exception : public interprocess_exception
 {
    public:
-   lock_exception()
+   lock_exception() BOOST_NOEXCEPT
       :  interprocess_exception(lock_error)
    {}
 

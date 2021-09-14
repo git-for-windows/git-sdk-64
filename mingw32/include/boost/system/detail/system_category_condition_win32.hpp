@@ -97,6 +97,7 @@ inline int system_category_condition_win32( int ev ) BOOST_NOEXCEPT
     case ERROR_RETRY_: return resource_unavailable_try_again;
     case ERROR_SEEK_: return io_error;
     case ERROR_SHARING_VIOLATION_: return permission_denied;
+    case ERROR_NOT_SUPPORTED_: return not_supported; // WinError.h: "The request is not supported."
     case ERROR_TOO_MANY_OPEN_FILES_: return too_many_files_open;
     case ERROR_WRITE_FAULT_: return io_error;
     case ERROR_WRITE_PROTECT_: return permission_denied;

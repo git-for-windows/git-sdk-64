@@ -42,11 +42,10 @@ namespace backends {
 template <class Backend>
 struct logged_adaptor
 {
-   typedef typename Backend::signed_types   signed_types;
-   typedef typename Backend::unsigned_types unsigned_types;
-   typedef typename Backend::float_types    float_types;
-   typedef typename extract_exponent_type<
-       Backend, number_category<Backend>::value>::type exponent_type;
+   using signed_types = typename Backend::signed_types  ;
+   using unsigned_types = typename Backend::unsigned_types;
+   using float_types = typename Backend::float_types   ;
+   using exponent_type = typename extract_exponent_type<Backend, number_category<Backend>::value>::type;
 
  private:
    Backend m_value;
@@ -62,7 +61,7 @@ struct logged_adaptor
       m_value = o.m_value;
       log_postfix_event(m_value, "Copy construct");
    }
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
+   // rvalue copy
    logged_adaptor(logged_adaptor&& o)
    {
       log_prefix_event(m_value, o.value(), "Move construct");
@@ -76,7 +75,6 @@ struct logged_adaptor
       log_postfix_event(m_value, "Move construct");
       return *this;
    }
-#endif
    logged_adaptor& operator=(const logged_adaptor& o)
    {
       log_prefix_event(m_value, o.value(), "Assignment");
@@ -85,19 +83,35 @@ struct logged_adaptor
       return *this;
    }
    template <class T>
-   logged_adaptor(const T& i, const typename enable_if_c<is_convertible<T, Backend>::value>::type* = 0)
+   logged_adaptor(const T& i, const typename std::enable_if<std::is_convertible<T, Backend>::value>::type* = 0)
        : m_value(i)
    {
       log_postfix_event(m_value, "construct from arithmetic type");
    }
    template <class T>
-   logged_adaptor(const logged_adaptor<T>& i, const typename enable_if_c<is_convertible<T, Backend>::value>::type* = 0)
+   logged_adaptor(const logged_adaptor<T>& i, const typename std::enable_if<std::is_convertible<T, Backend>::value>::type* = 0)
        : m_value(i.value())
    {
       log_postfix_event(m_value, "construct from arithmetic type");
    }
    template <class T>
-   typename enable_if_c<is_arithmetic<T>::value || is_convertible<T, Backend>::value, logged_adaptor&>::type operator=(const T& i)
+   logged_adaptor(const T& i, const T& j)
+      : m_value(i, j)
+   {
+      log_postfix_event(m_value, "construct from a pair of arithmetic types");
+   }
+   logged_adaptor(const Backend& i, unsigned digits10)
+      : m_value(i, digits10)
+   {
+      log_postfix_event(m_value, "construct from arithmetic type and precision");
+   }
+   logged_adaptor(const logged_adaptor<Backend>& i, unsigned digits10)
+      : m_value(i, digits10)
+   {
+      log_postfix_event(m_value, "construct from arithmetic type and precision");
+   }
+   template <class T>
+   typename std::enable_if<boost::multiprecision::detail::is_arithmetic<T>::value || std::is_convertible<T, Backend>::value, logged_adaptor&>::type operator=(const T& i)
    {
       log_prefix_event(m_value, i, "Assignment from arithmetic type");
       m_value = i;
@@ -160,21 +174,48 @@ struct logged_adaptor
       ar& boost::make_nvp("value", m_value);
       log_postfix_event(m_value, "serialize");
    }
-   static unsigned default_precision() BOOST_NOEXCEPT
+   static unsigned default_precision() noexcept
    {
       return Backend::default_precision();
    }
-   static void default_precision(unsigned v) BOOST_NOEXCEPT
+   static void default_precision(unsigned v) noexcept
    {
       Backend::default_precision(v);
    }
-   unsigned precision() const BOOST_NOEXCEPT
+   static unsigned thread_default_precision() noexcept
+   {
+      return Backend::thread_default_precision();
+   }
+   static void thread_default_precision(unsigned v) noexcept
+   {
+      Backend::thread_default_precision(v);
+   }
+   unsigned precision() const noexcept
    {
       return value().precision();
    }
-   void precision(unsigned digits10) BOOST_NOEXCEPT
+   void precision(unsigned digits10) noexcept
    {
       value().precision(digits10);
+   }
+   //
+   // Variable precision options:
+   // 
+   static constexpr variable_precision_options default_variable_precision_options()noexcept
+   {
+      return Backend::default_variable_precision_options();
+   }
+   static constexpr variable_precision_options thread_default_variable_precision_options()noexcept
+   {
+      return Backend::thread_default_variable_precision_options();
+   }
+   static BOOST_MP_CXX14_CONSTEXPR void default_variable_precision_options(variable_precision_options opts)
+   {
+      Backend::default_variable_precision_options(opts);
+   }
+   static BOOST_MP_CXX14_CONSTEXPR void thread_default_variable_precision_options(variable_precision_options opts)
+   {
+      Backend::thread_default_variable_precision_options(opts);
    }
 };
 
@@ -322,6 +363,49 @@ inline void eval_convert_to(R* result, const logged_adaptor<Backend>& val)
    log_postfix_event(val.value(), *result, "convert_to");
 }
 
+template <class Backend, class R>
+inline void eval_convert_to(logged_adaptor<R>* result, const logged_adaptor<Backend>& val)
+{
+   using default_ops::eval_convert_to;
+   log_prefix_event(val.value(), "convert_to");
+   eval_convert_to(&result->value(), val.value());
+   log_postfix_event(val.value(), &result->value(), "convert_to");
+}
+template <class Backend, class R>
+inline void eval_convert_to(logged_adaptor<R>* result, const Backend& val)
+{
+   using default_ops::eval_convert_to;
+   log_prefix_event(val, "convert_to");
+   eval_convert_to(&result->value(), val);
+   log_postfix_event(val, &result->value(), "convert_to");
+}
+
+template <class Backend>
+inline void eval_convert_to(std::complex<float>* result, const logged_adaptor<Backend>& val)
+{
+   using default_ops::eval_convert_to;
+   log_prefix_event(val.value(), "convert_to");
+   eval_convert_to(result, val.value());
+   log_postfix_event(val.value(), *result, "convert_to");
+}
+template <class Backend>
+inline void eval_convert_to(std::complex<double>* result, const logged_adaptor<Backend>& val)
+{
+   using default_ops::eval_convert_to;
+   log_prefix_event(val.value(), "convert_to");
+   eval_convert_to(result, val.value());
+   log_postfix_event(val.value(), *result, "convert_to");
+}
+template <class Backend>
+inline void eval_convert_to(std::complex<long double>* result, const logged_adaptor<Backend>& val)
+{
+   using default_ops::eval_convert_to;
+   log_prefix_event(val.value(), "convert_to");
+   eval_convert_to(result, val.value());
+   log_postfix_event(val.value(), *result, "convert_to");
+}
+
+
 template <class Backend, class Exp>
 inline void eval_frexp(logged_adaptor<Backend>& result, const logged_adaptor<Backend>& arg, Exp* exp)
 {
@@ -341,6 +425,7 @@ inline void eval_ldexp(logged_adaptor<Backend>& result, const logged_adaptor<Bac
 template <class Backend, class Exp>
 inline void eval_scalbn(logged_adaptor<Backend>& result, const logged_adaptor<Backend>& arg, Exp exp)
 {
+   using default_ops::eval_scalbn;
    log_prefix_event(arg.value(), "scalbn");
    eval_scalbn(result.value(), arg.value(), exp);
    log_postfix_event(result.value(), exp, "scalbn");
@@ -349,6 +434,7 @@ inline void eval_scalbn(logged_adaptor<Backend>& result, const logged_adaptor<Ba
 template <class Backend>
 inline typename Backend::exponent_type eval_ilogb(const logged_adaptor<Backend>& arg)
 {
+   using default_ops::eval_ilogb;
    log_prefix_event(arg.value(), "ilogb");
    typename Backend::exponent_type r = eval_ilogb(arg.value());
    log_postfix_event(arg.value(), "ilogb");
@@ -539,6 +625,10 @@ NON_MEMBER_OP2(logb, "logb")
 NON_MEMBER_OP3(fmod, "fmod")
 NON_MEMBER_OP3(pow, "pow")
 NON_MEMBER_OP3(atan2, "atan2")
+NON_MEMBER_OP2(asinh, "asinh")
+NON_MEMBER_OP2(acosh, "acosh")
+NON_MEMBER_OP2(atanh, "atanh")
+NON_MEMBER_OP2(conj, "conj")
 
 template <class Backend>
 int eval_signbit(const logged_adaptor<Backend>& val)
@@ -552,6 +642,72 @@ std::size_t hash_value(const logged_adaptor<Backend>& val)
 {
    return hash_value(val.value());
 }
+
+template <class Backend, expression_template_option ExpressionTemplates>
+inline typename std::enable_if<number_category<Backend>::value == number_kind_rational, typename number<logged_adaptor<Backend>, ExpressionTemplates>::value_type>::type
+numerator(const number<logged_adaptor<Backend>, ExpressionTemplates>& arg)
+{
+   number<Backend, ExpressionTemplates> t(arg.backend().value());
+   return numerator(t).backend();
+}
+template <class Backend, expression_template_option ExpressionTemplates>
+inline typename std::enable_if<number_category<Backend>::value == number_kind_rational, typename number<logged_adaptor<Backend>, ExpressionTemplates>::value_type>::type
+denominator(const number<logged_adaptor<Backend>, ExpressionTemplates>& arg)
+{
+   number<Backend, ExpressionTemplates> t(arg.backend().value());
+   return denominator(t).backend();
+}
+
+template <class To, class From>
+inline BOOST_MP_CXX14_CONSTEXPR void eval_set_real(To& to, const logged_adaptor<From>& from)
+{
+   using default_ops::eval_set_real;
+   log_prefix_event(to, from.value(), "Set real part");
+   eval_set_real(to, from.value());
+   log_postfix_event(to, from.value(), "Set real part");
+}
+template <class To, class From>
+inline BOOST_MP_CXX14_CONSTEXPR void eval_set_real(logged_adaptor<To>& to, const logged_adaptor<From>& from)
+{
+   using default_ops::eval_set_real;
+   log_prefix_event(to.value(), from.value(), "Set real part");
+   eval_set_real(to.value(), from.value());
+   log_postfix_event(to.value(), from.value(), "Set real part");
+}
+template <class To, class From>
+inline BOOST_MP_CXX14_CONSTEXPR void eval_set_real(logged_adaptor<To>& to, const From& from)
+{
+   using default_ops::eval_set_real;
+   log_prefix_event(to.value(), from, "Set real part");
+   eval_set_real(to.value(), from);
+   log_postfix_event(to.value(), from, "Set real part");
+}
+
+template <class To, class From>
+inline BOOST_MP_CXX14_CONSTEXPR void eval_set_imag(To& to, const logged_adaptor<From>& from)
+{
+   using default_ops::eval_set_imag;
+   log_prefix_event(to, from.value(), "Set imag part");
+   eval_set_imag(to, from.value());
+   log_postfix_event(to, from.value(), "Set imag part");
+}
+template <class To, class From>
+inline BOOST_MP_CXX14_CONSTEXPR void eval_set_imag(logged_adaptor<To>& to, const logged_adaptor<From>& from)
+{
+   using default_ops::eval_set_imag;
+   log_prefix_event(to.value(), from.value(), "Set imag part");
+   eval_set_imag(to.value(), from.value());
+   log_postfix_event(to.value(), from.value(), "Set imag part");
+}
+template <class To, class From>
+inline BOOST_MP_CXX14_CONSTEXPR void eval_set_imag(logged_adaptor<To>& to, const From& from)
+{
+   using default_ops::eval_set_imag;
+   log_prefix_event(to.value(), from, "Set imag part");
+   eval_set_imag(to.value(), from);
+   log_postfix_event(to.value(), from, "Set imag part");
+}
+
 
 #define NON_MEMBER_COMPLEX_TO_REAL(name, str)                                                    \
    template <class B1, class B2>                                                                 \
@@ -579,16 +735,40 @@ NON_MEMBER_COMPLEX_TO_REAL(imag, "imag")
 template <class T, class V, class U>
 inline void assign_components(logged_adaptor<T>& result, const V& v1, const U& v2)
 {
-   assign_components(result.value(), v1, v2);
+   using default_ops::assign_components;
+   assign_components(result.value(), unwrap_logged_type(v1), unwrap_logged_type(v2));
 }
 
 } // namespace backends
 
 using backends::logged_adaptor;
 
+namespace detail {
+   template <class Backend>
+   struct is_variable_precision<logged_adaptor<Backend> > : public is_variable_precision<Backend>
+   {};
+} // namespace detail
+
 template <class Backend>
 struct number_category<backends::logged_adaptor<Backend> > : public number_category<Backend>
 {};
+
+template <class Number>
+using logged_adaptor_t = number<logged_adaptor<typename Number::backend_type>, Number::et>;
+
+template <class Backend, expression_template_option ExpressionTemplates>
+struct component_type<number<logged_adaptor<Backend>, ExpressionTemplates>>
+{
+   //
+   // We'll make the component_type also a logged_adaptor:
+   //
+   using base_component_type = typename component_type<number<Backend, ExpressionTemplates>>::type;
+   using base_component_backend = typename base_component_type::backend_type;
+   using type = number<logged_adaptor<base_component_backend>, ExpressionTemplates>;
+};
+
+template <class Backend>
+struct is_interval_number<backends::logged_adaptor<Backend> > : public is_interval_number<Backend> {};
 
 }} // namespace boost::multiprecision
 
@@ -598,19 +778,19 @@ template <class Backend, boost::multiprecision::expression_template_option Expre
 class numeric_limits<boost::multiprecision::number<boost::multiprecision::backends::logged_adaptor<Backend>, ExpressionTemplates> >
     : public std::numeric_limits<boost::multiprecision::number<Backend, ExpressionTemplates> >
 {
-   typedef std::numeric_limits<boost::multiprecision::number<Backend, ExpressionTemplates> >                            base_type;
-   typedef boost::multiprecision::number<boost::multiprecision::backends::logged_adaptor<Backend>, ExpressionTemplates> number_type;
+   using base_type = std::numeric_limits<boost::multiprecision::number<Backend, ExpressionTemplates> >                           ;
+   using number_type = boost::multiprecision::number<boost::multiprecision::backends::logged_adaptor<Backend>, ExpressionTemplates>;
 
  public:
-   static number_type(min)() BOOST_NOEXCEPT { return (base_type::min)(); }
-   static number_type(max)() BOOST_NOEXCEPT { return (base_type::max)(); }
-   static number_type lowest() BOOST_NOEXCEPT { return -(max)(); }
-   static number_type epsilon() BOOST_NOEXCEPT { return base_type::epsilon(); }
-   static number_type round_error() BOOST_NOEXCEPT { return epsilon() / 2; }
-   static number_type infinity() BOOST_NOEXCEPT { return base_type::infinity(); }
-   static number_type quiet_NaN() BOOST_NOEXCEPT { return base_type::quiet_NaN(); }
-   static number_type signaling_NaN() BOOST_NOEXCEPT { return base_type::signaling_NaN(); }
-   static number_type denorm_min() BOOST_NOEXCEPT { return base_type::denorm_min(); }
+   static number_type(min)() noexcept { return (base_type::min)(); }
+   static number_type(max)() noexcept { return (base_type::max)(); }
+   static number_type lowest() noexcept { return -(max)(); }
+   static number_type epsilon() noexcept { return base_type::epsilon(); }
+   static number_type round_error() noexcept { return epsilon() / 2; }
+   static number_type infinity() noexcept { return base_type::infinity(); }
+   static number_type quiet_NaN() noexcept { return base_type::quiet_NaN(); }
+   static number_type signaling_NaN() noexcept { return base_type::signaling_NaN(); }
+   static number_type denorm_min() noexcept { return base_type::denorm_min(); }
 };
 
 } // namespace std

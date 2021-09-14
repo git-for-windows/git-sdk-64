@@ -1,5 +1,5 @@
 /* Pointer to a SG14 status_code
-(C) 2018-2020 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
+(C) 2018-2021 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
 File Created: Sep 2018
 
 

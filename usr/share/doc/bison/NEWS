@@ -1,5 +1,136 @@
 GNU Bison NEWS
 
+* Noteworthy changes in release 3.8.1 (2021-09-11) [stable]
+
+  The generation of prototypes for yylex and yyerror in Yacc mode is
+  breaking existing grammar files.  To avoid breaking too many grammars, the
+  prototypes are now generated when `-y/--yacc` is used *and* the
+  `POSIXLY_CORRECT` environment variable is defined.
+
+  Avoid using `-y`/`--yacc` simply to comply with Yacc's file name
+  conventions, rather, use `-o y.tab.c`.  Autoconf's AC_PROG_YACC macro uses
+  `-y`.  Avoid it if possible, for instance by using gnulib's gl_PROG_BISON.
+
+* Noteworthy changes in release 3.8 (2021-09-07) [stable]
+
+** Backward incompatible changes
+
+  In conformance with the recommendations of the Graphviz team
+  (https://marc.info/?l=graphviz-devel&m=129418103126092), `-g`/`--graph`
+  now generates a *.gv file by default, instead of *.dot.  A transition
+  started in Bison 3.4.
+
+  To comply with the latest POSIX standard, in Yacc compatibility mode
+  (options `-y`/`--yacc`) Bison now generates prototypes for yyerror and
+  yylex.  In some situations, this is breaking compatibility: if the user
+  has already declared these functions but with some differences (e.g., to
+  declare them as static, or to use specific attributes), the generated
+  parser will fail to compile.  To disable these prototypes, #define yyerror
+  (to `yyerror`), and likewise for yylex.
+
+** Deprecated features
+
+  Support for the YYPRINT macro is removed. It worked only with yacc.c and
+  only for tokens.  It was obsoleted by %printer, introduced in Bison 1.50
+  (November 2002).
+
+  It has always been recommended to prefer `%define api.value.type foo` to
+  `#define YYSTYPE foo`.  The latter is supported in C for compatibility
+  with Yacc, but not in C++.  Warnings are now issued if `#define YYSTYPE`
+  is used in C++, and eventually support will be removed.
+
+  In C++ code, prefer value_type to semantic_type to denote the semantic
+  value type, which is specified by the `api.value.type` %define variable.
+
+** New features
+
+*** A skeleton for the D programming language
+
+  The "lalr1.d" skeleton is now officially part of Bison.
+
+  It was originally contributed by Oliver Mangold, based on Paolo Bonzini's
+  lalr1.java, and was improved by H. S. Teoh.  Adela Vais then took over
+  maintenance and invested a lot of efforts to complete, test and document
+  it.
+
+  It now supports all the bells and whistles of the other deterministic
+  parsers, which include: pull/push interfaces, verbose and custom error
+  messages, lookahead correction, token constructors, internationalization,
+  locations, printers, token and symbol prefixes, etc.
+
+  Two examples demonstrate the D parsers: a basic one (examples/d/simple),
+  and an advanced one (examples/d/calc).
+
+*** Option -H, --header and directive %header
+
+  The option `-H`/`--header` supersedes the option `--defines`, and the
+  directive %header supersedes %defines.  Both `--defines` and `%defines`
+  are, of course, maintained for backward compatibility.
+
+*** Option --html
+
+  Since version 2.4 Bison can be used to generate HTML reports.  However it
+  was a two-step process: first bison must be invoked with option `--xml`,
+  and then xsltproc must be run to the convert the XML reports into HTML.
+
+  The new option `--html` combines these steps.  The xsltproc program must
+  be available.
+
+*** A C++ native GLR parser
+
+  A new version of the C++ GLR parser was added: "glr2.cc".  It generates
+  "true C++11", instead of a C++ wrapper around a C parser as does the
+  existing "glr.cc" parser.  As a first significant consequence, it supports
+  `%define api.value.type variant`, contrary to glr.cc.
+
+  It should be upward compatible in terms of interface, feature and
+  performance to "glr.cc". To try it out, simply use
+
+  %skeleton "glr2.cc"
+
+  It will eventually replace "glr.cc".  However we need user feedback on
+  this skeleton.  _Please_ report your results and comments about it.
+
+*** Counterexamples
+
+  Counterexamples now show the rule numbers, and always show ε for rules
+  with an empty right-hand side.  For instance
+
+    exp
+    ↳ 1: e1       e2     "a"
+         ↳ 3: ε • ↳ 1: ε
+
+  instead of
+
+    exp
+    ↳ e1  e2  "a"
+      ↳ • ↳ ε
+
+*** Lookahead correction in Java
+
+  The Java skeleton (lalr1.java) now supports LAC, via the `parse.lac`
+  %define variable.
+
+*** Abort parsing for memory exhaustion (C)
+
+  User actions may now use `YYNOMEM` (similar to `YYACCEPT` and `YYABORT`)
+  to abort the current parse with memory exhaustion.
+
+*** Printing locations in debug traces (C)
+
+  The `YYLOCATION_PRINT(File, Loc)` macro prints a location.  It is defined
+  when (i) locations are enabled, (ii) the default type for locations is
+  used, (iii) debug traces are enabled, and (iv) `YYLOCATION_PRINT` is not
+  already defined.
+
+  Users may define `YYLOCATION_PRINT` to cover other cases.
+
+*** GLR traces
+
+  There were no debug traces for deferred calls to user actions.  They are
+  logged now.
+
+
 * Noteworthy changes in release 3.7.6 (2021-03-08) [stable]
 
 ** Bug fixes
@@ -67,6 +198,7 @@ GNU Bison NEWS
   skeleton) used to be defined to 1.  It is now defined to the version of
   Bison as an integer (e.g., 30704 for version 3.7.4).
 
+
 * Noteworthy changes in release 3.7.3 (2020-10-13) [stable]
 
 ** Bug fixes
@@ -76,6 +208,7 @@ GNU Bison NEWS
   The bison executable is no longer linked uselessly against libreadline.
 
   Fix incorrect use of yytname in glr.cc.
+
 
 * Noteworthy changes in release 3.7.2 (2020-09-05) [stable]
 
@@ -777,7 +910,7 @@ GNU Bison NEWS
   Also, because string aliases need not be defined, typos such as "baz"
   instead of "bar" will be not reported.
 
-  The option -Wdangling-alias catches these situations.  On
+  The option `-Wdangling-alias` catches these situations.  On
 
     %token BAR "bar"
     %type <ival> foo "foo"
@@ -793,7 +926,7 @@ GNU Bison NEWS
           | foo: "baz" {}
           |      ^~~~~
 
-   The -Wall option does not (yet?) include -Wdangling-alias.
+   The `-Wall` option does not (yet?) include `-Wdangling-alias`.
 
 *** Better POSIX Yacc compatibility diagnostics
 
@@ -4569,7 +4702,7 @@ LocalWords:  pragmas noreturn untyped Rozenman unexpanded Wojciech Polak
 LocalWords:  Alexandre MERCHANTABILITY yytype emplace ptr automove lvalues
 LocalWords:  nonterminal yy args Pragma dereference yyformat rhs docdir bw
 LocalWords:  Redeclarations rpcalc Autoconf YFLAGS Makefiles PROG DECL num
-LocalWords:  Heimbigner AST src ast Makefile srcdir MinGW xxlex XXSTYPE
+LocalWords:  Heimbigner AST src ast Makefile srcdir MinGW xxlex XXSTYPE CVE
 LocalWords:  XXLTYPE strictfp IDEs ffixit fdiagnostics parseable fixits
 LocalWords:  Wdeprecated yytext Variadic variadic yyrhs yyphrs RCS README
 LocalWords:  noexcept constexpr ispell american deprecations backend Teoh
@@ -4580,6 +4713,8 @@ LocalWords:  symrec yypcontext TOKENMAX yyexpected YYEMPTY yypstate YYEOF
 LocalWords:  autocompletion bistromathic submessages Cayuela lexcalc hoc
 LocalWords:  yytoken YYUNDEF YYerror basename Automake's UTF ifdef ffile
 LocalWords:  gotos readline Imbimbo Wcounterexamples Wcex Nonunifying rcex
+LocalWords:  Vais xsltproc YYNOMEM YYLOCATION signedness YYBISON MITRE's
+LocalWords:  libreadline YYMALLOC YYFREE MSVC redefinitions POSIXLY
 
 Local Variables:
 ispell-dictionary: "american"

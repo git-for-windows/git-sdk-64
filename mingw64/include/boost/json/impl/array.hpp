@@ -207,7 +207,7 @@ at(std::size_t pos)
 {
     if(pos >= t_->size)
         detail::throw_out_of_range(
-            BOOST_CURRENT_LOCATION);
+            BOOST_JSON_SOURCE_POS);
     return (*t_)[pos];
 }
 
@@ -217,7 +217,7 @@ at(std::size_t pos) const
 {
     if(pos >= t_->size)
         detail::throw_out_of_range(
-            BOOST_CURRENT_LOCATION);
+            BOOST_JSON_SOURCE_POS);
     return (*t_)[pos];
 }
 
@@ -493,6 +493,12 @@ array(
 {
     std::size_t n =
         std::distance(first, last);
+    if( n == 0 )
+    {
+        t_ = &empty_;
+        return;
+    }
+
     t_ = table::allocate(n, sp_);
     t_->size = 0;
     revert_construct r(*this);

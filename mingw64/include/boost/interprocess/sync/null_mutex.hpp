@@ -27,14 +27,6 @@
 //!Describes null_mutex classes
 
 namespace boost {
-
-#if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
-
-namespace posix_time
-{  class ptime;   }
-
-#endif   //#if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
-
 namespace interprocess {
 
 //!Implements a mutex that simulates a mutex without doing any operation and
@@ -49,7 +41,7 @@ class null_mutex
 
    //!Constructor.
    //!Empty.
-   null_mutex(){}
+   null_mutex() BOOST_NOEXCEPT {}
 
    //!Destructor.
    //!Empty.
@@ -65,7 +57,8 @@ class null_mutex
 
    //!Simulates a mutex timed_lock() operation.
    //!Equivalent to "return true;"
-   bool timed_lock(const boost::posix_time::ptime &)
+   template<class TimePoint>
+   bool timed_lock(const TimePoint &)
    {  return true;   }
 
    //!Simulates a mutex unlock() operation.
@@ -83,7 +76,8 @@ class null_mutex
 
    //!Simulates a mutex timed_lock_sharable() operation.
    //!Equivalent to "return true;"
-   bool timed_lock_sharable(const boost::posix_time::ptime &)
+   template<class TimePoint>
+   bool timed_lock_sharable(const TimePoint &)
    {  return true;   }
 
    //!Simulates a mutex unlock_sharable() operation.
@@ -101,7 +95,8 @@ class null_mutex
 
    //!Simulates a mutex timed_lock_upgradable() operation.
    //!Equivalent to "return true;"
-   bool timed_lock_upgradable(const boost::posix_time::ptime &)
+   template<class TimePoint>
+   bool timed_lock_upgradable(const TimePoint &)
    {  return true;   }
 
    //!Simulates a mutex unlock_upgradable() operation.
@@ -133,7 +128,8 @@ class null_mutex
 
    //!Simulates timed_unlock_upgradable_and_lock().
    //!Equivalent to "return true;"
-   bool timed_unlock_upgradable_and_lock(const boost::posix_time::ptime &)
+   template<class TimePoint>
+   bool timed_unlock_upgradable_and_lock(const TimePoint &)
    {  return true;   }
 
    //!Simulates try_unlock_sharable_and_lock().

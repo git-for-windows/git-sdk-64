@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2020, Oracle and/or its affiliates.
+// Copyright (c) 2020-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -12,6 +12,7 @@
 
 
 #include <boost/geometry/strategy/geographic/area.hpp>
+#include <boost/geometry/strategy/geographic/area_box.hpp>
 
 #include <boost/geometry/strategies/area/services.hpp>
 #include <boost/geometry/strategies/detail.hpp>
@@ -26,29 +27,40 @@ namespace strategies { namespace area
 template
 <
     typename FormulaPolicy = strategy::andoyer,
-    std::size_t SeriesOrder = strategy::default_order<FormulaPolicy>::value,
     typename Spheroid = srs::spheroid<double>,
     typename CalculationType = void
 >
-class geographic : strategies::detail::geographic_base<Spheroid>
+class geographic
+    : public strategies::detail::geographic_base<Spheroid>
 {
     using base_t = strategies::detail::geographic_base<Spheroid>;
 
 public:
-    geographic()
-        : base_t()
-    {}
+    geographic() = default;
 
     explicit geographic(Spheroid const& spheroid)
         : base_t(spheroid)
     {}
 
     template <typename Geometry>
-    auto area(Geometry const&) const
+    auto area(Geometry const&,
+              std::enable_if_t<! util::is_box<Geometry>::value> * = nullptr) const
     {
         return strategy::area::geographic
             <
-                FormulaPolicy, SeriesOrder, Spheroid, CalculationType
+                FormulaPolicy,
+                strategy::default_order<FormulaPolicy>::value,
+                Spheroid, CalculationType
+            >(base_t::m_spheroid);
+    }
+
+    template <typename Geometry>
+    auto area(Geometry const&,
+              std::enable_if_t<util::is_box<Geometry>::value> * = nullptr) const
+    {
+        return strategy::area::geographic_box
+            <
+                Spheroid, CalculationType
             >(base_t::m_spheroid);
     }
 };
@@ -67,9 +79,23 @@ struct default_strategy<Geometry, geographic_tag>
 template <typename FP, std::size_t SO, typename S, typename CT>
 struct strategy_converter<strategy::area::geographic<FP, SO, S, CT> >
 {
+    struct altered_strategy
+        : strategies::area::geographic<FP, S, CT>
+    {
+        explicit altered_strategy(S const& spheroid)
+            : strategies::area::geographic<FP, S, CT>(spheroid)
+        {}
+
+        template <typename Geometry>
+        auto area(Geometry const&) const
+        {
+            return strategy::area::geographic<FP, SO, S, CT>(this->m_spheroid);
+        }
+    };
+
     static auto get(strategy::area::geographic<FP, SO, S, CT> const& strategy)
     {
-        return strategies::area::geographic<FP, SO, S, CT>(strategy.model());
+        return altered_strategy(strategy.model());
     }
 };
 

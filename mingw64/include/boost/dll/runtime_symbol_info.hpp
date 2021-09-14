@@ -1,5 +1,5 @@
 // Copyright 2014 Renato Tegon Forti, Antony Polukhin.
-// Copyright 2015-2019 Antony Polukhin.
+// Copyright 2015-2021 Antony Polukhin.
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt
@@ -168,6 +168,8 @@ namespace detail {
     /// @cond
     // We have anonymous namespace here to make sure that `this_line_location()` method is instantiated in
     // current translation unit and is not shadowed by instantiations from other units.
+    //
+    // boost-no-inspect
     namespace {
     /// @endcond
 

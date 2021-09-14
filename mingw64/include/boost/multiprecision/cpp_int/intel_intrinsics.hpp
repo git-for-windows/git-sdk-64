@@ -30,6 +30,16 @@
 // We appear to crash the compiler if we try to use these intrinsics?
 #undef BOOST_MP_HAS_IMMINTRIN_H
 #endif
+
+#if defined(BOOST_MSVC) && !defined(_M_IX86) && !defined(_M_ARM64) && !defined(_M_X64)
+//
+// When targeting platforms such as ARM, msvc still has the INtel headers in it's include path
+// even though they're not usable.  See https://github.com/boostorg/multiprecision/issues/321
+//
+#undef BOOST_MP_HAS_IMMINTRIN_H
+#endif
+
+
 //
 // If the compiler supports the intrinsics used by GCC internally
 // inside <immintrin.h> then we'll use them directly.
@@ -75,9 +85,9 @@ namespace boost { namespace multiprecision { namespace detail {
 BOOST_MP_FORCEINLINE unsigned char addcarry_limb(unsigned char carry, limb_type a, limb_type b, limb_type* p_result)
 {
 #ifdef BOOST_INTEL
-   typedef unsigned __int64 cast_type;
+   using cast_type = unsigned __int64;
 #else
-   typedef unsigned long long cast_type;
+   using cast_type = unsigned long long;
 #endif
    return BOOST_JOIN(BOOST_MP_ADDC, 64)(carry, a, b, reinterpret_cast<cast_type*>(p_result));
 }
@@ -85,9 +95,9 @@ BOOST_MP_FORCEINLINE unsigned char addcarry_limb(unsigned char carry, limb_type 
 BOOST_MP_FORCEINLINE unsigned char subborrow_limb(unsigned char carry, limb_type a, limb_type b, limb_type* p_result)
 {
 #ifdef BOOST_INTEL
-   typedef unsigned __int64 cast_type;
+   using cast_type = unsigned __int64;
 #else
-   typedef unsigned long long cast_type;
+   using cast_type = unsigned long long;
 #endif
    return BOOST_JOIN(BOOST_MP_SUBB, 64)(carry, a, b, reinterpret_cast<cast_type*>(p_result));
 }

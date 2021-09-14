@@ -142,11 +142,11 @@ vertical-direction text segments.</doc>
            c:type="hb_font_get_glyph_v_kerning_func_t">
       <doc xml:space="preserve"
            filename="../src/hb-deprecated.h"
-           line="218">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.
+           line="215">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.
 
 This method should retrieve the kerning-adjustment value for a glyph-pair in
 the specified font, for vertical text segments.</doc>
-      <source-position filename="../src/hb-deprecated.h" line="227"/>
+      <source-position filename="../src/hb-deprecated.h" line="224"/>
       <type name="font_get_glyph_kerning_func_t"
             c:type="hb_font_get_glyph_kerning_func_t"/>
     </alias>
@@ -510,8 +510,8 @@ of the buffer.</doc>
               deprecated-version="2.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-deprecated.h"
-           line="184">See Unicode 6.1 for details on the maximum decomposition length.</doc>
-      <source-position filename="../src/hb-deprecated.h" line="191"/>
+           line="181">See Unicode 6.1 for details on the maximum decomposition length.</doc>
+      <source-position filename="../src/hb-deprecated.h" line="188"/>
       <type name="gint" c:type="gint"/>
     </constant>
     <function-macro name="UNTAG"
@@ -547,7 +547,7 @@ of the buffer.</doc>
       <source-position filename="../src/hb-version.h" line="44"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
       <source-position filename="../src/hb-version.h" line="56"/>
       <type name="gint" c:type="gint"/>
     </constant>
@@ -555,7 +555,7 @@ of the buffer.</doc>
       <source-position filename="../src/hb-version.h" line="50"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="2.9.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="2.9.1" c:type="HB_VERSION_STRING">
       <source-position filename="../src/hb-version.h" line="63"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -4314,7 +4314,7 @@ Decreases the reference count on @buffer by one. If the result is zero, then
     <function name="buffer_diff" c:identifier="hb_buffer_diff" version="1.5.0">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1866">If dottedcircle_glyph is (hb_codepoint_t) -1 then #HB_BUFFER_DIFF_FLAG_DOTTED_CIRCLE_PRESENT
+           line="1888">If dottedcircle_glyph is (hb_codepoint_t) -1 then #HB_BUFFER_DIFF_FLAG_DOTTED_CIRCLE_PRESENT
 and #HB_BUFFER_DIFF_FLAG_NOTDEF_PRESENT are never returned.  This should be used by most
 callers if just comparing two buffers is needed.</doc>
       <source-position filename="../src/hb-buffer.h" line="651"/>
@@ -4325,25 +4325,25 @@ callers if just comparing two buffers is needed.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1868">a buffer.</doc>
+               line="1890">a buffer.</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="reference" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1869">other buffer to compare to.</doc>
+               line="1891">other buffer to compare to.</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="dottedcircle_glyph" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1870">glyph id of U+25CC DOTTED CIRCLE, or (hb_codepont_t) -1.</doc>
+               line="1892">glyph id of U+25CC DOTTED CIRCLE, or (hb_codepont_t) -1.</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
         <parameter name="position_fuzz" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1871">allowed absolute difference in position values.</doc>
+               line="1893">allowed absolute difference in position values.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
       </parameters>
@@ -5008,7 +5008,7 @@ the next one.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1816">Reorders a glyph buffer to have canonical in-cluster glyph order / position.
+           line="1838">Reorders a glyph buffer to have canonical in-cluster glyph order / position.
 The resulting clusters should behave identical to pre-reordering clusters.
 
 &lt;note&gt;This has nothing to do with Unicode normalization.&lt;/note&gt;</doc>
@@ -5020,7 +5020,7 @@ The resulting clusters should behave identical to pre-reordering clusters.
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1818">An #hb_buffer_t</doc>
+               line="1840">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5889,7 +5889,7 @@ end.</doc>
               version="1.1.3">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1962">Sets the implementation function for #hb_buffer_message_func_t.</doc>
+           line="1984">Sets the implementation function for #hb_buffer_message_func_t.</doc>
       <source-position filename="../src/hb-buffer.h" line="684"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -5898,7 +5898,7 @@ end.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1964">An #hb_buffer_t</doc>
+               line="1986">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="func"
@@ -5908,7 +5908,7 @@ end.</doc>
                    destroy="3">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1965">Callback function</doc>
+               line="1987">Callback function</doc>
           <type name="buffer_message_func_t"
                 c:type="hb_buffer_message_func_t"/>
         </parameter>
@@ -5918,7 +5918,7 @@ end.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1966">Data to pass to @func</doc>
+               line="1988">Data to pass to @func</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="destroy"
@@ -5928,7 +5928,7 @@ end.</doc>
                    scope="notified">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1967">The function to call when @user_data is not needed anymore</doc>
+               line="1989">The function to call when @user_data is not needed anymore</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
       </parameters>
@@ -8168,8 +8168,8 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
               deprecated-version="2.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-deprecated.h"
-           line="229">Sets the implementation function for #hb_font_get_glyph_v_kerning_func_t.</doc>
-      <source-position filename="../src/hb-deprecated.h" line="242"/>
+           line="226">Sets the implementation function for #hb_font_get_glyph_v_kerning_func_t.</doc>
+      <source-position filename="../src/hb-deprecated.h" line="239"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -8177,7 +8177,7 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         <parameter name="ffuncs" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="231">A font-function structure</doc>
+               line="228">A font-function structure</doc>
           <type name="font_funcs_t" c:type="hb_font_funcs_t*"/>
         </parameter>
         <parameter name="func"
@@ -8187,7 +8187,7 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
                    destroy="3">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="232">The callback function to assign</doc>
+               line="229">The callback function to assign</doc>
           <type name="font_get_glyph_v_kerning_func_t"
                 c:type="hb_font_get_glyph_v_kerning_func_t"/>
         </parameter>
@@ -8197,7 +8197,7 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="233">Data to pass to @func</doc>
+               line="230">Data to pass to @func</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="destroy"
@@ -8207,7 +8207,7 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
                    scope="notified">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="234">The function to call when @user_data is not needed anymore</doc>
+               line="231">The function to call when @user_data is not needed anymore</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
       </parameters>
@@ -10007,7 +10007,7 @@ the specified font, for vertical text segments.
 
 &lt;note&gt;It handles legacy kerning only (as returned by the corresponding
 #hb_font_funcs_t function).&lt;/note&gt;</doc>
-      <source-position filename="../src/hb-deprecated.h" line="247"/>
+      <source-position filename="../src/hb-deprecated.h" line="244"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-font.cc"
@@ -12379,7 +12379,7 @@ the caller.</doc>
     <function name="map_clear" c:identifier="hb_map_clear" version="1.7.7">
       <doc xml:space="preserve"
            filename="../src/hb-map.cc"
-           line="245">Clears out the contents of @map.</doc>
+           line="247">Clears out the contents of @map.</doc>
       <source-position filename="../src/hb-map.h" line="86"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -12388,7 +12388,7 @@ the caller.</doc>
         <parameter name="map" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-map.cc"
-               line="247">A map</doc>
+               line="249">A map</doc>
           <type name="map_t" c:type="hb_map_t*"/>
         </parameter>
       </parameters>
@@ -12408,7 +12408,7 @@ the caller.</doc>
     <function name="map_del" c:identifier="hb_map_del" version="1.7.7">
       <doc xml:space="preserve"
            filename="../src/hb-map.cc"
-           line="210">Removes @key and its stored value from @map.</doc>
+           line="211">Removes @key and its stored value from @map.</doc>
       <source-position filename="../src/hb-map.h" line="104"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -12417,13 +12417,13 @@ the caller.</doc>
         <parameter name="map" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-map.cc"
-               line="212">A map</doc>
+               line="213">A map</doc>
           <type name="map_t" c:type="hb_map_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-map.cc"
-               line="213">The key to delete</doc>
+               line="214">The key to delete</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
       </parameters>
@@ -12453,7 +12453,7 @@ destroyed, freeing all memory.</doc>
     <function name="map_get" c:identifier="hb_map_get" version="1.7.7">
       <doc xml:space="preserve"
            filename="../src/hb-map.cc"
-           line="194">Fetches the value stored for @key in @map.</doc>
+           line="195">Fetches the value stored for @key in @map.</doc>
       <source-position filename="../src/hb-map.h" line="100"/>
       <return-value transfer-ownership="none">
         <type name="codepoint_t" c:type="hb_codepoint_t"/>
@@ -12462,13 +12462,13 @@ destroyed, freeing all memory.</doc>
         <parameter name="map" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-map.cc"
-               line="196">A map</doc>
+               line="197">A map</doc>
           <type name="map_t" c:type="const hb_map_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-map.cc"
-               line="197">The key to query</doc>
+               line="198">The key to query</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
       </parameters>
@@ -12492,19 +12492,19 @@ destroyed, freeing all memory.</doc>
               version="1.7.7">
       <doc xml:space="preserve"
            filename="../src/hb-map.cc"
-           line="278">Returns the number of key-value pairs in the map.</doc>
+           line="277">Returns the number of key-value pairs in the map.</doc>
       <source-position filename="../src/hb-map.h" line="92"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-map.cc"
-             line="284">The population of @map</doc>
+             line="283">The population of @map</doc>
         <type name="guint" c:type="unsigned int"/>
       </return-value>
       <parameters>
         <parameter name="map" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-map.cc"
-               line="280">A map</doc>
+               line="279">A map</doc>
           <type name="map_t" c:type="const hb_map_t*"/>
         </parameter>
       </parameters>
@@ -12542,25 +12542,25 @@ attached to the specified map.</doc>
     <function name="map_has" c:identifier="hb_map_has" version="1.7.7">
       <doc xml:space="preserve"
            filename="../src/hb-map.cc"
-           line="226">Tests whether @key is an element of @map.</doc>
+           line="228">Tests whether @key is an element of @map.</doc>
       <source-position filename="../src/hb-map.h" line="108"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-map.cc"
-             line="233">%true if @key is found in @map, %false otherwise</doc>
+             line="235">%true if @key is found in @map, %false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="map" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-map.cc"
-               line="228">A map</doc>
+               line="230">A map</doc>
           <type name="map_t" c:type="const hb_map_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-map.cc"
-               line="229">The key to query</doc>
+               line="231">The key to query</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
       </parameters>
@@ -12570,19 +12570,19 @@ attached to the specified map.</doc>
               version="1.7.7">
       <doc xml:space="preserve"
            filename="../src/hb-map.cc"
-           line="262">Tests whether @map is empty (contains no elements).</doc>
+           line="261">Tests whether @map is empty (contains no elements).</doc>
       <source-position filename="../src/hb-map.h" line="89"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-map.cc"
-             line="268">%true if @map is empty</doc>
+             line="267">%true if @map is empty</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="map" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-map.cc"
-               line="264">A map</doc>
+               line="263">A map</doc>
           <type name="map_t" c:type="const hb_map_t*"/>
         </parameter>
       </parameters>
@@ -16669,33 +16669,34 @@ Tags](https://docs.microsoft.com/en-us/typography/opentype/spec/mvar#value-tags)
               version="2.1.0">
       <doc xml:space="preserve"
            filename="../src/hb-ot-name.cc"
-           line="175">Fetches a font name from the OpenType 'name' table.
+           line="176">Fetches a font name from the OpenType 'name' table.
 If @language is #HB_LANGUAGE_INVALID, English ("en") is assumed.
-Returns string in UTF-16 encoding.</doc>
+Returns string in UTF-16 encoding. A NUL terminator is always written
+for convenience, and isn't included in the output @text_size.</doc>
       <source-position filename="../src/hb-ot-name.h" line="112"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-name.cc"
-             line="188">full length of the requested string, or 0 if not found.</doc>
+             line="190">full length of the requested string, or 0 if not found.</doc>
         <type name="guint" c:type="unsigned int"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-name.cc"
-               line="177">font face.</doc>
+               line="178">font face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="name_id" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-name.cc"
-               line="178">OpenType name identifier to fetch.</doc>
+               line="179">OpenType name identifier to fetch.</doc>
           <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
         </parameter>
         <parameter name="language" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-name.cc"
-               line="179">language to fetch the name for.</doc>
+               line="180">language to fetch the name for.</doc>
           <type name="language_t" c:type="hb_language_t"/>
         </parameter>
         <parameter name="text_size"
@@ -16706,7 +16707,7 @@ Returns string in UTF-16 encoding.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-name.cc"
-               line="180">input size of @text buffer, and output size of
+               line="181">input size of @text buffer, and output size of
                                   text written to buffer.</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
@@ -16716,7 +16717,7 @@ Returns string in UTF-16 encoding.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-name.cc"
-               line="182">buffer to write fetched name into.</doc>
+               line="183">buffer to write fetched name into.</doc>
           <array length="3" zero-terminated="0" c:type="uint16_t*">
             <type name="guint16" c:type="uint16_t"/>
           </array>
@@ -16728,33 +16729,34 @@ Returns string in UTF-16 encoding.</doc>
               version="2.1.0">
       <doc xml:space="preserve"
            filename="../src/hb-ot-name.cc"
-           line="201">Fetches a font name from the OpenType 'name' table.
+           line="203">Fetches a font name from the OpenType 'name' table.
 If @language is #HB_LANGUAGE_INVALID, English ("en") is assumed.
-Returns string in UTF-32 encoding.</doc>
+Returns string in UTF-32 encoding. A NUL terminator is always written
+for convenience, and isn't included in the output @text_size.</doc>
       <source-position filename="../src/hb-ot-name.h" line="119"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-name.cc"
-             line="214">full length of the requested string, or 0 if not found.</doc>
+             line="217">full length of the requested string, or 0 if not found.</doc>
         <type name="guint" c:type="unsigned int"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-name.cc"
-               line="203">font face.</doc>
+               line="205">font face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="name_id" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-name.cc"
-               line="204">OpenType name identifier to fetch.</doc>
+               line="206">OpenType name identifier to fetch.</doc>
           <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
         </parameter>
         <parameter name="language" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-name.cc"
-               line="205">language to fetch the name for.</doc>
+               line="207">language to fetch the name for.</doc>
           <type name="language_t" c:type="hb_language_t"/>
         </parameter>
         <parameter name="text_size"
@@ -16765,7 +16767,7 @@ Returns string in UTF-32 encoding.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-name.cc"
-               line="206">input size of @text buffer, and output size of
+               line="208">input size of @text buffer, and output size of
                                   text written to buffer.</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
@@ -16775,7 +16777,7 @@ Returns string in UTF-32 encoding.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-name.cc"
-               line="208">buffer to write fetched name into.</doc>
+               line="210">buffer to write fetched name into.</doc>
           <array length="3" zero-terminated="0" c:type="uint32_t*">
             <type name="guint32" c:type="uint32_t"/>
           </array>
@@ -16789,12 +16791,13 @@ Returns string in UTF-32 encoding.</doc>
            filename="../src/hb-ot-name.cc"
            line="148">Fetches a font name from the OpenType 'name' table.
 If @language is #HB_LANGUAGE_INVALID, English ("en") is assumed.
-Returns string in UTF-8 encoding.</doc>
+Returns string in UTF-8 encoding. A NUL terminator is always written
+for convenience, and isn't included in the output @text_size.</doc>
       <source-position filename="../src/hb-ot-name.h" line="105"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-name.cc"
-             line="161">full length of the requested string, or 0 if not found.</doc>
+             line="162">full length of the requested string, or 0 if not found.</doc>
         <type name="guint" c:type="unsigned int"/>
       </return-value>
       <parameters>
@@ -16885,7 +16888,7 @@ used as long as @face is alive.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-ot-shape.cc"
-           line="1253">Computes the transitive closure of glyphs needed for a specified
+           line="1256">Computes the transitive closure of glyphs needed for a specified
 input buffer under the given font and feature list. The closure is
 computed as a set, not as a list.</doc>
       <source-position filename="../src/hb-ot-shape.h" line="40"/>
@@ -16896,19 +16899,19 @@ computed as a set, not as a list.</doc>
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1255">#hb_font_t to work upon</doc>
+               line="1258">#hb_font_t to work upon</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1256">The input buffer to compute from</doc>
+               line="1259">The input buffer to compute from</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="features" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1257">The features enabled on the buffer</doc>
+               line="1260">The features enabled on the buffer</doc>
           <array length="3" zero-terminated="0" c:type="const hb_feature_t*">
             <type name="feature_t" c:type="hb_feature_t"/>
           </array>
@@ -16916,7 +16919,7 @@ computed as a set, not as a list.</doc>
         <parameter name="num_features" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1258">The number of features enabled on the buffer</doc>
+               line="1261">The number of features enabled on the buffer</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="glyphs"
@@ -16925,7 +16928,7 @@ computed as a set, not as a list.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1259">The #hb_set_t set of glyphs comprising the transitive closure of the query</doc>
+               line="1262">The #hb_set_t set of glyphs comprising the transitive closure of the query</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
@@ -16935,7 +16938,7 @@ computed as a set, not as a list.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-ot-shape.cc"
-           line="1213">Computes the complete set of GSUB or GPOS lookups that are applicable
+           line="1216">Computes the complete set of GSUB or GPOS lookups that are applicable
 under a given @shape_plan.</doc>
       <source-position filename="../src/hb-ot-shape.h" line="47"/>
       <return-value transfer-ownership="none">
@@ -16945,13 +16948,13 @@ under a given @shape_plan.</doc>
         <parameter name="shape_plan" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1215">#hb_shape_plan_t to query</doc>
+               line="1218">#hb_shape_plan_t to query</doc>
           <type name="shape_plan_t" c:type="hb_shape_plan_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1216">GSUB or GPOS</doc>
+               line="1219">GSUB or GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="lookup_indexes"
@@ -16960,7 +16963,7 @@ under a given @shape_plan.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1217">The #hb_set_t set of lookups returned</doc>
+               line="1220">The #hb_set_t set of lookups returned</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
@@ -19241,8 +19244,8 @@ hb_buffer_get_segment_properties(), respectively.</doc>
     <function name="set_add" c:identifier="hb_set_add" version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="244">Adds @codepoint to @set.</doc>
-      <source-position filename="../src/hb-set.h" line="102"/>
+           line="242">Adds @codepoint to @set.</doc>
+      <source-position filename="../src/hb-set.h" line="105"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -19250,13 +19253,13 @@ hb_buffer_get_segment_properties(), respectively.</doc>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="246">A set</doc>
+               line="244">A set</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
         <parameter name="codepoint" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="247">The element to add to @set</doc>
+               line="245">The element to add to @set</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
       </parameters>
@@ -19266,9 +19269,9 @@ hb_buffer_get_segment_properties(), respectively.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="260">Adds all of the elements from @first to @last
+           line="259">Adds all of the elements from @first to @last
 (inclusive) to @set.</doc>
-      <source-position filename="../src/hb-set.h" line="106"/>
+      <source-position filename="../src/hb-set.h" line="109"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -19276,19 +19279,19 @@ hb_buffer_get_segment_properties(), respectively.</doc>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="262">A set</doc>
+               line="261">A set</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
         <parameter name="first" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="263">The first element to add to @set</doc>
+               line="262">The first element to add to @set</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
         <parameter name="last" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="264">The final element to add to @set</doc>
+               line="263">The final element to add to @set</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
       </parameters>
@@ -19368,7 +19371,7 @@ hb_buffer_get_segment_properties(), respectively.</doc>
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
            line="279">Removes @codepoint from @set.</doc>
-      <source-position filename="../src/hb-set.h" line="111"/>
+      <source-position filename="../src/hb-set.h" line="114"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -19392,12 +19395,12 @@ hb_buffer_get_segment_properties(), respectively.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="295">Removes all of the elements from @first to @last
+           line="296">Removes all of the elements from @first to @last
 (inclusive) from @set.
 
 If @last is #HB_SET_VALUE_INVALID, then all values
 greater than or equal to @first are removed.</doc>
-      <source-position filename="../src/hb-set.h" line="115"/>
+      <source-position filename="../src/hb-set.h" line="118"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -19405,19 +19408,19 @@ greater than or equal to @first are removed.</doc>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="297">A set</doc>
+               line="298">A set</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
         <parameter name="first" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="298">The first element to remove from @set</doc>
+               line="299">The first element to remove from @set</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
         <parameter name="last" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="299">The final element to remove from @set</doc>
+               line="300">The final element to remove from @set</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
       </parameters>
@@ -19461,19 +19464,19 @@ destroyed, freeing all memory.</doc>
     <function name="set_get_max" c:identifier="hb_set_get_max" version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="484">Finds the largest element in the set.</doc>
-      <source-position filename="../src/hb-set.h" line="156"/>
+           line="489">Finds the largest element in the set.</doc>
+      <source-position filename="../src/hb-set.h" line="159"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-set.cc"
-             line="490">maximum of @set, or #HB_SET_VALUE_INVALID if @set is empty.</doc>
+             line="495">maximum of @set, or #HB_SET_VALUE_INVALID if @set is empty.</doc>
         <type name="codepoint_t" c:type="hb_codepoint_t"/>
       </return-value>
       <parameters>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="486">A set</doc>
+               line="491">A set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
       </parameters>
@@ -19481,19 +19484,19 @@ destroyed, freeing all memory.</doc>
     <function name="set_get_min" c:identifier="hb_set_get_min" version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="468">Finds the smallest element in the set.</doc>
-      <source-position filename="../src/hb-set.h" line="152"/>
+           line="473">Finds the smallest element in the set.</doc>
+      <source-position filename="../src/hb-set.h" line="155"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-set.cc"
-             line="474">minimum of @set, or #HB_SET_VALUE_INVALID if @set is empty.</doc>
+             line="479">minimum of @set, or #HB_SET_VALUE_INVALID if @set is empty.</doc>
         <type name="codepoint_t" c:type="hb_codepoint_t"/>
       </return-value>
       <parameters>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="470">A set</doc>
+               line="475">A set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
       </parameters>
@@ -19503,19 +19506,19 @@ destroyed, freeing all memory.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="452">Returns the number of elements in the set.</doc>
-      <source-position filename="../src/hb-set.h" line="148"/>
+           line="457">Returns the number of elements in the set.</doc>
+      <source-position filename="../src/hb-set.h" line="151"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-set.cc"
-             line="458">The population of @set</doc>
+             line="463">The population of @set</doc>
         <type name="guint" c:type="unsigned int"/>
       </return-value>
       <parameters>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="454">A set</doc>
+               line="459">A set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
       </parameters>
@@ -19553,25 +19556,25 @@ attached to the specified set.</doc>
     <function name="set_has" c:identifier="hb_set_has" version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="226">Tests whether @codepoint belongs to @set.</doc>
-      <source-position filename="../src/hb-set.h" line="98"/>
+           line="224">Tests whether @codepoint belongs to @set.</doc>
+      <source-position filename="../src/hb-set.h" line="101"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-set.cc"
-             line="233">%true if @codepoint is in @set, %false otherwise</doc>
+             line="231">%true if @codepoint is in @set, %false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="228">A set</doc>
+               line="226">A set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
         <parameter name="codepoint" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="229">The element to query</doc>
+               line="227">The element to query</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
       </parameters>
@@ -19581,8 +19584,8 @@ attached to the specified set.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="386">Makes @set the intersection of @set and @other.</doc>
-      <source-position filename="../src/hb-set.h" line="136"/>
+           line="390">Makes @set the intersection of @set and @other.</doc>
+      <source-position filename="../src/hb-set.h" line="139"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -19590,26 +19593,22 @@ attached to the specified set.</doc>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="388">A set</doc>
+               line="392">A set</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
         <parameter name="other" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="389">Another set</doc>
+               line="393">Another set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
       </parameters>
     </function>
-    <function name="set_invert"
-              c:identifier="hb_set_invert"
-              version="0.9.10"
-              deprecated="1"
-              deprecated-version="1.6.1">
+    <function name="set_invert" c:identifier="hb_set_invert" version="3.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="436">Inverts the contents of @set.</doc>
-      <source-position filename="../src/hb-deprecated.h" line="111"/>
+           line="442">Inverts the contents of @set.</doc>
+      <source-position filename="../src/hb-set.h" line="98"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -19617,7 +19616,7 @@ attached to the specified set.</doc>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="438">A set</doc>
+               line="444">A set</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
@@ -19627,19 +19626,19 @@ attached to the specified set.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="210">Tests whether a set is empty (contains no elements).</doc>
+           line="208">Tests whether a set is empty (contains no elements).</doc>
       <source-position filename="../src/hb-set.h" line="95"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-set.cc"
-             line="216">%true if @set is empty</doc>
+             line="214">%true if @set is empty</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="212">a set.</doc>
+               line="210">a set.</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
       </parameters>
@@ -19649,26 +19648,26 @@ attached to the specified set.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="317">Tests whether @set and @other are equal (contain the same
+           line="319">Tests whether @set and @other are equal (contain the same
 elements).</doc>
-      <source-position filename="../src/hb-set.h" line="120"/>
+      <source-position filename="../src/hb-set.h" line="123"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-set.cc"
-             line="325">%true if the two sets are equal, %false otherwise.</doc>
+             line="327">%true if the two sets are equal, %false otherwise.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="319">A set</doc>
+               line="321">A set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
         <parameter name="other" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="320">Another set</doc>
+               line="322">Another set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
       </parameters>
@@ -19678,25 +19677,25 @@ elements).</doc>
               version="1.8.1">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="336">Tests whether @set is a subset of @larger_set.</doc>
-      <source-position filename="../src/hb-set.h" line="124"/>
+           line="338">Tests whether @set is a subset of @larger_set.</doc>
+      <source-position filename="../src/hb-set.h" line="127"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-set.cc"
-             line="343">%true if the @set is a subset of (or equal to) @larger_set, %false otherwise.</doc>
+             line="345">%true if the @set is a subset of (or equal to) @larger_set, %false otherwise.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="338">A set</doc>
+               line="340">A set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
         <parameter name="larger_set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="339">Another set</doc>
+               line="341">Another set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
       </parameters>
@@ -19704,21 +19703,21 @@ elements).</doc>
     <function name="set_next" c:identifier="hb_set_next" version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="500">Fetches the next element in @set that is greater than current value of @codepoint.
+           line="505">Fetches the next element in @set that is greater than current value of @codepoint.
 
 Set @codepoint to #HB_SET_VALUE_INVALID to get started.</doc>
-      <source-position filename="../src/hb-set.h" line="160"/>
+      <source-position filename="../src/hb-set.h" line="163"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-set.cc"
-             line="510">%true if there was a next value, %false otherwise</doc>
+             line="515">%true if there was a next value, %false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="502">A set</doc>
+               line="507">A set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
         <parameter name="codepoint"
@@ -19727,7 +19726,7 @@ Set @codepoint to #HB_SET_VALUE_INVALID to get started.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="503">Input = Code point to query
+               line="508">Input = Code point to query
             Output = Code point retrieved</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t*"/>
         </parameter>
@@ -19738,22 +19737,22 @@ Set @codepoint to #HB_SET_VALUE_INVALID to get started.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="542">Fetches the next consecutive range of elements in @set that
+           line="547">Fetches the next consecutive range of elements in @set that
 are greater than current value of @last.
 
 Set @last to #HB_SET_VALUE_INVALID to get started.</doc>
-      <source-position filename="../src/hb-set.h" line="170"/>
+      <source-position filename="../src/hb-set.h" line="173"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-set.cc"
-             line="554">%true if there was a next range, %false otherwise</doc>
+             line="559">%true if there was a next range, %false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="544">A set</doc>
+               line="549">A set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
         <parameter name="first"
@@ -19762,7 +19761,7 @@ Set @last to #HB_SET_VALUE_INVALID to get started.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="545">The first code point in the range</doc>
+               line="550">The first code point in the range</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t*"/>
         </parameter>
         <parameter name="last"
@@ -19771,7 +19770,7 @@ Set @last to #HB_SET_VALUE_INVALID to get started.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="546">Input = The current last code point in the range
+               line="551">Input = The current last code point in the range
         Output = The last code point in the range</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t*"/>
         </parameter>
@@ -19782,21 +19781,21 @@ Set @last to #HB_SET_VALUE_INVALID to get started.</doc>
               version="1.8.0">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="521">Fetches the previous element in @set that is lower than current value of @codepoint.
+           line="526">Fetches the previous element in @set that is lower than current value of @codepoint.
 
 Set @codepoint to #HB_SET_VALUE_INVALID to get started.</doc>
-      <source-position filename="../src/hb-set.h" line="165"/>
+      <source-position filename="../src/hb-set.h" line="168"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-set.cc"
-             line="531">%true if there was a previous value, %false otherwise</doc>
+             line="536">%true if there was a previous value, %false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="523">A set</doc>
+               line="528">A set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
         <parameter name="codepoint"
@@ -19805,7 +19804,7 @@ Set @codepoint to #HB_SET_VALUE_INVALID to get started.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="524">Input = Code point to query
+               line="529">Input = Code point to query
             Output = Code point retrieved</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t*"/>
         </parameter>
@@ -19816,22 +19815,22 @@ Set @codepoint to #HB_SET_VALUE_INVALID to get started.</doc>
               version="1.8.0">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="566">Fetches the previous consecutive range of elements in @set that
+           line="571">Fetches the previous consecutive range of elements in @set that
 are greater than current value of @last.
 
 Set @first to #HB_SET_VALUE_INVALID to get started.</doc>
-      <source-position filename="../src/hb-set.h" line="176"/>
+      <source-position filename="../src/hb-set.h" line="179"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-set.cc"
-             line="578">%true if there was a previous range, %false otherwise</doc>
+             line="583">%true if there was a previous range, %false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="568">A set</doc>
+               line="573">A set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
         <parameter name="first"
@@ -19840,7 +19839,7 @@ Set @first to #HB_SET_VALUE_INVALID to get started.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="569">Input = The current first code point in the range
+               line="574">Input = The current first code point in the range
         Output = The first code point in the range</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t*"/>
         </parameter>
@@ -19850,7 +19849,7 @@ Set @first to #HB_SET_VALUE_INVALID to get started.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="571">The last code point in the range</doc>
+               line="576">The last code point in the range</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t*"/>
         </parameter>
       </parameters>
@@ -19881,8 +19880,8 @@ Set @first to #HB_SET_VALUE_INVALID to get started.</doc>
     <function name="set_set" c:identifier="hb_set_set" version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="354">Makes the contents of @set equal to the contents of @other.</doc>
-      <source-position filename="../src/hb-set.h" line="128"/>
+           line="356">Makes the contents of @set equal to the contents of @other.</doc>
+      <source-position filename="../src/hb-set.h" line="131"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -19890,13 +19889,13 @@ Set @first to #HB_SET_VALUE_INVALID to get started.</doc>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="356">A set</doc>
+               line="358">A set</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
         <parameter name="other" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="357">Another set</doc>
+               line="359">Another set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
       </parameters>
@@ -19959,8 +19958,8 @@ Set @first to #HB_SET_VALUE_INVALID to get started.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="402">Subtracts the contents of @other from @set.</doc>
-      <source-position filename="../src/hb-set.h" line="140"/>
+           line="407">Subtracts the contents of @other from @set.</doc>
+      <source-position filename="../src/hb-set.h" line="143"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -19968,13 +19967,13 @@ Set @first to #HB_SET_VALUE_INVALID to get started.</doc>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="404">A set</doc>
+               line="409">A set</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
         <parameter name="other" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="405">Another set</doc>
+               line="410">Another set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
       </parameters>
@@ -19984,9 +19983,9 @@ Set @first to #HB_SET_VALUE_INVALID to get started.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="418">Makes @set the symmetric difference of @set
+           line="424">Makes @set the symmetric difference of @set
 and @other.</doc>
-      <source-position filename="../src/hb-set.h" line="144"/>
+      <source-position filename="../src/hb-set.h" line="147"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -19994,13 +19993,13 @@ and @other.</doc>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="420">A set</doc>
+               line="426">A set</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
         <parameter name="other" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="421">Another set</doc>
+               line="427">Another set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
       </parameters>
@@ -20021,8 +20020,8 @@ values.</doc>
     <function name="set_union" c:identifier="hb_set_union" version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-set.cc"
-           line="370">Makes @set the union of @set and @other.</doc>
-      <source-position filename="../src/hb-set.h" line="132"/>
+           line="373">Makes @set the union of @set and @other.</doc>
+      <source-position filename="../src/hb-set.h" line="135"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -20030,13 +20029,13 @@ values.</doc>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="372">A set</doc>
+               line="375">A set</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
         <parameter name="other" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-set.cc"
-               line="373">Another set</doc>
+               line="376">Another set</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
       </parameters>
@@ -21397,7 +21396,7 @@ Unicode-functions structure @ufuncs.</doc>
            filename="../src/hb-unicode.cc"
            line="463">Fetches the compatibility decomposition of a Unicode
 code point. Deprecated.</doc>
-      <source-position filename="../src/hb-deprecated.h" line="213"/>
+      <source-position filename="../src/hb-deprecated.h" line="210"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-unicode.cc"
@@ -21434,7 +21433,7 @@ code point. Deprecated.</doc>
               deprecated-version="2.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-deprecated.h"
-           line="159">Fully decompose @u to its Unicode compatibility decomposition. The codepoints of the decomposition will be written to @decomposed.
+           line="156">Fully decompose @u to its Unicode compatibility decomposition. The codepoints of the decomposition will be written to @decomposed.
 The complete length of the decomposition will be returned.
 
 If @u has no compatibility decomposition, zero should be returned.
@@ -21442,30 +21441,30 @@ If @u has no compatibility decomposition, zero should be returned.
 The Unicode standard guarantees that a buffer of length #HB_UNICODE_MAX_DECOMPOSITION_LEN codepoints will always be sufficient for any
 compatibility decomposition plus an terminating value of 0.  Consequently, @decompose must be allocated by the caller to be at least this length.  Implementations
 of this function type must ensure that they do not write past the provided array.</doc>
-      <source-position filename="../src/hb-deprecated.h" line="179"/>
+      <source-position filename="../src/hb-deprecated.h" line="176"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-deprecated.h"
-             line="175">number of codepoints in the full compatibility decomposition of @u, or 0 if no decomposition available.</doc>
+             line="172">number of codepoints in the full compatibility decomposition of @u, or 0 if no decomposition available.</doc>
         <type name="guint" c:type="unsigned int"/>
       </return-value>
       <parameters>
         <parameter name="ufuncs" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="161">a Unicode function structure</doc>
+               line="158">a Unicode function structure</doc>
           <type name="unicode_funcs_t" c:type="hb_unicode_funcs_t*"/>
         </parameter>
         <parameter name="u" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="162">codepoint to decompose</doc>
+               line="159">codepoint to decompose</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
         <parameter name="decomposed" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="163">address of codepoint array (of length #HB_UNICODE_MAX_DECOMPOSITION_LEN) to write decomposition into</doc>
+               line="160">address of codepoint array (of length #HB_UNICODE_MAX_DECOMPOSITION_LEN) to write decomposition into</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t*"/>
         </parameter>
         <parameter name="user_data"
@@ -21475,7 +21474,7 @@ of this function type must ensure that they do not write past the provided array
                    closure="3">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="164">user data pointer as passed to hb_unicode_funcs_set_decompose_compatibility_func()</doc>
+               line="161">user data pointer as passed to hb_unicode_funcs_set_decompose_compatibility_func()</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
       </parameters>
@@ -21547,8 +21546,8 @@ output parameters (if successful). The method must return an
               deprecated-version="2.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-deprecated.h"
-           line="144">Don't use. Not used by HarfBuzz.</doc>
-      <source-position filename="../src/hb-deprecated.h" line="155"/>
+           line="141">Don't use. Not used by HarfBuzz.</doc>
+      <source-position filename="../src/hb-deprecated.h" line="152"/>
       <return-value transfer-ownership="none">
         <type name="guint" c:type="unsigned int"/>
       </return-value>
@@ -21556,13 +21555,13 @@ output parameters (if successful). The method must return an
         <parameter name="ufuncs" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="146">a Unicode-function structure</doc>
+               line="143">a Unicode-function structure</doc>
           <type name="unicode_funcs_t" c:type="hb_unicode_funcs_t*"/>
         </parameter>
         <parameter name="unicode" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="147">The code point to query</doc>
+               line="144">The code point to query</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
       </parameters>
@@ -21573,8 +21572,8 @@ output parameters (if successful). The method must return an
               deprecated-version="2.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-deprecated.h"
-           line="113">A virtual method for the #hb_unicode_funcs_t structure.</doc>
-      <source-position filename="../src/hb-deprecated.h" line="123"/>
+           line="110">A virtual method for the #hb_unicode_funcs_t structure.</doc>
+      <source-position filename="../src/hb-deprecated.h" line="120"/>
       <return-value transfer-ownership="none">
         <type name="guint" c:type="unsigned int"/>
       </return-value>
@@ -21582,13 +21581,13 @@ output parameters (if successful). The method must return an
         <parameter name="ufuncs" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="115">A Unicode-functions structure</doc>
+               line="112">A Unicode-functions structure</doc>
           <type name="unicode_funcs_t" c:type="hb_unicode_funcs_t*"/>
         </parameter>
         <parameter name="unicode" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="116">The code point to query</doc>
+               line="113">The code point to query</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
         <parameter name="user_data"
@@ -21598,7 +21597,7 @@ output parameters (if successful). The method must return an
                    closure="2">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="117">User data pointer passed by the caller</doc>
+               line="114">User data pointer passed by the caller</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
       </parameters>
@@ -21903,8 +21902,8 @@ immutable.</doc>
               deprecated-version="2.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-deprecated.h"
-           line="193">Sets the implementation function for #hb_unicode_decompose_compatibility_func_t.</doc>
-      <source-position filename="../src/hb-deprecated.h" line="208"/>
+           line="190">Sets the implementation function for #hb_unicode_decompose_compatibility_func_t.</doc>
+      <source-position filename="../src/hb-deprecated.h" line="205"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -21912,7 +21911,7 @@ immutable.</doc>
         <parameter name="ufuncs" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="195">A Unicode-functions structure</doc>
+               line="192">A Unicode-functions structure</doc>
           <type name="unicode_funcs_t" c:type="hb_unicode_funcs_t*"/>
         </parameter>
         <parameter name="func"
@@ -21922,7 +21921,7 @@ immutable.</doc>
                    destroy="3">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="196">The callback function to assign</doc>
+               line="193">The callback function to assign</doc>
           <type name="unicode_decompose_compatibility_func_t"
                 c:type="hb_unicode_decompose_compatibility_func_t"/>
         </parameter>
@@ -21932,7 +21931,7 @@ immutable.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="197">Data to pass to @func</doc>
+               line="194">Data to pass to @func</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="destroy"
@@ -21942,7 +21941,7 @@ immutable.</doc>
                    scope="notified">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="198">The function to call when @user_data is not needed anymore</doc>
+               line="195">The function to call when @user_data is not needed anymore</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
       </parameters>
@@ -22003,8 +22002,8 @@ immutable.</doc>
               deprecated-version="2.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-deprecated.h"
-           line="127">Sets the implementation function for #hb_unicode_eastasian_width_func_t.</doc>
-      <source-position filename="../src/hb-deprecated.h" line="140"/>
+           line="124">Sets the implementation function for #hb_unicode_eastasian_width_func_t.</doc>
+      <source-position filename="../src/hb-deprecated.h" line="137"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -22012,7 +22011,7 @@ immutable.</doc>
         <parameter name="ufuncs" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="129">a Unicode-function structure</doc>
+               line="126">a Unicode-function structure</doc>
           <type name="unicode_funcs_t" c:type="hb_unicode_funcs_t*"/>
         </parameter>
         <parameter name="func"
@@ -22022,7 +22021,7 @@ immutable.</doc>
                    destroy="3">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="130">The callback function to assign</doc>
+               line="127">The callback function to assign</doc>
           <type name="unicode_eastasian_width_func_t"
                 c:type="hb_unicode_eastasian_width_func_t"/>
         </parameter>
@@ -22032,7 +22031,7 @@ immutable.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="131">Data to pass to @func</doc>
+               line="128">Data to pass to @func</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="destroy"
@@ -22042,7 +22041,7 @@ immutable.</doc>
                    scope="notified">
           <doc xml:space="preserve"
                filename="../src/hb-deprecated.h"
-               line="132">The function to call when @user_data is not needed anymore</doc>
+               line="129">The function to call when @user_data is not needed anymore</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
       </parameters>

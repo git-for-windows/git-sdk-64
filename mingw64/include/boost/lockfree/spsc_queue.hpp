@@ -448,6 +448,13 @@ protected:
         return max_size;
     }
 
+    ~compile_time_sized_ringbuffer(void)
+    {
+        // destroy all remaining items
+        T out;
+        while (pop(&out, 1)) {}
+    }
+
 public:
     bool push(T const & t)
     {

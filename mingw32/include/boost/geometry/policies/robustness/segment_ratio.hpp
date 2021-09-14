@@ -94,6 +94,35 @@ struct equal<Type, false>
     }
 };
 
+template
+<
+    typename Type,
+    bool IsFloatingPoint = std::is_floating_point<Type>::type::value
+>
+struct possibly_collinear {};
+
+template <typename Type>
+struct possibly_collinear<Type, true>
+{
+    template <typename Ratio, typename Threshold>
+    static inline bool apply(Ratio const& ratio, Threshold threshold)
+    {
+        return std::abs(ratio.denominator()) < threshold;
+    }
+};
+
+// Any ratio based on non-floating point (or user defined floating point)
+// is collinear if the denominator is exactly zero
+template <typename Type>
+struct possibly_collinear<Type, false>
+{
+    template <typename Ratio, typename Threshold>
+    static inline bool apply(Ratio const& ratio, Threshold)
+    {
+        return ratio.denominator() == 0;
+    }
+};
+
 }}
 
 //! Small class to keep a ratio (e.g. 1/4)
@@ -118,19 +147,63 @@ public :
         , m_approximation(0)
     {}
 
-    inline segment_ratio(const Type& nominator, const Type& denominator)
-        : m_numerator(nominator)
+    inline segment_ratio(const Type& numerator, const Type& denominator)
+        : m_numerator(numerator)
         , m_denominator(denominator)
     {
         initialize();
     }
 
+    segment_ratio(segment_ratio const&) = default;
+    segment_ratio& operator=(segment_ratio const&) = default;
+    segment_ratio(segment_ratio&&) = default;
+    segment_ratio& operator=(segment_ratio&&) = default;
+    
+    // These are needed because in intersection strategies ratios are assigned
+    // in fractions and if a user passes CalculationType then ratio Type in
+    // turns is taken from geometry coordinate_type and the one used in
+    // a strategy uses Type selected using CalculationType.
+    // See: detail::overlay::intersection_info_base
+    // and  policies::relate::segments_intersection_points
+    //      in particular segments_collinear() where ratios are assigned.
+    template<typename T> friend class segment_ratio;
+    template <typename T>
+    segment_ratio(segment_ratio<T> const& r)
+        : m_numerator(r.m_numerator)
+        , m_denominator(r.m_denominator)
+    {
+        initialize();
+    }
+    template <typename T>
+    segment_ratio& operator=(segment_ratio<T> const& r)
+    {
+        m_numerator = r.m_numerator;
+        m_denominator = r.m_denominator;
+        initialize();
+        return *this;
+    }
+    template <typename T>
+    segment_ratio(segment_ratio<T> && r)
+        : m_numerator(std::move(r.m_numerator))
+        , m_denominator(std::move(r.m_denominator))
+    {
+        initialize();
+    }
+    template <typename T>
+    segment_ratio& operator=(segment_ratio<T> && r)
+    {
+        m_numerator = std::move(r.m_numerator);
+        m_denominator = std::move(r.m_denominator);
+        initialize();
+        return *this;
+    }
+
     inline Type const& numerator() const { return m_numerator; }
     inline Type const& denominator() const { return m_denominator; }
 
-    inline void assign(const Type& nominator, const Type& denominator)
+    inline void assign(const Type& numerator, const Type& denominator)
     {
-        m_numerator = nominator;
+        m_numerator = numerator;
         m_denominator = denominator;
         initialize();
     }
@@ -196,6 +269,12 @@ public :
     inline bool close_to(thistype const& other) const
     {
         return geometry::math::abs(m_approximation - other.m_approximation) < 50;
+    }
+
+    template <typename Threshold>
+    inline bool possibly_collinear(Threshold threshold) const
+    {
+        return detail::segment_ratio::possibly_collinear<Type>::apply(*this, threshold);
     }
 
     inline bool operator< (thistype const& other) const

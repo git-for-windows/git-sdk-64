@@ -26,7 +26,6 @@
 #include <boost/interprocess/detail/config_begin.hpp>
 #include <boost/interprocess/detail/workaround.hpp>
 #include <boost/interprocess/sync/scoped_lock.hpp>
-#include <boost/interprocess/detail/posix_time_types_wrk.hpp>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
 #include <boost/interprocess/sync/interprocess_condition.hpp>
 #include <climits>
@@ -59,26 +58,45 @@ class interprocess_sharable_mutex
 
    //Exclusive locking
 
+   //!Requires: The calling thread does not own the mutex.
+   //!
    //!Effects: The calling thread tries to obtain exclusive ownership of the mutex,
    //!   and if another thread has exclusive or sharable ownership of
    //!   the mutex, it waits until it can obtain the ownership.
    //!Throws: interprocess_exception on error.
+   //! 
+   //!Note: A program may deadlock if the thread that has ownership calls 
+   //!   this function. If the implementation can detect the deadlock,
+   //!   an exception could be thrown.
    void lock();
 
+   //!Requires: The calling thread does not own the mutex.
+   //!
    //!Effects: The calling thread tries to acquire exclusive ownership of the mutex
    //!   without waiting. If no other thread has exclusive or sharable
    //!   ownership of the mutex this succeeds.
    //!Returns: If it can acquire exclusive ownership immediately returns true.
    //!   If it has to wait, returns false.
    //!Throws: interprocess_exception on error.
+   //! 
+   //!Note: A program may deadlock if the thread that has ownership calls 
+   //!   this function. If the implementation can detect the deadlock,
+   //!   an exception could be thrown.
    bool try_lock();
 
+   //!Requires: The calling thread does not own the mutex.
+   //!
    //!Effects: The calling thread tries to acquire exclusive ownership of the mutex
    //!   waiting if necessary until no other thread has exclusive or sharable
    //!   ownership of the mutex or abs_time is reached.
    //!Returns: If acquires exclusive ownership, returns true. Otherwise returns false.
    //!Throws: interprocess_exception on error.
-   bool timed_lock(const boost::posix_time::ptime &abs_time);
+   //! 
+   //!Note: A program may deadlock if the thread that has ownership calls 
+   //!   this function. If the implementation can detect the deadlock,
+   //!   an exception could be thrown.
+   template<class TimePoint>
+   bool timed_lock(const TimePoint &abs_time);
 
    //!Precondition: The thread must have exclusive ownership of the mutex.
    //!Effects: The calling thread releases the exclusive ownership of the mutex.
@@ -87,26 +105,45 @@ class interprocess_sharable_mutex
 
    //Sharable locking
 
+   //!Requires: The calling thread does not own the mutex.
+   //!
    //!Effects: The calling thread tries to obtain sharable ownership of the mutex,
    //!   and if another thread has exclusive ownership of the mutex,
    //!   waits until it can obtain the ownership.
    //!Throws: interprocess_exception on error.
+   //! 
+   //!Note: A program may deadlock if the thread that has ownership calls 
+   //!   this function. If the implementation can detect the deadlock,
+   //!   an exception could be thrown.
    void lock_sharable();
 
+   //!Requires: The calling thread does not own the mutex.
+   //!
    //!Effects: The calling thread tries to acquire sharable ownership of the mutex
    //!   without waiting. If no other thread has exclusive ownership
    //!   of the mutex this succeeds.
    //!Returns: If it can acquire sharable ownership immediately returns true. If it
    //!   has to wait, returns false.
    //!Throws: interprocess_exception on error.
+   //! 
+   //!Note: A program may deadlock if the thread that has ownership calls 
+   //!   this function. If the implementation can detect the deadlock,
+   //!   an exception could be thrown.
    bool try_lock_sharable();
 
+   //!Requires: The calling thread does not own the mutex.
+   //!
    //!Effects: The calling thread tries to acquire sharable ownership of the mutex
    //!   waiting if necessary until no other thread has exclusive
    //!   ownership of the mutex or abs_time is reached.
    //!Returns: If acquires sharable ownership, returns true. Otherwise returns false.
    //!Throws: interprocess_exception on error.
-   bool timed_lock_sharable(const boost::posix_time::ptime &abs_time);
+   //! 
+   //!Note: A program may deadlock if the thread that has ownership calls 
+   //!   this function. If the implementation can detect the deadlock,
+   //!   an exception could be thrown.
+   template<class TimePoint>
+   bool timed_lock_sharable(const TimePoint &abs_time);
 
    //!Precondition: The thread must have sharable ownership of the mutex.
    //!Effects: The calling thread releases the sharable ownership of the mutex.
@@ -214,8 +251,9 @@ inline bool interprocess_sharable_mutex::try_lock()
    return true;
 }
 
+template<class TimePoint>
 inline bool interprocess_sharable_mutex::timed_lock
-   (const boost::posix_time::ptime &abs_time)
+   (const TimePoint &abs_time)
 {
    scoped_lock_t lck(m_mut, abs_time);
    if(!lck.owns())   return false;
@@ -297,8 +335,9 @@ inline bool interprocess_sharable_mutex::try_lock_sharable()
    return true;
 }
 
+template<class TimePoint>
 inline bool interprocess_sharable_mutex::timed_lock_sharable
-   (const boost::posix_time::ptime &abs_time)
+   (const TimePoint &abs_time)
 {
    scoped_lock_t lck(m_mut, abs_time);
    if(!lck.owns())   return false;

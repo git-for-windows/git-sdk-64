@@ -1,5 +1,5 @@
 /* Proposed SG14 status_code
-(C) 2018 - 2019 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
+(C) 2018 - 2020 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
 File Created: Feb 2018
 
 
@@ -207,6 +207,9 @@ protected:
   {
   }
 
+  // Used to work around triggering a ubsan failure. Do NOT remove!
+  constexpr const status_code_domain *_domain_ptr() const noexcept { return _domain; }
+
 public:
   //! Return the status code domain.
   constexpr const status_code_domain &domain() const noexcept { return *_domain; }
@@ -214,7 +217,15 @@ public:
   BOOST_OUTCOME_SYSTEM_ERROR2_NODISCARD constexpr bool empty() const noexcept { return _domain == nullptr; }
 
   //! Return a reference to a string textually representing a code.
-  string_ref message() const noexcept { return (_domain != nullptr) ? _domain->_do_message(*this) : string_ref("(empty)"); }
+  string_ref message() const noexcept
+  {
+    // Avoid MSVC's buggy ternary operator for expensive to destruct things
+    if(_domain != nullptr)
+    {
+      return _domain->_do_message(*this);
+    }
+    return string_ref("(empty)");
+  }
   //! True if code means success.
   bool success() const noexcept { return (_domain != nullptr) ? !_domain->_do_failure(*this) : false; }
   //! True if code means failure.
@@ -298,9 +309,9 @@ namespace detail
 
 #if __cplusplus >= 201400 || _MSC_VER >= 1910 /* VS2017 */
     //! Return a reference to the `value_type`.
-    constexpr value_type &value() & noexcept { return this->_value; }
+    constexpr value_type &value() &noexcept { return this->_value; }
     //! Return a reference to the `value_type`.
-    constexpr value_type &&value() && noexcept { return static_cast<value_type &&>(this->_value); }
+    constexpr value_type &&value() &&noexcept { return static_cast<value_type &&>(this->_value); }
 #endif
     //! Return a reference to the `value_type`.
     constexpr const value_type &value() const &noexcept { return this->_value; }
@@ -442,7 +453,15 @@ public:
   }
 
   //! Return a reference to a string textually representing a code.
-  string_ref message() const noexcept { return this->_domain ? string_ref(this->domain()._do_message(*this)) : string_ref("(empty)"); }
+  string_ref message() const noexcept
+  {
+    // Avoid MSVC's buggy ternary operator for expensive to destruct things
+    if(this->_domain != nullptr)
+    {
+      return string_ref(this->domain()._do_message(*this));
+    }
+    return string_ref("(empty)");
+  }
 };
 
 namespace traits
@@ -514,14 +533,14 @@ public:
                                     && detail::type_erasure_is_safe<value_type, typename DomainType::value_type>::value,
                                     bool>::type = true>
   constexpr status_code(const status_code<DomainType> &v) noexcept  // NOLINT
-      : _base(typename _base::_value_type_constructor{}, &v.domain(), detail::erasure_cast<value_type>(v.value()))
+      : _base(typename _base::_value_type_constructor{}, v._domain_ptr(), detail::erasure_cast<value_type>(v.value()))
   {
   }
   //! Implicit move construction from any other status code if its value type is trivially copyable or move bitcopying and it would fit into our storage
   template <class DomainType,  //
             typename std::enable_if<detail::type_erasure_is_safe<value_type, typename DomainType::value_type>::value, bool>::type = true>
   BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR14 status_code(status_code<DomainType> &&v) noexcept  // NOLINT
-      : _base(typename _base::_value_type_constructor{}, &v.domain(), detail::erasure_cast<value_type>(v.value()))
+      : _base(typename _base::_value_type_constructor{}, v._domain_ptr(), detail::erasure_cast<value_type>(v.value()))
   {
     v._domain = nullptr;
   }

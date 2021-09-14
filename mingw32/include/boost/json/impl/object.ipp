@@ -13,6 +13,7 @@
 #include <boost/json/object.hpp>
 #include <boost/json/detail/digest.hpp>
 #include <boost/json/detail/except.hpp>
+#include <boost/json/detail/hash_combine.hpp>
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
@@ -400,7 +401,7 @@ insert(
     if(init.size() > max_size() - n0)
         detail::throw_length_error(
             "object too large",
-            BOOST_CURRENT_LOCATION);
+            BOOST_JSON_SOURCE_POS);
     reserve(n0 + init.size());
     revert_insert r(*this);
     if(t_->is_small())
@@ -767,7 +768,7 @@ growth(
     if(new_size > max_size())
         detail::throw_length_error(
             "object too large",
-            BOOST_CURRENT_LOCATION);
+            BOOST_JSON_SOURCE_POS);
     std::size_t const old = capacity();
     if(old > max_size() - old / 2)
         return new_size;
@@ -821,5 +822,30 @@ destroy(
 }
 
 BOOST_JSON_NS_END
+
+//----------------------------------------------------------
+//
+// std::hash specialization
+//
+//----------------------------------------------------------
+
+std::size_t
+std::hash<::boost::json::object>::operator()(
+    ::boost::json::object const& jo) const noexcept
+{
+    std::size_t seed = jo.size();
+    for (const auto& kv_pair : jo) {
+        auto const hk = ::boost::json::detail::digest(
+            kv_pair.key().data(), kv_pair.key().size(), 0);
+        auto const hkv = ::boost::json::detail::hash_combine(
+            hk,
+            std::hash<::boost::json::value>{}(kv_pair.value()));
+        seed = ::boost::json::detail::hash_combine_commutative(seed, hkv);
+    }
+    return seed;
+}
+
+//----------------------------------------------------------
+
 
 #endif

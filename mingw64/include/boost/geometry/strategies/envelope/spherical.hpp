@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2020, Oracle and/or its affiliates.
+// Copyright (c) 2020-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -19,12 +19,9 @@
 #include <boost/geometry/strategy/spherical/envelope_multipoint.hpp>
 #include <boost/geometry/strategy/spherical/envelope_segment.hpp>
 
-#include <boost/geometry/strategy/spherical/expand_box.hpp> // TEMP
-#include <boost/geometry/strategy/spherical/expand_point.hpp>
-#include <boost/geometry/strategy/spherical/expand_segment.hpp> // TEMP
-
 #include <boost/geometry/strategies/detail.hpp>
 #include <boost/geometry/strategies/envelope/services.hpp>
+#include <boost/geometry/strategies/expand/spherical.hpp>
 
 
 namespace boost { namespace geometry
@@ -33,15 +30,21 @@ namespace boost { namespace geometry
 namespace strategies { namespace envelope
 {
 
-template
-<
-    typename CalculationType = void
->
-class spherical : strategies::detail::spherical_base<void>
+#ifndef DOXYGEN_NO_DETAIL
+namespace detail
 {
-    using base_t = strategies::detail::spherical_base<void>;
 
-public:
+template <typename RadiusTypeOrSphere, typename CalculationType>
+struct spherical
+    : strategies::expand::detail::spherical<RadiusTypeOrSphere, CalculationType>
+{
+    spherical() = default;
+
+    template <typename RadiusOrSphere>
+    explicit spherical(RadiusOrSphere const& radius_or_sphere)
+        : strategies::expand::detail::spherical<RadiusTypeOrSphere, CalculationType>(radius_or_sphere)
+    {}
+
     template <typename Geometry, typename Box>
     static auto envelope(Geometry const&, Box const&,
                          typename util::enable_if_point_t<Geometry> * = nullptr)
@@ -76,29 +79,17 @@ public:
     {
         return strategy::envelope::spherical<CalculationType>();
     }
-
-    template <typename Box, typename Geometry>
-    static auto expand(Box const&, Geometry const&,
-                       typename util::enable_if_point_t<Geometry> * = nullptr)
-    {
-        return strategy::expand::spherical_point();
-    }
-
-    // TEMP
-    template <typename Box, typename Geometry>
-    static auto expand(Box const&, Geometry const&,
-                       typename util::enable_if_box_t<Geometry> * = nullptr)
-    {
-        return strategy::expand::spherical_box();
-    }
-
-    template <typename Box, typename Geometry>
-    static auto expand(Box const&, Geometry const&,
-                       typename util::enable_if_segment_t<Geometry> * = nullptr)
-    {
-        return strategy::expand::spherical_segment<CalculationType>();
-    }
 };
+
+
+} // namespace detail
+#endif // DOXYGEN_NO_DETAIL
+
+
+template <typename CalculationType = void>
+class spherical
+    : public strategies::envelope::detail::spherical<void, CalculationType>
+{};
 
 
 namespace services

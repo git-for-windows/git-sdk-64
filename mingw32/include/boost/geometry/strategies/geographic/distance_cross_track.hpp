@@ -1,6 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2016-2020, Oracle and/or its affiliates.
+// Copyright (c) 2016-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -89,32 +89,7 @@ template
 >
 class geographic_cross_track
 {
-public :
-    typedef within::spherical_point_point equals_point_point_strategy_type;
-
-    typedef intersection::geographic_segments
-        <
-            FormulaPolicy,
-            strategy::default_order<FormulaPolicy>::value,
-            Spheroid,
-            CalculationType
-        > relate_segment_segment_strategy_type;
-
-    inline relate_segment_segment_strategy_type get_relate_segment_segment_strategy() const
-    {
-        return relate_segment_segment_strategy_type(m_spheroid);
-    }
-
-    typedef within::geographic_winding
-        <
-            void, void, FormulaPolicy, Spheroid, CalculationType
-        > point_in_geometry_strategy_type;
-
-    inline point_in_geometry_strategy_type get_point_in_geometry_strategy() const
-    {
-        return point_in_geometry_strategy_type(m_spheroid);
-    }
-
+public:
     template <typename Point, typename PointOfSegment>
     struct return_type
         : promote_floating_point
@@ -128,7 +103,9 @@ public :
           >
     {};
 
-    explicit geographic_cross_track(Spheroid const& spheroid = Spheroid())
+    geographic_cross_track() = default;
+
+    explicit geographic_cross_track(Spheroid const& spheroid)
         : m_spheroid(spheroid)
     {}
 
@@ -765,9 +742,9 @@ struct tag<geographic_cross_track<FormulaPolicy, Spheroid> >
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType
 >
 struct tag<geographic_cross_track<FormulaPolicy, Spheroid, CalculationType> >
 {
@@ -776,12 +753,13 @@ struct tag<geographic_cross_track<FormulaPolicy, Spheroid, CalculationType> >
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType,
-        bool Bisection
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType,
+    bool Bisection,
+    bool EnableClosestPoint
 >
-struct tag<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection> >
+struct tag<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint> >
 {
     typedef strategy_tag_distance_point_segment type;
 };
@@ -794,10 +772,10 @@ struct return_type<geographic_cross_track<FormulaPolicy>, P, PS>
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename P,
-        typename PS
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename P,
+    typename PS
 >
 struct return_type<geographic_cross_track<FormulaPolicy, Spheroid>, P, PS>
     : geographic_cross_track<FormulaPolicy, Spheroid>::template return_type<P, PS>
@@ -805,11 +783,11 @@ struct return_type<geographic_cross_track<FormulaPolicy, Spheroid>, P, PS>
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType,
-        typename P,
-        typename PS
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType,
+    typename P,
+    typename PS
 >
 struct return_type<geographic_cross_track<FormulaPolicy, Spheroid, CalculationType>, P, PS>
     : geographic_cross_track<FormulaPolicy, Spheroid, CalculationType>::template return_type<P, PS>
@@ -817,23 +795,24 @@ struct return_type<geographic_cross_track<FormulaPolicy, Spheroid, CalculationTy
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType,
-        bool Bisection,
-        typename P,
-        typename PS
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType,
+    bool Bisection,
+    bool EnableClosestPoint,
+    typename P,
+    typename PS
 >
-struct return_type<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection>, P, PS>
-    : detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection>::template return_type<P, PS>
+struct return_type<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint>, P, PS>
+    : detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint>::template return_type<P, PS>
 {};
 
 //comparable types
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType
 >
 struct comparable_type<geographic_cross_track<FormulaPolicy, Spheroid, CalculationType> >
 {
@@ -846,24 +825,25 @@ struct comparable_type<geographic_cross_track<FormulaPolicy, Spheroid, Calculati
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType,
-        bool Bisection
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType,
+    bool Bisection,
+    bool EnableClosestPoint
 >
-struct comparable_type<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection> >
+struct comparable_type<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint> >
 {
     typedef detail::geographic_cross_track
         <
-            FormulaPolicy, Spheroid, CalculationType, Bisection
+            FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint
         >  type;
 };
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType
 >
 struct get_comparable<geographic_cross_track<FormulaPolicy, Spheroid, CalculationType> >
 {
@@ -877,43 +857,22 @@ public :
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType,
-        bool Bisection
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType,
+    bool Bisection,
+    bool EnableClosestPoint
 >
-struct get_comparable<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection> >
+struct get_comparable<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint> >
 {
 public :
-    static inline detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection>
-    apply(detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection> const& strategy)
+    static inline detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint>
+    apply(detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint> const& strategy)
     {
         return strategy;
     }
 };
 
-
-template
-<
-    typename FormulaPolicy,
-    typename P,
-    typename PS
->
-struct result_from_distance<geographic_cross_track<FormulaPolicy>, P, PS>
-{
-private :
-    typedef typename geographic_cross_track
-        <
-            FormulaPolicy
-        >::template return_type<P, PS>::type return_type;
-public :
-    template <typename T>
-    static inline return_type
-    apply(geographic_cross_track<FormulaPolicy> const& , T const& distance)
-    {
-        return distance;
-    }
-};
 
 template
 <
@@ -934,6 +893,32 @@ public :
     template <typename T>
     static inline return_type
     apply(geographic_cross_track<FormulaPolicy, Spheroid, CalculationType> const& , T const& distance)
+    {
+        return distance;
+    }
+};
+
+template
+<
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType,
+    bool Bisection,
+    bool EnableClosestPoint,
+    typename P,
+    typename PS
+>
+struct result_from_distance<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint>, P, PS>
+{
+private :
+    typedef typename detail::geographic_cross_track
+        <
+            FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint
+        >::template return_type<P, PS>::type return_type;
+public :
+    template <typename T>
+    static inline return_type
+    apply(detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint> const& , T const& distance)
     {
         return distance;
     }

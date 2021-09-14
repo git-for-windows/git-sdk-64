@@ -109,7 +109,6 @@ b4_percent_define_default([[api.filename.type]], [[const std::string]])
 # Make it a warning for those who used betas of Bison 3.0.
 b4_percent_define_default([[api.namespace]], m4_defn([b4_prefix]))
 
-b4_percent_define_default([[global_tokens_and_yystype]], [[false]])
 b4_percent_define_default([[define_location_comparison]],
                           [m4_if(b4_percent_define_get([[filename_type]]),
                                  [std::string], [[true]], [[false]])])
@@ -193,7 +192,7 @@ m4_define([b4_declare_symbol_enum],
 [[enum symbol_kind_type
       {
         YYNTOKENS = ]b4_tokens_number[, ///< Number of tokens.
-        ]b4_symbol(-2, kind_base)[ = -2,
+        ]b4_symbol(empty, kind_base)[ = -2,
 ]b4_symbol_foreach([      b4_symbol_enum])dnl
 [      };]])
 
@@ -207,16 +206,16 @@ m4_define([b4_declare_symbol_enum],
 
 # b4_value_type_declare
 # ---------------------
-# Declare semantic_type.
+# Declare value_type.
 m4_define([b4_value_type_declare],
 [b4_value_type_setup[]dnl
 [    /// Symbol semantic values.
 ]m4_bmatch(b4_percent_define_get_kind([[api.value.type]]),
 [code],
-[[    typedef ]b4_percent_define_get([[api.value.type]])[ semantic_type;]],
+[[    typedef ]b4_percent_define_get([[api.value.type]])[ value_type;]],
 [m4_bmatch(b4_percent_define_get([[api.value.type]]),
 [union\|union-directive],
-[[    union semantic_type
+[[    union value_type
     {
 ]b4_user_union_members[
     };]])])dnl
@@ -228,11 +227,16 @@ m4_define([b4_value_type_declare],
 # Define the public types: token, semantic value, location, and so forth.
 # Depending on %define token_lex, may be output in the header or source file.
 m4_define([b4_public_types_declare],
-[[#ifndef ]b4_api_PREFIX[STYPE
-]b4_value_type_declare[
+[[#ifdef ]b4_api_PREFIX[STYPE
+# ifdef __GNUC__
+#  pragma GCC message "bison: do not #define ]b4_api_PREFIX[STYPE in C++, use %define api.value.type"
+# endif
+    typedef ]b4_api_PREFIX[STYPE value_type;
 #else
-    typedef ]b4_api_PREFIX[STYPE semantic_type;
-#endif]b4_locations_if([
+]b4_value_type_declare[
+#endif
+    /// Backward compatibility (Bison 3.8).
+    typedef value_type semantic_type;]b4_locations_if([
     /// Symbol locations.
     typedef b4_percent_define_get([[api.location.type]],
                                   [[location]]) location_type;])[
@@ -330,7 +334,7 @@ m4_define([b4_symbol_type_define],
 
       /// Constructor for symbols with semantic value.
       basic_symbol (typename Base::kind_type t,
-                    YY_RVREF (semantic_type) v]b4_locations_if([,
+                    YY_RVREF (value_type) v]b4_locations_if([,
                     YY_RVREF (location_type) l])[);
 ]])[
       /// Destroy the symbol.
@@ -391,7 +395,7 @@ m4_define([b4_symbol_type_define],
       void move (basic_symbol& s);
 
       /// The semantic value.
-      semantic_type value;]b4_locations_if([
+      value_type value;]b4_locations_if([
 
       /// The location.
       location_type location;])[
@@ -454,7 +458,7 @@ m4_define([b4_symbol_type_define],
       symbol_type () {}
 
       /// Constructor for valueless symbols, and symbols from each type.
-]b4_type_foreach([_b4_token_constructor_define])dnl
+]b4_type_foreach([_b4_symbol_constructor_define])dnl
     ])[};
 ]])
 
@@ -488,7 +492,7 @@ m4_define([b4_public_types_define],
   template <typename Base>
   ]b4_parser_class[::basic_symbol<Base>::basic_symbol (]b4_join(
           [typename Base::kind_type t],
-          [YY_RVREF (semantic_type) v],
+          [YY_RVREF (value_type) v],
           b4_locations_if([YY_RVREF (location_type) l]))[)
     : Base (t)
     , value (]b4_variant_if([], [YY_MOVE (v)])[)]b4_locations_if([
@@ -508,7 +512,7 @@ m4_define([b4_public_types_define],
   bool
   ]b4_parser_class[::basic_symbol<Base>::empty () const YY_NOEXCEPT
   {
-    return this->kind () == ]b4_symbol(-2, kind)[;
+    return this->kind () == ]b4_symbol(empty, kind)[;
   }
 
   template <typename Base>
@@ -524,7 +528,7 @@ m4_define([b4_public_types_define],
 
   // by_kind.
   ]b4_inline([$1])b4_parser_class[::by_kind::by_kind ()
-    : kind_ (]b4_symbol(-2, kind)[)
+    : kind_ (]b4_symbol(empty, kind)[)
   {}
 
 #if 201103L <= YY_CPLUSPLUS
@@ -546,7 +550,7 @@ m4_define([b4_public_types_define],
   ]b4_inline([$1])[void
   ]b4_parser_class[::by_kind::clear () YY_NOEXCEPT
   {
-    kind_ = ]b4_symbol(-2, kind)[;
+    kind_ = ]b4_symbol(empty, kind)[;
   }
 
   ]b4_inline([$1])[void
@@ -572,7 +576,7 @@ m4_define([b4_public_types_define],
 
 # b4_token_constructor_define
 # ----------------------------
-# Define symbol constructors for all the value types.
+# Define make_FOO for all the token kinds.
 # Use at class-level.  Redefined in variant.hh.
 m4_define([b4_token_constructor_define], [])
 
@@ -601,7 +605,7 @@ m4_define([b4_yytranslate_define],
     if (t <= 0)
       return symbol_kind::]b4_symbol_prefix[YYEOF;
     else if (t <= code_max)
-      return YY_CAST (symbol_kind_type, translate_table[t]);
+      return static_cast <symbol_kind_type> (translate_table[t]);
     else
       return symbol_kind::]b4_symbol_prefix[YYUNDEF;]])[
   }

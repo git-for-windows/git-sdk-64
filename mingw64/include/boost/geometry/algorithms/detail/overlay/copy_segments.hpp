@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2014 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2014-2020.
-// Modifications copyright (c) 2014-2020 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014-2021.
+// Modifications copyright (c) 2014-2021 Oracle and/or its affiliates.
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -41,8 +41,7 @@
 
 #include <boost/geometry/util/range.hpp>
 
-#include <boost/geometry/views/closeable_view.hpp>
-#include <boost/geometry/views/reversible_view.hpp>
+#include <boost/geometry/views/detail/closed_clockwise_view.hpp>
 
 
 namespace boost { namespace geometry
@@ -61,35 +60,28 @@ struct copy_segments_ring
     <
         typename Ring,
         typename SegmentIdentifier,
-        typename SideStrategy,
+        typename Strategy,
         typename RobustPolicy,
         typename RangeOut
     >
     static inline void apply(Ring const& ring,
             SegmentIdentifier const& seg_id,
             signed_size_type to_index,
-            SideStrategy const& strategy,
+            Strategy const& strategy,
             RobustPolicy const& robust_policy,
             RangeOut& current_output)
     {
-        typedef typename closeable_view
-        <
-            Ring const,
-            closure<Ring>::value
-        >::type cview_type;
+        using view_type = detail::closed_clockwise_view
+            <
+                Ring const,
+                closure<Ring>::value,
+                Reverse ? counterclockwise : clockwise
+            >;
 
-        typedef typename reversible_view
-        <
-            cview_type const,
-            Reverse ? iterate_reverse : iterate_forward
-        >::type rview_type;
+        using iterator = typename boost::range_iterator<view_type const>::type;
+        using ec_iterator = geometry::ever_circling_iterator<iterator>;
 
-        typedef typename boost::range_iterator<rview_type const>::type iterator;
-        typedef geometry::ever_circling_iterator<iterator> ec_iterator;
-
-
-        cview_type cview(ring);
-        rview_type view(cview);
+        view_type view(ring);
 
         // The problem: sometimes we want to from "3" to "2"
         // -> end = "3" -> end == begin
@@ -125,10 +117,10 @@ class copy_segments_linestring
 {
 private:
     // remove spikes
-    template <typename RangeOut, typename Point, typename SideStrategy, typename RobustPolicy>
+    template <typename RangeOut, typename Point, typename Strategy, typename RobustPolicy>
     static inline void append_to_output(RangeOut& current_output,
                                         Point const& point,
-                                        SideStrategy const& strategy,
+                                        Strategy const& strategy,
                                         RobustPolicy const& robust_policy,
                                         std::true_type const&)
     {
@@ -138,14 +130,14 @@ private:
     }
 
     // keep spikes
-    template <typename RangeOut, typename Point, typename SideStrategy, typename RobustPolicy>
+    template <typename RangeOut, typename Point, typename Strategy, typename RobustPolicy>
     static inline void append_to_output(RangeOut& current_output,
                                         Point const& point,
-                                        SideStrategy const& strategy,
+                                        Strategy const& strategy,
                                         RobustPolicy const&,
                                         std::false_type const&)
     {
-        detail::overlay::append_no_duplicates(current_output, point, strategy.get_equals_point_point_strategy());
+        detail::overlay::append_no_duplicates(current_output, point, strategy);
     }
 
 public:

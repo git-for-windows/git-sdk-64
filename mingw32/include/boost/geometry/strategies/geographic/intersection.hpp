@@ -2,7 +2,7 @@
 
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// Copyright (c) 2016-2020, Oracle and/or its affiliates.
+// Copyright (c) 2016-2021, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -72,137 +72,13 @@ namespace strategy { namespace intersection
 template
 <
     typename FormulaPolicy = strategy::andoyer,
-    unsigned int Order = strategy::default_order<FormulaPolicy>::value,
+    std::size_t Order = strategy::default_order<FormulaPolicy>::value,
     typename Spheroid = srs::spheroid<double>,
     typename CalculationType = void
 >
 struct geographic_segments
 {
     typedef geographic_tag cs_tag;
-
-    typedef side::geographic
-        <
-            FormulaPolicy, Spheroid, CalculationType
-        > side_strategy_type;
-
-    inline side_strategy_type get_side_strategy() const
-    {
-        return side_strategy_type(m_spheroid);
-    }
-
-    template <typename Geometry1, typename Geometry2>
-    struct point_in_geometry_strategy
-    {
-        typedef strategy::within::geographic_winding
-            <
-                typename point_type<Geometry1>::type,
-                typename point_type<Geometry2>::type,
-                FormulaPolicy,
-                Spheroid,
-                CalculationType
-            > type;
-    };
-
-    template <typename Geometry1, typename Geometry2>
-    inline typename point_in_geometry_strategy<Geometry1, Geometry2>::type
-        get_point_in_geometry_strategy() const
-    {
-        typedef typename point_in_geometry_strategy
-            <
-                Geometry1, Geometry2
-            >::type strategy_type;
-        return strategy_type(m_spheroid);
-    }
-
-    template <typename Geometry>
-    struct area_strategy
-    {
-        typedef area::geographic
-            <
-                FormulaPolicy,
-                Order,
-                Spheroid,
-                CalculationType
-            > type;
-    };
-
-    template <typename Geometry>
-    inline typename area_strategy<Geometry>::type get_area_strategy() const
-    {
-        typedef typename area_strategy<Geometry>::type strategy_type;
-        return strategy_type(m_spheroid);
-    }
-
-    template <typename Geometry>
-    struct distance_strategy
-    {
-        typedef distance::geographic
-            <
-                FormulaPolicy,
-                Spheroid,
-                CalculationType
-            > type;
-    };
-
-    template <typename Geometry>
-    inline typename distance_strategy<Geometry>::type get_distance_strategy() const
-    {
-        typedef typename distance_strategy<Geometry>::type strategy_type;
-        return strategy_type(m_spheroid);
-    }
-
-    typedef envelope::geographic<FormulaPolicy, Spheroid, CalculationType>
-        envelope_strategy_type;
-
-    inline envelope_strategy_type get_envelope_strategy() const
-    {
-        return envelope_strategy_type(m_spheroid);
-    }
-
-    typedef expand::geographic_segment<FormulaPolicy, Spheroid, CalculationType>
-        expand_strategy_type;
-
-    inline expand_strategy_type get_expand_strategy() const
-    {
-        return expand_strategy_type(m_spheroid);
-    }
-
-    typedef within::spherical_point_point point_in_point_strategy_type;
-
-    static inline point_in_point_strategy_type get_point_in_point_strategy()
-    {
-        return point_in_point_strategy_type();
-    }
-
-    typedef within::spherical_point_point equals_point_point_strategy_type;
-
-    static inline equals_point_point_strategy_type get_equals_point_point_strategy()
-    {
-        return equals_point_point_strategy_type();
-    }
-
-    typedef disjoint::spherical_box_box disjoint_box_box_strategy_type;
-
-    static inline disjoint_box_box_strategy_type get_disjoint_box_box_strategy()
-    {
-        return disjoint_box_box_strategy_type();
-    }
-
-    typedef disjoint::segment_box_geographic
-        <
-            FormulaPolicy, Spheroid, CalculationType
-        > disjoint_segment_box_strategy_type;
-
-    inline disjoint_segment_box_strategy_type get_disjoint_segment_box_strategy() const
-    {
-        return disjoint_segment_box_strategy_type(m_spheroid);
-    }
-
-    typedef covered_by::spherical_point_box disjoint_point_box_strategy_type;
-    typedef covered_by::spherical_point_box covered_by_point_box_strategy_type;
-    typedef within::spherical_point_box within_point_box_strategy_type;
-    typedef envelope::spherical_box envelope_box_strategy_type;
-    typedef expand::spherical_box expand_box_strategy_type;
 
     enum intersection_point_flag { ipi_inters = 0, ipi_at_a1, ipi_at_a2, ipi_at_b1, ipi_at_b2 };
 
@@ -246,6 +122,11 @@ struct geographic_segments
     explicit geographic_segments(Spheroid const& spheroid = Spheroid())
         : m_spheroid(spheroid)
     {}
+
+    Spheroid model() const
+    {
+        return m_spheroid;
+    }
 
     // Relate segments a and b
     template
@@ -992,8 +873,7 @@ private:
     template <typename Point1, typename Point2>
     static inline bool equals_point_point(Point1 const& point1, Point2 const& point2)
     {
-        return detail::equals::equals_point_point(point1, point2,
-                                                  point_in_point_strategy_type());
+        return strategy::within::spherical_point_point::apply(point1, point2);
     }
 
 private:

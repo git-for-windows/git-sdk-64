@@ -17,7 +17,7 @@ namespace nowide {
     ///
     /// \brief Namespace that holds basic operations on UTF encoded sequences
     ///
-    /// All functions defined in this namespace do not require linking with Boost.Nowide library
+    /// All functions defined in this namespace do not require linking with Boost.Nowide library.
     /// Extracted from Boost.Locale
     ///
     namespace utf {
@@ -235,14 +235,14 @@ namespace nowide {
                     c = (c << 6) | (tmp & 0x3F);
                 }
 
-                // Check code point validity: no surrogates and
-                // valid range
-                if(BOOST_UNLIKELY(!is_valid_codepoint(c)))
+                // Check code point validity:
+                // - no surrogates and valid range
+                // - most compact representation
+                if(BOOST_UNLIKELY(!is_valid_codepoint(c)) || BOOST_UNLIKELY(width(c) != trail_size + 1))
+                {
+                    p -= trail_size;
                     return illegal;
-
-                // make sure it is the most compact representation
-                if(BOOST_UNLIKELY(width(c) != trail_size + 1))
-                    return illegal;
+                }
 
                 return c;
             }
@@ -307,12 +307,19 @@ namespace nowide {
             using char_type = CharType;
 
             // See RFC 2781
+            static bool is_single_codepoint(uint16_t x)
+            {
+                // Ranges [U+0000, 0+D7FF], [U+E000, U+FFFF] are numerically equal in UTF-16
+                return x <= 0xD7FF || x >= 0xE000;
+            }
             static bool is_first_surrogate(uint16_t x)
             {
+                // Range [U+D800, 0+DBFF]: High surrogate
                 return 0xD800 <= x && x <= 0xDBFF;
             }
             static bool is_second_surrogate(uint16_t x)
             {
+                // Range [U+DC00, 0+DFFF]: Low surrogate
                 return 0xDC00 <= x && x <= 0xDFFF;
             }
             static code_point combine_surrogate(uint16_t w1, uint16_t w2)
@@ -327,16 +334,12 @@ namespace nowide {
                     return -1;
                 return 0;
             }
-            ///
-            /// Returns true if c is trail code unit, always false for UTF-32
-            ///
+            /// Return true if c is trail code unit, always false for UTF-32
             static bool is_trail(char_type c)
             {
                 return is_second_surrogate(c);
             }
-            ///
-            /// Returns true if c is lead code unit, always true of UTF-32
-            ///
+            /// Return true if c is lead code unit, always true of UTF-32
             static bool is_lead(char_type c)
             {
                 return !is_second_surrogate(c);
@@ -348,16 +351,17 @@ namespace nowide {
                 if(BOOST_UNLIKELY(current == last))
                     return incomplete;
                 uint16_t w1 = *current++;
-                if(BOOST_LIKELY(w1 < 0xD800 || 0xDFFF < w1))
+                if(BOOST_LIKELY(is_single_codepoint(w1)))
                 {
                     return w1;
                 }
-                if(w1 > 0xDBFF)
+                // Now it's either a high or a low surrogate, the latter is invalid
+                if(w1 >= 0xDC00)
                     return illegal;
                 if(current == last)
                     return incomplete;
                 uint16_t w2 = *current++;
-                if(w2 < 0xDC00 || 0xDFFF < w2)
+                if(!is_second_surrogate(w2))
                     return illegal;
                 return combine_surrogate(w1, w2);
             }
@@ -365,7 +369,7 @@ namespace nowide {
             static code_point decode_valid(It& current)
             {
                 uint16_t w1 = *current++;
-                if(BOOST_LIKELY(w1 < 0xD800 || 0xDFFF < w1))
+                if(BOOST_LIKELY(is_single_codepoint(w1)))
                 {
                     return w1;
                 }
@@ -440,7 +444,6 @@ namespace nowide {
                 *out++ = static_cast<char_type>(u);
                 return out;
             }
-
         }; // utf32
 
 #endif

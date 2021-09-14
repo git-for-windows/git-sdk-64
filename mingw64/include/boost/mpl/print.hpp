@@ -55,15 +55,16 @@ struct print
     enum { n = sizeof(T) + -1 };
 #elif defined(__MWERKS__)
     void f(int);
-#elif defined(__EDG_VERSION__)
-    enum { n = aux::dependent_unsigned<T>::value > -1 };
-#elif defined(BOOST_GCC)
-    enum { n1 };
-    enum { n2 };
-    enum { n = n1 != n2 };
-#else
-    enum { n = sizeof(T) > -1 };
-#endif
+#else 
+    enum {
+        n =
+# if defined(__EDG_VERSION__)
+           aux::dependent_unsigned<T>::value > -1
+# else 
+           sizeof(T) > -1
+# endif 
+        };
+#endif 
 };
 
 #if defined(BOOST_MSVC)

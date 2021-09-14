@@ -18,8 +18,8 @@
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 %skeleton "lalr1.cc" // -*- C++ -*-
-%require "3.7.6"
-%defines
+%require "3.8.1"
+%header
 
 %define api.token.raw
 

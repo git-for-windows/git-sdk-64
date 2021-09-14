@@ -1,6 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014-2020, Oracle and/or its affiliates.
+// Copyright (c) 2014-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -33,21 +33,16 @@ namespace boost { namespace geometry
 namespace detail { namespace is_valid
 {
 
-template <typename Range, closure_selector Closure, typename CSTag>
+template <typename Range>
 struct has_duplicates
 {
-    template <typename VisitPolicy>
-    static inline bool apply(Range const& range, VisitPolicy& visitor)
+    template <typename VisitPolicy, typename Strategy>
+    static inline bool apply(Range const& range, VisitPolicy& visitor,
+                             Strategy const& )
     {
         boost::ignore_unused(visitor);
 
-        typedef typename closeable_view<Range const, Closure>::type view_type;
-        typedef typename boost::range_const_iterator
-            <
-                view_type const
-            >::type const_iterator;
-
-        view_type view(range);
+        detail::closed_view<Range const> const view(range);
 
         if ( boost::size(view) < 2 )
         {
@@ -58,13 +53,13 @@ struct has_duplicates
             <
                 typename boost::range_value<Range>::type,
                 -1,
-                CSTag
+                typename Strategy::cs_tag
             > equal;
 
-        const_iterator it = boost::const_begin(view);
-        const_iterator next = it;
-        ++next;
-        for (; next != boost::const_end(view); ++it, ++next)
+        auto it = boost::begin(view);
+        auto const end = boost::end(view);
+        auto next = it;
+        for (++next; next != end; ++it, ++next)
         {
             if ( equal(*it, *next) )
             {

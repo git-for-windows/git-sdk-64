@@ -5,8 +5,8 @@
 // Copyright (c) 2009-2014 Mateusz Loskot, London, UK.
 // Copyright (c) 2013-2014 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2013-2020.
-// Modifications copyright (c) 2013-2020, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2021.
+// Modifications copyright (c) 2013-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
@@ -74,7 +74,7 @@ struct disjoint_no_intersections_policy
         point1_type p;
         geometry::point_on_border(p, g1);
 
-        return !geometry::covered_by(p, g2, strategy);
+        return ! geometry::covered_by(p, g2, strategy);
     }
 };
 
@@ -120,9 +120,7 @@ struct disjoint_linear_areal
             return false;
         }
 
-        return NoIntersectionsPolicy
-                ::apply(g1, g2,
-                        strategy.template get_point_in_geometry_strategy<Geometry1, Geometry2>());
+        return NoIntersectionsPolicy::apply(g1, g2, strategy);
     }
 };
 
@@ -156,10 +154,7 @@ private:
             <
                 Segment,
                 Strategy,
-                disjoint_range_segment_or_box
-                    <
-                        ring_type, closure<ring_type>::value, Segment
-                    >
+                disjoint_range_segment_or_box<ring_type, Segment>
             > unary_predicate_type;
                 
         return check_iterator_range
@@ -177,17 +172,16 @@ public:
                              Polygon const& polygon,
                              IntersectionStrategy const& strategy)
     {
-        typedef typename geometry::ring_type<Polygon>::type ring;
-
-        if ( !disjoint_range_segment_or_box
-                 <
-                     ring, closure<Polygon>::value, Segment
-                 >::apply(geometry::exterior_ring(polygon), segment, strategy) )
+        if (! disjoint_range_segment_or_box
+                <
+                    typename geometry::ring_type<Polygon>::type,
+                    Segment
+                >::apply(geometry::exterior_ring(polygon), segment, strategy))
         {
             return false;
         }
 
-        if ( !check_interior_rings(geometry::interior_rings(polygon), segment, strategy) )
+        if (! check_interior_rings(geometry::interior_rings(polygon), segment, strategy))
         {
             return false;
         }
@@ -195,8 +189,7 @@ public:
         typename point_type<Segment>::type p;
         detail::assign_point_from_index<0>(segment, p);
 
-        return !geometry::covered_by(p, polygon,
-                    strategy.template get_point_in_geometry_strategy<Segment, Polygon>());
+        return ! geometry::covered_by(p, polygon, strategy);
     }
 };
 
@@ -224,10 +217,7 @@ struct disjoint_segment_areal<Segment, Ring, ring_tag>
                              Ring const& ring,
                              IntersectionStrategy const& strategy)
     {
-        if ( !disjoint_range_segment_or_box
-                 <
-                     Ring, closure<Ring>::value, Segment
-                 >::apply(ring, segment, strategy) )
+        if (! disjoint_range_segment_or_box<Ring, Segment>::apply(ring, segment, strategy))
         {
             return false;
         }
@@ -235,8 +225,7 @@ struct disjoint_segment_areal<Segment, Ring, ring_tag>
         typename point_type<Segment>::type p;
         detail::assign_point_from_index<0>(segment, p);
 
-        return !geometry::covered_by(p, ring,
-                    strategy.template get_point_in_geometry_strategy<Segment, Ring>());
+        return ! geometry::covered_by(p, ring, strategy);
     }
 };
 

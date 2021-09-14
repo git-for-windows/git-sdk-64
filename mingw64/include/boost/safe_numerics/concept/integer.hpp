@@ -12,14 +12,8 @@
 namespace boost {
 namespace safe_numerics {
 
-template <class T>
-struct Integer : public Numeric<T> {
-    constexpr static bool value =
-        std::numeric_limits<T>::is_integer && Numeric<T>::value ;
-    constexpr operator bool (){
-        return value;
-    }
-};
+template<class T>
+using Integer = std::integral_constant<bool, Numeric<T>() && std::numeric_limits<T>::is_integer>;
 
 } // safe_numerics
 } // boost

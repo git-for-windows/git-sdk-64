@@ -219,11 +219,7 @@ namespace nowide {
             return *this;
         }
     };
-    template<typename CharType, typename Traits>
-    void swap(basic_filebuf<CharType, Traits>& lhs, basic_filebuf<CharType, Traits>& rhs)
-    {
-        lhs.swap(rhs);
-    }
+
     template<typename CharType, typename Traits>
     void swap(basic_ifstream<CharType, Traits>& lhs, basic_ifstream<CharType, Traits>& rhs)
     {

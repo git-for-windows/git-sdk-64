@@ -31,6 +31,7 @@
 
 #if defined (BOOST_INTERPROCESS_WINDOWS)
 #  include <boost/interprocess/detail/win32_api.hpp>
+#  include <wchar.h> //wcsxxx()
 #else
 #  ifdef BOOST_HAS_UNISTD_H
 #     include <fcntl.h>
@@ -99,7 +100,8 @@ inline mapping_handle_t mapping_handle_from_shm_handle(file_handle_t hnd)
 inline file_handle_t file_handle_from_mapping_handle(mapping_handle_t hnd)
 {  return hnd.handle; }
 
-inline bool create_directory(const char *path)
+template<class CharT>
+inline bool create_directory(const CharT *path)
 {  return winapi::create_directory(path); }
 
 inline bool remove_directory(const char *path)
@@ -117,13 +119,31 @@ inline bool get_temporary_path(char *buffer, std::size_t buf_len, std::size_t &r
    required_len = winapi::get_temp_path(buf_len, buffer);
    const bool ret = !(buf_len < required_len);
    if(ret && buffer[required_len-1] == '\\'){
-      buffer[required_len-1] = 0;
+      buffer[required_len-1] = '\0';
    }
    return ret;
 }
 
+inline bool get_temporary_path(wchar_t *buffer, std::size_t buf_len, std::size_t &required_len)
+{
+   required_len = 0;
+   //std::size_t is always bigger or equal than unsigned long in Windows systems
+   //In case std::size_t is bigger than unsigned long
+   unsigned long buf = buf_len;
+   if(buf_len != buf){   //maybe overflowed
+      return false;
+   }
+   required_len = winapi::get_temp_path(buf_len, buffer);
+   const bool ret = !(buf_len < required_len);
+   if(ret && buffer[required_len-1] == L'\\'){
+      buffer[required_len-1] = L'\0';
+   }
+   return ret;
+}
+
+template<class CharT>
 inline file_handle_t create_new_file
-   (const char *name, mode_t mode, const permissions & perm = permissions(), bool temporary = false)
+   (const CharT *name, mode_t mode, const permissions & perm = permissions(), bool temporary = false)
 {
    unsigned long attr = temporary ? winapi::file_attribute_temporary : 0;
    return winapi::create_file
@@ -131,8 +151,9 @@ inline file_handle_t create_new_file
       , (winapi::interprocess_security_attributes*)perm.get_permissions());
 }
 
+template <class CharT>
 inline file_handle_t create_or_open_file
-   (const char *name, mode_t mode, const permissions & perm = permissions(), bool temporary = false)
+   (const CharT *name, mode_t mode, const permissions & perm = permissions(), bool temporary = false)
 {
    unsigned long attr = temporary ? winapi::file_attribute_temporary : 0;
    return winapi::create_file
@@ -140,8 +161,9 @@ inline file_handle_t create_or_open_file
       , (winapi::interprocess_security_attributes*)perm.get_permissions());
 }
 
+template<class CharT>
 inline file_handle_t open_existing_file
-   (const char *name, mode_t mode, bool temporary = false)
+   (const CharT *name, mode_t mode, bool temporary = false)
 {
    unsigned long attr = temporary ? winapi::file_attribute_temporary : 0;
    return winapi::create_file
@@ -149,6 +171,9 @@ inline file_handle_t open_existing_file
 }
 
 inline bool delete_file(const char *name)
+{  return winapi::unlink_file(name);   }
+
+inline bool delete_file(const wchar_t *name)
 {  return winapi::unlink_file(name);   }
 
 inline bool truncate_file (file_handle_t hnd, std::size_t size)
@@ -239,7 +264,8 @@ inline bool try_acquire_file_lock(file_handle_t hnd, bool &acquired)
                acquired = false, true : false;
 
    }
-   return (acquired = true);
+   acquired = true;
+   return true;
 }
 
 inline bool release_file_lock(file_handle_t hnd)
@@ -268,32 +294,75 @@ inline bool try_acquire_file_lock_sharable(file_handle_t hnd, bool &acquired)
       return winapi::get_last_error() == winapi::error_lock_violation ?
                acquired = false, true : false;
    }
-   return (acquired = true);
+   
+   acquired = true;
+   return true;
 }
 
 inline bool release_file_lock_sharable(file_handle_t hnd)
 {  return release_file_lock(hnd);   }
 
+template<class CharT>
+struct os_file_traits;
+
+template<>
+struct os_file_traits<char>
+{
+   static const char *any_file()
+   {  return "\\*.*";   }
+
+   static const char *backslash()
+   {  return "\\";   }
+
+   static char dot()
+   {  return '.';   }
+
+   typedef winapi::win32_find_data_a win32_find_data_t;
+
+   static int cmp(const char *a, const char *b)
+   {  return std::strcmp(a, b); }
+};
+
+template<>
+struct os_file_traits<wchar_t>
+{
+   static const wchar_t *any_file()
+   {  return L"\\*.*";   }
+
+   static const wchar_t *backslash()
+   {  return L"\\";   }
+
+   static wchar_t dot()
+   {  return L'.';   }
+
+   typedef winapi::win32_find_data_w win32_find_data_t;
+
+   static int cmp(const wchar_t *a, const wchar_t *b)
+   {  return std::wcscmp(a, b); }
+};
+
+template<class CharT>
 inline bool delete_subdirectories_recursive
-   (const std::string &refcstrRootDirectory, const char *dont_delete_this, unsigned int count)
+   (const std::basic_string<CharT> &refcstrRootDirectory, const CharT *dont_delete_this, unsigned int count)
 {
    bool               bSubdirectory = false;       // Flag, indicating whether
                                                    // subdirectories have been found
    void *             hFile;                       // Handle to directory
-   std::string        strFilePath;                 // Filepath
-   std::string        strPattern;                  // Pattern
-   winapi::win32_find_data  FileInformation;     // File information
+   std::basic_string<CharT>        strFilePath;                 // Filepath
+   std::basic_string<CharT>        strPattern;                  // Pattern
+   typedef os_file_traits<CharT> traits_t;
+   typename traits_t::win32_find_data_t  FileInformation;     // File information
 
    //Find all files and directories
-   strPattern = refcstrRootDirectory + "\\*.*";
+   strPattern = refcstrRootDirectory + traits_t::any_file();
    hFile = winapi::find_first_file(strPattern.c_str(), &FileInformation);
    if(hFile != winapi::invalid_handle_value){
       do{
          //If it's not "." or ".." or the pointed root_level dont_delete_this erase it
-         if(FileInformation.cFileName[0] != '.' &&
-            !(dont_delete_this && count == 0 && std::strcmp(dont_delete_this, FileInformation.cFileName) == 0)){
+         if(FileInformation.cFileName[0] != traits_t::dot() &&
+            !(dont_delete_this && count == 0 && traits_t::cmp(dont_delete_this, FileInformation.cFileName) == 0)){
             strFilePath.erase();
-            strFilePath = refcstrRootDirectory + "\\" + FileInformation.cFileName;
+            strFilePath = refcstrRootDirectory + traits_t::backslash() + FileInformation.cFileName;
 
             //If it's a directory, go recursive
             if(FileInformation.dwFileAttributes & winapi::file_attribute_directory){
@@ -340,7 +409,8 @@ inline bool delete_subdirectories_recursive
 }
 
 //This function erases all the subdirectories of a directory except the one pointed by "dont_delete_this"
-inline bool delete_subdirectories(const std::string &refcstrRootDirectory, const char *dont_delete_this)
+template <class CharT>
+inline bool delete_subdirectories(const std::basic_string<CharT> &refcstrRootDirectory, const CharT *dont_delete_this)
 {
    return delete_subdirectories_recursive(refcstrRootDirectory, dont_delete_this, 0u);
 }
@@ -350,7 +420,7 @@ template<class Function>
 inline bool for_each_file_in_dir(const char *dir, Function f)
 {
    void *             hFile;                       // Handle to directory
-   winapi::win32_find_data  FileInformation;     // File information
+   winapi::win32_find_data_a  FileInformation;     // File information
 
    //Get base directory
    std::string str(dir);
@@ -726,7 +796,7 @@ inline bool open_or_create_directory(const char *dir_name)
 inline std::string get_temporary_path()
 {
    std::size_t required_len = 0;
-   get_temporary_path(0, 0, required_len);
+   get_temporary_path((char*)0, 0, required_len);
    std::string ret_str(required_len, char(0));
    get_temporary_path(&ret_str[0], ret_str.size(), required_len);
    while(!ret_str.empty() && !ret_str[ret_str.size()-1]){
@@ -735,6 +805,23 @@ inline std::string get_temporary_path()
 
    return ret_str;
 }
+
+#ifdef BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES
+
+inline std::wstring get_temporary_wpath()
+{
+   std::size_t required_len = 0;
+   get_temporary_path((wchar_t*)0, 0, required_len);
+   std::wstring ret_str(required_len, char(0));
+   get_temporary_path(&ret_str[0], ret_str.size(), required_len);
+   while(!ret_str.empty() && !ret_str[ret_str.size()-1]){
+      ret_str.erase(ret_str.size()-1);
+   }
+
+   return ret_str;
+}
+
+#endif
 
 }  //namespace ipcdetail{
 }  //namespace interprocess {

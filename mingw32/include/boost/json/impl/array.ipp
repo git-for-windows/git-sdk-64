@@ -13,6 +13,7 @@
 #include <boost/json/array.hpp>
 #include <boost/json/pilfer.hpp>
 #include <boost/json/detail/except.hpp>
+#include <boost/json/detail/hash_combine.hpp>
 #include <cstdlib>
 #include <limits>
 #include <new>
@@ -40,7 +41,7 @@ allocate(
     if(capacity > array::max_size())
         detail::throw_length_error(
             "array too large",
-            BOOST_CURRENT_LOCATION);
+            BOOST_JSON_SOURCE_POS);
     auto p = reinterpret_cast<
         table*>(sp->allocate(
             sizeof(table) +
@@ -100,7 +101,7 @@ revert_insert(
     if(n_ > max_size() - arr_->size())
         detail::throw_length_error(
             "array too large",
-            BOOST_CURRENT_LOCATION);
+            BOOST_JSON_SOURCE_POS);
     auto t = table::allocate(
         arr_->growth(arr_->size() + n_),
             arr_->sp_);
@@ -628,7 +629,7 @@ growth(
     if(new_size > max_size())
         detail::throw_length_error(
             "array too large",
-            BOOST_CURRENT_LOCATION);
+            BOOST_JSON_SOURCE_POS);
     std::size_t const old = capacity();
     if(old > max_size() - old / 2)
         return new_size;
@@ -753,5 +754,26 @@ equal(
 }
 
 BOOST_JSON_NS_END
+
+//----------------------------------------------------------
+//
+// std::hash specialization
+//
+//----------------------------------------------------------
+
+std::size_t
+std::hash<::boost::json::array>::operator()(
+    ::boost::json::array const& ja) const noexcept
+{
+  std::size_t seed = ja.size();
+  for (const auto& jv : ja) {
+    seed = ::boost::json::detail::hash_combine(
+        seed,
+        std::hash<::boost::json::value>{}(jv));
+  }
+  return seed;
+}
+
+//----------------------------------------------------------
 
 #endif

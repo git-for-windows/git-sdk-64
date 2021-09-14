@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2020, Oracle and/or its affiliates.
+// Copyright (c) 2020-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -12,6 +12,7 @@
 
 
 #include <boost/geometry/strategy/spherical/area.hpp>
+#include <boost/geometry/strategy/spherical/area_box.hpp>
 
 #include <boost/geometry/strategies/area/services.hpp>
 #include <boost/geometry/strategies/detail.hpp>
@@ -28,7 +29,8 @@ template
     typename RadiusTypeOrSphere = double,
     typename CalculationType = void
 >
-class spherical : strategies::detail::spherical_base<RadiusTypeOrSphere>
+class spherical
+    : public strategies::detail::spherical_base<RadiusTypeOrSphere>
 {
     using base_t = strategies::detail::spherical_base<RadiusTypeOrSphere>;
 
@@ -43,9 +45,20 @@ public:
     {}
 
     template <typename Geometry>
-    auto area(Geometry const&) const
+    auto area(Geometry const&,
+              std::enable_if_t<! util::is_box<Geometry>::value> * = nullptr) const
     {
         return strategy::area::spherical
+            <
+                typename base_t::radius_type, CalculationType
+            >(base_t::m_radius);
+    }
+
+    template <typename Geometry>
+    auto area(Geometry const&,
+              std::enable_if_t<util::is_box<Geometry>::value> * = nullptr) const
+    {
+        return strategy::area::spherical_box
             <
                 typename base_t::radius_type, CalculationType
             >(base_t::m_radius);

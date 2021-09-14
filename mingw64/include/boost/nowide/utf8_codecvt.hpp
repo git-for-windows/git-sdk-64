@@ -39,11 +39,6 @@ namespace nowide {
         }
     } // namespace detail
 
-#if defined _MSC_VER && _MSC_VER < 1700
-// MSVC do_length is non-standard it counts wide characters instead of narrow and does not change mbstate
-#define BOOST_NOWIDE_DO_LENGTH_MBSTATE_CONST
-#endif
-
     /// std::codecvt implementation that converts between UTF-8 and UTF-16 or UTF-32
     ///
     /// @tparam CharSize Determines the encoding: 2 for UTF-16, 4 for UTF-32
@@ -86,21 +81,16 @@ namespace nowide {
             return false;
         }
 
-        int do_length(std::mbstate_t
-#ifdef BOOST_NOWIDE_DO_LENGTH_MBSTATE_CONST
-                      const
-#endif
-                        & std_state,
-                      const char* from,
-                      const char* from_end,
-                      size_t max) const override
+        int do_length(std::mbstate_t& std_state, const char* from, const char* from_end, size_t max) const override
         {
+            using utf16_traits = utf::utf_traits<uchar, 2>;
             std::uint16_t state = detail::read_state(std_state);
-#ifndef BOOST_NOWIDE_DO_LENGTH_MBSTATE_CONST
             const char* save_from = from;
-#else
-            size_t save_max = max;
-#endif
+            if(state && max > 0)
+            {
+                max--;
+                state = 0;
+            }
             while(max > 0 && from < from_end)
             {
                 const char* prev_from = from;
@@ -113,25 +103,21 @@ namespace nowide {
                     from = prev_from;
                     break;
                 }
-                max--;
-                if(ch > 0xFFFF)
+                // If we can't write the char, we have to save the low surrogate in state
+                if(BOOST_LIKELY(static_cast<size_t>(utf16_traits::width(ch)) <= max))
                 {
-                    if(state == 0)
-                    {
-                        from = prev_from;
-                        state = 1;
-                    } else
-                    {
-                        state = 0;
-                    }
+                    max -= utf16_traits::width(ch);
+                } else
+                {
+                    static_assert(utf16_traits::max_width == 2, "Required for below");
+                    std::uint16_t tmpOut[2]{};
+                    utf16_traits::encode(ch, tmpOut);
+                    state = tmpOut[1];
+                    break;
                 }
             }
-#ifndef BOOST_NOWIDE_DO_LENGTH_MBSTATE_CONST
             detail::write_state(std_state, state);
             return static_cast<int>(from - save_from);
-#else
-            return static_cast<int>(save_max - max);
-#endif
         }
 
         std::codecvt_base::result do_in(std::mbstate_t& std_state,
@@ -143,13 +129,18 @@ namespace nowide {
                                         uchar*& to_next) const override
         {
             std::codecvt_base::result r = std::codecvt_base::ok;
+            using utf16_traits = utf::utf_traits<uchar, 2>;
 
-            // mbstate_t is POD type and should be initialized to 0 (i.a. state = stateT())
-            // according to standard. We use it to keep a flag 0/1 for surrogate pair writing
-            //
-            // if 0 no code above >0xFFFF observed, of 1 a code above 0xFFFF observed
-            // and first pair is written, but no input consumed
+            // mbstate_t is POD type and should be initialized to 0 (i.e. state = stateT())
+            // according to standard.
+            // We use it to store a low surrogate if it was not yet written, else state is 0
             std::uint16_t state = detail::read_state(std_state);
+            // Write low surrogate if present
+            if(state && to < to_end)
+            {
+                *to++ = static_cast<CharType>(state);
+                state = 0;
+            }
             while(to < to_end && from < from_end)
             {
                 const char* from_saved = from;
@@ -165,36 +156,18 @@ namespace nowide {
                     r = std::codecvt_base::partial;
                     break;
                 }
-                // Normal codepoints go directly to stream
-                if(ch <= 0xFFFF)
+                // If the encoded char fits, write directly, else safe the low surrogate in state
+                if(BOOST_LIKELY(utf16_traits::width(ch) <= to_end - to))
                 {
-                    *to++ = static_cast<CharType>(ch);
+                    to = utf16_traits::encode(ch, to);
                 } else
                 {
-                    // for  other codepoints we do following
-                    //
-                    // 1. We can't consume our input as we may find ourself
-                    //    in state where all input consumed but not all output written,i.e. only
-                    //    1st pair is written
-                    // 2. We only write first pair and mark this in the state, we also revert back
-                    //    the from pointer in order to make sure this codepoint would be read
-                    //    once again and then we would consume our input together with writing
-                    //    second surrogate pair
-                    ch -= 0x10000;
-                    std::uint16_t vh = static_cast<std::uint16_t>(ch >> 10);
-                    std::uint16_t vl = ch & 0x3FF;
-                    std::uint16_t w1 = vh + 0xD800;
-                    std::uint16_t w2 = vl + 0xDC00;
-                    if(state == 0)
-                    {
-                        from = from_saved;
-                        *to++ = static_cast<CharType>(w1);
-                        state = 1;
-                    } else
-                    {
-                        *to++ = static_cast<CharType>(w2);
-                        state = 0;
-                    }
+                    static_assert(utf16_traits::max_width == 2, "Required for below");
+                    std::uint16_t tmpOut[2]{};
+                    utf16_traits::encode(ch, tmpOut);
+                    *to++ = static_cast<CharType>(tmpOut[0]);
+                    state = tmpOut[1];
+                    break;
                 }
             }
             from_next = from;
@@ -214,52 +187,41 @@ namespace nowide {
                                          char*& to_next) const override
         {
             std::codecvt_base::result r = std::codecvt_base::ok;
-            // mbstate_t is POD type and should be initialized to 0 (i.a. state = stateT())
-            // according to standard. We assume that sizeof(mbstate_t) >=2 in order
-            // to be able to store first observed surrogate pair
-            //
-            // State: state!=0 - a first surrogate pair was observed (state = first pair),
-            // we expect the second one to come and then zero the state
-            ///
+            using utf16_traits = utf::utf_traits<uchar, 2>;
+            // mbstate_t is POD type and should be initialized to 0
+            // (i.e. state = stateT()) according to standard.
+            // We use it to store the first observed surrogate pair, or 0 if there is none yet
             std::uint16_t state = detail::read_state(std_state);
-            while(to < to_end && from < from_end)
+            for(; to < to_end && from < from_end; ++from)
             {
                 std::uint32_t ch = 0;
                 if(state != 0)
                 {
-                    // if the state indicates that 1st surrogate pair was written
-                    // we should make sure that the second one that comes is actually
-                    // second surrogate
+                    // We have a high surrogate, so now there should be a low surrogate
                     std::uint16_t w1 = state;
                     std::uint16_t w2 = *from;
-                    // we don't forward from as writing may fail to incomplete or
-                    // partial conversion
-                    if(0xDC00 <= w2 && w2 <= 0xDFFF)
+                    if(BOOST_LIKELY(utf16_traits::is_trail(w2)))
                     {
-                        std::uint16_t vh = w1 - 0xD800;
-                        std::uint16_t vl = w2 - 0xDC00;
-                        ch = ((uint32_t(vh) << 10) | vl) + 0x10000;
+                        ch = utf16_traits::combine_surrogate(w1, w2);
                     } else
                     {
                         ch = BOOST_NOWIDE_REPLACEMENT_CHARACTER;
                     }
                 } else
                 {
-                    ch = *from;
-                    if(0xD800 <= ch && ch <= 0xDBFF)
+                    std::uint16_t w1 = *from;
+                    if(BOOST_LIKELY(utf16_traits::is_single_codepoint(w1)))
                     {
-                        // if this is a first surrogate pair we put
-                        // it into the state and consume it, note we don't
-                        // go forward as it should be illegal so we increase
-                        // the from pointer manually
-                        state = static_cast<std::uint16_t>(ch);
-                        from++;
+                        ch = w1;
+                    } else if(BOOST_LIKELY(utf16_traits::is_first_surrogate(w1)))
+                    {
+                        // Store into state and continue at next character
+                        state = w1;
                         continue;
-                    } else if(0xDC00 <= ch && ch <= 0xDFFF)
+                    } else
                     {
-                        // if we observe second surrogate pair and
-                        // first only may be expected we should break from the loop with error
-                        // as it is illegal input
+                        // Neither a single codepoint nor a high surrogate so must be low surrogate.
+                        // This is an error -> Replace character
                         ch = BOOST_NOWIDE_REPLACEMENT_CHARACTER;
                     }
                 }
@@ -276,7 +238,6 @@ namespace nowide {
                 }
                 to = utf::utf_traits<char>::encode(ch, to);
                 state = 0;
-                from++;
             }
             from_next = from;
             to_next = to;
@@ -317,20 +278,9 @@ namespace nowide {
             return false;
         }
 
-        int do_length(std::mbstate_t
-#ifdef BOOST_NOWIDE_DO_LENGTH_MBSTATE_CONST
-                      const
-#endif
-                        & /*state*/,
-                      const char* from,
-                      const char* from_end,
-                      size_t max) const override
+        int do_length(std::mbstate_t& /*state*/, const char* from, const char* from_end, size_t max) const override
         {
-#ifndef BOOST_NOWIDE_DO_LENGTH_MBSTATE_CONST
             const char* start_from = from;
-#else
-            size_t save_max = max;
-#endif
 
             while(max > 0 && from < from_end)
             {
@@ -346,11 +296,7 @@ namespace nowide {
                 }
                 max--;
             }
-#ifndef BOOST_NOWIDE_DO_LENGTH_MBSTATE_CONST
             return from - start_from;
-#else
-            return save_max - max;
-#endif
         }
 
         std::codecvt_base::result do_in(std::mbstate_t& /*state*/,

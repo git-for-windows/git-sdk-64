@@ -1,5 +1,5 @@
 /* A very simple result type
-(C) 2018-2020 Niall Douglas <http://www.nedproductions.biz/> (11 commits)
+(C) 2018-2021 Niall Douglas <http://www.nedproductions.biz/> (11 commits)
 File Created: Apr 2018
 
 
@@ -69,6 +69,15 @@ namespace trait
     static constexpr bool value = boost::system::is_error_condition_enum<Enum>::value;
   };
 #endif
+
+  template <class DomainType> struct is_move_bitcopying<BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE::status_code<DomainType>>
+  {
+    static constexpr bool value = BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE::traits::is_move_bitcopying<BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE::status_code<DomainType>>::value;
+  };
+  template <class DomainType> struct is_move_bitcopying<BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE::errored_status_code<DomainType>>
+  {
+    static constexpr bool value = BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE::traits::is_move_bitcopying<BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE::errored_status_code<DomainType>>::value;
+  };
 }  // namespace trait
 
 namespace detail
@@ -144,7 +153,8 @@ namespace experimental
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-  template <class R, class S = system_code, class NoValuePolicy = policy::default_status_result_policy<R, S>>  //
+  template <class R, class S = errored_status_code<erased<typename system_code::value_type>>,
+            class NoValuePolicy = policy::default_status_result_policy<R, S>>  //
   using status_result = basic_result<R, S, NoValuePolicy>;
 
 }  // namespace experimental
