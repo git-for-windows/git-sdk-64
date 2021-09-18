@@ -51,11 +51,10 @@ if(_IMPORT_PREFIX STREQUAL "/")
 endif()
 
 # Create imported target libzip::zip
-add_library(libzip::zip STATIC IMPORTED)
+add_library(libzip::zip SHARED IMPORTED)
 
 set_target_properties(libzip::zip PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include;${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "\$<LINK_ONLY:advapi32>;\$<LINK_ONLY:BZip2::BZip2>;\$<LINK_ONLY:LibLZMA::LibLZMA>;\$<LINK_ONLY:bcrypt>;\$<LINK_ONLY:ZLIB::ZLIB>"
 )
 
 # Create imported target libzip::zipcmp
@@ -66,10 +65,6 @@ add_executable(libzip::zipmerge IMPORTED)
 
 # Create imported target libzip::ziptool
 add_executable(libzip::ziptool IMPORTED)
-
-if(CMAKE_VERSION VERSION_LESS 2.8.12)
-  message(FATAL_ERROR "This file relies on consumers using CMake 2.8.12 or greater.")
-endif()
 
 # Load information for each installed configuration.
 get_filename_component(_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)

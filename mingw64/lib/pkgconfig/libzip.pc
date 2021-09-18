@@ -1,15 +1,15 @@
 prefix=/mingw64
 exec_prefix=${prefix}
-bindir=${exec_prefix}/bin
-libdir=${exec_prefix}/lib
-includedir=${prefix}/include
+bindir=/mingw64/bin
+libdir=/mingw64/lib
+includedir=/mingw64/include
 
-zipcmp=${exec_prefix}/bin/zipcmp
+zipcmp=/mingw64/bin/zipcmp
 
 Name: libzip
 Description: library for handling zip archives
-Version: 1.7.3
+Version: 1.8.0
 Libs:  -L${libdir} -lzip
-Libs.private:  -ladvapi32 -lbz2 -llzma -lbcrypt -lz
+Libs.private:  -ladvapi32 -lbz2 -llzma -lZstd::Zstd -lbcrypt -lz
 Cflags: -I${includedir}
 

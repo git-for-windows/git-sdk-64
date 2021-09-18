@@ -8,12 +8,12 @@ set(CMAKE_IMPORT_FILE_VERSION 1)
 # Import target "libzip::zip" for configuration ""
 set_property(TARGET libzip::zip APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
 set_target_properties(libzip::zip PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_NOCONFIG "C"
-  IMPORTED_LOCATION_NOCONFIG "${_IMPORT_PREFIX}/lib/libzip.a"
+  IMPORTED_IMPLIB_NOCONFIG "${_IMPORT_PREFIX}/lib/libzip.dll.a"
+  IMPORTED_LOCATION_NOCONFIG "${_IMPORT_PREFIX}/bin/libzip.dll"
   )
 
 list(APPEND _IMPORT_CHECK_TARGETS libzip::zip )
-list(APPEND _IMPORT_CHECK_FILES_FOR_libzip::zip "${_IMPORT_PREFIX}/lib/libzip.a" )
+list(APPEND _IMPORT_CHECK_FILES_FOR_libzip::zip "${_IMPORT_PREFIX}/lib/libzip.dll.a" "${_IMPORT_PREFIX}/bin/libzip.dll" )
 
 # Import target "libzip::zipcmp" for configuration ""
 set_property(TARGET libzip::zipcmp APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
