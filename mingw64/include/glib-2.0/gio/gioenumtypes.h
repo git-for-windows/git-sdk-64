@@ -8,7 +8,7 @@
 
 G_BEGIN_DECLS
 
-/* enumerations from "../glib-2.68.4/gio/gioenums.h" */
+/* enumerations from "../glib-2.70.0/gio/gioenums.h" */
 GLIB_AVAILABLE_IN_ALL GType g_app_info_create_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_APP_INFO_CREATE_FLAGS (g_app_info_create_flags_get_type ())
 GLIB_AVAILABLE_IN_ALL GType g_converter_flags_get_type (void) G_GNUC_CONST;
@@ -149,6 +149,8 @@ GLIB_AVAILABLE_IN_ALL GType g_tls_database_lookup_flags_get_type (void) G_GNUC_C
 #define G_TYPE_TLS_DATABASE_LOOKUP_FLAGS (g_tls_database_lookup_flags_get_type ())
 GLIB_AVAILABLE_IN_ALL GType g_tls_certificate_request_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_TLS_CERTIFICATE_REQUEST_FLAGS (g_tls_certificate_request_flags_get_type ())
+GLIB_AVAILABLE_IN_ALL GType g_tls_protocol_version_get_type (void) G_GNUC_CONST;
+#define G_TYPE_TLS_PROTOCOL_VERSION (g_tls_protocol_version_get_type ())
 GLIB_AVAILABLE_IN_ALL GType g_io_module_scope_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_IO_MODULE_SCOPE_FLAGS (g_io_module_scope_flags_get_type ())
 GLIB_AVAILABLE_IN_ALL GType g_socket_client_event_get_type (void) G_GNUC_CONST;
@@ -168,11 +170,11 @@ GLIB_AVAILABLE_IN_ALL GType g_pollable_return_get_type (void) G_GNUC_CONST;
 GLIB_AVAILABLE_IN_ALL GType g_memory_monitor_warning_level_get_type (void) G_GNUC_CONST;
 #define G_TYPE_MEMORY_MONITOR_WARNING_LEVEL (g_memory_monitor_warning_level_get_type ())
 
-/* enumerations from "../glib-2.68.4/gio/gresolver.h" */
+/* enumerations from "../glib-2.70.0/gio/gresolver.h" */
 GLIB_AVAILABLE_IN_ALL GType g_resolver_name_lookup_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_RESOLVER_NAME_LOOKUP_FLAGS (g_resolver_name_lookup_flags_get_type ())
 
-/* enumerations from "../glib-2.68.4/gio/gsettings.h" */
+/* enumerations from "../glib-2.70.0/gio/gsettings.h" */
 GLIB_AVAILABLE_IN_ALL GType g_settings_bind_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_SETTINGS_BIND_FLAGS (g_settings_bind_flags_get_type ())
 G_END_DECLS
