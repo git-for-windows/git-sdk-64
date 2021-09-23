@@ -1,4 +1,4 @@
-*autocmd.txt*   For Vim version 8.2.  Last change: 2021 Jul 02
+*autocmd.txt*   For Vim version 8.2.  Last change: 2021 Aug 01
 
 
 		  VIM REFERENCE MANUAL    by Bram Moolenaar
@@ -75,6 +75,12 @@ If the `:autocmd` is in Vim9 script (a script that starts with `:vim9script`
 and in a `:def` function) then {cmd} will be executed as in Vim9
 script.  Thus this depends on where the autocmd is defined, not where it is
 triggered.
+
+{cmd} can be a block, like with `:command`, see |:command-repl|.  Example: >
+	au BufReadPost *.xml {
+		  setlocal matchpairs+=<:>
+		  /<start
+		}
 
 Note: The ":autocmd" command can only be followed by another command when the
 '|' appears before {cmd}.  This works: >
@@ -359,6 +365,8 @@ Name			triggered by ~
 |InsertLeave|		when leaving Insert mode
 |InsertCharPre|		when a character was typed in Insert mode, before
 			inserting it
+
+|ModeChanged|		after changing the mode
 
 |TextChanged|		after a change was made to the text in Normal mode
 |TextChangedI|		after a change was made to the text in Insert mode
@@ -679,7 +687,8 @@ CursorHoldI			Just like CursorHold, but in Insert mode.
 CursorMoved			After the cursor was moved in Normal or Visual
 				mode.  Also when the text of the cursor line
 				has been changed, e.g., with "x", "rx" or "p".
-				Not triggered when there is typeahead, when
+				Not triggered when there is typeahead, while
+				executing commands in a script file, when
 				an operator is pending or when moving to
 				another window while remaining at the same
 				cursor position.
@@ -918,7 +927,22 @@ MenuPopup			Just before showing the popup menu (under the
 					i	Insert
 					c	Command line
 					tl	Terminal
-							*OptionSet*
+							*ModeChanged*
+ModeChanged			After changing the mode. The pattern is
+				matched against `'old_mode:new_mode'`, for
+				example match against `i:*` to simulate
+				|InsertLeave|.
+				The following values of |v:event| are set:
+				   old_mode	The mode before it changed.
+				   new_mode	The new mode as also returned
+						by |mode()|.
+				When ModeChanged is triggered, old_mode will
+				have the value of new_mode when the event was
+				last triggered.
+				Usage example to use relative line numbers
+				when entering visual mode: >
+	:autocmd ModeChanged *:v set relativenumber
+<							*OptionSet*
 OptionSet			After setting an option.  The pattern is
 				matched against the long option name.
 				|<amatch>| indicates what option has been set.

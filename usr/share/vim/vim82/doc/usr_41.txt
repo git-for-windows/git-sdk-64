@@ -1,4 +1,4 @@
-*usr_41.txt*	For Vim version 8.2.  Last change: 2021 Jun 07
+*usr_41.txt*	For Vim version 8.2.  Last change: 2021 Aug 08
 
 		     VIM USER MANUAL - by Bram Moolenaar
 
@@ -723,6 +723,10 @@ Floating point computation:				*float-functions*
 	isinf()			check for infinity
 	isnan()			check for not a number
 
+Blob manipulation:					*blob-functions*
+	blob2list()		get a list of numbers from a blob
+	list2blob()		get a blob from a list of numbers
+
 Other computation:					*bitwise-function*
 	and()			bitwise AND
 	invert()		bitwise invert
@@ -994,6 +998,10 @@ Window size and position:			*window-size-functions*
 	winrestview()		restore saved view of current window
 
 Mappings and Menus:			    *mapping-functions*
+	digraph_get()		get |digraph|
+	digraph_getlist()	get all |digraph|s
+	digraph_set()		register |digraph|
+	digraph_setlist()	register multiple |digraph|s
 	hasmapto()		check if a mapping exists
 	mapcheck()		check if a matching mapping exists
 	maparg()		get rhs of a mapping
@@ -1157,6 +1165,7 @@ Prompt Buffer:					*promptbuffer-functions*
 
 Text Properties:				*text-property-functions*
 	prop_add()		attach a property at a position
+	prop_add_list()		attach a property at multiple positions
 	prop_clear()		remove all properties from a line or lines
 	prop_find()		search for a property
 	prop_list()		return a list of all properties in a line
@@ -1178,6 +1187,7 @@ Various:					*various-functions*
 	state()			get current busy state
 	visualmode()		last visual mode used
 	exists()		check if a variable, function, etc. exists
+	exists_compiled()	like exists() but check at compile time
 	has()			check if a feature is supported in Vim
 	changenr()		return number of most recent change
 	cscope_connection()	check if a cscope connection exists
@@ -1442,6 +1452,8 @@ is a List with arguments.
 
 Function references are most useful in combination with a Dictionary, as is
 explained in the next section.
+
+More information about defining your own functions here: |user-functions|.
 
 ==============================================================================
 *41.8*	Lists and Dictionaries

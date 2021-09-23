@@ -28,9 +28,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.9
-srcdir=		../Python-3.9.6
-VPATH=		../Python-3.9.6
-abs_srcdir=	/c/_/M/mingw-w64-python/src/build-i686/../Python-3.9.6
+srcdir=		../Python-3.9.7
+VPATH=		../Python-3.9.7
+abs_srcdir=	/c/_/M/mingw-w64-python/src/build-i686/../Python-3.9.7
 abs_builddir=	/c/_/M/mingw-w64-python/src/build-i686
 
 
@@ -82,7 +82,7 @@ MAKESETUP=      $(srcdir)/Modules/makesetup
 OPT=		-DNDEBUG -g -fwrapv -O3 -Wall
 BASECFLAGS=	 -Wno-unused-result -Wsign-compare
 BASECPPFLAGS=	-IObjects -IInclude -IPython
-CONFIGURE_CFLAGS=	-march=i686 -mtune=generic -O2 -pipe
+CONFIGURE_CFLAGS=	-march=pentium4 -mtune=generic -O2 -pipe
 # CFLAGS_NODIST is used for building the interpreter and stdlib C extensions.
 # Use it when a compiler flag should _not_ be part of the distutils CFLAGS
 # once Python is installed (Issue #21121).
@@ -121,7 +121,7 @@ PY_CORE_CFLAGS=	$(PY_STDMODULE_CFLAGS) -DPy_BUILD_CORE
 PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 # Strict or non-strict aliasing flags used to compile dtoa.c, see above
 CFLAGS_ALIASING=
-RCFLAGS= -DFIELD3=6150 -O COFF --target=pe-i386
+RCFLAGS= -DFIELD3=7150 -O COFF --target=pe-i386
 
 
 # Machine-dependent subdirectories
@@ -141,9 +141,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.9.6
-VPATH_b2h=		C:/_/M/mingw-w64-python/src/Python-3.9.6
-abs_srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.9.6
+srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.9.7
+VPATH_b2h=		C:/_/M/mingw-w64-python/src/Python-3.9.7
+abs_srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.9.7
 abs_builddir_b2h=	C:/_/M/mingw-w64-python/src/build-i686
 prefix_b2h=		D:/a/_temp/msys/msys64/mingw32
 
@@ -217,7 +217,7 @@ OPENSSL_LIBS=-lssl -lcrypto
 OPENSSL_LDFLAGS=-LD:/a/_temp/msys/msys64/mingw32/lib 
 
 # Default zoneinfo.TZPATH. Added here to expose it in sysconfig.get_config_var
-TZPATH=/usr/share/zoneinfo:/usr/lib/zoneinfo:/usr/share/lib/zoneinfo:/etc/zoneinfo
+TZPATH=/mingw32/share/zoneinfo
 
 # Modes for directories, executables and data files created by the
 # install process.  Default to user-only-writable for all file types.
@@ -226,7 +226,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--without-c-locale-coercion' '--enable-loadable-sqlite-extensions' '--enable-optimizations' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe -Wl,--dynamicbase,--nxcompat,--no-seh' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--without-c-locale-coercion' '--enable-loadable-sqlite-extensions' '--with-tzpath=/mingw32/share/zoneinfo' '--enable-optimizations' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe -Wl,--dynamicbase,--nxcompat,--no-seh' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
 
 
 # Subdirectories with code
@@ -812,7 +812,7 @@ regen-abidump: all
 	@$(UPDATE_FILE) $(srcdir)/Doc/data/python$(LDVERSION).abi $(srcdir)/Doc/data/python$(LDVERSION).abi.new
 
 check-abidump: all
-		abidiff "libpython$(LDVERSION).so" $(srcdir)/Doc/data/python$(LDVERSION).abi --drop-private-types --no-architecture --no-added-syms
+		abidiff $(srcdir)/Doc/data/python$(LDVERSION).abi "libpython$(LDVERSION).so" --drop-private-types --no-architecture --no-added-syms
 
 ############################################################################
 # Regenerate all generated files

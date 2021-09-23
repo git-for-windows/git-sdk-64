@@ -16,7 +16,7 @@ use LWP::Protocol ();
 use Scalar::Util qw(blessed);
 use Try::Tiny qw(try catch);
 
-our $VERSION = '6.56';
+our $VERSION = '6.57';
 
 sub new
 {
@@ -2125,8 +2125,7 @@ See L</"cookie_jar"> for more information.
 
 =head2 Managing Protocols
 
-C<protocols_allowed> gives you the ability to whitelist the protocols you're
-willing to allow.
+C<protocols_allowed> gives you the ability to allow arbitrary protocols.
 
     my $ua = LWP::UserAgent->new(
         protocols_allowed => [ 'http', 'https' ]
@@ -2135,8 +2134,7 @@ willing to allow.
 This will prevent you from inadvertently following URLs like
 C<file:///etc/passwd>.  See L</"protocols_allowed">.
 
-C<protocols_forbidden> gives you the ability to blacklist the protocols you're
-unwilling to allow.
+C<protocols_forbidden> gives you the ability to deny arbitrary protocols.
 
     my $ua = LWP::UserAgent->new(
         protocols_forbidden => [ 'file', 'mailto', 'ssh', ]

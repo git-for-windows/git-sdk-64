@@ -33,7 +33,7 @@ from ast import literal_eval
 from collections import OrderedDict
 
 # Used by asciidocapi.py #
-VERSION = '9.1.0'           # See CHANGELOG file for version history.
+VERSION = '9.1.1'           # See CHANGELOG file for version history.
 
 MIN_PYTHON_VERSION = (3, 5)  # Require this version of Python or better.
 
@@ -6257,12 +6257,12 @@ def asciidoc(backend, doctype, confiles, infile, outfile, options):
                     writer.close()
             finally:
                 reader.closefile()
-    except KeyboardInterrupt:
-        raise
-    except Exception as e:
+    except BaseException as e:
         # Cleanup.
         if outfile and outfile != '<stdout>' and os.path.isfile(outfile):
             os.unlink(outfile)
+        if not isinstance(e, Exception):
+            raise
         # Build and print error description.
         msg = 'FAILED: '
         if reader.cursor:

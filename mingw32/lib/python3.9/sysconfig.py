@@ -432,6 +432,7 @@ def _generate_posix_vars():
             'INCLDIRSTOMAKE', 'INCLUDEDIR', 'INCLUDEPY',
             'LIBDEST', 'LIBDIR', 'LIBPC', 'LIBPL', 'MACHDESTLIB',
             'MANDIR', 'SCRIPTDIR', 'datarootdir', 'exec_prefix',
+            'TZPATH',
         ]
 
         prefix = build_time_vars['BINDIR'][:-4]

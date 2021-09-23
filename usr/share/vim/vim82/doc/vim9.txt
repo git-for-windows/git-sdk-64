@@ -1,4 +1,4 @@
-*vim9.txt*	For Vim version 8.2.  Last change: 2021 Jul 07
+*vim9.txt*	For Vim version 8.2.  Last change: 2021 Sep 08
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -106,6 +106,9 @@ script and `:def` functions; details are below:
   or curly-braces names.
 - A range before a command must be prefixed with a colon: >
 	:%s/this/that
+- Executing a register with "@r" does not work, you can prepend a colon or use
+  `:exe`: >
+  	:exe @a
 - Unless mentioned specifically, the highest |scriptversion| is used.
 
 
@@ -154,7 +157,7 @@ Compilation is done when any of these is encountered:
   function was defined
 - `:disassemble` is used for the function.
 - a function that is compiled calls the function or uses it as a function
-  reference
+  reference (so that the argument and return types can be checked)
 							*E1091*
 If compilation fails it is not tried again on the next call, instead this
 error is given: "E1091: Function is not compiled: {name}".
@@ -168,7 +171,7 @@ created yet.  In this case you can call `execute()` to invoke it at runtime. >
 "closure".  A `:def` function always aborts on an error (unless `:silent!` was
 used for the command or inside a `:try` block), does not get a range passed
 cannot be a "dict" function, and can always be a closure.
-
+						*vim9-no-dict-function*
 Later classes will be added, which replaces the "dict function" mechanism.
 For now you will need to pass the dictionary explicitly: >
 	def DictFunc(d: dict<any>, arg: string)
@@ -321,6 +324,25 @@ used: >
 	}
 	echo temp  # Error!
 
+This is especially useful in a user command: >
+
+	command -range Rename {
+		 var save = @a
+		 @a = 'some expression'
+		 echo 'do something with ' .. @a
+		 @a = save
+	    }
+
+And with autocommands: >
+
+   au BufWritePre *.go {
+		 var save = winsaveview()
+		 silent! exe ':%! some formatting command'
+		 winrestview(save)
+	   }
+
+Although using a :def function probably works better.
+
 Declaring a variable with a type but without an initializer will initialize to
 zero, false or empty.
 
@@ -331,6 +353,9 @@ with `:unlet`.
 
 `:lockvar` does not work on local variables.  Use `:const` and `:final`
 instead.
+
+The `exists()` and `exists_compiled()` functions do not work on local variables
+or arguments.
 
 Variables, functions and function arguments cannot shadow previously defined
 or imported variables and functions in the same script file.
@@ -350,6 +375,32 @@ called without "g:". >
 	enddef
 	echo GlobalFunc()
 The "g:" prefix is not needed for auto-load functions.
+
+					*vim9-function-defined-later*
+Although global functions can be called without the "g:" prefix, they must
+exist when compiled.  By adding the "g:" prefix the function can be defined
+later.  Example: >
+	def CallPluginFunc()
+	  if exists('g:loaded_plugin')
+	    g:PluginFunc()
+	  endif
+	enddef
+
+If you would do it like this you get an error at compile time that
+"PluginFunc" does not exist, even when "g:loaded_plugin" does not exist: >
+	def CallPluginFunc()
+	  if exists('g:loaded_plugin')
+	    PluginFunc()   # Error - function not found
+	  endif
+	enddef
+
+You can use exists_compiled() to avoid the error, but then the function would
+not be called, even when "g:loaded_plugin" is defined later: >
+	def CallPluginFunc()
+	  if exists_compiled('g:loaded_plugin')
+	    PluginFunc()   # Function may never be called
+	  endif
+	enddef
 
 Since `&opt = value` is now assigning a value to option "opt", ":&" cannot be
 used to repeat a `:substitute` command.
@@ -425,6 +476,12 @@ is both the `:substitute` command and the `substitute()` function.  When the
 line starts with `substitute(` this will use the function. Prepend a colon to
 use the command instead: >
 	:substitute(pattern (replacement (
+
+If the expression starts with "!" this is interpreted as a shell command, not
+negation of a condition.  Thus this is a shell command: >
+	!shellCommand->something
+Put the expression in parentheses to use the "!" for negation: >
+	(!expression)->Method()
 
 Note that while variables need to be defined before they can be used,
 functions can be called before being defined.  This is required to allow
@@ -687,6 +744,9 @@ White space is not allowed:
 	      arg	   # OK
 	      )
 
+White space is not allowed in a `:set` command between the option name and a
+following "&", "!", "<", "=", "+=", "-=" or "^=".
+
 
 No curly braces expansion ~
 
@@ -909,7 +969,8 @@ evaluates to false: >
 	    use-feature
 	  endif
 	enddef
-<							*vim9-user-command*
+The `exists_compiled()` function can also be used for this.
+							*vim9-user-command*
 Another side effect of compiling a function is that the presence of a user
 command is checked at compile time.  If the user command is defined later an
 error will result.  This works: >
@@ -1045,26 +1106,36 @@ For these the backtick expansion can be used.  Example: >
 	  g/pattern/s/^/`=newText`/
 	enddef
 
+Or a script variable can be used: >
+	var newText = 'blah'
+	def Replace()
+	  g/pattern/s/^/\=newText/
+	enddef
+
 Closures defined in a loop will share the same context.  For example: >
 	var flist: list<func>
-	for i in range(10)
+	for i in range(5)
 	  var inloop = i
 	  flist[i] = () => inloop
 	endfor
+	echo range(5)->map((i, _) => flist[i]())
+	# Result: [4, 4, 4, 4, 4]
 
 The "inloop" variable will exist only once, all closures put in the list refer
-to the same instance, which in the end will have the value 9.  This is
-efficient.  If you do want a separate context for each closure call a function
-to define it: >
-	def GetFunc(i: number): func
-	  var inloop = i
-	  return () => inloop
+to the same instance, which in the end will have the value 4.  This is
+efficient, also when looping many times.  If you do want a separate context
+for each closure call a function to define it: >
+	def GetClosure(i: number): func
+	  var infunc = i
+	  return () => infunc
 	enddef
 
 	var flist: list<func>
-	for i in range(10)
-	  flist[i] = GetFunc(i)
+	for i in range(5)
+	  flist[i] = GetClosure(i)
 	endfor
+	echo range(5)->map((i, _) => flist[i]())
+	# Result: [0, 1, 2, 3, 4]
 
 ==============================================================================
 
@@ -1345,11 +1416,10 @@ In case the name is ambiguous, another name can be specified: >
 To import all exported items under a specific identifier: >
 	import * as That from 'thatscript.vim'
 
-{not implemented yet: using "This as That"}
-
 Then you can use "That.EXPORTED_CONST", "That.someValue", etc.  You are free
 to choose the name "That", but it is highly recommended to use the name of the
-script file to avoid confusion.
+script file to avoid confusion.  Also avoid command names, because the name
+will shadow them.
 
 `:import` can also be used in legacy Vim script.  The imported items still
 become script-local, even when the "s:" prefix is not given.
@@ -1457,7 +1527,7 @@ Some examples: >
 	    var name: string
 	    
 	    def constructor(name: string)
-		this.name = name;
+		this.name = name
 	    enddef
 
 	    def display(): void

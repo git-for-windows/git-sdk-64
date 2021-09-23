@@ -1,4 +1,4 @@
-*options.txt*	For Vim version 8.2.  Last change: 2021 Jun 20
+*options.txt*	For Vim version 8.2.  Last change: 2021 Sep 06
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -195,10 +195,17 @@ include the "|" in the option value, use "\|" instead.  This example sets the
 This sets the 'titlestring' option to "hi" and 'iconstring' to "there": >
    :set titlestring=hi|set iconstring=there
 
-Similarly, the double quote character starts a comment.  To include the '"' in
-the option value, use '\"' instead.  This example sets the 'titlestring'
-option to 'hi "there"': >
+Similarly, in legacy script the double quote character starts a comment.  To
+include the '"' in the option value, use '\"' instead.  This example sets the
+'titlestring' option to 'hi "there"': >
    :set titlestring=hi\ \"there\"
+
+In |Vim9| script it's simpler, comments start with a '#' character, and only
+when preceded by white space.  A backslash is needed less often: >
+   vim9script
+   set titlestring=hi\ "there"
+   set titlestring=hi#there#
+   set titlestring=hi\ \#there#
 
 For Win32 backslashes in file names are mostly not removed.  More precise: For
 options that expect a file name (those where environment variables are
@@ -540,6 +547,15 @@ chance that a normal word like "lex:" is caught.  There is one exception:
 "vi:" and "vim:" can also be at the start of the line (for compatibility with
 version 3.0).  Using "ex:" at the start of the line will be ignored (this
 could be short for "example:").
+
+If the modeline is disabled within a modeline, subsequent modelines will be
+ignored.  This is to allow turning off modeline on a per-file basis.  This is
+useful when a line looks like a modeline but isn't.  For example, it would be
+good to start a YAML file containing strings like "vim:" with
+    # vim: nomodeline ~
+so as to avoid modeline misdetection.  Following options on the same line
+after modeline deactivation, if any, are still evaluated (but you would
+normally not have any).
 
 							*modeline-local*
 The options are set like with ":setlocal": The new value only applies to the
@@ -1326,9 +1342,11 @@ A jump table for the options with a short description can be found at |Q_op|.
 			    continuation (positive).
 		sbr	    Display the 'showbreak' value before applying the
 			    additional indent.
-		list:{n}    Adds an additional indent for lines that match a 
+		list:{n}    Adds an additional indent for lines that match a
 			    numbered or bulleted list (using the
 			    'formatlistpat' setting).
+		list:-1	    Uses the length of a match with 'formatlistpat'
+			    for indentation.
 	The default value for min is 20, shift and list is 0.
 
 						*'browsedir'* *'bsdir'*
@@ -4921,16 +4939,25 @@ A jump table for the options with a short description can be found at |Q_op|.
 							*lcs-space*
 	  space:c	Character to show for a space.  When omitted, spaces
 			are left blank.
+							*lcs-multispace*
+	  multispace:c...
+	 		One or more characters to use cyclically to show for
+	 		multiple consecutive spaces.  Overrides the "space"
+			setting, except for single spaces.  When omitted, the
+			"space" setting is used.  For example,
+			`:set listchars=multispace:---+` shows ten consecutive
+			spaces as:
+				---+---+--
 							*lcs-lead*
 	  lead:c	Character to show for leading spaces.  When omitted,
-			leading spaces are blank.  Overrides the "space"
-			setting for leading spaces.  You can combine it with
-			"tab:", for example: >
+			leading spaces are blank.  Overrides the "space" and
+			"multispace" settings for leading spaces.  You can
+			combine it with "tab:", for example: >
 				:set listchars+=tab:>-,lead:.
 <							*lcs-trail*
 	  trail:c	Character to show for trailing spaces.  When omitted,
-			trailing spaces are blank.  Overrides the "space"
-			setting for trailing spaces.
+			trailing spaces are blank.  Overrides the "space" and
+			"multispace" settings for trailing spaces.
 							*lcs-extends*
 	  extends:c	Character to show in the last column, when 'wrap' is
 			off and the line continues beyond the right of the
@@ -7158,6 +7185,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	If the name "cjk" is included East Asian characters are excluded from
 	spell checking.  This is useful when editing text that also has Asian
 	words.
+	Note that the "medical" dictionary does not exist, it is just an
+	example of a longer name.
 							*E757*
 	As a special case the name of a .spl file can be given as-is.  The
 	first "_xx" in the name is removed and used as the region name
@@ -8641,12 +8670,16 @@ A jump table for the options with a short description can be found at |Q_op|.
 
 					    *'virtualedit'* *'ve'*
 'virtualedit' 've'	string	(default "")
-			global
+			global or local to window |global-local|
 	A comma separated list of these words:
 	    block	Allow virtual editing in Visual block mode.
 	    insert	Allow virtual editing in Insert mode.
 	    all		Allow virtual editing in all modes.
 	    onemore	Allow the cursor to move just past the end of the line
+	    none	When used as the local value, do not allow virtual
+			editing even when the global value is set.  When used
+			as the global value, "none" is the same as "".
+	    NONE	Alternative spelling of "none".
 
 	Virtual editing means that the cursor can be positioned where there is
 	no actual character.  This can be halfway into a tab or beyond the end
@@ -8663,6 +8696,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	The `g$` command will move to the end of the screen line.
 	It doesn't make sense to combine "all" with "onemore", but you will
 	not get a warning for it.
+	When combined with other words, "none" is ignored.
 	NOTE: This option is set to "" when 'compatible' is set.
 
 			*'visualbell'* *'vb'* *'novisualbell'* *'novb'* *beep*
