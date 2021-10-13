@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.4 -->
-<!-- CreationDate: Tue Jun 15 10:02:28 2021 -->
+<!-- CreationDate: Wed Oct  6 08:45:57 2021 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -22,9 +22,9 @@
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
-<a href="#NOTICE">NOTICE</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
 <a href="#EDITING">EDITING</a><br>
+<a href="#NOTICE">NOTICE</a><br>
 <a href="#OPTIONS">OPTIONS</a><br>
 <a href="#TOGGLES">TOGGLES</a><br>
 <a href="#FILES">FILES</a><br>
@@ -59,27 +59,6 @@ Nano&rsquo;s ANOther editor, inspired by Pico</p>
 [[<b>+</b>[<b>crCR</b>](<b>/</b>|<b>?</b>)<i>string</i>]
 <i>file</i>]...</p>
 
-<h2>NOTICE
-<a name="NOTICE"></a>
-</h2>
-
-
-<p style="margin-left:11%; margin-top: 1em">Since version
-4.0, <b>nano</b> by default:</p>
-
-<p style="margin-left:17%; margin-top: 1em">&bull; does not
-automatically hard-wrap lines that become overlong, <br>
-&bull; includes the line below the title bar in the editing
-area, <br>
-&bull; does linewise (smooth) scrolling.</p>
-
-<p style="margin-left:11%; margin-top: 1em">If you want the
-old, Pico behavior back, you can use
-<b>&minus;&minus;breaklonglines</b>,
-<b>&minus;&minus;emptyline</b>, and
-<b>&minus;&minus;jumpyscrolling</b> (or <b>&minus;bej</b>
-for short).</p>
-
 <h2>DESCRIPTION
 <a name="DESCRIPTION"></a>
 </h2>
@@ -107,7 +86,7 @@ These search modes can be explicitly disabled by using the
 uppercase variant of those letters: <b>C</b> and/or
 <b>R</b>. When the string contains spaces, it needs to be
 enclosed in quotes. To give an example: to open a file at
-the first occurrence of the word &quot;Foo&quot;, one would
+the first occurrence of the word &quot;Foo&quot;, you would
 do:</p>
 
 <p style="margin-left:17%; margin-top: 1em"><b>nano
@@ -135,12 +114,12 @@ the current contents of the cutbuffer at the current cursor
 position.</p>
 
 <p style="margin-left:11%; margin-top: 1em">When a more
-precise piece of text needs to be cut or copied, one can
+precise piece of text needs to be cut or copied, you can
 mark its start with <b>^6</b>, move the cursor to its end
 (the marked text will be highlighted), and then use
 <b>^K</b> to cut it, or <b>M&minus;6</b> to copy it to the
-cutbuffer. One can also save the marked text to a file with
-<b>^O</b>, or spell check it with <b>^T</b>.</p>
+cutbuffer. You can also save the marked text to a file with
+<b>^O</b>, or spell check it with <b>^T^T</b>.</p>
 
 <p style="margin-left:11%; margin-top: 1em">On some
 terminals, text can be selected also by holding down Shift
@@ -153,6 +132,27 @@ at the bottom of the screen show some important commands;
 the built-in help (<b>^G</b>) lists all the available ones.
 The default key bindings can be changed via a <i>nanorc</i>
 file -- see <b>nanorc</b>(5).</p>
+
+<h2>NOTICE
+<a name="NOTICE"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Since version
+4.0, <b>nano</b> by default:</p>
+
+<p style="margin-left:17%; margin-top: 1em">&bull; does not
+automatically hard-wrap lines that become overlong, <br>
+&bull; includes the line below the title bar in the editing
+area, <br>
+&bull; does linewise (smooth) scrolling.</p>
+
+<p style="margin-left:11%; margin-top: 1em">If you want the
+old, Pico behavior back, you can use
+<b>&minus;&minus;breaklonglines</b>,
+<b>&minus;&minus;emptyline</b>, and
+<b>&minus;&minus;jumpyscrolling</b> (or <b>&minus;bej</b>
+for short).</p>
 
 <h2>OPTIONS
 <a name="OPTIONS"></a>
@@ -200,8 +200,9 @@ and/or <b>selectedcolor</b> in your nanorc file. See
 <p style="margin-left:11%;"><b>&minus;E</b>,
 <b>&minus;&minus;tabstospaces</b></p>
 
-<p style="margin-left:22%;">Convert typed tabs to
-spaces.</p>
+<p style="margin-left:22%;">Convert each typed tab to
+spaces -- to the number of spaces that a tab at that
+position would take up.</p>
 
 <p style="margin-left:11%;"><b>&minus;F</b>,
 <b>&minus;&minus;multibuffer</b></p>
@@ -595,7 +596,7 @@ the center of the title bar.</p>
 <p style="margin-left:22%;">Suppress the title bar and
 instead show information about the current buffer at the
 bottom of the screen, in the space for the status bar. In
-this &quot;minibar&quot; the file name is shown on the left,
+this &quot;minibar&quot; the filename is shown on the left,
 followed by an asterisk if the buffer has been modified. On
 the right are displayed the current line and column number,
 the code of the character under the cursor (in Unicode
@@ -604,7 +605,7 @@ format: U+xxxx), the same flags as are shown by
 expresses how far the cursor is into the file (linewise).
 When a file is loaded or saved, and also when switching
 between buffers, the number of lines in the buffer is
-displayed after the file name. This number is cleared upon
+displayed after the filename. This number is cleared upon
 the next keystroke, or replaced with an [i/n] counter when
 multiple buffers are open. The line plus column numbers and
 the character code are displayed only when

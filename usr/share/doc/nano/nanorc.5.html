@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.4 -->
-<!-- CreationDate: Tue Jun 15 10:05:46 2021 -->
+<!-- CreationDate: Wed Oct  6 08:49:14 2021 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -205,7 +205,7 @@ title bar, leaving it entirely blank.</p>
 
 <p style="margin-left:15%;">Use this color combination for
 the status bar when an error message is displayed. The
-default value is <b>brightwhite,red</b>. See <b>set
+default value is <b>bold,white,red</b>. See <b>set
 titlecolor</b> for valid color names.</p>
 
 <p style="margin-left:11%;"><b>set fill</b>
@@ -294,7 +294,7 @@ The default value is &quot;<b>(&lt;[{)&gt;]}</b>&quot;.</p>
 <p style="margin-left:15%;">Suppress the title bar and
 instead show information about the current buffer at the
 bottom of the screen, in the space for the status bar. In
-this &quot;minibar&quot; the file name is shown on the left,
+this &quot;minibar&quot; the filename is shown on the left,
 followed by an asterisk if the buffer has been modified. On
 the right are displayed the current line and column number,
 the code of the character under the cursor (in Unicode
@@ -302,12 +302,12 @@ format: U+xxxx), the same flags as are shown by <b>set
 stateflags</b>, and a percentage that expresses how far the
 cursor is into the file (linewise). When a file is loaded or
 saved, and also when switching between buffers, the number
-of lines in the buffer is displayed after the file name.
-This number is cleared upon the next keystroke, or replaced
-with an [i/n] counter when multiple buffers are open. The
-line plus column numbers and the character code are
-displayed only when <b>set constantshow</b> is used, and can
-be toggled on and off with <b>M-C</b>. The state flags are
+of lines in the buffer is displayed after the filename. This
+number is cleared upon the next keystroke, or replaced with
+an [i/n] counter when multiple buffers are open. The line
+plus column numbers and the character code are displayed
+only when <b>set constantshow</b> is used, and can be
+toggled on and off with <b>M-C</b>. The state flags are
 displayed only when <b>set stateflags</b> is used.</p>
 
 <p style="margin-left:11%;"><b>set minicolor</b>
@@ -466,8 +466,9 @@ details.</p>
 <p style="margin-left:11%;"><b>set showcursor</b></p>
 
 <p style="margin-left:15%;">Put the cursor on the
-highlighted item in the file browser, to aid braille
-users.</p>
+highlighted item in the file browser, and show the cursor in
+the help viewer, to aid braille users and people with poor
+vision.</p>
 
 <p style="margin-left:11%;"><b>set smarthome</b></p>
 
@@ -541,8 +542,9 @@ The default value is <b>8</b>.</p>
 
 <p style="margin-left:11%;"><b>set tabstospaces</b></p>
 
-<p style="margin-left:15%;">Convert typed tabs to
-spaces.</p>
+<p style="margin-left:15%;">Convert each typed tab to
+spaces -- to the number of spaces that a tab at that
+position would take up.</p>
 
 <p style="margin-left:11%;"><b>set titlecolor</b>
 [<b>bold,</b>][<b>italic,</b>]<i>fgcolor</i><b>,</b><i>bgcolor</i></p>
@@ -1019,8 +1021,9 @@ positions. (The old name of this function,
 
 <p style="margin-left:15%;"><b>wordcount</b></p>
 
-<p style="margin-left:18%;">Counts the number of words,
-lines and characters in the current buffer.</p>
+<p style="margin-left:18%;">Counts and reports on the
+status bar the number of lines, words, and characters in the
+current buffer (or in the marked region).</p>
 
 <p style="margin-left:15%;"><b>execute</b></p>
 
@@ -1049,39 +1052,39 @@ program (if the active syntax defines one).</p>
 
 <p style="margin-left:15%;"><b>justify</b></p>
 
-<p style="margin-left:18%;">Justifies the current
-paragraph. A paragraph is a group of contiguous lines that,
-apart from possibly the first line, all have the same
-indentation. The beginning of a paragraph is detected by
-either this lone line with a differing indentation or by a
-preceding blank line.</p>
+<p style="margin-left:18%;">Justifies the current paragraph
+(or the marked region). A paragraph is a group of contiguous
+lines that, apart from possibly the first line, all have the
+same indentation. The beginning of a paragraph is detected
+by either this lone line with a differing indentation or by
+a preceding blank line.</p>
 
 <p style="margin-left:15%;"><b>fulljustify</b></p>
 
 <p style="margin-left:18%;">Justifies the entire current
-buffer.</p>
+buffer (or the marked region).</p>
 
 <p style="margin-left:15%;"><b>indent</b></p>
 
 <p style="margin-left:18%;">Indents (shifts to the right)
-the currently marked text.</p>
+the current line or the marked lines.</p>
 
 <p style="margin-left:15%;"><b>unindent</b></p>
 
 <p style="margin-left:18%;">Unindents (shifts to the left)
-the currently marked text.</p>
+the current line or the marked lines.</p>
 
 <p style="margin-left:15%;"><b>comment</b></p>
 
 <p style="margin-left:18%;">Comments or uncomments the
-current line or marked lines, using the comment style
+current line or the marked lines, using the comment style
 specified in the active syntax.</p>
 
 <p style="margin-left:15%;"><b>complete</b></p>
 
-<p style="margin-left:18%;">Completes the fragment before
-the cursor to a full word found elsewhere in the current
-buffer.</p>
+<p style="margin-left:18%;">Completes (when possible) the
+fragment before the cursor to a full word found elsewhere in
+the current buffer.</p>
 
 <p style="margin-left:15%;"><b>left</b></p>
 
@@ -1107,13 +1110,17 @@ editor or browser).</p>
 
 <p style="margin-left:18%;">Scrolls the viewport up one row
 (meaning that the text slides down) while keeping the cursor
-in the same text position, if possible.</p>
+in the same text position, if possible. (This function is
+bound by default to &lt;Alt+Up&gt;. If &lt;Alt+Up&gt; does
+nothing on your Linux console, see the FAQ:
+<a href="https://nano-editor.org/dist/latest/faq.html#4.1">https://nano-editor.org/dist/latest/faq.html#4.1</a>.)</p>
 
 <p style="margin-left:15%;"><b>scrolldown</b></p>
 
 <p style="margin-left:18%;">Scrolls the viewport down one
 row (meaning that the text slides up) while keeping the
-cursor in the same text position, if possible.</p>
+cursor in the same text position, if possible. (This
+function is bound by default to &lt;Alt+Down&gt;.)</p>
 
 <p style="margin-left:15%;"><b>center</b></p>
 
