@@ -1,5 +1,5 @@
 /* idn-free.h --- Invoke the free function to release memory
-   Copyright (C) 2004-2020 Simon Josefsson
+   Copyright (C) 2004-2021 Simon Josefsson
 
    This file is part of GNU Libidn.
 
@@ -29,6 +29,14 @@
 
 #ifndef IDN_FREE_H
 # define IDN_FREE_H
+
+/**
+ * SECTION:idn-free
+ * @title: idn-free.h
+ * @short_description: Memory deallocation functions
+ *
+ * Memory deallocation functions.
+ */
 
 # ifndef IDNAPI
 #  if defined LIBIDN_BUILDING && defined HAVE_VISIBILITY && HAVE_VISIBILITY

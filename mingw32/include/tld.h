@@ -1,6 +1,6 @@
 /* tld.h --- Declarations for TLD restriction checking.
-   Copyright (C) 2004-2020 Simon Josefsson.
-   Copyright (C) 2003-2020 Free Software Foundation, Inc.
+   Copyright (C) 2004-2021 Simon Josefsson.
+   Copyright (C) 2003-2021 Free Software Foundation, Inc.
 
    Author: Thomas Jacob, Internet24.de
 
@@ -33,6 +33,14 @@
 #ifndef TLD_H
 # define TLD_H
 
+/**
+ * SECTION:tld
+ * @title: tld.h
+ * @short_description: TLD-related functions
+ *
+ * TLD-related functions.
+ */
+
 # ifndef IDNAPI
 #  if defined LIBIDN_BUILDING && defined HAVE_VISIBILITY && HAVE_VISIBILITY
 #   define IDNAPI __attribute__((__visibility__("default")))
@@ -56,23 +64,42 @@ extern "C"
   /* Get uint32_t. */
 # include <idn-int.h>
 
-  /* Interval of valid code points in the TLD. */
+  /* *INDENT-OFF* */
+
+  /* Why INDENT-OFF?  See stringprep.h */
+
+  /**
+   * Tld_table_element:
+   * @start: Start of range.
+   * @end: End of range, end == start if single.
+   *
+   * Interval of valid code points in the TLD.
+   */
   struct Tld_table_element
   {
-    uint32_t start;		/* Start of range. */
-    uint32_t end;		/* End of range, end == start if single. */
-  };
+    uint32_t start;
+    uint32_t end;
+};
   typedef struct Tld_table_element Tld_table_element;
 
-  /* List valid code points in a TLD. */
+  /**
+   * Tld_table:
+   * @name: TLD name, e.g., "no".
+   * @version: Version string from TLD file.
+   * @nvalid: Number of entries in data.
+   * @valid: Sorted array (of size @nvalid) of valid code points.
+   *
+   * List valid code points in a TLD.
+   */
   struct Tld_table
   {
-    const char *name;		/* TLD name, e.g., "no". */
-    const char *version;	/* Version string from TLD file. */
-    size_t nvalid;		/* Number of entries in data. */
-    const Tld_table_element *valid;	/* Sorted array of valid code points. */
-  };
+    const char *name;
+    const char *version;
+    size_t nvalid;
+    const Tld_table_element *valid;
+};
   typedef struct Tld_table Tld_table;
+  /* *INDENT-ON* */
 
   /* Error codes. */
   typedef enum

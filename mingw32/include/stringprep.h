@@ -1,5 +1,5 @@
 /* stringprep.h --- Header file for stringprep functions.
-   Copyright (C) 2002-2020 Simon Josefsson
+   Copyright (C) 2002-2021 Simon Josefsson
 
    This file is part of GNU Libidn.
 
@@ -30,6 +30,14 @@
 #ifndef STRINGPREP_H
 # define STRINGPREP_H
 
+/**
+ * SECTION:stringprep
+ * @title: stringprep.h
+ * @short_description: Stringprep-related functions
+ *
+ * Stringprep-related functions.
+ */
+
 # ifndef IDNAPI
 #  if defined LIBIDN_BUILDING && defined HAVE_VISIBILITY && HAVE_VISIBILITY
 #   define IDNAPI __attribute__((__visibility__("default")))
@@ -51,7 +59,7 @@ extern "C"
 {
 # endif
 
-# define STRINGPREP_VERSION "1.36"
+# define STRINGPREP_VERSION "1.38"
 
 /* Error codes. */
   typedef enum
@@ -97,29 +105,74 @@ extern "C"
 
 # define STRINGPREP_MAX_MAP_CHARS 4
 
+  /* *INDENT-OFF* */
+
+  /* Why INDENT-OFF?  GTK-DOC has a bug
+   * <https://gitlab.gnome.org/GNOME/gtk-doc/-/issues/37> which causes
+   * parsing of structs to fail unless the terminating } is at the
+   * beginning of the line.  We hard-code the header file to be like
+   * that, and add the INDENT-OFF markers so that indent won't restore
+   * them.  When that bug is fixed, remove the INDENT-* marker, run
+   * 'make indent', and make sure that
+   * doc/reference/libidn-decl-list.txt stay the same.
+   *
+   * Of course, exposing these struct's in the public header file in
+   * the first place was a mistake.
+   */
+
+  /**
+   * Stringprep_table_element:
+   * @start: starting codepoint.
+   * @end: ending codepoint, 0 if only one character.
+   * @map: codepoints to map @start into, NULL if end is not 0.
+   *
+   * Stringprep profile table element.
+   */
   struct Stringprep_table_element
   {
     uint32_t start;
-    uint32_t end;		/* 0 if only one character */
-    uint32_t map[STRINGPREP_MAX_MAP_CHARS];	/* NULL if end is not 0 */
-  };
+    uint32_t end;
+    uint32_t map[STRINGPREP_MAX_MAP_CHARS];
+};
   typedef struct Stringprep_table_element Stringprep_table_element;
 
+  /**
+   * Stringprep_table:
+   * @operation: a #Stringprep_profile_steps value
+   * @flags: a #Stringprep_profile_flags value
+   * @table: zero-terminated array of %Stringprep_table_element elements.
+   * @table_size: size of @table, to speed up searching.
+   *
+   * Stringprep profile table.
+   */
   struct Stringprep_table
   {
     Stringprep_profile_steps operation;
     Stringprep_profile_flags flags;
     const Stringprep_table_element *table;
     size_t table_size;
-  };
+};
+  /**
+   * Stringprep_profile:
+   *
+   * Stringprep profile table.
+   */
   typedef struct Stringprep_table Stringprep_profile;
 
+  /**
+   * Stringprep_profiles:
+   * @name: name of stringprep profile.
+   * @tables: zero-terminated array of %Stringprep_profile elements.
+   *
+   * Element structure
+   */
   struct Stringprep_profiles
   {
     const char *name;
     const Stringprep_profile *tables;
-  };
+};
   typedef struct Stringprep_profiles Stringprep_profiles;
+  /* *INDENT-ON* */
 
   extern IDNAPI const Stringprep_profiles stringprep_profiles[];
 

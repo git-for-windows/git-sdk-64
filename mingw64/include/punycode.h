@@ -1,5 +1,5 @@
 /* punycode.h --- Declarations for punycode functions.
-   Copyright (C) 2002-2020 Simon Josefsson
+   Copyright (C) 2002-2021 Simon Josefsson
 
    This file is part of GNU Libidn.
 
@@ -65,6 +65,14 @@
 
 #ifndef PUNYCODE_H
 # define PUNYCODE_H
+
+/**
+ * SECTION:punycode
+ * @title: punycode.h
+ * @short_description: Punycode-related functions
+ *
+ * Punycode-related functions.
+ */
 
 # ifndef IDNAPI
 #  if defined LIBIDN_BUILDING && defined HAVE_VISIBILITY && HAVE_VISIBILITY
