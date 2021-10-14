@@ -664,8 +664,8 @@ See also <a href="githooks.html">githooks(5)</a>.</p>
 <p>Use the given merge strategy; can be supplied more than
 once to specify them in the order they should be tried.
 If there is no <code>-s</code> option, a built-in list of strategies
-is used instead (<em>git merge-recursive</em> when merging a single
-head, <em>git merge-octopus</em> otherwise).</p>
+is used instead (<code>recursive</code> when merging a single head,
+<code>octopus</code> otherwise).</p>
 </dd>
 <dt class="hdlist1">-X &lt;option&gt;</dt>
 <dt class="hdlist1">--strategy-option=&lt;option&gt;</dt>
@@ -1115,14 +1115,6 @@ arguments to <code>git merge</code> and/or <code>git pull</code>.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">resolve</dt>
-<dd>
-<p>This can only resolve two heads (i.e. the current branch
-and another branch you pulled from) using a 3-way merge
-algorithm.  It tries to carefully detect criss-cross
-merge ambiguities and is considered generally safe and
-fast.</p>
-</dd>
 <dt class="hdlist1">recursive</dt>
 <dd>
 <p>This can only resolve two heads using a 3-way merge
@@ -1134,9 +1126,9 @@ reported to result in fewer merge conflicts without
 causing mismerges by tests done on actual merge commits
 taken from Linux 2.6 kernel development history.
 Additionally this can detect and handle merges involving
-renames, but currently cannot make use of detected
-copies.  This is the default merge strategy when pulling
-or merging one branch.</p>
+renames.  It does not make use of detected copies.  This
+is the default merge strategy when pulling or merging one
+branch.</p>
 <div class="paragraph">
 <p>The <em>recursive</em> strategy can take the following options:</p>
 </div>
@@ -1161,18 +1153,15 @@ no <em>theirs</em> merge strategy to confuse this merge option with.</p>
 </dd>
 <dt class="hdlist1">patience</dt>
 <dd>
-<p>With this option, <em>merge-recursive</em> spends a little extra time
-to avoid mismerges that sometimes occur due to unimportant
-matching lines (e.g., braces from distinct functions).  Use
-this when the branches to be merged have diverged wildly.
-See also <a href="git-diff.html">git-diff(1)</a> <code>--patience</code>.</p>
+<p>Deprecated synonym for <code>diff-algorithm=patience</code>.</p>
 </dd>
 <dt class="hdlist1">diff-algorithm=[patience|minimal|histogram|myers]</dt>
 <dd>
-<p>Tells <em>merge-recursive</em> to use a different diff algorithm, which
-can help avoid mismerges that occur due to unimportant matching
-lines (such as braces from distinct functions).  See also
-<a href="git-diff.html">git-diff(1)</a> <code>--diff-algorithm</code>.</p>
+<p>Use a different diff algorithm while merging, which can help
+avoid mismerges that occur due to unimportant matching lines
+(such as braces from distinct functions).  See also
+<a href="git-diff.html">git-diff(1)</a> <code>--diff-algorithm</code>.  Defaults to the
+<code>diff.algorithm</code> config setting.</p>
 </dd>
 <dt class="hdlist1">ignore-space-change</dt>
 <dt class="hdlist1">ignore-all-space</dt>
@@ -1241,6 +1230,29 @@ two trees to match.</p>
 </dd>
 </dl>
 </div>
+</dd>
+<dt class="hdlist1">ort</dt>
+<dd>
+<p>This is meant as a drop-in replacement for the <code>recursive</code>
+algorithm (as reflected in its acronym&#8201;&#8212;&#8201;"Ostensibly
+Recursive&#8217;s Twin"), and will likely replace it in the future.
+It fixes corner cases that the <code>recursive</code> strategy handles
+suboptimally, and is significantly faster in large
+repositories&#8201;&#8212;&#8201;especially when many renames are involved.</p>
+<div class="paragraph">
+<p>The <code>ort</code> strategy takes all the same options as <code>recursive</code>.
+However, it ignores three of those options: <code>no-renames</code>,
+<code>patience</code> and <code>diff-algorithm</code>.  It always runs with rename
+detection (it handles it much faster than <code>recursive</code> does), and
+it specifically uses <code>diff-algorithm=histogram</code>.</p>
+</div>
+</dd>
+<dt class="hdlist1">resolve</dt>
+<dd>
+<p>This can only resolve two heads (i.e. the current branch
+and another branch you pulled from) using a 3-way merge
+algorithm.  It tries to carefully detect criss-cross
+merge ambiguities.  It does not handle renames.</p>
 </dd>
 <dt class="hdlist1">octopus</dt>
 <dd>
@@ -1580,7 +1592,7 @@ values containing whitespace characters are currently not supported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-08-24 10:09:53 UTC
+Last updated 2021-10-13 23:06:50 UTC
 </div>
 </div>
 </body>

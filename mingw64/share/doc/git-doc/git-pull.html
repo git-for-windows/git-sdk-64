@@ -456,15 +456,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Incorporates changes from a remote repository into the current
-branch.  In its default mode, <code>git pull</code> is shorthand for
-<code>git fetch</code> followed by <code>git merge FETCH_HEAD</code>.</p>
+<p>Incorporates changes from a remote repository into the current branch.
+If the current branch is behind the remote, then by default it will
+fast-forward the current branch to match the remote.  If the current
+branch and the remote have diverged, the user needs to specify how to
+reconcile the divergent branches with <code>--rebase</code> or <code>--no-rebase</code> (or
+the corresponding configuration option in <code>pull.rebase</code>).</p>
 </div>
 <div class="paragraph">
-<p>More precisely, <em>git pull</em> runs <em>git fetch</em> with the given
-parameters and calls <em>git merge</em> to merge the retrieved branch
-heads into the current branch.
-With <code>--rebase</code>, it runs <em>git rebase</em> instead of <em>git merge</em>.</p>
+<p>More precisely, <code>git pull</code> runs <code>git fetch</code> with the given parameters
+and then depending on configuration options or command line flags,
+will call either <code>git rebase</code> or <code>git merge</code> to reconcile diverging
+branches.</p>
 </div>
 <div class="paragraph">
 <p>&lt;repository&gt; should be the name of a remote repository as
@@ -564,7 +567,8 @@ updated, too (see <a href="git-fetch.html">git-fetch(1)</a>, <a href="git-config
 <dt class="hdlist1">--no-commit</dt>
 <dd>
 <p>Perform the merge and commit the result. This option can
-be used to override --no-commit.</p>
+be used to override --no-commit.
+Only useful when merging.</p>
 <div class="paragraph">
 <p>With --no-commit perform the merge and stop just before creating
 a merge commit, to give the user a chance to inspect and further
@@ -602,12 +606,18 @@ the <em>&lt;mode&gt;</em> is given a value of <code>scissors</code>, scissors wi
 to <code>MERGE_MSG</code> before being passed on to the commit machinery in the
 case of a merge conflict.</p>
 </dd>
-<dt class="hdlist1">--ff</dt>
-<dt class="hdlist1">--no-ff</dt>
 <dt class="hdlist1">--ff-only</dt>
 <dd>
-<p>Specifies how a merge is handled when the merged-in history is
-already a descendant of the current history.  <code>--ff</code> is the
+<p>Only update to the new history if there is no divergent local
+history.  This is the default when no method for reconciling
+divergent histories is provided (via the --rebase=* flags).</p>
+</dd>
+<dt class="hdlist1">--ff</dt>
+<dt class="hdlist1">--no-ff</dt>
+<dd>
+<p>When merging rather than rebasing, specifies how a merge is
+handled when the merged-in history is already a descendant of
+the current history.  If merging is requested, <code>--ff</code> is the
 default unless merging an annotated (and possibly signed) tag
 that is not stored in its natural place in the <code>refs/tags/</code>
 hierarchy, in which case <code>--no-ff</code> is assumed.</p>
@@ -620,10 +630,6 @@ descendant of the current history), create a merge commit.</p>
 <div class="paragraph">
 <p>With <code>--no-ff</code>, create a merge commit in all cases, even when the merge
 could instead be resolved as a fast-forward.</p>
-</div>
-<div class="paragraph">
-<p>With <code>--ff-only</code>, resolve the merge as a fast-forward when possible.
-When not possible, refuse to merge and exit with a non-zero status.</p>
 </div>
 </dd>
 <dt class="hdlist1">-S[&lt;keyid&gt;]</dt>
@@ -641,7 +647,8 @@ and earlier <code>--gpg-sign</code>.</p>
 <dd>
 <p>In addition to branch names, populate the log message with
 one-line descriptions from at most &lt;n&gt; actual commits that are being
-merged. See also <a href="git-fmt-merge-msg.html">git-fmt-merge-msg(1)</a>.</p>
+merged. See also <a href="git-fmt-merge-msg.html">git-fmt-merge-msg(1)</a>.
+Only useful when merging.</p>
 <div class="paragraph">
 <p>With --no-log do not list one-line descriptions from the
 actual commits being merged.</p>
@@ -693,11 +700,15 @@ option can be used to override --squash.</p>
 <div class="paragraph">
 <p>With --squash, --commit is not allowed, and will fail.</p>
 </div>
+<div class="paragraph">
+<p>Only useful when merging.</p>
+</div>
 </dd>
 <dt class="hdlist1">--no-verify</dt>
 <dd>
 <p>This option bypasses the pre-merge and commit-msg hooks.
-See also <a href="githooks.html">githooks(5)</a>.</p>
+See also <a href="githooks.html">githooks(5)</a>.
+Only useful when merging.</p>
 </dd>
 <dt class="hdlist1">-s &lt;strategy&gt;</dt>
 <dt class="hdlist1">--strategy=&lt;strategy&gt;</dt>
@@ -705,8 +716,8 @@ See also <a href="githooks.html">githooks(5)</a>.</p>
 <p>Use the given merge strategy; can be supplied more than
 once to specify them in the order they should be tried.
 If there is no <code>-s</code> option, a built-in list of strategies
-is used instead (<em>git merge-recursive</em> when merging a single
-head, <em>git merge-octopus</em> otherwise).</p>
+is used instead (<code>recursive</code> when merging a single head,
+<code>octopus</code> otherwise).</p>
 </dd>
 <dt class="hdlist1">-X &lt;option&gt;</dt>
 <dt class="hdlist1">--strategy-option=&lt;option&gt;</dt>
@@ -722,6 +733,9 @@ signed with a valid key, i.e. a key that has a valid uid: in the
 default trust model, this means the signing key has been signed by
 a trusted key.  If the tip commit of the side branch is not signed
 with a valid key, the merge is aborted.</p>
+<div class="paragraph">
+<p>Only useful when merging.</p>
+</div>
 </dd>
 <dt class="hdlist1">--summary</dt>
 <dt class="hdlist1">--no-summary</dt>
@@ -747,6 +761,9 @@ used to override this safety when merging histories of two
 projects that started their lives independently. As that is
 a very rare occasion, no configuration variable to enable
 this by default exists and will not be added.</p>
+<div class="paragraph">
+<p>Only useful when merging.</p>
+</div>
 </dd>
 <dt class="hdlist1">-r</dt>
 <dt class="hdlist1">--rebase[=false|true|merges|preserve|interactive]</dt>
@@ -795,7 +812,7 @@ unless you have read <a href="git-rebase.html">git-rebase(1)</a> carefully.
 </dd>
 <dt class="hdlist1">--no-rebase</dt>
 <dd>
-<p>Override earlier --rebase.</p>
+<p>This is shorthand for --rebase=false.</p>
 </dd>
 </dl>
 </div>
@@ -1464,14 +1481,6 @@ arguments to <code>git merge</code> and/or <code>git pull</code>.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">resolve</dt>
-<dd>
-<p>This can only resolve two heads (i.e. the current branch
-and another branch you pulled from) using a 3-way merge
-algorithm.  It tries to carefully detect criss-cross
-merge ambiguities and is considered generally safe and
-fast.</p>
-</dd>
 <dt class="hdlist1">recursive</dt>
 <dd>
 <p>This can only resolve two heads using a 3-way merge
@@ -1483,9 +1492,9 @@ reported to result in fewer merge conflicts without
 causing mismerges by tests done on actual merge commits
 taken from Linux 2.6 kernel development history.
 Additionally this can detect and handle merges involving
-renames, but currently cannot make use of detected
-copies.  This is the default merge strategy when pulling
-or merging one branch.</p>
+renames.  It does not make use of detected copies.  This
+is the default merge strategy when pulling or merging one
+branch.</p>
 <div class="paragraph">
 <p>The <em>recursive</em> strategy can take the following options:</p>
 </div>
@@ -1510,18 +1519,15 @@ no <em>theirs</em> merge strategy to confuse this merge option with.</p>
 </dd>
 <dt class="hdlist1">patience</dt>
 <dd>
-<p>With this option, <em>merge-recursive</em> spends a little extra time
-to avoid mismerges that sometimes occur due to unimportant
-matching lines (e.g., braces from distinct functions).  Use
-this when the branches to be merged have diverged wildly.
-See also <a href="git-diff.html">git-diff(1)</a> <code>--patience</code>.</p>
+<p>Deprecated synonym for <code>diff-algorithm=patience</code>.</p>
 </dd>
 <dt class="hdlist1">diff-algorithm=[patience|minimal|histogram|myers]</dt>
 <dd>
-<p>Tells <em>merge-recursive</em> to use a different diff algorithm, which
-can help avoid mismerges that occur due to unimportant matching
-lines (such as braces from distinct functions).  See also
-<a href="git-diff.html">git-diff(1)</a> <code>--diff-algorithm</code>.</p>
+<p>Use a different diff algorithm while merging, which can help
+avoid mismerges that occur due to unimportant matching lines
+(such as braces from distinct functions).  See also
+<a href="git-diff.html">git-diff(1)</a> <code>--diff-algorithm</code>.  Defaults to the
+<code>diff.algorithm</code> config setting.</p>
 </dd>
 <dt class="hdlist1">ignore-space-change</dt>
 <dt class="hdlist1">ignore-all-space</dt>
@@ -1590,6 +1596,29 @@ two trees to match.</p>
 </dd>
 </dl>
 </div>
+</dd>
+<dt class="hdlist1">ort</dt>
+<dd>
+<p>This is meant as a drop-in replacement for the <code>recursive</code>
+algorithm (as reflected in its acronym&#8201;&#8212;&#8201;"Ostensibly
+Recursive&#8217;s Twin"), and will likely replace it in the future.
+It fixes corner cases that the <code>recursive</code> strategy handles
+suboptimally, and is significantly faster in large
+repositories&#8201;&#8212;&#8201;especially when many renames are involved.</p>
+<div class="paragraph">
+<p>The <code>ort</code> strategy takes all the same options as <code>recursive</code>.
+However, it ignores three of those options: <code>no-renames</code>,
+<code>patience</code> and <code>diff-algorithm</code>.  It always runs with rename
+detection (it handles it much faster than <code>recursive</code> does), and
+it specifically uses <code>diff-algorithm=histogram</code>.</p>
+</div>
+</dd>
+<dt class="hdlist1">resolve</dt>
+<dd>
+<p>This can only resolve two heads (i.e. the current branch
+and another branch you pulled from) using a 3-way merge
+algorithm.  It tries to carefully detect criss-cross
+merge ambiguities.  It does not handle renames.</p>
 </dd>
 <dt class="hdlist1">octopus</dt>
 <dd>
@@ -1821,7 +1850,7 @@ version.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-08-24 10:09:53 UTC
+Last updated 2021-10-13 23:06:50 UTC
 </div>
 </div>
 </body>

@@ -537,6 +537,10 @@ codes are:</p>
 <div class="paragraph">
 <p>On success, the command returns the exit code 0.</p>
 </div>
+<div class="paragraph">
+<p>A list of all available configuration variables can be obtained using the
+<code>git help --config</code> command.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -4463,7 +4467,7 @@ in the file list. The default is "true".</p>
 </dd>
 <dt class="hdlist1">gui.encoding</dt>
 <dd>
-<p>Specifies the default encoding to use for displaying of
+<p>Specifies the default character encoding to use for displaying of
 file contents in <a href="git-gui.html">git-gui(1)</a> and <a href="gitk.html">gitk(1)</a>.
 It can be overridden by setting the <em>encoding</em> attribute
 for relevant files (see <a href="gitattributes.html">gitattributes(5)</a>).
@@ -7321,13 +7325,18 @@ If you have multiple hideRefs values, later entries override earlier ones
 </div>
 <div class="paragraph">
 <p>If a namespace is in use, the namespace prefix is stripped from each
-reference before it is matched against <code>transfer.hiderefs</code> patterns.
-For example, if <code>refs/heads/master</code> is specified in <code>transfer.hideRefs</code> and
+reference before it is matched against <code>transfer.hiderefs</code> patterns. In
+order to match refs before stripping, add a <code>^</code> in front of the ref name. If
+you combine <code>!</code> and <code>^</code>, <code>!</code> must be specified first.</p>
+</div>
+<div class="paragraph">
+<p>For example, if <code>refs/heads/master</code> is specified in <code>transfer.hideRefs</code> and
 the current namespace is <code>foo</code>, then <code>refs/namespaces/foo/refs/heads/master</code>
-is omitted from the advertisements but <code>refs/heads/master</code> and
-<code>refs/namespaces/bar/refs/heads/master</code> are still advertised as so-called
-"have" lines. In order to match refs before stripping, add a <code>^</code> in front of
-the ref name. If you combine <code>!</code> and <code>^</code>, <code>!</code> must be specified first.</p>
+is omitted from the advertisements. If <code>uploadpack.allowRefInWant</code> is set,
+<code>upload-pack</code> will treat <code>want-ref refs/heads/master</code> in a protocol v2
+<code>fetch</code> command as if <code>refs/namespaces/foo/refs/heads/master</code> did not exist.
+<code>receive-pack</code>, on the other hand, will still advertise the object id the
+ref is pointing to without mentioning its name (a so-called ".have" line).</p>
 </div>
 <div class="paragraph">
 <p>Even if you hide refs, a client may still be able to steal the target
@@ -7627,7 +7636,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-08-24 10:09:53 UTC
+Last updated 2021-10-13 23:06:50 UTC
 </div>
 </div>
 </body>

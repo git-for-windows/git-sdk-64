@@ -535,14 +535,16 @@ used together.</p>
 </dd>
 <dt class="hdlist1">--encoding=&lt;encoding&gt;</dt>
 <dd>
-<p>The commit objects record the encoding used for the log message
+<p>Commit objects record the character encoding used for the log message
 in their encoding header; this option can be used to tell the
 command to re-code the commit log message in the encoding
 preferred by the user.  For non plumbing commands this
 defaults to UTF-8. Note that if an object claims to be encoded
 in <code>X</code> and we are outputting in <code>X</code>, we will output the object
 verbatim; this means that invalid sequences in the original
-commit may be copied to the output.</p>
+commit may be copied to the output. Likewise, if iconv(3) fails
+to convert the commit, we will output the original object
+verbatim, along with a warning.</p>
 </dd>
 <dt class="hdlist1">--expand-tabs=&lt;n&gt;</dt>
 <dt class="hdlist1">--expand-tabs</dt>
@@ -2710,7 +2712,7 @@ reversible operation.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-08-24 10:09:53 UTC
+Last updated 2021-10-13 23:06:50 UTC
 </div>
 </div>
 </body>
