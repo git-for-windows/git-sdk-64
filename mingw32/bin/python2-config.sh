@@ -40,7 +40,7 @@ installed_prefix ()
     echo $RESULT
 }
 
-prefix_build="D:/a/_temp/msys/msys64/mingw32"
+prefix_build="D:/a/_temp/msys64/mingw32"
 prefix_real=$(installed_prefix "$0")
 
 # Use sed to fix paths from their built to locations to their installed to locations.
@@ -49,7 +49,7 @@ exec_prefix_build="${prefix}"
 exec_prefix=$(echo "$exec_prefix_build" | sed "s#$exec_prefix_build#$prefix_real#")
 includedir=$(echo "${prefix}/include" | sed "s#$prefix_build#$prefix_real#")
 libdir=$(echo "${exec_prefix}/lib" | sed "s#$prefix_build#$prefix_real#")
-CFLAGS=$(echo "-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG " | sed "s#$prefix_build#$prefix_real#")
+CFLAGS=$(echo "-march=pentium4 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG " | sed "s#$prefix_build#$prefix_real#")
 VERSION="2.7"
 LIBM="-lm"
 LIBC=""

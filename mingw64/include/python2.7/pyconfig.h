@@ -339,7 +339,7 @@
 /* #undef HAVE_GETLOADAVG */
 
 /* Define to 1 if you have the `getlogin' function. */
-#define HAVE_GETLOGIN 1
+/* #undef HAVE_GETLOGIN */
 
 /* Define to 1 if you have the `getnameinfo' function. */
 /* #undef HAVE_GETNAMEINFO */

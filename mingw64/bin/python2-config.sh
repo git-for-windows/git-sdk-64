@@ -40,7 +40,7 @@ installed_prefix ()
     echo $RESULT
 }
 
-prefix_build="D:/a/_temp/msys/msys64/mingw64"
+prefix_build="D:/a/_temp/msys64/mingw64"
 prefix_real=$(installed_prefix "$0")
 
 # Use sed to fix paths from their built to locations to their installed to locations.

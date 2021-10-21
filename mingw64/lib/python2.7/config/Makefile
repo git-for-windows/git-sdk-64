@@ -77,7 +77,7 @@ CFLAGS=		$(BASECFLAGS) -march=x86-64 -mtune=generic -O2 -pipe -fwrapv -D__USE_MI
 # Both CPPFLAGS and LDFLAGS need to contain the shell's value for setup.py to
 # be able to build extension modules using the directories specified in the
 # environment variables
-CPPFLAGS=	-I. -IInclude -I$(srcdir)/Include -I$(srcdir)/Python -I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -ID:/a/_temp/msys/msys64/mingw64/include/ncurses 
+CPPFLAGS=	-I. -IInclude -I$(srcdir)/Include -I$(srcdir)/Python -I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -ID:/a/_temp/msys64/mingw64/include/ncurses 
 LDFLAGS=	-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high -s 
 LDLAST=		
 SGI_ABI=	
@@ -111,7 +111,7 @@ srcdir_b2h=		C:/_/M/mingw-w64-python2/src/Python-2.7.18
 VPATH_b2h=		C:/_/M/mingw-w64-python2/src/Python-2.7.18
 abs_srcdir_b2h=		C:/_/M/mingw-w64-python2/src/Python-2.7.18
 abs_builddir_b2h=	C:/_/M/mingw-w64-python2/src/build-x86_64
-prefix_b2h=		D:/a/_temp/msys/msys64/mingw64
+prefix_b2h=		D:/a/_temp/msys64/mingw64
 
 # Expanded directories
 BINDIR=		${exec_prefix}/bin
@@ -167,7 +167,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw64' '--host=x86_64-w64-mingw32' '--build=x86_64-w64-mingw32' '--enable-shared' '--with-threads' '--with-system-expat' '--with-system-ffi' 'OPT=' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG ' 'LDFLAGS=-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high -s ' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -ID:/a/_temp/msys/msys64/mingw64/include/ncurses ' 'PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw64' '--host=x86_64-w64-mingw32' '--build=x86_64-w64-mingw32' '--enable-shared' '--with-threads' '--with-system-expat' '--with-system-ffi' 'OPT=' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG ' 'LDFLAGS=-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high -s ' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -ID:/a/_temp/msys64/mingw64/include/ncurses ' 'PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig'
 
 
 # Subdirectories with code
@@ -260,7 +260,7 @@ SIGNAL_OBJS=
 
 ##########################################################################
 
-LIBFFI_INCLUDEDIR=	D:/a/_temp/msys/msys64/mingw64/include
+LIBFFI_INCLUDEDIR=	D:/a/_temp/msys64/mingw64/include
 
 ##########################################################################
 # Parser

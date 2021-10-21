@@ -1,4 +1,4 @@
-#!D:/a/_temp/msys/msys64/mingw32/bin/python2.7.exe
+#!D:/a/_temp/msys64/mingw32/bin/python2.7.exe
 """An RFC 2821 smtp proxy.
 
 Usage: %(program)s [options] [localhost:localport [remotehost:remoteport]]
