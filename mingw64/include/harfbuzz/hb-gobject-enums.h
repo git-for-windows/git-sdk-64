@@ -103,6 +103,9 @@ HB_EXTERN GType
 hb_gobject_ot_var_axis_flags_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_OT_VAR_AXIS_FLAGS (hb_gobject_ot_var_axis_flags_get_type ())
 HB_EXTERN GType
+hb_gobject_style_tag_get_type () G_GNUC_CONST;
+#define HB_GOBJECT_TYPE_STYLE_TAG (hb_gobject_style_tag_get_type ())
+HB_EXTERN GType
 hb_gobject_unicode_general_category_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_UNICODE_GENERAL_CATEGORY (hb_gobject_unicode_general_category_get_type ())
 HB_EXTERN GType
