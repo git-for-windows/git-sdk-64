@@ -449,8 +449,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git read-tree</em> [[-m [--trivial] [--aggressive] | --reset | --prefix=&lt;prefix&gt;]
-                [-u [--exclude-per-directory=&lt;gitignore&gt;] | -i]]
-                [--index-output=&lt;file&gt;] [--no-sparse-checkout]
+                [-u | -i]] [--index-output=&lt;file&gt;] [--no-sparse-checkout]
                 (--empty | &lt;tree-ish1&gt; [&lt;tree-ish2&gt; [&lt;tree-ish3&gt;]])</pre>
 </div>
 </div>
@@ -490,8 +489,9 @@ started.</p>
 <dt class="hdlist1">--reset</dt>
 <dd>
 <p>Same as -m, except that unmerged entries are discarded instead
-of failing. When used with <code>-u</code>, updates leading to loss of
-working tree changes will not abort the operation.</p>
+of failing.  When used with <code>-u</code>, updates leading to loss of
+working tree changes or untracked files or directories will not
+abort the operation.</p>
 </dd>
 <dt class="hdlist1">-u</dt>
 <dd>
@@ -554,22 +554,6 @@ is to add that path.</p>
 of the named tree-ish under the directory at <code>&lt;prefix&gt;</code>.
 The command will refuse to overwrite entries that already
 existed in the original index file.</p>
-</dd>
-<dt class="hdlist1">--exclude-per-directory=&lt;gitignore&gt;</dt>
-<dd>
-<p>When running the command with <code>-u</code> and <code>-m</code> options, the
-merge result may need to overwrite paths that are not
-tracked in the current branch.  The command usually
-refuses to proceed with the merge to avoid losing such a
-path.  However this safety valve sometimes gets in the
-way.  For example, it often happens that the other
-branch added a file that used to be a generated file in
-your branch, and the safety valve triggers when you try
-to switch to that branch after you ran <code>make</code> but before
-running <code>make clean</code> to remove the generated file.  This
-option tells the command to read per-directory exclude
-file (usually <em>.gitignore</em>) and allows such an untracked
-but explicitly ignored file to be overwritten.</p>
 </dd>
 <dt class="hdlist1">--index-output=&lt;file&gt;</dt>
 <dd>
@@ -999,7 +983,7 @@ support.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-10-13 23:06:50 UTC
+Last updated 2021-10-30 15:38:39 UTC
 </div>
 </div>
 </body>

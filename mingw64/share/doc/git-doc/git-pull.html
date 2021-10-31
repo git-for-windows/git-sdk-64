@@ -716,7 +716,7 @@ Only useful when merging.</p>
 <p>Use the given merge strategy; can be supplied more than
 once to specify them in the order they should be tried.
 If there is no <code>-s</code> option, a built-in list of strategies
-is used instead (<code>recursive</code> when merging a single head,
+is used instead (<code>ort</code> when merging a single head,
 <code>octopus</code> otherwise).</p>
 </dd>
 <dt class="hdlist1">-X &lt;option&gt;</dt>
@@ -766,7 +766,7 @@ this by default exists and will not be added.</p>
 </div>
 </dd>
 <dt class="hdlist1">-r</dt>
-<dt class="hdlist1">--rebase[=false|true|merges|preserve|interactive]</dt>
+<dt class="hdlist1">--rebase[=false|true|merges|interactive]</dt>
 <dd>
 <p>When true, rebase the current branch on top of the upstream
 branch after fetching. If there is a remote-tracking branch
@@ -777,11 +777,6 @@ to avoid rebasing non-local changes.</p>
 <p>When set to <code>merges</code>, rebase using <code>git rebase --rebase-merges</code> so that
 the local merge commits are included in the rebase (see
 <a href="git-rebase.html">git-rebase(1)</a> for details).</p>
-</div>
-<div class="paragraph">
-<p>When set to <code>preserve</code> (deprecated in favor of <code>merges</code>), rebase with the
-<code>--preserve-merges</code> option passed to <code>git rebase</code> so that locally created
-merge commits will not be flattened.</p>
 </div>
 <div class="paragraph">
 <p>When false, merge the upstream branch into the current branch.</p>
@@ -1481,22 +1476,24 @@ arguments to <code>git merge</code> and/or <code>git pull</code>.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">recursive</dt>
+<dt class="hdlist1">ort</dt>
 <dd>
-<p>This can only resolve two heads using a 3-way merge
-algorithm.  When there is more than one common
-ancestor that can be used for 3-way merge, it creates a
-merged tree of the common ancestors and uses that as
-the reference tree for the 3-way merge.  This has been
-reported to result in fewer merge conflicts without
-causing mismerges by tests done on actual merge commits
-taken from Linux 2.6 kernel development history.
-Additionally this can detect and handle merges involving
-renames.  It does not make use of detected copies.  This
-is the default merge strategy when pulling or merging one
-branch.</p>
+<p>This is the default merge strategy when pulling or merging one
+branch.  This strategy can only resolve two heads using a
+3-way merge algorithm.  When there is more than one common
+ancestor that can be used for 3-way merge, it creates a merged
+tree of the common ancestors and uses that as the reference
+tree for the 3-way merge.  This has been reported to result in
+fewer merge conflicts without causing mismerges by tests done
+on actual merge commits taken from Linux 2.6 kernel
+development history.  Additionally this strategy can detect
+and handle merges involving renames.  It does not make use of
+detected copies.  The name for this algorithm is an acronym
+("Ostensibly Recursive&#8217;s Twin") and came from the fact that it
+was written as a replacement for the previous default
+algorithm, <code>recursive</code>.</p>
 <div class="paragraph">
-<p>The <em>recursive</em> strategy can take the following options:</p>
+<p>The <em>ort</em> strategy can take the following options:</p>
 </div>
 <div class="dlist">
 <dl>
@@ -1516,18 +1513,6 @@ the other tree did, declaring <em>our</em> history contains all that happened in
 <dd>
 <p>This is the opposite of <em>ours</em>; note that, unlike <em>ours</em>, there is
 no <em>theirs</em> merge strategy to confuse this merge option with.</p>
-</dd>
-<dt class="hdlist1">patience</dt>
-<dd>
-<p>Deprecated synonym for <code>diff-algorithm=patience</code>.</p>
-</dd>
-<dt class="hdlist1">diff-algorithm=[patience|minimal|histogram|myers]</dt>
-<dd>
-<p>Use a different diff algorithm while merging, which can help
-avoid mismerges that occur due to unimportant matching lines
-(such as braces from distinct functions).  See also
-<a href="git-diff.html">git-diff(1)</a> <code>--diff-algorithm</code>.  Defaults to the
-<code>diff.algorithm</code> config setting.</p>
 </dd>
 <dt class="hdlist1">ignore-space-change</dt>
 <dt class="hdlist1">ignore-all-space</dt>
@@ -1569,12 +1554,6 @@ branches with differing checkin/checkout attributes" in
 <p>Disables the <code>renormalize</code> option.  This overrides the
 <code>merge.renormalize</code> configuration variable.</p>
 </dd>
-<dt class="hdlist1">no-renames</dt>
-<dd>
-<p>Turn off rename detection. This overrides the <code>merge.renames</code>
-configuration variable.
-See also <a href="git-diff.html">git-diff(1)</a> <code>--no-renames</code>.</p>
-</dd>
 <dt class="hdlist1">find-renames[=&lt;n&gt;]</dt>
 <dd>
 <p>Turn on rename detection, optionally setting the similarity
@@ -1597,20 +1576,47 @@ two trees to match.</p>
 </dl>
 </div>
 </dd>
-<dt class="hdlist1">ort</dt>
+<dt class="hdlist1">recursive</dt>
 <dd>
-<p>This is meant as a drop-in replacement for the <code>recursive</code>
-algorithm (as reflected in its acronym&#8201;&#8212;&#8201;"Ostensibly
-Recursive&#8217;s Twin"), and will likely replace it in the future.
-It fixes corner cases that the <code>recursive</code> strategy handles
-suboptimally, and is significantly faster in large
-repositories&#8201;&#8212;&#8201;especially when many renames are involved.</p>
+<p>This can only resolve two heads using a 3-way merge
+algorithm.  When there is more than one common
+ancestor that can be used for 3-way merge, it creates a
+merged tree of the common ancestors and uses that as
+the reference tree for the 3-way merge.  This has been
+reported to result in fewer merge conflicts without
+causing mismerges by tests done on actual merge commits
+taken from Linux 2.6 kernel development history.
+Additionally this can detect and handle merges involving
+renames.  It does not make use of detected copies.  This was
+the default strategy for resolving two heads from Git v0.99.9k
+until v2.33.0.</p>
 <div class="paragraph">
-<p>The <code>ort</code> strategy takes all the same options as <code>recursive</code>.
-However, it ignores three of those options: <code>no-renames</code>,
-<code>patience</code> and <code>diff-algorithm</code>.  It always runs with rename
-detection (it handles it much faster than <code>recursive</code> does), and
-it specifically uses <code>diff-algorithm=histogram</code>.</p>
+<p>The <em>recursive</em> strategy takes the same options as <em>ort</em>.  However,
+there are three additional options that <em>ort</em> ignores (not documented
+above) that are potentially useful with the <em>recursive</em> strategy:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">patience</dt>
+<dd>
+<p>Deprecated synonym for <code>diff-algorithm=patience</code>.</p>
+</dd>
+<dt class="hdlist1">diff-algorithm=[patience|minimal|histogram|myers]</dt>
+<dd>
+<p>Use a different diff algorithm while merging, which can help
+avoid mismerges that occur due to unimportant matching lines
+(such as braces from distinct functions).  See also
+<a href="git-diff.html">git-diff(1)</a> <code>--diff-algorithm</code>.  Note that <code>ort</code>
+specifically uses <code>diff-algorithm=histogram</code>, while <code>recursive</code>
+defaults to the <code>diff.algorithm</code> config setting.</p>
+</dd>
+<dt class="hdlist1">no-renames</dt>
+<dd>
+<p>Turn off rename detection. This overrides the <code>merge.renames</code>
+configuration variable.
+See also <a href="git-diff.html">git-diff(1)</a> <code>--no-renames</code>.</p>
+</dd>
+</dl>
 </div>
 </dd>
 <dt class="hdlist1">resolve</dt>
@@ -1639,7 +1645,7 @@ the <em>recursive</em> merge strategy.</p>
 </dd>
 <dt class="hdlist1">subtree</dt>
 <dd>
-<p>This is a modified recursive strategy. When merging trees A and
+<p>This is a modified <code>ort</code> strategy. When merging trees A and
 B, if B corresponds to a subtree of A, B is first adjusted to
 match the tree structure of A, instead of reading the trees at
 the same level. This adjustment is also done to the common
@@ -1648,7 +1654,7 @@ ancestor tree.</p>
 </dl>
 </div>
 <div class="paragraph">
-<p>With the strategies that use 3-way merge (including the default, <em>recursive</em>),
+<p>With the strategies that use 3-way merge (including the default, <em>ort</em>),
 if a change is made on both branches, but later reverted on one of the
 branches, that change will be present in the merged result; some people find
 this behavior confusing.  It occurs because only the heads and the merge base
@@ -1850,7 +1856,7 @@ version.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-10-13 23:06:50 UTC
+Last updated 2021-10-30 15:38:39 UTC
 </div>
 </div>
 </body>

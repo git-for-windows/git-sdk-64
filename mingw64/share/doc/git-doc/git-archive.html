@@ -559,14 +559,26 @@ If one or more paths are specified, only these are included.</p>
 <h3 id="_zip">zip</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">-0</dt>
+<dt class="hdlist1">-&lt;digit&gt;</dt>
 <dd>
-<p>Store the files instead of deflating them.</p>
+<p>Specify compression level.  Larger values allow the command
+to spend more time to compress to smaller size.  Supported
+values are from <code>-0</code> (store-only) to <code>-9</code> (best ratio).
+Default is <code>-6</code> if not given.</p>
 </dd>
-<dt class="hdlist1">-9</dt>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tar">tar</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">-&lt;number&gt;</dt>
 <dd>
-<p>Highest and slowest compression level.  You can specify any
-number from 1 to 9 to adjust compression speed and ratio.</p>
+<p>Specify compression level. The value will be passed to the
+compression command configured in <code>tar.&lt;format&gt;.command</code>. See
+manual page of the configured command for the list of supported
+levels and the default level if this option isn&#8217;t specified.</p>
 </dd>
 </dl>
 </div>
@@ -710,7 +722,7 @@ output file like <code>-o foo.tar.xz</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-10-13 23:06:50 UTC
+Last updated 2021-10-30 15:38:39 UTC
 </div>
 </div>
 </body>

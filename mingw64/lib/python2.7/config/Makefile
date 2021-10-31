@@ -28,8 +28,8 @@ MODLIBS=        $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	2.7
 srcdir=		../Python-2.7.18
 VPATH=		../Python-2.7.18
-abs_srcdir=	/c/_/M/mingw-w64-python2/src/build-x86_64/../Python-2.7.18
-abs_builddir=	/c/_/M/mingw-w64-python2/src/build-x86_64
+abs_srcdir=	/c/M/mingw-w64-python2/src/build-MINGW64/../Python-2.7.18
+abs_builddir=	/c/M/mingw-w64-python2/src/build-MINGW64
 build=		x86_64-w64-mingw32
 host=		x86_64-w64-mingw32
 
@@ -107,10 +107,10 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/_/M/mingw-w64-python2/src/Python-2.7.18
-VPATH_b2h=		C:/_/M/mingw-w64-python2/src/Python-2.7.18
-abs_srcdir_b2h=		C:/_/M/mingw-w64-python2/src/Python-2.7.18
-abs_builddir_b2h=	C:/_/M/mingw-w64-python2/src/build-x86_64
+srcdir_b2h=		C:/M/mingw-w64-python2/src/Python-2.7.18
+VPATH_b2h=		C:/M/mingw-w64-python2/src/Python-2.7.18
+abs_srcdir_b2h=		C:/M/mingw-w64-python2/src/Python-2.7.18
+abs_builddir_b2h=	C:/M/mingw-w64-python2/src/build-MINGW64
 prefix_b2h=		D:/a/_temp/msys64/mingw64
 
 # Expanded directories

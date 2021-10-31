@@ -516,7 +516,8 @@ response for stateless connections</p>
 <p>In general a client can request to speak protocol v2 by sending
 <code>version=2</code> through the respective side-channel for the transport being
 used which inevitably sets <code>GIT_PROTOCOL</code>.  More information can be
-found in <code>pack-protocol.txt</code> and <code>http-protocol.txt</code>.  In all cases the
+found in <code>pack-protocol.txt</code> and <code>http-protocol.txt</code>, as well as the
+<code>GIT_PROTOCOL</code> definition in <code>git.txt</code>. In all cases the
 response from the server is the capability advertisement.</p>
 </div>
 <div class="sect2">
@@ -535,7 +536,9 @@ sending "version=2" as an extra parameter:</p>
 <h3 id="_ssh_and_file_transport">SSH and File Transport</h3>
 <div class="paragraph">
 <p>When using either the ssh:// or file:// transport, the GIT_PROTOCOL
-environment variable must be set explicitly to include "version=2".</p>
+environment variable must be set explicitly to include "version=2".
+The server may need to be configured to allow this environment variable
+to pass.</p>
 </div>
 </div>
 <div class="sect2">
@@ -567,6 +570,14 @@ S: &lt;capability-advertisement&gt;</pre>
 <div class="paragraph">
 <p>Subsequent requests are then made directly to the service
 <code>$GIT_URL/git-upload-pack</code>. (This works the same for git-receive-pack).</p>
+</div>
+<div class="paragraph">
+<p>Uses the <code>--http-backend-info-refs</code> option to
+<a href="../git-upload-pack.html">git-upload-pack(1)</a>.</p>
+</div>
+<div class="paragraph">
+<p>The server may need to be configured to pass this header&#8217;s contents via
+the <code>GIT_PROTOCOL</code> variable. See the discussion in <code>git-http-backend.txt</code>.</p>
 </div>
 </div>
 </div>
@@ -710,7 +721,11 @@ pointed by it when showing a symbolic ref.
 Show peeled tags.
    ref-prefix &lt;prefix&gt;
 When specified, only references having a prefix matching one of
-the provided prefixes are displayed.</pre>
+the provided prefixes are displayed. Multiple instances may be
+given, in which case references matching any prefix will be
+shown. Note that this is purely for optimization; a server MAY
+show refs not matching the prefix if it chooses, and clients
+should filter the result themselves.</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1239,7 +1254,7 @@ and associated requested information, each separated by a single space.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-10-13 23:06:50 UTC
+Last updated 2021-10-30 15:38:39 UTC
 </div>
 </div>
 </body>

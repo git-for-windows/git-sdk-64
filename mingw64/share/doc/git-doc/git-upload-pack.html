@@ -487,15 +487,34 @@ repository.  For push operations, see <em>git send-pack</em>.</p>
 This fits with the HTTP POST request processing model where
 a program may read the request, write a response, and must exit.</p>
 </dd>
-<dt class="hdlist1">--advertise-refs</dt>
+<dt class="hdlist1">--http-backend-info-refs</dt>
 <dd>
-<p>Only the initial ref advertisement is output, and the program exits
-immediately. This fits with the HTTP GET request model, where
-no request content is received but a response must be produced.</p>
+<p>Used by <a href="git-http-backend.html">git-http-backend(1)</a> to serve up
+<code>$GIT_URL/info/refs?service=git-upload-pack</code> requests. See
+"Smart Clients" in <a href="technical/http-protocol.html">the HTTP
+transfer protocols</a> documentation and "HTTP Transport" in
+<a href="technical/protocol-v2.html">the Git Wire Protocol, Version
+2</a> documentation. Also understood by
+<a href="git-receive-pack.html">git-receive-pack(1)</a>.</p>
 </dd>
 <dt class="hdlist1">&lt;directory&gt;</dt>
 <dd>
 <p>The repository to sync from.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_environment">ENVIRONMENT</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>GIT_PROTOCOL</code></dt>
+<dd>
+<p>Internal variable used for handshaking the wire protocol. Server
+admins may need to configure some transports to allow this
+variable to be passed. See the discussion in <a href="git.html">git(1)</a>.</p>
 </dd>
 </dl>
 </div>
@@ -520,7 +539,7 @@ no request content is received but a response must be produced.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-10-13 23:06:50 UTC
+Last updated 2021-10-30 15:38:39 UTC
 </div>
 </div>
 </body>
