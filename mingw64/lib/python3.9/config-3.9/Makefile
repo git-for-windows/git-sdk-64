@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.9
 srcdir=		../Python-3.9.7
 VPATH=		../Python-3.9.7
-abs_srcdir=	/c/_/M/mingw-w64-python/src/build-x86_64/../Python-3.9.7
-abs_builddir=	/c/_/M/mingw-w64-python/src/build-x86_64
+abs_srcdir=	/c/M/mingw-w64-python/src/build-x86_64/../Python-3.9.7
+abs_builddir=	/c/M/mingw-w64-python/src/build-x86_64
 
 
 CC=		gcc
@@ -141,11 +141,11 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.9.7
-VPATH_b2h=		C:/_/M/mingw-w64-python/src/Python-3.9.7
-abs_srcdir_b2h=		C:/_/M/mingw-w64-python/src/Python-3.9.7
-abs_builddir_b2h=	C:/_/M/mingw-w64-python/src/build-x86_64
-prefix_b2h=		D:/a/_temp/msys/msys64/mingw64
+srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.9.7
+VPATH_b2h=		C:/M/mingw-w64-python/src/Python-3.9.7
+abs_srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.9.7
+abs_builddir_b2h=	C:/M/mingw-w64-python/src/build-x86_64
+prefix_b2h=		D:/a/msys64/mingw64
 
 # Expanded directories
 BINDIR=		${exec_prefix}/bin
@@ -212,9 +212,9 @@ RUNSHARED=
 ENSUREPIP=      no
 
 # OpenSSL options for setup.py so sysconfig can pick up AC_SUBST() vars.
-OPENSSL_INCLUDES=-ID:/a/_temp/msys/msys64/mingw64/include 
+OPENSSL_INCLUDES=-ID:/a/msys64/mingw64/include 
 OPENSSL_LIBS=-lssl -lcrypto 
-OPENSSL_LDFLAGS=-LD:/a/_temp/msys/msys64/mingw64/lib 
+OPENSSL_LDFLAGS=-LD:/a/msys64/mingw64/lib 
 
 # Default zoneinfo.TZPATH. Added here to expose it in sysconfig.get_config_var
 TZPATH=/mingw64/share/zoneinfo
@@ -327,8 +327,8 @@ IO_OBJS=	\
 
 ##########################################################################
 
-LIBFFI_INCLUDEDIR=	D:/a/_temp/msys/msys64/mingw64/include
-NCURSESW_INCLUDEDIR=	D:/a/_temp/msys/msys64/mingw64/include/ncursesw
+LIBFFI_INCLUDEDIR=	D:/a/msys64/mingw64/include
+NCURSESW_INCLUDEDIR=	D:/a/msys64/mingw64/include/ncursesw
 
 ##########################################################################
 # Parser
