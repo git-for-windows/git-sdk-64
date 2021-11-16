@@ -15,7 +15,8 @@ UI, Workflows & Features
    location relative to Git installation (e.g. its $sharedir which is
    $(prefix)/share), with "%(prefix)".
 
- * Use `ort` instead of `recursive` as the default merge strategy.
+ * The `ort` strategy is used instead of `recursive` as the default
+   merge strategy.
 
  * The userdiff pattern for "java" language has been updated.
 
@@ -77,7 +78,10 @@ UI, Workflows & Features
  * "git fsck" has been taught to report mismatch between expected and
    actual types of an object better.
 
- * Use ssh public crypto for object and push-cert signing.
+ * In addition to GnuPG, ssh public crypto can be used for object and
+   push-cert signing.  Note that this feature cannot be used with
+   ssh-keygen from OpenSSH 8.7, whose support for it is broken.  Avoid
+   using it unless you update to OpenSSH 8.8.
 
  * "git log --grep=string --author=name" learns to highlight hits just
    like "git grep string" does.
@@ -182,7 +186,7 @@ Performance, Internal Implementation, Development Support etc.
  * Prevent "make sparse" from running for the source files that
    haven't been modified.
 
- * The codepath to write a new version of .midx multi-pack index files
+ * The code path to write a new version of .midx multi-pack index files
    has learned to release the mmaped memory holding the current
    version of .midx before removing them from the disk, as some
    platforms do not allow removal of a file that still has mapping.
@@ -260,11 +264,7 @@ Fixes since v2.33
  * The output from "git fast-export", when its anonymization feature
    is in use, showed an annotated tag incorrectly.
 
- * Doc update plus improved error reporting.
-
  * Recent "diff -m" changes broke "gitk", which has been corrected.
-
- * Regression fix.
 
  * The "git apply -3" code path learned not to bother the lower level
    merge machinery when the three-way merge can be trivially resolved
@@ -391,7 +391,6 @@ Fixes since v2.33
    (merge 8252ec300e jc/branch-copy-doc later to maint).
 
  * Squelch over-eager warning message added during this cycle.
-   (merge 9e8fe7b1c7 jk/log-warn-on-bogus-encoding later to maint).
 
  * Fix long-standing shell syntax error in the completion script.
    (merge 46b0585286 re/completion-fix-test-equality later to maint).
@@ -405,8 +404,21 @@ Fixes since v2.33
    (merge 47bfdfb3fd ar/fix-git-pull-no-verify later to maint).
 
  * One CI task based on Fedora image noticed a not-quite-kosher
-   consturct recently, which has been corrected.
-   (merge 4b540cf913 vd/pthread-setspecific-g11-fix later to maint).
+   construct recently, which has been corrected.
+
+ * "git pull --ff-only" and "git pull --rebase --ff-only" should make
+   it a no-op to attempt pulling from a remote that is behind us, but
+   instead the command errored out by saying it was impossible to
+   fast-forward, which may technically be true, but not a useful thing
+   to diagnose as an error.  This has been corrected.
+   (merge 361cb52383 jc/fix-pull-ff-only-when-already-up-to-date later to maint).
+
+ * The way Cygwin emulates a unix-domain socket, on top of which the
+   simple-ipc mechanism is implemented, can race with the program on
+   the other side that wants to use the socket, and briefly make it
+   appear as a regular file before lstat(2) starts reporting it as a
+   socket.  We now have a workaround on the side that connects to a
+   unix domain socket.
 
  * Other code cleanup, docfix, build fix, etc.
    (merge f188160be9 ab/bundle-remove-verbose-option later to maint).
@@ -422,6 +434,5 @@ Fixes since v2.33
    (merge 8650c6298c ab/fix-make-lint-docs later to maint).
    (merge 1c720357ce ab/test-lib-diff-cleanup later to maint).
    (merge 6b615dbece ks/submodule-add-message-fix later to maint).
-   (merge 82a57cd13f ma/doc-git-version later to maint).
    (merge 203eb8381a jc/doc-format-patch-clarify-auto-base later to maint).
    (merge 559664c792 ab/test-lib later to maint).
