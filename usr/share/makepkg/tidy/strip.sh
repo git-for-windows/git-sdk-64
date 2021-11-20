@@ -203,6 +203,9 @@ tidy_strip() {
 			case "$(file -S -bi "$binary")" in
 				*application/x-dosexec*) # Windows executables and dlls
 					strip_flags="$STRIP_SHARED";;
+				*application/x-archive*) # Static and Import Libraries (*.a and *.dll.a)
+					strip_flags="$STRIP_STATIC"
+					STRIPLTO=1;;
 				*application/x-sharedlib*)  # Libraries (.so)
 					strip_flags="$STRIP_SHARED";;
 				*Type:*'DYN (Position-Independent Executable file)'*) # Relocatable binaries
