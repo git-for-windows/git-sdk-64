@@ -33,5 +33,10 @@ buildenv_lto() {
 	if check_option "lto" "y"; then
 		CFLAGS+=" -flto"
 		CXXFLAGS+=" -flto"
+		LDFLAGS+=" -flto"
+		if check_option "staticlibs" "y"; then
+			CFLAGS+=" -ffat-lto-objects"
+			CXXFLAGS+=" -ffat-lto-objects"
+		fi
 	fi
 }
