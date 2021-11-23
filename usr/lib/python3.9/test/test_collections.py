@@ -1584,7 +1584,7 @@ class TestCollectionABCs(ABCTestCase):
         self.assertSetEqual(set(s1), set(s2))
 
     def test_Set_from_iterable(self):
-        """Verify _from_iterable overriden to an instance method works."""
+        """Verify _from_iterable overridden to an instance method works."""
         class SetUsingInstanceFromIterable(MutableSet):
             def __init__(self, values, created_by):
                 if not created_by:
@@ -1790,6 +1790,18 @@ class TestCollectionABCs(ABCTestCase):
         self.assertTrue(f1 != l3)
         self.assertTrue(f1 != l1)
         self.assertTrue(f1 != l2)
+
+    def test_Set_hash_matches_frozenset(self):
+        sets = [
+            {}, {1}, {None}, {-1}, {0.0}, {"abc"}, {1, 2, 3},
+            {10**100, 10**101}, {"a", "b", "ab", ""}, {False, True},
+            {object(), object(), object()}, {float("nan")},  {frozenset()},
+            {*range(1000)}, {*range(1000)} - {100, 200, 300},
+            {*range(sys.maxsize - 10, sys.maxsize + 10)},
+        ]
+        for s in sets:
+            fs = frozenset(s)
+            self.assertEqual(hash(fs), Set._hash(fs), msg=s)
 
     def test_Mapping(self):
         for sample in [dict]:

@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.9
 srcdir=		.
 
-abs_srcdir=	/c/_/S/python/src/Python-3.9.6
-abs_builddir=	/c/_/S/python/src/Python-3.9.6
+abs_srcdir=	/c/S/python/src/Python-3.9.9
+abs_builddir=	/c/S/python/src/Python-3.9.9
 
 
 CC=		gcc
@@ -104,7 +104,6 @@ PY_CPPFLAGS=	$(BASECPPFLAGS) -I. -I$(srcdir)/Include $(CONFIGURE_CPPFLAGS) $(CPP
 PY_LDFLAGS=	$(CONFIGURE_LDFLAGS) $(LDFLAGS)
 PY_LDFLAGS_NODIST=$(CONFIGURE_LDFLAGS_NODIST) $(LDFLAGS_NODIST)
 NO_AS_NEEDED=	-Wl,--no-as-needed
-SGI_ABI=	@SGI_ABI@
 CCSHARED=	
 # LINKFORSHARED are the flags passed to the $(CC) command that links
 # the python executable -- this is only needed for a few systems
@@ -779,7 +778,7 @@ regen-abidump: all
 	@$(UPDATE_FILE) $(srcdir)/Doc/data/python$(LDVERSION).abi $(srcdir)/Doc/data/python$(LDVERSION).abi.new
 
 check-abidump: all
-		abidiff "libpython$(LDVERSION).so" $(srcdir)/Doc/data/python$(LDVERSION).abi --drop-private-types --no-architecture --no-added-syms
+		abidiff $(srcdir)/Doc/data/python$(LDVERSION).abi "libpython$(LDVERSION).so" --drop-private-types --no-architecture --no-added-syms
 
 ############################################################################
 # Regenerate all generated files

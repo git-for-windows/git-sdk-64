@@ -56,6 +56,7 @@ from distutils.unixccompiler import UnixCCompiler
 from distutils.file_util import write_file
 from distutils.errors import (DistutilsExecError, CCompilerError,
         CompileError, UnknownFileError)
+from distutils.version import LooseVersion
 from distutils.spawn import find_executable
 from subprocess import Popen, check_output
 
@@ -113,6 +114,12 @@ class CygwinCCompiler(UnixCCompiler):
 
         self.cc = os.environ.get('CC', 'gcc')
         self.cxx = os.environ.get('CXX', 'g++')
+
+        # Older numpy dependend on this existing to check for ancient
+        # gcc versions. This doesn't make much sense with clang etc so
+        # just hardcode to something recent.
+        # https://github.com/numpy/numpy/pull/20333
+        self.gcc_version = LooseVersion("11.2.0")
 
         self.linker_dll = self.cc
         shared_option = "-shared"

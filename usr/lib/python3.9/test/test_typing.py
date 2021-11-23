@@ -29,6 +29,7 @@ import weakref
 import types
 
 from test import mod_generics_cache
+from test import _typed_dict_helper
 
 
 class BaseTestCase(TestCase):
@@ -561,6 +562,8 @@ class LiteralTests(BaseTestCase):
         self.assertNotEqual(Literal[True], Literal[1])
         self.assertNotEqual(Literal[1], Literal[2])
         self.assertNotEqual(Literal[1, True], Literal[1])
+        self.assertNotEqual(Literal[1, True], Literal[1, 1])
+        self.assertNotEqual(Literal[1, 2], Literal[True, 2])
         self.assertEqual(Literal[1], Literal[1])
         self.assertEqual(Literal[1, 2], Literal[2, 1])
         self.assertEqual(Literal[1, 2, 3], Literal[1, 2, 3, 3])
@@ -744,6 +747,9 @@ class ProtocolTests(BaseTestCase):
         class C(P): pass
 
         self.assertIsInstance(C(), C)
+        with self.assertRaises(TypeError):
+            C(42)
+
         T = TypeVar('T')
 
         class PG(Protocol[T]): pass
@@ -758,6 +764,8 @@ class ProtocolTests(BaseTestCase):
         class CG(PG[T]): pass
 
         self.assertIsInstance(CG[int](), CG)
+        with self.assertRaises(TypeError):
+            CG[int](42)
 
     def test_cannot_instantiate_abstract(self):
         @runtime_checkable
@@ -1193,6 +1201,37 @@ class ProtocolTests(BaseTestCase):
 
         self.assertEqual(C[int]().test, 'OK')
 
+        class B:
+            def __init__(self):
+                self.test = 'OK'
+
+        class D1(B, P[T]):
+            pass
+
+        self.assertEqual(D1[int]().test, 'OK')
+
+        class D2(P[T], B):
+            pass
+
+        self.assertEqual(D2[int]().test, 'OK')
+
+    def test_new_called(self):
+        T = TypeVar('T')
+
+        class P(Protocol[T]): pass
+
+        class C(P[T]):
+            def __new__(cls, *args):
+                self = super().__new__(cls, *args)
+                self.test = 'OK'
+                return self
+
+        self.assertEqual(C[int]().test, 'OK')
+        with self.assertRaises(TypeError):
+            C[int](42)
+        with self.assertRaises(TypeError):
+            C[int](a=42)
+
     def test_protocols_bad_subscripts(self):
         T = TypeVar('T')
         S = TypeVar('S')
@@ -1421,6 +1460,17 @@ class ProtocolTests(BaseTestCase):
 
         class CustomContextManager(typing.ContextManager, Protocol):
             pass
+
+    def test_super_call_init(self):
+        class P(Protocol):
+            x: int
+
+        class Foo(P):
+            def __init__(self):
+                super().__init__()
+
+        Foo()  # Previously triggered RecursionError
+
 
 class GenericTests(BaseTestCase):
 
@@ -2760,7 +2810,7 @@ else:
 
 # Definitions needed for features introduced in Python 3.6
 
-from test import ann_module, ann_module2, ann_module3
+from test import ann_module, ann_module2, ann_module3, ann_module5, ann_module6
 from typing import AsyncContextManager
 
 class A:
@@ -2807,6 +2857,9 @@ Label = TypedDict('Label', [('label', str)])
 class Point2D(TypedDict):
     x: int
     y: int
+
+class Bar(_typed_dict_helper.Foo, total=False):
+    b: int
 
 class LabelPoint2D(Point2D, Label): ...
 
@@ -3076,6 +3129,22 @@ class GetUtilitiesTestCase(TestCase):
         self.assertEqual(get_args(collections.abc.Callable[[], str]), ([], str))
         self.assertEqual(get_args(collections.abc.Callable[[int], str]),
                          get_args(Callable[[int], str]))
+
+    def test_forward_ref_and_final(self):
+        # https://bugs.python.org/issue45166
+        hints = get_type_hints(ann_module5)
+        self.assertEqual(hints, {'name': Final[str]})
+
+        hints = get_type_hints(ann_module5.MyClass)
+        self.assertEqual(hints, {'value': Final})
+
+    def test_top_level_class_var(self):
+        # https://bugs.python.org/issue45166
+        with self.assertRaisesRegex(
+            TypeError,
+            r'typing.ClassVar\[int\] is not valid as type argument',
+        ):
+            get_type_hints(ann_module6)
 
 
 class CollectionsAbcTests(BaseTestCase):
@@ -3751,6 +3820,19 @@ class NamedTupleTests(BaseTestCase):
         self.assertEqual(a.typename, 'foo')
         self.assertEqual(a.fields, [('bar', tuple)])
 
+    def test_empty_namedtuple(self):
+        NT = NamedTuple('NT')
+
+        class CNT(NamedTuple):
+            pass  # empty body
+
+        for struct in [NT, CNT]:
+            with self.subTest(struct=struct):
+                self.assertEqual(struct._fields, ())
+                self.assertEqual(struct._field_defaults, {})
+                self.assertEqual(struct.__annotations__, {})
+                self.assertIsInstance(struct(), struct)
+
     def test_namedtuple_errors(self):
         with self.assertRaises(TypeError):
             NamedTuple.__new__()
@@ -3943,6 +4025,12 @@ class TypedDictTests(BaseTestCase):
             'tail': bool,
             'voice': str,
         }
+
+    def test_get_type_hints(self):
+        self.assertEqual(
+            get_type_hints(Bar),
+            {'a': typing.Optional[int], 'b': int}
+        )
 
 
 class IOTests(BaseTestCase):

@@ -614,6 +614,9 @@
 /* Define to 1 if you have the <libutil.h> header file. */
 /* #undef HAVE_LIBUTIL_H */
 
+/* Define to 1 if you have the `uuid' library (-luuid). */
+/* #undef HAVE_LIBUUID */
+
 /* Define if you have the 'link' function. */
 #define HAVE_LINK 1
 
@@ -887,6 +890,9 @@
 
 /* Define to 1 if you have the `sched_setscheduler' function. */
 #define HAVE_SCHED_SETSCHEDULER 1
+
+/* Define to 1 if you have the `sem_clockwait' function. */
+/* #undef HAVE_SEM_CLOCKWAIT */
 
 /* Define to 1 if you have the `sem_getvalue' function. */
 #define HAVE_SEM_GETVALUE 1

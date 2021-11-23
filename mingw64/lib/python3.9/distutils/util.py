@@ -46,6 +46,8 @@ def get_host_platform():
                     return 'mingw_x86_64_clang'
                 if 'arm64' in sys.version.lower():
                     return 'mingw_aarch64'
+                if 'arm' in sys.version.lower():
+                    return 'mingw_armv7'
                 return 'mingw_i686_clang'
             if 'amd64' in sys.version.lower():
                 return 'mingw_x86_64'
