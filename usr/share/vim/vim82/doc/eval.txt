@@ -1,4 +1,4 @@
-*eval.txt*	For Vim version 8.2.  Last change: 2021 Sep 08
+*eval.txt*	For Vim version 8.2.  Last change: 2021 Oct 20
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -658,7 +658,7 @@ It is not necessary to use the "dict" attribute for a numbered function.
 
 If you get an error for a numbered function, you can find out what it is with
 a trick.  Assuming the function is 42, the command is: >
-	:function {42}
+	:function g:42
 
 
 Functions for Dictionaries ~
@@ -1417,7 +1417,7 @@ A string constant accepts these special characters:
 \U....	same as \u but allows up to 8 hex numbers.
 \b	backspace <BS>
 \e	escape <Esc>
-\f	formfeed <FF>
+\f	formfeed 0x0C
 \n	newline <NL>
 \r	return <CR>
 \t	tab <Tab>
@@ -1426,7 +1426,7 @@ A string constant accepts these special characters:
 \<xxx>	Special key named "xxx".  e.g. "\<C-W>" for CTRL-W.  This is for use
 	in mappings, the 0x80 byte is escaped.
 	To use the double quote character it must be escaped: "<M-\">".
-	Don't use <Char-xxxx> to get a utf-8 character, use \uxxxx as
+	Don't use <Char-xxxx> to get a UTF-8 character, use \uxxxx as
 	mentioned above.
 \<*xxx>	Like \<xxx> but prepends a modifier instead of including it in the
 	character.  E.g. "\<C-w>" is one character 0x17 while "\<*C-w>" is four
@@ -1839,6 +1839,43 @@ v:collate	The current locale setting for collation order of the runtime
 		This variable can not be set directly, use the |:language|
 		command.
 		See |multi-lang|.
+
+                                                                *v:colornames*
+v:colornames    A dictionary that maps color names to hex color strings. These
+		color names can be used with the |highlight-guifg|,
+		|highlight-guibg|, and |highlight-guisp| parameters. Updating
+		an entry in v:colornames has no immediate effect on the syntax
+		highlighting. The highlight commands (probably in a
+		colorscheme script) need to be re-evaluated in order to use
+		the updated color values. For example: >
+
+		    :let v:colornames['fuscia'] = '#cf3ab4'
+		    :let v:colornames['mauve'] = '#915f6d'
+		    :highlight Normal guifg=fuscia guibg=mauve
+<
+		This cannot be used to override the |cterm-colors| but it can
+		be used to override other colors. For example, the X11 colors
+		defined in the `colors/lists/default.vim` (previously defined
+		in |rgb.txt|). When defining new color names in a plugin, the
+		recommended practice is to set a color entry only when it does
+		not already exist. For example: >
+
+		    :call extend(v:colornames, {
+			\ 'fuscia': '#cf3ab4',
+			\ 'mauve': '#915f6d,
+			\ }, 'keep')
+<
+		Using |extend| with the 'keep' option updates each color only
+		if it did not exist in |v:colornames|. Doing so allows the
+		user to choose the precise color value for a common name
+		by setting it in their |.vimrc|.
+
+		It is possible to remove entries from this dictionary but
+		doing so is *NOT* recommended. Doing so is disruptive to
+		other scripts. It is also unlikely to achieve the desired
+		result because the |colorscheme| and |highlight| commands will
+		both automatically load all `colors/lists/default.vim` color
+		scripts.
 
 				*v:completed_item* *completed_item-variable*
 v:completed_item
@@ -2516,7 +2553,7 @@ ch_setoptions({handle}, {options})
 ch_status({handle} [, {options}])
 				String	status of channel {handle}
 changenr()			Number	current change number
-char2nr({expr} [, {utf8}])	Number	ASCII/UTF8 value of first char in {expr}
+char2nr({expr} [, {utf8}])	Number	ASCII/UTF-8 value of first char in {expr}
 charclass({string})		Number	character class of {string}
 charcol({expr})			Number	column number of cursor or mark
 charidx({string}, {idx} [, {countcc}])
@@ -2549,7 +2586,7 @@ deletebufline({buf}, {first} [, {last}])
 did_filetype()			Number	|TRUE| if FileType autocmd event used
 diff_filler({lnum})		Number	diff filler lines about {lnum}
 diff_hlID({lnum}, {col})	Number	diff highlighting at {lnum}/{col}
-digraph_get({chars})		String	get the digraph of {chars}
+digraph_get({chars})		String	get the |digraph| of {chars}
 digraph_getlist([{listall}])	List	get all |digraph|s
 digraph_set({chars}, {digraph})	Boolean	register |digraph|
 digraph_setlist({digraphlist})	Boolean	register multiple |digraph|s
@@ -2681,6 +2718,8 @@ histget({history} [, {index}])	String	get the item {index} from a history
 histnr({history})		Number	highest index of a history
 hlID({name})			Number	syntax ID of highlight group {name}
 hlexists({name})		Number	|TRUE| if highlight group {name} exists
+hlget([{name} [, {resolve}]])	List	get highlight group attributes
+hlset({list})			Number	set highlight group attributes
 hostname()			String	name of the machine Vim is running on
 iconv({expr}, {from}, {to})	String	convert encoding of {expr}
 indent({lnum})			Number	indent of line {lnum}
@@ -2769,7 +2808,7 @@ mkdir({name} [, {path} [, {prot}]])
 mode([expr])			String	current editing mode
 mzeval({expr})			any	evaluate |MzScheme| expression
 nextnonblank({lnum})		Number	line nr of non-blank line >= {lnum}
-nr2char({expr} [, {utf8}])	String	single char with ASCII/UTF8 value {expr}
+nr2char({expr} [, {utf8}])	String	single char with ASCII/UTF-8 value {expr}
 or({expr}, {expr})		Number	bitwise OR
 pathshorten({expr} [, {len}])	String	shorten directory names in a path
 perleval({expr})		any	evaluate |Perl| expression
@@ -2787,7 +2826,7 @@ popup_getoptions({id})		Dict	get options of popup window {id}
 popup_getpos({id})		Dict	get position of popup window {id}
 popup_hide({id})		none	hide popup menu {id}
 popup_list()			List	get a list of window IDs of all popups
-popup_locate({row}, {col})	Number 	get window ID of popup at position
+popup_locate({row}, {col})	Number	get window ID of popup at position
 popup_menu({what}, {options})	Number	create a popup window used as a menu
 popup_move({id}, {options})	none	set position of popup window {id}
 popup_notification({what}, {options})
@@ -2899,7 +2938,7 @@ setenv({name}, {val})		none	set environment variable
 setfperm({fname}, {mode})	Number	set {fname} file permissions to {mode}
 setline({lnum}, {line})		Number	set line {lnum} to {line}
 setloclist({nr}, {list} [, {action}])
- 				Number	modify location list using {list}
+				Number	modify location list using {list}
 setloclist({nr}, {list}, {action}, {what})
 				Number	modify specific location list props
 setmatches({list} [, {win}])	Number	restore a list of matches
@@ -2959,7 +2998,7 @@ srand([{expr}])			List	get seed for |rand()|
 state([{what}])			String	current state of Vim
 str2float({expr} [, {quoted}])	Float	convert String to Float
 str2list({expr} [, {utf8}])	List	convert each character of {expr} to
-					ASCII/UTF8 value
+					ASCII/UTF-8 value
 str2nr({expr} [, {base} [, {quoted}]])
 				Number	convert String to Number
 strcharlen({expr})		Number	character length of the String {expr}
@@ -3656,7 +3695,7 @@ char2nr({string} [, {utf8}])					*char2nr()*
 		Example for "utf-8": >
 			char2nr("Ã¡")		returns 225
 			char2nr("Ã¡"[0])		returns 195
-<		With {utf8} set to TRUE, always treat as utf-8 characters.
+<		When {utf8} is TRUE, always treat as UTF-8 characters.
 		A combining character is a separate character.
 		|nr2char()| does the opposite.
 		To turn a string into a list of character numbers: >
@@ -3883,6 +3922,8 @@ complete_info([{what}])				*complete_info()*
 		   ""		     Not in completion mode
 		   "keyword"	     Keyword completion |i_CTRL-X_CTRL-N|
 		   "ctrl_x"	     Just pressed CTRL-X |i_CTRL-X|
+		   "scroll"	     Scrolling with |i_CTRL-X_CTRL-E| or
+				     |i_CTRL-X_CTRL-Y|
 		   "whole_line"	     Whole lines |i_CTRL-X_CTRL-L|
 		   "files"	     File names |i_CTRL-X_CTRL-F|
 		   "tags"	     Tags |i_CTRL-X_CTRL-]|
@@ -4281,7 +4322,7 @@ digraph_getlist([{listall}])				*digraph_getlist()*
 
 digraph_set({chars}, {digraph})				*digraph_set()* *E1205*
 		Add digraph {chars} to the list.  {chars} must be a string
-		with two characters.  {digraph} is a string with one utf-8
+		with two characters.  {digraph} is a string with one UTF-8
 		encoded character. Be careful, composing characters are NOT
 		ignored.  This function is similar to |:digraphs| command, but
 		useful to add digraphs start with a white space.
@@ -6140,6 +6181,7 @@ getreg([{regname} [, 1 [, {list}]]])			*getreg()*
 		(see |NL-used-for-Nul|).
 		When the register was not set an empty list is returned.
 
+		If {regname} is "", the unnamed register '"' is used.
 		If {regname} is not specified, |v:register| is used.
 		In |Vim9-script| {regname} must be one character.
 
@@ -6167,6 +6209,7 @@ getreginfo([{regname}])					*getreginfo()*
 
 		The {regname} argument is a string.  If {regname} is invalid
 		or not set, an empty Dictionary will be returned.
+		If {regname} is "" or "@", the unnamed register '"' is used.
 		If {regname} is not specified, |v:register| is used.
 		The returned Dictionary can be passed to |setreg()|.
 		In |Vim9-script| {regname} must be one character.
@@ -6182,8 +6225,9 @@ getregtype([{regname}])					*getregtype()*
 		    "<CTRL-V>{width}"	for |blockwise-visual| text
 		    ""			for an empty or unknown register
 		<CTRL-V> is one character with value 0x16.
-		The {regname} argument is a string.  If {regname} is not
-		specified, |v:register| is used.
+		The {regname} argument is a string.  If {regname} is "", the
+		unnamed register '"' is used.  If {regname} is not specified,
+		|v:register| is used.
 		In |Vim9-script| {regname} must be one character.
 
 		Can also be used as a |method|: >
@@ -6674,6 +6718,93 @@ hlexists({name})					*hlexists()*
 
 		Can also be used as a |method|: >
 			GetName()->hlexists()
+<
+hlget([{name} [, {resolve}]])				*hlget()*
+		Returns a List of all the highlight group attributes.  If the
+		optional {name} is specified, then returns a List with only
+		the attributes of the specified highlight group.  Returns an
+		empty List if the highlight group {name} is not present.
+
+		If the optional {resolve} argument is set to v:true and the
+		highlight group {name} is linked to another group, then the
+		link is resolved recursively and the attributes of the
+		resolved highlight group are returned.
+
+		Each entry in the returned List is a Dictionary with the
+		following items:
+			cleared	Boolean flag, set to v:true if the highlight
+				group attributes are cleared or not yet
+				specified.  See |highlight-clear|.
+			cterm	cterm attributes. See |highlight-cterm|.
+			ctermbg	cterm background color.
+				See |highlight-ctermbg|.
+			ctermfg	cterm foreground color.
+				See |highlight-ctermfg|.
+			ctermul	cterm underline color.  See |highlight-ctermul|.
+			font	highlight group font.  See |highlight-font|.
+			gui	gui attributes. See |highlight-gui|.
+			guibg	gui background color.  See |highlight-guibg|.
+			guifg	gui foreground color.  See |highlight-guifg|.
+			guisp	gui special color.  See |highlight-guisp|.
+			id	highlight group ID.
+			linksto	linked highlight group name.
+				See |:highlight-link|.
+			name	highlight group name. See |group-name|.
+			start	start terminal keycode.  See |highlight-start|.
+			stop	stop terminal keycode.  See |highlight-stop|.
+			term	term attributes.  See |highlight-term|.
+
+		The 'term', 'cterm' and 'gui' items in the above Dictionary
+		have a dictionary value with the following optional boolean
+		items: 'bold', 'standout', 'underline', 'undercurl', 'italic',
+		'reverse', 'inverse' and 'strikethrough'.
+
+		Example(s): >
+			:echo hlget()
+			:echo hlget('ModeMsg')
+			:echo hlget('Number', v:true)
+<
+		Can also be used as a |method|: >
+			GetName()->hlget()
+<
+hlset({list})						*hlset()*
+		Creates or modifies the attributes of a List of highlight
+		groups.  Each item in {list} is a dictionary containing the
+		attributes of a highlight group. See |hlget()| for the list of
+		supported items in this dictionary.
+
+		The highlight group is identified using the 'name' item and
+		the 'id' item (if supplied) is ignored.  If a highlight group
+		with a specified name doesn't exist, then it is created.
+		Otherwise the attributes of an existing highlight group are
+		modified.
+
+		If an empty dictionary value is used for the 'term' or 'cterm'
+		or 'gui' entries, then the corresponding attributes are
+		cleared.  If the 'cleared' item is set to v:true, then all the
+		attributes of the highlight group are cleared.
+
+		The 'linksto' item can be used to link a highlight group to
+		another highlight group.  See |:highlight-link|.
+
+		Returns zero for success, -1 for failure.
+
+		Example(s): >
+			" add bold attribute to the Visual highlight group
+			:call hlset([#{name: 'Visual',
+					\ term: #{reverse: 1 , bold: 1}}])
+			:call hlset([#{name: 'Type', guifg: 'DarkGreen'}])
+			:let l = hlget()
+			:call hlset(l)
+			" clear the Search highlight group
+			:call hlset([#{name: 'Search', cleared: v:true}])
+			" clear the 'term' attributes for a highlight group
+			:call hlset([#{name: 'Title', term: {}}])
+			" create the MyHlg group linking it to DiffAdd
+			:call hlset([#{name: 'MyHlg', linksto: 'DiffAdd'}])
+<
+		Can also be used as a |method|: >
+			GetAttrList()->hlset()
 <
 							*hlID()*
 hlID({name})	The result is a Number, which is the ID of the highlight group
@@ -7244,8 +7375,8 @@ list2str({list} [, {utf8}])				*list2str()*
 <		|str2list()| does the opposite.
 
 		When {utf8} is omitted or zero, the current 'encoding' is used.
-		With {utf8} is 1, always return utf-8 characters.
-		With utf-8 composing characters work as expected: >
+		When {utf8} is TRUE, always return UTF-8 characters.
+		With UTF-8 composing characters work as expected: >
 			list2str([97, 769])	returns "aÌ"
 <
 		Can also be used as a |method|: >
@@ -7487,7 +7618,7 @@ maparg({name} [, {mode} [, {abbr} [, {dict}]]])			*maparg()*
 		  "lhs"	     The {lhs} of the mapping as it would be typed
 		  "lhsraw"   The {lhs} of the mapping as raw bytes
 		  "lhsrawalt" The {lhs} of the mapping as raw bytes, alternate
-		  	      form, only present when it differs from "lhsraw"
+			      form, only present when it differs from "lhsraw"
 		  "rhs"	     The {rhs} of the mapping as typed.
 		  "silent"   1 for a |:map-silent| mapping, else 0.
 		  "noremap"  1 if the {rhs} of the mapping is not remappable.
@@ -7935,7 +8066,8 @@ max({expr})	Return the maximum value of all items in {expr}. Example: >
 menu_info({name} [, {mode}])				*menu_info()*
 		Return information about the specified menu {name} in
 		mode {mode}. The menu name should be specified without the
-		shortcut character ('&').
+		shortcut character ('&'). If {name} is "", then the top-level
+		menu names are returned.
 
 		{mode} can be one of these strings:
 			"n"	Normal
@@ -7986,6 +8118,20 @@ menu_info({name} [, {mode}])				*menu_info()*
 		Examples: >
 			:echo menu_info('Edit.Cut')
 			:echo menu_info('File.Save', 'n')
+
+			" Display the entire menu hierarchy in a buffer
+			func ShowMenu(name, pfx)
+			  let m = menu_info(a:name)
+			  call append(line('$'), a:pfx .. m.display)
+			  for child in m->get('submenus', [])
+			    call ShowMenu(a:name .. '.' .. escape(child, '.'),
+							\ a:pfx .. '    ')
+			  endfor
+			endfunc
+			new
+			for topmenu in menu_info('').submenus
+			  call ShowMenu(topmenu, '')
+			endfor
 <
 		Can also be used as a |method|: >
 			GetMenuName()->menu_info('v')
@@ -8043,7 +8189,7 @@ mode([expr])	Return a string that indicates the current mode.
 		returned, otherwise only the first letter is returned.
 		Also see |state()|.
 
-		   n	    Normal, Terminal-Normal
+		   n	    Normal
 		   no	    Operator-pending
 		   nov	    Operator-pending (forced characterwise |o_v|)
 		   noV	    Operator-pending (forced linewise |o_V|)
@@ -8052,23 +8198,25 @@ mode([expr])	Return a string that indicates the current mode.
 		   niI	    Normal using |i_CTRL-O| in |Insert-mode|
 		   niR	    Normal using |i_CTRL-O| in |Replace-mode|
 		   niV	    Normal using |i_CTRL-O| in |Virtual-Replace-mode|
+		   nt	    Terminal-Normal (insert goes to Terminal-Job mode)
 		   v	    Visual by character
+		   vs	    Visual by character using |v_CTRL-O| in Select mode
 		   V	    Visual by line
+		   Vs	    Visual by line using |v_CTRL-O| in Select mode
 		   CTRL-V   Visual blockwise
+		   CTRL-Vs  Visual blockwise using |v_CTRL-O| in Select mode
 		   s	    Select by character
 		   S	    Select by line
 		   CTRL-S   Select blockwise
-		   vs	    Visual by character using |v_CTRL-O| from
-				Select mode
-		   Vs	    Visual by line using |v_CTRL-O| from Select mode
-		   CTRL-Vs  Visual blockwise using |v_CTRL-O| from Select mode
 		   i	    Insert
 		   ic	    Insert mode completion |compl-generic|
 		   ix	    Insert mode |i_CTRL-X| completion
 		   R	    Replace |R|
 		   Rc	    Replace mode completion |compl-generic|
-		   Rv	    Virtual Replace |gR|
 		   Rx	    Replace mode |i_CTRL-X| completion
+		   Rv	    Virtual Replace |gR|
+		   Rvc	    Virtual Replace mode completion |compl-generic|
+		   Rvx	    Virtual Replace mode |i_CTRL-X| completion
 		   c	    Command-line editing
 		   cv	    Vim Ex mode |gQ|
 		   ce	    Normal Ex mode |Q|
@@ -8077,6 +8225,7 @@ mode([expr])	Return a string that indicates the current mode.
 		   r?	    A |:confirm| query of some sort
 		   !	    Shell or external command is executing
 		   t	    Terminal-Job mode: keys go to the job
+
 		This is useful in the 'statusline' option or when used
 		with |remote_expr()| In most other places it always returns
 		"c" or "n".
@@ -8131,7 +8280,7 @@ nr2char({expr} [, {utf8}])				*nr2char()*
 <		When {utf8} is omitted or zero, the current 'encoding' is used.
 		Example for "utf-8": >
 			nr2char(300)		returns I with bow character
-<		With {utf8} set to 1, always return utf-8 characters.
+<		When {utf8} is TRUE, always return UTF-8 characters.
 		Note that a NUL character in the file is specified with
 		nr2char(10), because NULs are represented with newline
 		characters.  nr2char(0) is a real NUL and terminates the
@@ -9612,7 +9761,7 @@ setcellwidths({list})					*setcellwidths()*
 		tells Vim how wide characters are, counted in screen cells.
 		This overrides 'ambiwidth'.  Example: >
 		   setcellwidths([[0xad, 0xad, 1],
-		   		\ [0x2194, 0x2199, 2]])
+				\ [0x2194, 0x2199, 2]])
 
 <					*E1109* *E1110* *E1111* *E1112* *E1113*
 		The {list} argument is a list of lists with each three
@@ -9624,6 +9773,9 @@ setcellwidths({list})					*setcellwidths()*
 		An error is given if the argument is invalid, also when a
 		range overlaps with another.
 		Only characters with value 0x100 and higher can be used.
+
+		If the new value causes 'fillchars' or 'listchars' to become
+		invalid it is rejected and an error is given.
 
 		To clear the overrides pass an empty list: >
 		   setcellwidths([]);
@@ -10526,7 +10678,7 @@ state([{what}])						*state()*
 		    w	blocked on waiting, e.g. ch_evalexpr(), ch_read() and
 			ch_readraw() when reading json
 		    S	not triggering SafeState or SafeStateAgain, e.g. after
-		    	|f| or a count
+			|f| or a count
 		    c	callback invoked, including timer (repeats for
 			recursiveness up to "ccc")
 		    s	screen has scrolled for messages
@@ -10561,8 +10713,8 @@ str2list({string} [, {utf8}])					*str2list()*
 <		|list2str()| does the opposite.
 
 		When {utf8} is omitted or zero, the current 'encoding' is used.
-		With {utf8} set to 1, always treat the String as utf-8
-		characters.  With utf-8 composing characters are handled
+		When {utf8} is TRUE, always treat the String as UTF-8
+		characters.  With UTF-8 composing characters are handled
 		properly: >
 			str2list("aÌ")		returns [97, 769]
 
@@ -12078,6 +12230,7 @@ There are three types of features:
 1.  Features that are only supported when they have been enabled when Vim
     was compiled |+feature-list|.  Example: >
 	:if has("cindent")
+<							*gui_running*
 2.  Features that are only supported when certain conditions have been met.
     Example: >
 	:if has("gui_running")
@@ -12212,6 +12365,7 @@ multi_byte_encoding	'encoding' is set to a multibyte encoding.
 multi_byte_ime		Compiled with support for IME input method.
 multi_lang		Compiled with support for multiple languages.
 mzscheme		Compiled with MzScheme interface |mzscheme|.
+nanotime		Compiled with sub-second time stamp checks.
 netbeans_enabled	Compiled with support for |netbeans| and connected.
 netbeans_intg		Compiled with support for |netbeans|.
 num64			Compiled with 64-bit |Number| support.
@@ -13096,7 +13250,7 @@ text...
 			literal then the items also cannot be changed: >
 				const ll = [1, 2, 3]
 				let ll[1] = 5  " Error!
-< 			Nested references are not locked: >
+<			Nested references are not locked: >
 				let lvar = ['a']
 				const lconst = [0, lvar]
 				let lconst[0] = 2  " Error!
@@ -13150,8 +13304,8 @@ text...
 			Example with [depth] 0: >
 				let mylist = [1, 2, 3]
 				lockvar 0 mylist
-				let mylist[0] = 77   	" OK
-				call add(mylist, 4]  	" OK
+				let mylist[0] = 77	" OK
+				call add(mylist, 4]	" OK
 				let mylist = [7, 8, 9]  " Error!
 <								*E743*
 			For unlimited depth use [!] and omit [depth].

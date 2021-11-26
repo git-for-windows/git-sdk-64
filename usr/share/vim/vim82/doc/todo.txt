@@ -1,4 +1,4 @@
-*todo.txt*      For Vim version 8.2.  Last change: 2021 Sep 08
+*todo.txt*      For Vim version 8.2.  Last change: 2021 Oct 16
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -38,12 +38,13 @@ browser use: https://github.com/vim/vim/issues/1234
 							*known-bugs*
 -------------------- Known bugs and current work -----------------------
 
-:delcommand -buffer should work
-
 Vim9 - Make everything work:
-- Disallow using numbered function with "g:123" in Vim9 script?  #8760
-- use CheckLegacyAndVim9Success(lines) in many more places
+- "filter #pat# ls" should work, #pat# is not a comment
+    vim9script
+    edit foobar
+    filter #foobar# ls
 - Check TODO items in vim9compile.c and vim9execute.c
+- use CheckLegacyAndVim9Success(lines) in many more places
 - For builtin functions using tv_get_string*() use check_for_string() to be
   more strict about the argument type (not a bool).
     done: balloon_()
@@ -366,10 +367,6 @@ autocommands for the buffer lifecycle:
     BufIsRenamed  (after buffer ID gets another name)
 The buffer list and windows are locked, no changes possible
 
-Add a ModeChanged autocommand that has an argument indicating the old and new
-mode, as what's returned from mode().  Also used for switching Terminal mode.
-#8360, #7863, #7363
-
 Matchparen doesn't remove highlight after undo. (#7054)
 Is OK when syntax HL is active.
 
@@ -430,6 +427,9 @@ undo result wrong: Masato Nishihata, #4798
 
 After recovering from a swap file the undofile should not be used, it causes
 corruption.  (#6631)
+
+When the computer crashes while writing the undofile, the contents may be
+lost.  Write to a temp file, fsync and rename. (#8879)
 
 When 'lazyredraw' is set sometimes the title is not updated.
 (Jason Franklin, 2020 Feb 3)  Looks like a race condition.
@@ -628,24 +628,27 @@ Window size changes after closing a tab. (#4741)
 
 Problem with colors in terminal window. (Jason Franklin, 2019 May 12)
 
-Lifepillar: Updated/cleaned up color schemes:
-https://github.com/lifepillar/vim8-colorschemes.
-
-Include a few color schemes, based on popularity:
-http://www.vim.org/scripts/script_search_results.php?keywords=&script_type=color+scheme&order_by=rating&direction=descending&search=search
+Color schemes:
+NOTE: modernizing the default colorschemes _AND_ introducing new ones is now
+a project in its own right: https://github.com/vim/colorschemes. Feel free to
+reach out if you want to lend a hand.
+- Lifepillar: Updated/cleaned up color schemes:
+  https://github.com/lifepillar/vim8-colorschemes.
+- Include a few color schemes, based on popularity:
+  - http://www.vim.org/scripts/script_search_results.php?keywords=&script_type=color+scheme&order_by=rating&direction=descending&search=search
 http://vimawesome.com/?q=tag:color-scheme
-Use names that indicate their appearance (Christian Brabandt, 2017 Aug 3)
-- monokai - Xia Crusoe (2017 Aug 4)
-- seoul256 - Christian Brabandt (2017 Aug 3)
-- gruvbox -  Christian Brabandt (2017 Aug 3) (simplified version from
-      Lifepillar, 2018 Jan 22, #2573)
-- janah - Marco Hinz (2017 Aug 4)
-- apprentice - Romain Lafourcade (2017 Aug 6)  remarks about help file #1964
-Suggested by Hiroki Kokubun:
-- [Iceberg](https://github.com/cocopon/iceberg.vim) (my one)
-- [hybrid](https://github.com/w0ng/vim-hybrid)
-Include solarized color scheme?, it does not support termguicolors.
-- Sanitized version of pablo (Lifepillar, 2017 Nov 21)
+- Use names that indicate their appearance (Christian Brabandt, 2017 Aug 3)
+  - monokai - Xia Crusoe (2017 Aug 4)
+  - seoul256 - Christian Brabandt (2017 Aug 3)
+  - gruvbox -  Christian Brabandt (2017 Aug 3) (simplified version from
+        Lifepillar, 2018 Jan 22, #2573)
+  - janah - Marco Hinz (2017 Aug 4)
+  - apprentice - Romain Lafourcade (2017 Aug 6)  remarks about help file #1964
+- Suggested by Hiroki Kokubun:
+  - [Iceberg](https://github.com/cocopon/iceberg.vim) (my one)
+  - [hybrid](https://github.com/w0ng/vim-hybrid)
+- Include solarized color scheme?, it does not support termguicolors.
+  - Sanitized version of pablo (Lifepillar, 2017 Nov 21)
 
 Bug: "vipgw" does not put cursor back where it belongs. (Jason Franklin, 2019
 Mar 5)
@@ -4845,7 +4848,6 @@ Autocommands:
     command used dos fileformat.  Same for 'fileencoding'.
 -   Add events to autocommands:
     Error	    - When an error happens
-    ModeChange	    - after changing mode (before waiting for a char)
     VimLeaveCheck    - Before Vim decides to exit, so that it can be cancelled
 		      when exiting isn't a good idea.
     CursorHoldC     - CursorHold while command-line editing

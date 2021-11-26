@@ -105,7 +105,7 @@ sdk () {
 			mingw-w64-curl \
 			mingw-w64-cv2pdb \
 			mingw-w64-git \
-			mingw-w64-git-credential-manager-core \
+			mingw-w64-git-credential-manager \
 			mingw-w64-git-lfs \
 			mingw-w64-git-sizer \
 			mingw-w64-wintoast \
@@ -175,7 +175,7 @@ sdk () {
 			;;
 		git-extra|git-for-windows-keyring|mingw-w64-cv2pdb|\
 		mingw-w64-git-lfs|\
-		mingw-w64-git-credential-manager-core|\
+		mingw-w64-git-credential-manager|\
 		mingw-w64-git-sizer|mingw-w64-wintoast|installer)
 			sdk init-lazy build-extra &&
 			src_dir="$src_dir/$2" ||
@@ -436,7 +436,12 @@ EOF
 		;;
 	esac
 }
-GIT_SDK_SH_PATH="$(realpath "$BASH_SOURCE")"
+
+if [ -n "$ZSH_VERSION" ]; then
+	GIT_SDK_SH_PATH="$(realpath "${(%):-%x}")"
+else
+	GIT_SDK_SH_PATH="$(realpath "$BASH_SOURCE")"
+fi
 
 case $- in
 *i*)

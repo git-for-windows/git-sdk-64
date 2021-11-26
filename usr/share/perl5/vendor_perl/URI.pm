@@ -3,7 +3,7 @@ package URI;
 use strict;
 use warnings;
 
-our $VERSION = '5.09';
+our $VERSION = '5.10';
 
 our ($ABS_REMOTE_LEADING_DOTS, $ABS_ALLOW_RELATIVE_SCHEME, $DEFAULT_QUERY_FORM_DELIMITER);
 
