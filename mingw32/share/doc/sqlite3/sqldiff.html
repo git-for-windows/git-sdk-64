@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -128,7 +127,7 @@ mk.innerHTML = "&#x25ba;";
 
 <p>
 The <tt>sqldiff.exe</tt> binary is a command-line utility program that
-displays the differences between SQLite databases.  Example
+displays content differences between SQLite databases.  Example
 usage:
 
 </p><div class="codeblock"><pre>sqldiff &#91;options&#93; database1.sqlite database2.sqlite
@@ -155,7 +154,8 @@ altered using command-line switches:
        pair rows in the source and destination database.  (See additional
        explanation below.)</p></dd>
 <dt><b>--schema</b></dt>
-<dd><p>Show only differences in the schema not the table content</p></dd>
+<dd><p>Show only column name and table differences in the schema,
+       not the table content</p></dd>
 <dt><b>--summary</b></dt>
 <dd><p>Show how many rows have changed on each table, but do not show
        the actual changes</p></dd>
@@ -228,6 +228,17 @@ will be to produce an empty file named "CHANGESET_OUT". See  <a href="session/in
 </li><li><p>
 The sqldiff.exe utility does not (currently) display differences in
 <a href="lang_createtrigger.html">TRIGGERs</a> or <a href="lang_createview.html">VIEWs</a>.
+
+</p></li><li><p>
+The sqldiff utility is not designed to support schema migrations
+and is forgiving with respect to differing column definitions.
+Normally, only the column names and their order are compared
+for like-named tables before content comparison proceeds.
+
+</p><p>However, the single-table comparison option, with "sqlite_schema"
+named, can be used to show or detect detailed schema differences
+between a pair of databases.
+When doing this, the output should not be used directly to modify a database.
 
 </p></li><li><p id="vtab">
 By default, differences in the schema or content of virtual tables are

@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -187,16 +186,18 @@ See the <a href="whentouse.html">Appropriate Uses For SQLite</a> document for ad
 </p><h1 id="flexible_typing"><span>3. </span>Flexible Typing</h1>
 
 <p>
-SQLite is very flexible with regard to datatypes.
+SQLite is flexible with regard to datatypes.  Datatypes are advisory
+rather than mandatory.
 
 </p><p>
 Some commentators say that SQLite is "weakly typed" and that other
 SQL databases are "strongly typed".  We consider these terms to be
-inaccurate and pejorative.  We prefer to say that SQLite is "flexibly typed"
-and that other SQL databases are "rigidly typed".
+inaccurate and even pejorative.  We prefer to say that SQLite is 
+"flexibly typed" and that other SQL database engines are
+"rigidly typed".
 
 </p><p>
-See the <a href="datatype3.html">Datatypes in SQLite Version 3</a> document for a detailed
+See the <a href="datatype3.html">Datatypes in SQLite</a> document for a detailed
 discussion of the type system in SQLite.
 
 </p><p>
@@ -225,17 +226,20 @@ then it will fail when moved to another database that uses a more rigid
 and unforgiving type enforcement policy.
 
 </p><p>
-Flexible typing is considered a feature of SQLite, not a bug.
+<a href="flextypegood.html">Flexible typing is a feature</a> of SQLite, not a bug.  Flexible typing
+is about freedom.
 Nevertheless, we recognize that this feature does sometimes cause
-confusion and pain for developers who are acustomed to working with
-other databases that are more judgmental with regard to data types.
-In retrospect, perhaps it would have been better if SQLite had merely
+confusion for developers who are accustomed to working with
+other databases that are more strict with regard to data type rules.
+In retrospect, perhaps it would have been less confusing if SQLite had merely
 implemented an ANY datatype so that developers could explicitly state
 when they wanted to use flexible typing, rather than making flexible
 typing the default.
-But that is not something that can be changed now without breaking
-the millions of applications and trillions of database files that 
-already use SQLite's flexible typing feature.
+As an accommodation for those who expect rigid typing, SQLite version 3.37.0
+(2021-11-27) introduced the option of <a href="stricttables.html">STRICT tables</a>.
+These either impose
+the mandatory datatype constraints found in other SQL database engines,
+or allow the explicit ANY datatype to retain SQLite's flexible typing.
 
 </p><h2 id="no_separate_boolean_datatype"><span>3.1. </span>No Separate BOOLEAN Datatype</h2>
 
@@ -252,7 +256,7 @@ Beginning with SQLite <a href="releaselog/3_23_0.html">version 3.23.0</a> (2018-
 recognizes TRUE and FALSE keywords as aliases for integer values 1 and 0,
 respectively.
 This provides better compatibility with other SQL implementations.
-But to retain backwards compatibility, if there are columns named TRUE or
+But for backwards compatibility, if there are columns named TRUE or
 FALSE, then the keywords are treated as identifiers referencing those
 columns, rather than BOOLEAN literals.
 

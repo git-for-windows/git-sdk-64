@@ -90,12 +90,39 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
 Clustered Indexes and the WITHOUT ROWID Optimization
 </div>
+<div class="fancy_toc">
+<a onclick="toggle_toc()">
+<span class="fancy_toc_mark" id="toc_mk">&#x25ba;</span>
+Table Of Contents
+</a>
+<div id="toc_sub"><div class="fancy-toc1"><a href="#introduction">1. Introduction</a></div>
+<div class="fancy-toc2"><a href="#syntax">1.1. Syntax</a></div>
+<div class="fancy-toc2"><a href="#compatibility">1.2. Compatibility</a></div>
+<div class="fancy-toc2"><a href="#quirks">1.3. Quirks</a></div>
+<div class="fancy-toc1"><a href="#differences_from_ordinary_rowid_tables">2. Differences From Ordinary Rowid Tables</a></div>
+<div class="fancy-toc1"><a href="#benefits_of_without_rowid_tables">3. Benefits Of WITHOUT ROWID Tables</a></div>
+<div class="fancy-toc1"><a href="#when_to_use_without_rowid">4. When To Use WITHOUT ROWID</a></div>
+<div class="fancy-toc1"><a href="#determining_if_an_existing_table_is_without_rowid">5. Determining If An Existing Table Is WITHOUT ROWID</a></div>
+</div>
+</div>
+<script>
+function toggle_toc(){
+var sub = document.getElementById("toc_sub")
+var mk = document.getElementById("toc_mk")
+if( sub.style.display!="block" ){
+sub.style.display = "block";
+mk.innerHTML = "&#x25bc;";
+} else {
+sub.style.display = "none";
+mk.innerHTML = "&#x25ba;";
+}
+}
+</script>
 </div>
 
 
@@ -355,4 +382,17 @@ the end of product development, then go back and run tests to see
 if adding WITHOUT ROWID to tables with non-integer PRIMARY KEYs helps
 or hurts performance, and retaining the WITHOUT ROWID only in those cases
 where it helps.
+
+</p><h1 id="determining_if_an_existing_table_is_without_rowid"><span>5. </span>Determining If An Existing Table Is WITHOUT ROWID</h1>
+
+<p>A WITHOUT ROWID table returns the same content for
+<a href="pragma.html#pragma_table_info">PRAGMA table_info</a> and <a href="pragma.html#pragma_table_xinfo">PRAGMA table_xinfo</a> as does an ordinary
+table.  But unlike an ordinary table, a WITHOUT ROWID also
+responds to the <a href="pragma.html#pragma_index_info">PRAGMA index_info</a> command.  The <a href="pragma.html#pragma_index_info">PRAGMA index_info</a>
+on a WITHOUT ROWID table returns information abou the PRIMARY KEY
+for the table.  In this way, the <a href="pragma.html#pragma_index_info">PRAGMA index_info</a> command can be
+used to unabiguously determine whether a particular table is a 
+WITHOUT ROWID table or an ordinary table - an ordinary table will
+always return no rows but a WITHOUT ROWID table will always return
+one or more rows.
 </p>

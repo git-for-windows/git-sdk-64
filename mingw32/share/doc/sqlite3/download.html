@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 
 
 
@@ -102,9 +101,14 @@ return false;
 </table>
 <hr>
 
+<!-- Download product data for scripts to read
+PRODUCT,VERSION,RELATIVE-URL,SIZE-IN-BYTES,SHA3-HASH
+ -->
+
+
 <a name="encoding"></a>
 
-<h3>Build Product Names</h3>
+<h3>Build Product Names and Info</h3>
 
 <p>
 Build products are named using one of the following templates:
@@ -128,6 +132,18 @@ filename encoding is 3XXYY00.  For branch version 3.X.Y.Z, the encoding is
 3XXYYZZ.
 
 <p>The <i>date</i> in template (4) is of the form: YYYYMMDDHHMM
+
+<p>For convenient, script-driven extraction of the downloadable
+file URLs and associated information, an HTML comment is embedded
+in this page's source. Its first line (sans leading tag) reads:
+<blockquote><b>Download product data for scripts to read</b></blockquote>
+Its subsequent lines comprise a CSV table with this column header:
+<blockquote><b>PRODUCT,VERSION,RELATIVE-URL,SIZE-IN-BYTES,SHA3-HASH</b></blockquote>
+The column header and following data lines have no leading space.
+The PRODUCT column is a constant value ("PRODUCT") for convenient
+regular expression matching. Other columns are self-explanatory.
+This format will remain stable except for possible new columns
+appended to the right of older columns.
 
 <a name="cvs"></a>
 <a name="fossil"></a>

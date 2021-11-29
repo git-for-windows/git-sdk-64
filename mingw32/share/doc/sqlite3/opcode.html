@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -193,8 +192,8 @@ output from SQLite, you should reference the version of this document
 that corresponds to the version of SQLite that ran the <a href="lang_explain.html">EXPLAIN</a>.
 Otherwise, the description of the opcodes may not be accurate.
 This document is derived from SQLite
- version 3.36.0 check-in
-<a href='https://www.sqlite.org/src/timeline?c=5c9a6c06871cb'>5c9a6c06871cb</a> dated 2021-06-18.
+ version 3.37.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=bd41822c7424d'>bd41822c7424d</a> dated 2021-11-27.
 
 
 
@@ -417,20 +416,20 @@ pragmas include:
 
 <h1 id="the_opcodes"><span>4. </span>The Opcodes</h1>
 
-<p>There are currently 179
+<p>There are currently 181
 opcodes defined by the virtual machine.
 All currently defined opcodes are described in the table below.
 This table was generated automatically by scanning the source code
 from the file
-<a href="http://www.sqlite.org/src/artifact/6ece0ee94fa3a95601372efdc4ec6d068cd6cc58e28af8852f3407b90be4b7f8">vdbe.c</a>.
+<a href="http://www.sqlite.org/src/artifact/e98f1baf54a00db2c4669dbd04f8bbc89b5909a5b43e76fbbbf1a97007adba2b">vdbe.c</a>.
 
 
 </p><p>Remember: The VDBE opcodes are <u>not</u> part of the interface 
 definition for SQLite.  The number of opcodes and their names and meanings
 change from one release of SQLite to the next.
 The opcodes shown in the table below are valid for SQLite
- version 3.36.0 check-in
-<a href='https://www.sqlite.org/src/timeline?c=5c9a6c06871cb'>5c9a6c06871cb</a> dated 2021-06-18.
+ version 3.37.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=bd41822c7424d'>bd41822c7424d</a> dated 2021-11-27.
 
 <a name="codes"></a>
 
@@ -1008,7 +1007,8 @@ if no matching index entry is found.  This happens when running
 an UPDATE or DELETE statement and the index entry to be updated
 or deleted is not found.  For some uses of <a href="opcode.html#IdxDelete">IdxDelete</a>
 (example:  the EXCEPT operator) it does not matter that no matching
-entry is found.  For those cases, P5 is zero.</td></tr>
+entry is found.  For those cases, P5 is zero.  Also, do not raise
+this (self-correcting and non-critical) error if in writable_schema mode.</td></tr>
 <tr><td valign="top" align="center">
 <a name="IdxGE"></a>IdxGE
 <td>The P4 register values beginning with P3 form an unpacked index
@@ -1244,6 +1244,11 @@ file, not the main database file.</p>
 <tr><td valign="top" align="center">
 <a name="IsNull"></a>IsNull
 <td>Jump to P2 if the value in register P1 is NULL.</td></tr>
+<tr><td valign="top" align="center">
+<a name="IsNullOrType"></a>IsNullOrType
+<td>Jump to P2 if the value in register P1 is NULL or has a datatype P3.
+P3 is an integer which should be one of SQLITE_INTEGER, SQLITE_FLOAT,
+SQLITE_BLOB, SQLITE_NULL, or SQLITE_TEXT.</td></tr>
 <tr><td valign="top" align="center">
 <a name="IsTrue"></a>IsTrue
 <td>This opcode implements the IS TRUE, IS FALSE, IS NOT TRUE, and
@@ -2330,6 +2335,30 @@ if the schema generation counter in P4 differs from the current
 generation counter, then an SQLITE_SCHEMA error is raised and execution
 halts.  The sqlite3_step() wrapper function might then reprepare the
 statement and rerun it from the beginning.</td></tr>
+<tr><td valign="top" align="center">
+<a name="TypeCheck"></a>TypeCheck
+<td>Apply affinities to the range of P2 registers beginning with P1.
+Take the affinities from the Table object in P4.  If any value
+cannot be coerced into the correct type, then raise an error.</p>
+
+<p>This opcode is similar to <a href="opcode.html#Affinity">Affinity</a> except that this opcode
+forces the register type to the Table column type.  This is used
+to implement "strict affinity".</p>
+
+<p>GENERATED ALWAYS AS ... STATIC columns are only checked if P3
+is zero.  When P3 is non-zero, no type checking occurs for
+static generated columns.  Virtual columns are computed at query time
+and so they are never checked.</p>
+
+<p>Preconditions:</p>
+
+<p><ul>
+<li> P2 should be the number of non-virtual columns in the
+table of P4.
+<li> Table P4 should be a STRICT table.
+</ul></p>
+
+<p>If any precondition is false, an assertion fault occurs.</td></tr>
 <tr><td valign="top" align="center">
 <a name="Vacuum"></a>Vacuum
 <td>Vacuum the entire database P1.  P1 is 0 for "main", and 2 or more

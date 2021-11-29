@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <!-- keywords: sqlite3_open sqlite3_open16 sqlite3_open_v2 -->
 <div class=nosearch>
 <a href="intro.html"><h2>SQLite C Interface</h2></a>
@@ -192,6 +191,15 @@ the default shared cache setting provided by
 the default shared cache setting provided by
 <a href="../c3ref/enable_shared_cache.html">sqlite3_enable_shared_cache()</a>.</p>
 
+<p><a name="openexrescode"></a>
+ <dt><a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_EXRESCODE</a></dt>
+<dd>The database connection comes up in "extended result code mode".
+In other words, the database behaves has if
+<a href="../c3ref/extended_result_codes.html">sqlite3_extended_result_codes(db,1)</a> where called on the database
+connection as soon as the connection is created. In addition to setting
+the extended result code mode, this flag also causes <a href="../c3ref/open.html">sqlite3_open_v2()</a>
+to return an extended result code.</dd></p>
+
 <p><a name="opennofollow"></a>
  <dt><a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_NOFOLLOW</a></dt>
 <dd>The database filename is not allowed to be a symbolic link</dd>
@@ -200,7 +208,15 @@ the default shared cache setting provided by
 <p>If the 3rd parameter to sqlite3_open_v2() is not one of the
 required combinations shown above optionally combined with other
 <a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_* bits</a>
-then the behavior is undefined.</p>
+then the behavior is undefined.  Historic versions of SQLite
+have silently ignored surplus bits in the flags parameter to
+sqlite3_open_v2(), however that behavior might not be carried through
+into future versions of SQLite and so applications should not rely
+upon it.  Note in particular that the SQLITE_OPEN_EXCLUSIVE flag is a no-op
+for sqlite3_open_v2().  The SQLITE_OPEN_EXCLUSIVE does *not* cause
+the open to fail if the database already exists.  The SQLITE_OPEN_EXCLUSIVE
+flag is intended for use by the <a href="../c3ref/vfs.html">VFS interface</a> only, and not
+by sqlite3_open_v2().</p>
 
 <p>The fourth parameter to sqlite3_open_v2() is the name of the
 <a href="../c3ref/vfs.html">sqlite3_vfs</a> object that defines the operating system interface that

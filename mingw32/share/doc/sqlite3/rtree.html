@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -239,6 +238,7 @@ store its content.  The names of these shadow tables are:
 <em>&lt;name&gt;</em><strong>_parent</strong>
 </pre></div>
 
+
 <p>
 The shadow tables are ordinary SQLite data tables.  You can query them 
 directly if you like, though this unlikely to reveal anything particularly
@@ -261,6 +261,7 @@ spatial queries:
 );
 </pre></div>
 
+
 <h3 id="column_naming_details"><span>3.1.1. </span>Column naming details</h3>
 
 <p>
@@ -273,7 +274,8 @@ a column, those extra tokens are accepted as valid, but they do not change
 the behavior of the rtree.
 In an RTREE virtual table, the first column always has a
 <a href="datatype3.html#affinity">type affinity</a> of INTEGER and all other data columns have a
-<a href="datatype3.html#affinity">type affinity</a> of NUMERIC.
+<a href="datatype3.html#affinity">type affinity</a> of REAL.
+In an RTREE_I32 virtual table, all columns have type affinity of INTEGER.
 
 </p><p>
 Recommended practice is to omit any extra tokens in the rtree specification.
@@ -288,68 +290,79 @@ index just like on regular tables.  So to insert some data into our sample
 R*Tree index, we can do something like this:
 </p>
 
-<div class="codeblock"><pre>INSERT INTO demo_index VALUES(
-    1,                   -- Primary key -- SQLite.org headquarters
-    -80.7749, -80.7747,  -- Longitude range
-    35.3776, 35.3778     -- Latitude range
-);
-INSERT INTO demo_index VALUES(
-    2,                   -- NC 12th Congressional District in 2010
-    -81.0, -79.6,
-    35.0, 36.2
-);
+<div class="codeblock"><pre>INSERT INTO demo_index VALUES
+  (28215, -80.781227, -80.604706, 35.208813, 35.297367),
+  (28216, -80.957283, -80.840599, 35.235920, 35.367825),
+  (28217, -80.960869, -80.869431, 35.133682, 35.208233),
+  (28226, -80.878983, -80.778275, 35.060287, 35.154446),
+  (28227, -80.745544, -80.555382, 35.130215, 35.236916),
+  (28244, -80.844208, -80.841988, 35.223728, 35.225471),
+  (28262, -80.809074, -80.682938, 35.276207, 35.377747),
+  (28269, -80.851471, -80.735718, 35.272560, 35.407925),
+  (28270, -80.794983, -80.728966, 35.059872, 35.161823),
+  (28273, -80.994766, -80.875259, 35.074734, 35.172836),
+  (28277, -80.876793, -80.767586, 35.001709, 35.101063),
+  (28278, -81.058029, -80.956375, 35.044701, 35.223812),
+  (28280, -80.844208, -80.841972, 35.225468, 35.227203),
+  (28282, -80.846382, -80.844193, 35.223972, 35.225655);
 </pre></div>
 
+
 <p>
-The entries above might represent (for example) a bounding box around
-the main office for SQLite.org and bounding box around the
-12th Congressional District of North Carolina (prior to the 2011
-redistricting) in which SQLite.org was located.  
+The entries above are bounding boxes (longitude and latitude) for 14
+zipcodes near Charlotte, NC.  A real database would have many thousands,
+millions, or billions of such entries, but this small 14-row sample will
+be sufficient to illustrate the ideas.
 </p>
 
 <h2 id="querying_an_r_tree_index"><span>3.3. </span>Querying An R*Tree Index</h2>
 
 <p>
-Any valid query will work against an R*Tree index.  But the R*Tree
-implementation is designed to make two kinds of queries especially
-efficient.  First, queries against the primary key are efficient:
+Any valid query will work against an R*Tree index.  The R*Tree
+implementation just makes some kinds of queries especially
+efficient.  Queries against the primary key are efficient:
 </p>
 
-<div class="codeblock"><pre>SELECT * FROM demo_index WHERE id=1;
+<div class="codeblock"><pre>SELECT * FROM demo_index WHERE id=28269;
 </pre></div>
+
 
 <p>
 Of course, an ordinary SQLite table will also do a query against its
-integer primary key efficiently, so the previous is no big deal.
-The real reason for using an R*Tree is so that
-you can efficiently do inequality queries against the coordinate
-ranges.  To find all elements of the index that are contained within
-the vicinity of Charlotte, North Carolina, one might do:
+integer primary key efficiently, so the previous is not important.
+The big reason for using an R*Tree is so that
+you can efficiently do range queries against the coordinate
+ranges.  For example, the main office of the SQLite project is
+located at 35.37785, -80.77470. 
+To find which zipcodes might service that office, one could right:
 </p>
 
 <div class="codeblock"><pre>SELECT id FROM demo_index
- WHERE minX&gt;=-81.08 AND maxX&lt;=-80.58
-   AND minY&gt;=35.00  AND maxY&lt;=35.44;
+ WHERE minX&lt;=-80.77470 AND maxX&gt;=-80.77470
+   AND minY&lt;=35.37785  AND maxY&gt;=35.37785;
 </pre></div>
 
+
 <p>
-The query above would very quickly locate the id of 1 even if the
-R*Tree contained millions of entries.  The previous is an example
+The query above will quickly locate all zipcodes that contain
+the SQLite main office in their bounding box, even if the
+R*Tree contains many entries.  The previous is an example
 of a "contained-within" query.  The R*Tree also supports "overlapping"
-queries.  For example, to find all bounding boxes that overlap the
-Charlotte area:
+queries.  For example, to find all zipcode bounding boxes that overlap
+with the 28269 zipcode:
 </p>
 
-<div class="codeblock"><pre>SELECT id FROM demo_index
- WHERE maxX&gt;=-81.08 AND minX&lt;=-80.58
-   AND maxY&gt;=35.00  AND minY&lt;=35.44;
+<div class="codeblock"><pre>SELECT A.id FROM demo_index AS A, demo_index AS B
+ WHERE A.maxX&gt;=B.minX AND A.minX&lt;=B.maxX
+   AND A.maxY&gt;=B.minY AND A.minY&lt;=B.maxY
+   AND B.id=28269;
 </pre></div>
 
+
 <p>
-This second query would find both entry 1 (the SQLite.org office) which
-is entirely contained within the query box and also
-the 12th Congressional District which extends well outside the
-query box but still overlaps the query box.
+This second query will find both 28269 entry (since every bounding box
+overlaps with itself) and also other zipcode that is close enough to
+28269 that their bounding boxes overlap.
 </p>
 
 <p>
@@ -362,6 +375,7 @@ the 35th parallel:
 <div class="codeblock"><pre>SELECT id FROM demo_index
  WHERE maxY&gt;=35.0  AND minY&lt;=35.0;
 </pre></div>
+
 
 <p>
 But, generally speaking, the more constraints that the R*Tree module
@@ -425,18 +439,6 @@ in the middle of a scan of the R-Tree.  So an update to the R-Tree cannot
 be tolerated as this would disrupt the scan.
 
 </p><p>
-It is also possible to express this kind of simultaneous read and write
-on an R-Tree within a single query, for example if an UPDATE statement
-tries to change the value of one row of the R-Tree based on a complicated
-query from another row of the same R-Tree, perhaps something like this:
-
-</p><div class="codeblock"><pre>UPDATE demo_index 
-   SET maxY = (SELECT max(maxX) FROM demo_index AS x2
-                WHERE x2.maxY&gt;demo_index.x2)
- WHERE maxY&gt;=35.0  AND minY&lt;=35.0;
-</pre></div>
-
-<p>
 This is a limitation of the R-Tree extension only.  Ordinary tables in
 SQLite are able to read and write at the same time.  Other virtual tables
 might (or might not) also that capability.  And R-Tree can appear to read
@@ -490,46 +492,44 @@ reduces the set of potential answers from millions to dozens.
 
 <p>
 Suppose the demo_data.boundary field holds some proprietary data description
-of a complex two-dimensional boundary for an object and suppose that the
+of a complex two-dimensional boundary for a zipcode and suppose that the
 application has used the <a href="c3ref/create_function.html">sqlite3_create_function()</a> interface to
-created application-defined functions "contained_in" and
-"overlaps" accepting two demo_data.boundary objects and return true or false.
-One may assume that "contained_in" and "overlaps" are relatively slow
+created an application-defined function "contained_in(boundary,lat,long)"
+that accepts the demo_data.boundary object and a latitute and longitude
+and returns return true or false if the lat/long is contained within
+the boundary.
+One may assume that "contained_in()" is a relatively slow
 functions that we do not want to invoke too frequently.
-Then an efficient way to find the name of all objects located within
-the North Carolina 12th District, one may be to run a query like this:
+Then an efficient way to find the specific ZIP code for the main
+SQLite office would be to run a query like this:
 </p>
 
 <a name="diquery"></a>
 <div class="codeblock"><pre>SELECT objname FROM demo_data, demo_index
  WHERE demo_data.id=demo_index.id
-   AND contained_in(demo_data.boundary, :boundary)
-   AND minX&gt;=-81.0 AND maxX&lt;=-79.6
-   AND minY&gt;=35.0 AND maxY&lt;=36.2;
+   AND contained_in(demo_data.boundary, 35.37785, -80.77470)
+   AND minX&lt;=-80.77470 AND maxX&gt;=-80.77470
+   AND minY&lt;=35.37785  AND maxY&gt;=35.37785;
 </pre></div>
 
-<p>In the query above, one would presumably bind the binary BLOB 
-description of the precise boundary of the 12th district to the
-":boundary" parameter.</p>
-
 <p>Notice how the query above works:  The R*Tree index runs in the outer
-loop to find entries that are contained within the bounding box
-of longitude -81..-79.6 and latitude 35.0..36.2. 
-For each object identifier found, SQLite looks up
+loop to find entries that contain the SQLite main office in their
+boundary box.
+For each row found, SQLite looks up
 the corresponding entry in the demo_data table.  It then uses the boundary
 field from the demo_data table as a parameter to the contained_in()
-function and if that function returns true, the objname field from
-the demo_data table is returned as the next row of query result.</p>
+function and if that function returns true, then we know the sought after
+coordinate is in that ZIP code boundary.</p>
 
 <p>One would get the same answer without the use of the R*Tree index
 using the following simpler query:</p>
 
 <div class="codeblock"><pre>SELECT objname FROM demo_data
- WHERE contained_in(demo_data.boundary, :boundary);
+ WHERE contained_in(demo_data.boundary, 35.37785, -80.77470);
 </pre></div>
 
 <p>The problem with this latter query is that it must apply the
-contained_in() function to millions of entries in the demo_data table.
+contained_in() function to all entries in the demo_data table.
 The use of the R*Tree in the penultimate query reduces the number of
 calls to contained_in() function to a small subset of the entire table.
 The R*Tree index did not find the exact answer itself, it merely
@@ -548,7 +548,9 @@ secondary tables such as "demo_data".
 </p><p>
 Auxiliary columns are marked with a "+" symbol before the column name.
 Auxiliary columns must come after all of the coordinate boundary columns.
-There is a limit of no more than 100 auxiliary columns.
+An RTREE table can have no more than 100 columns total.  In other words,
+the count of columns including the integer primary key column, 
+the coordinate boundary columns, and all auxiliary columns must be 100 or less.
 The following example shows an r-tree table with auxiliary columns that
 is equivalent to the two tables "demo_index" and "demo_data" above:
 
@@ -571,9 +573,9 @@ For example, the earlier
 be written as a simple query, like this:
 
 </p><div class="codeblock"><pre>SELECT objname FROM demo_index2
- WHERE contained_in(boundary, :boundary)
-   AND minX&gt;=-81.0 AND maxX&lt;=-79.6
-   AND minY&gt;=35.0 AND maxY&gt;=36.2;
+ WHERE contained_in(boundary, 35.37785, -80.77470)
+   AND minX&lt;=-80.77470 AND maxX&gt;=-80.77470
+   AND minY&lt;=35.37785  AND maxY&gt;=35.37785;
 </pre></div>
 
 <h3 id="limitations"><span>4.1.1. </span>Limitations</h3>
@@ -592,7 +594,7 @@ both blank, to avoid future compatibility problems.
 </p><h1 id="integer_valued_r_trees"><span>5. </span>Integer-Valued R-Trees</h1>
 
 <p>
-The default virtual table ("rtree") normally stores coordinates as
+The default virtual table ("rtree") stores coordinates as
 single-precision (4-byte) floating point numbers.  If integer coordinates
 are desired, declare the table using "rtree_i32" instead:
 
@@ -600,8 +602,10 @@ are desired, declare the table using "rtree_i32" instead:
 </pre></div>
 
 <p>
-An rtree_i32 stores coordinates as 32-bit signed integers.  But it still
-using floating point computations internally as part of the r-tree algorithm.
+An rtree_i32 stores coordinates as 32-bit signed integers.  
+Even though it stores values using integer, the rtree_i32 virtual
+table still uses floating point computations internally as part of
+the r-tree algorithm.
 
 <a name="customquery"></a>
 
@@ -776,11 +780,13 @@ the lowest score.  If that entry is a leaf (meaning that it is an actual
 R*Tree entry and not a subtree) then that entry
 is returned as one row of the query result.  
 If the extracted priority queue entry is a node (a subtree),
-then sub-subtrees or leaves contained within that entry are passed to the
-xQueryFunc callback, one by one.  Those subelements for which the xQueryFunc
-callback sets eWithin to PARTLY_WITHIN or FULLY_WITHIN are added to the priority
-queue using the score supplied by the callback.  Subelements that return
-NOT_WITHIN are discarded.  The query runs until the priority queue is empty.
+then the next child of that node is passed to the xQueryFunc callback.
+If the node has more children then it is returned to the priority queue.
+Otherwise it is discarded. Those subelements for which the xQueryFunc
+callback sets eWithin to PARTLY_WITHIN or FULLY_WITHIN are added to the
+priority queue using the score supplied by the callback.  Subelements that
+return NOT_WITHIN are discarded.  The query runs until the priority queue is
+empty.
 
 </p><p>Every leaf entry and node (subtree) within the R*Tree has an integer "level".
 The leaves have a level of 0.  The first containing subtree of the leaves has
@@ -841,9 +847,9 @@ that might be useful for trouble-shooting or performance analysis.
 SQLite tables with names derived from the name of the R*Tree.  These
 three tables are called "<a href="vtab.html#xshadowname">shadow tables</a>".  This is their schema:
 
-</p><div class="codeblock"><pre>CREATE TABLE %_node(nodeno INTEGER PRIMARY KEY, data BLOB)
-CREATE TABLE %_parent(nodeno INTEGER PRIMARY KEY, parentnode INTEGER)
-CREATE TABLE %_rowid(rowid INTEGER PRIMARY KEY, nodeno INTEGER)
+</p><div class="codeblock"><pre>CREATE TABLE %_node(nodeno INTEGER PRIMARY KEY, data)
+CREATE TABLE %_parent(nodeno INTEGER PRIMARY KEY, parentnode)
+CREATE TABLE %_rowid(rowid INTEGER PRIMARY KEY, nodeno)
 </pre></div>
 
 <p>The "%" in the name of each shadow table is replaced by the name of the
@@ -856,6 +862,11 @@ The nodes of an R*Tree for a tree.  All nodes other than the root have an
 entry in the %_parent shadow table that identifies the parent node.
 Each entry in an R*Tree has a rowid.  The %_rowid shadow table maps entry
 rowids to the node that contains that entry.
+
+</p><p>Extra columns appended to the %_rowid table hold the 
+content of <a href="rtree.html#auxcol">auxiliary columns</a>.  The names of these extra
+%_rowid columns are probably not the same as the
+actual auxiliary column names.
 
 <a name="rtreecheck"></a>
 

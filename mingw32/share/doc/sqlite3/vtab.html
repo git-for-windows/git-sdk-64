@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -120,6 +119,7 @@ Table Of Contents
 <div class="fancy-toc4"><a href="#like_glob_regexp_and_match_functions">2.3.1.1. LIKE, GLOB, REGEXP, and MATCH functions</a></div>
 <div class="fancy-toc3"><a href="#outputs">2.3.2. Outputs</a></div>
 <div class="fancy-toc3"><a href="#return_value">2.3.3. Return Value</a></div>
+<div class="fancy-toc3"><a href="#enforcing_required_parameters_on_table_valued_functions">2.3.4. Enforcing Required Parameters On Table-Valued Functions</a></div>
 <div class="fancy-toc2"><a href="#the_xdisconnect_method">2.4. The xDisconnect Method</a></div>
 <div class="fancy-toc2"><a href="#the_xdestroy_method">2.5. The xDestroy Method</a></div>
 <div class="fancy-toc2"><a href="#the_xopen_method">2.6. The xOpen Method</a></div>
@@ -219,8 +219,8 @@ virtual table implementations.
 <p>A virtual table is created using a <a href="lang_createvtab.html">CREATE VIRTUAL TABLE</a> statement.
 
 <p><b><a href="syntax/create-virtual-table-stmt.html">create-virtual-table-stmt:</a></b>
-<button id='x2345' onclick='hideorshow("x2345","x2346")'>hide</button></p>
- <div id='x2346' class='imgcontainer'>
+<button id='x2349' onclick='hideorshow("x2349","x2350")'>hide</button></p>
+ <div id='x2350' class='imgcontainer'>
  <div style="max-width:624px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 624.096 259.848">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -1176,13 +1176,38 @@ should be returned instead.
 
 </p><p>If xBestIndex returns <a href="rescode.html#constraint">SQLITE_CONSTRAINT</a>, that does not indicate an
 error.  Rather, SQLITE_CONSTRAINT indicates that the particular combination
-of input parameters specified should not be used in the query plan.
-The SQLITE_CONSTRAINT return is useful for <a href="vtab.html#tabfunc2">table-valued functions</a> that
+of input parameters specified is insufficient for the virtual table
+to do its job.
+This is logically the same as setting the estimatedCost to infinity.
+If every call to xBestIndex for a particular query plan returns
+SQLITE_CONSTRAINT, that means there is no way for the virtual table
+to be safely used, and the <a href="c3ref/prepare.html">sqlite3_prepare()</a> call will fail with
+a "no query solution" error.
+
+</p><h3 id="enforcing_required_parameters_on_table_valued_functions"><span>2.3.4. </span>Enforcing Required Parameters On Table-Valued Functions</h3>
+
+<p>The SQLITE_CONSTRAINT return from xBestIndex
+is useful for <a href="vtab.html#tabfunc2">table-valued functions</a> that
 have required parameters.  If the aConstraint[].usable field is false
 for one of the required parameter, then the xBestIndex method should
-return SQLITE_CONSTRAINT.
+return SQLITE_CONSTRAINT.  If a required field does not appear in
+the aConstraint[] array at all, that means that the corresponding
+parameter is omitted from the input SQL.  In that case, xBestIndex
+should set an error message in pVTab-&gt;zErrMsg and return
+SQLITE_ERROR.  To summarize:
 
-</p><p>The following example will better illustrate the use of SQLITE_CONSTRAINT
+</p><ol>
+<li><p>
+The aConstraint[].usable value for a required parameter is
+false <big>&rarr;</big> return SQLITE_CONSTRAINT.
+</p></li><li><p>
+A required parameter does not appears anywhere in
+the aConstraint[] array <big>&rarr;</big>
+Set an error message in pVTab-&gt;zErrMsg and return
+SQLITE_ERROR
+</p></li></ol>
+
+<p>The following example will better illustrate the use of SQLITE_CONSTRAINT
 as a return value from xBestIndex:
 
 </p><div class="codeblock"><pre>SELECT * FROM realtab, tablevaluedfunc(realtab.x);
@@ -1763,7 +1788,7 @@ and "%_docsize" where "%" is the name of the original virtual table.  This
 auxiliary real tables that store content for a virtual table are called
 "shadow tables".  See
 (<a href="fts3.html#*shadowtab">1</a>),
-(<a href="fts5.html#appendix_b">2</a>), and
+(<a href="fts5.html#fts5shadowtables">2</a>), and
 (<a href="rtree.html#xshadow">3</a>) for additional information.
 
 </p><p>The xShadowName method exists to allow SQLite to determine whether a

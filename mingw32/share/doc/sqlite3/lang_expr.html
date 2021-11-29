@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -102,7 +101,7 @@ SQL Language Expressions
 Table Of Contents
 </a>
 <div id="toc_sub"><div class="fancy-toc1"><a href="#syntax">1. Syntax</a></div>
-<div class="fancy-toc1"><a href="#operators">2. Operators</a></div>
+<div class="fancy-toc1"><a href="#operators_and_parse_affecting_attributes">2. Operators, and Parse-Affecting Attributes</a></div>
 <div class="fancy-toc1"><a href="#literal_values_constants_">3. Literal Values (Constants)</a></div>
 <div class="fancy-toc1"><a href="#parameters">4. Parameters</a></div>
 <div class="fancy-toc1"><a href="#the_like_glob_regexp_and_match_operators">5. The LIKE, GLOB, REGEXP, and MATCH operators</a></div>
@@ -139,8 +138,8 @@ mk.innerHTML = "&#x25ba;";
 <h1 id="syntax"><span>1. </span>Syntax</h1>
 
 <p><b><a href="syntax/expr.html">expr:</a></b>
-<button id='x1713' onclick='hideorshow("x1713","x1714")'>hide</button></p>
- <div id='x1714' class='imgcontainer'>
+<button id='x1717' onclick='hideorshow("x1717","x1718")'>hide</button></p>
+ <div id='x1718' class='imgcontainer'>
  <div style="max-width:963px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 963.96 1105.06">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="45,17 33,21 33,12" style="fill:rgb(0,0,0)"/>
@@ -350,6 +349,8 @@ mk.innerHTML = "&#x25ba;";
 <text x="276" y="531" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">REGEXP</text>
 <path d="M250,584L297,584A15 15 0 0 0 313 569A15 15 0 0 0 297 554L250,554A15 15 0 0 0 234 569A15 15 0 0 0 250 584Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="274" y="569" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">MATCH</text>
+<path d="M378,546L427,546L427,516L378,516Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="403" y="531" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">expr</text>
 <path d="M378,470L427,470L427,440L378,440Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="403" y="455" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">expr</text>
 <polygon points="465,486 454,490 454,481" style="fill:rgb(0,0,0)"/>
@@ -374,20 +375,24 @@ mk.innerHTML = "&#x25ba;";
 <path d="M211,478 L 211,486 Q 211,493 220,493 L 229,493"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="234,531 223,535 223,527" style="fill:rgb(0,0,0)"/>
 <path d="M211,516 L 211,523 Q 211,531 220,531 L 229,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="378,455 367,460 367,451" style="fill:rgb(0,0,0)"/>
+<path d="M288,455L372,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="340,569 329,573 329,564" style="fill:rgb(0,0,0)"/>
 <path d="M313,569L334,569"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<polygon points="378,455 367,460 367,451" style="fill:rgb(0,0,0)"/>
-<path d="M340,569 L 348,569 Q 355,569 355,554 L 355,470 Q 355,455 364,455 L 372,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="378,531 367,535 367,527" style="fill:rgb(0,0,0)"/>
+<path d="M340,569 L 348,569 Q 355,569 355,554 L 355,546 Q 355,531 364,531 L 372,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="340,531 329,535 329,527" style="fill:rgb(0,0,0)"/>
 <path d="M317,531L334,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M340,531 L 348,531 Q 355,531 355,523 L 355,516"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M340,531L378,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="340,493 329,497 329,489" style="fill:rgb(0,0,0)"/>
 <path d="M294,493L334,493"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M340,493 L 348,493 Q 355,493 355,486 L 355,478"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M288,455L367,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M340,493 L 348,493 Q 355,493 355,508 L 355,516 Q 355,531 367,531 L 378,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="506,455 495,460 495,451" style="fill:rgb(0,0,0)"/>
 <path d="M427,455L501,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <path d="M506,455L659,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="547,531 536,535 536,527" style="fill:rgb(0,0,0)"/>
+<path d="M427,531L542,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M547,531 L 656,531 Q 671,531 671,516 L 671,470 Q 671,455 686,455 L 692,455 L 707,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <path d="M45,622L94,622L94,591L45,591Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="69" y="606" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">expr</text>
 <polygon points="130,606 119,611 119,602" style="fill:rgb(0,0,0)"/>
@@ -629,8 +634,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/filter-clause.html">filter-clause:</a></b>
-<button id='x1715' onclick='hideorshow("x1715","x1716")'>show</button></p>
- <div id='x1716' style='display:none;' class='imgcontainer'>
+<button id='x1719' onclick='hideorshow("x1719","x1720")'>show</button></p>
+ <div id='x1720' style='display:none;' class='imgcontainer'>
  <div style="max-width:422px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 422.381 34.56">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -660,8 +665,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/literal-value.html">literal-value:</a></b>
-<button id='x1717' onclick='hideorshow("x1717","x1718")'>show</button></p>
- <div id='x1718' style='display:none;' class='imgcontainer'>
+<button id='x1721' onclick='hideorshow("x1721","x1722")'>show</button></p>
+ <div id='x1722' style='display:none;' class='imgcontainer'>
  <div style="max-width:341px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 341.376 336.96">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,319 39,324 39,315" style="fill:rgb(0,0,0)"/>
@@ -731,8 +736,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/over-clause.html">over-clause:</a></b>
-<button id='x1719' onclick='hideorshow("x1719","x1720")'>show</button></p>
- <div id='x1720' style='display:none;' class='imgcontainer'>
+<button id='x1723' onclick='hideorshow("x1723","x1724")'>show</button></p>
+ <div id='x1724' style='display:none;' class='imgcontainer'>
  <div style="max-width:600px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 600.706 418.392">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -823,8 +828,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x1721' onclick='hideorshow("x1721","x1722")'>show</button></p>
- <div id='x1722' style='display:none;' class='imgcontainer'>
+<button id='x1725' onclick='hideorshow("x1725","x1726")'>show</button></p>
+ <div id='x1726' style='display:none;' class='imgcontainer'>
  <div style="max-width:1039px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 1039.65 522.72">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,92 39,97 39,88" style="fill:rgb(0,0,0)"/>
@@ -1033,8 +1038,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x1723' onclick='hideorshow("x1723","x1724")'>show</button></p>
- <div id='x1724' style='display:none;' class='imgcontainer'>
+<button id='x1727' onclick='hideorshow("x1727","x1728")'>show</button></p>
+ <div id='x1728' style='display:none;' class='imgcontainer'>
  <div style="max-width:798px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 798.451 99.576">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -1095,8 +1100,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/raise-function.html">raise-function:</a></b>
-<button id='x1725' onclick='hideorshow("x1725","x1726")'>show</button></p>
- <div id='x1726' style='display:none;' class='imgcontainer'>
+<button id='x1729' onclick='hideorshow("x1729","x1730")'>show</button></p>
+ <div id='x1730' style='display:none;' class='imgcontainer'>
  <div style="max-width:627px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 627.302 147.96">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -1151,8 +1156,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
-<button id='x1727' onclick='hideorshow("x1727","x1728")'>show</button></p>
- <div id='x1728' style='display:none;' class='imgcontainer'>
+<button id='x1731' onclick='hideorshow("x1731","x1732")'>show</button></p>
+ <div id='x1732' style='display:none;' class='imgcontainer'>
  <div style="max-width:658px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 658.877 1139.62">
 <path d="M55,823L656,823L656,99L55,99Z"  style="fill:none;stroke-width:3.24;stroke:rgb(211,211,211);" />
 <circle cx="6" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
@@ -1426,8 +1431,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
-<button id='x1729' onclick='hideorshow("x1729","x1730")'>show</button></p>
- <div id='x1730' style='display:none;' class='imgcontainer'>
+<button id='x1733' onclick='hideorshow("x1733","x1734")'>show</button></p>
+ <div id='x1734' style='display:none;' class='imgcontainer'>
  <div style="max-width:638px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 638.525 167.4">
 <circle cx="5" cy="29" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,29 20,33 20,24" style="fill:rgb(0,0,0)"/>
@@ -1497,8 +1502,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
-<button id='x1731' onclick='hideorshow("x1731","x1732")'>show</button></p>
- <div id='x1732' style='display:none;' class='imgcontainer'>
+<button id='x1735' onclick='hideorshow("x1735","x1736")'>show</button></p>
+ <div id='x1736' style='display:none;' class='imgcontainer'>
  <div style="max-width:293px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 293.842 147.96">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -1539,8 +1544,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/join-clause.html">join-clause:</a></b>
-<button id='x1733' onclick='hideorshow("x1733","x1734")'>show</button></p>
- <div id='x1734' style='display:none;' class='imgcontainer'>
+<button id='x1737' onclick='hideorshow("x1737","x1738")'>show</button></p>
+ <div id='x1738' style='display:none;' class='imgcontainer'>
  <div style="max-width:793px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 793.282 84.24">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -1571,8 +1576,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
-<button id='x1735' onclick='hideorshow("x1735","x1736")'>show</button></p>
- <div id='x1736' style='display:none;' class='imgcontainer'>
+<button id='x1739' onclick='hideorshow("x1739","x1740")'>show</button></p>
+ <div id='x1740' style='display:none;' class='imgcontainer'>
  <div style="max-width:483px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 483.336 126.576">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,55 39,59 39,50" style="fill:rgb(0,0,0)"/>
@@ -1619,8 +1624,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/join-operator.html">join-operator:</a></b>
-<button id='x1737' onclick='hideorshow("x1737","x1738")'>show</button></p>
- <div id='x1738' style='display:none;' class='imgcontainer'>
+<button id='x1741' onclick='hideorshow("x1741","x1742")'>show</button></p>
+ <div id='x1742' style='display:none;' class='imgcontainer'>
  <div style="max-width:566px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 566.333 179.712">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,71 39,76 39,67" style="fill:rgb(0,0,0)"/>
@@ -1681,8 +1686,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x1739' onclick='hideorshow("x1739","x1740")'>show</button></p>
- <div id='x1740' style='display:none;' class='imgcontainer'>
+<button id='x1743' onclick='hideorshow("x1743","x1744")'>show</button></p>
+ <div id='x1744' style='display:none;' class='imgcontainer'>
  <div style="max-width:798px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 798.451 99.576">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -1742,8 +1747,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/result-column.html">result-column:</a></b>
-<button id='x1741' onclick='hideorshow("x1741","x1742")'>show</button></p>
- <div id='x1742' style='display:none;' class='imgcontainer'>
+<button id='x1745' onclick='hideorshow("x1745","x1746")'>show</button></p>
+ <div id='x1746' style='display:none;' class='imgcontainer'>
  <div style="max-width:398px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 398.054 163.08">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="45,17 33,21 33,12" style="fill:rgb(0,0,0)"/>
@@ -1795,8 +1800,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
-<button id='x1743' onclick='hideorshow("x1743","x1744")'>show</button></p>
- <div id='x1744' style='display:none;' class='imgcontainer'>
+<button id='x1747' onclick='hideorshow("x1747","x1748")'>show</button></p>
+ <div id='x1748' style='display:none;' class='imgcontainer'>
  <div style="max-width:720px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 720.778 457.704">
 <circle cx="5" cy="36" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,74 39,78 39,70" style="fill:rgb(0,0,0)"/>
@@ -1940,8 +1945,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/window-defn.html">window-defn:</a></b>
-<button id='x1745' onclick='hideorshow("x1745","x1746")'>show</button></p>
- <div id='x1746' style='display:none;' class='imgcontainer'>
+<button id='x1749' onclick='hideorshow("x1749","x1750")'>show</button></p>
+ <div id='x1750' style='display:none;' class='imgcontainer'>
  <div style="max-width:479px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 479.765 380.592">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -2021,8 +2026,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x1747' onclick='hideorshow("x1747","x1748")'>show</button></p>
- <div id='x1748' style='display:none;' class='imgcontainer'>
+<button id='x1751' onclick='hideorshow("x1751","x1752")'>show</button></p>
+ <div id='x1752' style='display:none;' class='imgcontainer'>
  <div style="max-width:1039px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 1039.65 522.72">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,92 39,97 39,88" style="fill:rgb(0,0,0)"/>
@@ -2233,8 +2238,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/type-name.html">type-name:</a></b>
-<button id='x1749' onclick='hideorshow("x1749","x1750")'>show</button></p>
- <div id='x1750' style='display:none;' class='imgcontainer'>
+<button id='x1753' onclick='hideorshow("x1753","x1754")'>show</button></p>
+ <div id='x1754' style='display:none;' class='imgcontainer'>
  <div style="max-width:661px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 661.008 110.16">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="45,17 33,21 33,12" style="fill:rgb(0,0,0)"/>
@@ -2288,8 +2293,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/signed-number.html">signed-number:</a></b>
-<button id='x1751' onclick='hideorshow("x1751","x1752")'>show</button></p>
- <div id='x1752' style='display:none;' class='imgcontainer'>
+<button id='x1755' onclick='hideorshow("x1755","x1756")'>show</button></p>
+ <div id='x1756' style='display:none;' class='imgcontainer'>
  <div style="max-width:292px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 292.013 99.576">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,44 39,48 39,40" style="fill:rgb(0,0,0)"/>
@@ -2320,34 +2325,81 @@ mk.innerHTML = "&#x25ba;";
 
 <a name="binaryops"></a>
 
-<h1 id="operators"><span>2. </span>Operators</h1>
-<p>SQLite understands the following binary operators, in order from
-highest to lowest precedence:</p>
+<h1 id="operators_and_parse_affecting_attributes"><span>2. </span>Operators, and Parse-Affecting Attributes</h1>
+<p>SQLite understands these operators, listed in precedence<sup>1</sup> order<br>
+(top to bottom / highest to lowest):
+</p><p></p>
 
-<blockquote><pre>
-<font color="#2c2cf0"><big>||
-*    /    %
-+    -
-&lt;&lt;   &gt;&gt;   &amp;    |
-&lt;    &lt;=   &gt;    &gt;=
-=    ==   !=   &lt;&gt;   </big>IS   IS NOT   IN   LIKE   GLOB   MATCH   REGEXP
-AND   
-OR</font>
-</pre></blockquote>
+  <style>
+   td.optab { color: #2c2cf0; border: 2px solid black; padding: 4px; }
+   th.optab { text-align: center; border: 2px solid black; padding: 4px; }
+   table.optab { border-collapse: collapse; margin-left: 50px }
+   small.optab { color: #101010;  }
+  </style>
 
-<p>Supported unary prefix operators are these:</p>
 
-<blockquote><pre>
-<font color="#2c2cf0"><big>-    +    ~    NOT</big></font>
-</pre></blockquote>
+<table class="optab" width="50%" border="1" border-collapse="collapse" line-height="1.2">
+  <tr align="center">
+    <th class="optab" text-align="center"><b>Operators&nbsp;<sup>2</sup></b></th>
+  </tr>
+  <tr align="center">
+    <td class="optab">~&nbsp;<small class="optab">&lsqb;expr&rsqb;</small>&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;<small class="optab">&lsqb;expr&rsqb;</small>&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<small class="optab">&lsqb;expr&rsqb;</small></td>
+  </tr>
+  <tr align="center">
+    <td class="optab"><small class="optab">&lsqb;expr&rsqb;</small>&nbsp;COLLATE&nbsp;&lpar;collation-name&rpar;&nbsp;<sup>3</sup></td>
+  </tr>
+  <tr align="center">
+    <td class="optab">||</td>
+  </tr>
+  <tr align="center">
+    <td class="optab">*&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;%</td>
+  </tr>
+  <tr align="center">
+    <td class="optab">+&nbsp;&nbsp;&nbsp;-</td>
+  </tr>
+  <tr align="center">
+    <td class="optab">&amp;&ensp;&nbsp;|&nbsp;&nbsp;&nbsp;&lt;&lt;&ensp;&nbsp;&gt;&gt;</td>
+  </tr>
+  <tr align="center">
+    <td class="optab"><small class="optab">&lsqb;expr&rsqb;</small>&nbsp;ESCAPE&nbsp;&lsqb;escape-character-expr&rsqb;&nbsp;<sup>4</sup></td>
+  </tr>
+  <tr align="center">
+    <td class="optab">&lt;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&lt;=&nbsp;&nbsp;&gt;=</td>
+  </tr>
+  <tr align="center">
+    <td class="optab">=&nbsp;&nbsp;==&nbsp;&nbsp;&lt;&gt;&nbsp;&nbsp;!=&nbsp;&nbsp;IS&nbsp;&nbsp;&nbsp;IS&nbsp;NOT<br>
+      <small class="optab">&lsqb;expr&rsqb;</small>&nbsp;BETWEEN<sup>5</sup>&nbsp;<small class="optab">&lsqb;expr&rsqb;</small>&nbsp;AND&nbsp;<small class="optab">&lsqb;expr&rsqb;</small><sup>&ensp;</sup><br>
+      IN<sup>5</sup>&nbsp;&nbsp;MATCH<sup>5</sup>&nbsp;&nbsp;LIKE<sup>5</sup>&nbsp;&nbsp;REGEXP<sup>5</sup>&nbsp;&nbsp;GLOB<sup>5</sup><br>
+      <small class="optab">&lsqb;expr&rsqb;</small>&nbsp;ISNULL&nbsp;&nbsp;<small class="optab">&lsqb;expr&rsqb;</small>&nbsp;NOTNULL&nbsp;&nbsp;&nbsp;<small class="optab">&lsqb;expr&rsqb;</small>&nbsp;NOT&nbsp;NULL
+    </td>
+  </tr>
+  <tr align="center">
+    <td class="optab">NOT&nbsp;<small class="optab">&lsqb;expr&rsqb;</small></td>
+  </tr>
+  <tr align="center">
+    <td class="optab">AND</td>
+  </tr>
+  <tr align="center">
+    <td class="optab">(OR</td>
+  </tr>
+</table>
+<p>
+</p><ol>
+<li> Operators shown within the same table cell share precedence.<br>
+</li><li> "<small>&lsqb;expr&rsqb;</small>" denotes operand locations for non-binary operators.<br>
+ &nbsp;&nbsp;Operators with no "&lsqb;expr&rsqb;" adjunct are binary and left-associative. <br>
+</li><li> The COLLATE clause (with its collation-name) acts as a single postfix operator.<br>
+</li><li> The ESCAPE clause (with its escape character) acts as a single postfix operator.<br>
+ &nbsp;&nbsp;It can only bind to a preceding &lsqb;expr&rsqb; LIKE &lsqb;expr&rsqb; expression.<br>
+</li><li> Each keyword in (BETWEEN IN GLOB LIKE MATCH REGEXP) may be prefixed<br>
+ &nbsp;&nbsp;by NOT, retaining the bare operator's precedence and associativity.
+</li></ol>
+
 
 <a name="collateop"></a>
 
 <p>The COLLATE operator is a unary postfix
 operator that assigns a <a href="datatype3.html#collation">collating sequence</a> to an expression.
-The COLLATE operator has a higher precedence (binds more tightly) than any
-binary operator and any unary prefix operator except "~".
-(COLLATE and "~" are associative so their binding order does not matter.)
 The collating sequence set by the COLLATE operator overrides the
 collating sequence determined by the COLLATE clause in a table
 <a href="lang_createtable.html#tablecoldef">column definition</a>.
@@ -2381,9 +2433,7 @@ operands are NULL. In this case, if both operands are NULL, then the
 IS operator evaluates to 1 (true) and the IS NOT operator evaluates
 to 0 (false). If one operand is NULL and the other is not, then the
 IS operator evaluates to 0 (false) and the IS NOT operator is 1 (true).
-It is not possible for an IS or IS NOT expression to evaluate to NULL.
-Operators <font color="#2c2cf0"><big>IS</big></font> and <font color="#2c2cf0"><big>IS NOT</big></font> have the same 
-precedence as <font color="#2c2cf0"><big>=</big></font>.<a name="litvalue"></a>
+It is not possible for an IS or IS NOT expression to evaluate to NULL.<a name="litvalue"></a>
 
 </p><h1 id="literal_values_constants_"><span>3. </span>Literal Values (Constants)</h1>
 <p>
@@ -2495,7 +2545,7 @@ The syntax for integer and floating point literals (collectively
 
 <p>
 If a numeric literal has a decimal point or an exponentiation
-clause or if its magnitude is less than -9223372036854775808 or
+clause or if it is less than -9223372036854775808 or
 greater than 9223372036854775807, then it is a floating point literal.
 Otherwise is it is an  integer literal.
 The "E" character that begins the exponentiation
@@ -2688,8 +2738,6 @@ helpful logic.</p>
 equivalent to 
 "<i>x</i><b>&gt;=</b><i>y</i> <b>AND</b> <i>x</i><b>&lt;=</b><i>z</i>" except
 that with BETWEEN, the <i>x</i> expression is only evaluated once.
-The precedence of the BETWEEN operator is the same as the precedence
-as operators <b>==</b> and <b>!=</b> and <b>LIKE</b> and groups left to right.
 
 <a name="case"></a>
 

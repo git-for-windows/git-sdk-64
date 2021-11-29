@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <!-- keywords: sqlite3_deserialize -->
 <div class=nosearch>
 <a href="intro.html"><h2>SQLite C Interface</h2></a>
@@ -125,6 +124,10 @@ if writes on the database cause it to grow larger than M bytes.</p>
 <p>The sqlite3_deserialize() interface will fail with SQLITE_BUSY if the
 database is currently in a read transaction or is involved in a backup
 operation.</p>
+
+<p>It is not possible to deserialized into the TEMP database.  If the
+S argument to sqlite3_deserialize(D,S,P,N,M,F) is "temp" then the
+function returns SQLITE_ERROR.</p>
 
 <p>If sqlite3_deserialize(D,S,P,N,M,F) fails for any reason and if the
 SQLITE_DESERIALIZE_FREEONCLOSE bit is set in argument F, then

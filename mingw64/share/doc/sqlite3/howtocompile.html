@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -213,7 +212,7 @@ cl shell.c sqlite3.c -Fesqlite3.exe
 the command typically looks something like this:</p>
 
 <blockquote><pre>
-gcc shell.c sqlite3.c -lpthread -ldl -lm
+gcc shell.c sqlite3.c -lpthread -ldl -lm -o sqlite3
 </pre></blockquote>
 
 <p>The pthreads library is needed to make SQLite threadsafe.  But
@@ -221,7 +220,7 @@ since the CLI is single threaded,  we could instruct SQLite to build
 in a non-threadsafe mode and thereby omit the pthreads library:</p>
 
 <blockquote><pre>
-gcc -DSQLITE_THREADSAFE=0 shell.c sqlite3.c -ldl -lm
+gcc -DSQLITE_THREADSAFE=0 shell.c sqlite3.c -ldl -lm -o sqlite3
 </pre></blockquote>
 
 <p>The -ldl library is needed to support dynamic loading, the
@@ -231,7 +230,7 @@ then they can be omitted using <a href="compile.html#omit_load_extension">SQLITE
 option:</p>
 
 <blockquote><pre>
-gcc -DSQLITE_THREADSAFE=0 -DSQLITE_OMIT_LOAD_EXTENSION shell.c sqlite3.c
+gcc -DSQLITE_THREADSAFE=0 -DSQLITE_OMIT_LOAD_EXTENSION shell.c sqlite3.c -o sqlite3
 </pre></blockquote>
 
 <p>One might want to provide other <a href="compile.html">compile-time options</a> such as

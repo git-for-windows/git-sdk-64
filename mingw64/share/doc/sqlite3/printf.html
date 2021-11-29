@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -496,7 +495,7 @@ The core string formatting routine is the sqlite3VXPrintf() function found in th
 <a href="https://sqlite.org/src/file/src/printf.c">printf.c</a> source file.  All the
 various interfaces invoke (sometimes indirectly) this one core function.
 The sqlite3VXPrintf() function began as code written by the first author
-of SQLite (<a href="crew.html">Hipp</a>) when he was a graduate student a Duke University in the
+of SQLite (<a href="crew.html">Hipp</a>) when he was a graduate student at Duke University in the
 late 1980s.  Hipp kept this printf() implementation in his personal toolbox until
 he started working on SQLite in 2000.  The code was incorporated into the
 SQLite source tree on <a href="https://sqlite.org/src/timeline?c=f9372072a6">2000-10-08</a>
@@ -508,9 +507,10 @@ printf() implementation that is derived from an early version of the SQLite
 printf() implementation, but those two implementations have since diverged.
 
 </p><p>
-The reason that the <a href="c3ref/mprintf.html">sqlite3_snprintf()</a> has its buffer pointer and buffer size
-arguments reversed from what is found in the standard library snprintf() routine
-is because there was no snprintf() routine in the standard C library
+The <a href="c3ref/mprintf.html">sqlite3_snprintf()</a> function has its buffer pointer and buffer size
+arguments reversed from what is found in the standard C library snprintf()
+routine. This is because there was no snprintf() routine in the
+standard C library
 when Hipp was first implementing his version, and he chose a different order
 than the designers of the standard C library.
 </p>

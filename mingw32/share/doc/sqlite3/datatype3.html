@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>Datatypes In SQLite Version 3</title>
+<title>Datatypes In SQLite</title>
 <!-- path= -->
 </head>
 <body>
@@ -90,11 +90,10 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
-Datatypes In SQLite Version 3
+Datatypes In SQLite
 </div>
 <div class="fancy_toc">
 <a onclick="toggle_toc()">
@@ -152,14 +151,18 @@ which the value is stored.</p>
 of a value is associated with the value itself, not with its container.
 The dynamic type system of SQLite is backwards
 compatible with the more common static type systems of other database engines
-in the sense that SQL statements that work on statically typed databases should
+in the sense that SQL statements that work on statically typed databases
 work the same way in SQLite.  However, the dynamic typing in SQLite allows
 it to do things which are not possible in traditional rigidly typed
-databases.</p>
+databases.  <a href="flextypegood.html">Flexible typing is a feature</a> of SQLite, not a bug.</p>
+
+<p>Update:
+As of version 3.37.0 (2021-11-27), SQLite provides <a href="stricttables.html">STRICT tables</a>
+that do rigid type enforcement, for developers who prefer that kind of thing.
 
 <a name="storageclasses"></a>
 
-<h1 id="storage_classes_and_datatypes"><span>2. </span>Storage Classes and Datatypes</h1>
+</p><h1 id="storage_classes_and_datatypes"><span>2. </span>Storage Classes and Datatypes</h1>
 
 <p>Each value stored in an SQLite database (or manipulated by the
 database engine) has one of the following storage classes:</p>
@@ -208,9 +211,14 @@ database engine may convert values between numeric storage classes
 <p>SQLite does not have a separate Boolean storage class.
 Instead, Boolean values are stored as integers 0 (false) and 1 (true).</p>
 
+<p>SQLite recognizes the keywords "TRUE" and "FALSE",
+as of version 3.23.0 (2018-04-02) but those keywords are
+really just alternative spellings for the integer literals 1 and 0
+respectively.
+
 <a name="datetime"></a>
 
-<h2 id="date_and_time_datatype"><span>2.2. </span>Date and Time Datatype</h2>
+</p><h2 id="date_and_time_datatype"><span>2.2. </span>Date and Time Datatype</h2>
 
 <p>SQLite does not have a storage class set aside for storing
 dates and/or times.

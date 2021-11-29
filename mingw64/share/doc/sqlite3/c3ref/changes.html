@@ -90,21 +90,24 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
-<!-- keywords: sqlite3_changes -->
+<!-- keywords: sqlite3_changes sqlite3_changes64 -->
 <div class=nosearch>
 <a href="intro.html"><h2>SQLite C Interface</h2></a>
 <h2>Count The Number Of Rows Modified</h2>
 </div>
 <blockquote><pre>
 int sqlite3_changes(sqlite3*);
+sqlite3_int64 sqlite3_changes64(sqlite3*);
 </pre></blockquote>
 <p>
-This function returns the number of rows modified, inserted or
+These functions return the number of rows modified, inserted or
 deleted by the most recently completed INSERT, UPDATE or DELETE
 statement on the database connection specified by the only parameter.
-Executing any other type of SQL statement does not modify the value
-returned by this function.</p>
+The two functions are identical except for the type of the return value
+and that if the number of rows modified by the most recent INSERT, UPDATE
+or DELETE is greater than the maximum value supported by type "int", then
+the return value of sqlite3_changes() is undefined. Executing any other
+type of SQL statement does not modify the value returned by these functions.</p>
 
 <p>Only changes made directly by the INSERT, UPDATE or DELETE statement are
 considered - auxiliary changes caused by <a href="../lang_createtrigger.html">triggers</a>,

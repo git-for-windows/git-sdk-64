@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 
 
 
@@ -250,6 +249,7 @@ be removed in some future release.</li>
 <li><a href='#SQLITE_ABORT'>SQLITE_CONSTRAINT</a></li>
 <li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_CHECK</a></li>
 <li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_COMMITHOOK</a></li>
+<li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_DATATYPE</a></li>
 <li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_FOREIGNKEY</a></li>
 <li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_FUNCTION</a></li>
 <li><a href='#SQLITE_ABORT_ROLLBACK'>SQLITE_CONSTRAINT_NOTNULL</a></li>
@@ -498,6 +498,7 @@ be removed in some future release.</li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_CREATE</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_DELETEONCLOSE</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_EXCLUSIVE</a></li>
+<li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_EXRESCODE</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_FULLMUTEX</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_MAIN_DB</a></li>
 <li><a href='#SQLITE_OPEN_AUTOPROXY'>SQLITE_OPEN_MAIN_JOURNAL</a></li>
@@ -640,7 +641,7 @@ be removed in some future release.</li>
 <p>Note: Functions marked with "<small><i>(exp)</i></small>"
 are <a href="capi3ref.html">experimental</a> and functions whose names are
 <s>struck through</s> are <a href="capi3ref.html">deprecated</a>.</p>
-<!-- number of functions: 274 -->
+<!-- number of functions: 277 -->
 <!-- number of deprecated functions: 7 -->
 <!-- number of experimental functions: 0 -->
 <div class='columns' style='columns: 15em auto;'>
@@ -648,6 +649,7 @@ are <a href="capi3ref.html">experimental</a> and functions whose names are
 <li><a href='#sqlite3_aggregate_context'>sqlite3_aggregate_context</a></li>
 <li><s>sqlite3_aggregate_count</s></li>
 <li><a href='#sqlite3_auto_extension'>sqlite3_auto_extension</a></li>
+<li><a href='#sqlite3_autovacuum_pages'>sqlite3_autovacuum_pages</a></li>
 <li><a href='#sqlite3backupfinish'>sqlite3_backup_finish</a></li>
 <li><a href='#sqlite3backupinit'>sqlite3_backup_init</a></li>
 <li><a href='#sqlite3backuppagecount'>sqlite3_backup_pagecount</a></li>
@@ -679,6 +681,7 @@ are <a href="capi3ref.html">experimental</a> and functions whose names are
 <li><a href='#sqlite3_busy_timeout'>sqlite3_busy_timeout</a></li>
 <li><a href='#sqlite3_cancel_auto_extension'>sqlite3_cancel_auto_extension</a></li>
 <li><a href='#sqlite3_changes'>sqlite3_changes</a></li>
+<li><a href='#sqlite3_changes'>sqlite3_changes64</a></li>
 <li><a href='#sqlite3_clear_bindings'>sqlite3_clear_bindings</a></li>
 <li><a href='#sqlite3_close'>sqlite3_close</a></li>
 <li><a href='#sqlite3_close'>sqlite3_close_v2</a></li>
@@ -880,6 +883,7 @@ are <a href="capi3ref.html">experimental</a> and functions whose names are
 <li><s>sqlite3_thread_cleanup</s></li>
 <li><a href='#sqlite3_threadsafe'>sqlite3_threadsafe</a></li>
 <li><a href='#sqlite3_total_changes'>sqlite3_total_changes</a></li>
+<li><a href='#sqlite3_total_changes'>sqlite3_total_changes64</a></li>
 <li><a href='#sqlite3_profile'>sqlite3_trace</a></li>
 <li><a href='#sqlite3_trace_v2'>sqlite3_trace_v2</a></li>
 <li><s>sqlite3_transfer_bindings</s></li>
@@ -1929,6 +1933,71 @@ will be called more than once for each database connection that is opened.</p>
 
 <p>See also: <a href="#sqlite3_reset_auto_extension">sqlite3_reset_auto_extension()</a>
 and <a href="#sqlite3_cancel_auto_extension">sqlite3_cancel_auto_extension()</a>
+</p><hr><a name="sqlite3_autovacuum_pages"></a>
+<h2>Autovacuum Compaction Amount Callback</h2>
+</div>
+<blockquote><pre>
+int sqlite3_autovacuum_pages(
+  sqlite3 *db,
+  unsigned int(*)(void*,const char*,unsigned int,unsigned int,unsigned int),
+  void*,
+  void(*)(void*)
+);
+</pre></blockquote>
+<p>
+The sqlite3_autovacuum_pages(D,C,P,X) interface registers a callback
+function C that is invoked prior to each autovacuum of the database
+file.  The callback is passed a copy of the generic data pointer (P),
+the schema-name of the attached database that is being autovacuumed,
+the the size of the database file in pages, the number of free pages,
+and the number of bytes per page, respectively.  The callback should
+return the number of free pages that should be removed by the
+autovacuum.  If the callback returns zero, then no autovacuum happens.
+If the value returned is greater than or equal to the number of
+free pages, then a complete autovacuum happens.</p>
+
+<p><p>If there are multiple ATTACH-ed database files that are being
+modified as part of a transaction commit, then the autovacuum pages
+callback is invoked separately for each file.</p>
+
+<p><p><b>The callback is not reentrant.</b> The callback function should
+not attempt to invoke any other SQLite interface.  If it does, bad
+things may happen, including segmentation faults and corrupt database
+files.  The callback function should be a simple function that
+does some arithmetic on its input parameters and returns a result.</p>
+
+<p>The X parameter to sqlite3_autovacuum_pages(D,C,P,X) is an optional
+destructor for the P parameter.  If X is not NULL, then X(P) is
+invoked whenever the database connection closes or when the callback
+is overwritten by another invocation of sqlite3_autovacuum_pages().</p>
+
+<p><p>There is only one autovacuum pages callback per database connection.
+Each call to the sqlite3_autovacuum_pages() interface overrides all
+previous invocations for that database connection.  If the callback
+argument (C) to sqlite3_autovacuum_pages(D,C,P,X) is a NULL pointer,
+then the autovacuum steps callback is cancelled.  The return value
+from sqlite3_autovacuum_pages() is normally SQLITE_OK, but might
+be some other error code if something goes wrong.  The current
+implementation will only return SQLITE_OK or SQLITE_MISUSE, but other
+return codes might be added in future releases.</p>
+
+<p><p>If no autovacuum pages callback is specified (the usual case) or
+a NULL pointer is provided for the callback,
+then the default behavior is to vacuum all free pages.  So, in other
+words, the default behavior is the same as if the callback function
+were something like this:</p>
+
+<p><blockquote><pre>
+&nbsp;   unsigned int demonstration_autovac_pages_callback(
+&nbsp;     void *pClientData,
+&nbsp;     const char *zSchema,
+&nbsp;     unsigned int nDbPage,
+&nbsp;     unsigned int nFreePage,
+&nbsp;     unsigned int nBytePerPage
+&nbsp;   ){
+&nbsp;     return nFreePage;
+&nbsp;   }
+</pre></blockquote>
 </p><hr><a name="sqlite3_bind_parameter_count"></a>
 <h2>Number Of SQL Parameters</h2>
 </div>
@@ -2259,64 +2328,6 @@ initialization routine X that was registered using a prior call to
 routine returns 1 if initialization routine X was successfully
 unregistered and it returns 0 if X was not on the list of initialization
 routines.
-</p><hr><a name="sqlite3_changes"></a>
-<h2>Count The Number Of Rows Modified</h2>
-</div>
-<blockquote><pre>
-int sqlite3_changes(sqlite3*);
-</pre></blockquote>
-<p>
-This function returns the number of rows modified, inserted or
-deleted by the most recently completed INSERT, UPDATE or DELETE
-statement on the database connection specified by the only parameter.
-Executing any other type of SQL statement does not modify the value
-returned by this function.</p>
-
-<p>Only changes made directly by the INSERT, UPDATE or DELETE statement are
-considered - auxiliary changes caused by <a href="lang_createtrigger.html">triggers</a>,
-<a href="foreignkeys.html#fk_actions">foreign key actions</a> or <a href="lang_replace.html">REPLACE</a> constraint resolution are not counted.</p>
-
-<p>Changes to a view that are intercepted by
-<a href="lang_createtrigger.html#instead_of_trigger">INSTEAD OF triggers</a> are not counted. The value
-returned by sqlite3_changes() immediately after an INSERT, UPDATE or
-DELETE statement run on a view is always zero. Only changes made to real
-tables are counted.</p>
-
-<p>Things are more complicated if the sqlite3_changes() function is
-executed while a trigger program is running. This may happen if the
-program uses the <a href="lang_corefunc.html#changes">changes() SQL function</a>, or if some other callback
-function invokes sqlite3_changes() directly. Essentially:</p>
-
-<p><ul>
-<li> Before entering a trigger program the value returned by
-sqlite3_changes() function is saved. After the trigger program
-has finished, the original value is restored.</p>
-
-<p><li> Within a trigger program each INSERT, UPDATE and DELETE
-statement sets the value returned by sqlite3_changes()
-upon completion as normal. Of course, this value will not include
-any changes performed by sub-triggers, as the sqlite3_changes()
-value will be saved and restored after each sub-trigger has run.
-</ul></p>
-
-<p>This means that if the changes() SQL function (or similar) is used
-by the first INSERT, UPDATE or DELETE statement within a trigger, it
-returns the value as set when the calling statement began executing.
-If it is used by the second or subsequent such statement within a trigger
-program, the value returned reflects the number of rows modified by the
-previous INSERT, UPDATE or DELETE statement within the same trigger.</p>
-
-<p>If a separate thread makes changes on the same database connection
-while <a href="#sqlite3_changes">sqlite3_changes()</a> is running then the value returned
-is unpredictable and not meaningful.</p>
-
-<p>See also:
-<ul>
-<li> the <a href="#sqlite3_total_changes">sqlite3_total_changes()</a> interface
-<li> the <a href="pragma.html#pragma_count_changes">count_changes pragma</a>
-<li> the <a href="lang_corefunc.html#changes">changes() SQL function</a>
-<li> the <a href="pragma.html#pragma_data_version">data_version pragma</a>
-</ul>
 </p><hr><a name="sqlite3_clear_bindings"></a>
 <h2>Reset All Bindings On A Prepared Statement</h2>
 </div>
@@ -2631,6 +2642,10 @@ if writes on the database cause it to grow larger than M bytes.</p>
 <p>The sqlite3_deserialize() interface will fail with SQLITE_BUSY if the
 database is currently in a read transaction or is involved in a backup
 operation.</p>
+
+<p>It is not possible to deserialized into the TEMP database.  If the
+S argument to sqlite3_deserialize(D,S,P,N,M,F) is "temp" then the
+function returns SQLITE_ERROR.</p>
 
 <p>If sqlite3_deserialize(D,S,P,N,M,F) fails for any reason and if the
 SQLITE_DESERIALIZE_FREEONCLOSE bit is set in argument F, then
@@ -3931,43 +3946,6 @@ sqlite3_config(). In other words, the return value from sqlite3_threadsafe()
 is unchanged by calls to sqlite3_config().</p>
 
 <p>See the <a href="threadsafe.html">threading mode</a> documentation for additional information.
-</p><hr><a name="sqlite3_total_changes"></a>
-<h2>Total Number Of Rows Modified</h2>
-</div>
-<blockquote><pre>
-int sqlite3_total_changes(sqlite3*);
-</pre></blockquote>
-<p>
-This function returns the total number of rows inserted, modified or
-deleted by all <a href="lang_insert.html">INSERT</a>, <a href="lang_update.html">UPDATE</a> or <a href="lang_delete.html">DELETE</a> statements completed
-since the database connection was opened, including those executed as
-part of trigger programs. Executing any other type of SQL statement
-does not affect the value returned by sqlite3_total_changes().</p>
-
-<p>Changes made as part of <a href="foreignkeys.html#fk_actions">foreign key actions</a> are included in the
-count, but those made as part of REPLACE constraint resolution are
-not. Changes to a view that are intercepted by INSTEAD OF triggers
-are not counted.</p>
-
-<p>The <a href="#sqlite3_total_changes">sqlite3_total_changes(D)</a> interface only reports the number
-of rows that changed due to SQL statement run against database
-connection D.  Any changes by other database connections are ignored.
-To detect changes against a database file from other database
-connections use the <a href="pragma.html#pragma_data_version">PRAGMA data_version</a> command or the
-<a href="#sqlitefcntldataversion">SQLITE_FCNTL_DATA_VERSION</a> <a href="#sqlite3_file_control">file control</a>.</p>
-
-<p>If a separate thread makes changes on the same database connection
-while <a href="#sqlite3_total_changes">sqlite3_total_changes()</a> is running then the value
-returned is unpredictable and not meaningful.</p>
-
-<p>See also:
-<ul>
-<li> the <a href="#sqlite3_changes">sqlite3_changes()</a> interface
-<li> the <a href="pragma.html#pragma_count_changes">count_changes pragma</a>
-<li> the <a href="lang_corefunc.html#changes">changes() SQL function</a>
-<li> the <a href="pragma.html#pragma_data_version">data_version pragma</a>
-<li> the <a href="#sqlitefcntldataversion">SQLITE_FCNTL_DATA_VERSION</a> <a href="#sqlite3_file_control">file control</a>
-</ul>
 </p><hr><a name="sqlite3_trace_v2"></a>
 <h2>SQL Trace Hook</h2>
 </div>
@@ -4491,8 +4469,9 @@ are undefined.</p>
 
 <p>A single database handle may have at most a single write-ahead log callback
 registered at one time. Calling <a href="#sqlite3_wal_hook">sqlite3_wal_hook()</a> replaces any
-previously registered write-ahead log callback. Note that the
-<a href="#sqlite3_wal_autocheckpoint">sqlite3_wal_autocheckpoint()</a> interface and the
+previously registered write-ahead log callback. The return value is
+a copy of the third parameter from the previous call, if any, or 0.
+Note that the <a href="#sqlite3_wal_autocheckpoint">sqlite3_wal_autocheckpoint()</a> interface and the
 <a href="pragma.html#pragma_wal_autocheckpoint">wal_autocheckpoint pragma</a> both invoke <a href="#sqlite3_wal_hook">sqlite3_wal_hook()</a> and will
 overwrite any prior <a href="#sqlite3_wal_hook">sqlite3_wal_hook()</a> settings.
 </p><hr><a name="sqlite3_snapshot"></a>
@@ -4642,6 +4621,7 @@ here in order to indicate success or failure.</p>
 #define SQLITE_CONSTRAINT_VTAB         (SQLITE_CONSTRAINT | (9&lt;&lt;8))
 #define SQLITE_CONSTRAINT_ROWID        (SQLITE_CONSTRAINT |(10&lt;&lt;8))
 #define SQLITE_CONSTRAINT_PINNED       (SQLITE_CONSTRAINT |(11&lt;&lt;8))
+#define SQLITE_CONSTRAINT_DATATYPE     (SQLITE_CONSTRAINT |(12&lt;&lt;8))
 #define SQLITE_NOTICE_RECOVER_WAL      (SQLITE_NOTICE | (1&lt;&lt;8))
 #define SQLITE_NOTICE_RECOVER_ROLLBACK (SQLITE_NOTICE | (2&lt;&lt;8))
 #define SQLITE_WARNING_AUTOINDEX       (SQLITE_WARNING | (1&lt;&lt;8))
@@ -6226,11 +6206,25 @@ prepared to accommodate additional static mutexes.
 #define SQLITE_OPEN_PRIVATECACHE     0x00040000  /* Ok for sqlite3_open_v2() */
 #define SQLITE_OPEN_WAL              0x00080000  /* VFS only */
 #define SQLITE_OPEN_NOFOLLOW         0x01000000  /* Ok for sqlite3_open_v2() */
+#define SQLITE_OPEN_EXRESCODE        0x02000000  /* Extended result codes */
 </pre></blockquote>
 <p>
 These bit values are intended for use in the
 3rd parameter to the <a href="#sqlite3_open">sqlite3_open_v2()</a> interface and
-in the 4th parameter to the <a href="#sqlite3vfsxopen">sqlite3_vfs.xOpen</a> method.
+in the 4th parameter to the <a href="#sqlite3vfsxopen">sqlite3_vfs.xOpen</a> method.</p>
+
+<p>Only those flags marked as "Ok for sqlite3_open_v2()" may be
+used as the third argument to the <a href="#sqlite3_open">sqlite3_open_v2()</a> interface.
+The other flags have historically been ignored by sqlite3_open_v2(),
+though future versions of SQLite might change so that an error is
+raised if any of the disallowed bits are passed into sqlite3_open_v2().
+Applications should not depend on the historical behavior.</p>
+
+<p>Note in particular that passing the SQLITE_OPEN_EXCLUSIVE flag into
+<a href="#sqlite3_open">sqlite3_open_v2()</a> does *not* cause the underlying database file
+to be opened using O_EXCL.  Passing SQLITE_OPEN_EXCLUSIVE into
+<a href="#sqlite3_open">sqlite3_open_v2()</a> has historically be a no-op and might become an
+error in future versions of SQLite.
 </p><hr><a name="SQLITE_PREPARE_NORMALIZE"></a>
 <h2>Prepare Flags</h2>
 </div>
@@ -6366,9 +6360,9 @@ and EXCLUSIVE.
 <h2>Compile-Time Library Version Numbers</h2>
 </div>
 <blockquote><pre>
-#define SQLITE_VERSION        "3.36.0"
-#define SQLITE_VERSION_NUMBER 3036000
-#define SQLITE_SOURCE_ID      "2021-06-18 18:36:39 5c9a6c06871cb9fe42814af9c039eb6da5427a6ec28f187af7ebfb62eafa66e5"
+#define SQLITE_VERSION        "3.37.0"
+#define SQLITE_VERSION_NUMBER 3037000
+#define SQLITE_SOURCE_ID      "2021-11-27 14:13:22 bd41822c7424d393a30e92ff6cb254d25c26769889c1499a18a0b9339f5d6c8a"
 </pre></blockquote>
 <p>
 The <a href="#SQLITE_SOURCE_ID">SQLITE_VERSION</a> C preprocessor macro in the sqlite3.h header
@@ -7198,13 +7192,15 @@ sqlite3 object.
 <p>2 Destructors:
  <a href="#sqlite3_close">sqlite3_close()</a>,
 <a href="#sqlite3_close">sqlite3_close_v2()</a></p>
-<p>71 Methods:
+<p>74 Methods:
 <div class='columns' style='columns: 17em auto;'>
 <ul style='padding-top:0;'>
+<li><a href='#sqlite3_autovacuum_pages'>sqlite3_autovacuum_pages</a></li>
 <li><a href='#sqlite3_blob_open'>sqlite3_blob_open</a></li>
 <li><a href='#sqlite3_busy_handler'>sqlite3_busy_handler</a></li>
 <li><a href='#sqlite3_busy_timeout'>sqlite3_busy_timeout</a></li>
 <li><a href='#sqlite3_changes'>sqlite3_changes</a></li>
+<li><a href='#sqlite3_changes'>sqlite3_changes64</a></li>
 <li><a href='#sqlite3_collation_needed'>sqlite3_collation_needed</a></li>
 <li><a href='#sqlite3_collation_needed'>sqlite3_collation_needed16</a></li>
 <li><a href='#sqlite3_commit_hook'>sqlite3_commit_hook</a></li>
@@ -7263,6 +7259,7 @@ sqlite3 object.
 <li><a href='#sqlite3_system_errno'>sqlite3_system_errno</a></li>
 <li><a href='#sqlite3_table_column_metadata'>sqlite3_table_column_metadata</a></li>
 <li><a href='#sqlite3_total_changes'>sqlite3_total_changes</a></li>
+<li><a href='#sqlite3_total_changes'>sqlite3_total_changes64</a></li>
 <li><a href='#sqlite3_profile'>sqlite3_trace</a></li>
 <li><a href='#sqlite3_trace_v2'>sqlite3_trace_v2</a></li>
 <li><a href='#sqlite3_txn_state'>sqlite3_txn_state</a></li>
@@ -7882,6 +7879,68 @@ However, the sqlite3_backup_remaining() and sqlite3_backup_pagecount()
 APIs are not strictly speaking threadsafe. If they are invoked at the
 same time as another thread is invoking sqlite3_backup_step() it is
 possible that they return invalid values.
+</p><hr><a name="sqlite3_changes"></a>
+<h2>Count The Number Of Rows Modified</h2>
+</div>
+<blockquote><pre>
+int sqlite3_changes(sqlite3*);
+sqlite3_int64 sqlite3_changes64(sqlite3*);
+</pre></blockquote>
+<p>
+These functions return the number of rows modified, inserted or
+deleted by the most recently completed INSERT, UPDATE or DELETE
+statement on the database connection specified by the only parameter.
+The two functions are identical except for the type of the return value
+and that if the number of rows modified by the most recent INSERT, UPDATE
+or DELETE is greater than the maximum value supported by type "int", then
+the return value of sqlite3_changes() is undefined. Executing any other
+type of SQL statement does not modify the value returned by these functions.</p>
+
+<p>Only changes made directly by the INSERT, UPDATE or DELETE statement are
+considered - auxiliary changes caused by <a href="lang_createtrigger.html">triggers</a>,
+<a href="foreignkeys.html#fk_actions">foreign key actions</a> or <a href="lang_replace.html">REPLACE</a> constraint resolution are not counted.</p>
+
+<p>Changes to a view that are intercepted by
+<a href="lang_createtrigger.html#instead_of_trigger">INSTEAD OF triggers</a> are not counted. The value
+returned by sqlite3_changes() immediately after an INSERT, UPDATE or
+DELETE statement run on a view is always zero. Only changes made to real
+tables are counted.</p>
+
+<p>Things are more complicated if the sqlite3_changes() function is
+executed while a trigger program is running. This may happen if the
+program uses the <a href="lang_corefunc.html#changes">changes() SQL function</a>, or if some other callback
+function invokes sqlite3_changes() directly. Essentially:</p>
+
+<p><ul>
+<li> Before entering a trigger program the value returned by
+sqlite3_changes() function is saved. After the trigger program
+has finished, the original value is restored.</p>
+
+<p><li> Within a trigger program each INSERT, UPDATE and DELETE
+statement sets the value returned by sqlite3_changes()
+upon completion as normal. Of course, this value will not include
+any changes performed by sub-triggers, as the sqlite3_changes()
+value will be saved and restored after each sub-trigger has run.
+</ul></p>
+
+<p>This means that if the changes() SQL function (or similar) is used
+by the first INSERT, UPDATE or DELETE statement within a trigger, it
+returns the value as set when the calling statement began executing.
+If it is used by the second or subsequent such statement within a trigger
+program, the value returned reflects the number of rows modified by the
+previous INSERT, UPDATE or DELETE statement within the same trigger.</p>
+
+<p>If a separate thread makes changes on the same database connection
+while <a href="#sqlite3_changes">sqlite3_changes()</a> is running then the value returned
+is unpredictable and not meaningful.</p>
+
+<p>See also:
+<ul>
+<li> the <a href="#sqlite3_total_changes">sqlite3_total_changes()</a> interface
+<li> the <a href="pragma.html#pragma_count_changes">count_changes pragma</a>
+<li> the <a href="lang_corefunc.html#changes">changes() SQL function</a>
+<li> the <a href="pragma.html#pragma_data_version">data_version pragma</a>
+</ul>
 </p><hr><a name="sqlite3_close"></a>
 <h2>Closing A Database Connection</h2>
 </div>
@@ -8460,7 +8519,9 @@ error code and message may or may not be set.
 <blockquote><pre>
 const char *sqlite3_sql(sqlite3_stmt *pStmt);
 char *sqlite3_expanded_sql(sqlite3_stmt *pStmt);
+#ifdef SQLITE_ENABLE_NORMALIZE
 const char *sqlite3_normalized_sql(sqlite3_stmt *pStmt);
+#endif
 </pre></blockquote>
 <p>
 The sqlite3_sql(P) interface returns a pointer to a copy of the UTF-8
@@ -8494,8 +8555,11 @@ option causes sqlite3_expanded_sql() to always return NULL.</p>
 are managed by SQLite and are automatically freed when the prepared
 statement is finalized.
 The string returned by sqlite3_expanded_sql(P), on the other hand,
-is obtained from <a href="#sqlite3_free">sqlite3_malloc()</a> and must be free by the application
-by passing it to <a href="#sqlite3_free">sqlite3_free()</a>.
+is obtained from <a href="#sqlite3_free">sqlite3_malloc()</a> and must be freed by the application
+by passing it to <a href="#sqlite3_free">sqlite3_free()</a>.</p>
+
+<p>The sqlite3_normalized_sql() interface is only available if
+the <a href="compile.html#enable_normalize">SQLITE_ENABLE_NORMALIZE</a> compile-time option is defined.
 </p><hr><a name="sqlite3_filename_database"></a>
 <h2>Translate filenames</h2>
 </div>
@@ -9320,6 +9384,15 @@ the default shared cache setting provided by
 the default shared cache setting provided by
 <a href="#sqlite3_enable_shared_cache">sqlite3_enable_shared_cache()</a>.</p>
 
+<p><a name="openexrescode"></a>
+ <dt><a href="#SQLITE_OPEN_AUTOPROXY">SQLITE_OPEN_EXRESCODE</a></dt>
+<dd>The database connection comes up in "extended result code mode".
+In other words, the database behaves has if
+<a href="#sqlite3_extended_result_codes">sqlite3_extended_result_codes(db,1)</a> where called on the database
+connection as soon as the connection is created. In addition to setting
+the extended result code mode, this flag also causes <a href="#sqlite3_open">sqlite3_open_v2()</a>
+to return an extended result code.</dd></p>
+
 <p><a name="opennofollow"></a>
  <dt><a href="#SQLITE_OPEN_AUTOPROXY">SQLITE_OPEN_NOFOLLOW</a></dt>
 <dd>The database filename is not allowed to be a symbolic link</dd>
@@ -9328,7 +9401,15 @@ the default shared cache setting provided by
 <p>If the 3rd parameter to sqlite3_open_v2() is not one of the
 required combinations shown above optionally combined with other
 <a href="#SQLITE_OPEN_AUTOPROXY">SQLITE_OPEN_* bits</a>
-then the behavior is undefined.</p>
+then the behavior is undefined.  Historic versions of SQLite
+have silently ignored surplus bits in the flags parameter to
+sqlite3_open_v2(), however that behavior might not be carried through
+into future versions of SQLite and so applications should not rely
+upon it.  Note in particular that the SQLITE_OPEN_EXCLUSIVE flag is a no-op
+for sqlite3_open_v2().  The SQLITE_OPEN_EXCLUSIVE does *not* cause
+the open to fail if the database already exists.  The SQLITE_OPEN_EXCLUSIVE
+flag is intended for use by the <a href="#sqlite3_vfs">VFS interface</a> only, and not
+by sqlite3_open_v2().</p>
 
 <p>The fourth parameter to sqlite3_open_v2() is the name of the
 <a href="#sqlite3_vfs">sqlite3_vfs</a> object that defines the operating system interface that
@@ -9932,6 +10013,48 @@ The <a href="#sqlite3_stricmp">sqlite3_stricmp()</a> and <a href="#sqlite3_stric
 and extensions to compare the contents of two buffers containing UTF-8
 strings in a case-independent fashion, using the same definition of "case
 independence" that SQLite uses internally when comparing identifiers.
+</p><hr><a name="sqlite3_total_changes"></a>
+<h2>Total Number Of Rows Modified</h2>
+</div>
+<blockquote><pre>
+int sqlite3_total_changes(sqlite3*);
+sqlite3_int64 sqlite3_total_changes64(sqlite3*);
+</pre></blockquote>
+<p>
+These functions return the total number of rows inserted, modified or
+deleted by all <a href="lang_insert.html">INSERT</a>, <a href="lang_update.html">UPDATE</a> or <a href="lang_delete.html">DELETE</a> statements completed
+since the database connection was opened, including those executed as
+part of trigger programs. The two functions are identical except for the
+type of the return value and that if the number of rows modified by the
+connection exceeds the maximum value supported by type "int", then
+the return value of sqlite3_total_changes() is undefined. Executing
+any other type of SQL statement does not affect the value returned by
+sqlite3_total_changes().</p>
+
+<p>Changes made as part of <a href="foreignkeys.html#fk_actions">foreign key actions</a> are included in the
+count, but those made as part of REPLACE constraint resolution are
+not. Changes to a view that are intercepted by INSTEAD OF triggers
+are not counted.</p>
+
+<p>The <a href="#sqlite3_total_changes">sqlite3_total_changes(D)</a> interface only reports the number
+of rows that changed due to SQL statement run against database
+connection D.  Any changes by other database connections are ignored.
+To detect changes against a database file from other database
+connections use the <a href="pragma.html#pragma_data_version">PRAGMA data_version</a> command or the
+<a href="#sqlitefcntldataversion">SQLITE_FCNTL_DATA_VERSION</a> <a href="#sqlite3_file_control">file control</a>.</p>
+
+<p>If a separate thread makes changes on the same database connection
+while <a href="#sqlite3_total_changes">sqlite3_total_changes()</a> is running then the value
+returned is unpredictable and not meaningful.</p>
+
+<p>See also:
+<ul>
+<li> the <a href="#sqlite3_changes">sqlite3_changes()</a> interface
+<li> the <a href="pragma.html#pragma_count_changes">count_changes pragma</a>
+<li> the <a href="lang_corefunc.html#changes">changes() SQL function</a>
+<li> the <a href="pragma.html#pragma_data_version">data_version pragma</a>
+<li> the <a href="#sqlitefcntldataversion">SQLITE_FCNTL_DATA_VERSION</a> <a href="#sqlite3_file_control">file control</a>
+</ul>
 </p><hr><a name="sqlite3_uri_boolean"></a>
 <h2>Obtain Values For URI Parameters</h2>
 </div>

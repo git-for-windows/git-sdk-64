@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -199,7 +198,7 @@ You should not assume that a CVE about
 SQLite contains authoritative information.
 CVEs often contain inaccuracies.
 The SQLite developers have attempted to add clarifications and
-corrections to CVEs about SQLite, but without success.
+corrections to CVEs about SQLite.  
 
 </p></li></ul>
 
@@ -372,12 +371,51 @@ be added.
 <tbody>
 
 <tr><td valign='top'>
+<a href='https://nvd.nist.gov/vuln/detail/CVE-2021-42169'>CVE-2021-42169</a>
+</td>
+<td valign='top'>Not a bug</td>
+<td valign='top'>This CVE has nothing whatsoever to do with SQLite.  It is about a bug in
+  application that happens to use SQLite.  Since SQLite is mentioned in the 
+  CVE description, the CVE is included here to emphasize that
+  this is not an SQLite bug.</td>
+</tr>
+
+<tr><td valign='top'>
+<a href='https://nvd.nist.gov/vuln/detail/CVE-2021-36690'>CVE-2021-36690</a>
+</td>
+<td valign='top'>Bug not in the SQLite library</td>
+<td valign='top'>This bug is not in the SQLite core library, but rather in an
+  <a href="http://www.sqlite.org/src/dir?ci=trunk&name=ext/expert">
+  experimental extension</a> that is used to implement the
+  <a href="cli.html#expert">.expert command</a> in the <a href="cli.html">CLI</a>.  The code that contains the bug
+  does not appear in <a href="amalgamation.html">standard SQLite builds</a>, though it
+  is included in the <a href="cli.html">sqlite3.exe command-line tool</a>.
+  Applications must link against the extra source code files that
+  implement the extension and take other deliberate actions to
+  activate the extension before the troublesome code can be run.
+  For the rare application that uses the troublesome extension,
+  the consequence of this bug is that malicious SQL can cause a
+  NULL pointer deference and denial of service.
+<a href='https://sqlite.org/forum/info/78165fa25061742f'>(details)</a></td>
+</tr>
+
+<tr><td valign='top'>
 <a href='https://nvd.nist.gov/vuln/detail/CVE-2021-28305'>CVE-2021-28305</a>
 </td>
 <td valign='top'>Not a bug</td>
-<td valign='top'>This is not a bug in SQLite.  The bug is in an application that
+<td valign='top'>This is not a bug in SQLite.  The bug is in a third-party application that
   uses SQLite.  SQLite is mentioned by name in the CVE description,
   however, so we have included the CVE in the list.</td>
+</tr>
+
+<tr><td valign='top'>
+<a href='https://nvd.nist.gov/vuln/detail/CVE-2021-23404'>CVE-2021-23404</a>
+</td>
+<td valign='top'>Not a bug</td>
+<td valign='top'>This is not a bug in SQLite.  The bug is in a third-party application that
+  uses SQLite and includes "sqlite" in its name.  This CVE is included on the
+  list because it mentions SQLite even though the bug has nothing to do
+  with SQLite.</td>
 </tr>
 
 <tr><td valign='top'>

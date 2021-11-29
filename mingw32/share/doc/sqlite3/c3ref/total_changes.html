@@ -90,21 +90,25 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
-<!-- keywords: sqlite3_total_changes -->
+<!-- keywords: sqlite3_total_changes sqlite3_total_changes64 -->
 <div class=nosearch>
 <a href="intro.html"><h2>SQLite C Interface</h2></a>
 <h2>Total Number Of Rows Modified</h2>
 </div>
 <blockquote><pre>
 int sqlite3_total_changes(sqlite3*);
+sqlite3_int64 sqlite3_total_changes64(sqlite3*);
 </pre></blockquote>
 <p>
-This function returns the total number of rows inserted, modified or
+These functions return the total number of rows inserted, modified or
 deleted by all <a href="../lang_insert.html">INSERT</a>, <a href="../lang_update.html">UPDATE</a> or <a href="../lang_delete.html">DELETE</a> statements completed
 since the database connection was opened, including those executed as
-part of trigger programs. Executing any other type of SQL statement
-does not affect the value returned by sqlite3_total_changes().</p>
+part of trigger programs. The two functions are identical except for the
+type of the return value and that if the number of rows modified by the
+connection exceeds the maximum value supported by type "int", then
+the return value of sqlite3_total_changes() is undefined. Executing
+any other type of SQL statement does not affect the value returned by
+sqlite3_total_changes().</p>
 
 <p>Changes made as part of <a href="../foreignkeys.html#fk_actions">foreign key actions</a> are included in the
 count, but those made as part of REPLACE constraint resolution are

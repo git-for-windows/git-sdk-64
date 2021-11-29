@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -113,7 +112,8 @@ Table Of Contents
 <div class="fancy-toc2"><a href="#unique_constraints">3.6. UNIQUE constraints</a></div>
 <div class="fancy-toc2"><a href="#check_constraints">3.7. CHECK constraints</a></div>
 <div class="fancy-toc2"><a href="#not_null_constraints">3.8. NOT NULL constraints</a></div>
-<div class="fancy-toc1"><a href="#constraint_violations">4. Constraint violations</a></div>
+<div class="fancy-toc1"><a href="#constraint_enforcement">4. Constraint enforcement</a></div>
+<div class="fancy-toc2"><a href="#response_to_constraint_violations">4.1. Response to constraint violations</a></div>
 <div class="fancy-toc1"><a href="#rowids_and_the_integer_primary_key">5. ROWIDs and the INTEGER PRIMARY KEY</a></div>
 </div>
 </div>
@@ -138,9 +138,9 @@ mk.innerHTML = "&#x25ba;";
 <h1 id="syntax"><span>1. </span>Syntax</h1>
 
 <p><b><a href="syntax/create-table-stmt.html">create-table-stmt:</a></b>
-<button id='x1421' onclick='hideorshow("x1421","x1422")'>hide</button></p>
- <div id='x1422' class='imgcontainer'>
- <div style="max-width:805px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 805.56 315.792">
+<button id='x1423' onclick='hideorshow("x1423","x1424")'>hide</button></p>
+ <div id='x1424' class='imgcontainer'>
+ <div style="max-width:718px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 718.33 315.792">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
 <path d="M9,17L26,17"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
@@ -212,14 +212,10 @@ mk.innerHTML = "&#x25ba;";
 <text x="431" y="298" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">,</text>
 <path d="M503,275A15 15 0 0 0 518 260A15 15 0 0 0 503 245A15 15 0 0 0 488 260A15 15 0 0 0 503 275Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="503" y="260" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">)</text>
-<polygon points="554,260 543,265 543,256" style="fill:rgb(0,0,0)"/>
-<path d="M518,260L548,260"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M569,275L638,275A15 15 0 0 0 653 260A15 15 0 0 0 638 245L569,245A15 15 0 0 0 554 260A15 15 0 0 0 569 275Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<text x="604" y="260" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">WITHOUT</text>
-<polygon points="670,260 659,265 659,256" style="fill:rgb(0,0,0)"/>
-<path d="M653,260L665,260"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M686,275L730,275A15 15 0 0 0 745 260A15 15 0 0 0 730 245L686,245A15 15 0 0 0 670 260A15 15 0 0 0 686 275Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<text x="708" y="260" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">ROWID</text>
+<polygon points="553,260 541,265 541,256" style="fill:rgb(0,0,0)"/>
+<path d="M518,260L547,260"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M553,275L674,275L674,245L553,245Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="613" y="260" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">table-options</text>
 <path d="M147,313A15 15 0 0 0 162 298A15 15 0 0 0 147 283A15 15 0 0 0 132 298A15 15 0 0 0 147 313Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="147" y="298" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">,</text>
 <polygon points="162,298 174,294 174,302" style="fill:rgb(0,0,0)"/>
@@ -232,12 +228,13 @@ mk.innerHTML = "&#x25ba;";
 <polygon points="446,298 458,294 458,302" style="fill:rgb(0,0,0)"/>
 <path d="M446,260 L 458,260 Q 469,260 469,275 L 469,283 Q 469,298 460,298 L 452,298"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <path d="M253,298 L 246,298 Q 238,298 238,283 L 238,275 Q 238,260 250,260 L 261,260"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<polygon points="796,222 784,227 784,218" style="fill:rgb(0,0,0)"/>
-<path d="M745,260 L 752,260 Q 760,260 760,245 L 760,237 Q 760,222 775,222 L 775,222 L 790,222"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<circle cx="799" cy="222" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<polygon points="649,222 638,227 638,218" style="fill:rgb(0,0,0)"/>
-<path d="M518,260 L 526,260 Q 533,260 533,245 L 533,237 Q 533,222 548,222 L 629,222 L 644,222"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M649,222L788,222"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="613,215 602,219 602,211" style="fill:rgb(0,0,0)"/>
+<path d="M518,260 L 526,260 Q 533,260 533,245 L 533,230 Q 533,215 548,215 L 592,215 L 607,215"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="708,215 697,219 697,211" style="fill:rgb(0,0,0)"/>
+<path d="M613,215 L 659,215 Q 674,215 688,215 L 703,215"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<circle cx="712" cy="215" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="708,215 697,219 697,211" style="fill:rgb(0,0,0)"/>
+<path d="M674,260 L 681,260 Q 689,260 689,245 L 689,230 Q 689,215 696,215 L 703,215"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="440,147 428,151 428,142" style="fill:rgb(0,0,0)"/>
 <path d="M350,147L434,147"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <path d="M455,162L459,162A15 15 0 0 0 474 147A15 15 0 0 0 459 132L455,132A15 15 0 0 0 440 147A15 15 0 0 0 455 162Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
@@ -248,12 +245,12 @@ mk.innerHTML = "&#x25ba;";
 <text x="549" y="147" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">select-stmt</text>
 <polygon points="637,147 626,151 626,142" style="fill:rgb(0,0,0)"/>
 <path d="M601,147L631,147"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M637,147 L 745,147 Q 760,147 760,162 L 760,207 Q 760,222 767,222 L 775,222"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M637,147 L 674,147 Q 689,147 689,162 L 689,200 Q 689,215 696,215 L 704,215"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 </svg>
 </div>
 <p><b><a href="syntax/column-def.html">column-def:</a></b>
-<button id='x1423' onclick='hideorshow("x1423","x1424")'>show</button></p>
- <div id='x1424' style='display:none;' class='imgcontainer'>
+<button id='x1425' onclick='hideorshow("x1425","x1426")'>show</button></p>
+ <div id='x1426' style='display:none;' class='imgcontainer'>
  <div style="max-width:614px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 614.333 64.8">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -285,8 +282,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/column-constraint.html">column-constraint:</a></b>
-<button id='x1425' onclick='hideorshow("x1425","x1426")'>show</button></p>
- <div id='x1426' style='display:none;' class='imgcontainer'>
+<button id='x1427' onclick='hideorshow("x1427","x1428")'>show</button></p>
+ <div id='x1428' style='display:none;' class='imgcontainer'>
  <div style="max-width:844px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 844.306 578.88">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -491,8 +488,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/conflict-clause.html">conflict-clause:</a></b>
-<button id='x1427' onclick='hideorshow("x1427","x1428")'>show</button></p>
- <div id='x1428' style='display:none;' class='imgcontainer'>
+<button id='x1429' onclick='hideorshow("x1429","x1430")'>show</button></p>
+ <div id='x1430' style='display:none;' class='imgcontainer'>
  <div style="max-width:451px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 451.517 205.2">
 <circle cx="5" cy="6" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,6 20,10 20,2" style="fill:rgb(0,0,0)"/>
@@ -549,8 +546,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/expr.html">expr:</a></b>
-<button id='x1429' onclick='hideorshow("x1429","x1430")'>show</button></p>
- <div id='x1430' style='display:none;' class='imgcontainer'>
+<button id='x1431' onclick='hideorshow("x1431","x1432")'>show</button></p>
+ <div id='x1432' style='display:none;' class='imgcontainer'>
  <div style="max-width:963px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 963.96 1105.06">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="45,17 33,21 33,12" style="fill:rgb(0,0,0)"/>
@@ -760,6 +757,8 @@ mk.innerHTML = "&#x25ba;";
 <text x="276" y="531" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">REGEXP</text>
 <path d="M250,584L297,584A15 15 0 0 0 313 569A15 15 0 0 0 297 554L250,554A15 15 0 0 0 234 569A15 15 0 0 0 250 584Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="274" y="569" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">MATCH</text>
+<path d="M378,546L427,546L427,516L378,516Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="403" y="531" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">expr</text>
 <path d="M378,470L427,470L427,440L378,440Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="403" y="455" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">expr</text>
 <polygon points="465,486 454,490 454,481" style="fill:rgb(0,0,0)"/>
@@ -784,20 +783,24 @@ mk.innerHTML = "&#x25ba;";
 <path d="M211,478 L 211,486 Q 211,493 220,493 L 229,493"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="234,531 223,535 223,527" style="fill:rgb(0,0,0)"/>
 <path d="M211,516 L 211,523 Q 211,531 220,531 L 229,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="378,455 367,460 367,451" style="fill:rgb(0,0,0)"/>
+<path d="M288,455L372,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="340,569 329,573 329,564" style="fill:rgb(0,0,0)"/>
 <path d="M313,569L334,569"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<polygon points="378,455 367,460 367,451" style="fill:rgb(0,0,0)"/>
-<path d="M340,569 L 348,569 Q 355,569 355,554 L 355,470 Q 355,455 364,455 L 372,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="378,531 367,535 367,527" style="fill:rgb(0,0,0)"/>
+<path d="M340,569 L 348,569 Q 355,569 355,554 L 355,546 Q 355,531 364,531 L 372,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="340,531 329,535 329,527" style="fill:rgb(0,0,0)"/>
 <path d="M317,531L334,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M340,531 L 348,531 Q 355,531 355,523 L 355,516"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M340,531L378,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="340,493 329,497 329,489" style="fill:rgb(0,0,0)"/>
 <path d="M294,493L334,493"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M340,493 L 348,493 Q 355,493 355,486 L 355,478"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M288,455L367,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M340,493 L 348,493 Q 355,493 355,508 L 355,516 Q 355,531 367,531 L 378,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="506,455 495,460 495,451" style="fill:rgb(0,0,0)"/>
 <path d="M427,455L501,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <path d="M506,455L659,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="547,531 536,535 536,527" style="fill:rgb(0,0,0)"/>
+<path d="M427,531L542,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M547,531 L 656,531 Q 671,531 671,516 L 671,470 Q 671,455 686,455 L 692,455 L 707,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <path d="M45,622L94,622L94,591L45,591Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="69" y="606" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">expr</text>
 <polygon points="130,606 119,611 119,602" style="fill:rgb(0,0,0)"/>
@@ -1039,8 +1042,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/filter-clause.html">filter-clause:</a></b>
-<button id='x1431' onclick='hideorshow("x1431","x1432")'>show</button></p>
- <div id='x1432' style='display:none;' class='imgcontainer'>
+<button id='x1433' onclick='hideorshow("x1433","x1434")'>show</button></p>
+ <div id='x1434' style='display:none;' class='imgcontainer'>
  <div style="max-width:422px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 422.381 34.56">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -1070,8 +1073,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/over-clause.html">over-clause:</a></b>
-<button id='x1433' onclick='hideorshow("x1433","x1434")'>show</button></p>
- <div id='x1434' style='display:none;' class='imgcontainer'>
+<button id='x1435' onclick='hideorshow("x1435","x1436")'>show</button></p>
+ <div id='x1436' style='display:none;' class='imgcontainer'>
  <div style="max-width:600px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 600.706 418.392">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -1162,8 +1165,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x1435' onclick='hideorshow("x1435","x1436")'>show</button></p>
- <div id='x1436' style='display:none;' class='imgcontainer'>
+<button id='x1437' onclick='hideorshow("x1437","x1438")'>show</button></p>
+ <div id='x1438' style='display:none;' class='imgcontainer'>
  <div style="max-width:1039px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 1039.65 522.72">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,92 39,97 39,88" style="fill:rgb(0,0,0)"/>
@@ -1372,8 +1375,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x1437' onclick='hideorshow("x1437","x1438")'>show</button></p>
- <div id='x1438' style='display:none;' class='imgcontainer'>
+<button id='x1439' onclick='hideorshow("x1439","x1440")'>show</button></p>
+ <div id='x1440' style='display:none;' class='imgcontainer'>
  <div style="max-width:798px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 798.451 99.576">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -1434,8 +1437,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/raise-function.html">raise-function:</a></b>
-<button id='x1439' onclick='hideorshow("x1439","x1440")'>show</button></p>
- <div id='x1440' style='display:none;' class='imgcontainer'>
+<button id='x1441' onclick='hideorshow("x1441","x1442")'>show</button></p>
+ <div id='x1442' style='display:none;' class='imgcontainer'>
  <div style="max-width:627px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 627.302 147.96">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -1491,8 +1494,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/foreign-key-clause.html">foreign-key-clause:</a></b>
-<button id='x1441' onclick='hideorshow("x1441","x1442")'>show</button></p>
- <div id='x1442' style='display:none;' class='imgcontainer'>
+<button id='x1443' onclick='hideorshow("x1443","x1444")'>show</button></p>
+ <div id='x1444' style='display:none;' class='imgcontainer'>
  <div style="max-width:648px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 648.158 492.48">
 <circle cx="5" cy="55" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="45,55 33,59 33,50" style="fill:rgb(0,0,0)"/>
@@ -1636,8 +1639,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/literal-value.html">literal-value:</a></b>
-<button id='x1443' onclick='hideorshow("x1443","x1444")'>show</button></p>
- <div id='x1444' style='display:none;' class='imgcontainer'>
+<button id='x1445' onclick='hideorshow("x1445","x1446")'>show</button></p>
+ <div id='x1446' style='display:none;' class='imgcontainer'>
  <div style="max-width:341px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 341.376 336.96">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,319 39,324 39,315" style="fill:rgb(0,0,0)"/>
@@ -1707,8 +1710,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/signed-number.html">signed-number:</a></b>
-<button id='x1445' onclick='hideorshow("x1445","x1446")'>show</button></p>
- <div id='x1446' style='display:none;' class='imgcontainer'>
+<button id='x1447' onclick='hideorshow("x1447","x1448")'>show</button></p>
+ <div id='x1448' style='display:none;' class='imgcontainer'>
  <div style="max-width:292px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 292.013 99.576">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,44 39,48 39,40" style="fill:rgb(0,0,0)"/>
@@ -1735,8 +1738,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/type-name.html">type-name:</a></b>
-<button id='x1447' onclick='hideorshow("x1447","x1448")'>show</button></p>
- <div id='x1448' style='display:none;' class='imgcontainer'>
+<button id='x1449' onclick='hideorshow("x1449","x1450")'>show</button></p>
+ <div id='x1450' style='display:none;' class='imgcontainer'>
  <div style="max-width:661px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 661.008 110.16">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="45,17 33,21 33,12" style="fill:rgb(0,0,0)"/>
@@ -1790,8 +1793,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/signed-number.html">signed-number:</a></b>
-<button id='x1449' onclick='hideorshow("x1449","x1450")'>show</button></p>
- <div id='x1450' style='display:none;' class='imgcontainer'>
+<button id='x1451' onclick='hideorshow("x1451","x1452")'>show</button></p>
+ <div id='x1452' style='display:none;' class='imgcontainer'>
  <div style="max-width:292px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 292.013 99.576">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,44 39,48 39,40" style="fill:rgb(0,0,0)"/>
@@ -1819,8 +1822,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
-<button id='x1451' onclick='hideorshow("x1451","x1452")'>show</button></p>
- <div id='x1452' style='display:none;' class='imgcontainer'>
+<button id='x1453' onclick='hideorshow("x1453","x1454")'>show</button></p>
+ <div id='x1454' style='display:none;' class='imgcontainer'>
  <div style="max-width:658px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 658.877 1139.62">
 <path d="M55,823L656,823L656,99L55,99Z"  style="fill:none;stroke-width:3.24;stroke:rgb(211,211,211);" />
 <circle cx="6" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
@@ -2094,8 +2097,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
-<button id='x1453' onclick='hideorshow("x1453","x1454")'>show</button></p>
- <div id='x1454' style='display:none;' class='imgcontainer'>
+<button id='x1455' onclick='hideorshow("x1455","x1456")'>show</button></p>
+ <div id='x1456' style='display:none;' class='imgcontainer'>
  <div style="max-width:638px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 638.525 167.4">
 <circle cx="5" cy="29" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,29 20,33 20,24" style="fill:rgb(0,0,0)"/>
@@ -2165,8 +2168,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
-<button id='x1455' onclick='hideorshow("x1455","x1456")'>show</button></p>
- <div id='x1456' style='display:none;' class='imgcontainer'>
+<button id='x1457' onclick='hideorshow("x1457","x1458")'>show</button></p>
+ <div id='x1458' style='display:none;' class='imgcontainer'>
  <div style="max-width:293px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 293.842 147.96">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -2207,8 +2210,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/expr.html">expr:</a></b>
-<button id='x1457' onclick='hideorshow("x1457","x1458")'>show</button></p>
- <div id='x1458' style='display:none;' class='imgcontainer'>
+<button id='x1459' onclick='hideorshow("x1459","x1460")'>show</button></p>
+ <div id='x1460' style='display:none;' class='imgcontainer'>
  <div style="max-width:963px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 963.96 1105.06">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="45,17 33,21 33,12" style="fill:rgb(0,0,0)"/>
@@ -2418,6 +2421,8 @@ mk.innerHTML = "&#x25ba;";
 <text x="276" y="531" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">REGEXP</text>
 <path d="M250,584L297,584A15 15 0 0 0 313 569A15 15 0 0 0 297 554L250,554A15 15 0 0 0 234 569A15 15 0 0 0 250 584Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="274" y="569" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">MATCH</text>
+<path d="M378,546L427,546L427,516L378,516Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="403" y="531" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">expr</text>
 <path d="M378,470L427,470L427,440L378,440Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="403" y="455" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">expr</text>
 <polygon points="465,486 454,490 454,481" style="fill:rgb(0,0,0)"/>
@@ -2442,20 +2447,24 @@ mk.innerHTML = "&#x25ba;";
 <path d="M211,478 L 211,486 Q 211,493 220,493 L 229,493"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="234,531 223,535 223,527" style="fill:rgb(0,0,0)"/>
 <path d="M211,516 L 211,523 Q 211,531 220,531 L 229,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="378,455 367,460 367,451" style="fill:rgb(0,0,0)"/>
+<path d="M288,455L372,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="340,569 329,573 329,564" style="fill:rgb(0,0,0)"/>
 <path d="M313,569L334,569"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<polygon points="378,455 367,460 367,451" style="fill:rgb(0,0,0)"/>
-<path d="M340,569 L 348,569 Q 355,569 355,554 L 355,470 Q 355,455 364,455 L 372,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="378,531 367,535 367,527" style="fill:rgb(0,0,0)"/>
+<path d="M340,569 L 348,569 Q 355,569 355,554 L 355,546 Q 355,531 364,531 L 372,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="340,531 329,535 329,527" style="fill:rgb(0,0,0)"/>
 <path d="M317,531L334,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M340,531 L 348,531 Q 355,531 355,523 L 355,516"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M340,531L378,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="340,493 329,497 329,489" style="fill:rgb(0,0,0)"/>
 <path d="M294,493L334,493"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M340,493 L 348,493 Q 355,493 355,486 L 355,478"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M288,455L367,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M340,493 L 348,493 Q 355,493 355,508 L 355,516 Q 355,531 367,531 L 378,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="506,455 495,460 495,451" style="fill:rgb(0,0,0)"/>
 <path d="M427,455L501,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <path d="M506,455L659,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="547,531 536,535 536,527" style="fill:rgb(0,0,0)"/>
+<path d="M427,531L542,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M547,531 L 656,531 Q 671,531 671,516 L 671,470 Q 671,455 686,455 L 692,455 L 707,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <path d="M45,622L94,622L94,591L45,591Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="69" y="606" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">expr</text>
 <polygon points="130,606 119,611 119,602" style="fill:rgb(0,0,0)"/>
@@ -2697,8 +2706,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/filter-clause.html">filter-clause:</a></b>
-<button id='x1459' onclick='hideorshow("x1459","x1460")'>show</button></p>
- <div id='x1460' style='display:none;' class='imgcontainer'>
+<button id='x1461' onclick='hideorshow("x1461","x1462")'>show</button></p>
+ <div id='x1462' style='display:none;' class='imgcontainer'>
  <div style="max-width:422px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 422.381 34.56">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -2728,8 +2737,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/literal-value.html">literal-value:</a></b>
-<button id='x1461' onclick='hideorshow("x1461","x1462")'>show</button></p>
- <div id='x1462' style='display:none;' class='imgcontainer'>
+<button id='x1463' onclick='hideorshow("x1463","x1464")'>show</button></p>
+ <div id='x1464' style='display:none;' class='imgcontainer'>
  <div style="max-width:341px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 341.376 336.96">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,319 39,324 39,315" style="fill:rgb(0,0,0)"/>
@@ -2799,8 +2808,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/over-clause.html">over-clause:</a></b>
-<button id='x1463' onclick='hideorshow("x1463","x1464")'>show</button></p>
- <div id='x1464' style='display:none;' class='imgcontainer'>
+<button id='x1465' onclick='hideorshow("x1465","x1466")'>show</button></p>
+ <div id='x1466' style='display:none;' class='imgcontainer'>
  <div style="max-width:600px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 600.706 418.392">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -2891,8 +2900,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x1465' onclick='hideorshow("x1465","x1466")'>show</button></p>
- <div id='x1466' style='display:none;' class='imgcontainer'>
+<button id='x1467' onclick='hideorshow("x1467","x1468")'>show</button></p>
+ <div id='x1468' style='display:none;' class='imgcontainer'>
  <div style="max-width:1039px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 1039.65 522.72">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,92 39,97 39,88" style="fill:rgb(0,0,0)"/>
@@ -3102,8 +3111,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/raise-function.html">raise-function:</a></b>
-<button id='x1467' onclick='hideorshow("x1467","x1468")'>show</button></p>
- <div id='x1468' style='display:none;' class='imgcontainer'>
+<button id='x1469' onclick='hideorshow("x1469","x1470")'>show</button></p>
+ <div id='x1470' style='display:none;' class='imgcontainer'>
  <div style="max-width:627px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 627.302 147.96">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -3158,8 +3167,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/type-name.html">type-name:</a></b>
-<button id='x1469' onclick='hideorshow("x1469","x1470")'>show</button></p>
- <div id='x1470' style='display:none;' class='imgcontainer'>
+<button id='x1471' onclick='hideorshow("x1471","x1472")'>show</button></p>
+ <div id='x1472' style='display:none;' class='imgcontainer'>
  <div style="max-width:661px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 661.008 110.16">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="45,17 33,21 33,12" style="fill:rgb(0,0,0)"/>
@@ -3213,8 +3222,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/signed-number.html">signed-number:</a></b>
-<button id='x1471' onclick='hideorshow("x1471","x1472")'>show</button></p>
- <div id='x1472' style='display:none;' class='imgcontainer'>
+<button id='x1473' onclick='hideorshow("x1473","x1474")'>show</button></p>
+ <div id='x1474' style='display:none;' class='imgcontainer'>
  <div style="max-width:292px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 292.013 99.576">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,44 39,48 39,40" style="fill:rgb(0,0,0)"/>
@@ -3242,8 +3251,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/join-clause.html">join-clause:</a></b>
-<button id='x1473' onclick='hideorshow("x1473","x1474")'>show</button></p>
- <div id='x1474' style='display:none;' class='imgcontainer'>
+<button id='x1475' onclick='hideorshow("x1475","x1476")'>show</button></p>
+ <div id='x1476' style='display:none;' class='imgcontainer'>
  <div style="max-width:793px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 793.282 84.24">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -3274,8 +3283,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
-<button id='x1475' onclick='hideorshow("x1475","x1476")'>show</button></p>
- <div id='x1476' style='display:none;' class='imgcontainer'>
+<button id='x1477' onclick='hideorshow("x1477","x1478")'>show</button></p>
+ <div id='x1478' style='display:none;' class='imgcontainer'>
  <div style="max-width:483px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 483.336 126.576">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,55 39,59 39,50" style="fill:rgb(0,0,0)"/>
@@ -3322,8 +3331,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/join-operator.html">join-operator:</a></b>
-<button id='x1477' onclick='hideorshow("x1477","x1478")'>show</button></p>
- <div id='x1478' style='display:none;' class='imgcontainer'>
+<button id='x1479' onclick='hideorshow("x1479","x1480")'>show</button></p>
+ <div id='x1480' style='display:none;' class='imgcontainer'>
  <div style="max-width:566px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 566.333 179.712">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,71 39,76 39,67" style="fill:rgb(0,0,0)"/>
@@ -3384,8 +3393,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x1479' onclick='hideorshow("x1479","x1480")'>show</button></p>
- <div id='x1480' style='display:none;' class='imgcontainer'>
+<button id='x1481' onclick='hideorshow("x1481","x1482")'>show</button></p>
+ <div id='x1482' style='display:none;' class='imgcontainer'>
  <div style="max-width:798px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 798.451 99.576">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -3445,8 +3454,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/result-column.html">result-column:</a></b>
-<button id='x1481' onclick='hideorshow("x1481","x1482")'>show</button></p>
- <div id='x1482' style='display:none;' class='imgcontainer'>
+<button id='x1483' onclick='hideorshow("x1483","x1484")'>show</button></p>
+ <div id='x1484' style='display:none;' class='imgcontainer'>
  <div style="max-width:398px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 398.054 163.08">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="45,17 33,21 33,12" style="fill:rgb(0,0,0)"/>
@@ -3498,8 +3507,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
-<button id='x1483' onclick='hideorshow("x1483","x1484")'>show</button></p>
- <div id='x1484' style='display:none;' class='imgcontainer'>
+<button id='x1485' onclick='hideorshow("x1485","x1486")'>show</button></p>
+ <div id='x1486' style='display:none;' class='imgcontainer'>
  <div style="max-width:720px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 720.778 457.704">
 <circle cx="5" cy="36" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,74 39,78 39,70" style="fill:rgb(0,0,0)"/>
@@ -3643,8 +3652,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/window-defn.html">window-defn:</a></b>
-<button id='x1485' onclick='hideorshow("x1485","x1486")'>show</button></p>
- <div id='x1486' style='display:none;' class='imgcontainer'>
+<button id='x1487' onclick='hideorshow("x1487","x1488")'>show</button></p>
+ <div id='x1488' style='display:none;' class='imgcontainer'>
  <div style="max-width:479px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 479.765 380.592">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -3724,8 +3733,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x1487' onclick='hideorshow("x1487","x1488")'>show</button></p>
- <div id='x1488' style='display:none;' class='imgcontainer'>
+<button id='x1489' onclick='hideorshow("x1489","x1490")'>show</button></p>
+ <div id='x1490' style='display:none;' class='imgcontainer'>
  <div style="max-width:1039px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 1039.65 522.72">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,92 39,97 39,88" style="fill:rgb(0,0,0)"/>
@@ -3936,8 +3945,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/table-constraint.html">table-constraint:</a></b>
-<button id='x1489' onclick='hideorshow("x1489","x1490")'>show</button></p>
- <div id='x1490' style='display:none;' class='imgcontainer'>
+<button id='x1491' onclick='hideorshow("x1491","x1492")'>show</button></p>
+ <div id='x1492' style='display:none;' class='imgcontainer'>
  <div style="max-width:751px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 751.325 261.36">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="45,17 33,21 33,12" style="fill:rgb(0,0,0)"/>
@@ -4044,8 +4053,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/conflict-clause.html">conflict-clause:</a></b>
-<button id='x1491' onclick='hideorshow("x1491","x1492")'>show</button></p>
- <div id='x1492' style='display:none;' class='imgcontainer'>
+<button id='x1493' onclick='hideorshow("x1493","x1494")'>show</button></p>
+ <div id='x1494' style='display:none;' class='imgcontainer'>
  <div style="max-width:451px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 451.517 205.2">
 <circle cx="5" cy="6" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,6 20,10 20,2" style="fill:rgb(0,0,0)"/>
@@ -4102,8 +4111,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/expr.html">expr:</a></b>
-<button id='x1493' onclick='hideorshow("x1493","x1494")'>show</button></p>
- <div id='x1494' style='display:none;' class='imgcontainer'>
+<button id='x1495' onclick='hideorshow("x1495","x1496")'>show</button></p>
+ <div id='x1496' style='display:none;' class='imgcontainer'>
  <div style="max-width:963px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 963.96 1105.06">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="45,17 33,21 33,12" style="fill:rgb(0,0,0)"/>
@@ -4313,6 +4322,8 @@ mk.innerHTML = "&#x25ba;";
 <text x="276" y="531" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">REGEXP</text>
 <path d="M250,584L297,584A15 15 0 0 0 313 569A15 15 0 0 0 297 554L250,554A15 15 0 0 0 234 569A15 15 0 0 0 250 584Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="274" y="569" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">MATCH</text>
+<path d="M378,546L427,546L427,516L378,516Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="403" y="531" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">expr</text>
 <path d="M378,470L427,470L427,440L378,440Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="403" y="455" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">expr</text>
 <polygon points="465,486 454,490 454,481" style="fill:rgb(0,0,0)"/>
@@ -4337,20 +4348,24 @@ mk.innerHTML = "&#x25ba;";
 <path d="M211,478 L 211,486 Q 211,493 220,493 L 229,493"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="234,531 223,535 223,527" style="fill:rgb(0,0,0)"/>
 <path d="M211,516 L 211,523 Q 211,531 220,531 L 229,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="378,455 367,460 367,451" style="fill:rgb(0,0,0)"/>
+<path d="M288,455L372,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="340,569 329,573 329,564" style="fill:rgb(0,0,0)"/>
 <path d="M313,569L334,569"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<polygon points="378,455 367,460 367,451" style="fill:rgb(0,0,0)"/>
-<path d="M340,569 L 348,569 Q 355,569 355,554 L 355,470 Q 355,455 364,455 L 372,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="378,531 367,535 367,527" style="fill:rgb(0,0,0)"/>
+<path d="M340,569 L 348,569 Q 355,569 355,554 L 355,546 Q 355,531 364,531 L 372,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="340,531 329,535 329,527" style="fill:rgb(0,0,0)"/>
 <path d="M317,531L334,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M340,531 L 348,531 Q 355,531 355,523 L 355,516"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M340,531L378,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="340,493 329,497 329,489" style="fill:rgb(0,0,0)"/>
 <path d="M294,493L334,493"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M340,493 L 348,493 Q 355,493 355,486 L 355,478"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M288,455L367,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M340,493 L 348,493 Q 355,493 355,508 L 355,516 Q 355,531 367,531 L 378,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="506,455 495,460 495,451" style="fill:rgb(0,0,0)"/>
 <path d="M427,455L501,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <path d="M506,455L659,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="547,531 536,535 536,527" style="fill:rgb(0,0,0)"/>
+<path d="M427,531L542,531"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M547,531 L 656,531 Q 671,531 671,516 L 671,470 Q 671,455 686,455 L 692,455 L 707,455"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <path d="M45,622L94,622L94,591L45,591Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="69" y="606" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">expr</text>
 <polygon points="130,606 119,611 119,602" style="fill:rgb(0,0,0)"/>
@@ -4592,8 +4607,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/filter-clause.html">filter-clause:</a></b>
-<button id='x1495' onclick='hideorshow("x1495","x1496")'>show</button></p>
- <div id='x1496' style='display:none;' class='imgcontainer'>
+<button id='x1497' onclick='hideorshow("x1497","x1498")'>show</button></p>
+ <div id='x1498' style='display:none;' class='imgcontainer'>
  <div style="max-width:422px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 422.381 34.56">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -4623,8 +4638,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/literal-value.html">literal-value:</a></b>
-<button id='x1497' onclick='hideorshow("x1497","x1498")'>show</button></p>
- <div id='x1498' style='display:none;' class='imgcontainer'>
+<button id='x1499' onclick='hideorshow("x1499","x1500")'>show</button></p>
+ <div id='x1500' style='display:none;' class='imgcontainer'>
  <div style="max-width:341px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 341.376 336.96">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,319 39,324 39,315" style="fill:rgb(0,0,0)"/>
@@ -4694,8 +4709,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/over-clause.html">over-clause:</a></b>
-<button id='x1499' onclick='hideorshow("x1499","x1500")'>show</button></p>
- <div id='x1500' style='display:none;' class='imgcontainer'>
+<button id='x1501' onclick='hideorshow("x1501","x1502")'>show</button></p>
+ <div id='x1502' style='display:none;' class='imgcontainer'>
  <div style="max-width:600px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 600.706 418.392">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -4786,8 +4801,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
-<button id='x1501' onclick='hideorshow("x1501","x1502")'>show</button></p>
- <div id='x1502' style='display:none;' class='imgcontainer'>
+<button id='x1503' onclick='hideorshow("x1503","x1504")'>show</button></p>
+ <div id='x1504' style='display:none;' class='imgcontainer'>
  <div style="max-width:1039px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 1039.65 522.72">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,92 39,97 39,88" style="fill:rgb(0,0,0)"/>
@@ -4996,8 +5011,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
-<button id='x1503' onclick='hideorshow("x1503","x1504")'>show</button></p>
- <div id='x1504' style='display:none;' class='imgcontainer'>
+<button id='x1505' onclick='hideorshow("x1505","x1506")'>show</button></p>
+ <div id='x1506' style='display:none;' class='imgcontainer'>
  <div style="max-width:798px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 798.451 99.576">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -5058,8 +5073,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/raise-function.html">raise-function:</a></b>
-<button id='x1505' onclick='hideorshow("x1505","x1506")'>show</button></p>
- <div id='x1506' style='display:none;' class='imgcontainer'>
+<button id='x1507' onclick='hideorshow("x1507","x1508")'>show</button></p>
+ <div id='x1508' style='display:none;' class='imgcontainer'>
  <div style="max-width:627px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 627.302 147.96">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="32,17 20,21 20,12" style="fill:rgb(0,0,0)"/>
@@ -5114,8 +5129,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/type-name.html">type-name:</a></b>
-<button id='x1507' onclick='hideorshow("x1507","x1508")'>show</button></p>
- <div id='x1508' style='display:none;' class='imgcontainer'>
+<button id='x1509' onclick='hideorshow("x1509","x1510")'>show</button></p>
+ <div id='x1510' style='display:none;' class='imgcontainer'>
  <div style="max-width:661px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 661.008 110.16">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="45,17 33,21 33,12" style="fill:rgb(0,0,0)"/>
@@ -5169,8 +5184,8 @@ mk.innerHTML = "&#x25ba;";
 </svg>
 </div>
 <p><b><a href="syntax/signed-number.html">signed-number:</a></b>
-<button id='x1509' onclick='hideorshow("x1509","x1510")'>show</button></p>
- <div id='x1510' style='display:none;' class='imgcontainer'>
+<button id='x1511' onclick='hideorshow("x1511","x1512")'>show</button></p>
+ <div id='x1512' style='display:none;' class='imgcontainer'>
  <div style="max-width:292px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 292.013 99.576">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,44 39,48 39,40" style="fill:rgb(0,0,0)"/>
@@ -5198,8 +5213,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/foreign-key-clause.html">foreign-key-clause:</a></b>
-<button id='x1511' onclick='hideorshow("x1511","x1512")'>show</button></p>
- <div id='x1512' style='display:none;' class='imgcontainer'>
+<button id='x1513' onclick='hideorshow("x1513","x1514")'>show</button></p>
+ <div id='x1514' style='display:none;' class='imgcontainer'>
  <div style="max-width:648px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 648.158 492.48">
 <circle cx="5" cy="55" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="45,55 33,59 33,50" style="fill:rgb(0,0,0)"/>
@@ -5343,8 +5358,8 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 <p><b><a href="syntax/indexed-column.html">indexed-column:</a></b>
-<button id='x1513' onclick='hideorshow("x1513","x1514")'>show</button></p>
- <div id='x1514' style='display:none;' class='imgcontainer'>
+<button id='x1515' onclick='hideorshow("x1515","x1516")'>show</button></p>
+ <div id='x1516' style='display:none;' class='imgcontainer'>
  <div style="max-width:696px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 696.36 102.6">
 <circle cx="5" cy="17" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <polygon points="50,17 39,21 39,12" style="fill:rgb(0,0,0)"/>
@@ -5393,6 +5408,37 @@ mk.innerHTML = "&#x25ba;";
 </div>
 </div>
 </div>
+<p><b><a href="syntax/table-options.html">table-options:</a></b>
+<button id='x1517' onclick='hideorshow("x1517","x1518")'>show</button></p>
+ <div id='x1518' style='display:none;' class='imgcontainer'>
+ <div style="max-width:324px"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 324.036 98.31">
+<circle cx="5" cy="36" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="77,17 66,21 66,12" style="fill:rgb(0,0,0)"/>
+<path d="M9,36 L 40,36 Q 55,36 55,26 Q 55,17 63,17 L 72,17"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M93,32L161,32A15 15 0 0 0 177 17A15 15 0 0 0 161 2L93,2A15 15 0 0 0 77 17A15 15 0 0 0 93 32Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="127" y="17" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">WITHOUT</text>
+<polygon points="194,17 182,21 182,12" style="fill:rgb(0,0,0)"/>
+<path d="M177,17L188,17"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M209,32L253,32A15 15 0 0 0 268 17A15 15 0 0 0 253 2L209,2A15 15 0 0 0 194 17A15 15 0 0 0 209 32Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="231" y="17" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">ROWID</text>
+<path d="M268,17 L 274,17 Q 280,17 280,26 Q 280,36 295,36 L 299,36 L 314,36"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<circle cx="318" cy="36" r="3.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="77,54 66,59 66,50" style="fill:rgb(0,0,0)"/>
+<path d="M9,36 L 40,36 Q 55,36 55,45 Q 55,54 63,54 L 72,54"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M93,69L139,69A15 15 0 0 0 154 54A15 15 0 0 0 139 39L93,39A15 15 0 0 0 77 54A15 15 0 0 0 93 69Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="116" y="54" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">STRICT</text>
+<polygon points="314,36 303,40 303,31" style="fill:rgb(0,0,0)"/>
+<path d="M154,54 L 253,54 Q 268,54 274,54 Q 280,54 280,45 Q 280,36 294,36 L 308,36"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="194,81 205,76 205,85" style="fill:rgb(0,0,0)"/>
+<path d="M285,36 L 293,36 Q 300,36 300,51 L 300,66 Q 300,81 285,81 L 215,81 L 200,81"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M179,96A15 15 0 0 0 194 81A15 15 0 0 0 179 65A15 15 0 0 0 164 81A15 15 0 0 0 179 96Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="179" y="81" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">,</text>
+<polygon points="77,81 89,76 89,85" style="fill:rgb(0,0,0)"/>
+<path d="M164,81L83,81"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M77,81 L 31,81 Q 16,81 16,66 L 16,51 Q 16,36 28,36 L 39,36"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+</svg>
+</div>
+</div>
 </div>
 
 
@@ -5426,6 +5472,8 @@ new table:
   </p></li><li><p> Optionally, a <a href="gencol.html">generated column</a> constraint.
 
   </p></li><li><p> Whether the table is a <a href="withoutrowid.html">WITHOUT ROWID</a> table.
+
+  </p></li><li><p> Whether the table is subject to <a href="stricttables.html">strict type checking</a>.
 </p></li></ul>
 
 <p>Every CREATE TABLE statement must specify a name for the new table.
@@ -5593,7 +5641,8 @@ limitations of generated columns.
 </p><p> According to the SQL standard, PRIMARY KEY should always imply NOT NULL.
   Unfortunately, due to a bug in some early versions, this is not the
   case in SQLite. Unless the column is an <a href="lang_createtable.html#rowid">INTEGER PRIMARY KEY</a> or
-  the table is a <a href="withoutrowid.html">WITHOUT ROWID</a> table or the column is declared NOT NULL,
+  the table is a <a href="withoutrowid.html">WITHOUT ROWID</a> table or a <a href="stricttables.html">STRICT</a> table 
+  or the column is declared NOT NULL,
   SQLite allows NULL values in a PRIMARY KEY column.  SQLite could be fixed to
   conform to the standard, but doing so might break legacy applications.
   Hence, it has been decided to merely document the fact that SQLite
@@ -5640,6 +5689,12 @@ limitations of generated columns.
   any other non-zero value, it is not a constraint violation.
   The expression of a CHECK constraint may not contain a subquery.
 
+</p><p>CHECK constraints are only verified when the table is written, not when
+   it is read.  Furthermore, verification of CHECK constraints can be
+   temporarily disabled using the "<a href="pragma.html#pragma_ignore_check_constraints">PRAGMA ignore_check_constraints=ON;</a>"
+   statement.  Hence, it is possible that a query might produce results that
+   violate the CHECK constraints.
+
 <a name="notnullconst"></a>
 
 </p><h2 id="not_null_constraints"><span>3.8. </span>NOT NULL constraints</h2>
@@ -5647,11 +5702,37 @@ limitations of generated columns.
   not specified as a table constraint.  Not surprisingly, a NOT NULL
   constraint dictates that the associated column may not contain a NULL value.
   Attempting to set the column value to NULL when inserting a new row or
-  updating an existing one causes a constraint violation.
+  updating an existing one causes a constraint violation.  NOT NULL
+  constraints are not verified during queries, so a query of a column might
+  produce a NULL value even though the column is marked as NOT NULL, if the
+  database file is corrupt.
 
 
-</p><h1 id="constraint_violations"><span>4. </span>Constraint violations</h1>
-<p>Exactly how a constraint violation is dealt with is determined by the
+</p><h1 id="constraint_enforcement"><span>4. </span>Constraint enforcement</h1>
+
+<p>Constraints are checked during <a href="lang_insert.html">INSERT</a> and <a href="lang_update.html">UPDATE</a> and by
+<a href="pragma.html#pragma_integrity_check">PRAGMA integrity_check</a> and <a href="pragma.html#pragma_quick_check">PRAGMA quick_check</a> and sometimes
+by <a href="lang_altertable.html">ALTER TABLE</a>.  Queries and <a href="lang_delete.html">DELETE</a>
+statements do not normally verify constraints.
+Hence, if a database file has been corrupted (perhaps by an external
+program making direct changes to the database file without going through 
+the SQLite library) a query might return data that violates a constraint.
+For example:
+
+</p><div class="codeblock"><pre>CREATE TABLE t1(x INT CHECK( x>3 ));
+/* Insert a row with X less than 3 by directly writing into the
+** database file using an external program */
+PRAGMA integrity_check;  -- Reports row with x less than 3 as corrupt
+INSERT INTO t1(x) VALUES(2);  -- Fails with SQLITE_CORRUPT
+SELECT x FROM t1;  -- Returns an integer less than 3 in spite of the CHECK constraint
+</pre></div>
+
+<p>Enforcement of CHECK constraints can be temporarily disabled using
+the <a href="pragma.html#pragma_ignore_check_constraints">PRAGMA ignore_check_constraints=ON;</a> statement.
+
+</p><h2 id="response_to_constraint_violations"><span>4.1. </span>Response to constraint violations</h2>
+
+<p>The response to a constraint violation is determined by the
   <a href="lang_conflict.html">constraint conflict resolution algorithm</a>. Each 
   PRIMARY KEY, UNIQUE, NOT NULL and CHECK constraint has a default conflict
   resolution algorithm. PRIMARY KEY, UNIQUE and NOT NULL constraints may be

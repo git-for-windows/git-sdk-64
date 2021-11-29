@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -130,7 +129,7 @@ mk.innerHTML = "&#x25ba;";
 
 <h1 id="c_is_best"><span>1. </span>C Is Best</h1>
 
-<blockquote><table border="'1'"><tr><td>
+<blockquote><table border="1"><tr><td>
 Note: Sections 2.0 and 3.0 of this article were added in response
 to comments on 
 <a href="https://news.ycombinator.com/item?id=16585120">Hacker News</a> and
@@ -282,33 +281,6 @@ None of the safe programming languages existed for the first 10 years
 of SQLite's existence.  SQLite could be recoded in Go or Rust, but doing
 so would probably introduce far more bugs than would be fixed, and it
 seems also likely to result in slower code.
-
-</p></li><li><p>
-Safe programming languages solve the easy problems: memory leaks,
-use-after-free errors, array overruns, etc.  Safe languages provide
-no help beyond ordinary C code in solving the rather more difficult
-problem of computing a correct answer to an SQL statement.
-
-</p></li><li><p>
-Safe languages are often touted for helping to prevent
-security vulnerabilities. True enough, but SQLite is
-not a particularly security-sensitive library.  If an application is
-running untrusted and unverified SQL, then it already has much bigger
-security issues (SQL injection) that no "safe" language will fix.
-</p><p>
-It is true that applications sometimes import complete binary SQLite
-database files from untrusted sources, and such imports could present a
-possible attack vector.  However, those code paths in SQLite are
-limited and are extremely well tested.  And pre-validation routines 
-are available to applications that want to read untrusted databases
-that can help detect possible attacks prior to use.
-
-</p></li><li><p>
-Some "safe" languages (ex: Go) dislike the use of assert().  But
-the use of assert() is a vital part of keeping SQLite maintainable.
-The lack of assert() in Go is a show-stopper as far as the developers
-of SQLite are concerned.  See the <a href="assert.html">The Use Of assert() In SQLite</a>
-article for additional information.
 
 </p></li><li><p>
 Safe languages insert additional machine branches to do things like

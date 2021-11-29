@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -152,6 +151,20 @@ Table Of Contents
 Custom Auxiliary Functions API Reference
 </a></div>
 <div class="fancy-toc1"><a href="#the_fts5vocab_virtual_table_module">8. The fts5vocab Virtual Table Module</a></div>
+<div class="fancy-toc1"><a href="#fts5_data_structures">9. FTS5 Data Structures</a></div>
+<div class="fancy-toc2"><a href="#varint_format">9.1. Varint Format</a></div>
+<div class="fancy-toc2"><a href="#the_fts_index_idx_and_data_tables_">9.2. The FTS Index (%_idx and %_data tables)</a></div>
+<div class="fancy-toc3"><a href="#data_structure">9.2.1. The %_data Table Rowid Space</a></div>
+<div class="fancy-toc3"><a href="#structure_record_format">9.2.2. Structure Record Format</a></div>
+<div class="fancy-toc3"><a href="#averages_record_format">9.2.3. Averages Record Format</a></div>
+<div class="fancy-toc3"><a href="#segment_b_tree_format">9.2.4. Segment B-Tree Format</a></div>
+<div class="fancy-toc4"><a href="#the_key_doclist_format">9.2.4.1. The Key/Doclist Format</a></div>
+<div class="fancy-toc4"><a href="#data_pagination">9.2.4.2. Pagination</a></div>
+<div class="fancy-toc4"><a href="#data_term_index">9.2.4.3. Segment Index Format</a></div>
+<div class="fancy-toc4"><a href="#doclist_index_format">9.2.4.4. Doclist Index Format</a></div>
+<div class="fancy-toc2"><a href="#document_sizes_table_docsize_table_">9.3. Document Sizes Table (%_docsize table)</a></div>
+<div class="fancy-toc2"><a href="#the_table_contents_content_table_">9.4. The Table Contents (%_content table)</a></div>
+<div class="fancy-toc2"><a href="#configuration_options_config_table_">9.5. Configuration Options (%_config table)</a></div>
 <div class="fancy-toc1"><a href="#appendix_a">
 Appendix A: Comparison with FTS3/4
 </a></div>
@@ -162,9 +175,6 @@ Appendix A: Comparison with FTS3/4
 <div class="fancy-toc3"><a href="#_other_issues"> Other Issues</a></div>
 <div class="fancy-toc2"><a href="#_summary_of_technical_differences_">
 Summary of Technical Differences
-</a></div>
-<div class="fancy-toc1"><a href="#appendix_b">
-Appendix B: Shadow tables created by FTS5
 </a></div>
 </div>
 </div>
@@ -1699,7 +1709,7 @@ fts5_api *fts5_api_from_db(sqlite3 *db){
   sqlite3_stmt *pStmt = 0;
 
   if( SQLITE_OK==sqlite3_prepare(db, "SELECT fts5(?1)", -1, &pStmt, 0) ){
-    sqlite3_bind_pointer(pStmt, (void*)&pRet, "fts5_api_ptr", NULL);
+    sqlite3_bin_pointer(pStmt, (void*)&pRet, "fts5_api_ptr", NULL);
     sqlite3_step(pStmt);
   }
   sqlite3_finalize(pStmt);
@@ -2565,6 +2575,573 @@ INSERT INTO ft1 VALUES('cherry cherry cherry', 'date date date');
 CREATE VIRTUAL TABLE ft1_v_instance USING fts5vocab(ft1, instance);
 </pre></div>
 
+<a name="fts5shadowtables"></a>
+
+<h1 id="fts5_data_structures"><span>9. </span>FTS5 Data Structures</h1>
+
+<p>This section describes at a high-level the way the FTS module stores its
+index and content in the database. It is not necessary to read or understand
+the material in this section in order to use FTS in an application. However, it
+may be useful to application developers attempting to analyze and understand
+FTS performance characteristics, or to developers contemplating enhancements to
+the existing FTS feature set.
+
+</p><p>
+When an FTS5 virtual table is created in a database, between 3 and 5 real
+tables are created in the database. These are known as "<a href="vtab.html#xshadowname">shadow tables</a>", and
+are used by the virtual table module to store persistent data. They should not
+be accessed directly by the user. Many other virtual table modules, including
+<a href="fts3.html">FTS3</a> and <a href="rtree.html">rtree</a>, also create and use shadow tables.
+
+</p><p>FTS5 creates the following shadow tables. In each case the actual table name
+is based on the name of the FTS5 virtual table (in the following, replace
+% with the name of the virtual table to find the actual shadow table name).
+
+</p><div class="codeblock"><pre><i>-- This table contains most of the full-text index data. </i>
+CREATE TABLE %_data(id INTEGER PRIMARY KEY, block BLOB);
+
+<i>-- This table contains the remainder of the full-text index data. </i>
+<i>-- It is almost always much smaller than the %_data table. </i>
+CREATE TABLE %_idx(segid, term, pgno, PRIMARY KEY(segid, term)) WITHOUT ROWID;
+
+<i>-- Contains the values of persistent configuration parameters.</i>
+CREATE TABLE %_config(k PRIMARY KEY, v) WITHOUT ROWID;
+
+<i>-- Contains the size of each column of each row in the virtual table</i>
+<i>-- in tokens. This shadow table is not present if the "columnsize"</i>
+<i>-- option is set to 0.</i>
+CREATE TABLE %_docsize(id INTEGER PRIMARY KEY, sz BLOB);
+
+<i>-- Contains the actual data inserted into the FTS5 table. There</i>
+<i>-- is one "cN" column for each indexed column in the FTS5 table.</i>
+<i>-- This shadow table is not present for contentless or external </i>
+<i>-- content FTS5 tables. </i>
+CREATE TABLE %_content(id INTEGER PRIMARY KEY, c0, c1...);
+</pre></div>
+
+<p>The following sections describe in more detail how these five tables are
+used to store FTS5 data.
+
+</p><h2 id="varint_format"><span>9.1. </span>Varint Format</h2>
+
+<p>The sections below refer to 64-bit signed integers stored in "varint" form.
+FTS5 uses the same varint format as used in various places by the SQLite core.
+
+</p><p>A varint is between 1 and 9 bytes in length. The varint consists of either
+zero or more bytes which have the high-order bit set followed by a single byte
+with the high-order bit clear, or nine bytes, whichever is shorter. The lower
+seven bits of each of the first eight bytes and all 8 bits of the ninth byte
+are used to reconstruct the 64-bit twos-complement integer. Varints are
+big-endian: bits taken from the earlier byte of the varint are more significant
+than bits taken from the later bytes.
+
+</p><h2 id="the_fts_index_idx_and_data_tables_"><span>9.2. </span>The FTS Index (%_idx and %_data tables)</h2>
+
+<p>The FTS index is an ordered key-value store where the keys are document
+terms or term prefixes and the associated values are "doclists". A doclist is a
+packed array of varints that encodes the position of each instance of the term
+within the FTS5 table. The position of a single term instance is defined as the
+combination of:
+
+</p><ul>
+  <li> The rowid of the FTS5 table row it appears in,
+  </li><li> The index of the column the term instance appears in (columns are
+       numbered from left to right starting from zero), and
+  </li><li> The offset of the term within the column value (i.e. the number of 
+       tokens that appear within the column value before this one).
+</li></ul>
+
+<p>The FTS index contains up to (nPrefix+1) entries for each token in the 
+data set, where nPrefix is the number of defined <a href="#prefix_indexes">
+prefix indexes</a>.
+
+</p><p>Keys associated with the main FTS index (the one that is not a prefix
+index) are prefixed with the character "0". Keys for the first prefix 
+index are prefixed with "1". Keys for the second prefix index are
+prefixed with "2", and so on. For example, if the token "document" is 
+inserted into an FTS5 table with <a href="#prefix_indexes">prefix indexes</a>
+specified by prefix="2 4", then the keys added to the FTS index would be 
+"0document", "1do" and "2docu".
+
+</p><p>The FTS index entries are not stored in a single tree or hash table
+structure. Instead, they are stored in a series of immutable b-tree like
+structures referred to as "segment b-trees". Each time a write to the FTS5
+table is committed, one or more (but usually just one) new segment b-trees
+are added containing both the new entries and tombstones for any deleted
+entries. When the FTS index is queried, the reader queries each segment 
+b-tree in turn and merges the results, giving priority to newer data.
+
+</p><p>Each segment b-tree is assigned a numerical level. When a new segment 
+b-tree is written to the database as part of committing a transaction,
+it is assigned to level 0. Segment b-trees belonging to a single level are
+periodically merged together to create a single, larger segment b-tree
+that is assigned to the next level (i.e. level 0 segment b-trees are 
+merged to become a single level 1 segment b-tree). Thus the numerically
+larger levels contain older data in (usually) larger segment b-trees. 
+Refer to the 
+<a href="#the_automerge_configuration_option">'automerge'</a>,
+<a href="#the_crisismerge_configuration_option">'crisismerge'</a> and
+<a href="#the_usermerge_configuration_option">'usermerge'</a> options, along
+with the 
+<a href="#the_merge_command">'merge'</a> and
+<a href="#the_optimize_command">'optimize'</a> commands for details on how to
+control the merging.
+
+</p><p>In cases where the doclist associated with a term or term prefix is very
+large, there may be an associated <a href="#doclist_index_format">doclist
+index</a>. A doclist index is similar to the set of internal nodes of a b-tree.
+It allows a large doclist to be efficiently queried for rowids or ranges of
+rowids. For example, when processing a query like:
+
+</p><div class="codeblock"><pre>SELECT ... FROM fts_table('term') WHERE rowid BETWEEN ? AND ?
+</pre></div>
+
+<p>FTS5 uses the segment b-tree index to locate the doclist for term "term",
+then uses its doclist index (assuming it is present) to efficiently identify
+the subset of matches with rowids in the required range.
+
+</p><h3 id="data_structure"><span>9.2.1. </span>The %_data Table Rowid Space</h3>
+
+<div class="codeblock"><pre>CREATE TABLE %_data(
+  id INTEGER PRIMARY KEY, 
+  block BLOB
+);
+</pre></div>
+
+<p>The %_data table is used to store three types of records:
+
+</p><ul>
+  <li> The special <a href="#structure_record_format">structure record</a>, 
+       stored with id=1.
+  </li><li> The special <a href="#averages_record_format">averages record</a>, 
+       stored with id=10.
+  </li><li> A record to store each <a href="#segment_b_tree_format">segment b-tree</a>
+       leaf and <a href="#doclist_index_format">doclist index</a> leaf and
+       internal node. See below for how id values are calculated for these
+       records.
+</li></ul>
+
+<p>Each segment b-tree in the system is assigned a unique 16-bit segment id.
+Segment ids may only be reused after the original owner segment b-tree is
+completely merged into a higher level segment b-tree. Within a segment b-tree,
+each leaf page is assigned a unique page number - 1 for the first leaf page, 2
+for the second, and so on.
+
+</p><p>Each doclist index leaf page is also assigned a page number. The first
+(leftmost) leaf page in a doclist index is assigned the same page number as 
+the segment b-tree leaf page on which its term appears (because doclist indexes
+are only created for terms with very long doclists, at most one term per
+segment b-tree leaf has an associated doclist index). Call this page number P.
+If the doclist is so large that it requires a second leaf, the second leaf is
+assigned page number P+1. The third leaf P+2. Each tier of a doclist index
+b-tree (leaves, parents of leaves, grandparents etc.) is assigned page numbers
+in this fashion, starting with page number P.
+
+</p><p>The "id" value used in the %_data table to store any given segment b-tree
+leaf or doclist index leaf or node is composed as follows:
+
+</p><table striped="1" style="margin:1em auto; width:80%; border-spacing:0">
+<tr style="text-align:left"><th>Rowid&nbsp;Bits </th><th>Contents
+</th></tr><tr style="text-align:left;background-color:#DDDDDD"><td>38..43 </td><td> (16 bit) Segment b-tree id value.
+</td></tr><tr style="text-align:left"><td>37 </td><td> (1 bit) Doclist index flag. Set for doclist index pages, clear
+                for segment b-tree leaves.
+</td></tr><tr style="text-align:left;background-color:#DDDDDD"><td>32..36 </td><td> (5 bits) Height in tree. This is set to 0 for segment b-tree
+                    and doclist index leaves, to 1 for the parents of doclist
+                    index leaves, 2 for the grandparents, etc.
+</td></tr><tr style="text-align:left"><td>0..31 </td><td> (32 bits) Page number
+</td></tr></table>
+
+<h3 id="structure_record_format"><span>9.2.2. </span>Structure Record Format</h3>
+
+<p>The structure record identifies the set of segment b-trees that make up the 
+current FTS index, along with details of any ongoing incremental merge
+operations. It is stored in the %_data table with id=1.
+
+A structure record begins with a single 32-bit unsigned value - the cookie
+value.  This value is incremented each time the structure is modified.
+Following the cookie value are three varint values, as follows:
+
+</p><ul>
+  <li> The number of levels in the index (i.e. the maximum level associated
+       with any segment b-tree plus one).
+  </li><li> The total number of segment b-trees in the index.
+  </li><li> The total number of segment b-tree leaves written to level 0 trees
+       since the FTS5 table was created.
+</li></ul>
+
+<p>Then, for each level from 0 to nLevel:
+
+</p><ul>
+  <li> The number of input segments from the previous level being used as
+       inputs for the current incremental merge, or zero if there is no
+       ongoing incremental merge to create a new segment b-tree for this level.
+  </li><li> The total number of segment b-trees on the level.
+  </li><li> Then, for each segment b-tree, from oldest to newest:
+  <ul>
+    <li> The segment id.
+    </li><li> Page number of first leaf (often 1, always >0).
+    </li><li> Page number of last leaf (always >0).
+  </li></ul>
+</li></ul>
+
+<h3 id="averages_record_format"><span>9.2.3. </span>Averages Record Format</h3>
+
+<p>The averages record, which is always stored with id=10 in the %_data table,
+does not store the average of anything. Instead, it contains a vector of
+(nCol+1) packed varint values, where nCol is the number of columns in the FTS5
+table, including unindexed columns. The first varint contains the total 
+number of rows in the FTS5 table. The second contains the total number of
+tokens in all values stored in the leftmost FTS5 table column. The third the
+number of tokens in all values for the next leftmost, and so on. The value for
+unindexed columns is always zero.
+
+</p><h3 id="segment_b_tree_format"><span>9.2.4. </span>Segment B-Tree Format</h3>
+
+<h4 id="the_key_doclist_format"><span>9.2.4.1. </span>The Key/Doclist Format</h4>
+
+<p>The key/doclist format is a format used to store a series of keys (document
+terms or term prefixes prefixed by a single character to indentify the specific
+index to which they belong) in sorted order, each with their associated
+doclist. The format consists of alternating keys and doclists packed together.
+
+</p><p>The first key is stored as:
+</p><ul>
+  <li> A varint indicating the number of bytes in the key (N), followed by
+  </li><li> The key data itself (N bytes).
+</li></ul>
+
+<p>Each subsequent key is stored as:
+</p><ul>
+  <li> A varint indicating the size of the prefix that the key has in common
+       with the previous key in bytes,
+  </li><li> A varint indicating the number of bytes in the key following the
+       common prefix (N), followed by
+  </li><li> The key suffix data itself (N bytes).
+</li></ul>
+
+<p>For example, if the first two keys in an FTS5 key/doclist record are
+"0challenger" and "0chandelier", then the first key is stored as varint 11
+followed by the 11 bytes "0challenger", and the second key is stored as varints
+4 and 7, followed by the 7 bytes "ndelier".
+
+</p><center><div style="max-width:956px;"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 956.102 126.72">
+<path d="M62,77L91,77L91,48L62,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M91,77L149,77L149,48L91,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M149,77L437,77L437,48L149,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="293" y="63" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">doclist 0</text>
+<path d="M437,77L466,77L466,48L437,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M466,77L494,77L494,48L466,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M494,77L538,77L538,48L494,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M538,77L826,77L826,48L538,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="682" y="63" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">doclist 1</text>
+<text x="892" y="63" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">key/doclist 2...</text>
+<path d="M826,48L883,48"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M826,77L883,77"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="120" y="114" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">key 0 data</text>
+<polygon points="120,77 124,89 116,89" style="fill:rgb(0,0,0)"/>
+<path d="M120,99L120,83"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="77" y="12" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">key 0 size (varint)</text>
+<polygon points="77,48 72,37 81,37" style="fill:rgb(0,0,0)"/>
+<path d="M77,27L77,43"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="358" y="114" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">key 1 prefix size (varint)</text>
+<polygon points="451,77 441,84 439,76" style="fill:rgb(0,0,0)"/>
+<path d="M358,99L446,79"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="480" y="12" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">key 1 suffix size (varint)</text>
+<polygon points="480,48 476,37 484,37" style="fill:rgb(0,0,0)"/>
+<path d="M480,27L480,43"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="585" y="114" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">key 1 prefix data</text>
+<polygon points="516,77 528,77 526,85" style="fill:rgb(0,0,0)"/>
+<path d="M585,99L521,79"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+</svg>
+</div>
+<p><i>Figure 1 - Term/Doclist Format
+</i></p></center>
+
+<p>Each doclist identifies the rows (by their rowid values) that contain at
+least one instance of the term or term prefix and an associated position list,
+or "poslist" enumerating the position of each term instance within the row. In
+this sense a "position" is defined as a column number and term offset within
+the column value. 
+
+</p><p>Within a doclist, documents are always stored in order sorted by rowid.  The
+first rowid in a doclist is stored as is, as a varint. It is immediately
+followed by its associated position list. Following this, the difference
+between the first rowid and the second, as a varint, followed by the doclist
+associated with the second rowid in the doclist. And so on.
+
+</p><p>There is no way to determine the size of a doclist by parsing it. This must
+be stored externally. See the <a href="#data_pagination">section below</a> for
+details of how this is accomplished in FTS5.
+
+</p><center><div style="max-width:889px;"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 889.459 79.92">
+<path d="M46,77L89,77L89,48L46,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M89,77L377,77L377,48L89,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="233" y="63" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">position list 0</text>
+<path d="M377,77L420,77L420,48L377,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M420,77L708,77L708,48L420,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="564" y="63" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">position list 1</text>
+<path d="M708,77L751,77L751,48L708,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822" y="63" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">position list 2...</text>
+<path d="M751,48L809,48"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M751,77L809,77"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="67" y="12" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">rowid 0 (varint)</text>
+<polygon points="67,48 63,37 72,37" style="fill:rgb(0,0,0)"/>
+<path d="M67,27L67,43"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="398" y="12" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">rowid 1 (delta-encoded varint)</text>
+<polygon points="398,48 394,37 403,37" style="fill:rgb(0,0,0)"/>
+<path d="M398,27L398,43"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="730" y="12" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">rowid 3 (delta-encoded varint)</text>
+<polygon points="730,48 725,37 734,37" style="fill:rgb(0,0,0)"/>
+<path d="M730,27L730,43"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+</svg>
+</div>
+<p><i>Figure 2 - Doclist Format
+</i></p></center>
+
+<p>A position list - often shortened to "poslist" - identifies the column
+and token offset within the row of each instance of the token in question.
+The format of a poslist is:
+
+</p><ul>
+  <li> Varint set to twice the size of the poslist, not including this field,
+       plus one if the "delete" flag is set on the entry.
+  </li><li> A (possibly empty) list of offsets for column 0 (the leftmost column) of
+       the row. Each offset is stored as a varint. The first varint contains
+       the value of the first offset, plus 2. The second variant contains the
+       difference between the second and first offsets, plus 2. etc. For
+       example, if the offset list is to contain offsets 0, 10, 15 and 16, it
+       is encoded by packing the following values, encoded as varints, end to
+       end:
+       <pre>
+           2, 12, 7, 3
+</pre>
+  </li><li> For each column other than column 0 that contains one of more instances
+       of the token:
+  <ul>
+    <li> Byte value 0x01.
+    </li><li> The column number, as a varint.
+    </li><li> An offset list, in the same format as the offset list for column 0.
+  </li></ul>
+</li></ul>
+
+<center><div style="max-width:785px;"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 785.606 133.92">
+<path d="M77,77L121,77L121,48L77,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M121,77L409,77L409,48L121,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="265" y="63" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">col 0 offset-list</text>
+<path d="M409,77L452,77L452,48L409,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="430" y="63" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">0x01</text>
+<path d="M452,77L495,77L495,48L452,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M495,77L783,77L783,48L495,48Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="639" y="63" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">col i offset-list</text>
+<text x="99" y="12" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nSize*2 + bDel (varint)</text>
+<polygon points="99,48 95,37 103,37" style="fill:rgb(0,0,0)"/>
+<path d="M99,27L99,43"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="473" y="12" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">column number (i)</text>
+<polygon points="473,48 469,37 478,37" style="fill:rgb(0,0,0)"/>
+<path d="M473,27L473,43"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M121,92L121,106L783,106L783,92"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
+<text x="452" y="121" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nSize bytes</text>
+</svg>
+</div>
+<p><i>Figure 3 - Position List (poslist) With Offsets in Columns 0 and i
+</i></p></center>
+
+<h4 id="data_pagination"><span>9.2.4.2. </span>Pagination</h4>
+
+<p>If it is small enough (by default this means smaller than 4000 bytes), the
+entire contents of a segment b-tree may be stored in the key/doclist format
+described in the previous section as a single blob within the %_data table.
+Otherwise, the key/doclist is split into pages (by default, of approximately
+4000 bytes each) and stored in a contiguous set of entries in the %_data table
+(<a href="#data_structure">see above</a> for details).
+
+</p><p>When a key/doclist is divided into pages, the following modifications are
+made to the format:
+
+</p><ul>
+  <li> A single varint or key data field never spans two pages.
+  </li><li> The first key on each page is not prefix-compressed. It is stored in
+       the format described above for the first key of a doclist - its size as
+       a varint followed by the key data.
+  </li><li> If there are one or more rowids on a page before the first key, then
+       the first of them is not delta compressed. It is stored as is, just as
+       if it were the first rowid of its doclist (which it may or may not be).
+</li></ul>
+
+<p>Each page also has fixed-size 4-byte header and a variably-sized footer.
+The header is divided into into 2 16-bit big-endian integer fields. They
+contain:
+
+</p><ul>
+  <li> The byte offset of the first rowid value on the page, if it occurs
+       before the first key, or 0 otherwise.
+  </li><li> The byte offset of the page footer.
+</li></ul>
+
+<p>The page footer consists of a series of varints containing the byte offset
+of each key that appears on the page. The page footer is zero bytes in size
+if there are no keys on the page.
+
+</p><center><div style="max-width:721px;"><svg xmlns='http://www.w3.org/2000/svg' class="pikchr" viewBox="0 0 721.267 79.92">
+<path d="M10,30L54,30L54,2L10,2Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="32" y="16" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">hdr</text>
+<path d="M54,30L630,30L630,2L54,2Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="342" y="16" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">modified key/doclist data</text>
+<path d="M630,30L702,30L702,2L630,2Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="666" y="16" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">footer</text>
+<text x="32" y="67" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">4 bytes</text>
+<text x="666" y="67" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">variable size</text>
+<polygon points="32,30 36,42 28,42" style="fill:rgb(0,0,0)"/>
+<path d="M32,52L32,36"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="666,30 670,42 661,42" style="fill:rgb(0,0,0)"/>
+<path d="M666,52L666,36"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+</svg>
+</div>
+<p><i>Figure 4 - Page Format
+</i></p></center>
+
+<h4 id="data_term_index"><span>9.2.4.3. </span>Segment Index Format</h4>
+
+<p>The result of formatting the contents of the segment b-tree in the 
+key/doclist format and then splitting it into pages is something very
+similar to the leaves of a b+tree. Instead of creating a format for
+the internal nodes of this b+tree and storing them in the %_data table
+alongside the leaves, the keys that would have been stored on such nodes are
+added to the %_idx table, defined as:
+
+</p><div class="codeblock"><pre>CREATE TABLE %_idx(
+  segid INTEGER,              <i>-- segment id</i>
+  term TEXT,                  <i>-- prefix of first key on page</i>
+  pgno INTEGER,               <i>-- (2*pgno + bDoclistIndex)</i>
+  PRIMARY KEY(segid, term)
+);
+</pre></div>
+
+<p>For each "leaf" page that contains at least one key, an entry is added
+to the %_idx table. Fields are set as follows:
+
+</p><table striped="1" style="margin:1em auto; width:80%; border-spacing:0">
+  <tr style="text-align:left"><th>Column</th><th>Contents
+  </th></tr><tr style="text-align:left;background-color:#DDDDDD"><td>segid</td><td>   The integer segment id.
+  </td></tr><tr style="text-align:left"><td>term</td><td>    The smallest prefix of the first key on the page that
+                      is larger than all keys on the previous page. For the
+                      first page in a segment, this prefix is zero bytes in
+                      size.
+  </td></tr><tr style="text-align:left;background-color:#DDDDDD"><td>pgno</td><td>    This field encodes both the page number (within the
+                      segment - starting from 1) and the doclist index flag.
+                      The doclist index flag is set if the final key on the
+                      page has an <a href="#data_doclist_index">associated 
+                      doclist index</a>. The value of this field is:
+                      <pre>
+       (pgno*2 + bDoclistIndexFlag)
+</pre>
+</td></tr></table>
+
+<p>Then, to find the leaf for segment i that may contain term t, instead of
+searching through internal nodes, FTS5 runs the query:
+
+</p><div class="codeblock"><pre>SELECT pgno FROM %_idx WHERE segid=$i AND term>=$t ORDER BY term LIMIT 1
+</pre></div>
+
+<h4 data_doclist_index="1" id="doclist_index_format"><span>9.2.4.4. </span>Doclist Index Format</h4>
+
+<p>The segment index described in the <a href="#data_term_index">previous
+section</a> allows a segment b-tree to be efficiently queried by term or,
+assuming there is a prefix index of the required size, a term prefix. The data
+structure described in this section, doclist indexes, allows FTS5 to
+efficiently search for a rowid or range or rowids within the doclist associated
+with a single term or term prefix.
+
+</p><p>Not all keys have associated doclists indexes. By default, a doclist index
+is only added for a key if its doclist spans more than 4 segment b-tree leaf
+pages. Doclist indexes are themselves b-trees, with both leaves and internal
+nodes stored as entries in the %_data table, but in practice most doclists are
+small enough to fit on a single leaf. FTS5 uses the same rough size for doclist
+index node and leaves as it does for segment b-tree leaves (by default 4000
+bytes).
+
+</p><p>Doclist index leaves and internal nodes use the same page format. The first
+byte is a "flags" byte. This is set to 0x00 for the root page of the doclist
+index b-tree, and 0x01 for all other pages. The remainder of the page is a
+series of tightly packed varints, as follows:
+
+</p><ul>
+  <li> page number of leftmost child page, followed by
+  </li><li> the smallest rowid value on the left most child page, followed by
+  </li><li> one varint for each subsequent child page, containing the value:
+  <ul>
+    <li> 0x00 if there are no rowids on the child page (this can only happen
+         when the "child" page is actually a segment b-tree leaf), or
+    </li><li> the difference between the smallest rowid on the child page and
+         the previous rowid value stored on the doclist index page.
+  </li></ul>
+</li></ul>
+
+<p>For the leftmost doclist index leaf in a doclist index, the leftmost child
+page is the first segment b-tree leaf after the one that contains the key
+itself.
+
+</p><h2 id="document_sizes_table_docsize_table_"><span>9.3. </span>Document Sizes Table (%_docsize table)</h2>
+
+<div class="codeblock"><pre>CREATE TABLE %_docsize(
+    id INTEGER PRIMARY KEY,   -- id of FTS5 row this record pertains to
+    sz BLOB                   -- blob containing nCol packed varints
+);
+</pre></div>
+
+<p>Many common search result ranking functions require as an input the size 
+in tokens of the result document (as a search term hit in a short document is
+considered more significant than one in a long document). To provide fast
+access to this information, for each row in the FTS5 table there exists a 
+corresponding record (with the same rowid) in the %_docsize shadow table
+that contains the size of each column value in the row, in tokens.
+
+</p><p>The column value sizes are stored in a blob containing one packed varint for
+each column of the FTS5 table, from left to right. The varint contains, of
+course, the total number of tokens in the corresponding column value. Unindexed
+columns are included in this vector of varints; for them the value is always
+set to zero.
+
+</p><p>This table is used by the <a href="#xColumnSize">xColumnSize</a> API. It can
+be omitted altogether by specifying the 
+<a href="#the_columnsize_option">columnsize=0</a> option. In that case the
+xColumnSize API is still available to auxiliary functions, but runs much more
+slowly.
+
+</p><h2 id="the_table_contents_content_table_"><span>9.4. </span>The Table Contents (%_content table)</h2>
+
+<div class="codeblock"><pre>CREATE TABLE %_content(id INTEGER PRIMARY KEY, c0, c1...);
+</pre></div>
+
+<p>The actual table content - the values inserted into the FTS5 table, is
+stored in the %_content table. This table is created with one "c*" column for
+each column of the FTS5 table, including any unindexed columns. The values for
+the leftmost FTS5 table column are stored in column "c0" of the %_content
+table, the values from the next FTS5 table column in column "c1", and so on.
+
+</p><p>This table is omitted completely for <a href="#content_and_contentless_tables">
+external content or contentless</a> FTS5 tables.
+tables.
+
+</p><h2 id="configuration_options_config_table_"><span>9.5. </span>Configuration Options (%_config table)</h2>
+
+<div class="codeblock"><pre>CREATE TABLE %_config(k PRIMARY KEY, v) WITHOUT ROWID;
+</pre></div>
+
+<p>This table stores the values of any persistent configuration options. 
+Column "k" stores the name of the option (text) and column "v" the value.
+Example contents:
+
+</p><div class="codeblock"><pre>sqlite> SELECT * FROM fts_tbl_config;
+┌─────────────┬──────┐
+│      k      │  v   │
+├─────────────┼──────┤
+│ crisismerge │ 8    │
+│ pgsz        │ 8000 │
+│ usermerge   │ 4    │
+│ version     │ 4    │
+└─────────────┴──────┘
+</pre></div>
 
 <a name="appendix_a"></a>
 <h1 id="appendix_a" nonumber="1" tags="comparison with fts4">
@@ -2758,37 +3335,4 @@ using FTS5.
        the amount of processing that may take place within any given 
        INSERT, UPDATE or DELETE operation.
 </p></li></ul>
-
-<a name="appendix_b"></a>
-<h1 id="appendix_b" nonumber="1" tags="fts5 shadow tables">
-  Appendix B: Shadow tables created by FTS5
-</h1>
-
-<p>
-When an FTS5 virtual table is created in a database, between 3 and 5 real
-tables are created in the database. These are known as "<a href="vtab.html#xshadowname">shadow tables</a>", and are
-used by the virtual table module to store persistent data. They should not
-be accessed directly by the user. Many other virtual table modules, including
-<a href="fts3.html">FTS3</a> and <a href="rtree.html">rtree</a>, also create and use shadow tables.
-
-</p><p>FTS5 creates the following shadow tables. In each case the actual table name
-is based on the name of the FTS5 virtual table (in the following table, replace
-&lt;name&gt; with the name of the virtual table to find the actual shadow
-table name).
-
-</p><table striped="1" style="margin:1em auto; width:80%; border-spacing:0">
-<tr style="text-align:left"><th>Table&nbsp;Name</th><th>Contents
-</th></tr><tr style="text-align:left;background-color:#DDDDDD"><td>&lt;name&gt;_data</td><td> This table contains most of the full-text index data.
-</td></tr><tr style="text-align:left"><td>&lt;name&gt;_idx</td><td> This table contains the remainder of the full-text
-index data. It is almost always much smaller than the &lt;name&gt;_data table.
-</td></tr><tr style="text-align:left;background-color:#DDDDDD"><td>&lt;name&gt;_config</td><td> Contains the values of persistent
-configuration parameters.
-</td></tr><tr style="text-align:left"><td>&lt;name&gt;_content</td><td> Contains the actual data inserted into the 
-FTS5 table. This shadow table is not present for 
-<a href="fts5.html#contentless_tables">contentless</a> or 
-<a href="fts5.html#external_content_tables">external content</a> FTS5 tables.
-</td></tr><tr style="text-align:left;background-color:#DDDDDD"><td>&lt;name&gt;_docsize</td><td> Contains the size of each column of each
-row in the virtual table in tokens. This shadow table is not present if 
-the <a href="fts5.html#the_columnsize_option">"columnsize" option</a> is set to 0.
-</td></tr></table>
 

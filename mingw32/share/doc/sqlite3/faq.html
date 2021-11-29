@@ -90,12 +90,11 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 
 
 <h2>Frequently Asked Questions</h2><ol class=nounderline><li value='1'><a href="#q1">How do I create an AUTOINCREMENT field?</a></li><li value='2'><a href="#q2">What datatypes does SQLite support?</a></li><li value='3'><a href="#q3">SQLite lets me insert a string into a database column of type integer!</a></li><li value='4'><a href="#q4">Why doesn't SQLite allow me to use '0' and '0.0' as the primary
   key on two different rows of the same table?</a></li><li value='5'><a href="#q5">Can multiple applications or multiple instances of the same
-  application access a single database file at the same time?</a></li><li value='6'><a href="#q6">Is SQLite threadsafe?</a></li><li value='7'><a href="#q7">How do I list all tables/indices contained in an SQLite database</a></li><li value='8'><a href="#q8">Are there any known size limits to SQLite databases?</a></li><li value='9'><a href="#q9">What is the maximum size of a VARCHAR in SQLite?</a></li><li value='10'><a href="#q10">Does SQLite support a BLOB type?</a></li><li value='11'><a href="#q11">How do I add or delete columns from an existing table in SQLite.</a></li><li value='12'><a href="#q12">I deleted a lot of data but the database file did not get any
+  application access a single database file at the same time?</a></li><li value='6'><a href="#q6">Is SQLite threadsafe?</a></li><li value='7'><a href="#q7">How do I list all tables/indices contained in an SQLite database</a></li><li value='8'><a href="#q8">Are there any known size limits to SQLite databases?</a></li><li value='9'><a href="#q9">What is the maximum size of a VARCHAR in SQLite?</a></li><li value='10'><a href="#q10">Does SQLite support a BLOB type?</a></li><li value='11'><a href="#q11">How do I add, delete or rename columns from an existing table in SQLite?</a></li><li value='12'><a href="#q12">I deleted a lot of data but the database file did not get any
   smaller.  Is this a bug?</a></li><li value='13'><a href="#q13">Can I use SQLite in my commercial product without paying royalties?</a></li><li value='14'><a href="#q14">How do I use a string literal that contains an embedded single-quote (')
   character?</a></li><li value='15'><a href="#q15">What is an SQLITE_SCHEMA error, and why am I getting one?</a></li><li value='17'><a href="#q17">I get some compiler warnings when I compile SQLite.
   Isn't this a problem?  Doesn't it indicate poor code quality?</a></li><li value='18'><a href="#q18">Case-insensitive matching of Unicode characters does not work.</a></li><li value='19'><a href="#q19">INSERT is really slow - I can only do few dozen INSERTs per second</a></li><li value='20'><a href="#q20">I accidentally deleted some important information from my SQLite database.
@@ -333,32 +332,17 @@ ORDER BY name
   column, even columns that are declared to hold some other type.
   BLOBs can even be used as PRIMARY KEYs.</p></blockquote></li>
 <a name="q11"></a>
-<p><b>(11) How do I add or delete columns from an existing table in SQLite.</b></p>
-<blockquote><p>SQLite has limited 
-  <a href="lang_altertable.html">ALTER TABLE</a> support that you can
-  use to add a column to the end of a table or to change the name of
-  a table.  
-  If you want to make more complex changes in the structure of a table,
-  you will have to recreate the
-  table.  You can save existing data to a temporary table, drop the
+<p><b>(11) How do I add, delete or rename columns from an existing table in SQLite?</b></p>
+<blockquote><p>SQLite has limited ALTER TABLE support that you can use to
+  add, rename or drop columns or to change the name of a table
+  as detailed at <a href="lang_altertable.html">ALTER TABLE</a>.</p>
+
+  <p>If you want to make more complex changes in the structure or
+  constraints of a table or its columns, you will have to recreate it.
+  You can save existing data to a temporary table, drop the
   old table, create the new table, then copy the data back in from
-  the temporary table.</p>
-
-  <p>For example, suppose you have a table named "t1" with columns
-  names "a", "b", and "c" and that you want to delete column "c" from
-  this table.  The following steps illustrate how this could be done:
-  </p>
-
-  <blockquote><pre>
-BEGIN TRANSACTION;
-CREATE TEMPORARY TABLE t1_backup(a,b);
-INSERT INTO t1_backup SELECT a,b FROM t1;
-DROP TABLE t1;
-CREATE TABLE t1(a,b);
-INSERT INTO t1 SELECT a,b FROM t1_backup;
-DROP TABLE t1_backup;
-COMMIT;
-</pre></blockquote></blockquote></li>
+  the temporary table. See <a href="lang_altertable.html#otheralter">
+  Making Other Kinds Of Table Schema Changes</a> for procedure.</p></blockquote></li>
 <a name="q12"></a>
 <p><b>(12) I deleted a lot of data but the database file did not get any
   smaller.  Is this a bug?</b></p>

@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -267,7 +266,7 @@ to reach new error states.  Dbsqlfuzz is built using the
 <a href="http://llvm.org/docs/LibFuzzer.html">libFuzzer</a> framework of LLVM
 with a custom mutator.  Starting from 
 252 seed files, the dbsqlfuzz fuzzer
-has tried literally billions of mutations, resulting in 
+has tried literally billions and billions of mutations, resulting in 
 58497 distinct test cases that form
 the basis of each new fuzzing session.  Dbsqlfuzz helps ensure
 that SQLite is robust against attack via malicious SQL or database
@@ -517,13 +516,15 @@ text to be run against that database. Because it mutates both the input
 database and the input SQL at the same time, dbsqlfuzz has been able to
 find some obscure faults in SQLite that were missed by prior fuzzers that
 mutated only SQL inputs or only the database file.
-The SQLite developers usually leave an instance or two of dbsqlfuzz
-running on the latest trunk code of SQLite whenever they are away from
-the office for an extended period, such as overnight.</p>
+The SQLite developers keep dbsqlfuzz running against trunk in about
+16 cores at all times.  Each instance of dbsqlfuzz program is able to 
+evalutes about 400 test cases per second, meaning that about 500 million
+cases are checked every day.</p>
 
-<p>The dbsqlfuzz fuzzer has been so successful at hardening the
-SQLite code base against malicious attack that it is now considered
-one of the four primary test harnesses for SQLite.
+<p>The dbsqlfuzz fuzzer has been very successful at hardening the
+SQLite code base against malicious attack.  Since dbsqlfuzz has been
+added to the SQLite internal test suite, bug reports from external
+fuzzers such as OSSFuzz have all but stopped.
 
 </p><p>Note that dbsqlfuzz is <i>not</i> the Protobuf-based structure-aware
 fuzzer for SQLite that is used by Chromium and described in the
@@ -600,7 +601,7 @@ robust against malicious attack.
 </p><p>Of course, users would prefer code that is both robust in normal
 use and resistant to malicious attack.  The SQLite developers are
 dedicated to providing that.  The purpose of this section is merely
-to point out that doing both at the same time is hard.
+to point out that doing both at the same time is difficult.
 
 </p><p>For much of its history SQLite has been focused on 100% MC/DC testing.
 Resistance to fuzzing attacks only became a concern with the introduction

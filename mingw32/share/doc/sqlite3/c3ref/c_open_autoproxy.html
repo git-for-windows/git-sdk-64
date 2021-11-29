@@ -90,8 +90,7 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
-<!-- keywords: SQLITE_OPEN_AUTOPROXY SQLITE_OPEN_CREATE SQLITE_OPEN_DELETEONCLOSE SQLITE_OPEN_EXCLUSIVE SQLITE_OPEN_FULLMUTEX SQLITE_OPEN_MAIN_DB SQLITE_OPEN_MAIN_JOURNAL SQLITE_OPEN_MEMORY SQLITE_OPEN_NOFOLLOW SQLITE_OPEN_NOMUTEX SQLITE_OPEN_PRIVATECACHE SQLITE_OPEN_READONLY SQLITE_OPEN_READWRITE SQLITE_OPEN_SHAREDCACHE SQLITE_OPEN_SUBJOURNAL SQLITE_OPEN_SUPER_JOURNAL SQLITE_OPEN_TEMP_DB SQLITE_OPEN_TEMP_JOURNAL SQLITE_OPEN_TRANSIENT_DB SQLITE_OPEN_URI SQLITE_OPEN_WAL -->
+<!-- keywords: SQLITE_OPEN_AUTOPROXY SQLITE_OPEN_CREATE SQLITE_OPEN_DELETEONCLOSE SQLITE_OPEN_EXCLUSIVE SQLITE_OPEN_EXRESCODE SQLITE_OPEN_FULLMUTEX SQLITE_OPEN_MAIN_DB SQLITE_OPEN_MAIN_JOURNAL SQLITE_OPEN_MEMORY SQLITE_OPEN_NOFOLLOW SQLITE_OPEN_NOMUTEX SQLITE_OPEN_PRIVATECACHE SQLITE_OPEN_READONLY SQLITE_OPEN_READWRITE SQLITE_OPEN_SHAREDCACHE SQLITE_OPEN_SUBJOURNAL SQLITE_OPEN_SUPER_JOURNAL SQLITE_OPEN_TEMP_DB SQLITE_OPEN_TEMP_JOURNAL SQLITE_OPEN_TRANSIENT_DB SQLITE_OPEN_URI SQLITE_OPEN_WAL -->
 <div class=nosearch>
 <a href="intro.html"><h2>SQLite C Interface</h2></a>
 <h2>Flags For File Open Operations</h2>
@@ -118,11 +117,25 @@ return false;
 #define SQLITE_OPEN_PRIVATECACHE     0x00040000  /* Ok for sqlite3_open_v2() */
 #define SQLITE_OPEN_WAL              0x00080000  /* VFS only */
 #define SQLITE_OPEN_NOFOLLOW         0x01000000  /* Ok for sqlite3_open_v2() */
+#define SQLITE_OPEN_EXRESCODE        0x02000000  /* Extended result codes */
 </pre></blockquote>
 <p>
 These bit values are intended for use in the
 3rd parameter to the <a href="../c3ref/open.html">sqlite3_open_v2()</a> interface and
-in the 4th parameter to the <a href="../c3ref/vfs.html#sqlite3vfsxopen">sqlite3_vfs.xOpen</a> method.
+in the 4th parameter to the <a href="../c3ref/vfs.html#sqlite3vfsxopen">sqlite3_vfs.xOpen</a> method.</p>
+
+<p>Only those flags marked as "Ok for sqlite3_open_v2()" may be
+used as the third argument to the <a href="../c3ref/open.html">sqlite3_open_v2()</a> interface.
+The other flags have historically been ignored by sqlite3_open_v2(),
+though future versions of SQLite might change so that an error is
+raised if any of the disallowed bits are passed into sqlite3_open_v2().
+Applications should not depend on the historical behavior.</p>
+
+<p>Note in particular that passing the SQLITE_OPEN_EXCLUSIVE flag into
+<a href="../c3ref/open.html">sqlite3_open_v2()</a> does *not* cause the underlying database file
+to be opened using O_EXCL.  Passing SQLITE_OPEN_EXCLUSIVE into
+<a href="../c3ref/open.html">sqlite3_open_v2()</a> has historically be a no-op and might become an
+error in future versions of SQLite.
 </p><p>See also lists of
   <a href="objlist.html">Objects</a>,
   <a href="constlist.html">Constants</a>, and

@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -119,7 +118,7 @@ Table Of Contents
 <div class="fancy-toc3"><a href="#sqlite_documentation_sources">5.3.2. SQLite Documentation Sources</a></div>
 <div class="fancy-toc3"><a href="#sql_logic_test">5.3.3. SQL Logic Test</a></div>
 <div class="fancy-toc3"><a href="#test_harness_3">5.3.4. Test Harness #3</a></div>
-<div class="fancy-toc3"><a href="#test_harness_3_private_extensions">5.3.5. Test Harness #3 Private Extensions</a></div>
+<div class="fancy-toc3"><a href="#dbsqlfuzz">5.3.5. Dbsqlfuzz</a></div>
 <div class="fancy-toc2"><a href="#software_verification_results">5.4. Software Verification Results</a></div>
 <div class="fancy-toc1"><a href="#software_requirements_standards_and_data">6. Software Requirements Standards And Data</a></div>
 <div class="fancy-toc1"><a href="#software_design_and_coding_standards">7. Software Design And Coding Standards</a></div>
@@ -143,12 +142,6 @@ mk.innerHTML = "&#x25ba;";
 
 
 
-<center>
-<font color="red" size="5"><b>
-This document is a work-in-progress.  It is incomplete and unverified.
-</b></font>
-</center>
-
 <h1 id="overview"><span>1. </span>Overview</h1>
 
 <p>
@@ -168,11 +161,11 @@ to paperwork ratio.  Even so, the amount of documentation needed
 for a full-up DO-178B implementation is vast.  SQLite strives to be
 nimble and low-ceremony, and to that end, much of the required
 DO-178B documentation is omitted.  We retain only those parts that
-genuinely improve quality for a open-source software project such
+genuinely improve quality for an open-source software project such
 as SQLite.
 
 </p><p>
-The purpose of this document is to brief the reader on how
+The purpose of this document is to brief the reader on how the
 SQLite development team functions on a daily basis, as they continuously
 enhance the SQLite software and work to improve its already high reliability.
 The document achieves its purpose if a competent developer can be
@@ -196,7 +189,7 @@ Certification and the Software Development Plan sections of DO-178B.
 
 
 </p><p>
-See <a href="'about.html'">About SQLite</a> for an overview of the
+See <a href="about.html">About SQLite</a> for an overview of the
 SQLite software and what it does and how it is different.
 
 </p><h2 id="software_life_cycle"><span>2.1. </span>Software Life Cycle</h2>
@@ -229,7 +222,8 @@ Upcoming maintenance releases announced on the sqlite-users and
 sqlite-dev <a href="support.html#mailinglists">mailing lists</a> about two weeks prior to the anticipated
 release.  Approximately one week prior to release, the lead developer
 declares "pencils down" after which only bug-fix check-ins are
-allowed on trunk.  A new <a href="https://sqlite.org/checklists">release checklist</a>
+allowed on trunk.  A new 
+<a href="https://sqlite.org/src/ext/checklist/top/index">release checklist</a>
 is created and updated as needed.  As items of the checklist are 
 verified, they are checked off and turn green.  The release occurs
 when all elements of the checklist are green.  That process normally
@@ -239,9 +233,9 @@ takes about a week.
 
 <p>
 Occasionally, a serious problem is found and a small "patch" release
-must be made against a regular maintenance release.  Patch are distinct
+must be made against a regular maintenance release.  Patches are distinct
 from maintenance releases in that the number of lines of code changed
-from the previous release is very small.  Every effort is made to avoid
+from the previous release is small.  Every effort is made to avoid
 patch releases by making sure that maintenance releases are bug free.
 
 </p><p>
@@ -329,12 +323,13 @@ Testing objectives include:
 <li> 100% MC/DC in an as-delivered configuration
 </li><li> Testing of both source code and object code
 </li><li> Testing on multiple platforms and with multiple compilers
+</li><li> Fuzz testing
 </li><li> Code change inspection
 </li><li> Dynamic and static analysis of the code
 </li></ul>
 
 <p>The testing process is controlled by the
-<a href="testing.html#cklist">release testing checklists</a>.  The checklists succinctly summary
+<a href="testing.html#cklist">release testing checklists</a>.  The checklists succinctly summarize
 all steps necessary to fully validate SQLite, and they record when
 and by whom each validation step was performed.
 
@@ -372,11 +367,11 @@ backups.
 </p><p>
 In addition to the official repositories, the developers typically
 keep complete clones of all software on their personal machines.
-And there are uncountable clones scattered about the internet.
+And there are other clones scattered about the internet.
 
 </p><h2 id="repositories"><span>5.3. </span>Repositories</h2>
 
-<p>The SQLite code is broken up into multiple repositories, each described
+<p>The SQLite source is broken up into multiple repositories, each described
 in a separate section below.
 
 </p><h3 id="sqlite_source_code"><span>5.3.1. </span>SQLite Source Code</h3>
@@ -384,18 +379,16 @@ in a separate section below.
 <p>The SQLite source code and the <a href="testing.html#tcl">TCL test suite</a> are stored together
 in a single repository.  This one repository is all that is required to
 build the SQLite.  The source repository is public and is
-readable by anonymous passers by on the internet.
+readable by anonymous passersby on the internet.
 
 </p><ul>
 <li> Primary location: <a href="https://www.sqlite.org/src">https://www.sqlite.org/src</a>
 </li><li> Backup A: <a href="https://www2.sqlite.org/src">https://www2.sqlite.org/src</a>
-</li><li> Backup B: <a href="https://www3.sqlite.org/src">https://www3.sqlite.org/src</a>
+</li><li> Backup B: <a href="https://www3.sqlite.org/cgi/src">https://www3.sqlite.org/cgi/src</a>
+</li><li> GitHub mirror: <a href="https://github.com/sqlite/sqlite/">https://github.com/sqlite/sqlite/</a>
 </li></ul>
 
-<p>There is an unofficial and unsanctioned Git clone of this repository
-at <a href="https://github.com/mackyle/sqlite">https://github.com/mackyle/sqlite</a>.
-
-</p><h3 id="sqlite_documentation_sources"><span>5.3.2. </span>SQLite Documentation Sources</h3>
+<h3 id="sqlite_documentation_sources"><span>5.3.2. </span>SQLite Documentation Sources</h3>
 
 <p>The documentation sources include documentation text and images with the
 scripts and makefile needed to construct the SQLite website documentation.
@@ -406,14 +399,14 @@ source code.  The documentation sources repository is publicly readable.
 </p><p>The makefiles and scripts used to generate the documentation gather
 text from baseline documents in the documentation source repository.
 Additional text is extracted from comments in the SQLite source code.
-Requirements coverage information is extract from special comments in the
+Requirements coverage information is extracted from special comments in the
 <a href="testing.html#tcl">TCL test suite</a> which is part of the source repository, and from
-comments in the <a href="th3.html">TH3</a> test suite which is a separate private repository.
+comments in the <a href="th3.html">TH3</a> test suite which is in a separate private repository.
 
 </p><ul>
 <li> Primary location: <a href="https://www.sqlite.org/docsrc">https://www.sqlite.org/docsrc</a>
 </li><li> Backup A: <a href="https://www2.sqlite.org/docsrc">https://www2.sqlite.org/docsrc</a>
-</li><li> Backup B: <a href="https://www3.sqlite.org/docsrc">https://www3.sqlite.org/docsrc</a>
+</li><li> Backup B: <a href="https://www3.sqlite.org/cgi/docsrc">https://www3.sqlite.org/cgi/docsrc</a>
 </li></ul>
 
 <h3 id="sql_logic_test"><span>5.3.3. </span>SQL Logic Test</h3>
@@ -440,22 +433,27 @@ proprietary.  The TH3 code is only accessible to SQLite developers.
 
 </p><ul>
 <li> Primary location: <a href="https://www.sqlite.org/th3">https://www.sqlite.org/th3</a>
-</li><li> Backup A: <a href="https://www2.sqlite.org/th3">https://www2.sqlite.org/th3</a>
-</li><li> Backup B: <a href="https://www3.sqlite.org/th3">https://www3.sqlite.org/th3</a>
+</li><li> Backup A: <a href="https://www3.sqlite.org/cgi/th3">https://www3.sqlite.org/cgi/th3</a>
+</li><li> Additional backups on private servers
 </li></ul>
 
-<h3 id="test_harness_3_private_extensions"><span>5.3.5. </span>Test Harness #3 Private Extensions</h3>
+<h3 id="dbsqlfuzz"><span>5.3.5. </span>Dbsqlfuzz</h3>
 
 <p>
-At one point, <a href="th3.html">TH3</a> was sometimes licensed to third-parties.
-Such licensing no longer occurs.  However, back when it was
-occurring, some of the TH3 test cases contained information that
-was sensitive and could not be released even to licensees.  This
-sensitive information is stored in yet another repository.
+The dbsqlfuzz module is a 
+<a href="https://www.llvm.org/docs/LibFuzzer.html">libFuzzer</a>-based fuzzer
+for SQLite.  Dbsqlfuzz fuzzes both the SQL and the database file at
+the same time.  Dbsqlfuzz uses a customized mutator.
+
+</p><p>
+Dbsqlfuzz seems to work better at finding problems than any other
+fuzzer available.  For that reason, it is kept private.  We do not
+want hacker gaining access to this technology.
 
 </p><ul>
-<li> Primary location: <a href="https://www.sqlite.org/th3private">https://www.sqlite.org/th3private</a>
-</li><li> Backups on private servers
+<li> Primary location: <a href="https://www.sqlite.org/dbsqlfuzz">https://www.sqlite.org/dbsqlfuzz</a>
+</li><li> Backup A: <a href="https://www3.sqlite.org/cgi/dbsqlfuzz">https://www3.sqlite.org/cgi/dbsqlfuzz</a>
+</li><li> Additional backups on private servers
 </li></ul>
 
 <h2 id="software_verification_results"><span>5.4. </span>Software Verification Results</h2>
@@ -471,13 +469,70 @@ in its own Fossil repository at <a href="https://www.sqlite.org/checklistapp">ht
 
 </p><h1 id="software_requirements_standards_and_data"><span>6. </span>Software Requirements Standards And Data</h1>
 
-<p><i>TBD...</i>
+<p>In the SQLite project, the "requirements" are the project documentation.
+Special markup in the documentation text indentifies individual requirements.
+The requirement numbers are based on a cryptographic hash of normalized
+requirement text, so that it is impossible to change the requirement text
+without also changing the requirement number.
+
+</p><p>Documentation text (and hence requirement text) is taken from the
+SQLite Documentation source repository, described above, and also from
+comments in the implementation.  The makefiles to build the documentation
+are in the documentation source repository.
+
+</p><p>When the documentation is build, requirements are identified and labeled.
+The documentation build process also scans for test cases that verify
+each requirement and constructs a matrix showing which requirements have
+been testing and identifying the specific test cases that test those
+requirements.
 
 </p><h1 id="software_design_and_coding_standards"><span>7. </span>Software Design And Coding Standards</h1>
 
-<p><i>TBD...</i>
+<p>Objective coding standards for SQLite are minimal:
+
+</p><ul>
+<li> 2-space indentation
+</li><li> No lines over 80 characters in length
+</li><li> No tabs
+</li></ul>
+
+<p>All other design and coding rules are subjective.  The
+goal here is to make the software so that it is readable
+and maintainable through the year 2050.  To that end, we look
+for succinct yet useful comments (no boilerplate), carefully
+chosen variable names, and careful explanation of the meaning
+of each data structure and the role of each code block.
 
 </p><h1 id="problem_reports"><span>8. </span>Problem Reports</h1>
 
-<p><i>TBD...</i>
+<p>All problems are fixed expeditiously.  There are no lingering problems
+in the sQLite software.
+
+</p><p>The <a href="https://fossil-scm.org/">Fossil version control system</a> utilized by
+SQLite contains built-in support for tracking trouble-tickets.  This built-in
+ticket system is used to track and document many historical problems.
+
+</p><p>The <a href="https://fossil-scm.org/forum">SQLite Community Forum</a> is a place
+where anybody on the internet can go to ask questions about or report bugs
+against SQLite.  Bugs found by third-parties are often reported initially
+on the Forum.  Forum-reported bugs will sometimes be transferred to tickets,
+though recent practice as been to just deal with the bugs on the Forum.
+The Forum has an excellent full-text search feature, is mirrored to
+multiple machines, and is just as searchable and survivable as the ticket
+system, so it seems unnecessary to duplicate Forum-originated bug reports
+into the ticket system.  The public locations of the Forum are:
+
+</p><ul>
+<li> Primary location: <a href="https://www.sqlite.org/forum">https://www.sqlite.org/forum</a>
+</li><li> Backup A: <a href="https://www2.sqlite.org/forum">https://www2.sqlite.org/forum</a>
+</li><li> Backup B: <a href="https://www3.sqlite.org/cgi/forum">https://www3.sqlite.org/cgi/forum</a>
+</li></ul>
+
+<p>
+As with the source repositories, the Forum is also synced to various
+private machines.
+Note that because of the way Fossil works, the "backups" are more than just
+read-only backups.  They can also function as data inputs.  All content
+entered is synced to all repositories, regardless of which repository is
+used for insertion.
 </p>

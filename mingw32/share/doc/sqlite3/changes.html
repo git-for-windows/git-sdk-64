@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 
 
 <h1 align=center>Release History</h1>
@@ -105,6 +104,45 @@ http://www.sqlite.org/src/timeline?t=release</a>.
 See the <a href="chronology.html">chronology</a> a succinct listing of releases.
 </p>
 
+<a name="version_3_37_0"></a>
+<h3>2021-11-27 (3.37.0)</h3><p><ol class='lessindent'>
+<li> <a href="stricttables.html">STRICT tables</a> provide a prescriptive style of data type management,
+     for developers who prefer that kind of thing.
+<li> When adding columns that contain a
+     <a href="lang_createtable.html#ckconst">CHECK constraint</a> or a <a href="gencol.html">generated column</a> containing a <a href="lang_createtable.html#notnullconst">NOT NULL constraint</a>,
+     the <a href="lang_altertable.html#altertabaddcol">ALTER TABLE ADD COLUMN</a> now checks new constraints against
+     preexisting rows in the database and will only proceed if no constraints
+     are violated.
+<li> Added the <a href="pragma.html#pragma_table_list">PRAGMA table_list</a> statement.
+<li> <a href="cli.html">CLI</a> enhancements:
+     <ol type="a">
+     <li> Add the <a href="cli.html#dotconn">.connection</a> command, allowing the CLI to keep multiple database
+          connections open at the same time.
+     <li> Add the <a href="cli.html#safemode">--safe command-line option</a> that disables
+          <a href="cli.html#dotcmd">dot-commands</a> and SQL statements that might cause side-effects that extend
+          beyond the single database file named on the command-line.
+     <li> Performance improvements when reading SQL statements
+          that span many lines.
+     </ol>
+<li> Added the <a href="c3ref/autovacuum_pages.html">sqlite3_autovacuum_pages()</a> interface.
+<li> The <a href="c3ref/deserialize.html">sqlite3_deserialize()</a> does not and has never worked for the TEMP
+     database.  That limitation is now noted in the documentation.
+<li> The query planner now omits ORDER BY clauses on subqueries and views 
+     if removing those clauses does not change the semantics of the query.
+<li> The <a href="series.html">generate_series</a> table-valued function extension is modified so that
+     the first parameter ("START") is now required.  This is done as a way to
+     demonstrate how to write table-valued functions with required parameters.
+     The legacy behavior is available using the -DZERO_ARGUMENT_GENERATE_SERIES
+     compile-time option.
+<li> Added new <a href="c3ref/changes.html">sqlite3_changes64()</a> and <a href="c3ref/total_changes.html">sqlite3_total_changes64()</a> interfaces.
+<li> Added the <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_EXRESCODE</a> flag option to <a href="c3ref/open.html">sqlite3_open_v2()</a>.
+<li> Use less memory to hold the database schema.
+
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: 2021-11-27 14:13:22 bd41822c7424d393a30e92ff6cb254d25c26769889c1499a18a0b9339f5d6c8a
+<li>SHA3-256 for sqlite3.c: a202a950ab401cda052e81259e96d6e64ad91faaaaf5690d769f64c2ab962f27
+
+</ol></p>
 <a name="version_3_36_0"></a>
 <h3>2021-06-18 (3.36.0)</h3><p><ol class='lessindent'>
 <li> Improvement to the <a href="eqp.html">EXPLAIN QUERY PLAN</a> output to make it easier to
@@ -130,7 +168,6 @@ See the <a href="chronology.html">chronology</a> a succinct listing of releases.
 <li> The <a href="https://sqlite.org/src/file/ext/misc/regexp.c">REGEXP extension</a> is
      now included in <a href="cli.html">CLI</a> builds.
 
- 
 <p><b>Hashes:</b>
 <li>SQLITE_SOURCE_ID: 2021-06-18 18:36:39 5c9a6c06871cb9fe42814af9c039eb6da5427a6ec28f187af7ebfb62eafa66e5
 <li>SHA3-256 for sqlite3.c: 2a8e87aaa414ac2d45ace8eb74e710935423607a8de0fafcb36bbde5b952d157

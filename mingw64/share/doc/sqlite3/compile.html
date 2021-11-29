@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -112,7 +111,7 @@ Table Of Contents
 <div class="fancy-toc1"><a href="#_options_to_omit_features">9.  Options To Omit Features</a></div>
 <div class="fancy-toc1"><a href="#_analysis_and_debugging_options">10.  Analysis and Debugging Options</a></div>
 <div class="fancy-toc1"><a href="#_windows_specific_options">11.  Windows-Specific Options</a></div>
-<div class="fancy-toc1"><a href="#compiler_linkage_control">12. Compiler Linkage Control</a></div>
+<div class="fancy-toc1"><a href="#compiler_linkage_and_calling_convention_control">12. Compiler Linkage and Calling Convention Control</a></div>
 </div>
 </div>
 <script>
@@ -1141,6 +1140,9 @@ the available settings:</p>
   of two and uses a first-fit, buddy-allocator algorithm
   that provides strong guarantees against fragmentation and breakdown
   subject to certain operating constraints.
+</p></blockquote><a name="enable_normalize"></a>
+<p><b>SQLITE_ENABLE_NORMALIZE</b></p><blockquote><p>
+  This option includes the <a href="c3ref/expanded_sql.html">sqlite3_normalized_sql()</a> API.
 </p></blockquote><a name="enable_null_trim"></a>
 <p><b>SQLITE_ENABLE_NULL_TRIM</b></p><blockquote><p>
   This option enables an optimization that omits NULL columns at
@@ -1911,13 +1913,13 @@ The SQLITE_OMIT_* compile-time options are mostly unsupported.
   enabled.
 </p></blockquote>
 <a name="linkage"></a>
-<h1 id="compiler_linkage_control"><span>12. </span>Compiler Linkage Control</h1>
+<h1 id="compiler_linkage_and_calling_convention_control"><span>12. </span>Compiler Linkage and Calling Convention Control</h1>
 
-<p>The following macros specify
-interface linkage for certain kinds of SQLite builds.  The Makefiles will normally
+<p>The following macros specify interface details
+for certain kinds of SQLite builds.  The Makefiles will normally
 handle setting these macros automatically.  Application developers should
 not need to worry with these macros.  The following documentation about these 
-macros is included completeness.</p>
+macros is included for completeness.</p>
 
 <a name="api"></a>
 <p><b>SQLITE_API</b></p><blockquote><p>
@@ -1927,25 +1929,21 @@ macros is included completeness.</p>
 </p></blockquote><a name="apicall"></a>
 <p><b>SQLITE_APICALL</b></p><blockquote><p>
   This macro identifies the calling convention used by public interface
-  routines in SQLite.  This macro is normally defined to be nothing,
+  routines in SQLite which accept a fixed number of arguments.
+  This macro is normally defined to be nothing,
   though on Windows builds it can sometimes be set to "__cdecl" or "__stdcall".
   The "__cdecl" setting is the default, but "__stdcall" is used when SQLite
   is intended to be compiled as a Windows system library.
   <p>
   A single function declaration should contain no more than one of
-  the following:  <a href="compile.html#apicall">SQLITE_APICALL</a>, <a href="compile.html#callback">SQLITE_CALLBACK</a>, <a href="compile.html#cdecl">SQLITE_CDECL</a>,
-  or <a href="compile.html#syscall">SQLITE_SYSCALL</a>.
+  the following:  <a href="compile.html#apicall">SQLITE_APICALL</a>, <a href="compile.html#cdecl">SQLITE_CDECL</a>, or <a href="compile.html#sysapi">SQLITE_SYSAPI</a>.
 </p></blockquote><a name="callback"></a>
 <p><b>SQLITE_CALLBACK</b></p><blockquote><p>
-  This macro specifies the calling convention used by callback pointers
+  This macro specifies the calling convention used with callback pointers
   in SQLite.  This macro is normally defined to be nothing, though on Windows
   builds it can sometimes be set to "__cdecl" or "__stdcall".  The
   "__cdecl" setting is the default, but "__stdcall" is used when SQLite
   is intended to be compiled as a Windows system library.
-  <p>
-  A single function declaration should contain no more than one of
-  the following:  <a href="compile.html#apicall">SQLITE_APICALL</a>, <a href="compile.html#callback">SQLITE_CALLBACK</a>, <a href="compile.html#cdecl">SQLITE_CDECL</a>,
-  or <a href="compile.html#syscall">SQLITE_SYSCALL</a>.
 </p></blockquote><a name="cdecl"></a>
 <p><b>SQLITE_CDECL</b></p><blockquote><p>
   This macro specifies the calling convention used by varargs interface
@@ -1955,18 +1953,23 @@ macros is included completeness.</p>
   since the __stdcall calling convention does not support varargs functions.
   <p>
   A single function declaration should contain no more than one of
-  the following:  <a href="compile.html#apicall">SQLITE_APICALL</a>, <a href="compile.html#callback">SQLITE_CALLBACK</a>, <a href="compile.html#cdecl">SQLITE_CDECL</a>,
-  or <a href="compile.html#syscall">SQLITE_SYSCALL</a>.
-</p></blockquote><a name="syscall"></a>
-<p><b>SQLITE_SYSCALL</b></p><blockquote><p>
+  the following:  <a href="compile.html#apicall">SQLITE_APICALL</a>, <a href="compile.html#cdecl">SQLITE_CDECL</a>, or <a href="compile.html#sysapi">SQLITE_SYSAPI</a>.
+</p></blockquote><a name="extern"></a>
+<p><b>SQLITE_EXTERN</b></p><blockquote><p>
+  This macro specifies linkage for public interface variables in SQLite.
+  It should normally be allowed to default to "extern".
+</p></blockquote><a name="stdcall"></a>
+<p><b>SQLITE_STDCALL</b></p><blockquote><p>
+  This macro is no longer used and is now deprecated.
+</p></blockquote><a name="sysapi"></a>
+<p><b>SQLITE_SYSAPI</b></p><blockquote><p>
   This macro identifies the calling convention used by operating system
-  interfaces for target the platform for an SQLite build.
-  This macro is normally defined to be nothing, though on Windows
-  builds it can sometimes be set to "__stdcall".
+  interfaces for the target platform for an SQLite build.
+  This macro is normally defined to be nothing,
+  though on Windows builds it can sometimes be set to "__stdcall".
   <p>
   A single function declaration should contain no more than one of
-  the following:  <a href="compile.html#apicall">SQLITE_APICALL</a>, <a href="compile.html#callback">SQLITE_CALLBACK</a>, <a href="compile.html#cdecl">SQLITE_CDECL</a>,
-  or <a href="compile.html#syscall">SQLITE_SYSCALL</a>.
+  the following:  <a href="compile.html#apicall">SQLITE_APICALL</a>, <a href="compile.html#cdecl">SQLITE_CDECL</a>, or <a href="compile.html#sysapi">SQLITE_SYSAPI</a>.
 </p></blockquote><a name="tclapi"></a>
 <p><b>SQLITE_TCLAPI</b></p><blockquote><p>
   This macro specifies the calling convention used by the 
@@ -1977,10 +1980,10 @@ macros is included completeness.</p>
   though on Windows builds it can sometimes be set to "__cdecl".  This
   macro is used on TCL library interface routines which are always compiled
   as __cdecl, even on platforms that prefer to use __stdcall, so this
-  macro should not be set to __stdcall unless the platform as a custom
+  macro should not be set to __stdcall unless the platform has a custom
   TCL library build that supports __stdcall.
   <p>
   This macro may not be used in combination with any of <a href="compile.html#apicall">SQLITE_APICALL</a>,
-  <a href="compile.html#callback">SQLITE_CALLBACK</a>, <a href="compile.html#cdecl">SQLITE_CDECL</a>, or <a href="compile.html#syscall">SQLITE_SYSCALL</a>.
+  <a href="compile.html#callback">SQLITE_CALLBACK</a>, <a href="compile.html#cdecl">SQLITE_CDECL</a> or <a href="compile.html#sysapi">SQLITE_SYSAPI</a>.
 </p></blockquote>
 

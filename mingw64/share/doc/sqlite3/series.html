@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -136,7 +135,12 @@ parameters START, END, and STEP.  The first row of the table has
 a value of START.  Subsequent rows increase by STEP up to END.
 
 </p><p>Omitted parameters take on default values.  STEP defaults to 1.
-END defaults to 9223372036854775807.  START defaults to 0.
+END defaults to 9223372036854775807.  The START parameter is required
+as of version 3.37.0 (2021-11-27) and later and an error will
+be raised if START is omitted or has an self-referential or otherwise
+uncomputable value.  Older versions used a default of 0 for START.
+The legacy behavior can be obtained from recent code by compiling
+with -DZERO_ARGUMENT_GENERATE_SERIES.
 
 </p><h2 id="equivalent_recursive_common_table_expression"><span>1.1. </span>Equivalent Recursive Common Table Expression</h2>
 
@@ -166,7 +170,7 @@ and faster.
 
 <p>Generate the 20 random integer values:
 
-</p><div class="codeblock"><pre>SELECT random() FROM generate_series LIMIT 20;
+</p><div class="codeblock"><pre>SELECT random() FROM generate_series(1,20);
 </pre></div>
 
 <p>Find the name of every customer whose account number

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>The Advantages Of Flexible Typing</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+The Advantages Of Flexible Typing
+</div>
+<div class="fancy_toc">
+<a onclick="toggle_toc()">
+<span class="fancy_toc_mark" id="toc_mk">&#x25ba;</span>
+Table Of Contents
+</a>
+<div id="toc_sub"><div class="fancy-toc1"><a href="#introduction">1. Introduction</a></div>
+<div class="fancy-toc1"><a href="#about_flexible_typing">2. About Flexible Typing</a></div>
+<div class="fancy-toc1"><a href="#cases_where_flexible_typing_is_useful">3. Cases Where Flexible Typing Is Useful</a></div>
+<div class="fancy-toc2"><a href="#attribute_tables">3.1. Attribute tables</a></div>
+<div class="fancy-toc2"><a href="#the_value_column_output_from_the_json_tree_virtual_tables">3.2. The "value" column output from the json_tree virtual tables</a></div>
+<div class="fancy-toc2"><a href="#storage_for_dirty_data">3.3. Storage for dirty data</a></div>
+<div class="fancy-toc2"><a href="#dynamic_programming_languages">3.4. Dynamic programming languages</a></div>
+<div class="fancy-toc2"><a href="#data_typename_cross_compatibility">3.5. Data typename cross-compatibility</a></div>
+<div class="fancy-toc2"><a href="#repurposing_unused_or_disused_columns_in_legacy_databases">3.6. Repurposing unused or disused columns in legacy databases</a></div>
+<div class="fancy-toc1"><a href="#perceived_disadvantages_of_flexible_typing_with_rebuttals_">4. Perceived Disadvantages of Flexible Typing (With Rebuttals)</a></div>
+<div class="fancy-toc2"><a href="#we_ve_never_done_it_that_way_before">4.1. We've never done it that way before</a></div>
+<div class="fancy-toc2"><a href="#rigid_type_enforcement_helps_prevent_application_bugs">4.2. Rigid type enforcement helps prevent application bugs</a></div>
+<div class="fancy-toc2"><a href="#rigid_type_enforcement_prevents_data_pollution">4.3. Rigid type enforcement prevents data pollution</a></div>
+<div class="fancy-toc2"><a href="#other_sql_database_engines_don_t_work_this_way">4.4. Other SQL database engines don't work this way</a></div>
+<div class="fancy-toc1"><a href="#if_you_insist_on_rigid_type_enforcement_">5. If You Insist On Rigid Type Enforcement...</a></div>
+<div class="fancy-toc1"><a href="#embrace_freedom">6. Embrace Freedom</a></div>
+</div>
+</div>
+<script>
+function toggle_toc(){
+var sub = document.getElementById("toc_sub")
+var mk = document.getElementById("toc_mk")
+if( sub.style.display!="block" ){
+sub.style.display = "block";
+mk.innerHTML = "&#x25bc;";
+} else {
+sub.style.display = "none";
+mk.innerHTML = "&#x25ba;";
+}
+}
+</script>
+</div>
+
+
+
+
+<h1 id="introduction"><span>1. </span>Introduction</h1>
+
+<p>SQLite provides developers with the freedom to store content in
+any desired format, regardless of the declared datatype of the column.
+Some people find this feature troublesome.  Some developers are shocked
+to discover that it is possible to insert text into a column marked INTEGER.
+
+</p><p>This article advocates in favor of the flexible type rules
+in SQLite.
+
+</p><h1 id="about_flexible_typing"><span>2. </span>About Flexible Typing</h1>
+
+<p>Details regarding the flexible type system of SQLite are found
+in the separate <a href="datatype3.html">Datatypes In SQLite</a> document.  Here is a quick
+summary:
+
+</p><ul>
+<li><p> Datatype names on column definitions are optional.  A column definition
+        can consist of just the column name and nothing else.
+</p></li><li><p> When datatype names are provided, they can be just about any text.
+        SQLite attempts to deduce the preferred datatype for the column based
+        on the datatype name in the column definition, but that preferred
+        datatype is advisory, not mandatory.  The preferred datatype is
+        call the "column affinity".
+</p></li><li><p> An attempt is made to transform incoming data into the preferred
+        datatype of the column.  (All SQL database engines do this, not
+        just SQLite.)  If this transformation is successful, all is well.
+        But if unsuccessful, instead of raising an error, SQLite just stores
+        the content using its original datatype.
+</p></li><li><p> The above can lead to situations that advocates of rigid typing
+        find incommodious:
+        </p><center><table border="1" cellpadding="5">
+        <tr><th>Column Datatype</th><th>Types Allowed In That Column
+        </th></tr><tr><td>INTEGER</td><td>INTEGER, REAL, TEXT, BLOB
+        </td></tr><tr><td>REAL</td><td>REAL, TEXT, BLOB
+        </td></tr><tr><td>TEXT</td><td>TEXT, BLOB
+        </td></tr><tr><td>BLOB</td><td>INTEGER, REAL, TEXT, BLOB
+        </td></tr></table></center>
+</li><li><p> Note that an INTEGER or REAL value will never end up being stored
+        in a TEXT column, since an INTEGER or REAL value can and always will
+        be converted into its equivalent TEXT representation.  Similarly,
+        and INTEGER will never be stored in a REAL column because it will
+        always be converted into a REAL.  But TEXT does not always look like
+        and INTEGER or REAL value and so cannot always be converted.  And a
+        BLOB cannot be converted into anything and nothing else can be
+        converted into a BLOB.
+</p></li></ul>
+
+
+<h1 id="cases_where_flexible_typing_is_useful"><span>3. </span>Cases Where Flexible Typing Is Useful</h1>
+
+<p>Some readers, upon first encountering flexible typing in SQLite, ask
+themselves "how could this ever be useful?"  Here is an
+attempt to answer that question:
+
+</p><h2 id="attribute_tables"><span>3.1. </span>Attribute tables</h2>
+
+<p> Many applications, especially those that use SQLite as an
+<a href="appfileformat.html">application file format</a>, need a place to store miscellaneous attributes
+such as thumbnail images (as BLOB values), short pieces of text (such
+as the user's name), as well as numeric, date, and JSON values.  It is
+convenient to create a single table to handle this storage:
+
+</p><div class="codeblock"><pre>CREATE TABLE attribute(name TEXT PRIMARY KEY, value) WITHOUT ROWID;
+</pre></div>
+
+<p>Without flexible typing, such a table would need to be more complex,
+with separate columns for each possible type of data.  Flexible typing
+of the "value" column makes the table conceptually simpler, more
+space-efficient, and easier to access and update.
+
+</p><p>In the <a href="https://fossil-scm.org/">Fossil version control system</a>, each
+repository has a CONFIG table that is used to store all kinds of settings
+with every possible datatype.  The user-specific configuration file
+for Fossil (the ~/.fossil file) is a separate SQLite database that contains
+a single attribute table hold the user-specific state across all
+repositories.
+
+</p><p> Some applications use an SQLite database as a pure key-value store
+The database schema contains a single table that looks something like this:
+
+</p><div class="codeblock"><pre>CREATE TABLE storage(name TEXT PRIMARY KEY, value ANYTHING);
+</pre></div>
+
+<h2 id="the_value_column_output_from_the_json_tree_virtual_tables"><span>3.2. </span>The "value" column output from the json_tree virtual tables</h2>
+
+<p>The <a href="json1.html#jtree">json_tree</a> and <a href="json1.html#jeach">json_each</a> table-valued functions that are
+built into SQLite both have a "value" column that can hold values of
+type INTEGER, REAL, or TEXT depending on the type of the corresponding
+JSON field.  For example:
+
+</p><div class="codeblock"><pre>SELECT typeof(value) FROM json_each('{"a":1,"b":2.5,"c":"hello"}');
+</pre></div>
+
+<p>The query above returns three rows of one column with values
+"integer", "real", and "text", respectively.
+
+</p><h2 id="storage_for_dirty_data"><span>3.3. </span>Storage for dirty data</h2>
+
+<p> Analysts sometimes encounter CSV files where some columns contain
+a mixture of integer, real, and text data.  CSV file that are obtained
+from Excel spreadsheet exports commonly have this trait, for example.
+When importing such "dirty data" into an SQL database, it is convenient
+to have flexible columns to import into.
+
+</p><p> Dirty data is not restricted to CSV files coming out of Excel, of
+course.  There are many data sources in which a single field might
+contain a mix of types.  For example, a data column might the number
+of seconds since 1970 sometimes, or as a text date string in other cases.
+It is desirable to clean up these inconsistent representations,
+but at the same time it is convenient to be able to store all the different
+representations in the same column of the intermediate database while the
+cleanup is underway.
+
+</p><h2 id="dynamic_programming_languages"><span>3.4. </span>Dynamic programming languages</h2>
+
+<p>SQLite began as a TCL extension that later escaped into the wild.
+TCL is a dynamic language in the sense that the programmer does not need
+to be aware of datatypes.  Under the hood, TCL keeps careful track of the
+datatype of every value, but to the developer and user of a TCL program,
+everything looks like a string.  Flexible typing is a natural fit for
+use with dynamic programming languages like TCL and others, since with
+a dynamic programming language, you can not always predict in advance what
+datatype a variable will hold.  So when you need to store the value of that
+variable into the database, having a database that is supports flexible
+typing makes storage much easier.
+
+</p><h2 id="data_typename_cross_compatibility"><span>3.5. </span>Data typename cross-compatibility</h2>
+
+<p>Every SQL database engine seems to have its own unique set of supported
+datatype names:
+
+</p><ul>
+<li> BIGINT
+</li><li> UNSIGNED SMALL INT
+</li><li> TEXT
+</li><li> VARCHAR
+</li><li> VARYING CHARACTER
+</li><li> NATIONAL VARYING CHARACTER
+</li><li> NVARCHAR
+</li><li> JSON
+</li><li> REAL
+</li><li> FLOAT
+</li><li> DOUBLE PRECISION
+</li><li> <i> ... and so forth ...</i>
+</li></ul>
+
+<p>The fact that SQLite will accept any of these names as a valid typename,
+and let you store any kind of content into the column, increases the chances
+that a script written to run on some other SQL database engine will also
+work in SQLite.
+
+</p><h2 id="repurposing_unused_or_disused_columns_in_legacy_databases"><span>3.6. </span>Repurposing unused or disused columns in legacy databases</h2>
+
+<p> Because an SQLite database file is a single file on disk, some
+applications use SQLite as an <a href="appfileformat.html">application file format</a>.  This means
+that a single instance of the application might, over the course of its
+life, talk to hundreds or thousands of separate databases, each in a separate
+file.  When such applications evolve over years, some columns in the
+underlying database will have their meanings altered subtly.  Or, it might
+be desirable to repurpose an existing column to serve two or more purposes.
+This is much easier to do if the column has a flexible datatype.
+
+</p><h1 id="perceived_disadvantages_of_flexible_typing_with_rebuttals_"><span>4. </span>Perceived Disadvantages of Flexible Typing (With Rebuttals)</h1>
+
+<p> The following perceived disadvantages of flexible typing were
+    gleaned and compiled from countless posts on Hacker News and
+    Reddit and similar forums where developers discuss these sorts of
+    things.  If you can think of other reasons why flexible typing
+    is a bad idea, please contact the SQLite developers or leave a
+    post on the <a href="https://sqlite.org/forum/forum">SQLite Forum</a> so
+    that your idea can be added to the list.
+
+
+</p><h2 id="we_ve_never_done_it_that_way_before"><span>4.1. </span>We've never done it that way before</h2>
+
+<p> Many skeptics of flexible typing simply express
+shock and disbelief, without offering any rationale for why they think
+flexible typing is a bad idea.  Without supporting arguments, one must
+assume their reason for not liking flexible typing is that it is different
+from what they are used to.
+
+</p><p> Presumably, many developers who are aghast at SQLite's flexible
+typing feel this way because they have just never encountered anything
+like it before.  All prior exposure to databases and especially SQL
+databases has involved rigid typing, and the readers mental model of
+SQL includes rigid typing as a fundamental feature.  Flexible typing
+upsets their world-view.
+
+</p><p> Yes, flexible typing is a new way of thinking about data in an
+SQL database.  But new is not necessary bad.  Sometimes, and I think
+especially in the case of flexible typing, innovation leads to improvement.
+
+</p><h2 id="rigid_type_enforcement_helps_prevent_application_bugs"><span>4.2. </span>Rigid type enforcement helps prevent application bugs</h2>
+
+<p> It has become a point of doctrine among many programmers that the
+best way to prevent application bugs is strict type enforcement.  But I
+find no evidence in support of this.
+
+</p><p> To be sure, strict type enforcement does help prevent some kinds of
+bugs in lower-level languages like C and C++ that present a model that is
+close to machine hardware.  But this does not seem to
+be the case for higher-abstraction languages in which all data is 
+passed around in a "Value" superclass of some kind which is subclassed
+for the various lower-level data types.  When everything is a Value
+object, specific datatypes cease to be important.
+
+</p><p> This technical note is being writing by the original author of SQLite.
+I having been writing TCL programs for 27 years.  TCL has no type enforcement
+whatsoever.  The "Value" class in TCL (called Tcl_Obj) can hold many
+different datatypes, but it presents the content to the program and to
+the application user as a string.  And I've had a lot of bugs in
+those TCL programs over the years.  But I do not recall a single instance
+where the bugs might have been caught by a rigid type system.  I have
+also written a lot of C code over a span of 35 years, not the
+least of which is SQLite itself.  I have found the type system in C
+to be very helpful at finding and preventing problems.  For the
+<a href="https://fossil-scm.org/">Fossil Version Control System</a>, which is written
+in C, I have even implemented supplemental static analysis programs that
+scan the Fossil source code prior to compilation, looking for problems
+that compilers miss.  This works well for compiled programs.
+
+</p><p> The SQL language model is a higher-level abstraction that C/C++.
+In SQLite, every data item is stored in memory as an "sqlite3_value" object.
+There are subclasses of this object for strings, integer, floating-point
+numbers, blobs, and other representations.  Everything is passed around
+inside the SQL language implemented by SQLite as "sqlite3_value" objects
+so the underlying datatype does not really matter.  I have never found
+rigid type enforcement to be helpful in languages like TCL and SQLite
+that have a single "Value" superclass used to represent any data element.
+Fossil makes extensive use of SQLite in its implementation.  There have
+been many bugs in Fossil over its 14-years history, but I cannot recall
+a single bug that might have been prevented by rigid type enforcement in
+the SQLite.  C-language bugs might have been caught by better type enforcement
+(which is why I wrote the supplemental source code scanners), but no
+SQL bugs.
+
+</p><p> Based on decades of experience, I reject the thesis that rigid
+type enforcement helps prevent application bugs.  I will accept and
+believe a slightly modified thesis:  Rigid type enforcement helps to
+prevent applications bugs <em>in languages that lack a single
+top-level "Value" superclass</em>.  But SQLite does have the
+single "sqlite3_value" superclass, so that proverb does not apply.
+
+</p><h2 id="rigid_type_enforcement_prevents_data_pollution"><span>4.3. </span>Rigid type enforcement prevents data pollution</h2>
+
+<p> Some people contend that if you have rigorous constraints on the
+schema, and especially strict enforcement of column datatypes, this
+will help prevent incorrect data from being added to the database.
+This is not true.  It is true that type enforcement might help prevent
+<em>egregiously</em> incorrect data from getting into the system.
+But type enforcement is no help in prevent subtly incorrect data
+from being recorded.
+
+</p><p> So, for example, rigid type enforcement can successfully prevent
+the customer name (text) from being inserted into integer
+Customer.creditScore column.  On the other hand, if that mistake occurs,
+it is very easy to spot the problem and find all affected rows.
+But type enforcement is no help in preventing a bug where the customer
+family name and given name are reversed, since both are text fields.
+
+</p><p> (Aside:  Decades ago, I worked on a team where there was a woman
+named "Merritt Tracy".  "Merritt" was her given name and "Tracy" was
+her family name.  She reported that she spend an inordinate amount of
+time and energy trying to correct databases that had "Tracy" has her 
+given name and "Merritt" as her family name.)
+
+</p><p> By suppressing easy-to-detect errors and passing through only the
+hard-to-detect errors, rigid type enforcement can actually make it more
+difficult to find and fix bugs.  Data errors tend to cluster.  If you have
+20 different data sources, most of the data errors will usually come
+from just 2 or 3 of those sources.  The presence of egregious
+errors (such as text in an integer column) is a convenient early warning
+signal that something is amiss.  The source of the problem can be 
+tracked quickly and extra scrutiny applied to the source of the
+egregious errors, thus hopefully also fixing the subtle errors too.
+When egregious errors are suppressed, you lose an important signal
+that helps you to detect and fix the subtle errors.
+
+</p><p> Data errors are inevitable.  They will happen regardless of how
+much type checking is done.  Rigid type enforcement can catch only
+a small subset of those cases - the most obvious cases.  It does
+nothing to help find and fix the more subtle cases.  And, by suppressing
+the signal of which data sources are problematic, it can sometimes
+make the subtle errors more difficult to locate.
+
+</p><h2 id="other_sql_database_engines_don_t_work_this_way"><span>4.4. </span>Other SQL database engines don't work this way</h2>
+
+<p> Because SQLite is less restrictive and allows you to do more things,
+SQL scripts that work on other database engines will also usually work
+on SQLite, but script written initially for SQLite might not work
+on more restrictive database engines.  This can cause problems when
+developers user SQLite for prototyping and testing and then migrate their
+application to a more restrictive SQL engine for deployment.  If the
+application was (unintentionally) taking advantage of the flexible
+typing available in SQLite, then it will fail when migrated.
+
+</p><p> People use this problem to argue that SQLite should be more
+restrictive about datatypes.  But you could just as easily turn
+that argument around and say that other database engines should be
+more flexible with regard to datatypes.  The application was working
+correctly under SQLite, prior to be migrated, after all.  If rigid
+type enforcement is really all that useful, why did it break an
+application that was previously working?
+
+</p><h1 id="if_you_insist_on_rigid_type_enforcement_"><span>5. </span>If You Insist On Rigid Type Enforcement...</h1>
+
+<p>As of SQLite version 3.37.0 (2021-11-27), SQLite supports this
+development style using <a href="stricttables.html">STRICT tables</a>.
+
+</p><p>If you find a real-world case where STRICT tables prevented or
+would have prevented a bug in an application, please post a message to the
+<a href="https://sqlite.org/forum/forum">SQLite Forum</a> so that we can add your story
+to this document.
+
+</p><h1 id="embrace_freedom"><span>6. </span>Embrace Freedom</h1>
+
+<p>If flexible typing in an SQL database is a new concept to you,
+I encourage you to give it a try.  It probably will not cause you
+any problems and it might make your program simpler and easier to
+write and maintain.  I think that even if you are skeptical at first,
+if you will just give flexible typing a try, you will eventually
+come to realize that it is a better approach and will start
+encouraging other database vendors to support at least an ANY
+datatype if not complete SQLite-style type flexibility.
+
+</p><p>Most of the time, flexible typing does not matter because a column
+stores a single well-defined type.  But occasionally you will run
+across situations where having a flexible type system makes the
+solution to your problem cleaner and easier.
+</p>

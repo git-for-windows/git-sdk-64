@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
@@ -151,15 +150,10 @@ multi-thread.
 </p>
 
 <p>
-The return value of the <a href="c3ref/threadsafe.html">sqlite3_threadsafe()</a> interface is determined
-by the compile-time threading mode selection.  If single-thread mode
-is selected at compile-time, then <a href="c3ref/threadsafe.html">sqlite3_threadsafe()</a> returns false.
-If either the multi-thread or serialized modes are selected, then
-<a href="c3ref/threadsafe.html">sqlite3_threadsafe()</a> returns true.  The <a href="c3ref/threadsafe.html">sqlite3_threadsafe()</a>
-interface predates the multi-thread mode and start-time and run-time
-mode selection and so is unable to distinguish
-between multi-thread and serialized mode nor is it able to report start-time
-or run-time mode changes.
+The return value of the <a href="c3ref/threadsafe.html">sqlite3_threadsafe()</a> interface is the value
+of SQLITE_THREADSAFE set at compile-time. It does not reflect changes
+to the threading mode made at runtime via the <a href="c3ref/config.html">sqlite3_config()</a>
+interface or by flags given as the third argument to <a href="c3ref/open.html">sqlite3_open_v2()</a>.
 </p>
 
 <p>

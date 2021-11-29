@@ -90,7 +90,6 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-</div>
 <!-- keywords: sqlite3_expanded_sql sqlite3_normalized_sql sqlite3_sql -->
 <div class=nosearch>
 <a href="intro.html"><h2>SQLite C Interface</h2></a>
@@ -99,7 +98,9 @@ return false;
 <blockquote><pre>
 const char *sqlite3_sql(sqlite3_stmt *pStmt);
 char *sqlite3_expanded_sql(sqlite3_stmt *pStmt);
+#ifdef SQLITE_ENABLE_NORMALIZE
 const char *sqlite3_normalized_sql(sqlite3_stmt *pStmt);
+#endif
 </pre></blockquote>
 <p>
 The sqlite3_sql(P) interface returns a pointer to a copy of the UTF-8
@@ -133,8 +134,11 @@ option causes sqlite3_expanded_sql() to always return NULL.</p>
 are managed by SQLite and are automatically freed when the prepared
 statement is finalized.
 The string returned by sqlite3_expanded_sql(P), on the other hand,
-is obtained from <a href="../c3ref/free.html">sqlite3_malloc()</a> and must be free by the application
-by passing it to <a href="../c3ref/free.html">sqlite3_free()</a>.
+is obtained from <a href="../c3ref/free.html">sqlite3_malloc()</a> and must be freed by the application
+by passing it to <a href="../c3ref/free.html">sqlite3_free()</a>.</p>
+
+<p>The sqlite3_normalized_sql() interface is only available if
+the <a href="../compile.html#enable_normalize">SQLITE_ENABLE_NORMALIZE</a> compile-time option is defined.
 </p><p>See also lists of
   <a href="objlist.html">Objects</a>,
   <a href="constlist.html">Constants</a>, and
