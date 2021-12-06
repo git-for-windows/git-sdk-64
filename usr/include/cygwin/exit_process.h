@@ -6,8 +6,7 @@
  * possible.
  *
  * If appropriate, we will attempt to emulate a console Ctrl event for the
- * process and its (transitive) children. Otherwise we will fall back to
- * terminating the process(es).
+ * process. Otherwise we will fall back to terminating the process.
  *
  * As we do not want to export this function in the MSYS2 runtime, these
  * functions are marked as file-local.
@@ -15,6 +14,7 @@
  * The idea is to inject a thread into the given process that runs either
  * kernel32!CtrlRoutine() (i.e. the work horse of GenerateConsoleCtrlEvent())
  * for SIGINT (Ctrl+C) and SIGQUIT (Ctrl+Break), or ExitProcess() for SIGTERM.
+ * This is handled through the console helpers.
  *
  * For SIGKILL, we run TerminateProcess() without injecting anything, and this
  * is also the fall-back when the previous methods are unavailable.
@@ -23,8 +23,7 @@
  * this process will have ExitProcess() at the same address. The same holds
  * true for kernel32!CtrlRoutine(), of course, but it is an internal API
  * function, so we cannot look it up directly. Instead, we launch
- * cygwin-console-helper.exe to find out (which has been modified to offer the
- * option to print the address to stdout).
+ * getprocaddr.exe to find out and inject the remote thread.
  *
  * This function expects the process handle to have the access rights for
  * CreateRemoteThread(): PROCESS_CREATE_THREAD, PROCESS_QUERY_INFORMATION,
@@ -39,197 +38,187 @@
  * http://stanislavs.org/stopping-command-line-applications-programatically-with-ctrl-c-events-from-net/).
  */
 
+#include <math.h>
 #include <wchar.h>
 
 #ifndef __INSIDE_CYGWIN__
 /* To help debugging via kill.exe */
-#define small_printf(...) fprintf(stderr, __VA_ARGS__)
+#define small_printf(...) fprintf (stderr, __VA_ARGS__)
 #endif
 
-static LPTHREAD_START_ROUTINE
-get_address_from_cygwin_console_helper(int bitness, wchar_t *function_name)
-{
-  const char *name;
-  if (bitness == 32)
-    name = "/usr/libexec/getprocaddr32.exe";
-  else if (bitness == 64)
-    name = "/usr/libexec/getprocaddr64.exe";
-  else
-    return NULL; /* what?!? */
-  wchar_t wbuf[PATH_MAX];
-  if (cygwin_conv_path (CCP_POSIX_TO_WIN_W, name, wbuf, PATH_MAX) ||
-      GetFileAttributesW (wbuf) == INVALID_FILE_ATTRIBUTES)
-    return NULL;
+static BOOL get_wow (HANDLE process, BOOL &is_wow, USHORT &process_arch);
+static int exit_process_tree (HANDLE main_process, int exit_code);
 
-  HANDLE h[2];
-  SECURITY_ATTRIBUTES attrs;
-  attrs.nLength = sizeof(attrs);
-  attrs.bInheritHandle = TRUE;
-  attrs.lpSecurityDescriptor = NULL;
-  if (!CreatePipe(&h[0], &h[1], &attrs, 0))
-    return NULL;
+static BOOL
+kill_via_console_helper (HANDLE process, wchar_t *function_name, int exit_code,
+                         DWORD pid)
+{
+  BOOL is_wow;
+  USHORT process_arch;
+  if (!get_wow (process, is_wow, process_arch))
+    {
+      return FALSE;
+    }
+
+  const char *name;
+  switch (process_arch)
+  {
+    case IMAGE_FILE_MACHINE_I386:
+      name = "/usr/libexec/getprocaddr32.exe";
+      break;
+    case IMAGE_FILE_MACHINE_AMD64:
+      name = "/usr/libexec/getprocaddr64.exe";
+      break;
+    /* TODO: provide exes for these */
+    case IMAGE_FILE_MACHINE_ARMNT:
+      name = "/usr/libexec/getprocaddrarm32.exe";
+      break;
+    case IMAGE_FILE_MACHINE_ARM64:
+      name = "/usr/libexec/getprocaddrarm64.exe";
+      break;
+    default:
+      return FALSE; /* what?!? */
+  }
+  wchar_t wbuf[PATH_MAX];
+
+  if (cygwin_conv_path (CCP_POSIX_TO_WIN_W, name, wbuf, PATH_MAX)
+      || GetFileAttributesW (wbuf) == INVALID_FILE_ATTRIBUTES)
+    return FALSE;
 
   STARTUPINFOW si = {};
   PROCESS_INFORMATION pi;
-  size_t len = wcslen (wbuf) + wcslen (function_name) + 1;
+  size_t len = wcslen (wbuf) + 1 /* space */ + wcslen (function_name)
+               + 1 /* space */ + 3 /* exit code */ + 1 /* space */
+               + 10 /* process ID, i.e. DWORD */ + 1 /* NUL */;
   WCHAR cmd[len + 1];
   WCHAR title[] = L"cygwin-console-helper";
+  DWORD process_exit;
 
-  swprintf (cmd, len + 1, L"%S %S", wbuf, function_name);
+  swprintf (cmd, len + 1, L"%S %S %d %u", wbuf, function_name, exit_code,
+            pid);
 
   si.cb = sizeof (si);
   si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
   si.wShowWindow = SW_HIDE;
   si.lpTitle = title;
-  si.hStdInput = si.hStdError = INVALID_HANDLE_VALUE;
-  si.hStdOutput = h[1];
+  si.hStdInput = si.hStdError = si.hStdOutput = INVALID_HANDLE_VALUE;
 
-  /* Create a new hidden process.  Use the two event handles as
-     argv[1] and argv[2]. */
-  BOOL x = CreateProcessW (NULL, cmd, NULL, NULL, TRUE,
-			   CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP,
-			   NULL, NULL, &si, &pi);
-  CloseHandle(h[1]);
-  if (!x)
+  /* Create a new hidden process. */
+  if (!CreateProcessW (NULL, cmd, NULL, NULL, TRUE,
+                       CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP, NULL, NULL,
+                       &si, &pi))
     {
-      CloseHandle(h[0]);
-      return NULL;
+      return FALSE;
     }
+  else
+    {
+      /* Wait for the process to complete for 10 seconds */
+      WaitForSingleObject (pi.hProcess, 10000);
+    }
+
+  if (!GetExitCodeProcess (pi.hProcess, &process_exit))
+    process_exit = -1;
 
   CloseHandle (pi.hThread);
   CloseHandle (pi.hProcess);
 
-  char buffer[64];
-  DWORD offset = 0, count = 0;
-  while (offset < sizeof(buffer) - 1)
-    {
-      if (!ReadFile(h[0], buffer + offset, 1, &count, NULL))
-	{
-	  offset = 0;
-	  break;
-	}
-      if (!count || buffer[offset] == '\n')
-	break;
-      offset += count;
-    }
-  CloseHandle(h[0]);
-
-  buffer[offset] = '\0';
-
-  return (LPTHREAD_START_ROUTINE) strtoull(buffer, NULL, 16);
+  return process_exit == 0 ? TRUE : FALSE;
 }
 
 static int current_is_wow = -1;
 static int is_32_bit_os = -1;
 
-static BOOL get_wow(HANDLE process, BOOL& is_wow, int& bitness)
-{
-  if (is_32_bit_os == -1)
-    {
-      SYSTEM_INFO info;
+typedef BOOL (WINAPI * IsWow64Process2_t) (HANDLE, USHORT *, USHORT *);
+static bool wow64process2initialized = false;
+static IsWow64Process2_t pIsWow64Process2 /* = NULL */;
 
-      GetNativeSystemInfo(&info);
-      if (info.wProcessorArchitecture == 0)
-	is_32_bit_os = 1;
-      else if (info.wProcessorArchitecture == 9)
-	is_32_bit_os = 0;
+typedef BOOL (WINAPI * GetProcessInformation_t) (HANDLE,
+                                                 PROCESS_INFORMATION_CLASS,
+                                                 LPVOID, DWORD);
+static bool getprocessinfoinitialized = false;
+static GetProcessInformation_t pGetProcessInformation /* = NULL */;
+
+static BOOL
+get_wow (HANDLE process, BOOL &is_wow, USHORT &process_arch)
+{
+  USHORT native_arch = IMAGE_FILE_MACHINE_UNKNOWN;
+  if (!wow64process2initialized)
+    {
+      pIsWow64Process2 = (IsWow64Process2_t)
+              GetProcAddress (GetModuleHandle ("KERNEL32"),
+                              "IsWow64Process2");
+      MemoryBarrier ();
+      wow64process2initialized = true;
+    }
+  if (!pIsWow64Process2)
+    {
+      if (is_32_bit_os == -1)
+        {
+          SYSTEM_INFO info;
+
+          GetNativeSystemInfo (&info);
+          if (info.wProcessorArchitecture == 0)
+            is_32_bit_os = 1;
+          else if (info.wProcessorArchitecture == 9)
+            is_32_bit_os = 0;
+          else
+            is_32_bit_os = -2;
+        }
+
+      if (current_is_wow == -1
+          && !IsWow64Process (GetCurrentProcess (), &current_is_wow))
+        current_is_wow = -2;
+
+      if (is_32_bit_os == -2 || current_is_wow == -2)
+        return FALSE;
+
+      if (!IsWow64Process (process, &is_wow))
+        return FALSE;
+
+      process_arch = is_32_bit_os || is_wow ? IMAGE_FILE_MACHINE_I386 :
+                                      IMAGE_FILE_MACHINE_AMD64;
+      return TRUE;
+    }
+
+  if (!pIsWow64Process2 (process, &process_arch, &native_arch))
+    return FALSE;
+
+  /* The value will be IMAGE_FILE_MACHINE_UNKNOWN if the target process
+   * is not a WOW64 process
+   */
+  if (process_arch == IMAGE_FILE_MACHINE_UNKNOWN)
+    {
+      struct /* _PROCESS_MACHINE_INFORMATION */
+        {
+          /* 0x0000 */ USHORT ProcessMachine;
+          /* 0x0002 */ USHORT Res0;
+          /* 0x0004 */ DWORD MachineAttributes;
+        } /* size: 0x0008 */ process_machine_info;
+
+      is_wow = FALSE;
+      /* However, x86_64 on ARM64 claims not to be WOW64, so we have to
+       * dig harder... */
+      if (!getprocessinfoinitialized)
+        {
+          pGetProcessInformation = (GetProcessInformation_t)
+                  GetProcAddress (GetModuleHandle ("KERNEL32"),
+                                  "GetProcessInformation");
+          MemoryBarrier ();
+          getprocessinfoinitialized = true;
+        }
+      /*#define ProcessMachineTypeInfo 9*/
+      if (pGetProcessInformation &&
+          pGetProcessInformation (process, (PROCESS_INFORMATION_CLASS)9,
+            &process_machine_info, sizeof (process_machine_info)))
+        process_arch = process_machine_info.ProcessMachine;
       else
-	is_32_bit_os = -2;
+        process_arch = native_arch;
     }
-
-  if (current_is_wow == -1 &&
-      !IsWow64Process (GetCurrentProcess (), &current_is_wow))
-    current_is_wow = -2;
-
-  if (is_32_bit_os == -2 || current_is_wow == -2)
-    return FALSE;
-
-  if (!IsWow64Process (process, &is_wow))
-    return FALSE;
-
-  bitness = is_32_bit_os || is_wow ? 32 : 64;
+  else
+    {
+      is_wow = TRUE;
+    }
   return TRUE;
-}
-
-static LPTHREAD_START_ROUTINE
-get_exit_process_address_for_process(HANDLE process)
-{
-  BOOL is_wow;
-  int bitness;
-  if (!get_wow (process, is_wow, bitness))
-    return NULL; /* could not determine */
-
-  if (is_wow == current_is_wow)
-    {
-      static LPTHREAD_START_ROUTINE exit_process_address;
-      if (!exit_process_address)
-	{
-	  HINSTANCE kernel32 = GetModuleHandle ("kernel32");
-	  exit_process_address = (LPTHREAD_START_ROUTINE)
-	    GetProcAddress (kernel32, "ExitProcess");
-	}
-      return exit_process_address;
-    }
-
-  /* Trying to terminate a 32-bit process from 64-bit or vice versa */
-  static LPTHREAD_START_ROUTINE exit_process_address;
-  if (!exit_process_address)
-    {
-      exit_process_address =
-	get_address_from_cygwin_console_helper(bitness, L"ExitProcess");
-    }
-  return exit_process_address;
-}
-
-static LPTHREAD_START_ROUTINE
-get_ctrl_routine_address_for_process(HANDLE process)
-{
-  BOOL is_wow;
-  int bitness;
-  if (!get_wow (process, is_wow, bitness))
-    return NULL; /* could not determine */
-
-  if (bitness == 64)
-    {
-      static LPTHREAD_START_ROUTINE ctrl_routine_address;
-      if (!ctrl_routine_address)
-	ctrl_routine_address =
-	  get_address_from_cygwin_console_helper(64, L"CtrlRoutine");
-      return ctrl_routine_address;
-    }
-
-  static LPTHREAD_START_ROUTINE ctrl_routine_address;
-  if (!ctrl_routine_address)
-    {
-      ctrl_routine_address =
-	get_address_from_cygwin_console_helper(32, L"CtrlRoutine");
-    }
-  return ctrl_routine_address;
-}
-
-static int
-inject_remote_thread_into_process(HANDLE process, LPTHREAD_START_ROUTINE address, int exit_code)
-{
-  int res = -1;
-
-  if (!address)
-    return res;
-
-  DWORD thread_id;
-  HANDLE thread = CreateRemoteThread (process, NULL, 1024 * 1024, address,
-				      (PVOID) exit_code, 0, &thread_id);
-  if (thread)
-    {
-      /*
-      * Wait up to 10 seconds (arbitrary constant) for the thread to finish;
-      * After that grace period, fall back to terminating non-gently.
-      */
-      if (WaitForSingleObject (thread, 10000) == WAIT_OBJECT_0)
-          res = 0;
-      CloseHandle (thread);
-    }
-
-  return res;
 }
 
 /**
@@ -240,32 +229,32 @@ inject_remote_thread_into_process(HANDLE process, LPTHREAD_START_ROUTINE address
  * .lock files, terminating spawned processes (if any), etc).
  */
 static int
-exit_one_process(HANDLE process, int exit_code)
+exit_process (HANDLE process, int exit_code)
 {
   LPTHREAD_START_ROUTINE address = NULL;
+  DWORD pid = GetProcessId (process), code;
   int signo = exit_code & 0x7f;
-
   switch (signo)
     {
-      case SIGINT:
-      case SIGQUIT:
-	address = get_ctrl_routine_address_for_process(process);
-	if (address &&
-	    !inject_remote_thread_into_process(process, address,
-					       signo == SIGINT ?
-					       CTRL_C_EVENT : CTRL_BREAK_EVENT))
-	  return 0;
-	/* fall-through */
-      case SIGTERM:
-	address = get_exit_process_address_for_process(process);
-	if (address && !inject_remote_thread_into_process(process, address, exit_code))
-	  return 0;
-	break;
-      default:
-	break;
+    case SIGINT:
+    case SIGQUIT:
+      /* We are not going to kill them but simply say that Ctrl+C
+      is pressed. If the processes want they can exit or else
+      just wait.*/
+      if (kill_via_console_helper (
+              process, L"CtrlRoutine",
+              signo == SIGINT ? CTRL_C_EVENT : CTRL_BREAK_EVENT, pid))
+        return 0;
+      /* fall-through */
+    case SIGTERM:
+      if (kill_via_console_helper (process, L"ExitProcess", exit_code, pid))
+        return 0;
+      break;
+    default:
+      break;
     }
 
-  return int(TerminateProcess (process, exit_code));
+  return int (TerminateProcess (process, exit_code));
 }
 
 #include <tlhelp32.h>
@@ -274,19 +263,19 @@ exit_one_process(HANDLE process, int exit_code)
 /**
  * Terminates the process corresponding to the process ID and all of its
  * directly and indirectly spawned subprocesses using the
- * exit_one_process() function.
+ * TerminateProcess() function.
  */
 static int
-exit_process_tree(HANDLE main_process, int exit_code)
+exit_process_tree (HANDLE main_process, int exit_code)
 {
   HANDLE snapshot = CreateToolhelp32Snapshot (TH32CS_SNAPPROCESS, 0);
   PROCESSENTRY32 entry;
   DWORD pids[16384];
   int max_len = sizeof (pids) / sizeof (*pids), i, len, ret = 0;
-  pid_t pid = GetProcessId (main_process);
+  DWORD pid = GetProcessId (main_process);
   int signo = exit_code & 0x7f;
 
-  pids[0] = (DWORD) pid;
+  pids[0] = pid;
   len = 1;
 
   /*
@@ -309,27 +298,27 @@ exit_process_tree(HANDLE main_process, int exit_code)
       int orig_len = len;
       do
         {
-	  /**
-	   * Look for the parent process ID in the list of pids to kill, and if
-	   * found, add it to the list.
-	   */
+          /**
+           * Look for the parent process ID in the list of pids to kill, and if
+           * found, add it to the list.
+           */
           for (i = len - 1; i >= 0; i--)
             {
               if (pids[i] == entry.th32ProcessID)
                 break;
               if (pids[i] != entry.th32ParentProcessID)
-	        continue;
+                continue;
 
               /* We found a process to kill; is it an MSYS2 process? */
-	      pid_t cyg_pid = cygwin_winpid_to_pid(entry.th32ProcessID);
+              pid_t cyg_pid = cygwin_winpid_to_pid (entry.th32ProcessID);
               if (cyg_pid > -1)
                 {
                   if (cyg_pid == getpgid (cyg_pid))
-                    kill(cyg_pid, signo);
+                    kill (cyg_pid, signo);
                   break;
                 }
-	      pids[len++] = entry.th32ProcessID;
-	      break;
+              pids[len++] = entry.th32ProcessID;
+              break;
             }
         }
       while (len < max_len && Process32Next (snapshot, &entry));
@@ -338,30 +327,34 @@ exit_process_tree(HANDLE main_process, int exit_code)
         break;
     }
 
+  CloseHandle (snapshot);
+
   for (i = len - 1; i >= 0; i--)
     {
       HANDLE process;
 
       if (!i)
-	process = main_process;
+        process = main_process;
       else
         {
-	  process = OpenProcess (PROCESS_CREATE_THREAD |
-				 PROCESS_QUERY_INFORMATION |
-				 PROCESS_VM_OPERATION | PROCESS_VM_WRITE |
-				 PROCESS_VM_READ, FALSE, pids[i]);
-	  if (!process)
-	    process = OpenProcess (PROCESS_TERMINATE, FALSE, pids[i]);
-	}
+          process = OpenProcess (
+              PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION
+                  | PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ,
+              FALSE, pids[i]);
+          if (!process)
+            process = OpenProcess (
+                PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_TERMINATE,
+                FALSE, pids[i]);
+        }
       DWORD code;
 
-      if (process &&
-	  (!GetExitCodeProcess (process, &code) || code == STILL_ACTIVE))
+      if (process
+          && (!GetExitCodeProcess (process, &code) || code == STILL_ACTIVE))
         {
-          if (!exit_one_process (process, exit_code))
+          if (!exit_process (process, exit_code))
             ret = -1;
         }
-      if (process)
+      if (process && process != main_process)
         CloseHandle (process);
     }
 

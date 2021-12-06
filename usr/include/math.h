@@ -146,7 +146,17 @@ extern int isnan (double);
   #define __TMP_FLT_EVAL_METHOD
 #endif /* FLT_EVAL_METHOD */
 #if defined FLT_EVAL_METHOD
-  #if FLT_EVAL_METHOD == 0
+/* FLT_EVAL_METHOD == 16 has meaning as defined in ISO/IEC TS 18661-3,
+ * which provides non-compliant extensions to C and POSIX (by adding
+ * additional positive values for FLT_EVAL_METHOD).  It effectively has
+ * same meaning as the C99 and C11 definitions for value 0, while also
+ * serving as a flag that the _Float16 (float16_t) type exists.
+ *
+ * FLT_EVAL_METHOD could be any number of bits of supported floating point
+ * format (e.g. 32, 64, 128), but currently only AArch64 and few other targets
+ * might define that as 16.  */
+  #if (FLT_EVAL_METHOD == 0) \
+      || (FLT_EVAL_METHOD == 16)
     typedef float  float_t;
     typedef double double_t;
    #elif FLT_EVAL_METHOD == 1
@@ -201,14 +211,14 @@ extern int isnan (double);
 # define math_errhandling (_MATH_ERRHANDLING_ERRNO | _MATH_ERRHANDLING_ERREXCEPT)
 #endif
 
-extern int __isinff (float x);
-extern int __isinfd (double x);
-extern int __isnanf (float x);
-extern int __isnand (double x);
-extern int __fpclassifyf (float x);
-extern int __fpclassifyd (double x);
-extern int __signbitf (float x);
-extern int __signbitd (double x);
+extern int __isinff (float);
+extern int __isinfd (double);
+extern int __isnanf (float);
+extern int __isnand (double);
+extern int __fpclassifyf (float);
+extern int __fpclassifyd (double);
+extern int __signbitf (float);
+extern int __signbitd (double);
 
 /* Note: isinf and isnan were once functions in newlib that took double
  *       arguments.  C99 specifies that these names are reserved for macros
@@ -499,6 +509,7 @@ extern long double erfcl (long double);
 #else /* !_LDBL_EQ_DBL && !__CYGWIN__ */
 extern long double hypotl (long double, long double);
 extern long double sqrtl (long double);
+extern long double frexpl (long double, int *);
 #ifdef __i386__
 /* Other long double precision functions.  */
 extern _LONG_DOUBLE rintl (_LONG_DOUBLE);

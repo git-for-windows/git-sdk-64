@@ -120,6 +120,10 @@ int pthread_cond_broadcast (pthread_cond_t *);
 int pthread_cond_destroy (pthread_cond_t *);
 int pthread_cond_init (pthread_cond_t *, const pthread_condattr_t *);
 int pthread_cond_signal (pthread_cond_t *);
+#if __GNU_VISIBLE
+int pthread_cond_clockwait (pthread_cond_t *, pthread_mutex_t *,
+			    clockid_t, const struct timespec *);
+#endif
 int pthread_cond_timedwait (pthread_cond_t *,
 			    pthread_mutex_t *, const struct timespec *);
 int pthread_cond_wait (pthread_cond_t *, pthread_mutex_t *);
@@ -163,6 +167,10 @@ int pthread_mutex_getprioceiling (const pthread_mutex_t *, int *);
 int pthread_mutex_init (pthread_mutex_t *, const pthread_mutexattr_t *);
 int pthread_mutex_lock (pthread_mutex_t *);
 int pthread_mutex_setprioceiling (pthread_mutex_t *, int, int *);
+#if __GNU_VISIBLE
+int pthread_mutex_clocklock (pthread_mutex_t *, clockid_t,
+			     const struct timespec *);
+#endif
 int pthread_mutex_timedlock (pthread_mutex_t *, const struct timespec *);
 int pthread_mutex_trylock (pthread_mutex_t *);
 int pthread_mutex_unlock (pthread_mutex_t *);
@@ -188,22 +196,27 @@ int pthread_spin_unlock (pthread_spinlock_t *);
 
 /* RW Locks */
 #if __XSI_VISIBLE >= 500 || __POSIX_VISIBLE >= 200112 || __cplusplus >= 201402L
-int pthread_rwlock_destroy (pthread_rwlock_t *rwlock);
-int pthread_rwlock_init (pthread_rwlock_t *rwlock, const pthread_rwlockattr_t *attr);
-int pthread_rwlock_rdlock (pthread_rwlock_t *rwlock);
-int pthread_rwlock_timedrdlock (pthread_rwlock_t *rwlock,
-				const struct timespec *abstime);
-int pthread_rwlock_tryrdlock (pthread_rwlock_t *rwlock);
-int pthread_rwlock_wrlock (pthread_rwlock_t *rwlock);
-int pthread_rwlock_timedwrlock (pthread_rwlock_t *rwlock,
-				const struct timespec *abstime);
-int pthread_rwlock_trywrlock (pthread_rwlock_t *rwlock);
-int pthread_rwlock_unlock (pthread_rwlock_t *rwlock);
-int pthread_rwlockattr_init (pthread_rwlockattr_t *rwlockattr);
-int pthread_rwlockattr_getpshared (const pthread_rwlockattr_t *attr,
-				   int *pshared);
-int pthread_rwlockattr_setpshared (pthread_rwlockattr_t *attr, int pshared);
-int pthread_rwlockattr_destroy (pthread_rwlockattr_t *rwlockattr);
+int pthread_rwlock_destroy (pthread_rwlock_t *);
+int pthread_rwlock_init (pthread_rwlock_t *, const pthread_rwlockattr_t *);
+int pthread_rwlock_rdlock (pthread_rwlock_t *);
+#if __GNU_VISIBLE
+int pthread_rwlock_clockrdlock (pthread_rwlock_t *, clockid_t,
+				const struct timespec *);
+#endif
+int pthread_rwlock_timedrdlock (pthread_rwlock_t *, const struct timespec *);
+int pthread_rwlock_tryrdlock (pthread_rwlock_t *);
+int pthread_rwlock_wrlock (pthread_rwlock_t *);
+#if __GNU_VISIBLE
+int pthread_rwlock_clockwrlock (pthread_rwlock_t *, clockid_t,
+				const struct timespec *);
+#endif
+int pthread_rwlock_timedwrlock (pthread_rwlock_t *, const struct timespec *);
+int pthread_rwlock_trywrlock (pthread_rwlock_t *);
+int pthread_rwlock_unlock (pthread_rwlock_t *);
+int pthread_rwlockattr_init (pthread_rwlockattr_t *);
+int pthread_rwlockattr_getpshared (const pthread_rwlockattr_t *, int *);
+int pthread_rwlockattr_setpshared (pthread_rwlockattr_t *, int);
+int pthread_rwlockattr_destroy (pthread_rwlockattr_t *);
 #endif
 
 int pthread_once (pthread_once_t *, void (*)(void));
@@ -234,6 +247,8 @@ int pthread_setname_np (pthread_t, const char *) __attribute__((__nonnull__(2)))
 int pthread_sigqueue (pthread_t *, int, const union sigval);
 int pthread_timedjoin_np (pthread_t, void **, const struct timespec *);
 int pthread_tryjoin_np (pthread_t, void **);
+#endif
+#if __BSD_VISIBLE || __GNU_VISIBLE
 int pthread_yield (void);
 #endif
 #if __MISC_VISIBLE /* HP-UX, others? */

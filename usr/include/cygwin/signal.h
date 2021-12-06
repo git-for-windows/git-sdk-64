@@ -482,7 +482,6 @@ extern const char *sys_siglist[];
 extern const char __declspec(dllimport) *sys_sigabbrev[];
 extern const char __declspec(dllimport) *sys_siglist[];
 #endif
-void kill_process_tree(pid_t pid, int sig);
 
 #ifdef __cplusplus
 }

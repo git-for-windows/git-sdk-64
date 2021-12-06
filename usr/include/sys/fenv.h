@@ -156,12 +156,21 @@ extern const fenv_t *_fe_dfl_env;
    if _GNU_SOURCE is defined.  */
 extern const fenv_t *_fe_nomask_env;
 #define FE_NOMASK_ENV (_fe_nomask_env)
+
+/* These are GNU extensions defined in glibc.  */
+int feenableexcept (int __excepts);
+int fedisableexcept (int __excepts);
+int fegetexcept (void);
 #endif /* __GNU_VISIBLE */
 
-#ifdef __INSIDE_CYGWIN__
-/* This is Cygwin-custom, not from the standard, for use in the Cygwin CRT.  */
-extern void _feinitialise ();
+#ifdef __CYGWIN__
+
+#if __MISC_VISIBLE
+int fegetprec (void);
+int fesetprec (int __prec);
 #endif
+
+#endif /* __CYGWIN__ */
 
 #ifdef __cplusplus
 }
