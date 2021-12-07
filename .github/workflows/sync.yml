@@ -9,9 +9,6 @@ on:
         description: 'Public SSH key to use to debug failures'
         required: false
 
-permissions:
-  contents: write
-
 env:
   GIT_CONFIG_PARAMETERS: "'user.name=Git for Windows Build Agent' 'user.email=ci@git-for-windows.build' 'windows.sdk64.path=${{ github.workspace }}' 'windows.sdk32.path=' 'http.sslbackend=schannel' 'core.autocrlf=false' 'checkout.workers=16'"
   HOME: "${{ github.workspace }}\\home\\git-ci"
@@ -21,11 +18,13 @@ jobs:
   sync:
     if: github.event.repository.fork == false || github.event.inputs.debug_with_ssh_key != ''
     runs-on: windows-latest
+    environment: sync
     steps:
       - name: clone git-sdk-64
         uses: actions/checkout@v2
         with:
           persist-credentials: true
+          token: ${{ secrets.PUSH_TOKEN }}
       - name: use git-sdk-64's Bash
         run: "usr\\bin\\bash.exe -c 'cygpath -aw /usr/bin >>$GITHUB_PATH && cygpath -aw /mingw64/bin >>$GITHUB_PATH'"
       - name: clone build-extra
