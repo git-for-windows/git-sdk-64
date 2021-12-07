@@ -26,7 +26,7 @@ jobs:
           persist-credentials: true
           token: ${{ secrets.PUSH_TOKEN }}
       - name: use git-sdk-64's Bash
-        run: "usr\\bin\\bash.exe -c 'cygpath -aw /usr/bin >>$GITHUB_PATH && cygpath -aw /mingw64/bin >>$GITHUB_PATH'"
+        run: "usr\\bin\\bash.exe -lc 'cygpath -aw /usr/bin >>$GITHUB_PATH && cygpath -aw /mingw64/bin >>$GITHUB_PATH'"
       - name: clone build-extra
         uses: actions/checkout@v2
         with:
