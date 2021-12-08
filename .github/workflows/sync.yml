@@ -33,7 +33,7 @@ jobs:
           repository: git-for-windows/build-extra
       - name: please sync --only64-bit
         shell: bash
-        run: sh -x usr/src/build-extra/please.sh sync --only-64-bit
+        run: sh -x usr/src/build-extra/please.sh sync --force --only-64-bit
       - name: use git-sdk-64's Bash
         run: "usr\\bin\\bash.exe -lc 'cygpath -aw /usr/bin >>$GITHUB_PATH && cygpath -aw /mingw64/bin >>$GITHUB_PATH'"
       - name: commit & push 64-bit SDK
