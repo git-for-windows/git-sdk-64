@@ -10,14 +10,14 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Shugo Maeda".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-08-16"
+  s.date = "2021-12-08"
   s.description = "Support for the File Transfer Protocol.".freeze
   s.email = ["shugo@ruby-lang.org".freeze]
   s.files = ["net/ftp.rb".freeze]
   s.homepage = "https://github.com/ruby/net-ftp".freeze
   s.licenses = ["Ruby".freeze, "BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.3.0".freeze)
-  s.rubygems_version = "3.2.22".freeze
+  s.rubygems_version = "3.2.32".freeze
   s.summary = "Support for the File Transfer Protocol.".freeze
 
   if s.respond_to? :specification_version then

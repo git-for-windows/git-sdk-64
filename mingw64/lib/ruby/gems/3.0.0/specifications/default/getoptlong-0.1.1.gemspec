@@ -10,12 +10,12 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yukihiro Matsumoto".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-08-15"
+  s.date = "2021-12-08"
   s.description = "GetoptLong for Ruby".freeze
   s.email = ["matz@ruby-lang.org".freeze]
   s.files = ["getoptlong.rb".freeze]
   s.homepage = "https://github.com/ruby/getoptlong".freeze
   s.licenses = ["Ruby".freeze, "BSD-2-Clause".freeze]
-  s.rubygems_version = "3.2.22".freeze
+  s.rubygems_version = "3.2.32".freeze
   s.summary = "GetoptLong for Ruby".freeze
 end

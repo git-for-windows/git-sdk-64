@@ -10,7 +10,7 @@
 
 module RbConfig
   RUBY_VERSION.start_with?("3.0.") or
-    raise "ruby lib version (3.0.2) doesn't match executable version (#{RUBY_VERSION})"
+    raise "ruby lib version (3.0.3) doesn't match executable version (#{RUBY_VERSION})"
 
   # Ruby installed directory.
   TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/3.0.0/x64-mingw32")
@@ -21,8 +21,8 @@ module RbConfig
   CONFIG["DESTDIR"] = DESTDIR
   CONFIG["MAJOR"] = "3"
   CONFIG["MINOR"] = "0"
-  CONFIG["TEENY"] = "2"
-  CONFIG["PATCHLEVEL"] = "107"
+  CONFIG["TEENY"] = "3"
+  CONFIG["PATCHLEVEL"] = "157"
   CONFIG["INSTALL"] = '/usr/bin/install -c'
   CONFIG["EXEEXT"] = ".exe"
   CONFIG["prefix"] = (TOPDIR || DESTDIR + "/mingw64")
@@ -44,7 +44,7 @@ module RbConfig
   CONFIG["RUBY_SEARCH_PATH"] = ""
   CONFIG["UNIVERSAL_INTS"] = ""
   CONFIG["UNIVERSAL_ARCHNAMES"] = ""
-  CONFIG["configure_args"] = " '--prefix=/mingw64' '--build=x86_64-w64-mingw32' '--host=x86_64-w64-mingw32' '--target=x86_64-w64-mingw32' '--disable-werror' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'target_alias=x86_64-w64-mingw32' 'CC=gcc' 'CXX=g++' 'CXXFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -I/mingw64/include/pdcurses -ID:/a/_temp/msys/msys64/mingw64/include ' 'LDFLAGS=-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048 -ID:/a/_temp/msys/msys64/mingw64/include  -I/mingw64/include/pdcurses' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -I/mingw64/include/pdcurses -ID:/a/_temp/msys/msys64/mingw64/include '"
+  CONFIG["configure_args"] = " '--prefix=/mingw64' '--build=x86_64-w64-mingw32' '--host=x86_64-w64-mingw32' '--target=x86_64-w64-mingw32' '--disable-werror' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'target_alias=x86_64-w64-mingw32' 'CC=gcc' 'CXX=g++' 'CXXFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -I/mingw64/include/pdcurses -ID:/a/msys64/mingw64/include ' 'LDFLAGS=-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048 -ID:/a/msys64/mingw64/include  -I/mingw64/include/pdcurses' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -I/mingw64/include/pdcurses -ID:/a/msys64/mingw64/include '"
   CONFIG["CONFIGURE"] = "configure"
   CONFIG["vendorarchdir"] = "$(vendorlibdir)/$(sitearch)"
   CONFIG["vendorlibdir"] = "$(vendordir)/$(ruby_version)"
@@ -159,9 +159,9 @@ module RbConfig
   CONFIG["ASFLAGS"] = ""
   CONFIG["ARFLAGS"] = "rcD "
   CONFIG["try_header"] = ""
-  CONFIG["CC_VERSION_MESSAGE"] = "gcc.exe (Rev5, Built by MSYS2 project) 10.3.0\nCopyright (C) 2020 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  CONFIG["CC_VERSION_MESSAGE"] = "gcc.exe (Rev3, Built by MSYS2 project) 11.2.0\nCopyright (C) 2021 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
   CONFIG["CC_VERSION"] = "$(CC) --version"
-  CONFIG["MJIT_CC"] = "D:/a/_temp/msys/msys64/mingw64/bin/gcc.exe"
+  CONFIG["MJIT_CC"] = "D:/a/msys64/mingw64/bin/gcc.exe"
   CONFIG["CSRCFLAG"] = ""
   CONFIG["COUTFLAG"] = "-o "
   CONFIG["OUTFLAG"] = "-o "
@@ -169,11 +169,11 @@ module RbConfig
   CONFIG["GNU_LD"] = "yes"
   CONFIG["GCC"] = "yes"
   CONFIG["CPP"] = "$(CC) -E"
-  CONFIG["CFLAGS"] = "-march=x86-64 -mtune=generic -O2 -pipe -I/mingw64/include/pdcurses -ID:/a/_temp/msys/msys64/mingw64/include "
+  CONFIG["CFLAGS"] = "-march=x86-64 -mtune=generic -O2 -pipe -I/mingw64/include/pdcurses -ID:/a/msys64/mingw64/include "
   CONFIG["OBJEXT"] = "o"
-  CONFIG["CPPFLAGS"] = "-D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048 -ID:/a/_temp/msys/msys64/mingw64/include  -I/mingw64/include/pdcurses -D_WIN32_WINNT=0x0600 -D__MINGW_USE_VC2005_COMPAT $(DEFS) $(cppflags)"
+  CONFIG["CPPFLAGS"] = "-D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048 -ID:/a/msys64/mingw64/include  -I/mingw64/include/pdcurses -D_WIN32_WINNT=0x0600 -D__MINGW_USE_VC2005_COMPAT $(DEFS) $(cppflags)"
   CONFIG["LDFLAGS"] = "-L. -pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high"
-  CONFIG["CXXFLAGS"] = "-march=x86-64 -mtune=generic -O2 -pipe -I/mingw64/include/pdcurses -ID:/a/_temp/msys/msys64/mingw64/include "
+  CONFIG["CXXFLAGS"] = "-march=x86-64 -mtune=generic -O2 -pipe -I/mingw64/include/pdcurses -ID:/a/msys64/mingw64/include "
   CONFIG["STRIP"] = "strip -S -x"
   CONFIG["RANLIB"] = "x86_64-w64-mingw32-gcc-ranlib"
   CONFIG["OBJDUMP"] = "objdump"

@@ -10,12 +10,12 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Masaki Suketa".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-08-15"
+  s.date = "2021-12-08"
   s.description = "Provides an interface for OLE Automation in Ruby".freeze
   s.email = ["suke@ruby-lang.org".freeze]
   s.files = ["win32ole.rb".freeze, "win32ole.so".freeze, "win32ole/property.rb".freeze]
   s.homepage = "https://github.com/ruby/win32ole".freeze
   s.required_ruby_version = Gem::Requirement.new(">= 2.3.0".freeze)
-  s.rubygems_version = "3.2.22".freeze
+  s.rubygems_version = "3.2.32".freeze
   s.summary = "Provides an interface for OLE Automation in Ruby".freeze
 end
