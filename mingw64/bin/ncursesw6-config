@@ -1,7 +1,7 @@
 #!/bin/sh
-# $Id: ncurses-config.in,v 1.43 2020/02/02 23:34:34 tom Exp $
+# $Id: ncurses-config.in,v 1.50 2021/08/07 21:36:14 tom Exp $
 ##############################################################################
-# Copyright 2018-2019,2020 Thomas E. Dickey                                  #
+# Copyright 2018-2020,2021 Thomas E. Dickey                                  #
 # Copyright 2006-2015,2017 Free Software Foundation, Inc.                    #
 #                                                                            #
 # Permission is hereby granted, free of charge, to any person obtaining a    #
@@ -87,7 +87,7 @@ if [ xno = xno ]; then
 	esac
 fi
 
-LIBS="-lgnurx  -ltre -lintl -liconv"
+LIBS="-lsystre -ltre -lintl -liconv "
 if [ "ncurses" = "ncurses" ]; then
 	LIBS="-l${THIS} $LIBS"
 else
@@ -98,7 +98,7 @@ fi
 # are standard library directories (i.e., the linker is supposed to search
 # those directories).
 #
-# There is no portable way to find the list of standard library directories. 
+# There is no portable way to find the list of standard library directories.
 # Require a POSIX shell anyway, to keep this simple.
 lib_flags=
 for opt in -L$libdir -pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high  $LIBS
@@ -110,11 +110,47 @@ do
 	-Wl,-z,*) # ignore flags used to manipulate shared image
 		continue
 		;;
+	-Wl,--dynamic-linker*) # ignore ELF interpreter
+		continue
+		;;
 	-L*)
-		[ -d ${opt##-L} ] || continue
-		case ${opt##-L} in
+		lib_check=`echo "x$opt" | sed -e 's/^.-L//'`
+		[ -d "$lib_check" ] || continue
+		case "$lib_check" in
 		/mingw64/x86_64-w64-mingw32/lib|/mingw64/lib|/usr/lib) # skip standard libdir
-			continue
+			if [ "$lib_check" = "$libdir" ]
+			then
+				lib_first=yes
+				IFS_save="$IFS"
+				IFS='|'
+				LIBDIRS="/mingw64/x86_64-w64-mingw32/lib|/mingw64/lib|/usr/lib"
+				for lib_check in $LIBDIRS
+				do
+					if [ -d "$lib_check" ]
+					then
+						if [ "$lib_check" != "$libdir" ]
+						then
+							lib_first=no
+						fi
+						break
+					fi
+				done
+				IFS="$IFS_save"
+				[ $lib_first = yes ] && continue
+				found=no
+				for check in $lib_flags
+				do
+					if [ "x$check" = "x$opt" ]
+					then
+						found=yes
+						break
+					fi
+				done
+				[ $found = yes ] && continue
+				:
+			else
+				continue
+			fi
 			;;
 		$libdir) # skip standard libdir
 			continue
@@ -213,7 +249,7 @@ ENDECHO
 		;;
 	# identification
 	--version)
-		echo "6.2.20200212"
+		echo "6.3.20211021"
 		;;
 	--abi-version)
 		echo "6"

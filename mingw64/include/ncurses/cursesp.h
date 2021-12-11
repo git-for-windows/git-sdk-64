@@ -1,6 +1,7 @@
 // * This makes emacs happy -*-Mode: C++;-*-
+// vile:cppmode
 /****************************************************************************
- * Copyright 2019,2020 Thomas E. Dickey                                     *
+ * Copyright 2019-2020,2021 Thomas E. Dickey                                *
  * Copyright 1998-2012,2014 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
@@ -35,7 +36,7 @@
 #ifndef NCURSES_CURSESP_H_incl
 #define NCURSES_CURSESP_H_incl 1
 
-// $Id: cursesp.h,v 1.33 2020/02/02 23:34:34 tom Exp $
+// $Id: cursesp.h,v 1.35 2021/04/17 18:11:08 tom Exp $
 
 #include <ncursesw/cursesw.h>
 
@@ -43,7 +44,7 @@ extern "C" {
 #  include <ncursesw/panel.h>
 }
 
-class NCURSES_IMPEXP NCursesPanel
+class NCURSES_CXX_IMPEXP NCursesPanel
   : public NCursesWindow
 {
 protected:
@@ -243,7 +244,7 @@ public:
   // This creates an user panel of the requested size with associated
   // user data pointed to by p_UserData.
 
-  NCursesUserPanel(const T* p_UserData = STATIC_CAST(T*)(0)) : NCursesPanel()
+  explicit NCursesUserPanel(const T* p_UserData = STATIC_CAST(T*)(0)) : NCursesPanel()
   {
     if (p)
       set_user(const_cast<void *>(reinterpret_cast<const void*>(p_UserData)));
