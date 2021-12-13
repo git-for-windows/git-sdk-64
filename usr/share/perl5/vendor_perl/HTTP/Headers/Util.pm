@@ -3,7 +3,7 @@ package HTTP::Headers::Util;
 use strict;
 use warnings;
 
-our $VERSION = '6.33';
+our $VERSION = '6.35';
 
 use Exporter 5.57 'import';
 
@@ -50,7 +50,7 @@ sub _split_header_words
 		push(@res, [@cur]) if @cur;
 		@cur = ();
 	    }
-	    elsif (s/^\s*;// || s/^\s+//) {
+	    elsif (s/^\s*;// || s/^\s+// || s/^=//) {
 		# continue
 	    }
 	    else {
@@ -103,7 +103,7 @@ HTTP::Headers::Util - Header value parsing utility functions
 
 =head1 VERSION
 
-version 6.33
+version 6.35
 
 =head1 SYNOPSIS
 
