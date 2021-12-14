@@ -32,7 +32,7 @@
 #define HAVE_GETGROUPS 1
 
 /* Define to 1 if you have the <gmp.h> header file. */
-#define HAVE_GMP_H 1
+/* #undef HAVE_GMP_H */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -41,7 +41,7 @@
 #define HAVE_LIBDL 1
 
 /* Define to 1 if you have the `gmp' library (-lgmp). */
-#define HAVE_LIBGMP 1
+/* #undef HAVE_LIBGMP */
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
