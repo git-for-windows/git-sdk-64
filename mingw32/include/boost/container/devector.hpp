@@ -179,7 +179,7 @@ class devector
    typedef typename detail::allocation_guard<allocator_type> allocation_guard;
 
    // Random access pseudo iterator always yielding to the same result
-   typedef constant_iterator<T, difference_type> cvalue_iterator;
+   typedef constant_iterator<T> cvalue_iterator;
 
    #endif // ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
 
@@ -348,7 +348,7 @@ class devector
       )
       : m_(allocator, pointer(), 0u, 0u, 0u)
    {
-      const size_type n = boost::container::iterator_distance(first, last);
+      const size_type n = boost::container::iterator_udistance(first, last);
       m_.buffer = n ? allocate(n) : pointer();
       m_.front_idx = 0u;
       //this->allocate(n) will take care of overflows
@@ -703,7 +703,7 @@ class devector
          >::type * = 0)
       )
    {
-      const size_type n = boost::container::iterator_distance(first, last);
+      const size_type n = boost::container::iterator_udistance(first, last);
 
       if (capacity() >= n)
       {
@@ -943,7 +943,7 @@ class devector
   BOOST_CONTAINER_ATTRIBUTE_NODISCARD BOOST_CONTAINER_FORCEINLINE
    size_type size() const BOOST_NOEXCEPT
   {
-    return m_.back_idx - m_.front_idx;
+    return size_type(m_.back_idx - m_.front_idx);
   }
 
   /**
@@ -991,7 +991,7 @@ class devector
   BOOST_CONTAINER_ATTRIBUTE_NODISCARD BOOST_CONTAINER_FORCEINLINE
    size_type back_free_capacity() const BOOST_NOEXCEPT
   {
-    return m_.capacity - m_.back_idx;
+    return size_type(m_.capacity - m_.back_idx);
   }
 
   /** **Equivalent to**: `resize_back(sz)` */
@@ -1643,7 +1643,7 @@ class devector
       }
       else
       {
-         size_type new_elem_index = position - begin();
+         size_type new_elem_index = size_type(position - begin());
          return this->emplace_slow_path(new_elem_index, boost::forward<Args>(args)...);
       }
    }
@@ -1668,7 +1668,7 @@ class devector
          return begin();\
       }\
       else{\
-         size_type new_elem_index = position - begin();\
+         size_type new_elem_index = size_type(position - begin());\
          return this->emplace_slow_path(new_elem_index BOOST_MOVE_I##N BOOST_MOVE_FWD##N);\
       }\
    }\
@@ -1900,9 +1900,9 @@ class devector
    */
    iterator erase(iterator first, iterator last)
    {
-      size_type front_distance = last - begin();
-      size_type back_distance = end() - first;
-      size_type n = boost::container::iterator_distance(first, last);
+      size_type front_distance = size_type(last - begin());
+      size_type back_distance  = size_type(end() - first);
+      size_type n = boost::container::iterator_udistance(first, last);
 
       if (front_distance < back_distance)
       {
@@ -2152,7 +2152,7 @@ class devector
 
    BOOST_CONTAINER_FORCEINLINE size_type back_capacity() const
    {
-      return m_.capacity - m_.front_idx;
+      return size_type(m_.capacity - m_.front_idx);
    }
 
    size_type calculate_new_capacity(size_type requested_capacity)
@@ -2671,7 +2671,7 @@ class devector
       m_.buffer = new_buffer;
       //Safe cast, allocate() will handle stored_size_type overflow
       m_.set_capacity(new_capacity);
-      m_.set_back_idx(m_.back_idx - m_.front_idx + buffer_offset);
+      m_.set_back_idx(size_type(m_.back_idx - m_.front_idx) + buffer_offset);
       m_.set_front_idx(buffer_offset);
 
       BOOST_ASSERT(invariants_ok());
@@ -2680,7 +2680,7 @@ class devector
    template <typename ForwardIterator>
    iterator insert_range(const_iterator position, ForwardIterator first, ForwardIterator last)
    {
-      size_type n = boost::container::iterator_distance(first, last);
+      size_type n = boost::container::iterator_udistance(first, last);
 
       if (position == end() && back_free_capacity() >= n) {// fast path
          iterator r(this->end());
@@ -2701,8 +2701,8 @@ class devector
    template <typename ForwardIterator>
    iterator insert_range_slow_path(const_iterator position, ForwardIterator first, ForwardIterator last)
    {
-      size_type n = boost::container::iterator_distance(first, last);
-      size_type index = position - begin();
+      size_type n = boost::container::iterator_udistance(first, last);
+      size_type index = size_type(position - begin());
 
       if (front_free_capacity() + back_free_capacity() >= n) {
          // if we move enough, it can be done without reallocation
@@ -2834,7 +2834,7 @@ class devector
    template <typename ForwardIterator>
    void allocate_and_copy_range(ForwardIterator first, ForwardIterator last)
    {
-      size_type n = boost::container::iterator_distance(first, last);
+      size_type n = boost::container::iterator_udistance(first, last);
 
       pointer new_buffer = n ? allocate(n) : pointer();
       allocation_guard new_buffer_guard(new_buffer, n, get_allocator_ref());
@@ -2861,7 +2861,7 @@ class devector
    template <typename ForwardIterator>
    void overwrite_buffer_impl(ForwardIterator first, ForwardIterator last, dtl::true_)
    {
-      const size_type n = boost::container::iterator_distance(first, last);
+      const size_type n = boost::container::iterator_udistance(first, last);
 
       BOOST_ASSERT(capacity() >= n);
       boost::container::uninitialized_copy_alloc_n
@@ -2901,7 +2901,7 @@ class devector
       back_guard.release();
 
       m_.front_idx = 0;
-      m_.set_back_idx(pos - begin());
+      m_.set_back_idx(size_type(pos - begin()));
       return first;
    }
 

@@ -87,7 +87,7 @@ struct ct_rounded_size
 };
 
 // Gennaro Prota wrote this. Thanks!
-template <int p, int n = 4>
+template <std::size_t p, std::size_t n = 4>
 struct ct_max_pow2_less
 {
    static const std::size_t c = 2*n < p;

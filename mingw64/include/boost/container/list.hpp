@@ -444,7 +444,7 @@ class list
    //! <b>Complexity</b>: Linear to n.
    BOOST_CONTAINER_FORCEINLINE void assign(size_type n, const T& val)
    {
-      typedef constant_iterator<value_type, difference_type> cvalue_iterator;
+      typedef constant_iterator<value_type> cvalue_iterator;
       return this->assign(cvalue_iterator(val, n), cvalue_iterator());
    }
 
@@ -676,7 +676,7 @@ class list
    void resize(size_type new_size)
    {
       if(!priv_try_shrink(new_size)){
-         typedef value_init_construct_iterator<value_type, difference_type> value_init_iterator;
+         typedef value_init_construct_iterator<value_type> value_init_iterator;
          this->insert(this->cend(), value_init_iterator(new_size - this->size()), value_init_iterator());
       }
    }
@@ -911,7 +911,7 @@ class list
    iterator insert(const_iterator position, size_type n, const T& x)
    {
       //range check is done by insert
-      typedef constant_iterator<value_type, difference_type> cvalue_iterator;
+      typedef constant_iterator<value_type> cvalue_iterator;
       return this->insert(position, cvalue_iterator(x, n), cvalue_iterator());
    }
 
@@ -966,7 +966,7 @@ class list
       insertion_functor func(this->icont(), position.get());
       iterator before_p(position.get());
       --before_p;
-      this->allocate_many_and_construct(first, boost::container::iterator_distance(first, last), func);
+      this->allocate_many_and_construct(first, boost::container::iterator_udistance(first, last), func);
       return ++before_p;
    }
    #endif

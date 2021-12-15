@@ -125,8 +125,6 @@ template <class A,class B>
 struct
 deduce_scalar
     {
-    BOOST_QVM_STATIC_ASSERT(is_scalar<A>::value);
-    BOOST_QVM_STATIC_ASSERT(is_scalar<B>::value);
     typedef typename deduce_scalar_detail::deduce_scalar_impl<A,B>::type type;
     };
 

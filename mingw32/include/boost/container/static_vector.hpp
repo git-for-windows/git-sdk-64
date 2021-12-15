@@ -536,7 +536,7 @@ public:
     //!   Nothing.
     //!
     //! @par Complexity
-    //!   Linear O(N).
+    //!   Constant O(1).
     void reserve(size_type count)  BOOST_NOEXCEPT_OR_NOTHROW;
 
     //! @pre <tt>size() < capacity()</tt>

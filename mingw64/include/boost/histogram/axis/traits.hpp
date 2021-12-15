@@ -194,7 +194,9 @@ template <class Axis>
 using get_options = decltype(detail::traits_options<Axis>(detail::priority<2>{}));
 
 template <class Axis>
-using static_options [[deprecated("use get_options instead")]] = get_options<Axis>;
+using static_options [[deprecated("use get_options instead; "
+                                  "static_options will be removed in boost-1.80")]] =
+    get_options<Axis>;
 
 #else
 struct get_options;
@@ -206,15 +208,15 @@ struct get_options;
   an axis type and represents compile-time boolean which is true or false, depending on
   whether the axis is inclusive or not.
 
+  An inclusive axis has a bin for every possible input value. In other words, all
+  possible input values always end up in a valid cell and there is no need to keep track
+  of input tuples that need to be discarded. A histogram which consists entirely of
+  inclusive axes can be filled more efficiently, which can be a factor 2 faster.
+
   An axis with underflow and overflow bins is always inclusive, but an axis may be
   inclusive under other conditions. The meta-function checks for the method `constexpr
   static bool inclusive()`, and uses the result. If this method is not present, it uses
   get_options<Axis> and checks whether the underflow and overflow bits are present.
-
-  An inclusive axis has a bin for every possible input value. A histogram which consists
-  only of inclusive axes can be filled more efficiently, since input values always
-  end up in a valid cell and there is no need to keep track of input tuples that need to
-  be discarded.
 
   @tparam Axis axis type
 */
@@ -223,7 +225,10 @@ template <class Axis>
 using is_inclusive = decltype(detail::traits_is_inclusive<Axis>(detail::priority<1>{}));
 
 template <class Axis>
-using static_is_inclusive [[deprecated("use is_inclusive instead")]] = is_inclusive<Axis>;
+using static_is_inclusive
+    [[deprecated("use is_inclusive instead; "
+                 "static_is_inclusive will be removed in boost-1.80")]] =
+        is_inclusive<Axis>;
 
 #else
 struct is_inclusive;

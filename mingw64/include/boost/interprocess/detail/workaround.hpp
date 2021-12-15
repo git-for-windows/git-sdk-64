@@ -72,6 +72,13 @@
    #endif
 
    //////////////////////////////////////////////////////
+   //    BOOST_INTERPROCESS_POSIX_ROBUST_MUTEXES
+   //////////////////////////////////////////////////////
+   #if (_XOPEN_SOURCE >= 700 || _POSIX_C_SOURCE >= 200809L)
+      #define BOOST_INTERPROCESS_POSIX_ROBUST_MUTEXES
+   #endif
+
+   //////////////////////////////////////////////////////
    // _POSIX_SHARED_MEMORY_OBJECTS (POSIX.1b/POSIX.4)
    //////////////////////////////////////////////////////
    #if ( defined(_POSIX_SHARED_MEMORY_OBJECTS) && ((_POSIX_SHARED_MEMORY_OBJECTS + 0) > 0) ) ||\
@@ -159,7 +166,7 @@
    //////////////////////////////////////////////////////
    //posix_fallocate
    //////////////////////////////////////////////////////
-   #if (_XOPEN_SOURCE >= 600 || __POSIX_C_SOURCE >= 200112L)
+   #if (_XOPEN_SOURCE >= 600 || _POSIX_C_SOURCE >= 200112L)
    #define BOOST_INTERPROCESS_POSIX_FALLOCATE
    #endif
 
@@ -182,6 +189,18 @@
 // Timeout duration use if BOOST_INTERPROCESS_ENABLE_TIMEOUT_WHEN_LOCKING is set
 #ifndef BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS
    #define BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS 10000
+#endif
+
+
+// Max open or create tries with managed memory segments
+#ifndef BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_INITIALIZE_MAX_TRIES
+   #define BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_INITIALIZE_MAX_TRIES 20u
+#endif
+
+// Maximum timeout in seconds with open or create tries with managed memory segments
+// waiting the creator to initialize the shared memory
+#ifndef BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_INITIALIZE_TIMEOUT_SEC
+   #define BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_INITIALIZE_TIMEOUT_SEC 300u
 #endif
 
 //Other switches
@@ -237,5 +256,7 @@
 #   define BOOST_INTERPROCESS_HAS_REENTRANT_STD_FUNCTIONS
 #  endif
 #endif
+
+#include <boost/core/no_exceptions_support.hpp>
 
 #endif   //#ifndef BOOST_INTERPROCESS_DETAIL_WORKAROUND_HPP

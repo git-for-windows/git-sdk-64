@@ -253,8 +253,8 @@ class scoped_lock
    //!Notes: The destructor behavior ensures that the mutex lock is not leaked.*/
    ~scoped_lock()
    {
-      try{  if(m_locked && mp_mutex)   mp_mutex->unlock();  }
-      catch(...){}
+      BOOST_TRY{  if(m_locked && mp_mutex)   mp_mutex->unlock();  }
+      BOOST_CATCH(...){} BOOST_CATCH_END
    }
 
    //!Effects: If owns() before the call, then unlock() is called on mutex().
@@ -313,6 +313,38 @@ class scoped_lock
       if(!mp_mutex || m_locked)
          throw lock_exception();
       m_locked = mp_mutex->timed_lock(abs_time);
+      return m_locked;
+   }
+
+   //!Effects: If mutex() == 0 or if already locked, throws a lock_exception()
+   //!   exception. Calls try_lock_until(abs_time) on the referenced mutex.
+   //!Postconditions: owns() == the value returned from mutex()-> timed_lock(abs_time).
+   //!Notes: The scoped_lock changes from a state of not owning the mutex, to
+   //!   owning the mutex, but only if it can obtain ownership by the specified
+   //!   time. If the mutex_type does not support timed_lock (), this function
+   //!   will fail at compile time if instantiated, but otherwise have no effect.*/
+   template<class TimePoint>
+   bool try_lock_until(const TimePoint& abs_time)
+   {
+      if(!mp_mutex || m_locked)
+         throw lock_exception();
+      m_locked = mp_mutex->try_lock_until(abs_time);
+      return m_locked;
+   }
+
+   //!Effects: If mutex() == 0 or if already locked, throws a lock_exception()
+   //!   exception. Calls try_lock_until(abs_time) on the referenced mutex.
+   //!Postconditions: owns() == the value returned from mutex()-> timed_lock(abs_time).
+   //!Notes: The scoped_lock changes from a state of not owning the mutex, to
+   //!   owning the mutex, but only if it can obtain ownership by the specified
+   //!   time. If the mutex_type does not support timed_lock (), this function
+   //!   will fail at compile time if instantiated, but otherwise have no effect.*/
+   template<class Duration>
+   bool try_lock_for(const Duration& dur)
+   {
+      if(!mp_mutex || m_locked)
+         throw lock_exception();
+      m_locked = mp_mutex->try_lock_for(dur);
       return m_locked;
    }
 

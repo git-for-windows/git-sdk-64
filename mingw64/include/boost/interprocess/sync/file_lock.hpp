@@ -138,6 +138,16 @@ class file_lock
    template<class TimePoint>
    bool timed_lock(const TimePoint &abs_time);
 
+   //!Same as `timed_lock`, but this function is modeled after the
+   //!standard library interface.
+   template<class TimePoint> bool try_lock_until(const TimePoint &abs_time)
+   {  return this->timed_lock(abs_time);  }
+
+   //!Same as `timed_lock`, but this function is modeled after the
+   //!standard library interface.
+   template<class Duration>  bool try_lock_for(const Duration &dur)
+   {  return this->timed_lock(ipcdetail::duration_to_ustime(dur)); }
+
    //!Precondition: The thread must have exclusive ownership of the mutex.
    //!Effects: The calling thread releases the exclusive ownership of the mutex.
    //!Throws: An exception derived from interprocess_exception on error.
@@ -157,6 +167,11 @@ class file_lock
    //!   an exception could be thrown.
    void lock_sharable();
 
+   //!Same as `lock_sharable` but with a std-compatible interface
+   //! 
+   void lock_shared()
+   {  this->lock_sharable();  }
+
    //!Effects: The calling thread tries to acquire sharable ownership of the mutex
    //!   without waiting. If no other thread has exclusive ownership of the
    //!   mutex this succeeds.
@@ -164,6 +179,11 @@ class file_lock
    //!   has to wait, returns false.
    //!Throws: interprocess_exception on error.
    bool try_lock_sharable();
+
+   //!Same as `try_lock_sharable` but with a std-compatible interface
+   //! 
+   bool try_lock_shared()
+   {  return this->try_lock_sharable();  }
 
    //!Effects: The calling thread tries to acquire sharable ownership of the mutex
    //!   waiting if necessary until no other thread has exclusive ownership of
@@ -173,10 +193,26 @@ class file_lock
    template<class TimePoint>
    bool timed_lock_sharable(const TimePoint &abs_time);
 
+   //!Same as `timed_lock_sharable`, but this function is modeled after the
+   //!standard library interface.
+   template<class TimePoint> bool try_lock_shared_until(const TimePoint &abs_time)
+   {  return this->timed_lock_sharable(abs_time);  }
+
+   //!Same as `timed_lock_sharable`, but this function is modeled after the
+   //!standard library interface.
+   template<class Duration>  bool try_lock_shared_for(const Duration &dur)
+   {  return this->timed_lock_sharable(ipcdetail::duration_to_ustime(dur)); }
+
    //!Precondition: The thread must have sharable ownership of the mutex.
    //!Effects: The calling thread releases the sharable ownership of the mutex.
    //!Throws: An exception derived from interprocess_exception on error.
    void unlock_sharable();
+
+   //!Same as `unlock_sharable` but with a std-compatible interface
+   //! 
+   void unlock_shared()
+   {  this->unlock_sharable();  }
+
    #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
    private:
    file_handle_t m_file_hnd;

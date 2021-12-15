@@ -13,20 +13,19 @@
 # pragma warning( disable: 4521 4522 ) // multiple copy operators
 #endif
 
-#ifndef BOOST_MP11_HPP_INCLUDED
 #include <boost/mp11.hpp>
-#endif
+#include <boost/assert.hpp>
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
 #include <boost/cstdint.hpp>
 #include <cstddef>
 #include <type_traits>
 #include <exception>
-#include <cassert>
 #include <initializer_list>
 #include <utility>
 #include <functional> // std::hash
 #include <cstdint>
+#include <iosfwd>
 
 //
 
@@ -367,36 +366,49 @@ template<std::size_t I, class... T> constexpr variant_alternative_t<I, variant<T
 #endif
 }
 
-// detail::unsafe_get (for visit)
+// unsafe_get
 
-namespace detail
-{
+#if !defined(BOOST_NO_CXX14_CONSTEXPR)
+# define BOOST_VARIANT2_CX14_ASSERT(expr) BOOST_ASSERT(expr);
+#else
+# define BOOST_VARIANT2_CX14_ASSERT(expr)
+#endif
 
 template<std::size_t I, class... T> constexpr variant_alternative_t<I, variant<T...>>& unsafe_get(variant<T...>& v)
 {
     static_assert( I < sizeof...(T), "Index out of bounds" );
+
+    BOOST_VARIANT2_CX14_ASSERT( v.index() == I )
+
     return v._get_impl( mp11::mp_size_t<I>() );
 }
 
 template<std::size_t I, class... T> constexpr variant_alternative_t<I, variant<T...>>&& unsafe_get(variant<T...>&& v)
 {
     static_assert( I < sizeof...(T), "Index out of bounds" );
+
+    BOOST_VARIANT2_CX14_ASSERT( v.index() == I )
+
     return std::move( v._get_impl( mp11::mp_size_t<I>() ) );
 }
 
 template<std::size_t I, class... T> constexpr variant_alternative_t<I, variant<T...>> const& unsafe_get(variant<T...> const& v)
 {
     static_assert( I < sizeof...(T), "Index out of bounds" );
+
+    BOOST_VARIANT2_CX14_ASSERT( v.index() == I )
+
     return v._get_impl( mp11::mp_size_t<I>() );
 }
 
 template<std::size_t I, class... T> constexpr variant_alternative_t<I, variant<T...>> const&& unsafe_get(variant<T...> const&& v)
 {
     static_assert( I < sizeof...(T), "Index out of bounds" );
+
+    BOOST_VARIANT2_CX14_ASSERT( v.index() == I )
+
     return std::move( v._get_impl( mp11::mp_size_t<I>() ) );
 }
-
-} // namespace detail
 
 // get (type)
 
@@ -857,7 +869,7 @@ template<class... T> struct variant_base_impl<true, true, T...>
     {
         size_t const J = I+1;
 
-        assert( ix_ == J );
+        BOOST_ASSERT( ix_ == J );
 
         return st_.get( mp11::mp_size_t<J>() );
     }
@@ -865,7 +877,8 @@ template<class... T> struct variant_base_impl<true, true, T...>
     template<std::size_t I> constexpr mp11::mp_at_c<variant<T...>, I> const& _get_impl( mp11::mp_size_t<I> ) const noexcept
     {
         // size_t const J = I+1;
-        // assert( ix_ == I+1 );
+
+        BOOST_VARIANT2_CX14_ASSERT( ix_ == I+1 )
 
         return st_.get( mp11::mp_size_t<I+1>() );
     }
@@ -925,7 +938,7 @@ template<class... T> struct variant_base_impl<true, false, T...>
 
     template<std::size_t I> BOOST_CXX14_CONSTEXPR mp11::mp_at_c<variant<T...>, I>& _get_impl( mp11::mp_size_t<I> ) noexcept
     {
-        assert( index() == I );
+        BOOST_ASSERT( index() == I );
 
         size_t const J = I+1;
 
@@ -935,7 +948,8 @@ template<class... T> struct variant_base_impl<true, false, T...>
 
     template<std::size_t I> constexpr mp11::mp_at_c<variant<T...>, I> const& _get_impl( mp11::mp_size_t<I> ) const noexcept
     {
-        // assert( index() == I );
+        BOOST_VARIANT2_CX14_ASSERT( index() == I )
+
         // size_t const J = I+1;
         // constexpr mp_size_t<J> j{};
 
@@ -1013,7 +1027,7 @@ template<class... T> struct variant_base_impl<false, true, T...>
     {
         size_t const J = I+1;
 
-        assert( ix_ == J );
+        BOOST_ASSERT( ix_ == J );
 
         return st_.get( mp11::mp_size_t<J>() );
     }
@@ -1021,7 +1035,8 @@ template<class... T> struct variant_base_impl<false, true, T...>
     template<std::size_t I> constexpr mp11::mp_at_c<variant<T...>, I> const& _get_impl( mp11::mp_size_t<I> ) const noexcept
     {
         // size_t const J = I+1;
-        // assert( ix_ == J );
+
+        BOOST_VARIANT2_CX14_ASSERT( ix_ == I+1 )
 
         return st_.get( mp11::mp_size_t<I+1>() );
     }
@@ -1137,7 +1152,7 @@ template<class... T> struct variant_base_impl<false, false, T...>
 
     template<std::size_t I> BOOST_CXX14_CONSTEXPR mp11::mp_at_c<variant<T...>, I>& _get_impl( mp11::mp_size_t<I> ) noexcept
     {
-        assert( index() == I );
+        BOOST_ASSERT( index() == I );
 
         size_t const J = I+1;
 
@@ -1147,7 +1162,8 @@ template<class... T> struct variant_base_impl<false, false, T...>
 
     template<std::size_t I> constexpr mp11::mp_at_c<variant<T...>, I> const& _get_impl( mp11::mp_size_t<I> ) const noexcept
     {
-        // assert( index() == I );
+        BOOST_VARIANT2_CX14_ASSERT( index() == I )
+
         // size_t const J = I+1;
         // constexpr mp_size_t<J> j{};
 
@@ -2176,7 +2192,7 @@ template<class R = detail::deduced, class F, class V1, class V2, class... V> con
 {
     return mp11::mp_with_index<detail::variant_base_size<V1>>( v1.index(), [&]( auto I ){
 
-        auto f2 = [&]( auto&&... a ){ return std::forward<F>(f)( detail::unsafe_get<I.value>( std::forward<V1>(v1) ), std::forward<decltype(a)>(a)... ); };
+        auto f2 = [&]( auto&&... a ){ return std::forward<F>(f)( unsafe_get<I.value>( std::forward<V1>(v1) ), std::forward<decltype(a)>(a)... ); };
         return visit<R>( f2, std::forward<V2>(v2), std::forward<V>(v)... );
 
     });
@@ -2191,6 +2207,58 @@ void swap( variant<T...> & v, variant<T...> & w )
     noexcept( noexcept(v.swap(w)) )
 {
     v.swap( w );
+}
+
+// visit_by_index
+
+namespace detail
+{
+
+template<class R, class V, class... F> using Vret2 = mp11::mp_eval_if_not< std::is_same<R, deduced>, R, front_if_same, mp11::mp_transform<mp11::mp_invoke_q, mp11::mp_list<Qret<F>...>, apply_cv_ref<V>> >;
+
+template<class R, class V, class... F> struct visit_by_index_L
+{
+    V&& v;
+    std::tuple<F&&...> tp;
+
+    template<class I> constexpr detail::Vret2<R, V, F...> operator()( I ) const
+    {
+        return std::get<I::value>( std::move(tp) )( unsafe_get<I::value>( std::forward<V>(v) ) );
+    }
+};
+
+} // namespace detail
+
+template<class R = detail::deduced, class V, class... F> constexpr auto visit_by_index( V&& v, F&&... f ) -> detail::Vret2<R, V, F...>
+{
+    static_assert( variant_size<V>::value == sizeof...(F), "Incorrect number of function objects" );
+
+    return mp11::mp_with_index<variant_size<V>::value>( v.index(),
+        detail::visit_by_index_L<R, V, F...>{ std::forward<V>(v), std::tuple<F&&...>( std::forward<F>(f)... ) } );
+}
+
+// output streaming
+
+namespace detail
+{
+
+template<class Ch, class Tr, class... T> struct ostream_insert_L
+{
+    std::basic_ostream<Ch, Tr>& os;
+    variant<T...> const& v;
+
+    template<class I> std::basic_ostream<Ch, Tr>& operator()( I ) const
+    {
+        return os << unsafe_get<I::value>( v );
+    }
+};
+
+} // namespace detail
+
+template<class Ch, class Tr, class T1, class... T> std::basic_ostream<Ch, Tr>& operator<<( std::basic_ostream<Ch, Tr>& os, variant<T1, T...> const& v )
+{
+    return mp11::mp_with_index<1 + sizeof...(T)>( v.index(),
+        detail::ostream_insert_L<Ch, Tr, T1, T...>{ os, v } );
 }
 
 // hashing support
@@ -2306,6 +2374,8 @@ template<> struct hash< ::boost::variant2::monostate >
 };
 
 } // namespace std
+
+#undef BOOST_VARIANT2_CX14_ASSERT
 
 #if defined(_MSC_VER) && _MSC_VER < 1910
 # pragma warning( pop )

@@ -87,16 +87,41 @@ inline posix_recursive_mutex::~posix_recursive_mutex()
 
 inline void posix_recursive_mutex::lock()
 {
-   if (pthread_mutex_lock(&m_mut) != 0)
+   int res = pthread_mutex_lock(&m_mut);
+   #ifdef BOOST_INTERPROCESS_POSIX_ROBUST_MUTEXES
+   if (res == EOWNERDEAD)
+   {
+      //We can't inform the application and data might
+      //corrupted, so be safe and mark the mutex as not recoverable
+      //so applications can act accordingly.
+      pthread_mutex_unlock(&m_mut);
+      throw lock_exception(not_recoverable);
+   }
+   else if (res == ENOTRECOVERABLE)
+      throw lock_exception(not_recoverable);
+   #endif
+   if (res != 0)
       throw lock_exception();
 }
 
 inline bool posix_recursive_mutex::try_lock()
 {
    int res = pthread_mutex_trylock(&m_mut);
+   #ifdef BOOST_INTERPROCESS_POSIX_ROBUST_MUTEXES
+   if (res == EOWNERDEAD)
+   {
+      //We can't inform the application and data might
+      //corrupted, so be safe and mark the mutex as not recoverable
+      //so applications can act accordingly.
+      pthread_mutex_unlock(&m_mut);
+      throw lock_exception(not_recoverable);
+   }
+   else if (res == ENOTRECOVERABLE)
+      throw lock_exception(not_recoverable);
+   #endif
    if (!(res == 0 || res == EBUSY))
       throw lock_exception();
-   return res == 0;
+   return (res == 0);
 }
 
 template<class TimePoint>
@@ -111,6 +136,18 @@ inline bool posix_recursive_mutex::timed_lock(const TimePoint &abs_time)
 
    timespec ts = timepoint_to_timespec(abs_time);
    int res = pthread_mutex_timedlock(&m_mut, &ts);
+   #ifdef BOOST_INTERPROCESS_POSIX_ROBUST_MUTEXES
+   if (res == EOWNERDEAD)
+   {
+      //We can't inform the application and data might
+      //corrupted, so be safe and mark the mutex as not recoverable
+      //so applications can act accordingly.
+      pthread_mutex_unlock(&m_mut);
+      throw lock_exception(not_recoverable);
+   }
+   else if (res == ENOTRECOVERABLE)
+      throw lock_exception(not_recoverable);
+   #endif
    if (res != 0 && res != ETIMEDOUT)
       throw lock_exception();
    return res == 0;

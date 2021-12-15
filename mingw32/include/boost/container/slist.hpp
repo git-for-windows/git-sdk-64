@@ -471,7 +471,7 @@ class slist
    //! <b>Complexity</b>: Linear to n.
    void assign(size_type n, const T& val)
    {
-      typedef constant_iterator<value_type, difference_type> cvalue_iterator;
+      typedef constant_iterator<value_type> cvalue_iterator;
       return this->assign(cvalue_iterator(val, n), cvalue_iterator());
    }
 
@@ -709,7 +709,7 @@ class slist
    {
       const_iterator last_pos;
       if(!priv_try_shrink(new_size, last_pos)){
-         typedef value_init_construct_iterator<value_type, difference_type> value_init_iterator;
+         typedef value_init_construct_iterator<value_type> value_init_iterator;
          this->insert_after(last_pos, value_init_iterator(new_size - this->size()), value_init_iterator());
       }
    }
@@ -887,7 +887,7 @@ class slist
    //!   previous values.
    iterator insert_after(const_iterator prev_p, size_type n, const value_type& x)
    {
-      typedef constant_iterator<value_type, difference_type> cvalue_iterator;
+      typedef constant_iterator<value_type> cvalue_iterator;
       return this->insert_after(prev_p, cvalue_iterator(x, n), cvalue_iterator());
    }
 
@@ -955,7 +955,7 @@ class slist
    {
       //Optimized allocation and construction
       insertion_functor func(this->icont(), prev.get());
-      this->allocate_many_and_construct(first, boost::container::iterator_distance(first, last), func);
+      this->allocate_many_and_construct(first, boost::container::iterator_udistance(first, last), func);
       return iterator(func.inserted_first());
    }
    #endif

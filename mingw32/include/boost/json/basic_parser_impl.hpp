@@ -17,6 +17,7 @@
 #include <boost/json/detail/buffer.hpp>
 #include <boost/json/detail/sse2.hpp>
 #include <cmath>
+#include <climits>
 #include <cstring>
 
 #ifdef _MSC_VER
@@ -2010,7 +2011,7 @@ do_num2:
                 if( num.mant  > 922337203685477580 || (
                     num.mant == 922337203685477580 && c > '8'))
                     break;
-                num.mant = 10 * num.mant + c - '0';
+                num.mant = 10 * num.mant + ( c - '0' );
                 continue;
             }
             goto do_num6; // [.eE]
@@ -2041,7 +2042,7 @@ do_num2:
                 if( num.mant  > 1844674407370955161 || (
                     num.mant == 1844674407370955161 && c > '5'))
                     break;
-                num.mant = 10 * num.mant + c - '0';
+                num.mant = 10 * num.mant + ( c - '0' );
             }
             else
             {
@@ -2260,7 +2261,7 @@ do_num8:
                 num.mant <= 9007199254740991)) // 2^53-1
             {
                 --num.bias;
-                num.mant = 10 * num.mant + c - '0';
+                num.mant = 10 * num.mant + ( c - '0' );
             }
             else
             {
@@ -2351,20 +2352,33 @@ do_exp3:
                     return fail(cs.begin());
                 return suspend(cs.begin(), state::exp3, num);
             }
-            goto finish_dub;
         }
-        char const c = *cs;
-        if(BOOST_JSON_LIKELY(
-            c >= '0' && c <= '9'))
+        else
         {
-            if(BOOST_JSON_UNLIKELY
-            //              2147483647 INT_MAX
-                (num.exp  > 214748364 || (
-                    num.exp == 214748364 && c > '7')))
+            char const c = *cs;
+            if(BOOST_JSON_LIKELY(
+                c >= '0' && c <= '9'))
+            {
+                if(BOOST_JSON_UNLIKELY
+                //              2147483647 INT_MAX
+                    (num.exp  > 214748364 || (
+                        num.exp == 214748364 && c > '7')))
+                    return fail(cs.begin(), error::exponent_overflow);
+                ++cs;
+                num.exp = 10 * num.exp + ( c - '0' );
+                continue;
+            }
+        }
+        BOOST_ASSERT(num.exp >= 0);
+        if ( num.frac )
+        {
+            if (BOOST_JSON_UNLIKELY( num.bias  < (INT_MIN + num.exp) ))
                 return fail(cs.begin(), error::exponent_overflow);
-            ++cs;
-            num.exp = 10 * num.exp + c - '0';
-            continue;
+        }
+        else
+        {
+            if (BOOST_JSON_UNLIKELY( num.bias > (INT_MAX - num.exp) ))
+                return fail(cs.begin(), error::exponent_overflow);
         }
         goto finish_dub;
     }

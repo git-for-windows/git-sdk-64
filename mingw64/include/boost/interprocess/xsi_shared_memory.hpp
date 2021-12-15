@@ -164,7 +164,7 @@ inline mapping_handle_t xsi_shared_memory::get_mapping_handle() const BOOST_NOEX
 inline bool xsi_shared_memory::priv_open_or_create
    (ipcdetail::create_enum_t type, const xsi_key &key, const permissions& permissions, std::size_t size)
 {
-   int perm = permissions.get_permissions();
+   int perm = (int)permissions.get_permissions();
    perm &= 0x01FF;
    int shmflg = perm;
 

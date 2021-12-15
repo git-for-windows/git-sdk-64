@@ -476,10 +476,13 @@ namespace std {
 #endif
 
 //
-// If we're on a CUDA device (note DEVICE not HOST, irrespective of compiler) then disable __float128 support if present:
+// If we're on a CUDA device (note DEVICE not HOST, irrespective of compiler) then disable __int128 and __float128 support if present:
 //
 #if defined(__CUDA_ARCH__) && defined(BOOST_HAS_FLOAT128)
 #  undef BOOST_HAS_FLOAT128
+#endif
+#if defined(__CUDA_ARCH__) && defined(BOOST_HAS_INT128)
+#  undef BOOST_HAS_INT128
 #endif
 
 // long long workaround ------------------------------------------//
@@ -628,6 +631,9 @@ namespace std{ using ::type_info; }
 #    if defined(__CUDACC__)
        // nvcc doesn't always parse __noinline__,
        // see: https://svn.boost.org/trac/boost/ticket/9392
+#      define BOOST_NOINLINE __attribute__ ((noinline))
+#    elif defined(HIP_VERSION)
+       // See https://github.com/boostorg/config/issues/392
 #      define BOOST_NOINLINE __attribute__ ((noinline))
 #    else
 #      define BOOST_NOINLINE __attribute__ ((__noinline__))
@@ -1047,7 +1053,7 @@ namespace std{ using ::type_info; }
 #endif
 #elif defined(__has_cpp_attribute)
 // clang-6 accepts [[nodiscard]] with -std=c++14, but warns about it -pedantic
-#if __has_cpp_attribute(nodiscard) && !(defined(__clang__) && (__cplusplus < 201703L))
+#if __has_cpp_attribute(nodiscard) && !(defined(__clang__) && (__cplusplus < 201703L)) && !(defined(__GNUC__) && (__cplusplus < 201100))
 # define BOOST_ATTRIBUTE_NODISCARD [[nodiscard]]
 #endif
 #if __has_cpp_attribute(no_unique_address) && !(defined(__GNUC__) && (__cplusplus < 201100))

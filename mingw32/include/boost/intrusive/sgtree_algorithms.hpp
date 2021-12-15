@@ -141,7 +141,7 @@ class sgtree_algorithms
       bstree_algo::erase(header, z);
       --tree_size;
       if (tree_size > 0 &&
-          tree_size < alpha_by_maxsize(max_tree_size)){
+          tree_size < static_cast<std::size_t>(alpha_by_maxsize(max_tree_size))){
          bstree_algo::rebalance(header);
          max_tree_size = tree_size;
       }

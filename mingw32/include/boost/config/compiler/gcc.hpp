@@ -323,6 +323,14 @@
 #  define BOOST_FALLTHROUGH __attribute__((fallthrough))
 #endif
 
+#if (__GNUC__ < 11) && defined(__MINGW32__) && !defined(__MINGW64__)
+// thread_local was broken on mingw for all 32bit compiler releases prior to 11.x, see
+// https://sourceforge.net/p/mingw-w64/bugs/527/
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83562
+// Not setting this causes program termination on thread exit.
+#define BOOST_NO_CXX11_THREAD_LOCAL
+#endif
+
 //
 // Unused attribute:
 #if __GNUC__ >= 4

@@ -122,7 +122,7 @@ inline void semaphore_close(sem_t *handle)
 
 inline bool semaphore_unlink(const char *semname)
 {
-   try{
+   BOOST_TRY{
       std::string sem_str;
       #ifndef BOOST_INTERPROCESS_FILESYSTEM_BASED_POSIX_SEMAPHORES
       add_leading_slash(semname, sem_str);
@@ -131,9 +131,9 @@ inline bool semaphore_unlink(const char *semname)
       #endif
       return 0 == sem_unlink(sem_str.c_str());
    }
-   catch(...){
+   BOOST_CATCH(...){
       return false;
-   }
+   } BOOST_CATCH_END
 }
 
 #endif   //BOOST_INTERPROCESS_POSIX_NAMED_SEMAPHORES

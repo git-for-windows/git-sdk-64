@@ -107,6 +107,7 @@ class rbtree_best_fit
 
    struct SizeHolder
    {
+      static const size_type size_mask = size_type(-1) >> 2;
       //!This block's memory size (including block_ctrl
       //!header) in Alignment units
       size_type m_prev_size;
@@ -385,7 +386,7 @@ void rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::
 
    //Initialize the first big block and the "end" node
    block_ctrl *first_big_block = ::new(addr, boost_container_new_t())block_ctrl;
-   first_big_block->m_size = segment_size/Alignment - EndCtrlBlockUnits;
+   first_big_block->m_size = (segment_size/Alignment - EndCtrlBlockUnits) & block_ctrl::size_mask;
    BOOST_ASSERT(first_big_block->m_size >= BlockCtrlUnits);
 
    //The "end" node is just a node of size 0 with the "end" bit set
@@ -396,10 +397,10 @@ void rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::
    priv_mark_as_free_block (first_big_block);
    #ifdef BOOST_INTERPROCESS_RBTREE_BEST_FIT_ABI_V1_HPP
    first_big_block->m_prev_size = end_block->m_size =
-      (reinterpret_cast<char*>(first_big_block) - reinterpret_cast<char*>(end_block))/Alignment;
+      size_type(reinterpret_cast<char*>(first_big_block) - reinterpret_cast<char*>(end_block))/Alignmen) & block_ctrl::size_mask;
    #else
    first_big_block->m_prev_size = end_block->m_size =
-      (reinterpret_cast<char*>(end_block) - reinterpret_cast<char*>(first_big_block))/Alignment;
+      size_type(reinterpret_cast<char*>(end_block) - reinterpret_cast<char*>(first_big_block))/Alignment & block_ctrl::size_mask;
    #endif
    end_block->m_allocated = 1;
    first_big_block->m_prev_allocated = 1;
@@ -491,11 +492,11 @@ void rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::grow(size_type ext
    //between them
    new_end_block->m_allocated = 1;
    #ifdef BOOST_INTERPROCESS_RBTREE_BEST_FIT_ABI_V1_HPP
-   new_end_block->m_size      = (reinterpret_cast<char*>(first_block) -
-                                 reinterpret_cast<char*>(new_end_block))/Alignment;
+   new_end_block->m_size      = size_type(reinterpret_cast<char*>(first_block) -
+                                          reinterpret_cast<char*>(new_end_block))/Alignment & block_ctrl::size_mask;
    #else
-   new_end_block->m_size      = (reinterpret_cast<char*>(new_end_block) -
-                                 reinterpret_cast<char*>(first_block))/Alignment;
+   new_end_block->m_size      = size_type(reinterpret_cast<char*>(new_end_block) -
+                                          reinterpret_cast<char*>(first_block))/Alignment & block_ctrl::size_mask;
    #endif
    first_block->m_prev_size = new_end_block->m_size;
    first_block->m_prev_allocated = 1;
@@ -503,8 +504,8 @@ void rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::grow(size_type ext
 
    //The old end block is the new block
    block_ctrl *new_block = old_end_block;
-   new_block->m_size = (reinterpret_cast<char*>(new_end_block) -
-                        reinterpret_cast<char*>(new_block))/Alignment;
+   new_block->m_size = size_type(reinterpret_cast<char*>(new_end_block) -
+                                 reinterpret_cast<char*>(new_block))/Alignment & block_ctrl::size_mask;
    BOOST_ASSERT(new_block->m_size >= BlockCtrlUnits);
    priv_mark_as_allocated_block(new_block);
    BOOST_ASSERT(priv_next_block(new_block) == new_end_block);
@@ -568,11 +569,13 @@ void rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::shrink_to_fit()
 
    //Write new end block attributes
    #ifdef BOOST_INTERPROCESS_RBTREE_BEST_FIT_ABI_V1_HPP
-   new_end_block->m_size = first_block->m_prev_size =
-      (reinterpret_cast<char*>(first_block) - reinterpret_cast<char*>(new_end_block))/Alignment;
+   new_end_block->m_size = 
+      size_type(reinterpret_cast<char*>(first_block) - reinterpret_cast<char*>(new_end_block))/Alignment & block_ctrl::size_mask;
+   first_block->m_prev_size = new_end_block->m_size;
    #else
-   new_end_block->m_size = first_block->m_prev_size =
-      (reinterpret_cast<char*>(new_end_block) - reinterpret_cast<char*>(first_block))/Alignment;
+   new_end_block->m_size =
+      size_type(reinterpret_cast<char*>(new_end_block) - reinterpret_cast<char*>(first_block))/Alignment & block_ctrl::size_mask;
+   first_block->m_prev_size = new_end_block->m_size;
    #endif
 
    new_end_block->m_allocated = 1;
@@ -581,7 +584,7 @@ void rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::shrink_to_fit()
    BOOST_ASSERT(new_end_block->m_size == (old_end_block_size - last_block_size));
 
    //Update managed buffer's size
-   m_header.m_size = shrunk_border_offset;
+   m_header.m_size = shrunk_border_offset & block_ctrl::size_mask;
    BOOST_ASSERT(priv_end_block() == new_end_block);
    if(unique_buffer)
       priv_deallocate(unique_buffer);
@@ -854,12 +857,12 @@ void* rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::
 
             //Free old previous buffer
             new_block->m_size =
-               AllocatedCtrlUnits + (needs_backwards_aligned + (prefer_in_recvd_out_size - UsableByPreviousChunk))/Alignment;
+               (AllocatedCtrlUnits + (needs_backwards_aligned + (prefer_in_recvd_out_size - UsableByPreviousChunk))/Alignment) & block_ctrl::size_mask;
             BOOST_ASSERT(new_block->m_size >= BlockCtrlUnits);
             priv_mark_as_allocated_block(new_block);
 
-            prev_block->m_size = (reinterpret_cast<char*>(new_block) -
-                                  reinterpret_cast<char*>(prev_block))/Alignment;
+            prev_block->m_size = size_type(reinterpret_cast<char*>(new_block) -
+                                           reinterpret_cast<char*>(prev_block))/Alignment & block_ctrl::size_mask;
             BOOST_ASSERT(prev_block->m_size >= BlockCtrlUnits);
             priv_mark_as_free_block(prev_block);
 
@@ -886,7 +889,7 @@ void* rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::
             //first bytes, fill them with a pattern
             void *p = priv_get_user_buffer(new_block);
             void *user_ptr = reinterpret_cast<char*>(p);
-            BOOST_ASSERT((static_cast<char*>(reuse_ptr) - static_cast<char*>(user_ptr)) % backwards_multiple == 0);
+            BOOST_ASSERT(size_type(static_cast<char*>(reuse_ptr) - static_cast<char*>(user_ptr)) % backwards_multiple == 0);
             algo_impl_t::assert_alignment(user_ptr);
             return user_ptr;
          }
@@ -903,14 +906,14 @@ void* rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::
 
             m_header.m_allocated += (size_type)prev_block->m_size*Alignment;
             //Now update sizes
-            prev_block->m_size = prev_block->m_size + reuse->m_size;
+            prev_block->m_size = size_type(prev_block->m_size + reuse->m_size) & block_ctrl::size_mask;
             BOOST_ASSERT(prev_block->m_size >= BlockCtrlUnits);
             priv_mark_as_allocated_block(prev_block);
 
             //If the backwards expansion has remaining bytes in the
             //first bytes, fill them with a pattern
             void *user_ptr = priv_get_user_buffer(prev_block);
-            BOOST_ASSERT((static_cast<char*>(reuse_ptr) - static_cast<char*>(user_ptr)) % backwards_multiple == 0);
+            BOOST_ASSERT(size_type(static_cast<char*>(reuse_ptr) - static_cast<char*>(user_ptr)) % backwards_multiple == 0);
             algo_impl_t::assert_alignment(user_ptr);
             return user_ptr;
          }
@@ -1096,7 +1099,7 @@ bool rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::
       //This is the remaining block
       block_ctrl *rem_block = ::new(reinterpret_cast<block_ctrl*>
                      (reinterpret_cast<char*>(block) + intended_units*Alignment), boost_container_new_t())block_ctrl;
-      rem_block->m_size  = rem_units;
+      rem_block->m_size = rem_units & block_ctrl::size_mask;
       algo_impl_t::assert_alignment(rem_block);
       BOOST_ASSERT(rem_block->m_size >= BlockCtrlUnits);
       priv_mark_as_free_block(rem_block);
@@ -1108,7 +1111,7 @@ bool rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::
          m_header.m_imultiset.replace_node(old_next_block_it, *rem_block);
 
       //Write the new length
-      block->m_size = intended_user_units + AllocatedCtrlUnits;
+      block->m_size = (intended_user_units + AllocatedCtrlUnits) & block_ctrl::size_mask;
       BOOST_ASSERT(block->m_size >= BlockCtrlUnits);
       m_header.m_allocated += (intended_units - old_block_units)*Alignment;
    }
@@ -1118,7 +1121,7 @@ bool rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::
       m_header.m_imultiset.erase(Imultiset::s_iterator_to(*next_block));
 
       //Write the new length
-      block->m_size = merged_units;
+      block->m_size = merged_units & block_ctrl::size_mask;
       BOOST_ASSERT(block->m_size >= BlockCtrlUnits);
       m_header.m_allocated += (merged_units - old_block_units)*Alignment;
    }
@@ -1254,14 +1257,14 @@ void* rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::priv_check_and_al
       //two blocks, the first's size will be "units" and
       //the second's size "block->m_size-units"
       size_type block_old_size = block->m_size;
-      block->m_size = nunits;
+      block->m_size = nunits & block_ctrl::size_mask;
       BOOST_ASSERT(block->m_size >= BlockCtrlUnits);
 
       //This is the remaining block
       block_ctrl *rem_block = ::new(reinterpret_cast<block_ctrl*>
                      (reinterpret_cast<char*>(block) + Alignment*nunits), boost_container_new_t())block_ctrl;
       algo_impl_t::assert_alignment(rem_block);
-      rem_block->m_size  = block_old_size - nunits;
+      rem_block->m_size = (block_old_size - nunits) & block_ctrl::size_mask;
       BOOST_ASSERT(rem_block->m_size >= BlockCtrlUnits);
       priv_mark_as_free_block(rem_block);
 
@@ -1302,7 +1305,7 @@ void* rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::priv_check_and_al
    //cleared with zero_free_memory
    TreeHook *t = static_cast<TreeHook*>(block);
    //Just clear the memory part reserved for the user
-   std::size_t tree_hook_offset_in_block = (char*)t - (char*)block;
+   std::size_t tree_hook_offset_in_block = std::size_t((char*)t - (char*)block);
    //volatile char *ptr =
    char *ptr = reinterpret_cast<char*>(block)+tree_hook_offset_in_block;
    const std::size_t s = BlockCtrlBytes - tree_hook_offset_in_block;
@@ -1354,12 +1357,12 @@ void rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::priv_deallocate(vo
       if(merge_with_prev){
          //Get the previous block
          block_to_insert = priv_prev_block(block);
-         block_to_insert->m_size += block->m_size;
+         block_to_insert->m_size = size_type(block_to_insert->m_size + block->m_size) & block_ctrl::size_mask;
          BOOST_ASSERT(block_to_insert->m_size >= BlockCtrlUnits);
       }
       //Merge if the next is free
       if(merge_with_next){
-         block_to_insert->m_size += next_block->m_size;
+         block_to_insert->m_size = size_type(block_to_insert->m_size + next_block->m_size) & block_ctrl::size_mask;
          BOOST_ASSERT(block_to_insert->m_size >= BlockCtrlUnits);
          const imultiset_iterator next_it = Imultiset::s_iterator_to(*next_block);
          if(merge_with_prev){

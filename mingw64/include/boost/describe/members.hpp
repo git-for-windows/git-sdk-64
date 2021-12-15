@@ -7,6 +7,9 @@
 
 #include <boost/describe/modifiers.hpp>
 #include <boost/describe/bases.hpp>
+#include <boost/describe/detail/void_t.hpp>
+#include <boost/describe/detail/cx_streq.hpp>
+#include <boost/describe/detail/config.hpp>
 
 #if defined(BOOST_DESCRIBE_CXX11)
 
@@ -15,6 +18,7 @@
 #include <boost/mp11/integral.hpp>
 #include <boost/mp11/list.hpp>
 #include <boost/mp11/bind.hpp>
+#include <type_traits>
 
 namespace boost
 {
@@ -56,11 +60,6 @@ template<template<class...> class L, class T, class V> struct describe_inherited
 {
     using type = L<>;
 };
-
-constexpr bool cx_streq( char const * s1, char const * s2 )
-{
-    return s1[0] == s2[0] && ( s1[0] == 0 || cx_streq( s1 + 1, s2 + 1 ) );
-}
 
 template<class D1, class D2> using name_matches = mp11::mp_bool< cx_streq( D1::name, D2::name ) >;
 
@@ -136,9 +135,21 @@ template<unsigned M> struct member_filter
     >;
 };
 
+// has_describe_members
+
+template<class T, class En = void> struct has_describe_members: std::false_type
+{
+};
+
+template<class T> struct has_describe_members<T, void_t<_describe_members<T>>>: std::true_type
+{
+};
+
 } // namespace detail
 
 template<class T, unsigned M> using describe_members = mp11::mp_copy_if_q<detail::describe_members<T, M>, detail::member_filter<M>>;
+
+template<class T> using has_describe_members = detail::has_describe_members<T>;
 
 } // namespace describe
 } // namespace boost

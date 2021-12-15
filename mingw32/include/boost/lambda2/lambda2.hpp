@@ -10,10 +10,11 @@
 #include <utility>
 #include <tuple>
 #include <cstddef>
+#include <iosfwd>
 
 // Same format as BOOST_VERSION:
 //   major * 100000 + minor * 100 + patch
-#define BOOST_LAMBDA2_VERSION 107700
+#define BOOST_LAMBDA2_VERSION 107800
 
 namespace boost
 {
@@ -28,6 +29,14 @@ struct subscript
     template<class T1, class T2> decltype(auto) operator()(T1&& t1, T2&& t2) const
     {
         return std::forward<T1>(t1)[ std::forward<T2>(t2) ];
+    }
+};
+
+template<int I> struct get
+{
+    template<class T> decltype(auto) operator()( T&& t ) const
+    {
+        return std::get<I>( std::forward<T>(t) );
     }
 };
 
@@ -63,6 +72,11 @@ BOOST_LAMBDA2_INLINE_VAR constexpr lambda2_arg<6> _6{};
 BOOST_LAMBDA2_INLINE_VAR constexpr lambda2_arg<7> _7{};
 BOOST_LAMBDA2_INLINE_VAR constexpr lambda2_arg<8> _8{};
 BOOST_LAMBDA2_INLINE_VAR constexpr lambda2_arg<9> _9{};
+
+// first, second
+
+BOOST_LAMBDA2_INLINE_VAR constexpr lambda2_detail::get<0> first{};
+BOOST_LAMBDA2_INLINE_VAR constexpr lambda2_detail::get<1> second{};
 
 #undef BOOST_LAMBDA2_INLINE_VAR
 
@@ -151,6 +165,8 @@ template<class A> using enable_unary_lambda =
 template<class A, class B> using enable_binary_lambda =
     std::enable_if_t<is_lambda_expression<A>::value || is_lambda_expression<B>::value>;
 
+template<class T> using is_stream = std::is_base_of<std::ios_base, remove_cvref_t<T>>;
+
 } // namespace lambda2_detail
 
 #define BOOST_LAMBDA2_UNARY_LAMBDA(op, fn) \
@@ -201,9 +217,6 @@ BOOST_LAMBDA2_UNARY_LAMBDA(~, std::bit_not<>)
 
 // additional
 
-BOOST_LAMBDA2_BINARY_LAMBDA(<<, lambda2_detail::left_shift)
-BOOST_LAMBDA2_BINARY_LAMBDA(>>, lambda2_detail::right_shift)
-
 BOOST_LAMBDA2_UNARY_LAMBDA(+, lambda2_detail::unary_plus)
 BOOST_LAMBDA2_UNARY_LAMBDA(*, lambda2_detail::dereference)
 
@@ -225,6 +238,46 @@ BOOST_LAMBDA2_BINARY_LAMBDA(|=, lambda2_detail::bit_or_equal)
 BOOST_LAMBDA2_BINARY_LAMBDA(^=, lambda2_detail::bit_xor_equal)
 BOOST_LAMBDA2_BINARY_LAMBDA(<<=, lambda2_detail::left_shift_equal)
 BOOST_LAMBDA2_BINARY_LAMBDA(>>=, lambda2_detail::right_shift_equal)
+
+// operator<<
+
+template<class A, class = std::enable_if_t<!lambda2_detail::is_stream<A>::value>,
+    class B, class = lambda2_detail::enable_binary_lambda<A, B>>
+auto operator<<( A&& a, B&& b )
+{
+    return std::bind( lambda2_detail::left_shift(), std::forward<A>(a), std::forward<B>(b) );
+}
+
+template<class A, class = std::enable_if_t<lambda2_detail::is_stream<A>::value>,
+    class B, class = lambda2_detail::enable_unary_lambda<B>>
+auto operator<<( A& a, B&& b )
+{
+    return std::bind( lambda2_detail::left_shift(), std::ref(a), std::forward<B>(b) );
+}
+
+// operator>>
+
+template<class A, class = std::enable_if_t<!lambda2_detail::is_stream<A>::value>,
+    class B, class = lambda2_detail::enable_binary_lambda<A, B>>
+auto operator>>( A&& a, B&& b )
+{
+    return std::bind( lambda2_detail::right_shift(), std::forward<A>(a), std::forward<B>(b) );
+}
+
+template<class A, class = std::enable_if_t<lambda2_detail::is_stream<A>::value>,
+    class B, class = lambda2_detail::enable_unary_lambda<B>>
+auto operator>>( A& a, B&& b )
+{
+    return std::bind( lambda2_detail::right_shift(), std::ref(a), std::forward<B>(b) );
+}
+
+// operator->*
+
+template<class A, class B, class = lambda2_detail::enable_unary_lambda<A>>
+auto operator->*( A&& a, B&& b )
+{
+    return std::bind( std::forward<B>(b), std::forward<A>(a) );
+}
 
 } // namespace lambda2
 } // namespace boost

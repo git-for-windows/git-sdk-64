@@ -22,13 +22,20 @@
 #include <cstring>
 
 #if defined(_MSC_VER)
+
 # include <intrin.h>
 # pragma intrinsic(_BitScanForward)
 # pragma intrinsic(_BitScanReverse)
+
 # if defined(_M_X64)
 #  pragma intrinsic(_BitScanForward64)
 #  pragma intrinsic(_BitScanReverse64)
 # endif
+
+# pragma warning(push)
+# pragma warning(disable: 4127) // conditional expression is constant
+# pragma warning(disable: 4244) // conversion from int to T
+
 #endif // defined(_MSC_VER)
 
 namespace boost
@@ -577,5 +584,9 @@ typedef endian::type endian_type;
 
 } // namespace core
 } // namespace boost
+
+#if defined(_MSC_VER)
+# pragma warning(pop)
+#endif
 
 #endif  // #ifndef BOOST_CORE_BIT_HPP_INCLUDED

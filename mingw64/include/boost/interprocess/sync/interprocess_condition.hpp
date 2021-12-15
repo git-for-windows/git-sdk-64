@@ -24,6 +24,7 @@
 #include <boost/interprocess/detail/config_begin.hpp>
 #include <boost/interprocess/detail/workaround.hpp>
 
+#include <boost/interprocess/sync/cv_status.hpp>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
 #include <boost/interprocess/sync/detail/locks.hpp>
 #include <boost/interprocess/exceptions.hpp>
@@ -128,6 +129,30 @@ class interprocess_condition
       ipcdetail::internal_mutex_lock<L> internal_lock(lock);
       return m_condition.timed_wait(internal_lock, abs_time, pred);
    }
+
+   //!Same as `timed_wait`, but this function is modeled after the
+   //!standard library interface.
+   template <typename L, class TimePoint>
+   cv_status wait_until(L& lock, const TimePoint &abs_time)
+   {  return this->timed_wait(lock, abs_time) ? cv_status::no_timeout : cv_status::timeout; }
+
+   //!Same as `timed_wait`, but this function is modeled after the
+   //!standard library interface.
+   template <typename L, class TimePoint, typename Pr>
+   bool wait_until(L& lock, const TimePoint &abs_time, Pr pred)
+   {  return this->timed_wait(lock, abs_time, pred); }
+
+   //!Same as `timed_wait`, but this function is modeled after the
+   //!standard library interface and uses relative timeouts.
+   template <typename L, class Duration>
+   cv_status wait_for(L& lock, const Duration &dur)
+   {  return this->wait_until(lock, ipcdetail::duration_to_ustime(dur)); }
+
+   //!Same as `timed_wait`, but this function is modeled after the
+   //!standard library interface and uses relative timeouts
+   template <typename L, class Duration, typename Pr>
+   bool wait_for(L& lock, const Duration &dur, Pr pred)
+   {  return this->wait_until(lock, ipcdetail::duration_to_ustime(dur), pred); }
 
    #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 

@@ -70,7 +70,7 @@ class permissions
    #if defined(BOOST_INTERPROCESS_WINDOWS)
    typedef void*  os_permissions_type;
    #else
-   typedef int    os_permissions_type;
+   typedef ::mode_t    os_permissions_type;
    #endif
    os_permissions_type  m_perm;
 

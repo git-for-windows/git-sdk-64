@@ -378,7 +378,7 @@ namespace nowide {
             }
 
             static const int max_width = 2;
-            static int width(code_point u)
+            static int width(code_point u) // LCOV_EXCL_LINE
             {
                 return u >= 0x10000 ? 2 : 1;
             }

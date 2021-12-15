@@ -59,6 +59,7 @@ using std::system_category;
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/system/error_code.hpp>
+#include <boost/system/system_error.hpp>
 
 namespace boost { namespace dll { namespace fs {
 

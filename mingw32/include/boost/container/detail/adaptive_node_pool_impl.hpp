@@ -535,7 +535,7 @@ class private_adaptive_node_pool_impl_common
                //Check that header offsets are correct
                hdr_offset_holder *hdr_off_holder = this->priv_first_subblock_from_block(const_cast<block_info_t *>(&*it), num_subblocks, real_block_alignment);
                for (size_type i = 0, max = num_subblocks; i < max; ++i) {
-                  const size_type offset = reinterpret_cast<char*>(const_cast<block_info_t *>(&*it)) - reinterpret_cast<char*>(hdr_off_holder);
+                  const size_type offset = size_type(reinterpret_cast<char*>(const_cast<block_info_t *>(&*it)) - reinterpret_cast<char*>(hdr_off_holder));
                   (void)offset;
                   BOOST_ASSERT(hdr_off_holder->hdr_offset == offset);
                   BOOST_ASSERT(0 == (reinterpret_cast<std::size_t>(hdr_off_holder) & (real_block_alignment - 1)));

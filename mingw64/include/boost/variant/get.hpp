@@ -102,7 +102,7 @@ public: // visitor interfaces
 #   if !BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x0551))
 #       define BOOST_VARIANT_AUX_GET_EXPLICIT_TEMPLATE_TYPE(t)
 #   else
-#       if defined(BOOST_NO_NULLPTR)
+#       if defined(BOOST_NO_CXX11_NULLPTR)
 #           define BOOST_VARIANT_AUX_GET_EXPLICIT_TEMPLATE_TYPE(t)  \
             , t* = 0
 #       else

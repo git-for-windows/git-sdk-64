@@ -329,7 +329,7 @@ struct node_alloc_holder
 
    template<class FwdIterator, class Inserter>
    void allocate_many_and_construct
-      (FwdIterator beg, difference_type n, Inserter inserter)
+      (FwdIterator beg, size_type n, Inserter inserter)
    {
       if(n){
          typedef typename node_allocator_version_traits_type::multiallocation_chain multiallocation_chain_t;

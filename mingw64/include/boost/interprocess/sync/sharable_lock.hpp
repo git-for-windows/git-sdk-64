@@ -182,10 +182,10 @@ class sharable_lock
    //!Notes: The destructor behavior ensures that the mutex lock is not leaked.
    ~sharable_lock()
    {
-      try{
+      BOOST_TRY{
          if(m_locked && mp_mutex)   mp_mutex->unlock_sharable();
       }
-      catch(...){}
+      BOOST_CATCH(...){} BOOST_CATCH_END
    }
 
    //!Effects: If owns() before the call, then unlock_sharable() is called on mutex().
@@ -246,6 +246,46 @@ class sharable_lock
       if(!mp_mutex || m_locked)
          throw lock_exception();
       m_locked = mp_mutex->timed_lock_sharable(abs_time);
+      return m_locked;
+   }
+
+   //!Effects: If mutex() == 0 or already locked, throws a lock_exception()
+   //!   exception. Calls try_lock_shared_until(abs_time) on the referenced mutex.
+   //!Postconditions: owns() == the value returned from
+   //!   mutex()->timed_lock_sharable(elps_time).
+   //!Notes: The sharable_lock changes from a state of not owning the mutex,
+   //!   to owning the mutex, but only if it can obtain ownership within the
+   //!   specified time interval. If the mutex_type does not support
+   //!   timed_lock_sharable(), this function will fail at compile time if
+   //!   instantiated, but otherwise have no effect.
+   //!
+   //!Note: Similar to timed_lock, but with a std-like interface
+   template<class TimePoint>
+   bool try_lock_until(const TimePoint& abs_time)
+   {
+      if(!mp_mutex || m_locked)
+         throw lock_exception();
+      m_locked = mp_mutex->try_lock_shared_until(abs_time);
+      return m_locked;
+   }
+
+   //!Effects: If mutex() == 0 or already locked, throws a lock_exception()
+   //!   exception. Calls try_lock_shared_until(abs_time) on the referenced mutex.
+   //!Postconditions: owns() == the value returned from
+   //!   mutex()->timed_lock_sharable(elps_time).
+   //!Notes: The sharable_lock changes from a state of not owning the mutex,
+   //!   to owning the mutex, but only if it can obtain ownership within the
+   //!   specified time interval. If the mutex_type does not support
+   //!   timed_lock_sharable(), this function will fail at compile time if
+   //!   instantiated, but otherwise have no effect.
+   //!
+   //!Note: Similar to timed_lock, but with a std-like interface
+   template<class Duration>
+   bool try_lock_for(const Duration& dur)
+   {
+      if(!mp_mutex || m_locked)
+         throw lock_exception();
+      m_locked = mp_mutex->try_lock_shared_for(dur);
       return m_locked;
    }
 

@@ -407,24 +407,24 @@ class mq_hdr_t
    msg_header &top_msg()
    {
       size_type pos = this->end_pos();
-      return *mp_index[pos ? --pos : m_max_num_msg - 1];
+      return *mp_index[difference_type(pos ? --pos : m_max_num_msg - 1)];
    }
 
    //!Returns the inserted message with bottom priority
    msg_header &bottom_msg()
-      {  return *mp_index[m_cur_first_msg];   }
+      {  return *mp_index[difference_type(m_cur_first_msg)];   }
 
    iterator inserted_ptr_begin() const
-   {  return &mp_index[m_cur_first_msg]; }
+   {  return &mp_index[difference_type(m_cur_first_msg)]; }
 
    iterator inserted_ptr_end() const
-      {  return &mp_index[this->end_pos()];  }
+      {  return &mp_index[difference_type(this->end_pos())];  }
 
    iterator lower_bound(const msg_hdr_ptr_t & value, priority_functor<VoidPointer> func)
    {
       iterator begin(this->inserted_ptr_begin()), end(this->inserted_ptr_end());
       if(end < begin){
-         iterator idx_end = &mp_index[m_max_num_msg];
+         iterator idx_end = &mp_index[difference_type(m_max_num_msg)];
          iterator ret = std::lower_bound(begin, idx_end, value, func);
          if(idx_end == ret){
             iterator idx_beg = &mp_index[0];
@@ -452,14 +452,14 @@ class mq_hdr_t
          m_cur_first_msg = m_cur_first_msg ? m_cur_first_msg : m_max_num_msg;
          --m_cur_first_msg;
          ++m_cur_num_msg;
-         return *mp_index[m_cur_first_msg];
+         return *mp_index[difference_type(m_cur_first_msg)];
       }
       else if(where == it_inserted_ptr_end){
          ++m_cur_num_msg;
          return **it_inserted_ptr_end;
       }
       else{
-         size_type pos  = where - &mp_index[0];
+         size_type pos  = size_type(where - &mp_index[0]);
          size_type circ_pos = pos >= m_cur_first_msg ? pos - m_cur_first_msg : pos + (m_max_num_msg - m_cur_first_msg);
          //Check if it's more efficient to move back or move front
          if(circ_pos < m_cur_num_msg/2){
@@ -467,7 +467,7 @@ class mq_hdr_t
             //indicates two step insertion
             if(!pos){
                pos   = m_max_num_msg;
-               where = &mp_index[m_max_num_msg-1];
+               where = &mp_index[difference_type(m_max_num_msg-1u)];
             }
             else{
                --where;
@@ -484,7 +484,7 @@ class mq_hdr_t
                std::copy( &mp_index[0] + second_segment_beg
                         , &mp_index[0] + second_segment_end
                         , &mp_index[0] + second_segment_beg - 1);
-               mp_index[m_max_num_msg-1] = mp_index[0];
+               mp_index[difference_type(m_max_num_msg-1u)] = mp_index[0];
             }
             std::copy( &mp_index[0] + first_segment_beg
                      , &mp_index[0] + first_segment_end
@@ -510,12 +510,12 @@ class mq_hdr_t
             if(!unique_segment){
                std::copy_backward( &mp_index[0] + second_segment_beg
                                  , &mp_index[0] + second_segment_end
-                                 , &mp_index[0] + second_segment_end + 1);
-               mp_index[0] = mp_index[m_max_num_msg-1];
+                                 , &mp_index[0] + second_segment_end + 1u);
+               mp_index[0] = mp_index[difference_type(m_max_num_msg-1u)];
             }
             std::copy_backward( &mp_index[0] + first_segment_beg
                               , &mp_index[0] + first_segment_end
-                              , &mp_index[0] + first_segment_end + 1);
+                              , &mp_index[0] + first_segment_end + 1u);
             *where = backup;
             ++m_cur_num_msg;
             return **where;
@@ -529,7 +529,7 @@ class mq_hdr_t
 
    //!Returns the inserted message with top priority
    msg_header &top_msg()
-      {  return *mp_index[m_cur_num_msg-1];   }
+      {  return *mp_index[difference_type(m_cur_num_msg-1u)];   }
 
    //!Returns the inserted message with bottom priority
    msg_header &bottom_msg()
@@ -539,7 +539,7 @@ class mq_hdr_t
    {  return &mp_index[0]; }
 
    iterator inserted_ptr_end() const
-   {  return &mp_index[m_cur_num_msg]; }
+   {  return &mp_index[difference_type(m_cur_num_msg)]; }
 
    iterator lower_bound(const msg_hdr_ptr_t & value, priority_functor<VoidPointer> func)
    {  return std::lower_bound(this->inserted_ptr_begin(), this->inserted_ptr_end(), value, func);  }
@@ -683,8 +683,7 @@ class msg_queue_initialization_func_t
          }
          BOOST_CATCH(...){
             return false;
-         }
-         BOOST_CATCH_END
+         } BOOST_CATCH_END
       }
       return true;
    }
@@ -893,8 +892,7 @@ inline bool message_queue_t<VoidPointer>::do_send(
             --p_hdr->m_blocked_senders;
             #endif
             BOOST_RETHROW;
-         }
-         BOOST_CATCH_END
+         } BOOST_CATCH_END
       }
 
       #if defined(BOOST_INTERPROCESS_MSG_QUEUE_CIRCULAR_INDEX)
@@ -1024,8 +1022,7 @@ inline bool
             --p_hdr->m_blocked_receivers;
             #endif
             BOOST_RETHROW;
-         }
-         BOOST_CATCH_END
+         } BOOST_CATCH_END
       }
 
       #ifdef BOOST_INTERPROCESS_MSG_QUEUE_CIRCULAR_INDEX

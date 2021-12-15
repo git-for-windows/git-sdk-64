@@ -92,7 +92,7 @@ struct block_header
       :  m_value_bytes(val_bytes)
       ,  m_num_char((unsigned short)num_char)
       ,  m_value_alignment((unsigned char)val_alignment)
-      ,  m_alloc_type_sizeof_char( (al_type << 5u) | ((unsigned char)szof_char & 0x1F) )
+      ,  m_alloc_type_sizeof_char( (unsigned char)((al_type << 5u) | ((unsigned char)szof_char & 0x1F)) )
    {};
 
    template<class T>
@@ -102,7 +102,7 @@ struct block_header
    size_type total_size() const
    {
       if(alloc_type() != anonymous_type){
-         return name_offset() + (m_num_char+1)*sizeof_char();
+         return name_offset() + (m_num_char+1u)*sizeof_char();
       }
       else{
          return this->value_offset() + m_value_bytes;
@@ -219,8 +219,7 @@ inline void array_construct(void *mem, std::size_t num, in_place_interface &tabl
       std::size_t destroyed = 0;
       table.destroy_n(mem, constructed, destroyed);
       BOOST_RETHROW
-   }
-   BOOST_CATCH_END
+   } BOOST_CATCH_END
 }
 
 template<class CharT>

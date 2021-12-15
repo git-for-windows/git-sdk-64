@@ -86,7 +86,7 @@ class shm_named_semaphore
 
    typedef ipcdetail::managed_open_or_create_impl<shared_memory_object, 0, true, false> open_create_impl_t;
    open_create_impl_t m_shmem;
-   typedef named_creation_functor<interprocess_semaphore, int> construct_func_t;
+   typedef named_creation_functor<interprocess_semaphore, unsigned> construct_func_t;
    #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 };
 

@@ -81,7 +81,7 @@ qvm_detail
         };
     }
 
-template <class A,class B,class S=typename deduce_scalar_detail::deduce_scalar_impl<typename scalar<A>::type,typename scalar<B>::type>::type>
+template <class A,class B,class S=typename deduce_scalar<typename scalar<A>::type,typename scalar<B>::type>::type>
 struct
 deduce_quat2
     {

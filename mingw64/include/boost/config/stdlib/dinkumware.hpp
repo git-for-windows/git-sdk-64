@@ -204,11 +204,15 @@
 #  define BOOST_NO_CXX20_HDR_COROUTINE
 #  define BOOST_NO_CXX20_HDR_SEMAPHORE
 #endif
+#if !defined(_MSVC_STL_UPDATE) || (_MSVC_STL_UPDATE < 202011L) || !defined(_HAS_CXX20) || (_HAS_CXX20 == 0)
+#  define BOOST_NO_CXX20_HDR_STOP_TOKEN
+#endif
 // C++20 features not yet implemented:
 #  define BOOST_NO_CXX20_HDR_FORMAT
+#if !defined(_MSVC_STL_UPDATE) || (_MSVC_STL_UPDATE < 202108L) || !defined(_HAS_CXX20) || (_HAS_CXX20 == 0)
 #  define BOOST_NO_CXX20_HDR_SOURCE_LOCATION
-#  define BOOST_NO_CXX20_HDR_STOP_TOKEN
 #  define BOOST_NO_CXX20_HDR_SYNCSTREAM
+#endif
 // Incomplete:
 #  define BOOST_NO_CXX20_HDR_RANGES
 
@@ -232,7 +236,15 @@
 // Bug specific to VC14, 
 // See https://connect.microsoft.com/VisualStudio/feedback/details/1348277/link-error-when-using-std-codecvt-utf8-utf16-char16-t
 // and discussion here: http://blogs.msdn.com/b/vcblog/archive/2014/11/12/visual-studio-2015-preview-now-available.aspx?PageIndex=2
-#if defined(_CPPLIB_VER) && (_CPPLIB_VER == 650)
+#if defined(_CPPLIB_VER) && (_CPPLIB_VER == 650) && (!defined(_MSVC_STL_VERSION) || (_MSVC_STL_VERSION < 142))
+#  define BOOST_NO_CXX11_HDR_CODECVT
+#endif
+
+#if (_MSVC_LANG > 201700) && !defined(BOOST_NO_CXX11_HDR_CODECVT)
+//
+// <codecvt> is deprected as of C++17, and by default MSVC emits hard errors
+// if you try to use it, so mark it as unavailable:
+//
 #  define BOOST_NO_CXX11_HDR_CODECVT
 #endif
 

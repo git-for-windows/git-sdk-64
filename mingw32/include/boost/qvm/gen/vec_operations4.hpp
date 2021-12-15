@@ -489,7 +489,7 @@ mag( A const & a )
     T const a2=vec_traits<A>::template read_element<2>(a);
     T const a3=vec_traits<A>::template read_element<3>(a);
     T const m2=a0*a0+a1*a1+a2*a2+a3*a3;
-    T const mag=sqrt<T>(m2);
+    T const mag=sqrt(m2);
     return mag;
     }
 
@@ -564,7 +564,7 @@ normalized( A const & a )
     T const m2=a0*a0+a1*a1+a2*a2+a3*a3;
     if( m2==scalar_traits<typename vec_traits<A>::scalar_type>::value(0) )
         BOOST_QVM_THROW_EXCEPTION(zero_magnitude_error());
-    T const rm=scalar_traits<T>::value(1)/sqrt<T>(m2);
+    T const rm=scalar_traits<T>::value(1)/sqrt(m2);
     typedef typename deduce_vec<A>::type R;
     R r;
     vec_traits<R>::template write_element<0>(r)=a0*rm;
@@ -595,7 +595,7 @@ normalize( A & a )
     T const m2=a0*a0+a1*a1+a2*a2+a3*a3;
     if( m2==scalar_traits<typename vec_traits<A>::scalar_type>::value(0) )
         BOOST_QVM_THROW_EXCEPTION(zero_magnitude_error());
-    T const rm=scalar_traits<T>::value(1)/sqrt<T>(m2);
+    T const rm=scalar_traits<T>::value(1)/sqrt(m2);
     vec_traits<A>::template write_element<0>(a)*=rm;
     vec_traits<A>::template write_element<1>(a)*=rm;
     vec_traits<A>::template write_element<2>(a)*=rm;

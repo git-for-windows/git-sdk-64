@@ -204,28 +204,28 @@ inline void windows_named_sync::open_or_create
 
 inline bool windows_named_sync::remove(const char *name)
 {
-   try{
+   BOOST_TRY{
       //Make sure a temporary path is created for shared memory
       std::string semfile;
       ipcdetail::shared_filepath(name, semfile);
       return winapi::unlink_file(semfile.c_str());
    }
-   catch(...){
+   BOOST_CATCH(...){
       return false;
-   }
+   } BOOST_CATCH_END
 }
 
 inline bool windows_named_sync::remove(const wchar_t *name)
 {
-   try{
+   BOOST_TRY{
       //Make sure a temporary path is created for shared memory
       std::wstring semfile;
       ipcdetail::shared_filepath(name, semfile);
       return winapi::unlink_file(semfile.c_str());
    }
-   catch(...){
+   BOOST_CATCH(...){
       return false;
-   }
+   } BOOST_CATCH_END
 }
 
 }  //namespace ipcdetail {

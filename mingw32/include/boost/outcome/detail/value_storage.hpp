@@ -800,7 +800,8 @@ namespace detail
     using _value_type_ = devoid<value_type>;
     using _error_type_ = devoid<error_type>;
 
-    union {
+    union
+    {
       empty_type _empty;
       _value_type_ _value;
       _error_type_ _error;
@@ -822,21 +823,21 @@ namespace detail
     }
     template <class... Args>
     constexpr explicit value_storage_trivial(in_place_type_t<_value_type> /*unused*/,
-                                             Args &&... args) noexcept(detail::is_nothrow_constructible<_value_type_, Args...>)
+                                             Args &&...args) noexcept(detail::is_nothrow_constructible<_value_type_, Args...>)
         : _value(static_cast<Args &&>(args)...)
         , _status(status::have_value)
     {
     }
     template <class U, class... Args>
     constexpr value_storage_trivial(in_place_type_t<_value_type> /*unused*/, std::initializer_list<U> il,
-                                    Args &&... args) noexcept(detail::is_nothrow_constructible<_value_type_, std::initializer_list<U>, Args...>)
+                                    Args &&...args) noexcept(detail::is_nothrow_constructible<_value_type_, std::initializer_list<U>, Args...>)
         : _value(il, static_cast<Args &&>(args)...)
         , _status(status::have_value)
     {
     }
     template <class... Args>
     constexpr explicit value_storage_trivial(in_place_type_t<_error_type> /*unused*/,
-                                             Args &&... args) noexcept(detail::is_nothrow_constructible<_error_type_, Args...>)
+                                             Args &&...args) noexcept(detail::is_nothrow_constructible<_error_type_, Args...>)
         : _error(static_cast<Args &&>(args)...)
         , _status(status::have_error)
     {
@@ -844,7 +845,7 @@ namespace detail
     }
     template <class U, class... Args>
     constexpr value_storage_trivial(in_place_type_t<_error_type> /*unused*/, std::initializer_list<U> il,
-                                    Args &&... args) noexcept(detail::is_nothrow_constructible<_error_type_, std::initializer_list<U>, Args...>)
+                                    Args &&...args) noexcept(detail::is_nothrow_constructible<_error_type_, std::initializer_list<U>, Args...>)
         : _error(il, static_cast<Args &&>(args)...)
         , _status(status::have_error)
     {
@@ -884,8 +885,7 @@ namespace detail
     {
     };
     template <class V>
-    static constexpr bool enable_void_value_converting_constructor =
-    std::is_default_constructible<value_type>::value &&detail::is_constructible<error_type, V>;
+    static constexpr bool enable_void_value_converting_constructor = std::is_default_constructible<value_type>::value &&detail::is_constructible<error_type, V>;
     BOOST_OUTCOME_TEMPLATE(class V)
     BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(enable_void_value_converting_constructor<V>))
     constexpr explicit value_storage_trivial(const value_storage_trivial<void, V> &o, void_value_converting_constructor_tag /*unused*/ = {}) noexcept(
@@ -912,8 +912,7 @@ namespace detail
     {
     };
     template <class U>
-    static constexpr bool enable_void_error_converting_constructor =
-    std::is_default_constructible<error_type>::value &&detail::is_constructible<value_type, U>;
+    static constexpr bool enable_void_error_converting_constructor = std::is_default_constructible<error_type>::value &&detail::is_constructible<value_type, U>;
     BOOST_OUTCOME_TEMPLATE(class U)
     BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(enable_void_error_converting_constructor<U>))
     constexpr explicit value_storage_trivial(const value_storage_trivial<U, void> &o, void_error_converting_constructor_tag /*unused*/ = {}) noexcept(
@@ -943,7 +942,9 @@ namespace detail
     }
   };
 
-  // Used if T is non-trivial
+  /* Used if T or E is non-trivial. The additional constexpr is injected in C++ 20 to enable Outcome to
+  work in constexpr evaluation contexts in C++ 20 where non-trivial constexpr destructors are now allowed.
+  */
   template <class T, class E> struct value_storage_nontrivial
   {
     using value_type = T;
@@ -959,15 +960,20 @@ namespace detail
     using _value_type_ = devoid<value_type>;
     using _error_type_ = devoid<error_type>;
 
-    union {
+    union
+    {
       empty_type _empty1;
       _value_type_ _value;
     };
     status_bitfield_type _status;
-    union {
+    union
+    {
       empty_type _empty2;
       _error_type_ _error;
     };
+#if __cplusplus >= 202000L || _HAS_CXX20
+    constexpr
+#endif
     value_storage_nontrivial() noexcept
         : _empty1{}
         , _empty2{}
@@ -975,6 +981,9 @@ namespace detail
     }
     value_storage_nontrivial &operator=(const value_storage_nontrivial &) = default;  // if reaches here, copy assignment is trivial
     value_storage_nontrivial &operator=(value_storage_nontrivial &&) = default;       // NOLINT if reaches here, move assignment is trivial
+#if __cplusplus >= 202000L || _HAS_CXX20
+    constexpr
+#endif
     value_storage_nontrivial(value_storage_nontrivial &&o) noexcept(
     std::is_nothrow_move_constructible<_value_type_>::value &&std::is_nothrow_move_constructible<_error_type_>::value)  // NOLINT
     {
@@ -989,6 +998,9 @@ namespace detail
       _status = o._status;
       o._status.set_have_moved_from(true);
     }
+#if __cplusplus >= 202000L || _HAS_CXX20
+    constexpr
+#endif
     value_storage_nontrivial(const value_storage_nontrivial &o) noexcept(
     std::is_nothrow_copy_constructible<_value_type_>::value &&std::is_nothrow_copy_constructible<_error_type_>::value)
     {
@@ -1002,6 +1014,9 @@ namespace detail
       }
       _status = o._status;
     }
+#if __cplusplus >= 202000L || _HAS_CXX20
+    constexpr
+#endif
     explicit value_storage_nontrivial(status_bitfield_type status)
         : _empty1()
         , _status(status)
@@ -1009,30 +1024,30 @@ namespace detail
     {
     }
     template <class... Args>
-    explicit value_storage_nontrivial(in_place_type_t<_value_type> /*unused*/,
-                                      Args &&... args) noexcept(detail::is_nothrow_constructible<_value_type_, Args...>)
+    constexpr explicit value_storage_nontrivial(in_place_type_t<_value_type> /*unused*/,
+                                                Args &&...args) noexcept(detail::is_nothrow_constructible<_value_type_, Args...>)
         : _value(static_cast<Args &&>(args)...)  // NOLINT
         , _status(status::have_value)
     {
     }
     template <class U, class... Args>
-    value_storage_nontrivial(in_place_type_t<_value_type> /*unused*/, std::initializer_list<U> il,
-                             Args &&... args) noexcept(detail::is_nothrow_constructible<_value_type_, std::initializer_list<U>, Args...>)
+    constexpr value_storage_nontrivial(in_place_type_t<_value_type> /*unused*/, std::initializer_list<U> il,
+                                       Args &&...args) noexcept(detail::is_nothrow_constructible<_value_type_, std::initializer_list<U>, Args...>)
         : _value(il, static_cast<Args &&>(args)...)
         , _status(status::have_value)
     {
     }
     template <class... Args>
-    explicit value_storage_nontrivial(in_place_type_t<_error_type> /*unused*/,
-                                      Args &&... args) noexcept(detail::is_nothrow_constructible<_error_type_, Args...>)
+    constexpr explicit value_storage_nontrivial(in_place_type_t<_error_type> /*unused*/,
+                                                Args &&...args) noexcept(detail::is_nothrow_constructible<_error_type_, Args...>)
         : _status(status::have_error)
         , _error(static_cast<Args &&>(args)...)  // NOLINT
     {
       _set_error_is_errno(*this);
     }
     template <class U, class... Args>
-    value_storage_nontrivial(in_place_type_t<_error_type> /*unused*/, std::initializer_list<U> il,
-                             Args &&... args) noexcept(detail::is_nothrow_constructible<_error_type_, std::initializer_list<U>, Args...>)
+    constexpr value_storage_nontrivial(in_place_type_t<_error_type> /*unused*/, std::initializer_list<U> il,
+                                       Args &&...args) noexcept(detail::is_nothrow_constructible<_error_type_, std::initializer_list<U>, Args...>)
         : _status(status::have_error)
         , _error(il, static_cast<Args &&>(args)...)
     {
@@ -1093,11 +1108,10 @@ namespace detail
     {
     };
     template <class V>
-    static constexpr bool enable_void_value_converting_constructor =
-    std::is_default_constructible<value_type>::value &&detail::is_constructible<error_type, V>;
+    static constexpr bool enable_void_value_converting_constructor = std::is_default_constructible<value_type>::value &&detail::is_constructible<error_type, V>;
     BOOST_OUTCOME_TEMPLATE(class V)
     BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(enable_void_value_converting_constructor<V>))
-    explicit value_storage_nontrivial(const value_storage_trivial<void, V> &o, void_value_converting_constructor_tag /*unused*/ = {}) noexcept(
+    constexpr explicit value_storage_nontrivial(const value_storage_trivial<void, V> &o, void_value_converting_constructor_tag /*unused*/ = {}) noexcept(
     std::is_nothrow_default_constructible<_value_type_>::value &&detail::is_nothrow_constructible<_error_type_, V>)
     {
       if(o._status.have_value())
@@ -1112,7 +1126,7 @@ namespace detail
     }
     BOOST_OUTCOME_TEMPLATE(class V)
     BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(enable_void_value_converting_constructor<V>))
-    explicit value_storage_nontrivial(value_storage_trivial<void, V> &&o, void_value_converting_constructor_tag /*unused*/ = {}) noexcept(
+    constexpr explicit value_storage_nontrivial(value_storage_trivial<void, V> &&o, void_value_converting_constructor_tag /*unused*/ = {}) noexcept(
     std::is_nothrow_default_constructible<_value_type_>::value &&detail::is_nothrow_constructible<_error_type_, V>)
     {
       if(o._status.have_value())
@@ -1131,11 +1145,10 @@ namespace detail
     {
     };
     template <class U>
-    static constexpr bool enable_void_error_converting_constructor =
-    std::is_default_constructible<error_type>::value &&detail::is_constructible<value_type, U>;
+    static constexpr bool enable_void_error_converting_constructor = std::is_default_constructible<error_type>::value &&detail::is_constructible<value_type, U>;
     BOOST_OUTCOME_TEMPLATE(class U)
     BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(enable_void_error_converting_constructor<U>))
-    explicit value_storage_nontrivial(const value_storage_trivial<U, void> &o, void_error_converting_constructor_tag /*unused*/ = {}) noexcept(
+    constexpr explicit value_storage_nontrivial(const value_storage_trivial<U, void> &o, void_error_converting_constructor_tag /*unused*/ = {}) noexcept(
     detail::is_nothrow_constructible<_value_type_, U> &&std::is_nothrow_default_constructible<_error_type_>::value)
     {
       if(o._status.have_value())
@@ -1150,7 +1163,7 @@ namespace detail
     }
     BOOST_OUTCOME_TEMPLATE(class U)
     BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(enable_void_error_converting_constructor<U>))
-    explicit value_storage_nontrivial(value_storage_trivial<U, void> &&o, void_error_converting_constructor_tag /*unused*/ = {}) noexcept(
+    constexpr explicit value_storage_nontrivial(value_storage_trivial<U, void> &&o, void_error_converting_constructor_tag /*unused*/ = {}) noexcept(
     detail::is_nothrow_constructible<_value_type_, U> &&std::is_nothrow_default_constructible<_error_type_>::value)
     {
       if(o._status.have_value())
@@ -1165,6 +1178,9 @@ namespace detail
       o._status.set_have_moved_from(true);
     }
 
+#if __cplusplus >= 202000L || _HAS_CXX20
+    constexpr
+#endif
     ~value_storage_nontrivial() noexcept(std::is_nothrow_destructible<_value_type_>::value &&std::is_nothrow_destructible<_error_type_>::value)
     {
       if(this->_status.have_value())
@@ -1184,7 +1200,10 @@ namespace detail
         this->_status.set_have_error(false);
       }
     }
-    constexpr void
+#if __cplusplus >= 202000L || _HAS_CXX20
+    constexpr
+#endif
+    void
     swap(value_storage_nontrivial &o) noexcept(detail::is_nothrow_swappable<_value_type_>::value &&detail::is_nothrow_swappable<_error_type_>::value)
     {
       using std::swap;
@@ -1369,7 +1388,11 @@ namespace detail
     value_storage_nontrivial_move_assignment(const value_storage_nontrivial_move_assignment &) = default;
     value_storage_nontrivial_move_assignment(value_storage_nontrivial_move_assignment &&) = default;  // NOLINT
     value_storage_nontrivial_move_assignment &operator=(const value_storage_nontrivial_move_assignment &o) = default;
-    value_storage_nontrivial_move_assignment &operator=(value_storage_nontrivial_move_assignment &&o) noexcept(
+#if __cplusplus >= 202000L || _HAS_CXX20
+    constexpr
+#endif
+    value_storage_nontrivial_move_assignment &
+    operator=(value_storage_nontrivial_move_assignment &&o) noexcept(
     std::is_nothrow_move_assignable<value_type>::value &&std::is_nothrow_move_assignable<error_type>::value)  // NOLINT
     {
       using _value_type_ = typename Base::_value_type_;
@@ -1382,14 +1405,14 @@ namespace detail
       }
       if(this->_status.have_value() && o._status.have_value())
       {
-        this->_value  = static_cast<_value_type_&&>(o._value);  // NOLINT
+        this->_value = static_cast<_value_type_ &&>(o._value);  // NOLINT
         this->_status = o._status;
         o._status.set_have_moved_from(true);
         return *this;
       }
       if(this->_status.have_error() && o._status.have_error())
       {
-        this->_error  = static_cast<_error_type_&&>(o._error);  // NOLINT
+        this->_error = static_cast<_error_type_ &&>(o._error);  // NOLINT
         this->_status = o._status;
         o._status.set_have_moved_from(true);
         return *this;
@@ -1406,7 +1429,7 @@ namespace detail
       }
       if(!this->_status.have_value() && !this->_status.have_error() && o._status.have_value())
       {
-        new(&this->_value) _value_type_(static_cast<_value_type_&&>(o._value));  // NOLINT
+        new(&this->_value) _value_type_(static_cast<_value_type_ &&>(o._value));  // NOLINT
         this->_status = o._status;
         o._status.set_have_moved_from(true);
         return *this;
@@ -1423,7 +1446,7 @@ namespace detail
       }
       if(!this->_status.have_value() && !this->_status.have_error() && o._status.have_error())
       {
-        new(&this->_error) _error_type_(static_cast<_error_type_&&>(o._error));  // NOLINT
+        new(&this->_error) _error_type_(static_cast<_error_type_ &&>(o._error));  // NOLINT
         this->_status = o._status;
         o._status.set_have_moved_from(true);
         return *this;
@@ -1434,7 +1457,7 @@ namespace detail
         {
           this->_value.~_value_type_();  // NOLINT
         }
-        new(&this->_error) _error_type_(static_cast<_error_type_&&>(o._error));  // NOLINT
+        new(&this->_error) _error_type_(static_cast<_error_type_ &&>(o._error));  // NOLINT
         this->_status = o._status;
         o._status.set_have_moved_from(true);
         return *this;
@@ -1445,7 +1468,7 @@ namespace detail
         {
           this->_error.~_error_type_();  // NOLINT
         }
-        new(&this->_value) _value_type_(static_cast<_value_type_&&>(o._value));  // NOLINT
+        new(&this->_value) _value_type_(static_cast<_value_type_ &&>(o._value));  // NOLINT
         this->_status = o._status;
         o._status.set_have_moved_from(true);
         return *this;
@@ -1463,13 +1486,16 @@ namespace detail
     value_storage_nontrivial_copy_assignment(const value_storage_nontrivial_copy_assignment &) = default;
     value_storage_nontrivial_copy_assignment(value_storage_nontrivial_copy_assignment &&) = default;              // NOLINT
     value_storage_nontrivial_copy_assignment &operator=(value_storage_nontrivial_copy_assignment &&o) = default;  // NOLINT
-    value_storage_nontrivial_copy_assignment &operator=(const value_storage_nontrivial_copy_assignment &o) noexcept(
+#if __cplusplus >= 202000L || _HAS_CXX20
+    constexpr
+#endif
+    value_storage_nontrivial_copy_assignment &
+    operator=(const value_storage_nontrivial_copy_assignment &o) noexcept(
     std::is_nothrow_copy_assignable<value_type>::value &&std::is_nothrow_copy_assignable<error_type>::value)
     {
       using _value_type_ = typename Base::_value_type_;
       using _error_type_ = typename Base::_error_type_;
-      if(!this->_status.have_value() && !this->_status.have_error() && !o._status.have_value()
-         && !o._status.have_error())
+      if(!this->_status.have_value() && !this->_status.have_error() && !o._status.have_value() && !o._status.have_error())
       {
         this->_status = o._status;
         return *this;

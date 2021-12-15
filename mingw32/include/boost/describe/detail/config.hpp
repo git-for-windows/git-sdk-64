@@ -27,4 +27,12 @@
 # define BOOST_DESCRIBE_CONSTEXPR_OR_CONST const
 #endif
 
+#define BOOST_DESCRIBE_MAYBE_UNUSED
+#if defined(__has_cpp_attribute)
+# if __has_cpp_attribute(maybe_unused)
+#  undef BOOST_DESCRIBE_MAYBE_UNUSED
+#  define BOOST_DESCRIBE_MAYBE_UNUSED [[maybe_unused]]
+# endif
+#endif
+
 #endif // #ifndef BOOST_DESCRIBE_DETAIL_CONFIG_HPP_INCLUDED

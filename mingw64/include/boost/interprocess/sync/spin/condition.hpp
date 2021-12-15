@@ -21,6 +21,8 @@
 
 #include <boost/interprocess/detail/config_begin.hpp>
 #include <boost/interprocess/detail/workaround.hpp>
+
+#include <boost/interprocess/sync/cv_status.hpp>
 #include <boost/interprocess/sync/spin/mutex.hpp>
 #include <boost/interprocess/detail/atomic.hpp>
 #include <boost/interprocess/sync/scoped_lock.hpp>
@@ -63,6 +65,24 @@ class spin_condition
    void notify_all()
    {  this->notify(NOTIFY_ALL);  }
 
+   template <typename L>
+   void wait(L& lock)
+   {
+      if (!lock)
+         throw lock_exception();
+      this->do_timed_wait_impl<false>(0, *lock.mutex());
+   }
+
+   template <typename L, typename Pr>
+   void wait(L& lock, Pr pred)
+   {
+      if (!lock)
+         throw lock_exception();
+
+      while (!pred())
+         this->do_timed_wait_impl<false>(0, *lock.mutex());
+   }
+
    template <typename L, typename TimePoint>
    bool timed_wait(L& lock, const TimePoint &abs_time)
    {
@@ -93,23 +113,21 @@ class spin_condition
       return true;
    }
 
-   template <typename L>
-   void wait(L& lock)
-   {
-      if (!lock)
-         throw lock_exception();
-      this->do_timed_wait_impl<false>(0, *lock.mutex());
-   }
+   template <typename L, class TimePoint>
+   cv_status wait_until(L& lock, const TimePoint &abs_time)
+   {  return this->timed_wait(lock, abs_time) ? cv_status::no_timeout : cv_status::timeout; }
 
-   template <typename L, typename Pr>
-   void wait(L& lock, Pr pred)
-   {
-      if (!lock)
-         throw lock_exception();
+   template <typename L, class TimePoint, typename Pr>
+   bool wait_until(L& lock, const TimePoint &abs_time, Pr pred)
+   {  return this->timed_wait(lock, abs_time, pred); }
 
-      while (!pred())
-         this->do_timed_wait_impl<false>(0, *lock.mutex());
-   }
+   template <typename L, class Duration>
+   cv_status wait_for(L& lock, const Duration &dur)
+   {  return this->wait_until(lock, duration_to_ustime(dur)); }
+
+   template <typename L, class Duration, typename Pr>
+   bool wait_for(L& lock, const Duration &dur, Pr pred)
+   {  return this->wait_until(lock, duration_to_ustime(dur), pred); }
 
    private:
 

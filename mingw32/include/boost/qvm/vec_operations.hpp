@@ -508,7 +508,7 @@ mag( A const & a )
         T x=vec_traits<A>::read_element_idx(i,a);
         m+=x*x;
         }
-    return sqrt<T>(m);
+    return sqrt(m);
     }
 
 ////////////////////////////////////////////////
@@ -735,7 +735,7 @@ normalized( A const & a )
         }
     if( m==scalar_traits<T>::value(0) )
         BOOST_QVM_THROW_EXCEPTION(zero_magnitude_error());
-    T rm=scalar_traits<T>::value(1)/sqrt<T>(m);
+    T rm=scalar_traits<T>::value(1)/sqrt(m);
     typedef typename deduce_vec<A>::type R;
     R r;
     for( int i=0; i!=vec_traits<A>::dim; ++i )
@@ -760,7 +760,7 @@ normalize( A & a )
         }
     if( m==scalar_traits<T>::value(0) )
         BOOST_QVM_THROW_EXCEPTION(zero_magnitude_error());
-    T rm=scalar_traits<T>::value(1)/sqrt<T>(m);
+    T rm=scalar_traits<T>::value(1)/sqrt(m);
     for( int i=0; i!=vec_traits<A>::dim; ++i )
         vec_traits<A>::write_element_idx(i,a)*=rm;
     }

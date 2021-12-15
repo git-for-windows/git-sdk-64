@@ -61,6 +61,18 @@ class null_mutex
    bool timed_lock(const TimePoint &)
    {  return true;   }
 
+   //!Same as `timed_lock`, but this function is modeled after the
+   //!standard library interface.
+   template<class TimePoint>
+   bool try_lock_until(const TimePoint &)
+   {  return true;  }
+
+   //!Same as `timed_lock`, but this function is modeled after the
+   //!standard library interface.
+   template<class Duration> 
+   bool try_lock_for(const Duration &)
+   {  return true; }
+
    //!Simulates a mutex unlock() operation.
    //!Empty function.
    void unlock(){}
@@ -69,10 +81,20 @@ class null_mutex
    //!Empty function.
    void lock_sharable(){}
 
+   //!Same as `lock_sharable` but with a std-compatible interface
+   //! 
+   void lock_shared()
+   {  this->lock_sharable();  }
+
    //!Simulates a mutex try_lock_sharable() operation.
    //!Equivalent to "return true;"
    bool try_lock_sharable()
    {  return true;   }
+
+   //!Same as `try_lock_sharable` but with a std-compatible interface
+   //! 
+   bool try_lock_shared()
+   {  return this->try_lock_sharable();  }
 
    //!Simulates a mutex timed_lock_sharable() operation.
    //!Equivalent to "return true;"
@@ -83,6 +105,11 @@ class null_mutex
    //!Simulates a mutex unlock_sharable() operation.
    //!Empty function.
    void unlock_sharable(){}
+
+   //!Same as `unlock_sharable` but with a std-compatible interface
+   //! 
+   void unlock_shared()
+   {  this->unlock_sharable();  }
 
    //!Simulates a mutex lock_upgradable() operation.
    //!Empty function.

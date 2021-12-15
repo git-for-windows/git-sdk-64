@@ -70,7 +70,9 @@ class _std_error_code_domain final : public status_code_domain
 
   static _base::string_ref _make_string_ref(_error_code_type c) noexcept
   {
+#if defined(__cpp_exceptions) || defined(__EXCEPTIONS) || defined(_CPPUNWIND)
     try
+#endif
     {
       std::string msg = c.message();
       auto *p = static_cast<char *>(malloc(msg.size() + 1));  // NOLINT
@@ -81,10 +83,9 @@ class _std_error_code_domain final : public status_code_domain
       memcpy(p, msg.c_str(), msg.size() + 1);
       return _base::atomic_refcounted_string_ref(p, msg.size());
     }
-    catch(...)
-    {
-      return _base::string_ref("failed to allocate message");
-    }
+#if defined(__cpp_exceptions) || defined(__EXCEPTIONS) || defined(_CPPUNWIND)
+    catch(...) { return _base::string_ref("failed to allocate message"); }
+#endif
   }
 
 public:

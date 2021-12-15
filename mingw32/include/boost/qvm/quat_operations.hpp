@@ -138,7 +138,7 @@ convert_to( A const & a )
     if( mat[0][0]+mat[1][1]+mat[2][2] > scalar_traits<T>::value(0) )
         {
         T t = mat[0][0] + mat[1][1] + mat[2][2] + scalar_traits<T>::value(1);
-        T s = (scalar_traits<T>::value(1)/sqrt<T>(t))/2;
+        T s = (scalar_traits<T>::value(1)/sqrt(t))/2;
         quat_traits<R>::template write_element<0>(r)=s*t;
         quat_traits<R>::template write_element<1>(r)=(mat[2][1]-mat[1][2])*s;
         quat_traits<R>::template write_element<2>(r)=(mat[0][2]-mat[2][0])*s;
@@ -147,7 +147,7 @@ convert_to( A const & a )
     else if( mat[0][0]>mat[1][1] && mat[0][0]>mat[2][2] )
         {
         T t = mat[0][0] - mat[1][1] - mat[2][2] + scalar_traits<T>::value(1);
-        T s = (scalar_traits<T>::value(1)/sqrt<T>(t))/2;
+        T s = (scalar_traits<T>::value(1)/sqrt(t))/2;
         quat_traits<R>::template write_element<0>(r)=(mat[2][1]-mat[1][2])*s;
         quat_traits<R>::template write_element<1>(r)=s*t;
         quat_traits<R>::template write_element<2>(r)=(mat[1][0]+mat[0][1])*s;
@@ -156,7 +156,7 @@ convert_to( A const & a )
     else if( mat[1][1]>mat[2][2] )
         {
         T t = - mat[0][0] + mat[1][1] - mat[2][2] + scalar_traits<T>::value(1);
-        T s = (scalar_traits<T>::value(1)/sqrt<T>(t))/2;
+        T s = (scalar_traits<T>::value(1)/sqrt(t))/2;
         quat_traits<R>::template write_element<0>(r)=(mat[0][2]-mat[2][0])*s;
         quat_traits<R>::template write_element<1>(r)=(mat[1][0]+mat[0][1])*s;
         quat_traits<R>::template write_element<2>(r)=s*t;
@@ -165,7 +165,7 @@ convert_to( A const & a )
     else
         {
         T t = - mat[0][0] - mat[1][1] + mat[2][2] + scalar_traits<T>::value(1);
-        T s = (scalar_traits<T>::value(1)/sqrt<T>(t))/2;
+        T s = (scalar_traits<T>::value(1)/sqrt(t))/2;
         quat_traits<R>::template write_element<0>(r)=(mat[1][0]-mat[0][1])*s;
         quat_traits<R>::template write_element<1>(r)=(mat[0][2]+mat[2][0])*s;
         quat_traits<R>::template write_element<2>(r)=(mat[2][1]+mat[1][2])*s;
@@ -480,7 +480,7 @@ mag( A const & a )
     T y=quat_traits<A>::template read_element<1>(a);
     T z=quat_traits<A>::template read_element<2>(a);
     T w=quat_traits<A>::template read_element<3>(a);
-    return sqrt<T>(x*x+y*y+z*z+w*w);
+    return sqrt(x*x+y*y+z*z+w*w);
     }
 
 template <class A,class B>
@@ -638,7 +638,7 @@ normalized( A const & a )
     T const m2=a0*a0+a1*a1+a2*a2+a3*a3;
     if( m2==scalar_traits<typename quat_traits<A>::scalar_type>::value(0) )
         BOOST_QVM_THROW_EXCEPTION(zero_magnitude_error());
-    T const rm=scalar_traits<T>::value(1)/sqrt<T>(m2);
+    T const rm=scalar_traits<T>::value(1)/sqrt(m2);
     typedef typename deduce_quat<A>::type R;
     R r;
     quat_traits<R>::template write_element<0>(r)=a0*rm;
@@ -663,7 +663,7 @@ normalize( A & a )
     T const m2=a0*a0+a1*a1+a2*a2+a3*a3;
     if( m2==scalar_traits<typename quat_traits<A>::scalar_type>::value(0) )
         BOOST_QVM_THROW_EXCEPTION(zero_magnitude_error());
-    T const rm=scalar_traits<T>::value(1)/sqrt<T>(m2);
+    T const rm=scalar_traits<T>::value(1)/sqrt(m2);
     quat_traits<A>::template write_element<0>(a)*=rm;
     quat_traits<A>::template write_element<1>(a)*=rm;
     quat_traits<A>::template write_element<2>(a)*=rm;
@@ -714,10 +714,10 @@ slerp( A const & a, B const & b, C t )
     TR sc=one;
     if( dp < one )
         {
-        TR const theta = acos<TR>(dp);
-        TR const invsintheta = one/sin<TR>(theta);
-        TR const scale = sin<TR>(theta*(one-t)) * invsintheta;
-        TR const invscale = sin<TR>(theta*t) * invsintheta * sc;
+        TR const theta = acos(dp);
+        TR const invsintheta = one/sin(theta);
+        TR const scale = sin(theta*(one-t)) * invsintheta;
+        TR const invscale = sin(theta*t) * invsintheta * sc;
         return a*scale + b*invscale;
         }
     else
@@ -919,10 +919,10 @@ qvm_detail
             scalar_type const m2=x*x+y*y+z*z;
             if( m2==scalar_traits<scalar_type>::value(0) )
                 BOOST_QVM_THROW_EXCEPTION(zero_magnitude_error());
-            scalar_type const rm=scalar_traits<scalar_type>::value(1)/sqrt<scalar_type>(m2);
+            scalar_type const rm=scalar_traits<scalar_type>::value(1)/sqrt(m2);
             angle/=2;
-            scalar_type const s=sin<Angle>(angle);
-            a[0] = cos<Angle>(angle);
+            scalar_type const s=sin(angle);
+            a[0] = cos(angle);
             a[1] = rm*x*s;
             a[2] = rm*y*s;
             a[3] = rm*z*s;
@@ -1051,7 +1051,7 @@ qvm_detail
         T
         get( T const & angle )
             {
-            return sin<T>(angle/2);
+            return sin(angle/2);
             }
         };
 
@@ -1065,7 +1065,7 @@ qvm_detail
         T
         get( T const & angle )
             {
-            return cos<T>(angle/2);
+            return cos(angle/2);
             }
         };
     }
@@ -1185,7 +1185,7 @@ qvm_detail
         T
         get( T const & angle )
             {
-            return sin<T>(angle/2);
+            return sin(angle/2);
             }
         };
 
@@ -1199,7 +1199,7 @@ qvm_detail
         T
         get( T const & angle )
             {
-            return cos<T>(angle/2);
+            return cos(angle/2);
             }
         };
     }
@@ -1319,7 +1319,7 @@ qvm_detail
         T
         get( T const & angle )
             {
-            return sin<T>(angle/2);
+            return sin(angle/2);
             }
         };
 
@@ -1333,7 +1333,7 @@ qvm_detail
         T
         get( T const & angle )
             {
-            return cos<T>(angle/2);
+            return cos(angle/2);
             }
         };
     }
@@ -1416,13 +1416,13 @@ axis_angle( A const & a, B & b )
         T const m2=a0*a0+a1*a1+a2*a2+a3*a3;
         if( m2==scalar_traits<T>::value(0) )
             BOOST_QVM_THROW_EXCEPTION(zero_magnitude_error());
-        T const s=sqrt<T>(m2);
+        T const s=sqrt(m2);
         a0/=s;
         a1/=s;
         a2/=s;
         a3/=s;
         }
-    if( T s=sqrt<T>(1-a0*a0) )
+    if( T s=sqrt(1-a0*a0) )
         {
         vec_traits<B>::template write_element<0>(b) = a1/s;
         vec_traits<B>::template write_element<1>(b) = a2/s;

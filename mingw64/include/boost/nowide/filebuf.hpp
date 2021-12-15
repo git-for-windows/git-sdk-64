@@ -213,7 +213,10 @@ namespace nowide {
             setg(NULL, NULL, NULL);
             setp(NULL, NULL);
             if(owns_buffer_)
+            {
                 delete[] buffer_;
+                owns_buffer_ = false;
+            }
             buffer_ = s;
             buffer_size_ = (n >= 0) ? static_cast<size_t>(n) : 0;
             return this;

@@ -157,6 +157,9 @@
 #if !defined(__cpp_lib_semaphore) || (__cpp_lib_semaphore < 201907L)
 #  define BOOST_NO_CXX20_HDR_SEMAPHORE
 #endif
+#if !defined(__cpp_lib_concepts) || (__cpp_lib_concepts < 202002L)
+#  define BOOST_NO_CXX20_HDR_CONCEPTS
+#endif
 
 #if(_LIBCPP_VERSION < 9000) && !defined(BOOST_NO_CXX20_HDR_SPAN)
 // as_writable_bytes is missing.

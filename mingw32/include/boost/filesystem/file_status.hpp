@@ -46,10 +46,8 @@ enum file_type
     fifo_file,
     socket_file,
     reparse_file, // Windows: FILE_ATTRIBUTE_REPARSE_POINT that is not a symlink
-    type_unknown, // file does exist, but isn't one of the above types or
+    type_unknown  // file does exist, but isn't one of the above types or
                   // we don't have strong enough permission to find its type
-
-    _detail_directory_symlink // internal use only; never exposed to users
 };
 
 //--------------------------------------------------------------------------------------//
