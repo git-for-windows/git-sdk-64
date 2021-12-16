@@ -239,13 +239,13 @@ int EVP_CIPHER_asn1_to_param(EVP_CIPHER_CTX *c, ASN1_TYPE *type);</code></pre>
 <dt id="EVP_CIPHER_CTX_ctrl-ctx-EVP_CTRL_AEAD_SET_TAG-taglen-tag">EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_TAG, taglen, tag)</dt>
 <dd>
 
-<p>Sets the expected tag to <code>taglen</code> bytes from <code>tag</code>. The tag length can only be set before specifying an IV. <code>taglen</code> must be between 1 and 16 inclusive.</p>
+<p>When decrypting, this call sets the expected tag to <code>taglen</code> bytes from <code>tag</code>. <code>taglen</code> must be between 1 and 16 inclusive. The tag must be set prior to any call to EVP_DecryptFinal() or EVP_DecryptFinal_ex().</p>
 
 <p>For GCM, this call is only valid when decrypting data.</p>
 
-<p>For OCB, this call is valid when decrypting data to set the expected tag, and before encryption to set the desired tag length.</p>
+<p>For OCB, this call is valid when decrypting data to set the expected tag, and when encrypting to set the desired tag length.</p>
 
-<p>In OCB mode, calling this before encryption with <code>tag</code> set to <code>NULL</code> sets the tag length. If this is not called prior to encryption, a default tag length is used.</p>
+<p>In OCB mode, calling this when encrypting with <code>tag</code> set to <code>NULL</code> sets the tag length. The tag length can only be set before specifying an IV. If this is not called prior to setting the IV during encryption, then a default tag length is used.</p>
 
 <p>For OCB AES, the default tag length is 16 (i.e. 128 bits). It is also the maximum tag length for OCB.</p>
 
@@ -455,7 +455,7 @@ int EVP_CIPHER_asn1_to_param(EVP_CIPHER_CTX *c, ASN1_TYPE *type);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
