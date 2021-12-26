@@ -9,7 +9,7 @@ BEGIN { @JSON::ISA = 'Exporter' }
 @JSON::EXPORT = qw(from_json to_json jsonToObj objToJson encode_json decode_json);
 
 BEGIN {
-    $JSON::VERSION = '4.03';
+    $JSON::VERSION = '4.04';
     $JSON::DEBUG   = 0 unless (defined $JSON::DEBUG);
     $JSON::DEBUG   = $ENV{ PERL_JSON_DEBUG } if exists $ENV{ PERL_JSON_DEBUG };
 }
@@ -1595,7 +1595,7 @@ argument being the object to serialise, and the second argument being the
 constant string C<JSON> to distinguish it from other serialisers.
 
 The C<FREEZE> method can return any number of values (i.e. zero or
-more). These values and the paclkage/classname of the object will then be
+more). These values and the package/classname of the object will then be
 encoded as a tagged JSON value in the following format:
 
    ("classname")[FREEZE return values...]
