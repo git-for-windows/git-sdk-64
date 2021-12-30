@@ -892,7 +892,7 @@
 #define HAVE_SCHED_SETSCHEDULER 1
 
 /* Define to 1 if you have the `sem_clockwait' function. */
-/* #undef HAVE_SEM_CLOCKWAIT */
+#define HAVE_SEM_CLOCKWAIT 1
 
 /* Define to 1 if you have the `sem_getvalue' function. */
 #define HAVE_SEM_GETVALUE 1

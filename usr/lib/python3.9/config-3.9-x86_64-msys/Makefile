@@ -239,7 +239,7 @@ LDLIBRARYDIR=
 INSTSONAME=	$(LDLIBRARY)
 
 
-LIBS=		-lcrypt -lintl -ldl  
+LIBS=		-lintl -ldl  
 LIBM=		
 LIBC=		
 SYSLIBS=	$(LIBM) $(LIBC)
