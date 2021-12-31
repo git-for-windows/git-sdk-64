@@ -133,6 +133,9 @@ AC_DEFUN([gl_THREADLIB_BODY],
 #pragma weak fputs
 int main ()
 {
+#ifdef __CYGWIN__
+  return 1;
+#endif
   return (fputs == NULL);
 }]])],
            [gl_cv_have_weak=yes],
