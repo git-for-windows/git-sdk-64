@@ -2547,14 +2547,8 @@ cygwin* | msys* | mingw* | pw32* | cegcc*)
     shlibpath_overrides_runpath=yes
 
     case $host_os in
-    cygwin*)
+    cygwin* | msys*)
       # Cygwin DLLs use 'cyg' prefix rather than 'lib'
-      soname_spec='`echo $libname | sed -e 's/^lib/cyg/'``echo $release | $SED -e 's/[[.]]/-/g'`$versuffix$shared_ext'
-m4_if([$1], [],[
-      sys_lib_search_path_spec="$sys_lib_search_path_spec /usr/lib/w32api"])
-      ;;
-    msys*)
-      # MSYS DLLs use 'msys-' prefix rather than 'lib'
       soname_spec='`echo $libname | sed -e 's/^lib/msys-/'``echo $release | $SED -e 's/[[.]]/-/g'`$versuffix$shared_ext'
 m4_if([$1], [],[
       sys_lib_search_path_spec="$sys_lib_search_path_spec /usr/lib/w32api"])
