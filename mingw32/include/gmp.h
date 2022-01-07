@@ -2324,7 +2324,7 @@ enum
 
 /* Define CC and CFLAGS which were used to build this version of GMP */
 #define __GMP_CC "gcc"
-#define __GMP_CFLAGS "-march=i686 -mtune=generic -O2 -pipe"
+#define __GMP_CFLAGS "-march=pentium4 -mtune=generic -O2 -pipe"
 
 /* Major version number is the value of __GNU_MP__ too, above. */
 #define __GNU_MP_VERSION            6

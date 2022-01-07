@@ -3,15 +3,15 @@ dnl This file is in the public domain.
 dnl
 dnl Configuration file - processed by autoconf.
 
-AC_INIT
-AC_CONFIG_SRCDIR(hello.c)
-AM_INIT_AUTOMAKE(hello-c-gnome, 0)
+AC_INIT([hello-c-gnome], [0])
+AC_CONFIG_SRCDIR([hello.c])
+AM_INIT_AUTOMAKE([1.11])
 
 AC_PROG_CC
 GNOME_INIT
 AC_CHECK_HEADERS([unistd.h])
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION(0.15)
+AM_GNU_GETTEXT_VERSION([0.21])
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([m4/Makefile])

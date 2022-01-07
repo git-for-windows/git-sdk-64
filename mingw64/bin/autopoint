@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# Copyright (C) 2002-2016 Free Software Foundation, Inc.
+# Copyright (C) 2002-2020 Free Software Foundation, Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 # This file is meant for authors, maintainers, co-maintainers or installers
@@ -22,8 +22,8 @@
 
 progname=$0
 package=gettext-tools
-version=0.19.8.1
-archive_version=0.19.8
+version=0.21
+archive_version=0.21
 
 # Set variables
 # - gettext_datadir     directory where the data files are stored.
@@ -91,7 +91,7 @@ func_find_curr_installdir ()
     *) curr_executable=`pwd`/"$curr_executable" ;;
   esac
   # Resolve symlinks.
-  sed_dirname='s,[\\/][^\\/]*$,,'
+  sed_dirname='s,/[^/]*$,,'
   sed_linkdest='s,^.* -> \(.*\),\1,p'
   while : ; do
     lsline=`LC_ALL=C ls -l "$curr_executable"`
@@ -105,7 +105,7 @@ func_find_curr_installdir ()
       *) break ;;
     esac
   done
-  curr_installdir=`echo "$curr_executable" | sed -e 's,[\\/][^\\/]*$,,'`
+  curr_installdir=`echo "$curr_executable" | sed -e 's,/[^/]*$,,'`
   # Canonicalize.
   curr_installdir=`cd "$curr_installdir" && pwd`
 }
@@ -116,16 +116,16 @@ func_find_prefixes ()
   orig_installprefix="$orig_installdir"
   curr_installprefix="$curr_installdir"
   while true; do
-    orig_last=`echo "$orig_installprefix" | sed -n -e 's,^.*[\\/]\([^\\/]*\)$,\1,p'`
-    curr_last=`echo "$curr_installprefix" | sed -n -e 's,^.*[\\/]\([^\\/]*\)$,\1,p'`
+    orig_last=`echo "$orig_installprefix" | sed -n -e 's,^.*/\([^/]*\)$,\1,p'`
+    curr_last=`echo "$curr_installprefix" | sed -n -e 's,^.*/\([^/]*\)$,\1,p'`
     if test -z "$orig_last" || test -z "$curr_last"; then
       break
     fi
     if test "$orig_last" != "$curr_last"; then
       break
     fi
-    orig_installprefix=`echo "$orig_installprefix" | sed -e 's,[\\/][^\\/]*$,,'`
-    curr_installprefix=`echo "$curr_installprefix" | sed -e 's,[\\/][^\\/]*$,,'`
+    orig_installprefix=`echo "$orig_installprefix" | sed -e 's,/[^/]*$,,'`
+    curr_installprefix=`echo "$curr_installprefix" | sed -e 's,/[^/]*$,,'`
   done
 }
 if test "yes" = yes; then
@@ -135,7 +135,7 @@ if test "yes" = yes; then
   func_find_curr_installdir # determine curr_installdir
   func_find_prefixes
   # Relocate the directory variables that we use.
-  gettext_datadir=`echo "$gettext_datadir/" | sed -e "s%^${orig_installprefix}/%${curr_installprefix}/%" | sed -e 's,[\\/]$,,'`
+  gettext_datadir=`echo "$gettext_datadir/" | sed -e "s%^${orig_installprefix}/%${curr_installprefix}/%" | sed -e 's,/$,,'`
 fi
 
 # func_trace_autoconf macro configure.ac
@@ -197,7 +197,8 @@ Options:
 #  -V version           copy the infrastructure of the specified gettext version
 #                         (dangerous)"
   echo "
-Report bugs to <bug-gnu-gettext@gnu.org>."
+Report bugs in the bug tracker at <https://savannah.gnu.org/projects/gettext>
+or by email to <bug-gettext@gnu.org>."
 }
 
 # func_version
@@ -206,8 +207,8 @@ func_version ()
 {
   echo "$progname (GNU $package) $version"
   echo "Uses a versions archive in dirxz format."
-  echo "Copyright (C) 2002-2013 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+  echo "Copyright (C) 2002-2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law."
   echo "Written by" "Bruno Haible"
@@ -321,7 +322,7 @@ func_version_prereq ()
   req="$1"
   ver="$2"
   echo "m4_if(m4_version_compare([$ver], [$req]), [-1], [m4_exit([1])])" \
-    | "$AUTOM4TE" --language=M4sugar 2>&1 >/dev/null
+    | "$AUTOM4TE" --language=M4sugar >/dev/null
 }
 
 # If AM_GNU_GETTEXT_REQUIRE_VERSION is used and archive_version is newer than
@@ -378,7 +379,9 @@ case "$ver" in
   0.16 | 0.16.1 | \
   0.17 | \
   0.18 | 0.18.1 | 0.18.2 | 0.18.3 | \
-  0.19 | 0.19.1 | 0.19.2 | 0.19.3 | 0.19.4 | 0.19.5 | 0.19.6 | 0.19.7 | 0.19.8 )
+  0.19 | 0.19.1 | 0.19.2 | 0.19.3 | 0.19.4 | 0.19.5 | 0.19.6 | 0.19.7 | 0.19.8 | \
+  0.20 | 0.20.2 | \
+  0.21 )
     ;;
   *)
     func_fatal_error "The AM_GNU_GETTEXT_VERSION declaration in your $configure_in
@@ -439,6 +442,13 @@ for arg in $xargs; do
   fi
 done
 IFS="$save_IFS"
+
+if test -z "$omitintl"; then
+  case "$ver" in
+    0.1[0-9] | 0.1[0-9].* ) ;;
+    *) func_fatal_error "AM_GNU_GETTEXT without 'external' argument is no longer supported in version $ver" ;;
+  esac
+fi
 
 # Check in which directory or directories the po/* infrastructure belongs.
 configfiles=`"$func_trace" AC_CONFIG_FILES "$configure_in"`
@@ -533,10 +543,10 @@ case "dirxz" in
     #
     # But the CVS format is now deprecated, because "cvs init" does not work in
     # all circumstances
-    # (see <http://lists.gnu.org/archive/html/bug-cvs/2010-05/msg00003.html>)
+    # (see <https://lists.gnu.org/archive/html/bug-cvs/2010-05/msg00003.html>)
     # and we are not allowed to distribute the cvs infrastructure files
     # ourselves
-    # (see <http://lists.gnu.org/archive/html/bug-cvs/2010-06/msg00011.html>).
+    # (see <https://lists.gnu.org/archive/html/bug-cvs/2010-06/msg00011.html>).
     #
     # Check availability of the CVS program.
     (cvs -v) >/dev/null 2>/dev/null || func_fatal_error "cvs program not found"
@@ -610,7 +620,12 @@ case "dirxz" in
     (git --version) >/dev/null 2>/dev/null || func_fatal_error "git program not found"
     mkdir "$work_dir/archive"
     gzip -d -c < "$gettext_datadir/archive.git.tar.gz" | (cd "$work_dir/archive" && tar xf -)
-    (cd "$work_dir/archive" && git checkout -q "gettext-$ver") || {
+    (unset GIT_CONFIG
+     unset XDG_CONFIG_HOME
+     unset HOME
+     GIT_CONFIG_NOSYSTEM=1; export GIT_CONFIG_NOSYSTEM
+     cd "$work_dir/archive" && git checkout -q "gettext-$ver"
+    ) || {
       rm -rf "$work_dir"
       func_fatal_error "infrastructure files for version $ver not found; this is autopoint from GNU $package $version"
     }
@@ -630,14 +645,14 @@ esac
 func_destfile ()
 {
   # There are five categories of files:
-  # ABOUT_NLS -> top level directory
+  # ABOUT-NLS -> top level directory
   # config.rpath mkinstalldirs -> $auxdir
   # m4/* -> $m4dir/
   # intl/* -> intl/
   # po/* -> 
   sharedowner=
   allpodirs=
-  case `echo "$1" | sed -e 's,[^\\/]*$,,'` in
+  case `echo "$1" | sed -e 's,[^/]*$,,'` in
     "" )
       case "$1" in
         config.rpath ) destfile="$auxdir$1" ;;
@@ -645,7 +660,7 @@ func_destfile ()
         * ) destfile="$1" ;;
       esac
       ;;
-    m4/ ) destfile=`echo "$1" | sed -e "s,^m4\([\\/]\),$m4dir\1,"` ;;
+    m4/ ) destfile=`echo "$1" | sed -e "s,^m4/,$m4dir/,"` ;;
     intl/ ) if test -n "$omitintl"; then destfile=""; else destfile="$1"; fi ;;
     po/ ) destfile=`echo "$1" | sed -e "s,^po/,,"` allpodirs=yes ;;
     * ) destfile="$1" ;;
@@ -694,7 +709,7 @@ if test -z "$force"; then
   mismatch=
   func_tmpdir
   mismatchfile="$tmp"/autopoint.diff
-  for file in `find "$work_dir/archive" -type f -print | sed -e "s,^$work_dir[\\/]archive[\\/],," | LC_ALL=C sort`; do
+  for file in `find "$work_dir/archive" -type f -print | sed -e "s,^$work_dir/archive/,," | LC_ALL=C sort`; do
     func_destfile "$file"
     if test -n "$destfile"; then
       func_compare_to_destfile ()
@@ -707,7 +722,7 @@ if test -z "$force"; then
             else
               echo "autopoint: File $finaldestfile has been locally modified." 1>&2
               mismatch=yes
-              diff -c "$work_dir/archive/$file" "$finaldestfile" | sed -e "1s,$work_dir[\\/]archive[\\/],," >> "$mismatchfile"
+              diff -c "$work_dir/archive/$file" "$finaldestfile" | sed -e "1s,$work_dir/archive/,," >> "$mismatchfile"
             fi
           fi
         fi
@@ -733,11 +748,11 @@ fi
 # 'to' is a relative pathname, relative to the current directory.
 func_mkdir_for ()
 {
-  base=`echo "$1" | sed -e 's,[\\/][^\\/]*$,,'`
+  base=`echo "$1" | sed -e 's,/[^/]*$,,'`
   if test "X$base" != "X$1" && test -n "$base"; then
     func_mkdir_for "$base"
     # Recompute base. It was clobbered by the recursive call.
-    base=`echo "$1" | sed -e 's,[\\/][^\\/]*$,,'`
+    base=`echo "$1" | sed -e 's,/[^/]*$,,'`
     test -d "$base" || { echo "Creating directory $base"; mkdir "$base"; }
   fi
 }
@@ -772,7 +787,7 @@ func_backup ()
 }
 
 # Now copy the files.
-for file in `find "$work_dir/archive" -type f -print | sed -e "s,^$work_dir[\\/]archive[\\/],," | LC_ALL=C sort`; do
+for file in `find "$work_dir/archive" -type f -print | sed -e "s,^$work_dir/archive/,," | LC_ALL=C sort`; do
   func_destfile "$file"
   if test -n "$destfile"; then
     func_copy_to_destfile ()

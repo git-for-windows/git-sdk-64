@@ -1,5 +1,5 @@
 /* Public API for GNU gettext PO files - contained in libgettextpo.
-   Copyright (C) 2003-2008, 2010, 2015-2016 Free Software Foundation, Inc.
+   Copyright (C) 2003-2008, 2010, 2012-2016, 2019-2020 Free Software Foundation, Inc.
    Written by Bruno Haible <bruno@clisp.org>, 2003.
 
    This program is free software: you can redistribute it and/or modify
@@ -13,7 +13,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #ifndef _GETTEXT_PO_H
 #define _GETTEXT_PO_H 1
@@ -28,7 +28,7 @@ extern "C" {
 /* =========================== Meta Information ============================ */
 
 /* Version number: (major<<16) + (minor<<8) + subminor */
-#define LIBGETTEXTPO_VERSION 0x001308
+#define LIBGETTEXTPO_VERSION 0x001500
 extern int libgettextpo_version;
 
 /* ================================= Types ================================= */
@@ -131,13 +131,13 @@ typedef const struct po_xerror_handler *po_xerror_handler_t;
 extern po_file_t po_file_create (void);
 
 /* Read a PO file into memory.
-   Return its contents.  Upon failure, return NULL and set errno.  */
+   Return its contents.  Upon failure, call function from handler.  */
 #define po_file_read po_file_read_v3
 extern po_file_t po_file_read (const char *filename,
                                po_xerror_handler_t handler);
 
 /* Write an in-memory PO file to a file.
-   Upon failure, return NULL and set errno.  */
+   Upon failure, call function from handler.  */
 #define po_file_write po_file_write_v2
 extern po_file_t po_file_write (po_file_t file, const char *filename,
                                 po_xerror_handler_t handler);

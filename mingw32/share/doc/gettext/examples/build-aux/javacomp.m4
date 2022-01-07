@@ -1,5 +1,5 @@
-# javacomp.m4 serial 12
-dnl Copyright (C) 2001-2003, 2006-2007, 2009-2016 Free Software Foundation,
+# javacomp.m4 serial 17
+dnl Copyright (C) 2001-2003, 2006-2007, 2009-2020 Free Software Foundation,
 dnl Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
@@ -15,7 +15,15 @@ dnl with or without modifications, as long as this notice is preserved.
 #           1.3             inner classes
 #           1.4             assert keyword
 #           1.5             generic classes and methods
-#           1.6             (not yet supported)
+#           1.6             (not supported)
+#           1.7             switch(string)
+#           1.8             lambdas
+#           9               private interface methods
+#          10               type inference for local variables
+#          11               'var' in parameters of lambda expressions
+# Instead of source-version 1.6, use 1.5, since Java 6 did not introduce any
+# language changes. See
+# https://docs.oracle.com/javase/8/docs/technotes/guides/language/enhancements.html
 #
 # target-version can be:  classfile version:
 #           1.1                 45.3
@@ -24,6 +32,11 @@ dnl with or without modifications, as long as this notice is preserved.
 #           1.4                 48.0
 #           1.5                 49.0
 #           1.6                 50.0
+#           1.7                 51.0
+#           1.8                 52.0
+#           9                   53.0
+#          10                   54.0
+#          11                   55.0
 # The classfile version of a .class file can be determined through the "file"
 # command. More portably, the classfile major version can be determined through
 # "od -A n -t d1 -j 7 -N 1 classfile".
@@ -33,12 +46,19 @@ dnl with or without modifications, as long as this notice is preserved.
 #           1.1         JDK 1.1, jview
 #           1.2         JDK/JRE 1.2
 #           1.3         JDK/JRE 1.3, gij 3.3, 3.4
-#           1.4         JDK/JRE 1.4, gij 4.0, 4.1
-#           1.5         JDK/JRE 1.5
-#           1.6         JDK/JRE 1.6
+#           1.4         JDK/JRE 1.4, gij 4.0 ... 4.2
+#           1.5         JDK/JRE 5, gij 4.3 ... 6
+#           1.6         JDK/JRE 6
+#           1.7         JDK/JRE 7
+#           1.8         JDK/JRE 8
+#           9           JDK/JRE 9
+#          10           JDK/JRE 10
+#          11           JDK/JRE 11
 # Note: gij >= 3.3 can in some cases handle classes compiled with -target 1.4,
 # and gij >= 4.1 can in some cases partially handle classes compiled with
-# -target 1.5, but I have no idea how complete this support is.
+# -target 1.5, but I have no idea how complete this support is. Similarly,
+# gcj >= 4.3 supports -ftarget=1.6, and gij >= 4.3 can in some cases handle
+# classes compiled with -target 1.6.
 #
 # Specifying target-version is useful when building a library (.jar) that is
 # useful outside the given package. Omitting target-version is useful when
@@ -47,20 +67,27 @@ dnl with or without modifications, as long as this notice is preserved.
 # It is unreasonable to ask for:
 #   - target-version < 1.4 with source-version >= 1.4, or
 #   - target-version < 1.5 with source-version >= 1.5, or
-#   - target-version < 1.6 with source-version >= 1.6,
-# because even Sun's javac doesn't support these combinations.
+#   - target_version < 1.6 with source_version >= 1.6, or
+#   - target_version < 1.7 with source_version >= 1.7, or
+#   - target_version < 1.8 with source_version >= 1.8, or
+#   - target_version < 9 with source_version >= 9, or
+#   - target_version < 10 with source_version >= 10, or
+#   - target_version < 11 with source_version >= 11,
+# because even Sun's/Oracle's javac doesn't support these combinations.
 #
 # It is redundant to ask for a target-version > source-version, since the
 # smaller target-version = source-version will also always work and newer JVMs
-# support the older target-versions too. Except for the case
-# target-version = 1.4, source-version = 1.3, which allows gcj versions 3.0
-# to 3.2 to be used.
+# support the older target-versions too. Except for the cases
+#   - target-version = 1.4, source-version = 1.3, which allows gcj versions 3.0
+#     to 3.2 to be used,
+#   - target-version = 1.6, source-version = 1.5, which allows gcj versions
+#     >= 4.3 to be used.
 
 AC_DEFUN([gt_JAVACOMP],
 [
   ifelse([$2], [], [AC_REQUIRE([gt_JAVAEXEC])], [])
   AC_EGREP_CPP([yes], [
-#if defined _WIN32 || defined __WIN32__ || defined __CYGWIN__ || defined __EMX__ || defined __DJGPP__
+#if defined _WIN32 || defined __CYGWIN__ || defined __EMX__ || defined __DJGPP__
   yes
 #endif
 ], CLASSPATH_SEPARATOR=';', CLASSPATH_SEPARATOR=':')
@@ -99,7 +126,11 @@ changequote([,])dnl
          CLASSPATH=.${CLASSPATH:+$CLASSPATH_SEPARATOR$CLASSPATH} $CONF_JAVA conftestver 2>&AS_MESSAGE_LOG_FD
        }`
        case "$target_version" in
-         1.1 | 1.2 | 1.3 | 1.4 | 1.5 | 1.6) ;;
+         1.1 | 1.2 | 1.3 | 1.4 | 1.5 | 1.6 | 1.7 | 1.8 | 9 | 10 | 11) ;;
+         12 | 13 | 14 | 15 | 16 | 17)
+           dnl Assume that these (not yet released) Java versions will behave
+           dnl like the preceding ones.
+           target_version=11 ;;
          null)
            dnl JDK 1.1.X returns null.
            target_version=1.1 ;;
@@ -117,6 +148,16 @@ changequote([,])dnl
     1.4) goodcode='class conftest     { static { assert(true); } }'
          failcode='class conftestfail<T> { T foo() { return null; } }' ;;
     1.5) goodcode='class conftest<T>     { T foo() { return null; } }'
+         failcode='class conftestfail { void foo () { switch ("A") {} } }' ;;
+    1.7) goodcode='class conftest     { void foo () { switch ("A") {} } }'
+         failcode='class conftestfail { void foo () { Runnable r = () -> {}; } }' ;;
+    1.8) goodcode='class conftest     { void foo () { Runnable r = () -> {}; } }'
+         failcode='interface conftestfail { private void foo () {} }' ;;
+    9)   goodcode='interface conftest     { private void foo () {} }'
+         failcode='class conftestfail { public void m() { var i = new Integer(0); } }' ;;
+    10)  goodcode='class conftest     { public void m() { var i = new Integer(0); } }'
+         failcode='class conftestfail { Readable r = (var b) -> 0; }' ;;
+    11)  goodcode='class conftest     { Readable r = (var b) -> 0; }'
          failcode='class conftestfail syntax error' ;;
     *) AC_MSG_ERROR([invalid source-version argument to gt_@&t@JAVACOMP: $source_version]) ;;
   esac
@@ -127,6 +168,11 @@ changequote([,])dnl
     1.4) cfversion=48 ;;
     1.5) cfversion=49 ;;
     1.6) cfversion=50 ;;
+    1.7) cfversion=51 ;;
+    1.8) cfversion=52 ;;
+    9)   cfversion=53 ;;
+    10)  cfversion=54 ;;
+    11)  cfversion=55 ;;
     *) AC_MSG_ERROR([invalid target-version argument to gt_@&t@JAVACOMP: $target_version]) ;;
   esac
   # Function to output the classfile version of a file (8th byte) in decimal.
@@ -153,15 +199,16 @@ changequote([,])dnl
   dnl   One consequence of this is that gcj compiles GetURL.java to invalid
   dnl   bytecode, which crashes with a VerifyError when executed by Sun Java
   dnl   1.3.1. The bug is registered as java/7066, see
-  dnl   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=7066
-  dnl   gcj 4.3 and newer has an option -ftarget=1.X.
+  dnl   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=7066
+  dnl   gcj 4.3 and newer has an option -ftarget=1.X; the maximum supported
+  dnl   target-version is 1.6.
   dnl
   dnl   For gcj < 3.3, the source-version always is 1.3.
   dnl   For 3.3 <= gcj < 4.3, the source-version defaults to 1.4; option
   dnl   "-fno-assert" switches to source-version 1.3.
   dnl   gcj >= 4.3 has an option -fsource=1.X.
   dnl
-  dnl The support of Sun javac for target-version and source-version:
+  dnl The support of Sun/Oracle javac for target-version and source-version:
   dnl
   dnl   javac 1.3:   -target 1.1 1.2 1.3               default: 1.1
   dnl                                                  source always: 1.3
@@ -180,6 +227,42 @@ changequote([,])dnl
   dnl                -target 1.1/1.2/1.3 only possible with -source 1.3
   dnl                -target 1.4 only possible with -source 1.3/1.4
   dnl                -target 1.5 only possible with -source 1.3/1.4/1.5 or no -source
+  dnl
+  dnl   javac 1.7:   -target 1.1 1.2 1.3 1.4 1.5 1.6 1.7  default: 1.7
+  dnl                -source 1.3 1.4 1.5 1.6 1.7          default: 1.7
+  dnl                -target 1.1/1.2/1.3 only possible with -source 1.3
+  dnl                -target 1.4 only possible with -source 1.3/1.4
+  dnl                -target 1.5 only possible with -source 1.3/1.4/1.5
+  dnl                -target 1.6 only possible with -source 1.3/1.4/1.5/1.6
+  dnl
+  dnl   javac 1.8:   -target 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8  default: 1.8
+  dnl                -source 1.3 1.4 1.5 1.6 1.7 1.8          default: 1.8
+  dnl                -target 1.1/1.2/1.3 only possible with -source 1.3
+  dnl                -target 1.4 only possible with -source 1.3/1.4
+  dnl                -target 1.5 only possible with -source 1.3/1.4/1.5
+  dnl                -target 1.6 only possible with -source 1.3/1.4/1.5/1.6
+  dnl                -target 1.7 only possible with -source 1.3/1.4/1.5/1.6/1.7
+  dnl
+  dnl   javac 9:     -target 1.6 1.7 1.8 9  default: 9
+  dnl                -source 1.6 1.7 1.8 9  default: 9
+  dnl                -target 1.6 only possible with -source 1.6
+  dnl                -target 1.7 only possible with -source 1.6/1.7
+  dnl                -target 1.8 only possible with -source 1.6/1.7/1.8
+  dnl
+  dnl   javac 10:    -target 1.6 1.7 1.8 9 10  default: 10
+  dnl                -source 1.6 1.7 1.8 9 10  default: 10
+  dnl                -target 1.6 only possible with -source 1.6
+  dnl                -target 1.7 only possible with -source 1.6/1.7
+  dnl                -target 1.8 only possible with -source 1.6/1.7/1.8
+  dnl                -target 9 only possible with -source 1.6/1.7/1.8/9
+  dnl
+  dnl   javac 11:    -target 1.6 1.7 1.8 9 10 11  default: 11
+  dnl                -source 1.6 1.7 1.8 9 10 11  default: 11
+  dnl                -target 1.6 only possible with -source 1.6
+  dnl                -target 1.7 only possible with -source 1.6/1.7
+  dnl                -target 1.8 only possible with -source 1.6/1.7/1.8
+  dnl                -target 9 only possible with -source 1.6/1.7/1.8/9
+  dnl                -target 10 only possible with -source 1.6/1.7/1.8/9/10
   dnl
   dnl The support of jikes for target-version and source-version:
   dnl
@@ -322,6 +405,15 @@ changequote([,])dnl
     else
       dnl It's not gcj. Assume the classfile versions are correct.
       dnl Try $JAVAC.
+      dnl The javac option '-source 1.5' has the same meaning as '-source 1.6',
+      dnl but since Java 9 supports only the latter, prefer the latter if a
+      dnl target_version >= 1.6 is requested.
+      if test "$source_version" = 1.5; then
+        case "$target_version" in
+          1.1 | 1.2 | 1.3 | 1.4 | 1.5) ;;
+          *) source_version='1.6' ;;
+        esac
+      fi
       rm -f conftest.class
       if { echo "$as_me:__oline__: $JAVAC -d . conftest.java" >&AS_MESSAGE_LOG_FD
            $JAVAC -d . conftest.java >&AS_MESSAGE_LOG_FD 2>&1
@@ -517,6 +609,15 @@ changequote([,])dnl
       if { javac -version >/dev/null 2>/dev/null || test $? -le 2; } \
          && ( if javac -help 2>&1 >/dev/null | grep at.dms.kjc.Main >/dev/null && javac -help 2>/dev/null | grep 'released.*2000' >/dev/null ; then exit 1; else exit 0; fi ); then
         dnl OK, javac works.
+        dnl The javac option '-source 1.5' has the same meaning as '-source 1.6',
+        dnl but since Java 9 supports only the latter, prefer the latter if a
+        dnl target_version >= 1.6 is requested.
+        if test "$source_version" = 1.5; then
+          case "$target_version" in
+            1.1 | 1.2 | 1.3 | 1.4 | 1.5) ;;
+            *) source_version='1.6' ;;
+          esac
+        fi
         dnl Now test whether it supports the desired target-version and
         dnl source-version.
         rm -f conftest.class

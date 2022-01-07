@@ -3,9 +3,9 @@ dnl This file is in the public domain.
 dnl
 dnl Configuration file - processed by autoconf.
 
-AC_INIT
-AC_CONFIG_SRCDIR(hello.sh)
-AM_INIT_AUTOMAKE(hello-sh, 0)
+AC_INIT([hello-sh], [0])
+AC_CONFIG_SRCDIR([hello.sh])
+AM_INIT_AUTOMAKE([1.11])
 
 dnl The installed program must know where to find its message catalogs.
 dnl Unfortunately, prefix gets only finally determined at the end of configure.
@@ -19,7 +19,7 @@ prefix="$final_prefix"
 eval "datarootdir=\"${datarootdir}\""
 eval "localedir=\"${datadir}/locale\""
 prefix="$save_prefix"
-AC_SUBST(localedir)
+AC_SUBST([localedir])
 
 dnl Support for the po directory.
 AM_PO_SUBDIRS

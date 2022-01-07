@@ -26,6 +26,13 @@ XGETTEXT_OPTIONS =
 # their copyright.
 COPYRIGHT_HOLDER = Yoyodyne, Inc.
 
+# This tells whether or not to prepend "GNU " prefix to the package
+# name that gets inserted into the header of the $(DOMAIN).pot file.
+# Possible values are "yes", "no", or empty.  If it is empty, try to
+# detect it automatically by scanning the files in $(top_srcdir) for
+# "GNU packagename" string.
+PACKAGE_GNU = no
+
 # This is the email address or URL to which the translators shall report
 # bugs in the untranslated strings:
 # - Strings which are not entire sentences, see the maintainer guidelines
@@ -40,13 +47,19 @@ COPYRIGHT_HOLDER = Yoyodyne, Inc.
 # It can be your email address, or a mailing list address where translators
 # can write to without being subscribed, or the URL of a web page through
 # which the translators can contact you.
-MSGID_BUGS_ADDRESS = bug-gnu-gettext@gnu.org
+MSGID_BUGS_ADDRESS = bug-gettext@gnu.org
 
 # These options get passed to msgmerge.
 # Useful options are in particular:
 #   --previous            to keep previous msgids of translated messages,
 #   --quiet               to reduce the verbosity.
 MSGMERGE_OPTIONS = --quiet
+
+# These options get passed to msginit.
+# If you want to disable line wrapping when writing PO files, add
+# --no-wrap to MSGMERGE_OPTIONS, XGETTEXT_OPTIONS, and
+# MSGINIT_OPTIONS.
+MSGINIT_OPTIONS =
 
 -include $(GNUSTEP_MAKEFILES)/rules.make
 
@@ -57,6 +70,7 @@ PACKAGE_VERSION = 0
 XGETTEXT = xgettext
 MSGMERGE = msgmerge
 MSGMERGE_UPDATE = msgmerge --update
+MSGMERGE_FOR_MSGFMT_OPTION = --for-msgfmt
 MSGINIT = msginit
 MSGCONV = msgconv
 MSGFILTER = msgfilter
@@ -78,7 +92,7 @@ STRINGSFILES = $(foreach lang, $(LINGUAS), $(top_srcdir)/$(NSLOCALE_$(lang)).lpr
 ENSTRINGSFILES = $(foreach lang, $(ENLINGUAS), $(top_srcdir)/$(NSLOCALE_$(lang)).lproj/Localizable.strings)
 CATALOGS = $(STRINGSFILES) $(ENSTRINGSFILES)
 
-.SUFFIXES: .po .mo .sed .sin .nop .po-create .po-update
+.SUFFIXES: .po .sed .sin .nop .po-create .po-update
 
 .sin.sed:
 	sed -e '/^#/d' $< > t-$@
@@ -96,32 +110,56 @@ all-local-no:
 
 # This target rebuilds $(DOMAIN).pot; it is an expensive operation.
 # Note that $(DOMAIN).pot is not touched if it doesn't need to be changed.
+# The determination of whether the package xyz is a GNU one is based on the
+# heuristic whether some file in the top level directory mentions "GNU xyz".
+# If GNU 'find' is available, we avoid grepping through monster files.
 $(DOMAIN).pot-update: $(POTFILES_DEPS) remove-potcdate.sed
-	if LC_ALL=C grep 'GNU $(PACKAGE_NAME)' ../* 2>/dev/null >/dev/null; then \
-	  package_gnu='GNU '; \
+	package_gnu="$(PACKAGE_GNU)"; \
+	test -n "$$package_gnu" || { \
+	  if { if (LC_ALL=C find --version) 2>/dev/null | grep GNU >/dev/null; then \
+	         LC_ALL=C find -L $(top_srcdir) -maxdepth 1 -type f -size -10000000c -exec grep -i 'GNU $(PACKAGE_NAME)' /dev/null '{}' ';' 2>/dev/null; \
+	       else \
+	         LC_ALL=C grep -i 'GNU $(PACKAGE_NAME)' $(top_srcdir)/* 2>/dev/null; \
+	       fi; \
+	     } | grep -v 'libtool:' >/dev/null; then \
+	     package_gnu=yes; \
+	   else \
+	     package_gnu=no; \
+	   fi; \
+	}; \
+	if test "$$package_gnu" = "yes"; then \
+	  package_prefix='GNU '; \
 	else \
-	  package_gnu=''; \
+	  package_prefix=''; \
 	fi; \
 	msgid_bugs_address='$(MSGID_BUGS_ADDRESS)'; \
 	case `$(XGETTEXT) --version | sed 1q | sed -e 's,^[^0-9]*,,'` in \
 	  '' | 0.[0-9] | 0.[0-9].* | 0.1[0-5] | 0.1[0-5].* | 0.16 | 0.16.[0-1]*) \
 	    $(XGETTEXT) --default-domain=$(DOMAIN) --directory=$(top_srcdir) \
-	      --add-comments=TRANSLATORS: $(XGETTEXT_OPTIONS) \
+	      --add-comments=TRANSLATORS: \
 	      --copyright-holder='$(COPYRIGHT_HOLDER)' \
 	      --msgid-bugs-address="$$msgid_bugs_address" \
+	      $(XGETTEXT_OPTIONS) \
 	      $(POTFILES) \
 	    ;; \
 	  *) \
 	    $(XGETTEXT) --default-domain=$(DOMAIN) --directory=$(top_srcdir) \
-	      --add-comments=TRANSLATORS: $(XGETTEXT_OPTIONS) \
+	      --add-comments=TRANSLATORS: \
 	      --copyright-holder='$(COPYRIGHT_HOLDER)' \
-	      --package-name="$${package_gnu}$(PACKAGE_NAME)" \
+	      --package-name="$${package_prefix}$(PACKAGE_NAME)" \
 	      --package-version='$(VERSION)' \
 	      --msgid-bugs-address="$$msgid_bugs_address" \
+	      $(XGETTEXT_OPTIONS) \
 	      $(POTFILES) \
 	    ;; \
 	esac
 	test ! -f $(DOMAIN).po || { \
+	  if test -f $(DOMAIN).pot-header; then \
+	    sed -e '1,/^#$$/d' < $(DOMAIN).po > $(DOMAIN).1po && \
+	    cat $(DOMAIN).pot-header $(DOMAIN).1po > $(DOMAIN).po && \
+	    rm -f $(DOMAIN).1po \
+	    || exit 1; \
+	  fi; \
 	  if test -f $(DOMAIN).pot; then \
 	    sed -f remove-potcdate.sed < $(DOMAIN).pot > $(DOMAIN).1po && \
 	    sed -f remove-potcdate.sed < $(DOMAIN).po > $(DOMAIN).2po && \
@@ -147,16 +185,21 @@ $(DOMAIN).pot:
 $(POFILES): $(DOMAIN).pot
 	@lang=`echo $@ | sed -e 's,.*/,,' -e 's/\.po$$//'`; \
 	if test -f $${lang}.po; then \
-	  echo "$(MSGMERGE_UPDATE) $(MSGMERGE_OPTIONS) --lang=$${lang} $${lang}.po $(DOMAIN).pot"; \
+	  echo "$(MSGMERGE_UPDATE) $(MSGMERGE_OPTIONS) --lang=$${lang} --previous $${lang}.po $(DOMAIN).pot"; \
 	  case `$(MSGMERGE_UPDATE) --version | sed 1q | sed -e 's,^[^0-9]*,,'` in \
-	    '' | 0.[0-9] | 0.[0-9].* | 0.1[0-7] | 0.1[0-7].*) \
+	    '' | 0.[0-9] | 0.[0-9].* | 0.1[0-5] | 0.1[0-5].*) \
 	      $(MSGMERGE_UPDATE) $(MSGMERGE_OPTIONS) $${lang}.po $(DOMAIN).pot;; \
+	    0.1[6-7] | 0.1[6-7].*) \
+	      $(MSGMERGE_UPDATE) $(MSGMERGE_OPTIONS) --previous $${lang}.po $(DOMAIN).pot;; \
 	    *) \
-	      $(MSGMERGE_UPDATE) $(MSGMERGE_OPTIONS) --lang=$${lang} $${lang}.po $(DOMAIN).pot;; \
+	      $(MSGMERGE_UPDATE) $(MSGMERGE_OPTIONS) --lang=$${lang} --previous $${lang}.po $(DOMAIN).pot;; \
 	  esac; \
 	else \
 	  $(MAKE) $${lang}.po-create; \
 	fi
+
+internal-clean::
+	rm -f remove-potcdate.sed
 
 update-po:
 	$(MAKE) $(DOMAIN).pot-update
@@ -205,14 +248,16 @@ $(DUMMYPOFILES):
 update-strings: $(CATALOGS)
 	@:
 
-# I don't know how to make a dependency from a particular .strings file to its
-# corresponding .po file; therefore I put here a dependency towards all .po
-# files. It's safer than no dependency at all.
-$(STRINGSFILES): $(POFILES)
-	$(MAKE) $(UNIXLOCALE_$(patsubst %.lproj,%, $(notdir $(patsubst %/,%, $(dir $@))))).po
+# During .po -> .strings conversion, take into account the most recent changes
+# to the .pot file. This eliminates the need to update the .po files when the
+# .pot file has changed, which would be troublesome if the .po files are put
+# under version control.
+$(STRINGSFILES): $(DOMAIN).pot $(POFILES)
 	mkdir -p $(patsubst %/,%, $(dir $@))
-	msgcat --stringtable-output -o $@.tmp $(UNIXLOCALE_$(patsubst %.lproj,%, $(notdir $(patsubst %/,%, $(dir $@))))).po
+	$(MSGMERGE) $(MSGMERGE_FOR_MSGFMT_OPTION) -o $@.1po $(UNIXLOCALE_$(patsubst %.lproj,%, $(notdir $(patsubst %/,%, $(dir $@))))).po $(DOMAIN).pot
+	msgcat --stringtable-output -o $@.tmp $@.1po
 	mv $@.tmp $@
+	rm -f $@.1po
 
 $(ENSTRINGSFILES): $(DOMAIN).pot
 	mkdir -p $(patsubst %/,%, $(dir $@))
