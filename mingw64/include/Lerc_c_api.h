@@ -46,7 +46,9 @@ extern "C" {
     (LERC_VERSION_NUMBER >= LERC_COMPUTE_VERSION(maj,min,patch))
 
 #if defined _WIN32 || defined __CYGWIN__
-#  ifdef LERC_EXPORTS
+#  if defined(LERC_STATIC)
+#    define LERCDLL_API
+#  elif defined(LERC_EXPORTS)
 #    define LERCDLL_API __declspec(dllexport)
 #  else
 #    define LERCDLL_API __declspec(dllimport)
