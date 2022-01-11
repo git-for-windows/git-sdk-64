@@ -104,28 +104,27 @@ The SQLite Amalgamation
 <h1 id="executive_summary"><span>1. </span>Executive Summary</h1>
 
 <p>Over 100 separate source files are concatenated into a
-single large files of C-code named "sqlite3.c" and
-called "the amalgamation". The amalgamation
+single large file of C-code named "sqlite3.c" and
+referred to as "the amalgamation". The amalgamation
 contains everything an application needs to embed SQLite.
-The amalgamation file is more than 220,000 lines long and over 7.5
-megabytes in size (as of 2018-11-24).
 
 </p><p>Combining all the code for SQLite into one big file makes SQLite
-easier to deploy &mdash; there is just one file to keep track of.  
+easier to deploy &mdash; there is just one file to keep track of.
 And because all code is in
-a single translation unit, compilers can do better inter-procedure
-optimization resulting in machine code that is between 5% and 10% faster.
+a single translation unit, compilers can do
+better inter-procedure and inlining optimization
+resulting in machine code that is between 5% and 10% faster.
 
 </p><h1 id="the_sqlite_amalgamation"><span>2. </span>The SQLite Amalgamation</h1>
 
-<p>The SQLite library consists of 102 files of C code
-(as of <a href="releaselog/3_9_0.html">Version 3.9.0</a> - 2015-10-14)
-in the core with 32 additional files that
-implement the <a href="fts3.html">FTS3</a>, <a href="fts5.html">FTS5</a>, <a href="rtree.html">RTREE</a>, <a href="dbstat.html">DBSTAT</a>, <a href="json1.html">JSON1</a>, and
-<a href="rbu.html">RBU</a> extensions.
-Of the 102 
+<p>The SQLite library consists of 111 files of C code
+(as of <a href="releaselog/3_37_0.html">Version 3.37.0</a> - 2021-11-27)
+in the core with 22 additional files that
+implement certain commonly used extensions.
+
+Of the 133
 main source files, about 75% are C code and about 25% are C header files.
-Most of these are "source" files in the sense that they are stored 
+Most of these are "source" files in the sense that they are stored
 in the <a href="https://www.sqlite.org/src">SQLite version control system</a>
 and are edited manually in an ordinary text editor.
 But some of the C-language files are generated using scripts
@@ -137,15 +136,15 @@ down into are parser in files "parse.c" and "parse.h" by the
 </p>
 
 <p>The makefiles for SQLite have an "sqlite3.c" target for building the
-file we call "the amalgamation".
-The amalgamation is a single C code file, named "sqlite3.c",
-that contains all C code 
-for the core SQLite library and the <a href="fts3.html">FTS3</a>, <a href="fts5.html">FTS5</a>, <a href="rtree.html">RTREE</a>,
-<a href="dbstat.html">DBSTAT</a>, <a href="json1.html">JSON1</a>, and <a href="rbu.html">RBU</a> extensions.
-This file contains about 184K lines of code 
-(113K if you omit blank lines and comments) and is over 6.4 megabytes
-in size.
-Though the various extensions are included in the
+amalgamation, to contain all C code for the core SQLite library and the
+<a href="fts3.html">FTS3</a>, <a href="fts5.html">FTS5</a>, <a href="rtree.html">RTREE</a>, <a href="dbstat.html">DBSTAT</a>, <a href="json1.html">JSON1</a>,
+<a href="rbu.html">RBU</a> and <a href="sessionintro.html">SESSION</a>
+extensions.
+This file contains about 238K lines of code
+(or 145K if you omit blank lines and comments) and is over 8.4 megabytes
+in size (as of 2021-12-29).
+
+</p><p>Though the various extensions are included in the
 "sqlite3.c" amalgamation file, they are disabled using #ifdef statements.
 Activate the extensions using <a href="compile.html">compile-time options</a> like:
 
@@ -156,6 +155,7 @@ Activate the extensions using <a href="compile.html">compile-time options</a> li
 </li><li> <a href="compile.html#enable_dbstat_vtab">-DSQLITE_ENABLE_DBSTAT_VTAB</a>
 </li><li> <a href="compile.html#enable_json1">-DSQLITE_ENABLE_JSON1</a>
 </li><li> <a href="compile.html#enable_rbu">-DSQLITE_ENABLE_RBU</a>
+</li><li> <a href="compile.html#enable_session">-DSQLITE_ENABLE_SESSION</a>
 </li></ul>
 
 <p>The amalgamation contains everything you need to integrate SQLite 
@@ -187,7 +187,7 @@ binary image larger.</p>
 <h1 id="the_split_amalgamation"><span>3. </span>The Split Amalgamation</h1>
 
 <p>Developers sometimes experience trouble debugging the
-185,000-line-long amalgamation source file because some debuggers
+quarter-million line amalgamation source file because some debuggers
 are only able to handle source code line numbers less than 32,768.
 The amalgamation source code runs fine.  One just cannot single-step
 through it in a debugger.

@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="../sqlite.css" rel="stylesheet">
-<title>SQLite Release 3.37.0 On 2021-11-27</title>
+<title>SQLite Release 3.37.2 On 2022-01-06</title>
 <!-- path=../ -->
 </head>
 <body>
@@ -90,8 +90,9 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-<h2>SQLite Release 3.37.0 On 2021-11-27</h2><p><ol class='lessindent'>
-<li> <a href="../stricttables.html">STRICT tables</a> provide a prescriptive style of data type management,
+<h2>SQLite Release 3.37.2 On 2022-01-06</h2><p><b>Changes in version 3.37.0 (2021-11-27):</b></p>
+<p><ol class='lessindent'>
+<li value='1'> <a href="../stricttables.html">STRICT tables</a> provide a prescriptive style of data type management,
      for developers who prefer that kind of thing.
 <li> When adding columns that contain a
      <a href="../lang_createtable.html#ckconst">CHECK constraint</a> or a <a href="../gencol.html">generated column</a> containing a <a href="../lang_createtable.html#notnullconst">NOT NULL constraint</a>,
@@ -123,9 +124,34 @@ return false;
 <li> Added the <a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_EXRESCODE</a> flag option to <a href="../c3ref/open.html">sqlite3_open_v2()</a>.
 <li> Use less memory to hold the database schema.
 
+</ol>
+<p><b>Additional changes in version 3.37.1 (2021-12-30):</b></p>
+<p><ol class='lessindent'>
+<li value='12'> Fix a bug introduced by the <a href="../lang_upsert.html">UPSERT</a> enhancements of <a href="../releaselog/3_35_0.html">version 3.35.0</a> that
+     can cause incorrect byte-code to be generated for some obscure but valid
+     SQL, possibly resulting in a NULL-pointer dereference.
+<li> Fix an OOB read that can occur in <a href="../fts5.html">FTS5</a> when reading corrupt database files.
+<li> Improved robustness of the --safe option in the <a href="../cli.html">CLI</a>.
+<li> Other minor fixes to assert() statements and test cases.
+
+</ol>
+<p><b>Additional changes in version 3.37.2 (2022-01-06):</b></p>
+<p><ol class='lessindent'>
+<li value='16'> Fix <a href="https://sqlite.org/forum/forumpost/b03d86f9516cb3a2">a bug</a> introduced
+     in <a href="../releaselog/3_35_0.html">version 3.35.0</a> (2021-03-12) that 
+     <a href="../howtocorrupt.html#svptbug">can cause database corruption</a>
+     if a <a href="../lang_savepoint.html">SAVEPOINT</a> is rolled back, other changes are made, and
+     the outer transaction commits.
+     <a href="https://sqlite.org/src/info/73c2b50211d3ae26">Check-in 73c2b50211d3ae26</a>
+<li> Fix a long-standing problem with ON DELETE CASCADE and ON UPDATE CASCADE
+     in which a cache of the <a href="../opcode.html">bytecode</a> used to implement the cascading change
+     was not being reset following a local DDL change.
+     <a href="https://sqlite.org/src/info/5232c9777fe4fb13">Check-in 5232c9777fe4fb13</a>.
+<li> Other minor fixes that should not impact production builds.
+
 <p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: 2021-11-27 14:13:22 bd41822c7424d393a30e92ff6cb254d25c26769889c1499a18a0b9339f5d6c8a
-<li>SHA3-256 for sqlite3.c: a202a950ab401cda052e81259e96d6e64ad91faaaaf5690d769f64c2ab962f27
+<li>SQLITE_SOURCE_ID: 2022-01-06 13:25:41 872ba256cbf61d9290b571c0e6d82a20c224ca3ad82971edc46b29818d5d17a0
+<li>SHA3-256 for sqlite3.c: 1bb01c382295cba85ec4685cedc52a7477cdae71cc37f1ad0f48719a17af1e1e
 
 </ol></p>
 

@@ -132,6 +132,7 @@ Table Of Contents
 <div class="fancy-toc2"><a href="#_database_pages_leak_from_the_free_page_list">8.4.  Database pages leak from the free page list</a></div>
 <div class="fancy-toc2"><a href="#_corruption_following_alternating_writes_from_3_6_and_3_7_">8.5.  Corruption following alternating writes from 3.6 and 3.7.</a></div>
 <div class="fancy-toc2"><a href="#_race_condition_in_recovery_on_windows_system_">8.6.  Race condition in recovery on windows system.</a></div>
+<div class="fancy-toc2"><a href="#_off_by_one_error_in_the_secondary_journals_used_by_nested_transactions_">8.7.  Off-by-one error in the secondary journals used by nested transactions.</a></div>
 </div>
 </div>
 <script>
@@ -744,3 +745,30 @@ need a fast multi-core machine in which you launch two processes to run
 recovery at the same moment on two separate cores.  This defect was
 on Windows systems only and did not affect the posix OS interface.</p>
 
+<a name="svptbug"></a>
+
+<h2 id="_off_by_one_error_in_the_secondary_journals_used_by_nested_transactions_"><span>8.7. </span> Off-by-one error in the secondary journals used by nested transactions.</h2>
+
+<p>When a nested transaction is started using <a href="lang_savepoint.html">SAVEPOINT</a>, SQLite uses
+a secondary in-memory rollback journal to track the changes for the nested
+transaction, in case the inner transaction needs to be rolled back.  Secondary
+journals are not involved in protecting the database from corruption due
+to program crashes or power outages.  The secondary journals only come into
+play when rolling back an inner transaction of a nested transaction.
+
+</p><p>In SQLite <a href="releaselog/3_35_0.html">version 3.35.0</a> (2021-03-12), a new optimization was
+added that helps these secondary journals to use less memory.
+Unfortunately, an off-by-one error in the new logic could, under rare
+circumstances, cause the secondary journal to enter an inconsistent state.
+If that happens and the SAVEPOINT is rolled back and the outer transaction
+eventually commits, the database might be left in an inconsistent state.
+
+</p><p>This problem was discovered by an 
+<a href="https://sqlite.org/forum/forumpost/b03d86f9516cb3a2">independent researcher</a>
+who was attempting to find bugs in SQLite using a fuzzer.  The fuzzer found a
+failure in an <a href="assert.html">assert() statement</a> that is used
+to help verify the internal state of the secondary journal.
+
+</p><p>This problem was <a href="https://www.sqlite.org/src/info/73c2b50211d3ae26">fixed</a>
+in <a href="releaselog/3_37_2.html">version 3.37.2</a> (2022-01-06).
+</p>

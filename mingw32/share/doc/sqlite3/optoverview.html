@@ -122,6 +122,7 @@ Table Of Contents
 <div class="fancy-toc2"><a href="#using_co_routines_to_defer_work_until_after_the_sorting">12.1. Using Co-routines to Defer Work until after the Sorting</a></div>
 <div class="fancy-toc1"><a href="#the_min_max_optimization">13. The MIN/MAX Optimization</a></div>
 <div class="fancy-toc1"><a href="#automatic_indexes">14. Automatic Indexes</a></div>
+<div class="fancy-toc2"><a href="#hash_joins">14.1. Hash Joins</a></div>
 <div class="fancy-toc1"><a href="#the_push_down_optimization">15. The Push-Down Optimization</a></div>
 <div class="fancy-toc1"><a href="#the_left_join_strength_reduction_optimization">16. The LEFT JOIN Strength Reduction Optimization</a></div>
 <div class="fancy-toc1"><a href="#the_omit_left_join_optimization">17. The Omit LEFT JOIN Optimization</a></div>
@@ -1412,6 +1413,29 @@ SELECT a, (SELECT d FROM t2 WHERE c=b) FROM t1;
   to disk, and are visible to all database connections.  The term "autoindex"
   appears in the names of <a href="fileformat2.html#intschema">internal indexes</a> for legacy reasons and does
   not indicate that internal indexes and automatic indexes are related.
+
+<a name="hashjoin"></a>
+
+</p><h2 id="hash_joins"><span>14.1. </span>Hash Joins</h2>
+
+<p>
+ An automatic index is about the same thing as a
+ <a href="https://en.wikipedia.org/wiki/Hash_join">hash join</a>.  The only difference
+ is that a B-Tree is used instead of a hash table.  If you are willing to
+ say that the transient B-Tree constructed for an automatic index is
+ really just a fancy hash table, then a query that uses an automatic
+ index is just a hash join.
+
+</p><p>
+ SQLite constructs an transient index instead of a hash table in this
+ instance because it already has a robust and high performance B-Tree
+ implementation at hand, whereas a hash-table would need to be added.
+ Adding a separate hash table implementation to handle this one case
+ would increase the size of the library (which is designed for use on
+ low-memory embedded devices) for minimal performance gain.  SQLite might
+ be enhanced with a hash-table implementation someday, but for now it seems
+ better to continue using automatic indexes in cases where client/server
+ database engines might use a hash join.
 
 <a name="pushdown"></a>
 

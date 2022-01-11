@@ -104,6 +104,39 @@ http://www.sqlite.org/src/timeline?t=release</a>.
 See the <a href="chronology.html">chronology</a> a succinct listing of releases.
 </p>
 
+<a name="version_3_37_2"></a>
+<h3>2022-01-06 (3.37.2)</h3><p><ol class='lessindent'>
+<li> Fix <a href="https://sqlite.org/forum/forumpost/b03d86f9516cb3a2">a bug</a> introduced
+     in <a href="#version_3_35_0">version 3.35.0</a> (2021-03-12) that 
+     <a href="howtocorrupt.html#svptbug">can cause database corruption</a>
+     if a <a href="lang_savepoint.html">SAVEPOINT</a> is rolled back, other changes are made, and
+     the outer transaction commits.
+     <a href="https://sqlite.org/src/info/73c2b50211d3ae26">Check-in 73c2b50211d3ae26</a>
+<li> Fix a long-standing problem with ON DELETE CASCADE and ON UPDATE CASCADE
+     in which a cache of the <a href="opcode.html">bytecode</a> used to implement the cascading change
+     was not being reset following a local DDL change.
+     <a href="https://sqlite.org/src/info/5232c9777fe4fb13">Check-in 5232c9777fe4fb13</a>.
+<li> Other minor fixes that should not impact production builds.
+
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: 2022-01-06 13:25:41 872ba256cbf61d9290b571c0e6d82a20c224ca3ad82971edc46b29818d5d17a0
+<li>SHA3-256 for sqlite3.c: 1bb01c382295cba85ec4685cedc52a7477cdae71cc37f1ad0f48719a17af1e1e
+
+</ol></p>
+<a name="version_3_37_1"></a>
+<h3>2021-12-30 (3.37.1)</h3><p><ol class='lessindent'>
+<li> Fix a bug introduced by the <a href="lang_upsert.html">UPSERT</a> enhancements of <a href="#version_3_35_0">version 3.35.0</a> that
+     can cause incorrect byte-code to be generated for some obscure but valid
+     SQL, possibly resulting in a NULL-pointer dereference.
+<li> Fix an OOB read that can occur in <a href="fts5.html">FTS5</a> when reading corrupt database files.
+<li> Improved robustness of the --safe option in the <a href="cli.html">CLI</a>.
+<li> Other minor fixes to assert() statements and test cases.
+
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: 2021-12-30 15:30:28 378629bf2ea546f73eee84063c5358439a12f7300e433f18c9e1bddd948dea62
+<li>SHA3-256 for sqlite3.c: 915afb3f29c2d217ea0c283326a9df7d505e6c73b40236f0b33ded91f812d174
+
+</ol></p>
 <a name="version_3_37_0"></a>
 <h3>2021-11-27 (3.37.0)</h3><p><ol class='lessindent'>
 <li> <a href="stricttables.html">STRICT tables</a> provide a prescriptive style of data type management,

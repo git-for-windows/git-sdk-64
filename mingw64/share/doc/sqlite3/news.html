@@ -94,7 +94,25 @@ return false;
 
 <h2>Recent News</h2>
 
-<a name="2021_11_27"></a><h3>2021-11-27 - <a href="releaselog/3_37_0.html">Version 3.37.0</a></h3><blockquote>
+<a name="2022_01_06"></a><h3>2022-01-06 - <a href="releaselog/3_37_2.html">Version 3.37.2</a></h3><blockquote>
+Version 3.37.2 fixes a
+<a href="howtocorrupt.html#svptbug">database corruption bug</a>.  You are
+encouraged to upgrade, especially if you are using <a href="lang_savepoint.html">SAVEPOINT</a>.</p>
+
+<p>An <a href="https://sqlite.org/forum/forumpost/d7338bf4901f1151">independent researcher</a>
+used a fuzzer to find the obscure bug.
+The problem first appeared in version 3.35.0 (2021-03-12).
+If a <a href="lang_savepoint.html">SAVEPOINT</a> is rolled back but then subsequent changes
+within the same transaction are committed, the database file might
+(with low but non-zero probability) go corrupt.
+</blockquote><hr width="50%"><a name="2021_12_30"></a><h3>2021-12-30 - <a href="releaselog/3_37_1.html">Version 3.37.1</a></h3><blockquote>
+Version 3.37.1 fixes a bug in the <a href="lang_upsert.html">UPSERT</a> logic, introduced by
+the UPSERT enhancements of <a href="releaselog/3_35_0.html">version 3.35.0</a>, that can cause
+incorrect byte-code to be generated in some cases, resulting
+in an infinite loop in the byte code, or a NULL-pointer dereference.
+This patch release also fixes some other minor problems with
+assert() statements and in the <a href="cli.html">CLI</a>.
+</blockquote><hr width="50%"><a name="2021_11_27"></a><h3>2021-11-27 - <a href="releaselog/3_37_0.html">Version 3.37.0</a></h3><blockquote>
 Version 3.37.0 is a routine maintenance release of SQLite.
 The biggest new feature in this release is support for
 <a href="stricttables.html">STRICT tables</a>.  Other enhancements are described in

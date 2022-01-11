@@ -634,7 +634,8 @@ The first string, argv[0], is the name of the module being invoked.   The
 module name is the name provided as the second argument to 
 <a href="c3ref/create_module.html">sqlite3_create_module()</a> and as the argument to the USING clause of the
 <a href="lang_createvtab.html">CREATE VIRTUAL TABLE</a> statement that is running.
-The second, argv[1], is the name of the database in which the new virtual table is being created. The database name is "main" for the primary database, or
+The second, argv[1], is the name of the database in which the new virtual 
+table is being created. The database name is "main" for the primary database, or
 "temp" for TEMP database, or the name given at the end of the <a href="lang_attach.html">ATTACH</a>
 statement for attached databases.  The third element of the array, argv[2], 
 is the name of the new virtual table, as specified following the TABLE
@@ -664,6 +665,18 @@ The CREATE TABLE statement string need not to be
 held in persistent memory.  The string can be
 deallocated and/or reused as soon as the <a href="c3ref/declare_vtab.html">sqlite3_declare_vtab()</a>
 routine returns.
+
+</p><p>The xConnect method can also optionally request special features
+for the virtual table by making one or more calls to
+the <a href="c3ref/vtab_config.html">sqlite3_vtab_config()</a> interface:
+
+</p><div class="codeblock"><pre>int sqlite3_vtab_config(sqlite3 *db, int op, ...);
+</pre></div>
+
+<p>Call calls to sqlite3_vtab_config() are optional.  But for maximum
+security, it is recommended that virtual table implementations
+invoke "<a href="c3ref/vtab_config.html">sqlite3_vtab_config</a>(db, <a href="c3ref/c_vtab_constraint_support.html#sqlitevtabdirectonly">SQLITE_VTAB_DIRECTONLY</a>)" if the
+virtual table will not be used from inside of triggers or views.
 
 </p><p>The xCreate method need not initialize the pModule, nRef, and zErrMsg
 fields of the <a href="c3ref/vtab.html">sqlite3_vtab</a> object.  The SQLite core will take care of 
@@ -812,7 +825,9 @@ PRIMARY KEY column and a non-NULL xUpdate method.
 <p>The xConnect method is very similar to <a href="vtab.html#xcreate">xCreate</a>. 
 It has the same parameters and constructs a new <a href="c3ref/vtab.html">sqlite3_vtab</a> structure 
 just like xCreate. 
-And it must also call <a href="c3ref/declare_vtab.html">sqlite3_declare_vtab()</a> like xCreate.
+And it must also call <a href="c3ref/declare_vtab.html">sqlite3_declare_vtab()</a> like xCreate.  It
+should also make all of the same <a href="c3ref/vtab_config.html">sqlite3_vtab_config()</a> calls as
+xCreate.
 
 </p><p>The difference is that xConnect is called to establish a new 
 connection to an existing virtual table whereas xCreate is called 
@@ -932,6 +947,13 @@ older version of SQLite are undefined.
 #define SQLITE_INDEX_CONSTRAINT_IS        72  /* 3.21.0 and later */
 #define SQLITE_INDEX_CONSTRAINT_FUNCTION 150  /* 3.25.0 and later */
 #define SQLITE_INDEX_SCAN_UNIQUE           1  /* Scan visits at most 1 row */
+</pre></div>
+
+<p>Use the <a href="c3ref/vtab_collation.html">sqlite3_vtab_collation()</a> interface to find the name of
+the <a href="datatype3.html#collation">collating sequence</a> that should be used when evaluating the i-th
+constraint:
+
+</p><div class="codeblock"><pre>const char *sqlite3_vtab_collation(sqlite3_index_info*, int i);
 </pre></div>
 
 <p>The SQLite core calls the xBestIndex method when it is compiling a query

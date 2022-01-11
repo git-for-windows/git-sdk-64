@@ -140,13 +140,17 @@ return false;
 <p>
   The <a href="c3ref/backup_finish.html#sqlite3backupinit">Online Backup API</a> was created to 
   address these concerns. The online backup API allows the contents of
-  one database to be copied into another database, overwriting the 
+  one database to be copied into another database file, replacing any 
   original contents of the target database. The copy operation may be 
   done incrementally, in which case the source database does not need
   to be locked for the duration of the copy, only for the brief periods
   of time when it is actually being read from. This allows other database
-  users to continue uninterrupted while a backup of an online database is
-  made.
+  users to continue without excessive delays while a backup of an online
+  database is made.
+<p>
+  The effect of completing the backup call sequence is to make the
+  destination a bit-wise identical copy of the source database as it
+  was when the copying commenced. (The destination becomes a "snapshot.")
 
 <p>
   The online backup API is <a href="c3ref/backup_finish.html#sqlite3backupinit">documented here</a>.
