@@ -32,11 +32,13 @@ Public Test Server
 The following endpoints are available to try out our nghttp2
 implementation.
 
-* https://nghttp2.org/ (TLS + ALPN/NPN)
+* https://nghttp2.org/ (TLS + ALPN/NPN and HTTP/3)
 
   This endpoint supports ``h2``, ``h2-16``, ``h2-14``, and
   ``http/1.1`` via ALPN/NPN and requires TLSv1.2 for HTTP/2
   connection.
+
+  It also supports HTTP/3.
 
 * http://nghttp2.org/ (HTTP Upgrade and HTTP/2 Direct)
 
@@ -149,7 +151,9 @@ To enable the experimental HTTP/3 support for h2load and nghttpx, the
 following libraries are required:
 
 * `OpenSSL with QUIC support
-  <https://github.com/quictls/openssl/tree/OpenSSL_1_1_1k+quic>`_
+  <https://github.com/quictls/openssl/tree/OpenSSL_1_1_1k+quic>`_; or
+  `BoringSSL <https://boringssl.googlesource.com/boringssl/>`_ (commit
+  f6ef1c560ae5af51e2df5d8d2175bed207b28b8f)
 * `ngtcp2 <https://github.com/ngtcp2/ngtcp2>`_
 * `nghttp3 <https://github.com/ngtcp2/nghttp3>`_
 
@@ -341,9 +345,9 @@ configure script with ``--enable-http3``.
 For nghttpx to reload configurations and swapping its executable while
 gracefully terminating old worker processes, eBPF is required.  Run
 the configure script with ``--enable-http3 --with-libbpf`` to build
-eBPF program.  The Connection ID encryption key must be set with
-``--frontend-quic-connection-id-encryption-key`` and must not change
-in order to keep the existing connections alive during reload.
+eBPF program.  The QUIC keying material must be set with
+``--frontend-quic-secret-file`` in order to keep the existing
+connections alive during reload.
 
 The detailed steps to build HTTP/3 enabled h2load and nghttpx follow.
 

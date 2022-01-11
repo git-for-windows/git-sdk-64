@@ -550,15 +550,15 @@ of the buffer.</doc>
       <source-position filename="../src/hb-version.h" line="44"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="2" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <source-position filename="../src/hb-version.h" line="56"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="1" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="2" c:type="HB_VERSION_MINOR">
       <source-position filename="../src/hb-version.h" line="50"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="3.1.2" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="3.2.0" c:type="HB_VERSION_STRING">
       <source-position filename="../src/hb-version.h" line="63"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -3986,7 +3986,7 @@ a client program and HarfBuzz.</doc>
     <function name="buffer_add" c:identifier="hb_buffer_add" version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1275">Appends a character with the Unicode value of @codepoint to @buffer, and
+           line="1230">Appends a character with the Unicode value of @codepoint to @buffer, and
 gives it the initial cluster value of @cluster. Clusters can be any thing
 the client wants, they are usually used to refer to the index of the
 character in the input text stream and are output in
@@ -4002,19 +4002,19 @@ caller to ensure it is a valid Unicode code point.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1277">An #hb_buffer_t</doc>
+               line="1232">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="codepoint" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1278">A Unicode code point.</doc>
+               line="1233">A Unicode code point.</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
         <parameter name="cluster" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1279">The cluster value of @codepoint.</doc>
+               line="1234">The cluster value of @codepoint.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
       </parameters>
@@ -4024,7 +4024,7 @@ caller to ensure it is a valid Unicode code point.</doc>
               version="0.9.31">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1716">Appends characters from @text array to @buffer. The @item_offset is the
+           line="1671">Appends characters from @text array to @buffer. The @item_offset is the
 position of the first character from @text that will be appended, and
 @item_length is the number of character. When shaping part of a larger text
 (e.g. a run of text from a paragraph), instead of passing just the substring
@@ -4044,13 +4044,13 @@ to ensure it contains a valid Unicode code points.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1718">a #hb_buffer_t to append characters to.</doc>
+               line="1673">a #hb_buffer_t to append characters to.</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="text" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1719">an array of Unicode code points to append.</doc>
+               line="1674">an array of Unicode code points to append.</doc>
           <array length="2" zero-terminated="0" c:type="const hb_codepoint_t*">
             <type name="codepoint_t" c:type="hb_codepoint_t"/>
           </array>
@@ -4058,19 +4058,19 @@ to ensure it contains a valid Unicode code points.</doc>
         <parameter name="text_length" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1720">the length of the @text, or -1 if it is %NULL terminated.</doc>
+               line="1675">the length of the @text, or -1 if it is %NULL terminated.</doc>
           <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="item_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1721">the offset of the first code point to add to the @buffer.</doc>
+               line="1676">the offset of the first code point to add to the @buffer.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="item_length" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1722">the number of code points to add to the @buffer, or -1 for the
+               line="1677">the number of code points to add to the @buffer, or -1 for the
               end of @text (assuming it is %NULL terminated).</doc>
           <type name="gint" c:type="int"/>
         </parameter>
@@ -4081,7 +4081,7 @@ to ensure it contains a valid Unicode code points.</doc>
               version="0.9.39">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1689">Similar to hb_buffer_add_codepoints(), but allows only access to first 256
+           line="1644">Similar to hb_buffer_add_codepoints(), but allows only access to first 256
 Unicode code points that can fit in 8-bit strings.
 
 &lt;note&gt;Has nothing to do with non-Unicode Latin-1 encoding.&lt;/note&gt;</doc>
@@ -4093,13 +4093,13 @@ Unicode code points that can fit in 8-bit strings.
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1691">An #hb_buffer_t</doc>
+               line="1646">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="text" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1692">an array of UTF-8
+               line="1647">an array of UTF-8
               characters to append</doc>
           <array length="2" zero-terminated="0" c:type="const uint8_t*">
             <type name="guint8"/>
@@ -4108,19 +4108,19 @@ Unicode code points that can fit in 8-bit strings.
         <parameter name="text_length" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1694">the length of the @text, or -1 if it is %NULL terminated</doc>
+               line="1649">the length of the @text, or -1 if it is %NULL terminated</doc>
           <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="item_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1695">the offset of the first character to add to the @buffer</doc>
+               line="1650">the offset of the first character to add to the @buffer</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="item_length" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1696">the number of characters to add to the @buffer, or -1 for the
+               line="1651">the number of characters to add to the @buffer, or -1 for the
               end of @text (assuming it is %NULL terminated)</doc>
           <type name="gint" c:type="int"/>
         </parameter>
@@ -4131,7 +4131,7 @@ Unicode code points that can fit in 8-bit strings.
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1637">See hb_buffer_add_codepoints().
+           line="1592">See hb_buffer_add_codepoints().
 
 Replaces invalid UTF-16 characters with the @buffer replacement code point,
 see hb_buffer_set_replacement_codepoint().</doc>
@@ -4143,13 +4143,13 @@ see hb_buffer_set_replacement_codepoint().</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1639">An #hb_buffer_t</doc>
+               line="1594">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="text" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1640">An array of UTF-16 characters to append</doc>
+               line="1595">An array of UTF-16 characters to append</doc>
           <array length="2" zero-terminated="0" c:type="const uint16_t*">
             <type name="guint16" c:type="uint16_t"/>
           </array>
@@ -4157,19 +4157,19 @@ see hb_buffer_set_replacement_codepoint().</doc>
         <parameter name="text_length" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1641">The length of the @text, or -1 if it is %NULL terminated</doc>
+               line="1596">The length of the @text, or -1 if it is %NULL terminated</doc>
           <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="item_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1642">The offset of the first character to add to the @buffer</doc>
+               line="1597">The offset of the first character to add to the @buffer</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="item_length" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1643">The number of characters to add to the @buffer, or -1 for the
+               line="1598">The number of characters to add to the @buffer, or -1 for the
               end of @text (assuming it is %NULL terminated)</doc>
           <type name="gint" c:type="int"/>
         </parameter>
@@ -4180,7 +4180,7 @@ see hb_buffer_set_replacement_codepoint().</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1663">See hb_buffer_add_codepoints().
+           line="1618">See hb_buffer_add_codepoints().
 
 Replaces invalid UTF-32 characters with the @buffer replacement code point,
 see hb_buffer_set_replacement_codepoint().</doc>
@@ -4192,13 +4192,13 @@ see hb_buffer_set_replacement_codepoint().</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1665">An #hb_buffer_t</doc>
+               line="1620">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="text" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1666">An array of UTF-32 characters to append</doc>
+               line="1621">An array of UTF-32 characters to append</doc>
           <array length="2" zero-terminated="0" c:type="const uint32_t*">
             <type name="guint32" c:type="uint32_t"/>
           </array>
@@ -4206,19 +4206,19 @@ see hb_buffer_set_replacement_codepoint().</doc>
         <parameter name="text_length" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1667">The length of the @text, or -1 if it is %NULL terminated</doc>
+               line="1622">The length of the @text, or -1 if it is %NULL terminated</doc>
           <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="item_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1668">The offset of the first character to add to the @buffer</doc>
+               line="1623">The offset of the first character to add to the @buffer</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="item_length" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1669">The number of characters to add to the @buffer, or -1 for the
+               line="1624">The number of characters to add to the @buffer, or -1 for the
               end of @text (assuming it is %NULL terminated)</doc>
           <type name="gint" c:type="int"/>
         </parameter>
@@ -4229,7 +4229,7 @@ see hb_buffer_set_replacement_codepoint().</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1610">See hb_buffer_add_codepoints().
+           line="1565">See hb_buffer_add_codepoints().
 
 Replaces invalid UTF-8 characters with the @buffer replacement code point,
 see hb_buffer_set_replacement_codepoint().</doc>
@@ -4241,13 +4241,13 @@ see hb_buffer_set_replacement_codepoint().</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1612">An #hb_buffer_t</doc>
+               line="1567">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="text" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1613">An array of UTF-8
+               line="1568">An array of UTF-8
               characters to append.</doc>
           <array length="2" zero-terminated="0" c:type="const char*">
             <type name="guint8"/>
@@ -4256,19 +4256,19 @@ see hb_buffer_set_replacement_codepoint().</doc>
         <parameter name="text_length" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1615">The length of the @text, or -1 if it is %NULL terminated.</doc>
+               line="1570">The length of the @text, or -1 if it is %NULL terminated.</doc>
           <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="item_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1616">The offset of the first character to add to the @buffer.</doc>
+               line="1571">The offset of the first character to add to the @buffer.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="item_length" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1617">The number of characters to add to the @buffer, or -1 for the
+               line="1572">The number of characters to add to the @buffer, or -1 for the
               end of @text (assuming it is %NULL terminated).</doc>
           <type name="gint" c:type="int"/>
         </parameter>
@@ -4279,19 +4279,19 @@ see hb_buffer_set_replacement_codepoint().</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1258">Check if allocating memory for the buffer succeeded.</doc>
+           line="1213">Check if allocating memory for the buffer succeeded.</doc>
       <source-position filename="../src/hb-buffer.h" line="406"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="1264">%true if @buffer memory allocation succeeded, %false otherwise.</doc>
+             line="1219">%true if @buffer memory allocation succeeded, %false otherwise.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1260">An #hb_buffer_t</doc>
+               line="1215">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -4301,7 +4301,7 @@ see hb_buffer_set_replacement_codepoint().</doc>
               version="1.5.0">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1751">Append (part of) contents of another buffer to this buffer.</doc>
+           line="1706">Append (part of) contents of another buffer to this buffer.</doc>
       <source-position filename="../src/hb-buffer.h" line="462"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -4310,25 +4310,25 @@ see hb_buffer_set_replacement_codepoint().</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1753">An #hb_buffer_t</doc>
+               line="1708">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="source" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1754">source #hb_buffer_t</doc>
+               line="1709">source #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="start" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1755">start index into source buffer to copy.  Use 0 to copy from start of buffer.</doc>
+               line="1710">start index into source buffer to copy.  Use 0 to copy from start of buffer.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="end" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1756">end index into source buffer to copy.  Use @HB_FEATURE_GLOBAL_END to copy to end of buffer.</doc>
+               line="1711">end index into source buffer to copy.  Use @HB_FEATURE_GLOBAL_END to copy to end of buffer.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
       </parameters>
@@ -4338,7 +4338,7 @@ see hb_buffer_set_replacement_codepoint().</doc>
               version="0.9.11">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1222">Similar to hb_buffer_reset(), but does not clear the Unicode functions and
+           line="1177">Similar to hb_buffer_reset(), but does not clear the Unicode functions and
 the replacement code point.</doc>
       <source-position filename="../src/hb-buffer.h" line="398"/>
       <return-value transfer-ownership="none">
@@ -4348,7 +4348,7 @@ the replacement code point.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1224">An #hb_buffer_t</doc>
+               line="1179">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -4455,12 +4455,12 @@ do not need to maintain such backward compatibility are recommended to use
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="627">Creates a new #hb_buffer_t with all properties to defaults.</doc>
+           line="582">Creates a new #hb_buffer_t with all properties to defaults.</doc>
       <source-position filename="../src/hb-buffer.h" line="185"/>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="632">
+             line="587">
 A newly allocated #hb_buffer_t with a reference count of 1. The initial
 reference count should be released with hb_buffer_destroy() when you are done
 using the #hb_buffer_t. This function never returns %NULL. If memory cannot
@@ -4596,7 +4596,7 @@ produced by hb_buffer_serialize_unicode().</doc>
               introspectable="0">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="690">Deallocate the @buffer.
+           line="645">Deallocate the @buffer.
 Decreases the reference count on @buffer by one. If the result is zero, then
 @buffer and all associated resources are freed. See hb_buffer_reference().</doc>
       <source-position filename="../src/hb-buffer.h" line="194"/>
@@ -4607,7 +4607,7 @@ Decreases the reference count on @buffer by one. If the result is zero, then
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="692">An #hb_buffer_t</doc>
+               line="647">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -4615,7 +4615,7 @@ Decreases the reference count on @buffer by one. If the result is zero, then
     <function name="buffer_diff" c:identifier="hb_buffer_diff" version="1.5.0">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1930">If dottedcircle_glyph is (hb_codepoint_t) -1 then #HB_BUFFER_DIFF_FLAG_DOTTED_CIRCLE_PRESENT
+           line="1885">If dottedcircle_glyph is (hb_codepoint_t) -1 then #HB_BUFFER_DIFF_FLAG_DOTTED_CIRCLE_PRESENT
 and #HB_BUFFER_DIFF_FLAG_NOTDEF_PRESENT are never returned.  This should be used by most
 callers if just comparing two buffers is needed.</doc>
       <source-position filename="../src/hb-buffer.h" line="658"/>
@@ -4626,25 +4626,25 @@ callers if just comparing two buffers is needed.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1932">a buffer.</doc>
+               line="1887">a buffer.</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="reference" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1933">other buffer to compare to.</doc>
+               line="1888">other buffer to compare to.</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="dottedcircle_glyph" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1934">glyph id of U+25CC DOTTED CIRCLE, or (hb_codepont_t) -1.</doc>
+               line="1889">glyph id of U+25CC DOTTED CIRCLE, or (hb_codepont_t) -1.</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
         <parameter name="position_fuzz" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1935">allowed absolute difference in position values.</doc>
+               line="1890">allowed absolute difference in position values.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
       </parameters>
@@ -4837,14 +4837,14 @@ report which aspect(s) of the glyph info/position are different.</doc>
               version="0.9.42">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1064">Fetches the cluster level of a buffer. The #hb_buffer_cluster_level_t
+           line="1019">Fetches the cluster level of a buffer. The #hb_buffer_cluster_level_t
 dictates one aspect of how HarfBuzz will treat non-base characters
 during shaping.</doc>
       <source-position filename="../src/hb-buffer.h" line="360"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="1072">The cluster level of @buffer</doc>
+             line="1027">The cluster level of @buffer</doc>
         <type name="buffer_cluster_level_t"
               c:type="hb_buffer_cluster_level_t"/>
       </return-value>
@@ -4852,7 +4852,7 @@ during shaping.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1066">An #hb_buffer_t</doc>
+               line="1021">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -4862,20 +4862,20 @@ during shaping.</doc>
               version="0.9.5">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="778">Fetches the type of @buffer contents. Buffers are either empty, contain
+           line="733">Fetches the type of @buffer contents. Buffers are either empty, contain
 characters (before shaping), or contain glyphs (the result of shaping).</doc>
       <source-position filename="../src/hb-buffer.h" line="227"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="785">The type of @buffer contents</doc>
+             line="740">The type of @buffer contents</doc>
         <type name="buffer_content_type_t" c:type="hb_buffer_content_type_t"/>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="780">An #hb_buffer_t</doc>
+               line="735">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -4885,19 +4885,19 @@ characters (before shaping), or contain glyphs (the result of shaping).</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="864">See hb_buffer_set_direction()</doc>
+           line="819">See hb_buffer_set_direction()</doc>
       <source-position filename="../src/hb-buffer.h" line="242"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="870">The direction of the @buffer.</doc>
+             line="825">The direction of the @buffer.</doc>
         <type name="direction_t" c:type="hb_direction_t"/>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="866">An #hb_buffer_t</doc>
+               line="821">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -4907,12 +4907,12 @@ characters (before shaping), or contain glyphs (the result of shaping).</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="657">Fetches an empty #hb_buffer_t.</doc>
+           line="612">Fetches an empty #hb_buffer_t.</doc>
       <source-position filename="../src/hb-buffer.h" line="188"/>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="662">The empty buffer</doc>
+             line="617">The empty buffer</doc>
         <type name="buffer_t" c:type="hb_buffer_t*"/>
       </return-value>
     </function>
@@ -4921,19 +4921,19 @@ characters (before shaping), or contain glyphs (the result of shaping).</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1026">Fetches the #hb_buffer_flags_t of @buffer.</doc>
+           line="981">Fetches the #hb_buffer_flags_t of @buffer.</doc>
       <source-position filename="../src/hb-buffer.h" line="318"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="1032">The @buffer flags</doc>
+             line="987">The @buffer flags</doc>
         <type name="buffer_flags_t" c:type="hb_buffer_flags_t"/>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1028">An #hb_buffer_t</doc>
+               line="983">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -4943,13 +4943,13 @@ characters (before shaping), or contain glyphs (the result of shaping).</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1361">Returns @buffer glyph information array.  Returned pointer
+           line="1316">Returns @buffer glyph information array.  Returned pointer
 is valid as long as @buffer contents are not modified.</doc>
       <source-position filename="../src/hb-buffer.h" line="477"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="1369">
+             line="1324">
 The @buffer glyph information array.
 The value valid as long as buffer has not been modified.</doc>
         <array length="1" zero-terminated="0" c:type="hb_glyph_info_t*">
@@ -4960,7 +4960,7 @@ The value valid as long as buffer has not been modified.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1363">An #hb_buffer_t</doc>
+               line="1318">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="length"
@@ -4969,7 +4969,7 @@ The value valid as long as buffer has not been modified.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1364">The output-array length.</doc>
+               line="1319">The output-array length.</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
       </parameters>
@@ -4979,7 +4979,7 @@ The value valid as long as buffer has not been modified.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1385">Returns @buffer glyph position array.  Returned pointer
+           line="1340">Returns @buffer glyph position array.  Returned pointer
 is valid as long as @buffer contents are not modified.
 
 If buffer did not have positions before, the positions will be
@@ -4990,7 +4990,7 @@ in which case %NULL is returned.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="1398">
+             line="1353">
 The @buffer glyph position array.
 The value valid as long as buffer has not been modified.</doc>
         <array length="1" zero-terminated="0" c:type="hb_glyph_position_t*">
@@ -5001,7 +5001,7 @@ The value valid as long as buffer has not been modified.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1387">An #hb_buffer_t</doc>
+               line="1342">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="length"
@@ -5010,7 +5010,7 @@ The value valid as long as buffer has not been modified.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1388">The output length</doc>
+               line="1343">The output length</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
       </parameters>
@@ -5020,19 +5020,19 @@ The value valid as long as buffer has not been modified.</doc>
               version="2.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1146">See hb_buffer_set_invisible_glyph().</doc>
+           line="1101">See hb_buffer_set_invisible_glyph().</doc>
       <source-position filename="../src/hb-buffer.h" line="384"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="1152">The @buffer invisible #hb_codepoint_t</doc>
+             line="1107">The @buffer invisible #hb_codepoint_t</doc>
         <type name="codepoint_t" c:type="hb_codepoint_t"/>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1148">An #hb_buffer_t</doc>
+               line="1103">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5042,12 +5042,12 @@ The value valid as long as buffer has not been modified.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="952">See hb_buffer_set_language().</doc>
+           line="907">See hb_buffer_set_language().</doc>
       <source-position filename="../src/hb-buffer.h" line="257"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="958">
+             line="913">
 The #hb_language_t of the buffer. Must not be freed by the caller.</doc>
         <type name="language_t" c:type="hb_language_t"/>
       </return-value>
@@ -5055,7 +5055,7 @@ The #hb_language_t of the buffer. Must not be freed by the caller.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="954">An #hb_buffer_t</doc>
+               line="909">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5065,12 +5065,12 @@ The #hb_language_t of the buffer. Must not be freed by the caller.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1343">Returns the number of items in the buffer.</doc>
+           line="1298">Returns the number of items in the buffer.</doc>
       <source-position filename="../src/hb-buffer.h" line="472"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="1349">The @buffer length.
+             line="1304">The @buffer length.
 The value valid as long as buffer has not been modified.</doc>
         <type name="guint" c:type="unsigned int"/>
       </return-value>
@@ -5078,7 +5078,7 @@ The value valid as long as buffer has not been modified.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1345">An #hb_buffer_t</doc>
+               line="1300">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5088,19 +5088,19 @@ The value valid as long as buffer has not been modified.</doc>
               version="3.1.0">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1186">See hb_buffer_set_not_found_glyph().</doc>
+           line="1141">See hb_buffer_set_not_found_glyph().</doc>
       <source-position filename="../src/hb-buffer.h" line="391"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="1192">The @buffer not-found #hb_codepoint_t</doc>
+             line="1147">The @buffer not-found #hb_codepoint_t</doc>
         <type name="codepoint_t" c:type="hb_codepoint_t"/>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1188">An #hb_buffer_t</doc>
+               line="1143">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5110,20 +5110,20 @@ The value valid as long as buffer has not been modified.</doc>
               version="0.9.31">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1105">Fetches the #hb_codepoint_t that replaces invalid entries for a given encoding
+           line="1060">Fetches the #hb_codepoint_t that replaces invalid entries for a given encoding
 when adding text to @buffer.</doc>
       <source-position filename="../src/hb-buffer.h" line="377"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="1112">The @buffer replacement #hb_codepoint_t</doc>
+             line="1067">The @buffer replacement #hb_codepoint_t</doc>
         <type name="codepoint_t" c:type="hb_codepoint_t"/>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1107">An #hb_buffer_t</doc>
+               line="1062">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5133,19 +5133,19 @@ when adding text to @buffer.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="908">Fetches the script of @buffer.</doc>
+           line="863">Fetches the script of @buffer.</doc>
       <source-position filename="../src/hb-buffer.h" line="249"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="914">The #hb_script_t of the @buffer</doc>
+             line="869">The #hb_script_t of the @buffer</doc>
         <type name="script_t" c:type="hb_script_t"/>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="910">An #hb_buffer_t</doc>
+               line="865">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5155,7 +5155,7 @@ when adding text to @buffer.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="990">Sets @props to the #hb_segment_properties_t of @buffer.</doc>
+           line="945">Sets @props to the #hb_segment_properties_t of @buffer.</doc>
       <source-position filename="../src/hb-buffer.h" line="264"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -5164,7 +5164,7 @@ when adding text to @buffer.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="992">An #hb_buffer_t</doc>
+               line="947">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="props"
@@ -5173,7 +5173,7 @@ when adding text to @buffer.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="993">The output #hb_segment_properties_t</doc>
+               line="948">The output #hb_segment_properties_t</doc>
           <type name="segment_properties_t" c:type="hb_segment_properties_t*"/>
         </parameter>
       </parameters>
@@ -5183,19 +5183,19 @@ when adding text to @buffer.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="822">Fetches the Unicode-functions structure of a buffer.</doc>
+           line="777">Fetches the Unicode-functions structure of a buffer.</doc>
       <source-position filename="../src/hb-buffer.h" line="235"/>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="828">The Unicode-functions structure</doc>
+             line="783">The Unicode-functions structure</doc>
         <type name="unicode_funcs_t" c:type="hb_unicode_funcs_t*"/>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="824">An #hb_buffer_t</doc>
+               line="779">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5206,26 +5206,26 @@ when adding text to @buffer.</doc>
               introspectable="0">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="741">Fetches the user data associated with the specified key,
+           line="696">Fetches the user data associated with the specified key,
 attached to the specified buffer.</doc>
       <source-position filename="../src/hb-buffer.h" line="204"/>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="749">A pointer to the user data</doc>
+             line="704">A pointer to the user data</doc>
         <type name="gpointer" c:type="void*"/>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="743">An #hb_buffer_t</doc>
+               line="698">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="744">The user-data key to query</doc>
+               line="699">The user-data key to query</doc>
           <type name="user_data_key_t" c:type="hb_user_data_key_t*"/>
         </parameter>
       </parameters>
@@ -5235,7 +5235,7 @@ attached to the specified buffer.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1505">Sets unset buffer segment properties based on buffer Unicode
+           line="1460">Sets unset buffer segment properties based on buffer Unicode
 contents.  If buffer is not empty, it must have content type
 #HB_BUFFER_CONTENT_TYPE_UNICODE.
 
@@ -5264,7 +5264,7 @@ it is called.  See documentation for that function for details.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1507">An #hb_buffer_t</doc>
+               line="1462">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5274,21 +5274,21 @@ it is called.  See documentation for that function for details.</doc>
               version="2.7.3">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1422">Returns whether @buffer has glyph position data.
+           line="1377">Returns whether @buffer has glyph position data.
 A buffer gains position data when hb_buffer_get_glyph_positions() is called on it,
 and cleared of position data when hb_buffer_clear_contents() is called.</doc>
       <source-position filename="../src/hb-buffer.h" line="485"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="1430">%true if the @buffer has position array, %false otherwise.</doc>
+             line="1385">%true if the @buffer has position array, %false otherwise.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1424">an #hb_buffer_t.</doc>
+               line="1379">an #hb_buffer_t.</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5346,7 +5346,7 @@ the next one.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1880">Reorders a glyph buffer to have canonical in-cluster glyph order / position.
+           line="1835">Reorders a glyph buffer to have canonical in-cluster glyph order / position.
 The resulting clusters should behave identical to pre-reordering clusters.
 
 &lt;note&gt;This has nothing to do with Unicode normalization.&lt;/note&gt;</doc>
@@ -5358,7 +5358,7 @@ The resulting clusters should behave identical to pre-reordering clusters.
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1882">An #hb_buffer_t</doc>
+               line="1837">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5368,25 +5368,25 @@ The resulting clusters should behave identical to pre-reordering clusters.
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1240">Pre allocates memory for @buffer to fit at least @size number of items.</doc>
+           line="1195">Pre allocates memory for @buffer to fit at least @size number of items.</doc>
       <source-position filename="../src/hb-buffer.h" line="401"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="1247">%true if @buffer memory allocation succeeded, %false otherwise</doc>
+             line="1202">%true if @buffer memory allocation succeeded, %false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1242">An #hb_buffer_t</doc>
+               line="1197">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="size" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1243">Number of items to pre allocate.</doc>
+               line="1198">Number of items to pre allocate.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
       </parameters>
@@ -5397,13 +5397,13 @@ The resulting clusters should behave identical to pre-reordering clusters.
               introspectable="0">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="672">Increases the reference count on @buffer by one. This prevents @buffer from
+           line="627">Increases the reference count on @buffer by one. This prevents @buffer from
 being destroyed until a matching call to hb_buffer_destroy() is made.</doc>
       <source-position filename="../src/hb-buffer.h" line="191"/>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="679">
+             line="634">
 The referenced #hb_buffer_t.</doc>
         <type name="buffer_t" c:type="hb_buffer_t*"/>
       </return-value>
@@ -5411,7 +5411,7 @@ The referenced #hb_buffer_t.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="674">An #hb_buffer_t</doc>
+               line="629">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5421,7 +5421,7 @@ The referenced #hb_buffer_t.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1204">Resets the buffer to its initial status, as if it was just newly created
+           line="1159">Resets the buffer to its initial status, as if it was just newly created
 with hb_buffer_create().</doc>
       <source-position filename="../src/hb-buffer.h" line="395"/>
       <return-value transfer-ownership="none">
@@ -5431,7 +5431,7 @@ with hb_buffer_create().</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1206">An #hb_buffer_t</doc>
+               line="1161">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5441,7 +5441,7 @@ with hb_buffer_create().</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1458">Reverses buffer contents.</doc>
+           line="1413">Reverses buffer contents.</doc>
       <source-position filename="../src/hb-buffer.h" line="409"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -5450,7 +5450,7 @@ with hb_buffer_create().</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1460">An #hb_buffer_t</doc>
+               line="1415">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5460,7 +5460,7 @@ with hb_buffer_create().</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1489">Reverses buffer clusters.  That is, the buffer contents are
+           line="1444">Reverses buffer clusters.  That is, the buffer contents are
 reversed, then each cluster (consecutive items having the
 same cluster number) are reversed again.</doc>
       <source-position filename="../src/hb-buffer.h" line="416"/>
@@ -5471,7 +5471,7 @@ same cluster number) are reversed again.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1491">An #hb_buffer_t</doc>
+               line="1446">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
       </parameters>
@@ -5481,7 +5481,7 @@ same cluster number) are reversed again.</doc>
               version="0.9.41">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1472">Reverses buffer contents between @start and @end.</doc>
+           line="1427">Reverses buffer contents between @start and @end.</doc>
       <source-position filename="../src/hb-buffer.h" line="412"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -5490,19 +5490,19 @@ same cluster number) are reversed again.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1474">An #hb_buffer_t</doc>
+               line="1429">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="start" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1475">start index</doc>
+               line="1430">start index</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="end" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1476">end index</doc>
+               line="1431">end index</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
       </parameters>
@@ -6036,7 +6036,7 @@ For example:
               version="0.9.42">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1043">Sets the cluster level of a buffer. The #hb_buffer_cluster_level_t
+           line="998">Sets the cluster level of a buffer. The #hb_buffer_cluster_level_t
 dictates one aspect of how HarfBuzz will treat non-base characters
 during shaping.</doc>
       <source-position filename="../src/hb-buffer.h" line="356"/>
@@ -6047,13 +6047,13 @@ during shaping.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1045">An #hb_buffer_t</doc>
+               line="1000">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="cluster_level" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1046">The cluster level to set on the buffer</doc>
+               line="1001">The cluster level to set on the buffer</doc>
           <type name="buffer_cluster_level_t"
                 c:type="hb_buffer_cluster_level_t"/>
         </parameter>
@@ -6064,7 +6064,7 @@ during shaping.</doc>
               version="0.9.5">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="761">Sets the type of @buffer contents. Buffers are either empty, contain
+           line="716">Sets the type of @buffer contents. Buffers are either empty, contain
 characters (before shaping), or contain glyphs (the result of shaping).</doc>
       <source-position filename="../src/hb-buffer.h" line="223"/>
       <return-value transfer-ownership="none">
@@ -6074,13 +6074,13 @@ characters (before shaping), or contain glyphs (the result of shaping).</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="763">An #hb_buffer_t</doc>
+               line="718">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="content_type" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="764">The type of buffer contents to set</doc>
+               line="719">The type of buffer contents to set</doc>
           <type name="buffer_content_type_t"
                 c:type="hb_buffer_content_type_t"/>
         </parameter>
@@ -6091,7 +6091,7 @@ characters (before shaping), or contain glyphs (the result of shaping).</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="838">Set the text flow direction of the buffer. No shaping can happen without
+           line="793">Set the text flow direction of the buffer. No shaping can happen without
 setting @buffer direction, and it controls the visual direction for the
 output glyphs; for RTL direction the glyphs will be reversed. Many layout
 features depend on the proper setting of the direction, for example,
@@ -6106,13 +6106,13 @@ direction.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="840">An #hb_buffer_t</doc>
+               line="795">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="direction" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="841">the #hb_direction_t of the @buffer</doc>
+               line="796">the #hb_direction_t of the @buffer</doc>
           <type name="direction_t" c:type="hb_direction_t"/>
         </parameter>
       </parameters>
@@ -6122,7 +6122,7 @@ direction.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1007">Sets @buffer flags to @flags. See #hb_buffer_flags_t.</doc>
+           line="962">Sets @buffer flags to @flags. See #hb_buffer_flags_t.</doc>
       <source-position filename="../src/hb-buffer.h" line="314"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -6131,13 +6131,13 @@ direction.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1009">An #hb_buffer_t</doc>
+               line="964">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="flags" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1010">The buffer flags to set</doc>
+               line="965">The buffer flags to set</doc>
           <type name="buffer_flags_t" c:type="hb_buffer_flags_t"/>
         </parameter>
       </parameters>
@@ -6147,7 +6147,7 @@ direction.</doc>
               version="2.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1124">Sets the #hb_codepoint_t that replaces invisible characters in
+           line="1079">Sets the #hb_codepoint_t that replaces invisible characters in
 the shaping result.  If set to zero (default), the glyph for the
 U+0020 SPACE character is used.  Otherwise, this value is used
 verbatim.</doc>
@@ -6159,13 +6159,13 @@ verbatim.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1126">An #hb_buffer_t</doc>
+               line="1081">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="invisible" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1127">the invisible #hb_codepoint_t</doc>
+               line="1082">the invisible #hb_codepoint_t</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
       </parameters>
@@ -6175,7 +6175,7 @@ verbatim.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="925">Sets the language of @buffer to @language.
+           line="880">Sets the language of @buffer to @language.
 
 Languages are crucial for selecting which OpenType feature to apply to the
 buffer which can result in applying language-specific behaviour. Languages
@@ -6192,13 +6192,13 @@ Use hb_language_from_string() to convert from BCP 47 language tags to
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="927">An #hb_buffer_t</doc>
+               line="882">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="language" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="928">An hb_language_t to set</doc>
+               line="883">An hb_language_t to set</doc>
           <type name="language_t" c:type="hb_language_t"/>
         </parameter>
       </parameters>
@@ -6208,26 +6208,26 @@ Use hb_language_from_string() to convert from BCP 47 language tags to
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1301">Similar to hb_buffer_pre_allocate(), but clears any new items added at the
+           line="1256">Similar to hb_buffer_pre_allocate(), but clears any new items added at the
 end.</doc>
       <source-position filename="../src/hb-buffer.h" line="468"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="1309">%true if @buffer memory allocation succeeded, %false otherwise.</doc>
+             line="1264">%true if @buffer memory allocation succeeded, %false otherwise.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1303">An #hb_buffer_t</doc>
+               line="1258">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="length" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1304">The new length of @buffer</doc>
+               line="1259">The new length of @buffer</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
       </parameters>
@@ -6237,7 +6237,7 @@ end.</doc>
               version="1.1.3">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="2026">Sets the implementation function for #hb_buffer_message_func_t.</doc>
+           line="1981">Sets the implementation function for #hb_buffer_message_func_t.</doc>
       <source-position filename="../src/hb-buffer.h" line="691"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -6246,7 +6246,7 @@ end.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="2028">An #hb_buffer_t</doc>
+               line="1983">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="func"
@@ -6256,7 +6256,7 @@ end.</doc>
                    destroy="3">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="2029">Callback function</doc>
+               line="1984">Callback function</doc>
           <type name="buffer_message_func_t"
                 c:type="hb_buffer_message_func_t"/>
         </parameter>
@@ -6266,7 +6266,7 @@ end.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="2030">Data to pass to @func</doc>
+               line="1985">Data to pass to @func</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="destroy"
@@ -6276,7 +6276,7 @@ end.</doc>
                    scope="notified">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="2031">The function to call when @user_data is not needed anymore</doc>
+               line="1986">The function to call when @user_data is not needed anymore</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
       </parameters>
@@ -6286,7 +6286,7 @@ end.</doc>
               version="3.1.0">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1163">Sets the #hb_codepoint_t that replaces characters not found in
+           line="1118">Sets the #hb_codepoint_t that replaces characters not found in
 the font during shaping.
 
 The not-found glyph defaults to zero, sometimes knows as the
@@ -6299,13 +6299,13 @@ The not-found glyph defaults to zero, sometimes knows as the
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1165">An #hb_buffer_t</doc>
+               line="1120">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="not_found" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1166">the not-found #hb_codepoint_t</doc>
+               line="1121">the not-found #hb_codepoint_t</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
       </parameters>
@@ -6315,7 +6315,7 @@ The not-found glyph defaults to zero, sometimes knows as the
               version="0.9.31">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1083">Sets the #hb_codepoint_t that replaces invalid entries for a given encoding
+           line="1038">Sets the #hb_codepoint_t that replaces invalid entries for a given encoding
 when adding text to @buffer.
 
 Default is #HB_BUFFER_REPLACEMENT_CODEPOINT_DEFAULT.</doc>
@@ -6327,13 +6327,13 @@ Default is #HB_BUFFER_REPLACEMENT_CODEPOINT_DEFAULT.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1085">An #hb_buffer_t</doc>
+               line="1040">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="replacement" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1086">the replacement #hb_codepoint_t</doc>
+               line="1041">the replacement #hb_codepoint_t</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
       </parameters>
@@ -6343,7 +6343,7 @@ Default is #HB_BUFFER_REPLACEMENT_CODEPOINT_DEFAULT.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="881">Sets the script of @buffer to @script.
+           line="836">Sets the script of @buffer to @script.
 
 Script is crucial for choosing the proper shaping behaviour for scripts that
 require it (e.g. Arabic) and the which OpenType features defined in the font
@@ -6360,13 +6360,13 @@ corresponding script from an ISO 15924 script tag.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="883">An #hb_buffer_t</doc>
+               line="838">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="script" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="884">An #hb_script_t to set.</doc>
+               line="839">An #hb_script_t to set.</doc>
           <type name="script_t" c:type="hb_script_t"/>
         </parameter>
       </parameters>
@@ -6376,7 +6376,7 @@ corresponding script from an ISO 15924 script tag.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="969">Sets the segment properties of the buffer, a shortcut for calling
+           line="924">Sets the segment properties of the buffer, a shortcut for calling
 hb_buffer_set_direction(), hb_buffer_set_script() and
 hb_buffer_set_language() individually.</doc>
       <source-position filename="../src/hb-buffer.h" line="260"/>
@@ -6387,13 +6387,13 @@ hb_buffer_set_language() individually.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="971">An #hb_buffer_t</doc>
+               line="926">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="props" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="972">An #hb_segment_properties_t to use</doc>
+               line="927">An #hb_segment_properties_t to use</doc>
           <type name="segment_properties_t"
                 c:type="const hb_segment_properties_t*"/>
         </parameter>
@@ -6404,7 +6404,7 @@ hb_buffer_set_language() individually.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="797">Sets the Unicode-functions structure of a buffer to
+           line="752">Sets the Unicode-functions structure of a buffer to
 @unicode_funcs.</doc>
       <source-position filename="../src/hb-buffer.h" line="231"/>
       <return-value transfer-ownership="none">
@@ -6414,13 +6414,13 @@ hb_buffer_set_language() individually.</doc>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="799">An #hb_buffer_t</doc>
+               line="754">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="unicode_funcs" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="800">The Unicode-functions structure</doc>
+               line="755">The Unicode-functions structure</doc>
           <type name="unicode_funcs_t" c:type="hb_unicode_funcs_t*"/>
         </parameter>
       </parameters>
@@ -6431,25 +6431,25 @@ hb_buffer_set_language() individually.</doc>
               introspectable="0">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="717">Attaches a user-data key/data pair to the specified buffer.</doc>
+           line="672">Attaches a user-data key/data pair to the specified buffer.</doc>
       <source-position filename="../src/hb-buffer.h" line="197"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="727">%true if success, %false otherwise</doc>
+             line="682">%true if success, %false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="719">An #hb_buffer_t</doc>
+               line="674">An #hb_buffer_t</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="720">The user-data key</doc>
+               line="675">The user-data key</doc>
           <type name="user_data_key_t" c:type="hb_user_data_key_t*"/>
         </parameter>
         <parameter name="data"
@@ -6458,7 +6458,7 @@ hb_buffer_set_language() individually.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="721">A pointer to the user data</doc>
+               line="676">A pointer to the user data</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="destroy"
@@ -6467,13 +6467,13 @@ hb_buffer_set_language() individually.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="722">A callback to call when @data is not needed anymore</doc>
+               line="677">A callback to call when @data is not needed anymore</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
         <parameter name="replace" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="723">Whether to replace an existing data with the same key</doc>
+               line="678">Whether to replace an existing data with the same key</doc>
           <type name="bool_t" c:type="hb_bool_t"/>
         </parameter>
       </parameters>
@@ -11692,7 +11692,7 @@ or vertical) depending on the value of @direction.</doc>
               introspectable="0">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="655">Creates an #hb_face_t face object from the specified FT_Face.
+           line="664">Creates an #hb_face_t face object from the specified FT_Face.
 
 This variant of the function does not provide any life-cycle management.
 
@@ -11706,7 +11706,7 @@ after the #hb_face_t face object has been destroyed.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-ft.cc"
-             line="671">the new #hb_face_t face object</doc>
+             line="680">the new #hb_face_t face object</doc>
         <type name="face_t" c:type="hb_face_t*"/>
       </return-value>
       <parameters>
@@ -11716,7 +11716,7 @@ after the #hb_face_t face object has been destroyed.</doc>
                    destroy="1">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="657">FT_Face to work upon</doc>
+               line="666">FT_Face to work upon</doc>
           <type c:type="FT_Face"/>
         </parameter>
         <parameter name="destroy"
@@ -11726,7 +11726,7 @@ after the #hb_face_t face object has been destroyed.</doc>
                    scope="notified">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="658">A callback to call when the face object is not needed anymore</doc>
+               line="667">A callback to call when the face object is not needed anymore</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
       </parameters>
@@ -11737,7 +11737,7 @@ after the #hb_face_t face object has been destroyed.</doc>
               introspectable="0">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="731">Creates an #hb_face_t face object from the specified FT_Face.
+           line="740">Creates an #hb_face_t face object from the specified FT_Face.
 
 This variant of the function caches the newly created #hb_face_t
 face object, using the @generic pointer of @ft_face. Subsequent function
@@ -11751,14 +11751,14 @@ However, client programs are still responsible for destroying
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-ft.cc"
-             line="746">the new #hb_face_t face object</doc>
+             line="755">the new #hb_face_t face object</doc>
         <type name="face_t" c:type="hb_face_t*"/>
       </return-value>
       <parameters>
         <parameter name="ft_face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="733">FT_Face to work upon</doc>
+               line="742">FT_Face to work upon</doc>
           <type c:type="FT_Face"/>
         </parameter>
       </parameters>
@@ -11769,7 +11769,7 @@ However, client programs are still responsible for destroying
               introspectable="0">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="700">Creates an #hb_face_t face object from the specified FT_Face.
+           line="709">Creates an #hb_face_t face object from the specified FT_Face.
 
 This is the preferred variant of the hb_ft_face_create*
 function family, because it calls FT_Reference_Face() on @ft_face,
@@ -11782,14 +11782,14 @@ Use this version unless you know you have good reasons not to.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-ft.cc"
-             line="714">the new #hb_face_t face object</doc>
+             line="723">the new #hb_face_t face object</doc>
         <type name="face_t" c:type="hb_face_t*"/>
       </return-value>
       <parameters>
         <parameter name="ft_face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="702">FT_Face to work upon</doc>
+               line="711">FT_Face to work upon</doc>
           <type c:type="FT_Face"/>
         </parameter>
       </parameters>
@@ -11799,7 +11799,7 @@ Use this version unless you know you have good reasons not to.</doc>
               version="1.0.5">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="810">Refreshes the state of @font when the underlying FT_Face has changed.
+           line="819">Refreshes the state of @font when the underlying FT_Face has changed.
 This function should be called after changing the size or
 variation-axis settings on the FT_Face.</doc>
       <source-position filename="../src/hb-ft.h" line="127"/>
@@ -11810,7 +11810,7 @@ variation-axis settings on the FT_Face.</doc>
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="812">#hb_font_t to work upon</doc>
+               line="821">#hb_font_t to work upon</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
       </parameters>
@@ -11821,7 +11821,7 @@ variation-axis settings on the FT_Face.</doc>
               introspectable="0">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="765">Creates an #hb_font_t font object from the specified FT_Face.
+           line="774">Creates an #hb_font_t font object from the specified FT_Face.
 
 &lt;note&gt;Note: You must set the face size on @ft_face before calling
 hb_ft_font_create() on it. HarfBuzz assumes size is always set and will
@@ -11845,7 +11845,7 @@ destroyed only after the #hb_font_t font object has been destroyed.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-ft.cc"
-             line="791">the new #hb_font_t font object</doc>
+             line="800">the new #hb_font_t font object</doc>
         <type name="font_t" c:type="hb_font_t*"/>
       </return-value>
       <parameters>
@@ -11855,7 +11855,7 @@ destroyed only after the #hb_font_t font object has been destroyed.</doc>
                    destroy="1">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="767">FT_Face to work upon</doc>
+               line="776">FT_Face to work upon</doc>
           <type c:type="FT_Face"/>
         </parameter>
         <parameter name="destroy"
@@ -11865,7 +11865,7 @@ destroyed only after the #hb_font_t font object has been destroyed.</doc>
                    scope="notified">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="768">A callback to call when the font object is not needed anymore</doc>
+               line="777">A callback to call when the font object is not needed anymore</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
       </parameters>
@@ -11876,7 +11876,7 @@ destroyed only after the #hb_font_t font object has been destroyed.</doc>
               introspectable="0">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="874">Creates an #hb_font_t font object from the specified FT_Face.
+           line="883">Creates an #hb_font_t font object from the specified FT_Face.
 
 &lt;note&gt;Note: You must set the face size on @ft_face before calling
 hb_ft_font_create_referenced() on it. HarfBuzz assumes size is always set
@@ -11892,14 +11892,14 @@ Use this version unless you know you have good reasons not to.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="../src/hb-ft.cc"
-             line="891">the new #hb_font_t font object</doc>
+             line="900">the new #hb_font_t font object</doc>
         <type name="font_t" c:type="hb_font_t*"/>
       </return-value>
       <parameters>
         <parameter name="ft_face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="876">FT_Face to work upon</doc>
+               line="885">FT_Face to work upon</doc>
           <type c:type="FT_Face"/>
         </parameter>
       </parameters>
@@ -11982,7 +11982,7 @@ you call hb_ft_font_unlock_face().</doc>
               version="1.0.5">
       <doc xml:space="preserve"
            filename="../src/hb-ft.cc"
-           line="945">Configures the font-functions structure of the specified
+           line="954">Configures the font-functions structure of the specified
 #hb_font_t font object to use FreeType font functions.
 
 In particular, you can use this function to configure an
@@ -12005,7 +12005,7 @@ require this function to be used.
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ft.cc"
-               line="947">#hb_font_t to work upon</doc>
+               line="956">#hb_font_t to work upon</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
       </parameters>
@@ -12242,19 +12242,19 @@ Note that @height is negative, in coordinate systems that grow up.</doc>
               version="1.5.0">
       <doc xml:space="preserve"
            filename="../src/hb-buffer.cc"
-           line="1441">Returns glyph flags encoded within a #hb_glyph_info_t.</doc>
+           line="1396">Returns glyph flags encoded within a #hb_glyph_info_t.</doc>
       <source-position filename="../src/hb-buffer.h" line="104"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-buffer.cc"
-             line="1447">The #hb_glyph_flags_t encoded within @info</doc>
+             line="1402">The #hb_glyph_flags_t encoded within @info</doc>
         <type name="glyph_flags_t" c:type="hb_glyph_flags_t"/>
       </return-value>
       <parameters>
         <parameter name="info" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-buffer.cc"
-               line="1443">a #hb_glyph_info_t</doc>
+               line="1398">a #hb_glyph_info_t</doc>
           <type name="glyph_info_t" c:type="const hb_glyph_info_t*"/>
         </parameter>
       </parameters>
@@ -13605,7 +13605,7 @@ If the requested palette has no name the result is #HB_OT_NAME_ID_INVALID.</doc>
               version="0.9.28">
       <doc xml:space="preserve"
            filename="../src/hb-ot-font.cc"
-           line="301">Sets the font functions to use when working with @font.</doc>
+           line="311">Sets the font functions to use when working with @font.</doc>
       <source-position filename="../src/hb-ot-font.h" line="40"/>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -13614,7 +13614,7 @@ If the requested palette has no name the result is #HB_OT_NAME_ID_INVALID.</doc>
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-font.cc"
-               line="303">#hb_font_t to work upon</doc>
+               line="313">#hb_font_t to work upon</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
       </parameters>
@@ -13818,38 +13818,38 @@ list of features is provided, all features will be queried.</doc>
               version="2.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1753">Fetches a list of the characters defined as having a variant under the specified
+           line="1754">Fetches a list of the characters defined as having a variant under the specified
 "Character Variant" ("cvXX") feature tag.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="466"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="1768">Number of total sample characters in the cvXX feature.</doc>
+             line="1769">Number of total sample characters in the cvXX feature.</doc>
         <type name="guint" c:type="unsigned int"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1755">#hb_face_t to work upon</doc>
+               line="1756">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1756">table tag to query, "GSUB" or "GPOS".</doc>
+               line="1757">table tag to query, "GSUB" or "GPOS".</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="feature_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1757">index of feature to query.</doc>
+               line="1758">index of feature to query.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1758">offset of the first character to retrieve</doc>
+               line="1759">offset of the first character to retrieve</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="char_count"
@@ -13860,7 +13860,7 @@ list of features is provided, all features will be queried.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1759">Input = the maximum number of characters to return;
+               line="1760">Input = the maximum number of characters to return;
              Output = the actual number of characters returned (may be zero)</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
@@ -13870,7 +13870,7 @@ list of features is provided, all features will be queried.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1761">A buffer pointer.
+               line="1762">A buffer pointer.
              The Unicode codepoints of the characters for which this feature provides
               glyph variants.</doc>
           <array length="4" zero-terminated="0" c:type="hb_codepoint_t*">
@@ -13949,32 +13949,32 @@ begin at the offset provided.</doc>
               version="2.0.0">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1679">Fetches name indices from feature parameters for "Stylistic Set" ('ssXX') or
+           line="1680">Fetches name indices from feature parameters for "Stylistic Set" ('ssXX') or
 "Character Variant" ('cvXX') features.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="455"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="1699">%true if data found, %false otherwise</doc>
+             line="1700">%true if data found, %false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1681">#hb_face_t to work upon</doc>
+               line="1682">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1682">table tag to query, "GSUB" or "GPOS".</doc>
+               line="1683">table tag to query, "GSUB" or "GPOS".</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="feature_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1683">index of feature to query.</doc>
+               line="1684">index of feature to query.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="label_id"
@@ -13985,7 +13985,7 @@ begin at the offset provided.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1684">The ‘name’ table name ID that specifies a string
+               line="1685">The ‘name’ table name ID that specifies a string
            for a user-interface label for this feature. (May be NULL.)</doc>
           <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
         </parameter>
@@ -13997,7 +13997,7 @@ begin at the offset provided.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1686">The ‘name’ table name ID that specifies a string
+               line="1687">The ‘name’ table name ID that specifies a string
              that an application can use for tooltip text for this
              feature. (May be NULL.)</doc>
           <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
@@ -14010,7 +14010,7 @@ begin at the offset provided.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1689">The ‘name’ table name ID that specifies sample text
+               line="1690">The ‘name’ table name ID that specifies sample text
             that illustrates the effect of this feature. (May be NULL.)</doc>
           <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
         </parameter>
@@ -14022,7 +14022,7 @@ begin at the offset provided.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1691">Number of named parameters. (May be zero.)</doc>
+               line="1692">Number of named parameters. (May be zero.)</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="first_param_id"
@@ -14033,7 +14033,7 @@ begin at the offset provided.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1692">The first ‘name’ table name ID used to specify
+               line="1693">The first ‘name’ table name ID used to specify
                  strings for user-interface labels for the feature
                  parameters. (Must be zero if numParameters is zero.)</doc>
           <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
@@ -14174,44 +14174,44 @@ Useful if the client program wishes to cache the list.</doc>
               version="2.6.0">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1963">Fetches a baseline value from the face.</doc>
+           line="1964">Fetches a baseline value from the face.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="515"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="1974">%true if found baseline value in the font.</doc>
+             line="1975">%true if found baseline value in the font.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1965">a font</doc>
+               line="1966">a font</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="baseline_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1966">a baseline tag</doc>
+               line="1967">a baseline tag</doc>
           <type name="ot_layout_baseline_tag_t"
                 c:type="hb_ot_layout_baseline_tag_t"/>
         </parameter>
         <parameter name="direction" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1967">text direction.</doc>
+               line="1968">text direction.</doc>
           <type name="direction_t" c:type="hb_direction_t"/>
         </parameter>
         <parameter name="script_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1968">script tag.</doc>
+               line="1969">script tag.</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="language_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1969">language tag, currently unused.</doc>
+               line="1970">language tag, currently unused.</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="coord"
@@ -14220,7 +14220,7 @@ Useful if the client program wishes to cache the list.</doc>
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1970">baseline value if found.</doc>
+               line="1971">baseline value if found.</doc>
           <type name="position_t" c:type="hb_position_t*"/>
         </parameter>
       </parameters>
@@ -14360,7 +14360,7 @@ table of the font. The list returned will begin at the offset provided.</doc>
               version="0.9.10">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1617">Fetches optical-size feature data (i.e., the `size` feature from GPOS). Note that
+           line="1618">Fetches optical-size feature data (i.e., the `size` feature from GPOS). Note that
 the subfamily_id and the subfamily name string (accessible via the subfamily_name_id)
 as used here are defined as pertaining only to fonts within a font family that differ
 specifically in their respective size ranges; other ways to differentiate fonts within
@@ -14372,14 +14372,14 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="1635">%true if data found, %false otherwise</doc>
+             line="1636">%true if data found, %false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1619">#hb_face_t to work upon</doc>
+               line="1620">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="design_size"
@@ -14388,7 +14388,7 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1620">The design size of the face</doc>
+               line="1621">The design size of the face</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="subfamily_id"
@@ -14397,7 +14397,7 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1621">The identifier of the face within the font subfamily</doc>
+               line="1622">The identifier of the face within the font subfamily</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="subfamily_name_id"
@@ -14406,7 +14406,7 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1622">The ‘name’ table name ID of the face within the font subfamily</doc>
+               line="1623">The ‘name’ table name ID of the face within the font subfamily</doc>
           <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
         </parameter>
         <parameter name="range_start"
@@ -14415,7 +14415,7 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1623">The minimum size of the recommended size range for the face</doc>
+               line="1624">The minimum size of the recommended size range for the face</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="range_end"
@@ -14424,7 +14424,7 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
                    transfer-ownership="full">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1624">The maximum size of the recommended size range for the face</doc>
+               line="1625">The maximum size of the recommended size range for the face</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
       </parameters>
@@ -14507,19 +14507,19 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
               c:identifier="hb_ot_layout_has_positioning">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="1556">Tests whether the specified face includes any GPOS positioning.</doc>
+           line="1557">Tests whether the specified face includes any GPOS positioning.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="432"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="1562">%true if the face has GPOS data, %false otherwise</doc>
+             line="1563">%true if the face has GPOS data, %false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="1558">#hb_face_t to work upon</doc>
+               line="1559">#hb_face_t to work upon</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
       </parameters>
@@ -14921,37 +14921,37 @@ specified face's GSUB table or GPOS table.</doc>
               version="2.6.8">
       <doc xml:space="preserve"
            filename="../src/hb-ot-layout.cc"
-           line="2020">Fetches alternates of a glyph from a given GSUB lookup index.</doc>
+           line="2021">Fetches alternates of a glyph from a given GSUB lookup index.</doc>
       <source-position filename="../src/hb-ot-layout.h" line="388"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-layout.cc"
-             line="2033">Total number of alternates found in the specific lookup index for the given glyph id.</doc>
+             line="2034">Total number of alternates found in the specific lookup index for the given glyph id.</doc>
         <type name="guint" c:type="unsigned"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="2022">a face.</doc>
+               line="2023">a face.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="lookup_index" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="2023">index of the feature lookup to query.</doc>
+               line="2024">index of the feature lookup to query.</doc>
           <type name="guint" c:type="unsigned"/>
         </parameter>
         <parameter name="glyph" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="2024">a glyph id.</doc>
+               line="2025">a glyph id.</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="2025">starting offset.</doc>
+               line="2026">starting offset.</doc>
           <type name="guint" c:type="unsigned"/>
         </parameter>
         <parameter name="alternate_count"
@@ -14962,7 +14962,7 @@ specified face's GSUB table or GPOS table.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="2026">Input = the maximum number of alternate glyphs to return;
+               line="2027">Input = the maximum number of alternate glyphs to return;
                   Output = the actual number of alternate glyphs returned (may be zero).</doc>
           <type name="guint" c:type="unsigned*"/>
         </parameter>
@@ -14972,7 +14972,7 @@ specified face's GSUB table or GPOS table.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-layout.cc"
-               line="2028">A glyphs buffer.
+               line="2029">A glyphs buffer.
                    Alternate glyphs associated with the glyph id.</doc>
           <array length="4" zero-terminated="0" c:type="hb_codepoint_t*">
             <type name="codepoint_t" c:type="hb_codepoint_t"/>
@@ -16763,25 +16763,25 @@ that the font is declared to be capable of supporting.</doc>
               version="2.6.0">
       <doc xml:space="preserve"
            filename="../src/hb-ot-metrics.cc"
-           line="120">Fetches metrics value corresponding to @metrics_tag from @font.</doc>
+           line="125">Fetches metrics value corresponding to @metrics_tag from @font.</doc>
       <source-position filename="../src/hb-ot-metrics.h" line="109"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-metrics.cc"
-             line="128">Whether found the requested metrics in the font.</doc>
+             line="133">Whether found the requested metrics in the font.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-metrics.cc"
-               line="122">an #hb_font_t object.</doc>
+               line="127">an #hb_font_t object.</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="metrics_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-metrics.cc"
-               line="123">tag of metrics value you like to fetch.</doc>
+               line="128">tag of metrics value you like to fetch.</doc>
           <type name="ot_metrics_tag_t" c:type="hb_ot_metrics_tag_t"/>
         </parameter>
         <parameter name="position"
@@ -16792,7 +16792,7 @@ that the font is declared to be capable of supporting.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="../src/hb-ot-metrics.cc"
-               line="124">result of metrics value from the font.</doc>
+               line="129">result of metrics value from the font.</doc>
           <type name="position_t" c:type="hb_position_t*"/>
         </parameter>
       </parameters>
@@ -16802,26 +16802,26 @@ that the font is declared to be capable of supporting.</doc>
               version="2.6.0">
       <doc xml:space="preserve"
            filename="../src/hb-ot-metrics.cc"
-           line="194">Fetches metrics value corresponding to @metrics_tag from @font with the
+           line="201">Fetches metrics value corresponding to @metrics_tag from @font with the
 current font variation settings applied.</doc>
       <source-position filename="../src/hb-ot-metrics.h" line="114"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-metrics.cc"
-             line="202">The requested metric value.</doc>
+             line="209">The requested metric value.</doc>
         <type name="gfloat" c:type="float"/>
       </return-value>
       <parameters>
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-metrics.cc"
-               line="196">an #hb_font_t object.</doc>
+               line="203">an #hb_font_t object.</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="metrics_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-metrics.cc"
-               line="197">tag of metrics value you like to fetch.</doc>
+               line="204">tag of metrics value you like to fetch.</doc>
           <type name="ot_metrics_tag_t" c:type="hb_ot_metrics_tag_t"/>
         </parameter>
       </parameters>
@@ -16831,26 +16831,26 @@ current font variation settings applied.</doc>
               version="2.6.0">
       <doc xml:space="preserve"
            filename="../src/hb-ot-metrics.cc"
-           line="212">Fetches horizontal metrics value corresponding to @metrics_tag from @font
+           line="219">Fetches horizontal metrics value corresponding to @metrics_tag from @font
 with the current font variation settings applied.</doc>
       <source-position filename="../src/hb-ot-metrics.h" line="117"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-metrics.cc"
-             line="220">The requested metric value.</doc>
+             line="227">The requested metric value.</doc>
         <type name="position_t" c:type="hb_position_t"/>
       </return-value>
       <parameters>
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-metrics.cc"
-               line="214">an #hb_font_t object.</doc>
+               line="221">an #hb_font_t object.</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="metrics_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-metrics.cc"
-               line="215">tag of metrics value you like to fetch.</doc>
+               line="222">tag of metrics value you like to fetch.</doc>
           <type name="ot_metrics_tag_t" c:type="hb_ot_metrics_tag_t"/>
         </parameter>
       </parameters>
@@ -16860,26 +16860,26 @@ with the current font variation settings applied.</doc>
               version="2.6.0">
       <doc xml:space="preserve"
            filename="../src/hb-ot-metrics.cc"
-           line="230">Fetches vertical metrics value corresponding to @metrics_tag from @font with
+           line="237">Fetches vertical metrics value corresponding to @metrics_tag from @font with
 the current font variation settings applied.</doc>
       <source-position filename="../src/hb-ot-metrics.h" line="120"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="../src/hb-ot-metrics.cc"
-             line="238">The requested metric value.</doc>
+             line="245">The requested metric value.</doc>
         <type name="position_t" c:type="hb_position_t"/>
       </return-value>
       <parameters>
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-metrics.cc"
-               line="232">an #hb_font_t object.</doc>
+               line="239">an #hb_font_t object.</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="metrics_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-metrics.cc"
-               line="233">tag of metrics value you like to fetch.</doc>
+               line="240">tag of metrics value you like to fetch.</doc>
           <type name="ot_metrics_tag_t" c:type="hb_ot_metrics_tag_t"/>
         </parameter>
       </parameters>
@@ -17391,7 +17391,7 @@ used as long as @face is alive.</doc>
               version="0.9.2">
       <doc xml:space="preserve"
            filename="../src/hb-ot-shape.cc"
-           line="1260">Computes the transitive closure of glyphs needed for a specified
+           line="1251">Computes the transitive closure of glyphs needed for a specified
 input buffer under the given font and feature list. The closure is
 computed as a set, not as a list.</doc>
       <source-position filename="../src/hb-ot-shape.h" line="40"/>
@@ -17402,19 +17402,19 @@ computed as a set, not as a list.</doc>
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1262">#hb_font_t to work upon</doc>
+               line="1253">#hb_font_t to work upon</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1263">The input buffer to compute from</doc>
+               line="1254">The input buffer to compute from</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="features" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1264">The features enabled on the buffer</doc>
+               line="1255">The features enabled on the buffer</doc>
           <array length="3" zero-terminated="0" c:type="const hb_feature_t*">
             <type name="feature_t" c:type="hb_feature_t"/>
           </array>
@@ -17422,7 +17422,7 @@ computed as a set, not as a list.</doc>
         <parameter name="num_features" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1265">The number of features enabled on the buffer</doc>
+               line="1256">The number of features enabled on the buffer</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="glyphs"
@@ -17431,7 +17431,7 @@ computed as a set, not as a list.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1266">The #hb_set_t set of glyphs comprising the transitive closure of the query</doc>
+               line="1257">The #hb_set_t set of glyphs comprising the transitive closure of the query</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
@@ -17441,7 +17441,7 @@ computed as a set, not as a list.</doc>
               version="0.9.7">
       <doc xml:space="preserve"
            filename="../src/hb-ot-shape.cc"
-           line="1220">Computes the complete set of GSUB or GPOS lookups that are applicable
+           line="1211">Computes the complete set of GSUB or GPOS lookups that are applicable
 under a given @shape_plan.</doc>
       <source-position filename="../src/hb-ot-shape.h" line="47"/>
       <return-value transfer-ownership="none">
@@ -17451,13 +17451,13 @@ under a given @shape_plan.</doc>
         <parameter name="shape_plan" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1222">#hb_shape_plan_t to query</doc>
+               line="1213">#hb_shape_plan_t to query</doc>
           <type name="shape_plan_t" c:type="hb_shape_plan_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1223">GSUB or GPOS</doc>
+               line="1214">GSUB or GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="lookup_indexes"
@@ -17466,7 +17466,7 @@ under a given @shape_plan.</doc>
                    transfer-ownership="none">
           <doc xml:space="preserve"
                filename="../src/hb-ot-shape.cc"
-               line="1224">The #hb_set_t set of lookups returned</doc>
+               line="1215">The #hb_set_t set of lookups returned</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
