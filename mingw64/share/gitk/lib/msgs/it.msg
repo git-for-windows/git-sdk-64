@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: gitk\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2015-05-17 14:32+1000\nPO-Revision-Date: 2010-01-28 18:41+0100\nLast-Translator: Michele Ballabio <barra_cuda@katamail.com>\nLanguage-Team: Italian\nLanguage: \nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+set ::msgcat::header "Project-Id-Version: gitk\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2010-01-28 18:41+0100\nLast-Translator: Michele Ballabio <barra_cuda@katamail.com>\nLanguage-Team: Italian\nLanguage: \nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 ::msgcat::mcset it "Couldn't get list of unmerged files:" "Impossibile ottenere l'elenco dei file in attesa di fusione:"
 ::msgcat::mcset it "Error parsing revisions:" "Errore nella lettura delle revisioni:"
 ::msgcat::mcset it "Error executing --argscmd command:" "Errore nell'esecuzione del comando specificato con --argscmd:"

@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2008-03-14 07:18+0100\nPO-Revision-Date: 2007-07-21 01:23-0700\nLast-Translator: Eric Miao <eric.y.miao@gmail.com>\nLanguage-Team: Chinese\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2007-07-21 01:23-0700\nLast-Translator: Eric Miao <eric.y.miao@gmail.com>\nLanguage-Team: Chinese\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 ::msgcat::mcset zh_cn "git-gui: fatal error" "git-gui: \u81f4\u547d\u9519\u8bef"
 ::msgcat::mcset zh_cn "Invalid font specified in %s:" "%s \u4e2d\u6307\u5b9a\u7684\u5b57\u4f53\u65e0\u6548:"
 ::msgcat::mcset zh_cn "Main Font" "\u4e3b\u8981\u5b57\u4f53"

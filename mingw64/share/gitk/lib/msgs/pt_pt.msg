@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: gitk\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2016-04-15 16:52+0000\nPO-Revision-Date: 2016-05-06 15:35+0000\nLast-Translator: Vasco Almeida <vascomalmeida@sapo.pt>\nLanguage-Team: Portuguese\nLanguage: pt\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Virtaal 0.7.1\n"
+set ::msgcat::header "Project-Id-Version: gitk\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2016-05-06 15:35+0000\nLast-Translator: Vasco Almeida <vascomalmeida@sapo.pt>\nLanguage-Team: Portuguese\nLanguage: pt\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Virtaal 0.7.1\n"
 ::msgcat::mcset pt_pt "Couldn't get list of unmerged files:" "N\u00e3o foi poss\u00edvel obter lista de ficheiros n\u00e3o integrados:"
 ::msgcat::mcset pt_pt "Color words" "Colorir palavras"
 ::msgcat::mcset pt_pt "Markup words" "Marcar palavras"

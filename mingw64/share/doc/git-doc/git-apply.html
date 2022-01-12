@@ -455,7 +455,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
           [--ignore-space-change | --ignore-whitespace]
           [--whitespace=(nowarn|warn|fix|error|error-all)]
           [--exclude=&lt;path&gt;] [--include=&lt;path&gt;] [--directory=&lt;root&gt;]
-          [--verbose] [--unsafe-paths] [&lt;patch&gt;&#8230;&#8203;]</pre>
+          [--verbose | --quiet] [--unsafe-paths] [--allow-empty] [&lt;patch&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -721,6 +721,12 @@ working around this bug.</p>
 current patch being applied will be printed. This option will cause
 additional information to be reported.</p>
 </dd>
+<dt class="hdlist1">-q</dt>
+<dt class="hdlist1">--quiet</dt>
+<dd>
+<p>Suppress stderr output. Messages about patch status and progress
+will not be printed.</p>
+</dd>
 <dt class="hdlist1">--recount</dt>
 <dd>
 <p>Do not trust the line counts in the hunk headers, but infer them
@@ -748,6 +754,11 @@ patch) is rejected as a mistake (or a mischief).</p>
 the <code>--unsafe-paths</code> option to override this safety check.  This option
 has no effect when <code>--index</code> or <code>--cached</code> is in use.</p>
 </div>
+</dd>
+<dt class="hdlist1">--allow-empty</dt>
+<dd>
+<p>Don&#8217;t return error for patches containing no diff. This includes
+empty patches and patches with commit text only.</p>
 </dd>
 </dl>
 </div>
@@ -813,7 +824,7 @@ subdirectory is checked and (if possible) updated.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-11-25 10:48:06 UTC
+Last updated 2022-01-11 14:19:48 UTC
 </div>
 </div>
 </body>

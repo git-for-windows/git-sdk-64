@@ -456,7 +456,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
         [--points-at &lt;object&gt;] [--format=&lt;format&gt;]
         [(-r | --remotes) | (-a | --all)]
         [--list] [&lt;pattern&gt;&#8230;&#8203;]
-<em>git branch</em> [--track | --no-track] [-f] &lt;branchname&gt; [&lt;start-point&gt;]
+<em>git branch</em> [--track [direct|inherit] | --no-track] [-f] &lt;branchname&gt; [&lt;start-point&gt;]
 <em>git branch</em> (--set-upstream-to=&lt;upstream&gt; | -u &lt;upstream&gt;) [&lt;branchname&gt;]
 <em>git branch</em> --unset-upstream [&lt;branchname&gt;]
 <em>git branch</em> (-m | -M) [&lt;oldbranch&gt;] &lt;newbranch&gt;
@@ -684,27 +684,39 @@ config option.</p>
 <p>Display the full sha1s in the output listing rather than abbreviating them.</p>
 </dd>
 <dt class="hdlist1">-t</dt>
-<dt class="hdlist1">--track</dt>
+<dt class="hdlist1">--track [inherit|direct]</dt>
 <dd>
 <p>When creating a new branch, set up <code>branch.&lt;name&gt;.remote</code> and
-<code>branch.&lt;name&gt;.merge</code> configuration entries to mark the
-start-point branch as "upstream" from the new branch. This
+<code>branch.&lt;name&gt;.merge</code> configuration entries to set "upstream" tracking
+configuration for the new branch. This
 configuration will tell git to show the relationship between the
 two branches in <code>git status</code> and <code>git branch -v</code>. Furthermore,
 it directs <code>git pull</code> without arguments to pull from the
 upstream when the new branch is checked out.</p>
 <div class="paragraph">
-<p>This behavior is the default when the start point is a remote-tracking branch.
+<p>The exact upstream branch is chosen depending on the optional argument:
+<code>--track</code> or <code>--track direct</code> means to use the start-point branch itself as the
+upstream; <code>--track inherit</code> means to copy the upstream configuration of the
+start-point branch.</p>
+</div>
+<div class="paragraph">
+<p><code>--track direct</code> is the default when the start point is a remote-tracking branch.
 Set the branch.autoSetupMerge configuration variable to <code>false</code> if you
 want <code>git switch</code>, <code>git checkout</code> and <code>git branch</code> to always behave as if <code>--no-track</code>
 were given. Set it to <code>always</code> if you want this behavior when the
-start-point is either a local or remote-tracking branch.</p>
+start-point is either a local or remote-tracking branch. Set it to
+<code>inherit</code> if you want to copy the tracking configuration from the
+branch point.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="git-pull.html">git-pull(1)</a> and <a href="git-config.html">git-config(1)</a> for additional discussion on
+how the <code>branch.&lt;name&gt;.remote</code> and <code>branch.&lt;name&gt;.merge</code> options are used.</p>
 </div>
 </dd>
 <dt class="hdlist1">--no-track</dt>
 <dd>
 <p>Do not set up "upstream" configuration, even if the
-branch.autoSetupMerge configuration variable is true.</p>
+branch.autoSetupMerge configuration variable is set.</p>
 </dd>
 <dt class="hdlist1">--set-upstream</dt>
 <dd>
@@ -951,7 +963,7 @@ a branch?&#8221;</a> in the Git User&#8217;s Manual.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-11-25 10:48:06 UTC
+Last updated 2022-01-11 14:19:48 UTC
 </div>
 </div>
 </body>

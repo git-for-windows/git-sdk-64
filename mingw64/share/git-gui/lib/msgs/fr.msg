@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: fr\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2010-01-26 15:47-0800\nPO-Revision-Date: 2010-02-02 12:59+0100\nLast-Translator: Christian Couder <chriscool@tuxfamily.org>\nLanguage-Team: French\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nX-Generator: KBabel 1.11.4\nPlural-Forms:  nplurals=2; plural=(n > 1);\n"
+set ::msgcat::header "Project-Id-Version: fr\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2010-02-02 12:59+0100\nLast-Translator: Christian Couder <chriscool@tuxfamily.org>\nLanguage-Team: French\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nX-Generator: KBabel 1.11.4\nPlural-Forms:  nplurals=2; plural=(n > 1);\n"
 ::msgcat::mcset fr "git-gui: fatal error" "git-gui: erreur fatale"
 ::msgcat::mcset fr "Invalid font specified in %s:" "Police invalide sp\u00e9cifi\u00e9e dans %s :"
 ::msgcat::mcset fr "Main Font" "Police principale"

@@ -1595,22 +1595,43 @@ themselves, you&#8217;ll need to prepare the patches. Luckily, this is pretty si
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git format-patch --cover-letter -o psuh/ master..psuh</pre>
+<pre>$ git format-patch --cover-letter -o psuh/ --base=auto psuh@{u}..psuh</pre>
 </div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The <code>--cover-letter</code> option tells <code>format-patch</code> to create a
+cover letter template for you. You will need to fill in the
+template before you&#8217;re ready to send - but for now, the template
+will be next to your other patches.</p>
+</li>
+<li>
+<p>The <code>-o psuh/</code> option tells <code>format-patch</code> to place the patch
+files into a directory. This is useful because <code>git send-email</code>
+can take a directory and send out all the patches from there.</p>
+</li>
+<li>
+<p>The <code>--base=auto</code> option tells the command to record the "base
+commit", on which the recipient is expected to apply the patch
+series.  The <code>auto</code> value will cause <code>format-patch</code> to compute
+the base commit automatically, which is the merge base of tip
+commit of the remote-tracking branch and the specified revision
+range.</p>
+</li>
+<li>
+<p>The <code>psuh@{u}..psuh</code> option tells <code>format-patch</code> to generate
+patches for the commits you created on the <code>psuh</code> branch since it
+forked from its upstream (which is <code>origin/master</code> if you
+followed the example in the "Set up your workspace" section).  If
+you are already on the <code>psuh</code> branch, you can just say <code>@{u}</code>,
+which means "commits on the current branch since it forked from
+its upstream", which is the same thing.</p>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>The <code>--cover-letter</code> parameter tells <code>format-patch</code> to create a cover letter
-template for you. You will need to fill in the template before you&#8217;re ready
-to send - but for now, the template will be next to your other patches.</p>
-</div>
-<div class="paragraph">
-<p>The <code>-o psuh/</code> parameter tells <code>format-patch</code> to place the patch files into a
-directory. This is useful because <code>git send-email</code> can take a directory and
-send out all the patches from there.</p>
-</div>
-<div class="paragraph">
-<p><code>master..psuh</code> tells <code>format-patch</code> to generate patches for the difference
-between <code>master</code> and <code>psuh</code>. It will make one patch file per commit. After you
+<p>The command will make one patch file per commit. After you
 run, you can go have a look at each of the patches with your favorite text
 editor and make sure everything looks alright; however, it&#8217;s not recommended to
 make code fixups via the patch file. It&#8217;s a better idea to make the change the
@@ -2030,7 +2051,7 @@ should generate your diffs from <code>&lt;topic&gt;..&lt;mybranch&gt;</code> and
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-11-25 10:48:06 UTC
+Last updated 2022-01-11 14:19:48 UTC
 </div>
 </div>
 </body>

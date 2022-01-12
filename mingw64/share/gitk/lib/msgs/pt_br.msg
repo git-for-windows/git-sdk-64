@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: gitk\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2015-05-17 14:32+1000\nPO-Revision-Date: 2010-12-06 23:39-0200\nLast-Translator: Alexandre Erwin Ittner <alexandre@ittner.com.br>\nLanguage-Team: Brazilian Portuguese <>\nLanguage: pt_BR\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+set ::msgcat::header "Project-Id-Version: gitk\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2010-12-06 23:39-0200\nLast-Translator: Alexandre Erwin Ittner <alexandre@ittner.com.br>\nLanguage-Team: Brazilian Portuguese <>\nLanguage: pt_BR\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 ::msgcat::mcset pt_br "Couldn't get list of unmerged files:" "N\u00e3o foi poss\u00edvel obter a lista dos arquivos n\u00e3o mesclados:"
 ::msgcat::mcset pt_br "Error parsing revisions:" "Erro ao interpretar revis\u00f5es:"
 ::msgcat::mcset pt_br "Error executing --argscmd command:" "Erro ao executar o comando--argscmd:"

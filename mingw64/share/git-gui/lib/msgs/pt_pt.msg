@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2016-05-06 09:36+0000\nPO-Revision-Date: 2016-05-06 13:09+0000\nLast-Translator: Vasco Almeida <vascomalmeida@sapo.pt>\nLanguage-Team: Portuguese\nLanguage: pt\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Virtaal 0.7.1\n"
+set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2016-05-06 13:09+0000\nLast-Translator: Vasco Almeida <vascomalmeida@sapo.pt>\nLanguage-Team: Portuguese\nLanguage: pt\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Virtaal 0.7.1\n"
 ::msgcat::mcset pt_pt "Invalid font specified in %s:" "Tipo de letra inv\u00e1lido especificado em %s:"
 ::msgcat::mcset pt_pt "Main Font" "Tipo de letra principal"
 ::msgcat::mcset pt_pt "Diff/Console Font" "Tipo de letra Diferen\u00e7as/Consola"

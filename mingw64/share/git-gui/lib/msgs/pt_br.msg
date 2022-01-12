@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2010-01-26 15:47-0800\nPO-Revision-Date: 2010-09-18 11:09-0300\nLast-Translator: Alexandre Erwin Ittner <alexandre@ittner.com.br>\nLanguage-Team: Brazilian Portuguese <>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2010-09-18 11:09-0300\nLast-Translator: Alexandre Erwin Ittner <alexandre@ittner.com.br>\nLanguage-Team: Brazilian Portuguese <>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 ::msgcat::mcset pt_br "git-gui: fatal error" "git-gui: erro fatal"
 ::msgcat::mcset pt_br "Invalid font specified in %s:" "Fonte inv\u00e1lida indicada em %s:"
 ::msgcat::mcset pt_br "Main Font" "Fonte principal"

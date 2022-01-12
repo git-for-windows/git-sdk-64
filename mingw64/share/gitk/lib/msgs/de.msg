@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2015-05-17 14:32+1000\nPO-Revision-Date: 2015-10-20 14:20+0200\nLast-Translator: Christian Stimming <stimming@tuhh.de>\nLanguage-Team: German\nLanguage: \nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2015-10-20 14:20+0200\nLast-Translator: Christian Stimming <stimming@tuhh.de>\nLanguage-Team: German\nLanguage: \nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 ::msgcat::mcset de "Couldn't get list of unmerged files:" "Liste der nicht zusammengef\u00fchrten Dateien nicht gefunden:"
 ::msgcat::mcset de "Color words" "W\u00f6rter einf\u00e4rben"
 ::msgcat::mcset de "Markup words" "W\u00f6rter kennzeichnen"

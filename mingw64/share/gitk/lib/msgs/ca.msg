@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: gitk\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2015-05-17 14:32+1000\nPO-Revision-Date: 2015-10-05 22:23-0600\nLast-Translator: Alex Henrie <alexhenrie24@gmail.com>\nLanguage-Team: Catalan\nLanguage: ca\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Poedit 1.8.5\n"
+set ::msgcat::header "Project-Id-Version: gitk\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2015-10-05 22:23-0600\nLast-Translator: Alex Henrie <alexhenrie24@gmail.com>\nLanguage-Team: Catalan\nLanguage: ca\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Poedit 1.8.5\n"
 ::msgcat::mcset ca "Couldn't get list of unmerged files:" "No s'ha pogut obtenir la llista de fitxers no fusionats:"
 ::msgcat::mcset ca "Color words" "Colora les paraules"
 ::msgcat::mcset ca "Markup words" "Marca les paraules"

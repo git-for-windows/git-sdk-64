@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2020-02-08 22:54+0100\nPO-Revision-Date: 2020-02-09 22:40+0100\nLast-Translator: Christian Stimming <christian@cstimming.de>\nLanguage-Team: German\nLanguage: de_DE\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2020-02-09 22:40+0100\nLast-Translator: Christian Stimming <christian@cstimming.de>\nLanguage-Team: German\nLanguage: de_DE\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 ::msgcat::mcset de "Invalid font specified in %s:" "Ung\u00fcltige Zeichensatz-Angabe in %s:"
 ::msgcat::mcset de "Main Font" "Programmschriftart"
 ::msgcat::mcset de "Diff/Console Font" "Vergleich-Schriftart"

@@ -528,16 +528,21 @@ running, enable trace output by setting the environment variable <code>GIT_TRACE
 </div>
 <div class="paragraph">
 <p>Add usage text and <code>-h</code> handling, like all subcommands should consistently do
-(our test suite will notice and complain if you fail to do so).</p>
+(our test suite will notice and complain if you fail to do so).
+We&#8217;ll need to include the <code>parse-options.h</code> header.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>int cmd_walken(int argc, const char **argv, const char *prefix)
+<pre>#include "parse-options.h"
+
+...
+
+int cmd_walken(int argc, const char **argv, const char *prefix)
 {
         const char * const walken_usage[] = {
                 N_("git walken"),
                 NULL,
-        }
+        };
         struct option options[] = {
                 OPT_END()
         };
@@ -734,11 +739,16 @@ ourselves; however, we should call <code>git_default_config()</code> if we aren&
 any other existing config callbacks.</p>
 </div>
 <div class="paragraph">
-<p>Add a new function to <code>builtin/walken.c</code>:</p>
+<p>Add a new function to <code>builtin/walken.c</code>.
+We&#8217;ll also need to include the <code>config.h</code> header:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>static int git_walken_config(const char *var, const char *value, void *cb)
+<pre>#include "config.h"
+
+...
+
+static int git_walken_config(const char *var, const char *value, void *cb)
 {
         /*
          * For now, we don't have any custom configuration, so fall back to
@@ -774,11 +784,16 @@ to target, as well as the <code>prefix</code> argument of <code>cmd_walken</code
 struct.</p>
 </div>
 <div class="paragraph">
-<p>Add the <code>struct rev_info</code> and the <code>repo_init_revisions()</code> call:</p>
+<p>Add the <code>struct rev_info</code> and the <code>repo_init_revisions()</code> call.
+We&#8217;ll also need to include the <code>revision.h</code> header:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>int cmd_walken(int argc, const char **argv, const char *prefix)
+<pre>#include "revision.h"
+
+...
+
+int cmd_walken(int argc, const char **argv, const char *prefix)
 {
         /* This can go wherever you like in your declarations.*/
         struct rev_info rev;
@@ -1300,11 +1315,16 @@ ready to call <code>prepare_revision_walk()</code>.</p>
 </div>
 <div class="paragraph">
 <p>Let&#8217;s start by calling just the unfiltered walk and reporting our counts.
-Complete your implementation of <code>walken_object_walk()</code>:</p>
+Complete your implementation of <code>walken_object_walk()</code>.
+We&#8217;ll also need to include the <code>list-objects.h</code> header.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>        traverse_commit_list(rev, walken_show_commit, walken_show_object, NULL);
+<pre>#include "list-objects.h"
+
+...
+
+        traverse_commit_list(rev, walken_show_commit, walken_show_object, NULL);
 
         printf("commits %d\nblobs %d\ntags %d\ntrees %d\n", commit_count,
                 blob_count, tag_count, tree_count);
@@ -1412,7 +1432,7 @@ referenced by <code>HEAD</code> or <code>HEAD</code>'s history, because we begin
 <div class="content">
 <pre>static void walken_object_walk(struct rev_info *rev)
 {
-        struct list_objects_filter_options filter_options = {};
+        struct list_objects_filter_options filter_options = { 0 };
 
         ...</pre>
 </div>
@@ -1644,7 +1664,7 @@ initial commit, <code>e83c5163</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-11-25 10:48:06 UTC
+Last updated 2022-01-11 14:19:48 UTC
 </div>
 </div>
 </body>

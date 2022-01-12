@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: sv\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2015-03-27 10:15+0100\nPO-Revision-Date: 2015-03-27 10:24+0100\nLast-Translator: Peter Krefting <peter@softwolves.pp.se>\nLanguage-Team: Swedish <tp-sv@listor.tp-sv.se>\nLanguage: sv\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Gtranslator 2.91.6\n"
+set ::msgcat::header "Project-Id-Version: sv\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2015-03-27 10:24+0100\nLast-Translator: Peter Krefting <peter@softwolves.pp.se>\nLanguage-Team: Swedish <tp-sv@listor.tp-sv.se>\nLanguage: sv\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Gtranslator 2.91.6\n"
 ::msgcat::mcset sv "Invalid font specified in %s:" "Ogiltigt teckensnitt angivet i %s:"
 ::msgcat::mcset sv "Main Font" "Huvudteckensnitt"
 ::msgcat::mcset sv "Diff/Console Font" "Diff/konsolteckensnitt"

@@ -464,8 +464,10 @@ base your work on the tip of the topic.</p>
 </li>
 <li>
 <p>A new feature should be based on <code>master</code> in general. If the new
-feature depends on a topic that is in <code>seen</code>, but not in <code>master</code>,
-base your work on the tip of that topic.</p>
+feature depends on other topics that are in <code>next</code>, but not in
+<code>master</code>, fork a branch from the tip of <code>master</code>, merge these topics
+to the branch, and work on that branch.  You can remind yourself of
+how you prepared the base with <code>git log --first-parent master..</code>.</p>
 </li>
 <li>
 <p>Corrections and enhancements to a topic not yet in <code>master</code> should
@@ -475,10 +477,10 @@ into the series.</p>
 </li>
 <li>
 <p>In the exceptional case that a new feature depends on several topics
-not in <code>master</code>, start working on <code>next</code> or <code>seen</code> privately and send
-out patches for discussion. Before the final merge, you may have to
-wait until some of the dependent topics graduate to <code>master</code>, and
-rebase your work.</p>
+not in <code>master</code>, start working on <code>next</code> or <code>seen</code> privately and
+send out patches only for discussion. Once your new feature starts
+to stabilize, you would have to rebase it (see the "depends on other
+topics" above).</p>
 </li>
 <li>
 <p>Some parts of the system have dedicated maintainers with their own
@@ -526,8 +528,13 @@ to have.</p>
 <div id="tests" class="paragraph">
 <p>When adding a new feature, make sure that you have new tests to show
 the feature triggers the new behavior when it should, and to show the
-feature does not trigger when it shouldn&#8217;t.  After any code change, make
-sure that the entire test suite passes.</p>
+feature does not trigger when it shouldn&#8217;t.  After any code change,
+make sure that the entire test suite passes.  When fixing a bug, make
+sure you have new tests that break if somebody else breaks what you
+fixed by accident to avoid regression.  Also, try merging your work to
+<em>next</em> and <em>seen</em> and make sure the tests still pass; topics by others
+that are still in flight may have unexpected interactions with what
+you are trying to do in your topic.</p>
 </div>
 <div class="paragraph">
 <p>Pushing to a fork of <a href="https://github.com/git/git" class="bare">https://github.com/git/git</a> will use their CI
@@ -618,8 +625,28 @@ without external resources. Instead of giving a URL to a mailing list
 archive, summarize the relevant points of the discussion.</p>
 </div>
 <div id="commit-reference" class="paragraph">
-<p>If you want to reference a previous commit in the history of a stable
-branch, use the format "abbreviated hash (subject, date)", like this:</p>
+<p>There are a few reasons why you may want to refer to another commit in
+the "more stable" part of the history (i.e. on branches like <code>maint</code>,
+<code>master</code>, and <code>next</code>):</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>A commit that introduced the root cause of a bug you are fixing.</p>
+</li>
+<li>
+<p>A commit that introduced a feature that you are enhancing.</p>
+</li>
+<li>
+<p>A commit that conflicts with your work when you made a trial merge
+of your work into <code>next</code> and <code>seen</code> for testing.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>When you reference a commit on a more stable branch (like <code>master</code>,
+<code>maint</code> and <code>next</code>), use the format "abbreviated hash (subject,
+date)", like this:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -769,9 +796,10 @@ receiving end can handle them just fine.</p>
 or include any extra files which do not relate to what your patch
 is trying to achieve. Make sure to review
 your patch after generating it, to ensure accuracy.  Before
-sending out, please make sure it cleanly applies to the <code>master</code>
-branch head.  If you are preparing a work based on "next" branch,
-that is fine, but please mark it as such.</p>
+sending out, please make sure it cleanly applies to the base you
+have chosen in the "Decide what to base your work on" section,
+and unless it targets the <code>master</code> branch (which is the default),
+mark your patches as such.</p>
 </div>
 </div>
 <div class="sect2">
@@ -893,7 +921,10 @@ Security mailing list<sup class="footnoteref">[<a class="footnote" href="#_footn
 <p>Send your patch with "To:" set to the mailing list, with "cc:" listing
 people who are involved in the area you are touching (the <code>git
 contacts</code> command in <code>contrib/contacts/</code> can help to
-identify them), to solicit comments and reviews.</p>
+identify them), to solicit comments and reviews.  Also, when you made
+trial merges of your topic to <code>next</code> and <code>seen</code>, you may have noticed
+work by others conflicting with your changes.  There is a good possibility
+that these people may know the area you are touching well.</p>
 </div>
 <div class="paragraph">
 <p>After the list reached a consensus that it is a good idea to apply the
@@ -1184,7 +1215,7 @@ this problem around.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-11-25 10:48:06 UTC
+Last updated 2022-01-11 14:19:48 UTC
 </div>
 </div>
 </body>

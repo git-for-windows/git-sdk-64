@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2010-01-26 15:47-0800\nPO-Revision-Date: 2010-01-28 10:04+0100\nLast-Translator: Michele Ballabio <barra_cuda@katamail.com>\nLanguage-Team: Italian <tp@lists.linux.it>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2010-01-28 10:04+0100\nLast-Translator: Michele Ballabio <barra_cuda@katamail.com>\nLanguage-Team: Italian <tp@lists.linux.it>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 ::msgcat::mcset it "git-gui: fatal error" "git-gui: errore grave"
 ::msgcat::mcset it "Invalid font specified in %s:" "Caratteri non validi specificati in %s:"
 ::msgcat::mcset it "Main Font" "Caratteri principali"

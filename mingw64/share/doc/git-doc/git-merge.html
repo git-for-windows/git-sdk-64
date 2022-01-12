@@ -451,7 +451,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <pre class="content"><em>git merge</em> [-n] [--stat] [--no-commit] [--squash] [--[no-]edit]
         [--no-verify] [-s &lt;strategy&gt;] [-X &lt;strategy-option&gt;] [-S[&lt;keyid&gt;]]
         [--[no-]allow-unrelated-histories]
-        [--[no-]rerere-autoupdate] [-m &lt;msg&gt;] [-F &lt;file&gt;] [&lt;commit&gt;&#8230;&#8203;]
+        [--[no-]rerere-autoupdate] [-m &lt;msg&gt;] [-F &lt;file&gt;]
+        [--into-name &lt;branch&gt;] [&lt;commit&gt;&#8230;&#8203;]
 <em>git merge</em> (--continue | --abort | --quit)</pre>
 </div>
 </div>
@@ -740,6 +741,12 @@ used to give a good default for automated <em>git merge</em>
 invocations. The automated message can include the branch description.</p>
 </div>
 </dd>
+<dt class="hdlist1">--into-name &lt;branch&gt;</dt>
+<dd>
+<p>Prepare the default merge message as if merging to the branch
+<code>&lt;branch&gt;</code>, instead of the name of the real branch to which
+the merge is made.</p>
+</dd>
 <dt class="hdlist1">-F &lt;file&gt;</dt>
 <dt class="hdlist1">--file=&lt;file&gt;</dt>
 <dd>
@@ -955,7 +962,8 @@ from the RCS suite to present such a conflicted hunk, like this:</p>
 <div class="listingblock">
 <div class="content">
 <pre>Here are lines that are either unchanged from the common
-ancestor, or cleanly resolved because only one side changed.
+ancestor, or cleanly resolved because only one side changed,
+or cleanly resolved because both sides changed the same way.
 &lt;&lt;&lt;&lt;&lt;&lt;&lt; yours:sample.txt
 Conflict resolution is hard;
 let's go shopping.
@@ -979,17 +987,40 @@ other side wants to claim it is easy.</p>
 </div>
 <div class="paragraph">
 <p>An alternative style can be used by setting the "merge.conflictStyle"
-configuration variable to "diff3".  In "diff3" style, the above conflict
-may look like this:</p>
+configuration variable to either "diff3" or "zdiff3".  In "diff3"
+style, the above conflict may look like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre>Here are lines that are either unchanged from the common
-ancestor, or cleanly resolved because only one side changed.
+ancestor, or cleanly resolved because only one side changed,
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; yours:sample.txt
+or cleanly resolved because both sides changed the same way.
+Conflict resolution is hard;
+let's go shopping.
+||||||| base:sample.txt
+or cleanly resolved because both sides changed identically.
+Conflict resolution is hard.
+=======
+or cleanly resolved because both sides changed the same way.
+Git makes conflict resolution easy.
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; theirs:sample.txt
+And here is another line that is cleanly resolved or unmodified.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>while in "zdiff3" style, it may look like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Here are lines that are either unchanged from the common
+ancestor, or cleanly resolved because only one side changed,
+or cleanly resolved because both sides changed the same way.
 &lt;&lt;&lt;&lt;&lt;&lt;&lt; yours:sample.txt
 Conflict resolution is hard;
 let's go shopping.
-|||||||
+||||||| base:sample.txt
+or cleanly resolved because both sides changed identically.
 Conflict resolution is hard.
 =======
 Git makes conflict resolution easy.
@@ -1316,7 +1347,14 @@ working tree files upon merge.  The default is "merge", which
 shows a <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> conflict marker, changes made by one side,
 a <code>=======</code> marker, changes made by the other side, and then
 a <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> marker.  An alternate style, "diff3", adds a <code>|||||||</code>
-marker and the original text before the <code>=======</code> marker.</p>
+marker and the original text before the <code>=======</code> marker.  The
+"merge" style tends to produce smaller conflict regions than diff3,
+both because of the exclusion of the original text, and because
+when a subset of lines match on the two sides they are just pulled
+out of the conflict region.  Another alternate style, "zdiff3", is
+similar to diff3 but removes matching lines on the two sides from
+the conflict region when those matching lines appear near either
+the beginning or end of a conflict region.</p>
 </dd>
 <dt class="hdlist1">merge.defaultToUpstream</dt>
 <dd>
@@ -1604,7 +1642,7 @@ values containing whitespace characters are currently not supported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-11-25 10:48:06 UTC
+Last updated 2022-01-11 14:19:48 UTC
 </div>
 </div>
 </body>

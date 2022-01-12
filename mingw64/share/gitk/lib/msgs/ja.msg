@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: gitk\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2015-05-17 14:32+1000\nPO-Revision-Date: 2015-11-12 13:00+0900\nLast-Translator: Satoshi Yasushima <s.yasushima@gmail.com>\nLanguage-Team: Japanese\nLanguage: ja\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\n"
+set ::msgcat::header "Project-Id-Version: gitk\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2015-11-12 13:00+0900\nLast-Translator: Satoshi Yasushima <s.yasushima@gmail.com>\nLanguage-Team: Japanese\nLanguage: ja\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\n"
 ::msgcat::mcset ja "Couldn't get list of unmerged files:" "\u30de\u30fc\u30b8\u3055\u308c\u3066\u3044\u306a\u3044\u30d5\u30a1\u30a4\u30eb\u306e\u30ea\u30b9\u30c8\u3092\u53d6\u5f97\u3067\u304d\u307e\u305b\u3093:"
 ::msgcat::mcset ja "Color words" "\u5909\u66f4\u3092\u7740\u8272"
 ::msgcat::mcset ja "Markup words" "\u5909\u66f4\u3092\u30de\u30fc\u30af\u30a2\u30c3\u30d7"

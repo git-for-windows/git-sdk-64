@@ -448,10 +448,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git init</em> [-q | --quiet] [--bare] [--template=&lt;template_directory&gt;]
-          [--separate-git-dir &lt;git dir&gt;] [--object-format=&lt;format&gt;]
+<pre class="content"><em>git init</em> [-q | --quiet] [--bare] [--template=&lt;template-directory&gt;]
+          [--separate-git-dir &lt;git-dir&gt;] [--object-format=&lt;format&gt;]
           [-b &lt;branch-name&gt; | --initial-branch=&lt;branch-name&gt;]
-          [--shared[=&lt;permissions&gt;]] [directory]</pre>
+          [--shared[=&lt;permissions&gt;]] [&lt;directory&gt;]</pre>
 </div>
 </div>
 </div>
@@ -511,12 +511,12 @@ repositories may change in backwards-incompatible ways.  Only use
 <code>--object-format=sha256</code> for testing purposes.</p>
 </div>
 </dd>
-<dt class="hdlist1">--template=&lt;template_directory&gt;</dt>
+<dt class="hdlist1">--template=&lt;template-directory&gt;</dt>
 <dd>
 <p>Specify the directory from which templates will be used.  (See the "TEMPLATE
 DIRECTORY" section below.)</p>
 </dd>
-<dt class="hdlist1">--separate-git-dir=&lt;git dir&gt;</dt>
+<dt class="hdlist1">--separate-git-dir=&lt;git-dir&gt;</dt>
 <dd>
 <p>Instead of initializing the repository as a directory to either <code>$GIT_DIR</code> or
 <code>./.git/</code>, create a text file there containing the path to the actual
@@ -534,7 +534,7 @@ repository.  If not specified, fall back to the default name (currently
 <code>master</code>, but this is subject to change in the future; the name can be
 customized via the <code>init.defaultBranch</code> configuration variable).</p>
 </dd>
-<dt class="hdlist1">--shared[=(false|true|umask|group|all|world|everybody|0xxx)]</dt>
+<dt class="hdlist1">--shared[=(false|true|umask|group|all|world|everybody|&lt;perm&gt;)]</dt>
 <dd>
 <p>Specify that the Git repository is to be shared amongst several users.  This
 allows users belonging to the same group to push into that
@@ -568,13 +568,16 @@ the repository permissions.</p>
 <dd>
 <p>Same as <em>group</em>, but make the repository readable by all users.</p>
 </dd>
-<dt class="hdlist1"><em>0xxx</em></dt>
+<dt class="hdlist1"><em>&lt;perm&gt;</em></dt>
 <dd>
-<p><em>0xxx</em> is an octal number and each file will have mode <em>0xxx</em>. <em>0xxx</em> will
-override users' umask(2) value (and not only loosen permissions as <em>group</em> and
-<em>all</em> does). <em>0640</em> will create a repository which is group-readable, but not
-group-writable or accessible to others. <em>0660</em> will create a repo that is
-readable and writable to the current user and group, but inaccessible to others.</p>
+<p><em>&lt;perm&gt;</em> is a 3-digit octal number prefixed with <code>0</code> and each file
+will have mode <em>&lt;perm&gt;</em>. <em>&lt;perm&gt;</em> will override users' umask(2)
+value (and not only loosen permissions as <em>group</em> and <em>all</em>
+does). <em>0640</em> will create a repository which is group-readable, but
+not group-writable or accessible to others. <em>0660</em> will create a repo
+that is readable and writable to the current user and group, but
+inaccessible to others (directories and executable files get their
+<code>x</code> bit from the <code>r</code> bit for corresponding classes of users).</p>
 </dd>
 </dl>
 </div>
@@ -677,7 +680,7 @@ $ git commit    <b class="conum">(3)</b></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-11-25 10:48:06 UTC
+Last updated 2022-01-11 14:19:48 UTC
 </div>
 </div>
 </body>

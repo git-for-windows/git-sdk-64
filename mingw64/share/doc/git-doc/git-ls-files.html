@@ -449,9 +449,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git ls-files</em> [-z] [-t] [-v] [-f]
-                (--[cached|deleted|others|ignored|stage|unmerged|killed|modified])*
-                (-[c|d|o|i|s|u|k|m])*
-                [--eol]
+                [-c|--cached] [-d|--deleted] [-o|--others] [-i|--|ignored]
+                [-s|--stage] [-u|--unmerged] [-k|--|killed] [-m|--modified]
+                [--directory [--no-empty-directory]] [--eol]
                 [--deduplicate]
                 [-x &lt;pattern&gt;|--exclude=&lt;pattern&gt;]
                 [-X &lt;file&gt;|--exclude-from=&lt;file&gt;]
@@ -692,6 +692,12 @@ and in the working tree ("w/&lt;eolinfo&gt;") are shown for regular files,
 followed by the  ("attr/&lt;eolattr&gt;").</p>
 </div>
 </dd>
+<dt class="hdlist1">--sparse</dt>
+<dd>
+<p>If the index is sparse, show the sparse directories without expanding
+to the contained files. Sparse directories will be shown with a
+trailing slash, such as "x/" for a sparse directory "x".</p>
+</dd>
 <dt class="hdlist1">--</dt>
 <dd>
 <p>Do not interpret any more arguments as options.</p>
@@ -801,7 +807,7 @@ pattern file appears in.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-11-25 10:48:06 UTC
+Last updated 2022-01-11 14:19:48 UTC
 </div>
 </div>
 </body>

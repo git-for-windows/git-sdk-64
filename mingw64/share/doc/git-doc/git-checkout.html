@@ -451,7 +451,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <pre class="content"><em>git checkout</em> [-q] [-f] [-m] [&lt;branch&gt;]
 <em>git checkout</em> [-q] [-f] [-m] --detach [&lt;branch&gt;]
 <em>git checkout</em> [-q] [-f] [-m] [--detach] &lt;commit&gt;
-<em>git checkout</em> [-q] [-f] [-m] [[-b|-B|--orphan] &lt;new_branch&gt;] [&lt;start_point&gt;]
+<em>git checkout</em> [-q] [-f] [-m] [[-b|-B|--orphan] &lt;new-branch&gt;] [&lt;start-point&gt;]
 <em>git checkout</em> [-f|--ours|--theirs|-m|--conflict=&lt;style&gt;] [&lt;tree-ish&gt;] [--] &lt;pathspec&gt;&#8230;&#8203;
 <em>git checkout</em> [-f|--ours|--theirs|-m|--conflict=&lt;style&gt;] [&lt;tree-ish&gt;] --pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]
 <em>git checkout</em> (-p|--patch) [&lt;tree-ish&gt;] [--] [&lt;pathspec&gt;&#8230;&#8203;]</pre>
@@ -493,7 +493,7 @@ rather expensive side-effects to show only the tracking information,
 if exists, for the current branch.</p>
 </div>
 </dd>
-<dt class="hdlist1"><em>git checkout</em> -b|-B &lt;new_branch&gt; [&lt;start point&gt;]</dt>
+<dt class="hdlist1"><em>git checkout</em> -b|-B &lt;new-branch&gt; [&lt;start-point&gt;]</dt>
 <dd>
 <p>Specifying <code>-b</code> causes a new branch to be created as if
 <a href="git-branch.html">git-branch(1)</a> were called and then checked out.  In
@@ -502,12 +502,12 @@ which will be passed to <em>git branch</em>.  As a convenience,
 <code>--track</code> without <code>-b</code> implies branch creation; see the
 description of <code>--track</code> below.</p>
 <div class="paragraph">
-<p>If <code>-B</code> is given, <code>&lt;new_branch&gt;</code> is created if it doesn&#8217;t exist; otherwise, it
+<p>If <code>-B</code> is given, <code>&lt;new-branch&gt;</code> is created if it doesn&#8217;t exist; otherwise, it
 is reset. This is the transactional equivalent of</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git branch -f &lt;branch&gt; [&lt;start point&gt;]
+<pre>$ git branch -f &lt;branch&gt; [&lt;start-point&gt;]
 $ git checkout &lt;branch&gt;</pre>
 </div>
 </div>
@@ -616,20 +616,20 @@ on your side branch as <code>theirs</code> (i.e. "one contributor&#8217;s work o
 of it").</p>
 </div>
 </dd>
-<dt class="hdlist1">-b &lt;new_branch&gt;</dt>
+<dt class="hdlist1">-b &lt;new-branch&gt;</dt>
 <dd>
-<p>Create a new branch named <code>&lt;new_branch&gt;</code> and start it at
-<code>&lt;start_point&gt;</code>; see <a href="git-branch.html">git-branch(1)</a> for details.</p>
+<p>Create a new branch named <code>&lt;new-branch&gt;</code> and start it at
+<code>&lt;start-point&gt;</code>; see <a href="git-branch.html">git-branch(1)</a> for details.</p>
 </dd>
-<dt class="hdlist1">-B &lt;new_branch&gt;</dt>
+<dt class="hdlist1">-B &lt;new-branch&gt;</dt>
 <dd>
-<p>Creates the branch <code>&lt;new_branch&gt;</code> and start it at <code>&lt;start_point&gt;</code>;
-if it already exists, then reset it to <code>&lt;start_point&gt;</code>. This is
+<p>Creates the branch <code>&lt;new-branch&gt;</code> and start it at <code>&lt;start-point&gt;</code>;
+if it already exists, then reset it to <code>&lt;start-point&gt;</code>. This is
 equivalent to running "git branch" with "-f"; see
 <a href="git-branch.html">git-branch(1)</a> for details.</p>
 </dd>
 <dt class="hdlist1">-t</dt>
-<dt class="hdlist1">--track</dt>
+<dt class="hdlist1">--track [direct|inherit]</dt>
 <dd>
 <p>When creating a new branch, set up "upstream" configuration. See
 "--track" in <a href="git-branch.html">git-branch(1)</a> for details.</p>
@@ -693,17 +693,17 @@ This is the default behavior of <code>git checkout &lt;commit&gt;</code> when
 <code>&lt;commit&gt;</code> is not a branch name.  See the "DETACHED HEAD" section
 below for details.</p>
 </dd>
-<dt class="hdlist1">--orphan &lt;new_branch&gt;</dt>
+<dt class="hdlist1">--orphan &lt;new-branch&gt;</dt>
 <dd>
-<p>Create a new <em>orphan</em> branch, named <code>&lt;new_branch&gt;</code>, started from
-<code>&lt;start_point&gt;</code> and switch to it.  The first commit made on this
+<p>Create a new <em>orphan</em> branch, named <code>&lt;new-branch&gt;</code>, started from
+<code>&lt;start-point&gt;</code> and switch to it.  The first commit made on this
 new branch will have no parents and it will be the root of a new
 history totally disconnected from all the other branches and
 commits.</p>
 <div class="paragraph">
 <p>The index and the working tree are adjusted as if you had previously run
-<code>git checkout &lt;start_point&gt;</code>.  This allows you to start a new history
-that records a set of paths similar to <code>&lt;start_point&gt;</code> by easily running
+<code>git checkout &lt;start-point&gt;</code>.  This allows you to start a new history
+that records a set of paths similar to <code>&lt;start-point&gt;</code> by easily running
 <code>git commit -a</code> to make the root commit.</p>
 </div>
 <div class="paragraph">
@@ -715,7 +715,7 @@ code.</p>
 </div>
 <div class="paragraph">
 <p>If you want to start a disconnected history that records a set of paths
-that is totally different from the one of <code>&lt;start_point&gt;</code>, then you should
+that is totally different from the one of <code>&lt;start-point&gt;</code>, then you should
 clear the index and the working tree right after creating the orphan
 branch by running <code>git rm -rf .</code> from the top level of the working tree.
 Afterwards you will be ready to prepare your new files, repopulating the
@@ -759,8 +759,7 @@ the conflicted merge in the specified paths.</p>
 <p>The same as <code>--merge</code> option above, but changes the way the
 conflicting hunks are presented, overriding the
 <code>merge.conflictStyle</code> configuration variable.  Possible values are
-"merge" (default) and "diff3" (in addition to what is shown by
-"merge" style, shows the original contents).</p>
+"merge" (default), "diff3", and "zdiff3".</p>
 </dd>
 <dt class="hdlist1">-p</dt>
 <dt class="hdlist1">--patch</dt>
@@ -846,11 +845,11 @@ merge base of <code>A</code> and <code>B</code> if there is exactly one merge ba
 leave out at most one of <code>A</code> and <code>B</code>, in which case it defaults to <code>HEAD</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">&lt;new_branch&gt;</dt>
+<dt class="hdlist1">&lt;new-branch&gt;</dt>
 <dd>
 <p>Name for the new branch.</p>
 </dd>
-<dt class="hdlist1">&lt;start_point&gt;</dt>
+<dt class="hdlist1">&lt;start-point&gt;</dt>
 <dd>
 <p>The name of a commit at which to start the new branch; see
 <a href="git-branch.html">git-branch(1)</a> for details. Defaults to <code>HEAD</code>.</p>
@@ -1200,7 +1199,7 @@ $ git add frotz</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-11-25 10:48:06 UTC
+Last updated 2022-01-11 14:19:48 UTC
 </div>
 </div>
 </body>

@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: git-gui-i 18n\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2008-12-08 08:31-0800\nPO-Revision-Date: 2008-12-10 15:00+0100\nLast-Translator: Miklos Vajna <vmiklos@frugalware.org>\nLanguage-Team: Hungarian\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
+set ::msgcat::header "Project-Id-Version: git-gui-i 18n\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2008-12-10 15:00+0100\nLast-Translator: Miklos Vajna <vmiklos@frugalware.org>\nLanguage-Team: Hungarian\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
 ::msgcat::mcset hu "git-gui: fatal error" "git-gui: v\u00e9gzetes hiba"
 ::msgcat::mcset hu "Invalid font specified in %s:" "\u00c9rv\u00e9nytelen font lett megadva itt: %s:"
 ::msgcat::mcset hu "Main Font" "F\u0151 bet\u0171t\u00edpus"

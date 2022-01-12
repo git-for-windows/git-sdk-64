@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2015-05-17 14:32+1000\nPO-Revision-Date: 2009-12-14 14:04+0100\nLast-Translator: Laszlo Papp <djszapi@archlinux.us>\nLanguage-Team: Hungarian\nLanguage: \nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2009-12-14 14:04+0100\nLast-Translator: Laszlo Papp <djszapi@archlinux.us>\nLanguage-Team: Hungarian\nLanguage: \nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 ::msgcat::mcset hu "Couldn't get list of unmerged files:" "Nem siker\u00fclt let\u00f6lteni az unmerged f\u00e1jl list\u00e1t:"
 ::msgcat::mcset hu "Error parsing revisions:" "Hiba t\u00f6rt\u00e9nt \u00e9rtelmez\u00e9s k\u00f6zben:"
 ::msgcat::mcset hu "Error executing --argscmd command:" "Hiba t\u00f6rt\u00e9nt a v\u00e9grehajt\u00e1skor --argscmd parancs:"
