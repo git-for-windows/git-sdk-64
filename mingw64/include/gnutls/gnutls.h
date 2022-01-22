@@ -51,13 +51,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.7.2"
+#define GNUTLS_VERSION "3.7.3"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 7
-#define GNUTLS_VERSION_PATCH 2
+#define GNUTLS_VERSION_PATCH 3
 
-#define GNUTLS_VERSION_NUMBER 0x030702
+#define GNUTLS_VERSION_NUMBER 0x030703
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -1232,6 +1232,11 @@ typedef struct {
 	unsigned int size;
 } gnutls_datum_t;
 
+typedef struct gnutls_library_config_st {
+	const char *name;
+	const char *value;
+} gnutls_library_config_st;
+
 
 typedef struct gnutls_params_st {
 	gnutls_params_type_t type;
@@ -1437,6 +1442,17 @@ const char *
 				 gnutls_cipher_algorithm_t * cipher,
 				 gnutls_mac_algorithm_t * mac,
 				 gnutls_protocol_t * min_version);
+
+  /* functions for run-time enablement of algorithms */
+int gnutls_ecc_curve_set_enabled(gnutls_ecc_curve_t curve,
+				 unsigned int enabled);
+int gnutls_sign_set_secure(gnutls_sign_algorithm_t sign, unsigned int secure);
+int gnutls_sign_set_secure_for_certs(gnutls_sign_algorithm_t sign,
+				     unsigned int secure);
+int gnutls_digest_set_secure(gnutls_digest_algorithm_t dig,
+			     unsigned int secure);
+int gnutls_protocol_set_enabled(gnutls_protocol_t version,
+				unsigned int enabled);
 
   /* error functions */
 int gnutls_error_is_fatal(int error) __GNUTLS_CONST__;
@@ -2272,6 +2288,8 @@ int gnutls_certificate_set_rawpk_key_file(gnutls_certificate_credentials_t cred,
  */
 int gnutls_global_init(void);
 void gnutls_global_deinit(void);
+
+const gnutls_library_config_st *gnutls_get_library_config(void);
 
   /**
    * gnutls_time_func:
@@ -3339,6 +3357,45 @@ void gnutls_fips140_set_mode(gnutls_fips_mode_t mode, unsigned flags);
 	if (gnutls_fips140_mode_enabled()) \
 		gnutls_fips140_set_mode(GNUTLS_FIPS140_STRICT, GNUTLS_FIPS140_SET_MODE_THREAD); \
 	} while(0)
+
+typedef struct gnutls_fips140_context_st *gnutls_fips140_context_t;
+
+int gnutls_fips140_context_init(gnutls_fips140_context_t *context);
+void gnutls_fips140_context_deinit(gnutls_fips140_context_t context);
+
+/**
+ * gnutls_fips140_operation_state_t:
+ * @GNUTLS_FIPS140_OP_INITIAL: no previous operation has done
+ * @GNUTLS_FIPS140_OP_APPROVED: the previous operation was FIPS approved
+ * @GNUTLS_FIPS140_OP_NOT_APPROVED: the previous operation was not FIPS approved
+ * @GNUTLS_FIPS140_OP_ERROR: the previous operation caused an error regardless of FIPS
+ *
+ * The FIPS operation state set by the preceding operation.
+ *
+ * There are state transition rules among the enum values:
+ * - When the context is attached to a thread, it will be set to reset
+ *   to the %GNUTLS_FIPS140_OP_INITIAL state
+ * - From the %GNUTLS_FIPS140_OP_INITIAL state, the context can
+ *   transition to either %GNUTLS_FIPS140_OP_APPROVED,
+ *   %GNUTLS_FIPS140_OP_NOT_APPROVED, or %GNUTLS_FIPS140_OP_ERROR
+ * - From the %GNUTLS_FIPS140_OP_APPROVED state, the context can
+ *   transition to %GNUTLS_FIPS140_OP_NOT_APPROVED
+ * - All other transitions are prohibited.
+ *
+ * Since: 3.7.3
+ */
+typedef enum {
+        GNUTLS_FIPS140_OP_INITIAL,
+        GNUTLS_FIPS140_OP_APPROVED,
+        GNUTLS_FIPS140_OP_NOT_APPROVED,
+        GNUTLS_FIPS140_OP_ERROR
+} gnutls_fips140_operation_state_t;
+
+gnutls_fips140_operation_state_t
+gnutls_fips140_get_operation_state(gnutls_fips140_context_t context);
+
+int gnutls_fips140_push_context(gnutls_fips140_context_t context);
+int gnutls_fips140_pop_context(void);
 
   /* Gnutls error codes. The mapping to a TLS alert is also shown in
    * comments.
