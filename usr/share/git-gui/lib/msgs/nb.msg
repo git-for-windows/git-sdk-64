@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: nb\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2008-11-16 13:56-0800\nPO-Revision-Date: 2008-12-03 16:05+0100\nLast-Translator: Fredrik Skolmli <fredrik@frsk.net>\nLanguage-Team: Norwegian Bokm\u00e5l\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+set ::msgcat::header "Project-Id-Version: nb\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2008-12-03 16:05+0100\nLast-Translator: Fredrik Skolmli <fredrik@frsk.net>\nLanguage-Team: Norwegian Bokm\u00e5l\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 ::msgcat::mcset nb "git-gui: fatal error" "git-gui: Kritisk feil"
 ::msgcat::mcset nb "Invalid font specified in %s:" "Ugyldig font spesifisert i %s:"
 ::msgcat::mcset nb "Main Font" "Hovedskrifttype"

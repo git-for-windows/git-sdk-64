@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2016-05-27 17:52+0900\nPO-Revision-Date: 2019-10-13 23:20+0900\nLast-Translator: KIDANI Akito <a.kid.1985@gmail.com>\nLanguage-Team: Japanese\nLanguage: ja\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2019-10-13 23:20+0900\nLast-Translator: KIDANI Akito <a.kid.1985@gmail.com>\nLanguage-Team: Japanese\nLanguage: ja\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 ::msgcat::mcset ja "Invalid font specified in %s:" "%s \u306b\u7121\u52b9\u306a\u30d5\u30a9\u30f3\u30c8\u304c\u6307\u5b9a\u3055\u308c\u3066\u3044\u307e\u3059:"
 ::msgcat::mcset ja "Main Font" "\u4e3b\u30d5\u30a9\u30f3\u30c8"
 ::msgcat::mcset ja "Diff/Console Font" "diff/\u30b3\u30f3\u30bd\u30fc\u30eb\u30fb\u30d5\u30a9\u30f3\u30c8"

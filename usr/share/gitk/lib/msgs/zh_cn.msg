@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: Git Chinese Localization Project\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2017-02-28 23:11+0800\nPO-Revision-Date: 2017-03-11 02:27+0800\nLast-Translator: YanKe <imyanke@163.com>\nLanguage-Team: Chinese\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nLanguage: zh_CN\n"
+set ::msgcat::header "Project-Id-Version: Git Chinese Localization Project\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2017-03-11 02:27+0800\nLast-Translator: YanKe <imyanke@163.com>\nLanguage-Team: Chinese\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nLanguage: zh_CN\n"
 ::msgcat::mcset zh_cn "Couldn't get list of unmerged files:" "\u4e0d\u80fd\u83b7\u53d6\u672a\u5408\u5e76\u6587\u4ef6\u5217\u8868\uff1a"
 ::msgcat::mcset zh_cn "Color words" "\u7740\u8272\u663e\u793a\u5dee\u5f02"
 ::msgcat::mcset zh_cn "Markup words" "\u6807\u8bb0\u663e\u793a\u5dee\u5f02"

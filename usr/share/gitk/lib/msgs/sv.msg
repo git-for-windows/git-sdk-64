@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: sv\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2015-12-09 09:40+0100\nPO-Revision-Date: 2015-12-11 09:46+0100\nLast-Translator: Peter Krefting <peter@softwolves.pp.se>\nLanguage-Team: Swedish <tp-sv@listor.tp-sv.se>\nLanguage: sv\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Gtranslator 2.91.6\n"
+set ::msgcat::header "Project-Id-Version: sv\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2015-12-11 09:46+0100\nLast-Translator: Peter Krefting <peter@softwolves.pp.se>\nLanguage-Team: Swedish <tp-sv@listor.tp-sv.se>\nLanguage: sv\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Gtranslator 2.91.6\n"
 ::msgcat::mcset sv "Couldn't get list of unmerged files:" "Kunde inte h\u00e4mta lista \u00f6ver ej sammanslagna filer:"
 ::msgcat::mcset sv "Color words" "F\u00e4rga ord"
 ::msgcat::mcset sv "Markup words" "M\u00e4rk upp ord"

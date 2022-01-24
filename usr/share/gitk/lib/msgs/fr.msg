@@ -1,4 +1,4 @@
-set ::msgcat::header "Project-Id-Version: gitk\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2016-01-22 22:04+0100\nPO-Revision-Date: 2016-01-22 23:28+0100\nLast-Translator: Jean-No\u00ebl Avila <jn.avila@free.fr>\nLanguage-Team: git@vger.kernel.org\nLanguage: \nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nX-Poedit-Language: French\nX-Poedit-Country: FRANCE\n"
+set ::msgcat::header "Project-Id-Version: gitk\nReport-Msgid-Bugs-To: \nPO-Revision-Date: 2016-01-22 23:28+0100\nLast-Translator: Jean-No\u00ebl Avila <jn.avila@free.fr>\nLanguage-Team: git@vger.kernel.org\nLanguage: \nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nX-Poedit-Language: French\nX-Poedit-Country: FRANCE\n"
 ::msgcat::mcset fr "Couldn't get list of unmerged files:" "Impossible de r\u00e9cup\u00e9rer la liste des fichiers non fusionn\u00e9s :"
 ::msgcat::mcset fr "Color words" "Colorier les mots diff\u00e9rents"
 ::msgcat::mcset fr "Markup words" "Marquer les mots diff\u00e9rents"
