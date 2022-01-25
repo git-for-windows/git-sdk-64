@@ -456,7 +456,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
         [--points-at &lt;object&gt;] [--format=&lt;format&gt;]
         [(-r | --remotes) | (-a | --all)]
         [--list] [&lt;pattern&gt;&#8230;&#8203;]
-<em>git branch</em> [--track [direct|inherit] | --no-track] [-f] &lt;branchname&gt; [&lt;start-point&gt;]
+<em>git branch</em> [--track[=(direct|inherit)] | --no-track] [-f] &lt;branchname&gt; [&lt;start-point&gt;]
 <em>git branch</em> (--set-upstream-to=&lt;upstream&gt; | -u &lt;upstream&gt;) [&lt;branchname&gt;]
 <em>git branch</em> --unset-upstream [&lt;branchname&gt;]
 <em>git branch</em> (-m | -M) [&lt;oldbranch&gt;] &lt;newbranch&gt;
@@ -684,7 +684,7 @@ config option.</p>
 <p>Display the full sha1s in the output listing rather than abbreviating them.</p>
 </dd>
 <dt class="hdlist1">-t</dt>
-<dt class="hdlist1">--track [inherit|direct]</dt>
+<dt class="hdlist1">--track[=(direct|inherit)]</dt>
 <dd>
 <p>When creating a new branch, set up <code>branch.&lt;name&gt;.remote</code> and
 <code>branch.&lt;name&gt;.merge</code> configuration entries to set "upstream" tracking
@@ -695,12 +695,12 @@ it directs <code>git pull</code> without arguments to pull from the
 upstream when the new branch is checked out.</p>
 <div class="paragraph">
 <p>The exact upstream branch is chosen depending on the optional argument:
-<code>--track</code> or <code>--track direct</code> means to use the start-point branch itself as the
-upstream; <code>--track inherit</code> means to copy the upstream configuration of the
-start-point branch.</p>
+<code>-t</code>, <code>--track</code>, or <code>--track=direct</code> means to use the start-point branch
+itself as the upstream; <code>--track=inherit</code> means to copy the upstream
+configuration of the start-point branch.</p>
 </div>
 <div class="paragraph">
-<p><code>--track direct</code> is the default when the start point is a remote-tracking branch.
+<p><code>--track=direct</code> is the default when the start point is a remote-tracking branch.
 Set the branch.autoSetupMerge configuration variable to <code>false</code> if you
 want <code>git switch</code>, <code>git checkout</code> and <code>git branch</code> to always behave as if <code>--no-track</code>
 were given. Set it to <code>always</code> if you want this behavior when the
@@ -963,7 +963,7 @@ a branch?&#8221;</a> in the Git User&#8217;s Manual.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-01-19 22:22:44 UTC
+Last updated 2022-01-24 21:15:45 UTC
 </div>
 </div>
 </body>
