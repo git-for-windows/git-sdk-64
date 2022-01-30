@@ -28,9 +28,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.9
-srcdir=		../Python-3.9.7
-VPATH=		../Python-3.9.7
-abs_srcdir=	/c/M/mingw-w64-python/src/build-x86_64/../Python-3.9.7
+srcdir=		../Python-3.9.10
+VPATH=		../Python-3.9.10
+abs_srcdir=	/c/M/mingw-w64-python/src/build-x86_64/../Python-3.9.10
 abs_builddir=	/c/M/mingw-w64-python/src/build-x86_64
 
 
@@ -105,7 +105,6 @@ PY_CPPFLAGS=	$(BASECPPFLAGS) -I. -I$(srcdir)/Include $(CONFIGURE_CPPFLAGS) $(CPP
 PY_LDFLAGS=	$(CONFIGURE_LDFLAGS) $(LDFLAGS)
 PY_LDFLAGS_NODIST=$(CONFIGURE_LDFLAGS_NODIST) $(LDFLAGS_NODIST)
 NO_AS_NEEDED=	-Wl,--no-as-needed
-SGI_ABI=	@SGI_ABI@
 CCSHARED=	
 # LINKFORSHARED are the flags passed to the $(CC) command that links
 # the python executable -- this is only needed for a few systems
@@ -121,7 +120,7 @@ PY_CORE_CFLAGS=	$(PY_STDMODULE_CFLAGS) -DPy_BUILD_CORE
 PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 # Strict or non-strict aliasing flags used to compile dtoa.c, see above
 CFLAGS_ALIASING=
-RCFLAGS= -DFIELD3=7150 -O COFF --target=pe-x86-64
+RCFLAGS= -DFIELD3=10150 -O COFF --target=pe-x86-64
 
 
 # Machine-dependent subdirectories
@@ -141,9 +140,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.9.7
-VPATH_b2h=		C:/M/mingw-w64-python/src/Python-3.9.7
-abs_srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.9.7
+srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.9.10
+VPATH_b2h=		C:/M/mingw-w64-python/src/Python-3.9.10
+abs_srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.9.10
 abs_builddir_b2h=	C:/M/mingw-w64-python/src/build-x86_64
 prefix_b2h=		D:/a/msys64/mingw64
 
@@ -212,9 +211,9 @@ RUNSHARED=
 ENSUREPIP=      no
 
 # OpenSSL options for setup.py so sysconfig can pick up AC_SUBST() vars.
-OPENSSL_INCLUDES=-ID:/a/msys64/mingw64/include 
-OPENSSL_LIBS=-lssl -lcrypto 
-OPENSSL_LDFLAGS=-LD:/a/msys64/mingw64/lib 
+OPENSSL_INCLUDES=-ID:/a/msys64/mingw64/include
+OPENSSL_LIBS=-lssl -lcrypto
+OPENSSL_LDFLAGS=-LD:/a/msys64/mingw64/lib
 
 # Default zoneinfo.TZPATH. Added here to expose it in sysconfig.get_config_var
 TZPATH=/mingw64/share/zoneinfo
@@ -2015,6 +2014,12 @@ funny:
 # Perform some verification checks on any modified files.
 patchcheck: build_all
 	$(RUNSHARED) ./$(BUILDPYTHON) $(srcdir)/Tools/scripts/patchcheck.py
+
+.PHONY: update-config
+update-config:
+	curl -sL -o config.guess 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD'
+	curl -sL -o config.sub 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD'
+	chmod +x config.guess config.sub
 
 # Dependencies
 

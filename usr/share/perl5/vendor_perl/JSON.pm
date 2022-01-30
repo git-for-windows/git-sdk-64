@@ -9,7 +9,7 @@ BEGIN { @JSON::ISA = 'Exporter' }
 @JSON::EXPORT = qw(from_json to_json jsonToObj objToJson encode_json decode_json);
 
 BEGIN {
-    $JSON::VERSION = '4.04';
+    $JSON::VERSION = '4.05';
     $JSON::DEBUG   = 0 unless (defined $JSON::DEBUG);
     $JSON::DEBUG   = $ENV{ PERL_JSON_DEBUG } if exists $ENV{ PERL_JSON_DEBUG };
 }
@@ -475,10 +475,6 @@ JSON - JSON (JavaScript Object Notation) encoder/decoder
  $perl_scalar = $json->decode( $json_text );
  
  $pretty_printed = $json->pretty->encode( $perl_scalar ); # pretty-printing
-
-=head1 VERSION
-
-    4.02
 
 =head1 DESCRIPTION
 

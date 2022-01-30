@@ -143,6 +143,20 @@ class EnvBuilder:
         context.bin_name = binname
         context.env_exe = os.path.join(binpath, exename)
         create_if_needed(binpath)
+        # Assign and update the command to use when launching the newly created
+        # environment, in case it isn't simply the executable script (e.g. bpo-45337)
+        context.env_exec_cmd = context.env_exe
+        if sys.platform == 'win32':
+            # bpo-45337: Fix up env_exec_cmd to account for file system redirections.
+            # Some redirects only apply to CreateFile and not CreateProcess
+            real_env_exe = os.path.realpath(context.env_exe)
+            if os.path.normcase(real_env_exe) != os.path.normcase(context.env_exe):
+                logger.warning('Actual environment location may have moved due to '
+                               'redirects, links or junctions.\n'
+                               '  Requested location: "%s"\n'
+                               '  Actual location:    "%s"',
+                               context.env_exe, real_env_exe)
+                context.env_exec_cmd = real_env_exe
         return context
 
     def create_configuration(self, context):
@@ -268,8 +282,9 @@ class EnvBuilder:
                         os.path.normcase(f).startswith(('python', 'vcruntime'))
                     ]
             else:
-                suffixes = ['python.exe', 'python_d.exe', 'pythonw.exe',
-                            'pythonw_d.exe']
+                suffixes = {'python.exe', 'python_d.exe', 'pythonw.exe', 'pythonw_d.exe'}
+                base_exe = os.path.basename(context.env_exe)
+                suffixes.add(base_exe)
 
             for suffix in suffixes:
                 src = os.path.join(dirname, suffix)
@@ -302,8 +317,8 @@ class EnvBuilder:
         # intended for the global Python environment
         env = os.environ.copy()
         env.pop("MSYSTEM", None)
-        cmd = [context.env_exe, '-Im', 'ensurepip', '--upgrade',
-               '--default-pip']
+        cmd = [context.env_exec_cmd, '-Im', 'ensurepip', '--upgrade',
+                                                         '--default-pip']
         subprocess.check_call(cmd, stderr=subprocess.STDOUT, env=env)
 
     def setup_scripts(self, context):
@@ -403,11 +418,7 @@ class EnvBuilder:
         logger.debug(
             f'Upgrading {CORE_VENV_DEPS} packages in {context.bin_path}'
         )
-        if sys.platform == 'win32':
-            python_exe = os.path.join(context.bin_path, 'python.exe')
-        else:
-            python_exe = os.path.join(context.bin_path, 'python')
-        cmd = [python_exe, '-m', 'pip', 'install', '--upgrade']
+        cmd = [context.env_exec_cmd, '-m', 'pip', 'install', '--upgrade']
         cmd.extend(CORE_VENV_DEPS)
         subprocess.check_call(cmd)
 
