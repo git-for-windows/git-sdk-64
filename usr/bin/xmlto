@@ -272,13 +272,13 @@ then
   USE_BACKEND=DEFAULT
 fi
 
-LINKS_PATH=/usr/bin/elinks
-W3M_PATH=/usr/bin/w3m
+LINKS_PATH=elinks
+W3M_PATH=w3m
 LYNX_PATH=lynx
 GCP_PATH=/usr/bin/cp
 SED_PATH=/usr/bin/sed
 GREP_PATH=/usr/bin/grep
-ZIP_PATH=/usr/bin/zip
+ZIP_PATH=zip
 
 # Process any options
 ARGS=$(${GETOPT} \
@@ -314,9 +314,13 @@ while [ "$#" -gt "0" ]; do
 	shift 2
 	;;
   -o)
-	case "$2" in
-	/*) OUTPUT_DIR="$2" ;;
-	 *) OUTPUT_DIR="$WD/$2" ;;
+	OUTPUT_DIR="$2"
+	if type -p cygpath >/dev/null; then
+		OUTPUT_DIR=$(cygpath "$OUTPUT_DIR")
+	fi
+	case "$OUTPUT_DIR" in
+	/*) OUTPUT_DIR="$OUTPUT_DIR" ;;
+	 *) OUTPUT_DIR="$WD/$OUTPUT_DIR" ;;
 	esac
 	shift 2
 	;;
