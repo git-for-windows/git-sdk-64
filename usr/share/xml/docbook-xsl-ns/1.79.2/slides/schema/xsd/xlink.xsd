@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.w3.org/1999/xlink" xmlns:db="http://docbook.org/ns/docbook" xmlns:dbs="http://docbook.org/ns/docbook-slides" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <xs:import namespace="http://docbook.org/ns/docbook" schemaLocation="docbook.xsd"/>
+  <xs:import namespace="http://docbook.org/ns/docbook-slides" schemaLocation="slides.xsd"/>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+  <xs:attribute name="href" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>Identifies a link target with a URI</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attributeGroup name="type">
+    <xs:attribute name="type" use="required" form="qualified">
+      <xs:annotation>
+        <xs:documentation>Identifies the XLink link type</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="simple">
+            <xs:annotation>
+              <xs:documentation>An XLink simple link</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attribute name="role" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>Identifies the XLink role of the link</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attribute name="arcrole" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>Identifies the XLink arcrole of the link</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attribute name="title"/>
+  <xs:attribute name="show" type="db:db.xlink.show.enumeration">
+    <xs:annotation>
+      <xs:documentation>Identifies the XLink show behavior of the link</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attribute name="actuate" type="db:db.xlink.actuate.enumeration">
+    <xs:annotation>
+      <xs:documentation>Identifies the XLink actuate behavior of the link</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attribute name="from" type="xs:NMTOKEN">
+    <xs:annotation>
+      <xs:documentation>Specifies the XLink traversal-from</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attribute name="label" type="xs:NMTOKEN">
+    <xs:annotation>
+      <xs:documentation>Specifies the XLink label</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attribute name="to" type="xs:NMTOKEN">
+    <xs:annotation>
+      <xs:documentation>Specifies the XLink traversal-to</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attributeGroup name="type1">
+    <xs:attribute name="type" use="required" form="qualified">
+      <xs:annotation>
+        <xs:documentation>Identifies the XLink link type </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="extended">
+            <xs:annotation>
+              <xs:documentation>An XLink extended link</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="type2">
+    <xs:attribute name="type" use="required" form="qualified">
+      <xs:annotation>
+        <xs:documentation>Identifies the XLink link type </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="locator">
+            <xs:annotation>
+              <xs:documentation>An XLink locator link</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="type3">
+    <xs:attribute name="type" use="required" form="qualified">
+      <xs:annotation>
+        <xs:documentation>Identifies the XLink link type </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="arc">
+            <xs:annotation>
+              <xs:documentation>An XLink arc link</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+</xs:schema>

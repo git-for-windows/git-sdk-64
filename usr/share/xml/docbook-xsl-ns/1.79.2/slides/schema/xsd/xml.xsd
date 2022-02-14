@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.w3.org/XML/1998/namespace" xmlns:db="http://docbook.org/ns/docbook" xmlns:dbs="http://docbook.org/ns/docbook-slides" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <xs:import namespace="http://docbook.org/ns/docbook" schemaLocation="docbook.xsd"/>
+  <xs:import namespace="http://docbook.org/ns/docbook-slides" schemaLocation="slides.xsd"/>
+  <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="xlink.xsd"/>
+  <xs:attribute name="id" type="xs:ID">
+    <xs:annotation>
+      <xs:documentation>Identifies the unique ID value of the element</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attribute name="lang"/>
+  <xs:attribute name="base" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>Specifies the base URI of the element and its descendants</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attributeGroup name="space">
+    <xs:attribute name="space" use="required" form="qualified">
+      <xs:annotation>
+        <xs:documentation>Can be used to indicate explicitly that whitespace in the verbatim environment is preserved. Whitespace must always be preserved in verbatim environments whether this attribute is specified or not.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="preserve">
+            <xs:annotation>
+              <xs:documentation>Whitespace must be preserved.</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="space1">
+    <xs:attribute name="space" use="required" form="qualified">
+      <xs:annotation>
+        <xs:documentation>Can be used to indicate that whitespace in the modifier should be preserved (for multi-line annotations, for example).</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="preserve">
+            <xs:annotation>
+              <xs:documentation>Extra whitespace and line breaks must be preserved.</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+</xs:schema>
