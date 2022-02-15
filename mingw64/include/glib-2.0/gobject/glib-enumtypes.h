@@ -8,7 +8,7 @@
 
 G_BEGIN_DECLS
 
-/* enumerations from "../glib-2.70.3/gobject/../glib/gunicode.h" */
+/* enumerations from "../glib-2.70.4/gobject/../glib/gunicode.h" */
 GLIB_AVAILABLE_IN_2_60 GType g_unicode_type_get_type (void) G_GNUC_CONST;
 #define G_TYPE_UNICODE_TYPE (g_unicode_type_get_type ())
 GLIB_AVAILABLE_IN_2_60 GType g_unicode_break_type_get_type (void) G_GNUC_CONST;
