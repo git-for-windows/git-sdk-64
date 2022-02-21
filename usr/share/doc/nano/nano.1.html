@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.4 -->
-<!-- CreationDate: Wed Oct  6 08:45:57 2021 -->
+<!-- CreationDate: Fri Feb 18 09:51:17 2022 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -243,9 +243,12 @@ stripecolor</b> in your <i>nanorc</i> file.)</p>
 <b>&minus;&minus;rawsequences</b></p>
 
 <p style="margin-left:22%;">Interpret escape sequences
-directly (instead of asking <b>ncurses</b> to translate
-them). If you need this option to get your keyboard to work
-properly, please report a bug. Using this option disables
+directly, instead of asking <b>ncurses</b> to translate
+them. (If you need this option to get some keys to work
+properly, it means that the terminfo terminal description
+that is used does not fully match the actual behavior of
+your terminal. This can happen when you ssh into a BSD
+machine, for example.) Using this option disables
 <b>nano</b>&rsquo;s mouse support.</p>
 
 <p style="margin-left:11%;"><b>&minus;L</b>,
@@ -330,9 +333,12 @@ greater than 0. The default value is <b>8</b>.</p>
 
 <p style="margin-left:22%;">Make status-bar messages
 disappear after 1 keystroke instead of after 20. Note that
-options <b>&minus;c</b> (<b>&minus;&minus;constantshow</b>)
-and <b>&minus;_</b> (<b>&minus;&minus;minibar</b>) override
-this.</p>
+option <b>&minus;c</b> (<b>&minus;&minus;constantshow</b>)
+overrides this. When option <b>&minus;&minus;minibar</b> or
+<b>&minus;&minus;zero</b> is in effect,
+<b>&minus;&minus;quickblank</b> makes a message disappear
+after 0.8 seconds instead of after the default 1.5
+seconds.</p>
 
 <p style="margin-left:11%;"><b>&minus;V</b>,
 <b>&minus;&minus;version</b></p>
@@ -576,8 +582,10 @@ stop at word ends instead of beginnings.</p>
 <p style="margin-left:11%;"><b>&minus;z</b>,
 <b>&minus;&minus;suspendable</b></p>
 
-<p style="margin-left:22%;">Allow the user to suspend the
-editor (with <b>^Z</b> by default).</p>
+<p style="margin-left:22%;">Obsolete option; ignored.
+Suspension is enabled by default, reachable via <b>^T^Z</b>.
+(If you want a plain <b>^Z</b> to suspend nano, add <b>bind
+^Z suspend main</b> to your nanorc.)</p>
 
 <p style="margin-left:11%;"><b>&minus;%</b>,
 <b>&minus;&minus;stateflags</b></p>
@@ -610,9 +618,21 @@ the next keystroke, or replaced with an [i/n] counter when
 multiple buffers are open. The line plus column numbers and
 the character code are displayed only when
 <b>&minus;&minus;constantshow</b> is used, and can be
-toggled on and off with <b>M-C</b>. The state flags are
-displayed only when <b>&minus;&minus;stateflags</b> is
+toggled on and off with <b>M&minus;C</b>. The state flags
+are displayed only when <b>&minus;&minus;stateflags</b> is
 used.</p>
+
+<p style="margin-left:11%;"><b>&minus;0</b>,
+<b>&minus;&minus;zero</b></p>
+
+<p style="margin-left:22%;">Hide all elements of the
+interface (title bar, status bar, and help lines) and use
+all rows of the terminal for showing the contents of the
+buffer. The status bar appears only when there is a
+significant message, and disappears after 1.5 seconds or
+upon the next keystroke. With <b>M&minus;Z</b> the title bar
+plus status bar can be toggled. With <b>M&minus;X</b> the
+help lines.</p>
 
 <p style="margin-left:11%;"><b>&minus;!</b>,
 <b>&minus;&minus;magic</b></p>

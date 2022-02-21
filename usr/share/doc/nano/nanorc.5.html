@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.4 -->
-<!-- CreationDate: Wed Oct  6 08:49:14 2021 -->
+<!-- CreationDate: Fri Feb 18 09:54:35 2022 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -307,8 +307,8 @@ number is cleared upon the next keystroke, or replaced with
 an [i/n] counter when multiple buffers are open. The line
 plus column numbers and the character code are displayed
 only when <b>set constantshow</b> is used, and can be
-toggled on and off with <b>M-C</b>. The state flags are
-displayed only when <b>set stateflags</b> is used.</p>
+toggled on and off with <b>M&minus;C</b>. The state flags
+are displayed only when <b>set stateflags</b> is used.</p>
 
 <p style="margin-left:11%;"><b>set minicolor</b>
 [<b>bold,</b>][<b>italic,</b>]<i>fgcolor</i><b>,</b><i>bgcolor</i></p>
@@ -404,8 +404,10 @@ punctuation, optionally followed by closing brackets (see
 
 <p style="margin-left:15%;">Make status-bar messages
 disappear after 1 keystroke instead of after 20. Note that
-options <b>constantshow</b> and <b>minibar</b> override
-this.</p>
+option <b>constantshow</b> overrides this. When option
+<b>minibar</b> or <b>zero</b> is in effect,
+<b>quickblank</b> makes a message disappear after 0.8
+seconds instead of after the default 1.5 seconds.</p>
 
 <p style="margin-left:11%;"><b>set quotestr
 &quot;</b><i>regex</i><b>&quot;</b></p>
@@ -421,9 +423,12 @@ writing source code.</p>
 <p style="margin-left:11%;"><b>set rawsequences</b></p>
 
 <p style="margin-left:15%;">Interpret escape sequences
-directly (instead of asking <b>ncurses</b> to translate
-them). If you need this option to get your keyboard to work
-properly, please report a bug. Using this option disables
+directly, instead of asking <b>ncurses</b> to translate
+them. (If you need this option to get some keys to work
+properly, it means that the terminfo terminal description
+that is used does not fully match the actual behavior of
+your terminal. This can happen when you ssh into a BSD
+machine, for example.) Using this option disables
 <b>nano</b>&rsquo;s mouse support.</p>
 
 <p style="margin-left:11%;"><b>set rebinddelete</b></p>
@@ -530,8 +535,10 @@ more details.</p>
 
 <p style="margin-left:11%;"><b>set suspendable</b></p>
 
-<p style="margin-left:15%;">Allow <b>nano</b> to be
-suspended (with <b>^Z</b> by default).</p>
+<p style="margin-left:15%;">Obsolete option; ignored.
+Suspension is enabled by default, reachable via <b>^T^Z</b>.
+(If you want a plain <b>^Z</b> to suspend nano, add <b>bind
+^Z suspend main</b> to your nanorc.)</p>
 
 <p style="margin-left:11%;"><b>set tabsize</b>
 <i>number</i></p>
@@ -560,9 +567,20 @@ synonym for <b>lightblack</b>. On terminal emulators that
 can do at least 256 colors, other valid (but unprefixable)
 color names are: <b>pink</b>, <b>purple</b>, <b>mauve</b>,
 <b>lagoon</b>, <b>mint</b>, <b>lime</b>, <b>peach</b>,
-<b>orange</b>, <b>latte</b>, and <b>normal</b> -- where
-<b>normal</b> means the default foreground or background
-color. Either &quot;<i>fgcolor</i>&quot; or
+<b>orange</b>, <b>latte</b>, <b>rosy</b>, <b>beet</b>,
+<b>plum</b>, <b>sea</b>, <b>sky</b>, <b>slate</b>,
+<b>teal</b>, <b>sage</b>, <b>brown</b>, <b>ocher</b>,
+<b>sand</b>, <b>tawny</b>, <b>brick</b>, <b>crimson</b>, and
+<b>normal</b> -- where <b>normal</b> means the default
+foreground or background color. On such emulators, the color
+may also be specified as a three-digit hexadecimal number
+prefixed with <b>#</b>, with the digits representing the
+amounts of red, green, and blue, respectively. This tells
+<b>nano</b> to select from the available palette the color
+that approximates the given values.</p>
+
+<p style="margin-left:15%; margin-top: 1em">Either
+&quot;<i>fgcolor</i>&quot; or
 &quot;<b>,</b><i>bgcolor</i>&quot; may be left out, and the
 pair may be preceded by <b>bold</b> and/or <b>italic</b>
 (separated by commas) to get a bold and/or slanting
@@ -609,6 +627,17 @@ to unset <b>wordbounds</b>.</p>
 <p style="margin-left:15%;">Let an unmodified Backspace or
 Delete erase the marked region (instead of a single
 character, and without affecting the cutbuffer).</p>
+
+<p style="margin-left:11%;"><b>set zero</b></p>
+
+<p style="margin-left:15%;">Hide all elements of the
+interface (title bar, status bar, and help lines) and use
+all rows of the terminal for showing the contents of the
+buffer. The status bar appears only when there is a
+significant message, and disappears after 1.5 seconds or
+upon the next keystroke. With <b>M&minus;Z</b> the title bar
+plus status bar can be toggled. With <b>M&minus;X</b> the
+help lines.</p>
 
 <h2>SYNTAX HIGHLIGHTING
 <a name="SYNTAX HIGHLIGHTING"></a>
@@ -733,16 +762,28 @@ which must be specified. Valid color names are: <b>red</b>,
 <b>green</b>, <b>blue</b>, <b>magenta</b>, <b>yellow</b>,
 <b>cyan</b>, <b>white</b>, and <b>black</b>. Each of these
 eight names may be prefixed with the word <b>light</b> to
-get a brighter version of that color. On terminal emulators
-that can do at least 256 colors, other valid (but
-unprefixable) color names are: <b>pink</b>, <b>purple</b>,
-<b>mauve</b>, <b>lagoon</b>, <b>mint</b>, <b>lime</b>,
-<b>peach</b>, <b>orange</b>, <b>latte</b>, and <b>normal</b>
--- where <b>normal</b> means the default foreground or
-background color. The color pair may be preceded by
-<b>bold</b> and/or <b>italic</b> (separated by commas) to
-get a bold and/or slanting typeface, if your terminal can do
-those.</p>
+get a brighter version of that color. The word <b>grey</b>
+or <b>gray</b> may be used as a synonym for
+<b>lightblack</b>. On terminal emulators that can do at
+least 256 colors, other valid (but unprefixable) color names
+are: <b>pink</b>, <b>purple</b>, <b>mauve</b>,
+<b>lagoon</b>, <b>mint</b>, <b>lime</b>, <b>peach</b>,
+<b>orange</b>, <b>latte</b>, <b>rosy</b>, <b>beet</b>,
+<b>plum</b>, <b>sea</b>, <b>sky</b>, <b>slate</b>,
+<b>teal</b>, <b>sage</b>, <b>brown</b>, <b>ocher</b>,
+<b>sand</b>, <b>tawny</b>, <b>brick</b>, <b>crimson</b>, and
+<b>normal</b> -- where <b>normal</b> means the default
+foreground or background color. On such emulators, the color
+may also be specified as a three-digit hexadecimal number
+prefixed with <b>#</b>, with the digits representing the
+amounts of red, green, and blue, respectively. This tells
+<b>nano</b> to select from the available palette the color
+that approximates the given values.</p>
+
+<p style="margin-left:22%; margin-top: 1em">The color pair
+may be preceded by <b>bold</b> and/or <b>italic</b>
+(separated by commas) to get a bold and/or slanting
+typeface, if your terminal can do those.</p>
 
 <p style="margin-left:22%; margin-top: 1em">All coloring
 commands are applied in the order in which they are
@@ -1029,8 +1070,8 @@ current buffer (or in the marked region).</p>
 
 <p style="margin-left:18%;">Prompts for a program to
 execute. The program&rsquo;s output will be inserted into
-the current buffer (or into a new buffer when <b>M-F</b> is
-toggled).</p>
+the current buffer (or into a new buffer when
+<b>M&minus;F</b> is toggled).</p>
 
 <p style="margin-left:15%;"><b>speller</b></p>
 
@@ -1276,9 +1317,9 @@ action (add text, delete text, etc).</p>
 
 <p style="margin-left:15%;"><b>suspend</b></p>
 
-<p style="margin-left:18%;">Suspends the editor (if the
-suspending function is enabled, see the <b>suspendable</b>
-toggle item below).</p>
+<p style="margin-left:18%;">Suspends the editor and returns
+control to the shell (until you tell the process to resume
+execution with <b>fg</b>).</p>
 
 <p style="margin-left:15%;"><b>casesens</b></p>
 
@@ -1402,6 +1443,11 @@ two-line list of key bindings at the bottom of the screen.
 the help viewer and the linter. All further toggles are
 available in the main menu only.)</p>
 
+<p style="margin-left:15%;"><b>zero</b></p>
+
+<p style="margin-left:18%;">Toggles the presence of title
+bar and status bar.</p>
+
 <p style="margin-left:15%;"><b>constantshow</b></p>
 
 <p style="margin-left:18%;">Toggles the constant display of
@@ -1459,13 +1505,6 @@ be converted to spaces.</p>
 <p style="margin-left:15%;"><b>mouse</b></p>
 
 <p style="margin-left:18%;">Toggles mouse support.</p>
-
-<p style="margin-left:15%;"><b>suspendable</b></p>
-
-<p style="margin-left:18%;">Toggles whether the suspend
-keystroke (<b>^Z</b> by default) will actually suspend the
-editor. (The old name of this function,
-&rsquo;suspendenable&rsquo;, is deprecated.)</p>
 
 <p style="margin-left:11%;">Valid <i>menu</i> sections
 are:</p>
