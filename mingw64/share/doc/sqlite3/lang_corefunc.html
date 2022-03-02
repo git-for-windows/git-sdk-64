@@ -120,6 +120,7 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
 <li><a href='lang_corefunc.html#changes'>changes()</a></li>
 <li><a href='lang_corefunc.html#char'>char(X1,X2,...,XN)</a></li>
 <li><a href='lang_corefunc.html#coalesce'>coalesce(X,Y,...)</a></li>
+<li><a href='lang_corefunc.html#format'>format(FORMAT,...)</a></li>
 <li><a href='lang_corefunc.html#glob'>glob(X,Y)</a></li>
 <li><a href='lang_corefunc.html#hex'>hex(X)</a></li>
 <li><a href='lang_corefunc.html#ifnull'>ifnull(X,Y)</a></li>
@@ -201,6 +202,19 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
   The coalesce() function returns a copy of its first non-NULL argument, or
   NULL if all arguments are NULL.  Coalesce() must have at least 
   2 arguments.
+</dd>
+<a name="format"></a>
+<dt><p><b>format(<i>FORMAT</i>,...)</b></dt><dd><p>
+  The format(FORMAT,...) SQL function works like the <a href="c3ref/mprintf.html">sqlite3_mprintf()</a> C-language
+  function and the printf() function from the standard C library.
+  The first argument is a format string that specifies how to construct the output
+  string using values taken from subsequent arguments.  If the FORMAT argument is
+  missing or NULL then the result is NULL.  The %n format is silently ignored and
+  does not consume an argument.  The %p format is an alias for %X.  The %z format
+  is interchangeable with %s.  If there are too few arguments in the argument list,
+  missing arguments are assumed to have a NULL value, which is translated into
+  0 or 0.0 for numeric formats or an empty string for %s.  See the
+  <a href="printf.html">built-in printf()</a> documentation for additional information.
 </dd>
 <a name="glob"></a>
 <dt><p><b>glob(<i>X</i>,<i>Y</i>)</b></dt><dd><p>
@@ -337,7 +351,7 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
   changes or deletes functions or collating sequences, use the
   <a href="c3ref/load_extension.html">sqlite3_load_extension()</a> C-language API.</p>
 
-  <p>For security reasons, extension loaded is turned off by default and must
+  <p>For security reasons, extension loading is disabled by default and must
   be enabled by a prior call to <a href="c3ref/enable_load_extension.html">sqlite3_enable_load_extension()</a>.</p>
 </dd>
 <a name="lower"></a>
@@ -386,20 +400,14 @@ the <a href="c3ref/create_function.html">sqlite3_create_function()</a> API.</p>
   searches its arguments from left to right for an argument that defines a
   collating function and uses that collating function for all string
   comparisons.  If neither argument to nullif() defines a collating function
-  then the BINARY is used.
+  then the BINARY collating function is used.
 </dd>
 <a name="printf"></a>
 <dt><p><b>printf(<i>FORMAT</i>,...)</b></dt><dd><p>
-  The printf(FORMAT,...) SQL function works like the <a href="c3ref/mprintf.html">sqlite3_mprintf()</a> C-language
-  function and the printf() function from the standard C library.
-  The first argument is a format string that specifies how to construct the output
-  string using values taken from subsequent arguments.  If the FORMAT argument is
-  missing or NULL then the result is NULL.  The %n format is silently ignored and
-  does not consume an argument.  The %p format is an alias for %X.  The %z format
-  is interchangeable with %s.  If there are too few arguments in the argument list,
-  missing arguments are assumed to have a NULL value, which is translated into
-  0 or 0.0 for numeric formats or an empty string for %s.  See the
-  <a href="printf.html">built-in printf()</a> documentation for additional information.
+  The printf() SQL function is an alias for the <a href="lang_corefunc.html#format">format() SQL function</a>.
+  The format() SQL function was original named printf(). But the name was later
+  changed to format() for compatibility with other database engines.  The original
+  printf() name is retained as an alias so as not to break any legacy code.
 </dd>
 <a name="quote"></a>
 <dt><p><b>quote(<i>X</i>)</b></dt><dd><p>

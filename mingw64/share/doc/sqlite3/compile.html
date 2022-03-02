@@ -1071,8 +1071,11 @@ the available settings:</p>
   "Makefile.msc" makefile for nmake.
 </p></blockquote><a name="enable_json1"></a>
 <p><b>SQLITE_ENABLE_JSON1</b></p><blockquote><p>
-  When this option is defined in the <a href="amalgamation.html">amalgamation</a>, the
-  <a href="json1.html">JSON SQL functions</a> are added to the build automatically.
+  This compile-time option is a no-op.  Prior to SQLite version 3.38.0
+  (2022-02-22), it was necessary to compile with this option in order
+  to include the <a href="json1.html">JSON SQL functions</a> in the build.  However, beginning
+  with SQLite version 3.38.0, those functions are included by default.
+  Use the <a href="compile.html#omit_json">-DSQLITE_OMIT_JSON</a> option to omit them.
 </p></blockquote><a name="enable_locking_style"></a>
 <p><b>SQLITE_ENABLE_LOCKING_STYLE</b></p><blockquote><p>
   This option enables additional logic in the OS interface layer for
@@ -1700,6 +1703,9 @@ The SQLITE_OMIT_* compile-time options are mostly unsupported.
   This option omits support for
   <a href="pragma.html#pragma_function_list">PRAGMA function_list</a>, <a href="pragma.html#pragma_module_list">PRAGMA module_list</a>, and
   <a href="pragma.html#pragma_pragma_list">PRAGMA pragma_list</a>.
+</p></blockquote><a name="omit_json"></a>
+<p><b>SQLITE_OMIT_JSON</b></p><blockquote><p>
+  This option omits the <a href="json1.html">JSON SQL functions</a> from the build.
 </p></blockquote><a name="omit_like_optimization"></a>
 <p><b>SQLITE_OMIT_LIKE_OPTIMIZATION</b></p><blockquote><p>
   This option disables the ability of SQLite to use indices to help

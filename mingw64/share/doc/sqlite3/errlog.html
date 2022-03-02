@@ -220,7 +220,7 @@ statement (using <a href="c3ref/step.html">sqlite3_step()</a>) that error is log
 When a schema change occurs that requires a prepared statement to be reparsed
 and reprepared, that event is logged with the error code SQLITE_SCHEMA.
 The reparse and reprepare is normally automatic (assuming that
-<a href="c3ref/prepare.html">sqlite3_prepare_v2()</a> has been used to prepared the statements originally,
+<a href="c3ref/prepare.html">sqlite3_prepare_v2()</a> has been used to prepare the statements originally,
 which is recommended) and so these logging events are normally the only
 way to know that reprepares are taking place.</p>
 
@@ -264,7 +264,7 @@ are not consistently checked in the application code.
 <p>SQLite strives to keep error logger traffic low and only send messages
 to the error logger when there really is something wrong.  Applications
 might further cull the error message traffic 
-by deliberately ignore certain classes of error
+by deliberately ignoring certain classes of error
 messages that they do not care about.  For example, an application that
 makes frequent database schema changes might want to ignore all
 SQLITE_SCHEMA errors.</p>
@@ -273,9 +273,9 @@ SQLITE_SCHEMA errors.</p>
 
 <p>The use of the error logger callback is highly recommended.
 The debugging information that the error logger provides has proven
-very useful in tracking down obscure problems that occurs with applications
+very useful in tracking down obscure problems that occur with applications
 after they get into the field.  The error logger callback has also 
-proven useful in catching errors occasional errors that the application
+proven useful in catching occasional errors that the application
 misses because of inconsistent checking of API return codes.
 Developers are encouraged to implement an error logger callback early
 in the development cycle in order to spot unexpected behavior quickly,

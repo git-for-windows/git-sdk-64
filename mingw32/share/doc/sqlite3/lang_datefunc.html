@@ -128,7 +128,7 @@ mk.innerHTML = "&#x25ba;";
 <h1 id="overview"><span>1. </span>Overview</h1>
 
 <p>
-SQLite supports five date and time functions as follows:
+SQLite supports six date and time functions as follows:
 </p>
 
 <p>
@@ -137,26 +137,51 @@ SQLite supports five date and time functions as follows:
 <li> <b>time(</b><i>time-value, modifier, modifier, ...</i><b>)</b> </li>
 <li> <b>datetime(</b><i>time-value, modifier, modifier, ...</i><b>)</b> </li>
 <li> <b>julianday(</b><i>time-value, modifier, modifier, ...</i><b>)</b> </li>
+<li> <b>unixepoch(</b><i>time-value, modifier, modifier, ...</i><b>)</b> </li>
 <li> <b>strftime(</b><i>format, time-value, modifier, modifier, ...</i><b>)</b> </li>
 </ol>
 
 <p>
-All five date and time functions take a time value as an argument. 
-The time value is followed by zero or more modifiers. 
+All six date and time functions take an optional time value as an argument, followed
+by zero or more modifiers.
 The strftime() function also takes a format string as its first argument.
 </p>
 
 <p>
-The date and time functions use a subset of
-<a href="http://en.wikipedia.org/wiki/ISO_8601">IS0-8601</a> date and time
-formats.
-The date() function returns the date in this format: YYYY-MM-DD. 
-The time() function returns the time as HH:MM:SS. 
-The datetime() function returns "YYYY-MM-DD HH:MM:SS". 
+Date and time values can be stored as
+</p><ul>
+<li> text in a subset of the <a href="http://en.wikipedia.org/wiki/ISO_8601">ISO-8601</a> format,
+</li><li> numbers representing the <a href="http://en.wikipedia.org/wiki/Julian_day">Julian day</a>, or
+</li><li> numbers representing the number of seconds since (or before) 1970-01-01 00:00:00 UTC
+     (the unix timestamp).
+</li></ul>
+
+<p>
+All of the date time functions access time-values in any of the above time formats.
+
+</p><p>
+The date() function returns the date as text in this format: YYYY-MM-DD.
+
+</p><p>
+The time() function returns the time as text in this format: HH:MM:SS.
+
+</p><p>
+The datetime() function returns the date and time as text in their same formats: YYYY-MM-DD HH:MM:SS.
+
+</p><p>
 The julianday() function returns the 
 <a href="http://en.wikipedia.org/wiki/Julian_day">Julian day</a> - the
-number of days since noon in Greenwich on November 24, 4714 B.C. 
+fractional number of days since noon in Greenwich on November 24, 4714 B.C. 
 (<a href="http://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar">Proleptic Gregorian calendar</a>).
+
+<a name="uepch"></a>
+
+</p><p>
+The unixepoch() function returns a unix timestamp - the number of seconds
+since 1970-01-01 00:00:00 UTC.  The unixepoch() always returns an integer,
+even if the input time-value has millisecond precision.
+
+</p><p>
 The strftime() routine returns the date formatted according to 
 the format string specified as the first argument.
 The format string supports the most common substitutions found in the 
@@ -173,7 +198,7 @@ The following is a complete list of valid strftime() substitutions:
 </td></tr><tr><td> %f </td><td></td><td> fractional seconds: SS.SSS
 </td></tr><tr><td> %H </td><td></td><td> hour: 00-24 
 </td></tr><tr><td> %j </td><td></td><td> day of year: 001-366
-</td></tr><tr><td> %J </td><td></td><td> Julian day number
+</td></tr><tr><td> %J </td><td></td><td> Julian day number (fractional)
 </td></tr><tr><td> %m </td><td></td><td> month: 01-12
 </td></tr><tr><td> %M </td><td></td><td> minute: 00-59
 </td></tr><tr><td> %s </td><td></td><td> seconds since 1970-01-01
@@ -186,23 +211,34 @@ The following is a complete list of valid strftime() substitutions:
 </blockquote>
 
 <p>
-Notice that all other date and time functions can be expressed
+All other date and time functions can be expressed
 in terms of strftime():
 </p>
 
 <blockquote>
 <table border="0" cellpadding="0" cellspacing="0">
-<tr><td><b>Function</b></td><td width="30"></td><td><b>Equivalent strftime()</b>
+<tr><td><b>Function</b></td><td width="30"></td><td><b>Equivalent (or nearly) strftime()</b>
 </td></tr><tr><td>   date(...)      </td><td></td><td>  strftime('%Y-%m-%d', ...)
 </td></tr><tr><td>   time(...)      </td><td></td><td>  strftime('%H:%M:%S', ...)
 </td></tr><tr><td>   datetime(...)  </td><td></td><td>  strftime('%Y-%m-%d %H:%M:%S', ...)
-</td></tr><tr><td>   julianday(...) </td><td></td><td>  strftime('%J', ...)
+</td></tr><tr><td>   julianday(...) </td><td></td><td>  <nobr>strftime('%J', ...) -- note-1</nobr>
+</td></tr><tr><td>   unixepoch(...) </td><td></td><td>  <nobr>strftime('%s', ...) -- note-1</nobr>
 </td></tr></table>
 </blockquote>
 
 <p>
-The only reasons for providing functions other than strftime() is
-for convenience and for efficiency.
+The date(), time(), and datetime() functions all return text, and so their
+strftime() equivalents are exact.  However (<b>note-1</b>) the julianday()
+and unixepoch() functions return numeric values.  Their strftime() equivalents
+return strings that is the text representation of the corresponding number.
+</p>
+
+<p>
+The main reasons for providing functions other than strftime() are
+for convenience and for efficiency. The julianday() and unixepoch()
+functions return real and integer values respectively, and do not
+incur the format conversion costs or inexactitude resulting from use
+of the '%J' or '%s' format specifiers with the strftime() function.
 </p>
 
 <h1 id="time_values"><span>2. </span>Time Values</h1>
@@ -240,6 +276,8 @@ same value for multiple invocations within the same <a href="c3ref/step.html">sq
 Format 12 is the 
 <a href="http://en.wikipedia.org/wiki/Julian_day">Julian day number</a>
 expressed as an integer or floating point value.
+Format 12 might also be interpreted as a unix timestamp if it is immediately followed
+either the 'auto' or 'unixepoch' modifier.
 </p>
 
 <p>
@@ -268,7 +306,13 @@ functions will really accept as many or as few digits as are necessary to
 represent the Julian day number.
 </p>
 
-<h1 id="modifiers"><span>3. </span>Modifiers</h1>
+<p>
+The time-value (and all modifiers) may be omitted, in which case a time
+value of 'now' is assumed.
+
+<a name="dtmods"></a>
+
+</p><h1 id="modifiers"><span>3. </span>Modifiers</h1>
 
 <p>The time value can be followed by zero or more modifiers that 
 alter date and/or time. Each modifier
@@ -288,6 +332,8 @@ The available modifiers are as follows.</p>
 </li><li> start of day
 </li><li> weekday N
 </li><li> unixepoch
+</li><li> julianday
+</li><li> auto
 </li><li> localtime
 </li><li> utc 
 </li></ol>
@@ -298,14 +344,14 @@ specified by the arguments to the left.
 The 's' character at the end of the modifier names is optional.
 Note that "&plusmn;NNN months" works by rendering the original date into
 the YYYY-MM-DD format, adding the &plusmn;NNN to the MM month value, then
-normalizing the result.  Thus, for example, the data 2001-03-31 modified
+normalizing the result.  Thus, for example, the date 2001-03-31 modified
 by '+1 month' initially yields 2001-04-31, but April only has 30 days
 so the date is normalized to 2001-05-01.  A similar effect occurs when
 the original date is February 29 of a leapyear and the modifier is
 &plusmn;N years where N is not a multiple of four.</p>
 
 <p>The "start of" modifiers (7 through 9) shift the date backwards 
-to the beginning of the current month, year or day.</p>
+to the beginning of the subject month, year or day.</p>
 
 <p>The "weekday" modifier advances the date forward, if necessary,
 to the next date where the weekday number is N. Sunday is 0, Monday is 1,
@@ -328,9 +374,45 @@ the "unixepoch" modifier only works for
 dates between 0000-01-01 00:00:00 and 5352-11-01 10:52:47 (unix times
 of -62167219200 through 106751991167).</p>
 
+<a name="jdmod"></a>
+
+<p>The "julianday" modifier must immediately follow the initial
+time-value which must be of the form DDDDDDDDD.  Any other use of
+the 'julianday' modifier is an error and causes the function to return NULL.
+The 'julianday' modifier forces the time-value number to be interpreted
+as a julian-day number.  As this is the default behavior, the 'julianday'
+modifier is scarcely more than a no-op.  The only difference is that
+adding 'julianday' forces the DDDDDDDDD time-value format, and causes
+a NULL to be returned if any other time-value format is used.
+
+<a name="automod"></a>
+
+</p><p>The "auto" modifier must immediately follow the initial time-value.
+If the time-value is numeric (the DDDDDDDDDD format) then the 'auto'
+modifier causes the time-value to interpreted as either a julian day
+number or a unix timestamp, depending on its magnitude.  If the value
+is between 0.0 and 5373484.499999, then it is interpreted as a julian
+day number (corresponding to dates between
+-4713-11-24 12:00:00 and 9999-12-31 23:59:59, inclusive).  For numeric
+values outside of the range of valid julian day numbers, but within 
+the range of -210866760000 to 253402300799, the 'auto' modifier causes
+the value to be interpreted as a unix timestamp.  Other numeric values
+are out of range and cause a NULL return.  The 'auto' modifier is a no-op 
+for text time-values.
+
+</p><p>The 'auto' modifier can be used to work with date/time values even in
+cases where it is not known if the julian day number or unix timestamp
+formats are in use.  The 'auto' modifier will automatically select the
+appropriate format.  However, there is a region of ambiguity.  Unix
+timestamps for the first 63 days of 1970 will be interpreted as julian
+day numbers.  The 'auto' modifier is very useful when the dataset is
+guaranteed to not contain any dates within that region, but should be
+avoided for applications that might make use of dates in the opening
+months of 1970.
+
 <a name="localtime"></a>
 
-<p>The "localtime" modifier (12) assumes the time value to its left is in
+</p><p>The "localtime" modifier (14) assumes the time value to its left is in
 Universal Coordinated Time (UTC) and adjusts that time
 value so that it is in localtime.  If "localtime"
 follows a time that is not UTC, then the behavior is undefined.
@@ -344,7 +426,7 @@ undefined.</p>
 
 <p>Compute the current date.</p><p>
 
-</p><blockquote>SELECT date('now');</blockquote>
+</p><blockquote>SELECT date();</blockquote>
 
 <p>Compute the last day of the current month.</p>
 
@@ -354,7 +436,8 @@ undefined.</p>
 <p>Compute the date and time given a unix timestamp 1092941466.</p>
 
 <blockquote>
-    SELECT datetime(1092941466, 'unixepoch');
+    SELECT datetime(1092941466, 'unixepoch');<br>
+    SELECT datetime(1092941466, 'auto'); -- Does not work for early 1970!
 </blockquote>
 
 <p>Compute the date and time given a unix timestamp 1092941466, and 
@@ -367,7 +450,8 @@ compensate for your local timezone.</p>
 <p>Compute the current unix timestamp.</p>
 
 <blockquote>
-  SELECT strftime('%s','now');
+  SELECT unixepoch();<br>
+  SELECT strftime('%s');
 </blockquote>
 
 <p>Compute the number of days since the signing of the US Declaration
@@ -380,7 +464,7 @@ of Independence.</p>
 <p>Compute the number of seconds since a particular moment in 2004:</p>
 
 <blockquote>
-  SELECT strftime('%s','now') - strftime('%s','2004-01-01 02:34:56');
+  SELECT unixepoch() - unixepoch('2004-01-01 02:34:56');
 </blockquote>
 
 <p>
@@ -392,8 +476,8 @@ for the current year.
   SELECT date('now','start of year','+9 months','weekday 2');
 </blockquote>
 
-<p>Compute the time since the unix epoch in seconds 
-(like strftime('%s','now') except includes fractional part):</p>
+<p>Compute the time since the unix epoch in seconds with
+millisecond precision:</p>
 
 <blockquote>
   SELECT (julianday('now') - 2440587.5)*86400.0;
@@ -411,7 +495,6 @@ between 1970 and 2037. For dates outside this range, SQLite
 attempts to map the year into an equivalent year within 
 this range, do the calculation, then map the year back.</p>
 
-
 <p>These functions only work for dates between 0000-01-01 00:00:00
 and 9999-12-31 23:59:59 (julian day numbers 1721059.5 through 5373484.5).
 For dates outside that range, the results of these
@@ -427,6 +510,6 @@ getting results correct back to 1986, when the rules were also changed.</p>
 
 <p>All internal computations assume the 
 <a href="http://en.wikipedia.org/wiki/Gregorian_calendar">Gregorian calendar</a>
-system.  It is also assumed that every
-day is exactly 86400 seconds in duration.</p>
+system.  They also assume that every
+day is exactly 86400 seconds in duration; no leap seconds are incorporated.</p>
 

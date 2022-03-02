@@ -140,8 +140,8 @@ return false;
 <li value='16'> Fix <a href="https://sqlite.org/forum/forumpost/b03d86f9516cb3a2">a bug</a> introduced
      in <a href="../releaselog/3_35_0.html">version 3.35.0</a> (2021-03-12) that 
      <a href="../howtocorrupt.html#svptbug">can cause database corruption</a>
-     if a <a href="../lang_savepoint.html">SAVEPOINT</a> is rolled back, other changes are made, and
-     the outer transaction commits.
+     if a <a href="../lang_savepoint.html">SAVEPOINT</a> is rolled back while in <a href="../pragma.html#pragma_temp_store">PRAGMA temp_store=MEMORY</a> mode,
+     and other changes are made, and then the outer transaction commits.
      <a href="https://sqlite.org/src/info/73c2b50211d3ae26">Check-in 73c2b50211d3ae26</a>
 <li> Fix a long-standing problem with ON DELETE CASCADE and ON UPDATE CASCADE
      in which a cache of the <a href="../opcode.html">bytecode</a> used to implement the cascading change

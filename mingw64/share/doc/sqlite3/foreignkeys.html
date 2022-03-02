@@ -343,7 +343,7 @@ sqlite&gt; UPDATE artist SET artistid=4 WHERE artistname = 'Dean Martin';
 </h1>
   <p>
     In order to use foreign key constraints in SQLite, the library must
-    be compiled with neither <a href="compile.html#omit_foreign_key">SQLITE_OMIT_FOREIGN_KEY</a> or 
+    be compiled with neither <a href="compile.html#omit_foreign_key">SQLITE_OMIT_FOREIGN_KEY</a> nor 
     <a href="compile.html#omit_trigger">SQLITE_OMIT_TRIGGER</a> defined. If SQLITE_OMIT_TRIGGER is defined 
     but SQLITE_OMIT_FOREIGN_KEY is not, then SQLite behaves as it did prior 
     to <a href="releaselog/3_6_19.html">version 3.6.19</a> (2009-10-14)
@@ -912,7 +912,8 @@ null
     foreign key constraints are not checked when a table is created. There is
     nothing stopping the user from creating a foreign key definition that
     refers to a parent table that does not exist, or to parent key columns that
-    do not exist or are not collectively bound by a PRIMARY KEY or UNIQUE constraint.
+    do not exist or are not collectively bound by a PRIMARY KEY or UNIQUE
+    constraint.
 
   </p><p>
     The <a href="lang_altertable.html">ALTER TABLE</a> command works differently in two respects when foreign

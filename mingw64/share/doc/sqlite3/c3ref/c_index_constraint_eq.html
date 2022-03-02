@@ -90,33 +90,65 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-<!-- keywords: SQLITE_INDEX_CONSTRAINT_EQ SQLITE_INDEX_CONSTRAINT_FUNCTION SQLITE_INDEX_CONSTRAINT_GE SQLITE_INDEX_CONSTRAINT_GLOB SQLITE_INDEX_CONSTRAINT_GT SQLITE_INDEX_CONSTRAINT_IS SQLITE_INDEX_CONSTRAINT_ISNOT SQLITE_INDEX_CONSTRAINT_ISNOTNULL SQLITE_INDEX_CONSTRAINT_ISNULL SQLITE_INDEX_CONSTRAINT_LE SQLITE_INDEX_CONSTRAINT_LIKE SQLITE_INDEX_CONSTRAINT_LT SQLITE_INDEX_CONSTRAINT_MATCH SQLITE_INDEX_CONSTRAINT_NE SQLITE_INDEX_CONSTRAINT_REGEXP -->
+<!-- keywords: SQLITE_INDEX_CONSTRAINT_EQ SQLITE_INDEX_CONSTRAINT_FUNCTION SQLITE_INDEX_CONSTRAINT_GE SQLITE_INDEX_CONSTRAINT_GLOB SQLITE_INDEX_CONSTRAINT_GT SQLITE_INDEX_CONSTRAINT_IS SQLITE_INDEX_CONSTRAINT_ISNOT SQLITE_INDEX_CONSTRAINT_ISNOTNULL SQLITE_INDEX_CONSTRAINT_ISNULL SQLITE_INDEX_CONSTRAINT_LE SQLITE_INDEX_CONSTRAINT_LIKE SQLITE_INDEX_CONSTRAINT_LIMIT SQLITE_INDEX_CONSTRAINT_LT SQLITE_INDEX_CONSTRAINT_MATCH SQLITE_INDEX_CONSTRAINT_NE SQLITE_INDEX_CONSTRAINT_OFFSET SQLITE_INDEX_CONSTRAINT_REGEXP -->
 <div class=nosearch>
 <a href="intro.html"><h2>SQLite C Interface</h2></a>
 <h2>Virtual Table Constraint Operator Codes</h2>
 </div>
 <blockquote><pre>
-#define SQLITE_INDEX_CONSTRAINT_EQ         2
-#define SQLITE_INDEX_CONSTRAINT_GT         4
-#define SQLITE_INDEX_CONSTRAINT_LE         8
-#define SQLITE_INDEX_CONSTRAINT_LT        16
-#define SQLITE_INDEX_CONSTRAINT_GE        32
-#define SQLITE_INDEX_CONSTRAINT_MATCH     64
-#define SQLITE_INDEX_CONSTRAINT_LIKE      65
-#define SQLITE_INDEX_CONSTRAINT_GLOB      66
-#define SQLITE_INDEX_CONSTRAINT_REGEXP    67
-#define SQLITE_INDEX_CONSTRAINT_NE        68
-#define SQLITE_INDEX_CONSTRAINT_ISNOT     69
-#define SQLITE_INDEX_CONSTRAINT_ISNOTNULL 70
-#define SQLITE_INDEX_CONSTRAINT_ISNULL    71
-#define SQLITE_INDEX_CONSTRAINT_IS        72
-#define SQLITE_INDEX_CONSTRAINT_FUNCTION 150
+#define SQLITE_INDEX_CONSTRAINT_EQ          2
+#define SQLITE_INDEX_CONSTRAINT_GT          4
+#define SQLITE_INDEX_CONSTRAINT_LE          8
+#define SQLITE_INDEX_CONSTRAINT_LT         16
+#define SQLITE_INDEX_CONSTRAINT_GE         32
+#define SQLITE_INDEX_CONSTRAINT_MATCH      64
+#define SQLITE_INDEX_CONSTRAINT_LIKE       65
+#define SQLITE_INDEX_CONSTRAINT_GLOB       66
+#define SQLITE_INDEX_CONSTRAINT_REGEXP     67
+#define SQLITE_INDEX_CONSTRAINT_NE         68
+#define SQLITE_INDEX_CONSTRAINT_ISNOT      69
+#define SQLITE_INDEX_CONSTRAINT_ISNOTNULL  70
+#define SQLITE_INDEX_CONSTRAINT_ISNULL     71
+#define SQLITE_INDEX_CONSTRAINT_IS         72
+#define SQLITE_INDEX_CONSTRAINT_LIMIT      73
+#define SQLITE_INDEX_CONSTRAINT_OFFSET     74
+#define SQLITE_INDEX_CONSTRAINT_FUNCTION  150
 </pre></blockquote>
 <p>
 These macros define the allowed values for the
 <a href="../c3ref/index_info.html">sqlite3_index_info</a>.aConstraint[].op field.  Each value represents
-an operator that is part of a constraint term in the wHERE clause of
-a query that uses a <a href="../vtab.html">virtual table</a>.
+an operator that is part of a constraint term in the WHERE clause of
+a query that uses a <a href="../vtab.html">virtual table</a>.</p>
+
+<p>The left-hand operand of the operator is given by the corresponding
+aConstraint[].iColumn field.  An iColumn of -1 indicates the left-hand
+operand is the rowid.
+The SQLITE_INDEX_CONSTRAINT_LIMIT and SQLITE_INDEX_CONSTRAINT_OFFSET
+operators have no left-hand operand, and so for those operators the
+corresponding aConstraint[].iColumn is meaningless and should not be
+used.</p>
+
+<p>All operator values from SQLITE_INDEX_CONSTRAINT_FUNCTION through
+value 255 are reserved to represent functions that are overloaded
+by the <a href="../vtab.html#xfindfunction">xFindFunction method</a> of the virtual table
+implementation.</p>
+
+<p>The right-hand operands for each constraint might be accessible using
+the <a href="../c3ref/vtab_rhs_value.html">sqlite3_vtab_rhs_value()</a> interface.  Usually the right-hand
+operand is only available if it appears as a single constant literal
+in the input SQL.  If the right-hand operand is another column or an
+expression (even a constant expression) or a parameter, then the
+sqlite3_vtab_rhs_value() probably will not be able to extract it.
+The SQLITE_INDEX_CONSTRAINT_ISNULL and
+SQLITE_INDEX_CONSTRAINT_ISNOTNULL operators have no right-hand operand
+and hence calls to sqlite3_vtab_rhs_value() for those operators will
+always return SQLITE_NOTFOUND.</p>
+
+<p>The collating sequence to be used for comparison can be found using
+the <a href="../c3ref/vtab_collation.html">sqlite3_vtab_collation()</a> interface.  For most real-world virtual
+tables, the collating sequence of constraints does not matter (for example
+because the constraints are numeric) and so the sqlite3_vtab_collation()
+interface is no commonly needed.
 </p><p>See also lists of
   <a href="objlist.html">Objects</a>,
   <a href="constlist.html">Constants</a>, and

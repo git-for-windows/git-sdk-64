@@ -136,7 +136,11 @@ For example, an UPDATE statement might have a WHERE clause that
 makes it a no-op, but the sqlite3_stmt_readonly() result would still
 be false.  Similarly, a CREATE TABLE IF NOT EXISTS statement is a
 read-only no-op if the table already exists, but
-sqlite3_stmt_readonly() still returns false for such a statement.
+sqlite3_stmt_readonly() still returns false for such a statement.</p>
+
+<p>If prepared statement X is an <a href="../lang_explain.html">EXPLAIN</a> or <a href="../eqp.html">EXPLAIN QUERY PLAN</a>
+statement, then sqlite3_stmt_readonly(X) returns the same value as
+if the EXPLAIN or EXPLAIN QUERY PLAN prefix were omitted.
 </p><p>See also lists of
   <a href="objlist.html">Objects</a>,
   <a href="constlist.html">Constants</a>, and

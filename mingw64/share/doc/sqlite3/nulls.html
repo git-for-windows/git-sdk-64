@@ -316,7 +316,7 @@ The following table shows the results of the NULL handling experiments.
 <tr>
 <td valign="top" rowspan=5>Notes:&nbsp;&nbsp;</td>
 <td>1.&nbsp;</td>
-<td>Older versions of firebird omits all NULLs from SELECT DISTINCT
+<td>Older versions of firebird omit all NULLs from SELECT DISTINCT
 and from UNION.</td>
 </tr>
 <tr><td>2.&nbsp;</td>
@@ -345,8 +345,8 @@ above.
 -- I have about decided that SQL's treatment of NULLs is capricious and cannot be
 -- deduced by logic.  It must be discovered by experiment.  To that end, I have 
 -- prepared the following script to test how various SQL databases deal with NULL.
--- My aim is to use the information gather from this script to make SQLite as much
--- like other databases as possible.
+-- My aim is to use the information gathered from this script to make SQLite as
+-- much like other databases as possible.
 --
 -- If you could please run this script in your database engine and mail the results
 -- to me at drh@hwaci.com, that will be a big help.  Please be sure to identify the
@@ -376,7 +376,7 @@ select a+50, case when not (b<>0 or c<>0) then 1 else 0 end from t1;
 select a+60, case b when c then 1 else 0 end from t1;
 select a+70, case c when b then 1 else 0 end from t1;
 
--- What happens when you multiple a NULL by zero?
+-- What happens when you multiply a NULL by zero?
 select a+80, b*0 from t1;
 select a+90, b*c from t1;
 

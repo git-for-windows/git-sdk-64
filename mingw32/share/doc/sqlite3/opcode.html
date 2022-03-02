@@ -192,8 +192,8 @@ output from SQLite, you should reference the version of this document
 that corresponds to the version of SQLite that ran the <a href="lang_explain.html">EXPLAIN</a>.
 Otherwise, the description of the opcodes may not be accurate.
 This document is derived from SQLite
- version 3.37.2 check-in
-<a href='https://www.sqlite.org/src/timeline?c=872ba256cbf61'>872ba256cbf61</a> dated 2022-01-06.
+ version 3.38.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=40fa792d359f8'>40fa792d359f8</a> dated 2022-02-22.
 
 
 
@@ -416,20 +416,20 @@ pragmas include:
 
 <h1 id="the_opcodes"><span>4. </span>The Opcodes</h1>
 
-<p>There are currently 181
+<p>There are currently 184
 opcodes defined by the virtual machine.
 All currently defined opcodes are described in the table below.
 This table was generated automatically by scanning the source code
 from the file
-<a href="http://www.sqlite.org/src/artifact/84cc51edc36f773a97433c0a1388833557806f56562b6a2cb9fefeadc5e236b0">vdbe.c</a>.
+<a href="http://www.sqlite.org/src/artifact/e179d2d6551c6cc3dda7f6f233f9fe3d3c8da2f9bfc46eaabb4b54dc4337d3cf">vdbe.c</a>.
 
 
 </p><p>Remember: The VDBE opcodes are <u>not</u> part of the interface 
 definition for SQLite.  The number of opcodes and their names and meanings
 change from one release of SQLite to the next.
 The opcodes shown in the table below are valid for SQLite
- version 3.37.2 check-in
-<a href='https://www.sqlite.org/src/timeline?c=872ba256cbf61'>872ba256cbf61</a> dated 2022-01-06.
+ version 3.38.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=40fa792d359f8'>40fa792d359f8</a> dated 2022-02-22.
 
 <a name="codes"></a>
 
@@ -553,7 +553,8 @@ If either input is NULL, the result is NULL.</td></tr>
 <tr><td valign="top" align="center">
 <a name="Blob"></a>Blob
 <td>P4 points to a blob of data P1 bytes long.  Store this
-blob in register P2.</td></tr>
+blob in register P2.  If P4 is a NULL pointer, then construct
+a zero-filled blob that is P1 bytes long in P2.</td></tr>
 <tr><td valign="top" align="center">
 <a name="Cast"></a>Cast
 <td>Force the value in register P1 to be the type defined by P2.</p>
@@ -577,15 +578,6 @@ WAL after the checkpoint into mem&#91;P3+1&#93; and the number of pages
 in the WAL that have been checkpointed after the checkpoint
 completes into mem&#91;P3+2&#93;.  However on an error, mem&#91;P3+1&#93; and
 mem&#91;P3+2&#93; are initialized to -1.</td></tr>
-<tr><td valign="top" align="center">
-<a name="ChngCntRow"></a>ChngCntRow
-<td>Output value in register P1 as the chance count for a DML statement,
-due to the "PRAGMA count_changes=ON" setting.  Or, if there was a
-foreign key error in the statement, trigger the error now.</p>
-
-<p>This opcode is a variant of <a href="opcode.html#ResultRow">ResultRow</a> that checks the foreign key
-immediate constraint count and throws an error if the count is
-non-zero.  The P2 opcode must be 1.</td></tr>
 <tr><td valign="top" align="center">
 <a name="Clear"></a>Clear
 <td>Delete all contents of the database table or index whose root page
@@ -884,10 +876,36 @@ The P2==1 case occurs when a CREATE INDEX or similar schema change happens
 that might help the statement run faster but which does not affect the
 correctness of operation.</td></tr>
 <tr><td valign="top" align="center">
+<a name="Filter"></a>Filter
+<td>Compute a hash on the key contained in the P4 registers starting
+with r&#91;P3&#93;.  Check to see if that hash is found in the
+bloom filter hosted by register P1.  If it is not present then
+maybe jump to P2.  Otherwise fall through.</p>
+
+<p>False negatives are harmless.  It is always safe to fall through,
+even if the value is in the bloom filter.  A false negative causes
+more CPU cycles to be used, but it should still yield the correct
+answer.  However, an incorrect answer may well arise from a
+false positive - if the jump is taken when it should fall through.</td></tr>
+<tr><td valign="top" align="center">
+<a name="FilterAdd"></a>FilterAdd
+<td>Compute a hash on the P4 registers starting with r&#91;P3&#93; and
+add that hash to the bloom filter contained in r&#91;P1&#93;.</td></tr>
+<tr><td valign="top" align="center">
 <a name="FinishSeek"></a>FinishSeek
 <td>If cursor P1 was previously moved via <a href="opcode.html#DeferredSeek">DeferredSeek</a>, complete that
 seek operation now, without further delay.  If the cursor seek has
 already occurred, this instruction is a no-op.</td></tr>
+<tr><td valign="top" align="center">
+<a name="FkCheck"></a>FkCheck
+<td>Halt with an SQLITE_CONSTRAINT error if there are any unresolved
+foreign key constraint violations.  If there are no foreign key
+constraint violations, this is a no-op.</p>
+
+<p>FK constraint violations are also checked when the prepared statement
+exits.  This opcode is used to raise foreign key constraint errors prior
+to returning results such as a row change count or the result of a
+RETURNING clause.</td></tr>
 <tr><td valign="top" align="center">
 <a name="FkCounter"></a>FkCounter
 <td>Increment a "constraint counter" by P2 (P2 may be negative or positive).
@@ -2418,6 +2436,14 @@ additional parameters which are passed to
 xFilter as argv. Register P3+2 becomes argv[0] when passed to xFilter.</p>
 
 <p>A jump is made to P2 if the result set after filtering would be empty.</td></tr>
+<tr><td valign="top" align="center">
+<a name="VInitIn"></a>VInitIn
+<td>Set register P2 to be a pointer to a ValueList object for cursor P1
+with cache register P3 and output register P3+1.  This ValueList object
+can be used as the first argument to sqlite3_vtab_in_first() and
+sqlite3_vtab_in_next() to extract all of the values stored in the P1
+cursor.  Register P3 is used to hold the values returned by
+sqlite3_vtab_in_first() and sqlite3_vtab_in_next().</td></tr>
 <tr><td valign="top" align="center">
 <a name="VNext"></a>VNext
 <td>Advance virtual table P1 to the next row in its result set and

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="../sqlite.css" rel="stylesheet">
+<title>Find all elements on the right-hand side of an IN constraint.</title>
+<!-- path=../ -->
+</head>
+<body>
+<div class=nosearch>
+<a href="../index.html">
+<img class="logo" src="../images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="../index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='../about.html'>About</a>
+<li class='desktoponly'><a href="../docs.html">Documentation</a>
+<li class='desktoponly'><a href="../download.html">Download</a>
+<li class='wideonly'><a href='../copyright.html'>License</a>
+<li class='desktoponly'><a href="../support.html">Support</a>
+<li class='desktoponly'><a href="../prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='../about.html'>About</a>
+<li><a href='../docs.html'>Documentation</a>
+<li><a href='../download.html'>Download</a>
+<li><a href='../support.html'>Support</a>
+<li><a href='../prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="../search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+<!-- keywords: sqlite3_vtab_in_first sqlite3_vtab_in_next -->
+<div class=nosearch>
+<a href="intro.html"><h2>SQLite C Interface</h2></a>
+<h2>Find all elements on the right-hand side of an IN constraint.</h2>
+</div>
+<blockquote><pre>
+int sqlite3_vtab_in_first(sqlite3_value *pVal, sqlite3_value **ppOut);
+int sqlite3_vtab_in_next(sqlite3_value *pVal, sqlite3_value **ppOut);
+</pre></blockquote>
+<p>
+These interfaces are only useful from within the
+<a href="../vtab.html#xfilter">xFilter() method</a> of a <a href="../vtab.html">virtual table</a> implementation.
+The result of invoking these interfaces from any other context
+is undefined and probably harmful.</p>
+
+<p>The X parameter in a call to sqlite3_vtab_in_first(X,P) or
+sqlite3_vtab_in_next(X,P) must be one of the parameters to the
+xFilter method which invokes these routines, and specifically
+a parameter that was previously selected for all-at-once IN constraint
+processing use the <a href="../c3ref/vtab_in.html">sqlite3_vtab_in()</a> interface in the
+<a href="../vtab.html#xbestindex">xBestIndex method</a>.  If the X parameter is not
+an xFilter argument that was selected for all-at-once IN constraint
+processing, then these routines return <a href="../rescode.html#misuse">SQLITE_MISUSE</a> or perhaps
+exhibit some other undefined or harmful behavior.</p>
+
+<p>Use these routines to access all values on the right-hand side
+of the IN constraint using code like the following:</p>
+
+<p><blockquote><pre>
+&nbsp;  for(rc=sqlite3_vtab_in_first(pList, &pVal);
+&nbsp;      rc==SQLITE_OK && pVal
+&nbsp;      rc=sqlite3_vtab_in_next(pList, &pVal)
+&nbsp;  ){
+&nbsp;    // do something with pVal
+&nbsp;  }
+&nbsp;  if( rc!=SQLITE_OK ){
+&nbsp;    // an error has occurred
+&nbsp;  }
+</pre></blockquote></p>
+
+<p>On success, the sqlite3_vtab_in_first(X,P) and sqlite3_vtab_in_next(X,P)
+routines return SQLITE_OK and set *P to point to the first or next value
+on the RHS of the IN constraint.  If there are no more values on the
+right hand side of the IN constraint, then *P is set to NULL and these
+routines return <a href="../rescode.html#done">SQLITE_DONE</a>.  The return value might be
+some other value, such as SQLITE_NOMEM, in the event of a malfunction.</p>
+
+<p>The *ppOut values returned by these routines are only valid until the
+next call to either of these routines or until the end of the xFilter
+method from which these routines were called.  If the virtual table
+implementation needs to retain the *ppOut values for longer, it must make
+copies.  The *ppOut values are <a href="../c3ref/value.html">protected</a>.
+</p><p>See also lists of
+  <a href="objlist.html">Objects</a>,
+  <a href="constlist.html">Constants</a>, and
+  <a href="funclist.html">Functions</a>.</p>

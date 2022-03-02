@@ -104,7 +104,7 @@ Table Of Contents
 <div class="fancy-toc1"><a href="#operators_and_parse_affecting_attributes">2. Operators, and Parse-Affecting Attributes</a></div>
 <div class="fancy-toc1"><a href="#literal_values_constants_">3. Literal Values (Constants)</a></div>
 <div class="fancy-toc1"><a href="#parameters">4. Parameters</a></div>
-<div class="fancy-toc1"><a href="#the_like_glob_regexp_and_match_operators">5. The LIKE, GLOB, REGEXP, and MATCH operators</a></div>
+<div class="fancy-toc1"><a href="#the_like_glob_regexp_match_and_extract_operators">5. The LIKE, GLOB, REGEXP, MATCH, and extract operators</a></div>
 <div class="fancy-toc1"><a href="#the_between_operator">6. The BETWEEN operator</a></div>
 <div class="fancy-toc1"><a href="#the_case_expression">7. The CASE expression</a></div>
 <div class="fancy-toc1"><a href="#the_in_and_not_in_operators">8. The IN and NOT IN operators</a></div>
@@ -2349,7 +2349,7 @@ mk.innerHTML = "&#x25ba;";
     <td class="optab"><small class="optab">&lsqb;expr&rsqb;</small>&nbsp;COLLATE&nbsp;&lpar;collation-name&rpar;&nbsp;<sup>3</sup></td>
   </tr>
   <tr align="center">
-    <td class="optab">||</td>
+    <td class="optab">||&nbsp;&nbsp;&nbsp;-&gt;&nbsp;&nbsp;&nbsp;-&gt;&gt;</td>
   </tr>
   <tr align="center">
     <td class="optab">*&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;%</td>
@@ -2380,7 +2380,7 @@ mk.innerHTML = "&#x25ba;";
     <td class="optab">AND</td>
   </tr>
   <tr align="center">
-    <td class="optab">(OR</td>
+    <td class="optab">OR</td>
   </tr>
 </table>
 <p>
@@ -2420,13 +2420,30 @@ The non-equals operator can be either
 <font color="#2c2cf0"><big>!=</big></font> or <font color="#2c2cf0"><big>&lt;&gt;</big></font>.
 The <font color="#2c2cf0"><big>||</big></font> operator is "concatenate" - it joins together
 the two strings of its operands.
+The <font color="#2c2cf0"><big>-&gt;</big></font> and <font color="#2c2cf0"><big>-&gt;&gt;</big></font> operators are "extract";
+they extract the RHS component from the LHS.
+For an example, see
+ <a href="json1.html#jptr">JSON subcomponent extraction</a>.
 The <font color="#2c2cf0"><big>%</big></font> operator <a href="lang_expr.html#castexpr">casts</a> both of its operands to type
 INTEGER and then computes the remainder after dividing the left integer
 by the right integer.</p>
 
 <p>The result of any binary operator is either a numeric value or 
-NULL, except for the <font color="#2c2cf0"><big>||</big></font> concatenation operator which always 
-evaluates to either NULL or a text value.</p><a name="isisnot"></a>
+NULL, except for the <font color="#2c2cf0"><big>||</big></font> concatenation operator,
+and the <font color="#2c2cf0"><big>-&gt;</big></font> and <font color="#2c2cf0"><big>-&gt;&gt;</big></font> extract operators
+which evaluate to either NULL or a text value.</p>
+
+<p>All operators generally evaluate to NULL when any operand is NULL,
+with specific exceptions as stated below. This is in accordance with
+the SQL92 standard.</p>
+
+<p> When paired with NULL:<br>
+&nbsp;&nbsp;<font color="#2c2cf0"><big>AND</big></font> evaluates to 0 (false) when
+the other operand is false; and<br>
+&nbsp;&nbsp;<font color="#2c2cf0"><big>OR</big></font> evaluates to 1 (true)
+when the other operand is true.
+</p>
+<a name="isisnot"></a>
 <p>The <font color="#2c2cf0"><big>IS</big></font> and <font color="#2c2cf0"><big>IS NOT</big></font> operators work
 like <font color="#2c2cf0"><big>=</big></font> and <font color="#2c2cf0"><big>!=</big></font> except when one or both of the
 operands are NULL. In this case, if both operands are NULL, then the
@@ -2667,7 +2684,7 @@ using the <a href="c3ref/limit.html">sqlite3_limit</a>(D, <a href="c3ref/c_limit
 
 <a name="like"></a>
 
-<h1 id="the_like_glob_regexp_and_match_operators"><span>5. </span>The LIKE, GLOB, REGEXP, and MATCH operators</h1>
+<h1 id="the_like_glob_regexp_match_and_extract_operators"><span>5. </span>The LIKE, GLOB, REGEXP, MATCH, and extract operators</h1>
 <p>The LIKE operator does a pattern matching comparison. The operand
 to the right of the LIKE operator contains the pattern and the left hand
 operand contains the string to match against the pattern.
@@ -2729,6 +2746,13 @@ application-defined function.  The default match() function implementation
 raises an exception and is not really useful for anything.
 But extensions can override the match() function with more
 helpful logic.</p>
+
+<a name="extract"></a>
+
+<p>The extract operators act as a special syntax for functions
+"-&gt;"() and "-&gt;&gt;"(). Default implementations for these functions
+perform <a href="\"json1.html#jptr\"">JSON subcomponent extraction</a>,
+but extensions can override them for other purposes.</p>
 
 <a name="between"></a>
 

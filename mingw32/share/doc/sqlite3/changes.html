@@ -104,13 +104,68 @@ http://www.sqlite.org/src/timeline?t=release</a>.
 See the <a href="chronology.html">chronology</a> a succinct listing of releases.
 </p>
 
+<a name="version_3_38_0"></a>
+<h3>2022-02-22 (3.38.0)</h3><p><ol class='lessindent'>
+<li> Added <a href="json1.html#jptr">the -> and ->> operators</a> for easier processing of JSON.
+     The new operators are compatible with MySQL and PostgreSQL.
+<li> The JSON functions are now built-ins.  It is no longer necessary
+     to use the <a href="compile.html#enable_json1">-DSQLITE_ENABLE_JSON1</a> compile-time option to enable JSON
+     support.  JSON is on by default.  Disable the JSON interface using
+     the new <a href="compile.html#omit_json">-DSQLITE_OMIT_JSON</a> compile-time option.
+<li> Enhancements to <a href="lang_datefunc.html">date and time functions</a>:
+     <ol type="a">
+     <li> Added the <a href="lang_datefunc.html#uepch">unixepoch() function</a>.
+     <li> Added the <a href="lang_datefunc.html#automod">auto modifier</a> and the <a href="lang_datefunc.html#jdmod">julianday modifier</a>.
+     </ol>
+<li> Rename the <a href="lang_corefunc.html#printf">printf() SQL function</a> to <a href="lang_corefunc.html#format">format()</a> for better
+     compatibility.  The original printf() name is retained as an alias
+     for backwards compatibility.
+<li> Added the <a href="c3ref/errcode.html">sqlite3_error_offset()</a> interface, which can sometimes
+     help to localize an SQL error to a specific character in the input
+     SQL text, so that applications can provide better error messages.
+<li> Enhanced the interface to <a href="vtab.html">virtual tables</a> as follows:
+     <ol type="a">
+     <li> Added the <a href="c3ref/vtab_distinct.html">sqlite3_vtab_distinct()</a> interface.
+     <li> Added the <a href="c3ref/vtab_rhs_value.html">sqlite3_vtab_rhs_value()</a> interface.
+     <li> Added new operator types <a href="c3ref/c_index_constraint_eq.html">SQLITE_INDEX_CONSTRAINT_LIMIT</a>
+          and <a href="c3ref/c_index_constraint_eq.html">SQLITE_INDEX_CONSTRAINT_OFFSET</a>.
+     <li> Added the <a href="c3ref/vtab_in.html">sqlite3_vtab_in()</a> interface (and related) to enable
+          a virtual table to process <a href="lang_expr.html#in_op">IN operator</a> constraints all at once,
+          rather than processing each value of the right-hand side of the
+          IN operator separately.
+     </ol>
+<li> <a href="cli.html">CLI</a> enhancements:
+     <ol type="a">
+     <li> <a href="cli.html#clmnr">Columnar output modes</a> are enhanced to correctly handle tabs
+          and newlines embedded in text.
+     <li> Added options like "--wrap N", "--wordwrap on", and "--quote"
+          to the <a href="cli.html#clmnr">columnar output modes</a>.
+     <li> Added the <a href="cli.html#qbox">.mode qbox</a> alias.
+     <li> The <a href="cli.html#csv">.import command</a> automatically disambiguates column names.
+     <li> Use the new <a href="c3ref/errcode.html">sqlite3_error_offset()</a> interface to provide better
+          error messages.
+     </ol>
+<li> Query planner enhancements:
+     <ol type="a">
+     <li> Use a Bloom filter to speed up large analytic queries.
+     <li> Use a balanced merge tree to evaluate UNION or UNION ALL
+          compound SELECT statements that have an ORDER BY clause.
+     </ol>
+<li> The <a href="lang_altertable.html">ALTER TABLE</a> statement is changed to silently ignores entries in the
+     <a href="schematab.html">sqlite_schema table</a> that do not parse when <a href="pragma.html#pragma_writable_schema">PRAGMA writable_schema=ON</a>.
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: 2022-02-22 18:58:40 40fa792d359f84c3b9e9d6623743e1a59826274e221df1bde8f47086968a1bab
+
+<li>SHA3-256 for sqlite3.c: a69af0a88d59271a2dd3c846a3e93cbd29e7c499864f6c0462a3b4160bee1762
+
+</ol></p>
 <a name="version_3_37_2"></a>
 <h3>2022-01-06 (3.37.2)</h3><p><ol class='lessindent'>
 <li> Fix <a href="https://sqlite.org/forum/forumpost/b03d86f9516cb3a2">a bug</a> introduced
      in <a href="#version_3_35_0">version 3.35.0</a> (2021-03-12) that 
      <a href="howtocorrupt.html#svptbug">can cause database corruption</a>
-     if a <a href="lang_savepoint.html">SAVEPOINT</a> is rolled back, other changes are made, and
-     the outer transaction commits.
+     if a <a href="lang_savepoint.html">SAVEPOINT</a> is rolled back while in <a href="pragma.html#pragma_temp_store">PRAGMA temp_store=MEMORY</a> mode,
+     and other changes are made, and then the outer transaction commits.
      <a href="https://sqlite.org/src/info/73c2b50211d3ae26">Check-in 73c2b50211d3ae26</a>
 <li> Fix a long-standing problem with ON DELETE CASCADE and ON UPDATE CASCADE
      in which a cache of the <a href="opcode.html">bytecode</a> used to implement the cascading change

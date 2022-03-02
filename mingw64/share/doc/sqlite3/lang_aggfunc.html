@@ -2403,8 +2403,8 @@ true are included in the aggregate.
   returns the average value of all non-NULL <i>X</i> within a
   group.  String and BLOB values that do not look like numbers are
   interpreted as 0.
-  The result of avg() is always a floating point value as long as
-  at there is at least one non-NULL input even if all
+  The result of avg() is always a floating point value whenever
+  there is at least one non-NULL input even if all
   inputs are integers.  The result of avg() is NULL if and only if
   there are no non-NULL inputs.  
 </dd>
@@ -2445,7 +2445,7 @@ true are included in the aggregate.
 <a name="sumunc"></a>
 <dt><p><b>sum(<i>X</i>)<br />total(<i>X</i>)</b></dt><dd><p>
   The sum() and total() aggregate functions
-  return sum of all non-NULL values in the group.
+  return the sum of all non-NULL values in the group.
   If there are no non-NULL input rows then sum() returns
   NULL but total() returns 0.0.
   NULL is not normally a helpful result for the sum of no rows
@@ -2457,9 +2457,9 @@ true are included in the aggregate.
 
   <p>The result of total() is always a floating point value.
   The result of sum() is an integer value if all non-NULL inputs are integers.
-  If any input to sum() is neither an integer or a NULL
+  If any input to sum() is neither an integer nor a NULL,
   then sum() returns a floating point value
-  which might be an approximation to the true sum.</p>
+  which is an approximation of the mathematical sum.</p>
 
   <p>Sum() will throw an "integer overflow" exception if all inputs
   are integers or NULL

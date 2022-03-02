@@ -136,7 +136,7 @@ mk.innerHTML = "&#x25ba;";
 accessible via the following interfaces:
 
 </p><ul>
-<li> <a href="lang_corefunc.html#printf">printf()</a> &rarr; an SQL function returning the formatted string
+<li> <a href="lang_corefunc.html#format">format()</a> &rarr; an SQL function returning the formatted string
 </li><li> <a href="c3ref/mprintf.html">sqlite3_mprintf()</a> &rarr; Store the formatted string in memory obtained
      <a href="c3ref/free.html">sqlite3_malloc64()</a>.
 </li><li> <a href="c3ref/mprintf.html">sqlite3_snprintf()</a> &rarr; Store the formatted string in a static buffer
@@ -166,12 +166,13 @@ always gives the same answer.
 
 </p></li><li><p>
 We know of no way to use the standard library printf() C interface to
-implement the <a href="lang_corefunc.html#printf">printf() SQL function</a> feature of SQLite.  The built-in
+implement the <a href="lang_corefunc.html#format">format() SQL function</a> feature of SQLite.  The built-in
 printf() implementation can be easily adapted to that task, however.
 
 </p></li><li><p>
 The printf() in SQLite supports new non-standard substitution
-types (<a href="printf.html#percentq">%q</a>, <a href="printf.html#percentq">%Q</a>, <a href="printf.html#percentw">%w</a>, and <a href="printf.html#percentz">%z</a>) that are useful both internally to SQLite
+types (<a href="printf.html#percentq">%q</a>, <a href="printf.html#percentq">%Q</a>, <a href="printf.html#percentw">%w</a>, and <a href="printf.html#percentz">%z</a>), and enhanced substitution
+behavior (%s and <a href="printf.html#percentz">%z</a>) that are useful both internally to SQLite
 and to applications using SQLite.
 Standard library printf()s cannot normally be extended in this way.
 
@@ -299,24 +300,27 @@ The other elements of the substitution are optional.
 </td><td>
 <a name="percentz"></a>
 
-    The argument is a zero-terminated string that is displayed.  For
+    The argument is either a zero-terminated string that is displayed,
+    or a null pointer which is treated as an empty string.  For
     the %z type in C-language interfaces, <a href="c3ref/free.html">sqlite3_free()</a> is invoked
-    on the string after it has be copied into the output. The %s and %z
-    substitutions are identical for the SQL printf() function.<br><br>
-    The %s substitution is universal, but
-    the %z substitution is an SQLite enhancement, not found in other
+    on the string after it has been copied into the output. The %s and %z
+    substitutions are identical for the SQL printf() function, with
+    a NULL argument treated as an empty string.<br><br>
+    The %s substitution is universal among printf functions, but
+    the %z substitution and safe treatment of null pointers
+    are SQLite enhancements, not found in other
     printf() implementations.
 </td></tr><tr>
 <td>c
 </td><td>For the C-language interfaces, the argument is an integer which
-    is interpreted as a character.  For the <a href="lang_corefunc.html#printf">printf() SQL function</a> the
+    is interpreted as a character.  For the <a href="lang_corefunc.html#format">format() SQL function</a> the
     argument is a string from which the first character is extracted and
     displayed.
 </td></tr><tr>
 <td>p
 </td><td>The argument is a pointer which is displayed as a hexadecimal address.
     Since the SQL language has no concept of a pointer, the %p substitution
-    for the <a href="lang_corefunc.html#printf">printf() SQL function</a> works like %x.
+    for the <a href="lang_corefunc.html#format">format() SQL function</a> works like %x.
 </td></tr><tr>
 <td>n
 </td><td>The argument is a pointer to an integer.  Nothing is displayed for
@@ -361,7 +365,7 @@ The other elements of the substitution are optional.
 <p>The length of the argument value can be specified by one or more letters
 that occur just prior to the substitution type letter.  In SQLite, the
 length only matter for integer types.  The length is ignored for the
-<a href="lang_corefunc.html#printf">printf() SQL function</a> which always uses 64-bit values.  The following
+<a href="lang_corefunc.html#format">format() SQL function</a> which always uses 64-bit values.  The following
 table shows the length specifiers allowed by SQLite:
 
 </p><center>
@@ -430,6 +434,9 @@ the number of digits to display to the right of the decimal point.
 </p><p>For the character substitution (%c) a precision N greater than 1 causes the
 character to be repeated N times.  This is a non-standard extension found only
 in SQLite.
+
+</p><p>If the precision is a single "*" character instead of a number, then the
+actual precision value is read as an integer from the argument list.
 
 </p><h2 id="the_options_flags_field"><span>2.5. </span>The Options Flags Field</h2>
 

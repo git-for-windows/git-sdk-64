@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="../sqlite.css" rel="stylesheet">
-<title>SQLite Release 3.37.2 On 2022-01-06</title>
+<title>SQLite Release 3.38.0 On 2022-02-22</title>
 <!-- path=../ -->
 </head>
 <body>
@@ -90,68 +90,58 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-<h2>SQLite Release 3.37.2 On 2022-01-06</h2><p><b>Changes in version 3.37.0 (2021-11-27):</b></p>
-<p><ol class='lessindent'>
-<li value='1'> <a href="../stricttables.html">STRICT tables</a> provide a prescriptive style of data type management,
-     for developers who prefer that kind of thing.
-<li> When adding columns that contain a
-     <a href="../lang_createtable.html#ckconst">CHECK constraint</a> or a <a href="../gencol.html">generated column</a> containing a <a href="../lang_createtable.html#notnullconst">NOT NULL constraint</a>,
-     the <a href="../lang_altertable.html#altertabaddcol">ALTER TABLE ADD COLUMN</a> now checks new constraints against
-     preexisting rows in the database and will only proceed if no constraints
-     are violated.
-<li> Added the <a href="../pragma.html#pragma_table_list">PRAGMA table_list</a> statement.
+<h2>SQLite Release 3.38.0 On 2022-02-22</h2><p><ol class='lessindent'>
+<li> Added <a href="../json1.html#jptr">the -> and ->> operators</a> for easier processing of JSON.
+     The new operators are compatible with MySQL and PostgreSQL.
+<li> The JSON functions are now built-ins.  It is no longer necessary
+     to use the <a href="../compile.html#enable_json1">-DSQLITE_ENABLE_JSON1</a> compile-time option to enable JSON
+     support.  JSON is on by default.  Disable the JSON interface using
+     the new <a href="../compile.html#omit_json">-DSQLITE_OMIT_JSON</a> compile-time option.
+<li> Enhancements to <a href="../lang_datefunc.html">date and time functions</a>:
+     <ol type="a">
+     <li> Added the <a href="../lang_datefunc.html#uepch">unixepoch() function</a>.
+     <li> Added the <a href="../lang_datefunc.html#automod">auto modifier</a> and the <a href="../lang_datefunc.html#jdmod">julianday modifier</a>.
+     </ol>
+<li> Rename the <a href="../lang_corefunc.html#printf">printf() SQL function</a> to <a href="../lang_corefunc.html#format">format()</a> for better
+     compatibility.  The original printf() name is retained as an alias
+     for backwards compatibility.
+<li> Added the <a href="../c3ref/errcode.html">sqlite3_error_offset()</a> interface, which can sometimes
+     help to localize an SQL error to a specific character in the input
+     SQL text, so that applications can provide better error messages.
+<li> Enhanced the interface to <a href="../vtab.html">virtual tables</a> as follows:
+     <ol type="a">
+     <li> Added the <a href="../c3ref/vtab_distinct.html">sqlite3_vtab_distinct()</a> interface.
+     <li> Added the <a href="../c3ref/vtab_rhs_value.html">sqlite3_vtab_rhs_value()</a> interface.
+     <li> Added new operator types <a href="../c3ref/c_index_constraint_eq.html">SQLITE_INDEX_CONSTRAINT_LIMIT</a>
+          and <a href="../c3ref/c_index_constraint_eq.html">SQLITE_INDEX_CONSTRAINT_OFFSET</a>.
+     <li> Added the <a href="../c3ref/vtab_in.html">sqlite3_vtab_in()</a> interface (and related) to enable
+          a virtual table to process <a href="../lang_expr.html#in_op">IN operator</a> constraints all at once,
+          rather than processing each value of the right-hand side of the
+          IN operator separately.
+     </ol>
 <li> <a href="../cli.html">CLI</a> enhancements:
      <ol type="a">
-     <li> Add the <a href="../cli.html#dotconn">.connection</a> command, allowing the CLI to keep multiple database
-          connections open at the same time.
-     <li> Add the <a href="../cli.html#safemode">--safe command-line option</a> that disables
-          <a href="../cli.html#dotcmd">dot-commands</a> and SQL statements that might cause side-effects that extend
-          beyond the single database file named on the command-line.
-     <li> Performance improvements when reading SQL statements
-          that span many lines.
+     <li> <a href="../cli.html#clmnr">Columnar output modes</a> are enhanced to correctly handle tabs
+          and newlines embedded in text.
+     <li> Added options like "--wrap N", "--wordwrap on", and "--quote"
+          to the <a href="../cli.html#clmnr">columnar output modes</a>.
+     <li> Added the <a href="../cli.html#qbox">.mode qbox</a> alias.
+     <li> The <a href="../cli.html#csv">.import command</a> automatically disambiguates column names.
+     <li> Use the new <a href="../c3ref/errcode.html">sqlite3_error_offset()</a> interface to provide better
+          error messages.
      </ol>
-<li> Added the <a href="../c3ref/autovacuum_pages.html">sqlite3_autovacuum_pages()</a> interface.
-<li> The <a href="../c3ref/deserialize.html">sqlite3_deserialize()</a> does not and has never worked for the TEMP
-     database.  That limitation is now noted in the documentation.
-<li> The query planner now omits ORDER BY clauses on subqueries and views 
-     if removing those clauses does not change the semantics of the query.
-<li> The <a href="../series.html">generate_series</a> table-valued function extension is modified so that
-     the first parameter ("START") is now required.  This is done as a way to
-     demonstrate how to write table-valued functions with required parameters.
-     The legacy behavior is available using the -DZERO_ARGUMENT_GENERATE_SERIES
-     compile-time option.
-<li> Added new <a href="../c3ref/changes.html">sqlite3_changes64()</a> and <a href="../c3ref/total_changes.html">sqlite3_total_changes64()</a> interfaces.
-<li> Added the <a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_EXRESCODE</a> flag option to <a href="../c3ref/open.html">sqlite3_open_v2()</a>.
-<li> Use less memory to hold the database schema.
-
-</ol>
-<p><b>Additional changes in version 3.37.1 (2021-12-30):</b></p>
-<p><ol class='lessindent'>
-<li value='12'> Fix a bug introduced by the <a href="../lang_upsert.html">UPSERT</a> enhancements of <a href="../releaselog/3_35_0.html">version 3.35.0</a> that
-     can cause incorrect byte-code to be generated for some obscure but valid
-     SQL, possibly resulting in a NULL-pointer dereference.
-<li> Fix an OOB read that can occur in <a href="../fts5.html">FTS5</a> when reading corrupt database files.
-<li> Improved robustness of the --safe option in the <a href="../cli.html">CLI</a>.
-<li> Other minor fixes to assert() statements and test cases.
-
-</ol>
-<p><b>Additional changes in version 3.37.2 (2022-01-06):</b></p>
-<p><ol class='lessindent'>
-<li value='16'> Fix <a href="https://sqlite.org/forum/forumpost/b03d86f9516cb3a2">a bug</a> introduced
-     in <a href="../releaselog/3_35_0.html">version 3.35.0</a> (2021-03-12) that 
-     <a href="../howtocorrupt.html#svptbug">can cause database corruption</a>
-     if a <a href="../lang_savepoint.html">SAVEPOINT</a> is rolled back, other changes are made, and
-     the outer transaction commits.
-     <a href="https://sqlite.org/src/info/73c2b50211d3ae26">Check-in 73c2b50211d3ae26</a>
-<li> Fix a long-standing problem with ON DELETE CASCADE and ON UPDATE CASCADE
-     in which a cache of the <a href="../opcode.html">bytecode</a> used to implement the cascading change
-     was not being reset following a local DDL change.
-     <a href="https://sqlite.org/src/info/5232c9777fe4fb13">Check-in 5232c9777fe4fb13</a>.
-<li> Other minor fixes that should not impact production builds.
-
+<li> Query planner enhancements:
+     <ol type="a">
+     <li> Use a Bloom filter to speed up large analytic queries.
+     <li> Use a balanced merge tree to evaluate UNION or UNION ALL
+          compound SELECT statements that have an ORDER BY clause.
+     </ol>
+<li> The <a href="../lang_altertable.html">ALTER TABLE</a> statement is changed to silently ignores entries in the
+     <a href="../schematab.html">sqlite_schema table</a> that do not parse when <a href="../pragma.html#pragma_writable_schema">PRAGMA writable_schema=ON</a>.
 <p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: 2022-01-06 13:25:41 872ba256cbf61d9290b571c0e6d82a20c224ca3ad82971edc46b29818d5d17a0
-<li>SHA3-256 for sqlite3.c: 1bb01c382295cba85ec4685cedc52a7477cdae71cc37f1ad0f48719a17af1e1e
+<li>SQLITE_SOURCE_ID: 2022-02-22 18:58:40 40fa792d359f84c3b9e9d6623743e1a59826274e221df1bde8f47086968a1bab
+
+<li>SHA3-256 for sqlite3.c: a69af0a88d59271a2dd3c846a3e93cbd29e7c499864f6c0462a3b4160bee1762
 
 </ol></p>
 

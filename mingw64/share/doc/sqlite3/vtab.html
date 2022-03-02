@@ -117,7 +117,11 @@ Table Of Contents
 <div class="fancy-toc2"><a href="#the_xbestindex_method">2.3. The xBestIndex Method</a></div>
 <div class="fancy-toc3"><a href="#inputs">2.3.1. Inputs</a></div>
 <div class="fancy-toc4"><a href="#like_glob_regexp_and_match_functions">2.3.1.1. LIKE, GLOB, REGEXP, and MATCH functions</a></div>
+<div class="fancy-toc4"><a href="#limit_and_offset">2.3.1.2. LIMIT and OFFSET</a></div>
+<div class="fancy-toc4"><a href="#right_hand_side_values_of_constraints">2.3.1.3. Right-hand side values of constraints</a></div>
 <div class="fancy-toc3"><a href="#outputs">2.3.2. Outputs</a></div>
+<div class="fancy-toc4"><a href="#omit_constraint_checking_in_bytecode">2.3.2.1. Omit constraint checking in bytecode</a></div>
+<div class="fancy-toc4"><a href="#order_by_and_orderbyconsumed">2.3.2.2. ORDER BY and orderByConsumed</a></div>
 <div class="fancy-toc3"><a href="#return_value">2.3.3. Return Value</a></div>
 <div class="fancy-toc3"><a href="#enforcing_required_parameters_on_table_valued_functions">2.3.4. Enforcing Required Parameters On Table-Valued Functions</a></div>
 <div class="fancy-toc2"><a href="#the_xdisconnect_method">2.4. The xDisconnect Method</a></div>
@@ -587,7 +591,7 @@ including:
 other custom virtual tables.
 </li><li> <b><a href="https://sqlite.org/src/file/ext/misc/series.c">series.c</a></b>
 &rarr; Implementation of the generate_series() table-valued function.
-</li><li> <b><a href="https://sqlite.org/src/file/ext/misc/json1.c">json1.c</a></b> &rarr;
+</li><li> <b><a href="https://sqlite.org/src/file/src/json.c">json.c</a></b> &rarr;
 Contains the sources for the <a href="json1.html#jeach">json_each()</a> and <a href="json1.html#jtree">json_tree()</a> table-valued
 functions.
 </li><li> <b><a href="https://sqlite.org/src/file/ext/misc/csv.c">csv.c</a></b> &rarr;
@@ -945,6 +949,8 @@ older version of SQLite are undefined.
 #define SQLITE_INDEX_CONSTRAINT_ISNOTNULL 70  /* 3.21.0 and later */
 #define SQLITE_INDEX_CONSTRAINT_ISNULL    71  /* 3.21.0 and later */
 #define SQLITE_INDEX_CONSTRAINT_IS        72  /* 3.21.0 and later */
+#define SQLITE_INDEX_CONSTRAINT_LIMIT     73  /* 3.38.0 and later */
+#define SQLITE_INDEX_CONSTRAINT_OFFSET    74  /* 3.38.0 and later */
 #define SQLITE_INDEX_CONSTRAINT_FUNCTION 150  /* 3.25.0 and later */
 #define SQLITE_INDEX_SCAN_UNIQUE           1  /* Scan visits at most 1 row */
 </pre></div>
@@ -1120,6 +1126,33 @@ apply to the <a href="vtab.html#xfindfunction">xFindFunction()</a> method, howev
 LIKE, GLOB, REGEXP, or MATCH operator but off of the first argument
 to function-call equivalents of those operators.
 
+</p><h4 id="limit_and_offset"><span>2.3.1.2. </span>LIMIT and OFFSET</h4>
+
+<p>When aConstraint[].op is one of SQLITE_INDEX_CONSTRAINT_LIMIT or
+SQLITE_INDEX_CONSTRAINT_OFFSET, that indicates that there is a
+LIMIT or OFFSET clause on the SQL query statement that is using
+the virtual table.  The LIMIT and OFFSET operators have no
+left operand, and so when aConstraint[].op is one of
+SQLITE_INDEX_CONSTRAINT_LIMIT or SQLITE_INDEX_CONSTRAINT_OFFSET
+then the aConstraint[].iColumn value is meaningless and should
+not be used.
+
+</p><h4 id="right_hand_side_values_of_constraints"><span>2.3.1.3. </span>Right-hand side values of constraints</h4>
+
+<p>The <a href="c3ref/vtab_rhs_value.html">sqlite3_vtab_rhs_value()</a> interface can be used to try to
+access the right-hand operand of a constraint.  However, the value
+of a right-hand operator might not be known at the time that
+the xBestIndex method is run, so the sqlite3_vtab_rhs_value()
+call might not be successful.  Usually the right operand of a
+constraint is only available to xBestIndex if it is coded as
+a literal value in the input SQL.  If the right operand is
+coded as an expression or a <a href="c3ref/bind_blob.html">host parameter</a>, it probably will
+not be accessible to xBestIndex.  Some operators, such as
+<a href="c3ref/c_index_constraint_eq.html">SQLITE_INDEX_CONSTRAINT_ISNULL</a> and
+<a href="c3ref/c_index_constraint_eq.html">SQLITE_INDEX_CONSTRAINT_ISNOTNULL</a> have no right-hand operand.
+The sqlite3_vtab_rhs_value() interface always returns
+<a href="rescode.html#notfound">SQLITE_NOTFOUND</a> for such operators.
+
 </p><h3 id="outputs"><span>2.3.2. </span>Outputs</h3>
 
 <p>Given all of the information above, the job of the xBestIndex 
@@ -1141,12 +1174,6 @@ that string when it has finished with it, and thus avoid a memory leak.
 The idxStr value may also be a static constant string, in which case
 the needToFreeIdxStr boolean should remain false.
 
-</p><p>If the virtual table will output rows in the order specified by 
-the ORDER BY clause, then the orderByConsumed flag may be set to 
-true. If the output is not automatically in the correct order 
-then orderByConsumed must be left in its default false setting. 
-This will indicate to the SQLite core that it will need to do a 
-separate sorting pass over the data after it comes out of the virtual table.
 
 </p><p>The estimatedCost field should be set to the estimated number
 of disk access operations required to execute this query against 
@@ -1185,10 +1212,66 @@ in as the argv[] parameters to xFilter.
 when xFilter is called, the argv[0] passed to xFilter will have 
 the EXPR value of the aConstraint[3] constraint.
 
-</p><p>By default, the SQLite core double checks all constraints on 
-each row of the virtual table that it receives. If such a check 
-is redundant, the xBestFilter method can suppress that double-check by 
-setting aConstraintUsage[].omit.
+</p><h4 id="omit_constraint_checking_in_bytecode"><span>2.3.2.1. </span>Omit constraint checking in bytecode</h4>
+
+<p>By default, the SQLite generates <a href="opcode.html">bytecode</a> that will double
+checks all constraints on each row of the virtual table to verify
+that they are satisfied.  If the virtual table can guarantee
+that a constraint will always be satisfied, it can try to
+suppress that double-check by setting aConstraintUsage[].omit.
+However, with some exceptions, this is only a hint and
+there is no guarantee that the redundant check of the constraint
+will be suppressed.  Key points:
+
+</p><ul>
+<li><p>
+The omit flag is only honored if the argvIndex value for the
+constraint is greater than 0 and less than or equal to 16.  
+Constraint checking is never suppressed for constraints
+that do not pass their right operand into the xFilter method.
+The current implementation is only able to suppress redundant
+constraint checking for the first 16 values passed to xFilter,
+though that limitation might be increased in future releases.
+
+</p></li><li><p>
+The omit flag is always honored for <a href="c3ref/c_index_constraint_eq.html">SQLITE_INDEX_CONSTRAINT_OFFSET</a>
+constraints as long as argvIndex is greater than 0.  Setting the
+omit flag on an SQLITE_INDEX_CONSTRAINT_OFFSET constraint indicates
+to SQLite that the virtual table will itself suppress the first N
+rows of output, where N is the right operand of the OFFSET operator.
+If the virtual table implementation sets omit on an
+SQLITE_INDEX_CONSTRAINT_OFFSET constraint but then fails to suppress
+the first N rows of output, an incorrect answer will result from
+the overall query.
+</p></li></ul>
+
+<a name="obc"></a>
+
+<h4 id="order_by_and_orderbyconsumed"><span>2.3.2.2. </span>ORDER BY and orderByConsumed</h4>
+
+<p>If the virtual table will output rows in the order specified by 
+the ORDER BY clause, then the orderByConsumed flag may be set to 
+true. If the output is not automatically in the correct order 
+then orderByConsumed must be left in its default false setting. 
+This will indicate to the SQLite core that it will need to do a 
+separate sorting pass over the data after it comes out of the virtual table.
+Setting orderByConsumed is an optimization.  A query will always
+get the correct answer if orderByConsumed is left at its default
+value (0).  Unnecessary sort operations might be avoided resulting
+in a faster query if orderByConsumed is set, but setting
+orderByConsumed incorrectly can result in an incorrect answer.
+It is suggested that new virtual table implementations leave
+the orderByConsumed value unset initially, and then after everything
+else is known to be working correctly, go back and attempt to
+optimize by setting orderByConsumed where appropriate.
+
+</p><p>Sometimes the orderByConsumed flag can be safely set even if
+the outputs from the virtual table are not strictly in the order
+specified by nOrderBy and aOrderBy.  If the
+<a href="c3ref/vtab_distinct.html">sqlite3_vtab_distinct()</a> interface returns 1 or 2, that indicates
+that the ordering can be relaxed.  See the documentation on
+<a href="c3ref/vtab_distinct.html">sqlite3_vtab_distinct()</a> for further information.
+
 
 </p><h3 id="return_value"><span>2.3.3. </span>Return Value</h3>
 
@@ -1640,22 +1723,24 @@ takes two arguments and the function
 can be used as a boolean in the WHERE clause of a query and that
 the virtual table is able to exploit that function to speed up the query
 result.  When xFindFunction returns <a href="c3ref/c_index_constraint_eq.html">SQLITE_INDEX_CONSTRAINT_FUNCTION</a> or 
-larger, the value returned becomes the sqlite3_index_info.aConstraint.op
-value for one of the constraints passed into <a href="vtab.html#xbestindex">xBestIndex()</a> and the second
-argument becomes the value corresponding to that constraint that is passed
-to <a href="vtab.html#xfilter">xFilter()</a>.  This enables the
-xBestIndex()/xFilter implementations to use the function to speed
-its search.
+larger, the value returned becomes the <a href="c3ref/index_info.html">sqlite3_index_info</a>.aConstraint.op
+value for one of the constraints passed into <a href="vtab.html#xbestindex">xBestIndex()</a>.  The first
+argument to the function is the column identified by 
+aConstraint[].iColumn field of the constraint and the second argument to the
+function is the value that will be passed into <a href="vtab.html#xfilter">xFilter()</a> (if the
+aConstraintUsage[].argvIndex value is set) or the value returned from
+<a href="c3ref/vtab_rhs_value.html">sqlite3_vtab_rhs_value()</a>.
 
-</p><p>The technique of having xFindFunction() return values of
-<a href="c3ref/c_index_constraint_eq.html">SQLITE_INDEX_CONSTRAINT_FUNCTION</a> was initially used in the implementation
-of the <a href="geopoly.html">Geopoly module</a>.  The xFindFunction() method of that module returns
+</p><p>The <a href="geopoly.html">Geopoly module</a> is an example of a virtual table that makes use
+of <a href="c3ref/c_index_constraint_eq.html">SQLITE_INDEX_CONSTRAINT_FUNCTION</a> to improve performance.
+The xFindFunction() method for Geopoly returns
 SQLITE_INDEX_CONSTRAINT_FUNCTION for the <a href="geopoly.html#goverlap">geopoly_overlap()</a> SQL function
 and it returns
 SQLITE_INDEX_CONSTRAINT_FUNCTION+1 for the <a href="geopoly.html#gwithin">geopoly_within()</a> SQL function.
 This permits search optimizations for queries such as:
 
 </p><div class="codeblock"><pre>SELECT * FROM geopolytab WHERE geopoly_overlap(_shape, $query_polygon);
+SELECT * FROM geopolytab WHERE geopoly_within(_shape, $query_polygon);
 </pre></div>
 
 <p>Note that infix functions (<a href="lang_expr.html#like">LIKE</a>, <a href="lang_expr.html#glob">GLOB</a>, <a href="lang_expr.html#regexp">REGEXP</a>, and <a href="lang_expr.html#match">MATCH</a>) reverse 

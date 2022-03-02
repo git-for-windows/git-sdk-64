@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="../sqlite.css" rel="stylesheet">
+<title>Determine if a virtual table query is DISTINCT</title>
+<!-- path=../ -->
+</head>
+<body>
+<div class=nosearch>
+<a href="../index.html">
+<img class="logo" src="../images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="../index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='../about.html'>About</a>
+<li class='desktoponly'><a href="../docs.html">Documentation</a>
+<li class='desktoponly'><a href="../download.html">Download</a>
+<li class='wideonly'><a href='../copyright.html'>License</a>
+<li class='desktoponly'><a href="../support.html">Support</a>
+<li class='desktoponly'><a href="../prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='../about.html'>About</a>
+<li><a href='../docs.html'>Documentation</a>
+<li><a href='../download.html'>Download</a>
+<li><a href='../support.html'>Support</a>
+<li><a href='../prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="../search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+<!-- keywords: sqlite3_vtab_distinct -->
+<div class=nosearch>
+<a href="intro.html"><h2>SQLite C Interface</h2></a>
+<h2>Determine if a virtual table query is DISTINCT</h2>
+</div>
+<blockquote><pre>
+int sqlite3_vtab_distinct(sqlite3_index_info*);
+</pre></blockquote>
+<p>
+This API may only be used from within an <a href="../vtab.html#xbestindex">xBestIndex method</a>
+of a <a href="../vtab.html">virtual table</a> implementation. The result of calling this
+interface from outside of xBestIndex() is undefined and probably harmful.</p>
+
+<p>The sqlite3_vtab_distinct() interface returns an integer that is
+either 0, 1, or 2.  The integer returned by sqlite3_vtab_distinct()
+gives the virtual table additional information about how the query
+planner wants the output to be ordered. As long as the virtual table
+can meet the ordering requirements of the query planner, it may set
+the "orderByConsumed" flag.</p>
+
+<p><ol><li value="0"><p>
+If the sqlite3_vtab_distinct() interface returns 0, that means
+that the query planner needs the virtual table to return all rows in the
+sort order defined by the "nOrderBy" and "aOrderBy" fields of the
+<a href="../c3ref/index_info.html">sqlite3_index_info</a> object.  This is the default expectation.  If the
+virtual table outputs all rows in sorted order, then it is always safe for
+the xBestIndex method to set the "orderByConsumed" flag, regardless of
+the return value from sqlite3_vtab_distinct().
+<li value="1"><p>
+If the sqlite3_vtab_distinct() interface returns 1, that means
+that the query planner does not need the rows to be returned in sorted order
+as long as all rows with the same values in all columns identified by the
+"aOrderBy" field are adjacent.  This mode is used when the query planner
+is doing a GROUP BY.
+<li value="2"><p>
+If the sqlite3_vtab_distinct() interface returns 2, that means
+that the query planner does not need the rows returned in any particular
+order, as long as rows with the same values in all "aOrderBy" columns
+are adjacent.  Furthermore, only a single row for each particular
+combination of values in the columns identified by the "aOrderBy" field
+needs to be returned.  It is always ok for two or more rows with the same
+values in all "aOrderBy" columns to be returned, as long as all such rows
+are adjacent.  The virtual table may, if it chooses, omit extra rows
+that have the same value for all columns identified by "aOrderBy".
+However omitting the extra rows is optional.
+This mode is used for a DISTINCT query.
+</ol></p>
+
+<p>For the purposes of comparing virtual table output values to see if the
+values are same value for sorting purposes, two NULL values are considered
+to be the same.  In other words, the comparison operator is "IS"
+(or "IS NOT DISTINCT FROM") and not "==".</p>
+
+<p>If a virtual table implementation is unable to meet the requirements
+specified above, then it must not set the "orderByConsumed" flag in the
+<a href="../c3ref/index_info.html">sqlite3_index_info</a> object or an incorrect answer may result.</p>
+
+<p>A virtual table implementation is always free to return rows in any order
+it wants, as long as the "orderByConsumed" flag is not set.  When the
+the "orderByConsumed" flag is unset, the query planner will add extra
+<a href="../opcode.html">bytecode</a> to ensure that the final results returned by the SQL query are
+ordered correctly.  The use of the "orderByConsumed" flag and the
+sqlite3_vtab_distinct() interface is merely an optimization.  Careful
+use of the sqlite3_vtab_distinct() interface and the "orderByConsumed"
+flag might help queries against a virtual table to run faster.  Being
+overly aggressive and setting the "orderByConsumed" flag when it is not
+valid to do so, on the other hand, might cause SQLite to return incorrect
+results.
+</p><p>See also lists of
+  <a href="objlist.html">Objects</a>,
+  <a href="constlist.html">Constants</a>, and
+  <a href="funclist.html">Functions</a>.</p>

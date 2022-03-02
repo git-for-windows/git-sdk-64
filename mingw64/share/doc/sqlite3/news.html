@@ -94,15 +94,24 @@ return false;
 
 <h2>Recent News</h2>
 
-<a name="2022_01_06"></a><h3>2022-01-06 - <a href="releaselog/3_37_2.html">Version 3.37.2</a></h3><blockquote>
+<a name="2022_02_22"></a><h3>2022-02-22 - <a href="releaselog/3_38_0.html">Version 3.38.0</a></h3><blockquote>
+Version 3.38.0 is a routine maintenance release of
+SQLite.  There are various minor enhancements and
+about a 0.5% reduction in the number of CPU cycles
+used. See the
+<a href="releaselog/3_38_0.html">release notes</a> for
+more detail.
+</blockquote><hr width="50%"><a name="2022_01_06"></a><h3>2022-01-06 - <a href="releaselog/3_37_2.html">Version 3.37.2</a></h3><blockquote>
 Version 3.37.2 fixes a
 <a href="howtocorrupt.html#svptbug">database corruption bug</a>.  You are
 encouraged to upgrade, especially if you are using <a href="lang_savepoint.html">SAVEPOINT</a>.</p>
 
-<p>An <a href="https://sqlite.org/forum/forumpost/d7338bf4901f1151">independent researcher</a>
-used a fuzzer to find the obscure bug.
-The problem first appeared in version 3.35.0 (2021-03-12).
-If a <a href="lang_savepoint.html">SAVEPOINT</a> is rolled back but then subsequent changes
+<p>The problem first appeared in version 3.35.0 (2021-03-12) and
+affects all subsequent releases through 3.37.1.
+If temporary files are store in memory (which is not the default
+behavior, but is sometimes selected by applications using either
+<a href="compile.html#temp_store">-DSQLITE_TEMP_STORE</a> or <a href="pragma.html#pragma_temp_store">PRAGMA temp_store</a>) and
+if a <a href="lang_savepoint.html">SAVEPOINT</a> is rolled back and then subsequent changes
 within the same transaction are committed, the database file might
 (with low but non-zero probability) go corrupt.
 </blockquote><hr width="50%"><a name="2021_12_30"></a><h3>2021-12-30 - <a href="releaselog/3_37_1.html">Version 3.37.1</a></h3><blockquote>

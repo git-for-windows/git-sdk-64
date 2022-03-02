@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="../sqlite.css" rel="stylesheet">
+<title>Identify and handle IN constraints in xBestIndex</title>
+<!-- path=../ -->
+</head>
+<body>
+<div class=nosearch>
+<a href="../index.html">
+<img class="logo" src="../images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="../index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='../about.html'>About</a>
+<li class='desktoponly'><a href="../docs.html">Documentation</a>
+<li class='desktoponly'><a href="../download.html">Download</a>
+<li class='wideonly'><a href='../copyright.html'>License</a>
+<li class='desktoponly'><a href="../support.html">Support</a>
+<li class='desktoponly'><a href="../prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='../about.html'>About</a>
+<li><a href='../docs.html'>Documentation</a>
+<li><a href='../download.html'>Download</a>
+<li><a href='../support.html'>Support</a>
+<li><a href='../prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="../search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin || !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+<!-- keywords: sqlite3_vtab_in -->
+<div class=nosearch>
+<a href="intro.html"><h2>SQLite C Interface</h2></a>
+<h2>Identify and handle IN constraints in xBestIndex</h2>
+</div>
+<blockquote><pre>
+int sqlite3_vtab_in(sqlite3_index_info*, int iCons, int bHandle);
+</pre></blockquote>
+<p>
+This interface may only be used from within an
+<a href="../vtab.html#xbestindex">xBestIndex() method</a> of a <a href="../vtab.html">virtual table</a> implementation.
+The result of invoking this interface from any other context is
+undefined and probably harmful.</p>
+
+<p>A constraint on a virtual table of the form
+"<a href="../lang_expr.html#in_op">column IN (...)</a>" is
+communicated to the xBestIndex method as a
+<a href="../c3ref/c_index_constraint_eq.html">SQLITE_INDEX_CONSTRAINT_EQ</a> constraint.  If xBestIndex wants to use
+this constraint, it must set the corresponding
+aConstraintUsage[].argvIndex to a postive integer.  Then, under
+the usual mode of handling IN operators, SQLite generates <a href="../opcode.html">bytecode</a>
+that invokes the <a href="../vtab.html#xfilter">xFilter() method</a> once for each value
+on the right-hand side of the IN operator.  Thus the virtual table
+only sees a single value from the right-hand side of the IN operator
+at a time.</p>
+
+<p>In some cases, however, it would be advantageous for the virtual
+table to see all values on the right-hand of the IN operator all at
+once.  The sqlite3_vtab_in() interfaces facilitates this in two ways:</p>
+
+<p><ol>
+<li><p>
+A call to sqlite3_vtab_in(P,N,-1) will return true (non-zero)
+if and only if the <a href="../c3ref/index_info.html">P->aConstraint</a>[N] constraint
+is an <a href="../lang_expr.html#in_op">IN operator</a> that can be processed all at once.  In other words,
+sqlite3_vtab_in() with -1 in the third argument is a mechanism
+by which the virtual table can ask SQLite if all-at-once processing
+of the IN operator is even possible.</p>
+
+<p><li><p>
+A call to sqlite3_vtab_in(P,N,F) with F==1 or F==0 indicates
+to SQLite that the virtual table does or does not want to process
+the IN operator all-at-once, respectively.  Thus when the third
+parameter (F) is non-negative, this interface is the mechanism by
+which the virtual table tells SQLite how it wants to process the
+IN operator.
+</ol></p>
+
+<p>The sqlite3_vtab_in(P,N,F) interface can be invoked multiple times
+within the same xBestIndex method call.  For any given P,N pair,
+the return value from sqlite3_vtab_in(P,N,F) will always be the same
+within the same xBestIndex call.  If the interface returns true
+(non-zero), that means that the constraint is an IN operator
+that can be processed all-at-once.  If the constraint is not an IN
+operator or cannot be processed all-at-once, then the interface returns
+false.</p>
+
+<p>All-at-once processing of the IN operator is selected if both of the
+following conditions are met:</p>
+
+<p><ol>
+<li><p> The P->aConstraintUsage[N].argvIndex value is set to a positive
+integer.  This is how the virtual table tells SQLite that it wants to
+use the N-th constraint.</p>
+
+<p><li><p> The last call to sqlite3_vtab_in(P,N,F) for which F was
+non-negative had F>=1.
+</ol></p>
+
+<p>If either or both of the conditions above are false, then SQLite uses
+the traditional one-at-a-time processing strategy for the IN constraint.
+If both conditions are true, then the argvIndex-th parameter to the
+xFilter method will be an <a href="../c3ref/value.html">sqlite3_value</a> that appears to be NULL,
+but which can be passed to <a href="../c3ref/vtab_in_first.html">sqlite3_vtab_in_first()</a> and
+<a href="../c3ref/vtab_in_first.html">sqlite3_vtab_in_next()</a> to find all values on the right-hand side
+of the IN constraint.
+</p><p>See also lists of
+  <a href="objlist.html">Objects</a>,
+  <a href="constlist.html">Constants</a>, and
+  <a href="funclist.html">Functions</a>.</p>

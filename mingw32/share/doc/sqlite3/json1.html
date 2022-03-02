@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="sqlite.css" rel="stylesheet">
-<title>The JSON1 Extension</title>
+<title>JSON Functions And Operators</title>
 <!-- path= -->
 </head>
 <body>
@@ -93,7 +93,7 @@ return false;
 <div class=fancy>
 <div class=nosearch>
 <div class="fancy_title">
-The JSON1 Extension
+JSON Functions And Operators
 </div>
 <div class="fancy_toc">
 <a onclick="toggle_toc()">
@@ -101,7 +101,7 @@ The JSON1 Extension
 Table Of Contents
 </a>
 <div id="toc_sub"><div class="fancy-toc1"><a href="#overview">1. Overview</a></div>
-<div class="fancy-toc1"><a href="#compiling_the_json1_extension">2. Compiling the JSON1 Extension</a></div>
+<div class="fancy-toc1"><a href="#compiling_in_json_support">2. Compiling in JSON Support</a></div>
 <div class="fancy-toc1"><a href="#interface_overview">3. Interface Overview</a></div>
 <div class="fancy-toc2"><a href="#json_arguments">3.1. JSON arguments</a></div>
 <div class="fancy-toc2"><a href="#path_arguments">3.2. PATH arguments</a></div>
@@ -112,17 +112,18 @@ Table Of Contents
 <div class="fancy-toc2"><a href="#the_json_array_function">4.2. The json_array() function</a></div>
 <div class="fancy-toc2"><a href="#the_json_array_length_function">4.3. The json_array_length() function</a></div>
 <div class="fancy-toc2"><a href="#the_json_extract_function">4.4. The json_extract() function</a></div>
-<div class="fancy-toc2"><a href="#the_json_insert_json_replace_and_json_set_functions">4.5. The json_insert(), json_replace, and json_set() functions</a></div>
-<div class="fancy-toc2"><a href="#the_json_object_function">4.6. The json_object() function</a></div>
-<div class="fancy-toc2"><a href="#the_json_patch_function">4.7. The json_patch() function</a></div>
-<div class="fancy-toc2"><a href="#the_json_remove_function">4.8. The json_remove() function</a></div>
-<div class="fancy-toc2"><a href="#the_json_type_function">4.9. The json_type() function</a></div>
-<div class="fancy-toc2"><a href="#the_json_valid_function">4.10. The json_valid() function</a></div>
-<div class="fancy-toc2"><a href="#the_json_quote_function">4.11. The json_quote() function</a></div>
-<div class="fancy-toc2"><a href="#the_json_group_array_and_json_group_object_aggregate_sql_functions">4.12. The json_group_array() and json_group_object()
+<div class="fancy-toc2"><a href="#the_and_operators">4.5. The -> and ->> operators</a></div>
+<div class="fancy-toc2"><a href="#the_json_insert_json_replace_and_json_set_functions">4.6. The json_insert(), json_replace, and json_set() functions</a></div>
+<div class="fancy-toc2"><a href="#the_json_object_function">4.7. The json_object() function</a></div>
+<div class="fancy-toc2"><a href="#the_json_patch_function">4.8. The json_patch() function</a></div>
+<div class="fancy-toc2"><a href="#the_json_remove_function">4.9. The json_remove() function</a></div>
+<div class="fancy-toc2"><a href="#the_json_type_function">4.10. The json_type() function</a></div>
+<div class="fancy-toc2"><a href="#the_json_valid_function">4.11. The json_valid() function</a></div>
+<div class="fancy-toc2"><a href="#the_json_quote_function">4.12. The json_quote() function</a></div>
+<div class="fancy-toc2"><a href="#the_json_group_array_and_json_group_object_aggregate_sql_functions">4.13. The json_group_array() and json_group_object()
 aggregate SQL functions</a></div>
-<div class="fancy-toc2"><a href="#the_json_each_and_json_tree_table_valued_functions">4.13. The json_each() and json_tree() table-valued functions</a></div>
-<div class="fancy-toc3"><a href="#examples_using_json_each_and_json_tree_">4.13.1. Examples using json_each() and json_tree()</a></div>
+<div class="fancy-toc2"><a href="#the_json_each_and_json_tree_table_valued_functions">4.14. The json_each() and json_tree() table-valued functions</a></div>
+<div class="fancy-toc3"><a href="#examples_using_json_each_and_json_tree_">4.14.1. Examples using json_each() and json_tree()</a></div>
 </div>
 </div>
 <script>
@@ -146,11 +147,12 @@ mk.innerHTML = "&#x25ba;";
 
 <h1 id="overview"><span>1. </span>Overview</h1>
 <p>
-The <b>json1</b> extension is a <a href="loadext.html">loadable extension</a> that
-implements fifteen <a href="appfunc.html">application-defined SQL functions</a> and
-two <a href="vtab.html#tabfunc2">table-valued functions</a> that are useful for
-managing <a href="http://json.org/">JSON</a> content stored in an SQLite database.
-There are thirteen scalar functions:
+By default, SQLite supports fifteen functions and two operators for
+dealing with JSON values.  There are also two <a href="vtab.html#tabfunc2">table-valued functions</a>
+that can be used to decompose a JSON string.
+
+</p><p>
+There are 15 scalar functions and operators:
 
 </p><ol>
 <li value='1'>
@@ -170,38 +172,46 @@ There are thirteen scalar functions:
 </li>
 
 <li value='5'>
-<a href='#jins'>json_insert</a>(<i>json</i>,<i>path</i>,<i>value</i>,...)
+<i>json</i> <a href='#jptr'>-></a> <i>path</i>
 </li>
 
 <li value='6'>
-<a href='#jobj'>json_object</a>(<i>label1</i>,<i>value1</i>,...)
+<i>json</i> <a href='#jptr'>->></a> <i>path</i>
 </li>
 
 <li value='7'>
-<a href='#jpatch'>json_patch</a>(<i>json</i>1,json2)
+<a href='#jins'>json_insert</a>(<i>json</i>,<i>path</i>,<i>value</i>,...)
 </li>
 
 <li value='8'>
-<a href='#jrm'>json_remove</a>(<i>json</i>,<i>path</i>,...)
+<a href='#jobj'>json_object</a>(<i>label1</i>,<i>value1</i>,...)
 </li>
 
 <li value='9'>
-<a href='#jrepl'>json_replace</a>(<i>json</i>,<i>path</i>,<i>value</i>,...)
+<a href='#jpatch'>json_patch</a>(<i>json</i>1,json2)
 </li>
 
 <li value='10'>
-<a href='#jset'>json_set</a>(<i>json</i>,<i>path</i>,<i>value</i>,...)
+<a href='#jrm'>json_remove</a>(<i>json</i>,<i>path</i>,...)
 </li>
 
 <li value='11'>
-<a href='#jtype'>json_type</a>(<i>json</i>)<br><a href='#jtype'>json_type</a>(<i>json</i>,<i>path</i>)
+<a href='#jrepl'>json_replace</a>(<i>json</i>,<i>path</i>,<i>value</i>,...)
 </li>
 
 <li value='12'>
-<a href='#jvalid'>json_valid</a>(<i>json</i>)
+<a href='#jset'>json_set</a>(<i>json</i>,<i>path</i>,<i>value</i>,...)
 </li>
 
 <li value='13'>
+<a href='#jtype'>json_type</a>(<i>json</i>)<br><a href='#jtype'>json_type</a>(<i>json</i>,<i>path</i>)
+</li>
+
+<li value='14'>
+<a href='#jvalid'>json_valid</a>(<i>json</i>)
+</li>
+
+<li value='15'>
 <a href='#jvalid'>json_quote</a>(<i>value</i>)
 </li>
 
@@ -211,11 +221,11 @@ There are thirteen scalar functions:
 <p>There are two aggregate SQL functions:
 
 </p><ol>
-<li value='14'>
+<li value='16'>
 <a href='#jgrouparray'>json_group_array</a>(<i>value</i>)
 </li>
 
-<li value='15'>
+<li value='17'>
 <a href='#jgroupobject'>json_group_object</a>(name,<i>value</i>)
 </li>
 
@@ -225,11 +235,11 @@ There are thirteen scalar functions:
 <p>The two <a href="vtab.html#tabfunc2">table-valued functions</a> are:
 
 </p><ol>
-<li value='16'>
+<li value='18'>
 <a href='#jeach'>json_each</a>(<i>json</i>)<br><a href='#jeach'>json_each</a>(<i>json</i>,<i>path</i>)
 </li>
 
-<li value='17'>
+<li value='19'>
 <a href='#jtree'>json_tree</a>(<i>json</i>)<br><a href='#jtree'>json_tree</a>(<i>json</i>,<i>path</i>)
 </li>
 
@@ -246,48 +256,35 @@ There are thirteen scalar functions:
 
 <a name="howtocompile"></a>
 
-<h1 id="compiling_the_json1_extension"><span>2. </span>Compiling the JSON1 Extension</h1>
+<h1 id="compiling_in_json_support"><span>2. </span>Compiling in JSON Support</h1>
 
 <p>
-The <a href="loadext.html">loadable extensions</a> documentation describes
-how to <a href="loadext.html#build">compile loadable extensions</a> as shared libraries.  The
-techniques described there work fine for the json1 module.
-
-</p><p>
-The json1 source code is included with the SQLite <a href="amalgamation.html">amalgamation</a>, though
-it is disabled by default.  Add the <a href="compile.html#enable_json1">-DSQLITE_ENABLE_JSON1</a> compile-time
-option to enable the json1 extension that is built into the <a href="amalgamation.html">amalgamation</a>.
-The standard makefiles include -DSQLITE_ENABLE_JSON1 when building the
-<a href="cli.html">command-line shell</a> and some of the test utilities so this extension is
-normally available in the <a href="cli.html">command-line shell</a>.
+The JSON functions and operators are built into SQLite by default,
+as of SQLite version 3.38.0 (2022-02-22).  They can be omitted
+by adding the -DSQLITE_OMIT_JSON compile-time option.  Prior to
+version 3.38.0, the JSON functions were an extension that would only
+be included in builds if the -DSQLITE_ENABLE_JSON1 compile-time option
+was included.  In other words, the JSON functions went from being
+opt-in with SQLite version 3.37.2 and earlier to opt-out with
+SQLite version 3.38.0 and later.
 
 </p><h1 id="interface_overview"><span>3. </span>Interface Overview</h1>
 
 <p>
-The json1 extension (currently) stores JSON as ordinary text.
-
-</p><p>
+SQLite stores JSON as ordinary text.
 Backwards compatibility constraints mean that SQLite is only able to
 store values that are NULL, integers, floating-point numbers, text,
 and BLOBs.  It is not possible to add a sixth "JSON" type.
 
 </p><p>
-The json1 extension does not (currently) support a binary encoding
+SQLite does not (currently) support a binary encoding
 of JSON.  Experiments have been unable to find a binary encoding
 that is significantly smaller or faster than a plain text encoding.
 (The present implementation parses JSON text at over 1 GB/s.)
-All json1 functions currently throw an error if any of their
+All JSON functions currently throw an error if any of their
 arguments are BLOBs because BLOBs are reserved
 for a future enhancement in which BLOBs will store the binary encoding
 for JSON.
-
-</p><p>
-The "1" at the end of the name for the json1 extension is deliberate.
-The designers anticipate that there will be future incompatible JSON
-extensions building upon the lessons learned from json1.
-Once sufficient experience is gained, some kind of
-JSON extension might be folded into the SQLite core.  For now,
-JSON support remains an extension.
 
 </p><h2 id="json_arguments"><span>3.1. </span>JSON arguments</h2>
 
@@ -297,7 +294,7 @@ can be a JSON object, array, number, string, or null.  SQLite numeric
 values and NULL values are interpreted as JSON numbers and nulls, respectively.
 SQLite text values can be understood as JSON objects, arrays, or strings.
 If an SQLite text value that is not a well-formed JSON object, array, or
-string is passed into json1 function, that function will usually throw
+string is passed into JSON function, that function will usually throw
 an error.  (Exceptions to this rule are <a href="json1.html#jvalid">json_valid()</a> and
 <a href="json1.html#jquote">json_quote()</a>.)
 
@@ -327,23 +324,35 @@ The <i>arrayindex</i> can also be of the form "<b>#-</b><i>N</i>"
 in which case the element selected is the <i>N</i>-th from the
 right.  The last element of the array is "<b>#-1</b>".  Think of
 the "#" characters as the "number of elements in the array".  Then
-the expression "#-1" evaluates is the integer that corresponds to 
-the last entry in the array.
+the expression "#-1" evaluates to the integer that corresponds to 
+the last entry in the array.  It is sometimes using for the array
+index to be just the <b>#</b> character, for example when appending
+a value to an existing JSON array:
+
+<ul>
+<li><span class='jex'>json_set('[0,1,2]','$[#]','new')</span>
+<span class='jans'>&rarr; '[0,1,2,"new"]'</span></li>
+
+</ul>
+
+
+<a name="varg"></a>
 
 </p><h2 id="value_arguments"><span>3.3. </span>VALUE arguments</h2>
 
 <p>
 For functions that accept "<i>value</i>" arguments (also shown as
 "<i>value1</i>" and "<i>value2</i>"),
-those arguments is usually understood
-to be a literal strings that are quoted and becomes JSON string values
+those arguments are usually understood
+to be literal strings that are quoted and become JSON string values
 in the result.  Even if the input <i>value</i> strings look like 
 well-formed JSON, they are still interpreted as literal strings in the
 result.
 
 </p><p>
-However, if a <i>value</i> argument come directly from the result of another
-json1 function, then the argument is understood to be actual JSON and
+However, if a <i>value</i> argument comes directly from the result of another
+JSON function or from <a href="json1.html#jptr">the -> operator</a> (but not <a href="json1.html#jptr">the ->> operator</a>),
+then the argument is understood to be actual JSON and
 the complete JSON is inserted rather than a quoted string.
 
 </p><p>
@@ -356,12 +365,15 @@ result as a quoted string:
 <li><span class='jex'>json_object('ex','[52,3.14159]')</span>
 <span class='jans'>&rarr; '{"ex":"[52,3.14159]"}'</span></li>
 
+<li><span class='jex'>json_object('ex',('52,3.14159]'->>'$'))</span>
+<span class='jans'>&rarr; '{"ex":"[52,3.14159]"}'</span></li>
+
 </ul>
 
 
 </p><p>
 But if the <i>value</i> argument in the outer json_object() call is the
-result of another json1 function like <a href="json1.html#jmini">json()</a> or <a href="json1.html#jarray">json_array()</a>, then
+result of another JSON function like <a href="json1.html#jmini">json()</a> or <a href="json1.html#jarray">json_array()</a>, then
 the value is understood to be actual JSON and is inserted as such:
 
 <ul>
@@ -371,6 +383,9 @@ the value is understood to be actual JSON and is inserted as such:
 <li><span class='jex'>json_object('ex',json_array(52,3.14159))</span>
 <span class='jans'>&rarr; '{"ex":[52,3.14159]}'</span></li>
 
+<li><span class='jex'>json_object('ex','[52,3.14159]'->'$')</span>
+<span class='jans'>&rarr; '{"ex":[52,3.14159]}'</span></li>
+
 </ul>
 
 
@@ -378,18 +393,11 @@ the value is understood to be actual JSON and is inserted as such:
 To be clear: "<i>json</i>" arguments are always interpreted as JSON
 regardless of where the value for that argument comes from.  But
 "<i>value</i>" arguments are only interpreted as JSON if those arguments
-come directly from another json1 function.
+come directly from another JSON function or <a href="json1.html#jptr">the -> operator</a>.
 
 </p><h2 id="compatibility"><span>3.4. </span>Compatibility</h2>
 
 <p>
-The json1 extension uses the <a href="c3ref/value_subtype.html">sqlite3_value_subtype()</a> and
-<a href="c3ref/result_subtype.html">sqlite3_result_subtype()</a> interfaces that were introduced with
-SQLite version 3.9.0 (2015-10-14)
-The json1 extension will not work
-in earlier versions of SQLite.
-
-</p><p>
 The current implementation of this JSON library uses a recursive descent
 parser.  In order to avoid using excess stack space, any JSON input that has
 more than 2000 levels of nesting is considered invalid.   Limits on nesting
@@ -400,7 +408,7 @@ depth are allowed for compatible implementations of JSON by
 </p><h1 id="function_details"><span>4. </span>Function Details</h1>
 
 <p>The following sections provide additional detail on the operation of
-the various functions that are part of the json1 extension.
+the various JSON functions and operators:
 
 <a name="jmini"></a>
 
@@ -410,6 +418,13 @@ the various functions that are part of the json1 extension.
 JSON string and returns a minified version of that JSON string
 (with all unnecessary whitespace removed).  If X is not a well-formed
 JSON string, then this routine throws an error.
+
+</p><p>In other words, this function converts raw text that looks like
+JSON into actual JSON so that it may be passed into the <a href="json1.html#varg">value argument</a>
+of some other json function and will be interpreted as JSON rather than
+a string.  This function is not appropriate for testing whether or not
+a particular string is well-formed JSON - use the <a href="json1.html#jvalid">json_valid()</a> routine
+below for that task.
 
 </p><p>If the argument X to json(X) contains JSON objects with duplicate
 labels, then it is undefined whether or not the duplicates are
@@ -542,8 +557,114 @@ the various values.
 <li><span class='jex'>json_extract('{"a":2,"c":[4,5,{"f":7}]}', '$.x', '$.a')</span>
 <span class='jans'>&rarr; '[null,2]'</span></li>
 
+<li><span class='jex'>json_extract('{"a":"xyz"}', '$.a')</span>
+<span class='jans'>&rarr; 'xyz'</span></li>
+
+<li><span class='jex'>json_extract('{"a":NULL}', '$.a')</span>
+<span class='jans'>&rarr; NULL</span></li>
+
 </ul>
-  
+
+
+</p><p>There is a subtle incompatibility between the json_extract() function
+in SQLite and the json_extract() function in MySQL.  The MySQL version
+of json_extract() always returns JSON.  The SQLite version of
+json_extract() only returns JSON if there are two or more PATH arguments
+(because the result is then a JSON array) or if the single PATH argument
+references an array or object.  In SQLite, if json_extract() has only
+a single PATH argument and that PATH references a JSON null or a string
+or a numeric value, then json_extract() returns the corresponding SQL
+NULL, TEXT, INTEGER, or REAL value.
+
+</p><p>The difference between MySQL json_extract() and SQLite json_extract()
+really only stands out when accessing individual values within the JSON
+that are strings or NULLs.  The following table demonstrates the difference:
+
+</p><center>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><th>Operation</th><th>SQLite Result</th><th>MySQL Result
+</th></tr><tr><td>json_extract('{"a":null,"b":"xyz"}','$.a')</td><td>NULL</td><td>'null'
+</td></tr><tr><td>json_extract('{"a":null,"b":"xyz"}','$.b')</td><td>'xyz'</td><td>'"xyz"'
+</td></tr></table></center>
+
+<a name="jptr"></a>
+
+<h2 id="the_and_operators"><span>4.5. </span>The -> and ->> operators</h2>
+
+<p>Beginning with SQLite version 3.38.0 (2022-02-22), the ->
+and ->> operators are available for extracting subcomponents of JSON.
+The SQLite implementation of the -> and ->> operators strive to be
+compatible with both MySQL and PostgreSQL.
+The -> and ->> operators take a JSON string
+as their left operand and a PATH expression or object field
+label or array index as their right operand.  The -> operator
+returns a JSON representation of the selected subcomponent or NULL if that
+subcomponent does not exist.  The ->> operator returns an SQL TEXT,
+INTEGER, REAL, or NULL value that represents the selected subcomponent,
+or NULL if the subcomponent does not exist.
+
+</p><p>Both the -> and ->> operators select the same subcomponent
+of the JSON to their left.  The difference is that -> always returns a
+JSON representation of that subcomponent and the ->> operator always
+returns an SQL representation of that subcomponent.  Thus, these operators
+are subtly different from a two-argument <a href="json1.html#jex">json_extract()</a> function call.
+A call to json_extract() with two arguments will return a JSON representation
+of the subcomponent if and only if the subcomponent is a JSON array or
+object, and will return an SQL representation of the subcomponent if the
+subcomponent is a JSON null, string, or numeric value.
+
+</p><p>The right-hand operand to the -> and ->> operators can
+be a well-formed JSON path expression.  This is the form used by MySQL.
+For compatibility with PostgreSQL,
+the -> and ->> operators also accept a text label or
+integer as their right-hand operand.  If the right operand is a text
+label X, then it is interpreted as the JSON path '$.X'.  If the right
+operand is an integer value N, then it is interpreted as the JSON path '$[N]'.
+
+</p><p>Examples:
+
+<ul>
+<li><span class='jex'>'{"a":2,"c":[4,5,{"f":7}]}' -> '$')</span>
+<span class='jans'>&rarr; '{"a":2,"c":[4,5,{"f":7}]}'</span></li>
+
+<li><span class='jex'>'{"a":2,"c":[4,5,{"f":7}]}' -> '$.c')</span>
+<span class='jans'>&rarr; '[4,5,{"f":7}]'</span></li>
+
+<li><span class='jex'>'{"a":2,"c":[4,5,{"f":7}]}' -> 'c')</span>
+<span class='jans'>&rarr; '[4,5,{"f":7}]'</span></li>
+
+<li><span class='jex'>'{"a":2,"c":[4,5,{"f":7}]}' -> '$.c[2]')</span>
+<span class='jans'>&rarr; '{"f":7}'</span></li>
+
+<li><span class='jex'>'{"a":2,"c":[4,5,{"f":7}]}' -> '$.c[2].f')</span>
+<span class='jans'>&rarr; 7</span></li>
+
+<li><span class='jex'>'{"a":2,"c":[4,5],"f":7}' -> '$.c[#-1]')</span>
+<span class='jans'>&rarr; 5</span></li>
+
+<li><span class='jex'>'{"a":2,"c":[4,5,{"f":7}]}' -> '$.x')</span>
+<span class='jans'>&rarr; NULL</span></li>
+
+<li><span class='jex'>'[11,22,33,44]' -> 3</span>
+<span class='jans'>&rarr; '44'</span></li>
+
+<li><span class='jex'>'[11,22,33,44]' ->> 3</span>
+<span class='jans'>&rarr; 44</span></li>
+
+<li><span class='jex'>'{"a":"xyz"}' -> '$.a')</span>
+<span class='jans'>&rarr; '"xyz"'</span></li>
+
+<li><span class='jex'>'{"a":"xyz"}' ->> '$.a')</span>
+<span class='jans'>&rarr; 'xyz'</span></li>
+
+<li><span class='jex'>'{"a":NULL}' -> '$.a')</span>
+<span class='jans'>&rarr; 'null'</span></li>
+
+<li><span class='jex'>'{"a":NULL}' ->> '$.a')</span>
+<span class='jans'>&rarr; NULL</span></li>
+
+</ul>
+
 
 <a name="jins"></a>
 
@@ -551,7 +672,7 @@ the various values.
 
 <a name="jset"></a>
 
-</p><h2 id="the_json_insert_json_replace_and_json_set_functions"><span>4.5. </span>The json_insert(), json_replace, and json_set() functions</h2>
+</p><h2 id="the_json_insert_json_replace_and_json_set_functions"><span>4.6. </span>The json_insert(), json_replace, and json_set() functions</h2>
 
 <p>The json_insert(), json_replace, and json_set() functions all take
 a single JSON value as their first argument followed by zero or more
@@ -585,8 +706,11 @@ prior edits can affect the path search for subsequent edits.
 is normally inserted as a quoted JSON string, even if the string looks
 like valid JSON.  However, if the value is the result of another
 json1 function (such as <a href="json1.html#jmini">json()</a> or <a href="json1.html#jarray">json_array()</a> or <a href="json1.html#jobj">json_object()</a>)
+or if it is the result of <a href="json1.html#jptr">the -> operator</a>,
 then it is interpreted as JSON and is inserted as JSON retaining all
-of its substructure.
+of its substructure.  Values that are the result of <a href="json1.html#jptr">the ->> operator</a>
+are always interpreted as TEXT and are inserted as a JSON string even
+if they look like valid JSON.
 
 </p><p>These routines throw an error if the first JSON argument is not
 well-formed or if any PATH argument is not well-formed or if any
@@ -640,7 +764,7 @@ with an array index of "#".  Examples:
 
 <a name="jobj"></a>
 
-</p><h2 id="the_json_object_function"><span>4.6. </span>The json_object() function</h2>
+</p><h2 id="the_json_object_function"><span>4.7. </span>The json_object() function</h2>
 
 <p>The json_object() SQL function accepts zero or more pairs of arguments
 and returns a well-formed JSON object that is composed from those arguments.
@@ -653,8 +777,9 @@ complaint, though this might change in a future enhancement.
 
 </p><p>An argument with SQL type TEXT it is normally converted into a quoted 
 JSON string even if the input text is well-formed JSON.  
-However, if the argument is the direct result from another json1
-function, then it is treated as JSON and all of its JSON type information
+However, if the argument is the direct result from another JSON
+function or <a href="json1.html#jptr">the -> operator</a> (but not <a href="json1.html#jptr">the ->> operator</a>), 
+then it is treated as JSON and all of its JSON type information
 and substructure is preserved.  This allows calls to json_object()
 and <a href="json1.html#jarray">json_array()</a> to be nested.  The <a href="json1.html#jmini">json()</a> function can also
 be used to force strings to be recognized as JSON.
@@ -676,7 +801,7 @@ be used to force strings to be recognized as JSON.
 
 <a name="jpatch"></a>
 
-</p><h2 id="the_json_patch_function"><span>4.7. </span>The json_patch() function</h2>
+</p><h2 id="the_json_patch_function"><span>4.8. </span>The json_patch() function</h2>
 
 <p>The json_patch(T,P) SQL function runs the
 <a href="https://tools.ietf.org/html/rfc7396">RFC-7396</a> MergePatch algorithm
@@ -714,7 +839,7 @@ especially Arrays with lots of substructure.
 
 <a name="jrm"></a>
 
-</p><h2 id="the_json_remove_function"><span>4.8. </span>The json_remove() function</h2>
+</p><h2 id="the_json_remove_function"><span>4.9. </span>The json_remove() function</h2>
 
 <p>The json_remove(X,P,...) function takes a single JSON value as its
 first argument followed by zero or more path arguments.
@@ -766,17 +891,17 @@ path, or if any argument is a BLOB.
 
 <a name="jtype"></a>
 
-</p><h2 id="the_json_type_function"><span>4.9. </span>The json_type() function</h2>
+</p><h2 id="the_json_type_function"><span>4.10. </span>The json_type() function</h2>
 
 <p>The json_type(X) function returns the "type" of the outermost element
 of X.  The json_type(X,P) function returns the "type" of the element
 in X that is selected by path P.  The "type" returned by json_type() is
-one of the following an SQL text values:
+one of the following SQL text values:
 'null', 'true', 'false', 'integer', 'real', 'text', 'array', or 'object'.
 If the path P in json_type(X,P) selects an element that does not exist
 in X, then this function returns NULL.
 
-</p><p>The json_type() function throws an error if any of its arguments are
+</p><p>The json_type() function throws an error if any of its arguments is
 not well-formed or is a BLOB.
 
 </p><p>Examples:
@@ -817,7 +942,7 @@ not well-formed or is a BLOB.
 
 <a name="jvalid"></a>
 
-</p><h2 id="the_json_valid_function"><span>4.10. </span>The json_valid() function</h2>
+</p><h2 id="the_json_valid_function"><span>4.11. </span>The json_valid() function</h2>
 
 <p>The json_valid(X) function return 1 if the argument X is well-formed
 JSON and return 0 if the argument X is not well-formed JSON.
@@ -836,10 +961,11 @@ JSON and return 0 if the argument X is not well-formed JSON.
 
 <a name="jquote"></a>
 
-</p><h2 id="the_json_quote_function"><span>4.11. </span>The json_quote() function</h2>
+</p><h2 id="the_json_quote_function"><span>4.12. </span>The json_quote() function</h2>
 
 <p>The json_quote(X) function converts the SQL value X (a number or a
-string) into its corresponding JSON representation. 
+string) into its corresponding JSON representation.  If X is already
+well-formed JSON, then this function is a no-op.
 
 </p><p>Examples:
 
@@ -850,13 +976,19 @@ string) into its corresponding JSON representation.
 <li><span class='jex'>json_quote('verdant')</span>
 <span class='jans'>&rarr; "verdant"</span></li>
 
+<li><span class='jex'>json_quote('[1]')</span>
+<span class='jans'>&rarr; '[1]'</span></li>
+
+<li><span class='jex'>json_quote('[1,')</span>
+<span class='jans'>&rarr; '\"[1\"'</span></li>
+
 </ul>
 
 
 <a name="jgrouparray"></a>
 <a name="jgroupobject"></a>
 
-</p><h2 id="the_json_group_array_and_json_group_object_aggregate_sql_functions"><span>4.12. </span>The json_group_array() and json_group_object()
+</p><h2 id="the_json_group_array_and_json_group_object_aggregate_sql_functions"><span>4.13. </span>The json_group_array() and json_group_object()
 aggregate SQL functions</h2>
 
 <p>The json_group_array(X) function is an 
@@ -870,12 +1002,12 @@ comprised of all NAME/VALUE pairs in the aggregation.
 
 <a name="jtree"></a>
 
-</p><h2 id="the_json_each_and_json_tree_table_valued_functions"><span>4.13. </span>The json_each() and json_tree() table-valued functions</h2>
+</p><h2 id="the_json_each_and_json_tree_table_valued_functions"><span>4.14. </span>The json_each() and json_tree() table-valued functions</h2>
 
 <p>The json_each(X) and json_tree(X) <a href="vtab.html#tabfunc2">table-valued functions</a> walk the
 JSON value provided as their first argument and return one row for each
 element.  The json_each(X) function only walks the immediate children
-of the top-level array or object or 
+of the top-level array or object,
 or just the top-level element itself if the top-level
 element is a primitive value.
 The json_tree(X) function recursively walks through the
@@ -940,12 +1072,12 @@ true top-level element is returned even if an alternative starting point
 is provided by the "root" argument.
 
 </p><p>
-The "path" column is the path to the array or object container the holds 
+The "path" column is the path to the array or object container that holds 
 the current row, or the path to the current row in the case where the 
 iteration starts on a primitive type and thus only provides a single
 row of output.
 
-</p><h3 id="examples_using_json_each_and_json_tree_"><span>4.13.1. </span>Examples using json_each() and json_tree()</h3>
+</p><h3 id="examples_using_json_each_and_json_tree_"><span>4.14.1. </span>Examples using json_each() and json_tree()</h3>
 
 <p>Suppose the table "CREATE TABLE user(name,phone)" stores zero or
 more phone numbers as a JSON array object in the user.phone field.

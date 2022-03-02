@@ -170,7 +170,7 @@ database engine) has one of the following storage classes:</p>
   <li><p><b>NULL</b>.
   The value is a NULL value.</p>
 
-  </li><li><p><b>INTEGER</b>. The value is a signed integer, stored in 1,
+  </li><li><p><b>INTEGER</b>. The value is a signed integer, stored in 0, 1,
   2, 3, 4, 6, or 8 bytes depending on the magnitude of the value.</p>
 
   </li><li><p><b>REAL</b>. The value is a floating point value, stored as
@@ -184,10 +184,12 @@ database engine) has one of the following storage classes:</p>
 </li></ul>
 
 <p>A storage class is more general than a datatype.
-The INTEGER storage class, for example, includes 6 different integer
-datatypes of different lengths.  This makes a difference on disk.  But
-as soon as INTEGER values are read off of disk and into memory for processing,
-they are converted to the most general datatype (8-byte signed integer).
+The INTEGER storage class, for example, includes 7 different integer
+datatypes of different lengths.
+<a href="fileformat2.html#record_format">This makes a difference on disk.</a> 
+But as soon as INTEGER values are read off of disk and into memory for
+processing, they are converted to the most general datatype
+(8-byte signed integer).
 And so for the most part, "storage class" is indistinguishable from 
 "datatype" and the two terms can be used interchangeably.</p>
 
@@ -234,7 +236,7 @@ proleptic Gregorian calendar.
 1970-01-01 00:00:00 UTC.
 </li></ul>
 
-<p>Applications can chose to store dates and times in any of these
+<p>Applications can choose to store dates and times in any of these
 formats and freely convert between formats using the built-in
 <a href="lang_datefunc.html">date and time functions</a>.</p>
 
@@ -450,7 +452,7 @@ REAL, or NUMERIC) but expressions do not necessarily have an affinity.
 
 </p><ul>
   <li><p>The right-hand operand of an IN or NOT IN
-  operator has no affinity if the operand is a list and has the same
+  operator has no affinity if the operand is a list, or has the same
   affinity as the affinity of the result set expression if the operand
   is a SELECT.
 
@@ -616,7 +618,7 @@ Numeric values can always be converted into TEXT.  TEXT values
 can be converted into numeric values if the text content is a well-formed 
 integer or real literal, but not a hexadecimal integer literal.
 BLOB values are converted into TEXT values by simply interpreting
-the binary BLOB context as a text string in the current database
+the binary BLOB content as a text string in the current database
 encoding.
 
 </p><p>Affinity is applied to operands of a comparison operator prior to
@@ -638,7 +640,7 @@ as is.</p>
 binary comparisons "a &gt;= b AND a &lt;= c", even if that means
 different affinities are applied to 'a' in each of the comparisons.
 Datatype conversions in comparisons of the
-form "x IN (SELECT y ...)" are handled is if
+form "x IN (SELECT y ...)" are handled as if
 the comparison were really "x=y".
 The expression "a IN (x, y, z, ...)" is equivalent to "a = +x OR
 a = +y OR a = +z OR ...".  
@@ -709,7 +711,7 @@ SELECT d &lt; '40', d &lt; '60', d &lt; '600' FROM t1;
 </pre>
 </blockquote>
 
-<p>All of the result in the example are the same if the comparisons are
+<p>All of the results in the example are the same if the comparisons are
 commuted - if expressions of the form "a&lt;40" are rewritten
 as "40&gt;a".
 
@@ -765,7 +767,7 @@ are compared as is.</p>
 <h1 id="collating_sequences"><span>7. </span>Collating Sequences</h1>
 
 <p>When SQLite compares two strings, it uses a collating sequence or
-collating function (two words for the same thing) to determine which
+collating function (two terms for the same thing) to determine which
 string is greater or if the two strings are equal.
 SQLite has three built-in collating functions:  BINARY, NOCASE, and 
 RTRIM.</p>
@@ -833,7 +835,7 @@ An operand of a comparison is considered to have an explicit
 collating function assignment (rule 1 above) 
 if any subexpression of the operand uses
 the postfix <a href="lang_expr.html#collateop">COLLATE operator</a>.  Thus, if a <a href="lang_expr.html#collateop">COLLATE operator</a> is used
-anywhere in a comparision expression, the collating function defined
+anywhere in a comparison expression, the collating function defined
 by that operator is used for string comparison regardless of what 
 table columns might be a part of that expression.  If two or more
 <a href="lang_expr.html#collateop">COLLATE operator</a> subexpressions appear anywhere in a comparison, the 

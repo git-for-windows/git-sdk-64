@@ -150,7 +150,7 @@ ATTACH DATABASE 'file::memory:' AS aux1;
 <p>In-memory databases are allowed to use <a href="sharedcache.html">shared cache</a> if they are
 opened using a <a href="uri.html">URI filename</a>.  If the unadorned ":memory:" name is used
 to specify the in-memory database, then that database always has a private
-cache and is this only visible to the database connection that originally
+cache and is only visible to the database connection that originally
 opened it.  However, the same in-memory database can be opened by two or
 more database connections as follows:
 
@@ -205,18 +205,18 @@ rc = sqlite3_open("", &amp;db);
 ATTACH DATABASE '' AS aux2;
 </pre></blockquote>
 
-<p>A different temporary file is created each time, so that just like as
+<p>A different temporary file is created each time so that, just as
 with the special ":memory:" string, two database connections to temporary
 databases each have their own private database.  Temporary databases are
 automatically deleted when the connection that created them closes.</p>
 
 <p>Even though a disk file is allocated for each temporary database, in
-practice the temporary database usually resides in the in-memory pager
-cache and hence is very little difference between a pure in-memory database
+practice the temporary database usually resides in the in-memory pager cache
+and hence there is very little difference between a pure in-memory database
 created by ":memory:" and a temporary database created by an empty filename.
 The sole difference is that a ":memory:" database must remain in memory
-at all times whereas parts of a temporary database might be flushed to
-disk if database becomes large or if SQLite comes under memory pressure.</p>
+at all times whereas parts of a temporary database might be flushed to disk
+if the database becomes large or if SQLite comes under memory pressure.</p>
 
 <p>The previous paragraphs describe the behavior of temporary databases
 under the default SQLite configuration.  An application can use the

@@ -3052,9 +3052,22 @@ are any traces of the column in other parts of the schema that will
 prevent the schema from parsing after the CREATE TABLE statement has
 been modified.
 
+</p><h1 id="disable_error_checking_using_pragma_writable_schema_on"><span>6. </span>Disable Error Checking Using PRAGMA writable_schema=ON</h1>
+
+<p>ALTER TABLE will normally fail and make no changes if it encounters
+any entries in the <a href="schematab.html">sqlite_schema table</a> that do not parse.  For
+example, if there is a malformed VIEW or TRIGGER associated some some
+table named "tbl1", then an attempt to rename "tbl1" to "tbl1neo" will
+fail because the associated views and triggers could not be parsed.
+
+</p><p>Beginning with SQLite 3.38.0 (2022-02-22), this error checking
+can be disabled by setting "<a href="pragma.html#pragma_writable_schema">PRAGMA writable_schema=ON;</a>".  When
+the schema is writable, ALTER TABLE silently ignores any rows of the
+sqlite_schema table that do not parse.
+
 <a name="otheralter"></a>
 
-</p><h1 id="making_other_kinds_of_table_schema_changes"><span>6. </span>Making Other Kinds Of Table Schema Changes</h1>
+</p><h1 id="making_other_kinds_of_table_schema_changes"><span>7. </span>Making Other Kinds Of Table Schema Changes</h1>
 
 <p> The only schema altering commands directly supported by SQLite are the
 "<a href="lang_altertable.html#altertabrename">rename table</a>", "<a href="lang_altertable.html#altertabmvcol">rename column</a>", "<a href="lang_altertable.html#altertabaddcol">add column</a>", "<a href="lang_altertable.html#altertabdropcol">drop column</a>"
@@ -3219,7 +3232,7 @@ outlined above.
 
 <a name="altertableishard"></a>
 
-</p><h1 id="why_alter_table_is_such_a_problem_for_sqlite"><span>7. </span>Why ALTER TABLE is such a problem for SQLite</h1>
+</p><h1 id="why_alter_table_is_such_a_problem_for_sqlite"><span>8. </span>Why ALTER TABLE is such a problem for SQLite</h1>
 
 <p>Most SQL database engines store the schema already parsed into
 various system tables.  On those database engines, ALTER TABLE merely 

@@ -238,12 +238,13 @@ result codes, might appear in future releases of SQLite.
 <a name="extrc"></a>
 
 </p><h1 id="extended_result_code_list"><span>5. </span>Extended Result Code List</h1>
-<p>The 71 extended result codes
+<p>The 74 extended result codes
   are <a href="c3ref/c_abort_rollback.html">defined in sqlite3.h</a> and are
   listed in alphabetical order below:
 <div class='columns' style='columns: 22em auto;'>
 <ul style='padding-top:0;'>
 <li><a href='rescode.html#abort_rollback'>SQLITE_ABORT_ROLLBACK&nbsp;(516)</a></li>
+<li><a href='rescode.html#auth_user'>SQLITE_AUTH_USER&nbsp;(279)</a></li>
 <li><a href='rescode.html#busy_recovery'>SQLITE_BUSY_RECOVERY&nbsp;(261)</a></li>
 <li><a href='rescode.html#busy_snapshot'>SQLITE_BUSY_SNAPSHOT&nbsp;(517)</a></li>
 <li><a href='rescode.html#busy_timeout'>SQLITE_BUSY_TIMEOUT&nbsp;(773)</a></li>
@@ -255,6 +256,7 @@ result codes, might appear in future releases of SQLite.
 <li><a href='rescode.html#cantopen_symlink'>SQLITE_CANTOPEN_SYMLINK&nbsp;(1550)</a></li>
 <li><a href='rescode.html#constraint_check'>SQLITE_CONSTRAINT_CHECK&nbsp;(275)</a></li>
 <li><a href='rescode.html#constraint_commithook'>SQLITE_CONSTRAINT_COMMITHOOK&nbsp;(531)</a></li>
+<li><a href='rescode.html#constraint_datatype'>SQLITE_CONSTRAINT_DATATYPE&nbsp;(3091)</a></li>
 <li><a href='rescode.html#constraint_foreignkey'>SQLITE_CONSTRAINT_FOREIGNKEY&nbsp;(787)</a></li>
 <li><a href='rescode.html#constraint_function'>SQLITE_CONSTRAINT_FUNCTION&nbsp;(1043)</a></li>
 <li><a href='rescode.html#constraint_notnull'>SQLITE_CONSTRAINT_NOTNULL&nbsp;(1299)</a></li>
@@ -278,6 +280,7 @@ result codes, might appear in future releases of SQLite.
 <li><a href='rescode.html#ioerr_close'>SQLITE_IOERR_CLOSE&nbsp;(4106)</a></li>
 <li><a href='rescode.html#ioerr_commit_atomic'>SQLITE_IOERR_COMMIT_ATOMIC&nbsp;(7690)</a></li>
 <li><a href='rescode.html#ioerr_convpath'>SQLITE_IOERR_CONVPATH&nbsp;(6666)</a></li>
+<li><a href='rescode.html#ioerr_corruptfs'>SQLITE_IOERR_CORRUPTFS&nbsp;(8458)</a></li>
 <li><a href='rescode.html#ioerr_data'>SQLITE_IOERR_DATA&nbsp;(8202)</a></li>
 <li><a href='rescode.html#ioerr_delete'>SQLITE_IOERR_DELETE&nbsp;(2570)</a></li>
 <li><a href='rescode.html#ioerr_delete_noent'>SQLITE_IOERR_DELETE_NOENT&nbsp;(5898)</a></li>
@@ -319,7 +322,7 @@ result codes, might appear in future releases of SQLite.
 
 </p><h1 id="result_code_meanings"><span>6. </span>Result Code Meanings</h1>
 <p>
-The meanings for all 102
+The meanings for all 105
 result code values are shown below,
 in numeric order.
 
@@ -496,12 +499,20 @@ in numeric order.
 <a name="notfound"></a>
 <h3>(12) SQLITE_NOTFOUND</h3>
 <p>
-  The SQLITE_NOTFOUND result code is used in two contexts.
+  The SQLITE_NOTFOUND result code is exposed in three ways:
+  <ol>
+  <li><p>
   SQLITE_NOTFOUND can be returned by the <a href="c3ref/file_control.html">sqlite3_file_control()</a> interface
   to indicate that the <a href="c3ref/c_fcntl_begin_atomic_write.html">file control opcode</a> passed as the third argument
   was not recognized by the underlying <a href="vfs.html">VFS</a>.
+  <li><p>
   SQLITE_NOTFOUND can also be returned by the xSetSystemCall() method of
   an <a href="c3ref/vfs.html">sqlite3_vfs</a> object.
+  <li><p>
+  SQLITE_NOTFOUND an be returned by <a href="c3ref/vtab_rhs_value.html">sqlite3_vtab_rhs_value()</a> to indicate
+  that the right-hand operand of a constraint is not available to the
+  <a href="vtab.html#xbestindex">xBestIndex method</a> that made the call.
+  </ol>
   <p>
   The SQLITE_NOTFOUND result code is also used
   internally by the SQLite implementation, but those internal uses are
@@ -836,6 +847,15 @@ in numeric order.
 <p>
   The SQLITE_CONSTRAINT_CHECK error code is an <a href="rescode.html#pve">extended error code</a>
   for <a href="rescode.html#constraint">SQLITE_CONSTRAINT</a> indicating that a <a href="lang_createtable.html#ckconst">CHECK constraint</a> failed.
+
+
+<!--------------------------------------------------------------->
+<a name="auth_user"></a>
+<h3>(279) SQLITE_AUTH_USER</h3>
+<p>
+  The SQLITE_AUTH_USER error code is an <a href="rescode.html#pve">extended error code</a>
+  for <a href="rescode.html#auth">SQLITE_AUTH</a> indicating that an operation was attempted on a
+  database for which the logged in user lacks sufficient authorization.
 
 
 <!--------------------------------------------------------------->
@@ -1294,6 +1314,17 @@ in numeric order.
 
 
 <!--------------------------------------------------------------->
+<a name="constraint_datatype"></a>
+<h3>(3091) SQLITE_CONSTRAINT_DATATYPE</h3>
+<p>
+  The SQLITE_CONSTRAINT_DATATYPE error code
+  is an <a href="rescode.html#pve">extended error code</a>
+  for <a href="rescode.html#constraint">SQLITE_CONSTRAINT</a> indicating that an insert or update attempted
+  to store a value inconsistent with the column's declared type
+  in a table defined as STRICT.
+
+
+<!--------------------------------------------------------------->
 <a name="ioerr_access"></a>
 <h3>(3338) SQLITE_IOERR_ACCESS</h3>
 <p>
@@ -1487,6 +1518,17 @@ in numeric order.
   The SQLITE_IOERR_DATA error code is an <a href="rescode.html#pve">extended error code</a>
   for <a href="rescode.html#ioerr">SQLITE_IOERR</a> used only by <a href="cksumvfs.html">checksum VFS shim</a> to indicate that
   the checksum on a page of the database file is incorrect.
+
+
+<!--------------------------------------------------------------->
+<a name="ioerr_corruptfs"></a>
+<h3>(8458) SQLITE_IOERR_CORRUPTFS</h3>
+<p>
+  The SQLITE_IOERR_CORRUPTFS error code is an <a href="rescode.html#pve">extended error code</a>
+  for <a href="rescode.html#ioerr">SQLITE_IOERR</a> used only by a VFS to indicate that a seek or read
+  failure was due to the request not falling within the file's boundary
+  rather than an ordinary device failure. This often indicates a
+  corrupt filesystem.
 
 
 

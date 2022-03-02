@@ -386,9 +386,11 @@ be removed in some future release.</li>
 <li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_ISNULL</a></li>
 <li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_LE</a></li>
 <li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_LIKE</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_LIMIT</a></li>
 <li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_LT</a></li>
 <li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_MATCH</a></li>
 <li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_NE</a></li>
+<li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_OFFSET</a></li>
 <li><a href='#SQLITE_INDEX_CONSTRAINT_EQ'>SQLITE_INDEX_CONSTRAINT_REGEXP</a></li>
 <li><a href='#SQLITE_INDEX_SCAN_UNIQUE'>SQLITE_INDEX_SCAN_UNIQUE</a></li>
 <li><a href='#sqliteinnocuous'>SQLITE_INNOCUOUS</a></li>
@@ -564,6 +566,8 @@ be removed in some future release.</li>
 <li><a href='#sqlitestatusscratchsize'>SQLITE_STATUS_SCRATCH_SIZE</a></li>
 <li><a href='#sqlitestatusscratchused'>SQLITE_STATUS_SCRATCH_USED</a></li>
 <li><a href='#sqlitestmtstatusautoindex'>SQLITE_STMTSTATUS_AUTOINDEX</a></li>
+<li><a href='#SQLITE_STMTSTATUS counter'>SQLITE_STMTSTATUS_FILTER_HIT</a></li>
+<li><a href='#sqlitestmtstatusfiltermiss'>SQLITE_STMTSTATUS_FILTER_MISS</a></li>
 <li><a href='#sqlitestmtstatusfullscanstep'>SQLITE_STMTSTATUS_FULLSCAN_STEP</a></li>
 <li><a href='#sqlitestmtstatusmemused'>SQLITE_STMTSTATUS_MEMUSED</a></li>
 <li><a href='#sqlitestmtstatusreprepare'>SQLITE_STMTSTATUS_REPREPARE</a></li>
@@ -589,6 +593,7 @@ be removed in some future release.</li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_ISKEYWORD</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_LAST</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_LOCALTIME_FAULT</a></li>
+<li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_LOGEST</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_NEVER_CORRUPT</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_ONCE_RESET_THRESHOLD</a></li>
 <li><a href='#SQLITE_TESTCTRL_ALWAYS'>SQLITE_TESTCTRL_OPTIMIZATIONS</a></li>
@@ -641,7 +646,7 @@ be removed in some future release.</li>
 <p>Note: Functions marked with "<small><i>(exp)</i></small>"
 are <a href="capi3ref.html">experimental</a> and functions whose names are
 <s>struck through</s> are <a href="capi3ref.html">deprecated</a>.</p>
-<!-- number of functions: 277 -->
+<!-- number of functions: 283 -->
 <!-- number of deprecated functions: 7 -->
 <!-- number of experimental functions: 0 -->
 <div class='columns' style='columns: 15em auto;'>
@@ -743,6 +748,7 @@ are <a href="capi3ref.html">experimental</a> and functions whose names are
 <li><a href='#sqlite3_errcode'>sqlite3_errcode</a></li>
 <li><a href='#sqlite3_errcode'>sqlite3_errmsg</a></li>
 <li><a href='#sqlite3_errcode'>sqlite3_errmsg16</a></li>
+<li><a href='#sqlite3_errcode'>sqlite3_error_offset</a></li>
 <li><a href='#sqlite3_errcode'>sqlite3_errstr</a></li>
 <li><a href='#sqlite3_exec'>sqlite3_exec</a></li>
 <li><a href='#sqlite3_expanded_sql'>sqlite3_expanded_sql</a></li>
@@ -921,8 +927,13 @@ are <a href="capi3ref.html">experimental</a> and functions whose names are
 <li><a href='#sqlite3_mprintf'>sqlite3_vsnprintf</a></li>
 <li><a href='#sqlite3_vtab_collation'>sqlite3_vtab_collation</a></li>
 <li><a href='#sqlite3_vtab_config'>sqlite3_vtab_config</a></li>
+<li><a href='#sqlite3_vtab_distinct'>sqlite3_vtab_distinct</a></li>
+<li><a href='#sqlite3_vtab_in'>sqlite3_vtab_in</a></li>
+<li><a href='#sqlite3_vtab_in_first'>sqlite3_vtab_in_first</a></li>
+<li><a href='#sqlite3_vtab_in_first'>sqlite3_vtab_in_next</a></li>
 <li><a href='#sqlite3_vtab_nochange'>sqlite3_vtab_nochange</a></li>
 <li><a href='#sqlite3_vtab_on_conflict'>sqlite3_vtab_on_conflict</a></li>
+<li><a href='#sqlite3_vtab_rhs_value'>sqlite3_vtab_rhs_value</a></li>
 <li><a href='#sqlite3_wal_autocheckpoint'>sqlite3_wal_autocheckpoint</a></li>
 <li><a href='#sqlite3_wal_checkpoint'>sqlite3_wal_checkpoint</a></li>
 <li><a href='#sqlite3_wal_checkpoint_v2'>sqlite3_wal_checkpoint_v2</a></li>
@@ -1231,7 +1242,11 @@ was added for <a href="releaselog/3_9_0.html">version 3.9.0</a> (2015-10-14).
 It may therefore only be used if
 sqlite3_libversion_number() returns a value greater than or equal to
 3009000.
-</p><hr><a name="sqlite3_io_methods"></a>
+</p><p>3 Methods:
+ <a href="#sqlite3_vtab_collation">sqlite3_vtab_collation()</a>,
+<a href="#sqlite3_vtab_distinct">sqlite3_vtab_distinct()</a>,
+<a href="#sqlite3_vtab_rhs_value">sqlite3_vtab_rhs_value()</a></p>
+<hr><a name="sqlite3_io_methods"></a>
 <h2>OS Interface File Virtual Methods Object</h2>
 </div>
 <blockquote><pre>
@@ -3635,7 +3650,11 @@ For example, an UPDATE statement might have a WHERE clause that
 makes it a no-op, but the sqlite3_stmt_readonly() result would still
 be false.  Similarly, a CREATE TABLE IF NOT EXISTS statement is a
 read-only no-op if the table already exists, but
-sqlite3_stmt_readonly() still returns false for such a statement.
+sqlite3_stmt_readonly() still returns false for such a statement.</p>
+
+<p>If prepared statement X is an <a href="lang_explain.html">EXPLAIN</a> or <a href="eqp.html">EXPLAIN QUERY PLAN</a>
+statement, then sqlite3_stmt_readonly(X) returns the same value as
+if the EXPLAIN or EXPLAIN QUERY PLAN prefix were omitted.
 </p><hr><a name="sqlite3_stmt_scanstatus"></a>
 <h2>Prepared Statement Scan Status</h2>
 </div>
@@ -4211,14 +4230,33 @@ const char *sqlite3_vtab_collation(sqlite3_index_info*,int);
 </pre></blockquote>
 <p>
 This function may only be called from within a call to the <a href="vtab.html#xbestindex">xBestIndex</a>
-method of a <a href="vtab.html">virtual table</a>.</p>
+method of a <a href="vtab.html">virtual table</a>.  This function returns a pointer to a string
+that is the name of the appropriate collation sequence to use for text
+comparisons on the constraint identified by its arguments.</p>
 
-<p>The first argument must be the sqlite3_index_info object that is the
-first parameter to the xBestIndex() method. The second argument must be
-an index into the aConstraint[] array belonging to the sqlite3_index_info
-structure passed to xBestIndex. This function returns a pointer to a buffer
-containing the name of the collation sequence for the corresponding
-constraint.
+<p>The first argument must be the pointer to the <a href="#sqlite3_index_info">sqlite3_index_info</a> object
+that is the first parameter to the xBestIndex() method. The second argument
+must be an index into the aConstraint[] array belonging to the
+sqlite3_index_info structure passed to xBestIndex.</p>
+
+<p>Important:
+The first parameter must be the same pointer that is passed into the
+xBestMethod() method.  The first parameter may not be a pointer to a
+different <a href="#sqlite3_index_info">sqlite3_index_info</a> object, even an exact copy.</p>
+
+<p>The return value is computed as follows:</p>
+
+<p><ol>
+<li><p> If the constraint comes from a WHERE clause expression that contains
+a <a href="lang_expr.html#collateop">COLLATE operator</a>, then the name of the collation specified by
+that COLLATE operator is returned.
+<li><p> If there is no COLLATE operator, but the column that is the subject
+of the constraint specifies an alternative collating sequence via
+a <a href="lang_createtable.html#collateclause">COLLATE clause</a> on the column definition within the CREATE TABLE
+statement that was passed into <a href="#sqlite3_declare_vtab">sqlite3_declare_vtab()</a>, then the
+name of that alternative collating sequence is returned.
+<li><p> Otherwise, "BINARY" is returned.
+</ol>
 </p><hr><a name="sqlite3_vtab_config"></a>
 <h2>Virtual Table Interface Configuration</h2>
 </div>
@@ -4240,6 +4278,146 @@ method that is invoking sqlite3_vtab_config().  The C parameter is one
 of the <a href="#SQLITE_VTAB_CONSTRAINT_SUPPORT">virtual table configuration options</a>.  The presence and meaning
 of parameters after C depend on which <a href="#SQLITE_VTAB_CONSTRAINT_SUPPORT">virtual table configuration option</a>
 is used.
+</p><hr><a name="sqlite3_vtab_distinct"></a>
+<h2>Determine if a virtual table query is DISTINCT</h2>
+</div>
+<blockquote><pre>
+int sqlite3_vtab_distinct(sqlite3_index_info*);
+</pre></blockquote>
+<p>
+This API may only be used from within an <a href="vtab.html#xbestindex">xBestIndex method</a>
+of a <a href="vtab.html">virtual table</a> implementation. The result of calling this
+interface from outside of xBestIndex() is undefined and probably harmful.</p>
+
+<p>The sqlite3_vtab_distinct() interface returns an integer that is
+either 0, 1, or 2.  The integer returned by sqlite3_vtab_distinct()
+gives the virtual table additional information about how the query
+planner wants the output to be ordered. As long as the virtual table
+can meet the ordering requirements of the query planner, it may set
+the "orderByConsumed" flag.</p>
+
+<p><ol><li value="0"><p>
+If the sqlite3_vtab_distinct() interface returns 0, that means
+that the query planner needs the virtual table to return all rows in the
+sort order defined by the "nOrderBy" and "aOrderBy" fields of the
+<a href="#sqlite3_index_info">sqlite3_index_info</a> object.  This is the default expectation.  If the
+virtual table outputs all rows in sorted order, then it is always safe for
+the xBestIndex method to set the "orderByConsumed" flag, regardless of
+the return value from sqlite3_vtab_distinct().
+<li value="1"><p>
+If the sqlite3_vtab_distinct() interface returns 1, that means
+that the query planner does not need the rows to be returned in sorted order
+as long as all rows with the same values in all columns identified by the
+"aOrderBy" field are adjacent.  This mode is used when the query planner
+is doing a GROUP BY.
+<li value="2"><p>
+If the sqlite3_vtab_distinct() interface returns 2, that means
+that the query planner does not need the rows returned in any particular
+order, as long as rows with the same values in all "aOrderBy" columns
+are adjacent.  Furthermore, only a single row for each particular
+combination of values in the columns identified by the "aOrderBy" field
+needs to be returned.  It is always ok for two or more rows with the same
+values in all "aOrderBy" columns to be returned, as long as all such rows
+are adjacent.  The virtual table may, if it chooses, omit extra rows
+that have the same value for all columns identified by "aOrderBy".
+However omitting the extra rows is optional.
+This mode is used for a DISTINCT query.
+</ol></p>
+
+<p>For the purposes of comparing virtual table output values to see if the
+values are same value for sorting purposes, two NULL values are considered
+to be the same.  In other words, the comparison operator is "IS"
+(or "IS NOT DISTINCT FROM") and not "==".</p>
+
+<p>If a virtual table implementation is unable to meet the requirements
+specified above, then it must not set the "orderByConsumed" flag in the
+<a href="#sqlite3_index_info">sqlite3_index_info</a> object or an incorrect answer may result.</p>
+
+<p>A virtual table implementation is always free to return rows in any order
+it wants, as long as the "orderByConsumed" flag is not set.  When the
+the "orderByConsumed" flag is unset, the query planner will add extra
+<a href="opcode.html">bytecode</a> to ensure that the final results returned by the SQL query are
+ordered correctly.  The use of the "orderByConsumed" flag and the
+sqlite3_vtab_distinct() interface is merely an optimization.  Careful
+use of the sqlite3_vtab_distinct() interface and the "orderByConsumed"
+flag might help queries against a virtual table to run faster.  Being
+overly aggressive and setting the "orderByConsumed" flag when it is not
+valid to do so, on the other hand, might cause SQLite to return incorrect
+results.
+</p><hr><a name="sqlite3_vtab_in"></a>
+<h2>Identify and handle IN constraints in xBestIndex</h2>
+</div>
+<blockquote><pre>
+int sqlite3_vtab_in(sqlite3_index_info*, int iCons, int bHandle);
+</pre></blockquote>
+<p>
+This interface may only be used from within an
+<a href="vtab.html#xbestindex">xBestIndex() method</a> of a <a href="vtab.html">virtual table</a> implementation.
+The result of invoking this interface from any other context is
+undefined and probably harmful.</p>
+
+<p>A constraint on a virtual table of the form
+"<a href="lang_expr.html#in_op">column IN (...)</a>" is
+communicated to the xBestIndex method as a
+<a href="#SQLITE_INDEX_CONSTRAINT_EQ">SQLITE_INDEX_CONSTRAINT_EQ</a> constraint.  If xBestIndex wants to use
+this constraint, it must set the corresponding
+aConstraintUsage[].argvIndex to a postive integer.  Then, under
+the usual mode of handling IN operators, SQLite generates <a href="opcode.html">bytecode</a>
+that invokes the <a href="vtab.html#xfilter">xFilter() method</a> once for each value
+on the right-hand side of the IN operator.  Thus the virtual table
+only sees a single value from the right-hand side of the IN operator
+at a time.</p>
+
+<p>In some cases, however, it would be advantageous for the virtual
+table to see all values on the right-hand of the IN operator all at
+once.  The sqlite3_vtab_in() interfaces facilitates this in two ways:</p>
+
+<p><ol>
+<li><p>
+A call to sqlite3_vtab_in(P,N,-1) will return true (non-zero)
+if and only if the <a href="#sqlite3_index_info">P->aConstraint</a>[N] constraint
+is an <a href="lang_expr.html#in_op">IN operator</a> that can be processed all at once.  In other words,
+sqlite3_vtab_in() with -1 in the third argument is a mechanism
+by which the virtual table can ask SQLite if all-at-once processing
+of the IN operator is even possible.</p>
+
+<p><li><p>
+A call to sqlite3_vtab_in(P,N,F) with F==1 or F==0 indicates
+to SQLite that the virtual table does or does not want to process
+the IN operator all-at-once, respectively.  Thus when the third
+parameter (F) is non-negative, this interface is the mechanism by
+which the virtual table tells SQLite how it wants to process the
+IN operator.
+</ol></p>
+
+<p>The sqlite3_vtab_in(P,N,F) interface can be invoked multiple times
+within the same xBestIndex method call.  For any given P,N pair,
+the return value from sqlite3_vtab_in(P,N,F) will always be the same
+within the same xBestIndex call.  If the interface returns true
+(non-zero), that means that the constraint is an IN operator
+that can be processed all-at-once.  If the constraint is not an IN
+operator or cannot be processed all-at-once, then the interface returns
+false.</p>
+
+<p>All-at-once processing of the IN operator is selected if both of the
+following conditions are met:</p>
+
+<p><ol>
+<li><p> The P->aConstraintUsage[N].argvIndex value is set to a positive
+integer.  This is how the virtual table tells SQLite that it wants to
+use the N-th constraint.</p>
+
+<p><li><p> The last call to sqlite3_vtab_in(P,N,F) for which F was
+non-negative had F>=1.
+</ol></p>
+
+<p>If either or both of the conditions above are false, then SQLite uses
+the traditional one-at-a-time processing strategy for the IN constraint.
+If both conditions are true, then the argvIndex-th parameter to the
+xFilter method will be an <a href="#sqlite3_value">sqlite3_value</a> that appears to be NULL,
+but which can be passed to <a href="#sqlite3_vtab_in_first">sqlite3_vtab_in_first()</a> and
+<a href="#sqlite3_vtab_in_first">sqlite3_vtab_in_next()</a> to find all values on the right-hand side
+of the IN constraint.
 </p><hr><a name="sqlite3_vtab_nochange"></a>
 <h2>Determine If Virtual Table Column Access Is For UPDATE</h2>
 </div>
@@ -4280,6 +4458,48 @@ value returned is one of <a href="#SQLITE_FAIL">SQLITE_ROLLBACK</a>, <a href="#S
 <a href="#SQLITE_ABORT">SQLITE_ABORT</a>, or <a href="#SQLITE_FAIL">SQLITE_REPLACE</a>, according to the <a href="lang_conflict.html">ON CONFLICT</a> mode
 of the SQL statement that triggered the call to the <a href="vtab.html#xupdate">xUpdate</a> method of the
 <a href="vtab.html">virtual table</a>.
+</p><hr><a name="sqlite3_vtab_rhs_value"></a>
+<h2>Constraint values in xBestIndex()</h2>
+</div>
+<blockquote><pre>
+int sqlite3_vtab_rhs_value(sqlite3_index_info*, int, sqlite3_value **ppVal);
+</pre></blockquote>
+<p>
+This API may only be used from within the <a href="vtab.html#xbestindex">xBestIndex method</a>
+of a <a href="vtab.html">virtual table</a> implementation. The result of calling this interface
+from outside of an xBestIndex method are undefined and probably harmful.</p>
+
+<p>When the sqlite3_vtab_rhs_value(P,J,V) interface is invoked from within
+the <a href="vtab.html#xbestindex">xBestIndex</a> method of a <a href="vtab.html">virtual table</a> implementation, with P being
+a copy of the <a href="#sqlite3_index_info">sqlite3_index_info</a> object pointer passed into xBestIndex and
+J being a 0-based index into P->aConstraint[], then this routine
+attempts to set *V to the value of the right-hand operand of
+that constraint if the right-hand operand is known.  If the
+right-hand operand is not known, then *V is set to a NULL pointer.
+The sqlite3_vtab_rhs_value(P,J,V) interface returns SQLITE_OK if
+and only if *V is set to a value.  The sqlite3_vtab_rhs_value(P,J,V)
+inteface returns SQLITE_NOTFOUND if the right-hand side of the J-th
+constraint is not available.  The sqlite3_vtab_rhs_value() interface
+can return an result code other than SQLITE_OK or SQLITE_NOTFOUND if
+something goes wrong.</p>
+
+<p>The sqlite3_vtab_rhs_value() interface is usually only successful if
+the right-hand operand of a constraint is a literal value in the original
+SQL statement.  If the right-hand operand is an expression or a reference
+to some other column or a <a href="#sqlite3_bind_blob">host parameter</a>, then sqlite3_vtab_rhs_value()
+will probably return <a href="#SQLITE_ABORT">SQLITE_NOTFOUND</a>.</p>
+
+<p>Some constraints, such as <a href="#SQLITE_INDEX_CONSTRAINT_EQ">SQLITE_INDEX_CONSTRAINT_ISNULL</a> and
+<a href="#SQLITE_INDEX_CONSTRAINT_EQ">SQLITE_INDEX_CONSTRAINT_ISNOTNULL</a>, have no right-hand operand.  For such
+constraints, sqlite3_vtab_rhs_value() always returns SQLITE_NOTFOUND.</p>
+
+<p>The <a href="#sqlite3_value">sqlite3_value</a> object returned in *V is a protected sqlite3_value
+and remains valid for the duration of the xBestIndex method call.
+When xBestIndex returns, the sqlite3_value object returned by
+sqlite3_vtab_rhs_value() is automatically deallocated.</p>
+
+<p>The "_rhs_" in the name of this routine is an appreviation for
+"Right-Hand Side".
 </p><hr><a name="sqlite3_wal_autocheckpoint"></a>
 <h2>Configure an auto-checkpoint</h2>
 </div>
@@ -4627,7 +4847,7 @@ here in order to indicate success or failure.</p>
 #define SQLITE_WARNING_AUTOINDEX       (SQLITE_WARNING | (1&lt;&lt;8))
 #define SQLITE_AUTH_USER               (SQLITE_AUTH | (1&lt;&lt;8))
 #define SQLITE_OK_LOAD_PERMANENTLY     (SQLITE_OK | (1&lt;&lt;8))
-#define SQLITE_OK_SYMLINK              (SQLITE_OK | (2&lt;&lt;8))
+#define SQLITE_OK_SYMLINK              (SQLITE_OK | (2&lt;&lt;8)) /* internal use only */
 </pre></blockquote>
 <p>
 In its default configuration, SQLite API routines return one of 30 integer
@@ -6068,27 +6288,59 @@ Used by the cksmvfs VFS module only.
 <h2>Virtual Table Constraint Operator Codes</h2>
 </div>
 <blockquote><pre>
-#define SQLITE_INDEX_CONSTRAINT_EQ         2
-#define SQLITE_INDEX_CONSTRAINT_GT         4
-#define SQLITE_INDEX_CONSTRAINT_LE         8
-#define SQLITE_INDEX_CONSTRAINT_LT        16
-#define SQLITE_INDEX_CONSTRAINT_GE        32
-#define SQLITE_INDEX_CONSTRAINT_MATCH     64
-#define SQLITE_INDEX_CONSTRAINT_LIKE      65
-#define SQLITE_INDEX_CONSTRAINT_GLOB      66
-#define SQLITE_INDEX_CONSTRAINT_REGEXP    67
-#define SQLITE_INDEX_CONSTRAINT_NE        68
-#define SQLITE_INDEX_CONSTRAINT_ISNOT     69
-#define SQLITE_INDEX_CONSTRAINT_ISNOTNULL 70
-#define SQLITE_INDEX_CONSTRAINT_ISNULL    71
-#define SQLITE_INDEX_CONSTRAINT_IS        72
-#define SQLITE_INDEX_CONSTRAINT_FUNCTION 150
+#define SQLITE_INDEX_CONSTRAINT_EQ          2
+#define SQLITE_INDEX_CONSTRAINT_GT          4
+#define SQLITE_INDEX_CONSTRAINT_LE          8
+#define SQLITE_INDEX_CONSTRAINT_LT         16
+#define SQLITE_INDEX_CONSTRAINT_GE         32
+#define SQLITE_INDEX_CONSTRAINT_MATCH      64
+#define SQLITE_INDEX_CONSTRAINT_LIKE       65
+#define SQLITE_INDEX_CONSTRAINT_GLOB       66
+#define SQLITE_INDEX_CONSTRAINT_REGEXP     67
+#define SQLITE_INDEX_CONSTRAINT_NE         68
+#define SQLITE_INDEX_CONSTRAINT_ISNOT      69
+#define SQLITE_INDEX_CONSTRAINT_ISNOTNULL  70
+#define SQLITE_INDEX_CONSTRAINT_ISNULL     71
+#define SQLITE_INDEX_CONSTRAINT_IS         72
+#define SQLITE_INDEX_CONSTRAINT_LIMIT      73
+#define SQLITE_INDEX_CONSTRAINT_OFFSET     74
+#define SQLITE_INDEX_CONSTRAINT_FUNCTION  150
 </pre></blockquote>
 <p>
 These macros define the allowed values for the
 <a href="#sqlite3_index_info">sqlite3_index_info</a>.aConstraint[].op field.  Each value represents
-an operator that is part of a constraint term in the wHERE clause of
-a query that uses a <a href="vtab.html">virtual table</a>.
+an operator that is part of a constraint term in the WHERE clause of
+a query that uses a <a href="vtab.html">virtual table</a>.</p>
+
+<p>The left-hand operand of the operator is given by the corresponding
+aConstraint[].iColumn field.  An iColumn of -1 indicates the left-hand
+operand is the rowid.
+The SQLITE_INDEX_CONSTRAINT_LIMIT and SQLITE_INDEX_CONSTRAINT_OFFSET
+operators have no left-hand operand, and so for those operators the
+corresponding aConstraint[].iColumn is meaningless and should not be
+used.</p>
+
+<p>All operator values from SQLITE_INDEX_CONSTRAINT_FUNCTION through
+value 255 are reserved to represent functions that are overloaded
+by the <a href="vtab.html#xfindfunction">xFindFunction method</a> of the virtual table
+implementation.</p>
+
+<p>The right-hand operands for each constraint might be accessible using
+the <a href="#sqlite3_vtab_rhs_value">sqlite3_vtab_rhs_value()</a> interface.  Usually the right-hand
+operand is only available if it appears as a single constant literal
+in the input SQL.  If the right-hand operand is another column or an
+expression (even a constant expression) or a parameter, then the
+sqlite3_vtab_rhs_value() probably will not be able to extract it.
+The SQLITE_INDEX_CONSTRAINT_ISNULL and
+SQLITE_INDEX_CONSTRAINT_ISNOTNULL operators have no right-hand operand
+and hence calls to sqlite3_vtab_rhs_value() for those operators will
+always return SQLITE_NOTFOUND.</p>
+
+<p>The collating sequence to be used for comparison can be found using
+the <a href="#sqlite3_vtab_collation">sqlite3_vtab_collation()</a> interface.  For most real-world virtual
+tables, the collating sequence of constraints does not matter (for example
+because the constraints are numeric) and so the sqlite3_vtab_collation()
+interface is no commonly needed.
 </p><hr><a name="SQLITE_IOCAP_ATOMIC"></a>
 <h2>Device Characteristics</h2>
 </div>
@@ -6360,9 +6612,9 @@ and EXCLUSIVE.
 <h2>Compile-Time Library Version Numbers</h2>
 </div>
 <blockquote><pre>
-#define SQLITE_VERSION        "3.37.2"
-#define SQLITE_VERSION_NUMBER 3037002
-#define SQLITE_SOURCE_ID      "2022-01-06 13:25:41 872ba256cbf61d9290b571c0e6d82a20c224ca3ad82971edc46b29818d5d17a0"
+#define SQLITE_VERSION        "3.38.0"
+#define SQLITE_VERSION_NUMBER 3038000
+#define SQLITE_SOURCE_ID      "2022-02-22 18:58:40 40fa792d359f84c3b9e9d6623743e1a59826274e221df1bde8f47086968a1bab"
 </pre></blockquote>
 <p>
 The <a href="#SQLITE_SOURCE_ID">SQLITE_VERSION</a> C preprocessor macro in the sqlite3.h header
@@ -6564,7 +6816,8 @@ cares about the difference.)
 #define SQLITE_TESTCTRL_SEEK_COUNT              30
 #define SQLITE_TESTCTRL_TRACEFLAGS              31
 #define SQLITE_TESTCTRL_TUNE                    32
-#define SQLITE_TESTCTRL_LAST                    32  /* Largest TESTCTRL */
+#define SQLITE_TESTCTRL_LOGEST                  33
+#define SQLITE_TESTCTRL_LAST                    33  /* Largest TESTCTRL */
 </pre></blockquote>
 <p>
 These constants are the valid operation code parameters used
@@ -6979,6 +7232,8 @@ resolved.  The highwater mark is always 0.
 #define SQLITE_STMTSTATUS_VM_STEP           4
 #define SQLITE_STMTSTATUS_REPREPARE         5
 #define SQLITE_STMTSTATUS_RUN               6
+#define SQLITE_STMTSTATUS_FILTER_MISS       7
+#define SQLITE_STMTSTATUS_FILTER_HIT        8
 #define SQLITE_STMTSTATUS_MEMUSED           99
 </pre></blockquote>
 <p>
@@ -7030,6 +7285,18 @@ been run.  A single "run" for the purposes of this counter is one
 or more calls to <a href="#sqlite3_step">sqlite3_step()</a> followed by a call to <a href="#sqlite3_reset">sqlite3_reset()</a>.
 The counter is incremented on the first <a href="#sqlite3_step">sqlite3_step()</a> call of each
 cycle.</p>
+
+<p><a name="sqlitestmtstatusfiltermiss"></a>
+
+<a name="sqlitestmtstatusfilterhit"></a>
+
+<dt>SQLITE_STMTSTATUS_FILTER_HIT<br>
+SQLITE_STMTSTATUS_FILTER_MISS</dt>
+<dd>SQLITE_STMTSTATUS_FILTER_HIT is the number of times that a join
+step was bypassed because a Bloom filter returned not-found.  The
+corresponding SQLITE_STMTSTATUS_FILTER_MISS value is the number of
+times that the Bloom filter returned a find, and thus the join step
+had to be processed as normal.</p>
 
 <p><a name="sqlitestmtstatusmemused"></a>
  <dt>SQLITE_STMTSTATUS_MEMUSED</dt>
@@ -7192,7 +7459,7 @@ sqlite3 object.
 <p>2 Destructors:
  <a href="#sqlite3_close">sqlite3_close()</a>,
 <a href="#sqlite3_close">sqlite3_close_v2()</a></p>
-<p>74 Methods:
+<p>75 Methods:
 <div class='columns' style='columns: 17em auto;'>
 <ul style='padding-top:0;'>
 <li><a href='#sqlite3_autovacuum_pages'>sqlite3_autovacuum_pages</a></li>
@@ -7225,6 +7492,7 @@ sqlite3 object.
 <li><a href='#sqlite3_errcode'>sqlite3_errcode</a></li>
 <li><a href='#sqlite3_errcode'>sqlite3_errmsg</a></li>
 <li><a href='#sqlite3_errcode'>sqlite3_errmsg16</a></li>
+<li><a href='#sqlite3_errcode'>sqlite3_error_offset</a></li>
 <li><a href='#sqlite3_errcode'>sqlite3_errstr</a></li>
 <li><a href='#sqlite3_exec'>sqlite3_exec</a></li>
 <li><a href='#sqlite3_errcode'>sqlite3_extended_errcode</a></li>
@@ -7625,6 +7893,8 @@ sqlite3_value objects even when not strictly required.</p>
 
 <p>The sqlite3_value objects that are passed as parameters into the
 implementation of <a href="appfunc.html">application-defined SQL functions</a> are protected.
+The sqlite3_value objects returned by <a href="#sqlite3_vtab_rhs_value">sqlite3_vtab_rhs_value()</a>
+are protected.
 The sqlite3_value object returned by
 <a href="#sqlite3_column_blob">sqlite3_column_value()</a> is unprotected.
 Unprotected sqlite3_value objects may only be used as arguments
@@ -8451,7 +8721,7 @@ interface is equivalent to sqlite3_create_module_v2() with a NULL
 destructor.</p>
 
 <p>If the third parameter (the pointer to the sqlite3_module object) is
-NULL then no new module is create and any existing modules with the
+NULL then no new module is created and any existing modules with the
 same name are dropped.</p>
 
 <p>See also: <a href="#sqlite3_drop_modules">sqlite3_drop_modules()</a>
@@ -8464,6 +8734,7 @@ int sqlite3_extended_errcode(sqlite3 *db);
 const char *sqlite3_errmsg(sqlite3*);
 const void *sqlite3_errmsg16(sqlite3*);
 const char *sqlite3_errstr(int);
+int sqlite3_error_offset(sqlite3 *db);
 </pre></blockquote>
 <p>
 If the most recent sqlite3_* API call associated with
@@ -8479,13 +8750,14 @@ disabled.</p>
 sqlite3_extended_errcode() might change with each API call.
 Except, there are some interfaces that are guaranteed to never
 change the value of the error code.  The error-code preserving
-interfaces are:</p>
+interfaces include the following:</p>
 
 <p><ul>
 <li> sqlite3_errcode()
 <li> sqlite3_extended_errcode()
 <li> sqlite3_errmsg()
 <li> sqlite3_errmsg16()
+<li> sqlite3_error_offset()
 </ul></p>
 
 <p>The sqlite3_errmsg() and sqlite3_errmsg16() return English-language
@@ -8499,6 +8771,13 @@ subsequent calls to other SQLite interface functions.</p>
 that describes the <a href="rescode.html">result code</a>, as UTF-8.
 Memory to hold the error message string is managed internally
 and must not be freed by the application.</p>
+
+<p>If the most recent error references a specific token in the input
+SQL, the sqlite3_error_offset() interface returns the byte offset
+of the start of that token.  The byte offset returned by
+sqlite3_error_offset() assumes that the input SQL is UTF8.
+If the most recent error does not reference a specific token in the input
+SQL, then the sqlite3_error_offset() function returns -1.</p>
 
 <p>When the serialized <a href="threadsafe.html">threading mode</a> is in use, it might be the
 case that a second error occurs on a separate thread in between
@@ -10322,6 +10601,56 @@ then the behavior is undefined.</p>
 <p>Unregister a VFS with the sqlite3_vfs_unregister() interface.
 If the default VFS is unregistered, another VFS is chosen as
 the default.  The choice for the new VFS is arbitrary.
+</p><hr><a name="sqlite3_vtab_in_first"></a>
+<h2>Find all elements on the right-hand side of an IN constraint.</h2>
+</div>
+<blockquote><pre>
+int sqlite3_vtab_in_first(sqlite3_value *pVal, sqlite3_value **ppOut);
+int sqlite3_vtab_in_next(sqlite3_value *pVal, sqlite3_value **ppOut);
+</pre></blockquote>
+<p>
+These interfaces are only useful from within the
+<a href="vtab.html#xfilter">xFilter() method</a> of a <a href="vtab.html">virtual table</a> implementation.
+The result of invoking these interfaces from any other context
+is undefined and probably harmful.</p>
+
+<p>The X parameter in a call to sqlite3_vtab_in_first(X,P) or
+sqlite3_vtab_in_next(X,P) must be one of the parameters to the
+xFilter method which invokes these routines, and specifically
+a parameter that was previously selected for all-at-once IN constraint
+processing use the <a href="#sqlite3_vtab_in">sqlite3_vtab_in()</a> interface in the
+<a href="vtab.html#xbestindex">xBestIndex method</a>.  If the X parameter is not
+an xFilter argument that was selected for all-at-once IN constraint
+processing, then these routines return <a href="#SQLITE_ABORT">SQLITE_MISUSE</a> or perhaps
+exhibit some other undefined or harmful behavior.</p>
+
+<p>Use these routines to access all values on the right-hand side
+of the IN constraint using code like the following:</p>
+
+<p><blockquote><pre>
+&nbsp;  for(rc=sqlite3_vtab_in_first(pList, &pVal);
+&nbsp;      rc==SQLITE_OK && pVal
+&nbsp;      rc=sqlite3_vtab_in_next(pList, &pVal)
+&nbsp;  ){
+&nbsp;    // do something with pVal
+&nbsp;  }
+&nbsp;  if( rc!=SQLITE_OK ){
+&nbsp;    // an error has occurred
+&nbsp;  }
+</pre></blockquote></p>
+
+<p>On success, the sqlite3_vtab_in_first(X,P) and sqlite3_vtab_in_next(X,P)
+routines return SQLITE_OK and set *P to point to the first or next value
+on the RHS of the IN constraint.  If there are no more values on the
+right hand side of the IN constraint, then *P is set to NULL and these
+routines return <a href="#SQLITE_ABORT">SQLITE_DONE</a>.  The return value might be
+some other value, such as SQLITE_NOMEM, in the event of a malfunction.</p>
+
+<p>The *ppOut values returned by these routines are only valid until the
+next call to either of these routines or until the end of the xFilter
+method from which these routines were called.  If the virtual table
+implementation needs to retain the *ppOut values for longer, it must make
+copies.  The *ppOut values are <a href="#sqlite3_value">protected</a>.
 </p><hr><a name="sqlite3_win32_set_directory"></a>
 <h2>Win32 Specific Interface</h2>
 </div>

@@ -103,7 +103,10 @@ Table Of Contents
 <div id="toc_sub"><div class="fancy-toc1"><a href="#getting_started">1. Getting Started</a></div>
 <div class="fancy-toc1"><a href="#double_click_startup_on_windows">2. Double-click Startup On Windows</a></div>
 <div class="fancy-toc1"><a href="#special_commands_to_sqlite3_dot_commands_">3. Special commands to sqlite3 (dot-commands)</a></div>
-<div class="fancy-toc1"><a href="#rules_for_dot_commands_">4. Rules for "dot-commands"</a></div>
+<div class="fancy-toc1"><a href="#rules_for_dot_commands_sql_and_more">4. Rules for "dot-commands", SQL and More</a></div>
+<div class="fancy-toc2"><a href="#line_structure">4.1. Line Structure</a></div>
+<div class="fancy-toc2"><a href="#dot_command_arguments">4.2. Dot-command arguments</a></div>
+<div class="fancy-toc2"><a href="#dot_command_execution">4.3. Dot-command execution</a></div>
 <div class="fancy-toc1"><a href="#changing_output_formats">5. Changing Output Formats</a></div>
 <div class="fancy-toc1"><a href="#querying_the_database_schema">6. Querying the database schema</a></div>
 <div class="fancy-toc1"><a href="#opening_database_files">7. Opening Database Files</a></div>
@@ -112,7 +115,7 @@ Table Of Contents
 <div class="fancy-toc2"><a href="#reading_sql_from_a_file">8.2. Reading SQL from a file</a></div>
 <div class="fancy-toc2"><a href="#file_i_o_functions">8.3. File I/O Functions</a></div>
 <div class="fancy-toc2"><a href="#the_edit_sql_function">8.4. The edit() SQL function</a></div>
-<div class="fancy-toc2"><a href="#importing_csv_files">8.5. Importing CSV files</a></div>
+<div class="fancy-toc2"><a href="#importing_files_as_csv_or_other_formats">8.5. Importing files as CSV or other formats</a></div>
 <div class="fancy-toc2"><a href="#export_to_csv">8.6. Export to CSV</a></div>
 <div class="fancy-toc3"><a href="#_export_to_excel_">8.6.1.  Export to Excel </a></div>
 <div class="fancy-toc1"><a href="#accessing_zip_archives_as_database_files">9. Accessing ZIP Archives As Database Files</a></div>
@@ -191,7 +194,7 @@ with a single table named "tbl1", you might do this:</p>
 <div class="codeblock"><pre>$ <b>sqlite3 ex1</b>
 SQLite version 3.36.0 2021-06-18 18:36:39
 Enter ".help" for usage hints.
-sqlite&gt; <b>create table tbl1(one varchar(10), two smallint);</b>
+sqlite&gt; <b>create table tbl1(one text, two int);</b>
 sqlite&gt; <b>insert into tbl1 values('hello!',10);</b>
 sqlite&gt; <b>insert into tbl1 values('goodbye', 20);</b>
 sqlite&gt; <b>select * from tbl1;</b>
@@ -276,7 +279,7 @@ are intercepted and interpreted by the sqlite3 program itself.
 These "dot commands" are typically used to change the output format
 of queries, or to execute certain prepackaged query statements.
 There were originally just a few dot commands, but over the years
-many new features have accumulated so that today there over 60.
+many new features have accumulated so that today there are over 60.
 </p>
 
 <p>
@@ -357,41 +360,76 @@ sqlite&gt;
 
 <a name="dotrules"></a>
 
-<h1 id="rules_for_dot_commands_"><span>4. </span>Rules for "dot-commands"</h1>
+<h1 id="rules_for_dot_commands_sql_and_more"><span>4. </span>Rules for "dot-commands", SQL and More</h1>
 
-<p>Ordinary SQL statements are free-form, and can be
-spread across multiple lines, and can have whitespace and
-comments anywhere.  Dot-commands are
-more restrictive:
+<h2 id="line_structure"><span>4.1. </span>Line Structure</h2>
 
+<p>The CLI's input is parsed into a sequence consisting of:
+  </p><ul>
+    <li>SQL statements;</li>
+    <li>dot-commands; or</li>
+    <li>CLI comments</li>
+  </ul>
+<p>SQL statements are free-form, and can be spread across multiple lines,
+  with whitespace or SQL comments embedded anywhere.
+  They are terminated by either a ';' character at the end of an input line,
+  or a '/' character or the word "go" on a line by itself.
+  When not at the end of an input line, the ';' character
+  acts to separate SQL statements.
+  Trailing whitespace is ignored for purposes of termination.
+</p><p>A dot-command has a more restrictive structure:
 </p><ul>
-<li>A dot-command must begin with the "." at the left margin
-    with no preceding whitespace.
-</li><li>The dot-command must be entirely contained on a single input line.
-</li><li>A dot-command cannot occur in the middle of an ordinary SQL
-    statement.  In other words, a dot-command cannot occur at a
-    continuation prompt.
-</li><li>Dot-commands do not recognize comments.
-</li></ul>
+<li>It must begin with its "." at the left margin
+    with no preceding whitespace.</li>
+<li>It must be entirely contained on a single input line.</li>
+<li>It cannot occur in the middle of an ordinary SQL
+    statement.  In other words, it cannot occur at a
+    continuation prompt.</li>
+<li>There is no comment syntax for dot-commands.</li>
+</ul>
+<p>The CLI also accepts whole-line comments that
+begin with a '#' character and extend to the end of the line.
+There can be no with whitespace prior to the '#'.
 
+</p><h2 id="dot_command_arguments"><span>4.2. </span>Dot-command arguments</h2>
 <p>The arguments passed to dot-commands are parsed from the command tail, 
-per these rules: Arguments are delimited by whitespace (excluding newline); 
-Text bounded by a pair of single-quotes or double-quotes is treated as a 
-single argument, with the quotes stripped.
-Within a double-quoted argument, traditional C-string literal, 
-backslash escape sequence translation is done.
+  per these rules:
+</p><ol>
+  <li>The trailing newline and any other trailing whitespace is discarded;</li>
+  <li>Whitespace immediately following the dot-command name, or any argument
+    input end bound is discarded;</li>
+  <li>An argument input begins with any non-whitespace character;</li>
+  <li>An argument input ends with a character which
+    depends upon its leading character thusly:</li>
+  <ul>
+    <li>for a leading single-quote ('), a single-quote acts
+      as the end delimiter;</li>
+    <li>for a leading double-quote ("), an unescaped double-quote
+      acts as the end delimiter;</li>
+    <li>for any other leading character, the end delimiter is
+      any whitespace; and</li>
+    <li>the command tail end acts as the end delimiter for any argument;</li>
+  </ul>
+  <li>Within a double-quoted argument input, a backslash-escaped double-quote
+    is part of the argument rather than its terminating quote;</li>
+  <li>Within a double-quoted argument, traditional C-string literal, backslash
+    escape sequence translation is done; and</li>
+  <li>Argument input delimiters (the bounding quotes or whitespace)
+    are discarded to yield the passed argument.</li>
+</ol>
 
-</p><p>The dot-commands
+<h2 id="dot_command_execution"><span>4.3. </span>Dot-command execution</h2>
+<p>The dot-commands
 are interpreted by the sqlite3.exe command-line program, not by
 SQLite itself.  So none of the dot-commands will work as an argument
-to SQLite interfaces like <a href="c3ref/prepare.html">sqlite3_prepare()</a> or <a href="c3ref/exec.html">sqlite3_exec()</a>.
+to SQLite interfaces such as <a href="c3ref/prepare.html">sqlite3_prepare()</a> or <a href="c3ref/exec.html">sqlite3_exec()</a>.
 
 <a name="dotmode"></a>
 
 </p><h1 id="changing_output_formats"><span>5. </span>Changing Output Formats</h1>
 
 <p>The sqlite3 program is able to show the results of a query
-in 14 different formats:
+in 14 different output formats:
 </p><div class="columns" style="columns:8em auto;">
 <ul style="padding-top:0;padding-left:4em;">
 <li> ascii
@@ -426,6 +464,13 @@ goodbye|20
 sqlite&gt;
 </pre></div>
 
+<p>Type ".mode" with no arguments to show the current mode:
+
+</p><div class="codeblock"><pre>sqlite&gt; <b>.mode</b>
+current output mode: list
+sqlite&gt;
+</pre></div>
+
 <p>Use the ".separator" dot command to change the separator.
 For example, to change the separator to a comma and
 a space, you could do this:</p>
@@ -437,9 +482,10 @@ goodbye, 20
 sqlite&gt;
 </pre></div>
 
-<p>The next ".mode" command will reset the ".separator" back to its default.
-So you will need repeat the ".separator" command whenever you change
-modes if you want to continue using a non-standard separator.
+<p>The next ".mode" command might reset the ".separator" back to some
+default value (depending on its arguments).
+So you will likely need to repeat the ".separator" command whenever you
+change modes if you want to continue using a non-standard separator.
 
 <a name="dotmodequote"></a>
 
@@ -452,7 +498,7 @@ character is selected using ".separator").
 
 </p><div class="codeblock"><pre>sqlite&gt; <b>.mode quote</b>
 sqlite&gt; <b>select * from tbl1;</b>
-'hello',10
+'hello!',10
 'goodbye',20
 sqlite&gt;
 </pre></div>
@@ -465,13 +511,16 @@ output:</p>
 
 <div class="codeblock"><pre>sqlite&gt; <b>.mode line</b>
 sqlite&gt; <b>select * from tbl1;</b>
-one = hello
+one = hello!
 two = 10
 
 one = goodbye
 two = 20
 sqlite&gt;
 </pre></div>
+
+<a name="clmnr"></a>
+
 
 <p>In column mode, each record is shown on a separate line with the
 data aligned in columns.  For example:</p>
@@ -480,16 +529,16 @@ data aligned in columns.  For example:</p>
 sqlite&gt; <b>select * from tbl1;</b>
 one       two       
 --------  ---
-hello     10        
+hello!    10        
 goodbye   20        
 sqlite&gt;
 </pre></div>
 
 <p>In "column" mode (and also in "box", "table", and "markdown" modes)
 the width of columns adjusts automatically.  But you can override this,
-providing a minimum width for each column using the ".width" command.
-The arguments to ".width" are integers which are the minimum number of
-spaces to devote to each column.  Negative numbers mean right-justify.
+providing a speicified width for each column using the ".width" command.
+The arguments to ".width" are integers which are the number of
+characters to devote to each column.  Negative numbers mean right-justify.
 Thus:</p>
 
 <div class="codeblock"><pre>sqlite&gt; <b>.width 12 -6</b>
@@ -502,9 +551,9 @@ sqlite&gt;
 </pre></div>
 
 <p>A width of 0 means the column width is chosen automatically.
-Unspecified columns widths become zero.  Hence, the command
-".width" with no arguments resets all columns widths to zero and
-hence causes all column widths to be determine automatically.
+Unspecified column widths become zero.  Hence, the command
+".width" with no arguments resets all column widths to zero and
+hence causes all column widths to be determined automatically.
 
 </p><p>The "column" mode is a tabular output format.  Other
 tabular output formats are "box", "markdown", and "table":
@@ -535,7 +584,53 @@ sqlite&gt; <b>select * from tbl1;</b>
 sqlite&gt;
 </pre></div>
 
-<p>Another useful output mode is "insert".  In insert mode, the output
+<a name="wrap1"></a>
+
+
+<p>The columnar modes accept some addition options to control formatting.
+The "--wrap <i>N</i>" option (where <i>N</i> is an integer) causes columns
+to wrap text that is longer than N characters.  Wrapping is disabled if
+N is zero.
+
+</p><div class="codeblock"><pre>sqlite&gt; <b>insert into tbl1 values('The quick fox jumps over a lazy brown dog.',99);</b>
+sqlite&gt; <b>.mode box --wrap 30</b>
+sqlite&gt; <b>select * from tbl1 where two&gt;50;</b>
+┌────────────────────────────────┬─────┐
+│              one               │ two │
+├────────────────────────────────┼─────┤
+│ The quick fox jumps over a laz │ 90  │
+│ y brown dog.                   │     │
+└────────────────────────────────┴─────┘
+sqlite&gt;
+</pre></div>
+
+<p>Wrapping happens after exactly <i>N</i> characters, 
+which might be in the middle of a word.
+To wrap at a word boundary, add the "--wordwrap on" option 
+(or just "-ww" for short):
+
+</p><div class="codeblock"><pre>sqlite&gt; <b>.mode box --wrap 30 -ww</b>
+sqlite&gt; <b>select * from tbl1 where two&gt;50;</b>
+┌─────────────────────────────┬─────┐
+│             one             │ two │
+├─────────────────────────────┼─────┤
+│ The quick fox jumps over a  │ 90  │
+│ lazy brown dog.             │     │
+└─────────────────────────────┴─────┘
+sqlite&gt;
+</pre></div>
+
+<p>The "--quote" option causes the results in each column to be
+quoted like an SQL literal, as in the "quote" mode.  See the on-line
+help for additional options.
+
+<a name="qbox"></a>
+
+</p><p>The command ".mode box --wrap 60 --quote" is so useful for general-purpose
+database queries that it is given its own alias.  Instead of typing out
+that whole 27-character command, you can just say ".mode qbox".
+
+</p><p>Another useful output mode is "insert".  In insert mode, the output
 is formatted to look like SQL INSERT statements.  Use insert
 mode to generate text that can later be used to input data into a 
 different database.</p>
@@ -544,14 +639,14 @@ different database.</p>
 which is the name of the table to be inserted into.  For example:</p>
 
 <div class="codeblock"><pre>sqlite&gt; <b>.mode insert new_table</b>
-sqlite&gt; <b>select * from tbl1;</b>
+sqlite&gt; <b>select * from tbl1 where two&lt;50;</b>
 INSERT INTO "new_table" VALUES('hello',10);
 INSERT INTO "new_table" VALUES('goodbye',20);
 sqlite&gt;
 </pre></div>
 
 
-<p>Other output modes include "html", "json", and "tcl".  Try these
+<p>Other output modes include "csv", "json", and "tcl".  Try these
 yourself to see what they do.
 </p>
 
@@ -643,8 +738,8 @@ databases listed for databases attached using the ATTACH statement.
 The first output column is the name the database is attached with, 
 and the second result column is the filename of the external file.
 There may be a third result column which will be either "'r/o'" or
-"'r/w'" depending of if the database file is read-only or read-write.
-And there might be fourth result column showing the result of
+"'r/w'" depending on whether the database file is read-only or read-write.
+And there might be a fourth result column showing the result of
 <a href="c3ref/txn_state.html">sqlite3_txn_state()</a> for that database file.
 
 </p><div class="codeblock"><pre>sqlite&gt; <b>.databases</b>
@@ -697,7 +792,7 @@ more information.
 </p><p>The --zip option causes the specified input file to be interpreted as a ZIP archive
 instead of as an SQLite database file.
 
-</p><p>The --hexdb option causes the database to be content to be read from subsequent
+</p><p>The --hexdb option causes the database content to be to be read from subsequent
 lines of input in a hex format, rather than from a separate file on disk.  
 The "dbtotxt" command-line tool can be used to generate
 the appropriate text for a database.  The --hexdb option is intended for use by the
@@ -737,7 +832,7 @@ of a query into some other process.  For example, the
 it reads from standard input.  So to see the results of a query
 in a text editor, one could type:</p>
 
-<div class="codeblock"><pre>sqlite&gt; <b>.once '|open -f'</b>
+<div class="codeblock"><pre>sqlite&gt; <b>.once | open -f</b>
 sqlite&gt; <b>SELECT * FROM bigTable;</b>
 </pre></div>
 
@@ -790,7 +885,7 @@ as a command, then uses the output of that command as its input.  Thus, if you
 have a script that generates SQL, you can execute that SQL directly using
 a command similar to the following:
 
-</p><div class="codeblock"><pre>sqlite&gt; <b>.read '|myscript.bat'</b>
+</p><div class="codeblock"><pre>sqlite&gt; <b>.read |myscript.bat</b>
 </pre></div>
 
 
@@ -828,10 +923,11 @@ source file in the <a href="download.html#srctree">SQLite source code repositori
 
 </p><h2 id="the_edit_sql_function"><span>8.4. </span>The edit() SQL function</h2>
 
-<p>The CLI has another build-in SQL function named edit().  Edit() takes
-one or two arguments.  The first argument is a value - usually a large
-multi-line string to be edited.  The second argument is the name of a
-text editor.  If the second argument is omitted, the VISUAL environment
+<p>The CLI has another built-in SQL function named edit().  Edit() takes
+one or two arguments.  The first argument is a value - often a large
+multi-line string to be edited.  The second argument is the invocation
+for a text editor. (It may include options to affect the editor's
+behavior.) If the second argument is omitted, the VISUAL environment
 variable is used.  The edit() function writes its first argument into a
 temporary file, invokes the editor on the temporary file, rereads the file
 back into memory after the editor is done, then returns the edited text.
@@ -862,42 +958,46 @@ return value.  For example, to merely look at the image above, you might run:
 
 <a name="csv"></a>
 
-<h2 id="importing_csv_files"><span>8.5. </span>Importing CSV files</h2>
+<h2 id="importing_files_as_csv_or_other_formats"><span>8.5. </span>Importing files as CSV or other formats</h2>
 
-<p>Use the ".import" command to import CSV (comma separated value) data into
-an SQLite table.  The ".import" command takes two arguments which are the
-source from which CSV data is to be read and the name of the
-SQLite table into which the CSV data is to be inserted. The source argument
+<p>Use the ".import" command to import CSV (comma separated value)
+or similarly delimited data into an SQLite table.
+The ".import" command takes two arguments which are the
+source from which data is to be read and the name of the
+SQLite table into which the data is to be inserted. The source argument
 is the name of a file to be read or, if it begins with a "|" character,
-specifies a command which will be run to produce the input CSV data.
+it specifies a command which will be run to produce the input data.
 
-</p><p>Note that it is important to set the "mode" to "csv" before running the
- ".import" command.  This is necessary to prevent the command-line shell
-from trying to interpret the input file text as some other format.
+</p><p>Note that it may be important to set the "mode" before running the
+ ".import" command.  This is prudent to prevent the command-line shell
+from trying to interpret the input file text as some format other than
+how the file is structured. If the --csv or --ascii options are used,
+they control import input delimiters. Otherwise, the delimiters are
+those in effect for the current output mode.
 
-</p><div class="codeblock"><pre>sqlite&gt; <b>.import C:/work/somedata.csv tab1</b>
+</p><p>To import into a table not in the "main" schema, the --schema option
+may be used to specify that the table is in some other schema. This can
+be useful for ATTACH'ed databases or to import into a TEMP table.
+
+</p><p>When .import is run, its treatment of the first input row depends
+upon whether the target table already exists. If it does not exist,
+the table is automatically created and the content of the first input
+row is used to set the name of all the columns in the table. In this
+case, the table data content is taken from the second and subsequent
+input rows. If the target table already exists, every row of the
+input, including the first, is taken to be actual data content.  If
+the input file contains an initial row of column labels, you can make
+the .import command skip that initial row using the "--skip 1" option.
+
+</p><p>Here is an example usage, loading a pre-existing temporary table
+from a CSV file which has column names in its first row:
+
+</p><div class="codeblock"><pre>sqlite&gt; <b>.import --csv --skip 1 --schema temp C:/work/somedata.csv tab1</b>
 </pre></div>
-
-<p>There are two cases to consider:  (1) Table "tab1" does not previously
-exist and (2) table "tab1" does already exist.
-
-</p><p>In the first case, when the table does not previously exist, the table is
-automatically created and the content of the first row of the input CSV
-file is used to determine the name of all the columns in the table.  In
-other words, if the table does not previously exist, the first row of the
-CSV file is interpreted to be column names and the actual data starts on
-the second row of the CSV file.
-
-</p><p>For the second case, when the table already exists, every row of the
-CSV file, including the first row, is assumed to be actual content.  If
-the CSV file contains an initial row of column labels, you can cause
-the .import command to skip that initial row using the "--skip 1" option.
-
-
 
 <a name="csvout"></a>
 
-</p><h2 id="export_to_csv"><span>8.6. </span>Export to CSV</h2>
+<h2 id="export_to_csv"><span>8.6. </span>Export to CSV</h2>
 
 <p>To export an SQLite table (or part of a table) as CSV, simply set
 the "mode" to "csv" and then run a query to extract the desired rows
@@ -1148,8 +1248,8 @@ the table "orphaned_rows":
 
 <p>You can add new custom <a href="appfunc.html">application-defined SQL functions</a>,
 <a href="datatype3.html#collation">collating sequences</a>, <a href="vtab.html">virtual tables</a>, and <a href="vfs.html">VFSes</a> to the command-line
-shell at run-time using the ".load" command.  First, convert the
-extension in to a DLL or shared library (as described in the
+shell at run-time using the ".load" command.  First, build the
+extension as a DLL or shared library (as described in the
 <a href="loadext.html">Run-Time Loadable Extensions</a> document) then type:
 
 </p><div class="codeblock"><pre>sqlite&gt; .load /path/to/my_extension
@@ -1226,7 +1326,7 @@ to the value in 'ans', and shows an error message if the results differ.
 does not already exists, then appends entries that check the SHA3
 hash of the content of all tables.  Subsequent runs of ".selftest"
 will verify that the database has not been changed in any way.  To
-generates tests to verify that a subset of the tables are unchanged,
+generate tests to verify that a subset of the tables is unchanged,
 simply run ".selftest --init" then <a href="lang_delete.html">DELETE</a> the selftest rows that
 refer to tables that are not constant.  
 
@@ -1414,7 +1514,7 @@ strings after the fashion of the "ls -l" command.
 <a href="https://sqlite.org/src/file/ext/misc/sqlar.c">sqlar.c</a> &mdash;
 This extension adds the sqlar_compress() and sqlar_uncompress()
 functions that are needed to compress and uncompress file content
-as it is insert and extracted from an SQLite Archive.
+as it is inserted and extracted from an SQLite Archive.
 
 </p></li><li><p>
 <a href="zipfile.html">zipfile.c</a> &mdash;
@@ -1465,6 +1565,21 @@ command shows all entries in the temp.sqlite_parameters table.  The ".param clea
 command drops the temp.sqlite_parameters table.  The ".param set KEY VALUE" and
 ".param unset KEY" commands create or delete entries from the 
 temp.sqlite_parameters table.
+
+</p><p>The VALUE passed to ".param set KEY VALUE" can be either a SQL literal
+or any other SQL expression or query which can be evaluated to yield a value.
+This allows values of differing types to be set.
+If such evaluation fails, the provided VALUE is instead quoted and inserted
+as text.
+Because such initial evaluation may or may not fail depending upon
+the VALUE content, the reliable way to get a text value is to enclose it
+with single-quotes protected from the above-described command-tail parsing.
+For example, (unless one intends a value of -1365):<br>
+</p><div class="codeblock"><pre>.parameter init
+.parameter set @phoneNumber "'202-456-1111'"
+</pre></div>
+<p>Note that the double-quotes serve to protect the single-quotes
+and ensure that the quoted text is parsed as one argument.
 
 </p><p>The temp.sqlite_parameters table only provides values for parameters in the
 command-line shell.  The temp.sqlite_parameter table has no effect on queries
@@ -1520,14 +1635,14 @@ indexes.
 
 </p><table striped="1" style="margin:1em auto; width:80%; border-spacing:0">
 <tr style="text-align:left"><th> Option </th><th> Purpose
-</th></tr><tr style="text-align:left;background-color:#DDDDDD"><td> --verbose 
+</th></tr><tr style="text-align:left;background-color:#DDDDDD"><td> &#8209;&#8209;verbose
     </td><td> If present, output a more verbose report for each query analyzed.
-</td></tr><tr style="text-align:left"><td> --sample&nbsp;PERCENT 
-    </td><td> By default, the ".expert" command recommends indexes based on the
-         query and database schema alone. This is similar to the way the
-         <a href="optoverview.html">SQLite query planner</a> selects indexes for queries if the user has not
-         run the <a href="lang_analyze.html">ANALYZE</a> command on the database to generate data
-         distribution statistics. 
+</td></tr><tr style="text-align:left"><td> &#8209;&#8209;sample&nbsp;PERCENT 
+    </td><td> This parameter defaults to 0, causing the ".expert" command to
+         recommend indexes based on the query and database schema alone.
+         This is similar to the way the <a href="optoverview.html">SQLite query planner</a> selects
+         indexes for queries if the user has not run the <a href="lang_analyze.html">ANALYZE</a> command
+         on the database to generate data distribution statistics. 
          <div style="margin-top:1ex">
          If this option is passed a non-zero argument, the ".expert" command
          generates similar data distribution statistics for all indexes
@@ -1548,7 +1663,7 @@ applications or tools using the
 <a href="http://www.sqlite.org/src/dir?ci=trunk&name=ext/expert">
 SQLite expert extension</a> code.
 
-</p><p>Database schema which incorporate SQL custom functions made available
+</p><p>A database schema which incorporate SQL custom functions made available
 via the extension load mechanism may need special provision to work with
 the .expert feature. Because the feature uses additional connections to
 implement its functionality, those custom functions must be made available
@@ -1580,7 +1695,7 @@ command followed by its number.  Close a database connection by typing
 </p><p>
 Though the underlying SQLite database connections are completely independent
 of one another, many of the CLI settings, such as the output format, are
-shared across all database connections.  Thus, change the <a href="cli.html#dotmode">output mode</a> in
+shared across all database connections.  Thus, changing the <a href="cli.html#dotmode">output mode</a> in
 one connection will change it in them all.  On the other hand, some
 <a href="cli.html#dotcmd">dot-commands</a> such as <a href="cli.html#dotopen">.open</a> only affect the current connection.
 
@@ -1610,8 +1725,8 @@ in list mode, and the program exits.  This mechanism is designed
 to make sqlite3 easy to use in conjunction with programs like
 "awk".  For example:</p>
 
-<div class="codeblock"><pre>$ <b>sqlite3 ex1 'select * from tbl1' |</b>
-&gt; <b> awk '{printf "&lt;tr&gt;&lt;td&gt;%s&lt;td&gt;%s\n",$1,$2 }'</b>
+<div class="codeblock"><pre>$ <b>sqlite3 ex1 'select * from tbl1' \</b>
+&gt; <b> | awk '{printf "&lt;tr&gt;&lt;td&gt;%s&lt;td&gt;%s\n",$1,$2 }'</b>
 &lt;tr&gt;&lt;td&gt;hello&lt;td&gt;10
 &lt;tr&gt;&lt;td&gt;goodbye&lt;td&gt;20
 $
@@ -1625,7 +1740,7 @@ $
 SQLite commands are normally terminated by a semicolon.  In the CLI
 you can also use the word "GO" (case-insensitive) or a slash character 
 "/" on a line by itself to end a command.  These are used by SQL Server 
-and Oracle, respectively, and are support by the SQLite CLI for
+and Oracle, respectively, and are supported by the SQLite CLI for
 compatibility.  These won't work in <b>sqlite3_exec()</b>, 
 because the CLI translates these inputs into a semicolon before passing 
 them down into the SQLite core.</p>
@@ -1728,22 +1843,24 @@ than the main database file is disabled.
 
 </p><h3 id="bypassing_safe_restrictions_for_specific_commands"><span>22.1.1. </span>Bypassing --safe restrictions for specific commands</h3>
 
-<p>If the "--nonce NONCE" option is also included on the command-line, for some large
-and arbitrary NONCE string, then the ".nonce NONCE" command (with the same large nonce
-string) will permit the next SQL statement or dot-command to bypass the --safe
-restrictions.
+<p>If the "--nonce NONCE" option is also included on the command-line, for some
+large and arbitrary NONCE string, then the ".nonce NONCE" command (with the
+same large nonce string) will permit the next SQL statement or dot-command
+to bypass the --safe restrictions.
 
-</p><p>Suppose you want to run a suspicious script and the script requires a one or two
-of the features that --safe normally disables.  For example, suppose it needs to ATTACH
-one additional database.  Or suppose the script needs to load a specific extension.
-This can be accomplished by preceding the (carefully audited) ATTACH statement or
-the ".load" command with an appropriate ".nonce" command and supplying the same nonce
-value using the "--nonce" command-line option.  Those specific commands will then
-be allowed to execute normally, but all other unsafe commands will still be restricted.
+</p><p>Suppose you want to run a suspicious script and the script requires one or
+two of the features that --safe normally disables.  For example, suppose it
+needs to ATTACH one additional database.  Or suppose the script needs to load
+a specific extension. This can be accomplished by preceding the (carefully
+audited) ATTACH statement or the ".load" command with an appropriate ".nonce"
+command and supplying the same nonce value using the "--nonce" command-line
+option.  Those specific commands will then be allowed to execute normally,
+but all other unsafe commands will still be restricted.
 
-</p><p>The use of ".nonce" is dangerous in the sense that a mistake can allow a hostile
-script to damage your system.  Therefore, use ".nonce" carefully, sparingly, and as a
-last resort when there are no other ways to get a script to run under --safe mode.
+</p><p>The use of ".nonce" is dangerous in the sense that a mistake can allow a
+hostile script to damage your system.  Therefore, use ".nonce" carefully,
+sparingly, and as a last resort when there are no other ways to get a
+script to run under --safe mode.
 
 <a name="compiling"></a>
 
