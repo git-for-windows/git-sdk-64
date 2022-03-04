@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Masatoshi SEKI".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-12-08"
+  s.date = "2022-03-03"
   s.description = "Distributed object system for Ruby".freeze
   s.email = ["seki@ruby-lang.org".freeze]
   s.files = ["drb.rb".freeze, "drb/acl.rb".freeze, "drb/drb.rb".freeze, "drb/eq.rb".freeze, "drb/extserv.rb".freeze, "drb/extservm.rb".freeze, "drb/gw.rb".freeze, "drb/invokemethod.rb".freeze, "drb/observer.rb".freeze, "drb/ssl.rb".freeze, "drb/timeridconv.rb".freeze, "drb/unix.rb".freeze, "drb/version.rb".freeze, "drb/weakidconv.rb".freeze]

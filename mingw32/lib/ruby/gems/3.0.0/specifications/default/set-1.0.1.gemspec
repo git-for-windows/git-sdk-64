@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Akinori MUSHA".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-12-08"
+  s.date = "2022-03-03"
   s.description = "Provides a class to deal with collections of unordered, unique values".freeze
   s.email = ["knu@idaemons.org".freeze]
   s.files = ["set.rb".freeze, "set/sorted_set.rb".freeze]

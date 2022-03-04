@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Shugo Maeda".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-12-08"
+  s.date = "2022-03-03"
   s.description = "Ruby client api for Internet Message Access Protocol".freeze
   s.email = ["shugo@ruby-lang.org".freeze]
   s.files = ["net/imap.rb".freeze]

@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.metadata = { "msys2_mingw_dependencies" => "libffi" } if s.respond_to? :metadata=
   s.require_paths = ["lib".freeze]
   s.authors = ["Aaron Patterson".freeze, "SHIBATA Hiroshi".freeze]
-  s.date = "2021-12-08"
+  s.date = "2022-03-03"
   s.description = "A libffi wrapper for Ruby.".freeze
   s.email = ["aaron@tenderlovemaking.com".freeze, "hsbt@ruby-lang.org".freeze]
   s.extensions = ["ext/fiddle/extconf.rb".freeze]

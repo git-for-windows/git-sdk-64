@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Tanaka Akira".freeze]
   s.bindir = "exe".freeze
-  s.date = "2021-12-08"
+  s.date = "2022-03-03"
   s.description = "Implements a pretty printing algorithm for readable structure.".freeze
   s.email = ["akr@fsij.org".freeze]
   s.files = ["prettyprint.rb".freeze]
