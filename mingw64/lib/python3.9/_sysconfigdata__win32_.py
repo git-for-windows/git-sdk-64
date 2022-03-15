@@ -14,10 +14,7 @@ build_time_vars = {'ABIFLAGS': '',
  'BINDIR': '/mingw64/bin',
  'BINLIBDEST': '/mingw64/lib/python3.9',
  'BLDLIBRARY': '-L. -lpython3.9',
- 'BLDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe '
-              '-Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high '
-              '-pipe '
-              '-Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high',
+ 'BLDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe -pipe',
  'BUILDEXE': '.exe',
  'BUILDPYTHON': 'python.exe',
  'BUILDPYTHONW': 'pythonw.exe',
@@ -43,8 +40,7 @@ build_time_vars = {'ABIFLAGS': '',
                             '-fvisibility=hidden -D_WIN32_WINNT=0x0601 '
                             '-DMS_DLL_ID=\'"3.9"\'',
  'CONFIGURE_CPPFLAGS': '-I../Python-3.9.10/PC -D__USE_MINGW_ANSI_STDIO=1 -I.',
- 'CONFIGURE_LDFLAGS': '-pipe '
-                      '-Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high',
+ 'CONFIGURE_LDFLAGS': '-pipe',
  'CONFIGURE_LDFLAGS_NODIST': '',
  'CONFIG_ARGS': "'--prefix=/mingw64' '--host=x86_64-w64-mingw32' "
                 "'--build=x86_64-w64-mingw32' '--enable-shared' "
@@ -56,9 +52,7 @@ build_time_vars = {'ABIFLAGS': '',
                 "'--enable-optimizations' 'build_alias=x86_64-w64-mingw32' "
                 "'host_alias=x86_64-w64-mingw32' 'CC=gcc' "
                 "'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe' "
-                "'LDFLAGS=-pipe "
-                "-Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high' "
-                "'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' "
+                "'LDFLAGS=-pipe' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' "
                 "'PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig'",
  'CONFINCLUDEDIR': '/mingw64/include',
  'CONFINCLUDEPY': '/mingw64/include/python3.9',
@@ -555,17 +549,11 @@ build_time_vars = {'ABIFLAGS': '',
  'IO_H': 'Modules/_io/_iomodule.h',
  'IO_OBJS': '\\',
  'LDCXXSHARED': 'g++ -shared -Wl,--enable-auto-image-base',
- 'LDFLAGS': '-pipe '
-            '-Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high '
-            '-pipe '
-            '-Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high',
+ 'LDFLAGS': '-pipe -pipe',
  'LDFLAGS_NODIST': '',
  'LDLIBRARY': 'libpython3.9.dll.a',
  'LDLIBRARYDIR': '',
- 'LDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe '
-             '-Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high '
-             '-pipe '
-             '-Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high',
+ 'LDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe -pipe',
  'LDVERSION': '3.9',
  'LIBC': '',
  'LIBDEST': '/mingw64/lib/python3.9',
@@ -708,18 +696,12 @@ build_time_vars = {'ABIFLAGS': '',
                    '-I../Python-3.9.10/Include -I../Python-3.9.10/PC '
                    '-D__USE_MINGW_ANSI_STDIO=1 -I. -D__USE_MINGW_ANSI_STDIO=1 '
                    '-DPy_BUILD_CORE',
- 'PY_CORE_LDFLAGS': '-pipe '
-                    '-Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high '
-                    '-pipe '
-                    '-Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high',
+ 'PY_CORE_LDFLAGS': '-pipe -pipe',
  'PY_CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.9.10/Include '
                 '-I../Python-3.9.10/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
                 '-D__USE_MINGW_ANSI_STDIO=1',
  'PY_FORMAT_SIZE_T': '"z"',
- 'PY_LDFLAGS': '-pipe '
-               '-Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high '
-               '-pipe '
-               '-Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high',
+ 'PY_LDFLAGS': '-pipe -pipe',
  'PY_LDFLAGS_NODIST': '',
  'PY_SSL_DEFAULT_CIPHERS': 1,
  'PY_SSL_DEFAULT_CIPHER_STRING': 0,

@@ -103,7 +103,8 @@ Table Of Contents
 <div id="toc_sub"><div class="fancy-toc1"><a href="#definitions">1. Definitions</a></div>
 <div class="fancy-toc1"><a href="#syntax">2. Syntax</a></div>
 <div class="fancy-toc2"><a href="#row_value_comparisons">2.1. Row Value Comparisons</a></div>
-<div class="fancy-toc2"><a href="#row_values_in_update_statements">2.2. Row Values In UPDATE Statements</a></div>
+<div class="fancy-toc2"><a href="#row_value_in_operators">2.2. Row Value IN Operators</a></div>
+<div class="fancy-toc2"><a href="#row_values_in_update_statements">2.3. Row Values In UPDATE Statements</a></div>
 <div class="fancy-toc1"><a href="#example_uses_of_row_values">3. Example Uses Of Row Values</a></div>
 <div class="fancy-toc2"><a href="#scrolling_window_queries">3.1. Scrolling Window Queries</a></div>
 <div class="fancy-toc2"><a href="#comparison_of_dates_stored_as_separate_fields">3.2. Comparison of dates stored as separate fields</a></div>
@@ -203,6 +204,10 @@ INSERT INTO t1(a,b,c) VALUES(1,2,3);
 SELECT (1,2,3)=(SELECT * FROM t1); -- 1
 </pre></div>
 
+<a name="rvinop"></a>
+
+<h2 id="row_value_in_operators"><span>2.2. </span>Row Value IN Operators</h2>
+
 <p>For a row-value <a href="lang_expr.html#in_op">IN operator</a>, the left-hand side (hereafter "LHS") can be either
 a parenthesized list of values or a subquery with multiple columns.  But the
 right-hand side (hereafter "RHS") must be a subquery expression.
@@ -215,7 +220,7 @@ SELECT
    (1,3,5) IN (SELECT * FROM t2);  -- NULL
 </pre></div>
 
-<h2 id="row_values_in_update_statements"><span>2.2. </span>Row Values In UPDATE Statements</h2>
+<h2 id="row_values_in_update_statements"><span>2.3. </span>Row Values In UPDATE Statements</h2>
 
 <p>Row values can also be used in the SET clause of an <a href="lang_update.html">UPDATE</a> statement.
 The LHS must be a list of column names.  The RHS can be any row value.

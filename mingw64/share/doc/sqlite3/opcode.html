@@ -192,8 +192,8 @@ output from SQLite, you should reference the version of this document
 that corresponds to the version of SQLite that ran the <a href="lang_explain.html">EXPLAIN</a>.
 Otherwise, the description of the opcodes may not be accurate.
 This document is derived from SQLite
- version 3.38.0 check-in
-<a href='https://www.sqlite.org/src/timeline?c=40fa792d359f8'>40fa792d359f8</a> dated 2022-02-22.
+ version 3.38.1 check-in
+<a href='https://www.sqlite.org/src/timeline?c=38c210fdd2586'>38c210fdd2586</a> dated 2022-03-12.
 
 
 
@@ -421,15 +421,15 @@ opcodes defined by the virtual machine.
 All currently defined opcodes are described in the table below.
 This table was generated automatically by scanning the source code
 from the file
-<a href="http://www.sqlite.org/src/artifact/e179d2d6551c6cc3dda7f6f233f9fe3d3c8da2f9bfc46eaabb4b54dc4337d3cf">vdbe.c</a>.
+<a href="http://www.sqlite.org/src/artifact/8239c69f3cb6fa27bac30d60c5a1ebac723abc007ff870ffc3af93e5159c7216">vdbe.c</a>.
 
 
 </p><p>Remember: The VDBE opcodes are <u>not</u> part of the interface 
 definition for SQLite.  The number of opcodes and their names and meanings
 change from one release of SQLite to the next.
 The opcodes shown in the table below are valid for SQLite
- version 3.38.0 check-in
-<a href='https://www.sqlite.org/src/timeline?c=40fa792d359f8'>40fa792d359f8</a> dated 2022-02-22.
+ version 3.38.1 check-in
+<a href='https://www.sqlite.org/src/timeline?c=38c210fdd2586'>38c210fdd2586</a> dated 2022-03-12.
 
 <a name="codes"></a>
 
@@ -1538,7 +1538,11 @@ NULL values will not compare equal even if SQLITE_NULLEQ is set on
 <a name="NullRow"></a>NullRow
 <td>Move the cursor P1 to a null row.  Any <a href="opcode.html#Column">Column</a> operations
 that occur while the cursor is on the null row will always
-write a NULL.</td></tr>
+write a NULL.</p>
+
+<p>Or, if P1 is a Pseudo-Cursor (a cursor opened using <a href="opcode.html#OpenPseudo">OpenPseudo</a>)
+just reset the cache for that cursor.  This causes the row of
+content held by the pseudo-cursor to be reparsed.</td></tr>
 <tr><td valign="top" align="center">
 <a name="Offset"></a>Offset
 <td>Store in register r&#91;P3&#93; the byte offset into the database file that is the

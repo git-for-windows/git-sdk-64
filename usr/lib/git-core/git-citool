@@ -51,7 +51,10 @@ catch {rename send {}} ; # What an evil concept...
 if { [info exists ::env(GIT_GUI_LIB_DIR) ] } {
 	set oguilib $::env(GIT_GUI_LIB_DIR)
 } else {
-	set oguilib {/usr/share/git-gui/lib}
+	set oguilib [exec cygpath \
+			--windows \
+			--absolute \
+			{/usr/share/git-gui/lib}]
 }
 set oguirel {}
 if {$oguirel eq {1}} {
@@ -274,10 +277,6 @@ proc is_Cygwin {} {
 				set _iscygwin 0
 			} else {
 				set _iscygwin 1
-				# Handle MSys2 which is only cygwin when MSYSTEM is MSYS.
-				if {[info exists ::env(MSYSTEM)] && $::env(MSYSTEM) ne "MSYS"} {
-					set _iscygwin 0
-				}
 			}
 		} else {
 			set _iscygwin 0

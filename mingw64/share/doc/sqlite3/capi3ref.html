@@ -4498,7 +4498,7 @@ and remains valid for the duration of the xBestIndex method call.
 When xBestIndex returns, the sqlite3_value object returned by
 sqlite3_vtab_rhs_value() is automatically deallocated.</p>
 
-<p>The "_rhs_" in the name of this routine is an appreviation for
+<p>The "_rhs_" in the name of this routine is an abbreviation for
 "Right-Hand Side".
 </p><hr><a name="sqlite3_wal_autocheckpoint"></a>
 <h2>Configure an auto-checkpoint</h2>
@@ -6612,9 +6612,9 @@ and EXCLUSIVE.
 <h2>Compile-Time Library Version Numbers</h2>
 </div>
 <blockquote><pre>
-#define SQLITE_VERSION        "3.38.0"
-#define SQLITE_VERSION_NUMBER 3038000
-#define SQLITE_SOURCE_ID      "2022-02-22 18:58:40 40fa792d359f84c3b9e9d6623743e1a59826274e221df1bde8f47086968a1bab"
+#define SQLITE_VERSION        "3.38.1"
+#define SQLITE_VERSION_NUMBER 3038001
+#define SQLITE_SOURCE_ID      "2022-03-12 13:37:29 38c210fdd258658321c85ec9c01a072fda3ada94540e3239d29b34dc547a8cbc"
 </pre></blockquote>
 <p>
 The <a href="#SQLITE_SOURCE_ID">SQLITE_VERSION</a> C preprocessor macro in the sqlite3.h header
@@ -11263,6 +11263,10 @@ bytes in the string, not the number of characters.</p>
 even empty strings, are always zero-terminated.  The return
 value from sqlite3_column_blob() for a zero-length BLOB is a NULL pointer.</p>
 
+<p>Strings returned by sqlite3_column_text16() always have the endianness
+which is native to the platform, regardless of the text encoding set
+for the database.</p>
+
 <p><b>Warning:</b> The object returned by <a href="#sqlite3_column_blob">sqlite3_column_value()</a> is an
 <a href="#sqlite3_value">unprotected sqlite3_value</a> object.  In a multithreaded environment,
 an unprotected sqlite3_value object may only be used safely with
@@ -11276,7 +11280,7 @@ is normally only useful within the implementation of
 <a href="appfunc.html">application-defined SQL functions</a> or <a href="vtab.html">virtual tables</a>, not within
 top-level application code.</p>
 
-<p>The these routines may attempt to convert the datatype of the result.
+<p>These routines may attempt to convert the datatype of the result.
 For example, if the internal representation is FLOAT and a text result
 is requested, <a href="#sqlite3_mprintf">sqlite3_snprintf()</a> is used internally to perform the
 conversion automatically.  The following table details the conversions
@@ -11301,7 +11305,7 @@ that are applied:</p>
 <tr><td>  TEXT    <td>   BLOB    <td> No change
 <tr><td>  BLOB    <td> INTEGER   <td> <a href="lang_expr.html#castexpr">CAST</a> to INTEGER
 <tr><td>  BLOB    <td>  FLOAT    <td> <a href="lang_expr.html#castexpr">CAST</a> to REAL
-<tr><td>  BLOB    <td>   TEXT    <td> Add a zero terminator if needed
+<tr><td>  BLOB    <td>   TEXT    <td> <a href="lang_expr.html#castexpr">CAST</a> to TEXT, ensure zero terminator
 </table>
 </blockquote></p>
 

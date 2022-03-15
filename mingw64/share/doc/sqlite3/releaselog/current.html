@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="../sqlite.css" rel="stylesheet">
-<title>SQLite Release 3.38.0 On 2022-02-22</title>
+<title>SQLite Release 3.38.1 On 2022-03-12</title>
 <!-- path=../ -->
 </head>
 <body>
@@ -90,8 +90,9 @@ b.innerHTML='hide';
 return false;
 }
 </script>
-<h2>SQLite Release 3.38.0 On 2022-02-22</h2><p><ol class='lessindent'>
-<li> Added <a href="../json1.html#jptr">the -> and ->> operators</a> for easier processing of JSON.
+<h2>SQLite Release 3.38.1 On 2022-03-12</h2><p><b>Changes in version 3.38.0 (2022-02-22):</b></p>
+<p><ol class='lessindent'>
+<li value='1'> Added <a href="../json1.html#jptr">the -> and ->> operators</a> for easier processing of JSON.
      The new operators are compatible with MySQL and PostgreSQL.
 <li> The JSON functions are now built-ins.  It is no longer necessary
      to use the <a href="../compile.html#enable_json1">-DSQLITE_ENABLE_JSON1</a> compile-time option to enable JSON
@@ -138,10 +139,26 @@ return false;
      </ol>
 <li> The <a href="../lang_altertable.html">ALTER TABLE</a> statement is changed to silently ignores entries in the
      <a href="../schematab.html">sqlite_schema table</a> that do not parse when <a href="../pragma.html#pragma_writable_schema">PRAGMA writable_schema=ON</a>.
-<p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: 2022-02-22 18:58:40 40fa792d359f84c3b9e9d6623743e1a59826274e221df1bde8f47086968a1bab
+</ol>
+<p><b>Additional changes in version 3.38.1 (2022-03-12):</b></p>
+<p><ol class='lessindent'>
+<li value='10'> Fix problems with the new Bloom filter optimization that might cause
+     some obscure queries to get an incorrect answer.
+<li> Fix the <a href="../lang_datefunc.html#localtime">localtime modifier</a> of the <a href="../lang_datefunc.html">date and time functions</a> so that
+     it preserves fractional seconds.
+<li> Fix the <a href="../lang_corefunc.html#sqlite_offset">sqlite_offset SQL function</a> so that it works correctly even
+     in corner cases such as when the argument is a virtual column or the
+     column of a view.
+<li> Fix <a href="../rowvalue.html#rvinop">row value IN operator</a> constraints on <a href="../vtab.html">virtual tables</a> so that they
+     work correctly even if the virtual table implementation relies on bytecode
+     to filter rows that do not satisfy the constraint.
+<li> Other minor fixes to assert() statements, test cases, and documentation.
+     See the <a href="https://sqlite.org/src/timeline?p=version-3.38.1&bt=version-3.38.0">source code timeline</a>
+     for details.
 
-<li>SHA3-256 for sqlite3.c: a69af0a88d59271a2dd3c846a3e93cbd29e7c499864f6c0462a3b4160bee1762
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: 2022-03-12 13:37:29 38c210fdd258658321c85ec9c01a072fda3ada94540e3239d29b34dc547a8cbc
+<li>SHA3-256 for sqlite3.c: 262ba071e960a8a0a6ce39307ae30244a2b0dc9fe1c4c09d0e1070d4353cd92c
 
 </ol></p>
 

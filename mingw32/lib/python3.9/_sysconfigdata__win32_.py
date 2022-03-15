@@ -14,9 +14,8 @@ build_time_vars = {'ABIFLAGS': '',
  'BINDIR': '/mingw32/bin',
  'BINLIBDEST': '/mingw32/lib/python3.9',
  'BLDLIBRARY': '-L. -lpython3.9',
- 'BLDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe '
-              '-Wl,--dynamicbase,--nxcompat,--no-seh -pipe '
-              '-Wl,--dynamicbase,--nxcompat,--no-seh',
+ 'BLDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe -Wl,--no-seh '
+              '-pipe -Wl,--no-seh',
  'BUILDEXE': '.exe',
  'BUILDPYTHON': 'python.exe',
  'BUILDPYTHONW': 'pythonw.exe',
@@ -42,7 +41,7 @@ build_time_vars = {'ABIFLAGS': '',
                             '-fvisibility=hidden -D_WIN32_WINNT=0x0601 '
                             '-DMS_DLL_ID=\'"3.9"\'',
  'CONFIGURE_CPPFLAGS': '-I../Python-3.9.10/PC -D__USE_MINGW_ANSI_STDIO=1 -I.',
- 'CONFIGURE_LDFLAGS': '-pipe -Wl,--dynamicbase,--nxcompat,--no-seh',
+ 'CONFIGURE_LDFLAGS': '-pipe -Wl,--no-seh',
  'CONFIGURE_LDFLAGS_NODIST': '',
  'CONFIG_ARGS': "'--prefix=/mingw32' '--host=i686-w64-mingw32' "
                 "'--build=i686-w64-mingw32' '--enable-shared' "
@@ -54,7 +53,7 @@ build_time_vars = {'ABIFLAGS': '',
                 "'--enable-optimizations' 'build_alias=i686-w64-mingw32' "
                 "'host_alias=i686-w64-mingw32' 'CC=gcc' "
                 "'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe' "
-                "'LDFLAGS=-pipe -Wl,--dynamicbase,--nxcompat,--no-seh' "
+                "'LDFLAGS=-pipe -Wl,--no-seh' "
                 "'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' "
                 "'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'",
  'CONFINCLUDEDIR': '/mingw32/include',
@@ -552,14 +551,12 @@ build_time_vars = {'ABIFLAGS': '',
  'IO_H': 'Modules/_io/_iomodule.h',
  'IO_OBJS': '\\',
  'LDCXXSHARED': 'g++ -shared -Wl,--enable-auto-image-base',
- 'LDFLAGS': '-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -pipe '
-            '-Wl,--dynamicbase,--nxcompat,--no-seh',
+ 'LDFLAGS': '-pipe -Wl,--no-seh -pipe -Wl,--no-seh',
  'LDFLAGS_NODIST': '',
  'LDLIBRARY': 'libpython3.9.dll.a',
  'LDLIBRARYDIR': '',
- 'LDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe '
-             '-Wl,--dynamicbase,--nxcompat,--no-seh -pipe '
-             '-Wl,--dynamicbase,--nxcompat,--no-seh',
+ 'LDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe -Wl,--no-seh '
+             '-pipe -Wl,--no-seh',
  'LDVERSION': '3.9',
  'LIBC': '',
  'LIBDEST': '/mingw32/lib/python3.9',
@@ -702,14 +699,12 @@ build_time_vars = {'ABIFLAGS': '',
                    '-I../Python-3.9.10/Include -I../Python-3.9.10/PC '
                    '-D__USE_MINGW_ANSI_STDIO=1 -I. -D__USE_MINGW_ANSI_STDIO=1 '
                    '-DPy_BUILD_CORE',
- 'PY_CORE_LDFLAGS': '-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -pipe '
-                    '-Wl,--dynamicbase,--nxcompat,--no-seh',
+ 'PY_CORE_LDFLAGS': '-pipe -Wl,--no-seh -pipe -Wl,--no-seh',
  'PY_CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.9.10/Include '
                 '-I../Python-3.9.10/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
                 '-D__USE_MINGW_ANSI_STDIO=1',
  'PY_FORMAT_SIZE_T': '"z"',
- 'PY_LDFLAGS': '-pipe -Wl,--dynamicbase,--nxcompat,--no-seh -pipe '
-               '-Wl,--dynamicbase,--nxcompat,--no-seh',
+ 'PY_LDFLAGS': '-pipe -Wl,--no-seh -pipe -Wl,--no-seh',
  'PY_LDFLAGS_NODIST': '',
  'PY_SSL_DEFAULT_CIPHERS': 1,
  'PY_SSL_DEFAULT_CIPHER_STRING': 0,

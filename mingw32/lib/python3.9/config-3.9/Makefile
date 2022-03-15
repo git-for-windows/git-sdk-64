@@ -92,7 +92,7 @@ CONFIGURE_CFLAGS_NODIST= -std=c99 -Wextra -Wno-unused-result -Wno-unused-paramet
 # once Python is installed (bpo-35257)
 CONFIGURE_LDFLAGS_NODIST=
 CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -I.
-CONFIGURE_LDFLAGS=	-pipe -Wl,--dynamicbase,--nxcompat,--no-seh
+CONFIGURE_LDFLAGS=	-pipe -Wl,--no-seh
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
 # values.
@@ -225,7 +225,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--without-c-locale-coercion' '--enable-loadable-sqlite-extensions' '--with-tzpath=/mingw32/share/zoneinfo' '--enable-optimizations' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe -Wl,--dynamicbase,--nxcompat,--no-seh' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--without-c-locale-coercion' '--enable-loadable-sqlite-extensions' '--with-tzpath=/mingw32/share/zoneinfo' '--enable-optimizations' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe -Wl,--no-seh' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
 
 
 # Subdirectories with code

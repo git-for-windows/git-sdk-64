@@ -104,6 +104,27 @@ http://www.sqlite.org/src/timeline?t=release</a>.
 See the <a href="chronology.html">chronology</a> a succinct listing of releases.
 </p>
 
+<a name="version_3_38_1"></a>
+<h3>2022-03-12 (3.38.1)</h3><p><ol class='lessindent'>
+<li> Fix problems with the new Bloom filter optimization that might cause
+     some obscure queries to get an incorrect answer.
+<li> Fix the <a href="lang_datefunc.html#localtime">localtime modifier</a> of the <a href="lang_datefunc.html">date and time functions</a> so that
+     it preserves fractional seconds.
+<li> Fix the <a href="lang_corefunc.html#sqlite_offset">sqlite_offset SQL function</a> so that it works correctly even
+     in corner cases such as when the argument is a virtual column or the
+     column of a view.
+<li> Fix <a href="rowvalue.html#rvinop">row value IN operator</a> constraints on <a href="vtab.html">virtual tables</a> so that they
+     work correctly even if the virtual table implementation relies on bytecode
+     to filter rows that do not satisfy the constraint.
+<li> Other minor fixes to assert() statements, test cases, and documentation.
+     See the <a href="https://sqlite.org/src/timeline?p=version-3.38.1&bt=version-3.38.0">source code timeline</a>
+     for details.
+
+<p><b>Hashes:</b>
+<li>SQLITE_SOURCE_ID: 2022-03-12 13:37:29 38c210fdd258658321c85ec9c01a072fda3ada94540e3239d29b34dc547a8cbc
+<li>SHA3-256 for sqlite3.c: 262ba071e960a8a0a6ce39307ae30244a2b0dc9fe1c4c09d0e1070d4353cd92c
+
+</ol></p>
 <a name="version_3_38_0"></a>
 <h3>2022-02-22 (3.38.0)</h3><p><ol class='lessindent'>
 <li> Added <a href="json1.html#jptr">the -> and ->> operators</a> for easier processing of JSON.

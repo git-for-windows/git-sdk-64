@@ -242,6 +242,10 @@ def check_enableusersite():
 #
 # See https://bugs.python.org/issue29585
 
+# Copy of sysconfig._POSIX_BUILD
+_POSIX_BUILD = os.name == 'posix' or \
+    (os.name == "nt" and 'GCC' in sys.version)
+
 # Copy of sysconfig._getuserbase()
 def _getuserbase():
     env_base = os.environ.get("PYTHONUSERBASE", None)
@@ -251,7 +255,6 @@ def _getuserbase():
     def joinuser(*args):
         return os.path.expanduser(os.path.join(*args))
 
-    from sysconfig import _POSIX_BUILD
     if os.name == "nt" and not _POSIX_BUILD:
         base = os.environ.get("APPDATA") or "~"
         return joinuser(base, "Python")
@@ -267,7 +270,6 @@ def _getuserbase():
 def _get_path(userbase):
     version = sys.version_info
 
-    from sysconfig import _POSIX_BUILD
     if sys.platform == 'win32' and not _POSIX_BUILD:
         return f'{userbase}\\Python{version[0]}{version[1]}\\site-packages'
 
@@ -331,7 +333,6 @@ def getsitepackages(prefixes=None):
     if prefixes is None:
         prefixes = PREFIXES
 
-    from sysconfig import _POSIX_BUILD
     for prefix in prefixes:
         if not prefix or prefix in seen:
             continue
