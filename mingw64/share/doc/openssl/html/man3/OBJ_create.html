@@ -18,7 +18,6 @@
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
-  <li><a href="#BUGS">BUGS</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
@@ -73,7 +72,7 @@ void OBJ_cleanup(void)
 
 <p>OBJ_txt2obj() converts the text string <i>s</i> into an ASN1_OBJECT structure. If <i>no_name</i> is 0 then long names and short names will be interpreted as well as numerical forms. If <i>no_name</i> is 1 only the numerical form is acceptable.</p>
 
-<p>OBJ_obj2txt() converts the <b>ASN1_OBJECT</b> <b>a</b> into a textual representation. The representation is written as a null terminated string to <b>buf</b> at most <b>buf_len</b> bytes are written, truncating the result if necessary. The total amount of space required is returned. If <b>no_name</b> is 0 then if the object has a long or short name then that will be used, otherwise the numerical form will be used. If <b>no_name</b> is 1 then the numerical form will always be used.</p>
+<p>OBJ_obj2txt() converts the <b>ASN1_OBJECT</b> <i>a</i> into a textual representation. Unless <i>buf</i> is NULL, the representation is written as a NUL-terminated string to <i>buf</i>, where at most <i>buf_len</i> bytes are written, truncating the result if necessary. In any case it returns the total string length, excluding the NUL character, required for non-truncated representation, or -1 on error. If <i>no_name</i> is 0 then if the object has a long or short name then that will be used, otherwise the numerical form will be used. If <i>no_name</i> is 1 then the numerical form will always be used.</p>
 
 <p>i2t_ASN1_OBJECT() is the same as OBJ_obj2txt() with the <i>no_name</i> set to zero.</p>
 
@@ -119,6 +118,10 @@ void OBJ_cleanup(void)
 
 <p>OBJ_obj2nid(), OBJ_ln2nid(), OBJ_sn2nid() and OBJ_txt2nid() return a NID or <b>NID_undef</b> on error.</p>
 
+<p>OBJ_add_sigid() returns 1 on success or 0 on error.</p>
+
+<p>i2t_ASN1_OBJECT() an OBJ_obj2txt() return -1 on error. On success, they return the length of the string written to <i>buf</i> if <i>buf</i> is not NULL and <i>buf_len</i> is big enough, otherwise the total string length. Note that this does not count the trailing NUL character.</p>
+
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
 <p>Create an object for <b>commonName</b>:</p>
@@ -139,10 +142,6 @@ ASN1_OBJECT *obj = OBJ_nid2obj(new_nid);</code></pre>
 
 <pre><code>obj = OBJ_txt2obj(&quot;1.2.3.4&quot;, 1);</code></pre>
 
-<h1 id="BUGS">BUGS</h1>
-
-<p>OBJ_obj2txt() is awkward and messy to use: it doesn&#39;t follow the convention of other OpenSSL functions where the buffer can be set to <b>NULL</b> to determine the amount of data that should be written. Instead <b>buf</b> must point to a valid buffer and <b>buf_len</b> should be set to a positive value. A buffer length of 80 should be more than enough to handle any OID encountered in practice.</p>
-
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man3/ERR_get_error.html">ERR_get_error(3)</a></p>
@@ -153,7 +152,7 @@ ASN1_OBJECT *obj = OBJ_nid2obj(new_nid);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
