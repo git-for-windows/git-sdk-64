@@ -10,7 +10,7 @@
 .ds B-Font B
 .ds I-Font I
 .ds R-Font R
-.TH p11tool 1 "18 Jan 2022" "3.7.3" "User Commands"
+.TH p11tool 1 "17 Mar 2022" "3.7.4" "User Commands"
 .SH NAME
 \f\*[B-Font]p11tool\fP
 \- GnuTLS PKCS #11 tool
@@ -64,17 +64,17 @@ Initializes/Resets a PKCS #11 token user PIN.
 .sp
 .TP
 .NOP \f\*[B-Font]\-\-initialize\-so\-pin\f[]
-Initializes/Resets a PKCS #11 token security officer PIN..
+Initializes/Resets a PKCS #11 token security officer PIN.
 .sp
 This initializes the security officer's PIN. When used non\-interactively use the GNUTLS_NEW_SO_PIN
 environment variables to initialize SO's PIN.
 .TP
-.NOP \f\*[B-Font]\-\-set\-pin\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-set\-pin\f[]=\f\*[I-Font]str\f[]
 Specify the PIN to use on token operations.
 .sp
 Alternatively the GNUTLS_PIN environment variable may be used.
 .TP
-.NOP \f\*[B-Font]\-\-set\-so\-pin\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-set\-so\-pin\f[]=\f\*[I-Font]str\f[]
 Specify the Security Officer's PIN to use on token initialization.
 .sp
 Alternatively the GNUTLS_SO_PIN environment variable may be used.
@@ -154,7 +154,7 @@ This is an alias for the \fI--mark-trusted\fR option.
 This is an alias for the \fI--mark-distrusted\fR option.
 .SS "Key generation"
 .TP
-.NOP \f\*[B-Font]\-\-generate\-privkey\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-generate\-privkey\f[]=\f\*[I-Font]str\f[]
 Generate private-public key pair of given type.
 .sp
 Generates a private\-public key pair in the specified token.
@@ -187,7 +187,7 @@ Should be combined with \-\-curve, \-\-sec\-param or \-\-bits.
 .B
 NOTE: THIS OPTION IS DEPRECATED
 .TP
-.NOP \f\*[B-Font]\-\-bits\f[]=\f\*[I-Font]number\f[]
+.NOP \f\*[B-Font]\-\-bits\f[]=\f\*[I-Font]num\f[]
 Specify the number of bits for the key generate.
 This option takes an integer number as its argument.
 .sp
@@ -195,7 +195,7 @@ For applications which have no key\-size restrictions the
 \-\-sec\-param option is recommended, as the sec\-param levels will adapt
 to the acceptable security levels with the new versions of gnutls.
 .TP
-.NOP \f\*[B-Font]\-\-curve\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-curve\f[]=\f\*[I-Font]str\f[]
 Specify the curve used for EC key generation.
 .sp
 Supported values are secp192r1, secp224r1, secp256r1, secp384r1 and secp521r1.
@@ -206,14 +206,14 @@ Specify the security level.
 This is alternative to the bits option. Available options are [low, legacy, medium, high, ultra].
 .SS "Writing objects"
 .TP
-.NOP \f\*[B-Font]\-\-set\-id\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-set\-id\f[]=\f\*[I-Font]str\f[]
 Set the CKA_ID (in hex) for the specified by the URL object.
 This option must not appear in combination with any of the following options:
 write.
 .sp
 Modifies or sets the CKA_ID in the specified by the URL object. The ID should be specified in hexadecimal format without a '0x' prefix.
 .TP
-.NOP \f\*[B-Font]\-\-set\-label\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-set\-label\f[]=\f\*[I-Font]str\f[]
 Set the CKA_LABEL for the specified by the URL object.
 This option must not appear in combination with any of the following options:
 write, set-id.
@@ -231,11 +231,11 @@ When writing a certificate object, its CKA_ID is set to the same CKA_ID of the c
 Deletes the objects matching the given PKCS #11 URL.
 .sp
 .TP
-.NOP \f\*[B-Font]\-\-label\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-label\f[]=\f\*[I-Font]str\f[]
 Sets a label for the write operation.
 .sp
 .TP
-.NOP \f\*[B-Font]\-\-id\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-id\f[]=\f\*[I-Font]str\f[]
 Sets an ID for the write operation.
 .sp
 Sets the CKA_ID to be set by the write operation. The ID should be specified in hexadecimal format without a '0x' prefix.
@@ -299,7 +299,7 @@ The \fIno\-mark\-always\-authenticate\fP form will disable the option.
 .sp
 Marks the object to be generated/written with the CKA_ALWAYS_AUTHENTICATE flag. The written object will Mark the object as requiring authentication (pin entry) before every operation.
 .TP
-.NOP \f\*[B-Font]\-\-secret\-key\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-secret\-key\f[]=\f\*[I-Font]str\f[]
 Provide a hex encoded secret key.
 .sp
 This secret key will be written to the module if \-\-write is specified.
@@ -317,22 +317,22 @@ Certificate file to use.
 .sp
 .SS "Other options"
 .TP
-.NOP \f\*[B-Font]\-d\f[] \f\*[I-Font]number\f[], \f\*[B-Font]\-\-debug\f[]=\f\*[I-Font]number\f[]
+.NOP \f\*[B-Font]\-d\f[] \f\*[I-Font]num\f[], \f\*[B-Font]\-\-debug\f[]=\f\*[I-Font]num\f[]
 Enable debugging.
 This option takes an integer number as its argument.
 The value of
-\f\*[I-Font]number\f[]
+\f\*[I-Font]num\f[]
 is constrained to being:
 .in +4
 .nf
 .na
-in the range 0  through  9999
+in the range 0 through 9999
 .fi
 .in -4
 .sp
 Specifies the debug level.
 .TP
-.NOP \f\*[B-Font]\-\-outfile\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-outfile\f[]=\f\*[I-Font]str\f[]
 Output file.
 .sp
 .TP
@@ -357,19 +357,19 @@ It can be used to test the correct operation of the signature operation.
 If both a private and a public key are available this operation will sign and verify
 the signed data.
 .TP
-.NOP \f\*[B-Font]\-\-sign\-params\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-sign\-params\f[]=\f\*[I-Font]str\f[]
 Sign with a specific signature algorithm.
 .sp
 This option can be combined with \-\-test\-sign, to sign with
 a specific signature algorithm variant. The only option supported is 'RSA\-PSS', and should be
 specified in order to use RSA\-PSS signature on RSA keys.
 .TP
-.NOP \f\*[B-Font]\-\-hash\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-hash\f[]=\f\*[I-Font]str\f[]
 Hash algorithm to use for signing.
 .sp
 This option can be combined with test\-sign. Available hash functions are SHA1, RMD160, SHA256, SHA384, SHA512, SHA3\-224, SHA3\-256, SHA3\-384, SHA3\-512.
 .TP
-.NOP \f\*[B-Font]\-\-generate\-random\f[]=\f\*[I-Font]number\f[]
+.NOP \f\*[B-Font]\-\-generate\-random\f[]=\f\*[I-Font]num\f[]
 Generate random data.
 This option takes an integer number as its argument.
 .sp
@@ -402,7 +402,7 @@ Specify the PKCS #11 provider library.
 .sp
 This will override the default options in /etc/gnutls/pkcs11.conf
 .TP
-.NOP \f\*[B-Font]\-\-provider\-opts\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-provider\-opts\f[]=\f\*[I-Font]str\f[]
 Specify parameters for the PKCS #11 provider library.
 .sp
 This is a PKCS#11 internal option used by few modules.
@@ -425,7 +425,7 @@ Disable all interaction with the tool.
 .sp
 In batch mode there will be no prompts, all parameters need to be specified on command line.
 .TP
-.NOP \f\*[B-Font]\-v\f[] \f\*[I-Font]keyword\f[], \f\*[B-Font]\-\-version\f[]=\f\*[I-Font]keyword\f[]
+.NOP \f\*[B-Font]\-v\f[] \f\*[I-Font]arg\f[], \f\*[B-Font]\-\-version\f[]=\f\*[I-Font]arg\f[]
 Output version of program and exit.  The default mode is `v', a simple
 version.  The `c' mode will print copyright information and `n' will
 print the full copyright notice.
@@ -498,9 +498,11 @@ The operation failed or the command syntax was not valid.
 .SH "SEE ALSO"
 certtool (1)
 .SH "AUTHORS"
-Nikos Mavrogiannopoulos, Simon Josefsson and others; see /usr/share/doc/gnutls/AUTHORS for a complete list.
+
 .SH "COPYRIGHT"
 Copyright (C) 2020-2021 Free Software Foundation, and others all rights reserved.
-This program is released under the terms of the GNU General Public License, version 3 or later.
+This program is released under the terms of
+the GNU General Public License, version 3 or later
+.
 .SH "BUGS"
 Please send bug reports to: bugs@gnutls.org

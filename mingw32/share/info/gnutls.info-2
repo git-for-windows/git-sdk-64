@@ -1,6 +1,7 @@
-This is gnutls.info, produced by makeinfo version 6.7 from gnutls.texi.
+This is gnutls.info, produced by makeinfo version 6.8 from gnutls.texi.
 
-This manual is last updated 7 January 2022 for version 3.7.3 of GnuTLS.
+This manual is last updated 22 February 2022 for version 3.7.4 of
+GnuTLS.
 
 Copyright (C) 2001-2022 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2022 Nikos Mavrogiannopoulos
@@ -283,6 +284,8 @@ to 'more'.  Both will exit with a status code of 0.
      tpmtool - GnuTLS TPM tool
      Usage:  tpmtool [ -<flag> [<val>] | --<name>[{=| }<val>] ]...
 
+     None:
+
         -d, --debug=num            Enable debugging
      				- it must be in the range:
      				  0 to 9999
@@ -306,14 +309,12 @@ to 'more'.  Both will exit with a status code of 0.
      				- requires the option 'register'
             --pubkey=str           Prints the public key of the provided key
             --list                 Lists all stored keys in the TPM
-            --delete=str           Delete the key identified by the given URL (UUID).
+            --delete=str           Delete the key identified by the given URL (UUID)
             --test-sign=str        Tests the signature operation of the provided object
-            --sec-param=str        Specify the security level [low, legacy, medium, high, ultra].
+            --sec-param=str        Specify the security level [low, legacy, medium, high, ultra]
             --bits=num             Specify the number of bits for key generate
-            --inder                Use the DER format for keys.
-     				- disabled as '--no-inder'
+            --inder                Use the DER format for keys
             --outder               Use DER format for output keys
-     				- disabled as '--no-outder'
             --srk-well-known       SRK has well known password (20 bytes of zeros)
 
      Version, usage and configuration options:
@@ -327,12 +328,14 @@ to 'more'.  Both will exit with a status code of 0.
 
      Program that allows handling cryptographic data from the TPM chip.
 
+     Please send bug reports to:  <bugs@gnutls.org>
+
 
 debug option (-d).
 ..................
 
-This is the "enable debugging" option.  This option takes a number
-argument.  Specifies the debug level.
+This is the "enable debugging" option.  This option takes a
+ArgumentType.NUMBER argument.  Specifies the debug level.
 
 generate-rsa option.
 ....................
@@ -370,25 +373,25 @@ test-sign option.
 .................
 
 This is the "tests the signature operation of the provided object"
-option.  This option takes a string argument 'url'.  It can be used to
-test the correct operation of the signature operation.  This operation
-will sign and verify the signed data.
+option.  This option takes a ArgumentType.STRING argument 'url'.  It can
+be used to test the correct operation of the signature operation.  This
+operation will sign and verify the signed data.
 
 sec-param option.
 .................
 
 This is the "specify the security level [low, legacy, medium, high,
-ultra]."  option.  This option takes a string argument 'Security
-parameter'.  This is alternative to the bits option.  Note however that
-the values allowed by the TPM chip are quantized and given values may be
-rounded up.
+ultra]" option.  This option takes a ArgumentType.STRING argument
+'Security parameter'.  This is alternative to the bits option.  Note
+however that the values allowed by the TPM chip are quantized and given
+values may be rounded up.
 
 inder option.
 .............
 
-This is the "use the der format for keys."  option.  The input files
-will be assumed to be in the portable DER format of TPM. The default
-format is a custom format used by various TPM tools
+This is the "use the der format for keys" option.  The input files will
+be assumed to be in the portable DER format of TPM. The default format
+is a custom format used by various TPM tools
 
 outder option.
 ..............
@@ -400,9 +403,10 @@ version option (-v).
 ....................
 
 This is the "output version information and exit" option.  This option
-takes a keyword argument.  Output version of program and exit.  The
-default mode is 'v', a simple version.  The 'c' mode will print
-copyright information and 'n' will print the full copyright notice.
+takes a ArgumentType.KEYWORD argument.  Output version of program and
+exit.  The default mode is 'v', a simple version.  The 'c' mode will
+print copyright information and 'n' will print the full copyright
+notice.
 
 help option (-h).
 .................
@@ -511,6 +515,8 @@ allocated memory and must be called after the program has permanently
 finished using GnuTLS.
 
  [image src="gnutls-internals.png" ]
+
+
 
 Figure 6.1: High level design of GnuTLS.
 
@@ -670,6 +676,7 @@ Variable               Purpose
                        set to one it will force the FIPS mode
                        enablement.
                        
+
 
 Table 6.1: Environment variables used by the library.
 
@@ -1086,6 +1093,7 @@ underlying protocol type, i.e., datagram (UDP) or reliable (TCP).
 'GNUTLS_NO_END_OF_EARLY_DATA'
      Under TLS1.3 suppress sending EndOfEarlyData message.  Since 3.7.2.
 
+
 Figure 6.2: The 'gnutls_init_flags_t' enumeration.
 
 After the session initialization details on the allowed ciphersuites and
@@ -1168,6 +1176,7 @@ Anonymous          'KX_ANON_DH',      'CRD_ANON'     'CRD_ANON'
 Pre-shared key     'KX_PSK',          'CRD_PSK'      'CRD_PSK'
                    'KX_DHE_PSK',                     
                    'KX_ECDHE_PSK'
+
 
 Table 6.2: Key exchange algorithms and the corresponding credential
 types.
@@ -2848,6 +2857,7 @@ NONE           Means nothing is enabled.  This disables even
                *note gnutls_set_default_priority_append::.
                
 
+
 Table 6.3: Supported initial keywords.
 
 Unless the initial keyword is "NONE" the defaults (in preference order)
@@ -2986,6 +2996,7 @@ Generic        The keyword GOST is a shortcut for secure GOST
                'NONE:+VERS-TLS1.2:+GOST'.
                
 
+
 Table 6.4: The supported algorithm keywords in priority strings.
 
 Note that the finite field groups (indicated by the FFDHE prefix) and
@@ -3063,6 +3074,7 @@ Keyword                          Description
                                  version record version in
                                  client hello.
                                  
+
 
 Table 6.5: Special priority string keywords.
 
@@ -3171,6 +3183,7 @@ Keyword                          Description
                                  sets the profile.
                                  
 
+
 Table 6.6: More priority string keywords.
 
 Finally the ciphersuites enabled by any priority string can be listed
@@ -3254,6 +3267,7 @@ bits    and SRP   key     parameter
                                          
 256     15424     512     'FUTURE'       Foreseeable future
                                          
+
 
 Table 6.7: Key sizes and security parameters.
 
@@ -3864,6 +3878,7 @@ status of the verification.
      The certificate obtained via DNS differs.
 'DANE_VERIFY_UNKNOWN_DANE_INFO'
      No known DANE data was found in the DNS record.
+
 
 Figure 6.3: The DANE verification status flags.
 

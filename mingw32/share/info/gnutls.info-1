@@ -1,6 +1,7 @@
-This is gnutls.info, produced by makeinfo version 6.7 from gnutls.texi.
+This is gnutls.info, produced by makeinfo version 6.8 from gnutls.texi.
 
-This manual is last updated 7 January 2022 for version 3.7.3 of GnuTLS.
+This manual is last updated 22 February 2022 for version 3.7.4 of
+GnuTLS.
 
 Copyright (C) 2001-2022 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2022 Nikos Mavrogiannopoulos
@@ -32,7 +33,8 @@ File: gnutls.info,  Node: Top,  Next: Preface,  Up: (dir)
 GnuTLS
 ******
 
-This manual is last updated 7 January 2022 for version 3.7.3 of GnuTLS.
+This manual is last updated 22 February 2022 for version 3.7.4 of
+GnuTLS.
 
 Copyright (C) 2001-2022 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2022 Nikos Mavrogiannopoulos
@@ -324,6 +326,8 @@ fig-tls-layers.
 
  [image src="gnutls-layers.png" ]
 
+
+
 Figure 3.1: The TLS protocol layers.
 
    ---------- Footnotes ----------
@@ -475,6 +479,7 @@ NULL           Legacy  TLS 1.0,    NULL is the empty/identity cipher
                                    will be implicitly disabled.
                                    
 
+
 Table 3.1: Supported ciphers in TLS.
 
 Algorithm      Description
@@ -502,6 +507,7 @@ GOST28147-TC26Z-IMITThis is a 64-bit block cipher GOST 28147-89 with
 MAC-AEAD       This indicates that an authenticated encryption
                algorithm, such as GCM, is in use.
                
+
 
 Table 3.2: Supported MAC algorithms in TLS.
 
@@ -1011,6 +1017,7 @@ profiles are listed below.
 'GNUTLS_SRTP_NULL_HMAC_SHA1_32'
      NULL cipher with a 32 bit HMAC-SHA1
 
+
 Figure 3.2: Supported SRTP profiles
 
 To enable use the following functions.
@@ -1389,6 +1396,7 @@ ECDHE_ECDSA    The Elliptic curve DSA algorithm is used to sign
                exchange algorithm.
                
 
+
 Table 4.1: Supported key exchange algorithms.
 
 * Menu:
@@ -1412,6 +1420,8 @@ authorities may certify other authorities to issue certificates as well,
 following a hierarchical model.
 
  [image src="gnutls-x509.png" ]
+
+
 
 Figure 4.1: An example of the X.509 hierarchical trust model.
 
@@ -1462,6 +1472,7 @@ subject        The subject's distinguished name of the
 extensions     The extensions are fields only present in
                version 3 certificates.
                
+
 
 Table 4.2: X.509 certificate fields.
 
@@ -1746,6 +1757,7 @@ Information                           this extension that
                                       Certificates are specified
                                       in [*note RFC3820::].
                                       
+
 
 Table 4.3: Supported X.509 certificate extensions.
 
@@ -2163,13 +2175,14 @@ more detailed flags will also be set when appropriate.
      The certificate or an intermediate does not match the intended
      purpose (extended key usage).
 'GNUTLS_CERT_MISSING_OCSP_STATUS'
-     The certificate requires the server to send the certifiate status,
+     The certificate requires the server to send the certificate status,
      but no status was received.
 'GNUTLS_CERT_INVALID_OCSP_STATUS'
      The received OCSP status response is invalid.
 'GNUTLS_CERT_UNKNOWN_CRIT_EXTENSIONS'
      The certificate has extensions marked as critical which are not
      supported.
+
 
 Figure 4.2: The 'gnutls_certificate_status_t' enumeration.
 
@@ -2273,6 +2286,7 @@ are part of the enumeration 'gnutls_certificate_verify_flags' shown in
      Disallow RSA-PSS signatures made with mismatching salt length with
      digest length, as mandated in RFC 8446 4.2.3.
 
+
 Figure 4.3: The 'gnutls_certificate_verify_flags' enumeration.
 
 
@@ -2337,6 +2351,7 @@ GNUTLS_KP_ANY  2.5.29.37.0    The certificate is to be used for any
                               indicates that the CA is allowed to sign
                               any kind of certificates.
                               
+
 
 Table 4.4: Key purpose object identifiers.
 
@@ -2821,6 +2836,7 @@ revokedCertificatesList of revoked certificates serial numbers.
 extensions     Optional CRL structure extensions.
                
 
+
 Table 4.5: Certificate revocation list fields.
 
 The basic CRL structure functions follow.
@@ -3097,6 +3113,7 @@ revocationTime The time the certificate was revoked.
 revocationReasonThe reason the certificate was revoked.
                
 
+
 Table 4.6: The most important OCSP response fields.
 
 We provide basic functions for initialization, importing, exporting and
@@ -3182,6 +3199,7 @@ below.
      Privilege withdrawn.
 'GNUTLS_X509_CRLREASON_AACOMPROMISE'
      AA compromised.
+
 
 Figure 4.4: The revocation reasons
 
@@ -3415,6 +3433,7 @@ the obsolete PBES1 scheme cannot be decrypted.
 'GNUTLS_PKCS_PBES2_GOST_CPD'
      PBES2 GOST 28147-89 CFB with CryptoPro-D S-box.
 
+
 Figure 4.5: Encryption flags
 
 PKCS #12 structures
@@ -3580,11 +3599,12 @@ to 'more'.  Both will exit with a status code of 0.
      certtool - GnuTLS certificate tool
      Usage:  certtool [ -<flag> [<val>] | --<name>[{=| }<val>] ]...
 
+     None:
+
         -d, --debug=num            Enable debugging
      				- it must be in the range:
      				  0 to 9999
         -V, --verbose              More verbose output
-     				- may appear multiple times
             --infile=file          Input file
      				- file must pre-exist
             --outfile=str          Output file
@@ -3654,13 +3674,11 @@ to 'more'.  Both will exit with a status code of 0.
             --p7-generate          Generate a PKCS #7 structure
             --p7-sign              Signs using a PKCS #7 structure
             --p7-detached-sign     Signs using a detached PKCS #7 structure
-            --p7-include-cert      The signer's certificate will be included in the cert list.
-     				- disabled as '--no-p7-include-cert'
+            --p7-include-cert      The signer's certificate will be included in the cert list
      				- enabled by default
+     				- disabled as '--no-p7-include-cert'
             --p7-time              Will include a timestamp in the PKCS #7 structure
-     				- disabled as '--no-p7-time'
             --p7-show-data         Will show the embedded data in the PKCS #7 structure
-     				- disabled as '--no-p7-show-data'
             --p7-info              Print information on a PKCS #7 structure
             --p7-verify            Verify the provided PKCS #7 structure
             --smime-to-p7          Convert S/MIME to PKCS #7 structure
@@ -3685,19 +3703,17 @@ to 'more'.  Both will exit with a status code of 0.
             --hash=str             Hash algorithm to use for signing
             --salt-size=num        Specify the RSA-PSS key default salt size
             --inder                Use DER format for input certificates, private keys, and DH parameters
-     				- disabled as '--no-inder'
             --inraw                an alias for the 'inder' option
             --outder               Use DER format for output certificates, private keys, and DH parameters
-     				- disabled as '--no-outder'
             --outraw               an alias for the 'outder' option
             --template=str         Template file to use for non-interactive operation
             --stdout-info          Print information to stdout instead of stderr
-            --ask-pass             Enable interaction for entering password when in batch mode.
+            --ask-pass             Enable interaction for entering password when in batch mode
             --pkcs-cipher=str      Cipher to use for PKCS #8 and #12 operations
             --provider=str         Specify the PKCS #11 provider library
             --text                 Output textual information before PEM-encoded certificates, private keys, etc
-     				- disabled as '--no-text'
      				- enabled by default
+     				- disabled as '--no-text'
 
      Version, usage and configuration options:
 
@@ -3717,12 +3733,14 @@ to 'more'.  Both will exit with a status code of 0.
      and GNUTLS_SO_PIN.
 
 
+     Please send bug reports to:  <bugs@gnutls.org>
+
 
 debug option (-d).
 ..................
 
-This is the "enable debugging" option.  This option takes a number
-argument.  Specifies the debug level.
+This is the "enable debugging" option.  This option takes a
+ArgumentType.NUMBER argument.  Specifies the debug level.
 
 cert-options options
 ....................
@@ -3765,9 +3783,9 @@ sign-params option.
 ...................
 
 This is the "sign a certificate with a specific signature algorithm"
-option.  This option takes a string argument.  This option can be
-combined with -generate-certificate, to sign the certificate with a
-specific signature algorithm variant.  The only option supported is
+option.  This option takes a ArgumentType.STRING argument.  This option
+can be combined with -generate-certificate, to sign the certificate with
+a specific signature algorithm variant.  The only option supported is
 'RSA-PSS', and should be specified when the signer does not have a
 certificate which is marked for RSA-PSS use only.
 
@@ -3804,8 +3822,8 @@ p12-name option.
 ................
 
 This is the "the pkcs #12 friendly name to use" option.  This option
-takes a string argument.  The name to be used for the primary
-certificate and private key in a PKCS #12 file.
+takes a ArgumentType.STRING argument.  The name to be used for the
+primary certificate and private key in a PKCS #12 file.
 
 to-p12 option.
 ..............
@@ -3845,25 +3863,26 @@ key-type option.
 ................
 
 This is the "specify the key type to use on key generation" option.
-This option takes a string argument.  This option can be combined with
--generate-privkey, to specify the key type to be generated.  Valid
-options are, 'rsa', 'rsa-pss', 'dsa', 'ecdsa', 'ed25519, 'ed448',
-'x25519', and 'x448'.'.  When combined with certificate generation it
-can be used to specify an RSA-PSS certificate when an RSA key is given.
+This option takes a ArgumentType.STRING argument.  This option can be
+combined with -generate-privkey, to specify the key type to be
+generated.  Valid options are, 'rsa', 'rsa-pss', 'dsa', 'ecdsa',
+'ed25519, 'ed448', 'x25519', and 'x448'.'.  When combined with
+certificate generation it can be used to specify an RSA-PSS certificate
+when an RSA key is given.
 
 curve option.
 .............
 
 This is the "specify the curve used for ec key generation" option.  This
-option takes a string argument.  Supported values are secp192r1,
-secp224r1, secp256r1, secp384r1 and secp521r1.
+option takes a ArgumentType.STRING argument.  Supported values are
+secp192r1, secp224r1, secp256r1, secp384r1 and secp521r1.
 
 sec-param option.
 .................
 
 This is the "specify the security level [low, legacy, medium, high,
-ultra]" option.  This option takes a string argument 'Security
-parameter'.  This is alternative to the bits option.
+ultra]" option.  This option takes a ArgumentType.STRING argument
+'Security parameter'.  This is alternative to the bits option.
 
 to-p8 option.
 .............
@@ -3898,10 +3917,10 @@ seed option.
 ............
 
 This is the "when generating a private key use the given hex-encoded
-seed" option.  This option takes a string argument.  The seed acts as a
-security parameter for the private key, and thus a seed size which
-corresponds to the security level of the private key should be provided
-(e.g., 256-bits seed).
+seed" option.  This option takes a ArgumentType.STRING argument.  The
+seed acts as a security parameter for the private key, and thus a seed
+size which corresponds to the security level of the private key should
+be provided (e.g., 256-bits seed).
 
 crl-options options
 ...................
@@ -3959,14 +3978,14 @@ verify-hostname option.
 .......................
 
 This is the "specify a hostname to be used for certificate chain
-verification" option.  This option takes a string argument.  This is to
-be combined with one of the verify certificate options.
+verification" option.  This option takes a ArgumentType.STRING argument.
+This is to be combined with one of the verify certificate options.
 
 verify-email option.
 ....................
 
 This is the "specify a email to be used for certificate chain
-verification" option.  This option takes a string argument.
+verification" option.  This option takes a ArgumentType.STRING argument.
 
 This option has some usage constraints.  It:
    * must not appear in combination with any of the following options:
@@ -3978,11 +3997,11 @@ verify-purpose option.
 ......................
 
 This is the "specify a purpose oid to be used for certificate chain
-verification" option.  This option takes a string argument.  This object
-identifier restricts the purpose of the certificates to be verified.
-Example purposes are 1.3.6.1.5.5.7.3.1 (TLS WWW), 1.3.6.1.5.5.7.3.4
-(EMAIL) etc.  Note that a CA certificate without a purpose set (extended
-key usage) is valid for any purpose.
+verification" option.  This option takes a ArgumentType.STRING argument.
+This object identifier restricts the purpose of the certificates to be
+verified.  Example purposes are 1.3.6.1.5.5.7.3.1 (TLS WWW),
+1.3.6.1.5.5.7.3.4 (EMAIL) etc.  Note that a CA certificate without a
+purpose set (extended key usage) is valid for any purpose.
 
 verify-allow-broken option.
 ...........................
@@ -3994,12 +4013,12 @@ verify-profile option.
 ......................
 
 This is the "specify a security level profile to be used for
-verification" option.  This option takes a string argument.  This option
-can be used to specify a certificate verification profile.  Certificate
-verification profiles correspond to the security level.  This should be
-one of 'none', 'very weak', 'low', 'legacy', 'medium', 'high', 'ultra',
-'future'.  Note that by default no profile is applied, unless one is set
-as minimum in the gnutls configuration file.
+verification" option.  This option takes a ArgumentType.STRING argument.
+This option can be used to specify a certificate verification profile.
+Certificate verification profiles correspond to the security level.
+This should be one of 'none', 'very weak', 'low', 'legacy', 'medium',
+'high', 'ultra', 'future'.  Note that by default no profile is applied,
+unless one is set as minimum in the gnutls configuration file.
 
 pkcs7-options options
 .....................
@@ -4038,8 +4057,8 @@ included in the structure.
 p7-include-cert option.
 .......................
 
-This is the "the signer's certificate will be included in the cert
-list."  option.
+This is the "the signer's certificate will be included in the cert list"
+option.
 
 This option has some usage constraints.  It:
    * can be disabled with -no-p7-include-cert.
@@ -4102,60 +4121,63 @@ load-privkey option.
 ....................
 
 This is the "loads a private key file" option.  This option takes a
-string argument.  This can be either a file or a PKCS #11 URL
+ArgumentType.STRING argument.  This can be either a file or a PKCS #11
+URL
 
 load-pubkey option.
 ...................
 
 This is the "loads a public key file" option.  This option takes a
-string argument.  This can be either a file or a PKCS #11 URL
+ArgumentType.STRING argument.  This can be either a file or a PKCS #11
+URL
 
 load-request option.
 ....................
 
 This is the "loads a certificate request file" option.  This option
-takes a string argument.  This option can be used with a file
+takes a ArgumentType.STRING argument.  This option can be used with a
+file
 
 load-certificate option.
 ........................
 
 This is the "loads a certificate file" option.  This option takes a
-string argument.  This option can be used with a file
+ArgumentType.STRING argument.  This option can be used with a file
 
 load-ca-privkey option.
 .......................
 
 This is the "loads the certificate authority's private key file" option.
-This option takes a string argument.  This can be either a file or a
-PKCS #11 URL
+This option takes a ArgumentType.STRING argument.  This can be either a
+file or a PKCS #11 URL
 
 load-ca-certificate option.
 ...........................
 
 This is the "loads the certificate authority's certificate file" option.
-This option takes a string argument.  This can be either a file or a
-PKCS #11 URL
+This option takes a ArgumentType.STRING argument.  This can be either a
+file or a PKCS #11 URL
 
 load-crl option.
 ................
 
-This is the "loads the provided crl" option.  This option takes a string
-argument.  This option can be used with a file
+This is the "loads the provided crl" option.  This option takes a
+ArgumentType.STRING argument.  This option can be used with a file
 
 load-data option.
 .................
 
-This is the "loads auxiliary data" option.  This option takes a string
-argument.  This option can be used with a file
+This is the "loads auxiliary data" option.  This option takes a
+ArgumentType.STRING argument.  This option can be used with a file
 
 password option.
 ................
 
-This is the "password to use" option.  This option takes a string
-argument.  You can use this option to specify the password in the
-command line instead of reading it from the tty.  Note, that the command
-line arguments are available for view in others in the system.
-Specifying password as " is the same as specifying no password.
+This is the "password to use" option.  This option takes a
+ArgumentType.STRING argument.  You can use this option to specify the
+password in the command line instead of reading it from the tty.  Note,
+that the command line arguments are available for view in others in the
+system.  Specifying password as " is the same as specifying no password.
 
 null-password option.
 .....................
@@ -4214,15 +4236,16 @@ hash option.
 ............
 
 This is the "hash algorithm to use for signing" option.  This option
-takes a string argument.  Available hash functions are SHA1, RMD160,
-SHA256, SHA384, SHA512, SHA3-224, SHA3-256, SHA3-384, SHA3-512.
+takes a ArgumentType.STRING argument.  Available hash functions are
+SHA1, RMD160, SHA256, SHA384, SHA512, SHA3-224, SHA3-256, SHA3-384,
+SHA3-512.
 
 salt-size option.
 .................
 
 This is the "specify the rsa-pss key default salt size" option.  This
-option takes a number argument.  Typical keys shouldn't set or restrict
-this option.
+option takes a ArgumentType.NUMBER argument.  Typical keys shouldn't set
+or restrict this option.
 
 inder option.
 .............
@@ -4255,7 +4278,7 @@ ask-pass option.
 ................
 
 This is the "enable interaction for entering password when in batch
-mode."  option.  This option will enable interaction to enter password
+mode" option.  This option will enable interaction to enter password
 when in batch mode.  That is useful when the template option has been
 specified.
 
@@ -4263,15 +4286,15 @@ pkcs-cipher option.
 ...................
 
 This is the "cipher to use for pkcs #8 and #12 operations" option.  This
-option takes a string argument 'Cipher'.  Cipher may be one of 3des,
-3des-pkcs12, aes-128, aes-192, aes-256, rc2-40, arcfour.
+option takes a ArgumentType.STRING argument 'Cipher'.  Cipher may be one
+of 3des, 3des-pkcs12, aes-128, aes-192, aes-256, rc2-40, arcfour.
 
 provider option.
 ................
 
 This is the "specify the pkcs #11 provider library" option.  This option
-takes a string argument.  This will override the default options in
-/etc/gnutls/pkcs11.conf
+takes a ArgumentType.STRING argument.  This will override the default
+options in /etc/gnutls/pkcs11.conf
 
 text option.
 ............
@@ -4289,9 +4312,10 @@ version option (-v).
 ....................
 
 This is the "output version information and exit" option.  This option
-takes a keyword argument.  Output version of program and exit.  The
-default mode is 'v', a simple version.  The 'c' mode will print
-copyright information and 'n' will print the full copyright notice.
+takes a ArgumentType.KEYWORD argument.  Output version of program and
+exit.  The default mode is 'v', a simple version.  The 'c' mode will
+print copyright information and 'n' will print the full copyright
+notice.
 
 help option (-h).
 .................
@@ -4796,11 +4820,12 @@ to 'more'.  Both will exit with a status code of 0.
      ocsptool - GnuTLS OCSP tool
      Usage:  ocsptool [ -<flag> [<val>] | --<name>[{=| }<val>] ]...
 
+     None:
+
         -d, --debug=num            Enable debugging
      				- it must be in the range:
      				  0 to 9999
         -V, --verbose              More verbose output
-     				- may appear multiple times
             --infile=file          Input file
      				- file must pre-exist
             --outfile=str          Output file
@@ -4810,7 +4835,6 @@ to 'more'.  Both will exit with a status code of 0.
         -j, --response-info        Print information on a OCSP response
         -q, --generate-request     Generates an OCSP request
             --nonce                Use (or not) a nonce to OCSP request
-     				- disabled as '--no-nonce'
             --load-chain=file      Reads a set of certificates forming a chain from file
      				- file must pre-exist
             --load-issuer=file     Reads issuer's certificate from file
@@ -4824,7 +4848,6 @@ to 'more'.  Both will exit with a status code of 0.
      				- prohibits the option 'load-trust'
      				- file must pre-exist
             --inder                Use DER format for input certificates and private keys
-     				- disabled as '--no-inder'
             --outder               Use DER format for output of responses (this is the default)
             --outpem               Use PEM format for output of responses
         -Q, --load-request=file    Reads the DER encoded OCSP request from file
@@ -4848,24 +4871,26 @@ to 'more'.  Both will exit with a status code of 0.
      other GnuTLS applications it outputs DER encoded structures by default
      unless the '--outpem' option is specified.
 
+     Please send bug reports to:  <bugs@gnutls.org>
+
 
 debug option (-d).
 ..................
 
-This is the "enable debugging" option.  This option takes a number
-argument.  Specifies the debug level.
+This is the "enable debugging" option.  This option takes a
+ArgumentType.NUMBER argument.  Specifies the debug level.
 
 ask option.
 ...........
 
 This is the "ask an ocsp/http server on a certificate validity" option.
-This option takes a string argument 'server name|url'.  Connects to the
-specified HTTP OCSP server and queries on the validity of the loaded
-certificate.  Its argument can be a URL or a plain server name.  It can
-be combined with -load-chain, where it checks all certificates in the
-provided chain, or with -load-cert and -load-issuer options.  The latter
-checks the provided certificate against its specified issuer
-certificate.
+This option takes a ArgumentType.STRING argument 'server name|url'.
+Connects to the specified HTTP OCSP server and queries on the validity
+of the loaded certificate.  Its argument can be a URL or a plain server
+name.  It can be combined with -load-chain, where it checks all
+certificates in the provided chain, or with -load-cert and -load-issuer
+options.  The latter checks the provided certificate against its
+specified issuer certificate.
 
 verify-response option (-e).
 ............................
@@ -4891,7 +4916,7 @@ load-trust option.
 ..................
 
 This is the "read ocsp trust anchors from file" option.  This option
-takes a file argument.
+takes a ArgumentType.FILE argument.
 
 This option has some usage constraints.  It:
    * must not appear in combination with any of the following options:
@@ -4924,9 +4949,10 @@ version option (-v).
 ....................
 
 This is the "output version information and exit" option.  This option
-takes a keyword argument.  Output version of program and exit.  The
-default mode is 'v', a simple version.  The 'c' mode will print
-copyright information and 'n' will print the full copyright notice.
+takes a ArgumentType.KEYWORD argument.  Output version of program and
+exit.  The default mode is 'v', a simple version.  The 'c' mode will
+print copyright information and 'n' will print the full copyright
+notice.
 
 help option (-h).
 .................
@@ -5090,11 +5116,12 @@ to 'more'.  Both will exit with a status code of 0.
      danetool - GnuTLS DANE tool
      Usage:  danetool [ -<flag> [<val>] | --<name>[{=| }<val>] ]...
 
+     None:
+
         -d, --debug=num            Enable debugging
      				- it must be in the range:
      				  0 to 9999
         -V, --verbose              More verbose output
-     				- may appear multiple times
             --outfile=str          Output file
             --load-pubkey=str      Loads a public key file
             --load-certificate=str Loads a certificate file
@@ -5114,16 +5141,13 @@ to 'more'.  Both will exit with a status code of 0.
             --x509                 Use the hash of the X.509 certificate, rather than the public key
             --local                an alias for the 'domain' option
             --domain               The provided certificate or public key is issued by the local domain
-     				- disabled as '--no-domain'
      				- enabled by default
+     				- disabled as '--no-domain'
             --local-dns            Use the local DNS server for DNSSEC resolving
-     				- disabled as '--no-local-dns'
             --insecure             Do not verify any DNSSEC signature
             --inder                Use DER format for input certificates and private keys
-     				- disabled as '--no-inder'
             --inraw                an alias for the 'inder' option
             --print-raw            Print the received DANE data in raw format
-     				- disabled as '--no-print-raw'
             --quiet                Suppress several informational messages
 
      Version, usage and configuration options:
@@ -5137,47 +5161,52 @@ to 'more'.  Both will exit with a status code of 0.
 
      Tool to generate and check DNS resource records for the DANE protocol.
 
+     Please send bug reports to:  <bugs@gnutls.org>
+
 
 debug option (-d).
 ..................
 
-This is the "enable debugging" option.  This option takes a number
-argument.  Specifies the debug level.
+This is the "enable debugging" option.  This option takes a
+ArgumentType.NUMBER argument.  Specifies the debug level.
 
 load-pubkey option.
 ...................
 
 This is the "loads a public key file" option.  This option takes a
-string argument.  This can be either a file or a PKCS #11 URL
+ArgumentType.STRING argument.  This can be either a file or a PKCS #11
+URL
 
 load-certificate option.
 ........................
 
 This is the "loads a certificate file" option.  This option takes a
-string argument.  This can be either a file or a PKCS #11 URL
+ArgumentType.STRING argument.  This can be either a file or a PKCS #11
+URL
 
 dlv option.
 ...........
 
-This is the "sets a dlv file" option.  This option takes a string
-argument.  This sets a DLV file to be used for DNSSEC verification.
+This is the "sets a dlv file" option.  This option takes a
+ArgumentType.STRING argument.  This sets a DLV file to be used for
+DNSSEC verification.
 
 hash option.
 ............
 
 This is the "hash algorithm to use for signing" option.  This option
-takes a string argument.  Available hash functions are SHA1, RMD160,
-SHA256, SHA384, SHA512.
+takes a ArgumentType.STRING argument.  Available hash functions are
+SHA1, RMD160, SHA256, SHA384, SHA512.
 
 check option.
 .............
 
 This is the "check a host's dane tlsa entry" option.  This option takes
-a string argument.  Obtains the DANE TLSA entry from the given hostname
-and prints information.  Note that the actual certificate of the host
-can be provided using -load-certificate, otherwise danetool will connect
-to the server to obtain it.  The exit code on verification success will
-be zero.
+a ArgumentType.STRING argument.  Obtains the DANE TLSA entry from the
+given hostname and prints information.  Note that the actual certificate
+of the host can be provided using -load-certificate, otherwise danetool
+will connect to the server to obtain it.  The exit code on verification
+success will be zero.
 
 check-ee option.
 ................
@@ -5208,15 +5237,15 @@ host option.
 ............
 
 This is the "specify the hostname to be used in the dane rr" option.
-This option takes a string argument 'Hostname'.  This command sets the
-hostname for the DANE RR.
+This option takes a ArgumentType.STRING argument 'Hostname'.  This
+command sets the hostname for the DANE RR.
 
 proto option.
 .............
 
 This is the "the protocol set for dane data (tcp, udp etc.)"  option.
-This option takes a string argument 'Protocol'.  This command specifies
-the protocol for the service set in the DANE data.
+This option takes a ArgumentType.STRING argument 'Protocol'.  This
+command specifies the protocol for the service set in the DANE data.
 
 app-proto option.
 .................
@@ -5229,11 +5258,11 @@ starttls-proto option.
 
 This is the "the application protocol to be used to obtain the server's
 certificate (https, ftp, smtp, imap, ldap, xmpp, lmtp, pop3, nntp,
-sieve, postgres)" option.  This option takes a string argument.  When
-the server's certificate isn't provided danetool will connect to the
-server to obtain the certificate.  In that case it is required to know
-the protocol to talk with the server prior to initiating the TLS
-handshake.
+sieve, postgres)" option.  This option takes a ArgumentType.STRING
+argument.  When the server's certificate isn't provided danetool will
+connect to the server to obtain the certificate.  In that case it is
+required to know the protocol to talk with the server prior to
+initiating the TLS handshake.
 
 ca option.
 ..........
@@ -5315,9 +5344,10 @@ version option (-v).
 ....................
 
 This is the "output version information and exit" option.  This option
-takes a keyword argument.  Output version of program and exit.  The
-default mode is 'v', a simple version.  The 'c' mode will print
-copyright information and 'n' will print the full copyright notice.
+takes a ArgumentType.KEYWORD argument.  Output version of program and
+exit.  The default mode is 'v', a simple version.  The 'c' mode will
+print copyright information and 'n' will print the full copyright
+notice.
 
 help option (-h).
 .................
@@ -5465,6 +5495,8 @@ to 'more'.  Both will exit with a status code of 0.
      psktool - GnuTLS PSK tool
      Usage:  psktool [ -<flag> [<val>] | --<name>[{=| }<val>] ]...
 
+     None:
+
         -d, --debug=num            Enable debugging
      				- it must be in the range:
      				  0 to 9999
@@ -5486,19 +5518,21 @@ to 'more'.  Both will exit with a status code of 0.
      Program  that generates random keys for use with TLS-PSK. The
      keys are stored in hexadecimal format in a key file.
 
+     Please send bug reports to:  <bugs@gnutls.org>
+
 
 debug option (-d).
 ..................
 
-This is the "enable debugging" option.  This option takes a number
-argument.  Specifies the debug level.
+This is the "enable debugging" option.  This option takes a
+ArgumentType.NUMBER argument.  Specifies the debug level.
 
 pskfile option (-p).
 ....................
 
 This is the "specify a pre-shared key file" option.  This option takes a
-string argument.  This option will specify the pre-shared key file to
-store the generated keys.
+ArgumentType.STRING argument.  This option will specify the pre-shared
+key file to store the generated keys.
 
 passwd option.
 ..............
@@ -5510,9 +5544,10 @@ version option (-v).
 ....................
 
 This is the "output version information and exit" option.  This option
-takes a keyword argument.  Output version of program and exit.  The
-default mode is 'v', a simple version.  The 'c' mode will print
-copyright information and 'n' will print the full copyright notice.
+takes a ArgumentType.KEYWORD argument.  Output version of program and
+exit.  The default mode is 'v', a simple version.  The 'c' mode will
+print copyright information and 'n' will print the full copyright
+notice.
 
 help option (-h).
 .................
@@ -5668,6 +5703,8 @@ to 'more'.  Both will exit with a status code of 0.
      srptool - GnuTLS SRP tool
      Usage:  srptool [ -<flag> [<val>] | --<name>[{=| }<val>] ]...
 
+     None:
+
         -d, --debug=num            Enable debugging
      				- it must be in the range:
      				  0 to 9999
@@ -5675,9 +5712,9 @@ to 'more'.  Both will exit with a status code of 0.
         -u, --username=str         specify a username
         -p, --passwd=str           specify a password file
         -s, --salt=num             specify salt size
-            --verify               just verify the password.
-        -v, --passwd-conf=str      specify a password conf file.
-            --create-conf=str      Generate a password configuration file.
+            --verify               just verify the password
+        -v, --passwd-conf=str      specify a password conf file
+            --create-conf=str      Generate a password configuration file
 
      Version, usage and configuration options:
 
@@ -5696,40 +5733,44 @@ to 'more'.  Both will exit with a status code of 0.
      file that holds the users and the verifiers associated with  them  and  the
      configuration file to hold the group parameters (called tpasswd.conf).
 
+     Please send bug reports to:  <bugs@gnutls.org>
+
 
 debug option (-d).
 ..................
 
-This is the "enable debugging" option.  This option takes a number
-argument.  Specifies the debug level.
+This is the "enable debugging" option.  This option takes a
+ArgumentType.NUMBER argument.  Specifies the debug level.
 
 verify option.
 ..............
 
-This is the "just verify the password."  option.  Verifies the password
+This is the "just verify the password" option.  Verifies the password
 provided against the password file.
 
 passwd-conf option (-v).
 ........................
 
-This is the "specify a password conf file."  option.  This option takes
-a string argument.  Specify a filename or a PKCS #11 URL to read the CAs
-from.
+This is the "specify a password conf file" option.  This option takes a
+ArgumentType.STRING argument.  Specify a filename or a PKCS #11 URL to
+read the CAs from.
 
 create-conf option.
 ...................
 
-This is the "generate a password configuration file."  option.  This
-option takes a string argument.  This generates a password configuration
-file (tpasswd.conf) containing the required for TLS parameters.
+This is the "generate a password configuration file" option.  This
+option takes a ArgumentType.STRING argument.  This generates a password
+configuration file (tpasswd.conf) containing the required for TLS
+parameters.
 
 version option (-v).
 ....................
 
 This is the "output version information and exit" option.  This option
-takes a keyword argument.  Output version of program and exit.  The
-default mode is 'v', a simple version.  The 'c' mode will print
-copyright information and 'n' will print the full copyright notice.
+takes a ArgumentType.KEYWORD argument.  Output version of program and
+exit.  The default mode is 'v', a simple version.  The 'c' mode will
+print copyright information and 'n' will print the full copyright
+notice.
 
 help option (-h).
 .................
@@ -6550,6 +6591,8 @@ functionality is available in 'gnutls/pkcs11.h'.
 
  [image src="pkcs11-vision.png" ]
 
+
+
 Figure 5.1: PKCS #11 module usage.
 
 * Menu:
@@ -6721,6 +6764,7 @@ The flags are of 'gnutls_pin_flag_t' type and are explained below.
      The PIN is for a specific action and key like signing.
 'GNUTLS_PIN_WRONG'
      Last given PIN was not correct.
+
 
 Figure 5.2: The 'gnutls_pin_flag_t' enumeration.
 
@@ -7095,6 +7139,8 @@ to 'more'.  Both will exit with a status code of 0.
      p11tool - GnuTLS PKCS #11 tool
      Usage:  p11tool [ -<flag> [<val>] | --<name>[{=| }<val>] ]... [url]
 
+     None:
+
 
      Tokens:
 
@@ -7103,7 +7149,7 @@ to 'more'.  Both will exit with a status code of 0.
             --list-mechanisms      List all available mechanisms in a token
             --initialize           Initializes a PKCS #11 token
             --initialize-pin       Initializes/Resets a PKCS #11 token user PIN
-            --initialize-so-pin    Initializes/Resets a PKCS #11 token security officer PIN.
+            --initialize-so-pin    Initializes/Resets a PKCS #11 token security officer PIN
             --set-pin=str          Specify the PIN to use on token operations
             --set-so-pin=str       Specify the Security Officer's PIN to use on token initialization
 
@@ -7160,24 +7206,17 @@ to 'more'.  Both will exit with a status code of 0.
             --label=str            Sets a label for the write operation
             --id=str               Sets an ID for the write operation
             --mark-wrap            Marks the generated key to be a wrapping key
-     				- disabled as '--no-mark-wrap'
             --mark-trusted         Marks the object to be written as trusted
      				- prohibits the option 'mark-distrusted'
-     				- disabled as '--no-mark-trusted'
             --mark-distrusted      When retrieving objects, it requires the objects to be distrusted (blacklisted)
      				- prohibits the option 'mark-trusted'
             --mark-decrypt         Marks the object to be written for decryption
-     				- disabled as '--no-mark-decrypt'
             --mark-sign            Marks the object to be written for signature generation
-     				- disabled as '--no-mark-sign'
             --mark-ca              Marks the object to be written as a CA
-     				- disabled as '--no-mark-ca'
             --mark-private         Marks the object to be written as private
-     				- disabled as '--no-mark-private'
             --ca                   an alias for the 'mark-ca' option
             --private              an alias for the 'mark-private' option
             --mark-always-authenticate  Marks the object to be written as always authenticate
-     				- disabled as '--no-mark-always-authenticate'
             --secret-key=str       Provide a hex encoded secret key
             --load-privkey=file    Private key file to use
      				- file must pre-exist
@@ -7193,9 +7232,7 @@ to 'more'.  Both will exit with a status code of 0.
      				  0 to 9999
             --outfile=str          Output file
             --login                Force (user) login to token
-     				- disabled as '--no-login'
             --so-login             Force security officer login to token
-     				- disabled as '--no-so-login'
             --admin-login          an alias for the 'so-login' option
             --test-sign            Tests the signature operation of the provided object
             --sign-params=str      Sign with a specific signature algorithm
@@ -7203,14 +7240,11 @@ to 'more'.  Both will exit with a status code of 0.
             --generate-random=num  Generate random data
         -8, --pkcs8                Use PKCS #8 format for private keys
             --inder                Use DER/RAW format for input
-     				- disabled as '--no-inder'
             --inraw                an alias for the 'inder' option
             --outder               Use DER format for output certificates, private keys, and DH parameters
-     				- disabled as '--no-outder'
             --outraw               an alias for the 'outder' option
             --provider=file        Specify the PKCS #11 provider library
             --detailed-url         Print detailed URLs
-     				- disabled as '--no-detailed-url'
             --only-urls            Print a compact listing using only the URLs
             --batch                Disable all interaction with the tool
 
@@ -7236,6 +7270,8 @@ to 'more'.  Both will exit with a status code of 0.
      GNUTLS_PIN and GNUTLS_SO_PIN.
 
 
+     Please send bug reports to:  <bugs@gnutls.org>
+
 
 token-related-options options
 .............................
@@ -7251,7 +7287,7 @@ compact version of -list-tokens.
 initialize-so-pin option.
 .........................
 
-This is the "initializes/resets a pkcs #11 token security officer pin."
+This is the "initializes/resets a pkcs #11 token security officer pin"
 option.  This initializes the security officer's PIN. When used
 non-interactively use the GNUTLS_NEW_SO_PIN environment variables to
 initialize SO's PIN.
@@ -7260,15 +7296,16 @@ set-pin option.
 ...............
 
 This is the "specify the pin to use on token operations" option.  This
-option takes a string argument.  Alternatively the GNUTLS_PIN
-environment variable may be used.
+option takes a ArgumentType.STRING argument.  Alternatively the
+GNUTLS_PIN environment variable may be used.
 
 set-so-pin option.
 ..................
 
 This is the "specify the security officer's pin to use on token
-initialization" option.  This option takes a string argument.
-Alternatively the GNUTLS_SO_PIN environment variable may be used.
+initialization" option.  This option takes a ArgumentType.STRING
+argument.  Alternatively the GNUTLS_SO_PIN environment variable may be
+used.
 
 object-list-related-options options
 ...................................
@@ -7374,9 +7411,10 @@ generate-privkey option.
 ........................
 
 This is the "generate private-public key pair of given type" option.
-This option takes a string argument.  Generates a private-public key
-pair in the specified token.  Acceptable types are RSA, ECDSA, Ed25519,
-and DSA. Should be combined with -sec-param or -bits.
+This option takes a ArgumentType.STRING argument.  Generates a
+private-public key pair in the specified token.  Acceptable types are
+RSA, ECDSA, Ed25519, and DSA. Should be combined with -sec-param or
+-bits.
 
 generate-rsa option.
 ....................
@@ -7409,24 +7447,25 @@ bits option.
 ............
 
 This is the "specify the number of bits for the key generate" option.
-This option takes a number argument.  For applications which have no
-key-size restrictions the -sec-param option is recommended, as the
-sec-param levels will adapt to the acceptable security levels with the
-new versions of gnutls.
+This option takes a ArgumentType.NUMBER argument.  For applications
+which have no key-size restrictions the -sec-param option is
+recommended, as the sec-param levels will adapt to the acceptable
+security levels with the new versions of gnutls.
 
 curve option.
 .............
 
 This is the "specify the curve used for ec key generation" option.  This
-option takes a string argument.  Supported values are secp192r1,
-secp224r1, secp256r1, secp384r1 and secp521r1.
+option takes a ArgumentType.STRING argument.  Supported values are
+secp192r1, secp224r1, secp256r1, secp384r1 and secp521r1.
 
 sec-param option.
 .................
 
 This is the "specify the security level" option.  This option takes a
-string argument 'Security parameter'.  This is alternative to the bits
-option.  Available options are [low, legacy, medium, high, ultra].
+ArgumentType.STRING argument 'Security parameter'.  This is alternative
+to the bits option.  Available options are [low, legacy, medium, high,
+ultra].
 
 write-object-related-options options
 ....................................
@@ -7437,7 +7476,7 @@ set-id option.
 ..............
 
 This is the "set the cka_id (in hex) for the specified by the url
-object" option.  This option takes a string argument.
+object" option.  This option takes a ArgumentType.STRING argument.
 
 This option has some usage constraints.  It:
    * must not appear in combination with any of the following options:
@@ -7450,7 +7489,7 @@ set-label option.
 .................
 
 This is the "set the cka_label for the specified by the url object"
-option.  This option takes a string argument.
+option.  This option takes a ArgumentType.STRING argument.
 
 This option has some usage constraints.  It:
    * must not appear in combination with any of the following options:
@@ -7476,9 +7515,9 @@ id option.
 ..........
 
 This is the "sets an id for the write operation" option.  This option
-takes a string argument.  Sets the CKA_ID to be set by the write
-operation.  The ID should be specified in hexadecimal format without a
-'0x' prefix.
+takes a ArgumentType.STRING argument.  Sets the CKA_ID to be set by the
+write operation.  The ID should be specified in hexadecimal format
+without a '0x' prefix.
 
 mark-wrap option.
 .................
@@ -7563,8 +7602,8 @@ secret-key option.
 ..................
 
 This is the "provide a hex encoded secret key" option.  This option
-takes a string argument.  This secret key will be written to the module
-if -write is specified.
+takes a ArgumentType.STRING argument.  This secret key will be written
+to the module if -write is specified.
 
 other-options options
 .....................
@@ -7574,8 +7613,8 @@ Other options.
 debug option (-d).
 ..................
 
-This is the "enable debugging" option.  This option takes a number
-argument.  Specifies the debug level.
+This is the "enable debugging" option.  This option takes a
+ArgumentType.NUMBER argument.  Specifies the debug level.
 
 so-login option.
 ................
@@ -7601,24 +7640,25 @@ sign-params option.
 ...................
 
 This is the "sign with a specific signature algorithm" option.  This
-option takes a string argument.  This option can be combined with
--test-sign, to sign with a specific signature algorithm variant.  The
-only option supported is 'RSA-PSS', and should be specified in order to
-use RSA-PSS signature on RSA keys.
+option takes a ArgumentType.STRING argument.  This option can be
+combined with -test-sign, to sign with a specific signature algorithm
+variant.  The only option supported is 'RSA-PSS', and should be
+specified in order to use RSA-PSS signature on RSA keys.
 
 hash option.
 ............
 
 This is the "hash algorithm to use for signing" option.  This option
-takes a string argument.  This option can be combined with test-sign.
-Available hash functions are SHA1, RMD160, SHA256, SHA384, SHA512,
-SHA3-224, SHA3-256, SHA3-384, SHA3-512.
+takes a ArgumentType.STRING argument.  This option can be combined with
+test-sign.  Available hash functions are SHA1, RMD160, SHA256, SHA384,
+SHA512, SHA3-224, SHA3-256, SHA3-384, SHA3-512.
 
 generate-random option.
 .......................
 
-This is the "generate random data" option.  This option takes a number
-argument.  Asks the token to generate a number of bytes of random bytes.
+This is the "generate random data" option.  This option takes a
+ArgumentType.NUMBER argument.  Asks the token to generate a number of
+bytes of random bytes.
 
 inder option.
 .............
@@ -7648,15 +7688,15 @@ provider option.
 ................
 
 This is the "specify the pkcs #11 provider library" option.  This option
-takes a file argument.  This will override the default options in
-/etc/gnutls/pkcs11.conf
+takes a ArgumentType.FILE argument.  This will override the default
+options in /etc/gnutls/pkcs11.conf
 
 provider-opts option.
 .....................
 
 This is the "specify parameters for the pkcs #11 provider library"
-option.  This option takes a string argument.  This is a PKCS#11
-internal option used by few modules.  Mainly for testing PKCS#11
+option.  This option takes a ArgumentType.STRING argument.  This is a
+PKCS#11 internal option used by few modules.  Mainly for testing PKCS#11
 modules.
 
 *NOTE**: THIS OPTION IS DEPRECATED*
@@ -7672,9 +7712,10 @@ version option (-v).
 ....................
 
 This is the "output version information and exit" option.  This option
-takes a keyword argument.  Output version of program and exit.  The
-default mode is 'v', a simple version.  The 'c' mode will print
-copyright information and 'n' will print the full copyright notice.
+takes a ArgumentType.KEYWORD argument.  Output version of program and
+exit.  The default mode is 'v', a simple version.  The 'c' mode will
+print copyright information and 'n' will print the full copyright
+notice.
 
 help option (-h).
 .................

@@ -834,7 +834,9 @@ def htmlReadDoc(cur, URL, encoding, options):
     return xmlDoc(_obj=ret)
 
 def htmlReadFd(fd, URL, encoding, options):
-    """parse an XML from a file descriptor and build a tree. """
+    """parse an HTML from a file descriptor and build a tree. NOTE
+      that the file descriptor will not be closed when the reader
+       is closed or reset. """
     ret = libxml2mod.htmlReadFd(fd, URL, encoding, options)
     if ret is None:raise treeError('htmlReadFd() failed')
     return xmlDoc(_obj=ret)

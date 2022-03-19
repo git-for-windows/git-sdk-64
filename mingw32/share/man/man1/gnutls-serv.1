@@ -10,7 +10,7 @@
 .ds B-Font B
 .ds I-Font I
 .ds R-Font R
-.TH gnutls-serv 1 "18 Jan 2022" "3.7.3" "User Commands"
+.TH gnutls-serv 1 "17 Mar 2022" "3.7.4" "User Commands"
 .SH NAME
 \f\*[B-Font]gnutls-serv\fP
 \- GnuTLS server
@@ -31,22 +31,22 @@ Server program that listens to incoming TLS connections.
 .sp
 .SH "OPTIONS"
 .TP
-.NOP \f\*[B-Font]\-d\f[] \f\*[I-Font]number\f[], \f\*[B-Font]\-\-debug\f[]=\f\*[I-Font]number\f[]
+.NOP \f\*[B-Font]\-d\f[] \f\*[I-Font]num\f[], \f\*[B-Font]\-\-debug\f[]=\f\*[I-Font]num\f[]
 Enable debugging.
 This option takes an integer number as its argument.
 The value of
-\f\*[I-Font]number\f[]
+\f\*[I-Font]num\f[]
 is constrained to being:
 .in +4
 .nf
 .na
-in the range 0  through  9999
+in the range 0 through 9999
 .fi
 .in -4
 .sp
 Specifies the debug level.
 .TP
-.NOP \f\*[B-Font]\-\-sni\-hostname\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-sni\-hostname\f[]=\f\*[I-Font]str\f[]
 Server's hostname for server name extension.
 .sp
 Server name of type host_name that the server will recognise as its own. If the server receives client hello with different name, it will send a warning\-level unrecognized_name alert.
@@ -55,7 +55,7 @@ Server name of type host_name that the server will recognise as its own. If the 
 Send fatal alert on sni-hostname mismatch.
 .sp
 .TP
-.NOP \f\*[B-Font]\-\-alpn\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-alpn\f[]=\f\*[I-Font]str\f[]
 Specify ALPN protocol to be enabled by the server.
 This option may appear an unlimited number of times.
 .sp
@@ -73,9 +73,18 @@ Don't accept session tickets.
 Accept early data.
 .sp
 .TP
-.NOP \f\*[B-Font]\-\-maxearlydata\f[]=\f\*[I-Font]number\f[]
+.NOP \f\*[B-Font]\-\-maxearlydata\f[]=\f\*[I-Font]num\f[]
 The maximum early data size to accept.
 This option takes an integer number as its argument.
+The value of
+\f\*[I-Font]num\f[]
+is constrained to being:
+.in +4
+.nf
+.na
+in the range 1 through 2147483648
+.fi
+.in -4
 .sp
 .TP
 .NOP \f\*[B-Font]\-\-nocookie\f[]
@@ -110,11 +119,11 @@ Do not replace CRLF by LF in Echo server mode.
 Use DTLS (datagram TLS) over UDP.
 .sp
 .TP
-.NOP \f\*[B-Font]\-\-mtu\f[]=\f\*[I-Font]number\f[]
+.NOP \f\*[B-Font]\-\-mtu\f[]=\f\*[I-Font]num\f[]
 Set MTU for datagram TLS.
 This option takes an integer number as its argument.
 The value of
-\f\*[I-Font]number\f[]
+\f\*[I-Font]num\f[]
 is constrained to being:
 .in +4
 .nf
@@ -124,7 +133,7 @@ in the range 0 through 17000
 .in -4
 .sp
 .TP
-.NOP \f\*[B-Font]\-\-srtp\-profiles\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-srtp\-profiles\f[]=\f\*[I-Font]str\f[]
 Offer SRTP profiles.
 .sp
 .TP
@@ -141,9 +150,15 @@ This option before 3.6.0 used to imply \-\-verify\-client\-cert.
 Since 3.6.0 it will no longer verify the certificate by default.
 .TP
 .NOP \f\*[B-Font]\-\-verify\-client\-cert\f[]
-If a client certificate is sent then verify it..
+If a client certificate is sent then verify it.
 .sp
 Do not require, but if a client certificate is sent then verify it and close the connection if invalid.
+.TP
+.NOP \f\*[B-Font]\-\-compress\-cert\f[]=\f\*[I-Font]str\f[]
+Compress certificate.
+This option may appear an unlimited number of times.
+.sp
+This option sets a supported compression method for certificate compression.
 .TP
 .NOP \f\*[B-Font]\-b\f[], \f\*[B-Font]\-\-heartbeat\f[]
 Activate heartbeat support.
@@ -154,7 +169,7 @@ Regularly ping client via heartbeat extension messages
 Use DER format for certificates to read from.
 .sp
 .TP
-.NOP \f\*[B-Font]\-\-priority\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-priority\f[]=\f\*[I-Font]str\f[]
 Priorities string.
 .sp
 TLS algorithms and protocols to enable. You can
@@ -168,7 +183,7 @@ information on allowed keywords
 DH params file to use.
 .sp
 .TP
-.NOP \f\*[B-Font]\-\-x509cafile\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-x509cafile\f[]=\f\*[I-Font]str\f[]
 Certificate file or PKCS #11 URL to use.
 .sp
 .TP
@@ -183,7 +198,7 @@ PGP Key file to use.
 .B
 NOTE: THIS OPTION IS DEPRECATED
 .TP
-.NOP \f\*[B-Font]\-\-x509keyfile\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-x509keyfile\f[]=\f\*[I-Font]str\f[]
 X.509 key file or PKCS #11 URL to use.
 This option may appear an unlimited number of times.
 .sp
@@ -192,7 +207,7 @@ the certificate specified in \-\-x509certfile. Multiple keys and certificates
 can be specified with this option and in that case each occurrence of keyfile
 must be followed by the corresponding x509certfile or vice\-versa.
 .TP
-.NOP \f\*[B-Font]\-\-x509certfile\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-x509certfile\f[]=\f\*[I-Font]str\f[]
 X.509 Certificate file or PKCS #11 URL to use.
 This option may appear an unlimited number of times.
 .sp
@@ -225,7 +240,7 @@ This is an alias for the \fI--x509certfile\fR option.
 .B
 NOTE: THIS OPTION IS DEPRECATED
 .TP
-.NOP \f\*[B-Font]\-\-rawpkkeyfile\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-rawpkkeyfile\f[]=\f\*[I-Font]str\f[]
 Private key file (PKCS #8 or PKCS #12) or PKCS #11 URL to use.
 This option may appear an unlimited number of times.
 .sp
@@ -241,7 +256,7 @@ and CTYPE\-SRV\-* flags).
 Check  the  GnuTLS  manual  on  section  \(lqPriority strings\(rq for more
 information on how to set certificate types.
 .TP
-.NOP \f\*[B-Font]\-\-rawpkfile\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-rawpkfile\f[]=\f\*[I-Font]str\f[]
 Raw public-key file to use.
 This option may appear an unlimited number of times.
 This option must appear in combination with the following options:
@@ -271,11 +286,11 @@ SRP password configuration file to use.
 PSK password file to use.
 .sp
 .TP
-.NOP \f\*[B-Font]\-\-pskhint\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-pskhint\f[]=\f\*[I-Font]str\f[]
 PSK identity hint to use.
 .sp
 .TP
-.NOP \f\*[B-Font]\-\-ocsp\-response\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-ocsp\-response\f[]=\f\*[I-Font]str\f[]
 The OCSP response to send to client.
 This option may appear an unlimited number of times.
 .sp
@@ -286,7 +301,7 @@ Ignore any errors when setting the OCSP response.
 .sp
 That option instructs gnutls to not attempt to match the provided OCSP responses with the certificates.
 .TP
-.NOP \f\*[B-Font]\-p\f[] \f\*[I-Font]number\f[], \f\*[B-Font]\-\-port\f[]=\f\*[I-Font]number\f[]
+.NOP \f\*[B-Font]\-p\f[] \f\*[I-Font]num\f[], \f\*[B-Font]\-\-port\f[]=\f\*[I-Font]num\f[]
 The port to connect to.
 This option takes an integer number as its argument.
 .sp
@@ -301,20 +316,20 @@ Specify the PKCS #11 provider library.
 .sp
 This will override the default options in /etc/gnutls/pkcs11.conf
 .TP
-.NOP \f\*[B-Font]\-\-keymatexport\f[]=\f\*[I-Font]string\f[]
+.NOP \f\*[B-Font]\-\-keymatexport\f[]=\f\*[I-Font]str\f[]
 Label used for exporting keying material.
 .sp
 .TP
-.NOP \f\*[B-Font]\-\-keymatexportsize\f[]=\f\*[I-Font]number\f[]
+.NOP \f\*[B-Font]\-\-keymatexportsize\f[]=\f\*[I-Font]num\f[]
 Size of the exported keying material.
 This option takes an integer number as its argument.
 .sp
 .TP
-.NOP \f\*[B-Font]\-\-recordsize\f[]=\f\*[I-Font]number\f[]
+.NOP \f\*[B-Font]\-\-recordsize\f[]=\f\*[I-Font]num\f[]
 The maximum record size to advertise.
 This option takes an integer number as its argument.
 The value of
-\f\*[I-Font]number\f[]
+\f\*[I-Font]num\f[]
 is constrained to being:
 .in +4
 .nf
@@ -328,7 +343,7 @@ in the range 0 through 16384
 The data used as HTTP response.
 .sp
 .TP
-.NOP \f\*[B-Font]\-v\f[] \f\*[I-Font]keyword\f[], \f\*[B-Font]\-\-version\f[]=\f\*[I-Font]keyword\f[]
+.NOP \f\*[B-Font]\-v\f[] \f\*[I-Font]arg\f[], \f\*[B-Font]\-\-version\f[]=\f\*[I-Font]arg\f[]
 Output version of program and exit.  The default mode is `v', a simple
 version.  The `c' mode will print copyright information and `n' will
 print the full copyright notice.
@@ -536,9 +551,11 @@ The operation failed or the command syntax was not valid.
 .SH "SEE ALSO"
 gnutls\-cli\-debug(1), gnutls\-cli(1)
 .SH "AUTHORS"
-Nikos Mavrogiannopoulos, Simon Josefsson and others; see /usr/share/doc/gnutls/AUTHORS for a complete list.
+
 .SH "COPYRIGHT"
 Copyright (C) 2020-2021 Free Software Foundation, and others all rights reserved.
-This program is released under the terms of the GNU General Public License, version 3 or later.
+This program is released under the terms of
+the GNU General Public License, version 3 or later
+.
 .SH "BUGS"
 Please send bug reports to: bugs@gnutls.org

@@ -20,6 +20,8 @@
 
 /* #undef GLIB_STATIC_COMPILATION */
 /* #undef GOBJECT_STATIC_COMPILATION */
+/* #undef G_INTL_STATIC_COMPILATION */
+/* #undef FFI_STATIC_BUILD */
 
 G_BEGIN_DECLS
 
@@ -109,8 +111,8 @@ typedef unsigned long long guintptr;
 #define G_GUINTPTR_FORMAT       "llu"
 
 #define GLIB_MAJOR_VERSION 2
-#define GLIB_MINOR_VERSION 70
-#define GLIB_MICRO_VERSION 4
+#define GLIB_MINOR_VERSION 72
+#define GLIB_MICRO_VERSION 0
 
 #define G_OS_WIN32
 #define G_PLATFORM_WIN32
@@ -152,7 +154,7 @@ typedef unsigned long long guintptr;
 #endif
 
 #define G_THREADS_ENABLED
-#define G_THREADS_IMPL_POSIX
+#define G_THREADS_IMPL_WIN32
 
 #define G_ATOMIC_LOCK_FREE
 

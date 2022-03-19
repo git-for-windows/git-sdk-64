@@ -51,13 +51,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.7.3"
+#define GNUTLS_VERSION "3.7.4"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 7
-#define GNUTLS_VERSION_PATCH 3
+#define GNUTLS_VERSION_PATCH 4
 
-#define GNUTLS_VERSION_NUMBER 0x030703
+#define GNUTLS_VERSION_NUMBER 0x030704
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -408,7 +408,7 @@ typedef enum {
   /* exported for other gnutls headers. This is the maximum number of
    * algorithms (ciphers, kx or macs).
    */
-#define GNUTLS_MAX_ALGORITHM_NUM 64
+#define GNUTLS_MAX_ALGORITHM_NUM 128
 #define GNUTLS_MAX_SESSION_ID_SIZE 32
 
 
@@ -425,7 +425,9 @@ typedef enum {
 	GNUTLS_COMP_UNKNOWN = 0,
 	GNUTLS_COMP_NULL = 1,
 	GNUTLS_COMP_DEFLATE = 2,
-	GNUTLS_COMP_ZLIB = GNUTLS_COMP_DEFLATE
+	GNUTLS_COMP_ZLIB = GNUTLS_COMP_DEFLATE,
+	GNUTLS_COMP_BROTLI = 3,
+	GNUTLS_COMP_ZSTD = 4
 } gnutls_compression_method_t;
 
 
@@ -640,6 +642,7 @@ typedef enum {
  * @GNUTLS_HANDSHAKE_FINISHED: Finished.
  * @GNUTLS_HANDSHAKE_CERTIFICATE_STATUS: Certificate status (OCSP).
  * @GNUTLS_HANDSHAKE_KEY_UPDATE: TLS1.3 key update message.
+ * @GNUTLS_HANDSHAKE_COMPRESSED_CERTIFICATE_PKT: Compressed certificate packet.
  * @GNUTLS_HANDSHAKE_SUPPLEMENTAL: Supplemental.
  * @GNUTLS_HANDSHAKE_CHANGE_CIPHER_SPEC: Change Cipher Spec.
  * @GNUTLS_HANDSHAKE_CLIENT_HELLO_V2: SSLv2 Client Hello.
@@ -665,6 +668,7 @@ typedef enum {
 	GNUTLS_HANDSHAKE_CERTIFICATE_STATUS = 22,
 	GNUTLS_HANDSHAKE_SUPPLEMENTAL = 23,
 	GNUTLS_HANDSHAKE_KEY_UPDATE = 24,
+	GNUTLS_HANDSHAKE_COMPRESSED_CERTIFICATE_PKT = 25,
 	GNUTLS_HANDSHAKE_CHANGE_CIPHER_SPEC = 254,
 	GNUTLS_HANDSHAKE_CLIENT_HELLO_V2 = 1024,
 	GNUTLS_HANDSHAKE_HELLO_RETRY_REQUEST = 1025,
@@ -701,7 +705,7 @@ const char
  * @GNUTLS_CERT_UNEXPECTED_OWNER: The owner is not the expected one.
  * @GNUTLS_CERT_MISMATCH: The certificate presented isn't the expected one (TOFU)
  * @GNUTLS_CERT_PURPOSE_MISMATCH: The certificate or an intermediate does not match the intended purpose (extended key usage).
- * @GNUTLS_CERT_MISSING_OCSP_STATUS: The certificate requires the server to send the certifiate status, but no status was received.
+ * @GNUTLS_CERT_MISSING_OCSP_STATUS: The certificate requires the server to send the certificate status, but no status was received.
  * @GNUTLS_CERT_INVALID_OCSP_STATUS: The received OCSP status response is invalid.
  * @GNUTLS_CERT_UNKNOWN_CRIT_EXTENSIONS: The certificate has extensions marked as critical which are not supported.
  *
@@ -1519,6 +1523,8 @@ ssize_t gnutls_record_send2(gnutls_session_t session, const void *data,
 ssize_t gnutls_record_send_range(gnutls_session_t session,
 				 const void *data, size_t data_size,
 				 const gnutls_range_st * range);
+ssize_t gnutls_record_send_file(gnutls_session_t session, int fd,
+		off_t *offset, size_t count);
 ssize_t gnutls_record_recv(gnutls_session_t session, void *data,
 			   size_t data_size);
 
@@ -1724,6 +1730,13 @@ int gnutls_srtp_set_mki(gnutls_session_t session,
 			const gnutls_datum_t * mki);
 int gnutls_srtp_get_mki(gnutls_session_t session, gnutls_datum_t * mki);
 
+/* COMPRESS_CERTIFICATE extension, RFC8879 */
+gnutls_compression_method_t
+gnutls_compress_certificate_get_selected_method(gnutls_session_t session);
+int gnutls_compress_certificate_set_methods(gnutls_session_t session,
+					    const gnutls_compression_method_t * methods,
+					    size_t methods_len);
+
 /* ALPN TLS extension */
 
 /**
@@ -1808,6 +1821,9 @@ const char *
 	gnutls_cipher_suite_get_name(gnutls_kx_algorithm_t kx_algorithm,
 				     gnutls_cipher_algorithm_t cipher_algorithm,
 				     gnutls_mac_algorithm_t mac_algorithm) __GNUTLS_CONST__;
+
+const char *
+gnutls_ciphersuite_get(gnutls_session_t session) __GNUTLS_CONST__;
 
 /* get the currently used protocol version */
 gnutls_protocol_t gnutls_protocol_get_version(gnutls_session_t session);

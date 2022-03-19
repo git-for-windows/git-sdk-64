@@ -1,6 +1,7 @@
-This is gnutls.info, produced by makeinfo version 6.7 from gnutls.texi.
+This is gnutls.info, produced by makeinfo version 6.8 from gnutls.texi.
 
-This manual is last updated 7 January 2022 for version 3.7.3 of GnuTLS.
+This manual is last updated 22 February 2022 for version 3.7.4 of
+GnuTLS.
 
 Copyright (C) 2001-2022 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2022 Nikos Mavrogiannopoulos
@@ -1690,6 +1691,7 @@ cryptographic primitives.
 'GNUTLS_CIPHER_TWOFISH_PGP_CFB'
      Twofish in CFB mode (placeholder - unsupported).
 
+
 Figure 9.1: The supported ciphers.
 
 Authenticated-encryption API
@@ -1943,6 +1945,7 @@ gnutls_pkcs7_sign:: function is the data signing function.
 'GNUTLS_PKCS7_WRITE_SPKI'
      Use the signer's key identifier instead of name.
 
+
 Figure 9.2: Flags applicable to gnutls_pkcs7_sign()
 
 Other helper functions which allow to access the signatures, or
@@ -2038,6 +2041,7 @@ either for HMAC or MAC operations.
 'GNUTLS_MAC_KUZNYECHIK_OMAC'
      GOST R 34.12-2015 (Kuznyechik) in OMAC (CMAC) mode.
 
+
 Figure 9.3: The supported MAC and HMAC algorithms.
 
 'INT *note gnutls_hmac_init:: (gnutls_hmac_hd_t * DIG, gnutls_mac_algorithm_t ALGORITHM, const void * KEY, size_t KEYLEN)'
@@ -2100,6 +2104,7 @@ gnutls_digest_algorithm_t.
 'GNUTLS_DIG_SHAKE_256'
      Reserved; unimplemented.
 
+
 Figure 9.4: The supported hash algorithms.
 
 
@@ -2120,6 +2125,7 @@ levels.
      broken.  Example use: temporal keys.
 'GNUTLS_RND_KEY'
      Fatal in many sessions if broken.  Example use: Long-term keys.
+
 
 Figure 9.5: The random number levels.
 
@@ -2356,24 +2362,20 @@ to 'more'.  Both will exit with a status code of 0.
      gnutls-cli - GnuTLS client
      Usage:  gnutls-cli [ -<flag> [<val>] | --<name>[{=| }<val>] ]... [hostname]
 
+     None:
+
         -d, --debug=num            Enable debugging
      				- it must be in the range:
      				  0 to 9999
         -V, --verbose              More verbose output
-     				- may appear multiple times
             --tofu                 Enable trust on first use authentication
-     				- disabled as '--no-tofu'
             --strict-tofu          Fail to connect if a certificate is unknown or a known certificate has changed
-     				- disabled as '--no-strict-tofu'
             --dane                 Enable DANE certificate verification (DNSSEC)
-     				- disabled as '--no-dane'
             --local-dns            Use the local DNS server for DNSSEC resolving
-     				- disabled as '--no-local-dns'
             --ca-verification      Enable CA certificate verification
-     				- disabled as '--no-ca-verification'
      				- enabled by default
+     				- disabled as '--no-ca-verification'
             --ocsp                 Enable OCSP certificate verification
-     				- disabled as '--no-ocsp'
         -r, --resume               Establish a session and resume
             --earlydata=str        Send early data on resumption from the specified file
         -e, --rehandshake          Establish a session and rehandshake
@@ -2425,7 +2427,7 @@ to 'more'.  Both will exit with a status code of 0.
             --noticket             Don't allow session tickets
             --srtp-profiles=str    Offer SRTP profiles
             --alpn=str             Application layer protocol
-     				- may appear multiple times
+            --compress-cert=str    Compress certificate
         -b, --heartbeat            Activate heartbeat support
             --recordsize=num       The maximum record size to advertise
      				- it must be in the range:
@@ -2434,17 +2436,16 @@ to 'more'.  Both will exit with a status code of 0.
             --single-key-share     Send a single key share under TLS1.3
             --post-handshake-auth  Enable post-handshake authentication under TLS1.3
             --inline-commands      Inline commands of the form ^<cmd>^
-            --inline-commands-prefix=str Change the default delimiter for inline commands.
+            --inline-commands-prefix=str Change the default delimiter for inline commands
             --provider=file        Specify the PKCS #11 provider library
      				- file must pre-exist
             --fips140-mode         Reports the status of the FIPS140-2 mode in gnutls library
             --list-config          Reports the configuration of the library
-            --logfile=str          Redirect informational messages to a specific file.
+            --logfile=str          Redirect informational messages to a specific file
             --keymatexport=str     Label used for exporting keying material
             --keymatexportsize=num Size of the exported keying material
             --waitresumption       Block waiting for the resumption data under TLS1.3
             --ca-auto-retrieve     Enable automatic retrieval of missing CA certificates
-     				- disabled as '--no-ca-auto-retrieve'
 
      Version, usage and configuration options:
 
@@ -2459,12 +2460,14 @@ to 'more'.  Both will exit with a status code of 0.
      Simple client program to set up a TLS connection to some other computer.
      It sets up a TLS connection and forwards data from the standard input to the secured socket and vice versa.
 
+     Please send bug reports to:  <bugs@gnutls.org>
+
 
 debug option (-d).
 ------------------
 
-This is the "enable debugging" option.  This option takes a number
-argument.  Specifies the debug level.
+This is the "enable debugging" option.  This option takes a
+ArgumentType.NUMBER argument.  Specifies the debug level.
 
 tofu option.
 ------------
@@ -2534,19 +2537,20 @@ sni-hostname option.
 --------------------
 
 This is the "server's hostname for server name indication extension"
-option.  This option takes a string argument.  Set explicitly the server
-name used in the TLS server name indication extension.  That is useful
-when testing with servers setup on different DNS name than the intended.
-If not specified, the provided hostname is used.  Even with this option
-server certificate verification still uses the hostname passed on the
-main commandline.  Use -verify-hostname to change this.
+option.  This option takes a ArgumentType.STRING argument.  Set
+explicitly the server name used in the TLS server name indication
+extension.  That is useful when testing with servers setup on different
+DNS name than the intended.  If not specified, the provided hostname is
+used.  Even with this option server certificate verification still uses
+the hostname passed on the main commandline.  Use -verify-hostname to
+change this.
 
 verify-hostname option.
 -----------------------
 
 This is the "server's hostname to use for validation" option.  This
-option takes a string argument.  Set explicitly the server name to be
-used when validating the server's certificate.
+option takes a ArgumentType.STRING argument.  Set explicitly the server
+name to be used when validating the server's certificate.
 
 starttls option (-s).
 ---------------------
@@ -2565,7 +2569,8 @@ starttls-proto option.
 
 This is the "the application protocol to be used to obtain the server's
 certificate (https, ftp, smtp, imap, ldap, xmpp, lmtp, pop3, nntp,
-sieve, postgres)" option.  This option takes a string argument.
+sieve, postgres)" option.  This option takes a ArgumentType.STRING
+argument.
 
 This option has some usage constraints.  It:
    * must not appear in combination with any of the following options:
@@ -2578,7 +2583,7 @@ save-ocsp-multi option.
 -----------------------
 
 This is the "save all ocsp responses provided by the peer in this file"
-option.  This option takes a string argument.
+option.  This option takes a ArgumentType.STRING argument.
 
 This option has some usage constraints.  It:
    * must not appear in combination with any of the following options:
@@ -2592,18 +2597,18 @@ dh-bits option.
 ---------------
 
 This is the "the minimum number of bits allowed for dh" option.  This
-option takes a number argument.  This option sets the minimum number of
-bits allowed for a Diffie-Hellman key exchange.  You may want to lower
-the default value if the peer sends a weak prime and you get an
-connection error with unacceptable prime.
+option takes a ArgumentType.NUMBER argument.  This option sets the
+minimum number of bits allowed for a Diffie-Hellman key exchange.  You
+may want to lower the default value if the peer sends a weak prime and
+you get an connection error with unacceptable prime.
 
 priority option.
 ----------------
 
-This is the "priorities string" option.  This option takes a string
-argument.  TLS algorithms and protocols to enable.  You can use
-predefined sets of ciphersuites such as PERFORMANCE, NORMAL, PFS,
-SECURE128, SECURE256.  The default is NORMAL.
+This is the "priorities string" option.  This option takes a
+ArgumentType.STRING argument.  TLS algorithms and protocols to enable.
+You can use predefined sets of ciphersuites such as PERFORMANCE, NORMAL,
+PFS, SECURE128, SECURE256.  The default is NORMAL.
 
 Check the GnuTLS manual on section "Priority strings" for more
 information on the allowed keywords
@@ -2612,10 +2617,10 @@ rawpkkeyfile option.
 --------------------
 
 This is the "private key file (pkcs #8 or pkcs #12) or pkcs #11 url to
-use" option.  This option takes a string argument.  In order to instruct
-the application to negotiate raw public keys one must enable the
-respective certificate types via the priority strings (i.e.  CTYPE-CLI-*
-and CTYPE-SRV-* flags).
+use" option.  This option takes a ArgumentType.STRING argument.  In
+order to instruct the application to negotiate raw public keys one must
+enable the respective certificate types via the priority strings (i.e.
+CTYPE-CLI-* and CTYPE-SRV-* flags).
 
 Check the GnuTLS manual on section "Priority strings" for more
 information on how to set certificate types.
@@ -2624,7 +2629,7 @@ rawpkfile option.
 -----------------
 
 This is the "raw public-key file to use" option.  This option takes a
-string argument.
+ArgumentType.STRING argument.
 
 This option has some usage constraints.  It:
    * must appear in combination with the following options:
@@ -2691,8 +2696,15 @@ alpn option.
 ------------
 
 This is the "application layer protocol" option.  This option takes a
-string argument.  This option will set and enable the Application Layer
-Protocol Negotiation (ALPN) in the TLS protocol.
+ArgumentType.STRING argument.  This option will set and enable the
+Application Layer Protocol Negotiation (ALPN) in the TLS protocol.
+
+compress-cert option.
+---------------------
+
+This is the "compress certificate" option.  This option takes a
+ArgumentType.STRING argument.  This option sets a supported compression
+method for certificate compression.
 
 disable-extensions option.
 --------------------------
@@ -2727,27 +2739,27 @@ rekey), rekey (rekey on both peers) and renegotiate.
 inline-commands-prefix option.
 ------------------------------
 
-This is the "change the default delimiter for inline commands."  option.
-This option takes a string argument.  Change the default delimiter (^)
-used for inline commands.  The delimiter is expected to be a single
-US-ASCII character (octets 0 - 127).  This option is only relevant if
-inline commands are enabled via the inline-commands option
+This is the "change the default delimiter for inline commands" option.
+This option takes a ArgumentType.STRING argument.  Change the default
+delimiter (^) used for inline commands.  The delimiter is expected to be
+a single US-ASCII character (octets 0 - 127).  This option is only
+relevant if inline commands are enabled via the inline-commands option
 
 provider option.
 ----------------
 
 This is the "specify the pkcs #11 provider library" option.  This option
-takes a file argument.  This will override the default options in
-/etc/gnutls/pkcs11.conf
+takes a ArgumentType.FILE argument.  This will override the default
+options in /etc/gnutls/pkcs11.conf
 
 logfile option.
 ---------------
 
-This is the "redirect informational messages to a specific file."
-option.  This option takes a string argument.  Redirect informational
-messages to a specific file.  The file may be /dev/null also to make the
-gnutls client quiet to use it in piped server connections where only the
-server communication may appear on stdout.
+This is the "redirect informational messages to a specific file" option.
+This option takes a ArgumentType.STRING argument.  Redirect
+informational messages to a specific file.  The file may be /dev/null
+also to make the gnutls client quiet to use it in piped server
+connections where only the server communication may appear on stdout.
 
 waitresumption option.
 ----------------------
@@ -2768,9 +2780,10 @@ version option (-v).
 --------------------
 
 This is the "output version information and exit" option.  This option
-takes a keyword argument.  Output version of program and exit.  The
-default mode is 'v', a simple version.  The 'c' mode will print
-copyright information and 'n' will print the full copyright notice.
+takes a ArgumentType.KEYWORD argument.  Output version of program and
+exit.  The default mode is 'v', a simple version.  The 'c' mode will
+print copyright information and 'n' will print the full copyright
+notice.
 
 help option (-h).
 -----------------
@@ -2929,17 +2942,20 @@ to 'more'.  Both will exit with a status code of 0.
      gnutls-serv - GnuTLS server
      Usage:  gnutls-serv [ -<flag> [<val>] | --<name>[{=| }<val>] ]...
 
+     None:
+
         -d, --debug=num            Enable debugging
      				- it must be in the range:
      				  0 to 9999
             --sni-hostname=str     Server's hostname for server name extension
             --sni-hostname-fatal   Send fatal alert on sni-hostname mismatch
             --alpn=str             Specify ALPN protocol to be enabled by the server
-     				- may appear multiple times
             --alpn-fatal           Send fatal alert on non-matching ALPN name
             --noticket             Don't accept session tickets
             --earlydata            Accept early data
             --maxearlydata=num     The maximum early data size to accept
+     				- it must be in the range:
+     				  1 to 2147483648
             --nocookie             Don't require cookie on DTLS sessions
         -g, --generate             Generate Diffie-Hellman parameters
         -q, --quiet                Suppress some messages
@@ -2955,7 +2971,8 @@ to 'more'.  Both will exit with a status code of 0.
         -a, --disable-client-cert  Do not request a client certificate
      				- prohibits the option 'require-client-cert'
         -r, --require-client-cert  Require a client certificate
-            --verify-client-cert   If a client certificate is sent then verify it.
+            --verify-client-cert   If a client certificate is sent then verify it
+            --compress-cert=str    Compress certificate
         -b, --heartbeat            Activate heartbeat support
             --x509fmtder           Use DER format for certificates to read from
             --priority=str         Priorities string
@@ -2965,14 +2982,10 @@ to 'more'.  Both will exit with a status code of 0.
             --x509crlfile=file     CRL file to use
      				- file must pre-exist
             --x509keyfile=str      X.509 key file or PKCS #11 URL to use
-     				- may appear multiple times
             --x509certfile=str     X.509 Certificate file or PKCS #11 URL to use
-     				- may appear multiple times
             --rawpkkeyfile=str     Private key file (PKCS #8 or PKCS #12) or PKCS #11 URL to use
-     				- may appear multiple times
             --rawpkfile=str        Raw public-key file to use
      				- requires the option 'rawpkkeyfile'
-     				- may appear multiple times
             --srppasswd=file       SRP password file to use
      				- file must pre-exist
             --srppasswdconf=file   SRP password configuration file to use
@@ -2981,7 +2994,6 @@ to 'more'.  Both will exit with a status code of 0.
      				- file must pre-exist
             --pskhint=str          PSK identity hint to use
             --ocsp-response=str    The OCSP response to send to client
-     				- may appear multiple times
             --ignore-ocsp-response-errors  Ignore any errors when setting the OCSP response
         -p, --port=num             The port to connect to
         -l, --list                 Print a list of the supported algorithms and modes
@@ -3006,28 +3018,30 @@ to 'more'.  Both will exit with a status code of 0.
 
      Server program that listens to incoming TLS connections.
 
+     Please send bug reports to:  <bugs@gnutls.org>
+
 
 debug option (-d).
 ------------------
 
-This is the "enable debugging" option.  This option takes a number
-argument.  Specifies the debug level.
+This is the "enable debugging" option.  This option takes a
+ArgumentType.NUMBER argument.  Specifies the debug level.
 
 sni-hostname option.
 --------------------
 
 This is the "server's hostname for server name extension" option.  This
-option takes a string argument.  Server name of type host_name that the
-server will recognise as its own.  If the server receives client hello
-with different name, it will send a warning-level unrecognized_name
-alert.
+option takes a ArgumentType.STRING argument.  Server name of type
+host_name that the server will recognise as its own.  If the server
+receives client hello with different name, it will send a warning-level
+unrecognized_name alert.
 
 alpn option.
 ------------
 
 This is the "specify alpn protocol to be enabled by the server" option.
-This option takes a string argument.  Specify the (textual) ALPN
-protocol for the server to use.
+This option takes a ArgumentType.STRING argument.  Specify the (textual)
+ALPN protocol for the server to use.
 
 require-client-cert option (-r).
 --------------------------------
@@ -3039,9 +3053,16 @@ verify the certificate by default.
 verify-client-cert option.
 --------------------------
 
-This is the "if a client certificate is sent then verify it."  option.
-Do not require, but if a client certificate is sent then verify it and
+This is the "if a client certificate is sent then verify it" option.  Do
+not require, but if a client certificate is sent then verify it and
 close the connection if invalid.
+
+compress-cert option.
+---------------------
+
+This is the "compress certificate" option.  This option takes a
+ArgumentType.STRING argument.  This option sets a supported compression
+method for certificate compression.
 
 heartbeat option (-b).
 ----------------------
@@ -3052,10 +3073,10 @@ via heartbeat extension messages
 priority option.
 ----------------
 
-This is the "priorities string" option.  This option takes a string
-argument.  TLS algorithms and protocols to enable.  You can use
-predefined sets of ciphersuites such as PERFORMANCE, NORMAL, SECURE128,
-SECURE256.  The default is NORMAL.
+This is the "priorities string" option.  This option takes a
+ArgumentType.STRING argument.  TLS algorithms and protocols to enable.
+You can use predefined sets of ciphersuites such as PERFORMANCE, NORMAL,
+SECURE128, SECURE256.  The default is NORMAL.
 
 Check the GnuTLS manual on section "Priority strings" for more
 information on allowed keywords
@@ -3064,21 +3085,21 @@ x509keyfile option.
 -------------------
 
 This is the "x.509 key file or pkcs #11 url to use" option.  This option
-takes a string argument.  Specify the private key file or URI to use; it
-must correspond to the certificate specified in -x509certfile.  Multiple
-keys and certificates can be specified with this option and in that case
-each occurrence of keyfile must be followed by the corresponding
-x509certfile or vice-versa.
+takes a ArgumentType.STRING argument.  Specify the private key file or
+URI to use; it must correspond to the certificate specified in
+-x509certfile.  Multiple keys and certificates can be specified with
+this option and in that case each occurrence of keyfile must be followed
+by the corresponding x509certfile or vice-versa.
 
 x509certfile option.
 --------------------
 
 This is the "x.509 certificate file or pkcs #11 url to use" option.
-This option takes a string argument.  Specify the certificate file or
-URI to use; it must correspond to the key specified in -x509keyfile.
-Multiple keys and certificates can be specified with this option and in
-that case each occurrence of keyfile must be followed by the
-corresponding x509certfile or vice-versa.
+This option takes a ArgumentType.STRING argument.  Specify the
+certificate file or URI to use; it must correspond to the key specified
+in -x509keyfile.  Multiple keys and certificates can be specified with
+this option and in that case each occurrence of keyfile must be followed
+by the corresponding x509certfile or vice-versa.
 
 x509dsakeyfile option.
 ----------------------
@@ -3108,11 +3129,11 @@ rawpkkeyfile option.
 --------------------
 
 This is the "private key file (pkcs #8 or pkcs #12) or pkcs #11 url to
-use" option.  This option takes a string argument.  Specify the private
-key file or URI to use; it must correspond to the raw public-key
-specified in -rawpkfile.  Multiple key pairs can be specified with this
-option and in that case each occurrence of keyfile must be followed by
-the corresponding rawpkfile or vice-versa.
+use" option.  This option takes a ArgumentType.STRING argument.  Specify
+the private key file or URI to use; it must correspond to the raw
+public-key specified in -rawpkfile.  Multiple key pairs can be specified
+with this option and in that case each occurrence of keyfile must be
+followed by the corresponding rawpkfile or vice-versa.
 
 In order to instruct the application to negotiate raw public keys one
 must enable the respective certificate types via the priority strings
@@ -3125,7 +3146,7 @@ rawpkfile option.
 -----------------
 
 This is the "raw public-key file to use" option.  This option takes a
-string argument.
+ArgumentType.STRING argument.
 
 This option has some usage constraints.  It:
    * must appear in combination with the following options:
@@ -3147,8 +3168,8 @@ ocsp-response option.
 ---------------------
 
 This is the "the ocsp response to send to client" option.  This option
-takes a string argument.  If the client requested an OCSP response,
-return data from this file to the client.
+takes a ArgumentType.STRING argument.  If the client requested an OCSP
+response, return data from this file to the client.
 
 ignore-ocsp-response-errors option.
 -----------------------------------
@@ -3168,16 +3189,17 @@ provider option.
 ----------------
 
 This is the "specify the pkcs #11 provider library" option.  This option
-takes a file argument.  This will override the default options in
-/etc/gnutls/pkcs11.conf
+takes a ArgumentType.FILE argument.  This will override the default
+options in /etc/gnutls/pkcs11.conf
 
 version option (-v).
 --------------------
 
 This is the "output version information and exit" option.  This option
-takes a keyword argument.  Output version of program and exit.  The
-default mode is 'v', a simple version.  The 'c' mode will print
-copyright information and 'n' will print the full copyright notice.
+takes a ArgumentType.KEYWORD argument.  Output version of program and
+exit.  The default mode is 'v', a simple version.  The 'c' mode will
+print copyright information and 'n' will print the full copyright
+notice.
 
 help option (-h).
 -----------------
@@ -3356,11 +3378,12 @@ to 'more'.  Both will exit with a status code of 0.
      gnutls-cli-debug - GnuTLS debug client
      Usage:  gnutls-cli-debug [ -<flag> [<val>] | --<name>[{=| }<val>] ]... [hostname]
 
+     None:
+
         -d, --debug=num            Enable debugging
      				- it must be in the range:
      				  0 to 9999
         -V, --verbose              More verbose output
-     				- may appear multiple times
         -p, --port=num             The port to connect to
      				- it must be in the range:
      				  0 to 65536
@@ -3384,12 +3407,14 @@ to 'more'.  Both will exit with a status code of 0.
      capabilities. If called with the `-V' parameter more checks will be performed.
      Can be used to check for servers with special needs or bugs.
 
+     Please send bug reports to:  <bugs@gnutls.org>
+
 
 debug option (-d).
 ------------------
 
-This is the "enable debugging" option.  This option takes a number
-argument.  Specifies the debug level.
+This is the "enable debugging" option.  This option takes a
+ArgumentType.NUMBER argument.  Specifies the debug level.
 
 app-proto option.
 -----------------
@@ -3402,17 +3427,18 @@ starttls-proto option.
 
 This is the "the application protocol to be used to obtain the server's
 certificate (https, ftp, smtp, imap, ldap, xmpp, lmtp, pop3, nntp,
-sieve, postgres)" option.  This option takes a string argument.  Specify
-the application layer protocol for STARTTLS. If the protocol is
-supported, gnutls-cli will proceed to the TLS negotiation.
+sieve, postgres)" option.  This option takes a ArgumentType.STRING
+argument.  Specify the application layer protocol for STARTTLS. If the
+protocol is supported, gnutls-cli will proceed to the TLS negotiation.
 
 version option (-v).
 --------------------
 
 This is the "output version information and exit" option.  This option
-takes a keyword argument.  Output version of program and exit.  The
-default mode is 'v', a simple version.  The 'c' mode will print
-copyright information and 'n' will print the full copyright notice.
+takes a ArgumentType.KEYWORD argument.  Output version of program and
+exit.  The default mode is 'v', a simple version.  The 'c' mode will
+print copyright information and 'n' will print the full copyright
+notice.
 
 help option (-h).
 -----------------
@@ -3530,6 +3556,8 @@ with the peer and be able to exchange data.
 
  [image src="gnutls-client-server-use-case.png" ]
 
+
+
 Figure 11.1: TLS protocol use case.
 
 
@@ -3545,6 +3573,8 @@ fig-gnutls-handshake.
 
  [image src="gnutls-handshake-state.png" ]
 
+
+
 Figure 11.2: GnuTLS handshake state machine.
 
 Also the way the input is processed varies per ciphersuite.  Several
@@ -3555,6 +3585,8 @@ of the 'process_client_key_exchange' than a certificate ciphersuite.  We
 illustrate the idea in *note Figure 11.3: fig-gnutls-handshake-sequence.
 
  [image src="gnutls-handshake-sequence.png" ]
+
+
 
 Figure 11.3: GnuTLS handshake process sequence.
 
@@ -3957,6 +3989,8 @@ operations as in *note Figure 11.4: fig-crypto-layers.
 
  [image src="gnutls-crypto-layers.png" ]
 
+
+
 Figure 11.4: GnuTLS cryptographic back-end design.
 
 The TLS layer uses a cryptographic provider layer, that will in turn
@@ -4275,6 +4309,7 @@ in *note Figure 11.5: gnutls_fips_mode_t.
      Similarly to 'GNUTLS_FIPS140_LAX' , it allows forbidden operations;
      any use of them results to a message to the audit callback
      functions.
+
 
 Figure 11.5: The 'gnutls_fips_mode_t' enumeration.
 
@@ -8009,6 +8044,87 @@ gnutls_cipher_suite_info
      about the cipher suite in the output variables.  If 'idx' is out of
      bounds, 'NULL' is returned.
 
+gnutls_ciphersuite_get
+----------------------
+
+ -- Function: const char * gnutls_ciphersuite_get (gnutls_session_t
+          SESSION)
+     SESSION: is a 'gnutls_session_t' type.
+
+     Get the canonical name of negotiated TLS ciphersuite.  The names
+     returned by this function match the IANA registry, with one
+     exception:
+
+     TLS_DHE_DSS_RC4_128_SHA { 0x00, 0x66 }
+
+     which is reserved for compatibility.
+
+     To get a detailed description of the current ciphersuite, it is
+     recommended to use 'gnutls_session_get_desc()' .
+
+     *Returns:* a string that contains the canonical name of a TLS
+     ciphersuite, or 'NULL' if the handshake is not completed.
+
+     *Since:* 3.7.4
+
+gnutls_compress_certificate_get_selected_method
+-----------------------------------------------
+
+ -- Function: gnutls_compression_method_t
+          gnutls_compress_certificate_get_selected_method
+          (gnutls_session_t SESSION)
+     SESSION: is a 'gnutls_session_t' type.
+
+     This function returns the certificate compression method that has
+     been selected to compress the certificate before sending it to the
+     peer.  The selection is done based on the local list of supported
+     compression methods and the peer's requested compression methods.
+
+     *Returns:* selected certificate compression method.
+
+     Since 3.7.4
+
+gnutls_compress_certificate_set_methods
+---------------------------------------
+
+ -- Function: int gnutls_compress_certificate_set_methods
+          (gnutls_session_t SESSION, const gnutls_compression_method_t *
+          METHODS, size_t METHODS_LEN)
+     SESSION: is a 'gnutls_session_t' type.
+
+     METHODS: is a list of supported compression methods.
+
+     METHODS_LEN: number of compression methods in 'methods'
+
+     This function sets the supported compression methods for
+     certificate compression for the given session.  The list of
+     supported compression methods will be used for a) requesting the
+     compression of peer's certificate and b) selecting the method to
+     compress the local certificate before sending it to the peer.  The
+     order of compression methods inside the list does matter as the
+     method that appears earlier in the list will be preffered before
+     the later ones.  Note that even if you set the list of supported
+     compression methods, the compression might not be used if the peer
+     does not support any of your chosen compression methods.
+
+     The list of supported compression methods must meet the following
+     criteria: Argument 'methods' must be an array of valid compression
+     methods of type 'gnutls_compression_method_t' .  Argument
+     'methods_len' must contain the number of compression methods stored
+     in the 'methods' array and must be within range <1, 127>.  The
+     length constraints are defined by
+     'MIN_COMPRESS_CERTIFICATE_METHODS' and
+     'MAX_COMPRESS_CERTIFICATE_METHODS' macros located in the header
+     file compress_certificate.h.
+
+     If either 'methods' or 'methods_len' is equal to 0, current list of
+     supported compression methods will be unset.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     Since 3.7.4
+
 gnutls_credentials_clear
 ------------------------
 
@@ -8660,6 +8776,9 @@ gnutls_digest_set_secure
      through the allowlisting mode in the configuration file, or when
      the setting is modified with a prior call to this function.
 
+     This function must be called prior to any session priority setting
+     functions; otherwise the behavior is undefined.
+
      *Since:* 3.7.3
 
 gnutls_early_cipher_get
@@ -8794,6 +8913,9 @@ gnutls_ecc_curve_set_enabled
      enabled or disabled.  This only has effect when the curve is
      enabled through the allowlisting mode in the configuration file, or
      when the setting is modified with a prior call to this function.
+
+     This function must be called prior to any session priority setting
+     functions; otherwise the behavior is undefined.
 
      *Returns:* 0 on success or negative error code otherwise.
 
@@ -11304,6 +11426,9 @@ gnutls_protocol_set_enabled
      enabled through the allowlisting mode in the configuration file, or
      when the setting is modified with a prior call to this function.
 
+     This function must be called prior to any session priority setting
+     functions; otherwise the behavior is undefined.
+
      *Returns:* 0 on success or negative error code otherwise.
 
      *Since:* 3.7.3
@@ -12188,6 +12313,35 @@ gnutls_record_send_early_data
      the negotiated maximum record size.
 
      *Since:* 3.6.5
+
+gnutls_record_send_file
+-----------------------
+
+ -- Function: ssize_t gnutls_record_send_file (gnutls_session_t SESSION,
+          int FD, off_t * OFFSET, size_t COUNT)
+     SESSION: is a 'gnutls_session_t' type.
+
+     FD: file descriptor from which to read data.
+
+     OFFSET: Is relative to file offset, denotes the starting location
+     for reading.  after function returns, it point to position
+     following last read byte.
+
+     COUNT: is the length of the data in bytes to be read from file and
+     send.
+
+     This function sends data from 'fd' .  If KTLS (kernel TLS) is
+     enabled, it will use the 'sendfile()' system call to avoid overhead
+     of copying data between user space and the kernel.  Otherwise, this
+     functionality is merely emulated by calling 'read()' and
+     'gnutls_record_send()' .  If this implementation is suboptimal,
+     check whether KTLS is enabled using
+     'gnutls_transport_is_ktls_enabled()' .
+
+     If 'offset' is NULL then file offset is incremented by number of
+     bytes send, otherwise file offset remains unchanged.
+
+     *Returns:* The number of bytes sent, or a negative error code.
 
 gnutls_record_send_range
 ------------------------
@@ -13515,6 +13669,9 @@ gnutls_sign_set_secure
      use in certificates.  Use 'gnutls_sign_set_secure_for_certs()' to
      mark it secure as well for certificates.
 
+     This function must be called prior to any session priority setting
+     functions; otherwise the behavior is undefined.
+
      *Since:* 3.7.3
 
 gnutls_sign_set_secure_for_certs
@@ -13536,6 +13693,9 @@ gnutls_sign_set_secure_for_certs
      unlike 'gnutls_sign_set_secure()' .  Otherwise, it is marked as
      insecure only for the use in certificates.  Use
      'gnutls_sign_set_secure()' to mark it insecure for any uses.
+
+     This function must be called prior to any session priority setting
+     functions; otherwise the behavior is undefined.
 
      *Since:* 3.7.3
 

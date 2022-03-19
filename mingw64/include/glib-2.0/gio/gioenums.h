@@ -392,7 +392,7 @@ typedef enum {
  *
  * Indicates a hint from the file system whether files should be
  * previewed in a file manager. Returned as the value of the key
- * #G_FILE_ATTRIBUTE_FILESYSTEM_USE_PREVIEW.
+ * %G_FILE_ATTRIBUTE_FILESYSTEM_USE_PREVIEW.
  **/
 typedef enum {
   G_FILESYSTEM_PREVIEW_TYPE_IF_ALWAYS = 0,
@@ -522,7 +522,7 @@ typedef enum {
  *   }
  * ]|
  * but should instead treat all unrecognized error codes the same as
- * #G_IO_ERROR_FAILED.
+ * %G_IO_ERROR_FAILED.
  *
  * See also #GPollableReturn for a cheaper way of returning
  * %G_IO_ERROR_WOULD_BLOCK to callers without allocating a #GError.
@@ -973,7 +973,7 @@ typedef enum
  * @G_BUS_NAME_OWNER_FLAGS_NONE: No flags set.
  * @G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT: Allow another message bus connection to claim the name.
  * @G_BUS_NAME_OWNER_FLAGS_REPLACE: If another message bus connection owns the name and have
- * specified #G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT, then take the name from the other connection.
+ * specified %G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT, then take the name from the other connection.
  * @G_BUS_NAME_OWNER_FLAGS_DO_NOT_QUEUE: If another message bus connection owns the name, immediately
  * return an error from g_bus_own_name() rather than entering the waiting queue for that name. (Since 2.54)
  *
@@ -1021,6 +1021,9 @@ typedef enum
  * do not ask the bus to launch an owner during proxy initialization, but allow it to be
  * autostarted by a method call. This flag is only meaningful in proxies for well-known names,
  * and only if %G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START is not also specified.
+ * @G_DBUS_PROXY_FLAGS_NO_MATCH_RULE: Don't actually send the AddMatch D-Bus
+ *    call for this signal subscription. This gives you more control
+ *    over which match rules you add (but you must add them manually). (Since: 2.72)
  *
  * Flags used when constructing an instance of a #GDBusProxy derived class.
  *
@@ -1033,7 +1036,8 @@ typedef enum
   G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS = (1<<1),
   G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START = (1<<2),
   G_DBUS_PROXY_FLAGS_GET_INVALIDATED_PROPERTIES = (1<<3),
-  G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START_AT_CONSTRUCTION = (1<<4)
+  G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START_AT_CONSTRUCTION = (1<<4),
+  G_DBUS_PROXY_FLAGS_NO_MATCH_RULE GLIB_AVAILABLE_ENUMERATOR_IN_2_72 = (1<<5)
 } GDBusProxyFlags;
 
 /**
@@ -1437,6 +1441,7 @@ typedef enum
  * @G_CREDENTIALS_TYPE_SOLARIS_UCRED: The native credentials type is a `ucred_t`. Added in 2.40.
  * @G_CREDENTIALS_TYPE_NETBSD_UNPCBID: The native credentials type is a `struct unpcbid`. Added in 2.42.
  * @G_CREDENTIALS_TYPE_APPLE_XUCRED: The native credentials type is a `struct xucred`. Added in 2.66.
+ * @G_CREDENTIALS_TYPE_WIN32_PID: The native credentials type is a PID `DWORD`. Added in 2.72.
  *
  * Enumeration describing different kinds of native credential types.
  *
@@ -1451,6 +1456,7 @@ typedef enum
   G_CREDENTIALS_TYPE_SOLARIS_UCRED,
   G_CREDENTIALS_TYPE_NETBSD_UNPCBID,
   G_CREDENTIALS_TYPE_APPLE_XUCRED,
+  G_CREDENTIALS_TYPE_WIN32_PID,
 } GCredentialsType;
 
 /**
@@ -1548,6 +1554,8 @@ typedef enum
  * @G_TLS_ERROR_INAPPROPRIATE_FALLBACK: The TLS handshake failed
  *   because the client sent the fallback SCSV, indicating a protocol
  *   downgrade attack. Since: 2.60
+ * @G_TLS_ERROR_BAD_CERTIFICATE_PASSWORD: The certificate failed
+ *   to load because a password was incorrect. Since: 2.72
  *
  * An error code used with %G_TLS_ERROR in a #GError returned from a
  * TLS-related routine.
@@ -1562,7 +1570,8 @@ typedef enum {
   G_TLS_ERROR_HANDSHAKE,
   G_TLS_ERROR_CERTIFICATE_REQUIRED,
   G_TLS_ERROR_EOF,
-  G_TLS_ERROR_INAPPROPRIATE_FALLBACK
+  G_TLS_ERROR_INAPPROPRIATE_FALLBACK,
+  G_TLS_ERROR_BAD_CERTIFICATE_PASSWORD
 } GTlsError;
 
 /**
@@ -1584,10 +1593,16 @@ typedef enum {
  *   flags
  *
  * A set of flags describing TLS certification validation. This can be
- * used to set which validation steps to perform (eg, with
- * g_tls_client_connection_set_validation_flags()), or to describe why
- * a particular certificate was rejected (eg, in
- * #GTlsConnection::accept-certificate).
+ * used to describe why a particular certificate was rejected (for
+ * example, in #GTlsConnection::accept-certificate).
+ *
+ * GLib guarantees that if certificate verification fails, at least one
+ * flag will be set, but it does not guarantee that all possible flags
+ * will be set. Accordingly, you may not safely decide to ignore any
+ * particular type of error. For example, it would be incorrect to mask
+ * %G_TLS_CERTIFICATE_EXPIRED if you want to allow expired certificates,
+ * because this could potentially be the only error flag set even if
+ * other problems exist with the certificate.
  *
  * Since: 2.28
  */
@@ -1973,6 +1988,9 @@ typedef enum /*< flags >*/ {
  *   file descriptors of their parent, unless those descriptors have
  *   been explicitly marked as close-on-exec.  This flag has no effect
  *   over the "standard" file descriptors (stdin, stdout, stderr).
+ * @G_SUBPROCESS_FLAGS_SEARCH_PATH_FROM_ENVP: if path searching is
+ *   needed when spawning the subprocess, use the `PATH` in the launcher
+ *   environment. (Since: 2.72)
  *
  * Flags to define the behaviour of a #GSubprocess.
  *
@@ -1995,7 +2013,8 @@ typedef enum {
   G_SUBPROCESS_FLAGS_STDERR_PIPE           = (1u << 4),
   G_SUBPROCESS_FLAGS_STDERR_SILENCE        = (1u << 5),
   G_SUBPROCESS_FLAGS_STDERR_MERGE          = (1u << 6),
-  G_SUBPROCESS_FLAGS_INHERIT_FDS           = (1u << 7)
+  G_SUBPROCESS_FLAGS_INHERIT_FDS           = (1u << 7),
+  G_SUBPROCESS_FLAGS_SEARCH_PATH_FROM_ENVP = (1u << 8)
 } GSubprocessFlags;
 
 /**

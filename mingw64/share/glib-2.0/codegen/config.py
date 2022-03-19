@@ -19,6 +19,6 @@
 #
 # Author: David Zeuthen <davidz@redhat.com>
 
-VERSION = "2.70.4"
+VERSION = "2.72.0"
 MAJOR_VERSION = 2
-MINOR_VERSION = 70
+MINOR_VERSION = 72

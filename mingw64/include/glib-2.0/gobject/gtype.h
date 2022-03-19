@@ -72,7 +72,7 @@ G_BEGIN_DECLS
  * 
  * The fundamental type corresponding to #gchar.
  *
- * The type designated by G_TYPE_CHAR is unconditionally an 8-bit signed integer.
+ * The type designated by %G_TYPE_CHAR is unconditionally an 8-bit signed integer.
  * This may or may not be the same type a the C type "gchar".
  */
 #define G_TYPE_CHAR			G_TYPE_MAKE_FUNDAMENTAL (3)
@@ -654,7 +654,7 @@ struct _GTypeQuery
  * This macro should only be used in type implementations.
  * 
  * Since: 2.4
- * Deprecated: 2.58: Use %G_ADD_PRIVATE and the generated
+ * Deprecated: 2.58: Use G_ADD_PRIVATE() and the generated
  *   `your_type_get_instance_private()` function instead
  * Returns: (not nullable): a pointer to the private data structure
  */
@@ -1210,7 +1210,7 @@ struct _GInterfaceInfo
  *  return NULL;
  *  ]|
  *  It should be noted, that it is generally a bad idea to follow the
- *  #G_VALUE_NOCOPY_CONTENTS hint for reference counted types. Due to
+ *  %G_VALUE_NOCOPY_CONTENTS hint for reference counted types. Due to
  *  reentrancy requirements and reference count assertions performed
  *  by the signal emission code, reference counts should always be
  *  incremented for reference counted contents stored in the value->data
@@ -1401,6 +1401,17 @@ guint     g_type_get_type_registration_serial (void);
  * #endif
  * ]|
  *
+ * And use it as follow in your C file:
+ *
+ * |[<!-- language="C" -->
+ * struct _MyAppWindow
+ * {
+ *  GtkWindow parent;
+ *  ...
+ * };
+ * G_DEFINE_TYPE (MyAppWindow, my_app_window, GTK_TYPE_WINDOW)
+ * ]|
+ *
  * This results in the following things happening:
  *
  * - the usual `my_app_window_get_type()` function is declared with a return type of #GType
@@ -1489,6 +1500,18 @@ guint     g_type_get_type_registration_serial (void);
  * ...
  *
  * #endif
+ * ]|
+ *
+ * Since the instance structure is public it is often needed to declare a
+ * private struct as follow in your C file:
+ *
+ * |[<!-- language="C" -->
+ * typedef struct _GtkFrobberPrivate GtkFrobberPrivate;
+ * struct _GtkFrobberPrivate
+ * {
+ *   ...
+ * };
+ * G_DEFINE_TYPE_WITH_PRIVATE (GtkFrobber, gtk_frobber, GTK_TYPE_WIDGET)
  * ]|
  *
  * This results in the following things happening:
@@ -1585,6 +1608,18 @@ guint     g_type_get_type_registration_serial (void);
  * #endif
  * ]|
  *
+ * And use it as follow in your C file:
+ *
+ * |[<!-- language="C" -->
+ * G_DEFINE_INTERFACE (MyModel, my_model, G_TYPE_OBJECT);
+ *
+ * static void
+ * my_model_default_init (MyModelInterface *iface)
+ * {
+ *   ...
+ * }
+ * ]|
+ *
  * This results in the following things happening:
  *
  * - the usual `my_model_get_type()` function is declared with a return type of #GType
@@ -1649,7 +1684,7 @@ guint     g_type_get_type_registration_serial (void);
  * 
  * A convenience macro for type implementations.
  *
- * Similar to G_DEFINE_TYPE(), but allows you to insert custom code into the 
+ * Similar to G_DEFINE_TYPE(), but allows you to insert custom code into the
  * `*_get_type()` function, e.g. interface implementations via G_IMPLEMENT_INTERFACE().
  * See G_DEFINE_TYPE_EXTENDED() for an example.
  * 
@@ -1709,7 +1744,7 @@ guint     g_type_get_type_registration_serial (void);
  *
  * Similar to G_DEFINE_TYPE_WITH_CODE(), but defines an abstract type and
  * allows you to insert custom code into the `*_get_type()` function, e.g.
- * interface implementations  via G_IMPLEMENT_INTERFACE().
+ * interface implementations via G_IMPLEMENT_INTERFACE().
  *
  * See G_DEFINE_TYPE_EXTENDED() for an example.
  * 
@@ -1758,7 +1793,7 @@ guint     g_type_get_type_registration_serial (void);
  *
  * Similar to G_DEFINE_TYPE_WITH_CODE(), but defines a final type and
  * allows you to insert custom code into the `*_get_type()` function, e.g.
- * interface implementations  via G_IMPLEMENT_INTERFACE().
+ * interface implementations via G_IMPLEMENT_INTERFACE().
  *
  * See G_DEFINE_TYPE_EXTENDED() for an example.
  *
@@ -1980,6 +2015,12 @@ guint     g_type_get_type_registration_serial (void);
  *       priv->bar = bar;
  *   }
  * ]|
+ *
+ * Since GLib 2.72, the returned `MyObjectPrivate` pointer is guaranteed to be
+ * aligned to at least the alignment of the largest basic GLib type (typically
+ * this is #guint64 or #gdouble). If you need larger alignment for an element in
+ * the struct, you should allocate it on the heap (aligned), or arrange for your
+ * `MyObjectPrivate` struct to be appropriately padded.
  *
  * Note that this macro can only be used together with the `G_DEFINE_TYPE_*`
  * macros, since it depends on variable names from those macros.
@@ -2215,7 +2256,7 @@ type_name##_get_type (void) \
  *                                register_rectangle_transform_funcs (g_define_type_id))
  * ]|
  *
- * Similarly to the %G_DEFINE_TYPE family of macros, the #GType of the newly
+ * Similarly to the `G_DEFINE_TYPE_*` family of macros, the #GType of the newly
  * defined boxed type is exposed in the `g_define_type_id` variable.
  *
  * Since: 2.26
@@ -2414,9 +2455,9 @@ const gchar *    g_type_name_from_class         (GTypeClass	*g_class);
 /* --- implementation bits --- */
 #ifndef G_DISABLE_CAST_CHECKS
 #  define _G_TYPE_CIC(ip, gt, ct) \
-    ((ct*) g_type_check_instance_cast ((GTypeInstance*) ip, gt))
+    ((ct*) (void *) g_type_check_instance_cast ((GTypeInstance*) ip, gt))
 #  define _G_TYPE_CCC(cp, gt, ct) \
-    ((ct*) g_type_check_class_cast ((GTypeClass*) cp, gt))
+    ((ct*) (void *) g_type_check_class_cast ((GTypeClass*) cp, gt))
 #else /* G_DISABLE_CAST_CHECKS */
 #  define _G_TYPE_CIC(ip, gt, ct)       ((ct*) ip)
 #  define _G_TYPE_CCC(cp, gt, ct)       ((ct*) cp)
