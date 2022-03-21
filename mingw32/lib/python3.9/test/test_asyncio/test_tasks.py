@@ -9,12 +9,13 @@ import io
 import random
 import re
 import sys
+import types
 import textwrap
 import traceback
-import types
 import unittest
 import weakref
 from unittest import mock
+from types import GenericAlias
 
 import asyncio
 from asyncio import coroutines
@@ -119,6 +120,12 @@ class BaseTaskTests:
         self.loop = self.new_test_loop()
         self.loop.set_task_factory(self.new_task)
         self.loop.create_future = lambda: self.new_future(self.loop)
+
+
+    def test_generic_alias(self):
+        task = self.__class__.Task[str]
+        self.assertEqual(task.__args__, (str,))
+        self.assertIsInstance(task, GenericAlias)
 
     def test_task_cancel_message_getter(self):
         async def coro():
@@ -3400,6 +3407,11 @@ class CoroutineGatherTests(GatherTestsBase, test_utils.TestCase):
             coros.append(coro())
         return coros
 
+    def _gather(self, *args, **kwargs):
+        async def coro():
+            return asyncio.gather(*args, **kwargs)
+        return self.one_loop.run_until_complete(coro())
+
     def test_constructor_loop_selection(self):
         async def coro():
             return 'abc'
@@ -3480,6 +3492,20 @@ class CoroutineGatherTests(GatherTestsBase, test_utils.TestCase):
         b.set_result(None)
         test_utils.run_briefly(self.one_loop)
         self.assertIsInstance(f.exception(), RuntimeError)
+
+    def test_issue46672(self):
+        with mock.patch(
+            'asyncio.base_events.BaseEventLoop.call_exception_handler',
+        ):
+            async def coro(s):
+                return s
+            c = coro('abc')
+
+            with self.assertRaises(TypeError):
+                self._gather(c, {})
+            self._run_loop(self.one_loop)
+            # NameError should not happen:
+            self.one_loop.call_exception_handler.assert_not_called()
 
 
 class RunCoroutineThreadsafeTests(test_utils.TestCase):
