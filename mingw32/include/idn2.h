@@ -29,6 +29,14 @@
 #ifndef IDN2_H
 #define IDN2_H
 
+/**
+ * SECTION:idn2
+ * @title: idn2.h
+ * @short_description: main library interfaces
+ *
+ * The main library interfaces are declared in idn2.h.
+ */
+
 /* *INDENT-OFF* */
 /* see https://www.gnu.org/software/gnulib/manual/html_node/Exported-Symbols-of-Shared-Libraries.html */
 #ifndef _IDN2_API
@@ -121,7 +129,7 @@ extern "C"
  * version number.  Used together with idn2_check_version() to verify
  * header file and run-time library consistency.
  */
-#define IDN2_VERSION "2.3.1"
+#define IDN2_VERSION "2.3.2"
 
 /**
  * IDN2_VERSION_NUMBER
@@ -132,7 +140,7 @@ extern "C"
  * digits are used to enumerate development snapshots, but for all
  * public releases they will be 0000.
  */
-#define IDN2_VERSION_NUMBER 0x02030001
+#define IDN2_VERSION_NUMBER 0x02030002
 
 /**
  * IDN2_VERSION_MAJOR
@@ -156,7 +164,7 @@ extern "C"
  * Pre-processor symbol for the patch level number (decimal).
  * The version scheme is major.minor.patchlevel.
  */
-#define IDN2_VERSION_PATCH 1
+#define IDN2_VERSION_PATCH 2
 
 /**
  * IDN2_LABEL_MAX_LENGTH
@@ -187,8 +195,8 @@ extern "C"
  * @IDN2_NONTRANSITIONAL: Perform Unicode TR46 non-transitional processing (default).
  * @IDN2_ALLOW_UNASSIGNED: Libidn compatibility flag, unused.
  * @IDN2_USE_STD3_ASCII_RULES: Use STD3 ASCII rules.
- * This is a #TR46 only flag, and will be ignored when set without either
- * @IDN2_TRANSITIONAL or @IDN2_NONTRANSITIONAL.
+ * This is a Unicode TR46 only flag, and will be ignored when set without
+ * either @IDN2_TRANSITIONAL or @IDN2_NONTRANSITIONAL.
  *
  * Flags to IDNA2008 functions, to be binary or:ed together.  Specify
  * only 0 if you want the default behaviour.
@@ -297,8 +305,8 @@ extern "C"
 
 /* Auxiliary functions. */
 
-  extern _IDN2_API G_GNUC_DEPRECATED int
-    idn2_to_ascii_4i (const uint32_t * input, size_t inlen, char * output, int flags);
+  extern _IDN2_API int
+    idn2_to_ascii_4i (const uint32_t * input, size_t inlen, char * output, int flags) G_GNUC_DEPRECATED;
   extern _IDN2_API int
     idn2_to_ascii_4i2 (const uint32_t * input, size_t inlen, char ** output, int flags);
   extern _IDN2_API int
@@ -321,18 +329,18 @@ extern "C"
   extern _IDN2_API int
     idn2_to_unicode_lzlz (const char * input, char ** output, int flags);
 
-  extern _IDN2_API G_GNUC_IDN2_ATTRIBUTE_CONST const char *
-    idn2_strerror (int rc);
-  extern _IDN2_API G_GNUC_IDN2_ATTRIBUTE_CONST const char *
-    idn2_strerror_name (int rc);
+  extern _IDN2_API const char *
+    idn2_strerror (int rc) G_GNUC_IDN2_ATTRIBUTE_CONST;
+  extern _IDN2_API const char *
+    idn2_strerror_name (int rc) G_GNUC_IDN2_ATTRIBUTE_CONST;
 
-  extern _IDN2_API G_GNUC_IDN2_ATTRIBUTE_PURE const char *
-    idn2_check_version (const char *req_version);
+  extern _IDN2_API const char *
+    idn2_check_version (const char *req_version) G_GNUC_IDN2_ATTRIBUTE_PURE;
 
   extern _IDN2_API void
     idn2_free (void *ptr);
 
-
+#ifndef __GTK_DOC_IGNORE__
 /*** libidn compatibility layer ***/
 #if !defined IDNA_H && !defined IDN2_SKIP_LIBIDN_COMPAT
 
@@ -403,7 +411,7 @@ extern "C"
   #define idn_free              idn2_free
 
 #endif /* IDNA_H */
-
+#endif
 
 #ifdef __cplusplus
 }
