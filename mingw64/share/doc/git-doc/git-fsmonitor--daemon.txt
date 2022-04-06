@@ -3,7 +3,7 @@ git-fsmonitor--daemon(1)
 
 NAME
 ----
-git-fsmonitor--daemon - (EXPERIMENTAL) A Built-in File System Monitor
+git-fsmonitor--daemon - A Built-in File System Monitor
 
 SYNOPSIS
 --------
@@ -15,9 +15,6 @@ SYNOPSIS
 
 DESCRIPTION
 -----------
-
-NOTE! This command is still only an experiment, subject to change dramatically
-(or even to be abandoned).
 
 A daemon to watch the working directory for file and directory
 changes using platform-specific file system notification facilities.
@@ -55,9 +52,9 @@ directories.  Performance of commands such as `git status` can be
 increased if they just ask for a summary of changes to the working
 directory and can avoid scanning the disk.
 
-When `core.useBuiltinFSMonitor` is set to `true` (see
-linkgit:git-config[1]) commands, such as `git status`, will ask the
-daemon for changes and automatically start it (if necessary).
+When `core.fsmonitor` is set to `true` (see linkgit:git-config[1])
+commands, such as `git status`, will ask the daemon for changes and
+automatically start it (if necessary).
 
 For more information see the "File System Monitor" section in
 linkgit:git-update-index[1].
