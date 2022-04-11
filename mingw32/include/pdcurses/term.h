@@ -38,7 +38,7 @@ PDCEX  int     tigetflag(const char *);
 PDCEX  int     tigetnum(const char *);
 PDCEX  char   *tigetstr(const char *);
 PDCEX  char   *tparm(const char *, long, long, long, long, long, 
-              long, long, long, long);
+                     long, long, long, long);
 PDCEX  int     tputs(const char *, int, int (*)(int));
 
 #if defined(__cplusplus) || defined(__cplusplus__) || defined(__CPLUSPLUS)
