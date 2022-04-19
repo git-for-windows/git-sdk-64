@@ -7051,6 +7051,47 @@ enabled if there is an <code>rr-cache</code> directory under the
 <code>$GIT_DIR</code>, e.g. if "rerere" was previously used in the
 repository.</p>
 </dd>
+<dt class="hdlist1">safe.directory</dt>
+<dd>
+<p>These config entries specify Git-tracked directories that are
+considered safe even if they are owned by someone other than the
+current user. By default, Git will refuse to even parse a Git
+config of a repository owned by someone else, let alone run its
+hooks, and this config setting allows users to specify exceptions,
+e.g. for intentionally shared repositories (see the <code>--shared</code>
+option in <a href="git-init.html">git-init(1)</a>).</p>
+<div class="paragraph">
+<p>This is a multi-valued setting, i.e. you can add more than one directory
+via <code>git config --add</code>. To reset the list of safe directories (e.g. to
+override any such directories specified in the system config), add a
+<code>safe.directory</code> entry with an empty value.</p>
+</div>
+<div class="paragraph">
+<p>This config setting is only respected when specified in a system or global
+config, not when it is specified in a repository config or via the command
+line option <code>-c safe.directory=&lt;path&gt;</code>.</p>
+</div>
+<div class="paragraph">
+<p>The value of this setting is interpolated, i.e. <code>~/&lt;path&gt;</code> expands to a
+path relative to the home directory and <code>%(prefix)/&lt;path&gt;</code> expands to a
+path relative to Git&#8217;s (runtime) prefix.</p>
+</div>
+<div class="paragraph">
+<p>Due to the permission model on Windows where ACLs are used instead of
+Unix' simpler permission model, it can be a bit tricky to figure out why
+a directory is considered unsafe. To help with this, Git will provide
+more detailed information when the environment variable
+<code>GIT_TEST_DEBUG_UNSAFE_DIRECTORIES</code> is set to <code>true</code>.</p>
+</div>
+<div class="paragraph">
+<p>To completely opt-out of this security check, set <code>safe.directory</code> to the
+string <code>*</code>. This will allow all repositories to be treated as if their
+directory was listed in the <code>safe.directory</code> list. If <code>safe.directory=*</code>
+is set in system config and you want to re-enable this protection, then
+initialize your list with an empty value before listing the repositories
+that you deem safe.</p>
+</div>
+</dd>
 <dt class="hdlist1">sendemail.identity</dt>
 <dd>
 <p>A configuration identity. When given, causes values in the
@@ -8028,7 +8069,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-04-08 22:09:47 UTC
+Last updated 2022-04-18 16:38:57 UTC
 </div>
 </div>
 </body>

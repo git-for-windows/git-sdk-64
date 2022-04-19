@@ -1557,7 +1557,7 @@ sub send_message {
 	@recipients = unique_email_list(@recipients,@cc,@initial_bcc);
 	@recipients = (map { extract_valid_address_or_die($_) } @recipients);
 	my $date = format_2822_time($time++);
-	my $gitversion = '2.36.0.rc1.windows.1';
+	my $gitversion = '2.36.0.rc2.windows.1';
 	if ($gitversion =~ m/..GIT_VERSION../) {
 	    $gitversion = Git::version();
 	}
@@ -2139,10 +2139,9 @@ sub validate_patch {
 			chdir($cwd_save) or die("chdir: $!");
 		}
 		if ($hook_error) {
-			$hook_error = sprintf(__("fatal: %s: rejected by %s hook\n" .
-						 $hook_error . "\n" .
-						 "warning: no patches were sent\n"),
-					      $fn, $hook_name);
+			$hook_error = sprintf(
+			    __("fatal: %s: rejected by %s hook\n%s\nwarning: no patches were sent\n"),
+			    $fn, $hook_name, $hook_error);
 			die $hook_error;
 		}
 	}
