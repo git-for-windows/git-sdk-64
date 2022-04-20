@@ -1,10 +1,10 @@
 #ifndef BOOST_QVM_DETAIL_DETERMINANT_IMPL_HPP_INCLUDED
 #define BOOST_QVM_DETAIL_DETERMINANT_IMPL_HPP_INCLUDED
 
-/// Copyright (c) 2008-2021 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2008-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/qvm/inline.hpp>
 #include <boost/qvm/mat_traits_array.hpp>
@@ -22,7 +22,7 @@ qvm_detail
         };
 
     template <class M>
-    BOOST_QVM_INLINE_TRIVIAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
     typename mat_traits<M>::scalar_type
     determinant_impl_( M const & a, det_size<2> )
         {
@@ -32,7 +32,7 @@ qvm_detail
         }
 
     template <class M,int N>
-    BOOST_QVM_INLINE_RECURSION
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_RECURSION
     typename mat_traits<M>::scalar_type
     determinant_impl_( M const & a, det_size<N> )
         {
@@ -61,7 +61,7 @@ qvm_detail
         }
 
     template <class M>
-    BOOST_QVM_INLINE_TRIVIAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
     typename mat_traits<M>::scalar_type
     determinant_impl( M const & a )
         {

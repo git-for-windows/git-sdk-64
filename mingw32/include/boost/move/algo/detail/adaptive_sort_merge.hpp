@@ -139,10 +139,10 @@ const T &max_value(const T &a, const T &b)
 }
 
 template<class ForwardIt, class Pred, class V>
-typename iterator_traits<ForwardIt>::size_type
+typename iter_size<ForwardIt>::type
    count_if_with(ForwardIt first, ForwardIt last, Pred pred, const V &v)
 {
-   typedef typename iterator_traits<ForwardIt>::size_type size_type;
+   typedef typename iter_size<ForwardIt>::type size_type;
    size_type count = 0;
    while(first != last) {
       count = size_type(count + static_cast<size_type>(0 != pred(*first, v)));
@@ -276,17 +276,17 @@ static SizeType needed_keys_count(SizeType n_block_a, SizeType n_block_b)
 }
 
 template<class RandItKeys, class KeyCompare, class RandIt, class Compare>
-typename iterator_traits<RandIt>::size_type
+typename iter_size<RandIt>::type
    find_next_block
       ( RandItKeys const key_first
       , KeyCompare key_comp
       , RandIt const first
-      , typename iterator_traits<RandIt>::size_type const l_block
-      , typename iterator_traits<RandIt>::size_type const ix_first_block
-      , typename iterator_traits<RandIt>::size_type const ix_last_block
+      , typename iter_size<RandIt>::type const l_block
+      , typename iter_size<RandIt>::type const ix_first_block
+      , typename iter_size<RandIt>::type const ix_last_block
       , Compare comp)
 {
-   typedef typename iterator_traits<RandIt>::size_type      size_type;
+   typedef typename iter_size<RandIt>::type      size_type;
    typedef typename iterator_traits<RandIt>::value_type     value_type;
    typedef typename iterator_traits<RandItKeys>::value_type key_type;
    BOOST_ASSERT(ix_first_block <= ix_last_block);
@@ -312,14 +312,14 @@ void merge_blocks_bufferless
    ( RandItKeys const key_first
    , KeyCompare key_comp
    , RandIt const first
-   , typename iterator_traits<RandIt>::size_type const l_block
-   , typename iterator_traits<RandIt>::size_type const l_irreg1
-   , typename iterator_traits<RandIt>::size_type const n_block_a
-   , typename iterator_traits<RandIt>::size_type const n_block_b
-   , typename iterator_traits<RandIt>::size_type const l_irreg2
+   , typename iter_size<RandIt>::type const l_block
+   , typename iter_size<RandIt>::type const l_irreg1
+   , typename iter_size<RandIt>::type const n_block_a
+   , typename iter_size<RandIt>::type const n_block_b
+   , typename iter_size<RandIt>::type const l_irreg2
    , Compare comp)
 {
-   typedef typename iterator_traits<RandIt>::size_type size_type;
+   typedef typename iter_size<RandIt>::type size_type;
    size_type const key_count = needed_keys_count(n_block_a, n_block_b);
    ::boost::ignore_unused(key_count);
    //BOOST_ASSERT(n_block_a || n_block_b);
@@ -389,13 +389,13 @@ void merge_blocks_bufferless
 // 
 // Returns the number of collected keys
 template<class RandIt, class Compare, class XBuf>
-typename iterator_traits<RandIt>::size_type
+typename iter_size<RandIt>::type
    collect_unique
       ( RandIt const first, RandIt const last
-      , typename iterator_traits<RandIt>::size_type const max_collected, Compare comp
+      , typename iter_size<RandIt>::type const max_collected, Compare comp
       , XBuf & xbuf)
 {
-   typedef typename iterator_traits<RandIt>::size_type       size_type;
+   typedef typename iter_size<RandIt>::type       size_type;
    size_type h = 0;
 
    if(max_collected){
@@ -538,7 +538,7 @@ template<class RandIt, class Compare>
 void slow_stable_sort
    ( RandIt const first, RandIt const last, Compare comp)
 {
-   typedef typename iterator_traits<RandIt>::size_type       size_type;
+   typedef typename iter_size<RandIt>::type       size_type;
 
    size_type L = size_type(last - first);
    {  //Use insertion sort to merge first elements
@@ -608,7 +608,7 @@ Unsigned lblock_for_combine
 template<class RandIt, class Compare, class XBuf>
 void stable_sort( RandIt first, RandIt last, Compare comp, XBuf & xbuf)
 {
-   typedef typename iterator_traits<RandIt>::size_type size_type;
+   typedef typename iter_size<RandIt>::type size_type;
    size_type const len = size_type(last - first);
    size_type const half_len = size_type(len/2u + (len&1u));
    if(std::size_t(xbuf.capacity() - xbuf.size()) >= half_len) {
@@ -635,7 +635,7 @@ void stable_merge
       , XBuf &xbuf)
 {
    BOOST_ASSERT(xbuf.empty());
-   typedef typename iterator_traits<RandIt>::size_type   size_type;
+   typedef typename iter_size<RandIt>::type   size_type;
    size_type const len1  = size_type(middle-first);
    size_type const len2  = size_type(last-middle);
    size_type const l_min = min_value<size_type>(len1, len2);
@@ -953,13 +953,13 @@ OutputIt op_merge_blocks_with_irreg
    , RandIt2 &first_irr
    , RandIt2 const last_irr
    , OutputIt dest
-   , typename iterator_traits<RandIt>::size_type const l_block
-   , typename iterator_traits<RandIt>::size_type n_block_left
-   , typename iterator_traits<RandIt>::size_type min_check
-   , typename iterator_traits<RandIt>::size_type max_check
+   , typename iter_size<RandIt>::type const l_block
+   , typename iter_size<RandIt>::type n_block_left
+   , typename iter_size<RandIt>::type min_check
+   , typename iter_size<RandIt>::type max_check
    , Compare comp, bool const is_stable, Op op)
 {
-   typedef typename iterator_traits<RandIt>::size_type size_type;
+   typedef typename iter_size<RandIt>::type size_type;
 
    for(; n_block_left; --n_block_left){
       size_type next_key_idx = find_next_block(key_first, key_comp, first_reg, l_block, min_check, max_check, comp);  
@@ -1015,14 +1015,14 @@ void op_merge_blocks_left
    ( RandItKeys const key_first
    , KeyCompare key_comp
    , RandIt const first
-   , typename iterator_traits<RandIt>::size_type const l_block
-   , typename iterator_traits<RandIt>::size_type const l_irreg1
-   , typename iterator_traits<RandIt>::size_type const n_block_a
-   , typename iterator_traits<RandIt>::size_type const n_block_b
-   , typename iterator_traits<RandIt>::size_type const l_irreg2
+   , typename iter_size<RandIt>::type const l_block
+   , typename iter_size<RandIt>::type const l_irreg1
+   , typename iter_size<RandIt>::type const n_block_a
+   , typename iter_size<RandIt>::type const n_block_b
+   , typename iter_size<RandIt>::type const l_irreg2
    , Compare comp, Op op)
 {
-   typedef typename iterator_traits<RandIt>::size_type       size_type;
+   typedef typename iter_size<RandIt>::type       size_type;
 
    size_type const key_count = needed_keys_count(n_block_a, n_block_b);
    boost::ignore_unused(key_count);
@@ -1181,11 +1181,11 @@ void merge_blocks_left
    ( RandItKeys const key_first
    , KeyCompare key_comp
    , RandIt const first
-   , typename iterator_traits<RandIt>::size_type const l_block
-   , typename iterator_traits<RandIt>::size_type const l_irreg1
-   , typename iterator_traits<RandIt>::size_type const n_block_a
-   , typename iterator_traits<RandIt>::size_type const n_block_b
-   , typename iterator_traits<RandIt>::size_type const l_irreg2
+   , typename iter_size<RandIt>::type const l_block
+   , typename iter_size<RandIt>::type const l_irreg1
+   , typename iter_size<RandIt>::type const n_block_a
+   , typename iter_size<RandIt>::type const n_block_b
+   , typename iter_size<RandIt>::type const l_irreg2
    , Compare comp
    , bool const xbuf_used)
 {
@@ -1212,14 +1212,14 @@ void merge_blocks_right
    ( RandItKeys const key_first
    , KeyCompare key_comp
    , RandIt const first
-   , typename iterator_traits<RandIt>::size_type const l_block
-   , typename iterator_traits<RandIt>::size_type const n_block_a
-   , typename iterator_traits<RandIt>::size_type const n_block_b
-   , typename iterator_traits<RandIt>::size_type const l_irreg2
+   , typename iter_size<RandIt>::type const l_block
+   , typename iter_size<RandIt>::type const n_block_a
+   , typename iter_size<RandIt>::type const n_block_b
+   , typename iter_size<RandIt>::type const l_irreg2
    , Compare comp
    , bool const xbuf_used)
 {
-   typedef typename iterator_traits<RandIt>::size_type size_type;
+   typedef typename iter_size<RandIt>::type size_type;
    merge_blocks_left
       ( (make_reverse_iterator)(key_first + needed_keys_count(n_block_a, n_block_b))
       , inverse<KeyCompare>(key_comp)
@@ -1246,16 +1246,16 @@ void op_merge_blocks_with_buf
    ( RandItKeys key_first
    , KeyCompare key_comp
    , RandIt const first
-   , typename iterator_traits<RandIt>::size_type const l_block
-   , typename iterator_traits<RandIt>::size_type const l_irreg1
-   , typename iterator_traits<RandIt>::size_type const n_block_a
-   , typename iterator_traits<RandIt>::size_type const n_block_b
-   , typename iterator_traits<RandIt>::size_type const l_irreg2
+   , typename iter_size<RandIt>::type const l_block
+   , typename iter_size<RandIt>::type const l_irreg1
+   , typename iter_size<RandIt>::type const n_block_a
+   , typename iter_size<RandIt>::type const n_block_b
+   , typename iter_size<RandIt>::type const l_irreg2
    , Compare comp
    , Op op
    , RandItBuf const buf_first)
 {
-   typedef typename iterator_traits<RandIt>::size_type size_type;
+   typedef typename iter_size<RandIt>::type size_type;
    size_type const key_count = needed_keys_count(n_block_a, n_block_b);
    boost::ignore_unused(key_count);
    //BOOST_ASSERT(n_block_a || n_block_b);
@@ -1397,14 +1397,14 @@ void op_merge_blocks_with_buf
 //////////////////////////////////
 
 template<class RandIt, class Compare, class Op>
-typename iterator_traits<RandIt>::size_type
+typename iter_size<RandIt>::type
    op_insertion_sort_step_left
       ( RandIt const first
-      , typename iterator_traits<RandIt>::size_type const length
-      , typename iterator_traits<RandIt>::size_type const step
+      , typename iter_size<RandIt>::type const length
+      , typename iter_size<RandIt>::type const step
       , Compare comp, Op op)
 {
-   typedef typename iterator_traits<RandIt>::size_type       size_type;
+   typedef typename iter_size<RandIt>::type       size_type;
 
    size_type const s = min_value<size_type>(step, AdaptiveSortInsertionSortThreshold);
    size_type m = 0;
@@ -1420,12 +1420,12 @@ typename iterator_traits<RandIt>::size_type
 template<class RandIt, class Compare, class Op>
 void op_merge_right_step_once
       ( RandIt first_block
-      , typename iterator_traits<RandIt>::size_type const elements_in_blocks
-      , typename iterator_traits<RandIt>::size_type const l_build_buf
+      , typename iter_size<RandIt>::type const elements_in_blocks
+      , typename iter_size<RandIt>::type const l_build_buf
       , Compare comp
       , Op op)
 {
-   typedef typename iterator_traits<RandIt>::size_type size_type;
+   typedef typename iter_size<RandIt>::type size_type;
    size_type restk = size_type(elements_in_blocks%(2*l_build_buf));
    size_type p = size_type(elements_in_blocks - restk);
    BOOST_ASSERT(0 == (p%(2*l_build_buf)));
@@ -1455,14 +1455,14 @@ void op_merge_right_step_once
 //////////////////////////////////
 //////////////////////////////////
 template<class RandIt, class Compare>
-typename iterator_traits<RandIt>::size_type
+typename iter_size<RandIt>::type
    insertion_sort_step
       ( RandIt const first
-      , typename iterator_traits<RandIt>::size_type const length
-      , typename iterator_traits<RandIt>::size_type const step
+      , typename iter_size<RandIt>::type const length
+      , typename iter_size<RandIt>::type const step
       , Compare comp)
 {
-   typedef typename iterator_traits<RandIt>::size_type size_type;
+   typedef typename iter_size<RandIt>::type size_type;
    size_type const s = min_value<size_type>(step, AdaptiveSortInsertionSortThreshold);
    size_type m = 0;
 
@@ -1484,17 +1484,17 @@ typename iterator_traits<RandIt>::size_type
 //////////////////////////////////
 //////////////////////////////////
 template<class RandIt, class Compare, class Op>
-typename iterator_traits<RandIt>::size_type  
+typename iter_size<RandIt>::type  
    op_merge_left_step_multiple
       ( RandIt first_block
-      , typename iterator_traits<RandIt>::size_type const elements_in_blocks
-      , typename iterator_traits<RandIt>::size_type l_merged
-      , typename iterator_traits<RandIt>::size_type const l_build_buf
-      , typename iterator_traits<RandIt>::size_type l_left_space
+      , typename iter_size<RandIt>::type const elements_in_blocks
+      , typename iter_size<RandIt>::type l_merged
+      , typename iter_size<RandIt>::type const l_build_buf
+      , typename iter_size<RandIt>::type l_left_space
       , Compare comp
       , Op op)
 {
-   typedef typename iterator_traits<RandIt>::size_type size_type;
+   typedef typename iter_size<RandIt>::type size_type;
    for(; l_merged < l_build_buf && l_left_space >= l_merged; l_merged = size_type(l_merged*2u)){
       size_type p0=0;
       RandIt pos = first_block;

@@ -29,7 +29,7 @@
 namespace boost {
 namespace filesystem {
 
-BOOST_FILESYSTEM_DECL const system::error_category& codecvt_error_category();
+BOOST_FILESYSTEM_DECL system::error_category const& codecvt_error_category() BOOST_NOEXCEPT;
 //  uses std::codecvt_base::result used for error codes:
 //
 //    ok:       Conversion successful.

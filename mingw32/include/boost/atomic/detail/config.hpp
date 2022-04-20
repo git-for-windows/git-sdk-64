@@ -69,9 +69,9 @@
 #define BOOST_ATOMIC_DETAIL_NO_CXX11_CONSTEXPR_UNION_INIT
 #endif
 
-#if !defined(__cpp_deduction_guides) || __cpp_deduction_guides < 201703
+#if (defined(_MSC_VER) && (_MSC_VER < 1914 || _MSVC_LANG < 201703)) || (!defined(_MSC_VER) && (!defined(__cpp_deduction_guides) || __cpp_deduction_guides < 201606))
 #define BOOST_ATOMIC_DETAIL_NO_CXX17_DEDUCTION_GUIDES
-#endif // !defined(__cpp_deduction_guides) || __cpp_deduction_guides < 201703
+#endif
 
 #if !defined(BOOST_ATOMIC_DETAIL_NO_CXX11_CONSTEXPR_UNION_INIT)
 #define BOOST_ATOMIC_DETAIL_CONSTEXPR_UNION_INIT BOOST_CONSTEXPR

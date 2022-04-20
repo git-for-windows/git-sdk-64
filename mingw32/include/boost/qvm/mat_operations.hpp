@@ -1,11 +1,11 @@
 #ifndef BOOST_QVM_MAT_OPERATIONS_HPP_INCLUDED
 #define BOOST_QVM_MAT_OPERATIONS_HPP_INCLUDED
 
-/// Copyright (c) 2008-2021 Emil Dotchevski and Reverge Studios, Inc.
-/// Copyright (c) 2019 agate-pris
+// Copyright 2008-2022 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2019 agate-pris
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/qvm/detail/mat_assign.hpp>
 #include <boost/qvm/mat_operations2.hpp>
@@ -101,7 +101,7 @@ to_string( A const & a )
 ////////////////////////////////////////////////
 
 template <class A,class B,class Cmp>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value && is_mat<B>::value &&
     mat_traits<A>::rows==mat_traits<B>::rows &&
@@ -132,7 +132,7 @@ qvm_detail
     }
 
 template <class R,class A>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 typename enable_if_c<
     is_mat<R>::value && is_mat<A>::value &&
     mat_traits<R>::rows==mat_traits<A>::rows &&
@@ -159,7 +159,7 @@ qvm_detail
     }
 
 template <class A>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -186,7 +186,7 @@ qvm_detail
         public:
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -207,7 +207,7 @@ mat_traits< qvm_detail::identity_mat_<T,Dim> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_matrix const & /*x*/ )
         {
@@ -219,7 +219,7 @@ mat_traits< qvm_detail::identity_mat_<T,Dim> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int row, int col, this_matrix const & /*x*/ )
         {
@@ -232,7 +232,7 @@ mat_traits< qvm_detail::identity_mat_<T,Dim> >
     };
 
 template <class T,int Dim>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 qvm_detail::identity_mat_<T,Dim> const &
 identity_mat()
     {
@@ -240,7 +240,7 @@ identity_mat()
     }
 
 template <class A>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols,
@@ -265,7 +265,7 @@ qvm_detail
         T const _23;
         T const _32;
 
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         projection_( T _00, T _11, T _22, T _23, T _32 ):
             _00(_00),
             _11(_11),
@@ -276,7 +276,7 @@ qvm_detail
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -291,7 +291,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( projection_<T> const & )
             {
@@ -299,11 +299,11 @@ qvm_detail
             }
         };
 
-    template <> struct projection_get<0,0> { template <class T> static BOOST_QVM_INLINE_CRITICAL T get( projection_<T> const & m ) { return m._00; } };
-    template <> struct projection_get<1,1> { template <class T> static BOOST_QVM_INLINE_CRITICAL T get( projection_<T> const & m ) { return m._11; } };
-    template <> struct projection_get<2,2> { template <class T> static BOOST_QVM_INLINE_CRITICAL T get( projection_<T> const & m ) { return m._22; } };
-    template <> struct projection_get<2,3> { template <class T> static BOOST_QVM_INLINE_CRITICAL T get( projection_<T> const & m ) { return m._23; } };
-    template <> struct projection_get<3,2> { template <class T> static BOOST_QVM_INLINE_CRITICAL T get( projection_<T> const & m ) { return m._32; } };
+    template <> struct projection_get<0,0> { template <class T> static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL T get( projection_<T> const & m ) { return m._00; } };
+    template <> struct projection_get<1,1> { template <class T> static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL T get( projection_<T> const & m ) { return m._11; } };
+    template <> struct projection_get<2,2> { template <class T> static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL T get( projection_<T> const & m ) { return m._22; } };
+    template <> struct projection_get<2,3> { template <class T> static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL T get( projection_<T> const & m ) { return m._23; } };
+    template <> struct projection_get<3,2> { template <class T> static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL T get( projection_<T> const & m ) { return m._32; } };
     }
 
 template <class T>
@@ -317,7 +317,7 @@ mat_traits< qvm_detail::projection_<T> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_matrix const & x )
         {
@@ -331,7 +331,7 @@ mat_traits< qvm_detail::projection_<T> >
 
 template <class T>
 qvm_detail::projection_<T>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 perspective_lh( T fov_y, T aspect_ratio, T z_near, T z_far )
     {
     T const one = scalar_traits<T>::value(1);
@@ -345,7 +345,7 @@ perspective_lh( T fov_y, T aspect_ratio, T z_near, T z_far )
 
 template <class T>
 qvm_detail::projection_<T>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 perspective_rh( T fov_y, T aspect_ratio, T z_near, T z_far )
     {
     T const one = scalar_traits<T>::value(1);
@@ -373,7 +373,7 @@ qvm_detail
         public:
 
         template <class T>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         matrix_scalar_cast_ &
         operator=( T const & x )
             {
@@ -382,7 +382,7 @@ qvm_detail
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -406,7 +406,7 @@ mat_traits< qvm_detail::matrix_scalar_cast_<OriginalType,Scalar> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_matrix const & x )
         {
@@ -418,7 +418,7 @@ mat_traits< qvm_detail::matrix_scalar_cast_<OriginalType,Scalar> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int row, int col, this_matrix const & x )
         {
@@ -438,7 +438,7 @@ deduce_mat<qvm_detail::matrix_scalar_cast_<OriginalType,Scalar>,R,C>
     };
 
 template <class Scalar,class T>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 qvm_detail::matrix_scalar_cast_<T,Scalar> const &
 scalar_cast( T const & x, typename qvm_detail::scalar_cast_matrix_filter<is_mat<T>::value>::type=0 )
     {
@@ -459,7 +459,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value && is_scalar<B>::value &&
     !qvm_detail::div_eq_ms_defined<mat_traits<A>::rows,mat_traits<A>::cols>::value,
@@ -486,7 +486,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_mat<A>::value && is_scalar<B>::value &&
     !qvm_detail::div_ms_defined<mat_traits<A>::rows,mat_traits<A>::cols>::value,
@@ -515,7 +515,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value && is_mat<B>::value &&
     mat_traits<A>::rows==mat_traits<B>::rows &&
@@ -545,7 +545,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value && is_mat<B>::value &&
     mat_traits<A>::rows==mat_traits<B>::rows &&
@@ -574,7 +574,7 @@ qvm_detail
     }
 
 template <class A>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_mat<A>::value &&
     !qvm_detail::minus_m_defined<mat_traits<A>::rows,mat_traits<A>::cols>::value,
@@ -603,7 +603,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_mat<A>::value && is_mat<B>::value &&
     mat_traits<A>::rows==mat_traits<B>::rows &&
@@ -634,7 +634,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     is_mat<B>::value &&
@@ -675,7 +675,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value && is_scalar<B>::value &&
     !qvm_detail::mul_eq_ms_defined<mat_traits<A>::rows,mat_traits<A>::cols>::value,
@@ -702,7 +702,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_mat<A>::value && is_mat<B>::value &&
     mat_traits<A>::cols==mat_traits<B>::rows &&
@@ -738,7 +738,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_mat<A>::value && is_scalar<B>::value &&
     !qvm_detail::mul_ms_defined<mat_traits<A>::rows,mat_traits<A>::cols>::value,
@@ -767,7 +767,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_scalar<A>::value && is_mat<B>::value &&
     !qvm_detail::mul_sm_defined<mat_traits<B>::rows,mat_traits<B>::cols>::value,
@@ -796,7 +796,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value && is_mat<B>::value &&
     mat_traits<A>::rows==mat_traits<B>::rows &&
@@ -826,7 +826,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value && is_mat<B>::value &&
     mat_traits<A>::rows==mat_traits<B>::rows &&
@@ -855,7 +855,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_mat<A>::value && is_mat<B>::value &&
     mat_traits<A>::rows==mat_traits<B>::rows &&
@@ -888,7 +888,7 @@ qvm_detail
         public:
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         mref_ &
         operator=( R const & x )
             {
@@ -897,7 +897,7 @@ qvm_detail
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -918,7 +918,7 @@ mat_traits< qvm_detail::mref_<M> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_matrix const & x )
         {
@@ -931,7 +931,7 @@ mat_traits< qvm_detail::mref_<M> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type &
     write_element( this_matrix & x )
         {
@@ -943,7 +943,7 @@ mat_traits< qvm_detail::mref_<M> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int row, int col, this_matrix const & x )
         {
@@ -955,7 +955,7 @@ mat_traits< qvm_detail::mref_<M> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type &
     write_element_idx( int row, int col, this_matrix & x )
         {
@@ -975,7 +975,7 @@ deduce_mat<qvm_detail::mref_<M>,R,C>
     };
 
 template <class M>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 typename enable_if_c<
     is_mat<M>::value,
     qvm_detail::mref_<M> const &>::type
@@ -985,7 +985,7 @@ mref( M const & a )
     }
 
 template <class M>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 typename enable_if_c<
     is_mat<M>::value,
     qvm_detail::mref_<M> &>::type
@@ -1010,7 +1010,7 @@ qvm_detail
         public:
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -1031,7 +1031,7 @@ mat_traits< qvm_detail::zero_mat_<T,Rows,Cols> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_matrix const & )
         {
@@ -1043,7 +1043,7 @@ mat_traits< qvm_detail::zero_mat_<T,Rows,Cols> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int row, int col, this_matrix const & )
         {
@@ -1063,7 +1063,7 @@ deduce_mat<qvm_detail::zero_mat_<T,Rows,Cols>,R,C>
     };
 
 template <class T,int Rows,int Cols>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 qvm_detail::zero_mat_<T,Rows,Cols> const &
 zero_mat()
     {
@@ -1071,7 +1071,7 @@ zero_mat()
     }
 
 template <class T,int Dim>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 qvm_detail::zero_mat_<T,Dim,Dim> const &
 zero_mat()
     {
@@ -1079,7 +1079,7 @@ zero_mat()
     }
 
 template <class A>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value,
     void>::type
@@ -1100,7 +1100,7 @@ qvm_detail
         typedef S scalar_type;
         scalar_type a[3][3];
 
-        BOOST_QVM_INLINE
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
         rot_mat_(
                 scalar_type a00, scalar_type a01, scalar_type a02,
                 scalar_type a10, scalar_type a11, scalar_type a12,
@@ -1118,7 +1118,7 @@ qvm_detail
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -1133,7 +1133,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const (&)[3][3] )
             {
@@ -1141,15 +1141,15 @@ qvm_detail
             }
         };
 
-    template <> struct rot_m_get<0,0> { template <class T> static BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[0][0]; } };
-    template <> struct rot_m_get<0,1> { template <class T> static BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[0][1]; } };
-    template <> struct rot_m_get<0,2> { template <class T> static BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[0][2]; } };
-    template <> struct rot_m_get<1,0> { template <class T> static BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[1][0]; } };
-    template <> struct rot_m_get<1,1> { template <class T> static BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[1][1]; } };
-    template <> struct rot_m_get<1,2> { template <class T> static BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[1][2]; } };
-    template <> struct rot_m_get<2,0> { template <class T> static BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[2][0]; } };
-    template <> struct rot_m_get<2,1> { template <class T> static BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[2][1]; } };
-    template <> struct rot_m_get<2,2> { template <class T> static BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[2][2]; } };
+    template <> struct rot_m_get<0,0> { template <class T> static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[0][0]; } };
+    template <> struct rot_m_get<0,1> { template <class T> static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[0][1]; } };
+    template <> struct rot_m_get<0,2> { template <class T> static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[0][2]; } };
+    template <> struct rot_m_get<1,0> { template <class T> static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[1][0]; } };
+    template <> struct rot_m_get<1,1> { template <class T> static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[1][1]; } };
+    template <> struct rot_m_get<1,2> { template <class T> static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[1][2]; } };
+    template <> struct rot_m_get<2,0> { template <class T> static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[2][0]; } };
+    template <> struct rot_m_get<2,1> { template <class T> static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[2][1]; } };
+    template <> struct rot_m_get<2,2> { template <class T> static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL T get( T const (&a)[3][3] ) { return a[2][2]; } };
     }
 
 template <class M>
@@ -1166,7 +1166,7 @@ mat_traits< qvm_detail::rot_mat_<D,S> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_matrix const & x )
         {
@@ -1178,7 +1178,7 @@ mat_traits< qvm_detail::rot_mat_<D,S> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int row, int col, this_matrix const & x )
         {
@@ -1193,7 +1193,7 @@ mat_traits< qvm_detail::rot_mat_<D,S> >
     };
 
 template <int Dim,class V,class Angle>
-BOOST_QVM_INLINE
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
 typename enable_if_c<
     is_vec<V>::value && vec_traits<V>::dim==3,
     qvm_detail::rot_mat_<Dim,Angle> >::type
@@ -1226,7 +1226,7 @@ rot_mat( V const & axis, Angle angle )
     }
 
 template <class A,class B,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1239,7 +1239,7 @@ set_rot( A & a, B const & axis, Angle angle )
     }
 
 template <class A,class B,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1254,7 +1254,7 @@ rotate( A & a, B const & axis, Angle angle )
 ////////////////////////////////////////////////
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
 qvm_detail::rot_mat_<Dim,Angle>
 rot_mat_xzy( Angle x1, Angle z2, Angle y3 )
     {
@@ -1272,7 +1272,7 @@ rot_mat_xzy( Angle x1, Angle z2, Angle y3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1284,7 +1284,7 @@ set_rot_xzy( A & a, Angle x1, Angle z2, Angle y3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1298,7 +1298,7 @@ rotate_xzy( A & a, Angle x1, Angle z2, Angle y3 )
 ////////////////////////////////////////////////
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
 qvm_detail::rot_mat_<Dim,Angle>
 rot_mat_xyz( Angle x1, Angle y2, Angle z3 )
     {
@@ -1316,7 +1316,7 @@ rot_mat_xyz( Angle x1, Angle y2, Angle z3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1328,7 +1328,7 @@ set_rot_xyz( A & a, Angle x1, Angle y2, Angle z3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1342,7 +1342,7 @@ rotate_xyz( A & a, Angle x1, Angle y2, Angle z3 )
 ////////////////////////////////////////////////
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
 qvm_detail::rot_mat_<Dim,Angle>
 rot_mat_yxz( Angle y1, Angle x2, Angle z3 )
     {
@@ -1360,7 +1360,7 @@ rot_mat_yxz( Angle y1, Angle x2, Angle z3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1372,7 +1372,7 @@ set_rot_yxz( A & a, Angle y1, Angle x2, Angle z3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1386,7 +1386,7 @@ rotate_yxz( A & a, Angle y1, Angle x2, Angle z3 )
 ////////////////////////////////////////////////
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
 qvm_detail::rot_mat_<Dim,Angle>
 rot_mat_yzx( Angle y1, Angle z2, Angle x3 )
     {
@@ -1404,7 +1404,7 @@ rot_mat_yzx( Angle y1, Angle z2, Angle x3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1416,7 +1416,7 @@ set_rot_yzx( A & a, Angle y1, Angle z2, Angle x3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1430,7 +1430,7 @@ rotate_yzx( A & a, Angle y1, Angle z2, Angle x3 )
 ////////////////////////////////////////////////
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
 qvm_detail::rot_mat_<Dim,Angle>
 rot_mat_zyx( Angle z1, Angle y2, Angle x3 )
     {
@@ -1448,7 +1448,7 @@ rot_mat_zyx( Angle z1, Angle y2, Angle x3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1460,7 +1460,7 @@ set_rot_zyx( A & a, Angle z1, Angle y2, Angle x3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1474,7 +1474,7 @@ rotate_zyx( A & a, Angle z1, Angle y2, Angle x3 )
 ////////////////////////////////////////////////
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
 qvm_detail::rot_mat_<Dim,Angle>
 rot_mat_zxy( Angle z1, Angle x2, Angle y3 )
     {
@@ -1492,7 +1492,7 @@ rot_mat_zxy( Angle z1, Angle x2, Angle y3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1504,7 +1504,7 @@ set_rot_zxy( A & a, Angle z1, Angle x2, Angle y3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1518,7 +1518,7 @@ rotate_zxy( A & a, Angle z1, Angle x2, Angle y3 )
 ////////////////////////////////////////////////
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
 qvm_detail::rot_mat_<Dim,Angle>
 rot_mat_xzx( Angle x1, Angle z2, Angle x3 )
     {
@@ -1536,7 +1536,7 @@ rot_mat_xzx( Angle x1, Angle z2, Angle x3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1548,7 +1548,7 @@ set_rot_xzx( A & a, Angle x1, Angle z2, Angle x3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1562,7 +1562,7 @@ rotate_xzx( A & a, Angle x1, Angle z2, Angle x3 )
 ////////////////////////////////////////////////
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
 qvm_detail::rot_mat_<Dim,Angle>
 rot_mat_xyx( Angle x1, Angle y2, Angle x3 )
     {
@@ -1580,7 +1580,7 @@ rot_mat_xyx( Angle x1, Angle y2, Angle x3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1592,7 +1592,7 @@ set_rot_xyx( A & a, Angle x1, Angle y2, Angle x3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1606,7 +1606,7 @@ rotate_xyx( A & a, Angle x1, Angle y2, Angle x3 )
 ////////////////////////////////////////////////
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
 qvm_detail::rot_mat_<Dim,Angle>
 rot_mat_yxy( Angle y1, Angle x2, Angle y3 )
     {
@@ -1624,7 +1624,7 @@ rot_mat_yxy( Angle y1, Angle x2, Angle y3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1636,7 +1636,7 @@ set_rot_yxy( A & a, Angle y1, Angle x2, Angle y3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1650,7 +1650,7 @@ rotate_yxy( A & a, Angle y1, Angle x2, Angle y3 )
 ////////////////////////////////////////////////
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
 qvm_detail::rot_mat_<Dim,Angle>
 rot_mat_yzy( Angle y1, Angle z2, Angle y3 )
     {
@@ -1668,7 +1668,7 @@ rot_mat_yzy( Angle y1, Angle z2, Angle y3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1680,7 +1680,7 @@ set_rot_yzy( A & a, Angle y1, Angle z2, Angle y3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1694,7 +1694,7 @@ rotate_yzy( A & a, Angle y1, Angle z2, Angle y3 )
 ////////////////////////////////////////////////
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
 qvm_detail::rot_mat_<Dim,Angle>
 rot_mat_zyz( Angle z1, Angle y2, Angle z3 )
     {
@@ -1712,7 +1712,7 @@ rot_mat_zyz( Angle z1, Angle y2, Angle z3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1724,7 +1724,7 @@ set_rot_zyz( A & a, Angle z1, Angle y2, Angle z3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1738,7 +1738,7 @@ rotate_zyz( A & a, Angle z1, Angle y2, Angle z3 )
 ////////////////////////////////////////////////
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
 qvm_detail::rot_mat_<Dim,Angle>
 rot_mat_zxz( Angle z1, Angle x2, Angle z3 )
     {
@@ -1756,7 +1756,7 @@ rot_mat_zxz( Angle z1, Angle x2, Angle z3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1768,7 +1768,7 @@ set_rot_zxz( A & a, Angle z1, Angle x2, Angle z3 )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -1788,13 +1788,13 @@ qvm_detail
     struct
     rotx_mat_
         {
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         rotx_mat_()
             {
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -1815,7 +1815,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & )
             {
@@ -1829,7 +1829,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -1843,7 +1843,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -1857,7 +1857,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -1871,7 +1871,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -1891,7 +1891,7 @@ mat_traits< qvm_detail::rotx_mat_<Dim,Angle> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_matrix const & x )
         {
@@ -1903,7 +1903,7 @@ mat_traits< qvm_detail::rotx_mat_<Dim,Angle> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int row, int col, this_matrix const & x )
         {
@@ -1945,7 +1945,7 @@ deduce_mat2<qvm_detail::rotx_mat_<Dim,Angle>,qvm_detail::rotx_mat_<Dim,Angle>,Di
     };
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 qvm_detail::rotx_mat_<Dim,Angle> const &
 rotx_mat( Angle const & angle )
     {
@@ -1954,7 +1954,7 @@ rotx_mat( Angle const & angle )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows>=3 &&
@@ -1966,7 +1966,7 @@ set_rotx( A & a, Angle angle )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows>=3 &&
@@ -1986,13 +1986,13 @@ qvm_detail
     struct
     roty_mat_
         {
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         roty_mat_()
             {
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -2013,7 +2013,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & )
             {
@@ -2027,7 +2027,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -2041,7 +2041,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -2055,7 +2055,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -2069,7 +2069,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -2089,7 +2089,7 @@ mat_traits< qvm_detail::roty_mat_<Dim,Angle> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_matrix const & x )
         {
@@ -2101,7 +2101,7 @@ mat_traits< qvm_detail::roty_mat_<Dim,Angle> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int row, int col, this_matrix const & x )
         {
@@ -2143,7 +2143,7 @@ deduce_mat2<qvm_detail::roty_mat_<Dim,Angle>,qvm_detail::roty_mat_<Dim,Angle>,Di
     };
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 qvm_detail::roty_mat_<Dim,Angle> const &
 roty_mat( Angle const & angle )
     {
@@ -2152,7 +2152,7 @@ roty_mat( Angle const & angle )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows>=2 &&
@@ -2164,7 +2164,7 @@ set_roty( A & a, Angle angle )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows>=3 &&
@@ -2184,13 +2184,13 @@ qvm_detail
     struct
     rotz_mat_
         {
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         rotz_mat_()
             {
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -2211,7 +2211,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & )
             {
@@ -2225,7 +2225,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -2239,7 +2239,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -2253,7 +2253,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -2267,7 +2267,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -2287,7 +2287,7 @@ mat_traits< qvm_detail::rotz_mat_<Dim,Angle> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_matrix const & x )
         {
@@ -2299,7 +2299,7 @@ mat_traits< qvm_detail::rotz_mat_<Dim,Angle> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int row, int col, this_matrix const & x )
         {
@@ -2341,7 +2341,7 @@ deduce_mat2<qvm_detail::rotz_mat_<Dim,Angle>,qvm_detail::rotz_mat_<Dim,Angle>,R,
     };
 
 template <int Dim,class Angle>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 qvm_detail::rotz_mat_<Dim,Angle> const &
 rotz_mat( Angle const & angle )
     {
@@ -2350,7 +2350,7 @@ rotz_mat( Angle const & angle )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows>=2 &&
@@ -2362,7 +2362,7 @@ set_rotz( A & a, Angle angle )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows>=2 &&
@@ -2387,7 +2387,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 typename lazy_enable_if_c<
     is_mat<A>::value && is_scalar<B>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&
@@ -2404,7 +2404,7 @@ inverse( A const & a, B det )
     }
 
 template <class A>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 typename lazy_enable_if_c<
     is_mat<A>::value &&
     mat_traits<A>::rows==mat_traits<A>::cols &&

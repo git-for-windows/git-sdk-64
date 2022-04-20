@@ -1,10 +1,10 @@
 #ifndef BOOST_QVM_VEC_MAT_OPERATIONS_HPP_INCLUDED
 #define BOOST_QVM_VEC_MAT_OPERATIONS_HPP_INCLUDED
 
-/// Copyright (c) 2008-2021 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2008-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/qvm/vec_mat_operations2.hpp>
 #include <boost/qvm/vec_mat_operations3.hpp>
@@ -24,7 +24,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_mat<A>::value && is_vec<B>::value &&
     mat_traits<A>::cols==vec_traits<B>::dim &&
@@ -57,7 +57,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_vec<A>::value && is_mat<B>::value &&
     vec_traits<A>::dim==mat_traits<B>::rows &&
@@ -81,7 +81,7 @@ operator*( A const & a, B const & b )
 ////////////////////////////////////////////////
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     mat_traits<A>::rows==4 && mat_traits<A>::cols==4 &&
     vec_traits<B>::dim==3,
@@ -115,7 +115,7 @@ transform_point( A const & a, B const & b )
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     mat_traits<A>::rows==4 && mat_traits<A>::cols==4 &&
     vec_traits<B>::dim==3,

@@ -54,6 +54,7 @@
 #include <boost/move/utility_core.hpp>
 #include <boost/move/iterator.hpp>
 #include <boost/move/adl_move_swap.hpp>
+#include <boost/move/detail/force_ptr.hpp>
 // move/detail
 #include <boost/move/detail/move_helpers.hpp>
 // other
@@ -165,19 +166,19 @@ struct node
    #  endif
 
    BOOST_CONTAINER_FORCEINLINE T &get_data()
-   {  return *reinterpret_cast<T*>(this->m_storage.data);   }
+   {  return *boost::move_detail::force_ptr<T*>(this->m_storage.data);   }
 
    BOOST_CONTAINER_FORCEINLINE const T &get_data() const
-   {  return *reinterpret_cast<const T*>(this->m_storage.data);  }
+   {  return *boost::move_detail::force_ptr<const T*>(this->m_storage.data);  }
 
    BOOST_CONTAINER_FORCEINLINE T *get_data_ptr()
-   {  return reinterpret_cast<T*>(this->m_storage.data);  }
+   {  return boost::move_detail::force_ptr<T*>(this->m_storage.data);  }
 
    BOOST_CONTAINER_FORCEINLINE const T *get_data_ptr() const
-   {  return reinterpret_cast<T*>(this->m_storage.data);  }
+   {  return boost::move_detail::force_ptr<const T*>(this->m_storage.data);  }
 
    BOOST_CONTAINER_FORCEINLINE ~node()
-   {  reinterpret_cast<T*>(this->m_storage.data)->~T();  }
+   {  boost::move_detail::force_ptr<T*>(this->m_storage.data)->~T();   }
 
    #if defined(BOOST_CONTAINER_DISABLE_ALIASING_WARNING)
       #pragma GCC diagnostic pop

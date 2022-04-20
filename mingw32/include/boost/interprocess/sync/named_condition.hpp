@@ -60,7 +60,7 @@ class named_condition
 
    //!Creates a global condition with a name.
    //!If the condition can't be created throws interprocess_exception
-   named_condition(create_only_t create_only, const char *name, const permissions &perm = permissions());
+   named_condition(create_only_t, const char *name, const permissions &perm = permissions());
 
    //!Opens or creates a global condition with a name.
    //!If the condition is created, this call is equivalent to
@@ -68,12 +68,12 @@ class named_condition
    //!If the condition is already created, this call is equivalent
    //!named_condition(open_only_t, ... )
    //!Does not throw
-   named_condition(open_or_create_t open_or_create, const char *name, const permissions &perm = permissions());
+   named_condition(open_or_create_t, const char *name, const permissions &perm = permissions());
 
    //!Opens a global condition with a name if that condition is previously
    //!created. If it is not previously created this function throws
    //!interprocess_exception.
-   named_condition(open_only_t open_only, const char *name);
+   named_condition(open_only_t, const char *name);
 
    //!Opens a global condition with a name if that condition is previously
    //!created. If it is not previously created this function throws
@@ -85,7 +85,7 @@ class named_condition
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   named_condition(create_only_t create_only, const wchar_t *name, const permissions &perm = permissions());
+   named_condition(create_only_t, const wchar_t *name, const permissions &perm = permissions());
 
    //!Opens or creates a global condition with a name.
    //!If the condition is created, this call is equivalent to
@@ -96,7 +96,7 @@ class named_condition
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   named_condition(open_or_create_t open_or_create, const wchar_t *name, const permissions &perm = permissions());
+   named_condition(open_or_create_t, const wchar_t *name, const permissions &perm = permissions());
 
    //!Opens a global condition with a name if that condition is previously
    //!created. If it is not previously created this function throws
@@ -104,7 +104,7 @@ class named_condition
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   named_condition(open_only_t open_only, const wchar_t *name);
+   named_condition(open_only_t, const wchar_t *name);
 
    #endif //#if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 

@@ -166,7 +166,7 @@ struct chlit_grammar :
 
             // the rule for a character literal
             ch_lit
-                =   eps_p[self.value = phx::val(0), self.long_lit = phx::val(false)]
+                =   eps_p[(self.value = phx::val(0), self.long_lit = phx::val(false))]
                     >> !ch_p('L')[self.long_lit = phx::val(true)]
                     >>  ch_p('\'')
                     >> +(   (

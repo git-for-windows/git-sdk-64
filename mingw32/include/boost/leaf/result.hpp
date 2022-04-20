@@ -1,23 +1,16 @@
 #ifndef BOOST_LEAF_RESULT_HPP_INCLUDED
 #define BOOST_LEAF_RESULT_HPP_INCLUDED
 
-/// Copyright (c) 2018-2021 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2018-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_LEAF_ENABLE_WARNINGS ///
-#   if defined(_MSC_VER) ///
-#       pragma warning(push,1) ///
-#   elif defined(__clang__) ///
-#       pragma clang system_header ///
-#   elif (__GNUC__*100+__GNUC_MINOR__>301) ///
-#       pragma GCC system_header ///
-#   endif ///
-#endif ///
-
+#include <boost/leaf/config.hpp>
 #include <boost/leaf/error.hpp>
+
 #include <climits>
+#include <functional>
 
 namespace boost { namespace leaf {
 
@@ -53,6 +46,16 @@ namespace leaf_detail
         using value_ref = T &;
         using value_rv_cref = T const &&;
         using value_rv_ref = T &&;
+
+        static value_type_const * cptr( type const & v ) noexcept
+        {
+            return &v;
+        }
+
+        static value_type * ptr( type & v ) noexcept
+        {
+            return &v;
+        }
     };
 
     template <class T>
@@ -65,6 +68,16 @@ namespace leaf_detail
         using value_cref = T &;
         using value_rv_ref = T &;
         using value_rv_cref = T &;
+
+        static value_type_const * cptr( type const & v ) noexcept
+        {
+            return &v.get();
+        }
+
+        static value_type * ptr( type const & v ) noexcept
+        {
+            return &v.get();
+        }
     };
 
     class result_discriminant
@@ -93,11 +106,13 @@ namespace leaf_detail
         {
         }
 
+#if BOOST_LEAF_CFG_CAPTURE
         struct kind_ctx_ptr { };
         explicit result_discriminant( kind_ctx_ptr ) noexcept:
             state_(ctx_ptr)
         {
         }
+#endif
 
         kind_t kind() const noexcept
         {
@@ -143,7 +158,11 @@ class result
             case result_discriminant::val:
                 return result<U>(error_id());
             case result_discriminant::ctx_ptr:
+#if BOOST_LEAF_CFG_CAPTURE
                 return result<U>(std::move(r_.ctx_));
+#else
+                BOOST_LEAF_ASSERT(0); // Possible ODR violation.
+#endif
             default:
                 return result<U>(std::move(r_.what_));
             }
@@ -156,11 +175,15 @@ class result
             case result_discriminant::val:
                 return error_id();
             case result_discriminant::ctx_ptr:
-            {
-                error_id captured_id = r_.ctx_->propagate_captured_errors();
-                leaf_detail::id_factory<>::current_id = captured_id.value();
-                return captured_id;
-            }
+#if BOOST_LEAF_CFG_CAPTURE
+                {
+                    error_id captured_id = r_.ctx_->propagate_captured_errors();
+                    tls::write_uint32<leaf_detail::tls_tag_id_factory_current_id>(captured_id.value());
+                    return captured_id;
+                }
+#else
+                BOOST_LEAF_ASSERT(0); // Possible ODR violation.
+#endif
             default:
                 return r_.what_.get_error_id();
             }
@@ -178,7 +201,9 @@ class result
     union
     {
         stored_type stored_;
+#if BOOST_LEAF_CFG_CAPTURE
         context_ptr ctx_;
+#endif
     };
 
     result_discriminant what_;
@@ -191,8 +216,12 @@ class result
             stored_.~stored_type();
             break;
         case result_discriminant::ctx_ptr:
+#if BOOST_LEAF_CFG_CAPTURE
             BOOST_LEAF_ASSERT(!ctx_ || ctx_->captured_id_);
             ctx_.~context_ptr();
+#else
+            BOOST_LEAF_ASSERT(0); // Possible ODR violation.
+#endif
         default:
             break;
         }
@@ -208,8 +237,12 @@ class result
             (void) new(&stored_) stored_type(std::move(x.stored_));
             break;
         case result_discriminant::ctx_ptr:
+#if BOOST_LEAF_CFG_CAPTURE
             BOOST_LEAF_ASSERT(!x.ctx_ || x.ctx_->captured_id_);
             (void) new(&ctx_) context_ptr(std::move(x.ctx_));
+#else
+            BOOST_LEAF_ASSERT(0); // Possible ODR violation.
+#endif
         default:
             break;
         }
@@ -225,14 +258,29 @@ class result
     error_id get_error_id() const noexcept
     {
         BOOST_LEAF_ASSERT(what_.kind()!=result_discriminant::val);
+#if BOOST_LEAF_CFG_CAPTURE
         return what_.kind()==result_discriminant::ctx_ptr ? ctx_->captured_id_ : what_.get_error_id();
+#else
+        BOOST_LEAF_ASSERT(what_.kind()!=result_discriminant::ctx_ptr); // Possible ODR violation.
+        return what_.get_error_id();
+#endif
+    }
+
+    stored_type const * get() const noexcept
+    {
+        return has_value() ? &stored_ : 0;
+    }
+
+    stored_type * get() noexcept
+    {
+        return has_value() ? &stored_ : 0;
     }
 
 protected:
 
     void enforce_value_state() const
     {
-        if( what_.kind() != result_discriminant::val )
+        if( !has_value() )
             ::boost::leaf::throw_exception(bad_result(get_error_id()));
     }
 
@@ -303,6 +351,7 @@ public:
 
 #endif
 
+#if BOOST_LEAF_CFG_STD_SYSTEM_ERROR
     result( std::error_code const & ec ) noexcept:
         what_(error_id(ec))
     {
@@ -313,12 +362,15 @@ public:
         what_(error_id(e))
     {
     }
+#endif
 
+#if BOOST_LEAF_CFG_CAPTURE
     result( context_ptr && ctx ) noexcept:
         ctx_(std::move(ctx)),
         what_(result_discriminant::kind_ctx_ptr{})
     {
     }
+#endif
 
     ~result() noexcept
     {
@@ -340,10 +392,36 @@ public:
         return *this;
     }
 
-    explicit operator bool() const noexcept
+    bool has_value() const noexcept
     {
         return what_.kind() == result_discriminant::val;
     }
+
+    bool has_error() const noexcept
+    {
+        return !has_value();
+    }
+
+    explicit operator bool() const noexcept
+    {
+        return has_value();
+    }
+
+#ifdef BOOST_LEAF_NO_CXX11_REF_QUALIFIERS
+
+    value_cref value() const
+    {
+        enforce_value_state();
+        return stored_;
+    }
+
+    value_ref value()
+    {
+        enforce_value_state();
+        return stored_;
+    }
+
+#else
 
     value_cref value() const &
     {
@@ -369,35 +447,65 @@ public:
         return std::move(stored_);
     }
 
-    value_cref operator*() const &
+#endif
+
+    value_type_const * operator->() const noexcept
     {
-        return value();
+        return has_value() ? leaf_detail::stored<T>::cptr(stored_) : 0;
     }
 
-    value_ref operator*() &
+    value_type * operator->() noexcept
     {
-        return value();
+        return has_value() ? leaf_detail::stored<T>::ptr(stored_) : 0;
     }
 
-    value_rv_cref operator*() const &&
+#ifdef BOOST_LEAF_NO_CXX11_REF_QUALIFIERS
+
+    value_cref operator*() const noexcept
     {
-        return std::move(*this).value();
+        auto p = get();
+        BOOST_LEAF_ASSERT(p != 0);
+        return *p;
     }
 
-    value_rv_ref operator*() &&
+    value_ref operator*() noexcept
     {
-        return std::move(*this).value();
+        auto p = get();
+        BOOST_LEAF_ASSERT(p != 0);
+        return *p;
     }
 
-    value_type_const * operator->() const
+#else
+
+    value_cref operator*() const & noexcept
     {
-        return &value();
+        auto p = get();
+        BOOST_LEAF_ASSERT(p != 0);
+        return *p;
     }
 
-    value_type * operator->()
+    value_ref operator*() & noexcept
     {
-        return &value();
+        auto p = get();
+        BOOST_LEAF_ASSERT(p != 0);
+        return *p;
     }
+
+    value_rv_cref operator*() const && noexcept
+    {
+        auto p = get();
+        BOOST_LEAF_ASSERT(p != 0);
+        return std::move(*p);
+    }
+
+    value_rv_ref operator*() && noexcept
+    {
+        auto p = get();
+        BOOST_LEAF_ASSERT(p != 0);
+        return std::move(*p);
+    }
+
+#endif
 
     error_result error() noexcept
     {
@@ -452,6 +560,7 @@ public:
     {
     }
 
+#if BOOST_LEAF_CFG_STD_SYSTEM_ERROR
     result( std::error_code const & ec ) noexcept:
         base(ec)
     {
@@ -462,11 +571,14 @@ public:
         base(e)
     {
     }
+#endif
 
+#if BOOST_LEAF_CFG_CAPTURE
     result( context_ptr && ctx ) noexcept:
         base(std::move(ctx))
     {
     }
+#endif
 
     ~result() noexcept
     {
@@ -475,6 +587,21 @@ public:
     void value() const
     {
         base::enforce_value_state();
+    }
+
+    void const * operator->() const noexcept
+    {
+        return base::operator->();
+    }
+
+    void * operator->() noexcept
+    {
+        return base::operator->();
+    }
+
+    void operator*() const noexcept
+    {
+        BOOST_LEAF_ASSERT(has_value());
     }
 
     using base::operator=;
@@ -495,9 +622,5 @@ struct is_result_type<result<T>>: std::true_type
 };
 
 } }
-
-#if defined(_MSC_VER) && !defined(BOOST_LEAF_ENABLE_WARNINGS) ///
-#pragma warning(pop) ///
-#endif ///
 
 #endif

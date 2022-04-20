@@ -42,7 +42,7 @@ template<class... T> auto enum_descriptor_fn_impl( int, T... )
 }
 
 #define BOOST_DESCRIBE_ENUM_BEGIN(E) \
-    inline auto boost_enum_descriptor_fn( E* ) \
+    inline auto boost_enum_descriptor_fn( E** ) \
     { return boost::describe::detail::enum_descriptor_fn_impl( 0
 
 #define BOOST_DESCRIBE_ENUM_ENTRY(E, e) , []{ struct _boost_desc { \
@@ -56,6 +56,7 @@ template<class... T> auto enum_descriptor_fn_impl( int, T... )
 #if defined(_MSC_VER) && !defined(__clang__)
 
 #define BOOST_DESCRIBE_ENUM(E, ...) \
+    namespace should_use_BOOST_DESCRIBE_NESTED_ENUM {} \
     static_assert(std::is_enum<E>::value, "BOOST_DESCRIBE_ENUM should only be used with enums"); \
     BOOST_DESCRIBE_ENUM_BEGIN(E) \
     BOOST_DESCRIBE_PP_FOR_EACH(BOOST_DESCRIBE_ENUM_ENTRY, E, __VA_ARGS__) \
@@ -70,6 +71,7 @@ template<class... T> auto enum_descriptor_fn_impl( int, T... )
 #else
 
 #define BOOST_DESCRIBE_ENUM(E, ...) \
+    namespace should_use_BOOST_DESCRIBE_NESTED_ENUM {} \
     static_assert(std::is_enum<E>::value, "BOOST_DESCRIBE_ENUM should only be used with enums"); \
     BOOST_DESCRIBE_MAYBE_UNUSED BOOST_DESCRIBE_ENUM_BEGIN(E) \
     BOOST_DESCRIBE_PP_FOR_EACH(BOOST_DESCRIBE_ENUM_ENTRY, E, ##__VA_ARGS__) \

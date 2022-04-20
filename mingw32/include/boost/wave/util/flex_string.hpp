@@ -101,7 +101,6 @@ class StoragePolicy
 
 #include <memory>
 #include <new>
-#include <string>
 #include <vector>
 #include <algorithm>
 #include <functional>

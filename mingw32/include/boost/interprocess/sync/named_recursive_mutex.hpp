@@ -56,7 +56,7 @@ class named_recursive_mutex
 
    //!Creates a global recursive_mutex with a name.
    //!If the recursive_mutex can't be created throws interprocess_exception
-   named_recursive_mutex(create_only_t create_only, const char *name, const permissions &perm = permissions());
+   named_recursive_mutex(create_only_t, const char *name, const permissions &perm = permissions());
 
    //!Opens or creates a global recursive_mutex with a name.
    //!If the recursive_mutex is created, this call is equivalent to
@@ -64,12 +64,12 @@ class named_recursive_mutex
    //!If the recursive_mutex is already created, this call is equivalent
    //!named_recursive_mutex(open_only_t, ... )
    //!Does not throw
-   named_recursive_mutex(open_or_create_t open_or_create, const char *name, const permissions &perm = permissions());
+   named_recursive_mutex(open_or_create_t, const char *name, const permissions &perm = permissions());
 
    //!Opens a global recursive_mutex with a name if that recursive_mutex is previously
    //!created. If it is not previously created this function throws
    //!interprocess_exception.
-   named_recursive_mutex(open_only_t open_only, const char *name);
+   named_recursive_mutex(open_only_t, const char *name);
 
    #if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 
@@ -78,7 +78,7 @@ class named_recursive_mutex
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   named_recursive_mutex(create_only_t create_only, const wchar_t *name, const permissions &perm = permissions());
+   named_recursive_mutex(create_only_t, const wchar_t *name, const permissions &perm = permissions());
 
    //!Opens or creates a global recursive_mutex with a name.
    //!If the recursive_mutex is created, this call is equivalent to
@@ -89,7 +89,7 @@ class named_recursive_mutex
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   named_recursive_mutex(open_or_create_t open_or_create, const wchar_t *name, const permissions &perm = permissions());
+   named_recursive_mutex(open_or_create_t, const wchar_t *name, const permissions &perm = permissions());
 
    //!Opens a global recursive_mutex with a name if that recursive_mutex is previously
    //!created. If it is not previously created this function throws
@@ -97,7 +97,7 @@ class named_recursive_mutex
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   named_recursive_mutex(open_only_t open_only, const wchar_t *name);
+   named_recursive_mutex(open_only_t, const wchar_t *name);
 
    #endif //defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 

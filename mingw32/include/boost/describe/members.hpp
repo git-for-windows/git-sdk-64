@@ -29,9 +29,9 @@ namespace detail
 
 // _describe_members<T>
 
-template<class T> using _describe_public_members = decltype( boost_public_member_descriptor_fn( static_cast<T*>(0) ) );
-template<class T> using _describe_protected_members = decltype( boost_protected_member_descriptor_fn( static_cast<T*>(0) ) );
-template<class T> using _describe_private_members = decltype( boost_private_member_descriptor_fn( static_cast<T*>(0) ) );
+template<class T> using _describe_public_members = decltype( boost_public_member_descriptor_fn( static_cast<T**>(0) ) );
+template<class T> using _describe_protected_members = decltype( boost_protected_member_descriptor_fn( static_cast<T**>(0) ) );
+template<class T> using _describe_private_members = decltype( boost_private_member_descriptor_fn( static_cast<T**>(0) ) );
 
 template<class T> using _describe_members = mp11::mp_append<_describe_public_members<T>, _describe_protected_members<T>, _describe_private_members<T>>;
 

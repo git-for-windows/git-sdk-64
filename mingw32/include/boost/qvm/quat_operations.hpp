@@ -1,10 +1,10 @@
 #ifndef BOOST_QVM_QUAT_OPERATIONS
 #define BOOST_QVM_QUAT_OPERATIONS
 
-/// Copyright (c) 2008-2021 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2008-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/qvm/detail/quat_assign.hpp>
 #include <boost/qvm/deduce_quat.hpp>
@@ -68,7 +68,7 @@ to_string( A const & a )
 ////////////////////////////////////////////////
 
 template <class A,class B,class Cmp>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value && is_quat<B>::value,
     bool>::type
@@ -90,8 +90,8 @@ cmp( A const & a, B const & b, Cmp f )
         quat_traits<B>::template read_element<2>(b),
         quat_traits<B>::template read_element<3>(b)
         };
-    int i;
-    for( i=0; i!=4; ++i )
+    int i=0;
+    for( ; i!=4; ++i )
         if( !f(q1[i],q2[i]) )
             break;
     if( i==4 )
@@ -105,7 +105,7 @@ cmp( A const & a, B const & b, Cmp f )
 ////////////////////////////////////////////////
 
 template <class R,class A>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 typename enable_if_c<
     is_quat<R>::value && is_quat<A>::value,
     R>::type
@@ -120,7 +120,7 @@ convert_to( A const & a )
     }
 
 template <class R,class A>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<R>::value && is_mat<A>::value &&
     mat_traits<A>::rows==3 && mat_traits<A>::cols==3,
@@ -177,7 +177,7 @@ convert_to( A const & a )
 ////////////////////////////////////////////////
 
 template <class A>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_quat<A>::value,
     deduce_quat<A> >::type
@@ -208,7 +208,7 @@ qvm_detail
         public:
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -227,7 +227,7 @@ quat_traits< qvm_detail::identity_quat_<T> >
 
     template <int I>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_quaternion const & x )
         {
@@ -237,7 +237,7 @@ quat_traits< qvm_detail::identity_quat_<T> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int i, this_quaternion const & x )
         {
@@ -262,7 +262,7 @@ deduce_quat2< qvm_detail::identity_quat_<T>, qvm_detail::identity_quat_<T> >
     };
 
 template <class T>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 qvm_detail::identity_quat_<T> const &
 identity_quat()
     {
@@ -270,7 +270,7 @@ identity_quat()
     }
 
 template <class A>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value,
     void>::type
@@ -301,7 +301,7 @@ qvm_detail
         public:
 
         template <class T>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         quaternion_scalar_cast_ &
         operator=( T const & x )
             {
@@ -310,7 +310,7 @@ qvm_detail
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -332,7 +332,7 @@ quat_traits< qvm_detail::quaternion_scalar_cast_<OriginalType,Scalar> >
 
     template <int I>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_quaternion const & x )
         {
@@ -342,7 +342,7 @@ quat_traits< qvm_detail::quaternion_scalar_cast_<OriginalType,Scalar> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int i, this_quaternion const & x )
         {
@@ -353,7 +353,7 @@ quat_traits< qvm_detail::quaternion_scalar_cast_<OriginalType,Scalar> >
     };
 
 template <class Scalar,class T>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 qvm_detail::quaternion_scalar_cast_<T,Scalar> const &
 scalar_cast( T const & x, typename qvm_detail::scalar_cast_quaternion_filter<is_quat<T>::value>::type=0 )
     {
@@ -363,7 +363,7 @@ scalar_cast( T const & x, typename qvm_detail::scalar_cast_quaternion_filter<is_
 ////////////////////////////////////////////////
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value && is_scalar<B>::value,
     A &>::type
@@ -377,7 +377,7 @@ operator/=( A & a, B b )
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_quat<A>::value && is_scalar<B>::value,
     deduce_quat2<A,B> >::type
@@ -393,7 +393,7 @@ operator/( A const & a, B b )
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_quat<A>::value && is_quat<B>::value,
     deduce_scalar<typename quat_traits<A>::scalar_type,typename quat_traits<B>::scalar_type> >::type
@@ -415,7 +415,7 @@ dot( A const & a, B const & b )
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value && is_quat<B>::value,
     bool>::type
@@ -429,7 +429,7 @@ operator==( A const & a, B const & b )
     }
 
 template <class A>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_quat<A>::value,
     deduce_quat<A> >::type
@@ -454,7 +454,7 @@ inverse( A const & a )
     }
 
 template <class A>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value,
     typename quat_traits<A>::scalar_type>::type
@@ -469,7 +469,7 @@ mag_sqr( A const & a )
     }
 
 template <class A>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value,
     typename quat_traits<A>::scalar_type>::type
@@ -484,7 +484,7 @@ mag( A const & a )
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if<
     msvc_parse_bug_workaround::quats<A,B>,
     A &>::type
@@ -498,7 +498,7 @@ operator-=( A & a, B const & b )
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_quat<A>::value && is_quat<B>::value,
     deduce_quat2<A,B> >::type
@@ -514,7 +514,7 @@ operator-( A const & a, B const & b )
     }
 
 template <class A>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_quat<A>::value,
     deduce_quat<A> >::type
@@ -530,7 +530,7 @@ operator-( A const & a )
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if<
     msvc_parse_bug_workaround::quats<A,B>,
     A &>::type
@@ -554,7 +554,7 @@ operator*=( A & a, B const & b )
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value && is_scalar<B>::value,
     A &>::type
@@ -568,7 +568,7 @@ operator*=( A & a, B b )
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_quat<A>::value && is_quat<B>::value,
     deduce_quat2<A,B> >::type
@@ -594,7 +594,7 @@ operator*( A const & a, B const & b )
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c2<
     is_quat<A>::value && is_scalar<B>::value,
     deduce_quat2<A,B> >::type
@@ -610,7 +610,7 @@ operator*( A const & a, B b )
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value && is_quat<B>::value,
     bool>::type
@@ -624,7 +624,7 @@ operator!=( A const & a, B const & b )
     }
 
 template <class A>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_quat<A>::value,
     deduce_quat<A> >::type
@@ -649,7 +649,7 @@ normalized( A const & a )
     }
 
 template <class A>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value,
     void>::type
@@ -671,7 +671,7 @@ normalize( A & a )
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if<
     msvc_parse_bug_workaround::quats<A,B>,
     A &>::type
@@ -685,7 +685,7 @@ operator+=( A & a, B const & b )
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_quat<A>::value && is_quat<B>::value,
     deduce_quat2<A,B> >::type
@@ -701,7 +701,7 @@ operator+( A const & a, B const & b )
     }
 
 template <class A,class B,class C>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename lazy_enable_if_c<
     is_quat<A>::value && is_quat<B>::value && is_scalar<C>::value,
     deduce_quat2<A,B> >::type
@@ -740,7 +740,7 @@ qvm_detail
         public:
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         qref_ &
         operator=( R const & x )
             {
@@ -749,7 +749,7 @@ qvm_detail
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -771,7 +771,7 @@ quat_traits< qvm_detail::qref_<Q> >
 
     template <int I>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_quaternion const & x )
         {
@@ -782,7 +782,7 @@ quat_traits< qvm_detail::qref_<Q> >
 
     template <int I>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type &
     write_element( this_quaternion & x )
         {
@@ -800,7 +800,7 @@ deduce_quat< qvm_detail::qref_<Q> >
     };
 
 template <class Q>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 typename enable_if_c<
     is_quat<Q>::value,
     qvm_detail::qref_<Q> const &>::type
@@ -810,7 +810,7 @@ qref( Q const & a )
     }
 
 template <class Q>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 typename enable_if_c<
     is_quat<Q>::value,
     qvm_detail::qref_<Q> &>::type
@@ -835,7 +835,7 @@ qvm_detail
         public:
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -854,7 +854,7 @@ quat_traits< qvm_detail::zero_q_<T> >
 
     template <int I>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_quaternion const & x )
         {
@@ -864,7 +864,7 @@ quat_traits< qvm_detail::zero_q_<T> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int i, this_quaternion const & x )
         {
@@ -875,7 +875,7 @@ quat_traits< qvm_detail::zero_q_<T> >
     };
 
 template <class T>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 qvm_detail::zero_q_<T> const &
 zero_quat()
     {
@@ -883,7 +883,7 @@ zero_quat()
     }
 
 template <class A>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value,
     void>::type
@@ -910,7 +910,7 @@ qvm_detail
         scalar_type a[4];
 
         template <class Angle>
-        BOOST_QVM_INLINE
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
         rot_quat_( V const & axis, Angle angle )
             {
             scalar_type const x=vec_traits<V>::template read_element<0>(axis);
@@ -929,7 +929,7 @@ qvm_detail
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -948,7 +948,7 @@ quat_traits< qvm_detail::rot_quat_<V> >
 
     template <int I>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_quaternion const & x )
         {
@@ -966,7 +966,7 @@ deduce_quat< qvm_detail::rot_quat_<V> >
     };
 
 template <class A,class Angle>
-BOOST_QVM_INLINE
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE
 typename enable_if_c<
     is_vec<A>::value && vec_traits<A>::dim==3,
     qvm_detail::rot_quat_<A> >::type
@@ -976,7 +976,7 @@ rot_quat( A const & axis, Angle angle )
     }
 
 template <class A,class B,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value &&
     is_vec<B>::value && vec_traits<B>::dim==3,
@@ -987,7 +987,7 @@ set_rot( A & a, B const & axis, Angle angle )
     }
 
 template <class A,class B,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value &&
     is_vec<B>::value && vec_traits<B>::dim==3,
@@ -1006,13 +1006,13 @@ qvm_detail
     struct
     rotx_quat_
         {
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         rotx_quat_()
             {
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -1033,7 +1033,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & )
             {
@@ -1047,7 +1047,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -1061,7 +1061,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -1079,7 +1079,7 @@ quat_traits< qvm_detail::rotx_quat_<Angle> >
 
     template <int I>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_quaternion const & x )
         {
@@ -1104,7 +1104,7 @@ deduce_quat2< qvm_detail::rotx_quat_<Angle>, qvm_detail::rotx_quat_<Angle> >
     };
 
 template <class Angle>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 qvm_detail::rotx_quat_<Angle> const &
 rotx_quat( Angle const & angle )
     {
@@ -1112,7 +1112,7 @@ rotx_quat( Angle const & angle )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value,
     void>::type
@@ -1122,7 +1122,7 @@ set_rotx( A & a, Angle angle )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value,
     void>::type
@@ -1140,13 +1140,13 @@ qvm_detail
     struct
     roty_quat_
         {
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         roty_quat_()
             {
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -1167,7 +1167,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & )
             {
@@ -1181,7 +1181,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -1195,7 +1195,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -1213,7 +1213,7 @@ quat_traits< qvm_detail::roty_quat_<Angle> >
 
     template <int I>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_quaternion const & x )
         {
@@ -1238,7 +1238,7 @@ deduce_quat2< qvm_detail::roty_quat_<Angle>, qvm_detail::roty_quat_<Angle> >
     };
 
 template <class Angle>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 qvm_detail::roty_quat_<Angle> const &
 roty_quat( Angle const & angle )
     {
@@ -1246,7 +1246,7 @@ roty_quat( Angle const & angle )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value,
     void>::type
@@ -1256,7 +1256,7 @@ set_roty( A & a, Angle angle )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value,
     void>::type
@@ -1274,13 +1274,13 @@ qvm_detail
     struct
     rotz_quat_
         {
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         rotz_quat_()
             {
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -1301,7 +1301,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & )
             {
@@ -1315,7 +1315,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -1329,7 +1329,7 @@ qvm_detail
         {
         template <class T>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         T
         get( T const & angle )
             {
@@ -1347,7 +1347,7 @@ quat_traits< qvm_detail::rotz_quat_<Angle> >
 
     template <int I>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_quaternion const & x )
         {
@@ -1372,7 +1372,7 @@ deduce_quat2< qvm_detail::rotz_quat_<Angle>, qvm_detail::rotz_quat_<Angle> >
     };
 
 template <class Angle>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 qvm_detail::rotz_quat_<Angle> const &
 rotz_quat( Angle const & angle )
     {
@@ -1380,7 +1380,7 @@ rotz_quat( Angle const & angle )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value,
     void>::type
@@ -1390,7 +1390,7 @@ set_rotz( A & a, Angle angle )
     }
 
 template <class A,class Angle>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value,
     void>::type
@@ -1400,7 +1400,7 @@ rotate_z( A & a, Angle angle )
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_OPERATIONS
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
 typename enable_if_c<
     is_quat<A>::value && is_vec<B>::value && vec_traits<B>::dim==3,
     typename quat_traits<A>::scalar_type>::type

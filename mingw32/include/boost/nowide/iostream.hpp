@@ -41,7 +41,7 @@ namespace nowide {
         class BOOST_NOWIDE_DECL winconsole_ostream : public std::ostream
         {
         public:
-            winconsole_ostream(int fd, winconsole_ostream* tieStream);
+            winconsole_ostream(bool isBuffered, winconsole_ostream* tieStream);
             ~winconsole_ostream();
 
         private:

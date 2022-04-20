@@ -19,7 +19,7 @@ namespace describe
 
 // describe_enumerators<E>
 
-template<class E> using describe_enumerators = decltype( boost_enum_descriptor_fn( static_cast<E*>(0) ) );
+template<class E> using describe_enumerators = decltype( boost_enum_descriptor_fn( static_cast<E**>(0) ) );
 
 // has_describe_enumerators<E>
 

@@ -140,6 +140,9 @@ struct cpu_times
    nanosecond_type system;
 
    void clear() { wall = user = system = 0; }
+
+   cpu_times()
+   {  this->clear(); }
 };
 
 

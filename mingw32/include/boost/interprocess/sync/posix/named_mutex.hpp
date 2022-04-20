@@ -45,11 +45,11 @@ class posix_named_mutex
    #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 
    public:
-   posix_named_mutex(create_only_t create_only, const char *name, const permissions &perm = permissions());
+   posix_named_mutex(create_only_t, const char *name, const permissions &perm = permissions());
 
-   posix_named_mutex(open_or_create_t open_or_create, const char *name, const permissions &perm = permissions());
+   posix_named_mutex(open_or_create_t, const char *name, const permissions &perm = permissions());
 
-   posix_named_mutex(open_only_t open_only, const char *name);
+   posix_named_mutex(open_only_t, const char *name);
 
    ~posix_named_mutex();
 

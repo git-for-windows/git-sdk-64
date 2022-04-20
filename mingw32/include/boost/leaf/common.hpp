@@ -1,40 +1,50 @@
 #ifndef BOOST_LEAF_COMMON_HPP_INCLUDED
 #define BOOST_LEAF_COMMON_HPP_INCLUDED
 
-/// Copyright (c) 2018-2021 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2018-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_LEAF_ENABLE_WARNINGS ///
-#   if defined(_MSC_VER) ///
-#       pragma warning(push,1) ///
-#   elif defined(__clang__) ///
-#       pragma clang system_header ///
-#   elif (__GNUC__*100+__GNUC_MINOR__>301) ///
-#       pragma GCC system_header ///
-#   endif ///
-#endif ///
+#include <boost/leaf/config.hpp>
+#include <boost/leaf/detail/demangle.hpp>
 
-#include <boost/leaf/detail/print.hpp>
-#include <string>
+#include <iosfwd>
+#if BOOST_LEAF_CFG_STD_STRING
+#   include <string>
+#endif
 #include <cerrno>
-#ifdef _WIN32
-#   include <Windows.h>
+#if BOOST_LEAF_CFG_WIN32
+#   include <windows.h>
 #   include <cstring>
-#ifdef min
-#   undef min
-#endif
-#ifdef max
-#   undef max
-#endif
+#   ifdef min
+#       undef min
+#   endif
+#   ifdef max
+#       undef max
+#   endif
 #endif
 
 namespace boost { namespace leaf {
 
 struct BOOST_LEAF_SYMBOL_VISIBLE e_api_function { char const * value; };
 
-struct BOOST_LEAF_SYMBOL_VISIBLE e_file_name { std::string value; };
+#if BOOST_LEAF_CFG_STD_STRING
+
+struct BOOST_LEAF_SYMBOL_VISIBLE e_file_name
+{
+    std::string value;
+};
+
+#else
+
+struct BOOST_LEAF_SYMBOL_VISIBLE e_file_name
+{
+    constexpr static char const * const value = "<unavailable>";
+    BOOST_LEAF_CONSTEXPR explicit e_file_name( char const * ) { }
+};
+
+#endif
 
 struct BOOST_LEAF_SYMBOL_VISIBLE e_errno
 {
@@ -43,7 +53,7 @@ struct BOOST_LEAF_SYMBOL_VISIBLE e_errno
     explicit e_errno(int value=errno): value(value) { }
 
     template <class CharT, class Traits>
-    friend std::basic_ostream<CharT, Traits> & operator<<( std::basic_ostream<CharT, Traits> & os, e_errno const & err )
+    friend std::basic_ostream<CharT, Traits> & operator<<(std::basic_ostream<CharT, Traits> & os, e_errno const & err)
     {
         return os << type<e_errno>() << ": " << err.value << ", \"" << std::strerror(err.value) << '"';
     }
@@ -61,11 +71,11 @@ namespace windows
 
         explicit e_LastError(unsigned value): value(value) { }
 
-#ifdef _WIN32
+#if BOOST_LEAF_CFG_WIN32
         e_LastError(): value(GetLastError()) { }
 
         template <class CharT, class Traits>
-        friend std::basic_ostream<CharT, Traits> & operator<<( std::basic_ostream<CharT, Traits> & os, e_LastError const & err )
+        friend std::basic_ostream<CharT, Traits> & operator<<(std::basic_ostream<CharT, Traits> & os, e_LastError const & err)
         {
             struct msg_buf
             {
@@ -93,16 +103,10 @@ namespace windows
             }
             return os;
         }
-#else
-        // TODO : Other platforms
 #endif
     };
 }
 
 } }
-
-#if defined(_MSC_VER) && !defined(BOOST_LEAF_ENABLE_WARNINGS) ///
-#pragma warning(pop) ///
-#endif ///
 
 #endif

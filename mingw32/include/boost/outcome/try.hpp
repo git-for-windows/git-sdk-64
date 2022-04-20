@@ -1,5 +1,5 @@
 /* Try operation macros
-(C) 2017-2021 Niall Douglas <http://www.nedproductions.biz/> (20 commits)
+(C) 2017-2022 Niall Douglas <http://www.nedproductions.biz/> (20 commits)
 File Created: July 2017
 
 

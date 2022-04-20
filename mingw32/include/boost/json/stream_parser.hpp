@@ -510,12 +510,21 @@ public:
 
         @param ec Set to the error, if any occurred.
     */
+/** @{ */
     BOOST_JSON_DECL
     std::size_t
     write_some(
         char const* data,
         std::size_t size,
         error_code& ec);
+
+    BOOST_JSON_DECL
+    std::size_t
+    write_some(
+        char const* data,
+        std::size_t size,
+        std::error_code& ec);
+/** @} */
 
     /** Parse a buffer containing all or part of a complete JSON.
 
@@ -615,6 +624,7 @@ public:
 
         @param ec Set to the error, if any occurred.
     */
+/** @{ */
     std::size_t
     write_some(
         string_view s,
@@ -623,6 +633,16 @@ public:
         return write_some(
             s.data(), s.size(), ec);
     }
+
+    std::size_t
+    write_some(
+        string_view s,
+        std::error_code& ec)
+    {
+        return write_some(
+            s.data(), s.size(), ec);
+    }
+/** @} */
 
     /** Parse a buffer containing all or part of a complete JSON.
 
@@ -721,12 +741,21 @@ public:
 
         @param ec Set to the error, if any occurred.
     */
+/** @{ */
     BOOST_JSON_DECL
     std::size_t
     write(
         char const* data,
         std::size_t size,
         error_code& ec);
+
+    BOOST_JSON_DECL
+    std::size_t
+    write(
+        char const* data,
+        std::size_t size,
+        std::error_code& ec);
+/** @} */
 
     /** Parse a buffer containing all or part of a complete JSON.
 
@@ -820,6 +849,7 @@ public:
 
         @param ec Set to the error, if any occurred.
     */
+/** @{ */
     std::size_t
     write(
         string_view s,
@@ -828,6 +858,16 @@ public:
         return write(
             s.data(), s.size(), ec);
     }
+
+    std::size_t
+    write(
+        string_view s,
+        std::error_code& ec)
+    {
+        return write(
+            s.data(), s.size(), ec);
+    }
+/** @} */
 
     /** Parse a buffer containing all or part of a complete JSON.
 
@@ -911,9 +951,15 @@ public:
 
         @param ec Set to the error, if any occurred.
     */
+/** @{ */
     BOOST_JSON_DECL
     void
     finish(error_code& ec);
+
+    BOOST_JSON_DECL
+    void
+    finish(std::error_code& ec);
+/** @} */
 
     /** Indicate the end of JSON input.
 

@@ -127,7 +127,7 @@ struct are_contiguous_and_same
    : boost::move_detail::and_
       < are_elements_contiguous<I>
       , are_elements_contiguous<O>
-      , is_same< typename remove_const< typename ::boost::container::iterator_traits<I>::value_type >::type
+      , is_same< typename remove_const< typename ::boost::container::iter_value<I>::type >::type
                , typename ::boost::container::iterator_traits<O>::value_type
                >
       >
@@ -137,7 +137,7 @@ template <typename I, typename O>
 struct is_memtransfer_copy_assignable
    : boost::move_detail::and_
       < are_contiguous_and_same<I, O>
-      , dtl::is_trivially_copy_assignable< typename ::boost::container::iterator_traits<I>::value_type >
+      , dtl::is_trivially_copy_assignable< typename ::boost::container::iter_value<I>::type >
       >
 {};
 
@@ -145,7 +145,7 @@ template <typename I, typename O>
 struct is_memtransfer_copy_constructible
    : boost::move_detail::and_
       < are_contiguous_and_same<I, O>
-      , dtl::is_trivially_copy_constructible< typename ::boost::container::iterator_traits<I>::value_type >
+      , dtl::is_trivially_copy_constructible< typename ::boost::container::iter_value<I>::type >
       >
 {};
 
@@ -174,7 +174,7 @@ template
     typename F> // F models ForwardIterator
 BOOST_CONTAINER_FORCEINLINE F memmove(I f, I l, F r) BOOST_NOEXCEPT_OR_NOTHROW
 {
-   typedef typename boost::container::iterator_traits<I>::value_type      value_type;
+   typedef typename boost::container::iter_value<I>::type      value_type;
    typedef typename boost::container::iterator_traits<F>::difference_type r_difference_type;
    value_type *const dest_raw = boost::movelib::iterator_to_raw_pointer(r);
    const value_type *const beg_raw = boost::movelib::iterator_to_raw_pointer(f);
@@ -189,14 +189,16 @@ BOOST_CONTAINER_FORCEINLINE F memmove(I f, I l, F r) BOOST_NOEXCEPT_OR_NOTHROW
 
 template
    <typename I, // I models InputIterator
-    typename U, // U models unsigned integral constant
     typename F> // F models ForwardIterator
-BOOST_CONTAINER_FORCEINLINE F memmove_n(I f, U n, F r) BOOST_NOEXCEPT_OR_NOTHROW
+BOOST_CONTAINER_FORCEINLINE F memmove_n(I f, std::size_t n, F r) BOOST_NOEXCEPT_OR_NOTHROW
 {
-   typedef typename boost::container::iterator_traits<I>::value_type value_type;
+   typedef typename boost::container::iter_value<I>::type value_type;
    typedef typename boost::container::iterator_traits<F>::difference_type r_difference_type;
    if(BOOST_LIKELY(n != 0)){
-      std::memmove(boost::movelib::iterator_to_raw_pointer(r), boost::movelib::iterator_to_raw_pointer(f), sizeof(value_type)*n);
+      void *dst = boost::movelib::iterator_to_raw_pointer(r);
+      const void *src = boost::movelib::iterator_to_raw_pointer(f);
+      if (dst && src)
+         std::memmove(dst, src, sizeof(value_type)*n);
       r += static_cast<r_difference_type>(n);
    }
 
@@ -209,9 +211,12 @@ template
 BOOST_CONTAINER_FORCEINLINE I memmove_n_source(I f, std::size_t n, F r) BOOST_NOEXCEPT_OR_NOTHROW
 {
    if(BOOST_LIKELY(n != 0)){
-      typedef typename boost::container::iterator_traits<I>::value_type value_type;
+      typedef typename boost::container::iter_value<I>::type value_type;
       typedef typename boost::container::iterator_traits<I>::difference_type i_difference_type;
-      std::memmove(boost::movelib::iterator_to_raw_pointer(r), boost::movelib::iterator_to_raw_pointer(f), sizeof(value_type)*n);
+      void *dst = boost::movelib::iterator_to_raw_pointer(r);
+      const void *src = boost::movelib::iterator_to_raw_pointer(f);
+      if (dst && src)
+         std::memmove(dst, src, sizeof(value_type)*n);
       f += static_cast<i_difference_type>(n);
    }
    return f;
@@ -222,12 +227,15 @@ template
     typename F> // F models ForwardIterator
 BOOST_CONTAINER_FORCEINLINE I memmove_n_source_dest(I f, std::size_t n, F &r) BOOST_NOEXCEPT_OR_NOTHROW
 {
-   typedef typename boost::container::iterator_traits<I>::value_type value_type;
+   typedef typename boost::container::iter_value<I>::type value_type;
    typedef typename boost::container::iterator_traits<F>::difference_type i_difference_type;
    typedef typename boost::container::iterator_traits<F>::difference_type f_difference_type;
 
    if(BOOST_LIKELY(n != 0)){
-      std::memmove(boost::movelib::iterator_to_raw_pointer(r), boost::movelib::iterator_to_raw_pointer(f), sizeof(value_type)*n);
+      void *dst = boost::movelib::iterator_to_raw_pointer(r);
+      const void *src = boost::movelib::iterator_to_raw_pointer(f);
+      if (dst && src)
+         std::memmove(dst, src, sizeof(value_type)*n);
       f += i_difference_type(n);
       r += f_difference_type(n);
    }
@@ -265,14 +273,14 @@ struct disable_if_memzero_initializable
 template <typename I, typename R>
 struct enable_if_trivially_destructible
    : enable_if_c < dtl::is_trivially_destructible
-                  <typename boost::container::iterator_traits<I>::value_type>::value
+                  <typename boost::container::iter_value<I>::type>::value
                , R>
 {};
 
 template <typename I, typename R>
 struct disable_if_trivially_destructible
    : enable_if_c <!dtl::is_trivially_destructible
-                  <typename boost::container::iterator_traits<I>::value_type>::value
+                  <typename boost::container::iter_value<I>::type>::value
                , R>
 {};
 
@@ -905,7 +913,7 @@ typename F>   // F models ForwardIterator
 BOOST_CONTAINER_FORCEINLINE typename dtl::enable_if_memtransfer_copy_assignable<I, F, F>::type
    move_backward(I f, I l, F r) BOOST_NOEXCEPT_OR_NOTHROW
 {
-   typedef typename boost::container::iterator_traits<I>::value_type value_type;
+   typedef typename boost::container::iter_value<I>::type value_type;
    const std::size_t n = boost::container::iterator_udistance(f, l);
    if (BOOST_LIKELY(n != 0)){
       r -= n;

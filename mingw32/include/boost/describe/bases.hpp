@@ -21,7 +21,7 @@ namespace describe
 namespace detail
 {
 
-template<class T> using _describe_bases = decltype( boost_base_descriptor_fn( static_cast<T*>(0) ) );
+template<class T> using _describe_bases = decltype( boost_base_descriptor_fn( static_cast<T**>(0) ) );
 
 template<unsigned M> struct base_filter
 {

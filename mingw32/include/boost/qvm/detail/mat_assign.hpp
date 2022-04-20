@@ -1,10 +1,10 @@
 #ifndef BOOST_QVM_DETAIL_MAT_ASSIGN_HPP_INCLUDED
 #define BOOST_QVM_DETAIL_MAT_ASSIGN_HPP_INCLUDED
 
-/// Copyright (c) 2008-2021 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2008-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/qvm/gen/mat_assign2.hpp>
 #include <boost/qvm/gen/mat_assign3.hpp>
@@ -28,7 +28,7 @@ qvm_detail
         {
         template <class A,class B>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         void
         f( A & a, B const & b )
             {
@@ -44,7 +44,7 @@ qvm_detail
         {
         template <class A,class B>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         void
         f( A &, B const & )
             {
@@ -53,7 +53,7 @@ qvm_detail
     }
 
 template <class A,class B>
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 typename enable_if_c<
     is_mat<A>::value && is_mat<B>::value &&
     mat_traits<A>::rows==mat_traits<B>::rows &&

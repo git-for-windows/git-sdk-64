@@ -232,6 +232,7 @@ class sync_handles
          winapi::close_handle(it->second);
          --num_handles_;
          std::size_t i = map_.erase(mapping_address);
+         (void)i;
          BOOST_ASSERT(i == 1);   //The entry should be there
          umap_.erase(it);
       }

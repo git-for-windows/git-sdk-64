@@ -39,18 +39,19 @@
 #include <boost/container/detail/version_type.hpp>
 #include <boost/container/detail/type_traits.hpp>
 #include <boost/container/detail/algorithm.hpp>
-
+#include <boost/container/detail/minimal_char_traits_header.hpp>  // for char_traits
+//intrusive
 #include <boost/intrusive/pointer_traits.hpp>
-
+#include <boost/intrusive/detail/hash_combine.hpp>
+#include <boost/move/detail/force_ptr.hpp>
+//move
 #include <boost/move/utility_core.hpp>
 #include <boost/move/adl_move_swap.hpp>
 #include <boost/move/traits.hpp>
 
 #include <boost/static_assert.hpp>
 #include <boost/core/no_exceptions_support.hpp>
-#include <boost/intrusive/detail/hash_combine.hpp>
 
-#include <boost/container/detail/minimal_char_traits_header.hpp>  // for char_traits
 #include <iosfwd> 
 #include <istream>   //
 #include <ostream>
@@ -227,16 +228,16 @@ class basic_string_base
       { this->init(); }
 
       BOOST_CONTAINER_FORCEINLINE const short_t *pshort_repr() const
-      {  return reinterpret_cast<const short_t*>(m_repr.data);  }
+      {  return move_detail::force_ptr<const short_t*>(m_repr.data);  }
 
       BOOST_CONTAINER_FORCEINLINE const long_t *plong_repr() const
-      {  return reinterpret_cast<const long_t*>(m_repr.data);  }
+      {  return move_detail::force_ptr<const long_t*>(m_repr.data);  }
 
       BOOST_CONTAINER_FORCEINLINE short_t *pshort_repr()
-      {  return reinterpret_cast<short_t*>(m_repr.data);  }
+      {  return move_detail::force_ptr<short_t*>(m_repr.data);  }
 
       BOOST_CONTAINER_FORCEINLINE long_t *plong_repr()
-      {  return reinterpret_cast<long_t*>(m_repr.data);  }
+      {  return move_detail::force_ptr<long_t*>(m_repr.data);  }
 
       repr_t m_repr;
    } members_;
@@ -1805,16 +1806,17 @@ class basic_string
          if(enough_capacity){
             const size_type elems_after = old_size - size_type(p - old_start);
             const size_type old_length = old_size;
+            size_type new_size = 0;
             if (elems_after >= n) {
                const pointer pointer_past_last = old_start + difference_type(old_size + 1u);
                priv_uninitialized_copy(old_start + difference_type(old_size - n + 1u),
                                        pointer_past_last, pointer_past_last);
 
-               this->priv_size(old_size+n);
                Traits::move(const_cast<CharT*>(boost::movelib::to_raw_pointer(p + difference_type(n))),
                            boost::movelib::to_raw_pointer(p),
                            (elems_after - n) + 1u);
-               this->priv_copy(first, last, const_cast<CharT*>(boost::movelib::to_raw_pointer(p)));
+               (priv_copy)(first, last, const_cast<CharT*>(boost::movelib::to_raw_pointer(p)));
+               new_size = old_size + n;
             }
             else {
                ForwardIter mid = first;
@@ -1826,9 +1828,11 @@ class basic_string
                priv_uninitialized_copy
                   (p, const_iterator(old_start + difference_type(old_length + 1u)),
                   old_start + difference_type(newer_size));
-               this->priv_size(newer_size + elems_after);
-               this->priv_copy(first, mid, const_cast<CharT*>(boost::movelib::to_raw_pointer(p)));
+               (priv_copy)(first, mid, const_cast<CharT*>(boost::movelib::to_raw_pointer(p)));
+               new_size = newer_size + elems_after;
             }
+            this->priv_size(new_size);
+            this->priv_construct_null(old_start + difference_type(new_size));
          }
          else{
             pointer new_start = allocation_ret;
@@ -2056,8 +2060,8 @@ class basic_string
       if (pos1 > this->size())
          throw_out_of_range("basic_string::replace out of range position");
       const size_type len = dtl::min_value(n1, this->size() - pos1);
-      const size_type max_size = this->max_size();
-      if (n2 > max_size || (this->size() - len) >= (max_size - n2))
+      const size_type max_sz = this->max_size();
+      if (n2 > max_sz || (this->size() - len) >= (max_sz - n2))
          throw_length_error("basic_string::replace max_size() exceeded");
       const pointer addr = this->priv_addr() + pos1;
       return this->replace(addr, addr + difference_type(len), s, s + difference_type(n2));
@@ -2981,12 +2985,12 @@ class basic_string
       }
    }
 
-   void priv_construct_null(pointer p)
+   BOOST_CONTAINER_FORCEINLINE void priv_construct_null(pointer p)
    {  this->construct(p, CharT(0));  }
 
    // Helper functions used by constructors.  It is a severe error for
    // any of them to be called anywhere except from within constructors.
-   void priv_terminate_string()
+   BOOST_CONTAINER_FORCEINLINE void priv_terminate_string()
    {  this->priv_construct_null(this->priv_end_addr());  }
 
    template<class FwdIt, class Count> inline
@@ -3036,13 +3040,13 @@ class basic_string
    }
 
    template <class InputIterator, class OutIterator>
-   void priv_copy(InputIterator first, InputIterator last, OutIterator result)
+   static void priv_copy(InputIterator first, InputIterator last, OutIterator result)
    {
       for ( ; first != last; ++first, ++result)
          Traits::assign(*result, *first);
    }
 
-   BOOST_CONTAINER_FORCEINLINE void priv_copy(const CharT* first, const CharT* last, CharT* result)
+   static BOOST_CONTAINER_FORCEINLINE void priv_copy(const CharT* first, const CharT* last, CharT* result)
    {  Traits::copy(result, first, std::size_t(last - first));  }
 
    template <class Integer>

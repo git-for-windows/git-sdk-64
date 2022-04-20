@@ -430,9 +430,24 @@ public:
 
     //  -----  concatenation  -----
 
+    path& operator+=(path const& p)
+    {
+        return concat(p);
+    }
+
+    path& operator+=(const value_type* ptr)
+    {
+        return concat(ptr);
+    }
+
+    path& operator+=(string_type const& s)
+    {
+        return concat(s);
+    }
+
     template< class Source >
     typename boost::enable_if_c<
-        path_traits::is_pathable< typename boost::decay< Source >::type >::value || path_detail::is_native_pathable< Source >::value,
+        path_traits::is_pathable< typename boost::decay< Source >::type >::value && !path_detail::is_native_pathable< Source >::value,
         path&
     >::type operator+=(Source const& source)
     {
@@ -552,9 +567,24 @@ public:
     //  if a separator is added, it is the preferred separator for the platform;
     //  slash for POSIX, backslash for Windows
 
+    path& operator/=(path const& p)
+    {
+        return append(p);
+    }
+
+    path& operator/=(const value_type* ptr)
+    {
+        return append(ptr);
+    }
+
+    path& operator/=(string_type const& s)
+    {
+        return append(s);
+    }
+
     template< class Source >
     BOOST_FORCEINLINE typename boost::enable_if_c<
-        path_traits::is_pathable< typename boost::decay< Source >::type >::value || path_detail::is_native_pathable< Source >::value,
+        path_traits::is_pathable< typename boost::decay< Source >::type >::value && !path_detail::is_native_pathable< Source >::value,
         path&
     >::type operator/=(Source const& source)
     {
@@ -671,7 +701,11 @@ public:
 #endif
     BOOST_FILESYSTEM_DECL path& remove_filename();
     BOOST_FILESYSTEM_DECL path& remove_trailing_separator();
-    BOOST_FILESYSTEM_DECL path& replace_extension(path const& new_extension = path());
+    BOOST_FORCEINLINE path& replace_extension(path const& new_extension = path())
+    {
+        BOOST_FILESYSTEM_VERSIONED_SYM(replace_extension)(new_extension);
+        return *this;
+    }
     void swap(path& rhs) BOOST_NOEXCEPT { m_pathname.swap(rhs.m_pathname); }
 
     //  -----  observers  -----
@@ -910,7 +944,16 @@ private:
     BOOST_FILESYSTEM_DECL path stem_v3() const;
     BOOST_FILESYSTEM_DECL path stem_v4() const;
     BOOST_FILESYSTEM_DECL path extension_v3() const;
-    BOOST_FILESYSTEM_DECL path extension_v4() const;
+    path extension_v4() const
+    {
+        string_type::size_type extension_size = find_extension_v4_size();
+        string_type::size_type pos = m_pathname.size() - extension_size;
+        const value_type* p = m_pathname.c_str() + pos;
+        return path(p, p + extension_size);
+    }
+
+    BOOST_FILESYSTEM_DECL void replace_extension_v3(path const& new_extension);
+    BOOST_FILESYSTEM_DECL void replace_extension_v4(path const& new_extension);
 
     BOOST_FILESYSTEM_DECL path lexically_normal_v3() const;
     BOOST_FILESYSTEM_DECL path lexically_normal_v4() const;
@@ -934,6 +977,7 @@ private:
     BOOST_FILESYSTEM_DECL path_detail::substring find_relative_path() const;
     BOOST_FILESYSTEM_DECL string_type::size_type find_parent_path_size() const;
     BOOST_FILESYSTEM_DECL string_type::size_type find_filename_v4_size() const;
+    BOOST_FILESYSTEM_DECL string_type::size_type find_extension_v4_size() const;
 
 private:
     /*

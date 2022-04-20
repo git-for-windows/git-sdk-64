@@ -29,6 +29,10 @@ namespace boost {
 namespace container {
 
 using ::boost::intrusive::iterator_traits;
+using ::boost::intrusive::iter_difference;
+using ::boost::intrusive::iter_category;
+using ::boost::intrusive::iter_value;
+using ::boost::intrusive::iter_size;
 using ::boost::intrusive::iterator_distance;
 using ::boost::intrusive::iterator_udistance;
 using ::boost::intrusive::iterator_advance;

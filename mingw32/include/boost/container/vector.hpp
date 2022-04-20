@@ -82,7 +82,9 @@ class vec_iterator
 {
    public:
    typedef std::random_access_iterator_tag                                          iterator_category;
+   #ifdef BOOST_MOVE_CONTIGUOUS_ITERATOR_TAG
    typedef std::contiguous_iterator_tag                                             iterator_concept;
+   #endif
    typedef typename boost::intrusive::pointer_traits<Pointer>::element_type         value_type;
 
    //Defining element_type to make libstdc++'s std::pointer_traits well-formed leads to ambiguity
@@ -435,7 +437,7 @@ struct vector_alloc_holder
       return this->priv_allocation_command(alloc_version(), command, limit_size, prefer_in_recvd_out_size, reuse);
    }
 
-   BOOST_CONTAINER_FORCEINLINE pointer allocate(size_type n)
+   pointer allocate(size_type n)
    {
       const size_type max_alloc = allocator_traits_type::max_size(this->alloc());
       const size_type max = max_alloc <= stored_size_type(-1) ? max_alloc : stored_size_type(-1);
@@ -663,9 +665,7 @@ struct vector_alloc_holder<Allocator, StoredSizeType, version_0>
    }
 
    BOOST_CONTAINER_FORCEINLINE void deep_swap(vector_alloc_holder &x)
-   {
-      this->priv_deep_swap(x);
-   }
+      {  this->priv_deep_swap(x);   }
 
    template<class OtherAllocator, class OtherStoredSizeType, class OtherAllocatorVersion>
    void deep_swap(vector_alloc_holder<OtherAllocator, OtherStoredSizeType, OtherAllocatorVersion> &x)
@@ -681,7 +681,6 @@ struct vector_alloc_holder<Allocator, StoredSizeType, version_0>
    {  //Containers with version 0 allocators can't be moved without moving elements one by one
       on_capacity_overflow();
    }
-
 
    BOOST_CONTAINER_FORCEINLINE void steal_resources(vector_alloc_holder &)
    {  //Containers with version 0 allocators can't be moved without moving elements one by one
@@ -824,12 +823,12 @@ private:
    {  return this->m_holder.steal_resources(x.m_holder);   }
 
    template<class AllocFwd>
-   BOOST_CONTAINER_FORCEINLINE vector(initial_capacity_t, pointer initial_memory, size_type capacity, BOOST_FWD_REF(AllocFwd) a)
-      : m_holder(initial_capacity_t(), initial_memory, capacity, ::boost::forward<AllocFwd>(a))
+   BOOST_CONTAINER_FORCEINLINE vector(initial_capacity_t, pointer initial_memory, size_type cap, BOOST_FWD_REF(AllocFwd) a)
+      : m_holder(initial_capacity_t(), initial_memory, cap, ::boost::forward<AllocFwd>(a))
    {}
 
-   BOOST_CONTAINER_FORCEINLINE vector(initial_capacity_t, pointer initial_memory, size_type capacity)
-      : m_holder(initial_capacity_t(), initial_memory, capacity)
+   BOOST_CONTAINER_FORCEINLINE vector(initial_capacity_t, pointer initial_memory, size_type cap)
+      : m_holder(initial_capacity_t(), initial_memory, cap)
    {}
 
    #endif   //#ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
@@ -1293,7 +1292,7 @@ private:
          >::type * = 0)
       )
    {
-      typedef typename iterator_traits<FwdIt>::size_type it_size_type;
+      typedef typename iter_size<FwdIt>::type it_size_type;
       //For Fwd iterators the standard only requires EmplaceConstructible and assignable from *first
       //so we can't do any backwards allocation
       const it_size_type sz = boost::container::iterator_udistance(first, last);
@@ -1752,7 +1751,7 @@ private:
    BOOST_CONTAINER_ATTRIBUTE_NODISCARD BOOST_CONTAINER_FORCEINLINE reference at(size_type n)
    {
       this->priv_throw_if_out_of_range(n);
-      return this->m_holder.start()[n];
+      return this->m_holder.start()[difference_type(n)];
    }
 
    //! <b>Requires</b>: size() > n.
@@ -2013,7 +2012,7 @@ private:
          >::type * = 0
       )
    {
-      typedef typename iterator_traits<FwdIt>::size_type it_size_type;
+      typedef typename iter_size<FwdIt>::type it_size_type;
       BOOST_ASSERT(this->priv_in_range_or_end(pos));
       const it_size_type sz = boost::container::iterator_udistance(first, last);
       if (sz > size_type(-1)){
@@ -3376,11 +3375,11 @@ private:
 
 template <typename InputIterator>
 vector(InputIterator, InputIterator) ->
-   vector<typename iterator_traits<InputIterator>::value_type>;
+   vector<typename iter_value<InputIterator>::type>;
 
 template <typename InputIterator, typename Allocator>
 vector(InputIterator, InputIterator, Allocator const&) ->
-   vector<typename iterator_traits<InputIterator>::value_type, Allocator>;
+   vector<typename iter_value<InputIterator>::type, Allocator>;
 
 #endif
 

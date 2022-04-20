@@ -56,20 +56,20 @@ class named_sharable_mutex
 
    //!Creates a global sharable mutex with a name.
    //!If the sharable mutex can't be created throws interprocess_exception
-   named_sharable_mutex(create_only_t create_only, const char *name, const permissions &perm = permissions());
+   named_sharable_mutex(create_only_t, const char *name, const permissions &perm = permissions());
 
    //!Opens or creates a global sharable mutex with a name.
    //!If the sharable mutex is created, this call is equivalent to
    //!named_sharable_mutex(create_only_t, ...)
    //!If the sharable mutex is already created, this call is equivalent to
    //!named_sharable_mutex(open_only_t, ... ).
-   named_sharable_mutex(open_or_create_t open_or_create, const char *name, const permissions &perm = permissions());
+   named_sharable_mutex(open_or_create_t, const char *name, const permissions &perm = permissions());
 
    //!Opens a global sharable mutex with a name if that sharable mutex
    //!is previously.
    //!created. If it is not previously created this function throws
    //!interprocess_exception.
-   named_sharable_mutex(open_only_t open_only, const char *name);
+   named_sharable_mutex(open_only_t, const char *name);
 
    #if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 
@@ -78,7 +78,7 @@ class named_sharable_mutex
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   named_sharable_mutex(create_only_t create_only, const wchar_t *name, const permissions &perm = permissions());
+   named_sharable_mutex(create_only_t, const wchar_t *name, const permissions &perm = permissions());
 
    //!Opens or creates a global sharable mutex with a name.
    //!If the sharable mutex is created, this call is equivalent to
@@ -88,7 +88,7 @@ class named_sharable_mutex
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   named_sharable_mutex(open_or_create_t open_or_create, const wchar_t *name, const permissions &perm = permissions());
+   named_sharable_mutex(open_or_create_t, const wchar_t *name, const permissions &perm = permissions());
 
    //!Opens a global sharable mutex with a name if that sharable mutex
    //!is previously.
@@ -97,7 +97,7 @@ class named_sharable_mutex
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   named_sharable_mutex(open_only_t open_only, const wchar_t *name);
+   named_sharable_mutex(open_only_t, const wchar_t *name);
 
    #endif   //defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 

@@ -1,21 +1,12 @@
 #ifndef BOOST_LEAF_ON_ERROR_HPP_INCLUDED
 #define BOOST_LEAF_ON_ERROR_HPP_INCLUDED
 
-/// Copyright (c) 2018-2021 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2018-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_LEAF_ENABLE_WARNINGS ///
-#   if defined(_MSC_VER) ///
-#       pragma warning(push,1) ///
-#   elif defined(__clang__) ///
-#       pragma clang system_header ///
-#   elif (__GNUC__*100+__GNUC_MINOR__>301) ///
-#       pragma GCC system_header ///
-#   endif ///
-#endif ///
-
+#include <boost/leaf/config.hpp>
 #include <boost/leaf/error.hpp>
 
 namespace boost { namespace leaf {
@@ -107,7 +98,7 @@ namespace leaf_detail
     public:
 
         BOOST_LEAF_CONSTEXPR preloaded_item( E && e ):
-            s_(tl_slot_ptr<decay_E>::p),
+            s_(tls::read_ptr<slot<decay_E>>()),
             e_(std::forward<E>(e))
         {
         }
@@ -120,10 +111,10 @@ namespace leaf_detail
                 if( !s_->has_value(err_id) )
                     s_->put(err_id, std::move(e_));
             }
-#if BOOST_LEAF_DIAGNOSTICS
+#if BOOST_LEAF_CFG_DIAGNOSTICS
             else
             {
-                int c = tl_unexpected_enabled<>::counter;
+                int c = tls::read_uint32<tls_tag_unexpected_enabled_counter>();
                 BOOST_LEAF_ASSERT(c>=0);
                 if( c )
                     load_unexpected(err_id, std::move(e_));
@@ -142,7 +133,7 @@ namespace leaf_detail
     public:
 
         BOOST_LEAF_CONSTEXPR deferred_item( F && f ) noexcept:
-            s_(tl_slot_ptr<E>::p),
+            s_(tls::read_ptr<slot<E>>()),
             f_(std::forward<F>(f))
         {
         }
@@ -155,10 +146,10 @@ namespace leaf_detail
                 if( !s_->has_value(err_id) )
                     s_->put(err_id, f_());
             }
-#if BOOST_LEAF_DIAGNOSTICS
+#if BOOST_LEAF_CFG_DIAGNOSTICS
             else
             {
-                int c = tl_unexpected_enabled<>::counter;
+                int c = tls::read_uint32<tls_tag_unexpected_enabled_counter>();
                 BOOST_LEAF_ASSERT(c>=0);
                 if( c )
                     load_unexpected(err_id, std::forward<E>(f_()));
@@ -180,7 +171,7 @@ namespace leaf_detail
     public:
 
         BOOST_LEAF_CONSTEXPR accumulating_item( F && f ) noexcept:
-            s_(tl_slot_ptr<E>::p),
+            s_(tls::read_ptr<slot<E>>()),
             f_(std::forward<F>(f))
         {
         }
@@ -261,9 +252,5 @@ on_error( Item && ... i )
 }
 
 } }
-
-#if defined(_MSC_VER) && !defined(BOOST_LEAF_ENABLE_WARNINGS) ///
-#pragma warning(pop) ///
-#endif ///
 
 #endif

@@ -119,7 +119,7 @@
 #   include <vsbConfig.h>
 #endif
 
-#if (!defined(__CRYSTAX__) && defined(__ANDROID__) && (__ANDROID_API__+0) < 21) \
+#if (!defined(__CRYSTAX__) && defined(__ANDROID__) && (__ANDROID_API__ < 21)) \
      || (defined(__VXWORKS__) && !defined(_WRS_CONFIG_USER_MANAGEMENT))
 // Until Android API version 21 Google NDK does not provide getpwuid_r
 #    define BOOST_LOG_NO_GETPWUID_R
@@ -143,19 +143,35 @@
 #define BOOST_LOG_NO_CXX11_ARG_PACKS_TO_NON_VARIADIC_ARGS_EXPANSION
 #endif
 
-#if defined(BOOST_NO_CXX11_CONSTEXPR) || (defined(BOOST_GCC) && ((BOOST_GCC+0) / 100) <= 406)
+#if defined(BOOST_NO_CXX11_CONSTEXPR) || (defined(BOOST_GCC) && (BOOST_GCC / 100) <= 406)
 // GCC 4.6 does not support in-class brace initializers for static constexpr array members
 #define BOOST_LOG_NO_CXX11_CONSTEXPR_DATA_MEMBER_BRACE_INITIALIZERS
 #endif
 
-#if defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS) || (defined(BOOST_GCC) && ((BOOST_GCC+0) / 100) <= 406)
-// GCC 4.6 cannot handle a defaulted function with noexcept specifier
+#if defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS) || (defined(BOOST_GCC) && (BOOST_GCC / 100) <= 406)
+// GCC 4.6 cannot handle defaulted functions with noexcept specifier or virtual functions
 #define BOOST_LOG_NO_CXX11_DEFAULTED_NOEXCEPT_FUNCTIONS
+#define BOOST_LOG_NO_CXX11_DEFAULTED_VIRTUAL_FUNCTIONS
 #endif
 
-#if defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS) || (defined(BOOST_CLANG) && (((__clang_major__+0) == 3) && ((__clang_minor__+0) <= 1)))
+#if defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS) || (defined(BOOST_CLANG) && ((__clang_major__ == 3) && (__clang_minor__ <= 1)))
 // Clang 3.1 cannot handle a defaulted constexpr constructor in some cases (presumably, if the class contains a member with a constexpr constructor)
 #define BOOST_LOG_NO_CXX11_DEFAULTED_CONSTEXPR_CONSTRUCTORS
+#endif
+
+// The macro indicates that the compiler does not support C++20 pack expansions in lambda init-captures.
+// Early gcc, clang and MSVC versions support C++20 pack expansions in lambda init-captures,
+// but define __cpp_init_captures to a lower value.
+#if (!defined(__cpp_init_captures) || (__cpp_init_captures < 201803)) && \
+    !(\
+        BOOST_CXX_VERSION > 201703 && \
+        (\
+            (defined(BOOST_GCC) && (BOOST_GCC >= 90000)) || \
+            (defined(BOOST_CLANG) && (BOOST_CLANG_VERSION >= 90000)) || \
+            (defined(BOOST_MSVC) && (BOOST_MSVC >= 1922))\
+        )\
+    )
+#define BOOST_LOG_NO_CXX20_PACK_EXPANSION_IN_LAMBDA_INIT_CAPTURE
 #endif
 
 #if defined(_MSC_VER)
@@ -365,7 +381,7 @@ inline namespace BOOST_LOG_VERSION_NAMESPACE {}
 #       define BOOST_LOG_OPEN_NAMESPACE namespace log { inline namespace BOOST_LOG_VERSION_NAMESPACE {
 #       define BOOST_LOG_CLOSE_NAMESPACE }}
 
-#   elif defined(BOOST_GCC) && (BOOST_GCC+0) >= 40400
+#   elif defined(BOOST_GCC) && (BOOST_GCC >= 40400)
 
 // GCC 7 deprecated strong using directives but allows inline namespaces in C++03 mode since GCC 4.4.
 __extension__ inline namespace BOOST_LOG_VERSION_NAMESPACE {}

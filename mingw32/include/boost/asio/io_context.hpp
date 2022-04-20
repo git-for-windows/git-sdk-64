@@ -2,7 +2,7 @@
 // io_context.hpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -20,6 +20,7 @@
 #include <stdexcept>
 #include <typeinfo>
 #include <boost/asio/async_result.hpp>
+#include <boost/asio/detail/concurrency_hint.hpp>
 #include <boost/asio/detail/cstdint.hpp>
 #include <boost/asio/detail/wrapped_handler.hpp>
 #include <boost/system/error_code.hpp>
@@ -169,30 +170,12 @@ namespace detail {
  * returning when there is no more work to do. For example, the io_context may
  * be being run in a background thread that is launched prior to the
  * application's asynchronous operations. The run() call may be kept running by
- * creating an executor that tracks work against the io_context:
+ * using the @ref make_work_guard function to create an object of type
+ * boost::asio::executor_work_guard<io_context::executor_type>:
  *
  * @code boost::asio::io_context io_context;
- * auto work = boost::asio::require(io_context.get_executor(),
- *     boost::asio::execution::outstanding_work.tracked);
- * ... @endcode
- *
- * If using C++03, which lacks automatic variable type deduction, you may
- * compute the return type of the require call:
- *
- * @code boost::asio::io_context io_context;
- * typename boost::asio::require_result<
- *     boost::asio::io_context::executor_type,
- *     boost::asio::exeution::outstanding_work_t::tracked_t>
- *   work = boost::asio::require(io_context.get_executor(),
- *     boost::asio::execution::outstanding_work.tracked);
- * ... @endcode
- *
- * or store the result in the type-erasing executor wrapper, any_io_executor:
- *
- * @code boost::asio::io_context io_context;
- * boost::asio::any_io_executor work
- *   = boost::asio::require(io_context.get_executor(),
- *       boost::asio::execution::outstanding_work.tracked);
+ * boost::asio::executor_work_guard<boost::asio::io_context::executor_type>
+ *   = boost::asio::make_work_guard(io_context);
  * ... @endcode
  *
  * To effect a shutdown, the application will then need to call the io_context
@@ -201,15 +184,13 @@ namespace detail {
  * permitting ready handlers to be dispatched.
  *
  * Alternatively, if the application requires that all operations and handlers
- * be allowed to finish normally, store the work-tracking executor in an
- * any_io_executor object, so that it may be explicitly reset.
+ * be allowed to finish normally, the work object may be explicitly reset.
  *
  * @code boost::asio::io_context io_context;
- * boost::asio::any_io_executor work
- *   = boost::asio::require(io_context.get_executor(),
- *       boost::asio::execution::outstanding_work.tracked);
+ * boost::asio::executor_work_guard<boost::asio::io_context::executor_type>
+ *   = boost::asio::make_work_guard(io_context);
  * ...
- * work = boost::asio::any_io_executor(); // Allow run() to exit. @endcode
+ * work.reset(); // Allow run() to exit. @endcode
  */
 class io_context
   : public execution_context

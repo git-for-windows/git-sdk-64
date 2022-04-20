@@ -63,8 +63,8 @@ class shm_named_condition_any
    //!Creates a global condition with a name.
    //!If the condition can't be created throws interprocess_exception
    template <class CharT>
-   shm_named_condition_any(create_only_t create_only, const CharT *name, const permissions &perm = permissions())
-      :  m_shmem  (create_only
+   shm_named_condition_any(create_only_t, const CharT *name, const permissions &perm = permissions())
+      :  m_shmem  (create_only_t()
                   ,name
                   ,sizeof(internal_condition) +
                      open_create_impl_t::ManagedOpenOrCreateUserOffset
@@ -81,8 +81,8 @@ class shm_named_condition_any
    //!shm_named_condition_any(open_only_t, ... )
    //!Does not throw
    template <class CharT>
-   shm_named_condition_any(open_or_create_t open_or_create, const CharT *name, const permissions &perm = permissions())
-      :  m_shmem  (open_or_create
+   shm_named_condition_any(open_or_create_t, const CharT *name, const permissions &perm = permissions())
+      :  m_shmem  (open_or_create_t()
                   ,name
                   ,sizeof(internal_condition) +
                      open_create_impl_t::ManagedOpenOrCreateUserOffset
@@ -96,8 +96,8 @@ class shm_named_condition_any
    //!created. If it is not previously created this function throws
    //!interprocess_exception.
    template <class CharT>
-   shm_named_condition_any(open_only_t open_only, const CharT *name)
-      :  m_shmem  (open_only
+   shm_named_condition_any(open_only_t, const CharT *name)
+      :  m_shmem  (open_only_t()
                   ,name
                   ,read_write
                   ,0

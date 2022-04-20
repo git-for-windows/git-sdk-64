@@ -57,20 +57,20 @@ class named_upgradable_mutex
 
    //!Creates a global upgradable mutex with a name.
    //!If the upgradable mutex can't be created throws interprocess_exception
-   named_upgradable_mutex(create_only_t create_only, const char *name, const permissions &perm = permissions());
+   named_upgradable_mutex(create_only_t, const char *name, const permissions &perm = permissions());
 
    //!Opens or creates a global upgradable mutex with a name, and an initial count.
    //!If the upgradable mutex is created, this call is equivalent to
    //!named_upgradable_mutex(create_only_t, ...)
    //!If the upgradable mutex is already created, this call is equivalent to
    //!named_upgradable_mutex(open_only_t, ... ).
-   named_upgradable_mutex(open_or_create_t open_or_create, const char *name, const permissions &perm = permissions());
+   named_upgradable_mutex(open_or_create_t, const char *name, const permissions &perm = permissions());
 
    //!Opens a global upgradable mutex with a name if that upgradable mutex
    //!is previously.
    //!created. If it is not previously created this function throws
    //!interprocess_exception.
-   named_upgradable_mutex(open_only_t open_only, const char *name);
+   named_upgradable_mutex(open_only_t, const char *name);
 
    //!Destroys *this and indicates that the calling process is finished using
    //!the resource. The destructor function will deallocate
@@ -249,7 +249,7 @@ inline named_upgradable_mutex::~named_upgradable_mutex()
 
 inline named_upgradable_mutex::named_upgradable_mutex
    (create_only_t, const char *name, const permissions &perm)
-   :  m_shmem  (create_only
+   :  m_shmem  (create_only_t()
                ,name
                ,sizeof(interprocess_upgradable_mutex) +
                   open_create_impl_t::ManagedOpenOrCreateUserOffset
@@ -261,7 +261,7 @@ inline named_upgradable_mutex::named_upgradable_mutex
 
 inline named_upgradable_mutex::named_upgradable_mutex
    (open_or_create_t, const char *name, const permissions &perm)
-   :  m_shmem  (open_or_create
+   :  m_shmem  (open_or_create_t()
                ,name
                ,sizeof(interprocess_upgradable_mutex) +
                   open_create_impl_t::ManagedOpenOrCreateUserOffset
@@ -273,7 +273,7 @@ inline named_upgradable_mutex::named_upgradable_mutex
 
 inline named_upgradable_mutex::named_upgradable_mutex
    (open_only_t, const char *name)
-   :  m_shmem  (open_only
+   :  m_shmem  (open_only_t()
                ,name
                ,read_write
                ,0

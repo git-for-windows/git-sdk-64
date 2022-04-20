@@ -1,4 +1,4 @@
-//  This file was automatically generated on Tue Aug 17 16:27:31 2021
+//  This file was automatically generated on Thu Feb  3 18:10:41 2022
 //  by libs/config/tools/generate.cpp
 //  Copyright John Maddock 2002-21.
 //  Use, modification and distribution are subject to the 
@@ -195,7 +195,8 @@
    || defined(BOOST_NO_CXX20_HDR_SOURCE_LOCATION)\
    || defined(BOOST_NO_CXX20_HDR_SPAN)\
    || defined(BOOST_NO_CXX20_HDR_STOP_TOKEN)\
-   || defined(BOOST_NO_CXX20_HDR_SYNCSTREAM)
+   || defined(BOOST_NO_CXX20_HDR_SYNCSTREAM)\
+   || defined(BOOST_NO_CXX20_HDR_VERSION)
 #    define BOOST_NO_CXX20
 #endif
 

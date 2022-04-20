@@ -132,7 +132,7 @@ inline bool get_temporary_path(char *buffer, std::size_t buf_len, std::size_t &r
       return false;
    }
    required_len = winapi::get_temp_path(buf_len, buffer);
-   const bool ret = !(buf_len < required_len);
+   const bool ret = required_len && (buf_len > required_len);
    if(ret && buffer[required_len-1] == '\\'){
       buffer[required_len-1] = '\0';
    }

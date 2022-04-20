@@ -2,7 +2,7 @@
 // detail/impl/win_iocp_file_service.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -68,6 +68,8 @@ boost::system::error_code win_iocp_file_service::open(
   else if ((open_flags & file_base::read_write) != 0)
     access = GENERIC_READ | GENERIC_WRITE;
 
+  DWORD share = FILE_SHARE_READ | FILE_SHARE_WRITE;
+
   DWORD disposition = 0;
   if ((open_flags & file_base::create) != 0)
   {
@@ -89,8 +91,10 @@ boost::system::error_code win_iocp_file_service::open(
     flags |= FILE_FLAG_SEQUENTIAL_SCAN;
   else
     flags |= FILE_FLAG_RANDOM_ACCESS;
+  if ((open_flags & file_base::sync_all_on_write) != 0)
+    flags |= FILE_FLAG_WRITE_THROUGH;
 
-  HANDLE handle = ::CreateFileA(path, access, 0, 0, disposition, flags, 0);
+  HANDLE handle = ::CreateFileA(path, access, share, 0, disposition, flags, 0);
   if (handle != INVALID_HANDLE_VALUE)
   {
     if (disposition == OPEN_ALWAYS && (open_flags & file_base::truncate) != 0)

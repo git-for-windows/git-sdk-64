@@ -67,7 +67,7 @@ class shm_named_condition
    public:
    //!Creates a global condition with a name.
    //!If the condition can't be created throws interprocess_exception
-   shm_named_condition(create_only_t create_only, const char *name, const permissions &perm = permissions());
+   shm_named_condition(create_only_t, const char *name, const permissions &perm = permissions());
 
    //!Opens or creates a global condition with a name.
    //!If the condition is created, this call is equivalent to
@@ -75,12 +75,12 @@ class shm_named_condition
    //!If the condition is already created, this call is equivalent
    //!shm_named_condition(open_only_t, ... )
    //!Does not throw
-   shm_named_condition(open_or_create_t open_or_create, const char *name, const permissions &perm = permissions());
+   shm_named_condition(open_or_create_t, const char *name, const permissions &perm = permissions());
 
    //!Opens a global condition with a name if that condition is previously
    //!created. If it is not previously created this function throws
    //!interprocess_exception.
-   shm_named_condition(open_only_t open_only, const char *name);
+   shm_named_condition(open_only_t, const char *name);
 
    #if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 
@@ -89,7 +89,7 @@ class shm_named_condition
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   shm_named_condition(create_only_t create_only, const wchar_t *name, const permissions &perm = permissions());
+   shm_named_condition(create_only_t, const wchar_t *name, const permissions &perm = permissions());
 
    //!Opens or creates a global condition with a name.
    //!If the condition is created, this call is equivalent to
@@ -100,7 +100,7 @@ class shm_named_condition
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   shm_named_condition(open_or_create_t open_or_create, const wchar_t *name, const permissions &perm = permissions());
+   shm_named_condition(open_or_create_t, const wchar_t *name, const permissions &perm = permissions());
 
    //!Opens a global condition with a name if that condition is previously
    //!created. If it is not previously created this function throws
@@ -108,7 +108,7 @@ class shm_named_condition
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   shm_named_condition(open_only_t open_only, const wchar_t *name);
+   shm_named_condition(open_only_t, const wchar_t *name);
 
    #endif //defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 

@@ -14,7 +14,9 @@
 namespace boost {
 namespace nowide {
     ///
-    /// Install utf8_codecvt facet into  boost::filesystem::path such all char strings are interpreted as utf-8 strings
+    /// Install utf8_codecvt facet into boost::filesystem::path
+    /// such that all char strings are interpreted as UTF-8 strings
+    /// \return The previous imbued path locale.
     ///
     inline std::locale nowide_filesystem()
     {

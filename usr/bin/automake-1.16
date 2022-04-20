@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # automake - create Makefile.in from Makefile.am            -*- perl -*-
 # Generated from bin/automake.in; do not edit by hand.
-# Copyright (C) 1994-2020 Free Software Foundation, Inc.
+# Copyright (C) 1994-2021 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -199,11 +199,14 @@ my @libtool_files = qw(ltmain.sh config.guess config.sub);
 # ltconfig appears here for compatibility with old versions of libtool.
 my @libtool_sometimes = qw(ltconfig ltcf-c.sh ltcf-cxx.sh ltcf-gcj.sh);
 
-# Commonly found files we look for and automatically include in
-# DISTFILES.
+# Top-level files that can be foo.md instead of foo.  We assume that all
+# but THANKS are required at strictness level gnu.
+my @toplevelmd_ok = qw(AUTHORS ChangeLog INSTALL NEWS README THANKS);
+
+# Commonly found files we look for and automatically include in DISTFILES.
 my @common_files =
-    (qw(ABOUT-GNU ABOUT-NLS AUTHORS BACKLOG COPYING COPYING.DOC COPYING.LIB
-	COPYING.LESSER ChangeLog INSTALL NEWS README THANKS TODO
+    (qw(ABOUT-GNU ABOUT-NLS BACKLOG COPYING
+        COPYING.DOC COPYING.LIB COPYING.LESSER TODO
 	ar-lib compile config.guess config.rpath
 	config.sub depcomp install-sh libversion.in mdate-sh
 	missing mkinstalldirs py-compile texinfo.tex ylwrap),
@@ -1839,22 +1842,27 @@ sub handle_single_transform
                 {
                   # Since the next major version of automake (2.0) will
                   # make the behaviour so far only activated with the
-                  # 'subdir-object' option mandatory, it's better if we
+                  # 'subdir-objects' option mandatory, it's better if we
                   # start warning users not using that option.
                   # As suggested by Peter Johansson, we strive to avoid
                   # the warning when it would be irrelevant, i.e., if
                   # all source files sit in "current" directory.
+                  #
+                  # There are problems with making this change; see
+                  # https://bugs.gnu.org/20699 before making
+                  # subdir-objects, let alone unconditional.
+                  # (Making it non-overridable seems especially wrong.)
+                  #
                   msg_var 'unsupported', $var,
                           "source file '$full' is in a subdirectory,"
                           . "\nbut option 'subdir-objects' is disabled";
                   msg 'unsupported', INTERNAL, <<'EOF', uniq_scope => US_GLOBAL;
 possible forward-incompatibility.
-At least a source file is in a subdirectory, but the 'subdir-objects'
+At least one source file is in a subdirectory, but the 'subdir-objects'
 automake option hasn't been enabled.  For now, the corresponding output
-object file(s) will be placed in the top-level directory.  However,
-this behaviour will change in future Automake versions: they will
-unconditionally cause object files to be placed in the same subdirectory
-of the corresponding sources.
+object file(s) will be placed in the top-level directory.  However, this
+behavior may change in a future Automake major version, with object
+files being placed in the same subdirectory as the corresponding sources.
 You are advised to start using 'subdir-objects' option throughout your
 project, to avoid future incompatibilities.
 EOF
@@ -2388,7 +2396,7 @@ sub handle_LIBOBJS
   $var->requires_variables ("\@${lt}LIBOBJS\@ used", $lt . 'LIBOBJS')
     if ! keys %libsources;
 
-  foreach my $iter (keys %libsources)
+  foreach my $iter (sort keys %libsources)
     {
       my $dir = '';
       if ($iter =~ /^(.*)(\.[cly])$/)
@@ -3828,7 +3836,7 @@ sub handle_dist ()
 	  $check_aux = 1;
 	}
     }
-  foreach my $cfile (@common_files)
+  foreach my $cfile (@toplevelmd_ok, @common_files)
     {
       if (dir_has_case_matching_file ($relative_dir, $cfile)
 	  # The file might be absent, but if it can be built it's ok.
@@ -3836,13 +3844,30 @@ sub handle_dist ()
 	{
 	  push_dist_common ($cfile);
 	}
+      elsif (grep { $_ eq $cfile } @toplevelmd_ok)
+        { # Irritatingly, have to repeat the checks, now for .md files;
+          # we want to prefer non-.md, so do this second, and only "elsif".
+          if (dir_has_case_matching_file ($relative_dir, "$cfile.md")
+	      || rule "$cfile.md")
+  	    {
+	      push_dist_common ("$cfile.md");
+	    }
+        }
 
       # Don't use 'elsif' here because a file might meaningfully
-      # appear in both directories.
+      # appear in both $relative_dir and $config_aux_dir.
       if ($check_aux && dir_has_case_matching_file ($config_aux_dir, $cfile))
 	{
 	  push_dist_common ("$config_aux_dir/$cfile")
 	}
+      elsif ($check_aux && grep { $_ eq $cfile } @toplevelmd_ok)
+        {
+          if (dir_has_case_matching_file ($config_aux_dir, "$cfile.md")
+	      || rule "$cfile.md")
+  	    {
+	      push_dist_common ("$cfile.md");
+	    }
+        }
     }
 
   # We might copy elements from @configure_dist_common to
@@ -4692,7 +4717,7 @@ sub handle_clean
 	     DIST_CLEAN, [],
 	     MAINTAINER_CLEAN, []);
 
-  foreach my $file (keys %clean_files)
+  foreach my $file (sort keys %clean_files)
     {
       my $when = $clean_files{$file};
       prog_error 'invalid entry in %clean_files'
@@ -4762,7 +4787,7 @@ sub handle_factored_dependencies ()
 	       . "not 'install-hook'");
 
   # Install the -local hooks.
-  foreach (keys %dependencies)
+  foreach (sort keys %dependencies)
     {
       # Hooks are installed on the -am targets.
       s/-am$// or next;
@@ -4784,7 +4809,7 @@ sub handle_factored_dependencies ()
     }
 
   # All the required targets are phony.
-  depend ('.PHONY', keys %required_targets);
+  depend ('.PHONY', sort keys %required_targets);
 
   # Actually output gathered targets.
   foreach (sort target_cmp keys %dependencies)
@@ -5114,11 +5139,12 @@ sub handle_minor_options ()
 		   "version '$package_version' doesn't follow " .
 		   "Gnits standards");
 	    }
-	  if (defined $1 && -f 'README-alpha')
+	  if (defined $1 && (-f 'README-alpha' || -f 'README-alpha.md'))
 	    {
 	      # This means we have an alpha release.  See
 	      # GNITS_VERSION_PATTERN for details.
-	      push_dist_common ('README-alpha');
+	      my $af = -f 'README-alpha' ? 'README-alpha' : 'README-alpha.md';
+	      push_dist_common ($af);
 	    }
 	}
     }
@@ -5260,7 +5286,7 @@ sub scan_autoconf_traces
   # has a precise meaning for AC_CONFIG_FILES and so on.
   $traces .= join (' ',
 		   map { "--trace=$_" . ':\$f:\$l::\$d::\$n::\${::}%' }
-		   (keys %traced));
+		   (sort keys %traced));
 
   verb "running WARNINGS=$ENV{WARNINGS} $traces";
   my $tracefh = new Automake::XFile ("$traces $filename |");
@@ -5605,8 +5631,16 @@ sub check_gnu_standards ()
   if ($relative_dir eq '.')
     {
       # In top level (or only) directory.
-      require_file ("$am_file.am", GNU,
-		    qw/INSTALL NEWS README AUTHORS ChangeLog/);
+
+      foreach my $file (@toplevelmd_ok)
+        {
+          next if $file eq 'THANKS'; # gnits, checked below
+          # if non-.md is absent, and .md is present, require .md;
+          # otherwise require non-.md.
+          my $required
+           = (! -f $file && -f "$file.md") ? "$file.md" : $file;
+          require_file ("$am_file.am", GNU, $required);
+        }
 
       # Accept one of these three licenses; default to COPYING.
       # Make sure we do not overwrite an existing license.
@@ -5637,7 +5671,10 @@ sub check_gnits_standards ()
   if ($relative_dir eq '.')
     {
       # In top level (or only) directory.
-      require_file ("$am_file.am", GNITS, 'THANKS');
+      my $file = 'THANKS';
+      my $required
+       = (! -f $file && -f "$file.md") ? "$file.md" : $file;
+      require_file ("$am_file.am", GNITS, $file);
     }
 }
 
@@ -5733,8 +5770,14 @@ sub lang_vala_finish_target
           my $built_c_file = "\$(builddir)/$c_file";
           my $built_dir = dirname $built_c_file;
           my $base_c_file = basename $c_file;
+          #
+          # The -newer test here is checking "C file not older than Vala
+          # file" (not "C file newer than Vala file"; see
+          # https://bugs.gnu.org/44772. The log message on the commit
+          # misleadingly says "reversed".
+          #
           $output_rules .= "$built_c_file: \$(builddir)/${derived}_vala.stamp\n"
-            . "\t\@if test ! -f \$@ && test \$(srcdir) != \$(builddir) && test -n \"\$\$(find -L \$(srcdir)/$c_file -prune -newer \$(srcdir)/$vala_file)\"; then cp -p \$(srcdir)/$c_file $built_c_file; fi\n"
+            . "\t\@if test ! -f \$@ && test \$(srcdir) != \$(builddir) && test -n \"\$\$(find -L \$(srcdir)/$vala_file -prune \! -newer \$(srcdir)/$c_file)\"; then cp -p \$(srcdir)/$c_file $built_c_file; fi\n"
             . "\t\@if test -f \$@; then :; else rm -f \$(builddir)/${derived}_vala.stamp; fi\n"
             . "\t\@if test -f \$@; then :; else \\\n"
             . "\t  \$(MAKE) \$(AM_MAKEFLAGS) \$(builddir)/${derived}_vala.stamp; \\\n"
@@ -5831,7 +5874,7 @@ sub lang_vala_finish ()
 {
   my ($self) = @_;
 
-  foreach my $prog (keys %known_programs)
+  foreach my $prog (sort keys %known_programs)
     {
       lang_vala_finish_target ($self, $prog);
     }
@@ -6317,8 +6360,12 @@ sub define_per_target_linker_variable
   my ($linker, $target) = @_;
 
   # If the user wrote a custom link command, we don't define ours.
-  return "${target}_LINK"
-    if set_seen "${target}_LINK";
+  my $custom_link = "${target}_LINK";
+  if (set_seen ($custom_link))
+    {
+      my $verbose = $custom_link if var (verbose_var ($custom_link));
+      return ($custom_link, $verbose);
+    }
 
   my $xlink = $linker ? $linker : 'LINK';
 
@@ -6820,6 +6867,7 @@ sub preprocess_file
 		 'SHAR'        => !! option 'dist-shar',
 		 'ZIP'         => !! option 'dist-zip',
 		 'ZSTD'        => !! option 'dist-zstd',
+		 'DIST_BUILT_SOURCES' => !! option 'dist-built-sources',
 
 		 'INSTALL-INFO' =>  ! option 'no-installinfo',
 		 'INSTALL-MAN'  =>  ! option 'no-installman',
@@ -7994,13 +8042,26 @@ sub generate_makefile
   handle_all ($makefile);
 
   # FIXME: Gross!
-  if (var ('lib_LTLIBRARIES') && var ('bin_PROGRAMS'))
+  my $have_lt1 = !!var("lib_LTLIBRARIES");
+  my $have_lt2 = !!var("nobase_lib_LTLIBRARIES");
+  for my $var (variables("PROGRAMS"), variables("LTLIBRARIES"))
     {
-      $output_rules .= "install-binPROGRAMS: install-libLTLIBRARIES\n\n";
-    }
-  if (var ('nobase_lib_LTLIBRARIES') && var ('bin_PROGRAMS'))
-    {
-      $output_rules .= "install-binPROGRAMS: install-nobase_libLTLIBRARIES\n\n";
+      if ($var->name eq "lib_LTLIBRARIES"
+          || $var->name eq "nobase_lib_LTLIBRARIES"
+          || substr($var->name, 0, 7) eq "noinst_")
+        {
+          next;
+        }
+      my $shortname = $var->name;
+      $shortname =~ tr{_}{}d;
+      if ($have_lt1)
+        {
+          $output_rules .= "install-$shortname: install-libLTLIBRARIES\n\n";
+        }
+      if ($have_lt2)
+        {
+          $output_rules .= "install-$shortname: install-nobase_libLTLIBRARIES\n\n";
+        }
     }
 
   handle_install;
@@ -8145,8 +8206,11 @@ Library files:
           "(always):\n";
     print_autodist_files @common_files;
     print "\nFiles automatically distributed if found " .
+          "(as .md if needed):\n";
+    print_autodist_files (map { "${_}[.md]" } @toplevelmd_ok);
+    print "\nFiles automatically distributed if found " .
           "(under certain conditions):\n";
-    print_autodist_files @common_sometimes;
+    print_autodist_files @common_sometimes, 'README-alpha[.md]';
 
     print '
 Report bugs to <bug-automake@gnu.org>.

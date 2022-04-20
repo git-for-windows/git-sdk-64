@@ -7,15 +7,23 @@
 #ifndef BOOST_MATH_BIG_NUM_DEF_OPS
 #define BOOST_MATH_BIG_NUM_DEF_OPS
 
-#include <boost/core/no_exceptions_support.hpp> // BOOST_TRY
-#include <boost/math/policies/error_handling.hpp>
+#include <boost/multiprecision/detail/standalone_config.hpp>
+#include <boost/multiprecision/detail/no_exceptions_support.hpp>
 #include <boost/multiprecision/detail/number_base.hpp>
+#include <boost/multiprecision/detail/assert.hpp>
+#include <boost/multiprecision/traits/is_backend.hpp>
+#include <boost/multiprecision/detail/fpclassify.hpp>
+#include <cstdint>
+#include <complex>
+#ifndef BOOST_NO_CXX17_HDR_STRING_VIEW
+#include <string_view>
+#endif
+
+#ifdef BOOST_MP_MATH_AVAILABLE
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/math/special_functions/next.hpp>
 #include <boost/math/special_functions/hypot.hpp>
-#include <cstdint>
-#ifndef BOOST_NO_CXX17_HDR_STRING_VIEW
-#include <string_view>
+#include <boost/math/policies/error_handling.hpp>
 #endif
 
 #ifndef INSTRUMENT_BACKEND
@@ -31,9 +39,6 @@ namespace boost {
 namespace multiprecision {
 
 namespace detail {
-
-template <class T>
-struct is_backend;
 
 template <class To, class From>
 void generic_interconvert(To& to, const From& from, const std::integral_constant<int, number_kind_floating_point>& /*to_type*/, const std::integral_constant<int, number_kind_integer>& /*from_type*/);
@@ -52,6 +57,23 @@ BOOST_MP_CXX14_CONSTEXPR Integer karatsuba_sqrt(const Integer& x, Integer& r, si
 } // namespace detail
 
 namespace default_ops {
+
+template <class T>
+BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<boost::multiprecision::detail::is_backend<T>::value, int>::type eval_signbit(const T& val);
+
+template <class T>
+inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<!boost::multiprecision::detail::is_backend<T>::value, int>::type eval_signbit(const T& val) { return val < 0; }
+
+inline int eval_signbit(float val) { return (std::signbit)(val); }
+inline int eval_signbit(double val) { return (std::signbit)(val); }
+inline int eval_signbit(long double val) { return (std::signbit)(val); }
+#ifdef BOOST_HAS_FLOAT128
+extern "C" int signbitq(float128_type) throw();
+inline int            eval_signbit(float128_type val) { return signbitq(val); }
+#endif
+
+template <class T>
+BOOST_MP_CXX14_CONSTEXPR bool eval_is_zero(const T& val);
 
 #ifdef BOOST_MSVC
 // warning C4127: conditional expression is constant
@@ -338,7 +360,14 @@ inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<std::is_convertible<U, n
    eval_subtract(t, u, vv);
 }
 template <class T, class U>
-inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<std::is_convertible<U, number<T, et_on> >::value && is_signed_number<T>::value>::type eval_subtract_default(T& t, const U& u, const T& v)
+inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<std::is_convertible<U, number<T, et_on> >::value && is_signed_number<T>::value && (number_category<T>::value != number_kind_complex)>::type eval_subtract_default(T& t, const U& u, const T& v)
+{
+   eval_subtract(t, v, u);
+   if(!eval_is_zero(t) || (eval_signbit(u) != eval_signbit(v)))
+      t.negate();
+}
+template <class T, class U>
+inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<std::is_convertible<U, number<T, et_on> >::value && is_signed_number<T>::value && (number_category<T>::value == number_kind_complex)>::type eval_subtract_default(T& t, const U& u, const T& v)
 {
    eval_subtract(t, v, u);
    t.negate();
@@ -980,7 +1009,10 @@ struct terminal
 template <class Tuple, int i, class T, bool = (i == std::tuple_size<Tuple>::value)>
 struct find_index_of_type
 {
-   static constexpr int value = std::is_same<T, typename std::tuple_element<i, Tuple>::type>::value ? i : find_index_of_type<Tuple, i + 1, T>::value;
+   static constexpr int value =
+      std::is_same<T, typename std::tuple_element<static_cast<std::size_t>(i), Tuple>::type>::value
+         ? i
+         : find_index_of_type<Tuple, i + 1, T>::value;
 };
 template <class Tuple, int i, class T>
 struct find_index_of_type<Tuple, i, T, true>
@@ -1001,7 +1033,7 @@ struct calculate_next_larger_type
            typename B::unsigned_types,
            typename B::float_types>::type>::type;
    static constexpr int start = find_index_of_type<list_type, 0, R>::value;
-   static constexpr int index_of_type = boost::multiprecision::detail::find_index_of_large_enough_type<list_type, start == INT_MAX ? 0 : start + 1, std::numeric_limits<R>::digits>::value;
+   static constexpr int index_of_type = boost::multiprecision::detail::find_index_of_large_enough_type<list_type, start == INT_MAX ? 0 : start + 1, boost::multiprecision::detail::bits_of<R>::value> ::value;
    using type = typename boost::multiprecision::detail::dereference_tuple<index_of_type, list_type, terminal<R> >::type;
 };
 
@@ -1067,6 +1099,7 @@ inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<std::is_enum<R>::value>:
    *result = static_cast<R>(t);
 }
 
+#ifndef BOOST_MP_STANDALONE
 template <class R, class B>
 inline void last_chance_eval_convert_to(terminal<R>* result, const B& backend, const std::integral_constant<bool, false>&)
 {
@@ -1076,11 +1109,11 @@ inline void last_chance_eval_convert_to(terminal<R>* result, const B& backend, c
    //
    BOOST_IF_CONSTEXPR (std::numeric_limits<R>::is_integer && !std::numeric_limits<R>::is_signed)
       if (eval_get_sign(backend) < 0)
-         BOOST_THROW_EXCEPTION(std::range_error("Attempt to convert negative value to an unsigned integer results in undefined behaviour"));
-   BOOST_TRY {
+         BOOST_MP_THROW_EXCEPTION(std::range_error("Attempt to convert negative value to an unsigned integer results in undefined behaviour"));
+   BOOST_MP_TRY {
       result->value = boost::lexical_cast<R>(backend.str(0, std::ios_base::fmtflags(0)));
    }
-   BOOST_CATCH (const bad_lexical_cast&)
+   BOOST_MP_CATCH (const bad_lexical_cast&)
    {
       if (eval_get_sign(backend) < 0)
       {
@@ -1094,7 +1127,7 @@ inline void last_chance_eval_convert_to(terminal<R>* result, const B& backend, c
       else
          *result = (std::numeric_limits<R>::max)();
    }
-   BOOST_CATCH_END
+   BOOST_MP_CATCH_END
 }
 
 template <class R, class B>
@@ -1106,20 +1139,34 @@ inline void last_chance_eval_convert_to(terminal<R>* result, const B& backend, c
    // a lexical_cast and hope for the best:
    //
    if (eval_get_sign(backend) < 0)
-      BOOST_THROW_EXCEPTION(std::range_error("Attempt to convert negative value to an unsigned integer results in undefined behaviour"));
-   BOOST_TRY {
+      BOOST_MP_THROW_EXCEPTION(std::range_error("Attempt to convert negative value to an unsigned integer results in undefined behaviour"));
+   BOOST_MP_TRY {
       B t(backend);
       R mask = ~static_cast<R>(0u);
       eval_bitwise_and(t, mask);
       result->value = boost::lexical_cast<R>(t.str(0, std::ios_base::fmtflags(0)));
    }
-   BOOST_CATCH (const bad_lexical_cast&)
+   BOOST_MP_CATCH (const bad_lexical_cast&)
    {
       // We should never really get here...
       *result = (std::numeric_limits<R>::max)();
    }
-   BOOST_CATCH_END
+   BOOST_MP_CATCH_END
 }
+#else // Using standalone mode
+
+template <class R, class B>
+inline void last_chance_eval_convert_to(terminal<R>*, const B&, const std::integral_constant<bool, false>&)
+{
+   static_assert(sizeof(R) == 1, "This type can not be used in standalone mode. Please de-activate and file a bug at https://github.com/boostorg/multiprecision/");
+}
+
+template <class R, class B>
+inline void last_chance_eval_convert_to(terminal<R>* result, const B& backend, const std::integral_constant<bool, true>&)
+{
+   static_assert(sizeof(R) == 1, "This type can not be used in standalone mode. Please de-activate and file a bug at https://github.com/boostorg/multiprecision/");
+}
+#endif
 
 template <class R, class B>
 inline BOOST_MP_CXX14_CONSTEXPR void eval_convert_to(terminal<R>* result, const B& backend)
@@ -1286,6 +1333,11 @@ inline BOOST_MP_CXX14_CONSTEXPR void eval_remquo(T& result, const T& a, const T&
    eval_convert_to(pi, n);
    eval_multiply(n, b);
    eval_subtract(result, a, n);
+   if (eval_is_zero(result))
+   {
+      if (eval_signbit(a))
+         result.negate();
+   }
 }
 template <class T, class A>
 inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<boost::multiprecision::detail::is_arithmetic<A>::value, void>::type eval_remquo(T& result, const T& x, const A& a, int* pi)
@@ -1357,7 +1409,7 @@ inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<boost::multiprecision::d
    using arithmetic_type = typename boost::multiprecision::detail::canonical<A, T>::type       ;
    const ui_type                                                                zero        = 0u;
    arithmetic_type                                                              canonical_b = b;
-   switch ((::boost::math::fpclassify)(b))
+   switch (BOOST_MP_FPCLASSIFY(b))
    {
    case FP_NAN:
    case FP_INFINITE:
@@ -1395,7 +1447,7 @@ inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<boost::multiprecision::d
       result = zero;
       return;
    }
-   switch ((::boost::math::fpclassify)(a))
+   switch (BOOST_MP_FPCLASSIFY(a))
    {
    case FP_NAN:
       result = zero;
@@ -1437,14 +1489,14 @@ inline BOOST_MP_CXX14_CONSTEXPR void eval_modf(T& result, T const& arg, T* pipar
 {
    using ui_type = typename boost::multiprecision::detail::canonical<unsigned, T>::type;
    int                                                                          c = eval_fpclassify(arg);
-   if (c == (int)FP_NAN)
+   if (c == static_cast<int>(FP_NAN))
    {
       if (pipart)
          *pipart = arg;
       result = arg;
       return;
    }
-   else if (c == (int)FP_INFINITE)
+   else if (c == static_cast<int>(FP_INFINITE))
    {
       if (pipart)
          *pipart = arg;
@@ -1470,13 +1522,13 @@ inline BOOST_MP_CXX14_CONSTEXPR void eval_round(T& result, const T& a)
    static_assert(number_category<T>::value == number_kind_floating_point, "The round function is only valid for floating point types.");
    using fp_type = typename boost::multiprecision::detail::canonical<float, T>::type;
    int                                                                       c = eval_fpclassify(a);
-   if (c == (int)FP_NAN)
+   if (c == static_cast<int>(FP_NAN))
    {
       result = a;
       errno  = EDOM;
       return;
    }
-   if ((c == FP_ZERO) || (c == (int)FP_INFINITE))
+   if ((c == FP_ZERO) || (c == static_cast<int>(FP_INFINITE)))
    {
       result = a;
    }
@@ -1527,19 +1579,19 @@ inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<boost::multiprecision::d
 }
 
 template <class T>
-inline BOOST_MP_CXX14_CONSTEXPR unsigned eval_lsb(const T& val)
+inline BOOST_MP_CXX14_CONSTEXPR std::size_t eval_lsb(const T& val)
 {
    using ui_type = typename boost::multiprecision::detail::canonical<unsigned, T>::type;
    int                                                                          c = eval_get_sign(val);
    if (c == 0)
    {
-      BOOST_THROW_EXCEPTION(std::domain_error("No bits were set in the operand."));
+      BOOST_MP_THROW_EXCEPTION(std::domain_error("No bits were set in the operand."));
    }
    if (c < 0)
    {
-      BOOST_THROW_EXCEPTION(std::domain_error("Testing individual bits in negative values is not supported - results are undefined."));
+      BOOST_MP_THROW_EXCEPTION(std::domain_error("Testing individual bits in negative values is not supported - results are undefined."));
    }
-   unsigned result = 0;
+   std::size_t result = 0;
    T        mask, t;
    mask = ui_type(1);
    do
@@ -1553,16 +1605,16 @@ inline BOOST_MP_CXX14_CONSTEXPR unsigned eval_lsb(const T& val)
 }
 
 template <class T>
-inline BOOST_MP_CXX14_CONSTEXPR int eval_msb(const T& val)
+inline BOOST_MP_CXX14_CONSTEXPR std::ptrdiff_t eval_msb(const T& val)
 {
    int c = eval_get_sign(val);
    if (c == 0)
    {
-      BOOST_THROW_EXCEPTION(std::domain_error("No bits were set in the operand."));
+      BOOST_MP_THROW_EXCEPTION(std::domain_error("No bits were set in the operand."));
    }
    if (c < 0)
    {
-      BOOST_THROW_EXCEPTION(std::domain_error("Testing individual bits in negative values is not supported - results are undefined."));
+      BOOST_MP_THROW_EXCEPTION(std::domain_error("Testing individual bits in negative values is not supported - results are undefined."));
    }
    //
    // This implementation is really really rubbish - it does
@@ -1572,7 +1624,7 @@ inline BOOST_MP_CXX14_CONSTEXPR int eval_msb(const T& val)
    // backends it's likely that there will always be a more efficient
    // native implementation possible.
    //
-   unsigned result = 0;
+   std::size_t result = 0;
    T        t(val);
    while (!eval_is_zero(t))
    {
@@ -1583,7 +1635,7 @@ inline BOOST_MP_CXX14_CONSTEXPR int eval_msb(const T& val)
 }
 
 template <class T>
-inline BOOST_MP_CXX14_CONSTEXPR bool eval_bit_test(const T& val, unsigned index)
+inline BOOST_MP_CXX14_CONSTEXPR bool eval_bit_test(const T& val, std::size_t index)
 {
    using ui_type = typename boost::multiprecision::detail::canonical<unsigned, T>::type;
    T                                                                            mask, t;
@@ -1594,7 +1646,7 @@ inline BOOST_MP_CXX14_CONSTEXPR bool eval_bit_test(const T& val, unsigned index)
 }
 
 template <class T>
-inline BOOST_MP_CXX14_CONSTEXPR void eval_bit_set(T& val, unsigned index)
+inline BOOST_MP_CXX14_CONSTEXPR void eval_bit_set(T& val, std::size_t index)
 {
    using ui_type = typename boost::multiprecision::detail::canonical<unsigned, T>::type;
    T                                                                            mask;
@@ -1604,7 +1656,7 @@ inline BOOST_MP_CXX14_CONSTEXPR void eval_bit_set(T& val, unsigned index)
 }
 
 template <class T>
-inline BOOST_MP_CXX14_CONSTEXPR void eval_bit_flip(T& val, unsigned index)
+inline BOOST_MP_CXX14_CONSTEXPR void eval_bit_flip(T& val, std::size_t index)
 {
    using ui_type = typename boost::multiprecision::detail::canonical<unsigned, T>::type;
    T                                                                            mask;
@@ -1614,7 +1666,7 @@ inline BOOST_MP_CXX14_CONSTEXPR void eval_bit_flip(T& val, unsigned index)
 }
 
 template <class T>
-inline BOOST_MP_CXX14_CONSTEXPR void eval_bit_unset(T& val, unsigned index)
+inline BOOST_MP_CXX14_CONSTEXPR void eval_bit_unset(T& val, std::size_t index)
 {
    using ui_type = typename boost::multiprecision::detail::canonical<unsigned, T>::type;
    T                                                                            mask, t;
@@ -1649,7 +1701,7 @@ BOOST_MP_CXX14_CONSTEXPR void eval_karatsuba_sqrt(Backend& result, const Backend
 #ifdef BOOST_HAS_INT128
    if (bits <= 128)
    {
-      unsigned __int128 a{}, b{}, c{};
+      uint128_type a{}, b{}, c{};
       eval_convert_to(&a, x);
       c = boost::multiprecision::detail::karatsuba_sqrt(a, b, bits);
       r = number<Backend>::canonical_value(b);
@@ -1722,7 +1774,7 @@ void BOOST_MP_CXX14_CONSTEXPR eval_integer_sqrt_bitwise(B& s, B& r, const B& x)
       r = ui_type(0u);
       return;
    }
-   int g = eval_msb(x);
+   std::ptrdiff_t g = eval_msb(x);
    if (g <= 1)
    {
       s = ui_type(1);
@@ -1733,14 +1785,14 @@ void BOOST_MP_CXX14_CONSTEXPR eval_integer_sqrt_bitwise(B& s, B& r, const B& x)
    B t;
    r = x;
    g /= 2;
-   int org_g = g;
+   std::ptrdiff_t org_g = g;
    eval_bit_set(s, g);
    eval_bit_set(t, 2 * g);
    eval_subtract(r, x, t);
    --g;
    if (eval_get_sign(r) == 0)
       return;
-   int msbr = eval_msb(r);
+   std::ptrdiff_t msbr = eval_msb(r);
    do
    {
       if (msbr >= org_g + g + 1)
@@ -1750,7 +1802,7 @@ void BOOST_MP_CXX14_CONSTEXPR eval_integer_sqrt_bitwise(B& s, B& r, const B& x)
          eval_bit_set(t, 2 * g);
          if (t.compare(r) <= 0)
          {
-            BOOST_ASSERT(g >= 0);
+            BOOST_MP_ASSERT(g >= 0);
             eval_bit_set(s, g);
             eval_subtract(r, t);
             if (eval_get_sign(r) == 0)
@@ -1845,9 +1897,6 @@ inline BOOST_MP_CXX14_CONSTEXPR typename B::exponent_type eval_ilogb(const B& va
    return e - 1;
 }
 
-template <class T>
-BOOST_MP_CXX14_CONSTEXPR int eval_signbit(const T& val);
-
 template <class B>
 inline BOOST_MP_CXX14_CONSTEXPR void eval_logb(B& result, const B& val)
 {
@@ -1868,7 +1917,7 @@ inline BOOST_MP_CXX14_CONSTEXPR void eval_logb(B& result, const B& val)
          result.negate();
       return;
    }
-   using max_t = typename std::conditional<std::is_same<std::intmax_t, long>::value, boost::long_long_type, std::intmax_t>::type;
+   using max_t = typename std::conditional<std::is_same<std::intmax_t, long>::value, long long, std::intmax_t>::type;
    result = static_cast<max_t>(eval_ilogb(val));
 }
 template <class B, class A>
@@ -1891,7 +1940,7 @@ inline BOOST_MP_CXX14_CONSTEXPR bool is_arg_nan(const T& val, std::integral_cons
 template <class T>
 inline BOOST_MP_CXX14_CONSTEXPR bool is_arg_nan(const T& val, std::integral_constant<bool, false> const&, const std::integral_constant<bool, true>&)
 {
-   return (boost::math::isnan)(val);
+   return BOOST_MP_ISNAN(val);
 }
 template <class T>
 inline BOOST_MP_CXX14_CONSTEXPR bool is_arg_nan(const T&, std::integral_constant<bool, false> const&, const std::integral_constant<bool, false>&)
@@ -2006,7 +2055,7 @@ inline BOOST_MP_CXX14_CONSTEXPR void eval_rint(R& result, const T& a)
 }
 
 template <class T>
-inline BOOST_MP_CXX14_CONSTEXPR int eval_signbit(const T& val)
+inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<boost::multiprecision::detail::is_backend<T>::value, int>::type eval_signbit(const T& val)
 {
    return eval_get_sign(val) < 0 ? 1 : 0;
 }
@@ -2106,7 +2155,7 @@ template <class Backend, multiprecision::expression_template_option ExpressionTe
 inline BOOST_MP_CXX14_CONSTEXPR bool isfinite BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::number<Backend, ExpressionTemplates>& arg)
 {
    int v = fpclassify BOOST_PREVENT_MACRO_SUBSTITUTION(arg);
-   return (v != (int)FP_INFINITE) && (v != (int)FP_NAN);
+   return (v != static_cast<int>(FP_INFINITE)) && (v != static_cast<int>(FP_NAN));
 }
 template <class tag, class A1, class A2, class A3, class A4>
 inline BOOST_MP_CXX14_CONSTEXPR bool isfinite BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::detail::expression<tag, A1, A2, A3, A4>& arg)
@@ -2117,7 +2166,7 @@ inline BOOST_MP_CXX14_CONSTEXPR bool isfinite BOOST_PREVENT_MACRO_SUBSTITUTION(c
 template <class Backend, multiprecision::expression_template_option ExpressionTemplates>
 inline BOOST_MP_CXX14_CONSTEXPR bool isnan BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::number<Backend, ExpressionTemplates>& arg)
 {
-   return fpclassify BOOST_PREVENT_MACRO_SUBSTITUTION(arg) == (int)FP_NAN;
+   return fpclassify BOOST_PREVENT_MACRO_SUBSTITUTION(arg) == static_cast<int>(FP_NAN);
 }
 template <class tag, class A1, class A2, class A3, class A4>
 inline BOOST_MP_CXX14_CONSTEXPR bool isnan BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::detail::expression<tag, A1, A2, A3, A4>& arg)
@@ -2128,7 +2177,7 @@ inline BOOST_MP_CXX14_CONSTEXPR bool isnan BOOST_PREVENT_MACRO_SUBSTITUTION(cons
 template <class Backend, multiprecision::expression_template_option ExpressionTemplates>
 inline BOOST_MP_CXX14_CONSTEXPR bool isinf BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::number<Backend, ExpressionTemplates>& arg)
 {
-   return fpclassify BOOST_PREVENT_MACRO_SUBSTITUTION(arg) == (int)FP_INFINITE;
+   return fpclassify BOOST_PREVENT_MACRO_SUBSTITUTION(arg) == static_cast<int>(FP_INFINITE);
 }
 template <class tag, class A1, class A2, class A3, class A4>
 inline BOOST_MP_CXX14_CONSTEXPR bool isinf BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::detail::expression<tag, A1, A2, A3, A4>& arg)
@@ -2139,7 +2188,7 @@ inline BOOST_MP_CXX14_CONSTEXPR bool isinf BOOST_PREVENT_MACRO_SUBSTITUTION(cons
 template <class Backend, multiprecision::expression_template_option ExpressionTemplates>
 inline BOOST_MP_CXX14_CONSTEXPR bool isnormal BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::number<Backend, ExpressionTemplates>& arg)
 {
-   return fpclassify BOOST_PREVENT_MACRO_SUBSTITUTION(arg) == (int)FP_NORMAL;
+   return fpclassify BOOST_PREVENT_MACRO_SUBSTITUTION(arg) == static_cast<int>(FP_NORMAL);
 }
 template <class tag, class A1, class A2, class A3, class A4>
 inline BOOST_MP_CXX14_CONSTEXPR bool isnormal BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::detail::expression<tag, A1, A2, A3, A4>& arg)
@@ -2164,16 +2213,16 @@ inline BOOST_MP_CXX14_CONSTEXPR int sign BOOST_PREVENT_MACRO_SUBSTITUTION(const 
 }
 
 template <class Backend, multiprecision::expression_template_option ExpressionTemplates>
-inline BOOST_MP_CXX14_CONSTEXPR int signbit BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::number<Backend, ExpressionTemplates>& arg)
+inline BOOST_MP_CXX14_CONSTEXPR bool signbit BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::number<Backend, ExpressionTemplates>& arg)
 {
    using default_ops::eval_signbit;
-   return eval_signbit(arg.backend());
+   return static_cast<bool>(eval_signbit(arg.backend()));
 }
 template <class tag, class A1, class A2, class A3, class A4>
-inline BOOST_MP_CXX14_CONSTEXPR int signbit BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::detail::expression<tag, A1, A2, A3, A4>& arg)
+inline BOOST_MP_CXX14_CONSTEXPR bool signbit BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::detail::expression<tag, A1, A2, A3, A4>& arg)
 {
    using value_type = typename multiprecision::detail::expression<tag, A1, A2, A3, A4>::result_type;
-   return signbit                                                                        BOOST_PREVENT_MACRO_SUBSTITUTION(value_type(arg));
+   return static_cast<bool>(signbit BOOST_PREVENT_MACRO_SUBSTITUTION(value_type(arg)));
 }
 template <class Backend, multiprecision::expression_template_option ExpressionTemplates>
 inline BOOST_MP_CXX14_CONSTEXPR multiprecision::number<Backend, ExpressionTemplates> changesign BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::number<Backend, ExpressionTemplates>& arg)
@@ -2255,14 +2304,15 @@ imag(const multiprecision::detail::expression<tag, A1, A2, A3, A4>& arg)
 // Complex number functions, these are overloaded at the Backend level, we just provide the
 // expression template versions here, plus overloads for non-complex types:
 //
+#ifdef BOOST_MP_MATH_AVAILABLE
 template <class T, expression_template_option ExpressionTemplates>
-inline BOOST_MP_CXX14_CONSTEXPR typename boost::lazy_enable_if_c<number_category<T>::value == number_kind_complex, component_type<number<T, ExpressionTemplates> > >::type
+inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<number_category<T>::value == number_kind_complex, component_type<number<T, ExpressionTemplates>>>::type::type
 abs(const number<T, ExpressionTemplates>& v)
 {
    return std::move(boost::math::hypot(real(v), imag(v)));
 }
 template <class tag, class A1, class A2, class A3, class A4>
-inline BOOST_MP_CXX14_CONSTEXPR typename boost::lazy_enable_if_c<number_category<typename detail::expression<tag, A1, A2, A3, A4>::result_type>::value == number_kind_complex, component_type<typename detail::expression<tag, A1, A2, A3, A4>::result_type> >::type
+inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<number_category<typename detail::expression<tag, A1, A2, A3, A4>::result_type>::value == number_kind_complex, component_type<typename detail::expression<tag, A1, A2, A3, A4>::result_type>>::type::type
 abs(const detail::expression<tag, A1, A2, A3, A4>& v)
 {
    using number_type = typename detail::expression<tag, A1, A2, A3, A4>::result_type;
@@ -2288,9 +2338,10 @@ arg(const detail::expression<tag, A1, A2, A3, A4>& v)
    using number_type = typename detail::expression<tag, A1, A2, A3, A4>::result_type;
    return std::move(arg(static_cast<number_type>(v)));
 }
+#endif // BOOST_MP_MATH_AVAILABLE
 
 template <class T, expression_template_option ExpressionTemplates>
-inline BOOST_MP_CXX14_CONSTEXPR typename boost::lazy_enable_if_c<number_category<T>::value == number_kind_complex, component_type<number<T, ExpressionTemplates> > >::type
+inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<number_category<T>::value == number_kind_complex, component_type<number<T, ExpressionTemplates>>>::type::type
 norm(const number<T, ExpressionTemplates>& v)
 {
    typename component_type<number<T, ExpressionTemplates> >::type a(real(v)), b(imag(v));
@@ -2391,10 +2442,49 @@ using boost::multiprecision::isnormal;
 using boost::multiprecision::sign;
 using boost::multiprecision::signbit;
 
+#ifndef BOOST_MP_MATH_AVAILABLE
+namespace policies {
+
+template <typename... Args>
+class policy {};
+
+template <typename T1, typename T2, typename T3, typename T4, typename T5>
+void raise_rounding_error(T1, T2, T3, T4, T5)
+{
+   BOOST_MP_THROW_EXCEPTION(std::runtime_error("Rounding error"));
+}
+
+template <typename T1, typename T2, typename T3, typename T4, typename T5>
+void raise_overflow_error(T1, T2, T3, T4, T5)
+{
+   BOOST_MP_THROW_EXCEPTION(std::runtime_error("Overflow error"));
+}
+
+template <typename T1, typename T2, typename T3, typename T4, typename T5>
+void raise_evaluation_error(T1, T2, T3, T4, T5)
+{
+   BOOST_MP_THROW_EXCEPTION(std::runtime_error("Evaluation error"));
+}
+
+template <typename T, typename... Args>
+struct is_policy
+{
+   static constexpr bool value = false;
+};
+
+template <typename... Args>
+struct is_policy<policy<Args...>>
+{
+   static constexpr bool value = true;
+};
+
+} // namespace policies
+#endif
+
 } // namespace math
 
 namespace multiprecision {
-
+#ifdef BOOST_MP_MATH_AVAILABLE
 using c99_error_policy = ::boost::math::policies::policy<
     ::boost::math::policies::domain_error< ::boost::math::policies::errno_on_error>,
     ::boost::math::policies::pole_error< ::boost::math::policies::errno_on_error>,
@@ -2556,12 +2646,12 @@ inline BOOST_MP_CXX14_CONSTEXPR long lrint BOOST_PREVENT_MACRO_SUBSTITUTION(cons
 }
 #ifndef BOOST_NO_LONG_LONG
 template <class Backend, multiprecision::expression_template_option ExpressionTemplates>
-inline BOOST_MP_CXX14_CONSTEXPR boost::long_long_type llrint BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::number<Backend, ExpressionTemplates>& arg)
+inline BOOST_MP_CXX14_CONSTEXPR long long llrint BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::number<Backend, ExpressionTemplates>& arg)
 {
    return llround(arg);
 }
 template <class tag, class A1, class A2, class A3, class A4>
-inline BOOST_MP_CXX14_CONSTEXPR boost::long_long_type llrint BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::detail::expression<tag, A1, A2, A3, A4>& arg)
+inline BOOST_MP_CXX14_CONSTEXPR long long llrint BOOST_PREVENT_MACRO_SUBSTITUTION(const multiprecision::detail::expression<tag, A1, A2, A3, A4>& arg)
 {
    return llround(arg);
 }
@@ -2630,6 +2720,7 @@ inline BOOST_MP_CXX14_CONSTEXPR typename multiprecision::detail::expression<tag,
    detail::scoped_default_precision<value_type>                                          precision_guard(a, b);
    return nexttoward                                                                     BOOST_PREVENT_MACRO_SUBSTITUTION(value_type(a), value_type(b));
 }
+#endif // BOOST_MP_MATH_AVAILABLE
 
 template <class B1, class B2, class B3, expression_template_option ET1, expression_template_option ET2, expression_template_option ET3>
 inline BOOST_MP_CXX14_CONSTEXPR number<B1, ET1>& add(number<B1, ET1>& result, const number<B2, ET2>& a, const number<B3, ET3>& b)
@@ -2713,7 +2804,7 @@ inline BOOST_MP_CXX14_CONSTEXPR int itrunc(const detail::expression<tag, A1, A2,
 {
    using number_type = typename detail::expression<tag, A1, A2, A3, A4>::result_type;
    number_type                                                           r(trunc(v, pol));
-   if ((r > (std::numeric_limits<int>::max)()) || r < (std::numeric_limits<int>::min)() || !(boost::math::isfinite)(v))
+   if ((r > (std::numeric_limits<int>::max)()) || r < (std::numeric_limits<int>::min)() || !BOOST_MP_ISFINITE(v))
       return boost::math::policies::raise_rounding_error("boost::multiprecision::itrunc<%1%>(%1%)", 0, number_type(v), 0, pol);
    return r.template convert_to<int>();
 }
@@ -2726,7 +2817,7 @@ template <class Backend, expression_template_option ExpressionTemplates, class P
 inline BOOST_MP_CXX14_CONSTEXPR int itrunc(const number<Backend, ExpressionTemplates>& v, const Policy& pol)
 {
    number<Backend, ExpressionTemplates> r(trunc(v, pol));
-   if ((r > (std::numeric_limits<int>::max)()) || r < (std::numeric_limits<int>::min)() || !(boost::math::isfinite)(v))
+   if ((r > (std::numeric_limits<int>::max)()) || r < (std::numeric_limits<int>::min)() || !BOOST_MP_ISFINITE(v))
       return boost::math::policies::raise_rounding_error("boost::multiprecision::itrunc<%1%>(%1%)", 0, v, 0, pol);
    return r.template convert_to<int>();
 }
@@ -2740,7 +2831,7 @@ inline BOOST_MP_CXX14_CONSTEXPR long ltrunc(const detail::expression<tag, A1, A2
 {
    using number_type = typename detail::expression<tag, A1, A2, A3, A4>::result_type;
    number_type                                                           r(trunc(v, pol));
-   if ((r > (std::numeric_limits<long>::max)()) || r < (std::numeric_limits<long>::min)() || !(boost::math::isfinite)(v))
+   if ((r > (std::numeric_limits<long>::max)()) || r < (std::numeric_limits<long>::min)() || !BOOST_MP_ISFINITE(v))
       return boost::math::policies::raise_rounding_error("boost::multiprecision::ltrunc<%1%>(%1%)", 0, number_type(v), 0L, pol);
    return r.template convert_to<long>();
 }
@@ -2753,7 +2844,7 @@ template <class T, expression_template_option ExpressionTemplates, class Policy>
 inline BOOST_MP_CXX14_CONSTEXPR long ltrunc(const number<T, ExpressionTemplates>& v, const Policy& pol)
 {
    number<T, ExpressionTemplates> r(trunc(v, pol));
-   if ((r > (std::numeric_limits<long>::max)()) || r < (std::numeric_limits<long>::min)() || !(boost::math::isfinite)(v))
+   if ((r > (std::numeric_limits<long>::max)()) || r < (std::numeric_limits<long>::min)() || !BOOST_MP_ISFINITE(v))
       return boost::math::policies::raise_rounding_error("boost::multiprecision::ltrunc<%1%>(%1%)", 0, v, 0L, pol);
    return r.template convert_to<long>();
 }
@@ -2764,29 +2855,29 @@ inline BOOST_MP_CXX14_CONSTEXPR long ltrunc(const number<T, ExpressionTemplates>
 }
 #ifndef BOOST_NO_LONG_LONG
 template <class tag, class A1, class A2, class A3, class A4, class Policy>
-inline BOOST_MP_CXX14_CONSTEXPR boost::long_long_type lltrunc(const detail::expression<tag, A1, A2, A3, A4>& v, const Policy& pol)
+inline BOOST_MP_CXX14_CONSTEXPR long long lltrunc(const detail::expression<tag, A1, A2, A3, A4>& v, const Policy& pol)
 {
    using number_type = typename detail::expression<tag, A1, A2, A3, A4>::result_type;
    number_type                                                           r(trunc(v, pol));
-   if ((r > (std::numeric_limits<boost::long_long_type>::max)()) || r < (std::numeric_limits<boost::long_long_type>::min)() || !(boost::math::isfinite)(v))
+   if ((r > (std::numeric_limits<long long>::max)()) || r < (std::numeric_limits<long long>::min)() || !BOOST_MP_ISFINITE(v))
       return boost::math::policies::raise_rounding_error("boost::multiprecision::lltrunc<%1%>(%1%)", 0, number_type(v), 0LL, pol);
-   return r.template convert_to<boost::long_long_type>();
+   return r.template convert_to<long long>();
 }
 template <class tag, class A1, class A2, class A3, class A4>
-inline BOOST_MP_CXX14_CONSTEXPR boost::long_long_type lltrunc(const detail::expression<tag, A1, A2, A3, A4>& v)
+inline BOOST_MP_CXX14_CONSTEXPR long long lltrunc(const detail::expression<tag, A1, A2, A3, A4>& v)
 {
    return lltrunc(v, boost::math::policies::policy<>());
 }
 template <class T, expression_template_option ExpressionTemplates, class Policy>
-inline BOOST_MP_CXX14_CONSTEXPR boost::long_long_type lltrunc(const number<T, ExpressionTemplates>& v, const Policy& pol)
+inline BOOST_MP_CXX14_CONSTEXPR long long lltrunc(const number<T, ExpressionTemplates>& v, const Policy& pol)
 {
    number<T, ExpressionTemplates> r(trunc(v, pol));
-   if ((r > (std::numeric_limits<boost::long_long_type>::max)()) || r < (std::numeric_limits<boost::long_long_type>::min)() || !(boost::math::isfinite)(v))
+   if ((r > (std::numeric_limits<long long>::max)()) || r < (std::numeric_limits<long long>::min)() || !BOOST_MP_ISFINITE(v))
       return boost::math::policies::raise_rounding_error("boost::multiprecision::lltrunc<%1%>(%1%)", 0, v, 0LL, pol);
-   return r.template convert_to<boost::long_long_type>();
+   return r.template convert_to<long long>();
 }
 template <class T, expression_template_option ExpressionTemplates>
-inline BOOST_MP_CXX14_CONSTEXPR boost::long_long_type lltrunc(const number<T, ExpressionTemplates>& v)
+inline BOOST_MP_CXX14_CONSTEXPR long long lltrunc(const number<T, ExpressionTemplates>& v)
 {
    return lltrunc(v, boost::math::policies::policy<>());
 }
@@ -2812,7 +2903,7 @@ inline BOOST_MP_CXX14_CONSTEXPR int iround(const detail::expression<tag, A1, A2,
 {
    using number_type = typename detail::expression<tag, A1, A2, A3, A4>::result_type;
    number_type                                                           r(round(v, pol));
-   if ((r > (std::numeric_limits<int>::max)()) || r < (std::numeric_limits<int>::min)() || !(boost::math::isfinite)(v))
+   if ((r > (std::numeric_limits<int>::max)()) || r < (std::numeric_limits<int>::min)() || !BOOST_MP_ISFINITE(v))
       return boost::math::policies::raise_rounding_error("boost::multiprecision::iround<%1%>(%1%)", 0, number_type(v), 0, pol);
    return r.template convert_to<int>();
 }
@@ -2825,7 +2916,7 @@ template <class T, expression_template_option ExpressionTemplates, class Policy>
 inline BOOST_MP_CXX14_CONSTEXPR int iround(const number<T, ExpressionTemplates>& v, const Policy& pol)
 {
    number<T, ExpressionTemplates> r(round(v, pol));
-   if ((r > (std::numeric_limits<int>::max)()) || r < (std::numeric_limits<int>::min)() || !(boost::math::isfinite)(v))
+   if ((r > (std::numeric_limits<int>::max)()) || r < (std::numeric_limits<int>::min)() || !BOOST_MP_ISFINITE(v))
       return boost::math::policies::raise_rounding_error("boost::multiprecision::iround<%1%>(%1%)", 0, v, 0, pol);
    return r.template convert_to<int>();
 }
@@ -2839,7 +2930,7 @@ inline BOOST_MP_CXX14_CONSTEXPR long lround(const detail::expression<tag, A1, A2
 {
    using number_type = typename detail::expression<tag, A1, A2, A3, A4>::result_type;
    number_type                                                           r(round(v, pol));
-   if ((r > (std::numeric_limits<long>::max)()) || r < (std::numeric_limits<long>::min)() || !(boost::math::isfinite)(v))
+   if ((r > (std::numeric_limits<long>::max)()) || r < (std::numeric_limits<long>::min)() || !BOOST_MP_ISFINITE(v))
       return boost::math::policies::raise_rounding_error("boost::multiprecision::lround<%1%>(%1%)", 0, number_type(v), 0L, pol);
    return r.template convert_to<long>();
 }
@@ -2852,7 +2943,7 @@ template <class T, expression_template_option ExpressionTemplates, class Policy>
 inline BOOST_MP_CXX14_CONSTEXPR long lround(const number<T, ExpressionTemplates>& v, const Policy& pol)
 {
    number<T, ExpressionTemplates> r(round(v, pol));
-   if ((r > (std::numeric_limits<long>::max)()) || r < (std::numeric_limits<long>::min)() || !(boost::math::isfinite)(v))
+   if ((r > (std::numeric_limits<long>::max)()) || r < (std::numeric_limits<long>::min)() || !BOOST_MP_ISFINITE(v))
       return boost::math::policies::raise_rounding_error("boost::multiprecision::lround<%1%>(%1%)", 0, v, 0L, pol);
    return r.template convert_to<long>();
 }
@@ -2863,29 +2954,29 @@ inline BOOST_MP_CXX14_CONSTEXPR long lround(const number<T, ExpressionTemplates>
 }
 #ifndef BOOST_NO_LONG_LONG
 template <class tag, class A1, class A2, class A3, class A4, class Policy>
-inline BOOST_MP_CXX14_CONSTEXPR boost::long_long_type llround(const detail::expression<tag, A1, A2, A3, A4>& v, const Policy& pol)
+inline BOOST_MP_CXX14_CONSTEXPR long long llround(const detail::expression<tag, A1, A2, A3, A4>& v, const Policy& pol)
 {
    using number_type = typename detail::expression<tag, A1, A2, A3, A4>::result_type;
    number_type                                                           r(round(v, pol));
-   if ((r > (std::numeric_limits<boost::long_long_type>::max)()) || r < (std::numeric_limits<boost::long_long_type>::min)() || !(boost::math::isfinite)(v))
+   if ((r > (std::numeric_limits<long long>::max)()) || r < (std::numeric_limits<long long>::min)() || !BOOST_MP_ISFINITE(v))
       return boost::math::policies::raise_rounding_error("boost::multiprecision::iround<%1%>(%1%)", 0, number_type(v), 0LL, pol);
-   return r.template convert_to<boost::long_long_type>();
+   return r.template convert_to<long long>();
 }
 template <class tag, class A1, class A2, class A3, class A4>
-inline BOOST_MP_CXX14_CONSTEXPR boost::long_long_type llround(const detail::expression<tag, A1, A2, A3, A4>& v)
+inline BOOST_MP_CXX14_CONSTEXPR long long llround(const detail::expression<tag, A1, A2, A3, A4>& v)
 {
    return llround(v, boost::math::policies::policy<>());
 }
 template <class T, expression_template_option ExpressionTemplates, class Policy>
-inline BOOST_MP_CXX14_CONSTEXPR boost::long_long_type llround(const number<T, ExpressionTemplates>& v, const Policy& pol)
+inline BOOST_MP_CXX14_CONSTEXPR long long llround(const number<T, ExpressionTemplates>& v, const Policy& pol)
 {
    number<T, ExpressionTemplates> r(round(v, pol));
-   if ((r > (std::numeric_limits<boost::long_long_type>::max)()) || r < (std::numeric_limits<boost::long_long_type>::min)() || !(boost::math::isfinite)(v))
+   if ((r > (std::numeric_limits<long long>::max)()) || r < (std::numeric_limits<long long>::min)() || !BOOST_MP_ISFINITE(v))
       return boost::math::policies::raise_rounding_error("boost::multiprecision::iround<%1%>(%1%)", 0, v, 0LL, pol);
-   return r.template convert_to<boost::long_long_type>();
+   return r.template convert_to<long long>();
 }
 template <class T, expression_template_option ExpressionTemplates>
-inline BOOST_MP_CXX14_CONSTEXPR boost::long_long_type llround(const number<T, ExpressionTemplates>& v)
+inline BOOST_MP_CXX14_CONSTEXPR long long llround(const number<T, ExpressionTemplates>& v)
 {
    return llround(v, boost::math::policies::policy<>());
 }
@@ -2944,7 +3035,7 @@ frexp(const detail::expression<tag, A1, A2, A3, A4>& v, long* pint)
    return std::move(frexp(static_cast<number_type>(v), pint));
 }
 template <class T, expression_template_option ExpressionTemplates>
-inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<number_category<T>::value == number_kind_floating_point, number<T, ExpressionTemplates> >::type frexp(const number<T, ExpressionTemplates>& v, boost::long_long_type* pint)
+inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<number_category<T>::value == number_kind_floating_point, number<T, ExpressionTemplates> >::type frexp(const number<T, ExpressionTemplates>& v, long long* pint)
 {
    using default_ops::eval_frexp;
    detail::scoped_default_precision<multiprecision::number<T, ExpressionTemplates> > precision_guard(v);
@@ -2954,7 +3045,7 @@ inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<number_category<T>::valu
 }
 template <class tag, class A1, class A2, class A3, class A4>
 inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<number_category<typename detail::expression<tag, A1, A2, A3, A4>::result_type>::value == number_kind_floating_point, typename detail::expression<tag, A1, A2, A3, A4>::result_type>::type
-frexp(const detail::expression<tag, A1, A2, A3, A4>& v, boost::long_long_type* pint)
+frexp(const detail::expression<tag, A1, A2, A3, A4>& v, long long* pint)
 {
    using number_type = typename detail::expression<tag, A1, A2, A3, A4>::result_type;
    return std::move(frexp(static_cast<number_type>(v), pint));
@@ -3768,8 +3859,8 @@ HETERO_BINARY_OP_FUNCTOR_B(ldexp, int, number_kind_floating_point)
 //HETERO_BINARY_OP_FUNCTOR_B(frexp, int*, number_kind_floating_point)
 HETERO_BINARY_OP_FUNCTOR_B(ldexp, long, number_kind_floating_point)
 //HETERO_BINARY_OP_FUNCTOR_B(frexp, long*, number_kind_floating_point)
-HETERO_BINARY_OP_FUNCTOR_B(ldexp, boost::long_long_type, number_kind_floating_point)
-//HETERO_BINARY_OP_FUNCTOR_B(frexp, boost::long_long_type*, number_kind_floating_point)
+HETERO_BINARY_OP_FUNCTOR_B(ldexp, long long, number_kind_floating_point)
+//HETERO_BINARY_OP_FUNCTOR_B(frexp, long long*, number_kind_floating_point)
 BINARY_OP_FUNCTOR(pow, number_kind_floating_point)
 BINARY_OP_FUNCTOR(fmod, number_kind_floating_point)
 BINARY_OP_FUNCTOR(fmax, number_kind_floating_point)
@@ -3786,8 +3877,8 @@ HETERO_BINARY_OP_FUNCTOR_B(scalbn, int, number_kind_floating_point)
 HETERO_BINARY_OP_FUNCTOR_B(scalbln, int, number_kind_floating_point)
 HETERO_BINARY_OP_FUNCTOR_B(scalbn, long, number_kind_floating_point)
 HETERO_BINARY_OP_FUNCTOR_B(scalbln, long, number_kind_floating_point)
-HETERO_BINARY_OP_FUNCTOR_B(scalbn, boost::long_long_type, number_kind_floating_point)
-HETERO_BINARY_OP_FUNCTOR_B(scalbln, boost::long_long_type, number_kind_floating_point)
+HETERO_BINARY_OP_FUNCTOR_B(scalbn, long long, number_kind_floating_point)
+HETERO_BINARY_OP_FUNCTOR_B(scalbln, long long, number_kind_floating_point)
 
 //
 // Complex functions:

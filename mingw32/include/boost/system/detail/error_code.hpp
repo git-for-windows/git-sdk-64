@@ -83,6 +83,28 @@ private:
     // >3: pointer to source_location, failed_ in lsb
     boost::uintptr_t lc_flags_;
 
+private:
+
+    char const* category_name() const BOOST_NOEXCEPT
+    {
+        // return category().name();
+
+        if( lc_flags_ == 0 )
+        {
+            // must match detail::system_error_category::name()
+            return "system";
+        }
+        else if( lc_flags_ == 1 )
+        {
+            // must match detail::interop_error_category::name()
+            return "std:unknown";
+        }
+        else
+        {
+            return d1_.cat_->name();
+        }
+    }
+
 public:
 
     // constructors:
@@ -188,7 +210,11 @@ public:
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
             std::error_code const& ec = *reinterpret_cast<std::error_code const*>( d2_ );
-            return ec.value() + 1000 * static_cast<unsigned>( reinterpret_cast<boost::uintptr_t>( &ec.category() ) % 2097143 ); // 2^21-9, prime
+
+            unsigned cv = static_cast<unsigned>( ec.value() );
+            unsigned ch = static_cast<unsigned>( reinterpret_cast<boost::uintptr_t>( &ec.category() ) % 2097143 ); // 2^21-9, prime
+
+            return static_cast<int>( cv + 1000 * ch );
 #else
 
             return -1;
@@ -230,7 +256,14 @@ public:
 
 #endif
 
-        return category().message( value() );
+        if( lc_flags_ == 0 )
+        {
+            return detail::system_error_category_message( value() );
+        }
+        else
+        {
+            return category().message( value() );
+        }
     }
 
     char const * message( char * buffer, std::size_t len ) const BOOST_NOEXCEPT
@@ -238,23 +271,33 @@ public:
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
         if( lc_flags_ == 1 )
         {
+            std::error_code const& ec = *reinterpret_cast<std::error_code const*>( d2_ );
+
 #if !defined(BOOST_NO_EXCEPTIONS)
             try
 #endif
             {
-                std::error_code const& ec = *reinterpret_cast<std::error_code const*>( d2_ );
                 detail::snprintf( buffer, len, "%s", ec.message().c_str() );
                 return buffer;
             }
 #if !defined(BOOST_NO_EXCEPTIONS)
             catch( ... )
             {
+                detail::snprintf( buffer, len, "No message text available for error std:%s:%d", ec.category().name(), ec.value() );
+                return buffer;
             }
 #endif
         }
 #endif
 
-        return category().message( value(), buffer, len );
+        if( lc_flags_ == 0 )
+        {
+            return detail::system_error_category_message( value(), buffer, len );
+        }
+        else
+        {
+            return category().message( value(), buffer, len );
+        }
     }
 
     BOOST_SYSTEM_CONSTEXPR bool failed() const BOOST_NOEXCEPT
@@ -532,7 +575,7 @@ public:
         else if( lc_flags_ == 0 )
         {
 // This condition must be the same as the one in error_category_impl.hpp
-#if defined(__CYGWIN__) || defined(__MINGW32__) || (defined(_MSC_VER) && _MSC_VER == 1800) || (defined(BOOST_GCC) && BOOST_GCC < 50000)
+#if defined(BOOST_SYSTEM_AVOID_STD_SYSTEM_CATEGORY)
 
             return std::error_code( 0, boost::system::system_category() );
 
@@ -594,7 +637,7 @@ public:
         else
 #endif
         {
-            std::string r = category().name();
+            std::string r = category_name();
             detail::append_int( r, value() );
             return r;
         }
@@ -604,7 +647,7 @@ public:
         inline friend std::basic_ostream<Ch, Tr>&
         operator<< (std::basic_ostream<Ch, Tr>& os, error_code const & ec)
     {
-        return os << ec.to_string();
+        return os << ec.to_string().c_str();
     }
 
     std::string what() const

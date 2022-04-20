@@ -231,33 +231,33 @@ class winapi_named_condition_any
          : m_condition_data(cond_data)
       {}
 
-      virtual std::size_t get_data_size() const
+      virtual std::size_t get_data_size() const BOOST_OVERRIDE
       {  return sizeof(sem_counts);   }
 
-      virtual const void *buffer_with_final_data_to_file()
+      virtual const void *buffer_with_final_data_to_file() BOOST_OVERRIDE
       {
          sem_counts[0] = m_condition_data.m_sem_block_queue.value();
          sem_counts[1] = m_condition_data.m_sem_block_lock.value();
          return &sem_counts;
       }
 
-      virtual const void *buffer_with_init_data_to_file()
+      virtual const void *buffer_with_init_data_to_file() BOOST_OVERRIDE
       {
          sem_counts[0] = 0;
          sem_counts[1] = 1;
          return &sem_counts;
       }
 
-      virtual void *buffer_to_store_init_data_from_file()
+      virtual void *buffer_to_store_init_data_from_file() BOOST_OVERRIDE
       {  return &sem_counts; }
 
-      virtual bool open(create_enum_t op, const char *id_name)
+      virtual bool open(create_enum_t op, const char *id_name) BOOST_OVERRIDE
       {  return this->open_impl(op, id_name);   }
 
-      virtual bool open(create_enum_t op, const wchar_t *id_name)
+      virtual bool open(create_enum_t op, const wchar_t *id_name) BOOST_OVERRIDE
       {  return this->open_impl(op, id_name);   }
 
-      virtual void close()
+      virtual void close() BOOST_OVERRIDE
       {
          m_condition_data.m_sem_block_queue.close();
          m_condition_data.m_sem_block_lock.close();
@@ -267,7 +267,7 @@ class winapi_named_condition_any
          m_condition_data.m_nwaiters_to_unblock = 0;
       }
 
-      virtual ~named_cond_callbacks()
+      virtual ~named_cond_callbacks() BOOST_OVERRIDE
       {}
 
       private:

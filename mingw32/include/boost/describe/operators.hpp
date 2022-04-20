@@ -109,49 +109,49 @@ namespace operators
 {
 
 template<class T> std::enable_if_t<
-    has_describe_bases<T>::value && has_describe_members<T>::value, bool>
+    has_describe_bases<T>::value && has_describe_members<T>::value && !std::is_union<T>::value, bool>
     operator==( T const& t1, T const& t2 )
 {
     return detail::eq( t1, t2 );
 }
 
 template<class T> std::enable_if_t<
-    has_describe_bases<T>::value && has_describe_members<T>::value, bool>
+    has_describe_bases<T>::value && has_describe_members<T>::value && !std::is_union<T>::value, bool>
     operator!=( T const& t1, T const& t2 )
 {
     return !detail::eq( t1, t2 );
 }
 
 template<class T> std::enable_if_t<
-    has_describe_bases<T>::value && has_describe_members<T>::value, bool>
+    has_describe_bases<T>::value && has_describe_members<T>::value && !std::is_union<T>::value, bool>
     operator<( T const& t1, T const& t2 )
 {
     return detail::lt( t1, t2 );
 }
 
 template<class T> std::enable_if_t<
-    has_describe_bases<T>::value && has_describe_members<T>::value, bool>
+    has_describe_bases<T>::value && has_describe_members<T>::value && !std::is_union<T>::value, bool>
     operator>=( T const& t1, T const& t2 )
 {
     return !detail::lt( t1, t2 );
 }
 
 template<class T> std::enable_if_t<
-    has_describe_bases<T>::value && has_describe_members<T>::value, bool>
+    has_describe_bases<T>::value && has_describe_members<T>::value && !std::is_union<T>::value, bool>
     operator>( T const& t1, T const& t2 )
 {
     return detail::lt( t2, t1 );
 }
 
 template<class T> std::enable_if_t<
-    has_describe_bases<T>::value && has_describe_members<T>::value, bool>
+    has_describe_bases<T>::value && has_describe_members<T>::value && !std::is_union<T>::value, bool>
     operator<=( T const& t1, T const& t2 )
 {
     return !detail::lt( t2, t1 );
 }
 
 template<class T, class Ch, class Tr> std::enable_if_t<
-    has_describe_bases<T>::value && has_describe_members<T>::value,
+    has_describe_bases<T>::value && has_describe_members<T>::value && !std::is_union<T>::value,
     std::basic_ostream<Ch, Tr>&>
     operator<<( std::basic_ostream<Ch, Tr>& os, T const& t )
 {

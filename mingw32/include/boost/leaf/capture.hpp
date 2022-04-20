@@ -1,23 +1,16 @@
 #ifndef BOOST_LEAF_CAPTURE_HPP_INCLUDED
 #define BOOST_LEAF_CAPTURE_HPP_INCLUDED
 
-/// Copyright (c) 2018-2021 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2018-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_LEAF_ENABLE_WARNINGS ///
-#   if defined(_MSC_VER) ///
-#       pragma warning(push,1) ///
-#   elif defined(__clang__) ///
-#       pragma clang system_header ///
-#   elif (__GNUC__*100+__GNUC_MINOR__>301) ///
-#       pragma GCC system_header ///
-#   endif ///
-#endif ///
-
+#include <boost/leaf/config.hpp>
 #include <boost/leaf/exception.hpp>
 #include <boost/leaf/on_error.hpp>
+
+#if BOOST_LEAF_CFG_CAPTURE
 
 namespace boost { namespace leaf {
 
@@ -109,8 +102,8 @@ namespace leaf_detail
         [[noreturn]] void unload_and_rethrow_original_exception() const
         {
             BOOST_LEAF_ASSERT(ctx_->captured_id_);
-            auto active_context = activate_context(*ctx_);
-            id_factory<>::current_id = ctx_->captured_id_.value();
+            tls::write_uint32<tls_tag_id_factory_current_id>(ctx_->captured_id_.value());
+            ctx_->propagate(ctx_->captured_id_);
             std::rethrow_exception(ex_);
         }
 
@@ -235,70 +228,8 @@ future_get( Future & fut )
     return future_get_impl(is_result_tag<decltype(std::declval<Future>().get())>(), fut);
 }
 
-////////////////////////////////////////
-
-#ifndef BOOST_LEAF_NO_EXCEPTIONS
-
-template <class T>
-class result;
-
-namespace leaf_detail
-{
-    inline error_id catch_exceptions_helper( std::exception const & ex, leaf_detail_mp11::mp_list<> )
-    {
-        return leaf::new_error(std::current_exception());
-    }
-
-    template <class Ex1, class... Ex>
-    inline error_id catch_exceptions_helper( std::exception const & ex, leaf_detail_mp11::mp_list<Ex1,Ex...> )
-    {
-        if( Ex1 const * p = dynamic_cast<Ex1 const *>(&ex) )
-            return catch_exceptions_helper(ex, leaf_detail_mp11::mp_list<Ex...>{ }).load(*p);
-        else
-            return catch_exceptions_helper(ex, leaf_detail_mp11::mp_list<Ex...>{ });
-    }
-
-    template <class T>
-    struct deduce_exception_to_result_return_type_impl
-    {
-        using type = result<T>;
-    };
-
-    template <class T>
-    struct deduce_exception_to_result_return_type_impl<result<T>>
-    {
-        using type = result<T>;
-    };
-
-    template <class T>
-    using deduce_exception_to_result_return_type = typename deduce_exception_to_result_return_type_impl<T>::type;
-}
-
-template <class... Ex, class F>
-inline
-leaf_detail::deduce_exception_to_result_return_type<leaf_detail::fn_return_type<F>>
-exception_to_result( F && f ) noexcept
-{
-    try
-    {
-        return std::forward<F>(f)();
-    }
-    catch( std::exception const & ex )
-    {
-        return leaf_detail::catch_exceptions_helper(ex, leaf_detail_mp11::mp_list<Ex...>());
-    }
-    catch(...)
-    {
-        return leaf::new_error(std::current_exception());
-    }
-}
-
-#endif
-
 } }
 
-#if defined(_MSC_VER) && !defined(BOOST_LEAF_ENABLE_WARNINGS) ///
-#pragma warning(pop) ///
-#endif ///
+#endif
 
 #endif

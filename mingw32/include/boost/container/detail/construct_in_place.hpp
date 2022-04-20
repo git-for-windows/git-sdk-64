@@ -30,6 +30,8 @@ namespace container {
 
 //In place construction
 
+struct iterator_arg_t{};
+
 template<class Allocator, class T, class InpIt>
 BOOST_CONTAINER_FORCEINLINE void construct_in_place(Allocator &a, T* dest, InpIt source)
 {     boost::container::allocator_traits<Allocator>::construct(a, dest, *source);  }

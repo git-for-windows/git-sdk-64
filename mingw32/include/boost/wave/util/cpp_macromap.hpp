@@ -14,7 +14,6 @@
 #define BOOST_CPP_MACROMAP_HPP_CB8F51B0_A3F0_411C_AEF4_6FF631B8B414_INCLUDED
 
 #include <cstdlib>
-#include <cstdio>
 #include <ctime>
 
 #include <list>
@@ -23,6 +22,7 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include <string>
 
 #include <boost/assert.hpp>
 #include <boost/wave/wave_config.hpp>
@@ -1701,11 +1701,8 @@ macromap<ContextT>::expand_predefined_macro(token_type const &curr_token,
     }
     else if (value == "__INCLUDE_LEVEL__") {
         // expand the __INCLUDE_LEVEL__ macro
-        char buffer[22]; // 21 bytes holds all NUL-terminated unsigned 64-bit numbers
-
-        using namespace std;    // for some systems sprintf is in namespace std
-        sprintf(buffer, "%d", (int)ctx.get_iteration_depth());
-        replacement = token_type(T_INTLIT, buffer, curr_token.get_position());
+        std::string buffer = std::to_string(ctx.get_iteration_depth());
+        replacement = token_type(T_INTLIT, buffer.c_str(), curr_token.get_position());
     }
 
     // post-expansion hooks
@@ -1785,23 +1782,11 @@ macromap<ContextT>::resolve_has_include(IteratorT &first,
     ContainerT result;
     bool is_quoted_filename;
     bool is_system;
+    IteratorT start = first;
 
-    // to simplify the parser we check for the trailing right paren first
-    // scan from the beginning because unput_queue_iterator is Forward
-    IteratorT end_find_it = first;
-    ++end_find_it;
-    IteratorT rparen_it = first;
-    while (end_find_it != last) {
-        ++end_find_it;
-        ++rparen_it;
-    }
-
-    boost::spirit::classic::parse_info<IteratorT> hit(first);
-    if ((rparen_it != first) && (T_RIGHTPAREN == *rparen_it)) {
-        IteratorT start = first;
-        hit = has_include_grammar_gen<typename ContextT::lexer_type>::
-            parse_operator_has_include(start, rparen_it, result, is_quoted_filename, is_system);
-    }
+    boost::spirit::classic::parse_info<IteratorT> hit =
+        has_include_grammar_gen<typename ContextT::lexer_type>::
+        parse_operator_has_include(start, last, result, is_quoted_filename, is_system);
 
     if (!hit.hit) {
         string_type msg ("__has_include(): ");
@@ -1813,7 +1798,7 @@ macromap<ContextT>::resolve_has_include(IteratorT &first,
         pending.push_back(token_type(T_INTLIT, "0", main_pos));
     }
     else {
-        impl::assign_iterator<IteratorT>::do_(first, last);
+        impl::assign_iterator<IteratorT>::do_(first, hit.stop);
 
         // insert a token, which reflects the outcome
         pending.push_back(

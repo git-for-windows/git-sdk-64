@@ -163,8 +163,8 @@ template<class T, class OffsetType>
 class pointer_offset_caster<T*, OffsetType>
 {
    public:
-   BOOST_INTERPROCESS_FORCEINLINE explicit pointer_offset_caster(OffsetType offset)
-      : m_offset(offset)
+   BOOST_INTERPROCESS_FORCEINLINE explicit pointer_offset_caster(OffsetType off)
+      : m_offset(off)
    {}
 
    BOOST_INTERPROCESS_FORCEINLINE explicit pointer_offset_caster(const volatile T *p)

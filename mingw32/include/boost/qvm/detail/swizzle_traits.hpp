@@ -1,10 +1,10 @@
 #ifndef BOOST_QVM_DETAIL_SWIZZLE_TRAITS_HPP_INCLUDED
 #define BOOST_QVM_DETAIL_SWIZZLE_TRAITS_HPP_INCLUDED
 
-/// Copyright (c) 2008-2021 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2008-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/qvm/inline.hpp>
 #include <boost/qvm/deduce_vec.hpp>
@@ -31,7 +31,7 @@ qvm_detail
     const_value
         {
         static
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         typename vec_traits<V>::scalar_type
         value()
             {
@@ -45,7 +45,7 @@ qvm_detail
     const_value<V,-1>
         {
         static
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         typename vec_traits<V>::scalar_type
         value()
             {
@@ -58,7 +58,7 @@ qvm_detail
     const_value<V,-2>
         {
         static
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         typename vec_traits<V>::scalar_type
         value()
             {
@@ -143,7 +143,7 @@ qvm_detail
         public:
 
         template <class T>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         sw_ &
         operator=( T const & x )
             {
@@ -152,7 +152,7 @@ qvm_detail
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -172,7 +172,7 @@ qvm_detail
         public:
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -194,7 +194,7 @@ qvm_detail
         public:
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -214,7 +214,7 @@ vec_traits<qvm_detail::sw_<OriginalVector,SwizzleList> >
 
     template <int I>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_vector const & x )
         {
@@ -229,7 +229,7 @@ vec_traits<qvm_detail::sw_<OriginalVector,SwizzleList> >
 
     template <int I>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type &
     write_element( this_vector & x )
         {
@@ -252,7 +252,7 @@ vec_traits<qvm_detail::sw01_<SwizzleList> >
 
     template <int I>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_vector const & )
         {
@@ -274,7 +274,7 @@ vec_traits<qvm_detail::sws_<OriginalScalar,SwizzleList> >
 
     template <int I>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_vector const & x )
         {
@@ -289,7 +289,7 @@ vec_traits<qvm_detail::sws_<OriginalScalar,SwizzleList> >
 
     template <int I>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type &
     write_element( this_vector & x )
         {

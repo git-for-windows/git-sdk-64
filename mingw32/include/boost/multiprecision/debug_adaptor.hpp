@@ -6,6 +6,7 @@
 #ifndef BOOST_MATH_DEBUG_ADAPTER_HPP
 #define BOOST_MATH_DEBUG_ADAPTER_HPP
 
+#include <boost/multiprecision/detail/standalone_config.hpp>
 #include <boost/multiprecision/traits/extract_exponent_type.hpp>
 #include <boost/multiprecision/detail/integer_ops.hpp>
 
@@ -74,13 +75,14 @@ struct debug_adaptor
    {
       update_view();
    }
-   debug_adaptor(const Backend& i, unsigned digits10)
+   template <class B2>
+   debug_adaptor(const B2& i, unsigned digits10, typename std::enable_if<std::is_same<B2, Backend>::value && std::is_constructible<Backend, const Backend&, unsigned>::value>::type* = nullptr)
        : m_value(i, digits10)
    {
       update_view();
    }
    template <class T>
-   typename std::enable_if<boost::multiprecision::detail::is_arithmetic<T>::value || std::is_convertible<T, Backend>::value, debug_adaptor&>::type operator=(const T& i)
+   typename std::enable_if<boost::multiprecision::detail::is_arithmetic<T>::value || std::is_assignable<Backend, T>::value, debug_adaptor&>::type operator=(const T& i)
    {
       m_value = i;
       update_view();
@@ -123,6 +125,8 @@ struct debug_adaptor
    {
       return m_value;
    }
+
+   #ifndef BOOST_MP_STANDALONE
    template <class Archive>
    void serialize(Archive& ar, const unsigned int /*version*/)
    {
@@ -131,6 +135,8 @@ struct debug_adaptor
       if (tag::value)
          update_view();
    }
+   #endif 
+   
    static unsigned default_precision() noexcept
    {
       return Backend::default_precision();
@@ -458,49 +464,49 @@ inline void eval_right_shift(debug_adaptor<Backend>& arg, const debug_adaptor<Ba
 }
 
 template <class Backend, class T>
-inline unsigned eval_integer_modulus(const debug_adaptor<Backend>& arg, const T& a)
+inline T eval_integer_modulus(const debug_adaptor<Backend>& arg, const T& a)
 {
    using default_ops::eval_integer_modulus;
    return eval_integer_modulus(arg.value(), a);
 }
 
 template <class Backend>
-inline unsigned eval_lsb(const debug_adaptor<Backend>& arg)
+inline std::size_t eval_lsb(const debug_adaptor<Backend>& arg)
 {
    using default_ops::eval_lsb;
    return eval_lsb(arg.value());
 }
 
 template <class Backend>
-inline unsigned eval_msb(const debug_adaptor<Backend>& arg)
+inline std::size_t eval_msb(const debug_adaptor<Backend>& arg)
 {
    using default_ops::eval_msb;
    return eval_msb(arg.value());
 }
 
 template <class Backend>
-inline bool eval_bit_test(const debug_adaptor<Backend>& arg, unsigned a)
+inline bool eval_bit_test(const debug_adaptor<Backend>& arg, std::size_t a)
 {
    using default_ops::eval_bit_test;
    return eval_bit_test(arg.value(), a);
 }
 
 template <class Backend>
-inline void eval_bit_set(const debug_adaptor<Backend>& arg, unsigned a)
+inline void eval_bit_set(const debug_adaptor<Backend>& arg, std::size_t a)
 {
    using default_ops::eval_bit_set;
    eval_bit_set(arg.value(), a);
    arg.update_view();
 }
 template <class Backend>
-inline void eval_bit_unset(const debug_adaptor<Backend>& arg, unsigned a)
+inline void eval_bit_unset(const debug_adaptor<Backend>& arg, std::size_t a)
 {
    using default_ops::eval_bit_unset;
    eval_bit_unset(arg.value(), a);
    arg.update_view();
 }
 template <class Backend>
-inline void eval_bit_flip(const debug_adaptor<Backend>& arg, unsigned a)
+inline void eval_bit_flip(const debug_adaptor<Backend>& arg, std::size_t a)
 {
    using default_ops::eval_bit_flip;
    eval_bit_flip(arg.value(), a);
@@ -669,7 +675,20 @@ namespace detail {
    template <class Backend>
    struct is_variable_precision<debug_adaptor<Backend> > : public is_variable_precision<Backend>
    {};
-} // namespace detail
+#ifdef BOOST_HAS_INT128
+   template <class Backend>
+   struct is_convertible_arithmetic<int128_type, debug_adaptor<Backend> > : public is_convertible_arithmetic<int128_type, Backend>
+   {};
+   template <class Backend>
+   struct is_convertible_arithmetic<uint128_type, debug_adaptor<Backend> > : public is_convertible_arithmetic<uint128_type, Backend>
+   {};
+#endif
+#ifdef BOOST_HAS_FLOAT128
+   template <class Backend>
+   struct is_convertible_arithmetic<float128_type, debug_adaptor<Backend> > : public is_convertible_arithmetic<float128_type, Backend>
+   {};
+#endif
+   } // namespace detail
 
 template <class Backend>
 struct number_category<backends::debug_adaptor<Backend> > : public number_category<Backend>
@@ -718,6 +737,7 @@ class numeric_limits<boost::multiprecision::number<boost::multiprecision::backen
 
 } // namespace std
 
+#ifdef BOOST_MP_MATH_AVAILABLE
 namespace boost {
 namespace math {
 
@@ -736,5 +756,11 @@ struct precision<boost::multiprecision::number<boost::multiprecision::debug_adap
 }
 
 }} // namespace boost::math::policies
+#else
+#undef NON_MEMBER_OP1
+#undef NON_MEMBER_OP2
+#undef NON_MEMBER_OP3
+#undef NON_MEMBER_OP4
+#endif // BOOST_MP_MATH_AVAILABLE
 
 #endif

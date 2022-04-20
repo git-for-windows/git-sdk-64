@@ -130,7 +130,7 @@ struct prime_list_holder
    }
 
    template <class SizeType>  //sizeof(SizeType) > sizeof(std::size_t)
-   static BOOST_INTRUSIVE_FORCEINLINE SizeType suggested_upper_bucket_count_dispatch(SizeType n, detail::true_)
+   static SizeType suggested_upper_bucket_count_dispatch(SizeType n, detail::true_)
    {
       std::size_t const c = n > std::size_t(-1)
                             ? std::size_t(-1)
@@ -139,7 +139,7 @@ struct prime_list_holder
    }
 
    template <class SizeType>  //sizeof(SizeType) > sizeof(std::size_t)
-   static BOOST_INTRUSIVE_FORCEINLINE SizeType suggested_lower_bucket_count_dispatch(SizeType n, detail::true_)
+   static SizeType suggested_lower_bucket_count_dispatch(SizeType n, detail::true_)
    {
       std::size_t const c = n > std::size_t(-1)
                             ? std::size_t(-1)
@@ -148,7 +148,7 @@ struct prime_list_holder
    }
 
    template <class SizeType>
-   static BOOST_INTRUSIVE_FORCEINLINE SizeType suggested_upper_bucket_count_dispatch(SizeType n, detail::false_)
+   static SizeType suggested_upper_bucket_count_dispatch(SizeType n, detail::false_)
    {
       std::size_t const c = suggested_upper_bucket_count_impl(static_cast<std::size_t>(n));
       return truncate_size_type<SizeType>(c, detail::bool_<(sizeof(SizeType) < sizeof(std::size_t))>());
@@ -156,7 +156,7 @@ struct prime_list_holder
    }
 
    template <class SizeType>
-   static BOOST_INTRUSIVE_FORCEINLINE SizeType suggested_lower_bucket_count_dispatch(SizeType n, detail::false_)
+   static SizeType suggested_lower_bucket_count_dispatch(SizeType n, detail::false_)
    {
       std::size_t const c = suggested_lower_bucket_count_impl(static_cast<std::size_t>(n));
       return truncate_size_type<SizeType>(c, detail::bool_<(sizeof(SizeType) < sizeof(std::size_t))>());
@@ -426,7 +426,7 @@ struct group_functions
       }
    }
 
-   BOOST_INTRUSIVE_FORCEINLINE static void erase_from_group(const slist_node_ptr&, const node_ptr&, detail::false_)
+   BOOST_INTRUSIVE_FORCEINLINE static void erase_from_group(slist_node_ptr, node_ptr, detail::false_)
    {}
 
    BOOST_INTRUSIVE_FORCEINLINE static node_ptr get_last_in_group(node_ptr first_in_group, detail::true_)
@@ -445,9 +445,7 @@ struct group_functions
    }
 
    BOOST_INTRUSIVE_FORCEINLINE static node_ptr next_group_if_first_in_group(node_ptr ptr)
-   {
-      return node_traits::get_next(group_traits::get_next(ptr));
-   }
+   {  return node_traits::get_next(group_traits::get_next(ptr));  }
 
    BOOST_INTRUSIVE_FORCEINLINE static node_ptr get_first_in_group(node_ptr n, detail::false_)
    {  return n;  }
@@ -455,10 +453,10 @@ struct group_functions
    BOOST_INTRUSIVE_FORCEINLINE static void insert_in_group(node_ptr first_in_group, node_ptr n, true_)
    {  group_algorithms::link_after(first_in_group, n);  }
 
-   static void insert_in_group(const node_ptr&, const node_ptr&, false_)
+   static void insert_in_group(node_ptr, node_ptr, false_)
    {}
 
-   BOOST_INTRUSIVE_FORCEINLINE static node_ptr split_group(node_ptr const new_first_in_group)
+   static node_ptr split_group(node_ptr const new_first_in_group)
    {
       node_ptr const first((get_first_in_group)(new_first_in_group, detail::true_()));
       if(first != new_first_in_group){
@@ -483,9 +481,9 @@ class incremental_rehash_rollback
 
    public:
    incremental_rehash_rollback
-      (bucket_type &source_bucket, bucket_type &destiny_bucket, split_traits &split_traits)
+      (bucket_type &source_bucket, bucket_type &destiny_bucket, split_traits &split_tr)
       :  source_bucket_(source_bucket),  destiny_bucket_(destiny_bucket)
-      ,  split_traits_(split_traits),  released_(false)
+      ,  split_traits_(split_tr),  released_(false)
    {}
 
    BOOST_INTRUSIVE_FORCEINLINE void release()
@@ -525,10 +523,10 @@ BOOST_INTRUSIVE_FORCEINLINE std::size_t hash_to_bucket(std::size_t hash_value, s
 {  return hash_value & (bucket_cnt - 1);   }
 
 template<bool Power2Buckets, bool Incremental>
-BOOST_INTRUSIVE_FORCEINLINE std::size_t hash_to_bucket_split(std::size_t hash_value, std::size_t bucket_cnt, std::size_t split)
+std::size_t hash_to_bucket_split(std::size_t hash_value, std::size_t bucket_cnt, std::size_t split)
 {
    std::size_t bucket_number = detail::hash_to_bucket(hash_value, bucket_cnt, detail::bool_<Power2Buckets>());
-   if(Incremental)
+   BOOST_IF_CONSTEXPR(Incremental)
       bucket_number -= static_cast<std::size_t>(bucket_number >= split)*(bucket_cnt/2);
    return bucket_number;
 }
@@ -620,7 +618,7 @@ struct downcast_node_to_value_t
          template rebind_pointer
             <const ValueTraits>::type                   const_value_traits_ptr;
 
-   BOOST_INTRUSIVE_FORCEINLINE downcast_node_to_value_t(const const_value_traits_ptr &ptr)
+   BOOST_INTRUSIVE_FORCEINLINE downcast_node_to_value_t(const_value_traits_ptr ptr)
       :  base_t(ptr)
    {}
 
@@ -1159,7 +1157,7 @@ struct bucket_hash_equal_t
    BOOST_INTRUSIVE_FORCEINLINE bucket_ptr priv_get_cache()
    {  return this->bucket_hash_type::priv_bucket_pointer();   }
 
-   BOOST_INTRUSIVE_FORCEINLINE void priv_set_cache(const bucket_ptr &)
+   BOOST_INTRUSIVE_FORCEINLINE void priv_set_cache(bucket_ptr)
    {}
 
    BOOST_INTRUSIVE_FORCEINLINE std::size_t priv_get_cache_bucket_num()
@@ -1229,13 +1227,10 @@ struct bucket_hash_equal_t<ValueTraits, VoidOrKeyOfValue, VoidOrKeyHash, VoidOrK
    typedef typename detail::unordered_bucket_ptr_impl
       <typename bucket_hash_type::value_traits>::type bucket_ptr;
 
-   BOOST_INTRUSIVE_FORCEINLINE bucket_ptr &priv_get_cache()
+   BOOST_INTRUSIVE_FORCEINLINE bucket_ptr priv_get_cache() const
    {  return cached_begin_;   }
 
-   BOOST_INTRUSIVE_FORCEINLINE const bucket_ptr &priv_get_cache() const
-   {  return cached_begin_;   }
-
-   BOOST_INTRUSIVE_FORCEINLINE void priv_set_cache(const bucket_ptr &p)
+   BOOST_INTRUSIVE_FORCEINLINE void priv_set_cache(bucket_ptr p)
    {  cached_begin_ = p;   }
 
    BOOST_INTRUSIVE_FORCEINLINE std::size_t priv_get_cache_bucket_num()
@@ -1245,9 +1240,7 @@ struct bucket_hash_equal_t<ValueTraits, VoidOrKeyOfValue, VoidOrKeyHash, VoidOrK
    {  this->cached_begin_ = this->bucket_hash_type::priv_invalid_bucket();  }
 
    BOOST_INTRUSIVE_FORCEINLINE void priv_swap_cache(bucket_hash_equal_t &other)
-   {
-      ::boost::adl_move_swap(this->cached_begin_, other.cached_begin_);
-   }
+   {  ::boost::adl_move_swap(this->cached_begin_, other.cached_begin_);  }
 
    siterator priv_begin() const
    {
@@ -1291,8 +1284,8 @@ struct bucket_hash_equal_t<ValueTraits, VoidOrKeyOfValue, VoidOrKeyHash, VoidOrK
          std::size_t current_n = std::size_t(this->priv_get_cache() - this->bucket_hash_type::priv_bucket_pointer());
          for( const std::size_t num_buckets = this->bucket_hash_type::priv_bucket_count()
             ; current_n < num_buckets
-            ; ++current_n, ++this->priv_get_cache()){
-            if(!this->priv_get_cache()->empty()){
+            ; ++current_n, ++cached_begin_){
+            if(!cached_begin_->empty()){
                return;
             }
          }
@@ -1479,9 +1472,7 @@ struct hashdata_internal
 
    //public functions
    BOOST_INTRUSIVE_FORCEINLINE SizeType split_count() const BOOST_NOEXCEPT
-   {
-      return this->priv_split_traits().get_size();
-   }
+   {  return this->priv_split_traits().get_size();  }
 
    BOOST_INTRUSIVE_FORCEINLINE iterator iterator_to(reference value) BOOST_NOEXCEPT
    {
@@ -2586,9 +2577,9 @@ class hashtable_impl
    iterator find(const KeyType &key, KeyHasher hash_func, KeyEqual equal_func)
    {
       size_type bucket_n;
-      std::size_t hash;
+      std::size_t h;
       siterator prev;
-      return iterator( this->priv_find(key, hash_func, equal_func, bucket_n, hash, prev)
+      return iterator( this->priv_find(key, hash_func, equal_func, bucket_n, h, prev)
                      , &this->get_bucket_value_traits());
    }
 

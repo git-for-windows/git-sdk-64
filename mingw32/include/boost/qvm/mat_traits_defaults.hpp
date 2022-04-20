@@ -1,10 +1,10 @@
 #ifndef BOOST_QVM_MAT_TRAITS_DEFAULTS_HPP_INCLUDED
 #define BOOST_QVM_MAT_TRAITS_DEFAULTS_HPP_INCLUDED
 
-/// Copyright (c) 2008-2021 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2008-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/qvm/inline.hpp>
 #include <boost/qvm/assert.hpp>
@@ -23,7 +23,7 @@ qvm_detail
         {
         template <class A>
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         typename mat_traits<A>::scalar_type &
         write_element_idx( int r, int c, A & a )
             {
@@ -39,7 +39,7 @@ qvm_detail
         {
         template <class A>
         static
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         typename mat_traits<A>::scalar_type &
         write_element_idx( int, int, A & a )
             {
@@ -60,7 +60,7 @@ mat_traits_defaults
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( mat_type const & x )
         {
@@ -68,7 +68,7 @@ mat_traits_defaults
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int r, int c, mat_type const & x )
         {
@@ -78,7 +78,7 @@ mat_traits_defaults
     protected:
 
     static
-    BOOST_QVM_INLINE_TRIVIAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
     scalar_type &
     write_element_idx( int r, int c, mat_type & m )
         {

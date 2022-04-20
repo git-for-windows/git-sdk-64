@@ -37,12 +37,12 @@ template<class... T> auto base_descriptor_fn_impl( int, T... )
 
 #if defined(_MSC_VER) && !defined(__clang__)
 
-#define BOOST_DESCRIBE_BASES(C, ...) inline auto boost_base_descriptor_fn( C * ) \
+#define BOOST_DESCRIBE_BASES(C, ...) inline auto boost_base_descriptor_fn( C** ) \
 { return boost::describe::detail::base_descriptor_fn_impl( 0 BOOST_DESCRIBE_PP_FOR_EACH(BOOST_DESCRIBE_BASE_IMPL, C, __VA_ARGS__) ); }
 
 #else
 
-#define BOOST_DESCRIBE_BASES(C, ...) inline auto boost_base_descriptor_fn( C * ) \
+#define BOOST_DESCRIBE_BASES(C, ...) inline auto boost_base_descriptor_fn( C** ) \
 { return boost::describe::detail::base_descriptor_fn_impl( 0 BOOST_DESCRIBE_PP_FOR_EACH(BOOST_DESCRIBE_BASE_IMPL, C, ##__VA_ARGS__) ); }
 
 #endif

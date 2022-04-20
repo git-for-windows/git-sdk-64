@@ -1243,8 +1243,8 @@ class nt_query_mem_deleter
       (SystemTimeOfDayInfoLength + sizeof(unsigned long) + sizeof(boost::winapi::DWORD_))*2;
 
    public:
-   explicit nt_query_mem_deleter(std::size_t object_name_information_size)
-      : m_size(object_name_information_size + rename_offset + rename_suffix)
+   explicit nt_query_mem_deleter(std::size_t object_name_info_size)
+      : m_size(object_name_info_size + rename_offset + rename_suffix)
       , m_buf(new char [m_size])
    {}
 
@@ -1723,10 +1723,10 @@ inline bool find_record_in_buffer( const void* pBuffer, unsigned long dwBytesRea
    const unsigned char * pEndOfRecords = pRecord + dwBytesRead;
 
    while (pRecord < pEndOfRecords){
-      interprocess_eventlogrecord *pTypedRecord = (interprocess_eventlogrecord*)pRecord;
+      interprocess_eventlogrecord *pTypedRecord = (interprocess_eventlogrecord*)(void*)pRecord;
       // Check provider, written at the end of the fixed-part of the record
 
-      if (0 == winapi_traits<CharT>::cmp(provider_name, (CharT*)(pRecord + sizeof(interprocess_eventlogrecord))))
+      if (0 == winapi_traits<CharT>::cmp(provider_name, (CharT*)(void*)(pRecord + sizeof(interprocess_eventlogrecord))))
       {
          // Check event id
          if(id_to_find == (pTypedRecord->EventID & 0xFFFF)){

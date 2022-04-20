@@ -601,7 +601,7 @@ class launch_thread_impl
       : f_( f )
    {}
 
-   void run()
+   virtual void run() BOOST_OVERRIDE
    {  f_();  }
 
    private:

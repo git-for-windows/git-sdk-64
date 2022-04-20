@@ -2,8 +2,8 @@
 // experimental/promise.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2021 Klemens D. Morgenstern
-//                    (klemens dot morgenstern at gmx dot net)
+// Copyright (c) 2021-2022 Klemens D. Morgenstern
+//                         (klemens dot morgenstern at gmx dot net)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -26,6 +26,7 @@
 #include <boost/asio/experimental/impl/promise.hpp>
 #include <boost/asio/post.hpp>
 
+#include <algorithm>
 #include <variant>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -500,7 +501,10 @@ struct promise<void(Ts...), Executor>
       throw std::logic_error(
           "Can't use race on an empty range with deduced executor");
     else
-      return race(std::begin(range)->get_executor(), std::move(range));
+    {
+      auto ex = std::begin(range)->get_executor();
+      return race(ex, std::move(range));
+    }
   }
 
   template <typename Range>
@@ -517,7 +521,10 @@ struct promise<void(Ts...), Executor>
       throw std::logic_error(
           "Can't use all on an empty range with deduced executor");
     else
-      return all(std::begin(range)->get_executor(), std::move(range));
+    {
+      auto ex = std::begin(range)->get_executor();
+      return all(ex, std::move(range));
+    }
   }
 
 private:

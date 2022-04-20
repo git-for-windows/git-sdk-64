@@ -28,18 +28,18 @@ namespace detail_adaptive {
 
 template<class RandIt, class Compare, class XBuf>
 inline void adaptive_merge_combine_blocks( RandIt first
-                                      , typename iterator_traits<RandIt>::size_type len1
-                                      , typename iterator_traits<RandIt>::size_type len2
-                                      , typename iterator_traits<RandIt>::size_type collected
-                                      , typename iterator_traits<RandIt>::size_type n_keys
-                                      , typename iterator_traits<RandIt>::size_type l_block
+                                      , typename iter_size<RandIt>::type len1
+                                      , typename iter_size<RandIt>::type len2
+                                      , typename iter_size<RandIt>::type collected
+                                      , typename iter_size<RandIt>::type n_keys
+                                      , typename iter_size<RandIt>::type l_block
                                       , bool use_internal_buf
                                       , bool xbuf_used
                                       , Compare comp
                                       , XBuf & xbuf
                                       )
 {
-   typedef typename iterator_traits<RandIt>::size_type       size_type;
+   typedef typename iter_size<RandIt>::type       size_type;
 
    size_type const len = size_type(len1+len2);
    size_type const l_combine  = size_type(len-collected);
@@ -101,18 +101,18 @@ inline void adaptive_merge_combine_blocks( RandIt first
 
 template<class RandIt, class Compare, class XBuf>
 inline void adaptive_merge_final_merge( RandIt first
-                                      , typename iterator_traits<RandIt>::size_type len1
-                                      , typename iterator_traits<RandIt>::size_type len2
-                                      , typename iterator_traits<RandIt>::size_type collected
-                                      , typename iterator_traits<RandIt>::size_type l_intbuf
-                                      , typename iterator_traits<RandIt>::size_type //l_block
+                                      , typename iter_size<RandIt>::type len1
+                                      , typename iter_size<RandIt>::type len2
+                                      , typename iter_size<RandIt>::type collected
+                                      , typename iter_size<RandIt>::type l_intbuf
+                                      , typename iter_size<RandIt>::type //l_block
                                       , bool //use_internal_buf
                                       , bool xbuf_used
                                       , Compare comp
                                       , XBuf & xbuf
                                       )
 {
-   typedef typename iterator_traits<RandIt>::size_type       size_type;
+   typedef typename iter_size<RandIt>::type       size_type;
 
    size_type n_keys = size_type(collected-l_intbuf);
    size_type len = size_type(len1+len2);
@@ -222,13 +222,13 @@ inline SizeType adaptive_merge_n_keys_intbuf(SizeType &rl_block, SizeType len1, 
 template<class RandIt, class Compare, class XBuf>
 void adaptive_merge_impl
    ( RandIt first
-   , typename iterator_traits<RandIt>::size_type len1
-   , typename iterator_traits<RandIt>::size_type len2
+   , typename iter_size<RandIt>::type len1
+   , typename iter_size<RandIt>::type len2
    , Compare comp
    , XBuf & xbuf
    )
 {
-   typedef typename iterator_traits<RandIt>::size_type size_type;
+   typedef typename iter_size<RandIt>::type size_type;
 
    if(xbuf.capacity() >= min_value<size_type>(len1, len2)){
       buffered_merge( first, first+len1
@@ -316,9 +316,9 @@ void adaptive_merge_impl
 template<class RandIt, class Compare>
 void adaptive_merge( RandIt first, RandIt middle, RandIt last, Compare comp
                 , typename iterator_traits<RandIt>::value_type* uninitialized = 0
-                , typename iterator_traits<RandIt>::size_type uninitialized_len = 0)
+                , typename iter_size<RandIt>::type uninitialized_len = 0)
 {
-   typedef typename iterator_traits<RandIt>::size_type  size_type;
+   typedef typename iter_size<RandIt>::type  size_type;
    typedef typename iterator_traits<RandIt>::value_type value_type;
 
    if (first == middle || middle == last){

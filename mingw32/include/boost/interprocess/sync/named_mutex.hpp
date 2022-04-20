@@ -61,7 +61,7 @@ class named_mutex
    public:
    //!Creates a global mutex with a name.
    //!Throws interprocess_exception on error.
-   named_mutex(create_only_t create_only, const char *name, const permissions &perm = permissions());
+   named_mutex(create_only_t, const char *name, const permissions &perm = permissions());
 
    //!Opens or creates a global mutex with a name.
    //!If the mutex is created, this call is equivalent to
@@ -69,12 +69,12 @@ class named_mutex
    //!If the mutex is already created, this call is equivalent
    //!named_mutex(open_only_t, ... )
    //!Does not throw
-   named_mutex(open_or_create_t open_or_create, const char *name, const permissions &perm = permissions());
+   named_mutex(open_or_create_t, const char *name, const permissions &perm = permissions());
 
    //!Opens a global mutex with a name if that mutex is previously
    //!created. If it is not previously created this function throws
    //!interprocess_exception.
-   named_mutex(open_only_t open_only, const char *name);
+   named_mutex(open_only_t, const char *name);
 
    #if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 
@@ -83,7 +83,7 @@ class named_mutex
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   named_mutex(create_only_t create_only, const wchar_t *name, const permissions &perm = permissions());
+   named_mutex(create_only_t, const wchar_t *name, const permissions &perm = permissions());
 
    //!Opens or creates a global mutex with a name.
    //!If the mutex is created, this call is equivalent to
@@ -94,7 +94,7 @@ class named_mutex
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   named_mutex(open_or_create_t open_or_create, const wchar_t *name, const permissions &perm = permissions());
+   named_mutex(open_or_create_t, const wchar_t *name, const permissions &perm = permissions());
 
    //!Opens a global mutex with a name if that mutex is previously
    //!created. If it is not previously created this function throws
@@ -102,7 +102,7 @@ class named_mutex
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   named_mutex(open_only_t open_only, const wchar_t *name);
+   named_mutex(open_only_t, const wchar_t *name);
 
    #endif   //defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 

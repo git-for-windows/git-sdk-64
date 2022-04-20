@@ -39,7 +39,7 @@ namespace boost {  namespace movelib{
 template <class RandomAccessIterator, class Compare>
 class heap_sort_helper
 {
-   typedef typename boost::movelib::iterator_traits<RandomAccessIterator>::size_type  size_type;
+   typedef typename boost::movelib::iter_size<RandomAccessIterator>::type  size_type;
    typedef typename boost::movelib::iterator_traits<RandomAccessIterator>::value_type value_type;
 
    static void adjust_heap(RandomAccessIterator first, size_type hole_index, size_type const len, value_type &value, Compare comp)

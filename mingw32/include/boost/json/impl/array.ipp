@@ -491,8 +491,11 @@ erase(
     auto const p = &(*t_)[0] +
         (pos - &(*t_)[0]);
     destroy(p, p + 1);
-    relocate(p, p + 1, 1);
     --t_->size;
+    if(t_->size > 0)
+        relocate(p, p + 1,
+            t_->size - (p -
+                &(*t_)[0]));
     return p;
 }
 

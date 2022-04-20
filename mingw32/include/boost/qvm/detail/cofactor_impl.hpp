@@ -1,10 +1,10 @@
 #ifndef BOOST_QVM_DETAIL_COFACTOR_IMPL_HPP_INCLUDED
 #define BOOST_QVM_DETAIL_COFACTOR_IMPL_HPP_INCLUDED
 
-/// Copyright (c) 2008-2021 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2008-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/qvm/detail/determinant_impl.hpp>
 #include <boost/qvm/mat_traits.hpp>
@@ -16,7 +16,7 @@ namespace
 qvm_detail
     {
     template <class A>
-    BOOST_QVM_INLINE_OPERATIONS
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_OPERATIONS
     typename deduce_mat<A>::type
     cofactor_impl( A const & a )
         {

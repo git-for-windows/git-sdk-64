@@ -1,5 +1,5 @@
 ## automake - create Makefile.in from Makefile.am
-## Copyright (C) 2001-2020 Free Software Foundation, Inc.
+## Copyright (C) 2001-2021 Free Software Foundation, Inc.
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -75,8 +75,13 @@ if %?SUBDIRS%
 AM_RECURSIVE_TARGETS += distdir distdir-am
 endif %?SUBDIRS%
 
+if %?DIST_BUILT_SOURCES%
+distdir:
+	$(MAKE) $(AM_MAKEFLAGS) distdir-am
+else !%?DIST_BUILT_SOURCES%
 distdir: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) distdir-am
+endif !%?DIST_BUILT_SOURCES%
 
 distdir-am: $(DISTFILES)
 ##

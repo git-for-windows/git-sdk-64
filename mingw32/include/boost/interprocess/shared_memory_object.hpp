@@ -463,7 +463,7 @@ inline void shared_memory_object::truncate(offset_t length)
    }
 
    if (ret && ret != EOPNOTSUPP && ret != ENODEV){
-      error_info err(system_error_code());
+      error_info err(ret);
       throw interprocess_exception(err);
    }
    //ftruncate fallback

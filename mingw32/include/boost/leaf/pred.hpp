@@ -1,21 +1,12 @@
 #ifndef BOOST_LEAF_PRED_HPP_INCLUDED
 #define BOOST_LEAF_PRED_HPP_INCLUDED
 
-/// Copyright (c) 2018-2021 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2018-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_LEAF_ENABLE_WARNINGS ///
-#   if defined(_MSC_VER) ///
-#       pragma warning(push,1) ///
-#   elif defined(__clang__) ///
-#       pragma clang system_header ///
-#   elif (__GNUC__*100+__GNUC_MINOR__>301) ///
-#       pragma GCC system_header ///
-#   endif ///
-#endif ///
-
+#include <boost/leaf/config.hpp>
 #include <boost/leaf/handle_errors.hpp>
 
 #if __cplusplus >= 201703L
@@ -60,6 +51,7 @@ namespace leaf_detail
 
 ////////////////////////////////////////
 
+#if BOOST_LEAF_CFG_STD_SYSTEM_ERROR
 template <class E, class Enum = E>
 struct condition
 {
@@ -80,6 +72,7 @@ BOOST_LEAF_CONSTEXPR inline bool category( std::error_code const & ec )
     return &ec.category() == &std::error_code(ErrorCodeEnum{}).category();
 }
 #endif
+#endif
 
 ////////////////////////////////////////
 
@@ -91,6 +84,7 @@ namespace leaf_detail
         using type = T;
     };
 
+#if BOOST_LEAF_CFG_STD_SYSTEM_ERROR
     template <class Enum>
     struct match_enum_type<condition<Enum, Enum>>
     {
@@ -102,6 +96,7 @@ namespace leaf_detail
     {
         static_assert(sizeof(Enum) == 0, "leaf::condition<E, Enum> should be used with leaf::match_value<>, not with leaf::match<>");
     };
+#endif
 }
 
 template <class E, BOOST_LEAF_MATCH_ARGS(match_enum_type<E>, V1, V)>
@@ -117,6 +112,7 @@ struct match
     }
 };
 
+#if BOOST_LEAF_CFG_STD_SYSTEM_ERROR
 template <class Enum, BOOST_LEAF_MATCH_ARGS(BOOST_LEAF_ESC(match_enum_type<condition<Enum, Enum>>), V1, V)>
 struct match<condition<Enum, Enum>, V1, V...>
 {
@@ -128,6 +124,7 @@ struct match<condition<Enum, Enum>, V1, V...>
         return leaf_detail::cmp_value_pack(e, V1, V...);
     }
 };
+#endif
 
 template <class E, BOOST_LEAF_MATCH_ARGS(match_enum_type<E>, V1, V)>
 struct is_predicate<match<E, V1, V...>>: std::true_type
@@ -144,6 +141,7 @@ namespace leaf_detail
         using type = typename std::remove_reference<decltype(std::declval<E>().value)>::type;
     };
 
+#if BOOST_LEAF_CFG_STD_SYSTEM_ERROR
     template <class E, class Enum>
     struct match_value_enum_type<condition<E, Enum>>
     {
@@ -155,6 +153,7 @@ namespace leaf_detail
     {
         static_assert(sizeof(Enum)==0, "leaf::condition<Enum> should be used with leaf::match<>, not with leaf::match_value<>");
     };
+#endif
 }
 
 template <class E, BOOST_LEAF_MATCH_ARGS(match_value_enum_type<E>, V1, V)>
@@ -169,6 +168,7 @@ struct match_value
     }
 };
 
+#if BOOST_LEAF_CFG_STD_SYSTEM_ERROR
 template <class E, class Enum, BOOST_LEAF_MATCH_ARGS(BOOST_LEAF_ESC(match_value_enum_type<condition<E, Enum>>), V1, V)>
 struct match_value<condition<E, Enum>, V1, V...>
 {
@@ -180,6 +180,7 @@ struct match_value<condition<E, Enum>, V1, V...>
         return leaf_detail::cmp_value_pack(e.value, V1, V...);
     }
 };
+#endif
 
 template <class E, BOOST_LEAF_MATCH_ARGS(match_value_enum_type<E>, V1, V)>
 struct is_predicate<match_value<E, V1, V...>>: std::true_type
@@ -292,9 +293,5 @@ struct is_predicate<catch_<Ex...>>: std::true_type
 #endif
 
 } }
-
-#if defined(_MSC_VER) && !defined(BOOST_LEAF_ENABLE_WARNINGS) ///
-#pragma warning(pop) ///
-#endif ///
 
 #endif

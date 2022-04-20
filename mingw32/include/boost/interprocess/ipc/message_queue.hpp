@@ -38,6 +38,7 @@
 #include <boost/intrusive/pointer_traits.hpp>
 #include <boost/move/detail/type_traits.hpp> //make_unsigned, alignment_of
 #include <boost/intrusive/pointer_traits.hpp>
+#include <boost/move/detail/force_ptr.hpp>
 #include <boost/assert.hpp>
 #include <algorithm> //std::lower_bound
 #include <cstddef>   //std::size_t
@@ -82,7 +83,7 @@ class message_queue_t
    //!Creates a process shared message queue with name "name". For this message queue,
    //!the maximum number of messages will be "max_num_msg" and the maximum message size
    //!will be "max_msg_size". Throws on error and if the queue was previously created.
-   message_queue_t(create_only_t create_only,
+   message_queue_t(create_only_t,
                  const char *name,
                  size_type max_num_msg,
                  size_type max_msg_size,
@@ -93,7 +94,7 @@ class message_queue_t
    //!and the maximum message size will be "max_msg_size". If queue was previously
    //!created the queue will be opened and "max_num_msg" and "max_msg_size" parameters
    //!are ignored. Throws on error.
-   message_queue_t(open_or_create_t open_or_create,
+   message_queue_t(open_or_create_t,
                  const char *name,
                  size_type max_num_msg,
                  size_type max_msg_size,
@@ -102,7 +103,7 @@ class message_queue_t
    //!Opens a previously created process shared message queue with name "name".
    //!If the queue was not previously created or there are no free resources,
    //!throws an error.
-   message_queue_t(open_only_t open_only, const char *name);
+   message_queue_t(open_only_t, const char *name);
 
    #if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 
@@ -112,7 +113,7 @@ class message_queue_t
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   message_queue_t(create_only_t create_only,
+   message_queue_t(create_only_t,
                  const wchar_t *name,
                  size_type max_num_msg,
                  size_type max_msg_size,
@@ -126,7 +127,7 @@ class message_queue_t
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   message_queue_t(open_or_create_t open_or_create,
+   message_queue_t(open_or_create_t,
                  const wchar_t *name,
                  size_type max_num_msg,
                  size_type max_msg_size,
@@ -138,7 +139,7 @@ class message_queue_t
    //! 
    //!Note: This function is only available on operating systems with
    //!      native wchar_t APIs (e.g. Windows).
-   message_queue_t(open_only_t open_only, const wchar_t *name);
+   message_queue_t(open_only_t, const wchar_t *name);
 
    #endif //defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 
@@ -611,11 +612,11 @@ class mq_hdr_t
          r_max_msg_size = ipcdetail::get_rounded_size<size_type>(m_max_msg_size, msg_hdr_align) + sizeof(msg_header);
 
       //Pointer to the index
-      msg_hdr_ptr_t *index =  reinterpret_cast<msg_hdr_ptr_t*>
+      msg_hdr_ptr_t *index =  move_detail::force_ptr<msg_hdr_ptr_t*>
                                  (reinterpret_cast<char*>(this)+r_hdr_size);
 
       //Pointer to the first message header
-      msg_header *msg_hdr   =  reinterpret_cast<msg_header*>
+      msg_header *msg_hdr   =  move_detail::force_ptr<msg_header*>
                                  (reinterpret_cast<char*>(this)+r_hdr_size+r_index_size);
 
       //Initialize the pointer to the index
@@ -624,7 +625,7 @@ class mq_hdr_t
       //Initialize the index so each slot points to a preallocated message
       for(size_type i = 0; i < m_max_num_msg; ++i){
          index[i] = msg_hdr;
-         msg_hdr  = reinterpret_cast<msg_header*>
+         msg_hdr  = move_detail::force_ptr<msg_header*>
                         (reinterpret_cast<char*>(msg_hdr)+r_max_msg_size);
       }
    }

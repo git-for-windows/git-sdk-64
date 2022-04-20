@@ -223,7 +223,7 @@ public:
     operator std::error_condition () const
     {
 // This condition must be the same as the one in error_category_impl.hpp
-#if defined(BOOST_GCC) && BOOST_GCC < 50000
+#if defined(BOOST_SYSTEM_AVOID_STD_GENERIC_CATEGORY)
 
         return std::error_condition( value(), category() );
 

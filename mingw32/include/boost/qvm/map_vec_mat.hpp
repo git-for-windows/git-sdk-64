@@ -1,10 +1,10 @@
 #ifndef BOOST_QVM_MAP_VEC_MAT_HPP_INCLUDED
 #define BOOST_QVM_MAP_VEC_MAT_HPP_INCLUDED
 
-/// Copyright (c) 2008-2021 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2008-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/qvm/inline.hpp>
 #include <boost/qvm/deduce_mat.hpp>
@@ -28,7 +28,7 @@ qvm_detail
         public:
 
         template <class T>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         col_mat_ &
         operator=( T const & x )
             {
@@ -37,7 +37,7 @@ qvm_detail
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -58,7 +58,7 @@ mat_traits< qvm_detail::col_mat_<OriginalVector> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_matrix const & x )
         {
@@ -70,7 +70,7 @@ mat_traits< qvm_detail::col_mat_<OriginalVector> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type &
     write_element( this_matrix & x )
         {
@@ -81,7 +81,7 @@ mat_traits< qvm_detail::col_mat_<OriginalVector> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int row, int col, this_matrix const & x )
         {
@@ -92,7 +92,7 @@ mat_traits< qvm_detail::col_mat_<OriginalVector> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type &
     write_element_idx( int row, int col, this_matrix & x )
         {
@@ -121,7 +121,7 @@ template <class A>
 typename enable_if_c<
     is_vec<A>::value,
     qvm_detail::col_mat_<A> const &>::type
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 col_mat( A const & a )
     {
     return reinterpret_cast<typename qvm_detail::col_mat_<A> const &>(a);
@@ -131,7 +131,7 @@ template <class A>
 typename enable_if_c<
     is_vec<A>::value,
     qvm_detail::col_mat_<A> &>::type
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 col_mat( A & a )
     {
     return reinterpret_cast<typename qvm_detail::col_mat_<A> &>(a);
@@ -153,7 +153,7 @@ qvm_detail
         public:
 
         template <class T>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         row_mat_ &
         operator=( T const & x )
             {
@@ -162,7 +162,7 @@ qvm_detail
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -183,7 +183,7 @@ mat_traits< qvm_detail::row_mat_<OriginalVector> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_matrix const & x )
         {
@@ -195,7 +195,7 @@ mat_traits< qvm_detail::row_mat_<OriginalVector> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type &
     write_element( this_matrix & x )
         {
@@ -206,7 +206,7 @@ mat_traits< qvm_detail::row_mat_<OriginalVector> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int row, int col, this_matrix const & x )
         {
@@ -217,7 +217,7 @@ mat_traits< qvm_detail::row_mat_<OriginalVector> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type &
     write_element_idx( int row, int col, this_matrix & x )
         {
@@ -246,7 +246,7 @@ template <class A>
 typename enable_if_c<
     is_vec<A>::value,
     qvm_detail::row_mat_<A> const &>::type
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 row_mat( A const & a )
     {
     return reinterpret_cast<typename qvm_detail::row_mat_<A> const &>(a);
@@ -256,7 +256,7 @@ template <class A>
 typename enable_if_c<
     is_vec<A>::value,
     qvm_detail::row_mat_<A> &>::type
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 row_mat( A & a )
     {
     return reinterpret_cast<typename qvm_detail::row_mat_<A> &>(a);
@@ -278,7 +278,7 @@ qvm_detail
         public:
 
         template <class T>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         translation_mat_ &
         operator=( T const & x )
             {
@@ -287,7 +287,7 @@ qvm_detail
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -304,7 +304,7 @@ qvm_detail
     read_translation_matat<translation_mat_<OriginalVector>,Row,Col,TransCol>
         {
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         typename mat_traits< translation_mat_<OriginalVector> >::scalar_type
         f( translation_mat_<OriginalVector> const & )
             {
@@ -317,7 +317,7 @@ qvm_detail
     read_translation_matat<translation_mat_<OriginalVector>,D,D,false>
         {
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         typename mat_traits< translation_mat_<OriginalVector> >::scalar_type
         f( translation_mat_<OriginalVector> const & )
             {
@@ -330,7 +330,7 @@ qvm_detail
     read_translation_matat<translation_mat_<OriginalVector>,D,D,true>
         {
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         typename mat_traits< translation_mat_<OriginalVector> >::scalar_type
         f( translation_mat_<OriginalVector> const & )
             {
@@ -343,7 +343,7 @@ qvm_detail
     read_translation_matat<translation_mat_<OriginalVector>,Row,Col,true>
         {
         static
-        BOOST_QVM_INLINE_CRITICAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
         typename mat_traits< translation_mat_<OriginalVector> >::scalar_type
         f( translation_mat_<OriginalVector> const & x )
             {
@@ -363,7 +363,7 @@ mat_traits< qvm_detail::translation_mat_<OriginalVector> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_matrix const & x )
         {
@@ -376,7 +376,7 @@ mat_traits< qvm_detail::translation_mat_<OriginalVector> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type &
     write_element( this_matrix & x )
         {
@@ -388,7 +388,7 @@ mat_traits< qvm_detail::translation_mat_<OriginalVector> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int row, int col, this_matrix const & x )
         {
@@ -405,7 +405,7 @@ mat_traits< qvm_detail::translation_mat_<OriginalVector> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type &
     write_element_idx( int row, int col, this_matrix const & x )
         {
@@ -435,7 +435,7 @@ template <class A>
 typename enable_if_c<
     is_vec<A>::value,
     qvm_detail::translation_mat_<A> const &>::type
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 translation_mat( A const & a )
     {
     return reinterpret_cast<typename qvm_detail::translation_mat_<A> const &>(a);
@@ -445,7 +445,7 @@ template <class A>
 typename enable_if_c<
     is_vec<A>::value,
     qvm_detail::translation_mat_<A> &>::type
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 translation_mat( A & a )
     {
     return reinterpret_cast<typename qvm_detail::translation_mat_<A> &>(a);
@@ -467,7 +467,7 @@ qvm_detail
         public:
 
         template <class T>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         diag_mat_ &
         operator=( T const & x )
             {
@@ -476,7 +476,7 @@ qvm_detail
             }
 
         template <class R>
-        BOOST_QVM_INLINE_TRIVIAL
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
@@ -497,7 +497,7 @@ mat_traits< qvm_detail::diag_mat_<OriginalVector> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element( this_matrix const & x )
         {
@@ -510,7 +510,7 @@ mat_traits< qvm_detail::diag_mat_<OriginalVector> >
 
     template <int Row,int Col>
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type &
     write_element( this_matrix & x )
         {
@@ -521,7 +521,7 @@ mat_traits< qvm_detail::diag_mat_<OriginalVector> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
     read_element_idx( int row, int col, this_matrix const & x )
         {
@@ -533,7 +533,7 @@ mat_traits< qvm_detail::diag_mat_<OriginalVector> >
         }
 
     static
-    BOOST_QVM_INLINE_CRITICAL
+    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type &
     write_element_idx( int row, int col, this_matrix & x )
         {
@@ -562,7 +562,7 @@ template <class A>
 typename enable_if_c<
     is_vec<A>::value,
     qvm_detail::diag_mat_<A> const &>::type
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 diag_mat( A const & a )
     {
     return reinterpret_cast<typename qvm_detail::diag_mat_<A> const &>(a);
@@ -572,7 +572,7 @@ template <class A>
 typename enable_if_c<
     is_vec<A>::value,
     qvm_detail::diag_mat_<A> &>::type
-BOOST_QVM_INLINE_TRIVIAL
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
 diag_mat( A & a )
     {
     return reinterpret_cast<typename qvm_detail::diag_mat_<A> &>(a);

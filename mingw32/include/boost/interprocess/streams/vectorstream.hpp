@@ -214,7 +214,7 @@ class basic_vectorbuf
    }
 
    protected:
-   virtual int_type underflow()
+   virtual int_type underflow() BOOST_OVERRIDE
    {
       if (base_t::gptr() == 0)
          return CharTraits::eof();
@@ -229,7 +229,7 @@ class basic_vectorbuf
       return CharTraits::eof();
    }
 
-   virtual int_type pbackfail(int_type c = CharTraits::eof())
+   virtual int_type pbackfail(int_type c = CharTraits::eof()) BOOST_OVERRIDE
    {
       if(this->gptr() != this->eback()) {
          if(!CharTraits::eq_int_type(c, CharTraits::eof())) {
@@ -254,7 +254,7 @@ class basic_vectorbuf
          return CharTraits::eof();
    }
 
-   virtual int_type overflow(int_type c = CharTraits::eof())
+   virtual int_type overflow(int_type c = CharTraits::eof()) BOOST_OVERRIDE
    {
       if(m_mode & std::ios_base::out) {
          if(!CharTraits::eq_int_type(c, CharTraits::eof())) {
@@ -289,7 +289,7 @@ class basic_vectorbuf
 
    virtual pos_type seekoff(off_type off, std::ios_base::seekdir dir,
                               std::ios_base::openmode mode
-                                 = std::ios_base::in | std::ios_base::out)
+                                 = std::ios_base::in | std::ios_base::out) BOOST_OVERRIDE
    {
       //Get seek mode
       bool in(0 != (mode & std::ios_base::in)), out(0 != (mode & std::ios_base::out));
@@ -357,7 +357,7 @@ class basic_vectorbuf
    }
 
    virtual pos_type seekpos(pos_type pos, std::ios_base::openmode mode
-                                 = std::ios_base::in | std::ios_base::out)
+                                 = std::ios_base::in | std::ios_base::out) BOOST_OVERRIDE
    {  return seekoff(pos - pos_type(off_type(0)), std::ios_base::beg, mode);  }
 
    private:

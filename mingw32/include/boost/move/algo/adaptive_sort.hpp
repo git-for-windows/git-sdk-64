@@ -30,7 +30,7 @@ namespace detail_adaptive {
 
 template<class RandIt>
 void move_data_backward( RandIt cur_pos
-              , typename iterator_traits<RandIt>::size_type const l_data
+              , typename iter_size<RandIt>::type const l_data
               , RandIt new_pos
               , bool const xbuf_used)
 {
@@ -47,7 +47,7 @@ void move_data_backward( RandIt cur_pos
 
 template<class RandIt>
 void move_data_forward( RandIt cur_pos
-              , typename iterator_traits<RandIt>::size_type const l_data
+              , typename iter_size<RandIt>::type const l_data
               , RandIt new_pos
               , bool const xbuf_used)
 {
@@ -83,16 +83,16 @@ void move_data_forward( RandIt cur_pos
 // As a last step, if auxiliary memory is available in-place merge is performed.
 // until all is merged or auxiliary memory is not large enough.
 template<class RandIt, class Compare, class XBuf>
-typename iterator_traits<RandIt>::size_type  
+typename iter_size<RandIt>::type  
    adaptive_sort_build_blocks
       ( RandIt const first
-      , typename iterator_traits<RandIt>::size_type const len
-      , typename iterator_traits<RandIt>::size_type const l_base
-      , typename iterator_traits<RandIt>::size_type const l_build_buf
+      , typename iter_size<RandIt>::type const len
+      , typename iter_size<RandIt>::type const l_base
+      , typename iter_size<RandIt>::type const l_build_buf
       , XBuf & xbuf
       , Compare comp)
 {
-   typedef typename iterator_traits<RandIt>::size_type       size_type;
+   typedef typename iter_size<RandIt>::type       size_type;
    BOOST_ASSERT(l_build_buf <= len);
    BOOST_ASSERT(0 == ((l_build_buf / l_base)&(l_build_buf/l_base-1)));
 
@@ -163,9 +163,9 @@ void adaptive_sort_combine_blocks
    ( RandItKeys const keys
    , KeyCompare key_comp
    , RandIt const first
-   , typename iterator_traits<RandIt>::size_type const len
-   , typename iterator_traits<RandIt>::size_type const l_prev_merged
-   , typename iterator_traits<RandIt>::size_type const l_block
+   , typename iter_size<RandIt>::type const len
+   , typename iter_size<RandIt>::type const l_prev_merged
+   , typename iter_size<RandIt>::type const l_block
    , bool const use_buf
    , bool const xbuf_used
    , XBuf & xbuf
@@ -173,7 +173,7 @@ void adaptive_sort_combine_blocks
    , bool merge_left)
 {
    boost::ignore_unused(xbuf);
-   typedef typename iterator_traits<RandIt>::size_type         size_type;
+   typedef typename iter_size<RandIt>::type         size_type;
 
    size_type const l_reg_combined   = size_type(2u*l_prev_merged);
    size_type l_irreg_combined = 0;
@@ -245,15 +245,15 @@ void adaptive_sort_combine_blocks
 template<class RandIt, class Compare, class XBuf>
 bool adaptive_sort_combine_all_blocks
    ( RandIt keys
-   , typename iterator_traits<RandIt>::size_type &n_keys
+   , typename iter_size<RandIt>::type &n_keys
    , RandIt const buffer
-   , typename iterator_traits<RandIt>::size_type const l_buf_plus_data
-   , typename iterator_traits<RandIt>::size_type l_merged
-   , typename iterator_traits<RandIt>::size_type &l_intbuf
+   , typename iter_size<RandIt>::type const l_buf_plus_data
+   , typename iter_size<RandIt>::type l_merged
+   , typename iter_size<RandIt>::type &l_intbuf
    , XBuf & xbuf
    , Compare comp)
 {
-   typedef typename iterator_traits<RandIt>::size_type       size_type;
+   typedef typename iter_size<RandIt>::type       size_type;
 
    RandIt const first = buffer + l_intbuf;
    size_type const l_data = size_type(l_buf_plus_data - l_intbuf);
@@ -353,16 +353,16 @@ bool adaptive_sort_combine_all_blocks
 template<class RandIt, class Compare, class XBuf>
 void adaptive_sort_final_merge( bool buffer_right
                               , RandIt const first
-                              , typename iterator_traits<RandIt>::size_type const l_intbuf
-                              , typename iterator_traits<RandIt>::size_type const n_keys
-                              , typename iterator_traits<RandIt>::size_type const len
+                              , typename iter_size<RandIt>::type const l_intbuf
+                              , typename iter_size<RandIt>::type const n_keys
+                              , typename iter_size<RandIt>::type const len
                               , XBuf & xbuf
                               , Compare comp)
 {
    //BOOST_ASSERT(n_keys || xbuf.size() == l_intbuf);
    xbuf.clear();
 
-   typedef typename iterator_traits<RandIt>::size_type         size_type;
+   typedef typename iter_size<RandIt>::type         size_type;
 
    size_type const n_key_plus_buf = size_type(l_intbuf+n_keys);
    if(buffer_right){
@@ -397,7 +397,7 @@ bool adaptive_sort_build_params
    , XBuf & xbuf
    )
 {
-   typedef typename iterator_traits<RandIt>::size_type         size_type;
+   typedef typename iter_size<RandIt>::type         size_type;
 
    //Calculate ideal parameters and try to collect needed unique keys
    l_base = 0u;
@@ -541,12 +541,12 @@ bool adaptive_sort_build_params
 template<class RandIt, class Compare, class XBuf>
 void adaptive_sort_impl
    ( RandIt first
-   , typename iterator_traits<RandIt>::size_type const len
+   , typename iter_size<RandIt>::type const len
    , Compare comp
    , XBuf & xbuf
    )
 {
-   typedef typename iterator_traits<RandIt>::size_type         size_type;
+   typedef typename iter_size<RandIt>::type         size_type;
 
    //Small sorts go directly to insertion sort
    if(len <= size_type(AdaptiveSortInsertionSortThreshold)){
@@ -626,9 +626,9 @@ void adaptive_sort_impl
 template<class RandIt, class RandRawIt, class Compare>
 void adaptive_sort( RandIt first, RandIt last, Compare comp
                , RandRawIt uninitialized
-               , typename iterator_traits<RandIt>::size_type uninitialized_len)
+               , typename iter_size<RandIt>::type uninitialized_len)
 {
-   typedef typename iterator_traits<RandIt>::size_type  size_type;
+   typedef typename iter_size<RandIt>::type  size_type;
    typedef typename iterator_traits<RandIt>::value_type value_type;
 
    ::boost::movelib::adaptive_xbuf<value_type, RandRawIt, size_type> xbuf(uninitialized, uninitialized_len);

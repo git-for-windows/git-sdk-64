@@ -1,10 +1,12 @@
 #ifndef BOOST_QVM_QUAT_TRAITS
 #define BOOST_QVM_QUAT_TRAITS
 
-/// Copyright (c) 2008-2021 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2008-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-/// Distributed under the Boost Software License, Version 1.0. (See accompanying
-/// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+#include <boost/qvm/is_scalar.hpp>
 
 namespace boost { namespace qvm {
 
@@ -15,29 +17,11 @@ quat_traits
     typedef void scalar_type;
     };
 
-namespace
-is_quaternion_detail
-    {
-    template <class>
-    struct
-    is_void
-        {
-        static bool const value=false;
-        };
-
-    template <>
-    struct
-    is_void<void>
-        {
-        static bool const value=true;
-        };
-    }
-
 template <class T>
 struct
 is_quat
     {
-    static bool const value=!is_quaternion_detail::is_void<typename quat_traits<T>::scalar_type>::value;
+    static bool const value = is_scalar<typename quat_traits<T>::scalar_type>::value;
     };
 
 } }

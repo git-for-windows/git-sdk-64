@@ -36,7 +36,9 @@
 #include <boost/move/detail/fwd_macros.hpp>
 #endif
 // move
+
 #include <boost/move/utility_core.hpp>
+#include <boost/move/detail/force_ptr.hpp>
 // other
 #include <boost/assert.hpp>
 #include <boost/core/no_exceptions_support.hpp>
@@ -129,8 +131,8 @@ struct insert_value_initialized_n_proxy
       while (n){
          --n;
          storage_t v;
-         value_type *vp = reinterpret_cast<value_type *>(v.data);
-         alloc_traits::construct(a, vp);
+         alloc_traits::construct(a, move_detail::force_ptr<value_type *>(&v));
+         value_type *vp = move_detail::force_ptr<value_type *>(&v);
          value_destructor<Allocator> on_exit(a, *vp); (void)on_exit;
          *p = ::boost::move(*vp);
          ++p;
@@ -154,8 +156,8 @@ struct insert_default_initialized_n_proxy
          while (n){
             --n;
             typename dtl::aligned_storage<sizeof(value_type), dtl::alignment_of<value_type>::value>::type v;
-            value_type *vp = reinterpret_cast<value_type *>(v.data);
-            alloc_traits::construct(a, vp, default_init);
+            alloc_traits::construct(a, move_detail::force_ptr<value_type *>(&v), default_init);
+            value_type *vp = move_detail::force_ptr<value_type *>(&v);
             value_destructor<Allocator> on_exit(a, *vp); (void)on_exit;
             *p = ::boost::move(*vp);
             ++p;
@@ -295,8 +297,8 @@ struct insert_emplace_proxy
    {
       BOOST_ASSERT(n ==1); (void)n;
       typename dtl::aligned_storage<sizeof(value_type), dtl::alignment_of<value_type>::value>::type v;
-      value_type *vp = reinterpret_cast<value_type *>(v.data);
-      alloc_traits::construct(a, vp, ::boost::forward<Args>(get<IdxPack>(this->args_))...);
+      alloc_traits::construct(a, move_detail::force_ptr<value_type *>(&v), ::boost::forward<Args>(get<IdxPack>(this->args_))...);
+      value_type *vp = move_detail::force_ptr<value_type *>(&v);
       BOOST_TRY{
          *p = ::boost::move(*vp);
       }
@@ -415,8 +417,8 @@ struct insert_emplace_proxy_arg##N\
    {\
       BOOST_ASSERT(n == 1); (void)n;\
       typename dtl::aligned_storage<sizeof(value_type), dtl::alignment_of<value_type>::value>::type v;\
-      value_type *vp = reinterpret_cast<value_type *>(v.data);\
-      alloc_traits::construct(a, vp BOOST_MOVE_I##N BOOST_MOVE_MFWD##N);\
+      alloc_traits::construct(a, move_detail::force_ptr<value_type *>(&v) BOOST_MOVE_I##N BOOST_MOVE_MFWD##N);\
+      value_type *vp = move_detail::force_ptr<value_type *>(&v);\
       BOOST_TRY{\
          *p = ::boost::move(*vp);\
       }\

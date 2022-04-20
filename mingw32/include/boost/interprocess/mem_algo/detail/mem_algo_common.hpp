@@ -35,6 +35,8 @@
 #include <boost/container/detail/placement_new.hpp>
 // move
 #include <boost/move/utility_core.hpp>
+// move/detail
+#include <boost/move/detail/force_ptr.hpp>
 // other boost
 #include <boost/static_assert.hpp>
 #include <boost/assert.hpp>
@@ -289,7 +291,7 @@ class memory_algorithm_common
             max_value(ceil_units(nbytes) + AllocatedCtrlUnits, size_type(MinBlockUnits));
          //We can create a new block in the end of the segment
          if(old_size >= (first_min_units + MinBlockUnits)){
-            block_ctrl *second =  reinterpret_cast<block_ctrl *>
+            block_ctrl *second =  move_detail::force_ptr<block_ctrl*>
                (reinterpret_cast<char*>(first) + Alignment*first_min_units);
             first->m_size  = first_min_units & block_ctrl::size_mask;
             second->m_size = (old_size - first->m_size) & block_ctrl::size_mask;
@@ -442,7 +444,7 @@ class memory_algorithm_common
       BOOST_ASSERT(block->m_size >= BlockCtrlUnits);
 
       //We create the new block
-      block_ctrl *new_block = reinterpret_cast<block_ctrl*>
+      block_ctrl *new_block = move_detail::force_ptr<block_ctrl*>
                   (reinterpret_cast<char*>(block) + block->m_size*Alignment);
       //Write control data to simulate this new block was previously allocated
       //and deallocate it
@@ -521,7 +523,7 @@ class memory_algorithm_common
                   break;
                total_request_units -= elem_units;
                //This is the position where the new block must be created
-               block_ctrl *new_block = reinterpret_cast<block_ctrl *>(block_address);
+               block_ctrl *new_block = move_detail::force_ptr<block_ctrl*>(block_address);
                assert_alignment(new_block);
 
                //The last block should take all the remaining space
