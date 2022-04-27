@@ -28,9 +28,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.9
-srcdir=		../Python-3.9.11
-VPATH=		../Python-3.9.11
-abs_srcdir=	/c/M/mingw-w64-python/src/build-x86_64/../Python-3.9.11
+srcdir=		../Python-3.9.12
+VPATH=		../Python-3.9.12
+abs_srcdir=	/c/M/mingw-w64-python/src/build-x86_64/../Python-3.9.12
 abs_builddir=	/c/M/mingw-w64-python/src/build-x86_64
 
 
@@ -120,7 +120,7 @@ PY_CORE_CFLAGS=	$(PY_STDMODULE_CFLAGS) -DPy_BUILD_CORE
 PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 # Strict or non-strict aliasing flags used to compile dtoa.c, see above
 CFLAGS_ALIASING=
-RCFLAGS= -DFIELD3=11150 -O COFF --target=pe-x86-64
+RCFLAGS= -DFIELD3=12150 -O COFF --target=pe-x86-64
 
 
 # Machine-dependent subdirectories
@@ -140,9 +140,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.9.11
-VPATH_b2h=		C:/M/mingw-w64-python/src/Python-3.9.11
-abs_srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.9.11
+srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.9.12
+VPATH_b2h=		C:/M/mingw-w64-python/src/Python-3.9.12
+abs_srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.9.12
 abs_builddir_b2h=	C:/M/mingw-w64-python/src/build-x86_64
 prefix_b2h=		D:/a/msys64/mingw64
 
@@ -225,7 +225,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw64' '--host=x86_64-w64-mingw32' '--build=x86_64-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--without-c-locale-coercion' '--enable-loadable-sqlite-extensions' '--with-tzpath=/mingw64/share/zoneinfo' '--enable-optimizations' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' 'PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw64' '--host=x86_64-w64-mingw32' '--build=x86_64-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-loadable-sqlite-extensions' '--with-tzpath=/mingw64/share/zoneinfo' '--enable-optimizations' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' 'PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig'
 
 
 # Subdirectories with code
