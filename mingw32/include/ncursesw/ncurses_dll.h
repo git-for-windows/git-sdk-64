@@ -78,11 +78,6 @@
 #define NCURSES_EXPORT(type) NCURSES_IMPEXP type NCURSES_API
 #define NCURSES_EXPORT_VAR(type) NCURSES_IMPEXP type
 
-/* XXX: MSYS2 hack to keep static builds working by default
- * https://github.com/msys2/MINGW-packages/issues/10312
- */
-#define NCURSES_STATIC
-
 /*
  * These symbols hide dllimport/dllexport, for compilers which care about it.
  */
