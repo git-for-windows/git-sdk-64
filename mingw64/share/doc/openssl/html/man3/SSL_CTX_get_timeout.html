@@ -50,6 +50,12 @@ long SSL_CTX_get_timeout(SSL_CTX *ctx);</code></pre>
 
 <p>The default value for session timeout is decided on a per protocol basis, see <a href="../man3/SSL_get_default_timeout.html">SSL_get_default_timeout(3)</a>. All currently supported protocols have the same default timeout value of 300 seconds.</p>
 
+<p>This timeout value is used as the ticket lifetime hint for stateless session tickets. It is also used as the timeout value within the ticket itself.</p>
+
+<p>For TLSv1.3, RFC8446 limits transmission of this value to 1 week (604800 seconds).</p>
+
+<p>For TLSv1.2, tickets generated during an initial handshake use the value as specified. Tickets generated during a resumed handshake have a value of 0 for the ticket lifetime hint.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>SSL_CTX_set_timeout() returns the previously set timeout value.</p>
@@ -62,7 +68,7 @@ long SSL_CTX_get_timeout(SSL_CTX *ctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
