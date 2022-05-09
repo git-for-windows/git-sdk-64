@@ -20,7 +20,7 @@
 shopt -s extglob
 
 declare -r myname='updpkgsums'
-declare -r myver='1.4.0'
+declare -r myver='1.5.1'
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
@@ -99,6 +99,11 @@ newbuildfile=$(mktemp "${TMPDIR:-/tmp}/updpkgsums.XXXXXX")
 trap "rm -rf '$BUILDDIR' '$newbuildfile'" EXIT
 sumtypes=$(IFS='|'; echo "${known_hash_algos[*]}")
 newsums=$(MINGW_PACKAGE_PREFIX=mingw-w64-i686 makepkg -g -p "$buildfile" "${MAKEPKG_OPTS[@]}") || die 'Failed to generate new checksums'
+
+if [[ -z $newsums ]]; then
+	die "$buildfile does not contain sources to update"
+fi
+
 awk -v sumtypes="$sumtypes" -v newsums="$newsums" '
 	$0 ~"^[[:blank:]]*(" sumtypes ")sums(_[^=]+)?=", $0 ~ "\\)[[:blank:]]*(#.*)?$" {
 		if (!w) {

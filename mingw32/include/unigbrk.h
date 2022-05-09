@@ -1,29 +1,28 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Grapheme cluster breaks in Unicode strings.
-   Copyright (C) 2010-2018 Free Software Foundation, Inc.
+   Copyright (C) 2010-2022 Free Software Foundation, Inc.
    Written by Ben Pfaff <blp@cs.stanford.edu>, 2010.
 
-   This program is free software: you can redistribute it and/or
-   modify it under the terms of either:
+   This file is free software.
+   It is dual-licensed under "the GNU LGPLv3+ or the GNU GPLv2+".
+   You can redistribute it and/or modify it under either
+     - the terms of the GNU Lesser General Public License as published
+       by the Free Software Foundation; either version 3, or (at your
+       option) any later version, or
+     - the terms of the GNU General Public License as published by the
+       Free Software Foundation; either version 2, or (at your option)
+       any later version, or
+     - the same dual license "the GNU LGPLv3+ or the GNU GPLv2+".
 
-     * the GNU Lesser General Public License as published by the Free
-       Software Foundation; either version 3 of the License, or (at your
-       option) any later version.
-
-   or
-
-     * the GNU General Public License as published by the Free
-       Software Foundation; either version 2 of the License, or (at your
-       option) any later version.
-
-   or both in parallel, as here.
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
+   Lesser General Public License and the GNU General Public License
+   for more details.
 
-   You should have received a copy of the GNU Lesser General Public License
-   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
+   You should have received a copy of the GNU Lesser General Public
+   License and of the GNU General Public License along with this
+   program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #ifndef _UNIGBRK_H
 #define _UNIGBRK_H
@@ -44,7 +43,7 @@ extern "C" {
 
 /* Property defined in Unicode Standard Annex #29, section "Grapheme Cluster
    Boundaries"
-   <http://unicode.org/reports/tr29/#Grapheme_Cluster_Boundaries> */
+   <https://unicode.org/reports/tr29/#Grapheme_Cluster_Boundaries> */
 
 /* Possible values of the Grapheme_Cluster_Break property.
    This enumeration may be extended in the future.  */
@@ -64,10 +63,10 @@ enum
   GBP_LVT          = 11,
   GBP_RI           = 12,
   GBP_ZWJ          = 13,
-  GBP_EB           = 14,
-  GBP_EM           = 15,
-  GBP_GAZ          = 16,
-  GBP_EBG          = 17
+  GBP_EB           = 14, /* obsolete */
+  GBP_EM           = 15, /* obsolete */
+  GBP_GAZ          = 16, /* obsolete */
+  GBP_EBG          = 17  /* obsolete */
 };
 
 /* Return the Grapheme_Cluster_Break property of a Unicode character. */

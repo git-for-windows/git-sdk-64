@@ -21,18 +21,26 @@
 shopt -s extglob
 
 declare -r myname='pacdiff'
-declare -r myver='1.4.0'
+declare -r myver='1.5.1'
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
 diffprog=${DIFFPROG:-'vim -d'}
 diffsearchpath=${DIFFSEARCHPATH:-/etc}
+mergeprog=${MERGEPROG:-'diff3 -m'}
+cachedir=
 USE_COLOR='y'
+SUDO=''
 declare -a oldsaves
 declare -i USE_FIND=0 USE_LOCATE=0 USE_PACDB=0 OUTPUTONLY=0
 
 # Import libmakepkg
 source "$LIBRARY"/util/message.sh
+
+die() {
+	error "$@"
+	exit 1
+}
 
 usage() {
 	cat <<EOF
@@ -48,15 +56,19 @@ Search Options:     select one (default: --pacmandb)
   -p/--pacmandb     scan active config files from pacman database
 
 General Options:
-  -o/--output       print files instead of merging them
-  --nocolor         remove colors from output
+  -o/--output         print files instead of merging them
+  --nocolor           remove colors from output
+  -c/--cachedir <dir> scan "dir" for 3-way merge base candidates.
+                      (default: read from /etc/pacman.conf)
+  -s/--sudo           use sudo to merge/remove files
 
 Environment Variables:
   DIFFPROG          override the merge program: (default: 'vim -d')
   DIFFSEARCHPATH    override the search path. (only when using find)
                     (default: /etc)
+  MERGEPROG         override the 3-way merge program: (default: 'diff3 -m')
 
-Example: DIFFPROG=meld DIFFSEARCHPATH="/boot /etc /usr" $myname
+Example: DIFFPROG=meld DIFFSEARCHPATH="/boot /etc /usr" MERGEPROG="git merge-file -p" $myname
 Example: $myname --output --locate
 
 EOF
@@ -78,6 +90,63 @@ print_existing_pacsave(){
 	done
 }
 
+base_cache_tar() {
+	package="$1"
+
+	[[ -d $cachedir ]] ||
+		die "cachedir '%s' does not exist or is not a directory" "$cachedir"
+
+	# unlikely that this will fail, but better make sure
+	pushd "$cachedir" &>/dev/null || die "failed to chdir to '%s'" "$cachedir"
+
+	find "$PWD" -name "$package-[0-9]*.pkg.tar*" | pacsort --files | sed -ne '2p'
+
+	popd &>/dev/null
+}
+
+merge_file() {
+	pacfile="$1"
+	file="$2"
+
+	package="$(pacman -Qoq "$file")" || return 1
+	base_tar="$(base_cache_tar "$package")"
+
+	if [[ -z $base_tar ]]; then
+		msg2 "Unable to find a base package."
+		return 1
+	fi
+
+	basename="$(basename "$file")"
+	tempdir="$(mktemp -d --tmpdir "pacdiff-merge-$basename.XXX")"
+	base="$(mktemp "$tempdir"/"$basename.base.XXX")"
+	merged="$(mktemp "$tempdir"/"$basename.merged.XXX")"
+
+	tar -xOf "$base_tar" "${file#/}" >"$base"
+	if $mergeprog "$file" "$base" "$pacfile" >"$merged"; then
+		msg2 "Merged without conflicts."
+	fi
+
+	$diffprog "$file" "$merged"
+
+	while :; do
+		ask "Would you like to use the results of the merge? [y/n] "
+
+		read c || return 1
+		case $c in
+			y|Y) break ;;
+			n|N) return 1 ;;
+			*) msg2 "Invalid answer." ;;
+		esac
+	done
+
+	if ! $SUDO cp -v "$merged" "$file"; then
+		warning "Unable to write merged file to %s. Merged file is preserved at %s" "$file" "$merged"
+		return 1
+	fi
+	$SUDO rm -rv "$pacfile" "$tempdir"
+	return 0
+}
+
 cmd() {
 	if (( USE_LOCATE )); then
 		locate -0 -e -b \*.pacnew \*.pacorig \*.pacsave '*.pacsave.[0-9]*'
@@ -87,8 +156,8 @@ cmd() {
 		awk '/^%BACKUP%$/ {
 		while (getline) {
 			if (/^$/) { nextfile }
-				print $1
-			}
+			print $1
+		}
 		}' "${pac_db}"/*/files | while read -r bkup; do
 			print_existing "/$bkup.pacnew"
 			print_existing "/$bkup.pacorig"
@@ -109,6 +178,10 @@ while [[ -n "$1" ]]; do
 			OUTPUTONLY=1;;
 		--nocolor)
 			USE_COLOR='n';;
+		-c|--cachedir)
+			cachedir="$2"; shift;;
+		-s|--sudo)
+			SUDO=sudo;;
 		-V|--version)
 			version; exit 0;;
 		-h|--help)
@@ -127,8 +200,11 @@ else
 fi
 
 if ! type -p ${diffprog%% *} >/dev/null && (( ! OUTPUTONLY )); then
-	error "Cannot find the $diffprog binary required for viewing differences."
-	exit 1
+	die "Cannot find the $diffprog binary required for viewing differences."
+fi
+
+if ! type -p ${mergeprog%% *} >/dev/null && (( ! OUTPUTONLY )); then
+	die "Cannot find the $mergeprog binary required for merging differences."
 fi
 
 case $(( USE_FIND + USE_LOCATE + USE_PACDB )) in
@@ -147,6 +223,10 @@ if (( USE_PACDB )); then
 		error "unable to read pacman database %s". "${pac_db}"
 		usage; exit 1
 	fi
+fi
+
+if [[ -z $cachedir ]]; then
+	cachedir="$(pacman-conf CacheDir)"
 fi
 
 # see http://mywiki.wooledge.org/BashFAQ/020
@@ -168,26 +248,38 @@ while IFS= read -u 3 -r -d '' pacfile; do
 	msg "%s file found for %s" "$file_type" "$file"
 	if [ ! -f "$file" ]; then
 		warning "$file does not exist"
-		rm -iv "$pacfile"
+		$SUDO rm -iv "$pacfile"
 		continue
 	fi
 
 	if cmp -s "$pacfile" "$file"; then
 		msg2 "Files are identical, removing..."
-		rm -v "$pacfile"
+		$SUDO rm -v "$pacfile"
 	else
-		ask "(V)iew, (S)kip, (R)emove %s, (O)verwrite with %s, (Q)uit: [v/s/r/o/q] " "$file_type" "$file_type"
-		while read c; do
+		while :; do
+			ask "(V)iew, (M)erge, (S)kip, (R)emove %s, (O)verwrite with %s, (Q)uit: [v/m/s/r/o/q] " "$file_type" "$file_type"
+			read c || break
 			case $c in
 				q|Q) exit 0;;
-				r|R) rm -v "$pacfile"; break ;;
-				o|O) mv -v "$pacfile" "$file"; break ;;
+				r|R) $SUDO rm -v "$pacfile"; break ;;
+				o|O) $SUDO mv -v "$pacfile" "$file"; break ;;
 				v|V)
-					$diffprog "$pacfile" "$file"
-					ask "(V)iew, (S)kip, (R)emove %s, (O)verwrite with %s, (Q)uit: [v/s/r/o/q] " "$file_type" "$file_type";
-					continue ;;
+					if [[ -n "$SUDO" ]]; then
+						SUDO_EDITOR="$diffprog" sudoedit "$pacfile" "$file"
+					else
+						$diffprog "$pacfile" "$file"
+					fi
+					if cmp -s "$pacfile" "$file"; then
+						msg2 "Files are identical, removing..."
+						$SUDO rm -v "$pacfile"
+						break
+					fi ;;
+				m|M)
+					if merge_file "$pacfile" "$file"; then
+						break
+					fi ;;
 				s|S) break ;;
-				*) ask "Invalid answer. Try again: [v/s/r/o/q] "; continue ;;
+				*) msg2 "Invalid answer." ;;
 			esac
 		done
 	fi

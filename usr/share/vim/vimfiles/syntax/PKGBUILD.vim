@@ -150,9 +150,12 @@ syn region pbSourceGroup  start=/^source=(/ end=/)/ contains=pb_k_source,pbIlleg
 syn match pbDerefEmulation /\$[{]\?[[:alnum:]_]*[}]\?/ contained
 hi def link pbDerefEmulation PreProc
 
+" SKIP sums
+syn match pbSumsSKIP /\(SKIP\)/
+
 " md5sums
 syn keyword pb_k_md5sums md5sums contained
-syn match pbIllegalMd5sums /[^='"()\/ ]/ contained contains=pbValidMd5sums
+syn match pbIllegalMd5sums /[^='"()\/ ]/ contained contains=pbValidMd5sums,pbSumsSKIP
 syn match pbValidMd5sums /\x\{32\}/ contained
 syn region pbMd5sumsGroup start=/^md5sums/ end=/)/ contains=pb_k_md5sums,pbMd5Quotes,pbMd5Hash,pbIllegalMd5sums keepend
 syn match pbMd5Quotes /'.*'\|".*"/ contained contains=pbMd5Hash,pbIllegalMd5sums
@@ -163,7 +166,7 @@ hi def link pbValidMd5sums  Number
 
 " sha1sums
 syn keyword pb_k_sha1sums sha1sums contained
-syn match pbIllegalSha1sums /[^='"()\/ ]/ contained contains=pbValidSha1sums
+syn match pbIllegalSha1sums /[^='"()\/ ]/ contained contains=pbValidSha1sums,pbSumsSKIP
 syn match pbValidSha1sums /\x\{40\}/ contained
 syn region pbSha1sumsGroup start=/^sha1sums/ end=/)/ contains=pb_k_sha1sums,pbSha1Quotes,pbSha1Hash,pbIllegalSha1sums keepend
 syn match pbSha1Quotes /'.*'\|".*"/ contained contains=pbSha1Hash,pbIllegalSha1sums
@@ -174,7 +177,7 @@ hi def link pbValidSha1sums  Number
 
 " sha224sums
 syn keyword pb_k_sha224sums sha224sums contained
-syn match pbIllegalsha224sums /[^='"()\/ ]/ contained contains=pbValidsha224sums
+syn match pbIllegalsha224sums /[^='"()\/ ]/ contained contains=pbValidsha224sums,pbSumsSKIP
 syn match pbValidsha224sums /\x\{64\}/ contained
 syn region pbsha224sumsGroup start=/^sha224sums/ end=/)/ contains=pb_k_sha224sums,pbsha224Quotes,pbsha224Hash,pbIllegalsha224sums keepend
 syn match pbsha224Quotes /'.*'\|".*"/ contained contains=pbsha224Hash,pbIllegalsha224sums
@@ -185,7 +188,7 @@ hi def link pbValidsha224sums  Number
 
 " sha256sums
 syn keyword pb_k_sha256sums sha256sums contained
-syn match pbIllegalSha256sums /[^='"()\/ ]/ contained contains=pbValidSha256sums
+syn match pbIllegalSha256sums /[^='"()\/ ]/ contained contains=pbValidSha256sums,pbSumsSKIP
 syn match pbValidSha256sums /\x\{64\}/ contained
 syn region pbSha256sumsGroup start=/^sha256sums/ end=/)/ contains=pb_k_sha256sums,pbSha256Quotes,pbSha256Hash,pbIllegalSha256sums keepend
 syn match pbSha256Quotes /'.*'\|".*"/ contained contains=pbSha256Hash,pbIllegalSha256sums
@@ -196,7 +199,7 @@ hi def link pbValidSha256sums  Number
 
 " sha384sums
 syn keyword pb_k_sha384sums sha384sums contained
-syn match pbIllegalSha384sums /[^='"()\/ ]/ contained contains=pbValidSha384sums
+syn match pbIllegalSha384sums /[^='"()\/ ]/ contained contains=pbValidSha384sums,pbSumsSKIP
 syn match pbValidSha384sums /\x\{96\}/ contained
 syn region pbSha384sumsGroup start=/^sha384sums/ end=/)/ contains=pb_k_sha384sums,pbSha384Quotes,pbSha384Hash,pbIllegalSha384sums keepend
 syn match pbSha384Quotes /'.*'\|".*"/ contained contains=pbSha384Hash,pbIllegalSha384sums
@@ -207,7 +210,7 @@ hi def link pbValidSha384sums  Number
 
 " sha512sums
 syn keyword pb_k_sha512sums sha512sums contained
-syn match pbIllegalSha512sums /[^='"()\/ ]/ contained contains=pbValidSha512sums
+syn match pbIllegalSha512sums /[^='"()\/ ]/ contained contains=pbValidSha512sums,pbSumsSKIP
 syn match pbValidSha512sums /\x\{128\}/ contained
 syn region pbSha512sumsGroup start=/^sha512sums/ end=/)/ contains=pb_k_sha512sums,pbSha512Quotes,pbSha512Hash,pbIllegalSha512sums keepend
 syn match pbSha512Quotes /'.*'\|".*"/ contained contains=pbSha512Hash,pbIllegalSha512sums
@@ -218,7 +221,7 @@ hi def link pbValidSha512sums  Number
 
 " b2sums
 syn keyword pb_k_b2sums b2sums contained
-syn match pbIllegalB2sums /[^='"()\/ ]/ contained contains=pbValidB2sums
+syn match pbIllegalB2sums /[^='"()\/ ]/ contained contains=pbValidB2sums,pbSumsSKIP
 syn match pbValidB2sums /\x\{128\}/ contained
 syn region pbB2sumsGroup start=/^b2sums/ end=/)/ contains=pb_k_b2sums,pbB2Quotes,pbB2Hash,pbIllegalB2sums keepend
 syn match pbB2Quotes /'.*'\|".*"/ contained contains=pbB2Hash,pbIllegalB2sums
@@ -234,7 +237,7 @@ syn region pbValidPGPKeysGroup start=/^validpgpkeys=(/ end=/)/ contains=pb_k_val
 
 " options
 syn keyword pb_k_options options contained
-syn match pbOptions /\(no\)\?\(strip\|docs\|libtool\|emptydirs\|zipman\|purge\|distcc\|color\|ccache\|check\|sign\|makeflags\|buildflags\)/ contained
+syn match pbOptions /\(no\)\?\(strip\|docs\|libtool\|emptydirs\|zipman\|purge\|distcc\|color\|ccache\|check\|sign\|makeflags\|buildflags\|lto\|debug\)/ contained
 syn match   pbOptionsNeg     /\!/ contained
 syn match   pbOptionsDeprec  /no/ contained
 syn region pbOptionsGroup start=/^options=(/ end=/)/ contains=pb_k_options,pbOptions,pbOptionsNeg,pbOptionsDeprec,pbIllegalOption

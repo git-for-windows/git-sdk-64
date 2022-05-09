@@ -1,27 +1,18 @@
 /* Character set conversion handler type.
-   Copyright (C) 2001-2007, 2009-2018 Free Software Foundation, Inc.
+   Copyright (C) 2001-2007, 2009-2022 Free Software Foundation, Inc.
    Written by Bruno Haible.
 
-   This program is free software: you can redistribute it and/or
-   modify it under the terms of either:
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-     * the GNU Lesser General Public License as published by the Free
-       Software Foundation; either version 3 of the License, or (at your
-       option) any later version.
-
-   or
-
-     * the GNU General Public License as published by the Free
-       Software Foundation; either version 2 of the License, or (at your
-       option) any later version.
-
-   or both in parallel, as here.
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #ifndef _ICONVEH_H
@@ -38,7 +29,10 @@ enum iconv_ilseq_handler
 {
   iconveh_error,                /* return and set errno = EILSEQ */
   iconveh_question_mark,        /* use one '?' per unconvertible character */
-  iconveh_escape_sequence       /* use escape sequence \uxxxx or \Uxxxxxxxx */
+  iconveh_escape_sequence,      /* use escape sequence \uxxxx or \Uxxxxxxxx */
+  iconveh_replacement_character /* use one U+FFFD per unconvertible character
+                                   if that fits in the target encoding,
+                                   otherwise one '?' */
 };
 
 

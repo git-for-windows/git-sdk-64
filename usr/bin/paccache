@@ -23,7 +23,7 @@ shopt -s nullglob
 shopt -s extglob
 
 declare -r myname='paccache'
-declare -r myver='1.4.0'
+declare -r myver='1.5.1'
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
@@ -175,7 +175,7 @@ summarize() {
 		printf -v output "finished: %d packages moved to '%s'" "$filecount" "$movedir"
 	elif (( dryrun )); then
 		if (( verbose )); then
-			msg "Candidate packages:"
+			msg 'Candidate packages:'
 			while read -r pkg; do
 				if (( verbose >= 3 )); then
 					[[ $pkg =~ $pkg_re ]] && name=${BASH_REMATCH[1]} arch=${BASH_REMATCH[2]}
@@ -343,8 +343,8 @@ whitelist=("$@")
 
 # sanity checks
 case $(( dryrun+delete+move )) in
-	0) die "no operation specified (use -h for help)" ;;
-	[^1]) die "only one operation may be used at a time" ;;
+	0) die 'no operation specified (use -h for help)' ;;
+	[^1]) die 'only one operation may be used at a time' ;;
 esac
 
 [[ $movedir && ! -d $movedir ]] &&

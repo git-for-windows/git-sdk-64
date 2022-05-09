@@ -1,32 +1,26 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Normalization forms (composition and decomposition) of Unicode strings.
-   Copyright (C) 2001-2002, 2009-2018 Free Software Foundation, Inc.
+   Copyright (C) 2001-2002, 2009-2022 Free Software Foundation, Inc.
    Written by Bruno Haible <bruno@clisp.org>, 2009.
 
-   This program is free software: you can redistribute it and/or
-   modify it under the terms of either:
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-     * the GNU Lesser General Public License as published by the Free
-       Software Foundation; either version 3 of the License, or (at your
-       option) any later version.
-
-   or
-
-     * the GNU General Public License as published by the Free
-       Software Foundation; either version 2 of the License, or (at your
-       option) any later version.
-
-   or both in parallel, as here.
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #ifndef _UNINORM_H
 #define _UNINORM_H
+
+/* Get common macros for C.  */
+#include <unistring/cdefs.h>
 
 /* Get LIBUNISTRING_DLL_VARIABLE.  */
 #include <unistring/woe32dll.h>
@@ -156,13 +150,13 @@ extern uninorm_t
 /* Return the specified normalization form of a string.  */
 extern uint8_t *
        u8_normalize (uninorm_t nf, const uint8_t *s, size_t n,
-                     uint8_t *resultbuf, size_t *lengthp);
+                     uint8_t *_UC_RESTRICT resultbuf, size_t *lengthp);
 extern uint16_t *
        u16_normalize (uninorm_t nf, const uint16_t *s, size_t n,
-                      uint16_t *resultbuf, size_t *lengthp);
+                      uint16_t *_UC_RESTRICT resultbuf, size_t *lengthp);
 extern uint32_t *
        u32_normalize (uninorm_t nf, const uint32_t *s, size_t n,
-                      uint32_t *resultbuf, size_t *lengthp);
+                      uint32_t *_UC_RESTRICT resultbuf, size_t *lengthp);
 
 
 /* Compare S1 and S2, ignoring differences in normalization.
@@ -222,6 +216,12 @@ extern int
    sequence to the encapsulated stream of Unicode characters.  */
 struct uninorm_filter;
 
+/* Bring data buffered in the filter to its destination, the encapsulated
+   stream, then close and free the filter.
+   Return 0 if successful, or -1 with errno set upon failure.  */
+extern int
+       uninorm_filter_free (struct uninorm_filter *filter);
+
 /* Create and return a normalization filter for Unicode characters.
    The pair (stream_func, stream_data) is the encapsulated stream.
    stream_func (stream_data, uc) receives the Unicode character uc
@@ -230,7 +230,8 @@ struct uninorm_filter;
 extern struct uninorm_filter *
        uninorm_filter_create (uninorm_t nf,
                               int (*stream_func) (void *stream_data, ucs4_t uc),
-                              void *stream_data);
+                              void *stream_data)
+       _GL_ATTRIBUTE_DEALLOC (uninorm_filter_free, 1);
 
 /* Stuff a Unicode character into a normalizing filter.
    Return 0 if successful, or -1 with errno set upon failure.  */
@@ -245,12 +246,6 @@ extern int
    will not necessarily be normalized.  */
 extern int
        uninorm_filter_flush (struct uninorm_filter *filter);
-
-/* Bring data buffered in the filter to its destination, the encapsulated
-   stream, then close and free the filter.
-   Return 0 if successful, or -1 with errno set upon failure.  */
-extern int
-       uninorm_filter_free (struct uninorm_filter *filter);
 
 
 #ifdef __cplusplus
