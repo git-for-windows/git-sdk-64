@@ -8686,12 +8686,6 @@ interval_microseconds value_seconds value_microseconds
      Flush the operating system disk buffers.  The return value is
      unspecified.
 
-crypt
-
-- Scheme Procedure: crypt key salt
-     Encrypt KEY using SALT as the salt value to the crypt(3) library
-     call.
-
 chroot
 
 - Scheme Procedure: chroot path
@@ -8733,6 +8727,21 @@ interval_microseconds value_seconds value_microseconds
      scheduling.  Sets the priority of all of the specified processes.
      Only the super-user may lower priorities.  The return value is not
      specified.
+
+getaffinity
+
+- Scheme Procedure: getaffinity pid
+     Return a bitvector representing the CPU affinity mask for process
+     PID.  Each CPU the process has affinity with has its corresponding
+     bit set in the returned bitvector.  The number of bits set is a
+     good estimate of how many CPUs Guile can use without stepping on
+     other processes' toes.
+
+setaffinity
+
+- Scheme Procedure: setaffinity pid mask
+     Install the CPU affinity mask MASK, a bitvector, for the process or
+     thread with ID PID.  The return value is unspecified.
 
 getpass
 
