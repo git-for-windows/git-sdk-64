@@ -5,18 +5,22 @@ header "<\?xml.*version=.*\?>"
 magic "(XML|SGML) (sub)?document"
 comment "<!--|-->"
 
-# The entire content of the tag:
+# First the entire content of the tag (for the attributes):
 color green start="<" end=">"
 
 # The angled brackets and the name of the tag:
-color cyan "<[^> ]+|>"
+color cyan "<[^> ]+|/?>"
 
 # The strings inside the tag:
 color magenta ""[^"]*""
 
+# Prolog stuff:
+color #888 "<\?.+\?>|<!DOCTYPE[^>]+>|\]>"
+color #888 start="<!DOCTYPE[^>]*$" end="^[^<]*>"
+
 # Comments:
-color yellow start="<!DOCTYPE" end="[/]?>"
 color yellow start="<!--" end="-->"
 
-# Escapes:
-color red "&[^;]*;"
+# Entities (custom and predefined):
+color pink "&[^; ]+;"
+color red "&(amp|apos|gt|lt|quot);"

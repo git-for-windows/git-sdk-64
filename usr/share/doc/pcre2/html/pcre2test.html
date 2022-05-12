@@ -59,12 +59,7 @@ patterns, and the subject lines specify PCRE2 function options, control how the
 subject is processed, and what output is produced.
 </P>
 <P>
-As the original fairly simple PCRE library evolved, it acquired many different
-features, and as a result, the original <b>pcretest</b> program ended up with a
-lot of options in a messy, arcane syntax for testing all the features. The
-move to the new PCRE2 API provided an opportunity to re-implement the test
-program as <b>pcre2test</b>, with a cleaner modifier syntax. Nevertheless, there
-are still many obscure modifiers, some of which are specifically designed for
+There are many obscure modifiers, some of which are specifically designed for
 use in conjunction with the test script and data files that are distributed as
 part of PCRE2. All the modifiers are documented here, some without much
 justification, but many of them are unlikely to be of use except when testing
@@ -83,16 +78,16 @@ to 8-bit code units for output.
 </P>
 <P>
 In the rest of this document, the names of library functions and structures
-are given in generic form, for example, <b>pcre_compile()</b>. The actual
+are given in generic form, for example, <b>pcre2_compile()</b>. The actual
 names used in the libraries have a suffix _8, _16, or _32, as appropriate.
 <a name="inputencoding"></a></P>
 <br><a name="SEC3" href="#TOC1">INPUT ENCODING</a><br>
 <P>
 Input to <b>pcre2test</b> is processed line by line, either by calling the C
-library's <b>fgets()</b> function, or via the <b>libreadline</b> library. In some
-Windows environments character 26 (hex 1A) causes an immediate end of file, and
-no further data is read, so this character should be avoided unless you really
-want that action.
+library's <b>fgets()</b> function, or via the <b>libreadline</b> or <b>libedit</b>
+library. In some Windows environments character 26 (hex 1A) causes an immediate
+end of file, and no further data is read, so this character should be avoided
+unless you really want that action.
 </P>
 <P>
 The input is processed using using C's string functions, so must not
@@ -258,7 +253,19 @@ available, and the use of JIT for matching is verified.
 <b>-LM</b>
 List modifiers: write a list of available pattern and subject modifiers to the
 standard output, then exit with zero exit code. All other options are ignored.
-If both -C and -LM are present, whichever is first is recognized.
+If both -C and any -Lx options are present, whichever is first is recognized.
+</P>
+<P>
+<b>-LP</b>
+List properties: write a list of recognized Unicode properties to the standard
+output, then exit with zero exit code. All other options are ignored. If both
+-C and any -Lx options are present, whichever is first is recognized.
+</P>
+<P>
+<b>-LS</b>
+List scripts: write a list of recogized Unicode script names to the standard
+output, then exit with zero exit code. All other options are ignored. If both
+-C and any -Lx options are present, whichever is first is recognized.
 </P>
 <P>
 <b>-pattern</b> <i>modifier-list</i>
@@ -486,15 +493,17 @@ excluding pattern meta-characters):
 </pre>
 This is interpreted as the pattern's delimiter. A regular expression may be
 continued over several input lines, in which case the newline characters are
-included within it. It is possible to include the delimiter within the pattern
-by escaping it with a backslash, for example
+included within it. It is possible to include the delimiter as a literal within
+the pattern by escaping it with a backslash, for example
 <pre>
   /abc\/def/
 </pre>
 If you do this, the escape and the delimiter form part of the pattern, but
-since the delimiters are all non-alphanumeric, this does not affect its
-interpretation. If the terminating delimiter is immediately followed by a
-backslash, for example,
+since the delimiters are all non-alphanumeric, the inclusion of the backslash
+does not affect the pattern's interpretation. Note, however, that this trick
+does not work within \Q...\E literal bracketing because the backslash will
+itself be interpreted as a literal. If the terminating delimiter is immediately
+followed by a backslash, for example,
 <pre>
   /abc/\
 </pre>
@@ -512,11 +521,11 @@ A pattern can be followed by a modifier list (details below).
 </P>
 <br><a name="SEC9" href="#TOC1">SUBJECT LINE SYNTAX</a><br>
 <P>
-Before each subject line is passed to <b>pcre2_match()</b> or
-<b>pcre2_dfa_match()</b>, leading and trailing white space is removed, and the
-line is scanned for backslash escapes, unless the <b>subject_literal</b>
-modifier was set for the pattern. The following provide a means of encoding
-non-printing characters in a visible way:
+Before each subject line is passed to <b>pcre2_match()</b>,
+<b>pcre2_dfa_match()</b>, or <b>pcre2_jit_match()</b>, leading and trailing white
+space is removed, and the line is scanned for backslash escapes, unless the
+<b>subject_literal</b> modifier was set for the pattern. The following provide a
+means of encoding non-printing characters in a visible way:
 <pre>
   \a         alarm (BEL, \x07)
   \b         backspace (\x08)
@@ -613,6 +622,7 @@ way <b>pcre2_compile()</b> behaves. See
 for a description of the effects of these options.
 <pre>
       allow_empty_class         set PCRE2_ALLOW_EMPTY_CLASS
+      allow_lookaround_bsk      set PCRE2_EXTRA_ALLOW_LOOKAROUND_BSK
       allow_surrogate_escapes   set PCRE2_EXTRA_ALLOW_SURROGATE_ESCAPES
       alt_bsux                  set PCRE2_ALT_BSUX
       alt_circumflex            set PCRE2_ALT_CIRCUMFLEX
@@ -1241,6 +1251,8 @@ pattern, but can be overridden by modifiers on the subject.
       match_limit=&#60;n&#62;            set a match limit
       memory                     show heap memory usage
       null_context               match with a NULL context
+      null_replacement           substitute with NULL replacement
+      null_subject               match with NULL subject
       offset=&#60;n&#62;                 set starting offset
       offset_limit=&#60;n&#62;           set offset limit
       ovector=&#60;n&#62;                set size of output vector
@@ -1670,7 +1682,7 @@ When testing <b>pcre2_substitute()</b>, this modifier also has the effect of
 passing the replacement string as zero-terminated.
 </P>
 <br><b>
-Passing a NULL context
+Passing a NULL context, subject, or replacement
 </b><br>
 <P>
 Normally, <b>pcre2test</b> passes a context block to <b>pcre2_match()</b>,
@@ -1679,6 +1691,11 @@ If the <b>null_context</b> modifier is set, however, NULL is passed. This is for
 testing that the matching and substitution functions behave correctly in this
 case (they use default values). This modifier cannot be used with the
 <b>find_limits</b> or <b>substitute_callout</b> modifiers.
+</P>
+<P>
+Similarly, for testing purposes, if the <b>null_subject</b> or
+<b>null_replacement</b> modifier is set, the subject or replacement string
+pointers are passed as NULL, respectively, to the relevant functions.
 </P>
 <br><a name="SEC12" href="#TOC1">THE ALTERNATIVE MATCHING FUNCTION</a><br>
 <P>
@@ -2117,16 +2134,16 @@ on the stack.
 <P>
 Philip Hazel
 <br>
-University Computing Service
+Retired from University Computing Service
 <br>
 Cambridge, England.
 <br>
 </P>
 <br><a name="SEC21" href="#TOC1">REVISION</a><br>
 <P>
-Last updated: 28 April 2021
+Last updated: 12 January 2022
 <br>
-Copyright &copy; 1997-2021 University of Cambridge.
+Copyright &copy; 1997-2022 University of Cambridge.
 <br>
 <p>
 Return to the <a href="index.html">PCRE2 index page</a>.

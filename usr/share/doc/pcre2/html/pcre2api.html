@@ -1845,7 +1845,7 @@ undefined. It may cause your program to crash or loop.
 </P>
 <P>
 Note that this option can also be passed to <b>pcre2_match()</b> and
-<b>pcre_dfa_match()</b>, to suppress UTF validity checking of the subject
+<b>pcre2_dfa_match()</b>, to suppress UTF validity checking of the subject
 string.
 </P>
 <P>
@@ -1914,6 +1914,13 @@ Extra compile options
 <P>
 The option bits that can be set in a compile context by calling the
 <b>pcre2_set_compile_extra_options()</b> function are as follows:
+<pre>
+  PCRE2_EXTRA_ALLOW_LOOKAROUND_BSK
+</pre>
+Since release 10.38 PCRE2 has forbidden the use of \K within lookaround
+assertions, following Perl's lead. This option is provided to re-enable the
+previous behaviour (act in positive lookarounds, ignore in negative ones) in
+case anybody is relying on it.
 <pre>
   PCRE2_EXTRA_ALLOW_SURROGATE_ESCAPES
 </pre>
@@ -2048,8 +2055,8 @@ point. However, this applies only to characters whose code points are less than
 \d.
 </P>
 <P>
-When PCRE2 is built with Unicode support (the default), the Unicode properties
-of all characters can be tested with \p and \P, or, alternatively, the
+When PCRE2 is built with Unicode support (the default), certain Unicode
+character properties can be tested with \p and \P, or, alternatively, the
 PCRE2_UCP option can be set when a pattern is compiled; this causes \w and
 friends to use Unicode property support instead of the built-in tables.
 PCRE2_UCP also causes upper/lower casing operations on characters with code
@@ -2309,7 +2316,7 @@ return zero. The third argument should point to a <b>size_t</b> variable.
   PCRE2_INFO_LASTCODETYPE
 </pre>
 Returns 1 if there is a rightmost literal code unit that must exist in any
-matched string, other than at its start. The third argument should  point to a
+matched string, other than at its start. The third argument should point to a
 <b>uint32_t</b> variable. If there is no such value, 0 is returned. When 1 is
 returned, the code unit value itself can be retrieved using
 PCRE2_INFO_LASTCODEUNIT. For anchored patterns, a last literal value is
@@ -2512,20 +2519,31 @@ to an abstract format like Java or .NET serialization.
 Information about a successful or unsuccessful match is placed in a match
 data block, which is an opaque structure that is accessed by function calls. In
 particular, the match data block contains a vector of offsets into the subject
-string that define the matched part of the subject and any substrings that were
-captured. This is known as the <i>ovector</i>.
+string that define the matched parts of the subject. This is known as the
+<i>ovector</i>.
 </P>
 <P>
 Before calling <b>pcre2_match()</b>, <b>pcre2_dfa_match()</b>, or
 <b>pcre2_jit_match()</b> you must create a match data block by calling one of
 the creation functions above. For <b>pcre2_match_data_create()</b>, the first
-argument is the number of pairs of offsets in the <i>ovector</i>. One pair of
-offsets is required to identify the string that matched the whole pattern, with
-an additional pair for each captured substring. For example, a value of 4
-creates enough space to record the matched portion of the subject plus three
-captured substrings. A minimum of at least 1 pair is imposed by
-<b>pcre2_match_data_create()</b>, so it is always possible to return the overall
-matched string.
+argument is the number of pairs of offsets in the <i>ovector</i>.
+</P>
+<P>
+When using <b>pcre2_match()</b>, one pair of offsets is required to identify the
+string that matched the whole pattern, with an additional pair for each
+captured substring. For example, a value of 4 creates enough space to record
+the matched portion of the subject plus three captured substrings.
+</P>
+<P>
+When using <b>pcre2_dfa_match()</b> there may be multiple matched substrings of
+different lengths at the same point in the subject. The ovector should be made
+large enough to hold as many as are expected.
+</P>
+<P>
+A minimum of at least 1 pair is imposed by <b>pcre2_match_data_create()</b>, so
+it is always possible to return the overall matched string in the case of
+<b>pcre2_match()</b> or the longest match in the case of
+<b>pcre2_dfa_match()</b>.
 </P>
 <P>
 The second argument of <b>pcre2_match_data_create()</b> is a pointer to a
@@ -2536,10 +2554,11 @@ pass NULL, which causes <b>malloc()</b> to be used.
 <P>
 For <b>pcre2_match_data_create_from_pattern()</b>, the first argument is a
 pointer to a compiled pattern. The ovector is created to be exactly the right
-size to hold all the substrings a pattern might capture. The second argument is
-again a pointer to a general context, but in this case if NULL is passed, the
-memory is obtained using the same allocator that was used for the compiled
-pattern (custom or default).
+size to hold all the substrings a pattern might capture when matched using
+<b>pcre2_match()</b>. You should not use this call when matching with
+<b>pcre2_dfa_match()</b>. The second argument is again a pointer to a general
+context, but in this case if NULL is passed, the memory is obtained using the
+same allocator that was used for the compiled pattern (custom or default).
 </P>
 <P>
 A match data block can be used many times, with the same or different compiled
@@ -2621,7 +2640,9 @@ The subject string is passed to <b>pcre2_match()</b> as a pointer in
 <i>startoffset</i>. The length and offset are in code units, not characters.
 That is, they are in bytes for the 8-bit library, 16-bit code units for the
 16-bit library, and 32-bit code units for the 32-bit library, whether or not
-UTF processing is enabled.
+UTF processing is enabled. As a special case, if <i>subject</i> is NULL and
+<i>length</i> is zero, the subject is assumed to be an empty string. If
+<i>length</i> is non-zero, an error occurs if <i>subject</i> is NULL.
 </P>
 <P>
 If <i>startoffset</i> is greater than the length of the subject,
@@ -2643,10 +2664,10 @@ lookbehind. For example, consider the pattern
 </pre>
 which finds occurrences of "iss" in the middle of words. (\B matches only if
 the current position in the subject is not a word boundary.) When applied to
-the string "Mississipi" the first call to <b>pcre2_match()</b> finds the first
+the string "Mississippi" the first call to <b>pcre2_match()</b> finds the first
 occurrence. If <b>pcre2_match()</b> is called again with just the remainder of
-the subject, namely "issipi", it does not match, because \B is always false at
-the start of the subject, which is deemed to be a word boundary. However, if
+the subject, namely "issippi", it does not match, because \B is always false
+at the start of the subject, which is deemed to be a word boundary. However, if
 <b>pcre2_match()</b> is passed the entire string again, but with
 <i>startoffset</i> set to 4, it finds the second occurrence of "iss" because it
 is able to look behind the starting point to discover that it is preceded by a
@@ -3375,12 +3396,17 @@ same number causes an error at compile time.
 <P>
 This function optionally calls <b>pcre2_match()</b> and then makes a copy of the
 subject string in <i>outputbuffer</i>, replacing parts that were matched with
-the <i>replacement</i> string, whose length is supplied in <b>rlength</b>. This
-can be given as PCRE2_ZERO_TERMINATED for a zero-terminated string. There is an
-option (see PCRE2_SUBSTITUTE_REPLACEMENT_ONLY below) to return just the
-replacement string(s). The default action is to perform just one replacement if
-the pattern matches, but there is an option that requests multiple replacements
-(see PCRE2_SUBSTITUTE_GLOBAL below).
+the <i>replacement</i> string, whose length is supplied in <b>rlength</b>, which
+can be given as PCRE2_ZERO_TERMINATED for a zero-terminated string. As a
+special case, if <i>replacement</i> is NULL and <i>rlength</i> is zero, the
+replacement is assumed to be an empty string. If <i>rlength</i> is non-zero, an
+error occurs if <i>replacement</i> is NULL.
+</P>
+<P>
+There is an option (see PCRE2_SUBSTITUTE_REPLACEMENT_ONLY below) to return just
+the replacement string(s). The default action is to perform just one
+replacement if the pattern matches, but there is an option that requests
+multiple replacements (see PCRE2_SUBSTITUTE_GLOBAL below).
 </P>
 <P>
 If successful, <b>pcre2_substitute()</b> returns the number of substitutions
@@ -3414,12 +3440,12 @@ block may or may not have been changed.
 As well as the usual options for <b>pcre2_match()</b>, a number of additional
 options can be set in the <i>options</i> argument of <b>pcre2_substitute()</b>.
 One such option is PCRE2_SUBSTITUTE_MATCHED. When this is set, an external
-<i>match_data</i> block must be provided, and it must have been used for an
-external call to <b>pcre2_match()</b>. The data in the <i>match_data</i> block
-(return code, offset vector) is used for the first substitution instead of
-calling <b>pcre2_match()</b> from within <b>pcre2_substitute()</b>. This allows
-an application to check for a match before choosing to substitute, without
-having to repeat the match.
+<i>match_data</i> block must be provided, and it must have already been used for
+an external call to <b>pcre2_match()</b> with the same pattern and subject
+arguments. The data in the <i>match_data</i> block (return code, offset vector)
+is then used for the first substitution instead of calling <b>pcre2_match()</b>
+from within <b>pcre2_substitute()</b>. This allows an application to check for a
+match before choosing to substitute, without having to repeat the match.
 </P>
 <P>
 The contents of the externally supplied match data block are not changed when
@@ -3564,7 +3590,7 @@ and force lower case. The escape sequences change the current state: \U and
 terminating a \Q quoted sequence) reverts to no case forcing. The sequences
 \u and \l force the next character (if it is a letter) to upper or lower
 case, respectively, and then the state automatically reverts to no case
-forcing. Case forcing applies to all inserted  characters, including those from
+forcing. Case forcing applies to all inserted characters, including those from
 capture groups and letters within \Q...\E quoted sequences. If either
 PCRE2_UTF or PCRE2_UCP was set when the pattern was compiled, Unicode
 properties are used for case forcing characters whose code points are greater
@@ -3636,7 +3662,9 @@ default.
 </P>
 <P>
 PCRE2_ERROR_NULL is returned if PCRE2_SUBSTITUTE_MATCHED is set but the
-<i>match_data</i> argument is NULL.
+<i>match_data</i> argument is NULL or if the <i>subject</i> or <i>replacement</i>
+arguments are NULL. For backward compatibility reasons an exception is made for
+the <i>replacement</i> argument if the <i>rlength</i> argument is also 0.
 </P>
 <P>
 PCRE2_ERROR_BADREPLACEMENT is used for miscellaneous syntax errors in the
@@ -3791,12 +3819,13 @@ other alternatives. Ultimately, when it runs out of matches,
 <P>
 The function <b>pcre2_dfa_match()</b> is called to match a subject string
 against a compiled pattern, using a matching algorithm that scans the subject
-string just once (not counting lookaround assertions), and does not backtrack.
-This has different characteristics to the normal algorithm, and is not
-compatible with Perl. Some of the features of PCRE2 patterns are not supported.
-Nevertheless, there are times when this kind of matching can be useful. For a
-discussion of the two matching algorithms, and a list of features that
-<b>pcre2_dfa_match()</b> does not support, see the
+string just once (not counting lookaround assertions), and does not backtrack
+(except when processing lookaround assertions). This has different
+characteristics to the normal algorithm, and is not compatible with Perl. Some
+of the features of PCRE2 patterns are not supported. Nevertheless, there are
+times when this kind of matching can be useful. For a discussion of the two
+matching algorithms, and a list of features that <b>pcre2_dfa_match()</b> does
+not support, see the
 <a href="pcre2matching.html"><b>pcre2matching</b></a>
 documentation.
 </P>
@@ -3831,7 +3860,7 @@ Here is an example of a simple call to <b>pcre2_dfa_match()</b>:
 </PRE>
 </P>
 <br><b>
-Option bits for <b>pcre_dfa_match()</b>
+Option bits for <b>pcre2_dfa_match()</b>
 </b><br>
 <P>
 The unused bits of the <i>options</i> argument for <b>pcre2_dfa_match()</b> must
@@ -3982,16 +4011,16 @@ fail, this error is given.
 <P>
 Philip Hazel
 <br>
-University Computing Service
+Retired from University Computing Service
 <br>
 Cambridge, England.
 <br>
 </P>
 <br><a name="SEC42" href="#TOC1">REVISION</a><br>
 <P>
-Last updated: 04 November 2020
+Last updated: 14 December 2021
 <br>
-Copyright &copy; 1997-2020 University of Cambridge.
+Copyright &copy; 1997-2021 University of Cambridge.
 <br>
 <p>
 Return to the <a href="index.html">PCRE2 index page</a>.
