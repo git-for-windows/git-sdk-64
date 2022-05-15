@@ -54,6 +54,7 @@ typedef enum {
 	GNUTLS_KTLS_DUPLEX = GNUTLS_KTLS_RECV | GNUTLS_KTLS_SEND,
 } gnutls_transport_ktls_enable_flags_t;
 
+
 gnutls_transport_ktls_enable_flags_t
 gnutls_transport_is_ktls_enabled(gnutls_session_t session);
 

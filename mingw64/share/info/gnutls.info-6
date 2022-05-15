@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.8 from gnutls.texi.
 
-This manual is last updated 22 February 2022 for version 3.7.4 of
+This manual is last updated 22 February 2022 for version 3.7.5 of
 GnuTLS.
 
 Copyright (C) 2001-2022 Free Software Foundation, Inc.\\ Copyright (C)
@@ -6586,6 +6586,22 @@ gnutls_aead_cipher_init
 
      *Since:* 3.4.0
 
+gnutls_aead_cipher_set_key
+--------------------------
+
+ -- Function: int gnutls_aead_cipher_set_key (gnutls_aead_cipher_hd_t
+          HANDLE, const gnutls_datum_t * KEY)
+     HANDLE: is a 'gnutls_aead_cipher_hd_t' type.
+
+     KEY: The key to be used for encryption
+
+     This function will set a new key without re-initializing the
+     context.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 3.7.5
+
 gnutls_cipher_add_auth
 ----------------------
 
@@ -8501,6 +8517,7 @@ Function and Data Index
 * gnutls_aead_cipher_encryptv <1>:       Cryptographic API.  (line  136)
 * gnutls_aead_cipher_encryptv2:          Cryptographic API.  (line  172)
 * gnutls_aead_cipher_init:               Cryptographic API.  (line  204)
+* gnutls_aead_cipher_set_key:            Cryptographic API.  (line  225)
 * gnutls_alert_get:                      Handling alerts.    (line   18)
 * gnutls_alert_get <1>:                  Core TLS API.       (line   11)
 * gnutls_alert_get_name:                 Handling alerts.    (line   31)
@@ -8636,25 +8653,25 @@ Function and Data Index
 * gnutls_certificate_verify_peers3:      Core TLS API.       (line 2222)
 * gnutls_check_version:                  Core TLS API.       (line 2273)
 * gnutls_ciphersuite_get:                Core TLS API.       (line 2409)
-* gnutls_cipher_add_auth:                Cryptographic API.  (line  225)
-* gnutls_cipher_decrypt:                 Cryptographic API.  (line  244)
-* gnutls_cipher_decrypt2:                Cryptographic API.  (line  266)
-* gnutls_cipher_deinit:                  Cryptographic API.  (line  295)
-* gnutls_cipher_encrypt:                 Cryptographic API.  (line  306)
-* gnutls_cipher_encrypt2:                Cryptographic API.  (line  324)
+* gnutls_cipher_add_auth:                Cryptographic API.  (line  241)
+* gnutls_cipher_decrypt:                 Cryptographic API.  (line  260)
+* gnutls_cipher_decrypt2:                Cryptographic API.  (line  282)
+* gnutls_cipher_deinit:                  Cryptographic API.  (line  311)
+* gnutls_cipher_encrypt:                 Cryptographic API.  (line  322)
+* gnutls_cipher_encrypt2:                Cryptographic API.  (line  340)
 * gnutls_cipher_get:                     Core TLS API.       (line 2292)
-* gnutls_cipher_get_block_size:          Cryptographic API.  (line  349)
+* gnutls_cipher_get_block_size:          Cryptographic API.  (line  365)
 * gnutls_cipher_get_id:                  Core TLS API.       (line 2304)
-* gnutls_cipher_get_iv_size:             Cryptographic API.  (line  360)
+* gnutls_cipher_get_iv_size:             Cryptographic API.  (line  376)
 * gnutls_cipher_get_key_size:            Core TLS API.       (line 2316)
 * gnutls_cipher_get_name:                Core TLS API.       (line 2328)
-* gnutls_cipher_get_tag_size:            Cryptographic API.  (line  375)
-* gnutls_cipher_init:                    Cryptographic API.  (line  389)
+* gnutls_cipher_get_tag_size:            Cryptographic API.  (line  391)
+* gnutls_cipher_init:                    Cryptographic API.  (line  405)
 * gnutls_cipher_list:                    Core TLS API.       (line 2340)
-* gnutls_cipher_set_iv:                  Cryptographic API.  (line  412)
+* gnutls_cipher_set_iv:                  Cryptographic API.  (line  428)
 * gnutls_cipher_suite_get_name:          Core TLS API.       (line 2356)
 * gnutls_cipher_suite_info:              Core TLS API.       (line 2379)
-* gnutls_cipher_tag:                     Cryptographic API.  (line  428)
+* gnutls_cipher_tag:                     Cryptographic API.  (line  444)
 * gnutls_compression_get:                Compatibility API.  (line   13)
 * gnutls_compression_get_id:             Compatibility API.  (line   25)
 * gnutls_compression_get_name:           Compatibility API.  (line   37)
@@ -8665,20 +8682,20 @@ Function and Data Index
 * gnutls_credentials_clear:              Core TLS API.       (line 2490)
 * gnutls_credentials_get:                Core TLS API.       (line 2498)
 * gnutls_credentials_set:                Session initialization.
-                                                             (line  147)
+                                                             (line  150)
 * gnutls_credentials_set <1>:            Core TLS API.       (line 2527)
 * gnutls_crypto_register_aead_cipher:    Overriding algorithms.
                                                              (line   58)
-* gnutls_crypto_register_aead_cipher <1>: Cryptographic API. (line  446)
+* gnutls_crypto_register_aead_cipher <1>: Cryptographic API. (line  462)
 * gnutls_crypto_register_cipher:         Overriding algorithms.
                                                              (line   13)
-* gnutls_crypto_register_cipher <1>:     Cryptographic API.  (line  491)
+* gnutls_crypto_register_cipher <1>:     Cryptographic API.  (line  507)
 * gnutls_crypto_register_digest:         Overriding algorithms.
                                                              (line  139)
-* gnutls_crypto_register_digest <1>:     Cryptographic API.  (line  539)
+* gnutls_crypto_register_digest <1>:     Cryptographic API.  (line  555)
 * gnutls_crypto_register_mac:            Overriding algorithms.
                                                              (line  100)
-* gnutls_crypto_register_mac <1>:        Cryptographic API.  (line  575)
+* gnutls_crypto_register_mac <1>:        Cryptographic API.  (line  591)
 * gnutls_db_check_entry:                 Core TLS API.       (line 2562)
 * gnutls_db_check_entry_expire_time:     Core TLS API.       (line 2578)
 * gnutls_db_check_entry_time:            Core TLS API.       (line 2592)
@@ -8690,9 +8707,9 @@ Function and Data Index
 * gnutls_db_set_remove_function:         Core TLS API.       (line 2663)
 * gnutls_db_set_retrieve_function:       Core TLS API.       (line 2678)
 * gnutls_db_set_store_function:          Core TLS API.       (line 2698)
-* gnutls_decode_ber_digest_info:         Cryptographic API.  (line  617)
-* gnutls_decode_gost_rs_value:           Cryptographic API.  (line  640)
-* gnutls_decode_rs_value:                Cryptographic API.  (line  665)
+* gnutls_decode_ber_digest_info:         Cryptographic API.  (line  633)
+* gnutls_decode_gost_rs_value:           Cryptographic API.  (line  656)
+* gnutls_decode_rs_value:                Cryptographic API.  (line  681)
 * gnutls_deinit:                         Data transfer and termination.
                                                              (line  188)
 * gnutls_deinit <1>:                     Core TLS API.       (line 2713)
@@ -8740,9 +8757,9 @@ Function and Data Index
 * gnutls_ecc_curve_get_size:             Core TLS API.       (line 3243)
 * gnutls_ecc_curve_list:                 Core TLS API.       (line 3253)
 * gnutls_ecc_curve_set_enabled:          Core TLS API.       (line 3265)
-* gnutls_encode_ber_digest_info:         Cryptographic API.  (line  689)
-* gnutls_encode_gost_rs_value:           Cryptographic API.  (line  709)
-* gnutls_encode_rs_value:                Cryptographic API.  (line  732)
+* gnutls_encode_ber_digest_info:         Cryptographic API.  (line  705)
+* gnutls_encode_gost_rs_value:           Cryptographic API.  (line  725)
+* gnutls_encode_rs_value:                Cryptographic API.  (line  748)
 * gnutls_error_is_fatal:                 Data transfer and termination.
                                                              (line   82)
 * gnutls_error_is_fatal <1>:             Core TLS API.       (line 3286)
@@ -8803,13 +8820,13 @@ Function and Data Index
 * gnutls_handshake_set_timeout:          TLS handshake.      (line   50)
 * gnutls_handshake_set_timeout <1>:      Core TLS API.       (line 4158)
 * gnutls_handshake_write:                Core TLS API.       (line 4178)
-* gnutls_hash:                           Cryptographic API.  (line  753)
-* gnutls_hash_copy:                      Cryptographic API.  (line  771)
-* gnutls_hash_deinit:                    Cryptographic API.  (line  790)
-* gnutls_hash_fast:                      Cryptographic API.  (line  804)
-* gnutls_hash_get_len:                   Cryptographic API.  (line  824)
-* gnutls_hash_init:                      Cryptographic API.  (line  838)
-* gnutls_hash_output:                    Cryptographic API.  (line  856)
+* gnutls_hash:                           Cryptographic API.  (line  769)
+* gnutls_hash_copy:                      Cryptographic API.  (line  787)
+* gnutls_hash_deinit:                    Cryptographic API.  (line  806)
+* gnutls_hash_fast:                      Cryptographic API.  (line  820)
+* gnutls_hash_get_len:                   Cryptographic API.  (line  840)
+* gnutls_hash_init:                      Cryptographic API.  (line  854)
+* gnutls_hash_output:                    Cryptographic API.  (line  872)
 * gnutls_heartbeat_allowed:              Core TLS API.       (line 4199)
 * gnutls_heartbeat_enable:               Core TLS API.       (line 4216)
 * gnutls_heartbeat_get_timeout:          Core TLS API.       (line 4240)
@@ -8821,17 +8838,17 @@ Function and Data Index
 * gnutls_hex_decode2:                    Core TLS API.       (line 4371)
 * gnutls_hex_encode:                     Core TLS API.       (line 4386)
 * gnutls_hex_encode2:                    Core TLS API.       (line 4405)
-* gnutls_hkdf_expand:                    Cryptographic API.  (line  870)
-* gnutls_hkdf_extract:                   Cryptographic API.  (line  894)
-* gnutls_hmac:                           Cryptographic API.  (line  915)
-* gnutls_hmac_copy:                      Cryptographic API.  (line  933)
-* gnutls_hmac_deinit:                    Cryptographic API.  (line  951)
-* gnutls_hmac_fast:                      Cryptographic API.  (line  965)
-* gnutls_hmac_get_key_size:              Cryptographic API.  (line  991)
-* gnutls_hmac_get_len:                   Cryptographic API.  (line 1006)
-* gnutls_hmac_init:                      Cryptographic API.  (line 1020)
-* gnutls_hmac_output:                    Cryptographic API.  (line 1046)
-* gnutls_hmac_set_nonce:                 Cryptographic API.  (line 1060)
+* gnutls_hkdf_expand:                    Cryptographic API.  (line  886)
+* gnutls_hkdf_extract:                   Cryptographic API.  (line  910)
+* gnutls_hmac:                           Cryptographic API.  (line  931)
+* gnutls_hmac_copy:                      Cryptographic API.  (line  949)
+* gnutls_hmac_deinit:                    Cryptographic API.  (line  967)
+* gnutls_hmac_fast:                      Cryptographic API.  (line  981)
+* gnutls_hmac_get_key_size:              Cryptographic API.  (line 1007)
+* gnutls_hmac_get_len:                   Cryptographic API.  (line 1022)
+* gnutls_hmac_init:                      Cryptographic API.  (line 1036)
+* gnutls_hmac_output:                    Cryptographic API.  (line 1062)
+* gnutls_hmac_set_nonce:                 Cryptographic API.  (line 1076)
 * gnutls_idna_map:                       Core TLS API.       (line 4423)
 * gnutls_idna_reverse_map:               Core TLS API.       (line 4454)
 * gnutls_init:                           Session initialization.
@@ -8847,7 +8864,7 @@ Function and Data Index
 * gnutls_mac_get_id:                     Core TLS API.       (line 4608)
 * gnutls_mac_get_key_size:               Core TLS API.       (line 4621)
 * gnutls_mac_get_name:                   Core TLS API.       (line 4633)
-* gnutls_mac_get_nonce_size:             Cryptographic API.  (line 1075)
+* gnutls_mac_get_nonce_size:             Cryptographic API.  (line 1091)
 * gnutls_mac_list:                       Core TLS API.       (line 4645)
 * gnutls_memcmp:                         Core TLS API.       (line 4657)
 * gnutls_memset:                         Core TLS API.       (line 4678)
@@ -8905,7 +8922,7 @@ Function and Data Index
 * gnutls_openpgp_send_cert:              Core TLS API.       (line 4886)
 * gnutls_packet_deinit:                  Core TLS API.       (line 4899)
 * gnutls_packet_get:                     Core TLS API.       (line 4910)
-* gnutls_pbkdf2:                         Cryptographic API.  (line 1088)
+* gnutls_pbkdf2:                         Cryptographic API.  (line 1104)
 * gnutls_pcert_deinit:                   Abstract key API.   (line  176)
 * gnutls_pcert_export_openpgp:           Abstract key API.   (line  186)
 * gnutls_pcert_export_x509:              Abstract key API.   (line  201)
@@ -9285,8 +9302,8 @@ Function and Data Index
 * gnutls_rehandshake <1>:                Core TLS API.       (line 6872)
 * gnutls_rnd:                            Random number generation.
                                                              (line   22)
-* gnutls_rnd <1>:                        Cryptographic API.  (line 1113)
-* gnutls_rnd_refresh:                    Cryptographic API.  (line 1135)
+* gnutls_rnd <1>:                        Cryptographic API.  (line 1129)
+* gnutls_rnd_refresh:                    Cryptographic API.  (line 1151)
 * gnutls_safe_renegotiation_status:      TLS 1.2 re-authentication.
                                                              (line   44)
 * gnutls_safe_renegotiation_status <1>:  Core TLS API.       (line 6912)

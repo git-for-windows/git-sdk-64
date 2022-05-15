@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.8 from gnutls.texi.
 
-This manual is last updated 22 February 2022 for version 3.7.4 of
+This manual is last updated 22 February 2022 for version 3.7.5 of
 GnuTLS.
 
 Copyright (C) 2001-2022 Free Software Foundation, Inc.\\ Copyright (C)
@@ -1092,6 +1092,9 @@ underlying protocol type, i.e., datagram (UDP) or reliable (TCP).
      handshake.
 'GNUTLS_NO_END_OF_EARLY_DATA'
      Under TLS1.3 suppress sending EndOfEarlyData message.  Since 3.7.2.
+'GNUTLS_NO_TICKETS_TLS12'
+     Flag to indicate that the session should not use resumption with
+     session tickets.  This flag only has effect if TLS 1.2 is used.
 
 
 Figure 6.2: The 'gnutls_init_flags_t' enumeration.
@@ -3049,8 +3052,12 @@ Keyword                          Description
                                  
 %NO_TICKETS                      will prevent the advertizing
                                  of the TLS session ticket
-                                 extension.  This is implied by
-                                 the PFS keyword.
+                                 extension.
+                                 
+%NO_TICKETS_TLS12                will prevent the advertizing
+                                 of the TLS session ticket
+                                 extension in TLS 1.2.  This is
+                                 implied by the PFS keyword.
                                  
 %NO_SESSION_HASH                 will prevent the advertizing
                                  the TLS extended master secret

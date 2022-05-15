@@ -69,6 +69,10 @@ typedef struct api_aead_cipher_hd_st *gnutls_aead_cipher_hd_t;
 int gnutls_aead_cipher_init(gnutls_aead_cipher_hd_t * handle,
 			    gnutls_cipher_algorithm_t cipher,
 			    const gnutls_datum_t * key);
+
+int gnutls_aead_cipher_set_key(gnutls_aead_cipher_hd_t handle,
+			       const gnutls_datum_t *key);
+
 int
 gnutls_aead_cipher_decrypt(gnutls_aead_cipher_hd_t handle,
 			   const void *nonce, size_t nonce_len,

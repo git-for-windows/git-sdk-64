@@ -51,13 +51,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.7.4"
+#define GNUTLS_VERSION "3.7.5"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 7
-#define GNUTLS_VERSION_PATCH 4
+#define GNUTLS_VERSION_PATCH 5
 
-#define GNUTLS_VERSION_NUMBER 0x030704
+#define GNUTLS_VERSION_NUMBER 0x030705
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -418,6 +418,8 @@ typedef enum {
  * @GNUTLS_COMP_NULL: The NULL compression method (no compression).
  * @GNUTLS_COMP_DEFLATE: The DEFLATE compression method from zlib.
  * @GNUTLS_COMP_ZLIB: Same as %GNUTLS_COMP_DEFLATE.
+ * @GNUTLS_COMP_BROTLI: Brotli compression method.
+ * @GNUTLS_COMP_ZSTD: Zstandard compression method.
  *
  * Enumeration of different TLS compression methods.
  */
@@ -452,6 +454,7 @@ typedef enum {
  *   This is not enabled by default as early data has weaker security properties than other data. Since 3.6.5.
  * @GNUTLS_FORCE_CLIENT_CERT: When in client side and only a single cert is specified, send that certificate irrespective of the issuers expected by the server. Since 3.5.0.
  * @GNUTLS_NO_TICKETS: Flag to indicate that the session should not use resumption with session tickets.
+ * @GNUTLS_NO_TICKETS_TLS12: Flag to indicate that the session should not use resumption with session tickets. This flag only has effect if TLS 1.2 is used.
  * @GNUTLS_KEY_SHARE_TOP3: Generate key shares for the top-3 different groups which are enabled.
  *   That is, as each group is associated with a key type (EC, finite field, x25519), generate
  *   three keys using %GNUTLS_PK_DH, %GNUTLS_PK_EC, %GNUTLS_PK_ECDH_X25519 if all of them are enabled.
@@ -515,7 +518,8 @@ typedef enum {
 	GNUTLS_AUTO_REAUTH = (1<<19),
 	GNUTLS_ENABLE_EARLY_DATA = (1<<20),
 	GNUTLS_NO_AUTO_SEND_TICKET = (1<<21),
-	GNUTLS_NO_END_OF_EARLY_DATA = (1<<22)
+	GNUTLS_NO_END_OF_EARLY_DATA = (1<<22),
+	GNUTLS_NO_TICKETS_TLS12 = (1<<23)
 } gnutls_init_flags_t;
 
 /* compatibility defines (previous versions of gnutls
@@ -2745,6 +2749,7 @@ gnutls_psk_set_server_params_function(gnutls_psk_server_credentials_t
  * @GNUTLS_SAN_REGISTERED_ID: RegisteredID.
  * @GNUTLS_SAN_OTHERNAME_XMPP: Virtual SAN, used by certain functions for convenience.
  * @GNUTLS_SAN_OTHERNAME_KRB5PRINCIPAL: Virtual SAN, used by certain functions for convenience.
+ * @GNUTLS_SAN_OTHERNAME_MSUSERPRINCIPAL: Virtual SAN, used by certain functions for convenience.
  *
  * Enumeration of different subject alternative names types.
  */
@@ -2761,7 +2766,8 @@ typedef enum gnutls_x509_subject_alt_name_t {
 	   that they are represented by an otherName value and an OID.
 	   Used by gnutls_x509_crt_get_subject_alt_othername_oid.  */
 	GNUTLS_SAN_OTHERNAME_XMPP = 1000,
-	GNUTLS_SAN_OTHERNAME_KRB5PRINCIPAL
+	GNUTLS_SAN_OTHERNAME_KRB5PRINCIPAL,
+	GNUTLS_SAN_OTHERNAME_MSUSERPRINCIPAL
 } gnutls_x509_subject_alt_name_t;
 
 struct gnutls_openpgp_crt_int;
