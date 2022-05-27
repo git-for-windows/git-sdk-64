@@ -53,7 +53,7 @@ $ ./install.sh
 #### From source
 
 - Ensure you have the latest version of Go, GNU make, and a standard Unix-compatible build environment installed.
-- On Windows, install `goversioninfo` with `go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo`.
+- On Windows, install `goversioninfo` with `go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo@latest`.
 - Run `make`.
 - Place the `git-lfs` binary, which can be found in `bin`, on your system’s executable `$PATH` or equivalent.
 - Git LFS requires global configuration changes once per-machine. This can be done by
@@ -79,6 +79,11 @@ the file you want like so:
 ```ShellSession
 $ gpg -d sha256sums.asc | grep git-lfs-linux-amd64-v2.10.0.tar.gz | shasum -a 256 -c
 ```
+
+For the convenience of distributors, we also provide a wider variety of signed
+hashes in the `hashes.asc` file.  Those hashes are in the tagged BSD format, but
+can be verified with Perl's `shasum` or the GNU hash utilities, just like the
+ones in `sha256sums.asc`.
 
 ## Example Usage
 
@@ -122,6 +127,9 @@ $ git commit -m "add psd"
 > $ git lfs migrate import --include="*.psd" --everything
 > ```
 >
+> **Note that this will rewrite history and change all of the Git object IDs in your
+> repository, just like the export version of this command.**
+>
 > For more information, read [`git-lfs-migrate(1)`](https://github.com/git-lfs/git-lfs/blob/main/docs/man/git-lfs-migrate.1.ronn).
 
 You can confirm that Git LFS is managing your PSD file:
@@ -153,8 +161,8 @@ example:
 $ git lfs migrate export --include="*.psd" --everything
 ```
 
-Note that this will rewrite history and change all of the Git object IDs in your
-repository, just like the import version of this command.
+**Note that this will rewrite history and change all of the Git object IDs in your
+repository, just like the import version of this command.**
 
 If there's some reason that things aren't working out for you, please let us
 know in an issue, and we'll definitely try to help or get it fixed.
