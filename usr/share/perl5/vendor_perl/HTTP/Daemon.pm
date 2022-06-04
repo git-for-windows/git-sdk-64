@@ -1,11 +1,11 @@
-package HTTP::Daemon; # git description: v6.11-4-g1c1c9bc
+package HTTP::Daemon; # git description: v6.13-4-ge6492b6
 
 # ABSTRACT: A simple http server class
 
 use strict;
 use warnings;
 
-our $VERSION = '6.12';
+our $VERSION = '6.14';
 
 use Socket ();
 use IO::Socket::IP;
@@ -603,7 +603,7 @@ HTTP::Daemon - A simple http server class
 
 =head1 VERSION
 
-version 6.12
+version 6.14
 
 =head1 SYNOPSIS
 
@@ -915,7 +915,7 @@ Gisle Aas <gisle@activestate.com>
 
 =head1 CONTRIBUTORS
 
-=for stopwords Olaf Alders Ville Skyttä Mark Stosberg Karen Etheridge Shoichi Kaji Chase Whitener Slaven Rezic Zefram Petr Písař Tom Hukins Alexey Tourbin Mike Schilli Bron Gondwana Ian Kilgore Jacob J Ondrej Hanak Perlover Peter Rabbitson Robert Stone Rolf Grossmann Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban amire80 jefflee john9art murphy phrstbrn ruff Adam Kennedy sasao Sjogren Alex Kapranoff Andreas J. Koenig Bill Mann DAVIDRW Daniel Hedlund David E. Wheeler FWILES Father Chrysostomos Ferenc Erki Gavin Peters Graeme Thompson Hans-H. Froehlich
+=for stopwords Olaf Alders Ville Skyttä Karen Etheridge Mark Stosberg Shoichi Kaji Chase Whitener Slaven Rezic Petr Písař Zefram Alexey Tourbin Bron Gondwana Michal Josef Špaček Mike Schilli Tom Hukins Adam Kennedy Sjogren Alex Kapranoff amire80 Andreas J. Koenig Bill Mann Daniel Hedlund David E. Wheeler DAVIDRW Father Chrysostomos Ferenc Erki FWILES Gavin Peters Graeme Thompson Hans-H. Froehlich Ian Kilgore Jacob J jefflee john9art murphy Ondrej Hanak Perlover Peter Rabbitson phrstbrn Robert Stone Rolf Grossmann ruff sasao Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban
 
 =over 4
 
@@ -929,11 +929,11 @@ Ville Skyttä <ville.skytta@iki.fi>
 
 =item *
 
-Mark Stosberg <MARKSTOS@cpan.org>
+Karen Etheridge <ether@cpan.org>
 
 =item *
 
-Karen Etheridge <ether@cpan.org>
+Mark Stosberg <MARKSTOS@cpan.org>
 
 =item *
 
@@ -949,15 +949,11 @@ Slaven Rezic <slaven@rezic.de>
 
 =item *
 
-Zefram <zefram@fysh.org>
-
-=item *
-
 Petr Písař <ppisar@redhat.com>
 
 =item *
 
-Tom Hukins <tom@eborcom.com>
+Zefram <zefram@fysh.org>
 
 =item *
 
@@ -965,11 +961,79 @@ Alexey Tourbin <at@altlinux.ru>
 
 =item *
 
+Bron Gondwana <brong@fastmail.fm>
+
+=item *
+
+Michal Josef Špaček <mspacek@redhat.com>
+
+=item *
+
 Mike Schilli <mschilli@yahoo-inc.com>
 
 =item *
 
-Bron Gondwana <brong@fastmail.fm>
+Tom Hukins <tom@eborcom.com>
+
+=item *
+
+Adam Kennedy <adamk@cpan.org>
+
+=item *
+
+Adam Sjogren <asjo@koldfront.dk>
+
+=item *
+
+Alex Kapranoff <ka@nadoby.ru>
+
+=item *
+
+amire80 <amir.aharoni@gmail.com>
+
+=item *
+
+Andreas J. Koenig <andreas.koenig@anima.de>
+
+=item *
+
+Bill Mann <wfmann@alum.mit.edu>
+
+=item *
+
+Daniel Hedlund <Daniel.Hedlund@eprize.com>
+
+=item *
+
+David E. Wheeler <david@justatheory.com>
+
+=item *
+
+DAVIDRW <davidrw@cpan.org>
+
+=item *
+
+Father Chrysostomos <sprout@cpan.org>
+
+=item *
+
+Ferenc Erki <erkiferenc@gmail.com>
+
+=item *
+
+FWILES <FWILES@cpan.org>
+
+=item *
+
+Gavin Peters <gpeters@deepsky.com>
+
+=item *
+
+Graeme Thompson <Graeme.Thompson@mobilecohesion.com>
+
+=item *
+
+Hans-H. Froehlich <hfroehlich@co-de-co.de>
 
 =item *
 
@@ -978,6 +1042,18 @@ Ian Kilgore <iank@cpan.org>
 =item *
 
 Jacob J <waif@chaos2.org>
+
+=item *
+
+jefflee <shaohua@gmail.com>
+
+=item *
+
+john9art <john9art@yahoo.com>
+
+=item *
+
+murphy <murphy@genome.chop.edu>
 
 =item *
 
@@ -993,11 +1069,23 @@ Peter Rabbitson <ribasushi@cpan.org>
 
 =item *
 
+phrstbrn <phrstbrn@gmail.com>
+
+=item *
+
 Robert Stone <talby@trap.mtview.ca.us>
 
 =item *
 
 Rolf Grossmann <rg@progtech.net>
+
+=item *
+
+ruff <ruff@ukrpost.net>
+
+=item *
+
+sasao <sasao@yugen.org>
 
 =item *
 
@@ -1026,90 +1114,6 @@ Toru Yamaguchi <zigorou@cpan.org>
 =item *
 
 Yuri Karaban <tech@askold.net>
-
-=item *
-
-amire80 <amir.aharoni@gmail.com>
-
-=item *
-
-jefflee <shaohua@gmail.com>
-
-=item *
-
-john9art <john9art@yahoo.com>
-
-=item *
-
-murphy <murphy@genome.chop.edu>
-
-=item *
-
-phrstbrn <phrstbrn@gmail.com>
-
-=item *
-
-ruff <ruff@ukrpost.net>
-
-=item *
-
-Adam Kennedy <adamk@cpan.org>
-
-=item *
-
-sasao <sasao@yugen.org>
-
-=item *
-
-Adam Sjogren <asjo@koldfront.dk>
-
-=item *
-
-Alex Kapranoff <ka@nadoby.ru>
-
-=item *
-
-Andreas J. Koenig <andreas.koenig@anima.de>
-
-=item *
-
-Bill Mann <wfmann@alum.mit.edu>
-
-=item *
-
-DAVIDRW <davidrw@cpan.org>
-
-=item *
-
-Daniel Hedlund <Daniel.Hedlund@eprize.com>
-
-=item *
-
-David E. Wheeler <david@justatheory.com>
-
-=item *
-
-FWILES <FWILES@cpan.org>
-
-=item *
-
-Father Chrysostomos <sprout@cpan.org>
-
-=item *
-
-Ferenc Erki <erkiferenc@gmail.com>
-
-=item *
-
-Gavin Peters <gpeters@deepsky.com>
-
-=item *
-
-Graeme Thompson <Graeme.Thompson@mobilecohesion.com>
-
-=item *
-
-Hans-H. Froehlich <hfroehlich@co-de-co.de>
 
 =back
 

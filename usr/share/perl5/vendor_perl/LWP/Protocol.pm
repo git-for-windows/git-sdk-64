@@ -1,8 +1,8 @@
 package LWP::Protocol;
 
-use base 'LWP::MemberMixin';
+use parent 'LWP::MemberMixin';
 
-our $VERSION = '6.57';
+our $VERSION = '6.60';
 
 use strict;
 use Carp ();
@@ -210,7 +210,7 @@ LWP::Protocol - Base class for LWP protocols
 =head1 SYNOPSIS
 
  package LWP::Protocol::foo;
- use base qw(LWP::Protocol);
+ use parent qw(LWP::Protocol);
 
 =head1 DESCRIPTION
 
@@ -223,9 +223,9 @@ appropriate for that access method. In other words, the
 L<LWP::Protocol/create> function calls the constructor for one of its
 subclasses.
 
-All derived C<LWP::Protocol> classes need to override the request()
+All derived C<LWP::Protocol> classes need to override the C<request()>
 method which is used to service a request. The overridden method can
-make use of the collect() function to collect together chunks of data
+make use of the C<collect()> method to collect together chunks of data
 as it is received.
 
 =head1 METHODS

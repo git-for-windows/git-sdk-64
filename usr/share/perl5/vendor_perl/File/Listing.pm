@@ -4,10 +4,10 @@ use strict;
 use warnings;
 use Carp ();
 use HTTP::Date qw(str2time);
-use base qw( Exporter );
+use Exporter 5.57 qw( import );
 
 # ABSTRACT: Parse directory listing
-our $VERSION = '6.14'; # VERSION
+our $VERSION = '6.15'; # VERSION
 
 sub Version { $File::Listing::VERSION; }
 
@@ -121,7 +121,7 @@ sub parse
            push(@files, $pkg->line($line, $tz, $error));
        }
    }
-   wantarray ? @files : \@files;  ## no critic (Freenode::Wantarray)
+   wantarray ? @files : \@files;  ## no critic (Community::Wantarray)
 }
 
 
@@ -399,7 +399,7 @@ File::Listing - Parse directory listing
 
 =head1 VERSION
 
-version 6.14
+version 6.15
 
 =head1 SYNOPSIS
 

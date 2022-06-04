@@ -2,7 +2,7 @@ package LWP::UserAgent;
 
 use strict;
 
-use base qw(LWP::MemberMixin);
+use parent qw(LWP::MemberMixin);
 
 use Carp ();
 use HTTP::Request ();
@@ -16,7 +16,7 @@ use LWP::Protocol ();
 use Scalar::Util qw(blessed);
 use Try::Tiny qw(try catch);
 
-our $VERSION = '6.57';
+our $VERSION = '6.60';
 
 sub new
 {
@@ -1022,11 +1022,11 @@ sub mirror
 
         if ( defined $content_length and $file_length < $content_length ) {
             unlink($tmpfile);
-            die "Transfer truncated: " . "only $file_length out of $content_length bytes received\n";
+            die "Transfer truncated: only $file_length out of $content_length bytes received\n";
         }
         elsif ( defined $content_length and $file_length > $content_length ) {
             unlink($tmpfile);
-            die "Content-length mismatch: " . "expected $content_length bytes, got $file_length\n";
+            die "Content-length mismatch: expected $content_length bytes, got $file_length\n";
         }
         # The file was the expected length.
         else {
@@ -1041,7 +1041,8 @@ sub mirror
 
             # make sure the file has the same last modification time
             if ( my $lm = $response->last_modified ) {
-                utime $lm, $lm, $file;
+                utime $lm, $lm, $file
+                    or warn "Cannot update modification time of '$file': $!\n";
             }
         }
     }
@@ -1795,7 +1796,7 @@ Set handlers private to the executing subroutine.  Works by defaulting
 an C<owner> field to the C<%matchspec> that holds the name of the called
 subroutine.  You might pass an explicit C<owner> to override this.
 
-If $cb is passed as C<undef>, remove the handler.
+If C<$cb> is passed as C<undef>, remove the handler.
 
 =head1 REQUEST METHODS
 
@@ -1811,7 +1812,7 @@ This method will dispatch a C<DELETE> request on the given URL.  Additional
 headers and content options are the same as for the L<LWP::UserAgent/get>
 method.
 
-This method will use the DELETE() function from L<HTTP::Request::Common>
+This method will use the C<DELETE()> function from L<HTTP::Request::Common>
 to build the request.  See L<HTTP::Request::Common> for a details on
 how to pass form content and other advanced features.
 
@@ -1843,7 +1844,7 @@ content is treated.  The following special field names are recognized:
     ':content_cb'     => \&callback
     ':read_size_hint' => $bytes
 
-If a $filename is provided with the C<:content_file> option, then the
+If a C<$filename> is provided with the C<:content_file> option, then the
 response content will be saved here instead of in the response
 object.  If a callback is provided with the C<:content_cb> option then
 this function will be called for each chunk of the response content as
@@ -1865,9 +1866,9 @@ number of callback invocations.
 
 The callback function is called with 3 arguments: a chunk of data, a
 reference to the response object, and a reference to the protocol
-object.  The callback can abort the request by invoking die().  The
+object.  The callback can abort the request by invoking C<die()>.  The
 exception message will show up as the "X-Died" header field in the
-response returned by the get() function.
+response returned by the C<< $ua->get() >> method.
 
 =head2 head
 
