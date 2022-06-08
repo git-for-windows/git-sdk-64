@@ -20,7 +20,7 @@
 shopt -s extglob
 
 declare -r myname='updpkgsums'
-declare -r myver='1.5.1'
+declare -r myver='1.5.2'
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
@@ -122,5 +122,3 @@ awk -v sumtypes="$sumtypes" -v newsums="$newsums" '
 if ! cat -- "$newbuildfile" >"$buildfile"; then
 	die "Failed to update %s. The file has not been modified." "$buildfile"
 fi
-
-# vim: set noet:

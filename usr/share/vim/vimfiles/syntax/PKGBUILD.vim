@@ -66,7 +66,7 @@ syn keyword pb_k_license license contained
 " echo $(pacman -Ql licenses | grep '/usr/share/licenses/common/' | cut -d'/' -f6 | sort -u)
 syn keyword pbLicense  AGPL AGPL3 Apache APACHE Artistic2.0 Boost CCPL CDDL CPL EPL FDL FDL1.2 FDL1.3 GPL GPL2 GPL3 LGPL LGPL2.1 LGPL3 LPPL MPL MPL2 PerlArtistic PHP PSF RUBY Unlicense W3C ZPL contained
 " special cases from https://wiki.archlinux.org/index.php/PKGBUILD#license
-syn keyword pbLicenseSpecial  BSD MIT ZLIB Python contained
+syn keyword pbLicenseSpecial  BSD ISC MIT OFL Python ZLIB contained
 syn match pbLicenseCustom /custom\(:[[:alnum:]]*\)*/ contained
 syn keyword pbLicenseUnknown unknown contained
 syn match pbIllegalLicense /[^='"() ]/ contained contains=pbLicenseUnknown,pbLicenseCustom,pbLicenseSpecial,pbLicense
@@ -346,5 +346,3 @@ hi def link pb_k_maintainer pbKeywords
 hi def link pbKeywords Keyword
 
 hi def link pbDate Special
-
-"let b:current_syntax = 'PKGBUILD'

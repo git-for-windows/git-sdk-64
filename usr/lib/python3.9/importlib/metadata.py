@@ -45,12 +45,21 @@ class EntryPoint(
     See `the packaging docs on entry points
     <https://packaging.python.org/specifications/entry-points/>`_
     for more information.
+
+    >>> ep = EntryPoint(
+    ...     name=None, group=None, value='package.module:attr [extra1, extra2]')
+    >>> ep.module
+    'package.module'
+    >>> ep.attr
+    'attr'
+    >>> ep.extras
+    ['extra1', 'extra2']
     """
 
     pattern = re.compile(
         r'(?P<module>[\w.]+)\s*'
-        r'(:\s*(?P<attr>[\w.]+))?\s*'
-        r'(?P<extras>\[.*\])?\s*$'
+        r'(:\s*(?P<attr>[\w.]+)\s*)?'
+        r'((?P<extras>\[.*\])\s*)?$'
         )
     """
     A regular expression describing the syntax for an entry point,
@@ -91,7 +100,7 @@ class EntryPoint(
     @property
     def extras(self):
         match = self.pattern.match(self.value)
-        return list(re.finditer(r'\w+', match.group('extras') or ''))
+        return re.findall(r'\w+', match.group('extras') or '')
 
     @classmethod
     def _from_config(cls, config):
@@ -308,7 +317,7 @@ class Distribution:
 
     def _read_egg_info_reqs(self):
         source = self.read_text('requires.txt')
-        return source and self._deps_from_requires_text(source)
+        return None if source is None else self._deps_from_requires_text(source)
 
     @classmethod
     def _deps_from_requires_text(cls, source):
@@ -344,17 +353,26 @@ class Distribution:
         def make_condition(name):
             return name and 'extra == "{name}"'.format(name=name)
 
-        def parse_condition(section):
+        def quoted_marker(section):
             section = section or ''
             extra, sep, markers = section.partition(':')
             if extra and markers:
-                markers = '({markers})'.format(markers=markers)
+                markers = f'({markers})'
             conditions = list(filter(None, [markers, make_condition(extra)]))
             return '; ' + ' and '.join(conditions) if conditions else ''
 
+        def url_req_space(req):
+            """
+            PEP 508 requires a space between the url_spec and the quoted_marker.
+            Ref python/importlib_metadata#357.
+            """
+            # '@' is uniquely indicative of a url_req.
+            return ' ' * ('@' in req)
+
         for section, deps in sections.items():
             for dep in deps:
-                yield dep + parse_condition(section)
+                space = url_req_space(dep)
+                yield dep + space + quoted_marker(section)
 
 
 class DistributionFinder(MetaPathFinder):

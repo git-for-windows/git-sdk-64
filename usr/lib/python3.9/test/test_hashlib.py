@@ -45,11 +45,14 @@ else:
     builtin_hashlib = None
 
 try:
-    from _hashlib import HASH, HASHXOF, openssl_md_meth_names
+    from _hashlib import HASH, HASHXOF, openssl_md_meth_names, get_fips_mode
 except ImportError:
     HASH = None
     HASHXOF = None
     openssl_md_meth_names = frozenset()
+
+    def get_fips_mode():
+        return 0
 
 try:
     import _blake2
@@ -63,7 +66,9 @@ try:
 except ImportError:
     _sha3 = None
 
-requires_sha3 = unittest.skipUnless(_sha3, 'requires _sha3')
+# bpo-46913: Don't test the _sha3 extension on a Python UBSAN build
+SKIP_SHA3 = support.check_sanitizer(ub=True)
+requires_sha3 = unittest.skipUnless(not SKIP_SHA3 and _sha3, 'requires _sha3')
 
 
 def hexstr(s):
@@ -126,6 +131,8 @@ class HashLibTestCase(unittest.TestCase):
 
         self.constructors_to_test = {}
         for algorithm in algorithms:
+            if SKIP_SHA3 and algorithm.startswith('sha3_'):
+                continue
             self.constructors_to_test[algorithm] = set()
 
         # For each algorithm, test the direct constructor and the use
@@ -178,14 +185,15 @@ class HashLibTestCase(unittest.TestCase):
             add_builtin_constructor('blake2s')
             add_builtin_constructor('blake2b')
 
-        _sha3 = self._conditional_import_module('_sha3')
-        if _sha3:
-            add_builtin_constructor('sha3_224')
-            add_builtin_constructor('sha3_256')
-            add_builtin_constructor('sha3_384')
-            add_builtin_constructor('sha3_512')
-            add_builtin_constructor('shake_128')
-            add_builtin_constructor('shake_256')
+        if not SKIP_SHA3:
+            _sha3 = self._conditional_import_module('_sha3')
+            if _sha3:
+                add_builtin_constructor('sha3_224')
+                add_builtin_constructor('sha3_256')
+                add_builtin_constructor('sha3_384')
+                add_builtin_constructor('sha3_512')
+                add_builtin_constructor('shake_128')
+                add_builtin_constructor('shake_256')
 
         super(HashLibTestCase, self).__init__(*args, **kwargs)
 
@@ -196,10 +204,7 @@ class HashLibTestCase(unittest.TestCase):
 
     @property
     def is_fips_mode(self):
-        if hasattr(self._hashlib, "get_fips_mode"):
-            return self._hashlib.get_fips_mode()
-        else:
-            return None
+        return get_fips_mode()
 
     def test_hash_array(self):
         a = array.array("b", range(10))
@@ -218,6 +223,10 @@ class HashLibTestCase(unittest.TestCase):
     def test_algorithms_available(self):
         self.assertTrue(set(hashlib.algorithms_guaranteed).
                             issubset(hashlib.algorithms_available))
+        # all available algorithms must be loadable, bpo-47101
+        self.assertNotIn("undefined", hashlib.algorithms_available)
+        for name in hashlib.algorithms_available:
+            digest = hashlib.new(name, usedforsecurity=False)
 
     def test_usedforsecurity_true(self):
         hashlib.new("sha256", usedforsecurity=True)
@@ -1013,7 +1022,7 @@ class KDFTests(unittest.TestCase):
                     self.assertEqual(out, expected,
                                      (digest_name, password, salt, rounds))
 
-        with self.assertRaisesRegex(ValueError, 'unsupported hash type'):
+        with self.assertRaisesRegex(ValueError, '.*unsupported.*'):
             pbkdf2('unknown', b'pass', b'salt', 1)
 
         if 'sha1' in supported:
@@ -1050,6 +1059,7 @@ class KDFTests(unittest.TestCase):
 
     @unittest.skipUnless(hasattr(hashlib, 'scrypt'),
                      '   test requires OpenSSL > 1.1')
+    @unittest.skipIf(get_fips_mode(), reason="scrypt is blocked in FIPS mode")
     def test_scrypt(self):
         for password, salt, n, r, p, expected in self.scrypt_test_vectors:
             result = hashlib.scrypt(password, salt=salt, n=n, r=r, p=p)

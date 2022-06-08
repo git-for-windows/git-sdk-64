@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.9
 srcdir=		.
 
-abs_srcdir=	/c/S/python/src/Python-3.9.9
-abs_builddir=	/c/S/python/src/Python-3.9.9
+abs_srcdir=	/c/S/python/src/Python-3.9.13
+abs_builddir=	/c/S/python/src/Python-3.9.13
 
 
 CC=		gcc
@@ -214,7 +214,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/usr' '--build=x86_64-pc-msys' '--host=x86_64-pc-msys' '--enable-shared' '--enable-ipv6' '--with-dbmliborder=gdbm' '--with-libc=' '--with-libm=' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--enable-loadable-sqlite-extensions' '--without-ensurepip' 'ac_cv_func_bind_textdomain_codeset=yes' 'build_alias=x86_64-pc-msys' 'host_alias=x86_64-pc-msys' 'CC=gcc' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe -L.' 'CPPFLAGS= -I/usr/include/ncursesw' 'PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/lib/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/usr' '--build=x86_64-pc-cygwin' '--host=x86_64-pc-cygwin' '--enable-shared' '--enable-ipv6' '--with-dbmliborder=gdbm' '--with-libc=' '--with-libm=' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--enable-loadable-sqlite-extensions' '--without-ensurepip' 'ac_cv_func_bind_textdomain_codeset=yes' 'build_alias=x86_64-pc-cygwin' 'host_alias=x86_64-pc-cygwin' 'CC=gcc' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe -L.' 'CPPFLAGS= -I/usr/include/ncursesw' 'PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/lib/pkgconfig'
 
 
 # Subdirectories with code
@@ -258,8 +258,8 @@ PYTHON_FOR_REGEN?=python3.9
 UPDATE_FILE=python3.9 $(srcdir)/Tools/scripts/update_file.py
 PYTHON_FOR_BUILD=./$(BUILDPYTHON) -E
 _PYTHON_HOST_PLATFORM=
-BUILD_GNU_TYPE=	x86_64-pc-msys
-HOST_GNU_TYPE=	x86_64-pc-msys
+BUILD_GNU_TYPE=	x86_64-pc-cygwin
+HOST_GNU_TYPE=	x86_64-pc-cygwin
 
 # Tcl and Tk config info from --with-tcltk-includes and -libs options
 TCLTK_INCLUDES=	
@@ -1963,6 +1963,12 @@ funny:
 # Perform some verification checks on any modified files.
 patchcheck: all
 	$(RUNSHARED) ./$(BUILDPYTHON) $(srcdir)/Tools/scripts/patchcheck.py
+
+.PHONY: update-config
+update-config:
+	curl -sL -o config.guess 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD'
+	curl -sL -o config.sub 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD'
+	chmod +x config.guess config.sub
 
 # Dependencies
 

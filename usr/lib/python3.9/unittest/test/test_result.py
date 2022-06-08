@@ -34,6 +34,22 @@ def bad_cleanup2():
     raise ValueError('bad cleanup2')
 
 
+class BufferedWriter:
+    def __init__(self):
+        self.result = ''
+        self.buffer = ''
+
+    def write(self, arg):
+        self.buffer += arg
+
+    def flush(self):
+        self.result += self.buffer
+        self.buffer = ''
+
+    def getvalue(self):
+        return self.result
+
+
 class Test_TestResult(unittest.TestCase):
     # Note: there are not separate tests for TestResult.wasSuccessful(),
     # TestResult.errors, TestResult.failures, TestResult.testsRun or
@@ -204,6 +220,61 @@ class Test_TestResult(unittest.TestCase):
         test_case, formatted_exc = result.failures[0]
         self.assertIs(test_case, test)
         self.assertIsInstance(formatted_exc, str)
+
+    def test_addFailure_filter_traceback_frames(self):
+        class Foo(unittest.TestCase):
+            def test_1(self):
+                pass
+
+        test = Foo('test_1')
+        def get_exc_info():
+            try:
+                test.fail("foo")
+            except:
+                return sys.exc_info()
+
+        exc_info_tuple = get_exc_info()
+
+        full_exc = traceback.format_exception(*exc_info_tuple)
+
+        result = unittest.TestResult()
+        result.startTest(test)
+        result.addFailure(test, exc_info_tuple)
+        result.stopTest(test)
+
+        formatted_exc = result.failures[0][1]
+        dropped = [l for l in full_exc if l not in formatted_exc]
+        self.assertEqual(len(dropped), 1)
+        self.assertIn("raise self.failureException(msg)", dropped[0])
+
+    def test_addFailure_filter_traceback_frames_context(self):
+        class Foo(unittest.TestCase):
+            def test_1(self):
+                pass
+
+        test = Foo('test_1')
+        def get_exc_info():
+            try:
+                try:
+                    test.fail("foo")
+                except:
+                    raise ValueError(42)
+            except:
+                return sys.exc_info()
+
+        exc_info_tuple = get_exc_info()
+
+        full_exc = traceback.format_exception(*exc_info_tuple)
+
+        result = unittest.TestResult()
+        result.startTest(test)
+        result.addFailure(test, exc_info_tuple)
+        result.stopTest(test)
+
+        formatted_exc = result.failures[0][1]
+        dropped = [l for l in full_exc if l not in formatted_exc]
+        self.assertEqual(len(dropped), 1)
+        self.assertIn("raise self.failureException(msg)", dropped[0])
 
     # "addError(test, err)"
     # ...
@@ -445,10 +516,13 @@ class Test_TestResult(unittest.TestCase):
         self.assertTrue(result.shouldStop)
 
     def testFailFastSetByRunner(self):
-        runner = unittest.TextTestRunner(stream=io.StringIO(), failfast=True)
+        stream = BufferedWriter()
+        runner = unittest.TextTestRunner(stream=stream, failfast=True)
         def test(result):
             self.assertTrue(result.failfast)
         result = runner.run(test)
+        stream.flush()
+        self.assertTrue(stream.getvalue().endswith('\n\nOK\n'))
 
 
 classDict = dict(unittest.TestResult.__dict__)

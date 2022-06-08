@@ -16,7 +16,7 @@ build_time_vars = {'ABIFLAGS': '',
  'BLDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe -L. -pipe -L.',
  'BUILDEXE': '.exe',
  'BUILDPYTHON': 'python.exe',
- 'BUILD_GNU_TYPE': 'x86_64-pc-msys',
+ 'BUILD_GNU_TYPE': 'x86_64-pc-cygwin',
  'BYTESTR_DEPS': '\\',
  'CC': 'gcc',
  'CCSHARED': '',
@@ -38,22 +38,22 @@ build_time_vars = {'ABIFLAGS': '',
  'CONFIGURE_CPPFLAGS': '-I/usr/include/ncursesw',
  'CONFIGURE_LDFLAGS': '-pipe -L.',
  'CONFIGURE_LDFLAGS_NODIST': '',
- 'CONFIG_ARGS': "'--prefix=/usr' '--build=x86_64-pc-msys' "
-                "'--host=x86_64-pc-msys' '--enable-shared' '--enable-ipv6' "
+ 'CONFIG_ARGS': "'--prefix=/usr' '--build=x86_64-pc-cygwin' "
+                "'--host=x86_64-pc-cygwin' '--enable-shared' '--enable-ipv6' "
                 "'--with-dbmliborder=gdbm' '--with-libc=' '--with-libm=' "
                 "'--with-system-expat' '--with-system-ffi' "
                 "'--with-system-libmpdec' "
                 "'--enable-loadable-sqlite-extensions' '--without-ensurepip' "
                 "'ac_cv_func_bind_textdomain_codeset=yes' "
-                "'build_alias=x86_64-pc-msys' 'host_alias=x86_64-pc-msys' "
+                "'build_alias=x86_64-pc-cygwin' 'host_alias=x86_64-pc-cygwin' "
                 "'CC=gcc' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe' "
                 "'LDFLAGS=-pipe -L.' 'CPPFLAGS= -I/usr/include/ncursesw' "
                 "'PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/lib/pkgconfig'",
  'CONFINCLUDEDIR': '/usr/include',
  'CONFINCLUDEPY': '/usr/include/python3.9',
  'COREPYTHONPATH': '',
- 'COVERAGE_INFO': '/c/S/python/src/Python-3.9.9/coverage.info',
- 'COVERAGE_REPORT': '/c/S/python/src/Python-3.9.9/lcov-report',
+ 'COVERAGE_INFO': '/c/S/python/src/Python-3.9.13/coverage.info',
+ 'COVERAGE_REPORT': '/c/S/python/src/Python-3.9.13/lcov-report',
  'COVERAGE_REPORT_OPTIONS': '--no-branch-coverage --title "CPython lcov '
                             'report"',
  'CPPFLAGS': '-I. -I./Include -I/usr/include/ncursesw  -I/usr/include/ncursesw',
@@ -280,6 +280,7 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_LIBUUID': 0,
  'HAVE_LINK': 1,
  'HAVE_LINKAT': 1,
+ 'HAVE_LINUX_AUXVEC_H': 0,
  'HAVE_LINUX_CAN_BCM_H': 0,
  'HAVE_LINUX_CAN_H': 0,
  'HAVE_LINUX_CAN_J1939_H': 0,
@@ -443,6 +444,7 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_SYSCONF': 1,
  'HAVE_SYSEXITS_H': 1,
  'HAVE_SYS_AUDIOIO_H': 0,
+ 'HAVE_SYS_AUXV_H': 0,
  'HAVE_SYS_BSDTTY_H': 0,
  'HAVE_SYS_DEVPOLL_H': 0,
  'HAVE_SYS_DIR_H': 0,
@@ -522,7 +524,7 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_X509_VERIFY_PARAM_SET1_HOST': 1,
  'HAVE_ZLIB_COPY': 1,
  'HAVE__GETPTY': 0,
- 'HOST_GNU_TYPE': 'x86_64-pc-msys',
+ 'HOST_GNU_TYPE': 'x86_64-pc-cygwin',
  'INCLDIRSTOMAKE': '/usr/include /usr/include /usr/include/python3.9 '
                    '/usr/include/python3.9',
  'INCLUDEDIR': '/usr/include',
@@ -758,8 +760,8 @@ build_time_vars = {'ABIFLAGS': '',
  'WITH_VALGRIND': 0,
  'X87_DOUBLE_ROUNDING': 0,
  'XMLLIBSUBDIRS': 'xml xml/dom xml/etree xml/parsers xml/sax',
- 'abs_builddir': '/c/S/python/src/Python-3.9.9',
- 'abs_srcdir': '/c/S/python/src/Python-3.9.9',
+ 'abs_builddir': '/c/S/python/src/Python-3.9.13',
+ 'abs_srcdir': '/c/S/python/src/Python-3.9.13',
  'datarootdir': '/usr/share',
  'exec_prefix': '/usr',
  'prefix': '/usr',

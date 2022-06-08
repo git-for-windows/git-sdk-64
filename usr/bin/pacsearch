@@ -24,7 +24,7 @@ use warnings;
 use Term::ANSIColor;
 
 my $myname = 'pacsearch';
-my $myver = '1.5.1';
+my $myver = '1.5.2';
 
 sub usage {
 	print "$myname v$myver\n\n";
@@ -121,5 +121,3 @@ my %allpkgs = map {$_->[1] . $_->[2] => 1} @sync;
 my @query = grep { not $allpkgs{$_->[1] . $_->[2]}} list_pkg('-Qs', @ARGV);
 $_->[4] = " [$LC_INSTALLED]" foreach @query;
 print_pkg (@{$_}) foreach (@sync, @query);
-
-#vim: set noet:
