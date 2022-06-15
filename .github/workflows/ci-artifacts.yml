@@ -9,39 +9,6 @@ env:
   LC_CTYPE: C.UTF-8
 
 jobs:
-  ci-artifact:
-    if: github.event.repository.fork == false
-    strategy:
-      matrix:
-        artifact: [full-sdk, build-installers, makepkg-git]
-    runs-on: windows-latest
-    steps:
-      - name: clone git-sdk-64
-        shell: bash
-        run: git clone --bare --depth=1 $(test full-sdk = ${{matrix.artifact}} || echo --filter=blob:none) --single-branch -b ${REF#refs/heads/} https://github.com/${{github.repository}}
-        env:
-          REF: ${{github.ref}}
-      - name: clone build-extra
-        run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
-      - name: build git-sdk-64-${{matrix.artifact}}
-        shell: bash
-        run: |
-          sh -x ./build-extra/please.sh create-sdk-artifact --sdk=git-sdk-64.git ${{matrix.artifact}}
-          echo "ARTIFACT_PATH=$(echo ${{matrix.artifact}}/*.tar.xz)" >$GITHUB_ENV
-      - name: compress artifact
-        if: matrix.artifact != 'full-sdk'
-        shell: bash
-        run: |
-          (cd ${{matrix.artifact}} && tar cvf - * .[0-9A-Za-z]*) | xz -9 >git-sdk-64-${{matrix.artifact}}.tar.xz
-          echo "ARTIFACT_PATH=$(echo *.tar.xz)" >$GITHUB_ENV
-      - name: upload to Azure Blobs
-        if: github.event.repository.fork == false
-        uses: fixpoint/azblob-upload-artifact@v3
-        with:
-          connection-string: ${{secrets.CI_ARTIFACTS_CONNECTION_STRING}}
-          name: .
-          path: ${{env.ARTIFACT_PATH}}
-          container: ci-artifacts
   minimal-sdk-artifact:
     if: github.event.repository.fork == false
     runs-on: windows-latest
