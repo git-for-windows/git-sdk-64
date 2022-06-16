@@ -702,13 +702,18 @@ itself as the upstream; <code>--track=inherit</code> means to copy the upstream
 configuration of the start-point branch.</p>
 </div>
 <div class="paragraph">
-<p><code>--track=direct</code> is the default when the start point is a remote-tracking branch.
-Set the branch.autoSetupMerge configuration variable to <code>false</code> if you
-want <code>git switch</code>, <code>git checkout</code> and <code>git branch</code> to always behave as if <code>--no-track</code>
-were given. Set it to <code>always</code> if you want this behavior when the
-start-point is either a local or remote-tracking branch. Set it to
-<code>inherit</code> if you want to copy the tracking configuration from the
-branch point.</p>
+<p>The branch.autoSetupMerge configuration variable specifies how <code>git switch</code>,
+<code>git checkout</code> and <code>git branch</code> should behave when neither <code>--track</code> nor
+<code>--no-track</code> are specified:</p>
+</div>
+<div class="paragraph">
+<p>The default option, <code>true</code>, behaves as though <code>--track=direct</code>
+were given whenever the start-point is a remote-tracking branch.
+<code>false</code> behaves as if <code>--no-track</code> were given. <code>always</code> behaves as though
+<code>--track=direct</code> were given. <code>inherit</code> behaves as though <code>--track=inherit</code>
+were given. <code>simple</code> behaves as though <code>--track=direct</code> were given only when
+the start-point is a remote-tracking branch and the new branch has the same
+name as the remote branch.</p>
 </div>
 <div class="paragraph">
 <p>See <a href="git-pull.html">git-pull(1)</a> and <a href="git-config.html">git-config(1)</a> for additional discussion on
@@ -983,7 +988,7 @@ a branch?&#8221;</a> in the Git User&#8217;s Manual.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-05-09 13:28:27 UTC
+Last updated 2022-06-15 10:04:01 UTC
 </div>
 </div>
 </body>

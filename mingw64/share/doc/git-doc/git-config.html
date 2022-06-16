@@ -767,7 +767,7 @@ applicable).</p>
 <dd>
 <p>Similar to <code>--show-origin</code> in that it augments the output of
 all queried config options with the scope of that value
-(local, global, system, command).</p>
+(worktree, local, global, system, command).</p>
 </dd>
 <dt class="hdlist1">--get-colorbool &lt;name&gt; [&lt;stdout-is-tty&gt;]</dt>
 <dd>
@@ -2553,13 +2553,11 @@ durable in the event of a system crash. This is the default mode on macOS.</p>
 <p><code>batch</code> enables a mode that uses writeout-only flushes to stage multiple
 updates in the disk writeback cache and then does a single full fsync of
 a dummy file to trigger the disk cache flush at the end of the operation.</p>
-<div class="literalblock">
-<div class="content">
-<pre>Currently `batch` mode only applies to loose-object files. Other repository
-data is made durable as if `fsync` was specified. This mode is expected to
-be as safe as `fsync` on macOS for repos stored on HFS+ or APFS filesystems
-and on Windows for repos stored on NTFS or ReFS filesystems.</pre>
-</div>
+<div class="paragraph">
+<p>Currently <code>batch</code> mode only applies to loose-object files. Other repository
+data is made durable as if <code>fsync</code> was specified. This mode is expected to
+be as safe as <code>fsync</code> on macOS for repos stored on HFS+ or APFS filesystems
+and on Windows for repos stored on NTFS or ReFS filesystems.</p>
 </div>
 </li>
 </ul>
@@ -2665,8 +2663,10 @@ for more information.</p>
 <dt class="hdlist1">core.sparseCheckoutCone</dt>
 <dd>
 <p>Enables the "cone mode" of the sparse checkout feature. When the
-sparse-checkout file contains a limited set of patterns, then this
-mode provides significant performance advantages. See
+sparse-checkout file contains a limited set of patterns, this
+mode provides significant performance advantages. The "non
+cone mode" can be requested to allow specifying a more flexible
+patterns by setting this variable to <em>false</em>. See
 <a href="git-sparse-checkout.html">git-sparse-checkout(1)</a> for more information.</p>
 </dd>
 <dt class="hdlist1">core.abbrev</dt>
@@ -2691,9 +2691,9 @@ variables.</p>
 </dd>
 <dt class="hdlist1">add.interactive.useBuiltin</dt>
 <dd>
-<p>[EXPERIMENTAL] Set to <code>true</code> to use the experimental built-in
-implementation of the interactive version of <a href="git-add.html">git-add(1)</a>
-instead of the Perl script version. Is <code>false</code> by default.</p>
+<p>Set to <code>false</code> to fall back to the original Perl implementation of
+the interactive version of <a href="git-add.html">git-add(1)</a> instead of the built-in
+version. Is <code>true</code> by default.</p>
 </dd>
 <dt class="hdlist1">alias.*</dt>
 <dd>
@@ -2815,7 +2815,9 @@ automatic setup is done; <code>true</code>&#8201;&#8212;&#8201;automatic setup i
 starting point is a remote-tracking branch; <code>always</code>&#8201;&#8212;&#8201;automatic setup is done when the starting point is either a
 local branch or remote-tracking branch; <code>inherit</code>&#8201;&#8212;&#8201;if the starting point
 has a tracking configuration, it is copied to the new
-branch. This option defaults to true.</p>
+branch; <code>simple</code>&#8201;&#8212;&#8201;automatic setup is done only when the starting point
+is a remote-tracking branch and the new branch has the same name as the
+remote branch. This option defaults to true.</p>
 </dd>
 <dt class="hdlist1">branch.autoSetupRebase</dt>
 <dd>
@@ -2847,8 +2849,9 @@ which remote to fetch from/push to.  The remote to push to
 may be overridden with <code>remote.pushDefault</code> (for all branches).
 The remote to push to, for the current branch, may be further
 overridden by <code>branch.&lt;name&gt;.pushRemote</code>.  If no remote is
-configured, or if you are not on any branch, it defaults to
-<code>origin</code> for fetching and <code>remote.pushDefault</code> for pushing.
+configured, or if you are not on any branch and there is more than
+one remote defined in the repository, it defaults to <code>origin</code> for
+fetching and <code>remote.pushDefault</code> for pushing.
 Additionally, <code>.</code> (a period) is the current local repository
 (a dot-repository), see <code>branch.&lt;name&gt;.merge</code>'s final note below.</p>
 </dd>
@@ -3709,108 +3712,105 @@ configured in <code>merge.guitool</code>. The list below shows the valid
 built-in values. Any other value is treated as a custom diff tool
 and requires that a corresponding difftool.&lt;guitool&gt;.cmd variable
 is defined.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>araxis</p>
-</li>
-<li>
-<p>bc</p>
-</li>
-<li>
-<p>bc3</p>
-</li>
-<li>
-<p>bc4</p>
-</li>
-<li>
-<p>codecompare</p>
-</li>
-<li>
-<p>deltawalker</p>
-</li>
-<li>
-<p>diffmerge</p>
-</li>
-<li>
-<p>diffuse</p>
-</li>
-<li>
-<p>ecmerge</p>
-</li>
-<li>
-<p>emerge</p>
-</li>
-<li>
-<p>examdiff</p>
-</li>
-<li>
-<p>guiffy</p>
-</li>
-<li>
-<p>gvimdiff</p>
-</li>
-<li>
-<p>gvimdiff1</p>
-</li>
-<li>
-<p>gvimdiff2</p>
-</li>
-<li>
-<p>gvimdiff3</p>
-</li>
-<li>
-<p>kdiff3</p>
-</li>
-<li>
-<p>kompare</p>
-</li>
-<li>
-<p>meld</p>
-</li>
-<li>
-<p>nvimdiff</p>
-</li>
-<li>
-<p>nvimdiff1</p>
-</li>
-<li>
-<p>nvimdiff2</p>
-</li>
-<li>
-<p>nvimdiff3</p>
-</li>
-<li>
-<p>opendiff</p>
-</li>
-<li>
-<p>p4merge</p>
-</li>
-<li>
-<p>smerge</p>
-</li>
-<li>
-<p>tkdiff</p>
-</li>
-<li>
-<p>vimdiff</p>
-</li>
-<li>
-<p>vimdiff1</p>
-</li>
-<li>
-<p>vimdiff2</p>
-</li>
-<li>
-<p>vimdiff3</p>
-</li>
-<li>
-<p>winmerge</p>
-</li>
-<li>
-<p>xxdiff</p>
-</li>
-</ul>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>araxis</code></dt>
+<dd>
+<p>Use Araxis Merge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>bc</code></dt>
+<dd>
+<p>Use Beyond Compare (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>bc3</code></dt>
+<dd>
+<p>Use Beyond Compare (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>bc4</code></dt>
+<dd>
+<p>Use Beyond Compare (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>codecompare</code></dt>
+<dd>
+<p>Use Code Compare (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>deltawalker</code></dt>
+<dd>
+<p>Use DeltaWalker (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>diffmerge</code></dt>
+<dd>
+<p>Use DiffMerge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>diffuse</code></dt>
+<dd>
+<p>Use Diffuse (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>ecmerge</code></dt>
+<dd>
+<p>Use ECMerge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>emerge</code></dt>
+<dd>
+<p>Use Emacs' Emerge</p>
+</dd>
+<dt class="hdlist1"><code>examdiff</code></dt>
+<dd>
+<p>Use ExamDiff Pro (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>guiffy</code></dt>
+<dd>
+<p>Use Guiffy&#8217;s Diff Tool (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>gvimdiff</code></dt>
+<dd>
+<p>Use gVim (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>kdiff3</code></dt>
+<dd>
+<p>Use KDiff3 (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>kompare</code></dt>
+<dd>
+<p>Use Kompare (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>meld</code></dt>
+<dd>
+<p>Use Meld (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>nvimdiff</code></dt>
+<dd>
+<p>Use Neovim</p>
+</dd>
+<dt class="hdlist1"><code>opendiff</code></dt>
+<dd>
+<p>Use FileMerge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>p4merge</code></dt>
+<dd>
+<p>Use HelixCore P4Merge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>smerge</code></dt>
+<dd>
+<p>Use Sublime Merge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>tkdiff</code></dt>
+<dd>
+<p>Use TkDiff (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>vimdiff</code></dt>
+<dd>
+<p>Use Vim</p>
+</dd>
+<dt class="hdlist1"><code>winmerge</code></dt>
+<dd>
+<p>Use WinMerge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>xxdiff</code></dt>
+<dd>
+<p>Use xxdiff (requires a graphical session)</p>
+</dd>
+</dl>
 </div>
 </dd>
 <dt class="hdlist1">diff.indentHeuristic</dt>
@@ -4107,6 +4107,30 @@ the existing commit-graph file(s). Occasionally, these files will
 merge and the write may take longer. Having an updated commit-graph
 file helps performance of many Git commands, including <code>git merge-base</code>,
 <code>git push -f</code>, and <code>git log --graph</code>. Defaults to false.</p>
+</dd>
+<dt class="hdlist1">fetch.credentialsInUrl</dt>
+<dd>
+<p>A URL can contain plaintext credentials in the form
+<code>&lt;protocol&gt;://&lt;user&gt;:&lt;password&gt;@&lt;domain&gt;/&lt;path&gt;</code>. Using such URLs
+is not recommended as it exposes the password in multiple ways,
+including Git storing the URL as plaintext in the repository config.
+The <code>fetch.credentialsInUrl</code> option provides instruction for how Git
+should react to seeing such a URL, with these values:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>allow</code> (default): Git will proceed with its activity without warning.</p>
+</li>
+<li>
+<p><code>warn</code>: Git will write a warning message to <code>stderr</code> when parsing a URL
+with a plaintext credential.</p>
+</li>
+<li>
+<p><code>die</code>: Git will write a failure message to <code>stderr</code> when parsing a URL
+with a plaintext credential.</p>
+</li>
+</ul>
+</div>
 </dd>
 <dt class="hdlist1">format.attach</dt>
 <dd>
@@ -4460,15 +4484,23 @@ transports such as HTTP.  This variable determines whether
 to enable it within all non-bare repos or it can be set to a
 boolean value.  The default is <code>true</code>.</p>
 </dd>
+<dt class="hdlist1">gc.cruftPacks</dt>
+<dd>
+<p>Store unreachable objects in a cruft pack (see
+<a href="git-repack.html">git-repack(1)</a>) instead of as loose objects. The default
+is <code>false</code>.</p>
+</dd>
 <dt class="hdlist1">gc.pruneExpire</dt>
 <dd>
-<p>When <em>git gc</em> is run, it will call <em>prune --expire 2.weeks.ago</em>.
-Override the grace period with this config variable.  The value
-"now" may be used to disable this grace period and always prune
-unreachable objects immediately, or "never" may be used to
-suppress pruning.  This feature helps prevent corruption when
-<em>git gc</em> runs concurrently with another process writing to the
-repository; see the "NOTES" section of <a href="git-gc.html">git-gc(1)</a>.</p>
+<p>When <em>git gc</em> is run, it will call <em>prune --expire 2.weeks.ago</em>
+(and <em>repack --cruft --cruft-expiration 2.weeks.ago</em> if using
+cruft packs via <code>gc.cruftPacks</code> or <code>--cruft</code>).  Override the
+grace period with this config variable.  The value "now" may be
+used to disable this grace period and always prune unreachable
+objects immediately, or "never" may be used to suppress pruning.
+This feature helps prevent corruption when <em>git gc</em> runs
+concurrently with another process writing to the repository; see
+the "NOTES" section of <a href="git-gc.html">git-gc(1)</a>.</p>
 </dd>
 <dt class="hdlist1">gc.worktreePruneExpire</dt>
 <dd>
@@ -5077,6 +5109,30 @@ this option are:</p>
 <p>HTTP/1.1</p>
 </li>
 </ul>
+</div>
+</dd>
+<dt class="hdlist1">http.curloptResolve</dt>
+<dd>
+<p>Hostname resolution information that will be used first by
+libcurl when sending HTTP requests.  This information should
+be in one of the following formats:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>[+]HOST:PORT:ADDRESS[,ADDRESS]</p>
+</li>
+<li>
+<p>-HOST:PORT</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The first format redirects all requests to the given <code>HOST:PORT</code>
+to the provided <code>ADDRESS</code>(s). The second format clears all
+previous config values for that <code>HOST:PORT</code> combination.  To
+allow easy overriding of all the settings inherited from the
+system config, an empty value will reset all resolution
+information to the empty list.</p>
 </div>
 </dd>
 <dt class="hdlist1">http.sslVersion</dt>
@@ -5844,108 +5900,141 @@ that a corresponding mergetool.&lt;tool&gt;.cmd variable is defined.</p>
 -g/--gui flag is specified. The list below shows the valid built-in values.
 Any other value is treated as a custom merge tool and requires that a
 corresponding mergetool.&lt;guitool&gt;.cmd variable is defined.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>araxis</p>
-</li>
-<li>
-<p>bc</p>
-</li>
-<li>
-<p>bc3</p>
-</li>
-<li>
-<p>bc4</p>
-</li>
-<li>
-<p>codecompare</p>
-</li>
-<li>
-<p>deltawalker</p>
-</li>
-<li>
-<p>diffmerge</p>
-</li>
-<li>
-<p>diffuse</p>
-</li>
-<li>
-<p>ecmerge</p>
-</li>
-<li>
-<p>emerge</p>
-</li>
-<li>
-<p>examdiff</p>
-</li>
-<li>
-<p>guiffy</p>
-</li>
-<li>
-<p>gvimdiff</p>
-</li>
-<li>
-<p>gvimdiff1</p>
-</li>
-<li>
-<p>gvimdiff2</p>
-</li>
-<li>
-<p>gvimdiff3</p>
-</li>
-<li>
-<p>kdiff3</p>
-</li>
-<li>
-<p>meld</p>
-</li>
-<li>
-<p>nvimdiff</p>
-</li>
-<li>
-<p>nvimdiff1</p>
-</li>
-<li>
-<p>nvimdiff2</p>
-</li>
-<li>
-<p>nvimdiff3</p>
-</li>
-<li>
-<p>opendiff</p>
-</li>
-<li>
-<p>p4merge</p>
-</li>
-<li>
-<p>smerge</p>
-</li>
-<li>
-<p>tkdiff</p>
-</li>
-<li>
-<p>tortoisemerge</p>
-</li>
-<li>
-<p>vimdiff</p>
-</li>
-<li>
-<p>vimdiff1</p>
-</li>
-<li>
-<p>vimdiff2</p>
-</li>
-<li>
-<p>vimdiff3</p>
-</li>
-<li>
-<p>winmerge</p>
-</li>
-<li>
-<p>xxdiff</p>
-</li>
-</ul>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>araxis</code></dt>
+<dd>
+<p>Use Araxis Merge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>bc</code></dt>
+<dd>
+<p>Use Beyond Compare (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>bc3</code></dt>
+<dd>
+<p>Use Beyond Compare (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>bc4</code></dt>
+<dd>
+<p>Use Beyond Compare (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>codecompare</code></dt>
+<dd>
+<p>Use Code Compare (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>deltawalker</code></dt>
+<dd>
+<p>Use DeltaWalker (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>diffmerge</code></dt>
+<dd>
+<p>Use DiffMerge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>diffuse</code></dt>
+<dd>
+<p>Use Diffuse (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>ecmerge</code></dt>
+<dd>
+<p>Use ECMerge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>emerge</code></dt>
+<dd>
+<p>Use Emacs' Emerge</p>
+</dd>
+<dt class="hdlist1"><code>examdiff</code></dt>
+<dd>
+<p>Use ExamDiff Pro (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>guiffy</code></dt>
+<dd>
+<p>Use Guiffy&#8217;s Diff Tool (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>gvimdiff</code></dt>
+<dd>
+<p>Use gVim (requires a graphical session) with a custom layout (see <code>git help mergetool</code>'s <code>BACKEND SPECIFIC HINTS</code> section)</p>
+</dd>
+<dt class="hdlist1"><code>gvimdiff1</code></dt>
+<dd>
+<p>Use gVim (requires a graphical session) with a 2 panes layout (LOCAL and REMOTE)</p>
+</dd>
+<dt class="hdlist1"><code>gvimdiff2</code></dt>
+<dd>
+<p>Use gVim (requires a graphical session) with a 3 panes layout (LOCAL, MERGED and REMOTE)</p>
+</dd>
+<dt class="hdlist1"><code>gvimdiff3</code></dt>
+<dd>
+<p>Use gVim (requires a graphical session) where only the MERGED file is shown</p>
+</dd>
+<dt class="hdlist1"><code>kdiff3</code></dt>
+<dd>
+<p>Use KDiff3 (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>meld</code></dt>
+<dd>
+<p>Use Meld (requires a graphical session) with optional <code>auto merge</code> (see <code>git help mergetool</code>'s <code>CONFIGURATION</code> section)</p>
+</dd>
+<dt class="hdlist1"><code>nvimdiff</code></dt>
+<dd>
+<p>Use Neovim with a custom layout (see <code>git help mergetool</code>'s <code>BACKEND SPECIFIC HINTS</code> section)</p>
+</dd>
+<dt class="hdlist1"><code>nvimdiff1</code></dt>
+<dd>
+<p>Use Neovim with a 2 panes layout (LOCAL and REMOTE)</p>
+</dd>
+<dt class="hdlist1"><code>nvimdiff2</code></dt>
+<dd>
+<p>Use Neovim with a 3 panes layout (LOCAL, MERGED and REMOTE)</p>
+</dd>
+<dt class="hdlist1"><code>nvimdiff3</code></dt>
+<dd>
+<p>Use Neovim where only the MERGED file is shown</p>
+</dd>
+<dt class="hdlist1"><code>opendiff</code></dt>
+<dd>
+<p>Use FileMerge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>p4merge</code></dt>
+<dd>
+<p>Use HelixCore P4Merge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>smerge</code></dt>
+<dd>
+<p>Use Sublime Merge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>tkdiff</code></dt>
+<dd>
+<p>Use TkDiff (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>tortoisemerge</code></dt>
+<dd>
+<p>Use TortoiseMerge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>vimdiff</code></dt>
+<dd>
+<p>Use Vim with a custom layout (see <code>git help mergetool</code>'s <code>BACKEND SPECIFIC HINTS</code> section)</p>
+</dd>
+<dt class="hdlist1"><code>vimdiff1</code></dt>
+<dd>
+<p>Use Vim with a 2 panes layout (LOCAL and REMOTE)</p>
+</dd>
+<dt class="hdlist1"><code>vimdiff2</code></dt>
+<dd>
+<p>Use Vim with a 3 panes layout (LOCAL, MERGED and REMOTE)</p>
+</dd>
+<dt class="hdlist1"><code>vimdiff3</code></dt>
+<dd>
+<p>Use Vim where only the MERGED file is shown</p>
+</dd>
+<dt class="hdlist1"><code>winmerge</code></dt>
+<dd>
+<p>Use WinMerge (requires a graphical session)</p>
+</dd>
+<dt class="hdlist1"><code>xxdiff</code></dt>
+<dd>
+<p>Use xxdiff (requires a graphical session)</p>
+</dd>
+</dl>
 </div>
 </dd>
 <dt class="hdlist1">merge.verbosity</dt>
@@ -6025,6 +6114,14 @@ Setting this value to <code>auto</code> makes git detect whether <code>--auto-me
 is supported and will only use <code>--auto-merge</code> when available.  A
 value of <code>false</code> avoids using <code>--auto-merge</code> altogether, and is the
 default value.</p>
+</dd>
+<dt class="hdlist1">mergetool.vimdiff.layout</dt>
+<dd>
+<p>The vimdiff backend uses this variable to control how its split
+windows look like. Applies even if you are using Neovim (<code>nvim</code>) or
+gVim (<code>gvim</code>) as the merge tool. See BACKEND SPECIFIC HINTS section
+in <a href="git-mergetool.html">git-mergetool(1)</a>.
+for details.</p>
 </dd>
 <dt class="hdlist1">mergetool.hideResolved</dt>
 <dd>
@@ -6487,6 +6584,18 @@ at once.</p>
 <dt class="hdlist1">pull.twohead</dt>
 <dd>
 <p>The default merge strategy to use when pulling a single branch.</p>
+</dd>
+<dt class="hdlist1">push.autoSetupRemote</dt>
+<dd>
+<p>If set to "true" assume <code>--set-upstream</code> on default push when no
+upstream tracking exists for the current branch; this option
+takes effect with push.default options <em>simple</em>, <em>upstream</em>,
+and <em>current</em>. It is useful if by default you want new branches
+to be pushed to the default remote (like the behavior of
+<em>push.default=current</em>) and you also want the upstream tracking
+to be set. Workflows most likely to benefit from this option are
+<em>simple</em> central workflows where all branches are expected to
+have the same name on the remote.</p>
 </dd>
 <dt class="hdlist1">push.default</dt>
 <dd>
@@ -7041,6 +7150,16 @@ Defaults to true on bare repos, false otherwise.</p>
 <a href="git-update-server-info.html">git-update-server-info(1)</a>. Defaults to true. Can be overridden
 when true by the <code>-n</code> option of <a href="git-repack.html">git-repack(1)</a>.</p>
 </dd>
+<dt class="hdlist1">repack.cruftWindow</dt>
+<dt class="hdlist1">repack.cruftWindowMemory</dt>
+<dt class="hdlist1">repack.cruftDepth</dt>
+<dt class="hdlist1">repack.cruftThreads</dt>
+<dd>
+<p>Parameters used by <a href="git-pack-objects.html">git-pack-objects(1)</a> when generating
+a cruft pack and the respective parameters are not given over
+the command line. See similarly named <code>pack.*</code> configuration
+variables for defaults and meaning.</p>
+</dd>
 <dt class="hdlist1">rerere.autoUpdate</dt>
 <dd>
 <p>When set to true, <code>git-rerere</code> updates the index with the
@@ -7073,8 +7192,8 @@ override any such directories specified in the system config), add a
 </div>
 <div class="paragraph">
 <p>This config setting is only respected when specified in a system or global
-config, not when it is specified in a repository config or via the command
-line option <code>-c safe.directory=&lt;path&gt;</code>.</p>
+config, not when it is specified in a repository config, via the command
+line option <code>-c safe.directory=&lt;path&gt;</code>, or in environment variables.</p>
 </div>
 <div class="paragraph">
 <p>The value of this setting is interpolated, i.e. <code>~/&lt;path&gt;</code> expands to a
@@ -7088,6 +7207,20 @@ directory was listed in the <code>safe.directory</code> list. If <code>safe.dire
 is set in system config and you want to re-enable this protection, then
 initialize your list with an empty value before listing the repositories
 that you deem safe.</p>
+</div>
+<div class="paragraph">
+<p>As explained, Git only allows you to access repositories owned by
+yourself, i.e. the user who is running Git, by default.  When Git
+is running as <em>root</em> in a non Windows platform that provides sudo,
+ however, git checks the SUDO_UID environment variable that sudo creates
+and will allow access to the uid recorded as its value instead.
+This is to make it easy to perform a common sequence during installation
+"make &amp;&amp; sudo make install".  A git process running under <em>sudo</em> runs as
+<em>root</em> but the <em>sudo</em> command exports the environment variable to record
+which id the original user has.
+If that is not what you would prefer and want git to only trust
+repositories that are owned by root instead, then you must remove
+the <code>SUDO_UID</code> variable from root&#8217;s environment before invoking git.</p>
 </div>
 <div class="paragraph">
 <p>Due to the permission model on Windows where ACLs are used instead of
@@ -8074,7 +8207,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-05-09 13:28:27 UTC
+Last updated 2022-06-15 10:04:01 UTC
 </div>
 </div>
 </body>

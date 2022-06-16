@@ -892,6 +892,38 @@ their corresponding offsets in the packfile.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_pack_mtimes_files_have_the_format">pack-*.mtimes files have the format:</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All 4-byte numbers are in network byte order.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A 4-byte magic number <em>0x4d544d45</em> (<em>MTME</em>).</p>
+</li>
+<li>
+<p>A 4-byte version identifier (= 1).</p>
+</li>
+<li>
+<p>A 4-byte hash function identifier (= 1 for SHA-1, 2 for SHA-256).</p>
+</li>
+<li>
+<p>A table of 4-byte unsigned integers. The ith value is the
+modification time (mtime) of the ith object in the corresponding
+pack by lexicographic (index) order. The mtimes count standard
+epoch seconds.</p>
+</li>
+<li>
+<p>A trailer, containing a checksum of the corresponding packfile,
+and a checksum of all of the above (each having length according
+to the specified hash function).</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_multi_pack_index_midx_files_have_the_following_format">multi-pack-index (MIDX) files have the following format:</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1147,7 +1179,7 @@ the MIDX itself.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-05-09 13:28:27 UTC
+Last updated 2022-06-15 10:04:01 UTC
 </div>
 </div>
 </body>

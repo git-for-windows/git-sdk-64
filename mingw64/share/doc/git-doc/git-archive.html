@@ -502,7 +502,9 @@ format is <code>tar</code>.</p>
 </dd>
 <dt class="hdlist1">--prefix=&lt;prefix&gt;/</dt>
 <dd>
-<p>Prepend &lt;prefix&gt;/ to each filename in the archive.</p>
+<p>Prepend &lt;prefix&gt;/ to paths in the archive.  Can be repeated; its
+rightmost value is used for all tracked files.  See below which
+value gets used by <code>--add-file</code> and <code>--add-virtual-file</code>.</p>
 </dd>
 <dt class="hdlist1">-o &lt;file&gt;</dt>
 <dt class="hdlist1">--output=&lt;file&gt;</dt>
@@ -512,9 +514,29 @@ format is <code>tar</code>.</p>
 <dt class="hdlist1">--add-file=&lt;file&gt;</dt>
 <dd>
 <p>Add a non-tracked file to the archive.  Can be repeated to add
+multiple files.  The path of the file in the archive is built by
+concatenating the value of the last <code>--prefix</code> option (if any)
+before this <code>--add-file</code> and the basename of &lt;file&gt;.</p>
+</dd>
+<dt class="hdlist1">--add-virtual-file=&lt;path&gt;:&lt;content&gt;</dt>
+<dd>
+<p>Add the specified contents to the archive.  Can be repeated to add
 multiple files.  The path of the file in the archive is built
-by concatenating the value for <code>--prefix</code> (if any) and the
-basename of &lt;file&gt;.</p>
+by concatenating the value of the last <code>--prefix</code> option (if any)
+before this <code>--add-virtual-file</code> and <code>&lt;path&gt;</code>.</p>
+<div class="paragraph">
+<p>The <code>&lt;path&gt;</code> argument can start and end with a literal double-quote
+character; the contained file name is interpreted as a C-style string,
+i.e. the backslash is interpreted as escape character. The path must
+be quoted if it contains a colon, to avoid the colon from being
+misinterpreted as the separator between the path and the contents, or
+if the path begins or ends with a double-quote character.</p>
+</div>
+<div class="paragraph">
+<p>The file mode is limited to a regular file, and the option may be
+subject to platform-dependent command-line limits. For non-trivial
+cases, write an untracked file and use <code>--add-file</code> instead.</p>
+</div>
 </dd>
 <dt class="hdlist1">--worktree-attributes</dt>
 <dd>
@@ -694,6 +716,12 @@ into <em>git-1.4.0-docs.zip</em>, with the prefix <em>git-docs/</em>.</p>
 commit on the current branch. Note that the output format is
 inferred by the extension of the output file.</p>
 </dd>
+<dt class="hdlist1"><code>git archive -o latest.tar --prefix=build/ --add-file=configure --prefix= HEAD</code></dt>
+<dd>
+<p>Creates a tar archive that contains the contents of the latest
+commit on the current branch with no prefix and the untracked
+file <em>configure</em> with the prefix <em>build/</em>.</p>
+</dd>
 <dt class="hdlist1"><code>git config tar.tar.xz.command "xz -c"</code></dt>
 <dd>
 <p>Configure a "tar.xz" format for making LZMA-compressed tarfiles.
@@ -723,7 +751,7 @@ output file like <code>-o foo.tar.xz</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-05-09 13:28:27 UTC
+Last updated 2022-06-15 10:04:01 UTC
 </div>
 </div>
 </body>

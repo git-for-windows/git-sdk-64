@@ -450,7 +450,7 @@ explicitly enabled by enabling one or more Trace2 Targets.</p>
 </div>
 <div class="paragraph">
 <p>The Trace2 API is intended to replace the existing (Trace1)
-printf-style tracing provided by the existing <code>GIT_TRACE</code> and
+<code>printf()</code>-style tracing provided by the existing <code>GIT_TRACE</code> and
 <code>GIT_TRACE_PERFORMANCE</code> facilities.  During initial implementation,
 Trace2 and Trace1 may operate in parallel.</p>
 </div>
@@ -473,8 +473,8 @@ for example.</p>
 <div class="paragraph">
 <p>Trace2 is controlled using <code>trace2.*</code> config values in the system and
 global config files and <code>GIT_TRACE2*</code> environment variables.  Trace2 does
-not read from repo local or worktree config files or respect <code>-c</code>
-command line config settings.</p>
+not read from repo local or worktree config files, nor does it respect
+<code>-c</code> command line config settings.</p>
 </div>
 </div>
 </div>
@@ -488,8 +488,8 @@ Format details are given in a later section.</p>
 <div class="sect2">
 <h3 id="_the_normal_format_target">The Normal Format Target</h3>
 <div class="paragraph">
-<p>The normal format target is a tradition printf format and similar
-to GIT_TRACE format.  This format is enabled with the <code>GIT_TRACE2</code>
+<p>The normal format target is a traditional <code>printf()</code> format and similar
+to the <code>GIT_TRACE</code> format.  This format is enabled with the <code>GIT_TRACE2</code>
 environment variable or the <code>trace2.normalTarget</code> system or global
 config setting.</p>
 </div>
@@ -531,8 +531,8 @@ git version 2.20.1.155.g426c96fcdb</pre>
 <h3 id="_the_performance_format_target">The Performance Format Target</h3>
 <div class="paragraph">
 <p>The performance format target (PERF) is a column-based format to
-replace GIT_TRACE_PERFORMANCE and is suitable for development and
-testing, possibly to complement tools like gprof.  This format is
+replace <code>GIT_TRACE_PERFORMANCE</code> and is suitable for development and
+testing, possibly to complement tools like <code>gprof</code>.  This format is
 enabled with the <code>GIT_TRACE2_PERF</code> environment variable or the
 <code>trace2.perfTarget</code> system or global config setting.</p>
 </div>
@@ -604,7 +604,7 @@ git version 2.20.1.155.g426c96fcdb</pre>
 <div class="listingblock">
 <div class="content">
 <pre>$ cat ~/log.event
-{"event":"version","sid":"sid":"20190408T191610.507018Z-H9b68c35f-P000059a8","thread":"main","time":"2019-01-16T17:28:42.620713Z","file":"common-main.c","line":38,"evt":"3","exe":"2.20.1.155.g426c96fcdb"}
+{"event":"version","sid":"20190408T191610.507018Z-H9b68c35f-P000059a8","thread":"main","time":"2019-01-16T17:28:42.620713Z","file":"common-main.c","line":38,"evt":"3","exe":"2.20.1.155.g426c96fcdb"}
 {"event":"start","sid":"20190408T191610.507018Z-H9b68c35f-P000059a8","thread":"main","time":"2019-01-16T17:28:42.621027Z","file":"common-main.c","line":39,"t_abs":0.001173,"argv":["git","version"]}
 {"event":"cmd_name","sid":"20190408T191610.507018Z-H9b68c35f-P000059a8","thread":"main","time":"2019-01-16T17:28:42.621122Z","file":"git.c","line":432,"name":"version","hierarchy":"version"}
 {"event":"exit","sid":"20190408T191610.507018Z-H9b68c35f-P000059a8","thread":"main","time":"2019-01-16T17:28:42.621236Z","file":"git.c","line":662,"t_abs":0.001227,"code":0}
@@ -689,11 +689,11 @@ take a <code>va_list</code> argument.</p>
 </div>
 <div class="paragraph">
 <p>Some functions have a <code>_printf_fl()</code> suffix to indicate that they also
-take a varargs argument.</p>
+take a <code>printf()</code> style format with a variable number of arguments.</p>
 </div>
 <div class="paragraph">
-<p>There are CPP wrapper macros and ifdefs to hide most of these details.
-See <code>trace2.h</code> for more details.  The following discussion will only
+<p>There are CPP wrapper macros and <code>#ifdef`s to hide most of these details.
+See `trace2.h</code> for more details.  The following discussion will only
 describe the simplified forms.</p>
 </div>
 </div>
@@ -780,7 +780,7 @@ over regions or spans of code. e.g:
 </dd>
 <dt class="hdlist1"><code>&lt;event-message&gt;</code></dt>
 <dd>
-<p>is a free-form printf message intended for human consumption.</p>
+<p>is a free-form <code>printf()</code> message intended for human consumption.</p>
 <div class="paragraph">
 <p>Note that this may contain embedded LF or CRLF characters that are
 not escaped, so the event may spill across multiple lines.</p>
@@ -865,7 +865,7 @@ indicate a broad category, such as "index" or "status".</p>
 </dd>
 <dt class="hdlist1"><code>&lt;perf-event-message&gt;</code></dt>
 <dd>
-<p>is a free-form printf message intended for human consumption.</p>
+<p>is a free-form <code>printf()</code> message intended for human consumption.</p>
 </dd>
 </dl>
 </div>
@@ -1071,8 +1071,8 @@ prevent the "atexit" event from being generated.</p>
 </dd>
 <dt class="hdlist1"><code>"error"</code></dt>
 <dd>
-<p>This event is emitted when one of the <code>BUG()</code>, <code>error()</code>, <code>die()</code>,
-<code>warning()</code>, or <code>usage()</code> functions are called.</p>
+<p>This event is emitted when one of the <code>BUG()</code>, <code>bug()</code>, <code>error()</code>,
+<code>die()</code>, <code>warning()</code>, or <code>usage()</code> functions are called.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
@@ -1150,7 +1150,7 @@ these special values are used:</p>
 </dd>
 <dt class="hdlist1"><code>"cmd_mode"</code></dt>
 <dd>
-<p>This event, when present, describes the command variant This
+<p>This event, when present, describes the command variant. This
 event may be emitted more than once.</p>
 <div class="listingblock">
 <div class="content">
@@ -1214,7 +1214,7 @@ with "?".</p>
 <dt class="hdlist1"><code>"child_exit"</code></dt>
 <dd>
 <p>This event is generated after the current process has returned
-from the waitpid() and collected the exit information from the
+from the <code>waitpid()</code> and collected the exit information from the
 child.</p>
 <div class="listingblock">
 <div class="content">
@@ -1237,7 +1237,7 @@ process may be a shell script which doesn&#8217;t have a session-id.)</p>
 <div class="paragraph">
 <p>Note that the <code>t_rel</code> field contains the observed run time in seconds
 for the child process (starting before the fork/exec/spawn and
-stopping after the waitpid() and includes OS process creation overhead).
+stopping after the <code>waitpid()</code> and includes OS process creation overhead).
 So this time will be slightly larger than the atexit time reported by
 the child process itself.</p>
 </div>
@@ -1267,7 +1267,7 @@ process may be a shell script which doesn&#8217;t have a session-id.)</p>
 <div class="paragraph">
 <p>This event is generated after the child is started in the background
 and given a little time to boot up and start working.  If the child
-startups normally and while the parent is still waiting, the "ready"
+starts up normally while the parent is still waiting, the "ready"
 field will have the value "ready".
 If the child is too slow to start and the parent times out, the field
 will have the value "timeout".
@@ -1628,7 +1628,7 @@ atexit elapsed:3.868970 code:0</pre>
 </dd>
 <dt class="hdlist1">Regions</dt>
 <dd>
-<p>Regions can be use to time an interesting section of code.</p>
+<p>Regions can be used to time an interesting section of code.</p>
 <div class="listingblock">
 <div class="content">
 <pre>void wt_status_collect(struct wt_status *s)
@@ -1793,9 +1793,9 @@ d0 | main                     | region_leave | r1  |  0.002539 |  0.000748 | ind
 <dd>
 <p>Thread messages added to a thread-proc.</p>
 <div class="paragraph">
-<p>For example, the multithreaded preload-index code can be
+<p>For example, the multi-threaded preload-index code can be
 instrumented with a region around the thread pool and then
-per-thread start and exit events within the threadproc.</p>
+per-thread start and exit events within the thread-proc.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1920,14 +1920,14 @@ switch to Trace2.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Updating existing tests that assume GIT_TRACE format messages.</p>
+<p>Updating existing tests that assume <code>GIT_TRACE</code> format messages.</p>
 </li>
 <li>
-<p>How to best handle custom GIT_TRACE_&lt;key&gt; messages?</p>
+<p>How to best handle custom <code>GIT_TRACE_&lt;key&gt;</code> messages?</p>
 <div class="ulist">
 <ul>
 <li>
-<p>The GIT_TRACE_&lt;key&gt; mechanism allows each &lt;key&gt; to write to a
+<p>The <code>GIT_TRACE_&lt;key&gt;</code> mechanism allows each &lt;key&gt; to write to a
 different file (in addition to just stderr).</p>
 </li>
 <li>
@@ -1945,7 +1945,7 @@ Trace2 targets (and convert &lt;key&gt; to a "category").</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-05-09 13:28:27 UTC
+Last updated 2022-06-15 10:04:01 UTC
 </div>
 </div>
 </body>
