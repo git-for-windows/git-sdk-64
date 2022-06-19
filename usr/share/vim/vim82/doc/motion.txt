@@ -1,4 +1,4 @@
-*motion.txt*    For Vim version 8.2.  Last change: 2021 Jun 13
+*motion.txt*    For Vim version 8.2.  Last change: 2022 Apr 18
 
 
 		  VIM REFERENCE MANUAL    by Bram Moolenaar
@@ -33,7 +33,8 @@ know what the hjkl keys do.  The mnemonic value of hjkl is clear from looking
 at the keyboard.  Think of j as an arrow pointing downwards.
 
 The 'virtualedit' option can be set to make it possible to move the cursor to
-positions where there is no character or halfway a character.
+positions where there is no character or within a multi-column character (like
+a tab).
 
 ==============================================================================
 1. Motions and operators				*operator*
@@ -386,6 +387,8 @@ w			[count] words forward.  |exclusive| motion.
 
 <C-Right>	or					*<C-Right>* *W*
 W			[count] WORDS forward.  |exclusive| motion.
+			If <C-Right> does not work, check out
+			|arrow_modifiers|.
 
 							*e*
 e			Forward to the end of word [count] |inclusive|.
@@ -400,6 +403,8 @@ b			[count] words backward.  |exclusive| motion.
 
 <C-Left>	or					*<C-Left>* *B*
 B			[count] WORDS backward.  |exclusive| motion.
+			If <C-Left> does not work, check out
+			|arrow_modifiers|.
 
 							*ge*
 ge			Backward to the end of word [count] |inclusive|.
@@ -441,35 +446,35 @@ between Vi and Vim.
 5. Text object motions					*object-motions*
 
 							*(*
-(			[count] sentences backward.  |exclusive| motion.
+(			[count] |sentence|s backward.  |exclusive| motion.
 
 							*)*
-)			[count] sentences forward.  |exclusive| motion.
+)			[count] |sentence|s forward.  |exclusive| motion.
 
 							*{*
-{			[count] paragraphs backward.  |exclusive| motion.
+{			[count] |paragraph|s backward.  |exclusive| motion.
 
 							*}*
-}			[count] paragraphs forward.  |exclusive| motion.
+}			[count] |paragraph|s forward.  |exclusive| motion.
 
 							*]]*
-]]			[count] sections forward or to the next '{' in the
+]]			[count] |section|s forward or to the next '{' in the
 			first column.  When used after an operator, then also
 			stops below a '}' in the first column.  |exclusive|
 			Note that |exclusive-linewise| often applies.
 
 							*][*
-][			[count] sections forward or to the next '}' in the
+][			[count] |section|s forward or to the next '}' in the
 			first column.  |exclusive|
 			Note that |exclusive-linewise| often applies.
 
 							*[[*
-[[			[count] sections backward or to the previous '{' in
+[[			[count] |section|s backward or to the previous '{' in
 			the first column.  |exclusive|
 			Note that |exclusive-linewise| often applies.
 
 							*[]*
-[]			[count] sections backward or to the previous '}' in
+[]			[count] |section|s backward or to the previous '}' in
 			the first column.  |exclusive|
 			Note that |exclusive-linewise| often applies.
 
@@ -784,6 +789,9 @@ m<  or  m>		Set the |'<| or |'>| mark.  Useful to change what the
 						*:k*
 :[range]k{a-zA-Z'}	Same as :mark, but the space before the mark name can
 			be omitted.
+			This command is not supported in |Vim9| script,
+			because it is too easily confused with a variable
+			name.
 
 						*'* *'a* *`* *`a*
 '{a-z}  `{a-z}		Jump to the mark {a-z} in the current buffer.
@@ -1012,7 +1020,7 @@ These commands are not marks themselves, but jump to a mark:
 				:let lnum = line(".")
 				:keepjumps normal gg
 				:call SetLastChange()
-				:keepjumps exe "normal " . lnum . "G"
+				:keepjumps exe "normal " .. lnum .. "G"
 <
 			Note that ":keepjumps" must be used for every command.
 			When invoking a function the commands in that function
@@ -1034,12 +1042,10 @@ commands that start editing a new file.
 							*CTRL-O*
 CTRL-O			Go to [count] Older cursor position in jump list
 			(not a motion command).
-			{not available without the |+jumplist| feature}
 
 <Tab>		or					*CTRL-I* *<Tab>*
 CTRL-I			Go to [count] newer cursor position in jump list
 			(not a motion command).
-			{not available without the |+jumplist| feature}
 
 			NOTE: In the GUI and in a terminal supporting
 			|modifyOtherKeys|, CTRL-I can be mapped separately
@@ -1049,18 +1055,15 @@ CTRL-I			Go to [count] newer cursor position in jump list
 
 							*:ju* *:jumps*
 :ju[mps]		Print the jump list (not a motion command).
-			{not available without the |+jumplist| feature}
 
 							*:cle* *:clearjumps*
 :cle[arjumps]		Clear the jump list of the current window.
-			{not available without the |+jumplist| feature}
 
 							*jumplist*
 Jumps are remembered in a jump list.  With the CTRL-O and CTRL-I command you
 can go to cursor positions before older jumps, and back again.  Thus you can
 move up and down the list.  There is a separate jump list for each window.
 The maximum number of entries is fixed at 100.
-{not available without the |+jumplist| feature}
 
 For example, after three jump commands you have this jump list:
 
@@ -1073,6 +1076,9 @@ For example, after three jump commands you have this jump list:
 The "file/text" column shows the file name, or the text at the jump if it is
 in the current file (an indent is removed and a long line is truncated to fit
 in the window).
+
+The marker ">" indicates the current position in the jumplist.  It may not be
+shown when filtering the |:jumps| command using |:filter|
 
 You are currently in line 1167.  If you then use the CTRL-O command, the
 cursor is put in line 1154.  This results in:
@@ -1137,13 +1143,11 @@ g;			Go to [count] older position in change list.
 			positions go to the oldest change.
 			If there is no older change an error message is given.
 			(not a motion command)
-			{not available without the |+jumplist| feature}
 
 							*g,* *E663*
 g,			Go to [count] newer cursor position in change list.
 			Just like |g;| but in the opposite direction.
 			(not a motion command)
-			{not available without the |+jumplist| feature}
 
 When using a count you jump as far back or forward as possible.  Thus you can
 use "999g;" to go to the first change for which the position is still

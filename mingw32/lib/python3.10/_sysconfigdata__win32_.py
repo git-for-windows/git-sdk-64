@@ -28,13 +28,13 @@ build_time_vars = {'ABIFLAGS': '',
  'CC': 'gcc',
  'CCSHARED': '',
  'CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall '
-           '-march=pentium4 -mtune=generic -O2 -pipe -march=pentium4 '
-           '-mtune=generic -O2 -pipe',
+           '-march=pentium4 -mtune=generic -O2 -pipe -O3 -march=pentium4 '
+           '-mtune=generic -O2 -pipe -O3',
  'CFLAGSFORSHARED': '',
  'CFLAGS_ALIASING': '',
  'CONFIGFILES': 'configure configure.ac acconfig.h pyconfig.h.in '
                 'Makefile.pre.in',
- 'CONFIGURE_CFLAGS': '-march=pentium4 -mtune=generic -O2 -pipe',
+ 'CONFIGURE_CFLAGS': '-march=pentium4 -mtune=generic -O2 -pipe -O3',
  'CONFIGURE_CFLAGS_NODIST': '-fno-semantic-interposition -std=c99 -Wextra '
                             '-Wno-unused-result -Wno-unused-parameter '
                             '-Wno-missing-field-initializers '
@@ -54,7 +54,7 @@ build_time_vars = {'ABIFLAGS': '',
                 "'--with-tzpath=/mingw32/share/zoneinfo' "
                 "'--enable-optimizations' 'build_alias=i686-w64-mingw32' "
                 "'host_alias=i686-w64-mingw32' 'CC=gcc' "
-                "'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe' "
+                "'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -O3' "
                 "'LDFLAGS=-pipe -Wl,--no-seh' "
                 "'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' "
                 "'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'",
@@ -669,8 +669,8 @@ build_time_vars = {'ABIFLAGS': '',
  'PY_BUILTIN_HASHLIB_HASHES': '"md5,sha1,sha256,sha512,sha3,blake2"',
  'PY_BUILTIN_MODULE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g '
                              '-fwrapv -O3 -Wall -march=pentium4 -mtune=generic '
-                             '-O2 -pipe -march=pentium4 -mtune=generic -O2 '
-                             '-pipe -fno-semantic-interposition -std=c99 '
+                             '-O2 -pipe -O3 -march=pentium4 -mtune=generic -O2 '
+                             '-pipe -O3 -fno-semantic-interposition -std=c99 '
                              '-Wextra -Wno-unused-result -Wno-unused-parameter '
                              '-Wno-missing-field-initializers '
                              '-Wstrict-prototypes '
@@ -686,8 +686,8 @@ build_time_vars = {'ABIFLAGS': '',
                              '-D__USE_MINGW_ANSI_STDIO=1 '
                              '-DPy_BUILD_CORE_BUILTIN',
  'PY_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall '
-              '-march=pentium4 -mtune=generic -O2 -pipe -march=pentium4 '
-              '-mtune=generic -O2 -pipe',
+              '-march=pentium4 -mtune=generic -O2 -pipe -O3 -march=pentium4 '
+              '-mtune=generic -O2 -pipe -O3',
  'PY_CFLAGS_NODIST': '-fno-semantic-interposition -std=c99 -Wextra '
                      '-Wno-unused-result -Wno-unused-parameter '
                      '-Wno-missing-field-initializers -Wstrict-prototypes '
@@ -698,8 +698,8 @@ build_time_vars = {'ABIFLAGS': '',
                      '-fprofile-correction -I../Python-3.10.5/Include/internal',
  'PY_COERCE_C_LOCALE': 0,
  'PY_CORE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 '
-                   '-Wall -march=pentium4 -mtune=generic -O2 -pipe '
-                   '-march=pentium4 -mtune=generic -O2 -pipe '
+                   '-Wall -march=pentium4 -mtune=generic -O2 -pipe -O3 '
+                   '-march=pentium4 -mtune=generic -O2 -pipe -O3 '
                    '-fno-semantic-interposition -std=c99 -Wextra '
                    '-Wno-unused-result -Wno-unused-parameter '
                    '-Wno-missing-field-initializers -Wstrict-prototypes '
@@ -725,7 +725,7 @@ build_time_vars = {'ABIFLAGS': '',
  'PY_SSL_DEFAULT_CIPHER_STRING': 0,
  'PY_STDMODULE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv '
                         '-O3 -Wall -march=pentium4 -mtune=generic -O2 -pipe '
-                        '-march=pentium4 -mtune=generic -O2 -pipe '
+                        '-O3 -march=pentium4 -mtune=generic -O2 -pipe -O3 '
                         '-fno-semantic-interposition -std=c99 -Wextra '
                         '-Wno-unused-result -Wno-unused-parameter '
                         '-Wno-missing-field-initializers -Wstrict-prototypes '

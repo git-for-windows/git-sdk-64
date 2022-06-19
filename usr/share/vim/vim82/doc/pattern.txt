@@ -1,4 +1,4 @@
-*pattern.txt*   For Vim version 8.2.  Last change: 2021 Jul 16
+*pattern.txt*   For Vim version 8.2.  Last change: 2022 Mar 04
 
 
 		  VIM REFERENCE MANUAL    by Bram Moolenaar
@@ -19,7 +19,7 @@ explanations are in chapter 27 |usr_27.txt|.
 8. Composing characters		|patterns-composing|
 9. Compare with Perl patterns	|perl-patterns|
 10. Highlighting matches	|match-highlight|
-11. Fuzzy matching		|fuzzy-match|
+11. Fuzzy matching		|fuzzy-matching|
 
 ==============================================================================
 1. Search commands				*search-commands*
@@ -164,9 +164,12 @@ index, on which the cursor is. This can look like this: >
 Note: the count does not take offset into account.
 
 When no match is found you get the error: *E486* Pattern not found
-Note that for the |:global| command this behaves like a normal message, for Vi
-compatibility.  For the |:s| command the "e" flag can be used to avoid the
-error message |:s_flags|.
+Note that for the `:global` command, when used in legacy script, you get a
+normal message "Pattern not found", for Vi compatibility.
+In |Vim9| script you get E486 for "pattern not found" or *E538* when the pattern
+matches in every line with `:vglobal`.
+For the |:s| command the "e" flag can be used to avoid the error message
+|:s_flags|.
 
 					*search-offset* *{offset}*
 These commands search for the specified pattern.  With "/" and "?" an
@@ -315,7 +318,7 @@ the pattern.
 ==============================================================================
 2. The definition of a pattern		*search-pattern* *pattern* *[pattern]*
 					*regular-expression* *regexp* *Pattern*
-					*E76* *E383* *E476*
+					*E383* *E476*
 
 For starters, read chapter 27 of the user manual |usr_27.txt|.
 
@@ -376,7 +379,7 @@ Vim includes two regexp engines:
 1. An old, backtracking engine that supports everything.
 2. A new, NFA engine that works much faster on some patterns, possibly slower
    on some patterns.
-
+								 *E1281*
 Vim will automatically select the right engine for you.  However, if you run
 into a problem or want to specifically select one engine or the other, you can
 prepend one of the following to the pattern:
@@ -925,13 +928,13 @@ $	At end of pattern or in front of "\|", "\)" or "\n" ('magic' on):
 	becomes invalid.  Vim doesn't automatically update the matches.
 	Similar to moving the cursor for "\%#" |/\%#|.
 
-						*/\%l* */\%>l* */\%<l* *E951*
+					*/\%l* */\%>l* */\%<l* *E951* *E1204*
 \%23l	Matches in a specific line.
 \%<23l	Matches above a specific line (lower line number).
 \%>23l	Matches below a specific line (higher line number).
-\%.l    Matches at the cursor line.
-\%<.l   Matches above the cursor line.
-\%>.l   Matches below the cursor line.
+\%.l	Matches at the cursor line.
+\%<.l	Matches above the cursor line.
+\%>.l	Matches below the cursor line.
 	These six can be used to match specific lines in a buffer.  The "23"
 	can be any line number.  The first line is 1.
 	WARNING: When inserting or deleting lines Vim does not automatically
@@ -950,9 +953,9 @@ $	At end of pattern or in front of "\|", "\)" or "\n" ('magic' on):
 \%23c	Matches in a specific column.
 \%<23c	Matches before a specific column.
 \%>23c	Matches after a specific column.
-\%.c    Matches at the cursor column.
-\%<.c   Matches before the cursor column.
-\%>.c   Matches after the cursor column.
+\%.c	Matches at the cursor column.
+\%<.c	Matches before the cursor column.
+\%>.c	Matches after the cursor column.
 	These six can be used to match specific columns in a buffer or string.
 	The "23" can be any column number.  The first column is 1.  Actually,
 	the column is the byte number (thus it's not exactly right for
@@ -963,7 +966,7 @@ $	At end of pattern or in front of "\|", "\)" or "\n" ('magic' on):
 	the cursor moves the display isn't updated for this change.  An update
 	is done when using the |CTRL-L| command (the whole screen is updated).
 	Example, to highlight the column where the cursor currently is: >
-		:exe '/\%' . col(".") . 'c'
+		:exe '/\%' .. col(".") .. 'c'
 <	Alternatively use: >
 		/\%.c
 <	When 'hlsearch' is set and you move the cursor around and make changes
@@ -976,9 +979,9 @@ $	At end of pattern or in front of "\|", "\)" or "\n" ('magic' on):
 \%23v	Matches in a specific virtual column.
 \%<23v	Matches before a specific virtual column.
 \%>23v	Matches after a specific virtual column.
-\%.v    Matches at the current virtual column.
-\%<.v   Matches before the current virtual column.
-\%>.v   Matches after the current virtual column.
+\%.v	Matches at the current virtual column.
+\%<.v	Matches before the current virtual column.
+\%>.v	Matches after the current virtual column.
 	These six can be used to match specific virtual columns in a buffer or
 	string.  When not matching with a buffer in a window, the option
 	values of the current window are used (e.g., 'tabstop').
@@ -1070,6 +1073,8 @@ match ASCII characters, as indicated by the range.
 
 \(\)	A pattern enclosed by escaped parentheses.	*/\(* */\(\)* */\)*
 	E.g., "\(^a\)" matches 'a' at the start of a line.
+	There can only be ten of these.  You can use "\%(" to add more, but
+	not counting it as a sub-expression.
 	*E51* *E54* *E55* *E872* *E873*
 
 \1      Matches the same string that was matched by	*/\1* *E65*
@@ -1092,7 +1097,7 @@ x	A single character, with no special meaning, matches itself
 \x	A backslash followed by a single character, with no special meaning,
 	is reserved for future expansions
 
-[]	(with 'nomagic': \[])		*/[]* */\[]* */\_[]* */collection*
+[]	(with 'nomagic': \[])		*/[]* */\[]* */\_[]* */collection* *E76*
 \_[]
 	A collection.  This is a sequence of characters enclosed in square
 	brackets.  It matches any single character in the collection.
@@ -1455,7 +1460,7 @@ Finally, these constructs are unique to Perl:
 		":2match" for another plugin.
 
 ==============================================================================
-11. Fuzzy matching					*fuzzy-match*
+11. Fuzzy matching					*fuzzy-matching*
 
 Fuzzy matching refers to matching strings using a non-exact search string.
 Fuzzy matching will match a string, if all the characters in the search string
@@ -1486,7 +1491,6 @@ matching strings. The matchfuzzypos() functions returns the List of matches,
 the matching positions and the fuzzy match scores.
 
 The "f" flag of `:vimgrep` enables fuzzy matching.
-
 
 
  vim:tw=78:ts=8:noet:ft=help:norl:

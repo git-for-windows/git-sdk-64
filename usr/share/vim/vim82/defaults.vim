@@ -1,7 +1,7 @@
 " The default vimrc file.
 "
 " Maintainer:	Bram Moolenaar <Bram@vim.org>
-" Last change:	2020 Sep 30
+" Last change:	2022 Mar 03
 "
 " This is loaded if no vimrc file was found.
 " Except when Vim is run with "-u NONE" or "-C".
@@ -64,9 +64,10 @@ if has('win32')
   set guioptions-=t
 endif
 
-" Don't use Ex mode, use Q for formatting.
+" Don't use Q for Ex mode, use it for formatting.  Except for Select mode.
 " Revert with ":unmap Q".
 map Q gq
+sunmap Q
 
 " CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
 " so that you can undo CTRL-U after inserting a line break.
@@ -96,7 +97,7 @@ if 1
   filetype plugin indent on
 
   " Put these in an autocmd group, so that you can revert them with:
-  " ":augroup vimStartup | au! | augroup END"
+  " ":augroup vimStartup | exe 'au!' | augroup END"
   augroup vimStartup
     au!
 
@@ -109,6 +110,18 @@ if 1
       \ |   exe "normal! g`\""
       \ | endif
 
+  augroup END
+
+  " Quite a few people accidentally type "q:" instead of ":q" and get confused
+  " by the command line window.  Give a hint about how to get out.
+  " If you don't like this you can put this in your vimrc:
+  " ":augroup vimHints | exe 'au!' | augroup END"
+  augroup vimHints
+    au!
+    autocmd CmdwinEnter *
+	  \ echohl Todo | 
+	  \ echo 'You discovered the command-line window! You can close it with ":q".' |
+	  \ echohl None
   augroup END
 
 endif

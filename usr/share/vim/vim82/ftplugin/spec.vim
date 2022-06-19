@@ -3,6 +3,7 @@
 " Maintainer: Igor Gnatenko i.gnatenko.brain@gmail.com
 " Former Maintainer: Gustavo Niemeyer <niemeyer@conectiva.com> (until March 2014)
 " Last Change: Mon Jun 01 21:15 MSK 2015 Igor Gnatenko
+" Update by Zdenek Dohnal, 2022 May 17
 
 if exists("b:did_ftplugin")
 	finish
@@ -18,8 +19,8 @@ if !exists("no_plugin_maps") && !exists("no_spec_maps")
 	endif
 endif
 
-if !hasmapto("call SpecChangelog(\"\")<CR>")
-       noremap <buffer> <unique> <script> <Plug>SpecChangelog :call SpecChangelog("")<CR>
+if !hasmapto("call <SID>SpecChangelog(\"\")<CR>")
+       noremap <buffer> <unique> <script> <Plug>SpecChangelog :call <SID>SpecChangelog("")<CR>
 endif
 
 if !exists("*s:GetRelVer")
@@ -41,8 +42,8 @@ else:
         headers = spec.sourceHeader
         version = headers["Version"]
         release = headers["Release"]
-        vim.command("let ver = " + version)
-        vim.command("let rel = " + release)
+        vim.command("let ver = '" + version + "'")
+        vim.command("let rel = '" + release + "'")
 PYEND
 		endif
 	endfunction

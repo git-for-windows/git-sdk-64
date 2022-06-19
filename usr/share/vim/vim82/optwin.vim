@@ -1,7 +1,7 @@
 " These commands create the option window.
 "
 " Maintainer:	Bram Moolenaar <Bram@vim.org>
-" Last Change:	2021 Oct 17
+" Last Change:	2022 Apr 07
 
 " If there already is an option window, jump to that one.
 let buf = bufnr('option-window')
@@ -260,6 +260,8 @@ call <SID>OptionG("sect", &sect)
 call <SID>AddOption("path", gettext("list of directory names used for file searching"))
 call append("$", "\t" .. s:global_or_local)
 call <SID>OptionG("pa", &pa)
+call <SID>AddOption("cdhome", gettext(":cd without argument goes to the home directory"))
+call <SID>BinOptionG("cdh", &cdh)
 call <SID>AddOption("cdpath", gettext("list of directory names used for :cd"))
 call <SID>OptionG("cd", &cd)
 if exists("+autochdir")
@@ -560,14 +562,22 @@ endif
 call <SID>Header(gettext("terminal"))
 call <SID>AddOption("term", gettext("name of the used terminal"))
 call <SID>OptionG("term", &term)
+
 call <SID>AddOption("ttytype", gettext("alias for 'term'"))
 call <SID>OptionG("tty", &tty)
+
 call <SID>AddOption("ttybuiltin", gettext("check built-in termcaps first"))
 call <SID>BinOptionG("tbi", &tbi)
+
 call <SID>AddOption("ttyfast", gettext("terminal connection is fast"))
 call <SID>BinOptionG("tf", &tf)
+
+call <SID>AddOption("xtermcodes", gettext("request terminal key codes when an xterm is detected"))
+call <SID>BinOptionG("xtermcodes", &xtermcodes)
+
 call <SID>AddOption("weirdinvert", gettext("terminal that requires extra redrawing"))
 call <SID>BinOptionG("wiv", &wiv)
+
 call <SID>AddOption("esckeys", gettext("recognize keys that start with <Esc> in Insert mode"))
 call <SID>BinOptionG("ek", &ek)
 call <SID>AddOption("scrolljump", gettext("minimal number of lines to scroll at a time"))
@@ -614,6 +624,8 @@ call <SID>BinOptionG("scf", &scf)
 if has("gui")
   call <SID>AddOption("mousehide", gettext("hide the mouse pointer while typing"))
   call <SID>BinOptionG("mh", &mh)
+  call <SID>AddOption("mousemoveevent", gettext("report mouse movement events"))
+  call <SID>BinOptionG("mousemev", &mousemev)
 endif
 call <SID>AddOption("mousemodel", gettext("\"extend\", \"popup\" or \"popup_setpos\"; what the right\nmouse button is used for"))
 call <SID>OptionG("mousem", &mousem)
@@ -652,7 +664,7 @@ if has("gui")
     endif
     call <SID>AddOption("guiheadroom", gettext("room (in pixels) left above/below the window"))
     call append("$", " \tset ghr=" . &ghr)
-    call <SID>AddOption("guiligatures", gettext("list of ASCII characters that can be combined into complesshapes"))
+    call <SID>AddOption("guiligatures", gettext("list of ASCII characters that can be combined into complex shapes"))
     call <SID>OptionG("gli", &gli)
   endif
   if has("directx")
@@ -917,6 +929,9 @@ if has("cindent")
   call <SID>AddOption("cinwords", gettext("list of words that cause more C-indent"))
   call append("$", "\t" .. s:local_to_buffer)
   call <SID>OptionL("cinw")
+  call <SID>AddOption("cinscopedecls", gettext("list of scope declaration names used by cino-g"))
+  call append("$", "\t" .. s:local_to_buffer)
+  call <SID>OptionL("cinsd")
   call <SID>AddOption("indentexpr", gettext("expression used to obtain the indent of a line"))
   call append("$", "\t" .. s:local_to_buffer)
   call <SID>OptionL("inde")

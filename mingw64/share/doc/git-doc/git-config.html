@@ -4108,30 +4108,6 @@ merge and the write may take longer. Having an updated commit-graph
 file helps performance of many Git commands, including <code>git merge-base</code>,
 <code>git push -f</code>, and <code>git log --graph</code>. Defaults to false.</p>
 </dd>
-<dt class="hdlist1">fetch.credentialsInUrl</dt>
-<dd>
-<p>A URL can contain plaintext credentials in the form
-<code>&lt;protocol&gt;://&lt;user&gt;:&lt;password&gt;@&lt;domain&gt;/&lt;path&gt;</code>. Using such URLs
-is not recommended as it exposes the password in multiple ways,
-including Git storing the URL as plaintext in the repository config.
-The <code>fetch.credentialsInUrl</code> option provides instruction for how Git
-should react to seeing such a URL, with these values:</p>
-<div class="ulist">
-<ul>
-<li>
-<p><code>allow</code> (default): Git will proceed with its activity without warning.</p>
-</li>
-<li>
-<p><code>warn</code>: Git will write a warning message to <code>stderr</code> when parsing a URL
-with a plaintext credential.</p>
-</li>
-<li>
-<p><code>die</code>: Git will write a failure message to <code>stderr</code> when parsing a URL
-with a plaintext credential.</p>
-</li>
-</ul>
-</div>
-</dd>
 <dt class="hdlist1">format.attach</dt>
 <dd>
 <p>Enable multipart/mixed attachments as the default for
@@ -4742,9 +4718,12 @@ in increasing order of significance:</p>
 <dt class="hdlist1">gpg.ssh.defaultKeyCommand</dt>
 <dd>
 <p>This command that will be run when user.signingkey is not set and a ssh
-signature is requested. On successful exit a valid ssh public key is
-expected in the first line of its output. To automatically use the first
-available key from your ssh-agent set this to "ssh-add -L".</p>
+signature is requested. On successful exit a valid ssh public key
+prefixed with <code>key::</code> is expected in the first line of its output.
+This allows for a script doing a dynamic lookup of the correct public
+key when it is impractical to statically configure <code>user.signingKey</code>.
+For example when keys or SSH Certificates are rotated frequently or
+selection of the right key depends on external factors unknown to git.</p>
 </dd>
 <dt class="hdlist1">gpg.ssh.allowedSignersFile</dt>
 <dd>
@@ -5261,7 +5240,7 @@ unless <code>http.schannelUseSSLCAInfo</code> overrides this behavior.</p>
 send client certificates from the Windows Certificate Store anymore.
 To opt in to the old behavior, http.sslAutoClientCert can be set.</p>
 </dd>
-<dt class="hdlist1">http.pinnedpubkey</dt>
+<dt class="hdlist1">http.pinnedPubkey</dt>
 <dd>
 <p>Public key of the https service. It may either be the filename of
 a PEM or DER encoded public key file or a string starting with
@@ -7212,14 +7191,15 @@ that you deem safe.</p>
 <p>As explained, Git only allows you to access repositories owned by
 yourself, i.e. the user who is running Git, by default.  When Git
 is running as <em>root</em> in a non Windows platform that provides sudo,
- however, git checks the SUDO_UID environment variable that sudo creates
-and will allow access to the uid recorded as its value instead.
+however, git checks the SUDO_UID environment variable that sudo creates
+and will allow access to the uid recorded as its value in addition to
+the id from <em>root</em>.
 This is to make it easy to perform a common sequence during installation
 "make &amp;&amp; sudo make install".  A git process running under <em>sudo</em> runs as
 <em>root</em> but the <em>sudo</em> command exports the environment variable to record
 which id the original user has.
 If that is not what you would prefer and want git to only trust
-repositories that are owned by root instead, then you must remove
+repositories that are owned by root instead, then you can remove
 the <code>SUDO_UID</code> variable from root&#8217;s environment before invoking git.</p>
 </div>
 <div class="paragraph">
@@ -7824,6 +7804,62 @@ write additional traces if we would exceed this many files. Instead,
 write a sentinel file that will block further tracing to this
 directory. Defaults to 0, which disables this check.</p>
 </dd>
+<dt class="hdlist1">transfer.credentialsInUrl</dt>
+<dd>
+<p>A configured URL can contain plaintext credentials in the form
+<code>&lt;protocol&gt;://&lt;user&gt;:&lt;password&gt;@&lt;domain&gt;/&lt;path&gt;</code>. You may want
+to warn or forbid the use of such configuration (in favor of
+using <a href="git-credential.html">git-credential(1)</a>). This will be used on
+<a href="git-clone.html">git-clone(1)</a>, <a href="git-fetch.html">git-fetch(1)</a>, <a href="git-push.html">git-push(1)</a>,
+and any other direct use of the configured URL.</p>
+<div class="paragraph">
+<p>Note that this is currently limited to detecting credentials in
+<code>remote.&lt;name&gt;.url</code> configuration, it won&#8217;t detect credentials in
+<code>remote.&lt;name&gt;.pushurl</code> configuration.</p>
+</div>
+<div class="paragraph">
+<p>You might want to enable this to prevent inadvertent credentials
+exposure, e.g. because:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The OS or system where you&#8217;re running git may not provide way way or
+otherwise allow you to configure the permissions of the
+configuration file where the username and/or password are stored.</p>
+</li>
+<li>
+<p>Even if it does, having such data stored "at rest" might expose you
+in other ways, e.g. a backup process might copy the data to another
+system.</p>
+</li>
+<li>
+<p>The git programs will pass the full URL to one another as arguments
+on the command-line, meaning the credentials will be exposed to oher
+users on OS&#8217;s or systems that allow other users to see the full
+process list of other users. On linux the "hidepid" setting
+documented in procfs(5) allows for configuring this behavior.</p>
+<div class="paragraph">
+<p>If such concerns don&#8217;t apply to you then you probably don&#8217;t need to be
+concerned about credentials exposure due to storing that sensitive
+data in git&#8217;s configuration files. If you do want to use this, set
+<code>transfer.credentialsInUrl</code> to one of these values:</p>
+</div>
+</li>
+<li>
+<p><code>allow</code> (default): Git will proceed with its activity without warning.</p>
+</li>
+<li>
+<p><code>warn</code>: Git will write a warning message to <code>stderr</code> when parsing a URL
+with a plaintext credential.</p>
+</li>
+<li>
+<p><code>die</code>: Git will write a failure message to <code>stderr</code> when parsing a URL
+with a plaintext credential.</p>
+</li>
+</ul>
+</div>
+</dd>
 <dt class="hdlist1">transfer.fsckObjects</dt>
 <dd>
 <p>When <code>fetch.fsckObjects</code> or <code>receive.fsckObjects</code> are
@@ -8207,7 +8243,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-06-15 10:04:01 UTC
+Last updated 2022-06-18 09:32:50 UTC
 </div>
 </div>
 </body>

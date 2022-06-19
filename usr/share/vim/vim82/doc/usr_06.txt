@@ -1,4 +1,4 @@
-*usr_06.txt*	For Vim version 8.2.  Last change: 2019 Jun 01
+*usr_06.txt*	For Vim version 8.2.  Last change: 2021 Nov 07
 
 		     VIM USER MANUAL - by Bram Moolenaar
 
@@ -189,7 +189,7 @@ You can specify #rrggbb hex colors and you can define new names for hex
 colors in |v:colornames| like so: >
 
 	let v:colornames['mine_red'] = '#aa0000'
-<
+
 If you are authoring a color scheme for others to use, it is important
 to define these colors only when they do not exist: >
 
@@ -197,7 +197,7 @@ to define these colors only when they do not exist: >
 
 This allows users of the color scheme to override the precise definition of
 that color prior to loading your color scheme. For example, in a |.vimrc|
-file:
+file: >
 
 	runtime colors/lists/css_colors.vim
 	let v:colornames['your_red'] = v:colornames['css_red']
@@ -205,7 +205,7 @@ file:
 
 As a color scheme author, you should be able to rely on some color names for
 GUI colors. These are defined in `colors/lists/default.vim`. All such files
-found on the |runtimepath| are loaded each time the colorscheme command is
+found on the |'runtimepath'| are loaded each time the colorscheme command is
 run. A canonical list is provided by the vim distribution, which should
 include all X11 colors (previously defined in rgb.txt).
 
