@@ -47,7 +47,7 @@ const BIO_METHOD *BIO_f_base64(void);</code></pre>
 
 <p>BIO_flush() on a base64 BIO that is being written through is used to signal that no more data is to be encoded: this is used to flush the final block through the BIO.</p>
 
-<p>The flag BIO_FLAGS_BASE64_NO_NL can be set with BIO_set_flags(). For writing, it causes all data to be written on one line without newline at the end. For reading, it forces the decoder to process the data regardless of newlines. All newlines are ignored and the input does not need to contain any newline at all.</p>
+<p>The flag BIO_FLAGS_BASE64_NO_NL can be set with BIO_set_flags(). For writing, it causes all data to be written on one line without newline at the end. For reading, it expects the data to be all on one line (with or without a trailing newline).</p>
 
 <h1 id="NOTES">NOTES</h1>
 
