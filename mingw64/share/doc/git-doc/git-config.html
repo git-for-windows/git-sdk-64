@@ -7154,6 +7154,11 @@ enabled if there is an <code>rr-cache</code> directory under the
 <code>$GIT_DIR</code>, e.g. if "rerere" was previously used in the
 repository.</p>
 </dd>
+<dt class="hdlist1">revert.reference</dt>
+<dd>
+<p>Setting this variable to true makes <code>git revert</code> behave
+as if the <code>--reference</code> option is given.</p>
+</dd>
 <dt class="hdlist1">safe.directory</dt>
 <dd>
 <p>These config entries specify Git-tracked directories that are
@@ -7835,7 +7840,7 @@ system.</p>
 </li>
 <li>
 <p>The git programs will pass the full URL to one another as arguments
-on the command-line, meaning the credentials will be exposed to oher
+on the command-line, meaning the credentials will be exposed to other
 users on OS&#8217;s or systems that allow other users to see the full
 process list of other users. On linux the "hidepid" setting
 documented in procfs(5) allows for configuring this behavior.</p>
@@ -8189,6 +8194,12 @@ in multiple config files.</p>
 Currently only <a href="git-instaweb.html">git-instaweb(1)</a> and <a href="git-help.html">git-help(1)</a>
 may use it.</p>
 </dd>
+<dt class="hdlist1">windows.appendAtomically</dt>
+<dd>
+<p>By default, append atomic API is used on windows. But it works only with
+local disk files, if you&#8217;re working on a network file system, you should
+set it false to turn it off.</p>
+</dd>
 <dt class="hdlist1">worktree.guessRemote</dt>
 <dd>
 <p>If no branch is specified and neither <code>-b</code> nor <code>-B</code> nor
@@ -8243,7 +8254,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-06-22 21:17:19 UTC
+Last updated 2022-06-27 18:44:28 UTC
 </div>
 </div>
 </body>

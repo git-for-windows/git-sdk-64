@@ -6,7 +6,7 @@
 #                            | (__| |_| |  _ <| |___
 #                             \___|\___/|_| \_\_____|
 #
-# Copyright (C) 2001 - 2020, Daniel Stenberg, <daniel@haxx.se>, et al.
+# Copyright (C) 2001 - 2022, Daniel Stenberg, <daniel@haxx.se>, et al.
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution. The terms
@@ -18,6 +18,8 @@
 #
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
+#
+# SPDX-License-Identifier: curl
 #
 ###########################################################################
 
@@ -84,7 +86,7 @@ while test $# -gt 0; do
         ;;
 
     --feature|--features)
-        for feature in AsynchDNS HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerberos Largefile MultiSSL NTLM SPNEGO SSL SSPI TLS-SRP alt-svc brotli libz zstd ""; do
+        for feature in AsynchDNS HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerberos Largefile MultiSSL NTLM SPNEGO SSL SSPI TLS-SRP alt-svc brotli libz threadsafe zstd ""; do
             test -n "$feature" && echo "$feature"
         done
         ;;
@@ -96,7 +98,7 @@ while test $# -gt 0; do
         ;;
 
     --version)
-        echo libcurl 7.83.1
+        echo libcurl 7.84.0
         exit 0
         ;;
 
@@ -108,11 +110,11 @@ while test $# -gt 0; do
         # dash as that's used for things like version 1.2.3-CVS
         cpatch=`echo $checkfor | cut -d. -f3 | cut -d- -f1`
 
-        vmajor=`echo 7.83.1 | cut -d. -f1`
-        vminor=`echo 7.83.1 | cut -d. -f2`
+        vmajor=`echo 7.84.0 | cut -d. -f1`
+        vminor=`echo 7.84.0 | cut -d. -f2`
         # when extracting the patch part we strip off everything after a
         # dash as that's used for things like version 1.2.3-CVS
-        vpatch=`echo 7.83.1 | cut -d. -f3 | cut -d- -f1`
+        vpatch=`echo 7.84.0 | cut -d. -f3 | cut -d- -f1`
 
         if test "$vmajor" -gt "$cmajor"; then
             exit 0;
@@ -128,12 +130,12 @@ while test $# -gt 0; do
             fi
         fi
 
-        echo "requested version $checkfor is newer than existing 7.83.1"
+        echo "requested version $checkfor is newer than existing 7.84.0"
         exit 1
         ;;
 
     --vernum)
-        echo 075301
+        echo 075400
         exit 0
         ;;
 
