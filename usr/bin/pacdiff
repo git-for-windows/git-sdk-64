@@ -21,7 +21,7 @@
 shopt -s extglob
 
 declare -r myname='pacdiff'
-declare -r myver='1.5.3'
+declare -r myver='1.6.0'
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
@@ -32,7 +32,7 @@ cachedir=
 USE_COLOR='y'
 SUDO=''
 declare -a oldsaves
-declare -i USE_FIND=0 USE_LOCATE=0 USE_PACDB=0 OUTPUTONLY=0
+declare -i USE_FIND=0 USE_LOCATE=0 USE_PACDB=0 OUTPUTONLY=0 BACKUP=0 THREE_WAY_DIFF=0
 
 # Import libmakepkg
 source "$LIBRARY"/util/message.sh
@@ -60,7 +60,9 @@ General Options:
   --nocolor           remove colors from output
   -c/--cachedir <dir> scan "dir" for 3-way merge base candidates.
                       (default: read from /etc/pacman.conf)
-  -s/--sudo           use sudo to merge/remove files
+  -s/--sudo           use sudo and sudoedit to merge/remove files
+  -b/--backup         when overwriting, save old files with .bak
+  -3/--threeway       view diffs in 3-way fashion
 
 Environment Variables:
   DIFFPROG          override the merge program: (default: 'vim -d')
@@ -103,6 +105,62 @@ base_cache_tar() {
 		pacsort --files --reverse | sed -ne '2p'
 
 	popd &>/dev/null
+}
+
+diffprog_fn() {
+	if [[ -n "$SUDO" ]]; then
+		SUDO_EDITOR="$diffprog" sudoedit "$@"
+	else
+		$diffprog "$@"
+	fi
+}
+
+view_diff() {
+	pacfile="$1"
+	file="$2"
+
+	package="$(pacman -Qoq "$file")" || return 1
+	base_tar="$(base_cache_tar "$package")"
+
+	two_way_diff() {
+		diffprog_fn "$pacfile" "$file"
+	}
+
+	three_way_diff() {
+		diffprog_fn "$pacfile" "$base" "$file"
+	}
+
+	unset tempdir
+
+	if (( ! THREE_WAY_DIFF )); then
+		two_way_diff
+	elif [[ -z $base_tar ]]; then
+		msg2 "Unable to find a base package. falling back to 2-way diff."
+		two_way_diff
+	else
+		basename="$(basename "$file")"
+		tempdir="$(mktemp -d --tmpdir "pacdiff-diff-$basename.XXX")"
+		base="$(mktemp "$tempdir"/"$basename.base.XXX")"
+		merged="$(mktemp "$tempdir"/"$basename.merged.XXX")"
+
+		if ! bsdtar -xqOf "$base_tar" "${file#/}" >"$base"; then
+			msg2 "Unable to extract the previous version of this file. falling back to 2-way diff."
+			two_way_diff
+		else
+			three_way_diff
+		fi
+	fi
+
+	ret=1
+
+	if cmp -s "$pacfile" "$file"; then
+		msg2 "Files are identical, removing..."
+		$SUDO rm -v "$pacfile"
+		ret=0
+	fi
+
+	$SUDO rm -rf "$tempdir"
+	return $ret
 }
 
 merge_file() {
@@ -187,6 +245,10 @@ while [[ -n "$1" ]]; do
 			cachedir="$2"; shift;;
 		-s|--sudo)
 			SUDO=sudo;;
+		-b|--backup)
+			BACKUP=1;;
+		-3|--threeway)
+			THREE_WAY_DIFF=1 ;;
 		-V|--version)
 			version; exit 0;;
 		-h|--help)
@@ -267,16 +329,14 @@ while IFS= read -u 3 -r -d '' pacfile; do
 			case $c in
 				q|Q) exit 0;;
 				r|R) $SUDO rm -v "$pacfile"; break ;;
-				o|O) $SUDO mv -v "$pacfile" "$file"; break ;;
-				v|V)
-					if [[ -n "$SUDO" ]]; then
-						SUDO_EDITOR="$diffprog" sudoedit "$pacfile" "$file"
-					else
-						$diffprog "$pacfile" "$file"
+				o|O)
+					if (( BACKUP )); then
+						$SUDO mv -v "$file" "$file.bak"
 					fi
-					if cmp -s "$pacfile" "$file"; then
-						msg2 "Files are identical, removing..."
-						$SUDO rm -v "$pacfile"
+					$SUDO mv -v "$pacfile" "$file"
+					break ;;
+				v|V)
+					if view_diff "$pacfile" "$file"; then
 						break
 					fi ;;
 				m|M)

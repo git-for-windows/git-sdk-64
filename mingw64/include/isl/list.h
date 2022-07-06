@@ -89,9 +89,10 @@ __isl_give isl_##EL##_list *isl_##EL##_list_sort(			\
 	int (*cmp)(__isl_keep struct isl_##EL *a,			\
 		__isl_keep struct isl_##EL *b,				\
 		void *user), void *user);				\
+EXPORT									\
 isl_stat isl_##EL##_list_foreach_scc(__isl_keep isl_##EL##_list *list,	\
-	isl_bool (*follows)(__isl_keep struct isl_##EL *a,		\
-			__isl_keep struct isl_##EL *b, void *user),	\
+	isl_bool (*follows)(__isl_keep isl_##EL *a,			\
+			__isl_keep isl_##EL *b, void *user),		\
 	void *follows_user,						\
 	isl_stat (*fn)(__isl_take isl_##EL##_list *scc, void *user),	\
 	void *fn_user);							\
@@ -104,6 +105,14 @@ void isl_##EL##_list_dump(__isl_keep isl_##EL##_list *list);
 	ISL_DECLARE_LIST_FN3(EL,,)
 #define ISL_DECLARE_EXPORTED_LIST_FN(EL)				\
 	ISL_DECLARE_LIST_FN3(EL,__isl_constructor,__isl_export)
+#define ISL_DECLARE_LIST_FN_READ2(EL,CONSTRUCTOR)			\
+CONSTRUCTOR								\
+__isl_give isl_##EL##_list *isl_##EL##_list_read_from_str(		\
+	isl_ctx *ctx, const char *str);
+#define ISL_DECLARE_LIST_FN_READ(EL)					\
+	ISL_DECLARE_LIST_FN_READ2(EL,)
+#define ISL_DECLARE_EXPORTED_LIST_FN_READ(EL)				\
+	ISL_DECLARE_LIST_FN_READ2(EL,__isl_constructor)
 
 #define ISL_DECLARE_LIST(EL)						\
 	ISL_DECLARE_LIST_TYPE(EL)					\

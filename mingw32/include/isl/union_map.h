@@ -178,6 +178,14 @@ __isl_give isl_union_map *isl_union_map_intersect_range_factor_domain(
 __isl_export
 __isl_give isl_union_map *isl_union_map_intersect_range_factor_range(
 	__isl_take isl_union_map *umap, __isl_take isl_union_map *factor);
+__isl_overload
+__isl_give isl_union_map *
+isl_union_map_intersect_domain_wrapped_domain_union_set(
+	__isl_take isl_union_map *umap, __isl_take isl_union_set *domain);
+__isl_overload
+__isl_give isl_union_map *
+isl_union_map_intersect_range_wrapped_domain_union_set(
+	__isl_take isl_union_map *umap, __isl_take isl_union_set *domain);
 
 __isl_export
 __isl_give isl_union_map *isl_union_map_subtract_domain(
@@ -278,6 +286,7 @@ isl_size isl_union_map_n_map(__isl_keep isl_union_map *umap);
 __isl_export
 isl_stat isl_union_map_foreach_map(__isl_keep isl_union_map *umap,
 	isl_stat (*fn)(__isl_take isl_map *map, void *user), void *user);
+__isl_export
 __isl_give isl_map_list *isl_union_map_get_map_list(
 	__isl_keep isl_union_map *umap);
 __isl_export
