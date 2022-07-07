@@ -87,23 +87,3 @@ jobs:
           GIT_TEST_OPTS: --verbose-log -x --no-chain-lint
           GIT_PROVE_OPTS: --timer --jobs 8
           NO_SVN_TESTS: 1
-  upload-minimal-sdk:
-    if: github.event.repository.fork == false
-    runs-on: windows-latest
-    needs: [test-minimal-sdk]
-    steps:
-      - name: download minimal-sdk artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: minimal-sdk
-          path: ${{github.workspace}}
-      - name: rename the artifact
-        shell: bash
-        run: mv git-sdk-64-minimal.tar.xz git-sdk-64-minimal-test.tar.xz
-      - name: upload to Azure Blobs
-        uses: fixpoint/azblob-upload-artifact@v3
-        with:
-          connection-string: ${{secrets.CI_ARTIFACTS_CONNECTION_STRING}}
-          name: .
-          path: git-sdk-64-minimal-test.tar.xz
-          container: ci-artifacts
