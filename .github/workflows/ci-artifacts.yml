@@ -87,3 +87,30 @@ jobs:
           GIT_TEST_OPTS: --verbose-log -x --no-chain-lint
           GIT_PROVE_OPTS: --timer --jobs 8
           NO_SVN_TESTS: 1
+  assorted-validations:
+    runs-on: windows-latest
+    needs: [minimal-sdk-artifact]
+    steps:
+      - name: download minimal-sdk artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: minimal-sdk
+          path: ${{github.workspace}}
+      - name: uncompress minimal-sdk
+        shell: bash
+        run: mkdir -p minimal-sdk && tar -C minimal-sdk -xJf git-sdk-64-minimal.tar.xz
+      - name: run some tests
+        shell: bash
+        env:
+          PATH: ${{github.workspace}}\minimal-sdk\mingw64\bin;${{github.workspace}}\minimal-sdk\usr\bin;C:\Windows\system32;C:\Windows;C:\Windows\system32\wbem
+        run: |
+          set -x
+          cat >dll.c <<-\EOF &&
+          __attribute__((dllexport)) int increment(int i)
+          {
+              return i + 1;
+          }
+          EOF
+
+          gcc -Wall -g -O2 -shared -o sample.dll dll.c
+          ls -la
