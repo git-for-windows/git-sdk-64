@@ -1,0 +1,44 @@
+name: check-for-missing-dlls
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  LC_CTYPE: C.UTF-8
+  GIT_CONFIG_PARAMETERS: "'checkout.workers=56'"
+  INCLUDE_OBJDUMP: t
+
+jobs:
+  check:
+    if: github.event.repository.fork == false
+    runs-on: windows-latest
+    steps:
+      - name: clone git-sdk-64
+        shell: bash
+        run: |
+          # cannot use `git clone` directly, to allow for PR's refs to be fetched
+          git init --bare -b ${REF#refs/heads/} git-sdk-64.git &&
+          git -C git-sdk-64.git remote add origin https://github.com/${{github.repository}} &&
+          git -C git-sdk-64.git config remote.origin.promisor true &&
+          git -C git-sdk-64.git config remote.origin.partialCloneFilter blob:none &&
+          git -C git-sdk-64.git fetch --depth=1 origin $REF:refs/heads/${REF#refs/heads/}
+        env:
+          REF: ${{github.ref}}
+      - name: clone build-extra
+        run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
+      - name: create build-installers artifact
+        shell: bash
+        run: |
+          sh -x ./build-extra/please.sh create-sdk-artifact --sdk=git-sdk-64.git build-installers &&
+          cygpath -aw "$PWD/build-installers/usr/bin/core_perl" >>$GITHUB_PATH &&
+          cygpath -aw "$PWD/build-installers/usr/bin" >>$GITHUB_PATH &&
+          cygpath -aw "$PWD/build-installers/mingw64/bin" >>$GITHUB_PATH
+      - name: check for missing DLLs
+        shell: bash
+        run: ./build-extra/check-for-missing-dlls.sh
+      - name: check for missing DLLs (MinGit)
+        shell: bash
+        run: MINIMAL_GIT=1 ./build-extra/check-for-missing-dlls.sh
