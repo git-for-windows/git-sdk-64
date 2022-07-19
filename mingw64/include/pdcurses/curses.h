@@ -37,10 +37,10 @@ Defined by this header:
 #define PDC_BUILD (PDC_VER_MAJOR*1000 + PDC_VER_MINOR *100 + PDC_VER_CHANGE)
 #define PDC_VER_MAJOR    4
 #define PDC_VER_MINOR    3
-#define PDC_VER_CHANGE   2
+#define PDC_VER_CHANGE   3
 #define PDC_VER_YEAR   2022
-#define PDC_VER_MONTH    02
-#define PDC_VER_DAY      06
+#define PDC_VER_MONTH    05
+#define PDC_VER_DAY      25
 
 #define PDC_STRINGIZE( x) #x
 #define PDC_stringize( x) PDC_STRINGIZE( x)
@@ -87,6 +87,8 @@ extern "C"
    #define uint64_t unsigned __int64
    #define uint32_t unsigned long
    #define uint16_t unsigned short
+   #define int32_t  long
+   #define int16_t  short
 #else
    #include <stdint.h>
 #endif
@@ -1303,22 +1305,22 @@ PDCEX  int     echo(void);
 #ifdef PDC_WIDE
    #ifdef PDC_FORCE_UTF8
       #ifdef CHTYPE_32
-         #define endwin endwin_u32_4301
+         #define endwin endwin_u32_4302
       #else
-         #define endwin endwin_u64_4301
+         #define endwin endwin_u64_4302
       #endif
    #else
       #ifdef CHTYPE_32
-         #define endwin endwin_w32_4301
+         #define endwin endwin_w32_4302
       #else
-         #define endwin endwin_w64_4301
+         #define endwin endwin_w64_4302
       #endif
    #endif
 #else       /* 8-bit chtypes */
    #ifdef CHTYPE_32
-      #define endwin endwin_x32_4301a
+      #define endwin endwin_x32_4302
    #else
-      #define endwin endwin_x64_4301a
+      #define endwin endwin_x64_4302
    #endif
 #endif
 
@@ -1461,6 +1463,7 @@ PDCEX  int     slk_attr_on(const attr_t, void *);
 PDCEX  int     slk_attrset(const chtype);
 PDCEX  int     slk_attr_set(const attr_t, short, void *);
 PDCEX  int     slk_clear(void);
+PDCEX  int     extended_slk_color(int);
 PDCEX  int     slk_color(short);
 PDCEX  int     slk_init(int);
 PDCEX  char   *slk_label(int);
