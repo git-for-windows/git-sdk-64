@@ -70,7 +70,7 @@ There are several ways to call the debugger:
 
 On the given program identified by C<program_name>.
 
-=item perl -d -e 0
+=item perl -d -e 0 
 
 Interactively supply an arbitrary C<expression> using C<-e>.
 
@@ -83,6 +83,16 @@ Debug a given program via the C<Devel::ptkdb> GUI.
 Debug a given program using threads (experimental).
 
 =back
+
+If Perl is called with the C<-d> switch, the variable C<$^P> will hold a true
+value. This is useful if you need to know if your code is running under the
+debugger:
+
+    if ( $^P ) {
+        # running under the debugger
+    }
+
+See L<perlvar/$^P> for more information on the variable.
 
 =head2 Debugger Commands
 
@@ -371,7 +381,7 @@ X<breakpoint>
 X<debugger command, disable>
 X<disable>
 
-Disable the breakpoint so it won't stop the execution of the program.
+Disable the breakpoint so it won't stop the execution of the program. 
 Breakpoints are enabled by default and can be re-enabled using the C<enable>
 command.
 
@@ -380,7 +390,7 @@ X<breakpoint>
 X<debugger command, disable>
 X<disable>
 
-Disable the breakpoint so it won't stop the execution of the program.
+Disable the breakpoint so it won't stop the execution of the program. 
 Breakpoints are enabled by default and can be re-enabled using the C<enable>
 command.
 
@@ -391,14 +401,14 @@ X<breakpoint>
 X<debugger command, disable>
 X<disable>
 
-Enable the breakpoint so it will stop the execution of the program.
+Enable the breakpoint so it will stop the execution of the program. 
 
 =item enable [line]
 X<breakpoint>
 X<debugger command, disable>
 X<disable>
 
-Enable the breakpoint so it will stop the execution of the program.
+Enable the breakpoint so it will stop the execution of the program. 
 
 This is done for a breakpoint in the current file.
 
@@ -740,7 +750,7 @@ X<debugger option, LineInfo>
 
 File or pipe to print line number info to.  If it is a pipe (say,
 C<|visual_perl_db>), then a short message is used.  This is the
-mechanism used to interact with a slave editor or visual debugger,
+mechanism used to interact with a client editor or visual debugger,
 such as the special C<vi> or C<emacs> hooks, or the C<ddd> graphical
 debugger.
 

@@ -106,37 +106,45 @@
 #define WARN_EXPERIMENTAL__CONST_ATTR	 59
 #define WARN_EXPERIMENTAL__RE_STRICT	 60
 #define WARN_EXPERIMENTAL__REFALIASING	 61
-#define WARN_EXPERIMENTAL__WIN32_PERLIO	 62
-#define WARN_LOCALE			 63
-#define WARN_MISSING			 64
-#define WARN_REDUNDANT			 65
+#define WARN_LOCALE			 62
+#define WARN_MISSING			 63
+#define WARN_REDUNDANT			 64
 
 /* Warnings Categories added in Perl 5.025 */
 
-#define WARN_EXPERIMENTAL__DECLARED_REFS 66
+#define WARN_EXPERIMENTAL__DECLARED_REFS 65
 
 /* Warnings Categories added in Perl 5.027 */
 
-#define WARN_EXPERIMENTAL__ALPHA_ASSERTIONS 67
-#define WARN_EXPERIMENTAL__SCRIPT_RUN	 68
-#define WARN_SHADOW			 69
+#define WARN_EXPERIMENTAL__ALPHA_ASSERTIONS 66
+#define WARN_EXPERIMENTAL__SCRIPT_RUN	 67
+#define WARN_SHADOW			 68
 
 /* Warnings Categories added in Perl 5.029 */
 
-#define WARN_EXPERIMENTAL__PRIVATE_USE	 70
-#define WARN_EXPERIMENTAL__UNIPROP_WILDCARDS 71
-#define WARN_EXPERIMENTAL__VLB		 72
+#define WARN_EXPERIMENTAL__PRIVATE_USE	 69
+#define WARN_EXPERIMENTAL__UNIPROP_WILDCARDS 70
+#define WARN_EXPERIMENTAL__VLB		 71
 
 /* Warnings Categories added in Perl 5.031 */
 
-#define WARN_EXPERIMENTAL__ISA		 73
+#define WARN_EXPERIMENTAL__ISA		 72
 
 /* Warnings Categories added in Perl 5.033 */
 
-#define WARN_EXPERIMENTAL__TRY		 74
-#define WARNsize			 19
-#define WARN_ALLstring			 "\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125"
-#define WARN_NONEstring			 "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+#define WARN_EXPERIMENTAL__TRY		 73
+
+/* Warnings Categories added in Perl 5.035 */
+
+#define WARN_EXPERIMENTAL__ARGS_ARRAY_WITH_SIGNATURES 74
+#define WARN_EXPERIMENTAL__BUILTIN	 75
+#define WARN_EXPERIMENTAL__DEFER	 76
+#define WARN_EXPERIMENTAL__EXTRA_PAIRED_DELIMITERS 77
+#define WARN_EXPERIMENTAL__FOR_LIST	 78
+#define WARN_SCALAR			 79
+#define WARNsize			 20
+#define WARN_ALLstring			 "\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125"
+#define WARN_NONEstring			 "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
 
 #define isLEXWARN_on \
         cBOOL(PL_curcop && PL_curcop->cop_warnings != pWARN_STD)
@@ -224,10 +232,10 @@ category parameters passed.
 #define packWARN3(a,b,c)	((a) | ((b)<<8) | ((c)<<16)             )
 #define packWARN4(a,b,c,d)	((a) | ((b)<<8) | ((c)<<16) | ((d) <<24))
 
-#define unpackWARN1(x)		((x)        & 0xFF)
-#define unpackWARN2(x)		(((x) >>8)  & 0xFF)
-#define unpackWARN3(x)		(((x) >>16) & 0xFF)
-#define unpackWARN4(x)		(((x) >>24) & 0xFF)
+#define unpackWARN1(x)		((U8)  (x)       )
+#define unpackWARN2(x)		((U8) ((x) >>  8))
+#define unpackWARN3(x)		((U8) ((x) >> 16))
+#define unpackWARN4(x)		((U8) ((x) >> 24))
 
 #define ckDEAD(x)							\
    (PL_curcop &&                                                        \
@@ -305,7 +313,6 @@ category parameters passed.
 =for apidoc Amnh||WARN_EXPERIMENTAL__CONST_ATTR
 =for apidoc Amnh||WARN_EXPERIMENTAL__RE_STRICT
 =for apidoc Amnh||WARN_EXPERIMENTAL__REFALIASING
-=for apidoc Amnh||WARN_EXPERIMENTAL__WIN32_PERLIO
 =for apidoc Amnh||WARN_LOCALE
 =for apidoc Amnh||WARN_MISSING
 =for apidoc Amnh||WARN_REDUNDANT
@@ -318,6 +325,12 @@ category parameters passed.
 =for apidoc Amnh||WARN_EXPERIMENTAL__VLB
 =for apidoc Amnh||WARN_EXPERIMENTAL__ISA
 =for apidoc Amnh||WARN_EXPERIMENTAL__TRY
+=for apidoc Amnh||WARN_EXPERIMENTAL__ARGS_ARRAY_WITH_SIGNATURES
+=for apidoc Amnh||WARN_EXPERIMENTAL__BUILTIN
+=for apidoc Amnh||WARN_EXPERIMENTAL__DEFER
+=for apidoc Amnh||WARN_EXPERIMENTAL__EXTRA_PAIRED_DELIMITERS
+=for apidoc Amnh||WARN_EXPERIMENTAL__FOR_LIST
+=for apidoc Amnh||WARN_SCALAR
 
 =cut
 */

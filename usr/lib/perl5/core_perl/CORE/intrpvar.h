@@ -1,4 +1,4 @@
-/*   intrpvar.h
+/*   intrpvar.h 
  *
  *    Copyright (C) 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005,
  *    2006, 2007, 2008 by Larry Wall and others
@@ -115,6 +115,7 @@ PERLVARI(I, utf8cache, I8, PERL___I)	/* Is the utf8 caching code enabled? */
 #undef PERL___I
 
 /*
+=for apidoc_section $GV
 =for apidoc Amn|GV *|PL_defgv
 
 The GV representing C<*_>.  Useful for access to C<$_>.
@@ -131,6 +132,7 @@ PERLVAR(I, in_eval,	U8)		/* trap "fatal" errors? */
 PERLVAR(I, defgv,	GV *)           /* the *_ glob */
 
 /*
+=for apidoc_section $GV
 =for apidoc Amn|HV*|PL_curstash
 
 The stash for the package code will be compiled into.
@@ -147,6 +149,7 @@ PERLVAR(I, defstash,	HV *)		/* main symbol table */
 PERLVAR(I, curstash,	HV *)		/* symbol table for current package */
 
 /*
+=for apidoc_section $COP
 =for apidoc Amn|COP*|PL_curcop
 
 The currently active COP (control op) roughly representing the current
@@ -221,6 +224,7 @@ PERLVAR(I, padname_undef,	PADNAME)
 PERLVAR(I, padname_const,	PADNAME)
 
 /*
+=for apidoc_section $SV
 =for apidoc Cmn||PL_Sv
 
 A scratch pad SV for whatever temporary use you need.  Chiefly used as a
@@ -238,12 +242,18 @@ PERLVAR(I, stashcache,	HV *)		/* Cache to speed up S_method_common */
 
 
 /*
+=for apidoc_section $string
 =for apidoc Amn|STRLEN|PL_na
 
-A convenience variable which is typically used with C<SvPV> when one
-doesn't care about the length of the string.  It is usually more efficient
-to either declare a local variable and use that instead or to use the
-C<SvPV_nolen> macro.
+A scratch pad variable in which to store a C<STRLEN> value.  If would have been
+better named something like C<PL_temp_strlen>.
+
+It is is typically used with C<SvPV> when one is actually planning to discard
+the returned length, (hence the length is "Not Applicable", which is how this
+variable got its name).
+
+It is usually more efficient to either declare a local variable and use that
+instead, or to use the C<SvPV_nolen> macro.
 
 =cut
 */
@@ -266,6 +276,7 @@ On threaded perls, each thread has an independent copy of this variable;
 each initialized at creation time with the current value of the creating
 thread's copy.
 
+=for apidoc_section $io
 =for apidoc mn|GV*|PL_last_in_gv
 
 The GV which was last used for a filehandle input operation.  (C<< <FH> >>)
@@ -274,6 +285,7 @@ On threaded perls, each thread has an independent copy of this variable;
 each initialized at creation time with the current value of the creating
 thread's copy.
 
+=for apidoc_section $io
 =for apidoc mn|GV*|PL_ofsgv
 
 The glob containing the output field separator - C<*,> in Perl space.
@@ -407,6 +419,7 @@ thread's copy.
 PERLVARI(I, peepp,	peep_t, Perl_peep)
 
 /*
+=for apidoc_section $optree_construction
 =for apidoc Amn|peep_t|PL_rpeepp
 
 Pointer to the recursive peephole optimiser.  This is a function
@@ -435,6 +448,7 @@ thread's copy.
 PERLVARI(I, rpeepp,	peep_t, Perl_rpeep)
 
 /*
+=for apidoc_section $optrees
 =for apidoc Amn|Perl_ophook_t|PL_opfreehook
 
 When non-C<NULL>, the function pointed by this variable will be called each time an OP is freed with the corresponding OP as the argument.
@@ -920,18 +934,18 @@ PERLVARI(I, globhook,	globhook_t, NULL)
 
 #if defined(MULTIPLICITY)
 /* The last unconditional member of the interpreter structure when 5.18.0 was
-   released. The offset of the end of this is baked into a global variable in
+   released. The offset of the end of this is baked into a global variable in 
    any shared perl library which will allow a sanity test in future perl
    releases.  */
 #  define PERL_LAST_5_18_0_INTERP_MEMBER	Iglobhook
 #endif
 
-#ifdef PERL_IMPLICIT_CONTEXT
+#ifdef MULTIPLICITY
 PERLVARI(I, my_cxt_list, void **, NULL) /* per-module array of MY_CXT pointers */
 PERLVARI(I, my_cxt_size, int,	0)	/* size of PL_my_cxt_list */
 #endif
 
-#if defined(PERL_IMPLICIT_CONTEXT) || defined(PERL_DEBUG_READONLY_COW)
+#if defined(MULTIPLICITY) || defined(PERL_DEBUG_READONLY_COW)
 /* For use with the memory debugging code in util.c. This is used only in
  * DEBUGGING builds (as long as the relevant structure is defined), but
  * defining it in non-debug builds too means that we retain binary
@@ -1026,8 +1040,14 @@ PERLVAR(I, wcrtomb_ps, mbstate_t)
 /* Enough space for the reserved byte, 1 for a potential leading 0, then enough
  * for the longest representable integer plus an extra, the 3 flag characters,
  * and NUL */
-PERLVARA(I, mem_log, 1 + 1 + TYPE_DIGITS(UV) + 1 + 3 + 1, char);
+PERLVARA(I, mem_log, 1 + 1 + TYPE_DIGITS(UV) + 1 + 3 + 1, char)
 #endif
+
+/* The most recently seen `use VERSION` declaration, encoded in a single
+ * U16 as (major << 8) | minor. We do this rather than store an entire SV
+ * version object so we can fit the U16 into the uv of a SAVEHINTS and not
+ * have to worry about SV refcounts during scope enter/exit. */
+PERLVAR(I, prevailing_version, U16)
 
 /* If you are adding a U8 or U16, check to see if there are 'Space' comments
  * above on where there are gaps which currently will be structure padding.  */

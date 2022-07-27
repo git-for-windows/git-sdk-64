@@ -23,7 +23,7 @@ use Net::Config;
 use Socket;
 use Time::Local;
 
-our $VERSION = '3.13';
+our $VERSION = '3.14';
 
 our $IOCLASS;
 my $family_key;
@@ -66,7 +66,7 @@ use constant TELNET_IAC => 255;
 use constant TELNET_IP  => 244;
 use constant TELNET_DM  => 242;
 
-use constant EBCDIC => $^O eq 'os390';
+use constant EBCDIC => ord 'A' == 193;
 
 sub new {
   my $pkg = shift;
@@ -1481,7 +1481,7 @@ This is the constructor for a new Net::FTP object. C<$host> is the
 name of the remote host to which an FTP connection is required.
 
 C<$host> is optional. If C<$host> is not given then it may instead be
-passed as the C<Host> option described below.
+passed as the C<Host> option described below. 
 
 C<%options> are passed in a hash like fashion, using key and value pairs.
 Possible options are:
@@ -1774,7 +1774,7 @@ Returns TRUE if the remote server supports the given command.
 =item C<hash([$filehandle_glob_ref[, $bytes_per_hash_mark]])>
 
 Called without parameters, or with the first argument false, hash marks
-are suppressed.  If the first argument is true but not a reference to a
+are suppressed.  If the first argument is true but not a reference to a 
 file handle glob, then \*STDERR is used.  The second argument is the number
 of bytes per hash mark printed, and defaults to 1024.  In all cases the
 return value is a reference to an array of two:  the filehandle glob reference
@@ -2044,7 +2044,7 @@ License or the Artistic License, as specified in the F<LICENCE> file.
 
 =head1 VERSION
 
-Version 3.13
+Version 3.14
 
 =head1 DATE
 

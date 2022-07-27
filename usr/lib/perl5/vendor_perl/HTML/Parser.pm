@@ -2,7 +2,7 @@ package HTML::Parser;
 
 use strict;
 
-our $VERSION = '3.76';
+our $VERSION = '3.78';
 
 require HTML::Entities;
 
@@ -129,30 +129,32 @@ HTML::Parser - HTML parser class
 
 =head1 SYNOPSIS
 
-  use strict;
-  use warnings;
-  use HTML::Parser ();
+    use strict;
+    use warnings;
+    use HTML::Parser ();
 
-  # Create parser object
-  my $p = HTML::Parser->new(
-    api_version => 3,
-    start_h => [\&start, "tagname, attr"],
-    end_h   => [\&end,   "tagname"],
-    marked_sections => 1,
-  );
+    # Create parser object
+    my $p = HTML::Parser->new(
+        api_version     => 3,
+        start_h         => [\&start, "tagname, attr"],
+        end_h           => [\&end,   "tagname"],
+        marked_sections => 1,
+    );
 
-  # Parse document text chunk by chunk
-  $p->parse($chunk1);
-  $p->parse($chunk2);
-  # ...
-  # signal end of document
-  $p->eof;
+    # Parse document text chunk by chunk
+    $p->parse($chunk1);
+    $p->parse($chunk2);
 
-  # Parse directly from file
-  $p->parse_file("foo.html");
-  # or
-  open(my $fh, "<:utf8", "foo.html") || die;
-  $p->parse_file($fh);
+    # ...
+    # signal end of document
+    $p->eof;
+
+    # Parse directly from file
+    $p->parse_file("foo.html");
+
+    # or
+    open(my $fh, "<:utf8", "foo.html") || die;
+    $p->parse_file($fh);
 
 =head1 DESCRIPTION
 
@@ -262,14 +264,14 @@ Parsing will also abort if one of the event handlers calls $p->eof.
 
 The effect of this is the same as:
 
-  while (1) {
-    my $chunk = &$code_ref();
-    if (!defined($chunk) || !length($chunk)) {
-      $p->eof;
-      return $p;
+    while (1) {
+        my $chunk = &$code_ref();
+        if (!defined($chunk) || !length($chunk)) {
+            $p->eof;
+            return $p;
+        }
+        $p->parse($chunk) || return undef;
     }
-    $p->parse($chunk) || return undef;
-  }
 
 But it is more efficient as this loop runs internally in XS code.
 
@@ -988,24 +990,24 @@ HTML::Parser version 2 callback methods.
 
 This is equivalent to the following method calls:
 
-  $p->handler(start   => "start",   "self, tagname, attr, attrseq, text");
-  $p->handler(end     => "end",     "self, tagname, text");
-  $p->handler(text    => "text",    "self, text, is_cdata");
-  $p->handler(process => "process", "self, token0, text");
-  $p->handler(
-    comment => sub {
-      my($self, $tokens) = @_;
-      for (@$tokens) {$self->comment($_);}
-    },
-    "self, tokens"
-  );
-  $p->handler(
-    declaration => sub {
-      my $self = shift;
-      $self->declaration(substr($_[0], 2, -1));
-    },
-    "self, text"
-  );
+    $p->handler(start   => "start",   "self, tagname, attr, attrseq, text");
+    $p->handler(end     => "end",     "self, tagname, text");
+    $p->handler(text    => "text",    "self, text, is_cdata");
+    $p->handler(process => "process", "self, token0, text");
+    $p->handler(
+        comment => sub {
+            my ($self, $tokens) = @_;
+            for (@$tokens) { $self->comment($_); }
+        },
+        "self, tokens"
+    );
+    $p->handler(
+        declaration => sub {
+            my $self = shift;
+            $self->declaration(substr($_[0], 2, -1));
+        },
+        "self, text"
+    );
 
 Setting up these handlers can also be requested with the "api_version =>
 2" constructor option.
@@ -1023,19 +1025,21 @@ The first simple example shows how you might strip out comments from
 an HTML document.  We achieve this by setting up a comment handler that
 does nothing and a default handler that will print out anything else:
 
-  use HTML::Parser;
-  HTML::Parser->new(
-    default_h => [sub { print shift }, 'text'],
-    comment_h => [""],
-  )->parse_file(shift || die) || die $!;
+    use HTML::Parser ();
+    HTML::Parser->new(
+        default_h => [sub { print shift }, 'text'],
+        comment_h => [""],
+    )->parse_file(shift || die)
+        || die $!;
 
 An alternative implementation is:
 
-  use HTML::Parser;
-  HTML::Parser->new(
-    end_document_h => [sub { print shift }, 'skipped_text'],
-    comment_h      => [""],
-  )->parse_file(shift || die) || die $!;
+    use HTML::Parser ();
+    HTML::Parser->new(
+        end_document_h => [sub { print shift }, 'skipped_text'],
+        comment_h      => [""],
+    )->parse_file(shift || die)
+        || die $!;
 
 This will in most cases be much more efficient since only a single
 callback will be made.
@@ -1046,24 +1050,24 @@ handler.  When it sees the title start tag it enables a text handler
 that prints any text found and an end handler that will terminate
 parsing as soon as the title end tag is seen:
 
-  use HTML::Parser ();
+    use HTML::Parser ();
 
-  sub start_handler {
-    return if shift ne "title";
-    my $self = shift;
-    $self->handler(text => sub { print shift }, "dtext");
-    $self->handler(
-      end  => sub {
-        shift->eof if shift eq "title";
-      },
-      "tagname,self"
-    );
-  }
+    sub start_handler {
+        return if shift ne "title";
+        my $self = shift;
+        $self->handler(text => sub { print shift }, "dtext");
+        $self->handler(
+            end => sub {
+                shift->eof if shift eq "title";
+            },
+            "tagname,self"
+        );
+    }
 
-  my $p = HTML::Parser->new(api_version => 3);
-  $p->handler(start => \&start_handler, "tagname,self");
-  $p->parse_file(shift || die) || die $!;
-  print "\n";
+    my $p = HTML::Parser->new(api_version => 3);
+    $p->handler(start => \&start_handler, "tagname,self");
+    $p->parse_file(shift || die) || die $!;
+    print "\n";
 
 More examples are found in the F<eg/> directory of the C<HTML-Parser>
 distribution: the program C<hrefsub> shows how you can edit all links

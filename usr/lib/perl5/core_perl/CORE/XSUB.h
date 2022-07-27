@@ -160,13 +160,13 @@ is a lexical C<$_> in scope.
 #define dAX const I32 ax = (I32)(MARK - PL_stack_base + 1)
 
 #define dAXMARK				\
-	I32 ax = POPMARK;	\
-	SV **mark = PL_stack_base + ax++
+        I32 ax = POPMARK;	\
+        SV **mark = PL_stack_base + ax++
 
 #define dITEMS I32 items = (I32)(SP - MARK)
 
 #define dXSARGS \
-	dSP; dAXMARK; dITEMS
+        dSP; dAXMARK; dITEMS
 /* These 3 macros are replacements for dXSARGS macro only in bootstrap.
    They factor out common code in every BOOT XSUB. Computation of vars mark
    and items will optimize away in most BOOT functions. Var ax can never be
@@ -174,20 +174,20 @@ is a lexical C<$_> in scope.
    Note these macros are not drop in replacements for dXSARGS since they set
    PL_xsubfilename. */
 #define dXSBOOTARGSXSAPIVERCHK  \
-	I32 ax = XS_BOTHVERSION_SETXSUBFN_POPMARK_BOOTCHECK;	\
-	SV **mark = PL_stack_base + ax - 1; dSP; dITEMS
+        I32 ax = XS_BOTHVERSION_SETXSUBFN_POPMARK_BOOTCHECK;	\
+        SV **mark = PL_stack_base + ax - 1; dSP; dITEMS
 #define dXSBOOTARGSAPIVERCHK  \
-	I32 ax = XS_APIVERSION_SETXSUBFN_POPMARK_BOOTCHECK;	\
-	SV **mark = PL_stack_base + ax - 1; dSP; dITEMS
+        I32 ax = XS_APIVERSION_SETXSUBFN_POPMARK_BOOTCHECK;	\
+        SV **mark = PL_stack_base + ax - 1; dSP; dITEMS
 /* dXSBOOTARGSNOVERCHK has no API in xsubpp to choose it so do
 #undef dXSBOOTARGSXSAPIVERCHK
 #define dXSBOOTARGSXSAPIVERCHK dXSBOOTARGSNOVERCHK */
 #define dXSBOOTARGSNOVERCHK  \
-	I32 ax = XS_SETXSUBFN_POPMARK;  \
-	SV **mark = PL_stack_base + ax - 1; dSP; dITEMS
+        I32 ax = XS_SETXSUBFN_POPMARK;  \
+        SV **mark = PL_stack_base + ax - 1; dSP; dITEMS
 
 #define dXSTARG SV * const targ = ((PL_op->op_private & OPpENTERSUB_HASTARG) \
-			     ? PAD_SV(PL_op->op_targ) : sv_newmortal())
+                             ? PAD_SV(PL_op->op_targ) : sv_newmortal())
 
 /* Should be used before final PUSHi etc. if not in PPCODE section. */
 #define XSprePUSH (sp = PL_stack_base + ax - 1)
@@ -206,7 +206,7 @@ is a lexical C<$_> in scope.
 #define dXSFUNCTION(ret)		XSINTERFACE_CVT(ret,XSFUNCTION)
 #define XSINTERFACE_FUNC(ret,cv,f)     ((XSINTERFACE_CVT_ANON(ret))(f))
 #define XSINTERFACE_FUNC_SET(cv,f)	\
-		CvXSUBANY(cv).any_dxptr = (void (*) (pTHX_ void*))(f)
+                CvXSUBANY(cv).any_dxptr = (void (*) (pTHX_ void*))(f)
 
 #define dUNDERBAR dNOOP
 #define UNDERBAR  find_rundefsv()
@@ -323,10 +323,10 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 
 #define XSRETURN(off)					\
     STMT_START {					\
-	const IV tmpXSoff = (off);			\
-	assert(tmpXSoff >= 0);\
-	PL_stack_sp = PL_stack_base + ax + (tmpXSoff - 1);	\
-	return;						\
+        const IV tmpXSoff = (off);			\
+        assert(tmpXSoff >= 0);\
+        PL_stack_sp = PL_stack_base + ax + (tmpXSoff - 1);	\
+        return;						\
     } STMT_END
 
 #define XSRETURN_IV(v) STMT_START { XST_mIV(0,v);  XSRETURN(1); } STMT_END
@@ -409,48 +409,48 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 */
 
 #define DBM_setFilter(db_type,code)				\
-	STMT_START {						\
-	    if (db_type)					\
-	        RETVAL = sv_mortalcopy(db_type) ;		\
-	    ST(0) = RETVAL ;					\
-	    if (db_type && (code == &PL_sv_undef)) {		\
-	        SvREFCNT_dec_NN(db_type) ;			\
-	        db_type = NULL ;				\
-	    }							\
-	    else if (code) {					\
-	        if (db_type)					\
-	            sv_setsv(db_type, code) ;			\
-	        else						\
-	            db_type = newSVsv(code) ;			\
-	    }	    						\
-	} STMT_END
+        STMT_START {						\
+            if (db_type)					\
+                RETVAL = sv_mortalcopy(db_type) ;		\
+            ST(0) = RETVAL ;					\
+            if (db_type && (code == &PL_sv_undef)) {		\
+                SvREFCNT_dec_NN(db_type) ;			\
+                db_type = NULL ;				\
+            }							\
+            else if (code) {					\
+                if (db_type)					\
+                    sv_setsv(db_type, code) ;			\
+                else						\
+                    db_type = newSVsv(code) ;			\
+            }	    						\
+        } STMT_END
 
 #define DBM_ckFilter(arg,type,name)				\
         STMT_START {						\
-	if (db->type) {						\
-	    if (db->filtering) {				\
-	        croak("recursion detected in %s", name) ;	\
-	    }                     				\
-	    ENTER ;						\
-	    SAVETMPS ;						\
-	    SAVEINT(db->filtering) ;				\
-	    db->filtering = TRUE ;				\
-	    SAVE_DEFSV ;					\
+        if (db->type) {						\
+            if (db->filtering) {				\
+                croak("recursion detected in %s", name) ;	\
+            }                     				\
+            ENTER ;						\
+            SAVETMPS ;						\
+            SAVEINT(db->filtering) ;				\
+            db->filtering = TRUE ;				\
+            SAVE_DEFSV ;					\
             if (name[7] == 's')                                 \
                 arg = newSVsv(arg);                             \
-	    DEFSV_set(arg) ;					\
-	    SvTEMP_off(arg) ;					\
-	    PUSHMARK(SP) ;					\
-	    PUTBACK ;						\
-	    (void) perl_call_sv(db->type, G_DISCARD); 		\
-	    SPAGAIN ;						\
-	    PUTBACK ;						\
-	    FREETMPS ;						\
-	    LEAVE ;						\
+            DEFSV_set(arg) ;					\
+            SvTEMP_off(arg) ;					\
+            PUSHMARK(SP) ;					\
+            PUTBACK ;						\
+            (void) perl_call_sv(db->type, G_DISCARD); 		\
+            SPAGAIN ;						\
+            PUTBACK ;						\
+            FREETMPS ;						\
+            LEAVE ;						\
             if (name[7] == 's'){                                \
                 arg = sv_2mortal(arg);                          \
             }                                                   \
-	} } STMT_END
+        } } STMT_END
 
 #if 1		/* for compatibility */
 #  define VTBL_sv		&PL_vtbl_sv
@@ -484,7 +484,7 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 #  define VTBL_amagicelem	&PL_vtbl_amagicelem
 #endif
 
-#if defined(PERL_IMPLICIT_CONTEXT) && !defined(PERL_NO_GET_CONTEXT) && !defined(PERL_CORE)
+#if defined(MULTIPLICITY) && !defined(PERL_NO_GET_CONTEXT) && !defined(PERL_CORE)
 #  undef aTHX
 #  undef aTHX_
 #  define aTHX		PERL_GET_THX
@@ -493,15 +493,6 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 
 #if defined(PERL_IMPLICIT_SYS) && !defined(PERL_CORE)
 #  ifndef NO_XSLOCKS
-# if defined (NETWARE) && defined (USE_STDIO)
-#    define times		PerlProc_times
-#    define setuid		PerlProc_setuid
-#    define setgid		PerlProc_setgid
-#    define getpid		PerlProc_getpid
-#    define pause		PerlProc_pause
-#    define exit		PerlProc_exit
-#    define _exit		PerlProc__exit
-# else
 #    undef closedir
 #    undef opendir
 #    undef stdin
@@ -516,35 +507,6 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 #    undef getc
 #    undef ungetc
 #    undef fileno
-
-/* Following symbols were giving redefinition errors while building extensions - sgp 17th Oct 2000 */
-#ifdef NETWARE
-#	undef readdir
-#	undef fstat
-#	undef stat
-#	undef longjmp
-#	undef endhostent
-#	undef endnetent
-#	undef endprotoent
-#	undef endservent
-#	undef gethostbyaddr
-#	undef gethostbyname
-#	undef gethostent
-#	undef getnetbyaddr
-#	undef getnetbyname
-#	undef getnetent
-#	undef getprotobyname
-#	undef getprotobynumber
-#	undef getprotoent
-#	undef getservbyname
-#	undef getservbyport
-#	undef getservent
-#	undef inet_ntoa
-#	undef sethostent
-#	undef setnetent
-#	undef setprotoent
-#	undef setservent
-#endif	/* NETWARE */
 
 /* to avoid warnings: "xyz" redefined */
 #ifdef WIN32
@@ -694,7 +656,6 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 #    define shutdown		PerlSock_shutdown
 #    define socket		PerlSock_socket
 #    define socketpair		PerlSock_socketpair
-#	endif	/* NETWARE && USE_STDIO */
 
 #    undef fd_set
 #    undef FD_SET

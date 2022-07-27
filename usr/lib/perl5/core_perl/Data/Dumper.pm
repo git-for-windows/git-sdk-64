@@ -14,7 +14,7 @@ use warnings;
 
 #$| = 1;
 
-use 5.006_001;
+use 5.008_001;
 require Exporter;
 
 use constant IS_PRE_516_PERL => $] < 5.016;
@@ -29,7 +29,7 @@ our ( $Indent, $Trailingcomma, $Purity, $Pad, $Varname, $Useqq, $Terse, $Freezer
 our ( @ISA, @EXPORT, @EXPORT_OK, $VERSION );
 
 BEGIN {
-    $VERSION = '2.179'; # Don't forget to set version and release
+    $VERSION = '2.184'; # Don't forget to set version and release
                         # date in POD below!
 
     @ISA = qw(Exporter);
@@ -123,38 +123,10 @@ sub new {
 
 # Packed numeric addresses take less memory. Plus pack is faster than sprintf
 
-# Most users of current versions of Data::Dumper will be 5.008 or later.
-# Anyone on 5.6.1 and 5.6.2 upgrading will be rare (particularly judging by
-# the bug reports from users on those platforms), so for the common case avoid
-# complexity, and avoid even compiling the unneeded code.
-
-sub init_refaddr_format {
-}
-
 sub format_refaddr {
     require Scalar::Util;
     pack "J", Scalar::Util::refaddr(shift);
 };
-
-if ($] < 5.008) {
-    eval <<'EOC' or die;
-    no warnings 'redefine';
-    my $refaddr_format;
-    sub init_refaddr_format {
-        require Config;
-        my $f = $Config::Config{uvxformat};
-        $f =~ tr/"//d;
-        $refaddr_format = "0x%" . $f;
-    }
-
-    sub format_refaddr {
-        require Scalar::Util;
-        sprintf $refaddr_format, Scalar::Util::refaddr(shift);
-    }
-
-    1
-EOC
-}
 
 #
 # add-to or query the table of already seen references
@@ -162,7 +134,6 @@ EOC
 sub Seen {
   my($s, $g) = @_;
   if (defined($g) && (ref($g) eq 'HASH'))  {
-    init_refaddr_format();
     my($k, $v, $id);
     while (($k, $v) = each %$g) {
       if (defined $v) {
@@ -252,7 +223,6 @@ sub Dumpperl {
   my(@out, $val, $name);
   my($i) = 0;
   local(@post);
-  init_refaddr_format();
 
   $s = $s->new(@_) unless ref $s;
 
@@ -394,7 +364,16 @@ sub _dump {
         else {
           $pat = "$val";
         }
-        $pat =~ s <(\\.)|/> { $1 || '\\/' }ge;
+        $pat =~ s <
+                     (\\.)           # anything backslash escaped
+                   | (\$)(?![)|]|\z) # any unescaped $, except $| $) and end
+                   | /               # any unescaped /
+                  >
+                  {
+                      $1 ? $1
+                          : $2 ? '${\q($)}'
+                          : '\\/'
+                  }gex;
         $out .= "qr/$pat/$flags";
     }
     elsif ($realtype eq 'SCALAR' || $realtype eq 'REF'
@@ -545,7 +524,7 @@ sub _dump {
       else {
         local $s->{useqq} = IS_PRE_516_PERL && ($s->{useqq} || $name =~ /[^\x00-\x7f]/) ? 1 : $s->{useqq};
         $sname = $s->_dump(
-          $name eq 'main::' || $] < 5.007 && $name eq "main::\0"
+          $name eq 'main::'
             ? ''
             : $name,
           "",
@@ -572,13 +551,26 @@ sub _dump {
     elsif (!defined($val)) {
       $out .= "undef";
     }
+    # This calls the XSUB _vstring (if the XS code is loaded). I'm not *sure* if
+    # if belongs in the "Pure Perl" implementation. It sort of depends on what
+    # was meant by "Pure Perl", as this subroutine already relies Scalar::Util
+    # loading, which means that it has an XS dependency. De facto, it's the
+    # "Pure Perl" implementation of dumping (which uses XS helper code), as
+    # opposed to the C implementation (which calls out to Perl helper code).
+    # So in that sense this is fine - it just happens to be a local XS helper.
     elsif (defined &_vstring and $v = _vstring($val)
       and !_bad_vsmg || eval $v eq $val) {
       $out .= $v;
     }
+    # However the confusion comes here - if we *can't* find our XS helper, we
+    # fall back to this code, which generates different (worse) results. That's
+    # better than nothing, *but* it means that if you run the regression tests
+    # with Dumper.so missing, the test for "vstrings" fails, because this code
+    # here generates a different result. So there are actually "three" different
+    # implementations of Data::Dumper (kind of sort of) but we only test two.
     elsif (!defined &_vstring
        and ref $ref eq 'VSTRING' || eval{Scalar::Util::isvstring($val)}) {
-      $out .= sprintf "%vd", $val;
+      $out .= sprintf "v%vd", $val;
     }
     # \d here would treat "1\x{660}" as a safe decimal number
     elsif ($val =~ /^(?:0|-?[1-9][0-9]{0,8})\z/) { # safe decimal number
@@ -748,15 +740,15 @@ my %esc = (
     "\e" => "\\e",
 );
 
-my $low_controls = ($IS_ASCII)
-
-                   # This includes \177, because traditionally it has been
-                   # output as octal, even though it isn't really a "low"
-                   # control
-                   ? qr/[\0-\x1f\177]/
-
-                     # EBCDIC low controls.
-                   : qr/[\0-\x3f]/;
+# The low controls are considered to be everything below SPACE, plus the
+# outlier \c? control (but that wasn't properly in existence in early perls,
+# so reconstruct its value here.  This abandons EBCDIC support for this
+# character for perls below 5.8)
+my $low_controls = join "", map { quotemeta chr $_ } 0.. (ord(" ") - 1);
+$low_controls .= ($] < 5.008 || $IS_ASCII)
+                 ? "\x7f"
+                 : chr utf8::unicode_to_native(0x9F);
+my $low_controls_re = qr/[$low_controls]/;
 
 # put a string value in double quotes
 sub qquote {
@@ -766,19 +758,10 @@ sub qquote {
   # This efficiently changes the high ordinal characters to \x{} if the utf8
   # flag is on.  On ASCII platforms, the high ordinals are all the
   # non-ASCII's.  On EBCDIC platforms, we don't include in these the non-ASCII
-  # controls whose ordinals are less than SPACE, excluded below by the range
-  # \0-\x3f.  On ASCII platforms this range just compiles as part of :ascii:.
-  # On EBCDIC platforms, there is just one outlier high ordinal control, and
-  # it gets output as \x{}.
+  # controls.
   my $bytes; { use bytes; $bytes = length }
-  s/([^[:ascii:]\0-\x3f])/sprintf("\\x{%x}",ord($1))/ge
-    if $bytes > length
-
-       # The above doesn't get the EBCDIC outlier high ordinal control when
-       # the string is UTF-8 but there are no UTF-8 variant characters in it.
-       # We want that to come out as \x{} anyway.  We need is_utf8() to do
-       # this.
-       || (! $IS_ASCII && $] ge 5.008_001 && utf8::is_utf8($_));
+  s/([^[:ascii:]$low_controls])/sprintf("\\x{%x}",ord($1))/ge
+    if $bytes > length;
 
   return qq("$_") unless /[[:^print:]]/;  # fast exit if only printables
 
@@ -787,21 +770,17 @@ sub qquote {
   s/([\a\b\t\n\f\r\e])/$esc{$1}/g;
 
   # no need for 3 digits in escape for octals not followed by a digit.
-  s/($low_controls)(?!\d)/'\\'.sprintf('%o',ord($1))/eg;
+  s/($low_controls_re)(?!\d)/'\\'.sprintf('%o',ord($1))/eg;
 
   # But otherwise use 3 digits
-  s/($low_controls)/'\\'.sprintf('%03o',ord($1))/eg;
+  s/($low_controls_re)/'\\'.sprintf('%03o',ord($1))/eg;
 
     # all but last branch below not supported --BEHAVIOR SUBJECT TO CHANGE--
   my $high = shift || "";
     if ($high eq "iso8859") {   # Doesn't escape the Latin1 printables
-      if ($IS_ASCII) {
-        s/([\200-\240])/'\\'.sprintf('%o',ord($1))/eg;
-      }
-      elsif ($] ge 5.007_003) {
-        my $high_control = utf8::unicode_to_native(0x9F);
-        s/$high_control/sprintf('\\%o',ord($1))/eg;
-      }
+      # Could use /u and [:cntrl:] etc, if khw were confident it worked in
+      # early early perls
+      s/([\200-\240])/'\\'.sprintf('%o',ord($1))/eg if $IS_ASCII;
     } elsif ($high eq "utf8") {
 #     Some discussion of what to do here is in
 #       https://rt.perl.org/Ticket/Display.html?id=113088
@@ -816,10 +795,6 @@ sub qquote {
 
   return qq("$_");
 }
-
-# helper sub to sort hash keys in Perl < 5.8.0 where we don't have
-# access to sortsv() from XS
-sub _sortkeys { [ sort keys %{$_[0]} ] }
 
 sub _refine_name {
     my $s = shift;
@@ -1451,12 +1426,9 @@ for L<B::Deparse>.
 
 SCALAR objects have the weirdest looking C<bless> workaround.
 
-Pure Perl version of C<Data::Dumper> escapes UTF-8 strings correctly
-only in Perl 5.8.0 and later.
-
 =head2 NOTE
 
-Starting from Perl 5.8.1 different runs of Perl will have different
+Different runs of Perl will have different
 ordering of hash keys.  The change was done for greater security,
 see L<perlsec/"Algorithmic Complexity Attacks">.  This means that
 different runs of Perl will have different Data::Dumper outputs if
@@ -1476,7 +1448,7 @@ modify it under the same terms as Perl itself.
 
 =head1 VERSION
 
-Version 2.179
+Version 2.184
 
 =head1 SEE ALSO
 

@@ -18,7 +18,7 @@ use Socket qw(inet_aton inet_ntoa);
 
 our @EXPORT  = qw(%NetConfig);
 our @ISA     = qw(Net::LocalCfg Exporter);
-our $VERSION = "3.13";
+our $VERSION = "3.14";
 
 our($CONFIGURE, $LIBNET_CFG);
 
@@ -62,9 +62,9 @@ my %nc = (
     ph_hosts        => [ \$InternetConfig{ kICPhHost() }   ],
     ftp_ext_passive => \$InternetConfig{"646F676F\xA5UsePassiveMode"} || 0,
     ftp_int_passive => \$InternetConfig{"646F676F\xA5UsePassiveMode"} || 0,
-    socks_hosts     =>
+    socks_hosts     => 
         \$InternetConfig{ kICUseSocks() }    ? [ \$InternetConfig{ kICSocksHost() }    ] : [],
-    ftp_firewall    =>
+    ftp_firewall    => 
         \$InternetConfig{ kICUseFTPProxy() } ? [ \$InternetConfig{ kICFTPProxyHost() } ] : [],
 );
 \@NetConfig{keys %nc} = values %nc;
@@ -368,7 +368,7 @@ License or the Artistic License, as specified in the F<LICENCE> file.
 
 =head1 VERSION
 
-Version 3.13
+Version 3.14
 
 =head1 DATE
 

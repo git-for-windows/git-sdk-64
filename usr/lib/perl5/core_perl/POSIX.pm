@@ -4,7 +4,7 @@ use warnings;
 
 our ($AUTOLOAD, %SIGRT);
 
-our $VERSION = '1.97';
+our $VERSION = '2.03';
 
 require XSLoader;
 
@@ -176,7 +176,7 @@ sub import {
 
     load_imports() unless $loaded++;
 
-    # Grandfather old foo_h form to new :foo_h form
+    # Rewrite legacy foo_h form to new :foo_h form
     s/^(?=\w+_h$)/:/ for my @list = @_;
 
     my @unimpl = sort grep { exists $replacement{$_} } @list;
@@ -466,7 +466,7 @@ my %other_export_tags = ( # cf. exports policy below
 # - new SHOUTYCONSTANTS are OK to add to @EXPORT
 
 {
-  # De-duplicate the export list:
+  # De-duplicate the export list: 
   my ( %export, %export_ok );
   @export   {map {@$_} values %default_export_tags} = ();
   @export_ok{map {@$_} values   %other_export_tags} = ();

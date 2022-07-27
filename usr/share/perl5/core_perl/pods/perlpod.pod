@@ -18,7 +18,7 @@ like plain text, HTML, man pages, and more.
 
 Pod markup consists of three basic kinds of paragraphs:
 L<ordinary|/"Ordinary Paragraph">,
-L<verbatim|/"Verbatim Paragraph">, and
+L<verbatim|/"Verbatim Paragraph">, and 
 L<command|/"Command Paragraph">.
 
 
@@ -28,7 +28,7 @@ X<POD, ordinary paragraph>
 Most paragraphs in your documentation will be ordinary blocks
 of text, like this one.  You can simply type in your text without
 any markup whatsoever, and with just a blank line before and
-after.  When it gets formatted, it will undergo minimal formatting,
+after.  When it gets formatted, it will undergo minimal formatting, 
 like being rewrapped, probably put into a proportionally spaced
 font, and maybe even justified.
 
@@ -69,6 +69,8 @@ are
     =head2 Heading Text
     =head3 Heading Text
     =head4 Heading Text
+    =head5 Heading Text
+    =head6 Heading Text
     =over indentlevel
     =item stuff
     =back
@@ -83,8 +85,8 @@ To explain them each in detail:
 =over
 
 =item C<=head1 I<Heading Text>>
-X<=head1> X<=head2> X<=head3> X<=head4>
-X<head1> X<head2> X<head3> X<head4>
+X<=head1> X<=head2> X<=head3> X<=head4> X<=head5> X<=head6>
+X<head1> X<head2> X<head3> X<head4> X<head5> X<head6>
 
 =item C<=head2 I<Heading Text>>
 
@@ -92,7 +94,11 @@ X<head1> X<head2> X<head3> X<head4>
 
 =item C<=head4 I<Heading Text>>
 
-Head1 through head4 produce headings, head1 being the highest
+=item C<=head5 I<Heading Text>>
+
+=item C<=head6 I<Heading Text>>
+
+Head1 through head6 produce headings, head1 being the highest
 level.  The text in the rest of this paragraph is the content of the
 heading.  For example:
 
@@ -105,6 +111,10 @@ The text in these heading commands can use formatting codes, as seen here:
 
 Such commands are explained in the
 "L<Formatting Codes|/"Formatting Codes">" section, below.
+
+Note that C<head5> and C<head6> were introduced in 2020 and in
+L<Pod::Simple> 3.41, released in October 2020, so they might not be
+supported on the Pod parser you use.
 
 =item C<=over I<indentlevel>>
 X<=over> X<=item> X<=back> X<over> X<item> X<back>
@@ -229,7 +239,7 @@ called I<formatname>.  For example,
 
 The command "=for I<formatname> I<text...>"
 specifies that the remainder of just this paragraph (starting
-right after I<formatname>) is in that special format.
+right after I<formatname>) is in that special format.  
 
   =for html <hr> <img src="thang.png">
   <p> This is a raw HTML paragraph </p>
@@ -521,7 +531,7 @@ X<F> X<< FZ<><> >> X<POD, formatting code, filename> X<filename>
 Typically displayed in italics.  Example: "C<FE<lt>.cshrcE<gt>>"
 
 =item C<SE<lt>textE<gt>> -- text contains non-breaking spaces
-X<S> X<< SZ<><> >> X<POD, formatting code, non-breaking space>
+X<S> X<< SZ<><> >> X<POD, formatting code, non-breaking space> 
 X<non-breaking space>
 
 This means that the words in I<text> should not be broken

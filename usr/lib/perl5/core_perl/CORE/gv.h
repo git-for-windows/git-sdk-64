@@ -261,6 +261,9 @@ Return the CV from the GV.
    found (with the exception GV_ADDMG, which *might* cause the symbol
    to be added) */
 
+/* gv_fetchfile_flags() */
+#define GVF_NOADD       0x01    /* don't add the glob if it doesn't exist */
+
 #define gv_fullname3(sv,gv,prefix) gv_fullname4(sv,gv,prefix,TRUE)
 #define gv_efullname3(sv,gv,prefix) gv_efullname4(sv,gv,prefix,TRUE)
 #define gv_fetchmethod(stash, name) gv_fetchmethod_autoload(stash, name, TRUE)
@@ -287,6 +290,17 @@ Equivalent to C<L</gv_autoload_pvn>>.
             ? (void)++PL_sub_generation		\
             : mro_method_changed_in(GvSTASH(gv)) \
     )
+
+/*
+=for apidoc      gv_AVadd
+=for apidoc_item gv_HVadd
+=for apidoc_item gv_IOadd
+=for apidoc_item gv_SVadd
+
+Make sure there is a slot of the given type (AV, HV, IO, SV) in the GV C<gv>.
+
+=cut
+*/
 
 #define gv_AVadd(gv) gv_add_by_type((gv), SVt_PVAV)
 #define gv_HVadd(gv) gv_add_by_type((gv), SVt_PVHV)

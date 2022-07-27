@@ -9,9 +9,9 @@
 
 /* Package name      : perl5
  * Source directory  : .
- * Configuration time: Thu Jul 22 12:32:41 GMT 2021
+ * Configuration time: Wed Jul 27 10:26:14 UTC 2022
  * Configured by     : VssAdministrator
- * Target system     : msys_nt-10.0-14393 fv-az123-95 3.1.7-340.x86_64 2021-03-26 22:17 utc x86_64 msys 
+ * Target system     : msys_nt-10.0-20348 fv-az131-318 3.3.5-341.x86_64 2022-07-08 09:41 utc x86_64 msys 
  */
 
 #ifndef _config_h_
@@ -1369,7 +1369,7 @@
  *	feature tests from Configure are generally more reliable.
  */
 #define OSNAME "msys"		/**/
-#define OSVERS "3.1.7-340.x86_64"		/**/
+#define OSVERS "3.3.5-341.x86_64"		/**/
 
 /* CAT2:
  *	This macro concatenates 2 tokens together.
@@ -1541,7 +1541,7 @@
 #define HAS_ENDPROTOENT		/**/
 
 /* HAS_ENDPWENT:
- *	This symbol, if defined, indicates that the getgrent routine is
+ *	This symbol, if defined, indicates that the endpwent routine is
  *	available for finalizing sequential access of the passwd database.
  */
 #define HAS_ENDPWENT		/**/
@@ -2304,6 +2304,13 @@
  */
 #define HAS_ATANH		/**/
 
+/* HAS_NON_INT_BITFIELDS:
+ *	This symbol, if defined, indicates that the C compiler accepts, without
+ *	error or warning, struct bitfields that are declared with sizes other
+ *	than plain 'int'; for example 'unsigned char' is accepted.
+ */
+#define HAS_NON_INT_BITFIELDS	/**/
+
 /* HAS_BUILTIN_CHOOSE_EXPR:
  *	Can we handle GCC builtin for compile-time ternary-like expressions
  */
@@ -2479,6 +2486,19 @@
  *	mode.
  */
 #define HAS_FEGETROUND	/**/
+
+/* HAS_FFS:
+ *	This symbol, if defined, indicates that the ffs routine is available
+ *	to find the first bit set in its argument.  If it's not available,
+ *	roll your own.
+ */
+/* HAS_FFSL:
+ *	This symbol, if defined, indicates that the ffsl routine is available
+ *	to find the first bit set in its argument.  If it's not available,
+ *	roll your own.
+ */
+#define HAS_FFS		/**/
+#define HAS_FFSL		/**/
 
 /* HAS_FINITE:
  *	This symbol, if defined, indicates that the finite routine is
@@ -3087,14 +3107,19 @@
  *	available to return the name of the locale for a category mask.
  */
 /* I_XLOCALE:
- *	This symbol, if defined, indicates to the C program that it should
- *	include <xlocale.h> to get uselocale() and its friends.
+ *	This symbol, if defined, indicates to the C program that the
+ *	header xlocale.h is available.  See also NEED_XLOCALE_H
+ */
+/* NEED_XLOCALE_H:
+ *	This symbol, if defined, indicates that the C program should
+ *	include <xlocale.h> to get newlocale() and its friends.
  */
 #define	HAS_NEWLOCALE	/**/
 #define	HAS_FREELOCALE	/**/
 #define	HAS_USELOCALE	/**/
 #define	HAS_DUPLOCALE	/**/
 /*#define	HAS_QUERYLOCALE	/ **/
+/*#define	NEED_XLOCALE_H	/ **/
 /*#define	I_XLOCALE               / **/
 
 /* HAS_NEXTAFTER:
@@ -3418,6 +3443,12 @@
  *	available to convert strings to unsigned long longs (quads).
  */
 /*#define HAS_STRTOUQ		/ **/
+
+/* HAS_STRXFRM_L:
+ *	This symbol, if defined, indicates that the strxfrm_l() routine is
+ *	available to transform strings.
+ */
+#define HAS_STRXFRM_L	/**/
 
 /* HAS_SYSCALL_PROTO:
  *	This symbol, if defined, indicates that the system provides
@@ -4131,6 +4162,16 @@
  *	the latter.  This is only useful if you have select(), naturally.
  */
 #define SELECT_MIN_BITS	64	/**/
+
+/* ST_DEV_SIZE:
+ *	This variable contains the size of struct stat's st_dev in bytes.
+ */
+/* ST_DEV_SIGN:
+ *	This symbol holds the signedness of struct stat's st_dev.
+ *	1 for unsigned, -1 for signed.
+ */
+#define ST_DEV_SIGN 1	/* st_dev sign */
+#define ST_DEV_SIZE 4	/* st_dev size */
 
 /* ST_INO_SIZE:
  *	This variable contains the size of struct stat's st_ino in bytes.
@@ -4873,10 +4914,15 @@
  */
 #define HAS_MBRTOWC	/**/
 
+/* HAS_NL_LANGINFO_L:
+ *	This symbol, when defined, indicates presence of the nl_langinfo_l()
+ *	function
+ */
 /* HAS_THREAD_SAFE_NL_LANGINFO_L:
  *	This symbol, when defined, indicates presence of the nl_langinfo_l()
  *	function, and that it is thread-safe.
  */
+#define HAS_NL_LANGINFO_L	/**/
 #define HAS_THREAD_SAFE_NL_LANGINFO_L	/**/
 
 /* OLD_PTHREAD_CREATE_JOINABLE:
@@ -5094,6 +5140,18 @@
  *	available to convert strings to long doubles.
  */
 #define HAS_STRTOLD_L		/**/
+
+/* PERL_THREAD_LOCAL:
+ *	This symbol, if defined, gives a linkage specification for thread-local
+ *	storage. For example, for a C11 compiler this will be _Thread_local.
+ *	Beware, some compilers are sensitive to the C language standard they are
+ *	told to parse. For example, suncc defaults to C11, so our probe will
+ *	report that _Thread_local can be used. However, if the -std=c99 is later
+ *	added to the compiler flags, then _Thread_local will become a syntax
+ *	error. Hence it is important for these flags to be consistent between
+ *	probing and use.
+ */
+#define PERL_THREAD_LOCAL _Thread_local	/**/
 
 /* HAS_TMPNAM_R:
  *	This symbol, if defined, indicates that the tmpnam_r routine

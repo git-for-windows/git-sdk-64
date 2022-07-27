@@ -15,7 +15,13 @@
  *			but this is replaced when op is grafted in, when
  *			this op will point to the real next op, and the new
  *			parent takes over role of remembering starting op.)
+ * 	op_sibparent    Pointer to the op's next sibling, or to the parent
+ *			if there are no more siblings.
  *	op_ppaddr	Pointer to current ppcode's function.
+ * 	op_targ		An index into the current pad, identifying an SV
+ *			that is typically used to store the OP's result
+ *			(such as a lexical variable, or a SVs_PADTMP
+ *			temporary intermediate value).
  *	op_type		The type of the operation.
  *	op_opt		Whether or not the op has been optimised by the
  *			peephole optimiser.
@@ -74,12 +80,12 @@ typedef PERL_BITFIELD16 Optype;
 
 =for apidoc Amn|U32|GIMME_V
 The XSUB-writer's equivalent to Perl's C<wantarray>.  Returns C<G_VOID>,
-C<G_SCALAR> or C<G_ARRAY> for void, scalar or list context,
+C<G_SCALAR> or C<G_LIST> for void, scalar or list context,
 respectively.  See L<perlcall> for a usage example.
 
 =for apidoc AmnD|U32|GIMME
 A backward-compatible version of C<GIMME_V> which can only return
-C<G_SCALAR> or C<G_ARRAY>; in a void context, it returns C<G_SCALAR>.
+C<G_SCALAR> or C<G_LIST>; in a void context, it returns C<G_SCALAR>.
 Deprecated.  Use C<GIMME_V> instead.
 
 =cut
@@ -160,7 +166,7 @@ Deprecated.  Use C<GIMME_V> instead.
 #  define GIMME \
           (PL_op->op_flags & OPf_WANT					\
            ? ((PL_op->op_flags & OPf_WANT) == OPf_WANT_LIST		\
-              ? G_ARRAY							\
+              ? G_LIST							\
               : G_SCALAR)						\
            : dowantarray())
 #endif
@@ -602,7 +608,7 @@ typedef enum {
 #  ifdef PERL_CORE
 #    define OP_REFCNT_LOCK		MUTEX_LOCK(&PL_op_mutex)
 #    define OP_REFCNT_UNLOCK		MUTEX_UNLOCK(&PL_op_mutex)
-#  else
+#  else     /* Subject non-core uses to clang thread safety analysis */
 #    define OP_REFCNT_LOCK		op_refcnt_lock()
 #    define OP_REFCNT_UNLOCK		op_refcnt_unlock()
 #  endif
@@ -889,7 +895,7 @@ Reenable a member of the XOP which has been disabled.
 */
 
 struct custom_op {
-    U32		    xop_flags;
+    U32		    xop_flags;    
     const char	   *xop_name;
     const char	   *xop_desc;
     U32		    xop_class;

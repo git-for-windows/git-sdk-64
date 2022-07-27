@@ -115,9 +115,9 @@
  * of the grow() can be done. These changes reduce the code of something
  * like save_pushptrptr() to half its former size.
  * Of course, doing the size check *after* pushing means we must always
- * ensure there are SS_MAXPUSH free slots on the savestack. This ensured
- * bt savestack_grow() and savestack_grow_cnt always allocating SS_MAXPUSH
- * slots more than asked for, or that it sets PL_savestack_max to
+ * ensure there are SS_MAXPUSH free slots on the savestack. This is ensured by
+ * savestack_grow() and savestack_grow_cnt always allocating SS_MAXPUSH slots
+ * more than asked for, or that it sets PL_savestack_max to
  *
  * These are for internal core use only and are subject to change */
 
@@ -201,16 +201,18 @@ scope has the given name. C<name> must be a literal string.
     STMT_START {							\
         push_scope();							\
         if (PL_scopestack_name)						\
-            PL_scopestack_name[PL_scopestack_ix-1] = name;		\
+            PL_scopestack_name[PL_scopestack_ix-1] = ASSERT_IS_LITERAL(name);\
         DEBUG_SCOPE("ENTER \"" name "\"")				\
     } STMT_END
 #define LEAVE_with_name(name)						\
     STMT_START {							\
         DEBUG_SCOPE("LEAVE \"" name "\"")				\
         if (PL_scopestack_name)	{					\
+            CLANG_DIAG_IGNORE_STMT(-Wstring-compare);			\
             assert(((char*)PL_scopestack_name[PL_scopestack_ix-1]	\
-                        == (char*)name)					\
+                        == (char*)ASSERT_IS_LITERAL(name))              \
                     || strEQ(PL_scopestack_name[PL_scopestack_ix-1], name));        \
+            CLANG_DIAG_RESTORE_STMT;					\
         }								\
         pop_scope();							\
     } STMT_END
@@ -224,28 +226,30 @@ scope has the given name. C<name> must be a literal string.
         if (PL_savestack_ix > old) leave_scope(old); \
     } STMT_END
 
-#define SAVEI8(i)	save_I8((I8*)&(i))
-#define SAVEI16(i)	save_I16((I16*)&(i))
-#define SAVEI32(i)	save_I32((I32*)&(i))
-#define SAVEINT(i)	save_int((int*)&(i))
-#define SAVEIV(i)	save_iv((IV*)&(i))
-#define SAVELONG(l)	save_long((long*)&(l))
-#define SAVEBOOL(b)	save_bool(&(b))
-#define SAVESPTR(s)	save_sptr((SV**)&(s))
-#define SAVEPPTR(s)	save_pptr((char**)&(s))
-#define SAVEVPTR(s)	save_vptr((void*)&(s))
-#define SAVEPADSVANDMORTALIZE(s)	save_padsv_and_mortalize(s)
-#define SAVEFREESV(s)	save_freesv(MUTABLE_SV(s))
-#define SAVEFREEPADNAME(s) save_pushptr((void *)(s), SAVEt_FREEPADNAME)
-#define SAVEMORTALIZESV(s)	save_mortalizesv(MUTABLE_SV(s))
-#define SAVEFREEOP(o)	save_freeop((OP*)(o))
-#define SAVEFREEPV(p)	save_freepv((char*)(p))
-#define SAVECLEARSV(sv)	save_clearsv((SV**)&(sv))
-#define SAVEGENERICSV(s)	save_generic_svref((SV**)&(s))
-#define SAVEGENERICPV(s)	save_generic_pvref((char**)&(s))
-#define SAVESHAREDPV(s)		save_shared_pvref((char**)&(s))
-#define SAVESETSVFLAGS(sv,mask,val)	save_set_svflags(sv,mask,val)
-#define SAVEFREECOPHH(h)	save_pushptr((void *)(h), SAVEt_FREECOPHH)
+#define SAVEI8(i)                   save_I8((I8*)&(i))
+#define SAVEI16(i)                  save_I16((I16*)&(i))
+#define SAVEI32(i)                  save_I32((I32*)&(i))
+#define SAVEINT(i)                  save_int((int*)&(i))
+#define SAVEIV(i)                   save_iv((IV*)&(i))
+#define SAVELONG(l)                 save_long((long*)&(l))
+#define SAVESTRLEN(l)               Perl_save_strlen(aTHX_ (STRLEN*)&(l))
+#define SAVEBOOL(b)                 save_bool(&(b))
+#define SAVESPTR(s)                 save_sptr((SV**)&(s))
+#define SAVEPPTR(s)                 save_pptr((char**)&(s))
+#define SAVEVPTR(s)                 save_vptr((void*)&(s))
+#define SAVEPADSVANDMORTALIZE(s)    save_padsv_and_mortalize(s)
+#define SAVEFREESV(s)               save_freesv(MUTABLE_SV(s))
+#define SAVEFREEPADNAME(s)          save_pushptr((void *)(s), SAVEt_FREEPADNAME)
+#define SAVEMORTALIZESV(s)          save_mortalizesv(MUTABLE_SV(s))
+#define SAVEFREEOP(o)               save_freeop((OP*)(o))
+#define SAVEFREEPV(p)               save_freepv((char*)(p))
+#define SAVECLEARSV(sv)             save_clearsv((SV**)&(sv))
+#define SAVEGENERICSV(s)            save_generic_svref((SV**)&(s))
+#define SAVEGENERICPV(s)            save_generic_pvref((char**)&(s))
+#define SAVESHAREDPV(s)             save_shared_pvref((char**)&(s))
+#define SAVESETSVFLAGS(sv,mask,val) save_set_svflags(sv,mask,val)
+#define SAVEFREECOPHH(h)            save_pushptr((void *)(h), SAVEt_FREECOPHH)
+
 #define SAVEDELETE(h,k,l) \
           save_delete(MUTABLE_HV(h), (char*)(k), (I32)(l))
 #define SAVEHDELETE(h,s) \
@@ -301,15 +305,35 @@ scope has the given name. C<name> must be a literal string.
 
 #define SAVECOPLINE(c)		SAVEI32(CopLINE(c))
 
-/* SSNEW() temporarily allocates a specified number of bytes of data on the
- * savestack.  It returns an I32 index into the savestack, because a
- * pointer would get broken if the savestack is moved on reallocation.
- * SSNEWa() works like SSNEW(), but also aligns the data to the specified
- * number of bytes.  MEM_ALIGNBYTES is perhaps the most useful.  The
- * alignment will be preserved through savestack reallocation *only* if
- * realloc returns data aligned to a size divisible by "align"!
- *
- * SSPTR() converts the index returned by SSNEW/SSNEWa() into a pointer.
+/*
+=for apidoc_section $stack
+=for apidoc    Am|I32|SSNEW  |Size_t size
+=for apidoc_item |   |SSNEWa |Size_t_size|Size_t align
+=for apidoc_item |   |SSNEWt |Size_t size|type
+=for apidoc_item |   |SSNEWat|Size_t_size|type|Size_t align
+
+These temporarily allocates data on the savestack, returning an I32 index into
+the savestack, because a pointer would get broken if the savestack is moved on
+reallocation.  Use L</C<SSPTR>> to convert the returned index into a pointer.
+
+The forms differ in that plain C<SSNEW> allocates C<size> bytes;
+C<SSNEWt> and C<SSNEWat> allocate C<size> objects, each of which is type
+C<type>;
+and <SSNEWa> and C<SSNEWat> make sure to align the new data to an C<align>
+boundary.  The most useful value for the alignment is likely to be
+L</C<MEM_ALIGNBYTES>>.  The alignment will be preserved through savestack
+reallocation B<only> if realloc returns data aligned to a size divisible by
+"align"!
+
+=for apidoc   Am|type  |SSPTR |I32 index|type
+=for apidoc_item|type *|SSPTRt|I32 index|type
+
+These convert the C<index> returned by L/<C<SSNEW>> and kin into actual pointers.
+
+The difference is that C<SSPTR> casts the result to C<type>, and C<SSPTRt>
+casts it to a pointer of that C<type>.
+
+=cut
  */
 
 #define SSNEW(size)             Perl_save_alloc(aTHX_ (size), 0)
@@ -332,6 +356,16 @@ STMT_START {                                 \
       save_pushptr((void *)(_o), SAVEt_FREEOP); \
     } STMT_END
 #define save_freepv(pv)		save_pushptr((void *)(pv), SAVEt_FREEPV)
+
+/*
+=for apidoc_section $callback
+=for apidoc save_op
+
+Implements C<SAVEOP>.
+
+=cut
+ */
+
 #define save_op()		save_pushptr((void *)(PL_op), SAVEt_OP)
 
 /*

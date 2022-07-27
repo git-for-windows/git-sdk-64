@@ -97,7 +97,7 @@ struct _PerlIO {
 #define PERLIO_F_OPEN		0x00200000
 #define PERLIO_F_FASTGETS	0x00400000
 #define PERLIO_F_TTY		0x00800000
-#define PERLIO_F_NOTREG         0x01000000
+#define PERLIO_F_NOTREG         0x01000000   
 #define PERLIO_F_CLEARED        0x02000000 /* layer cleared but not freed */
 
 #define PerlIOBase(f)      (*(f))
@@ -114,9 +114,6 @@ EXTCONST PerlIO_funcs PerlIO_utf8;
 EXTCONST PerlIO_funcs PerlIO_byte;
 EXTCONST PerlIO_funcs PerlIO_raw;
 EXTCONST PerlIO_funcs PerlIO_pending;
-#ifdef WIN32
-EXTCONST PerlIO_funcs PerlIO_win32;
-#endif
 PERL_CALLCONV PerlIO *PerlIO_allocate(pTHX);
 PERL_CALLCONV SV *PerlIO_arg_fetch(PerlIO_list_t *av, IV n);
 #define PerlIOArg PerlIO_arg_fetch(layers,n)

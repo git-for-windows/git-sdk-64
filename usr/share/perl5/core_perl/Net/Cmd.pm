@@ -19,14 +19,14 @@ use Symbol 'gensym';
 use Errno 'EINTR';
 
 BEGIN {
-  if ($^O eq 'os390') {
+  if (ord "A" == 193) {
     require Convert::EBCDIC;
 
     #    Convert::EBCDIC->import;
   }
 }
 
-our $VERSION = "3.13";
+our $VERSION = "3.14";
 our @ISA     = qw(Exporter);
 our @EXPORT  = qw(CMD_INFO CMD_OK CMD_MORE CMD_REJECT CMD_ERROR CMD_PENDING);
 
@@ -41,7 +41,7 @@ use constant DEF_REPLY_CODE => 421;
 
 my %debug = ();
 
-my $tr = $^O eq 'os390' ? Convert::EBCDIC->new() : undef;
+my $tr = ord "A" == 193 ? Convert::EBCDIC->new() : undef;
 
 sub toebcdic {
   my $cmd = shift;
@@ -670,11 +670,11 @@ These methods provide a user interface to the C<Net::Cmd> object.
 =item C<debug($level)>
 
 Set the level of debug information for this object. If C<$level> is not given
-then the current state is returned. Otherwise the state is changed to
-C<$level> and the previous state returned.
+then the current state is returned. Otherwise the state is changed to 
+C<$level> and the previous state returned. 
 
 Different packages
-may implement different levels of debug but a non-zero value results in
+may implement different levels of debug but a non-zero value results in 
 copies of all commands and responses also being sent to STDERR.
 
 If C<$level> is C<undef> then the debug level will be set to the default
@@ -724,7 +724,7 @@ returns true if C<response> returns CMD_OK.
 
 =head2 Protected Methods
 
-These methods are not intended to be called by the user, but used or
+These methods are not intended to be called by the user, but used or 
 over-ridden by a sub-class of C<Net::Cmd>
 
 =over 4
@@ -897,7 +897,7 @@ License or the Artistic License, as specified in the F<LICENCE> file.
 
 =head1 VERSION
 
-Version 3.13
+Version 3.14
 
 =head1 DATE
 

@@ -6,14 +6,13 @@ use strict;
 
 our($VERSION, @ISA, @EXPORT_OK);
 
-$VERSION = "1.50";
+$VERSION = "1.57";
 
 use Carp;
-use Exporter ();
+use Exporter 'import';
 use XSLoader;
 
 BEGIN {
-    @ISA = qw(Exporter);
     @EXPORT_OK = qw(
 	opset ops_to_opset
 	opset_to_ops opset_to_hex invert_opset
@@ -354,6 +353,9 @@ invert_opset function.
 
     cmpchain_and cmpchain_dup
 
+    is_bool
+    is_weak weaken unweaken
+
     leaveeval -- needed for Safe to operate, is safe
 		 without entereval
 
@@ -415,6 +417,7 @@ These are a hotchpotch of opcodes still waiting to be considered
     once
 
     rv2gv refgen srefgen ref refassign lvref lvrefslice lvavref
+    blessed refaddr reftype
 
     bless -- could be used to change ownership of objects
 	     (reblessing)
@@ -442,7 +445,11 @@ These are a hotchpotch of opcodes still waiting to be considered
     break continue
     smartmatch
 
+    pushdefer
+
     custom -- where should this go
+
+    ceil floor
 
 =item :base_math
 
@@ -563,7 +570,7 @@ SystemV Interprocess Communications:
 This tag holds opcodes related to loading modules and getting information
 about calling environment and args.
 
-    require dofile
+    require dofile 
     caller runcv
 
 =item :still_to_be_decided
@@ -611,4 +618,3 @@ Split out from Safe module version 1, named opcode tags and other
 changes added by Tim Bunce.
 
 =cut
-

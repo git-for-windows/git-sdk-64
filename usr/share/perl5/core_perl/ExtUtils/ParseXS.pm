@@ -11,7 +11,7 @@ use Symbol;
 
 our $VERSION;
 BEGIN {
-  $VERSION = '3.43';
+  $VERSION = '3.45';
   require ExtUtils::ParseXS::Constants; ExtUtils::ParseXS::Constants->VERSION($VERSION);
   require ExtUtils::ParseXS::CountLines; ExtUtils::ParseXS::CountLines->VERSION($VERSION);
   require ExtUtils::ParseXS::Utilities; ExtUtils::ParseXS::Utilities->VERSION($VERSION);
@@ -119,9 +119,9 @@ sub process_file {
   }
   @{ $self->{XSStack} } = ({type => 'none'});
   $self->{InitFileCode} = [ @ExtUtils::ParseXS::Constants::InitFileCode ];
-  $self->{Overload}     = 0; # bool
+  $self->{Overloaded}   = {}; # hashref of Package => Packid
+  $self->{Fallback}     = {}; # hashref of Package => fallback setting
   $self->{errors}       = 0; # count
-  $self->{Fallback}     = '&PL_sv_undef';
 
   # Most of the 1500 lines below uses these globals.  We'll have to
   # clean this up sometime, probably.  For now, we just pull them out
@@ -301,6 +301,7 @@ EOM
     $self->{interface_macro_set}       = 'XSINTERFACE_FUNC_SET';
     $self->{ProtoThisXSUB}             = $self->{WantPrototypes}; # states 0 (none), 1 (yes), 2 (empty prototype)
     $self->{ScopeThisXSUB}             = 0; # bool
+    $self->{OverloadsThisXSUB}         = {}; # overloaded operators (as hash keys, to de-dup)
 
     my $xsreturn = 0;
 
@@ -690,10 +691,17 @@ EOF
         do_push     => undef,
       } ) for grep $self->{in_out}->{$_} =~ /OUT$/, sort keys %{ $self->{in_out} };
 
-      my $prepush_done;
+      my $outlist_count = @{ $outlist_ref };
+      if ($outlist_count) {
+        my $ext = $outlist_count;
+        ++$ext if $self->{gotRETVAL} || $wantRETVAL;
+        print "\tXSprePUSH;";
+        print "\tEXTEND(SP,$ext);\n";
+      }
       # all OUTPUT done, so now push the return value on the stack
       if ($self->{gotRETVAL} && $self->{RETVAL_code}) {
         print "\t$self->{RETVAL_code}\n";
+        print "\t++SP;\n" if $outlist_count;
       }
       elsif ($self->{gotRETVAL} || $wantRETVAL) {
         my $outputmap = $self->{typemap}->get_outputmap( ctype => $self->{ret_type} );
@@ -708,8 +716,9 @@ EOF
           );
           if (not $trgt->{with_size} and $trgt->{type} eq 'p') { # sv_setpv
             # PUSHp corresponds to sv_setpvn.  Treat sv_setpv directly
-            print "\tsv_setpv(TARG, $what); XSprePUSH; PUSHTARG;\n";
-            $prepush_done = 1;
+              print "\tsv_setpv(TARG, $what);\n";
+              print "\tXSprePUSH;\n" unless $outlist_count;
+              print "\tPUSHTARG;\n";
           }
           else {
             my $tsize = $trgt->{what_size};
@@ -718,8 +727,8 @@ EOF
               qq("$tsize"),
               {var => $var, type => $self->{ret_type}}
             );
-            print "\tXSprePUSH; PUSH$trgt->{type}($what$tsize);\n";
-            $prepush_done = 1;
+            print "\tXSprePUSH;\n" unless $outlist_count;
+            print "\tPUSH$trgt->{type}($what$tsize);\n";
           }
         }
         else {
@@ -731,15 +740,13 @@ EOF
             do_setmagic => 0,
             do_push     => undef,
           } );
+          print "\t++SP;\n" if $outlist_count;
         }
       }
 
       $xsreturn = 1 if $self->{ret_type} ne "void";
       my $num = $xsreturn;
-      my $c = @{ $outlist_ref };
-      print "\tXSprePUSH;" if $c and not $prepush_done;
-      print "\tEXTEND(SP,$c);\n" if $c;
-      $xsreturn += $c;
+      $xsreturn += $outlist_count;
       $self->generate_output( {
         type        => $self->{var_types}->{$_},
         num         => $num++,
@@ -865,12 +872,20 @@ EOF
       push(@{ $self->{InitFileCode} },
        "        (void)$self->{newXS}(\"$self->{pname}\", XS_$self->{Full_func_name}$self->{file}$self->{proto});\n");
     }
+
+    for my $operator (keys %{ $self->{OverloadsThisXSUB} }) {
+      $self->{Overloaded}->{$self->{Package}} = $self->{Packid};
+      my $overload = "$self->{Package}\::($operator";
+      push(@{ $self->{InitFileCode} },
+        "        (void)$self->{newXS}(\"$overload\", XS_$self->{Full_func_name}$self->{file}$self->{proto});\n");
+    }
   } # END 'PARAGRAPH' 'while' loop
 
-  if ($self->{Overload}) { # make it findable with fetchmethod
+  for my $package (keys %{ $self->{Overloaded} }) { # make them findable with fetchmethod
+    my $packid = $self->{Overloaded}->{$package};
     print Q(<<"EOF");
-#XS_EUPXS(XS_$self->{Packid}_nil); /* prototype to pass -Wmissing-prototypes */
-#XS_EUPXS(XS_$self->{Packid}_nil)
+#XS_EUPXS(XS_${packid}_nil); /* prototype to pass -Wmissing-prototypes */
+#XS_EUPXS(XS_${packid}_nil)
 #{
 #   dXSARGS;
 #   PERL_UNUSED_VAR(items);
@@ -878,11 +893,11 @@ EOF
 #}
 #
 EOF
-    unshift(@{ $self->{InitFileCode} }, <<"MAKE_FETCHMETHOD_WORK");
-    /* Making a sub named "$self->{Package}::()" allows the package */
-    /* to be findable via fetchmethod(), and causes */
-    /* overload::Overloaded("$self->{Package}") to return true. */
-    (void)$self->{newXS}("$self->{Package}::()", XS_$self->{Packid}_nil$self->{file}$self->{proto});
+    unshift(@{ $self->{InitFileCode} }, Q(<<"MAKE_FETCHMETHOD_WORK"));
+#   /* Making a sub named "${package}::()" allows the package */
+#   /* to be findable via fetchmethod(), and causes */
+#   /* overload::Overloaded("$package") to return true. */
+#   (void)newXS_deffile("${package}::()", XS_${packid}_nil);
 MAKE_FETCHMETHOD_WORK
   }
 
@@ -953,19 +968,28 @@ EOF
 #
 EOF
 
-  print Q(<<"EOF") if ($self->{Overload});
+  if (%{ $self->{Overloaded} }) {
+    # once if any overloads
+    print Q(<<"EOF");
 #    /* register the overloading (type 'A') magic */
 ##if PERL_VERSION_LE(5, 8, 999) /* PERL_VERSION_LT is 5.33+ */
 #    PL_amagic_generation++;
 ##endif
+EOF
+    for my $package (keys %{ $self->{Overloaded} }) {
+      # once for each package with overloads
+      my $fallback = $self->{Fallback}->{$package} || "&PL_sv_undef";
+      print Q(<<"EOF");
 #    /* The magic for overload gets a GV* via gv_fetchmeth as */
 #    /* mentioned above, and looks in the SV* slot of it for */
 #    /* the "fallback" status. */
 #    sv_setsv(
-#        get_sv( "$self->{Package}::()", TRUE ),
-#        $self->{Fallback}
+#        get_sv( "${package}::()", TRUE ),
+#        $fallback
 #    );
 EOF
+    }
+  }
 
   print @{ $self->{InitFileCode} };
 
@@ -1342,10 +1366,7 @@ sub OVERLOAD_handler {
     next unless /\S/;
     trim_whitespace($_);
     while ( s/^\s*([\w:"\\)\+\-\*\/\%\<\>\.\&\|\^\!\~\{\}\=]+)\s*//) {
-      $self->{Overload} = 1 unless $self->{Overload};
-      my $overload = "$self->{Package}\::(".$1;
-      push(@{ $self->{InitFileCode} },
-       "        (void)$self->{newXS}(\"$overload\", XS_$self->{Full_func_name}$self->{file}$self->{proto});\n");
+      $self->{OverloadsThisXSUB}->{$1} = 1;
     }
   }
 }
@@ -1368,7 +1389,7 @@ sub FALLBACK_handler {
   # check for valid FALLBACK value
   $self->death("Error: FALLBACK: TRUE/FALSE/UNDEF") unless exists $map{$setting};
 
-  $self->{Fallback} = $map{$setting};
+  $self->{Fallback}->{$self->{Package}} = $map{$setting};
 }
 
 

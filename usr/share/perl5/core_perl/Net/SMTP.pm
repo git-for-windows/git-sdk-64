@@ -19,7 +19,7 @@ use Net::Cmd;
 use Net::Config;
 use Socket;
 
-our $VERSION = "3.13";
+our $VERSION = "3.14";
 
 # Code for detecting if we can use SSL
 my $ssl_class = eval {
@@ -204,7 +204,7 @@ sub auth {
       return unless $mechanisms =~ /\S/;
       $sasl->mechanism($mechanisms);
     }
-
+    
     # We should probably allow the user to pass the host, but I don't
     # currently know and SASL mechanisms that are used by smtp that need it
 
@@ -838,7 +838,7 @@ required by RFC 2554, in an RFC2821-quoted form and xtext-encoded, or <> .
 
 =item C<reset()>
 
-Reset the status of the server. This may be called after a message has been
+Reset the status of the server. This may be called after a message has been 
 initiated, but before any data has been sent, to cancel the sending of the
 message.
 
@@ -918,7 +918,7 @@ Synonyms for C<recipient>.
 
 =item C<data([$data])>
 
-Initiate the sending of the data from the current message.
+Initiate the sending of the data from the current message. 
 
 C<$data> may be a reference to a list or a list and must be encoded by the
 caller to octets of whatever encoding is required, e.g. by using the Encode
@@ -1052,7 +1052,7 @@ License or the Artistic License, as specified in the F<LICENCE> file.
 
 =head1 VERSION
 
-Version 3.13
+Version 3.14
 
 =head1 DATE
 

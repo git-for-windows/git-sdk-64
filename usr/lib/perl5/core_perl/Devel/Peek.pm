@@ -3,14 +3,13 @@
 
 package Devel::Peek;
 
-$VERSION = '1.30';
+$VERSION = '1.32';
 $XS_VERSION = $VERSION;
 $VERSION = eval $VERSION;
 
 require Exporter;
 require XSLoader;
 
-@ISA = qw(Exporter);
 @EXPORT = qw(Dump mstat DeadCode DumpArray DumpWithOP DumpProg
 	     fill_mstats mstats_fillhash mstats2hash runops_debug debug_flags);
 @EXPORT_OK = qw(SvREFCNT CvGV);
@@ -522,7 +521,7 @@ Looks like this:
 	    OUTSIDE = 0x22c9fb0 (MAIN)
 
 
-This shows that
+This shows that 
 
 =over 4
 
@@ -537,7 +536,7 @@ that it was compiled in the package C<main>;
 
 =item *
 
-under the name C<MY::top_targets>;
+under the name C<MY::top_targets>; 
 
 =item *
 

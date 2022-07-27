@@ -107,7 +107,7 @@
     0,
     0,
     /* sig 'S' %SIG hash */
-    magic_vtable_max,
+    want_vtbl_sig,
     0,
     /* uvar 'U' Available for use by extensions */
     want_vtbl_uvar,

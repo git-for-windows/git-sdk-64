@@ -11,11 +11,11 @@ TAP::Parser::Result::YAML - YAML result token.
 
 =head1 VERSION
 
-Version 3.43
+Version 3.44
 
 =cut
 
-our $VERSION = '3.43';
+our $VERSION = '3.44';
 
 =head1 DESCRIPTION
 
@@ -46,7 +46,7 @@ They keep me awake at night.
 
 =head2 Instance Methods
 
-=head3 C<data>
+=head3 C<data> 
 
   if ( $result->is_yaml ) {
      print $result->data;

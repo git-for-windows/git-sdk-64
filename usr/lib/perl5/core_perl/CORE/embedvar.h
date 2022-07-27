@@ -16,30 +16,8 @@
  * Edit those files and run 'make regen_headers' to effect changes.
  */
 
-/* (Doing namespace management portably in C is really gross.) */
-
-/*
-   The following combinations of MULTIPLICITY and PERL_IMPLICIT_CONTEXT
-   are supported:
-     1) none
-     2) MULTIPLICITY	# supported for compatibility
-     3) MULTIPLICITY && PERL_IMPLICIT_CONTEXT
-
-   All other combinations of these flags are errors.
-
-   only #3 is supported directly, while #2 is a special
-   case of #3 (supported by redefining vTHX appropriately).
-*/
-
 #if defined(MULTIPLICITY)
-/* cases 2 and 3 above */
-
-#  if defined(PERL_IMPLICIT_CONTEXT)
-#    define vTHX	aTHX
-#  else
-#    define vTHX	PERL_GET_INTERP
-#  endif
-
+#  define vTHX	aTHX
 #define PL_AboveLatin1		(vTHX->IAboveLatin1)
 #define PL_Assigned_invlist	(vTHX->IAssigned_invlist)
 #define PL_CCC_non0_non230	(vTHX->ICCC_non0_non230)
@@ -255,6 +233,7 @@
 #define PL_phase		(vTHX->Iphase)
 #define PL_pidstatus		(vTHX->Ipidstatus)
 #define PL_preambleav		(vTHX->Ipreambleav)
+#define PL_prevailing_version	(vTHX->Iprevailing_version)
 #define PL_profiledata		(vTHX->Iprofiledata)
 #define PL_psig_name		(vTHX->Ipsig_name)
 #define PL_psig_pend		(vTHX->Ipsig_pend)

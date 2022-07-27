@@ -106,50 +106,23 @@ already-built-in ones return pointers to what their names indicate.
 #define MUTABLE_IO(p)	((IO *)MUTABLE_PTR(p))
 #define MUTABLE_SV(p)	((SV *)MUTABLE_PTR(p))
 
-#if defined(I_STDBOOL) && !defined(PERL_BOOL_AS_CHAR)
+#ifndef __cplusplus
 #  include <stdbool.h>
-#  ifndef HAS_BOOL
-#    define HAS_BOOL 1
-#  endif
-#endif
-
-/* bool is built-in for g++-2.6.3 and later, which might be used
-   for extensions.  <_G_config.h> defines _G_HAVE_BOOL, but we can't
-   be sure _G_config.h will be included before this file.  _G_config.h
-   also defines _G_HAVE_BOOL for both gcc and g++, but only g++
-   actually has bool.  Hence, _G_HAVE_BOOL is pretty useless for us.
-   g++ can be identified by __GNUG__.
-   Andy Dougherty	February 2000
-*/
-#ifdef __GNUG__		/* GNU g++ has bool built-in */
-# ifndef PERL_BOOL_AS_CHAR
-#  ifndef HAS_BOOL
-#    define HAS_BOOL 1
-#  endif
-# endif
-#endif
-
-#ifndef HAS_BOOL
-# ifdef bool
-#  undef bool
-# endif
-# define bool char
-# define HAS_BOOL 1
 #endif
 
 /*
 =for apidoc_section $casting
 =for apidoc Am|bool|cBOOL|bool expr
 
-Cast-to-bool.  A simple S<C<(bool) I<expr>>> cast may not do the right thing:
-if C<bool> is defined as C<char>, for example, then the cast from C<int> is
-implementation-defined.
-
-C<(bool)!!(cbool)> in a ternary triggers a bug in xlc on AIX
+Cast-to-bool.  When Perl was able to be compiled on pre-C99 compilers, a
+C<(bool)> cast didn't necessarily do the right thing, so this macro was
+created (and made somewhat complicated to work around bugs in old
+compilers).  Now, many years later, and C99 is used, this is no longer
+required, but is kept for backwards compatibility.
 
 =cut
 */
-#define cBOOL(cbool) ((cbool) ? (bool)1 : (bool)0)
+#define cBOOL(cbool) ((bool) (cbool))
 
 /* Try to figure out __func__ or __FUNCTION__ equivalent, if any.
  * XXX Should really be a Configure probe, with HAS__FUNCTION__
@@ -397,14 +370,6 @@ string/length pair.
 Like C<sv_catpvn_mg>, but takes a literal string instead of a
 string/length pair.
 
-=for apidoc Am|void|sv_setpvs|SV* sv|"literal string"
-Like C<sv_setpvn>, but takes a literal string instead of a
-string/length pair.
-
-=for apidoc Am|void|sv_setpvs_mg|SV* sv|"literal string"
-Like C<sv_setpvn_mg>, but takes a literal string instead of a
-string/length pair.
-
 =for apidoc Am|SV *|sv_setref_pvs|SV *const rv|const char *const classname|"literal string"
 Like C<sv_setref_pvn>, but takes a literal string instead of
 a string/length pair.
@@ -446,6 +411,8 @@ a string/length pair.
 =cut
 */
 
+#define ASSERT_IS_LITERAL(s) ("" s "")
+
 /*
 =for apidoc_section $string
 
@@ -460,7 +427,7 @@ Perl_xxx(aTHX_ ...) form for any API calls where it's used.
 =cut
 */
 
-#define STR_WITH_LEN(s)  ("" s ""), (sizeof(s)-1)
+#define STR_WITH_LEN(s)  ASSERT_IS_LITERAL(s), (sizeof(s)-1)
 
 /* STR_WITH_LEN() shortcuts */
 #define newSVpvs(str) Perl_newSVpvn(aTHX_ STR_WITH_LEN(str))
@@ -721,26 +688,26 @@ based on the underlying C library functions):
 
 /* memEQ and memNE where second comparand is a string constant */
 #define memEQs(s1, l, s2) \
-        (((sizeof(s2)-1) == (l)) && memEQ((s1), ("" s2 ""), (sizeof(s2)-1)))
+        (((sizeof(s2)-1) == (l)) && memEQ((s1), ASSERT_IS_LITERAL(s2), (sizeof(s2)-1)))
 #define memNEs(s1, l, s2) (! memEQs(s1, l, s2))
 
 /* Keep these private until we decide it was a good idea */
 #if defined(PERL_CORE) || defined(PERL_EXT) || defined(PERL_EXT_POSIX)
 
-#define strBEGINs(s1,s2) (strncmp(s1,"" s2 "", sizeof(s2)-1) == 0)
+#define strBEGINs(s1,s2) (strncmp(s1,ASSERT_IS_LITERAL(s2), sizeof(s2)-1) == 0)
 
 #define memBEGINs(s1, l, s2)                                                \
             (   (Ptrdiff_t) (l) >= (Ptrdiff_t) sizeof(s2) - 1               \
-             && memEQ(s1, "" s2 "", sizeof(s2)-1))
+             && memEQ(s1, ASSERT_IS_LITERAL(s2), sizeof(s2)-1))
 #define memBEGINPs(s1, l, s2)                                               \
             (   (Ptrdiff_t) (l) > (Ptrdiff_t) sizeof(s2) - 1                \
-             && memEQ(s1, "" s2 "", sizeof(s2)-1))
+             && memEQ(s1, ASSERT_IS_LITERAL(s2), sizeof(s2)-1))
 #define memENDs(s1, l, s2)                                                  \
             (   (Ptrdiff_t) (l) >= (Ptrdiff_t) sizeof(s2) - 1               \
-             && memEQ(s1 + (l) - (sizeof(s2) - 1), "" s2 "", sizeof(s2)-1))
+             && memEQ(s1 + (l) - (sizeof(s2) - 1), ASSERT_IS_LITERAL(s2), sizeof(s2)-1))
 #define memENDPs(s1, l, s2)                                                 \
             (   (Ptrdiff_t) (l) > (Ptrdiff_t) sizeof(s2)                    \
-             && memEQ(s1 + (l) - (sizeof(s2) - 1), "" s2 "", sizeof(s2)-1))
+             && memEQ(s1 + (l) - (sizeof(s2) - 1), ASSERT_IS_LITERAL(s2), sizeof(s2)-1))
 #endif  /* End of making macros private */
 
 #define memLT(s1,s2,l) (memcmp(s1,s2,l) < 0)
@@ -748,7 +715,7 @@ based on the underlying C library functions):
 #define memGT(s1,s2,l) (memcmp(s1,s2,l) > 0)
 #define memGE(s1,s2,l) (memcmp(s1,s2,l) >= 0)
 
-#define memCHRs(s1,c) ((const char *) memchr("" s1 "" , c, sizeof(s1)-1))
+#define memCHRs(s1,c) ((const char *) memchr(ASSERT_IS_LITERAL(s1) , c, sizeof(s1)-1))
 
 /*
  * Character classes.
@@ -1180,79 +1147,108 @@ an API that does allow every possible legal result to be returned.)  Likewise
 no other function that is crippled by not being able to give the correct
 results for the full range of possible inputs has been implemented here.
 
-=for apidoc Am|U8|toUPPER|int ch
-Converts the specified character to uppercase.  If the input is anything but an
-ASCII lowercase character, that input character itself is returned.  Variant
-C<toUPPER_A> is equivalent.
+=for apidoc Am|UV|toUPPER|UV cp
+=for apidoc_item |UV|toUPPER_A|UV cp
+=for apidoc_item |UV|toUPPER_uvchr|UV cp|U8* s|STRLEN* lenp
+=for apidoc_item |UV|toUPPER_utf8|U8* p|U8* e|U8* s|STRLEN* lenp
+=for apidoc_item |UV|toUPPER_utf8_safe|U8* p|U8* e|U8* s|STRLEN* lenp
 
-=for apidoc Am|UV|toUPPER_uvchr|UV cp|U8* s|STRLEN* lenp
-Converts the code point C<cp> to its uppercase version, and
-stores that in UTF-8 in C<s>, and its length in bytes in C<lenp>.  The code
-point is interpreted as native if less than 256; otherwise as Unicode.  Note
-that the buffer pointed to by C<s> needs to be at least C<UTF8_MAXBYTES_CASE+1>
-bytes since the uppercase version may be longer than the original character.
+These all return the uppercase of a character.  The differences are what domain
+they operate on, and whether the input is specified as a code point (those
+forms with a C<cp> parameter) or as a UTF-8 string (the others).  In the latter
+case, the code point to use is the first one in the buffer of UTF-8 encoded
+code points, delineated by the arguments S<C<p .. e - 1>>.
 
-The first code point of the uppercased version is returned
-(but note, as explained at L<the top of this section|/Character case
-changing>, that there may be more.)
+C<toUPPER> and C<toUPPER_A> are synonyms of each other.  They return the
+uppercase of any lowercase ASCII-range code point.  All other inputs are
+returned unchanged.  Since these are macros, the input type may be any integral
+one, and the output will occupy the same number of bits as the input.
 
-=for apidoc Am|UV|toUPPER_utf8|U8* p|U8* e|U8* s|STRLEN* lenp
-=for apidoc_item toUPPER_utf8_safe
-Converts the first UTF-8 encoded character in the sequence starting at C<p> and
-extending no further than S<C<e - 1>> to its uppercase version, and
-stores that in UTF-8 in C<s>, and its length in bytes in C<lenp>.  Note
-that the buffer pointed to by C<s> needs to be at least C<UTF8_MAXBYTES_CASE+1>
-bytes since the uppercase version may be longer than the original character.
+There is no C<toUPPER_L1> nor C<toUPPER_LATIN1> as the uppercase of some code
+points in the 0..255 range is above that range or consists of multiple
+characters.  Instead use C<toUPPER_uvchr>.
 
-The first code point of the uppercased version is returned
-(but note, as explained at L<the top of this section|/Character case
-changing>, that there may be more).
+C<toUPPER_uvchr> returns the uppercase of any Unicode code point.  The return
+value is identical to that of C<toUPPER_A> for input code points in the ASCII
+range.  The uppercase of the vast majority of Unicode code points is the same
+as the code point itself.  For these, and for code points above the legal
+Unicode maximum, this returns the input code point unchanged.  It additionally
+stores the UTF-8 of the result into the buffer beginning at C<s>, and its
+length in bytes into C<*lenp>.  The caller must have made C<s> large enough to
+contain at least C<UTF8_MAXBYTES_CASE+1> bytes to avoid possible overflow.
 
-It will not attempt to read beyond S<C<e - 1>>, provided that the constraint
-S<C<s E<lt> e>> is true (this is asserted for in C<-DDEBUGGING> builds).  If
-the UTF-8 for the input character is malformed in some way, the program may
-croak, or the function may return the REPLACEMENT CHARACTER, at the discretion
-of the implementation, and subject to change in future releases.
+NOTE: the uppercase of a code point may be more than one code point.  The
+return value of this function is only the first of these.  The entire uppercase
+is returned in C<s>.  To determine if the result is more than a single code
+point, you can do something like this:
 
-C<toUPPER_utf8_safe> is now just a different spelling of plain C<toUPPER_utf8>
+ uc = toUPPER_uvchr(cp, s, &len);
+ if (len > UTF8SKIP(s)) { is multiple code points }
+ else { is a single code point }
 
-=for apidoc Am|U8|toFOLD|U8 ch
-Converts the specified character to foldcase.  If the input is anything but an
-ASCII uppercase character, that input character itself is returned.  Variant
-C<toFOLD_A> is equivalent.  (There is no equivalent C<to_FOLD_L1> for the full
-Latin1 range, as the full generality of L</toFOLD_uvchr> is needed there.)
+C<toUPPER_utf8> and C<toUPPER_utf8_safe> are synonyms of each other.  The only
+difference between these and C<toUPPER_uvchr> is that the source for these is
+encoded in UTF-8, instead of being a code point.  It is passed as a buffer
+starting at C<p>, with C<e> pointing to one byte beyond its end.  The C<p>
+buffer may certainly contain more than one code point; but only the first one
+(up through S<C<e - 1>>) is examined.  If the UTF-8 for the input character is
+malformed in some way, the program may croak, or the function may return the
+REPLACEMENT CHARACTER, at the discretion of the implementation, and subject to
+change in future releases.
 
-=for apidoc Am|UV|toFOLD_uvchr|UV cp|U8* s|STRLEN* lenp
-Converts the code point C<cp> to its foldcase version, and
-stores that in UTF-8 in C<s>, and its length in bytes in C<lenp>.  The code
-point is interpreted as native if less than 256; otherwise as Unicode.  Note
-that the buffer pointed to by C<s> needs to be at least C<UTF8_MAXBYTES_CASE+1>
-bytes since the foldcase version may be longer than the original character.
+=for apidoc Am|UV|toFOLD|UV cp
+=for apidoc_item |UV|toFOLD_A|UV cp
+=for apidoc_item |UV|toFOLD_uvchr|UV cp|U8* s|STRLEN* lenp
+=for apidoc_item |UV|toFOLD_utf8|U8* p|U8* e|U8* s|STRLEN* lenp
+=for apidoc_item |UV|toFOLD_utf8_safe|U8* p|U8* e|U8* s|STRLEN* lenp
 
-The first code point of the foldcased version is returned
-(but note, as explained at L<the top of this section|/Character case
-changing>, that there may be more).
+These all return the foldcase of a character.  "foldcase" is an internal case
+for C</i> pattern matching. If the foldcase of character A and the foldcase of
+character B are the same, they match caselessly; otherwise they don't.
 
-=for apidoc Am|UV|toFOLD_utf8|U8* p|U8* e|U8* s|STRLEN* lenp
-=for apidoc_item toFOLD_utf8_safe
-Converts the first UTF-8 encoded character in the sequence starting at C<p> and
-extending no further than S<C<e - 1>> to its foldcase version, and
-stores that in UTF-8 in C<s>, and its length in bytes in C<lenp>.  Note
-that the buffer pointed to by C<s> needs to be at least C<UTF8_MAXBYTES_CASE+1>
-bytes since the foldcase version may be longer than the original character.
+The differences in the forms are what domain they operate on, and whether the
+input is specified as a code point (those forms with a C<cp> parameter) or as a
+UTF-8 string (the others).  In the latter case, the code point to use is the
+first one in the buffer of UTF-8 encoded code points, delineated by the
+arguments S<C<p .. e - 1>>.
 
-The first code point of the foldcased version is returned
-(but note, as explained at L<the top of this section|/Character case
-changing>, that there may be more).
+C<toFOLD> and C<toFOLD_A> are synonyms of each other.  They return the
+foldcase of any ASCII-range code point.  In this range, the foldcase is
+identical to the lowercase.  All other inputs are returned unchanged.  Since
+these are macros, the input type may be any integral one, and the output will
+occupy the same number of bits as the input.
 
-It will not attempt
-to read beyond S<C<e - 1>>, provided that the constraint S<C<s E<lt> e>> is
-true (this is asserted for in C<-DDEBUGGING> builds).  If the UTF-8 for the
-input character is malformed in some way, the program may croak, or the
-function may return the REPLACEMENT CHARACTER, at the discretion of the
-implementation, and subject to change in future releases.
+There is no C<toFOLD_L1> nor C<toFOLD_LATIN1> as the foldcase of some code
+points in the 0..255 range is above that range or consists of multiple
+characters.  Instead use C<toFOLD_uvchr>.
 
-C<toFOLD_utf8_safe> is now just a different spelling of plain C<toFOLD_utf8>
+C<toFOLD_uvchr> returns the foldcase of any Unicode code point.  The return
+value is identical to that of C<toFOLD_A> for input code points in the ASCII
+range.  The foldcase of the vast majority of Unicode code points is the same
+as the code point itself.  For these, and for code points above the legal
+Unicode maximum, this returns the input code point unchanged.  It additionally
+stores the UTF-8 of the result into the buffer beginning at C<s>, and its
+length in bytes into C<*lenp>.  The caller must have made C<s> large enough to
+contain at least C<UTF8_MAXBYTES_CASE+1> bytes to avoid possible overflow.
+
+NOTE: the foldcase of a code point may be more than one code point.  The
+return value of this function is only the first of these.  The entire foldcase
+is returned in C<s>.  To determine if the result is more than a single code
+point, you can do something like this:
+
+ uc = toFOLD_uvchr(cp, s, &len);
+ if (len > UTF8SKIP(s)) { is multiple code points }
+ else { is a single code point }
+
+C<toFOLD_utf8> and C<toFOLD_utf8_safe> are synonyms of each other.  The only
+difference between these and C<toFOLD_uvchr> is that the source for these is
+encoded in UTF-8, instead of being a code point.  It is passed as a buffer
+starting at C<p>, with C<e> pointing to one byte beyond its end.  The C<p>
+buffer may certainly contain more than one code point; but only the first one
+(up through S<C<e - 1>>) is examined.  If the UTF-8 for the input character is
+malformed in some way, the program may croak, or the function may return the
+REPLACEMENT CHARACTER, at the discretion of the implementation, and subject to
+change in future releases.
 
 =for apidoc Am|UV|toLOWER|UV cp
 =for apidoc_item |UV|toLOWER_A|UV cp
@@ -1311,44 +1307,55 @@ malformed in some way, the program may croak, or the function may return the
 REPLACEMENT CHARACTER, at the discretion of the implementation, and subject to
 change in future releases.
 
-=for apidoc Am|U8|toTITLE|U8 ch
-Converts the specified character to titlecase.  If the input is anything but an
-ASCII lowercase character, that input character itself is returned.  Variant
-C<toTITLE_A> is equivalent.  (There is no C<toTITLE_L1> for the full Latin1
-range, as the full generality of L</toTITLE_uvchr> is needed there.  Titlecase is
-not a concept used in locale handling, so there is no functionality for that.)
+=for apidoc Am|UV|toTITLE|UV cp
+=for apidoc_item |UV|toTITLE_A|UV cp
+=for apidoc_item |UV|toTITLE_uvchr|UV cp|U8* s|STRLEN* lenp
+=for apidoc_item |UV|toTITLE_utf8|U8* p|U8* e|U8* s|STRLEN* lenp
+=for apidoc_item |UV|toTITLE_utf8_safe|U8* p|U8* e|U8* s|STRLEN* lenp
 
-=for apidoc Am|UV|toTITLE_uvchr|UV cp|U8* s|STRLEN* lenp
-Converts the code point C<cp> to its titlecase version, and
-stores that in UTF-8 in C<s>, and its length in bytes in C<lenp>.  The code
-point is interpreted as native if less than 256; otherwise as Unicode.  Note
-that the buffer pointed to by C<s> needs to be at least C<UTF8_MAXBYTES_CASE+1>
-bytes since the titlecase version may be longer than the original character.
+These all return the titlecase of a character.  The differences are what domain
+they operate on, and whether the input is specified as a code point (those
+forms with a C<cp> parameter) or as a UTF-8 string (the others).  In the latter
+case, the code point to use is the first one in the buffer of UTF-8 encoded
+code points, delineated by the arguments S<C<p .. e - 1>>.
 
-The first code point of the titlecased version is returned
-(but note, as explained at L<the top of this section|/Character case
-changing>, that there may be more).
+C<toTITLE> and C<toTITLE_A> are synonyms of each other.  They return the
+titlecase of any lowercase ASCII-range code point.  In this range, the
+titlecase is identical to the uppercase.  All other inputs are returned
+unchanged.  Since these are macros, the input type may be any integral one, and
+the output will occupy the same number of bits as the input.
 
-=for apidoc Am|UV|toTITLE_utf8|U8* p|U8* e|U8* s|STRLEN* lenp
-=for apidoc_item toTITLE_utf8_safe
-Convert the first UTF-8 encoded character in the sequence starting at C<p> and
-extending no further than S<C<e - 1>> to its titlecase version, and
-stores that in UTF-8 in C<s>, and its length in bytes in C<lenp>.  Note
-that the buffer pointed to by C<s> needs to be at least C<UTF8_MAXBYTES_CASE+1>
-bytes since the titlecase version may be longer than the original character.
+There is no C<toTITLE_L1> nor C<toTITLE_LATIN1> as the titlecase of some code
+points in the 0..255 range is above that range or consists of multiple
+characters.  Instead use C<toTITLE_uvchr>.
 
-The first code point of the titlecased version is returned
-(but note, as explained at L<the top of this section|/Character case
-changing>, that there may be more).
+C<toTITLE_uvchr> returns the titlecase of any Unicode code point.  The return
+value is identical to that of C<toTITLE_A> for input code points in the ASCII
+range.  The titlecase of the vast majority of Unicode code points is the same
+as the code point itself.  For these, and for code points above the legal
+Unicode maximum, this returns the input code point unchanged.  It additionally
+stores the UTF-8 of the result into the buffer beginning at C<s>, and its
+length in bytes into C<*lenp>.  The caller must have made C<s> large enough to
+contain at least C<UTF8_MAXBYTES_CASE+1> bytes to avoid possible overflow.
 
-It will not attempt
-to read beyond S<C<e - 1>>, provided that the constraint S<C<s E<lt> e>> is
-true (this is asserted for in C<-DDEBUGGING> builds).  If the UTF-8 for the
-input character is malformed in some way, the program may croak, or the
-function may return the REPLACEMENT CHARACTER, at the discretion of the
-implementation, and subject to change in future releases.
+NOTE: the titlecase of a code point may be more than one code point.  The
+return value of this function is only the first of these.  The entire titlecase
+is returned in C<s>.  To determine if the result is more than a single code
+point, you can do something like this:
 
-C<toTITLE_utf8_safe> is now just a different spelling of plain C<toTITLE_utf8>
+ uc = toTITLE_uvchr(cp, s, &len);
+ if (len > UTF8SKIP(s)) { is multiple code points }
+ else { is a single code point }
+
+C<toTITLE_utf8> and C<toTITLE_utf8_safe> are synonyms of each other.  The only
+difference between these and C<toTITLE_uvchr> is that the source for these is
+encoded in UTF-8, instead of being a code point.  It is passed as a buffer
+starting at C<p>, with C<e> pointing to one byte beyond its end.  The C<p>
+buffer may certainly contain more than one code point; but only the first one
+(up through S<C<e - 1>>) is examined.  If the UTF-8 for the input character is
+malformed in some way, the program may croak, or the function may return the
+REPLACEMENT CHARACTER, at the discretion of the implementation, and subject to
+change in future releases.
 
 =cut
 
@@ -1384,6 +1391,21 @@ or casts
 #   define WIDEST_UTYPE U32
 #endif
 
+/* Where there could be some confusion, use this as a static assert in macros
+ * to make sure that a parameter isn't a pointer.  But some compilers can't
+ * handle this.  The only one known so far that doesn't is gcc 3.3.6; the check
+ * below isn't thorough for such an old compiler, so may have to be revised if
+ * experience so dictates. */
+#if  ! PERL_IS_GCC || PERL_GCC_VERSION_GT(3,3,6)
+#  define ASSERT_NOT_PTR(x) ((x) | 0)
+#else
+#  define ASSERT_NOT_PTR(x) (x)
+#endif
+
+/* Likewise, this is effectively a static assert to be used to guarantee the
+ * parameter is a pointer */
+#define ASSERT_IS_PTR(x) (__ASSERT_(sizeof(*(x))) (x))
+
 /* FITS_IN_8_BITS(c) returns true if c doesn't have  a bit set other than in
  * the lower 8.  It is designed to be hopefully bomb-proof, making sure that no
  * bits of information are lost even on a 64-bit machine, but to get the
@@ -1396,12 +1418,12 @@ or casts
  * of operands.  Well, they are, but that is kind of the point.
  */
 #ifndef __COVERITY__
-  /* The '| 0' part ensures a compiler error if c is not integer (like e.g., a
-   * pointer) */
-#define FITS_IN_8_BITS(c) (   (sizeof(c) == 1)                      \
-                           || !(((WIDEST_UTYPE)((c) | 0)) & ~0xFF))
+  /* The '| 0' part in ASSERT_NOT_PTR ensures a compiler error if c is not
+   * integer (like e.g., a pointer) */
+#  define FITS_IN_8_BITS(c) (   (sizeof(c) == 1)                            \
+                             || (((WIDEST_UTYPE) ASSERT_NOT_PTR(c)) >> 8) == 0)
 #else
-#define FITS_IN_8_BITS(c) (1)
+#  define FITS_IN_8_BITS(c) (1)
 #endif
 
 /* Returns true if l <= c <= (l + n), where 'l' and 'n' are non-negative
@@ -1419,7 +1441,8 @@ or casts
  * asserts itself, once.  The reason that this is necessary is that the
  * duplicate asserts were exceeding the internal limits of some compilers */
 #define withinCOUNT_KNOWN_VALID_(c, l, n)                                   \
-    (((WIDEST_UTYPE) (((c)) - ((l) | 0))) <= (((WIDEST_UTYPE) ((n) | 0))))
+    ((((WIDEST_UTYPE) (c)) - ASSERT_NOT_PTR(l))                             \
+                                   <= ((WIDEST_UTYPE) ASSERT_NOT_PTR(n)))
 
 /* Returns true if c is in the range l..u, where 'l' is non-negative
  * Written this way so that after optimization, only one conditional test is
@@ -1453,17 +1476,14 @@ or casts
      * unsigned type.  khw supposes that it could be written as
      *      && ((c) == '\0' || (c) > 0)
      * to avoid the message, but the cast will likely avoid extra branches even
-     * with stupid compilers.
-     *
-     * The '| 0' part ensures a compiler error if c is not integer (like e.g.,
-     * a pointer) */
-#   define isASCII(c)    ((WIDEST_UTYPE)((c) | 0) < 128)
+     * with stupid compilers. */
+#   define isASCII(c)    (((WIDEST_UTYPE) ASSERT_NOT_PTR(c)) < 128)
 #endif
 
 /* Take the eight possible bit patterns of the lower 3 bits and you get the
  * lower 3 bits of the 8 octal digits, in both ASCII and EBCDIC, so those bits
  * can be ignored.  If the rest match '0', we have an octal */
-#define isOCTAL_A(c)  (((WIDEST_UTYPE)((c) | 0) & ~7) == '0')
+#define isOCTAL_A(c)  ((((WIDEST_UTYPE) ASSERT_NOT_PTR(c)) & ~7) == '0')
 
 #ifdef H_PERL       /* If have access to perl.h, lookup in its table */
 
@@ -1515,10 +1535,7 @@ or casts
 #  define _CC_OCTDIGIT                 24
 #  define _CC_MNEMONIC_CNTRL           25
 
-/* This next group is only used on EBCDIC platforms, so theoretically could be
- * shared with something entirely different that's only on ASCII platforms */
-#  define _CC_UTF8_START_BYTE_IS_FOR_AT_LEAST_SURROGATE 31
-/* Unused: 26-30
+/* Unused: 26-31
  * If more bits are needed, one could add a second word for non-64bit
  * QUAD_IS_INT systems, using some #ifdefs to distinguish between having a 2nd
  * word or not.  The IS_IN_SOME_FOLD bit is the most easily expendable, as it
@@ -1991,7 +2008,12 @@ END_EXTERN_C
 #  define isALPHANUMERIC_LC(c)  _generic_LC(c, _CC_ALPHANUMERIC, isalnum)
 #  define isCNTRL_LC(c)    _generic_LC(c, _CC_CNTRL, iscntrl)
 #  define isDIGIT_LC(c)    _generic_LC(c, _CC_DIGIT, isdigit)
-#  define isGRAPH_LC(c)    _generic_LC(c, _CC_GRAPH, isgraph)
+#  ifdef OS390  /* This system considers NBSP to be a graph */
+#    define isGRAPH_LC(c)    _generic_LC(c, _CC_GRAPH, isgraph)             \
+                        && ! isSPACE_LC(c)
+#  else
+#    define isGRAPH_LC(c)    _generic_LC(c, _CC_GRAPH, isgraph)
+#  endif
 #  define isIDFIRST_LC(c)  _generic_LC_underscore(c, _CC_IDFIRST, isalpha)
 #  define isLOWER_LC(c)    _generic_LC(c, _CC_LOWER, islower)
 #  define isPRINT_LC(c)    _generic_LC(c, _CC_PRINT, isprint)
@@ -2200,7 +2222,7 @@ END_EXTERN_C
  * 'above_latin1' should include its arguments */
 #define _generic_utf8_safe_no_upper_latin1(classnum, p, e, above_latin1)    \
          (__ASSERT_(_utf8_safe_assert(p, e))                                \
-         (UTF8_IS_INVARIANT(*(p)))                                          \
+         (isASCII(*(p)))                                                    \
           ? _generic_isCC(*(p), classnum)                                   \
           : (UTF8_IS_DOWNGRADEABLE_START(*(p)))                             \
              ? 0 /* Note that doesn't check validity for latin1 */          \
@@ -2498,6 +2520,8 @@ typedef U32 line_t;
 =for apidoc_section $memory
 
 =for apidoc Am|void|Newx|void* ptr|int nitems|type
+=for apidoc_item |void*|safemalloc|size_t size
+
 The XSUB-writer's interface to the C C<malloc> function.
 
 Memory obtained by this should B<ONLY> be freed with L</"Safefree">.
@@ -2515,12 +2539,16 @@ cast.  See also C<L</Newx>>.
 Memory obtained by this should B<ONLY> be freed with L</"Safefree">.
 
 =for apidoc Am|void|Newxz|void* ptr|int nitems|type
+=for apidoc_item |void*|safecalloc|size_t nitems|size_t item_size
+
 The XSUB-writer's interface to the C C<malloc> function.  The allocated
 memory is zeroed with C<memzero>.  See also C<L</Newx>>.
 
 Memory obtained by this should B<ONLY> be freed with L</"Safefree">.
 
 =for apidoc Am|void|Renew|void* ptr|int nitems|type
+=for apidoc_item |void*|saferealloc|void *ptr|size_t size
+
 The XSUB-writer's interface to the C C<realloc> function.
 
 Memory obtained by this should B<ONLY> be freed with L</"Safefree">.
@@ -2537,35 +2565,33 @@ The XSUB-writer's interface to the C C<free> function.
 This should B<ONLY> be used on memory obtained using L</"Newx"> and friends.
 
 =for apidoc_section $string
-=for apidoc Am|void|Move|void* src|void* dest|int nitems|type
+=for apidoc    Am|void  |Move |void* src|void* dest|int nitems|type
+=for apidoc_item |void *|MoveD|void* src|void* dest|int nitems|type
 The XSUB-writer's interface to the C C<memmove> function.  The C<src> is the
 source, C<dest> is the destination, C<nitems> is the number of items, and
 C<type> is the type.  Can do overlapping moves.  See also C<L</Copy>>.
 
-=for apidoc Am|void *|MoveD|void* src|void* dest|int nitems|type
-Like C<Move> but returns C<dest>.  Useful
+C<MoveD> is like C<Move> but returns C<dest>.  Useful
 for encouraging compilers to tail-call
 optimise.
 
-=for apidoc Am|void|Copy|void* src|void* dest|int nitems|type
+=for apidoc    Am|void  |Copy |void* src|void* dest|int nitems|type
+=for apidoc_item |void *|CopyD|void* src|void* dest|int nitems|type
 The XSUB-writer's interface to the C C<memcpy> function.  The C<src> is the
 source, C<dest> is the destination, C<nitems> is the number of items, and
 C<type> is the type.  May fail on overlapping copies.  See also C<L</Move>>.
 
-=for apidoc Am|void *|CopyD|void* src|void* dest|int nitems|type
-
-Like C<Copy> but returns C<dest>.  Useful
+C<CopyD> is like C<Copy> but returns C<dest>.  Useful
 for encouraging compilers to tail-call
 optimise.
 
-=for apidoc Am|void|Zero|void* dest|int nitems|type
+=for apidoc    Am|void  |Zero |void* dest|int nitems|type
+=for apidoc_item |void *|ZeroD|void* dest|int nitems|type
 
 The XSUB-writer's interface to the C C<memzero> function.  The C<dest> is the
 destination, C<nitems> is the number of items, and C<type> is the type.
 
-=for apidoc Am|void *|ZeroD|void* dest|int nitems|type
-
-Like C<Zero> but returns dest.  Useful
+C<ZeroD> is like C<Zero> but returns C<dest>.  Useful
 for encouraging compilers to tail-call
 optimise.
 
@@ -2648,8 +2674,8 @@ PoisonWith(0xEF) for catching access to freed memory.
 
 /* "a" arg must be a string literal */
 #  define MEM_WRAP_CHECK_s(n,t,a) \
-        (void)(UNLIKELY(_MEM_WRAP_WILL_WRAP(n,t)) \
-        && (Perl_croak_nocontext("" a ""),0))
+        (   (void) (UNLIKELY(_MEM_WRAP_WILL_WRAP(n,t))          \
+         && (Perl_croak_nocontext(ASSERT_IS_LITERAL(a)), 0)))
 
 #define MEM_WRAP_CHECK_(n,t) MEM_WRAP_CHECK(n,t),
 
@@ -2839,10 +2865,10 @@ last-inclusive range.
                                             "Use of " s " is deprecated")
 #  define deprecate_disappears_in(when,message) \
               Perl_ck_warner_d(aTHX_ packWARN(WARN_DEPRECATED),    \
-                               message ", and will disappear in Perl " when)
+                               message " is deprecated, and will disappear in Perl " when)
 #  define deprecate_fatal_in(when,message) \
               Perl_ck_warner_d(aTHX_ packWARN(WARN_DEPRECATED),    \
-                               message ". Its use will be fatal in Perl " when)
+                               message " is deprecated, and will become fatal in Perl " when)
 #endif
 
 /* Internal macros to deal with gids and uids */
