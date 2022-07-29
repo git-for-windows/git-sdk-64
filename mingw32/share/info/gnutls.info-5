@@ -1,7 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.8 from gnutls.texi.
 
-This manual is last updated 22 February 2022 for version 3.7.6 of
-GnuTLS.
+This manual is last updated 22 July 2022 for version 3.7.7 of GnuTLS.
 
 Copyright (C) 2001-2022 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2022 Nikos Mavrogiannopoulos
@@ -392,7 +391,9 @@ gnutls_pkcs7_import
 
      This function will convert the given DER or PEM encoded PKCS7 to
      the native 'gnutls_pkcs7_t' format.  The output will be stored in
-     'pkcs7' .
+     'pkcs7' .  Any signed data that may be present inside the 'pkcs7'
+     structure, like certificates set by 'gnutls_pkcs7_set_crt()' , will
+     be freed and overwritten by this function.
 
      If the PKCS7 is PEM encoded it should have a header of "PKCS7".
 

@@ -51,13 +51,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.7.6"
+#define GNUTLS_VERSION "3.7.7"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 7
-#define GNUTLS_VERSION_PATCH 6
+#define GNUTLS_VERSION_PATCH 7
 
-#define GNUTLS_VERSION_NUMBER 0x030706
+#define GNUTLS_VERSION_NUMBER 0x030707
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -3418,6 +3418,8 @@ gnutls_fips140_get_operation_state(gnutls_fips140_context_t context);
 
 int gnutls_fips140_push_context(gnutls_fips140_context_t context);
 int gnutls_fips140_pop_context(void);
+
+int gnutls_fips140_run_self_tests(void);
 
   /* Gnutls error codes. The mapping to a TLS alert is also shown in
    * comments.

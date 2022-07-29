@@ -1,7 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.8 from gnutls.texi.
 
-This manual is last updated 22 February 2022 for version 3.7.6 of
-GnuTLS.
+This manual is last updated 22 July 2022 for version 3.7.7 of GnuTLS.
 
 Copyright (C) 2001-2022 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2022 Nikos Mavrogiannopoulos
@@ -1292,7 +1291,7 @@ gnutls_get_system_config_file::.
 * Querying for disabled algorithms and protocols::
 * Overriding the parameter verification profile::
 * Overriding the default priority string::
-* Disabling system/acceleration protocols::
+* Enabling/Disabling system/acceleration protocols::
 
 
 File: gnutls.info,  Node: Application-specific priority strings,  Next: Disabling algorithms and protocols,  Up: System-wide configuration of the library
@@ -1527,7 +1526,7 @@ override using the following.
 
 
 
-File: gnutls.info,  Node: Overriding the default priority string,  Next: Disabling system/acceleration protocols,  Prev: Overriding the parameter verification profile,  Up: System-wide configuration of the library
+File: gnutls.info,  Node: Overriding the default priority string,  Next: Enabling/Disabling system/acceleration protocols,  Prev: Overriding the parameter verification profile,  Up: System-wide configuration of the library
 
 8.5 Overriding the default priority string
 ==========================================
@@ -1542,24 +1541,23 @@ Below example sets a more specific default priority string.
 
 
 
-File: gnutls.info,  Node: Disabling system/acceleration protocols,  Prev: Overriding the default priority string,  Up: System-wide configuration of the library
+File: gnutls.info,  Node: Enabling/Disabling system/acceleration protocols,  Prev: Overriding the default priority string,  Up: System-wide configuration of the library
 
-8.6 Disabling system/acceleration protocols
-===========================================
+8.6 Enabling/Disabling system/acceleration protocols
+====================================================
 
-When system/acceleration protocol is enabled during build, it is usually
-enabled by default.  The following options can overwrite this behavior
+The following options can overwrite default behavior of protocols
 system-wide.
      [global]
-     ktls = false
+     ktls = true
 
 
-8.6.1 Disabling KTLS
---------------------
+8.6.1 Enabling KTLS
+-------------------
 
-When GnuTLS is build with -–enable-ktls configuration, it uses KTLS by
-default.  This can be overwritten by setting 'ktls = false' in
-'[global]' section.
+When GnuTLS is build with -–enable-ktls configuration, KTLS is disabled
+by default.  This can be enabled by setting 'ktls = true' in '[global]'
+section.
 
 
 File: gnutls.info,  Node: Using GnuTLS as a cryptographic library,  Next: Other included programs,  Prev: System-wide configuration of the library,  Up: Top
@@ -9263,6 +9261,9 @@ gnutls_fips140_pop_context
      'gnutls_aead_cipher_deinit()' is not yet called, it returns an
      error 'GNUTLS_E_INVALID_REQUEST' .
 
+     This function is no-op if FIPS140 is not compiled in nor enabled at
+     run-time.
+
      *Returns:* 0 upon success, a negative error code otherwise
 
      *Since:* 3.7.3
@@ -9283,9 +9284,30 @@ gnutls_fips140_push_context
      The operation state of 'context' will be reset to
      'GNUTLS_FIPS140_OP_INITIAL' .
 
+     This function is no-op if FIPS140 is not compiled in nor enabled at
+     run-time.
+
      *Returns:* 0 upon success, a negative error code otherwise
 
      *Since:* 3.7.3
+
+gnutls_fips140_run_self_tests
+-----------------------------
+
+ -- Function: int gnutls_fips140_run_self_tests ( VOID)
+
+     Manually perform the second round of the FIPS140 self-tests,
+     including:
+
+     - Known answer tests (KAT) for the selected set of symmetric
+     cipher, MAC, public key, KDF, and DRBG - Library integrity checks
+
+     Upon failure with FIPS140 mode enabled, it makes the library
+     unusable.  This function is not thread-safe.
+
+     *Returns:* 0 upon success, a negative error code otherwise
+
+     *Since:* 3.7.7
 
 gnutls_fips140_set_mode
 -----------------------
