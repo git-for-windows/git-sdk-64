@@ -14,7 +14,7 @@ Define before inclusion (only those needed):
     PDC_RGB         if you want to use RGB color definitions
                     (Red = 1, Green = 2, Blue = 4) instead of BGR
     PDC_WIDE        if building / built with wide-character support
-    PDC_FORCE_UTF8  if forcing use of UTF8
+    PDC_FORCE_UTF8  if forcing use of UTF8 (implies PDC_WIDE)
     PDC_DLL_BUILD   if building / built as a Windows DLL
     PDC_NCMOUSE     to use the ncurses mouse API instead
                     of PDCurses' traditional mouse API
@@ -35,12 +35,14 @@ Defined by this header:
 
 #define PDCURSES        1
 #define PDC_BUILD (PDC_VER_MAJOR*1000 + PDC_VER_MINOR *100 + PDC_VER_CHANGE)
+         /* NOTE : For version changes that are not backward compatible, */
+         /* the 'endwin_*' #defines below should be updated.             */
 #define PDC_VER_MAJOR    4
 #define PDC_VER_MINOR    3
-#define PDC_VER_CHANGE   3
+#define PDC_VER_CHANGE   4
 #define PDC_VER_YEAR   2022
-#define PDC_VER_MONTH    05
-#define PDC_VER_DAY      25
+#define PDC_VER_MONTH    07
+#define PDC_VER_DAY      29
 
 #define PDC_STRINGIZE( x) #x
 #define PDC_stringize( x) PDC_STRINGIZE( x)
@@ -66,6 +68,10 @@ Defined by this header:
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
+
+#if defined( PDC_FORCE_UTF8) && !defined( PDC_WIDE)
+   #define PDC_WIDE
+#endif
 
 #ifdef PDC_WIDE
 # include <wchar.h>
@@ -416,8 +422,8 @@ typedef struct
                                       on last key press */
     bool  return_key_modifiers;    /* TRUE if modifier keys are
                                       returned as "real" keys */
-    bool  unused_key_code;         /* (was) TRUE if last key is a special key;
-                                      used internally by get_wch() */
+    bool  in_endwin;               /* if we're in endwin(),  we should use
+                                      only signal-safe code */
     MOUSE_STATUS mouse_status;     /* last returned mouse status */
     short line_color;     /* color of line attributes - default -1 */
     attr_t termattrs;     /* attribute capabilities */
@@ -505,14 +511,15 @@ Default, 64-bit chtype,  both wide- and 8-bit character builds:
 All attribute modifier schemes include eight "basic" bits:  bold, underline,
 right-line, left-line, italic, reverse and blink attributes,  plus the
 alternate character set indicator. For default and 32-bit narrow builds,
-three more bits are used for underlined, dimmed, and strikeout attributes;
+three more bits are used for overlined, dimmed, and strikeout attributes;
 a fourth bit is reserved.
 
 Default chtypes have enough character bits to support the full range of
 Unicode,  all attributes,  and 2^20 = 1048576 color pairs.  Note,  though,
-that as of 2021 Dec 21,  only WinGUI,  VT,  X11, and SDLn have COLOR_PAIRS
-= 1048576.  Other platforms (DOSVGA,  Plan9, WinCon) may join them.  Some
-(DOS,  OS/2) simply do not have full-color capability.
+that as of 2022 Jun 17,  only WinGUI,  VT,  X11,  Linux framebuffer,  and
+SDLn have COLOR_PAIRS = 1048576.  Other platforms (DOSVGA,  Plan9, WinCon)
+may join them.  Some (DOS,  OS/2) simply do not have full-color
+capability.
 
 **man-end****************************************************************/
 
@@ -565,7 +572,7 @@ that as of 2021 Dec 21,  only WinGUI,  VT,  X11, and SDLn have COLOR_PAIRS
 #endif
 
 #define A_ITALIC      A_INVIS
-#define A_PROTECT    (A_UNDERLINE | A_LEFT | A_RIGHT)
+#define A_PROTECT    (A_UNDERLINE | A_LEFT | A_RIGHT | A_OVERLINE)
 #define A_STANDOUT    (A_REVERSE | A_BOLD) /* X/Open */
 
 #define A_HORIZONTAL  A_NORMAL
@@ -1735,6 +1742,8 @@ PDCEX  char    wordchar(void);
 PDCEX  wchar_t *slk_wlabel(int);
 #endif
 
+PDCEX  bool    PDC_getcbreak(void);
+PDCEX  bool    PDC_getecho(void);
 PDCEX  void    PDC_debug(const char *, ...);
 PDCEX  void    _tracef(const char *, ...);
 PDCEX  void    PDC_get_version(PDC_VERSION *);
@@ -1756,6 +1765,7 @@ PDCEX  void    PDC_set_resize_limits( const int new_min_lines,
                                const int new_max_lines,
                                const int new_min_cols,
                                const int new_max_cols);
+PDCEX  void    PDC_free_memory_allocations( void);
 
 #define FUNCTION_KEY_SHUT_DOWN        0
 #define FUNCTION_KEY_PASTE            1
