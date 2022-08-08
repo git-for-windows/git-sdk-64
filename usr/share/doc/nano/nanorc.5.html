@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.4 -->
-<!-- CreationDate: Thu Apr 28 08:15:19 2022 -->
+<!-- CreationDate: Tue Aug  2 07:19:03 2022 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -22,8 +22,8 @@
 
 <a href="#NAME">NAME</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
-<a href="#NOTICE">NOTICE</a><br>
 <a href="#OPTIONS">OPTIONS</a><br>
+<a href="#NOTES">NOTES</a><br>
 <a href="#SYNTAX HIGHLIGHTING">SYNTAX HIGHLIGHTING</a><br>
 <a href="#REBINDING KEYS">REBINDING KEYS</a><br>
 <a href="#FILES">FILES</a><br>
@@ -57,24 +57,6 @@ from <i>~/.nanorc</i> or from
 <i>~/.config/nano/nanorc</i>, whichever is encountered
 first. If <b>&minus;&minus;rcfile</b> is given, <b>nano</b>
 will read just the specified settings file.</p>
-
-<h2>NOTICE
-<a name="NOTICE"></a>
-</h2>
-
-
-<p style="margin-left:11%; margin-top: 1em">Since version
-4.0, <b>nano</b> by default:</p>
-
-<p style="margin-left:17%; margin-top: 1em">&bull; does not
-automatically hard-wrap lines that become overlong, <br>
-&bull; includes the line below the title bar in the editing
-area, <br>
-&bull; does linewise (smooth) scrolling.</p>
-
-<p style="margin-left:11%; margin-top: 1em">To get the old,
-Pico behavior back, you can use <b>set breaklonglines</b>,
-<b>set emptyline</b>, and <b>set jumpyscrolling</b>.</p>
 
 <h2>OPTIONS
 <a name="OPTIONS"></a>
@@ -448,9 +430,7 @@ extended type (ERE).</p>
 <p style="margin-left:11%;"><b>set saveonexit</b></p>
 
 <p style="margin-left:15%;">Save a changed buffer
-automatically on exit (<b>^X</b>); don&rsquo;t prompt. (The
-old form of this option, <b>set tempfile</b>, is
-deprecated.)</p>
+automatically on exit (<b>^X</b>); don&rsquo;t prompt.</p>
 
 <p style="margin-left:11%;"><b>set scrollercolor</b>
 <i>fgcolor</i><b>,</b><i>bgcolor</i></p>
@@ -532,13 +512,6 @@ details.</p>
 <p style="margin-left:15%;">Use this color combination for
 the vertical guiding stripe. See <b>set titlecolor</b> for
 more details.</p>
-
-<p style="margin-left:11%;"><b>set suspendable</b></p>
-
-<p style="margin-left:15%;">Obsolete option; ignored.
-Suspension is enabled by default, reachable via <b>^T^Z</b>.
-(If you want a plain <b>^Z</b> to suspend nano, add <b>bind
-^Z suspend main</b> to your nanorc.)</p>
 
 <p style="margin-left:11%;"><b>set tabsize</b>
 <i>number</i></p>
@@ -639,6 +612,17 @@ upon the next keystroke. With <b>M&minus;Z</b> the title bar
 plus status bar can be toggled. With <b>M&minus;X</b> the
 help lines.</p>
 
+<h2>NOTES
+<a name="NOTES"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Option <b>set
+suspendable</b> has been removed. Suspension is enabled by
+default, reachable via <b>^T^Z</b>. (If you want a plain
+<b>^Z</b> to suspend nano, add <b>bind ^Z suspend main</b>
+to your nanorc.)</p>
+
 <h2>SYNTAX HIGHLIGHTING
 <a name="SYNTAX HIGHLIGHTING"></a>
 </h2>
@@ -716,10 +700,7 @@ on the system and will be silently ignored otherwise.)</p>
 [<i>argument</i> ...]</p>
 
 <p style="margin-left:22%;">Run the given <i>program</i> on
-the full contents of the current buffer. (The current buffer
-is written out to a temporary file, the program is run on
-it, and then the temporary file is read back in, replacing
-the contents of the buffer.)</p>
+the full contents of the current buffer.</p>
 
 <p style="margin-left:11%;"><b>linter</b> <i>program</i>
 [<i>argument</i> ...]</p>
@@ -1057,8 +1038,7 @@ unsets the mark.</p>
 
 <p style="margin-left:18%;">Reports the current position of
 the cursor in the buffer: the line, column, and character
-positions. (The old name of this function,
-&rsquo;curpos&rsquo;, is deprecated.)</p>
+positions.</p>
 
 <p style="margin-left:15%;"><b>wordcount</b></p>
 
@@ -1084,12 +1064,20 @@ program, either the default <b>hunspell</b>(1) or GNU
 
 <p style="margin-left:18%;">Invokes a
 full-buffer-processing program (if the active syntax defines
-one).</p>
+one). (The current buffer is written out to a temporary
+file, the program is run on it, and then the temporary file
+is read back in, replacing the contents of the buffer.)</p>
 
 <p style="margin-left:15%;"><b>linter</b></p>
 
 <p style="margin-left:18%;">Invokes a syntax-checking
-program (if the active syntax defines one).</p>
+program (if the active syntax defines one). If this program
+produces lines of the form &quot;filename:linenum:charnum:
+some message&quot;, then the cursor will be put at the
+indicated position in the mentioned file while showing
+&quot;some message&quot; on the status bar. You can move
+from message to message with &lt;PgUp&gt; and &lt;PgDn&gt;,
+and leave linting mode with <b>^C</b> or &lt;Enter&gt;.</p>
 
 <p style="margin-left:15%;"><b>justify</b></p>
 
@@ -1575,8 +1563,7 @@ directory&rsquo; menu in the file browser.</p>
 <p style="margin-left:18%;">The menu for inserting the
 output from an external command, or for filtering the buffer
 (or the marked region) through an external command, or for
-executing one of several tools. (The old form of this menu
-name, &rsquo;extcmd&rsquo;, is deprecated.)</p>
+executing one of several tools.</p>
 
 <p style="margin-left:15%;"><b>spell</b></p>
 

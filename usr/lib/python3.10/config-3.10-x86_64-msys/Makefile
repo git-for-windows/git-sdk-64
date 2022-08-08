@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.10
 srcdir=		.
 
-abs_srcdir=	/c/S/python/src/Python-3.10.5
-abs_builddir=	/c/S/python/src/Python-3.10.5
+abs_srcdir=	/c/S/python/src/Python-3.10.6
+abs_builddir=	/c/S/python/src/Python-3.10.6
 
 
 CC=		gcc
@@ -260,7 +260,7 @@ LIBOBJS=
 PYTHON=		python$(EXE)
 BUILDPYTHON=	python$(BUILDEXE)
 
-PYTHON_FOR_REGEN?=python3
+PYTHON_FOR_REGEN?=python3.10
 UPDATE_FILE=$(PYTHON_FOR_REGEN) $(srcdir)/Tools/scripts/update_file.py
 PYTHON_FOR_BUILD=./$(BUILDPYTHON) -E
 _PYTHON_HOST_PLATFORM=

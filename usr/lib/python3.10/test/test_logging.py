@@ -1904,7 +1904,7 @@ class SysLogHandlerTest(BaseTest):
             self.sl_hdlr = hcls((server.server_address[0], server.port))
         else:
             self.sl_hdlr = hcls(server.server_address)
-        self.log_output = ''
+        self.log_output = b''
         self.root_logger.removeHandler(self.root_logger.handlers[0])
         self.root_logger.addHandler(self.sl_hdlr)
         self.handled = threading.Event()
@@ -3598,7 +3598,7 @@ class QueueHandlerTest(BaseTest):
     @unittest.skipUnless(hasattr(logging.handlers, 'QueueListener'),
                          'logging.handlers.QueueListener required for this test')
     def test_queue_listener_with_StreamHandler(self):
-        # Test that traceback only appends once (bpo-34334).
+        # Test that traceback and stack-info only appends once (bpo-34334, bpo-46755).
         listener = logging.handlers.QueueListener(self.queue, self.root_hdlr)
         listener.start()
         try:
@@ -3606,8 +3606,10 @@ class QueueHandlerTest(BaseTest):
         except ZeroDivisionError as e:
             exc = e
             self.que_logger.exception(self.next_message(), exc_info=exc)
+        self.que_logger.error(self.next_message(), stack_info=True)
         listener.stop()
         self.assertEqual(self.stream.getvalue().strip().count('Traceback'), 1)
+        self.assertEqual(self.stream.getvalue().strip().count('Stack'), 1)
 
     @unittest.skipUnless(hasattr(logging.handlers, 'QueueListener'),
                          'logging.handlers.QueueListener required for this test')

@@ -53,7 +53,7 @@ ul.no-bullet {list-style: none}
 
 <div class="top" id="Top">
 <span id="SEC_Top"></span>
-<p>This manual documents GNU <code>nano</code>, version 6.3.
+<p>This manual documents GNU <code>nano</code>, version 6.4.
 </p>
 
 
@@ -674,7 +674,6 @@ to be installed.
 <dd><p>Save a changed buffer without prompting (when exiting with <kbd>^X</kbd>).
 This can be handy when <code>nano</code> is used as the composer of an
 email program.
-(The old form of the long option, <code>--tempfile</code>, is deprecated.)
 </p>
 </dd>
 <dt><span><samp>-u</samp></span></dt>
@@ -715,13 +714,6 @@ disabled to display the help-system navigation keys.
 <dt><span><samp>--afterends</samp></span></dt>
 <dd><p>Make <kbd>Ctrl+Right</kbd> and <kbd>Ctrl+Delete</kbd> stop at word ends
 instead of beginnings.
-</p>
-</dd>
-<dt><span><samp>-z</samp></span></dt>
-<dt><span><samp>--suspendable</samp></span></dt>
-<dd><p>Obsolete option; ignored.  Suspension is enabled by default,
-reachable via <kbd>^T^Z</kbd>.  (If you want a plain <kbd>^Z</kbd> to
-suspend nano, add <code>bind ^Z suspend main</code> to your nanorc.)
 </p>
 </dd>
 <dt><span><samp>-%</samp></span></dt>
@@ -771,6 +763,11 @@ try using libmagic to determine the applicable syntax.
 </dd>
 </dl>
 
+<p>Option <code>-z</code> (<code>--suspendable</code>) has been removed.
+Suspension is enabled by default, reachable via <kbd>^T^Z</kbd>.
+(If you want a plain <kbd>^Z</kbd> to suspend nano, add
+<code>bind ^Z suspend main</code> to your nanorc.)
+</p>
 
 <hr>
 </div>
@@ -1181,7 +1178,6 @@ Regular expressions in <code>nano</code> are of the extended type (ERE).
 </dd>
 <dt><span><code>set saveonexit</code></span></dt>
 <dd><p>Save a changed buffer automatically on exit (<kbd>^X</kbd>); don&rsquo;t prompt.
-(The old form of this option, <code>set tempfile</code>, is deprecated.)
 </p>
 </dd>
 <dt><span><code>set scrollercolor <var>fgcolor</var>,<var>bgcolor</var></code></span></dt>
@@ -1244,12 +1240,6 @@ See <a href="#set-keycolor"><code>set keycolor</code></a> for valid color names.
 <dt><span><code>set stripecolor [bold,][italic,]<var>fgcolor</var>,<var>bgcolor</var></code></span></dt>
 <dd><p>Use this color combination for the vertical guiding stripe.
 See <a href="#set-keycolor"><code>set keycolor</code></a> for valid color names.
-</p>
-</dd>
-<dt><span><code>set suspendable</code></span></dt>
-<dd><p>Obsolete option; ignored.  Suspension is enabled by default,
-reachable via <kbd>^T^Z</kbd>.  (If you want a plain <kbd>^Z</kbd> to
-suspend nano, add <code>bind ^Z suspend main</code> to your nanorc.)
 </p>
 </dd>
 <dt><span><code>set tabsize <var>number</var></code></span></dt>
@@ -1379,9 +1369,6 @@ on the system and will be silently ignored otherwise.)
 </dd>
 <dt><span><code>formatter <var>program</var> [<var>argument</var> &hellip;]</code></span></dt>
 <dd><p>Run the given <var>program</var> on the full contents of the current buffer.
-(The current buffer is written out to a temporary file, the program is
-run on it, and then the temporary file is read back in, replacing the
-contents of the buffer.)
 </p>
 </dd>
 <dt><span><code>linter <var>program</var> [<var>argument</var> &hellip;]</code></span></dt>
@@ -1631,7 +1618,6 @@ Or, when it is set, unsets the mark.
 <dt><span><code>location</code></span></dt>
 <dd><p>Reports the current position of the cursor in the buffer:
 the line, column, and character positions.
-(The old name of this function, &rsquo;curpos&rsquo;, is deprecated.)
 </p>
 </dd>
 <dt><span><code>wordcount</code></span></dt>
@@ -1652,17 +1638,25 @@ or GNU <code>spell</code>, or the one defined by <samp>--speller</samp> or
 </dd>
 <dt><span><code>formatter</code></span></dt>
 <dd><p>Invokes a full-buffer-processing program (if the active syntax defines one).
+(The current buffer is written out to a temporary file, the program
+is run on it, and then the temporary file is read back in, replacing
+the contents of the buffer.)
 </p>
 </dd>
 <dt><span><code>linter</code></span></dt>
 <dd><p>Invokes a syntax-checking program (if the active syntax defines one).
+If this program produces lines of the form &quot;filename:linenum:charnum:
+some message&quot;, then the cursor will be put at the indicated position
+in the mentioned file while showing &quot;some message&quot; on the status bar.
+You can move from message to message with <kbd>PgUp</kbd> and <kbd>PgDn</kbd>,
+and leave linting mode with <kbd>^C</kbd> or <kbd>Enter</kbd>.
 </p>
 </dd>
 <dt><span><code>justify</code></span></dt>
 <dd><p>Justifies the current paragraph (or the marked region).
-A paragraph is a group of contiguous lines
-that, apart from possibly the first line, all have the same indentation.  The
-beginning of a paragraph is detected by either this lone line with a differing
+A paragraph is a group of contiguous lines that, apart from possibly
+the first line, all have the same indentation.  The beginning of a
+paragraph is detected by either this lone line with a differing
 indentation or by a preceding blank line.
 </p>
 </dd>
@@ -2057,7 +2051,6 @@ inserted or written to.
 <dd><p>The menu for inserting the output from an external command,
 or for filtering the buffer (or the marked region) through
 an external command, or for executing one of several tools.
-(The old form of this menu name, &rsquo;extcmd&rsquo;, is deprecated.)
 </p>
 </dd>
 <dt><span><code>spell</code></span></dt>
