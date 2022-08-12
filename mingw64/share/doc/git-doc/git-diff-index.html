@@ -1461,7 +1461,7 @@ unmerged       :000000 000000 0000000 0000000 U file6</pre>
 <p>a space.</p>
 </li>
 <li>
-<p>sha1 for "dst"; 0{40} if creation, unmerged or "look at work tree".</p>
+<p>sha1 for "dst"; 0{40} if deletion, unmerged or "work tree out of sync with the index".</p>
 </li>
 <li>
 <p>a space.</p>
@@ -1525,8 +1525,8 @@ copy).  Status letter M may be followed by a score (denoting the
 percentage of dissimilarity) for file rewrites.</p>
 </div>
 <div class="paragraph">
-<p>&lt;sha1&gt; is shown as all 0&#8217;s if a file is new on the filesystem
-and it is out of sync with the index.</p>
+<p>The sha1 for "dst" is shown as all 0&#8217;s if a file on the filesystem
+is out of sync with the index.</p>
 </div>
 <div class="paragraph">
 <p>Example:</p>
@@ -2030,8 +2030,8 @@ matches my working directory. But doing a <em>git diff-index</em> does:</p>
 <div class="literalblock">
 <div class="content">
 <pre>torvalds@ppc970:~/git&gt; git diff-index --cached HEAD
--100644 blob    4161aecc6700a2eb579e842af0b7f22b98443f74        commit.c
-+100644 blob    4161aecc6700a2eb579e842af0b7f22b98443f74        git-commit.c</pre>
+:100644 000000 4161aecc6700a2eb579e842af0b7f22b98443f74 0000000000000000000000000000000000000000 D	commit.c
+:000000 100644 0000000000000000000000000000000000000000 4161aecc6700a2eb579e842af0b7f22b98443f74 A	git-commit.c</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2079,7 +2079,7 @@ have not actually done a <em>git update-index</em> on it yet - there is no
 <div class="literalblock">
 <div class="content">
 <pre>torvalds@ppc970:~/v2.6/linux&gt; git diff-index --abbrev HEAD
-:100644 100664 7476bb... 000000...      kernel/sched.c</pre>
+:100644 100644 7476bb5ba 000000000 M	kernel/sched.c</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2133,7 +2133,7 @@ always have the special all-zero sha1.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-07-11 18:32:55 UTC
+Last updated 2022-08-11 23:07:13 UTC
 </div>
 </div>
 </body>

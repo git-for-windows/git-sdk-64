@@ -69,7 +69,7 @@ use File::Path qw/rmtree/;
 use File::Basename;
 use Getopt::Long qw(:config require_order no_ignore_case);
 
-my $VERSION = '2.37.1.windows.1';
+my $VERSION = '2.37.2.windows.2';
 
 my $log = GITCVS::log->new();
 my $cfg;
@@ -195,7 +195,7 @@ $state->{allowed_roots} = [ @ARGV ];
 
 # don't export the whole system unless the users requests it
 if ($state->{'export-all'} && !@{$state->{allowed_roots}}) {
-    die "--export-all can only be used together with an explicit whitelist\n";
+    die "--export-all can only be used together with an explicit '<directory>...' list\n";
 }
 
 # Environment handling for running under git-shell

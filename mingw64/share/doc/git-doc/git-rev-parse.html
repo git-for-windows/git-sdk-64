@@ -984,20 +984,17 @@ before the current one.</p>
 </dd>
 <dt class="hdlist1"><em>[&lt;branchname&gt;]@{upstream}</em>, e.g. <em>master@{upstream}</em>, <em>@{u}</em></dt>
 <dd>
-<p>The suffix <em>@{upstream}</em> to a branchname (short form <em>&lt;branchname&gt;@{u}</em>)
-refers to the branch that the branch specified by branchname is set to build on
-top of (configured with <code>branch.&lt;name&gt;.remote</code> and
-<code>branch.&lt;name&gt;.merge</code>).  A missing branchname defaults to the
-current one. These suffixes are also accepted when spelled in uppercase, and
-they mean the same thing no matter the case.</p>
+<p>A branch B may be set up to build on top of a branch X (configured with
+<code>branch.&lt;name&gt;.merge</code>) at a remote R (configured with
+<code>branch.&lt;name&gt;.remote</code>). B@{u} refers to the remote-tracking branch for
+the branch X taken from remote R, typically found at <code>refs/remotes/R/X</code>.</p>
 </dd>
 <dt class="hdlist1"><em>[&lt;branchname&gt;]@{push}</em>, e.g. <em>master@{push}</em>, <em>@{push}</em></dt>
 <dd>
 <p>The suffix <em>@{push}</em> reports the branch "where we would push to" if
 <code>git push</code> were run while <code>branchname</code> was checked out (or the current
-<code>HEAD</code> if no branchname is specified). Since our push destination is
-in a remote repository, of course, we report the local tracking branch
-that corresponds to that branch (i.e., something in <code>refs/remotes/</code>).</p>
+<code>HEAD</code> if no branchname is specified). Like for <em>@{upstream}</em>, we report
+the remote-tracking branch that corresponds to that branch at the remote.</p>
 <div class="paragraph">
 <p>Here&#8217;s an example to make it more clear:</p>
 </div>
@@ -1205,7 +1202,7 @@ to the syntax explained in SPECIFYING REVISIONS above), you can ask
 for commits that are reachable from r2 excluding those that are reachable
 from r1 by <em>^r1 r2</em> and it can be written as <em>r1..r2</em>.</p>
 </dd>
-<dt class="hdlist1">The <em>&#8230;&#8203;</em> (three-dot) Symmetric Difference Notation</dt>
+<dt class="hdlist1">The <em>...</em> (three-dot) Symmetric Difference Notation</dt>
 <dd>
 <p>A similar notation <em>r1...r2</em> is called symmetric difference
 of <em>r1</em> and <em>r2</em> and is defined as
@@ -1576,7 +1573,7 @@ $ sh your-git-script.sh "a b'c"</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-07-11 18:32:55 UTC
+Last updated 2022-08-11 23:07:13 UTC
 </div>
 </div>
 </body>

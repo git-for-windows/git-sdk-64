@@ -478,8 +478,8 @@ that service if it is enabled.</p>
 <p>It verifies that the directory has the magic file "git-daemon-export-ok", and
 it will refuse to export any Git directory that hasn&#8217;t explicitly been marked
 for export this way (unless the <code>--export-all</code> parameter is specified). If you
-pass some directory paths as <em>git daemon</em> arguments, you can further restrict
-the offers to a whitelist comprising of those.</p>
+pass some directory paths as <em>git daemon</em> arguments, the offers are limited to
+repositories within those directories.</p>
 </div>
 <div class="paragraph">
 <p>By default, only <code>upload-pack</code> service is enabled, which serves
@@ -505,7 +505,7 @@ Git repositories.</p>
 <p>Match paths exactly (i.e. don&#8217;t allow "/foo/repo" when the real path is
 "/foo/repo.git" or "/foo/repo/.git") and don&#8217;t do user-relative paths.
 <em>git daemon</em> will refuse to start when this option is enabled and no
-whitelist is specified.</p>
+directory arguments are provided.</p>
 </dd>
 <dt class="hdlist1">--base-path=&lt;path&gt;</dt>
 <dd>
@@ -531,7 +531,7 @@ converted to all lowercase, %CH for the canonical hostname,
 %IP for the server&#8217;s IP address, %P for the port number,
 and %D for the absolute path of the named repository.
 After interpolation, the path is validated against the directory
-whitelist.</p>
+list.</p>
 </dd>
 <dt class="hdlist1">--export-all</dt>
 <dd>
@@ -711,9 +711,11 @@ it declines the service.</p>
 </dd>
 <dt class="hdlist1">&lt;directory&gt;</dt>
 <dd>
-<p>A directory to add to the whitelist of allowed directories. Unless
---strict-paths is specified this will also include subdirectories
-of each named directory.</p>
+<p>The remaining arguments provide a list of directories. If any
+directories are specified, then the <code>git-daemon</code> process will
+serve a requested directory only if it is contained in one of
+these directories. If <code>--strict-paths</code> is specified, then the
+requested directory must match one of these directories exactly.</p>
 </dd>
 </dl>
 </div>
@@ -777,9 +779,8 @@ git             9418/tcp                # Git Version Control System</pre>
 <dt class="hdlist1"><em>git daemon</em> as inetd server</dt>
 <dd>
 <p>To set up <em>git daemon</em> as an inetd service that handles any
-repository under the whitelisted set of directories, /pub/foo
-and /pub/bar, place an entry like the following into
-/etc/inetd all on one line:</p>
+repository within <code>/pub/foo</code> or <code>/pub/bar</code>, place an entry like
+the following into <code>/etc/inetd</code> all on one line:</p>
 <div class="listingblock">
 <div class="content">
 <pre>        git stream tcp nowait nobody  /usr/bin/git
@@ -873,7 +874,7 @@ services are performed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-07-11 18:32:55 UTC
+Last updated 2022-08-11 23:07:13 UTC
 </div>
 </div>
 </body>

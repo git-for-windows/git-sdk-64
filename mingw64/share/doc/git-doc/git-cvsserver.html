@@ -522,10 +522,10 @@ of allowed directories (see below) if you want to use this option.</p>
 </dd>
 <dt class="hdlist1">&lt;directory&gt;</dt>
 <dd>
-<p>You can specify a list of allowed directories. If no directories
-are given, all are allowed. This is an additional restriction, gitcvs
-access still needs to be enabled by the <code>gitcvs.enabled</code> config option
-unless <code>--export-all</code> was given, too.</p>
+<p>The remaining arguments provide a list of directories. If no directories
+are given, then all are allowed. Repositories within these directories
+still require the <code>gitcvs.enabled</code> config option, unless <code>--export-all</code>
+is specified.</p>
 </dd>
 </dl>
 </div>
@@ -855,13 +855,19 @@ numeric uid is used.</p>
 <p>These variables obviate the need for command-line options in some
 circumstances, allowing easier restricted usage through git-shell.</p>
 </div>
-<div class="paragraph">
-<p>GIT_CVSSERVER_BASE_PATH takes the place of the argument to --base-path.</p>
-</div>
-<div class="paragraph">
-<p>GIT_CVSSERVER_ROOT specifies a single-directory whitelist. The
-repository must still be configured to allow access through
-git-cvsserver, as described above.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">GIT_CVSSERVER_BASE_PATH</dt>
+<dd>
+<p>This variable replaces the argument to --base-path.</p>
+</dd>
+<dt class="hdlist1">GIT_CVSSERVER_ROOT</dt>
+<dd>
+<p>This variable specifies a single directory, replacing the
+<code>&lt;directory&gt;...</code> argument list. The repository still requires the
+<code>gitcvs.enabled</code> config option, unless <code>--export-all</code> is specified.</p>
+</dd>
+</dl>
 </div>
 <div class="paragraph">
 <p>When these environment variables are set, the corresponding
@@ -1031,7 +1037,7 @@ and <code>gitcvs.allBinary</code> to "guess".</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-07-11 18:32:55 UTC
+Last updated 2022-08-11 23:07:13 UTC
 </div>
 </div>
 </body>
