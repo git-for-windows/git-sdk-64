@@ -303,23 +303,21 @@ typedef enum UNumberFormatRoundingMode {
       * @stable ICU 4.8
       */
     UNUM_ROUND_UNNECESSARY,
-#ifndef U_HIDE_DRAFT_API
     /**
      * Rounds ties toward the odd number.
-     * @draft ICU 69
+     * @stable ICU 69
      */
     UNUM_ROUND_HALF_ODD,
     /**
      * Rounds ties toward +∞.
-     * @draft ICU 69
+     * @stable ICU 69
      */
     UNUM_ROUND_HALF_CEILING,
     /**
      * Rounds ties toward -∞.
-     * @draft ICU 69
+     * @stable ICU 69
      */
     UNUM_ROUND_HALF_FLOOR,
-#endif  // U_HIDE_DRAFT_API
 } UNumberFormatRoundingMode;
 
 /** The possible number format pad positions. 
@@ -401,40 +399,49 @@ typedef enum UNumberFormatFields {
     UNUM_MEASURE_UNIT_FIELD,
     /** @stable ICU 64 */
     UNUM_COMPACT_FIELD,
+#ifndef U_HIDE_DRAFT_API
+    /**
+     * Approximately sign. In ICU 70, this was categorized under the generic SIGN field.
+     * @draft ICU 71
+     */
+    UNUM_APPROXIMATELY_SIGN_FIELD,
+#endif // U_HIDE_DRAFT_API
 
 #ifndef U_HIDE_DEPRECATED_API
     /**
      * One more than the highest normal UNumberFormatFields value.
      * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
      */
-    UNUM_FIELD_COUNT = UNUM_SIGN_FIELD + 3
+#ifndef U_HIDE_DRAFT_API
+    UNUM_FIELD_COUNT = UNUM_COMPACT_FIELD + 2
+#else  // U_HIDE_DRAFT_API (for UNUM_APPROXIMATELY_SIGN_FIELD)
+    UNUM_FIELD_COUNT = UNUM_COMPACT_FIELD + 1
+#endif  // U_HIDE_DRAFT_API (for UNUM_APPROXIMATELY_SIGN_FIELD)
 #endif  /* U_HIDE_DEPRECATED_API */
 } UNumberFormatFields;
 
 
-#ifndef U_HIDE_DRAFT_API
 /**
  * Selectors with special numeric values to use locale default minimum grouping
  * digits for the DecimalFormat/UNumberFormat setMinimumGroupingDigits method.
  * Do not use these constants with the [U]NumberFormatter API.
  *
- * @draft ICU 68
+ * @stable ICU 68
  */
 typedef enum UNumberFormatMinimumGroupingDigits {
     /**
      * Display grouping using the default strategy for all locales.
-     * @draft ICU 68
+     * @stable ICU 68
      */
     UNUM_MINIMUM_GROUPING_DIGITS_AUTO = -2,
     /**
      * Display grouping using locale defaults, except do not show grouping on
      * values smaller than 10000 (such that there is a minimum of two digits
      * before the first separator).
-     * @draft ICU 68
+     * @stable ICU 68
      */
     UNUM_MINIMUM_GROUPING_DIGITS_MIN2 = -3,
 } UNumberFormatMinimumGroupingDigits;
-#endif  // U_HIDE_DRAFT_API
 
 /**
  * Create and return a new UNumberFormat for formatting and parsing
@@ -1092,7 +1099,7 @@ typedef enum UNumberFormatAttribute {
 
   /** 
    * if this attribute is set to 0, it is set to UNUM_CURRENCY_STANDARD purpose,
-   * otherwise it is UNUM_CURRENCY_CASH purpose
+   * otherwise it is UNUM_CASH_CURRENCY purpose
    * Default: 0 (UNUM_CURRENCY_STANDARD purpose)
    * @stable ICU 54
    */
@@ -1429,12 +1436,19 @@ typedef enum UNumberFormatSymbol {
    */
   UNUM_EXPONENT_MULTIPLICATION_SYMBOL = 27,
 
+#ifndef U_HIDE_INTERNAL_API
+  /** Approximately sign.
+   * @internal
+   */
+  UNUM_APPROXIMATELY_SIGN_SYMBOL = 28,
+#endif
+
 #ifndef U_HIDE_DEPRECATED_API
     /**
      * One more than the highest normal UNumberFormatSymbol value.
      * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
      */
-  UNUM_FORMAT_SYMBOL_COUNT = 28
+  UNUM_FORMAT_SYMBOL_COUNT = 29
 #endif  /* U_HIDE_DEPRECATED_API */
 } UNumberFormatSymbol;
 
