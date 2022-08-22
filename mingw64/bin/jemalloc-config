@@ -33,13 +33,13 @@ case "$1" in
 	exit 0
 	;;
 --version)
-	echo "5.2.1-0-gea6b3e973b477b8061e0076bb257dbd7f3faa756"
+	echo "5.3.0-0-g54eaed1d8b56b1aa528be3bdd1877e59c56fa90c"
 	;;
 --revision)
 	echo "2"
 	;;
 --config)
-	echo "--prefix=/mingw64 --build=x86_64-w64-mingw32 --host=x86_64-w64-mingw32 --enable-autogen --with-xslroot=/mingw64/share/xml/docbook/xsl-stylesheets-nons-1.79.2 build_alias=x86_64-w64-mingw32 host_alias=x86_64-w64-mingw32 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -std=gnu11' 'LDFLAGS=-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high' CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 'CXXFLAGS=-march=x86-64 -mtune=generic -O2 -pipe'"
+	echo "--prefix=/mingw64 --build=x86_64-w64-mingw32 --host=x86_64-w64-mingw32 --enable-autogen --with-xslroot=/mingw64/share/xml/docbook/xsl-stylesheets-nons-1.79.2 build_alias=x86_64-w64-mingw32 host_alias=x86_64-w64-mingw32 CC=gcc 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -std=gnu11' LDFLAGS=-pipe CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 CXX=g++ 'CXXFLAGS=-march=x86-64 -mtune=generic -O2 -pipe'"
 	;;
 --prefix)
 	echo "/mingw64"
@@ -60,19 +60,19 @@ case "$1" in
 	echo "/mingw64/share/man"
 	;;
 --cc)
-	echo "x86_64-w64-mingw32-gcc"
+	echo "gcc"
 	;;
 --cflags)
-	echo "-std=gnu11 -Wall -Wextra -Wsign-compare -Wundef -Wno-format-zero-length -pipe -g3 -O3 -funroll-loops -march=x86-64 -mtune=generic -O2 -pipe -std=gnu11"
+	echo "-std=gnu11 -Wall -Wextra -Wsign-compare -Wundef -Wno-format-zero-length -Wpointer-arith -Wno-missing-braces -Wno-missing-field-initializers -Wno-missing-attributes -pipe -g3 -Wimplicit-fallthrough -O3 -funroll-loops -march=x86-64 -mtune=generic -O2 -pipe -std=gnu11"
 	;;
 --cppflags)
 	echo "-D__USE_MINGW_ANSI_STDIO=1 -D_REENTRANT"
 	;;
 --cxxflags)
-	echo "-Wall -Wextra -g3 -O3 -march=x86-64 -mtune=generic -O2 -pipe"
+	echo "-Wall -Wextra -g3 -Wimplicit-fallthrough -O3 -march=x86-64 -mtune=generic -O2 -pipe"
 	;;
 --ldflags)
-	echo "-pipe -Wl,--dynamicbase,--high-entropy-va,--nxcompat,--default-image-base-high "
+	echo "-pipe "
 	;;
 --libs)
 	echo "-lstdc++"
