@@ -359,7 +359,6 @@ class pool: protected simple_segregated_storage < typename UserAllocator::size_t
 
     size_type max_chunks() const
     { //! Calculated maximum number of memory chunks that can be allocated in a single call by this Pool.
-      size_type partition_size = alloc_size();
       size_type POD_size = integer::static_lcm<sizeof(size_type), sizeof(void *)>::value + sizeof(size_type);
       return (std::numeric_limits<size_type>::max() - POD_size) / alloc_size();
     }
@@ -383,7 +382,7 @@ class pool: protected simple_segregated_storage < typename UserAllocator::size_t
       //!   is the number of chunks to request from the system
       //!   the first time that object needs to allocate system memory.
       //!   The default is 32. This parameter may not be 0.
-      //! \param nmax_size is the maximum number of chunks to allocate in one block.			
+      //! \param nmax_size is the maximum number of chunks to allocate in one block.
       set_next_size(nnext_size);
       set_max_size(nmax_size);
     }
@@ -408,7 +407,7 @@ class pool: protected simple_segregated_storage < typename UserAllocator::size_t
       return next_size;
     }
     void set_next_size(const size_type nnext_size)
-    { //! Set number of chunks to request from the system the next time that object needs to allocate system memory. This value should never be set to 0.     
+    { //! Set number of chunks to request from the system the next time that object needs to allocate system memory. This value should never be set to 0.
       BOOST_USING_STD_MIN();
       next_size = start_size = min BOOST_PREVENT_MACRO_SUBSTITUTION(nnext_size, max_chunks());
     }

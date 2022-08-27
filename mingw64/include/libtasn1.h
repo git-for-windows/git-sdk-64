@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2021 Free Software Foundation, Inc.
+ * Copyright (C) 2002-2022 Free Software Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -68,7 +68,7 @@ extern "C"
  *
  * Version of the library as a string.
  */
-# define ASN1_VERSION "4.18.0"
+# define ASN1_VERSION "4.19.0"
 
 /**
  * ASN1_VERSION_MAJOR:
@@ -82,7 +82,7 @@ extern "C"
  *
  * Minor version number of the library.
  */
-# define ASN1_VERSION_MINOR 18
+# define ASN1_VERSION_MINOR 19
 
 /**
  * ASN1_VERSION_PATCH:
@@ -96,7 +96,7 @@ extern "C"
  *
  * Version number of the library as a number.
  */
-# define ASN1_VERSION_NUMBER 0x041200
+# define ASN1_VERSION_NUMBER 0x041300
 
 
 # if defined __GNUC__ && !defined ASN1_INTERNAL_BUILD
@@ -278,6 +278,7 @@ extern "C"
  */
 # define ASN1_DECODE_FLAG_ALLOW_INCORRECT_TIME (1<<2)
 
+  /* *INDENT-OFF* */
 
 /**
  * asn1_data_node_st:
@@ -294,7 +295,10 @@ extern "C"
     const void *value;		/* Node value */
     unsigned int value_len;	/* Node value size */
     unsigned int type;		/* Node value type (ASN1_ETYPE_*) */
-  };
+};
+
+  /* *INDENT-ON* */
+
   typedef struct asn1_data_node_st asn1_data_node_st;
 
 /***********************************/

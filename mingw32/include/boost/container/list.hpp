@@ -32,7 +32,6 @@
 #include <boost/container/detail/iterators.hpp>
 #include <boost/container/detail/mpl.hpp>
 #include <boost/container/detail/node_alloc_holder.hpp>
-#include <boost/container/detail/pair.hpp>
 #include <boost/container/detail/version_type.hpp>
 #include <boost/container/detail/value_functors.hpp>
 // move
