@@ -83,6 +83,7 @@ jobs:
         with:
           name: bundle-artifacts
           path: bundle-artifacts
+          retention-days: 5
 
       - name: Check out git/git
         shell: bash
@@ -116,6 +117,7 @@ jobs:
         with:
           name: pkg-${{env.ARCH_NAME}}
           path: artifacts
+          retention-days: 5
 
       - name: prepare build-installers for uploading
         shell: bash
@@ -126,6 +128,7 @@ jobs:
         with:
           name: build-installers.tgz
           path: build-installers.tgz
+          retention-days: 1
 
   artifacts:
     runs-on: windows-latest
@@ -182,3 +185,4 @@ jobs:
         with:
           name: ${{matrix.artifact}}-${{env.ARCH_NAME}}
           path: artifacts
+          retention-days: 5
