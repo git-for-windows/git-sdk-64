@@ -187,3 +187,32 @@ jobs:
           name: ${{matrix.artifact}}-${{env.ARCH_NAME}}
           path: artifacts
           retention-days: 5
+
+      - name: Run the installer
+        if: matrix.artifact == 'installer'
+        shell: pwsh
+        run: |
+          $exePath = Get-ChildItem -Path artifacts/*.exe | %{$_.FullName}
+          Start-Process -Wait -FilePath "$exePath" -ArgumentList "/SILENT /VERYSILENT /NORESTART /SUPPRESSMSGBOXES /ALLOWDOWNGRADE=1 /LOG=installer.log"
+          "$env:ProgramFiles\Git\usr\bin" | Out-File -Encoding ascii -Append $env:GITHUB_PATH
+          "$env:ProgramFiles\Git\mingw${{env.ARCH_BITNESS}}\bin" | Out-File -Encoding ascii -Append $env:GITHUB_PATH
+      - name: Publish installer log
+        if: failure() || success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: installer.log
+          path: installer.log
+          retention-days: 5
+      - name: Validate
+        if: matrix.artifact == 'installer'
+        shell: bash
+        run: |
+          set -x &&
+          cygpath -aw / &&
+          git.exe version --build-options >version &&
+          cat version &&
+          grep "$(sed -e 's|^v||' -e 's|-|.|g' <bundle-artifacts/next_version)" version &&
+          checklist=build-installers/usr/src/build-extra/installer/run-checklist.sh &&
+          # cannot test SSH keys in read-only mode, skip test for now
+          sed -i 's|git@ssh.dev.azure.com:v3/git-for-windows/git/git|https://github.com/git/git|' $checklist &&
+          sh -x $checklist
