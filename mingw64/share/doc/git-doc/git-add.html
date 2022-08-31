@@ -665,7 +665,9 @@ submodules).</p>
 forcibly add them again to the index.  This is useful after
 changing <code>core.autocrlf</code> configuration or the <code>text</code> attribute
 in order to correct files added with wrong CRLF/LF line endings.
-This option implies <code>-u</code>.</p>
+This option implies <code>-u</code>. Lone CR characters are untouched, thus
+while a CRLF cleans to LF, a CRCRLF sequence is only partially
+cleaned to CRLF.</p>
 </dd>
 <dt class="hdlist1">--chmod=(+|-)x</dt>
 <dd>
@@ -1001,7 +1003,7 @@ they will make the patch impossible to apply:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-08-11 23:07:13 UTC
+Last updated 2022-08-30 21:40:02 UTC
 </div>
 </div>
 </body>
