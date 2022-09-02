@@ -1,0 +1,218 @@
+name: git-artifacts
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REPOSITORY: git-for-windows/git
+  REF: main
+
+  GIT_CONFIG_PARAMETERS: "'checkout.workers=56'"
+  HOME: "${{github.workspace}}\\home"
+  USERPROFILE: "${{github.workspace}}\\home"
+  MSYSTEM: MINGW64
+
+  ARCH_NAME: x86_64
+  ARCH_BITNESS: 64
+
+jobs:
+  build:
+    if: github.event.repository.fork == false
+    runs-on: windows-latest
+    steps:
+      - name: Configure user
+        shell: bash
+        run:
+          USER_NAME="${{github.actor}}" &&
+          USER_EMAIL="${{github.actor}}@users.noreply.github.com" &&
+          mkdir "$HOME" &&
+          git config --global user.name "$USER_NAME" &&
+          git config --global user.email "$USER_EMAIL" &&
+          echo "PACKAGER=$USER_NAME <$USER_EMAIL>" >>$GITHUB_ENV
+
+      - name: clone git-sdk-${{env.ARCH_BITNESS}}
+        shell: bash
+        run: |
+          # cannot use `git clone` directly, to allow for PR's refs to be fetched
+          git init --bare -b ${REF#refs/heads/} git-sdk-${{env.ARCH_BITNESS}}.git &&
+          git -C git-sdk-${{env.ARCH_BITNESS}}.git remote add origin https://github.com/${{github.repository}} &&
+          git -C git-sdk-${{env.ARCH_BITNESS}}.git config remote.origin.promisor true &&
+          git -C git-sdk-${{env.ARCH_BITNESS}}.git config remote.origin.partialCloneFilter blob:none &&
+          git -C git-sdk-${{env.ARCH_BITNESS}}.git fetch --depth=1 origin $REF:refs/heads/${REF#refs/heads/}
+        env:
+          REF: ${{github.ref}}
+      - name: clone build-extra
+        shell: bash
+        run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
+      - name: create build-installers artifact
+        shell: bash
+        run: |
+          sh -x ./build-extra/please.sh create-sdk-artifact --sdk=git-sdk-${{env.ARCH_BITNESS}}.git build-installers &&
+
+          cygpath -aw "$PWD/build-installers/usr/bin/core_perl" >>$GITHUB_PATH &&
+          cygpath -aw "$PWD/build-installers/usr/bin" >>$GITHUB_PATH &&
+          cygpath -aw "$PWD/build-installers/mingw${{env.ARCH_BITNESS}}/bin" >>$GITHUB_PATH &&
+
+          mkdir -p build-installers/usr/src &&
+          mv build-extra build-installers/usr/src/
+
+      - name: Generate bundle artifacts
+        shell: bash
+        run: |
+          printf '#!/bin/sh\n\nexec /mingw${{env.ARCH_BITNESS}}/bin/git.exe "$@"\n' >/usr/bin/git &&
+          mkdir -p bundle-artifacts &&
+
+          { test -n "$REPOSITORY" || REPOSITORY='${{github.repository}}'; } &&
+          { test -n "$REF" || REF='${{github.ref}}'; } &&
+          git -c init.defaultBranch=main init --bare &&
+          git remote add -f origin https://github.com/git-for-windows/git &&
+          git fetch "https://github.com/$REPOSITORY" "$REF:$REF" &&
+
+          tag_name="$(git describe --match 'v[0-9]*' FETCH_HEAD)-$(date +%Y%m%d%H%M%S)" &&
+          echo "prerelease-${tag_name#v}" >bundle-artifacts/ver &&
+          echo "${tag_name#v}" >bundle-artifacts/display_version &&
+          echo "$tag_name" >bundle-artifacts/next_version &&
+          git tag -m "Snapshot build" "$tag_name" FETCH_HEAD &&
+          git bundle create bundle-artifacts/git.bundle origin/main.."$tag_name" &&
+
+          sh -x /usr/src/build-extra/please.sh mention feature "Snapshot of $(git show -s  --pretty='tformat:%h (%s, %ad)' --date=short FETCH_HEAD)" &&
+          git -C /usr/src/build-extra bundle create "$PWD/bundle-artifacts/build-extra.bundle" origin/main..main
+      - name: 'Publish bundle-artifacts'
+        uses: actions/upload-artifact@v3
+        with:
+          name: bundle-artifacts
+          path: bundle-artifacts
+          retention-days: 5
+
+      - name: Check out git/git
+        shell: bash
+        run: |
+          git -c init.defaultBranch=main init &&
+          git remote add -f origin https://github.com/git-for-windows/git &&
+          git fetch --tags bundle-artifacts/git.bundle $(cat bundle-artifacts/next_version) &&
+          git reset --hard $(cat bundle-artifacts/next_version)
+      - name: Build mingw-w64-${{env.ARCH_NAME}}-git
+        shell: bash
+        run: |
+          set -x
+
+          # Make sure that there is a `/usr/bin/git` that can be used by `makepkg-mingw`
+          printf '#!/bin/sh\n\nexec /mingw${{env.ARCH_BITNESS}}/bin/git.exe "$@"\n' >/usr/bin/git &&
+
+          # Restrict `PATH` to MSYS2
+          PATH="/mingw${{env.ARCH_BITNESS}}/bin:/usr/bin:/C/Windows/system32"
+
+          sh -x /usr/src/build-extra/please.sh build-mingw-w64-git --only-${{env.ARCH_BITNESS}}-bit --build-src-pkg -o artifacts HEAD &&
+          cp bundle-artifacts/ver artifacts/ &&
+
+          b=$PWD/artifacts &&
+          version=$(cat bundle-artifacts/next_version) &&
+          (cd /usr/src/MINGW-packages/mingw-w64-git &&
+          cp PKGBUILD.$version PKGBUILD &&
+          git commit -s -m "mingw-w64-git: new version ($version)" PKGBUILD &&
+          git bundle create "$b"/MINGW-packages.bundle origin/main..main)
+      - name: Publish mingw-w64-${{env.ARCH_NAME}}-git
+        uses: actions/upload-artifact@v3
+        with:
+          name: pkg-${{env.ARCH_NAME}}
+          path: artifacts
+          retention-days: 5
+
+      - name: prepare build-installers for uploading
+        shell: bash
+        run: |
+          tar czf build-installers.tgz build-installers/
+      - name: Publish build-installers.tgz
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-installers.tgz
+          path: build-installers.tgz
+          retention-days: 1
+
+  artifacts:
+    runs-on: windows-latest
+    needs: [build]
+    strategy:
+      matrix:
+        artifact: [installer, portable, mingit]
+      fail-fast: false
+    steps:
+      - name: Download pkg-${{env.ARCH_NAME}}
+        uses: actions/download-artifact@v3
+        with:
+          name: pkg-${{env.ARCH_NAME}}
+          path: pkg-${{env.ARCH_NAME}}
+      - name: Download bundle-artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: bundle-artifacts
+          path: bundle-artifacts
+      - name: Download build-installers.tgz
+        uses: actions/download-artifact@v3
+        with:
+          name: build-installers.tgz
+      - name: Configure Git for Windows SDK
+        shell: bash
+        run: |
+          tar xf build-installers.tgz &&
+          cygpath -aw "$PWD/build-installers/usr/bin/core_perl" >>$GITHUB_PATH &&
+          cygpath -aw "$PWD/build-installers/usr/bin" >>$GITHUB_PATH &&
+          cygpath -aw "$PWD/build-installers/mingw${{env.ARCH_BITNESS}}/bin" >>$GITHUB_PATH
+      - name: Build ${{env.ARCH_BITNESS}}-bit ${{matrix.artifact}}
+        shell: bash
+        run: |
+          sh -x /usr/src/build-extra/please.sh make_installers_from_mingw_w64_git \
+            --version=$(cat pkg-${{env.ARCH_NAME}}/ver) \
+            -o artifacts \
+            --${{matrix.artifact}} \
+            --pkg=pkg-${{env.ARCH_NAME}}/mingw-w64-${{env.ARCH_NAME}}-git-[0-9]*.tar.xz \
+            --pkg=pkg-${{env.ARCH_NAME}}/mingw-w64-${{env.ARCH_NAME}}-git-doc-html-[0-9]*.tar.xz
+      - name: Copy package-versions and pdbs
+        if: matrix.artifact == 'installer'
+        shell: bash
+        run: |
+          cp /usr/src/build-extra/installer/package-versions.txt artifacts/ &&
+
+          a=$PWD/artifacts &&
+          p=$PWD/pkg-${{env.ARCH_NAME}} &&
+          (cd /usr/src/build-extra &&
+          mkdir -p cached-source-packages &&
+          cp "$p"/*-pdb* cached-source-packages/ &&
+          GIT_CONFIG_PARAMETERS="'windows.sdk${{env.ARCH_BITNESS}}.path='" ./please.sh bundle_pdbs --arch=${{env.ARCH_NAME}} --directory="$a" installer/package-versions.txt)
+      - name: Publish ${{matrix.artifact}}-${{env.ARCH_NAME}}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{matrix.artifact}}-${{env.ARCH_NAME}}
+          path: artifacts
+          retention-days: 5
+
+      - name: Run the installer
+        if: matrix.artifact == 'installer'
+        shell: pwsh
+        run: |
+          $exePath = Get-ChildItem -Path artifacts/*.exe | %{$_.FullName}
+          Start-Process -Wait -FilePath "$exePath" -ArgumentList "/SILENT /VERYSILENT /NORESTART /SUPPRESSMSGBOXES /ALLOWDOWNGRADE=1 /LOG=installer.log"
+          "$env:ProgramFiles\Git\usr\bin" | Out-File -Encoding ascii -Append $env:GITHUB_PATH
+          "$env:ProgramFiles\Git\mingw${{env.ARCH_BITNESS}}\bin" | Out-File -Encoding ascii -Append $env:GITHUB_PATH
+      - name: Publish installer log
+        if: failure() || success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: installer.log
+          path: installer.log
+          retention-days: 5
+      - name: Validate
+        if: matrix.artifact == 'installer'
+        shell: bash
+        run: |
+          set -x &&
+          cygpath -aw / &&
+          git.exe version --build-options >version &&
+          cat version &&
+          grep "$(sed -e 's|^v||' -e 's|-|.|g' <bundle-artifacts/next_version)" version &&
+          checklist=build-installers/usr/src/build-extra/installer/run-checklist.sh &&
+          # cannot test SSH keys in read-only mode, skip test for now
+          sed -i 's|git@ssh.dev.azure.com:v3/git-for-windows/git/git|https://github.com/git/git|' $checklist &&
+          sh -x $checklist
