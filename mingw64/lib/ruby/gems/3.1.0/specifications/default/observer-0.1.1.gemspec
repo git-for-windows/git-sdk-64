@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yukihiro Matsumoto".freeze]
   s.bindir = "exe".freeze
-  s.date = "2022-08-05"
+  s.date = "2022-09-08"
   s.description = "Implementation of the Observer object-oriented design pattern.".freeze
   s.email = ["matz@ruby-lang.org".freeze]
   s.files = ["lib/observer.rb".freeze]
