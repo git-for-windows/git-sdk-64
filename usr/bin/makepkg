@@ -1207,8 +1207,11 @@ fi
 
 pkgbase=${pkgbase:-${pkgname[0]}}
 
-# check the PKGBUILD for some basic requirements
-lint_pkgbuild || exit $E_PKGBUILD_ERROR
+# MSYS2: lint_pkgbuild is very slow with cygwin bash, so make it opt-in
+if (( MAKEPKG_LINT_PKGBUILD )); then
+	# check the PKGBUILD for some basic requirements
+	lint_pkgbuild || exit $E_PKGBUILD_ERROR
+fi
 
 if (( !SOURCEONLY && !PRINTSRCINFO )); then
 	merge_arch_attrs
