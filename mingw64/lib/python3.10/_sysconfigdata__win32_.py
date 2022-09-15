@@ -42,7 +42,7 @@ build_time_vars = {'ABIFLAGS': '',
                             '-fvisibility=hidden -D_WIN32_WINNT=0x0601 '
                             '-DPY3_DLLNAME=\'L"libpython3.10.dll"\' '
                             '-DMS_DLL_ID=\'"3.10"\'',
- 'CONFIGURE_CPPFLAGS': '-I../Python-3.10.6/PC -D__USE_MINGW_ANSI_STDIO=1 -I.',
+ 'CONFIGURE_CPPFLAGS': '-I../Python-3.10.7/PC -D__USE_MINGW_ANSI_STDIO=1 -I.',
  'CONFIGURE_LDFLAGS': '-pipe',
  'CONFIGURE_LDFLAGS_NODIST': '-fno-semantic-interposition',
  'CONFIG_ARGS': "'--prefix=/mingw64' '--host=x86_64-w64-mingw32' "
@@ -63,8 +63,8 @@ build_time_vars = {'ABIFLAGS': '',
  'COVERAGE_REPORT': '/c/M/mingw-w64-python/src/build-x86_64/lcov-report',
  'COVERAGE_REPORT_OPTIONS': '--no-branch-coverage --title "CPython lcov '
                             'report"',
- 'CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.10.6/Include '
-             '-I../Python-3.10.6/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
+ 'CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.10.7/Include '
+             '-I../Python-3.10.7/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
              '-D__USE_MINGW_ANSI_STDIO=1',
  'CXX': 'g++',
  'DESTDIR': '',
@@ -595,7 +595,7 @@ build_time_vars = {'ABIFLAGS': '',
  'MAINCC': 'gcc',
  'MAJOR_IN_MKDEV': 0,
  'MAJOR_IN_SYSMACROS': 0,
- 'MAKESETUP': '../Python-3.10.6/Modules/makesetup',
+ 'MAKESETUP': '../Python-3.10.7/Modules/makesetup',
  'MANDIR': '/mingw64/share/man',
  'MKDIR_P': '/usr/bin/mkdir -p',
  'MODBUILT_NAMES': 'nt  winreg  msvcrt  _winapi  errno  _sre  _codecs  '
@@ -676,9 +676,9 @@ build_time_vars = {'ABIFLAGS': '',
                              '-DPY3_DLLNAME=\'L"libpython3.10.dll"\' '
                              '-DMS_DLL_ID=\'"3.10"\' -fprofile-use '
                              '-fprofile-correction '
-                             '-I../Python-3.10.6/Include/internal -IObjects '
+                             '-I../Python-3.10.7/Include/internal -IObjects '
                              '-IInclude -IPython -I. '
-                             '-I../Python-3.10.6/Include -I../Python-3.10.6/PC '
+                             '-I../Python-3.10.7/Include -I../Python-3.10.7/PC '
                              '-D__USE_MINGW_ANSI_STDIO=1 -I. '
                              '-D__USE_MINGW_ANSI_STDIO=1 '
                              '-DPy_BUILD_CORE_BUILTIN',
@@ -692,7 +692,7 @@ build_time_vars = {'ABIFLAGS': '',
                      '-fvisibility=hidden -D_WIN32_WINNT=0x0601 '
                      '-DPY3_DLLNAME=\'L"libpython3.10.dll"\' '
                      '-DMS_DLL_ID=\'"3.10"\' -fprofile-use '
-                     '-fprofile-correction -I../Python-3.10.6/Include/internal',
+                     '-fprofile-correction -I../Python-3.10.7/Include/internal',
  'PY_COERCE_C_LOCALE': 0,
  'PY_CORE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 '
                    '-Wall -march=x86-64 -mtune=generic -O2 -pipe -O3 '
@@ -704,13 +704,13 @@ build_time_vars = {'ABIFLAGS': '',
                    '-D_WIN32_WINNT=0x0601 '
                    '-DPY3_DLLNAME=\'L"libpython3.10.dll"\' '
                    '-DMS_DLL_ID=\'"3.10"\' -fprofile-use -fprofile-correction '
-                   '-I../Python-3.10.6/Include/internal -IObjects -IInclude '
-                   '-IPython -I. -I../Python-3.10.6/Include '
-                   '-I../Python-3.10.6/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
+                   '-I../Python-3.10.7/Include/internal -IObjects -IInclude '
+                   '-IPython -I. -I../Python-3.10.7/Include '
+                   '-I../Python-3.10.7/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
                    '-D__USE_MINGW_ANSI_STDIO=1 -DPy_BUILD_CORE',
  'PY_CORE_LDFLAGS': '-pipe -pipe -fno-semantic-interposition',
- 'PY_CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.10.6/Include '
-                '-I../Python-3.10.6/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
+ 'PY_CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.10.7/Include '
+                '-I../Python-3.10.7/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
                 '-D__USE_MINGW_ANSI_STDIO=1',
  'PY_ENABLE_SHARED': 1,
  'PY_FORMAT_SIZE_T': '"z"',
@@ -729,16 +729,16 @@ build_time_vars = {'ABIFLAGS': '',
                         '-DPY3_DLLNAME=\'L"libpython3.10.dll"\' '
                         '-DMS_DLL_ID=\'"3.10"\' -fprofile-use '
                         '-fprofile-correction '
-                        '-I../Python-3.10.6/Include/internal -IObjects '
-                        '-IInclude -IPython -I. -I../Python-3.10.6/Include '
-                        '-I../Python-3.10.6/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
+                        '-I../Python-3.10.7/Include/internal -IObjects '
+                        '-IInclude -IPython -I. -I../Python-3.10.7/Include '
+                        '-I../Python-3.10.7/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
                         '-D__USE_MINGW_ANSI_STDIO=1',
  'Py_DEBUG': 0,
  'Py_ENABLE_SHARED': 1,
  'Py_HASH_ALGORITHM': 0,
  'Py_TRACE_REFS': 0,
  'QUICKTESTOPTS': '-x test_subprocess test_io test_lib2to3 \\',
- 'RCFLAGS': '-DFIELD3=6150 -O COFF --target=pe-x86-64',
+ 'RCFLAGS': '-DFIELD3=7150 -O COFF --target=pe-x86-64',
  'READELF': 'readelf',
  'RESSRCDIR': 'Mac/Resources/framework',
  'RETSIGTYPE': 'void',
@@ -771,7 +771,7 @@ build_time_vars = {'ABIFLAGS': '',
  'SIZEOF__BOOL': 1,
  'SOABI': 'cpython-310',
  'SRCDIRS': 'Parser Objects Python Modules Modules/_io Programs PC',
- 'SRC_GDB_HOOKS': '../Python-3.10.6/Tools/gdb/libpython.py',
+ 'SRC_GDB_HOOKS': '../Python-3.10.7/Tools/gdb/libpython.py',
  'STATIC_LIBPYTHON': 1,
  'STDC_HEADERS': 1,
  'STRICT_SYSV_CURSES': "/* Don't use ncurses extensions */",
@@ -786,7 +786,7 @@ build_time_vars = {'ABIFLAGS': '',
  'TESTPATH': '',
  'TESTPYTHON': './python.exe',
  'TESTPYTHONOPTS': '',
- 'TESTRUNNER': './python.exe ../Python-3.10.6/Tools/scripts/run_tests.py',
+ 'TESTRUNNER': './python.exe ../Python-3.10.7/Tools/scripts/run_tests.py',
  'TESTSUBDIRS': 'ctypes/test \\',
  'TESTTIMEOUT': 1200,
  'TEST_MODULES': 'yes',
@@ -797,12 +797,12 @@ build_time_vars = {'ABIFLAGS': '',
  'TZPATH': '/mingw64/share/zoneinfo',
  'UNICODE_DEPS': '\\',
  'UNIVERSALSDK': '',
- 'UPDATE_FILE': '../Python-3.10.6/Tools/scripts/update_file.py',
+ 'UPDATE_FILE': '../Python-3.10.7/Tools/scripts/update_file.py',
  'USE_COMPUTED_GOTOS': 0,
  'VENVLAUNCHERDIR': '/mingw64/lib/python3.10/venv/scripts/nt',
  'VERSION': '3.10',
- 'VPATH': 'C:/M/mingw-w64-python/src/Python-3.10.6',
- 'VPATH_b2h': 'C:/M/mingw-w64-python/src/Python-3.10.6',
+ 'VPATH': 'C:/M/mingw-w64-python/src/Python-3.10.7',
+ 'VPATH_b2h': 'C:/M/mingw-w64-python/src/Python-3.10.7',
  'WHEEL_PKG_DIR': '',
  'WINDOW_HAS_FLAGS': 1,
  'WINDRES': 'windres',
@@ -819,14 +819,14 @@ build_time_vars = {'ABIFLAGS': '',
  'XMLLIBSUBDIRS': 'xml xml/dom xml/etree xml/parsers xml/sax',
  'abs_builddir': 'C:/M/mingw-w64-python/src/build-x86_64',
  'abs_builddir_b2h': 'C:/M/mingw-w64-python/src/build-x86_64',
- 'abs_srcdir': 'C:/M/mingw-w64-python/src/Python-3.10.6',
- 'abs_srcdir_b2h': 'C:/M/mingw-w64-python/src/Python-3.10.6',
+ 'abs_srcdir': 'C:/M/mingw-w64-python/src/Python-3.10.7',
+ 'abs_srcdir_b2h': 'C:/M/mingw-w64-python/src/Python-3.10.7',
  'datarootdir': '/mingw64/share',
  'exec_prefix': '/mingw64',
  'prefix': 'D:/a/msys64/mingw64',
  'prefix_b2h': 'D:/a/msys64/mingw64',
- 'srcdir': 'C:/M/mingw-w64-python/src/Python-3.10.6',
- 'srcdir_b2h': 'C:/M/mingw-w64-python/src/Python-3.10.6'}
+ 'srcdir': 'C:/M/mingw-w64-python/src/Python-3.10.7',
+ 'srcdir_b2h': 'C:/M/mingw-w64-python/src/Python-3.10.7'}
 
 
 keys_to_replace = [
