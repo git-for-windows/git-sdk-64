@@ -814,6 +814,14 @@ explicitly given (<code>repo</code> for <code>/path/to/repo.git</code> and <code
 for <code>host.xz:foo/.git</code>).  Cloning into an existing directory
 is only allowed if the directory is empty.</p>
 </dd>
+<dt class="hdlist1">--bundle-uri=&lt;uri&gt;</dt>
+<dd>
+<p>Before fetching from the remote, fetch a bundle from the given
+<code>&lt;uri&gt;</code> and unbundle the data into the local repository. The refs
+in the bundle will be stored under the hidden <code>refs/bundle/*</code>
+namespace. This option is incompatible with <code>--depth</code>,
+<code>--shallow-since</code>, and <code>--shallow-exclude</code>.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -1029,6 +1037,47 @@ $ cd my-linux</pre>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_configuration">CONFIGURATION</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Everything below this line in this section is selectively included
+from the <a href="git-config.html">git-config(1)</a> documentation. The content is the same
+as what&#8217;s found there:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">init.templateDir</dt>
+<dd>
+<p>Specify the directory from which templates will be copied.
+(See the "TEMPLATE DIRECTORY" section of <a href="git-init.html">git-init(1)</a>.)</p>
+</dd>
+<dt class="hdlist1">init.defaultBranch</dt>
+<dd>
+<p>Allows overriding the default branch name e.g. when initializing
+a new repository.</p>
+</dd>
+<dt class="hdlist1">clone.defaultRemoteName</dt>
+<dd>
+<p>The name of the remote to create when cloning a repository.  Defaults to
+<code>origin</code>, and can be overridden by passing the <code>--origin</code> command-line
+option to <a href="git-clone.html">git-clone(1)</a>.</p>
+</dd>
+<dt class="hdlist1">clone.rejectShallow</dt>
+<dd>
+<p>Reject to clone a repository if it is a shallow one, can be overridden by
+passing option <code>--reject-shallow</code> in command line. See <a href="git-clone.html">git-clone(1)</a></p>
+</dd>
+<dt class="hdlist1">clone.filterSubmodules</dt>
+<dd>
+<p>If a partial clone filter is provided (see <code>--filter</code> in
+<a href="git-rev-list.html">git-rev-list(1)</a>) and <code>--recurse-submodules</code> is used, also apply
+the filter to submodules.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1039,7 +1088,7 @@ $ cd my-linux</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-08-30 21:40:02 UTC
+Last updated 2022-09-16 01:56:39 UTC
 </div>
 </div>
 </body>

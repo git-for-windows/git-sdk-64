@@ -35,7 +35,7 @@ BEGIN {
 	CGI->compile() if $ENV{'MOD_PERL'};
 }
 
-our $version = "2.37.3.windows.1";
+our $version = "2.38.0.rc0.windows.1";
 
 our ($my_url, $my_uri, $base_url, $path_info, $home_link);
 sub evaluate_uri {
@@ -3560,23 +3560,6 @@ sub parse_commit_text {
 		$title =~ s/^    //;
 		if ($title ne "") {
 			$co{'title'} = chop_str($title, 80, 5);
-			# remove leading stuff of merges to make the interesting part visible
-			if (length($title) > 50) {
-				$title =~ s/^Automatic //;
-				$title =~ s/^merge (of|with) /Merge ... /i;
-				if (length($title) > 50) {
-					$title =~ s/(http|rsync):\/\///;
-				}
-				if (length($title) > 50) {
-					$title =~ s/(master|www|rsync)\.//;
-				}
-				if (length($title) > 50) {
-					$title =~ s/kernel.org:?//;
-				}
-				if (length($title) > 50) {
-					$title =~ s/\/pub\/scm//;
-				}
-			}
 			$co{'title_short'} = chop_str($title, 50, 5);
 			last;
 		}

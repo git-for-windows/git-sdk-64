@@ -492,7 +492,7 @@ after a three dash separator line.</p>
 </div>
 <div class="paragraph">
 <p>To change which notes are shown by <em>git log</em>, see the
-"notes.displayRef" configuration in <a href="git-log.html">git-log(1)</a>.</p>
+"notes.displayRef" discussion in <a href="#CONFIGURATION">CONFIGURATION</a>.</p>
 </div>
 <div class="paragraph">
 <p>See the "notes.rewrite.&lt;command&gt;" configuration for a way to carry
@@ -813,7 +813,7 @@ some special-purpose tools to do something useful with them.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_configuration">CONFIGURATION</h2>
+<h2 id="CONFIGURATION">CONFIGURATION</h2>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
@@ -824,32 +824,58 @@ some special-purpose tools to do something useful with them.</p>
 This setting can be overridden through the environment and
 command line.</p>
 </dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Everything above this line in this section isn&#8217;t included from the
+<a href="git-config.html">git-config(1)</a> documentation. The content that follows is the
+same as what&#8217;s found there:</p>
+</div>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">notes.mergeStrategy</dt>
 <dd>
 <p>Which merge strategy to choose by default when resolving notes
 conflicts.  Must be one of <code>manual</code>, <code>ours</code>, <code>theirs</code>, <code>union</code>, or
 <code>cat_sort_uniq</code>.  Defaults to <code>manual</code>.  See "NOTES MERGE STRATEGIES"
-section above for more information on each strategy.</p>
+section of <a href="git-notes.html">git-notes(1)</a> for more information on each strategy.</p>
 <div class="paragraph">
-<p>This setting can be overridden by passing the <code>--strategy</code> option.</p>
+<p>This setting can be overridden by passing the <code>--strategy</code> option to
+<a href="git-notes.html">git-notes(1)</a>.</p>
 </div>
 </dd>
 <dt class="hdlist1">notes.&lt;name&gt;.mergeStrategy</dt>
 <dd>
 <p>Which merge strategy to choose when doing a notes merge into
 refs/notes/&lt;name&gt;.  This overrides the more general
-"notes.mergeStrategy".  See the "NOTES MERGE STRATEGIES" section above
-for more information on each available strategy.</p>
+"notes.mergeStrategy".  See the "NOTES MERGE STRATEGIES" section in
+<a href="git-notes.html">git-notes(1)</a> for more information on the available strategies.</p>
 </dd>
 <dt class="hdlist1">notes.displayRef</dt>
 <dd>
 <p>Which ref (or refs, if a glob or specified more than once), in
 addition to the default set by <code>core.notesRef</code> or
 <code>GIT_NOTES_REF</code>, to read notes from when showing commit
-messages with the <em>git log</em> family of commands.
-This setting can be overridden on the command line or by the
-<code>GIT_NOTES_DISPLAY_REF</code> environment variable.
-See <a href="git-log.html">git-log(1)</a>.</p>
+messages with the <em>git log</em> family of commands.</p>
+<div class="paragraph">
+<p>This setting can be overridden with the <code>GIT_NOTES_DISPLAY_REF</code>
+environment variable, which must be a colon separated list of refs or
+globs.</p>
+</div>
+<div class="paragraph">
+<p>A warning will be issued for refs that do not exist,
+but a glob that does not match any refs is silently ignored.</p>
+</div>
+<div class="paragraph">
+<p>This setting can be disabled by the <code>--no-notes</code> option to the <em>git
+log</em> family of commands, or by the <code>--notes=&lt;ref&gt;</code> option accepted by
+those commands.</p>
+</div>
+<div class="paragraph">
+<p>The effective value of "core.notesRef" (possibly overridden by
+GIT_NOTES_REF) is also implicitly added to the list of refs to be
+displayed.</p>
+</div>
 </dd>
 <dt class="hdlist1">notes.rewrite.&lt;command&gt;</dt>
 <dd>
@@ -858,16 +884,18 @@ See <a href="git-log.html">git-log(1)</a>.</p>
 notes from the original to the rewritten commit.  Defaults to
 <code>true</code>.  See also "<code>notes.rewriteRef</code>" below.</p>
 <div class="paragraph">
-<p>This setting can be overridden by the <code>GIT_NOTES_REWRITE_REF</code>
-environment variable.</p>
+<p>This setting can be overridden with the <code>GIT_NOTES_REWRITE_REF</code>
+environment variable, which must be a colon separated list of refs or
+globs.</p>
 </div>
 </dd>
 <dt class="hdlist1">notes.rewriteMode</dt>
 <dd>
-<p>When copying notes during a rewrite, what to do if the target
-commit already has a note.  Must be one of <code>overwrite</code>,
-<code>concatenate</code>, <code>cat_sort_uniq</code>, or <code>ignore</code>.  Defaults to
-<code>concatenate</code>.</p>
+<p>When copying notes during a rewrite (see the
+"notes.rewrite.&lt;command&gt;" option), determines what to do if
+the target commit already has a note.  Must be one of
+<code>overwrite</code>, <code>concatenate</code>, <code>cat_sort_uniq</code>, or <code>ignore</code>.
+Defaults to <code>concatenate</code>.</p>
 <div class="paragraph">
 <p>This setting can be overridden with the <code>GIT_NOTES_REWRITE_MODE</code>
 environment variable.</p>
@@ -881,10 +909,12 @@ in which case notes in all matching refs will be copied.  You
 may also specify this configuration several times.</p>
 <div class="paragraph">
 <p>Does not have a default value; you must configure this variable to
-enable note rewriting.</p>
+enable note rewriting.  Set it to <code>refs/notes/commits</code> to enable
+rewriting for the default commit notes.</p>
 </div>
 <div class="paragraph">
-<p>Can be overridden with the <code>GIT_NOTES_REWRITE_REF</code> environment variable.</p>
+<p>Can be overridden with the <code>GIT_NOTES_REWRITE_REF</code> environment variable.
+See <code>notes.rewrite.&lt;command&gt;</code> above for a further description of its format.</p>
 </div>
 </dd>
 </dl>
@@ -951,7 +981,7 @@ on the <code>notes.rewrite.&lt;command&gt;</code> and <code>notes.rewriteRef</co
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-08-30 21:40:02 UTC
+Last updated 2022-09-16 01:56:39 UTC
 </div>
 </div>
 </body>

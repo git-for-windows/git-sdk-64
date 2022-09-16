@@ -828,8 +828,8 @@ The default is to use a pager.</p>
 <h2 id="FILES">FILES</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If not set explicitly with <code>--file</code>, there are four files where
-<em>git config</em> will search for configuration options:</p>
+<p>By default, <em>git config</em> will read configuration options from multiple
+files:</p>
 </div>
 <div class="dlist">
 <dl>
@@ -838,18 +838,15 @@ The default is to use a pager.</p>
 <p>System-wide configuration file.</p>
 </dd>
 <dt class="hdlist1">$XDG_CONFIG_HOME/git/config</dt>
-<dd>
-<p>Second user-specific configuration file. If $XDG_CONFIG_HOME is not set
-or empty, <code>$HOME/.config/git/config</code> will be used. Any single-valued
-variable set in this file will be overwritten by whatever is in
-<code>~/.gitconfig</code>.  It is a good idea not to create this file if
-you sometimes use older versions of Git, as support for this
-file was added fairly recently.</p>
-</dd>
 <dt class="hdlist1">~/.gitconfig</dt>
 <dd>
-<p>User-specific configuration file. Also called "global"
-configuration file.</p>
+<p>User-specific configuration files. When the XDG_CONFIG_HOME environment
+variable is not set or empty, $HOME/.config/ is used as
+$XDG_CONFIG_HOME.</p>
+<div class="paragraph">
+<p>These are also called "global" configuration files. If both files exist, both
+files are read in the order given above.</p>
+</div>
 </dd>
 <dt class="hdlist1">$GIT_DIR/config</dt>
 <dd>
@@ -863,11 +860,15 @@ configuration file.</p>
 </dl>
 </div>
 <div class="paragraph">
-<p>If no further options are given, all reading options will read all of these
-files that are available. If the global or the system-wide configuration
-file are not available they will be ignored. If the repository configuration
-file is not available or readable, <em>git config</em> will exit with a non-zero
-error code. However, in neither case will an error message be issued.</p>
+<p>You may also provide additional configuration parameters when running any
+git command by using the <code>-c</code> option. See <a href="git.html">git(1)</a> for details.</p>
+</div>
+<div class="paragraph">
+<p>Options will be read from all of these files that are available. If the
+global or the system-wide configuration files are missing or unreadable they
+will be ignored. If the repository configuration file is missing or unreadable,
+<em>git config</em> will exit with a non-zero error code. An error message is produced
+if the file is unreadable, but not if it is missing.</p>
 </div>
 <div class="paragraph">
 <p>The files are read in the order given above, with last value found taking
@@ -875,23 +876,89 @@ precedence over values read earlier.  When multiple values are taken then all
 values of a key from all files will be used.</p>
 </div>
 <div class="paragraph">
-<p>You may override individual configuration parameters when running any git
-command by using the <code>-c</code> option. See <a href="git.html">git(1)</a> for details.</p>
-</div>
-<div class="paragraph">
-<p>All writing options will per default write to the repository specific
+<p>By default, options are only written to the repository specific
 configuration file. Note that this also affects options like <code>--replace-all</code>
 and <code>--unset</code>. <strong><em>git config</em> will only ever change one file at a time</strong>.</p>
 </div>
 <div class="paragraph">
-<p>You can override these rules using the <code>--global</code>, <code>--system</code>,
-<code>--local</code>, <code>--worktree</code>, and <code>--file</code> command-line options; see
-<a href="#OPTIONS">OPTIONS</a> above.</p>
+<p>You can limit which configuration sources are read from or written to by
+specifying the path of a file with the <code>--file</code> option, or by specifying a
+configuration scope with <code>--system</code>, <code>--global</code>, <code>--local</code>, or <code>--worktree</code>.
+For more, see <a href="#OPTIONS">OPTIONS</a> above.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_environment">ENVIRONMENT</h2>
+<h2 id="SCOPES">SCOPES</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Each configuration source falls within a configuration scope. The scopes
+are:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">system</dt>
+<dd>
+<p>$(prefix)/etc/gitconfig</p>
+</dd>
+<dt class="hdlist1">global</dt>
+<dd>
+<p>$XDG_CONFIG_HOME/git/config</p>
+<div class="paragraph">
+<p>~/.gitconfig</p>
+</div>
+</dd>
+<dt class="hdlist1">local</dt>
+<dd>
+<p>$GIT_DIR/config</p>
+</dd>
+<dt class="hdlist1">worktree</dt>
+<dd>
+<p>$GIT_DIR/config.worktree</p>
+</dd>
+<dt class="hdlist1">command</dt>
+<dd>
+<p>GIT_CONFIG_{COUNT,KEY,VALUE} environment variables (see <a href="#ENVIRONMENT">ENVIRONMENT</a>
+below)</p>
+<div class="paragraph">
+<p>the <code>-c</code> option</p>
+</div>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>With the exception of <em>command</em>, each scope corresponds to a command line
+option: <code>--system</code>, <code>--global</code>, <code>--local</code>, <code>--worktree</code>.</p>
+</div>
+<div class="paragraph">
+<p>When reading options, specifying a scope will only read options from the
+files within that scope. When writing options, specifying a scope will write
+to the files within that scope (instead of the repository specific
+configuration file). See <a href="#OPTIONS">OPTIONS</a> above for a complete description.</p>
+</div>
+<div class="paragraph">
+<p>Most configuration options are respected regardless of the scope it is
+defined in, but some options are only respected in certain scopes. See the
+respective option&#8217;s documentation for the full details.</p>
+</div>
+<div class="sect2">
+<h3 id="_protected_configuration">Protected configuration</h3>
+<div class="paragraph">
+<p>Protected configuration refers to the <em>system</em>, <em>global</em>, and <em>command</em> scopes.
+For security reasons, certain options are only respected when they are
+specified in protected configuration, and ignored otherwise.</p>
+</div>
+<div class="paragraph">
+<p>Git treats these scopes as if they are controlled by the user or a trusted
+administrator. This is because an attacker who controls these scopes can do
+substantial harm without using Git, so it is assumed that the user&#8217;s environment
+protects these scopes against attackers.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ENVIRONMENT">ENVIRONMENT</h2>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
@@ -2293,18 +2360,41 @@ You probably do not need to adjust this value.</p>
 </dd>
 <dt class="hdlist1">core.bigFileThreshold</dt>
 <dd>
-<p>Files larger than this size are stored deflated, without
-attempting delta compression.  Storing large files without
-delta compression avoids excessive memory usage, at the
-slight expense of increased disk usage. Additionally files
-larger than this size are always treated as binary.</p>
+<p>The size of files considered "big", which as discussed below
+changes the behavior of numerous git commands, as well as how
+such files are stored within the repository. The default is
+512 MiB. Common unit suffixes of <em>k</em>, <em>m</em>, or <em>g</em> are
+supported.</p>
 <div class="paragraph">
-<p>Default is 512 MiB on all platforms.  This should be reasonable
-for most projects as source code and other text files can still
-be delta compressed, but larger binary media files won&#8217;t be.</p>
+<p>Files above the configured limit will be:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Stored deflated in packfiles, without attempting delta compression.</p>
+<div class="paragraph">
+<p>The default limit is primarily set with this use-case in mind. With it,
+most projects will have their source code and other text files delta
+compressed, but not larger binary media files.</p>
 </div>
 <div class="paragraph">
-<p>Common unit suffixes of <em>k</em>, <em>m</em>, or <em>g</em> are supported.</p>
+<p>Storing large files without delta compression avoids excessive memory
+usage, at the slight expense of increased disk usage.</p>
+</div>
+</li>
+<li>
+<p>Will be treated as if they were labeled "binary" (see
+<a href="gitattributes.html">gitattributes(5)</a>). e.g. <a href="git-log.html">git-log(1)</a> and
+<a href="git-diff.html">git-diff(1)</a> will not compute diffs for files above this limit.</p>
+</li>
+<li>
+<p>Will generally be streamed when written, which avoids excessive
+memory usage, at the cost of some fixed overhead. Commands that make
+use of this include <a href="git-archive.html">git-archive(1)</a>,
+<a href="git-fast-import.html">git-fast-import(1)</a>, <a href="git-index-pack.html">git-index-pack(1)</a>,
+<a href="git-unpack-objects.html">git-unpack-objects(1)</a> and <a href="git-fsck.html">git-fsck(1)</a>.</p>
+</li>
+</ul>
 </div>
 </dd>
 <dt class="hdlist1">core.excludesFile</dt>
@@ -3695,23 +3785,6 @@ details.</p>
 <dd>
 <p>Set this option to true to make the diff driver cache the text
 conversion outputs.  See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
-</dd>
-<dt class="hdlist1">diff.tool</dt>
-<dd>
-<p>Controls which diff tool is used by <a href="git-difftool.html">git-difftool(1)</a>.
-This variable overrides the value configured in <code>merge.tool</code>.
-The list below shows the valid built-in values.
-Any other value is treated as a custom diff tool and requires
-that a corresponding difftool.&lt;tool&gt;.cmd variable is defined.</p>
-</dd>
-<dt class="hdlist1">diff.guitool</dt>
-<dd>
-<p>Controls which diff tool is used by <a href="git-difftool.html">git-difftool(1)</a> when
-the -g/--gui flag is specified. This variable overrides the value
-configured in <code>merge.guitool</code>. The list below shows the valid
-built-in values. Any other value is treated as a custom diff tool
-and requires that a corresponding difftool.&lt;guitool&gt;.cmd variable
-is defined.</p>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><code>araxis</code></dt>
@@ -3872,10 +3945,22 @@ moved lines are not colored.</p>
 this option controls the <code>&lt;mode&gt;</code> how spaces are treated
 for details of valid modes see <em>--color-moved-ws</em> in <a href="git-diff.html">git-diff(1)</a>.</p>
 </dd>
-<dt class="hdlist1">difftool.&lt;tool&gt;.path</dt>
+<dt class="hdlist1">diff.tool</dt>
 <dd>
-<p>Override the path for the given tool.  This is useful in case
-your tool is not in the PATH.</p>
+<p>Controls which diff tool is used by <a href="git-difftool.html">git-difftool(1)</a>.
+This variable overrides the value configured in <code>merge.tool</code>.
+The list below shows the valid built-in values.
+Any other value is treated as a custom diff tool and requires
+that a corresponding difftool.&lt;tool&gt;.cmd variable is defined.</p>
+</dd>
+<dt class="hdlist1">diff.guitool</dt>
+<dd>
+<p>Controls which diff tool is used by <a href="git-difftool.html">git-difftool(1)</a> when
+the -g/--gui flag is specified. This variable overrides the value
+configured in <code>merge.guitool</code>. The list below shows the valid
+built-in values. Any other value is treated as a custom diff tool
+and requires that a corresponding difftool.&lt;guitool&gt;.cmd variable
+is defined.</p>
 </dd>
 <dt class="hdlist1">difftool.&lt;tool&gt;.cmd</dt>
 <dd>
@@ -3885,6 +3970,21 @@ variables available:  <em>LOCAL</em> is set to the name of the temporary
 file containing the contents of the diff pre-image and <em>REMOTE</em>
 is set to the name of the temporary file containing the contents
 of the diff post-image.</p>
+<div class="paragraph">
+<p>See the <code>--tool=&lt;tool&gt;</code> option in <a href="git-difftool.html">git-difftool(1)</a> for more details.</p>
+</div>
+</dd>
+<dt class="hdlist1">difftool.&lt;tool&gt;.path</dt>
+<dd>
+<p>Override the path for the given tool.  This is useful in case
+your tool is not in the PATH.</p>
+</dd>
+<dt class="hdlist1">difftool.trustExitCode</dt>
+<dd>
+<p>Exit difftool if the invoked diff tool returns a non-zero exit status.</p>
+<div class="paragraph">
+<p>See the <code>--trust-exit-code</code> option in <a href="git-difftool.html">git-difftool(1)</a> for more details.</p>
+</div>
 </dd>
 <dt class="hdlist1">difftool.prompt</dt>
 <dd>
@@ -4126,6 +4226,11 @@ the "From:" field of patch mails.  If true, format-patch defaults to
 mails and including a "From:" field in the body of the patch mail if
 different.  If set to a non-boolean value, format-patch uses that
 value instead of your committer identity.  Defaults to false.</p>
+</dd>
+<dt class="hdlist1">format.forceInBodyFrom</dt>
+<dd>
+<p>Provides the default value for the <code>--[no-]force-in-body-from</code>
+option to format-patch.  Defaults to false.</p>
 </dd>
 <dt class="hdlist1">format.numbered</dt>
 <dd>
@@ -4654,8 +4759,12 @@ other than <em>default</em>.</p>
 </dd>
 <dt class="hdlist1">grep.threads</dt>
 <dd>
-<p>Number of grep worker threads to use.
-See <code>grep.threads</code> in <a href="git-grep.html">git-grep(1)</a> for more information.</p>
+<p>Number of grep worker threads to use. If unset (or set to 0), Git will
+use as many threads as the number of logical cores available.</p>
+</dd>
+<dt class="hdlist1">grep.fullName</dt>
+<dd>
+<p>If set to true, enable <code>--full-name</code> option by default.</p>
 </dd>
 <dt class="hdlist1">grep.fallbackToNoIndex</dt>
 <dd>
@@ -5565,6 +5674,11 @@ override this option with <code>--no-abbrev-commit</code>.</p>
 <p>Set the default date-time mode for the <em>log</em> command.
 Setting a value for log.date is similar to using <em>git log</em>'s
 <code>--date</code> option.  See <a href="git-log.html">git-log(1)</a> for details.</p>
+<div class="paragraph">
+<p>If the format is set to "auto:foo" and the pager is in use, format
+"foo" will be the used for the date format. Otherwise "default" will
+be used.</p>
+</div>
 </dd>
 <dt class="hdlist1">log.decorate</dt>
 <dd>
@@ -5576,6 +5690,12 @@ If <em>auto</em> is specified, then if the output is going to a terminal,
 the ref names are shown as if <em>short</em> were given, otherwise no ref
 names are shown. This is the same as the <code>--decorate</code> option
 of the <code>git log</code>.</p>
+</dd>
+<dt class="hdlist1">log.initialDecorationSet</dt>
+<dd>
+<p>By default, <code>git log</code> only shows decorations for certain known ref
+namespaces. If <em>all</em> is specified, then show all refs as
+decorations.</p>
 </dd>
 <dt class="hdlist1">log.excludeDecoration</dt>
 <dd>
@@ -5624,7 +5744,7 @@ assume <code>--no-use-mailmap</code>. True by default.</p>
 <dd>
 <p>May be "advertise" (the default), "allow", or "ignore". If "advertise",
 the server will respond to the client sending "unborn" (as described in
-protocol-v2.txt) and will advertise support for this feature during the
+<a href="gitprotocol-v2.html">gitprotocol-v2(5)</a>) and will advertise support for this feature during the
 protocol v2 capability advertisement. "allow" is the same as
 "advertise" except that the server will not advertise support for this
 feature; this is useful for load-balanced servers that cannot be
@@ -6153,6 +6273,10 @@ Defaults to <code>false</code>.</p>
 conflicts.  Must be one of <code>manual</code>, <code>ours</code>, <code>theirs</code>, <code>union</code>, or
 <code>cat_sort_uniq</code>.  Defaults to <code>manual</code>.  See "NOTES MERGE STRATEGIES"
 section of <a href="git-notes.html">git-notes(1)</a> for more information on each strategy.</p>
+<div class="paragraph">
+<p>This setting can be overridden by passing the <code>--strategy</code> option to
+<a href="git-notes.html">git-notes(1)</a>.</p>
+</div>
 </dd>
 <dt class="hdlist1">notes.&lt;name&gt;.mergeStrategy</dt>
 <dd>
@@ -6163,17 +6287,23 @@ refs/notes/&lt;name&gt;.  This overrides the more general
 </dd>
 <dt class="hdlist1">notes.displayRef</dt>
 <dd>
-<p>The (fully qualified) refname from which to show notes when
-showing commit messages.  The value of this variable can be set
-to a glob, in which case notes from all matching refs will be
-shown.  You may also specify this configuration variable
-several times.  A warning will be issued for refs that do not
-exist, but a glob that does not match any refs is silently
-ignored.</p>
+<p>Which ref (or refs, if a glob or specified more than once), in
+addition to the default set by <code>core.notesRef</code> or
+<code>GIT_NOTES_REF</code>, to read notes from when showing commit
+messages with the <em>git log</em> family of commands.</p>
 <div class="paragraph">
 <p>This setting can be overridden with the <code>GIT_NOTES_DISPLAY_REF</code>
 environment variable, which must be a colon separated list of refs or
 globs.</p>
+</div>
+<div class="paragraph">
+<p>A warning will be issued for refs that do not exist,
+but a glob that does not match any refs is silently ignored.</p>
+</div>
+<div class="paragraph">
+<p>This setting can be disabled by the <code>--no-notes</code> option to the <em>git
+log</em> family of commands, or by the <code>--notes=&lt;ref&gt;</code> option accepted by
+those commands.</p>
 </div>
 <div class="paragraph">
 <p>The effective value of "core.notesRef" (possibly overridden by
@@ -6184,10 +6314,14 @@ displayed.</p>
 <dt class="hdlist1">notes.rewrite.&lt;command&gt;</dt>
 <dd>
 <p>When rewriting commits with &lt;command&gt; (currently <code>amend</code> or
-<code>rebase</code>) and this variable is set to <code>true</code>, Git
-automatically copies your notes from the original to the
-rewritten commit.  Defaults to <code>true</code>, but see
-"notes.rewriteRef" below.</p>
+<code>rebase</code>), if this variable is <code>false</code>, git will not copy
+notes from the original to the rewritten commit.  Defaults to
+<code>true</code>.  See also "<code>notes.rewriteRef</code>" below.</p>
+<div class="paragraph">
+<p>This setting can be overridden with the <code>GIT_NOTES_REWRITE_REF</code>
+environment variable, which must be a colon separated list of refs or
+globs.</p>
+</div>
 </dd>
 <dt class="hdlist1">notes.rewriteMode</dt>
 <dd>
@@ -6204,18 +6338,17 @@ environment variable.</p>
 <dt class="hdlist1">notes.rewriteRef</dt>
 <dd>
 <p>When copying notes during a rewrite, specifies the (fully
-qualified) ref whose notes should be copied.  The ref may be a
-glob, in which case notes in all matching refs will be copied.
-You may also specify this configuration several times.</p>
+qualified) ref whose notes should be copied.  May be a glob,
+in which case notes in all matching refs will be copied.  You
+may also specify this configuration several times.</p>
 <div class="paragraph">
 <p>Does not have a default value; you must configure this variable to
 enable note rewriting.  Set it to <code>refs/notes/commits</code> to enable
 rewriting for the default commit notes.</p>
 </div>
 <div class="paragraph">
-<p>This setting can be overridden with the <code>GIT_NOTES_REWRITE_REF</code>
-environment variable, which must be a colon separated list of refs or
-globs.</p>
+<p>Can be overridden with the <code>GIT_NOTES_REWRITE_REF</code> environment variable.
+See <code>notes.rewrite.&lt;command&gt;</code> above for a further description of its format.</p>
 </div>
 </dd>
 <dt class="hdlist1">pack.window</dt>
@@ -6409,10 +6542,18 @@ computed; instead, any namehashes stored in an existing bitmap are
 permuted into their appropriate location when writing a new bitmap.</p>
 </div>
 </dd>
+<dt class="hdlist1">pack.writeBitmapLookupTable</dt>
+<dd>
+<p>When true, Git will include a "lookup table" section in the
+bitmap index (if one is written). This table is used to defer
+loading individual bitmaps as late as possible. This can be
+beneficial in repositories that have relatively large bitmap
+indexes. Defaults to false.</p>
+</dd>
 <dt class="hdlist1">pack.writeReverseIndex</dt>
 <dd>
 <p>When true, git will write a corresponding .rev file (see:
-<a href="../technical/pack-format.html">Documentation/technical/pack-format.txt</a>)
+<a href="gitformat-pack.html">gitformat-pack(5)</a>)
 for each new packfile that it writes in all places except for
 <a href="git-fast-import.html">git-fast-import(1)</a> and in the bulk checkin mechanism.
 Defaults to false.</p>
@@ -6524,7 +6665,7 @@ Supported versions:</p>
 in the initial response from the server.</p>
 </li>
 <li>
-<p><code>2</code> - <a href="technical/protocol-v2.html">wire protocol version 2</a>.</p>
+<p><code>2</code> - Wire protocol version 2, see <a href="gitprotocol-v2.html">gitprotocol-v2(5)</a>.</p>
 </li>
 </ul>
 </div>
@@ -6734,6 +6875,12 @@ server attempt to find commits in common. If "false", Git will
 rely solely on the server&#8217;s ref advertisement to find commits
 in common.</p>
 </dd>
+<dt class="hdlist1">push.useBitmaps</dt>
+<dd>
+<p>If set to "false", disable use of bitmaps for "git push" even if
+<code>pack.useBitmaps</code> is "true", without preventing other git operations
+from using bitmaps. Default is true.</p>
+</dd>
 <dt class="hdlist1">rebase.backend</dt>
 <dd>
 <p>Default backend to use for rebasing.  Possible choices are
@@ -6760,6 +6907,10 @@ successful rebase might result in non-trivial conflicts.
 This option can be overridden by the <code>--no-autostash</code> and
 <code>--autostash</code> options of <a href="git-rebase.html">git-rebase(1)</a>.
 Defaults to false.</p>
+</dd>
+<dt class="hdlist1">rebase.updateRefs</dt>
+<dd>
+<p>If set to true enable <code>--update-refs</code> option by default.</p>
 </dd>
 <dt class="hdlist1">rebase.missingCommitsCheck</dt>
 <dd>
@@ -7167,6 +7318,35 @@ repository.</p>
 <p>Setting this variable to true makes <code>git revert</code> behave
 as if the <code>--reference</code> option is given.</p>
 </dd>
+<dt class="hdlist1">safe.bareRepository</dt>
+<dd>
+<p>Specifies which bare repositories Git will work with. The currently
+supported values are:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>all</code>: Git works with all bare repositories. This is the default.</p>
+</li>
+<li>
+<p><code>explicit</code>: Git only works with bare repositories specified via
+the top-level <code>--git-dir</code> command-line option, or the <code>GIT_DIR</code>
+environment variable (see <a href="git.html">git(1)</a>).</p>
+<div class="paragraph">
+<p>If you do not use bare repositories in your workflow, then it may be
+beneficial to set <code>safe.bareRepository</code> to <code>explicit</code> in your global
+config. This will protect you from attacks that involve cloning a
+repository that contains a bare repository and running a Git command
+within that directory.</p>
+</div>
+<div class="paragraph">
+<p>This config setting is only respected in protected configuration (see
+<a href="#SCOPES">SCOPES</a>). This prevents the untrusted repository from tampering with
+this value.</p>
+</div>
+</li>
+</ul>
+</div>
+</dd>
 <dt class="hdlist1">safe.directory</dt>
 <dd>
 <p>These config entries specify Git-tracked directories that are
@@ -7183,9 +7363,9 @@ override any such directories specified in the system config), add a
 <code>safe.directory</code> entry with an empty value.</p>
 </div>
 <div class="paragraph">
-<p>This config setting is only respected when specified in a system or global
-config, not when it is specified in a repository config, via the command
-line option <code>-c safe.directory=&lt;path&gt;</code>, or in environment variables.</p>
+<p>This config setting is only respected in protected configuration (see
+<a href="#SCOPES">SCOPES</a>). This prevents the untrusted repository from tampering with this
+value.</p>
 </div>
 <div class="paragraph">
 <p>The value of this setting is interpolated, i.e. <code>~/&lt;path&gt;</code> expands to a
@@ -7240,17 +7420,74 @@ found below, taking precedence over those when this
 identity is selected, through either the command-line or
 <code>sendemail.identity</code>.</p>
 </dd>
+<dt class="hdlist1">sendemail.multiEdit</dt>
+<dd>
+<p>If true (default), a single editor instance will be spawned to edit
+files you have to edit (patches when <code>--annotate</code> is used, and the
+summary when <code>--compose</code> is used). If false, files will be edited one
+after the other, spawning a new editor each time.</p>
+</dd>
+<dt class="hdlist1">sendemail.confirm</dt>
+<dd>
+<p>Sets the default for whether to confirm before sending. Must be
+one of <em>always</em>, <em>never</em>, <em>cc</em>, <em>compose</em>, or <em>auto</em>. See <code>--confirm</code>
+in the <a href="git-send-email.html">git-send-email(1)</a> documentation for the meaning of these
+values.</p>
+</dd>
 <dt class="hdlist1">sendemail.aliasesFile</dt>
+<dd>
+<p>To avoid typing long email addresses, point this to one or more
+email aliases files.  You must also supply <code>sendemail.aliasFileType</code>.</p>
+</dd>
 <dt class="hdlist1">sendemail.aliasFileType</dt>
+<dd>
+<p>Format of the file(s) specified in sendemail.aliasesFile. Must be
+one of <em>mutt</em>, <em>mailrc</em>, <em>pine</em>, <em>elm</em>, or <em>gnus</em>, or <em>sendmail</em>.</p>
+<div class="paragraph">
+<p>What an alias file in each format looks like can be found in
+the documentation of the email program of the same name. The
+differences and limitations from the standard formats are
+described below:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">sendmail</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Quoted aliases and quoted addresses are not supported: lines that
+contain a <code>"</code> symbol are ignored.</p>
+</li>
+<li>
+<p>Redirection to a file (<code>/path/name</code>) or pipe (<code>|command</code>) is not
+supported.</p>
+</li>
+<li>
+<p>File inclusion (<code>:include: /path/name</code>) is not supported.</p>
+</li>
+<li>
+<p>Warnings are printed on the standard error output for any
+explicitly unsupported constructs, and any other lines that are not
+recognized by the parser.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</dd>
 <dt class="hdlist1">sendemail.annotate</dt>
 <dt class="hdlist1">sendemail.bcc</dt>
 <dt class="hdlist1">sendemail.cc</dt>
 <dt class="hdlist1">sendemail.ccCmd</dt>
 <dt class="hdlist1">sendemail.chainReplyTo</dt>
-<dt class="hdlist1">sendemail.confirm</dt>
 <dt class="hdlist1">sendemail.envelopeSender</dt>
 <dt class="hdlist1">sendemail.from</dt>
-<dt class="hdlist1">sendemail.multiEdit</dt>
 <dt class="hdlist1">sendemail.signedoffbycc</dt>
 <dt class="hdlist1">sendemail.smtpPass</dt>
 <dt class="hdlist1">sendemail.suppresscc</dt>
@@ -7267,7 +7504,9 @@ identity is selected, through either the command-line or
 <dt class="hdlist1">sendemail.validate</dt>
 <dt class="hdlist1">sendemail.xmailer</dt>
 <dd>
-<p>See <a href="git-send-email.html">git-send-email(1)</a> for description.</p>
+<p>These configuration variables all provide a default for
+<a href="git-send-email.html">git-send-email(1)</a> command-line options. See its
+documentation for details.</p>
 </dd>
 <dt class="hdlist1">sendemail.signedoffcc (deprecated)</dt>
 <dd>
@@ -7830,7 +8069,7 @@ exposure, e.g. because:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>The OS or system where you&#8217;re running git may not provide way way or
+<p>The OS or system where you&#8217;re running git may not provide a way or
 otherwise allow you to configure the permissions of the
 configuration file where the username and/or password are stored.</p>
 </li>
@@ -8024,9 +8263,9 @@ was run. I.e., <code>upload-pack</code> will feed input intended for
 <code>pack-objects</code> to the hook, and expects a completed packfile on
 stdout.</p>
 <div class="paragraph">
-<p>Note that this configuration variable is ignored if it is seen in the
-repository-level config (this is a safety measure against fetching from
-untrusted repositories).</p>
+<p>Note that this configuration variable is only respected when it is specified
+in protected configuration (see <a href="#SCOPES">SCOPES</a>). This is a safety measure
+against fetching from untrusted repositories.</p>
 </div>
 </dd>
 <dt class="hdlist1">uploadpack.allowFilter</dt>
@@ -8255,7 +8494,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-08-30 21:40:02 UTC
+Last updated 2022-09-16 01:56:39 UTC
 </div>
 </div>
 </body>

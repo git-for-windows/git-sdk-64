@@ -580,8 +580,13 @@ see am.threeWay in <a href="git-config.html">git-config(1)</a>.</p>
 <dt class="hdlist1">--rerere-autoupdate</dt>
 <dt class="hdlist1">--no-rerere-autoupdate</dt>
 <dd>
-<p>Allow the rerere mechanism to update the index with the
-result of auto-conflict resolution if possible.</p>
+<p>After the rerere mechanism reuses a recorded resolution on
+the current conflict to update the files in the working
+tree, allow it to also update the index with the result of
+resolution.  <code>--no-rerere-autoupdate</code> is a good way to
+double-check what <code>rerere</code> did and catch potential
+mismerges, before committing the result to the index with a
+separate <code>git add</code>.</p>
 </dd>
 <dt class="hdlist1">--ignore-space-change</dt>
 <dt class="hdlist1">--ignore-whitespace</dt>
@@ -774,6 +779,37 @@ information.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_configuration">CONFIGURATION</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Everything below this line in this section is selectively included
+from the <a href="git-config.html">git-config(1)</a> documentation. The content is the same
+as what&#8217;s found there:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">am.keepcr</dt>
+<dd>
+<p>If true, git-am will call git-mailsplit for patches in mbox format
+with parameter <code>--keep-cr</code>. In this case git-mailsplit will
+not remove <code>\r</code> from lines ending with <code>\r\n</code>. Can be overridden
+by giving <code>--no-keep-cr</code> from the command line.
+See <a href="git-am.html">git-am(1)</a>, <a href="git-mailsplit.html">git-mailsplit(1)</a>.</p>
+</dd>
+<dt class="hdlist1">am.threeWay</dt>
+<dd>
+<p>By default, <code>git am</code> will fail if the patch does not apply cleanly. When
+set to true, this setting tells <code>git am</code> to fall back on 3-way merge if
+the patch records the identity of blobs it is supposed to apply to and
+we have those blobs available locally (equivalent to giving the <code>--3way</code>
+option from the command line). Defaults to <code>false</code>.
+See <a href="git-am.html">git-am(1)</a>.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -792,7 +828,7 @@ information.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-08-30 21:40:02 UTC
+Last updated 2022-09-16 01:56:39 UTC
 </div>
 </div>
 </body>

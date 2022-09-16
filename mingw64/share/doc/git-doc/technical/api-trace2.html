@@ -1362,6 +1362,7 @@ setting, command-line flag, or environment variable.</p>
 <pre>{
         "event":"def_param",
         ...
+        "scope":"global",
         "param":"core.abbrev",
         "value":"7"
 }</pre>
@@ -1904,13 +1905,55 @@ at offset 508.</p>
 as each thread starts and allocates TLS storage.</p>
 </div>
 </dd>
+<dt class="hdlist1">Config (def param) Events</dt>
+<dd>
+<p>Dump "interesting" config values to trace2 log.</p>
+<div class="paragraph">
+<p>We can optionally emit configuration events, see
+<code>trace2.configparams</code> in <a href="../git-config.html">git-config(1)</a> for how to enable
+it.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ git config --system color.ui never
+$ git config --global color.ui always
+$ git config --local color.ui auto
+$ git config --list --show-scope | grep 'color.ui'
+system  color.ui=never
+global  color.ui=always
+local   color.ui=auto</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, mark the config <code>color.ui</code> as "interesting" config with
+<code>GIT_TRACE2_CONFIG_PARAMS</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ export GIT_TRACE2_PERF_BRIEF=1
+$ export GIT_TRACE2_PERF=~/log.perf
+$ export GIT_TRACE2_CONFIG_PARAMS=color.ui
+$ git version
+...
+$ cat ~/log.perf
+d0 | main                     | version      |     |           |           |              | ...
+d0 | main                     | start        |     |  0.001642 |           |              | /usr/local/bin/git version
+d0 | main                     | cmd_name     |     |           |           |              | version (version)
+d0 | main                     | def_param    |     |           |           | scope:system | color.ui:never
+d0 | main                     | def_param    |     |           |           | scope:global | color.ui:always
+d0 | main                     | def_param    |     |           |           | scope:local  | color.ui:auto
+d0 | main                     | data         | r0  |  0.002100 |  0.002100 | fsync        | fsync/writeout-only:0
+d0 | main                     | data         | r0  |  0.002126 |  0.002126 | fsync        | fsync/hardware-flush:0
+d0 | main                     | exit         |     |  0.000470 |           |              | code:0
+d0 | main                     | atexit       |     |  0.000477 |           |              | code:0</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>== Future Work</p>
+</div>
+</dd>
 </dl>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_future_work">Future Work</h2>
-<div class="sectionbody">
 <div class="sect2">
 <h3 id="_relationship_to_the_existing_trace_api_api_trace_txt">Relationship to the Existing Trace Api (api-trace.txt)</h3>
 <div class="paragraph">
@@ -1945,7 +1988,7 @@ Trace2 targets (and convert &lt;key&gt; to a "category").</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-08-30 21:40:02 UTC
+Last updated 2022-09-16 01:56:39 UTC
 </div>
 </div>
 </body>

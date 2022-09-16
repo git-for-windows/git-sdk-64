@@ -916,8 +916,13 @@ specified, <code>-s ort</code>.  Note the reversal of <em>ours</em> and
 <dt class="hdlist1">--rerere-autoupdate</dt>
 <dt class="hdlist1">--no-rerere-autoupdate</dt>
 <dd>
-<p>Allow the rerere mechanism to update the index with the
-result of auto-conflict resolution if possible.</p>
+<p>After the rerere mechanism reuses a recorded resolution on
+the current conflict to update the files in the working
+tree, allow it to also update the index with the result of
+resolution.  <code>--no-rerere-autoupdate</code> is a good way to
+double-check what <code>rerere</code> did and catch potential
+mismerges, before committing the result to the index with a
+separate <code>git add</code>.</p>
 </dd>
 <dt class="hdlist1">-S[&lt;keyid&gt;]</dt>
 <dt class="hdlist1">--gpg-sign[=&lt;keyid&gt;]</dt>
@@ -1207,6 +1212,17 @@ start would be overridden by the presence of
 <code>rebase.rescheduleFailedExec=true</code> configuration.</p>
 </div>
 </dd>
+<dt class="hdlist1">--update-refs</dt>
+<dt class="hdlist1">--no-update-refs</dt>
+<dd>
+<p>Automatically force-update any branches that point to commits that
+are being rebased. Any branches that are checked out in a worktree
+are not updated in this way.</p>
+<div class="paragraph">
+<p>If the configuration variable <code>rebase.updateRefs</code> is set, then this option
+can be used to override and disable this setting.</p>
+</div>
+</dd>
 </dl>
 </div>
 </div>
@@ -1270,6 +1286,9 @@ start would be overridden by the presence of
 </li>
 <li>
 <p>--edit-todo</p>
+</li>
+<li>
+<p>--update-refs</p>
 </li>
 <li>
 <p>--root when used in combination with --onto</p>
@@ -2267,6 +2286,11 @@ merge cmake</pre>
 <div class="sect1">
 <h2 id="_configuration">CONFIGURATION</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Everything below this line in this section is selectively included
+from the <a href="git-config.html">git-config(1)</a> documentation. The content is the same
+as what&#8217;s found there:</p>
+</div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">rebase.backend</dt>
@@ -2295,6 +2319,10 @@ successful rebase might result in non-trivial conflicts.
 This option can be overridden by the <code>--no-autostash</code> and
 <code>--autostash</code> options of <a href="git-rebase.html">git-rebase(1)</a>.
 Defaults to false.</p>
+</dd>
+<dt class="hdlist1">rebase.updateRefs</dt>
+<dd>
+<p>If set to true enable <code>--update-refs</code> option by default.</p>
 </dd>
 <dt class="hdlist1">rebase.missingCommitsCheck</dt>
 <dd>
@@ -2371,7 +2399,7 @@ When not configured the default commit message editor is used instead.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-08-30 21:40:02 UTC
+Last updated 2022-09-16 01:56:39 UTC
 </div>
 </div>
 </body>

@@ -454,7 +454,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <em>git cat-file</em> (-t | -s) [--allow-unknown-type] &lt;object&gt;
 <em>git cat-file</em> (--batch | --batch-check | --batch-command) [--batch-all-objects]
              [--buffer] [--follow-symlinks] [--unordered]
-             [--textconv | --filters]
+             [--textconv | --filters] [-z]
 <em>git cat-file</em> (--textconv | --filters)
              [&lt;rev&gt;:&lt;path|tree-ish&gt; | --path=&lt;path|tree-ish&gt; &lt;rev&gt;]</pre>
 </div>
@@ -518,6 +518,13 @@ for a type that can trivially be dereferenced from the given
 "tree" with <code>&lt;object&gt;</code> being a commit object that contains it,
 or to ask for a "blob" with <code>&lt;object&gt;</code> being a tag object that
 points at it.</p>
+</dd>
+<dt class="hdlist1">--[no-]mailmap</dt>
+<dt class="hdlist1">--[no-]use-mailmap</dt>
+<dd>
+<p>Use mailmap file to map author, committer and tagger names
+and email addresses to canonical real names and email addresses.
+See <a href="git-shortlog.html">git-shortlog(1)</a>.</p>
 </dd>
 <dt class="hdlist1">--textconv</dt>
 <dd>
@@ -712,6 +719,12 @@ respectively print:</p>
 </div>
 </div>
 </div>
+</dd>
+<dt class="hdlist1">-z</dt>
+<dd>
+<p>Only meaningful with <code>--batch</code>, <code>--batch-check</code>, or
+<code>--batch-command</code>; input is NUL-delimited instead of
+newline-delimited.</p>
 </dd>
 </dl>
 </div>
@@ -930,7 +943,7 @@ will be reported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-08-30 21:40:02 UTC
+Last updated 2022-09-16 01:56:39 UTC
 </div>
 </div>
 </body>

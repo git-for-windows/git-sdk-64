@@ -450,9 +450,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git help</em> [-a|--all] [--[no-]verbose] [--[no-]external-commands] [--[no-]aliases]
-<em>git help</em> [[-i|--info] [-m|--man] [-w|--web]] [&lt;command&gt;|&lt;guide&gt;]
+<em>git help</em> [[-i|--info] [-m|--man] [-w|--web]] [&lt;command&gt;|&lt;doc&gt;]
 <em>git help</em> [-g|--guides]
-<em>git help</em> [-c|--config]</pre>
+<em>git help</em> [-c|--config]
+<em>git help</em> [--user-interfaces]
+<em>git help</em> [--developer-interfaces]</pre>
 </div>
 </div>
 </div>
@@ -460,7 +462,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>With no options and no <em>&lt;command&gt;</em> or <em>&lt;guide&gt;</em> given, the synopsis of the <em>git</em>
+<p>With no options and no <em>&lt;command&gt;</em> or <em>&lt;doc&gt;</em> given, the synopsis of the <em>git</em>
 command and a list of the most commonly used Git commands are printed
 on the standard output.</p>
 </div>
@@ -473,8 +475,8 @@ printed on the standard output.</p>
 Git concept guides is also printed on the standard output.</p>
 </div>
 <div class="paragraph">
-<p>If a command, or a guide, is given, a manual page for that command or
-guide is brought up. The <em>man</em> program is used by default for this
+<p>If a command or other documentation is given, the relevant manual page
+will be brought up. The <em>man</em> program is used by default for this
 purpose, but this can be overridden by other options or configuration
 variables.</p>
 </div>
@@ -530,6 +532,27 @@ summary of the list in <a href="git-config.html">git-config(1)</a>.</p>
 <dt class="hdlist1">--guides</dt>
 <dd>
 <p>Prints a list of the Git concept guides on the standard output.</p>
+</dd>
+<dt class="hdlist1">--user-interfaces</dt>
+<dd>
+<p>Prints a list of the repository, command and file interfaces
+documentation on the standard output.</p>
+<div class="paragraph">
+<p>In-repository file interfaces such as <code>.git/info/exclude</code> are
+documented here (see <a href="gitrepository-layout.html">gitrepository-layout(5)</a>), as well as
+in-tree configuration such as <code>.mailmap</code> (see <a href="gitmailmap.html">gitmailmap(5)</a>).</p>
+</div>
+<div class="paragraph">
+<p>This section of the documentation also covers general or widespread
+user-interface conventions (e.g. <a href="gitcli.html">gitcli(7)</a>), and
+pseudo-configuration such as the file-based <code>.git/hooks/*</code> interface
+described in <a href="githooks.html">githooks(5)</a>.</p>
+</div>
+</dd>
+<dt class="hdlist1">--developer-interfaces</dt>
+<dd>
+<p>Print list of file formats, protocols and other developer
+interfaces documentation on the standard output.</p>
 </dd>
 <dt class="hdlist1">-i</dt>
 <dt class="hdlist1">--info</dt>
@@ -727,7 +750,7 @@ See <a href="git-config.html">git-config(1)</a> for more information about this.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-08-30 21:40:02 UTC
+Last updated 2022-09-16 01:56:39 UTC
 </div>
 </div>
 </body>
