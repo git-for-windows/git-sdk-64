@@ -560,7 +560,6 @@ build_time_vars = {'ABIFLAGS': '',
  'IO_OBJS': '\\',
  'LDCXXSHARED': 'g++ -shared -Wl,--enable-auto-image-base',
  'LDFLAGS': '-pipe -Wl,--no-seh -pipe -Wl,--no-seh',
- 'LDFLAGS_NODIST': '',
  'LDLIBRARY': 'libpython3.10.dll.a',
  'LDLIBRARYDIR': '',
  'LDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe -Wl,--no-seh '

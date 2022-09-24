@@ -21,7 +21,7 @@ import stat
 import genericpath
 from genericpath import *
 
-if sys.platform == "win32" and "MSYSTEM" in os.environ:
+if sys.platform == "win32" and os.environ.get("MSYSTEM", ""):
     sep = '/'
     altsep = '\\'
 else:

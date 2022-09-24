@@ -43,7 +43,7 @@ if _MS_WINDOWS:
 else:
     path_separators = ['/']
 
-if 'MSYSTEM' in _os.environ:
+if _os.environ.get('MSYSTEM', ''):
     path_separators = path_separators[::-1]
 
 # Assumption made in _path_join()
