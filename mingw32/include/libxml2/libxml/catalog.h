@@ -175,19 +175,6 @@ XMLPUBFUN const xmlChar * XMLCALL
 XMLPUBFUN const xmlChar * XMLCALL
 		xmlCatalogGetPublic	(const xmlChar *pubID);
 
-/* Location of the default catalog*/
-#if !defined(XML_XML_DEFAULT_CATALOG)
-	#if !defined(_WIN32)
-		#define XML_XML_DEFAULT_CATALOG "file:///etc/xml/catalog"
-	#elif defined(_WIN32) && defined(_MSC_VER)
-		static char XML_XML_DEFAULT_CATALOG[256] = "file:///etc/xml/catalog";
-	#elif defined(__MINGW32__) && !defined(__MINGW64__)
-		#define XML_XML_DEFAULT_CATALOG "/mingw32/etc/xml/catalog"
-	#elif defined(__MINGW64__)
-		#define XML_XML_DEFAULT_CATALOG "/mingw64/etc/xml/catalog"
-	#endif 
-#endif //!defined(XML_XML_DEFAULT_CATALOG)
-
 #ifdef __cplusplus
 }
 #endif

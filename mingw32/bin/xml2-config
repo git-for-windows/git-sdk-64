@@ -58,7 +58,7 @@ while test $# -gt 0; do
       ;;
 
     --version)
-	echo 2.9.14
+	echo 2.10.2
 	exit 0
 	;;
 
@@ -86,14 +86,12 @@ while test $# -gt 0; do
             shift
             libs="-lxml2"
         else
-            libs="-lxml2 -L${libdir} -lz -L${libdir} -llzma   -liconv    "
+            libs="-lxml2 -L${libdir} -lz -L${libdir} -llzma   -liconv  -lm -lws2_32  "
         fi
 
         if [ "-L${libdir}" != "-L/usr/lib" -a "-L${libdir}" != "-L/usr/lib64" ]; then
             libs="-L${libdir} $libs"
         fi
-
-        libs="$libs -lws2_32"
         ;;
 
     *)

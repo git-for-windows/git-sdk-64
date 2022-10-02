@@ -82,10 +82,10 @@ extern "C" {
 #define ITCL_MAJOR_VERSION	4
 #define ITCL_MINOR_VERSION	2
 #define ITCL_RELEASE_LEVEL      TCL_FINAL_RELEASE
-#define ITCL_RELEASE_SERIAL     0
+#define ITCL_RELEASE_SERIAL     2
 
 #define ITCL_VERSION            "4.2"
-#define ITCL_PATCH_LEVEL        "4.2.1"
+#define ITCL_PATCH_LEVEL        "4.2.2"
 
 
 /*
