@@ -13,7 +13,7 @@
 
 package IO::Socket::SSL;
 
-our $VERSION = '2.074';
+our $VERSION = '2.075';
 
 use IO::Socket;
 use Net::SSLeay 1.46;
@@ -1211,7 +1211,7 @@ sub _generic_write {
     } else {
 	$written = Net::SSLeay::write_partial( $ssl,$offset,$length,$$buffer );
 	# write_partial does SSL_write which returns -1 on error
-	$written = undef if $written < 0;
+	$written = undef if $written <= 0;
     }
     if ( !defined($written) ) {
 	if ( my $err = $self->_skip_rw_error( $ssl,-1 )) {
@@ -1432,11 +1432,16 @@ sub stop_SSL {
 
 		# initiate or complete shutdown
 		local $SIG{PIPE} = 'IGNORE';
+		$SSL_ERROR = $! = undef;
 		my $rv = Net::SSLeay::shutdown($ssl);
 		if ( $rv < 0 ) {
 		    # non-blocking socket?
 		    if ( ! $timeout ) {
-			$self->_skip_rw_error( $ssl,$rv );
+			if ( my $err = $self->_skip_rw_error( $ssl, $rv )) {
+				# if $! is not set with ERROR_SYSCALL then report as EPIPE
+				$! ||= EPIPE if $err == $Net_SSLeay_ERROR_SYSCALL;
+				$self->error("SSL shutdown error ($err)");
+			}
 			# need to try again
 			return;
 		    }
@@ -1976,6 +1981,7 @@ sub fatal_ssl_error {
     my $self = shift;
     my $error_trap = ${*$self}{'_SSL_arguments'}->{'SSL_error_trap'};
     $@ = $self->errstr;
+    my $saved_error = $SSL_ERROR;
     if (defined $error_trap and ref($error_trap) eq 'CODE') {
 	$error_trap->($self, $self->errstr()."\n".$self->get_ssleay_error());
     } elsif ( ${*$self}{'_SSL_ioclass_upgraded'}
@@ -1987,6 +1993,7 @@ sub fatal_ssl_error {
 	# kill socket
 	$self->close
     }
+    $SSL_ERROR = $saved_error if $saved_error;
     return;
 }
 
