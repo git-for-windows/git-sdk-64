@@ -19,12 +19,12 @@
 #
 
 declare -r myname='checkupdates'
-declare -r myver='1.6.0'
+declare -r myver='1.7.1'
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
 DOWNLOAD_CACHE=0
-USE_COLOR=0
+USE_COLOR='y'
 
 # Import libmakepkg
 source "$LIBRARY"/util/message.sh
@@ -49,25 +49,33 @@ runcmd() {
 }
 
 usage() {
-	cat << __EOF__
+	cat <<EOF
 ${myname} v${myver}
 
-Safely print a list of pending updates
+Safely print a list of pending updates.
 
 Usage: ${myname} [options]
 
-  Options:
-    -d, --download        download pending updates to the pacman cache.
-    -n, --nosync          do not sync the temporary database.
-    -h, --help            display this help message and exit.
+Options:
+  -d, --download  download pending updates to the pacman cache
+      --nocolor   do not colorize output
+  -n, --nosync    do not sync the temporary database
+  -h, --help      display this help message and exit
+  -V, --version   display version information and exit
 
-Note: Export the "CHECKUPDATES_DB" variable to change the path of the temporary database.
-
-__EOF__
+Environment Variables:
+  CHECKUPDATES_DB  override the path of the temporary database
+                   (default: "\${TMPDIR:-/tmp}/checkup-db-\${UID}")
+  TMPDIR           override the temporary directory (default: '/tmp')
+EOF
 }
 
-OPT_SHORT='dnh'
-OPT_LONG=('download' 'nosync' 'help' 'nocolor')
+version() {
+	printf "%s %s\n" "$myname" "$myver"
+}
+
+OPT_SHORT='dnhV'
+OPT_LONG=('download' 'nosync' 'help' 'nocolor' 'version')
 
 if ! parseopts "$OPT_SHORT" "${OPT_LONG[@]}" -- "$@"; then
 	exit 1
@@ -80,13 +88,16 @@ while :; do
 	case $1 in
 		-d|--download)
 			DOWNLOAD_CACHE=1 ;;
+		--nocolor)
+			USE_COLOR='n';;
 		-n|--nosync)
 			SYNC=0 ;;
 		-h|--help)
 			usage
 			exit 0 ;;
-		--nocolor)
-			USE_COLOR='n';;
+		-V|--version)
+			version
+			exit 0 ;;
 		--)
 			shift
 			break ;;

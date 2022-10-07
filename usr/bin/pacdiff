@@ -21,7 +21,7 @@
 shopt -s extglob
 
 declare -r myname='pacdiff'
-declare -r myver='1.6.0'
+declare -r myver='1.7.1'
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
@@ -46,33 +46,34 @@ usage() {
 	cat <<EOF
 ${myname} v${myver}
 
-A simple program to merge or remove pacnew/pacsave files.
+pacorig, pacnew and pacsave maintenance utility.
 
-Usage: $myname [-l | -f | -p] [--nocolor]
+Usage: $myname [options]
 
-Search Options:     select one (default: --pacmandb)
-  -l/--locate       scan using locate
-  -f/--find         scan using find
-  -p/--pacmandb     scan active config files from pacman database
+Search Options:   select one (default: --pacmandb)
+  -f, --find      scan using find
+  -l, --locate    scan using locate
+  -p, --pacmandb  scan active config files from pacman database
 
 General Options:
-  -o/--output         print files instead of merging them
-  --nocolor           remove colors from output
-  -c/--cachedir <dir> scan "dir" for 3-way merge base candidates.
-                      (default: read from /etc/pacman.conf)
-  -s/--sudo           use sudo and sudoedit to merge/remove files
-  -b/--backup         when overwriting, save old files with .bak
-  -3/--threeway       view diffs in 3-way fashion
+  -b, --backup          when overwriting, save old files with .bak
+  -c, --cachedir <dir>  scan "dir" for 3-way merge base candidates
+                        (default: read from /etc/pacman.conf)
+      --nocolor         do not colorize output
+  -o, --output          print files instead of merging them
+  -s, --sudo            use sudo and sudoedit to merge/remove files
+  -3, --threeway        view diffs in 3-way fashion
+  -h, --help            show this help message and exit
+  -V, --version         display version information and exit
 
 Environment Variables:
-  DIFFPROG          override the merge program: (default: 'vim -d')
-  DIFFSEARCHPATH    override the search path. (only when using find)
-                    (default: /etc)
-  MERGEPROG         override the 3-way merge program: (default: 'diff3 -m')
+  DIFFPROG        override the merge program (default: 'vim -d')
+  DIFFSEARCHPATH  override the search path (only when using find)
+                  (default: /etc)
+  MERGEPROG       override the 3-way merge program (default: 'diff3 -m')
 
 Example: DIFFPROG=meld DIFFSEARCHPATH="/boot /etc /usr" MERGEPROG="git merge-file -p" $myname
 Example: $myname --output --locate
-
 EOF
 }
 
@@ -231,22 +232,22 @@ cmd() {
 
 while [[ -n "$1" ]]; do
 	case "$1" in
-		-l|--locate)
-			USE_LOCATE=1;;
 		-f|--find)
 			USE_FIND=1;;
+		-l|--locate)
+			USE_LOCATE=1;;
 		-p|--pacmandb)
 			USE_PACDB=1;;
-		-o|--output)
-			OUTPUTONLY=1;;
-		--nocolor)
-			USE_COLOR='n';;
-		-c|--cachedir)
-			cachedir="$2"; shift;;
-		-s|--sudo)
-			SUDO=sudo;;
 		-b|--backup)
 			BACKUP=1;;
+		-c|--cachedir)
+			cachedir="$2"; shift;;
+		--nocolor)
+			USE_COLOR='n';;
+		-o|--output)
+			OUTPUTONLY=1;;
+		-s|--sudo)
+			SUDO=sudo;;
 		-3|--threeway)
 			THREE_WAY_DIFF=1 ;;
 		-V|--version)
