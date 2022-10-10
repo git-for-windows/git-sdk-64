@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Masaki Suketa".freeze]
   s.bindir = "exe".freeze
-  s.date = "2022-09-08"
+  s.date = "2022-10-08"
   s.description = "Provides an interface for OLE Automation in Ruby".freeze
   s.email = ["suke@ruby-lang.org".freeze]
   s.files = ["win32ole.rb".freeze, "win32ole.so".freeze, "win32ole/property.rb".freeze]

@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Tanaka Akira".freeze]
   s.bindir = "exe".freeze
-  s.date = "2022-09-08"
+  s.date = "2022-10-08"
   s.description = "Topological sorting using Tarjan's algorithm".freeze
   s.email = ["akr@fsij.org".freeze]
   s.files = ["tsort.rb".freeze]

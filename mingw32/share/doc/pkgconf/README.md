@@ -3,9 +3,9 @@
 `pkgconf` is a program which helps to configure compiler and linker flags for
 development libraries.  It is similar to pkg-config from freedesktop.org.
 
-`libpkgconf` is a library which provides access to most of `pkgconf`'s functionality, 
-to allow other tooling such as compilers and IDEs to discover and use libraries 
-configured by pkgconf.
+`libpkgconf` is a library which provides access to most of `pkgconf`'s functionality, to allow
+other tooling such as compilers and IDEs to discover and use libraries configured by
+pkgconf.
 
 ## using `pkgconf` with autotools
 
@@ -41,7 +41,7 @@ to improve this behaviour.
 As of the 1.1 series, pkgconf also fully implements support for `Provides` rules,
 while pkg-config does not.  pkg-config only provides the `--print-provides` functionality
 as a stub.  There are other intentional implementation differences in pkgconf's dependency
-resolver versus pkg-config's dependency resolver in terms of completeness and correctness,
+resolver verses pkg-config's dependency resolver in terms of completeness and correctness,
 such as, for example, how `Conflicts` rules are processed.
 
 ## linker flags optimization
@@ -71,25 +71,16 @@ do let us know, but also make sure that the .pc files are valid and follow the r
 the [pkg-config tutorial][fd-tut], as most likely fixing them to follow the specified
 rules will solve the problem.
 
-Additionally, **we do not consider pkgconf doing what you tell it to do, in cases for 
-which pkg-config fails to do so, to be a bug**.
+Additionally, **we do not consider pkgconf doing what you tell it to do, when pkg-config
+fails to do so, to be a bug**.
 
 If, for example, you use environment variables such as `PKG_CONFIG_SYSTEM_[INCLUDE|LIBRARY]_PATH`
 and then find yourself surprised that `pkgconf` is stripping `-I` and `-L` flags relating
-to those paths, it is not a `pkgconf` problem -- `pkgconf` is doing exactly what you told
+to those paths, it's not a `pkgconf` problem -- `pkgconf` is doing exactly what you told
 it to do.
 
-We will reject bugs like this, and if someone insists on fixing such a non-bug, this 
-constitutes a violation of our [Code of Conduct](CODE_OF_CONDUCT.md), which may be 
-addressed by banning from this repository.
-
-## debug output
-
-Please use only the stable interfaces to query pkg-config.  Do not screen-scrape the
-output from `--debug`: this is sent to `stderr` for a reason, it is not intended to be
-scraped.  The `--debug` output is **not** a stable interface, and should **never** be
-depended on as a source of information.  If you need a stable interface to query pkg-config
-which is not covered, please get in touch.
+We will reject bugs like this, and if you choose to violate our [Code of Conduct](CODE_OF_CONDUCT.md)
+by demanding we fix your non-bug, we will fix the problem by banning you from the repo instead.
 
 ## compiling `pkgconf` and `libpkgconf` on UNIX
 
@@ -112,16 +103,17 @@ flags like so:
     $ make
     $ sudo make install
 
-## compiling `pkgconf` and `libpkgconf` with Meson (usually for Windows)
+## compiling `pkgconf` and `libpkgconf` with CMake (usually for Windows)
 
+pkgconf is compiled using CMake on Windows.  In theory, you could also use CMake to build
+on UNIX, but this is not recommended at this time as it pkgconf is typically built much earlier
+than CMake.
 
-pkgconf is compiled using [Meson](https://mesonbuild.com) on Windows. In theory, you could also use
-Meson to build on UNIX, but this is not recommended at this time as it pkgconf is typically built
-much earlier than Meson.
-
-    $ meson setup build -Dtests=false
-    $ meson compile -C build
-    $ meson install -C build
+    $ mkdir build
+    $ cd build
+    $ cmake ..
+    $ make
+    $ sudo make install
 
 There are a few defines such as SYSTEM_LIBDIR, PKGCONFIGDIR and SYSTEM_INCLUDEDIR.
 However, on Windows, the default PKGCONFIGDIR value is usually overridden at runtime based
