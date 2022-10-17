@@ -28,9 +28,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.10
-srcdir=		../Python-3.10.7
-VPATH=		../Python-3.10.7
-abs_srcdir=	/c/M/mingw-w64-python/src/build-i686/../Python-3.10.7
+srcdir=		../Python-3.10.8
+VPATH=		../Python-3.10.8
+abs_srcdir=	/c/M/mingw-w64-python/src/build-i686/../Python-3.10.8
 abs_builddir=	/c/M/mingw-w64-python/src/build-i686
 
 
@@ -120,7 +120,7 @@ PY_CORE_CFLAGS=	$(PY_STDMODULE_CFLAGS) -DPy_BUILD_CORE
 PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 # Strict or non-strict aliasing flags used to compile dtoa.c, see above
 CFLAGS_ALIASING=
-RCFLAGS= -DFIELD3=7150 -O COFF --target=pe-i386
+RCFLAGS= -DFIELD3=8150 -O COFF --target=pe-i386
 
 
 # Machine-dependent subdirectories
@@ -140,9 +140,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.10.7
-VPATH_b2h=		C:/M/mingw-w64-python/src/Python-3.10.7
-abs_srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.10.7
+srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.10.8
+VPATH_b2h=		C:/M/mingw-w64-python/src/Python-3.10.8
+abs_srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.10.8
 abs_builddir_b2h=	C:/M/mingw-w64-python/src/build-i686
 prefix_b2h=		D:/a/msys64/mingw32
 
@@ -1581,6 +1581,7 @@ TESTSUBDIRS=	ctypes/test \
 		test/test_warnings test/test_warnings/data \
 		test/test_zoneinfo test/test_zoneinfo/data \
 		test/tracedmodules \
+		test/typinganndata \
 		test/xmltestdata test/xmltestdata/c14n-20 \
 		test/ziptestdata \
 		tkinter/test tkinter/test/test_tkinter \
@@ -1965,8 +1966,7 @@ rmtestturds:
 	-rm -f gb-18030-2000.xml
 
 docclean:
-	-rm -rf Doc/build
-	-rm -rf Doc/tools/sphinx Doc/tools/pygments Doc/tools/docutils
+	$(MAKE) -C Doc clean
 
 # like the 'clean' target but retain the profile guided optimization (PGO)
 # data.  The PGO data is only valid if source code remains unchanged.
@@ -2010,7 +2010,7 @@ clobber: clean
 # Make things extra clean, before making a distribution:
 # remove all generated files, even Makefile[.pre]
 # Keep configure and Python-ast.[ch], it's possible they can't be generated
-distclean: clobber
+distclean: clobber docclean
 	for file in $(srcdir)/Lib/test/data/* ; do \
 	    if test "$$file" != "$(srcdir)/Lib/test/data/README"; then rm "$$file"; fi; \
 	done
