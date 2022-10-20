@@ -1,6 +1,7 @@
 This is gnutls.info, produced by makeinfo version 6.8 from gnutls.texi.
 
-This manual is last updated 22 July 2022 for version 3.7.7 of GnuTLS.
+This manual is last updated 27 September 2022 for version 3.7.8 of
+GnuTLS.
 
 Copyright (C) 2001-2022 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2022 Nikos Mavrogiannopoulos
@@ -4174,9 +4175,13 @@ situations.  That unique string is called a "channel binding".  For
 background and discussion see [*note RFC5056::].
 
 In GnuTLS you can extract a channel binding using the *note
-gnutls_session_channel_binding:: function.  Currently only the type
-'GNUTLS_CB_TLS_UNIQUE' is supported, which corresponds to the
-'tls-unique' channel binding for TLS defined in [*note RFC5929::].
+gnutls_session_channel_binding:: function.  Currently only the following
+types are supported:
+
+   * 'GNUTLS_CB_TLS_UNIQUE': corresponds to the 'tls-unique' channel
+     binding for TLS defined in [*note RFC5929::]
+   * 'GNUTLS_CB_TLS_EXPORTER': corresponds to the 'tls-exporter' channel
+     binding for TLS defined in [*note RFC9266::]
 
 The following example describes how to print the channel binding data.
 Note that it must be run after a successful TLS handshake.

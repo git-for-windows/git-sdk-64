@@ -51,13 +51,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.7.7"
+#define GNUTLS_VERSION "3.7.8"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 7
-#define GNUTLS_VERSION_PATCH 7
+#define GNUTLS_VERSION_PATCH 8
 
-#define GNUTLS_VERSION_NUMBER 0x030707
+#define GNUTLS_VERSION_NUMBER 0x030708
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -1169,7 +1169,7 @@ typedef enum {
  * gnutls_channel_binding_t:
  * @GNUTLS_CB_TLS_UNIQUE: "tls-unique" (RFC 5929) channel binding
  * @GNUTLS_CB_TLS_SERVER_END_POINT: "tls-server-end-point" (RFC 5929) channel binding
- * @GNUTLS_CB_TLS_EXPORTER: "tls-exporter" (draft-ietf-kitten-tls-channel-bindings-for-tls13-03)
+ * @GNUTLS_CB_TLS_EXPORTER: "tls-exporter" (RFC 9266) channel binding
  *
  * Enumeration of supported channel binding types.
  */

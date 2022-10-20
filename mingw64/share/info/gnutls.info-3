@@ -1,6 +1,7 @@
 This is gnutls.info, produced by makeinfo version 6.8 from gnutls.texi.
 
-This manual is last updated 22 July 2022 for version 3.7.7 of GnuTLS.
+This manual is last updated 27 September 2022 for version 3.7.8 of
+GnuTLS.
 
 Copyright (C) 2001-2022 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2022 Nikos Mavrogiannopoulos
@@ -8795,9 +8796,6 @@ gnutls_digest_set_secure
      through the allowlisting mode in the configuration file, or when
      the setting is modified with a prior call to this function.
 
-     This function must be called prior to any session priority setting
-     functions; otherwise the behavior is undefined.
-
      *Since:* 3.7.3
 
 gnutls_early_cipher_get
@@ -8929,12 +8927,16 @@ gnutls_ecc_curve_set_enabled
      ENABLED: whether to enable the curve
 
      Modify the previous system wide setting that marked 'curve' as
-     enabled or disabled.  This only has effect when the curve is
-     enabled through the allowlisting mode in the configuration file, or
-     when the setting is modified with a prior call to this function.
+     enabled or disabled.  Calling this fuction is allowed only if
+     allowlisting mode is set in the configuration file, and only if the
+     system-wide TLS priority string has not been initialized yet.  The
+     intended usage is to provide applications with a way to expressly
+     deviate from the distribution or site defaults inherited from the
+     configuration file.  The modification is composable with further
+     modifications performed through the priority string mechanism.
 
-     This function must be called prior to any session priority setting
-     functions; otherwise the behavior is undefined.
+     This function is not thread-safe and is intended to be called in
+     the main thread at the beginning of the process execution.
 
      *Returns:* 0 on success or negative error code otherwise.
 
@@ -11464,13 +11466,17 @@ gnutls_protocol_set_enabled
 
      ENABLED: whether to enable the protocol
 
-     Mark the previous system wide setting that marked 'version' as
-     enabled or disabled.  This only has effect when the version is
-     enabled through the allowlisting mode in the configuration file, or
-     when the setting is modified with a prior call to this function.
+     Control the previous system-wide setting that marked 'version' as
+     enabled or disabled.  Calling this fuction is allowed only if
+     allowlisting mode is set in the configuration file, and only if the
+     system-wide TLS priority string has not been initialized yet.  The
+     intended usage is to provide applications with a way to expressly
+     deviate from the distribution or site defaults inherited from the
+     configuration file.  The modification is composable with further
+     modifications performed through the priority string mechanism.
 
-     This function must be called prior to any session priority setting
-     functions; otherwise the behavior is undefined.
+     This function is not thread-safe and is intended to be called in
+     the main thread at the beginning of the process execution.
 
      *Returns:* 0 on success or negative error code otherwise.
 
@@ -13703,17 +13709,22 @@ gnutls_sign_set_secure
      SECURE: whether to mark the sign algorithm secure
 
      Modify the previous system wide setting that marked 'sign' as
-     secure or insecure.  This only has effect when the algorithm is
-     marked as secure through the allowlisting mode in the configuration
-     file, or when the setting is modified with a prior call to this
-     function.
+     secure or insecure.  Calling this function is allowed only if
+     allowlisting mode is set in the configuration file, and only if the
+     system-wide TLS priority string has not been initialized yet.  The
+     intended usage is to provide applications with a way to expressly
+     deviate from the distribution or site defaults inherited from the
+     configuration file.  The modification is composable with further
+     modifications performed through the priority string mechanism.
+
+     This function is not thread-safe and is intended to be called in
+     the main thread at the beginning of the process execution.
 
      Even when 'secure' is true, 'sign' is not marked as secure for the
      use in certificates.  Use 'gnutls_sign_set_secure_for_certs()' to
      mark it secure as well for certificates.
 
-     This function must be called prior to any session priority setting
-     functions; otherwise the behavior is undefined.
+     *Returns:* 0 on success or negative error code otherwise.
 
      *Since:* 3.7.3
 
@@ -13727,18 +13738,23 @@ gnutls_sign_set_secure_for_certs
      SECURE: whether to mark the sign algorithm secure for certificates
 
      Modify the previous system wide setting that marked 'sign' as
-     secure or insecure for the use in certificates.  This only has
-     effect when the algorithm is marked as secure through the
-     allowlisting mode in the configuration file, or when the setting is
-     modified with a prior call to this function.
+     secure or insecure for the use in certificates.  Calling this
+     fuction is allowed only if allowlisting mode is set in the
+     configuration file, and only if the system-wide TLS priority string
+     has not been initialized yet.  The intended usage is to provide
+     applications with a way to expressly deviate from the distribution
+     or site defaults inherited from the configuration file.  The
+     modification is composable with further modifications performed
+     through the priority string mechanism.
 
-     When 'secure' is true, 'sign' is marked as secure for any use
-     unlike 'gnutls_sign_set_secure()' .  Otherwise, it is marked as
-     insecure only for the use in certificates.  Use
-     'gnutls_sign_set_secure()' to mark it insecure for any uses.
+     This function is not thread-safe and is intended to be called in
+     the main thread at the beginning of the process execution.  When
+     'secure' is true, 'sign' is marked as secure for any use unlike
+     'gnutls_sign_set_secure()' .  Otherwise, it is marked as insecure
+     only for the use in certificates.  Use 'gnutls_sign_set_secure()'
+     to mark it insecure for any uses.
 
-     This function must be called prior to any session priority setting
-     functions; otherwise the behavior is undefined.
+     *Returns:* 0 on success or negative error code otherwise.
 
      *Since:* 3.7.3
 
