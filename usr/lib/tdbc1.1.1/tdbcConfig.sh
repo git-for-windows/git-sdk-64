@@ -19,8 +19,8 @@ tdbc_LIB_FILE=libtdbc1.1.1.dll
 TDBC_LIB_FILE=libtdbc1.1.1.dll
 
 # String to pass to the linker to pick up the TDBC library from its build dir
-tdbc_BUILD_LIB_SPEC="-L/msysdev/tcl/src/tcl8.6.10/unix/pkgs/tdbc1.1.1 -ltdbc1.1.1"
-TDBC_BUILD_LIB_SPEC="-L/msysdev/tcl/src/tcl8.6.10/unix/pkgs/tdbc1.1.1 -ltdbc1.1.1"
+tdbc_BUILD_LIB_SPEC="-L/c/S/tcl/src/tcl8.6.10/unix/pkgs/tdbc1.1.1 -ltdbc1.1.1"
+TDBC_BUILD_LIB_SPEC="-L/c/S/tcl/src/tcl8.6.10/unix/pkgs/tdbc1.1.1 -ltdbc1.1.1"
 
 # String to pass to the linker to pick up the TDBC library from its installed
 # dir.
@@ -33,8 +33,8 @@ TDBC_STUB_LIB_FILE="libtdbcstub1.1.1.a"
 
 # String to pass to the linker to pick up the TDBC stub library from its
 # build directory
-tdbc_BUILD_STUB_LIB_SPEC="-L/msysdev/tcl/src/tcl8.6.10/unix/pkgs/tdbc1.1.1 -ltdbcstub1.1.1"
-TDBC_BUILD_STUB_LIB_SPEC="-L/msysdev/tcl/src/tcl8.6.10/unix/pkgs/tdbc1.1.1 -ltdbcstub1.1.1"
+tdbc_BUILD_STUB_LIB_SPEC="-L/c/S/tcl/src/tcl8.6.10/unix/pkgs/tdbc1.1.1 -ltdbcstub1.1.1"
+TDBC_BUILD_STUB_LIB_SPEC="-L/c/S/tcl/src/tcl8.6.10/unix/pkgs/tdbc1.1.1 -ltdbcstub1.1.1"
 
 # String to pass to the linker to pick up the TDBC stub library from its
 # installed directory
@@ -42,8 +42,8 @@ tdbc_STUB_LIB_SPEC="-L/usr/lib/tdbc1.1.1 -ltdbcstub1.1.1"
 TDBC_STUB_LIB_SPEC="-L/usr/lib/tdbc1.1.1 -ltdbcstub1.1.1"
 
 # Path name of the TDBC stub library in its build directory
-tdbc_BUILD_STUB_LIB_PATH="/msysdev/tcl/src/tcl8.6.10/unix/pkgs/tdbc1.1.1/libtdbcstub1.1.1.a"
-TDBC_BUILD_STUB_LIB_PATH="/msysdev/tcl/src/tcl8.6.10/unix/pkgs/tdbc1.1.1/libtdbcstub1.1.1.a"
+tdbc_BUILD_STUB_LIB_PATH="/c/S/tcl/src/tcl8.6.10/unix/pkgs/tdbc1.1.1/libtdbcstub1.1.1.a"
+TDBC_BUILD_STUB_LIB_PATH="/c/S/tcl/src/tcl8.6.10/unix/pkgs/tdbc1.1.1/libtdbcstub1.1.1.a"
 
 # Path name of the TDBC stub library in its installed directory
 tdbc_STUB_LIB_PATH="/usr/lib/tdbc1.1.1/libtdbcstub1.1.1.a"
@@ -54,8 +54,8 @@ TDBC_STUB_LIB_PATH="/usr/lib/tdbc1.1.1/libtdbcstub1.1.1.a"
 # was compiled in a directory other than the source directory, this still
 # points to the location of the sources, not the location where TDBC was
 # compiled.
-tdbc_SRC_DIR="/msysdev/tcl/src/tcl8.6.10/pkgs/tdbc1.1.1"
-TDBC_SRC_DIR="/msysdev/tcl/src/tcl8.6.10/pkgs/tdbc1.1.1"
+tdbc_SRC_DIR="/c/S/tcl/src/tcl8.6.10/pkgs/tdbc1.1.1"
+TDBC_SRC_DIR="/c/S/tcl/src/tcl8.6.10/pkgs/tdbc1.1.1"
 
 # String to pass to the compiler so that an extension can find installed TDBC
 # headers
@@ -64,16 +64,16 @@ TDBC_INCLUDE_SPEC="-I/usr/include"
 
 # String to pass to the compiler so that an extension can find TDBC headers
 # in the source directory
-tdbc_BUILD_INCLUDE_SPEC="-I/msysdev/tcl/src/tcl8.6.10/pkgs/tdbc1.1.1/generic"
-TDBC_BUILD_INCLUDE_SPEC="-I/msysdev/tcl/src/tcl8.6.10/pkgs/tdbc1.1.1/generic"
+tdbc_BUILD_INCLUDE_SPEC="-I/c/S/tcl/src/tcl8.6.10/pkgs/tdbc1.1.1/generic"
+TDBC_BUILD_INCLUDE_SPEC="-I/c/S/tcl/src/tcl8.6.10/pkgs/tdbc1.1.1/generic"
 
 # Path name where .tcl files in the tdbc package appear at run time.
 tdbc_LIBRARY_PATH="/usr/lib/tdbc1.1.1"
 TDBC_LIBRARY_PATH="/usr/lib/tdbc1.1.1"
 
 # Path name where .tcl files in the tdbc package appear at build time.
-tdbc_BUILD_LIBRARY_PATH="/msysdev/tcl/src/tcl8.6.10/pkgs/tdbc1.1.1/library"
-TDBC_BUILD_LIBRARY_PATH="/msysdev/tcl/src/tcl8.6.10/pkgs/tdbc1.1.1/library"
+tdbc_BUILD_LIBRARY_PATH="/c/S/tcl/src/tcl8.6.10/pkgs/tdbc1.1.1/library"
+TDBC_BUILD_LIBRARY_PATH="/c/S/tcl/src/tcl8.6.10/pkgs/tdbc1.1.1/library"
 
 # Additional flags that must be passed to the C compiler to use tdbc
 tdbc_CFLAGS=

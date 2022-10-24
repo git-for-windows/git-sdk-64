@@ -21,8 +21,8 @@ ITCL_LIB_FILE=libitcl4.2.0.dll
 
 # String to pass to linker to pick up the Itcl library from its
 # build directory.
-itcl_BUILD_LIB_SPEC='-L/msysdev/tcl/src/tcl8.6.10/unix/pkgs/itcl4.2.0 -litcl4.2.0'
-ITCL_BUILD_LIB_SPEC='-L/msysdev/tcl/src/tcl8.6.10/unix/pkgs/itcl4.2.0 -litcl4.2.0'
+itcl_BUILD_LIB_SPEC='-L/c/S/tcl/src/tcl8.6.10/unix/pkgs/itcl4.2.0 -litcl4.2.0'
+ITCL_BUILD_LIB_SPEC='-L/c/S/tcl/src/tcl8.6.10/unix/pkgs/itcl4.2.0 -litcl4.2.0'
 
 # String to pass to linker to pick up the Itcl library from its
 # installed directory.
@@ -35,8 +35,8 @@ ITCL_STUB_LIB_FILE=libitclstub4.2.0.a
 
 # String to pass to linker to pick up the Itcl stub library from its
 # build directory.
-itcl_BUILD_STUB_LIB_SPEC='-L/msysdev/tcl/src/tcl8.6.10/unix/pkgs/itcl4.2.0 -litclstub4.2.0'
-ITCL_BUILD_STUB_LIB_SPEC='-L/msysdev/tcl/src/tcl8.6.10/unix/pkgs/itcl4.2.0 -litclstub4.2.0'
+itcl_BUILD_STUB_LIB_SPEC='-L/c/S/tcl/src/tcl8.6.10/unix/pkgs/itcl4.2.0 -litclstub4.2.0'
+ITCL_BUILD_STUB_LIB_SPEC='-L/c/S/tcl/src/tcl8.6.10/unix/pkgs/itcl4.2.0 -litclstub4.2.0'
 
 # String to pass to linker to pick up the Itcl stub library from its
 # installed directory.
@@ -45,8 +45,8 @@ ITCL_STUB_LIB_SPEC='-L/usr/lib/itcl4.2.0 -litclstub4.2.0'
 
 # String to pass to linker to pick up the Itcl stub library from its
 # build directory.
-itcl_BUILD_STUB_LIB_PATH='/msysdev/tcl/src/tcl8.6.10/unix/pkgs/itcl4.2.0/libitclstub4.2.0.a'
-ITCL_BUILD_STUB_LIB_PATH='/msysdev/tcl/src/tcl8.6.10/unix/pkgs/itcl4.2.0/libitclstub4.2.0.a'
+itcl_BUILD_STUB_LIB_PATH='/c/S/tcl/src/tcl8.6.10/unix/pkgs/itcl4.2.0/libitclstub4.2.0.a'
+ITCL_BUILD_STUB_LIB_PATH='/c/S/tcl/src/tcl8.6.10/unix/pkgs/itcl4.2.0/libitclstub4.2.0.a'
 
 # String to pass to linker to pick up the Itcl stub library from its
 # installed directory.
@@ -58,10 +58,10 @@ ITCL_STUB_LIB_PATH='/usr/lib/itcl4.2.0/libitclstub4.2.0.a'
 # If [incr Tcl] was compiled in a different place than the directory
 # containing the source files, this points to the location of the sources,
 # not the location where [incr Tcl] was compiled.
-itcl_SRC_DIR='/msysdev/tcl/src/tcl8.6.10/pkgs/itcl4.2.0'
-ITCL_SRC_DIR='/msysdev/tcl/src/tcl8.6.10/pkgs/itcl4.2.0'
+itcl_SRC_DIR='/c/S/tcl/src/tcl8.6.10/pkgs/itcl4.2.0'
+ITCL_SRC_DIR='/c/S/tcl/src/tcl8.6.10/pkgs/itcl4.2.0'
 
 # String to pass to the compiler so that an extension can
 # find installed Itcl headers.
-itcl_INCLUDE_SPEC='-I/msysdev/tcl/src/tcl8.6.10/pkgs/itcl4.2.0/generic'
-ITCL_INCLUDE_SPEC='-I/msysdev/tcl/src/tcl8.6.10/pkgs/itcl4.2.0/generic'
+itcl_INCLUDE_SPEC='-I/c/S/tcl/src/tcl8.6.10/pkgs/itcl4.2.0/generic'
+ITCL_INCLUDE_SPEC='-I/c/S/tcl/src/tcl8.6.10/pkgs/itcl4.2.0/generic'
