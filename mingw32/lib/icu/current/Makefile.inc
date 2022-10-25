@@ -37,8 +37,8 @@ datadir = ${datarootdir}
 sbindir = ${exec_prefix}/sbin
 
 # about the ICU version
-VERSION = 71.1
-UNICODE_VERSION = 14.0
+VERSION = 72.1
+UNICODE_VERSION = 15.0
 
 # The prefix for ICU libraries, normally 'icu'
 ICUPREFIX = icu
@@ -191,7 +191,7 @@ CPPFLAGS =  -I$(prefix)/include
 CXXFLAGS =  -std=c++11
 CXX = g++
 DEFAULT_MODE = dll
-DEFS = -DPACKAGE_NAME=\"ICU\" -DPACKAGE_TARNAME=\"International\ Components\ for\ Unicode\" -DPACKAGE_VERSION=\"71.1\" -DPACKAGE_STRING=\"ICU\ 71.1\" -DPACKAGE_BUGREPORT=\"http://icu-project.org/bugs\" -DPACKAGE_URL=\"http://icu-project.org\" -DHAVE_STDIO_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_STRINGS_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DSIZEOF_VOID_P=4 -DHAVE_LIBM=1 -DHAVE_GETTIMEOFDAY=1 -DHAVE_LIBPTHREAD=1 -DHAVE_INTTYPES_H=1 -DHAVE_DIRENT_H=1 -DHAVE_WCHAR_H=1 -DSIZEOF_WCHAR_T=2 
+DEFS = -DPACKAGE_NAME=\"ICU\" -DPACKAGE_TARNAME=\"International\ Components\ for\ Unicode\" -DPACKAGE_VERSION=\"72.1\" -DPACKAGE_STRING=\"ICU\ 72.1\" -DPACKAGE_BUGREPORT=\"http://icu-project.org/bugs\" -DPACKAGE_URL=\"http://icu-project.org\" -DHAVE_STDIO_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_STRINGS_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DSIZEOF_VOID_P=4 -DHAVE_LIBM=1 -DHAVE_GETTIMEOFDAY=1 -DHAVE_LIBPTHREAD=1 -DHAVE_INTTYPES_H=1 -DHAVE_DIRENT_H=1 -DHAVE_WCHAR_H=1 -DSIZEOF_WCHAR_T=2 
 # use a consistent INSTALL 
 INSTALL  =  $(SHELL) $(pkgdatadir)/install-sh -c
 INSTALL_DATA  =  ${INSTALL} -m 644
@@ -202,8 +202,8 @@ INSTALL_SCRIPT = ${INSTALL}
 LDFLAGS = $(RPATHLDFLAGS)
 LIBS = -lpthread -lm  
 LIB_M = 
-LIB_VERSION = 71.1
-LIB_VERSION_MAJOR = 71
+LIB_VERSION = 72.1
+LIB_VERSION_MAJOR = 72
 MKINSTALLDIRS = $(SHELL) $(pkgdatadir)/mkinstalldirs
 RANLIB = ranlib
 RMV = rm -rf
@@ -235,7 +235,7 @@ ICU_MSG=@echo "   $(1)	"  #M#
 
 # The basename of the ICU data file (i.e. icudt21b )
 ICUDATA_CHAR = l
-ICUDATA_NAME = icudt71l
+ICUDATA_NAME = icudt72l
 
 # Defaults for pkgdata's mode and directories
 # The default data dir changes depending on what packaging mode 

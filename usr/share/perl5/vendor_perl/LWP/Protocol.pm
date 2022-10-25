@@ -2,12 +2,13 @@ package LWP::Protocol;
 
 use parent 'LWP::MemberMixin';
 
-our $VERSION = '6.60';
+our $VERSION = '6.67';
 
 use strict;
 use Carp ();
 use HTTP::Status ();
 use HTTP::Response ();
+use Scalar::Util qw(openhandle);
 use Try::Tiny qw(try catch);
 
 my %ImplementedBy = (); # scheme => classname
@@ -110,8 +111,10 @@ sub collect
             if (!defined($arg) || !$response->is_success) {
                 $response->{default_add_content} = 1;
             }
-            elsif (!ref($arg) && length($arg)) {
-                open(my $fh, ">", $arg) or die "Can't write to '$arg': $!";
+            elsif (defined(openhandle($arg)) || !ref($arg) && length($arg)) {
+                my $existing_fh = defined(openhandle($arg));
+                my $mode = $existing_fh ? '>&=' : '>';
+                open(my $fh, $mode, $arg) or die "Can't write to '$arg': $!";
                 binmode($fh);
                 push(@{$response->{handlers}{response_data}}, {
                     callback => sub {
@@ -121,7 +124,9 @@ sub collect
                 });
                 push(@{$response->{handlers}{response_done}}, {
                     callback => sub {
-                        close($fh) or die "Can't write to '$arg': $!";
+                        unless ($existing_fh) {
+                            close($fh) or die "Can't write to '$arg': $!";
+                        }
                         undef($fh);
                     },
                 });
@@ -260,6 +265,7 @@ specified scheme is not supported.
     $response = $protocol->request($request, $proxy, undef);
     $response = $protocol->request($request, $proxy, '/tmp/sss');
     $response = $protocol->request($request, $proxy, \&callback, 1024);
+    $response = $protocol->request($request, $proxy, $fh);
 
 Dispatches a request over the protocol, and returns a response
 object. This method needs to be overridden in subclasses.  Refer to
@@ -276,6 +282,8 @@ file, or by calling a callback. If the first parameter is undefined, then the
 content is stored within the C<$response>. If it's a simple scalar, then it's
 interpreted as a file name and the content is written to this file.  If it's a
 code reference, then content is passed to this routine.
+If it is a filehandle, or similar, such as a L<File::Temp> object,
+content will be written to it.
 
 The collector is a routine that will be called and which is
 responsible for returning pieces (as ref to scalar) of the content to

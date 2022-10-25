@@ -5,6 +5,7 @@ use strict;
 use parent qw(LWP::MemberMixin);
 
 use Carp ();
+use File::Copy ();
 use HTTP::Request ();
 use HTTP::Response ();
 use HTTP::Date ();
@@ -13,10 +14,10 @@ use LWP ();
 use HTTP::Status ();
 use LWP::Protocol ();
 
-use Scalar::Util qw(blessed);
+use Scalar::Util qw(blessed openhandle);
 use Try::Tiny qw(try catch);
 
-our $VERSION = '6.60';
+our $VERSION = '6.67';
 
 sub new
 {
@@ -557,11 +558,13 @@ sub _process_colonic_headers {
 	    # Some sanity-checking...
 	    Carp::croak("A :content_file value can't be undef")
 		unless defined $arg;
-	    Carp::croak("A :content_file value can't be a reference")
-		if ref $arg;
-	    Carp::croak("A :content_file value can't be \"\"")
-		unless length $arg;
 
+	    unless ( defined openhandle($arg) ) {
+		    Carp::croak("A :content_file value can't be a reference")
+			if ref $arg;
+		    Carp::croak("A :content_file value can't be \"\"")
+			unless length $arg;
+	    }
 	}
 	elsif ($args->[$i] eq ':read_size_hint') {
 	    $size = $args->[$i + 1];
@@ -1005,10 +1008,14 @@ sub mirror
             $request->header( 'If-Modified-Since' => HTTP::Date::time2str($mtime) );
         }
     }
-    my $tmpfile = "$file-$$";
+
+    require File::Temp;
+    my ($tmpfh, $tmpfile) = File::Temp::tempfile("$file-XXXXXX");
+    close($tmpfh) or die "Could not close tmpfile '$tmpfile': $!";
 
     my $response = $self->request($request, $tmpfile);
     if ( $response->header('X-Died') ) {
+        unlink($tmpfile);
         die $response->header('X-Died');
     }
 
@@ -1031,13 +1038,18 @@ sub mirror
         # The file was the expected length.
         else {
             # Replace the stale file with a fresh copy
-            if ( -e $file ) {
-                # Some DOSish systems fail to rename if the target exists
-                chmod 0777, $file;
-                unlink $file;
-            }
-            rename( $tmpfile, $file )
+            # File::Copy will attempt to do it atomically,
+            # and fall back to a delete + copy if that fails.
+            File::Copy::move( $tmpfile, $file )
                 or die "Cannot rename '$tmpfile' to '$file': $!\n";
+
+            # Set standard file permissions if umask is supported.
+            # If not, leave what File::Temp created in effect.
+            if ( defined(my $umask = umask()) ) {
+                my $mode = 0666 &~ $umask;
+                chmod $mode, $file
+                    or die sprintf("Cannot chmod %o '%s': %s\n", $mode, $file, $!);
+            }
 
             # make sure the file has the same last modification time
             if ( my $lm = $response->last_modified ) {
@@ -1840,13 +1852,15 @@ Fields names that start with ":" are special.  These will not
 initialize headers of the request but will determine how the response
 content is treated.  The following special field names are recognized:
 
-    ':content_file'   => $filename
+    ':content_file'   => $filename # or $filehandle
     ':content_cb'     => \&callback
     ':read_size_hint' => $bytes
 
-If a C<$filename> is provided with the C<:content_file> option, then the
-response content will be saved here instead of in the response
-object.  If a callback is provided with the C<:content_cb> option then
+If a C<$filename> or C<$filehandle> is provided with the C<:content_file>
+option, then the response content will be saved here instead of in
+the response object.  The C<$filehandle> may also be an object with
+an open file descriptor, such as a L<File::Temp> object.
+If a callback is provided with the C<:content_cb> option then
 this function will be called for each chunk of the response content as
 it is received from the server.  If neither of these options are
 given, then the response content will accumulate in the response
@@ -1913,6 +1927,8 @@ time of the file.  If the document on the server has not changed since
 this time, then nothing happens.  If the document has been updated, it
 will be downloaded again.  The modification time of the file will be
 forced to match that of the server.
+
+Uses L<File::Copy/move> to attempt to atomically replace the C<$filename>.
 
 The return value is an L<HTTP::Response> object.
 
