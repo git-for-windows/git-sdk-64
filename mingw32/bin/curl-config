@@ -86,7 +86,7 @@ while test $# -gt 0; do
         ;;
 
     --feature|--features)
-        for feature in AsynchDNS HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerberos Largefile MultiSSL NTLM SPNEGO SSL SSPI TLS-SRP alt-svc brotli libz threadsafe zstd ""; do
+        for feature in AsynchDNS HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerberos Largefile MultiSSL NTLM SPNEGO SSL SSPI TLS-SRP UnixSockets alt-svc brotli libz threadsafe zstd ""; do
             test -n "$feature" && echo "$feature"
         done
         ;;
@@ -98,7 +98,7 @@ while test $# -gt 0; do
         ;;
 
     --version)
-        echo libcurl 7.85.0
+        echo libcurl 7.86.0
         exit 0
         ;;
 
@@ -110,11 +110,11 @@ while test $# -gt 0; do
         # dash as that's used for things like version 1.2.3-CVS
         cpatch=`echo $checkfor | cut -d. -f3 | cut -d- -f1`
 
-        vmajor=`echo 7.85.0 | cut -d. -f1`
-        vminor=`echo 7.85.0 | cut -d. -f2`
+        vmajor=`echo 7.86.0 | cut -d. -f1`
+        vminor=`echo 7.86.0 | cut -d. -f2`
         # when extracting the patch part we strip off everything after a
         # dash as that's used for things like version 1.2.3-CVS
-        vpatch=`echo 7.85.0 | cut -d. -f3 | cut -d- -f1`
+        vpatch=`echo 7.86.0 | cut -d. -f3 | cut -d- -f1`
 
         if test "$vmajor" -gt "$cmajor"; then
             exit 0;
@@ -130,12 +130,12 @@ while test $# -gt 0; do
             fi
         fi
 
-        echo "requested version $checkfor is newer than existing 7.85.0"
+        echo "requested version $checkfor is newer than existing 7.86.0"
         exit 1
         ;;
 
     --vernum)
-        echo 075500
+        echo 075600
         exit 0
         ;;
 
@@ -182,7 +182,7 @@ while test $# -gt 0; do
         ;;
 
     --configure)
-        echo " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' '--without-random' '--without-librtmp' '--enable-static' '--enable-shared' '--enable-sspi' '--with-libssh2' '--disable-debug' '--with-ssl' '--with-ca-bundle=/mingw32/ssl/certs/ca-bundle.crt' '--with-nghttp2=${MINGW_PREFIX}/' '--with-schannel' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe -Wl,--no-seh' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1'"
+        echo " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' '--without-random' '--without-librtmp' '--enable-static' '--enable-shared' '--enable-sspi' '--with-libssh2' '--disable-debug' '--with-ssl' '--with-ca-bundle=/mingw32/ssl/certs/ca-bundle.crt' '--with-nghttp2=${MINGW_PREFIX}/' '--with-schannel' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong' 'LDFLAGS=-pipe -Wl,--no-seh' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1'"
         ;;
 
     *)
