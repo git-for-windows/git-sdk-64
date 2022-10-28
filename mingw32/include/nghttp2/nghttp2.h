@@ -2753,6 +2753,18 @@ nghttp2_option_set_server_fallback_rfc7540_priorities(nghttp2_option *option,
 /**
  * @function
  *
+ * This option, if set to nonzero, turns off RFC 9113 leading and
+ * trailing white spaces validation against HTTP field value.  Some
+ * important fields, such as HTTP/2 pseudo header fields, are
+ * validated more strictly and this option does not apply to them.
+ */
+NGHTTP2_EXTERN void
+nghttp2_option_set_no_rfc9113_leading_and_trailing_ws_validation(
+    nghttp2_option *option, int val);
+
+/**
+ * @function
+ *
  * Initializes |*session_ptr| for client use.  The all members of
  * |callbacks| are copied to |*session_ptr|.  Therefore |*session_ptr|
  * does not store |callbacks|.  The |user_data| is an arbitrary user
@@ -5046,8 +5058,22 @@ NGHTTP2_EXTERN int nghttp2_check_header_name(const uint8_t *name, size_t len);
  * Returns nonzero if HTTP header field value |value| of length |len|
  * is valid according to
  * http://tools.ietf.org/html/rfc7230#section-3.2
+ *
+ * This function is considered obsolete, and application should
+ * consider to use `nghttp2_check_header_value_rfc9113()` instead.
  */
 NGHTTP2_EXTERN int nghttp2_check_header_value(const uint8_t *value, size_t len);
+
+/**
+ * @function
+ *
+ * Returns nonzero if HTTP header field value |value| of length |len|
+ * is valid according to
+ * http://tools.ietf.org/html/rfc7230#section-3.2, plus
+ * https://datatracker.ietf.org/doc/html/rfc9113#section-8.2.1
+ */
+NGHTTP2_EXTERN int nghttp2_check_header_value_rfc9113(const uint8_t *value,
+                                                      size_t len);
 
 /**
  * @function
