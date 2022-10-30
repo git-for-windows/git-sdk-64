@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------*-C-*-
-   libffi 3.4.3
+   libffi 3.4.4
      - Copyright (c) 2011, 2014, 2019, 2021, 2022 Anthony Green
      - Copyright (c) 1996-2003, 2007, 2008 Red Hat, Inc.
 
@@ -406,7 +406,7 @@ typedef struct {
 
   /* If this is enabled, then a raw closure has the same layout
      as a regular closure.  We use this to install an intermediate
-     handler to do the transaltion, void** -> ffi_raw*.  */
+     handler to do the translation, void** -> ffi_raw*.  */
 
   void     (*translate_args)(ffi_cif*,void*,void**,void*);
   void      *this_closure;
