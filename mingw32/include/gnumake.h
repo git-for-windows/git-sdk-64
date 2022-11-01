@@ -1,7 +1,7 @@
 /* External interfaces usable by dynamic objects loaded into GNU Make.
    --THIS API IS A "TECHNOLOGY PREVIEW" ONLY.  IT IS NOT A STABLE INTERFACE--
 
-Copyright (C) 2013-2020 Free Software Foundation, Inc.
+Copyright (C) 2013-2022 Free Software Foundation, Inc.
 This file is part of GNU Make.
 
 GNU Make is free software; you can redistribute it and/or modify it under the
@@ -14,7 +14,7 @@ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with
-this program.  If not, see <http://www.gnu.org/licenses/>.  */
+this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #ifndef _GNUMAKE_H_
 #define _GNUMAKE_H_
