@@ -16,7 +16,6 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#NOTES">NOTES</a></li>
-  <li><a href="#NOTES1">NOTES</a></li>
   <li><a href="#BUGS">BUGS</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
@@ -37,19 +36,17 @@ PKCS7 *PKCS7_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>PKCS7_sign() creates and returns a PKCS#7 signedData structure. <b>signcert</b> is the certificate to sign with, <b>pkey</b> is the corresponding private key. <b>certs</b> is an optional additional set of certificates to include in the PKCS#7 structure (for example any intermediate CAs in the chain).</p>
+<p>PKCS7_sign() creates and returns a PKCS#7 signedData structure. <i>signcert</i> is the certificate to sign with, <i>pkey</i> is the corresponding private key. <i>certs</i> is an optional set of extra certificates to include in the PKCS#7 structure (for example any intermediate CAs in the chain).</p>
 
-<p>The data to be signed is read from BIO <b>data</b>.</p>
+<p>The data to be signed is read from BIO <i>data</i>.</p>
 
-<p><b>flags</b> is an optional set of flags.</p>
+<p><i>flags</i> is an optional set of flags.</p>
 
-<h1 id="NOTES">NOTES</h1>
+<p>Any of the following flags (ored together) can be passed in the <i>flags</i></p>
 
-<p>Any of the following flags (ored together) can be passed in the <b>flags</b> parameter.</p>
+<p>Many S/MIME clients expect the signed content to include valid MIME headers. If the <b>PKCS7_TEXT</b> flag is set MIME headers for type <code>text/plain</code> are prepended to the data.</p>
 
-<p>Many S/MIME clients expect the signed content to include valid MIME headers. If the <b>PKCS7_TEXT</b> flag is set MIME headers for type <b>text/plain</b> are prepended to the data.</p>
-
-<p>If <b>PKCS7_NOCERTS</b> is set the signer&#39;s certificate will not be included in the PKCS7 structure, the signer&#39;s certificate must still be supplied in the <b>signcert</b> parameter though. This can reduce the size of the signature if the signers certificate can be obtained by other means: for example a previously signed message.</p>
+<p>If <b>PKCS7_NOCERTS</b> is set the signer&#39;s certificate and the extra <i>certs</i> will not be included in the PKCS7 structure. The signer&#39;s certificate must still be supplied in the <i>signcert</i> parameter though. This can reduce the size of the signatures if the signer&#39;s certificates can be obtained by other means: for example a previously signed message.</p>
 
 <p>The data being signed is included in the PKCS7 structure, unless <b>PKCS7_DETACHED</b> is set in which case it is omitted. This is used for PKCS7 detached signatures which are used in S/MIME plaintext signed messages for example.</p>
 
@@ -59,11 +56,11 @@ PKCS7 *PKCS7_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 <p>If present the SMIMECapabilities attribute indicates support for the following algorithms: triple DES, 128 bit RC2, 64 bit RC2, DES and 40 bit RC2. If any of these algorithms is disabled then it will not be included.</p>
 
-<p>If the flags <b>PKCS7_STREAM</b> is set then the returned <b>PKCS7</b> structure is just initialized ready to perform the signing operation. The signing is however <b>not</b> performed and the data to be signed is not read from the <b>data</b> parameter. Signing is deferred until after the data has been written. In this way data can be signed in a single pass.</p>
+<p>If the flags <b>PKCS7_STREAM</b> is set then the returned <b>PKCS7</b> structure is just initialized ready to perform the signing operation. The signing is however <b>not</b> performed and the data to be signed is not read from the <i>data</i> parameter. Signing is deferred until after the data has been written. In this way data can be signed in a single pass.</p>
 
 <p>If the <b>PKCS7_PARTIAL</b> flag is set a partial <b>PKCS7</b> structure is output to which additional signers and capabilities can be added before finalization.</p>
 
-<h1 id="NOTES1">NOTES</h1>
+<h1 id="NOTES">NOTES</h1>
 
 <p>If the flag <b>PKCS7_STREAM</b> is set the returned <b>PKCS7</b> structure is <b>not</b> complete and outputting its contents via a function that does not properly finalize the <b>PKCS7</b> structure will give unpredictable results.</p>
 
@@ -71,11 +68,11 @@ PKCS7 *PKCS7_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 <p>If a signer is specified it will use the default digest for the signing algorithm. This is <b>SHA1</b> for both RSA and DSA keys.</p>
 
-<p>The <b>certs</b>, <b>signcert</b> and <b>pkey</b> parameters can all be <b>NULL</b> if the <b>PKCS7_PARTIAL</b> flag is set. One or more signers can be added using the function PKCS7_sign_add_signer(). PKCS7_final() must also be called to finalize the structure if streaming is not enabled. Alternative signing digests can also be specified using this method.</p>
+<p>The <i>certs</i>, <i>signcert</i> and <i>pkey</i> parameters can all be NULL if the <b>PKCS7_PARTIAL</b> flag is set. One or more signers can be added using the function PKCS7_sign_add_signer(). PKCS7_final() must also be called to finalize the structure if streaming is not enabled. Alternative signing digests can also be specified using this method.</p>
 
-<p>If <b>signcert</b> and <b>pkey</b> are NULL then a certificates only PKCS#7 structure is output.</p>
+<p>If <i>signcert</i> and <i>pkey</i> are NULL then a certificates only PKCS#7 structure is output.</p>
 
-<p>In versions of OpenSSL before 1.0.0 the <b>signcert</b> and <b>pkey</b> parameters must <b>NOT</b> be NULL.</p>
+<p>In versions of OpenSSL before 1.0.0 the <i>signcert</i> and <i>pkey</i> parameters must not be NULL.</p>
 
 <h1 id="BUGS">BUGS</h1>
 
@@ -91,13 +88,13 @@ PKCS7 *PKCS7_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The <b>PKCS7_PARTIAL</b> flag, and the ability for <b>certs</b>, <b>signcert</b>, and <b>pkey</b> parameters to be <b>NULL</b> were added in OpenSSL 1.0.0.</p>
+<p>The <b>PKCS7_PARTIAL</b> flag, and the ability for <i>certs</i>, <i>signcert</i>, and <i>pkey</i> parameters to be NULL were added in OpenSSL 1.0.0.</p>
 
 <p>The <b>PKCS7_STREAM</b> flag was added in OpenSSL 1.0.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

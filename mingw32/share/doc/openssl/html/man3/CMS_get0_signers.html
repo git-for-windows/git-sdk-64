@@ -38,35 +38,33 @@ STACK_OF(X509) *CMS_get0_signers(CMS_ContentInfo *cms);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>CMS_verify() verifies a CMS SignedData structure. <b>cms</b> is the CMS_ContentInfo structure to verify. <b>certs</b> is a set of certificates in which to search for the signing certificate(s). <b>store</b> is a trusted certificate store used for chain verification. <b>indata</b> is the detached content if the content is not present in <b>cms</b>. The content is written to <b>out</b> if it is not NULL.</p>
+<p>CMS_verify() is very similar to <a href="../man3/PKCS7_verify.html">PKCS7_verify(3)</a>. It verifies a <b>CMS SignedData</b> structure contained in a structure of type <b>CMS_ContentInfo</b>. <i>cms</i> points to the <b>CMS_ContentInfo</b> structure to verify. The optional <i>certs</i> parameter refers to a set of certificates in which to search for signing certificates. <i>cms</i> may contain extra untrusted CA certificates that may be used for chain building as well as CRLs that may be used for certificate validation. <i>store</i> may be NULL or point to the trusted certificate store to use for chain verification. <i>indata</i> refers to the signed data if the content is detached from <i>cms</i>. Otherwise <i>indata</i> should be NULL and the signed data must be in <i>cms</i>. The content is written to the BIO <i>out</i> unless it is NULL. <i>flags</i> is an optional set of flags, which can be used to modify the operation.</p>
 
-<p><b>flags</b> is an optional set of flags, which can be used to modify the verify operation.</p>
-
-<p>CMS_get0_signers() retrieves the signing certificate(s) from <b>cms</b>, it may only be called after a successful CMS_verify() operation.</p>
+<p>CMS_get0_signers() retrieves the signing certificate(s) from <i>cms</i>, it may only be called after a successful CMS_verify() operation.</p>
 
 <h1 id="VERIFY-PROCESS">VERIFY PROCESS</h1>
 
 <p>Normally the verify process proceeds as follows.</p>
 
-<p>Initially some sanity checks are performed on <b>cms</b>. The type of <b>cms</b> must be SignedData. There must be at least one signature on the data and if the content is detached <b>indata</b> cannot be <b>NULL</b>.</p>
+<p>Initially some sanity checks are performed on <i>cms</i>. The type of <i>cms</i> must be SignedData. There must be at least one signature on the data and if the content is detached <i>indata</i> cannot be NULL.</p>
 
-<p>An attempt is made to locate all the signing certificate(s), first looking in the <b>certs</b> parameter (if it is not NULL) and then looking in any certificates contained in the <b>cms</b> structure itself. If any signing certificate cannot be located the operation fails.</p>
+<p>An attempt is made to locate all the signing certificate(s), first looking in the <i>certs</i> parameter (if it is not NULL) and then looking in any certificates contained in the <i>cms</i> structure unless <b>CMS_NOINTERN</b> is set. If any signing certificate cannot be located the operation fails.</p>
 
-<p>Each signing certificate is chain verified using the <b>smimesign</b> purpose and the supplied trusted certificate store. Any internal certificates in the message are used as untrusted CAs. If CRL checking is enabled in <b>store</b> any internal CRLs are used in addition to attempting to look them up in <b>store</b>. If any chain verify fails an error code is returned.</p>
+<p>Each signing certificate is chain verified using the <i>smimesign</i> purpose and using the trusted certificate store <i>store</i> if supplied. Any internal certificates in the message, which may have been added using <a href="../man3/CMS_add1_cert.html">CMS_add1_cert(3)</a>, are used as untrusted CAs. If CRL checking is enabled in <i>store</i> and <b>CMS_NOCRL</b> is not set, any internal CRLs, which may have been added using <a href="../man3/CMS_add1_crl.html">CMS_add1_crl(3)</a>, are used in addition to attempting to look them up in <i>store</i>. If <i>store</i> is not NULL and any chain verify fails an error code is returned.</p>
 
-<p>Finally the signed content is read (and written to <b>out</b> if it is not NULL) and the signature&#39;s checked.</p>
+<p>Finally the signed content is read (and written to <i>out</i> unless it is NULL) and the signature is checked.</p>
 
-<p>If all signature&#39;s verify correctly then the function is successful.</p>
+<p>If all signatures verify correctly then the function is successful.</p>
 
-<p>Any of the following flags (ored together) can be passed in the <b>flags</b> parameter to change the default verify behaviour.</p>
+<p>Any of the following flags (ored together) can be passed in the <i>flags</i> parameter to change the default verify behaviour.</p>
 
-<p>If <b>CMS_NOINTERN</b> is set the certificates in the message itself are not searched when locating the signing certificate(s). This means that all the signing certificates must be in the <b>certs</b> parameter.</p>
+<p>If <b>CMS_NOINTERN</b> is set the certificates in the message itself are not searched when locating the signing certificate(s). This means that all the signing certificates must be in the <i>certs</i> parameter.</p>
 
-<p>If <b>CMS_NOCRL</b> is set and CRL checking is enabled in <b>store</b> then any CRLs in the message itself are ignored.</p>
+<p>If <b>CMS_NOCRL</b> is set and CRL checking is enabled in <i>store</i> then any CRLs in the message itself are ignored.</p>
 
 <p>If the <b>CMS_TEXT</b> flag is set MIME headers for type <b>text/plain</b> are deleted from the content. If the content is not of type <b>text/plain</b> then an error is returned.</p>
 
-<p>If <b>CMS_NO_SIGNER_CERT_VERIFY</b> is set the signing certificates are not verified.</p>
+<p>If <b>CMS_NO_SIGNER_CERT_VERIFY</b> is set the signing certificates are not chain verified.</p>
 
 <p>If <b>CMS_NO_ATTR_VERIFY</b> is set the signed attributes signature is not verified.</p>
 
@@ -74,17 +72,17 @@ STACK_OF(X509) *CMS_get0_signers(CMS_ContentInfo *cms);</code></pre>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>One application of <b>CMS_NOINTERN</b> is to only accept messages signed by a small number of certificates. The acceptable certificates would be passed in the <b>certs</b> parameter. In this case if the signer is not one of the certificates supplied in <b>certs</b> then the verify will fail because the signer cannot be found.</p>
+<p>One application of <b>CMS_NOINTERN</b> is to only accept messages signed by a small number of certificates. The acceptable certificates would be passed in the <i>certs</i> parameter. In this case if the signer certificate is not one of the certificates supplied in <i>certs</i> then the verify will fail because the signer cannot be found.</p>
 
-<p>In some cases the standard techniques for looking up and validating certificates are not appropriate: for example an application may wish to lookup certificates in a database or perform customised verification. This can be achieved by setting and verifying the signers certificates manually using the signed data utility functions.</p>
+<p>In some cases the standard techniques for looking up and validating certificates are not appropriate: for example an application may wish to lookup certificates in a database or perform customised verification. This can be achieved by setting and verifying the signer certificates manually using the signed data utility functions.</p>
 
-<p>Care should be taken when modifying the default verify behaviour, for example setting <b>CMS_NO_CONTENT_VERIFY</b> will totally disable all content verification and any modified content will be considered valid. This combination is however useful if one merely wishes to write the content to <b>out</b> and its validity is not considered important.</p>
+<p>Care should be taken when modifying the default verify behaviour, for example setting <b>CMS_NO_CONTENT_VERIFY</b> will totally disable all content verification and any modified content will be considered valid. This combination is however useful if one merely wishes to write the content to <i>out</i> and its validity is not considered important.</p>
 
 <p>Chain verification should arguably be performed using the signing time rather than the current time. However, since the signing time is supplied by the signer it cannot be trusted without additional evidence (such as a trusted timestamp).</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>CMS_verify() returns 1 for a successful verification and zero if an error occurred.</p>
+<p>CMS_verify() returns 1 for a successful verification and 0 if an error occurred.</p>
 
 <p>CMS_get0_signers() returns all signers or NULL if an error occurred.</p>
 
@@ -92,17 +90,17 @@ STACK_OF(X509) *CMS_get0_signers(CMS_ContentInfo *cms);</code></pre>
 
 <h1 id="BUGS">BUGS</h1>
 
-<p>The trusted certificate store is not searched for the signing certificate, this is primarily due to the inadequacies of the current <b>X509_STORE</b> functionality.</p>
+<p>The trusted certificate store is not searched for the signing certificate. This is primarily due to the inadequacies of the current <b>X509_STORE</b> functionality.</p>
 
 <p>The lack of single pass processing means that the signed content must all be held in memory if it is not detached.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>, <a href="../man3/CMS_sign.html">CMS_sign(3)</a></p>
+<p><a href="../man3/PKCS7_verify.html">PKCS7_verify(3)</a>, <a href="../man3/CMS_add1_cert.html">CMS_add1_cert(3)</a>, <a href="../man3/CMS_add1_crl.html">CMS_add1_crl(3)</a>, <a href="../man3/OSSL_ESS_check_signing_certs.html">OSSL_ESS_check_signing_certs(3)</a>, <a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>, <a href="../man3/CMS_sign.html">CMS_sign(3)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2008-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2008-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

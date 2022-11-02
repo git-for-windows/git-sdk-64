@@ -163,7 +163,7 @@ while test $# -gt 0; do
            CURLLIBDIR=""
         fi
         if test "Xyes" = "Xno"; then
-          echo ${CURLLIBDIR}-lcurl -lnghttp2 -lidn2 -lssh2 -L/mingw32/lib -lssh2 -lbcrypt -ladvapi32 -lcrypt32 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lwldap32 -lzstd -lbrotlidec -lz -lws2_32
+          echo ${CURLLIBDIR}-lcurl -lnghttp2 -lidn2 -lssh2 -lssh2 -lbcrypt -ladvapi32 -lcrypt32 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lwldap32 -lzstd -lbrotlidec -lz -lws2_32
         else
           echo ${CURLLIBDIR}-lcurl
         fi
@@ -174,7 +174,7 @@ while test $# -gt 0; do
 
     --static-libs)
         if test "Xyes" != "Xno" ; then
-          echo "${exec_prefix}/lib/libcurl.a" -pipe -Wl,--no-seh -L/mingw32/lib -L/mingw32/lib -L/mingw32/lib -L/mingw32/lib -L/mingw32/lib -lnghttp2 -lidn2 -lssh2 -L/mingw32/lib -lssh2 -lbcrypt -ladvapi32 -lcrypt32 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lwldap32 -lzstd -lbrotlidec -lz -lws2_32
+          echo "${exec_prefix}/lib/libcurl.a" -pipe -Wl,--no-seh -lnghttp2 -lidn2 -lssh2 -lssh2 -lbcrypt -ladvapi32 -lcrypt32 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lwldap32 -lzstd -lbrotlidec -lz -lws2_32
         else
           echo "curl was built with static libraries disabled" >&2
           exit 1

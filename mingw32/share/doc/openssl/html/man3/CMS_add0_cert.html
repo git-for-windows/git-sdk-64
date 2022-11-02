@@ -39,19 +39,21 @@ STACK_OF(X509_CRL) *CMS_get1_crls(CMS_ContentInfo *cms);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>CMS_add0_cert() and CMS_add1_cert() add certificate <b>cert</b> to <b>cms</b>. must be of type signed data or enveloped data.</p>
+<p>CMS_add0_cert() and CMS_add1_cert() add certificate <i>cert</i> to <i>cms</i>. <i>cms</i> must be of type signed data or (authenticated) enveloped data. For signed data, such a certificate can be used when signing or verifying to fill in the signer certificate or to provide an extra CA certificate that may be needed for chain building in certificate validation.</p>
 
-<p>CMS_get1_certs() returns all certificates in <b>cms</b>.</p>
+<p>CMS_get1_certs() returns all certificates in <i>cms</i>.</p>
 
-<p>CMS_add0_crl() and CMS_add1_crl() add CRL <b>crl</b> to <b>cms</b>. CMS_get1_crls() returns any CRLs in <b>cms</b>.</p>
+<p>CMS_add0_crl() and CMS_add1_crl() add CRL <i>crl</i> to <i>cms</i>. <i>cms</i> must be of type signed data or (authenticated) enveloped data. For signed data, such a CRL may be used in certificate validation. It may be given both for inclusion when signing a CMS message and when verifying a signed CMS message.</p>
+
+<p>CMS_get1_crls() returns all CRLs in <i>cms</i>.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>The CMS_ContentInfo structure <b>cms</b> must be of type signed data or enveloped data or an error will be returned.</p>
+<p>The CMS_ContentInfo structure <i>cms</i> must be of type signed data or enveloped data or an error will be returned.</p>
 
-<p>For signed data certificates and CRLs are added to the <b>certificates</b> and <b>crls</b> fields of SignedData structure. For enveloped data they are added to <b>OriginatorInfo</b>.</p>
+<p>For signed data certificates and CRLs are added to the <i>certificates</i> and <i>crls</i> fields of SignedData structure. For enveloped data they are added to <b>OriginatorInfo</b>.</p>
 
-<p>As the <b>0</b> implies CMS_add0_cert() adds <b>cert</b> internally to <b>cms</b> and it must not be freed up after the call as opposed to CMS_add1_cert() where <b>cert</b> must be freed up.</p>
+<p>As the <i>0</i> implies CMS_add0_cert() adds <i>cert</i> internally to <i>cms</i> and it must not be freed up after the call as opposed to CMS_add1_cert() where <i>cert</i> must be freed up.</p>
 
 <p>The same certificate or CRL must not be added to the same cms structure more than once.</p>
 
@@ -59,7 +61,7 @@ STACK_OF(X509_CRL) *CMS_get1_crls(CMS_ContentInfo *cms);</code></pre>
 
 <p>CMS_add0_cert(), CMS_add1_cert() and CMS_add0_crl() and CMS_add1_crl() return 1 for success and 0 for failure.</p>
 
-<p>CMS_get1_certs() and CMS_get1_crls() return the STACK of certificates or CRLs or NULL if there are none or an error occurs. The only error which will occur in practice is if the <b>cms</b> type is invalid.</p>
+<p>CMS_get1_certs() and CMS_get1_crls() return the STACK of certificates or CRLs or NULL if there are none or an error occurs. The only error which will occur in practice is if the <i>cms</i> type is invalid.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -67,7 +69,7 @@ STACK_OF(X509_CRL) *CMS_get1_crls(CMS_ContentInfo *cms);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2008-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2008-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

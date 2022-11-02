@@ -417,15 +417,17 @@
 
 <p>Sets the CA serial number file to use.</p>
 
-<p>When the <b>-CA</b> option is used to sign a certificate it uses a serial number specified in a file. This file consists of one line containing an even number of hex digits with the serial number to use. After each use the serial number is incremented and written out to the file again.</p>
+<p>When creating a certificate with this option, and with the <b>-CA</b> option, the certificate serial number is stored in the given file. This file consists of one line containing an even number of hex digits with the serial number used last time. After reading this number, it is incremented and used, and the file is updated.</p>
 
 <p>The default filename consists of the CA certificate file base name with &quot;.srl&quot; appended. For example if the CA certificate file is called &quot;mycacert.pem&quot; it expects to find a serial number file called &quot;mycacert.srl&quot;.</p>
+
+<p>If the <b>-CA</b> option is specified and neither &lt;-CAserial&gt; or &lt;-CAcreateserial&gt; is given and the default serial number file does not exist, a random number is generated; this is the recommended practice.</p>
 
 </dd>
 <dt id="CAcreateserial"><b>-CAcreateserial</b></dt>
 <dd>
 
-<p>With this option the CA serial number file is created if it does not exist: it will contain the serial number &quot;02&quot; and the certificate being signed will have the 1 as its serial number. If the <b>-CA</b> option is specified and the serial number file does not exist a random number is generated; this is the recommended practice.</p>
+<p>With this option and the <b>-CA</b> option the CA serial number file is created if it does not exist. A random number is generated, used for the certificate, and saved into the serial number file determined as described above.</p>
 
 </dd>
 <dt id="extfile-filename"><b>-extfile filename</b></dt>
@@ -880,7 +882,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
