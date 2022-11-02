@@ -1,0 +1,35 @@
+name: Windows Nano Server tests
+
+on: [workflow_dispatch, push]
+
+jobs:
+  test-nano-server:
+    if: github.event.repository.fork == false || github.event_name == 'workflow_dispatch'
+    runs-on: windows-2022
+    env:
+      REF: ${{github.ref}}
+      WINDBG_DIR: "C:/Program Files (x86)/Windows Kits/10/Debuggers/x64"
+      IMAGE: mcr.microsoft.com/powershell:nanoserver-ltsc2022
+
+    steps:
+      - name: partial clone
+        shell: bash
+        run: |
+          # cannot use `git clone` directly, to allow for PR's refs to be fetched
+          git clone --no-checkout --single-branch -b ${REF#refs/heads/} --filter=blob:none --depth=1 \
+            https://github.com/${{github.repository}} . &&
+          git sparse-checkout set .github/workflows mingw64/bin &&
+          git checkout HEAD
+      - name: pull nanoserver image
+        shell: bash
+        run: docker pull $IMAGE
+      - name: run nano-server test
+        shell: bash
+        run: |
+          docker pull $IMAGE
+          docker run \
+            --user "ContainerAdministrator" \
+            -v "$WINDBG_DIR:C:/dbg" \
+            -v "$(cygpath -aw mingw64/bin):C:/test" \
+            -v "$(cygpath -aw .github/workflows/nano-server):C:/script" \
+            $IMAGE pwsh.exe C:/script/run-tests.ps1
