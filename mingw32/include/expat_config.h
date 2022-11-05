@@ -1,6 +1,9 @@
 /* expat_config.h.  Generated from expat_config.h.in by configure.  */
 /* expat_config.h.in.  Generated from configure.ac by autoheader.  */
 
+#ifndef EXPAT_CONFIG_H
+#define EXPAT_CONFIG_H 1
+
 /* Define if building universal (internal helper macro) */
 /* #undef AC_APPLE_UNIVERSAL_BUILD */
 
@@ -77,7 +80,7 @@
 #define PACKAGE_NAME "expat"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "expat 2.4.9"
+#define PACKAGE_STRING "expat 2.5.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "expat"
@@ -86,7 +89,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.4.9"
+#define PACKAGE_VERSION "2.5.0"
 
 /* The size of `void *', as computed by sizeof. */
 #define SIZEOF_VOID_P 4
@@ -97,7 +100,7 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "2.4.9"
+#define VERSION "2.5.0"
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */
@@ -136,3 +139,5 @@
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef size_t */
+
+#endif // ndef EXPAT_CONFIG_H
