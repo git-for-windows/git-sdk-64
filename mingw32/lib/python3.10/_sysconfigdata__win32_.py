@@ -17,7 +17,8 @@ build_time_vars = {'ABIFLAGS': '',
  'BINLIBDEST': '/mingw32/lib/python3.10',
  'BLDLIBRARY': '-L. -lpython3.10',
  'BLDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe -Wl,--no-seh '
-              '-pipe -Wl,--no-seh',
+              '-Wl,--large-address-aware -pipe -Wl,--no-seh '
+              '-Wl,--large-address-aware',
  'BUILDEXE': '.exe',
  'BUILDPYTHON': 'python.exe',
  'BUILDPYTHONW': 'pythonw.exe',
@@ -28,13 +29,15 @@ build_time_vars = {'ABIFLAGS': '',
  'CC': 'gcc',
  'CCSHARED': '',
  'CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall '
-           '-march=pentium4 -mtune=generic -O2 -pipe -O3 -march=pentium4 '
-           '-mtune=generic -O2 -pipe -O3',
+           '-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 '
+           '-fstack-protector-strong -O3 -march=pentium4 -mtune=generic -O2 '
+           '-pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3',
  'CFLAGSFORSHARED': '',
  'CFLAGS_ALIASING': '',
  'CONFIGFILES': 'configure configure.ac acconfig.h pyconfig.h.in '
                 'Makefile.pre.in',
- 'CONFIGURE_CFLAGS': '-march=pentium4 -mtune=generic -O2 -pipe -O3',
+ 'CONFIGURE_CFLAGS': '-march=pentium4 -mtune=generic -O2 -pipe '
+                     '-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3',
  'CONFIGURE_CFLAGS_NODIST': '-fno-semantic-interposition -std=c99 -Wextra '
                             '-Wno-unused-result -Wno-unused-parameter '
                             '-Wno-missing-field-initializers '
@@ -44,7 +47,7 @@ build_time_vars = {'ABIFLAGS': '',
                             '-DPY3_DLLNAME=\'L"libpython3.10.dll"\' '
                             '-DMS_DLL_ID=\'"3.10-32"\'',
  'CONFIGURE_CPPFLAGS': '-I../Python-3.10.8/PC -D__USE_MINGW_ANSI_STDIO=1 -I.',
- 'CONFIGURE_LDFLAGS': '-pipe -Wl,--no-seh',
+ 'CONFIGURE_LDFLAGS': '-pipe -Wl,--no-seh -Wl,--large-address-aware',
  'CONFIGURE_LDFLAGS_NODIST': '-fno-semantic-interposition',
  'CONFIG_ARGS': "'--prefix=/mingw32' '--host=i686-w64-mingw32' "
                 "'--build=i686-w64-mingw32' '--enable-shared' "
@@ -54,8 +57,9 @@ build_time_vars = {'ABIFLAGS': '',
                 "'--with-tzpath=/mingw32/share/zoneinfo' "
                 "'--enable-optimizations' 'build_alias=i686-w64-mingw32' "
                 "'host_alias=i686-w64-mingw32' 'CC=gcc' "
-                "'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -O3' "
-                "'LDFLAGS=-pipe -Wl,--no-seh' "
+                "'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe "
+                "-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3' "
+                "'LDFLAGS=-pipe -Wl,--no-seh -Wl,--large-address-aware' "
                 "'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' "
                 "'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'",
  'CONFINCLUDEDIR': '/mingw32/include',
@@ -559,16 +563,18 @@ build_time_vars = {'ABIFLAGS': '',
  'IO_H': 'Modules/_io/_iomodule.h',
  'IO_OBJS': '\\',
  'LDCXXSHARED': 'g++ -shared -Wl,--enable-auto-image-base',
- 'LDFLAGS': '-pipe -Wl,--no-seh -pipe -Wl,--no-seh',
+ 'LDFLAGS': '-pipe -Wl,--no-seh -Wl,--large-address-aware -pipe -Wl,--no-seh '
+            '-Wl,--large-address-aware',
  'LDLIBRARY': 'libpython3.10.dll.a',
  'LDLIBRARYDIR': '',
  'LDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe -Wl,--no-seh '
-             '-pipe -Wl,--no-seh',
+             '-Wl,--large-address-aware -pipe -Wl,--no-seh '
+             '-Wl,--large-address-aware',
  'LDVERSION': '3.10',
  'LIBC': '',
  'LIBDEST': '/mingw32/lib/python3.10',
  'LIBDIR': '/mingw32/lib',
- 'LIBFFI_INCLUDEDIR': 'D:/a/msys64/mingw32/include',
+ 'LIBFFI_INCLUDEDIR': '',
  'LIBM': '-lm',
  'LIBOBJDIR': 'Python/',
  'LIBOBJS': '',
@@ -627,8 +633,8 @@ build_time_vars = {'ABIFLAGS': '',
  'NO_AS_NEEDED': '-Wl,--no-as-needed',
  'NT_THREADS': 1,
  'OBJECT_OBJS': '\\',
- 'OPENSSL_INCLUDES': '-ID:/a/msys64/mingw32/include',
- 'OPENSSL_LDFLAGS': '-LD:/a/msys64/mingw32/lib',
+ 'OPENSSL_INCLUDES': '',
+ 'OPENSSL_LDFLAGS': '',
  'OPENSSL_LIBS': '-lssl -lcrypto',
  'OPENSSL_RPATH': '',
  'OPT': '-DNDEBUG -g -fwrapv -O3 -Wall',
@@ -668,9 +674,12 @@ build_time_vars = {'ABIFLAGS': '',
  'PY_BUILTIN_HASHLIB_HASHES': '"md5,sha1,sha256,sha512,sha3,blake2"',
  'PY_BUILTIN_MODULE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g '
                              '-fwrapv -O3 -Wall -march=pentium4 -mtune=generic '
-                             '-O2 -pipe -O3 -march=pentium4 -mtune=generic -O2 '
-                             '-pipe -O3 -fno-semantic-interposition -std=c99 '
-                             '-Wextra -Wno-unused-result -Wno-unused-parameter '
+                             '-O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 '
+                             '-fstack-protector-strong -O3 -march=pentium4 '
+                             '-mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 '
+                             '-fstack-protector-strong -O3 '
+                             '-fno-semantic-interposition -std=c99 -Wextra '
+                             '-Wno-unused-result -Wno-unused-parameter '
                              '-Wno-missing-field-initializers '
                              '-Wstrict-prototypes '
                              '-Werror=implicit-function-declaration '
@@ -685,8 +694,10 @@ build_time_vars = {'ABIFLAGS': '',
                              '-D__USE_MINGW_ANSI_STDIO=1 '
                              '-DPy_BUILD_CORE_BUILTIN',
  'PY_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall '
-              '-march=pentium4 -mtune=generic -O2 -pipe -O3 -march=pentium4 '
-              '-mtune=generic -O2 -pipe -O3',
+              '-march=pentium4 -mtune=generic -O2 -pipe '
+              '-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3 '
+              '-march=pentium4 -mtune=generic -O2 -pipe '
+              '-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3',
  'PY_CFLAGS_NODIST': '-fno-semantic-interposition -std=c99 -Wextra '
                      '-Wno-unused-result -Wno-unused-parameter '
                      '-Wno-missing-field-initializers -Wstrict-prototypes '
@@ -697,8 +708,10 @@ build_time_vars = {'ABIFLAGS': '',
                      '-fprofile-correction -I../Python-3.10.8/Include/internal',
  'PY_COERCE_C_LOCALE': 0,
  'PY_CORE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 '
-                   '-Wall -march=pentium4 -mtune=generic -O2 -pipe -O3 '
-                   '-march=pentium4 -mtune=generic -O2 -pipe -O3 '
+                   '-Wall -march=pentium4 -mtune=generic -O2 -pipe '
+                   '-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3 '
+                   '-march=pentium4 -mtune=generic -O2 -pipe '
+                   '-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3 '
                    '-fno-semantic-interposition -std=c99 -Wextra '
                    '-Wno-unused-result -Wno-unused-parameter '
                    '-Wno-missing-field-initializers -Wstrict-prototypes '
@@ -711,20 +724,24 @@ build_time_vars = {'ABIFLAGS': '',
                    '-I../Python-3.10.8/Include -I../Python-3.10.8/PC '
                    '-D__USE_MINGW_ANSI_STDIO=1 -I. -D__USE_MINGW_ANSI_STDIO=1 '
                    '-DPy_BUILD_CORE',
- 'PY_CORE_LDFLAGS': '-pipe -Wl,--no-seh -pipe -Wl,--no-seh '
+ 'PY_CORE_LDFLAGS': '-pipe -Wl,--no-seh -Wl,--large-address-aware -pipe '
+                    '-Wl,--no-seh -Wl,--large-address-aware '
                     '-fno-semantic-interposition',
  'PY_CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.10.8/Include '
                 '-I../Python-3.10.8/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
                 '-D__USE_MINGW_ANSI_STDIO=1',
  'PY_ENABLE_SHARED': 1,
  'PY_FORMAT_SIZE_T': '"z"',
- 'PY_LDFLAGS': '-pipe -Wl,--no-seh -pipe -Wl,--no-seh',
+ 'PY_LDFLAGS': '-pipe -Wl,--no-seh -Wl,--large-address-aware -pipe '
+               '-Wl,--no-seh -Wl,--large-address-aware',
  'PY_LDFLAGS_NODIST': '-fno-semantic-interposition',
  'PY_SSL_DEFAULT_CIPHERS': 1,
  'PY_SSL_DEFAULT_CIPHER_STRING': 0,
  'PY_STDMODULE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv '
                         '-O3 -Wall -march=pentium4 -mtune=generic -O2 -pipe '
-                        '-O3 -march=pentium4 -mtune=generic -O2 -pipe -O3 '
+                        '-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3 '
+                        '-march=pentium4 -mtune=generic -O2 -pipe '
+                        '-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3 '
                         '-fno-semantic-interposition -std=c99 -Wextra '
                         '-Wno-unused-result -Wno-unused-parameter '
                         '-Wno-missing-field-initializers -Wstrict-prototypes '

@@ -27,13 +27,16 @@ build_time_vars = {'ABIFLAGS': '',
  'CC': 'gcc',
  'CCSHARED': '',
  'CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall '
-           '-march=x86-64 -mtune=generic -O2 -pipe -O3 -march=x86-64 '
-           '-mtune=generic -O2 -pipe -O3',
+           '-march=nocona -msahf -mtune=generic -O2 -pipe '
+           '-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3 -march=nocona '
+           '-msahf -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 '
+           '-fstack-protector-strong -O3',
  'CFLAGSFORSHARED': '',
  'CFLAGS_ALIASING': '',
  'CONFIGFILES': 'configure configure.ac acconfig.h pyconfig.h.in '
                 'Makefile.pre.in',
- 'CONFIGURE_CFLAGS': '-march=x86-64 -mtune=generic -O2 -pipe -O3',
+ 'CONFIGURE_CFLAGS': '-march=nocona -msahf -mtune=generic -O2 -pipe '
+                     '-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3',
  'CONFIGURE_CFLAGS_NODIST': '-fno-semantic-interposition -std=c99 -Wextra '
                             '-Wno-unused-result -Wno-unused-parameter '
                             '-Wno-missing-field-initializers '
@@ -53,7 +56,8 @@ build_time_vars = {'ABIFLAGS': '',
                 "'--with-tzpath=/mingw64/share/zoneinfo' "
                 "'--enable-optimizations' 'build_alias=x86_64-w64-mingw32' "
                 "'host_alias=x86_64-w64-mingw32' 'CC=gcc' "
-                "'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -O3' "
+                "'CFLAGS=-march=nocona -msahf -mtune=generic -O2 -pipe "
+                "-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3' "
                 "'LDFLAGS=-pipe' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' "
                 "'PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig'",
  'CONFINCLUDEDIR': '/mingw64/include',
@@ -565,7 +569,7 @@ build_time_vars = {'ABIFLAGS': '',
  'LIBC': '',
  'LIBDEST': '/mingw64/lib/python3.10',
  'LIBDIR': '/mingw64/lib',
- 'LIBFFI_INCLUDEDIR': 'D:/a/msys64/mingw64/include',
+ 'LIBFFI_INCLUDEDIR': '',
  'LIBM': '-lm',
  'LIBOBJDIR': 'Python/',
  'LIBOBJS': '',
@@ -624,8 +628,8 @@ build_time_vars = {'ABIFLAGS': '',
  'NO_AS_NEEDED': '-Wl,--no-as-needed',
  'NT_THREADS': 1,
  'OBJECT_OBJS': '\\',
- 'OPENSSL_INCLUDES': '-ID:/a/msys64/mingw64/include',
- 'OPENSSL_LDFLAGS': '-LD:/a/msys64/mingw64/lib',
+ 'OPENSSL_INCLUDES': '',
+ 'OPENSSL_LDFLAGS': '',
  'OPENSSL_LIBS': '-lssl -lcrypto',
  'OPENSSL_RPATH': '',
  'OPT': '-DNDEBUG -g -fwrapv -O3 -Wall',
@@ -664,10 +668,13 @@ build_time_vars = {'ABIFLAGS': '',
  'PYTHON_OBJS': '\\',
  'PY_BUILTIN_HASHLIB_HASHES': '"md5,sha1,sha256,sha512,sha3,blake2"',
  'PY_BUILTIN_MODULE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g '
-                             '-fwrapv -O3 -Wall -march=x86-64 -mtune=generic '
-                             '-O2 -pipe -O3 -march=x86-64 -mtune=generic -O2 '
-                             '-pipe -O3 -fno-semantic-interposition -std=c99 '
-                             '-Wextra -Wno-unused-result -Wno-unused-parameter '
+                             '-fwrapv -O3 -Wall -march=nocona -msahf '
+                             '-mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 '
+                             '-fstack-protector-strong -O3 -march=nocona '
+                             '-msahf -mtune=generic -O2 -pipe '
+                             '-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong '
+                             '-O3 -fno-semantic-interposition -std=c99 -Wextra '
+                             '-Wno-unused-result -Wno-unused-parameter '
                              '-Wno-missing-field-initializers '
                              '-Wstrict-prototypes '
                              '-Werror=implicit-function-declaration '
@@ -682,8 +689,10 @@ build_time_vars = {'ABIFLAGS': '',
                              '-D__USE_MINGW_ANSI_STDIO=1 '
                              '-DPy_BUILD_CORE_BUILTIN',
  'PY_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall '
-              '-march=x86-64 -mtune=generic -O2 -pipe -O3 -march=x86-64 '
-              '-mtune=generic -O2 -pipe -O3',
+              '-march=nocona -msahf -mtune=generic -O2 -pipe '
+              '-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3 '
+              '-march=nocona -msahf -mtune=generic -O2 -pipe '
+              '-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3',
  'PY_CFLAGS_NODIST': '-fno-semantic-interposition -std=c99 -Wextra '
                      '-Wno-unused-result -Wno-unused-parameter '
                      '-Wno-missing-field-initializers -Wstrict-prototypes '
@@ -694,8 +703,10 @@ build_time_vars = {'ABIFLAGS': '',
                      '-fprofile-correction -I../Python-3.10.8/Include/internal',
  'PY_COERCE_C_LOCALE': 0,
  'PY_CORE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 '
-                   '-Wall -march=x86-64 -mtune=generic -O2 -pipe -O3 '
-                   '-march=x86-64 -mtune=generic -O2 -pipe -O3 '
+                   '-Wall -march=nocona -msahf -mtune=generic -O2 -pipe '
+                   '-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3 '
+                   '-march=nocona -msahf -mtune=generic -O2 -pipe '
+                   '-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3 '
                    '-fno-semantic-interposition -std=c99 -Wextra '
                    '-Wno-unused-result -Wno-unused-parameter '
                    '-Wno-missing-field-initializers -Wstrict-prototypes '
@@ -718,8 +729,11 @@ build_time_vars = {'ABIFLAGS': '',
  'PY_SSL_DEFAULT_CIPHERS': 1,
  'PY_SSL_DEFAULT_CIPHER_STRING': 0,
  'PY_STDMODULE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv '
-                        '-O3 -Wall -march=x86-64 -mtune=generic -O2 -pipe -O3 '
-                        '-march=x86-64 -mtune=generic -O2 -pipe -O3 '
+                        '-O3 -Wall -march=nocona -msahf -mtune=generic -O2 '
+                        '-pipe -Wp,-D_FORTIFY_SOURCE=2 '
+                        '-fstack-protector-strong -O3 -march=nocona -msahf '
+                        '-mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 '
+                        '-fstack-protector-strong -O3 '
                         '-fno-semantic-interposition -std=c99 -Wextra '
                         '-Wno-unused-result -Wno-unused-parameter '
                         '-Wno-missing-field-initializers -Wstrict-prototypes '

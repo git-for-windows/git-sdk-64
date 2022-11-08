@@ -82,7 +82,7 @@ MAKESETUP=      $(srcdir)/Modules/makesetup
 OPT=		-DNDEBUG -g -fwrapv -O3 -Wall
 BASECFLAGS=	 -Wno-unused-result -Wsign-compare
 BASECPPFLAGS=	-IObjects -IInclude -IPython
-CONFIGURE_CFLAGS=	-march=x86-64 -mtune=generic -O2 -pipe -O3
+CONFIGURE_CFLAGS=	-march=nocona -msahf -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3
 # CFLAGS_NODIST is used for building the interpreter and stdlib C extensions.
 # Use it when a compiler flag should _not_ be part of the distutils CFLAGS
 # once Python is installed (Issue #21121).
@@ -213,9 +213,9 @@ RUNSHARED=
 ENSUREPIP=      no
 
 # OpenSSL options for setup.py so sysconfig can pick up AC_SUBST() vars.
-OPENSSL_INCLUDES=-ID:/a/msys64/mingw64/include
+OPENSSL_INCLUDES=
 OPENSSL_LIBS=-lssl -lcrypto
-OPENSSL_LDFLAGS=-LD:/a/msys64/mingw64/lib
+OPENSSL_LDFLAGS=
 OPENSSL_RPATH=
 
 # Default zoneinfo.TZPATH. Added here to expose it in sysconfig.get_config_var
@@ -228,7 +228,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw64' '--host=x86_64-w64-mingw32' '--build=x86_64-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-loadable-sqlite-extensions' '--with-tzpath=/mingw64/share/zoneinfo' '--enable-optimizations' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -O3' 'LDFLAGS=-pipe' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' 'PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw64' '--host=x86_64-w64-mingw32' '--build=x86_64-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-loadable-sqlite-extensions' '--with-tzpath=/mingw64/share/zoneinfo' '--enable-optimizations' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=nocona -msahf -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3' 'LDFLAGS=-pipe' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' 'PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig'
 
 
 # Subdirectories with code
@@ -332,7 +332,7 @@ IO_OBJS=	\
 
 ##########################################################################
 
-LIBFFI_INCLUDEDIR=	D:/a/msys64/mingw64/include
+LIBFFI_INCLUDEDIR=	
 NCURSESW_INCLUDEDIR=	D:/a/msys64/mingw64/include/ncursesw
 
 ##########################################################################

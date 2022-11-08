@@ -82,7 +82,7 @@ MAKESETUP=      $(srcdir)/Modules/makesetup
 OPT=		-DNDEBUG -g -fwrapv -O3 -Wall
 BASECFLAGS=	 -Wno-unused-result -Wsign-compare
 BASECPPFLAGS=	-IObjects -IInclude -IPython
-CONFIGURE_CFLAGS=	-march=pentium4 -mtune=generic -O2 -pipe -O3
+CONFIGURE_CFLAGS=	-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3
 # CFLAGS_NODIST is used for building the interpreter and stdlib C extensions.
 # Use it when a compiler flag should _not_ be part of the distutils CFLAGS
 # once Python is installed (Issue #21121).
@@ -92,7 +92,7 @@ CONFIGURE_CFLAGS_NODIST= -fno-semantic-interposition -std=c99 -Wextra -Wno-unuse
 # once Python is installed (bpo-35257)
 CONFIGURE_LDFLAGS_NODIST= -fno-semantic-interposition
 CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -I.
-CONFIGURE_LDFLAGS=	-pipe -Wl,--no-seh
+CONFIGURE_LDFLAGS=	-pipe -Wl,--no-seh -Wl,--large-address-aware
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
 # values.
@@ -213,9 +213,9 @@ RUNSHARED=
 ENSUREPIP=      no
 
 # OpenSSL options for setup.py so sysconfig can pick up AC_SUBST() vars.
-OPENSSL_INCLUDES=-ID:/a/msys64/mingw32/include
+OPENSSL_INCLUDES=
 OPENSSL_LIBS=-lssl -lcrypto
-OPENSSL_LDFLAGS=-LD:/a/msys64/mingw32/lib
+OPENSSL_LDFLAGS=
 OPENSSL_RPATH=
 
 # Default zoneinfo.TZPATH. Added here to expose it in sysconfig.get_config_var
@@ -228,7 +228,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-loadable-sqlite-extensions' '--with-tzpath=/mingw32/share/zoneinfo' '--enable-optimizations' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -O3' 'LDFLAGS=-pipe -Wl,--no-seh' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-loadable-sqlite-extensions' '--with-tzpath=/mingw32/share/zoneinfo' '--enable-optimizations' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3' 'LDFLAGS=-pipe -Wl,--no-seh -Wl,--large-address-aware' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
 
 
 # Subdirectories with code
@@ -332,7 +332,7 @@ IO_OBJS=	\
 
 ##########################################################################
 
-LIBFFI_INCLUDEDIR=	D:/a/msys64/mingw32/include
+LIBFFI_INCLUDEDIR=	
 NCURSESW_INCLUDEDIR=	D:/a/msys64/mingw32/include/ncursesw
 
 ##########################################################################
