@@ -17,21 +17,21 @@ syn case match
 " pkgname
 " FIXME if '=' is in pkgname/pkgver, it highlights whole string, not just '='
 syn keyword pb_k_pkgname pkgname contained
-syn match pbValidPkgname /\([[:alnum:]]\|+\|-\|_\){,32}/ contained contains=pbIllegalPkgname
-syn match pbIllegalPkgname /[[:upper:]]\|[^[:alnum:]-+_=]\|=.*=\|=['"]\?.\{33,\}['"]\?/ contained
+syn match pbValidPkgname /[[:alnum:]@._+-]{,32}/ contained contains=pbIllegalPkgname
+syn match pbIllegalPkgname /[[:upper:]]\|[^[:alnum:]=@._+-]\|=.*=\|=['"]\?.\{33,\}['"]\?/ contained
 syn match pbPkgnameGroup /^pkgname=.*/ contains=pbIllegalPkgname,pb_k_pkgname,shDoubleQuote,shSingleQuote
 
 " pkgbase
 " FIXME if '=' is in pkgbase/pkgname/pkgver, it highlights whole string, not just '='
 syn keyword pb_k_pkgbase pkgbase contained
-syn match pbValidPkgbase /\([[:alnum:]]\|+\|-\|_\){,32}/ contained contains=pbIllegalPkgbase
-syn match pbIllegalPkgbase /[[:upper:]]\|[^[:alnum:]-+_=]\|=.*=\|=['"]\?.\{33,\}['"]\?/ contained
+syn match pbValidPkgbase /[[:alnum:]@._+-]{,32}/ contained contains=pbIllegalPkgbase
+syn match pbIllegalPkgbase /[[:upper:]]\|[^[:alnum:]=@._+-]\|=.*=\|=['"]\?.\{33,\}['"]\?/ contained
 syn match pbPkgbaseGroup /^pkgbase=.*/ contains=pbIllegalPkgbase,pb_k_pkgbase,shDoubleQuote,shSingleQuote
 
 " pkgver
 syn keyword pb_k_pkgver pkgver contained
-syn match pbValidPkgver /\([[:alnum:]]\|\.\|+\|_\)/ contained contains=pbIllegalPkgver
-syn match pbIllegalPkgver /[^[:alnum:]+=\.\_]\|=.*=/ contained
+syn match pbValidPkgver /[[:alnum:]]+._]/ contained contains=pbIllegalPkgver
+syn match pbIllegalPkgver /[^[:alnum:]=+._]\|=.*=/ contained
 syn match pbPkgverGroup /^pkgver=.*/ contains=pbIllegalPkgver,pbValidPkgver,pb_k_pkgver,shDoubleQuote,shSingleQuote
 
 " pkgrel
@@ -64,10 +64,12 @@ syn match pbUrlGroup /^url=.*/ contains=pbValidUrl,pb_k_url,pbIllegalUrl,shDoubl
 " license
 syn keyword pb_k_license license contained
 " echo $(pacman -Ql licenses | grep '/usr/share/licenses/common/' | cut -d'/' -f6 | sort -u)
-syn keyword pbLicense  AGPL AGPL3 Apache APACHE Artistic2.0 Boost CCPL CDDL CPL EPL FDL FDL1.2 FDL1.3 GPL GPL2 GPL3 LGPL LGPL2.1 LGPL3 LPPL MPL MPL2 PerlArtistic PHP PSF RUBY Unlicense W3C ZPL contained
+syn keyword pbLicense AGPL AGPL3 Apache APACHE Boost CCPL CDDL CPL EPL FDL GPL GPL2 GPL3 LGPL LGPL3 LPPL MPL MPL2 PerlArtistic PHP PSF RUBY Unlicense W3C ZPL contained
+" keywords can't contain decimals
+syn match pbLicense /Artistic2\.0\|FDL1\.2\|FDL1\.3\|LGPL2\.1/ contained
 " special cases from https://wiki.archlinux.org/index.php/PKGBUILD#license
 syn keyword pbLicenseSpecial  BSD ISC MIT OFL Python ZLIB contained
-syn match pbLicenseCustom /custom\(:[[:alnum:]]*\)*/ contained
+syn match pbLicenseCustom /custom\(:[[:alnum:].]*\)*/ contained
 syn keyword pbLicenseUnknown unknown contained
 syn match pbIllegalLicense /[^='"() ]/ contained contains=pbLicenseUnknown,pbLicenseCustom,pbLicenseSpecial,pbLicense
 syn region pbLicenseGroup start=/^license=(/ end=/)/ contains=pb_k_license,pbLicenseCustom,pbLicenseSpecial,pbLicense,pbIllegalLicense
@@ -79,7 +81,7 @@ syn region pbBackupGroup start=/^backup=(/ end=/)/ contains=pb_k_backup,pbValidB
 
 " arch
 syn keyword pb_k_arch arch contained
-syn keyword pbArch i686 x86_64 ppc any contained
+syn keyword pbArch i686 x86_64 ppc pentium4 armv7h aarch64 any contained
 syn match pbIllegalArch /[^='"() ]/ contained contains=pbArch
 syn region pbArchGroup start=/^arch=(/ end=/)/ contains=pb_k_arch,pbArch,pbIllegalArch
 
@@ -124,10 +126,6 @@ syn match pbValidReplaces /\([[:alnum:]]\|+\|-\|_\)*/ contained
 syn region pbReplacesGroup start=/^replaces=(/  end=/)/ contains=pb_k_replaces,pbValidReplaces,shDoubleQuote,shSingleQuote
 
 " install
-" XXX remove install from bashStatement, fix strange bug
-syn clear bashStatement
-syn keyword bashStatement chmod clear complete du egrep expr fgrep find gnufind gnugrep grep less ls mkdir mv rm rmdir rpm sed sleep sort strip tail touch
-
 syn keyword pb_k_install install contained
 syn match pbValidInstall /\([[:alnum:]]\|\$\|+\|-\|_\)*\.install/ contained
 syn match pbIllegalInstall /[^=]/ contained contains=pbValidInstall
@@ -142,7 +140,8 @@ syn match pbChangelogGroup /^changelog=.*/ contains=pb_k_changelog,pbValidChange
 " source:
 " XXX remove source from shStatement, fix strange bug
 syn clear shStatement
-syn keyword shStatement xxx wait getopts return autoload whence printf true popd nohup enable r trap readonly fc fg kill ulimit umask disown stop pushd read history logout times local exit test pwd time eval integer suspend dirs shopt hash false newgrp bg print jobs continue functions exec help cd break unalias chdir type shift builtin let bind
+syn keyword shStatement alias break cd chdir continue eval exec exit kill newgrp pwd read readonly return shift test trap ulimit umask wait
+syn keyword shStatement bg builtin disown export false fg getopts jobs let printf sleep true unalias typeset fc hash history suspend times type bind builtin caller compopt declare dirs disown enable export help logout mapfile popd pushd readarray shopt typeset
 
 syn keyword pb_k_source source contained
 syn match pbIllegalSource /\(http\|ftp\|https\).*\.\+\(dl\|download.\?\)\.\(sourceforge\|sf\).net/
@@ -259,7 +258,12 @@ syn keyword    pbTodo   contained       COMBAK FIXME TODO XXX
 syn match      pbComment        "^#.*$" contains=@pbCommentGroup
 syn match      pbComment        "[^0-9]#.*$"    contains=@pbCommentGroup
 
-" quotes are handled by sh.vim
+" quotes
+" XXX redefined to fix #6 & #10
+syn clear shSingleQuote
+syn clear shDoubleQuote
+syn region shSingleQuote matchgroup=shQuote start=+'+ end=+'+ contains=@Spell nextgroup=shSpecialStart,shSpecialSQ
+syn region shDoubleQuote matchgroup=shQuote start=+\%(\%(\\\\\)*\\\)\@<!"+ skip=+\\.+ end=+"+ contains=@shDblQuoteList,shStringSpecial,@Spell nextgroup=shSpecialStart
 
 hi def link pbComment Comment
 hi def link pbTodo Todo
