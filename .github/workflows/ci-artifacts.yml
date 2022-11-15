@@ -51,12 +51,12 @@ jobs:
           make -C ../git NO_PERL=1 SKIP_DASHED_BUILT_INS=YesPlease -j8 all strip
       - name: compress git artifacts
         shell: bash
-        run: tar -C .. -cf - --exclude '*.a' --exclude '*.o' --exclude .git --exclude .depend git | xz -9 >git-artifacts.tar.xz
+        run: tar -C .. -czf git-artifacts.tar.gz --exclude '*.a' --exclude '*.o' --exclude .git --exclude .depend git
       - name: upload git artifacts for testing
         uses: actions/upload-artifact@v1
         with:
           name: git-artifacts
-          path: git-artifacts.tar.xz
+          path: git-artifacts.tar.gz
   test-minimal-sdk:
     runs-on: windows-latest
     needs: [minimal-sdk-artifact]
@@ -83,7 +83,7 @@ jobs:
           path: ${{github.workspace}}
       - name: uncompress git-artifacts
         shell: bash
-        run: tar -C .. -xJf git-artifacts.tar.xz
+        run: tar -C .. -xzf git-artifacts.tar.gz
       - name: test
         shell: bash
         run: |
