@@ -14,10 +14,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: clone git-sdk-64
-        shell: bash
-        run: git clone --bare --depth=1 --filter=blob:none --single-branch -b ${REF#refs/heads/} https://github.com/${{github.repository}}
-        env:
-          REF: ${{github.ref}}
+        run: git clone --bare --depth=1 --filter=blob:none --single-branch -b ${{github.ref_name}} https://github.com/${{github.repository}}
       - name: clone build-extra
         run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
       - name: build git-sdk-64-minimal-sdk
