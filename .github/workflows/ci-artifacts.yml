@@ -14,76 +14,94 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: clone git-sdk-64
-        shell: bash
-        run: git clone --bare --depth=1 --filter=blob:none --single-branch -b ${REF#refs/heads/} https://github.com/${{github.repository}}
-        env:
-          REF: ${{github.ref}}
+        run: git clone --bare --depth=1 --filter=blob:none --single-branch -b ${{github.ref_name}} https://github.com/${{github.repository}}
       - name: clone build-extra
         run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
       - name: build git-sdk-64-minimal-sdk
         shell: bash
-        run: sh -x ./build-extra/please.sh create-sdk-artifact --sdk=git-sdk-64.git minimal-sdk
+        run: |
+          sh -x ./build-extra/please.sh create-sdk-artifact --sdk=git-sdk-64.git minimal-sdk &&
+          cat <<-\EOF >minimal-sdk/init.sh &&
+          echo MSYSTEM=MINGW64 >>$GITHUB_ENV &&
+          cd "$(dirname "$0")" &&
+          cygpath -aw usr/bin/core_perl >>$GITHUB_PATH &&
+          cygpath -aw usr/bin >>$GITHUB_PATH &&
+          cygpath -aw mingw64/bin >>$GITHUB_PATH ||
+          exit 1
+          EOF
+          minimal-sdk/init.sh
       - name: compress artifact
         shell: bash
         run: (cd minimal-sdk && tar cvf - * .[0-9A-Za-z]*) | xz -9 >git-sdk-64-minimal.tar.xz
       - name: upload minimal-sdk artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: minimal-sdk
           path: git-sdk-64-minimal.tar.xz
       - name: clone git.git's `master`
         run: git clone --depth=1 --branch master https://github.com/git/git ..\git
       - name: build current `master` of git.git
+        shell: bash
+        env:
+          PATH: ${{github.workspace}}\minimal-sdk\mingw64\bin;${{github.workspace}}\minimal-sdk\usr\bin;C:\Windows\system32;C:\Windows;C:\Windows\system32\wbem
         run: |
-          & .\minimal-sdk\usr\bin\bash.exe -lc "make -C ../git NO_PERL=1 SKIP_DASHED_BUILT_INS=YesPlease -j8 all strip"
+          set -x
+          test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
+          test "$(type -p gcc)" = "/mingw64/bin/gcc" || exit 1
+          make -C ../git NO_PERL=1 SKIP_DASHED_BUILT_INS=YesPlease -j8 all strip
       - name: compress git artifacts
         shell: bash
-        run: tar -C .. -cf - --exclude '*.a' --exclude '*.o' --exclude .git --exclude .depend git | xz -9 >git-artifacts.tar.xz
+        run: tar -C .. -czf git-artifacts.tar.gz --exclude '*.a' --exclude '*.o' --exclude .git --exclude .depend git
       - name: upload git artifacts for testing
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: git-artifacts
-          path: git-artifacts.tar.xz
+          path: git-artifacts.tar.gz
   test-minimal-sdk:
     runs-on: windows-latest
     needs: [minimal-sdk-artifact]
     strategy:
       matrix:
-        # 0..16 permutated according to the matrix builds' runtimes as of git/git@9fadedd63
+        # 0..16 permuted according to the matrix builds' timings as of git/git@9fadedd63
         nr: [9, 6, 13, 0, 8, 5, 2, 16, 15, 11, 10, 1, 7, 3, 14, 12, 4]
     steps:
       - name: download minimal-sdk artifact
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: minimal-sdk
           path: ${{github.workspace}}
       - name: uncompress minimal-sdk
         shell: bash
-        run: mkdir -p minimal-sdk && tar -C minimal-sdk -xJf git-sdk-64-minimal.tar.xz
+        run: |
+          mkdir -p minimal-sdk &&
+          tar -C minimal-sdk -xJf git-sdk-64-minimal.tar.xz &&
+          minimal-sdk/init.sh
       - name: download git artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: git-artifacts
           path: ${{github.workspace}}
       - name: uncompress git-artifacts
         shell: bash
-        run: tar -C .. -xJf git-artifacts.tar.xz
+        run: tar -C .. -xzf git-artifacts.tar.gz
       - name: test
+        shell: bash
         run: |
-          & .\minimal-sdk\usr\bin\bash.exe -lc @"
-            cd ../git/t &&
-            make T=\"`$(ls -S t[0-9]*.sh | awk \"!((NR+${{matrix.nr}})%17)\" | tr '\n' \\ )\" prove || {
-              for d in trash*
-              do
-                t=`${d#trash directory.}
-                echo ===========================
-                echo Failed: `$t.sh
-                cat test-results/`$t.out
-              done
-              exit 1
-            }
-          "@
+          set -x
+          test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
+          cd ../git/t &&
+          make T="$(ls -S t[0-9]*.sh | awk '!((NR+${{matrix.nr}})%17)' | tr '\n' \ )" prove || {
+            for d in trash*
+            do
+              t=${d#trash directory.}
+              echo ===========================
+              echo Failed: $t.sh
+              cat test-results/$t.out
+            done
+            exit 1
+          }
         env:
+          PATH: ${{github.workspace}}\minimal-sdk\mingw64\bin;${{github.workspace}}\minimal-sdk\usr\bin;${{github.workspace}}\minimal-sdk\usr\bin\core_perl;C:\Windows\system32;C:\Windows;C:\Windows\system32\wbem
           GIT_TEST_OPTS: --verbose-log -x --no-chain-lint
           GIT_PROVE_OPTS: --timer --jobs 8
           NO_SVN_TESTS: 1
@@ -92,19 +110,24 @@ jobs:
     needs: [minimal-sdk-artifact]
     steps:
       - name: download minimal-sdk artifact
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: minimal-sdk
           path: ${{github.workspace}}
       - name: uncompress minimal-sdk
         shell: bash
-        run: mkdir -p minimal-sdk && tar -C minimal-sdk -xJf git-sdk-64-minimal.tar.xz
+        run: |
+          mkdir -p minimal-sdk &&
+          tar -C minimal-sdk -xJf git-sdk-64-minimal.tar.xz &&
+          minimal-sdk/init.sh
       - name: run some tests
         shell: bash
         env:
           PATH: ${{github.workspace}}\minimal-sdk\mingw64\bin;${{github.workspace}}\minimal-sdk\usr\bin;C:\Windows\system32;C:\Windows;C:\Windows\system32\wbem
         run: |
           set -x
+          test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
+          test "$(type -p gcc)" = "/mingw64/bin/gcc" || exit 1
           cat >dll.c <<-\EOF &&
           __attribute__((dllexport)) int increment(int i)
           {
