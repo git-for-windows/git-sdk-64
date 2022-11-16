@@ -44,7 +44,11 @@ jobs:
         shell: bash
         env:
           PATH: ${{github.workspace}}\minimal-sdk\mingw64\bin;${{github.workspace}}\minimal-sdk\usr\bin;C:\Windows\system32;C:\Windows;C:\Windows\system32\wbem
-        run: make -C ../git NO_PERL=1 SKIP_DASHED_BUILT_INS=YesPlease -j8 all strip
+        run: |
+          set -x
+          test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
+          test "$(type -p gcc)" = "/mingw64/bin/gcc" || exit 1
+          make -C ../git NO_PERL=1 SKIP_DASHED_BUILT_INS=YesPlease -j8 all strip
       - name: compress git artifacts
         shell: bash
         run: tar -C .. -cf - --exclude '*.a' --exclude '*.o' --exclude .git --exclude .depend git | xz -9 >git-artifacts.tar.xz
@@ -83,6 +87,8 @@ jobs:
       - name: test
         shell: bash
         run: |
+          set -x
+          test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
           cd ../git/t &&
           make T="$(ls -S t[0-9]*.sh | awk '!((NR+${{matrix.nr}})%17)' | tr '\n' \ )" prove || {
             for d in trash*
@@ -120,6 +126,8 @@ jobs:
           PATH: ${{github.workspace}}\minimal-sdk\mingw64\bin;${{github.workspace}}\minimal-sdk\usr\bin;C:\Windows\system32;C:\Windows;C:\Windows\system32\wbem
         run: |
           set -x
+          test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
+          test "$(type -p gcc)" = "/mingw64/bin/gcc" || exit 1
           cat >dll.c <<-\EOF &&
           __attribute__((dllexport)) int increment(int i)
           {
