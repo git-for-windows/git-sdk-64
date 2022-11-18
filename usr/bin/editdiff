@@ -63,7 +63,7 @@ trap 'rm -rf "${TMPD}"' EXIT
 NAME="$(basename "${FILE}")"
 filterdiff -v --format=unified <"${FILE}" >"${TMPD}/${NAME}.orig" || exit 1
 cp "${TMPD}/${NAME}.orig" "${TMPD}/${NAME}" || exit 1
-${EDITOR:-${VISUAL:-vim}} "${TMPD}/${NAME}" || \
+${EDITOR:-${VISUAL:-vi}} "${TMPD}/${NAME}" || \
 	{ echo >&2 "Editor exited with non-zero exit status"; exit 1; }
 cmp -s "${TMPD}/${NAME}" "${TMPD}/${NAME}.orig" && \
 	{ echo >&2 "No changes" ; exit 0; }
