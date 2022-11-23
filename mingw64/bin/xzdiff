@@ -30,7 +30,7 @@ case ${0##*/} in
   *)     prog=xzdiff; cmp=${DIFF:-diff};;
 esac
 
-version="$prog (XZ Utils) 5.2.7"
+version="$prog (XZ Utils) 5.2.8"
 
 usage="Usage: ${0##*/} [OPTION]... FILE1 [FILE2]
 Compare FILE1 to FILE2, using their uncompressed contents if they are
@@ -65,8 +65,9 @@ for file; do
   test "X$file" = X- || <"$file" || exit 2
 done
 
-xz1=$xz
-xz2=$xz
+# xz needs -qQ to ignore warnings like unsupported check type.
+xz1="$xz -qQ"
+xz2="$xz -qQ"
 xz_status=0
 exec 3>&1
 

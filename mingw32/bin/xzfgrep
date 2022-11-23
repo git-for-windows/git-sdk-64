@@ -34,7 +34,7 @@ case ${0##*/} in
   *)       prog=xzgrep; grep=${GREP:-grep};;
 esac
 
-version="$prog (XZ Utils) 5.2.7"
+version="$prog (XZ Utils) 5.2.8"
 
 usage="Usage: ${0##*/} [OPTION]... [-e] PATTERN [FILE]...
 Look for instances of PATTERN in the input FILEs, using their
@@ -180,7 +180,7 @@ for i; do
     *[-.]bz2 | *[-.]tbz | *.tbz2) uncompress="bzip2 -cdf";;
     *[-.]lzo | *[-.]tzo) uncompress="lzop -cdf";;
     *[-.]zst | *[-.]tzst) uncompress="zstd -cdfq";; # zstd needs -q.
-    *) uncompress="$xz -cdf";;
+    *) uncompress="$xz -cdfqQ";; # -qQ to ignore warnings like unsupp. check.
   esac
   # xz_status will hold the decompressor's exit status.
   # Exit status of grep (and in rare cases, printf or sed) is
