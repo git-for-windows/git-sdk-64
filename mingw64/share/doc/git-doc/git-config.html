@@ -2591,7 +2591,7 @@ but risks losing recent work in the event of an unclean system shutdown.</p>
 <p><code>pack-metadata</code> hardens packfile bitmaps and indexes.</p>
 </li>
 <li>
-<p><code>commit-graph</code> hardens the commit graph file.</p>
+<p><code>commit-graph</code> hardens the commit-graph file.</p>
 </li>
 <li>
 <p><code>index</code> hardens the index when it is modified.</p>
@@ -3020,6 +3020,36 @@ as arguments. (See <a href="git-web&#x2d;&#x2d;browse.html">git-web&#x2d;&#x2d;b
 <p>Override the path for the given tool that may be used to
 browse HTML help (see <code>-w</code> option in <a href="git-help.html">git-help(1)</a>) or a
 working repository in gitweb (see <a href="git-instaweb.html">git-instaweb(1)</a>).</p>
+</dd>
+<dt class="hdlist1">bundle.*</dt>
+<dd>
+<p>The <code>bundle.*</code> keys may appear in a bundle list file found via the
+<code>git clone --bundle-uri</code> option. These keys currently have no effect
+if placed in a repository config file, though this will change in the
+future. See <a href="technical/bundle-uri.html">the bundle URI design
+document</a> for more details.</p>
+</dd>
+<dt class="hdlist1">bundle.version</dt>
+<dd>
+<p>This integer value advertises the version of the bundle list format
+used by the bundle list. Currently, the only accepted value is <code>1</code>.</p>
+</dd>
+<dt class="hdlist1">bundle.mode</dt>
+<dd>
+<p>This string value should be either <code>all</code> or <code>any</code>. This value describes
+whether all of the advertised bundles are required to unbundle a
+complete understanding of the bundled information (<code>all</code>) or if any one
+of the listed bundle URIs is sufficient (<code>any</code>).</p>
+</dd>
+<dt class="hdlist1">bundle.&lt;id&gt;.*</dt>
+<dd>
+<p>The <code>bundle.&lt;id&gt;.*</code> keys are used to describe a single item in the
+bundle list, grouped under <code>&lt;id&gt;</code> for identification purposes.</p>
+</dd>
+<dt class="hdlist1">bundle.&lt;id&gt;.uri</dt>
+<dd>
+<p>This string value defines the URI by which Git can reach the contents
+of this <code>&lt;id&gt;</code>. This URI may be a bundle file or another bundle list.</p>
 </dd>
 <dt class="hdlist1">checkout.defaultRemote</dt>
 <dd>
@@ -4074,6 +4104,10 @@ features. The new default values are:</p>
 <p><code>fetch.negotiationAlgorithm=skipping</code> may improve fetch negotiation times by
 skipping more commits at a time, reducing the number of round trips.</p>
 </li>
+<li>
+<p><code>gc.cruftPacks=true</code> reduces disk space used by unreachable objects during
+garbage collection, preventing loose object explosions.</p>
+</li>
 </ul>
 </div>
 </dd>
@@ -4431,6 +4465,10 @@ allow new instances of the same breakages go unnoticed.</p>
 doing the same for <code>receive.fsck.&lt;msg-id&gt;</code> and <code>fetch.fsck.&lt;msg-id&gt;</code>
 will only cause git to warn.</p>
 </div>
+<div class="paragraph">
+<p>See <code>Fsck Messages</code> section of <a href="git-fsck.html">git-fsck(1)</a> for supported
+values of <code>&lt;msg-id&gt;</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1">fsck.skipList</dt>
 <dd>
@@ -4466,6 +4504,20 @@ list. Unless you had a humongous list there was no reason to go out of
 your way to pre-sort the list. After Git version 2.20 a hash implementation
 is used instead, so there&#8217;s now no reason to pre-sort the list.</p>
 </div>
+</dd>
+<dt class="hdlist1">fsmonitor.allowRemote</dt>
+<dd>
+<p>By default, the fsmonitor daemon refuses to work against network-mounted
+repositories. Setting <code>fsmonitor.allowRemote</code> to <code>true</code> overrides this
+behavior.  Only respected when <code>core.fsmonitor</code> is set to <code>true</code>.</p>
+</dd>
+<dt class="hdlist1">fsmonitor.socketDir</dt>
+<dd>
+<p>This Mac OS-specific option, if set, specifies the directory in
+which to create the Unix domain socket used for communication
+between the fsmonitor daemon and various Git commands. The directory must
+reside on a native Mac OS filesystem.  Only respected when <code>core.fsmonitor</code>
+is set to <code>true</code>.</p>
 </dd>
 <dt class="hdlist1">gc.aggressiveDepth</dt>
 <dd>
@@ -5706,9 +5758,9 @@ option.</p>
 </dd>
 <dt class="hdlist1">log.diffMerges</dt>
 <dd>
-<p>Set default diff format to be used for merge commits. See
-<code>--diff-merges</code> in <a href="git-log.html">git-log(1)</a> for details.
-Defaults to <code>separate</code>.</p>
+<p>Set diff format to be used when <code>--diff-merges=on</code> is
+specified, see <code>--diff-merges</code> in <a href="git-log.html">git-log(1)</a> for
+details. Defaults to <code>separate</code>.</p>
 </dd>
 <dt class="hdlist1">log.follow</dt>
 <dd>
@@ -6236,7 +6288,7 @@ for details.</p>
 possible and write the <em>MERGED</em> file containing conflict markers around
 any conflicts that it cannot resolve; <em>LOCAL</em> and <em>REMOTE</em> normally
 represent the versions of the file from before Git&#8217;s conflict
-resolution. This flag causes <em>LOCAL</em> and <em>REMOTE</em> to be overwriten so
+resolution. This flag causes <em>LOCAL</em> and <em>REMOTE</em> to be overwritten so
 that only the unresolved conflicts are presented to the merge tool. Can
 be configured per-tool via the <code>mergetool.&lt;tool&gt;.hideResolved</code>
 configuration variable. Defaults to <code>false</code>.</p>
@@ -6845,18 +6897,8 @@ This will result in only b (a and c are cleared).</pre>
 </dd>
 <dt class="hdlist1">push.recurseSubmodules</dt>
 <dd>
-<p>Make sure all submodule commits used by the revisions to be pushed
-are available on a remote-tracking branch. If the value is <em>check</em>
-then Git will verify that all submodule commits that changed in the
-revisions to be pushed are available on at least one remote of the
-submodule. If any commits are missing, the push will be aborted and
-exit with non-zero status. If the value is <em>on-demand</em> then all
-submodules that changed in the revisions to be pushed will be
-pushed. If on-demand was not able to push all necessary revisions
-it will also be aborted and exit with non-zero status. If the value
-is <em>no</em> then default behavior of ignoring submodules when pushing
-is retained. You may override this configuration at time of push by
-specifying <em>--recurse-submodules=check|on-demand|no</em>.
+<p>May be "check", "on-demand", "only", or "no", with the same behavior
+as that of "push --recurse-submodules".
 If not set, <em>no</em> is used by default, unless <em>submodule.recurse</em> is
 set (in which case a <em>true</em> value means <em>on-demand</em>).</p>
 </dd>
@@ -8494,7 +8536,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-10-07 11:51:27 UTC
+Last updated 2022-11-23 11:06:56 UTC
 </div>
 </div>
 </body>

@@ -775,7 +775,7 @@ series?)</p>
 between <em>master</em> and <em>seen</em> and often is slightly ahead of <em>next</em>.</p>
 <div class="literalblock">
 <div class="content">
-<pre>$ Meta/Reintegrate master..seen &gt;Meta/redo-jch.sh</pre>
+<pre>$ Meta/Reintegrate master..jch &gt;Meta/redo-jch.sh</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -815,7 +815,7 @@ merged to 'next', add it at the end of the list.  Then:</pre>
 <div class="literalblock">
 <div class="content">
 <pre>$ git checkout -B jch master
-$ Meta/redo-jch.sh -c1</pre>
+$ sh Meta/redo-jch.sh -c1</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -863,6 +863,17 @@ and rectified.</pre>
 </div>
 <div class="literalblock">
 <div class="content">
+<pre>Then build the rest of 'jch':</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ git checkout jch
+$ sh Meta/redo-jch.sh</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
 <pre>When all is well, clean up the redo-jch.sh script with</pre>
 </div>
 </div>
@@ -883,7 +894,7 @@ add it again to the appropriate place when it happens.</pre>
 <p>Rebuild <em>seen</em>.</p>
 <div class="literalblock">
 <div class="content">
-<pre>$ Meta/Reintegrate master..seen &gt;Meta/redo-seen.sh</pre>
+<pre>$ Meta/Reintegrate jch..seen &gt;Meta/redo-seen.sh</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -1162,7 +1173,7 @@ $ git update-ref -d $mf/ai/topic</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-10-07 11:51:27 UTC
+Last updated 2022-11-23 11:06:56 UTC
 </div>
 </div>
 </body>

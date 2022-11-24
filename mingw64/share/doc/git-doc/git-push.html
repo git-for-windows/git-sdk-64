@@ -934,10 +934,15 @@ be aborted and exit with non-zero status. If <em>on-demand</em> is used
 all submodules that changed in the revisions to be pushed will be
 pushed. If on-demand was not able to push all necessary revisions it will
 also be aborted and exit with non-zero status. If <em>only</em> is used all
-submodules will be recursively pushed while the superproject is left
+submodules will be pushed while the superproject is left
 unpushed. A value of <em>no</em> or using <code>--no-recurse-submodules</code> can be used
 to override the push.recurseSubmodules configuration variable when no
 submodule recursion is required.</p>
+<div class="paragraph">
+<p>When using <em>on-demand</em> or <em>only</em>, if a submodule has a
+"push.recurseSubmodules={on-demand,only}" or "submodule.recurse" configuration,
+further recursion will occur. In this case, "only" is treated as "on-demand".</p>
+</div>
 </dd>
 <dt class="hdlist1">--[no-]verify</dt>
 <dd>
@@ -1766,18 +1771,8 @@ This will result in only b (a and c are cleared).</pre>
 </dd>
 <dt class="hdlist1">push.recurseSubmodules</dt>
 <dd>
-<p>Make sure all submodule commits used by the revisions to be pushed
-are available on a remote-tracking branch. If the value is <em>check</em>
-then Git will verify that all submodule commits that changed in the
-revisions to be pushed are available on at least one remote of the
-submodule. If any commits are missing, the push will be aborted and
-exit with non-zero status. If the value is <em>on-demand</em> then all
-submodules that changed in the revisions to be pushed will be
-pushed. If on-demand was not able to push all necessary revisions
-it will also be aborted and exit with non-zero status. If the value
-is <em>no</em> then default behavior of ignoring submodules when pushing
-is retained. You may override this configuration at time of push by
-specifying <em>--recurse-submodules=check|on-demand|no</em>.
+<p>May be "check", "on-demand", "only", or "no", with the same behavior
+as that of "push --recurse-submodules".
 If not set, <em>no</em> is used by default, unless <em>submodule.recurse</em> is
 set (in which case a <em>true</em> value means <em>on-demand</em>).</p>
 </dd>
@@ -1817,7 +1812,7 @@ from using bitmaps. Default is true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-10-07 11:51:27 UTC
+Last updated 2022-11-23 11:06:56 UTC
 </div>
 </div>
 </body>

@@ -450,17 +450,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git stash</em> list [&lt;log-options&gt;]
-<em>git stash</em> show [-u|--include-untracked|--only-untracked] [&lt;diff-options&gt;] [&lt;stash&gt;]
-<em>git stash</em> drop [-q|--quiet] [&lt;stash&gt;]
-<em>git stash</em> ( pop | apply ) [--index] [-q|--quiet] [&lt;stash&gt;]
+<em>git stash</em> show [-u | --include-untracked | --only-untracked] [&lt;diff-options&gt;] [&lt;stash&gt;]
+<em>git stash</em> drop [-q | --quiet] [&lt;stash&gt;]
+<em>git stash</em> pop [--index] [-q | --quiet] [&lt;stash&gt;]
+<em>git stash</em> apply [--index] [-q | --quiet] [&lt;stash&gt;]
 <em>git stash</em> branch &lt;branchname&gt; [&lt;stash&gt;]
-<em>git stash</em> [push [-p|--patch] [-S|--staged] [-k|--[no-]keep-index] [-q|--quiet]
-             [-u|--include-untracked] [-a|--all] [-m|--message &lt;message&gt;]
+<em>git stash</em> [push [-p | --patch] [-S | --staged] [-k | --[no-]keep-index] [-q | --quiet]
+             [-u | --include-untracked] [-a | --all] [(-m | --message) &lt;message&gt;]
              [--pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]]
              [--] [&lt;pathspec&gt;&#8230;&#8203;]]
+<em>git stash</em> save [-p | --patch] [-S | --staged] [-k | --[no-]keep-index] [-q | --quiet]
+             [-u | --include-untracked] [-a | --all] [&lt;message&gt;]
 <em>git stash</em> clear
 <em>git stash</em> create [&lt;message&gt;]
-<em>git stash</em> store [-m|--message &lt;message&gt;] [-q|--quiet] &lt;commit&gt;</pre>
+<em>git stash</em> store [(-m | --message) &lt;message&gt;] [-q | --quiet] &lt;commit&gt;</pre>
 </div>
 </div>
 </div>
@@ -497,7 +500,7 @@ stash index (e.g. the integer <code>n</code> is equivalent to <code>stash@{n}</c
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">push [-p|--patch] [-S|--staged] [-k|--[no-]keep-index] [-u|--include-untracked] [-a|--all] [-q|--quiet] [-m|--message &lt;message&gt;] [--pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]] [--] [&lt;pathspec&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1">push [-p|--patch] [-S|--staged] [-k|--[no-]keep-index] [-u|--include-untracked] [-a|--all] [-q|--quiet] [(-m|--message) &lt;message&gt;] [--pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]] [--] [&lt;pathspec&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>Save your local modifications to a new <em>stash entry</em> and roll them
 back to HEAD (in the working tree and in the index).
@@ -953,7 +956,7 @@ See description of <em>show</em> command in <a href="git-stash.html">git-stash(1
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-10-07 11:51:27 UTC
+Last updated 2022-11-23 11:06:56 UTC
 </div>
 </div>
 </body>

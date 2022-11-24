@@ -505,6 +505,12 @@ by the <code>--format</code> option of <em>git log</em>, such as <em>* [%h] %s</
 </div>
 </div>
 </dd>
+<dt class="hdlist1">--date=&lt;format&gt;</dt>
+<dd>
+<p>Show dates formatted according to the given date string. (See
+the <code>--date</code> option in the "Commit Formatting" section of
+<a href="git-log.html">git-log(1)</a>). Useful with <code>--group=format:&lt;format&gt;</code>.</p>
+</dd>
 <dt class="hdlist1">--group=&lt;type&gt;</dt>
 <dd>
 <p>Group commits based on <code>&lt;type&gt;</code>. If no <code>--group</code> option is
@@ -525,6 +531,11 @@ commit message trailer (see <a href="git-interpret-trailers.html">git-interpret-
 example, if your project uses <code>Reviewed-by</code> trailers, you might want
 to see who has been reviewing with
 <code>git shortlog -ns --group=trailer:reviewed-by</code>.</p>
+</li>
+<li>
+<p><code>format:&lt;format&gt;</code>, any string accepted by the <code>--format</code> option of
+<em>git log</em>. (See the "PRETTY FORMATS" section of
+<a href="git-log.html">git-log(1)</a>.)</p>
 <div class="paragraph">
 <p>Note that commits that do not include the trailer will not be counted.
 Likewise, commits with multiple trailers (e.g., multiple signoffs) may
@@ -804,6 +815,14 @@ respectively, and they must begin with <code>refs/</code> when applied to <code>
 or <code>--all</code>. If a trailing <em>/*</em> is intended, it must be given
 explicitly.</p>
 </div>
+</dd>
+<dt class="hdlist1">--exclude-hidden=[receive|uploadpack]</dt>
+<dd>
+<p>Do not include refs that would be hidden by <code>git-receive-pack</code> or
+<code>git-upload-pack</code> by consulting the appropriate <code>receive.hideRefs</code> or
+<code>uploadpack.hideRefs</code> configuration along with <code>transfer.hideRefs</code> (see
+<a href="git-config.html">git-config(1)</a>). This option affects the next pseudo-ref option
+<code>--all</code> or <code>--glob</code> and is cleared after processing them.</p>
 </dd>
 <dt class="hdlist1">--reflog</dt>
 <dd>
@@ -1531,7 +1550,7 @@ the current directory.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-10-07 11:51:27 UTC
+Last updated 2022-11-23 11:06:56 UTC
 </div>
 </div>
 </body>

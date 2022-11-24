@@ -627,6 +627,10 @@ allow new instances of the same breakages go unnoticed.</p>
 doing the same for <code>receive.fsck.&lt;msg-id&gt;</code> and <code>fetch.fsck.&lt;msg-id&gt;</code>
 will only cause git to warn.</p>
 </div>
+<div class="paragraph">
+<p>See <code>Fsck Messages</code> section of <a href="git-fsck.html">git-fsck(1)</a> for supported
+values of <code>&lt;msg-id&gt;</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1">fsck.skipList</dt>
 <dd>
@@ -724,6 +728,241 @@ This indicates a serious data integrity problem.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_fsck_messages">FSCK MESSAGES</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following lists the types of errors <code>git fsck</code> detects and what
+each error means, with their default severity.  The severity of the
+error, other than those that are marked as "(FATAL)", can be tweaked
+by setting the corresponding <code>fsck.&lt;msg-id&gt;</code> configuration variable.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>badDate</code></dt>
+<dd>
+<p>(ERROR) Invalid date format in an author/committer line.</p>
+</dd>
+<dt class="hdlist1"><code>badDateOverflow</code></dt>
+<dd>
+<p>(ERROR) Invalid date value in an author/committer line.</p>
+</dd>
+<dt class="hdlist1"><code>badEmail</code></dt>
+<dd>
+<p>(ERROR) Invalid email format in an author/committer line.</p>
+</dd>
+<dt class="hdlist1"><code>badFilemode</code></dt>
+<dd>
+<p>(INFO) A tree contains a bad filemode entry.</p>
+</dd>
+<dt class="hdlist1"><code>badName</code></dt>
+<dd>
+<p>(ERROR) An author/committer name is empty.</p>
+</dd>
+<dt class="hdlist1"><code>badObjectSha1</code></dt>
+<dd>
+<p>(ERROR) An object has a bad sha1.</p>
+</dd>
+<dt class="hdlist1"><code>badParentSha1</code></dt>
+<dd>
+<p>(ERROR) A commit object has a bad parent sha1.</p>
+</dd>
+<dt class="hdlist1"><code>badTagName</code></dt>
+<dd>
+<p>(INFO) A tag has an invalid format.</p>
+</dd>
+<dt class="hdlist1"><code>badTimezone</code></dt>
+<dd>
+<p>(ERROR) Found an invalid time zone in an author/committer line.</p>
+</dd>
+<dt class="hdlist1"><code>badTree</code></dt>
+<dd>
+<p>(ERROR) A tree cannot be parsed.</p>
+</dd>
+<dt class="hdlist1"><code>badTreeSha1</code></dt>
+<dd>
+<p>(ERROR) A tree has an invalid format.</p>
+</dd>
+<dt class="hdlist1"><code>badType</code></dt>
+<dd>
+<p>(ERROR) Found an invalid object type.</p>
+</dd>
+<dt class="hdlist1"><code>duplicateEntries</code></dt>
+<dd>
+<p>(ERROR) A tree contains duplicate file entries.</p>
+</dd>
+<dt class="hdlist1"><code>emptyName</code></dt>
+<dd>
+<p>(WARN) A path contains an empty name.</p>
+</dd>
+<dt class="hdlist1"><code>extraHeaderEntry</code></dt>
+<dd>
+<p>(IGNORE) Extra headers found after <code>tagger</code>.</p>
+</dd>
+<dt class="hdlist1"><code>fullPathname</code></dt>
+<dd>
+<p>(WARN) A path contains the full path starting with "/".</p>
+</dd>
+<dt class="hdlist1"><code>gitattributesSymlink</code></dt>
+<dd>
+<p>(INFO) <code>.gitattributes</code> is a symlink.</p>
+</dd>
+<dt class="hdlist1"><code>gitignoreSymlink</code></dt>
+<dd>
+<p>(INFO) <code>.gitignore</code> is a symlink.</p>
+</dd>
+<dt class="hdlist1"><code>gitmodulesBlob</code></dt>
+<dd>
+<p>(ERROR) A non-blob found at <code>.gitmodules</code>.</p>
+</dd>
+<dt class="hdlist1"><code>gitmodulesLarge</code></dt>
+<dd>
+<p>(ERROR) The <code>.gitmodules</code> file is too large to parse.</p>
+</dd>
+<dt class="hdlist1"><code>gitmodulesMissing</code></dt>
+<dd>
+<p>(ERROR) Unable to read <code>.gitmodules</code> blob.</p>
+</dd>
+<dt class="hdlist1"><code>gitmodulesName</code></dt>
+<dd>
+<p>(ERROR) A submodule name is invalid.</p>
+</dd>
+<dt class="hdlist1"><code>gitmodulesParse</code></dt>
+<dd>
+<p>(INFO) Could not parse <code>.gitmodules</code> blob.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><code>gitmodulesLarge</code>;
+	(ERROR) <code>.gitmodules</code> blob is too large to parse.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>gitmodulesPath</code></dt>
+<dd>
+<p>(ERROR) <code>.gitmodules</code> path is invalid.</p>
+</dd>
+<dt class="hdlist1"><code>gitmodulesSymlink</code></dt>
+<dd>
+<p>(ERROR) <code>.gitmodules</code> is a symlink.</p>
+</dd>
+<dt class="hdlist1"><code>gitmodulesUpdate</code></dt>
+<dd>
+<p>(ERROR) Found an invalid submodule update setting.</p>
+</dd>
+<dt class="hdlist1"><code>gitmodulesUrl</code></dt>
+<dd>
+<p>(ERROR) Found an invalid submodule url.</p>
+</dd>
+<dt class="hdlist1"><code>hasDot</code></dt>
+<dd>
+<p>(WARN) A tree contains an entry named <code>.</code>.</p>
+</dd>
+<dt class="hdlist1"><code>hasDotdot</code></dt>
+<dd>
+<p>(WARN) A tree contains an entry named <code>..</code>.</p>
+</dd>
+<dt class="hdlist1"><code>hasDotgit</code></dt>
+<dd>
+<p>(WARN) A tree contains an entry named <code>.git</code>.</p>
+</dd>
+<dt class="hdlist1"><code>mailmapSymlink</code></dt>
+<dd>
+<p>(INFO) <code>.mailmap</code> is a symlink.</p>
+</dd>
+<dt class="hdlist1"><code>missingAuthor</code></dt>
+<dd>
+<p>(ERROR) Author is missing.</p>
+</dd>
+<dt class="hdlist1"><code>missingCommitter</code></dt>
+<dd>
+<p>(ERROR) Committer is missing.</p>
+</dd>
+<dt class="hdlist1"><code>missingEmail</code></dt>
+<dd>
+<p>(ERROR) Email is missing in an author/committer line.</p>
+</dd>
+<dt class="hdlist1"><code>missingNameBeforeEmail</code></dt>
+<dd>
+<p>(ERROR) Missing name before an email in an author/committer line.</p>
+</dd>
+<dt class="hdlist1"><code>missingObject</code></dt>
+<dd>
+<p>(ERROR) Missing <code>object</code> line in tag object.</p>
+</dd>
+<dt class="hdlist1"><code>missingSpaceBeforeDate</code></dt>
+<dd>
+<p>(ERROR) Missing space before date in an author/committer line.</p>
+</dd>
+<dt class="hdlist1"><code>missingSpaceBeforeEmail</code></dt>
+<dd>
+<p>(ERROR) Missing space before the email in author/committer line.</p>
+</dd>
+<dt class="hdlist1"><code>missingTag</code></dt>
+<dd>
+<p>(ERROR) Unexpected end after <code>type</code> line in a tag object.</p>
+</dd>
+<dt class="hdlist1"><code>missingTagEntry</code></dt>
+<dd>
+<p>(ERROR) Missing <code>tag</code> line in a tag object.</p>
+</dd>
+<dt class="hdlist1"><code>missingTaggerEntry</code></dt>
+<dd>
+<p>(INFO) Missing <code>tagger</code> line in a tag object.</p>
+</dd>
+<dt class="hdlist1"><code>missingTree</code></dt>
+<dd>
+<p>(ERROR) Missing <code>tree</code> line in a commit object.</p>
+</dd>
+<dt class="hdlist1"><code>missingType</code></dt>
+<dd>
+<p>(ERROR) Invalid type value on the <code>type</code> line in a tag object.</p>
+</dd>
+<dt class="hdlist1"><code>missingTypeEntry</code></dt>
+<dd>
+<p>(ERROR) Missing <code>type</code> line in a tag object.</p>
+</dd>
+<dt class="hdlist1"><code>multipleAuthors</code></dt>
+<dd>
+<p>(ERROR) Multiple author lines found in a commit.</p>
+</dd>
+<dt class="hdlist1"><code>nulInCommit</code></dt>
+<dd>
+<p>(WARN) Found a NUL byte in the commit object body.</p>
+</dd>
+<dt class="hdlist1"><code>nulInHeader</code></dt>
+<dd>
+<p>(FATAL) NUL byte exists in the object header.</p>
+</dd>
+<dt class="hdlist1"><code>nullSha1</code></dt>
+<dd>
+<p>(WARN) Tree contains entries pointing to a null sha1.</p>
+</dd>
+<dt class="hdlist1"><code>treeNotSorted</code></dt>
+<dd>
+<p>(ERROR) A tree is not properly sorted.</p>
+</dd>
+<dt class="hdlist1"><code>unknownType</code></dt>
+<dd>
+<p>(ERROR) Found an unknown object type.</p>
+</dd>
+<dt class="hdlist1"><code>unterminatedHeader</code></dt>
+<dd>
+<p>(FATAL) Missing end-of-line in the object header.</p>
+</dd>
+<dt class="hdlist1"><code>zeroPaddedDate</code></dt>
+<dd>
+<p>(ERROR) Found a zero padded date in an author/commiter line.</p>
+</dd>
+<dt class="hdlist1"><code>zeroPaddedFilemode</code></dt>
+<dd>
+<p>(WARN) Found a zero padded filemode in a tree.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_environment_variables">Environment Variables</h2>
 <div class="sectionbody">
 <div class="dlist">
@@ -755,7 +994,7 @@ This indicates a serious data integrity problem.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-10-07 11:51:27 UTC
+Last updated 2022-11-23 11:06:56 UTC
 </div>
 </div>
 </body>

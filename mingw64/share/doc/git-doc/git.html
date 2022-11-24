@@ -1595,7 +1595,7 @@ other git developer interfaces. See <code>--developer-interfaces</code> in
 </dd>
 <dt class="hdlist1"><a href="gitformat-commit-graph.html">gitformat-commit-graph(5)</a></dt>
 <dd>
-<p>Git commit graph format.</p>
+<p>Git commit-graph format.</p>
 </dd>
 <dt class="hdlist1"><a href="gitformat-index.html">gitformat-index(5)</a></dt>
 <dd>
@@ -1772,7 +1772,13 @@ symbolic notation:</p>
 <h2 id="_environment_variables">Environment Variables</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Various Git commands use the following environment variables:</p>
+<p>Various Git commands pay attention to environment variables and change
+their behavior.  The environment variables marked as "Boolean" take
+their values the same way as Boolean valued configuration variables, e.g.
+"true", "yes", "on" and positive numbers are taken as "yes".</p>
+</div>
+<div class="paragraph">
+<p>Here are the variables:</p>
 </div>
 <div class="sect2">
 <h3 id="_system">System</h3>
@@ -1799,14 +1805,14 @@ Git so take care if using a foreign front-end.</p>
 <dl>
 <dt class="hdlist1"><code>GIT_INDEX_FILE</code></dt>
 <dd>
-<p>This environment allows the specification of an alternate
+<p>This environment variable specifies an alternate
 index file. If not specified, the default of <code>$GIT_DIR/index</code>
 is used.</p>
 </dd>
 <dt class="hdlist1"><code>GIT_INDEX_VERSION</code></dt>
 <dd>
-<p>This environment variable allows the specification of an index
-version for new repositories.  It won&#8217;t affect existing index
+<p>This environment variable specifies what index version is used
+when writing the index file out.  It won&#8217;t affect existing index
 files.  By default index file version 2 or 3 is used. See
 <a href="git-update-index.html">git-update-index(1)</a> for more information.</p>
 </dd>
@@ -1871,7 +1877,7 @@ e.g.,
 <p>When run in a directory that does not have ".git" repository
 directory, Git tries to find such a directory in the parent
 directories to find the top of the working tree, but by default it
-does not cross filesystem boundaries.  This environment variable
+does not cross filesystem boundaries.  This Boolean environment variable
 can be set to true to tell Git not to stop at filesystem
 boundaries.  Like <code>GIT_CEILING_DIRECTORIES</code>, this will not affect
 an explicit repository directory set via <code>GIT_DIR</code> or on the
@@ -2075,6 +2081,12 @@ whether <code>GIT_SSH</code>/<code>GIT_SSH_COMMAND</code>/<code>core.sshCommand<
 plink or tortoiseplink. This variable overrides the config setting
 <code>ssh.variant</code> that serves the same purpose.</p>
 </dd>
+<dt class="hdlist1"><code>GIT_SSL_NO_VERIFY</code></dt>
+<dd>
+<p>Setting and exporting this environment variable to any value
+tells Git not to verify the SSL certificate when fetching or
+pushing over HTTPS.</p>
+</dd>
 <dt class="hdlist1"><code>GIT_ASKPASS</code></dt>
 <dd>
 <p>If this environment variable is set, then Git commands which need to
@@ -2085,7 +2097,7 @@ option in <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
 <dt class="hdlist1"><code>GIT_TERMINAL_PROMPT</code></dt>
 <dd>
-<p>If this environment variable is set to <code>0</code>, git will not prompt
+<p>If this Boolean environment variable is set to false, git will not prompt
 on the terminal (e.g., when asking for HTTP authentication).</p>
 </dd>
 <dt class="hdlist1"><code>GIT_CONFIG_GLOBAL</code></dt>
@@ -2102,10 +2114,10 @@ respective level.</p>
 <dt class="hdlist1"><code>GIT_CONFIG_NOSYSTEM</code></dt>
 <dd>
 <p>Whether to skip reading settings from the system-wide
-<code>$(prefix)/etc/gitconfig</code> file.  This environment variable can
+<code>$(prefix)/etc/gitconfig</code> file.  This Boolean environment variable can
 be used along with <code>$HOME</code> and <code>$XDG_CONFIG_HOME</code> to create a
 predictable environment for a picky script, or you can set it
-temporarily to avoid using a buggy <code>/etc/gitconfig</code> file while
+to true to temporarily avoid using a buggy <code>/etc/gitconfig</code> file while
 waiting for someone with sufficient permissions to fix it.</p>
 </dd>
 <dt class="hdlist1"><code>GIT_FLUSH</code></dt>
@@ -2275,12 +2287,12 @@ See <code>GIT_TRACE2</code> for available trace output options and
 <dd>
 <p>By default, when tracing is activated, Git redacts the values of
 cookies, the "Authorization:" header, the "Proxy-Authorization:"
-header and packfile URIs. Set this variable to <code>0</code> to prevent this
+header and packfile URIs. Set this Boolean environment variable to false to prevent this
 redaction.</p>
 </dd>
 <dt class="hdlist1"><code>GIT_LITERAL_PATHSPECS</code></dt>
 <dd>
-<p>Setting this variable to <code>1</code> will cause Git to treat all
+<p>Setting this Boolean environment variable to true will cause Git to treat all
 pathspecs literally, rather than as glob patterns. For example,
 running <code>GIT_LITERAL_PATHSPECS=1 git log -- '*.c'</code> will search
 for commits that touch the path <code>*.c</code>, not any paths that the
@@ -2290,17 +2302,17 @@ literal paths to Git (e.g., paths previously given to you by
 </dd>
 <dt class="hdlist1"><code>GIT_GLOB_PATHSPECS</code></dt>
 <dd>
-<p>Setting this variable to <code>1</code> will cause Git to treat all
+<p>Setting this Boolean environment variable to true will cause Git to treat all
 pathspecs as glob patterns (aka "glob" magic).</p>
 </dd>
 <dt class="hdlist1"><code>GIT_NOGLOB_PATHSPECS</code></dt>
 <dd>
-<p>Setting this variable to <code>1</code> will cause Git to treat all
+<p>Setting this Boolean environment variable to true will cause Git to treat all
 pathspecs as literal (aka "literal" magic).</p>
 </dd>
 <dt class="hdlist1"><code>GIT_ICASE_PATHSPECS</code></dt>
 <dd>
-<p>Setting this variable to <code>1</code> will cause Git to treat all
+<p>Setting this Boolean environment variable to true will cause Git to treat all
 pathspecs as case-insensitive.</p>
 </dd>
 <dt class="hdlist1"><code>GIT_REFLOG_ACTION</code></dt>
@@ -2316,7 +2328,7 @@ end user, to be recorded in the body of the reflog.</p>
 </dd>
 <dt class="hdlist1"><code>GIT_REF_PARANOIA</code></dt>
 <dd>
-<p>If set to <code>0</code>, ignore broken or badly named refs when iterating
+<p>If this Boolean environment variable is set to false, ignore broken or badly named refs when iterating
 over lists of refs. Normally Git will try to include any such
 refs, which may cause some operations to fail. This is usually
 preferable, as potentially destructive operations (e.g.,
@@ -2337,7 +2349,7 @@ protocols has <code>protocol.&lt;name&gt;.allow</code> set to <code>always</code
 </dd>
 <dt class="hdlist1"><code>GIT_PROTOCOL_FROM_USER</code></dt>
 <dd>
-<p>Set to 0 to prevent protocols used by fetch/push/clone which are
+<p>Set this Boolean environment variable to false to prevent protocols used by fetch/push/clone which are
 configured to the <code>user</code> state.  This is useful to restrict recursive
 submodule initialization from an untrusted repository or for programs
 which feed potentially-untrusted URLS to git commands.  See
@@ -2369,7 +2381,7 @@ be in the future).</p>
 </dd>
 <dt class="hdlist1"><code>GIT_OPTIONAL_LOCKS</code></dt>
 <dd>
-<p>If set to <code>0</code>, Git will complete any requested operation without
+<p>If this Boolean environment variable is set to false, Git will complete any requested operation without
 performing any optional sub-operations that require taking a lock.
 For example, this will prevent <code>git status</code> from refreshing the
 index as a side effect. This is useful for processes running in
@@ -2560,7 +2572,7 @@ the Git Security mailing list &lt;<a href="mailto:git-security@googlegroups.com"
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-10-07 11:51:27 UTC
+Last updated 2022-11-23 11:06:56 UTC
 </div>
 </div>
 </body>

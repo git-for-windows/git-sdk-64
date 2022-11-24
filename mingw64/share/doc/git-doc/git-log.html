@@ -894,6 +894,14 @@ or <code>--all</code>. If a trailing <em>/*</em> is intended, it must be given
 explicitly.</p>
 </div>
 </dd>
+<dt class="hdlist1">--exclude-hidden=[receive|uploadpack]</dt>
+<dd>
+<p>Do not include refs that would be hidden by <code>git-receive-pack</code> or
+<code>git-upload-pack</code> by consulting the appropriate <code>receive.hideRefs</code> or
+<code>uploadpack.hideRefs</code> configuration along with <code>transfer.hideRefs</code> (see
+<a href="git-config.html">git-config(1)</a>). This option affects the next pseudo-ref option
+<code>--all</code> or <code>--glob</code> and is cleared after processing them.</p>
+</dd>
 <dt class="hdlist1">--reflog</dt>
 <dd>
 <p>Pretend as if all objects mentioned by reflogs are listed on the
@@ -4180,9 +4188,9 @@ option.</p>
 </dd>
 <dt class="hdlist1">log.diffMerges</dt>
 <dd>
-<p>Set default diff format to be used for merge commits. See
-<code>--diff-merges</code> in <a href="git-log.html">git-log(1)</a> for details.
-Defaults to <code>separate</code>.</p>
+<p>Set diff format to be used when <code>--diff-merges=on</code> is
+specified, see <code>--diff-merges</code> in <a href="git-log.html">git-log(1)</a> for
+details. Defaults to <code>separate</code>.</p>
 </dd>
 <dt class="hdlist1">log.follow</dt>
 <dd>
@@ -4313,7 +4321,7 @@ See <code>notes.rewrite.&lt;command&gt;</code> above for a further description o
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-10-07 11:51:27 UTC
+Last updated 2022-11-23 11:06:56 UTC
 </div>
 </div>
 </body>

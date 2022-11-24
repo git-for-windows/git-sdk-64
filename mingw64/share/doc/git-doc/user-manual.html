@@ -3095,7 +3095,7 @@ Untyped <a class="link" href="#def_object">object</a>, e.g. the contents of a fi
 </dd><dt><span class="term"><a name="def_branch"></a>branch</span></dt><dd>
 A "branch" is a line of development.  The most recent
 <a class="link" href="#def_commit">commit</a> on a branch is referred to as the tip of
-that branch.  The tip of the branch is referenced by a branch
+that branch.  The tip of the branch is <a class="link" href="#def_ref">referenced</a> by a branch
 <a class="link" href="#def_head">head</a>, which moves forward as additional development
 is done on the branch.  A single Git
 <a class="link" href="#def_repository">repository</a> can track an arbitrary number of
@@ -3141,6 +3141,19 @@ hand for <a class="link" href="#def_commit_object">commit object</a>.</p>
 state in the Git history, by creating a new commit representing the current
 state of the <a class="link" href="#def_index">index</a> and advancing <a class="link" href="#def_HEAD">HEAD</a>
 to point at the new commit.</p>
+</dd><dt><span class="term"><a name="def_commit_graph_general"></a>commit graph concept, representations and usage</span></dt><dd>
+A synonym for the <a class="link" href="#def_DAG">DAG</a> structure formed by the commits
+in the object database, <a class="link" href="#def_ref">referenced</a> by branch tips,
+using their <a class="link" href="#def_chain">chain</a> of linked commits.
+This structure is the definitive commit graph. The
+graph can be represented in other ways, e.g. the
+<a class="link" href="#def_commit_graph_file">"commit-graph" file</a>.
+</dd><dt><span class="term"><a name="def_commit_graph_file"></a>commit-graph file</span></dt><dd>
+The "commit-graph" (normally hyphenated) file is a supplemental
+representation of the <a class="link" href="#def_commit_graph_general">commit graph</a>
+which accelerates commit graph walks. The "commit-graph" file is
+stored either in the .git/objects/info directory or in the info
+directory of an alternate object database.
 </dd><dt><span class="term"><a name="def_commit_object"></a>commit object</span></dt><dd>
 An <a class="link" href="#def_object">object</a> which contains the information about a
 particular <a class="link" href="#def_revision">revision</a>, such as <a class="link" href="#def_parent">parents</a>, committer,
@@ -3298,7 +3311,7 @@ object cannot be changed.
 Stores a set of "objects", and an individual <a class="link" href="#def_object">object</a> is
 identified by its <a class="link" href="#def_object_name">object name</a>. The objects usually
 live in <code class="literal">$GIT_DIR/objects/</code>.
-</dd><dt><span class="term"><a name="def_object_identifier"></a>object identifier</span></dt><dd>
+</dd><dt><span class="term"><a name="def_object_identifier"></a>object identifier (oid)</span></dt><dd>
 Synonym for <a class="link" href="#def_object_name">object name</a>.
 </dd><dt><span class="term"><a name="def_object_name"></a>object name</span></dt><dd>
 The unique identifier of an <a class="link" href="#def_object">object</a>.  The
@@ -3496,6 +3509,13 @@ that follows <a class="link" href="#def_tag">tags</a> to whatever they tag,
 <a class="link" href="#def_commit_object">commits</a> to their parents or trees, and
 <a class="link" href="#def_tree_object">trees</a> to the trees or <a class="link" href="#def_blob_object">blobs</a>
 that they contain.
+</dd><dt><span class="term"><a name="def_reachability_bitmap"></a>reachability bitmaps</span></dt><dd>
+Reachability bitmaps store information about the
+<a class="link" href="#def_reachable">reachability</a> of a selected set of commits in
+a packfile, or a multi-pack index (MIDX), to speed up object search.
+The bitmaps are stored in a ".bitmap" file. A repository may have at
+most one bitmap file in use. The bitmap file may belong to either one
+pack, or the repository’s multi-pack index (if it exists).
 </dd><dt><span class="term"><a name="def_rebase"></a>rebase</span></dt><dd>
 To reapply a series of changes from a <a class="link" href="#def_branch">branch</a> to a
 different base, and reset the <a class="link" href="#def_head">head</a> of that branch
