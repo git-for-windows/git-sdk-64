@@ -3,7 +3,7 @@ package HTTP::Message;
 use strict;
 use warnings;
 
-our $VERSION = '6.42';
+our $VERSION = '6.44';
 
 require HTTP::Headers;
 require Carp;
@@ -493,7 +493,7 @@ sub decodable
     # XXX preferably we should determine if the modules are available without loading
     # them here
     eval {
-        require IO::Uncompress::Gunzip;
+        require Compress::Raw::Zlib;
         push(@enc, "gzip", "x-gzip");
     };
     eval {
@@ -502,7 +502,7 @@ sub decodable
         push(@enc, "deflate");
     };
     eval {
-        require IO::Uncompress::Bunzip2;
+        require Compress::Raw::Bzip2;
         push(@enc, "x-bzip2", "bzip2");
     };
     eval {
@@ -884,7 +884,7 @@ HTTP::Message - HTTP style message (base class)
 
 =head1 VERSION
 
-version 6.42
+version 6.44
 
 =head1 SYNOPSIS
 

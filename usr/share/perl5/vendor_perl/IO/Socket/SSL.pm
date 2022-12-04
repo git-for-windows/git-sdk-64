@@ -13,7 +13,7 @@
 
 package IO::Socket::SSL;
 
-our $VERSION = '2.075';
+our $VERSION = '2.077';
 
 use IO::Socket;
 use Net::SSLeay 1.46;
@@ -193,6 +193,8 @@ if ( defined &Net::SSLeay::CTX_set_min_proto_version
     };
 }
 
+my $set_msg_callback = defined &Net::SSLeay::CTX_set_msg_callback
+    && \&Net::SSLeay::CTX_set_msg_callback;
 
 # global defaults
 my %DEFAULT_SSL_ARGS = (
@@ -2471,6 +2473,8 @@ sub new {
 	}
 
 	Net::SSLeay::CTX_set_options($ctx,$ssl_op);
+	$DEBUG>=2 && $set_msg_callback
+	    && $set_msg_callback->($ctx, \&IO::Socket::SSL::Trace::ossl_trace);
 
 	# enable X509_V_FLAG_PARTIAL_CHAIN if possible (OpenSSL 1.1.0+)
 	$check_partial_chain && $check_partial_chain->($ctx);
@@ -3093,6 +3097,7 @@ sub del_session {
     for (@del) {
 	_del_entry($self,$_);
 	Net::SSLeay::SESSION_free($_->[SESSION]) if $_->[SESSION];
+	@$_ = ();
     }
     return ~~@del;
 }
@@ -3144,6 +3149,7 @@ sub _add_entry {
 	my $l = $self->{ghead}[GPREV];
 	_del_entry($self,$l);
 	Net::SSLeay::SESSION_free($l->[SESSION]) if $l->[SESSION];
+	@$l = ();
     }
 }
 
@@ -3470,6 +3476,183 @@ sub resolve_blocking {
     $DEBUG>=2 && DEBUG("no more open OCSP requests");
     return $self->{hard_error};
 }
+
+package IO::Socket::SSL::Trace;
+*DEBUG = *IO::Socket::SSL::DEBUG;
+
+# Exhaustive list of constants we need for tracing
+my %trace_constants = map { $_ => eval { Net::SSLeay->$_ } || -1 } qw(
+    SSL2_VERSION
+    SSL3_VERSION
+    TLS1_VERSION
+    TLS1_1_VERSION
+    TLS1_2_VERSION
+    TLS1_3_VERSION
+    DTLS1_VERSION
+    DTLS1_2_VERSION
+    DTLS1_BAD_VER
+    SSL3_RT_INNER_CONTENT_TYPE
+    SSL3_RT_CHANGE_CIPHER_SPEC
+    SSL3_RT_ALERT
+    SSL3_RT_HEADER
+    SSL3_RT_HANDSHAKE
+    SSL3_RT_APPLICATION_DATA
+    SSL2_MT_ERROR
+    SSL2_MT_CLIENT_HELLO
+    SSL2_MT_CLIENT_MASTER_KEY
+    SSL2_MT_CLIENT_FINISHED
+    SSL2_MT_SERVER_HELLO
+    SSL2_MT_SERVER_VERIFY
+    SSL2_MT_SERVER_FINISHED
+    SSL2_MT_REQUEST_CERTIFICATE
+    SSL2_MT_CLIENT_CERTIFICATE
+    SSL3_MT_HELLO_REQUEST
+    SSL3_MT_CLIENT_HELLO
+    SSL3_MT_SERVER_HELLO
+    SSL3_MT_NEWSESSION_TICKET
+    SSL3_MT_CERTIFICATE
+    SSL3_MT_SERVER_KEY_EXCHANGE
+    SSL3_MT_CLIENT_KEY_EXCHANGE
+    SSL3_MT_CERTIFICATE_REQUEST
+    SSL3_MT_SERVER_DONE
+    SSL3_MT_CERTIFICATE_VERIFY
+    SSL3_MT_FINISHED
+    SSL3_MT_CERTIFICATE_STATUS
+    SSL3_MT_ENCRYPTED_EXTENSIONS
+    SSL3_MT_SUPPLEMENTAL_DATA
+    SSL3_MT_END_OF_EARLY_DATA
+    SSL3_MT_KEY_UPDATE
+    SSL3_MT_NEXT_PROTO
+    SSL3_MT_MESSAGE_HASH
+);
+
+#
+# Major versions
+#
+$trace_constants{SSL2_VERSION_MAJOR} = $trace_constants{SSL2_VERSION} >> 8;
+$trace_constants{SSL3_VERSION_MAJOR} = $trace_constants{SSL3_VERSION} >> 8;
+
+#
+# Mapping between trace constant and version string
+#
+my %tc_ver2s;
+for (
+    [ SSL2_VERSION    => "SSLv2" ],
+    [ SSL2_VERSION    => "SSLv2" ],
+    [ SSL3_VERSION    => "SSLv3" ],
+    [ TLS1_VERSION    => "TLSv1.0" ],
+    [ TLS1_1_VERSION  => "TLSv1.1" ],
+    [ TLS1_2_VERSION  => "TLSv1.2" ],
+    [ TLS1_3_VERSION  => "TLSv1.3" ],
+    [ DTLS1_VERSION   => "DTLSv1.0" ],
+    [ DTLS1_2_VERSION => "DTLSv1.2" ],
+    [ DTLS1_BAD_VER   => "DTLSv1.0 (bad)" ]
+) {
+    next if $trace_constants{$_->[0]} == -1;
+    $tc_ver2s{$trace_constants{$_->[0]}} = $_->[1];
+}
+
+my %tc_type2s;
+for (
+    [ SSL3_RT_HEADER             => "TLS header" ],
+    [ SSL3_RT_CHANGE_CIPHER_SPEC => "TLS change cipher" ],
+    [ SSL3_RT_ALERT              => "TLS alert" ],
+    [ SSL3_RT_HANDSHAKE          => "TLS handshake" ],
+    [ SSL3_RT_APPLICATION_DATA   => "TLS app data" ]
+) {
+    next if $trace_constants{$_->[0]} == -1;
+    $tc_type2s{$trace_constants{$_->[0]}} = $_->[1];
+}
+
+my %tc_msgtype2s;
+for(
+    [ SSL2_MT_ERROR               => "Error" ],
+    [ SSL2_MT_CLIENT_HELLO        => "Client hello" ],
+    [ SSL2_MT_CLIENT_MASTER_KEY   => "Client key" ],
+    [ SSL2_MT_CLIENT_FINISHED     => "Client finished" ],
+    [ SSL2_MT_SERVER_HELLO        => "Server hello" ],
+    [ SSL2_MT_SERVER_VERIFY       => "Server verify" ],
+    [ SSL2_MT_SERVER_FINISHED     => "Server finished" ],
+    [ SSL2_MT_REQUEST_CERTIFICATE => "Request CERT" ],
+    [ SSL2_MT_REQUEST_CERTIFICATE => "Client CERT" ]
+) {
+    next if $trace_constants{$_->[0]} == -1;
+    $tc_msgtype2s{$trace_constants{SSL2_VERSION_MAJOR}, $trace_constants{$_->[0]}} = $_->[1];
+}
+for(
+    [ SSL3_MT_HELLO_REQUEST        => "Hello request" ],
+    [ SSL3_MT_CLIENT_HELLO         => "Client hello" ],
+    [ SSL3_MT_SERVER_HELLO         => "Server hello" ],
+    [ SSL3_MT_NEWSESSION_TICKET    => "Newsession Ticket" ],
+    [ SSL3_MT_CERTIFICATE          => "Certificate" ],
+    [ SSL3_MT_SERVER_KEY_EXCHANGE  => "Server key exchange" ],
+    [ SSL3_MT_CLIENT_KEY_EXCHANGE  => "Client key exchange" ],
+    [ SSL3_MT_CERTIFICATE_REQUEST  => "Request CERT" ],
+    [ SSL3_MT_SERVER_DONE          => "Server finished" ],
+    [ SSL3_MT_CERTIFICATE_VERIFY   => "CERT verify" ],
+    [ SSL3_MT_FINISHED             => "Finished" ],
+    [ SSL3_MT_CERTIFICATE_STATUS   => "Certificate Status" ],
+    [ SSL3_MT_ENCRYPTED_EXTENSIONS => "Encrypted Extensions" ],
+    [ SSL3_MT_SUPPLEMENTAL_DATA    => "Supplemental data" ],
+    [ SSL3_MT_END_OF_EARLY_DATA    => "End of early data" ],
+    [ SSL3_MT_KEY_UPDATE           => "Key update" ],
+    [ SSL3_MT_NEXT_PROTO           => "Next protocol" ],
+    [ SSL3_MT_MESSAGE_HASH         => "Message hash" ]
+) {
+    next if $trace_constants{$_->[0]} == -1;
+    $tc_msgtype2s{$trace_constants{SSL3_VERSION_MAJOR}, $trace_constants{$_->[0]}} = $_->[1];
+}
+
+#
+# Translation of curl ossl_trace
+#
+
+sub ossl_trace {
+    $DEBUG>=2 or return;
+    my ($direction, $ssl_ver, $content_type, $buf, $len, $ssl, $userp) = @_;
+
+    my $verstr = $tc_ver2s{$ssl_ver} || "(version=$ssl_ver)";
+
+    # Log progress for interesting records only (like Handshake or Alert), skip
+    # all raw record headers (content_type == SSL3_RT_HEADER or ssl_ver == 0).
+    # For TLS 1.3, skip notification of the decrypted inner Content-Type.
+
+    if ($ssl_ver && ($content_type != $trace_constants{SSL3_RT_INNER_CONTENT_TYPE})) {
+
+        # the info given when the version is zero is not that useful for us
+        $ssl_ver >>= 8;  # check the upper 8 bits only below */
+
+        # SSLv2 doesn't seem to have TLS record-type headers, so OpenSSL
+        # always pass-up content-type as 0. But the interesting message-type
+        # is at 'buf[0]'.
+
+	my $tls_rt_name = ($ssl_ver == $trace_constants{SSL3_VERSION_MAJOR} && $content_type)
+	    ? $tc_type2s{$content_type} || "TLS Unknown (type=$content_type)"
+	    : "";
+
+        my $msg_type;
+        my $msg_name;
+        if ($content_type == $trace_constants{SSL3_RT_CHANGE_CIPHER_SPEC}) {
+            $msg_type = unpack('c1', $buf);
+            $msg_name = "Change cipher spec";
+        } elsif ($content_type == $trace_constants{SSL3_RT_ALERT}) {
+            my @c = unpack('c2', $buf);
+            $msg_type = ($c[0] << 8) + $c[1];
+            $msg_name = eval { Net::SSLeay::SSL_alert_desc_string_long($msg_type) } || "Unknown alert";
+        } else {
+            $msg_type = unpack('c1', $buf);
+	    $msg_name = $tc_msgtype2s{$ssl_ver, $msg_type} || "Unknown (ssl_ver=$ssl_ver, msg=$msg_type)";
+        }
+	DEBUG(sprintf("* %s (%s), %s, %s (%d)",
+	    $verstr, $direction ? "OUT" : "IN", $tls_rt_name, $msg_name, $msg_type));
+    }
+
+    #
+    # Here one might want to hexdump $buf (?)
+    #
+    # $DEBUG>=4 && printf STDERR "%s", hexdump($buf);
+}
+
 
 1;
 

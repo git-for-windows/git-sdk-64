@@ -10,7 +10,7 @@
 
 module RbConfig
   RUBY_VERSION.start_with?("3.1.") or
-    raise "ruby lib version (3.1.2) doesn't match executable version (#{RUBY_VERSION})"
+    raise "ruby lib version (3.1.3) doesn't match executable version (#{RUBY_VERSION})"
 
   # Ruby installed directory.
   TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/3.1.0/i386-mingw32")
@@ -21,8 +21,8 @@ module RbConfig
   CONFIG["DESTDIR"] = DESTDIR
   CONFIG["MAJOR"] = "3"
   CONFIG["MINOR"] = "1"
-  CONFIG["TEENY"] = "2"
-  CONFIG["PATCHLEVEL"] = "20"
+  CONFIG["TEENY"] = "3"
+  CONFIG["PATCHLEVEL"] = "185"
   CONFIG["INSTALL"] = '/usr/bin/install -c'
   CONFIG["EXEEXT"] = ".exe"
   CONFIG["prefix"] = (TOPDIR || DESTDIR + "/mingw32")
@@ -34,6 +34,7 @@ module RbConfig
   CONFIG["CC_WRAPPER"] = ""
   CONFIG["PACKAGE"] = "ruby"
   CONFIG["BUILTIN_TRANSSRCS"] = " enc/trans/newline.c"
+  CONFIG["MKMF_VERBOSE"] = "0"
   CONFIG["MANTYPE"] = "doc"
   CONFIG["vendorarchhdrdir"] = "$(vendorhdrdir)/$(sitearch)"
   CONFIG["sitearchhdrdir"] = "$(sitehdrdir)/$(sitearch)"
@@ -44,7 +45,7 @@ module RbConfig
   CONFIG["RUBY_SEARCH_PATH"] = ""
   CONFIG["UNIVERSAL_INTS"] = ""
   CONFIG["UNIVERSAL_ARCHNAMES"] = ""
-  CONFIG["configure_args"] = " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' '--disable-werror' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CC=gcc' 'CXX=g++' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -ID:/a/msys64/mingw32/include' 'LDFLAGS=-pipe -Wl,--no-seh' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048 -ID:/a/msys64/mingw32/include -I/mingw32/include/pdcurses' 'CXXFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -ID:/a/msys64/mingw32/include'"
+  CONFIG["configure_args"] = " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' '--disable-werror' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CC=gcc' 'CXX=g++' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -I/mingw32/include/pdcurses ' 'LDFLAGS=-pipe -Wl,--no-seh -Wl,--large-address-aware' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048  -I/mingw32/include/pdcurses' 'CXXFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses '"
   CONFIG["CONFIGURE"] = "configure"
   CONFIG["vendorarchdir"] = "$(vendorlibdir)/$(sitearch)"
   CONFIG["vendorlibdir"] = "$(vendordir)/$(ruby_version)"
@@ -121,6 +122,7 @@ module RbConfig
   CONFIG["RPATHFLAG"] = ""
   CONFIG["LIBPATHFLAG"] = " -L%s"
   CONFIG["LINK_SO"] = ""
+  CONFIG["ADDITIONAL_DLDFLAGS"] = ""
   CONFIG["ASMEXT"] = "S"
   CONFIG["LIBEXT"] = "a"
   CONFIG["DLEXT"] = "so"
@@ -129,7 +131,7 @@ module RbConfig
   CONFIG["CCDLFLAGS"] = ""
   CONFIG["STATIC"] = ""
   CONFIG["ARCH_FLAG"] = ""
-  CONFIG["DLDFLAGS"] = "-pipe -Wl,--no-seh -Wl,--enable-auto-image-base,--enable-auto-import"
+  CONFIG["DLDFLAGS"] = "-pipe -Wl,--no-seh -Wl,--large-address-aware -Wl,--enable-auto-image-base,--enable-auto-import"
   CONFIG["ALLOCA"] = ""
   CONFIG["EGREP"] = "/usr/bin/grep -E"
   CONFIG["GREP"] = "/usr/bin/grep"
@@ -159,7 +161,7 @@ module RbConfig
   CONFIG["ASFLAGS"] = ""
   CONFIG["ARFLAGS"] = "rcD "
   CONFIG["try_header"] = ""
-  CONFIG["CC_VERSION_MESSAGE"] = "gcc.exe (Rev2, Built by MSYS2 project) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  CONFIG["CC_VERSION_MESSAGE"] = "gcc.exe (Rev6, Built by MSYS2 project) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
   CONFIG["CC_VERSION"] = "$(CC) --version"
   CONFIG["MJIT_CC"] = "D:/a/msys64/mingw32/bin/gcc.exe"
   CONFIG["CSRCFLAG"] = ""
@@ -169,11 +171,11 @@ module RbConfig
   CONFIG["GNU_LD"] = "yes"
   CONFIG["GCC"] = "yes"
   CONFIG["CPP"] = "$(CC) -E"
-  CONFIG["CXXFLAGS"] = "-march=pentium4 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -ID:/a/msys64/mingw32/include"
+  CONFIG["CXXFLAGS"] = "-march=pentium4 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses "
   CONFIG["OBJEXT"] = "o"
-  CONFIG["CPPFLAGS"] = "-D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048 -ID:/a/msys64/mingw32/include -I/mingw32/include/pdcurses -D_WIN32_WINNT=0x0600 -D__MINGW_USE_VC2005_COMPAT $(DEFS) $(cppflags)"
-  CONFIG["LDFLAGS"] = "-L. -pipe -Wl,--no-seh -Wl,--no-as-needed"
-  CONFIG["CFLAGS"] = "-march=pentium4 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -ID:/a/msys64/mingw32/include"
+  CONFIG["CPPFLAGS"] = "-D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048  -I/mingw32/include/pdcurses -D_WIN32_WINNT=0x0600 -D__MINGW_USE_VC2005_COMPAT $(DEFS) $(cppflags)"
+  CONFIG["LDFLAGS"] = "-L. -pipe -Wl,--no-seh -Wl,--large-address-aware -Wl,--no-as-needed"
+  CONFIG["CFLAGS"] = "-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -I/mingw32/include/pdcurses "
   CONFIG["STRIP"] = "strip -S -x"
   CONFIG["RANLIB"] = "i686-w64-mingw32-gcc-ranlib"
   CONFIG["OBJDUMP"] = "objdump"
