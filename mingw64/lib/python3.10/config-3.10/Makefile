@@ -28,9 +28,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.10
-srcdir=		../Python-3.10.8
-VPATH=		../Python-3.10.8
-abs_srcdir=	/c/M/mingw-w64-python/src/build-x86_64/../Python-3.10.8
+srcdir=		../Python-3.10.9
+VPATH=		../Python-3.10.9
+abs_srcdir=	/c/M/mingw-w64-python/src/build-x86_64/../Python-3.10.9
 abs_builddir=	/c/M/mingw-w64-python/src/build-x86_64
 
 
@@ -120,7 +120,7 @@ PY_CORE_CFLAGS=	$(PY_STDMODULE_CFLAGS) -DPy_BUILD_CORE
 PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 # Strict or non-strict aliasing flags used to compile dtoa.c, see above
 CFLAGS_ALIASING=
-RCFLAGS= -DFIELD3=8150 -O COFF --target=pe-x86-64
+RCFLAGS= -DFIELD3=9150 -O COFF --target=pe-x86-64
 
 
 # Machine-dependent subdirectories
@@ -140,9 +140,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.10.8
-VPATH_b2h=		C:/M/mingw-w64-python/src/Python-3.10.8
-abs_srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.10.8
+srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.10.9
+VPATH_b2h=		C:/M/mingw-w64-python/src/Python-3.10.9
+abs_srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.10.9
 abs_builddir_b2h=	C:/M/mingw-w64-python/src/build-x86_64
 prefix_b2h=		D:/a/msys64/mingw64
 
@@ -1966,7 +1966,7 @@ rmtestturds:
 	-rm -f gb-18030-2000.xml
 
 docclean:
-	$(MAKE) -C Doc clean
+	$(MAKE) -C $(srcdir)/Doc clean
 
 # like the 'clean' target but retain the profile guided optimization (PGO)
 # data.  The PGO data is only valid if source code remains unchanged.

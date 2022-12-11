@@ -1,6 +1,6 @@
 /* mpfr.h -- Include file for mpfr.
 
-Copyright 1999-2020 Free Software Foundation, Inc.
+Copyright 1999-2022 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -26,8 +26,8 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 /* Define MPFR version number */
 #define MPFR_VERSION_MAJOR 4
 #define MPFR_VERSION_MINOR 1
-#define MPFR_VERSION_PATCHLEVEL 0
-#define MPFR_VERSION_STRING "4.1.0-p13"
+#define MPFR_VERSION_PATCHLEVEL 1
+#define MPFR_VERSION_STRING "4.1.1-p1"
 
 /* User macros:
    MPFR_USE_FILE:        Define it to make MPFR define functions dealing
@@ -252,14 +252,14 @@ typedef __mpfr_struct *mpfr_ptr;
 typedef const __mpfr_struct *mpfr_srcptr;
 
 /* For those who need a direct and fast access to the sign field.
-   However it is not in the API, thus use it at your own risk: it might
-   not be supported, or change name, in further versions!
+   However, it is not in the API, thus use it at your own risk: it
+   might not be supported, or change name, in further versions!
    Unfortunately, it must be defined here (instead of MPFR's internal
    header file mpfr-impl.h) because it is used by some macros below.
 */
 #define MPFR_SIGN(x) ((x)->_mpfr_sign)
 
-/* Stack interface */
+/* Custom interface */
 typedef enum {
   MPFR_NAN_KIND     = 0,
   MPFR_INF_KIND     = 1,
@@ -836,9 +836,7 @@ __MPFR_DECLSPEC int mpfr_total_order_p (mpfr_srcptr, mpfr_srcptr);
 /* In the implementation of these macros, we need to make sure that the
    arguments are evaluated one time exactly and that type conversion is
    done as it would be with a function. Tests should be added to ensure
-   that.
-   Note that the macros for the custom interface are not concerned; the
-   MPFR manual has been clarified. */
+   that. */
 
 /* Prevent x from being used as an lvalue.
    Thanks to Wojtek Lerch and Tim Rentsch for the idea. */
@@ -911,9 +909,9 @@ __MPFR_DECLSPEC int mpfr_total_order_p (mpfr_srcptr, mpfr_srcptr);
    implicit conversion in the macro allows the compiler to emit diagnostics
    when normally expected, for instance in the following call:
      mpfr_set_ui (x, "foo", MPFR_RNDN);
-   If this is not possible (for future macros), one of the tricks described
-   on http://groups.google.com/group/comp.std.c/msg/e92abd24bf9eaf7b could
-   be used. */
+   If this is not possible (for future macros), one of the tricks described on
+   https://groups.google.com/g/comp.std.c/c/9Jl0giNILfg/m/e6-evyS9KukJ?pli=1
+   could be used. */
 #if defined (__GNUC__) && !defined(__cplusplus)
 #if (__GNUC__ >= 2)
 
@@ -983,16 +981,30 @@ __MPFR_DECLSPEC int mpfr_total_order_p (mpfr_srcptr, mpfr_srcptr);
 #endif
 #endif
 
-/* Macro version of mpfr_stack interface for fast access */
-#define mpfr_custom_get_size(p) ((mpfr_size_t)                          \
-       (((p)+GMP_NUMB_BITS-1)/GMP_NUMB_BITS*sizeof (mp_limb_t)))
-#define mpfr_custom_init(m,p) do {} while (0)
-#define mpfr_custom_get_significand(x) ((mpfr_void*)((x)->_mpfr_d))
-#define mpfr_custom_get_exp(x) ((x)->_mpfr_exp)
-#define mpfr_custom_move(x,m) do { ((x)->_mpfr_d = (mp_limb_t*)(m)); } while (0)
+/* Macro versions of the custom interface for fast access. */
+
+/* The internal cast to mpfr_size_t will silent a warning with
+   GCC's -Wsign-conversion that could occur with user code, as
+   sizeof is of type size_t, which is unsigned. */
+#define mpfr_custom_get_size(p)                                             \
+  ((mpfr_size_t)                                                            \
+   ((mpfr_size_t) (((mpfr_prec_t)(p) + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS)  \
+    * sizeof (mp_limb_t)))
+
+#define mpfr_custom_init(m,p) ((void) (m), (void) (p))
+
+#define mpfr_custom_get_significand(x) \
+  ((mpfr_void *) MPFR_VALUE_OF(MPFR_SRCPTR(x)->_mpfr_d))
+
+#define mpfr_custom_get_exp(x) MPFR_VALUE_OF(MPFR_SRCPTR(x)->_mpfr_exp)
+
+#define mpfr_custom_move(x,m) (((mpfr_ptr) (x))->_mpfr_d = (mp_limb_t *) (m))
+
+/* Note: the following macro is not usable in contexts where an expression
+   is expected. */
 #define mpfr_custom_init_set(x,k,e,p,m) do {                   \
   mpfr_ptr _x = (x);                                           \
-  mpfr_exp_t _e;                                               \
+  mpfr_exp_t _e = (e);                                         \
   mpfr_kind_t _t;                                              \
   mpfr_int _s, _k;                                             \
   _k = (k);                                                    \
@@ -1003,7 +1015,7 @@ __MPFR_DECLSPEC int mpfr_total_order_p (mpfr_srcptr, mpfr_srcptr);
     _t = (mpfr_kind_t) - _k;                                   \
     _s = -1;                                                   \
   }                                                            \
-  _e = _t == MPFR_REGULAR_KIND ? (e) :                         \
+  _e = _t == MPFR_REGULAR_KIND ? _e :                          \
     _t == MPFR_NAN_KIND ? __MPFR_EXP_NAN :                     \
     _t == MPFR_INF_KIND ? __MPFR_EXP_INF : __MPFR_EXP_ZERO;    \
   _x->_mpfr_prec = (p);                                        \
@@ -1011,14 +1023,23 @@ __MPFR_DECLSPEC int mpfr_total_order_p (mpfr_srcptr, mpfr_srcptr);
   _x->_mpfr_exp  = _e;                                         \
   _x->_mpfr_d    = (mp_limb_t*) (m);                           \
  } while (0)
-#define mpfr_custom_get_kind(x)                                         \
-  ( (x)->_mpfr_exp >  __MPFR_EXP_INF ?                                  \
-    (mpfr_int) MPFR_REGULAR_KIND * MPFR_SIGN (x)                        \
-  : (x)->_mpfr_exp == __MPFR_EXP_INF ?                                  \
-    (mpfr_int) MPFR_INF_KIND * MPFR_SIGN (x)                            \
-  : (x)->_mpfr_exp == __MPFR_EXP_NAN ? (mpfr_int) MPFR_NAN_KIND         \
-  : (mpfr_int) MPFR_ZERO_KIND * MPFR_SIGN (x) )
 
+#if __GNUC__ > 2 || __GNUC_MINOR__ >= 95
+#define mpfr_custom_get_kind(x)                                         \
+  __extension__ ({                                                      \
+    mpfr_srcptr _x = (x);                                               \
+    _x->_mpfr_exp >  __MPFR_EXP_INF ?                                   \
+      (mpfr_int) MPFR_REGULAR_KIND * MPFR_SIGN (_x)                     \
+      : _x->_mpfr_exp == __MPFR_EXP_INF ?                               \
+      (mpfr_int) MPFR_INF_KIND * MPFR_SIGN (_x)                         \
+      : _x->_mpfr_exp == __MPFR_EXP_NAN ? (mpfr_int) MPFR_NAN_KIND      \
+      : (mpfr_int) MPFR_ZERO_KIND * MPFR_SIGN (_x);                     \
+  })
+#else
+#define mpfr_custom_get_kind(x) ((mpfr_custom_get_kind)(x))
+#endif
+
+/* End of the macro versions of the custom interface. */
 
 #endif /* MPFR_USE_NO_MACRO */
 

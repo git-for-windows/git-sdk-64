@@ -28,9 +28,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.10
-srcdir=		../Python-3.10.8
-VPATH=		../Python-3.10.8
-abs_srcdir=	/c/M/mingw-w64-python/src/build-i686/../Python-3.10.8
+srcdir=		../Python-3.10.9
+VPATH=		../Python-3.10.9
+abs_srcdir=	/c/M/mingw-w64-python/src/build-i686/../Python-3.10.9
 abs_builddir=	/c/M/mingw-w64-python/src/build-i686
 
 
@@ -92,7 +92,7 @@ CONFIGURE_CFLAGS_NODIST= -fno-semantic-interposition -std=c99 -Wextra -Wno-unuse
 # once Python is installed (bpo-35257)
 CONFIGURE_LDFLAGS_NODIST= -fno-semantic-interposition
 CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -I.
-CONFIGURE_LDFLAGS=	-pipe -Wl,--no-seh -Wl,--large-address-aware
+CONFIGURE_LDFLAGS=	-pipe -Wl,--no-seh -Wl,--large-address-aware -Wl,--large-address-aware
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
 # values.
@@ -120,7 +120,7 @@ PY_CORE_CFLAGS=	$(PY_STDMODULE_CFLAGS) -DPy_BUILD_CORE
 PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 # Strict or non-strict aliasing flags used to compile dtoa.c, see above
 CFLAGS_ALIASING=
-RCFLAGS= -DFIELD3=8150 -O COFF --target=pe-i386
+RCFLAGS= -DFIELD3=9150 -O COFF --target=pe-i386
 
 
 # Machine-dependent subdirectories
@@ -140,9 +140,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.10.8
-VPATH_b2h=		C:/M/mingw-w64-python/src/Python-3.10.8
-abs_srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.10.8
+srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.10.9
+VPATH_b2h=		C:/M/mingw-w64-python/src/Python-3.10.9
+abs_srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.10.9
 abs_builddir_b2h=	C:/M/mingw-w64-python/src/build-i686
 prefix_b2h=		D:/a/msys64/mingw32
 
@@ -228,7 +228,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-loadable-sqlite-extensions' '--with-tzpath=/mingw32/share/zoneinfo' '--enable-optimizations' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3' 'LDFLAGS=-pipe -Wl,--no-seh -Wl,--large-address-aware' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-loadable-sqlite-extensions' '--with-tzpath=/mingw32/share/zoneinfo' '--enable-optimizations' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3' 'LDFLAGS=-pipe -Wl,--no-seh -Wl,--large-address-aware -Wl,--large-address-aware' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
 
 
 # Subdirectories with code
@@ -1966,7 +1966,7 @@ rmtestturds:
 	-rm -f gb-18030-2000.xml
 
 docclean:
-	$(MAKE) -C Doc clean
+	$(MAKE) -C $(srcdir)/Doc clean
 
 # like the 'clean' target but retain the profile guided optimization (PGO)
 # data.  The PGO data is only valid if source code remains unchanged.
