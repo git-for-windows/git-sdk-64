@@ -270,6 +270,7 @@ __MPC_DECLSPEC long double _Complex mpc_get_ldc (mpc_srcptr, mpc_rnd_t);
 __MPC_DECLSPEC int mpc_inp_str    (mpc_ptr, FILE *, size_t *, int, mpc_rnd_t);
 __MPC_DECLSPEC size_t mpc_out_str (FILE *, int, size_t, mpc_srcptr, mpc_rnd_t);
 __MPC_DECLSPEC void mpcb_out_str  (FILE *f, mpcb_srcptr);
+__MPC_DECLSPEC void mpcr_out_str (FILE *f, mpcr_srcptr r);
 #endif
 
 __MPC_DECLSPEC int mpcr_inf_p (mpcr_srcptr r);
@@ -284,7 +285,6 @@ __MPC_DECLSPEC void mpcr_set_ui64_2si64 (mpcr_ptr r, uint64_t mant,
    int64_t exp);
 __MPC_DECLSPEC void mpcr_max (mpcr_ptr r, mpcr_srcptr s, mpcr_srcptr t);
 __MPC_DECLSPEC int64_t mpcr_get_exp (mpcr_srcptr r);
-__MPC_DECLSPEC void mpcr_out_str (FILE *f, mpcr_srcptr r);
 __MPC_DECLSPEC void mpcr_mul (mpcr_ptr r, mpcr_srcptr s, mpcr_srcptr t);
 __MPC_DECLSPEC void mpcr_mul_2ui (mpcr_ptr r, mpcr_srcptr s,
    unsigned long int e);
