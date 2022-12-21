@@ -1,8 +1,6 @@
 mingw_prefix_path () {
-	case "$(uname -m)" in
-	x86_64) echo /mingw64;;
-	i686) echo /mingw32;;
-	esac
+	test -n "$MINGW_PREFIX" || die "No MINGW_PREFIX set"
+	echo $MINGW_PREFIX
 }
 
 bin_path () {
