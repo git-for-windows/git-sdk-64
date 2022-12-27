@@ -229,7 +229,7 @@ limitations in handling dllimport attribute.  */
 #endif
 
 #ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x603
+#define _WIN32_WINNT 0x601
 #endif
 
 #ifndef _INT128_DEFINED
@@ -612,6 +612,7 @@ __MINGW_INTRIN_INLINE void __cdecl __MINGW_ATTRIB_NORETURN __fastfail(unsigned i
 #else
   __asm__ __volatile__("unimplemented");
 #endif
+  __builtin_unreachable();
 }
 #endif /* __MINGW_FASTFAIL_IMPL == 1 */
 

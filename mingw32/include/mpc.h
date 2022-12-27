@@ -28,8 +28,8 @@ along with this program. If not, see http://www.gnu.org/licenses/ .
 /* Define MPC version number */
 #define MPC_VERSION_MAJOR 1
 #define MPC_VERSION_MINOR 3
-#define MPC_VERSION_PATCHLEVEL 0
-#define MPC_VERSION_STRING "1.3.0"
+#define MPC_VERSION_PATCHLEVEL 1
+#define MPC_VERSION_STRING "1.3.1"
 
 /* Macros dealing with MPC VERSION */
 #define MPC_VERSION_NUM(a,b,c) (((a) << 16L) | ((b) << 8) | (c))

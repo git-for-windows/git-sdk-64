@@ -58,7 +58,7 @@ see https://www.gnu.org/licenses/.  */
 /* Instantiated by configure. */
 #if ! defined (__GMP_WITHIN_CONFIGURE)
 #define _LONG_LONG_LIMB 1
-#define __GMP_LIBGMP_DLL  0
+#define __GMP_LIBGMP_DLL  1
 #endif
 
 
@@ -2324,7 +2324,7 @@ enum
 
 /* Define CC and CFLAGS which were used to build this version of GMP */
 #define __GMP_CC "gcc"
-#define __GMP_CFLAGS "-march=x86-64 -mtune=generic -O2 -pipe"
+#define __GMP_CFLAGS "-march=nocona -msahf -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wno-attributes -Wno-ignored-attributes"
 
 /* Major version number is the value of __GNU_MP__ too, above. */
 #define __GNU_MP_VERSION            6
