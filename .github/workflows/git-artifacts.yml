@@ -113,6 +113,19 @@ jobs:
           cp PKGBUILD.$version PKGBUILD &&
           git commit -s -m "mingw-w64-git: new version ($version)" PKGBUILD &&
           git bundle create "$b"/MINGW-packages.bundle origin/main..main)
+      - name: Build mingw-w64-i686-git
+        if: env.ARCH_NAME == 'x86_64'
+        shell: bash
+        run: |
+          set -x
+
+          # Make sure that there is a `/usr/bin/git` that can be used by `makepkg-mingw`
+          printf '#!/bin/sh\n\nexec /mingw${{env.ARCH_BITNESS}}/bin/git.exe "$@"\n' >/usr/bin/git &&
+
+          # Restrict `PATH` to MSYS2
+          PATH="/mingw${{env.ARCH_BITNESS}}/bin:/usr/bin:/C/Windows/system32"
+
+          sh -x /usr/src/build-extra/please.sh build-mingw-w64-git --only-32-bit -o artifacts HEAD
       - name: Publish mingw-w64-${{env.ARCH_NAME}}-git
         uses: actions/upload-artifact@v3
         with:
