@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.metadata = { "source_code_url" => "https://github.com/ruby/io-console" } if s.respond_to? :metadata=
   s.require_paths = ["lib".freeze]
   s.authors = ["Nobu Nakada".freeze]
-  s.date = "2022-12-02"
+  s.date = "2023-01-14"
   s.description = "add console capabilities to IO instances.".freeze
   s.email = "nobu@ruby-lang.org".freeze
   s.extensions = ["ext/io/console/extconf.rb".freeze]

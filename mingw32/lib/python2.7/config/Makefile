@@ -73,12 +73,12 @@ MAKESETUP=      $(srcdir)/Modules/makesetup
 # Compiler options
 OPT=		-DNDEBUG 
 BASECFLAGS=	 -fno-strict-aliasing
-CFLAGS=		$(BASECFLAGS) -march=pentium4 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG  $(OPT) $(EXTRA_CFLAGS)
+CFLAGS=		$(BASECFLAGS) -march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG  $(OPT) $(EXTRA_CFLAGS)
 # Both CPPFLAGS and LDFLAGS need to contain the shell's value for setup.py to
 # be able to build extension modules using the directories specified in the
 # environment variables
 CPPFLAGS=	-I. -IInclude -I$(srcdir)/Include -I$(srcdir)/Python -I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -ID:/a/msys64/mingw32/include/ncurses 
-LDFLAGS=	-pipe -Wl,--no-seh -s 
+LDFLAGS=	-pipe -Wl,--no-seh -Wl,--large-address-aware -s 
 LDLAST=		
 SGI_ABI=	
 CCSHARED=	
@@ -167,7 +167,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-threads' '--with-system-expat' '--with-system-ffi' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG ' 'LDFLAGS=-pipe -Wl,--no-seh -s ' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -ID:/a/msys64/mingw32/include/ncurses ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-threads' '--with-system-expat' '--with-system-ffi' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG ' 'LDFLAGS=-pipe -Wl,--no-seh -Wl,--large-address-aware -s ' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -ID:/a/msys64/mingw32/include/ncurses ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
 
 
 # Subdirectories with code
@@ -260,7 +260,7 @@ SIGNAL_OBJS=
 
 ##########################################################################
 
-LIBFFI_INCLUDEDIR=	D:/a/msys64/mingw32/include
+LIBFFI_INCLUDEDIR=	
 
 ##########################################################################
 # Parser

@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Akinori MUSHA".freeze]
   s.bindir = "exe".freeze
-  s.date = "2022-12-02"
+  s.date = "2023-01-14"
   s.description = "Provides a framework for message digest libraries.".freeze
   s.email = ["knu@idaemons.org".freeze]
   s.files = ["digest.rb".freeze, "digest.so".freeze, "digest/bubblebabble.so".freeze, "digest/loader.rb".freeze, "digest/md5.so".freeze, "digest/rmd160.so".freeze, "digest/sha1.so".freeze, "digest/sha2.rb".freeze, "digest/sha2.so".freeze, "digest/sha2/loader.rb".freeze, "digest/version.rb".freeze]

@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yusuke Endoh".freeze]
   s.bindir = "exe".freeze
-  s.date = "2022-12-02"
+  s.date = "2023-01-14"
   s.description = "Support for encoding and decoding binary data using a Base64 representation.".freeze
   s.email = ["mame@ruby-lang.org".freeze]
   s.files = ["base64.rb".freeze]

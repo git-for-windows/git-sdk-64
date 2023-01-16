@@ -1246,7 +1246,7 @@
 #define WITH_PYMALLOC 1
 
 /* Define if we have external libffi. */
-#define WITH_SYSTEM_LIBFFI 1
+/* #undef WITH_SYSTEM_LIBFFI */
 
 /* Define if you want to compile in rudimentary thread support */
 #define WITH_THREAD 1

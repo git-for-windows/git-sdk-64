@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Nobu Nakada".freeze]
   s.bindir = "exe".freeze
-  s.date = "2022-12-02"
+  s.date = "2023-01-14"
   s.description = "Waits until IO is readable or writable without blocking.".freeze
   s.email = ["nobu@ruby-lang.org".freeze]
   s.extensions = ["ext/io/wait/extconf.rb".freeze]

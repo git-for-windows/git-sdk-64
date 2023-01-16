@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.metadata = { "homepage_uri" => "https://github.com/ruby/resolv-replace", "source_code_uri" => "https://github.com/ruby/resolv-replace" } if s.respond_to? :metadata=
   s.require_paths = ["lib".freeze]
   s.authors = ["Tanaka Akira".freeze]
-  s.date = "2022-12-02"
+  s.date = "2023-01-14"
   s.description = "Replace Socket DNS with Resolv.".freeze
   s.email = ["akr@fsij.org".freeze]
   s.files = ["resolv-replace.rb".freeze]

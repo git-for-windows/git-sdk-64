@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
   s.authors = ["Naotoshi Seo".freeze, "SHIBATA Hiroshi".freeze]
-  s.date = "2022-12-02"
+  s.date = "2023-01-14"
   s.description = "Provides a simple logging utility for outputting messages.".freeze
   s.email = ["sonots@gmail.com".freeze, "hsbt@ruby-lang.org".freeze]
   s.files = ["lib/logger.rb".freeze, "lib/logger/errors.rb".freeze, "lib/logger/formatter.rb".freeze, "lib/logger/log_device.rb".freeze, "lib/logger/period.rb".freeze, "lib/logger/severity.rb".freeze, "lib/logger/version.rb".freeze]
