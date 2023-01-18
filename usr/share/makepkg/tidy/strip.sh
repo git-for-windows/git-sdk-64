@@ -40,7 +40,7 @@ strip_file() {
 	local binary=$1; shift
 
 	case "$(file -bi "$binary")" in
-	*application/x-dosexec*)
+	*application/x-dosexec* | *application/vnd.microsoft.portable-executable*)
 		if check_option "debug" "y"; then
 			if [[ -f "$dbgdir/$binary.debug" ]]; then
 				return
@@ -201,7 +201,9 @@ tidy_strip() {
 			chmod 0755 "${binary}";
 
 			case "$(file -S -bi "$binary")" in
-				*application/x-dosexec*) # Windows executables and dlls
+				*application/x-dosexec*) # Windows executables and dlls (file <=5.43)
+					strip_flags="$STRIP_SHARED";;
+				*application/vnd.microsoft.portable-executable*) # Windows executables and dlls (file >=5.44)
 					strip_flags="$STRIP_SHARED";;
 				*application/x-archive*) # Static and Import Libraries (*.a and *.dll.a)
 					strip_flags="$STRIP_STATIC"
