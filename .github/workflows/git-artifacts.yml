@@ -210,7 +210,7 @@ jobs:
           "$env:ProgramFiles\Git\usr\bin" | Out-File -Encoding ascii -Append $env:GITHUB_PATH
           "$env:ProgramFiles\Git\mingw${{env.ARCH_BITNESS}}\bin" | Out-File -Encoding ascii -Append $env:GITHUB_PATH
       - name: Publish installer log
-        if: failure() || success()
+        if: matrix.artifact == 'installer' && (failure() || success())
         uses: actions/upload-artifact@v3
         with:
           name: installer.log
