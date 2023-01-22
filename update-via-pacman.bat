@@ -85,9 +85,9 @@
 @IF ERRORLEVEL 1 GOTO DIE
 
 :FINISH
-@ECHO Wrapping up: re-install git-extra
-@pacman -S --noconfirm git-extra
-@ECHO End of re-install of git-extra
+@ECHO Wrapping up: re-install mingw-w64-x86_64-git-extra
+@pacman -S --noconfirm mingw-w64-x86_64-git-extra
+@ECHO End of re-install of mingw-w64-x86_64-git-extra
 @ECHO ==
 @IF ERRORLEVEL 1 GOTO DIE
 
