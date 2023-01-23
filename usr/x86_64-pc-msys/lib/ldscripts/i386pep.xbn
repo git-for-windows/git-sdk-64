@@ -1,5 +1,5 @@
 /* Script for -N */
-/* Copyright (C) 2014-2022 Free Software Foundation, Inc.
+/* Copyright (C) 2014-2023 Free Software Foundation, Inc.
    Copying and distribution of this script, with or without modification,
    are permitted in any medium without royalty provided the copyright
    notice and this notice are preserved.  */
@@ -118,7 +118,7 @@ SECTIONS
     *(.debug$S)
     *(.debug$T)
     *(.debug$F)
-    *(.drectve)
+     *(.drectve)
      *(.note.GNU-stack)
      *(.gnu.lto_*)
   }
@@ -130,6 +130,7 @@ SECTIONS
     KEEP (SORT(*)(.idata$3))
     /* These zeroes mark the end of the import list.  */
     LONG (0); LONG (0); LONG (0); LONG (0); LONG (0);
+    . = ALIGN(8);
     KEEP (SORT(*)(.idata$4))
     __IAT_start__ = .;
     SORT(*)(.idata$5)
