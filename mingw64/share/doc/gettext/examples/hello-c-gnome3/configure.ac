@@ -10,7 +10,7 @@ AM_INIT_AUTOMAKE([1.11])
 AC_PROG_CC
 AC_CHECK_HEADERS([unistd.h])
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.21])
+AM_GNU_GETTEXT_VERSION([0.21.1])
 
 dnl Check GNOME specific stuff.
 dnl
