@@ -21,14 +21,14 @@
 shopt -s extglob
 
 declare -r myname='pacdiff'
-declare -r myver='1.8.0'
+declare -r myver='1.8.2'
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
 diffprog=${DIFFPROG:-'vim -d'}
 diffsearchpath=${DIFFSEARCHPATH:-/etc}
 mergeprog=${MERGEPROG:-'diff3 -m'}
-cachedir=
+cachedirs=()
 USE_COLOR='y'
 SUDO=''
 declare -a oldsaves
@@ -96,16 +96,17 @@ print_existing_pacsave(){
 base_cache_tar() {
 	package="$1"
 
-	[[ -d $cachedir ]] ||
-		die "cachedir '%s' does not exist or is not a directory" "$cachedir"
+	for cachedir in "${cachedirs[@]}"; do
+		pushd "$cachedir" &>/dev/null || {
+			error "failed to chdir to '%s', skipping" "$cachedir"
+			continue
+		}
 
-	# unlikely that this will fail, but better make sure
-	pushd "$cachedir" &>/dev/null || die "failed to chdir to '%s'" "$cachedir"
+		find "$PWD" -name "$package-[0-9]*.pkg.tar*" ! -name '*.sig' |
+			pacsort --files --reverse | sed -ne '2p'
 
-	find "$PWD" -name "$package-[0-9]*.pkg.tar*" ! -name '*.sig' |
-		pacsort --files --reverse | sed -ne '2p'
-
-	popd &>/dev/null
+		popd &>/dev/null
+	done
 }
 
 diffprog_fn() {
@@ -241,7 +242,7 @@ while [[ -n "$1" ]]; do
 		-b|--backup)
 			BACKUP=1;;
 		-c|--cachedir)
-			cachedir="$2"; shift;;
+			cachedirs+=("$2"); shift;;
 		--nocolor)
 			USE_COLOR='n';;
 		-o|--output)
@@ -293,8 +294,8 @@ if (( USE_PACDB )); then
 	fi
 fi
 
-if [[ -z $cachedir ]]; then
-	cachedir="$(pacman-conf CacheDir)"
+if [[ -z ${cachedirs[*]} ]]; then
+	readarray -t cachedirs < <(pacman-conf CacheDir)
 fi
 
 # see http://mywiki.wooledge.org/BashFAQ/020
