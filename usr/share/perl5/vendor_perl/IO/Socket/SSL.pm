@@ -13,7 +13,7 @@
 
 package IO::Socket::SSL;
 
-our $VERSION = '2.077';
+our $VERSION = '2.080';
 
 use IO::Socket;
 use Net::SSLeay 1.46;
@@ -789,7 +789,13 @@ sub connect_SSL {
 		|| $arg_hash->{SSL_hostname};
 	    if ( ! defined $host ) {
 		if ( $host = $arg_hash->{PeerAddr} || $arg_hash->{PeerHost} ) {
-		    $host =~s{:[a-zA-Z0-9_\-]+$}{};
+		    $host =~s{^
+			(?:
+			    ([^:\[]+) |    # ipv4|host
+			    (\[(.*)\])     # [ipv6|host]
+			)
+			(:[\w\-]+)?        # optional :port
+		    $}{$1$2}x;             # ipv4|host|ipv6
 		}
 	    }
 	    ${$ctx->{verify_name_ref}} = $host;
@@ -2365,9 +2371,6 @@ sub new {
 		warn "Cannot determine hostname of peer for verification. ".
 		    "Disabling default hostname verification for now. ".
 		    "Please specify hostname with SSL_verifycn_name and better set SSL_verifycn_scheme too.\n";
-		return $ok;
-	    } elsif ( ! $vcn_scheme && $host =~m{^[\d.]+$|:} ) {
-		# don't try to verify IP by default
 		return $ok;
 	    }
 

@@ -503,7 +503,7 @@ IO::Socket::SSL::Utils -- loading, storing, creating certificates and keys
 
     $cert = PEM_file2cert('cert.pem');     # load certificate from file
     my $hash = CERT_asHash($cert);         # get details from certificate
-    PEM_cert2file('cert.pem',$cert);       # write certificate to file
+    PEM_cert2file($cert,'cert.pem');       # write certificate to file
     CERT_free($cert);                      # free memory within OpenSSL
 
     @certs = PEM_file2certs('chain.pem');  # load multiple certificates from file
@@ -514,7 +514,7 @@ IO::Socket::SSL::Utils -- loading, storing, creating certificates and keys
     $pem = PEM_cert2string($cert);         # convert certificate to PEM string
 
     $key = KEY_create_rsa(2048);           # create new 2048-bit RSA key
-    PEM_string2file($key,"key.pem");       # and write it to file
+    PEM_key2file($key,"key.pem");          # and write it to file
     KEY_free($key);                        # free memory within OpenSSL
 
 
