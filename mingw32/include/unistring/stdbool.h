@@ -3,7 +3,7 @@
 #if (__GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
 #include <stdbool.h>
 #else
-/* Copyright (C) 2001-2003, 2006-2017 Free Software Foundation, Inc.
+/* Copyright (C) 2001-2003, 2006-2022 Free Software Foundation, Inc.
    Written by Bruno Haible <haible@clisp.cons.org>, 2001.
 
    This program is free software; you can redistribute it and/or modify
@@ -101,8 +101,17 @@
 
 /* The other macros must be usable in preprocessor directives.  */
 #ifdef __cplusplus
-# define false false
-# define true true
+# if !defined _MSC_VER
+#  define false false
+#  define true true
+# endif
+/* In Sun C++ 5.11 (Solaris Studio 12.2) and older, 'true' as a preprocessor
+   expression evaluates to 0, not 1.  Fix this by overriding 'true'.  Note that
+   the replacement has to be of type 'bool'.  */
+# if defined __SUNPRO_CC && true != 1
+#  undef true
+#  define true (!false)
+# endif
 #else
 # undef false
 # define false 0
