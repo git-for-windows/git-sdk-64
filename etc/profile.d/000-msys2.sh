@@ -11,13 +11,15 @@ _warn_deprecated_winver()
     if [ "$__MSYS2_WINDOWS_VERSION_WARNING_DONE" = "true" ]; then
         return;
     fi
-    local winver;
-    winver="$(uname -s | sed -ne 's/\([^-]*\)-\([^-]*\).*/\2/p')"
+
+    local winver
+    winver=$(uname -s)   # looks like `MINGW64_NT-10.0-22621`
+    winver=${winver#*-}  # strip off `<prefix>-`
+    winver=${winver%%-*} # strip off `-<suffix>`, if any
     if [ "$winver" = "6.1" ] || [ "$winver" = "6.2" ]; then
         export __MSYS2_WINDOWS_VERSION_WARNING_DONE="true"
-        printf "\e[1;33mThe MSYS2 project is planning to drop active support of Windows 7\e[1;0m\n" 1>&2;
-        printf "\e[1;33mand 8.0 sometime during 2022. For more information visit\e[1;0m\n" 1>&2;
-        printf "\e[1;33mhttps://www.msys2.org/docs/windows_support\e[1;0m\n" 1>&2;
+        printf "\e[1;33mThe MSYS2 project no longer supports Windows 7 and 8.0.\e[1;0m\n" 1>&2;
+        printf "\e[1;33mFor more information visit https://www.msys2.org/docs/windows_support\e[1;0m\n" 1>&2;
     fi
 }
 
