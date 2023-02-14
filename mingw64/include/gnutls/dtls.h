@@ -25,9 +25,9 @@
  */
 
 #ifndef GNUTLS_DTLS_H
-#define GNUTLS_DTLS_H
+# define GNUTLS_DTLS_H
 
-#include <gnutls/gnutls.h>
+# include <gnutls/gnutls.h>
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
@@ -35,7 +35,7 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_COOKIE_KEY_SIZE 16
+# define GNUTLS_COOKIE_KEY_SIZE 16
 
 void gnutls_dtls_set_timeouts(gnutls_session_t session,
 			      unsigned int retrans_timeout,
@@ -90,4 +90,4 @@ unsigned int gnutls_record_get_discarded(gnutls_session_t session);
 #endif
 /* *INDENT-ON* */
 
-#endif /* GNUTLS_DTLS_H */
+#endif				/* GNUTLS_DTLS_H */

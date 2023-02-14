@@ -21,10 +21,10 @@
  */
 
 #ifndef GNUTLS_TPM_H
-#define GNUTLS_TPM_H
+# define GNUTLS_TPM_H
 
-#include <gnutls/gnutls.h>
-#include <gnutls/x509.h>
+# include <gnutls/gnutls.h>
+# include <gnutls/x509.h>
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
@@ -35,9 +35,9 @@ extern "C" {
 struct tpm_key_list_st;
 typedef struct tpm_key_list_st *gnutls_tpm_key_list_t;
 
-#define GNUTLS_TPM_KEY_SIGNING (1<<1)
-#define GNUTLS_TPM_REGISTER_KEY (1<<2)
-#define GNUTLS_TPM_KEY_USER (1<<3)
+# define GNUTLS_TPM_KEY_SIGNING (1<<1)
+# define GNUTLS_TPM_REGISTER_KEY (1<<2)
+# define GNUTLS_TPM_KEY_USER (1<<3)
 
 /**
  * gnutls_tpmkey_fmt_t:
@@ -77,4 +77,4 @@ int gnutls_tpm_privkey_delete(const char *url, const char *srk_password);
 #endif
 /* *INDENT-ON* */
 
-#endif /* GNUTLS_TPM_H */
+#endif				/* GNUTLS_TPM_H */

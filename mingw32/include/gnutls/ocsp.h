@@ -24,10 +24,10 @@
  */
 
 #ifndef GNUTLS_OCSP_H
-#define GNUTLS_OCSP_H
+# define GNUTLS_OCSP_H
 
-#include <gnutls/gnutls.h>
-#include <gnutls/x509.h>
+# include <gnutls/gnutls.h>
+# include <gnutls/x509.h>
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
@@ -35,7 +35,7 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_OCSP_NONCE "1.3.6.1.5.5.7.48.1.2"
+# define GNUTLS_OCSP_NONCE "1.3.6.1.5.5.7.48.1.2"
 
 /**
  * gnutls_ocsp_print_formats_t:
@@ -147,8 +147,7 @@ typedef const struct gnutls_ocsp_req_int *gnutls_ocsp_req_const_t;
 int gnutls_ocsp_req_init(gnutls_ocsp_req_t * req);
 void gnutls_ocsp_req_deinit(gnutls_ocsp_req_t req);
 
-int gnutls_ocsp_req_import(gnutls_ocsp_req_t req,
-			   const gnutls_datum_t * data);
+int gnutls_ocsp_req_import(gnutls_ocsp_req_t req, const gnutls_datum_t * data);
 int gnutls_ocsp_req_export(gnutls_ocsp_req_const_t req, gnutls_datum_t * data);
 int gnutls_ocsp_req_print(gnutls_ocsp_req_const_t req,
 			  gnutls_ocsp_print_formats_t format,
@@ -171,8 +170,7 @@ int gnutls_ocsp_req_add_cert_id(gnutls_ocsp_req_t req,
 				const gnutls_datum_t * serial_number);
 int gnutls_ocsp_req_add_cert(gnutls_ocsp_req_t req,
 			     gnutls_digest_algorithm_t digest,
-			     gnutls_x509_crt_t issuer,
-			     gnutls_x509_crt_t cert);
+			     gnutls_x509_crt_t issuer, gnutls_x509_crt_t cert);
 
 int gnutls_ocsp_req_get_extension(gnutls_ocsp_req_const_t req,
 				  unsigned indx,
@@ -185,8 +183,7 @@ int gnutls_ocsp_req_set_extension(gnutls_ocsp_req_t req,
 				  const gnutls_datum_t * data);
 
 int gnutls_ocsp_req_get_nonce(gnutls_ocsp_req_const_t req,
-			      unsigned int *critical,
-			      gnutls_datum_t * nonce);
+			      unsigned int *critical, gnutls_datum_t * nonce);
 int gnutls_ocsp_req_set_nonce(gnutls_ocsp_req_t req,
 			      unsigned int critical,
 			      const gnutls_datum_t * nonce);
@@ -207,8 +204,7 @@ int gnutls_ocsp_resp_import2(gnutls_ocsp_resp_t resp,
 int gnutls_ocsp_resp_export(gnutls_ocsp_resp_const_t resp,
 			    gnutls_datum_t * data);
 int gnutls_ocsp_resp_export2(gnutls_ocsp_resp_const_t resp,
-			     gnutls_datum_t * data,
-			     gnutls_x509_crt_fmt_t fmt);
+			     gnutls_datum_t * data, gnutls_x509_crt_fmt_t fmt);
 int gnutls_ocsp_resp_print(gnutls_ocsp_resp_const_t resp,
 			   gnutls_ocsp_print_formats_t format,
 			   gnutls_datum_t * out);
@@ -216,24 +212,21 @@ int gnutls_ocsp_resp_print(gnutls_ocsp_resp_const_t resp,
 int gnutls_ocsp_resp_get_status(gnutls_ocsp_resp_const_t resp);
 int gnutls_ocsp_resp_get_response(gnutls_ocsp_resp_const_t resp,
 				  gnutls_datum_t *
-				  response_type_oid,
-				  gnutls_datum_t * response);
+				  response_type_oid, gnutls_datum_t * response);
 
 int gnutls_ocsp_resp_get_version(gnutls_ocsp_resp_const_t resp);
 int gnutls_ocsp_resp_get_responder(gnutls_ocsp_resp_const_t resp,
 				   gnutls_datum_t * dn);
 int gnutls_ocsp_resp_get_responder2(gnutls_ocsp_resp_const_t resp,
-				    gnutls_datum_t * dn,
-				    unsigned flags);
+				    gnutls_datum_t * dn, unsigned flags);
 
 /* the raw key ID of the responder */
-#define GNUTLS_OCSP_RESP_ID_KEY 1
+# define GNUTLS_OCSP_RESP_ID_KEY 1
 /* the raw DN of the responder */
-#define GNUTLS_OCSP_RESP_ID_DN 2
+# define GNUTLS_OCSP_RESP_ID_DN 2
 int
 gnutls_ocsp_resp_get_responder_raw_id(gnutls_ocsp_resp_const_t resp,
-				      unsigned type,
-				      gnutls_datum_t * raw);
+				      unsigned type, gnutls_datum_t * raw);
 
 time_t gnutls_ocsp_resp_get_produced(gnutls_ocsp_resp_const_t resp);
 int gnutls_ocsp_resp_get_single(gnutls_ocsp_resp_const_t resp,
@@ -253,19 +246,16 @@ int gnutls_ocsp_resp_get_extension(gnutls_ocsp_resp_const_t resp,
 				   unsigned int *critical,
 				   gnutls_datum_t * data);
 int gnutls_ocsp_resp_get_nonce(gnutls_ocsp_resp_const_t resp,
-			       unsigned int *critical,
-			       gnutls_datum_t * nonce);
+			       unsigned int *critical, gnutls_datum_t * nonce);
 int gnutls_ocsp_resp_get_signature_algorithm(gnutls_ocsp_resp_const_t resp);
 int gnutls_ocsp_resp_get_signature(gnutls_ocsp_resp_const_t resp,
 				   gnutls_datum_t * sig);
 int gnutls_ocsp_resp_get_certs(gnutls_ocsp_resp_const_t resp,
-			       gnutls_x509_crt_t ** certs,
-			       size_t * ncerts);
+			       gnutls_x509_crt_t ** certs, size_t *ncerts);
 
 int gnutls_ocsp_resp_verify_direct(gnutls_ocsp_resp_const_t resp,
 				   gnutls_x509_crt_t issuer,
-				   unsigned int *verify,
-				   unsigned int flags);
+				   unsigned int *verify, unsigned int flags);
 int gnutls_ocsp_resp_verify(gnutls_ocsp_resp_const_t resp,
 			    gnutls_x509_trust_list_t trustlist,
 			    unsigned int *verify, unsigned int flags);
@@ -274,11 +264,10 @@ int gnutls_ocsp_resp_check_crt(gnutls_ocsp_resp_const_t resp,
 			       unsigned int indx, gnutls_x509_crt_t crt);
 
 int
-gnutls_ocsp_resp_list_import2(gnutls_ocsp_resp_t **ocsps,
-			     unsigned int *size,
-			     const gnutls_datum_t *resp_data,
-			     gnutls_x509_crt_fmt_t format,
-			     unsigned int flags);
+gnutls_ocsp_resp_list_import2(gnutls_ocsp_resp_t ** ocsps,
+			      unsigned int *size,
+			      const gnutls_datum_t * resp_data,
+			      gnutls_x509_crt_fmt_t format, unsigned int flags);
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
@@ -286,4 +275,4 @@ gnutls_ocsp_resp_list_import2(gnutls_ocsp_resp_t **ocsps,
 #endif
 /* *INDENT-ON* */
 
-#endif /* GNUTLS_OCSP_H */
+#endif				/* GNUTLS_OCSP_H */

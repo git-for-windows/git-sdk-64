@@ -7,7 +7,7 @@ libdir=${exec_prefix}/lib
 includedir=${prefix}/include/ncursesw
 abi_version=6
 major_version=6
-version=6.4.20221231
+version=6.4.20230211
 
 Name: ncurses++w
 Description: ncurses 6.4 add-on library
@@ -16,5 +16,5 @@ URL: https://invisible-island.net/ncurses
 Requires.private: panelw, menuw, formw, ncursesw
 Libs:  -L${libdir} -lncurses++w
 Libs.private: -lsystre -ltre -lintl -liconv  
-Cflags:  -DNCURSES_WIDECHAR -I${includedir} -I${includedir}
+Cflags:  -D_POSIX_C_SOURCE=199506L -DNCURSES_WIDECHAR -I${includedir} -I${includedir}
 Cflags.private: -DNCURSES_STATIC
