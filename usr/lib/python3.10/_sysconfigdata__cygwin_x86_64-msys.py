@@ -15,7 +15,7 @@ build_time_vars = {'ABIFLAGS': '',
  'BINDIR': '/usr/bin',
  'BINLIBDEST': '/usr/lib/python3.10',
  'BLDLIBRARY': 'libpython3.10.dll.a',
- 'BLDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe -L. -pipe -L.',
+ 'BLDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe -pipe',
  'BUILDEXE': '.exe',
  'BUILDPYTHON': 'python.exe',
  'BUILD_GNU_TYPE': 'x86_64-pc-cygwin',
@@ -23,22 +23,21 @@ build_time_vars = {'ABIFLAGS': '',
  'CC': 'gcc',
  'CCSHARED': '',
  'CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall '
-           '-march=x86-64 -mtune=generic -O2 -pipe -march=x86-64 '
-           '-mtune=generic -O2 -pipe -march=x86-64 -mtune=generic -O2 -pipe',
+           '-march=nocona -msahf -mtune=generic -O2 -pipe -march=nocona -msahf '
+           '-mtune=generic -O2 -pipe',
  'CFLAGSFORSHARED': '',
  'CFLAGS_ALIASING': '',
  'CFLAGS_NODIST': '',
  'CONFIGFILES': 'configure configure.ac acconfig.h pyconfig.h.in '
                 'Makefile.pre.in',
- 'CONFIGURE_CFLAGS': '-march=x86-64 -mtune=generic -O2 -pipe',
+ 'CONFIGURE_CFLAGS': '-march=nocona -msahf -mtune=generic -O2 -pipe',
  'CONFIGURE_CFLAGS_NODIST': '-std=c99 -Wextra -Wno-unused-result '
                             '-Wno-unused-parameter '
                             '-Wno-missing-field-initializers '
-                            '-Wstrict-prototypes '
                             '-Werror=implicit-function-declaration '
                             '-fvisibility=hidden',
- 'CONFIGURE_CPPFLAGS': '-I/usr/include/ncursesw',
- 'CONFIGURE_LDFLAGS': '-pipe -L.',
+ 'CONFIGURE_CPPFLAGS': '',
+ 'CONFIGURE_LDFLAGS': '-pipe',
  'CONFIGURE_LDFLAGS_NODIST': '',
  'CONFIG_ARGS': "'--prefix=/usr' '--build=x86_64-pc-cygwin' "
                 "'--host=x86_64-pc-cygwin' '--enable-shared' '--enable-ipv6' "
@@ -46,20 +45,19 @@ build_time_vars = {'ABIFLAGS': '',
                 "'--with-system-expat' '--with-system-ffi' "
                 "'--with-system-libmpdec' "
                 "'--enable-loadable-sqlite-extensions' '--without-ensurepip' "
-                "'ac_cv_func_bind_textdomain_codeset=yes' "
                 "'build_alias=x86_64-pc-cygwin' 'host_alias=x86_64-pc-cygwin' "
-                "'CC=gcc' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe' "
-                "'LDFLAGS=-pipe -L.' 'CPPFLAGS= -I/usr/include/ncursesw' "
+                "'CC=gcc' 'CFLAGS=-march=nocona -msahf -mtune=generic -O2 "
+                "-pipe' 'LDFLAGS=-pipe' 'CPPFLAGS=' "
                 "'PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/lib/pkgconfig'",
  'CONFINCLUDEDIR': '/usr/include',
  'CONFINCLUDEPY': '/usr/include/python3.10',
  'COREPYTHONPATH': '',
- 'COVERAGE_INFO': '/c/S/python/src/Python-3.10.9/coverage.info',
- 'COVERAGE_REPORT': '/c/S/python/src/Python-3.10.9/lcov-report',
+ 'COVERAGE_INFO': '/c/S/python/src/Python-3.10.10/coverage.info',
+ 'COVERAGE_REPORT': '/c/S/python/src/Python-3.10.10/lcov-report',
  'COVERAGE_REPORT_OPTIONS': '--no-branch-coverage --title "CPython lcov '
                             'report"',
- 'CPPFLAGS': '-I. -I./Include -I/usr/include/ncursesw  -I/usr/include/ncursesw',
- 'CXX': '/usr/bin/g++',
+ 'CPPFLAGS': '-I. -I./Include',
+ 'CXX': 'g++',
  'DESTDIRS': '/usr /usr/lib /usr/lib/python3.10 '
              '/usr/lib/python3.10/lib-dynload',
  'DESTLIB': '/usr/lib/python3.10',
@@ -90,6 +88,7 @@ build_time_vars = {'ABIFLAGS': '',
  'EXPORTSFROM': '',
  'EXPORTSYMS': '',
  'EXTRATESTOPTS': '',
+ 'EXTRA_CFLAGS': '',
  'EXT_SUFFIX': '.cpython-310-x86_64-msys.dll',
  'FILEMODE': 644,
  'FLOAT_WORDS_BIGENDIAN': 0,
@@ -310,8 +309,8 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_MAKEDEV': 1,
  'HAVE_MBRTOWC': 1,
  'HAVE_MEMFD_CREATE': 0,
+ 'HAVE_MEMORY_H': 1,
  'HAVE_MEMRCHR': 1,
- 'HAVE_MINIX_CONFIG_H': 0,
  'HAVE_MKDIRAT': 1,
  'HAVE_MKFIFO': 1,
  'HAVE_MKFIFOAT': 1,
@@ -426,7 +425,6 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_STAT_TV_NSEC2': 0,
  'HAVE_STDARG_PROTOTYPES': 1,
  'HAVE_STDINT_H': 1,
- 'HAVE_STDIO_H': 1,
  'HAVE_STDLIB_H': 1,
  'HAVE_STD_ATOMIC': 1,
  'HAVE_STRFTIME': 1,
@@ -545,11 +543,11 @@ build_time_vars = {'ABIFLAGS': '',
  'IO_H': 'Modules/_io/_iomodule.h',
  'IO_OBJS': '\\',
  'LDCXXSHARED': 'g++ -shared -Wl,--enable-auto-image-base',
- 'LDFLAGS': '-pipe -L. -pipe -L.',
+ 'LDFLAGS': '-pipe -pipe',
  'LDFLAGS_NODIST': '',
  'LDLIBRARY': 'libpython3.10.dll.a',
  'LDLIBRARYDIR': '',
- 'LDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe -L. -pipe -L.',
+ 'LDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe -pipe',
  'LDVERSION': '3.10',
  'LIBC': '',
  'LIBDEST': '/usr/lib/python3.10',
@@ -582,7 +580,7 @@ build_time_vars = {'ABIFLAGS': '',
  'MACOSX_DEPLOYMENT_TARGET': '',
  'MAINCC': 'gcc',
  'MAJOR_IN_MKDEV': 0,
- 'MAJOR_IN_SYSMACROS': 1,
+ 'MAJOR_IN_SYSMACROS': 0,
  'MAKESETUP': './Modules/makesetup',
  'MANDIR': '/usr/share/man',
  'MKDIR_P': '/usr/bin/mkdir -p',
@@ -649,53 +647,45 @@ build_time_vars = {'ABIFLAGS': '',
  'PYTHON_OBJS': '\\',
  'PY_BUILTIN_HASHLIB_HASHES': '"md5,sha1,sha256,sha512,sha3,blake2"',
  'PY_BUILTIN_MODULE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g '
-                             '-fwrapv -O3 -Wall -march=x86-64 -mtune=generic '
-                             '-O2 -pipe -march=x86-64 -mtune=generic -O2 -pipe '
-                             '-march=x86-64 -mtune=generic -O2 -pipe -std=c99 '
-                             '-Wextra -Wno-unused-result -Wno-unused-parameter '
+                             '-fwrapv -O3 -Wall -march=nocona -msahf '
+                             '-mtune=generic -O2 -pipe -march=nocona -msahf '
+                             '-mtune=generic -O2 -pipe -std=c99 -Wextra '
+                             '-Wno-unused-result -Wno-unused-parameter '
                              '-Wno-missing-field-initializers '
-                             '-Wstrict-prototypes '
                              '-Werror=implicit-function-declaration '
                              '-fvisibility=hidden  -I./Include/internal -I. '
-                             '-I./Include -I/usr/include/ncursesw  '
-                             '-I/usr/include/ncursesw -DPy_BUILD_CORE_BUILTIN',
+                             '-I./Include -DPy_BUILD_CORE_BUILTIN',
  'PY_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall '
-              '-march=x86-64 -mtune=generic -O2 -pipe -march=x86-64 '
-              '-mtune=generic -O2 -pipe -march=x86-64 -mtune=generic -O2 -pipe',
+              '-march=nocona -msahf -mtune=generic -O2 -pipe -march=nocona '
+              '-msahf -mtune=generic -O2 -pipe',
  'PY_CFLAGS_NODIST': '-std=c99 -Wextra -Wno-unused-result '
                      '-Wno-unused-parameter -Wno-missing-field-initializers '
-                     '-Wstrict-prototypes '
                      '-Werror=implicit-function-declaration '
                      '-fvisibility=hidden  -I./Include/internal',
  'PY_COERCE_C_LOCALE': 1,
  'PY_CORE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 '
-                   '-Wall -march=x86-64 -mtune=generic -O2 -pipe -march=x86-64 '
-                   '-mtune=generic -O2 -pipe -march=x86-64 -mtune=generic -O2 '
-                   '-pipe -std=c99 -Wextra -Wno-unused-result '
-                   '-Wno-unused-parameter -Wno-missing-field-initializers '
-                   '-Wstrict-prototypes -Werror=implicit-function-declaration '
-                   '-fvisibility=hidden  -I./Include/internal -I. -I./Include '
-                   '-I/usr/include/ncursesw  -I/usr/include/ncursesw '
-                   '-DPy_BUILD_CORE',
- 'PY_CORE_LDFLAGS': '-pipe -L. -pipe -L.',
- 'PY_CPPFLAGS': '-I. -I./Include -I/usr/include/ncursesw  '
-                '-I/usr/include/ncursesw',
+                   '-Wall -march=nocona -msahf -mtune=generic -O2 -pipe '
+                   '-march=nocona -msahf -mtune=generic -O2 -pipe -std=c99 '
+                   '-Wextra -Wno-unused-result -Wno-unused-parameter '
+                   '-Wno-missing-field-initializers '
+                   '-Werror=implicit-function-declaration -fvisibility=hidden  '
+                   '-I./Include/internal -I. -I./Include -DPy_BUILD_CORE',
+ 'PY_CORE_LDFLAGS': '-pipe -pipe',
+ 'PY_CPPFLAGS': '-I. -I./Include',
  'PY_ENABLE_SHARED': 1,
  'PY_FORMAT_SIZE_T': '"z"',
- 'PY_LDFLAGS': '-pipe -L. -pipe -L.',
+ 'PY_LDFLAGS': '-pipe -pipe',
  'PY_LDFLAGS_NODIST': '',
  'PY_SSL_DEFAULT_CIPHERS': 1,
  'PY_SSL_DEFAULT_CIPHER_STRING': 0,
  'PY_STDMODULE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv '
-                        '-O3 -Wall -march=x86-64 -mtune=generic -O2 -pipe '
-                        '-march=x86-64 -mtune=generic -O2 -pipe -march=x86-64 '
-                        '-mtune=generic -O2 -pipe -std=c99 -Wextra '
-                        '-Wno-unused-result -Wno-unused-parameter '
-                        '-Wno-missing-field-initializers -Wstrict-prototypes '
+                        '-O3 -Wall -march=nocona -msahf -mtune=generic -O2 '
+                        '-pipe -march=nocona -msahf -mtune=generic -O2 -pipe '
+                        '-std=c99 -Wextra -Wno-unused-result '
+                        '-Wno-unused-parameter -Wno-missing-field-initializers '
                         '-Werror=implicit-function-declaration '
                         '-fvisibility=hidden  -I./Include/internal -I. '
-                        '-I./Include -I/usr/include/ncursesw  '
-                        '-I/usr/include/ncursesw',
+                        '-I./Include',
  'Py_DEBUG': 0,
  'Py_ENABLE_SHARED': 1,
  'Py_HASH_ALGORITHM': 0,
@@ -775,8 +765,8 @@ build_time_vars = {'ABIFLAGS': '',
  'WITH_VALGRIND': 0,
  'X87_DOUBLE_ROUNDING': 0,
  'XMLLIBSUBDIRS': 'xml xml/dom xml/etree xml/parsers xml/sax',
- 'abs_builddir': '/c/S/python/src/Python-3.10.9',
- 'abs_srcdir': '/c/S/python/src/Python-3.10.9',
+ 'abs_builddir': '/c/S/python/src/Python-3.10.10',
+ 'abs_srcdir': '/c/S/python/src/Python-3.10.10',
  'datarootdir': '/usr/share',
  'exec_prefix': '/usr',
  'prefix': '/usr',

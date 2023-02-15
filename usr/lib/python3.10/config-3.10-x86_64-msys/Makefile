@@ -30,12 +30,12 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.10
 srcdir=		.
 
-abs_srcdir=	/c/S/python/src/Python-3.10.9
-abs_builddir=	/c/S/python/src/Python-3.10.9
+abs_srcdir=	/c/S/python/src/Python-3.10.10
+abs_builddir=	/c/S/python/src/Python-3.10.10
 
 
 CC=		gcc
-CXX=		/usr/bin/g++
+CXX=		g++
 MAINCC=		$(CC)
 LINKCC=		$(PURIFY) $(MAINCC)
 AR=		ar
@@ -81,17 +81,17 @@ MAKESETUP=      $(srcdir)/Modules/makesetup
 OPT=		-DNDEBUG -g -fwrapv -O3 -Wall
 BASECFLAGS=	 -Wno-unused-result -Wsign-compare
 BASECPPFLAGS=	
-CONFIGURE_CFLAGS=	-march=x86-64 -mtune=generic -O2 -pipe
+CONFIGURE_CFLAGS=	-march=nocona -msahf -mtune=generic -O2 -pipe
 # CFLAGS_NODIST is used for building the interpreter and stdlib C extensions.
 # Use it when a compiler flag should _not_ be part of the distutils CFLAGS
 # once Python is installed (Issue #21121).
-CONFIGURE_CFLAGS_NODIST= -std=c99 -Wextra -Wno-unused-result -Wno-unused-parameter -Wno-missing-field-initializers -Wstrict-prototypes -Werror=implicit-function-declaration -fvisibility=hidden
+CONFIGURE_CFLAGS_NODIST= -std=c99 -Wextra -Wno-unused-result -Wno-unused-parameter -Wno-missing-field-initializers -Werror=implicit-function-declaration -fvisibility=hidden
 # LDFLAGS_NODIST is used in the same manner as CFLAGS_NODIST.
 # Use it when a linker flag should _not_ be part of the distutils LDFLAGS
 # once Python is installed (bpo-35257)
 CONFIGURE_LDFLAGS_NODIST=
-CONFIGURE_CPPFLAGS=	 -I/usr/include/ncursesw
-CONFIGURE_LDFLAGS=	-pipe -L.
+CONFIGURE_CPPFLAGS=	
+CONFIGURE_LDFLAGS=	-pipe
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
 # values.
@@ -203,7 +203,7 @@ ENSUREPIP=      no
 
 # OpenSSL options for setup.py so sysconfig can pick up AC_SUBST() vars.
 OPENSSL_INCLUDES=
-OPENSSL_LIBS=-lssl -lcrypto 
+OPENSSL_LIBS=-lssl -lcrypto
 OPENSSL_LDFLAGS=
 OPENSSL_RPATH=
 
@@ -217,7 +217,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/usr' '--build=x86_64-pc-cygwin' '--host=x86_64-pc-cygwin' '--enable-shared' '--enable-ipv6' '--with-dbmliborder=gdbm' '--with-libc=' '--with-libm=' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--enable-loadable-sqlite-extensions' '--without-ensurepip' 'ac_cv_func_bind_textdomain_codeset=yes' 'build_alias=x86_64-pc-cygwin' 'host_alias=x86_64-pc-cygwin' 'CC=gcc' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe -L.' 'CPPFLAGS= -I/usr/include/ncursesw' 'PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/lib/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/usr' '--build=x86_64-pc-cygwin' '--host=x86_64-pc-cygwin' '--enable-shared' '--enable-ipv6' '--with-dbmliborder=gdbm' '--with-libc=' '--with-libm=' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--enable-loadable-sqlite-extensions' '--without-ensurepip' 'build_alias=x86_64-pc-cygwin' 'host_alias=x86_64-pc-cygwin' 'CC=gcc' 'CFLAGS=-march=nocona -msahf -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe' 'CPPFLAGS=' 'PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/lib/pkgconfig'
 
 
 # Subdirectories with code
@@ -260,7 +260,7 @@ LIBOBJS=
 PYTHON=		python$(EXE)
 BUILDPYTHON=	python$(BUILDEXE)
 
-PYTHON_FOR_REGEN?=python3.10
+PYTHON_FOR_REGEN?=python3
 UPDATE_FILE=$(PYTHON_FOR_REGEN) $(srcdir)/Tools/scripts/update_file.py
 PYTHON_FOR_BUILD=./$(BUILDPYTHON) -E
 _PYTHON_HOST_PLATFORM=
