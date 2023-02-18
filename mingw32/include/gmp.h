@@ -101,7 +101,7 @@ see https://www.gnu.org/licenses/.  */
 
 #if defined (__GNUC__)
 #define __GMP_DECLSPEC_EXPORT  __declspec(__dllexport__)
-#define __GMP_DECLSPEC_IMPORT  __declspec(__dllimport__)
+#define __GMP_DECLSPEC_IMPORT
 #endif
 #if defined (_MSC_VER) || defined (__BORLANDC__)
 #define __GMP_DECLSPEC_EXPORT  __declspec(dllexport)
