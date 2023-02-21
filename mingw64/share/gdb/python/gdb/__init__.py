@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2022 Free Software Foundation, Inc.
+# Copyright (C) 2010-2023 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,16 +22,25 @@ from contextlib import contextmanager
 # Python 3 moved "reload"
 if sys.version_info >= (3, 4):
     from importlib import reload
-elif sys.version_info[0] > 2:
+else:
     from imp import reload
 
 from _gdb import *
+
+# Historically, gdb.events was always available, so ensure it's
+# still available without an explicit import.
+import _gdbevents as events
+
+sys.modules["gdb.events"] = events
 
 
 class _GdbFile(object):
     # These two are needed in Python 3
     encoding = "UTF-8"
     errors = "strict"
+
+    def __init__(self, stream):
+        self.stream = stream
 
     def close(self):
         # Do nothing.
@@ -45,23 +54,15 @@ class _GdbFile(object):
             self.write(line)
 
     def flush(self):
-        flush()
+        flush(stream=self.stream)
 
-
-class _GdbOutputFile(_GdbFile):
     def write(self, s):
-        write(s, stream=STDOUT)
+        write(s, stream=self.stream)
 
 
-sys.stdout = _GdbOutputFile()
+sys.stdout = _GdbFile(STDOUT)
 
-
-class _GdbOutputErrorFile(_GdbFile):
-    def write(self, s):
-        write(s, stream=STDERR)
-
-
-sys.stderr = _GdbOutputErrorFile()
+sys.stderr = _GdbFile(STDERR)
 
 # Default prompt hook does nothing.
 prompt_hook = None
@@ -234,6 +235,16 @@ def find_pc_line(pc):
 
 def set_parameter(name, value):
     """Set the GDB parameter NAME to VALUE."""
+    # Handle the specific cases of None and booleans here, because
+    # gdb.parameter can return them, but they can't be passed to 'set'
+    # this way.
+    if value is None:
+        value = "unlimited"
+    elif isinstance(value, bool):
+        if value:
+            value = "on"
+        else:
+            value = "off"
     execute("set " + name + " " + str(value), to_string=True)
 
 

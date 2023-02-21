@@ -1,5 +1,5 @@
 # Python side of the support for xmethods.
-# Copyright (C) 2013-2022 Free Software Foundation, Inc.
+# Copyright (C) 2013-2023 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,12 +19,6 @@
 import gdb
 import re
 import sys
-
-
-if sys.version_info[0] > 2:
-    # Python 3 removed basestring and long
-    basestring = str
-    long = int
 
 
 class XMethod(object):
@@ -223,7 +217,7 @@ def _validate_xmethod_matcher(matcher):
         return TypeError("Xmethod matcher is missing attribute: name")
     if not hasattr(matcher, "enabled"):
         return TypeError("Xmethod matcher is missing attribute: enabled")
-    if not isinstance(matcher.name, basestring):
+    if not isinstance(matcher.name, str):
         return TypeError("Attribute 'name' of xmethod matcher is not a " "string")
     if matcher.name.find(";") >= 0:
         return ValueError("Xmethod matcher name cannot contain ';' in it")
