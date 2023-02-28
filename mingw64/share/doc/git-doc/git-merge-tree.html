@@ -530,6 +530,12 @@ conflicts, and to omit them otherwise.</p>
 share no common history.  This flag can be given to override that
 check and make the merge proceed anyway.</p>
 </dd>
+<dt class="hdlist1">--merge-base=&lt;commit&gt;</dt>
+<dd>
+<p>Instead of finding the merge-bases for &lt;branch1&gt; and &lt;branch2&gt;,
+specify a merge-base for the merge, and specifying multiple bases is
+currently not supported. This option is incompatible with <code>--stdin</code>.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -763,6 +769,25 @@ with <a href="git-merge.html">git-merge(1)</a>:</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_input_format">INPUT FORMAT</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>git merge-tree --stdin</em> input format is fully text based. Each line
+has this format:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>[&lt;base-commit&gt; -- ]&lt;branch1&gt; &lt;branch2&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If one line is separated by <code>--</code>, the string before the separator is
+used for specifying a merge-base for the merge and the string after
+the separator describes the branches to be merged.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_mistakes_to_avoid">MISTAKES TO AVOID</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -865,7 +890,7 @@ large repositories).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-02-07 09:10:27 UTC
+Last updated 2023-02-27 15:08:06 UTC
 </div>
 </div>
 </body>

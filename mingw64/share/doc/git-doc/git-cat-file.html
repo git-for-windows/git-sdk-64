@@ -498,7 +498,9 @@ the "SPECIFYING REVISIONS" section in <a href="gitrevisions.html">gitrevisions(7
 <dt class="hdlist1">-s</dt>
 <dd>
 <p>Instead of the content, show the object size identified by
-<code>&lt;object&gt;</code>.</p>
+<code>&lt;object&gt;</code>. If used with <code>--use-mailmap</code> option, will show
+the size of updated object after replacing idents using the
+mailmap mechanism.</p>
 </dd>
 <dt class="hdlist1">-e</dt>
 <dd>
@@ -550,28 +552,80 @@ the revision from which the blob came.</p>
 <dt class="hdlist1">--batch=&lt;format&gt;</dt>
 <dd>
 <p>Print object information and contents for each object provided
-on stdin.  May not be combined with any other options or arguments
-except <code>--textconv</code> or <code>--filters</code>, in which case the input lines
-also need to specify the path, separated by whitespace.  See the
-section <code>BATCH OUTPUT</code> below for details.</p>
+on stdin. May not be combined with any other options or arguments
+except <code>--textconv</code>, <code>--filters</code>, or <code>--use-mailmap</code>.</p>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>When used with <code>--textconv</code> or <code>--filters</code>, the input lines
+must specify the path, separated by whitespace. See the section
+<code>BATCH OUTPUT</code> below for details.</p>
+</li>
+<li>
+<p>When used with <code>--use-mailmap</code>, for commit and tag objects, the
+contents part of the output shows the identities replaced using the
+mailmap mechanism, while the information part of the output shows
+the size of the object as if it actually recorded the replacement
+identities.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </dd>
 <dt class="hdlist1">--batch-check</dt>
 <dt class="hdlist1">--batch-check=&lt;format&gt;</dt>
 <dd>
-<p>Print object information for each object provided on stdin.  May
-not be combined with any other options or arguments except
-<code>--textconv</code> or <code>--filters</code>, in which case the input lines also
-need to specify the path, separated by whitespace.  See the
-section <code>BATCH OUTPUT</code> below for details.</p>
+<p>Print object information for each object provided on stdin. May not be
+combined with any other options or arguments except <code>--textconv</code>, <code>--filters</code>
+or <code>--use-mailmap</code>.</p>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>When used with <code>--textconv</code> or <code>--filters</code>, the input lines must
+specify the path, separated by whitespace. See the section
+<code>BATCH OUTPUT</code> below for details.</p>
+</li>
+<li>
+<p>When used with <code>--use-mailmap</code>, for commit and tag objects, the
+printed object information shows the size of the object as if the
+identities recorded in it were replaced by the mailmap mechanism.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </dd>
 <dt class="hdlist1">--batch-command</dt>
 <dt class="hdlist1">--batch-command=&lt;format&gt;</dt>
 <dd>
 <p>Enter a command mode that reads commands and arguments from stdin. May
-only be combined with <code>--buffer</code>, <code>--textconv</code> or <code>--filters</code>. In the
-case of <code>--textconv</code> or <code>--filters</code>, the input lines also need to specify
-the path, separated by whitespace. See the section <code>BATCH OUTPUT</code> below
-for details.</p>
+only be combined with <code>--buffer</code>, <code>--textconv</code>, <code>--use-mailmap</code> or
+<code>--filters</code>.</p>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>When used with <code>--textconv</code> or <code>--filters</code>, the input lines must
+specify the path, separated by whitespace. See the section
+<code>BATCH OUTPUT</code> below for details.</p>
+</li>
+<li>
+<p>When used with <code>--use-mailmap</code>, for commit and tag objects, the
+<code>contents</code> command shows the identities replaced using the
+mailmap mechanism, while the <code>info</code> command shows the size
+of the object as if it actually recorded the replacement
+identities.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 <div class="paragraph">
 <p><code>--batch-command</code> recognizes the following commands:</p>
 </div>
@@ -943,7 +997,7 @@ will be reported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-02-07 09:10:27 UTC
+Last updated 2023-02-27 15:08:06 UTC
 </div>
 </div>
 </body>

@@ -619,15 +619,17 @@ of it").</p>
 </dd>
 <dt class="hdlist1">-b &lt;new-branch&gt;</dt>
 <dd>
-<p>Create a new branch named <code>&lt;new-branch&gt;</code> and start it at
-<code>&lt;start-point&gt;</code>; see <a href="git-branch.html">git-branch(1)</a> for details.</p>
+<p>Create a new branch named <code>&lt;new-branch&gt;</code>, start it at
+<code>&lt;start-point&gt;</code>, and check the resulting branch out;
+see <a href="git-branch.html">git-branch(1)</a> for details.</p>
 </dd>
 <dt class="hdlist1">-B &lt;new-branch&gt;</dt>
 <dd>
-<p>Creates the branch <code>&lt;new-branch&gt;</code> and start it at <code>&lt;start-point&gt;</code>;
-if it already exists, then reset it to <code>&lt;start-point&gt;</code>. This is
-equivalent to running "git branch" with "-f"; see
-<a href="git-branch.html">git-branch(1)</a> for details.</p>
+<p>Creates the branch <code>&lt;new-branch&gt;</code>, start it at <code>&lt;start-point&gt;</code>;
+if it already exists, then reset it to <code>&lt;start-point&gt;</code>. And then
+check the resulting branch out.  This is equivalent to running
+"git branch" with "-f" followed by "git checkout" of that branch;
+see <a href="git-branch.html">git-branch(1)</a> for details.</p>
 </dd>
 <dt class="hdlist1">-t</dt>
 <dt class="hdlist1">--track[=(direct|inherit)]</dt>
@@ -1010,9 +1012,9 @@ any of these will create a reference to it:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git checkout -b foo   <b class="conum">(1)</b>
-$ git branch foo        <b class="conum">(2)</b>
-$ git tag foo           <b class="conum">(3)</b></pre>
+<pre>$ git checkout -b foo  # or "git switch -c foo"  <b class="conum">(1)</b>
+$ git branch foo                                 <b class="conum">(2)</b>
+$ git tag foo                                    <b class="conum">(3)</b></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1265,7 +1267,7 @@ default is 100.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-02-07 09:10:27 UTC
+Last updated 2023-02-27 15:08:06 UTC
 </div>
 </div>
 </body>

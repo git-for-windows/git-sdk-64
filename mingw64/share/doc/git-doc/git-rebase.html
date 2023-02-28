@@ -486,6 +486,22 @@ description on <code>--fork-point</code> below); or by <code>git log HEAD</code>
 <code>git reset --hard &lt;upstream&gt;</code> (or <code>&lt;newbase&gt;</code>). <code>ORIG_HEAD</code> is set
 to point at the tip of the branch before the reset.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<code>ORIG_HEAD</code> is not guaranteed to still point to the previous branch tip
+at the end of the rebase if other commands that write that pseudo-ref
+(e.g. <code>git reset</code>) are used during the rebase. The previous branch tip,
+however, is accessible using the reflog of the current branch
+(i.e. <code>@{1}</code>, see <a href="gitrevisions.html">gitrevisions(7)</a>).
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>The commits that were previously saved into the temporary area are
 then reapplied to the current branch, one by one, in order. Note that
@@ -699,6 +715,52 @@ desired resolution, you can continue the rebasing process with</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_mode_options">MODE OPTIONS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The options in this section cannot be used with any other option,
+including not with each other:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">--continue</dt>
+<dd>
+<p>Restart the rebasing process after having resolved a merge conflict.</p>
+</dd>
+<dt class="hdlist1">--skip</dt>
+<dd>
+<p>Restart the rebasing process by skipping the current patch.</p>
+</dd>
+<dt class="hdlist1">--abort</dt>
+<dd>
+<p>Abort the rebase operation and reset HEAD to the original
+branch. If <code>&lt;branch&gt;</code> was provided when the rebase operation was
+started, then <code>HEAD</code> will be reset to <code>&lt;branch&gt;</code>. Otherwise <code>HEAD</code>
+will be reset to where it was when the rebase operation was
+started.</p>
+</dd>
+<dt class="hdlist1">--quit</dt>
+<dd>
+<p>Abort the rebase operation but <code>HEAD</code> is not reset back to the
+original branch. The index and working tree are also left
+unchanged as a result. If a temporary stash entry was created
+using <code>--autostash</code>, it will be saved to the stash list.</p>
+</dd>
+<dt class="hdlist1">--edit-todo</dt>
+<dd>
+<p>Edit the todo list during an interactive rebase.</p>
+</dd>
+<dt class="hdlist1">--show-current-patch</dt>
+<dd>
+<p>Show the current patch in an interactive rebase or when rebase
+is stopped because of conflicts. This is the equivalent of
+<code>git show REBASE_HEAD</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_options">OPTIONS</h2>
 <div class="sectionbody">
 <div class="dlist">
@@ -749,25 +811,6 @@ upstream for the current branch.</p>
 <dt class="hdlist1">&lt;branch&gt;</dt>
 <dd>
 <p>Working branch; defaults to <code>HEAD</code>.</p>
-</dd>
-<dt class="hdlist1">--continue</dt>
-<dd>
-<p>Restart the rebasing process after having resolved a merge conflict.</p>
-</dd>
-<dt class="hdlist1">--abort</dt>
-<dd>
-<p>Abort the rebase operation and reset HEAD to the original
-branch. If <code>&lt;branch&gt;</code> was provided when the rebase operation was
-started, then <code>HEAD</code> will be reset to <code>&lt;branch&gt;</code>. Otherwise <code>HEAD</code>
-will be reset to where it was when the rebase operation was
-started.</p>
-</dd>
-<dt class="hdlist1">--quit</dt>
-<dd>
-<p>Abort the rebase operation but <code>HEAD</code> is not reset back to the
-original branch. The index and working tree are also left
-unchanged as a result. If a temporary stash entry was created
-using <code>--autostash</code>, it will be saved to the stash list.</p>
 </dd>
 <dt class="hdlist1">--apply</dt>
 <dd>
@@ -861,20 +904,6 @@ message do not cause rebasing to halt.</p>
 <div class="paragraph">
 <p>See also INCOMPATIBLE OPTIONS below.</p>
 </div>
-</dd>
-<dt class="hdlist1">--skip</dt>
-<dd>
-<p>Restart the rebasing process by skipping the current patch.</p>
-</dd>
-<dt class="hdlist1">--edit-todo</dt>
-<dd>
-<p>Edit the todo list during an interactive rebase.</p>
-</dd>
-<dt class="hdlist1">--show-current-patch</dt>
-<dd>
-<p>Show the current patch in an interactive rebase or when rebase
-is stopped because of conflicts. This is the equivalent of
-<code>git show REBASE_HEAD</code>.</p>
 </dd>
 <dt class="hdlist1">-m</dt>
 <dt class="hdlist1">--merge</dt>
@@ -1161,10 +1190,7 @@ without an explicit <code>--interactive</code>.</p>
 <dd>
 <p>Rebase all commits reachable from <code>&lt;branch&gt;</code>, instead of
 limiting them with an <code>&lt;upstream&gt;</code>.  This allows you to rebase
-the root commit(s) on a branch.  When used with <code>--onto</code>, it
-will skip changes already contained in <code>&lt;newbase&gt;</code> (instead of
-<code>&lt;upstream&gt;</code>) whereas without <code>--onto</code> it will operate on every
-change.</p>
+the root commit(s) on a branch.</p>
 <div class="paragraph">
 <p>See also INCOMPATIBLE OPTIONS below.</p>
 </div>
@@ -1226,6 +1252,9 @@ are not updated in this way.</p>
 <p>If the configuration variable <code>rebase.updateRefs</code> is set, then this option
 can be used to override and disable this setting.</p>
 </div>
+<div class="paragraph">
+<p>See also INCOMPATIBLE OPTIONS below.</p>
+</div>
 </dd>
 </dl>
 </div>
@@ -1265,10 +1294,7 @@ can be used to override and disable this setting.</p>
 <p>--strategy-option</p>
 </li>
 <li>
-<p>--allow-empty-message</p>
-</li>
-<li>
-<p>--[no-]autosquash</p>
+<p>--autosquash</p>
 </li>
 <li>
 <p>--rebase-merges</p>
@@ -1286,16 +1312,13 @@ can be used to override and disable this setting.</p>
 <p>--empty=</p>
 </li>
 <li>
-<p>--reapply-cherry-picks</p>
-</li>
-<li>
-<p>--edit-todo</p>
+<p>--[no-]reapply-cherry-picks when used without --keep-base</p>
 </li>
 <li>
 <p>--update-refs</p>
 </li>
 <li>
-<p>--root when used in combination with --onto</p>
+<p>--root when used without --onto</p>
 </li>
 </ul>
 </div>
@@ -2403,7 +2426,7 @@ When not configured the default commit message editor is used instead.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-02-07 09:10:27 UTC
+Last updated 2023-02-27 15:08:06 UTC
 </div>
 </div>
 </body>

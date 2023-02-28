@@ -457,7 +457,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Prints a Git logical variable.</p>
+<p>Prints a Git logical variable. Exits with code 1 if the variable has
+no value.</p>
 </div>
 </div>
 </div>
@@ -511,6 +512,15 @@ environment variable, then <code>core.editor</code> configuration, then
 <code>$VISUAL</code>, then <code>$EDITOR</code>, and then the default chosen at compile
 time, which is usually <em>vi</em>.</p>
 </dd>
+<dt class="hdlist1">GIT_SEQUENCE_EDITOR</dt>
+<dd>
+<p>Text editor used to edit the <em>todo</em> file while running <code>git rebase
+-i</code>. Like <code>GIT_EDITOR</code>, the value is meant to be interpreted by
+the shell when it is used. The order of preference is the
+<code>$GIT_SEQUENCE_EDITOR</code> environment variable, then
+<code>sequence.editor</code> configuration, and then the value of <code>git var
+GIT_EDITOR</code>.</p>
+</dd>
 <dt class="hdlist1">GIT_PAGER</dt>
 <dd>
 <p>Text viewer for use by Git commands (e.g., <em>less</em>).  The value
@@ -548,7 +558,7 @@ compile time (usually <em>less</em>).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-02-07 09:10:27 UTC
+Last updated 2023-02-27 15:08:06 UTC
 </div>
 </div>
 </body>

@@ -449,8 +449,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git check-attr</em> [-a | --all | &lt;attr&gt;&#8230;&#8203;] [--] &lt;pathname&gt;&#8230;&#8203;
-<em>git check-attr</em> --stdin [-z] [-a | --all | &lt;attr&gt;&#8230;&#8203;]</pre>
+<pre class="content"><em>git check-attr</em> [--source &lt;tree-ish&gt;] [-a | --all | &lt;attr&gt;&#8230;&#8203;] [--] &lt;pathname&gt;&#8230;&#8203;
+<em>git check-attr</em> --stdin [-z] [--source &lt;tree-ish&gt;] [-a | --all | &lt;attr&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -488,6 +488,12 @@ instead of from the command-line.</p>
 <p>The output format is modified to be machine-parsable.
 If <code>--stdin</code> is also given, input paths are separated
 with a NUL character instead of a linefeed character.</p>
+</dd>
+<dt class="hdlist1">--source=&lt;tree-ish&gt;</dt>
+<dd>
+<p>Check attributes against the specified tree-ish. It is common to
+specify the source tree by naming a commit, branch or tag associated
+with it.</p>
 </dd>
 <dt class="hdlist1">--</dt>
 <dd>
@@ -649,7 +655,7 @@ README: caveat: unspecified</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-02-07 09:10:27 UTC
+Last updated 2023-02-27 15:08:06 UTC
 </div>
 </div>
 </body>

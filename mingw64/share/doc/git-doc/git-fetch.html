@@ -1174,7 +1174,9 @@ config file would appear like this:</p>
 </div>
 <div class="paragraph">
 <p>The <code>&lt;pushurl&gt;</code> is used for pushes only. It is optional and defaults
-to <code>&lt;URL&gt;</code>.</p>
+to <code>&lt;URL&gt;</code>. Pushing to a remote affects all defined pushurls or to all
+defined urls if no pushurls are defined. Fetch, however, will only
+fetch from the first defined url if muliple urls are defined.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1514,10 +1516,10 @@ failure is described.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The above command copies all branches from the remote refs/heads/
-namespace and stores them to the local refs/remotes/origin/ namespace,
-unless the branch.&lt;name&gt;.fetch option is used to specify a non-default
-refspec.</p>
+<p>The above command copies all branches from the remote <code>refs/heads/</code>
+namespace and stores them to the local <code>refs/remotes/origin/</code> namespace,
+unless the <code>remote.&lt;repository&gt;.fetch</code> option is used to specify a
+non-default refspec.</p>
 </div>
 </li>
 <li>
@@ -1724,6 +1726,34 @@ merge and the write may take longer. Having an updated commit-graph
 file helps performance of many Git commands, including <code>git merge-base</code>,
 <code>git push -f</code>, and <code>git log --graph</code>. Defaults to false.</p>
 </dd>
+<dt class="hdlist1">fetch.bundleURI</dt>
+<dd>
+<p>This value stores a URI for downloading Git object data from a bundle
+URI before performing an incremental fetch from the origin Git server.
+This is similar to how the <code>--bundle-uri</code> option behaves in
+<a href="git-clone.html">git-clone(1)</a>. <code>git clone --bundle-uri</code> will set the
+<code>fetch.bundleURI</code> value if the supplied bundle URI contains a bundle
+list that is organized for incremental fetches.</p>
+<div class="paragraph">
+<p>If you modify this value and your repository has a <code>fetch.bundleCreationToken</code>
+value, then remove that <code>fetch.bundleCreationToken</code> value before fetching from
+the new bundle URI.</p>
+</div>
+</dd>
+<dt class="hdlist1">fetch.bundleCreationToken</dt>
+<dd>
+<p>When using <code>fetch.bundleURI</code> to fetch incrementally from a bundle
+list that uses the "creationToken" heuristic, this config value
+stores the maximum <code>creationToken</code> value of the downloaded bundles.
+This value is used to prevent downloading bundles in the future
+if the advertised <code>creationToken</code> is not strictly larger than this
+value.</p>
+<div class="paragraph">
+<p>The creation token values are chosen by the provider serving the specific
+bundle URI. If you modify the URI at <code>fetch.bundleURI</code>, then be sure to
+remove the value for the <code>fetch.bundleCreationToken</code> value before fetching.</p>
+</div>
+</dd>
 </dl>
 </div>
 </div>
@@ -1758,7 +1788,7 @@ submodule update</code>. This is expected to be fixed in a future Git version.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-02-07 09:10:27 UTC
+Last updated 2023-02-27 15:08:06 UTC
 </div>
 </div>
 </body>

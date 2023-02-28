@@ -479,7 +479,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <dt class="hdlist1">-u</dt>
 <dt class="hdlist1">--patch</dt>
 <dd>
-<p>Generate patch (see section on generating patches).</p>
+<p>	Generate patch (see section titled
+"Generating patch text with -p").</p>
 </dd>
 <dt class="hdlist1">-s</dt>
 <dt class="hdlist1">--no-patch</dt>
@@ -1846,38 +1847,48 @@ again.</p>
 <p>switch line wrapping, like the -w option of
 <a href="git-shortlog.html">git-shortlog(1)</a>.</p>
 </dd>
-<dt class="hdlist1"><em>%&lt;(&lt;N&gt;[,trunc|ltrunc|mtrunc])</em></dt>
+<dt class="hdlist1"><em>%&lt;( &lt;N&gt; [,trunc|ltrunc|mtrunc])</em></dt>
 <dd>
 <p>make the next placeholder take at
-least N columns, padding spaces on
+least N column widths, padding spaces on
 the right if necessary.  Optionally
-truncate at the beginning (ltrunc),
-the middle (mtrunc) or the end
-(trunc) if the output is longer than
-N columns.  Note that truncating
-only works correctly with N &gt;= 2.</p>
+truncate (with ellipsis <em>..</em>) at the left (ltrunc) <code>..ft</code>,
+the middle (mtrunc) <code>mi..le</code>, or the end
+(trunc) <code>rig..</code>, if the output is longer than
+N columns.
+Note 1: that truncating
+only works correctly with N &gt;= 2.
+Note 2: spaces around the N and M (see below)
+values are optional.
+Note 3: Emojis and other wide characters
+will take two display columns, which may
+over-run column boundaries.
+Note 4: decomposed character combining marks
+may be misplaced at padding boundaries.</p>
 </dd>
-<dt class="hdlist1"><em>%&lt;|(&lt;N&gt;)</em></dt>
+<dt class="hdlist1"><em>%&lt;|( &lt;M&gt; )</em></dt>
 <dd>
-<p>make the next placeholder take at least until Nth
-columns, padding spaces on the right if necessary</p>
+<p>make the next placeholder take at least until Mth
+display column, padding spaces on the right if necessary.
+Use negative M values for column positions measured
+from the right hand edge of the terminal window.</p>
 </dd>
-<dt class="hdlist1"><em>%&gt;(&lt;N&gt;)</em>, <em>%&gt;|(&lt;N&gt;)</em></dt>
+<dt class="hdlist1"><em>%&gt;( &lt;N&gt; )</em>, <em>%&gt;|( &lt;M&gt; )</em></dt>
 <dd>
-<p>similar to <em>%&lt;(&lt;N&gt;)</em>, <em>%&lt;|(&lt;N&gt;)</em> respectively,
+<p>similar to <em>%&lt;( &lt;N&gt; )</em>, <em>%&lt;|( &lt;M&gt; )</em> respectively,
 but padding spaces on the left</p>
 </dd>
-<dt class="hdlist1"><em>%&gt;&gt;(&lt;N&gt;)</em>, <em>%&gt;&gt;|(&lt;N&gt;)</em></dt>
+<dt class="hdlist1"><em>%&gt;&gt;( &lt;N&gt; )</em>, <em>%&gt;&gt;|( &lt;M&gt; )</em></dt>
 <dd>
-<p>similar to <em>%&gt;(&lt;N&gt;)</em>, <em>%&gt;|(&lt;N&gt;)</em>
+<p>similar to <em>%&gt;( &lt;N&gt; )</em>, <em>%&gt;|( &lt;M&gt; )</em>
 respectively, except that if the next
 placeholder takes more spaces than given and
 there are spaces on its left, use those
 spaces</p>
 </dd>
-<dt class="hdlist1"><em>%&gt;&lt;(&lt;N&gt;)</em>, <em>%&gt;&lt;|(&lt;N&gt;)</em></dt>
+<dt class="hdlist1"><em>%&gt;&lt;( &lt;N&gt; )</em>, <em>%&gt;&lt;|( &lt;M&gt; )</em></dt>
 <dd>
-<p>similar to <em>%&lt;(&lt;N&gt;)</em>, <em>%&lt;|(&lt;N&gt;)</em>
+<p>similar to <em>%&lt;( &lt;N&gt; )</em>, <em>%&lt;|( &lt;M&gt; )</em>
 respectively, but padding both sides
 (i.e. the text is centered)</p>
 </dd>
@@ -2536,7 +2547,7 @@ all parents.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_generating_patch_text_with_p">Generating patch text with -p</h2>
+<h2 id="generate_patch_text_with_p">Generating patch text with -p</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Running
@@ -2929,7 +2940,7 @@ the pathname, but if that is <code>NUL</code>, the record will show two paths.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-02-07 09:10:27 UTC
+Last updated 2023-02-27 15:08:06 UTC
 </div>
 </div>
 </body>

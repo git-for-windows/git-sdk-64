@@ -2781,9 +2781,10 @@ variables.</p>
 </dd>
 <dt class="hdlist1">add.interactive.useBuiltin</dt>
 <dd>
-<p>Set to <code>false</code> to fall back to the original Perl implementation of
-the interactive version of <a href="git-add.html">git-add(1)</a> instead of the built-in
-version. Is <code>true</code> by default.</p>
+<p>Unused configuration variable. Used in Git versions v2.25.0 to
+v2.36.0 to enable the built-in version of <a href="git-add.html">git-add(1)</a>'s
+interactive mode, which then became the default in Git
+versions v2.37.0 to v2.39.0.</p>
 </dd>
 <dt class="hdlist1">alias.*</dt>
 <dd>
@@ -3040,6 +3041,14 @@ used by the bundle list. Currently, the only accepted value is <code>1</code>.</
 whether all of the advertised bundles are required to unbundle a
 complete understanding of the bundled information (<code>all</code>) or if any one
 of the listed bundle URIs is sufficient (<code>any</code>).</p>
+</dd>
+<dt class="hdlist1">bundle.heuristic</dt>
+<dd>
+<p>If this string-valued key exists, then the bundle list is designed to
+work well with incremental <code>git fetch</code> commands. The heuristic signals
+that there are additional keys available for each bundle that help
+determine which subset of bundles the client should download. The
+only value currently understood is <code>creationToken</code>.</p>
 </dd>
 <dt class="hdlist1">bundle.&lt;id&gt;.*</dt>
 <dd>
@@ -4119,6 +4128,12 @@ working directory. With many files, commands such as <code>git status</code> and
 <div class="ulist">
 <ul>
 <li>
+<p><code>index.skipHash=true</code> speeds up index writes by not computing a trailing
+checksum. Note that this will cause Git versions earlier than 2.13.0 to
+refuse to parse the index and Git versions earlier than 2.40.0 will report
+a corrupted index during <code>git fsck</code>.</p>
+</li>
+<li>
 <p><code>index.version=4</code> enables path-prefix compression in the index.</p>
 </li>
 <li>
@@ -4241,6 +4256,34 @@ the existing commit-graph file(s). Occasionally, these files will
 merge and the write may take longer. Having an updated commit-graph
 file helps performance of many Git commands, including <code>git merge-base</code>,
 <code>git push -f</code>, and <code>git log --graph</code>. Defaults to false.</p>
+</dd>
+<dt class="hdlist1">fetch.bundleURI</dt>
+<dd>
+<p>This value stores a URI for downloading Git object data from a bundle
+URI before performing an incremental fetch from the origin Git server.
+This is similar to how the <code>--bundle-uri</code> option behaves in
+<a href="git-clone.html">git-clone(1)</a>. <code>git clone --bundle-uri</code> will set the
+<code>fetch.bundleURI</code> value if the supplied bundle URI contains a bundle
+list that is organized for incremental fetches.</p>
+<div class="paragraph">
+<p>If you modify this value and your repository has a <code>fetch.bundleCreationToken</code>
+value, then remove that <code>fetch.bundleCreationToken</code> value before fetching from
+the new bundle URI.</p>
+</div>
+</dd>
+<dt class="hdlist1">fetch.bundleCreationToken</dt>
+<dd>
+<p>When using <code>fetch.bundleURI</code> to fetch incrementally from a bundle
+list that uses the "creationToken" heuristic, this config value
+stores the maximum <code>creationToken</code> value of the downloaded bundles.
+This value is used to prevent downloading bundles in the future
+if the advertised <code>creationToken</code> is not strictly larger than this
+value.</p>
+<div class="paragraph">
+<p>The creation token values are chosen by the provider serving the specific
+bundle URI. If you modify the URI at <code>fetch.bundleURI</code>, then be sure to
+remove the value for the <code>fetch.bundleCreationToken</code> value before fetching.</p>
+</div>
 </dd>
 <dt class="hdlist1">format.attach</dt>
 <dd>
@@ -4408,6 +4451,11 @@ previous configurations and not show notes.</p>
 <div class="paragraph">
 <p>will only show notes from <code>refs/notes/bar</code>.</p>
 </div>
+</dd>
+<dt class="hdlist1">format.mboxrd</dt>
+<dd>
+<p>A boolean value which enables the robust "mboxrd" format when
+<code>--stdout</code> is in use to escape "^&gt;+From " lines.</p>
 </dd>
 <dt class="hdlist1">filter.&lt;driver&gt;.clean</dt>
 <dd>
@@ -5658,6 +5706,19 @@ CPU&#8217;s and set the number of threads accordingly. Specifying 1 or
 <p>Specify the version with which new index files should be
 initialized.  This does not affect existing repositories.
 If <code>feature.manyFiles</code> is enabled, then the default is 4.</p>
+</dd>
+<dt class="hdlist1">index.skipHash</dt>
+<dd>
+<p>When enabled, do not compute the trailing hash for the index file.
+This accelerates Git commands that manipulate the index, such as
+<code>git add</code>, <code>git commit</code>, or <code>git status</code>. Instead of storing the
+checksum, write a trailing set of bytes with value zero, indicating
+that the computation was skipped.</p>
+<div class="paragraph">
+<p>If you enable <code>index.skipHash</code>, then Git clients older than 2.13.0 will
+refuse to parse the index and Git clients older than 2.40.0 will report an
+error during <code>git fsck</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1">init.templateDir</dt>
 <dd>
@@ -8240,6 +8301,13 @@ The default value is 100.</p>
 <p>Boolean. When true, client and server processes will advertise their
 unique session IDs to their remote counterpart. Defaults to false.</p>
 </dd>
+<dt class="hdlist1">transfer.bundleURI</dt>
+<dd>
+<p>When <code>true</code>, local <code>git clone</code> commands will request bundle
+information from the remote server (if advertised) and download
+bundles before continuing the clone through the Git protocol.
+Defaults to <code>false</code>.</p>
+</dd>
 <dt class="hdlist1">uploadarchive.allowUnreachable</dt>
 <dd>
 <p>If true, allow clients to use <code>git archive --remote</code> to request
@@ -8536,7 +8604,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-02-07 09:10:27 UTC
+Last updated 2023-02-27 15:08:06 UTC
 </div>
 </div>
 </body>
