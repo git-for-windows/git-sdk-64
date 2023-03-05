@@ -13,7 +13,7 @@
 
 package IO::Socket::SSL;
 
-our $VERSION = '2.080';
+our $VERSION = '2.081';
 
 use IO::Socket;
 use Net::SSLeay 1.46;
@@ -192,9 +192,6 @@ if ( defined &Net::SSLeay::CTX_set_min_proto_version
 	return;
     };
 }
-
-my $set_msg_callback = defined &Net::SSLeay::CTX_set_msg_callback
-    && \&Net::SSLeay::CTX_set_msg_callback;
 
 # global defaults
 my %DEFAULT_SSL_ARGS = (
@@ -604,6 +601,7 @@ my @all_my_keys = qw(
     _SSL_opened
     _SSL_opening
     _SSL_servername
+    _SSL_msg_callback
 );
 
 
@@ -754,6 +752,8 @@ sub connect_SSL {
 
 	Net::SSLeay::set_fd($ssl, $fileno)
 	    || return $self->error("SSL filehandle association failed");
+
+	set_msg_callback($self) if $DEBUG>=2 || ${*$self}{_SSL_msg_callback};
 
 	if ( $can_client_sni ) {
 	    my $host;
@@ -1031,6 +1031,8 @@ sub accept_SSL {
 
 	Net::SSLeay::set_fd($ssl, $fileno)
 	    || return $socket->error("SSL filehandle association failed");
+
+	set_msg_callback($self) if $DEBUG>=2 || ${*$self}{_SSL_msg_callback};
     }
 
     $ssl ||= ${*$socket}{'_SSL_object'};
@@ -1116,6 +1118,42 @@ sub accept_SSL {
     tie *{$socket}, "IO::Socket::SSL::SSL_HANDLE", $socket;
 
     return $socket;
+}
+
+
+# support user defined message callback but also internal debugging
+sub _msg_callback {
+    ##  my ($direction, $ssl_ver, $content_type, $buf, $len, $ssl, $userp) = @_;
+    IO::Socket::SSL::Trace::ossl_trace(@_) if $DEBUG>=2;
+    my $self = ($SSL_OBJECT{$_[5]} || return)->[0] || return;
+    if (my $cb = ${*$self}{_SSL_msg_callback}) {
+	my ($sub,@arg) = @$cb;
+	$sub->($self, @_[0..5], @arg);
+    }
+}
+
+my $ssleay_set_msg_callback = defined &Net::SSLeay::set_msg_callback
+    && \&Net::SSLeay::set_msg_callback;
+
+sub set_msg_callback {
+    my $self = shift;
+    if (@_) {
+	if ($_[0]) {
+	    # enable user defined callback: ($cb,@arg)
+	    die "no support for msg callback with this version of Net::SSLeay/OpenSSL"
+		if !$ssleay_set_msg_callback;
+	    ${*$self}{_SSL_msg_callback} = [@_];
+	} else {
+	    # disable user defined callback
+	    delete ${*$self}{_SSL_msg_callback};
+	}
+    }
+
+    # activate user set callback and/or internal for debugging
+    if ($ssleay_set_msg_callback and my $ssl = ${*$self}{_SSL_object}) {
+	$ssleay_set_msg_callback->($ssl,
+	    ($DEBUG>=2 || ${*$self}{_SSL_msg_callback})? \&_msg_callback : undef)
+    }
 }
 
 
@@ -2476,8 +2514,6 @@ sub new {
 	}
 
 	Net::SSLeay::CTX_set_options($ctx,$ssl_op);
-	$DEBUG>=2 && $set_msg_callback
-	    && $set_msg_callback->($ctx, \&IO::Socket::SSL::Trace::ossl_trace);
 
 	# enable X509_V_FLAG_PARTIAL_CHAIN if possible (OpenSSL 1.1.0+)
 	$check_partial_chain && $check_partial_chain->($ctx);
@@ -3612,7 +3648,7 @@ for(
 
 sub ossl_trace {
     $DEBUG>=2 or return;
-    my ($direction, $ssl_ver, $content_type, $buf, $len, $ssl, $userp) = @_;
+    my ($direction, $ssl_ver, $content_type, $buf, $len, $ssl) = @_;
 
     my $verstr = $tc_ver2s{$ssl_ver} || "(version=$ssl_ver)";
 
@@ -3620,7 +3656,10 @@ sub ossl_trace {
     # all raw record headers (content_type == SSL3_RT_HEADER or ssl_ver == 0).
     # For TLS 1.3, skip notification of the decrypted inner Content-Type.
 
-    if ($ssl_ver && ($content_type != $trace_constants{SSL3_RT_INNER_CONTENT_TYPE})) {
+    if ($ssl_ver
+	&& ($content_type != $trace_constants{SSL3_RT_HEADER})
+	&& ($content_type != $trace_constants{SSL3_RT_INNER_CONTENT_TYPE})
+    ) {
 
         # the info given when the version is zero is not that useful for us
         $ssl_ver >>= 8;  # check the upper 8 bits only below */
