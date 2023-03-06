@@ -23,7 +23,7 @@
 export TEXTDOMAIN='pacman-scripts'
 export TEXTDOMAINDIR='/usr/share/locale'
 
-declare -r myver="6.0.1"
+declare -r myver="6.0.2"
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
@@ -375,7 +375,7 @@ populate_keyring() {
 			if (( VERBOSE )); then
 				msg2 "$(gettext "Disabling key %s...")" "${key_id}"
 			fi
-			printf 'disable\nquit\n' | LANG=C "${GPG_PACMAN[@]}" --command-fd 0 --quiet --batch --edit-key "${key_id}" 2>/dev/null
+			printf 'disable\nquit\n' | LANG=C "${GPG_PACMAN[@]}" --command-fd 0 --no-auto-check-trustdb --quiet --batch --edit-key "${key_id}" 2>/dev/null
 			key_count=$((key_count+1))
 		done
 		if (( key_count )); then

@@ -31,11 +31,6 @@ packaging_options+=('strip' 'debug')
 tidy_modify+=('tidy_strip')
 
 
-source_files() {
-	LANG=C readelf "$1" --debug-dump 2>/dev/null | \
-		awk '/DW_AT_name +:/{name=$NF}/DW_AT_comp_dir +:/{{if (name == "<artificial>") next}{if (name !~ /^[<\/]/) {printf "%s/", $NF}}{print name}}'
-}
-
 strip_file() {
 	local binary=$1; shift
 
@@ -45,17 +40,6 @@ strip_file() {
 			if [[ -f "$dbgdir/$binary.debug" ]]; then
 				return
 			fi
-
-			# copy source files to debug directory
-			local file dest t
-			while IFS= read -r t; do
-				file=${t/${dbgsrcdir}/"$srcdir"}
-				dest="${dbgsrc/"$dbgsrcdir"/}$t"
-				if ! [[ -f $dest ]]; then
-					mkdir -p "${dest%/*}"
-					cp -- "$file" "$dest"
-				fi
-			done < <(source_files "$binary")
 
 			# copy debug symbols to debug directory
 			mkdir -p "$dbgdir/${binary%/*}"

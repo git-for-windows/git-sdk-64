@@ -1386,6 +1386,54 @@ See <a href="git.html">git(1)</a> for details.</p>
 </div>
 </div>
 <div class="sect3">
+<h4 id="_setting_the_internal_diff_algorithm">Setting the internal diff algorithm</h4>
+<div class="paragraph">
+<p>The diff algorithm can be set through the <code>diff.algorithm</code> config key, but
+sometimes it may be helpful to set the diff algorithm per path. For example,
+one may want to use the <code>minimal</code> diff algorithm for .json files, and the
+<code>histogram</code> for .c files, and so on without having to pass in the algorithm
+through the command line each time.</p>
+</div>
+<div class="paragraph">
+<p>First, in <code>.gitattributes</code>, assign the <code>diff</code> attribute for paths.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>*.json diff=&lt;name&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, define a "diff.&lt;name&gt;.algorithm" configuration to specify the diff
+algorithm, choosing from <code>myers</code>, <code>patience</code>, <code>minimal</code>, or <code>histogram</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[diff "&lt;name&gt;"]
+  algorithm = histogram</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This diff algorithm applies to user facing diff output like git-diff(1),
+git-show(1) and is used for the <code>--stat</code> output as well. The merge machinery
+will not use the diff algorithm set through this method.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+If <code>diff.&lt;name&gt;.command</code> is defined for path with the
+<code>diff=&lt;name&gt;</code> attribute, it is executed as an external diff driver
+(see above), and adding <code>diff.&lt;name&gt;.algorithm</code> has no effect, as the
+algorithm is not passed to the external diff driver.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
 <h4 id="_defining_a_custom_hunk_header">Defining a custom hunk-header</h4>
 <div class="paragraph">
 <p>Each group of changes (called a "hunk") in the textual diff output
@@ -2077,7 +2125,7 @@ frotz   unspecified</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-02-27 15:08:06 UTC
+Last updated 2023-03-03 11:20:14 UTC
 </div>
 </div>
 </body>
