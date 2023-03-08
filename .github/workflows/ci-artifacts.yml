@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 env:
   LC_CTYPE: C.UTF-8
@@ -14,7 +15,13 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: clone git-sdk-64
-        run: git clone --bare --depth=1 --filter=blob:none --single-branch -b ${{github.ref_name}} https://github.com/${{github.repository}}
+        run: |
+          git init --bare git-sdk-64.git &&
+          git --git-dir=git-sdk-64.git remote add origin https://github.com/${{github.repository}} &&
+          git --git-dir=git-sdk-64.git config remote.origin.promisor true &&
+          git --git-dir=git-sdk-64.git config remote.origin.partialCloneFilter blob:none &&
+          git --git-dir=git-sdk-64.git fetch --depth=1 origin ${{github.sha}} &&
+          git --git-dir=git-sdk-64.git update-ref --no-deref HEAD ${{github.sha}}
       - name: clone build-extra
         run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
       - name: build git-sdk-64-minimal-sdk
@@ -32,12 +39,12 @@ jobs:
           minimal-sdk/init.sh
       - name: compress artifact
         shell: bash
-        run: (cd minimal-sdk && tar cvf - * .[0-9A-Za-z]*) | xz -9 >git-sdk-64-minimal.tar.xz
+        run: (cd minimal-sdk && tar cvf - * .[0-9A-Za-z]*) | gzip -1 >git-sdk-64-minimal.tar.gz
       - name: upload minimal-sdk artifact
         uses: actions/upload-artifact@v3
         with:
           name: minimal-sdk
-          path: git-sdk-64-minimal.tar.xz
+          path: git-sdk-64-minimal.tar.gz
       - name: clone git.git's `master`
         run: git clone --depth=1 --branch master https://github.com/git/git ..\git
       - name: build current `master` of git.git
@@ -74,7 +81,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p minimal-sdk &&
-          tar -C minimal-sdk -xJf git-sdk-64-minimal.tar.xz &&
+          tar -C minimal-sdk -xzf git-sdk-64-minimal.tar.gz &&
           minimal-sdk/init.sh
       - name: download git artifacts
         uses: actions/download-artifact@v3
@@ -118,7 +125,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p minimal-sdk &&
-          tar -C minimal-sdk -xJf git-sdk-64-minimal.tar.xz &&
+          tar -C minimal-sdk -xzf git-sdk-64-minimal.tar.gz &&
           minimal-sdk/init.sh
       - name: run some tests
         shell: bash
@@ -126,7 +133,11 @@ jobs:
           PATH: ${{github.workspace}}\minimal-sdk\mingw64\bin;${{github.workspace}}\minimal-sdk\usr\bin;C:\Windows\system32;C:\Windows;C:\Windows\system32\wbem
         run: |
           set -x
+
+          # cygpath works
           test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
+
+          # comes with GCC and can compile a DLL
           test "$(type -p gcc)" = "/mingw64/bin/gcc" || exit 1
           cat >dll.c <<-\EOF &&
           __attribute__((dllexport)) int increment(int i)
@@ -135,5 +146,21 @@ jobs:
           }
           EOF
 
-          gcc -Wall -g -O2 -shared -o sample.dll dll.c
+          gcc -Wall -g -O2 -shared -o sample.dll dll.c || exit 1
           ls -la
+
+          # stat works
+          test "stat is /usr/bin/stat" = "$(type stat)" || exit 1
+          stat /usr/bin/stat.exe || exit 1
+
+          # unzip works
+          test "unzip is /usr/bin/unzip" = "$(type unzip)" || exit 1
+          git init unzip-test &&
+          echo TEST >unzip-test/README &&
+          git -C unzip-test add -A &&
+          git -C unzip-test -c user.name=A -c user.email=b@c.d commit -m 'Testing, testing...' &&
+          git --git-dir=unzip-test/.git archive -o test.zip HEAD &&
+          unzip -v test.zip >unzip-test.out &&
+          cat unzip-test.out &&
+          test "grep is /usr/bin/grep" = "$(type grep)" || exit 1
+          grep README unzip-test.out
