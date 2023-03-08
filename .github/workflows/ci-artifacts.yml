@@ -145,3 +145,15 @@ jobs:
           # stat works
           test "stat is /usr/bin/stat" = "$(type stat)" || exit 1
           stat /usr/bin/stat.exe || exit 1
+
+          # unzip works
+          test "unzip is /usr/bin/unzip" = "$(type unzip)" || exit 1
+          git init unzip-test &&
+          echo TEST >unzip-test/README &&
+          git -C unzip-test add -A &&
+          git -C unzip-test -c user.name=A -c user.email=b@c.d commit -m 'Testing, testing...' &&
+          git --git-dir=unzip-test/.git archive -o test.zip HEAD &&
+          unzip -v test.zip >unzip-test.out &&
+          cat unzip-test.out &&
+          test "grep is /usr/bin/grep" = "$(type grep)" || exit 1
+          grep README unzip-test.out
