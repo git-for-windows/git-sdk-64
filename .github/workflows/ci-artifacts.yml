@@ -141,3 +141,7 @@ jobs:
 
           gcc -Wall -g -O2 -shared -o sample.dll dll.c || exit 1
           ls -la
+
+          # stat works
+          test "stat is /usr/bin/stat" = "$(type stat)" || exit 1
+          stat /usr/bin/stat.exe || exit 1
