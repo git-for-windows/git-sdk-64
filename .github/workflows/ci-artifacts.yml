@@ -39,12 +39,12 @@ jobs:
           minimal-sdk/init.sh
       - name: compress artifact
         shell: bash
-        run: (cd minimal-sdk && tar cvf - * .[0-9A-Za-z]*) | xz -9 >git-sdk-64-minimal.tar.xz
+        run: (cd minimal-sdk && tar cvf - * .[0-9A-Za-z]*) | gzip -1 >git-sdk-64-minimal.tar.gz
       - name: upload minimal-sdk artifact
         uses: actions/upload-artifact@v3
         with:
           name: minimal-sdk
-          path: git-sdk-64-minimal.tar.xz
+          path: git-sdk-64-minimal.tar.gz
       - name: clone git.git's `master`
         run: git clone --depth=1 --branch master https://github.com/git/git ..\git
       - name: build current `master` of git.git
@@ -81,7 +81,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p minimal-sdk &&
-          tar -C minimal-sdk -xJf git-sdk-64-minimal.tar.xz &&
+          tar -C minimal-sdk -xzf git-sdk-64-minimal.tar.gz &&
           minimal-sdk/init.sh
       - name: download git artifacts
         uses: actions/download-artifact@v3
@@ -125,7 +125,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p minimal-sdk &&
-          tar -C minimal-sdk -xJf git-sdk-64-minimal.tar.xz &&
+          tar -C minimal-sdk -xzf git-sdk-64-minimal.tar.gz &&
           minimal-sdk/init.sh
       - name: run some tests
         shell: bash
