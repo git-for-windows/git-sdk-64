@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 env:
   LC_CTYPE: C.UTF-8
@@ -14,7 +15,13 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: clone git-sdk-64
-        run: git clone --bare --depth=1 --filter=blob:none --single-branch -b ${{github.ref_name}} https://github.com/${{github.repository}}
+        run: |
+          git init --bare git-sdk-64.git &&
+          git --git-dir=git-sdk-64.git remote add origin https://github.com/${{github.repository}} &&
+          git --git-dir=git-sdk-64.git config remote.origin.promisor true &&
+          git --git-dir=git-sdk-64.git config remote.origin.partialCloneFilter blob:none &&
+          git --git-dir=git-sdk-64.git fetch --depth=1 origin ${{github.sha}} &&
+          git --git-dir=git-sdk-64.git update-ref --no-deref HEAD ${{github.sha}}
       - name: clone build-extra
         run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
       - name: build git-sdk-64-minimal-sdk
