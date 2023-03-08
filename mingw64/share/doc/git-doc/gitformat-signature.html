@@ -461,13 +461,32 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Git uses cryptographic signatures in various places, currently objects (tags,
 commits, mergetags) and transactions (pushes). In every case, the command which
 is about to create an object or transaction determines a payload from that,
-calls gpg to obtain a detached signature for the payload (<code>gpg -bsa</code>) and
-embeds the signature into the object or transaction.</p>
+calls an external program to obtain a detached signature for the payload
+(<code>gpg -bsa</code> in the case of PGP signatures), and embeds the signature into the
+object or transaction.</p>
 </div>
 <div class="paragraph">
-<p>Signatures always begin with <code>-----BEGIN PGP SIGNATURE-----</code>
-and end with <code>-----END PGP SIGNATURE-----</code>, unless gpg is told to
-produce RFC1991 signatures which use <code>MESSAGE</code> instead of <code>SIGNATURE</code>.</p>
+<p>Signatures begin with an "ASCII Armor" header line and end with a tail line,
+which differ depending on signature type (as selected by <code>gpg.format</code>, see
+<a href="git-config.html">git-config(1)</a>). These are, for <code>gpg.format</code> values:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>gpg</code> (PGP)</dt>
+<dd>
+<p><code>-----BEGIN PGP SIGNATURE-----</code> and <code>-----END PGP SIGNATURE-----</code>.
+Or, if gpg is told to produce RFC1991 signatures,
+<code>-----BEGIN PGP MESSAGE-----</code> and <code>-----END PGP MESSAGE-----</code></p>
+</dd>
+<dt class="hdlist1"><code>ssh</code> (SSH)</dt>
+<dd>
+<p><code>-----BEGIN SSH SIGNATURE-----</code> and <code>-----END SSH SIGNATURE-----</code></p>
+</dd>
+<dt class="hdlist1"><code>x509</code> (X.509)</dt>
+<dd>
+<p><code>-----BEGIN SIGNED MESSAGE-----</code> and <code>-----END SIGNED MESSAGE-----</code></p>
+</dd>
+</dl>
 </div>
 <div class="paragraph">
 <p>Signatures sometimes appear as a part of the normal payload
@@ -734,7 +753,7 @@ Date:   Wed Jun 15 09:13:29 2016 +0000
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-03-03 11:20:14 UTC
+Last updated 2023-03-07 22:03:41 UTC
 </div>
 </div>
 </body>
