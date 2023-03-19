@@ -409,7 +409,9 @@
   (define (finish-conditional exp)
     (define (true? x) (match x (($ <const> _ val) val) (_ #f)))
     (define (false? x) (match x (($ <const> _ val) (not val)) (_ #f)))
-    (define (predicate? name) (primitive-predicate? (lookup-primitive name)))
+    (define (predicate? name)
+      (and=> (lookup-primitive name) primitive-predicate?))
+
     (match exp
       (($ <conditional> src ($ <conditional> _ test (? true?) (? false?))
           consequent alternate)

@@ -158,6 +158,39 @@
    (lambda (exp res) res)
    table exp))
 
+(define (augment-var-table-with-externally-introduced-lexicals exp table)
+  "Take the previously computed var table TABLE and the term EXP and
+return a table augmented with the lexicals bound in EXP which are not
+present in TABLE.  This is used for the result of `expand-primcalls`,
+which may introduce new lexicals if a subexpression needs to be
+referenced multiple times."
+  (define (maybe-add-var name sym table)
+    ;; Use a refcount of 2 to prevent the copy-single optimization.
+    (define refcount 2)
+    (define assigned? #f)
+    (if (vhash-assq sym table)
+        table
+        (vhash-consq sym (make-var name sym refcount assigned?) table)))
+  (tree-il-fold
+   (lambda (exp table)
+     (match exp
+       (($ <lambda-case> src req opt rest kw init gensyms body alt)
+        (fold maybe-add-var table
+              (append req (or opt '()) (if rest (list rest) '())
+                      (match kw
+                        ((aok? (kw name sym) ...) name)
+                        (_ '())))
+              gensyms))
+       (($ <let> src names gensyms vals body)
+        (fold maybe-add-var table names gensyms))
+       (($ <letrec>)
+        (error "unexpected letrec"))
+       (($ <fix> src names gensyms vals body)
+        (fold maybe-add-var table names gensyms))
+       (_ table)))
+   (lambda (exp table) table)
+   table exp))
+
 ;; Counters are data structures used to limit the effort that peval
 ;; spends on particular inlining attempts.  Each call site in the source
 ;; program is allocated some amount of effort.  If peval exceeds the
@@ -1493,8 +1526,11 @@ top-level bindings from ENV and return the resulting expression."
        (let revisit-proc ((proc (visit orig-proc 'operator)))
          (match proc
            (($ <primitive-ref> _ name)
-            (for-tail
-             (expand-primcall (make-primcall src name orig-args))))
+            (let ((exp (expand-primcall (make-primcall src name orig-args))))
+              (set! store
+                    (augment-var-table-with-externally-introduced-lexicals
+                     exp store))
+              (for-tail exp)))
            (($ <lambda> _ _
                ($ <lambda-case> _ req opt rest #f inits gensyms body #f))
             ;; Simple case: no keyword arguments.

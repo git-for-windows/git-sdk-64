@@ -32,6 +32,8 @@
 (define-module (ice-9 format)
   #:autoload (ice-9 pretty-print) (pretty-print truncated-print)
   #:autoload (ice-9 i18n)         (%global-locale number->locale-string)
+  ;; Actually replaces the global format as soon as loaded; see the end
+  ;; of this file.
   #:replace (format))
 
 (define format:version "3.0")
@@ -1560,5 +1562,10 @@
           (close-port port)
           str)))))
 
-;; Thanks to Shuji Narazaki
+;; Set the format variable in the root module.  This is legacy and
+;; no longer necessary.  It means that as soon as (ice-9 format) is
+;; loaded somewhere by some module, the predefined binding for format
+;; becomes the extended format function, even in modules where (ice-9 format)
+;; isn't imported.  Because of this, removing this line should be done
+;; when a backwards compatibility break is allowed.
 (module-set! the-root-module 'format format)

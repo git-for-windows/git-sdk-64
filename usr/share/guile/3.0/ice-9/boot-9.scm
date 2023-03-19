@@ -1,6 +1,6 @@
 ;;; -*- mode: scheme; coding: utf-8; -*-
 
-;;;; Copyright (C) 1995-2014, 2016-2021  Free Software Foundation, Inc.
+;;;; Copyright (C) 1995-2014, 2016-2022  Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -361,7 +361,7 @@ If returning early, return the return value of F."
   (let ((v (hashq-ref (%get-pre-modules-obarray) sym)))
     (if v
         (variable-set! v val)
-        (module-add! (current-module) sym (make-variable val)))))
+        (module-add! module sym (make-variable val)))))
 (define (module-ref module sym)
   (let ((v (module-variable module sym)))
     (if v (variable-ref v) (error "badness!" (pk module) (pk sym)))))

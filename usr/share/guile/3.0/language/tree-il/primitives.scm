@@ -1,6 +1,6 @@
 ;;; open-coding primitive procedures
 
-;; Copyright (C) 2009-2015, 2017-2021 Free Software Foundation, Inc.
+;; Copyright (C) 2009-2015, 2017-2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -471,8 +471,8 @@
     (make-primcall src 'make-vector (list len (make-const src *unspecified*))))
    ((src len init)
     (make-primcall src 'make-vector (list len init)))
-   ((src . args)
-    (make-call src (make-primitive-ref src 'make-vector) args))))
+   ((src . args)                              ;wrong number of arguments
+    #f)))
 
 (define-primitive-expander caar (x) (car (car x)))
 (define-primitive-expander cadr (x) (car (cdr x)))
@@ -568,17 +568,32 @@
 (define-primitive-expander f64vector-set! (vec i x)
   (bytevector-ieee-double-native-set! vec (* i 8) x))
 
+(define (bind-lexicals src exps k)
+  (match exps
+    (() (k '()))
+    ((exp . exps)
+     (with-lexicals src (exp)
+       (bind-lexicals src exps (lambda (exps) (k (cons exp exps))))))))
+
 (define (expand-eq prim)
   (case-lambda
     ((src) (make-const src #t))
     ((src a) (make-const src #t))
     ((src a b) #f)
-    ((src a b . rest)
-     (with-lexicals src (b)
-       (make-conditional src (make-primcall src prim (list a b))
-                         (make-primcall src prim (cons b rest))
-                         (make-const src #f))))
-    (else #f)))
+    ((src . args)
+     (bind-lexicals
+      src args
+      (lambda (args)
+        (match args
+          ((a . args)
+           (let lp ((args args))
+             (match args
+               ((b)
+                (make-primcall src prim (list a b)))
+               ((b . args)
+                (make-conditional src (make-primcall src prim (list a b))
+                                  (lp args)
+                                  (make-const src #f))))))))))))
 
 (define-primitive-expander! 'eq?    (expand-eq 'eq?))
 (define-primitive-expander! 'eqv?   (expand-eq 'eqv?))
@@ -594,11 +609,18 @@
                (make-primcall src prim (list a (make-const src 0)))
                (make-const src #t)))
     ((src a b) #f)
-    ((src a b . rest)
-     (with-lexicals src (b)
-       (make-conditional src (make-primcall src prim (list a b))
-                         (make-primcall src prim (cons b rest))
-                         (make-const src #f))))
+    ((src . args)
+     (bind-lexicals
+      src args
+      (lambda (args)
+        (let lp ((args args))
+          (match args
+            ((a b)
+             (make-primcall src prim (list a b)))
+            ((a b . args)
+             (make-conditional src (make-primcall src prim (list a b))
+                               (lp (cons b args))
+                               (make-const src #f))))))))
     (else #f)))
 
 (for-each (lambda (prim)

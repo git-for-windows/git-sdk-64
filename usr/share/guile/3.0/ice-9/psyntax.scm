@@ -431,10 +431,21 @@
 
     (define-syntax no-source (identifier-syntax #f))
 
+    (define (datum-sourcev datum)
+      (let ((props (source-properties datum)))
+        (and (pair? props)
+             (vector (assq-ref props 'filename)
+                     (assq-ref props 'line)
+                     (assq-ref props 'column)))))
+
     (define source-annotation
       (lambda (x)
-        (and (syntax? x)
-             (syntax-sourcev x))))
+        ;; Normally X is a syntax object.  However, if it comes from a
+        ;; read hash extension, X might be a plain sexp with source
+        ;; properties.
+        (if (syntax? x)
+            (syntax-sourcev x)
+            (datum-sourcev x))))
 
     (define-syntax-rule (arg-check pred? e who)
       (let ((x e))

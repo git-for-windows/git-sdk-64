@@ -1,6 +1,6 @@
 ;;; Bytecode
 
-;; Copyright (C) 2013 Free Software Foundation, Inc.
+;; Copyright (C) 2013, 2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -21,11 +21,19 @@
 (define-module (language bytecode spec)
   #:use-module (system base language)
   #:use-module (system vm loader)
+  #:use-module (rnrs bytevectors)
   #:use-module (ice-9 binary-ports)
+  #:use-module (srfi srfi-71)
   #:export (bytecode))
 
 (define (bytecode->value x e opts)
-  (let ((thunk (load-thunk-from-memory x)))
+  (let ((thunk (load-thunk-from-memory
+                (if (bytevector? x)
+                    x
+                    (let ((port get-bv (open-bytevector-output-port)))
+                      (x port)
+                      (close-port port)
+                      (get-bv))))))
     (if (eq? e (current-module))
         ;; save a cons in this case
         (values (thunk) e e)
@@ -37,6 +45,9 @@
 (define-language bytecode
   #:title	"Bytecode"
   #:compilers   `((value . ,bytecode->value))
-  #:printer	(lambda (bytecode port) (put-bytevector port bytecode))
+  #:printer	(lambda (bytecode port)
+                  (if (bytevector? bytecode)
+                      (put-bytevector port bytecode)
+                      (bytecode port)))
   #:reader      get-bytevector-all
   #:for-humans? #f)

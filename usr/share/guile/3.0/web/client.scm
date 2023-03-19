@@ -1,6 +1,6 @@
 ;;; Web client
 
-;; Copyright (C) 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2020, 2021 Free Software Foundation, Inc.
+;; Copyright (C) 2011-2018, 2020-2022 Free Software Foundation, Inc.
 
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -171,6 +171,54 @@ way."
 (set-exception-printer! 'tls-certificate-error
                         print-tls-certificate-error)
 
+(define (wrap-record-port-for-gnutls<3.7.7 record port)
+  "Return a port that wraps RECORD to ensure that closing it also closes PORT,
+the actual socket port, and its file descriptor.  Make sure it does not
+introduce extra buffering (custom ports are buffered by default as of Guile
+3.0.5).
+
+This wrapper is unnecessary with GnuTLS >= 3.7.7, which can automatically
+close SESSION's file descriptor when RECORD is closed."
+  (define (read! bv start count)
+    (define read
+      (catch 'gnutls-error
+        (lambda ()
+          (get-bytevector-n! record bv start count))
+        (lambda (key err proc . rest)
+          ;; When responding to "Connection: close" requests, some servers
+          ;; close the connection abruptly after sending the response body,
+          ;; without doing a proper TLS connection termination.  Treat it as
+          ;; EOF.  This is fixed in GnuTLS 3.7.7.
+          (if (eq? err error/premature-termination)
+              the-eof-object
+              (apply throw key err proc rest)))))
+
+    (if (eof-object? read)
+        0
+        read))
+  (define (write! bv start count)
+    (put-bytevector record bv start count)
+    (force-output record)
+    count)
+  (define (get-position)
+    (port-position record))
+  (define (set-position! new-position)
+    (set-port-position! record new-position))
+  (define (close)
+    (unless (port-closed? port)
+      (close-port port))
+    (unless (port-closed? record)
+      (close-port record)))
+
+  (define (unbuffered port)
+    (setvbuf port 'none)
+    port)
+
+  (unbuffered
+   (make-custom-binary-input/output-port "gnutls wrapped port" read! write!
+                                         get-position set-position!
+                                         close)))
+
 (define* (tls-wrap port server #:key (verify-certificate? #t))
   "Return PORT wrapped in a TLS connection to SERVER.  SERVER must be a DNS
 host name without trailing dot."
@@ -211,21 +259,27 @@ host name without trailing dot."
     ;;(set-log-level! 10)
     ;;(set-log-procedure! log)
 
-    (catch 'gnutls-error
-      (lambda ()
-        (handshake session))
-      (lambda (key err proc . rest)
-        (cond ((eq? err error/warning-alert-received)
-               ;; Like Wget, do no stop upon non-fatal alerts such as
-               ;; 'alert-description/unrecognized-name'.
-               (format (current-error-port)
-                       "warning: TLS warning alert received: ~a~%"
-                       (alert-description->string (alert-get session)))
-               (handshake session))
-              (else
-               ;; XXX: We'd use 'gnutls_error_is_fatal' but (gnutls) doesn't
-               ;; provide a binding for this.
-               (apply throw key err proc rest)))))
+    (let loop ((retries 5))
+      (catch 'gnutls-error
+        (lambda ()
+          (handshake session))
+        (lambda (key err proc . rest)
+          (cond ((eq? err error/warning-alert-received)
+                 ;; Like Wget, do no stop upon non-fatal alerts such as
+                 ;; 'alert-description/unrecognized-name'.
+                 (format (current-error-port)
+                         "warning: TLS warning alert received: ~a~%"
+                         (alert-description->string (alert-get session)))
+                 (handshake session))
+                (else
+                 (if (or (fatal-error? err) (zero? retries))
+                     (apply throw key err proc rest)
+                     (begin
+                       ;; We got 'error/again' or similar; try again.
+                       (format (current-error-port)
+                               "warning: TLS non-fatal error: ~a~%"
+                               (error->string err))
+                       (loop (- retries 1)))))))))
 
     ;; Verify the server's certificate if needed.
     (when verify-certificate?
@@ -236,62 +290,14 @@ host name without trailing dot."
           (close-port port)
           (apply throw args))))
 
-    ;; FIXME: It appears that session-record-port is entirely
-    ;; sufficient; it's already a port.  The only value of this code is
-    ;; to keep a reference on "port", to keep it alive!  To fix this we
-    ;; need to arrange to either hand GnuTLS its own fd to close, or to
-    ;; arrange a reference from the session-record-port to the
-    ;; underlying socket.
     (let ((record (session-record-port session)))
-      (define (read! bv start count)
-        (define read
-          (catch 'gnutls-error
-            (lambda ()
-              (get-bytevector-n! record bv start count))
-            (lambda (key err proc . rest)
-              ;; When responding to "Connection: close" requests, some
-              ;; servers close the connection abruptly after sending the
-              ;; response body, without doing a proper TLS connection
-              ;; termination.  Treat it as EOF.
-              (if (eq? err error/premature-termination)
-                  the-eof-object
-                  (apply throw key err proc rest)))))
-
-        (if (eof-object? read)
-            0
-            read))
-      (define (write! bv start count)
-        (put-bytevector record bv start count)
-        (force-output record)
-        count)
-      (define (get-position)
-        (rnrs-ports:port-position record))
-      (define (set-position! new-position)
-        (rnrs-ports:set-port-position! record new-position))
-      (define (close)
-        (unless (port-closed? port)
-          (close-port port))
-        (unless (port-closed? record)
-          (close-port record)))
-
-      (define (unbuffered port)
-        (setvbuf port 'none)
-        port)
-
       (setvbuf record 'block)
-
-      ;; Return a port that wraps RECORD to ensure that closing it also
-      ;; closes PORT, the actual socket port, and its file descriptor.
-      ;; Make sure it does not introduce extra buffering (custom ports
-      ;; are buffered by default).
-      ;; XXX: This wrapper would be unnecessary if GnuTLS could
-      ;; automatically close SESSION's file descriptor when RECORD is
-      ;; closed, but that doesn't seem to be possible currently (as of
-      ;; 3.6.9).
-      (unbuffered
-       (make-custom-binary-input/output-port "gnutls wrapped port" read! write!
-                                             get-position set-position!
-                                             close)))))
+      (if (module-defined? (resolve-interface '(gnutls))
+                           'set-session-record-port-close!) ;GnuTLS >= 3.7.7
+          (let ((close-wrapped-port (lambda (_) (close-port port))))
+            (set-session-record-port-close! record close-wrapped-port)
+            record)
+          (wrap-record-port-for-gnutls<3.7.7 record port)))))
 
 (define (ensure-uri-reference uri-or-string)
   (cond

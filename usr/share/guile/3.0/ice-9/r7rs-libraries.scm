@@ -55,7 +55,10 @@
           ((not req)
            (not (has-req? #'req)))
           ((library lib-name)
-           (->bool (resolve-interface (syntax->datum #'lib-name))))
+           (->bool
+            (false-if-exception
+             (resolve-r6rs-interface
+              (syntax->datum #'lib-name)))))
           (id
            (identifier? #'id)
            ;; FIXME: R7RS (features) isn't quite the same as

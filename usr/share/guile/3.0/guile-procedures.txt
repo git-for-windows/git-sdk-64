@@ -1,4 +1,4 @@
-Produced by GNU Guile 3.0.8 from `./libguile/guile-procedures.texi'.
+Produced by GNU Guile 3.0.9 from `./libguile/guile-procedures.texi'.
 
 acons
 
@@ -685,6 +685,18 @@ Produced by GNU Guile 3.0.8 from `./libguile/guile-procedures.texi'.
 - Scheme Procedure: bitvector-flip-all-bits! v
      Modify the bit vector V in place by setting all clear bits and
      clearing all set bits.
+
+bytevector-slice
+
+- Scheme Procedure: bytevector-slice bv offset [size]
+     Return the slice of BV starting at OFFSET and counting SIZE bytes.
+     When SIZE is omitted, the slice covers all of BV starting from
+     OFFSET.  The returned slice shares storage with BV: changes to the
+     slice are visible in BV and vice-versa.
+
+     When BV is actually a SRFI-4 uniform vector, its element type is
+     preserved unless OFFSET and SIZE are not aligned on its element
+     type size.
 
 native-endianness
 
@@ -1531,10 +1543,25 @@ endianness
      the operating system (lchown is unsupported at present).  If OWNER
      or GROUP is specified as `-1', then that ID is not changed.
 
+chown-at
+
+- Scheme Procedure: chown-at dir name owner group [flags]
+     Like `chown', but modify the owner and/or group of the file named
+     NAME in the directory referred to by the file port DIR instead.  The
+     optional argument FLAGS is a bitmask.  If `AT_SYMLINK_NOFOLLOW' is
+     present, then NAME will not be dereferenced if it is a symbolic
+     link.
+
 open-fdes
 
 - Scheme Procedure: open-fdes path flags [mode]
      Similar to `open' but return a file descriptor instead of a port.
+
+open-fdes-at
+
+- Scheme Procedure: open-fdes-at dir path flags [mode]
+     Similar to `openat', but return a file descriptor instead of a
+     port.
 
 open
 
@@ -1565,6 +1592,12 @@ endianness
 
      See the Unix documentation of the `open' system call for additional
      flags.
+
+openat
+
+- Scheme Procedure: openat dir path flags [mode]
+     Similar to `open', but resolve the file name PATH relative to the
+     directory referred to by the file port DIR instead.
 
 close
 
@@ -1654,6 +1687,16 @@ endianness
      stat:perms
           An integer representing the access permission bits.
 
+statat
+
+- Scheme Procedure: statat dir filename [flags]
+     Like `stat', but resolve FILENAME relative to the directory
+     referred to by the file port DIR instead.
+
+     The optional argument FLAGS argument can be `AT_SYMLINK_NOFOLLOW',
+     in which case FILENAME will not be dereferenced even if it is a
+     symbolic link.
+
 lstat
 
 - Scheme Procedure: lstat str
@@ -1671,8 +1714,10 @@ endianness
 chdir
 
 - Scheme Procedure: chdir str
-     Change the current working directory to STR.  The return value is
-     unspecified.
+     Change the current working directory to STR.  STR can be a string
+     containing a file name, or a port if supported by the system.
+     `(provided? 'chdir-port)' reports whether ports are supported.The
+     return value is unspecified.
 
 select
 
@@ -1754,11 +1799,21 @@ endianness
      Create a symbolic link named NEWPATH with the value (i.e., pointing
      to) OLDPATH.  The return value is unspecified.
 
+symlinkat
+
+- Scheme Procedure: symlinkat dir oldpath newpath
+     Like `symlink', but resolve NEWPATH relative to the directory
+     referred to by the file port DIR.
+
 readlink
 
 - Scheme Procedure: readlink path
-     Return the value of the symbolic link named by PATH (a string),
-     i.e., the file that the link points to.
+     Return the value of the symbolic link named by PATH (a string, or a
+     port if supported by the system), i.e., the file that the link
+     points to.  To read a symbolic link represented by a port, the
+     symbolic link must have been opened with the `O_NOFOLLOW' and
+     `O_PATH' flags.`(provided? 'readlink-port)' reports whether ports
+     are supported.
 
 copy-file
 
@@ -1787,6 +1842,12 @@ endianness
      current umask (see `umask').  Otherwise they are set to the value
      specified with MODE.  The return value is unspecified.
 
+mkdirat
+
+- Scheme Procedure: mkdirat dir path [mode]
+     Like `mkdir', but resolve PATH relative to the directory referred
+     to by the file port DIR instead.
+
 rmdir
 
 - Scheme Procedure: rmdir path
@@ -1799,10 +1860,28 @@ endianness
      Renames the file specified by OLDNAME to NEWNAME.  The return value
      is unspecified.
 
+rename-file-at
+
+- Scheme Procedure: rename-file-at olddir oldname newdir newname
+     Like `rename-file', but when OLDDIR or NEWDIR is true, resolve
+     OLDNAME or NEWNAME relative to the directory specified by file port
+     OLDDIR or NEWDIR instead of the current working directory.
+
 delete-file
 
 - Scheme Procedure: delete-file str
      Deletes (or "unlinks") the file specified by STR.
+
+delete-file-at
+
+- Scheme Procedure: delete-file-at dir str [flags]
+     Like `unlink', but resolve STR relative to the directory referred
+     to by the file port DIR instead.
+
+     The optional FLAGS argument can be `AT_REMOVEDIR', in which case
+     `delete-file-at' will act like `rmdir' instead of `delete-file'.
+     Why doesn't POSIX have a `rmdirat' function for this instead? No
+     idea!
 
 access?
 
@@ -1854,6 +1933,18 @@ endianness
      as the underlying system call).  MODE specifies the new permissions
      as a decimal number, e.g., `(chmod "foo" #o755)'.  The return value
      is unspecified.
+
+chmodat
+
+- Scheme Procedure: chmodat dir pathname mode [flags]
+     Like CHMOD, but modify the permissions of the file named PATHNAME
+     in the directory referred to by the file port DIR instead.  The
+     optional FLAGS argument may be 0 or `AT_SYMLINK_NOFOLLOW', in which
+     case PATHNAME is not dereferenced if it is a symbolic link, i.e.,
+     the permissions of the symbolic link itself are modified.
+
+     Note that `AT_SYMLINK_NOFOLLOW' is not supported on all systems and
+     may result in `ENOTSUP'.
 
 umask
 
@@ -2245,6 +2336,10 @@ keyword_args
      +
           Open the port for both input and output.  E.g., `r+': open an
           existing file for both input and output.
+
+     e
+          Mark the underlying file descriptor as close-on-exec, as per
+          the `O_CLOEXEC' flag.
 
      0
           Create an "unbuffered" port.  In this case input and output
@@ -8173,7 +8268,7 @@ interval_microseconds value_seconds value_microseconds
 - Scheme Procedure: dlsym obj name
 pipe
 
-- Scheme Procedure: pipe
+- Scheme Procedure: pipe [flags]
      Return a newly created pipe: a pair of ports which are linked
      together on the local machine.  The _car_ is the input port and the
      _cdr_ is the output port.  Data written (and flushed) to the output
@@ -8181,6 +8276,24 @@ interval_microseconds value_seconds value_microseconds
      communication with a newly forked child process.  The need to flush
      the output port can be avoided by making it unbuffered using
      `setvbuf'.
+
+     Optionally, on systems that support it such as GNU/Linux and
+     GNU/Hurd, FLAGS can specify a bitwise-or of the following
+     constants:
+
+     O_CLOEXEC
+          Mark the returned file descriptors as close-on-exec;
+
+     O_DIRECT
+          Create a pipe that performs input/output in "packet"
+          mode---see `man 2 pipe' for details;
+
+     O_NONBLOCK
+          Set the `O_NONBLOCK' status flag (non-blocking input and
+          output) on the file descriptors.
+
+     On systems that do _not_ support it, passing a non-zero FLAGS value
+     triggers a `system-error' exception.
 
      Writes occur atomically provided the size of the data in bytes is
      not greater than the value of `PIPE_BUF'.  Note that the output
@@ -8518,6 +8631,28 @@ interval_microseconds value_seconds value_microseconds
      This procedure has been renamed from `fork' to avoid a naming
      conflict with the scsh fork.
 
+spawn
+
+- Scheme Procedure: spawn program arguments .  keyword_args
+     Spawn a new child process executing PROGRAM with the given
+     ARGUMENTS, a list of one or more strings (by convention, the first
+     argument is typically PROGRAM), and return its PID.  Raise a
+     `system-error' exception if PROGRAM could not be found or could not
+     be executed.
+
+     If the keyword argument `#:search-path?' is true, it selects
+     whether the `PATH' environment variable should be inspected to find
+     PROGRAM.  It is true by default.
+
+     The `#:environment' keyword parameter specifies the list of
+     environment variables of the child process.  It defaults to
+     `(environ)'.
+
+     The keyword arguments `#:input', `#:output', and `#:error' specify
+     the port or file descriptor for the child process to use as
+     standard input, standard output, and standard error.  No other file
+     descriptors are inherited from the parent process.
+
 system*
 
 - Scheme Procedure: system* .  args
@@ -8574,12 +8709,14 @@ interval_microseconds value_seconds value_microseconds
 
 utime
 
-- Scheme Procedure: utime pathname [actime [modtime [actimens [modtimens
+- Scheme Procedure: utime object [actime [modtime [actimens [modtimens
 [flags]]]]]
      `utime' sets the access and modification times for the file named
-     by PATHNAME.  If ACTIME or MODTIME is not supplied, then the
-     current time is used.  ACTIME and MODTIME must be integer time
-     values as returned by the `current-time' procedure.
+     by OBJECT.  If ACTIME or MODTIME is not supplied, then the current
+     time is used.  ACTIME and MODTIME must be integer time values as
+     returned by the `current-time' procedure.
+
+     OBJECT must be a file name or a port (if supported by the system).
 
      The optional ACTIMENS and MODTIMENS are nanoseconds to add ACTIME
      and MODTIME.  Nanosecond precision is only supported on some
@@ -8593,6 +8730,11 @@ interval_microseconds value_seconds value_microseconds
      Last, FLAGS may be either `0' or the `AT_SYMLINK_NOFOLLOW'
      constant, to set the time of PATHNAME even if it is a symbolic
      link.
+
+     On GNU/Linux systems, at least when using the Linux kernel 5.10.46,
+     if OBJECT is a port, it may not be a symbolic link, even if
+     `AT_SYMLINK_NOFOLLOW' is set.  This is either a bug in Linux or
+     Guile's wrappers.  The exact cause is unclear.
 
 getpid
 
@@ -9076,6 +9218,11 @@ interval_microseconds value_seconds value_microseconds
           linger'), only ENABLE has an effect but the value in Guile is
           always a pair.
 
+     - Variable: SO_RCVTIMEO
+
+
+          VALUE is a pair of integers `(SECONDS .  MICROSECONDS)'.
+
 setsockopt
 
 - Scheme Procedure: setsockopt sock level optname value
@@ -9135,6 +9282,11 @@ interval_microseconds value_seconds value_microseconds
           systems without timeout support (ie.: without `struct
           linger'), only ENABLE has an effect but the value in Guile is
           always a pair.
+
+     - Variable: SO_RCVTIMEO
+
+
+          VALUE is a pair of integers `(SECONDS .  MICROSECONDS)'.
 
      For IP level (`IPPROTO_IP') the following OPTNAMEs are defined
      (when provided by the system).  See `man ip' for what they mean.

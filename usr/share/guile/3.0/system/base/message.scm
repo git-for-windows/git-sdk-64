@@ -41,12 +41,19 @@
 ;;;
 
 (define (location-string loc)
-  (if (pair? loc)
-      (format #f "~a:~a:~a"
-              (or (assoc-ref loc 'filename) "<stdin>")
-              (1+ (assoc-ref loc 'line))
-              (assoc-ref loc 'column))
-      "<unknown-location>"))
+  (define (format-loc file line column)
+    (format #f "~a:~a:~a"
+            (or file "<stdin>")
+            (1+ line)
+            column))
+  (match loc
+    (#(file line column)
+     (format-loc file line column))
+    ((? pair? loc)
+     (format-loc (assoc-ref loc 'filename)
+                 (assoc-ref loc 'line)
+                 (assoc-ref loc 'column)))
+    (_ "<unknown-location>")))
 
 
 ;;;

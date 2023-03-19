@@ -300,7 +300,7 @@ was loaded at the time DATA was collected."
 ;;; LCOV output.
 ;;;
 
-(define* (coverage-data->lcov data port)
+(define* (coverage-data->lcov data port #:key (modules #f))
   "Traverse code coverage information DATA, as obtained with
 `with-code-coverage', and write coverage information in the LCOV format to PORT.
 The report will include all the modules loaded at the time coverage data was
@@ -325,6 +325,12 @@ gathered, even if their code was not executed."
 
   ;; Output per-file coverage data.
   (format port "TN:~%")
+  (define source-files
+    (filter
+     (lambda (file)
+       (or (not modules) (member file modules)))
+     (instrumented-source-files data)))
+
   (for-each (lambda (file)
               (let ((path (search-path %load-path file)))
                 (if (string? path)
@@ -345,6 +351,6 @@ gathered, even if their code was not executed."
                       (format port "end_of_record~%"))
                     (begin
                       (format (current-error-port)
-                              "skipping unknown source file: ~a~%"
+                              "skipping source file: ~a~%"
                               file)))))
-            (instrumented-source-files data)))
+            source-files))

@@ -38,6 +38,7 @@
   #:use-module (ice-9 q)
   #:use-module (ice-9 binary-ports)
   #:use-module (ice-9 textual-ports)
+  #:use-module (ice-9 exceptions)
   #:use-module (rnrs bytevectors)
   #:use-module (web uri)
   #:export (string->header
@@ -67,6 +68,8 @@
             read-response-line
             write-response-line
 
+            &chunked-input-error-prematurely
+            chunked-input-ended-prematurely-error?
             make-chunked-input-port
             make-chunked-output-port
 
@@ -962,13 +965,23 @@ as an ordered alist."
     (((? symbol?) . (? key-value-list?)) #t)
     (_ #f)))
 
+;; While according to RFC 7617 Schemes are case-insensitive:
+;;
+;; 'Note that both scheme and parameter names are matched
+;; case-insensitive'
+;;
+;; some software (*) incorrectly assumes title case for scheme
+;; names, so use the more titlecase.
+;;
+;; (*): See, e.g.,
+;; https://community.spotify.com/t5/Spotify-for-Developers/API-Authorization-header-doesn-t-follow-HTTP-spec/m-p/5397381#M4917
 (define (write-credentials val port)
   (match val
     (('basic . cred)
-     (put-string port "basic ")
+     (put-string port "Basic ")
      (put-string port cred))
     ((scheme . params)
-     (put-symbol port scheme)
+     (put-string port (string-titlecase (symbol->string scheme)))
      (put-char port #\space)
      (write-key-value-list params port))))
 
@@ -1935,6 +1948,17 @@ treated specially, and is just returned as a plain string."
 
 
 ;; Chunked Responses
+(define &chunked-input-ended-prematurely
+  (make-exception-type '&chunked-input-error-prematurely
+                       &external-error
+                       '()))
+
+(define make-chunked-input-ended-prematurely-error
+  (record-constructor &chunked-input-ended-prematurely))
+
+(define chunked-input-ended-prematurely-error?
+  (record-predicate &chunked-input-ended-prematurely))
+
 (define (read-chunk-header port)
   "Read a chunk header from PORT and return the size in bytes of the
 upcoming chunk."
@@ -1977,6 +2001,7 @@ closed it will also close PORT, unless the KEEP-ALIVE? is true."
                (cond
                 ((zero? size)
                  (set! finished? #t)
+                 (get-bytevector-n port 2) ; \r\n follows the last chunk
                  num-read)
                 (else
                  (loop to-read num-read)))))
@@ -1986,8 +2011,8 @@ closed it will also close PORT, unless the KEEP-ALIVE? is true."
                                                 ask-for)))
                (cond
                 ((eof-object? read)     ;premature termination
-                 (set! finished? #t)
-                 num-read)
+                 (raise-exception
+                  (make-chunked-input-ended-prematurely-error)))
                 (else
                  (let ((left (- remaining read)))
                    (set! remaining left)
@@ -2031,7 +2056,7 @@ KEEP-ALIVE? is true."
         (put-string port "\r\n"))))
   (define (close)
     (flush)
-    (put-string port "0\r\n")
+    (put-string port "0\r\n\r\n")
     (force-output port)
     (unless keep-alive?
       (close-port port)))

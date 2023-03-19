@@ -1,6 +1,6 @@
 ;;; Guile bytecode disassembler
 
-;;; Copyright (C) 2001, 2009-2010, 2012-2015, 2017-2020 Free Software Foundation, Inc.
+;;; Copyright (C) 2001, 2009-2010, 2012-2015, 2017-2020, 2022 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software; you can redistribute it and/or
 ;;; modify it under the terms of the GNU Lesser General Public
@@ -229,6 +229,10 @@ address of that offset."
       (pointer->scm
        (dereference-pointer (make-pointer addr)))))
 
+  (define (intrinsic-name index)
+    (and=> (intrinsic-index->name index)
+           (compose list symbol->string)))
+
   (match code
     (((or 'j 'je 'jl 'jge 'jne 'jnl 'jnge) target)
      (list "-> ~A" (vector-ref labels (- (+ offset target) start))))
@@ -284,6 +288,47 @@ address of that offset."
                       "anonymous procedure")))
        (push-addr! addr name)
        (list "~A at #x~X" name addr)))
+
+    ;; intrinsics
+    (('call-thread index)
+     (intrinsic-name index))
+    (('call-thread-scm _ index)
+     (intrinsic-name index))
+    (('call-thread-scm-scm _ _ index)
+     (intrinsic-name index))
+    (('call-scm-sz-u32 _ _ index)
+     (intrinsic-name index))
+    (('call-scm<-thread _ index)
+     (intrinsic-name index))
+    (('call-scm<-u64 _ _ index)
+     (intrinsic-name index))
+    (('call-scm<-s64 _ _ index)
+     (intrinsic-name index))
+    (('call-scm<-scm _ _ index)
+     (intrinsic-name index))
+    (('call-u64<-scm _ _ index)
+     (intrinsic-name index))
+    (('call-s64<-scm _ _ index)
+     (intrinsic-name index))
+    (('call-f64<-scm _ _ index)
+     (intrinsic-name index))
+    (('call-scm<-scm-scm _ _ _ index)
+     (intrinsic-name index))
+    (('call-scm<-scm-uim _ _ _ index)
+     (intrinsic-name index))
+    (('call-scm<-scm-u64 _ _ _ index)
+     (intrinsic-name index))
+    (('call-scm-scm _ _ index)
+     (intrinsic-name index))
+    (('call-scm-scm-scm _ _ _ index)
+     (intrinsic-name index))
+    (('call-scm-uimm-scm _ _ _ index)
+     (intrinsic-name index))
+    (('call-scm<-scm-uimm _ _ _ index)
+     (intrinsic-name index))
+    (('call-scm<-scmn-scmn _ _ _ index)
+     (intrinsic-name index))
+
     (('make-non-immediate dst target)
      (let ((val (reference-scm target)))
        (when (program? val)

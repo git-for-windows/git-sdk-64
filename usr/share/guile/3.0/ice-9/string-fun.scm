@@ -30,7 +30,7 @@
 
 ;;;;
 ;;;
-;;; Various string funcitons, particularly those that take
+;;; Various string functions, particularly those that take
 ;;; advantage of the "shared substring" capability.
 ;;; FIXME Document these functions in Miscellaneous String Operations::
 ;;; in doc/ref/api-data.texi.

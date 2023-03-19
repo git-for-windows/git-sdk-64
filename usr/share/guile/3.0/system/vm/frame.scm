@@ -381,8 +381,16 @@
         (frame-local-ref frame i 'scm))
        ((find-slot i bindings)
         => (lambda (binding)
-             (let ((val (frame-local-ref frame (binding-slot binding)
-                                         (binding-representation binding))))
+             (let* ((slot (binding-slot binding))
+                    ;; HACK: Avoid out-of-range from frame-local-ref.
+                    ;; Some frames have bindings beyond nlocals.  That
+                    ;; is probably a bug somewhere else, but at least
+                    ;; this workaround allows them to be printed.
+                    (val (if (< slot nlocals)
+                             (frame-local-ref frame slot
+                                              (binding-representation binding))
+                             ;; else #<unspecified>
+                             )))
                ;; It could be that there's a value that isn't clobbered
                ;; by a call but that isn't live after a call either.  In
                ;; that case, if GC runs during the call, the value will

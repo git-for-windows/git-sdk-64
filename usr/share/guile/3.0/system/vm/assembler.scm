@@ -1,6 +1,6 @@
 ;;; Guile bytecode assembler
 
-;;; Copyright (C) 2001, 2009-2021 Free Software Foundation, Inc.
+;;; Copyright (C) 2001, 2009-2023 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software; you can redistribute it and/or
 ;;; modify it under the terms of the GNU Lesser General Public
@@ -51,6 +51,7 @@
   #:use-module (system syntax internal)
   #:use-module (language bytecode)
   #:use-module (rnrs bytevectors)
+  #:use-module (rnrs bytevectors gnu)
   #:use-module (ice-9 binary-ports)
   #:use-module (ice-9 vlist)
   #:use-module (ice-9 match)
@@ -1762,7 +1763,7 @@ returned instead."
 ;;; Helper for linking objects.
 ;;;
 
-(define (make-object asm name bv relocs labels . kwargs)
+(define (make-object asm name size writer relocs labels . kwargs)
   "Make a linker object.  This helper handles interning the name in the
 shstrtab, assigning the size, allocating a fresh index, and defining a
 corresponding linker symbol for the start of the section."
@@ -1773,9 +1774,9 @@ corresponding linker symbol for the start of the section."
                         (apply make-elf-section
                                #:index index
                                #:name name-idx
-                               #:size (bytevector-length bv)
+                               #:size size
                                kwargs)
-                        bv relocs
+                        size writer relocs
                         (cons (make-linker-symbol name 0) labels))))
 
 
@@ -2102,18 +2103,27 @@ should be .data or .rodata), and return the resulting linker object.
      (else
       (let* ((byte-len (vhash-fold (lambda (k v len)
                                      (+ (byte-length k) (align len 8)))
-                                   0 data))
-             (buf (make-bytevector byte-len 0)))
+                                   0 data)))
         (let lp ((i 0) (pos 0) (relocs '()) (symbols '()))
           (if (< i (vlist-length data))
               (match (vlist-ref data i)
                 ((obj . obj-label)
-                 (write buf pos obj)
                  (lp (1+ i)
                      (align (+ (byte-length obj) pos) 8)
                      (add-relocs obj pos relocs)
                      (cons (make-linker-symbol obj-label pos) symbols))))
-              (make-object asm name buf relocs symbols
+              (make-object asm name byte-len
+                           (lambda (bv)
+                             (let loop ((i 0) (pos 0))
+                               (when (< i (vlist-length data))
+                                 (match (vlist-ref data i)
+                                   ((obj . obj-label)
+                                    (write bv pos obj)
+                                    (loop (1+ i)
+                                          (align
+                                           (+ (byte-length obj) pos)
+                                           8)))))))
+                           relocs symbols
                            #:flags (match name
                                      ('.data (logior SHF_ALLOC SHF_WRITE))
                                      ('.rodata SHF_ALLOC))))))))))
@@ -2159,40 +2169,55 @@ these may be @code{#f}."
 ;;; Linking program text.
 ;;;
 
-(define (process-relocs buf relocs labels)
+(define (process-relocs relocs labels)
+  "Return a list of linker relocations for references to symbols defined
+outside the text section."
+  (fold (lambda (reloc tail)
+          (match reloc
+            ((type label base offset)
+             (let ((abs (hashq-ref labels label))
+                   (dst (+ base offset)))
+               (case type
+                 ((s32)
+                  (if abs
+                      tail
+                      (cons (make-linker-reloc 'rel32/4 dst offset label)
+                            tail)))
+                 ((x8-s24)
+                  (unless abs
+                    (error "unbound near relocation" reloc))
+                  tail)
+                 (else (error "bad relocation kind" reloc)))))))
+        '()
+        relocs))
+
+(define (patch-relocs! buf relocs labels)
   "Patch up internal x8-s24 relocations, and any s32 relocations that
-reference symbols in the text section.  Return a list of linker
-relocations for references to symbols defined outside the text section."
-  (fold
-   (lambda (reloc tail)
-     (match reloc
-       ((type label base offset)
-        (let ((abs (hashq-ref labels label))
-              (dst (+ base offset)))
-          (case type
-            ((s32)
-             (if abs
-                 (let ((rel (- abs base)))
-                   (unless (zero? (logand rel #x3))
-                     (error "reloc not in 32-bit units!"))
-                   (bytevector-s32-native-set! buf dst (ash rel -2))
-                   tail)
-                 (cons (make-linker-reloc 'rel32/4 dst offset label)
-                       tail)))
-            ((x8-s24)
-             (unless abs
-               (error "unbound near relocation" reloc))
-             (let ((rel (- abs base))
-                   (u32 (bytevector-u32-native-ref buf dst)))
-               (unless (zero? (logand rel #x3))
-                 (error "reloc not in 32-bit units!"))
-               (bytevector-u32-native-set! buf dst
-                                           (pack-u8-s24 (logand u32 #xff)
-                                                        (ash rel -2)))
-               tail))
-            (else (error "bad relocation kind" reloc)))))))
-   '()
-   relocs))
+reference symbols in the text section."
+  (for-each (lambda (reloc)
+              (match reloc
+                ((type label base offset)
+                 (let ((abs (hashq-ref labels label))
+                       (dst (+ base offset)))
+                   (case type
+                     ((s32)
+                      (when abs
+                        (let ((rel (- abs base)))
+                          (unless (zero? (logand rel #x3))
+                            (error "reloc not in 32-bit units!"))
+                          (bytevector-s32-native-set! buf dst (ash rel -2)))))
+                     ((x8-s24)
+                      (unless abs
+                        (error "unbound near relocation" reloc))
+                      (let ((rel (- abs base))
+                            (u32 (bytevector-u32-native-ref buf dst)))
+                        (unless (zero? (logand rel #x3))
+                          (error "reloc not in 32-bit units!"))
+                        (bytevector-u32-native-set! buf dst
+                                                    (pack-u8-s24 (logand u32 #xff)
+                                                                 (ash rel -2)))))
+                     (else (error "bad relocation kind" reloc)))))))
+            relocs))
 
 (define (process-labels labels)
   "Define linker symbols for the label-offset map in @var{labels}.
@@ -2204,13 +2229,14 @@ The offsets are expected to be expressed in words."
 (define (link-text-object asm)
   "Link the .rtl-text section, swapping the endianness of the bytes if
 needed."
-  (let ((buf (make-bytevector (asm-pos asm))))
-    (bytevector-copy! (asm-buf asm) 0 buf 0 (bytevector-length buf))
-    (unless (eq? (asm-endianness asm) (native-endianness))
-      (byte-swap/4! buf))
-    (make-object asm '.rtl-text
-                 buf
-                 (process-relocs buf (asm-relocs asm)
+  (let ((size (asm-pos asm)))
+    (make-object asm '.rtl-text size
+                 (lambda (buf)
+                   (bytevector-copy! (asm-buf asm) 0 buf 0 size)
+                   (unless (eq? (asm-endianness asm) (native-endianness))
+                     (byte-swap/4! buf))
+                   (patch-relocs! buf (asm-relocs asm) (asm-labels asm)))
+                 (process-relocs (asm-relocs asm)
                                  (asm-labels asm))
                  (process-labels (asm-labels asm)))))
 
@@ -2245,26 +2271,29 @@ needed."
     (let* ((endianness (asm-endianness asm))
            (header-pos frame-maps-prefix-len)
            (map-pos (+ header-pos (* count frame-map-header-len)))
-           (bv (make-bytevector (+ map-pos map-len) 0)))
-      (bytevector-u32-set! bv 4 map-pos endianness)
-      (let lp ((maps maps) (header-pos header-pos) (map-pos map-pos))
-        (match maps
-          (()
-           (make-object asm '.guile.frame-maps bv
-                        (list (make-linker-reloc 'abs32/1 0 0 '.rtl-text))
-                        '() #:type SHT_PROGBITS #:flags SHF_ALLOC))
-          (((pos proc-slot . map) . maps)
-           (bytevector-u32-set! bv header-pos pos endianness)
-           (bytevector-u32-set! bv (+ header-pos 4) map-pos endianness)
-           (let write-bytes ((map-pos map-pos)
-                             (map map)
-                             (byte-length (map-byte-length proc-slot)))
-             (if (zero? byte-length)
-                 (lp maps (+ header-pos frame-map-header-len) map-pos)
-                 (begin
-                   (bytevector-u8-set! bv map-pos (logand map #xff))
-                   (write-bytes (1+ map-pos) (ash map -8)
-                                (1- byte-length))))))))))
+           (size (+ map-pos map-len)))
+      (define (write! bv)
+        (bytevector-u32-set! bv 4 map-pos endianness)
+        (let lp ((maps maps) (header-pos header-pos) (map-pos map-pos))
+          (match maps
+            (()
+             #t)
+            (((pos proc-slot . map) . maps)
+             (bytevector-u32-set! bv header-pos pos endianness)
+             (bytevector-u32-set! bv (+ header-pos 4) map-pos endianness)
+             (let write-bytes ((map-pos map-pos)
+                               (map map)
+                               (byte-length (map-byte-length proc-slot)))
+               (if (zero? byte-length)
+                   (lp maps (+ header-pos frame-map-header-len) map-pos)
+                   (begin
+                     (bytevector-u8-set! bv map-pos (logand map #xff))
+                     (write-bytes (1+ map-pos) (ash map -8)
+                                  (1- byte-length)))))))))
+
+      (make-object asm '.guile.frame-maps size write!
+                   (list (make-linker-reloc 'abs32/1 0 0 '.rtl-text))
+                   '() #:type SHT_PROGBITS #:flags SHF_ALLOC)))
   (match (asm-slot-maps asm)
     (() #f)
     (in
@@ -2298,37 +2327,52 @@ procedure with label @var{rw-init}.  @var{rw-init} may be false.  If
            (words (if rw (+ words 4) words))
            (words (if rw-init (+ words 2) words))
            (words (if frame-maps (+ words 2) words))
-           (bv (make-bytevector (* word-size words) 0))
-           (set-uword!
-            (lambda (i uword)
-              (%set-uword! bv (* i word-size) uword endianness)))
-           (relocs '())
-           (set-label!
-            (lambda (i label)
-              (set! relocs (cons (make-linker-reloc 'reloc-type
-                                                    (* i word-size) 0 label)
-                                 relocs))
-              (%set-uword! bv (* i word-size) 0 endianness))))
-      (set-uword! 0 DT_GUILE_VM_VERSION)
-      (set-uword! 1 (logior (ash *bytecode-major-version* 16)
-                            *bytecode-minor-version*))
-      (set-uword! 2 DT_GUILE_ENTRY)
-      (set-label! 3 '.rtl-text)
-      (when rw
-        ;; Add roots to GC.
-        (set-uword! 4 DT_GUILE_GC_ROOT)
-        (set-label! 5 '.data)
-        (set-uword! 6 DT_GUILE_GC_ROOT_SZ)
-        (set-uword! 7 (bytevector-length (linker-object-bv rw)))
-        (when rw-init
-          (set-uword! 8 DT_INIT)        ; constants
-          (set-label! 9 rw-init)))
-      (when frame-maps
-        (set-uword! (- words 4) DT_GUILE_FRAME_MAPS)
-        (set-label! (- words 3) '.guile.frame-maps))
-      (set-uword! (- words 2) DT_NULL)
-      (set-uword! (- words 1) 0)
-      (make-object asm '.dynamic bv relocs '()
+           (size  (* word-size words)))
+
+      (define relocs
+        ;; This must match the 'set-label!' calls below.
+        (let ((reloc (lambda (i label)
+                       (make-linker-reloc 'reloc-type
+                                          (* i word-size) 0 label))))
+          `(,(reloc 3 '.rtl-text)
+            ,@(if rw
+                  (list (reloc 5 '.data))
+                  '())
+            ,@(if (and rw rw-init)
+                  (list (reloc 9 rw-init))
+                  '())
+            ,@(if frame-maps
+                  (list (reloc (- words 3) '.guile.frame-maps))
+                  '()))))
+
+      (define (write! bv)
+        (define (set-uword! i uword)
+          (%set-uword! bv (* i word-size) uword endianness))
+        (define (set-label! i label)
+          (%set-uword! bv (* i word-size) 0 endianness))
+
+        (set-uword! 0 DT_GUILE_VM_VERSION)
+        (set-uword! 1 (logior (ash *bytecode-major-version* 16)
+                              *bytecode-minor-version*))
+        (set-uword! 2 DT_GUILE_ENTRY)
+        (set-label! 3 '.rtl-text)
+        (when rw
+          ;; Add roots to GC.
+          (set-uword! 4 DT_GUILE_GC_ROOT)
+          (set-label! 5 '.data)
+          (set-uword! 6 DT_GUILE_GC_ROOT_SZ)
+          (set-uword! 7 (linker-object-size rw))
+          (when rw-init
+            (set-uword! 8 DT_INIT)                ; constants
+            (set-label! 9 rw-init)))
+        (when frame-maps
+          (set-uword! (- words 4) DT_GUILE_FRAME_MAPS)
+          (set-label! (- words 3) '.guile.frame-maps))
+        (set-uword! (- words 2) DT_NULL)
+        (set-uword! (- words 1) 0))
+
+      (make-object asm '.dynamic size write!
+                   relocs '()
                    #:type SHT_DYNAMIC #:flags SHF_ALLOC)))
   (case (asm-word-size asm)
     ((4) (emit-dynamic-section 4 bytevector-u32-set! abs32/1))
@@ -2339,7 +2383,8 @@ procedure with label @var{rw-init}.  @var{rw-init} may be false.  If
   "Link the string table for the section headers."
   (intern-section-name! asm ".shstrtab")
   (make-object asm '.shstrtab
-               (link-string-table! (asm-shstrtab asm))
+               (string-table-size (asm-shstrtab asm))
+               (string-table-writer (asm-shstrtab asm))
                '() '()
                #:type SHT_STRTAB #:flags 0))
 
@@ -2349,31 +2394,37 @@ procedure with label @var{rw-init}.  @var{rw-init} may be false.  If
          (size (elf-symbol-len word-size))
          (meta (reverse (asm-meta asm)))
          (n (length meta))
-         (strtab (make-string-table))
-         (bv (make-bytevector (* n size) 0)))
+         (strtab (make-string-table)))
     (define (intern-string! name)
       (string-table-intern! strtab (if name (symbol->string name) "")))
-    (for-each
-     (lambda (meta n)
-       (let ((name (intern-string! (meta-name meta))))
-         (write-elf-symbol bv (* n size) endianness word-size
-                           (make-elf-symbol
-                            #:name name
-                            ;; Symbol value and size are measured in
-                            ;; bytes, not u32s.
-                            #:value (meta-low-pc meta)
-                            #:size (- (meta-high-pc meta)
-                                      (meta-low-pc meta))
-                            #:type STT_FUNC
-                            #:visibility STV_HIDDEN
-                            #:shndx (elf-section-index text-section)))))
-     meta (iota n))
+    (define names
+      (map (lambda (meta n)
+             (intern-string! (meta-name meta)))
+           meta (iota n)))
+    (define (write-symbols! bv)
+      (for-each (lambda (name meta n)
+                  (write-elf-symbol bv (* n size)
+                                    endianness word-size
+                                    (make-elf-symbol
+                                     #:name name
+                                     ;; Symbol value and size are measured in
+                                     ;; bytes, not u32s.
+                                     #:value (meta-low-pc meta)
+                                     #:size (- (meta-high-pc meta)
+                                               (meta-low-pc meta))
+                                     #:type STT_FUNC
+                                     #:visibility STV_HIDDEN
+                                     #:shndx (elf-section-index
+                                              text-section))))
+                names meta (iota n)))
+
     (let ((strtab (make-object asm '.strtab
-                               (link-string-table! strtab)
+                               (string-table-size strtab)
+                               (string-table-writer strtab)
                                '() '()
                                #:type SHT_STRTAB #:flags 0)))
       (values (make-object asm '.symtab
-                           bv
+                           (* n size) write-symbols!
                            '() '()
                            #:type SHT_SYMTAB #:flags 0 #:entsize size
                            #:link (elf-section-index
@@ -2583,13 +2634,6 @@ procedure with label @var{rw-init}.  @var{rw-init} may be false.  If
       ((arity) (lambda-size arity))
       (arities (case-lambda-size arities))))
 
-  (define (bytevector-append a b)
-    (let ((out (make-bytevector (+ (bytevector-length a)
-                                   (bytevector-length b)))))
-      (bytevector-copy! a 0 out 0 (bytevector-length a))
-      (bytevector-copy! b 0 out (bytevector-length a) (bytevector-length b))
-      out))
-
   (let* ((endianness (asm-endianness asm))
          (metas (reverse (asm-meta asm)))
          (header-size (fold (lambda (meta size)
@@ -2601,12 +2645,20 @@ procedure with label @var{rw-init}.  @var{rw-init} may be false.  If
     (bytevector-u32-set! headers 0 (bytevector-length headers) endianness)
     (let-values (((names-port get-name-bv) (open-bytevector-output-port)))
       (let* ((relocs (write-arities asm metas headers names-port strtab))
+             (name-bv (get-name-bv))
              (strtab (make-object asm '.guile.arities.strtab
-                                  (link-string-table! strtab)
+                                  (string-table-size strtab)
+                                  (string-table-writer strtab)
                                   '() '()
                                   #:type SHT_STRTAB #:flags 0)))
         (values (make-object asm '.guile.arities
-                             (bytevector-append headers (get-name-bv))
+                             (+ header-size (bytevector-length name-bv))
+                             (lambda (bv)
+                               ;; FIXME: Avoid extra allocation + copy.
+                               (bytevector-copy! headers 0 bv 0
+                                                 header-size)
+                               (bytevector-copy! name-bv 0 bv header-size
+                                                 (bytevector-length name-bv)))
                              relocs '()
                              #:type SHT_PROGBITS #:flags 0
                              #:link (elf-section-index
@@ -2638,25 +2690,31 @@ procedure with label @var{rw-init}.  @var{rw-init} may be false.  If
                          (cons (meta-low-pc meta) (cdar tail)))))
                 (reverse (asm-meta asm))))
   (let* ((endianness (asm-endianness asm))
-         (docstrings (find-docstrings))
          (strtab (make-string-table))
-         (bv (make-bytevector (* (length docstrings) docstr-size) 0)))
-    (fold (lambda (pair pos)
-            (match pair
-              ((pc . string)
-               (bytevector-u32-set! bv pos pc endianness)
-               (bytevector-u32-set! bv (+ pos 4)
-                                    (string-table-intern! strtab string)
-                                    endianness)
-               (+ pos docstr-size))))
-          0
-          docstrings)
+         (docstrings (map (match-lambda
+                            ((pc . str)
+                             (cons pc (string-table-intern! strtab str))))
+                          (find-docstrings))))
+    (define (write-docstrings! bv)
+      (fold (lambda (pair pos)
+              (match pair
+                ((pc . string-pos)
+                 (bytevector-u32-set! bv pos pc endianness)
+                 (bytevector-u32-set! bv (+ pos 4)
+                                      string-pos
+                                      endianness)
+                 (+ pos docstr-size))))
+            0
+            docstrings))
+
     (let ((strtab (make-object asm '.guile.docstrs.strtab
-                               (link-string-table! strtab)
+                               (string-table-size strtab)
+                               (string-table-writer strtab)
                                '() '()
                                #:type SHT_STRTAB #:flags 0)))
       (values (make-object asm '.guile.docstrs
-                           bv
+                           (* (length docstrings) docstr-size)
+                           write-docstrings!
                            '() '()
                            #:type SHT_PROGBITS #:flags 0
                            #:link (elf-section-index
@@ -2705,21 +2763,32 @@ procedure with label @var{rw-init}.  @var{rw-init} may be false.  If
                 (reverse (asm-meta asm))))
   (let* ((endianness (asm-endianness asm))
          (procprops (find-procprops))
-         (bv (make-bytevector (* (length procprops) procprops-size) 0)))
-    (let lp ((procprops procprops) (pos 0) (relocs '()))
-      (match procprops
-        (()
-         (make-object asm '.guile.procprops
-                      bv
-                      relocs '()
-                      #:type SHT_PROGBITS #:flags 0))
-        (((pc . props) . procprops)
-         (bytevector-u32-set! bv pos pc endianness)
-         (lp procprops
-             (+ pos procprops-size)
-             (cons (make-linker-reloc 'abs32/1 (+ pos 4) 0
-                                      (intern-constant asm props))
-                   relocs)))))))
+         (size (* (length procprops) procprops-size)))
+    (define (write-procprops! bv)
+      (let lp ((procprops procprops) (pos 0))
+        (match procprops
+          (()
+           #t)
+          (((pc . props) . procprops)
+           (bytevector-u32-set! bv pos pc endianness)
+           (lp procprops (+ pos procprops-size))))))
+
+    (define relocs
+      (let lp ((procprops procprops) (pos 0) (relocs '()))
+        (match procprops
+          (()
+           relocs)
+          (((pc . props) . procprops)
+           (lp procprops
+               (+ pos procprops-size)
+               (cons (make-linker-reloc 'abs32/1 (+ pos 4) 0
+                                        (intern-constant asm props))
+                     relocs))))))
+
+    (make-object asm '.guile.procprops
+                 size write-procprops!
+                 relocs '()
+                 #:type SHT_PROGBITS #:flags 0)))
 
 ;;;
 ;;; The DWARF .debug_info, .debug_abbrev, .debug_str, and .debug_loc
@@ -3036,6 +3105,11 @@ procedure with label @var{rw-init}.  @var{rw-init} may be false.  If
              (for-each write-die children)
              (put-uleb128 die-port 0))))))
 
+    (define (copy-writer source)
+      (lambda (bv)
+        (bytevector-copy! source 0 bv 0
+                          (bytevector-length source))))
+
     ;; Compilation unit header.
     (put-u32 die-port 0) ; Length; will patch later.
     (put-u16 die-port 4) ; DWARF 4.
@@ -3053,19 +3127,32 @@ procedure with label @var{rw-init}.  @var{rw-init} may be false.  If
               ;; Patch DWARF32 length.
               (bytevector-u32-set! bv 0 (- (bytevector-length bv) 4)
                                    (asm-endianness asm))
-              (make-object asm '.debug_info bv die-relocs '()
+              (make-object asm '.debug_info
+                           (bytevector-length bv)
+                           (copy-writer bv)
+                           die-relocs '()
                            #:type SHT_PROGBITS #:flags 0))
-            (make-object asm '.debug_abbrev (get-abbrev-bv) '() '()
+            (let ((bv (get-abbrev-bv)))
+              (make-object asm '.debug_abbrev
+                           (bytevector-length bv) (copy-writer bv)
+                           '() '()
+                           #:type SHT_PROGBITS #:flags 0))
+            (make-object asm '.debug_str
+                         (string-table-size strtab)
+                         (string-table-writer strtab)
+                         '() '()
                          #:type SHT_PROGBITS #:flags 0)
-            (make-object asm '.debug_str (link-string-table! strtab) '() '()
-                         #:type SHT_PROGBITS #:flags 0)
-            (make-object asm '.debug_loc #vu8() '() '()
+            (make-object asm '.debug_loc
+                         0 (lambda (bv) #t)
+                         '() '()
                          #:type SHT_PROGBITS #:flags 0)
             (let ((bv (get-line-bv)))
               ;; Patch DWARF32 length.
               (bytevector-u32-set! bv 0 (- (bytevector-length bv) 4)
                                    (asm-endianness asm))
-              (make-object asm '.debug_line bv line-relocs '()
+              (make-object asm '.debug_line
+                           (bytevector-length bv) (copy-writer bv)
+                           line-relocs '()
                            #:type SHT_PROGBITS #:flags 0)))))
 
 (define (link-objects asm)

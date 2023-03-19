@@ -1,6 +1,6 @@
 ;;; srfi-35.scm --- Conditions                 -*- coding: utf-8 -*-
 
-;; Copyright (C) 2007-2011, 2017 Free Software Foundation, Inc.
+;; Copyright (C) 2007-2011, 2017, 2022 Free Software Foundation, Inc.
 ;;
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -146,5 +146,5 @@ by C."
     ((_ (type field ...))
      (condition-instantiation type () field ...))
     ((_ (type field ...) ...)
-     (make-compound-condition (condition-instantiation type () field ...)
-                              ...))))
+     (make-exception (condition-instantiation type () field ...)
+                     ...))))

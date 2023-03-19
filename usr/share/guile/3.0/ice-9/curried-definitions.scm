@@ -20,38 +20,42 @@
              define-public
              define*-public))
 
-(define-syntax cdefine
-  (syntax-rules ()
-    ((_ (head . rest) body body* ...)
-     (cdefine head
-       (lambda rest body body* ...)))
-    ((_ name val)
-     (define name val))))
+(define-syntax make-currying-define
+  (syntax-rules ::: ()
+    ((_ currying-name lambda-name)
+     (define-syntax currying-name
+       (lambda (St-Ax)
+         (syntax-case St-Ax ()
+           ((_ ((head2 . rest2) . rest) docstring body body* ...)
+            (string? (syntax->datum #'docstring))
+            ;; Keep moving docstring to outermost lambda.
+            #'(currying-name (head2 . rest2)
+                docstring
+                (lambda-name rest body body* ...)))
+           ((_ (head . rest) body body* ...)
+            #'(currying-name head
+                (lambda-name rest body body* ...)))
+           ((_ name val)
+            #'(define name val))))))))
 
-(define-syntax cdefine*
-  (syntax-rules ()
-    ((_ (head . rest) body body* ...)
-     (cdefine* head
-       (lambda* rest body body* ...)))
-    ((_ name val)
-     (define* name val))))
+(make-currying-define cdefine lambda)
+(make-currying-define cdefine* lambda*)
 
-(define-syntax define-public
-  (syntax-rules ()
-    ((_ (head . rest) body body* ...)
-     (define-public head
-       (lambda rest body body* ...)))
-    ((_ name val)
-     (begin
-       (define name val)
-       (export name)))))
+(define-syntax make-currying-define-public
+  (syntax-rules ::: ()
+    ((_ public-name define-name)
+     (define-syntax public-name
+       (lambda (St-Ax)
+         (syntax-case St-Ax ()
+           ((_ binding body body* ...)
+            #`(begin
+                (define-name binding body body* ...)
+                (export #,(let find-name ((form #'binding))
+                            (syntax-case form ()
+                              ((head . tail)
+                               (find-name #'head))
+                              (name
+                               #'name))))))))))))
 
-(define-syntax define*-public
-  (syntax-rules ()
-    ((_ (head . rest) body body* ...)
-     (define*-public head
-       (lambda* rest body body* ...)))
-    ((_ name val)
-     (begin
-       (define* name val)
-       (export name)))))
+(make-currying-define-public define-public cdefine)
+(make-currying-define-public define*-public cdefine*)
