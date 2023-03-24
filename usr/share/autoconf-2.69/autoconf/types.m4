@@ -267,7 +267,7 @@ AC_CACHE_CHECK(type of array argument to getgroups, ac_cv_type_getgroups,
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
 int
-main ()
+main (void)
 {
   gid_t gidset[NGID];
   int i, n;

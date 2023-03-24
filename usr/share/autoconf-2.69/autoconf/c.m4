@@ -97,7 +97,7 @@ m4_define([AC_LANG_PROGRAM(C)],
 m4_ifdef([_AC_LANG_PROGRAM_C_F77_HOOKS], [_AC_LANG_PROGRAM_C_F77_HOOKS])[]dnl
 m4_ifdef([_AC_LANG_PROGRAM_C_FC_HOOKS], [_AC_LANG_PROGRAM_C_FC_HOOKS])[]dnl
 int
-main ()
+main (void)
 {
 dnl Do *not* indent the following line: there may be CPP directives.
 dnl Don't move the `;' right after for the same reason.
@@ -130,7 +130,7 @@ m4_if([$2], [main], ,
 #ifdef __cplusplus
 extern "C"
 #endif
-char $2 ();])], [return $2 ();])])
+char $2 (void);])], [return $2 ();])])
 
 
 # AC_LANG_FUNC_LINK_TRY(C)(FUNCTION)
@@ -154,7 +154,7 @@ m4_define([AC_LANG_FUNC_LINK_TRY(C)],
 #define $1 innocuous_$1
 
 /* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char $1 (); below.
+    which can conflict with char $1 (void); below.
     Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
     <limits.h> exists even on freestanding compilers.  */
 
@@ -172,7 +172,7 @@ m4_define([AC_LANG_FUNC_LINK_TRY(C)],
 #ifdef __cplusplus
 extern "C"
 #endif
-char $1 ();
+char $1 (void);
 /* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
@@ -201,8 +201,8 @@ return test_array @<:@0@:>@;
 # But we include them only after the EXPRESSION has been evaluated.
 m4_define([AC_LANG_INT_SAVE(C)],
 [AC_LANG_PROGRAM([$1
-static long int longval () { return $2; }
-static unsigned long int ulongval () { return $2; }
+static long int longval (void) { return $2; }
+static unsigned long int ulongval (void) { return $2; }
 @%:@include <stdio.h>
 @%:@include <stdlib.h>],
 [
@@ -1106,9 +1106,7 @@ struct stat;
 /* Most of the following tests are stolen from RCS 5.7's src/conf.sh.  */
 struct buf { int x; };
 FILE * (*rcsopen) (struct buf *, struct stat *, int);
-static char *e (p, i)
-     char **p;
-     int i;
+static char *e (char **p, int i)
 {
   return p[i];
 }
@@ -1625,8 +1623,8 @@ for ac_kw in inline __inline__ __inline; do
   AC_COMPILE_IFELSE([AC_LANG_SOURCE(
 [#ifndef __cplusplus
 typedef int foo_t;
-static $ac_kw foo_t static_foo () {return 0; }
-$ac_kw foo_t foo () {return 0; }
+static $ac_kw foo_t static_foo (void) {return 0; }
+$ac_kw foo_t foo (void) {return 0; }
 #endif
 ])],
 		    [ac_cv_c_inline=$ac_kw])
@@ -1949,7 +1947,7 @@ m4_define([_AC_LANG_OPENMP(C)],
  choke me
 #endif
 #include <omp.h>
-int main () { return omp_get_num_threads (); }
+int main (void) { return omp_get_num_threads (); }
 ])
 
 # _AC_LANG_OPENMP(C++)

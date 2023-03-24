@@ -202,7 +202,7 @@ AC_DEFUN(AC_PROG_CC_WORKS,
 [AC_MSG_CHECKING([whether the C compiler ($CC $CFLAGS $LDFLAGS) works])
 AC_LANG_SAVE
 AC_LANG_C
-AC_TRY_COMPILER([main(){return(0);}], ac_cv_prog_cc_works, ac_cv_prog_cc_cross)
+AC_TRY_COMPILER([int main(void){return(0);}], ac_cv_prog_cc_works, ac_cv_prog_cc_cross)
 AC_LANG_RESTORE
 AC_MSG_RESULT($ac_cv_prog_cc_works)
 if test $ac_cv_prog_cc_works = no; then
@@ -217,7 +217,7 @@ AC_DEFUN(AC_PROG_CXX_WORKS,
 [AC_MSG_CHECKING([whether the C++ compiler ($CXX $CXXFLAGS $LDFLAGS) works])
 AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
-AC_TRY_COMPILER([int main(){return(0);}], ac_cv_prog_cxx_works, ac_cv_prog_cxx_cross)
+AC_TRY_COMPILER([int main(void){return(0);}], ac_cv_prog_cxx_works, ac_cv_prog_cxx_cross)
 AC_LANG_RESTORE
 AC_MSG_RESULT($ac_cv_prog_cxx_works)
 if test $ac_cv_prog_cxx_works = no; then
@@ -300,7 +300,7 @@ fi])])
 
 AC_DEFUN(AC_PROG_CC_G,
 [AC_CACHE_CHECK(whether ${CC-cc} accepts -g, ac_cv_prog_cc_g,
-[echo 'void f(){}' > conftest.c
+[echo 'void f(void){}' > conftest.c
 if test -z "`${CC-cc} -g -c conftest.c 2>&1`"; then
   ac_cv_prog_cc_g=yes
 else
@@ -311,7 +311,7 @@ rm -f conftest*
 
 AC_DEFUN(AC_PROG_CXX_G,
 [AC_CACHE_CHECK(whether ${CXX-g++} accepts -g, ac_cv_prog_cxx_g,
-[echo 'void f(){}' > conftest.cc
+[echo 'void f(void){}' > conftest.cc
 if test -z "`${CXX-g++} -g -c conftest.cc 2>&1`"; then
   ac_cv_prog_cxx_g=yes
 else
@@ -371,7 +371,7 @@ changequote(, )dnl
 		       sed -e 's/[^a-zA-Z0-9_]/_/g' -e 's/^[0-9]/_/'`"
 changequote([, ])dnl
 AC_CACHE_VAL(ac_cv_prog_cc_${ac_cc}_c_o,
-[echo 'foo(){}' > conftest.c
+[echo 'int foo(void){}' > conftest.c
 # Make sure it works both with $CC and with simple cc.
 # We do the test twice because some compilers refuse to overwrite an
 # existing .o file with -o, though they will create one.
@@ -706,10 +706,11 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # /bin/cc in Irix-4.0.5 gets non-ANSI ctype macros unless using -ansi.
 AC_TRY_RUN([#include <ctype.h>
+#include <stdlib.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
 #define TOUPPER(c) (ISLOWER(c) ? 'A' + ((c) - 'a') : (c))
 #define XOR(e, f) (((e) && !(f)) || (!(e) && (f)))
-int main () { int i; for (i = 0; i < 256; i++)
+int main (void) { int i; for (i = 0; i < 256; i++)
 if (XOR (islower (i), ISLOWER (i)) || toupper (i) != TOUPPER (i)) exit(2);
 exit (0); }
 ], , ac_cv_header_stdc=no, :)
@@ -819,8 +820,9 @@ esac
 
 AC_CACHE_CHECK(whether closedir returns void, ac_cv_func_closedir_void,
 [AC_TRY_RUN([#include <sys/types.h>
+#include <stdlib.h>
 #include <$ac_header_dirent>
-int closedir(); main() { exit(closedir(opendir(".")) != 0); }],
+int closedir(...); int main(void) { exit(closedir(opendir(".")) != 0); }],
   ac_cv_func_closedir_void=no, ac_cv_func_closedir_void=yes, ac_cv_func_closedir_void=yes)])
 if test $ac_cv_func_closedir_void = yes; then
   AC_DEFINE(VOID_CLOSEDIR)
@@ -907,11 +909,13 @@ AC_CACHE_CHECK(type of array argument to getgroups, ac_cv_type_getgroups,
 changequote(<<, >>)dnl
 <<
 /* Thanks to Mike Rendell for this test.  */
+#include <stdlib.h>
+#include <unistd.h>
 #include <sys/types.h>
 #define NGID 256
 #undef MAX
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
-main()
+int main(void)
 {
   gid_t gidset[NGID];
   int i, n;
@@ -973,7 +977,7 @@ AC_DEFUN(AC_TYPE_SIGNAL,
 #ifdef __cplusplus
 extern "C" void (*signal (int, void (*)(int)))(int);
 #else
-void (*signal ()) ();
+void (*signal (void)) (void);
 #endif
 ],
 [int i;], ac_cv_type_signal=void, ac_cv_type_signal=int)])
@@ -988,8 +992,9 @@ AC_DEFUN(AC_FUNC_CLOSEDIR_VOID,
 [AC_REQUIRE([AC_HEADER_DIRENT])dnl
 AC_CACHE_CHECK(whether closedir returns void, ac_cv_func_closedir_void,
 [AC_TRY_RUN([#include <sys/types.h>
+#include <stdlib.h>
 #include <$ac_header_dirent>
-int closedir(); main() { exit(closedir(opendir(".")) != 0); }],
+int closedir(...); int main(void) { exit(closedir(opendir(".")) != 0); }],
   ac_cv_func_closedir_void=no, ac_cv_func_closedir_void=yes, ac_cv_func_closedir_void=yes)])
 if test $ac_cv_func_closedir_void = yes; then
   AC_DEFINE(CLOSEDIR_VOID)
@@ -1001,7 +1006,9 @@ AC_DEFUN(AC_FUNC_FNMATCH,
 # Some versions of Solaris or SCO have a broken fnmatch function.
 # So we run a test program.  If we are cross-compiling, take no chance.
 # Thanks to John Oleynick and Franc,ois Pinard for this test.
-[AC_TRY_RUN([main() { exit (fnmatch ("a*", "abc", 0) != 0); }],
+[AC_TRY_RUN([#include <stdlib.h>
+#include <fnmatch.h>
+int main(void) { exit (fnmatch ("a*", "abc", 0) != 0); }],
 ac_cv_func_fnmatch_works=yes, ac_cv_func_fnmatch_works=no,
 ac_cv_func_fnmatch_works=no)])
 if test $ac_cv_func_fnmatch_works = yes; then
@@ -1038,6 +1045,7 @@ AC_CACHE_CHECK(for working mmap, ac_cv_func_mmap_fixed_mapped,
 #include <sys/types.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <stdlib.h>
 
 /* This mess was copied from the GNU getpagesize.h.  */
 #ifndef HAVE_GETPAGESIZE
@@ -1083,11 +1091,11 @@ AC_CACHE_CHECK(for working mmap, ac_cv_func_mmap_fixed_mapped,
 #ifdef __cplusplus
 extern "C" { void *malloc(unsigned); }
 #else
-char *malloc();
+char *malloc(...);
 #endif
 
 int
-main()
+main(void)
 {
 	char *data, *data2, *data3;
 	int i, pagesize;
@@ -1165,49 +1173,17 @@ AC_DEFUN(AC_FUNC_GETPGRP,
  *
  * Snarfed from Chet Ramey's bash pgrp.c test program
  */
-#include <stdio.h>
-#include <sys/types.h>
+#include <stdlib.h>
 
-int     pid;
-int     pg1, pg2, pg3, pg4;
-int     ng, np, s, child;
-
-main()
+int main(void)
 {
-        pid = getpid();
-        pg1 = getpgrp(0);
-        pg2 = getpgrp();
-        pg3 = getpgrp(pid);
-        pg4 = getpgrp(1);
-
-        /*
-         * If all of these values are the same, it's pretty sure that
-         * we're on a system that ignores getpgrp's first argument.
-         */
-        if (pg2 == pg4 && pg1 == pg3 && pg2 == pg3)
-                exit(0);
-
-        child = fork();
-        if (child < 0)
-                exit(1);
-        else if (child == 0) {
-                np = getpid();
-                /*
-                 * If this is Sys V, this will not work; pgrp will be
-                 * set to np because setpgrp just changes a pgrp to be
-                 * the same as the pid.
-                 */
-                setpgrp(np, pg1);
-                ng = getpgrp(0);        /* Same result for Sys V and BSD */
-                if (ng == pg1) {
-                        exit(1);
-                } else {
-                        exit(0);
-                }
-        } else {
-                wait(&s);
-                exit(s>>8);
-        }
+    /* XXX: Gentoo: This function used to check for
+    BSD vs POSIX getpgrp but the test fails to compile
+    on modern POSIX systems when not relying on implicit
+    function declarations. It has no value anyway on such
+    systems and it's been removed in newer autoconf.
+    */
+    exit(0);
 }
 ], ac_cv_func_getpgrp_void=yes, ac_cv_func_getpgrp_void=no,
    AC_MSG_ERROR(cannot check getpgrp if cross compiling))
@@ -1220,20 +1196,21 @@ fi
 AC_DEFUN(AC_FUNC_SETPGRP,
 [AC_CACHE_CHECK(whether setpgrp takes no argument, ac_cv_func_setpgrp_void,
 AC_TRY_RUN([
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#include <stdlib.h>
 
 /*
  * If this system has a BSD-style setpgrp, which takes arguments, exit
  * successfully.
  */
-main()
+int main(void)
 {
-    if (setpgrp(1,1) == -1)
-	exit(0);
-    else
-	exit(1);
+    /* XXX: Gentoo: This function used to check for
+       BSD vs POSIX gsetpgrp but the test fails to compile
+       on modern POSIX systems when not relying on implicit
+       function declarations. It has no value anyway on such
+       systems and it's been removed in newer autoconf.
+    */
+    exit(1);
 }
 ], ac_cv_func_setpgrp_void=no, ac_cv_func_setpgrp_void=yes,
    AC_MSG_ERROR(cannot check setpgrp if cross compiling))
@@ -1255,9 +1232,11 @@ AC_DEFUN(AC_FUNC_VFORK,
 AC_CHECK_HEADER(vfork.h, AC_DEFINE(HAVE_VFORK_H))
 AC_CACHE_CHECK(for working vfork, ac_cv_func_vfork_works,
 [AC_TRY_RUN([/* Thanks to Paul Eggert for this test.  */
+#include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -1270,11 +1249,11 @@ AC_CACHE_CHECK(for working vfork, ac_cv_func_vfork_works,
    but some compilers (e.g. gcc -O) don't grok <vfork.h>.
    Test for this by using a static variable whose address
    is put into a register that is clobbered by the vfork.  */
-static
+static void
 #ifdef __cplusplus
 sparc_address_test (int arg)
 #else
-sparc_address_test (arg) int arg;
+sparc_address_test (int arg)
 #endif
 {
   static pid_t child;
@@ -1291,7 +1270,7 @@ sparc_address_test (arg) int arg;
     }
   }
 }
-main() {
+int main(void) {
   pid_t parent = getpid ();
   pid_t child;
 
@@ -1359,8 +1338,10 @@ AC_DEFUN(AC_FUNC_WAIT3,
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 /* HP-UX has wait3 but does not fill in rusage at all.  */
-main() {
+int main(void) {
   struct rusage r;
   int i;
   /* Use a field that we can force nonzero --
@@ -1416,7 +1397,7 @@ AC_CACHE_CHECK([for alloca], ac_cv_func_alloca_works,
  #pragma alloca
 #   else
 #    ifndef alloca /* predefined by HP cc +Olibcalls */
-char *alloca ();
+char *alloca (...);
 #    endif
 #   endif
 #  endif
@@ -1452,7 +1433,8 @@ done
 fi
 
 AC_CACHE_CHECK(stack direction for C alloca, ac_cv_c_stack_direction,
-[AC_TRY_RUN([find_stack_direction ()
+[AC_TRY_RUN([#include <stdlib.h>
+int find_stack_direction ()
 {
   static char *addr = 0;
   auto char dummy;
@@ -1464,7 +1446,7 @@ AC_CACHE_CHECK(stack direction for C alloca, ac_cv_c_stack_direction,
   else
     return (&dummy > addr) ? 1 : -1;
 }
-main ()
+int main (void)
 {
   exit (find_stack_direction() < 0);
 }], ac_cv_c_stack_direction=1, ac_cv_c_stack_direction=-1,
@@ -1582,7 +1564,9 @@ AC_DEFUN(AC_FUNC_UTIME_NULL,
 # Sequent interprets utime(file, 0) to mean use start of epoch.  Wrong.
 AC_TRY_RUN([#include <sys/types.h>
 #include <sys/stat.h>
-main() {
+#include <stdlib.h>
+#include <utime.h>
+int main(void) {
 struct stat s, t;
 exit(!(stat ("conftestdata", &s) == 0 && utime("conftestdata", (long *)0) == 0
 && stat("conftestdata", &t) == 0 && t.st_mtime >= s.st_mtime
@@ -1598,7 +1582,8 @@ fi
 AC_DEFUN(AC_FUNC_STRCOLL,
 [AC_CACHE_CHECK(for working strcoll, ac_cv_func_strcoll_works,
 [AC_TRY_RUN([#include <string.h>
-main ()
+#include <stdlib.h>
+int main (void)
 {
   exit (strcoll ("abc", "def") >= 0 ||
 	strcoll ("ABC", "DEF") >= 0 ||
@@ -1614,8 +1599,9 @@ AC_DEFUN(AC_FUNC_SETVBUF_REVERSED,
 [AC_CACHE_CHECK(whether setvbuf arguments are reversed,
   ac_cv_func_setvbuf_reversed,
 [AC_TRY_RUN([#include <stdio.h>
+#include <stdlib.h>
 /* If setvbuf has the reversed format, exit 0. */
-main () {
+int main (void) {
   /* This call has the arguments reversed.
      A reversed system may check and see that the address of main
      is not _IOLBF, _IONBF, or _IOFBF, and return nonzero.  */
@@ -1646,8 +1632,9 @@ LIBS="-lintl $LIBS"])])])
 
 AC_DEFUN(AC_FUNC_MEMCMP,
 [AC_CACHE_CHECK(for 8-bit clean memcmp, ac_cv_func_memcmp_clean,
-[AC_TRY_RUN([
-main()
+[AC_TRY_RUN([#include <stdlib.h>
+#include <string.h>
+int main(void)
 {
   char c0 = 0x40, c1 = 0x80, c2 = 0x81;
   exit(memcmp(&c0, &c2, 1) < 0 && memcmp(&c1, &c2, 1) < 0 ? 0 : 1);
@@ -1805,7 +1792,8 @@ AC_TRY_RUN(
 #if !defined(__STDC__) || __STDC__ != 1
 #define volatile
 #endif
-main() {
+#include <stdlib.h>
+int main(void) {
   volatile char c = 255; exit(c < 0);
 }], ac_cv_c_char_unsigned=yes, ac_cv_c_char_unsigned=no)
 fi])
@@ -1819,7 +1807,8 @@ AC_DEFUN(AC_C_LONG_DOUBLE,
 [if test "$GCC" = yes; then
   ac_cv_c_long_double=yes
 else
-AC_TRY_RUN([int main() {
+AC_TRY_RUN([#include <stdlib.h>
+int main(void) {
 /* The Stardent Vistra knows sizeof(long double), but does not support it.  */
 long double foo = 0.0;
 /* On Ultrix 4.3 cc, long double is 4 and double is 8.  */
@@ -1834,7 +1823,8 @@ fi
 AC_DEFUN(AC_INT_16_BITS,
 [AC_OBSOLETE([$0], [; instead use AC_CHECK_SIZEOF(int)])dnl
 AC_MSG_CHECKING(whether int is 16 bits)
-AC_TRY_RUN([main() { exit(sizeof(int) != 2); }],
+AC_TRY_RUN([#include <stdlib.h>
+int main(void) { exit(sizeof(int) != 2); }],
  [AC_MSG_RESULT(yes)
  AC_DEFINE(INT_16_BITS)], AC_MSG_RESULT(no))
 ])
@@ -1842,7 +1832,8 @@ AC_TRY_RUN([main() { exit(sizeof(int) != 2); }],
 AC_DEFUN(AC_LONG_64_BITS,
 [AC_OBSOLETE([$0], [; instead use AC_CHECK_SIZEOF(long)])dnl
 AC_MSG_CHECKING(whether long int is 64 bits)
-AC_TRY_RUN([main() { exit(sizeof(long int) != 8); }],
+AC_TRY_RUN([#include <stdlib.h>
+int main(void) { exit(sizeof(long int) != 8); }],
  [AC_MSG_RESULT(yes)
  AC_DEFINE(LONG_64_BITS)], AC_MSG_RESULT(no))
 ])
@@ -1862,7 +1853,8 @@ AC_TRY_COMPILE([#include <sys/types.h>
  not big endian
 #endif], ac_cv_c_bigendian=yes, ac_cv_c_bigendian=no)])
 if test $ac_cv_c_bigendian = unknown; then
-AC_TRY_RUN([main () {
+AC_TRY_RUN([#include <stdlib.h>
+int main (void) {
   /* Are we little or big endian?  From Harbison&Steele.  */
   union
   {
@@ -1885,7 +1877,7 @@ AC_DEFUN(AC_C_INLINE,
 [AC_CACHE_CHECK([for inline], ac_cv_c_inline,
 [ac_cv_c_inline=no
 for ac_kw in inline __inline__ __inline; do
-  AC_TRY_COMPILE(, [} $ac_kw foo() {], [ac_cv_c_inline=$ac_kw; break])
+  AC_TRY_COMPILE(, [} $ac_kw int foo(void) {], [ac_cv_c_inline=$ac_kw; break])
 done
 ])
 case "$ac_cv_c_inline" in
@@ -2275,9 +2267,12 @@ AC_DEFUN(AC_SYS_RESTARTABLE_SYSCALLS,
    i.e. the pid of the child, which means that wait was restarted
    after getting the signal.  */
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <signal.h>
+#include <stdlib.h>
+#include <unistd.h>
 ucatch (isig) { }
-main () {
+int main (void) {
   int i = fork (), status;
   if (i == 0) { sleep (3); kill (getppid (), SIGINT); sleep (3); exit (0); }
   signal (SIGINT, ucatch);
@@ -2444,7 +2439,7 @@ if test "$ac_x_libraries" = NO; then
   # Don't add to $LIBS permanently.
   ac_save_LIBS="$LIBS"
   LIBS="-l$x_direct_test_library $LIBS"
-AC_TRY_LINK(, [${x_direct_test_function}()],
+AC_TRY_LINK([#include <X11/Intrinsic.h>], [${x_direct_test_function}(0)],
 [LIBS="$ac_save_LIBS"
 # We can link X programs with no special library path.
 ac_x_libraries=],
@@ -2654,7 +2649,7 @@ AC_CACHE_VAL(ac_cv_exeext,
   ac_cv_exeext=.exe
 else
   rm -f conftest*
-  echo 'int main () { return 0; }' > conftest.$ac_ext
+  echo 'int main (void) { return 0; }' > conftest.$ac_ext
   ac_cv_exeext=
   if AC_TRY_EVAL(ac_link); then
     for file in conftest.*; do

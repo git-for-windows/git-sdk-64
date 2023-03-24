@@ -1088,7 +1088,7 @@ static const char *tz_strings[] = {
 /* Return 0 if mktime fails to convert a date in the spring-forward gap.
    Based on a problem report from Andreas Jaeger.  */
 static int
-spring_forward_gap ()
+spring_forward_gap (void)
 {
   /* glibc (up to about 1998-10-07) failed this test. */
   struct tm tm;
@@ -1125,7 +1125,7 @@ mktime_test (time_t now)
 }
 
 static int
-irix_6_4_bug ()
+irix_6_4_bug (void)
 {
   /* Based on code from Ariel Faigon.  */
   struct tm tm;
@@ -1167,7 +1167,7 @@ bigtime_test (int j)
 }
 
 static int
-year_2050_test ()
+year_2050_test (void)
 {
   /* The correct answer for 2050-02-01 00:00:00 in Pacific time,
      ignoring leap seconds.  */
@@ -1610,9 +1610,6 @@ AC_DEFUN([AC_FUNC_STRTOD],
 AC_CACHE_CHECK(for working strtod, ac_cv_func_strtod,
 [AC_RUN_IFELSE([AC_LANG_SOURCE([[
 ]AC_INCLUDES_DEFAULT[
-#ifndef strtod
-double strtod ();
-#endif
 int
 main (void)
 {

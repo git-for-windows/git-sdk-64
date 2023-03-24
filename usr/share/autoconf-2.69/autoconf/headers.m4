@@ -712,7 +712,7 @@ if test $ac_cv_header_stdc = yes; then
 
 #define XOR(e, f) (((e) && !(f)) || (!(e) && (f)))
 int
-main ()
+main (void)
 {
   int i;
   for (i = 0; i < 256; i++)

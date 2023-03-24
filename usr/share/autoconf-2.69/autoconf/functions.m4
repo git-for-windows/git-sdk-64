@@ -463,9 +463,6 @@ AC_CACHE_CHECK([whether closedir returns void],
 	       [ac_cv_func_closedir_void],
 [AC_RUN_IFELSE([AC_LANG_PROGRAM([AC_INCLUDES_DEFAULT
 #include <$ac_header_dirent>
-#ifndef __cplusplus
-int closedir ();
-#endif
 ],
 				[[return closedir (opendir (".")) != 0;]])],
 	       [ac_cv_func_closedir_void=no],
@@ -893,7 +890,7 @@ AC_CACHE_CHECK([for GNU libc compatible malloc], ac_cv_func_malloc_0_nonnull,
 [[#if defined STDC_HEADERS || defined HAVE_STDLIB_H
 # include <stdlib.h>
 #else
-char *malloc ();
+char *malloc (long);
 #endif
 ]],
 		 [return ! malloc (0);])],
@@ -1029,7 +1026,7 @@ static const char *tz_strings[] = {
 /* Return 0 if mktime fails to convert a date in the spring-forward gap.
    Based on a problem report from Andreas Jaeger.  */
 static int
-spring_forward_gap ()
+spring_forward_gap (void)
 {
   /* glibc (up to about 1998-10-07) failed this test. */
   struct tm tm;
@@ -1066,7 +1063,7 @@ mktime_test (time_t now)
 }
 
 static int
-irix_6_4_bug ()
+irix_6_4_bug (void)
 {
   /* Based on code from Ariel Faigon.  */
   struct tm tm;
@@ -1108,7 +1105,7 @@ bigtime_test (int j)
 }
 
 static int
-year_2050_test ()
+year_2050_test (void)
 {
   /* The correct answer for 2050-02-01 00:00:00 in Pacific time,
      ignoring leap seconds.  */
@@ -1138,7 +1135,7 @@ year_2050_test ()
 }
 
 int
-main ()
+main (void)
 {
   time_t t, delta;
   int i, j;
@@ -1232,7 +1229,7 @@ AC_CACHE_CHECK([for working mmap], [ac_cv_func_mmap_fixed_mapped],
 #include <sys/mman.h>
 
 #if !defined STDC_HEADERS && !defined HAVE_STDLIB_H
-char *malloc ();
+char *malloc (void *, long);
 #endif
 
 /* This mess was copied from the GNU getpagesize.h.  */
@@ -1268,7 +1265,7 @@ char *malloc ();
 #endif /* no HAVE_GETPAGESIZE */
 
 int
-main ()
+main (void)
 {
   char *data, *data2, *data3;
   const char *cdata2;
@@ -1398,7 +1395,7 @@ AC_CACHE_CHECK([for GNU libc compatible realloc], ac_cv_func_realloc_0_nonnull,
 [[#if defined STDC_HEADERS || defined HAVE_STDLIB_H
 # include <stdlib.h>
 #else
-char *realloc ();
+char *realloc (void *, long);
 #endif
 ]],
 		 [return ! realloc (0, 0);])],
@@ -1547,11 +1544,8 @@ AC_DEFUN([AC_FUNC_STRTOD],
 AC_CACHE_CHECK(for working strtod, ac_cv_func_strtod,
 [AC_RUN_IFELSE([AC_LANG_SOURCE([[
 ]AC_INCLUDES_DEFAULT[
-#ifndef strtod
-double strtod ();
-#endif
 int
-main()
+main(void)
 {
   {
     /* Some versions of Linux strtod mis-parse strings with leading '+'.  */
@@ -1645,8 +1639,7 @@ AC_CACHE_CHECK([whether strerror_r returns char *],
       # former has a strerror_r that returns char*, while the latter
       # has a strerror_r that returns `int'.
       # This test should segfault on the DEC system.
-      AC_RUN_IFELSE([AC_LANG_PROGRAM([AC_INCLUDES_DEFAULT
-	extern char *strerror_r ();],
+      AC_RUN_IFELSE([AC_LANG_PROGRAM([AC_INCLUDES_DEFAULT],
 	[[char buf[100];
 	  char x = *strerror_r (0, buf, sizeof buf);
 	  return ! isalpha (x);]])],
@@ -1879,7 +1872,7 @@ sparc_address_test (arg) int arg;
 }
 
 int
-main ()
+main (void)
 {
   pid_t parent = getpid ();
   pid_t child;
@@ -1985,7 +1978,7 @@ AC_CACHE_CHECK([for wait3 that fills in rusage],
 #include <sys/wait.h>
 /* HP-UX has wait3 but does not fill in rusage at all.  */
 int
-main ()
+main (void)
 {
   struct rusage r;
   int i;

@@ -126,8 +126,14 @@ m4_define([AC_LANG_CALL(C)],
 m4_if([$2], [main], ,
 [/* Override any GCC internal prototype to avoid an error.
    Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-char $2 ();])], [return $2 ();])])
+   builtin and then its argument prototype would still apply.
+   The 'extern "C"' is for builds by C++ compilers;
+   although this is not generally supported in C code supporting it here
+   has little cost and some practical benefit (sr 110532).  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char $2 (void);])], [return $2 ();])])
 
 
 # AC_LANG_FUNC_LINK_TRY(C)(FUNCTION)
@@ -151,7 +157,7 @@ m4_define([AC_LANG_FUNC_LINK_TRY(C)],
 #define $1 innocuous_$1
 
 /* System header to define __stub macros and hopefully few prototypes,
-   which can conflict with char $1 (); below.  */
+   which can conflict with char $1 (void); below.  */
 
 #include <limits.h>
 #undef $1
@@ -162,7 +168,7 @@ m4_define([AC_LANG_FUNC_LINK_TRY(C)],
 #ifdef __cplusplus
 extern "C"
 #endif
-char $1 ();
+char $1 (void);
 /* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
@@ -1147,9 +1153,7 @@ struct stat;
 /* Most of the following tests are stolen from RCS 5.7 src/conf.sh.  */
 struct buf { int x; };
 struct buf * (*rcsopen) (struct buf *, struct stat *, int);
-static char *e (p, i)
-     char **p;
-     int i;
+static char *e (char **p, int i)
 {
   return p[i];
 }
@@ -1206,6 +1210,7 @@ extern int puts (const char *);
 extern int printf (const char *, ...);
 extern int dprintf (int, const char *, ...);
 extern void *malloc (size_t);
+extern void free (void *);
 
 // Check varargs macros.  These examples are taken from C99 6.10.3.5.
 // dprintf is used instead of fprintf to avoid needing to declare
@@ -1830,8 +1835,8 @@ AC_DEFUN([AC_C_BIGENDIAN],
 	[ac_cv_c_bigendian=no],
 	[ac_cv_c_bigendian=yes],
 	[# Try to guess by grepping values from an object file.
-	 AC_COMPILE_IFELSE(
-	   [AC_LANG_PROGRAM(
+	 AC_LINK_IFELSE(
+	   [AC_LANG_SOURCE(
 	      [[unsigned short int ascii_mm[] =
 		  { 0x4249, 0x4765, 0x6E44, 0x6961, 0x6E53, 0x7953, 0 };
 		unsigned short int ascii_ii[] =
@@ -1846,13 +1851,20 @@ AC_DEFUN([AC_C_BIGENDIAN],
 		int use_ebcdic (int i) {
 		  return ebcdic_mm[i] + ebcdic_ii[i];
 		}
-		extern int foo;
-	      ]],
-	      [[return use_ascii (foo) == use_ebcdic (foo);]])],
-	   [if grep BIGenDianSyS conftest.$ac_objext >/dev/null; then
+		int
+		main (int argc, char **argv)
+		{
+		  /* Intimidate the compiler so that it does not
+		     optimize the arrays away.  */
+		  char *p = argv[0];
+		  ascii_mm[1] = *p++; ebcdic_mm[1] = *p++;
+		  ascii_ii[1] = *p++; ebcdic_ii[1] = *p++;
+		  return use_ascii (argc) == use_ebcdic (*p);
+		}]])],
+	   [if grep BIGenDianSyS conftest$ac_exeext >/dev/null; then
 	      ac_cv_c_bigendian=yes
 	    fi
-	    if grep LiTTleEnDian conftest.$ac_objext >/dev/null ; then
+	    if grep LiTTleEnDian conftest$ac_exeext >/dev/null ; then
 	      if test "$ac_cv_c_bigendian" = unknown; then
 		ac_cv_c_bigendian=no
 	      else

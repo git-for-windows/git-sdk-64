@@ -1542,7 +1542,7 @@ extern "C"
 ])dnl
 [/* We use char because int might match the return type of a gcc2
     builtin and then its argument prototype would still apply.  */
-char $1();
+char $1(void);
 ]),
 [$1()],
 [$2],
@@ -1597,7 +1597,7 @@ extern "C"
 ])dnl
 [/* We use char because int might match the return type of a gcc2
     builtin and then its argument prototype would still apply.  */
-char $2();
+char $2(void);
 ])),
 	    [$2()],
 	    eval "ac_cv_lib_$ac_lib_var=yes",
@@ -1733,7 +1733,7 @@ dnl [#]line __oline__ "[$]0"
 [#]line __oline__ "configure"
 #include "confdefs.h"
 [$1]
-int main() {
+int main(void) {
 [$2]
 ; return 0; }
 ])EOF
@@ -1777,7 +1777,7 @@ dnl [#]line __oline__ "[$]0"
 [#]line __oline__ "configure"
 #include "confdefs.h"
 [$1]
-int main() {
+int main(void) {
 [$2]
 ; return 0; }
 ])EOF
@@ -1934,7 +1934,7 @@ extern "C"
 ])dnl
 [/* We use char because int might match the return type of a gcc2
     builtin and then its argument prototype would still apply.  */
-char $1();
+char $1(void);
 ], [
 /* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
@@ -1988,7 +1988,8 @@ changequote([, ])dnl
 AC_MSG_CHECKING(size of $1)
 AC_CACHE_VAL(AC_CV_NAME,
 [AC_TRY_RUN([#include <stdio.h>
-main()
+#include <stdlib.h>
+int main(void)
 {
   FILE *f=fopen("conftestval", "w");
   if (!f) exit(1);

@@ -249,10 +249,9 @@ AC_INCLUDES_DEFAULT
 /* Some platforms explicitly require an extern "C" signal handler
    when using C++. */
 #ifdef __cplusplus
-extern "C" void ucatch (int dummy) { }
-#else
-void ucatch (dummy) int dummy; { }
+extern "C"
 #endif
+void ucatch (int dummy) { }
 
 int
 main (void)
