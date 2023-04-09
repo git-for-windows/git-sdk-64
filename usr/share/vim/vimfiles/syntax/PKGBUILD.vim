@@ -77,53 +77,53 @@ syn region pbLicenseGroup start=/^license=(/ end=/)/ contains=pb_k_license,pbLic
 " backup
 syn keyword pb_k_backup backup contained
 syn match pbValidBackup   /\.\?[[:alpha:]]*\/[[:alnum:]\{\}+._$-]*]*/ contained
-syn region pbBackupGroup start=/^backup=(/ end=/)/ contains=pb_k_backup,pbValidBackup,shDoubleQuote,shSingleQuote
+syn region pbBackupGroup start=/^backup=(/ end=/)/ contains=pb_k_backup,pbValidBackup,shDoubleQuote,shSingleQuote,pbComment
 
 " arch
 syn keyword pb_k_arch arch contained
 syn keyword pbArch i686 x86_64 ppc pentium4 armv7h aarch64 any contained
 syn match pbIllegalArch /[^='"() ]/ contained contains=pbArch
-syn region pbArchGroup start=/^arch=(/ end=/)/ contains=pb_k_arch,pbArch,pbIllegalArch
+syn region pbArchGroup start=/^arch=(/ end=/)/ contains=pb_k_arch,pbArch,pbIllegalArch,pbComment
 
 " groups
 syn keyword pb_k_groups groups contained
 syn match pbValidGroups /\([[:alnum:]]\|+\|-\|_\)*/ contained
-syn region pbGroupsGroup start=/^groups=(/ end=/)/ contains=pb_k_groups,pbValidGroups,shDoubleQuote,shSingleQuote
+syn region pbGroupsGroup start=/^groups=(/ end=/)/ contains=pb_k_groups,pbValidGroups,shDoubleQuote,shSingleQuote,pbComment
 
 " depends
 syn keyword pb_k_depends depends contained
 syn match pbValidDepends /\([[:alnum:]]\|+\|-\|_\)*/ contained
-syn region pbDependsGroup start=/^depends=(/ end=/)/ contains=pb_k_depends,pbValidDepends,shDoubleQuote,shSingleQuote
+syn region pbDependsGroup start=/^depends=(/ end=/)/ contains=pb_k_depends,pbValidDepends,shDoubleQuote,shSingleQuote,pbComment
 
 " makedepends
 syn keyword pb_k_makedepends makedepends contained
 syn match pbValidMakedepends /\([[:alnum:]]\|+\|-\|_\)*/ contained
-syn region pbMakedependsGroup start=/^makedepends=(/ end=/)/ contains=pb_k_makedepends,pbValidMakedepends,shDoubleQuote,shSingleQuote
+syn region pbMakedependsGroup start=/^makedepends=(/ end=/)/ contains=pb_k_makedepends,pbValidMakedepends,shDoubleQuote,shSingleQuote,pbComment
 
 " optdepends
 syn keyword pb_k_optdepends optdepends contained
 syn match pbValidOptdepends /\([[:alnum:]]\|+\|-\|_\)*/ contained
-syn region pbOptdependsGroup start=/^optdepends=(/ end=/)/ contains=pb_k_optdepends,pbValidOptdepends,shDoubleQuote,shSingleQuote
+syn region pbOptdependsGroup start=/^optdepends=(/ end=/)/ contains=pb_k_optdepends,pbValidOptdepends,shDoubleQuote,shSingleQuote,pbComment
 
 " checkdepends
 syn keyword pb_k_ckdepends checkdepends contained
 syn match pbValidCkdepends /\([[:alnum:]]\|+\|-\|_\)*/ contained
-syn region pbCkdependsGroup start=/^checkdepends=(/ end=/)/ contains=pb_k_ckdepends,pbValidCkdepends,shDoubleQuote,shSingleQuote
+syn region pbCkdependsGroup start=/^checkdepends=(/ end=/)/ contains=pb_k_ckdepends,pbValidCkdepends,shDoubleQuote,shSingleQuote,pbComment
 
 " conflicts
 syn keyword pb_k_conflicts conflicts contained
 syn match pbValidConflicts /\([[:alnum:]]\|+\|-\|_\)*/ contained
-syn region pbConflictsGroup start=/^conflicts=(/ end=/)/ contains=pb_k_conflicts,pbValidConflicts,shDoubleQuote,shSingleQuote
+syn region pbConflictsGroup start=/^conflicts=(/ end=/)/ contains=pb_k_conflicts,pbValidConflicts,shDoubleQuote,shSingleQuote,pbComment
 
 " provides
 syn keyword pb_k_provides provides contained
 syn match pbValidProvides /\([[:alnum:]]\|+\|-\|_\)*/ contained
-syn region pbProvidesGroup start=/^provides=(/ end=/)/ contains=pb_k_provides,pbValidProvides,shDoubleQuote,shSingleQuote
+syn region pbProvidesGroup start=/^provides=(/ end=/)/ contains=pb_k_provides,pbValidProvides,shDoubleQuote,shSingleQuote,pbComment
 
 " replaces
 syn keyword pb_k_replaces replaces contained
 syn match pbValidReplaces /\([[:alnum:]]\|+\|-\|_\)*/ contained
-syn region pbReplacesGroup start=/^replaces=(/  end=/)/ contains=pb_k_replaces,pbValidReplaces,shDoubleQuote,shSingleQuote
+syn region pbReplacesGroup start=/^replaces=(/  end=/)/ contains=pb_k_replaces,pbValidReplaces,shDoubleQuote,shSingleQuote,pbComment
 
 " install
 syn keyword pb_k_install install contained
@@ -232,14 +232,14 @@ hi def link pbValidB2sums  Number
 " validpgpkeys
 syn keyword pb_k_validpgpkeys validpgpkeys contained
 syn match pbValidPGPKeys /\([[:alnum:]]\)*/ contained
-syn region pbValidPGPKeysGroup start=/^validpgpkeys=(/ end=/)/ contains=pb_k_validpgpkeys,pbValidPGPKeys,shDoubleQuote,shSingleQuote
+syn region pbValidPGPKeysGroup start=/^validpgpkeys=(/ end=/)/ contains=pb_k_validpgpkeys,pbValidPGPKeys,shDoubleQuote,shSingleQuote,pbComment
 
 " options
 syn keyword pb_k_options options contained
 syn match pbOptions /\(no\)\?\(strip\|docs\|libtool\|emptydirs\|zipman\|purge\|distcc\|color\|ccache\|check\|sign\|makeflags\|buildflags\|lto\|debug\)/ contained
 syn match   pbOptionsNeg     /\!/ contained
 syn match   pbOptionsDeprec  /no/ contained
-syn region pbOptionsGroup start=/^options=(/ end=/)/ contains=pb_k_options,pbOptions,pbOptionsNeg,pbOptionsDeprec,pbIllegalOption
+syn region pbOptionsGroup start=/^options=(/ end=/)/ contains=pb_k_options,pbOptions,pbOptionsNeg,pbOptionsDeprec,pbIllegalOption,pbComment
 syn match pbIllegalOption /[^!"'()= ]/ contained contains=pbOptionsDeprec,pbOptions
 
 " noextract
