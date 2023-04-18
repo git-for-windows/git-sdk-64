@@ -57,7 +57,7 @@ TCL_SHLIB_CFLAGS=''
 TCL_CFLAGS_WARNING='-Wall -Wpointer-arith'
 
 # Extra flags to pass to cc:
-TCL_EXTRA_CFLAGS='-march=x86-64 -mtune=generic -O2 -pipe -pipe '
+TCL_EXTRA_CFLAGS='-march=nocona -msahf -mtune=generic -O2 -pipe -pipe '
 
 # Base command to use for combining object files into a shared library:
 TCL_SHLIB_LD='${CC} -shared'
