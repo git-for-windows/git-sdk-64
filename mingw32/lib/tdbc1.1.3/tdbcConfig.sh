@@ -19,8 +19,8 @@ tdbc_LIB_FILE=tdbc113.dll
 TDBC_LIB_FILE=tdbc113.dll
 
 # String to pass to the linker to pick up the TDBC library from its build dir
-tdbc_BUILD_LIB_SPEC="-LC:/M/mingw-w64-tcl/src/build-MINGW32/pkgs/tdbc1.1.3 -ltdbc113"
-TDBC_BUILD_LIB_SPEC="-LC:/M/mingw-w64-tcl/src/build-MINGW32/pkgs/tdbc1.1.3 -ltdbc113"
+tdbc_BUILD_LIB_SPEC="-LC:/M/B/src/build-MINGW32/pkgs/tdbc1.1.3 -ltdbc113"
+TDBC_BUILD_LIB_SPEC="-LC:/M/B/src/build-MINGW32/pkgs/tdbc1.1.3 -ltdbc113"
 
 # String to pass to the linker to pick up the TDBC library from its installed
 # dir.
@@ -33,8 +33,8 @@ TDBC_STUB_LIB_FILE="libtdbcstub113.a"
 
 # String to pass to the linker to pick up the TDBC stub library from its
 # build directory
-tdbc_BUILD_STUB_LIB_SPEC="-LC:/M/mingw-w64-tcl/src/build-MINGW32/pkgs/tdbc1.1.3 -ltdbcstub113"
-TDBC_BUILD_STUB_LIB_SPEC="-LC:/M/mingw-w64-tcl/src/build-MINGW32/pkgs/tdbc1.1.3 -ltdbcstub113"
+tdbc_BUILD_STUB_LIB_SPEC="-LC:/M/B/src/build-MINGW32/pkgs/tdbc1.1.3 -ltdbcstub113"
+TDBC_BUILD_STUB_LIB_SPEC="-LC:/M/B/src/build-MINGW32/pkgs/tdbc1.1.3 -ltdbcstub113"
 
 # String to pass to the linker to pick up the TDBC stub library from its
 # installed directory
@@ -42,8 +42,8 @@ tdbc_STUB_LIB_SPEC="-LD:/a/msys64/mingw32/lib/tdbc1.1.3 -ltdbcstub113"
 TDBC_STUB_LIB_SPEC="-LD:/a/msys64/mingw32/lib/tdbc1.1.3 -ltdbcstub113"
 
 # Path name of the TDBC stub library in its build directory
-tdbc_BUILD_STUB_LIB_PATH="C:/M/mingw-w64-tcl/src/build-MINGW32/pkgs/tdbc1.1.3/libtdbcstub113.a"
-TDBC_BUILD_STUB_LIB_PATH="C:/M/mingw-w64-tcl/src/build-MINGW32/pkgs/tdbc1.1.3/libtdbcstub113.a"
+tdbc_BUILD_STUB_LIB_PATH="C:/M/B/src/build-MINGW32/pkgs/tdbc1.1.3/libtdbcstub113.a"
+TDBC_BUILD_STUB_LIB_PATH="C:/M/B/src/build-MINGW32/pkgs/tdbc1.1.3/libtdbcstub113.a"
 
 # Path name of the TDBC stub library in its installed directory
 tdbc_STUB_LIB_PATH="D:/a/msys64/mingw32/lib/tdbc1.1.3/libtdbcstub113.a"
@@ -54,8 +54,8 @@ TDBC_STUB_LIB_PATH="D:/a/msys64/mingw32/lib/tdbc1.1.3/libtdbcstub113.a"
 # was compiled in a directory other than the source directory, this still
 # points to the location of the sources, not the location where TDBC was
 # compiled.
-tdbc_SRC_DIR="C:/M/mingw-w64-tcl/src/tcl8.6.12/pkgs/tdbc1.1.3"
-TDBC_SRC_DIR="C:/M/mingw-w64-tcl/src/tcl8.6.12/pkgs/tdbc1.1.3"
+tdbc_SRC_DIR="C:/M/B/src/tcl8.6.12/pkgs/tdbc1.1.3"
+TDBC_SRC_DIR="C:/M/B/src/tcl8.6.12/pkgs/tdbc1.1.3"
 
 # String to pass to the compiler so that an extension can find installed TDBC
 # headers
@@ -64,16 +64,16 @@ TDBC_INCLUDE_SPEC="-I/mingw32/include"
 
 # String to pass to the compiler so that an extension can find TDBC headers
 # in the source directory
-tdbc_BUILD_INCLUDE_SPEC="-IC:/M/mingw-w64-tcl/src/tcl8.6.12/pkgs/tdbc1.1.3/generic"
-TDBC_BUILD_INCLUDE_SPEC="-IC:/M/mingw-w64-tcl/src/tcl8.6.12/pkgs/tdbc1.1.3/generic"
+tdbc_BUILD_INCLUDE_SPEC="-IC:/M/B/src/tcl8.6.12/pkgs/tdbc1.1.3/generic"
+TDBC_BUILD_INCLUDE_SPEC="-IC:/M/B/src/tcl8.6.12/pkgs/tdbc1.1.3/generic"
 
 # Path name where .tcl files in the tdbc package appear at run time.
 tdbc_LIBRARY_PATH="/mingw32/lib/tdbc1.1.3"
 TDBC_LIBRARY_PATH="/mingw32/lib/tdbc1.1.3"
 
 # Path name where .tcl files in the tdbc package appear at build time.
-tdbc_BUILD_LIBRARY_PATH="C:/M/mingw-w64-tcl/src/tcl8.6.12/pkgs/tdbc1.1.3/library"
-TDBC_BUILD_LIBRARY_PATH="C:/M/mingw-w64-tcl/src/tcl8.6.12/pkgs/tdbc1.1.3/library"
+tdbc_BUILD_LIBRARY_PATH="C:/M/B/src/tcl8.6.12/pkgs/tdbc1.1.3/library"
+TDBC_BUILD_LIBRARY_PATH="C:/M/B/src/tcl8.6.12/pkgs/tdbc1.1.3/library"
 
 # Additional flags that must be passed to the C compiler to use tdbc
 tdbc_CFLAGS=

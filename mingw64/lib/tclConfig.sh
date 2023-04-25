@@ -107,7 +107,7 @@ TCL_COMPAT_OBJS=''
 TCL_RANLIB='ranlib'
 
 # -l flag to pass to the linker to pick up the Tcl library
-TCL_LIB_FLAG=''
+TCL_LIB_FLAG='-ltcl86'
 
 # String to pass to linker to pick up the Tcl library from its
 # build directory.

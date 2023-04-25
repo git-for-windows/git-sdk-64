@@ -90,7 +90,7 @@ TCL_DL_LIBS=''
 
 # Flags to pass to the compiler when linking object files into
 # an executable tclsh or tcltest binary.
-TCL_LD_FLAGS='-pipe -Wl,--no-seh'
+TCL_LD_FLAGS='-pipe -Wl,--no-seh -Wl,--large-address-aware'
 
 # Flags to pass to cc/ld, such as "-R /usr/local/tcl/lib", that tell the
 # run-time dynamic linker where to look for shared libraries such as
@@ -107,7 +107,7 @@ TCL_COMPAT_OBJS=''
 TCL_RANLIB='ranlib'
 
 # -l flag to pass to the linker to pick up the Tcl library
-TCL_LIB_FLAG=''
+TCL_LIB_FLAG='-ltcl86'
 
 # String to pass to linker to pick up the Tcl library from its
 # build directory.
