@@ -326,6 +326,8 @@ __isl_give isl_map *isl_map_copy(__isl_keep isl_map *map);
 __isl_export
 __isl_give isl_map *isl_map_reverse(__isl_take isl_map *map);
 __isl_export
+__isl_give isl_map *isl_map_domain_reverse(__isl_take isl_map *map);
+__isl_export
 __isl_give isl_map *isl_map_range_reverse(__isl_take isl_map *map);
 __isl_export
 __isl_give isl_map *isl_map_union(
@@ -485,6 +487,12 @@ __isl_give isl_map *isl_map_move_dims(__isl_take isl_map *map,
 __isl_give isl_basic_map *isl_basic_map_project_out(
 		__isl_take isl_basic_map *bmap,
 		enum isl_dim_type type, unsigned first, unsigned n);
+__isl_overload
+__isl_give isl_map *isl_map_project_out_param_id(__isl_take isl_map *map,
+	__isl_take isl_id *id);
+__isl_overload
+__isl_give isl_map *isl_map_project_out_param_id_list(__isl_take isl_map *map,
+	__isl_take isl_id_list *list);
 __isl_give isl_map *isl_map_project_out(__isl_take isl_map *map,
 		enum isl_dim_type type, unsigned first, unsigned n);
 __isl_export
@@ -558,6 +566,7 @@ __isl_give isl_basic_set *isl_basic_set_flatten(__isl_take isl_basic_set *bset);
 __isl_export
 __isl_give isl_set *isl_set_flatten(__isl_take isl_set *set);
 __isl_give isl_map *isl_set_flatten_map(__isl_take isl_set *set);
+__isl_export
 __isl_give isl_set *isl_map_params(__isl_take isl_map *map);
 __isl_export
 __isl_give isl_set *isl_map_domain(__isl_take isl_map *bmap);
@@ -713,6 +722,7 @@ isl_stat isl_map_foreach_basic_map(__isl_keep isl_map *map,
 __isl_give isl_basic_map_list *isl_map_get_basic_map_list(
 	__isl_keep isl_map *map);
 
+__isl_overload
 __isl_give isl_map *isl_map_fixed_power_val(__isl_take isl_map *map,
 	__isl_take isl_val *exp);
 __isl_give isl_map *isl_map_power(__isl_take isl_map *map, isl_bool *exact);
@@ -752,6 +762,7 @@ __isl_give isl_map *isl_map_align_params(__isl_take isl_map *map,
 	__isl_take isl_space *model);
 __isl_give isl_basic_map *isl_basic_map_drop_unused_params(
 	__isl_take isl_basic_map *bmap);
+__isl_export
 __isl_give isl_map *isl_map_drop_unused_params(__isl_take isl_map *map);
 
 __isl_give isl_mat *isl_basic_map_equalities_matrix(

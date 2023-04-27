@@ -69,6 +69,10 @@ __isl_give isl_##EL *isl_##EL##_list_get_at(				\
 	__isl_keep isl_##EL##_list *list, int index);			\
 __isl_give struct isl_##EL *isl_##EL##_list_get_##EL(			\
 	__isl_keep isl_##EL##_list *list, int index);			\
+EXPORT									\
+__isl_give isl_##EL##_list *isl_##EL##_list_set_at(			\
+	__isl_take isl_##EL##_list *list, int index,			\
+	__isl_take isl_##EL *el);					\
 __isl_give struct isl_##EL##_list *isl_##EL##_list_set_##EL(		\
 	__isl_take struct isl_##EL##_list *list, int index,		\
 	__isl_take struct isl_##EL *el);				\
