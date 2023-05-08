@@ -1,5 +1,5 @@
 # GDB 'explore' command.
-# Copyright (C) 2012-2021 Free Software Foundation, Inc.
+# Copyright (C) 2012-2023 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,10 +18,6 @@
 
 import gdb
 import sys
-
-if sys.version_info[0] > 2:
-    # Python 3 renamed raw_input to input
-    raw_input = input
 
 
 class Explorer(object):
@@ -172,7 +168,7 @@ class Explorer(object):
         so that the exploration session can shift back to the parent value.
         Useful when exploring values.
         """
-        raw_input("\nPress enter to return to parent value: ")
+        input("\nPress enter to return to parent value: ")
 
     @staticmethod
     def return_to_enclosing_type():
@@ -187,7 +183,7 @@ class Explorer(object):
         so that the exploration session can shift back to the enclosing type.
         Useful when exploring types.
         """
-        raw_input("\nPress enter to return to enclosing type: ")
+        input("\nPress enter to return to enclosing type: ")
 
 
 class ScalarExplorer(object):
@@ -244,7 +240,7 @@ class PointerExplorer(object):
             "'%s' is a pointer to a value of type '%s'"
             % (expr, str(value.type.target()))
         )
-        option = raw_input(
+        option = input(
             "Continue exploring it as a pointer to a single " "value [y/n]: "
         )
         if option == "y":
@@ -264,13 +260,13 @@ class PointerExplorer(object):
             )
             return False
 
-        option = raw_input("Continue exploring it as a pointer to an " "array [y/n]: ")
+        option = input("Continue exploring it as a pointer to an " "array [y/n]: ")
         if option == "y":
             while True:
                 index = 0
                 try:
                     index = int(
-                        raw_input(
+                        input(
                             "Enter the index of the element you "
                             "want to explore in '%s': " % expr
                         )
@@ -338,7 +334,7 @@ class ArrayExplorer(object):
         index = 0
         try:
             index = int(
-                raw_input(
+                input(
                     "Enter the index of the element you want to "
                     "explore in '%s': " % expr
                 )
@@ -354,7 +350,7 @@ class ArrayExplorer(object):
             str(element)
         except gdb.MemoryError:
             print("Cannot read value at index %d." % index)
-            raw_input("Press enter to continue... ")
+            input("Press enter to continue... ")
             return True
 
         Explorer.explore_expr(
@@ -474,7 +470,7 @@ class CompoundExplorer(object):
         print("")
 
         if has_explorable_fields:
-            choice = raw_input("Enter the field number of choice: ")
+            choice = input("Enter the field number of choice: ")
             if choice in choice_to_compound_field_map:
                 Explorer.explore_expr(
                     choice_to_compound_field_map[choice][0],
@@ -523,7 +519,6 @@ class CompoundExplorer(object):
         else:
             print("'%s' is a %s with the following " "fields:\n" % (name, type_desc))
 
-        has_explorable_fields = False
         current_choice = 0
         choice_to_compound_field_map = {}
         print_list = []
@@ -551,7 +546,7 @@ class CompoundExplorer(object):
         print("")
 
         if len(choice_to_compound_field_map) > 0:
-            choice = raw_input("Enter the field number of choice: ")
+            choice = input("Enter the field number of choice: ")
             if choice in choice_to_compound_field_map:
                 if is_child:
                     new_name = "%s '%s' of %s" % (
@@ -694,7 +689,7 @@ class ExploreCommand(gdb.Command):
         )
 
     def invoke(self, arg_str, from_tty):
-        if ExploreUtils.check_args("explore", arg_str) == False:
+        if ExploreUtils.check_args("explore", arg_str) is False:
             return
 
         # Check if it is a value
@@ -733,7 +728,7 @@ class ExploreValueCommand(gdb.Command):
         )
 
     def invoke(self, arg_str, from_tty):
-        if ExploreUtils.check_args("explore value", arg_str) == False:
+        if ExploreUtils.check_args("explore value", arg_str) is False:
             return
 
         value = ExploreUtils.get_value_from_str(arg_str)
@@ -764,7 +759,7 @@ class ExploreTypeCommand(gdb.Command):
         )
 
     def invoke(self, arg_str, from_tty):
-        if ExploreUtils.check_args("explore type", arg_str) == False:
+        if ExploreUtils.check_args("explore type", arg_str) is False:
             return
 
         datatype = ExploreUtils.get_type_from_str(arg_str)
