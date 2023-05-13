@@ -24,23 +24,14 @@ extern "C" {
    version of a function that takes _REENT.  This saves the overhead
    of a function call for what amounts to a simple computation.
 
-   The definition below is essentially equivalent to the one in cygtls.h
-   (&_my_tls.local_clib) however it uses a fixed precomputed
-   offset rather than dereferencing a field of a structure.
+   This is the allocation size of the TLS area on the stack.  Parts of
+   the stack are in use by the OS, so we need to go a bit higher than
+   what's actually required by the cygtls struct.  The _reent struct is
+   right at the beginning of struct cygtls and always has to be. */
+#define __CYGTLS_PADSIZE__ 12800	/* Must be 16-byte aligned */
 
-   Including tlsoffets.h here in order to get this constant offset
-   tls_local_clib is a bit of a hack, but the alternative would require
-   dragging the entire definition of struct _cygtls (a large and complex
-   Cygwin internal data structure) into newlib.  The machinery to
-   compute these offsets already exists for the sake of gendef so
-   we might as well just use it here.  */
+#if defined (_LIBC) || defined (__INSIDE_CYGWIN__)
 
-#if defined (_COMPILING_NEWLIB) || defined (__INSIDE_CYGWIN__)
-#ifdef __x86_64__
-#include "../tlsoffsets64.h"
-#else
-#include "../tlsoffsets.h"
-#endif
 __attribute__((__gnu_inline__))
 extern inline struct _reent *__getreent (void)
 {
@@ -48,18 +39,13 @@ extern inline struct _reent *__getreent (void)
 #ifdef __x86_64__
   __asm __volatile__ ("movq %%gs:8,%0" : "=r" (ret));
 #else
-  __asm __volatile__ ("movl %%fs:4,%0" : "=r" (ret));
+#error unimplemented for this target
 #endif
-  return (struct _reent *) (ret + tls_local_clib);
+  return (struct _reent *) (ret - __CYGTLS_PADSIZE__);
 }
-#endif /* _COMPILING_NEWLIB || __INSIDE_CYGWIN__ */
+#endif /* _LIBC || __INSIDE_CYGWIN__ */
 
-#ifdef __x86_64__
-# define __SYMBOL_PREFIX
-#else
-# define __SYMBOL_PREFIX "_"
-#endif
-#define _SYMSTR(x)	__SYMBOL_PREFIX #x
+#define _SYMSTR(x)	#x
 
 #define __FILENAME_MAX__ 4096	/* Keep in sync with PATH_MAX in limits.h. */
 
@@ -68,8 +54,6 @@ extern inline struct _reent *__getreent (void)
    Just leave them alone. */
 #define _READ_WRITE_RETURN_TYPE _ssize_t
 #define _READ_WRITE_BUFSIZE_TYPE size_t
-#define __LARGE64_FILES 1
-#define __USE_INTERNAL_STAT64 1
 #define __LINUX_ERRNO_EXTENSIONS__ 1
 #define _MB_EXTENDED_CHARSETS_ALL 1
 #define __HAVE_LOCALE_INFO__ 1
@@ -80,8 +64,9 @@ extern inline struct _reent *__getreent (void)
 #define __TM_GMTOFF tm_gmtoff
 #define __TM_ZONE   tm_zone
 #define _USE_LONG_TIME_T 1
+#define _REENT_BACKWARD_BINARY_COMPAT 1
 
-#if defined(__INSIDE_CYGWIN__) || defined(_COMPILING_NEWLIB)
+#if defined(__INSIDE_CYGWIN__) || defined(_LIBC)
 #define __EXPORT __declspec(dllexport)
 #define __IMPORT
 #else

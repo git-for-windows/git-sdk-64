@@ -20,29 +20,6 @@ extern "C" {
 
 #define _CYGWIN_SIGNAL_STRING "cYgSiGw00f"
 
-#ifdef __i386__
-/* DEPRECATED INTERFACES.  These are restricted to MAX_PATH length.
-   Don't use in modern applications.  They don't exist on x86_64. */
-extern int cygwin_win32_to_posix_path_list (const char *, char *)
-  __attribute__ ((__deprecated__));
-extern int cygwin_win32_to_posix_path_list_buf_size (const char *)
-  __attribute__ ((__deprecated__));
-extern int cygwin_posix_to_win32_path_list (const char *, char *)
-  __attribute__ ((__deprecated__));
-extern int cygwin_posix_to_win32_path_list_buf_size (const char *)
-  __attribute__ ((__deprecated__));
-extern int cygwin_conv_to_win32_path (const char *, char *)
-  __attribute__ ((__deprecated__));
-extern int cygwin_conv_to_full_win32_path (const char *, char *)
-  __attribute__ ((__deprecated__));
-extern int cygwin_conv_to_posix_path (const char *, char *)
-  __attribute__ ((__deprecated__));
-extern int cygwin_conv_to_full_posix_path (const char *, char *)
-  __attribute__ ((__deprecated__));
-#endif /* __i386__ */
-
-/* Use these interfaces in favor of the above. */
-
 /* Possible 'what' values in calls to cygwin_conv_path/cygwin_create_path. */
 enum
 {
@@ -322,9 +299,6 @@ struct per_process
   uint32_t dll_minor;
 
   struct _reent **impure_ptr_ptr;
-#ifdef __i386__
-  char ***envptr;
-#endif
 
   /* Used to point to the memory machine we should use.  Usually these
      point back into the dll, but they can be overridden by the user. */
@@ -362,11 +336,7 @@ struct per_process
   DWORD api_minor;		/*  linked with */
   /* For future expansion, so apps won't have to be relinked if we
      add an item. */
-#ifdef __x86_64__
   DWORD_PTR unused2[4];
-#else
-  DWORD_PTR unused2[2];
-#endif
 
   int (*posix_memalign)(void **, size_t, size_t);
 
@@ -406,10 +376,8 @@ extern void cygwin_premain3 (int, char **, struct per_process *);
 #define EXTERNAL_PINFO_VERSION_32_LP  2
 #define EXTERNAL_PINFO_VERSION EXTERNAL_PINFO_VERSION_32_LP
 
-#ifndef __INSIDE_CYGWIN__
 typedef __uint16_t __uid16_t;
 typedef __uint16_t __gid16_t;
-#endif
 
 struct external_pinfo
   {

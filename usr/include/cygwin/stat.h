@@ -32,35 +32,6 @@ struct stat
   timestruc_t   st_birthtim;
 };
 
-#if defined (__INSIDE_CYGWIN__) || defined (_COMPILING_NEWLIB)
-#ifdef __i386__
-struct __stat32
-{
-  __dev16_t	st_dev;
-  __ino32_t	st_ino;
-  mode_t	st_mode;
-  nlink_t       st_nlink;
-  __uid16_t     st_uid;
-  __gid16_t     st_gid;
-  __dev16_t     st_rdev;
-  _off_t        st_size;
-  timestruc_t   st_atim;
-  timestruc_t   st_mtim;
-  timestruc_t   st_ctim;
-  blksize_t     st_blksize;
-  __blkcnt32_t  st_blocks;
-  long          st_spare4[2];
-};
-#endif
-
-extern int fstat64 (int fd, struct stat *buf);
-extern int stat64 (const char *__restrict file_name,
-		   struct stat *__restrict buf);
-extern int lstat64 (const char *__restrict file_name,
-		    struct stat *__restrict buf);
-
-#endif
-
 #define st_atime st_atim.tv_sec
 #define st_mtime st_mtim.tv_sec
 #define st_ctime st_ctim.tv_sec

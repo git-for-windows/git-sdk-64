@@ -20,7 +20,7 @@ extern "C" {
 
 #ifdef __CYGWIN__
 #include <cygwin/stat.h>
-#ifdef _COMPILING_NEWLIB
+#ifdef _LIBC
 #define stat64 stat
 #endif
 #else
@@ -142,7 +142,7 @@ int	mkfifo (const char *__path, mode_t __mode );
 int	stat (const char *__restrict __path, struct stat *__restrict __sbuf );
 mode_t	umask (mode_t __mask );
 
-#if defined (__SPU__) || defined(__rtems__) || defined(__CYGWIN__) && !defined(__INSIDE_CYGWIN__)
+#if defined (__SPU__) || defined(__rtems__) || defined(__CYGWIN__)
 int	lstat (const char *__restrict __path, struct stat *__restrict __buf );
 int	mknod (const char *__path, mode_t __mode, dev_t __dev );
 #endif
@@ -161,7 +161,7 @@ int	futimens (int, const struct timespec [2]);
 
 /* Provide prototypes for most of the _<systemcall> names that are
    provided in newlib for some compilers.  */
-#ifdef _COMPILING_NEWLIB
+#ifdef _LIBC
 int	_fstat (int __fd, struct stat *__sbuf );
 int	_stat (const char *__restrict __path, struct stat *__restrict __sbuf );
 int	_mkdir (const char *_path, mode_t __mode );

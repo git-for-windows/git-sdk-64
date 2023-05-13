@@ -22,7 +22,7 @@ details. */
 #define DECLARE_CYGWIN_DLL(Entry)					      \
 									      \
 CDECL_BEGIN								      \
-  int WINAPI Entry (HINSTANCE h, DWORD reason, void *ptr);	              \
+  int Entry (HINSTANCE h, DWORD reason, void *ptr);	              \
   typedef int (*mainfunc) (int, char **, char **);			      \
   extern PVOID msys_attach_dll (HMODULE, mainfunc);			      \
   extern void msys_detach_dll (PVOID);				      \
@@ -42,7 +42,7 @@ static int __dllMain (int a __attribute__ ((__unused__)),		      \
 									      \
 static PVOID dll_index;							      \
 									      \
-int WINAPI _msys_dll_entry (HINSTANCE h, DWORD reason, void *ptr)	      \
+int _msys_dll_entry (HINSTANCE h, DWORD reason, void *ptr)	      \
 {									      \
   int ret;								      \
   ret = 1;								      \
@@ -85,12 +85,6 @@ int WINAPI _msys_dll_entry (HINSTANCE h, DWORD reason, void *ptr)	      \
     break;								      \
   }									      \
   return ret;								      \
-}									      \
-									      \
-/* OBSOLETE: This is only provided for source level compatibility. */         \
-int WINAPI _msys_nonmsys_dll_entry (HINSTANCE h, DWORD reason, void *ptr) \
-{									      \
-  return _msys_dll_entry (h, reason, ptr);				      \
 }									      \
 
 #endif /* __CYGWIN_CYGWIN_DLL_H__ */
