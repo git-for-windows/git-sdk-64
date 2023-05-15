@@ -74,7 +74,7 @@ while test $# -gt 0; do
         ;;
 
     --ca)
-        echo "/mingw32/ssl/certs/ca-bundle.crt"
+        echo 
         ;;
 
     --cc)
@@ -86,7 +86,7 @@ while test $# -gt 0; do
         ;;
 
     --feature|--features)
-        for feature in AsynchDNS HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerberos Largefile MultiSSL NTLM PSL SPNEGO SSL SSPI TLS-SRP UnixSockets alt-svc brotli libz threadsafe zstd ""; do
+        for feature in AsynchDNS HSTS HTTPS-proxy IDN IPv6 Kerberos Largefile NTLM PSL SPNEGO SSL SSPI UnixSockets alt-svc brotli libz threadsafe zstd ""; do
             test -n "$feature" && echo "$feature"
         done
         ;;
@@ -163,18 +163,18 @@ while test $# -gt 0; do
            CURLLIBDIR=""
         fi
         if test "Xyes" = "Xno"; then
-          echo ${CURLLIBDIR}-lcurl -lnghttp2 -lidn2 -lssh2 -lssh2 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lwldap32 -lzstd -lbrotlidec -lz -lws2_32
+          echo ${CURLLIBDIR}-lcurl -lidn2 -lssh2 -lssh2 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lwldap32 -lzstd -lzstd -lbrotlidec -lbrotlidec -lz -lws2_32
         else
           echo ${CURLLIBDIR}-lcurl
         fi
         ;;
     --ssl-backends)
-        echo "Schannel, OpenSSL"
+        echo "Schannel"
         ;;
 
     --static-libs)
-        if test "Xyes" != "Xno" ; then
-          echo "${exec_prefix}/lib/libcurl.a" -pipe -Wl,--no-seh -Wl,--large-address-aware -lnghttp2 -lidn2 -lssh2 -lssh2 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lwldap32 -lzstd -lbrotlidec -lz -lws2_32
+        if test "Xno" != "Xno" ; then
+          echo "${exec_prefix}/lib/libcurl.a" -pipe -Wl,--no-seh -Wl,--large-address-aware -lidn2 -lssh2 -lssh2 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lwldap32 -lzstd -lzstd -lbrotlidec -lbrotlidec -lz -lws2_32
         else
           echo "curl was built with static libraries disabled" >&2
           exit 1
@@ -182,7 +182,7 @@ while test $# -gt 0; do
         ;;
 
     --configure)
-        echo " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' '--without-random' '--without-librtmp' '--enable-static' '--enable-shared' '--enable-sspi' '--with-libssh2' '--disable-debug' '--with-ssl' '--with-ca-bundle=/mingw32/ssl/certs/ca-bundle.crt' '--with-nghttp2=${MINGW_PREFIX}/' '--with-schannel' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong' 'LDFLAGS=-pipe -Wl,--no-seh -Wl,--large-address-aware' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1'"
+        echo " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' '--disable-pthreads' '--without-random' '--disable-static' '--enable-shared' '--enable-sspi' '--enable-ldap' '--enable-ldaps' '--with-brotli' '--with-ldap-lib=wldap32' '--with-libssh2' '--with-zstd' '--with-schannel' '--without-nghttp2' '--without-ca-bundle' '--without-ca-path' '--without-librtmp' '--disable-debug' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong' 'LDFLAGS=-pipe -Wl,--no-seh -Wl,--large-address-aware' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1'"
         ;;
 
     *)
