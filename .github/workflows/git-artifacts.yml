@@ -120,7 +120,7 @@ jobs:
           set -x
 
           # Make sure that there is a `/usr/bin/git` that can be used by `makepkg-mingw`
-          printf '#!/bin/sh\n\nexec /mingw${{env.ARCH_BITNESS}}/bin/git.exe "$@"\n' >/usr/bin/git &&
+          printf '#!/bin/sh\n\nPATH=/mingw${{env.ARCH_BITNESS}}/bin:$PATH exec /mingw${{env.ARCH_BITNESS}}/bin/git.exe "$@"\n' >/usr/bin/git &&
 
           # Restrict `PATH` to MSYS2
           PATH="/mingw${{env.ARCH_BITNESS}}/bin:/usr/bin:/C/Windows/system32"
