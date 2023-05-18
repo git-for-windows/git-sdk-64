@@ -564,7 +564,7 @@ To omit patch numbers from the subject, use <code>-N</code>.</p>
 <div class="paragraph">
 <p>If given <code>--thread</code>, <code>git-format-patch</code> will generate <code>In-Reply-To</code> and
 <code>References</code> headers to make the second and subsequent patch mails appear
-as replies to the first mail; this also generates a <code>Message-Id</code> header to
+as replies to the first mail; this also generates a <code>Message-ID</code> header to
 reference.</p>
 </div>
 </div>
@@ -1072,6 +1072,12 @@ the behavior until 1.7.0). Using "all" hides all changes to submodules.</p>
 <dd>
 <p>Do not show any source or destination prefix.</p>
 </dd>
+<dt class="hdlist1">--default-prefix</dt>
+<dd>
+<p>Use the default source and destination prefixes ("a/" and "b/").
+This is usually the default already, but may be used to override
+config such as <code>diff.noprefix</code>.</p>
+</dd>
 <dt class="hdlist1">--line-prefix=&lt;prefix&gt;</dt>
 <dd>
 <p>Prepend an additional prefix to every line of output.</p>
@@ -1162,7 +1168,7 @@ second part, with <code>Content-Disposition: inline</code>.</p>
 <dd>
 <p>Controls addition of <code>In-Reply-To</code> and <code>References</code> headers to
 make the second and subsequent mails appear as replies to the
-first.  Also controls generation of the <code>Message-Id</code> header to
+first.  Also controls generation of the <code>Message-ID</code> header to
 reference.</p>
 <div class="paragraph">
 <p>The optional &lt;style&gt; argument can be either <code>shallow</code> or <code>deep</code>.
@@ -1173,8 +1179,7 @@ threading makes every mail a reply to the previous one.</p>
 </div>
 <div class="paragraph">
 <p>The default is <code>--no-thread</code>, unless the <code>format.thread</code> configuration
-is set.  If <code>--thread</code> is specified without a style, it defaults to the
-style specified by <code>format.thread</code> if any, or else <code>shallow</code>.</p>
+is set.  <code>--thread</code> without an argument is equivalent to <code>--thread=shallow</code>.</p>
 </div>
 <div class="paragraph">
 <p>Beware that the default for <em>git send-email</em> is to thread emails
@@ -1946,7 +1951,7 @@ merge commit.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-04-19 05:40:20 UTC
+Last updated 2023-05-17 11:49:33 UTC
 </div>
 </div>
 </body>

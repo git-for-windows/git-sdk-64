@@ -507,10 +507,11 @@ other housekeeping tasks (e.g. rerere, working trees, reflog&#8230;&#8203;) will
 be performed as well.</p>
 </div>
 </dd>
-<dt class="hdlist1">--cruft</dt>
+<dt class="hdlist1">--[no-]cruft</dt>
 <dd>
 <p>When expiring unreachable objects, pack them separately into a
-cruft pack instead of storing them as loose objects.</p>
+cruft pack instead of storing them as loose objects. <code>--cruft</code>
+is on by default.</p>
 </dd>
 <dt class="hdlist1">--prune=&lt;date&gt;</dt>
 <dd>
@@ -536,9 +537,10 @@ instance running on this repository.</p>
 </dd>
 <dt class="hdlist1">--keep-largest-pack</dt>
 <dd>
-<p>All packs except the largest pack and those marked with a
-<code>.keep</code> files are consolidated into a single pack. When this
-option is used, <code>gc.bigPackThreshold</code> is ignored.</p>
+<p>All packs except the largest non-cruft pack, any packs marked
+with a <code>.keep</code> file, and any cruft pack(s) are consolidated into
+a single pack. When this option is used, <code>gc.bigPackThreshold</code>
+is ignored.</p>
 </dd>
 </dl>
 </div>
@@ -641,11 +643,11 @@ if the system supports it. Default is true.</p>
 </dd>
 <dt class="hdlist1">gc.bigPackThreshold</dt>
 <dd>
-<p>If non-zero, all packs larger than this limit are kept when
-<code>git gc</code> is run. This is very similar to <code>--keep-largest-pack</code>
-except that all packs that meet the threshold are kept, not
-just the largest pack. Defaults to zero. Common unit suffixes of
-<em>k</em>, <em>m</em>, or <em>g</em> are supported.</p>
+<p>If non-zero, all non-cruft packs larger than this limit are kept
+when <code>git gc</code> is run. This is very similar to
+<code>--keep-largest-pack</code> except that all non-cruft packs that meet
+the threshold are kept, not just the largest pack. Defaults to
+zero. Common unit suffixes of <em>k</em>, <em>m</em>, or <em>g</em> are supported.</p>
 <div class="paragraph">
 <p>Note that if the number of kept packs is more than gc.autoPackLimit,
 this configuration variable is ignored, all packs except the base pack
@@ -688,7 +690,7 @@ boolean value.  The default is <code>true</code>.</p>
 <dd>
 <p>Store unreachable objects in a cruft pack (see
 <a href="git-repack.html">git-repack(1)</a>) instead of as loose objects. The default
-is <code>false</code>.</p>
+is <code>true</code>.</p>
 </dd>
 <dt class="hdlist1">gc.pruneExpire</dt>
 <dd>
@@ -832,7 +834,7 @@ seems to be low in practice).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-04-19 05:40:20 UTC
+Last updated 2023-05-17 11:49:33 UTC
 </div>
 </div>
 </body>

@@ -593,6 +593,15 @@ Internally this is used to implement the <code>push.negotiate</code> option, see
 <dd>
 <p>Show what would be done, without making any changes.</p>
 </dd>
+<dt class="hdlist1">--porcelain</dt>
+<dd>
+<p>Print the output to standard output in an easy-to-parse format for
+scripts. See section OUTPUT in <a href="git-fetch.html">git-fetch(1)</a> for details.</p>
+<div class="paragraph">
+<p>This is incompatible with <code>--recurse-submodules=[yes|on-demand]</code> and takes
+precedence over the <code>fetch.output</code> config option.</p>
+</div>
+</dd>
 <dt class="hdlist1">--[no-]write-fetch-head</dt>
 <dd>
 <p>Write the list of remote refs fetched in the <code>FETCH_HEAD</code>
@@ -1428,6 +1437,17 @@ representing the status of a single ref. Each line is of the form:</p>
 </div>
 </div>
 <div class="paragraph">
+<p>When using <code>--porcelain</code>, the output format is intended to be
+machine-parseable. In contrast to the human-readable output formats it
+thus prints to standard output instead of standard error. Each line is
+of the form:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>&lt;flag&gt; &lt;old-object-id&gt; &lt;new-object-id&gt; &lt;local-reference&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
 <p>The status of up-to-date refs is shown only if the --verbose option is
 used.</p>
 </div>
@@ -1788,7 +1808,7 @@ submodule update</code>. This is expected to be fixed in a future Git version.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-04-19 05:40:20 UTC
+Last updated 2023-05-17 11:49:33 UTC
 </div>
 </div>
 </body>

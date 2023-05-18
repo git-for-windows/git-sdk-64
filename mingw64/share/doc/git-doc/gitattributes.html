@@ -588,22 +588,21 @@ repository upon <em>git add</em> and <em>git commit</em>.</p>
 <div class="sect3">
 <h4 id="_text"><code>text</code></h4>
 <div class="paragraph">
-<p>This attribute enables and controls end-of-line normalization.  When a
-text file is normalized, its line endings are converted to LF in the
-repository.  To control what line ending style is used in the working
-directory, use the <code>eol</code> attribute for a single file and the
-<code>core.eol</code> configuration variable for all text files.
-Note that setting <code>core.autocrlf</code> to <code>true</code> or <code>input</code> overrides
-<code>core.eol</code> (see the definitions of those options in
-<a href="git-config.html">git-config(1)</a>).</p>
+<p>This attribute marks the path as a text file, which enables end-of-line
+conversion: When a matching file is added to the index, the file&#8217;s line
+endings are normalized to LF in the index.  Conversely, when the file is
+copied from the index to the working directory, its line endings may be
+converted from LF to CRLF depending on the <code>eol</code> attribute, the Git
+config, and the platform (see explanation of <code>eol</code> below).</p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Set</dt>
 <dd>
 <p>Setting the <code>text</code> attribute on a path enables end-of-line
-normalization and marks the path as a text file.  End-of-line
-conversion takes place without guessing the content type.</p>
+conversion on checkin and checkout as described above.  Line endings
+are normalized to LF in the index every time the file is checked in,
+even if the file was previously added to Git with CRLF line endings.</p>
 </dd>
 <dt class="hdlist1">Unset</dt>
 <dd>
@@ -612,10 +611,11 @@ attempt any end-of-line conversion upon checkin or checkout.</p>
 </dd>
 <dt class="hdlist1">Set to string value "auto"</dt>
 <dd>
-<p>When <code>text</code> is set to "auto", the path is marked for automatic
-end-of-line conversion.  If Git decides that the content is
-text, its line endings are converted to LF on checkin.
-When the file has been committed with CRLF, no conversion is done.</p>
+<p>When <code>text</code> is set to "auto", Git decides by itself whether the file
+is text or binary.  If it is text and the file was not already in
+Git with CRLF endings, line endings are converted on checkin and
+checkout as described above.  Otherwise, no conversion is done on
+checkin or checkout.</p>
 </dd>
 <dt class="hdlist1">Unspecified</dt>
 <dd>
@@ -633,28 +633,31 @@ unspecified.</p>
 <div class="sect3">
 <h4 id="_eol"><code>eol</code></h4>
 <div class="paragraph">
-<p>This attribute sets a specific line-ending style to be used in the
-working directory.  This attribute has effect only if the <code>text</code>
-attribute is set or unspecified, or if it is set to <code>auto</code>, the file is
-detected as text, and it is stored with LF endings in the index.  Note
-that setting this attribute on paths which are in the index with CRLF
-line endings may make the paths to be considered dirty unless
-<code>text=auto</code> is set. Adding the path to the index again will normalize
-the line endings in the index.</p>
+<p>This attribute marks a path to use a specific line-ending style in the
+working tree when it is checked out.  It has effect only if <code>text</code> or
+<code>text=auto</code> is set (see above), but specifying <code>eol</code> automatically sets
+<code>text</code> if <code>text</code> was left unspecified.</p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Set to string value "crlf"</dt>
 <dd>
-<p>This setting forces Git to normalize line endings for this
-file on checkin and convert them to CRLF when the file is
-checked out.</p>
+<p>This setting converts the file&#8217;s line endings in the working
+directory to CRLF when the file is checked out.</p>
 </dd>
 <dt class="hdlist1">Set to string value "lf"</dt>
 <dd>
-<p>This setting forces Git to normalize line endings to LF on
-checkin and prevents conversion to CRLF when the file is
-checked out.</p>
+<p>This setting uses the same line endings in the working directory as
+in the index when the file is checked out.</p>
+</dd>
+<dt class="hdlist1">Unspecified</dt>
+<dd>
+<p>If the <code>eol</code> attribute is unspecified for a file, its line endings
+in the working directory are determined by the <code>core.autocrlf</code> or
+<code>core.eol</code> configuration variable (see the definitions of those
+options in <a href="git-config.html">git-config(1)</a>).  If <code>text</code> is set but neither of
+those variables is, the default is <code>eol=crlf</code> on Windows and
+<code>eol=lf</code> on all other platforms.</p>
 </dd>
 </dl>
 </div>
@@ -2125,7 +2128,7 @@ frotz   unspecified</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-04-19 05:40:20 UTC
+Last updated 2023-05-17 11:49:33 UTC
 </div>
 </div>
 </body>

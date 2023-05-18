@@ -509,6 +509,12 @@ override the default when <code>/path/to/repo</code> is given, using the regular
 Git transport instead.</p>
 </div>
 <div class="paragraph">
+<p>If the repository&#8217;s <code>$GIT_DIR/objects</code> has symbolic links or is a
+symbolic link, the clone will fail. This is a security measure to
+prevent the unintentional copying of files by dereferencing the symbolic
+links.</p>
+</div>
+<div class="paragraph">
 <p><strong>NOTE</strong>: this operation can race with concurrent modification to the
 source repository, similar to running <code>cp -r src dst</code> while modifying
 <code>src</code>.</p>
@@ -1088,7 +1094,7 @@ the filter to submodules.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-04-19 05:40:20 UTC
+Last updated 2023-05-17 11:49:33 UTC
 </div>
 </div>
 </body>

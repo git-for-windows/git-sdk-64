@@ -1832,6 +1832,10 @@ the pathspec parameter.</p>
 is asked to update index entries outside the current sparse
 checkout.</p>
 </dd>
+<dt class="hdlist1">diverging</dt>
+<dd>
+<p>Advice shown when a fast-forward is not possible.</p>
+</dd>
 <dt class="hdlist1">useCoreFSMonitorConfig</dt>
 <dd>
 <p>Advice shown if the deprecated <em>core.useBuiltinFSMonitor</em> config
@@ -4029,6 +4033,14 @@ your tool is not in the PATH.</p>
 <dd>
 <p>Prompt before each invocation of the diff tool.</p>
 </dd>
+<dt class="hdlist1">difftool.guiDefault</dt>
+<dd>
+<p>Set <code>true</code> to use the <code>diff.guitool</code> by default (equivalent to specifying
+the <code>--gui</code> argument), or <code>auto</code> to select <code>diff.guitool</code> or <code>diff.tool</code>
+depending on the presence of a <code>DISPLAY</code> environment variable value. The
+default is <code>false</code>, where the <code>--gui</code> argument must be provided
+explicitly for the <code>diff.guitool</code> to be used.</p>
+</dd>
 <dt class="hdlist1">extensions.objectFormat</dt>
 <dd>
 <p>Specify the hash algorithm to use.  The acceptable values are <code>sha1</code> and
@@ -4112,10 +4124,6 @@ features. The new default values are:</p>
 <li>
 <p><code>fetch.negotiationAlgorithm=skipping</code> may improve fetch negotiation times by
 skipping more commits at a time, reducing the number of round trips.</p>
-</li>
-<li>
-<p><code>gc.cruftPacks=true</code> reduces disk space used by unreachable objects during
-garbage collection, preventing loose object explosions.</p>
 </li>
 </ul>
 </div>
@@ -4458,6 +4466,14 @@ previous configurations and not show notes.</p>
 <p>A boolean value which enables the robust "mboxrd" format when
 <code>--stdout</code> is in use to escape "^&gt;+From " lines.</p>
 </dd>
+<dt class="hdlist1">format.noprefix</dt>
+<dd>
+<p>If set, do not show any source or destination prefix in patches.
+This is equivalent to the <code>diff.noprefix</code> option used by <code>git
+diff</code> (but which is not respected by <code>format-patch</code>). Note that
+by setting this, the receiver of any patches you generate will
+have to apply them using the <code>-p0</code> option.</p>
+</dd>
 <dt class="hdlist1">filter.&lt;driver&gt;.clean</dt>
 <dd>
 <p>The command which is used to convert the content of a worktree
@@ -4623,11 +4639,11 @@ if the system supports it. Default is true.</p>
 </dd>
 <dt class="hdlist1">gc.bigPackThreshold</dt>
 <dd>
-<p>If non-zero, all packs larger than this limit are kept when
-<code>git gc</code> is run. This is very similar to <code>--keep-largest-pack</code>
-except that all packs that meet the threshold are kept, not
-just the largest pack. Defaults to zero. Common unit suffixes of
-<em>k</em>, <em>m</em>, or <em>g</em> are supported.</p>
+<p>If non-zero, all non-cruft packs larger than this limit are kept
+when <code>git gc</code> is run. This is very similar to
+<code>--keep-largest-pack</code> except that all non-cruft packs that meet
+the threshold are kept, not just the largest pack. Defaults to
+zero. Common unit suffixes of <em>k</em>, <em>m</em>, or <em>g</em> are supported.</p>
 <div class="paragraph">
 <p>Note that if the number of kept packs is more than gc.autoPackLimit,
 this configuration variable is ignored, all packs except the base pack
@@ -4670,7 +4686,7 @@ boolean value.  The default is <code>true</code>.</p>
 <dd>
 <p>Store unreachable objects in a cruft pack (see
 <a href="git-repack.html">git-repack(1)</a>) instead of as loose objects. The default
-is <code>false</code>.</p>
+is <code>true</code>.</p>
 </dd>
 <dt class="hdlist1">gc.pruneExpire</dt>
 <dd>
@@ -6385,6 +6401,14 @@ Defaults to <code>false</code>.</p>
 <dd>
 <p>Prompt before each invocation of the merge resolution program.</p>
 </dd>
+<dt class="hdlist1">mergetool.guiDefault</dt>
+<dd>
+<p>Set <code>true</code> to use the <code>merge.guitool</code> by default (equivalent to
+specifying the <code>--gui</code> argument), or <code>auto</code> to select <code>merge.guitool</code>
+or <code>merge.tool</code> depending on the presence of a <code>DISPLAY</code> environment
+variable value. The default is <code>false</code>, where the <code>--gui</code> argument
+must be provided explicitly for the <code>merge.guitool</code> to be used.</p>
+</dd>
 <dt class="hdlist1">notes.mergeStrategy</dt>
 <dd>
 <p>Which merge strategy to choose by default when resolving notes
@@ -6668,13 +6692,20 @@ loading individual bitmaps as late as possible. This can be
 beneficial in repositories that have relatively large bitmap
 indexes. Defaults to false.</p>
 </dd>
+<dt class="hdlist1">pack.readReverseIndex</dt>
+<dd>
+<p>When true, git will read any .rev file(s) that may be available
+(see: <a href="gitformat-pack.html">gitformat-pack(5)</a>). When false, the reverse index
+will be generated from scratch and stored in memory. Defaults to
+true.</p>
+</dd>
 <dt class="hdlist1">pack.writeReverseIndex</dt>
 <dd>
 <p>When true, git will write a corresponding .rev file (see:
 <a href="gitformat-pack.html">gitformat-pack(5)</a>)
 for each new packfile that it writes in all places except for
 <a href="git-fast-import.html">git-fast-import(1)</a> and in the bulk checkin mechanism.
-Defaults to false.</p>
+Defaults to true.</p>
 </dd>
 <dt class="hdlist1">pager.&lt;cmd&gt;</dt>
 <dd>
@@ -7072,6 +7103,17 @@ This is the same as specifying the <code>--reschedule-failed-exec</code> option.
 <dt class="hdlist1">rebase.forkPoint</dt>
 <dd>
 <p>If set to false set <code>--no-fork-point</code> option by default.</p>
+</dd>
+<dt class="hdlist1">rebase.rebaseMerges</dt>
+<dd>
+<p>Whether and how to set the <code>--rebase-merges</code> option by default. Can
+be <code>rebase-cousins</code>, <code>no-rebase-cousins</code>, or a boolean. Setting to
+true or to <code>no-rebase-cousins</code> is equivalent to
+<code>--rebase-merges=no-rebase-cousins</code>, setting to <code>rebase-cousins</code> is
+equivalent to <code>--rebase-merges=rebase-cousins</code>, and setting to false is
+equivalent to <code>--no-rebase-merges</code>. Passing <code>--rebase-merges</code> on the
+command line, with or without an argument, overrides any
+<code>rebase.rebaseMerges</code> configuration.</p>
 </dd>
 <dt class="hdlist1">receive.advertiseAtomic</dt>
 <dd>
@@ -7596,6 +7638,7 @@ recognized by the parser.</p>
 <dt class="hdlist1">sendemail.chainReplyTo</dt>
 <dt class="hdlist1">sendemail.envelopeSender</dt>
 <dt class="hdlist1">sendemail.from</dt>
+<dt class="hdlist1">sendemail.headerCmd</dt>
 <dt class="hdlist1">sendemail.signedoffbycc</dt>
 <dt class="hdlist1">sendemail.smtpPass</dt>
 <dt class="hdlist1">sendemail.suppresscc</dt>
@@ -8609,7 +8652,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-04-19 05:40:20 UTC
+Last updated 2023-05-17 11:49:33 UTC
 </div>
 </div>
 </body>

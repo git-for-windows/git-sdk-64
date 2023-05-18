@@ -562,10 +562,12 @@ Additionally, <code>$BASE</code> is set in the environment.</p>
 <dd>
 <p>When <em>git-difftool</em> is invoked with the <code>-g</code> or <code>--gui</code> option
 the default diff tool will be read from the configured
-<code>diff.guitool</code> variable instead of <code>diff.tool</code>. The <code>--no-gui</code>
-option can be used to override this setting. If <code>diff.guitool</code>
-is not set, we will fallback in the order of <code>merge.guitool</code>,
-<code>diff.tool</code>, <code>merge.tool</code> until a tool is found.</p>
+<code>diff.guitool</code> variable instead of <code>diff.tool</code>. This may be
+selected automatically using the configuration variable
+<code>difftool.guiDefault</code>. The <code>--no-gui</code> option can be used to
+override these settings. If <code>diff.guitool</code> is not set, we will
+fallback in the order of <code>merge.guitool</code>, <code>diff.tool</code>,
+<code>merge.tool</code> until a tool is found.</p>
 </dd>
 <dt class="hdlist1">--[no-]trust-exit-code</dt>
 <dd>
@@ -644,6 +646,14 @@ your tool is not in the PATH.</p>
 <dd>
 <p>Prompt before each invocation of the diff tool.</p>
 </dd>
+<dt class="hdlist1">difftool.guiDefault</dt>
+<dd>
+<p>Set <code>true</code> to use the <code>diff.guitool</code> by default (equivalent to specifying
+the <code>--gui</code> argument), or <code>auto</code> to select <code>diff.guitool</code> or <code>diff.tool</code>
+depending on the presence of a <code>DISPLAY</code> environment variable value. The
+default is <code>false</code>, where the <code>--gui</code> argument must be provided
+explicitly for the <code>diff.guitool</code> to be used.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -680,7 +690,7 @@ your tool is not in the PATH.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-04-19 05:40:20 UTC
+Last updated 2023-05-17 11:49:33 UTC
 </div>
 </div>
 </body>

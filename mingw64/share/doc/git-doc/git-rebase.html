@@ -1124,6 +1124,7 @@ have the long commit hash prepended to the format.</p>
 </dd>
 <dt class="hdlist1">-r</dt>
 <dt class="hdlist1">--rebase-merges[=(rebase-cousins|no-rebase-cousins)]</dt>
+<dt class="hdlist1">--no-rebase-merges</dt>
 <dd>
 <p>By default, a rebase will simply drop merge commits from the todo
 list, and put the rebased commits into a single, linear branch.
@@ -1131,14 +1132,18 @@ With <code>--rebase-merges</code>, the rebase will instead try to preserve
 the branching structure within the commits that are to be rebased,
 by recreating the merge commits. Any resolved merge conflicts or
 manual amendments in these merge commits will have to be
-resolved/re-applied manually.</p>
+resolved/re-applied manually. <code>--no-rebase-merges</code> can be used to
+countermand both the <code>rebase.rebaseMerges</code> config option and a previous
+<code>--rebase-merges</code>.</p>
 <div class="paragraph">
-<p>By default, or when <code>no-rebase-cousins</code> was specified, commits which do not
-have <code>&lt;upstream&gt;</code> as direct ancestor will keep their original branch point,
-i.e. commits that would be excluded by <a href="git-log.html">git-log(1)</a>'s
-<code>--ancestry-path</code> option will keep their original ancestry by default. If
-the <code>rebase-cousins</code> mode is turned on, such commits are instead rebased
-onto <code>&lt;upstream&gt;</code> (or <code>&lt;onto&gt;</code>, if specified).</p>
+<p>When rebasing merges, there are two modes: <code>rebase-cousins</code> and
+<code>no-rebase-cousins</code>. If the mode is not specified, it defaults to
+<code>no-rebase-cousins</code>. In <code>no-rebase-cousins</code> mode, commits which do not have
+<code>&lt;upstream&gt;</code> as direct ancestor will keep their original branch point, i.e.
+commits that would be excluded by <a href="git-log.html">git-log(1)</a>'s <code>--ancestry-path</code>
+option will keep their original ancestry by default. In <code>rebase-cousins</code> mode,
+such commits are instead rebased onto <code>&lt;upstream&gt;</code> (or <code>&lt;onto&gt;</code>, if
+specified).</p>
 </div>
 <div class="paragraph">
 <p>It is currently only possible to recreate the merge commits using the
@@ -2404,6 +2409,17 @@ This is the same as specifying the <code>--reschedule-failed-exec</code> option.
 <dd>
 <p>If set to false set <code>--no-fork-point</code> option by default.</p>
 </dd>
+<dt class="hdlist1">rebase.rebaseMerges</dt>
+<dd>
+<p>Whether and how to set the <code>--rebase-merges</code> option by default. Can
+be <code>rebase-cousins</code>, <code>no-rebase-cousins</code>, or a boolean. Setting to
+true or to <code>no-rebase-cousins</code> is equivalent to
+<code>--rebase-merges=no-rebase-cousins</code>, setting to <code>rebase-cousins</code> is
+equivalent to <code>--rebase-merges=rebase-cousins</code>, and setting to false is
+equivalent to <code>--no-rebase-merges</code>. Passing <code>--rebase-merges</code> on the
+command line, with or without an argument, overrides any
+<code>rebase.rebaseMerges</code> configuration.</p>
+</dd>
 <dt class="hdlist1">sequence.editor</dt>
 <dd>
 <p>Text editor used by <code>git rebase -i</code> for editing the rebase instruction file.
@@ -2426,7 +2442,7 @@ When not configured the default commit message editor is used instead.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-04-19 05:40:20 UTC
+Last updated 2023-05-17 11:49:33 UTC
 </div>
 </div>
 </body>

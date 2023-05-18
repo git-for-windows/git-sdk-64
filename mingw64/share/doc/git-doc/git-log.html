@@ -894,11 +894,12 @@ or <code>--all</code>. If a trailing <em>/*</em> is intended, it must be given
 explicitly.</p>
 </div>
 </dd>
-<dt class="hdlist1">--exclude-hidden=[receive|uploadpack]</dt>
+<dt class="hdlist1">--exclude-hidden=[fetch|receive|uploadpack]</dt>
 <dd>
-<p>Do not include refs that would be hidden by <code>git-receive-pack</code> or
-<code>git-upload-pack</code> by consulting the appropriate <code>receive.hideRefs</code> or
-<code>uploadpack.hideRefs</code> configuration along with <code>transfer.hideRefs</code> (see
+<p>Do not include refs that would be hidden by <code>git-fetch</code>,
+<code>git-receive-pack</code> or <code>git-upload-pack</code> by consulting the appropriate
+<code>fetch.hideRefs</code>, <code>receive.hideRefs</code> or <code>uploadpack.hideRefs</code>
+configuration along with <code>transfer.hideRefs</code> (see
 <a href="git-config.html">git-config(1)</a>). This option affects the next pseudo-ref option
 <code>--all</code> or <code>--glob</code> and is cleared after processing them.</p>
 </dd>
@@ -3663,6 +3664,12 @@ the behavior until 1.7.0). Using "all" hides all changes to submodules.</p>
 <dd>
 <p>Do not show any source or destination prefix.</p>
 </dd>
+<dt class="hdlist1">--default-prefix</dt>
+<dd>
+<p>Use the default source and destination prefixes ("a/" and "b/").
+This is usually the default already, but may be used to override
+config such as <code>diff.noprefix</code>.</p>
+</dd>
 <dt class="hdlist1">--line-prefix=&lt;prefix&gt;</dt>
 <dd>
 <p>Prepend an additional prefix to every line of output.</p>
@@ -4325,7 +4332,7 @@ See <code>notes.rewrite.&lt;command&gt;</code> above for a further description o
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-04-19 05:40:20 UTC
+Last updated 2023-05-17 11:49:33 UTC
 </div>
 </div>
 </body>
