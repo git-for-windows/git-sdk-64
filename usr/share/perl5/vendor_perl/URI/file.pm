@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use parent 'URI::_generic';
-our $VERSION = '5.17';
+our $VERSION = '5.19';
 
 use URI::Escape qw(uri_unescape);
 

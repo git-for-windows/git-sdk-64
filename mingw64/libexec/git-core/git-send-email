@@ -1574,7 +1574,7 @@ sub gen_header {
 	@recipients = unique_email_list(@recipients,@cc,@initial_bcc);
 	@recipients = (map { extract_valid_address_or_die($_) } @recipients);
 	my $date = format_2822_time($time++);
-	my $gitversion = '2.41.0.rc0.windows.1';
+	my $gitversion = '2.41.0.rc1.windows.1';
 	if ($gitversion =~ m/..GIT_VERSION../) {
 	    $gitversion = Git::version();
 	}
@@ -1831,6 +1831,7 @@ sub pre_process_file {
 	$subject = $initial_subject;
 	$message = "";
 	$message_num++;
+	undef $message_id;
 	# Retrieve and unfold header fields.
 	my @header_lines = ();
 	while(<$fh>) {

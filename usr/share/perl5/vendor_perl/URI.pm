@@ -3,7 +3,7 @@ package URI;
 use strict;
 use warnings;
 
-our $VERSION = '5.17';
+our $VERSION = '5.19';
 
 # 1=version 5.10 and earlier; 0=version 5.11 and later
 use constant HAS_RESERVED_SQUARE_BRACKETS => $ENV{URI_HAS_RESERVED_SQUARE_BRACKETS} ? 1 : 0;
@@ -57,7 +57,7 @@ sub new
 
     $uri = defined ($uri) ? "$uri" : "";   # stringify
     # Get rid of potential wrapping
-    $uri =~ s/^<(?:URL:)?(.*)>$/$1/;  # 
+    $uri =~ s/^<(?:URL:)?(.*)>$/$1/;  #
     $uri =~ s/^"(.*)"$/$1/;
     $uri =~ s/^\s+//;
     $uri =~ s/\s+$//;
@@ -230,7 +230,7 @@ sub _scheme
 	Carp::croak("Bad scheme '$new'") unless $new =~ /^$scheme_re$/o;
 	$old = $1 if $$self =~ s/^($scheme_re)://o;
 	my $newself = URI->new("$new:$$self");
-	$$self = $$newself; 
+	$$self = $$newself;
 	bless $self, ref($newself);
     }
     else {
@@ -876,7 +876,7 @@ every case where it has been used.
 
 Sets and returns the unescaped hostname.
 
-If the $new_host string ends with a colon and a number, then this
+If the C<$new_host> string ends with a colon and a number, then this
 number also sets the port.
 
 For IPv6 addresses the brackets around the raw address is removed in the return
@@ -884,9 +884,17 @@ value from $uri->host.  When setting the host attribute to an IPv6 address you
 can use a raw address or one enclosed in brackets.  The address needs to be
 enclosed in brackets if you want to pass in a new port value as well.
 
+  my $uri = URI->new("http://www.\xC3\xBCri-sample/foo/bar.html");
+  print $u->host; # www.xn--ri-sample-fra0f
+
+
 =item $uri->ihost
 
-Returns the host in Unicode form.  Any IDNA A-labels are turned into U-labels.
+Returns the host in Unicode form. Any IDNA A-labels (encoded unicode chars with
+I<xn--> prefix) are turned into U-labels (unicode chars).
+
+  my $uri = URI->new("http://www.\xC3\xBCri-sample/foo/bar.html");
+  print $u->ihost; # www.\xC3\xBCri-sample
 
 =item $uri->port
 
