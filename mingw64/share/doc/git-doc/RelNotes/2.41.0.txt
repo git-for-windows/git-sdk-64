@@ -65,9 +65,9 @@ UI, Workflows & Features
    has symbolic links inside its $GIT_DIR; an error message when that
    happens has been updated.
 
- * "git branch --format=..." and "git format-patch --format=..."
-   learns "--omit-empty" to hide refs that whose formatting result
-   becomes an empty string from the output.
+ * The "--format=..." option of "git for-each-ref", "git branch", and
+   "git tag" commands learn "--omit-empty" to hide refs whose
+   formatting results in an empty string from the output.
 
  * The sendemail-validate validate hook learned to pass the total
    number of input files and where in the sequence each invocation is
@@ -368,6 +368,10 @@ Fixes since v2.40
  * "git merge-tree" reads the basic configuration, which can be used
     by git forges to disable replace-refs feature.
    (merge b6551feadf ds/merge-tree-use-config later to maint).
+
+ * A few bugs in the sequencer machinery that results in miscounting
+   the steps have been corrected.
+   (merge 170eea9750 js/rebase-count-fixes later to maint).
 
  * Other code cleanup, docfix, build fix, etc.
    (merge f7111175df as/doc-markup-fix later to maint).
