@@ -1,6 +1,6 @@
 # Boehm-Demers-Weiser Garbage Collector
 
-This is version 8.2.2 of a conservative garbage
+This is version 8.2.4 of a conservative garbage
 collector for C and C++.
 
 
@@ -213,7 +213,7 @@ include subdirectory.  (Normally this is just gc.h.  `make cords` adds
 
 The collector currently is designed to run essentially unmodified on
 machines that use a flat 32-bit or 64-bit address space.
-That includes the vast majority of Workstations and X86 (X >= 3) PCs.
+That includes the vast majority of Workstations and x86 (i386 or later) PCs.
 
 In a few cases (Amiga, OS/2, Win32, MacOS) a separate makefile
 or equivalent is supplied.  Many of these have separate README.system
@@ -221,7 +221,7 @@ files.
 
 Dynamic libraries are completely supported only under SunOS/Solaris,
 (and even that support is not functional on the last Sun 3 release),
-Linux, FreeBSD, NetBSD, IRIX 5&6, HP/UX, Win32 (not Win32S) and OSF/1
+Linux, FreeBSD, NetBSD, IRIX 5&6, HP/UX, Win32 (not win32s) and OSF/1
 on DEC AXP machines plus perhaps a few others listed near the top
 of dyn_load.c.  On other machines we recommend that you do one of
 the following:
@@ -297,8 +297,9 @@ others.
   frequent collections at program startup.)
 
   6. `GC_malloc_ignore_off_page(bytes)` - Identical to `GC_malloc`, but the
-  client promises to keep a pointer to the somewhere within the first 256
-  bytes of the object while it is live.  (This pointer should normally be
+  client promises to keep a pointer to the somewhere within the first GC
+  heap block (512 .. 4096 bytes or even more, depending on the configuration)
+  of the object while it is live.  (This pointer should normally be
   declared volatile to prevent interference from compiler optimizations.)
   This is the recommended way to allocate anything that is likely to be
   larger than 100 KB or so.  (`GC_malloc` may result in a failure to reclaim

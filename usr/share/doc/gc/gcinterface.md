@@ -70,8 +70,8 @@ Typically not useful for small collectible objects.
 `void * GC_MALLOC_ATOMIC_IGNORE_OFF_PAGE(size_t _bytes_)` - Analogous
 to `GC_MALLOC` and `GC_MALLOC_ATOMIC`, respectively, except that the client
 guarantees that as long as the resulting object is of use, a pointer
-is maintained to someplace inside the first 512 bytes of the object. This
-pointer should be declared volatile to avoid interference from compiler
+is maintained to someplace inside the first heap block (hblk) of the object.
+This pointer should be declared volatile to avoid interference from compiler
 optimizations. (Other nonvolatile pointers to the object may exist as well.)
 This is the preferred way to allocate objects that are likely to be
 more than 100 KB in size. It greatly reduces the risk that such objects will
@@ -187,12 +187,12 @@ Users may include `gc_cpp.h` and then cause members of classes to be allocated
 in garbage collectible memory by having those classes inherit from class `gc`.
 For details see `gc_cpp.h` file.
 
-Linking against `libgccpp` in addition to the `gc` library overrides `::new`
+Linking against `gccpp` in addition to the `gc` library overrides `::new`
 (and friends) to allocate traceable but uncollectible memory, making
 it safe to refer to collectible objects from the resulting memory.
 
 If the user includes `gc_cpp.h` but `::new` should not be overridden then
-`libgctba` (in addition to the `gc`) library should be linked with to provide
+`gctba` (in addition to the `gc`) library should be linked with to provide
 the definition of `GC_throw_bad_alloc` C++ function used by operator `new` of
 class `gc`. Alternatively, the client may define `GC_NEW_ABORTS_ON_OOM` macro
 before include of `gc_cpp.h` (this instructs `::new` to issue an abort instead
@@ -206,7 +206,7 @@ It is also possible to use the C interface from `gc.h` directly. On platforms
 which use `malloc` to implement `::new`, it should usually be possible to use
 a version of the collector that has been compiled as a `malloc` replacement.
 It is also possible to replace `::new` and other allocation functions
-suitably, as is done by `libgccpp`.
+suitably, as is done by `gccpp`.
 
 Note that user-implemented small-block allocation often works poorly with
 an underlying garbage-collected large block allocator, since the collector has
