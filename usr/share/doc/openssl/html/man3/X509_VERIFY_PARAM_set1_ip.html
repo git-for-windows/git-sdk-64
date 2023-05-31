@@ -94,7 +94,7 @@ int X509_VERIFY_PARAM_set1_ip_asc(X509_VERIFY_PARAM *param, const char *ipasc);<
 
 <p>X509_VERIFY_PARAM_set_time() sets the verification time in <b>param</b> to <b>t</b>. Normally the current time is used.</p>
 
-<p>X509_VERIFY_PARAM_add0_policy() enables policy checking (it is disabled by default) and adds <b>policy</b> to the acceptable policy set.</p>
+<p>X509_VERIFY_PARAM_add0_policy() adds <b>policy</b> to the acceptable policy set. Contrary to preexisting documentation of this function it does not enable policy checking.</p>
 
 <p>X509_VERIFY_PARAM_set1_policies() enables policy checking (it is disabled by default) and sets the acceptable policy set to <b>policies</b>. Any existing policy set is cleared. The <b>policies</b> parameter can be <b>NULL</b> to clear an existing policy set.</p>
 
@@ -217,9 +217,11 @@ X509_VERIFY_PARAM_free(param);</code></pre>
 
 <p>The X509_VERIFY_PARAM_get_hostflags() function was added in OpenSSL 1.1.0i.</p>
 
+<p>The function X509_VERIFY_PARAM_add0_policy() was historically documented as enabling policy checking however the implementation has never done this. The documentation was changed to align with the implementation.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2009-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2009-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
