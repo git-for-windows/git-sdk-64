@@ -31,8 +31,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.11
 srcdir=		.
 
-abs_srcdir=	/c/S/B/src/Python-3.11.3
-abs_builddir=	/c/S/B/src/Python-3.11.3
+abs_srcdir=	/c/S/B/src/Python-3.11.4
+abs_builddir=	/c/S/B/src/Python-3.11.4
 
 
 CC=		gcc
@@ -2071,15 +2071,25 @@ TESTSUBDIRS=	ctypes/test \
 		lib2to3/tests/data \
 		lib2to3/tests/data/fixers \
 		lib2to3/tests/data/fixers/myfixes \
-		test test/audiodata \
-		test/capath test/cjkencodings \
-		test/data test/decimaltestdata \
-		test/dtracedata test/eintrdata \
-		test/encoded_modules test/imghdrdata \
-		test/libregrtest test/sndhdrdata \
-		test/subprocessdata test/support \
+		test \
+		test/audiodata \
+		test/capath \
+		test/cjkencodings \
+		test/crashers \
+		test/data \
+		test/decimaltestdata \
+		test/dtracedata \
+		test/encoded_modules \
+		test/imghdrdata \
+		test/leakers \
+		test/libregrtest \
+		test/sndhdrdata \
+		test/subprocessdata \
+		test/support \
 		test/test_asyncio \
-		test/test_email test/test_email/data \
+		test/test_capi \
+		test/test_email \
+		test/test_email/data \
 		test/test_import \
 		test/test_import/data \
 		test/test_import/data/circular_imports \
@@ -2132,16 +2142,40 @@ TESTSUBDIRS=	ctypes/test \
 		test/test_importlib/zipdata02 \
 		test/test_json \
 		test/test_peg_generator \
+		test/test_sqlite3 \
+		test/test_tomllib \
+		test/test_tomllib/data \
+		test/test_tomllib/data/invalid \
+		test/test_tomllib/data/invalid/array \
+		test/test_tomllib/data/invalid/array-of-tables \
+		test/test_tomllib/data/invalid/boolean \
+		test/test_tomllib/data/invalid/dates-and-times \
+		test/test_tomllib/data/invalid/dotted-keys \
+		test/test_tomllib/data/invalid/inline-table \
+		test/test_tomllib/data/invalid/keys-and-vals \
+		test/test_tomllib/data/invalid/literal-str \
+		test/test_tomllib/data/invalid/multiline-basic-str \
+		test/test_tomllib/data/invalid/multiline-literal-str \
+		test/test_tomllib/data/invalid/table \
+		test/test_tomllib/data/valid \
+		test/test_tomllib/data/valid/array \
+		test/test_tomllib/data/valid/dates-and-times \
+		test/test_tomllib/data/valid/multiline-basic-str \
 		test/test_tools \
-		test/test_warnings test/test_warnings/data \
-		test/test_zoneinfo test/test_zoneinfo/data \
+		test/test_warnings \
+		test/test_warnings/data \
+		test/test_zoneinfo \
+		test/test_zoneinfo/data \
 		test/tracedmodules \
 		test/typinganndata \
-		test/xmltestdata test/xmltestdata/c14n-20 \
+		test/xmltestdata \
+		test/xmltestdata/c14n-20 \
 		test/ziptestdata \
-		tkinter/test tkinter/test/test_tkinter \
+		tkinter/test \
+		tkinter/test/test_tkinter \
 		tkinter/test/test_ttk \
-		unittest/test unittest/test/testmock
+		unittest/test \
+		unittest/test/testmock
 
 TEST_MODULES=yes
 libinstall:	all $(srcdir)/Modules/xxmodule.c
