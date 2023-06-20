@@ -39,10 +39,10 @@ Defined by this header:
          /* the 'endwin_*' #defines below should be updated.             */
 #define PDC_VER_MAJOR    4
 #define PDC_VER_MINOR    3
-#define PDC_VER_CHANGE   6
+#define PDC_VER_CHANGE   7
 #define PDC_VER_YEAR   2023
-#define PDC_VER_MONTH    04
-#define PDC_VER_DAY      12
+#define PDC_VER_MONTH    06
+#define PDC_VER_DAY      17
 
 #define PDC_STRINGIZE( x) #x
 #define PDC_stringize( x) PDC_STRINGIZE( x)
@@ -70,7 +70,7 @@ Defined by this header:
 #include <stdio.h>
 
 #if defined( PDC_FORCE_UTF8) && !defined( PDC_WIDE)
-   #define PDC_WIDE
+   #define PDC_WIDE 1
 #endif
 
 #ifdef PDC_WIDE
@@ -160,7 +160,8 @@ enum PDC_port
     PDC_PORT_VT = 7,
     PDC_PORT_DOSVGA = 8,
     PDC_PORT_PLAN9 = 9,
-    PDC_PORT_LINUX_FB = 10
+    PDC_PORT_LINUX_FB = 10,
+    PDC_PORT_OPENGL = 11
 };
 
 /* Use this structure with PDC_get_version() for run-time info about the
@@ -523,8 +524,8 @@ a fourth bit is reserved.
 
 Default chtypes have enough character bits to support the full range of
 Unicode,  all attributes,  and 2^20 = 1048576 color pairs.  Note,  though,
-that as of 2022 Jun 17,  only WinGUI,  VT,  X11,  Linux framebuffer,  and
-SDLn have COLOR_PAIRS = 1048576.  Other platforms (DOSVGA,  Plan9, WinCon)
+that as of 2022 Jun 17,  only WinGUI,  VT,  X11,  Linux framebuffer,  OpenGL,
+and SDLn have COLOR_PAIRS = 1048576.  Other platforms (DOSVGA,  Plan9, WinCon)
 may join them.  Some (DOS,  OS/2) simply do not have full-color
 capability.
 
@@ -637,6 +638,92 @@ capability.
 #define ACS_HLINE         PDC_ACS('_')
 #define ACS_VLINE         PDC_ACS('`')
 
+/* Box char aliases.  The four characters tell you if a Single
+line points up, right, down,  and/or left from the center;
+or if it's Blank;  or if it's Thick or Double. */
+
+#define ACS_BSSB      ACS_ULCORNER
+#define ACS_SSBB      ACS_LLCORNER
+#define ACS_BBSS      ACS_URCORNER
+#define ACS_SBBS      ACS_LRCORNER
+#define ACS_SBSS      ACS_RTEE
+#define ACS_SSSB      ACS_LTEE
+#define ACS_SSBS      ACS_BTEE
+#define ACS_BSSS      ACS_TTEE
+#define ACS_BSBS      ACS_HLINE
+#define ACS_SBSB      ACS_VLINE
+#define ACS_SSSS      ACS_PLUS
+
+/* The following Single/Double,  Double,  and Double/Single box
+characters and their aliases are PDCursesMod extensions.  ncurses
+does have the wide-character versions of the Double-line box
+characters (and adds Thick box characters).  Aside from that,
+consider these to be completely non-portable. */
+
+#define ACS_SD_LRCORNER   PDC_ACS(';')
+#define ACS_SD_URCORNER   PDC_ACS('<')
+#define ACS_SD_ULCORNER   PDC_ACS('=')
+#define ACS_SD_LLCORNER   PDC_ACS('>')
+#define ACS_SD_LTEE       PDC_ACS('@')
+#define ACS_SD_RTEE       PDC_ACS('A')
+#define ACS_SD_BTEE       PDC_ACS('B')
+#define ACS_SD_TTEE       PDC_ACS('C')
+#define ACS_SD_PLUS       PDC_ACS('?')
+
+#define ACS_SBBD          ACS_SD_LRCORNER
+#define ACS_BBSD          ACS_SD_URCORNER
+#define ACS_BDSB          ACS_SD_ULCORNER
+#define ACS_SDBB          ACS_SD_LLCORNER
+#define ACS_SDSB          ACS_SD_LTEE
+#define ACS_SBSD          ACS_SD_RTEE
+#define ACS_SDBD          ACS_SD_BTEE
+#define ACS_BDSD          ACS_SD_TTEE
+#define ACS_SDSD          ACS_SD_PLUS
+
+#define ACS_D_LRCORNER    PDC_ACS('D')
+#define ACS_D_URCORNER    PDC_ACS('E')
+#define ACS_D_ULCORNER    PDC_ACS('F')
+#define ACS_D_LLCORNER    PDC_ACS('G')
+#define ACS_D_LTEE        PDC_ACS('I')
+#define ACS_D_RTEE        PDC_ACS('J')
+#define ACS_D_BTEE        PDC_ACS('K')
+#define ACS_D_TTEE        PDC_ACS('L')
+#define ACS_D_HLINE       PDC_ACS('a')
+#define ACS_D_VLINE       PDC_ACS('b')
+#define ACS_D_PLUS        PDC_ACS('H')
+
+#define ACS_DBBD          ACS_D_LRCORNER
+#define ACS_BBDD          ACS_D_URCORNER
+#define ACS_BDDB          ACS_D_ULCORNER
+#define ACS_DDBB          ACS_D_LLCORNER
+#define ACS_DDDB          ACS_D_LTEE
+#define ACS_DBDD          ACS_D_RTEE
+#define ACS_DDBD          ACS_D_BTEE
+#define ACS_BDDD          ACS_D_TTEE
+#define ACS_BDBD          ACS_D_HLINE
+#define ACS_DBDB          ACS_D_VLINE
+#define ACS_DDDD          ACS_D_PLUS
+
+#define ACS_DS_LRCORNER   PDC_ACS('M')
+#define ACS_DS_URCORNER   PDC_ACS('N')
+#define ACS_DS_ULCORNER   PDC_ACS('O')
+#define ACS_DS_LLCORNER   PDC_ACS('P')
+#define ACS_DS_LTEE       PDC_ACS('R')
+#define ACS_DS_RTEE       PDC_ACS('S')
+#define ACS_DS_BTEE       PDC_ACS('T')
+#define ACS_DS_TTEE       PDC_ACS('U')
+#define ACS_DS_PLUS       PDC_ACS('Q')
+
+#define ACS_DBBS      ACS_DS_LRCORNER
+#define ACS_BBDS      ACS_DS_URCORNER
+#define ACS_BSDB      ACS_DS_ULCORNER
+#define ACS_DSBB      ACS_DS_LLCORNER
+#define ACS_DSDB      ACS_DS_LTEE
+#define ACS_DBDS      ACS_DS_RTEE
+#define ACS_DSBS      ACS_DS_BTEE
+#define ACS_BSDS      ACS_DS_TTEE
+#define ACS_DSDS      ACS_DS_PLUS
+
 /* PDCurses-only ACS chars.  Don't use if ncurses compatibility matters.
 Some won't work in non-wide X11 builds (see 'acs_defs.h' for details). */
 
@@ -647,8 +734,6 @@ Some won't work in non-wide X11 builds (see 'acs_defs.h' for details). */
 #define ACS_QUARTER       PDC_ACS('\'')
 #define ACS_LEFT_ANG_QU   PDC_ACS(')')
 #define ACS_RIGHT_ANG_QU  PDC_ACS('*')
-#define ACS_D_HLINE       PDC_ACS('a')
-#define ACS_D_VLINE       PDC_ACS('b')
 #define ACS_CLUB          PDC_ACS( 11)
 #define ACS_HEART         PDC_ACS( 12)
 #define ACS_SPADE         PDC_ACS( 13)
@@ -697,36 +782,6 @@ Some won't work in non-wide X11 builds (see 'acs_defs.h' for details). */
 #define ACS_CENTER_SQU    PDC_ACS(30)
 #define ACS_F_WITH_HOOK   PDC_ACS(31)
 
-#define ACS_SD_LRCORNER   PDC_ACS(';')
-#define ACS_SD_URCORNER   PDC_ACS('<')
-#define ACS_SD_ULCORNER   PDC_ACS('=')
-#define ACS_SD_LLCORNER   PDC_ACS('>')
-#define ACS_SD_PLUS       PDC_ACS('?')
-#define ACS_SD_LTEE       PDC_ACS('@')
-#define ACS_SD_RTEE       PDC_ACS('A')
-#define ACS_SD_BTEE       PDC_ACS('B')
-#define ACS_SD_TTEE       PDC_ACS('C')
-
-#define ACS_D_LRCORNER    PDC_ACS('D')
-#define ACS_D_URCORNER    PDC_ACS('E')
-#define ACS_D_ULCORNER    PDC_ACS('F')
-#define ACS_D_LLCORNER    PDC_ACS('G')
-#define ACS_D_PLUS        PDC_ACS('H')
-#define ACS_D_LTEE        PDC_ACS('I')
-#define ACS_D_RTEE        PDC_ACS('J')
-#define ACS_D_BTEE        PDC_ACS('K')
-#define ACS_D_TTEE        PDC_ACS('L')
-
-#define ACS_DS_LRCORNER   PDC_ACS('M')
-#define ACS_DS_URCORNER   PDC_ACS('N')
-#define ACS_DS_ULCORNER   PDC_ACS('O')
-#define ACS_DS_LLCORNER   PDC_ACS('P')
-#define ACS_DS_PLUS       PDC_ACS('Q')
-#define ACS_DS_LTEE       PDC_ACS('R')
-#define ACS_DS_RTEE       PDC_ACS('S')
-#define ACS_DS_BTEE       PDC_ACS('T')
-#define ACS_DS_TTEE       PDC_ACS('U')
-
 /* VT100-compatible symbols -- other */
 
 #define ACS_S1            PDC_ACS('l')
@@ -761,38 +816,9 @@ Some won't work in non-wide X11 builds (see 'acs_defs.h' for details). */
 #define ACS_NEQUAL        PDC_ACS('%')
 #define ACS_STERLING      PDC_ACS('~')
 
-/* Box char aliases.  The four characters tell you if a Single
-line points up, right, down,  and/or left from the center;
-or if it's Blank;  or if it's Thick or Double.  The Thick
-ones are an ncurses extension;  the Double and Single/Double
-ones are a PDCursesMod extension. */
-
-#define ACS_BSSB      ACS_ULCORNER
-#define ACS_SSBB      ACS_LLCORNER
-#define ACS_BBSS      ACS_URCORNER
-#define ACS_SBBS      ACS_LRCORNER
-#define ACS_SBSS      ACS_RTEE
-#define ACS_SSSB      ACS_LTEE
-#define ACS_SSBS      ACS_BTEE
-#define ACS_BSSS      ACS_TTEE
-#define ACS_BSBS      ACS_HLINE
-#define ACS_SBSB      ACS_VLINE
-#define ACS_SSSS      ACS_PLUS
-
 /* cchar_t aliases */
 
 #ifdef PDC_WIDE
-# define WACS_LRCORNER      (&(acs_map['V']))
-# define WACS_URCORNER      (&(acs_map['W']))
-# define WACS_ULCORNER      (&(acs_map['X']))
-# define WACS_LLCORNER      (&(acs_map['Y']))
-# define WACS_PLUS          (&(acs_map['Z']))
-# define WACS_LTEE          (&(acs_map['[']))
-# define WACS_RTEE          (&(acs_map['\\']))
-# define WACS_BTEE          (&(acs_map[']']))
-# define WACS_TTEE          (&(acs_map['^']))
-# define WACS_HLINE         (&(acs_map['_']))
-# define WACS_VLINE         (&(acs_map['`']))
 
 # define WACS_CENT          (&(acs_map['{']))
 # define WACS_YEN           (&(acs_map['|']))
@@ -851,6 +877,36 @@ ones are a PDCursesMod extension. */
 # define WACS_CENTER_SQU    (&(acs_map[30]))
 # define WACS_F_WITH_HOOK   (&(acs_map[31]))
 
+/* See above comments about box characters and their aliases. The
+following eleven characters,  for single-line boxes,  are the only
+portable ones.  The thick and double-line characters are ncurses
+extensions.  The 'mixed' single-double and double-single
+characters are PDCursesMod extensions and totally non-portable. */
+
+# define WACS_LRCORNER      (&(acs_map['V']))
+# define WACS_URCORNER      (&(acs_map['W']))
+# define WACS_ULCORNER      (&(acs_map['X']))
+# define WACS_LLCORNER      (&(acs_map['Y']))
+# define WACS_PLUS          (&(acs_map['Z']))
+# define WACS_LTEE          (&(acs_map['[']))
+# define WACS_RTEE          (&(acs_map['\\']))
+# define WACS_BTEE          (&(acs_map[']']))
+# define WACS_TTEE          (&(acs_map['^']))
+# define WACS_HLINE         (&(acs_map['_']))
+# define WACS_VLINE         (&(acs_map['`']))
+
+# define WACS_SBBS     WACS_LRCORNER
+# define WACS_BBSS     WACS_URCORNER
+# define WACS_BSSB     WACS_ULCORNER
+# define WACS_SSBB     WACS_LLCORNER
+# define WACS_SSSS     WACS_PLUS
+# define WACS_SSSB     WACS_LTEE
+# define WACS_SBSS     WACS_RTEE
+# define WACS_SSBS     WACS_BTEE
+# define WACS_BSSS     WACS_TTEE
+# define WACS_BSBS     WACS_HLINE
+# define WACS_SBSB     WACS_VLINE
+
 # define WACS_SD_LRCORNER   (&(acs_map[';']))
 # define WACS_SD_URCORNER   (&(acs_map['<']))
 # define WACS_SD_ULCORNER   (&(acs_map['=']))
@@ -861,6 +917,16 @@ ones are a PDCursesMod extension. */
 # define WACS_SD_BTEE       (&(acs_map['B']))
 # define WACS_SD_TTEE       (&(acs_map['C']))
 
+# define WACS_SBBD     WACS_SD_LRCORNER
+# define WACS_BBSD     WACS_SD_URCORNER
+# define WACS_BDSB     WACS_SD_ULCORNER
+# define WACS_SDBB     WACS_SD_LLCORNER
+# define WACS_SDSD     WACS_SD_PLUS
+# define WACS_SDSB     WACS_SD_LTEE
+# define WACS_SBSD     WACS_SD_RTEE
+# define WACS_SDBD     WACS_SD_BTEE
+# define WACS_BDSD     WACS_SD_TTEE
+
 # define WACS_D_LRCORNER    (&(acs_map['D']))
 # define WACS_D_URCORNER    (&(acs_map['E']))
 # define WACS_D_ULCORNER    (&(acs_map['F']))
@@ -870,6 +936,18 @@ ones are a PDCursesMod extension. */
 # define WACS_D_RTEE        (&(acs_map['J']))
 # define WACS_D_BTEE        (&(acs_map['K']))
 # define WACS_D_TTEE        (&(acs_map['L']))
+
+# define WACS_DBBD     WACS_D_LRCORNER
+# define WACS_BBDD     WACS_D_URCORNER
+# define WACS_BDDB     WACS_D_ULCORNER
+# define WACS_DDBB     WACS_D_LLCORNER
+# define WACS_DDDD     WACS_D_PLUS
+# define WACS_DDDB     WACS_D_LTEE
+# define WACS_DBDD     WACS_D_RTEE
+# define WACS_DDBD     WACS_D_BTEE
+# define WACS_BDDD     WACS_D_TTEE
+# define WACS_BDBD     WACS_D_HLINE
+# define WACS_DBDB     WACS_D_VLINE
 
 # define WACS_T_LRCORNER    (&(acs_map[0]))
 # define WACS_T_URCORNER    (&(acs_map[1]))
@@ -883,6 +961,18 @@ ones are a PDCursesMod extension. */
 # define WACS_T_HLINE       (&(acs_map[9]))
 # define WACS_T_VLINE       (&(acs_map[10]))
 
+# define WACS_TBBT     WACS_T_LRCORNER
+# define WACS_BBTT     WACS_T_URCORNER
+# define WACS_BTTB     WACS_T_ULCORNER
+# define WACS_TTBB     WACS_T_LLCORNER
+# define WACS_TTTT     WACS_T_PLUS
+# define WACS_TTTB     WACS_T_LTEE
+# define WACS_TBTT     WACS_T_RTEE
+# define WACS_TTBT     WACS_T_BTEE
+# define WACS_BTTS     WACS_T_TTEE
+# define WACS_BTBT     WACS_T_HLINE
+# define WACS_TBTB     WACS_T_VLINE
+
 # define WACS_DS_LRCORNER   (&(acs_map['M']))
 # define WACS_DS_URCORNER   (&(acs_map['N']))
 # define WACS_DS_ULCORNER   (&(acs_map['O']))
@@ -893,6 +983,16 @@ ones are a PDCursesMod extension. */
 # define WACS_DS_BTEE       (&(acs_map['T']))
 # define WACS_DS_TTEE       (&(acs_map['U']))
 
+# define WACS_DBBS     WACS_DS_LRCORNER
+# define WACS_BBDS     WACS_DS_URCORNER
+# define WACS_BSDB     WACS_DS_ULCORNER
+# define WACS_DSBB     WACS_DS_LLCORNER
+# define WACS_DSDS     WACS_DS_PLUS
+# define WACS_DSDB     WACS_DS_LTEE
+# define WACS_DBDS     WACS_DS_RTEE
+# define WACS_DSBS     WACS_DS_BTEE
+# define WACS_BSDS     WACS_DS_TTEE
+
 # define WACS_S1            (&(acs_map['l']))
 # define WACS_S9            (&(acs_map['o']))
 # define WACS_DIAMOND       (&(acs_map['j']))
@@ -900,7 +1000,6 @@ ones are a PDCursesMod extension. */
 # define WACS_DEGREE        (&(acs_map['w']))
 # define WACS_PLMINUS       (&(acs_map['x']))
 # define WACS_BULLET        (&(acs_map['h']))
-
 
 # define WACS_LARROW        (&(acs_map['!']))
 # define WACS_RARROW        (&(acs_map[' ']))
@@ -918,30 +1017,6 @@ ones are a PDCursesMod extension. */
 # define WACS_PI            (&(acs_map['$']))
 # define WACS_NEQUAL        (&(acs_map['%']))
 # define WACS_STERLING      (&(acs_map['~']))
-
-# define WACS_BSSB     WACS_ULCORNER
-# define WACS_SSBB     WACS_LLCORNER
-# define WACS_BBSS     WACS_URCORNER
-# define WACS_SBBS     WACS_LRCORNER
-# define WACS_SBSS     WACS_RTEE
-# define WACS_SSSB     WACS_LTEE
-# define WACS_SSBS     WACS_BTEE
-# define WACS_BSSS     WACS_TTEE
-# define WACS_BSBS     WACS_HLINE
-# define WACS_SBSB     WACS_VLINE
-# define WACS_SSSS     WACS_PLUS
-
-# define WACS_BTTB     WACS_T_ULCORNER
-# define WACS_TTBB     WACS_T_LLCORNER
-# define WACS_BBTT     WACS_T_URCORNER
-# define WACS_TBBT     WACS_T_LRCORNER
-# define WACS_TBTT     WACS_T_RTEE
-# define WACS_TTTB     WACS_T_LTEE
-# define WACS_TTBT     WACS_T_BTEE
-# define WACS_BTTS     WACS_T_TTEE
-# define WACS_BTBT     WACS_T_HLINE
-# define WACS_TBTB     WACS_T_VLINE
-# define WACS_TTTT     WACS_T_PLUS
 #endif
 
 /*** Color macros ***/
@@ -1715,7 +1790,6 @@ PDCEX  bool    is_idlok(const WINDOW *);
 PDCEX  bool    is_immedok(const WINDOW *);
 PDCEX  bool    is_keypad(const WINDOW *);
 PDCEX  bool    is_leaveok(const WINDOW *);
-PDCEX  bool    is_leaveok(const WINDOW *);
 PDCEX  bool    is_nodelay(const WINDOW *);
 PDCEX  bool    is_notimeout(const WINDOW *);
 PDCEX  bool    is_pad(const WINDOW *);
@@ -1838,7 +1912,7 @@ PDCEX  int     wunderscore(WINDOW *);
 #define getparyx(w, y, x)  (y = getpary(w), x = getparx(w))
 #define getyx(w, y, x)     (y = getcury(w), x = getcurx(w))
 
-#define getsyx(y, x)       { if (curscr->_leaveit) (y)=(x)=-1; \
+#define getsyx(y, x)       { if (is_leaveok( curscr)) (y)=(x)=-1; \
                              else getyx(curscr,(y),(x)); }
 
 #ifdef NCURSES_MOUSE_VERSION
