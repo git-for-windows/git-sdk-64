@@ -29,24 +29,26 @@
 
 <pre><code>#include &lt;openssl/x509.h&gt;
 
-int X509_NAME_print_ex(BIO *out, const X509_NAME *nm, int indent, unsigned long flags);
-int X509_NAME_print_ex_fp(FILE *fp, const X509_NAME *nm, int indent, unsigned long flags);
+int X509_NAME_print_ex(BIO *out, const X509_NAME *nm,
+                       int indent, unsigned long flags);
+int X509_NAME_print_ex_fp(FILE *fp, const X509_NAME *nm,
+                          int indent, unsigned long flags);
 char *X509_NAME_oneline(const X509_NAME *a, char *buf, int size);
 int X509_NAME_print(BIO *bp, const X509_NAME *name, int obase);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>X509_NAME_print_ex() prints a human readable version of <b>nm</b> to BIO <b>out</b>. Each line (for multiline formats) is indented by <b>indent</b> spaces. The output format can be extensively customised by use of the <b>flags</b> parameter.</p>
+<p>X509_NAME_print_ex() prints a human readable version of <i>nm</i> to BIO <i>out</i>. Each line (for multiline formats) is indented by <i>indent</i> spaces. The output format can be extensively customised by use of the <i>flags</i> parameter.</p>
 
-<p>X509_NAME_print_ex_fp() is identical to X509_NAME_print_ex() except the output is written to FILE pointer <b>fp</b>.</p>
+<p>X509_NAME_print_ex_fp() is identical to X509_NAME_print_ex() except the output is written to FILE pointer <i>fp</i>.</p>
 
-<p>X509_NAME_oneline() prints an ASCII version of <b>a</b> to <b>buf</b>. If <b>buf</b> is <b>NULL</b> then a buffer is dynamically allocated and returned, and <b>size</b> is ignored. Otherwise, at most <b>size</b> bytes will be written, including the ending &#39;\0&#39;, and <b>buf</b> is returned.</p>
+<p>X509_NAME_oneline() prints an ASCII version of <i>a</i> to <i>buf</i>. This supports multi-valued RDNs and escapes <b>/</b> and <b>+</b> characters in values. If <i>buf</i> is <b>NULL</b> then a buffer is dynamically allocated and returned, and <i>size</i> is ignored. Otherwise, at most <i>size</i> bytes will be written, including the ending &#39;\0&#39;, and <i>buf</i> is returned.</p>
 
-<p>X509_NAME_print() prints out <b>name</b> to <b>bp</b> indenting each line by <b>obase</b> characters. Multiple lines are used if the output (including indent) exceeds 80 characters.</p>
+<p>X509_NAME_print() prints out <i>name</i> to <i>bp</i> indenting each line by <i>obase</i> characters. Multiple lines are used if the output (including indent) exceeds 80 characters.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>The functions X509_NAME_oneline() and X509_NAME_print() produce a non standard output form, they don&#39;t handle multi character fields and have various quirks and inconsistencies. Their use is strongly discouraged in new applications and they could be deprecated in a future release.</p>
+<p>The functions X509_NAME_oneline() and X509_NAME_print() produce a non standard output form, they don&#39;t handle multi-character fields and have various quirks and inconsistencies. Their use is strongly discouraged in new applications and they could be deprecated in a future release.</p>
 
 <p>Although there are a large number of possible flags for most purposes <b>XN_FLAG_ONELINE</b>, <b>XN_FLAG_MULTILINE</b> or <b>XN_FLAG_RFC2253</b> will suffice. As noted on the <a href="../man3/ASN1_STRING_print_ex.html">ASN1_STRING_print_ex(3)</a> manual page for UTF8 terminals the <b>ASN1_STRFLGS_ESC_MSB</b> should be unset: so for example <b>XN_FLAG_ONELINE &amp; ~ASN1_STRFLGS_ESC_MSB</b> would be used.</p>
 
@@ -72,11 +74,11 @@ int X509_NAME_print(BIO *bp, const X509_NAME *name, int obase);</code></pre>
 
 <p>In addition a number options can be set for commonly used formats.</p>
 
-<p><b>XN_FLAG_RFC2253</b> sets options which produce an output compatible with RFC2253 it is equivalent to: <b>ASN1_STRFLGS_RFC2253 | XN_FLAG_SEP_COMMA_PLUS | XN_FLAG_DN_REV | XN_FLAG_FN_SN | XN_FLAG_DUMP_UNKNOWN_FIELDS</b></p>
+<p><b>XN_FLAG_RFC2253</b> sets options which produce an output compatible with RFC2253. It is equivalent to: <code>ASN1_STRFLGS_RFC2253 | XN_FLAG_SEP_COMMA_PLUS | XN_FLAG_DN_REV | XN_FLAG_FN_SN | XN_FLAG_DUMP_UNKNOWN_FIELDS</code></p>
 
-<p><b>XN_FLAG_ONELINE</b> is a more readable one line format which is the same as: <b>ASN1_STRFLGS_RFC2253 | ASN1_STRFLGS_ESC_QUOTE | XN_FLAG_SEP_CPLUS_SPC | XN_FLAG_SPC_EQ | XN_FLAG_FN_SN</b></p>
+<p><b>XN_FLAG_ONELINE</b> is a more readable one line format which is the same as: <code>ASN1_STRFLGS_RFC2253 | ASN1_STRFLGS_ESC_QUOTE | XN_FLAG_SEP_CPLUS_SPC | XN_FLAG_SPC_EQ | XN_FLAG_FN_SN</code></p>
 
-<p><b>XN_FLAG_MULTILINE</b> is a multiline format which is the same as: <b>ASN1_STRFLGS_ESC_CTRL | ASN1_STRFLGS_ESC_MSB | XN_FLAG_SEP_MULTILINE | XN_FLAG_SPC_EQ | XN_FLAG_FN_LN | XN_FLAG_FN_ALIGN</b></p>
+<p><b>XN_FLAG_MULTILINE</b> is a multiline format which is the same as: <code>ASN1_STRFLGS_ESC_CTRL | ASN1_STRFLGS_ESC_MSB | XN_FLAG_SEP_MULTILINE | XN_FLAG_SPC_EQ | XN_FLAG_FN_LN | XN_FLAG_FN_ALIGN</code></p>
 
 <p><b>XN_FLAG_COMPAT</b> uses a format identical to X509_NAME_print(): in fact it calls X509_NAME_print() internally.</p>
 
@@ -94,9 +96,9 @@ int X509_NAME_print(BIO *bp, const X509_NAME *name, int obase);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

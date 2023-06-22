@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>dgst</title>
+<title>openssl-dgst</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:" />
 </head>
@@ -18,25 +18,24 @@
   <li><a href="#OPTIONS">OPTIONS</a></li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>openssl-dgst, dgst - perform digest operations</p>
+<p>openssl-dgst - perform digest operations</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl dgst</b> [<b>-<i>digest</i></b>] [<b>-help</b>] [<b>-c</b>] [<b>-d</b>] [<b>-list</b>] [<b>-hex</b>] [<b>-binary</b>] [<b>-r</b>] [<b>-out filename</b>] [<b>-sign filename</b>] [<b>-keyform arg</b>] [<b>-passin arg</b>] [<b>-verify filename</b>] [<b>-prverify filename</b>] [<b>-signature filename</b>] [<b>-sigopt nm:v</b>] [<b>-hmac key</b>] [<b>-fips-fingerprint</b>] [<b>-rand file...</b>] [<b>-engine id</b>] [<b>-engine_impl</b>] [<b>file...</b>]</p>
-
-<p><b>openssl</b> <i>digest</i> [<b>...</b>]</p>
+<p><b>openssl</b> <b>dgst</b>|<i>digest</i> [<b>-<i>digest</i></b>] [<b>-list</b>] [<b>-help</b>] [<b>-c</b>] [<b>-d</b>] [<b>-debug</b>] [<b>-hex</b>] [<b>-binary</b>] [<b>-xoflen</b> <i>length</i>] [<b>-r</b>] [<b>-out</b> <i>filename</i>] [<b>-sign</b> <i>filename</i>|<i>uri</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-passin</b> <i>arg</i>] [<b>-verify</b> <i>filename</i>] [<b>-prverify</b> <i>filename</i>] [<b>-signature</b> <i>filename</i>] [<b>-sigopt</b> <i>nm</i>:<i>v</i>] [<b>-hmac</b> <i>key</i>] [<b>-mac</b> <i>alg</i>] [<b>-macopt</b> <i>nm</i>:<i>v</i>] [<b>-fips-fingerprint</b>] [<b>-engine</b> <i>id</i>] [<b>-engine_impl</b> <i>id</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<i>file</i> ...]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The digest functions output the message digest of a supplied file or files in hexadecimal. The digest functions also generate and verify digital signatures using message digests.</p>
+<p>This command output the message digest of a supplied file or files in hexadecimal, and also generates and verifies digital signatures using message digests.</p>
 
-<p>The generic name, <b>dgst</b>, may be used with an option specifying the algorithm to be used. The default digest is <i>sha256</i>. A supported <i>digest</i> name may also be used as the command name. To see the list of supported algorithms, use the <i>list --digest-commands</i> command.</p>
+<p>The generic name, <b>openssl dgst</b>, may be used with an option specifying the algorithm to be used. The default digest is <b>sha256</b>. A supported <i>digest</i> name may also be used as the sub-command name. To see the list of supported algorithms, use <code>openssl list -digest-algorithms</code></p>
 
 <h1 id="OPTIONS">OPTIONS</h1>
 
@@ -51,25 +50,25 @@
 <dt id="digest"><b>-<i>digest</i></b></dt>
 <dd>
 
-<p>Specifies name of a supported digest to be used. To see the list of supported digests, use the command <i>list --digest-commands</i>.</p>
-
-</dd>
-<dt id="c"><b>-c</b></dt>
-<dd>
-
-<p>Print out the digest in two digit groups separated by colons, only relevant if <b>hex</b> format output is used.</p>
-
-</dd>
-<dt id="d"><b>-d</b></dt>
-<dd>
-
-<p>Print out BIO debugging information.</p>
+<p>Specifies name of a supported digest to be used. See option <b>-list</b> below :</p>
 
 </dd>
 <dt id="list"><b>-list</b></dt>
 <dd>
 
 <p>Prints out a list of supported message digests.</p>
+
+</dd>
+<dt id="c"><b>-c</b></dt>
+<dd>
+
+<p>Print out the digest in two digit groups separated by colons, only relevant if the <b>-hex</b> option is given as well.</p>
+
+</dd>
+<dt id="d--debug"><b>-d</b>, <b>-debug</b></dt>
+<dd>
+
+<p>Print out BIO debugging information.</p>
 
 </dd>
 <dt id="hex"><b>-hex</b></dt>
@@ -84,86 +83,102 @@
 <p>Output the digest or signature in binary form.</p>
 
 </dd>
+<dt id="xoflen-length"><b>-xoflen</b> <i>length</i></dt>
+<dd>
+
+<p>Set the output length for XOF algorithms, such as <b>shake128</b> and <b>shake256</b>. This option is not supported for signing operations.</p>
+
+<p>For OpenSSL providers it is recommended to set this value for shake algorithms, since the default values are set to only supply half of the maximum security strength.</p>
+
+<p>For backwards compatibility reasons the default xoflen length for <b>shake128</b> is 16 (bytes) which results in a security strength of only 64 bits. To ensure the maximum security strength of 128 bits, the xoflen should be set to at least 32.</p>
+
+<p>For backwards compatibility reasons the default xoflen length for <b>shake256</b> is 32 (bytes) which results in a security strength of only 128 bits. To ensure the maximum security strength of 256 bits, the xoflen should be set to at least 64.</p>
+
+</dd>
 <dt id="r"><b>-r</b></dt>
 <dd>
 
-<p>Output the digest in the &quot;coreutils&quot; format, including newlines. Used by programs like <b>sha1sum</b>.</p>
+<p>Output the digest in the &quot;coreutils&quot; format, including newlines. Used by programs like <a href="../man1/sha1sum.html">sha1sum(1)</a>.</p>
 
 </dd>
-<dt id="out-filename"><b>-out filename</b></dt>
+<dt id="out-filename"><b>-out</b> <i>filename</i></dt>
 <dd>
 
 <p>Filename to output to, or standard output by default.</p>
 
 </dd>
-<dt id="sign-filename"><b>-sign filename</b></dt>
+<dt id="sign-filename-uri"><b>-sign</b> <i>filename</i>|<i>uri</i></dt>
 <dd>
 
-<p>Digitally sign the digest using the private key in &quot;filename&quot;. Note this option does not support Ed25519 or Ed448 private keys.</p>
+<p>Digitally sign the digest using the given private key. Note this option does not support Ed25519 or Ed448 private keys. Use the <a href="../man1/openssl-pkeyutl.html">openssl-pkeyutl(1)</a> command instead for this.</p>
 
 </dd>
-<dt id="keyform-arg"><b>-keyform arg</b></dt>
+<dt id="keyform-DER-PEM-P12-ENGINE"><b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b></dt>
 <dd>
 
-<p>Specifies the key format to sign digest with. The DER, PEM, P12, and ENGINE formats are supported.</p>
+<p>The format of the key to sign with; unspecified by default. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
 
 </dd>
-<dt id="sigopt-nm:v"><b>-sigopt nm:v</b></dt>
+<dt id="sigopt-nm:v"><b>-sigopt</b> <i>nm</i>:<i>v</i></dt>
 <dd>
 
 <p>Pass options to the signature algorithm during sign or verify operations. Names and values of these options are algorithm-specific.</p>
 
 </dd>
-<dt id="passin-arg"><b>-passin arg</b></dt>
+<dt id="passin-arg"><b>-passin</b> <i>arg</i></dt>
 <dd>
 
-<p>The private key password source. For more information about the format of <b>arg</b> see <a href="../man1/openssl.html">&quot;Pass Phrase Options&quot; in openssl(1)</a>.</p>
+<p>The private key password source. For more information about the format of <i>arg</i> see <a href="../man1/openssl-passphrase-options.html">openssl-passphrase-options(1)</a>.</p>
 
 </dd>
-<dt id="verify-filename"><b>-verify filename</b></dt>
+<dt id="verify-filename"><b>-verify</b> <i>filename</i></dt>
 <dd>
 
-<p>Verify the signature using the public key in &quot;filename&quot;. The output is either &quot;Verification OK&quot; or &quot;Verification Failure&quot;.</p>
+<p>Verify the signature using the public key in &quot;filename&quot;. The output is either &quot;Verified OK&quot; or &quot;Verification Failure&quot;.</p>
 
 </dd>
-<dt id="prverify-filename"><b>-prverify filename</b></dt>
+<dt id="prverify-filename"><b>-prverify</b> <i>filename</i></dt>
 <dd>
 
 <p>Verify the signature using the private key in &quot;filename&quot;.</p>
 
 </dd>
-<dt id="signature-filename"><b>-signature filename</b></dt>
+<dt id="signature-filename"><b>-signature</b> <i>filename</i></dt>
 <dd>
 
 <p>The actual signature to verify.</p>
 
 </dd>
-<dt id="hmac-key"><b>-hmac key</b></dt>
+<dt id="hmac-key"><b>-hmac</b> <i>key</i></dt>
 <dd>
 
 <p>Create a hashed MAC using &quot;key&quot;.</p>
 
+<p>The <a href="../man1/openssl-mac.html">openssl-mac(1)</a> command should be preferred to using this command line option.</p>
+
 </dd>
-<dt id="mac-alg"><b>-mac alg</b></dt>
+<dt id="mac-alg"><b>-mac</b> <i>alg</i></dt>
 <dd>
 
-<p>Create MAC (keyed Message Authentication Code). The most popular MAC algorithm is HMAC (hash-based MAC), but there are other MAC algorithms which are not based on hash, for instance <b>gost-mac</b> algorithm, supported by <b>ccgost</b> engine. MAC keys and other options should be set via <b>-macopt</b> parameter.</p>
+<p>Create MAC (keyed Message Authentication Code). The most popular MAC algorithm is HMAC (hash-based MAC), but there are other MAC algorithms which are not based on hash, for instance <b>gost-mac</b> algorithm, supported by the <b>gost</b> engine. MAC keys and other options should be set via <b>-macopt</b> parameter.</p>
+
+<p>The <a href="../man1/openssl-mac.html">openssl-mac(1)</a> command should be preferred to using this command line option.</p>
 
 </dd>
-<dt id="macopt-nm:v"><b>-macopt nm:v</b></dt>
+<dt id="macopt-nm:v"><b>-macopt</b> <i>nm</i>:<i>v</i></dt>
 <dd>
 
 <p>Passes options to MAC algorithm, specified by <b>-mac</b> key. Following options are supported by both by <b>HMAC</b> and <b>gost-mac</b>:</p>
 
 <dl>
 
-<dt id="key:string"><b>key:string</b></dt>
+<dt id="key:string"><b>key</b>:<i>string</i></dt>
 <dd>
 
 <p>Specifies MAC key as alphanumeric string (use if key contain printable characters only). String length must conform to any restrictions of the MAC algorithm for example exactly 32 chars for gost-mac.</p>
 
 </dd>
-<dt id="hexkey:string"><b>hexkey:string</b></dt>
+<dt id="hexkey:string"><b>hexkey</b>:<i>string</i></dt>
 <dd>
 
 <p>Specifies MAC key in hexadecimal form (two hex digits per byte). Key length must conform to any restrictions of the MAC algorithm for example exactly 32 chars for gost-mac.</p>
@@ -171,17 +186,7 @@
 </dd>
 </dl>
 
-</dd>
-<dt id="rand-file"><b>-rand file...</b></dt>
-<dd>
-
-<p>A file or files containing random data used to seed the random number generator. Multiple files can be specified separated by an OS-dependent character. The separator is <b>;</b> for MS-Windows, <b>,</b> for OpenVMS, and <b>:</b> for all others.</p>
-
-</dd>
-<dt id="writerand-file">[<b>-writerand file</b>]</dt>
-<dd>
-
-<p>Writes random data to the specified <i>file</i> upon exit. This can be used with a subsequent <b>-rand</b> flag.</p>
+<p>The <a href="../man1/openssl-mac.html">openssl-mac(1)</a> command should be preferred to using this command line option.</p>
 
 </dd>
 <dt id="fips-fingerprint"><b>-fips-fingerprint</b></dt>
@@ -190,19 +195,41 @@
 <p>Compute HMAC using a specific key for certain OpenSSL-FIPS operations.</p>
 
 </dd>
-<dt id="engine-id"><b>-engine id</b></dt>
+<dt id="rand-files--writerand-file"><b>-rand</b> <i>files</i>, <b>-writerand</b> <i>file</i></dt>
 <dd>
 
-<p>Use engine <b>id</b> for operations (including private key storage). This engine is not used as source for digest algorithms, unless it is also specified in the configuration file or <b>-engine_impl</b> is also specified.</p>
+<p>See <a href="../man1/openssl.html">&quot;Random State Options&quot; in openssl(1)</a> for details.</p>
 
 </dd>
-<dt id="engine_impl"><b>-engine_impl</b></dt>
+<dt id="engine-id"><b>-engine</b> <i>id</i></dt>
 <dd>
 
-<p>When used with the <b>-engine</b> option, it specifies to also use engine <b>id</b> for digest operations.</p>
+<p>See <a href="../man1/openssl.html">&quot;Engine Options&quot; in openssl(1)</a>. This option is deprecated.</p>
+
+<p>The engine is not used for digests unless the <b>-engine_impl</b> option is used or it is configured to do so, see <a href="../man5/config.html">&quot;Engine Configuration Module&quot; in config(5)</a>.</p>
 
 </dd>
-<dt id="file"><b>file...</b></dt>
+<dt id="engine_impl-id"><b>-engine_impl</b> <i>id</i></dt>
+<dd>
+
+<p>When used with the <b>-engine</b> option, it specifies to also use engine <i>id</i> for digest operations.</p>
+
+</dd>
+<dt id="provider-name"><b>-provider</b> <i>name</i></dt>
+<dd>
+
+</dd>
+<dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="propquery-propq"><b>-propquery</b> <i>propq</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Provider Options&quot; in openssl(1)</a>, <a href="../man7/provider.html">provider(7)</a>, and <a href="../man7/property.html">property(7)</a>.</p>
+
+</dd>
+<dt id="file"><i>file</i> ...</dt>
 <dd>
 
 <p>File or files to digest. If no files are specified then standard input is used.</p>
@@ -212,19 +239,31 @@
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
-<p>To create a hex-encoded message digest of a file: openssl dgst -md5 -hex file.txt</p>
+<p>To create a hex-encoded message digest of a file:</p>
 
-<p>To sign a file using SHA-256 with binary file output: openssl dgst -sha256 -sign privatekey.pem -out signature.sign file.txt</p>
+<pre><code>openssl dgst -md5 -hex file.txt
+or
+openssl md5 file.txt</code></pre>
 
-<p>To verify a signature: openssl dgst -sha256 -verify publickey.pem \ -signature signature.sign \ file.txt</p>
+<p>To sign a file using SHA-256 with binary file output:</p>
+
+<pre><code>openssl dgst -sha256 -sign privatekey.pem -out signature.sign file.txt
+or
+openssl sha256 -sign privatekey.pem -out signature.sign file.txt</code></pre>
+
+<p>To verify a signature:</p>
+
+<pre><code>openssl dgst -sha256 -verify publickey.pem \
+-signature signature.sign \
+file.txt</code></pre>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>The digest mechanisms that are available will depend on the options used when building OpenSSL. The <b>list digest-commands</b> command can be used to list them.</p>
+<p>The digest mechanisms that are available will depend on the options used when building OpenSSL. The <code>openssl list -digest-algorithms</code> command can be used to list them.</p>
 
 <p>New or agile applications should use probably use SHA-256. Other digests, particularly SHA-1 and MD5, are still widely used for interoperating with existing formats and protocols.</p>
 
-<p>When signing a file, <b>dgst</b> will automatically determine the algorithm (RSA, ECC, etc) to use for signing based on the private key&#39;s ASN.1 info. When verifying signatures, it only handles the RSA, DSA, or ECDSA signature itself, not the related data to identify the signer and algorithm used in formats such as x.509, CMS, and S/MIME.</p>
+<p>When signing a file, this command will automatically determine the algorithm (RSA, ECC, etc) to use for signing based on the private key&#39;s ASN.1 info. When verifying signatures, it only handles the RSA, DSA, or ECDSA signature itself, not the related data to identify the signer and algorithm used in formats such as x.509, CMS, and S/MIME.</p>
 
 <p>A source of random numbers is required for certain signing algorithms, in particular ECDSA and DSA.</p>
 
@@ -232,15 +271,23 @@
 
 <p>Hex signatures cannot be verified using <b>openssl</b>. Instead, use &quot;xxd -r&quot; or similar program to transform the hex signature into a binary signature prior to verification.</p>
 
+<p>The <a href="../man1/openssl-mac.html">openssl-mac(1)</a> command is preferred over the <b>-hmac</b>, <b>-mac</b> and <b>-macopt</b> command line options.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man1/openssl-mac.html">openssl-mac(1)</a></p>
+
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>The default digest was changed from MD5 to SHA256 in OpenSSL 1.1.0. The FIPS-related options were removed in OpenSSL 1.1.0.</p>
 
+<p>The <b>-engine</b> and <b>-engine_impl</b> options were deprecated in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

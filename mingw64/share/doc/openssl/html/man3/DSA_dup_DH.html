@@ -18,6 +18,7 @@
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#NOTE">NOTE</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -27,11 +28,15 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/dsa.h&gt;
+<pre><code>#include &lt;openssl/dsa.h&gt;</code></pre>
 
-DH *DSA_dup_DH(const DSA *r);</code></pre>
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>DH *DSA_dup_DH(const DSA *r);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>The function described on this page is deprecated. There is no direct replacement, applications should use the EVP_PKEY APIs for Diffie-Hellman operations.</p>
 
 <p>DSA_dup_DH() duplicates DSA parameters/keys as DH parameters/keys. q is lost during that conversion, but the resulting DH parameters contain its length.</p>
 
@@ -47,11 +52,15 @@ DH *DSA_dup_DH(const DSA *r);</code></pre>
 
 <p><a href="../man3/DH_new.html">DH_new(3)</a>, <a href="../man3/DSA_new.html">DSA_new(3)</a>, <a href="../man3/ERR_get_error.html">ERR_get_error(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>This function was deprecated in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

@@ -24,17 +24,17 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>openssl-tsget, tsget - Time Stamping HTTP/HTTPS client</p>
+<p>tsget - Time Stamping HTTP/HTTPS client</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>tsget</b> <b>-h</b> server_url [<b>-e</b> extension] [<b>-o</b> output] [<b>-v</b>] [<b>-d</b>] [<b>-k</b> private_key.pem] [<b>-p</b> key_password] [<b>-c</b> client_cert.pem] [<b>-C</b> CA_certs.pem] [<b>-P</b> CA_path] [<b>-r</b> file:file...] [<b>-g</b> EGD_socket] [request]...</p>
+<p><b>tsget</b> <b>-h</b> <i>server_url</i> [<b>-e</b> <i>extension</i>] [<b>-o</b> <i>output</i>] [<b>-v</b>] [<b>-d</b>] [<b>-k</b> <i>private_key.pem</i>] [<b>-p</b> <i>key_password</i>] [<b>-c</b> <i>client_cert.pem</i>] [<b>-C</b> <i>CA_certs.pem</i>] [<b>-P</b> <i>CA_path</i>] [<b>-r</b> <i>files</i>] [<b>-g</b> <i>EGD_socket</i>] [<i>request</i> ...]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The <b>tsget</b> command can be used for sending a timestamp request, as specified in <b>RFC 3161</b>, to a timestamp server over HTTP or HTTPS and storing the timestamp response in a file. This tool cannot be used for creating the requests and verifying responses, you can use the OpenSSL <b>ts(1)</b> command to do that. <b>tsget</b> can send several requests to the server without closing the TCP connection if more than one requests are specified on the command line.</p>
+<p>This command can be used for sending a timestamp request, as specified in RFC 3161, to a timestamp server over HTTP or HTTPS and storing the timestamp response in a file. It cannot be used for creating the requests and verifying responses, you have to use <a href="../man1/openssl-ts.html">openssl-ts(1)</a> to do that. This command can send several requests to the server without closing the TCP connection if more than one requests are specified on the command line.</p>
 
-<p>The tool sends the following HTTP request for each timestamp request:</p>
+<p>This command sends the following HTTP request for each timestamp request:</p>
 
 <pre><code>POST url HTTP/1.1
 User-Agent: OpenTSA tsget.pl/&lt;version&gt;
@@ -46,25 +46,25 @@ Content-Length: length of body
 
 ...binary request specified by the user...</code></pre>
 
-<p><b>tsget</b> expects a response of type application/timestamp-reply, which is written to a file without any interpretation.</p>
+<p>It expects a response of type application/timestamp-reply, which is written to a file without any interpretation.</p>
 
 <h1 id="OPTIONS">OPTIONS</h1>
 
 <dl>
 
-<dt id="h-server_url"><b>-h</b> server_url</dt>
+<dt id="h-server_url"><b>-h</b> <i>server_url</i></dt>
 <dd>
 
 <p>The URL of the HTTP/HTTPS server listening for timestamp requests.</p>
 
 </dd>
-<dt id="e-extension"><b>-e</b> extension</dt>
+<dt id="e-extension"><b>-e</b> <i>extension</i></dt>
 <dd>
 
-<p>If the <b>-o</b> option is not given this argument specifies the extension of the output files. The base name of the output file will be the same as those of the input files. Default extension is &#39;.tsr&#39;. (Optional)</p>
+<p>If the <b>-o</b> option is not given this argument specifies the extension of the output files. The base name of the output file will be the same as those of the input files. Default extension is <i>.tsr</i>. (Optional)</p>
 
 </dd>
-<dt id="o-output"><b>-o</b> output</dt>
+<dt id="o-output"><b>-o</b> <i>output</i></dt>
 <dd>
 
 <p>This option can be specified only when just one request is sent to the server. The timestamp response will be written to the given output file. &#39;-&#39; means standard output. In case of multiple timestamp requests or the absence of this argument the names of the output files will be derived from the names of the input files and the default or specified extension argument. (Optional)</p>
@@ -79,55 +79,55 @@ Content-Length: length of body
 <dt id="d"><b>-d</b></dt>
 <dd>
 
-<p>Switches on verbose mode for the underlying <b>curl</b> library. You can see detailed debug messages for the connection. (Optional)</p>
+<p>Switches on verbose mode for the underlying perl module <a>WWW::Curl::Easy</a>. You can see detailed debug messages for the connection. (Optional)</p>
 
 </dd>
-<dt id="k-private_key.pem"><b>-k</b> private_key.pem</dt>
+<dt id="k-private_key.pem"><b>-k</b> <i>private_key.pem</i></dt>
 <dd>
 
-<p>(HTTPS) In case of certificate-based client authentication over HTTPS &lt;private_key.pem&gt; must contain the private key of the user. The private key file can optionally be protected by a passphrase. The <b>-c</b> option must also be specified. (Optional)</p>
+<p>(HTTPS) In case of certificate-based client authentication over HTTPS <i>private_key.pem</i> must contain the private key of the user. The private key file can optionally be protected by a passphrase. The <b>-c</b> option must also be specified. (Optional)</p>
 
 </dd>
-<dt id="p-key_password"><b>-p</b> key_password</dt>
+<dt id="p-key_password"><b>-p</b> <i>key_password</i></dt>
 <dd>
 
-<p>(HTTPS) Specifies the passphrase for the private key specified by the <b>-k</b> argument. If this option is omitted and the key is passphrase protected <b>tsget</b> will ask for it. (Optional)</p>
+<p>(HTTPS) Specifies the passphrase for the private key specified by the <b>-k</b> argument. If this option is omitted and the key is passphrase protected, it will be prompted for. (Optional)</p>
 
 </dd>
-<dt id="c-client_cert.pem"><b>-c</b> client_cert.pem</dt>
+<dt id="c-client_cert.pem"><b>-c</b> <i>client_cert.pem</i></dt>
 <dd>
 
-<p>(HTTPS) In case of certificate-based client authentication over HTTPS &lt;client_cert.pem&gt; must contain the X.509 certificate of the user. The <b>-k</b> option must also be specified. If this option is not specified no certificate-based client authentication will take place. (Optional)</p>
+<p>(HTTPS) In case of certificate-based client authentication over HTTPS <i>client_cert.pem</i> must contain the X.509 certificate of the user. The <b>-k</b> option must also be specified. If this option is not specified no certificate-based client authentication will take place. (Optional)</p>
 
 </dd>
-<dt id="C-CA_certs.pem"><b>-C</b> CA_certs.pem</dt>
+<dt id="C-CA_certs.pem"><b>-C</b> <i>CA_certs.pem</i></dt>
 <dd>
 
 <p>(HTTPS) The trusted CA certificate store. The certificate chain of the peer&#39;s certificate must include one of the CA certificates specified in this file. Either option <b>-C</b> or option <b>-P</b> must be given in case of HTTPS. (Optional)</p>
 
 </dd>
-<dt id="P-CA_path"><b>-P</b> CA_path</dt>
+<dt id="P-CA_path"><b>-P</b> <i>CA_path</i></dt>
 <dd>
 
-<p>(HTTPS) The path containing the trusted CA certificates to verify the peer&#39;s certificate. The directory must be prepared with the <b>c_rehash</b> OpenSSL utility. Either option <b>-C</b> or option <b>-P</b> must be given in case of HTTPS. (Optional)</p>
+<p>(HTTPS) The path containing the trusted CA certificates to verify the peer&#39;s certificate. The directory must be prepared with <a href="../man1/openssl-rehash.html">openssl-rehash(1)</a>. Either option <b>-C</b> or option <b>-P</b> must be given in case of HTTPS. (Optional)</p>
 
 </dd>
-<dt id="rand-file:file"><b>-rand</b> file:file...</dt>
+<dt id="r-files"><b>-r</b> <i>files</i></dt>
 <dd>
 
-<p>The files containing random data for seeding the random number generator. Multiple files can be specified, the separator is <b>;</b> for MS-Windows, <b>,</b> for VMS and <b>:</b> for all other platforms. (Optional)</p>
+<p>See <a href="../man1/openssl.html">&quot;Random State Options&quot; in openssl(1)</a> for more information.</p>
 
 </dd>
-<dt id="g-EGD_socket"><b>-g</b> EGD_socket</dt>
+<dt id="g-EGD_socket"><b>-g</b> <i>EGD_socket</i></dt>
 <dd>
 
 <p>The name of an EGD socket to get random data from. (Optional)</p>
 
 </dd>
-<dt id="request">[request]...</dt>
+<dt id="request"><i>request</i> ...</dt>
 <dd>
 
-<p>List of files containing <b>RFC 3161</b> DER-encoded timestamp requests. If no requests are specified only one request will be sent to the server and it will be read from the standard input. (Optional)</p>
+<p>List of files containing RFC 3161 DER-encoded timestamp requests. If no requests are specified only one request will be sent to the server and it will be read from the standard input. (Optional)</p>
 
 </dd>
 </dl>
@@ -138,29 +138,29 @@ Content-Length: length of body
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
-<p>The examples below presume that <b>file1.tsq</b> and <b>file2.tsq</b> contain valid timestamp requests, tsa.opentsa.org listens at port 8080 for HTTP requests and at port 8443 for HTTPS requests, the TSA service is available at the /tsa absolute path.</p>
+<p>The examples below presume that <i>file1.tsq</i> and <i>file2.tsq</i> contain valid timestamp requests, tsa.opentsa.org listens at port 8080 for HTTP requests and at port 8443 for HTTPS requests, the TSA service is available at the /tsa absolute path.</p>
 
-<p>Get a timestamp response for file1.tsq over HTTP, output is written to file1.tsr:</p>
+<p>Get a timestamp response for <i>file1.tsq</i> over HTTP, output is written to <i>file1.tsr</i>:</p>
 
 <pre><code>tsget -h http://tsa.opentsa.org:8080/tsa file1.tsq</code></pre>
 
-<p>Get a timestamp response for file1.tsq and file2.tsq over HTTP showing progress, output is written to file1.reply and file2.reply respectively:</p>
+<p>Get a timestamp response for <i>file1.tsq</i> and <i>file2.tsq</i> over HTTP showing progress, output is written to <i>file1.reply</i> and <i>file2.reply</i> respectively:</p>
 
 <pre><code>tsget -h http://tsa.opentsa.org:8080/tsa -v -e .reply \
       file1.tsq file2.tsq</code></pre>
 
-<p>Create a timestamp request, write it to file3.tsq, send it to the server and write the response to file3.tsr:</p>
+<p>Create a timestamp request, write it to <i>file3.tsq</i>, send it to the server and write the response to <i>file3.tsr</i>:</p>
 
 <pre><code>openssl ts -query -data file3.txt -cert | tee file3.tsq \
       | tsget -h http://tsa.opentsa.org:8080/tsa \
       -o file3.tsr</code></pre>
 
-<p>Get a timestamp response for file1.tsq over HTTPS without client authentication:</p>
+<p>Get a timestamp response for <i>file1.tsq</i> over HTTPS without client authentication:</p>
 
 <pre><code>tsget -h https://tsa.opentsa.org:8443/tsa \
       -C cacerts.pem file1.tsq</code></pre>
 
-<p>Get a timestamp response for file1.tsq over HTTPS with certificate-based client authentication (it will ask for the passphrase if client_key.pem is protected):</p>
+<p>Get a timestamp response for <i>file1.tsq</i> over HTTPS with certificate-based client authentication (it will ask for the passphrase if <i>client_key.pem</i> is protected):</p>
 
 <pre><code>tsget -h https://tsa.opentsa.org:8443/tsa -C cacerts.pem \
       -k client_key.pem -c client_cert.pem file1.tsq</code></pre>
@@ -174,13 +174,13 @@ tsget file1.tsq</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man1/openssl.html">openssl(1)</a>, <a href="../man1/ts.html">ts(1)</a>, <a href="../man1/curl.html">curl(1)</a>, <b>RFC 3161</b></p>
+<p><a href="../man1/openssl.html">openssl(1)</a>, <a href="../man1/openssl-ts.html">openssl-ts(1)</a>, <a>WWW::Curl::Easy</a>, <a href="https://www.rfc-editor.org/rfc/rfc3161.html">https://www.rfc-editor.org/rfc/rfc3161.html</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
 <p>Copyright 2006-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

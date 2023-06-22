@@ -62,7 +62,7 @@ X509_LOOKUP_ctrl_fn X509_LOOKUP_meth_get_ctrl(const X509_LOOKUP_METHOD *method);
 
 typedef int (*X509_LOOKUP_get_by_subject_fn)(X509_LOOKUP *ctx,
                                              X509_LOOKUP_TYPE type,
-                                             X509_NAME *name,
+                                             const X509_NAME *name,
                                              X509_OBJECT *ret);
 int X509_LOOKUP_meth_set_get_by_subject(X509_LOOKUP_METHOD *method,
     X509_LOOKUP_get_by_subject_fn fn);
@@ -71,8 +71,8 @@ X509_LOOKUP_get_by_subject_fn X509_LOOKUP_meth_get_get_by_subject(
 
 typedef int (*X509_LOOKUP_get_by_issuer_serial_fn)(X509_LOOKUP *ctx,
                                                    X509_LOOKUP_TYPE type,
-                                                   X509_NAME *name,
-                                                   ASN1_INTEGER *serial,
+                                                   const X509_NAME *name,
+                                                   const ASN1_INTEGER *serial,
                                                    X509_OBJECT *ret);
 int X509_LOOKUP_meth_set_get_by_issuer_serial(
     X509_LOOKUP_METHOD *method, X509_LOOKUP_get_by_issuer_serial_fn fn);
@@ -148,7 +148,7 @@ int X509_OBJECT_set1_X509_CRL(X509_OBJECT *a, X509_CRL *obj);</code></pre>
 
 <p>Copyright 2018-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

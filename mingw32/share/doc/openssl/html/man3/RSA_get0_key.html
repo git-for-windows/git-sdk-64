@@ -28,9 +28,11 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/rsa.h&gt;
+<pre><code>#include &lt;openssl/rsa.h&gt;</code></pre>
 
-int RSA_set0_key(RSA *r, BIGNUM *n, BIGNUM *e, BIGNUM *d);
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>int RSA_set0_key(RSA *r, BIGNUM *n, BIGNUM *e, BIGNUM *d);
 int RSA_set0_factors(RSA *r, BIGNUM *p, BIGNUM *q);
 int RSA_set0_crt_params(RSA *r, BIGNUM *dmp1, BIGNUM *dmq1, BIGNUM *iqmp);
 void RSA_get0_key(const RSA *r,
@@ -61,6 +63,8 @@ int RSA_set0_multi_prime_params(RSA *r, BIGNUM *primes[], BIGNUM *exps[],
 int RSA_get_version(RSA *r);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>All of the functions described on this page are deprecated. Applications should instead use <a href="../man3/EVP_PKEY_get_bn_param.html">EVP_PKEY_get_bn_param(3)</a> for any methods that return a <b>BIGNUM</b>. Refer to <a href="../man7/EVP_PKEY-DH.html">EVP_PKEY-DH(7)</a> for more information.</p>
 
 <p>An RSA object contains the components for the public and private key, <b>n</b>, <b>e</b>, <b>d</b>, <b>p</b>, <b>q</b>, <b>dmp1</b>, <b>dmq1</b> and <b>iqmp</b>. <b>n</b> is the modulus common to both public and private key, <b>e</b> is the public exponent and <b>d</b> is the private exponent. <b>p</b>, <b>q</b>, <b>dmp1</b>, <b>dmq1</b> and <b>iqmp</b> are the factors for the second representation of a private key (see PKCS#1 section 3 Key Types), where <b>p</b> and <b>q</b> are the first and second factor of <b>n</b> and <b>dmp1</b>, <b>dmq1</b> and <b>iqmp</b> are the exponents and coefficient for CRT calculations.</p>
 
@@ -100,6 +104,8 @@ int RSA_get_version(RSA *r);</code></pre>
 
 <p>RSA_get0_n(), RSA_get0_e(), RSA_get0_d(), RSA_get0_p(), RSA_get0_q(), RSA_get0_dmp1(), RSA_get0_dmq1(), and RSA_get0_iqmp() return the respective value.</p>
 
+<p>RSA_get0_pss_params() returns a <b>RSA_PSS_PARAMS</b> pointer, or NULL if there is none.</p>
+
 <p>RSA_get0_multi_prime_factors() and RSA_get0_multi_prime_crt_params() return 1 on success or 0 on failure.</p>
 
 <p>RSA_get_multi_prime_extra_count() returns two less than the number of primes in use, which is 0 for traditional RSA and the number of extra primes for multi-prime RSA.</p>
@@ -122,11 +128,13 @@ int RSA_get_version(RSA *r);</code></pre>
 
 <p>Other functions described here were added in OpenSSL 1.1.0.</p>
 
+<p>All of these functions were deprecated in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

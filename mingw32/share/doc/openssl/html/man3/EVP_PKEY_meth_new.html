@@ -21,6 +21,7 @@
     </ul>
   </li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -30,9 +31,11 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/evp.h&gt;
+<pre><code>#include &lt;openssl/evp.h&gt;</code></pre>
 
-typedef struct evp_pkey_method_st EVP_PKEY_METHOD;
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>typedef struct evp_pkey_method_st EVP_PKEY_METHOD;
 
 EVP_PKEY_METHOD *EVP_PKEY_meth_new(int id, int flags);
 void EVP_PKEY_meth_free(EVP_PKEY_METHOD *pmeth);
@@ -45,7 +48,7 @@ void EVP_PKEY_meth_set_init(EVP_PKEY_METHOD *pmeth,
                             int (*init) (EVP_PKEY_CTX *ctx));
 void EVP_PKEY_meth_set_copy(EVP_PKEY_METHOD *pmeth,
                             int (*copy) (EVP_PKEY_CTX *dst,
-                                         EVP_PKEY_CTX *src));
+                                         const EVP_PKEY_CTX *src));
 void EVP_PKEY_meth_set_cleanup(EVP_PKEY_METHOD *pmeth,
                                void (*cleanup) (EVP_PKEY_CTX *ctx));
 void EVP_PKEY_meth_set_paramgen(EVP_PKEY_METHOD *pmeth,
@@ -219,13 +222,13 @@ void EVP_PKEY_meth_get_ctrl(const EVP_PKEY_METHOD *pmeth,
                             int (**pctrl_str) (EVP_PKEY_CTX *ctx,
                                                const char *type,
                                                const char *value));
-void EVP_PKEY_meth_get_digestsign(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_digestsign(const EVP_PKEY_METHOD *pmeth,
                                   int (**digestsign) (EVP_MD_CTX *ctx,
                                                       unsigned char *sig,
                                                       size_t *siglen,
                                                       const unsigned char *tbs,
                                                       size_t tbslen));
-void EVP_PKEY_meth_get_digestverify(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_digestverify(const EVP_PKEY_METHOD *pmeth,
                                     int (**digestverify) (EVP_MD_CTX *ctx,
                                                           const unsigned char *sig,
                                                           size_t siglen,
@@ -237,11 +240,13 @@ void EVP_PKEY_meth_get_public_check(const EVP_PKEY_METHOD *pmeth,
                                     int (**pcheck) (EVP_PKEY *pkey));
 void EVP_PKEY_meth_get_param_check(const EVP_PKEY_METHOD *pmeth,
                                    int (**pcheck) (EVP_PKEY *pkey));
-void EVP_PKEY_meth_get_digest_custom(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_digest_custom(const EVP_PKEY_METHOD *pmeth,
                                     int (**pdigest_custom) (EVP_PKEY_CTX *ctx,
                                                             EVP_MD_CTX *mctx));</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>All of the functions described on this page are deprecated. Applications should instead use the OSSL_PROVIDER APIs.</p>
 
 <p><b>EVP_PKEY_METHOD</b> is a structure which holds a set of methods for a specific public key cryptographic algorithm. Those methods are usually used to perform different jobs, such as generating a key, signing or verifying, encrypting or decrypting, etc.</p>
 
@@ -254,7 +259,7 @@ void EVP_PKEY_meth_get_digest_custom(EVP_PKEY_METHOD *pmeth,
 <p>The methods are the underlying implementations of a particular public key algorithm present by the <b>EVP_PKEY_CTX</b> object.</p>
 
 <pre><code>int (*init) (EVP_PKEY_CTX *ctx);
-int (*copy) (EVP_PKEY_CTX *dst, EVP_PKEY_CTX *src);
+int (*copy) (EVP_PKEY_CTX *dst, const EVP_PKEY_CTX *src);
 void (*cleanup) (EVP_PKEY_CTX *ctx);</code></pre>
 
 <p>The init() method is called to initialize algorithm-specific data when a new <b>EVP_PKEY_CTX</b> is created. As opposed to init(), the cleanup() method is called when an <b>EVP_PKEY_CTX</b> is freed. The copy() method is called when an <b>EVP_PKEY_CTX</b> is being duplicated. Refer to <a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a>, <a href="../man3/EVP_PKEY_CTX_new_id.html">EVP_PKEY_CTX_new_id(3)</a>, <a href="../man3/EVP_PKEY_CTX_free.html">EVP_PKEY_CTX_free(3)</a> and <a href="../man3/EVP_PKEY_CTX_dup.html">EVP_PKEY_CTX_dup(3)</a>.</p>
@@ -380,11 +385,17 @@ EVP_PKEY_FLAG_SIGCTX_CUSTOM</code></pre>
 
 <p>All EVP_PKEY_meth_set and EVP_PKEY_meth_get functions have no return values. For the &#39;get&#39; functions, function pointers are returned by arguments.</p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>All of these functions were deprecated in OpenSSL 3.0.</p>
+
+<p>The signature of the <i>copy</i> functional argument of EVP_PKEY_meth_set_copy() has changed in OpenSSL 3.0 so its <i>src</i> parameter is now constified.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2017-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2017-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

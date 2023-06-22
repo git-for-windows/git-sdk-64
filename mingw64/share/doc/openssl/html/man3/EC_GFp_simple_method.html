@@ -17,6 +17,7 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -26,9 +27,11 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/ec.h&gt;
+<pre><code>#include &lt;openssl/ec.h&gt;</code></pre>
 
-const EC_METHOD *EC_GFp_simple_method(void);
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>const EC_METHOD *EC_GFp_simple_method(void);
 const EC_METHOD *EC_GFp_mont_method(void);
 const EC_METHOD *EC_GFp_nist_method(void);
 const EC_METHOD *EC_GFp_nistp224_method(void);
@@ -41,6 +44,8 @@ int EC_METHOD_get_field_type(const EC_METHOD *meth);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
+<p>All const EC_METHOD *EC_GF* functions were deprecated in OpenSSL 3.0, since EC_METHOD is no longer a public concept.</p>
+
 <p>The Elliptic Curve library provides a number of different implementations through a single common interface. When constructing a curve using EC_GROUP_new (see <a href="../man3/EC_GROUP_new.html">EC_GROUP_new(3)</a>) an implementation method must be provided. The functions described here all return a const pointer to an <b>EC_METHOD</b> structure that can be passed to EC_GROUP_NEW. It is important that the correct implementation type for the form of curve selected is used.</p>
 
 <p>For F2^m curves there is only one implementation choice, i.e. EC_GF2_simple_method.</p>
@@ -49,7 +54,7 @@ int EC_METHOD_get_field_type(const EC_METHOD *meth);</code></pre>
 
 <p>The functions EC_GFp_nistp224_method, EC_GFp_nistp256_method and EC_GFp_nistp521_method offer 64 bit optimised implementations for the NIST P224, P256 and P521 curves respectively. Note, however, that these implementations are not available on all platforms.</p>
 
-<p>EC_METHOD_get_field_type identifies what type of field the EC_METHOD structure supports, which will be either F2^m or Fp. If the field type is Fp then the value <b>NID_X9_62_prime_field</b> is returned. If the field type is F2^m then the value <b>NID_X9_62_characteristic_two_field</b> is returned. These values are defined in the obj_mac.h header file.</p>
+<p>EC_METHOD_get_field_type() was deprecated in OpenSSL 3.0. Applications should use EC_GROUP_get_field_type() as a replacement (see <a href="../man3/EC_GROUP_copy.html">EC_GROUP_copy(3)</a>).</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -61,11 +66,15 @@ int EC_METHOD_get_field_type(const EC_METHOD *meth);</code></pre>
 
 <p><a href="../man7/crypto.html">crypto(7)</a>, <a href="../man3/EC_GROUP_new.html">EC_GROUP_new(3)</a>, <a href="../man3/EC_GROUP_copy.html">EC_GROUP_copy(3)</a>, <a href="../man3/EC_POINT_new.html">EC_POINT_new(3)</a>, <a href="../man3/EC_POINT_add.html">EC_POINT_add(3)</a>, <a href="../man3/EC_KEY_new.html">EC_KEY_new(3)</a>, <a href="../man3/d2i_ECPKParameters.html">d2i_ECPKParameters(3)</a>, <a href="../man3/BN_mod_mul_montgomery.html">BN_mod_mul_montgomery(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>EC_GFp_simple_method(), EC_GFp_mont_method(void), EC_GFp_nist_method(), EC_GFp_nistp224_method(), EC_GFp_nistp256_method(), EC_GFp_nistp521_method(), EC_GF2m_simple_method(), and EC_METHOD_get_field_type() were deprecated in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2013-2017 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2013-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

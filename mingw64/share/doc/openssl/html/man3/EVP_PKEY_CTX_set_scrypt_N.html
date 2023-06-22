@@ -19,6 +19,7 @@
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -44,7 +45,7 @@ int EVP_PKEY_CTX_set_scrypt_maxmem_bytes(EVP_PKEY_CTX *pctx,
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>These functions are used to set up the necessary data to use the scrypt KDF. For more information on scrypt, see <a href="../man7/scrypt.html">scrypt(7)</a>.</p>
+<p>These functions are used to set up the necessary data to use the scrypt KDF. For more information on scrypt, see <a href="../man7/EVP_KDF-SCRYPT.html">EVP_KDF-SCRYPT(7)</a>.</p>
 
 <p>EVP_PKEY_CTX_set1_scrypt_salt() sets the <b>saltlen</b> bytes long salt value.</p>
 
@@ -58,9 +59,9 @@ int EVP_PKEY_CTX_set_scrypt_maxmem_bytes(EVP_PKEY_CTX *pctx,
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>The scrypt KDF also uses EVP_PKEY_CTX_set1_pbe_pass() as well as the value from the string controls &quot;pass&quot; and &quot;hexpass&quot;. See <a href="../man3/EVP_PKEY_CTX_set1_pbe_pass.html">EVP_PKEY_CTX_set1_pbe_pass(3)</a>.</p>
+<p>There is a newer generic API for KDFs, <a href="../man3/EVP_KDF.html">EVP_KDF(3)</a>, which is preferred over the EVP_PKEY method.</p>
 
-<p>All the functions described here are implemented as macros.</p>
+<p>The scrypt KDF also uses EVP_PKEY_CTX_set1_pbe_pass() as well as the value from the string controls &quot;pass&quot; and &quot;hexpass&quot;. See <a href="../man3/EVP_PKEY_CTX_set1_pbe_pass.html">EVP_PKEY_CTX_set1_pbe_pass(3)</a>.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -68,13 +69,17 @@ int EVP_PKEY_CTX_set_scrypt_maxmem_bytes(EVP_PKEY_CTX *pctx,
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/scrypt.html">scrypt(7)</a>, <a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a>, <a href="../man3/EVP_PKEY_CTX_ctrl_str.html">EVP_PKEY_CTX_ctrl_str(3)</a>, <a href="../man3/EVP_PKEY_derive.html">EVP_PKEY_derive(3)</a></p>
+<p><a href="../man3/EVP_KDF.html">EVP_KDF(3)</a> <a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a>, <a href="../man3/EVP_PKEY_CTX_ctrl_str.html">EVP_PKEY_CTX_ctrl_str(3)</a>, <a href="../man3/EVP_PKEY_derive.html">EVP_PKEY_derive(3)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>All of the functions described here were converted from macros to functions in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2017-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2017-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

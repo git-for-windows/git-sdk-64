@@ -25,7 +25,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>i2t_ASN1_OBJECT, OBJ_length, OBJ_get0_data, OBJ_nid2obj, OBJ_nid2ln, OBJ_nid2sn, OBJ_obj2nid, OBJ_txt2nid, OBJ_ln2nid, OBJ_sn2nid, OBJ_cmp, OBJ_dup, OBJ_txt2obj, OBJ_obj2txt, OBJ_create, OBJ_cleanup - ASN1 object utility functions</p>
+<p>i2t_ASN1_OBJECT, OBJ_length, OBJ_get0_data, OBJ_nid2obj, OBJ_nid2ln, OBJ_nid2sn, OBJ_obj2nid, OBJ_txt2nid, OBJ_ln2nid, OBJ_sn2nid, OBJ_cmp, OBJ_dup, OBJ_txt2obj, OBJ_obj2txt, OBJ_create, OBJ_cleanup, OBJ_add_sigid - ASN1 object utility functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -52,21 +52,21 @@ ASN1_OBJECT *OBJ_dup(const ASN1_OBJECT *o);
 int OBJ_create(const char *oid, const char *sn, const char *ln);
 
 size_t OBJ_length(const ASN1_OBJECT *obj);
-const unsigned char *OBJ_get0_data(const ASN1_OBJECT *obj);</code></pre>
+const unsigned char *OBJ_get0_data(const ASN1_OBJECT *obj);
 
-<p>Deprecated:</p>
+int OBJ_add_sigid(int signid, int dig_id, int pkey_id);</code></pre>
 
-<pre><code>#if OPENSSL_API_COMPAT &lt; 0x10100000L
-void OBJ_cleanup(void)
-#endif</code></pre>
+<p>The following function has been deprecated since OpenSSL 1.1.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>void OBJ_cleanup(void);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The ASN1 object utility functions process ASN1_OBJECT structures which are a representation of the ASN1 OBJECT IDENTIFIER (OID) type. For convenience, OIDs are usually represented in source code as numeric identifiers, or <i>NID</i>s. OpenSSL has an internal table of OIDs that are generated when the library is built, and their corresponding NIDs are available as defined constants. For the functions below, application code should treat all returned values -- OIDs, NIDs, or names -- as constants.</p>
+<p>The ASN1 object utility functions process ASN1_OBJECT structures which are a representation of the ASN1 OBJECT IDENTIFIER (OID) type. For convenience, OIDs are usually represented in source code as numeric identifiers, or <b>NID</b>s. OpenSSL has an internal table of OIDs that are generated when the library is built, and their corresponding NIDs are available as defined constants. For the functions below, application code should treat all returned values -- OIDs, NIDs, or names -- as constants.</p>
 
 <p>OBJ_nid2obj(), OBJ_nid2ln() and OBJ_nid2sn() convert the NID <i>n</i> to an ASN1_OBJECT structure, its long name and its short name respectively, or <b>NULL</b> if an error occurred.</p>
 
-<p>OBJ_obj2nid(), OBJ_ln2nid(), OBJ_sn2nid() return the corresponding NID for the object <i>o</i>, the long name &lt;ln&gt; or the short name &lt;sn&gt; respectively or NID_undef if an error occurred.</p>
+<p>OBJ_obj2nid(), OBJ_ln2nid(), OBJ_sn2nid() return the corresponding NID for the object <i>o</i>, the long name <i>ln</i> or the short name <i>sn</i> respectively or NID_undef if an error occurred.</p>
 
 <p>OBJ_txt2nid() returns NID corresponding to text string <i>s</i>. <i>s</i> can be a long name, a short name or the numerical representation of an object.</p>
 
@@ -85,6 +85,8 @@ void OBJ_cleanup(void)
 <p>OBJ_length() returns the size of the content octets of <i>obj</i>.</p>
 
 <p>OBJ_get0_data() returns a pointer to the content octets of <i>obj</i>. The returned pointer is an internal pointer which <b>must not</b> be freed.</p>
+
+<p>OBJ_add_sigid() creates a new composite &quot;Signature Algorithm&quot; that associates a given NID with two other NIDs - one representing the underlying signature algorithm and the other representing a digest algorithm to be used in conjunction with it. <i>signid</i> represents the NID for the composite &quot;Signature Algorithm&quot;, <i>dig_id</i> is the NID for the digest algorithm and <i>pkey_id</i> is the NID for the underlying signature algorithm. As there are signature algorithms that do not require a digest, NID_undef is a valid <i>dig_id</i>.</p>
 
 <p>OBJ_cleanup() releases any resources allocated by creating new objects.</p>
 
@@ -109,6 +111,8 @@ void OBJ_cleanup(void)
 <p>Some objects are used to represent algorithms which do not have a corresponding ASN.1 OBJECT IDENTIFIER encoding (for example no OID currently exists for a particular algorithm). As a result they <b>cannot</b> be encoded or decoded as part of ASN.1 structures. Applications can determine if there is a corresponding OBJECT IDENTIFIER by checking OBJ_length() is not zero.</p>
 
 <p>These functions cannot return <b>const</b> because an <b>ASN1_OBJECT</b> can represent both an internal, constant, OID and a dynamically-created one. The latter cannot be constant because it needs to be freed after use.</p>
+
+<p>These functions were not thread safe in OpenSSL 3.0 and before.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -154,7 +158,7 @@ ASN1_OBJECT *obj = OBJ_nid2obj(new_nid);</code></pre>
 
 <p>Copyright 2002-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

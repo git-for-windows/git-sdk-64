@@ -64,9 +64,11 @@ STACK_OF(X509) *CMS_get0_signers(CMS_ContentInfo *cms);</code></pre>
 
 <p>If the <b>CMS_TEXT</b> flag is set MIME headers for type <b>text/plain</b> are deleted from the content. If the content is not of type <b>text/plain</b> then an error is returned.</p>
 
-<p>If <b>CMS_NO_SIGNER_CERT_VERIFY</b> is set the signing certificates are not chain verified.</p>
+<p>If <b>CMS_NO_SIGNER_CERT_VERIFY</b> is set the signing certificates are not chain verified, unless <b>CMS_CADES</b> flag is also set.</p>
 
-<p>If <b>CMS_NO_ATTR_VERIFY</b> is set the signed attributes signature is not verified.</p>
+<p>If <b>CMS_NO_ATTR_VERIFY</b> is set the signed attributes signature is not verified, unless CMS_CADES flag is also set.</p>
+
+<p>If <b>CMS_CADES</b> is set, each signer certificate is checked against the ESS signingCertificate or ESS signingCertificateV2 extension that is required in the signed attributes of the signature.</p>
 
 <p>If <b>CMS_NO_CONTENT_VERIFY</b> is set then the content digest is not checked.</p>
 
@@ -102,7 +104,7 @@ STACK_OF(X509) *CMS_get0_signers(CMS_ContentInfo *cms);</code></pre>
 
 <p>Copyright 2008-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

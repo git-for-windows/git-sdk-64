@@ -41,11 +41,11 @@ int X509_CRL_match(const X509_CRL *a, const X509_CRL *b);</code></pre>
 
 <p>This set of functions are used to compare X509 objects, including X509 certificates, X509 CRL objects and various values in an X509 certificate.</p>
 
-<p>The X509_cmp() function compares two <b>X509</b> objects indicated by parameters <b>a</b> and <b>b</b>. The comparison is based on the <b>memcmp</b> result of the hash values of two <b>X509</b> objects and the canonical (DER) encoding values.</p>
+<p>The X509_cmp() function compares two <b>X509</b> objects indicated by parameters <i>a</i> and <i>b</i>. The comparison is based on the <b>memcmp</b> result of the hash values of two <b>X509</b> objects and the canonical (DER) encoding values.</p>
 
-<p>The X509_NAME_cmp() function compares two <b>X509_NAME</b> objects indicated by parameters <b>a</b> and <b>b</b>. The comparison is based on the <b>memcmp</b> result of the canonical (DER) encoding values of the two objects. <a href="../man3/i2d_X509_NAME.html">i2d_X509_NAME(3)</a> has a more detailed description of the DER encoding of the <b>X509_NAME</b> structure.</p>
+<p>The X509_NAME_cmp() function compares two <b>X509_NAME</b> objects indicated by parameters <i>a</i> and <i>b</i>. The comparison is based on the <b>memcmp</b> result of the canonical (DER) encoding values of the two objects using <a href="../man3/i2d_X509_NAME.html">i2d_X509_NAME(3)</a>. This procedure adheres to the matching rules for Distinguished Names (DN) given in RFC 4517 section 4.2.15 and RFC 5280 section 7.1. In particular, the order of Relative Distinguished Names (RDNs) is relevant. On the other hand, if an RDN is multi-valued, i.e., it contains a set of AttributeValueAssertions (AVAs), its members are effectively not ordered.</p>
 
-<p>The X509_issuer_and_serial_cmp() function compares the serial number and issuer values in the given <b>X509</b> objects <b>a</b> and <b>b</b>.</p>
+<p>The X509_issuer_and_serial_cmp() function compares the serial number and issuer values in the given <b>X509</b> objects <i>a</i> and <i>b</i>.</p>
 
 <p>The X509_issuer_name_cmp(), X509_subject_name_cmp() and X509_CRL_cmp() functions are effectively wrappers of the X509_NAME_cmp() function. These functions compare issuer names and subject names of the  objects, or issuers of <b>X509_CRL</b> objects, respectively.</p>
 
@@ -53,9 +53,9 @@ int X509_CRL_match(const X509_CRL *a, const X509_CRL *b);</code></pre>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>Like common memory comparison functions, the <b>X509</b> comparison functions return an integer less than, equal to, or greater than zero if object <b>a</b> is found to be less than, to match, or be greater than object <b>b</b>, respectively.</p>
+<p>The <b>X509</b> comparison functions return <b>-1</b>, <b>0</b>, or <b>1</b> if object <i>a</i> is found to be less than, to match, or be greater than object <i>b</i>, respectively.</p>
 
-<p>X509_NAME_cmp(), X509_issuer_and_serial_cmp(), X509_issuer_name_cmp(), X509_subject_name_cmp() and X509_CRL_cmp() may return <b>-2</b> to indicate an error.</p>
+<p>X509_NAME_cmp(), X509_issuer_and_serial_cmp(), X509_issuer_name_cmp(), X509_subject_name_cmp(), X509_CRL_cmp(), and X509_CRL_match() may return <b>-2</b> to indicate an error.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -69,7 +69,7 @@ int X509_CRL_match(const X509_CRL *a, const X509_CRL *b);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

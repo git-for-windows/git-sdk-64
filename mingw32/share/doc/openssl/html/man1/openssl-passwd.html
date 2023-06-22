@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>passwd</title>
+<title>openssl-passwd</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:" />
 </head>
@@ -17,20 +17,21 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#OPTIONS">OPTIONS</a></li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>openssl-passwd, passwd - compute password hashes</p>
+<p>openssl-passwd - compute password hashes</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl passwd</b> [<b>-help</b>] [<b>-crypt</b>] [<b>-1</b>] [<b>-apr1</b>] [<b>-aixmd5</b>] [<b>-5</b>] [<b>-6</b>] [<b>-salt</b> <i>string</i>] [<b>-in</b> <i>file</i>] [<b>-stdin</b>] [<b>-noverify</b>] [<b>-quiet</b>] [<b>-table</b>] [<b>-rand file...</b>] [<b>-writerand file</b>] {<i>password</i>}</p>
+<p><b>openssl passwd</b> [<b>-help</b>] [<b>-1</b>] [<b>-apr1</b>] [<b>-aixmd5</b>] [<b>-5</b>] [<b>-6</b>] [<b>-salt</b> <i>string</i>] [<b>-in</b> <i>file</i>] [<b>-stdin</b>] [<b>-noverify</b>] [<b>-quiet</b>] [<b>-table</b>] [<b>-reverse</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<i>password</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The <b>passwd</b> command computes the hash of a password typed at run-time or the hash of each password in a list. The password list is taken from the named file for option <b>-in file</b>, from stdin for option <b>-stdin</b>, or from the command line, or from the terminal otherwise.</p>
+<p>This command computes the hash of a password typed at run-time or the hash of each password in a list. The password list is taken from the named file for option <b>-in</b>, from stdin for option <b>-stdin</b>, or from the command line, or from the terminal otherwise.</p>
 
 <h1 id="OPTIONS">OPTIONS</h1>
 
@@ -42,16 +43,10 @@
 <p>Print out a usage message.</p>
 
 </dd>
-<dt id="crypt"><b>-crypt</b></dt>
-<dd>
-
-<p>Use the <b>crypt</b> algorithm (default).</p>
-
-</dd>
 <dt id="pod-1"><b>-1</b></dt>
 <dd>
 
-<p>Use the MD5 based BSD password algorithm <b>1</b>.</p>
+<p>Use the MD5 based BSD password algorithm <b>1</b> (default).</p>
 
 </dd>
 <dt id="apr1"><b>-apr1</b></dt>
@@ -112,26 +107,37 @@
 <p>In the output list, prepend the cleartext password and a TAB character to each password hash.</p>
 
 </dd>
-<dt id="rand-file"><b>-rand file...</b></dt>
+<dt id="reverse"><b>-reverse</b></dt>
 <dd>
 
-<p>A file or files containing random data used to seed the random number generator. Multiple files can be specified separated by an OS-dependent character. The separator is <b>;</b> for MS-Windows, <b>,</b> for OpenVMS, and <b>:</b> for all others.</p>
+<p>When the <b>-table</b> option is used, reverse the order of cleartext and hash.</p>
 
 </dd>
-<dt id="writerand-file">[<b>-writerand file</b>]</dt>
+<dt id="rand-files--writerand-file"><b>-rand</b> <i>files</i>, <b>-writerand</b> <i>file</i></dt>
 <dd>
 
-<p>Writes random data to the specified <i>file</i> upon exit. This can be used with a subsequent <b>-rand</b> flag.</p>
+<p>See <a href="../man1/openssl.html">&quot;Random State Options&quot; in openssl(1)</a> for details.</p>
+
+</dd>
+<dt id="provider-name"><b>-provider</b> <i>name</i></dt>
+<dd>
+
+</dd>
+<dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="propquery-propq"><b>-propquery</b> <i>propq</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Provider Options&quot; in openssl(1)</a>, <a href="../man7/provider.html">provider(7)</a>, and <a href="../man7/property.html">property(7)</a>.</p>
 
 </dd>
 </dl>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
-<pre><code>% openssl passwd -crypt -salt xx password
-xxj31ZMTZzkVA
-
-% openssl passwd -1 -salt xxxxxxxx password
+<pre><code>% openssl passwd -1 -salt xxxxxxxx password
 $1$xxxxxxxx$UYCIxa628.9qXjpQCjM4a.
 
 % openssl passwd -apr1 -salt xxxxxxxx password
@@ -140,11 +146,15 @@ $apr1$xxxxxxxx$dxHfLAsjHkDRmG83UXe8K0
 % openssl passwd -aixmd5 -salt xxxxxxxx password
 xxxxxxxx$8Oaipk/GPKhC64w/YVeFD/</code></pre>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>The <b>-crypt</b> option was removed in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
 <p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

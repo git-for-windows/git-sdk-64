@@ -26,13 +26,14 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>X509_STORE_CTX_get_cleanup, X509_STORE_CTX_get_lookup_crls, X509_STORE_CTX_get_lookup_certs, X509_STORE_CTX_get_check_policy, X509_STORE_CTX_get_cert_crl, X509_STORE_CTX_get_check_crl, X509_STORE_CTX_get_get_crl, X509_STORE_CTX_get_check_revocation, X509_STORE_CTX_get_check_issued, X509_STORE_CTX_get_get_issuer, X509_STORE_CTX_get_verify_cb, X509_STORE_CTX_set_verify_cb, X509_STORE_CTX_verify_cb - get and set verification callback</p>
+<p>X509_STORE_CTX_get_cleanup, X509_STORE_CTX_get_lookup_crls, X509_STORE_CTX_get_lookup_certs, X509_STORE_CTX_get_check_policy, X509_STORE_CTX_get_cert_crl, X509_STORE_CTX_get_check_crl, X509_STORE_CTX_get_get_crl, X509_STORE_CTX_get_check_revocation, X509_STORE_CTX_get_check_issued, X509_STORE_CTX_get_get_issuer, X509_STORE_CTX_get_verify_cb, X509_STORE_CTX_set_verify_cb, X509_STORE_CTX_verify_cb, X509_STORE_CTX_print_verify_cb - get and set X509_STORE_CTX components such as verification callback</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/x509_vfy.h&gt;
 
 typedef int (*X509_STORE_CTX_verify_cb)(int, X509_STORE_CTX *);
+int X509_STORE_CTX_print_verify_cb(int ok, X509_STORE_CTX *ctx);
 
 X509_STORE_CTX_verify_cb X509_STORE_CTX_get_verify_cb(X509_STORE_CTX *ctx);
 
@@ -54,13 +55,15 @@ X509_STORE_CTX_cleanup_fn X509_STORE_CTX_get_cleanup(X509_STORE_CTX *ctx);</code
 
 <p>X509_STORE_CTX_set_verify_cb() sets the verification callback of <b>ctx</b> to <b>verify_cb</b> overwriting any existing callback.</p>
 
-<p>The verification callback can be used to customise the operation of certificate verification, either by overriding error conditions or logging errors for debugging purposes.</p>
+<p>The verification callback can be used to customise the operation of certificate verification, for instance by overriding error conditions or logging errors for debugging purposes.</p>
 
 <p>However, a verification callback is <b>not</b> essential and the default operation is often sufficient.</p>
 
 <p>The <b>ok</b> parameter to the callback indicates the value the callback should return to retain the default behaviour. If it is zero then an error condition is indicated. If it is 1 then no error occurred. If the flag <b>X509_V_FLAG_NOTIFY_POLICY</b> is set then <b>ok</b> is set to 2 to indicate the policy checking is complete.</p>
 
 <p>The <b>ctx</b> parameter to the callback is the <b>X509_STORE_CTX</b> structure that is performing the verification operation. A callback can examine this structure and receive additional information about the error, for example by calling X509_STORE_CTX_get_current_cert(). Additional application data can be passed to the callback via the <b>ex_data</b> mechanism.</p>
+
+<p>X509_STORE_CTX_print_verify_cb() is a verification callback function that, when a certificate verification has failed, adds an entry to the error queue with code <b>X509_R_CERTIFICATE_VERIFICATION_FAILED</b> and with diagnostic details, including the most relevant fields of the target certificate that failed to verify and, if appropriate, of the available untrusted and trusted certificates.</p>
 
 <p>X509_STORE_CTX_get_verify_cb() returns the value of the current callback for the specific <b>ctx</b>.</p>
 
@@ -170,11 +173,13 @@ X509_STORE_CTX_cleanup_fn X509_STORE_CTX_get_cleanup(X509_STORE_CTX *ctx);</code
 
 <p>The X509_STORE_CTX_get_get_issuer(), X509_STORE_CTX_get_check_issued(), X509_STORE_CTX_get_check_revocation(), X509_STORE_CTX_get_get_crl(), X509_STORE_CTX_get_check_crl(), X509_STORE_CTX_get_cert_crl(), X509_STORE_CTX_get_check_policy(), X509_STORE_CTX_get_lookup_certs(), X509_STORE_CTX_get_lookup_crls() and X509_STORE_CTX_get_cleanup() functions were added in OpenSSL 1.1.0.</p>
 
+<p>X509_STORE_CTX_print_verify_cb() was added in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
 <p>Copyright 2009-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>ciphers</title>
+<title>openssl-ciphers</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:" />
 </head>
@@ -26,8 +26,9 @@
       <li><a href="#Camellia-cipher-suites-from-RFC4132-extending-TLS-v1.0">Camellia cipher suites from RFC4132, extending TLS v1.0</a></li>
       <li><a href="#SEED-cipher-suites-from-RFC4162-extending-TLS-v1.0">SEED cipher suites from RFC4162, extending TLS v1.0</a></li>
       <li><a href="#GOST-cipher-suites-from-draft-chudov-cryptopro-cptls-extending-TLS-v1.0">GOST cipher suites from draft-chudov-cryptopro-cptls, extending TLS v1.0</a></li>
+      <li><a href="#GOST-cipher-suites-extending-TLS-v1.2">GOST cipher suites, extending TLS v1.2</a></li>
       <li><a href="#Additional-Export-1024-and-other-cipher-suites">Additional Export 1024 and other cipher suites</a></li>
-      <li><a href="#Elliptic-curve-cipher-suites">Elliptic curve cipher suites.</a></li>
+      <li><a href="#Elliptic-curve-cipher-suites">Elliptic curve cipher suites</a></li>
       <li><a href="#TLS-v1.2-cipher-suites">TLS v1.2 cipher suites</a></li>
       <li><a href="#ARIA-cipher-suites-from-RFC6209-extending-TLS-v1.2">ARIA cipher suites from RFC6209, extending TLS v1.2</a></li>
       <li><a href="#Camellia-HMAC-Based-cipher-suites-from-RFC6367-extending-TLS-v1.2">Camellia HMAC-Based cipher suites from RFC6367, extending TLS v1.2</a></li>
@@ -46,15 +47,15 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>openssl-ciphers, ciphers - SSL cipher display and cipher list tool</p>
+<p>openssl-ciphers - SSL cipher display and cipher list command</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>ciphers</b> [<b>-help</b>] [<b>-s</b>] [<b>-v</b>] [<b>-V</b>] [<b>-ssl3</b>] [<b>-tls1</b>] [<b>-tls1_1</b>] [<b>-tls1_2</b>] [<b>-tls1_3</b>] [<b>-s</b>] [<b>-psk</b>] [<b>-srp</b>] [<b>-stdname</b>] [<b>-convert name</b>] [<b>-ciphersuites val</b>] [<b>cipherlist</b>]</p>
+<p><b>openssl</b> <b>ciphers</b> [<b>-help</b>] [<b>-s</b>] [<b>-v</b>] [<b>-V</b>] [<b>-ssl3</b>] [<b>-tls1</b>] [<b>-tls1_1</b>] [<b>-tls1_2</b>] [<b>-tls1_3</b>] [<b>-s</b>] [<b>-psk</b>] [<b>-srp</b>] [<b>-stdname</b>] [<b>-convert</b> <i>name</i>] [<b>-ciphersuites</b> <i>val</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<i>cipherlist</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The <b>ciphers</b> command converts textual OpenSSL cipher lists into ordered SSL cipher preference lists. It can be used as a test tool to determine the appropriate cipherlist.</p>
+<p>This command converts textual OpenSSL cipher lists into ordered SSL cipher preference lists. It can be used to determine the appropriate cipherlist.</p>
 
 <h1 id="OPTIONS">OPTIONS</h1>
 
@@ -64,6 +65,20 @@
 <dd>
 
 <p>Print a usage message.</p>
+
+</dd>
+<dt id="provider-name"><b>-provider</b> <i>name</i></dt>
+<dd>
+
+</dd>
+<dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="propquery-propq"><b>-propquery</b> <i>propq</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Provider Options&quot; in openssl(1)</a>, <a href="../man7/provider.html">provider(7)</a>, and <a href="../man7/property.html">property(7)</a>.</p>
 
 </dd>
 <dt id="s"><b>-s</b></dt>
@@ -89,7 +104,7 @@
 <dt id="srp"><b>-srp</b></dt>
 <dd>
 
-<p>When combined with <b>-s</b> includes cipher suites which require SRP.</p>
+<p>When combined with <b>-s</b> includes cipher suites which require SRP. This option is deprecated.</p>
 
 </dd>
 <dt id="v"><b>-v</b></dt>
@@ -116,13 +131,13 @@
 <p>Precede each cipher suite by its standard name.</p>
 
 </dd>
-<dt id="convert-name"><b>-convert name</b></dt>
+<dt id="convert-name"><b>-convert</b> <i>name</i></dt>
 <dd>
 
-<p>Convert a standard cipher <b>name</b> to its OpenSSL name.</p>
+<p>Convert a standard cipher <i>name</i> to its OpenSSL name.</p>
 
 </dd>
-<dt id="ciphersuites-val"><b>-ciphersuites val</b></dt>
+<dt id="ciphersuites-val"><b>-ciphersuites</b> <i>val</i></dt>
 <dd>
 
 <p>Sets the list of TLSv1.3 ciphersuites. This list will be combined with any TLSv1.2 and below ciphersuites that have been configured. The format for this list is a simple colon (&quot;:&quot;) separated list of TLSv1.3 ciphersuite names. By default this value is:</p>
@@ -162,7 +177,7 @@
 
 <p>The cipher string <b>@STRENGTH</b> can be used at any point to sort the current cipher list in order of encryption algorithm key length.</p>
 
-<p>The cipher string <b>@SECLEVEL=n</b> can be used at any point to set the security level to <b>n</b>, which should be a number between zero and five, inclusive. See <a href="/../../doc/man3/SSL_CTX_set_security_level.html">SSL_CTX_set_security_level</a> for a description of what each level means.</p>
+<p>The cipher string <b>@SECLEVEL</b>=<i>n</i> can be used at any point to set the security level to <i>n</i>, which should be a number between zero and five, inclusive. See <a href="../man3/SSL_CTX_set_security_level.html">SSL_CTX_set_security_level(3)</a> for a description of what each level means.</p>
 
 <p>The cipher list can be prefixed with the <b>DEFAULT</b> keyword, which enables the default cipher list as defined below. Unlike cipher strings, this prefix may not be combined with other strings using <b>+</b> character. For example, <b>DEFAULT+DES</b> is not valid.</p>
 
@@ -440,6 +455,12 @@
 <p>Enables suite B mode of operation using 128 (permitting 192 bit mode by peer) 128 bit (not permitting 192 bit by peer) or 192 bit level of security respectively. If used these cipherstrings should appear first in the cipher list and anything after them is ignored. Setting Suite B mode has additional consequences required to comply with RFC6460. In particular the supported signature algorithms is reduced to support only ECDSA and SHA256 or SHA384, only the elliptic curves P-256 and P-384 can be used and only the two suite B compliant cipher suites (ECDHE-ECDSA-AES128-GCM-SHA256 and ECDHE-ECDSA-AES256-GCM-SHA384) are permissible.</p>
 
 </dd>
+<dt id="CBC"><b>CBC</b></dt>
+<dd>
+
+<p>All cipher suites using encryption algorithm in Cipher Block Chaining (CBC) mode. These cipher suites are only supported in TLS v1.2 and earlier. Currently it&#39;s an alias for the following cipherstrings: <b>SSL_DES</b>, <b>SSL_3DES</b>, <b>SSL_RC2</b>, <b>SSL_IDEA</b>, <b>SSL_AES128</b>, <b>SSL_AES256</b>, <b>SSL_CAMELLIA128</b>, <b>SSL_CAMELLIA256</b>, <b>SSL_SEED</b>.</p>
+
+</dd>
 </dl>
 
 <h1 id="CIPHER-SUITE-NAMES">CIPHER SUITE NAMES</h1>
@@ -534,12 +555,21 @@ TLS_DH_anon_WITH_SEED_CBC_SHA          ADH-SEED-SHA</code></pre>
 
 <h2 id="GOST-cipher-suites-from-draft-chudov-cryptopro-cptls-extending-TLS-v1.0">GOST cipher suites from draft-chudov-cryptopro-cptls, extending TLS v1.0</h2>
 
-<p>Note: these ciphers require an engine which including GOST cryptographic algorithms, such as the <b>ccgost</b> engine, included in the OpenSSL distribution.</p>
+<p>Note: these ciphers require an engine which including GOST cryptographic algorithms, such as the <b>gost</b> engine, which isn&#39;t part of the OpenSSL distribution.</p>
 
 <pre><code>TLS_GOSTR341094_WITH_28147_CNT_IMIT GOST94-GOST89-GOST89
 TLS_GOSTR341001_WITH_28147_CNT_IMIT GOST2001-GOST89-GOST89
 TLS_GOSTR341094_WITH_NULL_GOSTR3411 GOST94-NULL-GOST94
 TLS_GOSTR341001_WITH_NULL_GOSTR3411 GOST2001-NULL-GOST94</code></pre>
+
+<h2 id="GOST-cipher-suites-extending-TLS-v1.2">GOST cipher suites, extending TLS v1.2</h2>
+
+<p>Note: these ciphers require an engine which including GOST cryptographic algorithms, such as the <b>gost</b> engine, which isn&#39;t part of the OpenSSL distribution.</p>
+
+<pre><code>TLS_GOSTR341112_256_WITH_28147_CNT_IMIT GOST2012-GOST8912-GOST8912
+TLS_GOSTR341112_256_WITH_NULL_GOSTR3411 GOST2012-NULL-GOST12</code></pre>
+
+<p>Note: GOST2012-GOST8912-GOST8912 is an alias for two ciphers ID old LEGACY-GOST2012-GOST8912-GOST8912 and new IANA-GOST2012-GOST8912-GOST8912</p>
 
 <h2 id="Additional-Export-1024-and-other-cipher-suites">Additional Export 1024 and other cipher suites</h2>
 
@@ -547,7 +577,7 @@ TLS_GOSTR341001_WITH_NULL_GOSTR3411 GOST2001-NULL-GOST94</code></pre>
 
 <pre><code>TLS_DHE_DSS_WITH_RC4_128_SHA            DHE-DSS-RC4-SHA</code></pre>
 
-<h2 id="Elliptic-curve-cipher-suites">Elliptic curve cipher suites.</h2>
+<h2 id="Elliptic-curve-cipher-suites">Elliptic curve cipher suites</h2>
 
 <pre><code>TLS_ECDHE_RSA_WITH_NULL_SHA             ECDHE-RSA-NULL-SHA
 TLS_ECDHE_RSA_WITH_RC4_128_SHA          ECDHE-RSA-RC4-SHA
@@ -787,11 +817,11 @@ SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA    EDH-DSS-DES-CBC3-SHA (DHE-DSS-DES-CBC3-SHA)
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man1/s_client.html">s_client(1)</a>, <a href="../man1/s_server.html">s_server(1)</a>, <a href="../man7/ssl.html">ssl(7)</a></p>
+<p><a href="../man1/openssl.html">openssl(1)</a>, <a href="../man1/openssl-s_client.html">openssl-s_client(1)</a>, <a href="../man1/openssl-s_server.html">openssl-s_server(1)</a>, <a href="../man7/ssl.html">ssl(7)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The <b>-V</b> option for the <b>ciphers</b> command was added in OpenSSL 1.0.0.</p>
+<p>The <b>-V</b> option was added in OpenSSL 1.0.0.</p>
 
 <p>The <b>-stdname</b> is only available if OpenSSL is built with tracing enabled (<b>enable-ssl-trace</b> argument to Configure) before OpenSSL 1.1.1.</p>
 
@@ -799,9 +829,9 @@ SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA    EDH-DSS-DES-CBC3-SHA (DHE-DSS-DES-CBC3-SHA)
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

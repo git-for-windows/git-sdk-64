@@ -29,7 +29,7 @@
 
 <pre><code>#include &lt;openssl/crypto.h&gt;
 
-int CRYPTO_secure_malloc_init(size_t size, int minsize);
+int CRYPTO_secure_malloc_init(size_t size, size_t minsize);
 
 int CRYPTO_secure_malloc_initialized();
 
@@ -58,7 +58,7 @@ size_t CRYPTO_secure_used();</code></pre>
 
 <p>If a secure heap is used, then private key <b>BIGNUM</b> values are stored there. This protects long-term storage of private keys, but will not necessarily put all intermediate values and computations there.</p>
 
-<p>CRYPTO_secure_malloc_init() creates the secure heap, with the specified <code>size</code> in bytes. The <code>minsize</code> parameter is the minimum size to allocate from the heap. Both <code>size</code> and <code>minsize</code> must be a power of two.</p>
+<p>CRYPTO_secure_malloc_init() creates the secure heap, with the specified <code>size</code> in bytes. The <code>minsize</code> parameter is the minimum size to allocate from the heap or zero to use a reasonable default value. Both <code>size</code> and, if specified, <code>minsize</code> must be a power of two and <code>minsize</code> should generally be small, for example 16 or 32. <code>minsize</code> must be less than a quarter of <code>size</code> in any case.</p>
 
 <p>CRYPTO_secure_malloc_initialized() indicates whether or not the secure heap as been initialized and is available.</p>
 
@@ -100,11 +100,13 @@ size_t CRYPTO_secure_used();</code></pre>
 
 <p>The OPENSSL_secure_clear_free() function was added in OpenSSL 1.1.0g.</p>
 
+<p>The second argument to CRYPTO_secure_malloc_init() was changed from an <b>int</b> to a <b>size_t</b> in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

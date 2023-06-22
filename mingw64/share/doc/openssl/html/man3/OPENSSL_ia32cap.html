@@ -15,7 +15,6 @@
   <li><a href="#NAME">NAME</a></li>
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
-  <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
@@ -108,7 +107,7 @@
 </dd>
 </dl>
 
-<p>For example, in 32-bit application context clearing bit #26 at run-time disables high-performance SSE2 code present in the crypto library, while clearing bit #24 disables SSE2 code operating on 128-bit XMM register bank. You might have to do the latter if target OpenSSL application is executed on SSE2 capable CPU, but under control of OS that does not enable XMM registers. Historically address of the capability vector copy was exposed to application through OPENSSL_ia32cap_loc(), but not anymore. Now the only way to affect the capability detection is to set OPENSSL_ia32cap environment variable prior target application start. To give a specific example, on Intel P4 processor &#39;env OPENSSL_ia32cap=0x16980010 apps/openssl&#39;, or better yet &#39;env OPENSSL_ia32cap=~0x1000000 apps/openssl&#39; would achieve the desired effect. Alternatively you can reconfigure the toolkit with no-sse2 option and recompile.</p>
+<p>For example, in 32-bit application context clearing bit #26 at run-time disables high-performance SSE2 code present in the crypto library, while clearing bit #24 disables SSE2 code operating on 128-bit XMM register bank. You might have to do the latter if target OpenSSL application is executed on SSE2 capable CPU, but under control of OS that does not enable XMM registers. Historically address of the capability vector copy was exposed to application through OPENSSL_ia32cap_loc(), but not anymore. Now the only way to affect the capability detection is to set <b>OPENSSL_ia32cap</b> environment variable prior target application start. To give a specific example, on Intel P4 processor <code>env OPENSSL_ia32cap=0x16980010 apps/openssl</code>, or better yet <code>env OPENSSL_ia32cap=~0x1000000 apps/openssl</code> would achieve the desired effect. Alternatively you can reconfigure the toolkit with no-sse2 option and recompile.</p>
 
 <p>Less intuitive is clearing bit #28, or ~0x10000000 in the &quot;environment variable&quot; terms. The truth is that it&#39;s not copied from CPUID output verbatim, but is adjusted to reflect whether or not the data cache is actually shared between logical cores. This in turn affects the decision on whether or not expensive countermeasures against cache-timing attacks are applied, most notably in AES assembler module.</p>
 
@@ -129,6 +128,10 @@
 
 </dd>
 <dt id="bit-64-16-denoting-availability-of-AVX512F-extension">bit #64+16 denoting availability of AVX512F extension;</dt>
+<dd>
+
+</dd>
+<dt id="bit-64-17-denoting-availability-of-AVX512DQ-extension">bit #64+17 denoting availability of AVX512DQ extension;</dt>
 <dd>
 
 </dd>
@@ -166,27 +169,7 @@
 </dd>
 </dl>
 
-<p>To control this extended capability word use &#39;:&#39; as delimiter when setting up OPENSSL_ia32cap environment variable. For example assigning &#39;:~0x20&#39; would disable AVX2 code paths, and &#39;:0&#39; - all post-AVX extensions.</p>
-
-<p>It should be noted that whether or not some of the most &quot;fancy&quot; extension code paths are actually assembled depends on current assembler version. Base minimum of AES-NI/PCLMULQDQ, SSSE3 and SHA extension code paths are always assembled. Apart from that, minimum assembler version requirements are summarized in below table:</p>
-
-<pre><code>Extension   | GNU as | nasm   | llvm
-------------+--------+--------+--------
-AVX         | 2.19   | 2.09   | 3.0
-AVX2        | 2.22   | 2.10   | 3.1
-ADCX/ADOX   | 2.23   | 2.10   | 3.3
-AVX512      | 2.25   | 2.11.8 | see NOTES
-AVX512IFMA  | 2.26   | 2.11.8 | see NOTES
-VAES        | 2.30   | 2.13.3 |</code></pre>
-
-<h1 id="NOTES">NOTES</h1>
-
-<p>Even though AVX512 support was implemented in llvm 3.6, compilation of assembly modules apparently requires explicit -march flag. But then compiler generates processor-specific code, which in turn contradicts the mere idea of run-time switch execution facilitated by the variable in question. Till the limitation is lifted, it&#39;s possible to work around the problem by making build procedure use following script:</p>
-
-<pre><code>#!/bin/sh
-exec clang -no-integrated-as &quot;$@&quot;</code></pre>
-
-<p>instead of real clang. In which case it doesn&#39;t matter which clang version is used, as it is GNU assembler version that will be checked.</p>
+<p>To control this extended capability word use <code>:</code> as delimiter when setting up <b>OPENSSL_ia32cap</b> environment variable. For example assigning <code>:~0x20</code> would disable AVX2 code paths, and <code>:0</code> - all post-AVX extensions.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -194,9 +177,9 @@ exec clang -no-integrated-as &quot;$@&quot;</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2004-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2004-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

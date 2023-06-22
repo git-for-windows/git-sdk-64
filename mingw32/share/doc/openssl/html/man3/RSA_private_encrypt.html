@@ -17,6 +17,7 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -26,15 +27,19 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/rsa.h&gt;
+<pre><code>#include &lt;openssl/rsa.h&gt;</code></pre>
 
-int RSA_private_encrypt(int flen, unsigned char *from,
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>int RSA_private_encrypt(int flen, unsigned char *from,
                         unsigned char *to, RSA *rsa, int padding);
 
 int RSA_public_decrypt(int flen, unsigned char *from,
                        unsigned char *to, RSA *rsa, int padding);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Both of the functions described on this page are deprecated. Applications should instead use <a href="../man3/EVP_PKEY_sign_init_ex.html">EVP_PKEY_sign_init_ex(3)</a>, <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a>, <a href="../man3/EVP_PKEY_verify_recover_init.html">EVP_PKEY_verify_recover_init(3)</a>, and <a href="../man3/EVP_PKEY_verify_recover.html">EVP_PKEY_verify_recover(3)</a>.</p>
 
 <p>These functions handle RSA signatures at a low-level.</p>
 
@@ -68,13 +73,17 @@ int RSA_public_decrypt(int flen, unsigned char *from,
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>, <a href="../man3/RSA_sign.html">RSA_sign(3)</a>, <a href="../man3/RSA_verify.html">RSA_verify(3)</a></p>
+<p><a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>, <a href="../man3/RSA_sign.html">RSA_sign(3)</a>, <a href="../man3/RSA_verify.html">RSA_verify(3)</a>, <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a>, <a href="../man3/EVP_PKEY_verify_recover.html">EVP_PKEY_verify_recover(3)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>Both of these functions were deprecated in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

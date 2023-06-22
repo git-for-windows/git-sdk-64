@@ -70,13 +70,17 @@ int BIO_do_accept(BIO *b);</code></pre>
 
 <p>BIO_set_accept_name() uses the string <b>name</b> to set the accept name. The name is represented as a string of the form &quot;host:port&quot;, where &quot;host&quot; is the interface to use and &quot;port&quot; is the port. The host can be &quot;*&quot; or empty which is interpreted as meaning any interface. If the host is an IPv6 address, it has to be enclosed in brackets, for example &quot;[::1]:https&quot;. &quot;port&quot; has the same syntax as the port specified in BIO_set_conn_port() for connect BIOs, that is it can be a numerical port string or a string to lookup using getservbyname() and a string table.</p>
 
-<p>BIO_set_accept_port() uses the string <b>port</b> to set the accept port. &quot;port&quot; has the same syntax as the port specified in BIO_set_conn_port() for connect BIOs, that is it can be a numerical port string or a string to lookup using getservbyname() and a string table.</p>
+<p>BIO_set_accept_port() uses the string <b>port</b> to set the accept port of BIO <i>b</i>. &quot;port&quot; has the same syntax as the port specified in BIO_set_conn_port() for connect BIOs, that is it can be a numerical port string or a string to lookup using getservbyname() and a string table. If the given port is <code>0</code> then a random available port is chosen. It may be queried using BIO_sock_info() and <a href="../man3/BIO_ADDR_service_string.html">BIO_ADDR_service_string(3)</a>.</p>
 
 <p>BIO_new_accept() combines BIO_new() and BIO_set_accept_name() into a single call: that is it creates a new accept BIO with port <b>host_port</b>.</p>
 
 <p>BIO_set_nbio_accept() sets the accept socket to blocking mode (the default) if <b>n</b> is 0 or non blocking mode if <b>n</b> is 1.</p>
 
 <p>BIO_set_accept_bios() can be used to set a chain of BIOs which will be duplicated and prepended to the chain when an incoming connection is received. This is useful if, for example, a buffering or SSL BIO is required for each connection. The chain of BIOs must not be freed after this call, they will be automatically freed when the accept BIO is freed.</p>
+
+<p>BIO_get_accept_ip_family() returns the IP family accepted by the BIO <i>b</i>, which may be <b>BIO_FAMILY_IPV4</b>, <b>BIO_FAMILY_IPV6</b>, or <b>BIO_FAMILY_IPANY</b>.</p>
+
+<p>BIO_set_accept_ip_family() sets the IP family <i>family</i> accepted by BIO <i>b</i>. The default is <b>BIO_FAMILY_IPANY</b>.</p>
 
 <p>BIO_set_bind_mode() and BIO_get_bind_mode() set and retrieve the current bind mode. If <b>BIO_BIND_NORMAL</b> (the default) is set then another socket cannot be bound to the same port. If <b>BIO_BIND_REUSEADDR</b> is set then other sockets can bind to the same port. If <b>BIO_BIND_REUSEADDR_IF_UNUSED</b> is set then and attempt is first made to use BIO_BIN_NORMAL, if this fails and the port is not in use then a second attempt is made using <b>BIO_BIND_REUSEADDR</b>.</p>
 
@@ -104,13 +108,13 @@ int BIO_do_accept(BIO *b);</code></pre>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>BIO_do_accept(), BIO_set_accept_name(), BIO_set_accept_port(), BIO_set_nbio_accept(), BIO_set_accept_bios(), BIO_set_accept_ip_family(), and BIO_set_bind_mode() return 1 for success and 0 or -1 for failure.</p>
+<p>BIO_do_accept(), BIO_set_accept_name(), BIO_set_accept_port(), BIO_set_nbio_accept(), BIO_set_accept_bios(), BIO_set_accept_ip_family(), and BIO_set_bind_mode() return 1 for success and &lt;=0 for failure.</p>
 
 <p>BIO_get_accept_name() returns the accept name or NULL on error. BIO_get_peer_name() returns the peer name or NULL on error.</p>
 
-<p>BIO_get_accept_port() returns the accept port as a string or NULL on error. BIO_get_peer_port() returns the peer port as a string or NULL on error. BIO_get_accept_ip_family() returns the IP family or -1 on error.</p>
+<p>BIO_get_accept_port() returns the accept port as a string or NULL on error. BIO_get_peer_port() returns the peer port as a string or NULL on error. BIO_get_accept_ip_family() returns the IP family or &lt;=0 on error.</p>
 
-<p>BIO_get_bind_mode() returns the set of <b>BIO_BIND</b> flags, or -1 on failure.</p>
+<p>BIO_get_bind_mode() returns the set of <b>BIO_BIND</b> flags, or &lt;=0 on failure.</p>
 
 <p>BIO_new_accept() returns a BIO or NULL on error.</p>
 
@@ -120,7 +124,7 @@ int BIO_do_accept(BIO *b);</code></pre>
 
 <pre><code>BIO *abio, *cbio, *cbio2;
 
-/* First call to BIO_accept() sets up accept BIO */
+/* First call to BIO_do_accept() sets up accept BIO */
 abio = BIO_new_accept(&quot;4444&quot;);
 if (BIO_do_accept(abio) &lt;= 0) {
     fprintf(stderr, &quot;Error setting up accept\n&quot;);
@@ -163,9 +167,9 @@ BIO_free(cbio2);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

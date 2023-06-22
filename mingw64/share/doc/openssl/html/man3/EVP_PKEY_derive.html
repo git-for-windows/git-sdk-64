@@ -25,27 +25,34 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>EVP_PKEY_derive_init, EVP_PKEY_derive_set_peer, EVP_PKEY_derive - derive public key algorithm shared secret</p>
+<p>EVP_PKEY_derive_init, EVP_PKEY_derive_init_ex, EVP_PKEY_derive_set_peer_ex, EVP_PKEY_derive_set_peer, EVP_PKEY_derive - derive public key algorithm shared secret</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/evp.h&gt;
 
 int EVP_PKEY_derive_init(EVP_PKEY_CTX *ctx);
+int EVP_PKEY_derive_init_ex(EVP_PKEY_CTX *ctx, const OSSL_PARAM params[]);
+int EVP_PKEY_derive_set_peer_ex(EVP_PKEY_CTX *ctx, EVP_PKEY *peer,
+                                int validate_peer);
 int EVP_PKEY_derive_set_peer(EVP_PKEY_CTX *ctx, EVP_PKEY *peer);
 int EVP_PKEY_derive(EVP_PKEY_CTX *ctx, unsigned char *key, size_t *keylen);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The EVP_PKEY_derive_init() function initializes a public key algorithm context using key <b>pkey</b> for shared secret derivation.</p>
+<p>EVP_PKEY_derive_init() initializes a public key algorithm context <i>ctx</i> for shared secret derivation using the algorithm given when the context was created using <a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a> or variants thereof. The algorithm is used to fetch a <b>EVP_KEYEXCH</b> method implicitly, see <a href="../man7/provider.html">&quot;Implicit fetch&quot; in provider(7)</a> for more information about implicit fetches.</p>
 
-<p>The EVP_PKEY_derive_set_peer() function sets the peer key: this will normally be a public key.</p>
+<p>EVP_PKEY_derive_init_ex() is the same as EVP_PKEY_derive_init() but additionally sets the passed parameters <i>params</i> on the context before returning.</p>
 
-<p>The EVP_PKEY_derive() derives a shared secret using <b>ctx</b>. If <b>key</b> is <b>NULL</b> then the maximum size of the output buffer is written to the <b>keylen</b> parameter. If <b>key</b> is not <b>NULL</b> then before the call the <b>keylen</b> parameter should contain the length of the <b>key</b> buffer, if the call is successful the shared secret is written to <b>key</b> and the amount of data written to <b>keylen</b>.</p>
+<p>EVP_PKEY_derive_set_peer_ex() sets the peer key: this will normally be a public key. The <i>validate_peer</i> will validate the public key if this value is non zero.</p>
+
+<p>EVP_PKEY_derive_set_peer() is similar to EVP_PKEY_derive_set_peer_ex() with <i>validate_peer</i> set to 1.</p>
+
+<p>EVP_PKEY_derive() derives a shared secret using <i>ctx</i>. If <i>key</i> is NULL then the maximum size of the output buffer is written to the <i>keylen</i> parameter. If <i>key</i> is not NULL then before the call the <i>keylen</i> parameter should contain the length of the <i>key</i> buffer, if the call is successful the shared secret is written to <i>key</i> and the amount of data written to <i>keylen</i>.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>After the call to EVP_PKEY_derive_init() algorithm specific control operations can be performed to set any appropriate parameters for the operation.</p>
+<p>After the call to EVP_PKEY_derive_init(), algorithm specific control operations can be performed to set any appropriate parameters for the operation.</p>
 
 <p>The function EVP_PKEY_derive() can be called more than once on the same context if several operations are performed using the same parameters.</p>
 
@@ -91,17 +98,19 @@ if (EVP_PKEY_derive(ctx, skey, &amp;skeylen) &lt;= 0)
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a>, <a href="../man3/EVP_PKEY_encrypt.html">EVP_PKEY_encrypt(3)</a>, <a href="../man3/EVP_PKEY_decrypt.html">EVP_PKEY_decrypt(3)</a>, <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a>, <a href="../man3/EVP_PKEY_verify.html">EVP_PKEY_verify(3)</a>, <a href="../man3/EVP_PKEY_verify_recover.html">EVP_PKEY_verify_recover(3)</a>,</p>
+<p><a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a>, <a href="../man3/EVP_PKEY_encrypt.html">EVP_PKEY_encrypt(3)</a>, <a href="../man3/EVP_PKEY_decrypt.html">EVP_PKEY_decrypt(3)</a>, <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a>, <a href="../man3/EVP_PKEY_verify.html">EVP_PKEY_verify(3)</a>, <a href="../man3/EVP_PKEY_verify_recover.html">EVP_PKEY_verify_recover(3)</a>, <a href="../man3/EVP_KEYEXCH_fetch.html">EVP_KEYEXCH_fetch(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>These functions were added in OpenSSL 1.0.0.</p>
+<p>The EVP_PKEY_derive_init(), EVP_PKEY_derive_set_peer() and EVP_PKEY_derive() functions were originally added in OpenSSL 1.0.0.</p>
+
+<p>The EVP_PKEY_derive_init_ex() and EVP_PKEY_derive_set_peer_ex() functions were added in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2006-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2006-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

@@ -19,12 +19,13 @@
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#BUGS">BUGS</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>EVP_VerifyInit_ex, EVP_VerifyInit, EVP_VerifyUpdate, EVP_VerifyFinal - EVP signature verification functions</p>
+<p>EVP_VerifyInit_ex, EVP_VerifyInit, EVP_VerifyUpdate, EVP_VerifyFinal_ex, EVP_VerifyFinal - EVP signature verification functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -32,6 +33,9 @@
 
 int EVP_VerifyInit_ex(EVP_MD_CTX *ctx, const EVP_MD *type, ENGINE *impl);
 int EVP_VerifyUpdate(EVP_MD_CTX *ctx, const void *d, unsigned int cnt);
+int EVP_VerifyFinal_ex(EVP_MD_CTX *ctx, const unsigned char *sigbuf,
+                       unsigned int siglen, EVP_PKEY *pkey,
+                       OSSL_LIB_CTX *libctx, const char *propq);
 int EVP_VerifyFinal(EVP_MD_CTX *ctx, unsigned char *sigbuf, unsigned int siglen,
                     EVP_PKEY *pkey);
 
@@ -41,19 +45,21 @@ int EVP_VerifyInit(EVP_MD_CTX *ctx, const EVP_MD *type);</code></pre>
 
 <p>The EVP signature verification routines are a high-level interface to digital signatures.</p>
 
-<p>EVP_VerifyInit_ex() sets up verification context <b>ctx</b> to use digest <b>type</b> from ENGINE <b>impl</b>. <b>ctx</b> must be created by calling EVP_MD_CTX_new() before calling this function.</p>
+<p>EVP_VerifyInit_ex() sets up verification context <i>ctx</i> to use digest <i>type</i> from ENGINE <i>impl</i>. <i>ctx</i> must be created by calling EVP_MD_CTX_new() before calling this function.</p>
 
-<p>EVP_VerifyUpdate() hashes <b>cnt</b> bytes of data at <b>d</b> into the verification context <b>ctx</b>. This function can be called several times on the same <b>ctx</b> to include additional data.</p>
+<p>EVP_VerifyUpdate() hashes <i>cnt</i> bytes of data at <i>d</i> into the verification context <i>ctx</i>. This function can be called several times on the same <i>ctx</i> to include additional data.</p>
 
-<p>EVP_VerifyFinal() verifies the data in <b>ctx</b> using the public key <b>pkey</b> and against the <b>siglen</b> bytes at <b>sigbuf</b>.</p>
+<p>EVP_VerifyFinal_ex() verifies the data in <i>ctx</i> using the public key <i>pkey</i> and <i>siglen</i> bytes in <i>sigbuf</i>. The library context <i>libctx</i> and property query <i>propq</i> are used when creating a context to use with the key <i>pkey</i>.</p>
 
-<p>EVP_VerifyInit() initializes verification context <b>ctx</b> to use the default implementation of digest <b>type</b>.</p>
+<p>EVP_VerifyFinal() is similar to EVP_VerifyFinal_ex() but uses default values of NULL for the library context <i>libctx</i> and the property query <i>propq</i>.</p>
+
+<p>EVP_VerifyInit() initializes verification context <i>ctx</i> to use the default implementation of digest <i>type</i>.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>EVP_VerifyInit_ex() and EVP_VerifyUpdate() return 1 for success and 0 for failure.</p>
 
-<p>EVP_VerifyFinal() returns 1 for a correct signature, 0 for failure and -1 if some other error occurred.</p>
+<p>EVP_VerifyFinal_ex() and EVP_VerifyFinal() return 1 for a correct signature, 0 for failure and a negative value if some other error occurred.</p>
 
 <p>The error codes can be obtained by <a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>.</p>
 
@@ -77,13 +83,17 @@ int EVP_VerifyInit(EVP_MD_CTX *ctx, const EVP_MD *type);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/evp.html">evp(7)</a>, <a href="../man3/EVP_SignInit.html">EVP_SignInit(3)</a>, <a href="../man3/EVP_DigestInit.html">EVP_DigestInit(3)</a>, <a href="../man7/evp.html">evp(7)</a>, <a href="../man3/HMAC.html">HMAC(3)</a>, <a href="../man3/MD2.html">MD2(3)</a>, <a href="../man3/MD5.html">MD5(3)</a>, <a href="../man3/MDC2.html">MDC2(3)</a>, <a href="../man3/RIPEMD160.html">RIPEMD160(3)</a>, <a href="../man3/SHA1.html">SHA1(3)</a>, <a href="../man1/dgst.html">dgst(1)</a></p>
+<p><a href="../man7/evp.html">evp(7)</a>, <a href="../man3/EVP_SignInit.html">EVP_SignInit(3)</a>, <a href="../man3/EVP_DigestInit.html">EVP_DigestInit(3)</a>, <a href="../man7/evp.html">evp(7)</a>, <a href="../man3/HMAC.html">HMAC(3)</a>, <a href="../man3/MD2.html">MD2(3)</a>, <a href="../man3/MD5.html">MD5(3)</a>, <a href="../man3/MDC2.html">MDC2(3)</a>, <a href="../man3/RIPEMD160.html">RIPEMD160(3)</a>, <a href="../man3/SHA1.html">SHA1(3)</a>, <a href="../man1/openssl-dgst.html">openssl-dgst(1)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>The function EVP_VerifyFinal_ex() was added in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

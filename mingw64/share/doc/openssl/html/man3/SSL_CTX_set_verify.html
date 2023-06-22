@@ -26,7 +26,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>SSL_get_ex_data_X509_STORE_CTX_idx, SSL_CTX_set_verify, SSL_set_verify, SSL_CTX_set_verify_depth, SSL_set_verify_depth, SSL_verify_cb, SSL_verify_client_post_handshake, SSL_set_post_handshake_auth, SSL_CTX_set_post_handshake_auth - set peer certificate verification parameters</p>
+<p>SSL_get_ex_data_X509_STORE_CTX_idx, SSL_CTX_set_verify, SSL_set_verify, SSL_CTX_set_verify_depth, SSL_set_verify_depth, SSL_verify_cb, SSL_verify_client_post_handshake, SSL_set_post_handshake_auth, SSL_CTX_set_post_handshake_auth - set various SSL/TLS parameters for peer certificate verification</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -50,6 +50,8 @@ void SSL_set_post_handshake_auth(SSL *ssl, int val);</code></pre>
 <p>SSL_CTX_set_verify() sets the verification flags for <b>ctx</b> to be <b>mode</b> and specifies the <b>verify_callback</b> function to be used. If no callback function shall be specified, the NULL pointer can be used for <b>verify_callback</b>.</p>
 
 <p>SSL_set_verify() sets the verification flags for <b>ssl</b> to be <b>mode</b> and specifies the <b>verify_callback</b> function to be used. If no callback function shall be specified, the NULL pointer can be used for <b>verify_callback</b>. In this case last <b>verify_callback</b> set specifically for this <b>ssl</b> remains. If no special <b>callback</b> was set before, the default callback for the underlying <b>ctx</b> is used, that was valid at the time <b>ssl</b> was created with <a href="../man3/SSL_new.html">SSL_new(3)</a>. Within the callback function, <b>SSL_get_ex_data_X509_STORE_CTX_idx</b> can be called to get the data index of the current SSL object that is doing the verification.</p>
+
+<p>In client mode <b>verify_callback</b> may also call the <a href="../man3/SSL_set_retry_verify.html">SSL_set_retry_verify(3)</a> function on the <b>SSL</b> object set in the <i>x509_store_ctx</i> ex data (see <a href="../man3/SSL_get_ex_data_X509_STORE_CTX_idx.html">SSL_get_ex_data_X509_STORE_CTX_idx(3)</a>) and return 1. This would be typically done in case the certificate verification was not yet able to succeed. This makes the handshake suspend and return control to the calling application with <b>SSL_ERROR_WANT_RETRY_VERIFY</b>. The application can for instance fetch further certificates or cert status information needed for the verification. Calling <a href="../man3/SSL_connect.html">SSL_connect(3)</a> again resumes the connection attempt by retrying the server certificate verification step. This process may even be repeated if need be. Note that the handshake may still be aborted if a subsequent invocation of the callback (e.g., at a lower depth, or for a separate error condition) returns 0.</p>
 
 <p>SSL_CTX_set_verify_depth() sets the maximum <b>depth</b> for the certificate chain verification that shall be allowed for <b>ctx</b>.</p>
 
@@ -252,9 +254,9 @@ if (peer = SSL_get_peer_certificate(ssl)) {
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

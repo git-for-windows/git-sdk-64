@@ -68,13 +68,13 @@ X509_NAME_ENTRY *X509_NAME_delete_entry(X509_NAME *name, int loc);</code></pre>
 
 <p><b>set</b> determines how the new type is added. If it is zero a new RDN is created.</p>
 
-<p>If <b>set</b> is -1 or 1 it is added to the previous or next RDN structure respectively. This will then be a multivalued RDN: since multivalues RDNs are very seldom used <b>set</b> is almost always set to zero.</p>
+<p>If <b>set</b> is -1 or 1 it is added as a new set member to the previous or next RDN structure, respectively. This will then become part of a multi-valued RDN (containing a set of AVAs). Since multi-valued RDNs are very rarely used <b>set</b> typically will be zero.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>X509_NAME_add_entry_by_txt(), X509_NAME_add_entry_by_OBJ(), X509_NAME_add_entry_by_NID() and X509_NAME_add_entry() return 1 for success of 0 if an error occurred.</p>
 
-<p>X509_NAME_delete_entry() returns either the deleted <b>X509_NAME_ENTRY</b> structure of <b>NULL</b> if an error occurred.</p>
+<p>X509_NAME_delete_entry() returns either the deleted <b>X509_NAME_ENTRY</b> structure or <b>NULL</b> if an error occurred.</p>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
@@ -107,9 +107,9 @@ if (!X509_NAME_add_entry_by_txt(nm, &quot;CN&quot;, MBSTRING_ASC,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

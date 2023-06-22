@@ -24,7 +24,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>BIO_read_ex, BIO_write_ex, BIO_read, BIO_write, BIO_gets, BIO_puts - BIO I/O functions</p>
+<p>BIO_read_ex, BIO_write_ex, BIO_read, BIO_write, BIO_gets, BIO_get_line, BIO_puts - BIO I/O functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -35,28 +35,37 @@ int BIO_write_ex(BIO *b, const void *data, size_t dlen, size_t *written);
 
 int BIO_read(BIO *b, void *data, int dlen);
 int BIO_gets(BIO *b, char *buf, int size);
+int BIO_get_line(BIO *b, char *buf, int size);
 int BIO_write(BIO *b, const void *data, int dlen);
 int BIO_puts(BIO *b, const char *buf);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>BIO_read_ex() attempts to read <b>dlen</b> bytes from BIO <b>b</b> and places the data in <b>data</b>. If any bytes were successfully read then the number of bytes read is stored in <b>*readbytes</b>.</p>
+<p>BIO_read_ex() attempts to read <i>dlen</i> bytes from BIO <i>b</i> and places the data in <i>data</i>. If any bytes were successfully read then the number of bytes read is stored in <i>*readbytes</i>.</p>
 
-<p>BIO_write_ex() attempts to write <b>dlen</b> bytes from <b>data</b> to BIO <b>b</b>. If successful then the number of bytes written is stored in <b>*written</b>.</p>
+<p>BIO_write_ex() attempts to write <i>dlen</i> bytes from <i>data</i> to BIO <i>b</i>. If successful then the number of bytes written is stored in <i>*written</i> unless <i>written</i> is NULL.</p>
 
-<p>BIO_read() attempts to read <b>len</b> bytes from BIO <b>b</b> and places the data in <b>buf</b>.</p>
+<p>BIO_read() attempts to read <i>len</i> bytes from BIO <i>b</i> and places the data in <i>buf</i>.</p>
 
-<p>BIO_gets() performs the BIOs &quot;gets&quot; operation and places the data in <b>buf</b>. Usually this operation will attempt to read a line of data from the BIO of maximum length <b>size-1</b>. There are exceptions to this, however; for example, BIO_gets() on a digest BIO will calculate and return the digest and other BIOs may not support BIO_gets() at all. The returned string is always NUL-terminated and the &#39;\n&#39; is preserved if present in the input data.</p>
+<p>BIO_gets() performs the BIOs &quot;gets&quot; operation and places the data in <i>buf</i>. Usually this operation will attempt to read a line of data from the BIO of maximum length <i>size-1</i>. There are exceptions to this, however; for example, BIO_gets() on a digest BIO will calculate and return the digest and other BIOs may not support BIO_gets() at all. The returned string is always NUL-terminated and the &#39;\n&#39; is preserved if present in the input data. On binary input there may be NUL characters within the string; in this case the return value (if nonnegative) may give an incorrect length.</p>
 
-<p>BIO_write() attempts to write <b>len</b> bytes from <b>buf</b> to BIO <b>b</b>.</p>
+<p>BIO_get_line() attempts to read from BIO <i>b</i> a line of data up to the next &#39;\n&#39; or the maximum length <i>size-1</i> is reached and places the data in <i>buf</i>. The returned string is always NUL-terminated and the &#39;\n&#39; is preserved if present in the input data. On binary input there may be NUL characters within the string; in this case the return value (if nonnegative) gives the actual length read. For implementing this, unfortunately the data needs to be read byte-by-byte.</p>
 
-<p>BIO_puts() attempts to write a NUL-terminated string <b>buf</b> to BIO <b>b</b>.</p>
+<p>BIO_write() attempts to write <i>len</i> bytes from <i>buf</i> to BIO <i>b</i>.</p>
+
+<p>BIO_puts() attempts to write a NUL-terminated string <i>buf</i> to BIO <i>b</i>.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>BIO_read_ex() and BIO_write_ex() return 1 if data was successfully read or written, and 0 otherwise.</p>
+<p>BIO_read_ex() returns 1 if data was successfully read, and 0 otherwise.</p>
 
-<p>All other functions return either the amount of data successfully read or written (if the return value is positive) or that no data was successfully read or written if the result is 0 or -1. If the return value is -2 then the operation is not implemented in the specific BIO type. The trailing NUL is not included in the length returned by BIO_gets().</p>
+<p>BIO_write_ex() returns 1 if no error was encountered writing data, 0 otherwise. Requesting to write 0 bytes is not considered an error.</p>
+
+<p>BIO_write() returns -2 if the &quot;write&quot; operation is not implemented by the BIO or -1 on other errors. Otherwise it returns the number of bytes written. This may be 0 if the BIO <i>b</i> is NULL or <i>dlen &lt;= 0</i>.</p>
+
+<p>BIO_gets() returns -2 if the &quot;gets&quot; operation is not implemented by the BIO or -1 on other errors. Otherwise it typically returns the amount of data read, but depending on the implementation it may return only the length up to the first NUL character contained in the data read. In any case the trailing NUL that is added after the data read is not included in the length returned.</p>
+
+<p>All other functions return either the amount of data successfully read or written (if the return value is positive) or that no data was successfully read or written if the result is 0 or -1. If the return value is -2 then the operation is not implemented in the specific BIO type.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -66,7 +75,7 @@ int BIO_puts(BIO *b, const char *buf);</code></pre>
 
 <p>See <a href="../man3/BIO_should_retry.html">BIO_should_retry(3)</a> for details of how to determine the cause of a retry and other I/O issues.</p>
 
-<p>If the BIO_gets() function is not supported by a BIO then it possible to work around this by adding a buffering BIO <a href="../man3/BIO_f_buffer.html">BIO_f_buffer(3)</a> to the chain.</p>
+<p>If the &quot;gets&quot; method is not supported by a BIO then BIO_get_line() can be used. It is also possible to make BIO_gets() usable even if the &quot;gets&quot; method is not supported by adding a buffering BIO <a href="../man3/BIO_f_buffer.html">BIO_f_buffer(3)</a> to the chain.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -74,13 +83,17 @@ int BIO_puts(BIO *b, const char *buf);</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>BIO_gets() on 1.1.0 and older when called on BIO_fd() based BIO does not keep the &#39;\n&#39; at the end of the line in the buffer.</p>
+<p>BIO_gets() on 1.1.0 and older when called on BIO_fd() based BIO did not keep the &#39;\n&#39; at the end of the line in the buffer.</p>
+
+<p>BIO_get_line() was added in OpenSSL 3.0.</p>
+
+<p>BIO_write_ex() returns 1 if the size of the data to write is 0 and the <i>written</i> parameter of the function can be NULL since OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

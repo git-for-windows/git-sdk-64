@@ -28,9 +28,11 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/dsa.h&gt;
+<pre><code>#include &lt;openssl/dsa.h&gt;</code></pre>
 
-void DSA_get0_pqg(const DSA *d,
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>void DSA_get0_pqg(const DSA *d,
                   const BIGNUM **p, const BIGNUM **q, const BIGNUM **g);
 int DSA_set0_pqg(DSA *d, BIGNUM *p, BIGNUM *q, BIGNUM *g);
 void DSA_get0_key(const DSA *d,
@@ -47,6 +49,8 @@ void DSA_set_flags(DSA *d, int flags);
 ENGINE *DSA_get0_engine(DSA *d);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>All of the functions described on this page are deprecated. Applications should instead use <a href="../man3/EVP_PKEY_get_bn_param.html">EVP_PKEY_get_bn_param(3)</a>.</p>
 
 <p>A DSA object contains the parameters <b>p</b>, <b>q</b> and <b>g</b>. It also contains a public key (<b>pub_key</b>) and (optionally) a private key (<b>priv_key</b>).</p>
 
@@ -78,17 +82,17 @@ ENGINE *DSA_get0_engine(DSA *d);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/DSA_new.html">DSA_new(3)</a>, <a href="../man3/DSA_new.html">DSA_new(3)</a>, <a href="../man3/DSA_generate_parameters.html">DSA_generate_parameters(3)</a>, <a href="../man3/DSA_generate_key.html">DSA_generate_key(3)</a>, <a href="../man3/DSA_dup_DH.html">DSA_dup_DH(3)</a>, <a href="../man3/DSA_do_sign.html">DSA_do_sign(3)</a>, <a href="../man3/DSA_set_method.html">DSA_set_method(3)</a>, <a href="../man3/DSA_SIG_new.html">DSA_SIG_new(3)</a>, <a href="../man3/DSA_sign.html">DSA_sign(3)</a>, <a href="../man3/DSA_size.html">DSA_size(3)</a>, <a href="../man3/DSA_meth_new.html">DSA_meth_new(3)</a></p>
+<p><a href="../man3/EVP_PKEY_get_bn_param.html">EVP_PKEY_get_bn_param(3)</a>, <a href="../man3/DSA_new.html">DSA_new(3)</a>, <a href="../man3/DSA_new.html">DSA_new(3)</a>, <a href="../man3/DSA_generate_parameters.html">DSA_generate_parameters(3)</a>, <a href="../man3/DSA_generate_key.html">DSA_generate_key(3)</a>, <a href="../man3/DSA_dup_DH.html">DSA_dup_DH(3)</a>, <a href="../man3/DSA_do_sign.html">DSA_do_sign(3)</a>, <a href="../man3/DSA_set_method.html">DSA_set_method(3)</a>, <a href="../man3/DSA_SIG_new.html">DSA_SIG_new(3)</a>, <a href="../man3/DSA_sign.html">DSA_sign(3)</a>, <a href="../man3/DSA_size.html">DSA_size(3)</a>, <a href="../man3/DSA_meth_new.html">DSA_meth_new(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The functions described here were added in OpenSSL 1.1.0.</p>
+<p>The functions described here were added in OpenSSL 1.1.0 and deprecated in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

@@ -30,27 +30,27 @@
 <pre><code>#include &lt;openssl/ssl.h&gt;
 
 int SSL_CTX_use_certificate(SSL_CTX *ctx, X509 *x);
-int SSL_CTX_use_certificate_ASN1(SSL_CTX *ctx, int len, unsigned char *d);
+int SSL_CTX_use_certificate_ASN1(SSL_CTX *ctx, int len, const unsigned char *d);
 int SSL_CTX_use_certificate_file(SSL_CTX *ctx, const char *file, int type);
 int SSL_use_certificate(SSL *ssl, X509 *x);
-int SSL_use_certificate_ASN1(SSL *ssl, unsigned char *d, int len);
+int SSL_use_certificate_ASN1(SSL *ssl, const unsigned char *d, int len);
 int SSL_use_certificate_file(SSL *ssl, const char *file, int type);
 
 int SSL_CTX_use_certificate_chain_file(SSL_CTX *ctx, const char *file);
 int SSL_use_certificate_chain_file(SSL *ssl, const char *file);
 
 int SSL_CTX_use_PrivateKey(SSL_CTX *ctx, EVP_PKEY *pkey);
-int SSL_CTX_use_PrivateKey_ASN1(int pk, SSL_CTX *ctx, unsigned char *d,
+int SSL_CTX_use_PrivateKey_ASN1(int pk, SSL_CTX *ctx, const unsigned char *d,
                                 long len);
 int SSL_CTX_use_PrivateKey_file(SSL_CTX *ctx, const char *file, int type);
 int SSL_CTX_use_RSAPrivateKey(SSL_CTX *ctx, RSA *rsa);
-int SSL_CTX_use_RSAPrivateKey_ASN1(SSL_CTX *ctx, unsigned char *d, long len);
+int SSL_CTX_use_RSAPrivateKey_ASN1(SSL_CTX *ctx, const unsigned char *d, long len);
 int SSL_CTX_use_RSAPrivateKey_file(SSL_CTX *ctx, const char *file, int type);
 int SSL_use_PrivateKey(SSL *ssl, EVP_PKEY *pkey);
-int SSL_use_PrivateKey_ASN1(int pk, SSL *ssl, unsigned char *d, long len);
+int SSL_use_PrivateKey_ASN1(int pk, SSL *ssl, const unsigned char *d, long len);
 int SSL_use_PrivateKey_file(SSL *ssl, const char *file, int type);
 int SSL_use_RSAPrivateKey(SSL *ssl, RSA *rsa);
-int SSL_use_RSAPrivateKey_ASN1(SSL *ssl, unsigned char *d, long len);
+int SSL_use_RSAPrivateKey_ASN1(SSL *ssl, const unsigned char *d, long len);
 int SSL_use_RSAPrivateKey_file(SSL *ssl, const char *file, int type);
 
 int SSL_CTX_check_private_key(const SSL_CTX *ctx);
@@ -75,7 +75,7 @@ int SSL_use_cert_and_key(SSL *ssl, X509 *x, EVP_PKEY *pkey, STACK_OF(X509) *chai
 
 <p>SSL_CTX_use_certificate_chain_file() loads a certificate chain from <b>file</b> into <b>ctx</b>. The certificates must be in PEM format and must be sorted starting with the subject&#39;s certificate (actual client or server certificate), followed by intermediate CA certificates if applicable, and ending at the highest level (root) CA. SSL_use_certificate_chain_file() is similar except it loads the certificate chain into <b>ssl</b>.</p>
 
-<p>SSL_CTX_use_PrivateKey() adds <b>pkey</b> as private key to <b>ctx</b>. SSL_CTX_use_RSAPrivateKey() adds the private key <b>rsa</b> of type RSA to <b>ctx</b>. SSL_use_PrivateKey() adds <b>pkey</b> as private key to <b>ssl</b>; SSL_use_RSAPrivateKey() adds <b>rsa</b> as private key of type RSA to <b>ssl</b>. If a certificate has already been set and the private does not belong to the certificate an error is returned. To change a certificate, private key pair the new certificate needs to be set with SSL_use_certificate() or SSL_CTX_use_certificate() before setting the private key with SSL_CTX_use_PrivateKey() or SSL_use_PrivateKey().</p>
+<p>SSL_CTX_use_PrivateKey() adds <b>pkey</b> as private key to <b>ctx</b>. SSL_CTX_use_RSAPrivateKey() adds the private key <b>rsa</b> of type RSA to <b>ctx</b>. SSL_use_PrivateKey() adds <b>pkey</b> as private key to <b>ssl</b>; SSL_use_RSAPrivateKey() adds <b>rsa</b> as private key of type RSA to <b>ssl</b>. If a certificate has already been set and the private key does not belong to the certificate an error is returned. To change a [certificate/private-key] pair, the new certificate needs to be set first with SSL_use_certificate() or SSL_CTX_use_certificate() before setting the private key with SSL_CTX_use_PrivateKey() or SSL_use_PrivateKey().</p>
 
 <p>SSL_CTX_use_cert_and_key() and SSL_use_cert_and_key() assign the X.509 certificate <b>x</b>, private key <b>key</b>, and certificate <b>chain</b> onto the corresponding <b>ssl</b> or <b>ctx</b>. The <b>pkey</b> argument must be the private key of the X.509 certificate <b>x</b>. If the <b>override</b> argument is 0, then <b>x</b>, <b>pkey</b> and <b>chain</b> are set only if all were not previously set. If <b>override</b> is non-0, then the certificate, private key and chain certs are always set. If <b>pkey</b> is NULL, then the public key of <b>x</b> is used as the private key. This is intended to be used with hardware (via the ENGINE interface) that stores the private key securely, such that it cannot be accessed by OpenSSL. The reference count of the public key is incremented (twice if there is no private key); it is not copied nor duplicated. This allows all private key validations checks to succeed without an actual private key being assigned via SSL_CTX_use_PrivateKey(), etc.</p>
 
@@ -83,7 +83,7 @@ int SSL_use_cert_and_key(SSL *ssl, X509 *x, EVP_PKEY *pkey, STACK_OF(X509) *chai
 
 <p>SSL_CTX_use_PrivateKey_file() adds the first private key found in <b>file</b> to <b>ctx</b>. The formatting <b>type</b> of the private key must be specified from the known types SSL_FILETYPE_PEM, SSL_FILETYPE_ASN1. SSL_CTX_use_RSAPrivateKey_file() adds the first private RSA key found in <b>file</b> to <b>ctx</b>. SSL_use_PrivateKey_file() adds the first private key found in <b>file</b> to <b>ssl</b>; SSL_use_RSAPrivateKey_file() adds the first private RSA key found to <b>ssl</b>.</p>
 
-<p>SSL_CTX_check_private_key() checks the consistency of a private key with the corresponding certificate loaded into <b>ctx</b>. If more than one key/certificate pair (RSA/DSA) is installed, the last item installed will be checked. If e.g. the last item was a RSA certificate or key, the RSA key/certificate pair will be checked. SSL_check_private_key() performs the same check for <b>ssl</b>. If no key/certificate was explicitly added for this <b>ssl</b>, the last item added into <b>ctx</b> will be checked.</p>
+<p>SSL_CTX_check_private_key() checks the consistency of a private key with the corresponding certificate loaded into <b>ctx</b>. If more than one key/certificate pair (RSA/DSA) is installed, the last item installed will be checked. If e.g. the last item was an RSA certificate or key, the RSA key/certificate pair will be checked. SSL_check_private_key() performs the same check for <b>ssl</b>. If no key/certificate was explicitly added for this <b>ssl</b>, the last item added into <b>ctx</b> will be checked.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -109,9 +109,9 @@ int SSL_use_cert_and_key(SSL *ssl, X509 *x, EVP_PKEY *pkey, STACK_OF(X509) *chai
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

@@ -18,18 +18,21 @@
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#WARNINGS">WARNINGS</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>RSA_padding_add_PKCS1_type_1, RSA_padding_check_PKCS1_type_1, RSA_padding_add_PKCS1_type_2, RSA_padding_check_PKCS1_type_2, RSA_padding_add_PKCS1_OAEP, RSA_padding_check_PKCS1_OAEP, RSA_padding_add_PKCS1_OAEP_mgf1, RSA_padding_check_PKCS1_OAEP_mgf1, RSA_padding_add_SSLv23, RSA_padding_check_SSLv23, RSA_padding_add_none, RSA_padding_check_none - asymmetric encryption padding</p>
+<p>RSA_padding_add_PKCS1_type_1, RSA_padding_check_PKCS1_type_1, RSA_padding_add_PKCS1_type_2, RSA_padding_check_PKCS1_type_2, RSA_padding_add_PKCS1_OAEP, RSA_padding_check_PKCS1_OAEP, RSA_padding_add_PKCS1_OAEP_mgf1, RSA_padding_check_PKCS1_OAEP_mgf1, RSA_padding_add_none, RSA_padding_check_none - asymmetric encryption padding</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/rsa.h&gt;
+<pre><code>#include &lt;openssl/rsa.h&gt;</code></pre>
 
-int RSA_padding_add_PKCS1_type_1(unsigned char *to, int tlen,
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>int RSA_padding_add_PKCS1_type_1(unsigned char *to, int tlen,
                                  const unsigned char *f, int fl);
 
 int RSA_padding_check_PKCS1_type_1(unsigned char *to, int tlen,
@@ -59,12 +62,6 @@ int RSA_padding_check_PKCS1_OAEP_mgf1(unsigned char *to, int tlen,
                                       const unsigned char *p, int pl,
                                       const EVP_MD *md, const EVP_MD *mgf1md);
 
-int RSA_padding_add_SSLv23(unsigned char *to, int tlen,
-                           const unsigned char *f, int fl);
-
-int RSA_padding_check_SSLv23(unsigned char *to, int tlen,
-                             const unsigned char *f, int fl, int rsa_len);
-
 int RSA_padding_add_none(unsigned char *to, int tlen,
                          const unsigned char *f, int fl);
 
@@ -72,6 +69,8 @@ int RSA_padding_check_none(unsigned char *to, int tlen,
                            const unsigned char *f, int fl, int rsa_len);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>All of the functions described on this page are deprecated. Applications should instead use the EVP PKEY APIs.</p>
 
 <p>The RSA_padding_xxx_xxx() functions are called from the RSA encrypt, decrypt, sign and verify functions. Normally they should not be called from application programs.</p>
 
@@ -99,12 +98,6 @@ int RSA_padding_check_none(unsigned char *to, int tlen,
 <dd>
 
 <p>PKCS #1 v2.0 EME-OAEP</p>
-
-</dd>
-<dt id="SSLv23">SSLv23</dt>
-<dd>
-
-<p>PKCS #1 EME-PKCS1-v1_5 with SSL-specific modification</p>
 
 </dd>
 <dt id="none">none</dt>
@@ -135,11 +128,15 @@ int RSA_padding_check_none(unsigned char *to, int tlen,
 
 <p><a href="../man3/RSA_public_encrypt.html">RSA_public_encrypt(3)</a>, <a href="../man3/RSA_private_decrypt.html">RSA_private_decrypt(3)</a>, <a href="../man3/RSA_sign.html">RSA_sign(3)</a>, <a href="../man3/RSA_verify.html">RSA_verify(3)</a>, <a href="../man7/RAND.html">RAND(7)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>All of these functions were deprecated in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

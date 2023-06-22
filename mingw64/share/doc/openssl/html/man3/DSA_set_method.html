@@ -17,6 +17,7 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -26,9 +27,11 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/dsa.h&gt;
+<pre><code>#include &lt;openssl/dsa.h&gt;</code></pre>
 
-void DSA_set_default_method(const DSA_METHOD *meth);
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>void DSA_set_default_method(const DSA_METHOD *meth);
 
 const DSA_METHOD *DSA_get_default_method(void);
 
@@ -36,9 +39,11 @@ int DSA_set_method(DSA *dsa, const DSA_METHOD *meth);
 
 DSA *DSA_new_method(ENGINE *engine);
 
-DSA_METHOD *DSA_OpenSSL(void);</code></pre>
+const DSA_METHOD *DSA_OpenSSL(void);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>All of the functions described on this page are deprecated. Applications should providers instead of method overrides.</p>
 
 <p>A <b>DSA_METHOD</b> specifies the functions that OpenSSL uses for DSA operations. By modifying the method, alternative implementations such as hardware accelerators may be used. IMPORTANT: See the NOTES section for important information about how these DSA API functions are affected by the use of <b>ENGINE</b> API calls.</p>
 
@@ -48,7 +53,7 @@ DSA_METHOD *DSA_OpenSSL(void);</code></pre>
 
 <p>DSA_get_default_method() returns a pointer to the current default DSA_METHOD. However, the meaningfulness of this result is dependent on whether the ENGINE API is being used, so this function is no longer recommended.</p>
 
-<p>DSA_set_method() selects <b>meth</b> to perform all operations using the key <b>rsa</b>. This will replace the DSA_METHOD used by the DSA key and if the previous method was supplied by an ENGINE, the handle to that ENGINE will be released during the change. It is possible to have DSA keys that only work with certain DSA_METHOD implementations (e.g. from an ENGINE module that supports embedded hardware-protected keys), and in such cases attempting to change the DSA_METHOD for the key can have unexpected results. See <a href="/../../doc/man3/DSA_meth_new.html">DSA_meth_new</a> for information on constructing custom DSA_METHOD objects;</p>
+<p>DSA_set_method() selects <b>meth</b> to perform all operations using the key <b>rsa</b>. This will replace the DSA_METHOD used by the DSA key and if the previous method was supplied by an ENGINE, the handle to that ENGINE will be released during the change. It is possible to have DSA keys that only work with certain DSA_METHOD implementations (e.g. from an ENGINE module that supports embedded hardware-protected keys), and in such cases attempting to change the DSA_METHOD for the key can have unexpected results. See <a href="../man3/DSA_meth_new.html">DSA_meth_new(3)</a> for information on constructing custom DSA_METHOD objects;</p>
 
 <p>DSA_new_method() allocates and initializes a DSA structure so that <b>engine</b> will be used for the DSA operations. If <b>engine</b> is NULL, the default engine for DSA operations is used, and if no default ENGINE is set, the DSA_METHOD controlled by DSA_set_default_method() is used.</p>
 
@@ -66,11 +71,15 @@ DSA_METHOD *DSA_OpenSSL(void);</code></pre>
 
 <p><a href="../man3/DSA_new.html">DSA_new(3)</a>, <a href="../man3/DSA_new.html">DSA_new(3)</a>, <a href="../man3/DSA_meth_new.html">DSA_meth_new(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>All of these functions were deprecated in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

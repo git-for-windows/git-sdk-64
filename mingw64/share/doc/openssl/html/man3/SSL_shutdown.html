@@ -14,14 +14,12 @@
 <ul id="index">
   <li><a href="#NAME">NAME</a></li>
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
-  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
-  <li><a href="#NOTES">NOTES</a>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
     <ul>
       <li><a href="#First-to-close-the-connection">First to close the connection</a></li>
       <li><a href="#Peer-closes-the-connection">Peer closes the connection</a></li>
     </ul>
   </li>
-  <li><a href="#NOTES1">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
@@ -41,8 +39,6 @@ int SSL_shutdown(SSL *ssl);</code></pre>
 
 <p>SSL_shutdown() shuts down an active TLS/SSL connection. It sends the close_notify shutdown alert to the peer.</p>
 
-<h1 id="NOTES">NOTES</h1>
-
 <p>SSL_shutdown() tries to send the close_notify shutdown alert to the peer. Whether the operation succeeds or not, the SSL_SENT_SHUTDOWN flag is set and a currently open session is considered closed and good and will be kept in the session cache for further reuse.</p>
 
 <p>Note that SSL_shutdown() must not be called if a previous fatal error has occurred on a connection i.e. if SSL_get_error() has returned SSL_ERROR_SYSCALL or SSL_ERROR_SSL.</p>
@@ -56,6 +52,16 @@ int SSL_shutdown(SSL *ssl);</code></pre>
 <p>When the underlying connection shall be used for more communications, the complete shutdown procedure must be performed, so that the peers stay synchronized.</p>
 
 <p>SSL_shutdown() only closes the write direction. It is not possible to call SSL_write() after calling SSL_shutdown(). The read direction is closed by the peer.</p>
+
+<p>The behaviour of SSL_shutdown() additionally depends on the underlying BIO. If the underlying BIO is <b>blocking</b>, SSL_shutdown() will only return once the handshake step has been finished or an error occurred.</p>
+
+<p>If the underlying BIO is <b>nonblocking</b>, SSL_shutdown() will also return when the underlying BIO could not satisfy the needs of SSL_shutdown() to continue the handshake. In this case a call to SSL_get_error() with the return value of SSL_shutdown() will yield <b>SSL_ERROR_WANT_READ</b> or <b>SSL_ERROR_WANT_WRITE</b>. The calling process then must repeat the call after taking appropriate action to satisfy the needs of SSL_shutdown(). The action depends on the underlying BIO. When using a nonblocking socket, nothing is to be done, but select() can be used to check for the required condition. When using a buffering BIO, like a BIO pair, data must be written into or retrieved out of the BIO before being able to continue.</p>
+
+<p>After SSL_shutdown() returned 0, it is possible to call SSL_shutdown() again to wait for the peer&#39;s close_notify alert. SSL_shutdown() will return 1 in that case. However, it is recommended to wait for it using SSL_read() instead.</p>
+
+<p>SSL_shutdown() can be modified to only set the connection to &quot;shutdown&quot; state but not actually send the close_notify alert messages, see <a href="../man3/SSL_CTX_set_quiet_shutdown.html">SSL_CTX_set_quiet_shutdown(3)</a>. When &quot;quiet shutdown&quot; is enabled, SSL_shutdown() will always succeed and return 1. Note that this is not standard compliant behaviour. It should only be done when the peer has a way to make sure all data has been received and doesn&#39;t wait for the close_notify alert message, otherwise an unexpected EOF will be reported.</p>
+
+<p>There are implementations that do not send the required close_notify alert. If there is a need to communicate with such an implementation, and it&#39;s clear that all data has been received, do not wait for the peer&#39;s close_notify alert. Waiting for the close_notify alert when the peer just closes the connection will result in an error being generated. The error can be ignored using the <b>SSL_OP_IGNORE_UNEXPECTED_EOF</b>. For more information see <a href="../man3/SSL_CTX_set_options.html">SSL_CTX_set_options(3)</a>.</p>
 
 <h2 id="First-to-close-the-connection">First to close the connection</h2>
 
@@ -72,18 +78,6 @@ int SSL_shutdown(SSL *ssl);</code></pre>
 <p>If the peer already sent the close_notify alert <b>and</b> it was already processed implicitly inside another function (<a href="../man3/SSL_read.html">SSL_read(3)</a>), the SSL_RECEIVED_SHUTDOWN flag is set. SSL_read() will return &lt;= 0 in that case, and SSL_get_error() will return SSL_ERROR_ZERO_RETURN. SSL_shutdown() will send the close_notify alert, set the SSL_SENT_SHUTDOWN flag. If successful, SSL_shutdown() will return 1.</p>
 
 <p>Whether SSL_RECEIVED_SHUTDOWN is already set can be checked using the SSL_get_shutdown() (see also <a href="../man3/SSL_set_shutdown.html">SSL_set_shutdown(3)</a> call.</p>
-
-<h1 id="NOTES1">NOTES</h1>
-
-<p>The behaviour of SSL_shutdown() additionally depends on the underlying BIO. If the underlying BIO is <b>blocking</b>, SSL_shutdown() will only return once the handshake step has been finished or an error occurred.</p>
-
-<p>If the underlying BIO is <b>nonblocking</b>, SSL_shutdown() will also return when the underlying BIO could not satisfy the needs of SSL_shutdown() to continue the handshake. In this case a call to SSL_get_error() with the return value of SSL_shutdown() will yield <b>SSL_ERROR_WANT_READ</b> or <b>SSL_ERROR_WANT_WRITE</b>. The calling process then must repeat the call after taking appropriate action to satisfy the needs of SSL_shutdown(). The action depends on the underlying BIO. When using a nonblocking socket, nothing is to be done, but select() can be used to check for the required condition. When using a buffering BIO, like a BIO pair, data must be written into or retrieved out of the BIO before being able to continue.</p>
-
-<p>After SSL_shutdown() returned 0, it is possible to call SSL_shutdown() again to wait for the peer&#39;s close_notify alert. SSL_shutdown() will return 1 in that case. However, it is recommended to wait for it using SSL_read() instead.</p>
-
-<p>SSL_shutdown() can be modified to only set the connection to &quot;shutdown&quot; state but not actually send the close_notify alert messages, see <a href="../man3/SSL_CTX_set_quiet_shutdown.html">SSL_CTX_set_quiet_shutdown(3)</a>. When &quot;quiet shutdown&quot; is enabled, SSL_shutdown() will always succeed and return 1. Note that this is not standard compliant behaviour. It should only be done when the peer has a way to make sure all data has been received and doesn&#39;t wait for the close_notify alert message, otherwise an unexpected EOF will be reported.</p>
-
-<p>There are implementations that do not send the required close_notify alert. If there is a need to communicate with such an implementation, and it&#39;s clear that all data has been received, do not wait for the peer&#39;s close_notify alert. Waiting for the close_notify alert when the peer just closes the connection will result in an error being generated.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -117,13 +111,13 @@ int SSL_shutdown(SSL *ssl);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/SSL_get_error.html">SSL_get_error(3)</a>, <a href="../man3/SSL_connect.html">SSL_connect(3)</a>, <a href="../man3/SSL_accept.html">SSL_accept(3)</a>, <a href="../man3/SSL_set_shutdown.html">SSL_set_shutdown(3)</a>, <a href="../man3/SSL_CTX_set_quiet_shutdown.html">SSL_CTX_set_quiet_shutdown(3)</a>, <a href="../man3/SSL_clear.html">SSL_clear(3)</a>, <a href="../man3/SSL_free.html">SSL_free(3)</a>, <a href="../man7/ssl.html">ssl(7)</a>, <a href="../man7/bio.html">bio(7)</a></p>
+<p><a href="../man3/SSL_get_error.html">SSL_get_error(3)</a>, <a href="../man3/SSL_connect.html">SSL_connect(3)</a>, <a href="../man3/SSL_accept.html">SSL_accept(3)</a>, <a href="../man3/SSL_set_shutdown.html">SSL_set_shutdown(3)</a>, <a href="../man3/SSL_CTX_set_quiet_shutdown.html">SSL_CTX_set_quiet_shutdown(3)</a>, <a href="../man3/SSL_CTX_set_options.html">SSL_CTX_set_options(3)</a> <a href="../man3/SSL_clear.html">SSL_clear(3)</a>, <a href="../man3/SSL_free.html">SSL_free(3)</a>, <a href="../man7/ssl.html">ssl(7)</a>, <a href="../man7/bio.html">bio(7)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
 <p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

@@ -25,13 +25,14 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>EVP_PKEY_encrypt_init, EVP_PKEY_encrypt - encrypt using a public key algorithm</p>
+<p>EVP_PKEY_encrypt_init_ex, EVP_PKEY_encrypt_init, EVP_PKEY_encrypt - encrypt using a public key algorithm</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/evp.h&gt;
 
 int EVP_PKEY_encrypt_init(EVP_PKEY_CTX *ctx);
+int EVP_PKEY_encrypt_init_ex(EVP_PKEY_CTX *ctx, const OSSL_PARAM params[]);
 int EVP_PKEY_encrypt(EVP_PKEY_CTX *ctx,
                      unsigned char *out, size_t *outlen,
                      const unsigned char *in, size_t inlen);</code></pre>
@@ -40,17 +41,19 @@ int EVP_PKEY_encrypt(EVP_PKEY_CTX *ctx,
 
 <p>The EVP_PKEY_encrypt_init() function initializes a public key algorithm context using key <b>pkey</b> for an encryption operation.</p>
 
+<p>The EVP_PKEY_encrypt_init_ex() function initializes a public key algorithm context using key <b>pkey</b> for an encryption operation and sets the algorithm specific <b>params</b>.</p>
+
 <p>The EVP_PKEY_encrypt() function performs a public key encryption operation using <b>ctx</b>. The data to be encrypted is specified using the <b>in</b> and <b>inlen</b> parameters. If <b>out</b> is <b>NULL</b> then the maximum size of the output buffer is written to the <b>outlen</b> parameter. If <b>out</b> is not <b>NULL</b> then before the call the <b>outlen</b> parameter should contain the length of the <b>out</b> buffer, if the call is successful the encrypted data is written to <b>out</b> and the amount of data written to <b>outlen</b>.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>After the call to EVP_PKEY_encrypt_init() algorithm specific control operations can be performed to set any appropriate parameters for the operation.</p>
+<p>After the call to EVP_PKEY_encrypt_init() algorithm specific control operations can be performed to set any appropriate parameters for the operation. These operations can be included in the EVP_PKEY_encrypt_init_ex() call.</p>
 
 <p>The function EVP_PKEY_encrypt() can be called more than once on the same context if several operations are performed using the same parameters.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>EVP_PKEY_encrypt_init() and EVP_PKEY_encrypt() return 1 for success and 0 or a negative value for failure. In particular a return value of -2 indicates the operation is not supported by the public key algorithm.</p>
+<p>EVP_PKEY_encrypt_init(), EVP_PKEY_encrypt_init_ex() and EVP_PKEY_encrypt() return 1 for success and 0 or a negative value for failure. In particular a return value of -2 indicates the operation is not supported by the public key algorithm.</p>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
@@ -75,7 +78,7 @@ if (!ctx)
     /* Error occurred */
 if (EVP_PKEY_encrypt_init(ctx) &lt;= 0)
     /* Error */
-if (EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_OAEP_PADDING) &lt;= 0)
+if (EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_OAEP_PADDING) &lt;= 0)
     /* Error */
 
 /* Determine buffer length */
@@ -102,9 +105,9 @@ if (EVP_PKEY_encrypt(ctx, out, &amp;outlen, in, inlen) &lt;= 0)
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2006-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2006-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

@@ -97,7 +97,7 @@ void SSL_set_psk_client_callback(SSL *ssl, SSL_psk_client_cb_func cb);</code></p
 
 <p>The purpose of the callback function is to select the PSK identity and the pre-shared key to use during the connection setup phase.</p>
 
-<p>The callback is set using functions SSL_CTX_set_psk_client_callback() or SSL_set_psk_client_callback(). The callback function is given the connection in parameter <b>ssl</b>, a <b>NULL</b>-terminated PSK identity hint sent by the server in parameter <b>hint</b>, a buffer <b>identity</b> of length <b>max_identity_len</b> bytes where the resulting <b>NUL</b>-terminated identity is to be stored, and a buffer <b>psk</b> of length <b>max_psk_len</b> bytes where the resulting pre-shared key is to be stored.</p>
+<p>The callback is set using functions SSL_CTX_set_psk_client_callback() or SSL_set_psk_client_callback(). The callback function is given the connection in parameter <b>ssl</b>, a <b>NUL</b>-terminated PSK identity hint sent by the server in parameter <b>hint</b>, a buffer <b>identity</b> of length <b>max_identity_len</b> bytes (including the <b>NUL</b>-terminator) where the resulting <b>NUL</b>-terminated identity is to be stored, and a buffer <b>psk</b> of length <b>max_psk_len</b> bytes where the resulting pre-shared key is to be stored.</p>
 
 <p>The callback for use in TLSv1.2 will also work in TLSv1.3 although it is recommended to use SSL_CTX_set_psk_use_session_callback() or SSL_set_psk_use_session_callback() for this purpose instead. If TLSv1.3 has been negotiated then OpenSSL will first check to see if a callback has been set via SSL_CTX_set_psk_use_session_callback() or SSL_set_psk_use_session_callback() and it will use that in preference. If no such callback is present then it will check to see if a callback has been set via SSL_CTX_set_psk_client_callback() or SSL_set_psk_client_callback() and use that. In this case the <b>hint</b> value will always be NULL and the handshake digest will default to SHA-256 for any returned PSK. TLSv1.3 early data exchanges are possible in PSK connections only with the <b>SSL_psk_use_session_cb_func</b> callback, and are not possible with the <b>SSL_psk_client_cb_func</b> callback.</p>
 
@@ -123,7 +123,7 @@ void SSL_set_psk_client_callback(SSL *ssl, SSL_psk_client_cb_func cb);</code></p
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/SSL_CTX_set_psk_find_session_callback.html">SSL_CTX_set_psk_find_session_callback(3)</a>, <a href="../man3/SSL_set_psk_find_session_callback.html">SSL_set_psk_find_session_callback(3)</a></p>
+<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_CTX_set_psk_find_session_callback.html">SSL_CTX_set_psk_find_session_callback(3)</a>, <a href="../man3/SSL_set_psk_find_session_callback.html">SSL_set_psk_find_session_callback(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -131,9 +131,9 @@ void SSL_set_psk_client_callback(SSL *ssl, SSL_psk_client_cb_func cb);</code></p
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2006-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2006-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

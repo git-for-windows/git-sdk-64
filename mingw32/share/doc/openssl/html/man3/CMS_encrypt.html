@@ -15,8 +15,6 @@
   <li><a href="#NAME">NAME</a></li>
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
-  <li><a href="#NOTES">NOTES</a></li>
-  <li><a href="#NOTES1">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
@@ -25,26 +23,27 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>CMS_encrypt - create a CMS envelopedData structure</p>
+<p>CMS_encrypt_ex, CMS_encrypt - create a CMS envelopedData structure</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/cms.h&gt;
 
+CMS_ContentInfo *CMS_encrypt_ex(STACK_OF(X509) *certs, BIO *in,
+                                const EVP_CIPHER *cipher, unsigned int flags,
+                                OSSL_LIB_CTX *libctx, const char *propq);
 CMS_ContentInfo *CMS_encrypt(STACK_OF(X509) *certs, BIO *in,
                              const EVP_CIPHER *cipher, unsigned int flags);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>CMS_encrypt() creates and returns a CMS EnvelopedData structure. <b>certs</b> is a list of recipient certificates. <b>in</b> is the content to be encrypted. <b>cipher</b> is the symmetric cipher to use. <b>flags</b> is an optional set of flags.</p>
-
-<h1 id="NOTES">NOTES</h1>
+<p>CMS_encrypt_ex() creates and returns a CMS EnvelopedData or AuthEnvelopedData structure. <i>certs</i> is a list of recipient certificates. <i>in</i> is the content to be encrypted. <i>cipher</i> is the symmetric cipher to use. <i>flags</i> is an optional set of flags. The library context <i>libctx</i> and the property query <i>propq</i> are used internally when retrieving algorithms from providers.</p>
 
 <p>Only certificates carrying RSA, Diffie-Hellman or EC keys are supported by this function.</p>
 
 <p>EVP_des_ede3_cbc() (triple DES) is the algorithm of choice for S/MIME use because most clients will support it.</p>
 
-<p>The algorithm passed in the <b>cipher</b> parameter must support ASN1 encoding of its parameters.</p>
+<p>The algorithm passed in the <b>cipher</b> parameter must support ASN1 encoding of its parameters. If the cipher mode is GCM, then an AuthEnvelopedData structure containing MAC is used. Otherwise an EnvelopedData structure is used. Currently the AES variants with GCM mode are the only supported AEAD algorithms.</p>
 
 <p>Many browsers implement a &quot;sign and encrypt&quot; option which is simply an S/MIME envelopedData containing an S/MIME signed message. This can be readily produced by storing the S/MIME signed message in a memory BIO and passing it to CMS_encrypt().</p>
 
@@ -62,8 +61,6 @@ CMS_ContentInfo *CMS_encrypt(STACK_OF(X509) *certs, BIO *in,
 
 <p>The data being encrypted is included in the CMS_ContentInfo structure, unless <b>CMS_DETACHED</b> is set in which case it is omitted. This is rarely used in practice and is not supported by SMIME_write_CMS().</p>
 
-<h1 id="NOTES1">NOTES</h1>
-
 <p>If the flag <b>CMS_STREAM</b> is set the returned <b>CMS_ContentInfo</b> structure is <b>not</b> complete and outputting its contents via a function that does not properly finalize the <b>CMS_ContentInfo</b> structure will give unpredictable results.</p>
 
 <p>Several functions including SMIME_write_CMS(), i2d_CMS_bio_stream(), PEM_write_bio_CMS_stream() finalize the structure. Alternatively finalization can be performed by obtaining the streaming ASN1 <b>BIO</b> directly using BIO_new_CMS().</p>
@@ -72,9 +69,11 @@ CMS_ContentInfo *CMS_encrypt(STACK_OF(X509) *certs, BIO *in,
 
 <p>The parameter <b>certs</b> may be NULL if <b>CMS_PARTIAL</b> is set and recipients added later using CMS_add1_recipient_cert() or CMS_add0_recipient_key().</p>
 
+<p>CMS_encrypt() is similar to CMS_encrypt_ex() but uses default values of NULL for the library context <i>libctx</i> and the property query <i>propq</i>.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>CMS_encrypt() returns either a CMS_ContentInfo structure or NULL if an error occurred. The error can be obtained from ERR_get_error(3).</p>
+<p>CMS_encrypt_ex() and CMS_encrypt() return either a CMS_ContentInfo structure or NULL if an error occurred. The error can be obtained from ERR_get_error(3).</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -82,13 +81,15 @@ CMS_ContentInfo *CMS_encrypt(STACK_OF(X509) *certs, BIO *in,
 
 <h1 id="HISTORY">HISTORY</h1>
 
+<p>The function CMS_encrypt_ex() was added in OpenSSL 3.0.</p>
+
 <p>The <b>CMS_STREAM</b> flag was first supported in OpenSSL 1.0.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2008-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2008-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

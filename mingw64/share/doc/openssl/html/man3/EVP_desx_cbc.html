@@ -28,7 +28,7 @@
 
 <pre><code>#include &lt;openssl/evp.h&gt;
 
-const EVP_CIPHER *EVP_desx_cbc(void)</code></pre>
+const EVP_CIPHER *EVP_desx_cbc(void);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -43,8 +43,12 @@ const EVP_CIPHER *EVP_desx_cbc(void)</code></pre>
 
 <p>The DES-X algorithm in CBC mode.</p>
 
+<p>This algorithm is not provided by the OpenSSL default provider. To use it is necessary to load either the OpenSSL legacy provider or another implementation.</p>
+
 </dd>
 </dl>
+
+<p>Developers should be aware of the negative performance implications of calling this function multiple times and should consider using <a href="../man3/EVP_CIPHER_fetch.html">EVP_CIPHER_fetch(3)</a> instead. See <a href="../man7/crypto.html">&quot;Performance&quot; in crypto(7)</a> for further information.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -56,9 +60,9 @@ const EVP_CIPHER *EVP_desx_cbc(void)</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2017 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2017-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

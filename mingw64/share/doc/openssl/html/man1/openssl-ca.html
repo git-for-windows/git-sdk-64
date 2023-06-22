@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>ca</title>
+<title>openssl-ca</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:" />
 </head>
@@ -32,17 +32,19 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>openssl-ca, ca - sample minimal CA application</p>
+<p>openssl-ca - sample minimal CA application</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>ca</b> [<b>-help</b>] [<b>-verbose</b>] [<b>-config filename</b>] [<b>-name section</b>] [<b>-gencrl</b>] [<b>-revoke file</b>] [<b>-valid file</b>] [<b>-status serial</b>] [<b>-updatedb</b>] [<b>-crl_reason reason</b>] [<b>-crl_hold instruction</b>] [<b>-crl_compromise time</b>] [<b>-crl_CA_compromise time</b>] [<b>-crldays days</b>] [<b>-crlhours hours</b>] [<b>-crlexts section</b>] [<b>-startdate date</b>] [<b>-enddate date</b>] [<b>-days arg</b>] [<b>-md arg</b>] [<b>-policy arg</b>] [<b>-keyfile arg</b>] [<b>-keyform PEM|DER</b>] [<b>-key arg</b>] [<b>-passin arg</b>] [<b>-cert file</b>] [<b>-selfsign</b>] [<b>-in file</b>] [<b>-out file</b>] [<b>-notext</b>] [<b>-outdir dir</b>] [<b>-infiles</b>] [<b>-spkac file</b>] [<b>-ss_cert file</b>] [<b>-preserveDN</b>] [<b>-noemailDN</b>] [<b>-batch</b>] [<b>-msie_hack</b>] [<b>-extensions section</b>] [<b>-extfile section</b>] [<b>-engine id</b>] [<b>-subj arg</b>] [<b>-utf8</b>] [<b>-sigopt nm:v</b>] [<b>-create_serial</b>] [<b>-rand_serial</b>] [<b>-multivalue-rdn</b>] [<b>-rand file...</b>] [<b>-writerand file</b>]</p>
+<p><b>openssl</b> <b>ca</b> [<b>-help</b>] [<b>-verbose</b>] [<b>-config</b> <i>filename</i>] [<b>-name</b> <i>section</i>] [<b>-section</b> <i>section</i>] [<b>-gencrl</b>] [<b>-revoke</b> <i>file</i>] [<b>-valid</b> <i>file</i>] [<b>-status</b> <i>serial</i>] [<b>-updatedb</b>] [<b>-crl_reason</b> <i>reason</i>] [<b>-crl_hold</b> <i>instruction</i>] [<b>-crl_compromise</b> <i>time</i>] [<b>-crl_CA_compromise</b> <i>time</i>] [<b>-crl_lastupdate</b> <i>date</i>] [<b>-crl_nextupdate</b> <i>date</i>] [<b>-crldays</b> <i>days</i>] [<b>-crlhours</b> <i>hours</i>] [<b>-crlsec</b> <i>seconds</i>] [<b>-crlexts</b> <i>section</i>] [<b>-startdate</b> <i>date</i>] [<b>-enddate</b> <i>date</i>] [<b>-days</b> <i>arg</i>] [<b>-md</b> <i>arg</i>] [<b>-policy</b> <i>arg</i>] [<b>-keyfile</b> <i>filename</i>|<i>uri</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-key</b> <i>arg</i>] [<b>-passin</b> <i>arg</i>] [<b>-cert</b> <i>file</i>] [<b>-certform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>] [<b>-selfsign</b>] [<b>-in</b> <i>file</i>] [<b>-inform</b> <b>DER</b>|&lt;PEM&gt;] [<b>-out</b> <i>file</i>] [<b>-notext</b>] [<b>-dateopt</b>] [<b>-outdir</b> <i>dir</i>] [<b>-infiles</b>] [<b>-spkac</b> <i>file</i>] [<b>-ss_cert</b> <i>file</i>] [<b>-preserveDN</b>] [<b>-noemailDN</b>] [<b>-batch</b>] [<b>-msie_hack</b>] [<b>-extensions</b> <i>section</i>] [<b>-extfile</b> <i>section</i>] [<b>-subj</b> <i>arg</i>] [<b>-utf8</b>] [<b>-sigopt</b> <i>nm</i>:<i>v</i>] [<b>-vfyopt</b> <i>nm</i>:<i>v</i>] [<b>-create_serial</b>] [<b>-rand_serial</b>] [<b>-multivalue-rdn</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<i>certreq</i>...]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The <b>ca</b> command is a minimal CA application. It can be used to sign certificate requests in a variety of forms and generate CRLs it also maintains a text database of issued certificates and their status.</p>
+<p>This command emulates a CA application. See the <b>WARNINGS</b> especially when considering to use it productively. It can be used to sign certificate requests (CSRs) in a variety of forms and generate certificate revocation lists (CRLs). It also maintains a text database of issued certificates and their status. When signing certificates, a single request can be specified with the <b>-in</b> option, or multiple requests can be processed by specifying a set of <b>certreq</b> files after all options.</p>
 
-<p>The options descriptions will be divided into each purpose.</p>
+<p>Note that there are also very lean ways of generating certificates: the <b>req</b> and <b>x509</b> commands can be used for directly creating certificates. See <a href="../man1/openssl-req.html">openssl-req(1)</a> and <a href="../man1/openssl-x509.html">openssl-x509(1)</a> for details.</p>
+
+<p>The descriptions of the <b>ca</b> command options are divided into each purpose.</p>
 
 <h1 id="OPTIONS">OPTIONS</h1>
 
@@ -60,31 +62,37 @@
 <p>This prints extra details about the operations being performed.</p>
 
 </dd>
-<dt id="config-filename"><b>-config filename</b></dt>
+<dt id="config-filename"><b>-config</b> <i>filename</i></dt>
 <dd>
 
 <p>Specifies the configuration file to use. Optional; for a description of the default value, see <a href="../man1/openssl.html">&quot;COMMAND SUMMARY&quot; in openssl(1)</a>.</p>
 
 </dd>
-<dt id="name-section"><b>-name section</b></dt>
+<dt id="name-section--section-section"><b>-name</b> <i>section</i>, <b>-section</b> <i>section</i></dt>
 <dd>
 
 <p>Specifies the configuration file section to use (overrides <b>default_ca</b> in the <b>ca</b> section).</p>
 
 </dd>
-<dt id="in-filename"><b>-in filename</b></dt>
+<dt id="in-filename"><b>-in</b> <i>filename</i></dt>
 <dd>
 
-<p>An input filename containing a single certificate request to be signed by the CA.</p>
+<p>An input filename containing a single certificate request (CSR) to be signed by the CA.</p>
 
 </dd>
-<dt id="ss_cert-filename"><b>-ss_cert filename</b></dt>
+<dt id="inform-DER-PEM"><b>-inform</b> <b>DER</b>|<b>PEM</b></dt>
+<dd>
+
+<p>The format of the data in certificate request input files; unspecified by default. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
+
+</dd>
+<dt id="ss_cert-filename"><b>-ss_cert</b> <i>filename</i></dt>
 <dd>
 
 <p>A single self-signed certificate to be signed by the CA.</p>
 
 </dd>
-<dt id="spkac-filename"><b>-spkac filename</b></dt>
+<dt id="spkac-filename"><b>-spkac</b> <i>filename</i></dt>
 <dd>
 
 <p>A file containing a single Netscape signed public key and challenge and additional field values to be signed by the CA. See the <b>SPKAC FORMAT</b> section for information on the required input and output format.</p>
@@ -96,46 +104,66 @@
 <p>If present this should be the last option, all subsequent arguments are taken as the names of files containing certificate requests.</p>
 
 </dd>
-<dt id="out-filename"><b>-out filename</b></dt>
+<dt id="out-filename"><b>-out</b> <i>filename</i></dt>
 <dd>
 
 <p>The output file to output certificates to. The default is standard output. The certificate details will also be printed out to this file in PEM format (except that <b>-spkac</b> outputs DER format).</p>
 
 </dd>
-<dt id="outdir-directory"><b>-outdir directory</b></dt>
+<dt id="outdir-directory"><b>-outdir</b> <i>directory</i></dt>
 <dd>
 
-<p>The directory to output certificates to. The certificate will be written to a filename consisting of the serial number in hex with &quot;.pem&quot; appended.</p>
+<p>The directory to output certificates to. The certificate will be written to a filename consisting of the serial number in hex with <i>.pem</i> appended.</p>
 
 </dd>
-<dt id="cert"><b>-cert</b></dt>
+<dt id="cert-filename"><b>-cert</b> <i>filename</i></dt>
 <dd>
 
-<p>The CA certificate file.</p>
+<p>The CA certificate, which must match with <b>-keyfile</b>.</p>
 
 </dd>
-<dt id="keyfile-filename"><b>-keyfile filename</b></dt>
+<dt id="certform-DER-PEM-P12"><b>-certform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b></dt>
 <dd>
 
-<p>The private key to sign requests with.</p>
+<p>The format of the data in certificate input files; unspecified by default. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
 
 </dd>
-<dt id="keyform-PEM-DER"><b>-keyform PEM|DER</b></dt>
+<dt id="keyfile-filename-uri"><b>-keyfile</b> <i>filename</i>|<i>uri</i></dt>
 <dd>
 
-<p>The format of the data in the private key file. The default is PEM.</p>
+<p>The CA private key to sign certificate requests with. This must match with <b>-cert</b>.</p>
 
 </dd>
-<dt id="sigopt-nm:v"><b>-sigopt nm:v</b></dt>
+<dt id="keyform-DER-PEM-P12-ENGINE"><b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b></dt>
 <dd>
 
-<p>Pass options to the signature algorithm during sign or verify operations. Names and values of these options are algorithm-specific.</p>
+<p>The format of the private key input file; unspecified by default. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
 
 </dd>
-<dt id="key-password"><b>-key password</b></dt>
+<dt id="sigopt-nm:v"><b>-sigopt</b> <i>nm</i>:<i>v</i></dt>
 <dd>
 
-<p>The password used to encrypt the private key. Since on some systems the command line arguments are visible (e.g. Unix with the &#39;ps&#39; utility) this option should be used with caution.</p>
+<p>Pass options to the signature algorithm during sign operations. Names and values of these options are algorithm-specific.</p>
+
+</dd>
+<dt id="vfyopt-nm:v"><b>-vfyopt</b> <i>nm</i>:<i>v</i></dt>
+<dd>
+
+<p>Pass options to the signature algorithm during verify operations. Names and values of these options are algorithm-specific.</p>
+
+<p>This often needs to be given while signing too, because the self-signature of a certificate signing request (CSR) is verified against the included public key, and that verification may need its own set of options.</p>
+
+</dd>
+<dt id="key-password"><b>-key</b> <i>password</i></dt>
+<dd>
+
+<p>The password used to encrypt the private key. Since on some systems the command line arguments are visible (e.g., when using <a href="../man1/ps.html">ps(1)</a> on Unix), this option should be used with caution. Better use <b>-passin</b>.</p>
+
+</dd>
+<dt id="passin-arg"><b>-passin</b> <i>arg</i></dt>
+<dd>
+
+<p>The key password source for key files and certificate PKCS#12 files. For more information about the format of <b>arg</b> see <a href="../man1/openssl-passphrase-options.html">openssl-passphrase-options(1)</a>.</p>
 
 </dd>
 <dt id="selfsign"><b>-selfsign</b></dt>
@@ -146,43 +174,43 @@
 <p>A consequence of using <b>-selfsign</b> is that the self-signed certificate appears among the entries in the certificate database (see the configuration option <b>database</b>), and uses the same serial number counter as all other certificates sign with the self-signed certificate.</p>
 
 </dd>
-<dt id="passin-arg"><b>-passin arg</b></dt>
-<dd>
-
-<p>The key password source. For more information about the format of <b>arg</b> see <a href="../man1/openssl.html">&quot;Pass Phrase Options&quot; in openssl(1)</a>.</p>
-
-</dd>
 <dt id="notext"><b>-notext</b></dt>
 <dd>
 
 <p>Don&#39;t output the text form of a certificate to the output file.</p>
 
 </dd>
-<dt id="startdate-date"><b>-startdate date</b></dt>
+<dt id="dateopt"><b>-dateopt</b></dt>
+<dd>
+
+<p>Specify the date output format. Values are: rfc_822 and iso_8601. Defaults to rfc_822.</p>
+
+</dd>
+<dt id="startdate-date"><b>-startdate</b> <i>date</i></dt>
 <dd>
 
 <p>This allows the start date to be explicitly set. The format of the date is YYMMDDHHMMSSZ (the same as an ASN1 UTCTime structure), or YYYYMMDDHHMMSSZ (the same as an ASN1 GeneralizedTime structure). In both formats, seconds SS and timezone Z must be present.</p>
 
 </dd>
-<dt id="enddate-date"><b>-enddate date</b></dt>
+<dt id="enddate-date"><b>-enddate</b> <i>date</i></dt>
 <dd>
 
 <p>This allows the expiry date to be explicitly set. The format of the date is YYMMDDHHMMSSZ (the same as an ASN1 UTCTime structure), or YYYYMMDDHHMMSSZ (the same as an ASN1 GeneralizedTime structure). In both formats, seconds SS and timezone Z must be present.</p>
 
 </dd>
-<dt id="days-arg"><b>-days arg</b></dt>
+<dt id="days-arg"><b>-days</b> <i>arg</i></dt>
 <dd>
 
 <p>The number of days to certify the certificate for.</p>
 
 </dd>
-<dt id="md-alg"><b>-md alg</b></dt>
+<dt id="md-alg"><b>-md</b> <i>alg</i></dt>
 <dd>
 
-<p>The message digest to use. Any digest supported by the OpenSSL <b>dgst</b> command can be used. For signing algorithms that do not support a digest (i.e. Ed25519 and Ed448) any message digest that is set is ignored. This option also applies to CRLs.</p>
+<p>The message digest to use. Any digest supported by the <a href="../man1/openssl-dgst.html">openssl-dgst(1)</a> command can be used. For signing algorithms that do not support a digest (i.e. Ed25519 and Ed448) any message digest that is set is ignored. This option also applies to CRLs.</p>
 
 </dd>
-<dt id="policy-arg"><b>-policy arg</b></dt>
+<dt id="policy-arg"><b>-policy</b> <i>arg</i></dt>
 <dd>
 
 <p>This option defines the CA &quot;policy&quot; to use. This is a section in the configuration file which decides which fields should be mandatory or match the CA certificate. Check out the <b>POLICY FORMAT</b> section for more information.</p>
@@ -191,7 +219,7 @@
 <dt id="msie_hack"><b>-msie_hack</b></dt>
 <dd>
 
-<p>This is a deprecated option to make <b>ca</b> work with very old versions of the IE certificate enrollment control &quot;certenr3&quot;. It used UniversalStrings for almost everything. Since the old control has various security bugs its use is strongly discouraged.</p>
+<p>This is a deprecated option to make this command work with very old versions of the IE certificate enrollment control &quot;certenr3&quot;. It used UniversalStrings for almost everything. Since the old control has various security bugs its use is strongly discouraged.</p>
 
 </dd>
 <dt id="preserveDN"><b>-preserveDN</b></dt>
@@ -212,28 +240,26 @@
 <p>This sets the batch mode. In this mode no questions will be asked and all certificates will be certified automatically.</p>
 
 </dd>
-<dt id="extensions-section"><b>-extensions section</b></dt>
+<dt id="extensions-section"><b>-extensions</b> <i>section</i></dt>
 <dd>
 
-<p>The section of the configuration file containing certificate extensions to be added when a certificate is issued (defaults to <b>x509_extensions</b> unless the <b>-extfile</b> option is used). If no extension section is present then, a V1 certificate is created. If the extension section is present (even if it is empty), then a V3 certificate is created. See the <a href="../man5/x509v3_config.html">x509v3_config(5)</a> manual page for details of the extension section format.</p>
+<p>The section of the configuration file containing certificate extensions to be added when a certificate is issued (defaults to <b>x509_extensions</b> unless the <b>-extfile</b> option is used). If no X.509 extensions are specified then a V1 certificate is created, else a V3 certificate is created. See the <a href="../man5/x509v3_config.html">x509v3_config(5)</a> manual page for details of the extension section format.</p>
 
 </dd>
-<dt id="extfile-file"><b>-extfile file</b></dt>
+<dt id="extfile-file"><b>-extfile</b> <i>file</i></dt>
 <dd>
 
 <p>An additional configuration file to read certificate extensions from (using the default section unless the <b>-extensions</b> option is also used).</p>
 
 </dd>
-<dt id="engine-id"><b>-engine id</b></dt>
+<dt id="subj-arg"><b>-subj</b> <i>arg</i></dt>
 <dd>
 
-<p>Specifying an engine (by its unique <b>id</b> string) will cause <b>ca</b> to attempt to obtain a functional reference to the specified engine, thus initialising it if needed. The engine will then be set as the default for all available algorithms.</p>
+<p>Supersedes subject name given in the request.</p>
 
-</dd>
-<dt id="subj-arg"><b>-subj arg</b></dt>
-<dd>
+<p>The arg must be formatted as <code>/type0=value0/type1=value1/type2=...</code>. Special characters may be escaped by <code>\</code> (backslash), whitespace is retained. Empty values are permitted, but the corresponding type will not be included in the resulting certificate. Giving a single <code>/</code> will lead to an empty sequence of RDNs (a NULL-DN). Multi-valued RDNs can be formed by placing a <code>+</code> character instead of a <code>/</code> between the AttributeValueAssertions (AVAs) that specify the members of the set. Example:</p>
 
-<p>Supersedes subject name given in the request. The arg must be formatted as <i>/type0=value0/type1=value1/type2=...</i>. Keyword characters may be escaped by \ (backslash), and whitespace is retained. Empty values are permitted, but the corresponding type will not be included in the resulting certificate.</p>
+<p><code>/DC=org/DC=OpenSSL/DC=users/UID=123456+CN=John Doe</code></p>
 
 </dd>
 <dt id="utf8"><b>-utf8</b></dt>
@@ -257,23 +283,33 @@
 <dt id="multivalue-rdn"><b>-multivalue-rdn</b></dt>
 <dd>
 
-<p>This option causes the -subj argument to be interpreted with full support for multivalued RDNs. Example:</p>
-
-<p><i>/DC=org/DC=OpenSSL/DC=users/UID=123456+CN=John Doe</i></p>
-
-<p>If -multi-rdn is not used then the UID value is <i>123456+CN=John Doe</i>.</p>
+<p>This option has been deprecated and has no effect.</p>
 
 </dd>
-<dt id="rand-file"><b>-rand file...</b></dt>
+<dt id="rand-files--writerand-file"><b>-rand</b> <i>files</i>, <b>-writerand</b> <i>file</i></dt>
 <dd>
 
-<p>A file or files containing random data used to seed the random number generator. Multiple files can be specified separated by an OS-dependent character. The separator is <b>;</b> for MS-Windows, <b>,</b> for OpenVMS, and <b>:</b> for all others.</p>
+<p>See <a href="../man1/openssl.html">&quot;Random State Options&quot; in openssl(1)</a> for details.</p>
 
 </dd>
-<dt id="writerand-file">[<b>-writerand file</b>]</dt>
+<dt id="engine-id"><b>-engine</b> <i>id</i></dt>
 <dd>
 
-<p>Writes random data to the specified <i>file</i> upon exit. This can be used with a subsequent <b>-rand</b> flag.</p>
+<p>See <a href="../man1/openssl.html">&quot;Engine Options&quot; in openssl(1)</a>. This option is deprecated.</p>
+
+</dd>
+<dt id="provider-name"><b>-provider</b> <i>name</i></dt>
+<dd>
+
+</dd>
+<dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="propquery-propq"><b>-propquery</b> <i>propq</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Provider Options&quot; in openssl(1)</a>, <a href="../man7/provider.html">provider(7)</a>, and <a href="../man7/property.html">property(7)</a>.</p>
 
 </dd>
 </dl>
@@ -288,31 +324,49 @@
 <p>This option generates a CRL based on information in the index file.</p>
 
 </dd>
-<dt id="crldays-num"><b>-crldays num</b></dt>
+<dt id="crl_lastupdate-time"><b>-crl_lastupdate</b> <i>time</i></dt>
+<dd>
+
+<p>Allows the value of the CRL&#39;s lastUpdate field to be explicitly set; if this option is not present, the current time is used. Accepts times in YYMMDDHHMMSSZ format (the same as an ASN1 UTCTime structure) or YYYYMMDDHHMMSSZ format (the same as an ASN1 GeneralizedTime structure).</p>
+
+</dd>
+<dt id="crl_nextupdate-time"><b>-crl_nextupdate</b> <i>time</i></dt>
+<dd>
+
+<p>Allows the value of the CRL&#39;s nextUpdate field to be explicitly set; if this option is present, any values given for <b>-crldays</b>, <b>-crlhours</b> and <b>-crlsec</b> are ignored. Accepts times in the same formats as <b>-crl_lastupdate</b>.</p>
+
+</dd>
+<dt id="crldays-num"><b>-crldays</b> <i>num</i></dt>
 <dd>
 
 <p>The number of days before the next CRL is due. That is the days from now to place in the CRL nextUpdate field.</p>
 
 </dd>
-<dt id="crlhours-num"><b>-crlhours num</b></dt>
+<dt id="crlhours-num"><b>-crlhours</b> <i>num</i></dt>
 <dd>
 
 <p>The number of hours before the next CRL is due.</p>
 
 </dd>
-<dt id="revoke-filename"><b>-revoke filename</b></dt>
+<dt id="crlsec-num"><b>-crlsec</b> <i>num</i></dt>
+<dd>
+
+<p>The number of seconds before the next CRL is due.</p>
+
+</dd>
+<dt id="revoke-filename"><b>-revoke</b> <i>filename</i></dt>
 <dd>
 
 <p>A filename containing a certificate to revoke.</p>
 
 </dd>
-<dt id="valid-filename"><b>-valid filename</b></dt>
+<dt id="valid-filename"><b>-valid</b> <i>filename</i></dt>
 <dd>
 
 <p>A filename containing a certificate to add a Valid certificate entry.</p>
 
 </dd>
-<dt id="status-serial"><b>-status serial</b></dt>
+<dt id="status-serial"><b>-status</b> <i>serial</i></dt>
 <dd>
 
 <p>Displays the revocation status of the certificate with the specified serial number and exits.</p>
@@ -324,33 +378,33 @@
 <p>Updates the database index to purge expired certificates.</p>
 
 </dd>
-<dt id="crl_reason-reason"><b>-crl_reason reason</b></dt>
+<dt id="crl_reason-reason"><b>-crl_reason</b> <i>reason</i></dt>
 <dd>
 
-<p>Revocation reason, where <b>reason</b> is one of: <b>unspecified</b>, <b>keyCompromise</b>, <b>CACompromise</b>, <b>affiliationChanged</b>, <b>superseded</b>, <b>cessationOfOperation</b>, <b>certificateHold</b> or <b>removeFromCRL</b>. The matching of <b>reason</b> is case insensitive. Setting any revocation reason will make the CRL v2.</p>
+<p>Revocation reason, where <i>reason</i> is one of: <b>unspecified</b>, <b>keyCompromise</b>, <b>CACompromise</b>, <b>affiliationChanged</b>, <b>superseded</b>, <b>cessationOfOperation</b>, <b>certificateHold</b> or <b>removeFromCRL</b>. The matching of <i>reason</i> is case insensitive. Setting any revocation reason will make the CRL v2.</p>
 
 <p>In practice <b>removeFromCRL</b> is not particularly useful because it is only used in delta CRLs which are not currently implemented.</p>
 
 </dd>
-<dt id="crl_hold-instruction"><b>-crl_hold instruction</b></dt>
+<dt id="crl_hold-instruction"><b>-crl_hold</b> <i>instruction</i></dt>
 <dd>
 
-<p>This sets the CRL revocation reason code to <b>certificateHold</b> and the hold instruction to <b>instruction</b> which must be an OID. Although any OID can be used only <b>holdInstructionNone</b> (the use of which is discouraged by RFC2459) <b>holdInstructionCallIssuer</b> or <b>holdInstructionReject</b> will normally be used.</p>
+<p>This sets the CRL revocation reason code to <b>certificateHold</b> and the hold instruction to <i>instruction</i> which must be an OID. Although any OID can be used only <b>holdInstructionNone</b> (the use of which is discouraged by RFC2459) <b>holdInstructionCallIssuer</b> or <b>holdInstructionReject</b> will normally be used.</p>
 
 </dd>
-<dt id="crl_compromise-time"><b>-crl_compromise time</b></dt>
+<dt id="crl_compromise-time"><b>-crl_compromise</b> <i>time</i></dt>
 <dd>
 
-<p>This sets the revocation reason to <b>keyCompromise</b> and the compromise time to <b>time</b>. <b>time</b> should be in GeneralizedTime format that is <b>YYYYMMDDHHMMSSZ</b>.</p>
+<p>This sets the revocation reason to <b>keyCompromise</b> and the compromise time to <i>time</i>. <i>time</i> should be in GeneralizedTime format that is <i>YYYYMMDDHHMMSSZ</i>.</p>
 
 </dd>
-<dt id="crl_CA_compromise-time"><b>-crl_CA_compromise time</b></dt>
+<dt id="crl_CA_compromise-time"><b>-crl_CA_compromise</b> <i>time</i></dt>
 <dd>
 
 <p>This is the same as <b>crl_compromise</b> except the revocation reason is set to <b>CACompromise</b>.</p>
 
 </dd>
-<dt id="crlexts-section"><b>-crlexts section</b></dt>
+<dt id="crlexts-section"><b>-crlexts</b> <i>section</i></dt>
 <dd>
 
 <p>The section of the configuration file containing CRL extensions to include. If no CRL extension section is present then a V1 CRL is created, if the CRL extension section is present (even if it is empty) then a V2 CRL is created. The CRL extensions specified are CRL extensions and <b>not</b> CRL entry extensions. It should be noted that some software (for example Netscape) can&#39;t handle V2 CRLs. See <a href="../man5/x509v3_config.html">x509v3_config(5)</a> manual page for details of the extension section format.</p>
@@ -360,7 +414,7 @@
 
 <h1 id="CONFIGURATION-FILE-OPTIONS">CONFIGURATION FILE OPTIONS</h1>
 
-<p>The section of the configuration file containing options for <b>ca</b> is found as follows: If the <b>-name</b> command line option is used, then it names the section to be used. Otherwise the section to be used must be named in the <b>default_ca</b> option of the <b>ca</b> section of the configuration file (or in the default section of the configuration file). Besides <b>default_ca</b>, the following options are read directly from the <b>ca</b> section: RANDFILE preserve msie_hack With the exception of <b>RANDFILE</b>, this is probably a bug and may change in future releases.</p>
+<p>The section of the configuration file containing options for this command is found as follows: If the <b>-name</b> command line option is used, then it names the section to be used. Otherwise the section to be used must be named in the <b>default_ca</b> option of the <b>ca</b> section of the configuration file (or in the default section of the configuration file). Besides <b>default_ca</b>, the following options are read directly from the <b>ca</b> section: RANDFILE preserve msie_hack With the exception of <b>RANDFILE</b>, this is probably a bug and may change in future releases.</p>
 
 <p>Many of the configuration file options are identical to command line options. Where the option is present in the configuration file and the command line the command line value is used. Where an option is described as mandatory then it must be present in the configuration file or the command line equivalent (if any) used.</p>
 
@@ -369,7 +423,7 @@
 <dt id="oid_file"><b>oid_file</b></dt>
 <dd>
 
-<p>This specifies a file containing additional <b>OBJECT IDENTIFIERS</b>. Each line of the file should consist of the numerical form of the object identifier followed by white space then the short name followed by white space and finally the long name.</p>
+<p>This specifies a file containing additional <b>OBJECT IDENTIFIERS</b>. Each line of the file should consist of the numerical form of the object identifier followed by whitespace then the short name followed by whitespace and finally the long name.</p>
 
 </dd>
 <dt id="oid_section"><b>oid_section</b></dt>
@@ -399,7 +453,7 @@
 <dt id="RANDFILE"><b>RANDFILE</b></dt>
 <dd>
 
-<p>At startup the specified file is loaded into the random number generator, and at exit 256 bytes will be written to it.</p>
+<p>At startup the specified file is loaded into the random number generator, and at exit 256 bytes will be written to it. (Note: Using a RANDFILE is not necessary anymore, see the <a href="#HISTORY">&quot;HISTORY&quot;</a> section.</p>
 
 </dd>
 <dt id="default_days"><b>default_days</b></dt>
@@ -461,13 +515,13 @@
 <dt id="x509_extensions"><b>x509_extensions</b></dt>
 <dd>
 
-<p>The same as <b>-extensions</b>.</p>
+<p>A fallback to the <b>-extensions</b> option.</p>
 
 </dd>
 <dt id="crl_extensions"><b>crl_extensions</b></dt>
 <dd>
 
-<p>The same as <b>-crlexts</b>.</p>
+<p>A fallback to the <b>-crlexts</b> option.</p>
 
 </dd>
 <dt id="preserve"><b>preserve</b></dt>
@@ -520,7 +574,7 @@
 
 <h1 id="SPKAC-FORMAT">SPKAC FORMAT</h1>
 
-<p>The input to the <b>-spkac</b> command line option is a Netscape signed public key and challenge. This will usually come from the <b>KEYGEN</b> tag in an HTML form to create a new private key. It is however possible to create SPKACs using the <b>spkac</b> utility.</p>
+<p>The input to the <b>-spkac</b> command line option is a Netscape signed public key and challenge. This will usually come from the <b>KEYGEN</b> tag in an HTML form to create a new private key. It is however possible to create SPKACs using <a href="../man1/openssl-spkac.html">openssl-spkac(1)</a>.</p>
 
 <p>The file should contain the variable SPKAC set to the value of the SPKAC and also the required DN components as name value pairs. If you need to include the same component twice then it can be preceded by a number and a &#39;.&#39;.</p>
 
@@ -528,13 +582,19 @@
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
-<p>Note: these examples assume that the <b>ca</b> directory structure is already set up and the relevant files already exist. This usually involves creating a CA certificate and private key with <b>req</b>, a serial number file and an empty index file and placing them in the relevant directories.</p>
+<p>Note: these examples assume that the directory structure this command assumes is already set up and the relevant files already exist. This usually involves creating a CA certificate and private key with <a href="../man1/openssl-req.html">openssl-req(1)</a>, a serial number file and an empty index file and placing them in the relevant directories.</p>
 
-<p>To use the sample configuration file below the directories demoCA, demoCA/private and demoCA/newcerts would be created. The CA certificate would be copied to demoCA/cacert.pem and its private key to demoCA/private/cakey.pem. A file demoCA/serial would be created containing for example &quot;01&quot; and the empty index file demoCA/index.txt.</p>
+<p>To use the sample configuration file below the directories <i>demoCA</i>, <i>demoCA/private</i> and <i>demoCA/newcerts</i> would be created. The CA certificate would be copied to <i>demoCA/cacert.pem</i> and its private key to <i>demoCA/private/cakey.pem</i>. A file <i>demoCA/serial</i> would be created containing for example &quot;01&quot; and the empty index file <i>demoCA/index.txt</i>.</p>
 
 <p>Sign a certificate request:</p>
 
 <pre><code>openssl ca -in req.pem -out newcert.pem</code></pre>
+
+<p>Sign an SM2 certificate request:</p>
+
+<pre><code>openssl ca -in sm2.csr -out sm2.crt -md sm3 \
+        -sigopt &quot;distid:1234567812345678&quot; \
+        -vfyopt &quot;distid:1234567812345678&quot;</code></pre>
 
 <p>Sign a certificate request, using CA extensions:</p>
 
@@ -560,7 +620,7 @@ emailAddress=steve@openssl.org
 0.OU=OpenSSL Group
 1.OU=Another Group</code></pre>
 
-<p>A sample configuration file with the relevant sections for <b>ca</b>:</p>
+<p>A sample configuration file with the relevant sections for this command:</p>
 
 <pre><code>[ ca ]
 default_ca      = CA_default            # The default ca section
@@ -575,7 +635,6 @@ certificate    = $dir/cacert.pem       # The CA cert
 serial         = $dir/serial           # serial no file
 #rand_serial    = yes                  # for random serial#&#39;s
 private_key    = $dir/private/cakey.pem# CA private key
-RANDFILE       = $dir/private/.rand    # random number file
 
 default_days   = 365                   # how long to certify for
 default_crl_days= 30                   # how long before next CRL
@@ -608,8 +667,7 @@ emailAddress           = optional</code></pre>
 ./demoCA/serial.old            - CA serial number backup file
 ./demoCA/index.txt             - CA text database file
 ./demoCA/index.txt.old         - CA text database backup file
-./demoCA/certs                 - certificate output file
-./demoCA/.rnd                  - CA random seed information</code></pre>
+./demoCA/certs                 - certificate output file</code></pre>
 
 <h1 id="RESTRICTIONS">RESTRICTIONS</h1>
 
@@ -621,9 +679,11 @@ emailAddress           = optional</code></pre>
 
 <h1 id="BUGS">BUGS</h1>
 
+<p>This command is quirky and at times downright unfriendly.</p>
+
 <p>The use of an in-memory text database can cause problems when large numbers of certificates are present because, as the name implies the database has to be kept in memory.</p>
 
-<p>The <b>ca</b> command really needs rewriting or the required functionality exposed at either a command or interface level so a more friendly utility (perl script or GUI) can handle things properly. The script <b>CA.pl</b> helps a little but not very much.</p>
+<p>This command really needs rewriting or the required functionality exposed at either a command or interface level so that a more user-friendly replacement could handle things properly. The script <b>CA.pl</b> helps a little but not very much.</p>
 
 <p>Any fields in a request that are not present in a policy are silently deleted. This does not happen if the <b>-preserveDN</b> option is used. To enforce the absence of the EMAIL field within the DN, as suggested by RFCs, regardless the contents of the request&#39; subject the <b>-noemailDN</b> option can be used. The behaviour should be more friendly and configurable.</p>
 
@@ -631,15 +691,11 @@ emailAddress           = optional</code></pre>
 
 <h1 id="WARNINGS">WARNINGS</h1>
 
-<p>The <b>ca</b> command is quirky and at times downright unfriendly.</p>
+<p>This command was originally meant as an example of how to do things in a CA. Its code does not have production quality. It was not supposed to be used as a full blown CA itself, nevertheless some people are using it for this purpose at least internally. When doing so, specific care should be taken to properly secure the private key(s) used for signing certificates. It is advisable to keep them in a secure HW storage such as a smart card or HSM and access them via a suitable engine or crypto provider.</p>
 
-<p>The <b>ca</b> utility was originally meant as an example of how to do things in a CA. It was not supposed to be used as a full blown CA itself: nevertheless some people are using it for this purpose.</p>
+<p>This command command is effectively a single user command: no locking is done on the various files and attempts to run more than one <b>openssl ca</b> command on the same database can have unpredictable results.</p>
 
-<p>The <b>ca</b> command is effectively a single user command: no locking is done on the various files and attempts to run more than one <b>ca</b> command on the same database can have unpredictable results.</p>
-
-<p>The <b>copy_extensions</b> option should be used with caution. If care is not taken then it can be a security risk. For example if a certificate request contains a basicConstraints extension with CA:TRUE and the <b>copy_extensions</b> value is set to <b>copyall</b> and the user does not spot this when the certificate is displayed then this will hand the requester a valid CA certificate.</p>
-
-<p>This situation can be avoided by setting <b>copy_extensions</b> to <b>copy</b> and including basicConstraints with CA:FALSE in the configuration file. Then if the request contains a basicConstraints extension it will be ignored.</p>
+<p>The <b>copy_extensions</b> option should be used with caution. If care is not taken then it can be a security risk. For example if a certificate request contains a basicConstraints extension with CA:TRUE and the <b>copy_extensions</b> value is set to <b>copyall</b> and the user does not spot this when the certificate is displayed then this will hand the requester a valid CA certificate. This situation can be avoided by setting <b>copy_extensions</b> to <b>copy</b> and including basicConstraints with CA:FALSE in the configuration file. Then if the request contains a basicConstraints extension it will be ignored.</p>
 
 <p>It is advisable to also include values for other extensions such as <b>keyUsage</b> to prevent a request supplying its own values.</p>
 
@@ -651,17 +707,25 @@ emailAddress           = optional</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>Since OpenSSL 1.1.1, the program follows RFC5280. Specifically, certificate validity period (specified by any of <b>-startdate</b>, <b>-enddate</b> and <b>-days</b>) will be encoded as UTCTime if the dates are earlier than year 2049 (included), and as GeneralizedTime if the dates are in year 2050 or later.</p>
+<p>Since OpenSSL 1.1.1, the program follows RFC5280. Specifically, certificate validity period (specified by any of <b>-startdate</b>, <b>-enddate</b> and <b>-days</b>) and CRL last/next update time (specified by any of <b>-crl_lastupdate</b>, <b>-crl_nextupdate</b>, <b>-crldays</b>, <b>-crlhours</b> and <b>-crlsec</b>) will be encoded as UTCTime if the dates are earlier than year 2049 (included), and as GeneralizedTime if the dates are in year 2050 or later.</p>
+
+<p>OpenSSL 1.1.1 introduced a new random generator (CSPRNG) with an improved seeding mechanism. The new seeding mechanism makes it unnecessary to define a RANDFILE for saving and restoring randomness. This option is retained mainly for compatibility reasons.</p>
+
+<p>The <b>-section</b> option was added in OpenSSL 3.0.0.</p>
+
+<p>The <b>-multivalue-rdn</b> option has become obsolete in OpenSSL 3.0.0 and has no effect.</p>
+
+<p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man1/req.html">req(1)</a>, <a href="../man1/spkac.html">spkac(1)</a>, <a href="../man1/x509.html">x509(1)</a>, <a href="../man1/CA.pl.html">CA.pl(1)</a>, <a href="../man5/config.html">config(5)</a>, <a href="../man5/x509v3_config.html">x509v3_config(5)</a></p>
+<p><a href="../man1/openssl.html">openssl(1)</a>, <a href="../man1/openssl-req.html">openssl-req(1)</a>, <a href="../man1/openssl-spkac.html">openssl-spkac(1)</a>, <a href="../man1/openssl-x509.html">openssl-x509(1)</a>, <a href="../man1/CA.pl.html">CA.pl(1)</a>, <a href="../man5/config.html">config(5)</a>, <a href="../man5/x509v3_config.html">x509v3_config(5)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
 <p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

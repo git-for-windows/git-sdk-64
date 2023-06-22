@@ -37,7 +37,7 @@ typedef struct asn1_string_table_st ASN1_STRING_TABLE;
 
 int ASN1_STRING_TABLE_add(int nid, long minsize, long maxsize,
                           unsigned long mask, unsigned long flags);
-ASN1_STRING_TABLE * ASN1_STRING_TABLE_get(int nid);
+ASN1_STRING_TABLE *ASN1_STRING_TABLE_get(int nid);
 void ASN1_STRING_TABLE_cleanup(void);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
@@ -48,11 +48,11 @@ void ASN1_STRING_TABLE_cleanup(void);</code></pre>
 
 <h2 id="Functions">Functions</h2>
 
-<p>ASN1_STRING_TABLE_add() adds a new <b>ASN1_STRING_TABLE</b> item into the local ASN1 string table based on the <b>nid</b> along with other parameters.</p>
+<p>ASN1_STRING_TABLE_add() adds a new <b>ASN1_STRING_TABLE</b> item into the local ASN1 string table based on the <i>nid</i> along with other parameters.</p>
 
-<p>If the item is already in the table, fields of <b>ASN1_STRING_TABLE</b> are updated (depending on the values of those parameters, e.g., <b>minsize</b> and <b>maxsize</b> &gt;= 0, <b>mask</b> and <b>flags</b> != 0). If the <b>nid</b> is standard, a copy of the standard <b>ASN1_STRING_TABLE</b> is created and updated with other parameters.</p>
+<p>If the item is already in the table, fields of <b>ASN1_STRING_TABLE</b> are updated (depending on the values of those parameters, e.g., <i>minsize</i> and <i>maxsize</i> &gt;= 0, <i>mask</i> and <i>flags</i> != 0). If the <i>nid</i> is standard, a copy of the standard <b>ASN1_STRING_TABLE</b> is created and updated with other parameters.</p>
 
-<p>ASN1_STRING_TABLE_get() searches for an <b>ASN1_STRING_TABLE</b> item based on <b>nid</b>. It will search the local table first, then the standard one.</p>
+<p>ASN1_STRING_TABLE_get() searches for an <b>ASN1_STRING_TABLE</b> item based on <i>nid</i>. It will search the local table first, then the standard one.</p>
 
 <p>ASN1_STRING_TABLE_cleanup() frees all <b>ASN1_STRING_TABLE</b> items added by ASN1_STRING_TABLE_add().</p>
 
@@ -60,7 +60,7 @@ void ASN1_STRING_TABLE_cleanup(void);</code></pre>
 
 <p>ASN1_STRING_TABLE_add() returns 1 on success, 0 if an error occurred.</p>
 
-<p>ASN1_STRING_TABLE_get() returns a valid <b>ASN1_STRING_TABLE</b> structure or <b>NULL</b> if nothing is found.</p>
+<p>ASN1_STRING_TABLE_get() returns a valid <b>ASN1_STRING_TABLE</b> structure or NULL if nothing is found.</p>
 
 <p>ASN1_STRING_TABLE_cleanup() does not return a value.</p>
 
@@ -70,9 +70,9 @@ void ASN1_STRING_TABLE_cleanup(void);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2017 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2017-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

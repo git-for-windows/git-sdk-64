@@ -74,7 +74,7 @@ STACK_OF(X509) *PKCS7_get0_signers(PKCS7 *p7, STACK_OF(X509) *certs, int flags);
 
 <p>One application of <b>PKCS7_NOINTERN</b> is to only accept messages signed by a small number of certificates. The acceptable certificates would be passed in the <i>certs</i> parameter. In this case if the signer&#39;s certificate is not one of the certificates supplied in <i>certs</i> then the verify will fail because the signer cannot be found.</p>
 
-<p>Care should be taken when modifying the default verify behaviour, for example setting <b>PKCS7_NOVERIFY|PKCS7_NOSIGS</b> will totally disable all verification and any signed message will be considered valid. This combination is however useful if one merely wishes to write the content to <i>out</i> and its validity is not considered important.</p>
+<p>Care should be taken when modifying the default verify behaviour, for example setting <code>PKCS7_NOVERIFY|PKCS7_NOSIGS</code> will totally disable all verification and any signed message will be considered valid. This combination is however useful if one merely wishes to write the content to <i>out</i> and its validity is not considered important.</p>
 
 <p>Chain verification should arguably be performed using the signing time rather than the current time. However, since the signing time is supplied by the signer it cannot be trusted without additional evidence (such as a trusted timestamp).</p>
 
@@ -100,7 +100,7 @@ STACK_OF(X509) *PKCS7_get0_signers(PKCS7 *p7, STACK_OF(X509) *certs, int flags);
 
 <p>Copyright 2002-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

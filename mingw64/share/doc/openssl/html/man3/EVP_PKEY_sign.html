@@ -25,22 +25,25 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>EVP_PKEY_sign_init, EVP_PKEY_sign - sign using a public key algorithm</p>
+<p>EVP_PKEY_sign_init, EVP_PKEY_sign_init_ex, EVP_PKEY_sign - sign using a public key algorithm</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/evp.h&gt;
 
 int EVP_PKEY_sign_init(EVP_PKEY_CTX *ctx);
+int EVP_PKEY_sign_init_ex(EVP_PKEY_CTX *ctx, const OSSL_PARAM params[]);
 int EVP_PKEY_sign(EVP_PKEY_CTX *ctx,
                   unsigned char *sig, size_t *siglen,
                   const unsigned char *tbs, size_t tbslen);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The EVP_PKEY_sign_init() function initializes a public key algorithm context using key <b>pkey</b> for a signing operation.</p>
+<p>EVP_PKEY_sign_init() initializes a public key algorithm context <i>ctx</i> for signing using the algorithm given when the context was created using <a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a> or variants thereof. The algorithm is used to fetch a <b>EVP_SIGNATURE</b> method implicitly, see <a href="../man7/provider.html">&quot;Implicit fetch&quot; in provider(7)</a> for more information about implicit fetches.</p>
 
-<p>The EVP_PKEY_sign() function performs a public key signing operation using <b>ctx</b>. The data to be signed is specified using the <b>tbs</b> and <b>tbslen</b> parameters. If <b>sig</b> is <b>NULL</b> then the maximum size of the output buffer is written to the <b>siglen</b> parameter. If <b>sig</b> is not <b>NULL</b> then before the call the <b>siglen</b> parameter should contain the length of the <b>sig</b> buffer, if the call is successful the signature is written to <b>sig</b> and the amount of data written to <b>siglen</b>.</p>
+<p>EVP_PKEY_sign_init_ex() is the same as EVP_PKEY_sign_init() but additionally sets the passed parameters <i>params</i> on the context before returning.</p>
+
+<p>The EVP_PKEY_sign() function performs a public key signing operation using <i>ctx</i>. The data to be signed is specified using the <i>tbs</i> and <i>tbslen</i> parameters. If <i>sig</i> is NULL then the maximum size of the output buffer is written to the <i>siglen</i> parameter. If <i>sig</i> is not NULL then before the call the <i>siglen</i> parameter should contain the length of the <i>sig</i> buffer, if the call is successful the signature is written to <i>sig</i> and the amount of data written to <i>siglen</i>.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -102,13 +105,15 @@ if (EVP_PKEY_sign(ctx, sig, &amp;siglen, md, mdlen) &lt;= 0)
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>These functions were added in OpenSSL 1.0.0.</p>
+<p>The EVP_PKEY_sign_init() and EVP_PKEY_sign() functions were added in OpenSSL 1.0.0.</p>
+
+<p>The EVP_PKEY_sign_init_ex() function was added in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2006-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2006-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

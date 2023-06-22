@@ -24,12 +24,14 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>TLSv1_2_method, TLSv1_2_server_method, TLSv1_2_client_method, SSL_CTX_new, SSL_CTX_up_ref, SSLv3_method, SSLv3_server_method, SSLv3_client_method, TLSv1_method, TLSv1_server_method, TLSv1_client_method, TLSv1_1_method, TLSv1_1_server_method, TLSv1_1_client_method, TLS_method, TLS_server_method, TLS_client_method, SSLv23_method, SSLv23_server_method, SSLv23_client_method, DTLS_method, DTLS_server_method, DTLS_client_method, DTLSv1_method, DTLSv1_server_method, DTLSv1_client_method, DTLSv1_2_method, DTLSv1_2_server_method, DTLSv1_2_client_method - create a new SSL_CTX object as framework for TLS/SSL or DTLS enabled functions</p>
+<p>TLSv1_2_method, TLSv1_2_server_method, TLSv1_2_client_method, SSL_CTX_new, SSL_CTX_new_ex, SSL_CTX_up_ref, SSLv3_method, SSLv3_server_method, SSLv3_client_method, TLSv1_method, TLSv1_server_method, TLSv1_client_method, TLSv1_1_method, TLSv1_1_server_method, TLSv1_1_client_method, TLS_method, TLS_server_method, TLS_client_method, SSLv23_method, SSLv23_server_method, SSLv23_client_method, DTLS_method, DTLS_server_method, DTLS_client_method, DTLSv1_method, DTLSv1_server_method, DTLSv1_client_method, DTLSv1_2_method, DTLSv1_2_server_method, DTLSv1_2_client_method - create a new SSL_CTX object as framework for TLS/SSL or DTLS enabled functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/ssl.h&gt;
 
+SSL_CTX *SSL_CTX_new_ex(OSSL_LIB_CTX *libctx, const char *propq,
+                        const SSL_METHOD *method);
 SSL_CTX *SSL_CTX_new(const SSL_METHOD *method);
 int SSL_CTX_up_ref(SSL_CTX *ctx);
 
@@ -83,11 +85,21 @@ const SSL_METHOD *DTLSv1_2_client_method(void);
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_CTX_new() creates a new <b>SSL_CTX</b> object as framework to establish TLS/SSL or DTLS enabled connections. An <b>SSL_CTX</b> object is reference counted. Creating an <b>SSL_CTX</b> object for the first time increments the reference count. Freeing it (using SSL_CTX_free) decrements it. When the reference count drops to zero, any memory or resources allocated to the <b>SSL_CTX</b> object are freed. SSL_CTX_up_ref() increments the reference count for an existing <b>SSL_CTX</b> structure.</p>
+<p>SSL_CTX_new_ex() creates a new <b>SSL_CTX</b> object, which holds various configuration and data relevant to SSL/TLS or DTLS session establishment. These are later inherited by the <b>SSL</b> object representing an active session. The <i>method</i> parameter specifies whether the context will be used for the client or server side or both - for details see the <a href="#NOTES">&quot;NOTES&quot;</a> below. The library context <i>libctx</i> (see <a href="../man3/OSSL_LIB_CTX.html">OSSL_LIB_CTX(3)</a>) is used to provide the cryptographic algorithms needed for the session. Any cryptographic algorithms that are used by any <b>SSL</b> objects created from this <b>SSL_CTX</b> will be fetched from the <i>libctx</i> using the property query string <i>propq</i> (see <a href="../man7/crypto.html">&quot;ALGORITHM FETCHING&quot; in crypto(7)</a>. Either or both the <i>libctx</i> or <i>propq</i> parameters may be NULL.</p>
+
+<p>SSL_CTX_new() does the same as SSL_CTX_new_ex() except that the default library context is used and no property query string is specified.</p>
+
+<p>An <b>SSL_CTX</b> object is reference counted. Creating an <b>SSL_CTX</b> object for the first time increments the reference count. Freeing the <b>SSL_CTX</b> (using SSL_CTX_free) decrements it. When the reference count drops to zero, any memory or resources allocated to the <b>SSL_CTX</b> object are freed. SSL_CTX_up_ref() increments the reference count for an existing <b>SSL_CTX</b> structure.</p>
+
+<p>An <b>SSL_CTX</b> object should not be changed after it is used to create any <b>SSL</b> objects or from multiple threads concurrently, since the implementation does not provide serialization of access for these cases.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>The SSL_CTX object uses <b>method</b> as connection method. The methods exist in a generic type (for client and server use), a server only type, and a client only type. <b>method</b> can be of the following types:</p>
+<p>On session estabilishment, by default, no peer credentials verification is done. This must be explicitly requested, typically using <a href="../man3/SSL_CTX_set_verify.html">SSL_CTX_set_verify(3)</a>. For verifying peer certificates many options can be set using various functions such as <a href="../man3/SSL_CTX_load_verify_locations.html">SSL_CTX_load_verify_locations(3)</a> and <a href="../man3/SSL_CTX_set1_param.html">SSL_CTX_set1_param(3)</a>. The <a href="../man3/X509_VERIFY_PARAM_set_purpose.html">X509_VERIFY_PARAM_set_purpose(3)</a> function can be used, also in conjunction with <a href="../man3/SSL_CTX_get0_param.html">SSL_CTX_get0_param(3)</a>, to set the intended purpose of the session. The default is <b>X509_PURPOSE_SSL_SERVER</b> on the client side and <b>X509_PURPOSE_SSL_CLIENT</b> on the server side.</p>
+
+<p>The SSL_CTX object uses <i>method</i> as the connection method. Three method variants are available: a generic method (for either client or server use), a server-only method, and a client-only method.</p>
+
+<p>The <i>method</i> parameter of SSL_CTX_new_ex() and SSL_CTX_new() can be one of the following:</p>
 
 <dl>
 
@@ -181,7 +193,7 @@ const SSL_METHOD *DTLSv1_2_client_method(void);
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/SSL_CTX_set_options.html">SSL_CTX_set_options(3)</a>, <a href="../man3/SSL_CTX_free.html">SSL_CTX_free(3)</a>, <a href="../man3/SSL_accept.html">SSL_accept(3)</a>, <a href="../man3/SSL_CTX_set_min_proto_version.html">SSL_CTX_set_min_proto_version(3)</a>, <a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_set_connect_state.html">SSL_set_connect_state(3)</a></p>
+<p><a href="../man3/SSL_CTX_set_options.html">SSL_CTX_set_options(3)</a>, <a href="../man3/SSL_CTX_free.html">SSL_CTX_free(3)</a>, SSL_CTX_set_verify(3), <a href="../man3/SSL_CTX_set1_param.html">SSL_CTX_set1_param(3)</a>, <a href="../man3/SSL_CTX_get0_param.html">SSL_CTX_get0_param(3)</a>, <a href="../man3/SSL_connect.html">SSL_connect(3)</a>, <a href="../man3/SSL_accept.html">SSL_accept(3)</a>, <a href="../man3/SSL_CTX_set_min_proto_version.html">SSL_CTX_set_min_proto_version(3)</a>, <a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_set_connect_state.html">SSL_set_connect_state(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -191,11 +203,13 @@ const SSL_METHOD *DTLSv1_2_client_method(void);
 
 <p>All version-specific methods were deprecated in OpenSSL 1.1.0.</p>
 
+<p>SSL_CTX_new_ex() was added in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

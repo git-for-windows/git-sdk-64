@@ -57,7 +57,7 @@ int UI_add_error_string(UI *ui, const char *text);
 int UI_dup_error_string(UI *ui, const char *text);
 
 char *UI_construct_prompt(UI *ui_method,
-       const char *object_desc, const char *object_name);
+                          const char *phrase_desc, const char *object_name);
 
 void *UI_add_user_data(UI *ui, void *user_data);
 int UI_dup_user_data(UI *ui, void *user_data);
@@ -106,15 +106,15 @@ const UI_METHOD *UI_null(void);</code></pre>
 
 <p>UI_add_input_boolean() adds a prompt to the UI that&#39;s supposed to be answered in a boolean way, with a single character for yes and a different character for no. A set of characters that can be used to cancel the prompt is given as well. The prompt itself is divided in two, one part being the descriptive text (given through the <i>prompt</i> argument) and one describing the possible answers (given through the <i>action_desc</i> argument).</p>
 
-<p>UI_add_info_string() and UI_add_error_string() add strings that are shown at the same time as the prompt for extra information or to show an error string. The difference between the two is only conceptual. With the builtin method, there&#39;s no technical difference between them. Other methods may make a difference between them, however.</p>
+<p>UI_add_info_string() and UI_add_error_string() add strings that are shown at the same time as the prompt for extra information or to show an error string. The difference between the two is only conceptual. With the built-in method, there&#39;s no technical difference between them. Other methods may make a difference between them, however.</p>
 
 <p>The flags currently supported are <b>UI_INPUT_FLAG_ECHO</b>, which is relevant for UI_add_input_string() and will have the users response be echoed (when prompting for a password, this flag should obviously not be used, and <b>UI_INPUT_FLAG_DEFAULT_PWD</b>, which means that a default password of some sort will be used (completely depending on the application and the UI method).</p>
 
 <p>UI_dup_input_string(), UI_dup_verify_string(), UI_dup_input_boolean(), UI_dup_info_string() and UI_dup_error_string() are basically the same as their UI_add counterparts, except that they make their own copies of all strings.</p>
 
-<p>UI_construct_prompt() is a helper function that can be used to create a prompt from two pieces of information: an description and a name. The default constructor (if there is none provided by the method used) creates a string &quot;Enter <i>description</i> for <i>name</i>:&quot;. With the description &quot;pass phrase&quot; and the filename &quot;foo.key&quot;, that becomes &quot;Enter pass phrase for foo.key:&quot;. Other methods may create whatever string and may include encodings that will be processed by the other method functions.</p>
+<p>UI_construct_prompt() is a helper function that can be used to create a prompt from two pieces of information: a phrase description <i>phrase_desc</i> and an object name <i>object_name</i>, where the latter may be NULL. The default constructor (if there is none provided by the method used) creates a string &quot;Enter <i>phrase_desc</i> for <i>object_name</i>:&quot; where the &quot; for <i>object_name</i>&quot; part is left out if <i>object_name</i> is NULL. With the description &quot;pass phrase&quot; and the filename &quot;foo.key&quot;, that becomes &quot;Enter pass phrase for foo.key:&quot;. Other methods may create whatever string and may include encodings that will be processed by the other method functions.</p>
 
-<p>UI_add_user_data() adds a user data pointer for the method to use at any time. The builtin UI method doesn&#39;t care about this info. Note that several calls to this function doesn&#39;t add data, it replaces the previous blob with the one given as argument.</p>
+<p>UI_add_user_data() adds a user data pointer for the method to use at any time. The built-in UI method doesn&#39;t care about this info. Note that several calls to this function doesn&#39;t add data, it replaces the previous blob with the one given as argument.</p>
 
 <p>UI_dup_user_data() duplicates the user data and works as an alternative to UI_add_user_data() when the user data needs to be preserved for a longer duration, perhaps even the lifetime of the application. The UI object takes ownership of this duplicate and will free it whenever it gets replaced or the UI is destroyed. UI_dup_user_data() returns 0 on success, or -1 on memory allocation failure or if the method doesn&#39;t have a duplicator function.</p>
 
@@ -138,7 +138,7 @@ const UI_METHOD *UI_null(void);</code></pre>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>The resulting strings that the built in method UI_OpenSSL() generate are assumed to be encoded according to the current locale or (for Windows) code page. For applications having different demands, these strings need to be converted appropriately by the caller. For Windows, if the OPENSSL_WIN32_UTF8 environment variable is set, the built-in method UI_OpenSSL() will produce UTF-8 encoded strings instead.</p>
+<p>The resulting strings that the built in method UI_OpenSSL() generate are assumed to be encoded according to the current locale or (for Windows) code page. For applications having different demands, these strings need to be converted appropriately by the caller. For Windows, if the <b>OPENSSL_WIN32_UTF8</b> environment variable is set, the built-in method UI_OpenSSL() will produce UTF-8 encoded strings instead.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -168,7 +168,7 @@ const UI_METHOD *UI_null(void);</code></pre>
 
 <p>Copyright 2001-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

@@ -31,7 +31,7 @@
 <pre><code>#include &lt;openssl/ssl.h&gt;
 
 SSL_SESSION *SSL_SESSION_new(void);
-SSL_SESSION *SSL_SESSION_dup(SSL_SESSION *src);
+SSL_SESSION *SSL_SESSION_dup(const SSL_SESSION *src);
 int SSL_SESSION_up_ref(SSL_SESSION *ses);
 void SSL_SESSION_free(SSL_SESSION *session);</code></pre>
 
@@ -39,7 +39,7 @@ void SSL_SESSION_free(SSL_SESSION *session);</code></pre>
 
 <p>SSL_SESSION_new() creates a new SSL_SESSION structure and returns a pointer to it.</p>
 
-<p>SSL_SESSION_dup() copies the contents of the SSL_SESSION structure in <b>src</b> and returns a pointer to it.</p>
+<p>SSL_SESSION_dup() creates a new SSL_SESSION structure that is a copy of <b>src</b>. The copy is not owned by any cache that <b>src</b> may have been in.</p>
 
 <p>SSL_SESSION_up_ref() increments the reference count on the given SSL_SESSION structure.</p>
 
@@ -55,6 +55,8 @@ void SSL_SESSION_free(SSL_SESSION *session);</code></pre>
 
 <p>SSL_SESSION_new returns a pointer to the newly allocated SSL_SESSION structure or NULL on error.</p>
 
+<p>SSL_SESSION_dup returns a pointer to the new copy or NULL on error.</p>
+
 <p>SSL_SESSION_up_ref returns 1 on success or 0 on error.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
@@ -67,9 +69,9 @@ void SSL_SESSION_free(SSL_SESSION *session);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

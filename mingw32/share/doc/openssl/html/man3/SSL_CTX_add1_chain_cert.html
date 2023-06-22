@@ -62,7 +62,7 @@ int SSL_set_current_cert(SSL *ssl, long op);</code></pre>
 
 <p>SSL_CTX_clear_chain_certs() clears any existing chain associated with the current certificate of <b>ctx</b>. (This is implemented by calling SSL_CTX_set0_chain() with <b>sk</b> set to <b>NULL</b>).</p>
 
-<p>SSL_CTX_build_cert_chain() builds the certificate chain for <b>ctx</b> normally this uses the chain store or the verify store if the chain store is not set. If the function is successful the built chain will replace any existing chain. The <b>flags</b> parameter can be set to <b>SSL_BUILD_CHAIN_FLAG_UNTRUSTED</b> to use existing chain certificates as untrusted CAs, <b>SSL_BUILD_CHAIN_FLAG_NO_ROOT</b> to omit the root CA from the built chain, <b>SSL_BUILD_CHAIN_FLAG_CHECK</b> to use all existing chain certificates only to build the chain (effectively sanity checking and rearranging them if necessary), the flag <b>SSL_BUILD_CHAIN_FLAG_IGNORE_ERROR</b> ignores any errors during verification: if flag <b>SSL_BUILD_CHAIN_FLAG_CLEAR_ERROR</b> is also set verification errors are cleared from the error queue.</p>
+<p>SSL_CTX_build_cert_chain() builds the certificate chain for <b>ctx</b>. Normally this uses the chain store or the verify store if the chain store is not set. If the function is successful the built chain will replace any existing chain. The <b>flags</b> parameter can be set to <b>SSL_BUILD_CHAIN_FLAG_UNTRUSTED</b> to use existing chain certificates as untrusted CAs, <b>SSL_BUILD_CHAIN_FLAG_NO_ROOT</b> to omit the root CA from the built chain, <b>SSL_BUILD_CHAIN_FLAG_CHECK</b> to use all existing chain certificates only to build the chain (effectively sanity checking and rearranging them if necessary), the flag <b>SSL_BUILD_CHAIN_FLAG_IGNORE_ERROR</b> ignores any errors during verification: if flag <b>SSL_BUILD_CHAIN_FLAG_CLEAR_ERROR</b> is also set verification errors are cleared from the error queue. Details of the chain building process are described in <a href="../man1/openssl-verification-options.html">&quot;Certification Path Building&quot; in openssl-verification-options(1)</a>.</p>
 
 <p>Each of these functions operates on the <i>current</i> end entity (i.e. server or client) certificate. This is the last certificate loaded or selected on the corresponding <b>ctx</b> structure.</p>
 
@@ -102,7 +102,7 @@ int SSL_set_current_cert(SSL *ssl, long op);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/SSL_CTX_add_extra_chain_cert.html">SSL_CTX_add_extra_chain_cert(3)</a></p>
+<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_CTX_add_extra_chain_cert.html">SSL_CTX_add_extra_chain_cert(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -110,9 +110,9 @@ int SSL_set_current_cert(SSL *ssl, long op);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2013-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2013-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

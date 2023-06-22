@@ -25,15 +25,15 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>BIO_set_conn_address, BIO_get_conn_address, BIO_s_connect, BIO_new_connect, BIO_set_conn_hostname, BIO_set_conn_port, BIO_set_conn_ip_family, BIO_get_conn_ip_family, BIO_get_conn_hostname, BIO_get_conn_port, BIO_set_nbio, BIO_do_connect - connect BIO</p>
+<p>BIO_s_connect, BIO_new_connect, BIO_set_conn_hostname, BIO_set_conn_port, BIO_set_conn_address, BIO_set_conn_ip_family, BIO_get_conn_hostname, BIO_get_conn_port, BIO_get_conn_address, BIO_get_conn_ip_family, BIO_set_nbio, BIO_do_connect - connect BIO</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/bio.h&gt;
 
-const BIO_METHOD * BIO_s_connect(void);
+const BIO_METHOD *BIO_s_connect(void);
 
-BIO *BIO_new_connect(char *name);
+BIO *BIO_new_connect(const char *name);
 
 long BIO_set_conn_hostname(BIO *b, char *name);
 long BIO_set_conn_port(BIO *b, char *port);
@@ -46,7 +46,7 @@ const long BIO_get_conn_ip_family(BIO *b);
 
 long BIO_set_nbio(BIO *b, long n);
 
-int BIO_do_connect(BIO *b);</code></pre>
+long BIO_do_connect(BIO *b);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -62,11 +62,11 @@ int BIO_do_connect(BIO *b);</code></pre>
 
 <p>Calling BIO_reset() on a connect BIO will close any active connection and reset the BIO into a state where it can connect to the same host again.</p>
 
-<p>BIO_get_fd() places the underlying socket in <b>c</b> if it is not NULL, it also returns the socket . If <b>c</b> is not NULL it should be of type (int *).</p>
+<p>BIO_new_connect() combines BIO_new() and BIO_set_conn_hostname() into a single call: that is it creates a new connect BIO with hostname <b>name</b>.</p>
 
-<p>BIO_set_conn_hostname() uses the string <b>name</b> to set the hostname. The hostname can be an IP address; if the address is an IPv6 one, it must be enclosed with brackets. The hostname can also include the port in the form hostname:port.</p>
+<p>BIO_set_conn_hostname() uses the string <b>name</b> to set the hostname. The hostname can be an IP address; if the address is an IPv6 one, it must be enclosed with brackets <code>[</code> and <code>]</code>. The hostname can also include the port in the form hostname:port; see <a href="../man3/BIO_parse_hostserv.html">BIO_parse_hostserv(3)</a> and BIO_set_conn_port() for details.</p>
 
-<p>BIO_set_conn_port() sets the port to <b>port</b>. <b>port</b> can be the numerical form or a string such as &quot;http&quot;. A string will be looked up first using getservbyname() on the host platform but if that fails a standard table of port names will be used. This internal list is http, telnet, socks, https, ssl, ftp, and gopher.</p>
+<p>BIO_set_conn_port() sets the port to <b>port</b>. <b>port</b> can be the numerical form or a service string such as &quot;http&quot;, which will be mapped to a port number using the system function getservbyname().</p>
 
 <p>BIO_set_conn_address() sets the address and port information using a BIO_ADDR(3ssl).</p>
 
@@ -82,9 +82,7 @@ int BIO_do_connect(BIO *b);</code></pre>
 
 <p>BIO_set_nbio() sets the non blocking I/O flag to <b>n</b>. If <b>n</b> is zero then blocking I/O is set. If <b>n</b> is 1 then non blocking I/O is set. Blocking I/O is the default. The call to BIO_set_nbio() should be made before the connection is established because non blocking I/O is set during the connect process.</p>
 
-<p>BIO_new_connect() combines BIO_new() and BIO_set_conn_hostname() into a single call: that is it creates a new connect BIO with <b>name</b>.</p>
-
-<p>BIO_do_connect() attempts to connect the supplied BIO. It returns 1 if the connection was established successfully. A zero or negative value is returned if the connection could not be established, the call BIO_should_retry() should be used for non blocking connect BIOs to determine if the call should be retried.</p>
+<p>BIO_do_connect() attempts to connect the supplied BIO. This performs an SSL/TLS handshake as far as supported by the BIO. For non-SSL BIOs the connection is done typically at TCP level. If domain name resolution yields multiple IP addresses all of them are tried after connect() failures. The function returns 1 if the connection was established successfully. A zero or negative value is returned if the connection could not be established. The call BIO_should_retry() should be used for non blocking connect BIOs to determine if the call should be retried. If a connection has already been established this call has no effect.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -106,11 +104,9 @@ int BIO_do_connect(BIO *b);</code></pre>
 
 <p>BIO_s_connect() returns the connect BIO method.</p>
 
-<p>BIO_get_fd() returns the socket or -1 if the BIO has not been initialized.</p>
+<p>BIO_set_conn_address(), BIO_set_conn_port(), and BIO_set_conn_ip_family() return 1 or &lt;=0 if an error occurs.</p>
 
-<p>BIO_set_conn_address(), BIO_set_conn_port(), and BIO_set_conn_ip_family() always return 1.</p>
-
-<p>BIO_set_conn_hostname() returns 1 on success and 0 on failure.</p>
+<p>BIO_set_conn_hostname() returns 1 on success and &lt;=0 on failure.</p>
 
 <p>BIO_get_conn_address() returns the address information or NULL if none was set.</p>
 
@@ -120,9 +116,9 @@ int BIO_do_connect(BIO *b);</code></pre>
 
 <p>BIO_get_conn_port() returns a string representing the connected port or NULL if not set.</p>
 
-<p>BIO_set_nbio() always returns 1.</p>
+<p>BIO_set_nbio() returns 1 or &lt;=0 if an error occurs.</p>
 
-<p>BIO_do_connect() returns 1 if the connection was successfully established and 0 or -1 if the connection failed.</p>
+<p>BIO_do_connect() returns 1 if the connection was successfully established and &lt;=0 if the connection failed.</p>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
@@ -151,7 +147,7 @@ BIO_free(out);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/BIO_ADDR.html">BIO_ADDR(3)</a></p>
+<p><a href="../man3/BIO_ADDR.html">BIO_ADDR(3)</a>, <a href="../man3/BIO_parse_hostserv.html">BIO_parse_hostserv(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -159,9 +155,9 @@ BIO_free(out);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

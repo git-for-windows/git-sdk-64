@@ -17,6 +17,7 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -26,9 +27,11 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/rsa.h&gt;
+<pre><code>#include &lt;openssl/rsa.h&gt;</code></pre>
 
-RSA *RSA_new(void);
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>RSA *RSA_new(void);
 
 void RSA_free(RSA *rsa);</code></pre>
 
@@ -48,11 +51,15 @@ void RSA_free(RSA *rsa);</code></pre>
 
 <p><a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>, <a href="../man3/RSA_generate_key.html">RSA_generate_key(3)</a>, <a href="../man3/RSA_new_method.html">RSA_new_method(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>All functions described here were deprecated in OpenSSL 3.0. For replacement see EVP_PKEY-RSA(7).</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

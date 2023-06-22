@@ -25,22 +25,28 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>CMS_sign - create a CMS SignedData structure</p>
+<p>CMS_sign, CMS_sign_ex - create a CMS SignedData structure</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/cms.h&gt;
 
+CMS_ContentInfo *CMS_sign_ex(X509 *signcert, EVP_PKEY *pkey,
+                             STACK_OF(X509) *certs, BIO *data,
+                             unsigned int flags, OSSL_LIB_CTX *ctx,
+                             const char *propq);
 CMS_ContentInfo *CMS_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
                           BIO *data, unsigned int flags);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>CMS_sign() creates and returns a CMS SignedData structure. <b>signcert</b> is the certificate to sign with, <b>pkey</b> is the corresponding private key. <b>certs</b> is an optional additional set of certificates to include in the CMS structure (for example any intermediate CAs in the chain). Any or all of these parameters can be <b>NULL</b>, see <b>NOTES</b> below.</p>
+<p>CMS_sign_ex() creates and returns a CMS SignedData structure. <i>signcert</i> is the certificate to sign with, <i>pkey</i> is the corresponding private key. <i>certs</i> is an optional additional set of certificates to include in the CMS structure (for example any intermediate CAs in the chain). The library context <i>libctx</i> and the property query <i>propq</i> are used when retrieving algorithms from providers. Any or all of these parameters can be <b>NULL</b>, see <b>NOTES</b> below.</p>
 
 <p>The data to be signed is read from BIO <b>data</b>.</p>
 
 <p><b>flags</b> is an optional set of flags.</p>
+
+<p>CMS_sign() is similar to CMS_sign_ex() but uses default values of NULL for the library context <i>libctx</i> and the property query <i>propq</i>.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -80,7 +86,7 @@ CMS_ContentInfo *CMS_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>CMS_sign() returns either a valid CMS_ContentInfo structure or NULL if an error occurred. The error can be obtained from ERR_get_error(3).</p>
+<p>CMS_sign_ex() and CMS_sign() return either a valid CMS_ContentInfo structure or NULL if an error occurred. The error can be obtained from ERR_get_error(3).</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -90,11 +96,13 @@ CMS_ContentInfo *CMS_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 <p>The <b>CMS_STREAM</b> flag is only supported for detached data in OpenSSL 0.9.8, it is supported for embedded data in OpenSSL 1.0.0 and later.</p>
 
+<p>The CMS_sign_ex() method was added in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2008-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2008-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

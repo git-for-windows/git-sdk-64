@@ -38,10 +38,10 @@ BIO *BIO_new_fp(FILE *stream, int flags);
 BIO_set_fp(BIO *b, FILE *fp, int flags);
 BIO_get_fp(BIO *b, FILE **fpp);
 
-int BIO_read_filename(BIO *b, char *name)
-int BIO_write_filename(BIO *b, char *name)
-int BIO_append_filename(BIO *b, char *name)
-int BIO_rw_filename(BIO *b, char *name)</code></pre>
+int BIO_read_filename(BIO *b, char *name);
+int BIO_write_filename(BIO *b, char *name);
+int BIO_append_filename(BIO *b, char *name);
+int BIO_rw_filename(BIO *b, char *name);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -87,13 +87,13 @@ int BIO_rw_filename(BIO *b, char *name)</code></pre>
 
 <p>BIO_new_file() and BIO_new_fp() return a file BIO or NULL if an error occurred.</p>
 
-<p>BIO_set_fp() and BIO_get_fp() return 1 for success or 0 for failure (although the current implementation never return 0).</p>
+<p>BIO_set_fp() and BIO_get_fp() return 1 for success or &lt;=0 for failure (although the current implementation never return 0).</p>
 
-<p>BIO_seek() returns the same value as the underlying fseek() function: 0 for success or -1 for failure.</p>
+<p>BIO_seek() returns 0 for success or negative values for failure.</p>
 
-<p>BIO_tell() returns the current file position.</p>
+<p>BIO_tell() returns the current file position or negative values for failure.</p>
 
-<p>BIO_read_filename(), BIO_write_filename(), BIO_append_filename() and BIO_rw_filename() return 1 for success or 0 for failure.</p>
+<p>BIO_read_filename(), BIO_write_filename(), BIO_append_filename() and BIO_rw_filename() return 1 for success or &lt;=0 for failure.</p>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
@@ -111,7 +111,7 @@ BIO_printf(bio_out, &quot;Hello World\n&quot;);</code></pre>
 bio_out = BIO_new(BIO_s_file());
 if (bio_out == NULL)
     /* Error */
-if (!BIO_set_fp(bio_out, stdout, BIO_NOCLOSE))
+if (BIO_set_fp(bio_out, stdout, BIO_NOCLOSE) &lt;= 0)
     /* Error */
 BIO_printf(bio_out, &quot;Hello World\n&quot;);</code></pre>
 
@@ -132,7 +132,7 @@ BIO_free(out);</code></pre>
 out = BIO_new(BIO_s_file());
 if (out == NULL)
     /* Error */
-if (!BIO_write_filename(out, &quot;filename.txt&quot;))
+if (BIO_write_filename(out, &quot;filename.txt&quot;) &lt;= 0)
     /* Error */
 BIO_printf(out, &quot;Hello World\n&quot;);
 BIO_free(out);</code></pre>
@@ -147,9 +147,9 @@ BIO_free(out);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

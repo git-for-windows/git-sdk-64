@@ -19,12 +19,13 @@
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#BUGS">BUGS</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>EVP_SignInit, EVP_SignInit_ex, EVP_SignUpdate, EVP_SignFinal - EVP signing functions</p>
+<p>EVP_SignInit, EVP_SignInit_ex, EVP_SignUpdate, EVP_SignFinal_ex, EVP_SignFinal - EVP signing functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -32,7 +33,10 @@
 
 int EVP_SignInit_ex(EVP_MD_CTX *ctx, const EVP_MD *type, ENGINE *impl);
 int EVP_SignUpdate(EVP_MD_CTX *ctx, const void *d, unsigned int cnt);
-int EVP_SignFinal(EVP_MD_CTX *ctx, unsigned char *sig, unsigned int *s, EVP_PKEY *pkey);
+int EVP_SignFinal_ex(EVP_MD_CTX *ctx, unsigned char *md, unsigned int *s,
+                     EVP_PKEY *pkey, OSSL_LIB_CTX *libctx, const char *propq);
+int EVP_SignFinal(EVP_MD_CTX *ctx, unsigned char *sig, unsigned int *s,
+                  EVP_PKEY *pkey);
 
 void EVP_SignInit(EVP_MD_CTX *ctx, const EVP_MD *type);</code></pre>
 
@@ -44,13 +48,15 @@ void EVP_SignInit(EVP_MD_CTX *ctx, const EVP_MD *type);</code></pre>
 
 <p>EVP_SignUpdate() hashes <i>cnt</i> bytes of data at <i>d</i> into the signature context <i>ctx</i>. This function can be called several times on the same <i>ctx</i> to include additional data.</p>
 
-<p>EVP_SignFinal() signs the data in <i>ctx</i> using the private key <i>pkey</i> and places the signature in <i>sig</i>. <i>sig</i> must be at least <code>EVP_PKEY_size(pkey)</code> bytes in size. <i>s</i> is an OUT parameter, and not used as an IN parameter. The number of bytes of data written (i.e. the length of the signature) will be written to the integer at <i>s</i>, at most <code>EVP_PKEY_size(pkey)</code> bytes will be written.</p>
+<p>EVP_SignFinal_ex() signs the data in <i>ctx</i> using the private key <i>pkey</i> and places the signature in <i>sig</i>. The library context <i>libctx</i> and property query <i>propq</i> are used when creating a context to use with the key <i>pkey</i>. <i>sig</i> must be at least <code>EVP_PKEY_get_size(pkey)</code> bytes in size. <i>s</i> is an OUT parameter, and not used as an IN parameter. The number of bytes of data written (i.e. the length of the signature) will be written to the integer at <i>s</i>, at most <code>EVP_PKEY_get_size(pkey)</code> bytes will be written.</p>
+
+<p>EVP_SignFinal() is similar to EVP_SignFinal_ex() but uses default values of NULL for the library context <i>libctx</i> and the property query <i>propq</i>.</p>
 
 <p>EVP_SignInit() initializes a signing context <i>ctx</i> to use the default implementation of digest <i>type</i>.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>EVP_SignInit_ex(), EVP_SignUpdate() and EVP_SignFinal() return 1 for success and 0 for failure.</p>
+<p>EVP_SignInit_ex(), EVP_SignUpdate(), EVP_SignFinal_ex() and EVP_SignFinal() return 1 for success and 0 for failure.</p>
 
 <p>The error codes can be obtained by <a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>.</p>
 
@@ -58,7 +64,7 @@ void EVP_SignInit(EVP_MD_CTX *ctx, const EVP_MD *type);</code></pre>
 
 <p>The <b>EVP</b> interface to digital signatures should almost always be used in preference to the low-level interfaces. This is because the code then becomes transparent to the algorithm used and much more flexible.</p>
 
-<p>When signing with DSA private keys the random number generator must be seeded. If the automatic seeding or reseeding of the OpenSSL CSPRNG fails due to external circumstances (see <a href="../man7/RAND.html">RAND(7)</a>), the operation will fail. This requirement does not hold for RSA signatures.</p>
+<p>When signing with some private key types the random number generator must be seeded. If the automatic seeding or reseeding of the OpenSSL CSPRNG fails due to external circumstances (see <a href="../man7/RAND.html">RAND(7)</a>), the operation will fail.</p>
 
 <p>The call to EVP_SignFinal() internally finalizes a copy of the digest context. This means that calls to EVP_SignUpdate() and EVP_SignFinal() can be called later to digest and sign additional data.</p>
 
@@ -72,17 +78,21 @@ void EVP_SignInit(EVP_MD_CTX *ctx, const EVP_MD *type);</code></pre>
 
 <p>It is not possible to change the signing parameters using these function.</p>
 
-<p>The previous two bugs are fixed in the newer EVP_SignDigest*() function.</p>
+<p>The previous two bugs are fixed in the newer EVP_DigestSign*() functions.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/EVP_PKEY_size.html">EVP_PKEY_size(3)</a>, <a href="../man3/EVP_PKEY_bits.html">EVP_PKEY_bits(3)</a>, <a href="../man3/EVP_PKEY_security_bits.html">EVP_PKEY_security_bits(3)</a>, <a href="../man3/EVP_VerifyInit.html">EVP_VerifyInit(3)</a>, <a href="../man3/EVP_DigestInit.html">EVP_DigestInit(3)</a>, <a href="../man7/evp.html">evp(7)</a>, <a href="../man3/HMAC.html">HMAC(3)</a>, <a href="../man3/MD2.html">MD2(3)</a>, <a href="../man3/MD5.html">MD5(3)</a>, <a href="../man3/MDC2.html">MDC2(3)</a>, <a href="../man3/RIPEMD160.html">RIPEMD160(3)</a>, <a href="../man3/SHA1.html">SHA1(3)</a>, <a href="../man1/dgst.html">dgst(1)</a></p>
+<p><a href="../man3/EVP_PKEY_get_size.html">EVP_PKEY_get_size(3)</a>, <a href="../man3/EVP_PKEY_get_bits.html">EVP_PKEY_get_bits(3)</a>, <a href="../man3/EVP_PKEY_get_security_bits.html">EVP_PKEY_get_security_bits(3)</a>, <a href="../man3/EVP_VerifyInit.html">EVP_VerifyInit(3)</a>, <a href="../man3/EVP_DigestInit.html">EVP_DigestInit(3)</a>, <a href="../man7/evp.html">evp(7)</a>, <a href="../man3/HMAC.html">HMAC(3)</a>, <a href="../man3/MD2.html">MD2(3)</a>, <a href="../man3/MD5.html">MD5(3)</a>, <a href="../man3/MDC2.html">MDC2(3)</a>, <a href="../man3/RIPEMD160.html">RIPEMD160(3)</a>, <a href="../man3/SHA1.html">SHA1(3)</a>, <a href="../man1/openssl-dgst.html">openssl-dgst(1)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>The function EVP_SignFinal_ex() was added in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

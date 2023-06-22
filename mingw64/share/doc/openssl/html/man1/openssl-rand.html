@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>rand</title>
+<title>openssl-rand</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:" />
 </head>
@@ -16,24 +16,24 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#OPTIONS">OPTIONS</a></li>
-  <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>openssl-rand, rand - generate pseudo-random bytes</p>
+<p>openssl-rand - generate pseudo-random bytes</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl rand</b> [<b>-help</b>] [<b>-out</b> <i>file</i>] [<b>-rand file...</b>] [<b>-writerand file</b>] [<b>-base64</b>] [<b>-hex</b>] <i>num</i></p>
+<p><b>openssl rand</b> [<b>-help</b>] [<b>-out</b> <i>file</i>] [<b>-base64</b>] [<b>-hex</b>] [<b>-engine</b> <i>id</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] <i>num</i></p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>This command generates <i>num</i> random bytes using a cryptographically secure pseudo random number generator (CSPRNG).</p>
 
-<p>The random bytes are generated using the <a href="../man3/RAND_bytes.html">RAND_bytes(3)</a> function, which provides a security level of 256 bits, provided it managed to seed itself successfully from a trusted operating system entropy source. Otherwise, the command will fail with a nonzero error code. For more details, see <a href="../man3/RAND_bytes.html">RAND_bytes(3)</a>, <a href="../man7/RAND.html">RAND(7)</a>, and <a href="../man7/RAND_DRBG.html">RAND_DRBG(7)</a>.</p>
+<p>The random bytes are generated using the <a href="../man3/RAND_bytes.html">RAND_bytes(3)</a> function, which provides a security level of 256 bits, provided it managed to seed itself successfully from a trusted operating system entropy source. Otherwise, the command will fail with a nonzero error code. For more details, see <a href="../man3/RAND_bytes.html">RAND_bytes(3)</a>, <a href="../man7/RAND.html">RAND(7)</a>, and <a href="../man7/EVP_RAND.html">EVP_RAND(7)</a>.</p>
 
 <h1 id="OPTIONS">OPTIONS</h1>
 
@@ -45,22 +45,10 @@
 <p>Print out a usage message.</p>
 
 </dd>
-<dt id="out-file"><b>-out file</b></dt>
+<dt id="out-file"><b>-out</b> <i>file</i></dt>
 <dd>
 
 <p>Write to <i>file</i> instead of standard output.</p>
-
-</dd>
-<dt id="rand-file"><b>-rand file...</b></dt>
-<dd>
-
-<p>A file or files containing random data used to seed the random number generator. Multiple files can be specified separated by an OS-dependent character. The separator is <b>;</b> for MS-Windows, <b>,</b> for OpenVMS, and <b>:</b> for all others. Explicitly specifying a seed file is in general not necessary, see the <a href="#NOTES">&quot;NOTES&quot;</a> section for more information.</p>
-
-</dd>
-<dt id="writerand-file">[<b>-writerand file</b>]</dt>
-<dd>
-
-<p>Writes random data to the specified <i>file</i> upon exit. This can be used with a subsequent <b>-rand</b> flag.</p>
 
 </dd>
 <dt id="base64"><b>-base64</b></dt>
@@ -75,23 +63,47 @@
 <p>Show the output as a hex string.</p>
 
 </dd>
+<dt id="engine-id"><b>-engine</b> <i>id</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Engine Options&quot; in openssl(1)</a>. This option is deprecated.</p>
+
+</dd>
+<dt id="rand-files--writerand-file"><b>-rand</b> <i>files</i>, <b>-writerand</b> <i>file</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Random State Options&quot; in openssl(1)</a> for details.</p>
+
+</dd>
+<dt id="provider-name"><b>-provider</b> <i>name</i></dt>
+<dd>
+
+</dd>
+<dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="propquery-propq"><b>-propquery</b> <i>propq</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Provider Options&quot; in openssl(1)</a>, <a href="../man7/provider.html">provider(7)</a>, and <a href="../man7/property.html">property(7)</a>.</p>
+
+</dd>
 </dl>
-
-<h1 id="NOTES">NOTES</h1>
-
-<p>Prior to OpenSSL 1.1.1, it was common for applications to store information about the state of the random-number generator in a file that was loaded at startup and rewritten upon exit. On modern operating systems, this is generally no longer necessary as OpenSSL will seed itself from a trusted entropy source provided by the operating system. The <b>-rand</b> and <b>-writerand</b> flags are still supported for special platforms or circumstances that might require them.</p>
-
-<p>It is generally an error to use the same seed file more than once and every use of <b>-rand</b> should be paired with <b>-writerand</b>.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/RAND_bytes.html">RAND_bytes(3)</a>, <a href="../man7/RAND.html">RAND(7)</a>, <a href="../man7/RAND_DRBG.html">RAND_DRBG(7)</a></p>
+<p><a href="../man1/openssl.html">openssl(1)</a>, <a href="../man3/RAND_bytes.html">RAND_bytes(3)</a>, <a href="../man7/RAND.html">RAND(7)</a>, <a href="../man7/EVP_RAND.html">EVP_RAND(7)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

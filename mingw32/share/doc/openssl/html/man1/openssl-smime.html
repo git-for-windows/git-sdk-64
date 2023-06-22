@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>smime</title>
+<title>openssl-smime</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:" />
 </head>
@@ -20,21 +20,22 @@
   <li><a href="#EXIT-CODES">EXIT CODES</a></li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>openssl-smime, smime - S/MIME utility</p>
+<p>openssl-smime - S/MIME command</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>smime</b> [<b>-help</b>] [<b>-encrypt</b>] [<b>-decrypt</b>] [<b>-sign</b>] [<b>-resign</b>] [<b>-verify</b>] [<b>-pk7out</b>] [<b>-binary</b>] [<b>-crlfeol</b>] [<b>-<i>cipher</i></b>] [<b>-in file</b>] [<b>-CAfile file</b>] [<b>-CApath dir</b>] [<b>-no-CAfile</b>] [<b>-no-CApath</b>] [<b>-attime timestamp</b>] [<b>-check_ss_sig</b>] [<b>-crl_check</b>] [<b>-crl_check_all</b>] [<b>-explicit_policy</b>] [<b>-extended_crl</b>] [<b>-ignore_critical</b>] [<b>-inhibit_any</b>] [<b>-inhibit_map</b>] [<b>-partial_chain</b>] [<b>-policy arg</b>] [<b>-policy_check</b>] [<b>-policy_print</b>] [<b>-purpose purpose</b>] [<b>-suiteB_128</b>] [<b>-suiteB_128_only</b>] [<b>-suiteB_192</b>] [<b>-trusted_first</b>] [<b>-no_alt_chains</b>] [<b>-use_deltas</b>] [<b>-auth_level num</b>] [<b>-verify_depth num</b>] [<b>-verify_email email</b>] [<b>-verify_hostname hostname</b>] [<b>-verify_ip ip</b>] [<b>-verify_name name</b>] [<b>-x509_strict</b>] [<b>-certfile file</b>] [<b>-signer file</b>] [<b>-recip file</b>] [<b>-inform SMIME|PEM|DER</b>] [<b>-passin arg</b>] [<b>-inkey file_or_id</b>] [<b>-out file</b>] [<b>-outform SMIME|PEM|DER</b>] [<b>-content file</b>] [<b>-to addr</b>] [<b>-from ad</b>] [<b>-subject s</b>] [<b>-text</b>] [<b>-indef</b>] [<b>-noindef</b>] [<b>-stream</b>] [<b>-rand file...</b>] [<b>-writerand file</b>] [<b>-md digest</b>] [cert.pem]...</p>
+<p><b>openssl</b> <b>smime</b> [<b>-help</b>] [<b>-encrypt</b>] [<b>-decrypt</b>] [<b>-sign</b>] [<b>-resign</b>] [<b>-verify</b>] [<b>-pk7out</b>] [<b>-binary</b>] [<b>-crlfeol</b>] [<b>-<i>cipher</i></b>] [<b>-in</b> <i>file</i>] [<b>-certfile</b> <i>file</i>] [<b>-signer</b> <i>file</i>] [<b>-nointern</b>] [<b>-noverify</b>] [<b>-nochain</b>] [<b>-nosigs</b>] [<b>-nocerts</b>] [<b>-noattr</b>] [<b>-nodetach</b>] [<b>-nosmimecap</b>] [<b>-recip</b> <i> file</i>] [<b>-inform</b> <b>DER</b>|<b>PEM</b>|<b>SMIME</b>] [<b>-outform</b> <b>DER</b>|<b>PEM</b>|<b>SMIME</b>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-passin</b> <i>arg</i>] [<b>-inkey</b> <i>filename</i>|<i>uri</i>] [<b>-out</b> <i>file</i>] [<b>-content</b> <i>file</i>] [<b>-to</b> <i>addr</i>] [<b>-from</b> <i>ad</i>] [<b>-subject</b> <i>s</i>] [<b>-text</b>] [<b>-indef</b>] [<b>-noindef</b>] [<b>-stream</b>] [<b>-md</b> <i>digest</i>] [<b>-CAfile</b> <i>file</i>] [<b>-no-CAfile</b>] [<b>-CApath</b> <i>dir</i>] [<b>-no-CApath</b>] [<b>-CAstore</b> <i>uri</i>] [<b>-no-CAstore</b>] [<b>-engine</b> <i>id</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-allow_proxy_certs</b>] [<b>-attime</b> <i>timestamp</i>] [<b>-no_check_time</b>] [<b>-check_ss_sig</b>] [<b>-crl_check</b>] [<b>-crl_check_all</b>] [<b>-explicit_policy</b>] [<b>-extended_crl</b>] [<b>-ignore_critical</b>] [<b>-inhibit_any</b>] [<b>-inhibit_map</b>] [<b>-partial_chain</b>] [<b>-policy</b> <i>arg</i>] [<b>-policy_check</b>] [<b>-policy_print</b>] [<b>-purpose</b> <i>purpose</i>] [<b>-suiteB_128</b>] [<b>-suiteB_128_only</b>] [<b>-suiteB_192</b>] [<b>-trusted_first</b>] [<b>-no_alt_chains</b>] [<b>-use_deltas</b>] [<b>-auth_level</b> <i>num</i>] [<b>-verify_depth</b> <i>num</i>] [<b>-verify_email</b> <i>email</i>] [<b>-verify_hostname</b> <i>hostname</i>] [<b>-verify_ip</b> <i>ip</i>] [<b>-verify_name</b> <i>name</i>] [<b>-x509_strict</b>] [<b>-issuer_checks</b>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<b>-config</b> <i>configfile</i>] <i>recipcert</i> ...</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The <b>smime</b> command handles S/MIME mail. It can encrypt, decrypt, sign and verify S/MIME messages.</p>
+<p>This command handles S/MIME mail. It can encrypt, decrypt, sign and verify S/MIME messages.</p>
 
 <h1 id="OPTIONS">OPTIONS</h1>
 
@@ -86,31 +87,37 @@
 <p>Resign a message: take an existing message and one or more new signers.</p>
 
 </dd>
-<dt id="in-filename"><b>-in filename</b></dt>
+<dt id="in-filename"><b>-in</b> <i>filename</i></dt>
 <dd>
 
 <p>The input message to be encrypted or signed or the MIME message to be decrypted or verified.</p>
 
 </dd>
-<dt id="inform-SMIME-PEM-DER"><b>-inform SMIME|PEM|DER</b></dt>
-<dd>
-
-<p>This specifies the input format for the PKCS#7 structure. The default is <b>SMIME</b> which reads an S/MIME format message. <b>PEM</b> and <b>DER</b> format change this to expect PEM and DER format PKCS#7 structures instead. This currently only affects the input format of the PKCS#7 structure, if no PKCS#7 structure is being input (for example with <b>-encrypt</b> or <b>-sign</b>) this option has no effect.</p>
-
-</dd>
-<dt id="out-filename"><b>-out filename</b></dt>
+<dt id="out-filename"><b>-out</b> <i>filename</i></dt>
 <dd>
 
 <p>The message text that has been decrypted or verified or the output MIME format message that has been signed or verified.</p>
 
 </dd>
-<dt id="outform-SMIME-PEM-DER"><b>-outform SMIME|PEM|DER</b></dt>
+<dt id="inform-DER-PEM-SMIME"><b>-inform</b> <b>DER</b>|<b>PEM</b>|<b>SMIME</b></dt>
 <dd>
 
-<p>This specifies the output format for the PKCS#7 structure. The default is <b>SMIME</b> which write an S/MIME format message. <b>PEM</b> and <b>DER</b> format change this to write PEM and DER format PKCS#7 structures instead. This currently only affects the output format of the PKCS#7 structure, if no PKCS#7 structure is being output (for example with <b>-verify</b> or <b>-decrypt</b>) this option has no effect.</p>
+<p>The input format of the PKCS#7 (S/MIME) structure (if one is being read); the default is <b>SMIME</b>. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
 
 </dd>
-<dt id="stream--indef--noindef"><b>-stream -indef -noindef</b></dt>
+<dt id="outform-DER-PEM-SMIME"><b>-outform</b> <b>DER</b>|<b>PEM</b>|<b>SMIME</b></dt>
+<dd>
+
+<p>The output format of the PKCS#7 (S/MIME) structure (if one is being written); the default is <b>SMIME</b>. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
+
+</dd>
+<dt id="keyform-DER-PEM-P12-ENGINE"><b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b></dt>
+<dd>
+
+<p>The key format; unspecified by default. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
+
+</dd>
+<dt id="stream--indef--noindef"><b>-stream</b>, <b>-indef</b>, <b>-noindef</b></dt>
 <dd>
 
 <p>The <b>-stream</b> and <b>-indef</b> options are equivalent and enable streaming I/O for encoding operations. This permits single pass processing of data without the need to hold the entire contents in memory, potentially supporting very large files. Streaming is automatically set for S/MIME signing with detached data if the output format is <b>SMIME</b> it is currently off by default for all other operations.</p>
@@ -122,7 +129,7 @@
 <p>Disable streaming I/O where it would produce and indefinite length constructed encoding. This option currently has no effect. In future streaming will be enabled by default on all relevant operations and this option will disable it.</p>
 
 </dd>
-<dt id="content-filename"><b>-content filename</b></dt>
+<dt id="content-filename"><b>-content</b> <i>filename</i></dt>
 <dd>
 
 <p>This specifies a file containing the detached content, this is only useful with the <b>-verify</b> command. This is only usable if the PKCS#7 structure is using the detached signature form where the content is not included. This option will override any content if the input format is S/MIME and it uses the multipart/signed MIME content type.</p>
@@ -134,31 +141,7 @@
 <p>This option adds plain text (text/plain) MIME headers to the supplied message if encrypting or signing. If decrypting or verifying it strips off text headers: if the decrypted or verified message is not of MIME type text/plain then an error occurs.</p>
 
 </dd>
-<dt id="CAfile-file"><b>-CAfile file</b></dt>
-<dd>
-
-<p>A file containing trusted CA certificates, only used with <b>-verify</b>.</p>
-
-</dd>
-<dt id="CApath-dir"><b>-CApath dir</b></dt>
-<dd>
-
-<p>A directory containing trusted CA certificates, only used with <b>-verify</b>. This directory must be a standard certificate directory: that is a hash of each subject name (using <b>x509 -hash</b>) should be linked to each certificate.</p>
-
-</dd>
-<dt id="no-CAfile"><b>-no-CAfile</b></dt>
-<dd>
-
-<p>Do not load the trusted CA certificates from the default file location.</p>
-
-</dd>
-<dt id="no-CApath"><b>-no-CApath</b></dt>
-<dd>
-
-<p>Do not load the trusted CA certificates from the default directory location.</p>
-
-</dd>
-<dt id="md-digest"><b>-md digest</b></dt>
+<dt id="md-digest"><b>-md</b> <i>digest</i></dt>
 <dd>
 
 <p>Digest algorithm to use when signing or resigning. If not present then the default digest algorithm for the signing key will be used (usually SHA1).</p>
@@ -167,7 +150,7 @@
 <dt id="cipher"><b>-<i>cipher</i></b></dt>
 <dd>
 
-<p>The encryption algorithm to use. For example DES (56 bits) - <b>-des</b>, triple DES (168 bits) - <b>-des3</b>, EVP_get_cipherbyname() function) can also be used preceded by a dash, for example <b>-aes-128-cbc</b>. See <a href="../man1/enc.html"><b>enc</b></a> for list of ciphers supported by your version of OpenSSL.</p>
+<p>The encryption algorithm to use. For example DES (56 bits) - <b>-des</b>, triple DES (168 bits) - <b>-des3</b>, EVP_get_cipherbyname() function) can also be used preceded by a dash, for example <b>-aes-128-cbc</b>. See <a href="../man1/openssl-enc.html">openssl-enc(1)</a> for list of ciphers supported by your version of OpenSSL.</p>
 
 <p>If not specified triple DES is used. Only used with <b>-encrypt</b>.</p>
 
@@ -187,7 +170,7 @@
 <dt id="nochain"><b>-nochain</b></dt>
 <dd>
 
-<p>Do not do chain verification of signers certificates: that is don&#39;t use the certificates in the signed message as untrusted CAs.</p>
+<p>Do not do chain verification of signers certificates; that is, do not use the certificates in the signed message as untrusted CAs.</p>
 
 </dd>
 <dt id="nosigs"><b>-nosigs</b></dt>
@@ -208,6 +191,18 @@
 <p>Normally when a message is signed a set of attributes are included which include the signing time and supported symmetric algorithms. With this option they are not included.</p>
 
 </dd>
+<dt id="nodetach"><b>-nodetach</b></dt>
+<dd>
+
+<p>When signing a message use opaque signing. This form is more resistant to translation by mail relays but it cannot be read by mail agents that do not support S/MIME. Without this option cleartext signing with the MIME type multipart/signed is used.</p>
+
+</dd>
+<dt id="nosmimecap"><b>-nosmimecap</b></dt>
+<dd>
+
+<p>When signing a message, do not include the <b>SMIMECapabilities</b> attribute.</p>
+
+</dd>
 <dt id="binary"><b>-binary</b></dt>
 <dd>
 
@@ -220,70 +215,104 @@
 <p>Normally the output file uses a single <b>LF</b> as end of line. When this option is present <b>CRLF</b> is used instead.</p>
 
 </dd>
-<dt id="nodetach"><b>-nodetach</b></dt>
+<dt id="certfile-file"><b>-certfile</b> <i>file</i></dt>
 <dd>
 
-<p>When signing a message use opaque signing: this form is more resistant to translation by mail relays but it cannot be read by mail agents that do not support S/MIME. Without this option cleartext signing with the MIME type multipart/signed is used.</p>
+<p>Allows additional certificates to be specified. When signing these will be included with the message. When verifying these will be searched for the signers certificates. The input can be in PEM, DER, or PKCS#12 format.</p>
 
 </dd>
-<dt id="certfile-file"><b>-certfile file</b></dt>
-<dd>
-
-<p>Allows additional certificates to be specified. When signing these will be included with the message. When verifying these will be searched for the signers certificates. The certificates should be in PEM format.</p>
-
-</dd>
-<dt id="signer-file"><b>-signer file</b></dt>
+<dt id="signer-file"><b>-signer</b> <i>file</i></dt>
 <dd>
 
 <p>A signing certificate when signing or resigning a message, this option can be used multiple times if more than one signer is required. If a message is being verified then the signers certificates will be written to this file if the verification was successful.</p>
 
 </dd>
-<dt id="recip-file"><b>-recip file</b></dt>
+<dt id="nocerts1"><b>-nocerts</b></dt>
+<dd>
+
+<p>Don&#39;t include signers certificate when signing.</p>
+
+</dd>
+<dt id="noattr1"><b>-noattr</b></dt>
+<dd>
+
+<p>Don&#39;t include any signed attributes when signing.</p>
+
+</dd>
+<dt id="recip-file"><b>-recip</b> <i>file</i></dt>
 <dd>
 
 <p>The recipients certificate when decrypting a message. This certificate must match one of the recipients of the message or an error occurs.</p>
 
 </dd>
-<dt id="inkey-file_or_id"><b>-inkey file_or_id</b></dt>
+<dt id="inkey-filename-uri"><b>-inkey</b> <i>filename</i>|<i>uri</i></dt>
 <dd>
 
-<p>The private key to use when signing or decrypting. This must match the corresponding certificate. If this option is not specified then the private key must be included in the certificate file specified with the <b>-recip</b> or <b>-signer</b> file. When signing this option can be used multiple times to specify successive keys. If no engine is used, the argument is taken as a file; if an engine is specified, the argument is given to the engine as a key identifier.</p>
+<p>The private key to use when signing or decrypting. This must match the corresponding certificate. If this option is not specified then the private key must be included in the certificate file specified with the <b>-recip</b> or <b>-signer</b> file. When signing this option can be used multiple times to specify successive keys.</p>
 
 </dd>
-<dt id="passin-arg"><b>-passin arg</b></dt>
+<dt id="passin-arg"><b>-passin</b> <i>arg</i></dt>
 <dd>
 
-<p>The private key password source. For more information about the format of <b>arg</b> see <a href="../man1/openssl.html">&quot;Pass Phrase Options&quot; in openssl(1)</a>.</p>
+<p>The private key password source. For more information about the format of <i>arg</i> see <a href="../man1/openssl-passphrase-options.html">openssl-passphrase-options(1)</a>.</p>
 
 </dd>
-<dt id="rand-file"><b>-rand file...</b></dt>
-<dd>
-
-<p>A file or files containing random data used to seed the random number generator. Multiple files can be specified separated by an OS-dependent character. The separator is <b>;</b> for MS-Windows, <b>,</b> for OpenVMS, and <b>:</b> for all others.</p>
-
-</dd>
-<dt id="writerand-file">[<b>-writerand file</b>]</dt>
-<dd>
-
-<p>Writes random data to the specified <i>file</i> upon exit. This can be used with a subsequent <b>-rand</b> flag.</p>
-
-</dd>
-<dt id="cert.pem"><b>cert.pem...</b></dt>
-<dd>
-
-<p>One or more certificates of message recipients: used when encrypting a message.</p>
-
-</dd>
-<dt id="to--from--subject"><b>-to, -from, -subject</b></dt>
+<dt id="to--from--subject"><b>-to</b>, <b>-from</b>, <b>-subject</b></dt>
 <dd>
 
 <p>The relevant mail headers. These are included outside the signed portion of a message so they may be included manually. If signing then many S/MIME mail clients check the signers certificate&#39;s email address matches that specified in the From: address.</p>
 
 </dd>
-<dt id="attime--check_ss_sig--crl_check--crl_check_all--explicit_policy--extended_crl--ignore_critical--inhibit_any--inhibit_map--no_alt_chains--partial_chain--policy--policy_check--policy_print--purpose--suiteB_128--suiteB_128_only--suiteB_192--trusted_first--use_deltas--auth_level--verify_depth--verify_email--verify_hostname--verify_ip--verify_name--x509_strict"><b>-attime</b>, <b>-check_ss_sig</b>, <b>-crl_check</b>, <b>-crl_check_all</b>, <b>-explicit_policy</b>, <b>-extended_crl</b>, <b>-ignore_critical</b>, <b>-inhibit_any</b>, <b>-inhibit_map</b>, <b>-no_alt_chains</b>, <b>-partial_chain</b>, <b>-policy</b>, <b>-policy_check</b>, <b>-policy_print</b>, <b>-purpose</b>, <b>-suiteB_128</b>, <b>-suiteB_128_only</b>, <b>-suiteB_192</b>, <b>-trusted_first</b>, <b>-use_deltas</b>, <b>-auth_level</b>, <b>-verify_depth</b>, <b>-verify_email</b>, <b>-verify_hostname</b>, <b>-verify_ip</b>, <b>-verify_name</b>, <b>-x509_strict</b></dt>
+<dt id="allow_proxy_certs--attime--no_check_time--check_ss_sig--crl_check--crl_check_all--explicit_policy--extended_crl--ignore_critical--inhibit_any--inhibit_map--no_alt_chains--partial_chain--policy--policy_check--policy_print--purpose--suiteB_128--suiteB_128_only--suiteB_192--trusted_first--use_deltas--auth_level--verify_depth--verify_email--verify_hostname--verify_ip--verify_name--x509_strict--issuer_checks"><b>-allow_proxy_certs</b>, <b>-attime</b>, <b>-no_check_time</b>, <b>-check_ss_sig</b>, <b>-crl_check</b>, <b>-crl_check_all</b>, <b>-explicit_policy</b>, <b>-extended_crl</b>, <b>-ignore_critical</b>, <b>-inhibit_any</b>, <b>-inhibit_map</b>, <b>-no_alt_chains</b>, <b>-partial_chain</b>, <b>-policy</b>, <b>-policy_check</b>, <b>-policy_print</b>, <b>-purpose</b>, <b>-suiteB_128</b>, <b>-suiteB_128_only</b>, <b>-suiteB_192</b>, <b>-trusted_first</b>, <b>-use_deltas</b>, <b>-auth_level</b>, <b>-verify_depth</b>, <b>-verify_email</b>, <b>-verify_hostname</b>, <b>-verify_ip</b>, <b>-verify_name</b>, <b>-x509_strict</b> <b>-issuer_checks</b></dt>
 <dd>
 
-<p>Set various options of certificate chain verification. See <a href="../man1/verify.html">verify(1)</a> manual page for details.</p>
+<p>Set various options of certificate chain verification. See <a href="../man1/openssl-verification-options.html">&quot;Verification Options&quot; in openssl-verification-options(1)</a> for details.</p>
+
+<p>Any verification errors cause the command to exit.</p>
+
+</dd>
+<dt id="CAfile-file--no-CAfile--CApath-dir--no-CApath--CAstore-uri--no-CAstore"><b>-CAfile</b> <i>file</i>, <b>-no-CAfile</b>, <b>-CApath</b> <i>dir</i>, <b>-no-CApath</b>, <b>-CAstore</b> <i>uri</i>, <b>-no-CAstore</b></dt>
+<dd>
+
+<p>See <a href="../man1/openssl-verification-options.html">&quot;Trusted Certificate Options&quot; in openssl-verification-options(1)</a> for details.</p>
+
+</dd>
+<dt id="engine-id"><b>-engine</b> <i>id</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Engine Options&quot; in openssl(1)</a>. This option is deprecated.</p>
+
+</dd>
+<dt id="rand-files--writerand-file"><b>-rand</b> <i>files</i>, <b>-writerand</b> <i>file</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Random State Options&quot; in openssl(1)</a> for details.</p>
+
+</dd>
+<dt id="provider-name"><b>-provider</b> <i>name</i></dt>
+<dd>
+
+</dd>
+<dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="propquery-propq"><b>-propquery</b> <i>propq</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Provider Options&quot; in openssl(1)</a>, <a href="../man7/provider.html">provider(7)</a>, and <a href="../man7/property.html">property(7)</a>.</p>
+
+</dd>
+<dt id="config-configfile"><b>-config</b> <i>configfile</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Configuration Option&quot; in openssl(1)</a>.</p>
+
+</dd>
+<dt id="recipcert"><i>recipcert</i> ...</dt>
+<dd>
+
+<p>One or more certificates of message recipients, used when encrypting a message.</p>
 
 </dd>
 </dl>
@@ -434,17 +463,23 @@
 
 <p>The current code can only handle S/MIME v2 messages, the more complex S/MIME v3 structures may cause parsing errors.</p>
 
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man7/ossl_store-file.html">ossl_store-file(7)</a></p>
+
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>The use of multiple <b>-signer</b> options and the <b>-resign</b> command were first added in OpenSSL 1.0.0</p>
 
 <p>The -no_alt_chains option was added in OpenSSL 1.1.0.</p>
 
+<p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
 <p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

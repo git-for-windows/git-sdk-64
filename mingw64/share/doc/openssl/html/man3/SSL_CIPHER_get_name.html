@@ -33,7 +33,7 @@ const char *SSL_CIPHER_get_name(const SSL_CIPHER *cipher);
 const char *SSL_CIPHER_standard_name(const SSL_CIPHER *cipher);
 const char *OPENSSL_cipher_name(const char *stdname);
 int SSL_CIPHER_get_bits(const SSL_CIPHER *cipher, int *alg_bits);
-char *SSL_CIPHER_get_version(const SSL_CIPHER *cipher);
+const char *SSL_CIPHER_get_version(const SSL_CIPHER *cipher);
 char *SSL_CIPHER_description(const SSL_CIPHER *cipher, char *buf, int size);
 int SSL_CIPHER_get_cipher_nid(const SSL_CIPHER *c);
 int SSL_CIPHER_get_digest_nid(const SSL_CIPHER *c);
@@ -135,7 +135,7 @@ RSA-PSK-AES256-CBC-SHA384 TLSv1.0 Kx=RSAPSK   Au=RSA  Enc=AES(256)  Mac=SHA384</
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>SSL_CIPHER_get_name(), SSL_CIPHER_standard_name(), OPENSSL_cipher_name(), SSL_CIPHER_get_version() and SSL_CIPHER_description() return the corresponding value in a null-terminated string for a specific cipher or &quot;(NONE)&quot; if the cipher is not found.</p>
+<p>SSL_CIPHER_get_name(), SSL_CIPHER_standard_name(), OPENSSL_cipher_name(), SSL_CIPHER_get_version() and SSL_CIPHER_description() return the corresponding value in a NUL-terminated string for a specific cipher or &quot;(NONE)&quot; if the cipher is not found.</p>
 
 <p>SSL_CIPHER_get_bits() returns a positive integer representing the number of secret bits or 0 if an error occurred.</p>
 
@@ -153,7 +153,7 @@ RSA-PSK-AES256-CBC-SHA384 TLSv1.0 Kx=RSAPSK   Au=RSA  Enc=AES(256)  Mac=SHA384</
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_get_current_cipher.html">SSL_get_current_cipher(3)</a>, <a href="../man3/SSL_get_ciphers.html">SSL_get_ciphers(3)</a>, <a href="../man1/ciphers.html">ciphers(1)</a></p>
+<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_get_current_cipher.html">SSL_get_current_cipher(3)</a>, <a href="../man3/SSL_get_ciphers.html">SSL_get_ciphers(3)</a>, <a href="../man1/openssl-ciphers.html">openssl-ciphers(1)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -169,9 +169,9 @@ RSA-PSK-AES256-CBC-SHA384 TLSv1.0 Kx=RSAPSK   Au=RSA  Enc=AES(256)  Mac=SHA384</
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

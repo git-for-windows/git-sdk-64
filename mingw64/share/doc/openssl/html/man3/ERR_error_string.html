@@ -17,6 +17,7 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -32,8 +33,11 @@ char *ERR_error_string(unsigned long e, char *buf);
 void ERR_error_string_n(unsigned long e, char *buf, size_t len);
 
 const char *ERR_lib_error_string(unsigned long e);
-const char *ERR_func_error_string(unsigned long e);
 const char *ERR_reason_error_string(unsigned long e);</code></pre>
+
+<p>Deprecated in OpenSSL 3.0:</p>
+
+<pre><code>const char *ERR_func_error_string(unsigned long e);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -43,11 +47,11 @@ const char *ERR_reason_error_string(unsigned long e);</code></pre>
 
 <p>The string will have the following format:</p>
 
-<pre><code>error:[error code]:[library name]:[function name]:[reason string]</code></pre>
+<pre><code>error:[error code]:[library name]::[reason string]</code></pre>
 
-<p><i>error code</i> is an 8 digit hexadecimal number, <i>library name</i>, <i>function name</i> and <i>reason string</i> are ASCII text.</p>
+<p><i>error code</i> is an 8 digit hexadecimal number, <i>library name</i> and <i>reason string</i> are ASCII text.</p>
 
-<p>ERR_lib_error_string(), ERR_func_error_string() and ERR_reason_error_string() return the library name, function name and reason string respectively.</p>
+<p>ERR_lib_error_string() and ERR_reason_error_string() return the library name and reason string respectively.</p>
 
 <p>If there is no text string registered for the given error code, the error string will contain the numeric code.</p>
 
@@ -57,17 +61,23 @@ const char *ERR_reason_error_string(unsigned long e);</code></pre>
 
 <p>ERR_error_string() returns a pointer to a static buffer containing the string if <i>buf</i> <b>== NULL</b>, <i>buf</i> otherwise.</p>
 
-<p>ERR_lib_error_string(), ERR_func_error_string() and ERR_reason_error_string() return the strings, and <b>NULL</b> if none is registered for the error code.</p>
+<p>ERR_lib_error_string() and ERR_reason_error_string() return the strings, and <b>NULL</b> if none is registered for the error code.</p>
+
+<p>ERR_func_error_string() returns NULL.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>, <a href="../man3/ERR_print_errors.html">ERR_print_errors(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>ERR_func_error_string() became deprecated in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
 <p>Copyright 2000-2017 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

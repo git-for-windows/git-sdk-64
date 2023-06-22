@@ -31,17 +31,15 @@
 
 void SSL_CTX_set_cert_cb(SSL_CTX *c, int (*cert_cb)(SSL *ssl, void *arg),
                          void *arg);
-void SSL_set_cert_cb(SSL *s, int (*cert_cb)(SSL *ssl, void *arg), void *arg);
-
-int (*cert_cb)(SSL *ssl, void *arg);</code></pre>
+void SSL_set_cert_cb(SSL *s, int (*cert_cb)(SSL *ssl, void *arg), void *arg);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_CTX_set_cert_cb() and SSL_set_cert_cb() sets the cert_cb() callback, <b>arg</b> value is pointer which is passed to the application callback.</p>
+<p>SSL_CTX_set_cert_cb() and SSL_set_cert_cb() sets the <i>cert_cb</i> callback, <i>arg</i> value is pointer which is passed to the application callback.</p>
 
-<p>When cert_cb() is NULL, no callback function is used.</p>
+<p>When <i>cert_cb</i> is NULL, no callback function is used.</p>
 
-<p>cert_cb() is the application defined callback. It is called before a certificate will be used by a client or server. The callback can then inspect the passed <b>ssl</b> structure and set or clear any appropriate certificates. If the callback is successful it <b>MUST</b> return 1 even if no certificates have been set. A zero is returned on error which will abort the handshake with a fatal internal error alert. A negative return value will suspend the handshake and the handshake function will return immediately. <a href="../man3/SSL_get_error.html">SSL_get_error(3)</a> will return SSL_ERROR_WANT_X509_LOOKUP to indicate, that the handshake was suspended. The next call to the handshake function will again lead to the call of cert_cb(). It is the job of the cert_cb() to store information about the state of the last call, if required to continue.</p>
+<p><i>cert_cb</i> is the application defined callback. It is called before a certificate will be used by a client or server. The callback can then inspect the passed <i>ssl</i> structure and set or clear any appropriate certificates. If the callback is successful it <b>MUST</b> return 1 even if no certificates have been set. A zero is returned on error which will abort the handshake with a fatal internal error alert. A negative return value will suspend the handshake and the handshake function will return immediately. <a href="../man3/SSL_get_error.html">SSL_get_error(3)</a> will return SSL_ERROR_WANT_X509_LOOKUP to indicate, that the handshake was suspended. The next call to the handshake function will again lead to the call of <i>cert_cb</i>. It is the job of the <i>cert_cb</i> to store information about the state of the last call, if required to continue.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -65,9 +63,9 @@ int (*cert_cb)(SSL *ssl, void *arg);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2014-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2014-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

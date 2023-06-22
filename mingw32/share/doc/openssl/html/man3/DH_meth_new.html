@@ -27,9 +27,11 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/dh.h&gt;
+<pre><code>#include &lt;openssl/dh.h&gt;</code></pre>
 
-DH_METHOD *DH_meth_new(const char *name, int flags);
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>DH_METHOD *DH_meth_new(const char *name, int flags);
 
 void DH_meth_free(DH_METHOD *dhm);
 
@@ -72,6 +74,8 @@ int DH_meth_set_generate_params(DH_METHOD *dhm,
     int (*generate_params)(DH *, int, int, BN_GENCB *));</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>All of the functions described on this page are deprecated. Applications should instead use the provider APIs.</p>
 
 <p>The <b>DH_METHOD</b> type is a structure used for the provision of custom DH implementations. It provides a set of functions used by OpenSSL for the implementation of the various DH capabilities.</p>
 
@@ -119,13 +123,15 @@ int DH_meth_set_generate_params(DH_METHOD *dhm,
 
 <h1 id="HISTORY">HISTORY</h1>
 
+<p>All of these functions were deprecated in OpenSSL 3.0.</p>
+
 <p>The functions described here were added in OpenSSL 1.1.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

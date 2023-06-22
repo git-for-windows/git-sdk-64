@@ -19,31 +19,41 @@
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>SSL_load_client_CA_file, SSL_add_file_cert_subjects_to_stack, SSL_add_dir_cert_subjects_to_stack - load certificate names</p>
+<p>SSL_load_client_CA_file_ex, SSL_load_client_CA_file, SSL_add_file_cert_subjects_to_stack, SSL_add_dir_cert_subjects_to_stack, SSL_add_store_cert_subjects_to_stack - load certificate names</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/ssl.h&gt;
 
+STACK_OF(X509_NAME) *SSL_load_client_CA_file_ex(const char *file,
+                                                OSSL_LIB_CTX *libctx,
+                                                const char *propq);
 STACK_OF(X509_NAME) *SSL_load_client_CA_file(const char *file);
 
 int SSL_add_file_cert_subjects_to_stack(STACK_OF(X509_NAME) *stack,
-                                        const char *file)
+                                        const char *file);
 int SSL_add_dir_cert_subjects_to_stack(STACK_OF(X509_NAME) *stack,
-                                       const char *dir)</code></pre>
+                                       const char *dir);
+int SSL_add_store_cert_subjects_to_stack(STACK_OF(X509_NAME) *stack,
+                                         const char *store);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_load_client_CA_file() reads certificates from <i>file</i> and returns a STACK_OF(X509_NAME) with the subject names found.</p>
+<p>SSL_load_client_CA_file_ex() reads certificates from <i>file</i> and returns a STACK_OF(X509_NAME) with the subject names found. The library context <i>libctx</i> and property query <i>propq</i> are used when fetching algorithms from providers.</p>
+
+<p>SSL_load_client_CA_file() is similar to SSL_load_client_CA_file_ex() but uses NULL for the library context <i>libctx</i> and property query <i>propq</i>.</p>
 
 <p>SSL_add_file_cert_subjects_to_stack() reads certificates from <i>file</i>, and adds their subject name to the already existing <i>stack</i>.</p>
 
 <p>SSL_add_dir_cert_subjects_to_stack() reads certificates from every file in the directory <i>dir</i>, and adds their subject name to the already existing <i>stack</i>.</p>
+
+<p>SSL_add_store_cert_subjects_to_stack() loads certificates from the <i>store</i> URI, and adds their subject name to the already existing <i>stack</i>.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -86,13 +96,17 @@ else
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_CTX_set_client_CA_list.html">SSL_CTX_set_client_CA_list(3)</a></p>
+<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man7/ossl_store.html">ossl_store(7)</a>, <a href="../man3/SSL_CTX_set_client_CA_list.html">SSL_CTX_set_client_CA_list(3)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>SSL_load_client_CA_file_ex() and SSL_add_store_cert_subjects_to_stack() were added in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

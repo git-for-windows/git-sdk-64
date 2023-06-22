@@ -16,6 +16,7 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
@@ -23,7 +24,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>ERR_GET_LIB, ERR_GET_FUNC, ERR_GET_REASON, ERR_FATAL_ERROR - get information from error codes</p>
+<p>ERR_GET_LIB, ERR_GET_REASON, ERR_FATAL_ERROR - get information from error codes</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -31,29 +32,31 @@
 
 int ERR_GET_LIB(unsigned long e);
 
-int ERR_GET_FUNC(unsigned long e);
-
 int ERR_GET_REASON(unsigned long e);
 
 int ERR_FATAL_ERROR(unsigned long e);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The error code returned by ERR_get_error() consists of a library number, function code and reason code. ERR_GET_LIB(), ERR_GET_FUNC() and ERR_GET_REASON() can be used to extract these.</p>
+<p>The error code returned by ERR_get_error() consists of a library number and reason code. ERR_GET_LIB() and ERR_GET_REASON() can be used to extract these.</p>
 
 <p>ERR_FATAL_ERROR() indicates whether a given error code is a fatal error.</p>
 
-<p>The library number and function code describe where the error occurred, the reason code is the information about what went wrong.</p>
+<p>The library number describes where the error occurred, the reason code is the information about what went wrong.</p>
 
-<p>Each sub-library of OpenSSL has a unique library number; function and reason codes are unique within each sub-library. Note that different libraries may use the same value to signal different functions and reasons.</p>
+<p>Each sub-library of OpenSSL has a unique library number; the reason code is unique within each sub-library. Note that different libraries may use the same value to signal different reasons.</p>
 
 <p><b>ERR_R_...</b> reason codes such as <b>ERR_R_MALLOC_FAILURE</b> are globally unique. However, when checking for sub-library specific reason codes, be sure to also compare the library number.</p>
 
-<p>ERR_GET_LIB(), ERR_GET_FUNC(), ERR_GET_REASON(), and ERR_FATAL_ERROR() are macros.</p>
+<p>ERR_GET_LIB(), ERR_GET_REASON(), and ERR_FATAL_ERROR() are macros.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>The library number, function code, reason code, and whether the error is fatal, respectively.</p>
+<p>The library number, reason code, and whether the error is fatal, respectively. Starting with OpenSSL 3.0.0, the function code is always set to zero.</p>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>Applications should not make control flow decisions based on specific error codes. Error codes are subject to change at any time (even in patch releases of OpenSSL). A particular error code can only be considered meaningful for control flow decisions if it is explicitly documented as such. New failure codes may still appear at any time.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -61,13 +64,15 @@ int ERR_FATAL_ERROR(unsigned long e);</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>ERR_GET_LIB(), ERR_GET_FUNC() and ERR_GET_REASON() are available in all versions of OpenSSL.</p>
+<p>ERR_GET_LIB() and ERR_GET_REASON() are available in all versions of OpenSSL.</p>
+
+<p>ERR_GET_FUNC() was removed in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2017 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

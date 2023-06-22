@@ -37,12 +37,10 @@ void RAND_seed(const void *buf, int num);
 
 void RAND_keep_random_devices_open(int keep);</code></pre>
 
-<p>Deprecated:</p>
+<p>The following functions have been deprecated since OpenSSL 1.1.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
 
-<pre><code>#if OPENSSL_API_COMPAT &lt; 0x10100000L
-int RAND_event(UINT iMsg, WPARAM wParam, LPARAM lParam);
-void RAND_screen(void);
-#endif</code></pre>
+<pre><code>int RAND_event(UINT iMsg, WPARAM wParam, LPARAM lParam);
+void RAND_screen(void);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -54,9 +52,11 @@ void RAND_screen(void);
 
 <p>RAND_add() mixes the <b>num</b> bytes at <b>buf</b> into the internal state of the random generator. This function will not normally be needed, as mentioned above. The <b>randomness</b> argument is an estimate of how much randomness is contained in <b>buf</b>, in bytes, and should be a number between zero and <b>num</b>. Details about sources of randomness and how to estimate their randomness can be found in the literature; for example [NIST SP 800-90B]. The content of <b>buf</b> cannot be recovered from subsequent random generator output. Applications that intend to save and restore random state in an external file should consider using <a href="../man3/RAND_load_file.html">RAND_load_file(3)</a> instead.</p>
 
+<p>NOTE: In FIPS mode, random data provided by the application is not considered to be a trusted entropy source. It is mixed into the internal state of the RNG as additional data only and this does not count as a full reseed. For more details, see <a href="../man7/EVP_RAND.html">EVP_RAND(7)</a>.</p>
+
 <p>RAND_seed() is equivalent to RAND_add() with <b>randomness</b> set to <b>num</b>.</p>
 
-<p>RAND_keep_random_devices_open() is used to control file descriptor usage by the random seed sources. Some seed sources maintain open file descriptors by default, which allows such sources to operate in a chroot(2) jail without the associated device nodes being available. When the <b>keep</b> argument is zero, this call disables the retention of file descriptors. Conversely, a nonzero argument enables the retention of file descriptors. This function is usually called during initialization and it takes effect immediately.</p>
+<p>RAND_keep_random_devices_open() is used to control file descriptor usage by the random seed sources. Some seed sources maintain open file descriptors by default, which allows such sources to operate in a chroot(2) jail without the associated device nodes being available. When the <b>keep</b> argument is zero, this call disables the retention of file descriptors. Conversely, a nonzero argument enables the retention of file descriptors. This function is usually called during initialization and it takes effect immediately. This capability only applies to the default provider.</p>
 
 <p>RAND_event() and RAND_screen() are equivalent to RAND_poll() and exist for compatibility reasons only. See HISTORY section below.</p>
 
@@ -72,7 +72,7 @@ void RAND_screen(void);
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/RAND_bytes.html">RAND_bytes(3)</a>, <a href="../man3/RAND_egd.html">RAND_egd(3)</a>, <a href="../man3/RAND_load_file.html">RAND_load_file(3)</a>, <a href="../man7/RAND.html">RAND(7)</a></p>
+<p><a href="../man3/RAND_bytes.html">RAND_bytes(3)</a>, <a href="../man3/RAND_egd.html">RAND_egd(3)</a>, <a href="../man3/RAND_load_file.html">RAND_load_file(3)</a>, <a href="../man7/RAND.html">RAND(7)</a> <a href="../man7/EVP_RAND.html">EVP_RAND(7)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -80,9 +80,9 @@ void RAND_screen(void);
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

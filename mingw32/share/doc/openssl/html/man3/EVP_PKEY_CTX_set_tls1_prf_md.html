@@ -20,6 +20,7 @@
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -52,8 +53,6 @@ int EVP_PKEY_CTX_add1_tls1_prf_seed(EVP_PKEY_CTX *pctx,
 <p>The TLS PRF also supports string based control operations using <a href="../man3/EVP_PKEY_CTX_ctrl_str.html">EVP_PKEY_CTX_ctrl_str(3)</a>. The <b>type</b> parameter &quot;md&quot; uses the supplied <b>value</b> as the name of the digest algorithm to use. The <b>type</b> parameters &quot;secret&quot; and &quot;seed&quot; use the supplied <b>value</b> parameter as a secret or seed value. The names &quot;hexsecret&quot; and &quot;hexseed&quot; are similar except they take a hex string which is converted to binary.</p>
 
 <h1 id="NOTES">NOTES</h1>
-
-<p>All these functions are implemented as macros.</p>
 
 <p>A context for the TLS PRF can be obtained by calling:</p>
 
@@ -95,11 +94,15 @@ if (EVP_PKEY_derive(pctx, out, &amp;outlen) &lt;= 0)
 
 <p><a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a>, <a href="../man3/EVP_PKEY_CTX_ctrl_str.html">EVP_PKEY_CTX_ctrl_str(3)</a>, <a href="../man3/EVP_PKEY_derive.html">EVP_PKEY_derive(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>All of the functions described here were converted from macros to functions in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

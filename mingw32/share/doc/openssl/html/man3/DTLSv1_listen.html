@@ -49,6 +49,10 @@ int DTLSv1_listen(SSL *ssl, BIO_ADDR *peer);</code></pre>
 
 <p>When a ClientHello is received that contains a cookie that has been verified, then these functions will return with the <b>ssl</b> parameter updated into a state where the handshake can be continued by a call to (for example) SSL_accept(). Additionally, for DTLSv1_listen(), the <b>BIO_ADDR</b> pointed to by <b>peer</b> will be filled in with details of the peer that sent the ClientHello. If the underlying BIO is unable to obtain the <b>BIO_ADDR</b> of the peer (for example because the BIO does not support this), then <b>*peer</b> will be cleared and the family set to AF_UNSPEC. Typically user code is expected to &quot;connect&quot; the underlying socket to the peer and continue the handshake in a connected state.</p>
 
+<p>Warning: It is essential that the calling code connects the underlying socket to the peer after making use of DTLSv1_listen(). In the typical case where <a href="../man3/BIO_s_datagram.html">BIO_s_datagram(3)</a> is used, the peer address is updated when receiving a datagram on an unconnected socket. If the socket is not connected, it can receive datagrams from any host on the network, which will cause subsequent outgoing datagrams transmitted by DTLS to be transmitted to that host. In other words, failing to call BIO_connect() or a similar OS-specific function on a socket means that any host on the network can cause outgoing DTLS traffic to be redirected to it by sending a datagram to the socket in question. This does not break the cryptographic protections of DTLS but may facilitate a denial-of-service attack or allow unencrypted information in the DTLS handshake to be learned by an attacker. This is due to the historical design of <a href="../man3/BIO_s_datagram.html">BIO_s_datagram(3)</a>; see <a href="../man3/BIO_s_datagram.html">BIO_s_datagram(3)</a> for details on this issue.</p>
+
+<p>Once a socket has been connected, <a href="../man3/BIO_ctrl_set_connected.html">BIO_ctrl_set_connected(3)</a> should be used to inform the BIO that the socket is to be used in connected mode.</p>
+
 <p>Prior to calling DTLSv1_listen() user code must ensure that cookie generation and verification callbacks have been set up using <a href="../man3/SSL_CTX_set_cookie_generate_cb.html">SSL_CTX_set_cookie_generate_cb(3)</a> and <a href="../man3/SSL_CTX_set_cookie_verify_cb.html">SSL_CTX_set_cookie_verify_cb(3)</a> respectively. For SSL_stateless(), <a href="../man3/SSL_CTX_set_stateless_cookie_generate_cb.html">SSL_CTX_set_stateless_cookie_generate_cb(3)</a> and <a href="../man3/SSL_CTX_set_stateless_cookie_verify_cb.html">SSL_CTX_set_stateless_cookie_verify_cb(3)</a> must be used instead.</p>
 
 <p>Since DTLSv1_listen() operates entirely statelessly whilst processing incoming ClientHellos it is unable to process fragmented messages (since this would require the allocation of state). An implication of this is that DTLSv1_listen() <b>only</b> supports ClientHellos that fit inside a single datagram.</p>
@@ -83,9 +87,9 @@ int DTLSv1_listen(SSL *ssl, BIO_ADDR *peer);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

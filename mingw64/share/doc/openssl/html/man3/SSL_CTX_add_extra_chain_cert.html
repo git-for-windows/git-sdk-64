@@ -24,18 +24,24 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>SSL_CTX_add_extra_chain_cert, SSL_CTX_clear_extra_chain_certs - add or clear extra chain certificates</p>
+<p>SSL_CTX_add_extra_chain_cert, SSL_CTX_get_extra_chain_certs, SSL_CTX_get_extra_chain_certs_only, SSL_CTX_clear_extra_chain_certs - add, get or clear extra chain certificates</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/ssl.h&gt;
 
 long SSL_CTX_add_extra_chain_cert(SSL_CTX *ctx, X509 *x509);
+long SSL_CTX_get_extra_chain_certs(SSL_CTX *ctx, STACK_OF(X509) **sk);
+long SSL_CTX_get_extra_chain_certs_only(SSL_CTX *ctx, STACK_OF(X509) **sk);
 long SSL_CTX_clear_extra_chain_certs(SSL_CTX *ctx);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>SSL_CTX_add_extra_chain_cert() adds the certificate <b>x509</b> to the extra chain certificates associated with <b>ctx</b>. Several certificates can be added one after another.</p>
+
+<p>SSL_CTX_get_extra_chain_certs() retrieves the extra chain certificates associated with <b>ctx</b>, or the chain associated with the current certificate of <b>ctx</b> if the extra chain is empty. The returned stack should not be freed by the caller.</p>
+
+<p>SSL_CTX_get_extra_chain_certs_only() retrieves the extra chain certificates associated with <b>ctx</b>. The returned stack should not be freed by the caller.</p>
 
 <p>SSL_CTX_clear_extra_chain_certs() clears all extra chain certificates associated with <b>ctx</b>.</p>
 
@@ -63,9 +69,9 @@ long SSL_CTX_clear_extra_chain_certs(SSL_CTX *ctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

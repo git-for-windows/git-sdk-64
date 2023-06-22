@@ -17,6 +17,7 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -26,9 +27,11 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/dh.h&gt;
+<pre><code>#include &lt;openssl/dh.h&gt;</code></pre>
 
-void DH_set_default_method(const DH_METHOD *meth);
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>void DH_set_default_method(const DH_METHOD *meth);
 
 const DH_METHOD *DH_get_default_method(void);
 
@@ -39,6 +42,8 @@ DH *DH_new_method(ENGINE *engine);
 const DH_METHOD *DH_OpenSSL(void);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>All of the functions described on this page are deprecated. Applications should instead use the provider APIs.</p>
 
 <p>A <b>DH_METHOD</b> specifies the functions that OpenSSL uses for Diffie-Hellman operations. By modifying the method, alternative implementations such as hardware accelerators may be used. IMPORTANT: See the NOTES section for important information about how these DH API functions are affected by the use of <b>ENGINE</b> API calls.</p>
 
@@ -68,11 +73,15 @@ const DH_METHOD *DH_OpenSSL(void);</code></pre>
 
 <p><a href="../man3/DH_new.html">DH_new(3)</a>, <a href="../man3/DH_new.html">DH_new(3)</a>, <a href="../man3/DH_meth_new.html">DH_meth_new(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>All of these functions were deprecated in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

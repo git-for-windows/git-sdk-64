@@ -29,7 +29,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>ASN1_generate_nconf, ASN1_generate_v3 - ASN1 generation functions</p>
+<p>ASN1_generate_nconf, ASN1_generate_v3 - ASN1 string generation functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -42,44 +42,44 @@ ASN1_TYPE *ASN1_generate_v3(const char *str, X509V3_CTX *cnf);</code></pre>
 
 <p>These functions generate the ASN1 encoding of a string in an <b>ASN1_TYPE</b> structure.</p>
 
-<p><b>str</b> contains the string to encode <b>nconf</b> or <b>cnf</b> contains the optional configuration information where additional strings will be read from. <b>nconf</b> will typically come from a config file whereas <b>cnf</b> is obtained from an <b>X509V3_CTX</b> structure which will typically be used by X509 v3 certificate extension functions. <b>cnf</b> or <b>nconf</b> can be set to <b>NULL</b> if no additional configuration will be used.</p>
+<p><i>str</i> contains the string to encode. <i>nconf</i> or <i>cnf</i> contains the optional configuration information where additional strings will be read from. <i>nconf</i> will typically come from a config file whereas <i>cnf</i> is obtained from an <b>X509V3_CTX</b> structure, which will typically be used by X509 v3 certificate extension functions. <i>cnf</i> or <i>nconf</i> can be set to NULL if no additional configuration will be used.</p>
 
 <h1 id="GENERATION-STRING-FORMAT">GENERATION STRING FORMAT</h1>
 
-<p>The actual data encoded is determined by the string <b>str</b> and the configuration information. The general format of the string is:</p>
+<p>The actual data encoded is determined by the string <i>str</i> and the configuration information. The general format of the string is:</p>
 
 <dl>
 
-<dt id="modifier-type-:value"><b>[modifier,]type[:value]</b></dt>
+<dt id="modifier-type-:value">[<i>modifier</i>,]<i>type</i>[:<i>value</i>]</dt>
 <dd>
 
 </dd>
 </dl>
 
-<p>That is zero or more comma separated modifiers followed by a type followed by an optional colon and a value. The formats of <b>type</b>, <b>value</b> and <b>modifier</b> are explained below.</p>
+<p>That is zero or more comma separated modifiers followed by a type followed by an optional colon and a value. The formats of <i>type</i>, <i>value</i> and <i>modifier</i> are explained below.</p>
 
 <h2 id="Supported-Types">Supported Types</h2>
 
-<p>The supported types are listed below. Unless otherwise specified only the <b>ASCII</b> format is permissible.</p>
+<p>The supported types are listed below. Case is not significant in the type names. Unless otherwise specified only the <b>ASCII</b> format is permissible.</p>
 
 <dl>
 
 <dt id="BOOLEAN-BOOL"><b>BOOLEAN</b>, <b>BOOL</b></dt>
 <dd>
 
-<p>This encodes a boolean type. The <b>value</b> string is mandatory and should be <b>TRUE</b> or <b>FALSE</b>. Additionally <b>TRUE</b>, <b>true</b>, <b>Y</b>, <b>y</b>, <b>YES</b>, <b>yes</b>, <b>FALSE</b>, <b>false</b>, <b>N</b>, <b>n</b>, <b>NO</b> and <b>no</b> are acceptable.</p>
+<p>This encodes a boolean type. The <i>value</i> string is mandatory and should be <b>TRUE</b> or <b>FALSE</b>. Additionally <b>TRUE</b>, <b>true</b>, <b>Y</b>, <b>y</b>, <b>YES</b>, <b>yes</b>, <b>FALSE</b>, <b>false</b>, <b>N</b>, <b>n</b>, <b>NO</b> and <b>no</b> are acceptable.</p>
 
 </dd>
 <dt id="NULL"><b>NULL</b></dt>
 <dd>
 
-<p>Encode the <b>NULL</b> type, the <b>value</b> string must not be present.</p>
+<p>Encode the <b>NULL</b> type, the <i>value</i> string must not be present.</p>
 
 </dd>
 <dt id="INTEGER-INT"><b>INTEGER</b>, <b>INT</b></dt>
 <dd>
 
-<p>Encodes an ASN1 <b>INTEGER</b> type. The <b>value</b> string represents the value of the integer, it can be prefaced by a minus sign and is normally interpreted as a decimal value unless the prefix <b>0x</b> is included.</p>
+<p>Encodes an ASN1 <b>INTEGER</b> type. The <i>value</i> string represents the value of the integer, it can be prefaced by a minus sign and is normally interpreted as a decimal value unless the prefix <b>0x</b> is included.</p>
 
 </dd>
 <dt id="ENUMERATED-ENUM"><b>ENUMERATED</b>, <b>ENUM</b></dt>
@@ -91,7 +91,7 @@ ASN1_TYPE *ASN1_generate_v3(const char *str, X509V3_CTX *cnf);</code></pre>
 <dt id="OBJECT-OID"><b>OBJECT</b>, <b>OID</b></dt>
 <dd>
 
-<p>Encodes an ASN1 <b>OBJECT IDENTIFIER</b>, the <b>value</b> string can be a short name, a long name or numerical format.</p>
+<p>Encodes an ASN1 <b>OBJECT IDENTIFIER</b>, the <i>value</i> string can be a short name, a long name or numerical format.</p>
 
 </dd>
 <dt id="UTCTIME-UTC"><b>UTCTIME</b>, <b>UTC</b></dt>
@@ -109,13 +109,13 @@ ASN1_TYPE *ASN1_generate_v3(const char *str, X509V3_CTX *cnf);</code></pre>
 <dt id="OCTETSTRING-OCT"><b>OCTETSTRING</b>, <b>OCT</b></dt>
 <dd>
 
-<p>Encodes an ASN1 <b>OCTET STRING</b>. <b>value</b> represents the contents of this structure, the format strings <b>ASCII</b> and <b>HEX</b> can be used to specify the format of <b>value</b>.</p>
+<p>Encodes an ASN1 <b>OCTET STRING</b>. <i>value</i> represents the contents of this structure, the format strings <b>ASCII</b> and <b>HEX</b> can be used to specify the format of <i>value</i>.</p>
 
 </dd>
 <dt id="BITSTRING-BITSTR"><b>BITSTRING</b>, <b>BITSTR</b></dt>
 <dd>
 
-<p>Encodes an ASN1 <b>BIT STRING</b>. <b>value</b> represents the contents of this structure, the format strings <b>ASCII</b>, <b>HEX</b> and <b>BITLIST</b> can be used to specify the format of <b>value</b>.</p>
+<p>Encodes an ASN1 <b>BIT STRING</b>. <i>value</i> represents the contents of this structure, the format strings <b>ASCII</b>, <b>HEX</b> and <b>BITLIST</b> can be used to specify the format of <i>value</i>.</p>
 
 <p>If the format is anything other than <b>BITLIST</b> the number of unused bits is set to zero.</p>
 
@@ -123,13 +123,13 @@ ASN1_TYPE *ASN1_generate_v3(const char *str, X509V3_CTX *cnf);</code></pre>
 <dt id="UNIVERSALSTRING-UNIV-IA5-IA5STRING-UTF8-UTF8String-BMP-BMPSTRING-VISIBLESTRING-VISIBLE-PRINTABLESTRING-PRINTABLE-T61-T61STRING-TELETEXSTRING-GeneralString-NUMERICSTRING-NUMERIC"><b>UNIVERSALSTRING</b>, <b>UNIV</b>, <b>IA5</b>, <b>IA5STRING</b>, <b>UTF8</b>, <b>UTF8String</b>, <b>BMP</b>, <b>BMPSTRING</b>, <b>VISIBLESTRING</b>, <b>VISIBLE</b>, <b>PRINTABLESTRING</b>, <b>PRINTABLE</b>, <b>T61</b>, <b>T61STRING</b>, <b>TELETEXSTRING</b>, <b>GeneralString</b>, <b>NUMERICSTRING</b>, <b>NUMERIC</b></dt>
 <dd>
 
-<p>These encode the corresponding string types. <b>value</b> represents the contents of this structure. The format can be <b>ASCII</b> or <b>UTF8</b>.</p>
+<p>These encode the corresponding string types. <i>value</i> represents the contents of this structure. The format can be <b>ASCII</b> or <b>UTF8</b>.</p>
 
 </dd>
 <dt id="SEQUENCE-SEQ-SET"><b>SEQUENCE</b>, <b>SEQ</b>, <b>SET</b></dt>
 <dd>
 
-<p>Formats the result as an ASN1 <b>SEQUENCE</b> or <b>SET</b> type. <b>value</b> should be a section name which will contain the contents. The field names in the section are ignored and the values are in the generated string format. If <b>value</b> is absent then an empty SEQUENCE will be encoded.</p>
+<p>Formats the result as an ASN1 <b>SEQUENCE</b> or <b>SET</b> type. <i>value</i> should be a section name which will contain the contents. The field names in the section are ignored and the values are in the generated string format. If <i>value</i> is absent then an empty SEQUENCE will be encoded.</p>
 
 </dd>
 </dl>
@@ -172,7 +172,7 @@ ASN1_TYPE *ASN1_generate_v3(const char *str, X509V3_CTX *cnf);</code></pre>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>ASN1_generate_nconf() and ASN1_generate_v3() return the encoded data as an <b>ASN1_TYPE</b> structure or <b>NULL</b> if an error occurred.</p>
+<p>ASN1_generate_nconf() and ASN1_generate_v3() return the encoded data as an <b>ASN1_TYPE</b> structure or NULL if an error occurred.</p>
 
 <p>The error codes that can be obtained by <a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>.</p>
 
@@ -262,9 +262,9 @@ e=INTEGER:0x010001</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

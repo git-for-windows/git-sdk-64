@@ -29,23 +29,27 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/rsa.h&gt;
+<pre><code>#include &lt;openssl/rsa.h&gt;</code></pre>
 
-void RSA_set_default_method(const RSA_METHOD *meth);
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
 
-RSA_METHOD *RSA_get_default_method(void);
+<pre><code>void RSA_set_default_method(const RSA_METHOD *meth);
+
+const RSA_METHOD *RSA_get_default_method(void);
 
 int RSA_set_method(RSA *rsa, const RSA_METHOD *meth);
 
-RSA_METHOD *RSA_get_method(const RSA *rsa);
+const RSA_METHOD *RSA_get_method(const RSA *rsa);
 
-RSA_METHOD *RSA_PKCS1_OpenSSL(void);
+const RSA_METHOD *RSA_PKCS1_OpenSSL(void);
 
 int RSA_flags(const RSA *rsa);
 
 RSA *RSA_new_method(ENGINE *engine);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>All of the functions described on this page are deprecated. Applications should instead use the OSSL_PROVIDER APIs.</p>
 
 <p>An <b>RSA_METHOD</b> specifies the functions that OpenSSL uses for RSA operations. By modifying the method, alternative implementations such as hardware accelerators may be used. IMPORTANT: See the NOTES section for important information about how these RSA API functions are affected by the use of <b>ENGINE</b> API calls.</p>
 
@@ -120,7 +124,7 @@ RSA *RSA_new_method(ENGINE *engine);</code></pre>
                       const unsigned char *m, unsigned int m_length,
                       const unsigned char *sigbuf, unsigned int siglen,
                       const RSA *rsa);
-    /* keygen. If NULL builtin RSA key generation will be used */
+    /* keygen. If NULL built-in RSA key generation will be used */
     int (*rsa_keygen)(RSA *rsa, int bits, BIGNUM *e, BN_GENCB *cb);
 
 } RSA_METHOD;</code></pre>
@@ -145,13 +149,15 @@ RSA *RSA_new_method(ENGINE *engine);</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
+<p>All of these functions were deprecated in OpenSSL 3.0.</p>
+
 <p>The RSA_null_method(), which was a partial attempt to avoid patent issues, was replaced to always return NULL in OpenSSL 1.1.1.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

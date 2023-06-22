@@ -29,13 +29,17 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/rsa.h&gt;
+<pre><code>#include &lt;openssl/rsa.h&gt;</code></pre>
 
-int RSA_check_key_ex(RSA *rsa, BN_GENCB *cb);
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
 
-int RSA_check_key(RSA *rsa);</code></pre>
+<pre><code>int RSA_check_key_ex(const RSA *rsa, BN_GENCB *cb);
+
+int RSA_check_key(const RSA *rsa);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Both of the functions described on this page are deprecated. Applications should instead use <a href="../man3/EVP_PKEY_public_check.html">EVP_PKEY_public_check(3)</a>, <a href="../man3/EVP_PKEY_private_check.html">EVP_PKEY_private_check(3)</a> and <a href="../man3/EVP_PKEY_pairwise_check.html">EVP_PKEY_pairwise_check(3)</a>.</p>
 
 <p>RSA_check_key_ex() function validates RSA keys. It checks that <b>p</b> and <b>q</b> are in fact prime, and that <b>n = p*q</b>.</p>
 
@@ -65,13 +69,15 @@ int RSA_check_key(RSA *rsa);</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
+<p>All of these functions were deprecated in OpenSSL 3.0.</p>
+
 <p>RSA_check_key_ex() appeared after OpenSSL 1.0.2.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

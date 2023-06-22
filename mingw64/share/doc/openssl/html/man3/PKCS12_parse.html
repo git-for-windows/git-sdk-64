@@ -41,7 +41,7 @@ int PKCS12_parse(PKCS12 *p12, const char *pass, EVP_PKEY **pkey, X509 **cert,
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>The parameters <b>pkey</b> and <b>cert</b> cannot be <b>NULL</b>. <b>ca</b> can be &lt;NULL&gt; in which case additional certificates will be discarded. <b>*ca</b> can also be a valid STACK in which case additional certificates are appended to <b>*ca</b>. If <b>*ca</b> is <b>NULL</b> a new STACK will be allocated.</p>
+<p>Each of the parameters <b>pkey</b>, <b>cert</b>, and <b>ca</b> can be NULL in which case the private key, the corresponding certificate, or the additional certificates, respectively, will be discarded. If any of <b>pkey</b> and <b>cert</b> is non-NULL the variable it points to is initialized. If <b>ca</b> is non-NULL and <b>*ca</b> is NULL a new STACK will be allocated. If <b>ca</b> is non-NULL and <b>*ca</b> is a valid STACK then additional certificates are appended in the given order to <b>*ca</b>.</p>
 
 <p>The <b>friendlyName</b> and <b>localKeyID</b> attributes (if present) on each certificate will be stored in the <b>alias</b> and <b>keyid</b> attributes of the <b>X509</b> structure.</p>
 
@@ -69,9 +69,9 @@ int PKCS12_parse(PKCS12 *p12, const char *pass, EVP_PKEY **pkey, X509 **cert,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

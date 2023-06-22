@@ -25,18 +25,21 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>SSL_write_ex, SSL_write - write bytes to a TLS/SSL connection</p>
+<p>SSL_write_ex, SSL_write, SSL_sendfile - write bytes to a TLS/SSL connection</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/ssl.h&gt;
 
+ossl_ssize_t SSL_sendfile(SSL *s, int fd, off_t offset, size_t size, int flags);
 int SSL_write_ex(SSL *s, const void *buf, size_t num, size_t *written);
 int SSL_write(SSL *ssl, const void *buf, int num);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>SSL_write_ex() and SSL_write() write <b>num</b> bytes from the buffer <b>buf</b> into the specified <b>ssl</b> connection. On success SSL_write_ex() will store the number of bytes written in <b>*written</b>.</p>
+
+<p>SSL_sendfile() writes <b>size</b> bytes from offset <b>offset</b> in the file descriptor <b>fd</b> to the specified SSL connection <b>s</b>. This function provides efficient zero-copy semantics. SSL_sendfile() is available only when Kernel TLS is enabled, which can be checked by calling BIO_get_ktls_send(). It is provided here to allow users to maintain the same interface. The meaning of <b>flags</b> is platform dependent. Currently, under Linux it is ignored.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -82,19 +85,37 @@ int SSL_write(SSL *ssl, const void *buf, int num);</code></pre>
 </dd>
 </dl>
 
+<p>For SSL_sendfile(), the following return values can occur:</p>
+
+<dl>
+
+<dt id="pod-01">&gt;= 0</dt>
+<dd>
+
+<p>The write operation was successful, the return value is the number of bytes of the file written to the TLS/SSL connection. The return value can be less than <b>size</b> for a partial write.</p>
+
+</dd>
+<dt id="pod01">&lt; 0</dt>
+<dd>
+
+<p>The write operation was not successful, because either the connection was closed, an error occurred or action must be taken by the calling process. Call SSL_get_error() with the return value to find out the reason.</p>
+
+</dd>
+</dl>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/SSL_get_error.html">SSL_get_error(3)</a>, <a href="../man3/SSL_read_ex.html">SSL_read_ex(3)</a>, <a href="../man3/SSL_read.html">SSL_read(3)</a> <a href="../man3/SSL_CTX_set_mode.html">SSL_CTX_set_mode(3)</a>, <a href="../man3/SSL_CTX_new.html">SSL_CTX_new(3)</a>, <a href="../man3/SSL_connect.html">SSL_connect(3)</a>, <a href="../man3/SSL_accept.html">SSL_accept(3)</a> <a href="../man3/SSL_set_connect_state.html">SSL_set_connect_state(3)</a>, <a href="../man7/ssl.html">ssl(7)</a>, <a href="../man7/bio.html">bio(7)</a></p>
+<p><a href="../man3/SSL_get_error.html">SSL_get_error(3)</a>, <a href="../man3/SSL_read_ex.html">SSL_read_ex(3)</a>, <a href="../man3/SSL_read.html">SSL_read(3)</a> <a href="../man3/SSL_CTX_set_mode.html">SSL_CTX_set_mode(3)</a>, <a href="../man3/SSL_CTX_new.html">SSL_CTX_new(3)</a>, <a href="../man3/SSL_connect.html">SSL_connect(3)</a>, <a href="../man3/SSL_accept.html">SSL_accept(3)</a> <a href="../man3/SSL_set_connect_state.html">SSL_set_connect_state(3)</a>, <a href="../man3/BIO_ctrl.html">BIO_ctrl(3)</a>, <a href="../man7/ssl.html">ssl(7)</a>, <a href="../man7/bio.html">bio(7)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The SSL_write_ex() function was added in OpenSSL 1.1.1.</p>
+<p>The SSL_write_ex() function was added in OpenSSL 1.1.1. The SSL_sendfile() function was added in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

@@ -38,7 +38,7 @@ enum BIO_lookup_type {
 
 int BIO_lookup_ex(const char *host, const char *service, int lookup_type,
                   int family, int socktype, int protocol, BIO_ADDRINFO **res);
-int BIO_lookup(const char *node, const char *service,
+int BIO_lookup(const char *host, const char *service,
                enum BIO_lookup_type lookup_type,
                int family, int socktype, BIO_ADDRINFO **res);
 
@@ -57,7 +57,7 @@ void BIO_ADDRINFO_free(BIO_ADDRINFO *bai);</code></pre>
 
 <p>BIO_lookup_ex() looks up a specified <b>host</b> and <b>service</b>, and uses <b>lookup_type</b> to determine what the default address should be if <b>host</b> is <b>NULL</b>. <b>family</b>, <b>socktype</b> and <b>protocol</b> are used to determine what protocol family, socket type and protocol should be used for the lookup. <b>family</b> can be any of AF_INET, AF_INET6, AF_UNIX and AF_UNSPEC. <b>socktype</b> can be SOCK_STREAM, SOCK_DGRAM or 0. Specifying 0 indicates that any type can be used. <b>protocol</b> specifies a protocol such as IPPROTO_TCP, IPPROTO_UDP or IPPORTO_SCTP. If set to 0 than any protocol can be used. <b>res</b> points at a pointer to hold the start of a <b>BIO_ADDRINFO</b> chain.</p>
 
-<p>For the family <b>AF_UNIX</b>, BIO_lookup_ex() will ignore the <b>service</b> parameter and expects the <b>node</b> parameter to hold the path to the socket file.</p>
+<p>For the family <b>AF_UNIX</b>, BIO_lookup_ex() will ignore the <b>service</b> parameter and expects the <b>host</b> parameter to hold the path to the socket file.</p>
 
 <p>BIO_lookup() does the same as BIO_lookup_ex() but does not provide the ability to select based on the protocol (any protocol may be returned).</p>
 
@@ -89,9 +89,9 @@ void BIO_ADDRINFO_free(BIO_ADDRINFO *bai);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

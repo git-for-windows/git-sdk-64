@@ -15,8 +15,6 @@
   <li><a href="#NAME">NAME</a></li>
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
-  <li><a href="#NOTES">NOTES</a></li>
-  <li><a href="#NOTES1">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
@@ -37,8 +35,6 @@ CMS_ContentInfo *CMS_compress(BIO *in, int comp_nid, unsigned int flags);</code>
 
 <p>CMS_compress() creates and returns a CMS CompressedData structure. <b>comp_nid</b> is the compression algorithm to use or <b>NID_undef</b> to use the default algorithm (zlib compression). <b>in</b> is the content to be compressed. <b>flags</b> is an optional set of flags.</p>
 
-<h1 id="NOTES">NOTES</h1>
-
 <p>The only currently supported compression algorithm is zlib using the NID NID_zlib_compression.</p>
 
 <p>If zlib support is not compiled into OpenSSL then CMS_compress() will return an error.</p>
@@ -50,8 +46,6 @@ CMS_ContentInfo *CMS_compress(BIO *in, int comp_nid, unsigned int flags);</code>
 <p>If the <b>CMS_STREAM</b> flag is set a partial <b>CMS_ContentInfo</b> structure is returned suitable for streaming I/O: no data is read from the BIO <b>in</b>.</p>
 
 <p>The compressed data is included in the CMS_ContentInfo structure, unless <b>CMS_DETACHED</b> is set in which case it is omitted. This is rarely used in practice and is not supported by SMIME_write_CMS().</p>
-
-<h1 id="NOTES1">NOTES</h1>
 
 <p>If the flag <b>CMS_STREAM</b> is set the returned <b>CMS_ContentInfo</b> structure is <b>not</b> complete and outputting its contents via a function that does not properly finalize the <b>CMS_ContentInfo</b> structure will give unpredictable results.</p>
 
@@ -75,7 +69,7 @@ CMS_ContentInfo *CMS_compress(BIO *in, int comp_nid, unsigned int flags);</code>
 
 <p>Copyright 2008-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

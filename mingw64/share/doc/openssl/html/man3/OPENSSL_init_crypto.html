@@ -24,7 +24,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>OPENSSL_INIT_new, OPENSSL_INIT_set_config_filename, OPENSSL_INIT_set_config_appname, OPENSSL_INIT_set_config_file_flags, OPENSSL_INIT_free, OPENSSL_init_crypto, OPENSSL_cleanup, OPENSSL_atexit, OPENSSL_thread_stop - OpenSSL initialisation and deinitialisation functions</p>
+<p>OPENSSL_INIT_new, OPENSSL_INIT_set_config_filename, OPENSSL_INIT_set_config_appname, OPENSSL_INIT_set_config_file_flags, OPENSSL_INIT_free, OPENSSL_init_crypto, OPENSSL_cleanup, OPENSSL_atexit, OPENSSL_thread_stop_ex, OPENSSL_thread_stop - OpenSSL initialisation and deinitialisation functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -33,6 +33,7 @@
 void OPENSSL_cleanup(void);
 int OPENSSL_init_crypto(uint64_t opts, const OPENSSL_INIT_SETTINGS *settings);
 int OPENSSL_atexit(void (*handler)(void));
+void OPENSSL_thread_stop_ex(OSSL_LIB_CTX *ctx);
 void OPENSSL_thread_stop(void);
 
 OPENSSL_INIT_SETTINGS *OPENSSL_INIT_new(void);
@@ -97,7 +98,7 @@ void OPENSSL_INIT_free(OPENSSL_INIT_SETTINGS *init);</code></pre>
 <dt id="OPENSSL_INIT_LOAD_CONFIG">OPENSSL_INIT_LOAD_CONFIG</dt>
 <dd>
 
-<p>With this option an OpenSSL configuration file will be automatically loaded and used by calling OPENSSL_config(). This is not a default option for libcrypto. As of OpenSSL 1.1.1 this is a default option for libssl (see <a href="../man3/OPENSSL_init_ssl.html">OPENSSL_init_ssl(3)</a> for further details about libssl initialisation). See the description of OPENSSL_INIT_new(), below.</p>
+<p>With this option an OpenSSL configuration file will be automatically loaded and used by calling OPENSSL_config(). This is a default option. Note that in OpenSSL 1.1.1 this was the default for libssl but not for libcrypto (see <a href="../man3/OPENSSL_init_ssl.html">OPENSSL_init_ssl(3)</a> for further details about libssl initialisation). In OpenSSL 1.1.0 this was a nondefault option for both libssl and libcrypto. See the description of OPENSSL_INIT_new(), below.</p>
 
 </dd>
 <dt id="OPENSSL_INIT_NO_LOAD_CONFIG">OPENSSL_INIT_NO_LOAD_CONFIG</dt>
@@ -115,49 +116,49 @@ void OPENSSL_INIT_free(OPENSSL_INIT_SETTINGS *init);</code></pre>
 <dt id="OPENSSL_INIT_ENGINE_RDRAND">OPENSSL_INIT_ENGINE_RDRAND</dt>
 <dd>
 
-<p>With this option the library will automatically load and initialise the RDRAND engine (if available). This not a default option.</p>
+<p>With this option the library will automatically load and initialise the RDRAND engine (if available). This not a default option and is deprecated in OpenSSL 3.0.</p>
 
 </dd>
 <dt id="OPENSSL_INIT_ENGINE_DYNAMIC">OPENSSL_INIT_ENGINE_DYNAMIC</dt>
 <dd>
 
-<p>With this option the library will automatically load and initialise the dynamic engine. This not a default option.</p>
+<p>With this option the library will automatically load and initialise the dynamic engine. This not a default option and is deprecated in OpenSSL 3.0.</p>
 
 </dd>
 <dt id="OPENSSL_INIT_ENGINE_OPENSSL">OPENSSL_INIT_ENGINE_OPENSSL</dt>
 <dd>
 
-<p>With this option the library will automatically load and initialise the openssl engine. This not a default option.</p>
+<p>With this option the library will automatically load and initialise the openssl engine. This not a default option and is deprecated in OpenSSL 3.0.</p>
 
 </dd>
 <dt id="OPENSSL_INIT_ENGINE_CRYPTODEV">OPENSSL_INIT_ENGINE_CRYPTODEV</dt>
 <dd>
 
-<p>With this option the library will automatically load and initialise the cryptodev engine (if available). This not a default option.</p>
+<p>With this option the library will automatically load and initialise the cryptodev engine (if available). This not a default option and is deprecated in OpenSSL 3.0.</p>
 
 </dd>
 <dt id="OPENSSL_INIT_ENGINE_CAPI">OPENSSL_INIT_ENGINE_CAPI</dt>
 <dd>
 
-<p>With this option the library will automatically load and initialise the CAPI engine (if available). This not a default option.</p>
+<p>With this option the library will automatically load and initialise the CAPI engine (if available). This not a default option and is deprecated in OpenSSL 3.0.</p>
 
 </dd>
 <dt id="OPENSSL_INIT_ENGINE_PADLOCK">OPENSSL_INIT_ENGINE_PADLOCK</dt>
 <dd>
 
-<p>With this option the library will automatically load and initialise the padlock engine (if available). This not a default option.</p>
+<p>With this option the library will automatically load and initialise the padlock engine (if available). This not a default option and is deprecated in OpenSSL 3.0.</p>
 
 </dd>
 <dt id="OPENSSL_INIT_ENGINE_AFALG">OPENSSL_INIT_ENGINE_AFALG</dt>
 <dd>
 
-<p>With this option the library will automatically load and initialise the AFALG engine. This not a default option.</p>
+<p>With this option the library will automatically load and initialise the AFALG engine. This not a default option and is deprecated in OpenSSL 3.0.</p>
 
 </dd>
 <dt id="OPENSSL_INIT_ENGINE_ALL_BUILTIN">OPENSSL_INIT_ENGINE_ALL_BUILTIN</dt>
 <dd>
 
-<p>With this option the library will automatically load and initialise all the built in engines listed above with the exception of the openssl and afalg engines. This not a default option.</p>
+<p>With this option the library will automatically load and initialise all the built in engines listed above with the exception of the openssl and afalg engines. This not a default option and is deprecated in OpenSSL 3.0.</p>
 
 </dd>
 <dt id="OPENSSL_INIT_ATFORK">OPENSSL_INIT_ATFORK</dt>
@@ -181,13 +182,19 @@ void OPENSSL_INIT_free(OPENSSL_INIT_SETTINGS *init);</code></pre>
 
 <p>The OPENSSL_cleanup() function deinitialises OpenSSL (both libcrypto and libssl). All resources allocated by OpenSSL are freed. Typically there should be no need to call this function directly as it is initiated automatically on application exit. This is done via the standard C library atexit() function. In the event that the application will close in a manner that will not call the registered atexit() handlers then the application should call OPENSSL_cleanup() directly. Developers of libraries using OpenSSL are discouraged from calling this function and should instead, typically, rely on auto-deinitialisation. This is to avoid error conditions where both an application and a library it depends on both use OpenSSL, and the library deinitialises it before the application has finished using it.</p>
 
-<p>Once OPENSSL_cleanup() has been called the library cannot be reinitialised. Attempts to call OPENSSL_init_crypto() will fail and an ERR_R_INIT_FAIL error will be added to the error stack. Note that because initialisation has failed OpenSSL error strings will not be available, only an error code. This code can be put through the openssl errstr command line application to produce a human readable error (see <a href="../man1/errstr.html">errstr(1)</a>).</p>
+<p>Once OPENSSL_cleanup() has been called the library cannot be reinitialised. Attempts to call OPENSSL_init_crypto() will fail and an ERR_R_INIT_FAIL error will be added to the error stack. Note that because initialisation has failed OpenSSL error strings will not be available, only an error code. This code can be put through the openssl errstr command line application to produce a human readable error (see <a href="../man1/openssl-errstr.html">openssl-errstr(1)</a>).</p>
 
 <p>The OPENSSL_atexit() function enables the registration of a function to be called during OPENSSL_cleanup(). Stop handlers are called after deinitialisation of resources local to a thread, but before other process wide resources are freed. In the event that multiple stop handlers are registered, no guarantees are made about the order of execution.</p>
 
-<p>The OPENSSL_thread_stop() function deallocates resources associated with the current thread. Typically this function will be called automatically by the library when the thread exits. This should only be called directly if resources should be freed at an earlier time, or under the circumstances described in the NOTES section below.</p>
+<p>The OPENSSL_thread_stop_ex() function deallocates resources associated with the current thread for the given OSSL_LIB_CTX <b>ctx</b>. The <b>ctx</b> parameter can be NULL in which case the default OSSL_LIB_CTX is used.</p>
 
-<p>The <b>OPENSSL_INIT_LOAD_CONFIG</b> flag will load a configuration file, as with <a href="../man3/CONF_modules_load_file.html">CONF_modules_load_file(3)</a> with NULL filename and application name and the <b>CONF_MFLAGS_IGNORE_MISSING_FILE</b>, <b>CONF_MFLAGS_IGNORE_RETURN_CODES</b> and <b>CONF_MFLAGS_DEFAULT_SECTION</b> flags. The filename, application name, and flags can be customized by providing a non-null <b>OPENSSL_INIT_SETTINGS</b> object. The object can be allocated via <b>OPENSSL_init_new()</b>. The <b>OPENSSL_INIT_set_config_filename()</b> function can be used to specify a nondefault filename, which is copied and need not refer to persistent storage. Similarly, OPENSSL_INIT_set_config_appname() can be used to specify a nondefault application name. Finally, OPENSSL_INIT_set_file_flags can be used to specify nondefault flags. If the <b>CONF_MFLAGS_IGNORE_RETURN_CODES</b> flag is not included, any errors in the configuration file will cause an error return from <b>OPENSSL_init_crypto</b> or indirectly <a href="../man3/OPENSSL_init_ssl.html">OPENSSL_init_ssl(3)</a>. The object can be released with OPENSSL_INIT_free() when done.</p>
+<p>Typically, this function will be called automatically by the library when the thread exits as long as the OSSL_LIB_CTX has not been freed before the thread exits. If OSSL_LIB_CTX_free() is called OPENSSL_thread_stop_ex will be called automatically for the current thread (but not any other threads that may have used this OSSL_LIB_CTX).</p>
+
+<p>OPENSSL_thread_stop_ex should be called on all threads that will exit after the OSSL_LIB_CTX is freed. Typically this is not necessary for the default OSSL_LIB_CTX (because all resources are cleaned up on library exit) except if thread local resources should be freed before library exit, or under the circumstances described in the NOTES section below.</p>
+
+<p>OPENSSL_thread_stop() is the same as OPENSSL_thread_stop_ex() except that the default OSSL_LIB_CTX is always used.</p>
+
+<p>The <b>OPENSSL_INIT_LOAD_CONFIG</b> flag will load a configuration file, as with <a href="../man3/CONF_modules_load_file.html">CONF_modules_load_file(3)</a> with NULL filename and application name and the <b>CONF_MFLAGS_IGNORE_MISSING_FILE</b>, <b>CONF_MFLAGS_IGNORE_RETURN_CODES</b> and <b>CONF_MFLAGS_DEFAULT_SECTION</b> flags. The filename, application name, and flags can be customized by providing a non-null <b>OPENSSL_INIT_SETTINGS</b> object. The object can be allocated via <b>OPENSSL_INIT_new()</b>. The <b>OPENSSL_INIT_set_config_filename()</b> function can be used to specify a nondefault filename, which is copied and need not refer to persistent storage. Similarly, OPENSSL_INIT_set_config_appname() can be used to specify a nondefault application name. Finally, OPENSSL_INIT_set_file_flags can be used to specify nondefault flags. If the <b>CONF_MFLAGS_IGNORE_RETURN_CODES</b> flag is not included, any errors in the configuration file will cause an error return from <b>OPENSSL_init_crypto</b> or indirectly <a href="../man3/OPENSSL_init_ssl.html">OPENSSL_init_ssl(3)</a>. The object can be released with OPENSSL_INIT_free() when done.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -211,7 +218,7 @@ void OPENSSL_INIT_free(OPENSSL_INIT_SETTINGS *init);</code></pre>
 
 <p>Copyright 2016-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

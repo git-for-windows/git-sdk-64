@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>speed</title>
+<title>openssl-speed</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:" />
 </head>
@@ -16,20 +16,22 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#OPTIONS">OPTIONS</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>openssl-speed, speed - test library performance</p>
+<p>openssl-speed - test library performance</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl speed</b> [<b>-help</b>] [<b>-engine id</b>] [<b>-elapsed</b>] [<b>-evp algo</b>] [<b>-decrypt</b>] [<b>-rand file...</b>] [<b>-writerand file</b>] [<b>-primes num</b>] [<b>-seconds num</b>] [<b>-bytes num</b>] [<b>algorithm...</b>]</p>
+<p><b>openssl speed</b> [<b>-help</b>] [<b>-config</b> <i>filename</i>] [<b>-elapsed</b>] [<b>-evp</b> <i>algo</i>] [<b>-hmac</b> <i>algo</i>] [<b>-cmac</b> <i>algo</i>] [<b>-mb</b>] [<b>-aead</b>] [<b>-multi</b> <i>num</i>] [<b>-async_jobs</b> <i>num</i>] [<b>-misalign</b> <i>num</i>] [<b>-decrypt</b>] [<b>-primes</b> <i>num</i>] [<b>-seconds</b> <i>num</i>] [<b>-bytes</b> <i>num</i>] [<b>-mr</b>] [<b>-mlock</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<i>algorithm</i> ...]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>This command is used to test the performance of cryptographic algorithms. To see the list of supported algorithms, use the <i>list --digest-commands</i> or <i>list --cipher-commands</i> command. The global CSPRNG is denoted by the <i>rand</i> algorithm name.</p>
+<p>This command is used to test the performance of cryptographic algorithms.</p>
 
 <h1 id="OPTIONS">OPTIONS</h1>
 
@@ -41,10 +43,10 @@
 <p>Print out a usage message.</p>
 
 </dd>
-<dt id="engine-id"><b>-engine id</b></dt>
+<dt id="config-filename"><b>-config</b> <i>filename</i></dt>
 <dd>
 
-<p>Specifying an engine (by its unique <b>id</b> string) will cause <b>speed</b> to attempt to obtain a functional reference to the specified engine, thus initialising it if needed. The engine will then be set as the default for all available algorithms.</p>
+<p>Specifies the configuration file to use. Optional; for a description of the default value, see <a href="../man1/openssl.html">&quot;COMMAND SUMMARY&quot; in openssl(1)</a>.</p>
 
 </dd>
 <dt id="elapsed"><b>-elapsed</b></dt>
@@ -53,10 +55,42 @@
 <p>When calculating operations- or bytes-per-second, use wall-clock time instead of CPU user time as divisor. It can be useful when testing speed of hardware engines.</p>
 
 </dd>
-<dt id="evp-algo"><b>-evp algo</b></dt>
+<dt id="evp-algo"><b>-evp</b> <i>algo</i></dt>
 <dd>
 
-<p>Use the specified cipher or message digest algorithm via the EVP interface. If <b>algo</b> is an AEAD cipher, then you can pass &lt;-aead&gt; to benchmark a TLS-like sequence. And if <b>algo</b> is a multi-buffer capable cipher, e.g. aes-128-cbc-hmac-sha1, then <b>-mb</b> will time multi-buffer operation.</p>
+<p>Use the specified cipher or message digest algorithm via the EVP interface. If <i>algo</i> is an AEAD cipher, then you can pass <b>-aead</b> to benchmark a TLS-like sequence. And if <i>algo</i> is a multi-buffer capable cipher, e.g. aes-128-cbc-hmac-sha1, then <b>-mb</b> will time multi-buffer operation.</p>
+
+<p>To see the algorithms supported with this option, use <code>openssl list -digest-algorithms</code> or <code>openssl list -cipher-algorithms</code> command.</p>
+
+</dd>
+<dt id="multi-num"><b>-multi</b> <i>num</i></dt>
+<dd>
+
+<p>Run multiple operations in parallel.</p>
+
+</dd>
+<dt id="async_jobs-num"><b>-async_jobs</b> <i>num</i></dt>
+<dd>
+
+<p>Enable async mode and start specified number of jobs.</p>
+
+</dd>
+<dt id="misalign-num"><b>-misalign</b> <i>num</i></dt>
+<dd>
+
+<p>Misalign the buffers by the specified number of bytes.</p>
+
+</dd>
+<dt id="hmac-digest"><b>-hmac</b> <i>digest</i></dt>
+<dd>
+
+<p>Time the HMAC algorithm using the specified message digest.</p>
+
+</dd>
+<dt id="cmac-cipher"><b>-cmac</b> <i>cipher</i></dt>
+<dd>
+
+<p>Time the CMAC algorithm using the specified cipher e.g. <code>openssl speed -cmac aes128</code>.</p>
 
 </dd>
 <dt id="decrypt"><b>-decrypt</b></dt>
@@ -65,49 +99,97 @@
 <p>Time the decryption instead of encryption. Affects only the EVP testing.</p>
 
 </dd>
-<dt id="rand-file"><b>-rand file...</b></dt>
+<dt id="mb"><b>-mb</b></dt>
 <dd>
 
-<p>A file or files containing random data used to seed the random number generator. Multiple files can be specified separated by an OS-dependent character. The separator is <b>;</b> for MS-Windows, <b>,</b> for OpenVMS, and <b>:</b> for all others.</p>
+<p>Enable multi-block mode on EVP-named cipher.</p>
 
 </dd>
-<dt id="writerand-file">[<b>-writerand file</b>]</dt>
+<dt id="aead"><b>-aead</b></dt>
 <dd>
 
-<p>Writes random data to the specified <i>file</i> upon exit. This can be used with a subsequent <b>-rand</b> flag.</p>
+<p>Benchmark EVP-named AEAD cipher in TLS-like sequence.</p>
 
 </dd>
-<dt id="primes-num"><b>-primes num</b></dt>
+<dt id="primes-num"><b>-primes</b> <i>num</i></dt>
 <dd>
 
-<p>Generate a <b>num</b>-prime RSA key and use it to run the benchmarks. This option is only effective if RSA algorithm is specified to test.</p>
+<p>Generate a <i>num</i>-prime RSA key and use it to run the benchmarks. This option is only effective if RSA algorithm is specified to test.</p>
 
 </dd>
-<dt id="seconds-num"><b>-seconds num</b></dt>
+<dt id="seconds-num"><b>-seconds</b> <i>num</i></dt>
 <dd>
 
-<p>Run benchmarks for <b>num</b> seconds.</p>
+<p>Run benchmarks for <i>num</i> seconds.</p>
 
 </dd>
-<dt id="bytes-num"><b>-bytes num</b></dt>
+<dt id="bytes-num"><b>-bytes</b> <i>num</i></dt>
 <dd>
 
-<p>Run benchmarks on <b>num</b>-byte buffers. Affects ciphers, digests and the CSPRNG.</p>
+<p>Run benchmarks on <i>num</i>-byte buffers. Affects ciphers, digests and the CSPRNG. The limit on the size of the buffer is INT_MAX - 64 bytes, which for a 32-bit int would be 2147483583 bytes.</p>
 
 </dd>
-<dt id="zero-or-more-test-algorithms"><b>[zero or more test algorithms]</b></dt>
+<dt id="mr"><b>-mr</b></dt>
 <dd>
 
-<p>If any options are given, <b>speed</b> tests those algorithms, otherwise a pre-compiled grand selection is tested.</p>
+<p>Produce the summary in a mechanical, machine-readable, format.</p>
+
+</dd>
+<dt id="mlock"><b>-mlock</b></dt>
+<dd>
+
+<p>Lock memory into RAM for more deterministic measurements.</p>
+
+</dd>
+<dt id="rand-files--writerand-file"><b>-rand</b> <i>files</i>, <b>-writerand</b> <i>file</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Random State Options&quot; in openssl(1)</a> for details.</p>
+
+</dd>
+<dt id="engine-id"><b>-engine</b> <i>id</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Engine Options&quot; in openssl(1)</a>. This option is deprecated.</p>
+
+</dd>
+<dt id="provider-name"><b>-provider</b> <i>name</i></dt>
+<dd>
+
+</dd>
+<dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="propquery-propq"><b>-propquery</b> <i>propq</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Provider Options&quot; in openssl(1)</a>, <a href="../man7/provider.html">provider(7)</a>, and <a href="../man7/property.html">property(7)</a>.</p>
+
+</dd>
+<dt id="algorithm"><i>algorithm</i> ...</dt>
+<dd>
+
+<p>If any <i>algorithm</i> is given, then those algorithms are tested, otherwise a pre-compiled grand selection is tested.</p>
 
 </dd>
 </dl>
 
+<h1 id="BUGS">BUGS</h1>
+
+<p>The <i>algorithm</i> can be selected only from a pre-compiled subset of things that the <code>openssl speed</code> command knows about. To test any additional digest or cipher algorithm supported by OpenSSL use the <code>-evp</code> option.</p>
+
+<p>There is no way to test the speed of any additional public key algorithms supported by third party providers with the <code>openssl speed</code> command.</p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

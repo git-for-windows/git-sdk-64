@@ -48,9 +48,9 @@ int X509_check_ip_asc(X509 *, const char *address, unsigned int flags);</code></
 
 <p>When the certificate is matched, and <b>peername</b> is not NULL, a pointer to a copy of the matching SAN or CN from the peer certificate is stored at the address passed in <b>peername</b>. The application is responsible for freeing the peername via OPENSSL_free() when it is no longer needed.</p>
 
-<p>X509_check_email() checks if the certificate matches the specified email <b>address</b>. Only the mailbox syntax of RFC 822 is supported, comments are not allowed, and no attempt is made to normalize quoted characters. The <b>addresslen</b> argument must be the number of characters in the address string or zero in which case the length is calculated with strlen(<b>address</b>).</p>
+<p>X509_check_email() checks if the certificate matches the specified email <b>address</b>. The mailbox syntax of RFC 822 is supported, comments are not allowed, and no attempt is made to normalize quoted characters. The mailbox syntax of RFC 6531 is supported for SmtpUTF8Mailbox address in subjectAltName according to RFC 8398, with similar limitations as for RFC 822 syntax, and no attempt is made to convert from A-label to U-label before comparison. The <b>addresslen</b> argument must be the number of characters in the address string or zero in which case the length is calculated with strlen(<b>address</b>).</p>
 
-<p>X509_check_ip() checks if the certificate matches a specified IPv4 or IPv6 address. The <b>address</b> array is in binary format, in network byte order. The length is either 4 (IPv4) or 16 (IPv6). Only explicitly marked addresses in the certificates are considered; IP addresses stored in DNS names and Common Names are ignored.</p>
+<p>X509_check_ip() checks if the certificate matches a specified IPv4 or IPv6 address. The <b>address</b> array is in binary format, in network byte order. The length is either 4 (IPv4) or 16 (IPv6). Only explicitly marked addresses in the certificates are considered; IP addresses stored in DNS names and Common Names are ignored. There are currently no <b>flags</b> that would affect the behavior of this call.</p>
 
 <p>X509_check_ip_asc() is similar, except that the NUL-terminated string <b>address</b> is first converted to the internal representation.</p>
 
@@ -104,11 +104,11 @@ int X509_check_ip_asc(X509 *, const char *address, unsigned int flags);</code></
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>Applications are encouraged to use X509_VERIFY_PARAM_set1_host() rather than explicitly calling <a href="../man3/X509_check_host.html">X509_check_host(3)</a>. Host name checks may be out of scope with the DANE-EE(3) certificate usage, and the internal checks will be suppressed as appropriate when DANE support is enabled.</p>
+<p>Applications are encouraged to use X509_VERIFY_PARAM_set1_host() rather than explicitly calling <a href="../man3/X509_check_host.html">X509_check_host(3)</a>. Hostname checks may be out of scope with the DANE-EE(3) certificate usage, and the internal checks will be suppressed as appropriate when DANE support is enabled.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/SSL_get_verify_result.html">SSL_get_verify_result(3)</a>, <a href="../man3/X509_VERIFY_PARAM_set1_host.html">X509_VERIFY_PARAM_set1_host(3)</a>, <a href="../man3/X509_VERIFY_PARAM_add1_host.html">X509_VERIFY_PARAM_add1_host(3)</a>, <a href="../man3/X509_VERIFY_PARAM_set1_email.html">X509_VERIFY_PARAM_set1_email(3)</a>, <a href="../man3/X509_VERIFY_PARAM_set1_ip.html">X509_VERIFY_PARAM_set1_ip(3)</a>, <a href="../man3/X509_VERIFY_PARAM_set1_ipasc.html">X509_VERIFY_PARAM_set1_ipasc(3)</a></p>
+<p><a href="../man3/SSL_get_verify_result.html">SSL_get_verify_result(3)</a>, <a href="../man3/X509_VERIFY_PARAM_set1_host.html">X509_VERIFY_PARAM_set1_host(3)</a>, <a href="../man3/X509_VERIFY_PARAM_add1_host.html">X509_VERIFY_PARAM_add1_host(3)</a>, <a href="../man3/X509_VERIFY_PARAM_set1_email.html">X509_VERIFY_PARAM_set1_email(3)</a>, <a href="../man3/X509_VERIFY_PARAM_set1_ip.html">X509_VERIFY_PARAM_set1_ip(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -116,9 +116,9 @@ int X509_check_ip_asc(X509 *, const char *address, unsigned int flags);</code></
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2012-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2012-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

@@ -25,7 +25,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>X509_STORE_set_lookup_crls_cb, X509_STORE_set_verify_func, X509_STORE_get_cleanup, X509_STORE_set_cleanup, X509_STORE_get_lookup_crls, X509_STORE_set_lookup_crls, X509_STORE_get_lookup_certs, X509_STORE_set_lookup_certs, X509_STORE_get_check_policy, X509_STORE_set_check_policy, X509_STORE_get_cert_crl, X509_STORE_set_cert_crl, X509_STORE_get_check_crl, X509_STORE_set_check_crl, X509_STORE_get_get_crl, X509_STORE_set_get_crl, X509_STORE_get_check_revocation, X509_STORE_set_check_revocation, X509_STORE_get_check_issued, X509_STORE_set_check_issued, X509_STORE_get_get_issuer, X509_STORE_set_get_issuer, X509_STORE_CTX_get_verify, X509_STORE_set_verify, X509_STORE_get_verify_cb, X509_STORE_set_verify_cb_func, X509_STORE_set_verify_cb, X509_STORE_CTX_cert_crl_fn, X509_STORE_CTX_check_crl_fn, X509_STORE_CTX_check_issued_fn, X509_STORE_CTX_check_policy_fn, X509_STORE_CTX_check_revocation_fn, X509_STORE_CTX_cleanup_fn, X509_STORE_CTX_get_crl_fn, X509_STORE_CTX_get_issuer_fn, X509_STORE_CTX_lookup_certs_fn, X509_STORE_CTX_lookup_crls_fn - set verification callback</p>
+<p>X509_STORE_set_lookup_crls_cb, X509_STORE_set_verify_func, X509_STORE_get_cleanup, X509_STORE_set_cleanup, X509_STORE_get_lookup_crls, X509_STORE_set_lookup_crls, X509_STORE_get_lookup_certs, X509_STORE_set_lookup_certs, X509_STORE_get_check_policy, X509_STORE_set_check_policy, X509_STORE_get_cert_crl, X509_STORE_set_cert_crl, X509_STORE_get_check_crl, X509_STORE_set_check_crl, X509_STORE_get_get_crl, X509_STORE_set_get_crl, X509_STORE_get_check_revocation, X509_STORE_set_check_revocation, X509_STORE_get_check_issued, X509_STORE_set_check_issued, X509_STORE_CTX_get1_issuer, X509_STORE_get_get_issuer, X509_STORE_set_get_issuer, X509_STORE_CTX_get_verify, X509_STORE_set_verify, X509_STORE_get_verify_cb, X509_STORE_set_verify_cb_func, X509_STORE_set_verify_cb, X509_STORE_CTX_cert_crl_fn, X509_STORE_CTX_check_crl_fn, X509_STORE_CTX_check_issued_fn, X509_STORE_CTX_check_policy_fn, X509_STORE_CTX_check_revocation_fn, X509_STORE_CTX_cleanup_fn, X509_STORE_CTX_get_crl_fn, X509_STORE_CTX_get_issuer_fn, X509_STORE_CTX_lookup_certs_fn, X509_STORE_CTX_lookup_crls_fn - set verification callback</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -43,57 +43,65 @@ typedef int (*X509_STORE_CTX_cert_crl_fn)(X509_STORE_CTX *ctx,
                                           X509_CRL *crl, X509 *x);
 typedef int (*X509_STORE_CTX_check_policy_fn)(X509_STORE_CTX *ctx);
 typedef STACK_OF(X509) *(*X509_STORE_CTX_lookup_certs_fn)(X509_STORE_CTX *ctx,
-                                                          X509_NAME *nm);
-typedef STACK_OF(X509_CRL) *(*X509_STORE_CTX_lookup_crls_fn)(X509_STORE_CTX *ctx,
-                                                             X509_NAME *nm);
+                                                          const X509_NAME *nm);
+typedef STACK_OF(X509_CRL) *(*X509_STORE_CTX_lookup_crls_fn)(const
+                                                             X509_STORE_CTX *ctx,
+                                                             const X509_NAME *nm);
 typedef int (*X509_STORE_CTX_cleanup_fn)(X509_STORE_CTX *ctx);
 
 void X509_STORE_set_verify_cb(X509_STORE *ctx,
                               X509_STORE_CTX_verify_cb verify_cb);
-X509_STORE_CTX_verify_cb X509_STORE_get_verify_cb(X509_STORE_CTX *ctx);
+X509_STORE_CTX_verify_cb X509_STORE_get_verify_cb(const X509_STORE_CTX *ctx);
 
 void X509_STORE_set_verify(X509_STORE *ctx, X509_STORE_CTX_verify_fn verify);
-X509_STORE_CTX_verify_fn X509_STORE_CTX_get_verify(X509_STORE_CTX *ctx);
+X509_STORE_CTX_verify_fn X509_STORE_CTX_get_verify(const X509_STORE_CTX *ctx);
 
+int X509_STORE_CTX_get1_issuer(X509 **issuer, X509_STORE_CTX *ctx, X509 *x);
+X509_STORE_CTX_get_issuer_fn X509_STORE_get_get_issuer(const X509_STORE_CTX *ctx);
 void X509_STORE_set_get_issuer(X509_STORE *ctx,
                                X509_STORE_CTX_get_issuer_fn get_issuer);
-X509_STORE_CTX_get_issuer_fn X509_STORE_get_get_issuer(X509_STORE_CTX *ctx);
 
 void X509_STORE_set_check_issued(X509_STORE *ctx,
                                  X509_STORE_CTX_check_issued_fn check_issued);
-X509_STORE_CTX_check_issued_fn X509_STORE_get_check_issued(X509_STORE_CTX *ctx);
+X509_STORE_CTX_check_issued_fn
+    X509_STORE_get_check_issued(const X509_STORE_CTX *ctx);
 
 void X509_STORE_set_check_revocation(X509_STORE *ctx,
                                      X509_STORE_CTX_check_revocation_fn check_revocation);
-X509_STORE_CTX_check_revocation_fn X509_STORE_get_check_revocation(X509_STORE_CTX *ctx);
+X509_STORE_CTX_check_revocation_fn
+    X509_STORE_get_check_revocation(const X509_STORE_CTX *ctx);
 
 void X509_STORE_set_get_crl(X509_STORE *ctx,
                             X509_STORE_CTX_get_crl_fn get_crl);
-X509_STORE_CTX_get_crl_fn X509_STORE_get_get_crl(X509_STORE_CTX *ctx);
+X509_STORE_CTX_get_crl_fn X509_STORE_get_get_crl(const X509_STORE_CTX *ctx);
 
 void X509_STORE_set_check_crl(X509_STORE *ctx,
                               X509_STORE_CTX_check_crl_fn check_crl);
-X509_STORE_CTX_check_crl_fn X509_STORE_get_check_crl(X509_STORE_CTX *ctx);
+X509_STORE_CTX_check_crl_fn
+    X509_STORE_get_check_crl(const X509_STORE_CTX *ctx);
 
 void X509_STORE_set_cert_crl(X509_STORE *ctx,
                              X509_STORE_CTX_cert_crl_fn cert_crl);
-X509_STORE_CTX_cert_crl_fn X509_STORE_get_cert_crl(X509_STORE_CTX *ctx);
+X509_STORE_CTX_cert_crl_fn X509_STORE_get_cert_crl(const X509_STORE_CTX *ctx);
 
 void X509_STORE_set_check_policy(X509_STORE *ctx,
                                  X509_STORE_CTX_check_policy_fn check_policy);
-X509_STORE_CTX_check_policy_fn X509_STORE_get_check_policy(X509_STORE_CTX *ctx);
+X509_STORE_CTX_check_policy_fn
+    X509_STORE_get_check_policy(const X509_STORE_CTX *ctx);
 
 void X509_STORE_set_lookup_certs(X509_STORE *ctx,
                                  X509_STORE_CTX_lookup_certs_fn lookup_certs);
-X509_STORE_CTX_lookup_certs_fn X509_STORE_get_lookup_certs(X509_STORE_CTX *ctx);
+X509_STORE_CTX_lookup_certs_fn
+    X509_STORE_get_lookup_certs(const X509_STORE_CTX *ctx);
 
 void X509_STORE_set_lookup_crls(X509_STORE *ctx,
                                 X509_STORE_CTX_lookup_crls_fn lookup_crls);
-X509_STORE_CTX_lookup_crls_fn X509_STORE_get_lookup_crls(X509_STORE_CTX *ctx);
+X509_STORE_CTX_lookup_crls_fn
+    X509_STORE_get_lookup_crls(const X509_STORE_CTX *ctx);
 
 void X509_STORE_set_cleanup(X509_STORE *ctx,
                             X509_STORE_CTX_cleanup_fn cleanup);
-X509_STORE_CTX_cleanup_fn X509_STORE_get_cleanup(X509_STORE_CTX *ctx);
+X509_STORE_CTX_cleanup_fn X509_STORE_get_cleanup(const X509_STORE_CTX *ctx);
 
 /* Aliases */
 void X509_STORE_set_verify_cb_func(X509_STORE *st,
@@ -105,25 +113,27 @@ void X509_STORE_set_lookup_crls_cb(X509_STORE *ctx,
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>X509_STORE_set_verify_cb() sets the verification callback of <b>ctx</b> to <b>verify_cb</b> overwriting the previous callback. The callback assigned with this function becomes a default for the one that can be assigned directly to the corresponding <b>X509_STORE_CTX</b>, please see <a href="../man3/X509_STORE_CTX_set_verify_cb.html">X509_STORE_CTX_set_verify_cb(3)</a> for further information.</p>
+<p>X509_STORE_set_verify_cb() sets the verification callback of <i>ctx</i> to <i>verify_cb</i> overwriting the previous callback. The callback assigned with this function becomes a default for the one that can be assigned directly to the corresponding <b>X509_STORE_CTX</b>, please see <a href="../man3/X509_STORE_CTX_set_verify_cb.html">X509_STORE_CTX_set_verify_cb(3)</a> for further information.</p>
 
-<p>X509_STORE_set_verify() sets the final chain verification function for <b>ctx</b> to <b>verify</b>. Its purpose is to go through the chain of certificates and check that all signatures are valid and that the current time is within the limits of each certificate&#39;s first and last validity time. The final chain verification functions must return 0 on failure and 1 on success. <i>If no chain verification function is provided, the internal default function will be used instead.</i></p>
+<p>X509_STORE_set_verify() sets the final chain verification function for <i>ctx</i> to <i>verify</i>. Its purpose is to go through the chain of certificates and check that all signatures are valid and that the current time is within the limits of each certificate&#39;s first and last validity time. The final chain verification functions must return 0 on failure and 1 on success. <i>If no chain verification function is provided, the internal default function will be used instead.</i></p>
 
-<p>X509_STORE_set_get_issuer() sets the function to get the issuer certificate that verifies the given certificate <b>x</b>. When found, the issuer certificate must be assigned to <b>*issuer</b>. This function must return 0 on failure and 1 on success. <i>If no function to get the issuer is provided, the internal default function will be used instead.</i></p>
+<p>X509_STORE_CTX_get1_issuer() tries to find a certificate from the <i>store</i> component of <i>ctx</i> with a subject name matching the issuer name of <i>x</i>. On success it assigns to <i>*issuer</i> the first match that is currently valid, or at least the most recently expired match if there is no currently valid one. If the function returns 1 the caller is responsible for freeing <i>*issuer</i>.</p>
 
-<p>X509_STORE_set_check_issued() sets the function to check that a given certificate <b>x</b> is issued by the issuer certificate <b>issuer</b>. This function must return 0 on failure (among others if <b>x</b> hasn&#39;t been issued with <b>issuer</b>) and 1 on success. <i>If no function to get the issuer is provided, the internal default function will be used instead.</i></p>
+<p>X509_STORE_set_get_issuer() sets the function <i>get_issuer</i> to get the &quot;best&quot; candidate issuer certificate of the given certificate <i>x</i>. When such a certificate is found, <i>get_issuer</i> must up-ref and assign it to <i>*issuer</i> and then return 1. Otherwise <i>get_issuer</i> must return 0 if not found and -1 (or 0) on failure. If X509_STORE_set_get_issuer() is not used or <i>get_issuer</i> is NULL then X509_STORE_CTX_get1_issuer() is used as the default implementation.</p>
+
+<p>X509_STORE_set_check_issued() sets the function to check that a given certificate <i>x</i> is issued by the issuer certificate <i>issuer</i>. This function must return 0 on failure (among others if <i>x</i> hasn&#39;t been issued with <i>issuer</i>) and 1 on success. <i>If no function to get the issuer is provided, the internal default function will be used instead.</i></p>
 
 <p>X509_STORE_set_check_revocation() sets the revocation checking function. Its purpose is to look through the final chain and check the revocation status for each certificate. It must return 0 on failure and 1 on success. <i>If no function to get the issuer is provided, the internal default function will be used instead.</i></p>
 
-<p>X509_STORE_set_get_crl() sets the function to get the crl for a given certificate <b>x</b>. When found, the crl must be assigned to <b>*crl</b>. This function must return 0 on failure and 1 on success. <i>If no function to get the issuer is provided, the internal default function will be used instead.</i></p>
+<p>X509_STORE_set_get_crl() sets the function to get the crl for a given certificate <i>x</i>. When found, the crl must be assigned to <i>*crl</i>. This function must return 0 on failure and 1 on success. <i>If no function to get the issuer is provided, the internal default function will be used instead.</i></p>
 
-<p>X509_STORE_set_check_crl() sets the function to check the validity of the given <b>crl</b>. This function must return 0 on failure and 1 on success. <i>If no function to get the issuer is provided, the internal default function will be used instead.</i></p>
+<p>X509_STORE_set_check_crl() sets the function to check the validity of the given <i>crl</i>. This function must return 0 on failure and 1 on success. <i>If no function to get the issuer is provided, the internal default function will be used instead.</i></p>
 
-<p>X509_STORE_set_cert_crl() sets the function to check the revocation status of the given certificate <b>x</b> against the given <b>crl</b>. This function must return 0 on failure and 1 on success. <i>If no function to get the issuer is provided, the internal default function will be used instead.</i></p>
+<p>X509_STORE_set_cert_crl() sets the function to check the revocation status of the given certificate <i>x</i> against the given <i>crl</i>. This function must return 0 on failure and 1 on success. <i>If no function to get the issuer is provided, the internal default function will be used instead.</i></p>
 
 <p>X509_STORE_set_check_policy() sets the function to check the policies of all the certificates in the final chain.. This function must return 0 on failure and 1 on success. <i>If no function to get the issuer is provided, the internal default function will be used instead.</i></p>
 
-<p>X509_STORE_set_lookup_certs() and X509_STORE_set_lookup_crls() set the functions to look up all the certs or all the CRLs that match the given name <b>nm</b>. These functions return NULL on failure and a pointer to a stack of certificates (<b>X509</b>) or to a stack of CRLs (<b>X509_CRL</b>) on success. <i>If no function to get the issuer is provided, the internal default function will be used instead.</i></p>
+<p>X509_STORE_set_lookup_certs() and X509_STORE_set_lookup_crls() set the functions to look up all the certs or all the CRLs that match the given name <i>nm</i>. These functions return NULL on failure and a pointer to a stack of certificates (<b>X509</b>) or to a stack of CRLs (<b>X509_CRL</b>) on success. <i>If no function to get the issuer is provided, the internal default function will be used instead.</i></p>
 
 <p>X509_STORE_set_cleanup() sets the final cleanup function, which is called when the context (<b>X509_STORE_CTX</b>) is being torn down. This function doesn&#39;t return any value. <i>If no function to get the issuer is provided, the internal default function will be used instead.</i></p>
 
@@ -145,6 +155,8 @@ void X509_STORE_set_lookup_crls_cb(X509_STORE *ctx,
 
 <p>The X509_STORE_get_*() functions return a pointer of the appropriate function type.</p>
 
+<p>X509_STORE_CTX_get1_issuer() returns 1 if a suitable certificate is found, 0 if not found, -1 on other error.</p>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man3/X509_STORE_CTX_set_verify_cb.html">X509_STORE_CTX_set_verify_cb(3)</a>, <a href="../man3/X509_STORE_CTX_get0_chain.html">X509_STORE_CTX_get0_chain(3)</a>, <a href="../man3/X509_STORE_CTX_verify_cb.html">X509_STORE_CTX_verify_cb(3)</a>, <a href="../man3/X509_STORE_CTX_verify_fn.html">X509_STORE_CTX_verify_fn(3)</a>, <a href="../man3/CMS_verify.html">CMS_verify(3)</a></p>
@@ -157,9 +169,9 @@ void X509_STORE_set_lookup_crls_cb(X509_STORE *ctx,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2009-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2009-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

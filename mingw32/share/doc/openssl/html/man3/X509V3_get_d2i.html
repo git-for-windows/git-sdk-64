@@ -33,7 +33,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>X509_get0_extensions, X509_CRL_get0_extensions, X509_REVOKED_get0_extensions, X509V3_get_d2i, X509V3_add1_i2d, X509V3_EXT_d2i, X509V3_EXT_i2d, X509_get_ext_d2i, X509_add1_ext_i2d, X509_CRL_get_ext_d2i, X509_CRL_add1_ext_i2d, X509_REVOKED_get_ext_d2i, X509_REVOKED_add1_ext_i2d - X509 extension decode and encode functions</p>
+<p>X509V3_get_d2i, X509V3_add1_i2d, X509V3_EXT_d2i, X509V3_EXT_i2d, X509_get_ext_d2i, X509_add1_ext_i2d, X509_CRL_get_ext_d2i, X509_CRL_add1_ext_i2d, X509_REVOKED_get_ext_d2i, X509_REVOKED_add1_ext_i2d, X509_get0_extensions, X509_CRL_get0_extensions, X509_REVOKED_get0_extensions - X509 extension decode and encode functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -45,7 +45,7 @@ int X509V3_add1_i2d(STACK_OF(X509_EXTENSION) **x, int nid, void *value,
                     int crit, unsigned long flags);
 
 void *X509V3_EXT_d2i(X509_EXTENSION *ext);
-X509_EXTENSION *X509V3_EXT_i2d(int ext_nid, int crit, void *ext);
+X509_EXTENSION *X509V3_EXT_i2d(int ext_nid, int crit, void *ext_struc);
 
 void *X509_get_ext_d2i(const X509 *x, int nid, int *crit, int *idx);
 int X509_add1_ext_i2d(X509 *x, int nid, void *value, int crit,
@@ -65,43 +65,45 @@ const STACK_OF(X509_EXTENSION) *X509_REVOKED_get0_extensions(const X509_REVOKED 
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>X509V3_get_ext_d2i() looks for an extension with OID <b>nid</b> in the extensions <b>x</b> and, if found, decodes it. If <b>idx</b> is <b>NULL</b> then only one occurrence of an extension is permissible otherwise the first extension after index <b>*idx</b> is returned and <b>*idx</b> updated to the location of the extension. If <b>crit</b> is not <b>NULL</b> then <b>*crit</b> is set to a status value: -2 if the extension occurs multiple times (this is only returned if <b>idx</b> is <b>NULL</b>), -1 if the extension could not be found, 0 if the extension is found and is not critical and 1 if critical. A pointer to an extension specific structure or <b>NULL</b> is returned.</p>
+<p>X509V3_get_d2i() looks for an extension with OID <i>nid</i> in the extensions <i>x</i> and, if found, decodes it. If <i>idx</i> is NULL then only one occurrence of an extension is permissible, otherwise the first extension after index <i>*idx</i> is returned and <i>*idx</i> updated to the location of the extension. If <i>crit</i> is not NULL then <i>*crit</i> is set to a status value: -2 if the extension occurs multiple times (this is only returned if <i>idx</i> is NULL), -1 if the extension could not be found, 0 if the extension is found and is not critical and 1 if critical. A pointer to an extension specific structure or NULL is returned.</p>
 
-<p>X509V3_add1_i2d() adds extension <b>value</b> to STACK <b>*x</b> (allocating a new STACK if necessary) using OID <b>nid</b> and criticality <b>crit</b> according to <b>flags</b>.</p>
+<p>X509V3_add1_i2d() adds extension <i>value</i> to STACK <i>*x</i> (allocating a new STACK if necessary) using OID <i>nid</i> and criticality <i>crit</i> according to <i>flags</i>.</p>
 
-<p>X509V3_EXT_d2i() attempts to decode the ASN.1 data contained in extension <b>ext</b> and returns a pointer to an extension specific structure or <b>NULL</b> if the extension could not be decoded (invalid syntax or not supported).</p>
+<p>X509V3_EXT_d2i() attempts to decode the ASN.1 data contained in extension <i>ext</i> and returns a pointer to an extension specific structure or NULL if the extension could not be decoded (invalid syntax or not supported).</p>
 
-<p>X509V3_EXT_i2d() encodes the extension specific structure <b>ext</b> with OID <b>ext_nid</b> and criticality <b>crit</b>.</p>
+<p>X509V3_EXT_i2d() encodes the extension specific structure <i>ext_struc</i> with OID <i>ext_nid</i> and criticality <i>crit</i>.</p>
 
-<p>X509_get_ext_d2i() and X509_add1_ext_i2d() operate on the extensions of certificate <b>x</b>, they are otherwise identical to X509V3_get_d2i() and X509V3_add_i2d().</p>
+<p>X509_get_ext_d2i() and X509_add1_ext_i2d() operate on the extensions of certificate <i>x</i>. They are otherwise identical to X509V3_get_d2i() and X509V3_add1_i2d().</p>
 
-<p>X509_CRL_get_ext_d2i() and X509_CRL_add1_ext_i2d() operate on the extensions of CRL <b>crl</b>, they are otherwise identical to X509V3_get_d2i() and X509V3_add_i2d().</p>
+<p>X509_CRL_get_ext_d2i() and X509_CRL_add1_ext_i2d() operate on the extensions of CRL <i>crl</i>. They are otherwise identical to X509V3_get_d2i() and X509V3_add1_i2d().</p>
 
-<p>X509_REVOKED_get_ext_d2i() and X509_REVOKED_add1_ext_i2d() operate on the extensions of <b>X509_REVOKED</b> structure <b>r</b> (i.e for CRL entry extensions), they are otherwise identical to X509V3_get_d2i() and X509V3_add_i2d().</p>
+<p>X509_REVOKED_get_ext_d2i() and X509_REVOKED_add1_ext_i2d() operate on the extensions of <b>X509_REVOKED</b> structure <i>r</i> (i.e for CRL entry extensions). They are otherwise identical to X509V3_get_d2i() and X509V3_add1_i2d().</p>
 
-<p>X509_get0_extensions(), X509_CRL_get0_extensions() and X509_REVOKED_get0_extensions() return a stack of all the extensions of a certificate a CRL or a CRL entry respectively.</p>
+<p>X509_get0_extensions(), X509_CRL_get0_extensions() and X509_REVOKED_get0_extensions() return a STACK of all the extensions of a certificate, a CRL or a CRL entry respectively.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>In almost all cases an extension can occur at most once and multiple occurrences is an error. Therefore, the <b>idx</b> parameter is usually <b>NULL</b>.</p>
+<p>In almost all cases an extension can occur at most once and multiple occurrences is an error. Therefore, the <i>idx</i> parameter is usually NULL.</p>
 
-<p>The <b>flags</b> parameter may be one of the following values.</p>
+<p>The <i>flags</i> parameter may be one of the following values.</p>
 
-<p><b>X509V3_ADD_DEFAULT</b> appends a new extension only if the extension does not already exist. An error is returned if the extension does already exist.</p>
+<p><b>X509V3_ADD_DEFAULT</b> appends a new extension only if the extension does not exist. An error is returned if the extension exists.</p>
 
-<p><b>X509V3_ADD_APPEND</b> appends a new extension, ignoring whether the extension already exists.</p>
+<p><b>X509V3_ADD_APPEND</b> appends a new extension, ignoring whether the extension exists.</p>
 
-<p><b>X509V3_ADD_REPLACE</b> replaces an extension if it exists otherwise appends a new extension.</p>
+<p><b>X509V3_ADD_REPLACE</b> replaces an existing extension. If the extension does not exist, appends a new extension.</p>
 
-<p><b>X509V3_ADD_REPLACE_EXISTING</b> replaces an existing extension if it exists otherwise returns an error.</p>
+<p><b>X509V3_ADD_REPLACE_EXISTING</b> replaces an existing extension. If the extension does not exist, returns an error.</p>
 
-<p><b>X509V3_ADD_KEEP_EXISTING</b> appends a new extension only if the extension does not already exist. An error <b>is not</b> returned if the extension does already exist.</p>
+<p><b>X509V3_ADD_KEEP_EXISTING</b> appends a new extension only if the extension does not exist. An error is <b>not</b> returned if the extension exists.</p>
 
-<p><b>X509V3_ADD_DELETE</b> extension <b>nid</b> is deleted: no new extension is added.</p>
+<p><b>X509V3_ADD_DELETE</b> deletes and frees an existing extension. If the extension does not exist, returns an error. No new extension is added.</p>
 
-<p>If <b>X509V3_ADD_SILENT</b> is ored with <b>flags</b>: any error returned will not be added to the error queue.</p>
+<p>If <b>X509V3_ADD_SILENT</b> is bitwise ORed with <i>flags</i>: any error returned will not be added to the error queue.</p>
 
-<p>The function X509V3_get_d2i() will return <b>NULL</b> if the extension is not found, occurs multiple times or cannot be decoded. It is possible to determine the precise reason by checking the value of <b>*crit</b>.</p>
+<p>The function X509V3_get_d2i() and its variants will return NULL if the extension is not found, occurs multiple times or cannot be decoded. It is possible to determine the precise reason by checking the value of <i>*crit</i>.</p>
+
+<p>The function X509V3_add1_i2d() and its variants allocate <b>X509_EXTENSION</b> objects on STACK <i>*x</i> depending on <i>flags</i>. The <b>X509_EXTENSION</b> objects must be explicitly freed using X509_EXTENSION_free().</p>
 
 <h1 id="SUPPORTED-EXTENSIONS">SUPPORTED EXTENSIONS</h1>
 
@@ -188,11 +190,11 @@ CT Certificate SCTs                NID_ct_cert_scts</code></pre>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>X509V3_EXT_d2i() and *X509V3_get_d2i() return a pointer to an extension specific structure of <b>NULL</b> if an error occurs.</p>
+<p>X509V3_get_d2i(), its variants, and X509V3_EXT_d2i() return a pointer to an extension specific structure or NULL if an error occurs.</p>
 
-<p>X509V3_EXT_i2d() returns a pointer to an <b>X509_EXTENSION</b> structure or <b>NULL</b> if an error occurs.</p>
+<p>X509V3_add1_i2d() and its variants return 1 if the operation is successful and 0 if it fails due to a non-fatal error (extension not found, already exists, cannot be encoded) or -1 due to a fatal error such as a memory allocation failure.</p>
 
-<p>X509V3_add1_i2d() returns 1 if the operation is successful and 0 if it fails due to a non-fatal error (extension not found, already exists, cannot be encoded) or -1 due to a fatal error such as a memory allocation failure.</p>
+<p>X509V3_EXT_i2d() returns a pointer to an <b>X509_EXTENSION</b> structure or NULL if an error occurs.</p>
 
 <p>X509_get0_extensions(), X509_CRL_get0_extensions() and X509_REVOKED_get0_extensions() return a stack of extensions. They return NULL if no extensions are present.</p>
 
@@ -202,9 +204,9 @@ CT Certificate SCTs                NID_ct_cert_scts</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

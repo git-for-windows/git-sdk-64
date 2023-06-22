@@ -35,11 +35,9 @@ STACK_OF(SSL_COMP) *SSL_COMP_get_compression_methods(void);
 const char *SSL_COMP_get0_name(const SSL_COMP *comp);
 int SSL_COMP_get_id(const SSL_COMP *comp);</code></pre>
 
-<p>Deprecated:</p>
+<p>The following function has been deprecated since OpenSSL 1.1.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
 
-<pre><code>#if OPENSSL_API_COMPAT &lt; 0x10100000L
-void SSL_COMP_free_compression_methods(void)
-#endif</code></pre>
+<pre><code>void SSL_COMP_free_compression_methods(void);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -99,9 +97,9 @@ void SSL_COMP_free_compression_methods(void)
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

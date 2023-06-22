@@ -39,7 +39,7 @@ SSL_CTX_keylog_cb_func SSL_CTX_get_keylog_callback(const SSL_CTX *ctx);</code></
 
 <p>SSL_CTX_get_keylog_callback() retrieves the previously set TLS key logging callback. If no callback has been set, this will return NULL. When there is no key logging callback, or if SSL_CTX_set_keylog_callback is called with NULL as the value of cb, no logging of key material will be done.</p>
 
-<p>The key logging callback is called with two items: the <b>ssl</b> object associated with the connection, and <b>line</b>, a string containing the key material in the format used by NSS for its <b>SSLKEYLOGFILE</b> debugging output. To recreate that file, the key logging callback should log <b>line</b>, followed by a newline. <b>line</b> will always be a NULL-terminated string.</p>
+<p>The key logging callback is called with two items: the <b>ssl</b> object associated with the connection, and <b>line</b>, a string containing the key material in the format used by NSS for its <b>SSLKEYLOGFILE</b> debugging output. To recreate that file, the key logging callback should log <b>line</b>, followed by a newline. <b>line</b> will always be a NUL-terminated string.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -51,9 +51,9 @@ SSL_CTX_keylog_cb_func SSL_CTX_get_keylog_callback(const SSL_CTX *ctx);</code></
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

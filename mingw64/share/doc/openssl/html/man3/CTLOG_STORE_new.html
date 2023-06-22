@@ -24,12 +24,13 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>CTLOG_STORE_new, CTLOG_STORE_free, CTLOG_STORE_load_default_file, CTLOG_STORE_load_file - Create and populate a Certificate Transparency log list</p>
+<p>CTLOG_STORE_new_ex, CTLOG_STORE_new, CTLOG_STORE_free, CTLOG_STORE_load_default_file, CTLOG_STORE_load_file - Create and populate a Certificate Transparency log list</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/ct.h&gt;
 
+CTLOG_STORE *CTLOG_STORE_new_ex(OSSL_LIB_CTX *libctx, const char *propq);
 CTLOG_STORE *CTLOG_STORE_new(void);
 void CTLOG_STORE_free(CTLOG_STORE *store);
 
@@ -40,7 +41,11 @@ int CTLOG_STORE_load_file(CTLOG_STORE *store, const char *file);</code></pre>
 
 <p>A CTLOG_STORE is a container for a list of CTLOGs (Certificate Transparency logs). The list can be loaded from one or more files and then searched by LogID (see RFC 6962, Section 3.2, for the definition of a LogID).</p>
 
-<p>CTLOG_STORE_new() creates an empty list of CT logs. This is then populated by CTLOG_STORE_load_default_file() or CTLOG_STORE_load_file(). CTLOG_STORE_load_default_file() loads from the default file, which is named &quot;ct_log_list.cnf&quot; in OPENSSLDIR (see the output of <a href="/../../doc/man1/version.html">version</a>). This can be overridden using an environment variable named &quot;CTLOG_FILE&quot;. CTLOG_STORE_load_file() loads from a caller-specified file path instead. Both of these functions append any loaded CT logs to the CTLOG_STORE.</p>
+<p>CTLOG_STORE_new_ex() creates an empty list of CT logs associated with the library context <i>libctx</i> and the property query string <i>propq</i>.</p>
+
+<p>CTLOG_STORE_new() does the same thing as CTLOG_STORE_new_ex() but with the default library context and property query string.</p>
+
+<p>The CTLOG_STORE is then populated by CTLOG_STORE_load_default_file() or CTLOG_STORE_load_file(). CTLOG_STORE_load_default_file() loads from the default file, which is named <i>ct_log_list.cnf</i> in OPENSSLDIR (see the output of <a href="../man1/openssl-version.html">openssl-version(1)</a>). This can be overridden using an environment variable named <b>CTLOG_FILE</b>. CTLOG_STORE_load_file() loads from a caller-specified file path instead. Both of these functions append any loaded CT logs to the CTLOG_STORE.</p>
 
 <p>The expected format of the file is:</p>
 
@@ -70,13 +75,13 @@ key = &lt;base64-encoded DER SubjectPublicKeyInfo here&gt;</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>These functions were added in OpenSSL 1.1.0.</p>
+<p>CTLOG_STORE_new_ex was added in OpenSSL 3.0. All other functions were added in OpenSSL 1.1.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

@@ -29,9 +29,11 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/des.h&gt;
+<pre><code>#include &lt;openssl/des.h&gt;</code></pre>
 
-void DES_random_key(DES_cblock *ret);
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>void DES_random_key(DES_cblock *ret);
 
 int DES_set_key(const_DES_cblock *key, DES_key_schedule *schedule);
 int DES_key_sched(const_DES_cblock *key, DES_key_schedule *schedule);
@@ -109,6 +111,8 @@ char *DES_crypt(const char *buf, const char *salt);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
+<p>All of the functions described on this page are deprecated. Applications should instead use <a href="../man3/EVP_EncryptInit_ex.html">EVP_EncryptInit_ex(3)</a>, <a href="../man3/EVP_EncryptUpdate.html">EVP_EncryptUpdate(3)</a> and <a href="../man3/EVP_EncryptFinal_ex.html">EVP_EncryptFinal_ex(3)</a> or the equivalently named decrypt functions.</p>
+
 <p>This library contains a fast implementation of the DES encryption algorithm.</p>
 
 <p>There are two phases to the use of DES encryption. The first is the generation of a <i>DES_key_schedule</i> from a key, the second is the actual encryption. A DES key is of type <i>DES_cblock</i>. This type consists of 8 bytes with odd parity. The least significant bit in each byte is the parity bit. The key schedule is an expanded form of the key; it is used to speed the encryption process.</p>
@@ -119,7 +123,7 @@ char *DES_crypt(const char *buf, const char *salt);</code></pre>
 
 <p>DES_set_key_checked() will check that the key passed is of odd parity and is not a weak or semi-weak key. If the parity is wrong, then -1 is returned. If the key is a weak key, then -2 is returned. If an error is returned, the key schedule is not generated.</p>
 
-<p>DES_set_key() works like DES_set_key_checked() if the <i>DES_check_key</i> flag is nonzero, otherwise like DES_set_key_unchecked(). These functions are available for compatibility; it is recommended to use a function that does not depend on a global variable.</p>
+<p>DES_set_key() works like DES_set_key_checked() and remains for backward compatibility.</p>
 
 <p>DES_set_odd_parity() sets the parity of the passed <i>key</i> to odd.</p>
 
@@ -189,7 +193,9 @@ char *DES_crypt(const char *buf, const char *salt);</code></pre>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>DES_set_key(), DES_key_sched(), DES_set_key_checked() and DES_is_weak_key() return 0 on success or negative values on error.</p>
+<p>DES_set_key(), DES_key_sched(), and DES_set_key_checked() return 0 on success or negative values on error.</p>
+
+<p>DES_is_weak_key() returns 1 if the passed key is a weak key, 0 if it is ok.</p>
 
 <p>DES_cbc_cksum() and DES_quad_cksum() return 4-byte integer representing the last 4 bytes of the checksum of the input.</p>
 
@@ -201,13 +207,15 @@ char *DES_crypt(const char *buf, const char *salt);</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
+<p>All of these functions were deprecated in OpenSSL 3.0.</p>
+
 <p>The requirement that the <b>salt</b> parameter to DES_crypt() and DES_fcrypt() be two ASCII characters was first enforced in OpenSSL 1.1.0. Previous versions tried to use the letter uppercase <b>A</b> if both character were not present, and could crash when given non-ASCII on some platforms.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

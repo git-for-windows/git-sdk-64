@@ -39,23 +39,23 @@ ASN1_TYPE *ASN1_TYPE_pack_sequence(const ASN1_ITEM *it, void *s,
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>These functions allow an ASN1_TYPE structure to be manipulated. The ASN1_TYPE structure can contain any ASN.1 type or constructed type such as a SEQUENCE: it is effectively equivalent to the ASN.1 ANY type.</p>
+<p>These functions allow an <b>ASN1_TYPE</b> structure to be manipulated. The <b>ASN1_TYPE</b> structure can contain any ASN.1 type or constructed type such as a SEQUENCE: it is effectively equivalent to the ASN.1 ANY type.</p>
 
-<p>ASN1_TYPE_get() returns the type of <b>a</b>.</p>
+<p>ASN1_TYPE_get() returns the type of <i>a</i> or 0 if it fails.</p>
 
-<p>ASN1_TYPE_set() sets the value of <b>a</b> to <b>type</b> and <b>value</b>. This function uses the pointer <b>value</b> internally so it must <b>not</b> be freed up after the call.</p>
+<p>ASN1_TYPE_set() sets the value of <i>a</i> to <i>type</i> and <i>value</i>. This function uses the pointer <i>value</i> internally so it must <b>not</b> be freed up after the call.</p>
 
-<p>ASN1_TYPE_set1() sets the value of <b>a</b> to <b>type</b> a copy of <b>value</b>.</p>
+<p>ASN1_TYPE_set1() sets the value of <i>a</i> to <i>type</i> a copy of <i>value</i>.</p>
 
-<p>ASN1_TYPE_cmp() compares ASN.1 types <b>a</b> and <b>b</b> and returns 0 if they are identical and nonzero otherwise.</p>
+<p>ASN1_TYPE_cmp() compares ASN.1 types <i>a</i> and <i>b</i> and returns 0 if they are identical and nonzero otherwise.</p>
 
-<p>ASN1_TYPE_unpack_sequence() attempts to parse the SEQUENCE present in <b>t</b> using the ASN.1 structure <b>it</b>. If successful it returns a pointer to the ASN.1 structure corresponding to <b>it</b> which must be freed by the caller. If it fails it return NULL.</p>
+<p>ASN1_TYPE_unpack_sequence() attempts to parse the SEQUENCE present in <i>t</i> using the ASN.1 structure <i>it</i>. If successful it returns a pointer to the ASN.1 structure corresponding to <i>it</i> which must be freed by the caller. If it fails it return NULL.</p>
 
-<p>ASN1_TYPE_pack_sequence() attempts to encode the ASN.1 structure <b>s</b> corresponding to <b>it</b> into an ASN1_TYPE. If successful the encoded ASN1_TYPE is returned. If <b>t</b> and <b>*t</b> are not NULL the encoded type is written to <b>t</b> overwriting any existing data. If <b>t</b> is not NULL but <b>*t</b> is NULL the returned ASN1_TYPE is written to <b>*t</b>.</p>
+<p>ASN1_TYPE_pack_sequence() attempts to encode the ASN.1 structure <i>s</i> corresponding to <i>it</i> into an <b>ASN1_TYPE</b>. If successful the encoded <b>ASN1_TYPE</b> is returned. If <i>t</i> and <i>*t</i> are not NULL the encoded type is written to <i>t</i> overwriting any existing data. If <i>t</i> is not NULL but <i>*t</i> is NULL the returned <b>ASN1_TYPE</b> is written to <i>*t</i>.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>The type and meaning of the <b>value</b> parameter for ASN1_TYPE_set() and ASN1_TYPE_set1() is determined by the <b>type</b> parameter. If <b>type</b> is V_ASN1_NULL <b>value</b> is ignored. If <b>type</b> is V_ASN1_BOOLEAN then the boolean is set to TRUE if <b>value</b> is not NULL. If <b>type</b> is V_ASN1_OBJECT then value is an ASN1_OBJECT structure. Otherwise <b>type</b> is and ASN1_STRING structure. If <b>type</b> corresponds to a primitive type (or a string type) then the contents of the ASN1_STRING contain the content octets of the type. If <b>type</b> corresponds to a constructed type or a tagged type (V_ASN1_SEQUENCE, V_ASN1_SET or V_ASN1_OTHER) then the ASN1_STRING contains the entire ASN.1 encoding verbatim (including tag and length octets).</p>
+<p>The type and meaning of the <i>value</i> parameter for ASN1_TYPE_set() and ASN1_TYPE_set1() is determined by the <i>type</i> parameter. If <i>type</i> is <b>V_ASN1_NULL</b> <i>value</i> is ignored. If <i>type</i> is <b>V_ASN1_BOOLEAN</b> then the boolean is set to TRUE if <i>value</i> is not NULL. If <i>type</i> is <b>V_ASN1_OBJECT</b> then value is an <b>ASN1_OBJECT</b> structure. Otherwise <i>type</i> is and <b>ASN1_STRING</b> structure. If <i>type</i> corresponds to a primitive type (or a string type) then the contents of the <b>ASN1_STRING</b> contain the content octets of the type. If <i>type</i> corresponds to a constructed type or a tagged type (<b>V_ASN1_SEQUENCE</b>, <b>V_ASN1_SET</b> or <b>V_ASN1_OTHER</b>) then the <b>ASN1_STRING</b> contains the entire ASN.1 encoding verbatim (including tag and length octets).</p>
 
 <p>ASN1_TYPE_cmp() may not return zero if two types are equivalent but have different encodings. For example the single content octet of the boolean TRUE value under BER can have any nonzero encoding but ASN1_TYPE_cmp() will only return zero if the values are the same.</p>
 
@@ -63,7 +63,7 @@ ASN1_TYPE *ASN1_TYPE_pack_sequence(const ASN1_ITEM *it, void *s,
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>ASN1_TYPE_get() returns the type of the ASN1_TYPE argument.</p>
+<p>ASN1_TYPE_get() returns the type of the <b>ASN1_TYPE</b> argument.</p>
 
 <p>ASN1_TYPE_set() does not return a value.</p>
 
@@ -73,13 +73,13 @@ ASN1_TYPE *ASN1_TYPE_pack_sequence(const ASN1_ITEM *it, void *s,
 
 <p>ASN1_TYPE_unpack_sequence() returns a pointer to an ASN.1 structure or NULL on failure.</p>
 
-<p>ASN1_TYPE_pack_sequence() return an ASN1_TYPE structure if it succeeds or NULL on failure.</p>
+<p>ASN1_TYPE_pack_sequence() return an <b>ASN1_TYPE</b> structure if it succeeds or NULL on failure.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

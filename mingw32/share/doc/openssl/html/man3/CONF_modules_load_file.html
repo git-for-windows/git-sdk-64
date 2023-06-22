@@ -24,12 +24,15 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>CONF_modules_load_file, CONF_modules_load - OpenSSL configuration functions</p>
+<p>CONF_get1_default_config_file, CONF_modules_load_file_ex, CONF_modules_load_file, CONF_modules_load - OpenSSL configuration functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/conf.h&gt;
 
+char *CONF_get1_default_config_file(void);
+int CONF_modules_load_file_ex(OSSL_LIB_CTX *libctx, const char *filename,
+                              const char *appname, unsigned long flags);
 int CONF_modules_load_file(const char *filename, const char *appname,
                            unsigned long flags);
 int CONF_modules_load(const CONF *cnf, const char *appname,
@@ -37,7 +40,11 @@ int CONF_modules_load(const CONF *cnf, const char *appname,
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The function CONF_modules_load_file() configures OpenSSL using file <b>filename</b> and application name <b>appname</b>. If <b>filename</b> is NULL the standard OpenSSL configuration file is used. If <b>appname</b> is NULL the standard OpenSSL application name <b>openssl_conf</b> is used. The behaviour can be customized using <b>flags</b>.</p>
+<p>The function CONF_get1_default_config_file() determines the default configuration file pathname as follows. If the <b>OPENSSL_CONF</b> environment variable is set its value is returned. Else the function returns the path obtained using <a href="../man3/X509_get_default_cert_area.html">X509_get_default_cert_area(3)</a> with the filename <code>&quot;openssl.cnf&quot;</code> appended. The caller is responsible for freeing any string returned.</p>
+
+<p>The function CONF_modules_load_file_ex() configures OpenSSL using library context <b>libctx</b> file <b>filename</b> and application name <b>appname</b>. If <b>filename</b> is NULL the standard OpenSSL configuration file is used as determined by calling CONF_get1_default_config_file(). If <b>appname</b> is NULL the standard OpenSSL application name <b>openssl_conf</b> is used. The behaviour can be customized using <b>flags</b>. Note that, the error suppressing can be overridden by <b>config_diagnostics</b> as described in <a href="../man5/config.html">config(5)</a>.</p>
+
+<p>CONF_modules_load_file() is the same as CONF_modules_load_file_ex() but has a NULL library context.</p>
 
 <p>CONF_modules_load() is identical to CONF_modules_load_file() except it reads configuration information from <b>cnf</b>.</p>
 
@@ -49,7 +56,7 @@ int CONF_modules_load(const CONF *cnf, const char *appname,
 
 <p>Normally any modules errors will add error information to the error queue. If <b>CONF_MFLAGS_SILENT</b> is set no error information is added.</p>
 
-<p>If <b>CONF_MFLAGS_IGNORE_RETURN_CODES</b> is set the function unconditionally returns success. This is used by default in <a href="../man3/OPENSSL_init_crypto.html">OPENSSL_init_crypto(3)</a> to ignore any errors in the default system-wide configuration file, as having all OpenSSL applications fail to start when there are potentially minor issues in the file is too risky. Applications calling <b>CONF_modules_load_file</b> explicitly should not generally set this flag.</p>
+<p>If <b>CONF_MFLAGS_IGNORE_RETURN_CODES</b> is set the function unconditionally returns success. This is used by default in <a href="../man3/OPENSSL_init_crypto.html">OPENSSL_init_crypto(3)</a> to ignore any errors in the default system-wide configuration file, as having all OpenSSL applications fail to start when there are potentially minor issues in the file is too risky. Applications calling <b>CONF_modules_load_file_ex</b> explicitly should not generally set this flag.</p>
 
 <p>If <b>CONF_MFLAGS_NO_DSO</b> is set configuration module loading from DSOs is disabled.</p>
 
@@ -57,7 +64,7 @@ int CONF_modules_load(const CONF *cnf, const char *appname,
 
 <p><b>CONF_MFLAGS_DEFAULT_SECTION</b> if set and <b>appname</b> is not NULL will use the default section pointed to by <b>openssl_conf</b> if <b>appname</b> does not exist.</p>
 
-<p>By using CONF_modules_load_file() with appropriate flags an application can customise application configuration to best suit its needs. In some cases the use of a configuration file is optional and its absence is not an error: in this case <b>CONF_MFLAGS_IGNORE_MISSING_FILE</b> would be set.</p>
+<p>By using CONF_modules_load_file_ex() with appropriate flags an application can customise application configuration to best suit its needs. In some cases the use of a configuration file is optional and its absence is not an error: in this case <b>CONF_MFLAGS_IGNORE_MISSING_FILE</b> would be set.</p>
 
 <p>Errors during configuration may also be handled differently by different applications. For example in some cases an error may simply print out a warning message and the application continue. In other cases an application might consider a configuration file error as fatal and exit immediately.</p>
 
@@ -71,7 +78,7 @@ int CONF_modules_load(const CONF *cnf, const char *appname,
 
 <p>Load a configuration file and print out any errors and exit (missing file considered fatal):</p>
 
-<pre><code>if (CONF_modules_load_file(NULL, NULL, 0) &lt;= 0) {
+<pre><code>if (CONF_modules_load_file_ex(libctx, NULL, NULL, 0) &lt;= 0) {
     fprintf(stderr, &quot;FATAL: error loading configuration file\n&quot;);
     ERR_print_errors_fp(stderr);
     exit(1);
@@ -79,8 +86,8 @@ int CONF_modules_load(const CONF *cnf, const char *appname,
 
 <p>Load default configuration file using the section indicated by &quot;myapp&quot;, tolerate missing files, but exit on other errors:</p>
 
-<pre><code>if (CONF_modules_load_file(NULL, &quot;myapp&quot;,
-                           CONF_MFLAGS_IGNORE_MISSING_FILE) &lt;= 0) {
+<pre><code>if (CONF_modules_load_file_ex(NULL, NULL, &quot;myapp&quot;,
+                              CONF_MFLAGS_IGNORE_MISSING_FILE) &lt;= 0) {
     fprintf(stderr, &quot;FATAL: error loading configuration file\n&quot;);
     ERR_print_errors_fp(stderr);
     exit(1);
@@ -88,8 +95,8 @@ int CONF_modules_load(const CONF *cnf, const char *appname,
 
 <p>Load custom configuration file and section, only print warnings on error, missing configuration file ignored:</p>
 
-<pre><code>if (CONF_modules_load_file(&quot;/something/app.cnf&quot;, &quot;myapp&quot;,
-                           CONF_MFLAGS_IGNORE_MISSING_FILE) &lt;= 0) {
+<pre><code>if (CONF_modules_load_file_ex(NULL, &quot;/something/app.cnf&quot;, &quot;myapp&quot;,
+                              CONF_MFLAGS_IGNORE_MISSING_FILE) &lt;= 0) {
     fprintf(stderr, &quot;WARNING: error loading configuration file\n&quot;);
     ERR_print_errors_fp(stderr);
 }</code></pre>
@@ -105,7 +112,7 @@ if (fp == NULL) {
     fprintf(stderr, &quot;Error opening configuration file\n&quot;);
     /* Other missing configuration file behaviour */
 } else {
-    cnf = NCONF_new(NULL);
+    cnf = NCONF_new_ex(libctx, NULL);
     if (NCONF_load_fp(cnf, fp, &amp;eline) == 0) {
         fprintf(stderr, &quot;Error on line %ld of configuration file\n&quot;, eline);
         ERR_print_errors_fp(stderr);
@@ -121,13 +128,13 @@ if (fp == NULL) {
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man5/config.html">config(5)</a>, <a href="../man3/OPENSSL_config.html">OPENSSL_config(3)</a></p>
+<p><a href="../man5/config.html">config(5)</a>, <a href="../man3/OPENSSL_config.html">OPENSSL_config(3)</a>, <a href="../man3/NCONF_new_ex.html">NCONF_new_ex(3)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2004-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2004-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

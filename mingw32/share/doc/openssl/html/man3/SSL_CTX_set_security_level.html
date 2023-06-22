@@ -19,6 +19,7 @@
   <li><a href="#APPLICATION-DEFINED-SECURITY-CALLBACKS">APPLICATION DEFINED SECURITY CALLBACKS</a></li>
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
@@ -84,25 +85,25 @@ void *SSL_get0_security_ex_data(const SSL *s);</code></pre>
 <dt id="Level-1"><b>Level 1</b></dt>
 <dd>
 
-<p>The security level corresponds to a minimum of 80 bits of security. Any parameters offering below 80 bits of security are excluded. As a result RSA, DSA and DH keys shorter than 1024 bits and ECC keys shorter than 160 bits are prohibited. All export cipher suites are prohibited since they all offer less than 80 bits of security. SSL version 2 is prohibited. Any cipher suite using MD5 for the MAC is also prohibited.</p>
+<p>The security level corresponds to a minimum of 80 bits of security. Any parameters offering below 80 bits of security are excluded. As a result RSA, DSA and DH keys shorter than 1024 bits and ECC keys shorter than 160 bits are prohibited. All export cipher suites are prohibited since they all offer less than 80 bits of security. SSL version 2 is prohibited. Any cipher suite using MD5 for the MAC is also prohibited. Note that signatures using SHA1 and MD5 are also forbidden at this level as they have less than 80 security bits. Additionally, SSLv3, TLS 1.0, TLS 1.1 and DTLS 1.0 are all disabled at this level.</p>
 
 </dd>
 <dt id="Level-2"><b>Level 2</b></dt>
 <dd>
 
-<p>Security level set to 112 bits of security. As a result RSA, DSA and DH keys shorter than 2048 bits and ECC keys shorter than 224 bits are prohibited. In addition to the level 1 exclusions any cipher suite using RC4 is also prohibited. SSL version 3 is also not allowed. Compression is disabled.</p>
+<p>Security level set to 112 bits of security. As a result RSA, DSA and DH keys shorter than 2048 bits and ECC keys shorter than 224 bits are prohibited. In addition to the level 1 exclusions any cipher suite using RC4 is also prohibited. Compression is disabled.</p>
 
 </dd>
 <dt id="Level-3"><b>Level 3</b></dt>
 <dd>
 
-<p>Security level set to 128 bits of security. As a result RSA, DSA and DH keys shorter than 3072 bits and ECC keys shorter than 256 bits are prohibited. In addition to the level 2 exclusions cipher suites not offering forward secrecy are prohibited. TLS versions below 1.1 are not permitted. Session tickets are disabled.</p>
+<p>Security level set to 128 bits of security. As a result RSA, DSA and DH keys shorter than 3072 bits and ECC keys shorter than 256 bits are prohibited. In addition to the level 2 exclusions cipher suites not offering forward secrecy are prohibited. Session tickets are disabled.</p>
 
 </dd>
 <dt id="Level-4"><b>Level 4</b></dt>
 <dd>
 
-<p>Security level set to 192 bits of security. As a result RSA, DSA and DH keys shorter than 7680 bits and ECC keys shorter than 384 bits are prohibited. Cipher suites using SHA1 for the MAC are prohibited. TLS versions below 1.2 are not permitted.</p>
+<p>Security level set to 192 bits of security. As a result RSA, DSA and DH keys shorter than 7680 bits and ECC keys shorter than 384 bits are prohibited. Cipher suites using SHA1 for the MAC are prohibited.</p>
 
 </dd>
 <dt id="Level-5"><b>Level 5</b></dt>
@@ -133,7 +134,7 @@ void *SSL_get0_security_ex_data(const SSL *s);</code></pre>
 
 <p>Some restrictions can be gracefully handled: for example cipher suites offering insufficient security are not sent by the client and will not be selected by the server. Other restrictions such as the peer certificate key size or the DH parameter size will abort the handshake with a fatal alert.</p>
 
-<p>Attempts to set certificates or parameters with insufficient security are also blocked. For example trying to set a certificate using a 512 bit RSA key using SSL_CTX_use_certificate() at level 1. Applications which do not check the return values for errors will misbehave: for example it might appear that a certificate is not set at all because it had been rejected.</p>
+<p>Attempts to set certificates or parameters with insufficient security are also blocked. For example trying to set a certificate using a 512 bit RSA key or a certificate with a signature with SHA1 digest at level 1 using SSL_CTX_use_certificate(). Applications which do not check the return values for errors will misbehave: for example it might appear that a certificate is not set at all because it had been rejected.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -147,15 +148,19 @@ void *SSL_get0_security_ex_data(const SSL *s);</code></pre>
 
 <p>SSL_CTX_get0_security_ex_data() and SSL_get0_security_ex_data() return the extra data pointer or NULL if the ex data is not set.</p>
 
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man7/ssl.html">ssl(7)</a></p>
+
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>These functions were added in OpenSSL 1.1.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2014-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2014-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

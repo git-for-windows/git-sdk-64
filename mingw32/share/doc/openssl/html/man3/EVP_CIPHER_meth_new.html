@@ -27,9 +27,11 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/evp.h&gt;
+<pre><code>#include &lt;openssl/evp.h&gt;</code></pre>
 
-EVP_CIPHER *EVP_CIPHER_meth_new(int cipher_type, int block_size, int key_len);
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>EVP_CIPHER *EVP_CIPHER_meth_new(int cipher_type, int block_size, int key_len);
 EVP_CIPHER *EVP_CIPHER_meth_dup(const EVP_CIPHER *cipher);
 void EVP_CIPHER_meth_free(EVP_CIPHER *cipher);
 
@@ -77,6 +79,8 @@ int (*EVP_CIPHER_meth_get_ctrl(const EVP_CIPHER *cipher))(EVP_CIPHER_CTX *,
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
+<p>All of the functions described on this page are deprecated. Applications should instead use the OSSL_PROVIDER APIs.</p>
+
 <p>The <b>EVP_CIPHER</b> type is a structure for symmetric cipher method implementation.</p>
 
 <p>EVP_CIPHER_meth_new() creates a new <b>EVP_CIPHER</b> structure.</p>
@@ -91,7 +95,7 @@ int (*EVP_CIPHER_meth_get_ctrl(const EVP_CIPHER *cipher))(EVP_CIPHER_CTX *,
 
 <dl>
 
-<dt id="EVP_CIPH_STREAM_CIPHER-EVP_CIPH_ECB_MODE-EVP_CIPH_CBC_MODE-EVP_CIPH_CFB_MODE-EVP_CIPH_OFB_MODE-EVP_CIPH_CTR_MODE-EVP_CIPH_GCM_MODE-EVP_CIPH_CCM_MODE-EVP_CIPH_XTS_MODE-EVP_CIPH_WRAP_MODE-EVP_CIPH_OCB_MODE">EVP_CIPH_STREAM_CIPHER, EVP_CIPH_ECB_MODE EVP_CIPH_CBC_MODE, EVP_CIPH_CFB_MODE, EVP_CIPH_OFB_MODE, EVP_CIPH_CTR_MODE, EVP_CIPH_GCM_MODE, EVP_CIPH_CCM_MODE, EVP_CIPH_XTS_MODE, EVP_CIPH_WRAP_MODE, EVP_CIPH_OCB_MODE</dt>
+<dt id="EVP_CIPH_STREAM_CIPHER-EVP_CIPH_ECB_MODE-EVP_CIPH_CBC_MODE-EVP_CIPH_CFB_MODE-EVP_CIPH_OFB_MODE-EVP_CIPH_CTR_MODE-EVP_CIPH_GCM_MODE-EVP_CIPH_CCM_MODE-EVP_CIPH_XTS_MODE-EVP_CIPH_WRAP_MODE-EVP_CIPH_OCB_MODE-EVP_CIPH_SIV_MODE">EVP_CIPH_STREAM_CIPHER, EVP_CIPH_ECB_MODE EVP_CIPH_CBC_MODE, EVP_CIPH_CFB_MODE, EVP_CIPH_OFB_MODE, EVP_CIPH_CTR_MODE, EVP_CIPH_GCM_MODE, EVP_CIPH_CCM_MODE, EVP_CIPH_XTS_MODE, EVP_CIPH_WRAP_MODE, EVP_CIPH_OCB_MODE, EVP_CIPH_SIV_MODE</dt>
 <dd>
 
 <p>The cipher mode.</p>
@@ -157,6 +161,12 @@ int (*EVP_CIPHER_meth_get_ctrl(const EVP_CIPHER *cipher))(EVP_CIPHER_CTX *,
 <p>Signals that the length of the input buffer for encryption / decryption is to be understood as the number of bits instead of bytes for this implementation. This is only useful for CFB1 ciphers.</p>
 
 </dd>
+<dt id="EVP_CIPH_FLAG_CTS">EVP_CIPH_FLAG_CTS</dt>
+<dd>
+
+<p>Indicates that the cipher uses ciphertext stealing. This is currently used to indicate that the cipher is a one shot that only allows a single call to EVP_CipherUpdate().</p>
+
+</dd>
 <dt id="EVP_CIPH_FLAG_CUSTOM_CIPHER">EVP_CIPH_FLAG_CUSTOM_CIPHER</dt>
 <dd>
 
@@ -197,17 +207,19 @@ int (*EVP_CIPHER_meth_get_ctrl(const EVP_CIPHER *cipher))(EVP_CIPHER_CTX *,
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="/../../doc/man3/EVP_EncryptInit.html">EVP_EncryptInit</a></p>
+<p><a href="../man3/EVP_EncryptInit.html">EVP_EncryptInit(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The functions described here were added in OpenSSL 1.1.0.</p>
+<p>All of these functions were deprecated in OpenSSL 3.0.</p>
+
+<p>The functions described here were added in OpenSSL 1.1.0. The <b>EVP_CIPHER</b> structure created with these functions became reference counted in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

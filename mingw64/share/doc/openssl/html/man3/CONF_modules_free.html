@@ -32,11 +32,9 @@
 void CONF_modules_finish(void);
 void CONF_modules_unload(int all);</code></pre>
 
-<p>Deprecated:</p>
+<p>The following functions have been deprecated since OpenSSL 1.1.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
 
-<pre><code>#if OPENSSL_API_COMPAT &lt; 0x10100000L
-void CONF_modules_free(void)
-#endif</code></pre>
+<pre><code>void CONF_modules_free(void);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -44,7 +42,7 @@ void CONF_modules_free(void)
 
 <p>CONF_modules_finish() calls each configuration modules <b>finish</b> handler to free up any configuration that module may have performed.</p>
 
-<p>CONF_modules_unload() finishes and unloads configuration modules. If <b>all</b> is set to <b>0</b> only modules loaded from DSOs will be unloads. If <b>all</b> is <b>1</b> all modules, including builtin modules will be unloaded.</p>
+<p>CONF_modules_unload() finishes and unloads configuration modules. If <b>all</b> is set to <b>0</b> only modules loaded from DSOs will be unloads. If <b>all</b> is <b>1</b> all modules, including built-in modules will be unloaded.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -52,7 +50,7 @@ void CONF_modules_free(void)
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man5/config.html">config(5)</a>, <a href="../man3/OPENSSL_config.html">OPENSSL_config(3)</a>, <a href="../man3/CONF_modules_load_file.html">CONF_modules_load_file(3)</a></p>
+<p><a href="../man5/config.html">config(5)</a>, <a href="../man3/OPENSSL_config.html">OPENSSL_config(3)</a>, <a href="../man3/CONF_modules_load_file_ex.html">CONF_modules_load_file_ex(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -60,9 +58,9 @@ void CONF_modules_free(void)
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2004-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2004-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

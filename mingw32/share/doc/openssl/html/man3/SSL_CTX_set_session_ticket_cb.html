@@ -49,7 +49,7 @@ int SSL_SESSION_get0_ticket_appdata(SSL_SESSION *ss, void **data, size_t *len);<
 
 <p><b>gen_cb</b> is the application defined callback invoked when a session ticket is about to be created. The application can call SSL_SESSION_set1_ticket_appdata() at this time to add application data to the session ticket. The value of <b>arg</b> is the same as that given to SSL_CTX_set_session_ticket_cb(). The <b>gen_cb</b> callback is defined as type <b>SSL_CTX_generate_session_ticket_fn</b>.</p>
 
-<p><b>dec_cb</b> is the application defined callback invoked after session ticket decryption has been attempted and any session ticket application data is available. If ticket decryption was successful then the <b>ss</b> argument contains the session data. The <b>keyname</b> and <b>keyname_len</b> arguments identify the key used to decrypt the session ticket. The <b>status</b> argument is the result of the ticket decryption. See the <a>NOTES</a> section below for further details. The value of <b>arg</b> is the same as that given to SSL_CTX_set_session_ticket_cb(). The <b>dec_cb</b> callback is defined as type <b>SSL_CTX_decrypt_session_ticket_fn</b>.</p>
+<p><b>dec_cb</b> is the application defined callback invoked after session ticket decryption has been attempted and any session ticket application data is available. If ticket decryption was successful then the <b>ss</b> argument contains the session data. The <b>keyname</b> and <b>keyname_len</b> arguments identify the key used to decrypt the session ticket. The <b>status</b> argument is the result of the ticket decryption. See the <a href="#NOTES">&quot;NOTES&quot;</a> section below for further details. The value of <b>arg</b> is the same as that given to SSL_CTX_set_session_ticket_cb(). The <b>dec_cb</b> callback is defined as type <b>SSL_CTX_decrypt_session_ticket_fn</b>.</p>
 
 <p>SSL_SESSION_set1_ticket_appdata() sets the application data specified by <b>data</b> and <b>len</b> into <b>ss</b> which is then placed into any generated session tickets. It can be called at any time before a session ticket is created to update the data placed into the session ticket. However, given that sessions and tickets are created by the handshake, the <b>gen_cb</b> is provided to notify the application that a session ticket is about to be generated.</p>
 
@@ -145,7 +145,7 @@ int SSL_SESSION_get0_ticket_appdata(SSL_SESSION *ss, void **data, size_t *len);<
 
 <p>The <b>gen_cb</b> callback must return 1 to continue the connection. A return of 0 will terminate the connection with an INTERNAL_ERROR alert.</p>
 
-<p>The <b>dec_cb</b> callback must return a value as described in <a>NOTES</a> above.</p>
+<p>The <b>dec_cb</b> callback must return a value as described in <a href="#NOTES">&quot;NOTES&quot;</a> above.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -159,7 +159,7 @@ int SSL_SESSION_get0_ticket_appdata(SSL_SESSION *ss, void **data, size_t *len);<
 
 <p>Copyright 2017-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

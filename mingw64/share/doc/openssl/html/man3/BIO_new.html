@@ -24,21 +24,24 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>BIO_new, BIO_up_ref, BIO_free, BIO_vfree, BIO_free_all - BIO allocation and freeing functions</p>
+<p>BIO_new_ex, BIO_new, BIO_up_ref, BIO_free, BIO_vfree, BIO_free_all - BIO allocation and freeing functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/bio.h&gt;
 
-BIO *  BIO_new(const BIO_METHOD *type);
-int    BIO_up_ref(BIO *a);
-int    BIO_free(BIO *a);
-void   BIO_vfree(BIO *a);
-void   BIO_free_all(BIO *a);</code></pre>
+BIO *BIO_new_ex(OSSL_LIB_CTX *libctx, const BIO_METHOD *type);
+BIO *BIO_new(const BIO_METHOD *type);
+int BIO_up_ref(BIO *a);
+int BIO_free(BIO *a);
+void BIO_vfree(BIO *a);
+void BIO_free_all(BIO *a);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The BIO_new() function returns a new BIO using method <b>type</b>.</p>
+<p>The BIO_new_ex() function returns a new BIO using method <b>type</b> associated with the library context <i>libctx</i> (see OSSL_LIB_CTX(3)). The library context may be NULL to indicate the default library context.</p>
+
+<p>The BIO_new() is the same as BIO_new_ex() except the default library context is always used.</p>
 
 <p>BIO_up_ref() increments the reference count associated with the BIO object.</p>
 
@@ -48,7 +51,7 @@ void   BIO_free_all(BIO *a);</code></pre>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>BIO_new() returns a newly created BIO or NULL if the call fails.</p>
+<p>BIO_new_ex() and BIO_new() return a newly created BIO or NULL if the call fails.</p>
 
 <p>BIO_up_ref() and BIO_free() return 1 for success and 0 for failure.</p>
 
@@ -64,6 +67,8 @@ void   BIO_free_all(BIO *a);</code></pre>
 
 <p>BIO_set() was removed in OpenSSL 1.1.0 as BIO type is now opaque.</p>
 
+<p>BIO_new_ex() was added in OpenSSL 3.0.</p>
+
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
 <p>Create a memory BIO:</p>
@@ -72,9 +77,9 @@ void   BIO_free_all(BIO *a);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

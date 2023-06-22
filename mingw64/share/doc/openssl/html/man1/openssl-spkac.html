@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>spkac</title>
+<title>openssl-spkac</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:" />
 </head>
@@ -19,20 +19,21 @@
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>openssl-spkac, spkac - SPKAC printing and generating utility</p>
+<p>openssl-spkac - SPKAC printing and generating command</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>spkac</b> [<b>-help</b>] [<b>-in filename</b>] [<b>-out filename</b>] [<b>-key keyfile</b>] [<b>-keyform PEM|DER|ENGINE</b>] [<b>-passin arg</b>] [<b>-challenge string</b>] [<b>-pubkey</b>] [<b>-spkac spkacname</b>] [<b>-spksect section</b>] [<b>-noout</b>] [<b>-verify</b>] [<b>-engine id</b>]</p>
+<p><b>openssl</b> <b>spkac</b> [<b>-help</b>] [<b>-in</b> <i>filename</i>] [<b>-out</b> <i>filename</i>] [<b>-digest</b> <i>digest</i>] [<b>-key</b> <i>filename</i>|<i>uri</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-passin</b> <i>arg</i>] [<b>-challenge</b> <i>string</i>] [<b>-pubkey</b>] [<b>-spkac</b> <i>spkacname</i>] [<b>-spksect</b> <i>section</i>] [<b>-noout</b>] [<b>-verify</b>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The <b>spkac</b> command processes Netscape signed public key and challenge (SPKAC) files. It can print out their contents, verify the signature and produce its own SPKACs from a supplied private key.</p>
+<p>This command processes Netscape signed public key and challenge (SPKAC) files. It can print out their contents, verify the signature and produce its own SPKACs from a supplied private key.</p>
 
 <h1 id="OPTIONS">OPTIONS</h1>
 
@@ -44,49 +45,55 @@
 <p>Print out a usage message.</p>
 
 </dd>
-<dt id="in-filename"><b>-in filename</b></dt>
+<dt id="in-filename"><b>-in</b> <i>filename</i></dt>
 <dd>
 
 <p>This specifies the input filename to read from or standard input if this option is not specified. Ignored if the <b>-key</b> option is used.</p>
 
 </dd>
-<dt id="out-filename"><b>-out filename</b></dt>
+<dt id="out-filename"><b>-out</b> <i>filename</i></dt>
 <dd>
 
 <p>Specifies the output filename to write to or standard output by default.</p>
 
 </dd>
-<dt id="key-keyfile"><b>-key keyfile</b></dt>
+<dt id="digest-digest"><b>-digest</b> <i>digest</i></dt>
 <dd>
 
-<p>Create an SPKAC file using the private key in <b>keyfile</b>. The <b>-in</b>, <b>-noout</b>, <b>-spksect</b> and <b>-verify</b> options are ignored if present.</p>
+<p>Use the specified <i>digest</i> to sign a created SPKAC file. The default digest algorithm is MD5.</p>
 
 </dd>
-<dt id="keyform-PEM-DER-ENGINE"><b>-keyform PEM|DER|ENGINE</b></dt>
+<dt id="key-filename-uri"><b>-key</b> <i>filename</i>|<i>uri</i></dt>
 <dd>
 
-<p>Whether the key format is PEM, DER, or an engine-backed key. The default is PEM.</p>
+<p>Create an SPKAC file using the private key specified by <i>filename</i> or <i>uri</i>. The <b>-in</b>, <b>-noout</b>, <b>-spksect</b> and <b>-verify</b> options are ignored if present.</p>
 
 </dd>
-<dt id="passin-password"><b>-passin password</b></dt>
+<dt id="keyform-DER-PEM-P12-ENGINE"><b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b></dt>
 <dd>
 
-<p>The input file password source. For more information about the format of <b>arg</b> see <a href="../man1/openssl.html">&quot;Pass Phrase Options&quot; in openssl(1)</a>.</p>
+<p>The key format; unspecified by default. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
 
 </dd>
-<dt id="challenge-string"><b>-challenge string</b></dt>
+<dt id="passin-arg"><b>-passin</b> <i>arg</i></dt>
+<dd>
+
+<p>The input file password source. For more information about the format of <i>arg</i> see <a href="../man1/openssl-passphrase-options.html">openssl-passphrase-options(1)</a>.</p>
+
+</dd>
+<dt id="challenge-string"><b>-challenge</b> <i>string</i></dt>
 <dd>
 
 <p>Specifies the challenge string if an SPKAC is being created.</p>
 
 </dd>
-<dt id="spkac-spkacname"><b>-spkac spkacname</b></dt>
+<dt id="spkac-spkacname"><b>-spkac</b> <i>spkacname</i></dt>
 <dd>
 
 <p>Allows an alternative name form the variable containing the SPKAC. The default is &quot;SPKAC&quot;. This option affects both generated and input SPKAC files.</p>
 
 </dd>
-<dt id="spksect-section"><b>-spksect section</b></dt>
+<dt id="spksect-section"><b>-spksect</b> <i>section</i></dt>
 <dd>
 
 <p>Allows an alternative name form the section containing the SPKAC. The default is the default section.</p>
@@ -110,10 +117,24 @@
 <p>Verifies the digital signature on the supplied SPKAC.</p>
 
 </dd>
-<dt id="engine-id"><b>-engine id</b></dt>
+<dt id="engine-id"><b>-engine</b> <i>id</i></dt>
 <dd>
 
-<p>Specifying an engine (by its unique <b>id</b> string) will cause <b>spkac</b> to attempt to obtain a functional reference to the specified engine, thus initialising it if needed. The engine will then be set as the default for all available algorithms.</p>
+<p>See <a href="../man1/openssl.html">&quot;Engine Options&quot; in openssl(1)</a>. This option is deprecated.</p>
+
+</dd>
+<dt id="provider-name"><b>-provider</b> <i>name</i></dt>
+<dd>
+
+</dd>
+<dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="propquery-propq"><b>-propquery</b> <i>propq</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Provider Options&quot; in openssl(1)</a>, <a href="../man7/provider.html">provider(7)</a>, and <a href="../man7/property.html">property(7)</a>.</p>
 
 </dd>
 </dl>
@@ -143,7 +164,7 @@ dq+NQ3F+X4deMx9AaEglZtULwV4=</code></pre>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>A created SPKAC with suitable DN components appended can be fed into the <b>ca</b> utility.</p>
+<p>A created SPKAC with suitable DN components appended can be fed to <a href="../man1/openssl-ca.html">openssl-ca(1)</a>.</p>
 
 <p>SPKACs are typically generated by Netscape when a form is submitted containing the <b>KEYGEN</b> tag as part of the certificate enrollment process.</p>
 
@@ -151,13 +172,19 @@ dq+NQ3F+X4deMx9AaEglZtULwV4=</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man1/ca.html">ca(1)</a></p>
+<p><a href="../man1/openssl.html">openssl(1)</a>, <a href="../man1/openssl-ca.html">openssl-ca(1)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
+
+<p>The <b>-digest</b> option was added in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
 <p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

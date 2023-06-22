@@ -65,11 +65,11 @@ long BIO_set_buffer_read_data(BIO *b, void *buf, long num);</code></pre>
 
 <p>BIO_f_buffer() returns the buffering BIO method.</p>
 
-<p>BIO_get_buffer_num_lines() returns the number of lines buffered (may be 0).</p>
+<p>BIO_get_buffer_num_lines() returns the number of lines buffered (may be 0) or a negative value in case of errors.</p>
 
-<p>BIO_set_read_buffer_size(), BIO_set_write_buffer_size() and BIO_set_buffer_size() return 1 if the buffer was successfully resized or 0 for failure.</p>
+<p>BIO_set_read_buffer_size(), BIO_set_write_buffer_size() and BIO_set_buffer_size() return 1 if the buffer was successfully resized or &lt;=0 for failure.</p>
 
-<p>BIO_set_buffer_read_data() returns 1 if the data was set correctly or 0 if there was an error.</p>
+<p>BIO_set_buffer_read_data() returns 1 if the data was set correctly or &lt;=0 if there was an error.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -77,9 +77,9 @@ long BIO_set_buffer_read_data(BIO *b, void *buf, long num);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

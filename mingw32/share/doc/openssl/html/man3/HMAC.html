@@ -30,11 +30,13 @@
 
 <pre><code>#include &lt;openssl/hmac.h&gt;
 
-unsigned char *HMAC(const EVP_MD *evp_md, const void *key,
-                    int key_len, const unsigned char *d, size_t n,
-                    unsigned char *md, unsigned int *md_len);
+unsigned char *HMAC(const EVP_MD *evp_md, const void *key, int key_len,
+                    const unsigned char *data, size_t data_len,
+                    unsigned char *md, unsigned int *md_len);</code></pre>
 
-HMAC_CTX *HMAC_CTX_new(void);
+<p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>HMAC_CTX *HMAC_CTX_new(void);
 int HMAC_CTX_reset(HMAC_CTX *ctx);
 
 int HMAC_Init_ex(HMAC_CTX *ctx, const void *key, int key_len,
@@ -50,42 +52,44 @@ const EVP_MD *HMAC_CTX_get_md(const HMAC_CTX *ctx);
 
 size_t HMAC_size(const HMAC_CTX *e);</code></pre>
 
-<p>Deprecated:</p>
+<p>The following function has been deprecated since OpenSSL 1.1.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
 
-<pre><code>#if OPENSSL_API_COMPAT &lt; 0x10100000L
-int HMAC_Init(HMAC_CTX *ctx, const void *key, int key_len,
-              const EVP_MD *md);
-#endif</code></pre>
+<pre><code>int HMAC_Init(HMAC_CTX *ctx, const void *key, int key_len,
+              const EVP_MD *md);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>HMAC is a MAC (message authentication code), i.e. a keyed hash function used for message authentication, which is based on a hash function.</p>
 
-<p>HMAC() computes the message authentication code of the <b>n</b> bytes at <b>d</b> using the hash function <b>evp_md</b> and the key <b>key</b> which is <b>key_len</b> bytes long.</p>
+<p>HMAC() computes the message authentication code of the <i>data_len</i> bytes at <i>data</i> using the hash function <i>evp_md</i> and the key <i>key</i> which is <i>key_len</i> bytes long. The <i>key</i> may also be NULL with <i>key_len</i> being 0.</p>
 
-<p>It places the result in <b>md</b> (which must have space for the output of the hash function, which is no more than <b>EVP_MAX_MD_SIZE</b> bytes). If <b>md</b> is NULL, the digest is placed in a static array. The size of the output is placed in <b>md_len</b>, unless it is <b>NULL</b>. Note: passing a NULL value for <b>md</b> to use the static array is not thread safe.</p>
+<p>It places the result in <i>md</i> (which must have space for the output of the hash function, which is no more than <b>EVP_MAX_MD_SIZE</b> bytes). If <i>md</i> is NULL, the digest is placed in a static array. The size of the output is placed in <i>md_len</i>, unless it is NULL. Note: passing a NULL value for <i>md</i> to use the static array is not thread safe.</p>
 
-<p><b>evp_md</b> is a message digest such as EVP_sha1(), EVP_ripemd160() etc. HMAC does not support variable output length digests such as EVP_shake128() and EVP_shake256().</p>
+<p><i>evp_md</i> is a message digest such as EVP_sha1(), EVP_ripemd160() etc. HMAC does not support variable output length digests such as EVP_shake128() and EVP_shake256().</p>
+
+<p>HMAC() uses the default <b>OSSL_LIB_CTX</b>. Use <a href="../man3/EVP_Q_mac.html">EVP_Q_mac(3)</a> instead if a library context is required.</p>
+
+<p>All of the functions described below are deprecated. Applications should instead use <a href="../man3/EVP_MAC_CTX_new.html">EVP_MAC_CTX_new(3)</a>, <a href="../man3/EVP_MAC_CTX_free.html">EVP_MAC_CTX_free(3)</a>, <a href="../man3/EVP_MAC_init.html">EVP_MAC_init(3)</a>, <a href="../man3/EVP_MAC_update.html">EVP_MAC_update(3)</a> and <a href="../man3/EVP_MAC_final.html">EVP_MAC_final(3)</a> or the &#39;quick&#39; single-shot MAC function <a href="../man3/EVP_Q_mac.html">EVP_Q_mac(3)</a>.</p>
 
 <p>HMAC_CTX_new() creates a new HMAC_CTX in heap memory.</p>
 
-<p>HMAC_CTX_reset() zeros an existing <b>HMAC_CTX</b> and associated resources, making it suitable for new computations as if it was newly created with HMAC_CTX_new().</p>
+<p>HMAC_CTX_reset() clears an existing <b>HMAC_CTX</b> and associated resources, making it suitable for new computations as if it was newly created with HMAC_CTX_new().</p>
 
 <p>HMAC_CTX_free() erases the key and other data from the <b>HMAC_CTX</b>, releases any associated resources and finally frees the <b>HMAC_CTX</b> itself.</p>
 
 <p>The following functions may be used if the message is not completely stored in memory:</p>
 
-<p>HMAC_Init_ex() initializes or reuses a <b>HMAC_CTX</b> structure to use the hash function <b>evp_md</b> and key <b>key</b>. If both are NULL, or if <b>key</b> is NULL and <b>evp_md</b> is the same as the previous call, then the existing key is reused. <b>ctx</b> must have been created with HMAC_CTX_new() before the first use of an <b>HMAC_CTX</b> in this function.</p>
+<p>HMAC_Init_ex() initializes or reuses a <b>HMAC_CTX</b> structure to use the hash function <i>evp_md</i> and key <i>key</i>. If both are NULL, or if <i>key</i> is NULL and <i>evp_md</i> is the same as the previous call, then the existing key is reused. <i>ctx</i> must have been created with HMAC_CTX_new() before the first use of an <b>HMAC_CTX</b> in this function.</p>
 
-<p>If HMAC_Init_ex() is called with <b>key</b> NULL and <b>evp_md</b> is not the same as the previous digest used by <b>ctx</b> then an error is returned because reuse of an existing key with a different digest is not supported.</p>
+<p>If HMAC_Init_ex() is called with <i>key</i> NULL and <i>evp_md</i> is not the same as the previous digest used by <i>ctx</i> then an error is returned because reuse of an existing key with a different digest is not supported.</p>
 
-<p>HMAC_Init() initializes a <b>HMAC_CTX</b> structure to use the hash function <b>evp_md</b> and the key <b>key</b> which is <b>key_len</b> bytes long.</p>
+<p>HMAC_Init() initializes a <b>HMAC_CTX</b> structure to use the hash function <i>evp_md</i> and the key <i>key</i> which is <i>key_len</i> bytes long.</p>
 
-<p>HMAC_Update() can be called repeatedly with chunks of the message to be authenticated (<b>len</b> bytes at <b>data</b>).</p>
+<p>HMAC_Update() can be called repeatedly with chunks of the message to be authenticated (<i>len</i> bytes at <i>data</i>).</p>
 
-<p>HMAC_Final() places the message authentication code in <b>md</b>, which must have space for the hash function output.</p>
+<p>HMAC_Final() places the message authentication code in <i>md</i>, which must have space for the hash function output.</p>
 
-<p>HMAC_CTX_copy() copies all of the internal state from <b>sctx</b> into <b>dctx</b>.</p>
+<p>HMAC_CTX_copy() copies all of the internal state from <i>sctx</i> into <i>dctx</i>.</p>
 
 <p>HMAC_CTX_set_flags() applies the specified flags to the internal EVP_MD_CTXs. These flags have the same meaning as for <a href="../man3/EVP_MD_CTX_set_flags.html">EVP_MD_CTX_set_flags(3)</a>.</p>
 
@@ -97,7 +101,7 @@ int HMAC_Init(HMAC_CTX *ctx, const void *key, int key_len,
 
 <p>HMAC() returns a pointer to the message authentication code or NULL if an error occurred.</p>
 
-<p>HMAC_CTX_new() returns a pointer to a new <b>HMAC_CTX</b> on success or <b>NULL</b> if an error occurred.</p>
+<p>HMAC_CTX_new() returns a pointer to a new <b>HMAC_CTX</b> on success or NULL if an error occurred.</p>
 
 <p>HMAC_CTX_reset(), HMAC_Init_ex(), HMAC_Update(), HMAC_Final() and HMAC_CTX_copy() return 1 for success or 0 if an error occurred.</p>
 
@@ -111,9 +115,11 @@ int HMAC_Init(HMAC_CTX *ctx, const void *key, int key_len,
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/SHA1.html">SHA1(3)</a>, <a href="../man7/evp.html">evp(7)</a></p>
+<p><a href="../man3/SHA1.html">SHA1(3)</a>, EVP_Q_mac(3), <a href="../man7/evp.html">evp(7)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
+
+<p>All functions except for HMAC() were deprecated in OpenSSL 3.0.</p>
 
 <p>HMAC_CTX_init() was replaced with HMAC_CTX_reset() in OpenSSL 1.1.0.</p>
 
@@ -125,9 +131,9 @@ int HMAC_Init(HMAC_CTX *ctx, const void *key, int key_len,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

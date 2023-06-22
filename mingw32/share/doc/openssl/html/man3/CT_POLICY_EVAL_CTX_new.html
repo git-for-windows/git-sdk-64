@@ -24,12 +24,14 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>CT_POLICY_EVAL_CTX_new, CT_POLICY_EVAL_CTX_free, CT_POLICY_EVAL_CTX_get0_cert, CT_POLICY_EVAL_CTX_set1_cert, CT_POLICY_EVAL_CTX_get0_issuer, CT_POLICY_EVAL_CTX_set1_issuer, CT_POLICY_EVAL_CTX_get0_log_store, CT_POLICY_EVAL_CTX_set_shared_CTLOG_STORE, CT_POLICY_EVAL_CTX_get_time, CT_POLICY_EVAL_CTX_set_time - Encapsulates the data required to evaluate whether SCTs meet a Certificate Transparency policy</p>
+<p>CT_POLICY_EVAL_CTX_new_ex, CT_POLICY_EVAL_CTX_new, CT_POLICY_EVAL_CTX_free, CT_POLICY_EVAL_CTX_get0_cert, CT_POLICY_EVAL_CTX_set1_cert, CT_POLICY_EVAL_CTX_get0_issuer, CT_POLICY_EVAL_CTX_set1_issuer, CT_POLICY_EVAL_CTX_get0_log_store, CT_POLICY_EVAL_CTX_set_shared_CTLOG_STORE, CT_POLICY_EVAL_CTX_get_time, CT_POLICY_EVAL_CTX_set_time - Encapsulates the data required to evaluate whether SCTs meet a Certificate Transparency policy</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/ct.h&gt;
 
+CT_POLICY_EVAL_CTX *CT_POLICY_EVAL_CTX_new_ex(OSSL_LIB_CTX *libctx,
+                                              const char *propq);
 CT_POLICY_EVAL_CTX *CT_POLICY_EVAL_CTX_new(void);
 void CT_POLICY_EVAL_CTX_free(CT_POLICY_EVAL_CTX *ctx);
 X509* CT_POLICY_EVAL_CTX_get0_cert(const CT_POLICY_EVAL_CTX *ctx);
@@ -64,7 +66,11 @@ void CT_POLICY_EVAL_CTX_set_time(CT_POLICY_EVAL_CTX *ctx, uint64_t time_in_ms);<
 
 <p>The above requirements are met using the setters described below.</p>
 
-<p>CT_POLICY_EVAL_CTX_new() creates an empty policy evaluation context. This should then be populated using:</p>
+<p>CT_POLICY_EVAL_CTX_new_ex() creates an empty policy evaluation context and associates it with the given library context <i>libctx</i> and property query string <i>propq</i>.</p>
+
+<p>CT_POLICY_EVAL_CTX_new() does the same thing as CT_POLICY_EVAL_CTX_new_ex() except that it uses the default library context and property query string.</p>
+
+<p>The CT_POLICY_EVAL_CTX should then be populated using:</p>
 
 <ul>
 
@@ -87,7 +93,7 @@ void CT_POLICY_EVAL_CTX_set_time(CT_POLICY_EVAL_CTX *ctx, uint64_t time_in_ms);<
 
 <p>The SCT timestamp will be compared to this time to check whether the SCT was issued in the future. RFC6962 states that &quot;TLS clients MUST reject SCTs whose timestamp is in the future&quot;. By default, this will be set to 5 minutes in the future (e.g. (time() + 300) * 1000), to allow for clock drift.</p>
 
-<p>The time should be in milliseconds since the Unix epoch.</p>
+<p>The time should be in milliseconds since the Unix Epoch.</p>
 
 </li>
 </ul>
@@ -102,7 +108,7 @@ void CT_POLICY_EVAL_CTX_set_time(CT_POLICY_EVAL_CTX *ctx, uint64_t time_in_ms);<
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>CT_POLICY_EVAL_CTX_new() will return NULL if malloc fails.</p>
+<p>CT_POLICY_EVAL_CTX_new_ex() and CT_POLICY_EVAL_CTX_new() will return NULL if malloc fails.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -110,13 +116,13 @@ void CT_POLICY_EVAL_CTX_set_time(CT_POLICY_EVAL_CTX *ctx, uint64_t time_in_ms);<
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>These functions were added in OpenSSL 1.1.0.</p>
+<p>CT_POLICY_EVAL_CTX_new_ex was added in OpenSSL 3.0. All other functions were added in OpenSSL 1.1.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

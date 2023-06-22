@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>genrsa</title>
+<title>openssl-genrsa</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:" />
 </head>
@@ -18,20 +18,23 @@
   <li><a href="#OPTIONS">OPTIONS</a></li>
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>openssl-genrsa, genrsa - generate an RSA private key</p>
+<p>openssl-genrsa - generate an RSA private key</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>genrsa</b> [<b>-help</b>] [<b>-out filename</b>] [<b>-passout arg</b>] [<b>-aes128</b>] [<b>-aes192</b>] [<b>-aes256</b>] [<b>-aria128</b>] [<b>-aria192</b>] [<b>-aria256</b>] [<b>-camellia128</b>] [<b>-camellia192</b>] [<b>-camellia256</b>] [<b>-des</b>] [<b>-des3</b>] [<b>-idea</b>] [<b>-f4</b>] [<b>-3</b>] [<b>-rand file...</b>] [<b>-writerand file</b>] [<b>-engine id</b>] [<b>-primes num</b>] [<b>numbits</b>]</p>
+<p><b>openssl</b> <b>genrsa</b> [<b>-help</b>] [<b>-out</b> <i>filename</i>] [<b>-passout</b> <i>arg</i>] [<b>-aes128</b>] [<b>-aes192</b>] [<b>-aes256</b>] [<b>-aria128</b>] [<b>-aria192</b>] [<b>-aria256</b>] [<b>-camellia128</b>] [<b>-camellia192</b>] [<b>-camellia256</b>] [<b>-des</b>] [<b>-des3</b>] [<b>-idea</b>] [<b>-F4</b>] [<b>-f4</b>] [<b>-3</b>] [<b>-primes</b> <i>num</i>] [<b>-verbose</b>] [<b>-traditional</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<b>numbits</b>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The <b>genrsa</b> command generates an RSA private key.</p>
+<p>This command has been deprecated. The <a href="../man1/openssl-genpkey.html">openssl-genpkey(1)</a> command should be used instead.</p>
+
+<p>This command generates an RSA private key.</p>
 
 <h1 id="OPTIONS">OPTIONS</h1>
 
@@ -43,16 +46,16 @@
 <p>Print out a usage message.</p>
 
 </dd>
-<dt id="out-filename"><b>-out filename</b></dt>
+<dt id="out-filename"><b>-out</b> <i>filename</i></dt>
 <dd>
 
 <p>Output the key to the specified file. If this argument is not specified then standard output is used.</p>
 
 </dd>
-<dt id="passout-arg"><b>-passout arg</b></dt>
+<dt id="passout-arg"><b>-passout</b> <i>arg</i></dt>
 <dd>
 
-<p>The output file password source. For more information about the format of <b>arg</b> see <a href="../man1/openssl.html">&quot;Pass Phrase Options&quot; in openssl(1)</a>.</p>
+<p>The output file password source. For more information about the format see <a href="../man1/openssl-passphrase-options.html">openssl-passphrase-options(1)</a>.</p>
 
 </dd>
 <dt id="aes128--aes192--aes256--aria128--aria192--aria256--camellia128--camellia192--camellia256--des--des3--idea"><b>-aes128</b>, <b>-aes192</b>, <b>-aes256</b>, <b>-aria128</b>, <b>-aria192</b>, <b>-aria256</b>, <b>-camellia128</b>, <b>-camellia192</b>, <b>-camellia256</b>, <b>-des</b>, <b>-des3</b>, <b>-idea</b></dt>
@@ -61,34 +64,54 @@
 <p>These options encrypt the private key with specified cipher before outputting it. If none of these options is specified no encryption is used. If encryption is used a pass phrase is prompted for if it is not supplied via the <b>-passout</b> argument.</p>
 
 </dd>
-<dt id="F4--3"><b>-F4|-3</b></dt>
+<dt id="F4--f4--3"><b>-F4</b>, <b>-f4</b>, <b>-3</b></dt>
 <dd>
 
-<p>The public exponent to use, either 65537 or 3. The default is 65537.</p>
+<p>The public exponent to use, either 65537 or 3. The default is 65537. The <b>-3</b> option has been deprecated.</p>
 
 </dd>
-<dt id="rand-file"><b>-rand file...</b></dt>
+<dt id="primes-num"><b>-primes</b> <i>num</i></dt>
 <dd>
 
-<p>A file or files containing random data used to seed the random number generator. Multiple files can be specified separated by an OS-dependent character. The separator is <b>;</b> for MS-Windows, <b>,</b> for OpenVMS, and <b>:</b> for all others.</p>
+<p>Specify the number of primes to use while generating the RSA key. The <i>num</i> parameter must be a positive integer that is greater than 1 and less than 16. If <i>num</i> is greater than 2, then the generated key is called a &#39;multi-prime&#39; RSA key, which is defined in RFC 8017.</p>
 
 </dd>
-<dt id="writerand-file">[<b>-writerand file</b>]</dt>
+<dt id="verbose"><b>-verbose</b></dt>
 <dd>
 
-<p>Writes random data to the specified <i>file</i> upon exit. This can be used with a subsequent <b>-rand</b> flag.</p>
+<p>Print extra details about the operations being performed.</p>
 
 </dd>
-<dt id="engine-id"><b>-engine id</b></dt>
+<dt id="traditional"><b>-traditional</b></dt>
 <dd>
 
-<p>Specifying an engine (by its unique <b>id</b> string) will cause <b>genrsa</b> to attempt to obtain a functional reference to the specified engine, thus initialising it if needed. The engine will then be set as the default for all available algorithms.</p>
+<p>Write the key using the traditional PKCS#1 format instead of the PKCS#8 format.</p>
 
 </dd>
-<dt id="primes-num"><b>-primes num</b></dt>
+<dt id="rand-files--writerand-file"><b>-rand</b> <i>files</i>, <b>-writerand</b> <i>file</i></dt>
 <dd>
 
-<p>Specify the number of primes to use while generating the RSA key. The <b>num</b> parameter must be a positive integer that is greater than 1 and less than 16. If <b>num</b> is greater than 2, then the generated key is called a &#39;multi-prime&#39; RSA key, which is defined in RFC 8017.</p>
+<p>See <a href="../man1/openssl.html">&quot;Random State Options&quot; in openssl(1)</a> for details.</p>
+
+</dd>
+<dt id="engine-id"><b>-engine</b> <i>id</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Engine Options&quot; in openssl(1)</a>. This option is deprecated.</p>
+
+</dd>
+<dt id="provider-name"><b>-provider</b> <i>name</i></dt>
+<dd>
+
+</dd>
+<dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="propquery-propq"><b>-propquery</b> <i>propq</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Provider Options&quot; in openssl(1)</a>, <a href="../man7/provider.html">provider(7)</a>, and <a href="../man7/property.html">property(7)</a>.</p>
 
 </dd>
 <dt id="numbits"><b>numbits</b></dt>
@@ -107,13 +130,17 @@
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man1/gendsa.html">gendsa(1)</a></p>
+<p><a href="../man1/openssl.html">openssl(1)</a>, <a href="../man1/openssl-genpkey.html">openssl-genpkey(1)</a>, <a href="../man1/openssl-gendsa.html">openssl-gendsa(1)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>This command was deprecated in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
 <p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
-<p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>
