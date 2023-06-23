@@ -1771,7 +1771,7 @@ namespace __gnu_cxx
 
 /* Define if C11 functions in <uchar.h> should be imported into namespace std
    in <cuchar>. */
-#define _GLIBCXX_USE_C11_UCHAR_CXX11 1
+/* #undef _GLIBCXX_USE_C11_UCHAR_CXX11 */
 
 /* Define if C99 functions or macros from <wchar.h>, <math.h>, <complex.h>,
    <stdio.h>, and <stdlib.h> can be used or exposed. */
