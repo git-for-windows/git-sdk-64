@@ -28,10 +28,10 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.10
-srcdir=		../Python-3.10.9
-VPATH=		../Python-3.10.9
-abs_srcdir=	/c/M/mingw-w64-python/src/build-i686/../Python-3.10.9
-abs_builddir=	/c/M/mingw-w64-python/src/build-i686
+srcdir=		../Python-3.10.12
+VPATH=		../Python-3.10.12
+abs_srcdir=	/c/M/B/src/build-MINGW32/../Python-3.10.12
+abs_builddir=	/c/M/B/src/build-MINGW32
 
 
 CC=		gcc
@@ -120,7 +120,7 @@ PY_CORE_CFLAGS=	$(PY_STDMODULE_CFLAGS) -DPy_BUILD_CORE
 PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 # Strict or non-strict aliasing flags used to compile dtoa.c, see above
 CFLAGS_ALIASING=
-RCFLAGS= -DFIELD3=9150 -O COFF --target=pe-i386
+RCFLAGS= -DFIELD3=12150 -O COFF --target=pe-i386
 
 
 # Machine-dependent subdirectories
@@ -140,10 +140,10 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.10.9
-VPATH_b2h=		C:/M/mingw-w64-python/src/Python-3.10.9
-abs_srcdir_b2h=		C:/M/mingw-w64-python/src/Python-3.10.9
-abs_builddir_b2h=	C:/M/mingw-w64-python/src/build-i686
+srcdir_b2h=		C:/M/B/src/Python-3.10.12
+VPATH_b2h=		C:/M/B/src/Python-3.10.12
+abs_srcdir_b2h=		C:/M/B/src/Python-3.10.12
+abs_builddir_b2h=	C:/M/B/src/build-MINGW32
 prefix_b2h=		D:/a/msys64/mingw32
 
 # Expanded directories

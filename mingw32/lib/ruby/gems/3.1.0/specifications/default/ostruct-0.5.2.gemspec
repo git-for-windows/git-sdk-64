@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Marc-Andre Lafortune".freeze]
   s.bindir = "exe".freeze
-  s.date = "2022-12-02"
+  s.date = "2023-01-14"
   s.description = "Class to build custom data structures, similar to a Hash.".freeze
   s.email = ["ruby-core@marc-andre.ca".freeze]
   s.files = ["lib/ostruct.rb".freeze]

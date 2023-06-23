@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.metadata = { "msys2_mingw_dependencies" => "openssl" } if s.respond_to? :metadata=
   s.require_paths = ["lib".freeze]
   s.authors = ["Martin Bosslet".freeze, "SHIBATA Hiroshi".freeze, "Zachary Scott".freeze, "Kazuki Yamaguchi".freeze]
-  s.date = "2022-12-02"
+  s.date = "2023-01-14"
   s.description = "It wraps the OpenSSL library.".freeze
   s.email = ["ruby-core@ruby-lang.org".freeze]
   s.extensions = ["ext/openssl/extconf.rb".freeze]

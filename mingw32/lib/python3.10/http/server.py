@@ -709,7 +709,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 return None
             for index in "index.html", "index.htm":
                 index = os.path.join(path, index)
-                if os.path.exists(index):
+                if os.path.isfile(index):
                     path = index
                     break
             else:
@@ -791,7 +791,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             displaypath = urllib.parse.unquote(self.path,
                                                errors='surrogatepass')
         except UnicodeDecodeError:
-            displaypath = urllib.parse.unquote(path)
+            displaypath = urllib.parse.unquote(self.path)
         displaypath = html.escape(displaypath, quote=False)
         enc = sys.getfilesystemencoding()
         title = 'Directory listing for %s' % displaypath

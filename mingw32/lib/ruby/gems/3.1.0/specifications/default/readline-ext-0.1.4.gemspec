@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yukihiro Matsumoto".freeze]
   s.bindir = "exe".freeze
-  s.date = "2022-12-02"
+  s.date = "2023-01-14"
   s.description = "Provides an interface for GNU Readline and Edit Line (libedit).".freeze
   s.email = ["matz@ruby-lang.org".freeze]
   s.extensions = ["ext/readline/extconf.rb".freeze]
