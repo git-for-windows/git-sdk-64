@@ -24,10 +24,44 @@ endmacro()
 
 ####################################################################################
 
-# only needed for static library, and doesn't work as-is
-#include(CMakeFindDependencyMacro)
-#find_dependency(ZLIB::ZLIB)
-# how to handle the optional dependencies?
+# We need to supply transitive dependencies if this config is for a static library
+set(IS_SHARED ON)
+if (NOT IS_SHARED)
+  include(CMakeFindDependencyMacro)
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/modules")
+
+  set(ENABLE_BZIP2 TRUE)
+  set(ENABLE_LZMA TRUE)
+  set(ENABLE_ZSTD TRUE)
+  set(ENABLE_GNUTLS TRUE)
+  set(ENABLE_MBEDTLS )
+  set(ENABLE_OPENSSL )
+
+  find_dependency(ZLIB 1.1.2)
+  if(ENABLE_BZIP2)
+    find_dependency(BZip2)
+  endif()
+
+  if(ENABLE_LZMA)
+    find_dependency(LibLZMA 5.2)
+  endif()
+
+  if(ENABLE_ZSTD)
+    find_dependency(zstd 1.3.6)
+  endif()
+
+  if(ENABLE_GNUTLS)
+    find_dependency(Nettle 3.0)
+    find_dependency(GnuTLS)
+  endif()
+  if(ENABLE_MBEDTLS)
+    find_dependency(MbedTLS 1.0)
+  endif()
+  if(ENABLE_OPENSSL)
+    find_dependency(OpenSSL)
+  endif()
+endif()
+
 # Provide all our library targets to users.
 include("${CMAKE_CURRENT_LIST_DIR}/libzip-targets.cmake")
 
