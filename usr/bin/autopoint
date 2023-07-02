@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# Copyright (C) 2002-2020 Free Software Foundation, Inc.
+# Copyright (C) 2002-2023 Free Software Foundation, Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
 
 progname=$0
 package=gettext-tools
-version=0.21
-archive_version=0.21
+version=0.22
+archive_version=0.22
 
 # Set variables
 # - gettext_datadir     directory where the data files are stored.
@@ -201,13 +201,18 @@ Report bugs in the bug tracker at <https://savannah.gnu.org/projects/gettext>
 or by email to <bug-gettext@gnu.org>."
 }
 
-# func_version
+# func_version include_config_details
 # outputs to stdout the --version message.
+# Inputs:
+# - include_config_details   true or false
 func_version ()
 {
   echo "$progname (GNU $package) $version"
-  echo "Uses a versions archive in dirxz format."
-  echo "Copyright (C) 2002-2020 Free Software Foundation, Inc.
+  if $1; then
+    echo "This binary is configured to use a versions archive in dirxz format."
+    echo
+  fi
+  echo "Copyright (C) 2002-2023 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law."
@@ -261,8 +266,12 @@ unset CLICOLOR_FORCE GREP_OPTIONS
       -V*) # Some people omit the space between -V and the version number.
         ver=`echo "X$1" | sed -e 's/^X-V//'`
         shift ;;
+      --version-without-config )
+        # Print version output without build dependent details.
+        func_version false
+        exit 0 ;;
       --version | --versio | --versi | --vers | --ver | --ve | --v )
-        func_version
+        func_version true
         exit 0 ;;
       -- ) # Stop option prcessing
         shift; break ;;
@@ -290,17 +299,17 @@ srcdir=`pwd`
 
 # Check integrity of package: A configure.in/ac must be present. Sets variable
 # - configure_in    name of configure.in/ac file.
-if test -f configure.in; then
-  configure_in=configure.in
+if test -f configure.ac; then
+  configure_in=configure.ac
 else
-  if test -f configure.ac; then
-    configure_in=configure.ac
+  if test -f configure.in; then
+    configure_in=configure.in
   else
     # KDE specific convention: configure.in.in
     if test -f configure.in.in; then
       configure_in=configure.in.in
     else
-      func_fatal_error "Missing configure.in or configure.ac, please cd to your package first."
+      func_fatal_error "Missing configure.ac or configure.in, please cd to your package first."
     fi
   fi
 fi
@@ -381,7 +390,8 @@ case "$ver" in
   0.18 | 0.18.1 | 0.18.2 | 0.18.3 | \
   0.19 | 0.19.1 | 0.19.2 | 0.19.3 | 0.19.4 | 0.19.5 | 0.19.6 | 0.19.7 | 0.19.8 | \
   0.20 | 0.20.2 | \
-  0.21 )
+  0.21 | 0.21.1 | \
+  0.22 )
     ;;
   *)
     func_fatal_error "The AM_GNU_GETTEXT_VERSION declaration in your $configure_in
