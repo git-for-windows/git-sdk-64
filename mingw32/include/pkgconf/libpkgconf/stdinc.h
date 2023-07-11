@@ -55,6 +55,7 @@
 # include <dirent.h>
 # include <unistd.h>
 # include <limits.h>
+# include <strings.h>
 # ifdef PATH_MAX
 #  define PKGCONF_ITEM_SIZE (PATH_MAX + 1024)
 # else
