@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018-2020,2021 Thomas E. Dickey                                *
+ * Copyright 2018-2021,2023 Thomas E. Dickey                                *
  * Copyright 1998-2013,2017 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
@@ -33,7 +33,7 @@
 /*    and: Thomas E. Dickey                        1995-on                  */
 /****************************************************************************/
 
-/* $Id: MKterm.h.awk.in,v 1.82 2021/09/24 17:02:46 tom Exp $ */
+/* $Id: MKterm.h.awk.in,v 1.85 2023/04/23 19:15:36 tom Exp $ */
 
 /*
 **	term.h -- Definition of struct term
@@ -61,7 +61,7 @@ typedef struct screen  SCREEN;
 
 #if 1
 #undef  NCURSES_SP_FUNCS
-#define NCURSES_SP_FUNCS 20230211
+#define NCURSES_SP_FUNCS 20230708
 #undef  NCURSES_SP_NAME
 #define NCURSES_SP_NAME(name) name##_sp
 
@@ -803,15 +803,10 @@ extern NCURSES_EXPORT(int) _nc_read_termtype (TERMTYPE2 *, char *, int);
 extern NCURSES_EXPORT(char *) _nc_first_name (const char *const);
 extern NCURSES_EXPORT(int) _nc_name_match (const char *const, const char *const, const char *const);
 extern NCURSES_EXPORT(char *) _nc_tiparm(int, const char *, ...);
-
-#endif /* NCURSES_INTERNALS */
-
-
-/*
- * These entrypoints are used by tack 1.07.
- */
 extern NCURSES_EXPORT(const TERMTYPE *) _nc_fallback (const char *);
 extern NCURSES_EXPORT(int) _nc_read_entry (const char * const, char * const, TERMTYPE *const);
+
+#endif /* NCURSES_INTERNALS */
 
 /*
  * Normal entry points
@@ -838,6 +833,8 @@ extern NCURSES_EXPORT(char *) tparm (const char *, long,long,long,long,long,long
 #endif
 
 extern NCURSES_EXPORT(char *) tiparm (const char *, ...);		/* special */
+extern NCURSES_EXPORT(char *) tiparm_s (int, int, const char *, ...);	/* special */
+extern NCURSES_EXPORT(int) tiscan_s (int *, int *, const char *);	/* special */
 
 #endif /* __NCURSES_H */
 
