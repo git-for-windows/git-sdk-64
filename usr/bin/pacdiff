@@ -21,7 +21,7 @@
 shopt -s extglob
 
 declare -r myname='pacdiff'
-declare -r myver='1.9.0'
+declare -r myver='1.9.1'
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
@@ -333,7 +333,7 @@ while IFS= read -u 3 -r -d '' pacfile; do
 				r|R) $SUDO rm -v "$pacfile"; break ;;
 				o|O)
 					if (( BACKUP )); then
-						$SUDO mv -v "$file" "$file.bak"
+						$SUDO cp -v "$file" "$file.bak"
 					fi
 					$SUDO mv -v "$pacfile" "$file"
 					break ;;

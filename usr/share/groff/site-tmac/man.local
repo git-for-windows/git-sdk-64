@@ -1,7 +1,34 @@
-.\" -*- nroff -*-
+.\" This file is loaded by an.tmac.
 .\"
-.\" This file is loaded after an-old.tmac.
-.\" Put any local modifications to an-old.tmac here.
+.\" Put local modifications to groff_man(7)'s behavior here.
+.\"
+.\" Change "0" to "1" to enable OSC 8 links on SGR-capable grotty(1)
+.\" output devices.
+.if !'\*[.T]'html' \
+.  if !r U \
+.    nr U 0
+.\"
+.\" "CW" is not a portable font name, but some man pages use it anyway.
+.\" Uncomment this to suppress warnings produced by such pages.  This
+.\" test remaps the font to roman ("R") on nroff (terminal) devices. You
+.\" might prefer to remap it to bold ("B") instead.
+.\" .if n .ftr CW R
+.\"
+.\" A de facto standard URL format for man pages is recognized
+.\" everywhere except Apple, where different macOS applications expect
+.\" different formats.
+.\"   1: man:groff(1)          -- package default
+.\"   2: x-man-page://1/groff  -- macOS/Mac OS X since 10.3 (Panther)
+.\"   3: man:groff.1           -- Bwana (Mac OS X)
+.\"   4: x-man-doc://1/groff   -- ManOpen (Mac OS X pre-2005)
+.\" Set this register to configure which the `MR` macro uses.
+.\" .nr an*MR-URL-format 1
+.\"
+.\" Local Variables:
+.\" mode: nroff
+.\" fill-column: 72
+.\" End:
+.\" vim: set filetype=groff textwidth=72:
 .
 .if n \{\
 .  \" Character translations for non-keyboard

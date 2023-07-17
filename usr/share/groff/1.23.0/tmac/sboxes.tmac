@@ -1,0 +1,147 @@
+.ig
+
+sboxes.tmac
+
+Copyright (C) 2021 Free Software Foundation, Inc.
+     Written by Deri James (deri@chuzzlewit.myzen.co.uk)
+
+This file is part of groff.
+
+groff is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your
+option) any later version.
+
+groff is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+..
+.if !\n(.g \{\
+.  tm sboxes.tmac: macros require groff extensions; not loading
+.  nx
+.\}
+.
+.if \n(.C \{\
+.  tm sboxes.tmac: macros do not work in compatibility mode; not loading
+.  nx
+.\}
+.
+.\" Define a string for use in diagnostic messages.
+.ds bx*name sboxes.tmac\"
+.
+.if !r GS \
+.  ab \*[bx*name]: ms macros must be loaded first; aborting
+.
+.if (\n[.x]\n[.y] < 123) \{\
+.  ds bx*msg \*[bx*name]: groff 1.23 or later is required,\"
+.  as bx*msg " but found groff \n[.x].\n[.y]; not loading\"
+.  tm \*[bx*msg]
+.  nx
+.\}
+.
+.\" See if already loaded.
+.if r GSBOX .nx
+.
+.\" GSBOX is defined if the package is loaded, and true if it will work.
+.nr GSBOX 0
+.if '\*[.T]'pdf' \
+.  nr GSBOX 1
+.
+.nr bx*stack 0
+.
+.de bx*error
+.  tm \*[bx*name]:\\n[.F]:\\n[.c]: error: \\$*
+..
+.
+.\" Define dummy macro if we're not formatting for the pdf device.
+.if !\n[GSBOX] \{\
+.  de pdfbackground
+.  .
+.\}
+.
+.\" Link into ms macros to trap footnote growth
+.am fn@print-sep
+.  nr bx*pb \\n[nl]u-2p
+.  nop \!x X pdf: background footnote \\n[bx*pb]z
+.  rr bx*pb
+..
+.\" Has PD been actioned?
+.am par*start
+.  nr bx*PD \\n[PD]
+..
+.
+.de BOXSTART
+.  fl
+.  nr bx*stack \\n[bx*stack]+1u
+.  nr bx*shad 0
+.  nr bx*outl 0
+.  nr bx*ind 1P
+.  ds bx*wt 0
+.  ds bx*type "\"
+.  while \\n[.$] \{\
+.    ie 'SHADED'\\$1' \{\
+.       nop \\M[\\$2]\c
+.       nr bx*shad 1
+.       as bx*type "fill\"
+.       shift 2
+.    \}
+.    el \{\
+.     ie 'OUTLINED'\\$1' \{\
+.       nop \\m[\\$2]\c
+.       nr bx*outl 1
+.       as bx*type "box\"
+.       shift 2
+.     \}
+.     el \{\
+.       ie 'WEIGHT'\\$1' \{\
+.         ds bx*wt \\$2
+.         shift 2
+.       \}
+.       el \{\
+.         ie 'INDENT'\\$1' \{\
+.           nr bx*ind \\$2
+.           shift 2
+.         \}
+.         el \{\
+.           bx*error ignoring unrecognized BOXSTART parameter '\\$1'
+.           shift
+.         \}
+.       \}
+.     \}
+.    \}
+.  \}
+.
+.  if '\\*[bx*type]'' .ds bx*type "fill"
+.  nr bx*l \\n[\\n[.ev]:li]s+\\n[.o]s-\\n[bx*ind]u
+.  nr bx*r \\n[bx*l]u+\\n[.l]-\\n[\\n[.ev]:li]+(\\n[bx*ind]u*2u)
+.  nr bx*gap \\n[.v]-\\n[.ps]+\\*[bx*wt]
+.  nr bx*bot \\n[.p]u-\\n[FM]u+\\n[bx*ind]u+\\n[.ps]u
+.  nr bx*top \\n[HM]-\\n[bx*ind]u+\\n[bx*gap]u
+.  ne \\n[bx*ind]u+2v+\\*[bx*wt]
+.  sp -(2v-(\\n[bx*PD]u*2u))u
+.  pdfbackground \\*[bx*type] \\n[bx*l]z \\n[bx*top]z \
+                              \\n[bx*r]z \\n[bx*bot]z \
+                              \\*[bx*wt]
+.  sp (\\n[bx*ind]u-1v)u
+.  if (\\n[bx*shad]=1) .nop \\M[]\c
+.  if (\\n[bx*outl]=1) .nop \\m[]\c
+.  ds bx*ind\\n[bx*stack] \\n[bx*ind]
+.  rr bx*shad bx*outl bx*ind bx*bot bx*top bx*l bx*r
+.  rm wt type
+.  sp -(\\n[bx*gap]u)
+.  nr bx*PD 0
+..
+.de BOXSTOP
+.  sp \\*[bx*ind\\n[bx*stack]]u-\\n[.psr]u
+.  pdfbackground off
+.  nr bx*stack \\n[bx*stack]-1u
+..
+.\" Local Variables:
+.\" mode: nroff
+.\" fill-column: 72
+.\" End:
+.\" vim: set expandtab filetype=groff textwidth=72:

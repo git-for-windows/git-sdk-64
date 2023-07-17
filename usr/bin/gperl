@@ -2,10 +2,7 @@
 
 # gperl - add Perl part to groff files, this is the preprocessor for that
 
-# Source file position: <groff-source>/contrib/gperl/gperl.pl
-# Installed position: <prefix>/bin/gperl
-
-# Copyright (C) 2014-2018 Free Software Foundation, Inc.
+# Copyright (C) 2014-2020 Free Software Foundation, Inc.
 
 # Written by Bernd Warken <groff-bernd.warken-72@web.de>.
 
@@ -68,7 +65,7 @@ our $Groff_Version;
 my $before_make;		# script before run of 'make'
 {
   my $at = '@';
-  $before_make = 1 if '1.22.4' eq "${at}VERSION${at}";
+  $before_make = 1 if '1.23.0' eq "${at}VERSION${at}";
 }
 
 my %at_at;
@@ -99,7 +96,7 @@ foreach (@ARGV) {
       q(parts in 'roff' files.);
     exit;
   } elsif ( /^(-v|--v|--ve|--ver|--vers|--versi|--versio|--version)$/ ) {
-    print q('gperl' version ) . $version;
+    print "gperl (groff 1.23.0) version $version";
     exit;
   }
 }
@@ -132,121 +129,129 @@ my $out_file;
 
 my $perl_mode = 0;
 
-foreach (<>) {
-  chomp;
-  s/\s+$//;
-  my $line = $_;
-  my $is_dot_Perl = $line =~ /^[.']\s*Perl(|\s+.*)$/;
-
-  unless ( $is_dot_Perl ) {	# not a '.Perl' line
-    if ( $perl_mode ) {		# is running in Perl mode
-      print OUT $line;
-    } else {			# normal line, not Perl-related
-      print $line;
-    }
+unshift @ARGV, '-' unless @ARGV;
+foreach my $filename (@ARGV) {
+  my $input;
+  if ($filename eq '-') {
+    $input = \*STDIN;
+  } elsif (not open $input, '<', $filename) {
+    warn $!;
     next;
   }
+  while (<$input>) {
+    chomp;
+    s/\s+$//;
+    my $line = $_;
+    my $is_dot_Perl = $line =~ /^[.']\s*Perl(|\s+.*)$/;
 
-
-  ##########
-  # now the line is a '.Perl' line
-
-  my $args = $line;
-  $args =~ s/\s+$//;	# remove final spaces
-  $args =~ s/^[.']\s*Perl\s*//;	# omit .Perl part, leave the arguments
-
-  my @args = split /\s+/, $args;
-
-  ##########
-  # start Perl mode
-  if ( @args == 0 || @args == 1 && $args[0] eq 'start' ) {
-    # For '.Perl' no args or first arg 'start' means opening 'Perl' mode.
-    # Everything else means an ending command.
-    if ( $perl_mode ) {
-      # '.Perl' was started twice, ignore
-      print STDERR q('.Perl' starter was run several times);
-      next;
-    } else {	# new Perl start
-      $perl_mode = 1;
-      open OUT, '>', $out_file;
+    unless ( $is_dot_Perl ) {	# not a '.Perl' line
+      if ( $perl_mode ) {		# is running in Perl mode
+        print OUT $line;
+      } else {			# normal line, not Perl-related
+        print $line;
+      }
       next;
     }
-  }
 
-  ##########
-  # now the line must be a Perl ending line (stop)
 
-  unless ( $perl_mode ) {
-    print STDERR 'gperl: there was a Perl ending without being in ' .
-      'Perl mode:';
-    print STDERR '    ' . $line;
-    next;
-  }
+    ##########
+    # now the line is a '.Perl' line
 
-  $perl_mode = 0;	# 'Perl' stop calling is correct
-  close OUT;		# close the storing of 'Perl' commands
+    my $args = $line;
+    $args =~ s/\s+$//;	# remove final spaces
+    $args =~ s/^[.']\s*Perl\s*//;	# omit .Perl part, leave the arguments
 
-  ##########
-  # run this 'Perl' part, later on about storage of the result
-  # array stores prints with \n
-  my @print_res = `perl $out_file`;
+    my @args = split /\s+/, $args;
 
-  # remove 'stop' arg if exists
-  shift @args if ( $args[0] eq 'stop' );
+    ##########
+    # start Perl mode
+    if ( @args == 0 || @args == 1 && $args[0] eq 'start' ) {
+      # For '.Perl' no args or first arg 'start' means opening 'Perl' mode.
+      # Everything else means an ending command.
+      if ( $perl_mode ) {
+        # '.Perl' was started twice, ignore
+        print STDERR q('.Perl' starter was run several times);
+        next;
+      } else {	# new Perl start
+        $perl_mode = 1;
+        open OUT, '>', $out_file;
+        next;
+      }
+    }
 
-  if ( @args == 0 ) {
-    # no args for saving, so @print_res doesn't matter
-    next;
-  }
+    ##########
+    # now the line must be a Perl ending line (stop)
 
-  my @var_names = ();
-  my @mode_names = ();
-
-  my $mode = '.ds';
-  for ( @args ) {
-    if ( /^\.?ds$/ ) {
-      $mode = '.ds';
+    unless ( $perl_mode ) {
+      print STDERR 'gperl: there was a Perl ending without being in ' .
+        'Perl mode:';
+      print STDERR '    ' . $line;
       next;
     }
-    if ( /^\.?nr$/ ) {
-      $mode = '.nr';
+
+    $perl_mode = 0;	# 'Perl' stop calling is correct
+    close OUT;		# close the storing of 'Perl' commands
+
+    ##########
+    # run this 'Perl' part, later on about storage of the result
+    # array stores prints with \n
+    my @print_res = `perl $out_file`;
+
+    # remove 'stop' arg if exists
+    shift @args if ( $args[0] eq 'stop' );
+
+    if ( @args == 0 ) {
+      # no args for saving, so @print_res doesn't matter
       next;
     }
-    push @mode_names, $mode;
-    push @var_names, $_;
-  }
 
-  my $n_res = @print_res;
-  my $n_vars = @var_names;
+    my @var_names = ();
+    my @mode_names = ();
 
-  if ( $n_vars < $n_res ) {
-    print STDERR 'gperl: not enough variables for Perl part: ' .
-      $n_vars . ' variables for ' . $n_res . ' output lines.';
-  } elsif ( $n_vars > $n_res ) {
-    print STDERR 'gperl: too many variablenames for Perl part: ' .
-      $n_vars . ' variables for ' . $n_res . ' output lines.';
-  }
-  if ( $n_vars < $n_res ) {
-    print STDERR 'gperl: not enough variables for Perl part: ' .
-      $n_vars . ' variables for ' . $n_res . ' output lines.';
-  }
+    my $mode = '.ds';
+    for ( @args ) {
+      if ( /^\.?ds$/ ) {
+        $mode = '.ds';
+        next;
+      }
+      if ( /^\.?nr$/ ) {
+        $mode = '.nr';
+        next;
+      }
+      push @mode_names, $mode;
+      push @var_names, $_;
+    }
 
-  my $n_min = $n_res;
-  $n_min = $n_vars if ( $n_vars < $n_res );
-  exit unless ( $n_min );
-  $n_min -= 1; # for starting with 0
+    my $n_res = @print_res;
+    my $n_vars = @var_names;
 
-  for my $i ( 0..$n_min ) {
-    my $value = $print_res[$i];
-    chomp $value;
-    print $mode_names[$i] . ' ' . $var_names[$i] . ' ' . $value;
+    if ( $n_vars < $n_res ) {
+      print STDERR 'gperl: not enough variables for Perl part: ' .
+        $n_vars . ' variables for ' . $n_res . ' output lines.';
+    } elsif ( $n_vars > $n_res ) {
+      print STDERR 'gperl: too many variablenames for Perl part: ' .
+        $n_vars . ' variables for ' . $n_res . ' output lines.';
+    }
+    if ( $n_vars < $n_res ) {
+      print STDERR 'gperl: not enough variables for Perl part: ' .
+        $n_vars . ' variables for ' . $n_res . ' output lines.';
+    }
+
+    my $n_min = $n_res;
+    $n_min = $n_vars if ( $n_vars < $n_res );
+    exit unless ( $n_min );
+    $n_min -= 1; # for starting with 0
+
+    for my $i ( 0..$n_min ) {
+      my $value = $print_res[$i];
+      chomp $value;
+      print $mode_names[$i] . ' ' . $var_names[$i] . ' ' . $value;
+    }
   }
 }
 
 
 1;
-########################################################################
-### Emacs settings
 # Local Variables:
 # mode: CPerl
 # End:

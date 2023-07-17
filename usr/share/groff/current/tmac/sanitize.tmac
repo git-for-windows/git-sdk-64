@@ -1,0 +1,170 @@
+.ig
+
+sanitize.tmac
+
+Copyright (C) 2021 Free Software Foundation, Inc.
+     Written by Keith Marshall (keith.d.marshall@ntlworld.com)
+
+This file is part of groff.
+
+groff is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free
+Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+groff is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+..
+.eo
+.de sanitize
+.\" Usage: .sanitize name text ...
+.\"
+.\" Remove designated formatting escape sequences from "text ..."; return
+.\" the sanitized text in a string register, identified by "name".
+.\"
+.\" Begin by initializing the named result as an empty string, bind it to
+.\" an internal reference name, and discard the "name" argument, to leave
+.\" only the text which is to be sanitized, as residual arguments.
+.\"
+.   ds \$1
+.   als sanitize:result \$1
+.   shift
+.
+.\" Initialize a working string register, which we will cyclically reduce
+.\" until it becomes empty, after starting with all of the text passed as
+.\" the residual arguments, and establish its initial length.
+.\"
+.   ds sanitize:residual "\$*\"
+.   length sanitize:residual.length "\$*\"
+.
+.\" Begin the cyclic reduction loop...
+.\"
+.   while \n[sanitize:residual.length] \{\
+.   \"
+.   \" ...assuming, at the start of each cycle, that the next character
+.   \" will not be skipped, and that it will be moved from the residual,
+.   \" to the result, as the character-by-character scan proceeds.
+.   \"
+.      nr sanitize:skip.count 0
+.      sanitize:scan.execute
+.
+.   \" For each character scanned, we need to check if it matches the
+.   \" normal escape character; the check is most readily performed, if
+.   \" an alternative escape character is introduced, and when a match
+.   \" is found, we prepare to skip an escape sequence.
+.   \"
+.      ec !
+.      if '!*[sanitize:scan.char]'\' .nr sanitize:skip.count 1
+.      ec
+.      ie \n[sanitize:skip.count] \{\
+.      \"
+.      \" When a possible escape sequence has been detected, we back it
+.      \" up, (in case it isn't recognized, and we need to reinstate its
+.      \" content into the result string), then scan ahead to check for
+.      \" an identifiable escape sequence...
+.      \"
+.         rn sanitize:scan.char sanitize:hold
+.         sanitize:scan.execute
+.         ie d sanitize:esc-\*[sanitize:scan.char] \
+.         \"
+.         \" ...which we delegate to its appropriate handler, to skip...
+.         \"
+.            sanitize:esc-\*[sanitize:scan.char]
+.
+.      \" ...but, in the case of an unrecognized escape sequence, we copy
+.      \" its backed-up content, followed by the character retrieved from
+.      \" the current scan cycle, to the result string.
+.      \"
+.         el .as sanitize:result "\*[sanitize:hold]\*[sanitize:scan.char]\"
+.      \}
+.
+.   \" When the current scan cycle has retrieved a character, which isn't
+.   \" part of any possible escape sequence, we simply copy that character
+.   \" to the result string.
+.   \"
+.      el .as sanitize:result "\*[sanitize:scan.char]\"
+.   \}
+.
+.\" Clean up the register space, by deleting all of the string registers,
+.\" and numeric registers, which are designated as temporary, for private
+.\" use within this macro only.
+.\"
+.   rm sanitize:hold sanitize:scan.char sanitize:residual sanitize:result
+.   rr sanitize:residual.length sanitize:skip.count
+..
+.de sanitize:scan.execute
+.\" Usage (internal): .sanitize:scan.execute
+.\"
+.\" Perform a single-character reduction of sanitize:residual, by copying
+.\" its initial character to sanitize:scan.char, and then deleting it from
+.\" sanitize:residual itself.  (Note that we use arithmetic decrementation
+.\" of sanitize:residual.length, rather than repeating the length request
+.\" on sanitize:residual, because reduction WILL fail when there is only
+.\" one character remaining).
+.\"
+.   nr sanitize:residual.length -1
+.   ds sanitize:scan.char "\*[sanitize:residual]\"
+.   substring sanitize:scan.char 0 0
+.   substring sanitize:residual 1
+..
+.de sanitize:skip-(
+.\" Usage (internal): .sanitize:skip-(
+.\"
+.\" For any identified escape sequence, with a two-character property name,
+.\" simply skip over the next two characters in the residual string.
+.\"
+.   nr sanitize:residual.length -2
+.   substring sanitize:residual 2
+..
+.de sanitize:skip-[
+.\" Usage (internal): .sanitize:skip-[
+.\"
+.\" For any identified escape sequence, with an arbitrary-length property
+.\" name, skip following characters in the residual string, until we find
+.\" a terminal "]" character, or we exhaust the residual.
+.\"
+.   while \n[sanitize:skip.count] \{\
+.      sanitize:scan.execute
+.      ie \n[sanitize:residual.length] \{\
+.      \" We haven't yet exhausted the residual; if we find a nested "["
+.      \" character, increment the nesting level, otherwise decrement it
+.      \" for each "]"; it will become zero at the terminal "]".
+.      \"
+.         ie '\*[sanitize:scan.char]'[' .nr sanitize:skip.count +1
+.         el .if '\*[sanitize:scan.char]']' .nr sanitize:skip.count -1
+.      \}
+.      \" Stop unconditionally, if we do exhaust the residual.
+.      \"
+.      el .nr sanitize:skip.count 0
+.   \}
+..
+.de sanitize:esc-generic
+.\" Usage: .sanitize:esc-X
+.\"
+.\" (X represents any legitimate single-character escape sequence id).
+.\"
+.\" Handler for skipping "\X" sequences, in text which is to be sanitized;
+.\" this will automatically detect sequences conforming to any of the forms
+.\" "\Xc", "\X(cc", or "\X[...]", and will handle each appropriately.  The
+.\" implementation is generic, and may be aliased to handle any specific
+.\" escape sequences, which exhibit similar semantics.
+.\"
+.   sanitize:scan.execute
+.   if d sanitize:skip-\*[sanitize:scan.char] \
+.      sanitize:skip-\*[sanitize:scan.char]
+..
+.ec
+.\" Map the generic handler to specific escape sequences, as required.
+.\"
+.als sanitize:esc-F sanitize:esc-generic
+.\" Local Variables:
+.\" mode: nroff
+.\" End:
+.\" vim: filetype=groff:
+.\" sanitize.tmac: end of file

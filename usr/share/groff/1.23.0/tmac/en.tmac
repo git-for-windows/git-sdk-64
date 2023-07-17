@@ -1,0 +1,77 @@
+.\" English localization for groff
+.\"
+.\" Copyright (C) 2021-2022 Free Software Foundation, Inc.
+.\"   Written by G. Branden Robinson <g.branden.robinson.@gmail.com>
+.\"
+.\" This file is part of groff.
+.\"
+.\" groff is free software; you can redistribute it and/or modify it
+.\" under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation, either version 3 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" groff is distributed in the hope that it will be useful, but WITHOUT
+.\" ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+.\" or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+.\" License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program.  If not, see
+.\" <http://www.gnu.org/licenses/>.
+.\"
+.\" Please send comments to groff@gnu.org.
+.
+.do nr *groff_en_tmac_C \n[.cp]
+.cp 0
+.
+.
+.\" If changing from an existing locale, we need to preserve the state
+.\" of the "suppress hyphenation before a page location trap" bit.
+.nr locale*use-trap-hyphenation-mode 0
+.if d locale \
+.  if \n[.hy]=\n[\*[locale]*hyphenation-mode-trap] \
+.    nr locale*use-trap-hyphenation-mode 1
+.
+.
+.ds locale english\"
+.
+.ss 12
+.
+.\" Set up hyphenation.
+.
+.\" English hyphenation (\lefthyphenmin=2, \righthyphenmin=3)
+.nr \*[locale]*hyphenation-mode-base 4
+.nr \*[locale]*hyphenation-mode-trap 6
+.
+.ie \n[locale*use-trap-hyphenation-mode] \
+.  hy \n[\*[locale]*hyphenation-mode-trap]
+.el \
+.  hy \n[\*[locale]*hyphenation-mode-base]
+.
+.rr locale*use-trap-hyphenation-mode
+.
+.hla en
+.hpf hyphen.en
+.hpfa hyphenex.en
+.
+.
+.\" man package
+.if d an \
+.	an*reset-hyphenation-mode
+.
+.
+.\" me package
+.if d @R \{\
+.	ds _td_format \\*(mo \\n(dy, \\n(y4\"
+.	ld
+.\}
+.
+.
+.cp \n[*groff_en_tmac_C]
+.do rr *groff_en_tmac_C
+.
+.\" Local Variables:
+.\" mode: nroff
+.\" fill-column: 72
+.\" End:
+.\" vim: set filetype=groff textwidth=72:
