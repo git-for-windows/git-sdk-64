@@ -56,7 +56,11 @@ extern "C" {
 #define _wP_tmpdir L"\\"
 #endif
 
+#ifdef _UCRT
+#define L_tmpnam 260
+#else
 #define L_tmpnam (sizeof(_P_tmpdir) + 12)
+#endif
 
 #ifdef _POSIX_
 #define L_ctermid 9
@@ -74,7 +78,11 @@ extern "C" {
 #define FILENAME_MAX 260
 #define FOPEN_MAX 20
 #define _SYS_OPEN 20
+#ifdef _UCRT
+#define TMP_MAX 2147483647
+#else
 #define TMP_MAX 32767
+#endif
 
 #ifndef NULL
 #ifdef __cplusplus
