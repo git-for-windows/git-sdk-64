@@ -43,11 +43,16 @@
  */
 #ifdef CRYPTOKI_GNU
 typedef ck_rv_t CK_RV;
+typedef ck_object_handle_t CK_OBJECT_HANDLE;
+typedef unsigned long int CK_ULONG;
 typedef struct ck_function_list* CK_FUNCTION_LIST_PTR;
 typedef struct ck_function_list CK_FUNCTION_LIST;
 #endif
 
 #include "p11-kit/deprecated.h"
+
+/* For size_t.  */
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {

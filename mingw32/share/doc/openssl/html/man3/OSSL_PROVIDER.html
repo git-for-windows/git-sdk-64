@@ -85,7 +85,7 @@ int OSSL_PROVIDER_self_test(const OSSL_PROVIDER *prov);</code></pre>
 
 <p>OSSL_PROVIDER_load() loads and initializes a provider. This may simply initialize a provider that was previously added with OSSL_PROVIDER_add_builtin() and run its given initialization function, or load a provider module with the given name and run its provider entry point, <code>OSSL_provider_init</code>. The <i>name</i> can be a path to a provider module, in that case the provider name as returned by OSSL_PROVIDER_get0_name() will be the path. Interpretation of relative paths is platform dependent and they are relative to the configured &quot;MODULESDIR&quot; directory or the path set in the environment variable OPENSSL_MODULES if set.</p>
 
-<p>OSSL_PROVIDER_try_load() functions like OSSL_PROVIDER_load(), except that it does not disable the fallback providers if the provider cannot be loaded and initialized or if <i>retain_fallbacks</i> is zero. If the provider loads successfully and <i>retain_fallbacks</i> is nonzero, the fallback providers are disabled.</p>
+<p>OSSL_PROVIDER_try_load() functions like OSSL_PROVIDER_load(), except that it does not disable the fallback providers if the provider cannot be loaded and initialized or if <i>retain_fallbacks</i> is nonzero. If the provider loads successfully and <i>retain_fallbacks</i> is zero, the fallback providers are disabled.</p>
 
 <p>OSSL_PROVIDER_unload() unloads the given provider. For a provider added with OSSL_PROVIDER_add_builtin(), this simply runs its teardown function.</p>
 
@@ -162,7 +162,7 @@ else
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

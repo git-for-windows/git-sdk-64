@@ -181,6 +181,71 @@ typedef CK_ULONG                        CK_TRUST;
 
 #endif /* CRYPTOKI_RU_TEAM_TC26_VENDOR_DEFINED */
 
+/* Define this if you want the IBM specific symbols */
+#define CRYPTOKI_IBM_VENDOR_DEFINED 1
+#ifdef CRYPTOKI_IBM_VENDOR_DEFINED
+
+#define CKK_IBM_PQC_DILITHIUM    CKK_VENDOR_DEFINED + 0x10023
+
+#define CKA_IBM_OPAQUE                         (CKA_VENDOR_DEFINED + 1)
+#define CKA_IBM_RESTRICTABLE                   (CKA_VENDOR_DEFINED + 0x10001)
+#define CKA_IBM_NEVER_MODIFIABLE               (CKA_VENDOR_DEFINED + 0x10002)
+#define CKA_IBM_RETAINKEY                      (CKA_VENDOR_DEFINED + 0x10003)
+#define CKA_IBM_ATTRBOUND                      (CKA_VENDOR_DEFINED + 0x10004)
+#define CKA_IBM_KEYTYPE                        (CKA_VENDOR_DEFINED + 0x10005)
+#define CKA_IBM_CV                             (CKA_VENDOR_DEFINED + 0x10006)
+#define CKA_IBM_MACKEY                         (CKA_VENDOR_DEFINED + 0x10007)
+#define CKA_IBM_USE_AS_DATA                    (CKA_VENDOR_DEFINED + 0x10008)
+#define CKA_IBM_STRUCT_PARAMS                  (CKA_VENDOR_DEFINED + 0x10009)
+#define CKA_IBM_STD_COMPLIANCE1                (CKA_VENDOR_DEFINED + 0x1000a)
+#define CKA_IBM_PROTKEY_EXTRACTABLE            (CKA_VENDOR_DEFINED + 0x1000c)
+#define CKA_IBM_PROTKEY_NEVER_EXTRACTABLE      (CKA_VENDOR_DEFINED + 0x1000d)
+#define CKA_IBM_DILITHIUM_KEYFORM              (CKA_VENDOR_DEFINED + 0xd0001)
+#define CKA_IBM_DILITHIUM_RHO                  (CKA_VENDOR_DEFINED + 0xd0002)
+#define CKA_IBM_DILITHIUM_SEED                 (CKA_VENDOR_DEFINED + 0xd0003)
+#define CKA_IBM_DILITHIUM_TR                   (CKA_VENDOR_DEFINED + 0xd0004)
+#define CKA_IBM_DILITHIUM_S1                   (CKA_VENDOR_DEFINED + 0xd0005)
+#define CKA_IBM_DILITHIUM_S2                   (CKA_VENDOR_DEFINED + 0xd0006)
+#define CKA_IBM_DILITHIUM_T0                   (CKA_VENDOR_DEFINED + 0xd0007)
+#define CKA_IBM_DILITHIUM_T1                   (CKA_VENDOR_DEFINED + 0xd0008)
+#define CKA_IBM_OPAQUE_PKEY                    (CKA_VENDOR_DEFINED + 0xd0100)
+
+#define CKM_IBM_SHA3_224                       (CKM_VENDOR_DEFINED + 0x10001)
+#define CKM_IBM_SHA3_256                       (CKM_VENDOR_DEFINED + 0x10002)
+#define CKM_IBM_SHA3_384                       (CKM_VENDOR_DEFINED + 0x10003)
+#define CKM_IBM_SHA3_512                       (CKM_VENDOR_DEFINED + 0x10004)
+#define CKM_IBM_CMAC                           (CKM_VENDOR_DEFINED + 0x10007)
+#define CKM_IBM_EC_X25519                      (CKM_VENDOR_DEFINED + 0x1001b)
+#define CKM_IBM_ED25519_SHA512                 (CKM_VENDOR_DEFINED + 0x1001c)
+#define CKM_IBM_EC_X448                        (CKM_VENDOR_DEFINED + 0x1001e)
+#define CKM_IBM_ED448_SHA3                     (CKM_VENDOR_DEFINED + 0x1001f)
+#define CKM_IBM_DILITHIUM                      (CKM_VENDOR_DEFINED + 0x10023)
+#define CKM_IBM_SHA3_224_HMAC                  (CKM_VENDOR_DEFINED + 0x10025)
+#define CKM_IBM_SHA3_256_HMAC                  (CKM_VENDOR_DEFINED + 0x10026)
+#define CKM_IBM_SHA3_384_HMAC                  (CKM_VENDOR_DEFINED + 0x10027)
+#define CKM_IBM_SHA3_512_HMAC                  (CKM_VENDOR_DEFINED + 0x10028)
+#define CKM_IBM_ATTRIBUTEBOUND_WRAP            (CKM_VENDOR_DEFINED + 0x20004)
+
+/*
+ * If the caller is using the PKCS#11 GNU calling convention, then we cater
+ * to that here.
+ */
+#ifdef CRYPTOKI_GNU
+#define hSignVerifyKey h_sign_verify_key
+#endif
+
+struct ck_ibm_attributebound_wrap {
+	CK_OBJECT_HANDLE hSignVerifyKey;
+};
+
+typedef struct ck_ibm_attributebound_wrap CK_IBM_ATTRIBUTEBOUND_WRAP_PARAMS;
+
+#ifdef CRYPTOKI_GNU
+#undef hSignVerifyKey
+#endif
+
+#endif /* CRYPTOKI_IBM_VENDOR_DEFINED */
+
 #if defined(__cplusplus)
 }
 #endif

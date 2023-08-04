@@ -84,7 +84,7 @@
 <dt id="kdfopt-nm:v"><b>-kdfopt</b> <i>nm</i>:<i>v</i></dt>
 <dd>
 
-<p>Passes options to the KDF algorithm. A comprehensive list of parameters can be found in the EVP_KDF_CTX implementation documentation. Common parameter names used by EVP_KDF_CTX_set_params() are:</p>
+<p>Passes options to the KDF algorithm. A comprehensive list of parameters can be found in <a href="../man3/EVP_KDF.html">&quot;PARAMETERS&quot; in EVP_KDF(3)</a>. Common parameter names used by EVP_KDF_CTX_set_params() are:</p>
 
 <dl>
 
@@ -97,7 +97,7 @@
 <dt id="hexkey:string"><b>hexkey:</b><i>string</i></dt>
 <dd>
 
-<p>Specifies the secret key in hexadecimal form (two hex digits per byte). The key length must conform to any restrictions of the KDF algorithm. A key must be specified for most KDF algorithms.</p>
+<p>Alternative to the <b>key:</b> option where the secret key is specified in hexadecimal form (two hex digits per byte).</p>
 
 </dd>
 <dt id="pass:string"><b>pass:</b><i>string</i></dt>
@@ -109,7 +109,31 @@
 <dt id="hexpass:string"><b>hexpass:</b><i>string</i></dt>
 <dd>
 
-<p>Specifies the password in hexadecimal form (two hex digits per byte). The password must be specified for PBKDF2 and scrypt.</p>
+<p>Alternative to the <b>pass:</b> option where the password is specified in hexadecimal form (two hex digits per byte).</p>
+
+</dd>
+<dt id="salt:string"><b>salt:</b><i>string</i></dt>
+<dd>
+
+<p>Specifies a non-secret unique cryptographic salt as an alphanumeric string (use if it contains printable characters only). The length must conform to any restrictions of the KDF algorithm. A salt parameter is required for several KDF algorithms, such as <a href="../man7/EVP_KDF-PBKDF2.html">EVP_KDF-PBKDF2(7)</a>.</p>
+
+</dd>
+<dt id="hexsalt:string"><b>hexsalt:</b><i>string</i></dt>
+<dd>
+
+<p>Alternative to the <b>salt:</b> option where the salt is specified in hexadecimal form (two hex digits per byte).</p>
+
+</dd>
+<dt id="info:string"><b>info:</b><i>string</i></dt>
+<dd>
+
+<p>Some KDF implementations, such as <a href="../man7/EVP_KDF-HKDF.html">EVP_KDF-HKDF(7)</a>, take an &#39;info&#39; parameter for binding the derived key material to application- and context-specific information. Specifies the info, fixed info, other info or shared info argument as an alphanumeric string (use if it contains printable characters only). The length must conform to any restrictions of the KDF algorithm.</p>
+
+</dd>
+<dt id="hexinfo:string"><b>hexinfo:</b><i>string</i></dt>
+<dd>
+
+<p>Alternative to the <b>info:</b> option where the info is specified in hexadecimal form (two hex digits per byte).</p>
 
 </dd>
 <dt id="digest:string"><b>digest:</b><i>string</i></dt>
@@ -218,7 +242,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -25,7 +25,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>EVP_PKEY_decapsulate_init, EVP_PKEY_decapsulate - Key decapsulation using a private key algorithm</p>
+<p>EVP_PKEY_decapsulate_init, EVP_PKEY_decapsulate - Key decapsulation using a KEM algorithm with a private key</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -33,18 +33,18 @@
 
 int EVP_PKEY_decapsulate_init(EVP_PKEY_CTX *ctx, const OSSL_PARAM params[]);
 int EVP_PKEY_decapsulate(EVP_PKEY_CTX *ctx,
-                         unsigned char *secret, size_t *secretlen,
+                         unsigned char *unwrapped, size_t *unwrappedlen,
                          const unsigned char *wrapped, size_t wrappedlen);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The EVP_PKEY_decapsulate_init() function initializes a private key algorithm context <i>ctx</i> for a decapsulation operation and then sets the <i>params</i> on the context in the same way as calling <a href="../man3/EVP_PKEY_CTX_set_params.html">EVP_PKEY_CTX_set_params(3)</a>.</p>
+<p>The EVP_PKEY_decapsulate_init() function initializes a private key algorithm context <i>ctx</i> for a decapsulation operation and then sets the <i>params</i> on the context in the same way as calling <a href="../man3/EVP_PKEY_CTX_set_params.html">EVP_PKEY_CTX_set_params(3)</a>. Note that <i>ctx</i> usually is produced using <a href="../man3/EVP_PKEY_CTX_new_from_pkey.html">EVP_PKEY_CTX_new_from_pkey(3)</a>, specifying the private key to use.</p>
 
-<p>The EVP_PKEY_decapsulate() function performs a private key decapsulation operation using <i>ctx</i>. The data to be decapsulated is specified using the <i>wrapped</i> and <i>wrappedlen</i> parameters. If <i>secret</i> is <i>NULL</i> then the maximum size of the output secret buffer is written to the <i>*secretlen</i> parameter. If <i>secret</i> is not <b>NULL</b> and the call is successful then the decapsulated secret data is written to <i>secret</i> and the amount of data written to <i>secretlen</i>.</p>
+<p>The EVP_PKEY_decapsulate() function performs a private key decapsulation operation using <i>ctx</i>. The data to be decapsulated is specified using the <i>wrapped</i> and <i>wrappedlen</i> parameters. If <i>unwrapped</i> is NULL then the maximum size of the output secret buffer is written to <i>*unwrappedlen</i>. If <i>unwrapped</i> is not NULL and the call is successful then the decapsulated secret data is written to <i>unwrapped</i> and the amount of data written to <i>*unwrappedlen</i>.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>After the call to EVP_PKEY_decapsulate_init() algorithm specific parameters for the operation may be set or modified using <a href="../man3/EVP_PKEY_CTX_set_params.html">EVP_PKEY_CTX_set_params(3)</a>.</p>
+<p>After the call to EVP_PKEY_decapsulate_init() algorithm-specific parameters for the operation may be set or modified using <a href="../man3/EVP_PKEY_CTX_set_params.html">EVP_PKEY_CTX_set_params(3)</a>.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -89,7 +89,7 @@ if (EVP_PKEY_decapsulaterctx, secret, &amp;secretlen, in, inlen) &lt;= 0)
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a>, <a href="../man3/EVP_PKEY_encapsulate.html">EVP_PKEY_encapsulate(3)</a>, <a href="../man7/EVP_KEM-RSA.html">EVP_KEM-RSA(7)</a>,</p>
+<p><a href="../man3/EVP_PKEY_CTX_new_from_pkey.html">EVP_PKEY_CTX_new_from_pkey(3)</a>, <a href="../man3/EVP_PKEY_encapsulate.html">EVP_PKEY_encapsulate(3)</a>, <a href="../man7/EVP_KEM-RSA.html">EVP_KEM-RSA(7)</a>,</p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -97,7 +97,7 @@ if (EVP_PKEY_decapsulaterctx, secret, &amp;secretlen, in, inlen) &lt;= 0)
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

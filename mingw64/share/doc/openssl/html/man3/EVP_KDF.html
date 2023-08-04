@@ -155,7 +155,7 @@ const OSSL_PROVIDER *EVP_KDF_get0_provider(const EVP_KDF *kdf);</code></pre>
 <dt id="salt-OSSL_KDF_PARAM_SALT-octet-string">&quot;salt&quot; (<b>OSSL_KDF_PARAM_SALT</b>) &lt;octet string&gt;</dt>
 <dd>
 
-<p>Some KDF implementations can take a salt. For those KDF implementations that support it, this parameter sets the salt.</p>
+<p>Some KDF implementations can take a non-secret unique cryptographic salt. For those KDF implementations that support it, this parameter sets the salt.</p>
 
 <p>The default value, if any, is implementation dependent.</p>
 
@@ -194,6 +194,12 @@ const OSSL_PROVIDER *EVP_KDF_get0_provider(const EVP_KDF *kdf);</code></pre>
 <dd>
 
 <p>Some KDF implementations require a key. For those KDF implementations that support it, this octet string parameter sets the key.</p>
+
+</dd>
+<dt id="info-OSSL_KDF_PARAM_INFO-octet-string">&quot;info&quot; (<b>OSSL_KDF_PARAM_INFO</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>Some KDF implementations, such as <a href="../man7/EVP_KDF-HKDF.html">EVP_KDF-HKDF(7)</a>, take an &#39;info&#39; parameter for binding the derived key material to application- and context-specific information. This parameter sets the info, fixed info, other info or shared info argument. You can specify this parameter multiple times, and each instance will be concatenated to form the final value.</p>
 
 </dd>
 <dt id="maclen-OSSL_KDF_PARAM_MAC_SIZE-unsigned-integer">&quot;maclen&quot; (<b>OSSL_KDF_PARAM_MAC_SIZE</b>) &lt;unsigned integer&gt;</dt>
@@ -248,7 +254,7 @@ const OSSL_PROVIDER *EVP_KDF_get0_provider(const EVP_KDF *kdf);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

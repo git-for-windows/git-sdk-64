@@ -69,7 +69,7 @@ int ASYNC_WAIT_CTX_get_status(ASYNC_WAIT_CTX *ctx);</code></pre>
 
 <p>The function ASYNC_WAIT_CTX_get_changed_fds() can be used to detect if any fds have changed since the last call time ASYNC_start_job() returned <b>ASYNC_PAUSE</b> (or since the <b>ASYNC_WAIT_CTX</b> was created if no <b>ASYNC_PAUSE</b> result has been received). The <i>numaddfds</i> and <i>numdelfds</i> parameters will be populated with the number of fds added or deleted respectively. <i>*addfd</i> and <i>*delfd</i> will be populated with the list of added and deleted fds respectively. Similarly to ASYNC_WAIT_CTX_get_all_fds() either of these can be NULL, but if they are not NULL then the caller is responsible for ensuring sufficient memory is allocated.</p>
 
-<p>Implementors of async aware code (e.g. engines) are encouraged to return a stable fd for the lifetime of the <b>ASYNC_WAIT_CTX</b> in order to reduce the &quot;churn&quot; of regularly changing fds - although no guarantees of this are provided to applications.</p>
+<p>Implementers of async aware code (e.g. engines) are encouraged to return a stable fd for the lifetime of the <b>ASYNC_WAIT_CTX</b> in order to reduce the &quot;churn&quot; of regularly changing fds - although no guarantees of this are provided to applications.</p>
 
 <p>Applications can wait for the file descriptor to be ready for &quot;read&quot; using a system function call such as select or poll (being ready for &quot;read&quot; indicates that the job should be resumed). If no file descriptor is made available then an application will have to periodically &quot;poll&quot; the job by attempting to restart it to see if it is ready to continue.</p>
 
@@ -139,7 +139,7 @@ int ASYNC_WAIT_CTX_get_status(ASYNC_WAIT_CTX *ctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -44,6 +44,8 @@
 
 <p>This guide details different ways that OpenSSL can be used in conjunction with the FIPS module. Which is the correct approach to use will depend on your own specific circumstances and what you are attempting to achieve.</p>
 
+<p>For information related to installing the FIPS module see <a href="https://github.com/openssl/openssl/blob/master/README-FIPS.md">https://github.com/openssl/openssl/blob/master/README-FIPS.md</a>.</p>
+
 <p>Note that the old functions FIPS_mode() and FIPS_mode_set() are no longer present so you must remove them from your application if you use them.</p>
 
 <p>Applications written to use the OpenSSL 3.0 FIPS module should not use any legacy APIs or features that avoid the FIPS module. Specifically this includes:</p>
@@ -354,6 +356,8 @@ SSL_CTX *non_fips_ssl_ctx = SSL_CTX_new_ex(NULL, &quot;provider!=fips&quot;,
 
 <h1 id="NOTES">NOTES</h1>
 
+<p>Some released versions of OpenSSL do not include a validated FIPS provider. To determine which versions have undergone the validation process, please refer to the <a href="https://www.openssl.org/source/">OpenSSL Downloads page</a>. If you require FIPS-approved functionality, it is essential to build your FIPS provider using one of the validated versions listed there. Normally, it is possible to utilize a FIPS provider constructed from one of the validated versions alongside <i>libcrypto</i> and <i>libssl</i> compiled from any release within the same major release series. This flexibility enables you to address bug fixes and CVEs that fall outside the FIPS boundary.</p>
+
 <p>The FIPS provider in OpenSSL 3.1 includes some non-FIPS validated algorithms, consequently the property query <code>fips=yes</code> is mandatory for applications that want to operate in a FIPS approved manner. The algorithms are:</p>
 
 <dl>
@@ -374,15 +378,11 @@ SSL_CTX *non_fips_ssl_ctx = SSL_CTX_new_ex(NULL, &quot;provider!=fips&quot;,
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/migration_guide.html">migration_guide(7)</a>, <a href="../man7/crypto.html">crypto(7)</a>, <a href="../man5/fips_config.html">fips_config(5)</a></p>
+<p><a href="../man7/migration_guide.html">migration_guide(7)</a>, <a href="../man7/crypto.html">crypto(7)</a>, <a href="../man5/fips_config.html">fips_config(5)</a>, <a href="https://www.openssl.org/source/">https://www.openssl.org/source/</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>The FIPS module guide was created for use with the new FIPS provider in OpenSSL 3.0.</p>
-
-<p>OpenSSL 3.0 includes a FIPS 140-2 approved FIPS provider.</p>
-
-<p>OpenSSL 3.1 includes a FIPS 140-3 approved FIPS provider.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

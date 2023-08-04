@@ -606,6 +606,8 @@ err:
 
 <h1 id="NOTES">NOTES</h1>
 
+<p>Some released versions of OpenSSL do not include a validated FIPS provider. To determine which versions have undergone the validation process, please refer to the <a href="https://www.openssl.org/source/">OpenSSL Downloads page</a>. If you require FIPS-approved functionality, it is essential to build your FIPS provider using one of the validated versions listed there. Normally, it is possible to utilize a FIPS provider constructed from one of the validated versions alongside <i>libcrypto</i> and <i>libssl</i> compiled from any release within the same major release series. This flexibility enables you to address bug fixes and CVEs that fall outside the FIPS boundary.</p>
+
 <p>The FIPS provider in OpenSSL 3.1 includes some non-FIPS validated algorithms, consequently the property query <code>fips=yes</code> is mandatory for applications that want to operate in a FIPS approved manner. The algorithms are:</p>
 
 <dl>
@@ -626,15 +628,11 @@ err:
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man1/openssl-fipsinstall.html">openssl-fipsinstall(1)</a>, <a href="../man5/fips_config.html">fips_config(5)</a>, <a href="../man3/OSSL_SELF_TEST_set_callback.html">OSSL_SELF_TEST_set_callback(3)</a>, <a href="../man3/OSSL_SELF_TEST_new.html">OSSL_SELF_TEST_new(3)</a>, <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a>, <a href="../man7/openssl-core.h.html">openssl-core.h(7)</a>, <a href="../man7/openssl-core_dispatch.h.html">openssl-core_dispatch.h(7)</a>, <a href="../man7/provider.html">provider(7)</a></p>
+<p><a href="../man1/openssl-fipsinstall.html">openssl-fipsinstall(1)</a>, <a href="../man5/fips_config.html">fips_config(5)</a>, <a href="../man3/OSSL_SELF_TEST_set_callback.html">OSSL_SELF_TEST_set_callback(3)</a>, <a href="../man3/OSSL_SELF_TEST_new.html">OSSL_SELF_TEST_new(3)</a>, <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a>, <a href="../man7/openssl-core.h.html">openssl-core.h(7)</a>, <a href="../man7/openssl-core_dispatch.h.html">openssl-core_dispatch.h(7)</a>, <a href="../man7/provider.html">provider(7)</a>, <a href="https://www.openssl.org/source/">https://www.openssl.org/source/</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>This functionality was added in OpenSSL 3.0.</p>
-
-<p>OpenSSL 3.0 includes a FIPS 140-2 approved FIPS provider.</p>
-
-<p>OpenSSL 3.1 includes a FIPS 140-3 approved FIPS provider.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
