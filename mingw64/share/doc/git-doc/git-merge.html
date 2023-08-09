@@ -904,8 +904,14 @@ in your working tree.</p>
 versions: stage 1 stores the version from the common ancestor,
 stage 2 from <code>HEAD</code>, and stage 3 from <code>MERGE_HEAD</code> (you
 can inspect the stages with <code>git ls-files -u</code>).  The working
-tree files contain the result of the "merge" program; i.e. 3-way
+tree files contain the result of the merge operation; i.e. 3-way
 merge results with familiar conflict markers <code>&lt;&lt;&lt;</code> <code>===</code> <code>&gt;&gt;&gt;</code>.</p>
+</li>
+<li>
+<p>A special ref <code>AUTO_MERGE</code> is written, pointing to a tree
+corresponding to the current content of the working tree (including
+conflict markers for textual conflicts).  Note that this ref is only
+written when the <em>ort</em> merge strategy is used (the default).</p>
 </li>
 <li>
 <p>No other changes are made.  In particular, the local
@@ -1081,7 +1087,8 @@ mergetool which will work you through the merge.</p>
 <li>
 <p>Look at the diffs.  <code>git diff</code> will show a three-way diff,
 highlighting changes from both the <code>HEAD</code> and <code>MERGE_HEAD</code>
-versions.</p>
+versions. <code>git diff AUTO_MERGE</code> will show what changes you&#8217;ve
+made so far to resolve textual conflicts.</p>
 </li>
 <li>
 <p>Look at the diffs from each branch. <code>git log --merge -p &lt;path&gt;</code>
@@ -1691,7 +1698,7 @@ See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-13 19:37:19 UTC
+Last updated 2023-08-08 11:18:35 UTC
 </div>
 </div>
 </body>

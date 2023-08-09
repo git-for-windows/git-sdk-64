@@ -454,7 +454,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
                    [ --stdin | &lt;pattern&gt;&#8230;&#8203; ]
                    [--points-at=&lt;object&gt;]
                    [--merged[=&lt;object&gt;]] [--no-merged[=&lt;object&gt;]]
-                   [--contains[=&lt;object&gt;]] [--no-contains[=&lt;object&gt;]]</pre>
+                   [--contains[=&lt;object&gt;]] [--no-contains[=&lt;object&gt;]]
+                   [--exclude=&lt;pattern&gt; &#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -564,6 +565,12 @@ if not specified).</p>
 <dd>
 <p>Do not print a newline after formatted refs where the format expands
 to the empty string.</p>
+</dd>
+<dt class="hdlist1">--exclude=&lt;pattern&gt;</dt>
+<dd>
+<p>If one or more patterns are given, only refs which do not match
+any excluded pattern(s) are shown. Matching is done using the
+same rules as <code>&lt;pattern&gt;</code> above.</p>
 </dd>
 </dl>
 </div>
@@ -709,6 +716,40 @@ symbolic ref, nothing is printed. Respects the <code>:short</code>,
 <code>:lstrip</code> and <code>:rstrip</code> options in the same way as <code>refname</code>
 above.</p>
 </dd>
+<dt class="hdlist1">signature</dt>
+<dd>
+<p>The GPG signature of a commit.</p>
+</dd>
+<dt class="hdlist1">signature:grade</dt>
+<dd>
+<p>Show "G" for a good (valid) signature, "B" for a bad
+signature, "U" for a good signature with unknown validity, "X"
+for a good signature that has expired, "Y" for a good
+signature made by an expired key, "R" for a good signature
+made by a revoked key, "E" if the signature cannot be
+checked (e.g. missing key) and "N" for no signature.</p>
+</dd>
+<dt class="hdlist1">signature:signer</dt>
+<dd>
+<p>The signer of the GPG signature of a commit.</p>
+</dd>
+<dt class="hdlist1">signature:key</dt>
+<dd>
+<p>The key of the GPG signature of a commit.</p>
+</dd>
+<dt class="hdlist1">signature:fingerprint</dt>
+<dd>
+<p>The fingerprint of the GPG signature of a commit.</p>
+</dd>
+<dt class="hdlist1">signature:primarykeyfingerprint</dt>
+<dd>
+<p>The primary key fingerprint of the GPG signature of a commit.</p>
+</dd>
+<dt class="hdlist1">signature:trustlevel</dt>
+<dd>
+<p>The trust level of the GPG signature of a commit. Possible
+outputs are <code>ultimate</code>, <code>fully</code>, <code>marginal</code>, <code>never</code> and <code>undefined</code>.</p>
+</dd>
 <dt class="hdlist1">worktreepath</dt>
 <dd>
 <p>The absolute path to the worktree in which the ref is checked
@@ -720,6 +761,43 @@ otherwise.</p>
 <p>Two integers, separated by a space, demonstrating the number of
 commits ahead and behind, respectively, when comparing the output
 ref to the <code>&lt;committish&gt;</code> specified in the format.</p>
+</dd>
+<dt class="hdlist1">describe[:options]</dt>
+<dd>
+<p>A human-readable name, like <a href="git-describe.html">git-describe(1)</a>;
+empty string for undescribable commits. The <code>describe</code> string may
+be followed by a colon and one or more comma-separated options.</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">tags=&lt;bool-value&gt;</dt>
+<dd>
+<p>Instead of only considering annotated tags, consider
+lightweight tags as well; see the corresponding option in
+<a href="git-describe.html">git-describe(1)</a> for details.</p>
+</dd>
+<dt class="hdlist1">abbrev=&lt;number&gt;</dt>
+<dd>
+<p>Use at least &lt;number&gt; hexadecimal digits; see the corresponding
+option in <a href="git-describe.html">git-describe(1)</a> for details.</p>
+</dd>
+<dt class="hdlist1">match=&lt;pattern&gt;</dt>
+<dd>
+<p>Only consider tags matching the given <code>glob(7)</code> pattern,
+excluding the "refs/tags/" prefix; see the corresponding option
+in <a href="git-describe.html">git-describe(1)</a> for details.</p>
+</dd>
+<dt class="hdlist1">exclude=&lt;pattern&gt;</dt>
+<dd>
+<p>Do not consider tags matching the given <code>glob(7)</code> pattern,
+excluding the "refs/tags/" prefix; see the corresponding option
+in <a href="git-describe.html">git-describe(1)</a> for details.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
 </dd>
 </dl>
 </div>
@@ -995,7 +1073,7 @@ commits and from none of the <code>--no-merged</code> commits are shown.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-13 19:37:19 UTC
+Last updated 2023-08-08 11:18:35 UTC
 </div>
 </div>
 </body>

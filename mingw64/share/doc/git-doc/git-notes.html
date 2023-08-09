@@ -450,10 +450,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git notes</em> [list [&lt;object&gt;]]
-<em>git notes</em> add [-f] [--allow-empty] [-F &lt;file&gt; | -m &lt;msg&gt; | (-c | -C) &lt;object&gt;] [&lt;object&gt;]
+<em>git notes</em> add [-f] [--allow-empty] [--[no-]separator | --separator=&lt;paragraph-break&gt;] [--[no-]stripspace] [-F &lt;file&gt; | -m &lt;msg&gt; | (-c | -C) &lt;object&gt;] [&lt;object&gt;]
 <em>git notes</em> copy [-f] ( --stdin | &lt;from-object&gt; [&lt;to-object&gt;] )
-<em>git notes</em> append [--allow-empty] [-F &lt;file&gt; | -m &lt;msg&gt; | (-c | -C) &lt;object&gt;] [&lt;object&gt;]
-<em>git notes</em> edit [--allow-empty] [&lt;object&gt;]
+<em>git notes</em> append [--allow-empty] [--[no-]separator | --separator=&lt;paragraph-break&gt;] [--[no-]stripspace] [-F &lt;file&gt; | -m &lt;msg&gt; | (-c | -C) &lt;object&gt;] [&lt;object&gt;]
+<em>git notes</em> edit [--allow-empty] [&lt;object&gt;] [--[no-]stripspace]
 <em>git notes</em> show [&lt;object&gt;]
 <em>git notes</em> merge [-v | -q] [-s &lt;strategy&gt; ] &lt;notes-ref&gt;
 <em>git notes</em> merge --commit [-v | -q]
@@ -519,7 +519,9 @@ object already has notes (use <code>-f</code> to overwrite existing notes).
 However, if you&#8217;re using <code>add</code> interactively (using an editor
 to supply the notes contents), then - instead of aborting -
 the existing notes will be opened in the editor (like the <code>edit</code>
-subcommand).</p>
+subcommand). If you specify multiple <code>-m</code> and <code>-F</code>, a blank
+line will be inserted between the messages. Use the <code>--separator</code>
+option to insert other delimiters.</p>
 </dd>
 <dt class="hdlist1">copy</dt>
 <dd>
@@ -544,8 +546,12 @@ the command can read the input given to the <code>post-rewrite</code> hook.)</p>
 </dd>
 <dt class="hdlist1">append</dt>
 <dd>
-<p>Append to the notes of an existing object (defaults to HEAD).
-Creates a new notes object if needed.</p>
+<p>Append new message(s) given by <code>-m</code> or <code>-F</code> options to an
+existing note, or add them as a new note if one does not
+exist, for the object (defaults to HEAD).  When appending to
+an existing note, a blank line is added before each new
+message as an inter-paragraph separator.  The separator can
+be customized with the <code>--separator</code> option.</p>
 </dd>
 <dt class="hdlist1">edit</dt>
 <dd>
@@ -610,7 +616,8 @@ overwrite the existing notes (instead of aborting).</p>
 If multiple <code>-m</code> options are given, their values
 are concatenated as separate paragraphs.
 Lines starting with <code>#</code> and empty lines other than a
-single line between paragraphs will be stripped out.</p>
+single line between paragraphs will be stripped out,
+if you wish to keep them verbatim, use <code>--no-stripspace</code>.</p>
 </dd>
 <dt class="hdlist1">-F &lt;file&gt;</dt>
 <dt class="hdlist1">--file=&lt;file&gt;</dt>
@@ -618,14 +625,19 @@ single line between paragraphs will be stripped out.</p>
 <p>Take the note message from the given file.  Use <em>-</em> to
 read the note message from the standard input.
 Lines starting with <code>#</code> and empty lines other than a
-single line between paragraphs will be stripped out.</p>
+single line between paragraphs will be stripped out,
+if you wish to keep them verbatim, use with
+<code>--no-stripspace</code> option.</p>
 </dd>
 <dt class="hdlist1">-C &lt;object&gt;</dt>
 <dt class="hdlist1">--reuse-message=&lt;object&gt;</dt>
 <dd>
 <p>Take the given blob object (for example, another note) as the
 note message. (Use <code>git notes copy &lt;object&gt;</code> instead to
-copy notes between objects.)</p>
+copy notes between objects.).  By default, message will be
+copied verbatim, but if you wish to strip out the lines
+starting with <code>#</code> and empty lines other than a single line
+between paragraphs, use with`--stripspace` option.</p>
 </dd>
 <dt class="hdlist1">-c &lt;object&gt;</dt>
 <dt class="hdlist1">--reedit-message=&lt;object&gt;</dt>
@@ -637,6 +649,21 @@ the user can further edit the note message.</p>
 <dd>
 <p>Allow an empty note object to be stored. The default behavior is
 to automatically remove empty notes.</p>
+</dd>
+<dt class="hdlist1">--[no-]separator, --separator=&lt;paragraph-break&gt;</dt>
+<dd>
+<p>Specify a string used as a custom inter-paragraph separator
+(a newline is added at the end as needed). If <code>--no-separator</code>, no
+separators will be added between paragraphs.  Defaults to a blank
+line.</p>
+</dd>
+<dt class="hdlist1">--[no-]stripspace</dt>
+<dd>
+<p>Strip leading and trailing whitespace from the note message.
+Also strip out empty lines other than a single line between
+paragraphs. For lines starting with <code>#</code> will be stripped out
+in non-editor cases like "-m", "-F" and "-C", but not in
+editor case like "git notes edit", "-c", etc.</p>
 </dd>
 <dt class="hdlist1">--ref &lt;ref&gt;</dt>
 <dd>
@@ -981,7 +1008,7 @@ on the <code>notes.rewrite.&lt;command&gt;</code> and <code>notes.rewriteRef</co
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-13 19:37:19 UTC
+Last updated 2023-08-08 11:18:35 UTC
 </div>
 </div>
 </body>

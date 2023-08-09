@@ -934,6 +934,28 @@ $ git diff -2 file.txt          # diff against stage 2
 $ git diff --ours file.txt      # same as the above
 $ git diff -3 file.txt          # diff against stage 3
 $ git diff --theirs file.txt    # same as the above.</pre>
+<p>When using the <span class="emphasis"><em>ort</em></span> merge strategy (the default), before updating the working
+tree with the result of the merge, Git writes a special ref named AUTO_MERGE
+reflecting the state of the tree it is about to write. Conflicted paths with
+textual conflicts that could not be automatically merged are written to this
+tree with conflict markers, just as in the working tree. AUTO_MERGE can thus be
+used with <a class="ulink" href="git-diff.html" target="_top">git-diff(1)</a> to show the changes you’ve made so far to resolve
+conflicts. Using the same example as above, after resolving the conflict we
+get:</p>
+<pre class="screen">$ git diff AUTO_MERGE
+diff --git a/file.txt b/file.txt
+index cd10406..8bf5ae7 100644
+--- a/file.txt
++++ b/file.txt
+@@ -1,5 +1 @@
+-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:file.txt
+-Hello world
+-=======
+-Goodbye
+-&gt;&gt;&gt;&gt;&gt;&gt;&gt; 77976da35a11db4580b80ae27e8d65caf5208086:file.txt
++Goodbye world</pre>
+<p>Notice that the diff shows we deleted the conflict markers and both versions of
+the content line, and wrote "Goodbye world" instead.</p>
 <p>The <a class="ulink" href="git-log.html" target="_top">git-log(1)</a> and <a class="ulink" href="gitk.html" target="_top">gitk(1)</a> commands also provide special help
 for merges:</p>
 <pre class="screen">$ git log --merge
@@ -2933,12 +2955,10 @@ today, but is small enough to read in one sitting.</p>
 <p>Note that terminology has changed since that revision.  For example, the
 README in that revision uses the word "changeset" to describe what we
 now call a <a class="link" href="#def_commit_object">commit</a>.</p>
-<p>Also, we do not call it "cache" any more, but rather "index"; however, the
-file is still called <code class="literal">cache.h</code>.  Remark: Not much reason to change it now,
-especially since there is no good single name for it anyway, because it is
-basically <span class="emphasis"><em>the</em></span> header file which is included by <span class="emphasis"><em>all</em></span> of Git’s C sources.</p>
+<p>Also, we do not call it "cache" any more, but rather "index"; however,
+the file is still called <code class="literal">read-cache.h</code>.</p>
 <p>If you grasp the ideas in that initial commit, you should check out a
-more recent version and skim <code class="literal">cache.h</code>, <code class="literal">object.h</code> and <code class="literal">commit.h</code>.</p>
+more recent version and skim <code class="literal">read-cache-ll.h</code>, <code class="literal">object.h</code> and <code class="literal">commit.h</code>.</p>
 <p>In the early days, Git (in the tradition of UNIX) was a bunch of programs
 which were extremely simple, and which you used in scripts, piping the
 output of one into another. This turned out to be good for initial
@@ -2947,11 +2967,11 @@ many of these parts have become builtins, and some of the core has been
 "libified", i.e. put into libgit.a for performance, portability reasons,
 and to avoid code duplication.</p>
 <p>By now, you know what the index is (and find the corresponding data
-structures in <code class="literal">cache.h</code>), and that there are just a couple of object types
-(blobs, trees, commits and tags) which inherit their common structure from
-<code class="literal">struct object</code>, which is their first member (and thus, you can cast e.g.
-<code class="literal">(struct object *)commit</code> to achieve the <span class="emphasis"><em>same</em></span> as <code class="literal">&amp;commit-&gt;object</code>, i.e.
-get at the object name and flags).</p>
+structures in <code class="literal">read-cache-ll.h</code>), and that there are just a couple of
+object types (blobs, trees, commits and tags) which inherit their
+common structure from <code class="literal">struct object</code>, which is their first member
+(and thus, you can cast e.g.  <code class="literal">(struct object *)commit</code> to achieve the
+<span class="emphasis"><em>same</em></span> as <code class="literal">&amp;commit-&gt;object</code>, i.e.  get at the object name and flags).</p>
 <p>Now is a good point to take a break to let this information sink in.</p>
 <p>Next step: get familiar with the object naming.  Read <a class="xref" href="#naming-commits" title="Naming commits">the section called “Naming commits”</a>.
 There are quite a few ways to name an object (and not only revisions!).

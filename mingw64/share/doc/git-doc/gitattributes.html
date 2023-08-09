@@ -1861,7 +1861,10 @@ size (see below).</p>
 <p>The merge driver is expected to leave the result of the merge in
 the file named with <code>%A</code> by overwriting it, and exit with zero
 status if it managed to merge them cleanly, or non-zero if there
-were conflicts.</p>
+were conflicts.  When the driver crashes (e.g. killed by SEGV),
+it is expected to exit with non-zero status that are higher than
+128, and in such a case, the merge results in a failure (which is
+different from producing a conflict).</p>
 </div>
 <div class="paragraph">
 <p>The <code>merge.*.recursive</code> variable specifies what other merge
@@ -2128,7 +2131,7 @@ frotz   unspecified</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-13 19:37:19 UTC
+Last updated 2023-08-08 11:18:35 UTC
 </div>
 </div>
 </body>

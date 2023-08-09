@@ -940,10 +940,11 @@ line.</p>
 </dd>
 <dt class="hdlist1">--stdin</dt>
 <dd>
-<p>In addition to the <em>&lt;commit&gt;</em> listed on the command
-line, read them from the standard input. If a <code>--</code> separator is
-seen, stop reading commits and start reading paths to limit the
-result.</p>
+<p>In addition to getting arguments from the command line, read
+them for standard input as well. This accepts commits and
+pseudo-options like <code>--all</code> and <code>--glob=</code>. When a <code>--</code> separator
+is seen, the following input is treated as paths and used to
+limit the result.</p>
 </dd>
 <dt class="hdlist1">--cherry-mark</dt>
 <dd>
@@ -2720,8 +2721,10 @@ the default format.</p>
 <dt class="hdlist1">-s</dt>
 <dt class="hdlist1">--no-patch</dt>
 <dd>
-<p>Suppress diff output. Useful for commands like <code>git show</code> that
-show the patch by default, or to cancel the effect of <code>--patch</code>.</p>
+<p>Suppress all output from the diff machinery.  Useful for
+commands like <code>git show</code> that show the patch by default to
+squelch their output, or to cancel the effect of options like
+<code>--patch</code>, <code>--stat</code> earlier on the command line in an alias.</p>
 </dd>
 <dt class="hdlist1">--diff-merges=(off|none|on|first-parent|1|separate|m|combined|c|dense-combined|cc|remerge|r)</dt>
 <dt class="hdlist1">--no-diff-merges</dt>
@@ -4332,7 +4335,7 @@ See <code>notes.rewrite.&lt;command&gt;</code> above for a further description o
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-13 19:37:19 UTC
+Last updated 2023-08-08 11:18:35 UTC
 </div>
 </div>
 </body>

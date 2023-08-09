@@ -554,7 +554,11 @@ of &lt;commit&gt;, which has the same effect as using HEAD instead.</p>
 <p>Just in case you are doing something exotic, it should be
 noted that all of the &lt;commit&gt; in the above description, except
 in the <code>--merge-base</code> case and in the last two forms that use <code>..</code>
-notations, can be any &lt;tree&gt;.</p>
+notations, can be any &lt;tree&gt;. A tree of interest is the one pointed to
+by the special ref <code>AUTO_MERGE</code>, which is written by the <em>ort</em> merge
+strategy upon hitting merge conflicts (see <a href="git-merge.html">git-merge(1)</a>).
+Comparing the working tree with <code>AUTO_MERGE</code> shows changes you&#8217;ve made
+so far to resolve textual conflicts (see the examples below).</p>
 </div>
 <div class="paragraph">
 <p>For a more complete list of ways to spell &lt;commit&gt;, see
@@ -591,8 +595,10 @@ contents of two blob objects.</p>
 <dt class="hdlist1">-s</dt>
 <dt class="hdlist1">--no-patch</dt>
 <dd>
-<p>Suppress diff output. Useful for commands like <code>git show</code> that
-show the patch by default, or to cancel the effect of <code>--patch</code>.</p>
+<p>Suppress all output from the diff machinery.  Useful for
+commands like <code>git show</code> that show the patch by default to
+squelch their output, or to cancel the effect of options like
+<code>--patch</code>, <code>--stat</code> earlier on the command line in an alias.</p>
 </dd>
 <dt class="hdlist1">-U&lt;n&gt;</dt>
 <dt class="hdlist1">--unified=&lt;n&gt;</dt>
@@ -2121,7 +2127,8 @@ the pathname, but if that is <code>NUL</code>, the record will show two paths.</
 <div class="content">
 <pre>$ git diff            <b class="conum">(1)</b>
 $ git diff --cached   <b class="conum">(2)</b>
-$ git diff HEAD       <b class="conum">(3)</b></pre>
+$ git diff HEAD       <b class="conum">(3)</b>
+$ git diff AUTO_MERGE <b class="conum">(4)</b></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2136,6 +2143,10 @@ would be committing if you run <code>git commit</code> without <code>-a</code> o
 <li>
 <p>Changes in the working tree since your last commit; what you
 would be committing if you run <code>git commit -a</code></p>
+</li>
+<li>
+<p>Changes in the working tree you&#8217;ve made to resolve textual
+conflicts so far.</p>
 </li>
 </ol>
 </div>
@@ -2669,7 +2680,7 @@ for details of valid modes see <em>--color-moved-ws</em> in <a href="git-diff.ht
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-13 19:37:19 UTC
+Last updated 2023-08-08 11:18:35 UTC
 </div>
 </div>
 </body>

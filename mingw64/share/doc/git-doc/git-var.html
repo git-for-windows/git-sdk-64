@@ -533,7 +533,37 @@ compile time (usually <em>less</em>).</p>
 <dd>
 <p>The name of the first branch created in newly initialized repositories.</p>
 </dd>
+<dt class="hdlist1">GIT_SHELL_PATH</dt>
+<dd>
+<p>The path of the binary providing the POSIX shell for commands which use the shell.</p>
+</dd>
+<dt class="hdlist1">GIT_ATTR_SYSTEM</dt>
+<dd>
+<p>The path to the system <a href="gitattributes.html">gitattributes(5)</a> file, if one is enabled.</p>
+</dd>
+<dt class="hdlist1">GIT_ATTR_GLOBAL</dt>
+<dd>
+<p>The path to the global (per-user) <a href="gitattributes.html">gitattributes(5)</a> file.</p>
+</dd>
+<dt class="hdlist1">GIT_CONFIG_SYSTEM</dt>
+<dd>
+<p>The path to the system configuration file, if one is enabled.</p>
+</dd>
+<dt class="hdlist1">GIT_CONFIG_GLOBAL</dt>
+<dd>
+<p>The path to the global (per-user) configuration files, if any.</p>
+</dd>
 </dl>
+</div>
+<div class="paragraph">
+<p>Most path values contain only one value. However, some can contain multiple
+values, which are separated by newlines, and are listed in order from highest to
+lowest priority.  Callers should be prepared for any such path value to contain
+multiple items.</p>
+</div>
+<div class="paragraph">
+<p>Note that paths are printed even if they do not exist, but not if they are
+disabled by other environment variables.</p>
 </div>
 </div>
 </div>
@@ -558,7 +588,7 @@ compile time (usually <em>less</em>).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-13 19:37:19 UTC
+Last updated 2023-08-08 11:18:35 UTC
 </div>
 </div>
 </body>

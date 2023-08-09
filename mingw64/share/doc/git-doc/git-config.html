@@ -1391,7 +1391,7 @@ the resolution of these conditions (thus, prohibiting them from
 declaring remote URLs).</p>
 </div>
 <div class="paragraph">
-<p>As for the naming of this keyword, it is for forwards compatibiliy with
+<p>As for the naming of this keyword, it is for forwards compatibility with
 a naming scheme that supports more variable-based include conditions,
 but currently Git only supports the exact keyword described above.</p>
 </div>
@@ -1835,6 +1835,12 @@ checkout.</p>
 <dt class="hdlist1">diverging</dt>
 <dd>
 <p>Advice shown when a fast-forward is not possible.</p>
+</dd>
+<dt class="hdlist1">worktreeAddOrphan</dt>
+<dd>
+<p>Advice shown when a user tries to create a worktree from an
+invalid reference, to instruct how to create a new orphan
+branch instead.</p>
 </dd>
 <dt class="hdlist1">useCoreFSMonitorConfig</dt>
 <dd>
@@ -4132,6 +4138,10 @@ features. The new default values are:</p>
 <p><code>fetch.negotiationAlgorithm=skipping</code> may improve fetch negotiation times by
 skipping more commits at a time, reducing the number of round trips.</p>
 </li>
+<li>
+<p><code>pack.useBitmapBoundaryTraversal=true</code> may improve bitmap traversal times by
+walking fewer objects.</p>
+</li>
 </ul>
 </div>
 </dd>
@@ -4742,6 +4752,23 @@ commit --amend</code> or <code>git rebase</code> and are the commits prior to th
 or rebase occurring.  Since these changes are not part of the current
 project most users will want to expire them sooner, which is why the
 default is more aggressive than <code>gc.reflogExpire</code>.</p>
+</div>
+</dd>
+<dt class="hdlist1">gc.recentObjectsHook</dt>
+<dd>
+<p>When considering whether or not to remove an object (either when
+generating a cruft pack or storing unreachable objects as
+loose), use the shell to execute the specified command(s).
+Interpret their output as object IDs which Git will consider as
+"recent", regardless of their age. By treating their mtimes as
+"now", any objects (and their descendants) mentioned in the
+output will be kept regardless of their true age.</p>
+<div class="paragraph">
+<p>Output must contain exactly one hex object ID per line, and nothing
+else. Objects which cannot be found in the repository are ignored.
+Multiple hooks are supported, but all must exit successfully, else the
+operation (either generating a cruft pack or unpacking unreachable
+objects) will be halted.</p>
 </div>
 </dd>
 <dt class="hdlist1">gc.rerereResolved</dt>
@@ -6643,6 +6670,26 @@ Common unit suffixes of <em>k</em>, <em>m</em>, or <em>g</em> are supported.</p>
 to stdout (e.g., during the server side of a fetch). Defaults to
 true. You should not generally need to turn this off unless
 you are debugging pack bitmaps.</p>
+</dd>
+<dt class="hdlist1">pack.useBitmapBoundaryTraversal</dt>
+<dd>
+<p>When true, Git will use an experimental algorithm for computing
+reachability queries with bitmaps. Instead of building up
+complete bitmaps for all of the negated tips and then OR-ing
+them together, consider negated tips with existing bitmaps as
+additive (i.e. OR-ing them into the result if they exist,
+ignoring them otherwise), and build up a bitmap at the boundary
+instead.</p>
+<div class="paragraph">
+<p>When using this algorithm, Git may include too many objects as a result
+of not opening up trees belonging to certain UNINTERESTING commits. This
+inexactness matches the non-bitmap traversal algorithm.</p>
+</div>
+<div class="paragraph">
+<p>In many cases, this can provide a speed-up over the exact algorithm,
+particularly when there is poor bitmap coverage of the negated side of
+the query.</p>
+</div>
 </dd>
 <dt class="hdlist1">pack.useSparse</dt>
 <dd>
@@ -8660,7 +8707,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-13 19:37:19 UTC
+Last updated 2023-08-08 11:18:35 UTC
 </div>
 </div>
 </body>
