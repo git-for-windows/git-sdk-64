@@ -1570,12 +1570,12 @@ IXAudio2 : public IUnknown
 
     virtual HRESULT STDMETHODCALLTYPE CreateMasteringVoice(
         IXAudio2MasteringVoice **ppMasteringVoice,
-        UINT32 InputChannels,
-        UINT32 InputSampleRate,
-        UINT32 Flags,
-        LPCWSTR DeviceId,
-        const XAUDIO2_EFFECT_CHAIN *pEffectChain,
-        AUDIO_STREAM_CATEGORY category) = 0;
+        UINT32 InputChannels = XAUDIO2_DEFAULT_CHANNELS,
+        UINT32 InputSampleRate = XAUDIO2_DEFAULT_SAMPLERATE,
+        UINT32 Flags = 0,
+        LPCWSTR DeviceId = 0,
+        const XAUDIO2_EFFECT_CHAIN *pEffectChain = 0,
+        AUDIO_STREAM_CATEGORY category = AudioCategory_GameEffects) = 0;
 
     virtual HRESULT STDMETHODCALLTYPE StartEngine(
         ) = 0;

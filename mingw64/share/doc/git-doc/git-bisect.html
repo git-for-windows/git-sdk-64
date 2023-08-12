@@ -689,9 +689,15 @@ as an alternative to <code>visualize</code>):</p>
 </div>
 </div>
 <div class="paragraph">
-<p>If the <code>DISPLAY</code> environment variable is not set, <em>git log</em> is used
-instead.  You can also give command-line options such as <code>-p</code> and
-<code>--stat</code>.</p>
+<p>Git detects a graphical environment through various environment variables:
+<code>DISPLAY</code>, which is set in X Window System environments on Unix systems.
+<code>SESSIONNAME</code>, which is set under Cygwin in interactive desktop sessions.
+<code>MSYSTEM</code>, which is set under Msys2 and Git for Windows.
+<code>SECURITYSESSIONID</code>, which may be set on macOS in interactive desktop sessions.</p>
+</div>
+<div class="paragraph">
+<p>If none of these environment variables is set, <em>git log</em> is used instead.
+You can also give command-line options such as <code>-p</code> and <code>--stat</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1080,7 +1086,7 @@ help</code> or <code>git bisect -h</code> to get a long usage description.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-08-08 11:18:35 UTC
+Last updated 2023-08-11 06:08:06 UTC
 </div>
 </div>
 </body>
