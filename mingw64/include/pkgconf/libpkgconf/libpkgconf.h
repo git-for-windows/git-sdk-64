@@ -67,6 +67,7 @@ typedef struct pkgconf_fragment_ pkgconf_fragment_t;
 typedef struct pkgconf_path_ pkgconf_path_t;
 typedef struct pkgconf_client_ pkgconf_client_t;
 typedef struct pkgconf_cross_personality_ pkgconf_cross_personality_t;
+typedef struct pkgconf_queue_ pkgconf_queue_t;
 
 #define PKGCONF_ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
 
@@ -79,8 +80,13 @@ typedef struct pkgconf_cross_personality_ pkgconf_cross_personality_t;
 #define PKGCONF_FOREACH_LIST_ENTRY_REVERSE(tail, value) \
 	for ((value) = (tail); (value) != NULL; (value) = (value)->prev)
 
-#define LIBPKGCONF_VERSION	20000
-#define LIBPKGCONF_VERSION_STR	"2.0.0"
+#define LIBPKGCONF_VERSION	20001
+#define LIBPKGCONF_VERSION_STR	"2.0.1"
+
+struct pkgconf_queue_ {
+	pkgconf_node_t iter;
+	char *package;
+};
 
 struct pkgconf_fragment_ {
 	pkgconf_node_t iter;
