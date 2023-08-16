@@ -1442,7 +1442,7 @@ _CK_DECLARE_FUNCTION (C_GetInterfaceList,
 _CK_DECLARE_FUNCTION (C_GetInterface,
 		      (unsigned char *interface_name,
 		       struct ck_version *version,
-		       struct ck_interface **interface,
+		       struct ck_interface **interface_,
 		       ck_flags_t flags));
 
 _CK_DECLARE_FUNCTION (C_LoginUser,
