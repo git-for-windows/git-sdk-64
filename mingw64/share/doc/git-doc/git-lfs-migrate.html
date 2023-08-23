@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.18">
+<meta name="generator" content="Asciidoctor 2.0.20">
 <title>git-lfs-migrate(1)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -208,13 +208,10 @@ table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
 .admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
 .admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
 .exampleblock>.content{border:1px solid #e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;border-radius:4px}
-.exampleblock>.content>:first-child{margin-top:0}
-.exampleblock>.content>:last-child{margin-bottom:0}
 .sidebarblock{border:1px solid #dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;border-radius:4px}
-.sidebarblock>:first-child{margin-top:0}
-.sidebarblock>:last-child{margin-bottom:0}
 .sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
-.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content>:first-child,.sidebarblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child,.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
 .literalblock pre,.listingblock>.content>pre{border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
 @media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
 @media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
@@ -393,7 +390,7 @@ b.conum *{color:inherit!important}
 dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
 h1,h2,p,td.content,span.alt,summary{letter-spacing:-.01em}
 p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
-p,blockquote,dt,td.content,span.alt,summary{font-size:1.0625rem}
+p,blockquote,dt,td.content,td.hdlist1,span.alt,summary{font-size:1.0625rem}
 p{margin-bottom:1.25rem}
 .sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
 .exampleblock>.content{background:#fffef7;border-color:#e0e0dc;box-shadow:0 1px 4px #e0e0dc}
@@ -560,14 +557,22 @@ akin to how existing Git LFS pointers were handled by the <code>info</code> mode
 prior versions of Git LFS).</p>
 </div>
 <div class="paragraph">
-<p>When using the <code>--everything</code> option, take note that it means all refs
-(local and remote) will be considered, but not necessarily all file
-types. The <code>import</code> and <code>info</code> modes consider all file types by default,
-although the <code>--include</code> and <code>--exclude</code> options constrain this
-behavior. Also note that after importing across all branches with the
-<code>--everything</code> option (and then checking to ensure the results are
-satisfactory!) it may be convenient to update multiple branches on your
-remotes by using the <code>--all</code> option to <code>git push</code>.</p>
+<p>When using the <code>--everything</code> option, take note that it means all commits
+reachable from all refs (local and remote) will be considered, but not
+necessarily all file types. The <code>import</code> and <code>info</code> modes consider all file
+types by default, although the <code>--include</code> and <code>--exclude</code> options constrain
+this behavior.</p>
+</div>
+<div class="paragraph">
+<p>While the <code>--everything</code> option means all commits reachable from any
+ref will be considered for migration, after migration only local refs will
+be updated even when <code>--everything</code> is specified. This ensures remote
+refs stay synchronized with their remote. In other words, <code>refs/heads/foo</code>
+will be updated with the <code>--everything</code> option, but <code>refs/remotes/origin/foo</code>
+will not, so it stays in sync with the remote until <code>git push origin foo</code>
+is performed.  After checking that the results of a migration with
+<code>--everything</code> are satisfactory, it may be convenient to push all local
+branches to your remotes by using the <code>--all</code> option to <code>git push</code>.</p>
 </div>
 <div class="paragraph">
 <p>Unless the <code>--skip-fetch</code> option is given, <code>git lfs migrate</code> always
@@ -947,8 +952,9 @@ commits F, E, D, C, and B, but exclude commit A:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The presence of flag <code>--everything</code> indicates that all local and remote
-references should be migrated.</p>
+<p>The presence of flag <code>--everything</code> indicates that all commits reachable
+from all local and remote references should be migrated (but note that
+the remote refs themselves will not be updated).</p>
 </div>
 </div>
 </div>
@@ -1036,7 +1042,7 @@ $ git lfs migrate import --everything --above=100Kb</pre>
 </div>
 <div class="paragraph">
 <p>Note: This will require a force-push to any existing Git remotes. Using
-the <code>--all</code> option when force-pushing may be convenient if many refs
+the <code>--all</code> option when force-pushing may be convenient if many local refs
 were updated, e.g., after importing to Git LFS with the <code>--everything</code>
 option.</p>
 </div>
@@ -1066,6 +1072,37 @@ specified.</p>
   -m "Import test.zip, .mp3, .psd files in root of repo" \
   test.zip *.mp3 *.psd</pre>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_migrate_from_git_lfs">Migrate from Git LFS</h3>
+<div class="paragraph">
+<p>If you no longer wish to use Git LFS for some or all of your files, you can
+use the <code>export</code> mode to convert Git LFS objects into regular Git blobs again.</p>
+</div>
+<div class="paragraph">
+<p>The <code>export</code> mode requires at least one <code>--include</code> pathspec, and will
+download any objects not found locally from your <code>origin</code> Git remote, or
+from the Git remote you specify with the <code>--remote</code> option.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre># Convert all zip Git LFS objects to files in your main branch
+$ git lfs migrate export --include-ref=main --include="*.zip"
+
+# Convert all zip Git LFS objects to files in every local branch,
+# fetching any object data not cached locally from the my-remote Git remote
+$ git lfs migrate export --everything --include="*.zip" --remote=my-remote
+
+# Convert all Git LFS objects to files in every local branch
+$ git lfs migrate export --everything --include="*"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note: This will require a force-push to any existing Git remotes. Using
+the <code>--all</code> option when force-pushing may be convenient if many local refs
+were updated, e.g., after exporting from Git LFS with the <code>--everything</code>
+option.</p>
 </div>
 </div>
 </div>
