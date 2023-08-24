@@ -398,6 +398,8 @@ LIBRARY_DEPS=	$(LIBRARY) $(LDLIBRARY) $(PY3LIBRARY) $(EXPORTSYMS)
 LINK_PYTHON_DEPS=$(LIBRARY_DEPS)
 PY_ENABLE_SHARED=	1
 STATIC_LIBPYTHON=	1
+ABI3DLLLIBRARY= libpython3.dll
+ABI3LDLIBRARY=  libpython3.dll.a
 
 
 LIBS=		 -lversion -lshlwapi -lpathcch -lbcrypt
@@ -732,7 +734,7 @@ LIBEXPAT_HEADERS= \
 # Default target
 all:		profile-opt
 build_all:	check-clean-src $(BUILDPYTHON) $(BUILDPYTHONW) $(BUILDVENVLAUNCHER) $(BUILDVENVWLAUNCHER) platform oldsharedmods sharedmods \
-		gdbhooks Programs/_testembed python-config
+		gdbhooks Programs/_testembed python-config $(ABI3DLLLIBRARY) $(ABI3LDLIBRARY)
 build_wasm: check-clean-src $(BUILDPYTHON) platform oldsharedmods python-config
 
 # Check that the source is clean when building out of source.
@@ -855,6 +857,9 @@ pythonw_exe.o: $(srcdir)/PC/pythonw_exe.rc
 
 python_nt.o: $(srcdir)/PC/python_nt.rc
 	$(WINDRES) $(RCFLAGS) -DORIGINAL_FILENAME=\\\"$(DLLLIBRARY)\\\" -I$(srcdir)/Include -I$(srcdir)/PC -I. $(srcdir)/PC/python_nt.rc $@
+
+python3dll_nt.o: $(srcdir)/PC/python_nt.rc
+	$(WINDRES) $(RCFLAGS) -DORIGINAL_FILENAME=\\\"$(ABI3DLLLIBRARY)\\\" -I$(srcdir)/Include -I$(srcdir)/PC -I. $(srcdir)/PC/python_nt.rc $@
 
 venvlauncher.o: $(srcdir)/PC/pylauncher.rc
 	$(WINDRES) $(RCFLAGS) -DPY_ICON -I$(srcdir)/Include -I$(srcdir)/PC -I. $(srcdir)/PC/pylauncher.rc $@
@@ -983,6 +988,10 @@ $(DLLLIBRARY) libpython$(LDVERSION).dll.a: $(LIBRARY_OBJS) python_nt.o
 			$(LIBS) $(LDFLAGS_NODIST) $(MODLIBS) $(SYSLIBS) python_nt.o; \
 	else true; \
 	fi
+
+$(ABI3DLLLIBRARY) $(ABI3LDLIBRARY): python3dll_nt.o $(srcdir)/PC/launcher.c
+	$(LDSHARED) -DPYTHON_DLL_NAME=\"$(DLLLIBRARY)\" $(srcdir)/PC/python3dll.c -Wl,--out-implib=$(ABI3LDLIBRARY) -o $(ABI3DLLLIBRARY) python3dll_nt.o \
+		$(LDFLAGS_NODIST);
 
 # wasm32-emscripten browser build
 # wasm assets directory is relative to current build dir, e.g. "./usr/local".
@@ -1995,6 +2004,7 @@ altbininstall: $(BUILDPYTHON)
 		if test -f $(LDLIBRARY) && test "$(PYTHONFRAMEWORKDIR)" = "no-framework" ; then \
 			if test -n "$(DLLLIBRARY)" ; then \
 				$(INSTALL_SHARED) $(DLLLIBRARY) $(DESTDIR)$(BINDIR); \
+				$(INSTALL_SHARED) $(ABI3DLLLIBRARY) $(DESTDIR)$(BINDIR); \
 			else \
 				$(INSTALL_SHARED) $(LDLIBRARY) $(DESTDIR)$(LIBDIR)/$(INSTSONAME); \
 				if test $(LDLIBRARY) != $(INSTSONAME); then \
@@ -2407,6 +2417,7 @@ libainstall: all python-config
 			if test "$(PYTHONFRAMEWORKDIR)" = no-framework; then \
 				if test "$(SHLIB_SUFFIX)" = .dll -o "$(SHLIB_SUFFIX)" = .pyd; then \
 					$(INSTALL_DATA) $(LDLIBRARY) $(DESTDIR)$(LIBDIR) ; \
+					$(INSTALL_DATA) $(ABI3LDLIBRARY) $(DESTDIR)$(LIBDIR) ; \
 				else \
 					$(INSTALL_DATA) $(LIBRARY) $(DESTDIR)$(LIBPL)/$(LIBRARY) ; \
 				fi; \
@@ -2653,7 +2664,7 @@ clean: clean-retain-profile
 	fi
 
 clobber: clean
-	-rm -f $(BUILDPYTHON) $(LIBRARY) $(LDLIBRARY) $(DLLLIBRARY) \
+	-rm -f $(BUILDPYTHON) $(LIBRARY) $(LDLIBRARY) $(DLLLIBRARY)$(ABI3LDLIBRARY) $(ABI3DLLLIBRARY) \
 		tags TAGS \
 		config.cache config.log pyconfig.h Modules/config.c
 	-rm -rf build platform

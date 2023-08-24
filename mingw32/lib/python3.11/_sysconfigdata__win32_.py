@@ -1,6 +1,8 @@
 import sys
 # system configuration generated and used by the sysconfig module
-build_time_vars = {'ABIFLAGS': '',
+build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
+ 'ABI3LDLIBRARY': 'libpython3.dll.a',
+ 'ABIFLAGS': '',
  'AC_APPLE_UNIVERSAL_BUILD': 0,
  'AIX_BUILDDATE': 0,
  'AIX_GENUINE_CPLUSPLUS': 0,
