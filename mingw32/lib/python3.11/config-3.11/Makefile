@@ -29,9 +29,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.11
-srcdir=		../Python-3.11.4
-VPATH=		../Python-3.11.4
-abs_srcdir=	/c/M/B/src/build-MINGW32/../Python-3.11.4
+srcdir=		../Python-3.11.5
+VPATH=		../Python-3.11.5
+abs_srcdir=	/c/M/B/src/build-MINGW32/../Python-3.11.5
 abs_builddir=	/c/M/B/src/build-MINGW32
 
 
@@ -125,7 +125,7 @@ PY_CORE_CFLAGS=	$(PY_STDMODULE_CFLAGS) -DPy_BUILD_CORE
 PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 # Strict or non-strict aliasing flags used to compile dtoa.c, see above
 CFLAGS_ALIASING=
-RCFLAGS= -DFIELD3=4150 -O COFF --target=pe-i386
+RCFLAGS= -DFIELD3=5150 -O COFF --target=pe-i386
 
 
 # Machine-dependent subdirectories
@@ -145,8 +145,8 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/M/B/src/Python-3.11.4
-abs_srcdir_b2h=		C:/M/B/src/Python-3.11.4
+srcdir_b2h=		C:/M/B/src/Python-3.11.5
+abs_srcdir_b2h=		C:/M/B/src/Python-3.11.5
 abs_builddir_b2h=	C:/M/B/src/build-MINGW32
 prefix_b2h=		D:/a/msys64/mingw32
 
@@ -1951,8 +1951,7 @@ altinstall: commoninstall
 
 commoninstall:  check-clean-src  \
 		altbininstall libinstall inclinstall libainstall \
-		sharedinstall oldsharedinstall altmaninstall \
-		
+		sharedinstall oldsharedinstall altmaninstall 
 
 # Install shared libraries enabled by Setup
 DESTDIRS=	$(exec_prefix) $(LIBDIR) $(BINLIBDEST) $(DESTSHARED)
@@ -2030,7 +2029,11 @@ altbininstall: $(BUILDPYTHON)
 			$(DESTDIR)$(BINDIR)/python$(VERSION)$(EXE); \
 	fi
 
-bininstall: altbininstall
+# We depend on commoninstall here to make sure the installation is already usable
+# before we possibly overwrite the global 'python3' symlink to avoid causing
+# problems for anything else trying to run 'python3' while we install, particularly
+# if we're installing in parallel with -j.
+bininstall: commoninstall altbininstall
 	if test ! -d $(DESTDIR)$(LIBPC); then \
 		echo "Creating directory $(LIBPC)"; \
 		$(INSTALL) -d -m $(DIRMODE) $(DESTDIR)$(LIBPC); \
@@ -2148,6 +2151,7 @@ TESTSUBDIRS=	ctypes/test \
 		test/support \
 		test/test_asyncio \
 		test/test_capi \
+		test/test_cppext \
 		test/test_email \
 		test/test_email/data \
 		test/test_import \
@@ -2201,6 +2205,7 @@ TESTSUBDIRS=	ctypes/test \
 		test/test_importlib/zipdata01 \
 		test/test_importlib/zipdata02 \
 		test/test_json \
+		test/test_module \
 		test/test_peg_generator \
 		test/test_sqlite3 \
 		test/test_tomllib \
