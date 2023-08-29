@@ -219,7 +219,8 @@ enum
 enum
 {
   NSS_SRC_FILES = 1,
-  NSS_SRC_DB = 2
+  NSS_SRC_DB = 2,
+  NSS_SRC_DB_ACCURATE = 4
 };
 
 /* Enumeration source constants for CW_SETENT called from mkpasswd/mkgroup. */

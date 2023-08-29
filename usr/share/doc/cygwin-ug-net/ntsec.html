@@ -562,7 +562,16 @@ The two lines starting with the keywords <code class="literal">passwd:</code> an
 information from.  <code class="literal">files</code> means, fetch the information
 from the corresponding file in the /etc directory.  <code class="literal">db</code>
 means, fetch the information from the Windows account databases, the SAM
-for local accounts, Active Directory for domain account.  Examples:
+for local accounts, Active Directory for domain account.  For the current
+user, the default group is obtained from the current user token to avoid
+additional lookups to the group database. <code class="literal">db-accuarte</code> 
+is only valid on <code class="literal">group:</code> line, and performs the same 
+lookups as the <code class="literal">db</code> option, but disables using the
+current user token to retrieve the default group as this optimization
+is not accurate in all cases.  For example, if you run a native process
+with the primary group set to the Administrators builtin group, the 
+<code class="literal">db</code> option will return a non-existent group as primary
+group. Examples:
 </p><pre class="screen">
   passwd: files
 </pre><p>
@@ -571,6 +580,11 @@ Read passwd entries only from /etc/passwd.
   group: db
 </pre><p>
 Read group entries only from SAM/AD.
+</p><pre class="screen">
+  group: db-accurate
+</pre><p>
+Read group entries only from SAM/AD. Force the use of the group database
+for the current user.
 </p><pre class="screen">
   group: files # db
 </pre><p>
