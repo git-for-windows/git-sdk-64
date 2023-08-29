@@ -31,8 +31,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.11
 srcdir=		.
 
-abs_srcdir=	/c/S/B/src/Python-3.11.4
-abs_builddir=	/c/S/B/src/Python-3.11.4
+abs_srcdir=	/c/S/B/src/Python-3.11.5
+abs_builddir=	/c/S/B/src/Python-3.11.5
 
 
 CC=		gcc
@@ -1895,8 +1895,7 @@ altinstall: commoninstall
 
 commoninstall:  check-clean-src  \
 		altbininstall libinstall inclinstall libainstall \
-		sharedinstall oldsharedinstall altmaninstall \
-		
+		sharedinstall oldsharedinstall altmaninstall 
 
 # Install shared libraries enabled by Setup
 DESTDIRS=	$(exec_prefix) $(LIBDIR) $(BINLIBDEST) $(DESTSHARED)
@@ -1971,7 +1970,11 @@ altbininstall: $(BUILDPYTHON)
 			$(DESTDIR)$(BINDIR)/python$(VERSION)$(EXE); \
 	fi
 
-bininstall: altbininstall commoninstall
+# We depend on commoninstall here to make sure the installation is already usable
+# before we possibly overwrite the global 'python3' symlink to avoid causing
+# problems for anything else trying to run 'python3' while we install, particularly
+# if we're installing in parallel with -j.
+bininstall: commoninstall altbininstall
 	if test ! -d $(DESTDIR)$(LIBPC); then \
 		echo "Creating directory $(LIBPC)"; \
 		$(INSTALL) -d -m $(DIRMODE) $(DESTDIR)$(LIBPC); \
@@ -2088,6 +2091,7 @@ TESTSUBDIRS=	ctypes/test \
 		test/support \
 		test/test_asyncio \
 		test/test_capi \
+		test/test_cppext \
 		test/test_email \
 		test/test_email/data \
 		test/test_import \
@@ -2141,6 +2145,7 @@ TESTSUBDIRS=	ctypes/test \
 		test/test_importlib/zipdata01 \
 		test/test_importlib/zipdata02 \
 		test/test_json \
+		test/test_module \
 		test/test_peg_generator \
 		test/test_sqlite3 \
 		test/test_tomllib \
