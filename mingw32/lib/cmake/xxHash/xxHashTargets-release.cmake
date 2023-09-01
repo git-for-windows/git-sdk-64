@@ -12,8 +12,8 @@ set_target_properties(xxHash::xxhash PROPERTIES
   IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/bin/libxxhash.dll"
   )
 
-list(APPEND _IMPORT_CHECK_TARGETS xxHash::xxhash )
-list(APPEND _IMPORT_CHECK_FILES_FOR_xxHash::xxhash "${_IMPORT_PREFIX}/lib/libxxhash.dll.a" "${_IMPORT_PREFIX}/bin/libxxhash.dll" )
+list(APPEND _cmake_import_check_targets xxHash::xxhash )
+list(APPEND _cmake_import_check_files_for_xxHash::xxhash "${_IMPORT_PREFIX}/lib/libxxhash.dll.a" "${_IMPORT_PREFIX}/bin/libxxhash.dll" )
 
 # Import target "xxHash::xxhsum" for configuration "Release"
 set_property(TARGET xxHash::xxhsum APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
@@ -21,8 +21,8 @@ set_target_properties(xxHash::xxhsum PROPERTIES
   IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/bin/xxhsum.exe"
   )
 
-list(APPEND _IMPORT_CHECK_TARGETS xxHash::xxhsum )
-list(APPEND _IMPORT_CHECK_FILES_FOR_xxHash::xxhsum "${_IMPORT_PREFIX}/bin/xxhsum.exe" )
+list(APPEND _cmake_import_check_targets xxHash::xxhsum )
+list(APPEND _cmake_import_check_files_for_xxHash::xxhsum "${_IMPORT_PREFIX}/bin/xxhsum.exe" )
 
 # Commands beyond this point should not need to know the version.
 set(CMAKE_IMPORT_FILE_VERSION)
