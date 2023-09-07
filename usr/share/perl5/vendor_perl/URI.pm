@@ -3,7 +3,7 @@ package URI;
 use strict;
 use warnings;
 
-our $VERSION = '5.19';
+our $VERSION = '5.21';
 
 # 1=version 5.10 and earlier; 0=version 5.11 and later
 use constant HAS_RESERVED_SQUARE_BRACKETS => $ENV{URI_HAS_RESERVED_SQUARE_BRACKETS} ? 1 : 0;
@@ -993,6 +993,21 @@ The I<https> URI scheme is a Netscape invention which is commonly
 implemented.  The scheme is used to reference HTTP servers through SSL
 connections.  Its syntax is the same as http, but the default
 port is different.
+
+=item B<icap>:
+
+The I<icap> URI scheme is specified in L<RFC 3507|http://tools.ietf.org/html/rfc3507>.
+The scheme is used to reference resources hosted by ICAP servers.
+
+C<URI> objects belonging to the icap scheme support the common,
+generic and server methods.
+
+=item B<icaps>:
+
+The I<icaps> URI scheme is specified in L<RFC 3507|http://tools.ietf.org/html/rfc3507> as well.
+The scheme is used to reference ICAP servers through SSL
+connections.  Its syntax is the same as icap, including the same
+default port.
 
 =item B<ldap>:
 

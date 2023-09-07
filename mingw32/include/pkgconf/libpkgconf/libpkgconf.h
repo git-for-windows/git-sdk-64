@@ -16,6 +16,7 @@
 #ifndef LIBPKGCONF__LIBPKGCONF_H
 #define LIBPKGCONF__LIBPKGCONF_H
 
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -80,8 +81,8 @@ typedef struct pkgconf_queue_ pkgconf_queue_t;
 #define PKGCONF_FOREACH_LIST_ENTRY_REVERSE(tail, value) \
 	for ((value) = (tail); (value) != NULL; (value) = (value)->prev)
 
-#define LIBPKGCONF_VERSION	20002
-#define LIBPKGCONF_VERSION_STR	"2.0.2"
+#define LIBPKGCONF_VERSION	20003
+#define LIBPKGCONF_VERSION_STR	"2.0.3"
 
 struct pkgconf_queue_ {
 	pkgconf_node_t iter;
@@ -149,6 +150,7 @@ struct pkgconf_pkg_ {
 	char *license;
 	char *maintainer;
 	char *copyright;
+	char *why;
 
 	pkgconf_list_t libs;
 	pkgconf_list_t libs_private;

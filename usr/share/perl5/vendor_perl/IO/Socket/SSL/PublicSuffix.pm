@@ -728,11 +728,29 @@ org.bi
 // biz : https://en.wikipedia.org/wiki/.biz
 biz
 
-// bj : https://en.wikipedia.org/wiki/.bj
+// bj : https://nic.bj/bj-suffixes.txt
+// submitted by registry <contact@nic.bj>
 bj
-asso.bj
-barreau.bj
-gouv.bj
+africa.bj
+agro.bj
+architectes.bj
+assur.bj
+avocats.bj
+co.bj
+com.bj
+eco.bj
+econo.bj
+edu.bj
+info.bj
+loisirs.bj
+money.bj
+net.bj
+org.bj
+ote.bj
+resto.bj
+restaurant.bj
+tourism.bj
+univ.bj
 
 // bm : http://www.bermudanic.bm/dnr-text.txt
 bm
@@ -1381,8 +1399,7 @@ fm
 // fo : https://en.wikipedia.org/wiki/.fo
 fo
 
-// fr : http://www.afnic.fr/
-// domaines descriptifs : https://www.afnic.fr/medias/documents/Cadre_legal/Afnic_Naming_Policy_12122016_VEN.pdf
+// fr : https://www.afnic.fr/ https://www.afnic.fr/wp-media/uploads/2022/12/afnic-naming-policy-2023-01-01.pdf
 fr
 asso.fr
 com.fr
@@ -1390,7 +1407,7 @@ gouv.fr
 nom.fr
 prd.fr
 tm.fr
-// domaines sectoriels : https://www.afnic.fr/en/products-and-services/the-fr-tld/sector-based-fr-domains-4.html
+// Former "domaines sectoriels", still registration suffixes
 aeroport.fr
 avocat.fr
 avoues.fr
@@ -4400,555 +4417,8 @@ ac.mu
 co.mu
 or.mu
 
-// museum : http://about.museum/naming/
-// http://index.museum/
+// museum : https://welcome.museum/wp-content/uploads/2018/05/20180525-Registration-Policy-MUSEUM-EN_VF-2.pdf https://welcome.museum/buy-your-dot-museum-2/
 museum
-academy.museum
-agriculture.museum
-air.museum
-airguard.museum
-alabama.museum
-alaska.museum
-amber.museum
-ambulance.museum
-american.museum
-americana.museum
-americanantiques.museum
-americanart.museum
-amsterdam.museum
-and.museum
-annefrank.museum
-anthro.museum
-anthropology.museum
-antiques.museum
-aquarium.museum
-arboretum.museum
-archaeological.museum
-archaeology.museum
-architecture.museum
-art.museum
-artanddesign.museum
-artcenter.museum
-artdeco.museum
-arteducation.museum
-artgallery.museum
-arts.museum
-artsandcrafts.museum
-asmatart.museum
-assassination.museum
-assisi.museum
-association.museum
-astronomy.museum
-atlanta.museum
-austin.museum
-australia.museum
-automotive.museum
-aviation.museum
-axis.museum
-badajoz.museum
-baghdad.museum
-bahn.museum
-bale.museum
-baltimore.museum
-barcelona.museum
-baseball.museum
-basel.museum
-baths.museum
-bauern.museum
-beauxarts.museum
-beeldengeluid.museum
-bellevue.museum
-bergbau.museum
-berkeley.museum
-berlin.museum
-bern.museum
-bible.museum
-bilbao.museum
-bill.museum
-birdart.museum
-birthplace.museum
-bonn.museum
-boston.museum
-botanical.museum
-botanicalgarden.museum
-botanicgarden.museum
-botany.museum
-brandywinevalley.museum
-brasil.museum
-bristol.museum
-british.museum
-britishcolumbia.museum
-broadcast.museum
-brunel.museum
-brussel.museum
-brussels.museum
-bruxelles.museum
-building.museum
-burghof.museum
-bus.museum
-bushey.museum
-cadaques.museum
-california.museum
-cambridge.museum
-can.museum
-canada.museum
-capebreton.museum
-carrier.museum
-cartoonart.museum
-casadelamoneda.museum
-castle.museum
-castres.museum
-celtic.museum
-center.museum
-chattanooga.museum
-cheltenham.museum
-chesapeakebay.museum
-chicago.museum
-children.museum
-childrens.museum
-childrensgarden.museum
-chiropractic.museum
-chocolate.museum
-christiansburg.museum
-cincinnati.museum
-cinema.museum
-circus.museum
-civilisation.museum
-civilization.museum
-civilwar.museum
-clinton.museum
-clock.museum
-coal.museum
-coastaldefence.museum
-cody.museum
-coldwar.museum
-collection.museum
-colonialwilliamsburg.museum
-coloradoplateau.museum
-columbia.museum
-columbus.museum
-communication.museum
-communications.museum
-community.museum
-computer.museum
-computerhistory.museum
-xn--comunicaes-v6a2o.museum
-contemporary.museum
-contemporaryart.museum
-convent.museum
-copenhagen.museum
-corporation.museum
-xn--correios-e-telecomunicaes-ghc29a.museum
-corvette.museum
-costume.museum
-countryestate.museum
-county.museum
-crafts.museum
-cranbrook.museum
-creation.museum
-cultural.museum
-culturalcenter.museum
-culture.museum
-cyber.museum
-cymru.museum
-dali.museum
-dallas.museum
-database.museum
-ddr.museum
-decorativearts.museum
-delaware.museum
-delmenhorst.museum
-denmark.museum
-depot.museum
-design.museum
-detroit.museum
-dinosaur.museum
-discovery.museum
-dolls.museum
-donostia.museum
-durham.museum
-eastafrica.museum
-eastcoast.museum
-education.museum
-educational.museum
-egyptian.museum
-eisenbahn.museum
-elburg.museum
-elvendrell.museum
-embroidery.museum
-encyclopedic.museum
-england.museum
-entomology.museum
-environment.museum
-environmentalconservation.museum
-epilepsy.museum
-essex.museum
-estate.museum
-ethnology.museum
-exeter.museum
-exhibition.museum
-family.museum
-farm.museum
-farmequipment.museum
-farmers.museum
-farmstead.museum
-field.museum
-figueres.museum
-filatelia.museum
-film.museum
-fineart.museum
-finearts.museum
-finland.museum
-flanders.museum
-florida.museum
-force.museum
-fortmissoula.museum
-fortworth.museum
-foundation.museum
-francaise.museum
-frankfurt.museum
-franziskaner.museum
-freemasonry.museum
-freiburg.museum
-fribourg.museum
-frog.museum
-fundacio.museum
-furniture.museum
-gallery.museum
-garden.museum
-gateway.museum
-geelvinck.museum
-gemological.museum
-geology.museum
-georgia.museum
-giessen.museum
-glas.museum
-glass.museum
-gorge.museum
-grandrapids.museum
-graz.museum
-guernsey.museum
-halloffame.museum
-hamburg.museum
-handson.museum
-harvestcelebration.museum
-hawaii.museum
-health.museum
-heimatunduhren.museum
-hellas.museum
-helsinki.museum
-hembygdsforbund.museum
-heritage.museum
-histoire.museum
-historical.museum
-historicalsociety.museum
-historichouses.museum
-historisch.museum
-historisches.museum
-history.museum
-historyofscience.museum
-horology.museum
-house.museum
-humanities.museum
-illustration.museum
-imageandsound.museum
-indian.museum
-indiana.museum
-indianapolis.museum
-indianmarket.museum
-intelligence.museum
-interactive.museum
-iraq.museum
-iron.museum
-isleofman.museum
-jamison.museum
-jefferson.museum
-jerusalem.museum
-jewelry.museum
-jewish.museum
-jewishart.museum
-jfk.museum
-journalism.museum
-judaica.museum
-judygarland.museum
-juedisches.museum
-juif.museum
-karate.museum
-karikatur.museum
-kids.museum
-koebenhavn.museum
-koeln.museum
-kunst.museum
-kunstsammlung.museum
-kunstunddesign.museum
-labor.museum
-labour.museum
-lajolla.museum
-lancashire.museum
-landes.museum
-lans.museum
-xn--lns-qla.museum
-larsson.museum
-lewismiller.museum
-lincoln.museum
-linz.museum
-living.museum
-livinghistory.museum
-localhistory.museum
-london.museum
-losangeles.museum
-louvre.museum
-loyalist.museum
-lucerne.museum
-luxembourg.museum
-luzern.museum
-mad.museum
-madrid.museum
-mallorca.museum
-manchester.museum
-mansion.museum
-mansions.museum
-manx.museum
-marburg.museum
-maritime.museum
-maritimo.museum
-maryland.museum
-marylhurst.museum
-media.museum
-medical.museum
-medizinhistorisches.museum
-meeres.museum
-memorial.museum
-mesaverde.museum
-michigan.museum
-midatlantic.museum
-military.museum
-mill.museum
-miners.museum
-mining.museum
-minnesota.museum
-missile.museum
-missoula.museum
-modern.museum
-moma.museum
-money.museum
-monmouth.museum
-monticello.museum
-montreal.museum
-moscow.museum
-motorcycle.museum
-muenchen.museum
-muenster.museum
-mulhouse.museum
-muncie.museum
-museet.museum
-museumcenter.museum
-museumvereniging.museum
-music.museum
-national.museum
-nationalfirearms.museum
-nationalheritage.museum
-nativeamerican.museum
-naturalhistory.museum
-naturalhistorymuseum.museum
-naturalsciences.museum
-nature.museum
-naturhistorisches.museum
-natuurwetenschappen.museum
-naumburg.museum
-naval.museum
-nebraska.museum
-neues.museum
-newhampshire.museum
-newjersey.museum
-newmexico.museum
-newport.museum
-newspaper.museum
-newyork.museum
-niepce.museum
-norfolk.museum
-north.museum
-nrw.museum
-nyc.museum
-nyny.museum
-oceanographic.museum
-oceanographique.museum
-omaha.museum
-online.museum
-ontario.museum
-openair.museum
-oregon.museum
-oregontrail.museum
-otago.museum
-oxford.museum
-pacific.museum
-paderborn.museum
-palace.museum
-paleo.museum
-palmsprings.museum
-panama.museum
-paris.museum
-pasadena.museum
-pharmacy.museum
-philadelphia.museum
-philadelphiaarea.museum
-philately.museum
-phoenix.museum
-photography.museum
-pilots.museum
-pittsburgh.museum
-planetarium.museum
-plantation.museum
-plants.museum
-plaza.museum
-portal.museum
-portland.museum
-portlligat.museum
-posts-and-telecommunications.museum
-preservation.museum
-presidio.museum
-press.museum
-project.museum
-public.museum
-pubol.museum
-quebec.museum
-railroad.museum
-railway.museum
-research.museum
-resistance.museum
-riodejaneiro.museum
-rochester.museum
-rockart.museum
-roma.museum
-russia.museum
-saintlouis.museum
-salem.museum
-salvadordali.museum
-salzburg.museum
-sandiego.museum
-sanfrancisco.museum
-santabarbara.museum
-santacruz.museum
-santafe.museum
-saskatchewan.museum
-satx.museum
-savannahga.museum
-schlesisches.museum
-schoenbrunn.museum
-schokoladen.museum
-school.museum
-schweiz.museum
-science.museum
-scienceandhistory.museum
-scienceandindustry.museum
-sciencecenter.museum
-sciencecenters.museum
-science-fiction.museum
-sciencehistory.museum
-sciences.museum
-sciencesnaturelles.museum
-scotland.museum
-seaport.museum
-settlement.museum
-settlers.museum
-shell.museum
-sherbrooke.museum
-sibenik.museum
-silk.museum
-ski.museum
-skole.museum
-society.museum
-sologne.museum
-soundandvision.museum
-southcarolina.museum
-southwest.museum
-space.museum
-spy.museum
-square.museum
-stadt.museum
-stalbans.museum
-starnberg.museum
-state.museum
-stateofdelaware.museum
-station.museum
-steam.museum
-steiermark.museum
-stjohn.museum
-stockholm.museum
-stpetersburg.museum
-stuttgart.museum
-suisse.museum
-surgeonshall.museum
-surrey.museum
-svizzera.museum
-sweden.museum
-sydney.museum
-tank.museum
-tcm.museum
-technology.museum
-telekommunikation.museum
-television.museum
-texas.museum
-textile.museum
-theater.museum
-time.museum
-timekeeping.museum
-topology.museum
-torino.museum
-touch.museum
-town.museum
-transport.museum
-tree.museum
-trolley.museum
-trust.museum
-trustee.museum
-uhren.museum
-ulm.museum
-undersea.museum
-university.museum
-usa.museum
-usantiques.museum
-usarts.museum
-uscountryestate.museum
-usculture.museum
-usdecorativearts.museum
-usgarden.museum
-ushistory.museum
-ushuaia.museum
-uslivinghistory.museum
-utah.museum
-uvic.museum
-valley.museum
-vantaa.museum
-versailles.museum
-viking.museum
-village.museum
-virginia.museum
-virtual.museum
-virtuel.museum
-vlaanderen.museum
-volkenkunde.museum
-wales.museum
-wallonie.museum
-war.museum
-washingtondc.museum
-watchandclock.museum
-watch-and-clock.museum
-western.museum
-westfalen.museum
-whaling.museum
-wildlife.museum
-williamsburg.museum
-windmill.museum
-workshop.museum
-york.museum
-yorkshire.museum
-yosemite.museum
-youth.museum
-zoological.museum
-zoology.museum
-xn--9dbhblg6di.museum
-xn--h1aegh.museum
 
 // mv : https://en.wikipedia.org/wiki/.mv
 // "mv" included because, contra Wikipedia, google.mv exists.
@@ -6024,52 +5494,60 @@ turystyka.pl
 // Government domains
 gov.pl
 ap.gov.pl
+griw.gov.pl
 ic.gov.pl
 is.gov.pl
-us.gov.pl
 kmpsp.gov.pl
+konsulat.gov.pl
 kppsp.gov.pl
-kwpsp.gov.pl
-psp.gov.pl
-wskr.gov.pl
 kwp.gov.pl
+kwpsp.gov.pl
+mup.gov.pl
 mw.gov.pl
-ug.gov.pl
-um.gov.pl
-umig.gov.pl
-ugim.gov.pl
-upow.gov.pl
-uw.gov.pl
-starostwo.gov.pl
+oia.gov.pl
+oirm.gov.pl
+oke.gov.pl
+oow.gov.pl
+oschr.gov.pl
+oum.gov.pl
 pa.gov.pl
+pinb.gov.pl
+piw.gov.pl
 po.gov.pl
+pr.gov.pl
+psp.gov.pl
 psse.gov.pl
 pup.gov.pl
 rzgw.gov.pl
 sa.gov.pl
+sdn.gov.pl
+sko.gov.pl
 so.gov.pl
 sr.gov.pl
-wsa.gov.pl
-sko.gov.pl
+starostwo.gov.pl
+ug.gov.pl
+ugim.gov.pl
+um.gov.pl
+umig.gov.pl
+upow.gov.pl
+uppo.gov.pl
+us.gov.pl
+uw.gov.pl
 uzs.gov.pl
+wif.gov.pl
 wiih.gov.pl
 winb.gov.pl
-pinb.gov.pl
 wios.gov.pl
 witd.gov.pl
-wzmiuw.gov.pl
-piw.gov.pl
 wiw.gov.pl
-griw.gov.pl
-wif.gov.pl
-oum.gov.pl
-sdn.gov.pl
-zp.gov.pl
-uppo.gov.pl
-mup.gov.pl
+wkz.gov.pl
+wsa.gov.pl
+wskr.gov.pl
+wsse.gov.pl
 wuoz.gov.pl
-konsulat.gov.pl
-oirm.gov.pl
+wzmiuw.gov.pl
+zp.gov.pl
+zpisdn.gov.pl
 // pl regional domains (http://www.dns.pl/english/index.html)
 augustow.pl
 babia-gora.pl
@@ -6191,7 +5669,7 @@ zarow.pl
 zgora.pl
 zgorzelec.pl
 
-// pm : http://www.afnic.fr/medias/documents/AFNIC-naming-policy2012.pdf
+// pm : https://www.afnic.fr/wp-media/uploads/2022/12/afnic-naming-policy-2023-01-01.pdf
 pm
 
 // pn : http://www.government.pn/PnRegistry/policies.htm
@@ -6289,7 +5767,7 @@ net.qa
 org.qa
 sch.qa
 
-// re : http://www.afnic.re/obtenir/chartes/nommage-re/annexe-descriptifs
+// re : https://www.afnic.fr/wp-media/uploads/2022/12/afnic-naming-policy-2023-01-01.pdf
 re
 asso.re
 com.re
@@ -6546,7 +6024,7 @@ td
 // http://www.telnic.org/
 tel
 
-// tf : https://en.wikipedia.org/wiki/.tf
+// tf : https://www.afnic.fr/wp-media/uploads/2022/12/afnic-naming-policy-2023-01-01.pdf
 tf
 
 // tg : https://en.wikipedia.org/wiki/.tg
@@ -6754,6 +6232,7 @@ kiev.ua
 kirovograd.ua
 km.ua
 kr.ua
+kropyvnytskyi.ua
 krym.ua
 ks.ua
 kv.ua
@@ -7165,7 +6644,7 @@ edu.vu
 net.vu
 org.vu
 
-// wf : http://www.afnic.fr/medias/documents/AFNIC-naming-policy2012.pdf
+// wf : https://www.afnic.fr/wp-media/uploads/2022/12/afnic-naming-policy-2023-01-01.pdf
 wf
 
 // ws : https://en.wikipedia.org/wiki/.ws
@@ -7177,7 +6656,7 @@ org.ws
 gov.ws
 edu.ws
 
-// yt : http://www.afnic.fr/medias/documents/AFNIC-naming-policy2012.pdf
+// yt : https://www.afnic.fr/wp-media/uploads/2022/12/afnic-naming-policy-2023-01-01.pdf
 yt
 
 // IDN ccTLDs
@@ -7519,7 +6998,7 @@ org.zw
 
 // newGTLDs
 
-// List of new gTLDs imported from https://www.icann.org/resources/registries/gtlds/v2/gtlds.json on 2022-11-02T15:17:39Z
+// List of new gTLDs imported from https://www.icann.org/resources/registries/gtlds/v2/gtlds.json on 2023-04-14T15:13:16Z
 // This list is auto-generated, don't edit it manually.
 // aaa : 2015-02-26 American Automobile Association, Inc.
 aaa
@@ -7568,9 +7047,6 @@ aco
 
 // actor : 2013-12-12 Dog Beach, LLC
 actor
-
-// adac : 2015-07-16 Allgemeiner Deutscher Automobil-Club e.V. (ADAC)
-adac
 
 // ads : 2014-12-04 Charleston Road Registry Inc.
 ads
@@ -8721,7 +8197,7 @@ glass
 // gle : 2014-07-24 Charleston Road Registry Inc.
 gle
 
-// global : 2014-04-17 Dot Global Domain Registry Limited
+// global : 2014-04-17 Identity Digital Limited
 global
 
 // globo : 2013-12-19 Globo Comunicação e Participações S.A
@@ -9231,9 +8707,6 @@ limo
 // lincoln : 2014-11-13 Ford Motor Company
 lincoln
 
-// linde : 2014-12-04 Linde Aktiengesellschaft
-linde
-
 // link : 2013-11-14 Nova Registry Ltd
 link
 
@@ -9263,9 +8736,6 @@ locker
 
 // locus : 2015-06-25 Locus Analytics LLC
 locus
-
-// loft : 2015-07-30 Annco, Inc.
-loft
 
 // lol : 2015-01-30 XYZ.COM LLC
 lol
@@ -9302,9 +8772,6 @@ luxe
 
 // luxury : 2013-10-17 Luxury Partners, LLC
 luxury
-
-// macys : 2015-07-31 Macys, Inc.
-macys
 
 // madrid : 2014-05-01 Comunidad de Madrid
 madrid
@@ -9645,7 +9112,7 @@ ovh
 // page : 2014-12-04 Charleston Road Registry Inc.
 page
 
-// panasonic : 2015-07-30 Panasonic Corporation
+// panasonic : 2015-07-30 Panasonic Holdings Corporation
 panasonic
 
 // paris : 2014-01-30 City of Paris
@@ -9807,7 +9274,7 @@ pub
 // pwc : 2015-10-29 PricewaterhouseCoopers LLP
 pwc
 
-// qpon : 2013-11-14 dotCOOL, Inc.
+// qpon : 2013-11-14 dotQPON LLC
 qpon
 
 // quebec : 2013-12-19 PointQuébec Inc
@@ -10053,9 +9520,6 @@ sener
 // services : 2014-02-27 Binky Moon, LLC
 services
 
-// ses : 2015-07-23 SES
-ses
-
 // seven : 2015-08-06 Seven West Media Ltd
 seven
 
@@ -10140,7 +9604,7 @@ smart
 // smile : 2014-12-18 Amazon Registry Services, Inc.
 smile
 
-// sncf : 2015-02-19 Société Nationale des Chemins de fer Francais S N C F
+// sncf : 2015-02-19 Société Nationale SNCF
 sncf
 
 // soccer : 2015-03-26 Binky Moon, LLC
@@ -10377,7 +9841,7 @@ toray
 // toshiba : 2014-04-10 TOSHIBA Corporation
 toshiba
 
-// total : 2015-08-06 TOTAL SE
+// total : 2015-08-06 TotalEnergies SE
 total
 
 // tours : 2015-01-22 Binky Moon, LLC
@@ -10812,9 +10276,6 @@ xn--j1aef
 // xn--jlq480n2rg : 2019-12-19 Amazon Registry Services, Inc.
 xn--jlq480n2rg
 
-// xn--jlq61u9w7b : 2015-01-08 Nokia Corporation
-xn--jlq61u9w7b
-
 // xn--jvr189m : 2015-02-26 Amazon Registry Services, Inc.
 xn--jvr189m
 
@@ -11006,6 +10467,10 @@ graphox.us
 // Submitted by Craig Jellick <domains@acorn.io>
 *.on-acorn.io
 
+// ActiveTrail: https://www.activetrail.biz/
+// Submitted by Ofer Kalaora <postmaster@activetrail.com>
+activetrail.biz
+
 // Adobe : https://www.adobe.com/
 // Submitted by Ian Boston <boston@adobe.com> and Lars Trieloff <trieloff@adobe.com>
 adobeaemcloud.com
@@ -11014,6 +10479,11 @@ hlx.live
 adobeaemcloud.net
 hlx.page
 hlx3.page
+
+// Adobe Developer Platform : https://developer.adobe.com
+// Submitted by Jesse MacFadyen<jessem@adobe.com>
+adobeio-static.net
+adobeioruntime.net
 
 // Agnat sp. z o.o. : https://domena.pl
 // Submitted by Przemyslaw Plewa <it-admin@domena.pl>
@@ -11028,6 +10498,24 @@ airkitapps.eu
 // Aiven: https://aiven.io/
 // Submitted by Etienne Stalmans <security@aiven.io>
 aivencloud.com
+
+// Akamai : https://www.akamai.com/
+// Submitted by Akamai Team <publicsuffixlist@akamai.com>
+akadns.net
+akamai.net
+akamai-staging.net
+akamaiedge.net
+akamaiedge-staging.net
+akamaihd.net
+akamaihd-staging.net
+akamaiorigin.net
+akamaiorigin-staging.net
+akamaized.net
+akamaized-staging.net
+edgekey.net
+edgekey-staging.net
+edgesuite.net
+edgesuite-staging.net
 
 // alboto.ca : http://alboto.ca
 // Submitted by Anton Avramov <avramov@alboto.ca>
@@ -11273,6 +10761,10 @@ cdn.prod.atlassian-dev.net
 // Submitted by Lukas Reschke <lukas@authentick.net>
 translated.page
 
+// Autocode : https://autocode.com
+// Submitted by Jacob Lee <jacob@autocode.com>
+autocode.dev
+
 // AVM : https://avm.de
 // Submitted by Andreas Weise <a.weise@avm.de>
 myfritz.net
@@ -11400,6 +10892,11 @@ cafjs.com
 // callidomus : https://www.callidomus.com/
 // Submitted by Marcus Popp <admin@callidomus.com>
 mycd.eu
+
+// Canva Pty Ltd : https://canva.com/
+// Submitted by Joel Aquilina <publicsuffixlist@canva.com>
+canva-apps.cn
+canva-apps.com
 
 // Carrd : https://carrd.co
 // Submitted by AJ <aj@carrd.co>
@@ -11530,8 +11027,11 @@ cloudcontrolapp.com
 
 // Cloudflare, Inc. : https://www.cloudflare.com/
 // Submitted by Cloudflare Team <publicsuffixlist@cloudflare.com>
-pages.dev
+cf-ipfs.com
+cloudflare-ipfs.com
 trycloudflare.com
+pages.dev
+r2.dev
 workers.dev
 
 // Clovyr : https://clovyr.io
@@ -12315,6 +11815,7 @@ u.channelsdvr.net
 // Fastly Inc. : http://www.fastly.com/
 // Submitted by Fastly Security <security@fastly.com>
 edgecompute.app
+fastly-edge.com
 fastly-terrarium.com
 fastlylb.net
 map.fastlylb.net
@@ -12829,6 +12330,10 @@ ngo.ng
 edu.scot
 sch.so
 
+// HostFly : https://www.ie.ua
+// Submitted by Bohdan Dub <support@hostfly.com.ua>
+ie.ua
+
 // HostyHosting (hostyhosting.com)
 hostyhosting.io
 
@@ -13287,6 +12792,7 @@ cloudapp.net
 azurestaticapps.net
 1.azurestaticapps.net
 2.azurestaticapps.net
+3.azurestaticapps.net
 centralus.azurestaticapps.net
 eastasia.azurestaticapps.net
 eastus2.azurestaticapps.net
@@ -13353,7 +12859,19 @@ netlify.app
 
 // ngrok : https://ngrok.com/
 // Submitted by Alan Shreve <alan@ngrok.com>
+ngrok.app
+ngrok-free.app
+ngrok.dev
+ngrok-free.dev
 ngrok.io
+ap.ngrok.io
+au.ngrok.io
+eu.ngrok.io
+in.ngrok.io
+jp.ngrok.io
+sa.ngrok.io
+us.ngrok.io
+ngrok.pizza
 
 // Nimbus Hosting Ltd. : https://www.nimbushosting.co.uk/
 // Submitted by Nicholas Ford <nick@nimbushosting.co.uk>
@@ -13750,6 +13268,10 @@ qoto.io
 // Submitted by Xavier De Cock <xdecock@gmail.com>
 qualifioapp.com
 
+// Quality Unit: https://qualityunit.com
+// Submitted by Vasyl Tsalko <vtsalko@qualityunit.com>
+ladesk.com
+
 // QuickBackend: https://www.quickbackend.com
 // Submitted by Dani Biro <dani@pymet.com>
 qbuser.com
@@ -13872,6 +13394,56 @@ xn--80aaa0cvac.xn--p1acf
 xn--h1aliz.xn--p1acf
 xn--90a1af.xn--p1acf
 xn--41a.xn--p1acf
+
+// SAKURA Internet Inc. : https://www.sakura.ad.jp/
+// Submitted by Internet Service Department <rs-vendor-ml@sakura.ad.jp>
+180r.com
+dojin.com
+sakuratan.com
+sakuraweb.com
+x0.com
+2-d.jp
+bona.jp
+crap.jp
+daynight.jp
+eek.jp
+flop.jp
+halfmoon.jp
+jeez.jp
+matrix.jp
+mimoza.jp
+ivory.ne.jp
+mail-box.ne.jp
+mints.ne.jp
+mokuren.ne.jp
+opal.ne.jp
+sakura.ne.jp
+sumomo.ne.jp
+topaz.ne.jp
+netgamers.jp
+nyanta.jp
+o0o0.jp
+rdy.jp
+rgr.jp
+rulez.jp
+s3.isk01.sakurastorage.jp
+s3.isk02.sakurastorage.jp
+saloon.jp
+sblo.jp
+skr.jp
+tank.jp
+uh-oh.jp
+undo.jp
+rs.webaccel.jp
+user.webaccel.jp
+websozai.jp
+xii.jp
+squares.net
+jpn.org
+kirara.st
+x0.to
+from.tv
+sakura.tv
 
 // Salesforce.com, Inc. https://salesforce.com/
 // Submitted by Michael Biven <mbiven@salesforce.com>
@@ -14025,6 +13597,9 @@ vp4.me
 
 // Snowflake Inc : https://www.snowflake.com/
 // Submitted by Faith Olapade <faith.olapade@snowflake.com>
+snowflake.app
+privatelink.snowflake.app
+streamlit.app
 streamlitapp.com
 
 // Snowplow Analytics : https://snowplowanalytics.com/
@@ -14160,6 +13735,8 @@ direct.quickconnect.to
 // Tabit Technologies Ltd. : https://tabit.cloud/
 // Submitted by Oren Agiv <oren@tabit.cloud>
 tabitorder.co.il
+mytabit.co.il
+mytabit.com
 
 // TAIFUN Software AG : http://taifun-software.de
 // Submitted by Bjoern Henke <dev-server@taifun-software.de>
@@ -14225,10 +13802,6 @@ pages.torproject.net
 // Submitted by Dustin Ward <dward@townnews.com>
 bloxcms.com
 townnews-staging.com
-
-// TradableBits: https://tradablebits.com
-// Submitted by Dmitry Khrisanov dmitry@tradablebits.com
-tbits.me
 
 // TrafficPlex GmbH : https://www.trafficplex.de/
 // Submitted by Phillipp Röll <phillipp.roell@trafficplex.de>
@@ -14301,6 +13874,10 @@ hk.com
 hk.org
 ltd.hk
 inc.hk
+
+// UK Intis Telecom LTD : https://it.com
+// Submitted by ITComdomains <to@it.com>
+it.com
 
 // UNIVERSAL DOMAIN REGISTRY : https://www.udr.org.yt/
 // see also: whois -h whois.udr.org.yt help

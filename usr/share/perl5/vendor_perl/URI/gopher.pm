@@ -3,7 +3,7 @@ package URI::gopher;  # <draft-murali-url-gopher>, Dec 4, 1996
 use strict;
 use warnings;
 
-our $VERSION = '5.19';
+our $VERSION = '5.21';
 
 use parent 'URI::_server';
 

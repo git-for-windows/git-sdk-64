@@ -13,7 +13,7 @@
 
 package IO::Socket::SSL;
 
-our $VERSION = '2.081';
+our $VERSION = '2.083';
 
 use IO::Socket;
 use Net::SSLeay 1.46;
@@ -196,7 +196,8 @@ if ( defined &Net::SSLeay::CTX_set_min_proto_version
 # global defaults
 my %DEFAULT_SSL_ARGS = (
     SSL_check_crl => 0,
-    SSL_version => 'SSLv23:!SSLv3:!SSLv2', # consider both SSL3.0 and SSL2.0 as broken
+    # TLS 1.1 and lower are deprecated with RFC 8996
+    SSL_version => 'SSLv23:!TLSv1:!TLSv1_1:!SSLv3:!SSLv2',
     SSL_verify_callback => undef,
     SSL_verifycn_scheme => undef,  # fallback cn verification
     SSL_verifycn_publicsuffix => undef,  # fallback default list verification
@@ -790,12 +791,12 @@ sub connect_SSL {
 	    if ( ! defined $host ) {
 		if ( $host = $arg_hash->{PeerAddr} || $arg_hash->{PeerHost} ) {
 		    $host =~s{^
-			(?:
-			    ([^:\[]+) |    # ipv4|host
-			    (\[(.*)\])     # [ipv6|host]
+			(
+			    (?:[^:\[]+) |    # ipv4|host
+			    (?:\[(?:.*)\])   # [ipv6|host]
 			)
-			(:[\w\-]+)?        # optional :port
-		    $}{$1$2}x;             # ipv4|host|ipv6
+			(:[\w\-]+)?          # optional :port
+		    $}{$1}x;                 # ipv4|host|ipv6
 		}
 	    }
 	    ${$ctx->{verify_name_ref}} = $host;
@@ -2114,6 +2115,7 @@ sub can_ocsp       { return $can_ocsp }
 sub can_ticket_keycb { return $can_tckt_keycb }
 sub can_pha        { return $can_pha }
 sub can_partial_chain { return $check_partial_chain && 1 }
+sub can_ciphersuites { return $can_ciphersuites }
 
 sub DESTROY {
     my $self = shift or return;
@@ -3680,7 +3682,7 @@ sub ossl_trace {
         } elsif ($content_type == $trace_constants{SSL3_RT_ALERT}) {
             my @c = unpack('c2', $buf);
             $msg_type = ($c[0] << 8) + $c[1];
-            $msg_name = eval { Net::SSLeay::SSL_alert_desc_string_long($msg_type) } || "Unknown alert";
+            $msg_name = eval { Net::SSLeay::alert_desc_string_long($msg_type) } || "Unknown alert";
         } else {
             $msg_type = unpack('c1', $buf);
 	    $msg_name = $tc_msgtype2s{$ssl_ver, $msg_type} || "Unknown (ssl_ver=$ssl_ver, msg=$msg_type)";
