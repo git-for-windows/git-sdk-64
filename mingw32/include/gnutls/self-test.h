@@ -21,14 +21,14 @@
  */
 
 #ifndef GNUTLS_SELF_TEST_H
-# define GNUTLS_SELF_TEST_H
+#define GNUTLS_SELF_TEST_H
 
-# include <gnutls/gnutls.h>
+#include <gnutls/gnutls.h>
 
- /* Self checking functions */
+/* Self checking functions */
 
-# define GNUTLS_SELF_TEST_FLAG_ALL 1
-# define GNUTLS_SELF_TEST_FLAG_NO_COMPAT (1<<1)
+#define GNUTLS_SELF_TEST_FLAG_ALL 1
+#define GNUTLS_SELF_TEST_FLAG_NO_COMPAT (1 << 1)
 
 int gnutls_cipher_self_test(unsigned flags, gnutls_cipher_algorithm_t cipher);
 int gnutls_mac_self_test(unsigned flags, gnutls_mac_algorithm_t mac);
@@ -38,4 +38,4 @@ int gnutls_hkdf_self_test(unsigned flags, gnutls_mac_algorithm_t mac);
 int gnutls_pbkdf2_self_test(unsigned flags, gnutls_mac_algorithm_t mac);
 int gnutls_tlsprf_self_test(unsigned flags, gnutls_mac_algorithm_t mac);
 
-#endif				/* GNUTLS_SELF_TEST_H */
+#endif /* GNUTLS_SELF_TEST_H */

@@ -10,7 +10,7 @@
 .ds B-Font B
 .ds I-Font I
 .ds R-Font R
-.TH certtool 1 "09 Feb 2023" "3.8.0" "User Commands"
+.TH certtool 1 "04 Aug 2023" "3.8.1" "User Commands"
 .SH NAME
 \f\*[B-Font]certtool\fP
 \- GnuTLS certificate tool
@@ -63,6 +63,15 @@ Input file.
 .NOP \f\*[B-Font]\-\-outfile\f[]=\f\*[I-Font]str\f[]
 Output file.
 .sp
+.TP
+.NOP \f\*[B-Font]\-\-attime\f[]=\f\*[I-Font]timestamp\f[]
+Perform validation at the timestamp instead of the system time.
+.sp
+timestamp is an instance in time encoded as Unix time or in a human
+ readable timestring such as "29 Feb 2004", "2004\-02\-29".
+Full documentation available at 
+<https://www.gnu.org/software/coreutils/manual/html_node/Date\-input\-formats.html>
+or locally via info '(coreutils) date invocation'.
 .SS "Certificate related options"
 .TP
 .NOP \f\*[B-Font]\-i\f[], \f\*[B-Font]\-\-certificate\-info\f[]
@@ -1097,7 +1106,7 @@ p11tool (1), psktool (1), srptool (1)
 .SH "AUTHORS"
 
 .SH "COPYRIGHT"
-Copyright (C) 2020-2021 Free Software Foundation, and others all rights reserved.
+Copyright (C) 2020-2023 Free Software Foundation, and others all rights reserved.
 This program is released under the terms of
 the GNU General Public License, version 3 or later
 .

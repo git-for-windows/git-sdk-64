@@ -10,7 +10,7 @@
 .ds B-Font B
 .ds I-Font I
 .ds R-Font R
-.TH ocsptool 1 "09 Feb 2023" "3.8.0" "User Commands"
+.TH ocsptool 1 "04 Aug 2023" "3.8.1" "User Commands"
 .SH NAME
 \f\*[B-Font]ocsptool\fP
 \- GnuTLS OCSP tool
@@ -159,6 +159,15 @@ Ignore any verification errors.
 Allow broken algorithms, such as MD5 for verification.
 .sp
 This can be combined with \-\-verify\-response.
+.TP
+.NOP \f\*[B-Font]\-\-attime\f[]=\f\*[I-Font]timestamp\f[]
+Perform validation at the timestamp instead of the system time.
+.sp
+timestamp is an instance in time encoded as Unix time or in a human
+ readable timestring such as "29 Feb 2004", "2004\-02\-29".
+Full documentation available at 
+<https://www.gnu.org/software/coreutils/manual/html_node/Date\-input\-formats.html>
+or locally via info '(coreutils) date invocation'.
 .TP
 .NOP \f\*[B-Font]\-v\f[] \f\*[I-Font]arg\f[], \f\*[B-Font]\-\-version\f[]=\f\*[I-Font]arg\f[]
 Output version of program and exit.  The default mode is `v', a simple
@@ -356,7 +365,7 @@ certtool (1)
 .SH "AUTHORS"
 
 .SH "COPYRIGHT"
-Copyright (C) 2020-2021 Free Software Foundation, and others all rights reserved.
+Copyright (C) 2020-2023 Free Software Foundation, and others all rights reserved.
 This program is released under the terms of
 the GNU General Public License, version 3 or later
 .

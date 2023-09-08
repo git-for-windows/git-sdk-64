@@ -21,21 +21,19 @@
  */
 
 #ifndef GNUTLS_URLS_H
-# define GNUTLS_URLS_H
+#define GNUTLS_URLS_H
 
-# include <gnutls/gnutls.h>
-# include <gnutls/x509.h>
-# include <gnutls/abstract.h>
+#include <gnutls/gnutls.h>
+#include <gnutls/x509.h>
+#include <gnutls/abstract.h>
 
 /* This API allows to register application specific URLs for
  * keys and certificates.
  */
 
-/* *INDENT-OFF* */
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* *INDENT-ON* */
 
 typedef int (*gnutls_privkey_import_url_func)(gnutls_privkey_t pkey,
 					      const char *url, unsigned flags);
@@ -55,7 +53,7 @@ typedef int (*gnutls_pubkey_import_url_func)(gnutls_pubkey_t pkey,
  * it should return GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE. */
 typedef int (*gnutls_get_raw_issuer_func)(const char *url,
 					  gnutls_x509_crt_t crt,
-					  gnutls_datum_t * issuer_der,
+					  gnutls_datum_t *issuer_der,
 					  unsigned flags);
 
 typedef struct gnutls_custom_url_st {
@@ -65,16 +63,14 @@ typedef struct gnutls_custom_url_st {
 	gnutls_x509_crt_import_url_func import_crt;
 	gnutls_pubkey_import_url_func import_pubkey;
 	gnutls_get_raw_issuer_func get_issuer;
-	void *future1;		/* replace in a future extension */
-	void *future2;		/* replace in a future extension */
+	void *future1; /* replace in a future extension */
+	void *future2; /* replace in a future extension */
 } gnutls_custom_url_st;
 
-int gnutls_register_custom_url(const gnutls_custom_url_st * st);
+int gnutls_register_custom_url(const gnutls_custom_url_st *st);
 
-/* *INDENT-OFF* */
 #ifdef __cplusplus
 }
 #endif
-/* *INDENT-ON* */
 
-#endif				/* GNUTLS_URLS_H */
+#endif /* GNUTLS_URLS_H */
