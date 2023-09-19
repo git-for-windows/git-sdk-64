@@ -1,4 +1,4 @@
-*syntax.txt*	For Vim version 9.0.  Last change: 2023 Feb 26
+*syntax.txt*	For Vim version 9.0.  Last change: 2023 Apr 24
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -214,10 +214,10 @@ A syntax group name is to be used for syntax items that match the same kind of
 thing.  These are then linked to a highlight group that specifies the color.
 A syntax group name doesn't specify any color or attributes itself.
 
-The name for a highlight or syntax group must consist of ASCII letters, digits
-and the underscore.  As a regexp: "[a-zA-Z0-9_]*".  However, Vim does not give
-an error when using other characters.  The maximum length of a group name is
-about 200 bytes.  *E1249*
+The name for a highlight or syntax group must consist of ASCII letters,
+digits, underscores, dots, or hyphens.  As a regexp: "[a-zA-Z0-9_.-]*".
+However, Vim does not give an error when using other characters.  The maximum
+length of a group name is about 200 bytes.  *E1249*
 
 To be able to allow each user to pick their favorite set of colors, there must
 be preferred names for highlight groups that are common for many languages.
@@ -596,7 +596,7 @@ The method used to prevent copying in the generated page depends on the value
 of |g:html_use_input_for_pc|.
 
 						    *g:html_use_input_for_pc*
-Default: "fallback"
+Default: "none"
 If |g:html_prevent_copy| is non-empty, then:
 
 When "all", read-only <input> elements are used in place of normal text for
@@ -1579,9 +1579,10 @@ example, FORM files, use this in your startup vimrc: >
 
 FORTH						*forth.vim* *ft-forth-syntax*
 
-Files matching "*.fs" could be F# or Forth.  If the automatic detection
-doesn't work for you, or you don't edit F# at all, use this in your
-startup vimrc: >
+Files matching "*.f" could be Fortran or Forth and those matching "*.fs" could
+be F# or Forth.  If the automatic detection doesn't work for you, or you don't
+edit F# or Fortran at all, use this in your startup vimrc: >
+   :let filetype_f  = "forth"
    :let filetype_fs = "forth"
 
 
@@ -2159,11 +2160,11 @@ should set a variable in your .vimrc file: >
 	:let lpc_syntax_for_c = 1
 
 If it doesn't work properly for some particular C or LPC files, use a
-modeline.  For a LPC file:
+modeline.  For a LPC file: >
 
 	// vim:set ft=lpc:
 
-For a C file that is recognized as LPC:
+For a C file that is recognized as LPC: >
 
 	// vim:set ft=c:
 
@@ -2195,7 +2196,7 @@ LUA						*lua.vim* *ft-lua-syntax*
 The Lua syntax file can be used for versions 4.0, 5.0, 5.1 and 5.2 (5.2 is
 the default). You can select one of these versions using the global variables
 lua_version and lua_subversion. For example, to activate Lua
-5.1 syntax highlighting, set the variables like this:
+5.1 syntax highlighting, set the variables like this: >
 
 	:let lua_version = 5
 	:let lua_subversion = 1
@@ -2803,8 +2804,8 @@ unsetting all the other ones.
 
 If you use Python 2 or straddling code (Python 2 and 3 compatible),
 you can enforce the use of an older syntax file with support for
-Python 2 and up to Python 3.5.
-	: let python_use_python2_syntax = 1
+Python 2 and up to Python 3.5. >
+	:let python_use_python2_syntax = 1
 This option will exclude all modern Python 3.6 or higher features.
 
 Note: Only existence of these options matters, not their value.
@@ -3748,11 +3749,12 @@ The syntax script for zsh allows for syntax-based folding: >
 Vim understands three types of syntax items:
 
 1. Keyword
-   It can only contain keyword characters, according to the 'iskeyword'
-   option.  It cannot contain other syntax items.  It will only match with a
-   complete word (there are no keyword characters before or after the match).
-   The keyword "if" would match in "if(a=b)", but not in "ifdef x", because
-   "(" is not a keyword character and "d" is.
+   It can only contain keyword characters, according to the characters
+   specified with |:syn-iskeyword| or the 'iskeyword' option.  It cannot
+   contain other syntax items.  It will only match with a complete word (there
+   are no keyword characters before or after the match).  The keyword "if"
+   would match in "if(a=b)", but not in "ifdef x", because "(" is not a
+   keyword character and "d" is.
 
 2. Match
    This is a match with a single regexp pattern.
@@ -4928,7 +4930,7 @@ is mostly used, because it looks better.
 ==============================================================================
 13. Colorschemes				*color-schemes*
 
-In the next section you can find information about indivisual highlight groups
+In the next section you can find information about individual highlight groups
 and how to specify colors for them.  Most likely you want to just select a set
 of colors by using the `:colorscheme` command, for example: >
 

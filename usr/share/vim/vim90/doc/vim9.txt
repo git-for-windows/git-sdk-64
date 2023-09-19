@@ -1,4 +1,4 @@
-*vim9.txt*	For Vim version 9.0.  Last change: 2023 Feb 21
+*vim9.txt*	For Vim version 9.0.  Last change: 2023 Jun 10
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -117,6 +117,9 @@ script and `:def` functions; details are below:
 - Unless mentioned specifically, the highest |scriptversion| is used.
 - When defining an expression mapping, the expression will be evaluated in the
   context of the script where it was defined.
+- When indexing a string the index is counted in characters, not bytes:
+  |vim9-string-index|
+- Some possibly unexpected differences: |vim9-gotchas|.
 
 
 Comments starting with # ~
@@ -190,8 +193,8 @@ created yet.  In this case you can call `execute()` to invoke it at runtime. >
 used for the command or the error was caught a `:try` block), does not get a
 range passed, cannot be a "dict" function, and can always be a closure.
 						*vim9-no-dict-function*
-Later classes will be added, which replaces the "dict function" mechanism.
-For now you will need to pass the dictionary explicitly: >
+You can use a Vim9 Class (|Vim9-class|) instead of a "dict function".
+You can also pass the dictionary explicitly: >
 	def DictFunc(self: dict<any>, arg: string)
 	   echo self[arg]
 	enddef
@@ -914,7 +917,7 @@ Thus "=~" works like "=~#".
 "is" and "isnot" (|expr-is| and |expr-isnot|) when used on strings now return
 false.  In legacy script they just compare the strings, in |Vim9| script they
 check identity, and strings are copied when used, thus two strings are never
-the same (this might change some day if strings are not copied but reference
+the same (this might change someday if strings are not copied but reference
 counted).
 
 
@@ -1030,10 +1033,12 @@ In Vim9 script one can use the following predefined values: >
 	null
 	null_blob
 	null_channel
+	null_class
 	null_dict
 	null_function
 	null_job
 	null_list
+	null_object
 	null_partial
 	null_string
 `true` is the same as `v:true`, `false` the same as `v:false`, `null` the same
@@ -1056,11 +1061,11 @@ It is possible to compare `null`  with any value, this will not give a type
 error.  However, comparing `null` with a number, float or bool will always
 result in `false`.  This is different from legacy script, where comparing
 `null` with zero or `false` would return `true`.
-
+							*vim9-false-true*
 When converting a boolean to a string `false` and `true` are used, not
 `v:false` and `v:true` like in legacy script.  `v:none` has no `none`
 replacement, it has no equivalent in other languages.
-
+							*vim9-string-index*
 Indexing a string with [idx] or taking a slice with [idx : idx] uses character
 indexes instead of byte indexes.  Composing characters are included.
 Example: >
@@ -1461,8 +1466,8 @@ have the "void" type.  Trying to use a void (e.g. a function without a
 return value) results in error *E1031*  *E1186* .
 
 There is no array type, use list<{type}> instead.  For a list constant an
-efficient implementation is used that avoids allocating lot of small pieces of
-memory.
+efficient implementation is used that avoids allocating a lot of small pieces
+of memory.
 							*E1005* *E1007*
 A partial and function can be declared in more or less specific ways:
 func				any kind of function reference, no type
@@ -1552,6 +1557,8 @@ string to a number.
 
 If a type is given where it is not expected you can get *E1272* .
 
+If a type is incomplete you get *E1363*, e.g. when you have an object for
+which the class is not known (usually that is a null object).
 
 Type inference ~
 							*type-inference*

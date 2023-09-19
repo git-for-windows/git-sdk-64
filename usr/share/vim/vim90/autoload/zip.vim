@@ -1,7 +1,7 @@
 " zip.vim: Handles browsing zipfiles
 "            AUTOLOAD PORTION
-" Date:		Nov 08, 2021
-" Version:	32
+" Date:		Mar 12, 2023
+" Version:	33
 " Maintainer:	Charles E Campbell <NcampObell@SdrPchip.AorgM-NOSPAM>
 " License:	Vim License  (see vim's :help license)
 " Copyright:    Copyright (C) 2005-2019 Charles E. Campbell {{{1
@@ -20,7 +20,7 @@
 if &cp || exists("g:loaded_zip")
  finish
 endif
-let g:loaded_zip= "v32"
+let g:loaded_zip= "v33"
 if v:version < 702
  echohl WarningMsg
  echo "***warning*** this version of zip needs vim 7.2 or later"
@@ -56,6 +56,15 @@ endif
 if !exists("g:zip_extractcmd")
  let g:zip_extractcmd= g:zip_unzipcmd
 endif
+
+let s:tmp_cwd = getcwd()
+if (fnamemodify(exepath(g:zip_unzipcmd), ":p:h") ==# getcwd()
+          \ && (index(split($PATH,has("win32")? ';' : ':'), s:tmp_cwd) == -1 || s:tmp_cwd == '.'))
+ unlet s:tmp_cwd
+ echoerr "Warning: NOT executing " .. g:zip_unzipcmd .. " from current directory!"
+ finish
+endif
+unlet s:tmp_cwd
 
 " ----------------
 "  Functions: {{{1
@@ -160,10 +169,14 @@ endfun
 " ---------------------------------------------------------------------
 " ZipBrowseSelect: {{{2
 fun! s:ZipBrowseSelect()
-"  call Dfunc("ZipBrowseSelect() zipfile<".b:zipfile."> curfile<".expand("%").">")
+  "  call Dfunc("ZipBrowseSelect() zipfile<".((exists("b:zipfile"))? b:zipfile : "n/a")."> curfile<".expand("%").">")
   let repkeep= &report
   set report=10
   let fname= getline(".")
+  if !exists("b:zipfile")
+"   call Dret("ZipBrowseSelect : b:zipfile doesn't exist!")
+   return
+  endif
 
   " sanity check
   if fname =~ '^"'
