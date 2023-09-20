@@ -133,7 +133,7 @@ int OSSL_CMP_CTX_set1_senderNonce(OSSL_CMP_CTX *ctx,
 
 <p>OSSL_CMP_CTX_free() deallocates an OSSL_CMP_CTX structure.</p>
 
-<p>OSSL_CMP_CTX_reinit() prepares the given <i>ctx</i> for a further transaction by clearing the internal CMP transaction (aka session) status, PKIStatusInfo, and any previous results (newCert, newChain, caPubs, and extraCertsIn) from the last executed transaction. It also clears any ITAVs that were added by OSSL_CMP_CTX_push0_genm_ITAV(). All other field values (i.e., CMP options) are retained for potential re-use.</p>
+<p>OSSL_CMP_CTX_reinit() prepares the given <i>ctx</i> for a further transaction by clearing the internal CMP transaction (aka session) status, PKIStatusInfo, and any previous results (newCert, newChain, caPubs, and extraCertsIn) from the last executed transaction. It also clears any ITAVs that were added by OSSL_CMP_CTX_push0_genm_ITAV(). All other field values (i.e., CMP options) are retained for potential reuse.</p>
 
 <p>OSSL_CMP_CTX_set_option() sets the given value for the given option (e.g., OSSL_CMP_OPT_IMPLICIT_CONFIRM) in the given OSSL_CMP_CTX structure.</p>
 
@@ -228,11 +228,11 @@ for signature-based message protection and Proof-of-Possession (POPO).
 Default is SHA256.</code></pre>
 
 </dd>
-<dt id="OSSL_CMP_OPT_OWF_ALGNID-The-NID-of-the-digest-algorithm-to-be-used-as-one-way-function-OWF-in-RFC-4210s-MSG_MAC_ALG-for-PBM-based-message-protection.-Default-is-SHA256"><b>OSSL_CMP_OPT_OWF_ALGNID</b> The NID of the digest algorithm to be used as one-way function (OWF) in RFC 4210&#39;s MSG_MAC_ALG for PBM-based message protection. Default is SHA256.</dt>
+<dt id="OSSL_CMP_OPT_OWF_ALGNID-The-NID-of-the-digest-algorithm-to-be-used-as-one-way-function-OWF-for-MAC-based-message-protection-with-password-based-MAC-PBM-.-See-RFC-4210-section-5.1.3.1-for-details.-Default-is-SHA256"><b>OSSL_CMP_OPT_OWF_ALGNID</b> The NID of the digest algorithm to be used as one-way function (OWF) for MAC-based message protection with password-based MAC (PBM). See RFC 4210 section 5.1.3.1 for details. Default is SHA256.</dt>
 <dd>
 
 </dd>
-<dt id="OSSL_CMP_OPT_MAC_ALGNID-The-NID-of-the-MAC-algorithm-to-be-used-in-RFC-4210s-MSG_MAC_ALG-for-PBM-based-message-protection.-Default-is-HMAC-SHA1-as-per-RFC-4210"><b>OSSL_CMP_OPT_MAC_ALGNID</b> The NID of the MAC algorithm to be used in RFC 4210&#39;s MSG_MAC_ALG for PBM-based message protection. Default is HMAC-SHA1 as per RFC 4210.</dt>
+<dt id="OSSL_CMP_OPT_MAC_ALGNID-The-NID-of-the-MAC-algorithm-to-be-used-for-message-protection-with-PBM.-Default-is-HMAC-SHA1-as-per-RFC-4210"><b>OSSL_CMP_OPT_MAC_ALGNID</b> The NID of the MAC algorithm to be used for message protection with PBM. Default is HMAC-SHA1 as per RFC 4210.</dt>
 <dd>
 
 </dd>
@@ -350,17 +350,17 @@ to validate the certificate chain of an IP message.</code></pre>
 
 <p>OSSL_CMP_CTX_get0_untrusted(OSSL_CMP_CTX *ctx) returns a pointer to the list of untrusted certs, which may be empty if unset.</p>
 
-<p>OSSL_CMP_CTX_set1_cert() sets the CMP signer certificate related to the private key used for CMP message protection. Therefore the public key of this <i>cert</i> must correspond to the private key set before or thereafter via OSSL_CMP_CTX_set1_pkey(). When using signature-based protection of CMP request messages this CMP signer certificate will be included first in the extraCerts field. It serves as fallback reference certificate, see OSSL_CMP_CTX_set1_oldCert(). The subject of this <i>cert</i> will be used as the sender field of outgoing messages, while the subject of any cert set via OSSL_CMP_CTX_set1_oldCert() and any value set via OSSL_CMP_CTX_set1_subjectName() are used as fallback.</p>
+<p>OSSL_CMP_CTX_set1_cert() sets the CMP signer certificate, also called protection certificate, related to the private key for signature-based message protection. Therefore the public key of this <i>cert</i> must correspond to the private key set before or thereafter via OSSL_CMP_CTX_set1_pkey(). When using signature-based protection of CMP request messages this CMP signer certificate will be included first in the extraCerts field. It serves as fallback reference certificate, see OSSL_CMP_CTX_set1_oldCert(). The subject of this <i>cert</i> will be used as the sender field of outgoing messages, while the subject of any cert set via OSSL_CMP_CTX_set1_oldCert() and any value set via OSSL_CMP_CTX_set1_subjectName() are used as fallback.</p>
 
 <p>The <i>cert</i> argument may be NULL to clear the entry.</p>
 
 <p>OSSL_CMP_CTX_build_cert_chain() builds a certificate chain for the CMP signer certificate previously set in the <i>ctx</i>. It adds the optional <i>candidates</i>, a list of intermediate CA certs that may already constitute the targeted chain, to the untrusted certs that may already exist in the <i>ctx</i>. Then the function uses this augmented set of certs for chain construction. If <i>own_trusted</i> is NULL it builds the chain as far down as possible and ignores any verification errors. Else the CMP signer certificate must be verifiable where the chain reaches a trust anchor contained in <i>own_trusted</i>. On success the function stores the resulting chain in <i>ctx</i> for inclusion in the extraCerts field of signature-protected messages. Calling this function is optional; by default a chain construction is performed on demand that is equivalent to calling this function with the <i>candidates</i> and <i>own_trusted</i> arguments being NULL.</p>
 
-<p>OSSL_CMP_CTX_set1_pkey() sets the client&#39;s private key corresponding to the CMP signer certificate set via OSSL_CMP_CTX_set1_cert(). This key is used create signature-based protection (protectionAlg = MSG_SIG_ALG) of outgoing messages unless a PBM secret has been set via OSSL_CMP_CTX_set1_secretValue(). The <i>pkey</i> argument may be NULL to clear the entry.</p>
+<p>OSSL_CMP_CTX_set1_pkey() sets the client&#39;s private key corresponding to the CMP signer certificate set via OSSL_CMP_CTX_set1_cert(). This key is used create signature-based protection (protectionAlg = MSG_SIG_ALG) of outgoing messages unless a symmetric secret has been set via OSSL_CMP_CTX_set1_secretValue(). The <i>pkey</i> argument may be NULL to clear the entry.</p>
 
-<p>OSSL_CMP_CTX_set1_secretValue() sets the byte string <i>sec</i> with length <i>len</i> as PBM secret in the given <i>ctx</i> or clears it if the <i>sec</i> argument is NULL. If present, this secret is used to create PBM-based protection of outgoing messages and to verify any PBM-based protection of incoming messages (protectionAlg = MSG_MAC_ALG). PBM stands for Password-Based MAC. PBM-based protection takes precedence over signature-based protection.</p>
+<p>OSSL_CMP_CTX_set1_secretValue() sets in <i>ctx</i> the byte string <i>sec</i> of length <i>len</i> to use as pre-shared secret, or clears it if the <i>sec</i> argument is NULL. If present, this secret is used to create MAC-based authentication and integrity protection (rather than applying signature-based protection) of outgoing messages and to verify authenticity and integrity of incoming messages that have MAC-based protection (protectionAlg = <code>MSG_MAC_ALG</code>).</p>
 
-<p>OSSL_CMP_CTX_set1_referenceValue() sets the given referenceValue <i>ref</i> with length <i>len</i> in the given <i>ctx</i> or clears it if the <i>ref</i> argument is NULL. According to RFC 4210 section 5.1.1, if no value for the sender field in CMP message headers can be determined (i.e., no CMP signer certificate and no subject DN is set via OSSL_CMP_CTX_set1_subjectName() then the sender field will contain the NULL-DN and the senderKID field of the CMP message header must be set. When signature-based protection is used the senderKID will be set to the subjectKeyIdentifier of the CMP signer certificate as far as present. If not present or when PBM-based protection is used the <i>ref</i> value is taken as the fallback value for the senderKID.</p>
+<p>OSSL_CMP_CTX_set1_referenceValue() sets the given referenceValue <i>ref</i> with length <i>len</i> in the given <i>ctx</i> or clears it if the <i>ref</i> argument is NULL. According to RFC 4210 section 5.1.1, if no value for the sender field in CMP message headers can be determined (i.e., no CMP signer certificate and no subject DN is set via OSSL_CMP_CTX_set1_subjectName() then the sender field will contain the NULL-DN and the senderKID field of the CMP message header must be set. When signature-based protection is used the senderKID will be set to the subjectKeyIdentifier of the CMP signer certificate as far as present. If not present or when MAC-based protection is used the <i>ref</i> value is taken as the fallback value for the senderKID.</p>
 
 <p>OSSL_CMP_CTX_set1_recipient() sets the recipient name that will be used in the PKIHeader of CMP request messages, i.e. the X509 name of the (CA) server.</p>
 
@@ -477,7 +477,7 @@ OSSL_CMP_CTX_set1_serverPort(cmp_ctx, port_string);
 OSSL_CMP_CTX_set1_serverPath(cmp_ctx, path_or_alias);
 OSSL_CMP_CTX_set0_trustedStore(cmp_ctx, ts);</code></pre>
 
-<p>Set up client credentials for password-based protection (PBM):</p>
+<p>Set up symmetric credentials for MAC-based message protection such as PBM:</p>
 
 <pre><code>OSSL_CMP_CTX_set1_referenceValue(cmp_ctx, ref, ref_len);
 OSSL_CMP_CTX_set1_secretValue(cmp_ctx, sec, sec_len);</code></pre>

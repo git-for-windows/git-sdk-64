@@ -69,7 +69,7 @@ int OSSL_HTTP_is_alive(const OSSL_HTTP_REQ_CTX *rctx);</code></pre>
 
 <p>OSSL_HTTP_REQ_CTX_free() frees up the HTTP request context <i>rctx</i>. The <i>rbio</i> is not free&#39;d, <i>wbio</i> will be free&#39;d if <i>free_wbio</i> is set.</p>
 
-<p>OSSL_HTTP_REQ_CTX_set_request_line() adds the HTTP request line to the context. The HTTP method is determined by <i>method_POST</i>, which should be 1 to indicate <code>POST</code> or 0 to indicate <code>GET</code>. <i>server</i> and <i>port</i> may be set to indicate a proxy server and port that the request should go through, otherwise they should be left NULL. <i>path</i> is the HTTP request path; if left NULL, <code>/</code> is used.</p>
+<p>OSSL_HTTP_REQ_CTX_set_request_line() adds the 1st HTTP request line to <i>rctx</i>. The HTTP method is determined by <i>method_POST</i>, which should be 1 to indicate <code>POST</code> or 0 to indicate <code>GET</code>. <i>server</i> and <i>port</i> may be set to give the server and the optional port that an HTTP proxy shall forward the request to, otherwise they must be left NULL. <i>path</i> provides the HTTP request path; if left NULL, <code>/</code> is used. For backward compatibility, <i>path</i> may begin with <code>http://</code> and thus convey an absoluteURI. In this case it indicates HTTP proxy use and provides also the server (and optionally the port) that the proxy shall forward the request to. In this case the <i>server</i> and <i>port</i> arguments must be NULL.</p>
 
 <p>OSSL_HTTP_REQ_CTX_add1_header() adds header <i>name</i> with value <i>value</i> to the context <i>rctx</i>. It can be called more than once to add multiple header lines. For example, to add a <code>Host</code> header for <code>example.com</code> you would call:</p>
 
@@ -150,7 +150,7 @@ int OSSL_HTTP_is_alive(const OSSL_HTTP_REQ_CTX *rctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

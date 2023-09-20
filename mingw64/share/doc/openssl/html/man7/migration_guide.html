@@ -43,6 +43,7 @@
               <li><a href="#New-Algorithms">New Algorithms</a></li>
               <li><a href="#CMS-and-PKCS-7-updates">CMS and PKCS#7 updates</a></li>
               <li><a href="#PKCS-12-API-updates">PKCS#12 API updates</a></li>
+              <li><a href="#PKCS-12-KDF-versus-FIPS">PKCS#12 KDF versus FIPS</a></li>
               <li><a href="#Windows-thread-synchronization-changes">Windows thread synchronization changes</a></li>
               <li><a href="#Trace-API">Trace API</a></li>
               <li><a href="#Key-validation-updates">Key validation updates</a></li>
@@ -329,6 +330,12 @@
 <p><a href="../man3/PKCS12_add_key_ex.html">PKCS12_add_key_ex(3)</a>, <a href="../man3/PKCS12_add_safe_ex.html">PKCS12_add_safe_ex(3)</a>, <a href="../man3/PKCS12_add_safes_ex.html">PKCS12_add_safes_ex(3)</a>, <a href="../man3/PKCS12_create_ex.html">PKCS12_create_ex(3)</a>, <a href="../man3/PKCS12_decrypt_skey_ex.html">PKCS12_decrypt_skey_ex(3)</a>, <a href="../man3/PKCS12_init_ex.html">PKCS12_init_ex(3)</a>, <a href="../man3/PKCS12_item_decrypt_d2i_ex.html">PKCS12_item_decrypt_d2i_ex(3)</a>, <a href="../man3/PKCS12_item_i2d_encrypt_ex.html">PKCS12_item_i2d_encrypt_ex(3)</a>, <a href="../man3/PKCS12_key_gen_asc_ex.html">PKCS12_key_gen_asc_ex(3)</a>, <a href="../man3/PKCS12_key_gen_uni_ex.html">PKCS12_key_gen_uni_ex(3)</a>, <a href="../man3/PKCS12_key_gen_utf8_ex.html">PKCS12_key_gen_utf8_ex(3)</a>, <a href="../man3/PKCS12_pack_p7encdata_ex.html">PKCS12_pack_p7encdata_ex(3)</a>, <a href="../man3/PKCS12_pbe_crypt_ex.html">PKCS12_pbe_crypt_ex(3)</a>, <a href="../man3/PKCS12_PBE_keyivgen_ex.html">PKCS12_PBE_keyivgen_ex(3)</a>, <a href="../man3/PKCS12_SAFEBAG_create_pkcs8_encrypt_ex.html">PKCS12_SAFEBAG_create_pkcs8_encrypt_ex(3)</a>, <a href="../man3/PKCS5_pbe2_set_iv_ex.html">PKCS5_pbe2_set_iv_ex(3)</a>, <a href="../man3/PKCS5_pbe_set0_algor_ex.html">PKCS5_pbe_set0_algor_ex(3)</a>, <a href="../man3/PKCS5_pbe_set_ex.html">PKCS5_pbe_set_ex(3)</a>, <a href="../man3/PKCS5_pbkdf2_set_ex.html">PKCS5_pbkdf2_set_ex(3)</a>, <a href="../man3/PKCS5_v2_PBE_keyivgen_ex.html">PKCS5_v2_PBE_keyivgen_ex(3)</a>, <a href="../man3/PKCS5_v2_scrypt_keyivgen_ex.html">PKCS5_v2_scrypt_keyivgen_ex(3)</a>, <a href="../man3/PKCS8_decrypt_ex.html">PKCS8_decrypt_ex(3)</a>, <a href="../man3/PKCS8_encrypt_ex.html">PKCS8_encrypt_ex(3)</a>, <a href="../man3/PKCS8_set0_pbe_ex.html">PKCS8_set0_pbe_ex(3)</a>.</p>
 
 <p>As part of this change the EVP_PBE_xxx APIs can also accept a library context and property query and will call an extended version of the key/IV derivation function which supports these parameters. This includes <a href="../man3/EVP_PBE_CipherInit_ex.html">EVP_PBE_CipherInit_ex(3)</a>, <a href="../man3/EVP_PBE_find_ex.html">EVP_PBE_find_ex(3)</a> and <a href="../man3/EVP_PBE_scrypt_ex.html">EVP_PBE_scrypt_ex(3)</a>.</p>
+
+<h4 id="PKCS-12-KDF-versus-FIPS">PKCS#12 KDF versus FIPS</h4>
+
+<p>Unlike in 1.x.y, the PKCS12KDF algorithm used when a PKCS#12 structure is created with a MAC that does not work with the FIPS provider as the PKCS12KDF is not a FIPS approvable mechanism.</p>
+
+<p>See <a href="../man7/EVP_KDF-PKCS12KDF.html">EVP_KDF-PKCS12KDF(7)</a>, <a href="../man3/PKCS12_create.html">PKCS12_create(3)</a>, <a href="../man1/openssl-pkcs12.html">openssl-pkcs12(1)</a>, <a href="../man7/OSSL_PROVIDER-FIPS.html">OSSL_PROVIDER-FIPS(7)</a>.</p>
 
 <h4 id="Windows-thread-synchronization-changes">Windows thread synchronization changes</h4>
 

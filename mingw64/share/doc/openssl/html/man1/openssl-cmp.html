@@ -551,7 +551,7 @@
 <dt id="secret-arg"><b>-secret</b> <i>arg</i></dt>
 <dd>
 
-<p>Prefer PBM-based message protection with given source of a secret value. The secret is used for creating PBM-based protection of outgoing messages and (as far as needed) for validating PBM-based protection of incoming messages. PBM stands for Password-Based Message Authentication Code. This takes precedence over the <b>-cert</b> and <b>-key</b> options.</p>
+<p>Provides the source of a secret value to use with MAC-based message protection. This takes precedence over the <b>-cert</b> and <b>-key</b> options. The secret is used for creating MAC-based protection of outgoing messages and for validating incoming messages that have MAC-based protection. The algorithm used by default is Password-Based Message Authentication Code (PBM) as defined in RFC 4210 section 5.1.3.1.</p>
 
 <p>For more information about the format of <i>arg</i> see <a href="../man1/openssl-passphrase-options.html">openssl-passphrase-options(1)</a>.</p>
 
@@ -567,7 +567,7 @@
 
 <p>The issuer of this certificate is used as one of the recipient fallback values and as fallback issuer entry in the certificate template of IR/CR/KUR messages.</p>
 
-<p>When using signature-based message protection, this &quot;protection certificate&quot; will be included first in the extraCerts field of outgoing messages and the signature is done with the corresponding key. In Initialization Request (IR) messages this can be used for authenticating using an external entity certificate as defined in appendix E.7 of RFC 4210.</p>
+<p>When performing signature-based message protection, this &quot;protection certificate&quot;, also called &quot;signer certificate&quot;, will be included first in the extraCerts field of outgoing messages and the signature is done with the corresponding key. In Initialization Request (IR) messages this can be used for authenticating using an external entity certificate as defined in appendix E.7 of RFC 4210.</p>
 
 <p>For Key Update Request (KUR) messages this is also used as the certificate to be updated if the <b>-oldcert</b> option is not given.</p>
 
@@ -587,7 +587,7 @@
 <dt id="key-filename-uri"><b>-key</b> <i>filename</i>|<i>uri</i></dt>
 <dd>
 
-<p>The corresponding private key file for the client&#39;s current certificate given in the <b>-cert</b> option. This will be used for signature-based message protection unless the <b>-secret</b> option indicating PBM or <b>-unprotected_requests</b> is given.</p>
+<p>The corresponding private key file for the client&#39;s current certificate given in the <b>-cert</b> option. This will be used for signature-based message protection unless the <b>-secret</b> option indicating MAC-based protection or <b>-unprotected_requests</b> is given.</p>
 
 <p>It is also used as a fallback for the <b>-newkey</b> option with IR/CR/KUR messages.</p>
 
@@ -603,13 +603,13 @@
 <dt id="digest-name"><b>-digest</b> <i>name</i></dt>
 <dd>
 
-<p>Specifies name of supported digest to use in RFC 4210&#39;s MSG_SIG_ALG and as the one-way function (OWF) in MSG_MAC_ALG. If applicable, this is used for message protection and proof-of-possession (POPO) signatures. To see the list of supported digests, use <code>openssl list -digest-commands</code>. Defaults to <code>sha256</code>.</p>
+<p>Specifies name of supported digest to use in RFC 4210&#39;s MSG_SIG_ALG and as the one-way function (OWF) in <code>MSG_MAC_ALG</code>. If applicable, this is used for message protection and proof-of-possession (POPO) signatures. To see the list of supported digests, use <code>openssl list -digest-commands</code>. Defaults to <code>sha256</code>.</p>
 
 </dd>
 <dt id="mac-name"><b>-mac</b> <i>name</i></dt>
 <dd>
 
-<p>Specifies the name of the MAC algorithm in MSG_MAC_ALG. To get the names of supported MAC algorithms use <code>openssl list -mac-algorithms</code> and possibly combine such a name with the name of a supported digest algorithm, e.g., hmacWithSHA256. Defaults to <code>hmac-sha1</code> as per RFC 4210.</p>
+<p>Specifies the name of the MAC algorithm in <code>MSG_MAC_ALG</code>. To get the names of supported MAC algorithms use <code>openssl list -mac-algorithms</code> and possibly combine such a name with the name of a supported digest algorithm, e.g., hmacWithSHA256. Defaults to <code>hmac-sha1</code> as per RFC 4210.</p>
 
 </dd>
 <dt id="extracerts-filenames-uris"><b>-extracerts</b> <i>filenames</i>|<i>uris</i></dt>
@@ -1004,6 +1004,8 @@
 
 <h1 id="NOTES">NOTES</h1>
 
+<p>When a client obtains from a CMP server CA certificates that it is going to trust, for instance via the <code>caPubs</code> field of a certificate response, authentication of the CMP server is particularly critical. So special care must be taken setting up server authentication using <b>-trusted</b> and related options for certificate-based authentication or <b>-secret</b> for MAC-based protection.</p>
+
 <p>When setting up CMP configurations and experimenting with enrollment options typically various errors occur until the configuration is correct and complete. When the CMP server reports an error the client will by default check the protection of the CMP response message. Yet some CMP services tend not to protect negative responses. In this case the client will reject them, and thus their contents are not shown although they usually contain hints that would be helpful for diagnostics. For assisting in such cases the CMP client offers a workaround via the <b>-unprotected_errors</b> option, which allows accepting such negative messages.</p>
 
 <p>If OpenSSL was built with trace support enabled and the environment variable <b>OPENSSL_TRACE</b> includes <b>HTTP</b>, the request and response headers of HTTP transfers are printed.</p>
@@ -1047,7 +1049,7 @@ openssl cmp -section insta</code></pre>
 
 <pre><code>openssl cmp -section insta,kur</code></pre>
 
-<p>using with PBM-based protection or</p>
+<p>using MAC-based protection with PBM or</p>
 
 <pre><code>openssl cmp -section insta,kur,signature</code></pre>
 
@@ -1090,7 +1092,7 @@ openssl cmp -cmd kur -server 127.0.0.1:80/pkix/ \
   -newkey cl_key_new.pem -certout cl_cert.pem
 cp cl_key_new.pem cl_key.pem</code></pre>
 
-<p>This command sequence can be repated as often as needed.</p>
+<p>This command sequence can be repeated as often as needed.</p>
 
 <h2 id="Requesting-information-from-CMP-server">Requesting information from CMP server</h2>
 

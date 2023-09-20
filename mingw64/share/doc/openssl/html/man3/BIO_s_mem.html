@@ -62,7 +62,7 @@ BIO *BIO_new_mem_buf(const void *buf, int len);</code></pre>
 
 <p>BIO_set_mem_eof_return() sets the behaviour of memory BIO <b>b</b> when it is empty. If the <b>v</b> is zero then an empty memory BIO will return EOF (that is it will return zero and BIO_should_retry(b) will be false. If <b>v</b> is non zero then it will return <b>v</b> when it is empty and it will set the read retry flag (that is BIO_read_retry(b) is true). To avoid ambiguity with a normal positive return value <b>v</b> should be set to a negative value, typically -1.</p>
 
-<p>BIO_get_mem_data() sets *<b>pp</b> to a pointer to the start of the memory BIOs data and returns the total amount of data available. It is implemented as a macro.</p>
+<p>BIO_get_mem_data() sets *<b>pp</b> to a pointer to the start of the memory BIOs data and returns the total amount of data available. It is implemented as a macro. Note the pointer returned by this call is informative, no transfer of ownership of this memory is implied. See notes on BIO_set_close().</p>
 
 <p>BIO_set_mem_buf() sets the internal BUF_MEM structure to <b>bm</b> and sets the close flag to <b>c</b>, that is <b>c</b> should be either BIO_CLOSE or BIO_NOCLOSE. It is a macro.</p>
 
@@ -87,6 +87,8 @@ BIO *BIO_new_mem_buf(const void *buf, int len);</code></pre>
 <p>Calling BIO_reset() on a read write memory BIO with BIO_FLAGS_NONCLEAR_RST flag set can have unexpected outcome when the reads and writes to the BIO are intertwined. As documented above the BIO will be reset to the state after the last completed write operation. The effects of reads preceding that write operation cannot be undone.</p>
 
 <p>Calling BIO_get_mem_ptr() prior to a BIO_reset() call with BIO_FLAGS_NONCLEAR_RST set has the same effect as a write operation.</p>
+
+<p>Calling BIO_set_close() with BIO_NOCLOSE orphans the BUF_MEM internal to the BIO, _not_ its actual data buffer. See the examples section for the proper method for claiming ownership of the data pointer for a deferred free operation.</p>
 
 <h1 id="BUGS">BUGS</h1>
 
@@ -123,9 +125,23 @@ BIO_get_mem_ptr(mem, &amp;bptr);
 BIO_set_close(mem, BIO_NOCLOSE); /* So BIO_free() leaves BUF_MEM alone */
 BIO_free(mem);</code></pre>
 
+<p>Extract the BUF_MEM ptr, claim ownership of the internal data and free the BIO and BUF_MEM structure:</p>
+
+<pre><code>BUF_MEM *bptr;
+char *data;
+
+BIO_get_mem_data(bio, &amp;data);
+BIO_get_mem_ptr(bio, &amp;bptr);
+BIO_set_close(mem, BIO_NOCLOSE); /* So BIO_free orphans BUF_MEM */
+BIO_free(bio);
+bptr-&gt;data = NULL; /* Tell BUF_MEM to orphan data */
+BUF_MEM_free(bptr);
+...
+free(data);</code></pre>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

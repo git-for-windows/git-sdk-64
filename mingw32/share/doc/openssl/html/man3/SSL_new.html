@@ -40,7 +40,7 @@ int SSL_up_ref(SSL *s);</code></pre>
 
 <p>The function SSL_dup() creates and returns a new <b>SSL</b> structure from the same <b>SSL_CTX</b> that was used to create <i>s</i>. It additionally duplicates a subset of the settings in <i>s</i> into the new <b>SSL</b> object.</p>
 
-<p>For SSL_dup() to work, the connection MUST be in its initial state and MUST NOT have yet started the SSL handshake. For connections that are not in their initial state SSL_dup() just increments an internal reference count and returns the <i>same</i> handle. It may be possible to use <a href="../man3/SSL_clear.html">SSL_clear(3)</a> to recycle an SSL handle that is not in its initial state for re-use, but this is best avoided. Instead, save and restore the session, if desired, and construct a fresh handle for each connection.</p>
+<p>For SSL_dup() to work, the connection MUST be in its initial state and MUST NOT have yet started the SSL handshake. For connections that are not in their initial state SSL_dup() just increments an internal reference count and returns the <i>same</i> handle. It may be possible to use <a href="../man3/SSL_clear.html">SSL_clear(3)</a> to recycle an SSL handle that is not in its initial state for reuse, but this is best avoided. Instead, save and restore the session, if desired, and construct a fresh handle for each connection.</p>
 
 <p>The subset of settings in <i>s</i> that are duplicated are:</p>
 
@@ -168,7 +168,7 @@ int SSL_up_ref(SSL *s);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

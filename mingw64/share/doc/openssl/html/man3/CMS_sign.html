@@ -78,7 +78,7 @@ CMS_ContentInfo *CMS_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 <p>If <b>signcert</b> and <b>pkey</b> are NULL then a certificates only CMS structure is output.</p>
 
-<p>The function CMS_sign() is a basic CMS signing function whose output will be suitable for many purposes. For finer control of the output format the <b>certs</b>, <b>signcert</b> and <b>pkey</b> parameters can all be <b>NULL</b> and the <b>CMS_PARTIAL</b> flag set. Then one or more signers can be added using the function CMS_sign_add1_signer(), non default digests can be used and custom attributes added. CMS_final() must then be called to finalize the structure if streaming is not enabled.</p>
+<p>The function CMS_sign() is a basic CMS signing function whose output will be suitable for many purposes. For finer control of the output format the <b>certs</b>, <b>signcert</b> and <b>pkey</b> parameters can all be <b>NULL</b> and the <b>CMS_PARTIAL</b> flag set. Then one or more signers can be added using the function CMS_add1_signer(), non default digests can be used and custom attributes added. CMS_final() must then be called to finalize the structure if streaming is not enabled.</p>
 
 <h1 id="BUGS">BUGS</h1>
 
@@ -100,7 +100,7 @@ CMS_ContentInfo *CMS_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2008-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2008-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
