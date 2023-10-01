@@ -125,7 +125,7 @@ class CygwinCCompiler(UnixCCompiler):
         shared_option = "-shared"
 
         self.set_executables(compiler='%s -mcygwin -O -Wall' % self.cc,
-                             compiler_so='%s -mcygwin -mdll -O -Wall' % self.cc,
+                             compiler_so='%s -mcygwin -shared -O -Wall' % self.cc,
                              compiler_cxx='%s -mcygwin -O -Wall' % self.cxx,
                              linker_exe='%s -mcygwin' % self.cc,
                              linker_so=('%s -mcygwin %s' %
@@ -287,7 +287,7 @@ class Mingw32CCompiler(CygwinCCompiler):
                 'Cygwin gcc cannot be used with --compiler=mingw32')
 
         self.set_executables(compiler='%s -O2 -Wall' % self.cc,
-                             compiler_so='%s -mdll -O2 -Wall' % self.cc,
+                             compiler_so='%s -shared -O2 -Wall' % self.cc,
                              compiler_cxx='%s -O2 -Wall' % self.cxx,
                              linker_exe='%s' % self.cc,
                              linker_so='%s %s'
