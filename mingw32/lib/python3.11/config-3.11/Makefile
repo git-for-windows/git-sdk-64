@@ -29,9 +29,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.11
-srcdir=		../Python-3.11.5
-VPATH=		../Python-3.11.5
-abs_srcdir=	/c/M/B/src/build-MINGW32/../Python-3.11.5
+srcdir=		../Python-3.11.6
+VPATH=		../Python-3.11.6
+abs_srcdir=	/c/M/B/src/build-MINGW32/../Python-3.11.6
 abs_builddir=	/c/M/B/src/build-MINGW32
 
 
@@ -125,7 +125,7 @@ PY_CORE_CFLAGS=	$(PY_STDMODULE_CFLAGS) -DPy_BUILD_CORE
 PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 # Strict or non-strict aliasing flags used to compile dtoa.c, see above
 CFLAGS_ALIASING=
-RCFLAGS= -DFIELD3=5150 -O COFF --target=pe-i386
+RCFLAGS= -DFIELD3=6150 -O COFF --target=pe-i386
 
 
 # Machine-dependent subdirectories
@@ -145,8 +145,8 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/M/B/src/Python-3.11.5
-abs_srcdir_b2h=		C:/M/B/src/Python-3.11.5
+srcdir_b2h=		C:/M/B/src/Python-3.11.6
+abs_srcdir_b2h=		C:/M/B/src/Python-3.11.6
 abs_builddir_b2h=	C:/M/B/src/build-MINGW32
 prefix_b2h=		D:/a/msys64/mingw32
 
@@ -636,6 +636,7 @@ OBJECT_OBJS=	\
 		Objects/unionobject.o \
 		Objects/weakrefobject.o
 
+DEEPFREEZE_C = Python/deepfreeze/deepfreeze.c
 DEEPFREEZE_OBJS = Python/deepfreeze/deepfreeze.o
 
 ##########################################################################
@@ -1332,12 +1333,12 @@ regen-frozen: Tools/scripts/freeze_modules.py $(FROZEN_FILES_IN)
 # Deepfreeze targets
 
 .PHONY: regen-deepfreeze
-regen-deepfreeze: $(DEEPFREEZE_OBJS)
+regen-deepfreeze: $(DEEPFREEZE_C)
 
 DEEPFREEZE_DEPS=$(srcdir)/Tools/scripts/deepfreeze.py $(FREEZE_MODULE_DEPS) $(FROZEN_FILES_OUT)
 
 # BEGIN: deepfreeze modules
-Python/deepfreeze/deepfreeze.c: $(DEEPFREEZE_DEPS)
+$(DEEPFREEZE_C): $(DEEPFREEZE_DEPS)
 	$(PYTHON_FOR_FREEZE) $(srcdir)/Tools/scripts/deepfreeze.py \
 	Python/frozen_modules/importlib._bootstrap.h:importlib._bootstrap \
 	Python/frozen_modules/importlib._bootstrap_external.h:importlib._bootstrap_external \
@@ -1364,8 +1365,6 @@ Python/deepfreeze/deepfreeze.c: $(DEEPFREEZE_DEPS)
 	Python/frozen_modules/frozen_only.h:frozen_only \
 	-o Python/deepfreeze/deepfreeze.c
 # END: deepfreeze modules
-	@echo "Note: Deepfreeze may have added some global objects,"
-	@echo "      so run 'make regen-global-objects' if necessary."
 
 # We keep this renamed target around for folks with muscle memory.
 .PHONY: regen-importlib
@@ -1374,11 +1373,12 @@ regen-importlib: regen-frozen
 ############################################################################
 # Global objects
 
+# Dependencies which can add and/or remove _Py_ID() identifiers:
+# - deepfreeze.c
+# - "make clinic"
 .PHONY: regen-global-objects
-regen-global-objects: $(srcdir)/Tools/scripts/generate_global_objects.py
+regen-global-objects: $(srcdir)/Tools/scripts/generate_global_objects.py $(DEEPFREEZE_C) clinic
 	$(PYTHON_FOR_REGEN) $(srcdir)/Tools/scripts/generate_global_objects.py
-	@echo "Note: Global objects can be added or removed by other tools (e.g. deepfreeze), "
-	@echo "      so be sure to re-run regen-global-objects after those tools."
 
 ############################################################################
 # ABI
@@ -1397,8 +1397,10 @@ regen-limited-abi: all
 ############################################################################
 # Regenerate all generated files
 
+# "clinic" is regenerated implicitly via "regen-global-objects".
+.PHONY: regen-all
 regen-all: regen-opcode regen-opcode-targets regen-typeslots \
-	regen-token regen-ast regen-keyword regen-sre regen-frozen clinic \
+	regen-token regen-ast regen-keyword regen-sre regen-frozen \
 	regen-pegen-metaparser regen-pegen regen-test-frozenmain \
 	regen-global-objects
 	@echo
@@ -2152,8 +2154,10 @@ TESTSUBDIRS=	ctypes/test \
 		test/test_asyncio \
 		test/test_capi \
 		test/test_cppext \
+		test/test_dataclasses \
 		test/test_email \
 		test/test_email/data \
+		test/test_future_stmt \
 		test/test_import \
 		test/test_import/data \
 		test/test_import/data/circular_imports \
@@ -2231,6 +2235,7 @@ TESTSUBDIRS=	ctypes/test \
 		test/test_warnings/data \
 		test/test_zoneinfo \
 		test/test_zoneinfo/data \
+		test/tokenizedata \
 		test/tracedmodules \
 		test/typinganndata \
 		test/xmltestdata \
@@ -2589,6 +2594,7 @@ recheck:
 autoconf:
 	(cd $(srcdir); autoreconf -ivf -Werror)
 
+# See https://github.com/tiran/cpython_autoconf container
 .PHONY: regen-configure
 regen-configure:
 	@if command -v podman >/dev/null; then RUNTIME="podman"; else RUNTIME="docker"; fi; \

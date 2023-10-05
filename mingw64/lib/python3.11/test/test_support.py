@@ -7,6 +7,7 @@ import socket
 import stat
 import subprocess
 import sys
+import sysconfig
 import tempfile
 import textwrap
 import time
@@ -510,6 +511,7 @@ class TestSupport(unittest.TestCase):
         self.assertEqual(proc.stdout.rstrip(), repr(expected))
         self.assertEqual(proc.returncode, 0)
 
+    @support.requires_resource('cpu')
     def test_args_from_interpreter_flags(self):
         # Test test.support.args_from_interpreter_flags()
         for opts in (
@@ -696,6 +698,130 @@ class TestSupport(unittest.TestCase):
             self.assertFalse(support.has_strftime_extensions)
         else:
             self.assertTrue(support.has_strftime_extensions)
+
+    def test_get_recursion_depth(self):
+        # test support.get_recursion_depth()
+        code = textwrap.dedent("""
+            from test import support
+            import sys
+            try:
+                from _testcapi import USE_STACKCHECK
+            except ImportError:
+                USE_STACKCHECK = False
+
+            def check(cond):
+                if not cond:
+                    raise AssertionError("test failed")
+
+            # depth 1
+            check(support.get_recursion_depth() == 1)
+
+            # depth 2
+            def test_func():
+                check(support.get_recursion_depth() == 2)
+            test_func()
+
+            def test_recursive(depth, limit):
+                if depth >= limit:
+                    # cannot call get_recursion_depth() at this depth,
+                    # it can raise RecursionError
+                    return
+                get_depth = support.get_recursion_depth()
+                print(f"test_recursive: {depth}/{limit}: "
+                      f"get_recursion_depth() says {get_depth}")
+                check(get_depth == depth)
+                test_recursive(depth + 1, limit)
+
+            if USE_STACKCHECK:
+                # f-string consumes 2 frames and -1 for USE_STACKCHECK
+                IGNORE = 3
+            else:
+                # f-string consumes 2 frames
+                IGNORE = 2
+
+            # depth up to 25
+            with support.infinite_recursion(max_depth=25):
+                limit = sys.getrecursionlimit()
+                print(f"test with sys.getrecursionlimit()={limit}")
+                test_recursive(2, limit - IGNORE)
+
+            # depth up to 500
+            with support.infinite_recursion(max_depth=500):
+                limit = sys.getrecursionlimit()
+                print(f"test with sys.getrecursionlimit()={limit}")
+                test_recursive(2, limit - IGNORE)
+        """)
+        script_helper.assert_python_ok("-c", code)
+
+    def test_recursion(self):
+        # Test infinite_recursion() and get_recursion_available() functions.
+        def recursive_function(depth):
+            if depth:
+                recursive_function(depth - 1)
+
+        for max_depth in (5, 25, 250):
+            with support.infinite_recursion(max_depth):
+                available = support.get_recursion_available()
+
+                # Recursion up to 'available' additional frames should be OK.
+                recursive_function(available)
+
+                # Recursion up to 'available+1' additional frames must raise
+                # RecursionError. Avoid self.assertRaises(RecursionError) which
+                # can consume more than 3 frames and so raises RecursionError.
+                try:
+                    recursive_function(available + 1)
+                except RecursionError:
+                    pass
+                else:
+                    self.fail("RecursionError was not raised")
+
+        # Test the bare minimumum: max_depth=4
+        with support.infinite_recursion(4):
+            try:
+                recursive_function(4)
+            except RecursionError:
+                pass
+            else:
+                self.fail("RecursionError was not raised")
+
+        #self.assertEqual(available, 2)
+
+    def test_copy_python_src_ignore(self):
+        # Get source directory
+        src_dir = sysconfig.get_config_var('abs_srcdir')
+        if not src_dir:
+            src_dir = sysconfig.get_config_var('srcdir')
+        src_dir = os.path.abspath(src_dir)
+
+        # Check that the source code is available
+        if not os.path.exists(src_dir):
+            self.skipTest(f"cannot access Python source code directory:"
+                          f" {src_dir!r}")
+        # Check that the landmark copy_python_src_ignore() expects is available
+        # (Previously we looked for 'Lib\os.py', which is always present on Windows.)
+        landmark = os.path.join(src_dir, 'Modules')
+        if not os.path.exists(landmark):
+            self.skipTest(f"cannot access Python source code directory:"
+                          f" {landmark!r} landmark is missing")
+
+        # Test support.copy_python_src_ignore()
+
+        # Source code directory
+        ignored = {'.git', '__pycache__'}
+        names = os.listdir(src_dir)
+        self.assertEqual(support.copy_python_src_ignore(src_dir, names),
+                         ignored | {'build'})
+
+        # Doc/ directory
+        path = os.path.join(src_dir, 'Doc')
+        self.assertEqual(support.copy_python_src_ignore(path, os.listdir(path)),
+                         ignored | {'build', 'venv'})
+
+        # Another directory
+        path = os.path.join(src_dir, 'Objects')
+        self.assertEqual(support.copy_python_src_ignore(path, os.listdir(path)),
+                         ignored)
 
     # XXX -follows a list of untested API
     # make_legacy_pyc

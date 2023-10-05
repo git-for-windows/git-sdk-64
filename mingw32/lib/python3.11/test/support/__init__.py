@@ -4,6 +4,7 @@ if __name__ != 'test.support':
     raise ImportError('support must be imported from the test package')
 
 import contextlib
+import dataclasses
 import functools
 import getpass
 import os
@@ -116,17 +117,20 @@ class Error(Exception):
 
 class TestFailed(Error):
     """Test failed."""
-
-class TestFailedWithDetails(TestFailed):
-    """Test failed."""
-    def __init__(self, msg, errors, failures):
+    def __init__(self, msg, *args, stats=None):
         self.msg = msg
-        self.errors = errors
-        self.failures = failures
-        super().__init__(msg, errors, failures)
+        self.stats = stats
+        super().__init__(msg, *args)
 
     def __str__(self):
         return self.msg
+
+class TestFailedWithDetails(TestFailed):
+    """Test failed."""
+    def __init__(self, msg, errors, failures, stats):
+        self.errors = errors
+        self.failures = failures
+        super().__init__(msg, errors, failures, stats=stats)
 
 class TestDidNotRun(Error):
     """Test did not run any subtests."""
@@ -400,19 +404,19 @@ def check_sanitizer(*, address=False, memory=False, ub=False):
         raise ValueError('At least one of address, memory, or ub must be True')
 
 
-    _cflags = sysconfig.get_config_var('CFLAGS') or ''
-    _config_args = sysconfig.get_config_var('CONFIG_ARGS') or ''
+    cflags = sysconfig.get_config_var('CFLAGS') or ''
+    config_args = sysconfig.get_config_var('CONFIG_ARGS') or ''
     memory_sanitizer = (
-        '-fsanitize=memory' in _cflags or
-        '--with-memory-sanitizer' in _config_args
+        '-fsanitize=memory' in cflags or
+        '--with-memory-sanitizer' in config_args
     )
     address_sanitizer = (
-        '-fsanitize=address' in _cflags or
-        '--with-memory-sanitizer' in _config_args
+        '-fsanitize=address' in cflags or
+        '--with-address-sanitizer' in config_args
     )
     ub_sanitizer = (
-        '-fsanitize=undefined' in _cflags or
-        '--with-undefined-behavior-sanitizer' in _config_args
+        '-fsanitize=undefined' in cflags or
+        '--with-undefined-behavior-sanitizer' in config_args
     )
     return (
         (memory and memory_sanitizer) or
@@ -761,6 +765,21 @@ def python_is_optimized():
     return final_opt not in ('', '-O0', '-Og')
 
 
+def check_cflags_pgo():
+    # Check if Python was built with ./configure --enable-optimizations:
+    # with Profile Guided Optimization (PGO).
+    cflags_nodist = sysconfig.get_config_var('PY_CFLAGS_NODIST') or ''
+    pgo_options = (
+        # GCC
+        '-fprofile-use',
+        # clang: -fprofile-instr-use=code.profclangd
+        '-fprofile-instr-use',
+        # ICC
+        "-prof-use",
+    )
+    return any(option in cflags_nodist for option in pgo_options)
+
+
 _header = 'nP'
 _align = '0n'
 if hasattr(sys, "getobjects"):
@@ -1086,6 +1105,29 @@ def _filter_suite(suite, pred):
                 newtests.append(test)
     suite._tests = newtests
 
+@dataclasses.dataclass(slots=True)
+class TestStats:
+    tests_run: int = 0
+    failures: int = 0
+    skipped: int = 0
+
+    @staticmethod
+    def from_unittest(result):
+        return TestStats(result.testsRun,
+                         len(result.failures),
+                         len(result.skipped))
+
+    @staticmethod
+    def from_doctest(results):
+        return TestStats(results.attempted,
+                         results.failed)
+
+    def accumulate(self, stats):
+        self.tests_run += stats.tests_run
+        self.failures += stats.failures
+        self.skipped += stats.skipped
+
+
 def _run_suite(suite):
     """Run tests from a unittest.TestSuite-derived class."""
     runner = get_test_runner(sys.stdout,
@@ -1100,6 +1142,7 @@ def _run_suite(suite):
     if not result.testsRun and not result.skipped and not result.errors:
         raise TestDidNotRun
     if not result.wasSuccessful():
+        stats = TestStats.from_unittest(result)
         if len(result.errors) == 1 and not result.failures:
             err = result.errors[0][1]
         elif len(result.failures) == 1 and not result.errors:
@@ -1109,7 +1152,8 @@ def _run_suite(suite):
             if not verbose: err += "; run in verbose mode for details"
         errors = [(str(tc), exc_str) for tc, exc_str in result.errors]
         failures = [(str(tc), exc_str) for tc, exc_str in result.failures]
-        raise TestFailedWithDetails(err, errors, failures)
+        raise TestFailedWithDetails(err, errors, failures, stats=stats)
+    return result
 
 
 # By default, don't filter tests
@@ -1218,7 +1262,7 @@ def run_unittest(*classes):
         else:
             suite.addTest(loader.loadTestsFromTestCase(cls))
     _filter_suite(suite, match_test)
-    _run_suite(suite)
+    return _run_suite(suite)
 
 #=======================================================================
 # Check for the presence of docstrings.
@@ -1258,13 +1302,18 @@ def run_doctest(module, verbosity=None, optionflags=0):
     else:
         verbosity = None
 
-    f, t = doctest.testmod(module, verbose=verbosity, optionflags=optionflags)
-    if f:
-        raise TestFailed("%d of %d doctests failed" % (f, t))
+    results = doctest.testmod(module,
+                             verbose=verbosity,
+                             optionflags=optionflags)
+    if results.failed:
+        stats = TestStats.from_doctest(results)
+        raise TestFailed(f"{results.failed} of {results.attempted} "
+                         f"doctests failed",
+                         stats=stats)
     if verbose:
         print('doctest (%s) ... %d tests with zero failures' %
-              (module.__name__, t))
-    return f, t
+              (module.__name__, results.attempted))
+    return results
 
 
 #=======================================================================
@@ -2163,20 +2212,70 @@ def check_disallow_instantiation(testcase, tp, *args, **kwds):
     msg = f"cannot create '{re.escape(qualname)}' instances"
     testcase.assertRaisesRegex(TypeError, msg, tp, *args, **kwds)
 
+def get_recursion_depth():
+    """Get the recursion depth of the caller function.
+
+    In the __main__ module, at the module level, it should be 1.
+    """
+    try:
+        import _testinternalcapi
+        depth = _testinternalcapi.get_recursion_depth()
+    except (ImportError, RecursionError) as exc:
+        # sys._getframe() + frame.f_back implementation.
+        try:
+            depth = 0
+            frame = sys._getframe()
+            while frame is not None:
+                depth += 1
+                frame = frame.f_back
+        finally:
+            # Break any reference cycles.
+            frame = None
+
+    # Ignore get_recursion_depth() frame.
+    return max(depth - 1, 1)
+
+def get_recursion_available():
+    """Get the number of available frames before RecursionError.
+
+    It depends on the current recursion depth of the caller function and
+    sys.getrecursionlimit().
+    """
+    limit = sys.getrecursionlimit()
+    depth = get_recursion_depth()
+
+    try:
+        from _testcapi import USE_STACKCHECK
+    except ImportError:
+        USE_STACKCHECK = False
+
+    if USE_STACKCHECK:
+        return max(limit - depth - 1, 0)
+    else:
+        return limit - depth
+
 @contextlib.contextmanager
-def infinite_recursion(max_depth=75):
+def set_recursion_limit(limit):
+    """Temporarily change the recursion limit."""
+    original_limit = sys.getrecursionlimit()
+    try:
+        sys.setrecursionlimit(limit)
+        yield
+    finally:
+        sys.setrecursionlimit(original_limit)
+
+def infinite_recursion(max_depth=100):
     """Set a lower limit for tests that interact with infinite recursions
     (e.g test_ast.ASTHelpers_Test.test_recursion_direct) since on some
     debug windows builds, due to not enough functions being inlined the
     stack size might not handle the default recursion limit (1000). See
     bpo-11105 for details."""
-
-    original_depth = sys.getrecursionlimit()
-    try:
-        sys.setrecursionlimit(max_depth)
-        yield
-    finally:
-        sys.setrecursionlimit(original_depth)
+    if max_depth < 4:
+        raise ValueError("max_depth must be at least 4, got {max_depth}")
+    depth = get_recursion_depth()
+    depth = max(depth - 1, 1)  # Ignore infinite_recursion() frame.
+    limit = depth + max_depth
+    return set_recursion_limit(limit)
 
 def ignore_deprecations_from(module: str, *, like: str) -> object:
     token = object()
@@ -2234,3 +2333,29 @@ def adjust_int_max_str_digits(max_digits):
         yield
     finally:
         sys.set_int_max_str_digits(current)
+
+_BASE_COPY_SRC_DIR_IGNORED_NAMES = frozenset({
+    # SRC_DIR/.git
+    '.git',
+    # ignore all __pycache__/ sub-directories
+    '__pycache__',
+})
+
+# Ignore function for shutil.copytree() to copy the Python source code.
+def copy_python_src_ignore(path, names):
+    ignored = _BASE_COPY_SRC_DIR_IGNORED_NAMES
+    if os.path.basename(path) == 'Doc':
+        ignored |= {
+            # SRC_DIR/Doc/build/
+            'build',
+            # SRC_DIR/Doc/venv/
+            'venv',
+        }
+
+    # check if we are at the root of the source code
+    elif 'Modules' in names:
+        ignored |= {
+            # SRC_DIR/build/
+            'build',
+        }
+    return ignored
