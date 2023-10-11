@@ -3,12 +3,12 @@ package HTTP::Status;
 use strict;
 use warnings;
 
-our $VERSION = '6.44';
+our $VERSION = '6.45';
 
 use Exporter 5.57 'import';
 
 our @EXPORT = qw(is_info is_success is_redirect is_error status_message);
-our @EXPORT_OK = qw(is_client_error is_server_error is_cacheable_by_default status_constant_name);
+our @EXPORT_OK = qw(is_client_error is_server_error is_cacheable_by_default status_constant_name status_codes);
 
 # Note also addition of mnemonics to @EXPORT below
 
@@ -169,6 +169,8 @@ sub is_cacheable_by_default ($) { $_[0] && ( $_[0] == 200 # OK
                                             );
 }
 
+sub status_codes         { %StatusCode; }
+
 1;
 
 =pod
@@ -181,7 +183,7 @@ HTTP::Status - HTTP Status code processing
 
 =head1 VERSION
 
-version 6.44
+version 6.45
 
 =head1 SYNOPSIS
 
@@ -347,6 +349,12 @@ Return TRUE if C<$code> indicates that a response is cacheable by default, and
 it can be reused by a cache with heuristic expiration. All other status codes
 are not cacheable by default. See L<RFC 7231 - HTTP/1.1 Semantics and Content,
 Section 6.1. Overview of Status Codes|https://tools.ietf.org/html/rfc7231#section-6.1>.
+
+This function is B<not> exported by default.
+
+=item status_codes
+
+Returns a hash mapping numerical HTTP status code (e.g. 200) to text status messages (e.g. "OK")
 
 This function is B<not> exported by default.
 
