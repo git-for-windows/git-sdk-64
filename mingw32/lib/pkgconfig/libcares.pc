@@ -4,16 +4,20 @@
 #              | (_|_____| (_| | | |  __/\__ \
 #               \___|     \__,_|_|  \___||___/
 #
-exec_prefix=/mingw32/bin
-libdir=/mingw32/lib
-includedir=/mingw32/include
+# Copyright (C) The c-ares project and its contributors
+# SPDX-License-Identifier: MIT
+prefix=/mingw32
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
 
 Name: c-ares
 URL: https://c-ares.org/
 Description: asynchronous DNS lookup library
-Version: 1.19.1
+Version: 1.20.1
 Requires: 
-Requires.private: libcares-static
+Requires.private: 
 Cflags: -I${includedir}
+Cflags.private: -DCARES_STATICLIB
 Libs: -L${libdir} -lcares
-Libs.private: 
+Libs.private:  -lws2_32 -ladvapi32 -liphlpapi
