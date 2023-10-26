@@ -45,7 +45,7 @@ int CMS_SignerInfo_sign(CMS_SignerInfo *si);</code></pre>
 
 <p>Unless the <b>CMS_REUSE_DIGEST</b> flag is set the returned CMS_ContentInfo structure is not complete and must be finalized either by streaming (if applicable) or a call to CMS_final().</p>
 
-<p>The CMS_SignerInfo_sign() function will explicitly sign a CMS_SignerInfo structure, its main use is when <b>CMS_REUSE_DIGEST</b> and <b>CMS_PARTIAL</b> flags are both set.</p>
+<p>The CMS_SignerInfo_sign() function explicitly signs a CMS_SignerInfo structure, its main use is when the <b>CMS_REUSE_DIGEST</b> and <b>CMS_PARTIAL</b> flags are both set.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -71,13 +71,15 @@ int CMS_SignerInfo_sign(CMS_SignerInfo *si);</code></pre>
 
 <p>CMS_add1_signer() returns an internal pointer to the CMS_SignerInfo structure just added or NULL if an error occurs.</p>
 
+<p>CMS_SignerInfo_sign() returns 1 on success, 0 on failure.</p>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>, <a href="../man3/CMS_sign.html">CMS_sign(3)</a>, <a href="../man3/CMS_final.html">CMS_final(3)</a>,</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2014-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2014-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

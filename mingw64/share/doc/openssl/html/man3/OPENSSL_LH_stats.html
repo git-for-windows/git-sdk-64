@@ -18,6 +18,7 @@
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#NOTE">NOTE</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -27,17 +28,17 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/lhash.h&gt;
-
-void OPENSSL_LH_node_stats(LHASH *table, FILE *out);
-void OPENSSL_LH_node_usage_stats(LHASH *table, FILE *out);
-
-void OPENSSL_LH_node_stats_bio(LHASH *table, BIO *out);
-void OPENSSL_LH_node_usage_stats_bio(LHASH *table, BIO *out);</code></pre>
+<pre><code>#include &lt;openssl/lhash.h&gt;</code></pre>
 
 <p>The following functions have been deprecated since OpenSSL 3.1, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
 
-<pre><code>void OPENSSL_LH_stats(LHASH *table, FILE *out);
+<pre><code>void OPENSSL_LH_node_stats(LHASH *table, FILE *out);
+void OPENSSL_LH_node_usage_stats(LHASH *table, FILE *out);
+
+void OPENSSL_LH_node_stats_bio(LHASH *table, BIO *out);
+void OPENSSL_LH_node_usage_stats_bio(LHASH *table, BIO *out);
+
+void OPENSSL_LH_stats(LHASH *table, FILE *out);
 void OPENSSL_LH_stats_bio(LHASH *table, BIO *out);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
@@ -52,7 +53,7 @@ void OPENSSL_LH_stats_bio(LHASH *table, BIO *out);</code></pre>
 
 <p>OPENSSL_LH_stats_bio(), OPENSSL_LH_node_stats_bio() and OPENSSL_LH_node_usage_stats_bio() are the same as the above, except that the output goes to a <b>BIO</b>.</p>
 
-<p>OPENSSH_LH_stats() and OPENSSH_LH_stats_bio() are deprecated and should no longer be used.</p>
+<p>These functions are deprecated and should no longer be used.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -62,15 +63,17 @@ void OPENSSL_LH_stats_bio(LHASH *table, BIO *out);</code></pre>
 
 <p>These calls should be made under a read lock. Refer to <a href="../man3/OPENSSL_LH_COMPFUNC.html">&quot;NOTE&quot; in OPENSSL_LH_COMPFUNC(3)</a> for more details about the locks required when using the LHASH data structure.</p>
 
-<p>The functions OPENSSH_LH_stats() and OPENSSH_LH_stats_bio() were deprecated in version 3.1.</p>
-
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man7/bio.html">bio(7)</a>, <a href="../man3/OPENSSL_LH_COMPFUNC.html">OPENSSL_LH_COMPFUNC(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>These functions were deprecated in version 3.1.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

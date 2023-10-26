@@ -48,7 +48,7 @@ int i2d_TYPE_bio(BIO *bp, TYPE *a);</code></pre>
 
 <p><b>d2i_<i>TYPE</i></b>() attempts to decode <i>len</i> bytes at <i>*ppin</i>. If successful a pointer to the <b><i>TYPE</i></b> structure is returned and <i>*ppin</i> is incremented to the byte following the parsed data. If <i>a</i> is not NULL then a pointer to the returned structure is also written to <i>*a</i>. If an error occurred then NULL is returned.</p>
 
-<p>On a successful return, if <i>*a</i> is not NULL then it is assumed that <i>*a</i> contains a valid <b><i>TYPE</i></b> structure and an attempt is made to reuse it. This &quot;reuse&quot; capability is present for historical compatibility but its use is <b>strongly discouraged</b> (see BUGS below, and the discussion in the RETURN VALUES section).</p>
+<p>On a successful return, if <i>*a</i> is not NULL then it is assumed that <i>*a</i> contains a valid <b><i>TYPE</i></b> structure and an attempt is made to reuse it. For <b><i>TYPE</i></b> structures where it matters it is possible to set up a library context on the decoded structure this way (see the <b>EXAMPLES</b> section). However using the &quot;reuse&quot; capability for other purposes is <b>strongly discouraged</b> (see <b>BUGS</b> below, and the discussion in the <b>RETURN VALUES</b> section).</p>
 
 <p><b>d2i_<i>TYPE</i>_bio</b>() is similar to <b>d2i_<i>TYPE</i></b>() except it attempts to parse data from BIO <i>bp</i>.</p>
 
@@ -176,6 +176,22 @@ x = NULL;
 
 if (d2i_X509(&amp;x, &amp;p, len) == NULL)
     /* error */</code></pre>
+
+<p>Setting up a library context and property query:</p>
+
+<pre><code>X509 *x;
+unsigned char *buf;
+const unsigned char *p;
+int len;
+OSSL_LIB_CTX *libctx = ....;
+const char *propq = ....;
+
+/* Set up buf and len to point to the input buffer. */
+p = buf;
+x = X509_new_ex(libctx, propq);
+
+if (d2i_X509(&amp;x, &amp;p, len) == NULL)
+    /* error, x was freed and NULL assigned to it (see RETURN VALUES) */</code></pre>
 
 <h1 id="WARNINGS">WARNINGS</h1>
 

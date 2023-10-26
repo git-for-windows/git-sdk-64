@@ -46,7 +46,7 @@ int PKCS5_PBKDF2_HMAC_SHA1(const char *pass, int passlen,
 
 <p><b>salt</b> is the salt used in the derivation of length <b>saltlen</b>. If the <b>salt</b> is NULL, then <b>saltlen</b> must be 0. The function will not attempt to calculate the length of the <b>salt</b> because it is not assumed to be NULL terminated.</p>
 
-<p><b>iter</b> is the iteration count and its value should be greater than or equal to 1. RFC 2898 suggests an iteration count of at least 1000. Any <b>iter</b> less than 1 is treated as a single iteration.</p>
+<p><b>iter</b> is the iteration count and its value should be greater than or equal to 1. RFC 2898 suggests an iteration count of at least 1000. Any <b>iter</b> value less than 1 is invalid; such values will result in failure and raise the PROV_R_INVALID_ITERATION_COUNT error.</p>
 
 <p><b>digest</b> is the message digest function used in the derivation. PKCS5_PBKDF2_HMAC_SHA1() calls PKCS5_PBKDF2_HMAC() with EVP_sha1().</p>
 
@@ -70,7 +70,7 @@ int PKCS5_PBKDF2_HMAC_SHA1(const char *pass, int passlen,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2014-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2014-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
