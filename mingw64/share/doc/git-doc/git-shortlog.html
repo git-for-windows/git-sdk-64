@@ -661,7 +661,7 @@ error to use this option unless <code>--walk-reflogs</code> is in use.</p>
 </dd>
 <dt class="hdlist1">--grep=&lt;pattern&gt;</dt>
 <dd>
-<p>Limit the commits output to ones with log message that
+<p>Limit the commits output to ones with a log message that
 matches the specified pattern (regular expression).  With
 more than one <code>--grep=&lt;pattern&gt;</code>, commits whose message
 matches any of the given patterns are chosen (but see
@@ -678,7 +678,7 @@ instead of ones that match at least one.</p>
 </dd>
 <dt class="hdlist1">--invert-grep</dt>
 <dd>
-<p>Limit the commits output to ones with log message that do not
+<p>Limit the commits output to ones with a log message that do not
 match the pattern specified with <code>--grep=&lt;pattern&gt;</code>.</p>
 </dd>
 <dt class="hdlist1">-i</dt>
@@ -765,7 +765,11 @@ that arbitrary merges can be valid topic branch changes.</p>
 <dt class="hdlist1">--not</dt>
 <dd>
 <p>Reverses the meaning of the <em>^</em> prefix (or lack thereof)
-for all following revision specifiers, up to the next <code>--not</code>.</p>
+for all following revision specifiers, up to the next <code>--not</code>.
+When used on the command line before --stdin, the revisions passed
+through stdin will not be affected by it. Conversely, when passed
+via standard input, the revisions passed on the command line will
+not be affected by it.</p>
 </dd>
 <dt class="hdlist1">--all</dt>
 <dd>
@@ -866,7 +870,9 @@ line.</p>
 them from standard input as well. This accepts commits and
 pseudo-options like <code>--all</code> and <code>--glob=</code>. When a <code>--</code> separator
 is seen, the following input is treated as paths and used to
-limit the result.</p>
+limit the result. Flags like <code>--not</code> which are read via standard input
+are only respected for arguments passed in the same way and will not
+influence any subsequent command line arguments.</p>
 </dd>
 <dt class="hdlist1">--cherry-mark</dt>
 <dd>
@@ -1552,7 +1558,7 @@ the current directory.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-08-30 09:49:01 UTC
+Last updated 2023-11-03 08:04:06 UTC
 </div>
 </div>
 </body>

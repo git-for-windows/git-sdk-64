@@ -529,11 +529,12 @@ Default is the value of <code>sendemail.cc</code>.</p>
 <p>Invoke a text editor (see GIT_EDITOR in <a href="git-var.html">git-var(1)</a>)
 to edit an introductory message for the patch series.</p>
 <div class="paragraph">
-<p>When <code>--compose</code> is used, git send-email will use the From, Subject, and
-In-Reply-To headers specified in the message. If the body of the message
-(what you type after the headers and a blank line) only contains blank
-(or Git: prefixed) lines, the summary won&#8217;t be sent, but From, Subject,
-and In-Reply-To headers will be used unless they are removed.</p>
+<p>When <code>--compose</code> is used, git send-email will use the From, To, Cc, Bcc,
+Subject, Reply-To, and In-Reply-To headers specified in the message. If
+the body of the message (what you type after the headers and a blank
+line) only contains blank (or Git: prefixed) lines, the summary won&#8217;t be
+sent, but the headers mentioned above will be used unless they are
+removed.</p>
 </div>
 <div class="paragraph">
 <p>Missing From or In-Reply-To headers will be prompted for.</p>
@@ -1057,8 +1058,8 @@ default to <code>--validate</code>.</p>
 <dt class="hdlist1">--dump-aliases</dt>
 <dd>
 <p>Instead of the normal operation, dump the shorthand alias names from
-the configured alias file(s), one per line in alphabetical order. Note,
-this only includes the alias name and not its expanded email addresses.
+the configured alias file(s), one per line in alphabetical order. Note
+that this only includes the alias name and not its expanded email addresses.
 See <em>sendemail.aliasesfile</em> for more information about aliases.</p>
 </dd>
 </dl>
@@ -1122,7 +1123,7 @@ email aliases files.  You must also supply <code>sendemail.aliasFileType</code>.
 <dt class="hdlist1">sendemail.aliasFileType</dt>
 <dd>
 <p>Format of the file(s) specified in sendemail.aliasesFile. Must be
-one of <em>mutt</em>, <em>mailrc</em>, <em>pine</em>, <em>elm</em>, or <em>gnus</em>, or <em>sendmail</em>.</p>
+one of <em>mutt</em>, <em>mailrc</em>, <em>pine</em>, <em>elm</em>, <em>gnus</em>, or <em>sendmail</em>.</p>
 <div class="paragraph">
 <p>What an alias file in each format looks like can be found in
 the documentation of the email program of the same name. The
@@ -1202,7 +1203,7 @@ See also the <code>--batch-size</code> option of <a href="git-send-email.html">g
 </dd>
 <dt class="hdlist1">sendemail.smtpReloginDelay</dt>
 <dd>
-<p>Seconds wait before reconnecting to smtp server.
+<p>Seconds to wait before reconnecting to the smtp server.
 See also the <code>--relogin-delay</code> option of <a href="git-send-email.html">git-send-email(1)</a>.</p>
 </dd>
 <dt class="hdlist1">sendemail.forbidSendmailVariables</dt>
@@ -1284,7 +1285,7 @@ Authen::SASL and Mail::Address.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-08-30 09:49:01 UTC
+Last updated 2023-11-03 08:04:06 UTC
 </div>
 </div>
 </body>

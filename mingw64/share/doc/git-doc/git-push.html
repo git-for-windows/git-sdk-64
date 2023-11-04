@@ -450,7 +450,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git push</em> [--all | --branches | --mirror | --tags] [--follow-tags] [--atomic] [-n | --dry-run] [--receive-pack=&lt;git-receive-pack&gt;]
-           [--repo=&lt;repository&gt;] [-f | --force] [-d | --delete] [--prune] [-v | --verbose]
+           [--repo=&lt;repository&gt;] [-f | --force] [-d | --delete] [--prune] [-q | --quiet] [-v | --verbose]
            [-u | --set-upstream] [-o &lt;string&gt; | --push-option=&lt;string&gt;]
            [--[no-]signed|--signed=(true|false|if-asked)]
            [--force-with-lease[=&lt;refname&gt;[:&lt;expect&gt;]] [--force-if-includes]]
@@ -484,7 +484,7 @@ and if it is not found, honors <code>push.default</code> configuration to decide
 what to push (See <a href="git-config.html">git-config(1)</a> for the meaning of <code>push.default</code>).</p>
 </div>
 <div class="paragraph">
-<p>When neither the command-line nor the configuration specify what to
+<p>When neither the command-line nor the configuration specifies what to
 push, the default behavior is used, which corresponds to the <code>simple</code>
 value for <code>push.default</code>: the current branch is pushed to the
 corresponding upstream branch, but as a safety measure, the push is
@@ -500,7 +500,7 @@ local one.</p>
 <dl>
 <dt class="hdlist1">&lt;repository&gt;</dt>
 <dd>
-<p>The "remote" repository that is destination of a push
+<p>The "remote" repository that is the destination of a push
 operation.  This parameter can be either a URL
 (see the section <a href="#URLS">GIT URLS</a> below) or the name
 of a remote (see the section <a href="#REMOTES">REMOTES</a> below).</p>
@@ -975,9 +975,9 @@ Depending on the transport protocol, some of this information may be
 absent.</p>
 </div>
 <div class="paragraph">
-<p>Git supports ssh, git, http, and https protocols (in addition, ftp,
+<p>Git supports ssh, git, http, and https protocols (in addition, ftp
 and ftps can be used for fetching, but this is inefficient and
-deprecated; do not use it).</p>
+deprecated; do not use them).</p>
 </div>
 <div class="paragraph">
 <p>The native transport (i.e. git:// URL) does no authentication and
@@ -1174,7 +1174,7 @@ config file would appear like this:</p>
 </div>
 <div class="paragraph">
 <p>The <code>&lt;pushurl&gt;</code> is used for pushes only. It is optional and defaults
-to <code>&lt;URL&gt;</code>. Pushing to a remote affects all defined pushurls or to all
+to <code>&lt;URL&gt;</code>. Pushing to a remote affects all defined pushurls or all
 defined urls if no pushurls are defined. Fetch, however, will only
 fetch from the first defined url if multiple urls are defined.</p>
 </div>
@@ -1191,7 +1191,7 @@ following format:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>        URL: one of the above URL format
+<pre>        URL: one of the above URL formats
         Push: &lt;refspec&gt;
         Pull: &lt;refspec&gt;</pre>
 </div>
@@ -1687,7 +1687,7 @@ pushing to the same repository you would normally pull from
 <p><code>tracking</code> - This is a deprecated synonym for <code>upstream</code>.</p>
 </li>
 <li>
-<p><code>simple</code> - pushes the current branch with the same name on the remote.</p>
+<p><code>simple</code> - push the current branch with the same name on the remote.</p>
 <div class="paragraph">
 <p>If you are working on a centralized workflow (pushing to the same repository you
 pull from, which is typically <code>origin</code>), then you need to configure an upstream
@@ -1728,7 +1728,7 @@ new default).</p>
 </dd>
 <dt class="hdlist1">push.followTags</dt>
 <dd>
-<p>If set to true enable <code>--follow-tags</code> option by default.  You
+<p>If set to true, enable <code>--follow-tags</code> option by default.  You
 may override this configuration at time of push by specifying
 <code>--no-follow-tags</code>.</p>
 </dd>
@@ -1815,7 +1815,7 @@ from using bitmaps. Default is true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-08-30 09:49:01 UTC
+Last updated 2023-11-03 08:04:06 UTC
 </div>
 </div>
 </body>

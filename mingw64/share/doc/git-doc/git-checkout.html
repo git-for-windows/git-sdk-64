@@ -453,8 +453,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <em>git checkout</em> [-q] [-f] [-m] --detach [&lt;branch&gt;]
 <em>git checkout</em> [-q] [-f] [-m] [--detach] &lt;commit&gt;
 <em>git checkout</em> [-q] [-f] [-m] [[-b|-B|--orphan] &lt;new-branch&gt;] [&lt;start-point&gt;]
-<em>git checkout</em> [-f|--ours|--theirs|-m|--conflict=&lt;style&gt;] [&lt;tree-ish&gt;] [--] &lt;pathspec&gt;&#8230;&#8203;
-<em>git checkout</em> [-f|--ours|--theirs|-m|--conflict=&lt;style&gt;] [&lt;tree-ish&gt;] --pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]
+<em>git checkout</em> [-f] &lt;tree-ish&gt; [--] &lt;pathspec&gt;&#8230;&#8203;
+<em>git checkout</em> [-f] &lt;tree-ish&gt; --pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]
+<em>git checkout</em> [-f|--ours|--theirs|-m|--conflict=&lt;style&gt;] [--] &lt;pathspec&gt;&#8230;&#8203;
+<em>git checkout</em> [-f|--ours|--theirs|-m|--conflict=&lt;style&gt;] --pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]
 <em>git checkout</em> (-p|--patch) [&lt;tree-ish&gt;] [--] [&lt;pathspec&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
@@ -491,7 +493,7 @@ exactly one remote (call it <code>&lt;remote&gt;</code>) with a matching name an
 <p>You could omit <code>&lt;branch&gt;</code>, in which case the command degenerates to
 "check out the current branch", which is a glorified no-op with
 rather expensive side-effects to show only the tracking information,
-if exists, for the current branch.</p>
+if it exists, for the current branch.</p>
 </div>
 </dd>
 <dt class="hdlist1"><em>git checkout</em> -b|-B &lt;new-branch&gt; [&lt;start-point&gt;]</dt>
@@ -751,7 +753,8 @@ should result in deletion of the path).</p>
 </div>
 <div class="paragraph">
 <p>When checking out paths from the index, this option lets you recreate
-the conflicted merge in the specified paths.</p>
+the conflicted merge in the specified paths.  This option cannot be
+used when checking out paths from a tree-ish.</p>
 </div>
 <div class="paragraph">
 <p>When switching branches with <code>--merge</code>, staged changes may be lost.</p>
@@ -1233,7 +1236,7 @@ available. This setting and <code>checkout.thresholdForParallelism</code> affect
 all commands that perform checkout. E.g. checkout, clone, reset,
 sparse-checkout, etc.</p>
 <div class="paragraph">
-<p>Note: parallel checkout usually delivers better performance for repositories
+<p>Note: Parallel checkout usually delivers better performance for repositories
 located on SSDs or over NFS. For repositories on spinning disks and/or machines
 with a small number of cores, the default sequential checkout often performs
 better. The size and compression level of a repository might also influence how
@@ -1244,7 +1247,7 @@ well the parallel version performs.</p>
 <dd>
 <p>When running parallel checkout with a small number of files, the cost
 of subprocess spawning and inter-process communication might outweigh
-the parallelization gains. This setting allows to define the minimum
+the parallelization gains. This setting allows you to define the minimum
 number of files for which parallel checkout should be attempted. The
 default is 100.</p>
 </dd>
@@ -1272,7 +1275,7 @@ default is 100.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-08-30 09:49:01 UTC
+Last updated 2023-11-03 08:04:06 UTC
 </div>
 </div>
 </body>

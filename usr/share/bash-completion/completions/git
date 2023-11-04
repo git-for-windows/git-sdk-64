@@ -28,6 +28,7 @@
 # completion style.  For example '!f() { : git commit ; ... }; f' will
 # tell the completion to use commit completion.  This also works with aliases
 # of form "!sh -c '...'".  For example, "!sh -c ': git commit ; ... '".
+# Be sure to add a space between the command name and the ';'.
 #
 # If you have a command that is not part of git, but you would still
 # like completion, you can use __git_complete:
@@ -1607,7 +1608,7 @@ _git_checkout ()
 
 		if [ -n "$(__git_find_on_cmdline "-b -B -d --detach --orphan")" ]; then
 			__git_complete_refs --mode="refs"
-		elif [ -n "$(__git_find_on_cmdline "--track")" ]; then
+		elif [ -n "$(__git_find_on_cmdline "-t --track")" ]; then
 			__git_complete_refs --mode="remote-heads"
 		else
 			__git_complete_refs $dwim_opt --mode="refs"
@@ -2514,7 +2515,7 @@ _git_switch ()
 
 		if [ -n "$(__git_find_on_cmdline "-c -C -d --detach")" ]; then
 			__git_complete_refs --mode="refs"
-		elif [ -n "$(__git_find_on_cmdline "--track")" ]; then
+		elif [ -n "$(__git_find_on_cmdline "-t --track")" ]; then
 			__git_complete_refs --mode="remote-heads"
 		else
 			__git_complete_refs $dwim_opt --mode="heads"

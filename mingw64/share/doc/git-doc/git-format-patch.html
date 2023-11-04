@@ -507,7 +507,7 @@ commit log message).</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>The log message and the patch is separated by a line with a
+<p>The log message and the patch are separated by a line with a
 three-dash line.</p>
 </div>
 <div class="paragraph">
@@ -674,14 +674,15 @@ will be used for the filename part, and the rest for the graph
 part. Maximum width defaults to terminal width, or 80 columns
 if not connected to a terminal, and can be overridden by
 <code>&lt;width&gt;</code>. The width of the filename part can be limited by
-giving another width <code>&lt;name-width&gt;</code> after a comma. The width
-of the graph part can be limited by using
-<code>--stat-graph-width=&lt;width&gt;</code> (affects all commands generating
-a stat graph) or by setting <code>diff.statGraphWidth=&lt;width&gt;</code>
-(does not affect <code>git format-patch</code>).
-By giving a third parameter <code>&lt;count&gt;</code>, you can limit the
-output to the first <code>&lt;count&gt;</code> lines, followed by <code>...</code> if
-there are more.</p>
+giving another width <code>&lt;name-width&gt;</code> after a comma or by setting
+<code>diff.statNameWidth=&lt;width&gt;</code>. The width of the graph part can be
+limited by using <code>--stat-graph-width=&lt;width&gt;</code> or by setting
+<code>diff.statGraphWidth=&lt;width&gt;</code>. Using <code>--stat</code> or
+<code>--stat-graph-width</code> affects all commands generating a stat graph,
+while setting <code>diff.statNameWidth</code> or <code>diff.statGraphWidth</code>
+does not affect <code>git format-patch</code>.
+By giving a third parameter <code>&lt;count&gt;</code>, you can limit the output to
+the first <code>&lt;count&gt;</code> lines, followed by <code>...</code> if there are more.</p>
 <div class="paragraph">
 <p>These parameters can also be set individually with <code>--stat-width=&lt;width&gt;</code>,
 <code>--stat-name-width=&lt;name-width&gt;</code> and <code>--stat-count=&lt;count&gt;</code>.</p>
@@ -956,7 +957,7 @@ matches "<code>fooasdfbar</code>" and "<code>foo/bar/baz/asdf</code>" but not "<
 <dd>
 <p>Discard the files before the named &lt;file&gt; from the output
 (i.e. <em>skip to</em>), or move them to the end of the output
-(i.e. <em>rotate to</em>).  These were invented primarily for use
+(i.e. <em>rotate to</em>).  These options were invented primarily for the use
 of the <code>git difftool</code> command, and may not be very useful
 otherwise.</p>
 </dd>
@@ -1231,12 +1232,24 @@ is greater than 100 bytes, then the mode will be <code>message</code>, otherwise
 populated with placeholder text.</p>
 </div>
 </dd>
+<dt class="hdlist1">--description-file=&lt;file&gt;</dt>
+<dd>
+<p>Use the contents of &lt;file&gt; instead of the branch&#8217;s description
+for generating the cover letter.</p>
+</dd>
 <dt class="hdlist1">--subject-prefix=&lt;subject prefix&gt;</dt>
 <dd>
 <p>Instead of the standard <em>[PATCH]</em> prefix in the subject
-line, instead use <em>[&lt;subject prefix&gt;]</em>. This
-allows for useful naming of a patch series, and can be
-combined with the <code>--numbered</code> option.</p>
+line, instead use <em>[&lt;subject prefix&gt;]</em>. This can be used
+to name a patch series, and can be combined with the
+<code>--numbered</code> option.</p>
+<div class="paragraph">
+<p>The configuration variable <code>format.subjectPrefix</code> may also be used
+to configure a subject prefix to apply to a given repository for
+all patches. This is often useful on mailing lists which receive
+patches for several repositories and can be used to disambiguate
+the patches (with a value of e.g. "PATCH my-project").</p>
+</div>
 </dd>
 <dt class="hdlist1">--filename-max-length=&lt;n&gt;</dt>
 <dd>
@@ -1248,9 +1261,9 @@ variable, or 64 if unconfigured.</p>
 </dd>
 <dt class="hdlist1">--rfc</dt>
 <dd>
-<p>Alias for <code>--subject-prefix="RFC PATCH"</code>. RFC means "Request For
-Comments"; use this when sending an experimental patch for
-discussion rather than application.</p>
+<p>Prepends "RFC" to the subject prefix (producing "RFC PATCH" by
+default). RFC means "Request For Comments"; use this when sending
+an experimental patch for discussion rather than application.</p>
 </dd>
 <dt class="hdlist1">-v &lt;n&gt;</dt>
 <dt class="hdlist1">--reroll-count=&lt;n&gt;</dt>
@@ -1951,7 +1964,7 @@ merge commit.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-08-30 09:49:01 UTC
+Last updated 2023-11-03 08:04:06 UTC
 </div>
 </div>
 </body>

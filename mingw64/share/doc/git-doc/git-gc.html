@@ -513,6 +513,14 @@ be performed as well.</p>
 cruft pack instead of storing them as loose objects. <code>--cruft</code>
 is on by default.</p>
 </dd>
+<dt class="hdlist1">--max-cruft-size=&lt;n&gt;</dt>
+<dd>
+<p>When packing unreachable objects into a cruft pack, limit the
+size of new cruft packs to be at most <code>&lt;n&gt;</code> bytes. Overrides any
+value specified via the <code>gc.maxCruftSize</code> configuration. See
+the <code>--max-cruft-size</code> option of <a href="git-repack.html">git-repack(1)</a> for
+more.</p>
+</dd>
 <dt class="hdlist1">--prune=&lt;date&gt;</dt>
 <dd>
 <p>Prune loose objects older than date (default is 2 weeks ago,
@@ -619,7 +627,7 @@ light-weight garbage collection from time to time.  The
 default value is 6700.</p>
 <div class="paragraph">
 <p>Setting this to 0 disables not only automatic packing based on the
-number of loose objects, but any other heuristic <code>git gc --auto</code> will
+number of loose objects, but also any other heuristic <code>git gc --auto</code> will
 otherwise use to determine if there&#8217;s work to do, such as
 <code>gc.autoPackLimit</code>.</p>
 </div>
@@ -638,7 +646,7 @@ use, it&#8217;ll affect how the auto pack limit works.</p>
 </dd>
 <dt class="hdlist1">gc.autoDetach</dt>
 <dd>
-<p>Make <code>git gc --auto</code> return immediately and run in background
+<p>Make <code>git gc --auto</code> return immediately and run in the background
 if the system supports it. Default is true.</p>
 </dd>
 <dt class="hdlist1">gc.bigPackThreshold</dt>
@@ -691,6 +699,13 @@ boolean value.  The default is <code>true</code>.</p>
 <p>Store unreachable objects in a cruft pack (see
 <a href="git-repack.html">git-repack(1)</a>) instead of as loose objects. The default
 is <code>true</code>.</p>
+</dd>
+<dt class="hdlist1">gc.maxCruftSize</dt>
+<dd>
+<p>Limit the size of new cruft packs when repacking. When
+specified in addition to <code>--max-cruft-size</code>, the command line
+option takes priority. See the <code>--max-cruft-size</code> option of
+<a href="git-repack.html">git-repack(1)</a>.</p>
 </dd>
 <dt class="hdlist1">gc.pruneExpire</dt>
 <dd>
@@ -757,6 +772,24 @@ Multiple hooks are supported, but all must exit successfully, else the
 operation (either generating a cruft pack or unpacking unreachable
 objects) will be halted.</p>
 </div>
+</dd>
+<dt class="hdlist1">gc.repackFilter</dt>
+<dd>
+<p>When repacking, use the specified filter to move certain
+objects into a separate packfile.  See the
+<code>--filter=&lt;filter-spec&gt;</code> option of <a href="git-repack.html">git-repack(1)</a>.</p>
+</dd>
+<dt class="hdlist1">gc.repackFilterTo</dt>
+<dd>
+<p>When repacking and using a filter, see <code>gc.repackFilter</code>, the
+specified location will be used to create the packfile
+containing the filtered out objects. <strong>WARNING:</strong> The
+specified location should be accessible, using for example the
+Git alternates mechanism, otherwise the repo could be
+considered corrupt by Git as it migh not be able to access the
+objects in that packfile. See the <code>--filter-to=&lt;dir&gt;</code> option
+of <a href="git-repack.html">git-repack(1)</a> and the <code>objects/info/alternates</code>
+section of <a href="gitrepository-layout.html">gitrepository-layout(5)</a>.</p>
 </dd>
 <dt class="hdlist1">gc.rerereResolved</dt>
 <dd>
@@ -851,7 +884,7 @@ seems to be low in practice).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-08-30 09:49:01 UTC
+Last updated 2023-11-03 08:04:06 UTC
 </div>
 </div>
 </body>

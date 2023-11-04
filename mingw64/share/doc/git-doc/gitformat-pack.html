@@ -460,8 +460,8 @@ $GIT_DIR/objects/pack/multi-pack-index</pre>
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Git pack format is now Git stores most of its primary repository
-data. Over the lietime af a repository loose objects (if any) and
+<p>The Git pack format is how Git stores most of its primary repository
+data. Over the lifetime of a repository, loose objects (if any) and
 smaller packs are consolidated into larger pack(s). See
 <a href="git-gc.html">git-gc(1)</a> and <a href="git-pack-objects.html">git-pack-objects(1)</a>.</p>
 </div>
@@ -515,7 +515,7 @@ more than 4G objects in a pack.</pre>
 </div>
 </li>
 <li>
-<p>The header is followed by number of object entries, each of
+<p>The header is followed by a number of object entries, each of
 which looks like this:</p>
 <div class="literalblock">
 <div class="content">
@@ -536,7 +536,7 @@ is an OBJ_OFS_DELTA object
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>Observation: length of each object is encoded in a variable
+<pre>Observation: the length of each object is encoded in a variable
 length format and is not constrained to 32-bit or anything.</pre>
 </div>
 </div>
@@ -621,7 +621,7 @@ the delta data is a sequence of instructions to reconstruct the object
 from the base object. If the base object is deltified, it must be
 converted to canonical form first. Each instruction appends more and
 more data to the target object until it&#8217;s complete. There are two
-supported instructions so far: one for copy a byte range from the
+supported instructions so far: one for copying a byte range from the
 source object and one for inserting new data embedded in the
 instruction itself.</p>
 </div>
@@ -647,7 +647,7 @@ copy. Offset and size are in little-endian order.</p>
 <div class="paragraph">
 <p>All offset and size bytes are optional. This is to reduce the
 instruction size when encoding small offsets or sizes. The first seven
-bits in the first octet determines which of the next seven octets is
+bits in the first octet determine which of the next seven octets is
 present. If bit zero is set, offset1 is present. If bit one is set
 offset2 is present and so on.</p>
 </div>
@@ -681,9 +681,9 @@ converted to 0x10000.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This is the instruction to construct target object without the base
+<p>This is the instruction to construct the target object without the base
 object. The following data is appended to the target object. The first
-seven bits of the first octet determines the size of data in
+seven bits of the first octet determine the size of data in
 bytes. The size must be non-zero.</p>
 </div>
 </div>
@@ -869,7 +869,7 @@ not need to refer to this table.</p>
 <p>The same trailer as a v1 pack file:</p>
 <div class="literalblock">
 <div class="content">
-<pre>A copy of the pack checksum at the end of
+<pre>A copy of the pack checksum at the end of the
 corresponding packfile.</pre>
 </div>
 </div>
@@ -1309,44 +1309,6 @@ unreachable objects.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_caution_for_mixed_version_environments">Caution for mixed-version environments</h3>
-<div class="paragraph">
-<p>Repositories that have cruft packs in them will continue to work with any older
-version of Git. Note, however, that previous versions of Git which do not
-understand the <code>.mtimes</code> file will use the cruft pack&#8217;s mtime as the mtime for
-all of the objects in it. In other words, do not expect older (pre-cruft pack)
-versions of Git to interpret or even read the contents of the <code>.mtimes</code> file.</p>
-</div>
-<div class="paragraph">
-<p>Note that having mixed versions of Git GC-ing the same repository can lead to
-unreachable objects never being completely pruned. This can happen under the
-following circumstances:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>An older version of Git running GC explodes the contents of an existing
-cruft pack loose, using the cruft pack&#8217;s mtime.</p>
-</li>
-<li>
-<p>A newer version running GC collects those loose objects into a cruft pack,
-where the .mtime file reflects the loose object&#8217;s actual mtimes, but the
-cruft pack mtime is "now".</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Repeating this process will lead to unreachable objects not getting pruned as a
-result of repeatedly resetting the objects' mtimes to the present time.</p>
-</div>
-<div class="paragraph">
-<p>If you are GC-ing repositories in a mixed version environment, consider omitting
-the <code>--cruft</code> option when using <a href="git-repack.html">git-repack(1)</a> and <a href="git-gc.html">git-gc(1)</a>, and
-setting the <code>gc.cruftPacks</code> configuration to "false" until all writers
-understand cruft packs.</p>
-</div>
-</div>
-<div class="sect2">
 <h3 id="_alternatives">Alternatives</h3>
 <div class="paragraph">
 <p>Notable alternatives to this design include:</p>
@@ -1354,10 +1316,7 @@ understand cruft packs.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>The location of the per-object mtime data, and</p>
-</li>
-<li>
-<p>Storing unreachable objects in multiple cruft packs.</p>
+<p>The location of the per-object mtime data.</p>
 </li>
 </ul>
 </div>
@@ -1366,14 +1325,6 @@ understand cruft packs.</p>
 to avoid complicating the <code>.idx</code> format. If the <code>.idx</code> format were ever to gain
 support for optional chunks of data, it may make sense to consolidate the
 <code>.mtimes</code> format into the <code>.idx</code> itself.</p>
-</div>
-<div class="paragraph">
-<p>Storing unreachable objects among multiple cruft packs (e.g., creating a new
-cruft pack during each repacking operation including only unreachable objects
-which aren&#8217;t already stored in an earlier cruft pack) is significantly more
-complicated to construct, and so aren&#8217;t pursued here. The obvious drawback to
-the current implementation is that the entire cruft pack must be re-written from
-scratch.</p>
 </div>
 </div>
 </div>
@@ -1389,7 +1340,7 @@ scratch.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-08-30 09:49:01 UTC
+Last updated 2023-11-03 08:04:06 UTC
 </div>
 </div>
 </body>
