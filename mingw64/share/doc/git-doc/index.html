@@ -2342,6 +2342,18 @@ be paranoid about detecting and aborting all operations). You
 should not normally need to set this to <code>0</code>, but it may be
 useful when trying to salvage data from a corrupted repository.</p>
 </dd>
+<dt class="hdlist1"><code>GIT_COMMIT_GRAPH_PARANOIA</code></dt>
+<dd>
+<p>When loading a commit object from the commit-graph, Git performs an
+existence check on the object in the object database. This is done to
+avoid issues with stale commit-graphs that contain references to
+already-deleted commits, but comes with a performance penalty.</p>
+<div class="paragraph">
+<p>The default is "true", which enables the aforementioned behavior.
+Setting this to "false" disables the existence check. This can lead to
+a performance improvement at the cost of consistency.</p>
+</div>
+</dd>
 <dt class="hdlist1"><code>GIT_ALLOW_PROTOCOL</code></dt>
 <dd>
 <p>If set to a colon-separated list of protocols, behave as if
@@ -2575,7 +2587,7 @@ the Git Security mailing list &lt;<a href="mailto:git-security@googlegroups.com"
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-03 08:04:06 UTC
+Last updated 2023-11-08 19:16:20 UTC
 </div>
 </div>
 </body>

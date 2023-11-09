@@ -449,10 +449,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git show-ref</em> [-q | --quiet] [--verify] [--head] [-d | --dereference]
+<pre class="content"><em>git show-ref</em> [--head] [-d | --dereference]
              [-s | --hash[=&lt;n&gt;]] [--abbrev[=&lt;n&gt;]] [--tags]
              [--heads] [--] [&lt;pattern&gt;&#8230;&#8203;]
-<em>git show-ref</em> --exclude-existing[=&lt;pattern&gt;]</pre>
+<em>git show-ref</em> --verify [-q | --quiet] [-d | --dereference]
+             [-s | --hash[=&lt;n&gt;]] [--abbrev[=&lt;n&gt;]]
+             [--] [&lt;ref&gt;&#8230;&#8203;]
+<em>git show-ref</em> --exclude-existing[=&lt;pattern&gt;]
+<em>git show-ref</em> --exists &lt;ref&gt;</pre>
 </div>
 </div>
 </div>
@@ -472,6 +476,11 @@ particular ref exists.</p>
 <p>The <code>--exclude-existing</code> form is a filter that does the inverse. It reads
 refs from stdin, one ref per line, and shows those that don&#8217;t exist in
 the local repository.</p>
+</div>
+<div class="paragraph">
+<p>The <code>--exists</code> form can be used to check for the existence of a single
+references. This form does not verify whether the reference resolves to an
+actual object.</p>
 </div>
 <div class="paragraph">
 <p>Use of this utility is encouraged in favor of directly accessing files under
@@ -513,6 +522,12 @@ appended.</p>
 Aside from returning an error code of 1, it will also print an error
 message if <code>--quiet</code> was not specified.</p>
 </dd>
+<dt class="hdlist1">--exists</dt>
+<dd>
+<p>Check whether the given reference exists. Returns an exit code of 0 if
+it does, 2 if it is missing, and 1 in case looking up the reference
+failed with an error other than the reference being missing.</p>
+</dd>
 <dt class="hdlist1">--abbrev[=&lt;n&gt;]</dt>
 <dd>
 <p>Abbreviate the object name.  When using <code>--hash</code>, you do
@@ -521,8 +536,8 @@ not have to say <code>--hash --abbrev</code>; <code>--hash=n</code> would do.</p
 <dt class="hdlist1">-q</dt>
 <dt class="hdlist1">--quiet</dt>
 <dd>
-<p>Do not print any results to stdout. When combined with <code>--verify</code>, this
-can be used to silently check if a reference exists.</p>
+<p>Do not print any results to stdout. Can be used with <code>--verify</code> to
+silently check if a reference exists.</p>
 </dd>
 <dt class="hdlist1">--exclude-existing[=&lt;pattern&gt;]</dt>
 <dd>
@@ -692,7 +707,7 @@ flag, so you can do</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-03 08:04:06 UTC
+Last updated 2023-11-08 19:16:20 UTC
 </div>
 </div>
 </body>

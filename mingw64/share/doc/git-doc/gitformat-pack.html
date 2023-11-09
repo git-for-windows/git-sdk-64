@@ -1042,10 +1042,11 @@ otherwise specified.</pre>
 <div class="literalblock">
 <div class="content">
 <pre>Packfile Names (ID: {'P', 'N', 'A', 'M'})
-    Stores the packfile names as concatenated, null-terminated strings.
-    Packfiles must be listed in lexicographic order for fast lookups by
-    name. This is the only chunk not guaranteed to be a multiple of four
-    bytes in length, so should be the last chunk for alignment reasons.</pre>
+    Store the names of packfiles as a sequence of NUL-terminated
+    strings. There is no extra padding between the filenames,
+    and they are listed in lexicographic order. The chunk itself
+    is padded at the end with between 0 and 3 NUL bytes to make the
+    chunk size a multiple of 4 bytes.</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -1340,7 +1341,7 @@ support for optional chunks of data, it may make sense to consolidate the
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-03 08:04:06 UTC
+Last updated 2023-11-08 19:16:20 UTC
 </div>
 </div>
 </body>
