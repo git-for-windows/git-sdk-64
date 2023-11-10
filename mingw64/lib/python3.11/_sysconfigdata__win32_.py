@@ -1150,4 +1150,4 @@ prefix = build_time_vars['BINDIR'][:-4]
 
 for key in keys_to_replace:
     value = build_time_vars[key]
-    build_time_vars[key] = value.replace(prefix, sys.prefix)
+    build_time_vars[key] = value.replace(prefix, sys.base_prefix)
