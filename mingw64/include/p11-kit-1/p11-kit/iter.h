@@ -63,6 +63,7 @@ typedef enum {
 	P11_KIT_ITER_KIND_SLOT,
 	P11_KIT_ITER_KIND_TOKEN,
 	P11_KIT_ITER_KIND_OBJECT,
+	P11_KIT_ITER_KIND_SESSION,
 	P11_KIT_ITER_KIND_UNKNOWN = -1,
 } P11KitIterKind;
 
@@ -73,6 +74,8 @@ typedef enum {
 	P11_KIT_ITER_WITH_SLOTS = 1 << 4,
 	P11_KIT_ITER_WITH_TOKENS = 1 << 5,
 	P11_KIT_ITER_WITHOUT_OBJECTS = 1 << 6,
+	P11_KIT_ITER_WITH_LOGIN = 1 << 7,
+	P11_KIT_ITER_WITH_SESSIONS = 1 << 8,
 } P11KitIterBehavior;
 
 typedef CK_RV      (* p11_kit_iter_callback)                (P11KitIter *iter,
