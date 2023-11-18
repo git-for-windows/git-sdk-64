@@ -13,7 +13,7 @@
 
 package IO::Socket::SSL;
 
-our $VERSION = '2.083';
+our $VERSION = '2.084';
 
 use IO::Socket;
 use Net::SSLeay 1.46;
@@ -1182,6 +1182,8 @@ sub _generic_read {
 	    if (not $! and $err == $Net_SSLeay_ERROR_SSL || $err == $Net_SSLeay_ERROR_SYSCALL) {
 		# treat as EOF
 		$data = '';
+		# clear the "unexpected eof while reading" error (OpenSSL 3.0+)
+		Net::SSLeay::ERR_clear_error();
 		last;
 	    }
 	    $self->error("SSL read error");
@@ -1501,9 +1503,14 @@ sub stop_SSL {
 		    my $err = Net::SSLeay::get_error($ssl,$rv);
 		    if ( $err == $Net_SSLeay_ERROR_WANT_READ) {
 			select($vec,undef,undef,$wait)
-		    } elsif ( $err == $Net_SSLeay_ERROR_WANT_READ) {
+		    } elsif ( $err == $Net_SSLeay_ERROR_WANT_WRITE) {
 			select(undef,$vec,undef,$wait)
 		    } else {
+			if ($err) {
+			    # if $! is not set with ERROR_SYSCALL then report as EPIPE
+			    $! ||= EPIPE if $err == $Net_SSLeay_ERROR_SYSCALL;
+			    $self->error("SSL shutdown error ($err)");
+			}
 			last;
 		    }
 		}
@@ -1959,7 +1966,7 @@ sub get_servername {
 
 sub get_fingerprint_bin {
     my ($self,$algo,$cert,$key_only) = @_;
-    $cert ||= $self->peer_certificate;
+    $cert ||= $self->peer_certificate or return;
     return $key_only
 	? Net::SSLeay::X509_pubkey_digest($cert, $algo2digest->($algo || 'sha256'))
 	: Net::SSLeay::X509_digest($cert, $algo2digest->($algo || 'sha256'));
@@ -3651,6 +3658,9 @@ for(
 sub ossl_trace {
     $DEBUG>=2 or return;
     my ($direction, $ssl_ver, $content_type, $buf, $len, $ssl) = @_;
+
+    # Restore original $! value on return
+    local $!;
 
     my $verstr = $tc_ver2s{$ssl_ver} || "(version=$ssl_ver)";
 
