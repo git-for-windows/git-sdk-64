@@ -342,6 +342,9 @@ au BufNewFile,BufRead *.cc
 au BufNewFile,BufRead *.cpp
 	\ if exists("cynlib_syntax_for_cpp")|setf cynlib|else|setf cpp|endif
 
+" Cypher query language
+au BufNewFile,BufRead *.cypher			setf cypher
+
 " C++
 au BufNewFile,BufRead *.cxx,*.c++,*.hh,*.hxx,*.hpp,*.ipp,*.moc,*.tcc,*.inl setf cpp
 if has("fname_case")
@@ -1462,6 +1465,9 @@ au BufNewFile,BufRead {env,config}.nu		setf nu
 " Oblivion Language and Oblivion Script Extender
 au BufNewFile,BufRead *.obl,*.obse,*.oblivion,*.obscript  setf obse
 
+" Objdump
+au BufNewFile,BufRead *.objdump,*.cppobjdump  setf objdump
+
 " OCaml
 au BufNewFile,BufRead *.ml,*.mli,*.mll,*.mly,.ocamlinit,*.mlt,*.mlp,*.mlip,*.mli.cppo,*.ml.cppo setf ocaml
 
@@ -2448,8 +2454,7 @@ au BufNewFile,BufRead *.vroom			setf vroom
 au BufNewFile,BufRead *.vue			setf vue
 
 " WebAssembly
-au BufNewFile,BufRead *.wat			setf wat
-au BufNewFile,BufRead *.wast		setf wast
+au BufNewFile,BufRead *.wat,*.wast		setf wat
 
 " WebAssembly Interface Type (WIT)
 au BufNewFile,BufRead *.wit			setf wit
@@ -2530,6 +2535,9 @@ au BufNewFile,BufRead */etc/xinetd.conf		setf xinetd
 
 " XS Perl extension interface language
 au BufNewFile,BufRead *.xs			setf xs
+
+" X compose file
+au BufNewFile,BufRead .XCompose,Compose	setf xcompose
 
 " X resources file
 au BufNewFile,BufRead .Xdefaults,.Xpdefaults,.Xresources,xdm-config,*.ad setf xdefaults

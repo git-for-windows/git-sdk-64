@@ -154,7 +154,8 @@ typedef enum {
   ARES_ECANCELLED = 24, /* introduced in 1.7.0 */
 
   /* More ares_getaddrinfo error codes */
-  ARES_ESERVICE = 25 /* introduced in 1.?.0 */
+  ARES_ESERVICE = 25 /* ares_getaddrinfo() was passed a text service name that
+                      * is not recognized. introduced in 1.16.0 */
 } ares_status_t;
 
 typedef enum {
@@ -194,6 +195,7 @@ typedef enum {
 #define ARES_OPT_RESOLVCONF      (1 << 17)
 #define ARES_OPT_HOSTS_FILE      (1 << 18)
 #define ARES_OPT_UDP_MAX_QUERIES (1 << 19)
+#define ARES_OPT_MAXTIMEOUTMS    (1 << 20)
 
 /* Nameinfo flag values */
 #define ARES_NI_NOFQDN        (1 << 0)
@@ -304,6 +306,7 @@ struct ares_options {
   char              *resolvconf_path;
   char              *hosts_path;
   int                udp_max_queries;
+  int                maxtimeout; /* in milliseconds */
 };
 
 struct hostent;
@@ -313,7 +316,12 @@ struct ares_channeldata;
 struct ares_addrinfo;
 struct ares_addrinfo_hints;
 
+/* Legacy typedef, don't use, you can't specify "const" */
 typedef struct ares_channeldata *ares_channel;
+
+/* Current main channel typedef */
+typedef struct ares_channeldata  ares_channel_t;
+
 
 typedef void     (*ares_callback)(void *arg, int status, int timeouts,
                               unsigned char *abuf, int alen);
@@ -346,53 +354,57 @@ CARES_EXTERN int  ares_library_init_android(jobject connectivity_manager);
 CARES_EXTERN int  ares_library_android_initialized(void);
 #endif
 
-CARES_EXTERN int         ares_library_initialized(void);
+CARES_EXTERN int           ares_library_initialized(void);
 
-CARES_EXTERN void        ares_library_cleanup(void);
+CARES_EXTERN void          ares_library_cleanup(void);
 
-CARES_EXTERN const char *ares_version(int *version);
+CARES_EXTERN const char   *ares_version(int *version);
 
-CARES_EXTERN int         ares_init(ares_channel *channelptr);
+CARES_EXTERN int           ares_init(ares_channel_t **channelptr);
 
-CARES_EXTERN int         ares_init_options(ares_channel        *channelptr,
-                                           struct ares_options *options, int optmask);
+CARES_EXTERN int           ares_init_options(ares_channel_t           **channelptr,
+                                             const struct ares_options *options,
+                                             int                        optmask);
 
-CARES_EXTERN int         ares_save_options(ares_channel         channel,
-                                           struct ares_options *options, int *optmask);
+CARES_EXTERN int           ares_save_options(ares_channel_t      *channel,
+                                             struct ares_options *options, int *optmask);
 
-CARES_EXTERN void        ares_destroy_options(struct ares_options *options);
+CARES_EXTERN void          ares_destroy_options(struct ares_options *options);
 
-CARES_EXTERN int         ares_dup(ares_channel *dest, ares_channel src);
+CARES_EXTERN int           ares_dup(ares_channel_t **dest, ares_channel_t *src);
 
-CARES_EXTERN void        ares_destroy(ares_channel channel);
+CARES_EXTERN ares_status_t ares_reinit(ares_channel_t *channel);
 
-CARES_EXTERN void        ares_cancel(ares_channel channel);
+CARES_EXTERN void          ares_destroy(ares_channel_t *channel);
+
+CARES_EXTERN void          ares_cancel(ares_channel_t *channel);
 
 /* These next 3 configure local binding for the out-going socket
  * connection.  Use these to specify source IP and/or network device
  * on multi-homed systems.
  */
-CARES_EXTERN void        ares_set_local_ip4(ares_channel channel,
-                                            unsigned int local_ip);
+CARES_EXTERN void          ares_set_local_ip4(ares_channel_t *channel,
+                                              unsigned int    local_ip);
 
 /* local_ip6 should be 16 bytes in length */
-CARES_EXTERN void        ares_set_local_ip6(ares_channel         channel,
-                                            const unsigned char *local_ip6);
+CARES_EXTERN void          ares_set_local_ip6(ares_channel_t      *channel,
+                                              const unsigned char *local_ip6);
 
 /* local_dev_name should be null terminated. */
-CARES_EXTERN void        ares_set_local_dev(ares_channel channel,
-                                            const char  *local_dev_name);
+CARES_EXTERN void          ares_set_local_dev(ares_channel_t *channel,
+                                              const char     *local_dev_name);
 
-CARES_EXTERN void        ares_set_socket_callback(ares_channel              channel,
-                                                  ares_sock_create_callback callback,
-                                                  void                     *user_data);
+CARES_EXTERN void          ares_set_socket_callback(ares_channel_t           *channel,
+                                                    ares_sock_create_callback callback,
+                                                    void                     *user_data);
 
-CARES_EXTERN void        ares_set_socket_configure_callback(
-         ares_channel channel, ares_sock_config_callback callback, void *user_data);
+CARES_EXTERN void          ares_set_socket_configure_callback(
+           ares_channel_t *channel, ares_sock_config_callback callback, void *user_data);
 
-CARES_EXTERN int  ares_set_sortlist(ares_channel channel, const char *sortstr);
+CARES_EXTERN int  ares_set_sortlist(ares_channel_t *channel,
+                                    const char     *sortstr);
 
-CARES_EXTERN void ares_getaddrinfo(ares_channel channel, const char *node,
+CARES_EXTERN void ares_getaddrinfo(ares_channel_t *channel, const char *node,
                                    const char                       *service,
                                    const struct ares_addrinfo_hints *hints,
                                    ares_addrinfo_callback callback, void *arg);
@@ -420,51 +432,54 @@ struct ares_socket_functions {
 };
 
 CARES_EXTERN void
-                  ares_set_socket_functions(ares_channel                        channel,
+                  ares_set_socket_functions(ares_channel_t                     *channel,
                                             const struct ares_socket_functions *funcs,
                                             void                               *user_data);
 
-CARES_EXTERN void ares_send(ares_channel channel, const unsigned char *qbuf,
+CARES_EXTERN void ares_send(ares_channel_t *channel, const unsigned char *qbuf,
                             int qlen, ares_callback callback, void *arg);
 
-CARES_EXTERN void ares_query(ares_channel channel, const char *name,
+CARES_EXTERN void ares_query(ares_channel_t *channel, const char *name,
                              int dnsclass, int type, ares_callback callback,
                              void *arg);
 
-CARES_EXTERN void ares_search(ares_channel channel, const char *name,
+CARES_EXTERN void ares_search(ares_channel_t *channel, const char *name,
                               int dnsclass, int type, ares_callback callback,
                               void *arg);
 
-CARES_EXTERN void ares_gethostbyname(ares_channel channel, const char *name,
+CARES_EXTERN void ares_gethostbyname(ares_channel_t *channel, const char *name,
                                      int family, ares_host_callback callback,
                                      void *arg);
 
-CARES_EXTERN int ares_gethostbyname_file(ares_channel channel, const char *name,
-                                         int family, struct hostent **host);
+CARES_EXTERN int  ares_gethostbyname_file(ares_channel_t *channel,
+                                          const char *name, int family,
+                                          struct hostent **host);
 
-CARES_EXTERN void ares_gethostbyaddr(ares_channel channel, const void *addr,
+CARES_EXTERN void ares_gethostbyaddr(ares_channel_t *channel, const void *addr,
                                      int addrlen, int family,
                                      ares_host_callback callback, void *arg);
 
-CARES_EXTERN void ares_getnameinfo(ares_channel           channel,
+CARES_EXTERN void ares_getnameinfo(ares_channel_t        *channel,
                                    const struct sockaddr *sa,
                                    ares_socklen_t salen, int flags,
                                    ares_nameinfo_callback callback, void *arg);
 
-CARES_EXTERN int  ares_fds(ares_channel channel, fd_set *read_fds,
+CARES_EXTERN int  ares_fds(ares_channel_t *channel, fd_set *read_fds,
                            fd_set *write_fds);
 
-CARES_EXTERN int  ares_getsock(ares_channel channel, ares_socket_t *socks,
+CARES_EXTERN int  ares_getsock(ares_channel_t *channel, ares_socket_t *socks,
                                int numsocks);
 
-CARES_EXTERN struct timeval *
-  ares_timeout(ares_channel channel, struct timeval *maxtv, struct timeval *tv);
+CARES_EXTERN struct timeval *ares_timeout(ares_channel_t *channel,
+                                          struct timeval *maxtv,
+                                          struct timeval *tv);
 
-CARES_EXTERN void ares_process(ares_channel channel, fd_set *read_fds,
+CARES_EXTERN void ares_process(ares_channel_t *channel, fd_set *read_fds,
                                fd_set *write_fds);
 
-CARES_EXTERN void ares_process_fd(ares_channel channel, ares_socket_t read_fd,
-                                  ares_socket_t write_fd);
+CARES_EXTERN void ares_process_fd(ares_channel_t *channel,
+                                  ares_socket_t   read_fd,
+                                  ares_socket_t   write_fd);
 
 CARES_EXTERN int  ares_create_query(const char *name, int dnsclass, int type,
                                     unsigned short id, int rd,
@@ -494,6 +509,15 @@ struct ares_in6_addr {
   union {
     unsigned char _S6_u8[16];
   } _S6_un;
+};
+
+struct ares_addr {
+  int family;
+
+  union {
+    struct in_addr       addr4;
+    struct ares_in6_addr addr6;
+  } addr;
 };
 
 struct ares_addrttl {
@@ -693,20 +717,21 @@ struct ares_addr_port_node {
   int tcp_port;
 };
 
-CARES_EXTERN int         ares_set_servers(ares_channel           channel,
-                                          struct ares_addr_node *servers);
-CARES_EXTERN int         ares_set_servers_ports(ares_channel                channel,
-                                                struct ares_addr_port_node *servers);
+CARES_EXTERN int ares_set_servers(ares_channel_t              *channel,
+                                  const struct ares_addr_node *servers);
+CARES_EXTERN int
+                         ares_set_servers_ports(ares_channel_t                   *channel,
+                                                const struct ares_addr_port_node *servers);
 
 /* Incomming string format: host[:port][,host[:port]]... */
-CARES_EXTERN int         ares_set_servers_csv(ares_channel channel,
-                                              const char  *servers);
-CARES_EXTERN int         ares_set_servers_ports_csv(ares_channel channel,
-                                                    const char  *servers);
+CARES_EXTERN int         ares_set_servers_csv(ares_channel_t *channel,
+                                              const char     *servers);
+CARES_EXTERN int         ares_set_servers_ports_csv(ares_channel_t *channel,
+                                                    const char     *servers);
 
-CARES_EXTERN int         ares_get_servers(ares_channel            channel,
+CARES_EXTERN int         ares_get_servers(ares_channel_t         *channel,
                                           struct ares_addr_node **servers);
-CARES_EXTERN int         ares_get_servers_ports(ares_channel                 channel,
+CARES_EXTERN int         ares_get_servers_ports(ares_channel_t              *channel,
                                                 struct ares_addr_port_node **servers);
 
 CARES_EXTERN const char *ares_inet_ntop(int af, const void *src, char *dst,
@@ -718,5 +743,8 @@ CARES_EXTERN int         ares_inet_pton(int af, const char *src, void *dst);
 #ifdef __cplusplus
 }
 #endif
+
+/* DNS record parser, writer, and helpers */
+#include "ares_dns_record.h"
 
 #endif /* ARES__H */
