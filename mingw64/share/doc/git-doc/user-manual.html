@@ -3181,9 +3181,8 @@ author, date and the <a class="link" href="#def_tree_object">tree object</a> whi
 to the top <a class="link" href="#def_directory">directory</a> of the stored
 revision.
 </dd><dt><span class="term"><a name="def_commit-ish"></a>commit-ish (also committish)</span></dt><dd>
-A <a class="link" href="#def_commit_object">commit object</a> or an
-<a class="link" href="#def_object">object</a> that can be recursively dereferenced to
-a commit object.
+A <a class="link" href="#def_commit_object">commit object</a> or an <a class="link" href="#def_object">object</a> that
+can be recursively <a class="link" href="#def_dereference">dereferenced</a> to a commit object.
 The following are all commit-ishes:
 a commit object,
 a <a class="link" href="#def_tag_object">tag object</a> that points to a commit
@@ -3204,6 +3203,21 @@ An <a class="link" href="#def_unreachable_object">unreachable object</a> which i
 <a class="link" href="#def_reachable">reachable</a> even from other unreachable objects; a
 dangling object has no references to it from any
 reference or <a class="link" href="#def_object">object</a> in the <a class="link" href="#def_repository">repository</a>.
+</dd><dt><span class="term"><a name="def_dereference"></a>dereference</span></dt><dd>
+<p class="simpara">Referring to a <a class="link" href="#def_symref">symbolic ref</a>: the action of accessing the
+<a class="link" href="#def_ref">reference</a> pointed at by a symbolic ref. Recursive
+dereferencing involves repeating the aforementioned process on the
+resulting ref until a non-symbolic reference is found.</p>
+<p class="simpara">Referring to a <a class="link" href="#def_tag_object">tag object</a>: the action of accessing the
+<a class="link" href="#def_object">object</a> a tag points at. Tags are recursively dereferenced by
+repeating the operation on the result object until the result has either a
+specified <a class="link" href="#def_object_type">object type</a> (where applicable) or any non-"tag"
+object type. A synonym for "recursive dereference" in the context of tags is
+"<a class="link" href="#def_peel">peel</a>".</p>
+<p class="simpara">Referring to a <a class="link" href="#def_commit_object">commit object</a>: the action of accessing
+the commit’s tree object. Commits cannot be dereferenced recursively.</p>
+<p class="simpara">Unless otherwise specified, "dereferencing" as it used in the context of Git
+commands or protocols is implicitly recursive.</p>
 </dd><dt><span class="term"><a name="def_detached_HEAD"></a>detached HEAD</span></dt><dd>
 <p class="simpara">Normally the <a class="link" href="#def_HEAD">HEAD</a> stores the name of a
 <a class="link" href="#def_branch">branch</a>, and commands that operate on the
@@ -3473,6 +3487,9 @@ result set as if invoked without any pathspec.
 A <a class="link" href="#def_commit_object">commit object</a> contains a (possibly empty) list
 of the logical predecessor(s) in the line of development, i.e. its
 parents.
+</dd><dt><span class="term"><a name="def_peel"></a>peel</span></dt><dd>
+The action of recursively <a class="link" href="#def_dereference">dereferencing</a> a
+<a class="link" href="#def_tag_object">tag object</a>.
 </dd><dt><span class="term"><a name="def_pickaxe"></a>pickaxe</span></dt><dd>
 The term <a class="link" href="#def_pickaxe">pickaxe</a> refers to an option to the diffcore
 routines that help select changes that add or delete a given text
@@ -3621,12 +3638,11 @@ of other projects in its working tree as <a class="link" href="#def_submodule">s
 The superproject knows about the names of (but does not hold
 copies of) commit objects of the contained submodules.
 </dd><dt><span class="term"><a name="def_symref"></a>symref</span></dt><dd>
-Symbolic reference: instead of containing the <a class="link" href="#def_SHA1">SHA-1</a>
-id itself, it is of the format <span class="emphasis"><em>ref: refs/some/thing</em></span> and when
-referenced, it recursively dereferences to this reference.
-<span class="emphasis"><em><a class="link" href="#def_HEAD">HEAD</a></em></span> is a prime example of a symref. Symbolic
-references are manipulated with the <a class="ulink" href="git-symbolic-ref.html" target="_top">git-symbolic-ref(1)</a>
-command.
+Symbolic reference: instead of containing the <a class="link" href="#def_SHA1">SHA-1</a> id
+itself, it is of the format <span class="emphasis"><em>ref: refs/some/thing</em></span> and when referenced,
+it recursively <a class="link" href="#def_dereference">dereferences</a> to this reference.
+<span class="emphasis"><em><a class="link" href="#def_HEAD">HEAD</a></em></span> is a prime example of a symref. Symbolic references
+are manipulated with the <a class="ulink" href="git-symbolic-ref.html" target="_top">git-symbolic-ref(1)</a> command.
 </dd><dt><span class="term"><a name="def_tag"></a>tag</span></dt><dd>
 A <a class="link" href="#def_ref">ref</a> under <code class="literal">refs/tags/</code> namespace that points to an
 object of an arbitrary type (typically a tag points to either a
@@ -3656,11 +3672,11 @@ An <a class="link" href="#def_object">object</a> containing a list of file names
 with refs to the associated blob and/or tree objects. A
 <a class="link" href="#def_tree">tree</a> is equivalent to a <a class="link" href="#def_directory">directory</a>.
 </dd><dt><span class="term"><a name="def_tree-ish"></a>tree-ish (also treeish)</span></dt><dd>
-A <a class="link" href="#def_tree_object">tree object</a> or an <a class="link" href="#def_object">object</a>
-that can be recursively dereferenced to a tree object.
-Dereferencing a <a class="link" href="#def_commit_object">commit object</a> yields the
-tree object corresponding to the <a class="link" href="#def_revision">revision</a>'s
-top <a class="link" href="#def_directory">directory</a>.
+A <a class="link" href="#def_tree_object">tree object</a> or an <a class="link" href="#def_object">object</a> that can
+be recursively <a class="link" href="#def_dereference">dereferenced</a> to a tree object.
+Dereferencing a <a class="link" href="#def_commit_object">commit object</a> yields the tree
+object corresponding to the <a class="link" href="#def_revision">revision</a>'s top
+<a class="link" href="#def_directory">directory</a>.
 The following are all tree-ishes:
 a <a class="link" href="#def_commit-ish">commit-ish</a>,
 a tree object,

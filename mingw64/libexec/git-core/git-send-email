@@ -71,8 +71,8 @@ Getopt::Long::Configure qw/ pass_through /;
 
 sub usage {
 	print <<EOT;
-git send-email' [<options>] <file|directory>
-git send-email' [<options>] <format-patch options>
+git send-email [<options>] <file|directory>
+git send-email [<options>] <format-patch options>
 git send-email --dump-aliases
 
   Composing:
@@ -1512,7 +1512,7 @@ sub gen_header {
 	@recipients = unique_email_list(@recipients,@cc,@initial_bcc);
 	@recipients = (map { extract_valid_address_or_die($_) } @recipients);
 	my $date = format_2822_time($time++);
-	my $gitversion = '2.43.0.rc2.windows.1';
+	my $gitversion = '2.43.0.windows.1';
 	if ($gitversion =~ m/..GIT_VERSION../) {
 	    $gitversion = Git::version();
 	}
