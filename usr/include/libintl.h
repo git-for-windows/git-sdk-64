@@ -54,7 +54,7 @@ extern "C" {
 
 
 /* Version number: (major<<16) + (minor<<8) + subminor */
-#define LIBINTL_VERSION 0x001603
+#define LIBINTL_VERSION 0x001604
 extern int libintl_version;
 
 
