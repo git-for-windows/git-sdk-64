@@ -10,7 +10,7 @@
 .ds B-Font B
 .ds I-Font I
 .ds R-Font R
-.TH gnutls-cli 1 "04 Aug 2023" "3.8.1" "User Commands"
+.TH gnutls-cli 1 "15 Nov 2023" "3.8.2" "User Commands"
 .SH NAME
 \f\*[B-Font]gnutls-cli\fP
 \- GnuTLS client
@@ -133,6 +133,15 @@ This option must not appear in combination with any of the following options:
 starttls.
 .sp
 Specify the application layer protocol for STARTTLS. If the protocol is supported, gnutls\-cli will proceed to the TLS negotiation.
+.TP
+.NOP \f\*[B-Font]\-\-starttls\-name\f[]=\f\*[I-Font]str\f[]
+The hostname presented to the application protocol for STARTTLS (for smtp, xmpp, lmtp).
+This option must not appear in combination with any of the following options:
+starttls.
+This option must appear in combination with the following options:
+starttls-proto.
+.sp
+Specify the hostname presented to the application protocol for STARTTLS.
 .TP
 .NOP \f\*[B-Font]\-u\f[], \f\*[B-Font]\-\-udp\f[]
 Use DTLS (datagram TLS) over UDP.

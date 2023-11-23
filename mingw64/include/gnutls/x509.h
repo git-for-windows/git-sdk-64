@@ -1118,6 +1118,10 @@ int gnutls_x509_privkey_import_dsa_raw(gnutls_x509_privkey_t key,
 				       const gnutls_datum_t *g,
 				       const gnutls_datum_t *y,
 				       const gnutls_datum_t *x);
+int gnutls_x509_privkey_import_dh_raw(gnutls_x509_privkey_t key,
+				      const gnutls_dh_params_t params,
+				      const gnutls_datum_t *y,
+				      const gnutls_datum_t *x);
 
 int gnutls_x509_privkey_get_pk_algorithm(gnutls_x509_privkey_t key);
 int gnutls_x509_privkey_get_pk_algorithm2(gnutls_x509_privkey_t key,
@@ -1145,13 +1149,15 @@ void gnutls_x509_privkey_set_flags(gnutls_x509_privkey_t key,
  * @GNUTLS_KEYGEN_SEED: Specifies the seed to be used in key generation.
  * @GNUTLS_KEYGEN_DIGEST: The size field specifies the hash algorithm to be used in key generation.
  * @GNUTLS_KEYGEN_SPKI: data points to a %gnutls_x509_spki_t structure; it is not used after the key generation call.
+ * @GNUTLS_KEYGEN_DH: data points to a %gnutls_dh_params_t structure; it is not used after the key generation call.
  *
  * Enumeration of different key generation data options.
  */
 typedef enum {
 	GNUTLS_KEYGEN_SEED = 1,
 	GNUTLS_KEYGEN_DIGEST = 2,
-	GNUTLS_KEYGEN_SPKI = 3
+	GNUTLS_KEYGEN_SPKI = 3,
+	GNUTLS_KEYGEN_DH = 4
 } gnutls_keygen_types_t;
 
 typedef struct {

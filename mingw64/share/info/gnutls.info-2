@@ -1,7 +1,7 @@
 This is gnutls.info, produced by makeinfo version 7.0.2 from
 gnutls.texi.
 
-This manual is last updated 10 February 2023 for version 3.8.1 of
+This manual is last updated 10 February 2023 for version 3.8.2 of
 GnuTLS.
 
 Copyright © 2001-2023 Free Software Foundation, Inc.\\ Copyright ©
@@ -1751,7 +1751,7 @@ underlying protocol type, i.e., datagram (UDP) or reliable (TCP).
      Generate key share for the first group which is enabled.  For
      example x25519.  This option is the most performant for client
      (less CPU spent generating keys), but if the server doesn’t support
-     the advertized option it may result to more roundtrips needed to
+     the advertised option it may result to more roundtrips needed to
      discover the server’s choice.
 ‘GNUTLS_KEY_SHARE_TOP2’
      Generate key shares for the top-2 different groups which are
@@ -4120,7 +4120,7 @@ handshake process.  A brief usage example is shown below.
                               const unsigned char *data, unsigned size)
      {
      	if (tls_id == 0) { /* server name */
-     		/* figure the advertized name - the following hack
+     		/* figure the advertised name - the following hack
                       * relies on the fact that this extension only supports
                       * DNS names, and due to a protocol bug cannot be extended
                       * to support anything else. */
@@ -4601,7 +4601,7 @@ below.
      certificate chain - verification.  To be run independently the
      ‘DANE_VFLAG_ONLY_CHECK_EE_USAGE’ flag should be specified; then the
      function will check whether the key of the peer matches the key
-     advertized in the DANE entry.
+     advertised in the DANE entry.
 
      *Returns:* a negative error code on error and ‘DANE_E_SUCCESS’ (0)
      when the DANE entries were successfully parsed, irrespective of
@@ -4757,7 +4757,7 @@ The re-authentication process, allows the connected client to switch
 identity by presenting a new certificate.  Unlike TLS 1.2, the server is
 not allowed to change identities.  That client re-authentication, or
 post-handshake authentication can be initiated only by the server using
-*note gnutls_reauth::, and only if a client has advertized support for
+*note gnutls_reauth::, and only if a client has advertised support for
 it.  Both server and client have to explicitly enable support for post
 handshake authentication using the ‘GNUTLS_POST_HANDSHAKE_AUTH’ flag at
 *note gnutls_init::.

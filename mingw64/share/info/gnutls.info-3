@@ -1,7 +1,7 @@
 This is gnutls.info, produced by makeinfo version 7.0.2 from
 gnutls.texi.
 
-This manual is last updated 10 February 2023 for version 3.8.1 of
+This manual is last updated 10 February 2023 for version 3.8.2 of
 GnuTLS.
 
 Copyright © 2001-2023 Free Software Foundation, Inc.\\ Copyright ©
@@ -1474,6 +1474,10 @@ cryptographic primitives.
      GOST R 34.12-2015 (Magma) cipher in CTR-ACPKM mode.
 ‘GNUTLS_CIPHER_KUZNYECHIK_CTR_ACPKM’
      GOST R 34.12-2015 (Kuznyechik) cipher in CTR-ACPKM mode.
+‘GNUTLS_CIPHER_AES_128_SIV_GCM’
+     AES in SIV-GCM mode with 128-bit key.
+‘GNUTLS_CIPHER_AES_256_SIV_GCM’
+     AES in SIV-GCM mode with 256-bit key.
 ‘GNUTLS_CIPHER_IDEA_PGP_CFB’
      IDEA in CFB mode (placeholder - unsupported).
 ‘GNUTLS_CIPHER_3DES_PGP_CFB’
@@ -2187,6 +2191,9 @@ to ‘more’.  Both will exit with a status code of 0.
             --app-proto            an alias for the 'starttls-proto' option
             --starttls-proto=str   The application protocol to be used to obtain the server's certificate (https, ftp, smtp, imap, ldap, xmpp, lmtp, pop3, nntp, sieve, postgres)
      				- prohibits the option 'starttls'
+            --starttls-name=str    The hostname presented to the application protocol for STARTTLS (for smtp, xmpp, lmtp)
+     				- prohibits the option 'starttls'
+     				- requires the option 'starttls-proto'
         -u, --udp                  Use DTLS (datagram TLS) over UDP
             --mtu=num              Set MTU for datagram TLS
      				- it must be in the range:
@@ -2381,6 +2388,21 @@ This option has some usage constraints.  It:
 
 Specify the application layer protocol for STARTTLS. If the protocol is
 supported, gnutls-cli will proceed to the TLS negotiation.
+
+starttls-name option.
+---------------------
+
+This is the “the hostname presented to the application protocol for
+starttls (for smtp, xmpp, lmtp)” option.  This option takes a
+ArgumentType.STRING argument.
+
+This option has some usage constraints.  It:
+   • must not appear in combination with any of the following options:
+     starttls.
+   • must appear in combination with the following options:
+     starttls-proto.
+
+Specify the hostname presented to the application protocol for STARTTLS.
 
 save-ocsp-multi option.
 -----------------------
@@ -5314,6 +5336,8 @@ Ciphers
 ‘AES-256-XTS’
 ‘AES-128-SIV’
 ‘AES-256-SIV’
+‘AES-128-SIV-GCM’
+‘AES-256-SIV-GCM’
 ‘GOST28147-TC26Z-CNT’
 ‘MAGMA-CTR-ACPKM’
 ‘KUZNYECHIK-CTR-ACPKM’
@@ -7823,29 +7847,6 @@ gnutls_cipher_list
      *Returns:* a (0)-terminated list of ‘gnutls_cipher_algorithm_t’
      integers indicating the available ciphers.
 
-gnutls_ciphersuite_get
-----------------------
-
- -- Function: const char * gnutls_ciphersuite_get (gnutls_session_t
-          SESSION)
-     SESSION: is a ‘gnutls_session_t’ type.
-
-     Get the canonical name of negotiated TLS ciphersuite.  The names
-     returned by this function match the IANA registry, with one
-     exception:
-
-     TLS_DHE_DSS_RC4_128_SHA { 0x00, 0x66 }
-
-     which is reserved for compatibility.
-
-     To get a detailed description of the current ciphersuite, it is
-     recommended to use ‘gnutls_session_get_desc()’ .
-
-     *Returns:* a string that contains the canonical name of a TLS
-     ciphersuite, or ‘NULL’ if the handshake is not completed.
-
-     *Since:* 3.7.4
-
 gnutls_cipher_suite_get_name
 ----------------------------
 
@@ -7898,6 +7899,29 @@ gnutls_cipher_suite_info
      *Returns:* the name of ‘idx’ cipher suite, and set the information
      about the cipher suite in the output variables.  If ‘idx’ is out of
      bounds, ‘NULL’ is returned.
+
+gnutls_ciphersuite_get
+----------------------
+
+ -- Function: const char * gnutls_ciphersuite_get (gnutls_session_t
+          SESSION)
+     SESSION: is a ‘gnutls_session_t’ type.
+
+     Get the canonical name of negotiated TLS ciphersuite.  The names
+     returned by this function match the IANA registry, with one
+     exception:
+
+     TLS_DHE_DSS_RC4_128_SHA { 0x00, 0x66 }
+
+     which is reserved for compatibility.
+
+     To get a detailed description of the current ciphersuite, it is
+     recommended to use ‘gnutls_session_get_desc()’ .
+
+     *Returns:* a string that contains the canonical name of a TLS
+     ciphersuite, or ‘NULL’ if the handshake is not completed.
+
+     *Since:* 3.7.4
 
 gnutls_compress_certificate_get_selected_method
 -----------------------------------------------

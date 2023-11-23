@@ -190,6 +190,9 @@ int gnutls_pubkey_export_dsa_raw2(gnutls_pubkey_t key, gnutls_datum_t *p,
 				  gnutls_datum_t *q, gnutls_datum_t *g,
 				  gnutls_datum_t *y, unsigned flags);
 
+int gnutls_pubkey_export_dh_raw(gnutls_pubkey_t key, gnutls_dh_params_t params,
+				gnutls_datum_t *y, unsigned flags);
+
 int gnutls_pubkey_export_ecc_raw2(gnutls_pubkey_t key,
 				  gnutls_ecc_curve_t *curve, gnutls_datum_t *x,
 				  gnutls_datum_t *y, unsigned flags);
@@ -238,6 +241,9 @@ int gnutls_pubkey_import_dsa_raw(gnutls_pubkey_t key, const gnutls_datum_t *p,
 				 const gnutls_datum_t *q,
 				 const gnutls_datum_t *g,
 				 const gnutls_datum_t *y);
+int gnutls_pubkey_import_dh_raw(gnutls_pubkey_t key,
+				const gnutls_dh_params_t params,
+				const gnutls_datum_t *y);
 int gnutls_pubkey_import_rsa_raw(gnutls_pubkey_t key, const gnutls_datum_t *m,
 				 const gnutls_datum_t *e);
 
@@ -437,6 +443,11 @@ int gnutls_privkey_import_dsa_raw(gnutls_privkey_t key, const gnutls_datum_t *p,
 				  const gnutls_datum_t *y,
 				  const gnutls_datum_t *x);
 
+int gnutls_privkey_import_dh_raw(gnutls_privkey_t key,
+				 const gnutls_dh_params_t params,
+				 const gnutls_datum_t *y,
+				 const gnutls_datum_t *x);
+
 int gnutls_privkey_import_rsa_raw(
 	gnutls_privkey_t key, const gnutls_datum_t *m, const gnutls_datum_t *e,
 	const gnutls_datum_t *d, const gnutls_datum_t *p,
@@ -511,6 +522,10 @@ int gnutls_privkey_export_dsa_raw2(gnutls_privkey_t key, gnutls_datum_t *p,
 				   gnutls_datum_t *y, gnutls_datum_t *x,
 				   unsigned flags);
 
+int gnutls_privkey_export_dh_raw(gnutls_privkey_t key,
+				 gnutls_dh_params_t params, gnutls_datum_t *y,
+				 gnutls_datum_t *x, unsigned int flags);
+
 int gnutls_privkey_export_ecc_raw(gnutls_privkey_t key,
 				  gnutls_ecc_curve_t *curve, gnutls_datum_t *x,
 				  gnutls_datum_t *y, gnutls_datum_t *k);
@@ -526,6 +541,10 @@ int gnutls_privkey_export_gost_raw2(gnutls_privkey_t key,
 				    gnutls_gost_paramset_t *paramset,
 				    gnutls_datum_t *x, gnutls_datum_t *y,
 				    gnutls_datum_t *k, unsigned flags);
+int gnutls_privkey_derive_secret(gnutls_privkey_t privkey,
+				 gnutls_pubkey_t pubkey,
+				 const gnutls_datum_t *nonce,
+				 gnutls_datum_t *secret, unsigned int flags);
 
 int gnutls_x509_crt_privkey_sign(gnutls_x509_crt_t crt,
 				 gnutls_x509_crt_t issuer,

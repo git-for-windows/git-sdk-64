@@ -1,7 +1,7 @@
 This is gnutls.info, produced by makeinfo version 7.0.2 from
 gnutls.texi.
 
-This manual is last updated 10 February 2023 for version 3.8.1 of
+This manual is last updated 10 February 2023 for version 3.8.2 of
 GnuTLS.
 
 Copyright © 2001-2023 Free Software Foundation, Inc.\\ Copyright ©
@@ -3468,6 +3468,62 @@ gnutls_privkey_deinit
 
      *Since:* 2.12.0
 
+gnutls_privkey_derive_secret
+----------------------------
+
+ -- Function: int gnutls_privkey_derive_secret (gnutls_privkey_t
+          PRIVKEY, gnutls_pubkey_t PUBKEY, const gnutls_datum_t * NONCE,
+          gnutls_datum_t * SECRET, unsigned int FLAGS)
+     PRIVKEY: a private key of type ‘gnutls_privkey_t’
+
+     PUBKEY: a public key of type ‘gnutls_pubkey_t’
+
+     NONCE: an optional nonce value
+
+     SECRET: where shared secret will be stored
+
+     FLAGS: must be zero
+
+     This function will calculate a shared secret from our ‘privkey’ and
+     peer’s ‘pubkey’ .  The result will be stored in ‘secret’ , whose
+     data member should be freed after use using ‘gnutls_free()’ .
+     ‘privkey’ and ‘pubkey’ must be backed by the X.509 keys.
+
+     *Returns:* On success, ‘GNUTLS_E_SUCCESS’ (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.8.2
+
+gnutls_privkey_export_dh_raw
+----------------------------
+
+ -- Function: int gnutls_privkey_export_dh_raw (gnutls_privkey_t KEY,
+          gnutls_dh_params_t PARAMS, gnutls_datum_t * Y, gnutls_datum_t
+          * X, unsigned int FLAGS)
+     KEY: Holds the private key
+
+     PARAMS: will hold the Diffie-Hellman parameters (optional), must be
+     initialized
+
+     Y: will hold the y (optional)
+
+     X: will hold the x
+
+     FLAGS: flags from ‘gnutls_abstract_export_flags_t’
+
+     This function will export the Diffie-Hellman private key parameter
+     found in the given ‘gnutls_privkey_t’ structure.  The new parameter
+     will be allocated using ‘gnutls_malloc()’ and will be stored in the
+     appropriate datum.
+
+     To retrieve other parameters common in both public key and private
+     key, use ‘gnutls_dh_params_export_raw()’ .
+
+     *Returns:* ‘GNUTLS_E_SUCCESS’ on success, otherwise a negative
+     error code.
+
+     *Since:* 3.8.2
+
 gnutls_privkey_export_dsa_raw
 -----------------------------
 
@@ -3914,6 +3970,29 @@ gnutls_privkey_get_type
 
      *Since:* 2.12.0
 
+gnutls_privkey_import_dh_raw
+----------------------------
+
+ -- Function: int gnutls_privkey_import_dh_raw (gnutls_privkey_t KEY,
+          const gnutls_dh_params_t PARAMS, const gnutls_datum_t * Y,
+          const gnutls_datum_t * X)
+     KEY: The structure to store the parsed key
+
+     PARAMS: holds the ‘gnutls_dh_params_t’
+
+     Y: holds the y (optional)
+
+     X: holds the x
+
+     This function will convert the given Diffie-Hellman raw parameters
+     to the native ‘gnutls_privkey_t’ format.  The output will be stored
+     in ‘key’ .
+
+     *Returns:* On success, ‘GNUTLS_E_SUCCESS’ (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.8.2
+
 gnutls_privkey_import_dsa_raw
 -----------------------------
 
@@ -4262,7 +4341,7 @@ gnutls_privkey_import_pkcs11_url
      URL: A PKCS 11 url
 
      This function will import a PKCS 11 private key to a
-     ‘gnutls_private_key_t’ type.
+     ‘gnutls_privkey_t’ type.
 
      *Returns:* On success, ‘GNUTLS_E_SUCCESS’ (0) is returned,
      otherwise a negative error value.
@@ -4790,6 +4869,35 @@ gnutls_pubkey_export2
 
      *Since:* 3.1.3
 
+gnutls_pubkey_export_dh_raw
+---------------------------
+
+ -- Function: int gnutls_pubkey_export_dh_raw (gnutls_pubkey_t KEY,
+          gnutls_dh_params_t PARAMS, gnutls_datum_t * Y, unsigned FLAGS)
+     KEY: Holds the public key
+
+     PARAMS: will hold the Diffie-Hellman parameter (optional), must be
+     initialized
+
+     Y: will hold the y
+
+     FLAGS: flags from ‘gnutls_abstract_export_flags_t’
+
+     This function will export the Diffie-Hellman public key parameter
+     found in the given public key.  The new parameter will be allocated
+     using ‘gnutls_malloc()’ and will be stored in the appropriate
+     datum.
+
+     To retrieve other parameters common in both public key and private
+     key, use ‘gnutls_dh_params_export_raw()’ .
+
+     This function allows for ‘NULL’ parameters since 3.4.1.
+
+     *Returns:* ‘GNUTLS_E_SUCCESS’ on success, otherwise a negative
+     error code.
+
+     *Since:* 3.8.2
+
 gnutls_pubkey_export_dsa_raw
 ----------------------------
 
@@ -5160,6 +5268,26 @@ gnutls_pubkey_import
      otherwise a negative error value.
 
      *Since:* 2.12.0
+
+gnutls_pubkey_import_dh_raw
+---------------------------
+
+ -- Function: int gnutls_pubkey_import_dh_raw (gnutls_pubkey_t KEY,
+          const gnutls_dh_params_t PARAMS, const gnutls_datum_t * Y)
+     KEY: The structure to store the parsed key
+
+     PARAMS: holds the ‘gnutls_dh_params_t’
+
+     Y: holds the y
+
+     This function will convert the given Diffie-Hellman raw parameters
+     to the native ‘gnutls_pubkey_t’ format.  The output will be stored
+     in ‘key’ .
+
+     *Returns:* On success, ‘GNUTLS_E_SUCCESS’ (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.8.2
 
 gnutls_pubkey_import_dsa_raw
 ----------------------------
@@ -6269,7 +6397,7 @@ dane_verify_crt
      certificate chain - verification.  To be run independently the
      ‘DANE_VFLAG_ONLY_CHECK_EE_USAGE’ flag should be specified; then the
      function will check whether the key of the peer matches the key
-     advertized in the DANE entry.
+     advertised in the DANE entry.
 
      *Returns:* a negative error code on error and ‘DANE_E_SUCCESS’ (0)
      when the DANE entries were successfully parsed, irrespective of
