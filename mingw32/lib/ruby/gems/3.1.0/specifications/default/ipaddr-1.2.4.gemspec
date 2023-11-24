@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
   s.authors = ["Akinori MUSHA".freeze, "Hajimu UMEMOTO".freeze]
-  s.date = "2023-01-14"
+  s.date = "2023-11-23"
   s.description = "IPAddr provides a set of methods to manipulate an IP address.\nBoth IPv4 and IPv6 are supported.\n".freeze
   s.email = ["knu@idaemons.org".freeze, "ume@mahoroba.org".freeze]
   s.files = ["ipaddr.rb".freeze]

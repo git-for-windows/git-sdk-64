@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Tanaka Akira".freeze]
   s.bindir = "exe".freeze
-  s.date = "2023-01-14"
+  s.date = "2023-11-23"
   s.description = "Representation of the name of a file or directory on the filesystem".freeze
   s.email = ["akr@fsij.org".freeze]
   s.extensions = ["ext/pathname/extconf.rb".freeze]

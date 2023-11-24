@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.metadata = { "homepage_uri" => "https://github.com/ruby/getoptlong", "source_code_uri" => "https://github.com/ruby/getoptlong" } if s.respond_to? :metadata=
   s.require_paths = ["lib".freeze]
   s.authors = ["Yukihiro Matsumoto".freeze]
-  s.date = "2023-01-14"
+  s.date = "2023-11-23"
   s.description = "GetoptLong for Ruby".freeze
   s.email = ["matz@ruby-lang.org".freeze]
   s.files = ["lib/getoptlong.rb".freeze]
