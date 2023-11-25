@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["NARUSE Yui".freeze]
   s.bindir = "exe".freeze
-  s.date = "2023-11-23"
+  s.date = "2023-11-24"
   s.description = "Ruby extension for Network Kanji Filter".freeze
   s.email = ["naruse@airemix.jp".freeze]
   s.files = ["nkf.so".freeze]

@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yukihiro Matsumoto".freeze]
   s.bindir = "exe".freeze
-  s.date = "2023-11-23"
+  s.date = "2023-11-24"
   s.description = "A utility class for managing temporary files.".freeze
   s.email = ["matz@ruby-lang.org".freeze]
   s.files = ["tempfile.rb".freeze]

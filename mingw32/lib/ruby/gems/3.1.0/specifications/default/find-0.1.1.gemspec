@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Kazuki Tsujimoto".freeze]
   s.bindir = "exe".freeze
-  s.date = "2023-11-23"
+  s.date = "2023-11-24"
   s.description = "This module supports top-down traversal of a set of file paths.".freeze
   s.email = ["kazuki@callcc.net".freeze]
   s.files = ["find.rb".freeze]

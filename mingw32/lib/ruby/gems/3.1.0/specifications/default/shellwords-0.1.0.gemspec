@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Akinori MUSHA".freeze]
   s.bindir = "exe".freeze
-  s.date = "2023-11-23"
+  s.date = "2023-11-24"
   s.description = "Manipulates strings with word parsing rules of UNIX Bourne shell.".freeze
   s.email = ["knu@idaemons.org".freeze]
   s.files = ["shellwords.rb".freeze]
