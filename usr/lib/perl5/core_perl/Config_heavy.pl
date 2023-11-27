@@ -76,9 +76,9 @@ sub header_files {
 #
 ## Package name      : perl5
 ## Source directory  : .
-## Configuration time: Mon Apr 24 08:38:19 UTC 2023
+## Configuration time: Sun Nov 26 14:06:45 UTC 2023
 ## Configured by     : runneradmin
-## Target system     : msys_nt-10.0-20348 fv-az623-349 3.3.6-bec3d608-341.x86_64 2023-02-22 08:29 utc x86_64 msys 
+## Target system     : msys_nt-10.0-20348 fv-az586-560 3.4.9-b0394951.x86_64 2023-11-23 12:57 utc x86_64 msys 
 #
 #: Configure command line arguments.
 #
@@ -155,19 +155,19 @@ my $summary_expanded;
 sub myconfig {
     return $summary_expanded if $summary_expanded;
     ($summary_expanded = $summary) =~ s{\$(\w+)}
-		 { 
-			my $c;
-			if ($1 eq 'git_ancestor_line') {
-				if ($Config::Config{git_ancestor}) {
-					$c= "\n  Ancestor: $Config::Config{git_ancestor}";
-				} else {
-					$c= "";
-				}
-			} else {
-                     		$c = $Config::Config{$1}; 
-			}
-			defined($c) ? $c : 'undef' 
-		}ge;
+                 {
+                        my $c;
+                        if ($1 eq 'git_ancestor_line') {
+                                if ($Config::Config{git_ancestor}) {
+                                        $c= "\n  Ancestor: $Config::Config{git_ancestor}";
+                                } else {
+                                        $c= "";
+                                }
+                        } else {
+                                $c = $Config::Config{$1};
+                        }
+                        defined($c) ? $c : 'undef'
+                }ge;
     $summary_expanded;
 }
 
@@ -180,16 +180,16 @@ Header=''
 Id=''
 Locker=''
 Log=''
-PATCHLEVEL='36'
+PATCHLEVEL='38'
 PATH='.:/usr/bin/'
 PERL_API_REVISION='5'
 PERL_API_SUBVERSION='0'
-PERL_API_VERSION='36'
+PERL_API_VERSION='38'
 PERL_CONFIG_SH='true'
 PERL_PATCHLEVEL=''
 PERL_REVISION='5'
 PERL_SUBVERSION='1'
-PERL_VERSION='36'
+PERL_VERSION='38'
 RCSfile=''
 Revision=''
 SUBVERSION='1'
@@ -204,8 +204,8 @@ alignbytes='8'
 aphostname='/usr/bin/hostname'
 api_revision='5'
 api_subversion='0'
-api_version='36'
-api_versionstring='5.36.0'
+api_version='38'
+api_versionstring='5.38.0'
 ar='ar'
 archlib='/usr/lib/perl5/core_perl'
 archlibexp='/usr/lib/perl5/core_perl'
@@ -235,7 +235,7 @@ ccsymbols=''
 ccversion=''
 cf_by='runneradmin'
 cf_email=''
-cf_time='Mon Apr 24 08:38:19 UTC 2023'
+cf_time='Sun Nov 26 14:06:45 UTC 2023'
 charbits='8'
 charsize='1'
 chgrp=''
@@ -258,7 +258,7 @@ config_arg17='-Dman3ext=3perl'
 config_arg18='-Darchname=-msys-threads'
 config_arg19='-Dmyarchname=-msys'
 config_arg2='-Dusethreads'
-config_arg20='-Dlibperl=msys-perl5_36.dll'
+config_arg20='-Dlibperl=msys-perl5_38.dll'
 config_arg21='-Dcc=gcc'
 config_arg22='-Dld=g++'
 config_arg23='-Accflags=-march=nocona -msahf -mtune=generic -O2 -pipe -fwrapv'
@@ -270,7 +270,7 @@ config_arg7='-Darchlib=/usr/lib/perl5/core_perl'
 config_arg8='-Dsitelib=/usr/share/perl5/site_perl'
 config_arg9='-Dsitearch=/usr/lib/perl5/site_perl'
 config_argc='23'
-config_args='-des -Dusethreads -Doptimize=-march=nocona -msahf -mtune=generic -O2 -pipe -Dprefix=/usr -Dvendorprefix=/usr -Dprivlib=/usr/share/perl5/core_perl -Darchlib=/usr/lib/perl5/core_perl -Dsitelib=/usr/share/perl5/site_perl -Dsitearch=/usr/lib/perl5/site_perl -Dvendorlib=/usr/share/perl5/vendor_perl -Dvendorarch=/usr/lib/perl5/vendor_perl -Dscriptdir=/usr/bin/core_perl -Dsitescript=/usr/bin/site_perl -Dvendorscript=/usr/bin/vendor_perl -Dinc_version_list=none -Dman1ext=1perl -Dman3ext=3perl -Darchname=-msys-threads -Dmyarchname=-msys -Dlibperl=msys-perl5_36.dll -Dcc=gcc -Dld=g++ -Accflags=-march=nocona -msahf -mtune=generic -O2 -pipe -fwrapv'
+config_args='-des -Dusethreads -Doptimize=-march=nocona -msahf -mtune=generic -O2 -pipe -Dprefix=/usr -Dvendorprefix=/usr -Dprivlib=/usr/share/perl5/core_perl -Darchlib=/usr/lib/perl5/core_perl -Dsitelib=/usr/share/perl5/site_perl -Dsitearch=/usr/lib/perl5/site_perl -Dvendorlib=/usr/share/perl5/vendor_perl -Dvendorarch=/usr/lib/perl5/vendor_perl -Dscriptdir=/usr/bin/core_perl -Dsitescript=/usr/bin/site_perl -Dvendorscript=/usr/bin/vendor_perl -Dinc_version_list=none -Dman1ext=1perl -Dman3ext=3perl -Darchname=-msys-threads -Dmyarchname=-msys -Dlibperl=msys-perl5_38.dll -Dcc=gcc -Dld=g++ -Accflags=-march=nocona -msahf -mtune=generic -O2 -pipe -fwrapv'
 contains='grep'
 cp='cp'
 cpio=''
@@ -282,7 +282,7 @@ cpplast='-'
 cppminus='-'
 cpprun='gcc  -E'
 cppstdin='gcc  -E'
-cppsymbols='BIG_ENDIAN=4321 BYTE_ORDER=1234 LITTLE_ENDIAN=1234 _BIG_ENDIAN=4321 _BYTE_ORDER=1234 _GNU_SOURCE=1 _LITTLE_ENDIAN=1234 _LONG_DOUBLE=long\ double _LP64=1 _POSIX_C_SOURCE=200809L _POSIX_SOURCE=1 _XOPEN_SOURCE=700 _XOPEN_SOURCE_EXTENDED=1 __BIG_ENDIAN=4321 __BYTE_ORDER=1234 __BYTE_ORDER__=1234 __CYGWIN__=1 __GNUC_MINOR__=3 __GNUC__=11 __LITTLE_ENDIAN=1234 __LP64__=1 __MSYS__=1 __PIC__=1 __STDC__=1 __amd64=1 __amd64__=1 __pic__=1 __unix=1 __unix__=1 __x86_64=1 __x86_64__=1 unix=1'
+cppsymbols='_GNU_SOURCE=1 _LONG_DOUBLE=long\ double _LP64=1 _POSIX_C_SOURCE=200809L _POSIX_SOURCE=1 _XOPEN_SOURCE=700 _XOPEN_SOURCE_EXTENDED=1 __BYTE_ORDER__=1234 __CYGWIN__=1 __GNUC_MINOR__=2 __GNUC__=13 __LP64__=1 __MSYS__=1 __PIC__=1 __STDC__=1 __amd64=1 __amd64__=1 __pic__=1 __unix=1 __unix__=1 __x86_64=1 __x86_64__=1 unix=1'
 crypt_r_proto='REENTRANT_PROTO_B_CCS'
 cryptlib=''
 csh='csh'
@@ -324,6 +324,7 @@ d_attribute_nonnull='define'
 d_attribute_noreturn='define'
 d_attribute_pure='define'
 d_attribute_unused='define'
+d_attribute_visibility='define'
 d_attribute_warn_unused_result='define'
 d_backtrace='undef'
 d_bsd='define'
@@ -692,6 +693,7 @@ d_semget='define'
 d_semop='define'
 d_sendmsg='define'
 d_setegid='define'
+d_setenv='define'
 d_seteuid='define'
 d_setgrent='define'
 d_setgrent_r='undef'
@@ -901,7 +903,7 @@ full_csh='csh'
 full_sed='/usr/bin/sed'
 gccansipedantic=''
 gccosandvers=''
-gccversion='11.3.0'
+gccversion='13.2.0'
 getgrent_r_proto='0'
 getgrgid_r_proto='REENTRANT_PROTO_I_TSBWR'
 getgrnam_r_proto='REENTRANT_PROTO_I_CSBWR'
@@ -947,6 +949,7 @@ html3dir=' '
 html3direxp=''
 i16size='2'
 i16type='short'
+i32dformat='"d"'
 i32size='4'
 i32type='int'
 i64size='8'
@@ -1019,6 +1022,7 @@ i_syssockio='undef'
 i_sysstat='define'
 i_sysstatfs='define'
 i_sysstatvfs='define'
+i_syssyscall='undef'
 i_systime='define'
 i_systimek='undef'
 i_systimes='define'
@@ -1042,7 +1046,7 @@ ignore_versioned_solibs='y'
 inc_version_list=' '
 inc_version_list_init='0'
 incpath=''
-incpth='/usr/lib/gcc/x86_64-pc-msys/11.3.0/include /usr/include'
+incpth='/usr/lib/gcc/x86_64-pc-msys/13.2.0/include /usr/include'
 inews=''
 initialinstalllocation='/usr/bin'
 installarchlib='/usr/lib/perl5/core_perl'
@@ -1089,14 +1093,14 @@ ldlibpthname='PATH'
 less='less.exe'
 lib_ext='.a'
 libc='/usr/lib/libmsys-2.0.a'
-libperl='msys-perl5_36.dll'
+libperl='msys-perl5_38.dll'
 libpth='/usr/lib'
 libs='-lpthread -ldl -lcrypt'
 libsdirs=' /usr/lib'
 libsfiles=' libpthread.a libdl.a libcrypt.dll.a'
 libsfound=' /usr/lib/libpthread.a /usr/lib/libdl.a /usr/lib/libcrypt.dll.a'
 libspath=' /usr/lib'
-libswanted='   cl pthread socket bind inet nsl ndbm gdbm dbm db malloc dl ld sun crypt sec cposix posix ucb bsd BSD    gdbm_compat'
+libswanted='   cl pthread socket bind inet ndbm gdbm dbm db malloc dl ld sun crypt sec cposix posix ucb bsd BSD    gdbm_compat'
 libswanted_uselargefiles=''
 line=''
 lint=''
@@ -1140,9 +1144,9 @@ more='more'
 multiarch='undef'
 mv=''
 myarchname='x86_64-msys'
-mydomain='.ilzcsnipcnfufnikbzmpfh4dug.bx.internal.cloudapp.net'
-myhostname='fv-az623-349'
-myuname='msys_nt-10.0-20348 fv-az623-349 3.3.6-bec3d608-341.x86_64 2023-02-22 08:29 utc x86_64 msys '
+mydomain='.tcyitnne5h1udiirmv1fr5uvod.phxx.internal.cloudapp.net'
+myhostname='fv-az586-560'
+myuname='msys_nt-10.0-20348 fv-az586-560 3.4.9-b0394951.x86_64 2023-11-23 12:57 utc x86_64 msys '
 n='-n'
 need_va_copy='undef'
 netdb_hlen_type='int'
@@ -1171,12 +1175,12 @@ old_pthread_create_joinable=''
 optimize='-march=nocona -msahf -mtune=generic -O2 -pipe'
 orderlib='false'
 osname='msys'
-osvers='3.3.6-bec3d608-341.x86_64'
+osvers='3.4.9-b0394951.x86_64'
 otherlibdirs=' '
 package='perl5'
 pager='/usr/bin/less.exe -R'
 passcat='cat /etc/passwd'
-patchlevel='36'
+patchlevel='38'
 path_sep=':'
 perl='perl'
 perl5='/usr/bin/perl'
@@ -1315,6 +1319,8 @@ subversion='1'
 sysman='/usr/share/man/man1'
 sysroot=''
 tail=''
+taint_disabled=''
+taint_support=''
 tar=''
 targetarch=''
 targetdir=''
@@ -1337,8 +1343,12 @@ troff=''
 ttyname_r_proto='REENTRANT_PROTO_I_IBW'
 u16size='2'
 u16type='unsigned short'
+u32XUformat='"X"'
+u32oformat='"o"'
 u32size='4'
 u32type='unsigned int'
+u32uformat='"u"'
+u32xformat='"x"'
 u64size='8'
 u64type='unsigned long'
 u8size='1'
@@ -1410,8 +1420,8 @@ vendorprefix='/usr'
 vendorprefixexp='/usr'
 vendorscript='/usr/bin/vendor_perl'
 vendorscriptexp='/usr/bin/vendor_perl'
-version='5.36.1'
-version_patchlevel_string='version 36 subversion 1'
+version='5.38.1'
+version_patchlevel_string='version 38 subversion 1'
 versiononly='undef'
 vi=''
 xlibpth='/usr/lib/386 /lib/386'
@@ -1427,21 +1437,39 @@ foreach my $c (7,6,5,4,3,2,1) { $i <<= 8; $i |= ord($c); }
 our $byteorder = join('', unpack('aaaaaaaa', pack('L!', $i)));
 s/(byteorder=)(['"]).*?\2/$1$2$Config::byteorder$2/m;
 
+{
+    # We have to set this up late as Win32 does not build miniperl
+    # with the same defines and CC flags as it builds perl itself.
+    my $defines = join " ", (Internals::V)[0,1];
+    if (
+        $defines =~ /\b(SILENT_NO_TAINT_SUPPORT)\b/ ||
+        $defines =~ /\b(NO_TAINT_SUPPORT)\b/
+    ){
+        my $which = $1;
+        my $taint_disabled = ($which eq "SILENT_NO_TAINT_SUPPORT")
+                             ? "silent" : "define";
+        s/^(taint_disabled=['"])(["'])/$1$taint_disabled$2/m;
+    }
+    else {
+        my $taint_support = 'define';
+        s/^(taint_support=['"])(["'])/$1$taint_support$2/m;
+    }
+}
 my $config_sh_len = length $_;
 
 our $Config_SH_expanded = "\n$_" . << 'EOVIRTUAL';
 ccflags_nolargefiles='-DPERL_USE_SAFE_PUTENV -U__STRICT_ANSI__ -D_GNU_SOURCE -march=nocona -msahf -mtune=generic -O2 -pipe -fwrapv -fno-strict-aliasing -fstack-protector-strong -D_FORTIFY_SOURCE=2'
 ldflags_nolargefiles=' -Wl,--enable-auto-import -Wl,--export-all-symbols -Wl,--enable-auto-image-base -fstack-protector-strong'
 libs_nolargefiles='-lpthread -ldl -lcrypt'
-libswanted_nolargefiles='   cl pthread socket bind inet nsl ndbm gdbm dbm db malloc dl ld sun crypt sec cposix posix ucb bsd BSD    gdbm_compat'
-ccwarnflags=' -Wall -Werror=pointer-arith -Werror=vla -Wextra -Wno-long-long -Wno-declaration-after-statement -Wc++-compat -Wwrite-strings'
+libswanted_nolargefiles='   cl pthread socket bind inet ndbm gdbm dbm db malloc dl ld sun crypt sec cposix posix ucb bsd BSD    gdbm_compat'
+ccwarnflags=' -Wall -Werror=pointer-arith -Werror=vla -Wextra -Wno-long-long -Wno-declaration-after-statement -Wc++-compat -Wwrite-strings -Wno-use-after-free'
 ccstdflags=' -std=c99'
 EOVIRTUAL
 eval {
-	# do not have hairy conniptions if this isnt available
-	require 'Config_git.pl';
-	$Config_SH_expanded .= $Config::Git_Data;
-	1;
+        # do not have hairy conniptions if this isnt available
+        require 'Config_git.pl';
+        $Config_SH_expanded .= $Config::Git_Data;
+        1;
 } or warn "Warning: failed to load Config_git.pl, something strange about this perl...\n";
 
 # Search for it in the big string
@@ -1490,23 +1518,23 @@ sub config_re {
 sub config_vars {
     # implements -V:cfgvar option (see perlrun -V:)
     foreach (@_) {
-	# find optional leading, trailing colons; and query-spec
-	my ($notag,$qry,$lncont) = m/^(:)?(.*?)(:)?$/;	# flags fore and aft, 
-	# map colon-flags to print decorations
-	my $prfx = $notag ? '': "$qry=";		# tag-prefix for print
-	my $lnend = $lncont ? ' ' : ";\n";		# line ending for print
+        # find optional leading, trailing colons; and query-spec
+        my ($notag,$qry,$lncont) = m/^(:)?(.*?)(:)?$/;  # flags fore and aft,
+        # map colon-flags to print decorations
+        my $prfx = $notag ? '': "$qry=";                # tag-prefix for print
+        my $lnend = $lncont ? ' ' : ";\n";              # line ending for print
 
-	# all config-vars are by definition \w only, any \W means regex
-	if ($qry =~ /\W/) {
-	    my @matches = config_re($qry);
-	    print map "$_$lnend", @matches ? @matches : "$qry: not found"		if !$notag;
-	    print map { s/\w+=//; "$_$lnend" } @matches ? @matches : "$qry: not found"	if  $notag;
-	} else {
-	    my $v = (exists $Config::Config{$qry}) ? $Config::Config{$qry}
-						   : 'UNKNOWN';
-	    $v = 'undef' unless defined $v;
-	    print "${prfx}'${v}'$lnend";
-	}
+        # all config-vars are by definition \w only, any \W means regex
+        if ($qry =~ /\W/) {
+            my @matches = config_re($qry);
+            print map "$_$lnend", @matches ? @matches : "$qry: not found"               if !$notag;
+            print map { s/\w+=//; "$_$lnend" } @matches ? @matches : "$qry: not found"  if  $notag;
+        } else {
+            my $v = (exists $Config::Config{$qry}) ? $Config::Config{$qry}
+                                                   : 'UNKNOWN';
+            $v = 'undef' unless defined $v;
+            print "${prfx}'${v}'$lnend";
+        }
     }
 }
 
