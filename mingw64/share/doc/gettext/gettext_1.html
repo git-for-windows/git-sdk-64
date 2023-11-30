@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on October, 9 2022 by texi2html 1.78a -->
+<!-- Created on September, 19 2023 by texi2html 1.78a -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -51,7 +51,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="gettext_21.html#SEC387" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_21.html#SEC389" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 
@@ -192,7 +192,7 @@ by which the programs are untied from calling only English strings or
 other English specific habits, and connected to generic ways of doing
 the same, instead.  Program developers may use various techniques to
 internationalize their programs.  Some of these have been standardized.
-GNU <code>gettext</code> offers one of these standards.  See section <a href="gettext_11.html#SEC196">The Programmer's View</a>.
+GNU <code>gettext</code> offers one of these standards.  See section <a href="gettext_11.html#SEC197">The Programmer's View</a>.
 </p>
 <a name="IDX7"></a>
 <p>By <em>localization</em>, one means the operation by which, in a set
@@ -518,30 +518,30 @@ contains all original program strings.  It has sets of pointers to
 exactly where in C sources each string is used.  All translations
 are set to empty.  The letter <code>t</code> in &lsquo;<tt>.pot</tt>&rsquo; marks this as
 a Template PO file, not yet oriented towards any particular language.
-See section <a href="gettext_5.html#SEC35">Invoking the <code>xgettext</code> Program</a>, for more details about how one calls the
+See section <a href="gettext_5.html#SEC36">Invoking the <code>xgettext</code> Program</a>, for more details about how one calls the
 <code>xgettext</code> program.  If you are <em>really</em> lazy, you might
 be interested at working a lot more right away, and preparing the
-whole distribution setup (see section <a href="gettext_13.html#SEC229">The Maintainer's View</a>).  By doing so, you
+whole distribution setup (see section <a href="gettext_13.html#SEC230">The Maintainer's View</a>).  By doing so, you
 spare yourself typing the <code>xgettext</code> command, as <code>make</code>
 should now generate the proper things automatically for you!
 </p>
 <p>The first time through, there is no &lsquo;<tt><var>lang</var>.po</tt>&rsquo; yet, so the
 <code>msgmerge</code> step may be skipped and replaced by a mere copy of
 &lsquo;<tt><var>package</var>.pot</tt>&rsquo; to &lsquo;<tt><var>lang</var>.po</tt>&rsquo;, where <var>lang</var>
-represents the target language.  See <a href="gettext_6.html#SEC44">Creating a New PO File</a> for details.
+represents the target language.  See <a href="gettext_6.html#SEC45">Creating a New PO File</a> for details.
 </p>
 <p>Then comes the initial translation of messages.  Translation in
 itself is a whole matter, still exclusively meant for humans,
 and whose complexity far overwhelms the level of this manual.
 Nevertheless, a few hints are given in some other chapter of this
-manual (see section <a href="gettext_12.html#SEC216">The Translator's View</a>).  You will also find there indications
+manual (see section <a href="gettext_12.html#SEC217">The Translator's View</a>).  You will also find there indications
 about how to contact translating teams, or becoming part of them,
 for sharing your translating concerns with others who target the same
 native language.
 </p>
 <p>While adding the translated messages into the &lsquo;<tt><var>lang</var>.po</tt>&rsquo;
 PO file, if you are not using one of the dedicated PO file editors
-(see section <a href="gettext_8.html#SEC62">Editing PO Files</a>), you are on your own
+(see section <a href="gettext_8.html#SEC63">Editing PO Files</a>), you are on your own
 for ensuring that your efforts fully respect the PO file format, and quoting
 conventions (see section <a href="gettext_3.html#SEC16">The Format of PO Files</a>).  This is surely not an impossible task,
 as this is the way many people have handled PO files around 1995.
@@ -552,7 +552,7 @@ some familiarity with PO file editor itself.
 <p>If some common translations have already been saved into a compendium
 PO file, translators may use PO mode for initializing untranslated
 entries from the compendium, and also save selected translations into
-the compendium, updating it (see section <a href="gettext_8.html#SEC79">Using Translation Compendia</a>).  Compendium files
+the compendium, updating it (see section <a href="gettext_8.html#SEC80">Using Translation Compendia</a>).  Compendium files
 are meant to be exchanged between members of a given translation team.
 </p>
 <p>Programs, or packages of programs, are dynamic in nature: users write
@@ -590,8 +590,8 @@ out of recent C sources.  The refreshing operation adjusts all
 references to C source locations for strings, since these strings
 move as programs are modified.  Also, <code>msgmerge</code> comments out as
 obsolete, in &lsquo;<tt><var>lang</var>.po</tt>&rsquo;, those already translated entries
-which are no longer used in the program sources (see section <a href="gettext_8.html#SEC73">Obsolete Entries</a>).  It finally discovers new strings and inserts them in
-the resulting PO file as untranslated entries (see section <a href="gettext_8.html#SEC72">Untranslated Entries</a>).  See section <a href="gettext_7.html#SEC53">Invoking the <code>msgmerge</code> Program</a>, for more information about what
+which are no longer used in the program sources (see section <a href="gettext_8.html#SEC74">Obsolete Entries</a>).  It finally discovers new strings and inserts them in
+the resulting PO file as untranslated entries (see section <a href="gettext_8.html#SEC73">Untranslated Entries</a>).  See section <a href="gettext_7.html#SEC54">Invoking the <code>msgmerge</code> Program</a>, for more information about what
 <code>msgmerge</code> really does.
 </p>
 <p>Whatever route or means taken, the goal is to obtain an updated
@@ -615,7 +615,7 @@ distribution.
 <p>Once the PO file is complete and dependable, the <code>msgfmt</code> program
 is used for turning the PO file into a machine-oriented format, which
 may yield efficient retrieval of translations by the programs of the
-package, whenever needed at runtime (see section <a href="gettext_10.html#SEC195">The Format of GNU MO Files</a>).  See section <a href="gettext_10.html#SEC173">Invoking the <code>msgfmt</code> Program</a>, for more information about all modes of execution
+package, whenever needed at runtime (see section <a href="gettext_10.html#SEC196">The Format of GNU MO Files</a>).  See section <a href="gettext_10.html#SEC174">Invoking the <code>msgfmt</code> Program</a>, for more information about all modes of execution
 for the <code>msgfmt</code> program.
 </p>
 <p>Finally, the modified and marked C sources are compiled and linked
@@ -640,12 +640,12 @@ steps outlined above.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="gettext_21.html#SEC387" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_21.html#SEC389" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Bruno Haible</em> on <em>October, 9 2022</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
+  This document was generated by <em>Bruno Haible</em> on <em>September, 19 2023</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
  </font>
  <br>
 

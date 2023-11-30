@@ -48,9 +48,8 @@ MSGID_BUGS_ADDRESS = bug-gettext@gnu.org
 
 # These options get passed to msgmerge.
 # Useful options are in particular:
-#   --previous            to keep previous msgids of translated messages,
-#   --quiet               to reduce the verbosity.
-MSGMERGE_OPTIONS = --quiet
+#   --previous            to keep previous msgids of translated messages
+MSGMERGE_OPTIONS =
 
 # These options get passed to msginit.
 # If you want to disable line wrapping when writing PO files, add
@@ -212,15 +211,17 @@ $(POFILES): $(srcdir)/$(DOMAIN).pot
 	@lang=`echo $@ | sed -e 's,.*/,,' -e 's/\.po$$//'`; \
 	if test -f "$(srcdir)/$${lang}.po"; then \
 	  test "$(srcdir)" = . && cdcmd="" || cdcmd="cd $(srcdir) && "; \
-	  echo "$${cdcmd}$(MSGMERGE_UPDATE) $(MSGMERGE_OPTIONS) --lang=$${lang} --previous $${lang}.po $(DOMAIN).pot"; \
+	  echo "$${cdcmd}$(MSGMERGE_UPDATE) --quiet $(MSGMERGE_OPTIONS) --lang=$${lang} --previous $${lang}.po $(DOMAIN).pot"; \
 	  cd $(srcdir) \
 	    && { case `$(MSGMERGE_UPDATE) --version | sed 1q | sed -e 's,^[^0-9]*,,'` in \
-	           '' | 0.[0-9] | 0.[0-9].* | 0.1[0-5] | 0.1[0-5].*) \
+	           '' | 0.[0-9] | 0.[0-9].* | 0.10 | 0.10.*) \
 	             $(MSGMERGE_UPDATE) $(MSGMERGE_OPTIONS) $${lang}.po $(DOMAIN).pot;; \
+	           0.1[1-5] | 0.1[1-5].*) \
+	             $(MSGMERGE_UPDATE) --quiet $(MSGMERGE_OPTIONS) $${lang}.po $(DOMAIN).pot;; \
 	           0.1[6-7] | 0.1[6-7].*) \
-	             $(MSGMERGE_UPDATE) $(MSGMERGE_OPTIONS) --previous $${lang}.po $(DOMAIN).pot;; \
+	             $(MSGMERGE_UPDATE) --quiet $(MSGMERGE_OPTIONS) --previous $${lang}.po $(DOMAIN).pot;; \
 	           *) \
-	             $(MSGMERGE_UPDATE) $(MSGMERGE_OPTIONS) --lang=$${lang} --previous $${lang}.po $(DOMAIN).pot;; \
+	             $(MSGMERGE_UPDATE) --quiet $(MSGMERGE_OPTIONS) --lang=$${lang} --previous $${lang}.po $(DOMAIN).pot;; \
 	         esac; \
 	       }; \
 	else \
@@ -277,15 +278,17 @@ update-po: Makefile
 	tmpdir=`pwd`; \
 	echo "$$lang:"; \
 	test "$(srcdir)" = . && cdcmd="" || cdcmd="cd $(srcdir) && "; \
-	echo "$${cdcmd}$(MSGMERGE) $(MSGMERGE_OPTIONS) --lang=$$lang --previous $$lang.po $(DOMAIN).pot -o $$lang.new.po"; \
+	echo "$${cdcmd}$(MSGMERGE) --quiet $(MSGMERGE_OPTIONS) --lang=$$lang --previous $$lang.po $(DOMAIN).pot -o $$lang.new.po"; \
 	cd $(srcdir); \
 	if { case `$(MSGMERGE) --version | sed 1q | sed -e 's,^[^0-9]*,,'` in \
-	       '' | 0.[0-9] | 0.[0-9].* | 0.1[0-5] | 0.1[0-5].*) \
+	       '' | 0.[0-9] | 0.[0-9].* | 0.10 | 0.10.*) \
 	         $(MSGMERGE) $(MSGMERGE_OPTIONS) -o $$tmpdir/$$lang.new.po $$lang.po $(DOMAIN).pot;; \
+	       0.1[1-5] | 0.1[1-5].*) \
+	         $(MSGMERGE) --quiet $(MSGMERGE_OPTIONS) -o $$tmpdir/$$lang.new.po $$lang.po $(DOMAIN).pot;; \
 	       0.1[6-7] | 0.1[6-7].*) \
-	         $(MSGMERGE) $(MSGMERGE_OPTIONS) --previous -o $$tmpdir/$$lang.new.po $$lang.po $(DOMAIN).pot;; \
+	         $(MSGMERGE) --quiet $(MSGMERGE_OPTIONS) --previous -o $$tmpdir/$$lang.new.po $$lang.po $(DOMAIN).pot;; \
 	       *) \
-	         $(MSGMERGE) $(MSGMERGE_OPTIONS) --lang=$$lang --previous -o $$tmpdir/$$lang.new.po $$lang.po $(DOMAIN).pot;; \
+	         $(MSGMERGE) --quiet $(MSGMERGE_OPTIONS) --lang=$$lang --previous -o $$tmpdir/$$lang.new.po $$lang.po $(DOMAIN).pot;; \
 	     esac; \
 	   }; then \
 	  if cmp $$lang.po $$tmpdir/$$lang.new.po >/dev/null 2>&1; then \

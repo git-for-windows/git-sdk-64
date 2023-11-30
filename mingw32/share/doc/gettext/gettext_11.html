@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on October, 9 2022 by texi2html 1.78a -->
+<!-- Created on September, 19 2023 by texi2html 1.78a -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -42,8 +42,8 @@ ul.toc {list-style: none}
 <body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
 
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="gettext_10.html#SEC172" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="gettext_12.html#SEC216" title="Next chapter"> &gt;&gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="gettext_10.html#SEC173" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="gettext_12.html#SEC217" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
@@ -51,13 +51,13 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="gettext_21.html#SEC387" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_21.html#SEC389" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 
 <hr size="2">
 <a name="Programmers"></a>
-<a name="SEC196"></a>
+<a name="SEC197"></a>
 <h1 class="chapter"> <a href="gettext_toc.html#TOC190">11. The Programmer's View</a> </h1>
 
 
@@ -75,7 +75,7 @@ later explain our solution of this dilemma.
 
 
 <a name="catgets"></a>
-<a name="SEC197"></a>
+<a name="SEC198"></a>
 <h2 class="section"> <a href="gettext_toc.html#TOC191">11.1 About <code>catgets</code></a> </h2>
 
 <p>The <code>catgets</code> implementation is defined in the X/Open Portability
@@ -102,7 +102,7 @@ therefore part of all Unix implementation (implementations, which are
 
 
 <a name="Interface-to-catgets"></a>
-<a name="SEC198"></a>
+<a name="SEC199"></a>
 <h3 class="subsection"> <a href="gettext_toc.html#TOC192">11.1.1 The Interface</a> </h3>
 
 <p>The interface to the <code>catgets</code> implementation consists of three
@@ -112,7 +112,7 @@ tables, and <code>catclose</code> for closing after work is done.  Prototypes
 for the functions and the needed definitions are in the
 <code>&lt;nl_types.h&gt;</code> header file.
 </p>
-<a name="IDX1054"></a>
+<a name="IDX1059"></a>
 <p><code>catopen</code> is used like in this:
 </p>
 <table><tr><td>&nbsp;</td><td><pre class="example">nl_catd catd = catopen (&quot;catalog_name&quot;, 0);
@@ -125,7 +125,7 @@ is implemented consistently among various systems.  So the common advice
 is to use <code>0</code> as the value.  The return value is a handle to the
 message catalog, equivalent to handles to file returned by <code>open</code>.
 </p>
-<a name="IDX1055"></a>
+<a name="IDX1060"></a>
 <p>This handle is of course used in the <code>catgets</code> function which can
 be used like this:
 </p>
@@ -148,7 +148,7 @@ is <code>char *</code> the resulting string <em>must not</em> be changed.  It
 should better be <code>const char *</code>, but the standard is published in
 1988, one year before ANSI C.
 </p>
-<a name="IDX1056"></a>
+<a name="IDX1061"></a>
 <p>The last of these functions is used and behaves as expected:
 </p>
 <table><tr><td>&nbsp;</td><td><pre class="example">catclose (catd);
@@ -158,7 +158,7 @@ should better be <code>const char *</code>, but the standard is published in
 </p>
 
 <a name="Problems-with-catgets"></a>
-<a name="SEC199"></a>
+<a name="SEC200"></a>
 <h3 class="subsection"> <a href="gettext_toc.html#TOC193">11.1.2 Problems with the <code>catgets</code> Interface?!</a> </h3>
 
 <p>Now that this description seemed to be really easy &mdash; where are the
@@ -175,7 +175,7 @@ more easy to manage.
 </p>
 
 <a name="gettext"></a>
-<a name="SEC200"></a>
+<a name="SEC201"></a>
 <h2 class="section"> <a href="gettext_toc.html#TOC194">11.2 About <code>gettext</code></a> </h2>
 
 <p>The definition of the <code>gettext</code> interface comes from a Uniforum
@@ -187,7 +187,7 @@ proposal.  It was submitted there by Sun, who had implemented the
 method of normal file handling (open-use-close) and that it does not
 burden the programmer with so many tasks, especially the unique key handling.
 Of course here also a unique key is needed, but this key is the message
-itself (how long or short it is).  See <a href="#SEC208">Comparing the Two Interfaces</a> for a more
+itself (how long or short it is).  See <a href="#SEC209">Comparing the Two Interfaces</a> for a more
 detailed comparison of the two methods.
 </p>
 <p>The following section contains a rather detailed description of the
@@ -198,7 +198,7 @@ in using this library will be interested in this description.
 
 
 <a name="Interface-to-gettext"></a>
-<a name="SEC201"></a>
+<a name="SEC202"></a>
 <h3 class="subsection"> <a href="gettext_toc.html#TOC195">11.2.1 The Interface</a> </h3>
 
 <p>The minimal functionality an interface must have is a) to select a
@@ -249,7 +249,7 @@ your language.
 </p>
 
 <a name="Ambiguities"></a>
-<a name="SEC202"></a>
+<a name="SEC203"></a>
 <h3 class="subsection"> <a href="gettext_toc.html#TOC196">11.2.2 Solving Ambiguities</a> </h3>
 
 <p>While this single name domain works well for most applications there
@@ -315,7 +315,7 @@ wide string (in UTF-16 encoding, as usual on Windows).
 </p>
 
 <a name="Locating-Catalogs"></a>
-<a name="SEC203"></a>
+<a name="SEC204"></a>
 <h3 class="subsection"> <a href="gettext_toc.html#TOC197">11.2.3 Locating Message Catalog Files</a> </h3>
 
 <p>Because many different languages for many different packages have to be
@@ -345,7 +345,7 @@ through the third argument.
 </p>
 
 <a name="Charset-conversion"></a>
-<a name="SEC204"></a>
+<a name="SEC205"></a>
 <h3 class="subsection"> <a href="gettext_toc.html#TOC198">11.2.4 How to specify the output character set <code>gettext</code> uses</a> </h3>
 
 <p><code>gettext</code> not only looks up a translation in a message catalog.  It
@@ -370,7 +370,7 @@ recommended that all <var>msgid</var>s be US-ASCII strings.
 </p>
 <dl>
 <dt><u>Function:</u> char * <b>bind_textdomain_codeset</b><i> (const&nbsp;char&nbsp;*<var>domainname</var>, const&nbsp;char&nbsp;*<var>codeset</var>)</i>
-<a name="IDX1057"></a>
+<a name="IDX1062"></a>
 </dt>
 <dd><p>The <code>bind_textdomain_codeset</code> function can be used to specify the
 output character set for message catalogs for domain <var>domainname</var>.
@@ -396,7 +396,7 @@ global variable <var>errno</var> is set accordingly.
 
 
 <a name="Contexts"></a>
-<a name="SEC205"></a>
+<a name="SEC206"></a>
 <h3 class="subsection"> <a href="gettext_toc.html#TOC199">11.2.5 Using contexts for solving ambiguities</a> </h3>
 
 <p>One place where the <code>gettext</code> functions, if used normally, have big
@@ -425,7 +425,7 @@ MO file, and can be edited by the translator in the same PO file.
 with contexts.  They are implemented as thin macros and inline functions
 over the functions from <code>&lt;libintl.h&gt;</code>.
 </p>
-<a name="IDX1058"></a>
+<a name="IDX1063"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">const char *pgettext (const char *msgctxt, const char *msgid);
 </pre></td></tr></table>
 
@@ -449,8 +449,8 @@ and again, it shouldn't force the translator to do a review.
 <p>The &lsquo;<samp>p</samp>&rsquo; in &lsquo;<samp>pgettext</samp>&rsquo; stands for &ldquo;particular&rdquo;: <code>pgettext</code>
 fetches a particular translation of the <var>msgid</var>.
 </p>
-<a name="IDX1059"></a>
-<a name="IDX1060"></a>
+<a name="IDX1064"></a>
+<a name="IDX1065"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">const char *dpgettext (const char *domain_name,
                        const char *msgctxt, const char *msgid);
 const char *dcpgettext (const char *domain_name,
@@ -512,9 +512,9 @@ matter of style.
 <p>For more complex cases, where the <var>msgctxt</var> or <var>msgid</var> are not
 string literals, more general macros are available:
 </p>
-<a name="IDX1061"></a>
-<a name="IDX1062"></a>
-<a name="IDX1063"></a>
+<a name="IDX1066"></a>
+<a name="IDX1067"></a>
+<a name="IDX1068"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">const char *pgettext_expr (const char *msgctxt, const char *msgid);
 const char *dpgettext_expr (const char *domain_name,
                             const char *msgctxt, const char *msgid);
@@ -530,7 +530,7 @@ efficient.
 </p>
 
 <a name="Plural-forms"></a>
-<a name="SEC206"></a>
+<a name="SEC207"></a>
 <h3 class="subsection"> <a href="gettext_toc.html#TOC200">11.2.6 Additional functions for plural forms</a> </h3>
 
 <p>The functions of the <code>gettext</code> family described so far (and all the
@@ -622,7 +622,7 @@ purpose.
 </p>
 <dl>
 <dt><u>Function:</u> char * <b>ngettext</b><i> (const&nbsp;char&nbsp;*<var>msgid1</var>, const&nbsp;char&nbsp;*<var>msgid2</var>, unsigned&nbsp;long&nbsp;int&nbsp;<var>n</var>)</i>
-<a name="IDX1064"></a>
+<a name="IDX1069"></a>
 </dt>
 <dd><p>The <code>ngettext</code> function is similar to the <code>gettext</code> function
 as it finds the message catalogs in the same way.  But it takes two
@@ -672,7 +672,7 @@ comes last:
         dir, n);
 </pre></td></tr></table>
 
-<p>See <a href="gettext_15.html#SEC266">C Format Strings</a> for details about this argument reordering syntax.
+<p>See <a href="gettext_15.html#SEC267">C Format Strings</a> for details about this argument reordering syntax.
 </p>
 <p>When you know that the value of <code>n</code> is within a given range, you can
 specify it as a comment directed to the <code>xgettext</code> tool.  This
@@ -699,7 +699,7 @@ cardinal number:
 
 <dl>
 <dt><u>Function:</u> char * <b>dngettext</b><i> (const&nbsp;char&nbsp;*<var>domain</var>, const&nbsp;char&nbsp;*<var>msgid1</var>, const&nbsp;char&nbsp;*<var>msgid2</var>, unsigned&nbsp;long&nbsp;int&nbsp;<var>n</var>)</i>
-<a name="IDX1065"></a>
+<a name="IDX1070"></a>
 </dt>
 <dd><p>The <code>dngettext</code> is similar to the <code>dgettext</code> function in the
 way the message catalog is selected.  The difference is that it takes
@@ -709,7 +709,7 @@ parameters are handled in the same way <code>ngettext</code> handles them.
 
 <dl>
 <dt><u>Function:</u> char * <b>dcngettext</b><i> (const&nbsp;char&nbsp;*<var>domain</var>, const&nbsp;char&nbsp;*<var>msgid1</var>, const&nbsp;char&nbsp;*<var>msgid2</var>, unsigned&nbsp;long&nbsp;int&nbsp;<var>n</var>, int&nbsp;<var>category</var>)</i>
-<a name="IDX1066"></a>
+<a name="IDX1071"></a>
 </dt>
 <dd><p>The <code>dcngettext</code> is similar to the <code>dcgettext</code> function in the
 way the message catalog is selected.  The difference is that it takes
@@ -729,9 +729,9 @@ with every language this is the only viable solution except for
 hardcoding the information in the code (which still would require the
 possibility of extensions to not prevent the use of new languages).
 </p>
-<a name="IDX1067"></a>
-<a name="IDX1068"></a>
-<a name="IDX1069"></a>
+<a name="IDX1072"></a>
+<a name="IDX1073"></a>
+<a name="IDX1074"></a>
 <p>The information about the plural form selection has to be stored in the
 header entry of the PO file (the one with the empty <code>msgid</code> string).
 The plural form information looks like this:
@@ -753,7 +753,7 @@ of the variable <code>n</code> in the expression.  The resulting value then
 must be greater or equal to zero and smaller than the value given as the
 value of <code>nplurals</code>.
 </p>
-<a name="IDX1070"></a>
+<a name="IDX1075"></a>
 <p>The following rules are known at this point.  The language with families
 are listed.  But this does not necessarily mean the information can be
 generalized for the whole family (as can be easily seen in the table
@@ -1024,11 +1024,11 @@ for all values will do.  For example:
 <p>is acceptable in English, and similarly for other languages.
 </p>
 <p>The translators' perspective regarding plural forms is explained in
-<a href="gettext_12.html#SEC227">Translating plural forms</a>.
+<a href="gettext_12.html#SEC228">Translating plural forms</a>.
 </p>
 
 <a name="Optimized-gettext"></a>
-<a name="SEC207"></a>
+<a name="SEC208"></a>
 <h3 class="subsection"> <a href="gettext_toc.html#TOC201">11.2.7 Optimization of the *gettext functions</a> </h3>
 
 <p>At this point of the discussion we should talk about an advantage of the
@@ -1069,7 +1069,7 @@ find the result through a single cache lookup.
 </p>
 
 <a name="Comparison"></a>
-<a name="SEC208"></a>
+<a name="SEC209"></a>
 <h2 class="section"> <a href="gettext_toc.html#TOC202">11.3 Comparing the Two Interfaces</a> </h2>
 
 
@@ -1104,7 +1104,7 @@ the definition
 
 <p>by
 </p>
-<a name="IDX1071"></a>
+<a name="IDX1076"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">#include &lt;libintl.h&gt;
 #define _(String) gettext (String)
 </pre></td></tr></table>
@@ -1114,9 +1114,9 @@ which contain translatable strings and that's it: we have a running
 program which does not depend on translations to be available, but which
 can use any that becomes available.
 </p>
-<a name="IDX1072"></a>
+<a name="IDX1077"></a>
 <p>The same procedure can be done for the <code>gettext_noop</code> invocations
-(see section <a href="gettext_4.html#SEC30">Special Cases of Translatable Strings</a>).  One usually defines <code>gettext_noop</code> as a
+(see section <a href="gettext_4.html#SEC31">Special Cases of Translatable Strings</a>).  One usually defines <code>gettext_noop</code> as a
 no-op macro.  So you should consider the following code for your project:
 </p>
 <table><tr><td>&nbsp;</td><td><pre class="example">#define gettext_noop(String) String
@@ -1173,11 +1173,11 @@ little bit.  But it is not impossible to overcome.
 </p>
 <p><code>catgets</code> allows same original entry to have different translations,
 but <code>gettext</code> has another, scalable approach for solving ambiguities
-of this kind: See section <a href="#SEC202">Solving Ambiguities</a>.
+of this kind: See section <a href="#SEC203">Solving Ambiguities</a>.
 </p>
 
 <a name="Using-libintl_002ea"></a>
-<a name="SEC209"></a>
+<a name="SEC210"></a>
 <h2 class="section"> <a href="gettext_toc.html#TOC203">11.4 Using libintl.a in own programs</a> </h2>
 
 <p>Starting with version 0.9.4 the library <code>libintl.h</code> should be
@@ -1187,7 +1187,7 @@ and the library in directories selected using the <code>$(prefix)</code>.
 </p>
 
 <a name="gettext-grok"></a>
-<a name="SEC210"></a>
+<a name="SEC211"></a>
 <h2 class="section"> <a href="gettext_toc.html#TOC204">11.5 Being a <code>gettext</code> grok</a> </h2>
 
 <p><strong> NOTE: </strong> This documentation section is outdated and needs to be
@@ -1200,7 +1200,7 @@ is a list comments:
 </p>
 <ul>
 <li> Changing the language at runtime
-<a name="IDX1073"></a>
+<a name="IDX1078"></a>
 
 <p>For interactive programs it might be useful to offer a selection of the
 used language at runtime.  To understand how to do this one need to know
@@ -1214,18 +1214,18 @@ Highest priority means here the following list with decreasing
 priority:
 </p>
 <ol>
-<li><a name="IDX1074"></a>
+<li><a name="IDX1079"></a>
 </li><li> <code>LANGUAGE</code>
-<a name="IDX1075"></a>
-</li><li> <code>LC_ALL</code>
-<a name="IDX1076"></a>
-<a name="IDX1077"></a>
-<a name="IDX1078"></a>
-<a name="IDX1079"></a>
 <a name="IDX1080"></a>
+</li><li> <code>LC_ALL</code>
 <a name="IDX1081"></a>
-</li><li> <code>LC_xxx</code>, according to selected locale category
 <a name="IDX1082"></a>
+<a name="IDX1083"></a>
+<a name="IDX1084"></a>
+<a name="IDX1085"></a>
+<a name="IDX1086"></a>
+</li><li> <code>LC_xxx</code>, according to selected locale category
+<a name="IDX1087"></a>
 </li><li> <code>LANG</code>
 </li></ol>
 
@@ -1242,7 +1242,7 @@ words: the used language is changed.
 some optimization.  This optimization normally prevents the calling of
 the <code>dcgettext</code> function as long as no new catalog is loaded.  But
 if <code>dcgettext</code> is not called the program also cannot find the
-<code>LANGUAGE</code> variable be changed (see section <a href="#SEC207">Optimization of the *gettext functions</a>).  A
+<code>LANGUAGE</code> variable be changed (see section <a href="#SEC208">Optimization of the *gettext functions</a>).  A
 solution for this is very easy.  Include the following code in the
 language switching function.
 </p>
@@ -1256,7 +1256,7 @@ language switching function.
   }
 </pre></td></tr></table>
 
-<a name="IDX1083"></a>
+<a name="IDX1088"></a>
 <p>The variable <code>_nl_msg_cat_cntr</code> is defined in &lsquo;<tt>loadmsgcat.c</tt>&rsquo;.
 You don't need to know what this is for.  But it can be used to detect
 whether a <code>gettext</code> implementation is GNU gettext and not non-GNU
@@ -1266,7 +1266,7 @@ system's native gettext implementation.
 
 
 <a name="Temp-Programmers"></a>
-<a name="SEC211"></a>
+<a name="SEC212"></a>
 <h2 class="section"> <a href="gettext_toc.html#TOC205">11.6 Temporary Notes for the Programmers Chapter</a> </h2>
 
 <p><strong> NOTE: </strong> This documentation section is outdated and needs to be
@@ -1275,7 +1275,7 @@ revised.
 
 
 <a name="Temp-Implementations"></a>
-<a name="SEC212"></a>
+<a name="SEC213"></a>
 <h3 class="subsection"> <a href="gettext_toc.html#TOC206">11.6.1 Temporary - Two Possible Implementations</a> </h3>
 
 <p>There are two competing methods for language independent messages:
@@ -1302,7 +1302,7 @@ see the Programming for Internationalization FAQ.
 </p>
 
 <a name="Temp-catgets"></a>
-<a name="SEC213"></a>
+<a name="SEC214"></a>
 <h3 class="subsection"> <a href="gettext_toc.html#TOC207">11.6.2 Temporary - About <code>catgets</code></a> </h3>
 
 <p>There have been a few discussions of late on the use of
@@ -1338,7 +1338,7 @@ of all Unix systems.
 </p>
 
 <a name="Temp-WSI"></a>
-<a name="SEC214"></a>
+<a name="SEC215"></a>
 <h3 class="subsection"> <a href="gettext_toc.html#TOC208">11.6.3 Temporary - Why a single implementation</a> </h3>
 
 <p>Now it seems kind of wasteful to me to have two different systems
@@ -1376,7 +1376,7 @@ the future.
 </p>
 
 <a name="Temp-Notes"></a>
-<a name="SEC215"></a>
+<a name="SEC216"></a>
 <h3 class="subsection"> <a href="gettext_toc.html#TOC209">11.6.4 Temporary - Notes</a> </h3>
 
 <p>X/Open agreed very late on the standard form so that many
@@ -1389,8 +1389,8 @@ Solaris is not the only system having <code>gettext</code>.
 </p>
 
 <table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC196" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="gettext_12.html#SEC216" title="Next chapter"> &gt;&gt; </a>]</td>
+<tr><td valign="middle" align="left">[<a href="#SEC197" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="gettext_12.html#SEC217" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
@@ -1398,12 +1398,12 @@ Solaris is not the only system having <code>gettext</code>.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="gettext_21.html#SEC387" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_21.html#SEC389" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Bruno Haible</em> on <em>October, 9 2022</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
+  This document was generated by <em>Bruno Haible</em> on <em>September, 19 2023</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
  </font>
  <br>
 

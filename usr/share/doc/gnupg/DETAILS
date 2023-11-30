@@ -192,6 +192,9 @@ described here.
     - s :: Sign
     - c :: Certify
     - a :: Authentication
+    - r :: Restricted encryption (subkey only use)
+    - t :: Timestamping
+    - g :: Group key
     - ? :: Unknown capability
 
     A key may have any combination of them in any order.  In addition
@@ -1103,7 +1106,13 @@ pkd:0:1024:B665B1435F4C2 .... FF26ABB:
            - learncard :: Send by the agent and gpgsm while learing
                           the data of a smartcard.
            - card_busy :: A smartcard is still working
-           - scd_locked :: Waiting for other clients to unlock the scdaemon
+           - scd_locked :: Waiting for other clients to unlock the
+                           scdaemon
+           - gpgtar :: Here <char> has a special meaning: 's'
+                       indicates total size and 'c' file count.  A
+                       <total> of zero indicates that gpgtar is in the
+                       scanning phase.  A positive <total> is used in
+                       the writing phase.
 
     When <what> refers to a file path, it may be truncated.
 
@@ -1128,6 +1137,17 @@ pkd:0:1024:B665B1435F4C2 .... FF26ABB:
     inquiry line with the same name used internally or, if enabled,
     send to the client instead of this status line.  Such an inquiry
     may be used to sync with Pinentry
+
+*** GPGTAR_EXTRACT <tot> <skp> <bad> <sus> <sym> <hrd> <oth>
+    This status line is emitted after gpgtar has extracted files.
+
+    - tot :: Total number of files extracted and stored
+    - skp :: Total number of files skipped during extraction
+    - bad :: Number of files skipped due to a bad file name
+    - sus :: Number of files skipped due to a suspicious file name
+    - sym :: Number of symlinks not restored
+    - hrd :: Number of hard links not restored
+    - oth :: Number of files not extracted due to other reasons.
 
 ** Obsolete status codes
 *** SIGEXPIRED
@@ -1173,6 +1193,20 @@ pkd:0:1024:B665B1435F4C2 .... FF26ABB:
     For OpenPGP this is weel defined; for other cards this is 0.  The
     name of the manufacturer is also given as <string>; spaces are not
     escaped.  For PKCS#15 cards <string> is TokenInfo.manufactorerID.
+
+*** KEY-STATUS <keyref> <status>
+    This is the response from scdaemon on GETATTR KEY-STATUS for
+    OpenPGP cards.  <keyref> is the usual keyref (e.g. OPENPGP.1 or
+    OPENPGP.129) and <status> is an integer describing the status of
+    the key: 0 = key is not present, 1 = key generated on card, 2 =
+    key imported.  See section 4.4.3.8 of the OpenPGP Smart Card
+    Application V3.4.
+
+*** KEY-ATTR-INFO <keyref> <string>
+    This is the response from scdaemon on GETATTR KEY-ATTR-INFO for
+    OpenPGP cards.  <keyref> is the usual keyref (e.g. OPENPGP.1 or
+    OPENPGP.129) and <string> is the algoritm or curve name, which
+    is available for the key.
 
 * Format of the --attribute-fd output
 
@@ -1578,6 +1612,8 @@ Description of some debug flags:
     - ELGAMAL :: Build a v3 pubkey packet (with CTB 0x99) and
                  calculate a RMD160 hash value from it. This is used
                  as the fingerprint and the low 64 bits are the keyid.
+
+** gnupg.org notations
 
 ** Simplified revocation certificates
   Revocation certificates consist only of the signature packet;

@@ -14,6 +14,7 @@ rm -f gettext.h
 rm -f ABOUT-NLS
 rm -f config.rpath
 rm -f m4/gettext.m4
+rm -f m4/build-to-host.m4
 rm -f m4/host-cpu-c-abi.m4
 rm -f m4/iconv.m4
 rm -f m4/intlmacosx.m4
