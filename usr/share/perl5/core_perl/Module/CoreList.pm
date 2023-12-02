@@ -4,7 +4,7 @@ use strict;
 our ( %released, %version, %families, %upstream, %bug_tracker, %deprecated, %delta );
 
 use version;
-our $VERSION = '5.20231125';
+our $VERSION = '5.20231129';
 
 sub PKG_PATTERN () { q#\A[a-zA-Z_][0-9a-zA-Z_]*(?:(::|')[0-9a-zA-Z_]+)*\z# }
 sub _looks_like_invocant ($) { local $@; !!eval { $_[0]->isa(__PACKAGE__) } }
@@ -411,10 +411,12 @@ sub changes_between {
     5.039003 => '2023-09-20',
     5.039004 => '2023-10-25',
     5.039005 => '2023-11-20',
-    5.039006 => '2023-12-20',
     5.034002 => '2023-11-25',
     5.036002 => '2023-11-25',
     5.038001 => '2023-11-25',
+    5.034003 => '2023-11-29',
+    5.036003 => '2023-11-29',
+    5.038002 => '2023-11-29',
   );
 
 for my $version ( sort { $a <=> $b } keys %released ) {
@@ -21065,22 +21067,13 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         removed => {
         }
     },
-    5.039006 => {
-        delta_from => 5.039005,
-        changed => {
-            'B::Op_private'         => '5.039006',
-            'Config'                => '5.039006',
-            'Module::CoreList'      => '5.20231125',
-            'Module::CoreList::Utils'=> '5.20231125',
-        },
-        removed => {
-        }
-    },
     5.034002 => {
         delta_from => 5.034001,
         changed => {
             'B::Op_private'         => '5.034002',
             'Config'                => '5.034002',
+            'Module::CoreList'      => '5.20231125',
+            'Module::CoreList::Utils'=> '5.20231125',
         },
         removed => {
         }
@@ -21090,6 +21083,8 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         changed => {
             'B::Op_private'         => '5.036002',
             'Config'                => '5.036002',
+            'Module::CoreList'      => '5.20231125',
+            'Module::CoreList::Utils'=> '5.20231125',
         },
         removed => {
         }
@@ -21099,6 +21094,41 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         changed => {
             'B::Op_private'         => '5.038001',
             'Config'                => '5.038001',
+            'Module::CoreList'      => '5.20231125',
+            'Module::CoreList::Utils'=> '5.20231125',
+        },
+        removed => {
+        }
+    },
+    5.034003 => {
+        delta_from => 5.034002,
+        changed => {
+            'B::Op_private'         => '5.034003',
+            'Config'                => '5.034003',
+            'Module::CoreList'      => '5.20231129',
+            'Module::CoreList::Utils'=> '5.20231129',
+        },
+        removed => {
+        }
+    },
+    5.036003 => {
+        delta_from => 5.036002,
+        changed => {
+            'B::Op_private'         => '5.036003',
+            'Config'                => '5.036003',
+            'Module::CoreList'      => '5.20231129',
+            'Module::CoreList::Utils'=> '5.20231129',
+        },
+        removed => {
+        }
+    },
+    5.038002 => {
+        delta_from => 5.038001,
+        changed => {
+            'B::Op_private'         => '5.038002',
+            'Config'                => '5.038002',
+            'Module::CoreList'      => '5.20231129',
+            'Module::CoreList::Utils'=> '5.20231129',
         },
         removed => {
         }
@@ -22539,13 +22569,6 @@ sub is_core
         removed => {
         }
     },
-    5.039006 => {
-        delta_from => 5.039005,
-        changed => {
-        },
-        removed => {
-        }
-    },
     5.034002 => {
         delta_from => 5.034001,
         changed => {
@@ -22562,6 +22585,27 @@ sub is_core
     },
     5.038001 => {
         delta_from => 5.038,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.034003 => {
+        delta_from => 5.034002,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.036003 => {
+        delta_from => 5.036002,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.038002 => {
+        delta_from => 5.038001,
         changed => {
         },
         removed => {
