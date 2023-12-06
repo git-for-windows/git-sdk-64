@@ -910,7 +910,7 @@ $(srcdir)/Modules/_blake2/blake2s_impl.c: $(srcdir)/Modules/_blake2/blake2b_impl
 # -s, --silent or --quiet is always the first char.
 # Under BSD make, MAKEFLAGS might be " -s -v x=y".
 # Ignore macros passed by GNU make, passed after --
-sharedmods: $(PYTHON_FOR_BUILD_DEPS) pybuilddir.txt  
+sharedmods: $(PYTHON_FOR_BUILD_DEPS) pybuilddir.txt $(LDLIBRARY)  
 	@case "`echo X $$MAKEFLAGS | sed 's/^X //;s/ -- .*//'`" in \
 	    *\ -s*|s*) quiet="-q";; \
 	    *) quiet="";; \
