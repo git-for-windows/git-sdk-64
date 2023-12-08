@@ -969,6 +969,9 @@
 /* Define if you can turn off readline's signal handling. */
 #define HAVE_RL_CATCH_SIGNAL 1
 
+/* Define if readline supports rl_compdisp_func_t */
+#define HAVE_RL_COMPDISP_FUNC_T 1
+
 /* Define if you have readline 2.2 */
 #define HAVE_RL_COMPLETION_APPEND_CHARACTER 1
 
@@ -1601,6 +1604,9 @@
 
 /* Define if you want to enable internal statistics gathering. */
 /* #undef Py_STATS */
+
+/* The version of SunOS/Solaris as reported by `uname -r' without the dot. */
+/* #undef Py_SUNOS_VERSION */
 
 /* Define if you want to enable tracing references for debugging purpose */
 /* #undef Py_TRACE_REFS */
