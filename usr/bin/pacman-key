@@ -319,7 +319,9 @@ populate_keyring() {
 	# Add keys from requested keyrings
 	for keyring in "${KEYRINGIDS[@]}"; do
 		msg "$(gettext "Appending keys from %s.gpg...")" "$keyring"
-		"${GPG_PACMAN[@]}" --quiet --import "${KEYRING_IMPORT_DIR}/${keyring}.gpg"
+		# FIXME: --allow-weak-key-signatures is a workaround for
+		# https://github.com/msys2/MSYS2-keyring/issues/45
+		"${GPG_PACMAN[@]}" --allow-weak-key-signatures --quiet --import "${KEYRING_IMPORT_DIR}/${keyring}.gpg"
 	done
 
 	# Read the trusted key IDs to an array. Because this is an ownertrust
@@ -566,7 +568,9 @@ refresh_keys() {
 		done
 
 		# if no key was found, fall back to using the keyservers (with the key fingerprint instead)
-		if (( $? )) &&  ! "${GPG_PACMAN[@]}" --refresh-keys "$id"; then
+		# FIXME: --allow-weak-key-signatures is a workaround for
+		# https://github.com/msys2/MSYS2-keyring/issues/45
+		if (( $? )) &&  ! "${GPG_PACMAN[@]}" --allow-weak-key-signatures --refresh-keys "$id"; then
 			error "$(gettext "Could not update key: %s")" "$id"
 			ret=1
 		fi
