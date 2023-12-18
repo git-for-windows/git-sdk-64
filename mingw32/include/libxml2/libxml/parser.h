@@ -11,7 +11,9 @@
 #define __XML_PARSER_H__
 
 #include <libxml/xmlversion.h>
+#define XML_TREE_INTERNALS
 #include <libxml/tree.h>
+#undef XML_TREE_INTERNALS
 #include <libxml/dict.h>
 #include <libxml/hash.h>
 #include <libxml/valid.h>
@@ -857,7 +859,10 @@ XMLPUBFUN const char *const *__xmlParserVersion(void);
   XML_OP(xmlLoadExtDtdDefaultValue, int, XML_DEPRECATED) \
   XML_OP(xmlParserDebugEntities, int, XML_DEPRECATED) \
   XML_OP(xmlPedanticParserDefaultValue, int, XML_DEPRECATED) \
-  XML_OP(xmlSubstituteEntitiesDefaultValue, int, XML_DEPRECATED)
+  XML_OP(xmlSubstituteEntitiesDefaultValue, int, XML_DEPRECATED) \
+  XML_OP(xmlIndentTreeOutput, int, XML_NO_ATTR) \
+  XML_OP(xmlTreeIndentString, const char *, XML_NO_ATTR) \
+  XML_OP(xmlSaveNoEmptyTags, int, XML_NO_ATTR)
 
 #ifdef LIBXML_SAX1_ENABLED
   #define XML_GLOBALS_PARSER_SAX1 \
@@ -891,6 +896,9 @@ XML_GLOBALS_PARSER
     XML_GLOBAL_MACRO(xmlPedanticParserDefaultValue)
   #define xmlSubstituteEntitiesDefaultValue \
     XML_GLOBAL_MACRO(xmlSubstituteEntitiesDefaultValue)
+  #define xmlIndentTreeOutput XML_GLOBAL_MACRO(xmlIndentTreeOutput)
+  #define xmlTreeIndentString XML_GLOBAL_MACRO(xmlTreeIndentString)
+  #define xmlSaveNoEmptyTags XML_GLOBAL_MACRO(xmlSaveNoEmptyTags)
 #endif
 /** DOC_ENABLE */
 
@@ -901,6 +909,12 @@ XMLPUBFUN void
 		xmlInitParser		(void);
 XMLPUBFUN void
 		xmlCleanupParser	(void);
+XML_DEPRECATED
+XMLPUBFUN void
+		xmlInitGlobals		(void);
+XML_DEPRECATED
+XMLPUBFUN void
+		xmlCleanupGlobals	(void);
 
 /*
  * Input functions
