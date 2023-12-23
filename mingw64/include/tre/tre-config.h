@@ -1,4 +1,4 @@
-/* lib/tre-config.h.  Generated from tre-config.h.in by configure.  */
+/* local_includes/tre-config.h.  Generated from tre-config.h.in by configure.  */
 /* tre-config.h.in.  This file has all definitions that are needed in
    `tre.h'.  Note that this file must contain only the bare minimum
    of definitions without the TRE_ prefix to avoid conflicts between
