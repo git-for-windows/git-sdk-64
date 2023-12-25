@@ -1,4 +1,4 @@
-*filetype.txt*  For Vim version 9.0.  Last change: 2023 Sep 11
+*filetype.txt*  For Vim version 9.0.  Last change: 2023 Dec 05
 
 
 		  VIM REFERENCE MANUAL    by Bram Moolenaar
@@ -567,8 +567,9 @@ FORTRAN							*ft-fortran-plugin*
 Options:
 'expandtab'	is switched on to avoid tabs as required by the Fortran
 		standards unless the user has set fortran_have_tabs in .vimrc.
-'textwidth'	is set to 72 for fixed source format as required by the
-		Fortran standards and to 80 for free source format.
+'textwidth'	is set to 80 for fixed source format whereas it is set to 132
+		for free source format. Setting the fortran_extended_line_length
+		variable increases the width to 132 for fixed source format.
 'formatoptions' is set to break code and comment lines and to preserve long
 		lines.  You can format comments with |gq|.
 For further discussion of fortran_have_tabs and the method used for the
@@ -607,6 +608,18 @@ to the details of that function in the call graph.
 
 The mapping can be disabled with: >
 	let g:no_gprof_maps = 1
+
+
+JSON-FORMAT						*ft-json-plugin*
+
+JSON filetype can be extended to use 'formatexpr' and "json.FormatExpr()"
+function for json formatting (using |gq|).
+
+Add following lines to $HOME/.vim/ftplugin/json.vim: >
+
+	vim9script
+	import autoload 'dist/json.vim'
+	setl formatexpr=json.FormatExpr()
 
 
 MAIL							*ft-mail-plugin*

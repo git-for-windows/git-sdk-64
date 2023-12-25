@@ -1,0 +1,215 @@
+#! /usr/bin/perl
+# -*- Perl -*-
+# Generated from bin/autoconf.in; do not edit by hand.
+
+eval 'case $# in 0) exec /usr/bin/perl -S "$0";; *) exec /usr/bin/perl -S "$0" "$@";; esac'
+    if 0;
+
+# autoconf -- create 'configure' using m4 macros.
+
+# Copyright (C) 1992-1994, 1996, 1999-2017, 2020-2023 Free Software
+# Foundation, Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+use 5.006;
+use strict;
+use warnings FATAL => 'all';
+
+BEGIN
+{
+  my $pkgdatadir = $ENV{'autom4te_perllibdir'} || '/usr/share/autoconf-2.72';
+  unshift @INC, $pkgdatadir;
+
+  # Override SHELL.  On DJGPP SHELL may not be set to a shell
+  # that can handle redirection and quote arguments correctly,
+  # e.g.: COMMAND.COM.  For DJGPP always use the shell that configure
+  # has detected.
+  $ENV{'SHELL'} = '/bin/sh' if ($^O eq 'dos');
+}
+
+use Autom4te::ChannelDefs;
+use Autom4te::Channels qw(msg);
+use Autom4te::General;
+
+# Lib files.
+my $autom4te = $ENV{'AUTOM4TE'} || '/usr/bin/autom4te-2.72';
+my $trailer_m4 = $ENV{'trailer_m4'} || '/usr/share/autoconf-2.72/autoconf/trailer.m4';
+
+# $HELP
+# -----
+$help = "Usage: $0 [OPTION]... [TEMPLATE-FILE]
+
+Generate a configuration script from a TEMPLATE-FILE if given, or
+'configure.ac' if present, or else 'configure.in'.  Output is sent
+to the standard output if TEMPLATE-FILE is given, else into
+'configure'.
+
+Operation modes:
+  -h, --help                print this help, then exit
+  -V, --version             print version number, then exit
+  -v, --verbose             verbosely report processing
+  -d, --debug               don't remove temporary files
+  -f, --force               consider all files obsolete
+  -o, --output=FILE         save output in FILE (stdout is the default)
+  -W, --warnings=CATEGORY   report the warnings falling in CATEGORY
+                            (comma-separated list accepted)
+
+" . Autom4te::ChannelDefs::usage . "
+
+Library directories:
+  -B, --prepend-include=DIR  prepend directory DIR to search path
+  -I, --include=DIR          append directory DIR to search path
+
+Tracing:
+  -t, --trace=MACRO[:FORMAT]  report the list of calls to MACRO
+  -i, --initialization        also trace Autoconf's initialization process
+
+In tracing mode, no configuration script is created.  FORMAT defaults
+to '\$f:\$l:\$n:\$%'; see 'autom4te --help' for information about FORMAT.
+
+Report bugs to <bug-autoconf\@gnu.org>.
+
+The full documentation for Autoconf can be read via 'info autoconf',
+or on the Web at <https://www.gnu.org/software/autoconf/manual/>.
+";
+
+# $VERSION
+# --------
+$version = "autoconf (GNU Autoconf) 2.72
+Copyright (C) 2023 Free Software Foundation, Inc.
+License GPLv3+/Autoconf: GNU GPL version 3 or later
+<https://gnu.org/licenses/gpl.html>, <https://gnu.org/licenses/exceptions.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by David J. MacKenzie and Akim Demaille.
+";
+
+## ---------- ##
+## Routines.  ##
+## ---------- ##
+
+my $infile;
+my $outfile;
+my @autom4te_options;
+my @traces;
+
+# parse_args ()
+# -------------
+# Process any command line arguments.
+sub parse_args ()
+{
+  getopt (
+    # Arguments passed as-is to autom4te.
+    'I|include=s'         => sub { push @autom4te_options, '--include='.$_[1] },
+    'B|prepend-include=s' => sub { push @autom4te_options,
+                                     '--prepend-include='.$_[1] },
+    'W|warnings=s'        => sub { push @autom4te_options,
+                                     '--warnings='.$_[1] },
+
+    # Arguments processed (somewhat) in this program.
+    'i|initialization' => sub { push @autom4te_options, '--melt' },
+    't|trace=s'        => sub { push @traces, '--trace='.$_[1] },
+    'o|output=s'       => \$outfile,
+  );
+
+  # Also pass down certain options that were processed into their own
+  # variables by Autom4te::General::getopt.
+  push @autom4te_options, '--debug' if $debug;
+  push @autom4te_options, '--force' if $force;
+  push @autom4te_options, '--verbose' if $verbose;
+
+  # Find the input file.
+  if (@ARGV == 0)
+    {
+      $outfile = 'configure' if !$outfile && !@traces;
+
+      if (-f 'configure.ac')
+        {
+          $infile = 'configure.ac';
+          if (-f 'configure.in')
+            {
+              msg 'obsolete',
+                q(both 'configure.ac' and 'configure.in' are present);
+              msg 'obsolete',
+                q(proceeding with 'configure.ac');
+            }
+        }
+      elsif (-f 'configure.in')
+        {
+          $infile = 'configure.in';
+        }
+      else
+        {
+          fatal 'no input file';
+        }
+    }
+  elsif (@ARGV == 1)
+    {
+      $infile = $ARGV[0];
+    }
+  else
+    {
+      fatal "invalid number of arguments.\n"
+        . "Try '$me --help' for more information.";
+    }
+
+  # Unless already set, the output is stdout.
+  $outfile = '-' if !$outfile;
+}
+
+## -------------- ##
+## Main program.  ##
+## -------------- ##
+
+parse_args;
+
+# Construct the autom4te invocation.
+# $autom4te might contain additional command line options; word-split it
+# exactly as the shell would.
+my @autom4te_command = split /[ \t\n]+/, $autom4te;
+push @autom4te_command, @autom4te_options;
+push @autom4te_command, '--language=autoconf', "--output=$outfile", @traces;
+
+# Don't read trailer.m4 if we are tracing.
+# trailer.m4 is read _before_ $infile, despite the name,
+# because putting it afterward screws up autom4te's location tracing.
+push @autom4te_command, $trailer_m4 if !@traces;
+push @autom4te_command, $infile;
+
+print {*STDERR} $me,
+  ': running ',
+  join (" ", map { shell_quote($_) } @autom4te_command),
+  "\n"
+  if $verbose;
+
+exec {$autom4te_command[0]} @autom4te_command;
+
+### Setup "GNU" style for perl-mode and cperl-mode.
+## Local Variables:
+## perl-indent-level: 2
+## perl-continued-statement-offset: 2
+## perl-continued-brace-offset: 0
+## perl-brace-offset: 0
+## perl-brace-imaginary-offset: 0
+## perl-label-offset: -2
+## cperl-indent-level: 2
+## cperl-brace-offset: 0
+## cperl-continued-brace-offset: 0
+## cperl-label-offset: -2
+## cperl-extra-newline-before-brace: t
+## cperl-merge-trailing-else: nil
+## cperl-continued-statement-offset: 2
+## End:
