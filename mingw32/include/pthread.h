@@ -208,16 +208,22 @@ struct _pthread_cleanup
     _pthread_cleanup *next;
 };
 
-#define pthread_cleanup_push(F, A)\
-{\
-    const _pthread_cleanup _pthread_cup = {(F), (A), *pthread_getclean()};\
-    __sync_synchronize();\
-    *pthread_getclean() = (_pthread_cleanup *) &_pthread_cup;\
-    __sync_synchronize()
+#define pthread_cleanup_push(F, A)                                      \
+    do {                                                                \
+        const _pthread_cleanup _pthread_cup =                           \
+            { (F), (A), *pthread_getclean() };                          \
+        __sync_synchronize();                                           \
+        *pthread_getclean() = (_pthread_cleanup *) &_pthread_cup;       \
+        __sync_synchronize();                                           \
+        do {                                                            \
+            do {} while (0)
 
 /* Note that if async cancelling is used, then there is a race here */
-#define pthread_cleanup_pop(E)\
-    (*pthread_getclean() = _pthread_cup.next, ((E) ? (_pthread_cup.func((pthread_once_t *)_pthread_cup.arg)) : (void)0));}
+#define pthread_cleanup_pop(E)                                          \
+        } while (0);                                                    \
+        *pthread_getclean() = _pthread_cup.next;                        \
+        if ((E)) _pthread_cup.func((pthread_once_t *)_pthread_cup.arg); \
+    } while (0)
 
 #ifndef SCHED_OTHER
 /* Some POSIX realtime extensions, mostly stubbed */
@@ -436,7 +442,8 @@ int                        WINPTHREAD_API pthread_rwlockattr_setpshared(pthread_
 #define SEM_NSEMS_MAX                           1024
 
 /* Wrap cancellation points.  */
-#ifdef __WINPTRHEAD_ENABLE_WRAP_API
+#if defined(__WINPTHREAD_ENABLE_WRAP_API) \
+    || defined(__WINPTRHEAD_ENABLE_WRAP_API) /* historical typo */
 #define accept(...) (pthread_testcancel(), accept(__VA_ARGS__))
 #define aio_suspend(...) (pthread_testcancel(), aio_suspend(__VA_ARGS__))
 #define clock_nanosleep(...) (pthread_testcancel(), clock_nanosleep(__VA_ARGS__))
