@@ -14,7 +14,11 @@
 <ul id="index">
   <li><a href="#NAME">NAME</a></li>
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
-  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#TCP-Fast-Open">TCP Fast Open</a></li>
+    </ul>
+  </li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
@@ -48,6 +52,31 @@
 
 <p>Normally the <i>type</i> argument is supplied by a function which returns a pointer to a BIO_METHOD. There is a naming convention for such functions: a source/sink BIO typically starts with <i>BIO_s_</i> and a filter BIO with <i>BIO_f_</i>.</p>
 
+<h2 id="TCP-Fast-Open">TCP Fast Open</h2>
+
+<p>TCP Fast Open (RFC7413), abbreviated &quot;TFO&quot;, is supported by the BIO interface since OpenSSL 3.2. TFO is supported in the following operating systems:</p>
+
+<ul>
+
+<li><p>Linux kernel 3.13 and later, where TFO is enabled by default.</p>
+
+</li>
+<li><p>Linux kernel 4.11 and later, using TCP_FASTOPEN_CONNECT.</p>
+
+</li>
+<li><p>FreeBSD 10.3 to 11.4, supports server TFO only.</p>
+
+</li>
+<li><p>FreeBSD 12.0 and later, supports both client and server TFO.</p>
+
+</li>
+<li><p>macOS 10.14 and later.</p>
+
+</li>
+</ul>
+
+<p>Each operating system has a slightly different API for TFO. Please refer to the operating systems&#39; API documentation when using sockets directly.</p>
+
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
 <p>Create a memory BIO:</p>
@@ -56,11 +85,11 @@
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/BIO_ctrl.html">BIO_ctrl(3)</a>, <a href="../man3/BIO_f_base64.html">BIO_f_base64(3)</a>, <a href="../man3/BIO_f_buffer.html">BIO_f_buffer(3)</a>, <a href="../man3/BIO_f_cipher.html">BIO_f_cipher(3)</a>, <a href="../man3/BIO_f_md.html">BIO_f_md(3)</a>, <a href="../man3/BIO_f_null.html">BIO_f_null(3)</a>, <a href="../man3/BIO_f_ssl.html">BIO_f_ssl(3)</a>, <a href="../man3/BIO_f_readbuffer.html">BIO_f_readbuffer(3)</a>, <a href="../man3/BIO_find_type.html">BIO_find_type(3)</a>, <a href="../man3/BIO_new.html">BIO_new(3)</a>, <a href="../man3/BIO_new_bio_pair.html">BIO_new_bio_pair(3)</a>, <a href="../man3/BIO_push.html">BIO_push(3)</a>, <a href="../man3/BIO_read_ex.html">BIO_read_ex(3)</a>, <a href="../man3/BIO_s_accept.html">BIO_s_accept(3)</a>, <a href="../man3/BIO_s_bio.html">BIO_s_bio(3)</a>, <a href="../man3/BIO_s_connect.html">BIO_s_connect(3)</a>, <a href="../man3/BIO_s_fd.html">BIO_s_fd(3)</a>, <a href="../man3/BIO_s_file.html">BIO_s_file(3)</a>, <a href="../man3/BIO_s_mem.html">BIO_s_mem(3)</a>, <a href="../man3/BIO_s_null.html">BIO_s_null(3)</a>, <a href="../man3/BIO_s_socket.html">BIO_s_socket(3)</a>, <a href="../man3/BIO_set_callback.html">BIO_set_callback(3)</a>, <a href="../man3/BIO_should_retry.html">BIO_should_retry(3)</a></p>
+<p><a href="../man3/BIO_ctrl.html">BIO_ctrl(3)</a>, <a href="../man3/BIO_f_base64.html">BIO_f_base64(3)</a>, <a href="../man3/BIO_f_buffer.html">BIO_f_buffer(3)</a>, <a href="../man3/BIO_f_cipher.html">BIO_f_cipher(3)</a>, <a href="../man3/BIO_f_md.html">BIO_f_md(3)</a>, <a href="../man3/BIO_f_null.html">BIO_f_null(3)</a>, <a href="../man3/BIO_f_ssl.html">BIO_f_ssl(3)</a>, <a href="../man3/BIO_f_readbuffer.html">BIO_f_readbuffer(3)</a>, <a href="../man3/BIO_find_type.html">BIO_find_type(3)</a>, <a href="../man3/BIO_get_conn_mode.html">BIO_get_conn_mode(3)</a>, <a href="../man3/BIO_new.html">BIO_new(3)</a>, <a href="../man3/BIO_new_bio_pair.html">BIO_new_bio_pair(3)</a>, <a href="../man3/BIO_push.html">BIO_push(3)</a>, <a href="../man3/BIO_read_ex.html">BIO_read_ex(3)</a>, <a href="../man3/BIO_s_accept.html">BIO_s_accept(3)</a>, <a href="../man3/BIO_s_bio.html">BIO_s_bio(3)</a>, <a href="../man3/BIO_s_connect.html">BIO_s_connect(3)</a>, <a href="../man3/BIO_s_fd.html">BIO_s_fd(3)</a>, <a href="../man3/BIO_s_file.html">BIO_s_file(3)</a>, <a href="../man3/BIO_s_mem.html">BIO_s_mem(3)</a>, <a href="../man3/BIO_s_null.html">BIO_s_null(3)</a>, <a href="../man3/BIO_s_socket.html">BIO_s_socket(3)</a>, <a href="../man3/BIO_set_callback.html">BIO_set_callback(3)</a>, <a href="../man3/BIO_set_conn_mode.html">BIO_set_conn_mode(3)</a>, <a href="../man3/BIO_set_tfo.html">BIO_set_tfo(3)</a>, <a href="../man3/BIO_set_tfo_accept.html">BIO_set_tfo_accept(3)</a>, <a href="../man3/BIO_should_retry.html">BIO_should_retry(3)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

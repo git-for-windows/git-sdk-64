@@ -15,6 +15,7 @@
   <li><a href="#NAME">NAME</a></li>
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
@@ -35,7 +36,11 @@ BIGNUM *BN_mod_inverse(BIGNUM *r, BIGNUM *a, const BIGNUM *n,
 
 <p>BN_mod_inverse() computes the inverse of <b>a</b> modulo <b>n</b> places the result in <b>r</b> (<code>(a*r)%n==1</code>). If <b>r</b> is NULL, a new <b>BIGNUM</b> is created.</p>
 
-<p><b>ctx</b> is a previously allocated <b>BN_CTX</b> used for temporary variables. <b>r</b> may be the same <b>BIGNUM</b> as <b>a</b> or <b>n</b>.</p>
+<p><b>ctx</b> is a previously allocated <b>BN_CTX</b> used for temporary variables. <b>r</b> may be the same <b>BIGNUM</b> as <b>a</b>.</p>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>It is an error to use the same <b>BIGNUM</b> as <b>n</b>.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -47,7 +52,7 @@ BIGNUM *BN_mod_inverse(BIGNUM *r, BIGNUM *a, const BIGNUM *n,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2017 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -45,7 +45,9 @@
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>This command is a multi-purposes certificate handling command. It can be used to print certificate information, convert certificates to various forms, edit certificate trust settings, generate certificates from scratch or from certificating requests and then self-signing them or signing them like a &quot;micro CA&quot;.</p>
+<p>This command is a multi-purposes certificate handling command. It can be used to print certificate information, convert certificates to various forms, edit certificate trust settings, generate certificates from scratch or from certification requests and then self-signing them or signing them like a &quot;micro CA&quot;.</p>
+
+<p>Generated certificates bear X.509 version 3. Unless specified otherwise, key identifier extensions are included as described in <a href="../man5/x509v3_config.html">x509v3_config(5)</a>.</p>
 
 <p>Since there are a large number of options they will split up into various sections.</p>
 
@@ -78,7 +80,7 @@
 <dt id="new"><b>-new</b></dt>
 <dd>
 
-<p>Generate a certificate from scratch, not using an input certificate or certificate request. So the <b>-in</b> option must not be used in this case. Instead, the <b>-subj</b> option needs to be given. The public key to include can be given with the <b>-force_pubkey</b> option and defaults to the key given with the <b>-key</b> (or <b>-signkey</b>) option, which implies self-signature.</p>
+<p>Generate a certificate from scratch, not using an input certificate or certificate request. So this excludes the <b>-in</b> and <b>-req</b> options. Instead, the <b>-subj</b> option needs to be given. The public key to include can be given with the <b>-force_pubkey</b> option and defaults to the key given with the <b>-key</b> (or <b>-signkey</b>) option, which implies self-signature.</p>
 
 </dd>
 <dt id="x509toreq"><b>-x509toreq</b></dt>
@@ -108,7 +110,7 @@
 <dt id="inform-DER-PEM"><b>-inform</b> <b>DER</b>|<b>PEM</b></dt>
 <dd>
 
-<p>The input file format; unspecified by default. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
+<p>The input file format to use; by default PEM is tried first. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
 
 </dd>
 <dt id="vfyopt-nm:v"><b>-vfyopt</b> <i>nm</i>:<i>v</i></dt>
@@ -124,7 +126,7 @@
 
 <p>This option cannot be used in conjunction with the <b>-CA</b> option.</p>
 
-<p>It sets the issuer name to the subject name (i.e., makes it self-issued) and changes the public key to the supplied value (unless overridden by <b>-force_pubkey</b>). Unless the <b>-preserve_dates</b> option is supplied, it sets the validity start date to the current time and the end date to a value determined by the <b>-days</b> option.</p>
+<p>It sets the issuer name to the subject name (i.e., makes it self-issued). Unless the <b>-preserve_dates</b> option is supplied, it sets the validity start date to the current time and the end date to a value determined by the <b>-days</b> option.</p>
 
 </dd>
 <dt id="signkey-filename-uri"><b>-signkey</b> <i>filename</i>|<i>uri</i></dt>
@@ -282,7 +284,7 @@
 <dt id="ext-extensions"><b>-ext</b> <i>extensions</i></dt>
 <dd>
 
-<p>Prints out the certificate extensions in text form. Can also be used to restrict which extensions to copy. Extensions are specified with a comma separated string, e.g., &quot;subjectAltName,subjectKeyIdentifier&quot;. See the <a href="../man5/x509v3_config.html">x509v3_config(5)</a> manual page for the extension names.</p>
+<p>Prints out the certificate extensions in text form. Can also be used to restrict which extensions to copy. Extensions are specified with a comma separated string, e.g., &quot;subjectAltName, subjectKeyIdentifier&quot;. See the <a href="../man5/x509v3_config.html">x509v3_config(5)</a> manual page for the extension names.</p>
 
 </dd>
 <dt id="ocspid"><b>-ocspid</b></dt>
@@ -386,15 +388,17 @@
 
 <p><code>/DC=org/DC=OpenSSL/DC=users/UID=123456+CN=John Doe</code></p>
 
-<p>This option can be used in conjunction with the <b>-force_pubkey</b> option to create a certificate even without providing an input certificate or certificate request.</p>
+<p>This option can be used with the <b>-new</b> and <b>-force_pubkey</b> options to create a new certificate without providing an input certificate or certificate request.</p>
 
 </dd>
 <dt id="force_pubkey-filename"><b>-force_pubkey</b> <i>filename</i></dt>
 <dd>
 
-<p>When a certificate is created set its public key to the key in <i>filename</i> instead of the key contained in the input or given with the <b>-key</b> (or <b>-signkey</b>) option.</p>
+<p>When a new certificate or certificate request is created set its public key to the given key instead of the key contained in the input or given with the <b>-key</b> (or <b>-signkey</b>) option. If the input contains no public key but a private key, its public part is used.</p>
 
-<p>This option is useful for creating self-issued certificates that are not self-signed, for instance when the key cannot be used for signing, such as DH. It can also be used in conjunction with <b>-new</b> and <b>-subj</b> to directly generate a certificate containing any desired public key.</p>
+<p>This option can be used in conjunction with b&lt;-new&gt; and <b>-subj</b> to directly generate a certificate containing any desired public key.</p>
+
+<p>This option is also useful for creating self-issued certificates that are not self-signed, for instance when the key cannot be used for signing, such as DH.</p>
 
 </dd>
 <dt id="clrext"><b>-clrext</b></dt>
@@ -414,7 +418,11 @@
 <dt id="extensions-section"><b>-extensions</b> <i>section</i></dt>
 <dd>
 
-<p>The section in the extfile to add X.509 extensions from. If this option is not specified then the extensions should either be contained in the unnamed (default) section or the default section should contain a variable called &quot;extensions&quot; which contains the section to use. See the <a href="../man5/x509v3_config.html">x509v3_config(5)</a> manual page for details of the extension section format.</p>
+<p>The section in the extfile to add X.509 extensions from. If this option is not specified then the extensions should either be contained in the unnamed (default) section or the default section should contain a variable called &quot;extensions&quot; which contains the section to use.</p>
+
+<p>See the <a href="../man5/x509v3_config.html">x509v3_config(5)</a> manual page for details of the extension section format.</p>
+
+<p>Unless specified otherwise, key identifier extensions are included as described in <a href="../man5/x509v3_config.html">x509v3_config(5)</a>.</p>
 
 </dd>
 <dt id="sigopt-nm:v"><b>-sigopt</b> <i>nm</i>:<i>v</i></dt>
@@ -765,6 +773,8 @@
 <p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
 
 <p>The <b>-C</b> option was removed in OpenSSL 3.0.</p>
+
+<p>Since OpenSSL 3.2, generated certificates bear X.509 version 3, and key identifier extensions are included by default.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

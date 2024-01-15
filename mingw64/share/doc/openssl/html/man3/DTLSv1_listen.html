@@ -63,6 +63,8 @@ int DTLSv1_listen(SSL *ssl, BIO_ADDR *peer);</code></pre>
 
 <p>Both SSL_stateless() and DTLSv1_listen() will clear the error queue when they start.</p>
 
+<p>SSL_stateless() cannot be used with QUIC SSL objects and returns an error if called on such an object.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>For SSL_stateless() a return value of 1 indicates success and the <b>ssl</b> object will be set up ready to continue the handshake. A return value of 0 or -1 indicates failure. If the value is 0 then a HelloRetryRequest was sent. A value of -1 indicates any other error. User code may retry the SSL_stateless() call.</p>

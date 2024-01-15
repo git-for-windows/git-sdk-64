@@ -24,7 +24,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>SSL_CTX_set_msg_callback, SSL_CTX_set_msg_callback_arg, SSL_set_msg_callback, SSL_set_msg_callback_arg - install callback for observing protocol messages</p>
+<p>SSL_CTX_set_msg_callback, SSL_CTX_set_msg_callback_arg, SSL_set_msg_callback, SSL_set_msg_callback_arg, SSL_trace - install callback for observing protocol messages</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -40,15 +40,18 @@ void SSL_set_msg_callback(SSL *ssl,
                           void (*cb)(int write_p, int version,
                                      int content_type, const void *buf,
                                      size_t len, SSL *ssl, void *arg));
-void SSL_set_msg_callback_arg(SSL *ssl, void *arg);</code></pre>
+void SSL_set_msg_callback_arg(SSL *ssl, void *arg);
+
+void SSL_trace(int write_p, int version, int content_type,
+               const void *buf, size_t len, SSL *ssl, void *arg);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_CTX_set_msg_callback() or SSL_set_msg_callback() can be used to define a message callback function <i>cb</i> for observing all SSL/TLS protocol messages (such as handshake messages) that are received or sent, as well as other events that occur during processing. SSL_CTX_set_msg_callback_arg() and SSL_set_msg_callback_arg() can be used to set argument <i>arg</i> to the callback function, which is available for arbitrary application use.</p>
+<p>SSL_CTX_set_msg_callback() or SSL_set_msg_callback() can be used to define a message callback function <i>cb</i> for observing all SSL/TLS/QUIC protocol messages (such as handshake messages) that are received or sent, as well as other events that occur during processing. SSL_CTX_set_msg_callback_arg() and SSL_set_msg_callback_arg() can be used to set argument <i>arg</i> to the callback function, which is available for arbitrary application use.</p>
 
 <p>SSL_CTX_set_msg_callback() and SSL_CTX_set_msg_callback_arg() specify default settings that will be copied to new <b>SSL</b> objects by <a href="../man3/SSL_new.html">SSL_new(3)</a>. SSL_set_msg_callback() and SSL_set_msg_callback_arg() modify the actual settings of an <b>SSL</b> object. Using a <b>NULL</b> pointer for <i>cb</i> disables the message callback.</p>
 
-<p>When <i>cb</i> is called by the SSL/TLS library the function arguments have the following meaning:</p>
+<p>When <i>cb</i> is called by the SSL/TLS/QUIC library the function arguments have the following meaning:</p>
 
 <dl>
 
@@ -61,7 +64,7 @@ void SSL_set_msg_callback_arg(SSL *ssl, void *arg);</code></pre>
 <dt id="version"><i>version</i></dt>
 <dd>
 
-<p>The protocol version according to which the protocol message is interpreted by the library such as <b>TLS1_3_VERSION</b>, <b>TLS1_2_VERSION</b> etc. This is set to 0 for the SSL3_RT_HEADER pseudo content type (see NOTES below).</p>
+<p>The protocol version according to which the protocol message is interpreted by the library such as <b>TLS1_3_VERSION</b>, <b>TLS1_2_VERSION</b>, <b>OSSL_QUIC1_VERSION</b> etc. For the SSL3_RT_HEADER pseudo content type (see NOTES below) this value will be the decoded version/legacy_version field of the record header.</p>
 
 </dd>
 <dt id="content_type"><i>content_type</i></dt>
@@ -90,6 +93,8 @@ void SSL_set_msg_callback_arg(SSL *ssl, void *arg);</code></pre>
 </dd>
 </dl>
 
+<p>The SSL_trace() function can be used as a pre-written callback in a call to SSL_CTX_set_msg_callback() or SSL_set_msg_callback(). It requires a BIO to be set as the callback argument via SSL_CTX_set_msg_callback_arg() or SSL_set_msg_callback_arg(). Setting this callback will cause human readable diagostic tracing information about an SSL/TLS/QUIC connection to be written to the BIO.</p>
+
 <h1 id="NOTES">NOTES</h1>
 
 <p>Protocol messages are passed to the callback function after decryption and fragment collection where applicable. (Thus record boundaries are not visible.)</p>
@@ -105,13 +110,43 @@ void SSL_set_msg_callback_arg(SSL *ssl, void *arg);</code></pre>
 <dt id="SSL3_RT_HEADER"><b>SSL3_RT_HEADER</b></dt>
 <dd>
 
-<p>Used when a record is sent or received. The <b>buf</b> contains the record header bytes only.</p>
+<p>Used when a TLS record is sent or received. The <b>buf</b> contains the record header bytes only.</p>
 
 </dd>
 <dt id="SSL3_RT_INNER_CONTENT_TYPE"><b>SSL3_RT_INNER_CONTENT_TYPE</b></dt>
 <dd>
 
 <p>Used when an encrypted TLSv1.3 record is sent or received. In encrypted TLSv1.3 records the content type in the record header is always SSL3_RT_APPLICATION_DATA. The real content type for the record is contained in an &quot;inner&quot; content type. <b>buf</b> contains the encoded &quot;inner&quot; content type byte.</p>
+
+</dd>
+<dt id="SSL3_RT_QUIC_DATAGRAM"><b>SSL3_RT_QUIC_DATAGRAM</b></dt>
+<dd>
+
+<p>Used when a QUIC datagram is sent or received.</p>
+
+</dd>
+<dt id="SSL3_RT_QUIC_PACKET"><b>SSL3_RT_QUIC_PACKET</b></dt>
+<dd>
+
+<p>Used when a QUIC packet is sent or received.</p>
+
+</dd>
+<dt id="SSL3_RT_QUIC_FRAME_FULL"><b>SSL3_RT_QUIC_FRAME_FULL</b></dt>
+<dd>
+
+<p>Used when a QUIC frame is sent or received. This is only used for non-crypto and stream data related frames. The full QUIC frame data is supplied.</p>
+
+</dd>
+<dt id="SSL3_RT_QUIC_FRAME_HEADER"><b>SSL3_RT_QUIC_FRAME_HEADER</b></dt>
+<dd>
+
+<p>Used when a QUIC stream data or crypto frame is sent or received. Only the QUIC frame header data is supplied.</p>
+
+</dd>
+<dt id="SSL3_RT_QUIC_FRAME_PADDING"><b>SSL3_RT_QUIC_FRAME_PADDING</b></dt>
+<dd>
+
+<p>Used when a sequence of one or more QUIC padding frames is sent or received. A padding frame consists of a single byte and it is common to have multiple such frames in a sequence. Rather than supplying each frame individually the callback will supply all the padding frames in one go via this pseudo content type.</p>
 
 </dd>
 </dl>
@@ -128,9 +163,15 @@ void SSL_set_msg_callback_arg(SSL *ssl, void *arg);</code></pre>
 
 <p>The pseudo content type <b>SSL3_RT_INNER_CONTENT_TYPE</b> was added in OpenSSL 1.1.1.</p>
 
+<p>The pseudo content types <b>SSL3_RT_QUIC_DATAGRAM</b>, <b>SSL3_RT_QUIC_PACKET</b>, <b>SSL3_RT_QUIC_FRAME_FULL</b>, <b>SSL3_RT_QUIC_FRAME_HEADER</b> and <b>SSL3_RT_QUIC_FRAME_PADDING</b> were added in OpenSSL 3.2.</p>
+
+<p>In versions previous to OpenSSL 3.0 <i>cb</i> was called with 0 as <i>version</i> for the pseudo content type <b>SSL3_RT_HEADER</b> for TLS records.</p>
+
+<p>In versions previous to OpenSSL 3.2 <i>cb</i> was called with 0 as <i>version</i> for the pseudo content type <b>SSL3_RT_HEADER</b> for DTLS records.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

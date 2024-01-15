@@ -29,7 +29,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>OSSL_STORE_CTX, OSSL_STORE_post_process_info_fn, OSSL_STORE_open, OSSL_STORE_open_ex, OSSL_STORE_ctrl, OSSL_STORE_load, OSSL_STORE_eof, OSSL_STORE_error, OSSL_STORE_close - Types and functions to read objects from a URI</p>
+<p>OSSL_STORE_CTX, OSSL_STORE_post_process_info_fn, OSSL_STORE_open, OSSL_STORE_open_ex, OSSL_STORE_ctrl, OSSL_STORE_load, OSSL_STORE_eof, OSSL_STORE_delete, OSSL_STORE_error, OSSL_STORE_close - Types and functions to read objects from a URI</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -53,6 +53,9 @@ OSSL_STORE_open_ex(const char *uri, OSSL_LIB_CTX *libctx, const char *propq,
 
 OSSL_STORE_INFO *OSSL_STORE_load(OSSL_STORE_CTX *ctx);
 int OSSL_STORE_eof(OSSL_STORE_CTX *ctx);
+int OSSL_STORE_delete(const char *uri, OSSL_LIB_CTX *libctx, const char *propq,
+                      const UI_METHOD *ui_method, void *ui_data,
+                      const OSSL_PARAM params[]);
 int OSSL_STORE_error(OSSL_STORE_CTX *ctx);
 int OSSL_STORE_close(OSSL_STORE_CTX *ctx);</code></pre>
 
@@ -92,6 +95,8 @@ int OSSL_STORE_close(OSSL_STORE_CTX *ctx);</code></pre>
 
 <p>OSSL_STORE_load() takes a <b>OSSL_STORE_CTX</b> and tries to load the next available object and return it wrapped with <b>OSSL_STORE_INFO</b>.</p>
 
+<p>OSSL_STORE_delete() deletes the object identified by <i>uri</i>.</p>
+
 <p>OSSL_STORE_eof() takes a <b>OSSL_STORE_CTX</b> and checks if we&#39;ve reached the end of data.</p>
 
 <p>OSSL_STORE_error() takes a <b>OSSL_STORE_CTX</b> and checks if an error occurred in the last OSSL_STORE_load() call. Note that it may still be meaningful to try and load more objects, unless OSSL_STORE_eof() shows that the end of data has been reached.</p>
@@ -116,7 +121,7 @@ int OSSL_STORE_close(OSSL_STORE_CTX *ctx);</code></pre>
 
 <p>OSSL_STORE_error() returns 1 if an error occurred in an OSSL_STORE_load() call, otherwise 0.</p>
 
-<p>OSSL_STORE_ctrl() and OSSL_STORE_close() returns 1 on success, or 0 on failure.</p>
+<p>OSSL_STORE_delete(), OSSL_STORE_ctrl() and OSSL_STORE_close() return 1 on success, or 0 on failure.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -124,19 +129,19 @@ int OSSL_STORE_close(OSSL_STORE_CTX *ctx);</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
+<p>OSSL_STORE_delete() was added in OpenSSL 3.2.</p>
+
 <p>OSSL_STORE_open_ex() was added in OpenSSL 3.0.</p>
 
 <p><b>OSSL_STORE_CTX</b>, OSSL_STORE_post_process_info_fn(), OSSL_STORE_open(), OSSL_STORE_ctrl(), OSSL_STORE_load(), OSSL_STORE_eof() and OSSL_STORE_close() were added in OpenSSL 1.1.1.</p>
 
 <p>Handling of NULL <i>ctx</i> argument for OSSL_STORE_close() was introduced in OpenSSL 1.1.1h.</p>
 
-<p>OSSL_STORE_open_ex() was added in OpenSSL 3.0.</p>
-
 <p>OSSL_STORE_ctrl() and OSSL_STORE_vctrl() were deprecated in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

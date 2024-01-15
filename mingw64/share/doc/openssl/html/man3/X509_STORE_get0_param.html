@@ -29,16 +29,16 @@
 
 <pre><code>#include &lt;openssl/x509_vfy.h&gt;
 
-X509_VERIFY_PARAM *X509_STORE_get0_param(const X509_STORE *ctx);
-int X509_STORE_set1_param(X509_STORE *ctx, const X509_VERIFY_PARAM *pm);
-STACK_OF(X509_OBJECT) *X509_STORE_get0_objects(const X509_STORE *ctx);
-STACK_OF(X509) *X509_STORE_get1_all_certs(X509_STORE *st);</code></pre>
+X509_VERIFY_PARAM *X509_STORE_get0_param(const X509_STORE *xs);
+int X509_STORE_set1_param(X509_STORE *xs, const X509_VERIFY_PARAM *pm);
+STACK_OF(X509_OBJECT) *X509_STORE_get0_objects(const X509_STORE *xs);
+STACK_OF(X509) *X509_STORE_get1_all_certs(X509_STORE *xs);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>X509_STORE_set1_param() sets the verification parameters to <b>pm</b> for <b>ctx</b>.</p>
+<p>X509_STORE_set1_param() sets the verification parameters to <i>pm</i> for <i>xs</i>.</p>
 
-<p>X509_STORE_get0_param() retrieves an internal pointer to the verification parameters for <b>ctx</b>. The returned pointer must not be freed by the calling application</p>
+<p>X509_STORE_get0_param() retrieves an internal pointer to the verification parameters for <i>xs</i>. The returned pointer must not be freed by the calling application</p>
 
 <p>X509_STORE_get0_objects() retrieves an internal pointer to the store&#39;s X509 object cache. The cache contains <b>X509</b> and <b>X509_CRL</b> objects. The returned pointer must not be freed by the calling application.</p>
 

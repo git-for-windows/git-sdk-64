@@ -25,7 +25,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>ASYNC_get_wait_ctx, ASYNC_init_thread, ASYNC_cleanup_thread, ASYNC_start_job, ASYNC_pause_job, ASYNC_get_current_job, ASYNC_block_pause, ASYNC_unblock_pause, ASYNC_is_capable - asynchronous job management functions</p>
+<p>ASYNC_get_wait_ctx, ASYNC_init_thread, ASYNC_cleanup_thread, ASYNC_start_job, ASYNC_pause_job, ASYNC_get_current_job, ASYNC_block_pause, ASYNC_unblock_pause, ASYNC_is_capable, ASYNC_stack_alloc_fn, ASYNC_stack_free_fn, ASYNC_set_mem_functions, ASYNC_get_mem_functions - asynchronous job management functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -43,7 +43,14 @@ ASYNC_WAIT_CTX *ASYNC_get_wait_ctx(ASYNC_JOB *job);
 void ASYNC_block_pause(void);
 void ASYNC_unblock_pause(void);
 
-int ASYNC_is_capable(void);</code></pre>
+int ASYNC_is_capable(void);
+
+typedef void *(*ASYNC_stack_alloc_fn)(size_t *num);
+typedef void (*ASYNC_stack_free_fn)(void *addr);
+int ASYNC_set_mem_functions(ASYNC_stack_alloc_fn alloc_fn,
+                            ASYNC_stack_free_fn free_fn);
+void ASYNC_get_mem_functions(ASYNC_stack_alloc_fn *alloc_fn,
+                             ASYNC_stack_free_fn *free_fn);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -97,6 +104,8 @@ int ASYNC_is_capable(void);</code></pre>
 
 <p>Some platforms cannot support async operations. The ASYNC_is_capable() function can be used to detect whether the current platform is async capable or not.</p>
 
+<p>Custom memory allocation functions are supported for the POSIX platform. Custom memory allocation functions allow alternative methods of allocating stack memory such as mmap, or using stack memory from the current thread. Using an ASYNC_stack_alloc_fn callback also allows manipulation of the stack size, which defaults to 32k. The stack size can be altered by allocating a stack of a size different to the requested size, and passing back the new stack size in the callback&#39;s <i>*num</i> parameter.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>ASYNC_init_thread returns 1 on success or 0 otherwise.</p>
@@ -110,6 +119,8 @@ int ASYNC_is_capable(void);</code></pre>
 <p>ASYNC_get_wait_ctx() returns a pointer to the <b>ASYNC_WAIT_CTX</b> for the job.</p>
 
 <p>ASYNC_is_capable() returns 1 if the current platform is async capable or 0 otherwise.</p>
+
+<p>ASYNC_set_mem_functions returns 1 if custom stack allocators are supported by the current platform and no allocations have already occurred or 0 otherwise.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -263,7 +274,7 @@ Finishing</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

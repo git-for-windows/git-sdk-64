@@ -59,6 +59,8 @@ long SSL_get_mode(SSL *ssl);</code></pre>
 
 <p>Allow SSL_write_ex(..., n, &amp;r) to return with 0 &lt; r &lt; n (i.e. report success when just a single record has been written). This works in a similar way for SSL_write(). When not set (the default), SSL_write_ex() or SSL_write() will only report success once the complete chunk was written. Once SSL_write_ex() or SSL_write() returns successful, <b>r</b> bytes have been written and the next call to SSL_write_ex() or SSL_write() must only send the n-r bytes left, imitating the behaviour of write().</p>
 
+<p>This mode cannot be enabled while in the middle of an incomplete write operation.</p>
+
 </dd>
 <dt id="SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER">SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER</dt>
 <dd>
@@ -124,7 +126,7 @@ long SSL_get_mode(SSL *ssl);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

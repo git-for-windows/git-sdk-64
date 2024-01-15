@@ -96,6 +96,8 @@ long BIO_do_handshake(BIO *b);</code></pre>
 
 <p>BIO_set_ssl(), BIO_get_ssl(), BIO_set_ssl_mode(), BIO_set_ssl_renegotiate_bytes(), BIO_set_ssl_renegotiate_timeout(), BIO_get_num_renegotiates(), and BIO_do_handshake() are implemented as macros.</p>
 
+<p>BIO_ssl_copy_session_id() is not currently supported on QUIC SSL objects and fails if called on such an object.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>BIO_f_ssl() returns the SSL <b>BIO_METHOD</b> structure.</p>
@@ -104,7 +106,7 @@ long BIO_do_handshake(BIO *b);</code></pre>
 
 <p>BIO_new_ssl(), BIO_new_ssl_connect() and BIO_new_buffer_ssl_connect() return a valid <b>BIO</b> structure on success or <b>NULL</b> if an error occurred.</p>
 
-<p>BIO_ssl_copy_session_id() returns 1 on success or 0 on error.</p>
+<p>BIO_ssl_copy_session_id() returns 1 on success or 0 on error, or if called on a QUIC SSL object.</p>
 
 <p>BIO_do_handshake() returns 1 if the connection was established successfully. A zero or negative value is returned if the connection could not be established.</p>
 
@@ -244,7 +246,7 @@ BIO_free_all(sbio);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

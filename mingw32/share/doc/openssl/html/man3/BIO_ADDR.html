@@ -18,12 +18,13 @@
   <li><a href="#RAW-ADDRESSES">RAW ADDRESSES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>BIO_ADDR, BIO_ADDR_new, BIO_ADDR_clear, BIO_ADDR_free, BIO_ADDR_rawmake, BIO_ADDR_family, BIO_ADDR_rawaddress, BIO_ADDR_rawport, BIO_ADDR_hostname_string, BIO_ADDR_service_string, BIO_ADDR_path_string - BIO_ADDR routines</p>
+<p>BIO_ADDR, BIO_ADDR_new, BIO_ADDR_copy, BIO_ADDR_dup, BIO_ADDR_clear, BIO_ADDR_free, BIO_ADDR_rawmake, BIO_ADDR_family, BIO_ADDR_rawaddress, BIO_ADDR_rawport, BIO_ADDR_hostname_string, BIO_ADDR_service_string, BIO_ADDR_path_string - BIO_ADDR routines</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -33,6 +34,8 @@
 typedef union bio_addr_st BIO_ADDR;
 
 BIO_ADDR *BIO_ADDR_new(void);
+int BIO_ADDR_copy(BIO_ADDR *dst, const BIO_ADDR *src);
+BIO_ADDR *BIO_ADDR_dup(const BIO_ADDR *ap);
 void BIO_ADDR_free(BIO_ADDR *);
 void BIO_ADDR_clear(BIO_ADDR *ap);
 int BIO_ADDR_rawmake(BIO_ADDR *ap, int family,
@@ -50,7 +53,11 @@ char *BIO_ADDR_path_string(const BIO_ADDR *ap);</code></pre>
 
 <p>BIO_ADDR_new() creates a new unfilled <b>BIO_ADDR</b>, to be used with routines that will fill it with information, such as BIO_accept_ex().</p>
 
-<p>BIO_ADDR_free() frees a <b>BIO_ADDR</b> created with BIO_ADDR_new().</p>
+<p>BIO_ADDR_copy() copies the contents of <b>src</b> into <b>dst</b>. Neither <b>src</b> or <b>dst</b> can be NULL.</p>
+
+<p>BIO_ADDR_dup() creates a new <b>BIO_ADDR</b>, with a copy of the address data in <b>ap</b>.</p>
+
+<p>BIO_ADDR_free() frees a <b>BIO_ADDR</b> created with BIO_ADDR_new() or BIO_ADDR_dup();</p>
 
 <p>BIO_ADDR_clear() clears any data held within the provided <b>BIO_ADDR</b> and sets it back to an uninitialised state.</p>
 
@@ -76,15 +83,21 @@ char *BIO_ADDR_path_string(const BIO_ADDR *ap);</code></pre>
 
 <p>The string producing functions BIO_ADDR_hostname_string(), BIO_ADDR_service_string() and BIO_ADDR_path_string() will return <b>NULL</b> on error and leave an error indication on the OpenSSL error stack.</p>
 
+<p>BIO_ADDR_copy() returns 1 on success or 0 on error.</p>
+
 <p>All other functions described here return 0 or <b>NULL</b> when the information they should return isn&#39;t available.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man3/BIO_connect.html">BIO_connect(3)</a>, <a href="../man3/BIO_s_connect.html">BIO_s_connect(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>BIO_ADDR_copy() and BIO_ADDR_dup() were added in OpenSSL 3.2.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

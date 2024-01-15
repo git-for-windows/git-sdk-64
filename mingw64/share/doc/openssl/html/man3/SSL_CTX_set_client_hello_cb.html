@@ -24,7 +24,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>SSL_CTX_set_client_hello_cb, SSL_client_hello_cb_fn, SSL_client_hello_isv2, SSL_client_hello_get0_legacy_version, SSL_client_hello_get0_random, SSL_client_hello_get0_session_id, SSL_client_hello_get0_ciphers, SSL_client_hello_get0_compression_methods, SSL_client_hello_get1_extensions_present, SSL_client_hello_get0_ext - callback functions for early server-side ClientHello processing</p>
+<p>SSL_CTX_set_client_hello_cb, SSL_client_hello_cb_fn, SSL_client_hello_isv2, SSL_client_hello_get0_legacy_version, SSL_client_hello_get0_random, SSL_client_hello_get0_session_id, SSL_client_hello_get0_ciphers, SSL_client_hello_get0_compression_methods, SSL_client_hello_get1_extensions_present, SSL_client_hello_get_extension_order, SSL_client_hello_get0_ext - callback functions for early server-side ClientHello processing</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -40,6 +40,8 @@ size_t SSL_client_hello_get0_compression_methods(SSL *s,
                                                  const unsigned char **out);
 int SSL_client_hello_get1_extensions_present(SSL *s, int **out,
                                              size_t *outlen);
+int SSL_client_hello_get_extension_order(SSL *s, uint16_t *exts,
+                                         size_t *num_exts);
 int SSL_client_hello_get0_ext(SSL *s, unsigned int type, const unsigned char **out,
                               size_t *outlen);</code></pre>
 
@@ -54,6 +56,8 @@ int SSL_client_hello_get0_ext(SSL *s, unsigned int type, const unsigned char **o
 <p>Similarly, SSL_client_hello_get0_ext() provides access to individual extensions from the ClientHello on a per-extension basis. For the provided wire protocol extension type value, the extension value and length are returned in the output parameters (if present).</p>
 
 <p>SSL_client_hello_get1_extensions_present() can be used prior to SSL_client_hello_get0_ext(), to determine which extensions are present in the ClientHello before querying for them. The <b>out</b> and <b>outlen</b> parameters are both required, and on success the caller must release the storage allocated for <b>*out</b> using OPENSSL_free(). The contents of <b>*out</b> is an array of integers holding the numerical value of the TLS extension types in the order they appear in the ClientHello. <b>*outlen</b> contains the number of elements in the array. In situations when the ClientHello has no extensions, the function will return success with <b>*out</b> set to NULL and <b>*outlen</b> set to 0.</p>
+
+<p>SSL_client_hello_get_extension_order() is similar to SSL_client_hello_get1_extensions_present(), without internal memory allocation. When called with <b>exts</b> set to NULL, returns the number of extensions (e.g., to allocate storage for a subsequent call). Otherwise, <b>*exts</b> is populated with the ExtensionType values in the order that the corresponding extensions appeared in the ClientHello. <b>*num_exts</b> is an input/output parameter, used as input to supply the size of storage allocated by the caller, and as output to indicate how many ExtensionType values were written. If the input <b>*num_exts</b> is smaller then the number of extensions in question, that is treated as an error. A subsequent call with <b>exts</b> set to NULL can retrieve the size of storage needed. A ClientHello that contained no extensions is treated as success, with <b>*num_exts</b> set to 0.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -75,17 +79,19 @@ int SSL_client_hello_get0_ext(SSL *s, unsigned int type, const unsigned char **o
 
 <p>SSL_client_hello_get1_extensions_present() returns 1 on success and 0 on failure.</p>
 
+<p>SSL_client_hello_get_extension_order() returns 1 on success and 0 on failure.</p>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_CTX_set_tlsext_servername_callback.html">SSL_CTX_set_tlsext_servername_callback(3)</a>, <a href="../man3/SSL_bytes_to_cipher_list.html">SSL_bytes_to_cipher_list(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The SSL ClientHello callback, SSL_client_hello_isv2(), SSL_client_hello_get0_random(), SSL_client_hello_get0_session_id(), SSL_client_hello_get0_ciphers(), SSL_client_hello_get0_compression_methods(), SSL_client_hello_get0_ext(), and SSL_client_hello_get1_extensions_present() were added in OpenSSL 1.1.1.</p>
+<p>The SSL ClientHello callback, SSL_client_hello_isv2(), SSL_client_hello_get0_random(), SSL_client_hello_get0_session_id(), SSL_client_hello_get0_ciphers(), SSL_client_hello_get0_compression_methods(), SSL_client_hello_get0_ext(), and SSL_client_hello_get1_extensions_present() were added in OpenSSL 1.1.1. SSL_client_hello_get_extension_order() was added in OpenSSL 3.2.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2017-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2017-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

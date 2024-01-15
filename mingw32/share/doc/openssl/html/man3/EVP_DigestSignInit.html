@@ -141,7 +141,9 @@ int EVP_DigestSign(EVP_MD_CTX *ctx, unsigned char *sig,
 
 <p>For some key types and parameters the random number generator must be seeded. If the automatic seeding or reseeding of the OpenSSL CSPRNG fails due to external circumstances (see <a href="../man7/RAND.html">RAND(7)</a>), the operation will fail.</p>
 
-<p>The call to EVP_DigestSignFinal() internally finalizes a copy of the digest context. This means that calls to EVP_DigestSignUpdate() and EVP_DigestSignFinal() can be called later to digest and sign additional data.</p>
+<p>The call to EVP_DigestSignFinal() internally finalizes a copy of the digest context. This means that calls to EVP_DigestSignUpdate() and EVP_DigestSignFinal() can be called later to digest and sign additional data. Applications may disable this behavior by setting the EVP_MD_CTX_FLAG_FINALISE context flag via <a href="../man3/EVP_MD_CTX_set_flags.html">EVP_MD_CTX_set_flags(3)</a>.</p>
+
+<p>Note that not all providers support continuation, in case the selected provider does not allow to duplicate contexts EVP_DigestSignFinal() will finalize the digest context and attempting to process additional data via EVP_DigestSignUpdate() will result in an error.</p>
 
 <p>EVP_DigestSignInit() and EVP_DigestSignInit_ex() functions can be called multiple times on a context and the parameters set by previous calls should be preserved if the <i>pkey</i> parameter is NULL. The call then just resets the state of the <i>ctx</i>.</p>
 

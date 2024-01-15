@@ -218,7 +218,7 @@ void OSSL_PARAM_set_all_unmodified(OSSL_PARAM *params);</code></pre>
 
 <p>Native types will be converted as required only if the value is exactly representable by the target type or parameter. Apart from that, the functions must be used appropriately for the expected type of the parameter.</p>
 
-<p>OSSL_PARAM_get_BN() and OSSL_PARAM_set_BN() currently only support nonnegative <b>BIGNUM</b>s, and by consequence, only <b>OSSL_PARAM_UNSIGNED_INTEGER</b>. OSSL_PARAM_construct_BN() currently constructs an <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a> structure with the data type <b>OSSL_PARAM_UNSIGNED_INTEGER</b>.</p>
+<p>OSSL_PARAM_get_BN() and OSSL_PARAM_set_BN() only support nonnegative <b>BIGNUM</b>s when the desired data type is <b>OSSL_PARAM_UNSIGNED_INTEGER</b>. OSSL_PARAM_construct_BN() currently constructs an <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a> structure with the data type <b>OSSL_PARAM_UNSIGNED_INTEGER</b>.</p>
 
 <p>For OSSL_PARAM_construct_utf8_ptr() and OSSL_PARAM_consstruct_octet_ptr(), <i>bsize</i> is not relevant if the purpose is to send the <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a> array to a <i>responder</i>, i.e. to get parameter data back. In that case, <i>bsize</i> can safely be given zero. See <a href="../man3/OSSL_PARAM.html">&quot;DESCRIPTION&quot; in OSSL_PARAM(3)</a> for further information on the possible purposes.</p>
 

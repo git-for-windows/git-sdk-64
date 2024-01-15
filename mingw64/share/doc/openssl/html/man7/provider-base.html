@@ -27,6 +27,7 @@
       <li>
         <ul>
           <li><a href="#TLS-GROUP-Capability">&quot;TLS-GROUP&quot; Capability</a></li>
+          <li><a href="#TLS-SIGALG-Capability">&quot;TLS-SIGALG&quot; Capability</a></li>
         </ul>
       </li>
     </ul>
@@ -527,6 +528,92 @@ data3 = foo,bar</code></pre>
 </dd>
 </dl>
 
+<h3 id="TLS-SIGALG-Capability">&quot;TLS-SIGALG&quot; Capability</h3>
+
+<p>The &quot;TLS-SIGALG&quot; capability can be queried by libssl to discover the list of TLS signature algorithms that a provider can support. Each signature supported can be used for client- or server-authentication in addition to the built-in signature algorithms. TLS1.3 clients can advertise the list of TLS signature algorithms they support in the signature_algorithms extension, and TLS servers can select an algorithm from the offered list that they also support. In this way a provider can add to the list of signature algorithms that libssl already supports with additional ones.</p>
+
+<p>Each TLS signature algorithm that a provider supports should be described via the callback passed in through the provider_get_capabilities function. Each algorithm can have the following details supplied:</p>
+
+<dl>
+
+<dt id="iana-name-OSSL_CAPABILITY_TLS_SIGALG_IANA_NAME-UTF8-string">&quot;iana-name&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_IANA_NAME</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>The name of the signature algorithm as given in the IANA TLS Signature Scheme registry as &quot;Description&quot;: <a href="https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-signaturescheme">https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-signaturescheme</a>. This value must be supplied.</p>
+
+</dd>
+<dt id="iana-code-point-OSSL_CAPABILITY_TLS_SIGALG_CODE_POINT-unsigned-integer">&quot;iana-code-point&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_CODE_POINT</b>) &lt;unsigned integer&gt;</dt>
+<dd>
+
+<p>The TLS algorithm ID value as given in the IANA TLS SignatureScheme registry. This value must be supplied.</p>
+
+</dd>
+<dt id="sigalg-name-OSSL_CAPABILITY_TLS_SIGALG_NAME-UTF8-string">&quot;sigalg-name&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_NAME</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>A name for the full (possibly composite hash-and-signature) signature algorithm. The provider may, but is not obligated to, provide a signature implementation with this name; if it doesn&#39;t, this is assumed to be a composite of a pure signature algorithm and a hash algorithm, which must be given with the parameters &quot;sig-name&quot; and &quot;hash-name&quot;. This value must be supplied.</p>
+
+</dd>
+<dt id="sigalg-oid-OSSL_CAPABILITY_TLS_SIGALG_OID-UTF8-string">&quot;sigalg-oid&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_OID</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>The OID of the &quot;sigalg-name&quot; algorithm in canonical numeric text form. If this parameter is given, OBJ_create() will be used to create an OBJ and a NID for this OID, using the &quot;sigalg-name&quot; parameter for its (short) name. Otherwise, it&#39;s assumed to already exist in the object database, possibly done by the provider with the core_obj_create() upcall. This value is optional.</p>
+
+</dd>
+<dt id="sig-name-OSSL_CAPABILITY_TLS_SIGALG_SIG_NAME-UTF8-string">&quot;sig-name&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_SIG_NAME</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>The name of the pure signature algorithm that is part of a composite &quot;sigalg-name&quot;. If &quot;sigalg-name&quot; is implemented by the provider, this parameter is redundant and must not be given. This value is optional.</p>
+
+</dd>
+<dt id="sig-oid-OSSL_CAPABILITY_TLS_SIGALG_SIG_OID-UTF8-string">&quot;sig-oid&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_SIG_OID</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>The OID of the &quot;sig-name&quot; algorithm in canonical numeric text form. If this parameter is given, OBJ_create() will be used to create an OBJ and a NID for this OID, using the &quot;sig-name&quot; parameter for its (short) name. Otherwise, it is assumed to already exist in the object database. This can be done by the provider using the core_obj_create() upcall. This value is optional.</p>
+
+</dd>
+<dt id="hash-name-OSSL_CAPABILITY_TLS_SIGALG_HASH_NAME-UTF8-string">&quot;hash-name&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_HASH_NAME</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>The name of the hash algorithm that is part of a composite &quot;sigalg-name&quot;. If &quot;sigalg-name&quot; is implemented by the provider, this parameter is redundant and must not be given. This value is optional.</p>
+
+</dd>
+<dt id="hash-oid-OSSL_CAPABILITY_TLS_SIGALG_HASH_OID-UTF8-string">&quot;hash-oid&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_HASH_OID</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>The OID of the &quot;hash-name&quot; algorithm in canonical numeric text form. If this parameter is given, OBJ_create() will be used to create an OBJ and a NID for this OID, using the &quot;hash-name&quot; parameter for its (short) name. Otherwise, it&#39;s assumed to already exist in the object database, possibly done by the provider with the core_obj_create() upcall. This value is optional.</p>
+
+</dd>
+<dt id="key-type-OSSL_CAPABILITY_TLS_SIGALG_KEYTYPE-UTF8-string">&quot;key-type&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_KEYTYPE</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>The key type of the public key of applicable certificates. If this parameter isn&#39;t present, it&#39;s assumed to be the same as &quot;sig-name&quot; if that&#39;s present, otherwise &quot;sigalg-name&quot;. This value is optional.</p>
+
+</dd>
+<dt id="key-type-oid-OSSL_CAPABILITY_TLS_SIGALG_KEYTYPE_OID-UTF8-string">&quot;key-type-oid&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_KEYTYPE_OID</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>The OID of the &quot;key-type&quot; in canonical numeric text form. If this parameter is given, OBJ_create() will be used to create an OBJ and a NID for this OID, using the &quot;key-type&quot; parameter for its (short) name. Otherwise, it&#39;s assumed to already exist in the object database, possibly done by the provider with the core_obj_create() upcall. This value is optional.</p>
+
+</dd>
+<dt id="sec-bits-OSSL_CAPABILITY_TLS_SIGALG_SECURITY_BITS-unsigned-integer">&quot;sec-bits&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_SECURITY_BITS</b>) &lt;unsigned integer&gt;</dt>
+<dd>
+
+<p>The number of bits of security offered by keys of this algorithm. The number of bits should be comparable with the ones given in table 2 and 3 of the NIST SP800-57 document. This number is used to determine the security strength of the algorithm if no digest algorithm has been registered that otherwise defines the security strength. If the signature algorithm implements its own digest internally, this value needs to be set to properly reflect the overall security strength. This value must be supplied.</p>
+
+</dd>
+<dt id="tls-min-tls-OSSL_CAPABILITY_TLS_SIGALG_MIN_TLS-integer">&quot;tls-min-tls&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_MIN_TLS</b>) &lt;integer&gt;</dt>
+<dd>
+
+</dd>
+<dt id="tls-max-tls-OSSL_CAPABILITY_TLS_SIGALG_MAX_TLS-integer">&quot;tls-max-tls&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_MAX_TLS</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>These parameters can be used to describe the minimum and maximum TLS versions supported by the signature algorithm. The values equate to the on-the-wire encoding of the various TLS versions. For example TLSv1.3 is 0x0304 (772 decimal), and TLSv1.2 is 0x0303 (771 decimal). A 0 indicates that there is no defined minimum or maximum. A -1 indicates that the signature algorithm should not be used in that protocol. Presently values representing anything other than TLS1.3 mean that the complete algorithm is ignored.</p>
+
+</dd>
+</dl>
+
 <h1 id="NOTES">NOTES</h1>
 
 <p>The core_obj_create() and core_obj_add_sigid() functions were not thread safe in OpenSSL 3.0.</p>
@@ -544,7 +631,7 @@ data3 = foo,bar</code></pre>
 
 static const OSSL_ITEM reasons[] = {
     { E_MALLOC, &quot;memory allocation failure&quot; }.
-    { 0, NULL } /* Termination */
+    OSSL_DISPATCH_END
 };
 
 /*
@@ -624,7 +711,7 @@ static const OSSL_DISPATCH foo_fns[] = {
     { OSSL_FUNC_BAR_INIT, (void (*)(void))foo_init },
     { OSSL_FUNC_BAR_UPDATE, (void (*)(void))foo_update },
     { OSSL_FUNC_BAR_FINAL, (void (*)(void))foo_final },
-    { 0, NULL }
+    OSSL_DISPATCH_END
 };
 
 static const OSSL_ALGORITHM bars[] = {
@@ -656,7 +743,7 @@ static const OSSL_DISPATCH prov_fns[] = {
     { OSSL_FUNC_PROVIDER_TEARDOWN, (void (*)(void))p_teardown },
     { OSSL_FUNC_PROVIDER_QUERY_OPERATION, (void (*)(void))p_query },
     { OSSL_FUNC_PROVIDER_GET_REASON_STRINGS, (void (*)(void))p_reasons },
-    { 0, NULL }
+    OSSL_DISPATCH_END
 };
 
 int OSSL_provider_init(const OSSL_CORE_HANDLE *handle,

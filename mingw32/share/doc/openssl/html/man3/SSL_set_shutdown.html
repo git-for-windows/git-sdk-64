@@ -71,11 +71,15 @@ int SSL_get_shutdown(const SSL *ssl);</code></pre>
 
 <p>If a close_notify was received, SSL_RECEIVED_SHUTDOWN will be set, for setting SSL_SENT_SHUTDOWN the application must however still call <a href="../man3/SSL_shutdown.html">SSL_shutdown(3)</a> or SSL_set_shutdown() itself.</p>
 
+<p>SSL_set_shutdown() is not supported for QUIC SSL objects.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>SSL_set_shutdown() does not return diagnostic information.</p>
 
-<p>SSL_get_shutdown() returns the current setting.</p>
+<p>SSL_get_shutdown() returns the current shutdown state as set or based on the actual connection state.</p>
+
+<p>SSL_get_shutdown() returns 0 if called on a QUIC stream SSL object. If it is called on a QUIC connection SSL object, it returns a value with SSL_SENT_SHUTDOWN set if CONNECTION_CLOSE has been sent to the peer and it returns a value with SSL_RECEIVED_SHUTDOWN set if CONNECTION_CLOSE has been received from the peer or the QUIC connection is fully terminated for other reasons.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -83,7 +87,7 @@ int SSL_get_shutdown(const SSL *ssl);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

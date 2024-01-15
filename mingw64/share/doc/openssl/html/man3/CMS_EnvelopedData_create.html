@@ -52,15 +52,15 @@ CMS_ContentInfo *CMS_AuthEnvelopedData_create(const EVP_CIPHER *cipher);</code><
 
 <p>The <b>CMS_ContentInfo</b> structure needs to be finalized using <a href="../man3/CMS_final.html">CMS_final(3)</a> and then freed using <a href="../man3/CMS_ContentInfo_free.html">CMS_ContentInfo_free(3)</a>.</p>
 
-<p>CMS_EnvelopedData_create() and CMS_AuthEnvelopedData_create are similar to CMS_EnvelopedData_create_ex() and CMS_AuthEnvelopedData_create_ex() but use default values of NULL for the library context <i>libctx</i> and the property query <i>propq</i>.</p>
+<p>CMS_EnvelopedData_create() and CMS_AuthEnvelopedData_create() are similar to CMS_EnvelopedData_create_ex() and CMS_AuthEnvelopedData_create_ex() but use default values of NULL for the library context <i>libctx</i> and the property query <i>propq</i>.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>Although CMS_EnvelopedData_create() and CMS_AuthEnvelopedData_create() allocate a new <b>CMS_ContentInfo</b> structure, they are not usually used in applications. The wrappers <a href="../man3/CMS_encrypt.html">CMS_encrypt(3)</a> and <a href="../man3/CMS_decrypt.html">CMS_decrypt(3)</a> are often used instead.</p>
+<p>Although CMS_EnvelopedData_create_ex(), and CMS_EnvelopedData_create(), CMS_AuthEnvelopedData_create_ex(), and CMS_AuthEnvelopedData_create() allocate a new <b>CMS_ContentInfo</b> structure, they are not usually used in applications. The wrappers <a href="../man3/CMS_encrypt.html">CMS_encrypt(3)</a> and <a href="../man3/CMS_decrypt.html">CMS_decrypt(3)</a> are often used instead.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>If the allocation fails, CMS_EnvelopedData_create() and CMS_AuthEnvelopedData_create() return NULL and set an error code that can be obtained by <a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>. Otherwise they return a pointer to the newly allocated structure.</p>
+<p>If the allocation fails, CMS_EnvelopedData_create_ex(), CMS_EnvelopedData_create(), CMS_AuthEnvelopedData_create_ex(), and CMS_AuthEnvelopedData_create() return NULL and set an error code that can be obtained by <a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>. Otherwise they return a pointer to the newly allocated structure.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

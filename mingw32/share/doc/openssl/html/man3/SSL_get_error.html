@@ -69,13 +69,15 @@ int SSL_get_error(const SSL *ssl, int ret);</code></pre>
 
 <p>The operation did not complete and can be retried later.</p>
 
-<p><b>SSL_ERROR_WANT_READ</b> is returned when the last operation was a read operation from a nonblocking <b>BIO</b>. It means that not enough data was available at this time to complete the operation. If at a later time the underlying <b>BIO</b> has data available for reading the same function can be called again.</p>
+<p>For non-QUIC SSL objects, <b>SSL_ERROR_WANT_READ</b> is returned when the last operation was a read operation from a nonblocking <b>BIO</b>. It means that not enough data was available at this time to complete the operation. If at a later time the underlying <b>BIO</b> has data available for reading the same function can be called again.</p>
 
 <p>SSL_read() and SSL_read_ex() can also set <b>SSL_ERROR_WANT_READ</b> when there is still unprocessed data available at either the <b>SSL</b> or the <b>BIO</b> layer, even for a blocking <b>BIO</b>. See <a href="../man3/SSL_read.html">SSL_read(3)</a> for more information.</p>
 
-<p><b>SSL_ERROR_WANT_WRITE</b> is returned when the last operation was a write to a nonblocking <b>BIO</b> and it was unable to sent all data to the <b>BIO</b>. When the <b>BIO</b> is writable again, the same function can be called again.</p>
+<p>For non-QUIC SSL objects, <b>SSL_ERROR_WANT_WRITE</b> is returned when the last operation was a write to a nonblocking <b>BIO</b> and it was unable to sent all data to the <b>BIO</b>. When the <b>BIO</b> is writable again, the same function can be called again.</p>
 
 <p>Note that the retry may again lead to an <b>SSL_ERROR_WANT_READ</b> or <b>SSL_ERROR_WANT_WRITE</b> condition. There is no fixed upper limit for the number of iterations that may be necessary until progress becomes visible at application protocol level.</p>
+
+<p>For QUIC SSL objects, the meaning of <b>SSL_ERROR_WANT_READ</b> and <b>SSL_ERROR_WANT_WRITE</b> have different but largely compatible semantics. Since QUIC implements its own flow control and uses UDP datagrams, backpressure conditions in terms of the underlying BIO providing network I/O are not directly relevant to the circumstances in which these errors are produced. In particular, <b>SSL_ERROR_WANT_WRITE</b> indicates that the OpenSSL internal send buffer for a given QUIC stream has been filled. Likewise, <b>SSL_ERROR_WANT_READ</b> indicates that the OpenSSL internal receive buffer for a given QUIC stream is empty.</p>
 
 <p>It is safe to call SSL_read() or SSL_read_ex() when more data is available even when the call that set this error was an SSL_write() or SSL_write_ex(). However, if the call was an SSL_write() or SSL_write_ex(), it should be called again to continue sending the application data. If you get <b>SSL_ERROR_WANT_WRITE</b> from SSL_write() or SSL_write_ex() then you should not do any other operation that could trigger <b>IO</b> other than to repeat the previous SSL_write() call.</p>
 
@@ -140,7 +142,7 @@ int SSL_get_error(const SSL *ssl, int ret);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

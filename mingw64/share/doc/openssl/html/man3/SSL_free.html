@@ -40,6 +40,20 @@ void SSL_free(SSL *ssl);</code></pre>
 
 <p>The ssl session has reference counts from two users: the SSL object, for which the reference count is removed by SSL_free() and the internal session cache. If the session is considered bad, because <a href="../man3/SSL_shutdown.html">SSL_shutdown(3)</a> was not called for the connection and <a href="../man3/SSL_set_shutdown.html">SSL_set_shutdown(3)</a> was not used to set the SSL_SENT_SHUTDOWN state, the session will also be removed from the session cache as required by RFC2246.</p>
 
+<p>When used to free a QUIC stream SSL object, the respective sending and receiving parts of the stream are reset unless those parts have already been concluded normally:</p>
+
+<ul>
+
+<li><p>If the stream has a sending part (in other words, if it is bidirectional or a locally-initiated unidirectional stream) and that part has not been concluded via a call to <a href="../man3/SSL_stream_conclude.html">SSL_stream_conclude(3)</a> or <a href="../man3/SSL_stream_reset.html">SSL_stream_reset(3)</a> on the QUIC stream SSL object, a call to SSL_free() automatically resets the sending part of the stream as though <a href="../man3/SSL_stream_reset.html">SSL_stream_reset(3)</a> were called with a QUIC application error code of 0.</p>
+
+</li>
+<li><p>If the stream has a receiving part (in other words, if it is bidirectional or a remotely-initiated unidirectional stream), and the peer has not yet concluded that part of the stream normally (such as via a call to <a href="../man3/SSL_stream_conclude.html">SSL_stream_conclude(3)</a> on its own end), a call to SSL_free() automatically requests the reset of the receiving part of the stream using a QUIC STOP_SENDING frame with a QUIC application error code of 0. Note that as per the QUIC protocol, this will automatically cause the peer to reset that part of the stream in turn (which is its sending part).</p>
+
+</li>
+</ul>
+
+<p>A QUIC stream SSL object maintains a reference to a QUIC connection SSL object internally, therefore a QUIC stream SSL object and its parent QUIC connection SSL object can be freed in either order.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>SSL_free() does not provide diagnostic information.</p>
@@ -48,7 +62,7 @@ void SSL_free(SSL *ssl);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -27,7 +27,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl speed</b> [<b>-help</b>] [<b>-config</b> <i>filename</i>] [<b>-elapsed</b>] [<b>-evp</b> <i>algo</i>] [<b>-hmac</b> <i>algo</i>] [<b>-cmac</b> <i>algo</i>] [<b>-mb</b>] [<b>-aead</b>] [<b>-multi</b> <i>num</i>] [<b>-async_jobs</b> <i>num</i>] [<b>-misalign</b> <i>num</i>] [<b>-decrypt</b>] [<b>-primes</b> <i>num</i>] [<b>-seconds</b> <i>num</i>] [<b>-bytes</b> <i>num</i>] [<b>-mr</b>] [<b>-mlock</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<i>algorithm</i> ...]</p>
+<p><b>openssl speed</b> [<b>-help</b>] [<b>-config</b> <i>filename</i>] [<b>-elapsed</b>] [<b>-evp</b> <i>algo</i>] [<b>-hmac</b> <i>algo</i>] [<b>-cmac</b> <i>algo</i>] [<b>-mb</b>] [<b>-aead</b>] [<b>-kem-algorithms</b>] [<b>-signature-algorithms</b>] [<b>-multi</b> <i>num</i>] [<b>-async_jobs</b> <i>num</i>] [<b>-misalign</b> <i>num</i>] [<b>-decrypt</b>] [<b>-primes</b> <i>num</i>] [<b>-seconds</b> <i>num</i>] [<b>-bytes</b> <i>num</i>] [<b>-mr</b>] [<b>-mlock</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<i>algorithm</i> ...]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -111,6 +111,18 @@
 <p>Benchmark EVP-named AEAD cipher in TLS-like sequence.</p>
 
 </dd>
+<dt id="kem-algorithms"><b>-kem-algorithms</b></dt>
+<dd>
+
+<p>Benchmark KEM algorithms: key generation, encapsulation, decapsulation.</p>
+
+</dd>
+<dt id="signature-algorithms"><b>-signature-algorithms</b></dt>
+<dd>
+
+<p>Benchmark signature algorithms: key generation, signature, verification.</p>
+
+</dd>
 <dt id="primes-num"><b>-primes</b> <i>num</i></dt>
 <dd>
 
@@ -185,9 +197,11 @@
 
 <p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
 
+<p>DSA512 was removed in OpenSSL 3.2.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

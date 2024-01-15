@@ -26,7 +26,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>OSSL_DISPATCH - OpenSSL Core type to define a dispatchable function table</p>
+<p>OSSL_DISPATCH, OSSL_DISPATCH_END - OpenSSL Core type to define a dispatchable function table</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -36,13 +36,15 @@ typedef struct ossl_dispatch_st OSSL_DISPATCH;
 struct ossl_dispatch_st {
     int function_id;
     void (*function)(void);
-};</code></pre>
+};
+
+#define OSSL_DISPATCH_END</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>This type is a tuple of function identity and function pointer. Arrays of this type are passed between the OpenSSL libraries and the providers to describe what functionality one side provides to the other.</p>
 
-<p>Arrays of this type must be terminated with a tuple having function identity zero and function pointer NULL.</p>
+<p>Arrays of this type must be terminated with the OSSL_DISPATCH_END macro.</p>
 
 <h2 id="OSSL_DISPATCH-fields"><b>OSSL_DISPATCH</b> fields</h2>
 
@@ -76,7 +78,7 @@ struct ossl_dispatch_st {
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2022-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -17,6 +17,7 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#WARNINGS">WARNINGS</a></li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
@@ -56,6 +57,12 @@ int EVP_PKEY_decrypt(EVP_PKEY_CTX *ctx,
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>EVP_PKEY_decrypt_init(), EVP_PKEY_decrypt_init_ex() and EVP_PKEY_decrypt() return 1 for success and 0 or a negative value for failure. In particular a return value of -2 indicates the operation is not supported by the public key algorithm.</p>
+
+<h1 id="WARNINGS">WARNINGS</h1>
+
+<p>In OpenSSL versions before 3.2.0, when used in PKCS#1 v1.5 padding, both the return value from the EVP_PKEY_decrypt() and the <b>outlen</b> provided information useful in mounting a Bleichenbacher attack against the used private key. They had to processed in a side-channel free way.</p>
+
+<p>Since version 3.2.0, the EVP_PKEY_decrypt() method when used with PKCS#1 v1.5 padding doesn&#39;t return an error in case it detects an error in padding, instead it returns a pseudo-randomly generated message, removing the need of side-channel secure code from applications using OpenSSL.</p>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
@@ -106,7 +113,7 @@ if (EVP_PKEY_decrypt(ctx, out, &amp;outlen, in, inlen) &lt;= 0)
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2006-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2006-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

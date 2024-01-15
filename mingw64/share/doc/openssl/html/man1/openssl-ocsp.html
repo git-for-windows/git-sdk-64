@@ -41,7 +41,7 @@
 
 <h2 id="OCSP-Client">OCSP Client</h2>
 
-<p><b>openssl</b> <b>ocsp</b> [<b>-help</b>] [<b>-out</b> <i>file</i>] [<b>-issuer</b> <i>file</i>] [<b>-cert</b> <i>file</i>] [<b>-no_certs</b>] [<b>-serial</b> <i>n</i>] [<b>-signer</b> <i>file</i>] [<b>-signkey</b> <i>file</i>] [<b>-sign_other</b> <i>file</i>] [<b>-nonce</b>] [<b>-no_nonce</b>] [<b>-req_text</b>] [<b>-resp_text</b>] [<b>-text</b>] [<b>-reqout</b> <i>file</i>] [<b>-respout</b> <i>file</i>] [<b>-reqin</b> <i>file</i>] [<b>-respin</b> <i>file</i>] [<b>-url</b> <i>URL</i>] [<b>-host</b> <i>host</i>:<i>port</i>] [<b>-path</b>] [<b>-proxy</b> <i>[http[s]://][userinfo@]host[:port][/path]</i>] [<b>-no_proxy</b> <i>addresses</i>] [<b>-header</b>] [<b>-timeout</b> <i>seconds</i>] [<b>-VAfile</b> <i>file</i>] [<b>-validity_period</b> <i>n</i>] [<b>-status_age</b> <i>n</i>] [<b>-noverify</b>] [<b>-verify_other</b> <i>file</i>] [<b>-trust_other</b>] [<b>-no_intern</b>] [<b>-no_signature_verify</b>] [<b>-no_cert_verify</b>] [<b>-no_chain</b>] [<b>-no_cert_checks</b>] [<b>-no_explicit</b>] [<b>-port</b> <i>num</i>] [<b>-ignore_err</b>]</p>
+<p><b>openssl</b> <b>ocsp</b> [<b>-help</b>] [<b>-out</b> <i>file</i>] [<b>-issuer</b> <i>file</i>] [<b>-cert</b> <i>file</i>] [<b>-no_certs</b>] [<b>-serial</b> <i>n</i>] [<b>-signer</b> <i>file</i>] [<b>-signkey</b> <i>file</i>] [<b>-sign_other</b> <i>file</i>] [<b>-nonce</b>] [<b>-no_nonce</b>] [<b>-req_text</b>] [<b>-resp_text</b>] [<b>-text</b>] [<b>-reqout</b> <i>file</i>] [<b>-respout</b> <i>file</i>] [<b>-reqin</b> <i>file</i>] [<b>-respin</b> <i>file</i>] [<b>-url</b> <i>URL</i>] [<b>-host</b> <i>host</i>:<i>port</i>] [<b>-path</b> <i>pathname</i>] [<b>-proxy</b> <i>[http[s]://][userinfo@]host[:port][/path]</i>] [<b>-no_proxy</b> <i>addresses</i>] [<b>-header</b>] [<b>-timeout</b> <i>seconds</i>] [<b>-VAfile</b> <i>file</i>] [<b>-validity_period</b> <i>n</i>] [<b>-status_age</b> <i>n</i>] [<b>-noverify</b>] [<b>-verify_other</b> <i>file</i>] [<b>-trust_other</b>] [<b>-no_intern</b>] [<b>-no_signature_verify</b>] [<b>-no_cert_verify</b>] [<b>-no_chain</b>] [<b>-no_cert_checks</b>] [<b>-no_explicit</b>] [<b>-port</b> <i>num</i>] [<b>-ignore_err</b>]</p>
 
 <h2 id="OCSP-Server">OCSP Server</h2>
 
@@ -76,13 +76,17 @@
 <dt id="issuer-filename"><b>-issuer</b> <i>filename</i></dt>
 <dd>
 
-<p>This specifies the current issuer certificate. This option can be used multiple times. This option <b>MUST</b> come before any <b>-cert</b> options.</p>
+<p>This specifies the current issuer certificate. The input can be in PEM, DER, or PKCS#12 format.</p>
+
+<p>This option can be used multiple times. This option <b>MUST</b> come before any <b>-cert</b> options.</p>
 
 </dd>
 <dt id="cert-filename"><b>-cert</b> <i>filename</i></dt>
 <dd>
 
-<p>Add the certificate <i>filename</i> to the request. The issuer certificate is taken from the previous <b>-issuer</b> option, or an error occurs if no issuer certificate is specified.</p>
+<p>Add the certificate <i>filename</i> to the request. The input can be in PEM, DER, or PKCS#12 format.</p>
+
+<p>This option can be used multiple times. The issuer certificate is taken from the previous <b>-issuer</b> option, or an error occurs if no issuer certificate is specified.</p>
 
 </dd>
 <dt id="no_certs"><b>-no_certs</b></dt>
@@ -100,7 +104,9 @@
 <dt id="signer-filename--signkey-filename"><b>-signer</b> <i>filename</i>, <b>-signkey</b> <i>filename</i></dt>
 <dd>
 
-<p>Sign the OCSP request using the certificate specified in the <b>-signer</b> option and the private key specified by the <b>-signkey</b> option. If the <b>-signkey</b> option is not present then the private key is read from the same file as the certificate. If neither option is specified then the OCSP request is not signed.</p>
+<p>Sign the OCSP request using the certificate specified in the <b>-signer</b> option and the private key specified by the <b>-signkey</b> option. The input can be in PEM, DER, or PKCS#12 format.</p>
+
+<p>If the <b>-signkey</b> option is not present then the private key is read from the same file as the certificate. If neither option is specified then the OCSP request is not signed.</p>
 
 </dd>
 <dt id="sign_other-filename"><b>-sign_other</b> <i>filename</i></dt>
@@ -136,13 +142,13 @@
 <dt id="url-responder_url"><b>-url</b> <i>responder_url</i></dt>
 <dd>
 
-<p>Specify the responder URL. Both HTTP and HTTPS (SSL/TLS) URLs can be specified. The optional userinfo and fragment components are ignored. Any given query component is handled as part of the path component.</p>
+<p>Specify the responder host and optionally port and path via a URL. Both HTTP and HTTPS (SSL/TLS) URLs can be specified. The optional userinfo and fragment components are ignored. Any given query component is handled as part of the path component. For details, see the <b>-host</b> and <b>-path</b> options described next.</p>
 
 </dd>
-<dt id="host-hostname:port--path-pathname"><b>-host</b> <i>hostname</i>:<i>port</i>, <b>-path</b> <i>pathname</i></dt>
+<dt id="host-host:port--path-pathname"><b>-host</b> <i>host</i>:<i>port</i>, <b>-path</b> <i>pathname</i></dt>
 <dd>
 
-<p>If the <b>-host</b> option is present then the OCSP request is sent to the host <i>hostname</i> on port <i>port</i>. The <b>-path</b> option specifies the HTTP pathname to use or &quot;/&quot; by default. This is equivalent to specifying <b>-url</b> with scheme http:// and the given hostname, port, and pathname.</p>
+<p>If the <b>-host</b> option is present then the OCSP request is sent to the host <i>host</i> on port <i>port</i>. The <i>host</i> may be a domain name or an IP (v4 or v6) address, such as <code>127.0.0.1</code> or <code>[::1]</code> for localhost. The <b>-path</b> option specifies the HTTP pathname to use or &quot;/&quot; by default. This is equivalent to specifying <b>-url</b> with scheme http:// and the given <i>host</i>, <i>port</i>, and optional <i>pathname</i>.</p>
 
 </dd>
 <dt id="proxy-http-s-:-userinfo-host-:port-path"><b>-proxy</b> <i>[http[s]://][userinfo@]host[:port][/path]</i></dt>
@@ -294,13 +300,13 @@
 <dt id="CA-file"><b>-CA</b> <i>file</i></dt>
 <dd>
 
-<p>CA certificate corresponding to the revocation information in the index file given with <b>-index</b>. The input can be in PEM, DER, or PKCS#12 format.</p>
+<p>CA certificates corresponding to the revocation information in the index file given with <b>-index</b>. The input can be in PEM, DER, or PKCS#12 format.</p>
 
 </dd>
 <dt id="rsigner-file"><b>-rsigner</b> <i>file</i></dt>
 <dd>
 
-<p>The certificate to sign OCSP responses with.</p>
+<p>The certificate to sign OCSP responses with. The input can be in PEM, DER, or PKCS#12 format.</p>
 
 </dd>
 <dt id="rkey-file"><b>-rkey</b> <i>file</i></dt>
@@ -354,7 +360,7 @@
 <dt id="port-portnum"><b>-port</b> <i>portnum</i></dt>
 <dd>
 
-<p>Port to listen for OCSP requests on. The port may also be specified using the <b>url</b> option. A <code>0</code> argument indicates that any available port shall be chosen automatically.</p>
+<p>Port to listen for OCSP requests on. Both IPv4 and IPv6 are possible. The port may also be specified using the <b>-url</b> option. A <code>0</code> argument indicates that any available port shall be chosen automatically.</p>
 
 </dd>
 <dt id="ignore_err"><b>-ignore_err</b></dt>
@@ -458,7 +464,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

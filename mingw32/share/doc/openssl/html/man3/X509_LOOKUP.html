@@ -92,7 +92,7 @@ int X509_LOOKUP_by_alias(X509_LOOKUP *ctx, X509_LOOKUP_TYPE type,
 
 <p>X509_LOOKUP_set_method_data() and X509_LOOKUP_get_method_data() associates and retrieves a pointer to application data to and from the given <b>X509_LOOKUP</b>, respectively.</p>
 
-<p>X509_LOOKUP_ctrl_ex() is used to set or get additional data to or from a <b>X509_LOOKUP</b> structure or its associated <a href="../man3/X509_LOOKUP_METHOD.html">X509_LOOKUP_METHOD(3)</a>. The arguments of the control command are passed via <i>argc</i> and <i>argl</i>, its return value via <i>*ret</i>. The library context <i>libctx</i> and property query <i>propq</i> are used when fetching algorithms from providers. The meaning of the arguments depends on the <i>cmd</i> number of the control command. In general, this function is not called directly, but wrapped by a macro call, see below. The control <i>cmd</i>s known to OpenSSL are discussed in more depth in <a href="#Control-Commands">&quot;Control Commands&quot;</a>.</p>
+<p>X509_LOOKUP_ctrl_ex() is used to set or get additional data to or from a <b>X509_LOOKUP</b> structure using any control function in the associated <a href="../man3/X509_LOOKUP_METHOD.html">X509_LOOKUP_METHOD(3)</a>. The arguments of the control command are passed via <i>argc</i> and <i>argl</i>, its return value via <i>*ret</i>. The library context <i>libctx</i> and property query <i>propq</i> are used when fetching algorithms from providers. The meaning of the arguments depends on the <i>cmd</i> number of the control command. In general, this function is not called directly, but wrapped by a macro call, see below. The control <i>cmd</i>s known to OpenSSL are discussed in more depth in <a href="#Control-Commands">&quot;Control Commands&quot;</a>.</p>
 
 <p>X509_LOOKUP_ctrl() is similar to X509_LOOKUP_ctrl_ex() but uses NULL for the library context <i>libctx</i> and property query <i>propq</i>.</p>
 
@@ -152,11 +152,15 @@ int X509_LOOKUP_by_alias(X509_LOOKUP *ctx, X509_LOOKUP_TYPE type,
 
 <p>X509_LOOKUP_init() and X509_LOOKUP_shutdown() return 1 on success, or 0 on error.</p>
 
-<p>X509_LOOKUP_ctrl() returns -1 if the <b>X509_LOOKUP</b> doesn&#39;t have an associated <b>X509_LOOKUP_METHOD</b>, or 1 if the  doesn&#39;t have a control function. Otherwise, it returns what the control function in the <b>X509_LOOKUP_METHOD</b> returns, which is usually 1 on success and 0 in error.</p>
+<p>X509_LOOKUP_ctrl_ex() and X509_LOOKUP_ctrl() return -1 if the <b>X509_LOOKUP</b> doesn&#39;t have an associated <b>X509_LOOKUP_METHOD</b>, or 1 if the  doesn&#39;t have a control function. Otherwise, it returns what the control function in the <b>X509_LOOKUP_METHOD</b> returns, which is usually 1 on success and 0 on error but could also be -1 on failure.</p>
 
 <p>X509_LOOKUP_get_store() returns a <b>X509_STORE</b> pointer if there is one, otherwise NULL.</p>
 
-<p>X509_LOOKUP_by_subject_ex(), X509_LOOKUP_by_subject(), X509_LOOKUP_by_issuer_serial(), X509_LOOKUP_by_fingerprint(), and X509_LOOKUP_by_alias() all return 0 if there is no <b>X509_LOOKUP_METHOD</b> or that method doesn&#39;t implement the corresponding function. Otherwise, it returns what the corresponding function in the <b>X509_LOOKUP_METHOD</b> returns, which is usually 1 on success and 0 in error.</p>
+<p>X509_LOOKUP_by_subject_ex() returns 0 if there is no <b>X509_LOOKUP_METHOD</b> that implements any of the get_by_subject_ex() or get_by_subject() functions. It calls get_by_subject_ex() if present, otherwise get_by_subject(), and returns the result of the function, which is usually 1 on success and 0 on error.</p>
+
+<p>X509_LOOKUP_by_subject() is similar to X509_LOOKUP_by_subject_ex() but passes NULL for both the libctx and propq.</p>
+
+<p>X509_LOOKUP_by_issuer_serial(), X509_LOOKUP_by_fingerprint(), and X509_LOOKUP_by_alias() all return 0 if there is no <b>X509_LOOKUP_METHOD</b> or that method doesn&#39;t implement the corresponding function. Otherwise, they return what the corresponding function in the <b>X509_LOOKUP_METHOD</b> returns, which is usually 1 on success and 0 in error.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

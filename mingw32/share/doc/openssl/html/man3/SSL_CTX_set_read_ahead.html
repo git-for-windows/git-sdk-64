@@ -42,6 +42,8 @@ long SSL_CTX_get_default_read_ahead(SSL_CTX *ctx);</code></pre>
 
 <p>SSL_CTX_get_read_ahead() and SSL_get_read_ahead() indicate whether reading ahead has been set or not. SSL_CTX_get_default_read_ahead() is identical to SSL_CTX_get_read_ahead().</p>
 
+<p>These functions cannot be used with QUIC SSL objects. SSL_set_read_ahead() has no effect if called on a QUIC SSL object.</p>
+
 <h1 id="NOTES">NOTES</h1>
 
 <p>These functions have no impact when used with DTLS. The return values for SSL_CTX_get_read_head() and SSL_get_read_ahead() are undefined for DTLS. Setting <b>read_ahead</b> can impact the behaviour of the SSL_pending() function (see <a href="../man3/SSL_pending.html">SSL_pending(3)</a>).</p>
@@ -60,7 +62,7 @@ long SSL_CTX_get_default_read_ahead(SSL_CTX *ctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

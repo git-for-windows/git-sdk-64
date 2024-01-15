@@ -22,7 +22,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>d2i_SSL_SESSION, i2d_SSL_SESSION - convert SSL_SESSION object from/to ASN1 representation</p>
+<p>d2i_SSL_SESSION, d2i_SSL_SESSION_ex, i2d_SSL_SESSION - convert SSL_SESSION object from/to ASN1 representation</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -30,6 +30,9 @@
 
 SSL_SESSION *d2i_SSL_SESSION(SSL_SESSION **a, const unsigned char **pp,
                              long length);
+SSL_SESSION *d2i_SSL_SESSION_ex(SSL_SESSION **a, const unsigned char **pp,
+                                long length, OSSL_LIB_CTX *libctx,
+                                const char *propq);
 int i2d_SSL_SESSION(SSL_SESSION *in, unsigned char **pp);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
@@ -40,7 +43,7 @@ int i2d_SSL_SESSION(SSL_SESSION *in, unsigned char **pp);</code></pre>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>d2i_SSL_SESSION() returns a pointer to the newly allocated SSL_SESSION object. In case of failure the NULL-pointer is returned and the error message can be retrieved from the error stack.</p>
+<p>d2i_SSL_SESSION() and d2i_SSL_SESSION_ex() return a pointer to the newly allocated SSL_SESSION object. In case of failure the NULL-pointer is returned and the error message can be retrieved from the error stack.</p>
 
 <p>i2d_SSL_SESSION() returns the size of the ASN1 representation in bytes. When the session is not valid, <b>0</b> is returned and no operation is performed.</p>
 
@@ -50,7 +53,7 @@ int i2d_SSL_SESSION(SSL_SESSION *in, unsigned char **pp);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

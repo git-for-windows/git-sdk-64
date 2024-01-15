@@ -50,7 +50,14 @@ long BIO_debug_callback_ex(BIO *bio, int oper, const char *argp, size_t len,
 void BIO_set_callback(BIO *b, BIO_callback_fn cb);
 BIO_callback_fn BIO_get_callback(const BIO *b);
 long BIO_debug_callback(BIO *bio, int cmd, const char *argp, int argi,
-                        long argl, long ret);</code></pre>
+                        long argl, long ret);
+
+typedef struct bio_mmsg_cb_args_st {
+    BIO_MSG    *msg;
+    size_t      stride, num_msg;
+    uint64_t    flags;
+    size_t     *msgs_processed;
+} BIO_MMSG_CB_ARGS;</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -229,6 +236,34 @@ long BIO_debug_callback(BIO *bio, int cmd, const char *argp, int argi,
 <p>Note: <b>cmd</b> == <b>BIO_CTRL_SET_CALLBACK</b> is special, because <b>parg</b> is not the argument of type <b>BIO_info_cb</b> itself. In this case <b>parg</b> is a pointer to the actual call parameter, see <b>BIO_callback_ctrl</b>.</p>
 
 </dd>
+<dt id="BIO_sendmmsg-BIO-b-BIO_MSG-msg-size_t-stride-size_t-num_msg-uint64_t-flags-size_t-msgs_processed"><b>BIO_sendmmsg(BIO *b, BIO_MSG *msg, size_t stride, size_t num_msg, uint64_t flags, size_t *msgs_processed)</b></dt>
+<dd>
+
+<pre><code>callback_ex(b, BIO_CB_SENDMMSG, args, 0, 0, 0, 1, NULL)</code></pre>
+
+<p>or</p>
+
+<pre><code>callback(b, BIO_CB_SENDMMSG, args, 0, 0, 1)</code></pre>
+
+<p>is called before the call and</p>
+
+<pre><code>callback_ex(b, BIO_CB_SENDMMSG | BIO_CB_RETURN, args, ret, 0, 0, ret, NULL)</code></pre>
+
+<p>or</p>
+
+<pre><code>callback(b, BIO_CB_SENDMMSG | BIO_CB_RETURN, args, ret, 0, 0, ret)</code></pre>
+
+<p>after.</p>
+
+<p><b>args</b> is a pointer to a <b>BIO_MMSG_CB_ARGS</b> structure containing the arguments passed to BIO_sendmmsg(). <b>ret</b> is the return value of the BIO_sendmmsg() call. The return value of BIO_sendmmsg() is altered to the value returned by the <b>BIO_CB_SENDMMSG | BIO_CB_RETURN</b> call.</p>
+
+</dd>
+<dt id="BIO_recvmmsg-BIO-b-BIO_MSG-msg-size_t-stride-size_t-num_msg-uint64_t-flags-size_t-msgs_processed"><b>BIO_recvmmsg(BIO *b, BIO_MSG *msg, size_t stride, size_t num_msg, uint64_t flags, size_t *msgs_processed)</b></dt>
+<dd>
+
+<p>See the documentation for BIO_sendmmsg(). BIO_recvmmsg() works identically except that <b>BIO_CB_RECVMMSG</b> is used instead of <b>BIO_CB_SENDMMSG</b>.</p>
+
+</dd>
 </dl>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
@@ -251,7 +286,7 @@ long BIO_debug_callback(BIO *bio, int cmd, const char *argp, int argi,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

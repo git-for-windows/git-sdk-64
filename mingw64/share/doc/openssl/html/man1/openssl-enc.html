@@ -30,7 +30,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>enc</b>|<i>cipher</i> [<b>-<i>cipher</i></b>] [<b>-help</b>] [<b>-list</b>] [<b>-ciphers</b>] [<b>-in</b> <i>filename</i>] [<b>-out</b> <i>filename</i>] [<b>-pass</b> <i>arg</i>] [<b>-e</b>] [<b>-d</b>] [<b>-a</b>] [<b>-base64</b>] [<b>-A</b>] [<b>-k</b> <i>password</i>] [<b>-kfile</b> <i>filename</i>] [<b>-K</b> <i>key</i>] [<b>-iv</b> <i>IV</i>] [<b>-S</b> <i>salt</i>] [<b>-salt</b>] [<b>-nosalt</b>] [<b>-z</b>] [<b>-md</b> <i>digest</i>] [<b>-iter</b> <i>count</i>] [<b>-pbkdf2</b>] [<b>-p</b>] [<b>-P</b>] [<b>-bufsize</b> <i>number</i>] [<b>-nopad</b>] [<b>-v</b>] [<b>-debug</b>] [<b>-none</b>] [<b>-engine</b> <i>id</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>]</p>
+<p><b>openssl</b> <b>enc</b>|<i>cipher</i> [<b>-<i>cipher</i></b>] [<b>-help</b>] [<b>-list</b>] [<b>-ciphers</b>] [<b>-in</b> <i>filename</i>] [<b>-out</b> <i>filename</i>] [<b>-pass</b> <i>arg</i>] [<b>-e</b>] [<b>-d</b>] [<b>-a</b>] [<b>-base64</b>] [<b>-A</b>] [<b>-k</b> <i>password</i>] [<b>-kfile</b> <i>filename</i>] [<b>-K</b> <i>key</i>] [<b>-iv</b> <i>IV</i>] [<b>-S</b> <i>salt</i>] [<b>-salt</b>] [<b>-nosalt</b>] [<b>-z</b>] [<b>-md</b> <i>digest</i>] [<b>-iter</b> <i>count</i>] [<b>-pbkdf2</b>] [<b>-saltlen</b> <i>size</i>] [<b>-p</b>] [<b>-P</b>] [<b>-bufsize</b> <i>number</i>] [<b>-nopad</b>] [<b>-v</b>] [<b>-debug</b>] [<b>-none</b>] [<b>-engine</b> <i>id</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>]</p>
 
 <p><b>openssl</b> <i>cipher</i> [<b>...</b>]</p>
 
@@ -144,6 +144,12 @@
 <p>Use PBKDF2 algorithm with a default iteration count of 10000 unless otherwise specified by the <b>-iter</b> command line option.</p>
 
 </dd>
+<dt id="saltlen"><b>-saltlen</b></dt>
+<dd>
+
+<p>Set the salt length to use when using the <b>-pbkdf2</b> option. For compatibility reasons, the default is 8 bytes. The maximum value is currently 16 bytes. If the <b>-pbkdf2</b> option is not used, then this option is ignored and a fixed salt length of 8 is used. The salt length used when encrypting must also be used when decrypting.</p>
+
+</dd>
 <dt id="nosalt"><b>-nosalt</b></dt>
 <dd>
 
@@ -159,7 +165,7 @@
 <dt id="S-salt"><b>-S</b> <i>salt</i></dt>
 <dd>
 
-<p>The actual salt to use: this must be represented as a string of hex digits. If this option is used while encrypting, the same exact value will be needed again during decryption.</p>
+<p>The actual salt to use: this must be represented as a string of hex digits. If this option is used while encrypting, the same exact value will be needed again during decryption. This salt may be truncated or zero padded to match the salt length (See <b>-saltlen</b>).</p>
 
 </dd>
 <dt id="K-key"><b>-K</b> <i>key</i></dt>
@@ -286,6 +292,8 @@
 
 <p>This command does not support authenticated encryption modes like CCM and GCM, and will not support such modes in the future. This is due to having to begin streaming output (e.g., to standard output when <b>-out</b> is not used) before the authentication tag could be validated. When this command is used in a pipeline, the receiving end will not be able to roll back upon authentication failure. The AEAD modes currently in common use also suffer from catastrophic failure of confidentiality and/or integrity upon reuse of key/iv/nonce, and since <b>openssl enc</b> places the entire burden of key/iv/nonce management upon the user, the risk of exposing AEAD modes is too great to allow. These key/iv/nonce management issues also affect other modes currently exposed in this command, but the failure modes are less extreme in these cases, and the functionality cannot be removed with a stable release branch. For bulk encryption of data, whether using authenticated encryption modes or other modes, <a href="../man1/openssl-cms.html">openssl-cms(1)</a> is recommended, as it provides a standard data format and performs the needed key/iv/nonce management.</p>
 
+<p>When enc is used with key wrapping modes the input data cannot be streamed, meaning it must be processed in a single pass. Consequently, the input data size must be less than the buffer size (-bufsize arg, default to 8*1024 bytes). The &#39;*-wrap&#39; ciphers require the input to be a multiple of 8 bytes long, because no padding is involved. The &#39;*-wrap-pad&#39; ciphers allow any input length. In both cases, no IV is needed. See example below.</p>
+
 <pre><code>base64             Base 64
 
 bf-cbc             Blowfish in CBC mode
@@ -372,6 +380,9 @@ aes-[128|192|256]-ctr  128/192/256 bit AES in CTR mode
 aes-[128|192|256]-ecb  128/192/256 bit AES in ECB mode
 aes-[128|192|256]-ofb  128/192/256 bit AES in OFB mode
 
+aes-[128|192|256]-wrap     key wrapping using 128/192/256 bit AES
+aes-[128|192|256]-wrap-pad key wrapping with padding using 128/192/256 bit AES
+
 aria-[128|192|256]-cbc  128/192/256 bit ARIA in CBC mode
 aria[128|192|256]       Alias for aria-[128|192|256]-cbc
 aria-[128|192|256]-cfb  128/192/256 bit ARIA in 128 bit CFB mode
@@ -418,6 +429,12 @@ camellia-[128|192|256]-ofb  128/192/256 bit Camellia in OFB mode</code></pre>
 <pre><code>openssl enc -aes-256-ctr -pbkdf2 -d -a -in file.aes256 -out file.txt \
    -pass file:&lt;passfile&gt;</code></pre>
 
+<p>AES key wrapping:</p>
+
+<pre><code> openssl enc -e -a -id-aes128-wrap-pad -K 000102030405060708090A0B0C0D0E0F -in file.bin
+or
+ openssl aes128-wrap-pad -e -a -K 000102030405060708090A0B0C0D0E0F -in file.bin</code></pre>
+
 <h1 id="BUGS">BUGS</h1>
 
 <p>The <b>-A</b> option when used with large files doesn&#39;t work properly.</p>
@@ -431,6 +448,8 @@ camellia-[128|192|256]-ofb  128/192/256 bit Camellia in OFB mode</code></pre>
 <p>The <b>-list</b> option was added in OpenSSL 1.1.1e.</p>
 
 <p>The <b>-ciphers</b> and <b>-engine</b> options were deprecated in OpenSSL 3.0.</p>
+
+<p>The <b>-saltlen</b> option was added in OpenSSL 3.2.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

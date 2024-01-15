@@ -33,7 +33,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>OSSL_trace_enabled, OSSL_trace_begin, OSSL_trace_end, OSSL_TRACE_BEGIN, OSSL_TRACE_END, OSSL_TRACE_CANCEL, OSSL_TRACE, OSSL_TRACE1, OSSL_TRACE2, OSSL_TRACE3, OSSL_TRACE4, OSSL_TRACE5, OSSL_TRACE6, OSSL_TRACE7, OSSL_TRACE8, OSSL_TRACE9, OSSL_TRACEV, OSSL_TRACE_ENABLED - OpenSSL Tracing API</p>
+<p>OSSL_trace_enabled, OSSL_trace_begin, OSSL_trace_end, OSSL_TRACE_BEGIN, OSSL_TRACE_END, OSSL_TRACE_CANCEL, OSSL_TRACE, OSSL_TRACE1, OSSL_TRACE2, OSSL_TRACE3, OSSL_TRACE4, OSSL_TRACE5, OSSL_TRACE6, OSSL_TRACE7, OSSL_TRACE8, OSSL_TRACE9, OSSL_TRACEV, OSSL_TRACE_STRING, OSSL_TRACE_STRING_MAX, OSSL_trace_string, OSSL_TRACE_ENABLED - OpenSSL Tracing API</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -56,10 +56,16 @@ OSSL_TRACE_BEGIN(category) {
 } OSSL_TRACE_END(category);
 
 /* one-shot trace macros */
+OSSL_TRACE(category, text)
 OSSL_TRACE1(category, format, arg1)
 OSSL_TRACE2(category, format, arg1, arg2)
 ...
 OSSL_TRACE9(category, format, arg1, ..., arg9)
+OSSL_TRACE_STRING(category, text, full, data, len)
+
+#define OSSL_TRACE_STRING_MAX 80
+int OSSL_trace_string(BIO *out, int text, int full,
+                      const unsigned char *data, size_t size);
 
 /* check whether a trace category is enabled */
 if (OSSL_TRACE_ENABLED(category)) {
@@ -91,6 +97,8 @@ if (OSSL_TRACE_ENABLED(category)) {
 <p>OSSL_trace_end() is used to end a tracing section.</p>
 
 <p>Using OSSL_trace_begin() and OSSL_trace_end() to wrap tracing sections is <i>mandatory</i>. The result of trying to produce tracing output outside of such sections is undefined.</p>
+
+<p>OSSL_trace_string() outputs <i>data</i> of length <i>size</i> as a string on BIO <i>out</i>. If <i>text</i> is 0, the function masks any included control characters apart from newlines and makes sure for nonempty input that the output ends with a newline. Unless <i>full</i> is nonzero, the length is limited (with a suitable warning) to <b>OSSL_TRACE_STRING_MAX</b> characters, which currently is 80.</p>
 
 <h2 id="Macros">Macros</h2>
 
@@ -148,10 +156,16 @@ if (OSSL_TRACE_ENABLED(category)) {
 <p>The macro call <code>OSSL_TRACEn(category, format, arg1, ..., argn)</code> produces printf-style trace output with n format field arguments (n=1,...,9). It expands to:</p>
 
 <pre><code>OSSL_TRACE_BEGIN(category) {
-    BIO_printf(trc_out, format, arg1, ..., argN)
+    BIO_printf(trc_out, format, arg1, ..., argN);
 } OSSL_TRACE_END(category)</code></pre>
 
 <p>Internally, all one-shot macros are implemented using a generic OSSL_TRACEV() macro, since C90 does not support variadic macros. This helper macro has a rather weird synopsis and should not be used directly.</p>
+
+<p>The macro call <code>OSSL_TRACE_STRING(category, text, full, data, len)</code> outputs <i>data</i> of length <i>size</i> as a string if tracing for the given <i>category</i> is enabled. It expands to:</p>
+
+<pre><code>OSSL_TRACE_BEGIN(category) {
+    OSSL_trace_string(trc_out, text, full, data, len);
+} OSSL_TRACE_END(category)</code></pre>
 
 <p>The OSSL_TRACE_ENABLED() macro can be used to conditionally execute some code only if a specific trace category is enabled. In some situations this is simpler than entering a trace section using OSSL_TRACE_BEGIN() and OSSL_TRACE_END(). For example, the code</p>
 
@@ -236,6 +250,8 @@ if (OSSL_TRACE_ENABLED(category)) {
 
 <p>OSSL_trace_begin() returns a <b>BIO</b> pointer if the given <i>type</i> is enabled, otherwise NULL.</p>
 
+<p>OSSL_trace_string() returns the number of characters emitted, or -1 on error.</p>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man3/OSSL_trace_set_channel.html">OSSL_trace_set_channel(3)</a>, <a href="../man3/OSSL_trace_set_callback.html">OSSL_trace_set_callback(3)</a></p>
@@ -244,9 +260,11 @@ if (OSSL_TRACE_ENABLED(category)) {
 
 <p>The OpenSSL Tracing API was added in OpenSSL 3.0.</p>
 
+<p>OSSL_TRACE_STRING(), OSSL_TRACE_STRING_MAX, and OSSL_trace_string were added in OpenSSL 3.2.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

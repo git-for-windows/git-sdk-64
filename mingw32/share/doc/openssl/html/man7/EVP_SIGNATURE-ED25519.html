@@ -15,6 +15,7 @@
   <li><a href="#NAME">NAME</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a>
     <ul>
+      <li><a href="#EdDSA-Instances">EdDSA Instances</a></li>
       <li><a href="#ED25519-and-ED448-Signature-Parameters">ED25519 and ED448 Signature Parameters</a></li>
     </ul>
   </li>
@@ -30,27 +31,72 @@
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The <b>Ed25519</b> and <b>Ed448</b> EVP_PKEY implementation supports key generation, one-shot digest sign and digest verify using PureEdDSA and <b>Ed25519</b> or <b>Ed448</b> (see RFC8032). It has associated private and public key formats compatible with RFC 8410.</p>
+<p>The <b>Ed25519</b> and <b>Ed448</b> EVP_PKEY implementation supports key generation, one-shot digest-sign and digest-verify using the EdDSA signature scheme described in RFC 8032. It has associated private and public key formats compatible with RFC 8410.</p>
+
+<h2 id="EdDSA-Instances">EdDSA Instances</h2>
+
+<p>RFC 8032 describes five EdDSA instances: Ed25519, Ed25519ctx, Ed25519ph, Ed448, Ed448ph.</p>
+
+<p>The instances Ed25519, Ed25519ctx, Ed448 are referred to as <b>PureEdDSA</b> schemes. For these three instances, the sign and verify procedures require access to the complete message (not a digest of the message).</p>
+
+<p>The instances Ed25519ph, Ed448ph are referred to as <b>HashEdDSA</b> schemes. For these two instances, the sign and verify procedures do not require access to the complete message; they operate on a hash of the message. For Ed25519ph, the hash function is SHA512. For Ed448ph, the hash function is SHAKE256 with an output length of 512 bits.</p>
+
+<p>The instances Ed25519ctx, Ed25519ph, Ed448, Ed448ph accept an optional <b>context-string</b> as input to sign and verify operations (and for Ed25519ctx, the context-string must be nonempty). For the Ed25519 instance, a nonempty context-string is not permitted.</p>
 
 <h2 id="ED25519-and-ED448-Signature-Parameters">ED25519 and ED448 Signature Parameters</h2>
 
-<p>No additional parameters can be set during one-shot signing or verification. In particular, because PureEdDSA is used, a digest must <b>NOT</b> be specified when signing or verifying. See <a href="../man7/EVP_PKEY-X25519.html">EVP_PKEY-X25519(7)</a> for information related to <b>X25519</b> and <b>X448</b> keys.</p>
+<p>Two parameters can be set during signing or verification: the EdDSA <b>instance name</b> and the <b>context-string value</b>. They can be set by passing an OSSL_PARAM array to EVP_DigestSignInit_ex().</p>
+
+<ul>
+
+<li><p>&quot;instance&quot; (<b>OSSL_SIGNATURE_PARAM_INSTANCE</b>) &lt;utf8 string&gt;</p>
+
+<p>One of the five strings &quot;Ed25519&quot;, &quot;Ed25519ctx&quot;, &quot;Ed25519ph&quot;, &quot;Ed448&quot;, &quot;Ed448ph&quot;.</p>
+
+<p>&quot;Ed25519&quot;, &quot;Ed25519ctx&quot;, &quot;Ed25519ph&quot; are valid only for an Ed25519 EVP_PKEY.</p>
+
+<p>&quot;Ed448&quot;, &quot;Ed448ph&quot; are valid only for an Ed448 EVP_PKEY.</p>
+
+</li>
+<li><p>&quot;context-string&quot; (<b>OSSL_SIGNATURE_PARAM_CONTEXT_STRING</b>) &lt;octet string&gt;</p>
+
+<p>A string of octets with length at most 255.</p>
+
+</li>
+</ul>
+
+<p>Both of these parameters are optional.</p>
+
+<p>If the instance name is not specified, then the default &quot;Ed25519&quot; or &quot;Ed448&quot; is used.</p>
+
+<p>If a context-string is not specified, then an empty context-string is used.</p>
+
+<p>Note that a message digest name must <b>NOT</b> be specified when signing or verifying.</p>
+
+<p>See <a href="../man7/EVP_PKEY-X25519.html">EVP_PKEY-X25519(7)</a> for information related to <b>X25519</b> and <b>X448</b> keys.</p>
 
 <p>The following signature parameters can be retrieved using EVP_PKEY_CTX_get_params().</p>
 
-<dl>
+<ul>
 
-<dt id="algorithm-id-OSSL_SIGNATURE_PARAM_ALGORITHM_ID-octet-string">&quot;algorithm-id&quot; (<b>OSSL_SIGNATURE_PARAM_ALGORITHM_ID</b>) &lt;octet string&gt;</dt>
-<dd>
+<li><p>&quot;algorithm-id&quot; (<b>OSSL_SIGNATURE_PARAM_ALGORITHM_ID</b>) &lt;octet string&gt;</p>
+
+</li>
+<li><p>&quot;instance&quot; (<b>OSSL_SIGNATURE_PARAM_INSTANCE</b>) &lt;utf8 string&gt;</p>
+
+</li>
+<li><p>&quot;context-string&quot; (<b>OSSL_SIGNATURE_PARAM_CONTEXT_STRING</b>) &lt;octet string&gt;</p>
+
+</li>
+</ul>
 
 <p>The parameters are described in <a href="../man7/provider-signature.html">provider-signature(7)</a>.</p>
 
-</dd>
-</dl>
-
 <h1 id="NOTES">NOTES</h1>
 
-<p>The PureEdDSA algorithm does not support the streaming mechanism of other signature algorithms using, for example, EVP_DigestUpdate(). The message to sign or verify must be passed using the one-shot EVP_DigestSign() and EVP_DigestVerify() functions.</p>
+<p>The PureEdDSA instances do not support the streaming mechanism of other signature algorithms using, for example, EVP_DigestUpdate(). The message to sign or verify must be passed using the one-shot EVP_DigestSign() and EVP_DigestVerify() functions.</p>
+
+<p>The HashEdDSA instances do not yet support the streaming mechanisms (so the one-shot functions must be used with HashEdDSA as well).</p>
 
 <p>When calling EVP_DigestSignInit() or EVP_DigestVerifyInit(), the digest <i>type</i> parameter <b>MUST</b> be set to NULL.</p>
 
@@ -64,7 +110,7 @@
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
-<p>To sign a message using a ED25519 or ED448 key:</p>
+<p>To sign a message using an ED25519 EVP_PKEY structure:</p>
 
 <pre><code>void do_sign(EVP_PKEY *ed_key, unsigned char *msg, size_t msg_len)
 {
@@ -72,8 +118,16 @@
     unsigned char *sig = NULL;
     EVP_MD_CTX *md_ctx = EVP_MD_CTX_new();
 
-    EVP_DigestSignInit(md_ctx, NULL, NULL, NULL, ed_key);
-    /* Calculate the requires size for the signature by passing a NULL buffer */
+    const OSSL_PARAM params[] = {
+        OSSL_PARAM_utf8_string (&quot;instance&quot;, &quot;Ed25519ctx&quot;, 10),
+        OSSL_PARAM_octet_string(&quot;context-string&quot;, (unsigned char *)&quot;A protocol defined context string&quot;, 33),
+        OSSL_PARAM_END
+    };
+
+    /* The input &quot;params&quot; is not needed if default options are acceptable.
+       Use NULL in place of &quot;params&quot; in that case. */
+    EVP_DigestSignInit_ex(md_ctx, NULL, NULL, NULL, NULL, ed_key, params);
+    /* Calculate the required size for the signature by passing a NULL buffer. */
     EVP_DigestSign(md_ctx, NULL, &amp;sig_len, msg, msg_len);
     sig = OPENSSL_zalloc(sig_len);
 
@@ -89,7 +143,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2017-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2017-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

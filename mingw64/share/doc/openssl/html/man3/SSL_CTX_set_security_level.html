@@ -85,7 +85,7 @@ void *SSL_get0_security_ex_data(const SSL *s);</code></pre>
 <dt id="Level-1"><b>Level 1</b></dt>
 <dd>
 
-<p>The security level corresponds to a minimum of 80 bits of security. Any parameters offering below 80 bits of security are excluded. As a result RSA, DSA and DH keys shorter than 1024 bits and ECC keys shorter than 160 bits are prohibited. All export cipher suites are prohibited since they all offer less than 80 bits of security. SSL version 2 is prohibited. Any cipher suite using MD5 for the MAC is also prohibited. Note that signatures using SHA1 and MD5 are also forbidden at this level as they have less than 80 security bits. Additionally, SSLv3, TLS 1.0, TLS 1.1 and DTLS 1.0 are all disabled at this level.</p>
+<p>The security level corresponds to a minimum of 80 bits of security. Any parameters offering below 80 bits of security are excluded. As a result RSA, DSA and DH keys shorter than 1024 bits and ECC keys shorter than 160 bits are prohibited. Any cipher suite using MD5 for the MAC is also prohibited. Any cipher suites using CCM with a 64 bit authentication tag are prohibited. Note that signatures using SHA1 and MD5 are also forbidden at this level as they have less than 80 security bits. Additionally, SSLv3, TLS 1.0, TLS 1.1 and DTLS 1.0 are all disabled at this level.</p>
 
 </dd>
 <dt id="Level-2"><b>Level 2</b></dt>
@@ -120,7 +120,7 @@ void *SSL_get0_security_ex_data(const SSL *s);</code></pre>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>The default security level can be configured when OpenSSL is compiled by setting <b>-DOPENSSL_TLS_SECURITY_LEVEL=level</b>. If not set then 1 is used.</p>
+<p>The default security level can be configured when OpenSSL is compiled by setting <b>-DOPENSSL_TLS_SECURITY_LEVEL=level</b>. If not set then 2 is used.</p>
 
 <p>The security framework disables or reject parameters inconsistent with the set security level. In the past this was difficult as applications had to set a number of distinct parameters (supported ciphers, supported curves supported signature algorithms) to achieve this end and some cases (DH parameter size for example) could not be checked at all.</p>
 
@@ -158,7 +158,7 @@ void *SSL_get0_security_ex_data(const SSL *s);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2014-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2014-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

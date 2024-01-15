@@ -61,11 +61,11 @@
 
 <p>Certificate enrollment options:</p>
 
-<p>[<b>-newkey</b> <i>filename</i>|<i>uri</i>] [<b>-newkeypass</b> <i>arg</i>] [<b>-subject</b> <i>name</i>] [<b>-issuer</b> <i>name</i>] [<b>-days</b> <i>number</i>] [<b>-reqexts</b> <i>name</i>] [<b>-sans</b> <i>spec</i>] [<b>-san_nodefault</b>] [<b>-policies</b> <i>name</i>] [<b>-policy_oids</b> <i>names</i>] [<b>-policy_oids_critical</b>] [<b>-popo</b> <i>number</i>] [<b>-csr</b> <i>filename</i>] [<b>-out_trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-implicit_confirm</b>] [<b>-disable_confirm</b>] [<b>-certout</b> <i>filename</i>] [<b>-chainout</b> <i>filename</i>]</p>
+<p>[<b>-newkey</b> <i>filename</i>|<i>uri</i>] [<b>-newkeypass</b> <i>arg</i>] [<b>-subject</b> <i>name</i>] [<b>-days</b> <i>number</i>] [<b>-reqexts</b> <i>name</i>] [<b>-sans</b> <i>spec</i>] [<b>-san_nodefault</b>] [<b>-policies</b> <i>name</i>] [<b>-policy_oids</b> <i>names</i>] [<b>-policy_oids_critical</b>] [<b>-popo</b> <i>number</i>] [<b>-csr</b> <i>filename</i>] [<b>-out_trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-implicit_confirm</b>] [<b>-disable_confirm</b>] [<b>-certout</b> <i>filename</i>] [<b>-chainout</b> <i>filename</i>]</p>
 
 <p>Certificate enrollment and revocation options:</p>
 
-<p>[<b>-oldcert</b> <i>filename</i>|<i>uri</i>] [<b>-revreason</b> <i>number</i>]</p>
+<p>[<b>-oldcert</b> <i>filename</i>|<i>uri</i>] [<b>-issuer</b> <i>name</i>] [<b>-serial</b> <i>number</i>] [<b>-revreason</b> <i>number</i>]</p>
 
 <p>Message transfer options:</p>
 
@@ -73,7 +73,7 @@
 
 <p>Server authentication options:</p>
 
-<p>[<b>-trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-untrusted</b> <i>filenames</i>|<i>uris</i>] [<b>-srvcert</b> <i>filename</i>|<i>uri</i>] [<b>-expect_sender</b> <i>name</i>] [<b>-ignore_keyusage</b>] [<b>-unprotected_errors</b>] [<b>-extracertsout</b> <i>filename</i>] [<b>-cacertsout</b> <i>filename</i>]</p>
+<p>[<b>-trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-untrusted</b> <i>filenames</i>|<i>uris</i>] [<b>-srvcert</b> <i>filename</i>|<i>uri</i>] [<b>-expect_sender</b> <i>name</i>] [<b>-ignore_keyusage</b>] [<b>-unprotected_errors</b>] [<b>-srvcertout</b> <i>filename</i>] [<b>-extracertsout</b> <i>filename</i>] [<b>-cacertsout</b> <i>filename</i>] [<b>-oldwithold</b> <i>filename</i>] [<b>-newwithnew</b> <i>filename</i>] [<b>-newwithold</b> <i>filename</i>] [<b>-oldwithnew</b> <i>filename</i>]</p>
 
 <p>Client authentication and protection options:</p>
 
@@ -97,7 +97,7 @@
 
 <p>Mock server options:</p>
 
-<p>[<b>-port</b> <i>number</i>] [<b>-max_msgs</b> <i>number</i>] [<b>-srv_ref</b> <i>value</i>] [<b>-srv_secret</b> <i>arg</i>] [<b>-srv_cert</b> <i>filename</i>|<i>uri</i>] [<b>-srv_key</b> <i>filename</i>|<i>uri</i>] [<b>-srv_keypass</b> <i>arg</i>] [<b>-srv_trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-srv_untrusted</b> <i>filenames</i>|<i>uris</i>] [<b>-rsp_cert</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_extracerts</b> <i>filenames</i>|<i>uris</i>] [<b>-rsp_capubs</b> <i>filenames</i>|<i>uris</i>] [<b>-poll_count</b> <i>number</i>] [<b>-check_after</b> <i>number</i>] [<b>-grant_implicitconf</b>] [<b>-pkistatus</b> <i>number</i>] [<b>-failure</b> <i>number</i>] [<b>-failurebits</b> <i>number</i>] [<b>-statusstring</b> <i>arg</i>] [<b>-send_error</b>] [<b>-send_unprotected</b>] [<b>-send_unprot_err</b>] [<b>-accept_unprotected</b>] [<b>-accept_unprot_err</b>] [<b>-accept_raverified</b>]</p>
+<p>[<b>-port</b> <i>number</i>] [<b>-max_msgs</b> <i>number</i>] [<b>-srv_ref</b> <i>value</i>] [<b>-srv_secret</b> <i>arg</i>] [<b>-srv_cert</b> <i>filename</i>|<i>uri</i>] [<b>-srv_key</b> <i>filename</i>|<i>uri</i>] [<b>-srv_keypass</b> <i>arg</i>] [<b>-srv_trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-srv_untrusted</b> <i>filenames</i>|<i>uris</i>] [<b>-ref_cert</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_cert</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_extracerts</b> <i>filenames</i>|<i>uris</i>] [<b>-rsp_capubs</b> <i>filenames</i>|<i>uris</i>] [<b>-rsp_newwithnew</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_newwithold</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_oldwithnew</b> <i>filename</i>|<i>uri</i>] [<b>-poll_count</b> <i>number</i>] [<b>-check_after</b> <i>number</i>] [<b>-grant_implicitconf</b>] [<b>-pkistatus</b> <i>number</i>] [<b>-failure</b> <i>number</i>] [<b>-failurebits</b> <i>number</i>] [<b>-statusstring</b> <i>arg</i>] [<b>-send_error</b>] [<b>-send_unprotected</b>] [<b>-send_unprot_err</b>] [<b>-accept_unprotected</b>] [<b>-accept_unprot_err</b>] [<b>-accept_raverified</b>]</p>
 
 <p>Certificate verification options, for both CMP and TLS:</p>
 
@@ -192,7 +192,7 @@
 <dt id="infotype-name"><b>-infotype</b> <i>name</i></dt>
 <dd>
 
-<p>Set InfoType name to use for requesting specific info in <b>genm</b>, e.g., <code>signKeyPairTypes</code>.</p>
+<p>Set InfoType name to use for requesting specific info in <b>genm</b>, e.g., <code>signKeyPairTypes</code>. So far, there is specific support for <code>caCerts</code> and <code>rootCaCert</code>.</p>
 
 </dd>
 <dt id="geninfo-OID:int:N"><b>-geninfo</b> <i>OID:int:N</i></dt>
@@ -228,23 +228,13 @@
 <dt id="subject-name"><b>-subject</b> <i>name</i></dt>
 <dd>
 
-<p>X509 Distinguished Name (DN) of subject to use in the requested certificate template. If the NULL-DN (<code>&quot;/&quot;</code>) is given then no subject is placed in the template. Default is the subject DN of any PKCS#10 CSR given with the <b>-csr</b> option. For KUR, a further fallback is the subject DN of the reference certificate (see <b>-oldcert</b>) if provided. This fallback is used for IR and CR only if no SANs are set.</p>
+<p>X.509 Distinguished Name (DN) to use as subject field in the requested certificate template in IR/CR/KUR messages. If the NULL-DN (<code>/</code>) is given then no subject is placed in the template. Default is the subject DN of any PKCS#10 CSR given with the <b>-csr</b> option. For KUR, a further fallback is the subject DN of the reference certificate (see <b>-oldcert</b>) if provided. This fallback is used for IR and CR only if no SANs are set.</p>
 
-<p>If provided and neither <b>-cert</b> nor <b>-oldcert</b> is given, the subject DN is used as fallback sender of outgoing CMP messages.</p>
+<p>If provided and neither of <b>-cert</b>, <b>-oldcert</b>, or <b>-csr</b> is given, the subject DN is used as fallback sender of outgoing CMP messages.</p>
 
 <p>The argument must be formatted as <i>/type0=value0/type1=value1/type2=...</i>. Special characters may be escaped by <code>\</code> (backslash); whitespace is retained. Empty values are permitted, but the corresponding type will not be included. Giving a single <code>/</code> will lead to an empty sequence of RDNs (a NULL-DN). Multi-valued RDNs can be formed by placing a <code>+</code> character instead of a <code>/</code> between the AttributeValueAssertions (AVAs) that specify the members of the set. Example:</p>
 
 <p><code>/DC=org/DC=OpenSSL/DC=users/UID=123456+CN=John Doe</code></p>
-
-</dd>
-<dt id="issuer-name"><b>-issuer</b> <i>name</i></dt>
-<dd>
-
-<p>X509 issuer Distinguished Name (DN) of the CA server to place in the requested certificate template in IR/CR/KUR. If the NULL-DN (<code>&quot;/&quot;</code>) is given then no issuer is placed in the template.</p>
-
-<p>If provided and neither <b>-recipient</b> nor <b>-srvcert</b> is given, the issuer DN is used as fallback recipient of outgoing CMP messages.</p>
-
-<p>The argument must be formatted as <i>/type0=value0/type1=value1/type2=...</i>. For details see the description of the <b>-subject</b> option.</p>
 
 </dd>
 <dt id="days-number"><b>-days</b> <i>number</i></dt>
@@ -262,7 +252,7 @@
 <dt id="sans-spec"><b>-sans</b> <i>spec</i></dt>
 <dd>
 
-<p>One or more IP addresses, DNS names, or URIs separated by commas or whitespace (where in the latter case the whole argument must be enclosed in &quot;...&quot;) to add as Subject Alternative Name(s) (SAN) certificate request extension. If the special element &quot;critical&quot; is given the SANs are flagged as critical. Cannot be used if any Subject Alternative Name extension is set via <b>-reqexts</b>.</p>
+<p>One or more IP addresses, email addresses, DNS names, or URIs separated by commas or whitespace (where in the latter case the whole argument must be enclosed in &quot;...&quot;) to add as Subject Alternative Name(s) (SAN) certificate request extension. If the special element &quot;critical&quot; is given the SANs are flagged as critical. Cannot be used if any Subject Alternative Name extension is set via <b>-reqexts</b>.</p>
 
 </dd>
 <dt id="san_nodefault"><b>-san_nodefault</b></dt>
@@ -304,7 +294,7 @@
 
 <p>When used with <b>-cmd</b> <i>ir</i>, <i>cr</i>, or <i>kur</i>, it is transformed into the respective regular CMP request. In this case, a private key must be provided (with <b>-newkey</b> or <b>-key</b>) for the proof of possession (unless <b>-popo</b> <i>-1</i> or <b>-popo</b> <i>0</i> is used) and the respective public key is placed in the certification request (rather than taking over the public key contained in the PKCS#10 CSR).</p>
 
-<p>PKCS#10 CSR input may also be used with <b>-cmd</b> <i>rr</i> to specify the certificate to be revoked via the included subject name and public key.</p>
+<p>PKCS#10 CSR input may also be used with <b>-cmd</b> <i>rr</i> to specify the certificate to be revoked via the included subject name and public key. Its subject is used as fallback sender in CMP message headers if <b>-cert</b> and <b>-oldcert</b> are not given.</p>
 
 </dd>
 <dt id="out_trusted-filenames-uris"><b>-out_trusted</b> <i>filenames</i>|<i>uris</i></dt>
@@ -332,13 +322,13 @@
 <dt id="certout-filename"><b>-certout</b> <i>filename</i></dt>
 <dd>
 
-<p>The file where the newly enrolled certificate should be saved.</p>
+<p>The file where any newly enrolled certificate should be saved.</p>
 
 </dd>
 <dt id="chainout-filename"><b>-chainout</b> <i>filename</i></dt>
 <dd>
 
-<p>The file where the chain of the newly enrolled certificate should be saved.</p>
+<p>The file where the chain of any newly enrolled certificate should be saved.</p>
 
 </dd>
 </dl>
@@ -350,9 +340,25 @@
 <dt id="oldcert-filename-uri"><b>-oldcert</b> <i>filename</i>|<i>uri</i></dt>
 <dd>
 
-<p>The certificate to be updated (i.e., renewed or re-keyed) in Key Update Request (KUR) messages or to be revoked in Revocation Request (RR) messages. For KUR the certificate to be updated defaults to <b>-cert</b>, and the resulting certificate is called <i>reference certificate</i>. For RR the certificate to be revoked can also be specified using <b>-csr</b>.</p>
+<p>The certificate to be updated (i.e., renewed or re-keyed) in Key Update Request (KUR) messages or to be revoked in Revocation Request (RR) messages. For KUR the certificate to be updated defaults to <b>-cert</b>, and the resulting certificate is called <i>reference certificate</i>. For RR the certificate to be revoked can also be specified using <b>-csr</b>. <b>-oldcert</b> and <b>-csr</b> is ignored if <b>-issuer</b> and <b>-serial</b> is provided.</p>
 
 <p>The reference certificate, if any, is also used for deriving default subject DN and Subject Alternative Names and the default issuer entry in the requested certificate template of an IR/CR/KUR. Its public key is used as a fallback in the template of certification requests. Its subject is used as sender of outgoing messages if <b>-cert</b> is not given. Its issuer is used as default recipient in CMP message headers if neither <b>-recipient</b>, <b>-srvcert</b>, nor <b>-issuer</b> is given.</p>
+
+</dd>
+<dt id="issuer-name"><b>-issuer</b> <i>name</i></dt>
+<dd>
+
+<p>X.509 Distinguished Name (DN) use as issuer field in the requested certificate template in IR/CR/KUR/RR messages. If the NULL-DN (<code>/</code>) is given then no issuer is placed in the template.</p>
+
+<p>If provided and neither <b>-recipient</b> nor <b>-srvcert</b> is given, the issuer DN is used as fallback recipient of outgoing CMP messages.</p>
+
+<p>The argument must be formatted as <i>/type0=value0/type1=value1/type2=...</i>. For details see the description of the <b>-subject</b> option.</p>
+
+</dd>
+<dt id="serial-number"><b>-serial</b> <i>number</i></dt>
+<dd>
+
+<p>Specify the Serial number of certificate to be revoked in revocation request. The serial number can be decimal or hex (if preceded by <code>0x</code>)</p>
 
 </dd>
 <dt id="revreason-number"><b>-revreason</b> <i>number</i></dt>
@@ -386,15 +392,17 @@
 <dt id="server-http-s-:-userinfo-host-:port-path-query-fragment"><b>-server</b> <i>[http[s]://][userinfo@]host[:port][/path][?query][#fragment]</i></dt>
 <dd>
 
-<p>The DNS hostname or IP address and optionally port of the CMP server to connect to using HTTP(S). This option excludes <i>-port</i> and <i>-use_mock_srv</i>. It is ignored if <i>-rspin</i> is given with enough filename arguments.</p>
+<p>The <i>host</i> domain name or IP address and optionally <i>port</i> of the CMP server to connect to using HTTP(S). IP address may be for v4 or v6, such as <code>127.0.0.1</code> or <code>[::1]</code> for localhost.</p>
 
-<p>The scheme <code>https</code> may be given only if the <b>-tls_used</b> option is used. In this case the default port is 443, else 80. The optional userinfo and fragment components are ignored. Any given query component is handled as part of the path component. If a path is included it provides the default value for the <b>-path</b> option.</p>
+<p>This option excludes <i>-port</i> and <i>-use_mock_srv</i>. It is ignored if <i>-rspin</i> is given with enough filename arguments.</p>
+
+<p>If the scheme <code>https</code> is given, the <b>-tls_used</b> option is implied. When TLS is used, the default port is 443, otherwise 80. The optional userinfo and fragment components are ignored. Any given query component is handled as part of the path component. If a path is included it provides the default value for the <b>-path</b> option.</p>
 
 </dd>
 <dt id="proxy-http-s-:-userinfo-host-:port-path-query-fragment"><b>-proxy</b> <i>[http[s]://][userinfo@]host[:port][/path][?query][#fragment]</i></dt>
 <dd>
 
-<p>The HTTP(S) proxy server to use for reaching the CMP server unless <b>-no_proxy</b> applies, see below. The proxy port defaults to 80 or 443 if the scheme is <code>https</code>; apart from that the optional <code>http://</code> or <code>https://</code> prefix is ignored (note that TLS may be selected by <b>-tls_used</b>), as well as any path, userinfo, and query, and fragment components. Defaults to the environment variable <code>http_proxy</code> if set, else <code>HTTP_PROXY</code> in case no TLS is used, otherwise <code>https_proxy</code> if set, else <code>HTTPS_PROXY</code>. This option is ignored if <i>-server</i> is not given.</p>
+<p>The HTTP(S) proxy server to use for reaching the CMP server unless <b>-no_proxy</b> applies, see below. The proxy port defaults to 80 or 443 if the scheme is <code>https</code>; apart from that the optional <code>http://</code> or <code>https://</code> prefix is ignored (note that using TLS may be required by <b>-tls_used</b> or <b>-server</b> with the prefix <code>https</code>), as well as any path, userinfo, and query, and fragment components. Defaults to the environment variable <code>http_proxy</code> if set, else <code>HTTP_PROXY</code> in case no TLS is used, otherwise <code>https_proxy</code> if set, else <code>HTTPS_PROXY</code>. This option is ignored if <i>-server</i> is not given.</p>
 
 </dd>
 <dt id="no_proxy-addresses"><b>-no_proxy</b> <i>addresses</i></dt>
@@ -422,7 +430,7 @@
 <dt id="keep_alive-value"><b>-keep_alive</b> <i>value</i></dt>
 <dd>
 
-<p>If the given value is 0 then HTTP connections are not kept open after receiving a response, which is the default behavior for HTTP 1.0. If the value is 1 or 2 then persistent connections are requested. If the value is 2 then persistent connections are required, i.e., in case the server does not grant them an error occurs. The default value is 1, which means preferring to keep the connection open.</p>
+<p>If the given value is 0 then HTTP connections are closed after each response (which would be the default behavior of HTTP 1.0) even if a CMP transaction needs more than one round trip. If the value is 1 or 2 then for each transaction a persistent connection is requested. If the value is 2 then a persistent connection is required, i.e., an error occurs if the server does not grant it. The default value is 1, which means preferring to keep the connection open.</p>
 
 </dd>
 <dt id="msg_timeout-seconds"><b>-msg_timeout</b> <i>seconds</i></dt>
@@ -458,9 +466,9 @@
 <dt id="untrusted-filenames-uris"><b>-untrusted</b> <i>filenames</i>|<i>uris</i></dt>
 <dd>
 
-<p>Non-trusted intermediate CA certificate(s). Any extra certificates given with the <b>-cert</b> option are appended to it. All these certificates may be useful for cert path construction for the own CMP signer certificate (to include in the extraCerts field of request messages) and for the TLS client certificate (if TLS is enabled) as well as for chain building when validating server certificates (checking signature-based CMP message protection) and when validating newly enrolled certificates.</p>
+<p>Non-trusted intermediate CA certificate(s). Any extra certificates given with the <b>-cert</b> option are appended to it. All these certificates may be useful for cert path construction for the own CMP signer certificate (to include in the extraCerts field of request messages) and for the TLS client certificate (if TLS is used) as well as for chain building when validating server certificates (checking signature-based CMP message protection) and when validating newly enrolled certificates.</p>
 
-<p>Multiple filenames or URLs may be given, separated by commas and/or whitespace. Each source may contain multiple certificates.</p>
+<p>Multiple sources may be given, separated by commas and/or whitespace (where in the latter case the whole argument must be enclosed in &quot;...&quot;). Each source may contain multiple certificates.</p>
 
 </dd>
 <dt id="srvcert-filename-uri"><b>-srvcert</b> <i>filename</i>|<i>uri</i></dt>
@@ -524,16 +532,50 @@
 </ul>
 
 </dd>
+<dt id="srvcertout-filename"><b>-srvcertout</b> <i>filename</i></dt>
+<dd>
+
+<p>The file where to save the successfully validated certificate, if any, that the CMP server used for signature-based response message protection. If there is no such certificate, typically because the protection was MAC-based, this is indicated by deleting the file (if it existed).</p>
+
+</dd>
 <dt id="extracertsout-filename"><b>-extracertsout</b> <i>filename</i></dt>
 <dd>
 
-<p>The file where to save all certificates contained in the extraCerts field of the last received response message (except for pollRep and PKIConf).</p>
+<p>The file where to save the list of certificates contained in the extraCerts field of the last received response message that is not a pollRep nor PKIConf.</p>
 
 </dd>
 <dt id="cacertsout-filename"><b>-cacertsout</b> <i>filename</i></dt>
 <dd>
 
-<p>The file where to save any CA certificates contained in the caPubs field of the last received certificate response (i.e., IP, CP, or KUP) message.</p>
+<p>The file where to save the list of CA certificates contained in the caPubs field if a positive certificate response (i.e., IP, CP, or KUP) message was received or contained in a general response (genp) message with infoType <code>caCerts</code>.</p>
+
+</dd>
+<dt id="oldwithold-filename"><b>-oldwithold</b> <i>filename</i></dt>
+<dd>
+
+<p>The root CA certificate to include in a genm request of infoType <code>rootCaCert</code>. If present and the optional oldWithNew certificate is received, it is verified using the newWithNew certificate as the (only) trust anchor.</p>
+
+</dd>
+<dt id="newwithnew-filename"><b>-newwithnew</b> <i>filename</i></dt>
+<dd>
+
+<p>This option must be provided when <b>-infotype</b> <i>rootCaCert</i> is given. It specifies the file to save the newWithNew certificate received in a genp message of type <code>rootCaKeyUpdate</code>. If on success no such cert was received, this file (if present) is deleted to indicate that the requested root CA certificate update is not available.</p>
+
+<p>Any received newWithNew certificate is verified using any received newWithOld certificate as untrusted intermediate certificate and the certificate provided with <b>-oldwithold</b> as the (only) trust anchor, or if not provided, using the certificates given with the <b>-trusted</b> option.</p>
+
+<p><b>WARNING:</b> The newWithNew certificate is meant to be a certificate that will be trusted. The trust placed in it cannot be stronger than the trust placed in the <b>-oldwithold</b> certificate if present, otherwise it cannot be stronger than the weakest trust placed in any of the <b>-trusted</b> certificates.</p>
+
+</dd>
+<dt id="newwithold-filename"><b>-newwithold</b> <i>filename</i></dt>
+<dd>
+
+<p>The file to save any newWithOld certificate received in a genp message of infoType <code>rootCaKeyUpdate</code>. If on success no such cert was received, this is indicated by deleting the file.</p>
+
+</dd>
+<dt id="oldwithnew-filename"><b>-oldwithnew</b> <i>filename</i></dt>
+<dd>
+
+<p>The file to save any oldWithNew certificate received in a genp message of infoType <code>rootCaKeyUpdate</code>. If on success no such cert was received, this is indicated by deleting the file.</p>
 
 </dd>
 </dl>
@@ -647,7 +689,7 @@
 <dt id="otherpass-arg"><b>-otherpass</b> <i>arg</i></dt>
 <dd>
 
-<p>Pass phrase source for certificate given with the <b>-trusted</b>, <b>-untrusted</b>, <b>-own_trusted</b>, <b>-srvcert</b>, <b>-out_trusted</b>, <b>-extracerts</b>, <b>-srv_trusted</b>, <b>-srv_untrusted</b>, <b>-rsp_extracerts</b>, <b>-rsp_capubs</b>, <b>-tls_extra</b>, and <b>-tls_trusted</b> options. If not given here, the password will be prompted for if needed.</p>
+<p>Pass phrase source for certificate given with the <b>-trusted</b>, <b>-untrusted</b>, <b>-own_trusted</b>, <b>-srvcert</b>, <b>-out_trusted</b>, <b>-extracerts</b>, <b>-srv_trusted</b>, <b>-srv_untrusted</b>, <b>-ref_cert</b>, <b>-rsp_cert</b>, <b>-rsp_extracerts</b>, <b>-rsp_capubs</b>, <b>-rsp_newwithnew</b>, <b>-rsp_newwithold</b>, <b>-rsp_oldwithnew</b>, <b>-tls_extra</b>, and <b>-tls_trusted</b> options. If not given here, the password will be prompted for if needed.</p>
 
 <p>For more information about the format of <i>arg</i> see <a href="../man1/openssl-passphrase-options.html">openssl-passphrase-options(1)</a>.</p>
 
@@ -709,15 +751,15 @@
 <dt id="tls_used"><b>-tls_used</b></dt>
 <dd>
 
-<p>Enable using TLS (even when other TLS-related options are not set) for message exchange with CMP server via HTTP. This option is not supported with the <i>-port</i> option. It is ignored if the <i>-server</i> option is not given or <i>-use_mock_srv</i> is given or <i>-rspin</i> is given with enough filename arguments.</p>
+<p>Make the CMP client use TLS (regardless if other TLS-related options are set) for message exchange with the server via HTTP. This option is not supported with the <i>-port</i> option. It is implied if the <b>-server</b> option is given with the scheme <code>https</code>. It is ignored if the <b>-server</b> option is not given or <b>-use_mock_srv</b> is given or <b>-rspin</b> is given with enough filename arguments.</p>
 
-<p>The following TLS-related options are ignored if <b>-tls_used</b> is not given or does not take effect.</p>
+<p>The following TLS-related options are ignored if TLS is not used.</p>
 
 </dd>
 <dt id="tls_cert-filename-uri"><b>-tls_cert</b> <i>filename</i>|<i>uri</i></dt>
 <dd>
 
-<p>Client&#39;s TLS certificate. If the source includes further certs they are used (along with <b>-untrusted</b> certs) for constructing the client cert chain provided to the TLS server.</p>
+<p>Client&#39;s TLS certificate to use for authenticating to the TLS server. If the source includes further certs they are used (along with <b>-untrusted</b> certs) for constructing the client cert chain provided to the TLS server.</p>
 
 </dd>
 <dt id="tls_key-filename-uri"><b>-tls_key</b> <i>filename</i>|<i>uri</i></dt>
@@ -737,7 +779,7 @@
 <dt id="tls_extra-filenames-uris"><b>-tls_extra</b> <i>filenames</i>|<i>uris</i></dt>
 <dd>
 
-<p>Extra certificates to provide to TLS server during TLS handshake</p>
+<p>Extra certificates to provide to the TLS server during handshake.</p>
 
 </dd>
 <dt id="tls_trusted-filenames-uris"><b>-tls_trusted</b> <i>filenames</i>|<i>uris</i></dt>
@@ -839,7 +881,7 @@
 <dt id="port-number"><b>-port</b> <i>number</i></dt>
 <dd>
 
-<p>Act as HTTP-based CMP server mock-up listening on the given port. This excludes the <b>-server</b> and <b>-use_mock_srv</b> options. The <b>-rspin</b>, <b>-rspout</b>, <b>-reqin</b>, and <b>-reqout</b> options so far are not supported in this mode.</p>
+<p>Act as HTTP-based CMP server mock-up listening on the given local port. The client may address the server via, e.g., <code>127.0.0.1</code> or <code>[::1]</code>. This option excludes the <b>-server</b> and <b>-use_mock_srv</b> options. The <b>-rspin</b>, <b>-rspout</b>, <b>-reqin</b>, and <b>-reqout</b> options so far are not supported in this mode.</p>
 
 </dd>
 <dt id="max_msgs-number"><b>-max_msgs</b> <i>number</i></dt>
@@ -892,6 +934,12 @@
 <p>Intermediate CA certs that may be useful when validating client certificates.</p>
 
 </dd>
+<dt id="ref_cert-filename-uri"><b>-ref_cert</b> <i>filename</i>|<i>uri</i></dt>
+<dd>
+
+<p>Certificate to be expected for RR messages and any oldCertID in KUR messages.</p>
+
+</dd>
 <dt id="rsp_cert-filename-uri"><b>-rsp_cert</b> <i>filename</i>|<i>uri</i></dt>
 <dd>
 
@@ -908,6 +956,24 @@
 <dd>
 
 <p>CA certificates to be included in mock Initialization Response (IP) message.</p>
+
+</dd>
+<dt id="rsp_newwithnew-filename-uri"><b>-rsp_newwithnew</b> <i>filename</i>|<i>uri</i></dt>
+<dd>
+
+<p>Certificate to be returned in newWithNew field of genp of type rootCaKeyUpdate.</p>
+
+</dd>
+<dt id="rsp_newwithold-filename-uri"><b>-rsp_newwithold</b> <i>filename</i>|<i>uri</i></dt>
+<dd>
+
+<p>Certificate to be returned in newWithOld field of genp of type rootCaKeyUpdate.</p>
+
+</dd>
+<dt id="rsp_oldwithnew-filename-uri"><b>-rsp_oldwithnew</b> <i>filename</i>|<i>uri</i></dt>
+<dd>
+
+<p>Certificate to be returned in oldWithNew field of genp of type rootCaKeyUpdate.</p>
 
 </dd>
 <dt id="poll_count-number"><b>-poll_count</b> <i>number</i></dt>
@@ -1004,11 +1070,11 @@
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>When a client obtains from a CMP server CA certificates that it is going to trust, for instance via the <code>caPubs</code> field of a certificate response, authentication of the CMP server is particularly critical. So special care must be taken setting up server authentication using <b>-trusted</b> and related options for certificate-based authentication or <b>-secret</b> for MAC-based protection.</p>
+<p>When a client obtains, from a CMP server, CA certificates that it is going to trust, for instance via the <code>caPubs</code> field of a certificate response or using general messages with infoType <code>caCerts</code> or <code>rootCaCert</code>, authentication of the CMP server is particularly critical. So special care must be taken setting up server authentication using <b>-trusted</b> and related options for certificate-based authentication or <b>-secret</b> for MAC-based protection. If authentication is certificate-based, the <b>-srvcertout</b> option should be used to obtain the validated server certificate and perform an authorization check based on it.</p>
 
 <p>When setting up CMP configurations and experimenting with enrollment options typically various errors occur until the configuration is correct and complete. When the CMP server reports an error the client will by default check the protection of the CMP response message. Yet some CMP services tend not to protect negative responses. In this case the client will reject them, and thus their contents are not shown although they usually contain hints that would be helpful for diagnostics. For assisting in such cases the CMP client offers a workaround via the <b>-unprotected_errors</b> option, which allows accepting such negative messages.</p>
 
-<p>If OpenSSL was built with trace support enabled and the environment variable <b>OPENSSL_TRACE</b> includes <b>HTTP</b>, the request and response headers of HTTP transfers are printed.</p>
+<p>If OpenSSL was built with trace support enabled (e.g., <code>./config enable-trace</code>) and the environment variable <b>OPENSSL_TRACE</b> includes <b>HTTP</b>, the requests and the response headers transferred via HTTP are printed.</p>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
@@ -1049,7 +1115,7 @@ openssl cmp -section insta</code></pre>
 
 <pre><code>openssl cmp -section insta,kur</code></pre>
 
-<p>using MAC-based protection with PBM or</p>
+<p>using with MAC-based protection with PBM or</p>
 
 <pre><code>openssl cmp -section insta,kur,signature</code></pre>
 

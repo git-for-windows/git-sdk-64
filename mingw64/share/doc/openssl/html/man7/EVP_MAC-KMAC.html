@@ -52,7 +52,7 @@
 
 <p>The general description of these parameters can be found in <a href="../man3/EVP_MAC.html">&quot;PARAMETERS&quot; in EVP_MAC(3)</a>.</p>
 
-<p>All these parameters can be set with EVP_MAC_CTX_set_params(). Furthermore, the &quot;size&quot; parameter can be retrieved with EVP_MAC_CTX_get_params(), or with EVP_MAC_CTX_get_mac_size(). The length of the &quot;size&quot; parameter should not exceed that of a <b>size_t</b>. Likewise, the &quot;block-size&quot; parameter can be retrieved with EVP_MAC_CTX_get_params(), or with EVP_MAC_CTX_get_block_size().</p>
+<p>All these parameters (except for &quot;block-size&quot;) can be set with EVP_MAC_CTX_set_params(). Furthermore, the &quot;size&quot; parameter can be retrieved with EVP_MAC_CTX_get_params(), or with EVP_MAC_CTX_get_mac_size(). The length of the &quot;size&quot; parameter should not exceed that of a <b>size_t</b>. Likewise, the &quot;block-size&quot; parameter can be retrieved with EVP_MAC_CTX_get_params(), or with EVP_MAC_CTX_get_block_size().</p>
 
 <dl>
 
@@ -65,19 +65,19 @@
 <dt id="custom-OSSL_MAC_PARAM_CUSTOM-octet-string">&quot;custom&quot; (<b>OSSL_MAC_PARAM_CUSTOM</b>) &lt;octet string&gt;</dt>
 <dd>
 
-<p>Sets the custom value. It is an optional value with a length of at most 512 bytes, and is empty by default.</p>
+<p>Sets the customization string. It is an optional value with a length of at most 512 bytes, and is empty by default.</p>
 
 </dd>
 <dt id="size-OSSL_MAC_PARAM_SIZE-unsigned-integer">&quot;size&quot; (<b>OSSL_MAC_PARAM_SIZE</b>) &lt;unsigned integer&gt;</dt>
 <dd>
 
-<p>Sets the MAC size. By default, it is 16 for <code>KMAC-128</code> and 32 for <code>KMAC-256</code>.</p>
+<p>Sets the MAC size. By default, it is 32 for <code>KMAC-128</code> and 64 for <code>KMAC-256</code>.</p>
 
 </dd>
-<dt id="block-size-OSSL_MAC_PARAM_SIZE-unsigned-integer">&quot;block-size&quot; (<b>OSSL_MAC_PARAM_SIZE</b>) &lt;unsigned integer&gt;</dt>
+<dt id="block-size-OSSL_MAC_PARAM_BLOCK_SIZE-unsigned-integer">&quot;block-size&quot; (<b>OSSL_MAC_PARAM_BLOCK_SIZE</b>) &lt;unsigned integer&gt;</dt>
 <dd>
 
-<p>Gets the MAC block size. By default, it is 168 for <code>KMAC-128</code> and 136 for <code>KMAC-256</code>.</p>
+<p>Gets the MAC block size. It is 168 for <code>KMAC-128</code> and 136 for <code>KMAC-256</code>.</p>
 
 </dd>
 <dt id="xof-OSSL_MAC_PARAM_XOF-integer">&quot;xof&quot; (<b>OSSL_MAC_PARAM_XOF</b>) &lt;integer&gt;</dt>
@@ -161,7 +161,7 @@ err:
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2018-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2018-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

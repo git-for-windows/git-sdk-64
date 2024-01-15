@@ -20,7 +20,10 @@
   </li>
   <li><a href="#OPERATIONS-AND-ALGORITHMS">OPERATIONS AND ALGORITHMS</a>
     <ul>
+      <li><a href="#Random-Number-Generation">Random Number Generation</a></li>
       <li><a href="#Asymmetric-Key-Encoder">Asymmetric Key Encoder</a></li>
+      <li><a href="#Asymmetric-Key-Decoder">Asymmetric Key Decoder</a></li>
+      <li><a href="#Stores">Stores</a></li>
     </ul>
   </li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
@@ -92,37 +95,141 @@
 
 <p>The OpenSSL base provider supports these operations and algorithms:</p>
 
-<h2 id="Asymmetric-Key-Encoder">Asymmetric Key Encoder</h2>
-
-<p>In addition to &quot;provider=base&quot;, some of these encoders define the property &quot;fips=yes&quot;, to allow them to be used together with the FIPS provider.</p>
+<h2 id="Random-Number-Generation">Random Number Generation</h2>
 
 <dl>
 
-<dt id="RSA-see-OSSL_ENCODER-RSA-7">RSA, see <a href="../man7/OSSL_ENCODER-RSA.html">OSSL_ENCODER-RSA(7)</a></dt>
-<dd>
-
-</dd>
-<dt id="DH-see-OSSL_ENCODER-DH-7">DH, see <a href="../man7/OSSL_ENCODER-DH.html">OSSL_ENCODER-DH(7)</a></dt>
-<dd>
-
-</dd>
-<dt id="DSA-see-OSSL_ENCODER-DSA-7">DSA, see <a href="../man7/OSSL_ENCODER-DSA.html">OSSL_ENCODER-DSA(7)</a></dt>
-<dd>
-
-</dd>
-<dt id="EC-see-OSSL_ENCODER-EC-7">EC, see <a href="../man7/OSSL_ENCODER-EC.html">OSSL_ENCODER-EC(7)</a></dt>
-<dd>
-
-</dd>
-<dt id="X25519-see-OSSL_ENCODER-X25519-7">X25519, see <a href="../man7/OSSL_ENCODER-X25519.html">OSSL_ENCODER-X25519(7)</a></dt>
-<dd>
-
-</dd>
-<dt id="X448-see-OSSL_ENCODER-X448-7">X448, see <a href="../man7/OSSL_ENCODER-X448.html">OSSL_ENCODER-X448(7)</a></dt>
+<dt id="SEED-SRC-see-EVP_RAND-SEED-SRC-7">SEED-SRC, see <a href="../man7/EVP_RAND-SEED-SRC.html">EVP_RAND-SEED-SRC(7)</a></dt>
 <dd>
 
 </dd>
 </dl>
+
+<p>In addition to this provider, the &quot;SEED-SRC&quot; algorithm is also available in the default provider.</p>
+
+<h2 id="Asymmetric-Key-Encoder">Asymmetric Key Encoder</h2>
+
+<dl>
+
+<dt id="RSA">RSA</dt>
+<dd>
+
+</dd>
+<dt id="RSA-PSS">RSA-PSS</dt>
+<dd>
+
+</dd>
+<dt id="DH">DH</dt>
+<dd>
+
+</dd>
+<dt id="DHX">DHX</dt>
+<dd>
+
+</dd>
+<dt id="DSA">DSA</dt>
+<dd>
+
+</dd>
+<dt id="EC">EC</dt>
+<dd>
+
+</dd>
+<dt id="ED25519">ED25519</dt>
+<dd>
+
+</dd>
+<dt id="ED448">ED448</dt>
+<dd>
+
+</dd>
+<dt id="X25519">X25519</dt>
+<dd>
+
+</dd>
+<dt id="X448">X448</dt>
+<dd>
+
+</dd>
+<dt id="SM2">SM2</dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>In addition to this provider, all of these encoding algorithms are also available in the default provider. Some of these algorithms may be used in combination with the FIPS provider.</p>
+
+<h2 id="Asymmetric-Key-Decoder">Asymmetric Key Decoder</h2>
+
+<dl>
+
+<dt id="RSA1">RSA</dt>
+<dd>
+
+</dd>
+<dt id="RSA-PSS1">RSA-PSS</dt>
+<dd>
+
+</dd>
+<dt id="DH1">DH</dt>
+<dd>
+
+</dd>
+<dt id="DHX1">DHX</dt>
+<dd>
+
+</dd>
+<dt id="DSA1">DSA</dt>
+<dd>
+
+</dd>
+<dt id="EC1">EC</dt>
+<dd>
+
+</dd>
+<dt id="ED255191">ED25519</dt>
+<dd>
+
+</dd>
+<dt id="ED4481">ED448</dt>
+<dd>
+
+</dd>
+<dt id="X255191">X25519</dt>
+<dd>
+
+</dd>
+<dt id="X4481">X448</dt>
+<dd>
+
+</dd>
+<dt id="SM21">SM2</dt>
+<dd>
+
+</dd>
+<dt id="DER">DER</dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>In addition to this provider, all of these decoding algorithms are also available in the default provider. Some of these algorithms may be used in combination with the FIPS provider.</p>
+
+<h2 id="Stores">Stores</h2>
+
+<dl>
+
+<dt id="file">file</dt>
+<dd>
+
+</dd>
+<dt id="org.openssl.winstore">org.openssl.winstore</dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>In addition to this provider, all of these store algorithms are also available in the default provider.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -134,7 +241,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

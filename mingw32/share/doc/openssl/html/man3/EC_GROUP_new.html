@@ -23,7 +23,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>EC_GROUP_get_ecparameters, EC_GROUP_get_ecpkparameters, EC_GROUP_new_from_params, EC_GROUP_new_from_ecparameters, EC_GROUP_new_from_ecpkparameters, EC_GROUP_new, EC_GROUP_free, EC_GROUP_clear_free, EC_GROUP_new_curve_GFp, EC_GROUP_new_curve_GF2m, EC_GROUP_new_by_curve_name_ex, EC_GROUP_new_by_curve_name, EC_GROUP_set_curve, EC_GROUP_get_curve, EC_GROUP_set_curve_GFp, EC_GROUP_get_curve_GFp, EC_GROUP_set_curve_GF2m, EC_GROUP_get_curve_GF2m, EC_get_builtin_curves, OSSL_EC_curve_nid2name - Functions for creating and destroying EC_GROUP objects</p>
+<p>EC_GROUP_get_ecparameters, EC_GROUP_get_ecpkparameters, EC_GROUP_new_from_params, EC_GROUP_to_params, EC_GROUP_new_from_ecparameters, EC_GROUP_new_from_ecpkparameters, EC_GROUP_new, EC_GROUP_free, EC_GROUP_clear_free, EC_GROUP_new_curve_GFp, EC_GROUP_new_curve_GF2m, EC_GROUP_new_by_curve_name_ex, EC_GROUP_new_by_curve_name, EC_GROUP_set_curve, EC_GROUP_get_curve, EC_GROUP_set_curve_GFp, EC_GROUP_get_curve_GFp, EC_GROUP_set_curve_GF2m, EC_GROUP_get_curve_GF2m, EC_get_builtin_curves, OSSL_EC_curve_nid2name - Functions for creating and destroying EC_GROUP objects</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -31,6 +31,8 @@
 
 EC_GROUP *EC_GROUP_new_from_params(const OSSL_PARAM params[],
                                    OSSL_LIB_CTX *libctx, const char *propq);
+OSSL_PARAM *EC_GROUP_to_params(const EC_GROUP *group, OSSL_LIB_CTX *libctx,
+                               const char *propq, BN_CTX *bnctx);
 EC_GROUP *EC_GROUP_new_from_ecparameters(const ECPARAMETERS *params);
 EC_GROUP *EC_GROUP_new_from_ecpkparameters(const ECPKPARAMETERS *params);
 void EC_GROUP_free(EC_GROUP *group);
@@ -85,6 +87,8 @@ int EC_GROUP_get_curve_GF2m(const EC_GROUP *group, BIGNUM *p,
 <p>Although deprecated since OpenSSL 3.0 and should no longer be used, a new curve can be constructed by calling EC_GROUP_new(), using the implementation provided by <i>meth</i> (see <a href="../man3/EC_GFp_simple_method.html">EC_GFp_simple_method(3)</a>) and associated with the library context <i>ctx</i> (see <a href="../man3/OSSL_LIB_CTX.html">OSSL_LIB_CTX(3)</a>). The <i>ctx</i> parameter may be NULL in which case the default library context is used. It is then necessary to call EC_GROUP_set_curve() to set the curve parameters. Applications should instead use one of the other EC_GROUP_new_* constructors.</p>
 
 <p>EC_GROUP_new_from_params() creates a group with parameters specified by <i>params</i>. The library context <i>libctx</i> (see <a href="../man3/OSSL_LIB_CTX.html">OSSL_LIB_CTX(3)</a>) and property query string <i>propq</i> are used to fetch algorithms from providers. <i>params</i> may be either a list of explicit params or a named group, The values for <i>ctx</i> and <i>propq</i> may be NULL. The <i>params</i> that can be used are described in <a href="../man7/EVP_PKEY-EC.html"><b>EVP_PKEY-EC</b>(7)</a>.</p>
+
+<p>EC_GROUP_to_params creates an OSSL_PARAM array with the corresponding parameters describing the given EC_GROUP. The resulting parameters may contain parameters describing a named or explicit curve depending on the EC_GROUP. The library context <i>libctx</i> (see <a href="../man3/OSSL_LIB_CTX.html">OSSL_LIB_CTX(3)</a>) and property query string <i>propq</i> are used to fetch algorithms from providers. <i>bnctx</i> is an optional preallocated BN_CTX (to save the overhead of allocating and freeing the structure in a loop). The values for <i>libctx</i>, <i>propq</i> and <i>bnctx</i> may be NULL. The caller is responsible for freeing the OSSL_PARAM pointer returned.</p>
 
 <p>EC_GROUP_new_from_ecparameters() will create a group from the specified <i>params</i> and EC_GROUP_new_from_ecpkparameters() will create a group from the specific PK <i>params</i>.</p>
 
@@ -154,7 +158,7 @@ OpenSSL 3.0; use EC_GROUP_set_curve() and EC_GROUP_get_curve() instead.</code></
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2013-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2013-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

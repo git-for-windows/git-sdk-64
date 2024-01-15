@@ -55,6 +55,8 @@ int SSL_write(SSL *ssl, const void *buf, int num);</code></pre>
 
 <p>The write functions will only return with success when the complete contents of <b>buf</b> of length <b>num</b> has been written. This default behaviour can be changed with the SSL_MODE_ENABLE_PARTIAL_WRITE option of <a href="../man3/SSL_CTX_set_mode.html">SSL_CTX_set_mode(3)</a>. When this flag is set the write functions will also return with success when a partial write has been successfully completed. In this case the write function operation is considered completed. The bytes are sent and a new write call with a new buffer (with the already sent bytes removed) must be started. A partial write is performed with the size of a message block, which is 16kB.</p>
 
+<p>When used with a QUIC SSL object, calling an I/O function such as SSL_write() allows internal network event processing to be performed. It is important that this processing is performed regularly. If an application is not using thread assisted mode, an application should ensure that an I/O function such as SSL_write() is called regularly, or alternatively ensure that SSL_handle_events() is called regularly. See <a href="../man7/openssl-quic.html">openssl-quic(7)</a> and <a href="../man3/SSL_handle_events.html">SSL_handle_events(3)</a> for more information.</p>
+
 <h1 id="WARNINGS">WARNINGS</h1>
 
 <p>When a write function call has to be repeated because <a href="../man3/SSL_get_error.html">SSL_get_error(3)</a> returned <b>SSL_ERROR_WANT_READ</b> or <b>SSL_ERROR_WANT_WRITE</b>, it must be repeated with the same arguments. The data that was passed might have been partially processed. When <b>SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER</b> was set using <a href="../man3/SSL_CTX_set_mode.html">SSL_CTX_set_mode(3)</a> the pointer can be different, but the data and length should still be the same.</p>
@@ -113,7 +115,7 @@ int SSL_write(SSL *ssl, const void *buf, int num);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

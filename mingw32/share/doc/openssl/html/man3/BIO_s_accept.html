@@ -18,12 +18,13 @@
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>BIO_s_accept, BIO_set_accept_name, BIO_set_accept_port, BIO_get_accept_name, BIO_get_accept_port, BIO_new_accept, BIO_set_nbio_accept, BIO_set_accept_bios, BIO_get_peer_name, BIO_get_peer_port, BIO_get_accept_ip_family, BIO_set_accept_ip_family, BIO_set_bind_mode, BIO_get_bind_mode, BIO_do_accept - accept BIO</p>
+<p>BIO_s_accept, BIO_set_accept_name, BIO_set_accept_port, BIO_get_accept_name, BIO_get_accept_port, BIO_new_accept, BIO_set_nbio_accept, BIO_set_tfo_accept, BIO_set_accept_bios, BIO_get_peer_name, BIO_get_peer_port, BIO_get_accept_ip_family, BIO_set_accept_ip_family, BIO_set_bind_mode, BIO_get_bind_mode, BIO_do_accept - accept BIO</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -40,6 +41,7 @@ char *BIO_get_accept_port(BIO *b);
 BIO *BIO_new_accept(char *host_port);
 
 long BIO_set_nbio_accept(BIO *b, int n);
+long BIO_set_tfo_accept(BIO *b, int n);
 long BIO_set_accept_bios(BIO *b, char *bio);
 
 char *BIO_get_peer_name(BIO *b);
@@ -76,13 +78,15 @@ int BIO_do_accept(BIO *b);</code></pre>
 
 <p>BIO_set_nbio_accept() sets the accept socket to blocking mode (the default) if <b>n</b> is 0 or non blocking mode if <b>n</b> is 1.</p>
 
+<p>BIO_set_tfo_accept() enables TCP Fast Open on the accept socket if <b>n</b> is 1 or disables TCP Fast Open if <b>n</b> is 0 (the default). Setting the value to 1 is equivalent to setting <b>BIO_SOCK_TFO</b> in BIO_set_bind_mode().</p>
+
 <p>BIO_set_accept_bios() can be used to set a chain of BIOs which will be duplicated and prepended to the chain when an incoming connection is received. This is useful if, for example, a buffering or SSL BIO is required for each connection. The chain of BIOs must not be freed after this call, they will be automatically freed when the accept BIO is freed.</p>
 
 <p>BIO_get_accept_ip_family() returns the IP family accepted by the BIO <i>b</i>, which may be <b>BIO_FAMILY_IPV4</b>, <b>BIO_FAMILY_IPV6</b>, or <b>BIO_FAMILY_IPANY</b>.</p>
 
 <p>BIO_set_accept_ip_family() sets the IP family <i>family</i> accepted by BIO <i>b</i>. The default is <b>BIO_FAMILY_IPANY</b>.</p>
 
-<p>BIO_set_bind_mode() and BIO_get_bind_mode() set and retrieve the current bind mode. If <b>BIO_BIND_NORMAL</b> (the default) is set then another socket cannot be bound to the same port. If <b>BIO_BIND_REUSEADDR</b> is set then other sockets can bind to the same port. If <b>BIO_BIND_REUSEADDR_IF_UNUSED</b> is set then and attempt is first made to use BIO_BIN_NORMAL, if this fails and the port is not in use then a second attempt is made using <b>BIO_BIND_REUSEADDR</b>.</p>
+<p>BIO_set_bind_mode() and BIO_get_bind_mode() set and retrieve the current bind mode. If <b>BIO_BIND_NORMAL</b> (the default) is set then another socket cannot be bound to the same port. If <b>BIO_BIND_REUSEADDR</b> is set then other sockets can bind to the same port. If <b>BIO_BIND_REUSEADDR_IF_UNUSED</b> is set then and attempt is first made to use BIO_BIN_NORMAL, if this fails and the port is not in use then a second attempt is made using <b>BIO_BIND_REUSEADDR</b>. If <b>BIO_SOCK_TFO</b> is set, then the socket will be configured to accept TCP Fast Open connections.</p>
 
 <p>BIO_do_accept() serves two functions. When it is first called, after the accept BIO has been setup, it will attempt to create the accept socket and bind an address to it. Second and subsequent calls to BIO_do_accept() will await an incoming connection, or request a retry in non blocking mode.</p>
 
@@ -164,6 +168,10 @@ BIO_puts(cbio, &quot;Connection 1: Second connection established\n&quot;);
 /* Close the two established connections */
 BIO_free(cbio);
 BIO_free(cbio2);</code></pre>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>BIO_set_tfo_accept() was added in OpenSSL 3.2.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

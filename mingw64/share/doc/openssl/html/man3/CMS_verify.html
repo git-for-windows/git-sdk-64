@@ -20,33 +20,41 @@
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#BUGS">BUGS</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>CMS_verify, CMS_get0_signers - verify a CMS SignedData structure</p>
+<p>CMS_verify, CMS_SignedData_verify, CMS_get0_signers - verify a CMS SignedData structure</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/cms.h&gt;
 
 int CMS_verify(CMS_ContentInfo *cms, STACK_OF(X509) *certs, X509_STORE *store,
-               BIO *indata, BIO *out, unsigned int flags);
+               BIO *detached_data, BIO *out, unsigned int flags);
+BIO *CMS_SignedData_verify(CMS_SignedData *sd, BIO *detached_data,
+                           STACK_OF(X509) *scerts, X509_STORE *store,
+                           STACK_OF(X509) *extra, STACK_OF(X509_CRL) *crls,
+                           unsigned int flags,
+                           OSSL_LIB_CTX *libctx, const char *propq);
 
 STACK_OF(X509) *CMS_get0_signers(CMS_ContentInfo *cms);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>CMS_verify() is very similar to <a href="../man3/PKCS7_verify.html">PKCS7_verify(3)</a>. It verifies a <b>CMS SignedData</b> structure contained in a structure of type <b>CMS_ContentInfo</b>. <i>cms</i> points to the <b>CMS_ContentInfo</b> structure to verify. The optional <i>certs</i> parameter refers to a set of certificates in which to search for signing certificates. <i>cms</i> may contain extra untrusted CA certificates that may be used for chain building as well as CRLs that may be used for certificate validation. <i>store</i> may be NULL or point to the trusted certificate store to use for chain verification. <i>indata</i> refers to the signed data if the content is detached from <i>cms</i>. Otherwise <i>indata</i> should be NULL and the signed data must be in <i>cms</i>. The content is written to the BIO <i>out</i> unless it is NULL. <i>flags</i> is an optional set of flags, which can be used to modify the operation.</p>
+<p>CMS_verify() is very similar to <a href="../man3/PKCS7_verify.html">PKCS7_verify(3)</a>. It verifies a <b>CMS SignedData</b> structure contained in a structure of type <b>CMS_ContentInfo</b>. <i>cms</i> points to the <b>CMS_ContentInfo</b> structure to verify. The optional <i>certs</i> parameter refers to a set of certificates in which to search for signing certificates. <i>cms</i> may contain extra untrusted CA certificates that may be used for chain building as well as CRLs that may be used for certificate validation. <i>store</i> may be NULL or point to the trusted certificate store to use for chain verification. <i>detached_data</i> refers to the signed data if the content is detached from <i>cms</i>. Otherwise <i>detached_data</i> should be NULL and the signed data must be in <i>cms</i>. The content is written to the BIO <i>out</i> unless it is NULL. <i>flags</i> is an optional set of flags, which can be used to modify the operation.</p>
 
-<p>CMS_get0_signers() retrieves the signing certificate(s) from <i>cms</i>, it may only be called after a successful CMS_verify() operation.</p>
+<p>CMS_SignedData_verify() is like CMS_verify() except that it operates on <b>CMS SignedData</b> input in the <i>sd</i> argument, it has some additional parameters described next, and on success it returns the verified content as a memory BIO. The optional <i>extra</i> parameter may be used to provide untrusted CA certificates that may be helpful for chain building in certificate validation. This list of certificates must not contain duplicates. The optional <i>crls</i> parameter may be used to provide extra CRLs. Also the list of CRLs must not contain duplicates. The optional parameters library context <i>libctx</i> and property query <i>propq</i> are used when retrieving algorithms from providers.</p>
+
+<p>CMS_get0_signers() retrieves the signing certificate(s) from <i>cms</i>; it may only be called after a successful CMS_verify() or CMS_SignedData_verify() operation.</p>
 
 <h1 id="VERIFY-PROCESS">VERIFY PROCESS</h1>
 
 <p>Normally the verify process proceeds as follows.</p>
 
-<p>Initially some sanity checks are performed on <i>cms</i>. The type of <i>cms</i> must be SignedData. There must be at least one signature on the data and if the content is detached <i>indata</i> cannot be NULL.</p>
+<p>Initially some sanity checks are performed on <i>cms</i>. The type of <i>cms</i> must be SignedData. There must be at least one signature on the data and if the content is detached <i>detached_data</i> cannot be NULL.</p>
 
 <p>An attempt is made to locate all the signing certificate(s), first looking in the <i>certs</i> parameter (if it is not NULL) and then looking in any certificates contained in the <i>cms</i> structure unless <b>CMS_NOINTERN</b> is set. If any signing certificate cannot be located the operation fails.</p>
 
@@ -60,9 +68,9 @@ STACK_OF(X509) *CMS_get0_signers(CMS_ContentInfo *cms);</code></pre>
 
 <p>If <b>CMS_NOINTERN</b> is set the certificates in the message itself are not searched when locating the signing certificate(s). This means that all the signing certificates must be in the <i>certs</i> parameter.</p>
 
-<p>If <b>CMS_NOCRL</b> is set and CRL checking is enabled in <i>store</i> then any CRLs in the message itself are ignored.</p>
+<p>If <b>CMS_NOCRL</b> is set and CRL checking is enabled in <i>store</i> then any CRLs in the message itself and provided via the <i>crls</i> parameter are ignored.</p>
 
-<p>If the <b>CMS_TEXT</b> flag is set MIME headers for type <b>text/plain</b> are deleted from the content. If the content is not of type <b>text/plain</b> then an error is returned.</p>
+<p>If the <b>CMS_TEXT</b> flag is set MIME headers for type <code>text/plain</code> are deleted from the content. If the content is not of type <code>text/plain</code> then an error is returned.</p>
 
 <p>If <b>CMS_NO_SIGNER_CERT_VERIFY</b> is set the signing certificates are not chain verified, unless <b>CMS_CADES</b> flag is also set.</p>
 
@@ -86,9 +94,11 @@ STACK_OF(X509) *CMS_get0_signers(CMS_ContentInfo *cms);</code></pre>
 
 <p>CMS_verify() returns 1 for a successful verification and 0 if an error occurred.</p>
 
+<p>CMS_SignedData_verify() returns a memory BIO containing the verified content, or NULL on error.</p>
+
 <p>CMS_get0_signers() returns all signers or NULL if an error occurred.</p>
 
-<p>The error can be obtained from <a href="../man3/ERR_get_error.html">ERR_get_error(3)</a></p>
+<p>The error can be obtained from <a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>.</p>
 
 <h1 id="BUGS">BUGS</h1>
 
@@ -100,9 +110,13 @@ STACK_OF(X509) *CMS_get0_signers(CMS_ContentInfo *cms);</code></pre>
 
 <p><a href="../man3/PKCS7_verify.html">PKCS7_verify(3)</a>, <a href="../man3/CMS_add1_cert.html">CMS_add1_cert(3)</a>, <a href="../man3/CMS_add1_crl.html">CMS_add1_crl(3)</a>, <a href="../man3/OSSL_ESS_check_signing_certs.html">OSSL_ESS_check_signing_certs(3)</a>, <a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>, <a href="../man3/CMS_sign.html">CMS_sign(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>CMS_SignedData_verify() was added in OpenSSL 3.2.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2008-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2008-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

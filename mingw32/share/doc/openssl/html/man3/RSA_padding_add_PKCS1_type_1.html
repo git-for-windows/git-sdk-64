@@ -122,7 +122,9 @@ int RSA_padding_check_none(unsigned char *to, int tlen,
 
 <h1 id="WARNINGS">WARNINGS</h1>
 
-<p>The result of RSA_padding_check_PKCS1_type_2() is a very sensitive information which can potentially be used to mount a Bleichenbacher padding oracle attack. This is an inherent weakness in the PKCS #1 v1.5 padding design. Prefer PKCS1_OAEP padding. If that is not possible, the result of RSA_padding_check_PKCS1_type_2() should be checked in constant time if it matches the expected length of the plaintext and additionally some application specific consistency checks on the plaintext need to be performed in constant time. If the plaintext is rejected it must be kept secret which of the checks caused the application to reject the message. Do not remove the zero-padding from the decrypted raw RSA data which was computed by RSA_private_decrypt() with <b>RSA_NO_PADDING</b>, as this would create a small timing side channel which could be used to mount a Bleichenbacher attack against any padding mode including PKCS1_OAEP.</p>
+<p>The result of RSA_padding_check_PKCS1_type_2() is exactly the information which is used to mount a classical Bleichenbacher padding oracle attack. This is an inherent weakness in the PKCS #1 v1.5 padding design. Prefer PKCS1_OAEP padding. If that is not possible, the result of RSA_padding_check_PKCS1_type_2() should be checked in constant time if it matches the expected length of the plaintext and additionally some application specific consistency checks on the plaintext need to be performed in constant time. If the plaintext is rejected it must be kept secret which of the checks caused the application to reject the message. Do not remove the zero-padding from the decrypted raw RSA data which was computed by RSA_private_decrypt() with <b>RSA_NO_PADDING</b>, as this would create a small timing side channel which could be used to mount a Bleichenbacher attack against any padding mode including PKCS1_OAEP.</p>
+
+<p>You should prefer the use of EVP PKEY APIs for PKCS#1 v1.5 decryption as they implement the necessary workarounds internally.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

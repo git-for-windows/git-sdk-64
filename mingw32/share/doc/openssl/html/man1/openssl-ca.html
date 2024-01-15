@@ -36,11 +36,15 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>ca</b> [<b>-help</b>] [<b>-verbose</b>] [<b>-config</b> <i>filename</i>] [<b>-name</b> <i>section</i>] [<b>-section</b> <i>section</i>] [<b>-gencrl</b>] [<b>-revoke</b> <i>file</i>] [<b>-valid</b> <i>file</i>] [<b>-status</b> <i>serial</i>] [<b>-updatedb</b>] [<b>-crl_reason</b> <i>reason</i>] [<b>-crl_hold</b> <i>instruction</i>] [<b>-crl_compromise</b> <i>time</i>] [<b>-crl_CA_compromise</b> <i>time</i>] [<b>-crl_lastupdate</b> <i>date</i>] [<b>-crl_nextupdate</b> <i>date</i>] [<b>-crldays</b> <i>days</i>] [<b>-crlhours</b> <i>hours</i>] [<b>-crlsec</b> <i>seconds</i>] [<b>-crlexts</b> <i>section</i>] [<b>-startdate</b> <i>date</i>] [<b>-enddate</b> <i>date</i>] [<b>-days</b> <i>arg</i>] [<b>-md</b> <i>arg</i>] [<b>-policy</b> <i>arg</i>] [<b>-keyfile</b> <i>filename</i>|<i>uri</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-key</b> <i>arg</i>] [<b>-passin</b> <i>arg</i>] [<b>-cert</b> <i>file</i>] [<b>-certform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>] [<b>-selfsign</b>] [<b>-in</b> <i>file</i>] [<b>-inform</b> <b>DER</b>|&lt;PEM&gt;] [<b>-out</b> <i>file</i>] [<b>-notext</b>] [<b>-dateopt</b>] [<b>-outdir</b> <i>dir</i>] [<b>-infiles</b>] [<b>-spkac</b> <i>file</i>] [<b>-ss_cert</b> <i>file</i>] [<b>-preserveDN</b>] [<b>-noemailDN</b>] [<b>-batch</b>] [<b>-msie_hack</b>] [<b>-extensions</b> <i>section</i>] [<b>-extfile</b> <i>section</i>] [<b>-subj</b> <i>arg</i>] [<b>-utf8</b>] [<b>-sigopt</b> <i>nm</i>:<i>v</i>] [<b>-vfyopt</b> <i>nm</i>:<i>v</i>] [<b>-create_serial</b>] [<b>-rand_serial</b>] [<b>-multivalue-rdn</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<i>certreq</i>...]</p>
+<p><b>openssl</b> <b>ca</b> [<b>-help</b>] [<b>-verbose</b>] [<b>-quiet</b>] [<b>-config</b> <i>filename</i>] [<b>-name</b> <i>section</i>] [<b>-section</b> <i>section</i>] [<b>-gencrl</b>] [<b>-revoke</b> <i>file</i>] [<b>-valid</b> <i>file</i>] [<b>-status</b> <i>serial</i>] [<b>-updatedb</b>] [<b>-crl_reason</b> <i>reason</i>] [<b>-crl_hold</b> <i>instruction</i>] [<b>-crl_compromise</b> <i>time</i>] [<b>-crl_CA_compromise</b> <i>time</i>] [<b>-crl_lastupdate</b> <i>date</i>] [<b>-crl_nextupdate</b> <i>date</i>] [<b>-crldays</b> <i>days</i>] [<b>-crlhours</b> <i>hours</i>] [<b>-crlsec</b> <i>seconds</i>] [<b>-crlexts</b> <i>section</i>] [<b>-startdate</b> <i>date</i>] [<b>-enddate</b> <i>date</i>] [<b>-days</b> <i>arg</i>] [<b>-md</b> <i>arg</i>] [<b>-policy</b> <i>arg</i>] [<b>-keyfile</b> <i>filename</i>|<i>uri</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-key</b> <i>arg</i>] [<b>-passin</b> <i>arg</i>] [<b>-cert</b> <i>file</i>] [<b>-certform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>] [<b>-selfsign</b>] [<b>-in</b> <i>file</i>] [<b>-inform</b> <b>DER</b>|&lt;PEM&gt;] [<b>-out</b> <i>file</i>] [<b>-notext</b>] [<b>-dateopt</b>] [<b>-outdir</b> <i>dir</i>] [<b>-infiles</b>] [<b>-spkac</b> <i>file</i>] [<b>-ss_cert</b> <i>file</i>] [<b>-preserveDN</b>] [<b>-noemailDN</b>] [<b>-batch</b>] [<b>-msie_hack</b>] [<b>-extensions</b> <i>section</i>] [<b>-extfile</b> <i>section</i>] [<b>-subj</b> <i>arg</i>] [<b>-utf8</b>] [<b>-sigopt</b> <i>nm</i>:<i>v</i>] [<b>-vfyopt</b> <i>nm</i>:<i>v</i>] [<b>-create_serial</b>] [<b>-rand_serial</b>] [<b>-multivalue-rdn</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<i>certreq</i>...]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>This command emulates a CA application. See the <b>WARNINGS</b> especially when considering to use it productively. It can be used to sign certificate requests (CSRs) in a variety of forms and generate certificate revocation lists (CRLs). It also maintains a text database of issued certificates and their status. When signing certificates, a single request can be specified with the <b>-in</b> option, or multiple requests can be processed by specifying a set of <b>certreq</b> files after all options.</p>
+<p>This command emulates a CA application. See the <b>WARNINGS</b> especially when considering to use it productively.</p>
+
+<p>It generates certificates bearing X.509 version 3. Unless specified otherwise, key identifier extensions are included as described in <a href="../man5/x509v3_config.html">x509v3_config(5)</a>.</p>
+
+<p>It can be used to sign certificate requests (CSRs) in a variety of forms and generate certificate revocation lists (CRLs). It also maintains a text database of issued certificates and their status. When signing certificates, a single request can be specified with the <b>-in</b> option, or multiple requests can be processed by specifying a set of <b>certreq</b> files after all options.</p>
 
 <p>Note that there are also very lean ways of generating certificates: the <b>req</b> and <b>x509</b> commands can be used for directly creating certificates. See <a href="../man1/openssl-req.html">openssl-req(1)</a> and <a href="../man1/openssl-x509.html">openssl-x509(1)</a> for details.</p>
 
@@ -60,6 +64,12 @@
 <dd>
 
 <p>This prints extra details about the operations being performed.</p>
+
+</dd>
+<dt id="quiet"><b>-quiet</b></dt>
+<dd>
+
+<p>This prints fewer details about the operations being performed, which may be handy during batch scripts or pipelines.</p>
 
 </dd>
 <dt id="config-filename"><b>-config</b> <i>filename</i></dt>
@@ -83,7 +93,7 @@
 <dt id="inform-DER-PEM"><b>-inform</b> <b>DER</b>|<b>PEM</b></dt>
 <dd>
 
-<p>The format of the data in certificate request input files; unspecified by default. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
+<p>The format to use when loading certificate request (CSR) input files; by default PEM is tried first. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
 
 </dd>
 <dt id="ss_cert-filename"><b>-ss_cert</b> <i>filename</i></dt>
@@ -243,7 +253,9 @@
 <dt id="extensions-section"><b>-extensions</b> <i>section</i></dt>
 <dd>
 
-<p>The section of the configuration file containing certificate extensions to be added when a certificate is issued (defaults to <b>x509_extensions</b> unless the <b>-extfile</b> option is used). If no X.509 extensions are specified then a V1 certificate is created, else a V3 certificate is created. See the <a href="../man5/x509v3_config.html">x509v3_config(5)</a> manual page for details of the extension section format.</p>
+<p>The section of the configuration file containing certificate extensions to be added when a certificate is issued (defaults to <b>x509_extensions</b> unless the <b>-extfile</b> option is used).</p>
+
+<p>See the <a href="../man5/x509v3_config.html">x509v3_config(5)</a> manual page for details of the extension section format.</p>
 
 </dd>
 <dt id="extfile-file"><b>-extfile</b> <i>file</i></dt>
@@ -693,7 +705,7 @@ emailAddress           = optional</code></pre>
 
 <p>This command was originally meant as an example of how to do things in a CA. Its code does not have production quality. It was not supposed to be used as a full blown CA itself, nevertheless some people are using it for this purpose at least internally. When doing so, specific care should be taken to properly secure the private key(s) used for signing certificates. It is advisable to keep them in a secure HW storage such as a smart card or HSM and access them via a suitable engine or crypto provider.</p>
 
-<p>This command command is effectively a single user command: no locking is done on the various files and attempts to run more than one <b>openssl ca</b> command on the same database can have unpredictable results.</p>
+<p>This command is effectively a single user command: no locking is done on the various files and attempts to run more than one <b>openssl ca</b> command on the same database can have unpredictable results.</p>
 
 <p>The <b>copy_extensions</b> option should be used with caution. If care is not taken then it can be a security risk. For example if a certificate request contains a basicConstraints extension with CA:TRUE and the <b>copy_extensions</b> value is set to <b>copyall</b> and the user does not spot this when the certificate is displayed then this will hand the requester a valid CA certificate. This situation can be avoided by setting <b>copy_extensions</b> to <b>copy</b> and including basicConstraints with CA:FALSE in the configuration file. Then if the request contains a basicConstraints extension it will be ignored.</p>
 
@@ -717,13 +729,15 @@ emailAddress           = optional</code></pre>
 
 <p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
 
+<p>Since OpenSSL 3.2, generated certificates bear X.509 version 3, and key identifier extensions are included by default.</p>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man1/openssl.html">openssl(1)</a>, <a href="../man1/openssl-req.html">openssl-req(1)</a>, <a href="../man1/openssl-spkac.html">openssl-spkac(1)</a>, <a href="../man1/openssl-x509.html">openssl-x509(1)</a>, <a href="../man1/CA.pl.html">CA.pl(1)</a>, <a href="../man5/config.html">config(5)</a>, <a href="../man5/x509v3_config.html">x509v3_config(5)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

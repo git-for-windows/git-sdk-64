@@ -25,6 +25,7 @@
   </li>
   <li><a href="#OPTIONS">OPTIONS</a>
     <ul>
+      <li><a href="#Program-Options">Program Options</a></li>
       <li><a href="#Common-Options">Common Options</a></li>
       <li><a href="#Format-Options">Format Options</a></li>
       <li><a href="#Pass-Phrase-Options">Pass Phrase Options</a></li>
@@ -52,9 +53,11 @@
 
 <p><b>openssl</b> <b>no-</b><i>XXX</i> [ <i>options</i> ]</p>
 
+<p><b>openssl</b> <b>-help</b> | <b>-version</b></p>
+
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>OpenSSL is a cryptography toolkit implementing the Secure Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1) network protocols and related cryptography standards required by them.</p>
+<p>OpenSSL is a cryptography toolkit implementing the Secure Sockets Layer (SSL) and Transport Layer Security (TLS) network protocols and related cryptography standards required by them.</p>
 
 <p>The <b>openssl</b> program is a command line program for using the various cryptography functions of OpenSSL&#39;s <b>crypto</b> library from the shell. It can be used for</p>
 
@@ -499,6 +502,30 @@ o  Timestamp requests, generation and verification</code></pre>
 <p>SHA-3 512 Digest</p>
 
 </dd>
+<dt id="keccak-224"><b>keccak-224</b></dt>
+<dd>
+
+<p>KECCAK 224 Digest</p>
+
+</dd>
+<dt id="keccak-256"><b>keccak-256</b></dt>
+<dd>
+
+<p>KECCAK 256 Digest</p>
+
+</dd>
+<dt id="keccak-384"><b>keccak-384</b></dt>
+<dd>
+
+<p>KECCAK 384 Digest</p>
+
+</dd>
+<dt id="keccak-512"><b>keccak-512</b></dt>
+<dd>
+
+<p>KECCAK 512 Digest</p>
+
+</dd>
 <dt id="shake128"><b>shake128</b></dt>
 <dd>
 
@@ -665,14 +692,34 @@ o  Timestamp requests, generation and verification</code></pre>
 
 <p>Details of which options are available depend on the specific command. This section describes some common options with common behavior.</p>
 
-<h2 id="Common-Options">Common Options</h2>
+<h2 id="Program-Options">Program Options</h2>
+
+<p>These options can be specified without a command specified to get help or version information.</p>
 
 <dl>
 
 <dt id="help1"><b>-help</b></dt>
 <dd>
 
-<p>Provides a terse summary of all options. If an option takes an argument, the &quot;type&quot; of argument is also given.</p>
+<p>Provides a terse summary of all options. For more detailed information, each command supports a <b>-help</b> option. Accepts <b>--help</b> as well.</p>
+
+</dd>
+<dt id="version1"><b>-version</b></dt>
+<dd>
+
+<p>Provides a terse summary of the <b>openssl</b> program version. For more detailed information see <a href="../man1/openssl-version.html">openssl-version(1)</a>. Accepts <b>--version</b> as well.</p>
+
+</dd>
+</dl>
+
+<h2 id="Common-Options">Common Options</h2>
+
+<dl>
+
+<dt id="help2"><b>-help</b></dt>
+<dd>
+
+<p>If an option takes an argument, the &quot;type&quot; of argument is also given.</p>
 
 </dd>
 <dt id="pod"><b>--</b></dt>
@@ -923,7 +970,7 @@ o  Timestamp requests, generation and verification</code></pre>
 <dt id="HTTP"><b>HTTP</b></dt>
 <dd>
 
-<p>HTTP client diagnostics</p>
+<p>Traces the HTTP client and server, such as messages being sent and received.</p>
 
 </dd>
 </dl>

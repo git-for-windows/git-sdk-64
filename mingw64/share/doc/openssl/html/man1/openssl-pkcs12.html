@@ -42,7 +42,7 @@
 
 <p>PKCS#12 output (export) options:</p>
 
-<p>[<b>-export</b>] [<b>-inkey</b> <i>filename</i>|<i>uri</i>] [<b>-certfile</b> <i>filename</i>] [<b>-passcerts</b> <i>arg</i>] [<b>-chain</b>] [<b>-untrusted</b> <i>filename</i>] [<b>-CAfile</b> <i>file</i>] [<b>-no-CAfile</b>] [<b>-CApath</b> <i>dir</i>] [<b>-no-CApath</b>] [<b>-CAstore</b> <i>uri</i>] [<b>-no-CAstore</b>] [<b>-name</b> <i>name</i>] [<b>-caname</b> <i>name</i>] [<b>-CSP</b> <i>name</i>] [<b>-LMK</b>] [<b>-keyex</b>] [<b>-keysig</b>] [<b>-keypbe</b> <i>cipher</i>] [<b>-certpbe</b> <i>cipher</i>] [<b>-descert</b>] [<b>-macalg</b> <i>digest</i>] [<b>-iter</b> <i>count</i>] [<b>-noiter</b>] [<b>-nomaciter</b>] [<b>-maciter</b>] [<b>-nomac</b>]</p>
+<p>[<b>-export</b>] [<b>-inkey</b> <i>filename</i>|<i>uri</i>] [<b>-certfile</b> <i>filename</i>] [<b>-passcerts</b> <i>arg</i>] [<b>-chain</b>] [<b>-untrusted</b> <i>filename</i>] [<b>-CAfile</b> <i>file</i>] [<b>-no-CAfile</b>] [<b>-CApath</b> <i>dir</i>] [<b>-no-CApath</b>] [<b>-CAstore</b> <i>uri</i>] [<b>-no-CAstore</b>] [<b>-name</b> <i>name</i>] [<b>-caname</b> <i>name</i>] [<b>-CSP</b> <i>name</i>] [<b>-LMK</b>] [<b>-keyex</b>] [<b>-keysig</b>] [<b>-keypbe</b> <i>cipher</i>] [<b>-certpbe</b> <i>cipher</i>] [<b>-descert</b>] [<b>-macalg</b> <i>digest</i>] [<b>-iter</b> <i>count</i>] [<b>-noiter</b>] [<b>-nomaciter</b>] [<b>-maciter</b>] [<b>-macsaltlen</b>] [<b>-nomac</b>] [<b>-jdktrust</b> <i>usage</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -360,10 +360,22 @@
 <p>This option is included for compatibility with previous versions, it used to be needed to use MAC iterations counts but they are now used by default.</p>
 
 </dd>
+<dt id="macsaltlen"><b>-macsaltlen</b></dt>
+<dd>
+
+<p>This option specifies the salt length in bytes for the MAC. The salt length should be at least 16 bytes as per NIST SP 800-132. The default value is 8 bytes for backwards compatibility.</p>
+
+</dd>
 <dt id="nomac"><b>-nomac</b></dt>
 <dd>
 
 <p>Do not attempt to provide the MAC integrity. This can be useful with the FIPS provider as the PKCS12 MAC requires PKCS12KDF which is not an approved FIPS algorithm and cannot be supported by the FIPS provider.</p>
+
+</dd>
+<dt id="jdktrust"><b>-jdktrust</b></dt>
+<dd>
+
+<p>Export pkcs12 file in a format compatible with Java keystore usage. This option accepts a string parameter indicating the trust oid name to be granted to the certificate it is associated with. Currently only &quot;anyExtendedKeyUsage&quot; is defined. Note that, as Java keystores do not accept PKCS12 files with both trusted certificates and keypairs, use of this option implies the setting of the <b>-nokeys</b> option</p>
 
 </dd>
 </dl>
@@ -423,7 +435,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

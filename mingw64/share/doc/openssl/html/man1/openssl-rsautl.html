@@ -86,7 +86,7 @@
 <dt id="pubin"><b>-pubin</b></dt>
 <dd>
 
-<p>The input file is an RSA public key.</p>
+<p>By default a private key is read from the key input. With this option a public key is read instead. If the input contains no public key but a private key, its public part is used.</p>
 
 </dd>
 <dt id="certin"><b>-certin</b></dt>
@@ -123,6 +123,8 @@
 <dd>
 
 <p>The padding to use: PKCS#1 v1.5 (the default), PKCS#1 OAEP, ANSI X9.31, or no padding, respectively. For signatures, only <b>-pkcs</b> and <b>-raw</b> can be used.</p>
+
+<p>Note: because of protection against Bleichenbacher attacks, decryption using PKCS#1 v1.5 mode will not return errors in case padding check failed. Use <b>-raw</b> and inspect the returned value manually to check if the padding is correct.</p>
 
 </dd>
 <dt id="hexdump"><b>-hexdump</b></dt>

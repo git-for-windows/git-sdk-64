@@ -22,7 +22,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>ASN1_item_d2i_ex, ASN1_item_d2i, ASN1_item_d2i_bio_ex, ASN1_item_d2i_bio, ASN1_item_d2i_fp_ex, ASN1_item_d2i_fp, ASN1_item_i2d_mem_bio - decode and encode DER-encoded ASN.1 structures</p>
+<p>ASN1_item_d2i_ex, ASN1_item_d2i, ASN1_item_d2i_bio_ex, ASN1_item_d2i_bio, ASN1_item_d2i_fp_ex, ASN1_item_d2i_fp, ASN1_item_i2d_mem_bio, ASN1_item_pack, ASN1_item_unpack_ex, ASN1_item_unpack - decode and encode DER-encoded ASN.1 structures</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -42,7 +42,14 @@ void *ASN1_item_d2i_fp_ex(const ASN1_ITEM *it, FILE *in, void *x,
                           OSSL_LIB_CTX *libctx, const char *propq);
 void *ASN1_item_d2i_fp(const ASN1_ITEM *it, FILE *in, void *x);
 
-BIO *ASN1_item_i2d_mem_bio(const ASN1_ITEM *it, const ASN1_VALUE *val);</code></pre>
+BIO *ASN1_item_i2d_mem_bio(const ASN1_ITEM *it, const ASN1_VALUE *val);
+
+ASN1_STRING *ASN1_item_pack(void *obj, const ASN1_ITEM *it, ASN1_STRING **oct);
+
+void *ASN1_item_unpack(const ASN1_STRING *oct, const ASN1_ITEM *it);
+
+void *ASN1_item_unpack_ex(const ASN1_STRING *oct, const ASN1_ITEM *it,
+                         OSSL_LIB_CTX *libctx, const char *propq);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -60,19 +67,29 @@ BIO *ASN1_item_i2d_mem_bio(const ASN1_ITEM *it, const ASN1_VALUE *val);</code></
 
 <p>ASN1_item_i2d_mem_bio() encodes the given ASN.1 value <i>val</i> using the ASN.1 template <i>it</i> and returns the result in a memory BIO.</p>
 
+<p>ASN1_item_pack() encodes the given ASN.1 value in <i>obj</i> using the ASN.1 template <i>it</i> and returns an <b>ASN1_STRING</b> object. If the passed in <i>*oct</i> is not NULL then this is used to store the returned result, otherwise a new <b>ASN1_STRING</b> object is created. If <i>oct</i> is not NULL and <i>*oct</i> is NULL then the returned return is also set into <i>*oct</i>. If there is an error the optional passed in <b>ASN1_STRING</b> will not be freed, but the previous value may be cleared when ASN1_STRING_set0(*oct, NULL, 0) is called internally.</p>
+
+<p>ASN1_item_unpack() uses ASN1_item_d2i() to decode the DER-encoded <b>ASN1_STRING</b> <i>oct</i> using the ASN.1 template <i>it</i>.</p>
+
+<p>ASN1_item_unpack_ex() is similar to ASN1_item_unpack(), but uses ASN1_item_d2i_ex() so that the <i>libctx</i> and <i>propq</i> can be used when doing algorithm fetching.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>ASN1_item_d2i_bio() returns a pointer to an <b>ASN1_VALUE</b> or NULL.</p>
+<p>ASN1_item_d2i_bio(), ASN1_item_unpack_ex() and ASN1_item_unpack() return a pointer to an <b>ASN1_VALUE</b> or NULL on error.</p>
 
 <p>ASN1_item_i2d_mem_bio() returns a pointer to a memory BIO or NULL on error.</p>
+
+<p>ASN1_item_pack() returns a pointer to an <b>ASN1_STRING</b> or NULL on error.</p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>The functions ASN1_item_d2i_ex(), ASN1_item_d2i_bio_ex(), ASN1_item_d2i_fp_ex() and ASN1_item_i2d_mem_bio() were added in OpenSSL 3.0.</p>
 
+<p>The function ASN1_item_unpack_ex() was added in OpenSSL 3.2.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

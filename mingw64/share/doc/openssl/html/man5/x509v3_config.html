@@ -182,9 +182,31 @@ extendedKeyUsage = serverAuth, clientAuth</code></pre>
 
 <h2 id="Subject-Key-Identifier">Subject Key Identifier</h2>
 
-<p>The SKID extension specification has a value with three choices. If the value is the word <b>none</b> then no SKID extension will be included. If the value is the word <b>hash</b>, or by default for the <b>x509</b>, <b>req</b>, and <b>ca</b> apps, the process specified in RFC 5280 section 4.2.1.2. (1) is followed: The keyIdentifier is composed of the 160-bit SHA-1 hash of the value of the BIT STRING subjectPublicKey (excluding the tag, length, and number of unused bits).</p>
+<p>The SKID extension specification has a value with three choices.</p>
 
-<p>Otherwise, the value must be a hex string (possibly with <code>:</code> separating bytes) to output directly, however, this is strongly discouraged.</p>
+<dl>
+
+<dt id="none"><b>none</b></dt>
+<dd>
+
+<p>No SKID extension will be included.</p>
+
+</dd>
+<dt id="hash"><b>hash</b></dt>
+<dd>
+
+<p>The process specified in RFC 5280 section 4.2.1.2. (1) is followed: The keyIdentifier is composed of the 160-bit SHA-1 hash of the value of the BIT STRING subjectPublicKey (excluding the tag, length, and number of unused bits).</p>
+
+</dd>
+<dt id="A-hex-string-possibly-with-:-separating-bytes">A hex string (possibly with <code>:</code> separating bytes)</dt>
+<dd>
+
+<p>The provided value is output directly. This choice is strongly discouraged.</p>
+
+</dd>
+</dl>
+
+<p>By default the <b>x509</b>, <b>req</b>, and <b>ca</b> apps behave as if <b>hash</b> was given.</p>
 
 <p>Example:</p>
 
@@ -192,11 +214,13 @@ extendedKeyUsage = serverAuth, clientAuth</code></pre>
 
 <h2 id="Authority-Key-Identifier">Authority Key Identifier</h2>
 
-<p>The AKID extension specification may have the value <b>none</b> indicating that no AKID shall be included. Otherwise it may have the value <b>keyid</b> or <b>issuer</b> or both of them, separated by <code>,</code>. Either or both can have the option <b>always</b>, indicated by putting a colon <code>:</code> between the value and this option. For self-signed certificates the AKID is suppressed unless <b>always</b> is present. By default the <b>x509</b>, <b>req</b>, and <b>ca</b> apps behave as if &quot;none&quot; was given for self-signed certificates and &quot;keyid, issuer&quot; otherwise.</p>
+<p>The AKID extension specification may have the value <b>none</b> indicating that no AKID shall be included. Otherwise it may have the value <b>keyid</b> or <b>issuer</b> or both of them, separated by <code>,</code>. Either or both can have the option <b>always</b>, indicated by putting a colon <code>:</code> between the value and this option. For self-signed certificates the AKID is suppressed unless <b>always</b> is present.</p>
+
+<p>By default the <b>x509</b>, <b>req</b>, and <b>ca</b> apps behave as if <b>none</b> was given for self-signed certificates and <b>keyid</b><code>,</code> <b>issuer</b> otherwise.</p>
 
 <p>If <b>keyid</b> is present, an attempt is made to copy the subject key identifier (SKID) from the issuer certificate except if the issuer certificate is the same as the current one and it is not self-signed. The hash of the public key related to the signing key is taken as fallback if the issuer certificate is the same as the current certificate. If <b>always</b> is present but no value can be obtained, an error is returned.</p>
 
-<p>If <b>issuer</b> is present, and in addition it has the option <b>always</b> specified or <b>keyid</b> is not present, then the issuer DN and serial number are copied from the issuer certificate.</p>
+<p>If <b>issuer</b> is present, and in addition it has the option <b>always</b> specified or <b>keyid</b> is not present, then the issuer DN and serial number are copied from the issuer certificate. If this fails, an error is returned.</p>
 
 <p>Examples:</p>
 

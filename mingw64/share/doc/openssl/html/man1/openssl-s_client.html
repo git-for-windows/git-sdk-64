@@ -16,7 +16,8 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#OPTIONS">OPTIONS</a></li>
-  <li><a href="#CONNECTED-COMMANDS">CONNECTED COMMANDS</a></li>
+  <li><a href="#CONNECTED-COMMANDS-BASIC">CONNECTED COMMANDS (BASIC)</a></li>
+  <li><a href="#CONNECTED-COMMANDS-ADVANCED">CONNECTED COMMANDS (ADVANCED)</a></li>
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#BUGS">BUGS</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
@@ -30,7 +31,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>s_client</b> [<b>-help</b>] [<b>-ssl_config</b> <i>section</i>] [<b>-connect</b> <i>host:port</i>] [<b>-host</b> <i>hostname</i>] [<b>-port</b> <i>port</i>] [<b>-bind</b> <i>host:port</i>] [<b>-proxy</b> <i>host:port</i>] [<b>-proxy_user</b> <i>userid</i>] [<b>-proxy_pass</b> <i>arg</i>] [<b>-unix</b> <i>path</i>] [<b>-4</b>] [<b>-6</b>] [<b>-servername</b> <i>name</i>] [<b>-noservername</b>] [<b>-verify</b> <i>depth</i>] [<b>-verify_return_error</b>] [<b>-verify_quiet</b>] [<b>-verifyCAfile</b> <i>filename</i>] [<b>-verifyCApath</b> <i>dir</i>] [<b>-verifyCAstore</b> <i>uri</i>] [<b>-cert</b> <i>filename</i>] [<b>-certform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>] [<b>-cert_chain</b> <i>filename</i>] [<b>-build_chain</b>] [<b>-CRL</b> <i>filename</i>] [<b>-CRLform</b> <b>DER</b>|<b>PEM</b>] [<b>-crl_download</b>] [<b>-key</b> <i>filename</i>|<i>uri</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-pass</b> <i>arg</i>] [<b>-chainCAfile</b> <i>filename</i>] [<b>-chainCApath</b> <i>directory</i>] [<b>-chainCAstore</b> <i>uri</i>] [<b>-requestCAfile</b> <i>filename</i>] [<b>-dane_tlsa_domain</b> <i>domain</i>] [<b>-dane_tlsa_rrdata</b> <i>rrdata</i>] [<b>-dane_ee_no_namechecks</b>] [<b>-reconnect</b>] [<b>-showcerts</b>] [<b>-prexit</b>] [<b>-debug</b>] [<b>-trace</b>] [<b>-nocommands</b>] [<b>-security_debug</b>] [<b>-security_debug_verbose</b>] [<b>-msg</b>] [<b>-timeout</b>] [<b>-mtu</b> <i>size</i>] [<b>-no_etm</b>] [<b>-keymatexport</b> <i>label</i>] [<b>-keymatexportlen</b> <i>len</i>] [<b>-msgfile</b> <i>filename</i>] [<b>-nbio_test</b>] [<b>-state</b>] [<b>-nbio</b>] [<b>-crlf</b>] [<b>-ign_eof</b>] [<b>-no_ign_eof</b>] [<b>-psk_identity</b> <i>identity</i>] [<b>-psk</b> <i>key</i>] [<b>-psk_session</b> <i>file</i>] [<b>-quiet</b>] [<b>-sctp</b>] [<b>-sctp_label_bug</b>] [<b>-fallback_scsv</b>] [<b>-async</b>] [<b>-maxfraglen</b> <i>len</i>] [<b>-max_send_frag</b>] [<b>-split_send_frag</b>] [<b>-max_pipelines</b>] [<b>-read_buf</b>] [<b>-ignore_unexpected_eof</b>] [<b>-bugs</b>] [<b>-comp</b>] [<b>-no_comp</b>] [<b>-brief</b>] [<b>-legacy_server_connect</b>] [<b>-no_legacy_server_connect</b>] [<b>-allow_no_dhe_kex</b>] [<b>-sigalgs</b> <i>sigalglist</i>] [<b>-curves</b> <i>curvelist</i>] [<b>-cipher</b> <i>cipherlist</i>] [<b>-ciphersuites</b> <i>val</i>] [<b>-serverpref</b>] [<b>-starttls</b> <i>protocol</i>] [<b>-name</b> <i>hostname</i>] [<b>-xmpphost</b> <i>hostname</i>] [<b>-name</b> <i>hostname</i>] [<b>-tlsextdebug</b>] [<b>-no_ticket</b>] [<b>-sess_out</b> <i>filename</i>] [<b>-serverinfo</b> <i>types</i>] [<b>-sess_in</b> <i>filename</i>] [<b>-serverinfo</b> <i>types</i>] [<b>-status</b>] [<b>-alpn</b> <i>protocols</i>] [<b>-nextprotoneg</b> <i>protocols</i>] [<b>-ct</b>] [<b>-noct</b>] [<b>-ctlogfile</b>] [<b>-keylogfile</b> <i>file</i>] [<b>-early_data</b> <i>file</i>] [<b>-enable_pha</b>] [<b>-use_srtp</b> <i>value</i>] [<b>-srpuser</b> <i>value</i>] [<b>-srppass</b> <i>value</i>] [<b>-srp_lateuser</b>] [<b>-srp_moregroups</b>] [<b>-srp_strength</b> <i>number</i>] [<b>-nameopt</b> <i>option</i>] [<b>-no_ssl3</b>] [<b>-no_tls1</b>] [<b>-no_tls1_1</b>] [<b>-no_tls1_2</b>] [<b>-no_tls1_3</b>] [<b>-ssl3</b>] [<b>-tls1</b>] [<b>-tls1_1</b>] [<b>-tls1_2</b>] [<b>-tls1_3</b>] [<b>-dtls</b>] [<b>-dtls1</b>] [<b>-dtls1_2</b>] [<b>-xkey</b> <i>infile</i>] [<b>-xcert</b> <i>file</i>] [<b>-xchain</b> <i>file</i>] [<b>-xchain_build</b> <i>file</i>] [<b>-xcertform</b> <b>DER</b>|<b>PEM</b>]&gt; [<b>-xkeyform</b> <b>DER</b>|<b>PEM</b>]&gt; [<b>-CAfile</b> <i>file</i>] [<b>-no-CAfile</b>] [<b>-CApath</b> <i>dir</i>] [<b>-no-CApath</b>] [<b>-CAstore</b> <i>uri</i>] [<b>-no-CAstore</b>] [<b>-bugs</b>] [<b>-no_comp</b>] [<b>-comp</b>] [<b>-no_ticket</b>] [<b>-serverpref</b>] [<b>-client_renegotiation</b>] [<b>-legacy_renegotiation</b>] [<b>-no_renegotiation</b>] [<b>-no_resumption_on_reneg</b>] [<b>-legacy_server_connect</b>] [<b>-no_legacy_server_connect</b>] [<b>-no_etm</b>] [<b>-allow_no_dhe_kex</b>] [<b>-prioritize_chacha</b>] [<b>-strict</b>] [<b>-sigalgs</b> <i>algs</i>] [<b>-client_sigalgs</b> <i>algs</i>] [<b>-groups</b> <i>groups</i>] [<b>-curves</b> <i>curves</i>] [<b>-named_curve</b> <i>curve</i>] [<b>-cipher</b> <i>ciphers</i>] [<b>-ciphersuites</b> <i>1.3ciphers</i>] [<b>-min_protocol</b> <i>minprot</i>] [<b>-max_protocol</b> <i>maxprot</i>] [<b>-record_padding</b> <i>padding</i>] [<b>-debug_broken_protocol</b>] [<b>-no_middlebox</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<b>-engine</b> <i>id</i>] [<b>-ssl_client_engine</b> <i>id</i>] [<b>-allow_proxy_certs</b>] [<b>-attime</b> <i>timestamp</i>] [<b>-no_check_time</b>] [<b>-check_ss_sig</b>] [<b>-crl_check</b>] [<b>-crl_check_all</b>] [<b>-explicit_policy</b>] [<b>-extended_crl</b>] [<b>-ignore_critical</b>] [<b>-inhibit_any</b>] [<b>-inhibit_map</b>] [<b>-partial_chain</b>] [<b>-policy</b> <i>arg</i>] [<b>-policy_check</b>] [<b>-policy_print</b>] [<b>-purpose</b> <i>purpose</i>] [<b>-suiteB_128</b>] [<b>-suiteB_128_only</b>] [<b>-suiteB_192</b>] [<b>-trusted_first</b>] [<b>-no_alt_chains</b>] [<b>-use_deltas</b>] [<b>-auth_level</b> <i>num</i>] [<b>-verify_depth</b> <i>num</i>] [<b>-verify_email</b> <i>email</i>] [<b>-verify_hostname</b> <i>hostname</i>] [<b>-verify_ip</b> <i>ip</i>] [<b>-verify_name</b> <i>name</i>] [<b>-x509_strict</b>] [<b>-issuer_checks</b>] [<i>host</i>:<i>port</i>]</p>
+<p><b>openssl</b> <b>s_client</b> [<b>-help</b>] [<b>-ssl_config</b> <i>section</i>] [<b>-connect</b> <i>host:port</i>] [<b>-host</b> <i>hostname</i>] [<b>-port</b> <i>port</i>] [<b>-bind</b> <i>host:port</i>] [<b>-proxy</b> <i>host:port</i>] [<b>-proxy_user</b> <i>userid</i>] [<b>-proxy_pass</b> <i>arg</i>] [<b>-unix</b> <i>path</i>] [<b>-4</b>] [<b>-6</b>] [<b>-quic</b>] [<b>-servername</b> <i>name</i>] [<b>-noservername</b>] [<b>-verify</b> <i>depth</i>] [<b>-verify_return_error</b>] [<b>-verify_quiet</b>] [<b>-verifyCAfile</b> <i>filename</i>] [<b>-verifyCApath</b> <i>dir</i>] [<b>-verifyCAstore</b> <i>uri</i>] [<b>-cert</b> <i>filename</i>] [<b>-certform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>] [<b>-cert_chain</b> <i>filename</i>] [<b>-build_chain</b>] [<b>-CRL</b> <i>filename</i>] [<b>-CRLform</b> <b>DER</b>|<b>PEM</b>] [<b>-crl_download</b>] [<b>-key</b> <i>filename</i>|<i>uri</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-pass</b> <i>arg</i>] [<b>-chainCAfile</b> <i>filename</i>] [<b>-chainCApath</b> <i>directory</i>] [<b>-chainCAstore</b> <i>uri</i>] [<b>-requestCAfile</b> <i>filename</i>] [<b>-dane_tlsa_domain</b> <i>domain</i>] [<b>-dane_tlsa_rrdata</b> <i>rrdata</i>] [<b>-dane_ee_no_namechecks</b>] [<b>-reconnect</b>] [<b>-showcerts</b>] [<b>-prexit</b>] [<b>-no-interactive</b>] [<b>-debug</b>] [<b>-trace</b>] [<b>-nocommands</b>] [<b>-adv</b>] [<b>-security_debug</b>] [<b>-security_debug_verbose</b>] [<b>-msg</b>] [<b>-timeout</b>] [<b>-mtu</b> <i>size</i>] [<b>-no_etm</b>] [<b>-no_ems</b>] [<b>-keymatexport</b> <i>label</i>] [<b>-keymatexportlen</b> <i>len</i>] [<b>-msgfile</b> <i>filename</i>] [<b>-nbio_test</b>] [<b>-state</b>] [<b>-nbio</b>] [<b>-crlf</b>] [<b>-ign_eof</b>] [<b>-no_ign_eof</b>] [<b>-psk_identity</b> <i>identity</i>] [<b>-psk</b> <i>key</i>] [<b>-psk_session</b> <i>file</i>] [<b>-quiet</b>] [<b>-sctp</b>] [<b>-sctp_label_bug</b>] [<b>-fallback_scsv</b>] [<b>-async</b>] [<b>-maxfraglen</b> <i>len</i>] [<b>-max_send_frag</b>] [<b>-split_send_frag</b>] [<b>-max_pipelines</b>] [<b>-read_buf</b>] [<b>-ignore_unexpected_eof</b>] [<b>-bugs</b>] [<b>-no_tx_cert_comp</b>] [<b>-no_rx_cert_comp</b>] [<b>-comp</b>] [<b>-no_comp</b>] [<b>-brief</b>] [<b>-legacy_server_connect</b>] [<b>-no_legacy_server_connect</b>] [<b>-allow_no_dhe_kex</b>] [<b>-sigalgs</b> <i>sigalglist</i>] [<b>-curves</b> <i>curvelist</i>] [<b>-cipher</b> <i>cipherlist</i>] [<b>-ciphersuites</b> <i>val</i>] [<b>-serverpref</b>] [<b>-starttls</b> <i>protocol</i>] [<b>-name</b> <i>hostname</i>] [<b>-xmpphost</b> <i>hostname</i>] [<b>-name</b> <i>hostname</i>] [<b>-tlsextdebug</b>] [<b>-no_ticket</b>] [<b>-sess_out</b> <i>filename</i>] [<b>-serverinfo</b> <i>types</i>] [<b>-sess_in</b> <i>filename</i>] [<b>-serverinfo</b> <i>types</i>] [<b>-status</b>] [<b>-alpn</b> <i>protocols</i>] [<b>-nextprotoneg</b> <i>protocols</i>] [<b>-ct</b>] [<b>-noct</b>] [<b>-ctlogfile</b>] [<b>-keylogfile</b> <i>file</i>] [<b>-early_data</b> <i>file</i>] [<b>-enable_pha</b>] [<b>-use_srtp</b> <i>value</i>] [<b>-srpuser</b> <i>value</i>] [<b>-srppass</b> <i>value</i>] [<b>-srp_lateuser</b>] [<b>-srp_moregroups</b>] [<b>-srp_strength</b> <i>number</i>] [<b>-ktls</b>] [<b>-tfo</b>] [<b>-nameopt</b> <i>option</i>] [<b>-no_ssl3</b>] [<b>-no_tls1</b>] [<b>-no_tls1_1</b>] [<b>-no_tls1_2</b>] [<b>-no_tls1_3</b>] [<b>-ssl3</b>] [<b>-tls1</b>] [<b>-tls1_1</b>] [<b>-tls1_2</b>] [<b>-tls1_3</b>] [<b>-dtls</b>] [<b>-dtls1</b>] [<b>-dtls1_2</b>] [<b>-xkey</b> <i>infile</i>] [<b>-xcert</b> <i>file</i>] [<b>-xchain</b> <i>file</i>] [<b>-xchain_build</b> <i>file</i>] [<b>-xcertform</b> <b>DER</b>|<b>PEM</b>]&gt; [<b>-xkeyform</b> <b>DER</b>|<b>PEM</b>]&gt; [<b>-CAfile</b> <i>file</i>] [<b>-no-CAfile</b>] [<b>-CApath</b> <i>dir</i>] [<b>-no-CApath</b>] [<b>-CAstore</b> <i>uri</i>] [<b>-no-CAstore</b>] [<b>-bugs</b>] [<b>-no_comp</b>] [<b>-comp</b>] [<b>-no_ticket</b>] [<b>-serverpref</b>] [<b>-client_renegotiation</b>] [<b>-legacy_renegotiation</b>] [<b>-no_renegotiation</b>] [<b>-no_resumption_on_reneg</b>] [<b>-legacy_server_connect</b>] [<b>-no_legacy_server_connect</b>] [<b>-no_etm</b>] [<b>-allow_no_dhe_kex</b>] [<b>-prioritize_chacha</b>] [<b>-strict</b>] [<b>-sigalgs</b> <i>algs</i>] [<b>-client_sigalgs</b> <i>algs</i>] [<b>-groups</b> <i>groups</i>] [<b>-curves</b> <i>curves</i>] [<b>-named_curve</b> <i>curve</i>] [<b>-cipher</b> <i>ciphers</i>] [<b>-ciphersuites</b> <i>1.3ciphers</i>] [<b>-min_protocol</b> <i>minprot</i>] [<b>-max_protocol</b> <i>maxprot</i>] [<b>-record_padding</b> <i>padding</i>] [<b>-debug_broken_protocol</b>] [<b>-no_middlebox</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<b>-engine</b> <i>id</i>] [<b>-ssl_client_engine</b> <i>id</i>] [<b>-allow_proxy_certs</b>] [<b>-attime</b> <i>timestamp</i>] [<b>-no_check_time</b>] [<b>-check_ss_sig</b>] [<b>-crl_check</b>] [<b>-crl_check_all</b>] [<b>-explicit_policy</b>] [<b>-extended_crl</b>] [<b>-ignore_critical</b>] [<b>-inhibit_any</b>] [<b>-inhibit_map</b>] [<b>-partial_chain</b>] [<b>-policy</b> <i>arg</i>] [<b>-policy_check</b>] [<b>-policy_print</b>] [<b>-purpose</b> <i>purpose</i>] [<b>-suiteB_128</b>] [<b>-suiteB_128_only</b>] [<b>-suiteB_192</b>] [<b>-trusted_first</b>] [<b>-no_alt_chains</b>] [<b>-use_deltas</b>] [<b>-auth_level</b> <i>num</i>] [<b>-verify_depth</b> <i>num</i>] [<b>-verify_email</b> <i>email</i>] [<b>-verify_hostname</b> <i>hostname</i>] [<b>-verify_ip</b> <i>ip</i>] [<b>-verify_name</b> <i>name</i>] [<b>-x509_strict</b>] [<b>-issuer_checks</b>] [<b>-enable_server_rpk</b>] [<b>-enable_client_rpk</b>] [<i>host</i>:<i>port</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -112,6 +113,12 @@
 <dd>
 
 <p>Use IPv6 only.</p>
+
+</dd>
+<dt id="quic"><b>-quic</b></dt>
+<dd>
+
+<p>Connect using the QUIC protocol. If specified then the <b>-alpn</b> option must also be provided.</p>
 
 </dd>
 <dt id="servername-name"><b>-servername</b> <i>name</i></dt>
@@ -303,6 +310,12 @@ DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
 <p>Print session information when the program exits. This will always attempt to print out information even if the connection fails. Normally information will only be printed out once if the connection succeeds. This option is useful because the cipher in use may be renegotiated or the connection may fail because a client certificate is required or is requested only after an attempt is made to access a certain URL. Note: the output produced by this option is not always accurate because a connection might never have been established.</p>
 
 </dd>
+<dt id="no-interactive"><b>-no-interactive</b></dt>
+<dd>
+
+<p>This flag can be used to run the client in a non-interactive mode.</p>
+
+</dd>
 <dt id="state"><b>-state</b></dt>
 <dd>
 
@@ -319,6 +332,12 @@ DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
 <dd>
 
 <p>Do not use interactive command letters.</p>
+
+</dd>
+<dt id="adv"><b>-adv</b></dt>
+<dd>
+
+<p>Use advanced command mode.</p>
 
 </dd>
 <dt id="security_debug"><b>-security_debug</b></dt>
@@ -355,6 +374,12 @@ DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
 <dd>
 
 <p>Disable Encrypt-then-MAC negotiation.</p>
+
+</dd>
+<dt id="no_ems"><b>-no_ems</b></dt>
+<dd>
+
+<p>Disable Extended master secret negotiation.</p>
 
 </dd>
 <dt id="keymatexport-label"><b>-keymatexport</b> <i>label</i></dt>
@@ -501,6 +526,18 @@ DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
 <dd>
 
 <p>There are several known bugs in SSL and TLS implementations. Adding this option enables various workarounds.</p>
+
+</dd>
+<dt id="no_tx_cert_comp"><b>-no_tx_cert_comp</b></dt>
+<dd>
+
+<p>Disables support for sending TLSv1.3 compressed certificates.</p>
+
+</dd>
+<dt id="no_rx_cert_comp"><b>-no_rx_cert_comp</b></dt>
+<dd>
+
+<p>Disables support for receiving TLSv1.3 compressed certificate.</p>
 
 </dd>
 <dt id="comp"><b>-comp</b></dt>
@@ -681,6 +718,18 @@ DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
 <p>Set the minimal acceptable length, in bits, for <b>N</b>. This option is deprecated.</p>
 
 </dd>
+<dt id="ktls"><b>-ktls</b></dt>
+<dd>
+
+<p>Enable Kernel TLS for sending and receiving. This option was introduced in OpenSSL 3.2.0. Kernel TLS is off by default as of OpenSSL 3.2.0.</p>
+
+</dd>
+<dt id="tfo"><b>-tfo</b></dt>
+<dd>
+
+<p>Enable creation of connections via TCP fast open (RFC7413).</p>
+
+</dd>
 <dt id="no_ssl3--no_tls1--no_tls1_1--no_tls1_2--no_tls1_3--ssl3--tls1--tls1_1--tls1_2--tls1_3"><b>-no_ssl3</b>, <b>-no_tls1</b>, <b>-no_tls1_1</b>, <b>-no_tls1_2</b>, <b>-no_tls1_3</b>, <b>-ssl3</b>, <b>-tls1</b>, <b>-tls1_1</b>, <b>-tls1_2</b>, <b>-tls1_3</b></dt>
 <dd>
 
@@ -757,6 +806,18 @@ DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
 <p>Verification errors are displayed, for debugging, but the command will proceed unless the <b>-verify_return_error</b> option is used.</p>
 
 </dd>
+<dt id="enable_server_rpk"><b>-enable_server_rpk</b></dt>
+<dd>
+
+<p>Enable support for receiving raw public keys (RFC7250) from the server. Use of X.509 certificates by the server becomes optional, and servers that support raw public keys may elect to use them. Servers that don&#39;t support raw public keys or prefer to use X.509 certificates can still elect to send X.509 certificates as usual.</p>
+
+</dd>
+<dt id="enable_client_rpk"><b>-enable_client_rpk</b></dt>
+<dd>
+
+<p>Enable support for sending raw public keys (RFC7250) to the server. A raw public key will be sent by the client, if solicited by the server, provided a suitable key and public certificate pair is configured. Some servers may nevertheless not request any client credentials, or may request a certificate.</p>
+
+</dd>
 <dt id="host:port"><i>host</i>:<i>port</i></dt>
 <dd>
 
@@ -765,9 +826,11 @@ DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
 </dd>
 </dl>
 
-<h1 id="CONNECTED-COMMANDS">CONNECTED COMMANDS</h1>
+<h1 id="CONNECTED-COMMANDS-BASIC">CONNECTED COMMANDS (BASIC)</h1>
 
-<p>If a connection is established with an SSL server then any data received from the server is displayed and any key presses will be sent to the server. If end of file is reached then the connection will be closed down. When used interactively (which means neither <b>-quiet</b> nor <b>-ign_eof</b> have been given), then certain commands are also recognized which perform special operations. These commands are a letter which must appear at the start of a line. They are listed below.</p>
+<p>If a connection is established with an SSL/TLS server then any data received from the server is displayed and any key presses will be sent to the server. If end of file is reached then the connection will be closed down.</p>
+
+<p>When used interactively (which means neither <b>-quiet</b> nor <b>-ign_eof</b> have been given), and neither of <b>-adv</b> or <b>-nocommands</b> are given then &quot;Basic&quot; command mode is entered. In this mode certain commands are recognized which perform special operations. These commands are a letter which must appear at the start of a line. All further data after the initial letter on the line is ignored. The commands are listed below.</p>
 
 <dl>
 
@@ -783,6 +846,12 @@ DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
 <p>Renegotiate the SSL session (TLSv1.2 and below only).</p>
 
 </dd>
+<dt id="C"><b>C</b></dt>
+<dd>
+
+<p>Attempt to reconnect to the server using a resumption handshake.</p>
+
+</dd>
 <dt id="k"><b>k</b></dt>
 <dd>
 
@@ -793,6 +862,56 @@ DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
 <dd>
 
 <p>Send a key update message to the server and request one back (TLSv1.3 only)</p>
+
+</dd>
+</dl>
+
+<h1 id="CONNECTED-COMMANDS-ADVANCED">CONNECTED COMMANDS (ADVANCED)</h1>
+
+<p>If <b>-adv</b> has been given then &quot;advanced&quot; command mode is entered. As with basic mode, if a connection is established with an SSL/TLS server then any data received from the server is displayed and any key presses will be sent to the server. If end of file is reached then the connection will be closed down.</p>
+
+<p>Special commands can be supplied by enclosing them in braces, e.g. &quot;{help}&quot; or &quot;{quit}&quot;. These commands can appear anywhere in the text entered into s_client, but they are not sent to the server. Some commands can take an argument by ending the command name with &quot;:&quot; and then providing the argument, e.g. &quot;{keyup:req}&quot;. Some commands are only available when certain protocol versions have been negotiated.</p>
+
+<p>If a newline appears at the end of a line entered into s_client then this is also sent to the server. If a command appears on a line on its own with no other text on the same line, then the newline is suppressed and not sent to the server.</p>
+
+<p>The following commands are recognised.</p>
+
+<dl>
+
+<dt id="help1"><b>help</b></dt>
+<dd>
+
+<p>Prints out summary help text about the available commands.</p>
+
+</dd>
+<dt id="quit"><b>quit</b></dt>
+<dd>
+
+<p>Close the connection to the peer</p>
+
+</dd>
+<dt id="reconnect1"><b>reconnect</b></dt>
+<dd>
+
+<p>Reconnect to the peer and attempt a resumption handshake</p>
+
+</dd>
+<dt id="keyup"><b>keyup</b></dt>
+<dd>
+
+<p>Send a Key Update message. TLSv1.3 only. This command takes an optional argument. If the argument &quot;req&quot; is supplied then the peer is also requested to update its keys. Otherwise if &quot;noreq&quot; is supplied the the peer is not requested to update its keys. The default is &quot;req&quot;.</p>
+
+</dd>
+<dt id="reneg"><b>reneg</b></dt>
+<dd>
+
+<p>Initiate a renegotiation with the server. (D)TLSv1.2 or below only.</p>
+
+</dd>
+<dt id="fin"><b>fin</b></dt>
+<dd>
+
+<p>Indicate FIN on the current stream. QUIC only. Once FIN has been sent any further text entered for this stream is ignored.</p>
 
 </dd>
 </dl>
@@ -835,9 +954,11 @@ DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
 
 <p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
 
+<p>The <b>-enable_client_rpk</b>, <b>-enable_server_rpk</b>, <b>-no_rx_cert_comp</b>, <b>-no_tx_cert_comp</b>, and <b>-tfo</b> options were added in OpenSSL 3.2.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

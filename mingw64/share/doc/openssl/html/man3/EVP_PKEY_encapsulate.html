@@ -25,13 +25,15 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>EVP_PKEY_encapsulate_init, EVP_PKEY_encapsulate - Key encapsulation using a KEM algorithm with a public key</p>
+<p>EVP_PKEY_encapsulate_init, EVP_PKEY_auth_encapsulate_init, EVP_PKEY_encapsulate - Key encapsulation using a KEM algorithm with a public key</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/evp.h&gt;
 
 int EVP_PKEY_encapsulate_init(EVP_PKEY_CTX *ctx, const OSSL_PARAM params[]);
+int EVP_PKEY_auth_encapsulate_init(EVP_PKEY_CTX *ctx, EVP_PKEY *authpriv,
+                                  const OSSL_PARAM params[]);
 int EVP_PKEY_encapsulate(EVP_PKEY_CTX *ctx,
                          unsigned char *wrappedkey, size_t *wrappedkeylen,
                          unsigned char *genkey, size_t *genkeylen);</code></pre>
@@ -39,6 +41,8 @@ int EVP_PKEY_encapsulate(EVP_PKEY_CTX *ctx,
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>The EVP_PKEY_encapsulate_init() function initializes a public key algorithm context <i>ctx</i> for an encapsulation operation and then sets the <i>params</i> on the context in the same way as calling <a href="../man3/EVP_PKEY_CTX_set_params.html">EVP_PKEY_CTX_set_params(3)</a>. Note that <i>ctx</i> is usually is produced using <a href="../man3/EVP_PKEY_CTX_new_from_pkey.html">EVP_PKEY_CTX_new_from_pkey(3)</a>, specifying the public key to use.</p>
+
+<p>The EVP_PKEY_auth_encapsulate_init() function is similar to EVP_PKEY_encapsulate_init() but also passes an <i>authpriv</i> authentication private key that is used during encapsulation.</p>
 
 <p>The EVP_PKEY_encapsulate() function performs a public key encapsulation operation using <i>ctx</i>. The symmetric secret generated in <i>genkey</i> can be used as key material. The ciphertext in <i>wrappedkey</i> is its encapsulated form, which can be sent to another party, who can use <a href="../man3/EVP_PKEY_decapsulate.html">EVP_PKEY_decapsulate(3)</a> to retrieve it using their private key. If <i>wrappedkey</i> is NULL then the maximum size of the output buffer is written to the <i>*wrappedkeylen</i> parameter unless <i>wrappedkeylen</i> is NULL and the maximum size of the generated key buffer is written to <i>*genkeylen</i> unless <i>genkeylen</i> is NULL. If <i>wrappedkey</i> is not NULL and the call is successful then the internally generated key is written to <i>genkey</i> and its size is written to <i>*genkeylen</i>. The encapsulated version of the generated key is written to <i>wrappedkey</i> and its size is written to <i>*wrappedkeylen</i>.</p>
 
@@ -48,7 +52,7 @@ int EVP_PKEY_encapsulate(EVP_PKEY_CTX *ctx,
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>EVP_PKEY_encapsulate_init() and EVP_PKEY_encapsulate() return 1 for success and 0 or a negative value for failure. In particular a return value of -2 indicates the operation is not supported by the public key algorithm.</p>
+<p>EVP_PKEY_encapsulate_init(), EVP_PKEY_auth_encapsulate_init() and EVP_PKEY_encapsulate() return 1 for success and 0 or a negative value for failure. In particular a return value of -2 indicates the operation is not supported by the public key algorithm.</p>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
@@ -92,11 +96,11 @@ if (EVP_PKEY_encapsulate(ctx, out, &amp;outlen, secret, &amp;secretlen) &lt;= 0)
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/EVP_PKEY_CTX_new_from_pkey.html">EVP_PKEY_CTX_new_from_pkey(3)</a>, <a href="../man3/EVP_PKEY_decapsulate.html">EVP_PKEY_decapsulate(3)</a>, <a href="../man7/EVP_KEM-RSA.html">EVP_KEM-RSA(7)</a>,</p>
+<p><a href="../man3/EVP_PKEY_CTX_new_from_pkey.html">EVP_PKEY_CTX_new_from_pkey(3)</a>, <a href="../man3/EVP_PKEY_decapsulate.html">EVP_PKEY_decapsulate(3)</a>, <a href="../man7/EVP_KEM-RSA.html">EVP_KEM-RSA(7)</a>, <a href="../man7/EVP_KEM-X25519.html">EVP_KEM-X25519(7)</a>, <a href="../man7/EVP_KEM-EC.html">EVP_KEM-EC(7)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>These functions were added in OpenSSL 3.0.</p>
+<p>These functions EVP_PKEY_encapsulate_init() and EVP_PKEY_encapsulate() were added in OpenSSL 3.0. The function EVP_PKEY_auth_encapsulate_init() was added in OpenSSL 3.2.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

@@ -63,7 +63,7 @@
 </li>
 </ul>
 
-<p>All of the above APIs are deprecated in OpenSSL 3.0 - so a simple rule is to avoid using all deprecated functions. See <a href="../man7/migration_guide.html">migration_guide(7)</a> for a list of deprecated functions.</p>
+<p>All of the above APIs are deprecated in OpenSSL 3.0 - so a simple rule is to avoid using all deprecated functions. See <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a> for a list of deprecated functions.</p>
 
 <h2 id="Making-all-applications-use-the-FIPS-module-by-default">Making all applications use the FIPS module by default</h2>
 
@@ -308,7 +308,7 @@ return ret;</code></pre>
 
 <p>Note that we have made use of the special &quot;null&quot; provider here which we load into the default library context. We could have chosen to use the default library context for FIPS usage, and just create one additional library context for other usages - or vice versa. However if code has not been converted to use library contexts then the default library context will be automatically used. This could be the case for your own existing applications as well as certain parts of OpenSSL itself. Not all parts of OpenSSL are library context aware. If this happens then you could &quot;accidentally&quot; use the wrong library context for a particular operation. To be sure this doesn&#39;t happen you can load the &quot;null&quot; provider into the default library context. Because a provider has been explicitly loaded, the default provider will not automatically load. This means code using the default context by accident will fail because no algorithms will be available.</p>
 
-<p>See <a href="../man7/migration_guide.html">&quot;Library Context&quot; in migration_guide(7)</a> for additional information about the Library Context.</p>
+<p>See <a href="../man7/ossl-guide-migration.html">&quot;Library Context&quot; in ossl-guide-migration(7)</a> for additional information about the Library Context.</p>
 
 <h2 id="Using-Encoders-and-Decoders-with-the-FIPS-module">Using Encoders and Decoders with the FIPS module</h2>
 
@@ -378,7 +378,7 @@ SSL_CTX *non_fips_ssl_ctx = SSL_CTX_new_ex(NULL, &quot;provider!=fips&quot;,
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/migration_guide.html">migration_guide(7)</a>, <a href="../man7/crypto.html">crypto(7)</a>, <a href="../man5/fips_config.html">fips_config(5)</a>, <a href="https://www.openssl.org/source/">https://www.openssl.org/source/</a></p>
+<p><a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a>, <a href="../man7/crypto.html">crypto(7)</a>, <a href="../man5/fips_config.html">fips_config(5)</a>, <a href="https://www.openssl.org/source/">https://www.openssl.org/source/</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 

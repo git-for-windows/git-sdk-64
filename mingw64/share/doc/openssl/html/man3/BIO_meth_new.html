@@ -23,7 +23,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>BIO_get_new_index, BIO_meth_new, BIO_meth_free, BIO_meth_get_read_ex, BIO_meth_set_read_ex, BIO_meth_get_write_ex, BIO_meth_set_write_ex, BIO_meth_get_write, BIO_meth_set_write, BIO_meth_get_read, BIO_meth_set_read, BIO_meth_get_puts, BIO_meth_set_puts, BIO_meth_get_gets, BIO_meth_set_gets, BIO_meth_get_ctrl, BIO_meth_set_ctrl, BIO_meth_get_create, BIO_meth_set_create, BIO_meth_get_destroy, BIO_meth_set_destroy, BIO_meth_get_callback_ctrl, BIO_meth_set_callback_ctrl - Routines to build up BIO methods</p>
+<p>BIO_get_new_index, BIO_meth_new, BIO_meth_free, BIO_meth_get_read_ex, BIO_meth_set_read_ex, BIO_meth_get_write_ex, BIO_meth_set_write_ex, BIO_meth_get_write, BIO_meth_set_write, BIO_meth_get_read, BIO_meth_set_read, BIO_meth_get_puts, BIO_meth_set_puts, BIO_meth_get_gets, BIO_meth_set_gets, BIO_meth_get_ctrl, BIO_meth_set_ctrl, BIO_meth_get_create, BIO_meth_set_create, BIO_meth_get_destroy, BIO_meth_set_destroy, BIO_meth_get_callback_ctrl, BIO_meth_set_callback_ctrl, BIO_meth_set_sendmmsg, BIO_meth_get_sendmmsg, BIO_meth_set_recvmmsg, BIO_meth_get_recvmmsg - Routines to build up BIO methods</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -68,7 +68,25 @@ int BIO_meth_set_destroy(BIO_METHOD *biom, int (*destroy)(BIO *));
 
 long (*BIO_meth_get_callback_ctrl(const BIO_METHOD *biom))(BIO *, int, BIO_info_cb *);
 int BIO_meth_set_callback_ctrl(BIO_METHOD *biom,
-                               long (*callback_ctrl)(BIO *, int, BIO_info_cb *));</code></pre>
+                               long (*callback_ctrl)(BIO *, int, BIO_info_cb *));
+
+ossl_ssize_t (*BIO_meth_get_sendmmsg(const BIO_METHOD *biom))(BIO *,
+                                                              BIO_MSG *,
+                                                              size_t,
+                                                              size_t,
+                                                              uint64_t);
+int BIO_meth_set_sendmmsg(BIO_METHOD *biom,
+                          ossl_ssize_t (*f) (BIO *, BIO_MSG *, size_t,
+                                             size_t, uint64_t));
+
+ossl_ssize_t (*BIO_meth_get_recvmmsg(const BIO_METHOD *biom))(BIO *,
+                                                              BIO_MSG *,
+                                                              size_t,
+                                                              size_t,
+                                                              uint64_t);
+int BIO_meth_set_recvmmsg(BIO_METHOD *biom,
+                          ossl_ssize_t (*f) (BIO *, BIO_MSG *, size_t,
+                                             size_t, uint64_t));</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -95,6 +113,8 @@ int BIO_meth_set_callback_ctrl(BIO_METHOD *biom,
 <p>BIO_meth_get_destroy() and BIO_meth_set_destroy() get and set the function used for destroying an instance of a BIO respectively. This function will be called in response to the application calling BIO_free(). A pointer to the BIO to be destroyed is passed as a parameter. The destroy function should be used for BIO specific clean up. The memory for the BIO itself should not be freed by this function.</p>
 
 <p>BIO_meth_get_callback_ctrl() and BIO_meth_set_callback_ctrl() get and set the function used for processing callback ctrl messages in the BIO respectively. See the <a href="../man3/BIO_callback_ctrl.html">BIO_callback_ctrl(3)</a> page for more information. This function will be called in response to the application calling BIO_callback_ctrl(). The parameters for the function have the same meaning as for BIO_callback_ctrl().</p>
+
+<p>BIO_meth_get_sendmmsg(), BIO_meth_set_sendmmsg(), BIO_meth_get_recvmmsg() and BIO_meth_set_recvmmsg() get and set the functions used for handling BIO_sendmmsg() and BIO_recvmmsg() calls respectively. See <a href="../man3/BIO_sendmmsg.html">BIO_sendmmsg(3)</a> for more information.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 

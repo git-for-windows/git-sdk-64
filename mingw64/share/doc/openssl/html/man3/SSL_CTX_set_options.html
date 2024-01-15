@@ -21,6 +21,7 @@
       <li><a href="#Patched-client-and-server">Patched client and server</a></li>
       <li><a href="#Unpatched-client-and-patched-OpenSSL-server">Unpatched client and patched OpenSSL server</a></li>
       <li><a href="#Patched-OpenSSL-client-and-unpatched-server">Patched OpenSSL client and unpatched server</a></li>
+      <li><a href="#Applicability-of-options-to-QUIC-connections-and-streams">Applicability of options to QUIC connections and streams</a></li>
     </ul>
   </li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
@@ -147,9 +148,13 @@ long SSL_get_secure_renegotiation_support(SSL *ssl);</code></pre>
 <dt id="SSL_OP_CLEANSE_PLAINTEXT">SSL_OP_CLEANSE_PLAINTEXT</dt>
 <dd>
 
-<p>By default TLS connections keep a copy of received plaintext application data in a static buffer until it is overwritten by the next portion of data. When enabling SSL_OP_CLEANSE_PLAINTEXT deciphered application data is cleansed by calling OPENSSL_cleanse(3) after passing data to the application. Data is also cleansed when releasing the connection (e.g. <a href="../man3/SSL_free.html">SSL_free(3)</a>).</p>
+<p>By default TLS and QUIC SSL objects keep a copy of received plaintext application data in a static buffer until it is overwritten by the next portion of data. When enabling SSL_OP_CLEANSE_PLAINTEXT deciphered application data is cleansed by calling OPENSSL_cleanse(3) after passing data to the application. Data is also cleansed when releasing the connection (e.g. <a href="../man3/SSL_free.html">SSL_free(3)</a>).</p>
 
 <p>Since OpenSSL only cleanses internal buffers, the application is still responsible for cleansing all other buffers. Most notably, this applies to buffers passed to functions like <a href="../man3/SSL_read.html">SSL_read(3)</a>, <a href="../man3/SSL_peek.html">SSL_peek(3)</a> but also like <a href="../man3/SSL_write.html">SSL_write(3)</a>.</p>
+
+<p>TLS connections do not buffer data to be sent in plaintext. QUIC stream objects do buffer plaintext data to be sent and this option will also cause that data to be cleansed when it is discarded.</p>
+
+<p>This option can be set differently on individual QUIC stream objects and has no effect on QUIC connection objects (except where a default stream is being used).</p>
 
 </dd>
 <dt id="SSL_OP_COOKIE_EXCHANGE">SSL_OP_COOKIE_EXCHANGE</dt>
@@ -174,6 +179,14 @@ long SSL_get_secure_renegotiation_support(SSL *ssl);</code></pre>
 <p>Kernel TLS might not support all the features of OpenSSL. For instance, renegotiation, and setting the maximum fragment size is not possible as of Linux 4.20.</p>
 
 <p>Note that with kernel TLS enabled some cryptographic operations are performed by the kernel directly and not via any available OpenSSL Providers. This might be undesirable if, for example, the application requires all cryptographic operations to be performed by the FIPS provider.</p>
+
+</dd>
+<dt id="SSL_OP_ENABLE_KTLS_TX_ZEROCOPY_SENDFILE">SSL_OP_ENABLE_KTLS_TX_ZEROCOPY_SENDFILE</dt>
+<dd>
+
+<p>With this option, sendfile() will use the zerocopy mode, which gives a performance boost when used with KTLS hardware offload. Note that invalid TLS records might be transmitted if the file is changed while being sent. This option has no effect if <b>SSL_OP_ENABLE_KTLS</b> is not enabled.</p>
+
+<p>This option only applies to Linux. KTLS sendfile on FreeBSD doesn&#39;t offer an option to disable zerocopy and always runs in this mode.</p>
 
 </dd>
 <dt id="SSL_OP_ENABLE_MIDDLEBOX_COMPAT">SSL_OP_ENABLE_MIDDLEBOX_COMPAT</dt>
@@ -202,6 +215,22 @@ long SSL_get_secure_renegotiation_support(SSL *ssl);</code></pre>
 <dd>
 
 <p>By default, when a server is configured for early data (i.e., max_early_data &gt; 0), OpenSSL will switch on replay protection. See <a href="../man3/SSL_read_early_data.html">SSL_read_early_data(3)</a> for a description of the replay protection feature. Anti-replay measures are required to comply with the TLSv1.3 specification. Some applications may be able to mitigate the replay risks in other ways and in such cases the built in OpenSSL functionality is not required. Those applications can turn this feature off by setting this option. This is a server-side option only. It is ignored by clients.</p>
+
+</dd>
+<dt id="SSL_OP_NO_TX_CERTIFICATE_COMPRESSION">SSL_OP_NO_TX_CERTIFICATE_COMPRESSION</dt>
+<dd>
+
+<p>Normally clients and servers will transparently attempt to negotiate the RFC8879 certificate compression option on TLSv1.3 connections.</p>
+
+<p>If this option is set, the certificate compression extension is ignored upon receipt and compressed certificates will not be sent to the peer.</p>
+
+</dd>
+<dt id="SSL_OP_NO_RX_CERTIFICATE_COMPRESSION">SSL_OP_NO_RX_CERTIFICATE_COMPRESSION</dt>
+<dd>
+
+<p>Normally clients and servers will transparently attempt to negotiate the RFC8879 certificate compression option on TLSv1.3 connections.</p>
+
+<p>If this option is set, the certificate compression extension will not be sent and compressed certificates will not be accepted from the peer.</p>
 
 </dd>
 <dt id="SSL_OP_NO_COMPRESSION">SSL_OP_NO_COMPRESSION</dt>
@@ -383,6 +412,52 @@ long SSL_get_secure_renegotiation_support(SSL *ssl);</code></pre>
 <p>OpenSSL client applications that want to ensure they can <b>not</b> connect to unpatched servers (and thus avoid any security issues) should always <b>clear</b> <b>SSL_OP_LEGACY_SERVER_CONNECT</b> using SSL_CTX_clear_options() or SSL_clear_options().</p>
 
 <p>The difference between the <b>SSL_OP_LEGACY_SERVER_CONNECT</b> and <b>SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION</b> options is that <b>SSL_OP_LEGACY_SERVER_CONNECT</b> enables initial connections and secure renegotiation between OpenSSL clients and unpatched servers <b>only</b>, while <b>SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION</b> allows initial connections and renegotiation between OpenSSL and unpatched clients or servers.</p>
+
+<h2 id="Applicability-of-options-to-QUIC-connections-and-streams">Applicability of options to QUIC connections and streams</h2>
+
+<p>These options apply to SSL objects referencing a QUIC connection:</p>
+
+<dl>
+
+<dt id="SSL_OP_ALLOW_NO_DHE_KEX1">SSL_OP_ALLOW_NO_DHE_KEX</dt>
+<dd>
+
+</dd>
+<dt id="SSL_OP_NO_TX_CERTIFICATE_COMPRESSION1">SSL_OP_NO_TX_CERTIFICATE_COMPRESSION</dt>
+<dd>
+
+</dd>
+<dt id="SSL_OP_NO_RX_CERTIFICATE_COMPRESSION1">SSL_OP_NO_RX_CERTIFICATE_COMPRESSION</dt>
+<dd>
+
+</dd>
+<dt id="SSL_OP_NO_TICKET1">SSL_OP_NO_TICKET</dt>
+<dd>
+
+</dd>
+<dt id="SSL_OP_PRIORITIZE_CHACHA1">SSL_OP_PRIORITIZE_CHACHA</dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>These options apply to SSL objects referencing a QUIC stream:</p>
+
+<dl>
+
+<dt id="SSL_OP_CLEANSE_PLAINTEXT1">SSL_OP_CLEANSE_PLAINTEXT</dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>Options on QUIC connections are initialized from the options set on SSL_CTX before a QUIC connection SSL object is created. Options on QUIC streams are initialised from the options configured on the QUIC connection SSL object they are created from.</p>
+
+<p>Setting options which relate to QUIC streams on a QUIC connection SSL object has no direct effect on the QUIC connection SSL object itself, but will change the options set on the default stream (if there is one) and will also determine the default options set on any future streams which are created.</p>
+
+<p>Other options not mentioned above do not have an effect and will be ignored.</p>
+
+<p>Options which relate to QUIC streams may also be set directly on QUIC stream SSL objects. Setting connection-related options on such an object has no effect.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 

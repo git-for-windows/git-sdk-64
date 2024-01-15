@@ -23,7 +23,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>SSL_client_version, SSL_get_version, SSL_is_dtls, SSL_version - get the protocol information of a connection</p>
+<p>SSL_client_version, SSL_get_version, SSL_is_dtls, SSL_is_tls, SSL_is_quic, SSL_version - get the protocol information of a connection</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -34,14 +34,22 @@ int SSL_client_version(const SSL *s);
 const char *SSL_get_version(const SSL *ssl);
 
 int SSL_is_dtls(const SSL *ssl);
+int SSL_is_tls(const SSL *ssl);
+int SSL_is_quic(const SSL *ssl);
 
 int SSL_version(const SSL *s);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_client_version() returns the numeric protocol version advertised by the client in the legacy_version field of the ClientHello when initiating the connection. Note that, for TLS, this value will never indicate a version greater than TLSv1.2 even if TLSv1.3 is subsequently negotiated. SSL_get_version() returns the name of the protocol used for the connection. SSL_version() returns the numeric protocol version used for the connection. They should only be called after the initial handshake has been completed. Prior to that the results returned from these functions may be unreliable.</p>
+<p>For SSL, TLS and DTLS protocols SSL_client_version() returns the numeric protocol version advertised by the client in the legacy_version field of the ClientHello when initiating the connection. Note that, for TLS, this value will never indicate a version greater than TLSv1.2 even if TLSv1.3 is subsequently negotiated. For QUIC connections it returns OSSL_QUIC1_VERSION.</p>
 
-<p>SSL_is_dtls() returns one if the connection is using DTLS, zero if not.</p>
+<p>SSL_get_version() returns the name of the protocol used for the connection. SSL_version() returns the numeric protocol version used for the connection. They should only be called after the initial handshake has been completed. Prior to that the results returned from these functions may be unreliable.</p>
+
+<p>SSL_is_dtls() returns 1 if the connection is using DTLS or 0 if not.</p>
+
+<p>SSL_is_tls() returns 1 if the connection is using SSL/TLS or 0 if not.</p>
+
+<p>SSL_is_quic() returns 1 if the connection is using QUIC or 0 if not.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -77,6 +85,30 @@ int SSL_version(const SSL *s);</code></pre>
 <dd>
 
 <p>The connection uses the TLSv1.3 protocol.</p>
+
+</dd>
+<dt id="DTLSv0.9">DTLSv0.9</dt>
+<dd>
+
+<p>The connection uses an obsolete pre-standardisation DTLS protocol</p>
+
+</dd>
+<dt id="DTLSv1">DTLSv1</dt>
+<dd>
+
+<p>The connection uses the DTLSv1 protocol</p>
+
+</dd>
+<dt id="DTLSv1.2">DTLSv1.2</dt>
+<dd>
+
+<p>The connection uses the DTLSv1.2 protocol</p>
+
+</dd>
+<dt id="QUICv1">QUICv1</dt>
+<dd>
+
+<p>The connection uses the QUICv1 protocol.</p>
 
 </dd>
 <dt id="unknown">unknown</dt>
@@ -121,6 +153,30 @@ int SSL_version(const SSL *s);</code></pre>
 <p>The connection uses the TLSv1.3 protocol (never returned for SSL_client_version()).</p>
 
 </dd>
+<dt id="DTLS1_BAD_VER">DTLS1_BAD_VER</dt>
+<dd>
+
+<p>The connection uses an obsolete pre-standardisation DTLS protocol</p>
+
+</dd>
+<dt id="DTLS1_VERSION">DTLS1_VERSION</dt>
+<dd>
+
+<p>The connection uses the DTLSv1 protocol</p>
+
+</dd>
+<dt id="DTLS1_2_VERSION">DTLS1_2_VERSION</dt>
+<dd>
+
+<p>The connection uses the DTLSv1.2 protocol</p>
+
+</dd>
+<dt id="OSSL_QUIC1_VERSION">OSSL_QUIC1_VERSION</dt>
+<dd>
+
+<p>The connection uses the QUICv1 protocol.</p>
+
+</dd>
 </dl>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
@@ -129,11 +185,11 @@ int SSL_version(const SSL *s);</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The SSL_is_dtls() function was added in OpenSSL 1.1.0.</p>
+<p>The SSL_is_dtls() function was added in OpenSSL 1.1.0. The SSL_is_tls() and SSL_is_quic() functions were added in OpenSSL 3.2.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

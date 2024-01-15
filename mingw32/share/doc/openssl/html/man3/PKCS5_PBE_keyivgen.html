@@ -129,6 +129,8 @@ X509_ALGOR *PKCS5_pbkdf2_set_ex(int iter, unsigned char *salt, int saltlen,
 
 <p>PKCS5_pbe_set0_algor() and PKCS5_pbe_set0_algor_ex() set the PBE algorithm OID and parameters into the supplied <b>X509_ALGOR</b>.</p>
 
+<p>If <i>salt</i> is NULL, then <i>saltlen</i> specifies the size in bytes of the random salt to generate. If <i>saltlen</i> is 0 then a default size is used. For PBE related functions such as PKCS5_pbe_set_ex() the default salt length is 8 bytes. For PBE2 related functions that use PBKDF2 such as PKCS5_pbkdf2_set(), PKCS5_pbe2_set_scrypt() and PKCS5_pbe2_set() the default salt length is 16 bytes.</p>
+
 <h1 id="NOTES">NOTES</h1>
 
 <p>The *_keyivgen() functions are typically used in PKCS#12 to encrypt objects.</p>
@@ -155,9 +157,11 @@ X509_ALGOR *PKCS5_pbkdf2_set_ex(int iter, unsigned char *salt, int saltlen,
 
 <p>From OpenSSL 3.0 the PBKDF1 algorithm used in PKCS5_PBE_keyivgen() and PKCS5_PBE_keyivgen_ex() has been moved to the legacy provider as an EVP_KDF.</p>
 
+<p>In OpenSSL 3.2 the default salt length changed from 8 bytes to 16 bytes for PBE2 related functions such as PKCS5_pbe2_set(). This is required for PBKDF2 FIPS compliance.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

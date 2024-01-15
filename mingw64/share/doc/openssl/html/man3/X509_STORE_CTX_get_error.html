@@ -59,11 +59,11 @@ const char *X509_verify_cert_error_string(long n);</code></pre>
 
 <p>X509_STORE_CTX_set_current_cert() sets the certificate <i>x</i> in <i>ctx</i> which caused the error. This value is not intended to remain valid for very long, and remains owned by the caller. It may be examined by a verification callback invoked to handle each error encountered during chain verification and is no longer required after such a callback. If a callback wishes the save the certificate for use after it returns, it needs to increment its reference count via <a href="../man3/X509_up_ref.html">X509_up_ref(3)</a>. Once such a <i>saved</i> certificate is no longer needed it can be freed with <a href="../man3/X509_free.html">X509_free(3)</a>.</p>
 
-<p>X509_STORE_CTX_get0_cert() retrieves an internal pointer to the certificate being verified by the <i>ctx</i>.</p>
+<p>X509_STORE_CTX_get0_cert() retrieves an internal pointer to the certificate being verified by the <i>ctx</i>. It may be NULL if a raw public key is being verified.</p>
 
 <p>X509_STORE_CTX_get1_chain() returns a complete validate chain if a previous verification is successful. Otherwise the returned chain may be incomplete or invalid. The returned chain persists after the <i>ctx</i> structure is freed. When it is no longer needed it should be free up using:</p>
 
-<pre><code>sk_X509_pop_free(chain, X509_free);</code></pre>
+<pre><code>OSSL_STACK_OF_X509_free(chain);</code></pre>
 
 <p>X509_verify_cert_error_string() returns a human readable error string for verification error <i>n</i>.</p>
 
@@ -525,6 +525,12 @@ const char *X509_verify_cert_error_string(long n);</code></pre>
 <dd>
 
 <p>A CA certificate is invalid. Either it is not a CA or its extensions are not consistent with the supplied purpose.</p>
+
+</dd>
+<dt id="X509_V_ERR_RPK_UNTRUSTED:-raw-public-key-untrusted-no-trusted-keys-configured"><b>X509_V_ERR_RPK_UNTRUSTED: raw public key untrusted, no trusted keys configured</b></dt>
+<dd>
+
+<p>No TLS records were configured to validate the raw public key, or DANE was not enabled on the connection.</p>
 
 </dd>
 </dl>

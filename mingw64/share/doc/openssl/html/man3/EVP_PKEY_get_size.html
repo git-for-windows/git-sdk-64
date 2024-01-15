@@ -40,13 +40,13 @@ int EVP_PKEY_get_security_bits(const EVP_PKEY *pkey);
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>EVP_PKEY_get_size() returns the maximum suitable size for the output buffers for almost all operations that can be done with <i>pkey</i>. The primary documented use is with <a href="../man3/EVP_SignFinal.html">EVP_SignFinal(3)</a> and <a href="../man3/EVP_SealInit.html">EVP_SealInit(3)</a>, but it isn&#39;t limited there. The returned size is also large enough for the output buffer of <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a>, <a href="../man3/EVP_PKEY_encrypt.html">EVP_PKEY_encrypt(3)</a>, <a href="../man3/EVP_PKEY_decrypt.html">EVP_PKEY_decrypt(3)</a>, <a href="../man3/EVP_PKEY_derive.html">EVP_PKEY_derive(3)</a>.</p>
+<p>EVP_PKEY_get_size() returns the maximum suitable size for the output buffers for almost all operations that can be done with <i>pkey</i>. This corresponds to the provider parameter <b>OSSL_PKEY_PARAM_MAX_SIZE</b>. The primary documented use is with <a href="../man3/EVP_SignFinal.html">EVP_SignFinal(3)</a> and <a href="../man3/EVP_SealInit.html">EVP_SealInit(3)</a>, but it isn&#39;t limited there. The returned size is also large enough for the output buffer of <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a>, <a href="../man3/EVP_PKEY_encrypt.html">EVP_PKEY_encrypt(3)</a>, <a href="../man3/EVP_PKEY_decrypt.html">EVP_PKEY_decrypt(3)</a>, <a href="../man3/EVP_PKEY_derive.html">EVP_PKEY_derive(3)</a>.</p>
 
 <p>It must be stressed that, unless the documentation for the operation that&#39;s being performed says otherwise, the size returned by EVP_PKEY_get_size() is only preliminary and not exact, so the final contents of the target buffer may be smaller. It is therefore crucial to take note of the size given back by the function that performs the operation, such as <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a> (the <i>siglen</i> argument will receive that length), to avoid bugs.</p>
 
-<p>EVP_PKEY_get_bits() returns the cryptographic length of the cryptosystem to which the key in <i>pkey</i> belongs, in bits. Note that the definition of cryptographic length is specific to the key cryptosystem.</p>
+<p>EVP_PKEY_get_bits() returns the cryptographic length of the cryptosystem to which the key in <i>pkey</i> belongs, in bits. Note that the definition of cryptographic length is specific to the key cryptosystem. This length corresponds to the provider parameter <b>OSSL_PKEY_PARAM_BITS</b>.</p>
 
-<p>EVP_PKEY_get_security_bits() returns the number of security bits of the given <i>pkey</i>, bits of security is defined in NIST SP800-57.</p>
+<p>EVP_PKEY_get_security_bits() returns the number of security bits of the given <i>pkey</i>, bits of security is defined in NIST SP800-57. This corresponds to the provider parameter <b>OSSL_PKEY_PARAM_SECURITY_BITS</b>.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -60,7 +60,7 @@ int EVP_PKEY_get_security_bits(const EVP_PKEY *pkey);
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/EVP_SignFinal.html">EVP_SignFinal(3)</a>, <a href="../man3/EVP_SealInit.html">EVP_SealInit(3)</a>, <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a>, <a href="../man3/EVP_PKEY_encrypt.html">EVP_PKEY_encrypt(3)</a>, <a href="../man3/EVP_PKEY_decrypt.html">EVP_PKEY_decrypt(3)</a>, <a href="../man3/EVP_PKEY_derive.html">EVP_PKEY_derive(3)</a></p>
+<p><a href="../man7/provider-keymgmt.html">provider-keymgmt(7)</a>, <a href="../man3/EVP_SignFinal.html">EVP_SignFinal(3)</a>, <a href="../man3/EVP_SealInit.html">EVP_SealInit(3)</a>, <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a>, <a href="../man3/EVP_PKEY_encrypt.html">EVP_PKEY_encrypt(3)</a>, <a href="../man3/EVP_PKEY_decrypt.html">EVP_PKEY_decrypt(3)</a>, <a href="../man3/EVP_PKEY_derive.html">EVP_PKEY_derive(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -68,7 +68,7 @@ int EVP_PKEY_get_security_bits(const EVP_PKEY *pkey);
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

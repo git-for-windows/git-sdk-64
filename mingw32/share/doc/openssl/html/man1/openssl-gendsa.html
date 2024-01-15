@@ -28,7 +28,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>gendsa</b> [<b>-help</b>] [<b>-out</b> <i>filename</i>] [<b>-passout</b> <i>arg</i>] [<b>-aes128</b>] [<b>-aes192</b>] [<b>-aes256</b>] [<b>-aria128</b>] [<b>-aria192</b>] [<b>-aria256</b>] [<b>-camellia128</b>] [<b>-camellia192</b>] [<b>-camellia256</b>] [<b>-des</b>] [<b>-des3</b>] [<b>-idea</b>] [<b>-verbose</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<i>paramfile</i>]</p>
+<p><b>openssl</b> <b>gendsa</b> [<b>-help</b>] [<b>-out</b> <i>filename</i>] [<b>-passout</b> <i>arg</i>] [<b>-aes128</b>] [<b>-aes192</b>] [<b>-aes256</b>] [<b>-aria128</b>] [<b>-aria192</b>] [<b>-aria256</b>] [<b>-camellia128</b>] [<b>-camellia192</b>] [<b>-camellia256</b>] [<b>-des</b>] [<b>-des3</b>] [<b>-idea</b>] [<b>-verbose</b>] [<b>-quiet</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<i>paramfile</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -61,13 +61,19 @@
 
 <p>These options encrypt the private key with specified cipher before outputting it. A pass phrase is prompted for. If none of these options is specified no encryption is used.</p>
 
-<p>Note that all options must be given before the <i>paramfile</i> argument. Otherwise they are ignored.</p>
+<p>Note that all options must be given before the <i>paramfile</i> argument.</p>
 
 </dd>
 <dt id="verbose"><b>-verbose</b></dt>
 <dd>
 
 <p>Print extra details about the operations being performed.</p>
+
+</dd>
+<dt id="quiet"><b>-quiet</b></dt>
+<dd>
+
+<p>Print fewer details about the operations being performed, which may be handy during batch scripts and pipelines.</p>
 
 </dd>
 <dt id="rand-files--writerand-file"><b>-rand</b> <i>files</i>, <b>-writerand</b> <i>file</i></dt>

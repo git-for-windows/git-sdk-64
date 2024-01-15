@@ -140,7 +140,7 @@
 <dt id="CAfile-file"><b>-CAfile</b> <i>file</i></dt>
 <dd>
 
-<p>Load the specified file which contains a certificate or several of them in case the input is in PEM or PKCS#12 format. PEM-encoded certificates may also have trust attributes set.</p>
+<p>Load the specified file which contains a trusted certificate in DER format or potentially several of them in case the input is in PEM format. PEM-encoded certificates may also have trust attributes set.</p>
 
 </dd>
 <dt id="no-CAfile"><b>-no-CAfile</b></dt>
@@ -377,7 +377,7 @@
 <dt id="purpose-purpose"><b>-purpose</b> <i>purpose</i></dt>
 <dd>
 
-<p>The intended use for the certificate. Currently defined purposes are <code>sslclient</code>, <code>sslserver</code>, <code>nssslserver</code>, <code>smimesign</code>, <code>smimeencrypt</code>, <code>crlsign</code>, <code>ocsphelper</code>, <code>timestampsign</code>, and <code>any</code>. If peer certificate verification is enabled, by default the TLS implementation as well as the commands <b>s_client</b> and <b>s_server</b> check for consistency with TLS server or TLS client use, respectively.</p>
+<p>The intended use for the certificate. Currently defined purposes are <code>sslclient</code>, <code>sslserver</code>, <code>nssslserver</code>, <code>smimesign</code>, <code>smimeencrypt</code>, <code>crlsign</code>, <code>ocsphelper</code>, <code>timestampsign</code>, <code>codesign</code> and <code>any</code>. If peer certificate verification is enabled, by default the TLS implementation as well as the commands <b>s_client</b> and <b>s_server</b> check for consistency with TLS server or TLS client use, respectively.</p>
 
 <p>While IETF RFC 5280 says that <b>id-kp-serverAuth</b> and <b>id-kp-clientAuth</b> are only for WWW use, in practice they are used for all kinds of TLS clients and servers, and this is what OpenSSL assumes as well.</p>
 
@@ -552,7 +552,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
