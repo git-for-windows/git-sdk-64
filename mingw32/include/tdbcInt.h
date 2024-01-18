@@ -30,11 +30,26 @@
 #   endif
 #endif
 
+#ifndef JOIN
+#  define JOIN(a,b) JOIN1(a,b)
+#  define JOIN1(a,b) a##b
+#endif
+
+#ifndef TCL_UNUSED
+#   if defined(__cplusplus)
+#	define TCL_UNUSED(T) T
+#   elif defined(__GNUC__) && (__GNUC__ > 2)
+#	define TCL_UNUSED(T) T JOIN(dummy, __LINE__) __attribute__((unused))
+#   else
+#	define TCL_UNUSED(T) T JOIN(dummy, __LINE__)
+#   endif
+#endif
+
 /*
  * Linkage to procedures not exported from this module
  */
 
-MODULE_SCOPE int TdbcTokenizeObjCmd(ClientData clientData, Tcl_Interp* interp,
+MODULE_SCOPE int TdbcTokenizeObjCmd(void *clientData, Tcl_Interp* interp,
 				    int objc, Tcl_Obj *const objv[]);
 
 #endif

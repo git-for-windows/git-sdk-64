@@ -15,7 +15,7 @@ TCL_DLL_FILE="tcl86.dll"
 TCL_VERSION='8.6'
 TCL_MAJOR_VERSION='8'
 TCL_MINOR_VERSION='6'
-TCL_PATCH_LEVEL='.12'
+TCL_PATCH_LEVEL='.13'
 
 # C compiler to use for compilation.
 TCL_CC='gcc'
@@ -68,7 +68,7 @@ TCL_SHLIB_CFLAGS=''
 TCL_CFLAGS_WARNING='-Wall -Wpointer-arith -Wdeclaration-after-statement'
 
 # Extra flags to pass to cc:
-TCL_EXTRA_CFLAGS='-pipe'
+TCL_EXTRA_CFLAGS='-pipe -DHAVE_CPUID=1'
 
 # Base command to use for combining object files into a shared library:
 TCL_SHLIB_LD='${CC} -shared'

@@ -150,7 +150,8 @@ enum _SQL_DATATYPE {
 /* Diagnostic fields */
 
 enum _SQL_DIAG {
-    SQL_DIAG_SQLSTATE = 4,
+    SQL_DIAG_NUMBER = 2,
+    SQL_DIAG_SQLSTATE = 4
 };
 
 /* Transaction isolation levels */

@@ -60,7 +60,7 @@ DLLIMPORT int		Tdbc_Init(Tcl_Interp* interp);
  */
 
 #define	TDBC_VERSION	"1.1"
-#define TDBC_PATCHLEVEL "1.1.3"
+#define TDBC_PATCHLEVEL "1.1.5"
 
 /*
  * Include the Stubs declarations for the public API, generated from

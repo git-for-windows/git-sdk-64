@@ -57,7 +57,7 @@
 
 #include <tcl.h>
 
-#if (TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION < 6)
+#if (TCL_MAJOR_VERSION == 8) && defined(TCL_MINOR_VERSION) && (TCL_MINOR_VERSION < 6)
 #    error Itcl 4 build requires tcl.h from Tcl 8.6 or later
 #endif
 
@@ -82,10 +82,10 @@ extern "C" {
 #define ITCL_MAJOR_VERSION	4
 #define ITCL_MINOR_VERSION	2
 #define ITCL_RELEASE_LEVEL      TCL_FINAL_RELEASE
-#define ITCL_RELEASE_SERIAL     2
+#define ITCL_RELEASE_SERIAL     3
 
 #define ITCL_VERSION            "4.2"
-#define ITCL_PATCH_LEVEL        "4.2.2"
+#define ITCL_PATCH_LEVEL        "4.2.3"
 
 
 /*
@@ -132,14 +132,18 @@ ITCL_EXTERN int Itcl_SafeInit(Tcl_Interp *interp);
 #define ITCL_PRIVATE          3
 #define ITCL_DEFAULT_PROTECT  4
 
+#if (TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION < 7) && !defined(Tcl_Size)
+#    define Tcl_Size int
+#endif
+
 /*
  *  Generic stack.
  */
 typedef struct Itcl_Stack {
-    ClientData *values;          /* values on stack */
-    int len;                     /* number of values on stack */
-    int max;                     /* maximum size of stack */
-    ClientData space[5];         /* initial space for stack data */
+    void **values;               /* values on stack */
+    Tcl_Size len;                  /* number of values on stack */
+    Tcl_Size max;                  /* maximum size of stack */
+    void *space[5];              /* initial space for stack data */
 } Itcl_Stack;
 
 #define Itcl_GetStackSize(stackPtr) ((stackPtr)->len)
@@ -150,14 +154,14 @@ typedef struct Itcl_Stack {
 struct Itcl_List;
 typedef struct Itcl_ListElem {
     struct Itcl_List* owner;     /* list containing this element */
-    ClientData value;            /* value associated with this element */
+    void *value;                 /* value associated with this element */
     struct Itcl_ListElem *prev;  /* previous element in linked list */
     struct Itcl_ListElem *next;  /* next element in linked list */
 } Itcl_ListElem;
 
 typedef struct Itcl_List {
     int validate;                /* validation stamp */
-    int num;                     /* number of elements */
+    Tcl_Size num;                  /* number of elements */
     struct Itcl_ListElem *head;  /* previous element in linked list */
     struct Itcl_ListElem *tail;  /* next element in linked list */
 } Itcl_List;

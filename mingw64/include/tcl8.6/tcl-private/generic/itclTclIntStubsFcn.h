@@ -24,14 +24,14 @@ MODULE_SCOPE Tcl_Command _Tcl_GetOriginalCommand(Tcl_Command command);
 MODULE_SCOPE int _Tcl_CreateProc(Tcl_Interp *interp, Tcl_Namespace *nsPtr,
 	 const char *procName, Tcl_Obj *argsPtr, Tcl_Obj *bodyPtr,
         Tcl_Proc *procPtrPtr);
-MODULE_SCOPE void _Tcl_ProcDeleteProc(ClientData clientData);
+MODULE_SCOPE void _Tcl_ProcDeleteProc(void *clientData);
 MODULE_SCOPE Tcl_ObjCmdProc *_Tcl_GetObjInterpProc(void);
 MODULE_SCOPE int Tcl_RenameCommand(Tcl_Interp *interp, const char *oldName,
 	const char *newName);
 MODULE_SCOPE Tcl_HashTable *Itcl_GetNamespaceChildTable(Tcl_Namespace *nsPtr);
 MODULE_SCOPE Tcl_HashTable *Itcl_GetNamespaceCommandTable(Tcl_Namespace *nsPtr);
-MODULE_SCOPE int Itcl_InitRewriteEnsemble(Tcl_Interp *interp, int numRemoved,
-	int numInserted, int objc, Tcl_Obj *const *objv);
+MODULE_SCOPE int Itcl_InitRewriteEnsemble(Tcl_Interp *interp, size_t numRemoved,
+	size_t numInserted, size_t objc, Tcl_Obj *const *objv);
 MODULE_SCOPE void Itcl_ResetRewriteEnsemble(Tcl_Interp *interp,
         int isRootEnsemble);
 

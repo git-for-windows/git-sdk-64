@@ -43,6 +43,7 @@ typedef struct odbcStubDefs {
     SQLRETURN (SQL_API*SQLSetConnectOptionPtr)(SQLHDBC,SQLUSMALLINT,SQLULEN);
     SQLRETURN (SQL_API*SQLSetEnvAttrPtr)(SQLHENV,SQLINTEGER,SQLPOINTER,SQLINTEGER);
     SQLRETURN (SQL_API*SQLTablesWPtr)(SQLHSTMT,SQLWCHAR*,SQLSMALLINT,SQLWCHAR*,SQLSMALLINT,SQLWCHAR*,SQLSMALLINT,SQLWCHAR*,SQLSMALLINT);
+    SQLRETURN (SQL_API*SQLExecDirectWPtr)(SQLHSTMT,SQLWCHAR*,SQLINTEGER);
 } odbcStubDefs;
 #define SQLAllocHandle (odbcStubs->SQLAllocHandlePtr)
 #define SQLBindParameter (odbcStubs->SQLBindParameterPtr)
@@ -75,4 +76,5 @@ typedef struct odbcStubDefs {
 #define SQLSetConnectOption (odbcStubs->SQLSetConnectOptionPtr)
 #define SQLSetEnvAttr (odbcStubs->SQLSetEnvAttrPtr)
 #define SQLTablesW (odbcStubs->SQLTablesWPtr)
+#define SQLExecDirectW (odbcStubs->SQLExecDirectWPtr)
 MODULE_SCOPE const odbcStubDefs *odbcStubs;

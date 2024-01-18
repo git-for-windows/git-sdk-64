@@ -16,6 +16,7 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif
+#include <stddef.h>
 
 /*
  * Used to tag functions that are only to be visible within the module being
@@ -68,9 +69,17 @@
 #ifndef TCL_UNUSED
 #   if defined(__cplusplus)
 #	define TCL_UNUSED(T) T
+#   elif defined(__GNUC__) && (__GNUC__ > 2)
+#	define TCL_UNUSED(T) T JOIN(dummy, __LINE__) __attribute__((unused))
 #   else
 #	define TCL_UNUSED(T) T JOIN(dummy, __LINE__)
 #   endif
+#endif
+
+#if TCL_MAJOR_VERSION == 8
+#   define ITCL_Z_MODIFIER ""
+#else
+#   define ITCL_Z_MODIFIER TCL_Z_MODIFIER
 #endif
 
 /*
@@ -181,7 +190,7 @@ typedef struct ItclObjectInfo {
                                      * handling */
     int currClassFlags;             /* flags for the class just in creation */
     int buildingWidget;             /* set if in construction of a widget */
-    int unparsedObjc;               /* number options not parsed by
+    Tcl_Size unparsedObjc;         /* number options not parsed by
                                        ItclExtendedConfigure/-Cget function */
     Tcl_Obj **unparsedObjv;         /* options not parsed by
                                        ItclExtendedConfigure/-Cget function */
@@ -214,7 +223,7 @@ typedef struct ItclObjectInfo {
 typedef struct EnsembleInfo {
     Tcl_HashTable ensembles;        /* list of all known ensembles */
     Tcl_HashTable subEnsembles;     /* list of all known subensembles */
-    int numEnsembles;
+    Tcl_Size numEnsembles;
     Tcl_Namespace *ensembleNsPtr;
 } EnsembleInfo;
 /*
@@ -286,7 +295,7 @@ typedef struct ItclClass {
                                      in this class.  Look up simple string
                                      names and get back
 				     ItclMethodVariable* ptrs */
-    int numInstanceVars;          /* number of instance vars in variables
+    Tcl_Size numInstanceVars;    /* number of instance vars in variables
                                      table */
     Tcl_HashTable classCommons;   /* used for storing variable namespace
                                    * string for Tcl_Resolve */
@@ -307,15 +316,15 @@ typedef struct ItclClass {
                                    * ::itcl::widget */
     Tcl_Object oPtr;		  /* TclOO class object */
     Tcl_Class  clsPtr;            /* TclOO class */
-    int numCommons;               /* number of commons in this class */
-    int numVariables;             /* number of variables in this class */
-    int numOptions;               /* number of options in this class */
-    int unique;                   /* unique number for #auto generation */
+    Tcl_Size numCommons;         /* number of commons in this class */
+    Tcl_Size numVariables;       /* number of variables in this class */
+    Tcl_Size numOptions;         /* number of options in this class */
+    Tcl_Size unique;             /* unique number for #auto generation */
     int flags;                    /* maintains class status */
-    int callRefCount;             /* prevent deleting of class if refcount>1 */
+    Tcl_Size callRefCount;       /* prevent deleting of class if refcount>1 */
     Tcl_Obj *typeConstructorPtr;  /* initialization for types */
     int destructorHasBeenCalled;  /* prevent multiple invocations of destrcutor */
-    int refCount;
+    Tcl_Size refCount;
 } ItclClass;
 
 typedef struct ItclHierIter {
@@ -340,8 +349,8 @@ typedef struct ItclObject {
     ItclClass *iclsPtr;          /* most-specific class */
     Tcl_Command accessCmd;       /* object access command */
 
-    Tcl_HashTable* constructed;  /* temp storage used during construction */
-    Tcl_HashTable* destructed;   /* temp storage used during destruction */
+    Tcl_HashTable *constructed;  /* temp storage used during construction */
+    Tcl_HashTable *destructed;   /* temp storage used during destruction */
     Tcl_HashTable objectVariables;
                                  /* used for storing Tcl_Var entries for
 				  * variable resolving, key is ivPtr of
@@ -380,7 +389,7 @@ typedef struct ItclObject {
     Tcl_Object oPtr;             /* the TclOO object */
     Tcl_Resolve *resolvePtr;
     int flags;
-    int callRefCount;             /* prevent deleting of object if refcount > 1 */
+    Tcl_Size callRefCount;       /* prevent deleting of object if refcount > 1 */
     Tcl_Obj *hullWindowNamePtr;   /* the window path name for the hull
                                    * (before renaming in installhull) */
     int destructorHasBeenCalled;  /* is set when the destructor is called
@@ -406,8 +415,8 @@ typedef struct ItclResolveInfo {
  */
 typedef struct ItclMemberCode {
     int flags;                  /* flags describing implementation */
-    int argcount;               /* number of args in arglist */
-    int maxargcount;            /* max number of args in arglist */
+    Tcl_Size argcount;         /* number of args in arglist */
+    Tcl_Size maxargcount;      /* max number of args in arglist */
     Tcl_Obj *usagePtr;          /* usage string for error messages */
     Tcl_Obj *argumentPtr;       /* the function arguments */
     Tcl_Obj *bodyPtr;           /* the function body */
@@ -416,7 +425,7 @@ typedef struct ItclMemberCode {
         Tcl_CmdProc *argCmd;    /* (argc,argv) C implementation */
         Tcl_ObjCmdProc *objCmd; /* (objc,objv) C implementation */
     } cfunc;
-    ClientData clientData;      /* client data for C implementations */
+    void *clientData;           /* client data for C implementations */
 } ItclMemberCode;
 
 /*
@@ -505,9 +514,9 @@ typedef struct ItclMemberFunc {
     int flags;                  /* flags describing member (see above) */
     ItclObjectInfo *infoPtr;
     ItclMemberCode *codePtr;    /* code associated with member */
-    Tcl_Command accessCmd;       /* Tcl command installed for this function */
-    int argcount;                /* number of args in arglist */
-    int maxargcount;             /* max number of args in arglist */
+    Tcl_Command accessCmd;      /* Tcl command installed for this function */
+    Tcl_Size argcount;         /* number of args in arglist */
+    Tcl_Size maxargcount;      /* max number of args in arglist */
     Tcl_Obj *usagePtr;          /* usage string for error messages */
     Tcl_Obj *argumentPtr;       /* the function arguments */
     Tcl_Obj *builtinArgumentPtr; /* the function arguments for builtin functions */
@@ -515,7 +524,7 @@ typedef struct ItclMemberFunc {
     Tcl_Obj *bodyPtr;           /* the function body */
     ItclArgList *argListPtr;    /* the parsed arguments */
     ItclClass *declaringClassPtr; /* the class which declared the method/proc */
-    ClientData tmPtr;           /* TclOO methodPtr */
+    void *tmPtr;                /* TclOO methodPtr */
     ItclDelegatedFunction *idmPtr;
                                 /* if the function is delegated != NULL */
 } ItclMemberFunc;
@@ -599,7 +608,9 @@ typedef struct ItclMethodVariable {
 typedef struct ItclClassCmdInfo {
     int type;
     int protection;
-    int cmdNum;
+#if TCL_MAJOR_VERSION == 8
+    int cmdNum; /* not actually used */
+#endif
     Tcl_Namespace *nsPtr;
     Tcl_Namespace *declaringNsPtr;
 } ItclClassCmdInfo;
@@ -616,7 +627,7 @@ typedef struct ItclVarLookup {
                                * the fewest qualifiers.  This string is
                                * taken from the resolveVars table, so
                                * it shouldn't be freed. */
-    int varNum;
+    Tcl_Size varNum;
     Tcl_Var varPtr;
 } ItclVarLookup;
 
@@ -625,7 +636,9 @@ typedef struct ItclVarLookup {
  */
 typedef struct ItclCmdLookup {
     ItclMemberFunc* imPtr;    /* function definition */
-    int cmdNum;
+#if TCL_MAJOR_VERSION == 8
+    int cmdNum; /* not actually used */
+#endif
     ItclClassCmdInfo *classCmdInfoPtr;
     Tcl_Command cmdPtr;
 } ItclCmdLookup;
@@ -635,7 +648,7 @@ typedef struct ItclCallContext {
     Tcl_Namespace *nsPtr;
     ItclObject *ioPtr;
     ItclMemberFunc *imPtr;
-    int refCount;
+    Tcl_Size refCount;
 } ItclCallContext;
 
 /*
@@ -651,60 +664,57 @@ typedef struct ItclCallContext {
  * to/from pointer from/to integer of different size".
  */
 
-#if !defined(INT2PTR) && !defined(PTR2INT)
-#   if defined(HAVE_INTPTR_T) || defined(intptr_t)
-#       define INT2PTR(p) ((void*)(intptr_t)(p))
-#       define PTR2INT(p) ((int)(intptr_t)(p))
-#   else
-#       define INT2PTR(p) ((void*)(p))
-#       define PTR2INT(p) ((int)(p))
-#   endif
+#if !defined(INT2PTR)
+#   define INT2PTR(p) ((void *)(ptrdiff_t)(p))
+#endif
+#if !defined(PTR2INT)
+#   define PTR2INT(p) ((ptrdiff_t)(p))
 #endif
 
 #ifdef ITCL_DEBUG
 MODULE_SCOPE int _itcl_debug_level;
-MODULE_SCOPE void ItclShowArgs(int level, const char *str, int objc,
-	Tcl_Obj * const* objv);
+MODULE_SCOPE void ItclShowArgs(int level, const char *str, size_t objc,
+	Tcl_Obj *const *objv);
 #else
 #define ItclShowArgs(a,b,c,d) do {(void)(c);(void)(d);} while(0)
 #endif
 
 MODULE_SCOPE Tcl_ObjCmdProc ItclCallCCommand;
 MODULE_SCOPE Tcl_ObjCmdProc ItclObjectUnknownCommand;
-MODULE_SCOPE int ItclCheckCallProc(ClientData clientData, Tcl_Interp *interp,
-        Tcl_ObjectContext contextPtr, Tcl_CallFrame *framePtr, int *isFinished);
+MODULE_SCOPE int ItclCheckCallProc(void *clientData, Tcl_Interp *interp,
+	Tcl_ObjectContext contextPtr, Tcl_CallFrame *framePtr, int *isFinished);
 
 MODULE_SCOPE void ItclPreserveClass(ItclClass *iclsPtr);
-MODULE_SCOPE void ItclReleaseClass(ClientData iclsPtr);
+MODULE_SCOPE void ItclReleaseClass(void *iclsPtr);
 
 MODULE_SCOPE ItclFoundation *ItclGetFoundation(Tcl_Interp *interp);
 MODULE_SCOPE Tcl_ObjCmdProc ItclClassCommandDispatcher;
 MODULE_SCOPE Tcl_Command Itcl_CmdAliasProc(Tcl_Interp *interp,
-        Tcl_Namespace *nsPtr, const char *cmdName, ClientData clientData);
+	Tcl_Namespace *nsPtr, const char *cmdName, void *clientData);
 MODULE_SCOPE Tcl_Var Itcl_VarAliasProc(Tcl_Interp *interp,
-        Tcl_Namespace *nsPtr, const char *VarName, ClientData clientData);
+	Tcl_Namespace *nsPtr, const char *VarName, void *clientData);
 MODULE_SCOPE int ItclIsClass(Tcl_Interp *interp, Tcl_Command cmd);
-MODULE_SCOPE int ItclCheckCallMethod(ClientData clientData, Tcl_Interp *interp,
-        Tcl_ObjectContext contextPtr, Tcl_CallFrame *framePtr, int *isFinished);
-MODULE_SCOPE int ItclAfterCallMethod(ClientData clientData, Tcl_Interp *interp,
-        Tcl_ObjectContext contextPtr, Tcl_Namespace *nsPtr, int result);
+MODULE_SCOPE int ItclCheckCallMethod(void *clientData, Tcl_Interp *interp,
+	Tcl_ObjectContext contextPtr, Tcl_CallFrame *framePtr, int *isFinished);
+MODULE_SCOPE int ItclAfterCallMethod(void *clientData, Tcl_Interp *interp,
+	Tcl_ObjectContext contextPtr, Tcl_Namespace *nsPtr, int result);
 MODULE_SCOPE void ItclReportObjectUsage(Tcl_Interp *interp,
-        ItclObject *contextIoPtr, Tcl_Namespace *callerNsPtr,
+	ItclObject *contextIoPtr, Tcl_Namespace *callerNsPtr,
 	Tcl_Namespace *contextNsPtr);
 MODULE_SCOPE int ItclMapMethodNameProc(Tcl_Interp *interp, Tcl_Object oPtr,
-        Tcl_Class *startClsPtr, Tcl_Obj *methodObj);
+	Tcl_Class *startClsPtr, Tcl_Obj *methodObj);
 MODULE_SCOPE int ItclCreateArgList(Tcl_Interp *interp, const char *str,
-        int *argcPtr, int *maxArgcPtr, Tcl_Obj **usagePtr,
+	Tcl_Size *argcPtr, Tcl_Size *maxArgcPtr, Tcl_Obj **usagePtr,
 	ItclArgList **arglistPtrPtr, ItclMemberFunc *imPtr,
 	const char *commandName);
-MODULE_SCOPE int ItclObjectCmd(ClientData clientData, Tcl_Interp *interp,
-        Tcl_Object oPtr, Tcl_Class clsPtr, int objc, Tcl_Obj *const *objv);
+MODULE_SCOPE int ItclObjectCmd(void *clientData, Tcl_Interp *interp,
+	Tcl_Object oPtr, Tcl_Class clsPtr, size_t objc, Tcl_Obj *const *objv);
 MODULE_SCOPE int ItclCreateObject (Tcl_Interp *interp, const char* name,
-        ItclClass *iclsPtr, int objc, Tcl_Obj *const objv[]);
+	ItclClass *iclsPtr, size_t objc, Tcl_Obj *const objv[]);
 MODULE_SCOPE void ItclDeleteObjectVariablesNamespace(Tcl_Interp *interp,
-        ItclObject *ioPtr);
+	ItclObject *ioPtr);
 MODULE_SCOPE void ItclDeleteClassVariablesNamespace(Tcl_Interp *interp,
-        ItclClass *iclsPtr);
+	ItclClass *iclsPtr);
 MODULE_SCOPE int ItclInfoInit(Tcl_Interp *interp, ItclObjectInfo *infoPtr);
 
 MODULE_SCOPE Tcl_HashEntry *ItclResolveVarEntry(
@@ -714,17 +724,14 @@ struct Tcl_ResolvedVarInfo;
 MODULE_SCOPE int Itcl_ClassCmdResolver(Tcl_Interp *interp, const char* name,
 	Tcl_Namespace *nsPtr, int flags, Tcl_Command *rPtr);
 MODULE_SCOPE int Itcl_ClassVarResolver(Tcl_Interp *interp, const char* name,
-        Tcl_Namespace *nsPtr, int flags, Tcl_Var *rPtr);
+	Tcl_Namespace *nsPtr, int flags, Tcl_Var *rPtr);
 MODULE_SCOPE int Itcl_ClassCompiledVarResolver(Tcl_Interp *interp,
-        const char* name, int length, Tcl_Namespace *nsPtr,
-        struct Tcl_ResolvedVarInfo **rPtr);
+	const char* name, Tcl_Size length, Tcl_Namespace *nsPtr,
+	struct Tcl_ResolvedVarInfo **rPtr);
 MODULE_SCOPE int Itcl_ClassCmdResolver2(Tcl_Interp *interp, const char* name,
 	Tcl_Namespace *nsPtr, int flags, Tcl_Command *rPtr);
 MODULE_SCOPE int Itcl_ClassVarResolver2(Tcl_Interp *interp, const char* name,
-        Tcl_Namespace *nsPtr, int flags, Tcl_Var *rPtr);
-MODULE_SCOPE int Itcl_ClassCompiledVarResolver2(Tcl_Interp *interp,
-        const char* name, int length, Tcl_Namespace *nsPtr,
-        struct Tcl_ResolvedVarInfo **rPtr);
+	Tcl_Namespace *nsPtr, int flags, Tcl_Var *rPtr);
 MODULE_SCOPE int ItclSetParserResolver(Tcl_Namespace *nsPtr);
 MODULE_SCOPE void ItclProcErrorProc(Tcl_Interp *interp, Tcl_Obj *procNameObj);
 MODULE_SCOPE int Itcl_CreateOption (Tcl_Interp *interp, ItclClass *iclsPtr,
@@ -733,79 +740,79 @@ MODULE_SCOPE int ItclCreateMethodVariable(Tcl_Interp *interp,
 	ItclVariable *ivPtr, Tcl_Obj* defaultPtr, Tcl_Obj* callbackPtr,
 	ItclMethodVariable** imvPtrPtr);
 MODULE_SCOPE int DelegationInstall(Tcl_Interp *interp, ItclObject *ioPtr,
-        ItclClass *iclsPtr);
+	ItclClass *iclsPtr);
 MODULE_SCOPE ItclClass *ItclNamespace2Class(Tcl_Namespace *nsPtr);
 MODULE_SCOPE const char* ItclGetCommonInstanceVar(Tcl_Interp *interp,
-        const char *name, const char *name2, ItclObject *contextIoPtr,
+	const char *name, const char *name2, ItclObject *contextIoPtr,
 	ItclClass *contextIclsPtr);
 MODULE_SCOPE int ItclCreateMethod(Tcl_Interp* interp, ItclClass *iclsPtr,
 	Tcl_Obj *namePtr, const char* arglist, const char* body,
-        ItclMemberFunc **imPtrPtr);
+	ItclMemberFunc **imPtrPtr);
 MODULE_SCOPE int Itcl_WidgetParseInit(Tcl_Interp *interp,
-        ItclObjectInfo *infoPtr);
-MODULE_SCOPE void ItclDeleteObjectMetadata(ClientData clientData);
-MODULE_SCOPE void ItclDeleteClassMetadata(ClientData clientData);
+	ItclObjectInfo *infoPtr);
+MODULE_SCOPE void ItclDeleteObjectMetadata(void *clientData);
+MODULE_SCOPE void ItclDeleteClassMetadata(void *clientData);
 MODULE_SCOPE void ItclDeleteArgList(ItclArgList *arglistPtr);
-MODULE_SCOPE int Itcl_ClassOptionCmd(ClientData clientData, Tcl_Interp *interp,
-        int objc, Tcl_Obj *const objv[]);
+MODULE_SCOPE int Itcl_ClassOptionCmd(void *clientData, Tcl_Interp *interp,
+	int objc, Tcl_Obj *const objv[]);
 MODULE_SCOPE int DelegatedOptionsInstall(Tcl_Interp *interp,
-        ItclClass *iclsPtr);
+	ItclClass *iclsPtr);
 MODULE_SCOPE int Itcl_HandleDelegateOptionCmd(Tcl_Interp *interp,
-        ItclObject *ioPtr, ItclClass *iclsPtr, ItclDelegatedOption **idoPtrPtr,
-        int objc, Tcl_Obj *const objv[]);
+	ItclObject *ioPtr, ItclClass *iclsPtr, ItclDelegatedOption **idoPtrPtr,
+	size_t objc, Tcl_Obj *const objv[]);
 MODULE_SCOPE int Itcl_HandleDelegateMethodCmd(Tcl_Interp *interp,
-        ItclObject *ioPtr, ItclClass *iclsPtr,
-	ItclDelegatedFunction **idmPtrPtr, int objc, Tcl_Obj *const objv[]);
+	ItclObject *ioPtr, ItclClass *iclsPtr,
+	ItclDelegatedFunction **idmPtrPtr, size_t objc, Tcl_Obj *const objv[]);
 MODULE_SCOPE int DelegateFunction(Tcl_Interp *interp, ItclObject *ioPtr,
-        ItclClass *iclsPtr, Tcl_Obj *componentNamePtr,
-        ItclDelegatedFunction *idmPtr);
+	ItclClass *iclsPtr, Tcl_Obj *componentNamePtr,
+	ItclDelegatedFunction *idmPtr);
 MODULE_SCOPE int ItclInitObjectMethodVariables(Tcl_Interp *interp,
-        ItclObject *ioPtr, ItclClass *iclsPtr, const char *name);
+	ItclObject *ioPtr, ItclClass *iclsPtr, const char *name);
 MODULE_SCOPE int InitTclOOFunctionPointers(Tcl_Interp *interp);
 MODULE_SCOPE ItclOption* ItclNewOption(Tcl_Interp *interp, ItclObject *ioPtr,
-        ItclClass *iclsPtr, Tcl_Obj *namePtr, const char *resourceName,
-        const char *className, char *init, ItclMemberCode *mCodePtr);
+	ItclClass *iclsPtr, Tcl_Obj *namePtr, const char *resourceName,
+	const char *className, char *init, ItclMemberCode *mCodePtr);
 MODULE_SCOPE int ItclParseOption(ItclObjectInfo *infoPtr, Tcl_Interp *interp,
-        int objc, Tcl_Obj *const objv[], ItclClass *iclsPtr,
+	size_t objc, Tcl_Obj *const objv[], ItclClass *iclsPtr,
 	ItclObject *ioPtr, ItclOption **ioptPtrPtr);
-MODULE_SCOPE void ItclDestroyClassNamesp(ClientData cdata);
+MODULE_SCOPE void ItclDestroyClassNamesp(void *cdata);
 MODULE_SCOPE int ExpandDelegateAs(Tcl_Interp *interp, ItclObject *ioPtr,
 	ItclClass *iclsPtr, ItclDelegatedFunction *idmPtr,
 	const char *funcName, Tcl_Obj *listPtr);
 MODULE_SCOPE int ItclCheckForInitializedComponents(Tcl_Interp *interp,
-        ItclClass *iclsPtr, ItclObject *ioPtr);
+	ItclClass *iclsPtr, ItclObject *ioPtr);
 MODULE_SCOPE int ItclCreateDelegatedFunction(Tcl_Interp *interp,
-        ItclClass *iclsPtr, Tcl_Obj *methodNamePtr, ItclComponent *icPtr,
+	ItclClass *iclsPtr, Tcl_Obj *methodNamePtr, ItclComponent *icPtr,
 	Tcl_Obj *targetPtr, Tcl_Obj *usingPtr, Tcl_Obj *exceptionsPtr,
 	ItclDelegatedFunction **idmPtrPtr);
 MODULE_SCOPE void ItclDeleteDelegatedOption(char *cdata);
 MODULE_SCOPE void Itcl_FinishList();
 MODULE_SCOPE void ItclDeleteDelegatedFunction(ItclDelegatedFunction *idmPtr);
 MODULE_SCOPE void ItclFinishEnsemble(ItclObjectInfo *infoPtr);
-MODULE_SCOPE int Itcl_EnsembleDeleteCmd(ClientData clientData,
-        Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
+MODULE_SCOPE int Itcl_EnsembleDeleteCmd(void *clientData,
+	Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
 MODULE_SCOPE int ItclAddClassesDictInfo(Tcl_Interp *interp, ItclClass *iclsPtr);
 MODULE_SCOPE int ItclDeleteClassesDictInfo(Tcl_Interp *interp,
-        ItclClass *iclsPtr);
+	ItclClass *iclsPtr);
 MODULE_SCOPE int ItclAddObjectsDictInfo(Tcl_Interp *interp, ItclObject *ioPtr);
 MODULE_SCOPE int ItclDeleteObjectsDictInfo(Tcl_Interp *interp,
-        ItclObject *ioPtr);
+	ItclObject *ioPtr);
 MODULE_SCOPE int ItclAddOptionDictInfo(Tcl_Interp *interp, ItclClass *iclsPtr,
 	ItclOption *ioptPtr);
 MODULE_SCOPE int ItclAddDelegatedOptionDictInfo(Tcl_Interp *interp,
-        ItclClass *iclsPtr, ItclDelegatedOption *idoPtr);
+	ItclClass *iclsPtr, ItclDelegatedOption *idoPtr);
 MODULE_SCOPE int ItclAddClassComponentDictInfo(Tcl_Interp *interp,
-        ItclClass *iclsPtr, ItclComponent *icPtr);
+	ItclClass *iclsPtr, ItclComponent *icPtr);
 MODULE_SCOPE int ItclAddClassVariableDictInfo(Tcl_Interp *interp,
-        ItclClass *iclsPtr, ItclVariable *ivPtr);
+	ItclClass *iclsPtr, ItclVariable *ivPtr);
 MODULE_SCOPE int ItclAddClassFunctionDictInfo(Tcl_Interp *interp,
-        ItclClass *iclsPtr, ItclMemberFunc *imPtr);
+	ItclClass *iclsPtr, ItclMemberFunc *imPtr);
 MODULE_SCOPE int ItclAddClassDelegatedFunctionDictInfo(Tcl_Interp *interp,
-        ItclClass *iclsPtr, ItclDelegatedFunction *idmPtr);
-MODULE_SCOPE int ItclClassCreateObject(ClientData clientData, Tcl_Interp *interp,
-        int objc, Tcl_Obj *const objv[]);
+	ItclClass *iclsPtr, ItclDelegatedFunction *idmPtr);
+MODULE_SCOPE int ItclClassCreateObject(void *clientData, Tcl_Interp *interp,
+	size_t objc, Tcl_Obj *const objv[]);
 
-MODULE_SCOPE void ItclRestoreInfoVars(ClientData clientData);
+MODULE_SCOPE void ItclRestoreInfoVars(void *clientData);
 
 MODULE_SCOPE Tcl_ObjCmdProc Itcl_BiMyProcCmd;
 MODULE_SCOPE Tcl_ObjCmdProc Itcl_BiInstallComponentCmd;
