@@ -1,5 +1,5 @@
 /*
- * Copyright(c) 2014-2022 Tim Ruehsen
+ * Copyright(c) 2014-2024 Tim Ruehsen
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -34,11 +34,11 @@
 #include <stdio.h>
 #include <time.h>
 
-#define PSL_VERSION "0.21.2"
+#define PSL_VERSION "0.21.5"
 #define PSL_VERSION_MAJOR 0
 #define PSL_VERSION_MINOR 21
-#define PSL_VERSION_PATCH 2
-#define PSL_VERSION_NUMBER 0x001502
+#define PSL_VERSION_PATCH 5
+#define PSL_VERSION_NUMBER 0x001505
 
 /* support clang's __has_declspec_attribute attribute */
 #ifndef __has_declspec_attribute
