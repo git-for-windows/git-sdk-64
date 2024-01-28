@@ -16,13 +16,13 @@
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # traps interrupt key to spit out pre-interrupt info
 trap finaloutput INT
 
 declare -r myname='rankmirrors'
-declare -r myver='1.10.1'
+declare -r myver='1.10.2'
 
 usage() {
 	cat <<EOF
@@ -67,7 +67,7 @@ err() {
 	exit 1
 }
 
-# gettime fetchurl (e.g gettime http://foo.com/core/os/i686/core.db.tar.gz)
+# gettime fetchurl (e.g gettime https://foo.com/core/os/i686/core.db.tar.gz)
 # returns the fetching time, or timeout, or unreachable
 gettime() {
 	IFS=' ' read -ra output <<< "$(curl -s -m "$MAX_TIME" -w "%{time_total} %{http_code}" "$1" -o/dev/null)"
@@ -77,10 +77,10 @@ gettime() {
 	return 0
 }
 
-# getfetchurl serverurl (e.g. getturl http://foo.com/core/os/i686)
+# getfetchurl serverurl (e.g. getturl https://foo.com/core/os/i686)
 # if $repo is in the line, then assumes core
 # if $arch is in the line, then assumes $(uname -m)
-# returns a fetchurl (e.g. http://foo.com/core/os/i686/core.db.tar.gz)
+# returns a fetchurl (e.g. https://foo.com/core/os/i686/core.db.tar.gz)
 ARCH="$(uname -m)"
 getfetchurl() {
 	local strippedurl="${1%/}"

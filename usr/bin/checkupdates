@@ -15,16 +15,17 @@
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 declare -r myname='checkupdates'
-declare -r myver='1.10.1'
+declare -r myver='1.10.2'
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
 DOWNLOAD_CACHE=0
-USE_COLOR='y'
+SYNC=1
+USE_COLOR=1
 
 # Import libmakepkg
 # shellcheck source=/dev/null
@@ -59,10 +60,11 @@ Safely print a list of pending updates.
 Usage: ${myname} [options]
 
 Options:
-  -d, --download  download pending updates to the pacman cache
-      --nocolor   do not colorize output
-  -n, --nosync    do not sync the temporary database
   -c, --change    print only when available updates differ from the last --change run
+  -d, --download  download pending updates to the pacman cache
+      --nocolor   do not colorize output (listing color also dependent on Color
+                  option in pacman.conf)
+  -n, --nosync    do not sync the temporary database
   -h, --help      display this help message and exit
   -V, --version   display version information and exit
 
@@ -89,13 +91,12 @@ fi
 set -- "${OPTRET[@]}"
 unset OPT_SHORT OPT_LONG OPTRET
 
-SYNC=1
 while :; do
 	case $1 in
 		-d|--download)
 			DOWNLOAD_CACHE=1 ;;
 		--nocolor)
-			USE_COLOR='n';;
+			USE_COLOR=0 ;;
 		-n|--nosync)
 			SYNC=0 ;;
 		-c|--change)
@@ -114,8 +115,13 @@ while :; do
 done
 
 # check if messages are to be printed using color
-if [[ -t 2 && $USE_COLOR != "n" ]]; then
+if [[ -t 2 ]] && (( USE_COLOR )); then
 	colorize
+
+	# check if pacman colors are to be kept in the updates array
+	if pacman-conf | grep -q Color; then
+		PACMAN_COLOR=1
+	fi
 else
 	unset ALL_OFF BOLD BLUE GREEN RED YELLOW
 fi
@@ -142,7 +148,12 @@ if (( SYNC )); then
 		die 'Cannot fetch updates'
 	fi
 fi
-mapfile -t updates < <(pacman -Qu --dbpath "$CHECKUPDATES_DB" 2> /dev/null | grep -v '\[.*\]')
+
+if (( PACMAN_COLOR )); then
+	mapfile -t updates < <(pacman --color always -Qu --dbpath "$CHECKUPDATES_DB" 2> /dev/null | grep -v '\[.*\]')
+else
+	mapfile -t updates < <(pacman -Qu --dbpath "$CHECKUPDATES_DB" 2> /dev/null | grep -v '\[.*\]')
+fi
 
 if (( ${#updates[@]} )); then
 	if (( CHANGE )); then
