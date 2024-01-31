@@ -51,7 +51,7 @@ int SSL_CTX_set_tlsext_ticket_key_evp_cb(SSL_CTX sslctx,
 
 <p>The OpenSSL library uses your callback function to help implement a common TLS ticket construction state according to RFC5077 Section 4 such that per session state is unnecessary and a small set of cryptographic variables needs to be maintained by the callback function implementation.</p>
 
-<p>In order to reuse a session, a TLS client must send the a session ticket extension to the server. The client can only send exactly one session ticket. The server, through the callback function, either agrees to reuse the session ticket information or it starts a full TLS handshake to create a new session ticket.</p>
+<p>In order to reuse a session, a TLS client must send the session ticket extension to the server. The client must send exactly one session ticket. The server, through the callback function, either agrees to reuse the session ticket information or it starts a full TLS handshake to create a new session ticket.</p>
 
 <p>Before the callback function is started <i>ctx</i> and <i>hctx</i> have been initialised with <a href="../man3/EVP_CIPHER_CTX_reset.html">EVP_CIPHER_CTX_reset(3)</a> and <a href="../man3/EVP_MAC_CTX_new.html">EVP_MAC_CTX_new(3)</a> respectively.</p>
 

@@ -105,7 +105,7 @@ const BIO_METHOD *BIO_f_zstd(void);</code></pre>
 
 <p>Zstandard may be found at <a href="https://github.com/facebook/zstd">https://github.com/facebook/zstd</a>.</p>
 
-<p>Compression of SSL/TLS records is not recommended, as it has been shown to lead to the CRIME attack <a href="https://en.wikipedia.org/wiki/CRIME">https://en.wikipedia.org/wiki/CRIME</a>. It is disabled by default, and may be enabled by clearing the SSL_OP_NO_COMPRESSION options of the <a href="../man3/SSL_CTX_set_options.html">SSL_CTX_set_options(3)</a> or <a href="../man3/SSL_set_options.html">SSL_set_options(3)</a> functions.</p>
+<p>Compression of SSL/TLS records is not recommended, as it has been shown to lead to the CRIME attack <a href="https://en.wikipedia.org/wiki/CRIME">https://en.wikipedia.org/wiki/CRIME</a>. It is disabled by default, and may be enabled by clearing the SSL_OP_NO_COMPRESSION option and setting the security level as appropriate. See the documentation for the <a href="../man3/SSL_CTX_set_options.html">SSL_CTX_set_options(3)</a> and <a href="../man3/SSL_set_options.html">SSL_set_options(3)</a> functions.</p>
 
 <p>Compression is also used to support certificate compression as described in RFC8879 <a href="https://datatracker.ietf.org/doc/html/rfc8879">https://datatracker.ietf.org/doc/html/rfc8879</a>. It may be disabled via the SSL_OP_NO_TX_CERTIFICATE_COMPRESSION and SSL_OP_NO_RX_CERTIFICATE_COMPRESSION options of the <a href="../man3/SSL_CTX_set_options.html">SSL_CTX_set_options(3)</a> or <a href="../man3/SSL_set_options.html">SSL_set_options(3)</a> functions.</p>
 

@@ -42,7 +42,7 @@ int SSL_get_error(const SSL *ssl, int ret);</code></pre>
 
 <p>Some TLS implementations do not send a close_notify alert on shutdown.</p>
 
-<p>On an unexpected EOF, versions before OpenSSL 3.0 returned <b>SSL_ERROR_SYSCALL</b>, nothing was added to the error stack, and errno was 0. Since OpenSSL 3.0 the returned error is <b>SSL_ERROR_SSL</b> with a meaningful error on the error stack.</p>
+<p>On an unexpected EOF, versions before OpenSSL 3.0 returned <b>SSL_ERROR_SYSCALL</b>, nothing was added to the error stack, and errno was 0. Since OpenSSL 3.0 the returned error is <b>SSL_ERROR_SSL</b> with a meaningful error on the error stack (SSL_R_UNEXPECTED_EOF_WHILE_READING). This error reason code may be used for control flow decisions (see the man page for <a href="../man3/ERR_GET_REASON.html">ERR_GET_REASON(3)</a> for further details on this).</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -73,7 +73,7 @@ int SSL_get_error(const SSL *ssl, int ret);</code></pre>
 
 <p>SSL_read() and SSL_read_ex() can also set <b>SSL_ERROR_WANT_READ</b> when there is still unprocessed data available at either the <b>SSL</b> or the <b>BIO</b> layer, even for a blocking <b>BIO</b>. See <a href="../man3/SSL_read.html">SSL_read(3)</a> for more information.</p>
 
-<p>For non-QUIC SSL objects, <b>SSL_ERROR_WANT_WRITE</b> is returned when the last operation was a write to a nonblocking <b>BIO</b> and it was unable to sent all data to the <b>BIO</b>. When the <b>BIO</b> is writable again, the same function can be called again.</p>
+<p>For non-QUIC SSL objects, <b>SSL_ERROR_WANT_WRITE</b> is returned when the last operation was a write to a nonblocking <b>BIO</b> and it was unable to send all data to the <b>BIO</b>. When the <b>BIO</b> is writable again, the same function can be called again.</p>
 
 <p>Note that the retry may again lead to an <b>SSL_ERROR_WANT_READ</b> or <b>SSL_ERROR_WANT_WRITE</b> condition. There is no fixed upper limit for the number of iterations that may be necessary until progress becomes visible at application protocol level.</p>
 
@@ -142,7 +142,7 @@ int SSL_get_error(const SSL *ssl, int ret);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

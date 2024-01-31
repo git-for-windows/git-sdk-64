@@ -39,7 +39,7 @@ int BIO_get_md_ctx(BIO *b, EVP_MD_CTX **mdcp);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>BIO_f_md() returns the message digest BIO method. This is a filter BIO that digests any data passed through it, it is a BIO wrapper for the digest routines EVP_DigestInit(), EVP_DigestUpdate() and EVP_DigestFinal().</p>
+<p>BIO_f_md() returns the message digest BIO method. This is a filter BIO that digests any data passed through it. It is a BIO wrapper for the digest routines EVP_DigestInit(), EVP_DigestUpdate() and EVP_DigestFinal().</p>
 
 <p>Any data written or read through a digest BIO using BIO_read_ex() and BIO_write_ex() is digested.</p>
 
@@ -49,7 +49,7 @@ int BIO_get_md_ctx(BIO *b, EVP_MD_CTX **mdcp);</code></pre>
 
 <p>BIO_set_md() sets the message digest of BIO <b>b</b> to <b>md</b>: this must be called to initialize a digest BIO before any data is passed through it. It is a BIO_ctrl() macro.</p>
 
-<p>BIO_get_md() places the a pointer to the digest BIOs digest method in <b>mdp</b>, it is a BIO_ctrl() macro.</p>
+<p>BIO_get_md() places a pointer to the digest BIOs digest method in <b>mdp</b>. It is a BIO_ctrl() macro.</p>
 
 <p>BIO_get_md_ctx() returns the digest BIOs context into <b>mdcp</b>.</p>
 

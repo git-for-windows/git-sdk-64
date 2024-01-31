@@ -25,7 +25,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>LHASH, LHASH_OF, DEFINE_LHASH_OF_EX, DEFINE_LHASH_OF, OPENSSL_LH_COMPFUNC, OPENSSL_LH_HASHFUNC, OPENSSL_LH_DOALL_FUNC, LHASH_DOALL_ARG_FN_TYPE, IMPLEMENT_LHASH_HASH_FN, IMPLEMENT_LHASH_COMP_FN, lh_TYPE_new, lh_TYPE_free, lh_TYPE_flush, lh_TYPE_insert, lh_TYPE_delete, lh_TYPE_retrieve, lh_TYPE_doall, lh_TYPE_doall_arg, lh_TYPE_error, OPENSSL_LH_new, OPENSSL_LH_free, OPENSSL_LH_flush, OPENSSL_LH_insert, OPENSSL_LH_delete, OPENSSL_LH_retrieve, OPENSSL_LH_doall, OPENSSL_LH_doall_arg, OPENSSL_LH_error - dynamic hash table</p>
+<p>LHASH, LHASH_OF, DEFINE_LHASH_OF_EX, DEFINE_LHASH_OF, OPENSSL_LH_COMPFUNC, OPENSSL_LH_HASHFUNC, OPENSSL_LH_DOALL_FUNC, LHASH_DOALL_ARG_FN_TYPE, IMPLEMENT_LHASH_HASH_FN, IMPLEMENT_LHASH_COMP_FN, lh_TYPE_new, lh_TYPE_free, lh_TYPE_flush, lh_TYPE_insert, lh_TYPE_delete, lh_TYPE_retrieve, lh_TYPE_doall, lh_TYPE_doall_arg, lh_TYPE_num_items, lh_TYPE_get_down_load, lh_TYPE_set_down_load, lh_TYPE_error, OPENSSL_LH_new, OPENSSL_LH_free, OPENSSL_LH_flush, OPENSSL_LH_insert, OPENSSL_LH_delete, OPENSSL_LH_retrieve, OPENSSL_LH_doall, OPENSSL_LH_doall_arg, OPENSSL_LH_num_items, OPENSSL_LH_get_down_load, OPENSSL_LH_set_down_load, OPENSSL_LH_error - dynamic hash table</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -47,6 +47,10 @@ void lh_TYPE_doall(LHASH_OF(TYPE) *table, OPENSSL_LH_DOALL_FUNC func);
 void lh_TYPE_doall_arg(LHASH_OF(TYPE) *table, OPENSSL_LH_DOALL_FUNCARG func,
                        TYPE *arg);
 
+unsigned long lh_TYPE_num_items(OPENSSL_LHASH *lh);
+unsigned long lh_TYPE_get_down_load(OPENSSL_LHASH *lh);
+void lh_TYPE_set_down_load(OPENSSL_LHASH *lh, unsigned long dl);
+
 int lh_TYPE_error(LHASH_OF(TYPE) *table);
 
 typedef int (*OPENSSL_LH_COMPFUNC)(const void *, const void *);
@@ -65,7 +69,13 @@ void *OPENSSL_LH_retrieve(OPENSSL_LHASH *lh, const void *data);
 void OPENSSL_LH_doall(OPENSSL_LHASH *lh, OPENSSL_LH_DOALL_FUNC func);
 void OPENSSL_LH_doall_arg(OPENSSL_LHASH *lh, OPENSSL_LH_DOALL_FUNCARG func, void *arg);
 
-int OPENSSL_LH_error(OPENSSL_LHASH *lh);</code></pre>
+unsigned long OPENSSL_LH_num_items(OPENSSL_LHASH *lh);
+unsigned long OPENSSL_LH_get_down_load(OPENSSL_LHASH *lh);
+void OPENSSL_LH_set_down_load(OPENSSL_LHASH *lh, unsigned long dl);
+
+int OPENSSL_LH_error(OPENSSL_LHASH *lh);
+
+#define LH_LOAD_MULT   /* integer constant */</code></pre>
 
 <p>The following macro is deprecated:</p>
 
@@ -134,8 +144,6 @@ lh_TYPE_doall(hashtable, LHASH_DOALL_FN(TYPE_cleanup));
 /* Then the hash table itself can be deallocated */
 lh_TYPE_free(hashtable);</code></pre>
 
-<p>When doing this, be careful if you delete entries from the hash table in your callbacks: the table may decrease in size, moving the item that you are currently on down lower in the hash table - this could cause some entries to be skipped during the iteration. The second best solution to this problem is to set hash-&gt;down_load=0 before you start (which will stop the hash table ever decreasing in size). The best solution is probably to avoid deleting items from the hash table inside a &quot;doall&quot; callback!</p>
-
 <p><b>lh_<i>TYPE</i>_doall_arg</b>() is the same as <b>lh_<i>TYPE</i>_doall</b>() except that <i>func</i> will be called with <i>arg</i> as the second argument and <i>func</i> should be of type <b>LHASH_DOALL_ARG_FN</b>(<b><i>TYPE</i></b>) (a callback prototype that is passed both the table entry and an extra argument). As with lh_doall(), you can instead choose to declare your callback with a prototype matching the types you are dealing with and use the declare/implement macros to create compatible wrappers that cast variables before calling your type-specific callbacks. An example of this is demonstrated here (printing all hash table entries to a BIO that is provided by the caller):</p>
 
 <pre><code>/* Prints item &#39;a&#39; to &#39;output_bio&#39; (this is implemented elsewhere) */
@@ -148,9 +156,19 @@ static IMPLEMENT_LHASH_DOALL_ARG_FN(TYPE, const TYPE, BIO)
 lh_TYPE_doall_arg(hashtable, LHASH_DOALL_ARG_FN(TYPE_print), BIO,
                   logging_bio);</code></pre>
 
+<p>Note that it is by default <b>not</b> safe to use <b>lh_<i>TYPE</i>_delete</b>() inside a callback passed to <b>lh_<i>TYPE</i>_doall</b>() or <b>lh_<i>TYPE</i>_doall_arg</b>(). The reason for this is that deleting an item from the hash table may result in the hash table being contracted to a smaller size and rehashed. <b>lh_<i>TYPE</i>_doall</b>() and <b>lh_<i>TYPE</i>_doall_arg</b>() are unsafe and will exhibit undefined behaviour under these conditions, as these functions assume the hash table size and bucket pointers do not change during the call.</p>
+
+<p>If it is desired to use <b>lh_<i>TYPE</i>_doall</b>() or <b>lh_<i>TYPE</i>_doall_arg</b>() with <b>lh_<i>TYPE</i>_delete</b>(), it is essential that you call <b>lh_<i>TYPE</i>_set_down_load</b>() with a <i>down_load</i> argument of 0 first. This disables hash table contraction and guarantees that it will be safe to delete items from a hash table during a call to <b>lh_<i>TYPE</i>_doall</b>() or <b>lh_<i>TYPE</i>_doall_arg</b>().</p>
+
+<p>It is never safe to call <b>lh_<i>TYPE</i>_insert</b>() during a call to <b>lh_<i>TYPE</i>_doall</b>() or <b>lh_<i>TYPE</i>_doall_arg</b>().</p>
+
 <p><b>lh_<i>TYPE</i>_error</b>() can be used to determine if an error occurred in the last operation.</p>
 
-<p>OPENSSL_LH_new() is the same as the <b>lh_<i>TYPE</i>_new</b>() except that it is not type specific. So instead of returning an <b>LHASH_OF(<i>TYPE</i>)</b> value it returns a <b>void *</b>. In the same way the functions OPENSSL_LH_free(), OPENSSL_LH_flush(), OPENSSL_LH_insert(), OPENSSL_LH_delete(), OPENSSL_LH_retrieve(), OPENSSL_LH_doall(), OPENSSL_LH_doall_arg(), and OPENSSL_LH_error() are equivalent to the similarly named <b>lh_<i>TYPE</i></b> functions except that they return or use a <b>void *</b> where the equivalent <b>lh_<i>TYPE</i></b> function returns or uses a <b><i>TYPE</i> *</b> or <b>LHASH_OF(<i>TYPE</i>) *</b>. <b>lh_<i>TYPE</i></b> functions are implemented as type checked wrappers around the <b>OPENSSL_LH</b> functions. Most applications should not call the <b>OPENSSL_LH</b> functions directly.</p>
+<p><b>lh_<i>TYPE</i>_num_items</b>() returns the number of items in the hash table.</p>
+
+<p><b>lh_<i>TYPE</i>_get_down_load</b>() and <b>lh_<i>TYPE</i>_set_down_load</b>() get and set the factor used to determine when the hash table is contracted. The factor is the load factor at or below which hash table contraction will occur, multiplied by <b>LH_LOAD_MULT</b>, where the load factor is the number of items divided by the number of nodes. Setting this value to 0 disables hash table contraction.</p>
+
+<p>OPENSSL_LH_new() is the same as the <b>lh_<i>TYPE</i>_new</b>() except that it is not type specific. So instead of returning an <b>LHASH_OF(<i>TYPE</i>)</b> value it returns a <b>void *</b>. In the same way the functions OPENSSL_LH_free(), OPENSSL_LH_flush(), OPENSSL_LH_insert(), OPENSSL_LH_delete(), OPENSSL_LH_retrieve(), OPENSSL_LH_doall(), OPENSSL_LH_doall_arg(), OPENSSL_LH_num_items(), OPENSSL_LH_get_down_load(), OPENSSL_LH_set_down_load() and OPENSSL_LH_error() are equivalent to the similarly named <b>lh_<i>TYPE</i></b> functions except that they return or use a <b>void *</b> where the equivalent <b>lh_<i>TYPE</i></b> function returns or uses a <b><i>TYPE</i> *</b> or <b>LHASH_OF(<i>TYPE</i>) *</b>. <b>lh_<i>TYPE</i></b> functions are implemented as type checked wrappers around the <b>OPENSSL_LH</b> functions. Most applications should not call the <b>OPENSSL_LH</b> functions directly.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 

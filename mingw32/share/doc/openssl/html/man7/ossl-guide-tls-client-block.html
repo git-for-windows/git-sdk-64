@@ -273,7 +273,7 @@ if (SSL_connect(ssl) &lt; 1) {
 
 <p>Once the handshake is complete we are able to send and receive application data. Exactly what data is sent and in what order is usually controlled by some application level protocol. In this example we are using HTTP 1.0 which is a very simple request and response protocol. The client sends a request to the server. The server sends the response data and then immediately closes down the connection.</p>
 
-<p>To send data to the server we use the <a href="../man3/SSL_write_ex.html">SSL_write_ex(3)</a> function and to receive data from the server we use the <a href="../man3/SSL_read_ex.html">SSL_read_ex(3)</a> function. In HTTP 1.0 the client always writes data first. Our HTTP request will include the hostname that we are connecting to. For simplicitly, we write the HTTP request in three chunks. First we write the start of the request. Secondly we write the hostname we are sending the request to. Finally we send the end of the request.</p>
+<p>To send data to the server we use the <a href="../man3/SSL_write_ex.html">SSL_write_ex(3)</a> function and to receive data from the server we use the <a href="../man3/SSL_read_ex.html">SSL_read_ex(3)</a> function. In HTTP 1.0 the client always writes data first. Our HTTP request will include the hostname that we are connecting to. For simplicity, we write the HTTP request in three chunks. First we write the start of the request. Secondly we write the hostname we are sending the request to. Finally we send the end of the request.</p>
 
 <pre><code>size_t written;
 const char *request_start = &quot;GET / HTTP/1.0\r\nConnection: close\r\nHost: &quot;;

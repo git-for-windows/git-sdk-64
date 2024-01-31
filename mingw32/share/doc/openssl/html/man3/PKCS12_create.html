@@ -69,7 +69,9 @@
 
 <p><i>keytype</i> adds a flag to the store private key. This is a non standard extension that is only currently interpreted by MSIE. If set to zero the flag is omitted, if set to <b>KEY_SIG</b> the key can be used for signing only, if set to <b>KEY_EX</b> it can be used for signing and encryption. This option was useful for old export grade software which could use signing only keys of arbitrary size but had restrictions on the permissible sizes of keys which could be used for encryption.</p>
 
-<p>If a certificate contains an <i>alias</i> or <i>keyid</i> then this will be used for the corresponding <b>friendlyName</b> or <b>localKeyID</b> in the PKCS12 structure.</p>
+<p>If <i>name</i> is <b>NULL</b> and <i>cert</i> contains an <i>alias</i> then this will be used for the corresponding <b>friendlyName</b> in the PKCS12 structure instead. Similarly, if <i>pkey</i> is NULL and <i>cert</i> contains a <i>keyid</i> then this will be used for the corresponding <b>localKeyID</b> in the PKCS12 structure instead of the id calculated from the <i>pkey</i>.</p>
+
+<p>For all certificates in <i>ca</i> then if a certificate contains an <i>alias</i> or <i>keyid</i> then this will be used for the corresponding <b>friendlyName</b> or <b>localKeyID</b> in the PKCS12 structure.</p>
 
 <p>Either <i>pkey</i>, <i>cert</i> or both can be <b>NULL</b> to indicate that no key or certificate is required. In previous versions both had to be present or a fatal error is returned.</p>
 
@@ -101,7 +103,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

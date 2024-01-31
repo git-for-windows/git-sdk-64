@@ -1,5 +1,5 @@
 /* idn2.h - header file for idn2
-   Copyright (C) 2011-2022 Simon Josefsson
+   Copyright (C) 2011-2024 Simon Josefsson
 
    Libidn2 is free software: you can redistribute it and/or modify it
    under the terms of either:
@@ -98,19 +98,6 @@ extern "C"
 # endif
 
 /**
- * G_GNUC_DEPRECATED
- *
- * Function attribute: Function is deprecated.
- */
-# if GCC_VERSION_AT_LEAST(3,1)
-#  define G_GNUC_DEPRECATED __attribute__((deprecated))
-# elif defined(_MSC_VER)
-#  define G_GNUC_DEPRECATED __declspec(deprecated)
-# else
-#  define G_GNUC_DEPRECATED	/* empty */
-# endif
-
-/**
  * G_GNUC_UNUSED
  *
  * Parameter attribute: Parameter is not used.
@@ -129,7 +116,7 @@ extern "C"
  * version number.  Used together with idn2_check_version() to verify
  * header file and run-time library consistency.
  */
-# define IDN2_VERSION "2.3.4"
+# define IDN2_VERSION "2.3.7"
 
 /**
  * IDN2_VERSION_NUMBER
@@ -140,7 +127,7 @@ extern "C"
  * digits are used to enumerate development snapshots, but for all
  * public releases they will be 0000.
  */
-# define IDN2_VERSION_NUMBER 0x02030004
+# define IDN2_VERSION_NUMBER 0x02030007
 
 /**
  * IDN2_VERSION_MAJOR
@@ -164,7 +151,7 @@ extern "C"
  * Pre-processor symbol for the patch level number (decimal).
  * The version scheme is major.minor.patchlevel.
  */
-# define IDN2_VERSION_PATCH 4
+# define IDN2_VERSION_PATCH 7
 
 /**
  * IDN2_LABEL_MAX_LENGTH
@@ -305,9 +292,8 @@ extern "C"
 
 /* Auxiliary functions. */
 
-  extern _IDN2_API int
-    idn2_to_ascii_4i (const uint32_t * input, size_t inlen, char *output,
-		      int flags) G_GNUC_DEPRECATED;
+  extern _IDN2_API int idn2_to_ascii_4i (const uint32_t * input, size_t inlen,
+					 char *output, int flags);
   extern _IDN2_API int idn2_to_ascii_4i2 (const uint32_t * input,
 					  size_t inlen, char **output,
 					  int flags);
@@ -318,9 +304,9 @@ extern "C"
   extern _IDN2_API int idn2_to_ascii_lz (const char *input, char **output,
 					 int flags);
 
-  extern _IDN2_API int
-    idn2_to_unicode_8z4z (const char *input, uint32_t ** output,
-			  int flags G_GNUC_UNUSED);
+  extern _IDN2_API int idn2_to_unicode_8z4z (const char *input,
+					     uint32_t ** output,
+					     int flags G_GNUC_UNUSED);
   extern _IDN2_API int idn2_to_unicode_4z4z (const uint32_t * input,
 					     uint32_t ** output, int flags);
   extern _IDN2_API int idn2_to_unicode_44i (const uint32_t * in, size_t inlen,
@@ -332,6 +318,15 @@ extern "C"
 					     int flags);
   extern _IDN2_API int idn2_to_unicode_lzlz (const char *input, char **output,
 					     int flags);
+
+  extern _IDN2_API int idn2_punycode_encode (const uint32_t * input,
+					     size_t input_length,
+					     char *output,
+					     size_t *output_length);
+  extern _IDN2_API int idn2_punycode_decode (const char *input,
+					     size_t input_length,
+					     uint32_t * output,
+					     size_t *output_length);
 
   extern _IDN2_API const char *idn2_strerror (int rc)
     G_GNUC_IDN2_ATTRIBUTE_CONST;

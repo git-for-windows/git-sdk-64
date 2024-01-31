@@ -127,7 +127,7 @@ void EVP_MAC_do_all_provided(OSSL_LIB_CTX *libctx,
 
 <p>EVP_Q_mac() computes the message authentication code of <i>data</i> with length <i>datalen</i> using the MAC algorithm <i>name</i> and the key <i>key</i> with length <i>keylen</i>. The MAC algorithm is fetched using any given <i>libctx</i> and property query string <i>propq</i>. It takes parameters <i>subalg</i> and further <i>params</i>, both of which may be NULL if not needed. If <i>out</i> is not NULL, it places the result in the memory pointed at by <i>out</i>, but only if <i>outsize</i> is sufficient (otherwise no computation is made). If <i>out</i> is NULL, it allocates and uses a buffer of suitable length, which will be returned on success and must be freed by the caller. In either case, also on error, it assigns the number of bytes written to <i>*outlen</i> unless <i>outlen</i> is NULL.</p>
 
-<p>EVP_MAC_init() sets up the underlying context <i>ctx</i> with information given via the <i>key</i> and <i>params</i> arguments. The MAC <i>key</i> has a length of <i>keylen</i> and the parameters in <i>params</i> are processed before setting the key. If <i>key</i> is NULL, the key must be set via <i>params</i> either as part of this call or separately using EVP_MAC_CTX_set_params(). Providing non-NULL <i>params</i> to this function is equivalent to calling EVP_MAC_CTX_set_params() with those <i>params</i> for the same <i>ctx</i> beforehand.</p>
+<p>EVP_MAC_init() sets up the underlying context <i>ctx</i> with information given via the <i>key</i> and <i>params</i> arguments. The MAC <i>key</i> has a length of <i>keylen</i> and the parameters in <i>params</i> are processed before setting the key. If <i>key</i> is NULL, the key must be set via <i>params</i> either as part of this call or separately using EVP_MAC_CTX_set_params(). Providing non-NULL <i>params</i> to this function is equivalent to calling EVP_MAC_CTX_set_params() with those <i>params</i> for the same <i>ctx</i> beforehand. Note: There are additional requirements for some MAC algorithms during re-initalization (i.e. calling EVP_MAC_init() on an EVP_MAC after EVP_MAC_final() has been called on the same object). See the NOTES section below.</p>
 
 <p>EVP_MAC_init() should be called before EVP_MAC_update() and EVP_MAC_final().</p>
 
@@ -267,6 +267,8 @@ void EVP_MAC_do_all_provided(OSSL_LIB_CTX *libctx,
 
 <p>The usage of the parameter names &quot;custom&quot;, &quot;iv&quot; and &quot;salt&quot; correspond to the names used in the standard where the algorithm was defined.</p>
 
+<p>Some MAC algorithms store internal state that cannot be extracted during re-initalization. For example GMAC cannot extract an <b>IV</b> from the underlying CIPHER context, and so calling EVP_MAC_init() on an EVP_MAC object after EVP_MAC_final() has been called cannot reset its cipher state to what it was when the <b>IV</b> was initially generated. For such instances, an <b>OSSL_MAC_PARAM_IV</b> parameter must be passed with each call to EVP_MAC_init().</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>EVP_MAC_fetch() returns a pointer to a newly fetched <b>EVP_MAC</b>, or NULL if allocation failed.</p>
@@ -385,7 +387,7 @@ Result: C5C06683CD9DDEF904D754505C560A4E</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2018-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2018-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -68,7 +68,7 @@ int SSL_CONF_cmd_value_type(SSL_CONF_CTX *ctx, const char *option);</code></pre>
 <dt id="comp"><b>-comp</b></dt>
 <dd>
 
-<p>Enables support for SSL/TLS compression, same as clearing <b>SSL_OP_NO_COMPRESSION</b>. This command was introduced in OpenSSL 1.1.0. As of OpenSSL 1.1.0, compression is off by default.</p>
+<p>Enables support for SSL/TLS compression, same as clearing <b>SSL_OP_NO_COMPRESSION</b>. This command was introduced in OpenSSL 1.1.0. As of OpenSSL 1.1.0, compression is off by default. TLS compression can only be used in security level 1 or lower. From OpenSSL 3.2.0 and above the default security level is 2, so this option will have no effect without also changing the security level. See <a href="../man3/SSL_CTX_set_security_level.html">SSL_CTX_set_security_level(3)</a>.</p>
 
 </dd>
 <dt id="no_ticket"><b>-no_ticket</b></dt>

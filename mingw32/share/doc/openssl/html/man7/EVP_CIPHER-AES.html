@@ -19,6 +19,7 @@
       <li><a href="#Parameters">Parameters</a></li>
     </ul>
   </li>
+  <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
@@ -105,6 +106,12 @@
 <h2 id="Parameters">Parameters</h2>
 
 <p>This implementation supports the parameters described in <a href="../man3/EVP_EncryptInit.html">&quot;PARAMETERS&quot; in EVP_EncryptInit(3)</a>.</p>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>The AES-SIV and AES-WRAP mode implementations do not support streaming. That means to obtain correct results there can be only one <a href="../man3/EVP_EncryptUpdate.html">EVP_EncryptUpdate(3)</a> or <a href="../man3/EVP_DecryptUpdate.html">EVP_DecryptUpdate(3)</a> call after the initialization of the context.</p>
+
+<p>The AES-XTS implementations allow streaming to be performed, but each <a href="../man3/EVP_EncryptUpdate.html">EVP_EncryptUpdate(3)</a> or <a href="../man3/EVP_DecryptUpdate.html">EVP_DecryptUpdate(3)</a> call requires each input to be a multiple of the blocksize. Only the final EVP_EncryptUpdate() or EVP_DecryptUpdate() call can optionally have an input that is not a multiple of the blocksize but is larger than one block. In that case ciphertext stealing (CTS) is used to fill the block.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

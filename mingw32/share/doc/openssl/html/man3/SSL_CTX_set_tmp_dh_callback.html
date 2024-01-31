@@ -57,7 +57,7 @@ long SSL_set_tmp_dh(SSL *ssl, DH *dh);</code></pre>
 
 <p>As generating DH parameters is extremely time consuming, an application should not generate the parameters on the fly. DH parameters can be reused, as the actual key is newly generated during the negotiation.</p>
 
-<p>Typically applications should use well know DH parameters that have built-in support in OpenSSL. The macros SSL_CTX_set_dh_auto() and SSL_set_dh_auto() configure OpenSSL to use the default built-in DH parameters for the <b>SSL_CTX</b> and <b>SSL</b> objects respectively. Passing a value of 1 in the <i>onoff</i> parameter switches the feature on, and passing a value of 0 switches it off. The default setting is off.</p>
+<p>Typically applications should use well known DH parameters that have built-in support in OpenSSL. The macros SSL_CTX_set_dh_auto() and SSL_set_dh_auto() configure OpenSSL to use the default built-in DH parameters for the <b>SSL_CTX</b> and <b>SSL</b> objects respectively. Passing a value of 1 in the <i>onoff</i> parameter switches the feature on, and passing a value of 0 switches it off. The default setting is off.</p>
 
 <p>If &quot;auto&quot; DH parameters are switched on then the parameters will be selected to be consistent with the size of the key associated with the server&#39;s certificate. If there is no certificate (e.g. for PSK ciphersuites), then it it will be consistent with the size of the negotiated symmetric cipher key.</p>
 

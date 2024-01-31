@@ -264,9 +264,9 @@
 
 <p>This sets the RSA padding mode. Acceptable values for <i>mode</i> are <b>pkcs1</b> for PKCS#1 padding, <b>none</b> for no padding, <b>oaep</b> for <b>OAEP</b> mode, <b>x931</b> for X9.31 mode and <b>pss</b> for PSS.</p>
 
-<p>In PKCS#1 padding if the message digest is not set then the supplied data is signed or verified directly instead of using a <b>DigestInfo</b> structure. If a digest is set then the a <b>DigestInfo</b> structure is used and its the length must correspond to the digest type.</p>
+<p>In PKCS#1 padding, if the message digest is not set, then the supplied data is signed or verified directly instead of using a <b>DigestInfo</b> structure. If a digest is set, then the <b>DigestInfo</b> structure is used and its length must correspond to the digest type.</p>
 
-<p>Note, for <b>pkcs1</b> padding, as a protection against Bleichenbacher attack, the decryption will not fail in case of padding check failures. Use <b>none</b> and manual inspection of the decrypted message to verify if the decrypted value has correct PKCS#1 v1.5 padding.</p>
+<p>Note, for <b>pkcs1</b> padding, as a protection against the Bleichenbacher attack, the decryption will not fail in case of padding check failures. Use <b>none</b> and manual inspection of the decrypted message to verify if the decrypted value has correct PKCS#1 v1.5 padding.</p>
 
 <p>For <b>oaep</b> mode only encryption and decryption is supported.</p>
 
