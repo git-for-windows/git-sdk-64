@@ -25,7 +25,7 @@ set -o nounset
 set -o errexit
 
 declare -r myname='pacscripts'
-declare -r myver='1.10.2'
+declare -r myver='1.10.4'
 
 error() {
 	local mesg=$1; shift
@@ -71,7 +71,7 @@ print_db() {
 	pkg=${pkg/ /-}
 	for file in "$pac_db"/"$pkg"*/install; do
 		if [ -f "$file" ]; then
-			cat "$pac_db/$pkg*/install"
+			cat "$pac_db/$pkg"*/install
 			echo
 			return 0
 		else

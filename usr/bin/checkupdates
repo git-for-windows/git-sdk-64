@@ -19,7 +19,7 @@
 #
 
 declare -r myname='checkupdates'
-declare -r myver='1.10.2'
+declare -r myver='1.10.4'
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
@@ -168,6 +168,9 @@ if (( ${#updates[@]} )); then
 	else
 		printf '%s\n' "${updates[@]}"
 		if (( DOWNLOAD_CACHE )); then
+			if (( PACMAN_COLOR )); then
+				updates=("${updates[@]#*m}")
+			fi
 			runcmd pacman -Sw --noconfirm "${updates[@]%% *}" --dbpath "$CHECKUPDATES_DB" --logfile /dev/null
 		fi
 	fi
