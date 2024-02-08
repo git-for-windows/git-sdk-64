@@ -217,11 +217,17 @@ Parameters: (FunctionName, DataType, Segment)
    Type: b, w, l, q
    */
 
+#if defined(__GNUC__) && __GNUC__ > 11
+#define __buildreadseg_star (*)[]
+#else
+#define __buildreadseg_star *
+#endif
+
 #define __buildreadseg(x, y, z, a) y x(unsigned __LONG32 Offset) { \
     y ret; \
     __asm__ ("mov{" a " %%" z ":%[offset], %[ret] | %[ret], %%" z ":%[offset]}" \
         : [ret] "=r" (ret) \
-        : [offset] "m" ((*(y *) (size_t) Offset))); \
+        : [offset] "m" ((*(y __buildreadseg_star) (size_t) Offset))); \
     return ret; \
 }
 
