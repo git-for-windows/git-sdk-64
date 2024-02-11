@@ -457,10 +457,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
                    [--signature-file=&lt;file&gt;]
                    [-n | --numbered | -N | --no-numbered]
                    [--start-number &lt;n&gt;] [--numbered-files]
-                   [--in-reply-to=&lt;message id&gt;] [--suffix=.&lt;sfx&gt;]
+                   [--in-reply-to=&lt;message-id&gt;] [--suffix=.&lt;sfx&gt;]
                    [--ignore-if-in-upstream] [--always]
                    [--cover-from-description=&lt;mode&gt;]
-                   [--rfc] [--subject-prefix=&lt;subject prefix&gt;]
+                   [--rfc] [--subject-prefix=&lt;subject-prefix&gt;]
                    [(--reroll-count|-v) &lt;n&gt;]
                    [--to=&lt;email&gt;] [--cc=&lt;email&gt;]
                    [--[no-]cover-letter] [--quiet]
@@ -470,8 +470,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
                    [--range-diff=&lt;previous&gt; [--creation-factor=&lt;percent&gt;]]
                    [--filename-max-length=&lt;n&gt;]
                    [--progress]
-                   [&lt;common diff options&gt;]
-                   [ &lt;since&gt; | &lt;revision range&gt; ]</pre>
+                   [&lt;common-diff-options&gt;]
+                   [ &lt;since&gt; | &lt;revision-range&gt; ]</pre>
 </div>
 </div>
 </div>
@@ -521,7 +521,7 @@ to the tip of the current branch that are not in the history
 that leads to the &lt;since&gt; to be output.</p>
 </li>
 <li>
-<p>Generic &lt;revision range&gt; expression (see "SPECIFYING
+<p>Generic &lt;revision-range&gt; expression (see "SPECIFYING
 REVISIONS" section in <a href="gitrevisions.html">gitrevisions(7)</a>) means the
 commits in the specified range.</p>
 </li>
@@ -779,7 +779,7 @@ and accumulating child directory counts in the parent directories:
 </dd>
 <dt class="hdlist1">--dirstat-by-file[=&lt;param1,param2&gt;&#8230;&#8203;]</dt>
 <dd>
-<p>Synonym for --dirstat=files,param1,param2&#8230;&#8203;</p>
+<p>Synonym for --dirstat=files,&lt;param1&gt;,&lt;param2&gt;&#8230;&#8203;</p>
 </dd>
 <dt class="hdlist1">--summary</dt>
 <dd>
@@ -1188,10 +1188,10 @@ itself.  If you want <code>git format-patch</code> to take care of threading, yo
 will want to ensure that threading is disabled for <code>git send-email</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--in-reply-to=&lt;message id&gt;</dt>
+<dt class="hdlist1">--in-reply-to=&lt;message-id&gt;</dt>
 <dd>
 <p>Make the first mail (or all the mails with <code>--no-thread</code>) appear as a
-reply to the given &lt;message id&gt;, which avoids breaking threads to
+reply to the given &lt;message-id&gt;, which avoids breaking threads to
 provide a new patch series.</p>
 </dd>
 <dt class="hdlist1">--ignore-if-in-upstream</dt>
@@ -1237,10 +1237,10 @@ populated with placeholder text.</p>
 <p>Use the contents of &lt;file&gt; instead of the branch&#8217;s description
 for generating the cover letter.</p>
 </dd>
-<dt class="hdlist1">--subject-prefix=&lt;subject prefix&gt;</dt>
+<dt class="hdlist1">--subject-prefix=&lt;subject-prefix&gt;</dt>
 <dd>
 <p>Instead of the standard <em>[PATCH]</em> prefix in the subject
-line, instead use <em>[&lt;subject prefix&gt;]</em>. This can be used
+line, instead use <em>[&lt;subject-prefix&gt;]</em>. This can be used
 to name a patch series, and can be combined with the
 <code>--numbered</code> option.</p>
 <div class="paragraph">
@@ -1450,7 +1450,7 @@ automatically chosen. The <code>--no-base</code> option overrides a
 </dd>
 <dt class="hdlist1">--root</dt>
 <dd>
-<p>Treat the revision argument as a &lt;revision range&gt;, even if it
+<p>Treat the revision argument as a &lt;revision-range&gt;, even if it
 is just a single commit (that would normally be treated as a
 &lt;since&gt;).  Note that root commits included in the specified
 range are always formatted as creation patches, independently
@@ -1722,8 +1722,8 @@ and the patches will not be mangled.</p>
 <h4 id="_approach_3_external_editor">Approach #3 (external editor)</h4>
 <div class="paragraph">
 <p>The following Thunderbird extensions are needed:
-AboutConfig from <a href="http://aboutconfig.mozdev.org/" class="bare">http://aboutconfig.mozdev.org/</a> and
-External Editor from <a href="http://globs.org/articles.php?lng=en&amp;pg=8" class="bare">http://globs.org/articles.php?lng=en&amp;pg=8</a></p>
+AboutConfig from <a href="https://mjg.github.io/AboutConfig/" class="bare">https://mjg.github.io/AboutConfig/</a> and
+External Editor from <a href="https://globs.org/articles.php?lng=en&amp;pg=8" class="bare">https://globs.org/articles.php?lng=en&amp;pg=8</a></p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -1964,7 +1964,7 @@ merge commit.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-20 18:35:40 UTC
+Last updated 2024-02-10 08:49:29 UTC
 </div>
 </div>
 </body>

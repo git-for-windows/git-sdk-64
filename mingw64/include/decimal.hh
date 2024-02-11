@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Stefan Krah. All rights reserved.
+ * Copyright (c) 2020-2024 Stefan Krah. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -7,12 +7,11 @@
  *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
- *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS "AS IS" AND
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
@@ -44,8 +43,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "mpdecimal.h"
-
+#include <mpdecimal.h>
 
 #undef iscanonical /* math.h */
 #undef isfinite    /* math.h */
@@ -68,7 +66,7 @@
   #define ALWAYS_INLINE __forceinline
 #else
   #define IMPORTEXPORT
-  #define ALWAYS_INLINE inline __attribute__ ((always_inline))
+  #define ALWAYS_INLINE inline
 #endif
 
 
@@ -177,7 +175,6 @@ class Rounded : public DecimalException {
 class Clamped : public DecimalException {
   using DecimalException::DecimalException;
 };
-
 
 /* Conditions */
 class InvalidOperation : public IEEEInvalidOperation {
@@ -291,7 +288,7 @@ class Context {
   }
 
   /***********************************************************************/
-  /*                               Accessors                             */
+  /*                              Accessors                              */
   /***********************************************************************/
   /* Get pointers to the full context */
   ALWAYS_INLINE mpd_context_t *get() { return &ctx; }
@@ -369,6 +366,18 @@ class Context {
     ctx.status |= (flags & ~MPD_Malloc_error);
     const uint32_t active_traps = flags & (ctx.traps|MPD_Malloc_error);
     if (active_traps) {
+      raiseit(active_traps);
+    }
+  }
+
+  /* Same, but with cleanup for constructors */
+  ALWAYS_INLINE void raise(uint32_t flags, mpd_t *a, bool isstatic) {
+    ctx.status |= (flags & ~MPD_Malloc_error);
+    const uint32_t active_traps = flags & (ctx.traps|MPD_Malloc_error);
+    if (active_traps) {
+      if (!isstatic) {
+        mpd_del(a);
+      }
       raiseit(active_traps);
     }
   }
@@ -537,7 +546,7 @@ class Decimal {
   /* mpd_t accessors */
   ALWAYS_INLINE bool isstatic() const { return value.data == data; }
 
-  /* reset rhs to snan after moving data to lhs */
+  /* Reset rhs to snan after moving data to lhs */
   ALWAYS_INLINE void reset() {
     value = {
       MPD_STATIC|MPD_STATIC_DATA|MPD_SNAN, /* flags */
@@ -549,7 +558,7 @@ class Decimal {
     };
   }
 
-  /* Copy flags, preserving memory attributes of result. */
+  /* Copy flags, preserving memory attributes of result */
   ALWAYS_INLINE uint8_t
   copy_flags(const uint8_t rflags, const uint8_t aflags) {
       return (rflags & (MPD_STATIC|MPD_DATAFLAGS)) |
@@ -698,7 +707,7 @@ class Decimal {
     ASSERT_SIGNED(T);
     uint32_t status = 0;
     mpd_qset_i64_exact(&value, other, &status);
-    context.raise(status);
+    context.raise(status, &value, isstatic());
   }
 
   ENABLE_IF_UNSIGNED(T)
@@ -706,7 +715,7 @@ class Decimal {
     ASSERT_UNSIGNED(T);
     uint32_t status = 0;
     mpd_qset_u64_exact(&value, other, &status);
-    context.raise(status);
+    context.raise(status, &value, isstatic());
   }
 
   /* Explicit */
@@ -716,19 +725,19 @@ class Decimal {
       throw ValueError("Decimal: string argument in constructor is NULL");
     }
     mpd_qset_string_exact(&value, s, &status);
-    context.raise(status);
+    context.raise(status, &value, isstatic());
   }
 
   explicit Decimal(const std::string& s) {
     uint32_t status = 0;
     mpd_qset_string_exact(&value, s.c_str(), &status);
-    context.raise(status);
+    context.raise(status, &value, isstatic());
   }
 
   explicit Decimal(const mpd_uint128_triple_t& triple) {
     uint32_t status = 0;
     if (mpd_from_uint128_triple(&value, &triple, &status) < 0) {
-      context.raise(status);
+      context.raise(status, &value, isstatic());
     }
   }
 
@@ -741,14 +750,14 @@ class Decimal {
     *this = other;
 
     if (mpd_isnan(&value) && value.digits > ctx->prec - ctx->clamp) {
-      /* Special case: too many NaN payload digits */
+      /* Special case:  too many NaN payload digits */
       mpd_setspecial(&value, MPD_POS, MPD_NAN);
-      c.raise(MPD_Conversion_syntax);
+      c.raise(MPD_Conversion_syntax, &value, isstatic());
     }
     else {
       uint32_t status = 0;
       mpd_qfinalize(&value, ctx, &status);
-      c.raise(status);
+      c.raise(status, &value, isstatic());
     }
   }
 
@@ -757,7 +766,7 @@ class Decimal {
     ASSERT_SIGNED(T);
     uint32_t status = 0;
     mpd_qset_i64(&value, other, c.getconst(), &status);
-    c.raise(status);
+    c.raise(status, &value, isstatic());
   }
 
   ENABLE_IF_UNSIGNED(T)
@@ -765,7 +774,7 @@ class Decimal {
     ASSERT_UNSIGNED(T);
     uint32_t status = 0;
     mpd_qset_u64(&value, other, c.getconst(), &status);
-    c.raise(status);
+    c.raise(status, &value, isstatic());
   }
 
   explicit Decimal(const char * const s, Context& c) {
@@ -774,13 +783,13 @@ class Decimal {
       throw ValueError("Decimal: string argument in constructor is NULL");
     }
     mpd_qset_string(&value, s, c.getconst(), &status);
-    c.raise(status);
+    c.raise(status, &value, isstatic());
   }
 
   explicit Decimal(const std::string& s, Context& c) {
     uint32_t status = 0;
     mpd_qset_string(&value, s.c_str(), c.getconst(), &status);
-    c.raise(status);
+    c.raise(status, &value, isstatic());
   }
 
   /***********************************************************************/
@@ -1107,6 +1116,12 @@ class Decimal {
   ALWAYS_INLINE Decimal shiftl(const int64_t n, Context& c=context) const {
     Decimal result;
     uint32_t status = 0;
+    if (isspecial()) {
+      throw ValueError("shiftl: cannot handle special numbers");
+    }
+    if (n < 0 || n > MPD_MAX_PREC - getconst()->digits) {
+      throw ValueError("shiftl: shift is negative or too large");
+    }
     mpd_ssize_t nn = util::safe_downcast<mpd_ssize_t, int64_t>(n);
     mpd_qshiftl(result.get(), getconst(), nn, &status);
     c.raise(status);
@@ -1116,6 +1131,12 @@ class Decimal {
   ALWAYS_INLINE Decimal shiftr(const int64_t n, Context& c=context) const {
     Decimal result;
     uint32_t status = 0;
+    if (isspecial()) {
+      throw ValueError("shiftr: cannot handle special numbers");
+    }
+    if (n < 0) {
+      throw ValueError("shiftr: shift is negative");
+    }
     mpd_ssize_t nn = util::safe_downcast<mpd_ssize_t, int64_t>(n);
     mpd_qshiftr(result.get(), getconst(), nn, &status);
     c.raise(status);

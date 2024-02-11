@@ -585,8 +585,10 @@ below for more information.</p>
 <dt class="hdlist1">--exclude-per-directory=&lt;file&gt;</dt>
 <dd>
 <p>Read additional exclude patterns that apply only to the
-directory and its subdirectories in &lt;file&gt;.  Deprecated; use
---exclude-standard instead.</p>
+directory and its subdirectories in &lt;file&gt;.  If you are
+trying to emulate the way Porcelain commands work, using
+the <code>--exclude-standard</code> option instead is easier and more
+thorough.</p>
 </dd>
 <dt class="hdlist1">--exclude-standard</dt>
 <dd>
@@ -857,9 +859,8 @@ flags --others or --ignored are specified.  <a href="gitignore.html">gitignore(5
 specifies the format of exclude patterns.</p>
 </div>
 <div class="paragraph">
-<p>Generally, you should just use --exclude-standard, but for historical
-reasons the exclude patterns can be specified from the following
-places, in order:</p>
+<p>These exclude patterns can be specified from the following places,
+in order:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -889,6 +890,26 @@ top of the directory tree.  A pattern read from a file specified
 by --exclude-per-directory is relative to the directory that the
 pattern file appears in.</p>
 </div>
+<div class="paragraph">
+<p>Generally, you should be able to use <code>--exclude-standard</code> when you
+want the exclude rules applied the same way as what Porcelain
+commands do.  To emulate what <code>--exclude-standard</code> specifies, you
+can give <code>--exclude-per-directory=.gitignore</code>, and then specify:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The file specified by the <code>core.excludesfile</code> configuration
+variable, if exists, or the <code>$XDG_CONFIG_HOME/git/ignore</code> file.</p>
+</li>
+<li>
+<p>The <code>$GIT_DIR/info/exclude</code> file.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>via the <code>--exclude-from=</code> option.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -910,7 +931,7 @@ pattern file appears in.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-20 18:35:40 UTC
+Last updated 2024-02-10 08:49:29 UTC
 </div>
 </div>
 </body>

@@ -100,6 +100,21 @@ for a path to `Unspecified` state.  This can be done by listing
 the name of the attribute prefixed with an exclamation point `!`.
 
 
+RESERVED BUILTIN_* ATTRIBUTES
+-----------------------------
+
+builtin_* is a reserved namespace for builtin attribute values. Any
+user defined attributes under this namespace will be ignored and
+trigger a warning.
+
+`builtin_objectmode`
+~~~~~~~~~~~~~~~~~~~~
+This attribute is for filtering files by their file bit modes (40000,
+120000, 160000, 100755, 100644). e.g. ':(attr:builtin_objectmode=160000)'.
+You may also check these values with `git check-attr builtin_objectmode -- <file>`.
+If the object is not in the index `git check-attr --cached` will return unspecified.
+
+
 EFFECTS
 -------
 
@@ -1152,11 +1167,11 @@ The `merge.*.name` variable gives the driver a human-readable
 name.
 
 The `merge.*.driver` variable's value is used to construct a
-command to run to merge ancestor's version (`%O`), current
+command to run to common ancestor's version (`%O`), current
 version (`%A`) and the other branches' version (`%B`).  These
 three tokens are replaced with the names of temporary files that
 hold the contents of these versions when the command line is
-built. Additionally, %L will be replaced with the conflict marker
+built. Additionally, `%L` will be replaced with the conflict marker
 size (see below).
 
 The merge driver is expected to leave the result of the merge in
@@ -1174,8 +1189,9 @@ When left unspecified, the driver itself is used for both
 internal merge and the final merge.
 
 The merge driver can learn the pathname in which the merged result
-will be stored via placeholder `%P`.
-
+will be stored via placeholder `%P`. The conflict labels to be used
+for the common ancestor, local head and other head can be passed by
+using '%S', '%X' and '%Y` respectively.
 
 `conflict-marker-size`
 ^^^^^^^^^^^^^^^^^^^^^^

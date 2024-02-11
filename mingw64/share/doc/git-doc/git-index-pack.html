@@ -534,9 +534,14 @@ locate any which have outlived their usefulness.</p>
 to force the version for the generated pack index, and to force
 64-bit index entries on objects located above the given offset.</p>
 </dd>
-<dt class="hdlist1">--strict</dt>
+<dt class="hdlist1">--strict[=&lt;msg-id&gt;=&lt;severity&gt;&#8230;&#8203;]</dt>
 <dd>
-<p>Die, if the pack contains broken objects or links.</p>
+<p>Die, if the pack contains broken objects or links. An optional
+comma-separated list of <code>&lt;msg-id&gt;=&lt;severity&gt;</code> can be passed to change
+the severity of some possible issues, e.g.,
+ <code>--strict="missingEmail=ignore,badTagName=error"</code>. See the entry for the
+<code>fsck.&lt;msg-id&gt;</code> configuration options in <a href="git-fsck.html">git-fsck(1)</a> for more
+information on the possible values of <code>&lt;msg-id&gt;</code> and <code>&lt;severity&gt;</code>.</p>
 </dd>
 <dt class="hdlist1">--progress-title</dt>
 <dd>
@@ -550,14 +555,19 @@ default and "Indexing objects" when <code>--stdin</code> is specified.</p>
 <dd>
 <p>Die if the pack contains broken links. For internal use only.</p>
 </dd>
-<dt class="hdlist1">--fsck-objects</dt>
+<dt class="hdlist1">--fsck-objects[=&lt;msg-id&gt;=&lt;severity&gt;&#8230;&#8203;]</dt>
 <dd>
-<p>For internal use only.</p>
+<p>Die if the pack contains broken objects, but unlike <code>--strict</code>, don&#8217;t
+choke on broken links. If the pack contains a tree pointing to a
+.gitmodules blob that does not exist, prints the hash of that blob
+(for the caller to check) after the hash that goes into the name of the
+pack/idx file (see "Notes").</p>
 <div class="paragraph">
-<p>Die if the pack contains broken objects. If the pack contains a tree
-pointing to a .gitmodules blob that does not exist, prints the hash of
-that blob (for the caller to check) after the hash that goes into the
-name of the pack/idx file (see "Notes").</p>
+<p>An optional comma-separated list of <code>&lt;msg-id&gt;=&lt;severity&gt;</code> can be passed to
+change the severity of some possible issues, e.g.,
+<code>--fsck-objects="missingEmail=ignore,badTagName=ignore"</code>. See the entry for the
+<code>fsck.&lt;msg-id&gt;</code> configuration options in <a href="git-fsck.html">git-fsck(1)</a> for more
+information on the possible values of <code>&lt;msg-id&gt;</code> and <code>&lt;severity&gt;</code>.</p>
 </div>
 </dd>
 <dt class="hdlist1">--threads=&lt;n&gt;</dt>
@@ -638,7 +648,7 @@ mentioned above.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-20 18:35:40 UTC
+Last updated 2024-02-10 08:49:29 UTC
 </div>
 </div>
 </body>

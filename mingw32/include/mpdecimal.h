@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2020 Stefan Krah. All rights reserved.
+ * Copyright (c) 2008-2024 Stefan Krah. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -7,12 +7,11 @@
  *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
- *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS "AS IS" AND
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
@@ -64,11 +63,11 @@ extern "C" {
 /*                                  Version                                   */
 /******************************************************************************/
 
-#define MPD_MAJOR_VERSION 2
-#define MPD_MINOR_VERSION 5
-#define MPD_MICRO_VERSION 1
+#define MPD_MAJOR_VERSION 4
+#define MPD_MINOR_VERSION 0
+#define MPD_MICRO_VERSION 0
 
-#define MPD_VERSION "2.5.1"
+#define MPD_VERSION "4.0.0"
 
 #define MPD_VERSION_HEX ((MPD_MAJOR_VERSION << 24) | \
                          (MPD_MINOR_VERSION << 16) | \
@@ -368,6 +367,7 @@ typedef struct mpd_spec_t {
     char type;             /* conversion specifier */
     char align;            /* alignment */
     char sign;             /* sign printing/alignment */
+    char sign_coerce;      /* coerce to positive zero */
     char fill[5];          /* fill character */
     const char *dot;       /* decimal point */
     const char *sep;       /* thousands separator */
@@ -528,7 +528,6 @@ void mpd_qln(mpd_t *result, const mpd_t *a, const mpd_context_t *ctx, uint32_t *
 void mpd_qlog10(mpd_t *result, const mpd_t *a, const mpd_context_t *ctx, uint32_t *status);
 void mpd_qsqrt(mpd_t *result, const mpd_t *a, const mpd_context_t *ctx, uint32_t *status);
 void mpd_qinvroot(mpd_t *result, const mpd_t *a, const mpd_context_t *ctx, uint32_t *status);
-
 #ifndef MPD_LEGACY_COMPILER
 void mpd_qadd_i64(mpd_t *result, const mpd_t *a, int64_t b, const mpd_context_t *ctx, uint32_t *status);
 void mpd_qadd_u64(mpd_t *result, const mpd_t *a, uint64_t b, const mpd_context_t *ctx, uint32_t *status);
@@ -658,7 +657,6 @@ void mpd_floor(mpd_t *result, const mpd_t *a, mpd_context_t *ctx);
 void mpd_ceil(mpd_t *result, const mpd_t *a, mpd_context_t *ctx);
 void mpd_sqrt(mpd_t *result, const mpd_t *a, mpd_context_t *ctx);
 void mpd_invroot(mpd_t *result, const mpd_t *a, mpd_context_t *ctx);
-
 #ifndef MPD_LEGACY_COMPILER
 void mpd_add_i64(mpd_t *result, const mpd_t *a, int64_t b, mpd_context_t *ctx);
 void mpd_add_u64(mpd_t *result, const mpd_t *a, uint64_t b, mpd_context_t *ctx);

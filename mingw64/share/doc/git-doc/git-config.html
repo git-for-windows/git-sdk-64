@@ -580,11 +580,11 @@ names are not.</p>
 </dd>
 <dt class="hdlist1">--get-urlmatch &lt;name&gt; &lt;URL&gt;</dt>
 <dd>
-<p>When given a two-part name section.key, the value for
-section.&lt;URL&gt;.key whose &lt;URL&gt; part matches the best to the
+<p>When given a two-part &lt;name&gt; as &lt;section&gt;.&lt;key&gt;, the value for
+&lt;section&gt;.&lt;URL&gt;.&lt;key&gt; whose &lt;URL&gt; part matches the best to the
 given URL is returned (if no such key exists, the value for
-section.key is used as a fallback).  When given just the
-section as name, do so for all the keys in the section and
+&lt;section&gt;.&lt;key&gt; is used as a fallback).  When given just the
+&lt;section&gt; as name, do so for all the keys in the section and
 list them.  Returns error code 1 if no value is found.</p>
 </dd>
 <dt class="hdlist1">--global</dt>
@@ -1623,17 +1623,67 @@ other popular tools, and describe them in your documentation.</p>
 <dt class="hdlist1">advice.*</dt>
 <dd>
 <p>These variables control various optional help messages designed to
-aid new users. All <em>advice.*</em> variables default to <em>true</em>, and you
-can tell Git that you do not need help by setting these to <em>false</em>:</p>
+aid new users.  When left unconfigured, Git will give the message
+alongside instructions on how to squelch it.  You can tell Git
+that you do not need the help message by setting these to <em>false</em>:</p>
 <div class="openblock">
 <div class="content">
 <div class="dlist">
 <dl>
+<dt class="hdlist1">addEmbeddedRepo</dt>
+<dd>
+<p>Advice on what to do when you&#8217;ve accidentally added one
+git repo inside of another.</p>
+</dd>
+<dt class="hdlist1">addEmptyPathspec</dt>
+<dd>
+<p>Advice shown if a user runs the add command without providing
+the pathspec parameter.</p>
+</dd>
+<dt class="hdlist1">addIgnoredFile</dt>
+<dd>
+<p>Advice shown if a user attempts to add an ignored file to
+the index.</p>
+</dd>
+<dt class="hdlist1">amWorkDir</dt>
+<dd>
+<p>Advice that shows the location of the patch file when
+<a href="git-am.html">git-am(1)</a> fails to apply it.</p>
+</dd>
 <dt class="hdlist1">ambiguousFetchRefspec</dt>
 <dd>
 <p>Advice shown when a fetch refspec for multiple remotes maps to
 the same remote-tracking branch namespace and causes branch
 tracking set-up to fail.</p>
+</dd>
+<dt class="hdlist1">checkoutAmbiguousRemoteBranchName</dt>
+<dd>
+<p>Advice shown when the argument to
+<a href="git-checkout.html">git-checkout(1)</a> and <a href="git-switch.html">git-switch(1)</a>
+ambiguously resolves to a
+remote tracking branch on more than one remote in
+situations where an unambiguous argument would have
+otherwise caused a remote-tracking branch to be
+checked out. See the <code>checkout.defaultRemote</code>
+configuration variable for how to set a given remote
+to be used by default in some situations where this
+advice would be printed.</p>
+</dd>
+<dt class="hdlist1">commitBeforeMerge</dt>
+<dd>
+<p>Advice shown when <a href="git-merge.html">git-merge(1)</a> refuses to
+merge to avoid overwriting local changes.</p>
+</dd>
+<dt class="hdlist1">detachedHead</dt>
+<dd>
+<p>Advice shown when you used
+<a href="git-switch.html">git-switch(1)</a> or <a href="git-checkout.html">git-checkout(1)</a>
+to move to the detached HEAD state, to instruct how to
+create a local branch after the fact.</p>
+</dd>
+<dt class="hdlist1">diverging</dt>
+<dd>
+<p>Advice shown when a fast-forward is not possible.</p>
 </dd>
 <dt class="hdlist1">fetchShowForcedUpdates</dt>
 <dd>
@@ -1641,24 +1691,30 @@ tracking set-up to fail.</p>
 to calculate forced updates after ref updates, or to warn
 that the check is disabled.</p>
 </dd>
-<dt class="hdlist1">pushUpdateRejected</dt>
+<dt class="hdlist1">forceDeleteBranch</dt>
 <dd>
-<p>Set this variable to <em>false</em> if you want to disable
-<em>pushNonFFCurrent</em>, <em>pushNonFFMatching</em>, <em>pushAlreadyExists</em>,
-<em>pushFetchFirst</em>, <em>pushNeedsForce</em>, and <em>pushRefNeedsUpdate</em>
-simultaneously.</p>
+<p>Advice shown when a user tries to delete a not fully merged
+branch without the force option set.</p>
 </dd>
-<dt class="hdlist1">pushNonFFCurrent</dt>
+<dt class="hdlist1">ignoredHook</dt>
 <dd>
-<p>Advice shown when <a href="git-push.html">git-push(1)</a> fails due to a
-non-fast-forward update to the current branch.</p>
+<p>Advice shown if a hook is ignored because the hook is not
+set as executable.</p>
 </dd>
-<dt class="hdlist1">pushNonFFMatching</dt>
+<dt class="hdlist1">implicitIdentity</dt>
 <dd>
-<p>Advice shown when you ran <a href="git-push.html">git-push(1)</a> and pushed
-<em>matching refs</em> explicitly (i.e. you used <em>:</em>, or
-specified a refspec that isn&#8217;t your current branch) and
-it resulted in a non-fast-forward error.</p>
+<p>Advice on how to set your identity configuration when
+your information is guessed from the system username and
+domain name.</p>
+</dd>
+<dt class="hdlist1">nameTooLong</dt>
+<dd>
+<p>Advice shown if a filepath operation is attempted where the
+path was too long.</p>
+</dd>
+<dt class="hdlist1">nestedTag</dt>
+<dd>
+<p>Advice shown if a user attempts to recursively tag a tag object.</p>
 </dd>
 <dt class="hdlist1">pushAlreadyExists</dt>
 <dd>
@@ -1678,6 +1734,24 @@ tries to overwrite a remote ref that points at an
 object that is not a commit-ish, or make the remote
 ref point at an object that is not a commit-ish.</p>
 </dd>
+<dt class="hdlist1">pushNonFFCurrent</dt>
+<dd>
+<p>Advice shown when <a href="git-push.html">git-push(1)</a> fails due to a
+non-fast-forward update to the current branch.</p>
+</dd>
+<dt class="hdlist1">pushNonFFMatching</dt>
+<dd>
+<p>Advice shown when you ran <a href="git-push.html">git-push(1)</a> and pushed
+<em>matching refs</em> explicitly (i.e. you used <em>:</em>, or
+specified a refspec that isn&#8217;t your current branch) and
+it resulted in a non-fast-forward error.</p>
+</dd>
+<dt class="hdlist1">pushRefNeedsUpdate</dt>
+<dd>
+<p>Shown when <a href="git-push.html">git-push(1)</a> rejects a forced update of
+a branch when its remote-tracking ref has updates that we
+do not have locally.</p>
+</dd>
 <dt class="hdlist1">pushUnqualifiedRefname</dt>
 <dd>
 <p>Shown when <a href="git-push.html">git-push(1)</a> gives up trying to
@@ -1687,11 +1761,32 @@ we can still suggest that the user push to either
 refs/heads/* or refs/tags/* based on the type of the
 source object.</p>
 </dd>
-<dt class="hdlist1">pushRefNeedsUpdate</dt>
+<dt class="hdlist1">pushUpdateRejected</dt>
 <dd>
-<p>Shown when <a href="git-push.html">git-push(1)</a> rejects a forced update of
-a branch when its remote-tracking ref has updates that we
-do not have locally.</p>
+<p>Set this variable to <em>false</em> if you want to disable
+<em>pushNonFFCurrent</em>, <em>pushNonFFMatching</em>, <em>pushAlreadyExists</em>,
+<em>pushFetchFirst</em>, <em>pushNeedsForce</em>, and <em>pushRefNeedsUpdate</em>
+simultaneously.</p>
+</dd>
+<dt class="hdlist1">resetNoRefresh</dt>
+<dd>
+<p>Advice to consider using the <code>--no-refresh</code> option to
+<a href="git-reset.html">git-reset(1)</a> when the command takes more than 2 seconds
+to refresh the index after reset.</p>
+</dd>
+<dt class="hdlist1">resolveConflict</dt>
+<dd>
+<p>Advice shown by various commands when conflicts
+prevent the operation from being performed.</p>
+</dd>
+<dt class="hdlist1">rmHints</dt>
+<dd>
+<p>In case of failure in the output of <a href="git-rm.html">git-rm(1)</a>,
+show directions on how to proceed from the current state.</p>
+</dd>
+<dt class="hdlist1">sequencerInUse</dt>
+<dd>
+<p>Advice shown when a sequencer command is already in progress.</p>
 </dd>
 <dt class="hdlist1">skippedCherryPicks</dt>
 <dd>
@@ -1721,91 +1816,6 @@ by <a href="git-switch.html">git-switch(1)</a> or
 when the command takes more than 2 seconds to enumerate untracked
 files.</p>
 </dd>
-<dt class="hdlist1">commitBeforeMerge</dt>
-<dd>
-<p>Advice shown when <a href="git-merge.html">git-merge(1)</a> refuses to
-merge to avoid overwriting local changes.</p>
-</dd>
-<dt class="hdlist1">resetNoRefresh</dt>
-<dd>
-<p>Advice to consider using the <code>--no-refresh</code> option to
-<a href="git-reset.html">git-reset(1)</a> when the command takes more than 2 seconds
-to refresh the index after reset.</p>
-</dd>
-<dt class="hdlist1">resolveConflict</dt>
-<dd>
-<p>Advice shown by various commands when conflicts
-prevent the operation from being performed.</p>
-</dd>
-<dt class="hdlist1">sequencerInUse</dt>
-<dd>
-<p>Advice shown when a sequencer command is already in progress.</p>
-</dd>
-<dt class="hdlist1">implicitIdentity</dt>
-<dd>
-<p>Advice on how to set your identity configuration when
-your information is guessed from the system username and
-domain name.</p>
-</dd>
-<dt class="hdlist1">detachedHead</dt>
-<dd>
-<p>Advice shown when you used
-<a href="git-switch.html">git-switch(1)</a> or <a href="git-checkout.html">git-checkout(1)</a>
-to move to the detached HEAD state, to instruct how to
-create a local branch after the fact.</p>
-</dd>
-<dt class="hdlist1">suggestDetachingHead</dt>
-<dd>
-<p>Advice shown when <a href="git-switch.html">git-switch(1)</a> refuses to detach HEAD
-without the explicit <code>--detach</code> option.</p>
-</dd>
-<dt class="hdlist1">checkoutAmbiguousRemoteBranchName</dt>
-<dd>
-<p>Advice shown when the argument to
-<a href="git-checkout.html">git-checkout(1)</a> and <a href="git-switch.html">git-switch(1)</a>
-ambiguously resolves to a
-remote tracking branch on more than one remote in
-situations where an unambiguous argument would have
-otherwise caused a remote-tracking branch to be
-checked out. See the <code>checkout.defaultRemote</code>
-configuration variable for how to set a given remote
-to be used by default in some situations where this
-advice would be printed.</p>
-</dd>
-<dt class="hdlist1">amWorkDir</dt>
-<dd>
-<p>Advice that shows the location of the patch file when
-<a href="git-am.html">git-am(1)</a> fails to apply it.</p>
-</dd>
-<dt class="hdlist1">rmHints</dt>
-<dd>
-<p>In case of failure in the output of <a href="git-rm.html">git-rm(1)</a>,
-show directions on how to proceed from the current state.</p>
-</dd>
-<dt class="hdlist1">addEmbeddedRepo</dt>
-<dd>
-<p>Advice on what to do when you&#8217;ve accidentally added one
-git repo inside of another.</p>
-</dd>
-<dt class="hdlist1">ignoredHook</dt>
-<dd>
-<p>Advice shown if a hook is ignored because the hook is not
-set as executable.</p>
-</dd>
-<dt class="hdlist1">waitingForEditor</dt>
-<dd>
-<p>Print a message to the terminal whenever Git is waiting for
-editor input from the user.</p>
-</dd>
-<dt class="hdlist1">nameTooLong</dt>
-<dd>
-<p>Advice shown if a filepath operation is attempted where the
-path was too long.</p>
-</dd>
-<dt class="hdlist1">nestedTag</dt>
-<dd>
-<p>Advice shown if a user attempts to recursively tag a tag object.</p>
-</dd>
 <dt class="hdlist1">submoduleAlternateErrorStrategyDie</dt>
 <dd>
 <p>Advice shown when a submodule.alternateErrorStrategy option
@@ -1816,15 +1826,10 @@ configured to "die" causes a fatal error.</p>
 <p>Advice shown when a user runs a submodule command that fails
 because <code>git submodule update --init</code> was not run.</p>
 </dd>
-<dt class="hdlist1">addIgnoredFile</dt>
+<dt class="hdlist1">suggestDetachingHead</dt>
 <dd>
-<p>Advice shown if a user attempts to add an ignored file to
-the index.</p>
-</dd>
-<dt class="hdlist1">addEmptyPathspec</dt>
-<dd>
-<p>Advice shown if a user runs the add command without providing
-the pathspec parameter.</p>
+<p>Advice shown when <a href="git-switch.html">git-switch(1)</a> refuses to detach HEAD
+without the explicit <code>--detach</code> option.</p>
 </dd>
 <dt class="hdlist1">updateSparsePath</dt>
 <dd>
@@ -1832,14 +1837,15 @@ the pathspec parameter.</p>
 is asked to update index entries outside the current sparse
 checkout.</p>
 </dd>
-<dt class="hdlist1">diverging</dt>
+<dt class="hdlist1">waitingForEditor</dt>
 <dd>
-<p>Advice shown when a fast-forward is not possible.</p>
+<p>Print a message to the terminal whenever Git is waiting for
+editor input from the user.</p>
 </dd>
 <dt class="hdlist1">worktreeAddOrphan</dt>
 <dd>
 <p>Advice shown when a user tries to create a worktree from an
-invalid reference, to instruct how to create a new orphan
+invalid reference, to instruct how to create a new unborn
 branch instead.</p>
 </dd>
 <dt class="hdlist1">useCoreFSMonitorConfig</dt>
@@ -4086,6 +4092,25 @@ this key unless <code>core.repositoryFormatVersion</code> is 1.</p>
 work and will produce hard-to-diagnose issues.</p>
 </div>
 </dd>
+<dt class="hdlist1">extensions.refStorage</dt>
+<dd>
+<p>Specify the ref storage format to use. The acceptable values are:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>files</code> for loose files with packed-refs. This is the default.</p>
+<div class="paragraph">
+<p>It is an error to specify this key unless <code>core.repositoryFormatVersion</code> is 1.</p>
+</div>
+<div class="paragraph">
+<p>Note that this setting should only be set by <a href="git-init.html">git-init(1)</a> or
+<a href="git-clone.html">git-clone(1)</a>. Trying to change it after initialization will not
+work and will produce hard-to-diagnose issues.</p>
+</div>
+</li>
+</ul>
+</div>
+</dd>
 <dt class="hdlist1">extensions.worktreeConfig</dt>
 <dd>
 <p>If enabled, then worktrees will load config settings from the
@@ -4247,6 +4272,13 @@ if not set already. This allows for setting both this option
 and <code>fetch.prune</code> to maintain a 1=1 mapping to upstream
 refs. See also <code>remote.&lt;name&gt;.pruneTags</code> and the PRUNING
 section of <a href="git-fetch.html">git-fetch(1)</a>.</p>
+</dd>
+<dt class="hdlist1">fetch.all</dt>
+<dd>
+<p>If true, fetch will attempt to update all available remotes.
+This behavior can be overridden by passing <code>--no-all</code> or by
+explicitly specifying one or more remote(s) to fetch from.
+Defaults to false.</p>
 </dd>
 <dt class="hdlist1">fetch.output</dt>
 <dd>
@@ -4472,7 +4504,7 @@ set to a non-boolean value, format-patch defaults to
 <code>--notes=&lt;ref&gt;</code>, where <code>ref</code> is the non-boolean value. Defaults
 to false.</p>
 <div class="paragraph">
-<p>If one wishes to use the ref <code>ref/notes/true</code>, please use that literal
+<p>If one wishes to use the ref <code>refs/notes/true</code>, please use that literal
 instead.</p>
 </div>
 <div class="paragraph">
@@ -6610,11 +6642,20 @@ to <a href="git-repack.html">git-repack(1)</a>.</p>
 </dd>
 <dt class="hdlist1">pack.allowPackReuse</dt>
 <dd>
-<p>When true, and when reachability bitmaps are enabled,
-pack-objects will try to send parts of the bitmapped packfile
-verbatim. This can reduce memory and CPU usage to serve fetches,
-but might result in sending a slightly larger pack. Defaults to
-true.</p>
+<p>When true or "single", and when reachability bitmaps are
+enabled, pack-objects will try to send parts of the bitmapped
+packfile verbatim. When "multi", and when a multi-pack
+reachability bitmap is available, pack-objects will try to send
+parts of all packs in the MIDX.</p>
+<div class="literalblock">
+<div class="content">
+<pre>If only a single pack bitmap is available, and
+`pack.allowPackReuse` is set to "multi", reuse parts of just the
+bitmapped packfile. This can reduce memory and CPU usage to
+serve fetches, but might result in sending a slightly larger
+pack. Defaults to true.</pre>
+</div>
+</div>
 </dd>
 <dt class="hdlist1">pack.island</dt>
 <dd>
@@ -7135,7 +7176,9 @@ rebase. False by default.</p>
 </dd>
 <dt class="hdlist1">rebase.autoSquash</dt>
 <dd>
-<p>If set to true enable <code>--autosquash</code> option by default.</p>
+<p>If set to true, enable the <code>--autosquash</code> option of
+<a href="git-rebase.html">git-rebase(1)</a> by default for interactive mode.
+This can be overridden with the <code>--no-autosquash</code> option.</p>
 </dd>
 <dt class="hdlist1">rebase.autoStash</dt>
 <dd>
@@ -7168,7 +7211,7 @@ Defaults to "ignore".</p>
 <dd>
 <p>A format string, as specified in <a href="git-log.html">git-log(1)</a>, to be used for the
 todo list during an interactive rebase.  The format will
-automatically have the long commit hash prepended to the format.</p>
+automatically have the commit hash prepended to the format.</p>
 </dd>
 <dt class="hdlist1">rebase.abbreviateCommands</dt>
 <dd>
@@ -8239,7 +8282,7 @@ already exists and is a directory, the traces will be written to files (one
 per process) underneath the given directory.</p>
 </li>
 <li>
-<p><code>af_unix:[&lt;socket_type&gt;:]&lt;absolute-pathname&gt;</code> - Write to a
+<p><code>af_unix:[&lt;socket-type&gt;:]&lt;absolute-pathname&gt;</code> - Write to a
 Unix DomainSocket (on platforms that support them).  Socket
 type can be either <code>stream</code> or <code>dgram</code>; if omitted Git will
 try both.</p>
@@ -8760,7 +8803,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-20 18:35:40 UTC
+Last updated 2024-02-10 08:49:29 UTC
 </div>
 </div>
 </body>

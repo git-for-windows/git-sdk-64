@@ -935,7 +935,7 @@ $ git diff --ours file.txt      # same as the above
 $ git diff -3 file.txt          # diff against stage 3
 $ git diff --theirs file.txt    # same as the above.</pre>
 <p>When using the <span class="emphasis"><em>ort</em></span> merge strategy (the default), before updating the working
-tree with the result of the merge, Git writes a special ref named AUTO_MERGE
+tree with the result of the merge, Git writes a ref named AUTO_MERGE
 reflecting the state of the tree it is about to write. Conflicted paths with
 textual conflicts that could not be automatically merged are written to this
 tree with conflict markers, just as in the working tree. AUTO_MERGE can thus be
@@ -2935,8 +2935,8 @@ independently of the contents or the type of the object: all objects can
 be validated by verifying that (a) their hashes match the content of the
 file and (b) the object successfully inflates to a stream of bytes that
 forms a sequence of
-<code class="literal">&lt;ascii type without space&gt; + &lt;space&gt; + &lt;ascii decimal size&gt; +
-&lt;byte\0&gt; + &lt;binary object data&gt;</code>.</p>
+<code class="literal">&lt;ascii-type-without-space&gt; + &lt;space&gt; + &lt;ascii-decimal-size&gt; +
+&lt;byte\0&gt; + &lt;binary-object-data&gt;</code>.</p>
 <p>The structured objects can further have their structure and
 connectivity to other objects verified. This is generally done with
 the <code class="literal">git fsck</code> program, which generates a full dependency graph
@@ -3268,6 +3268,8 @@ Synonym for <a class="link" href="#def_repository">repository</a> (for arch peop
 </dd><dt><span class="term"><a name="def_gitfile"></a>gitfile</span></dt><dd>
 A plain file <code class="literal">.git</code> at the root of a working tree that
 points at the directory that is the real repository.
+For proper use see <a class="ulink" href="git-worktree.html" target="_top">git-worktree(1)</a> or <a class="ulink" href="git-submodule.html" target="_top">git-submodule(1)</a>.
+For syntax see <a class="ulink" href="gitrepository-layout.html" target="_top">gitrepository-layout(5)</a>.
 </dd><dt><span class="term"><a name="def_grafts"></a>grafts</span></dt><dd>
 <p class="simpara">Grafts enable two otherwise different lines of development to be joined
 together by recording fake ancestry information for commits. This way
@@ -3358,6 +3360,11 @@ One of the identifiers "<a class="link" href="#def_commit_object">commit</a>",
 <a class="link" href="#def_object">object</a>.
 </dd><dt><span class="term"><a name="def_octopus"></a>octopus</span></dt><dd>
 To <a class="link" href="#def_merge">merge</a> more than two <a class="link" href="#def_branch">branches</a>.
+</dd><dt><span class="term"><a name="def_orphan"></a>orphan</span></dt><dd>
+The act of getting on a <a class="link" href="#def_branch">branch</a> that does not
+exist yet (i.e., an <a class="link" href="#def_unborn">unborn</a> branch).  After
+such an operation, the commit first created becomes a commit
+without a parent, starting a new history.
 </dd><dt><span class="term"><a name="def_origin"></a>origin</span></dt><dd>
 The default upstream <a class="link" href="#def_repository">repository</a>. Most projects have
 at least one upstream project which they track. By default
@@ -3628,6 +3635,19 @@ its history can be later deepened with <a class="ulink" href="git-fetch.html" ta
 </dd><dt><span class="term"><a name="def_stash"></a>stash entry</span></dt><dd>
 An <a class="link" href="#def_object">object</a> used to temporarily store the contents of a
 <a class="link" href="#def_dirty">dirty</a> working directory and the index for future reuse.
+</dd><dt><span class="term"><a name="def_special_ref"></a>special ref</span></dt><dd>
+<p class="simpara">A ref that has different semantics than normal refs. These refs can be
+accessed via normal Git commands but may not behave the same as a
+normal ref in some cases.</p>
+<p class="simpara">The following special refs are known to Git:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+"<code class="literal">FETCH_HEAD</code>" is written by <a class="ulink" href="git-fetch.html" target="_top">git-fetch(1)</a> or <a class="ulink" href="git-pull.html" target="_top">git-pull(1)</a>. It
+may refer to multiple object IDs. Each object ID is annotated with metadata
+indicating where it was fetched from and its fetch status.
+</li><li class="listitem">
+"<code class="literal">MERGE_HEAD</code>" is written by <a class="ulink" href="git-merge.html" target="_top">git-merge(1)</a> when resolving merge
+conflicts. It contains all commit IDs which are being merged.
+</li></ul></div>
 </dd><dt><span class="term"><a name="def_submodule"></a>submodule</span></dt><dd>
 A <a class="link" href="#def_repository">repository</a> that holds the history of a
 separate project inside another repository (the latter of
@@ -3684,6 +3704,16 @@ a <a class="link" href="#def_tag_object">tag object</a> that points to a tree ob
 a tag object that points to a tag object that points to a tree
 object,
 etc.
+</dd><dt><span class="term"><a name="def_unborn"></a>unborn</span></dt><dd>
+The <a class="link" href="#def_HEAD">HEAD</a> can point at a <a class="link" href="#def_branch">branch</a>
+that does not yet exist and that does not have any commit on
+it yet, and such a branch is called an unborn branch.  The
+most typical way users encounter an unborn branch is by
+creating a repository anew without cloning from elsewhere.
+The HEAD would point at the <span class="emphasis"><em>main</em></span> (or <span class="emphasis"><em>master</em></span>, depending
+on your configuration) branch that is yet to be born.  Also
+some operations can get you on an unborn branch with their
+<a class="link" href="#def_orphan">orphan</a> option.
 </dd><dt><span class="term"><a name="def_unmerged_index"></a>unmerged index</span></dt><dd>
 An <a class="link" href="#def_index">index</a> which contains unmerged
 <a class="link" href="#def_index_entry">index entries</a>.

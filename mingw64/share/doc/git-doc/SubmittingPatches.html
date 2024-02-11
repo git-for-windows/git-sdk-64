@@ -904,11 +904,32 @@ patch after a detailed analysis.</p>
 <p><code>Tested-by:</code> is used to indicate that the person applied the patch
 and found it to have the desired effect.</p>
 </li>
+<li>
+<p><code>Co-authored-by:</code> is used to indicate that people exchanged drafts
+of a patch before submitting it.</p>
+</li>
+<li>
+<p><code>Helped-by:</code> is used to credit someone who suggested ideas for
+changes without providing the precise changes in patch form.</p>
+</li>
+<li>
+<p><code>Mentored-by:</code> is used to credit someone with helping develop a
+patch as part of a mentorship program (e.g., GSoC or Outreachy).</p>
+</li>
+<li>
+<p><code>Suggested-by:</code> is used to credit someone with suggesting the idea
+for a patch.</p>
+</li>
 </ol>
 </div>
 <div class="paragraph">
-<p>You can also create your own tag or use one that&#8217;s in common usage
-such as "Thanks-to:", "Based-on-patch-by:", or "Mentored-by:".</p>
+<p>While you can also create your own trailer if the situation warrants it, we
+encourage you to instead use one of the common trailers in this project
+highlighted above.</p>
+</div>
+<div class="paragraph">
+<p>Only capitalize the very first letter of tags, i.e. favor
+"Signed-off-by" over "Signed-Off-By" and "Acked-by:" over "Acked-By".</p>
 </div>
 </div>
 <div class="sect2">
@@ -1195,7 +1216,7 @@ master).</p>
 </li>
 <li>
 <p>Read the Git mailing list, the maintainer regularly posts messages
-entitled "What&#8217;s cooking in git.git" and "What&#8217;s in git.git" giving
+entitled "What&#8217;s cooking in git.git" giving
 the status of various proposed changes.</p>
 </li>
 </ul>
@@ -1229,11 +1250,12 @@ to your fork of Git on GitHub.  You can monitor the test state of all your
 branches here: <code>https://github.com/&lt;Your GitHub handle&gt;/git/actions/workflows/main.yml</code></p>
 </div>
 <div class="paragraph">
-<p>If a branch did not pass all test cases then it is marked with a red
-cross. In that case you can click on the failing job and navigate to
-"ci/run-build-and-tests.sh" and/or "ci/print-test-failures.sh". You
-can also download "Artifacts" which are tarred (or zipped) archives
-with test data relevant for debugging.</p>
+<p>If a branch does not pass all test cases then it will be marked with a
+red <code>x</code>, instead of a green check. In that case, you can click on the
+failing job and navigate to "ci/run-build-and-tests.sh" and/or
+"ci/print-test-failures.sh". You can also download "Artifacts" which
+are zip archives containing tarred (or zipped) archives with test data
+relevant for debugging.</p>
 </div>
 <div class="paragraph">
 <p>Then fix the problem and push your fix to your GitHub fork. This will
@@ -1340,7 +1362,7 @@ message to an external program, and this is a handy way to drive
 <code>git am</code>.  However, if the message is MIME encoded, what is
 piped into the program is the representation you see in your
 <code>*Article*</code> buffer after unwrapping MIME.  This is often not what
-you would want for two reasons.  It tends to screw up non ASCII
+you would want for two reasons.  It tends to screw up non-ASCII
 characters (most notably in people&#8217;s names), and also
 whitespaces (fatal in patches).  Running "C-u g" to display the
 message in raw form before using "|" to run the pipe can work
@@ -1364,7 +1386,7 @@ this problem around.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-20 18:35:40 UTC
+Last updated 2024-02-10 08:49:29 UTC
 </div>
 </div>
 </body>

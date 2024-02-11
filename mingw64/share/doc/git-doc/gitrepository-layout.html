@@ -475,7 +475,9 @@ from it.</p>
 <div class="paragraph">
 <p><strong>Note</strong>: Also you can have a plain text file <code>.git</code> at the root of
 your working tree, containing <code>gitdir: &lt;path&gt;</code> to point at the real
-directory that has the repository.  This mechanism is often used for
+directory that has the repository.
+This mechanism is called a <em>gitfile</em> and is usually managed via the
+<code>git submodule</code> and <code>git worktree</code> commands. It is often used for
 a working tree of a submodule checkout, to allow you in the
 containing superproject to <code>git checkout</code> a branch that does not
 have the submodule.  The <code>checkout</code> has to remove the entire
@@ -933,6 +935,13 @@ multiple working directory mode, "config" file is shared while
 GIT_COMMON_DIR/worktrees/&lt;id&gt;/config.worktree)</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_refstorage"><code>refStorage</code></h4>
+<div class="paragraph">
+<p>Specifies the file format for the ref database. The only valid value
+is <code>files</code> (loose references with a packed-refs file).</p>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -962,7 +971,7 @@ GIT_COMMON_DIR/worktrees/&lt;id&gt;/config.worktree)</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-20 18:35:40 UTC
+Last updated 2024-02-10 08:49:29 UTC
 </div>
 </div>
 </body>

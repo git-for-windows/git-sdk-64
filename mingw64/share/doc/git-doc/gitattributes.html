@@ -568,6 +568,25 @@ the name of the attribute prefixed with an exclamation point <code>!</code>.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_reserved_builtin_attributes">RESERVED BUILTIN_* ATTRIBUTES</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>builtin_* is a reserved namespace for builtin attribute values. Any
+user defined attributes under this namespace will be ignored and
+trigger a warning.</p>
+</div>
+<div class="sect2">
+<h3 id="_builtin_objectmode"><code>builtin_objectmode</code></h3>
+<div class="paragraph">
+<p>This attribute is for filtering files by their file bit modes (40000,
+120000, 160000, 100755, 100644). e.g. <em>:(attr:builtin_objectmode=160000)</em>.
+You may also check these values with <code>git check-attr builtin_objectmode -- &lt;file&gt;</code>.
+If the object is not in the index <code>git check-attr --cached</code> will return unspecified.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_effects">EFFECTS</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1850,11 +1869,11 @@ name.</p>
 </div>
 <div class="paragraph">
 <p>The <code>merge.*.driver</code> variable&#8217;s value is used to construct a
-command to run to merge ancestor&#8217;s version (<code>%O</code>), current
+command to run to common ancestor&#8217;s version (<code>%O</code>), current
 version (<code>%A</code>) and the other branches' version (<code>%B</code>).  These
 three tokens are replaced with the names of temporary files that
 hold the contents of these versions when the command line is
-built. Additionally, %L will be replaced with the conflict marker
+built. Additionally, <code>%L</code> will be replaced with the conflict marker
 size (see below).</p>
 </div>
 <div class="paragraph">
@@ -1875,7 +1894,9 @@ internal merge and the final merge.</p>
 </div>
 <div class="paragraph">
 <p>The merge driver can learn the pathname in which the merged result
-will be stored via placeholder <code>%P</code>.</p>
+will be stored via placeholder <code>%P</code>. The conflict labels to be used
+for the common ancestor, local head and other head can be passed by
+using <em>%S</em>, <em>%X</em> and '%Y` respectively.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2131,7 +2152,7 @@ frotz   unspecified</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-20 18:35:40 UTC
+Last updated 2024-02-10 08:49:29 UTC
 </div>
 </div>
 </body>

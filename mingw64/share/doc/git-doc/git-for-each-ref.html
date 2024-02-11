@@ -505,17 +505,15 @@ key.</p>
 </dd>
 <dt class="hdlist1">--format=&lt;format&gt;</dt>
 <dd>
-<p>A string that interpolates <code>%(fieldname)</code> from a ref being shown
-and the object it points at.  If <code>fieldname</code>
-is prefixed with an asterisk (<code>*</code>) and the ref points
-at a tag object, use the value for the field in the object
-which the tag object refers to (instead of the field in the tag object).
-When unspecified, <code>&lt;format&gt;</code> defaults to
-<code>%(objectname) SPC %(objecttype) TAB %(refname)</code>.
-It also interpolates <code>%%</code> to <code>%</code>, and <code>%xx</code> where <code>xx</code>
-are hex digits interpolates to character with hex code
-<code>xx</code>; for example <code>%00</code> interpolates to <code>\0</code> (NUL),
-<code>%09</code> to <code>\t</code> (TAB) and <code>%0a</code> to <code>\n</code> (LF).</p>
+<p>A string that interpolates <code>%(fieldname)</code> from a ref being shown and
+the object it points at. In addition, the string literal <code>%%</code>
+renders as <code>%</code> and <code>%xx</code> - where <code>xx</code> are hex digits - renders as
+the character with hex code <code>xx</code>. For example, <code>%00</code> interpolates to
+<code>\0</code> (NUL), <code>%09</code> to <code>\t</code> (TAB), and <code>%0a</code> to <code>\n</code> (LF).</p>
+<div class="paragraph">
+<p>When unspecified, <code>&lt;format&gt;</code> defaults to <code>%(objectname) SPC %(objecttype)
+TAB %(refname)</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1">--color[=&lt;when&gt;]</dt>
 <dd>
@@ -815,6 +813,11 @@ from the <code>committer</code> or <code>tagger</code> fields depending on the o
 These are intended for working on a mix of annotated and lightweight tags.</p>
 </div>
 <div class="paragraph">
+<p>For tag objects, a <code>fieldname</code> prefixed with an asterisk (<code>*</code>) expands to
+the <code>fieldname</code> value of the peeled object, rather than that of the tag
+object itself.</p>
+</div>
+<div class="paragraph">
 <p>Fields that have name-email-date tuple as its value (<code>author</code>,
 <code>committer</code>, and <code>tagger</code>) can be suffixed with <code>name</code>, <code>email</code>,
 and <code>date</code> to extract the named component.  For email fields (<code>authoremail</code>,
@@ -1077,7 +1080,7 @@ commits and from none of the <code>--no-merged</code> commits are shown.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-20 18:35:40 UTC
+Last updated 2024-02-10 08:49:29 UTC
 </div>
 </div>
 </body>

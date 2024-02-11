@@ -1051,6 +1051,18 @@ otherwise specified.</pre>
 </div>
 <div class="literalblock">
 <div class="content">
+<pre>Bitmapped Packfiles (ID: {'B', 'T', 'M', 'P'})
+    Stores a table of two 4-byte unsigned integers in network order.
+    Each table entry corresponds to a single pack (in the order that
+    they appear above in the `PNAM` chunk). The values for each table
+    entry are as follows:
+    - The first bit position (in pseudo-pack order, see below) to
+      contain an object from that pack.
+    - The number of bits whose objects are selected from that pack.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
 <pre>OID Fanout (ID: {'O', 'I', 'D', 'F'})
     The ith entry, F[i], stores the number of OIDs with first
     byte at most i. Thus F[255] stores the total
@@ -1206,6 +1218,112 @@ packs arranged in MIDX order (with the preferred pack coming first).</p>
 <p>The MIDX&#8217;s reverse index is stored in the optional <em>RIDX</em> chunk within
 the MIDX itself.</p>
 </div>
+<div class="sect2">
+<h3 id="_btmp_chunk"><code>BTMP</code> chunk</h3>
+<div class="paragraph">
+<p>The Bitmapped Packfiles (<code>BTMP</code>) chunk encodes additional information
+about the objects in the multi-pack index&#8217;s reachability bitmap. Recall
+that objects from the MIDX are arranged in "pseudo-pack" order (see
+above) for reachability bitmaps.</p>
+</div>
+<div class="paragraph">
+<p>From the example above, suppose we have packs "a", "b", and "c", with
+10, 15, and 20 objects, respectively. In pseudo-pack order, those would
+be arranged as follows:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>|a,0|a,1|...|a,9|b,0|b,1|...|b,14|c,0|c,1|...|c,19|</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When working with single-pack bitmaps (or, equivalently, multi-pack
+reachability bitmaps with a preferred pack), <a href="git-pack-objects.html">git-pack-objects(1)</a>
+performs &#8220;verbatim&#8221; reuse, attempting to reuse chunks of the bitmapped
+or preferred packfile instead of adding objects to the packing list.</p>
+</div>
+<div class="paragraph">
+<p>When a chunk of bytes is reused from an existing pack, any objects
+contained therein do not need to be added to the packing list, saving
+memory and CPU time. But a chunk from an existing packfile can only be
+reused when the following conditions are met:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The chunk contains only objects which were requested by the caller
+(i.e. does not contain any objects which the caller didn&#8217;t ask for
+explicitly or implicitly).</p>
+</li>
+<li>
+<p>All objects stored in non-thin packs as offset- or reference-deltas
+also include their base object in the resulting pack.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The <code>BTMP</code> chunk encodes the necessary information in order to implement
+multi-pack reuse over a set of packfiles as described above.
+Specifically, the <code>BTMP</code> chunk encodes three pieces of information (all
+32-bit unsigned integers in network byte-order) for each packfile <code>p</code>
+that is stored in the MIDX, as follows:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>bitmap_pos</code></dt>
+<dd>
+<p>The first bit position (in pseudo-pack order) in the
+multi-pack index&#8217;s reachability bitmap occupied by an object from <code>p</code>.</p>
+</dd>
+<dt class="hdlist1"><code>bitmap_nr</code></dt>
+<dd>
+<p>The number of bit positions (including the one at
+<code>bitmap_pos</code>) that encode objects from that pack <code>p</code>.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>For example, the <code>BTMP</code> chunk corresponding to the above example (with
+packs &#8220;a&#8221;, &#8220;b&#8221;, and &#8220;c&#8221;) would look like:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;"/>
+<col style="width: 40%;"/>
+<col style="width: 40%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-top"><code>bitmap_pos</code></th>
+<th class="tableblock halign-left valign-top"><code>bitmap_nr</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">packfile &#8220;a&#8221;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>10</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">packfile &#8220;b&#8221;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>10</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>15</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">packfile &#8220;c&#8221;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>25</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>20</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>With this information in place, we can treat each packfile as
+individually reusable in the same fashion as verbatim pack reuse is
+performed on individual packs prior to the implementation of the <code>BTMP</code>
+chunk.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1341,7 +1459,7 @@ support for optional chunks of data, it may make sense to consolidate the
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-20 18:35:40 UTC
+Last updated 2024-02-10 08:49:29 UTC
 </div>
 </div>
 </body>
