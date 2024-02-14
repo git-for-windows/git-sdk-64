@@ -31,8 +31,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.11
 srcdir=		.
 
-abs_srcdir=	/c/S/B/src/Python-3.11.7
-abs_builddir=	/c/S/B/src/Python-3.11.7
+abs_srcdir=	/c/S/B/src/Python-3.11.8
+abs_builddir=	/c/S/B/src/Python-3.11.8
 
 
 CC=		gcc
@@ -720,11 +720,13 @@ check-clean-src:
 	@if test -n "$(VPATH)" -a \( \
 	    -f "$(srcdir)/$(BUILDPYTHON)" \
 	    -o -f "$(srcdir)/Programs/python.o" \
-	    -o -f "$(srcdir)\Python/frozen_modules/importlib._bootstrap.h" \
+	    -o -f "$(srcdir)/Python/frozen_modules/importlib._bootstrap.h" \
 	\); then \
 		echo "Error: The source directory ($(srcdir)) is not clean" ; \
 		echo "Building Python out of the source tree (in $(abs_builddir)) requires a clean source tree ($(abs_srcdir))" ; \
-		echo "Try to run: make -C \"$(srcdir)\" clean" ; \
+		echo "Build artifacts such as .o files, executables, and Python/frozen_modules/*.h must not exist within $(srcdir)." ; \
+		echo "Try to run:" ; \
+		echo "  (cd \"$(srcdir)\" && make clean || git clean -fdx -e Doc/venv)" ; \
 		exit 1; \
 	fi
 
@@ -2091,6 +2093,9 @@ TESTSUBDIRS=	ctypes/test \
 		test/imghdrdata \
 		test/leakers \
 		test/libregrtest \
+		test/regrtestdata \
+		test/regrtestdata/import_from_tests \
+		test/regrtestdata/import_from_tests/test_regrtest_b \
 		test/sndhdrdata \
 		test/subprocessdata \
 		test/support \
@@ -2098,6 +2103,7 @@ TESTSUBDIRS=	ctypes/test \
 		test/test_capi \
 		test/test_cppext \
 		test/test_dataclasses \
+		test/test_doctest \
 		test/test_email \
 		test/test_email/data \
 		test/test_future_stmt \

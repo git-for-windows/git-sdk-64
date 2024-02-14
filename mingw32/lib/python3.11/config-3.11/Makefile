@@ -29,9 +29,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.11
-srcdir=		../Python-3.11.7
-VPATH=		../Python-3.11.7
-abs_srcdir=	/c/M/B/src/build-MINGW32/../Python-3.11.7
+srcdir=		../Python-3.11.8
+VPATH=		../Python-3.11.8
+abs_srcdir=	/c/M/B/src/build-MINGW32/../Python-3.11.8
 abs_builddir=	/c/M/B/src/build-MINGW32
 
 
@@ -125,7 +125,7 @@ PY_CORE_CFLAGS=	$(PY_STDMODULE_CFLAGS) -DPy_BUILD_CORE
 PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 # Strict or non-strict aliasing flags used to compile dtoa.c, see above
 CFLAGS_ALIASING=
-RCFLAGS= -DFIELD3=7150 -O COFF --target=pe-i386
+RCFLAGS= -DFIELD3=8150 -O COFF --target=pe-i386
 
 
 # Machine-dependent subdirectories
@@ -145,8 +145,8 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/M/B/src/Python-3.11.7
-abs_srcdir_b2h=		C:/M/B/src/Python-3.11.7
+srcdir_b2h=		C:/M/B/src/Python-3.11.8
+abs_srcdir_b2h=		C:/M/B/src/Python-3.11.8
 abs_builddir_b2h=	C:/M/B/src/build-MINGW32
 prefix_b2h=		D:/a/msys64/mingw32
 
@@ -743,11 +743,13 @@ check-clean-src:
 	@if test -n "$(VPATH)" -a \( \
 	    -f "$(srcdir)/$(BUILDPYTHON)" \
 	    -o -f "$(srcdir)/Programs/python.o" \
-	    -o -f "$(srcdir)\Python/frozen_modules/importlib._bootstrap.h" \
+	    -o -f "$(srcdir)/Python/frozen_modules/importlib._bootstrap.h" \
 	\); then \
 		echo "Error: The source directory ($(srcdir)) is not clean" ; \
 		echo "Building Python out of the source tree (in $(abs_builddir)) requires a clean source tree ($(abs_srcdir))" ; \
-		echo "Try to run: make -C \"$(srcdir)\" clean" ; \
+		echo "Build artifacts such as .o files, executables, and Python/frozen_modules/*.h must not exist within $(srcdir)." ; \
+		echo "Try to run:" ; \
+		echo "  (cd \"$(srcdir)\" && make clean || git clean -fdx -e Doc/venv)" ; \
 		exit 1; \
 	fi
 
@@ -2151,6 +2153,9 @@ TESTSUBDIRS=	ctypes/test \
 		test/imghdrdata \
 		test/leakers \
 		test/libregrtest \
+		test/regrtestdata \
+		test/regrtestdata/import_from_tests \
+		test/regrtestdata/import_from_tests/test_regrtest_b \
 		test/sndhdrdata \
 		test/subprocessdata \
 		test/support \
@@ -2158,6 +2163,7 @@ TESTSUBDIRS=	ctypes/test \
 		test/test_capi \
 		test/test_cppext \
 		test/test_dataclasses \
+		test/test_doctest \
 		test/test_email \
 		test/test_email/data \
 		test/test_future_stmt \
