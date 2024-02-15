@@ -462,11 +462,11 @@ on the subcommand:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>git bisect start [--term-(new|bad)=&lt;term-new&gt; --term-(old|good)=&lt;term-old&gt;]
+<pre>git bisect start [--term-(bad|new)=&lt;term-new&gt; --term-(good|old)=&lt;term-old&gt;]
 	  [--no-checkout] [--first-parent] [&lt;bad&gt; [&lt;good&gt;...]] [--] [&lt;pathspec&gt;...]
 git bisect (bad|new|&lt;term-new&gt;) [&lt;rev&gt;]
 git bisect (good|old|&lt;term-old&gt;) [&lt;rev&gt;...]
-git bisect terms [--term-good | --term-bad]
+git bisect terms [--term-(good|old) | --term-(bad|new)]
 git bisect skip [(&lt;rev&gt;|&lt;range&gt;)...]
 git bisect reset [&lt;commit&gt;]
 git bisect (visualize|view)
@@ -640,8 +640,10 @@ commands to add the commits:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>You can get just the old (respectively new) term with <code>git bisect terms
---term-old</code> or <code>git bisect terms --term-good</code>.</p>
+<p>You can get just the old term with <code>git bisect terms --term-old</code>
+or <code>git bisect terms --term-good</code>; <code>git bisect terms --term-new</code>
+and <code>git bisect terms --term-bad</code> can be used to learn how to call
+the commits more recent than the sought change.</p>
 </div>
 <div class="paragraph">
 <p>If you would like to use your own terms instead of "bad"/"good" or
@@ -1086,7 +1088,7 @@ help</code> or <code>git bisect -h</code> to get a long usage description.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-10 08:49:29 UTC
+Last updated 2024-02-14 22:10:05 UTC
 </div>
 </div>
 </body>
