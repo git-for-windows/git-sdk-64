@@ -35,7 +35,7 @@ BEGIN {
 	CGI->compile() if $ENV{'MOD_PERL'};
 }
 
-our $version = "2.43.2";
+our $version = "2.44.0";
 
 our ($my_url, $my_uri, $base_url, $path_info, $home_link);
 sub evaluate_uri {
@@ -728,9 +728,11 @@ our $per_request_config = 1;
 sub read_config_file {
 	my $filename = shift;
 	return unless defined $filename;
-	# die if there are errors parsing config file
 	if (-e $filename) {
 		do $filename;
+		# die if there is a problem accessing the file
+		die $! if $!;
+		# die if there are errors parsing config file
 		die $@ if $@;
 		return 1;
 	}
