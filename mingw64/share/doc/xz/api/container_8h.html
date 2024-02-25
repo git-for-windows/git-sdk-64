@@ -17,8 +17,9 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
+  <td id="projectlogo"><img alt="Logo" src="xz-logo.png"/></td>
   <td id="projectalign">
-   <div id="projectname">liblzma (XZ Utils)<span id="projectnumber">&#160;5.4.6</span>
+   <div id="projectname">liblzma (XZ Utils)<span id="projectnumber">&#160;5.6.0</span>
    </div>
   </td>
  </tr>
@@ -110,6 +111,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a3f8793518711ee84d1abf12ea3aaba42"><td class="memItemLeft" align="right" valign="top"><a class="el" href="base_8h.html#a8494e0457e1463d6d2b6836018d87b6e">lzma_ret</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="container_8h.html#a3f8793518711ee84d1abf12ea3aaba42">lzma_stream_encoder_mt</a> (<a class="el" href="structlzma__stream.html">lzma_stream</a> *strm, const <a class="el" href="structlzma__mt.html">lzma_mt</a> *options) lzma_nothrow lzma_attr_warn_unused_result</td></tr>
 <tr class="memdesc:a3f8793518711ee84d1abf12ea3aaba42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize multithreaded .xz Stream encoder.  <br /></td></tr>
 <tr class="separator:a3f8793518711ee84d1abf12ea3aaba42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7eaeda1cb811ac1f5a6403691df8a894"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="container_8h.html#a7eaeda1cb811ac1f5a6403691df8a894">lzma_mt_block_size</a> (const <a class="el" href="structlzma__filter.html">lzma_filter</a> *filters) lzma_nothrow</td></tr>
+<tr class="memdesc:a7eaeda1cb811ac1f5a6403691df8a894"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate recommended Block size for multithreaded .xz encoder.  <br /></td></tr>
+<tr class="separator:a7eaeda1cb811ac1f5a6403691df8a894"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26fcc5bccdf3f862caa4c992d01e1a72"><td class="memItemLeft" align="right" valign="top"><a class="el" href="base_8h.html#a8494e0457e1463d6d2b6836018d87b6e">lzma_ret</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="container_8h.html#a26fcc5bccdf3f862caa4c992d01e1a72">lzma_alone_encoder</a> (<a class="el" href="structlzma__stream.html">lzma_stream</a> *strm, const <a class="el" href="structlzma__options__lzma.html">lzma_options_lzma</a> *options) lzma_nothrow lzma_attr_warn_unused_result</td></tr>
 <tr class="memdesc:a26fcc5bccdf3f862caa4c992d01e1a72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize .lzma encoder (legacy file format)  <br /></td></tr>
 <tr class="separator:a26fcc5bccdf3f862caa4c992d01e1a72"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -279,8 +283,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>This flag enables decoding of concatenated files with file formats that allow concatenating compressed files as is. From the formats currently supported by liblzma, only the .xz and .lz formats allow concatenated files. Concatenated files are not allowed with the legacy .lzma format.</p>
-<p>This flag also affects the usage of the `action' argument for <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a>. When LZMA_CONCATENATED is used, <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> won't return LZMA_STREAM_END unless LZMA_FINISH is used as `action'. Thus, the application has to set LZMA_FINISH in the same way as it does when encoding.</p>
-<p>If LZMA_CONCATENATED is not used, the decoders still accept LZMA_FINISH as `action' for <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a>, but the usage of LZMA_FINISH isn't required. </p>
+<p>This flag also affects the usage of the 'action' argument for <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a>. When LZMA_CONCATENATED is used, <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> won't return LZMA_STREAM_END unless LZMA_FINISH is used as 'action'. Thus, the application has to set LZMA_FINISH in the same way as it does when encoding.</p>
+<p>If LZMA_CONCATENATED is not used, the decoders still accept LZMA_FINISH as 'action' for <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a>, but the usage of LZMA_FINISH isn't required. </p>
 
 </div>
 </div>
@@ -395,7 +399,7 @@ Functions</h2></td></tr>
 <p>Initialize .xz Stream encoder using a preset number. </p>
 <p>This function is intended for those who just want to use the basic features of liblzma (that is, most developers out there).</p>
 <p>If initialization fails (return value is not LZMA_OK), all the memory allocated for *strm by liblzma is always freed. Thus, there is no need to call <a class="el" href="base_8h.html#a854ff37464ae1225febf14db1af43308" title="Free memory allocated for the coder data structures.">lzma_end()</a> after failed initialization.</p>
-<p>If initialization succeeds, use <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> to do the actual encoding. Valid values for `action' (the second argument of <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a>) are LZMA_RUN, LZMA_SYNC_FLUSH, LZMA_FULL_FLUSH, and LZMA_FINISH. In future, there may be compression levels or flags that don't support LZMA_SYNC_FLUSH.</p>
+<p>If initialization succeeds, use <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> to do the actual encoding. Valid values for 'action' (the second argument of <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a>) are LZMA_RUN, LZMA_SYNC_FLUSH, LZMA_FULL_FLUSH, and LZMA_FINISH. In future, there may be compression levels or flags that don't support LZMA_SYNC_FLUSH.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">strm</td><td>Pointer to <a class="el" href="structlzma__stream.html" title="Passing data to and from liblzma.">lzma_stream</a> that is at least initialized with LZMA_STREAM_INIT. </td></tr>
@@ -629,6 +633,35 @@ Functions</h2></td></tr>
 <li>LZMA_PROG_ERROR </li>
 </ul>
 </dd></dl>
+
+</div>
+</div>
+<a id="a7eaeda1cb811ac1f5a6403691df8a894" name="a7eaeda1cb811ac1f5a6403691df8a894"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7eaeda1cb811ac1f5a6403691df8a894">&#9670;&#160;</a></span>lzma_mt_block_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t lzma_mt_block_size </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structlzma__filter.html">lzma_filter</a> *&#160;</td>
+          <td class="paramname"><em>filters</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calculate recommended Block size for multithreaded .xz encoder. </p>
+<p>This calculates a recommended Block size for multithreaded encoding given a filter chain. This is used internally by <a class="el" href="container_8h.html#a3f8793518711ee84d1abf12ea3aaba42" title="Initialize multithreaded .xz Stream encoder.">lzma_stream_encoder_mt()</a> to determine the Block size if the block_size member is not set to the special value of 0 in the <a class="el" href="structlzma__mt.html" title="Multithreading options.">lzma_mt</a> options struct.</p>
+<p>If one wishes to change the filters between Blocks, this function is helpful to set the block_size member of the <a class="el" href="structlzma__mt.html" title="Multithreading options.">lzma_mt</a> struct before calling <a class="el" href="container_8h.html#a3f8793518711ee84d1abf12ea3aaba42" title="Initialize multithreaded .xz Stream encoder.">lzma_stream_encoder_mt()</a>. Since the block_size member represents the maximum possible Block size for the multithreaded .xz encoder, one can use this function to find the maximum recommended Block size based on all planned filter chains. Otherwise, the multithreaded encoder will base its maximum Block size on the first filter chain used (if the block_size member is not set), which may unnecessarily limit the Block size for a later filter chain.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filters</td><td>Array of filters terminated with .id == LZMA_VLI_UNKNOWN.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Recommended Block size in bytes, or UINT64_MAX if an error occurred. </dd></dl>
 
 </div>
 </div>
@@ -1029,7 +1062,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Initialize .lzma decoder (legacy file format) </p>
-<p>Valid `action' arguments to <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> are LZMA_RUN and LZMA_FINISH. There is no need to use LZMA_FINISH, but it's allowed because it may simplify certain types of applications.</p>
+<p>Valid 'action' arguments to <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> are LZMA_RUN and LZMA_FINISH. There is no need to use LZMA_FINISH, but it's allowed because it may simplify certain types of applications.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">strm</td><td>Pointer to <a class="el" href="structlzma__stream.html" title="Passing data to and from liblzma.">lzma_stream</a> that is at least initialized with LZMA_STREAM_INIT. </td></tr>
@@ -1271,9 +1304,14 @@ Functions</h2></td></tr>
 </div>
 </div>
 </div><!-- contents -->
-<!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.7
-</small></address>
+<hr class="footer"/>
+<p style="text-align: right;padding-right: 12px;">
+	XZ logo &copy; 2023 by Jia Tan is licensed under
+	<a href="COPYING.CC-BY-SA-4.0"
+	   rel="license"
+	   style="display:inline-block;">
+		CC BY-SA 4.0
+	</a>
+</p>
 </body>
 </html>

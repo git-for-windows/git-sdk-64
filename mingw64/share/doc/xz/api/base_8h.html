@@ -17,8 +17,9 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
+  <td id="projectlogo"><img alt="Logo" src="xz-logo.png"/></td>
   <td id="projectalign">
-   <div id="projectname">liblzma (XZ Utils)<span id="projectnumber">&#160;5.4.6</span>
+   <div id="projectname">liblzma (XZ Utils)<span id="projectnumber">&#160;5.6.0</span>
    </div>
   </td>
  </tr>
@@ -129,7 +130,7 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="base_8h.html#aa92efcbf3cecfcac79c81fc645fce77ea7d24fb3c6c144d13bcb091195b8ebec1">LZMA_FINISH</a> = 3
 <br />
  }</td></tr>
-<tr class="memdesc:aa92efcbf3cecfcac79c81fc645fce77e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The `action' argument for <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a>  <a href="base_8h.html#aa92efcbf3cecfcac79c81fc645fce77e">More...</a><br /></td></tr>
+<tr class="memdesc:aa92efcbf3cecfcac79c81fc645fce77e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The 'action' argument for <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a>  <a href="base_8h.html#aa92efcbf3cecfcac79c81fc645fce77e">More...</a><br /></td></tr>
 <tr class="separator:aa92efcbf3cecfcac79c81fc645fce77e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -195,8 +196,8 @@ Functions</h2></td></tr>
 
 <p>Boolean. </p>
 <p>This is here because C89 doesn't have stdbool.h. To set a value for variables having type lzma_bool, you can use</p><ul>
-<li>C99's `true' and `false' from stdbool.h;</li>
-<li>C++'s internal `true' and `false'; or</li>
+<li>C99's 'true' and 'false' from stdbool.h;</li>
+<li>C++'s internal 'true' and 'false'; or</li>
 <li>integers one (true) and zero (false). </li>
 </ul>
 
@@ -329,8 +330,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The `action' argument for <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> </p>
-<p>After the first use of LZMA_SYNC_FLUSH, LZMA_FULL_FLUSH, LZMA_FULL_BARRIER, or LZMA_FINISH, the same `action' must be used until <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> returns LZMA_STREAM_END. Also, the amount of input (that is, strm-&gt;avail_in) must not be modified by the application until <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> returns LZMA_STREAM_END. Changing the `action' or modifying the amount of input will make <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> return LZMA_PROG_ERROR. </p>
+<p>The 'action' argument for <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> </p>
+<p>After the first use of LZMA_SYNC_FLUSH, LZMA_FULL_FLUSH, LZMA_FULL_BARRIER, or LZMA_FINISH, the same 'action' must be used until <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> returns LZMA_STREAM_END. Also, the amount of input (that is, strm-&gt;avail_in) must not be modified by the application until <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> returns LZMA_STREAM_END. Changing the 'action' or modifying the amount of input will make <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> return LZMA_PROG_ERROR. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa92efcbf3cecfcac79c81fc645fce77ea868472b76492afcaef54020a481890b1" name="aa92efcbf3cecfcac79c81fc645fce77ea868472b76492afcaef54020a481890b1"></a>LZMA_RUN&#160;</td><td class="fielddoc"><p>Continue coding. </p>
 <p>Encoder: Encode as much input as possible. Some internal buffering will probably be done (depends on the filter chain in use), which causes latency: the input used won't usually be decodeable from the output of the same <a class="el" href="base_8h.html#a28cc09bc422d5ba1e0187c9f2af5d957" title="Encode or decode data.">lzma_code()</a> call.</p>
@@ -388,7 +389,7 @@ Functions</h2></td></tr>
 
 <p>Encode or decode data. </p>
 <p>Once the <a class="el" href="structlzma__stream.html" title="Passing data to and from liblzma.">lzma_stream</a> has been successfully initialized (e.g. with <a class="el" href="container_8h.html#a1a97aec94c9fedd7646cfa51c4f4cd52" title="Initialize .xz Stream encoder using a custom filter chain.">lzma_stream_encoder()</a>), the actual encoding or decoding is done using this function. The application has to update strm-&gt;next_in, strm-&gt;avail_in, strm-&gt;next_out, and strm-&gt;avail_out to pass input to and get output from liblzma.</p>
-<p>See the description of the coder-specific initialization function to find out what `action' values are supported by the coder.</p>
+<p>See the description of the coder-specific initialization function to find out what 'action' values are supported by the coder.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">strm</td><td>Pointer to <a class="el" href="structlzma__stream.html" title="Passing data to and from liblzma.">lzma_stream</a> that is at least initialized with LZMA_STREAM_INIT. </td></tr>
@@ -572,9 +573,14 @@ Functions</h2></td></tr>
 </div>
 </div>
 </div><!-- contents -->
-<!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.7
-</small></address>
+<hr class="footer"/>
+<p style="text-align: right;padding-right: 12px;">
+	XZ logo &copy; 2023 by Jia Tan is licensed under
+	<a href="COPYING.CC-BY-SA-4.0"
+	   rel="license"
+	   style="display:inline-block;">
+		CC BY-SA 4.0
+	</a>
+</p>
 </body>
 </html>
