@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 # xzgrep -- a wrapper around a grep program that decompresses files as needed
 # Adapted from a version sent by Charles Levert <charles@comm.polymtl.ca>
@@ -34,7 +35,7 @@ case ${0##*/} in
   *)       prog=xzgrep; grep=${GREP:-grep};;
 esac
 
-version="$prog (XZ Utils) 5.4.6"
+version="$prog (XZ Utils) 5.6.0"
 
 usage="Usage: ${0##*/} [OPTION]... [-e] PATTERN [FILE]...
 Look for instances of PATTERN in the input FILEs, using their
@@ -156,7 +157,7 @@ done
 eval "set -- $operands "'${1+"$@"}'
 
 if test $have_pat -eq 0; then
-  case ${1?"Missing pattern; try \`${0##*/} --help' for help"} in
+  case ${1?"Missing pattern; try '${0##*/} --help' for help"} in
   (*\'*)
     grep="$grep -e '"$(printf '%sX\n' "$1" | LC_ALL=C sed "$escape");;
   (*)
@@ -180,6 +181,7 @@ for i; do
     *[-.]bz2 | *[-.]tbz | *.tbz2) uncompress="bzip2 -cdf";;
     *[-.]lzo | *[-.]tzo) uncompress="lzop -cdf";;
     *[-.]zst | *[-.]tzst) uncompress="zstd -cdfq";; # zstd needs -q.
+    *[-.]lz4) uncompress="lz4 -cdf";;
     *) uncompress="$xz -cdfqQ";; # -qQ to ignore warnings like unsupp. check.
   esac
   # xz_status will hold the decompressor's exit status.
