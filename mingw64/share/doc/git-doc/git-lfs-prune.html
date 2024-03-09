@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.20">
+<meta name="generator" content="Asciidoctor 2.0.21">
 <title>git-lfs-prune(1)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -140,7 +140,7 @@ p a>code:hover{color:rgba(0,0,0,.9)}
 #content::before{content:none}
 #header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
 #header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
-#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header>h1:only-child{border-bottom:1px solid #dddddf;padding-bottom:8px}
 #header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:flex;flex-flow:row wrap}
 #header .details span:first-child{margin-left:-.125em}
 #header .details span.email a{color:rgba(0,0,0,.85)}
@@ -162,6 +162,7 @@ p a>code:hover{color:rgba(0,0,0,.9)}
 #toctitle{color:#7a2518;font-size:1.2em}
 @media screen and (min-width:768px){#toctitle{font-size:1.375em}
 body.toc2{padding-left:15em;padding-right:0}
+body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
 #toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
 #toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
 #toc.toc2>ul{font-size:.9em;margin-bottom:0}
@@ -327,7 +328,7 @@ a.image{text-decoration:none;display:inline-block}
 a.image object{pointer-events:none}
 sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
 sup.footnote a,sup.footnoteref a{text-decoration:none}
-sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+sup.footnote a:active,sup.footnoteref a:active,#footnotes .footnote a:first-of-type:active{text-decoration:underline}
 #footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
 #footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
 #footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
@@ -534,13 +535,30 @@ configuration options specified below in <a href="#_recent_files">RECENT FILES</
 <dt class="hdlist1"><code>--verify-remote</code></dt>
 <dt class="hdlist1"><code>-c</code></dt>
 <dd>
-<p>Contact the remote and check that copies of the files we would delete
+<p>Contact the remote and check that copies of reachable files we would delete
 definitely exist before deleting. See <a href="#_verify_remote">VERIFY REMOTE</a>.</p>
 </dd>
 <dt class="hdlist1"><code>--no-verify-remote</code></dt>
 <dd>
 <p>Disables remote verification if lfs.pruneverifyremotealways was enabled in
 settings. See <a href="#_verify_remote">VERIFY REMOTE</a>.</p>
+</dd>
+<dt class="hdlist1"><code>--verify-reachable</code></dt>
+<dd>
+<p>When doing <code>--verify-remote</code> contact the remote and check unreachable
+objects as well. See <a href="#_verify_remote">VERIFY REMOTE</a>.</p>
+</dd>
+<dt class="hdlist1"><code>--no-verify-reachable</code></dt>
+<dd>
+<p>Disables remote verification of unreachable files if
+lfs.pruneverifyunreachablealways was enabled in settings. See
+<a href="#_verify_remote">VERIFY REMOTE</a>.</p>
+</dd>
+<dt class="hdlist1"><code>--when-unverified=&lt;halt,continue&gt;</code></dt>
+<dd>
+<p>When <code>--verify-remote</code> cannot verify an object on the remote, either halt
+the execution or continue the deletion of verified objects. See
+<a href="#_verify_remote">VERIFY REMOTE</a>.</p>
 </dd>
 <dt class="hdlist1"><code>--verbose</code></dt>
 <dt class="hdlist1"><code>-v</code></dt>
@@ -612,8 +630,8 @@ pruning purposes.</p>
 <h2 id="_verify_remote">VERIFY REMOTE</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>--verify-remote</code> option calls the remote to ensure that any LFS
-files to be deleted have copies on the remote before actually deleting
+<p>The <code>--verify-remote</code> option calls the remote to ensure that any reachable
+LFS files to be deleted have copies on the remote before actually deleting
 them.</p>
 </div>
 <div class="paragraph">
@@ -634,6 +652,19 @@ also requires prune to distinguish between totally unreachable files
 referenced only by orphaned commits), and files which are still
 referenced, but by commits which are prunable. This makes the prune
 process take longer.</p>
+</div>
+<div class="paragraph">
+<p>If you want to verify unreachable objects as well, set the
+<code>--verify-unreachable</code> option.</p>
+</div>
+<div class="paragraph">
+<p>You can check for unreachable objects by default by setting
+<code>lfs.pruneverifyunreachablealways</code> to true.</p>
+</div>
+<div class="paragraph">
+<p>By default, <code>--verify-remote</code> halts execution if a file cannot be
+verified. Set <code>--when-unverified=continue</code> to not halt exceution but
+continue deleting all objects that can be verified.</p>
 </div>
 </div>
 </div>
