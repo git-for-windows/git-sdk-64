@@ -27,8 +27,8 @@ get_filename_component(_libxml2_rootdir ${CMAKE_CURRENT_LIST_DIR}/../../../ ABSO
 
 set(LIBXML2_VERSION_MAJOR  2)
 set(LIBXML2_VERSION_MINOR  12)
-set(LIBXML2_VERSION_MICRO  5)
-set(LIBXML2_VERSION_STRING "2.12.5")
+set(LIBXML2_VERSION_MICRO  6)
+set(LIBXML2_VERSION_STRING "2.12.6")
 set(LIBXML2_DEFINITIONS    "")
 set(LIBXML2_INSTALL_PREFIX ${_libxml2_rootdir})
 set(LIBXML2_INCLUDE_DIR    ${_libxml2_rootdir}/include/libxml2)
