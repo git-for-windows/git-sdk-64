@@ -21,7 +21,7 @@
 shopt -s extglob
 
 declare -r myname='pacdiff'
-declare -r myver='1.10.4'
+declare -r myver='1.10.5'
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
@@ -215,7 +215,14 @@ merge_file() {
 
 cmd() {
 	if (( USE_LOCATE )); then
-		locate -0 -e -b \*.pacnew \*.pacorig \*.pacsave '*.pacsave.[0-9]*'
+		# plocate searches for files that match all patterns whereas mlocate searches for files that match one or more patterns
+		if type -p plocate >/dev/null; then
+			for p in \*.pacnew \*.pacorig \*.pacsave '*.pacsave.[0-9]*'; do
+				locate -0 -e -b "$p"
+			done
+		else
+			locate -0 -e -b \*.pacnew \*.pacorig \*.pacsave '*.pacsave.[0-9]*'
+		fi
 	elif (( USE_FIND )); then
 		find "$diffsearchpath" \( -name \*.pacnew -o -name \*.pacorig -o -name \*.pacsave -o -name '*.pacsave.[0-9]*' \) -print0
 	elif (( USE_PACDB )); then
