@@ -10,7 +10,7 @@
 .ds B-Font B
 .ds I-Font I
 .ds R-Font R
-.TH certtool 1 "16 Jan 2024" "3.8.3" "User Commands"
+.TH certtool 1 "19 Mar 2024" "3.8.4" "User Commands"
 .SH NAME
 \f\*[B-Font]certtool\fP
 \- GnuTLS certificate tool
@@ -180,15 +180,15 @@ cannot read RSA\-PSS keys.
 .NOP \f\*[B-Font]\-p\f[], \f\*[B-Font]\-\-generate\-privkey\f[]
 Generate a private key.
 .sp
-When generating RSA\-PSS private keys, the \-\-hash option will
-restrict the allowed hash for the key; in the same keys the \-\-salt\-size
+When generating RSA\-PSS or RSA\-OAEP private keys, the \-\-hash option will
+restrict the allowed hash for the key; For RSA\-PSS keys the \-\-salt\-size
 option is also acceptable.
 .TP
 .NOP \f\*[B-Font]\-\-key\-type\f[]=\f\*[I-Font]str\f[]
 Specify the key type to use on key generation.
 .sp
 This option can be combined with \-\-generate\-privkey, to specify
-the key type to be generated. Valid options are, 'rsa', 'rsa\-pss', 'dsa', 'ecdsa', 'ed25519, 'ed448', 'x25519', and 'x448'.'.
+the key type to be generated. Valid options are, 'rsa', 'rsa\-pss', 'rsa\-oaep', 'dsa', 'ecdsa', 'ed25519, 'ed448', 'x25519', and 'x448'.'.
 When combined with certificate generation it can be used to specify an
 RSA\-PSS certificate when an RSA key is given.
 .TP
@@ -481,6 +481,11 @@ Available hash functions are SHA1, RMD160, SHA256, SHA384, SHA512, SHA3\-224, SH
 .NOP \f\*[B-Font]\-\-salt\-size\f[]=\f\*[I-Font]num\f[]
 Specify the RSA-PSS key default salt size.
 This option takes an integer number as its argument.
+.sp
+Typical keys shouldn't set or restrict this option.
+.TP
+.NOP \f\*[B-Font]\-\-label\f[]=\f\*[I-Font]str\f[]
+Specify the RSA-OAEP label, encoded in hexadecimal.
 .sp
 Typical keys shouldn't set or restrict this option.
 .TP

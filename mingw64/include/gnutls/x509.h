@@ -410,6 +410,14 @@ void gnutls_x509_spki_set_rsa_pss_params(gnutls_x509_spki_t spki,
 					 gnutls_digest_algorithm_t dig,
 					 unsigned int salt_size);
 
+int gnutls_x509_spki_set_rsa_oaep_params(gnutls_x509_spki_t spki,
+					 gnutls_digest_algorithm_t dig,
+					 const gnutls_datum_t *label);
+
+int gnutls_x509_spki_get_rsa_oaep_params(gnutls_x509_spki_t spki,
+					 gnutls_digest_algorithm_t *dig,
+					 gnutls_datum_t *label);
+
 int gnutls_x509_crt_get_pk_algorithm(gnutls_x509_crt_t cert,
 				     unsigned int *bits);
 int gnutls_x509_crt_set_spki(gnutls_x509_crt_t crt,

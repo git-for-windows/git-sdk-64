@@ -1,7 +1,7 @@
 This is gnutls.info, produced by makeinfo version 7.0.3 from
 gnutls.texi.
 
-This manual is last updated 16 January 2024 for version 3.8.3 of GnuTLS.
+This manual is last updated 18 January 2024 for version 3.8.4 of GnuTLS.
 
 Copyright © 2001-2024 Free Software Foundation, Inc.\\ Copyright ©
 2001-2024 Nikos Mavrogiannopoulos
@@ -8412,6 +8412,26 @@ gnutls_x509_spki_deinit
 
      *Since:* 3.6.0
 
+gnutls_x509_spki_get_rsa_oaep_params
+------------------------------------
+
+ -- Function: int gnutls_x509_spki_get_rsa_oaep_params
+          (gnutls_x509_spki_t SPKI, gnutls_digest_algorithm_t * DIG,
+          gnutls_datum_t * LABEL)
+     SPKI: the SubjectPublicKeyInfo structure
+
+     DIG: if non-NULL, it will hold the digest algorithm
+
+     LABEL: if non-NULL, it will hold the pointer to label
+
+     This function will get the public key algorithm parameters of
+     RSA-OAEP type.
+
+     *Returns:* zero if the parameters are present or a negative value
+     on error.
+
+     *Since:* 3.8.4
+
 gnutls_x509_spki_get_rsa_pss_params
 -----------------------------------
 
@@ -8446,6 +8466,26 @@ gnutls_x509_spki_init
      otherwise a negative error value.
 
      *Since:* 3.6.0
+
+gnutls_x509_spki_set_rsa_oaep_params
+------------------------------------
+
+ -- Function: int gnutls_x509_spki_set_rsa_oaep_params
+          (gnutls_x509_spki_t SPKI, gnutls_digest_algorithm_t DIG, const
+          gnutls_datum_t * LABEL)
+     SPKI: the SubjectPublicKeyInfo structure
+
+     DIG: a digest algorithm of type ‘gnutls_digest_algorithm_t’
+
+     LABEL: optional label
+
+     This function will set the public key parameters for an RSA-OAEP
+     algorithm, in the SubjectPublicKeyInfo structure.
+
+     *Returns:* zero if the parameters are present or a negative value
+     on error.
+
+     *Since:* 3.8.4
 
 gnutls_x509_spki_set_rsa_pss_params
 -----------------------------------

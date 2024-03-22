@@ -49,14 +49,14 @@
 extern "C" {
 #endif
 
-#define GNUTLS_VERSION "3.8.3"
+#define GNUTLS_VERSION "3.8.4"
 
 /* clang-format off */
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 8
-#define GNUTLS_VERSION_PATCH 3
+#define GNUTLS_VERSION_PATCH 4
 
-#define GNUTLS_VERSION_NUMBER 0x030803
+#define GNUTLS_VERSION_NUMBER 0x030804
 /* clang-format on */
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
@@ -876,6 +876,7 @@ typedef enum gnutls_certificate_print_formats {
  * gnutls_pk_algorithm_t:
  * @GNUTLS_PK_UNKNOWN: Unknown public-key algorithm.
  * @GNUTLS_PK_RSA: RSA public-key algorithm.
+ * @GNUTLS_PK_RSA_OAEP: RSA public-key algorithm, with OAEP padding.
  * @GNUTLS_PK_RSA_PSS: RSA public-key algorithm, with PSS padding.
  * @GNUTLS_PK_DSA: DSA public-key algorithm.
  * @GNUTLS_PK_DH: Diffie-Hellman algorithm. Used to generate parameters.
@@ -904,7 +905,8 @@ typedef enum {
 	GNUTLS_PK_GOST_12_512 = 10,
 	GNUTLS_PK_ECDH_X448 = 11,
 	GNUTLS_PK_EDDSA_ED448 = 12,
-	GNUTLS_PK_MAX = GNUTLS_PK_EDDSA_ED448
+	GNUTLS_PK_RSA_OAEP = 13,
+	GNUTLS_PK_MAX = GNUTLS_PK_RSA_OAEP
 } gnutls_pk_algorithm_t;
 
 const char *gnutls_pk_algorithm_get_name(gnutls_pk_algorithm_t algorithm);

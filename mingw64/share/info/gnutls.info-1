@@ -1,7 +1,7 @@
 This is gnutls.info, produced by makeinfo version 7.0.3 from
 gnutls.texi.
 
-This manual is last updated 16 January 2024 for version 3.8.3 of GnuTLS.
+This manual is last updated 18 January 2024 for version 3.8.4 of GnuTLS.
 
 Copyright © 2001-2024 Free Software Foundation, Inc.\\ Copyright ©
 2001-2024 Nikos Mavrogiannopoulos
@@ -33,7 +33,7 @@ File: gnutls.info,  Node: Top,  Next: Preface,  Up: (dir)
 GnuTLS
 ******
 
-This manual is last updated 16 January 2024 for version 3.8.3 of GnuTLS.
+This manual is last updated 18 January 2024 for version 3.8.4 of GnuTLS.
 
 Copyright © 2001-2024 Free Software Foundation, Inc.\\ Copyright ©
 2001-2024 Nikos Mavrogiannopoulos
@@ -3701,6 +3701,7 @@ to ‘more’.  Both will exit with a status code of 0.
             --cprint               In certain operations it prints the information in C-friendly format
             --hash=str             Hash algorithm to use for signing
             --salt-size=num        Specify the RSA-PSS key default salt size
+            --label=str            Specify the RSA-OAEP label, encoded in hexadecimal
             --inder                Use DER format for input certificates, private keys, and DH parameters
             --inraw                an alias for the 'inder' option
             --outder               Use DER format for output certificates, private keys, and DH parameters
@@ -3865,9 +3866,9 @@ read RSA-PSS keys.
 generate-privkey option (-p).
 .............................
 
-This is the “generate a private key” option.  When generating RSA-PSS
-private keys, the –hash option will restrict the allowed hash for the
-key; in the same keys the –salt-size option is also acceptable.
+This is the “generate a private key” option.  When generating RSA-PSS or
+RSA-OAEP private keys, the –hash option will restrict the allowed hash
+for the key; For RSA-PSS keys the –salt-size option is also acceptable.
 
 key-type option.
 ................
@@ -3875,8 +3876,8 @@ key-type option.
 This is the “specify the key type to use on key generation” option.
 This option takes a ArgumentType.STRING argument.  This option can be
 combined with –generate-privkey, to specify the key type to be
-generated.  Valid options are, ’rsa’, ’rsa-pss’, ’dsa’, ’ecdsa’,
-’ed25519, ’ed448’, ’x25519’, and ’x448’.’.  When combined with
+generated.  Valid options are, ’rsa’, ’rsa-pss’, ’rsa-oaep’, ’dsa’,
+’ecdsa’, ’ed25519, ’ed448’, ’x25519’, and ’x448’.’.  When combined with
 certificate generation it can be used to specify an RSA-PSS certificate
 when an RSA key is given.
 
@@ -4256,6 +4257,13 @@ salt-size option.
 This is the “specify the rsa-pss key default salt size” option.  This
 option takes a ArgumentType.NUMBER argument.  Typical keys shouldn’t set
 or restrict this option.
+
+label option.
+.............
+
+This is the “specify the rsa-oaep label, encoded in hexadecimal” option.
+This option takes a ArgumentType.STRING argument.  Typical keys
+shouldn’t set or restrict this option.
 
 inder option.
 .............
