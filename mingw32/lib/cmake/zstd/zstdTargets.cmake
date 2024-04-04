@@ -74,7 +74,7 @@ add_library(zstd::libzstd INTERFACE IMPORTED)
 
 set_target_properties(zstd::libzstd PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "zstd::libzstd_static"
+  INTERFACE_LINK_LIBRARIES "zstd::libzstd_shared"
 )
 
 # Load information for each installed configuration.
