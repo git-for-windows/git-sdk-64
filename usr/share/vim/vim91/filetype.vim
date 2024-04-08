@@ -280,6 +280,9 @@ endif
 " Busted (Lua unit testing framework - configuration files)
 au BufNewFile,BufRead .busted			setf lua
 
+" Bundle config
+au BufNewFile,BufRead */.bundle/config			setf yaml
+
 " C or lpc
 au BufNewFile,BufRead *.c			call dist#ft#FTlpc()
 au BufNewFile,BufRead *.lpc,*.ulpc		setf lpc
@@ -316,6 +319,9 @@ au BufRead,BufNewFile *.chai			setf chaiscript
 
 " Chatito
 au BufNewFile,BufRead *.chatito			setf chatito
+
+" Chuck
+au BufNewFile,BufRead *.ck			setf chuck
 
 " Comshare Dimension Definition Language
 au BufNewFile,BufRead *.cdl			setf cdl
@@ -405,6 +411,9 @@ au BufNewFile,BufRead .clang-format		setf yaml
 
 " Clang-tidy
 au BufNewFile,BufRead .clang-tidy		setf yaml
+
+" Matplotlib style
+au BufNewFile,BufRead *.mplstyle		setf yaml
 
 " Clean
 au BufNewFile,BufRead *.dcl,*.icl		setf clean
@@ -501,6 +510,9 @@ endif
 au BufNewFile,BufRead *s6*/\(up\|down\|run\|finish\)    setf execline
 au BufNewFile,BufRead s6-*                              setf execline
 
+" Fontconfig config files
+au BufNewFile,BufRead fonts.conf			setf xml
+
 " Lynx config files
 au BufNewFile,BufRead lynx.cfg			setf lynx
 
@@ -510,6 +522,10 @@ au BufNewFile,BufRead *.lrc			setf lyrics
 " Modula-3 configuration language (must be before *.cfg and *makefile)
 au BufNewFile,BufRead *.quake,cm3.cfg		setf m3quake
 au BufNewFile,BufRead m3makefile,m3overrides	setf m3build
+
+" Many Python tools use dosini as their config, like setuptools, pudb, coverage
+" (must be before *.cfg)
+au BufNewFile,BufRead setup.cfg,pudb.cfg,.coveragerc	setf dosini
 
 " Quake
 au BufNewFile,BufRead *baseq[2-3]/*.cfg,*id1/*.cfg	setf quake
@@ -530,6 +546,9 @@ au BufNewFile,BufRead *.csp,*.fdr		setf csp
 " CUPL logic description and simulation
 au BufNewFile,BufRead *.pld			setf cupl
 au BufNewFile,BufRead *.si			setf cuplsim
+
+" Dafny
+au BufNewFile,BufRead *.dfy			setf dafny
 
 " Dart
 au BufRead,BufNewfile *.dart,*.drt		setf dart
@@ -619,8 +638,12 @@ au BufNewFile,BufRead *.intr			setf dylanintr
 " Dylan
 au BufNewFile,BufRead *.dylan			setf dylan
 
-" Microsoft Module Definition
-au BufNewFile,BufRead *.def			setf def
+" Microsoft Module Definition or Modula-2
+au BufNewFile,BufRead *.def			call dist#ft#FTdef()
+
+if has("fname_case")
+  au BufNewFile,BufRead *.DEF			setf modula2
+endif
 
 " Dracula
 au BufNewFile,BufRead *.drac,*.drc,*lvs,*lpe	setf dracula
@@ -639,8 +662,8 @@ au BufNewFile,BufRead *.dsl
 " DTD (Document Type Definition for XML)
 au BufNewFile,BufRead *.dtd			setf dtd
 
-" DTS/DSTI (device tree files)
-au BufNewFile,BufRead *.dts,*.dtsi		setf dts
+" DTS/DSTI/DTSO (device tree files)
+au BufNewFile,BufRead *.dts,*.dtsi,*.dtso,*.its	setf dts
 
 " EDIF (*.edf,*.edif,*.edn,*.edo) or edn
 au BufNewFile,BufRead *.ed\(f\|if\|o\)		setf edif
@@ -852,7 +875,7 @@ au BufNewFile,BufRead *.gts			setf typescript.glimmer
 au BufNewFile,BufRead *.gjs			setf javascript.glimmer
 
 " Gnuplot scripts
-au BufNewFile,BufRead *.gpi,.gnuplot		setf gnuplot
+au BufNewFile,BufRead *.gpi,*.gnuplot,.gnuplot_history	setf gnuplot
 
 " Go (Google)
 au BufNewFile,BufRead *.go			setf go
@@ -928,7 +951,7 @@ au BufNewFile,BufRead *.vc,*.ev,*.sum,*.errsum	setf hercules
 au BufRead,BufNewFile *.heex			setf heex
 
 " HEX (Intel)
-au BufNewFile,BufRead *.hex,*.h32		setf hex
+au BufNewFile,BufRead *.hex,*.ihex,*.int,*.ihe,*.ihx,*.mcs,*.h32,*.h80,*.h86,*.a43,*.a90	setf hex
 
 " Hjson
 au BufNewFile,BufRead *.hjson			setf hjson
@@ -1085,8 +1108,11 @@ au BufNewFile,BufRead *.json-patch		setf json
 " Geojson is also json
 au BufNewFile,BufRead *.geojson			setf json
 
-" Jupyter Notebook is also json
-au BufNewFile,BufRead *.ipynb			setf json
+" Jupyter Notebook and jupyterlab config is also json
+au BufNewFile,BufRead *.ipynb,*.jupyterlab-settings	setf json
+
+" Sublime config
+au BufNewFile,BufRead *.sublime-project,*.sublime-settings,*.sublime-workspace	setf json
 
 " Other files that look like json
 au BufNewFile,BufRead .prettierrc,.firebaserc,.stylelintrc	setf json
@@ -1134,7 +1160,7 @@ au BufNewFile,BufRead *.kt,*.ktm,*.kts		setf kotlin
 au BufNewFile,BufRead *.ks			setf kscript
 
 " Kconfig
-au BufNewFile,BufRead Kconfig,Kconfig.debug	setf kconfig
+au BufNewFile,BufRead Kconfig,Kconfig.debug,Config.in	setf kconfig
 
 " Lace (ISE)
 au BufNewFile,BufRead *.ace,*.ACE		setf lace
@@ -1157,8 +1183,11 @@ au BufNewFile,BufRead *.sig			call dist#ft#FTsig()
 " LDAP LDIF
 au BufNewFile,BufRead *.ldif			setf ldif
 
+" Luadoc, Ldoc (must be before *.ld)
+au BufNewFile,BufRead config.ld			setf lua
+
 " Ld loader
-au BufNewFile,BufRead *.ld			setf ld
+au BufNewFile,BufRead *.ld,*/ldscripts/*	setf ld
 
 " Lean
 au BufNewFile,BufRead *.lean			setf lean
@@ -1193,9 +1222,9 @@ au BufNewFile,BufRead *.ly,*.ily		setf lilypond
 " Lisp (*.el = ELisp, *.cl = Common Lisp)
 " *.jl was removed, it's also used for Julia, better skip than guess wrong.
 if has("fname_case")
-  au BufNewFile,BufRead *.lsp,*.lisp,*.asd,*.el,*.cl,*.L,.emacs,.sawfishrc setf lisp
+  au BufNewFile,BufRead *.lsp,*.lisp,*.asd,*.el,*.cl,*.L,.emacs,.sawfishrc,*.stsg,*/supertux2/config setf lisp
 else
-  au BufNewFile,BufRead *.lsp,*.lisp,*.asd,*.el,*.cl,.emacs,.sawfishrc setf lisp
+  au BufNewFile,BufRead *.lsp,*.lisp,*.asd,*.el,*.cl,.emacs,.sawfishrc,*.stsg,*/supertux2/config setf lisp
 endif
 
 " SBCL implementation of Common Lisp
@@ -1231,17 +1260,20 @@ au BufNewFile,BufRead *.lot,*.lotos		setf lotos
 " Lout (also: *.lt)
 au BufNewFile,BufRead *.lou,*.lout		setf lout
 
-" Lua
-au BufNewFile,BufRead *.lua			setf lua
+" Lua, Texlua
+au BufNewFile,BufRead *.lua,*.tlu		setf lua
 
 " Luau
 au BufNewFile,BufRead *.luau		setf luau
+
+" Luau config
+au BufNewFile,BufRead .luaurc		setf jsonc
 
 " Luacheck
 au BufNewFile,BufRead .luacheckrc		setf lua
 
 " Luarocks
-au BufNewFile,BufRead *.rockspec		setf lua
+au BufNewFile,BufRead *.rockspec,rock_manifest	setf lua
 
 " Linden Scripting Language (Second Life)
 au BufNewFile,BufRead *.lsl			call dist#ft#FTlsl()
@@ -1339,9 +1371,6 @@ au BufNewFile,BufRead *.mmp			setf mmp
 " ABB Rapid, Modula-2, Modsim III or LambdaProlog
 au BufNewFile,BufRead *.mod\c			call dist#ft#FTmod()
 
-" Modula-2  (.md removed in favor of Markdown, see dist#ft#FTmod for *.MOD)
-au BufNewFile,BufRead *.m2,*.DEF,*.mi		setf modula2
-
 " Modula-3 (.m3, .i3, .mg, .ig)
 au BufNewFile,BufRead *.[mi][3g]		setf modula3
 
@@ -1379,7 +1408,7 @@ au BufNewFile,BufRead mrxvtrc,.mrxvtrc		setf mrxvtrc
 au BufNewFile,BufRead *.msql			setf msql
 
 " Mysql
-au BufNewFile,BufRead *.mysql			setf mysql
+au BufNewFile,BufRead *.mysql,.mysql_history	setf mysql
 
 " Tcl Shell RC file
 au BufNewFile,BufRead tclsh.rc			setf tcl
@@ -1482,7 +1511,7 @@ au BufNewFile,BufRead *.ml,*.mli,*.mll,*.mly,.ocamlinit,*.mlt,*.mlp,*.mlip,*.mli
 au BufNewFile,BufRead *.occ			setf occam
 
 " Octave
-au BufNewFile,BufRead octave.conf,.octaverc,octaverc	setf octave
+au BufNewFile,BufRead octave.conf,.octaverc,octaverc,*/octave/history	setf octave
 
 " Odin
 au BufNewFile,BufRead *.odin			setf odin
@@ -2001,7 +2030,7 @@ au BufNewFile,BufRead catalog			setf catalog
 " Gentoo ebuilds, Arch Linux PKGBUILDs and Alpine Linux APKBUILDs are actually
 " bash scripts.
 " NOTE: Patterns ending in a star are further down, these have lower priority.
-au BufNewFile,BufRead .bashrc,bashrc,bash.bashrc,.bash[_-]profile,.bash[_-]logout,.bash[_-]aliases,bash-fc[-.],*.ebuild,PKGBUILD*,*.install,*.bash,*.eclass,PKGBUILD,APKBUILD call dist#ft#SetFileTypeSH("bash")
+au BufNewFile,BufRead .bashrc,bashrc,bash.bashrc,.bash[_-]profile,.bash[_-]logout,.bash[_-]aliases,.bash[_-]history,bash-fc[-.],*.ebuild,PKGBUILD*,*.install,*.bash,*.eclass,PKGBUILD,APKBUILD,*.bats call dist#ft#SetFileTypeSH("bash")
 au BufNewFile,BufRead .kshrc,*.ksh call dist#ft#SetFileTypeSH("ksh")
 au BufNewFile,BufRead */etc/profile,.profile,*.sh,*.env call dist#ft#SetFileTypeSH(getline(1))
 
@@ -2028,8 +2057,8 @@ au BufNewFile,BufRead *.zs			setf zserio
 
 " Z-Shell script (patterns ending in a star further below)
 au BufNewFile,BufRead .zprofile,*/etc/zprofile,.zfbfmarks  setf zsh
-au BufNewFile,BufRead .zshrc,.zshenv,.zlogin,.zlogout,.zcompdump setf zsh
-au BufNewFile,BufRead *.zsh			setf zsh
+au BufNewFile,BufRead .zshrc,.zshenv,.zlogin,.zlogout,.zcompdump,.zsh_history setf zsh
+au BufNewFile,BufRead *.zsh,*.zsh-theme,*.zunit		setf zsh
 
 " Scheme ("racket" patterns are now separate, see above)
 au BufNewFile,BufRead *.scm,*.ss,*.sld		setf scheme
@@ -2344,6 +2373,9 @@ au BufNewFile,BufRead *.mts,*.cts		setf typescript
 " TypeScript with React
 au BufNewFile,BufRead *.tsx			setf typescriptreact
 
+" TypeSpec files
+au BufNewFile,BufRead *.tsp			setf typespec
+
 " Motif UIT/UIL files
 au BufNewFile,BufRead *.uit,*.uil		setf uil
 
@@ -2390,6 +2422,9 @@ au BufRead,BufNewFile *.vdmpp,*.vpp		setf vdmpp
 au BufRead,BufNewFile *.vdmrt			setf vdmrt
 au BufRead,BufNewFile *.vdmsl,*.vdm		setf vdmsl
 
+" Vento
+au BufNewFile,BufRead *.vto			setf vento
+
 " Vera
 au BufNewFile,BufRead *.vr,*.vri,*.vrh		setf vera
 
@@ -2414,7 +2449,7 @@ au BufNewFile,BufRead *.tape			setf vhs
 au BufNewFile,BufRead *.hdl,*.vhd,*.vhdl,*.vbe,*.vst,*.vho  setf vhdl
 
 " Vim script
-au BufNewFile,BufRead *.vim,.exrc,_exrc		setf vim
+au BufNewFile,BufRead *.vim,.exrc,_exrc,.netrwhist	setf vim
 
 " Viminfo file
 au BufNewFile,BufRead .viminfo,_viminfo		setf viminfo
@@ -2773,7 +2808,7 @@ au! BufNewFile,BufRead *jarg*
 au BufNewFile,BufRead *.properties_??_??_*	call s:StarSetf('jproperties')
 
 " Kconfig
-au BufNewFile,BufRead Kconfig.*			call s:StarSetf('kconfig')
+au BufNewFile,BufRead Kconfig.*,Config.in.*	call s:StarSetf('kconfig')
 
 " Lilo: Linux loader
 au BufNewFile,BufRead lilo.conf*		call s:StarSetf('lilo')
@@ -2930,6 +2965,9 @@ au filetypedetect BufNewFile,BufRead,StdinReadPost *
 	\	|| getline(5) =~ '^#') |
 	\   setf FALLBACK conf |
 	\ endif
+
+" Yarn lock
+au BufNewFile,BufRead yarn.lock			setf yaml
 
 
 " If the GUI is already running, may still need to install the Syntax menu.
