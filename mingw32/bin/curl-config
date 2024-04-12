@@ -98,7 +98,7 @@ while test $# -gt 0; do
         ;;
 
     --version)
-        echo libcurl 8.6.0
+        echo libcurl 8.7.1
         exit 0
         ;;
 
@@ -110,11 +110,11 @@ while test $# -gt 0; do
         # dash as that's used for things like version 1.2.3-CVS
         cpatch=`echo $checkfor | cut -d. -f3 | cut -d- -f1`
 
-        vmajor=`echo 8.6.0 | cut -d. -f1`
-        vminor=`echo 8.6.0 | cut -d. -f2`
+        vmajor=`echo 8.7.1 | cut -d. -f1`
+        vminor=`echo 8.7.1 | cut -d. -f2`
         # when extracting the patch part we strip off everything after a
         # dash as that's used for things like version 1.2.3-CVS
-        vpatch=`echo 8.6.0 | cut -d. -f3 | cut -d- -f1`
+        vpatch=`echo 8.7.1 | cut -d. -f3 | cut -d- -f1`
 
         if test "$vmajor" -gt "$cmajor"; then
             exit 0;
@@ -130,12 +130,12 @@ while test $# -gt 0; do
             fi
         fi
 
-        echo "requested version $checkfor is newer than existing 8.6.0"
+        echo "requested version $checkfor is newer than existing 8.7.1"
         exit 1
         ;;
 
     --vernum)
-        echo 080600
+        echo 080701
         exit 0
         ;;
 
@@ -174,7 +174,7 @@ while test $# -gt 0; do
 
     --static-libs)
         if test "Xno" != "Xno" ; then
-          echo "${exec_prefix}/lib/libcurl.a" -pipe -Wl,--no-seh -Wl,--large-address-aware -lidn2 -lssh2 -lssh2 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lwldap32 -lzstd -lzstd -lbrotlidec -lbrotlidec -lz -lws2_32
+          echo "${exec_prefix}/lib/libcurl.a" -Wl,--no-seh -Wl,--large-address-aware -lidn2 -lssh2 -lssh2 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lwldap32 -lzstd -lzstd -lbrotlidec -lbrotlidec -lz -lws2_32
         else
           echo "curl was built with static libraries disabled" >&2
           exit 1
@@ -182,7 +182,7 @@ while test $# -gt 0; do
         ;;
 
     --configure)
-        echo " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' '--disable-pthreads' '--without-random' '--disable-static' '--enable-shared' '--enable-sspi' '--enable-ldap' '--enable-ldaps' '--with-brotli' '--with-ldap-lib=wldap32' '--with-libssh2' '--with-zstd' '--with-schannel' '--without-nghttp2' '--without-ca-bundle' '--without-ca-path' '--without-librtmp' '--disable-debug' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong' 'LDFLAGS=-pipe -Wl,--no-seh -Wl,--large-address-aware' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1'"
+        echo " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' '--disable-pthreads' '--without-random' '--disable-static' '--enable-shared' '--enable-sspi' '--enable-ldap' '--enable-ldaps' '--with-brotli' '--with-ldap-lib=wldap32' '--with-libssh2' '--with-zstd' '--with-schannel' '--without-nghttp2' '--without-ca-bundle' '--without-ca-path' '--without-librtmp' '--disable-debug' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong' 'LDFLAGS=-Wl,--no-seh -Wl,--large-address-aware' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1'"
         ;;
 
     *)
