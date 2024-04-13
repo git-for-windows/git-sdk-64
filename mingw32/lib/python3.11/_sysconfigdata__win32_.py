@@ -18,8 +18,8 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'BINDIR': '/mingw32/bin',
  'BINLIBDEST': '/mingw32/lib/python3.11',
  'BLDLIBRARY': '-L. -lpython3.11',
- 'BLDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe -Wl,--no-seh '
-              '-Wl,--large-address-aware -Wl,--large-address-aware -pipe '
+ 'BLDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -Wl,--no-seh '
+              '-Wl,--large-address-aware -Wl,--large-address-aware '
               '-Wl,--no-seh -Wl,--large-address-aware '
               '-Wl,--large-address-aware',
  'BOOTSTRAP_HEADERS': '\\',
@@ -47,8 +47,8 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
                             '-fvisibility=hidden -D_WIN32_WINNT=0x0602 '
                             '-DPY3_DLLNAME=\'L"libpython3.11.dll"\' '
                             '-DMS_DLL_ID=\'"3.11-32"\'',
- 'CONFIGURE_CPPFLAGS': '-I../Python-3.11.8/PC -D__USE_MINGW_ANSI_STDIO=1 -I.',
- 'CONFIGURE_LDFLAGS': '-pipe -Wl,--no-seh -Wl,--large-address-aware '
+ 'CONFIGURE_CPPFLAGS': '-I../Python-3.11.9/PC -D__USE_MINGW_ANSI_STDIO=1 -I.',
+ 'CONFIGURE_LDFLAGS': '-Wl,--no-seh -Wl,--large-address-aware '
                       '-Wl,--large-address-aware',
  'CONFIGURE_LDFLAGS_NODIST': '-fno-semantic-interposition',
  'CONFIGURE_LDFLAGS_NOLTO': '',
@@ -63,7 +63,7 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
                 "'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig' "
                 "'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe "
                 "-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3' "
-                "'LDFLAGS=-pipe -Wl,--no-seh -Wl,--large-address-aware "
+                "'LDFLAGS=-Wl,--no-seh -Wl,--large-address-aware "
                 "-Wl,--large-address-aware' "
                 "'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1'",
  'CONFINCLUDEDIR': '/mingw32/include',
@@ -75,16 +75,16 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'COVERAGE_REPORT_OPTIONS': '--rc lcov_branch_coverage=1 --branch-coverage '
                             '--title "CPython 3.11 LCOV report [commit $(shell '
                             ')]"',
- 'CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.11.8/Include '
-             '-I../Python-3.11.8/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
+ 'CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.11.9/Include '
+             '-I../Python-3.11.9/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
              '-D__USE_MINGW_ANSI_STDIO=1',
  'CXX': 'g++',
  'DECIMAL_CFLAGS': '-DCONFIG_32=1 -DANSI=1',
  'DECIMAL_LDFLAGS': '-lmpdec',
  'DEEPFREEZE_C': 'Python/deepfreeze/deepfreeze.c',
- 'DEEPFREEZE_DEPS': '../Python-3.11.8/Tools/scripts/deepfreeze.py '
+ 'DEEPFREEZE_DEPS': '../Python-3.11.9/Tools/scripts/deepfreeze.py '
                     '_bootstrap_python '
-                    '../Python-3.11.8/Programs/_freeze_module.py \\',
+                    '../Python-3.11.9/Programs/_freeze_module.py \\',
  'DEEPFREEZE_OBJS': 'Python/deepfreeze/deepfreeze.o',
  'DESTDIR': '',
  'DESTDIRFINAL': '/',
@@ -124,11 +124,11 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'FILEMODE': 644,
  'FLOAT_WORDS_BIGENDIAN': 0,
  'FREEZE_MODULE': './_bootstrap_python '
-                  '../Python-3.11.8/Programs/_freeze_module.py',
+                  '../Python-3.11.9/Programs/_freeze_module.py',
  'FREEZE_MODULE_BOOTSTRAP': './Programs/_freeze_module',
  'FREEZE_MODULE_BOOTSTRAP_DEPS': 'Programs/_freeze_module',
  'FREEZE_MODULE_DEPS': '_bootstrap_python '
-                       '../Python-3.11.8/Programs/_freeze_module.py',
+                       '../Python-3.11.9/Programs/_freeze_module.py',
  'FROZEN_FILES_IN': '\\',
  'FROZEN_FILES_OUT': '\\',
  'GETPGRP_HAVE_ARG': 0,
@@ -633,14 +633,13 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'IO_H': 'Modules/_io/_iomodule.h',
  'IO_OBJS': '\\',
  'LDCXXSHARED': 'g++ -shared -Wl,--enable-auto-image-base',
- 'LDFLAGS': '-pipe -Wl,--no-seh -Wl,--large-address-aware '
-            '-Wl,--large-address-aware -pipe -Wl,--no-seh '
-            '-Wl,--large-address-aware -Wl,--large-address-aware',
+ 'LDFLAGS': '-Wl,--no-seh -Wl,--large-address-aware -Wl,--large-address-aware '
+            '-Wl,--no-seh -Wl,--large-address-aware -Wl,--large-address-aware',
  'LDLIBRARY': 'libpython3.11.dll.a',
  'LDLIBRARYDIR': '',
- 'LDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -pipe -Wl,--no-seh '
-             '-Wl,--large-address-aware -Wl,--large-address-aware -pipe '
-             '-Wl,--no-seh -Wl,--large-address-aware -Wl,--large-address-aware',
+ 'LDSHARED': 'gcc -shared -Wl,--enable-auto-image-base -Wl,--no-seh '
+             '-Wl,--large-address-aware -Wl,--large-address-aware -Wl,--no-seh '
+             '-Wl,--large-address-aware -Wl,--large-address-aware',
  'LDVERSION': '3.11',
  'LIBC': '',
  'LIBDEST': '/mingw32/lib/python3.11',
@@ -655,9 +654,9 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
                     '-fvisibility=hidden -D_WIN32_WINNT=0x0602 '
                     '-DPY3_DLLNAME=\'L"libpython3.11.dll"\' '
                     '-DMS_DLL_ID=\'"3.11-32"\' -fprofile-use '
-                    '-fprofile-correction -I../Python-3.11.8/Include/internal '
+                    '-fprofile-correction -I../Python-3.11.9/Include/internal '
                     '-IObjects -IInclude -IPython -I. '
-                    '-I../Python-3.11.8/Include -I../Python-3.11.8/PC '
+                    '-I../Python-3.11.9/Include -I../Python-3.11.9/PC '
                     '-D__USE_MINGW_ANSI_STDIO=1 -I. -D__USE_MINGW_ANSI_STDIO=1',
  'LIBEXPAT_HEADERS': '\\',
  'LIBEXPAT_OBJS': '\\',
@@ -674,9 +673,9 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
                     '-D_WIN32_WINNT=0x0602 '
                     '-DPY3_DLLNAME=\'L"libpython3.11.dll"\' '
                     '-DMS_DLL_ID=\'"3.11-32"\' -fprofile-use '
-                    '-fprofile-correction -I../Python-3.11.8/Include/internal '
+                    '-fprofile-correction -I../Python-3.11.9/Include/internal '
                     '-IObjects -IInclude -IPython -I. '
-                    '-I../Python-3.11.8/Include -I../Python-3.11.8/PC '
+                    '-I../Python-3.11.9/Include -I../Python-3.11.9/PC '
                     '-D__USE_MINGW_ANSI_STDIO=1 -I. -D__USE_MINGW_ANSI_STDIO=1',
  'LIBMPDEC_HEADERS': '\\',
  'LIBMPDEC_OBJS': '\\',
@@ -709,7 +708,7 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'MAINCC': 'gcc',
  'MAJOR_IN_MKDEV': 0,
  'MAJOR_IN_SYSMACROS': 0,
- 'MAKESETUP': '../Python-3.11.8/Modules/makesetup',
+ 'MAKESETUP': '../Python-3.11.9/Modules/makesetup',
  'MANDIR': '/mingw32/share/man',
  'MKDIR_P': '/usr/bin/mkdir -p',
  'MODBUILT_NAMES': 'atexit  faulthandler  nt  _signal  _tracemalloc  _codecs  '
@@ -740,7 +739,7 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'MODULE_BINASCII_CFLAGS': '-DUSE_ZLIB_CRC32',
  'MODULE_BINASCII_LDFLAGS': '-lz',
  'MODULE_BINASCII_STATE': 'yes',
- 'MODULE_CMATH_DEPS': '../Python-3.11.8/Modules/_math.h',
+ 'MODULE_CMATH_DEPS': '../Python-3.11.9/Modules/_math.h',
  'MODULE_CMATH_LDFLAGS': '-lm',
  'MODULE_CMATH_STATE': 'yes',
  'MODULE_ERRNO_LDFLAGS': '',
@@ -748,7 +747,7 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'MODULE_FCNTL_STATE': 'missing',
  'MODULE_GRP_STATE': 'missing',
  'MODULE_ITERTOOLS_LDFLAGS': '',
- 'MODULE_MATH_DEPS': '../Python-3.11.8/Modules/_math.h',
+ 'MODULE_MATH_DEPS': '../Python-3.11.9/Modules/_math.h',
  'MODULE_MATH_LDFLAGS': '-lm',
  'MODULE_MATH_STATE': 'yes',
  'MODULE_MMAP_STATE': 'yes',
@@ -769,8 +768,8 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'MODULE_TERMIOS_STATE': 'missing',
  'MODULE_TIME_LDFLAGS': '',
  'MODULE_TIME_STATE': 'yes',
- 'MODULE_UNICODEDATA_DEPS': '../Python-3.11.8/Modules/unicodedata_db.h '
-                            '../Python-3.11.8/Modules/unicodename_db.h',
+ 'MODULE_UNICODEDATA_DEPS': '../Python-3.11.9/Modules/unicodedata_db.h '
+                            '../Python-3.11.9/Modules/unicodename_db.h',
  'MODULE_UNICODEDATA_STATE': 'yes',
  'MODULE_WINREG_LDFLAGS': '',
  'MODULE_WINSOUND_LDFLAGS': '-lwinmm',
@@ -785,22 +784,22 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'MODULE__ASYNCIO_STATE': 'yes',
  'MODULE__BISECT_STATE': 'yes',
  'MODULE__BLAKE2_CFLAGS': '',
- 'MODULE__BLAKE2_DEPS': '../Python-3.11.8/Modules/_blake2/impl/blake2-config.h '
-                        '../Python-3.11.8/Modules/_blake2/impl/blake2-impl.h '
-                        '../Python-3.11.8/Modules/_blake2/impl/blake2.h '
-                        '../Python-3.11.8/Modules/_blake2/impl/blake2b-load-sse2.h '
-                        '../Python-3.11.8/Modules/_blake2/impl/blake2b-load-sse41.h '
-                        '../Python-3.11.8/Modules/_blake2/impl/blake2b-ref.c '
-                        '../Python-3.11.8/Modules/_blake2/impl/blake2b-round.h '
-                        '../Python-3.11.8/Modules/_blake2/impl/blake2b.c '
-                        '../Python-3.11.8/Modules/_blake2/impl/blake2s-load-sse2.h '
-                        '../Python-3.11.8/Modules/_blake2/impl/blake2s-load-sse41.h '
-                        '../Python-3.11.8/Modules/_blake2/impl/blake2s-load-xop.h '
-                        '../Python-3.11.8/Modules/_blake2/impl/blake2s-ref.c '
-                        '../Python-3.11.8/Modules/_blake2/impl/blake2s-round.h '
-                        '../Python-3.11.8/Modules/_blake2/impl/blake2s.c '
-                        '../Python-3.11.8/Modules/_blake2/blake2module.h '
-                        '../Python-3.11.8/Modules/hashlib.h',
+ 'MODULE__BLAKE2_DEPS': '../Python-3.11.9/Modules/_blake2/impl/blake2-config.h '
+                        '../Python-3.11.9/Modules/_blake2/impl/blake2-impl.h '
+                        '../Python-3.11.9/Modules/_blake2/impl/blake2.h '
+                        '../Python-3.11.9/Modules/_blake2/impl/blake2b-load-sse2.h '
+                        '../Python-3.11.9/Modules/_blake2/impl/blake2b-load-sse41.h '
+                        '../Python-3.11.9/Modules/_blake2/impl/blake2b-ref.c '
+                        '../Python-3.11.9/Modules/_blake2/impl/blake2b-round.h '
+                        '../Python-3.11.9/Modules/_blake2/impl/blake2b.c '
+                        '../Python-3.11.9/Modules/_blake2/impl/blake2s-load-sse2.h '
+                        '../Python-3.11.9/Modules/_blake2/impl/blake2s-load-sse41.h '
+                        '../Python-3.11.9/Modules/_blake2/impl/blake2s-load-xop.h '
+                        '../Python-3.11.9/Modules/_blake2/impl/blake2s-ref.c '
+                        '../Python-3.11.9/Modules/_blake2/impl/blake2s-round.h '
+                        '../Python-3.11.9/Modules/_blake2/impl/blake2s.c '
+                        '../Python-3.11.9/Modules/_blake2/blake2module.h '
+                        '../Python-3.11.9/Modules/hashlib.h',
  'MODULE__BLAKE2_LDFLAGS': '',
  'MODULE__BLAKE2_STATE': 'yes',
  'MODULE__BZ2_CFLAGS': '',
@@ -817,27 +816,27 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'MODULE__CONTEXTVARS_STATE': 'yes',
  'MODULE__CRYPT_STATE': 'missing',
  'MODULE__CSV_STATE': 'yes',
- 'MODULE__CTYPES_DEPS': '../Python-3.11.8/Modules/_ctypes/ctypes.h',
+ 'MODULE__CTYPES_DEPS': '../Python-3.11.9/Modules/_ctypes/ctypes.h',
  'MODULE__CTYPES_TEST_LDFLAGS': '-lm',
  'MODULE__CTYPES_TEST_STATE': 'yes',
  'MODULE__DATETIME_LDFLAGS': '-lm',
  'MODULE__DATETIME_STATE': 'yes',
  'MODULE__DECIMAL_CFLAGS': '-DCONFIG_32=1 -DANSI=1',
- 'MODULE__DECIMAL_DEPS': '../Python-3.11.8/Modules/_decimal/docstrings.h',
+ 'MODULE__DECIMAL_DEPS': '../Python-3.11.9/Modules/_decimal/docstrings.h',
  'MODULE__DECIMAL_LDFLAGS': '-lmpdec',
  'MODULE__DECIMAL_STATE': 'yes',
  'MODULE__ELEMENTTREE_CFLAGS': '',
- 'MODULE__ELEMENTTREE_DEPS': '../Python-3.11.8/Modules/pyexpat.c',
+ 'MODULE__ELEMENTTREE_DEPS': '../Python-3.11.9/Modules/pyexpat.c',
  'MODULE__ELEMENTTREE_STATE': 'yes',
  'MODULE__FUNCTOOLS_LDFLAGS': '',
  'MODULE__GDBM_STATE': 'missing',
  'MODULE__HASHLIB_CFLAGS': '',
- 'MODULE__HASHLIB_DEPS': '../Python-3.11.8/Modules/hashlib.h',
+ 'MODULE__HASHLIB_DEPS': '../Python-3.11.9/Modules/hashlib.h',
  'MODULE__HASHLIB_LDFLAGS': '-lcrypto',
  'MODULE__HASHLIB_STATE': 'yes',
  'MODULE__HEAPQ_STATE': 'yes',
- 'MODULE__IO_CFLAGS': '-I../Python-3.11.8/Modules/_io',
- 'MODULE__IO_DEPS': '../Python-3.11.8/Modules/_io/_iomodule.h',
+ 'MODULE__IO_CFLAGS': '-I../Python-3.11.9/Modules/_io',
+ 'MODULE__IO_DEPS': '../Python-3.11.9/Modules/_io/_iomodule.h',
  'MODULE__IO_LDFLAGS': '',
  'MODULE__IO_STATE': 'yes',
  'MODULE__JSON_STATE': 'yes',
@@ -846,12 +845,12 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'MODULE__LZMA_CFLAGS': '',
  'MODULE__LZMA_LDFLAGS': '-llzma',
  'MODULE__LZMA_STATE': 'yes',
- 'MODULE__MD5_DEPS': '../Python-3.11.8/Modules/hashlib.h',
+ 'MODULE__MD5_DEPS': '../Python-3.11.9/Modules/hashlib.h',
  'MODULE__MD5_STATE': 'yes',
  'MODULE__MSI_LDFLAGS': '-lmsi -lcabinet -lrpcrt4',
  'MODULE__MSI_STATE': 'yes',
  'MODULE__MULTIBYTECODEC_STATE': 'yes',
- 'MODULE__MULTIPROCESSING_CFLAGS': '-I../Python-3.11.8/Modules/_multiprocessing',
+ 'MODULE__MULTIPROCESSING_CFLAGS': '-I../Python-3.11.9/Modules/_multiprocessing',
  'MODULE__MULTIPROCESSING_STATE': 'yes',
  'MODULE__OPCODE_STATE': 'yes',
  'MODULE__OPERATOR_LDFLAGS': '',
@@ -863,42 +862,42 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'MODULE__QUEUE_STATE': 'yes',
  'MODULE__RANDOM_STATE': 'yes',
  'MODULE__SCPROXY_STATE': 'n/a',
- 'MODULE__SHA1_DEPS': '../Python-3.11.8/Modules/hashlib.h',
+ 'MODULE__SHA1_DEPS': '../Python-3.11.9/Modules/hashlib.h',
  'MODULE__SHA1_STATE': 'yes',
- 'MODULE__SHA256_DEPS': '../Python-3.11.8/Modules/hashlib.h',
+ 'MODULE__SHA256_DEPS': '../Python-3.11.9/Modules/hashlib.h',
  'MODULE__SHA256_STATE': 'yes',
- 'MODULE__SHA3_DEPS': '../Python-3.11.8/Modules/_sha3/sha3.c '
-                      '../Python-3.11.8/Modules/_sha3/sha3.h '
-                      '../Python-3.11.8/Modules/hashlib.h',
+ 'MODULE__SHA3_DEPS': '../Python-3.11.9/Modules/_sha3/sha3.c '
+                      '../Python-3.11.9/Modules/_sha3/sha3.h '
+                      '../Python-3.11.9/Modules/hashlib.h',
  'MODULE__SHA3_STATE': 'yes',
- 'MODULE__SHA512_DEPS': '../Python-3.11.8/Modules/hashlib.h',
+ 'MODULE__SHA512_DEPS': '../Python-3.11.9/Modules/hashlib.h',
  'MODULE__SHA512_STATE': 'yes',
- 'MODULE__SOCKET_DEPS': '../Python-3.11.8/Modules/socketmodule.h '
-                        '../Python-3.11.8/Modules/addrinfo.h '
-                        '../Python-3.11.8/Modules/getaddrinfo.c '
-                        '../Python-3.11.8/Modules/getnameinfo.c',
+ 'MODULE__SOCKET_DEPS': '../Python-3.11.9/Modules/socketmodule.h '
+                        '../Python-3.11.9/Modules/addrinfo.h '
+                        '../Python-3.11.9/Modules/getaddrinfo.c '
+                        '../Python-3.11.9/Modules/getnameinfo.c',
  'MODULE__SOCKET_LDFLAGS': '',
  'MODULE__SOCKET_STATE': 'yes',
- 'MODULE__SQLITE3_CFLAGS': '-I../Python-3.11.8/Modules/_sqlite',
- 'MODULE__SQLITE3_DEPS': '../Python-3.11.8/Modules/_sqlite/connection.h '
-                         '../Python-3.11.8/Modules/_sqlite/cursor.h '
-                         '../Python-3.11.8/Modules/_sqlite/microprotocols.h '
-                         '../Python-3.11.8/Modules/_sqlite/module.h '
-                         '../Python-3.11.8/Modules/_sqlite/prepare_protocol.h '
-                         '../Python-3.11.8/Modules/_sqlite/row.h '
-                         '../Python-3.11.8/Modules/_sqlite/util.h',
+ 'MODULE__SQLITE3_CFLAGS': '-I../Python-3.11.9/Modules/_sqlite',
+ 'MODULE__SQLITE3_DEPS': '../Python-3.11.9/Modules/_sqlite/connection.h '
+                         '../Python-3.11.9/Modules/_sqlite/cursor.h '
+                         '../Python-3.11.9/Modules/_sqlite/microprotocols.h '
+                         '../Python-3.11.9/Modules/_sqlite/module.h '
+                         '../Python-3.11.9/Modules/_sqlite/prepare_protocol.h '
+                         '../Python-3.11.9/Modules/_sqlite/row.h '
+                         '../Python-3.11.9/Modules/_sqlite/util.h',
  'MODULE__SQLITE3_LDFLAGS': '-lsqlite3',
  'MODULE__SQLITE3_STATE': 'yes',
  'MODULE__SRE_LDFLAGS': '',
  'MODULE__SSL_CFLAGS': '',
- 'MODULE__SSL_DEPS': '../Python-3.11.8/Modules/_ssl.h '
-                     '../Python-3.11.8/Modules/_ssl/cert.c '
-                     '../Python-3.11.8/Modules/_ssl/debughelpers.c '
-                     '../Python-3.11.8/Modules/_ssl/misc.c '
-                     '../Python-3.11.8/Modules/_ssl_data.h '
-                     '../Python-3.11.8/Modules/_ssl_data_111.h '
-                     '../Python-3.11.8/Modules/_ssl_data_300.h '
-                     '../Python-3.11.8/Modules/socketmodule.h',
+ 'MODULE__SSL_DEPS': '../Python-3.11.9/Modules/_ssl.h '
+                     '../Python-3.11.9/Modules/_ssl/cert.c '
+                     '../Python-3.11.9/Modules/_ssl/debughelpers.c '
+                     '../Python-3.11.9/Modules/_ssl/misc.c '
+                     '../Python-3.11.9/Modules/_ssl_data.h '
+                     '../Python-3.11.9/Modules/_ssl_data_111.h '
+                     '../Python-3.11.9/Modules/_ssl_data_300.h '
+                     '../Python-3.11.9/Modules/socketmodule.h',
  'MODULE__SSL_LDFLAGS': '-lssl -lcrypto -lws2_32',
  'MODULE__SSL_STATE': 'yes',
  'MODULE__STATISTICS_LDFLAGS': '-lm',
@@ -907,7 +906,7 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'MODULE__STRUCT_STATE': 'yes',
  'MODULE__SYMTABLE_LDFLAGS': '',
  'MODULE__TESTBUFFER_STATE': 'yes',
- 'MODULE__TESTCAPI_DEPS': '../Python-3.11.8/Modules/testcapi_long.h',
+ 'MODULE__TESTCAPI_DEPS': '../Python-3.11.9/Modules/testcapi_long.h',
  'MODULE__TESTCAPI_STATE': 'yes',
  'MODULE__TESTCLINIC_STATE': 'yes',
  'MODULE__TESTIMPORTMULTIPLE_STATE': 'yes',
@@ -986,9 +985,9 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
                              '-DPY3_DLLNAME=\'L"libpython3.11.dll"\' '
                              '-DMS_DLL_ID=\'"3.11-32"\' -fprofile-use '
                              '-fprofile-correction '
-                             '-I../Python-3.11.8/Include/internal -IObjects '
+                             '-I../Python-3.11.9/Include/internal -IObjects '
                              '-IInclude -IPython -I. '
-                             '-I../Python-3.11.8/Include -I../Python-3.11.8/PC '
+                             '-I../Python-3.11.9/Include -I../Python-3.11.9/PC '
                              '-D__USE_MINGW_ANSI_STDIO=1 -I. '
                              '-D__USE_MINGW_ANSI_STDIO=1 '
                              '-DPy_BUILD_CORE_BUILTIN',
@@ -1001,7 +1000,7 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
                      '-fvisibility=hidden -D_WIN32_WINNT=0x0602 '
                      '-DPY3_DLLNAME=\'L"libpython3.11.dll"\' '
                      '-DMS_DLL_ID=\'"3.11-32"\' -fprofile-use '
-                     '-fprofile-correction -I../Python-3.11.8/Include/internal',
+                     '-fprofile-correction -I../Python-3.11.9/Include/internal',
  'PY_COERCE_C_LOCALE': 0,
  'PY_CORE_CFLAGS': '-DNDEBUG -g -fwrapv -O3 -Wall -march=pentium4 '
                    '-mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 '
@@ -1012,26 +1011,26 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
                    '-fvisibility=hidden -D_WIN32_WINNT=0x0602 '
                    '-DPY3_DLLNAME=\'L"libpython3.11.dll"\' '
                    '-DMS_DLL_ID=\'"3.11-32"\' -fprofile-use '
-                   '-fprofile-correction -I../Python-3.11.8/Include/internal '
+                   '-fprofile-correction -I../Python-3.11.9/Include/internal '
                    '-IObjects -IInclude -IPython -I. '
-                   '-I../Python-3.11.8/Include -I../Python-3.11.8/PC '
+                   '-I../Python-3.11.9/Include -I../Python-3.11.9/PC '
                    '-D__USE_MINGW_ANSI_STDIO=1 -I. -D__USE_MINGW_ANSI_STDIO=1 '
                    '-DPy_BUILD_CORE',
- 'PY_CORE_LDFLAGS': '-pipe -Wl,--no-seh -Wl,--large-address-aware '
-                    '-Wl,--large-address-aware -pipe -Wl,--no-seh '
+ 'PY_CORE_LDFLAGS': '-Wl,--no-seh -Wl,--large-address-aware '
+                    '-Wl,--large-address-aware -Wl,--no-seh '
                     '-Wl,--large-address-aware -Wl,--large-address-aware '
                     '-fno-semantic-interposition',
- 'PY_CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.11.8/Include '
-                '-I../Python-3.11.8/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
+ 'PY_CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.11.9/Include '
+                '-I../Python-3.11.9/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
                 '-D__USE_MINGW_ANSI_STDIO=1',
  'PY_ENABLE_SHARED': 1,
  'PY_FORMAT_SIZE_T': '"z"',
- 'PY_LDFLAGS': '-pipe -Wl,--no-seh -Wl,--large-address-aware '
-               '-Wl,--large-address-aware -pipe -Wl,--no-seh '
+ 'PY_LDFLAGS': '-Wl,--no-seh -Wl,--large-address-aware '
+               '-Wl,--large-address-aware -Wl,--no-seh '
                '-Wl,--large-address-aware -Wl,--large-address-aware',
  'PY_LDFLAGS_NODIST': '-fno-semantic-interposition',
- 'PY_LDFLAGS_NOLTO': '-pipe -Wl,--no-seh -Wl,--large-address-aware '
-                     '-Wl,--large-address-aware -pipe -Wl,--no-seh '
+ 'PY_LDFLAGS_NOLTO': '-Wl,--no-seh -Wl,--large-address-aware '
+                     '-Wl,--large-address-aware -Wl,--no-seh '
                      '-Wl,--large-address-aware -Wl,--large-address-aware',
  'PY_SQLITE_ENABLE_LOAD_EXTENSION': 1,
  'PY_SQLITE_HAVE_SERIALIZE': 1,
@@ -1048,9 +1047,9 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
                         '-DPY3_DLLNAME=\'L"libpython3.11.dll"\' '
                         '-DMS_DLL_ID=\'"3.11-32"\' -fprofile-use '
                         '-fprofile-correction '
-                        '-I../Python-3.11.8/Include/internal -IObjects '
-                        '-IInclude -IPython -I. -I../Python-3.11.8/Include '
-                        '-I../Python-3.11.8/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
+                        '-I../Python-3.11.9/Include/internal -IObjects '
+                        '-IInclude -IPython -I. -I../Python-3.11.9/Include '
+                        '-I../Python-3.11.9/PC -D__USE_MINGW_ANSI_STDIO=1 -I. '
                         '-D__USE_MINGW_ANSI_STDIO=1',
  'PY_SUPPORT_TIER': 0,
  'Py_DEBUG': 0,
@@ -1060,7 +1059,7 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'Py_SUNOS_VERSION': 0,
  'Py_TRACE_REFS': 0,
  'QUICKTESTOPTS': '-x test_subprocess test_io test_lib2to3 \\',
- 'RCFLAGS': '-DFIELD3=8150 -O COFF --target=pe-i386',
+ 'RCFLAGS': '-DFIELD3=9150 -O COFF --target=pe-i386',
  'READELF': 'readelf',
  'RESSRCDIR': 'Mac/Resources/framework',
  'RETSIGTYPE': 'void',
@@ -1097,7 +1096,7 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
             'Modules/_sre   Modules/_xxtestfuzz   Modules/cjkcodecs   '
             'Modules/expat   Objects   Parser   Programs   Python   '
             'Python/frozen_modules   Python/deepfreeze PC',
- 'SRC_GDB_HOOKS': '../Python-3.11.8/Tools/gdb/libpython.py',
+ 'SRC_GDB_HOOKS': '../Python-3.11.9/Tools/gdb/libpython.py',
  'STATIC_LIBPYTHON': 1,
  'STDC_HEADERS': 1,
  'STRICT_SYSV_CURSES': "/* Don't use ncurses extensions */",
@@ -1110,7 +1109,7 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'TESTPATH': '',
  'TESTPYTHON': './python.exe -E',
  'TESTPYTHONOPTS': '',
- 'TESTRUNNER': './python.exe -E ../Python-3.11.8/Tools/scripts/run_tests.py',
+ 'TESTRUNNER': './python.exe -E ../Python-3.11.9/Tools/scripts/run_tests.py',
  'TESTSUBDIRS': 'ctypes/test \\',
  'TESTTIMEOUT': 1200,
  'TEST_MODULES': 'yes',
@@ -1121,11 +1120,11 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'TZPATH': '/mingw32/share/zoneinfo',
  'UNICODE_DEPS': '\\',
  'UNIVERSALSDK': '',
- 'UPDATE_FILE': '../Python-3.11.8/Tools/scripts/update_file.py',
+ 'UPDATE_FILE': '../Python-3.11.9/Tools/scripts/update_file.py',
  'USE_COMPUTED_GOTOS': 0,
  'VENVLAUNCHERDIR': '/mingw32/lib/python3.11/venv/scripts/nt',
  'VERSION': '3.11',
- 'VPATH': '../Python-3.11.8',
+ 'VPATH': '../Python-3.11.9',
  'WASM_ASSETS_DIR': './mingw32',
  'WASM_STDLIB': './mingw32/lib/python3.11/os.py',
  'WHEEL_PKG_DIR': '',
@@ -1145,14 +1144,14 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'XMLLIBSUBDIRS': 'xml xml/dom xml/etree xml/parsers xml/sax',
  'abs_builddir': 'C:/M/B/src/build-MINGW32',
  'abs_builddir_b2h': 'C:/M/B/src/build-MINGW32',
- 'abs_srcdir': 'C:/M/B/src/Python-3.11.8',
- 'abs_srcdir_b2h': 'C:/M/B/src/Python-3.11.8',
+ 'abs_srcdir': 'C:/M/B/src/Python-3.11.9',
+ 'abs_srcdir_b2h': 'C:/M/B/src/Python-3.11.9',
  'datarootdir': '/mingw32/share',
  'exec_prefix': '/mingw32',
  'prefix': 'D:/a/msys64/mingw32',
  'prefix_b2h': 'D:/a/msys64/mingw32',
- 'srcdir': 'C:/M/B/src/Python-3.11.8',
- 'srcdir_b2h': 'C:/M/B/src/Python-3.11.8'}
+ 'srcdir': 'C:/M/B/src/Python-3.11.9',
+ 'srcdir_b2h': 'C:/M/B/src/Python-3.11.9'}
 
 
 keys_to_replace = [
