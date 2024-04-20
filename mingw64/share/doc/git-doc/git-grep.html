@@ -468,7 +468,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
            [-f &lt;file&gt;] [-e] &lt;pattern&gt;
            [--and|--or|--not|(|)|-e &lt;pattern&gt;&#8230;&#8203;]
            [--recurse-submodules] [--parent-basename &lt;basename&gt;]
-           [ [--[no-]exclude-standard] [--cached | --no-index | --untracked] | &lt;tree&gt;&#8230;&#8203;]
+           [ [--[no-]exclude-standard] [--cached | --untracked | --no-index] | &lt;tree&gt;&#8230;&#8203;]
            [--] [&lt;pathspec&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
@@ -494,14 +494,23 @@ characters.  An empty string as search expression matches all lines.</p>
 <p>Instead of searching tracked files in the working tree, search
 blobs registered in the index file.</p>
 </dd>
-<dt class="hdlist1">--no-index</dt>
-<dd>
-<p>Search files in the current directory that is not managed by Git.</p>
-</dd>
 <dt class="hdlist1">--untracked</dt>
 <dd>
 <p>In addition to searching in the tracked files in the working
 tree, search also in untracked files.</p>
+</dd>
+<dt class="hdlist1">--no-index</dt>
+<dd>
+<p>Search files in the current directory that is not managed by Git,
+or by ignoring that the current directory is managed by Git.  This
+is rather similar to running the regular <code>grep(1)</code> utility with its
+<code>-r</code> option specified, but with some additional benefits, such as
+using pathspec patterns to limit paths;  see the <em>pathspec</em> entry
+in <a href="gitglossary.html">gitglossary(7)</a> for more information.</p>
+<div class="paragraph">
+<p>This option cannot be used together with <code>--cached</code> or <code>--untracked</code>.
+See also <code>grep.fallbackToNoIndex</code> in <em>CONFIGURATION</em> below.</p>
+</div>
 </dd>
 <dt class="hdlist1">--no-exclude-standard</dt>
 <dd>
@@ -518,9 +527,9 @@ with <code>--no-index</code>.</p>
 <dd>
 <p>Recursively search in each submodule that is active and
 checked out in the repository.  When used in combination with the
-&lt;tree&gt; option the prefix of all submodule output will be the name of
-the parent project&#8217;s &lt;tree&gt; object. This option has no effect
-if <code>--no-index</code> is given.</p>
+<em>&lt;tree&gt;</em> option the prefix of all submodule output will be the name of
+the parent project&#8217;s <em>&lt;tree&gt;</em> object.  This option cannot be used together
+with <code>--untracked</code>, and it has no effect if <code>--no-index</code> is specified.</p>
 </dd>
 <dt class="hdlist1">-a</dt>
 <dt class="hdlist1">--text</dt>
@@ -653,7 +662,7 @@ will be used (see <code>core.pager</code> in <a href="git-config.html">git-confi
 <p>Use \0 as the delimiter for pathnames in the output, and print
 them verbatim. Without this option, pathnames with "unusual"
 characters are quoted as explained for the configuration
-variable core.quotePath (see <a href="git-config.html">git-config(1)</a>).</p>
+variable <code>core.quotePath</code> (see <a href="git-config.html">git-config(1)</a>).</p>
 </dd>
 <dt class="hdlist1">-o</dt>
 <dt class="hdlist1">--only-matching</dt>
@@ -736,8 +745,8 @@ a non-zero status.</p>
 </dd>
 <dt class="hdlist1">--threads &lt;num&gt;</dt>
 <dd>
-<p>Number of grep worker threads to use.
-See <code>grep.threads</code> in <em>CONFIGURATION</em> for more information.</p>
+<p>Number of <code>grep</code> worker threads to use.  See <em>NOTES ON THREADS</em>
+and <code>grep.threads</code> in <em>CONFIGURATION</em> for more information.</p>
 </dd>
 <dt class="hdlist1">-f &lt;file&gt;</dt>
 <dd>
@@ -848,14 +857,14 @@ files that have lines that match both.</p>
 <h2 id="_notes_on_threads">NOTES ON THREADS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>--threads</code> option (and the grep.threads configuration) will be ignored when
+<p>The <code>--threads</code> option (and the <code>grep.threads</code> configuration) will be ignored when
 <code>--open-files-in-pager</code> is used, forcing a single-threaded execution.</p>
 </div>
 <div class="paragraph">
 <p>When grepping the object store (with <code>--cached</code> or giving tree objects), running
-with multiple threads might perform slower than single threaded if <code>--textconv</code>
-is given and there are too many text conversions. So if you experience low
-performance in this case, it might be desirable to use <code>--threads=1</code>.</p>
+with multiple threads might perform slower than single-threaded if <code>--textconv</code>
+is given and there are too many text conversions.  Thus, if low performance is
+experienced in this case, it might be desirable to use <code>--threads=1</code>.</p>
 </div>
 </div>
 </div>
@@ -902,7 +911,7 @@ use as many threads as the number of logical cores available.</p>
 </dd>
 <dt class="hdlist1">grep.fallbackToNoIndex</dt>
 <dd>
-<p>If set to true, fall back to git grep --no-index if git grep
+<p>If set to true, fall back to <code>git grep --no-index</code> if <code>git grep</code>
 is executed outside of a git repository.  Defaults to false.</p>
 </dd>
 </dl>
@@ -920,7 +929,7 @@ is executed outside of a git repository.  Defaults to false.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-23 20:26:53 UTC
+Last updated 2024-04-19 21:16:23 UTC
 </div>
 </div>
 </body>

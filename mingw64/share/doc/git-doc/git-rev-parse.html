@@ -449,7 +449,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git rev-parse</em> [&lt;options&gt;] &lt;args&gt;&#8230;&#8203;</pre>
+<pre class="content"><em>git rev-parse</em> [&lt;options&gt;] &lt;arg&gt;&#8230;&#8203;</pre>
 </div>
 </div>
 </div>
@@ -606,7 +606,7 @@ newlines (e.g. when using pickaxe <code>-S</code> with
 <em>git diff-*</em>). In contrast to the <code>--sq-quote</code> option,
 the command input is still interpreted as usual.</p>
 </dd>
-<dt class="hdlist1">--short[=length]</dt>
+<dt class="hdlist1">--short[=&lt;length&gt;]</dt>
 <dd>
 <p>Same as <code>--verify</code> but shortens the object name to a unique
 prefix with at least <code>length</code> characters. The minimum length
@@ -640,6 +640,27 @@ want to name the "master" branch when there is an
 unfortunately named tag "master"), and shows them as full
 refnames (e.g. "refs/heads/master").</p>
 </dd>
+<dt class="hdlist1">--output-object-format=(sha1|sha256|storage)</dt>
+<dd>
+<p>Allow oids to be input from any object format that the current
+repository supports.</p>
+<div class="literalblock">
+<div class="content">
+<pre>Specifying "sha1" translates if necessary and returns a sha1 oid.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Specifying "sha256" translates if necessary and returns a sha256 oid.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Specifying "storage" translates if necessary and returns an oid in
+encoded in the storage hash algorithm.</pre>
+</div>
+</div>
+</dd>
 </dl>
 </div>
 </div>
@@ -651,9 +672,9 @@ refnames (e.g. "refs/heads/master").</p>
 <dd>
 <p>Show all refs found in <code>refs/</code>.</p>
 </dd>
-<dt class="hdlist1">--branches[=pattern]</dt>
-<dt class="hdlist1">--tags[=pattern]</dt>
-<dt class="hdlist1">--remotes[=pattern]</dt>
+<dt class="hdlist1">--branches[=&lt;pattern&gt;]</dt>
+<dt class="hdlist1">--tags[=&lt;pattern&gt;]</dt>
+<dt class="hdlist1">--remotes[=&lt;pattern&gt;]</dt>
 <dd>
 <p>Show all branches, tags, or remote-tracking branches,
 respectively (i.e., refs found in <code>refs/heads</code>,
@@ -664,7 +685,7 @@ shown.  If the pattern does not contain a globbing character (<code>?</code>,
 <code>*</code>, or <code>[</code>), it is turned into a prefix match by appending <code>/*</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--glob=pattern</dt>
+<dt class="hdlist1">--glob=&lt;pattern&gt;</dt>
 <dd>
 <p>Show all refs matching the shell glob pattern <code>pattern</code>. If
 the pattern does not start with <code>refs/</code>, this is automatically
@@ -688,7 +709,7 @@ or <code>--all</code>. If a trailing <em>/*</em> is intended, it must be given
 explicitly.</p>
 </div>
 </dd>
-<dt class="hdlist1">--exclude-hidden=[fetch|receive|uploadpack]</dt>
+<dt class="hdlist1">--exclude-hidden=(fetch|receive|uploadpack)</dt>
 <dd>
 <p>Do not include refs that would be hidden by <code>git-fetch</code>,
 <code>git-receive-pack</code> or <code>git-upload-pack</code> by consulting the appropriate
@@ -844,19 +865,19 @@ If not specified, the default is "storage".</p>
 <h3 id="_other_options">Other Options</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--since=datestring</dt>
-<dt class="hdlist1">--after=datestring</dt>
+<dt class="hdlist1">--since=&lt;datestring&gt;</dt>
+<dt class="hdlist1">--after=&lt;datestring&gt;</dt>
 <dd>
 <p>Parse the date string, and output the corresponding
 --max-age= parameter for <em>git rev-list</em>.</p>
 </dd>
-<dt class="hdlist1">--until=datestring</dt>
-<dt class="hdlist1">--before=datestring</dt>
+<dt class="hdlist1">--until=&lt;datestring&gt;</dt>
+<dt class="hdlist1">--before=&lt;datestring&gt;</dt>
 <dd>
 <p>Parse the date string, and output the corresponding
 --min-age= parameter for <em>git rev-list</em>.</p>
 </dd>
-<dt class="hdlist1">&lt;args&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1">&lt;arg&gt;&#8230;&#8203;</dt>
 <dd>
 <p>Flags and parameters to be parsed.</p>
 </dd>
@@ -1625,7 +1646,7 @@ $ sh your-git-script.sh "a b'c"</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-23 20:26:53 UTC
+Last updated 2024-04-19 21:16:23 UTC
 </div>
 </div>
 </body>

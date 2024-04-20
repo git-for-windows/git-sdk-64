@@ -926,7 +926,8 @@ the <em>wanted-refs</em> section in the server&#8217;s response as explained bel
 <pre>   want-ref &lt;ref&gt;
 Indicates to the server that the client wants to retrieve a
 particular ref, where &lt;ref&gt; is the full name of a ref on the
-server.</pre>
+server.  It is a protocol error to send want-ref for the
+same ref more than once.</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -947,7 +948,8 @@ indicating its sideband (1, 2, or 3), and the server may send "0005\2"
 <p>If the <em>packfile-uris</em> feature is advertised, the following argument
 can be included in the client&#8217;s request as well as the potential
 addition of the <em>packfile-uris</em> section in the server&#8217;s response as
-explained below.</p>
+explained below. Note that at most one <code>packfile-uris</code> line can be sent
+to the server.</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1521,7 +1523,7 @@ headers of that bundle or bundles.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-23 20:26:53 UTC
+Last updated 2024-04-19 21:16:23 UTC
 </div>
 </div>
 </body>

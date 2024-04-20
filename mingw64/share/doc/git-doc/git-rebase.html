@@ -453,7 +453,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
         [--onto &lt;newbase&gt; | --keep-base] [&lt;upstream&gt; [&lt;branch&gt;]]
 <em>git rebase</em> [-i | --interactive] [&lt;options&gt;] [--exec &lt;cmd&gt;] [--onto &lt;newbase&gt;]
         --root [&lt;branch&gt;]
-<em>git rebase</em> (--continue | --skip | --abort | --quit | --edit-todo | --show-current-patch)</pre>
+<em>git rebase</em> (--continue|--skip|--abort|--quit|--edit-todo|--show-current-patch)</pre>
 </div>
 </div>
 </div>
@@ -821,18 +821,37 @@ once the merge backend handles everything the apply one does.</p>
 <p>See also INCOMPATIBLE OPTIONS below.</p>
 </div>
 </dd>
-<dt class="hdlist1">--empty=(drop|keep|ask)</dt>
+<dt class="hdlist1">--empty=(drop|keep|stop)</dt>
 <dd>
 <p>How to handle commits that are not empty to start and are not
 clean cherry-picks of any upstream commit, but which become
 empty after rebasing (because they contain a subset of already
-upstream changes).  With drop (the default), commits that
-become empty are dropped.  With keep, such commits are kept.
-With ask (implied by <code>--interactive</code>), the rebase will halt when
-an empty commit is applied allowing you to choose whether to
-drop it, edit files more, or just commit the empty changes.
-Other options, like <code>--exec</code>, will use the default of drop unless
-<code>-i</code>/<code>--interactive</code> is explicitly specified.</p>
+upstream changes):</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>drop</code></dt>
+<dd>
+<p>The commit will be dropped. This is the default behavior.</p>
+</dd>
+<dt class="hdlist1"><code>keep</code></dt>
+<dd>
+<p>The commit will be kept. This option is implied when <code>--exec</code> is
+specified unless <code>-i</code>/<code>--interactive</code> is also specified.</p>
+</dd>
+<dt class="hdlist1"><code>stop</code></dt>
+<dt class="hdlist1"><code>ask</code></dt>
+<dd>
+<p>The rebase will halt when the commit is applied, allowing you to
+choose whether to drop it, edit files more, or just commit the empty
+changes. This option is implied when <code>-i</code>/<code>--interactive</code> is
+specified. <code>ask</code> is a deprecated synonym of <code>stop</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
 <div class="paragraph">
 <p>Note that commits which start empty are kept (unless <code>--no-keep-empty</code>
 is specified), and commits which are clean cherry-picks (as determined
@@ -1223,7 +1242,7 @@ be used to review and edit the todo list before proceeding.</p>
 automatically fill in the subject line of the new commit from that.</p>
 </div>
 <div class="paragraph">
-<p>Settting configuration variable <code>rebase.autoSquash</code> to true enables
+<p>Setting configuration variable <code>rebase.autoSquash</code> to true enables
 auto-squashing by default for interactive rebase.  The <code>--no-autosquash</code>
 option can be used to override that setting.</p>
 </div>
@@ -1386,7 +1405,7 @@ be dropped automatically with <code>--no-keep-empty</code>).</p>
 <p>Similar to the apply backend, by default the merge backend drops
 commits that become empty unless <code>-i</code>/<code>--interactive</code> is specified (in
 which case it stops and asks the user what to do).  The merge backend
-also has an <code>--empty=(drop|keep|ask)</code> option for changing the behavior
+also has an <code>--empty=(drop|keep|stop)</code> option for changing the behavior
 of handling commits that become empty.</p>
 </div>
 </div>
@@ -2462,7 +2481,7 @@ When not configured, the default commit message editor is used instead.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-23 20:26:53 UTC
+Last updated 2024-04-19 21:16:23 UTC
 </div>
 </div>
 </body>

@@ -490,7 +490,7 @@ git directories mentioned under <code>--force</code>) will be removed.</p>
 <dd>
 <p>If the Git configuration variable clean.requireForce is not set
 to false, <em>git clean</em> will refuse to delete files or directories
-unless given -f or -i.  Git will refuse to modify untracked
+unless given -f.  Git will refuse to modify untracked
 nested git repositories (directories with a .git subdirectory)
 unless a second -f is given.</p>
 </dd>
@@ -498,12 +498,16 @@ unless a second -f is given.</p>
 <dt class="hdlist1">--interactive</dt>
 <dd>
 <p>Show what would be done and clean files interactively. See
-&#8220;Interactive mode&#8221; for details.</p>
+&#8220;Interactive mode&#8221; for details.
+Configuration variable <code>clean.requireForce</code> is ignored, as
+this mode gives its own safety protection by going interactive.</p>
 </dd>
 <dt class="hdlist1">-n</dt>
 <dt class="hdlist1">--dry-run</dt>
 <dd>
-<p>Don&#8217;t actually remove anything, just show what would be done.</p>
+<p>Don&#8217;t actually remove anything, just show what would be done.
+Configuration variable <code>clean.requireForce</code> is ignored, as
+nothing will be deleted anyway.</p>
 </dd>
 <dt class="hdlist1">-q</dt>
 <dt class="hdlist1">--quiet</dt>
@@ -620,8 +624,8 @@ as what&#8217;s found there:</p>
 <dl>
 <dt class="hdlist1">clean.requireForce</dt>
 <dd>
-<p>A boolean to make git-clean do nothing unless given -f,
--i, or -n.  Defaults to true.</p>
+<p>A boolean to make git-clean refuse to delete files unless -f
+is given. Defaults to true.</p>
 </dd>
 </dl>
 </div>
@@ -646,7 +650,7 @@ as what&#8217;s found there:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-23 20:26:53 UTC
+Last updated 2024-04-19 21:16:23 UTC
 </div>
 </div>
 </body>

@@ -1350,8 +1350,9 @@ the behavior until 1.7.0). Using "all" hides all changes to submodules.</p>
 <dt class="hdlist1">--default-prefix</dt>
 <dd>
 <p>Use the default source and destination prefixes ("a/" and "b/").
-This is usually the default already, but may be used to override
-config such as <code>diff.noprefix</code>.</p>
+This overrides configuration variables such as <code>diff.noprefix</code>,
+<code>diff.srcPrefix</code>, <code>diff.dstPrefix</code>, and <code>diff.mnemonicPrefix</code>
+(see <code>git-config</code>(1)).</p>
 </dd>
 <dt class="hdlist1">--line-prefix=&lt;prefix&gt;</dt>
 <dd>
@@ -2261,9 +2262,8 @@ desired it can be disabled with <code>only=false</code>.  E.g.,
 block should be included.</p>
 </li>
 <li>
-<p><em>separator=&lt;sep&gt;</em>: specify a separator inserted between trailer
-lines. When this option is not given each trailer line is
-terminated with a line feed character. The string &lt;sep&gt; may contain
+<p><em>separator=&lt;sep&gt;</em>: specify the separator inserted between trailer
+lines. Defaults to a line feed character. The string &lt;sep&gt; may contain
 the literal formatting codes described above. To use comma as
 separator one must use <code>%x2C</code> as it would otherwise be parsed as
 next option. E.g., <code>%(trailers:key=Ticket,separator=%x2C )</code>
@@ -2282,10 +2282,9 @@ option was given. E.g.,
 <p><em>valueonly[=&lt;bool&gt;]</em>: only show the value part of the trailer.</p>
 </li>
 <li>
-<p><em>key_value_separator=&lt;sep&gt;</em>: specify a separator inserted between
-trailer lines. When this option is not given each trailer key-value
-pair is separated by ": ". Otherwise it shares the same semantics
-as <em>separator=&lt;sep&gt;</em> above.</p>
+<p><em>key_value_separator=&lt;sep&gt;</em>: specify the separator inserted between
+the key and value of each trailer. Defaults to ": ". Otherwise it
+shares the same semantics as <em>separator=&lt;sep&gt;</em> above.</p>
 </li>
 </ul>
 </div>
@@ -2988,7 +2987,7 @@ the pathname, but if that is <code>NUL</code>, the record will show two paths.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-23 20:26:53 UTC
+Last updated 2024-04-19 21:16:23 UTC
 </div>
 </div>
 </body>

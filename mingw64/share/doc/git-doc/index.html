@@ -652,8 +652,18 @@ directory.</p>
 </dd>
 <dt class="hdlist1">--no-replace-objects</dt>
 <dd>
-<p>Do not use replacement refs to replace Git objects. See
-<a href="git-replace.html">git-replace(1)</a> for more information.</p>
+<p>Do not use replacement refs to replace Git objects.
+This is equivalent to exporting the <code>GIT_NO_REPLACE_OBJECTS</code>
+environment variable with any value.
+See <a href="git-replace.html">git-replace(1)</a> for more information.</p>
+</dd>
+<dt class="hdlist1">--no-lazy-fetch</dt>
+<dd>
+<p>Do not fetch missing objects from the promisor remote on
+demand.  Useful together with <code>git cat-file -e &lt;object&gt;</code> to
+see if the object is locally available.
+This is equivalent to setting the <code>GIT_NO_LAZY_FETCH</code>
+environment variable to <code>1</code>.</p>
 </dd>
 <dt class="hdlist1">--literal-pathspecs</dt>
 <dd>
@@ -2303,6 +2313,11 @@ cookies, the "Authorization:" header, the "Proxy-Authorization:"
 header and packfile URIs. Set this Boolean environment variable to false to prevent this
 redaction.</p>
 </dd>
+<dt class="hdlist1"><code>GIT_NO_REPLACE_OBJECTS</code></dt>
+<dd>
+<p>Setting and exporting this environment variable tells Git to
+ignore replacement refs and do not replace Git objects.</p>
+</dd>
 <dt class="hdlist1"><code>GIT_LITERAL_PATHSPECS</code></dt>
 <dd>
 <p>Setting this Boolean environment variable to true will cause Git to treat all
@@ -2327,6 +2342,12 @@ pathspecs as literal (aka "literal" magic).</p>
 <dd>
 <p>Setting this Boolean environment variable to true will cause Git to treat all
 pathspecs as case-insensitive.</p>
+</dd>
+<dt class="hdlist1"><code>GIT_NO_LAZY_FETCH</code></dt>
+<dd>
+<p>Setting this Boolean environment variable to true tells Git
+not to lazily fetch missing objects from the promisor remote
+on demand.</p>
 </dd>
 <dt class="hdlist1"><code>GIT_REFLOG_ACTION</code></dt>
 <dd>
@@ -2384,7 +2405,7 @@ which feed potentially-untrusted URLS to git commands.  See
 <dd>
 <p>For internal use only.  Used in handshaking the wire protocol.
 Contains a colon <em>:</em> separated list of keys with optional values
-<em>key[=value]</em>.  Presence of unknown keys and values must be
+<em>&lt;key&gt;[=&lt;value&gt;]</em>.  Presence of unknown keys and values must be
 ignored.</p>
 <div class="paragraph">
 <p>Note that servers may need to be configured to allow this variable to
@@ -2598,7 +2619,7 @@ the Git Security mailing list &lt;<a href="mailto:git-security@googlegroups.com"
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-23 20:26:53 UTC
+Last updated 2024-04-19 21:16:23 UTC
 </div>
 </div>
 </body>

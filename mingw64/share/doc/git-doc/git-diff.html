@@ -1464,8 +1464,9 @@ the behavior until 1.7.0). Using "all" hides all changes to submodules.</p>
 <dt class="hdlist1">--default-prefix</dt>
 <dd>
 <p>Use the default source and destination prefixes ("a/" and "b/").
-This is usually the default already, but may be used to override
-config such as <code>diff.noprefix</code>.</p>
+This overrides configuration variables such as <code>diff.noprefix</code>,
+<code>diff.srcPrefix</code>, <code>diff.dstPrefix</code>, and <code>diff.mnemonicPrefix</code>
+(see <code>git-config</code>(1)).</p>
 </dd>
 <dt class="hdlist1">--line-prefix=&lt;prefix&gt;</dt>
 <dd>
@@ -2409,9 +2410,17 @@ the order of the prefixes:</p>
 </dl>
 </div>
 </dd>
-<dt class="hdlist1">diff.noprefix</dt>
+<dt class="hdlist1">diff.noPrefix</dt>
 <dd>
 <p>If set, <em>git diff</em> does not show any source or destination prefix.</p>
+</dd>
+<dt class="hdlist1">diff.srcPrefix</dt>
+<dd>
+<p>If set, <em>git diff</em> uses this source prefix. Defaults to "a/".</p>
+</dd>
+<dt class="hdlist1">diff.dstPrefix</dt>
+<dd>
+<p>If set, <em>git diff</em> uses this destination prefix. Defaults to "b/".</p>
 </dd>
 <dt class="hdlist1">diff.relative</dt>
 <dd>
@@ -2653,8 +2662,8 @@ moved lines are not colored.</p>
 <dt class="hdlist1">diff.colorMovedWS</dt>
 <dd>
 <p>When moved lines are colored using e.g. the <code>diff.colorMoved</code> setting,
-this option controls the <code>&lt;mode&gt;</code> how spaces are treated
-for details of valid modes see <em>--color-moved-ws</em> in <a href="git-diff.html">git-diff(1)</a>.</p>
+this option controls the <code>&lt;mode&gt;</code> how spaces are treated.
+For details of valid modes see <em>--color-moved-ws</em> in <a href="git-diff.html">git-diff(1)</a>.</p>
 </dd>
 </dl>
 </div>
@@ -2685,7 +2694,7 @@ for details of valid modes see <em>--color-moved-ws</em> in <a href="git-diff.ht
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-23 20:26:53 UTC
+Last updated 2024-04-19 21:16:23 UTC
 </div>
 </div>
 </body>

@@ -835,8 +835,8 @@ and <em>commit1...commit2</em> notations cannot be used).</p>
 <p>With <code>--pretty</code> format other than <code>oneline</code> and <code>reference</code> (for obvious reasons),
 this causes the output to have two extra lines of information
 taken from the reflog.  The reflog designator in the output may be shown
-as <code>ref@{Nth}</code> (where <code>Nth</code> is the reverse-chronological index in the
-reflog) or as <code>ref@{timestamp}</code> (with the timestamp for that entry),
+as <code>ref@{&lt;Nth&gt;}</code> (where <em>&lt;Nth&gt;</em> is the reverse-chronological index in the
+reflog) or as <code>ref@{&lt;timestamp&gt;}</code> (with the <em>&lt;timestamp&gt;</em> for that entry),
 depending on a few rules:</p>
 </div>
 <div class="openblock">
@@ -844,7 +844,7 @@ depending on a few rules:</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>If the starting point is specified as <code>ref@{Nth}</code>, show the index
+<p>If the starting point is specified as <code>ref@{&lt;Nth&gt;}</code>, show the index
 format.</p>
 </li>
 <li>
@@ -874,8 +874,11 @@ See also <a href="git-reflog.html">git-reflog(1)</a>.</p>
 </dd>
 <dt class="hdlist1">--merge</dt>
 <dd>
-<p>After a failed merge, show refs that touch files having a
-conflict and don&#8217;t exist on all heads to merge.</p>
+<p>Show commits touching conflicted paths in the range <code>HEAD...&lt;other&gt;</code>,
+where <code>&lt;other&gt;</code> is the first existing pseudoref in <code>MERGE_HEAD</code>,
+<code>CHERRY_PICK_HEAD</code>, <code>REVERT_HEAD</code> or <code>REBASE_HEAD</code>. Only works
+when the index has unmerged entries. This option can be used to show
+relevant commits when resolving conflicts from a 3-way merge.</p>
 </dd>
 <dt class="hdlist1">--boundary</dt>
 <dd>
@@ -1905,7 +1908,7 @@ that they have in common, but that does not need to be the case.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-23 20:26:53 UTC
+Last updated 2024-04-19 21:16:23 UTC
 </div>
 </div>
 </body>

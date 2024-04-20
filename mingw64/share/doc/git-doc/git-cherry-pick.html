@@ -607,8 +607,8 @@ commits that meet the "fast-forward" requirement will be kept
 even without this option.  Note also, that use of this option only
 keeps commits that were initially empty (i.e. the commit recorded the
 same tree as its parent).  Commits which are made empty due to a
-previous commit are dropped.  To force the inclusion of those commits
-use <code>--keep-redundant-commits</code>.</p>
+previous commit will cause the cherry-pick to fail.  To force the
+inclusion of those commits, use <code>--empty=keep</code>.</p>
 </dd>
 <dt class="hdlist1">--allow-empty-message</dt>
 <dd>
@@ -616,13 +616,41 @@ use <code>--keep-redundant-commits</code>.</p>
 This option overrides that behavior, allowing commits with empty
 messages to be cherry picked.</p>
 </dd>
+<dt class="hdlist1">--empty=(drop|keep|stop)</dt>
+<dd>
+<p>How to handle commits being cherry-picked that are redundant with
+changes already in the current history.</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>drop</code></dt>
+<dd>
+<p>The commit will be dropped.</p>
+</dd>
+<dt class="hdlist1"><code>keep</code></dt>
+<dd>
+<p>The commit will be kept. Implies <code>--allow-empty</code>.</p>
+</dd>
+<dt class="hdlist1"><code>stop</code></dt>
+<dd>
+<p>The cherry-pick will stop when the commit is applied, allowing
+you to examine the commit. This is the default behavior.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that <code>--empty=drop</code> and <code>--empty=stop</code> only specify how to handle a
+commit that was not initially empty, but rather became empty due to a previous
+commit. Commits that were initially empty will still cause the cherry-pick to
+fail unless one of <code>--empty=keep</code> or <code>--allow-empty</code> are specified.</p>
+</div>
+</dd>
 <dt class="hdlist1">--keep-redundant-commits</dt>
 <dd>
-<p>If a commit being cherry picked duplicates a commit already in the
-current history, it will become empty.  By default these
-redundant commits cause <code>cherry-pick</code> to stop so the user can
-examine the commit. This option overrides that behavior and
-creates an empty commit object.  Implies <code>--allow-empty</code>.</p>
+<p>Deprecated synonym for <code>--empty=keep</code>.</p>
 </dd>
 <dt class="hdlist1">--strategy=&lt;strategy&gt;</dt>
 <dd>
@@ -793,7 +821,7 @@ matching context lines.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-23 20:26:53 UTC
+Last updated 2024-04-19 21:16:23 UTC
 </div>
 </div>
 </body>

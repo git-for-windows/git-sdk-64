@@ -629,12 +629,17 @@ is supported and will only use <code>--auto-merge</code> when available.  A
 value of <code>false</code> avoids using <code>--auto-merge</code> altogether, and is the
 default value.</p>
 </dd>
-<dt class="hdlist1">mergetool.vimdiff.layout</dt>
+<dt class="hdlist1">mergetool.&lt;vimdiff variant&gt;.layout</dt>
 <dd>
-<p>The vimdiff backend uses this variable to control how its split
-windows appear. Applies even if you are using Neovim (<code>nvim</code>) or
-gVim (<code>gvim</code>) as the merge tool. See BACKEND SPECIFIC HINTS section
-for details.</p>
+<p>Configure the split window layout for vimdiff&#8217;s <code>&lt;variant&gt;</code>, which is any of <code>vimdiff</code>,
+<code>nvimdiff</code>, <code>gvimdiff</code>.
+Upon launching <code>git mergetool</code> with <code>--tool=&lt;variant&gt;</code> (or without <code>--tool</code>
+if <code>merge.tool</code> is configured as <code>&lt;variant&gt;</code>), Git will consult
+<code>mergetool.&lt;variant&gt;.layout</code> to determine the tool&#8217;s layout. If the
+variant-specific configuration is not available, <code>vimdiff</code>'s is used as
+fallback.  If that too is not available, a default layout with 4 windows
+will be used.  To configure the layout, see the <code>BACKEND SPECIFIC HINTS</code>
+section.</p>
 </dd>
 <dt class="hdlist1">mergetool.hideResolved</dt>
 <dd>
@@ -967,7 +972,8 @@ have precedence over <code>/</code>.</p>
 <div class="paragraph">
 <p>When using these variants, in order to specify a custom layout you will have to
 set configuration variables <code>mergetool.gvimdiff.layout</code> and
-<code>mergetool.nvimdiff.layout</code> instead of <code>mergetool.vimdiff.layout</code></p>
+<code>mergetool.nvimdiff.layout</code> instead of <code>mergetool.vimdiff.layout</code> (though the
+latter will be used as fallback if the variant-specific one is not set).</p>
 </div>
 <div class="paragraph">
 <p>In addition, for backwards compatibility with previous Git versions, you can
@@ -1009,7 +1015,7 @@ MERGED and REMOTE).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-23 20:26:53 UTC
+Last updated 2024-04-19 21:16:23 UTC
 </div>
 </div>
 </body>

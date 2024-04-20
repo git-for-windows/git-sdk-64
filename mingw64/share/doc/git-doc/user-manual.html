@@ -2929,7 +2929,26 @@ that not only specifies their type, but also provides size information
 about the data in the object.  It’s worth noting that the SHA-1 hash
 that is used to name the object is the hash of the original data
 plus this header, so <code class="literal">sha1sum</code> <span class="emphasis"><em>file</em></span> does not match the object name
-for <span class="emphasis"><em>file</em></span>.</p>
+for <span class="emphasis"><em>file</em></span> (the earliest versions of Git hashed slightly differently
+but the conclusion is still the same).</p>
+<p>The following is a short example that demonstrates how these hashes
+can be generated manually:</p>
+<p>Let’s assume a small text file with some simple content:</p>
+<pre class="screen">$ echo "Hello world" &gt;hello.txt</pre>
+<p>We can now manually generate the hash Git would use for this file:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The object we want the hash for is of type "blob" and its size is
+12 bytes.
+</li><li class="listitem">
+Prepend the object header to the file content and feed this to
+<code class="literal">sha1sum</code>:
+</li></ul></div>
+<pre class="screen">$ { printf "blob 12\0"; cat hello.txt; } | sha1sum
+802992c4220de19a90767f3000a79a31b98d0df7  -</pre>
+<p>This manually constructed hash can be verified using <code class="literal">git hash-object</code>
+which of course hides the addition of the header:</p>
+<pre class="screen">$ git hash-object hello.txt
+802992c4220de19a90767f3000a79a31b98d0df7</pre>
 <p>As a result, the general consistency of an object can always be tested
 independently of the contents or the type of the object: all objects can
 be validated by verifying that (a) their hashes match the content of the
@@ -2951,7 +2970,8 @@ start.</p>
 <p>A good place to start is with the contents of the initial commit, with:</p>
 <pre class="screen">$ git switch --detach e83c5163</pre>
 <p>The initial revision lays the foundation for almost everything Git has
-today, but is small enough to read in one sitting.</p>
+today (even though details may differ in a few places), but is small
+enough to read in one sitting.</p>
 <p>Note that terminology has changed since that revision.  For example, the
 README in that revision uses the word "changeset" to describe what we
 now call a <a class="link" href="#def_commit_object">commit</a>.</p>

@@ -449,9 +449,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--fixed-value] [--show-origin] [--show-scope] [-z|--null] &lt;name&gt; [&lt;value&gt; [&lt;value-pattern&gt;]]
-<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] --add &lt;name&gt; &lt;value&gt;
-<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--fixed-value] --replace-all &lt;name&gt; &lt;value&gt; [&lt;value-pattern&gt;]
+<pre class="content"><em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--comment=&lt;message&gt;] [--fixed-value] [--show-origin] [--show-scope] [-z|--null] &lt;name&gt; [&lt;value&gt; [&lt;value-pattern&gt;]]
+<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--comment=&lt;message&gt;] --add &lt;name&gt; &lt;value&gt;
+<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--comment=&lt;message&gt;] [--fixed-value] --replace-all &lt;name&gt; &lt;value&gt; [&lt;value-pattern&gt;]
 <em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--show-origin] [--show-scope] [-z|--null] [--fixed-value] --get &lt;name&gt; [&lt;value-pattern&gt;]
 <em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--show-origin] [--show-scope] [-z|--null] [--fixed-value] --get-all &lt;name&gt; [&lt;value-pattern&gt;]
 <em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--show-origin] [--show-scope] [-z|--null] [--fixed-value] [--name-only] --get-regexp &lt;name-regex&gt; [&lt;value-pattern&gt;]
@@ -559,6 +559,22 @@ all lines matching the key (and optionally the <code>value-pattern</code>).</p>
 <p>Adds a new line to the option without altering any existing
 values.  This is the same as providing <em>^$</em> as the <code>value-pattern</code>
 in <code>--replace-all</code>.</p>
+</dd>
+<dt class="hdlist1">--comment &lt;message&gt;</dt>
+<dd>
+<p>Append a comment at the end of new or modified lines.</p>
+<div class="literalblock">
+<div class="content">
+<pre>If _&lt;message&gt;_ begins with one or more whitespaces followed
+by "#", it is used as-is.  If it begins with "#", a space is
+prepended before it is used.  Otherwise, a string " # " (a
+space followed by a hash followed by a space) is prepended
+to it.  And the resulting string is placed immediately after
+the value defined for the variable.  The _&lt;message&gt;_ must
+not contain linefeed characters (no multi-line comments are
+permitted).</pre>
+</div>
+</div>
 </dd>
 <dt class="hdlist1">--get</dt>
 <dd>
@@ -796,7 +812,8 @@ there is no color configured for <code>name</code>.</p>
 <dt class="hdlist1">--edit</dt>
 <dd>
 <p>Opens an editor to modify the specified config file; either
-<code>--system</code>, <code>--global</code>, or repository (default).</p>
+<code>--system</code>, <code>--global</code>, <code>--local</code> (default), <code>--worktree</code>, or
+<code>--file &lt;config-file&gt;</code>.</p>
 </dd>
 <dt class="hdlist1">--[no-]includes</dt>
 <dd>
@@ -808,7 +825,7 @@ config files.</p>
 <dt class="hdlist1">--default &lt;value&gt;</dt>
 <dd>
 <p>When using <code>--get</code>, and the requested variable is not found, behave as if
-&lt;value&gt; were the value assigned to the that variable.</p>
+&lt;value&gt; were the value assigned to that variable.</p>
 </dd>
 </dl>
 </div>
@@ -1201,9 +1218,10 @@ multivalued.</p>
 <div class="sect2">
 <h3 id="_syntax">Syntax</h3>
 <div class="paragraph">
-<p>The syntax is fairly flexible and permissive; whitespaces are mostly
-ignored.  The <em>#</em> and <em>;</em> characters begin comments to the end of line,
-blank lines are ignored.</p>
+<p>The syntax is fairly flexible and permissive.  Whitespace characters,
+which in this context are the space character (SP) and the horizontal
+tabulation (HT), are mostly ignored.  The <em>#</em> and <em>;</em> characters begin
+comments to the end of line.  Blank lines are ignored.</p>
 </div>
 <div class="paragraph">
 <p>The file consists of sections and variables.  A section begins with
@@ -1248,17 +1266,18 @@ The variable names are case-insensitive, allow only alphanumeric characters
 and <code>-</code>, and must start with an alphabetic character.</p>
 </div>
 <div class="paragraph">
-<p>A line that defines a value can be continued to the next line by
-ending it with a <code>\</code>; the backslash and the end-of-line are
-stripped.  Leading whitespaces after <em>name =</em>, the remainder of the
-line after the first comment character <em>#</em> or <em>;</em>, and trailing
-whitespaces of the line are discarded unless they are enclosed in
-double quotes.  Internal whitespaces within the value are retained
-verbatim.</p>
+<p>Whitespace characters surrounding <code>name</code>, <code>=</code> and <code>value</code> are discarded.
+Internal whitespace characters within <em>value</em> are retained verbatim.
+Comments starting with either <code>#</code> or <code>;</code> and extending to the end of line
+are discarded.  A line that defines a value can be continued to the next
+line by ending it with a backslash (<code>\</code>);  the backslash and the end-of-line
+characters are discarded.</p>
 </div>
 <div class="paragraph">
-<p>Inside double quotes, double quote <code>"</code> and backslash <code>\</code> characters
-must be escaped: use <code>\"</code> for <code>"</code> and <code>\\</code> for <code>\</code>.</p>
+<p>If <code>value</code> needs to contain leading or trailing whitespace characters,
+it must be enclosed in double quotation marks (<code>"</code>).  Inside double quotation
+marks, double quote (<code>"</code>) and backslash (<code>\</code>) characters must be escaped:
+use <code>\"</code> for <code>"</code> and <code>\\</code> for <code>\</code>.</p>
 </div>
 <div class="paragraph">
 <p>The following escape sequences (beside <code>\"</code> and <code>\\</code>) are recognized:
@@ -1620,45 +1639,61 @@ other popular tools, and describe them in your documentation.</p>
 </div>
 <div class="dlist">
 <dl>
+<dt class="hdlist1">add.ignoreErrors</dt>
+<dt class="hdlist1">add.ignore-errors (deprecated)</dt>
+<dd>
+<p>Tells <em>git add</em> to continue adding files when some files cannot be
+added due to indexing errors. Equivalent to the <code>--ignore-errors</code>
+option of <a href="git-add.html">git-add(1)</a>.  <code>add.ignore-errors</code> is deprecated,
+as it does not follow the usual naming convention for configuration
+variables.</p>
+</dd>
+<dt class="hdlist1">add.interactive.useBuiltin</dt>
+<dd>
+<p>Unused configuration variable. Used in Git versions v2.25.0 to
+v2.36.0 to enable the built-in version of <a href="git-add.html">git-add(1)</a>'s
+interactive mode, which then became the default in Git
+versions v2.37.0 to v2.39.0.</p>
+</dd>
 <dt class="hdlist1">advice.*</dt>
 <dd>
 <p>These variables control various optional help messages designed to
 aid new users.  When left unconfigured, Git will give the message
 alongside instructions on how to squelch it.  You can tell Git
-that you do not need the help message by setting these to <em>false</em>:</p>
+that you do not need the help message by setting these to <code>false</code>:</p>
 <div class="openblock">
 <div class="content">
 <div class="dlist">
 <dl>
 <dt class="hdlist1">addEmbeddedRepo</dt>
 <dd>
-<p>Advice on what to do when you&#8217;ve accidentally added one
+<p>Shown when the user accidentally adds one
 git repo inside of another.</p>
 </dd>
 <dt class="hdlist1">addEmptyPathspec</dt>
 <dd>
-<p>Advice shown if a user runs the add command without providing
+<p>Shown when the user runs <code>git add</code> without providing
 the pathspec parameter.</p>
 </dd>
 <dt class="hdlist1">addIgnoredFile</dt>
 <dd>
-<p>Advice shown if a user attempts to add an ignored file to
+<p>Shown when the user attempts to add an ignored file to
 the index.</p>
 </dd>
 <dt class="hdlist1">amWorkDir</dt>
 <dd>
-<p>Advice that shows the location of the patch file when
-<a href="git-am.html">git-am(1)</a> fails to apply it.</p>
+<p>Shown when <a href="git-am.html">git-am(1)</a> fails to apply a patch
+file, to tell the user the location of the file.</p>
 </dd>
 <dt class="hdlist1">ambiguousFetchRefspec</dt>
 <dd>
-<p>Advice shown when a fetch refspec for multiple remotes maps to
+<p>Shown when a fetch refspec for multiple remotes maps to
 the same remote-tracking branch namespace and causes branch
 tracking set-up to fail.</p>
 </dd>
 <dt class="hdlist1">checkoutAmbiguousRemoteBranchName</dt>
 <dd>
-<p>Advice shown when the argument to
+<p>Shown when the argument to
 <a href="git-checkout.html">git-checkout(1)</a> and <a href="git-switch.html">git-switch(1)</a>
 ambiguously resolves to a
 remote tracking branch on more than one remote in
@@ -1671,41 +1706,45 @@ advice would be printed.</p>
 </dd>
 <dt class="hdlist1">commitBeforeMerge</dt>
 <dd>
-<p>Advice shown when <a href="git-merge.html">git-merge(1)</a> refuses to
+<p>Shown when <a href="git-merge.html">git-merge(1)</a> refuses to
 merge to avoid overwriting local changes.</p>
 </dd>
 <dt class="hdlist1">detachedHead</dt>
 <dd>
-<p>Advice shown when you used
+<p>Shown when the user uses
 <a href="git-switch.html">git-switch(1)</a> or <a href="git-checkout.html">git-checkout(1)</a>
-to move to the detached HEAD state, to instruct how to
-create a local branch after the fact.</p>
+to move to the detached HEAD state, to tell the user how
+to create a local branch after the fact.</p>
 </dd>
 <dt class="hdlist1">diverging</dt>
 <dd>
-<p>Advice shown when a fast-forward is not possible.</p>
+<p>Shown when a fast-forward is not possible.</p>
 </dd>
 <dt class="hdlist1">fetchShowForcedUpdates</dt>
 <dd>
-<p>Advice shown when <a href="git-fetch.html">git-fetch(1)</a> takes a long time
+<p>Shown when <a href="git-fetch.html">git-fetch(1)</a> takes a long time
 to calculate forced updates after ref updates, or to warn
 that the check is disabled.</p>
 </dd>
 <dt class="hdlist1">forceDeleteBranch</dt>
 <dd>
-<p>Advice shown when a user tries to delete a not fully merged
+<p>Shown when the user tries to delete a not fully merged
 branch without the force option set.</p>
 </dd>
 <dt class="hdlist1">ignoredHook</dt>
 <dd>
-<p>Advice shown if a hook is ignored because the hook is not
+<p>Shown when a hook is ignored because the hook is not
 set as executable.</p>
 </dd>
 <dt class="hdlist1">implicitIdentity</dt>
 <dd>
-<p>Advice on how to set your identity configuration when
-your information is guessed from the system username and
-domain name.</p>
+<p>Shown when the user&#8217;s information is guessed from the
+system username and domain name, to tell the user how to
+set their identity configuration.</p>
+</dd>
+<dt class="hdlist1">mergeConflict</dt>
+<dd>
+<p>Shown when various commands stop because of conflicts.</p>
 </dd>
 <dt class="hdlist1">nameTooLong</dt>
 <dd>
@@ -1714,7 +1753,7 @@ path was too long.</p>
 </dd>
 <dt class="hdlist1">nestedTag</dt>
 <dd>
-<p>Advice shown if a user attempts to recursively tag a tag object.</p>
+<p>Shown when a user attempts to recursively tag a tag object.</p>
 </dd>
 <dt class="hdlist1">pushAlreadyExists</dt>
 <dd>
@@ -1736,14 +1775,14 @@ ref point at an object that is not a commit-ish.</p>
 </dd>
 <dt class="hdlist1">pushNonFFCurrent</dt>
 <dd>
-<p>Advice shown when <a href="git-push.html">git-push(1)</a> fails due to a
+<p>Shown when <a href="git-push.html">git-push(1)</a> fails due to a
 non-fast-forward update to the current branch.</p>
 </dd>
 <dt class="hdlist1">pushNonFFMatching</dt>
 <dd>
-<p>Advice shown when you ran <a href="git-push.html">git-push(1)</a> and pushed
-<em>matching refs</em> explicitly (i.e. you used <em>:</em>, or
-specified a refspec that isn&#8217;t your current branch) and
+<p>Shown when the user ran <a href="git-push.html">git-push(1)</a> and pushed
+"matching refs" explicitly (i.e. used <code>:</code>, or
+specified a refspec that isn&#8217;t the current branch) and
 it resulted in a non-fast-forward error.</p>
 </dd>
 <dt class="hdlist1">pushRefNeedsUpdate</dt>
@@ -1758,35 +1797,40 @@ do not have locally.</p>
 guess based on the source and destination refs what
 remote ref namespace the source belongs in, but where
 we can still suggest that the user push to either
-refs/heads/* or refs/tags/* based on the type of the
+<code>refs/heads/*</code> or <code>refs/tags/*</code> based on the type of the
 source object.</p>
 </dd>
 <dt class="hdlist1">pushUpdateRejected</dt>
 <dd>
-<p>Set this variable to <em>false</em> if you want to disable
-<em>pushNonFFCurrent</em>, <em>pushNonFFMatching</em>, <em>pushAlreadyExists</em>,
-<em>pushFetchFirst</em>, <em>pushNeedsForce</em>, and <em>pushRefNeedsUpdate</em>
+<p>Set this variable to <code>false</code> if you want to disable
+<code>pushNonFFCurrent</code>, <code>pushNonFFMatching</code>, <code>pushAlreadyExists</code>,
+<code>pushFetchFirst</code>, <code>pushNeedsForce</code>, and <code>pushRefNeedsUpdate</code>
 simultaneously.</p>
+</dd>
+<dt class="hdlist1">refSyntax</dt>
+<dd>
+<p>Shown when the user provides an illegal ref name, to
+tell the user about the ref syntax documentation.</p>
 </dd>
 <dt class="hdlist1">resetNoRefresh</dt>
 <dd>
-<p>Advice to consider using the <code>--no-refresh</code> option to
-<a href="git-reset.html">git-reset(1)</a> when the command takes more than 2 seconds
-to refresh the index after reset.</p>
+<p>Shown when <a href="git-reset.html">git-reset(1)</a> takes more than 2
+seconds to refresh the index after reset, to tell the user
+that they can use the <code>--no-refresh</code> option.</p>
 </dd>
 <dt class="hdlist1">resolveConflict</dt>
 <dd>
-<p>Advice shown by various commands when conflicts
+<p>Shown by various commands when conflicts
 prevent the operation from being performed.</p>
 </dd>
 <dt class="hdlist1">rmHints</dt>
 <dd>
-<p>In case of failure in the output of <a href="git-rm.html">git-rm(1)</a>,
-show directions on how to proceed from the current state.</p>
+<p>Shown on failure in the output of <a href="git-rm.html">git-rm(1)</a>, to
+give directions on how to proceed from the current state.</p>
 </dd>
 <dt class="hdlist1">sequencerInUse</dt>
 <dd>
-<p>Advice shown when a sequencer command is already in progress.</p>
+<p>Shown when a sequencer command is already in progress.</p>
 </dd>
 <dt class="hdlist1">skippedCherryPicks</dt>
 <dd>
@@ -1812,40 +1856,45 @@ by <a href="git-switch.html">git-switch(1)</a> or
 </dd>
 <dt class="hdlist1">statusUoption</dt>
 <dd>
-<p>Advise to consider using the <code>-u</code> option to <a href="git-status.html">git-status(1)</a>
-when the command takes more than 2 seconds to enumerate untracked
-files.</p>
+<p>Shown when <a href="git-status.html">git-status(1)</a> takes more than 2
+seconds to enumerate untracked files, to tell the user that
+they can use the <code>-u</code> option.</p>
 </dd>
 <dt class="hdlist1">submoduleAlternateErrorStrategyDie</dt>
 <dd>
-<p>Advice shown when a submodule.alternateErrorStrategy option
+<p>Shown when a submodule.alternateErrorStrategy option
 configured to "die" causes a fatal error.</p>
+</dd>
+<dt class="hdlist1">submoduleMergeConflict</dt>
+<dd>
+<p>Advice shown when a non-trivial submodule merge conflict is
+encountered.</p>
 </dd>
 <dt class="hdlist1">submodulesNotUpdated</dt>
 <dd>
-<p>Advice shown when a user runs a submodule command that fails
+<p>Shown when a user runs a submodule command that fails
 because <code>git submodule update --init</code> was not run.</p>
 </dd>
 <dt class="hdlist1">suggestDetachingHead</dt>
 <dd>
-<p>Advice shown when <a href="git-switch.html">git-switch(1)</a> refuses to detach HEAD
+<p>Shown when <a href="git-switch.html">git-switch(1)</a> refuses to detach HEAD
 without the explicit <code>--detach</code> option.</p>
 </dd>
 <dt class="hdlist1">updateSparsePath</dt>
 <dd>
-<p>Advice shown when either <a href="git-add.html">git-add(1)</a> or <a href="git-rm.html">git-rm(1)</a>
+<p>Shown when either <a href="git-add.html">git-add(1)</a> or <a href="git-rm.html">git-rm(1)</a>
 is asked to update index entries outside the current sparse
 checkout.</p>
 </dd>
 <dt class="hdlist1">waitingForEditor</dt>
 <dd>
-<p>Print a message to the terminal whenever Git is waiting for
-editor input from the user.</p>
+<p>Shown when Git is waiting for editor input. Relevant
+when e.g. the editor is not launched inside the terminal.</p>
 </dd>
 <dt class="hdlist1">worktreeAddOrphan</dt>
 <dd>
-<p>Advice shown when a user tries to create a worktree from an
-invalid reference, to instruct how to create a new unborn
+<p>Shown when the user tries to create a worktree from an
+invalid reference, to tell the user how to create a new unborn
 branch instead.</p>
 </dd>
 <dt class="hdlist1">useCoreFSMonitorConfig</dt>
@@ -1858,6 +1907,69 @@ setting is in use.</p>
 </div>
 </div>
 </dd>
+<dt class="hdlist1">alias.*</dt>
+<dd>
+<p>Command aliases for the <a href="git.html">git(1)</a> command wrapper - e.g.
+after defining <code>alias.last = cat-file commit HEAD</code>, the invocation
+<code>git last</code> is equivalent to <code>git cat-file commit HEAD</code>. To avoid
+confusion and troubles with script usage, aliases that
+hide existing Git commands are ignored. Arguments are split by
+spaces, the usual shell quoting and escaping are supported.
+A quote pair or a backslash can be used to quote them.</p>
+<div class="paragraph">
+<p>Note that the first word of an alias does not necessarily have to be a
+command. It can be a command-line option that will be passed into the
+invocation of <code>git</code>. In particular, this is useful when used with <code>-c</code>
+to pass in one-time configurations or <code>-p</code> to force pagination. For example,
+<code>loud-rebase = -c commit.verbose=true rebase</code> can be defined such that
+running <code>git loud-rebase</code> would be equivalent to
+<code>git -c commit.verbose=true rebase</code>. Also, <code>ps = -p status</code> would be a
+helpful alias since <code>git ps</code> would paginate the output of <code>git status</code>
+where the original command does not.</p>
+</div>
+<div class="paragraph">
+<p>If the alias expansion is prefixed with an exclamation point,
+it will be treated as a shell command.  For example, defining
+<code>alias.new = !gitk --all --not ORIG_HEAD</code>, the invocation
+<code>git new</code> is equivalent to running the shell command
+<code>gitk --all --not ORIG_HEAD</code>.  Note that shell commands will be
+executed from the top-level directory of a repository, which may
+not necessarily be the current directory.
+<code>GIT_PREFIX</code> is set as returned by running <code>git rev-parse --show-prefix</code>
+from the original current directory. See <a href="git-rev-parse.html">git-rev-parse(1)</a>.</p>
+</div>
+</dd>
+<dt class="hdlist1">am.keepcr</dt>
+<dd>
+<p>If true, git-am will call git-mailsplit for patches in mbox format
+with parameter <code>--keep-cr</code>. In this case git-mailsplit will
+not remove <code>\r</code> from lines ending with <code>\r\n</code>. Can be overridden
+by giving <code>--no-keep-cr</code> from the command line.
+See <a href="git-am.html">git-am(1)</a>, <a href="git-mailsplit.html">git-mailsplit(1)</a>.</p>
+</dd>
+<dt class="hdlist1">am.threeWay</dt>
+<dd>
+<p>By default, <code>git am</code> will fail if the patch does not apply cleanly. When
+set to true, this setting tells <code>git am</code> to fall back on 3-way merge if
+the patch records the identity of blobs it is supposed to apply to and
+we have those blobs available locally (equivalent to giving the <code>--3way</code>
+option from the command line). Defaults to <code>false</code>.
+See <a href="git-am.html">git-am(1)</a>.</p>
+</dd>
+<dt class="hdlist1">apply.ignoreWhitespace</dt>
+<dd>
+<p>When set to <em>change</em>, tells <em>git apply</em> to ignore changes in
+whitespace, in the same way as the <code>--ignore-space-change</code>
+option.
+When set to one of: no, none, never, false, it tells <em>git apply</em> to
+respect all whitespace differences.
+See <a href="git-apply.html">git-apply(1)</a>.</p>
+</dd>
+<dt class="hdlist1">apply.whitespace</dt>
+<dd>
+<p>Tells <em>git apply</em> how to handle whitespace, in the same way
+as the <code>--whitespace</code> option. See <a href="git-apply.html">git-apply(1)</a>.</p>
+</dd>
 <dt class="hdlist1">attr.tree</dt>
 <dd>
 <p>A reference to a tree in the repository from which to read attributes,
@@ -1866,6 +1978,708 @@ repository, this defaults to <code>HEAD:.gitattributes</code>. If the value does
 not resolve to a valid tree object, an empty tree is used instead.
 When the <code>GIT_ATTR_SOURCE</code> environment variable or <code>--attr-source</code>
 command line option are used, this configuration variable has no effect.</p>
+</dd>
+<dt class="hdlist1">blame.blankBoundary</dt>
+<dd>
+<p>Show blank commit object name for boundary commits in
+<a href="git-blame.html">git-blame(1)</a>. This option defaults to false.</p>
+</dd>
+<dt class="hdlist1">blame.coloring</dt>
+<dd>
+<p>This determines the coloring scheme to be applied to blame
+output. It can be <em>repeatedLines</em>, <em>highlightRecent</em>,
+or <em>none</em> which is the default.</p>
+</dd>
+<dt class="hdlist1">blame.date</dt>
+<dd>
+<p>Specifies the format used to output dates in <a href="git-blame.html">git-blame(1)</a>.
+If unset the iso format is used. For supported values,
+see the discussion of the <code>--date</code> option at <a href="git-log.html">git-log(1)</a>.</p>
+</dd>
+<dt class="hdlist1">blame.showEmail</dt>
+<dd>
+<p>Show the author email instead of author name in <a href="git-blame.html">git-blame(1)</a>.
+This option defaults to false.</p>
+</dd>
+<dt class="hdlist1">blame.showRoot</dt>
+<dd>
+<p>Do not treat root commits as boundaries in <a href="git-blame.html">git-blame(1)</a>.
+This option defaults to false.</p>
+</dd>
+<dt class="hdlist1">blame.ignoreRevsFile</dt>
+<dd>
+<p>Ignore revisions listed in the file, one unabbreviated object name per
+line, in <a href="git-blame.html">git-blame(1)</a>.  Whitespace and comments beginning with
+<code>#</code> are ignored.  This option may be repeated multiple times.  Empty
+file names will reset the list of ignored revisions.  This option will
+be handled before the command line option <code>--ignore-revs-file</code>.</p>
+</dd>
+<dt class="hdlist1">blame.markUnblamableLines</dt>
+<dd>
+<p>Mark lines that were changed by an ignored revision that we could not
+attribute to another commit with a <em>*</em> in the output of
+<a href="git-blame.html">git-blame(1)</a>.</p>
+</dd>
+<dt class="hdlist1">blame.markIgnoredLines</dt>
+<dd>
+<p>Mark lines that were changed by an ignored revision that we attributed to
+another commit with a <em>?</em> in the output of <a href="git-blame.html">git-blame(1)</a>.</p>
+</dd>
+<dt class="hdlist1">branch.autoSetupMerge</dt>
+<dd>
+<p>Tells <em>git branch</em>, <em>git switch</em> and <em>git checkout</em> to set up new branches
+so that <a href="git-pull.html">git-pull(1)</a> will appropriately merge from the
+starting point branch. Note that even if this option is not set,
+this behavior can be chosen per-branch using the <code>--track</code>
+and <code>--no-track</code> options. The valid settings are: <code>false</code>&#8201;&#8212;&#8201;no
+automatic setup is done; <code>true</code>&#8201;&#8212;&#8201;automatic setup is done when the
+starting point is a remote-tracking branch; <code>always</code>&#8201;&#8212;&#8201;automatic setup is done when the starting point is either a
+local branch or remote-tracking branch; <code>inherit</code>&#8201;&#8212;&#8201;if the starting point
+has a tracking configuration, it is copied to the new
+branch; <code>simple</code>&#8201;&#8212;&#8201;automatic setup is done only when the starting point
+is a remote-tracking branch and the new branch has the same name as the
+remote branch. This option defaults to true.</p>
+</dd>
+<dt class="hdlist1">branch.autoSetupRebase</dt>
+<dd>
+<p>When a new branch is created with <em>git branch</em>, <em>git switch</em> or <em>git checkout</em>
+that tracks another branch, this variable tells Git to set
+up pull to rebase instead of merge (see "branch.&lt;name&gt;.rebase").
+When <code>never</code>, rebase is never automatically set to true.
+When <code>local</code>, rebase is set to true for tracked branches of
+other local branches.
+When <code>remote</code>, rebase is set to true for tracked branches of
+remote-tracking branches.
+When <code>always</code>, rebase will be set to true for all tracking
+branches.
+See "branch.autoSetupMerge" for details on how to set up a
+branch to track another branch.
+This option defaults to never.</p>
+</dd>
+<dt class="hdlist1">branch.sort</dt>
+<dd>
+<p>This variable controls the sort ordering of branches when displayed by
+<a href="git-branch.html">git-branch(1)</a>. Without the "--sort=&lt;value&gt;" option provided, the
+value of this variable will be used as the default.
+See <a href="git-for-each-ref.html">git-for-each-ref(1)</a> field names for valid values.</p>
+</dd>
+<dt class="hdlist1">branch.&lt;name&gt;.remote</dt>
+<dd>
+<p>When on branch &lt;name&gt;, it tells <em>git fetch</em> and <em>git push</em>
+which remote to fetch from or push to.  The remote to push to
+may be overridden with <code>remote.pushDefault</code> (for all branches).
+The remote to push to, for the current branch, may be further
+overridden by <code>branch.&lt;name&gt;.pushRemote</code>.  If no remote is
+configured, or if you are not on any branch and there is more than
+one remote defined in the repository, it defaults to <code>origin</code> for
+fetching and <code>remote.pushDefault</code> for pushing.
+Additionally, <code>.</code> (a period) is the current local repository
+(a dot-repository), see <code>branch.&lt;name&gt;.merge</code>'s final note below.</p>
+</dd>
+<dt class="hdlist1">branch.&lt;name&gt;.pushRemote</dt>
+<dd>
+<p>When on branch &lt;name&gt;, it overrides <code>branch.&lt;name&gt;.remote</code> for
+pushing.  It also overrides <code>remote.pushDefault</code> for pushing
+from branch &lt;name&gt;.  When you pull from one place (e.g. your
+upstream) and push to another place (e.g. your own publishing
+repository), you would want to set <code>remote.pushDefault</code> to
+specify the remote to push to for all branches, and use this
+option to override it for a specific branch.</p>
+</dd>
+<dt class="hdlist1">branch.&lt;name&gt;.merge</dt>
+<dd>
+<p>Defines, together with branch.&lt;name&gt;.remote, the upstream branch
+for the given branch. It tells <em>git fetch</em>/<em>git pull</em>/<em>git rebase</em> which
+branch to merge and can also affect <em>git push</em> (see push.default).
+When in branch &lt;name&gt;, it tells <em>git fetch</em> the default
+refspec to be marked for merging in FETCH_HEAD. The value is
+handled like the remote part of a refspec, and must match a
+ref which is fetched from the remote given by
+"branch.&lt;name&gt;.remote".
+The merge information is used by <em>git pull</em> (which first calls
+<em>git fetch</em>) to lookup the default branch for merging. Without
+this option, <em>git pull</em> defaults to merge the first refspec fetched.
+Specify multiple values to get an octopus merge.
+If you wish to setup <em>git pull</em> so that it merges into &lt;name&gt; from
+another branch in the local repository, you can point
+branch.&lt;name&gt;.merge to the desired branch, and use the relative path
+setting <code>.</code> (a period) for branch.&lt;name&gt;.remote.</p>
+</dd>
+<dt class="hdlist1">branch.&lt;name&gt;.mergeOptions</dt>
+<dd>
+<p>Sets default options for merging into branch &lt;name&gt;. The syntax and
+supported options are the same as those of <a href="git-merge.html">git-merge(1)</a>, but
+option values containing whitespace characters are currently not
+supported.</p>
+</dd>
+<dt class="hdlist1">branch.&lt;name&gt;.rebase</dt>
+<dd>
+<p>When true, rebase the branch &lt;name&gt; on top of the fetched branch,
+instead of merging the default branch from the default remote when
+"git pull" is run. See "pull.rebase" for doing this in a non
+branch-specific manner.</p>
+<div class="paragraph">
+<p>When <code>merges</code> (or just <em>m</em>), pass the <code>--rebase-merges</code> option to <em>git rebase</em>
+so that the local merge commits are included in the rebase (see
+<a href="git-rebase.html">git-rebase(1)</a> for details).</p>
+</div>
+<div class="paragraph">
+<p>When the value is <code>interactive</code> (or just <em>i</em>), the rebase is run in interactive
+mode.</p>
+</div>
+<div class="paragraph">
+<p><strong>NOTE</strong>: this is a possibly dangerous operation; do <strong>not</strong> use
+it unless you understand the implications (see <a href="git-rebase.html">git-rebase(1)</a>
+for details).</p>
+</div>
+</dd>
+<dt class="hdlist1">branch.&lt;name&gt;.description</dt>
+<dd>
+<p>Branch description, can be edited with
+<code>git branch --edit-description</code>. Branch description is
+automatically added to the format-patch cover letter or
+request-pull summary.</p>
+</dd>
+<dt class="hdlist1">browser.&lt;tool&gt;.cmd</dt>
+<dd>
+<p>Specify the command to invoke the specified browser. The
+specified command is evaluated in shell with the URLs passed
+as arguments. (See <a href="git-web&#x2d;&#x2d;browse.html">git-web&#x2d;&#x2d;browse(1)</a>.)</p>
+</dd>
+<dt class="hdlist1">browser.&lt;tool&gt;.path</dt>
+<dd>
+<p>Override the path for the given tool that may be used to
+browse HTML help (see <code>-w</code> option in <a href="git-help.html">git-help(1)</a>) or a
+working repository in gitweb (see <a href="git-instaweb.html">git-instaweb(1)</a>).</p>
+</dd>
+<dt class="hdlist1">bundle.*</dt>
+<dd>
+<p>The <code>bundle.*</code> keys may appear in a bundle list file found via the
+<code>git clone --bundle-uri</code> option. These keys currently have no effect
+if placed in a repository config file, though this will change in the
+future. See <a href="technical/bundle-uri.html">the bundle URI design
+document</a> for more details.</p>
+</dd>
+<dt class="hdlist1">bundle.version</dt>
+<dd>
+<p>This integer value advertises the version of the bundle list format
+used by the bundle list. Currently, the only accepted value is <code>1</code>.</p>
+</dd>
+<dt class="hdlist1">bundle.mode</dt>
+<dd>
+<p>This string value should be either <code>all</code> or <code>any</code>. This value describes
+whether all of the advertised bundles are required to unbundle a
+complete understanding of the bundled information (<code>all</code>) or if any one
+of the listed bundle URIs is sufficient (<code>any</code>).</p>
+</dd>
+<dt class="hdlist1">bundle.heuristic</dt>
+<dd>
+<p>If this string-valued key exists, then the bundle list is designed to
+work well with incremental <code>git fetch</code> commands. The heuristic signals
+that there are additional keys available for each bundle that help
+determine which subset of bundles the client should download. The
+only value currently understood is <code>creationToken</code>.</p>
+</dd>
+<dt class="hdlist1">bundle.&lt;id&gt;.*</dt>
+<dd>
+<p>The <code>bundle.&lt;id&gt;.*</code> keys are used to describe a single item in the
+bundle list, grouped under <code>&lt;id&gt;</code> for identification purposes.</p>
+</dd>
+<dt class="hdlist1">bundle.&lt;id&gt;.uri</dt>
+<dd>
+<p>This string value defines the URI by which Git can reach the contents
+of this <code>&lt;id&gt;</code>. This URI may be a bundle file or another bundle list.</p>
+</dd>
+<dt class="hdlist1">checkout.defaultRemote</dt>
+<dd>
+<p>When you run <code>git checkout &lt;something&gt;</code>
+or <code>git switch &lt;something&gt;</code> and only have one
+remote, it may implicitly fall back on checking out and
+tracking e.g. <code>origin/&lt;something&gt;</code>. This stops working as soon
+as you have more than one remote with a <code>&lt;something&gt;</code>
+reference. This setting allows for setting the name of a
+preferred remote that should always win when it comes to
+disambiguation. The typical use-case is to set this to
+<code>origin</code>.</p>
+<div class="paragraph">
+<p>Currently this is used by <a href="git-switch.html">git-switch(1)</a> and
+<a href="git-checkout.html">git-checkout(1)</a> when <code>git checkout &lt;something&gt;</code>
+or <code>git switch &lt;something&gt;</code>
+will checkout the <code>&lt;something&gt;</code> branch on another remote,
+and by <a href="git-worktree.html">git-worktree(1)</a> when <code>git worktree add</code> refers to a
+remote branch. This setting might be used for other checkout-like
+commands or functionality in the future.</p>
+</div>
+</dd>
+<dt class="hdlist1">checkout.guess</dt>
+<dd>
+<p>Provides the default value for the <code>--guess</code> or <code>--no-guess</code>
+option in <code>git checkout</code> and <code>git switch</code>. See
+<a href="git-switch.html">git-switch(1)</a> and <a href="git-checkout.html">git-checkout(1)</a>.</p>
+</dd>
+<dt class="hdlist1">checkout.workers</dt>
+<dd>
+<p>The number of parallel workers to use when updating the working tree.
+The default is one, i.e. sequential execution. If set to a value less
+than one, Git will use as many workers as the number of logical cores
+available. This setting and <code>checkout.thresholdForParallelism</code> affect
+all commands that perform checkout. E.g. checkout, clone, reset,
+sparse-checkout, etc.</p>
+<div class="paragraph">
+<p>Note: Parallel checkout usually delivers better performance for repositories
+located on SSDs or over NFS. For repositories on spinning disks and/or machines
+with a small number of cores, the default sequential checkout often performs
+better. The size and compression level of a repository might also influence how
+well the parallel version performs.</p>
+</div>
+</dd>
+<dt class="hdlist1">checkout.thresholdForParallelism</dt>
+<dd>
+<p>When running parallel checkout with a small number of files, the cost
+of subprocess spawning and inter-process communication might outweigh
+the parallelization gains. This setting allows you to define the minimum
+number of files for which parallel checkout should be attempted. The
+default is 100.</p>
+</dd>
+<dt class="hdlist1">clean.requireForce</dt>
+<dd>
+<p>A boolean to make git-clean refuse to delete files unless -f
+is given. Defaults to true.</p>
+</dd>
+<dt class="hdlist1"><code>clone.defaultRemoteName</code></dt>
+<dd>
+<p>The name of the remote to create when cloning a repository.  Defaults to
+<code>origin</code>.
+It can be overridden by passing the <code>--origin</code> command-line
+option to <a href="git-clone.html">git-clone(1)</a>.</p>
+</dd>
+<dt class="hdlist1"><code>clone.rejectShallow</code></dt>
+<dd>
+<p>Reject cloning a repository if it is a shallow one; this can be overridden by
+passing the <code>--reject-shallow</code> option on the command line.
+See <a href="git-clone.html">git-clone(1)</a>.</p>
+</dd>
+<dt class="hdlist1"><code>clone.filterSubmodules</code></dt>
+<dd>
+<p>If a partial clone filter is provided (see <code>--filter</code> in
+<a href="git-rev-list.html">git-rev-list(1)</a>) and <code>--recurse-submodules</code> is used, also apply
+the filter to submodules.</p>
+</dd>
+<dt class="hdlist1">color.advice</dt>
+<dd>
+<p>A boolean to enable/disable color in hints (e.g. when a push
+failed, see <code>advice.*</code> for a list).  May be set to <code>always</code>,
+<code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which case colors
+are used only when the error output goes to a terminal. If
+unset, then the value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
+</dd>
+<dt class="hdlist1">color.advice.hint</dt>
+<dd>
+<p>Use customized color for hints.</p>
+</dd>
+<dt class="hdlist1">color.blame.highlightRecent</dt>
+<dd>
+<p>Specify the line annotation color for <code>git blame --color-by-age</code>
+depending upon the age of the line.</p>
+<div class="paragraph">
+<p>This setting should be set to a comma-separated list of color and
+date settings, starting and ending with a color, the dates should be
+set from oldest to newest. The metadata will be colored with the
+specified colors if the line was introduced before the given
+timestamp, overwriting older timestamped colors.</p>
+</div>
+<div class="paragraph">
+<p>Instead of an absolute timestamp relative timestamps work as well,
+e.g. <code>2.weeks.ago</code> is valid to address anything older than 2 weeks.</p>
+</div>
+<div class="paragraph">
+<p>It defaults to <code>blue,12 month ago,white,1 month ago,red</code>, which
+colors everything older than one year blue, recent changes between
+one month and one year old are kept white, and lines introduced
+within the last month are colored red.</p>
+</div>
+</dd>
+<dt class="hdlist1">color.blame.repeatedLines</dt>
+<dd>
+<p>Use the specified color to colorize line annotations for
+<code>git blame --color-lines</code>, if they come from the same commit as the
+preceding line. Defaults to cyan.</p>
+</dd>
+<dt class="hdlist1">color.branch</dt>
+<dd>
+<p>A boolean to enable/disable color in the output of
+<a href="git-branch.html">git-branch(1)</a>. May be set to <code>always</code>,
+<code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which case colors are used
+only when the output is to a terminal. If unset, then the
+value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
+</dd>
+<dt class="hdlist1">color.branch.&lt;slot&gt;</dt>
+<dd>
+<p>Use customized color for branch coloration. <code>&lt;slot&gt;</code> is one of
+<code>current</code> (the current branch), <code>local</code> (a local branch),
+<code>remote</code> (a remote-tracking branch in refs/remotes/),
+<code>upstream</code> (upstream tracking branch), <code>plain</code> (other
+refs).</p>
+</dd>
+<dt class="hdlist1">color.diff</dt>
+<dd>
+<p>Whether to use ANSI escape sequences to add color to patches.
+If this is set to <code>always</code>, <a href="git-diff.html">git-diff(1)</a>,
+<a href="git-log.html">git-log(1)</a>, and <a href="git-show.html">git-show(1)</a> will use color
+for all patches.  If it is set to <code>true</code> or <code>auto</code>, those
+commands will only use color when output is to the terminal.
+If unset, then the value of <code>color.ui</code> is used (<code>auto</code> by
+default).</p>
+<div class="paragraph">
+<p>This does not affect <a href="git-format-patch.html">git-format-patch(1)</a> or the
+<em>git-diff-*</em> plumbing commands.  Can be overridden on the
+command line with the <code>--color[=&lt;when&gt;]</code> option.</p>
+</div>
+</dd>
+<dt class="hdlist1">color.diff.&lt;slot&gt;</dt>
+<dd>
+<p>Use customized color for diff colorization.  <code>&lt;slot&gt;</code> specifies
+which part of the patch to use the specified color, and is one
+of <code>context</code> (context text - <code>plain</code> is a historical synonym),
+<code>meta</code> (metainformation), <code>frag</code>
+(hunk header), <em>func</em> (function in hunk header), <code>old</code> (removed lines),
+<code>new</code> (added lines), <code>commit</code> (commit headers), <code>whitespace</code>
+(highlighting whitespace errors), <code>oldMoved</code> (deleted lines),
+<code>newMoved</code> (added lines), <code>oldMovedDimmed</code>, <code>oldMovedAlternative</code>,
+<code>oldMovedAlternativeDimmed</code>, <code>newMovedDimmed</code>, <code>newMovedAlternative</code>
+<code>newMovedAlternativeDimmed</code> (See the <em>&lt;mode&gt;</em>
+setting of <em>--color-moved</em> in <a href="git-diff.html">git-diff(1)</a> for details),
+<code>contextDimmed</code>, <code>oldDimmed</code>, <code>newDimmed</code>, <code>contextBold</code>,
+<code>oldBold</code>, and <code>newBold</code> (see <a href="git-range-diff.html">git-range-diff(1)</a> for details).</p>
+</dd>
+<dt class="hdlist1">color.decorate.&lt;slot&gt;</dt>
+<dd>
+<p>Use customized color for <em>git log --decorate</em> output.  <code>&lt;slot&gt;</code> is one
+of <code>branch</code>, <code>remoteBranch</code>, <code>tag</code>, <code>stash</code> or <code>HEAD</code> for local
+branches, remote-tracking branches, tags, stash and HEAD, respectively
+and <code>grafted</code> for grafted commits.</p>
+</dd>
+<dt class="hdlist1">color.grep</dt>
+<dd>
+<p>When set to <code>always</code>, always highlight matches.  When <code>false</code> (or
+<code>never</code>), never.  When set to <code>true</code> or <code>auto</code>, use color only
+when the output is written to the terminal.  If unset, then the
+value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
+</dd>
+<dt class="hdlist1">color.grep.&lt;slot&gt;</dt>
+<dd>
+<p>Use customized color for grep colorization.  <code>&lt;slot&gt;</code> specifies which
+part of the line to use the specified color, and is one of</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>context</code></dt>
+<dd>
+<p>non-matching text in context lines (when using <code>-A</code>, <code>-B</code>, or <code>-C</code>)</p>
+</dd>
+<dt class="hdlist1"><code>filename</code></dt>
+<dd>
+<p>filename prefix (when not using <code>-h</code>)</p>
+</dd>
+<dt class="hdlist1"><code>function</code></dt>
+<dd>
+<p>function name lines (when using <code>-p</code>)</p>
+</dd>
+<dt class="hdlist1"><code>lineNumber</code></dt>
+<dd>
+<p>line number prefix (when using <code>-n</code>)</p>
+</dd>
+<dt class="hdlist1"><code>column</code></dt>
+<dd>
+<p>column number prefix (when using <code>--column</code>)</p>
+</dd>
+<dt class="hdlist1"><code>match</code></dt>
+<dd>
+<p>matching text (same as setting <code>matchContext</code> and <code>matchSelected</code>)</p>
+</dd>
+<dt class="hdlist1"><code>matchContext</code></dt>
+<dd>
+<p>matching text in context lines</p>
+</dd>
+<dt class="hdlist1"><code>matchSelected</code></dt>
+<dd>
+<p>matching text in selected lines. Also, used to customize the following
+<a href="git-log.html">git-log(1)</a> subcommands: <code>--grep</code>, <code>--author</code>, and <code>--committer</code>.</p>
+</dd>
+<dt class="hdlist1"><code>selected</code></dt>
+<dd>
+<p>non-matching text in selected lines. Also, used to customize the
+following <a href="git-log.html">git-log(1)</a> subcommands: <code>--grep</code>, <code>--author</code> and
+<code>--committer</code>.</p>
+</dd>
+<dt class="hdlist1"><code>separator</code></dt>
+<dd>
+<p>separators between fields on a line (<code>:</code>, <code>-</code>, and <code>=</code>)
+and between hunks (<code>--</code>)</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">color.interactive</dt>
+<dd>
+<p>When set to <code>always</code>, always use colors for interactive prompts
+and displays (such as those used by "git-add --interactive" and
+"git-clean --interactive"). When false (or <code>never</code>), never.
+When set to <code>true</code> or <code>auto</code>, use colors only when the output is
+to the terminal. If unset, then the value of <code>color.ui</code> is
+used (<code>auto</code> by default).</p>
+</dd>
+<dt class="hdlist1">color.interactive.&lt;slot&gt;</dt>
+<dd>
+<p>Use customized color for <em>git add --interactive</em> and <em>git clean
+--interactive</em> output. <code>&lt;slot&gt;</code> may be <code>prompt</code>, <code>header</code>, <code>help</code>
+or <code>error</code>, for four distinct types of normal output from
+interactive commands.</p>
+</dd>
+<dt class="hdlist1">color.pager</dt>
+<dd>
+<p>A boolean to specify whether <code>auto</code> color modes should colorize
+output going to the pager. Defaults to true; set this to false
+if your pager does not understand ANSI color codes.</p>
+</dd>
+<dt class="hdlist1">color.push</dt>
+<dd>
+<p>A boolean to enable/disable color in push errors. May be set to
+<code>always</code>, <code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which
+case colors are used only when the error output goes to a terminal.
+If unset, then the value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
+</dd>
+<dt class="hdlist1">color.push.error</dt>
+<dd>
+<p>Use customized color for push errors.</p>
+</dd>
+<dt class="hdlist1">color.remote</dt>
+<dd>
+<p>If set, keywords at the start of the line are highlighted. The
+keywords are "error", "warning", "hint" and "success", and are
+matched case-insensitively. May be set to <code>always</code>, <code>false</code> (or
+<code>never</code>) or <code>auto</code> (or <code>true</code>). If unset, then the value of
+<code>color.ui</code> is used (<code>auto</code> by default).</p>
+</dd>
+<dt class="hdlist1">color.remote.&lt;slot&gt;</dt>
+<dd>
+<p>Use customized color for each remote keyword. <code>&lt;slot&gt;</code> may be
+<code>hint</code>, <code>warning</code>, <code>success</code> or <code>error</code> which match the
+corresponding keyword.</p>
+</dd>
+<dt class="hdlist1">color.showBranch</dt>
+<dd>
+<p>A boolean to enable/disable color in the output of
+<a href="git-show-branch.html">git-show-branch(1)</a>. May be set to <code>always</code>,
+<code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which case colors are used
+only when the output is to a terminal. If unset, then the
+value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
+</dd>
+<dt class="hdlist1">color.status</dt>
+<dd>
+<p>A boolean to enable/disable color in the output of
+<a href="git-status.html">git-status(1)</a>. May be set to <code>always</code>,
+<code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which case colors are used
+only when the output is to a terminal. If unset, then the
+value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
+</dd>
+<dt class="hdlist1">color.status.&lt;slot&gt;</dt>
+<dd>
+<p>Use customized color for status colorization. <code>&lt;slot&gt;</code> is
+one of <code>header</code> (the header text of the status message),
+<code>added</code> or <code>updated</code> (files which are added but not committed),
+<code>changed</code> (files which are changed but not added in the index),
+<code>untracked</code> (files which are not tracked by Git),
+<code>branch</code> (the current branch),
+<code>nobranch</code> (the color the <em>no branch</em> warning is shown in, defaulting
+to red),
+<code>localBranch</code> or <code>remoteBranch</code> (the local and remote branch names,
+respectively, when branch and tracking information is displayed in the
+status short-format), or
+<code>unmerged</code> (files which have unmerged changes).</p>
+</dd>
+<dt class="hdlist1">color.transport</dt>
+<dd>
+<p>A boolean to enable/disable color when pushes are rejected. May be
+set to <code>always</code>, <code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which
+case colors are used only when the error output goes to a terminal.
+If unset, then the value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
+</dd>
+<dt class="hdlist1">color.transport.rejected</dt>
+<dd>
+<p>Use customized color when a push was rejected.</p>
+</dd>
+<dt class="hdlist1">color.ui</dt>
+<dd>
+<p>This variable determines the default value for variables such
+as <code>color.diff</code> and <code>color.grep</code> that control the use of color
+per command family. Its scope will expand as more commands learn
+configuration to set a default for the <code>--color</code> option.  Set it
+to <code>false</code> or <code>never</code> if you prefer Git commands not to use
+color unless enabled explicitly with some other configuration
+or the <code>--color</code> option. Set it to <code>always</code> if you want all
+output not intended for machine consumption to use color, to
+<code>true</code> or <code>auto</code> (this is the default since Git 1.8.4) if you
+want such output to use color when written to the terminal.</p>
+</dd>
+<dt class="hdlist1">column.ui</dt>
+<dd>
+<p>Specify whether supported commands should output in columns.
+This variable consists of a list of tokens separated by spaces
+or commas:</p>
+<div class="paragraph">
+<p>These options control when the feature should be enabled
+(defaults to <em>never</em>):</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>always</code></dt>
+<dd>
+<p>always show in columns</p>
+</dd>
+<dt class="hdlist1"><code>never</code></dt>
+<dd>
+<p>never show in columns</p>
+</dd>
+<dt class="hdlist1"><code>auto</code></dt>
+<dd>
+<p>show in columns if the output is to the terminal</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>These options control layout (defaults to <em>column</em>).  Setting any
+of these implies <em>always</em> if none of <em>always</em>, <em>never</em>, or <em>auto</em> are
+specified.</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>column</code></dt>
+<dd>
+<p>fill columns before rows</p>
+</dd>
+<dt class="hdlist1"><code>row</code></dt>
+<dd>
+<p>fill rows before columns</p>
+</dd>
+<dt class="hdlist1"><code>plain</code></dt>
+<dd>
+<p>show in one column</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Finally, these options can be combined with a layout option (defaults
+to <em>nodense</em>):</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>dense</code></dt>
+<dd>
+<p>make unequal size columns to utilize more space</p>
+</dd>
+<dt class="hdlist1"><code>nodense</code></dt>
+<dd>
+<p>make equal size columns</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">column.branch</dt>
+<dd>
+<p>Specify whether to output branch listing in <code>git branch</code> in columns.
+See <code>column.ui</code> for details.</p>
+</dd>
+<dt class="hdlist1">column.clean</dt>
+<dd>
+<p>Specify the layout when listing items in <code>git clean -i</code>, which always
+shows files and directories in columns. See <code>column.ui</code> for details.</p>
+</dd>
+<dt class="hdlist1">column.status</dt>
+<dd>
+<p>Specify whether to output untracked files in <code>git status</code> in columns.
+See <code>column.ui</code> for details.</p>
+</dd>
+<dt class="hdlist1">column.tag</dt>
+<dd>
+<p>Specify whether to output tag listings in <code>git tag</code> in columns.
+See <code>column.ui</code> for details.</p>
+</dd>
+<dt class="hdlist1">commit.cleanup</dt>
+<dd>
+<p>This setting overrides the default of the <code>--cleanup</code> option in
+<code>git commit</code>. See <a href="git-commit.html">git-commit(1)</a> for details. Changing the
+default can be useful when you always want to keep lines that begin
+with the comment character <code>#</code> in your log message, in which case you
+would do <code>git config commit.cleanup whitespace</code> (note that you will
+have to remove the help lines that begin with <code>#</code> in the commit log
+template yourself, if you do this).</p>
+</dd>
+<dt class="hdlist1">commit.gpgSign</dt>
+<dd>
+<p>A boolean to specify whether all commits should be GPG signed.
+Use of this option when doing operations such as rebase can
+result in a large number of commits being signed. It may be
+convenient to use an agent to avoid typing your GPG passphrase
+several times.</p>
+</dd>
+<dt class="hdlist1">commit.status</dt>
+<dd>
+<p>A boolean to enable/disable inclusion of status information in the
+commit message template when using an editor to prepare the commit
+message.  Defaults to true.</p>
+</dd>
+<dt class="hdlist1">commit.template</dt>
+<dd>
+<p>Specify the pathname of a file to use as the template for
+new commit messages.</p>
+</dd>
+<dt class="hdlist1">commit.verbose</dt>
+<dd>
+<p>A boolean or int to specify the level of verbosity with <code>git commit</code>.
+See <a href="git-commit.html">git-commit(1)</a>.</p>
+</dd>
+<dt class="hdlist1">commitGraph.generationVersion</dt>
+<dd>
+<p>Specifies the type of generation number version to use when writing
+or reading the commit-graph file. If version 1 is specified, then
+the corrected commit dates will not be written or read. Defaults to
+2.</p>
+</dd>
+<dt class="hdlist1">commitGraph.maxNewFilters</dt>
+<dd>
+<p>Specifies the default value for the <code>--max-new-filters</code> option of <code>git
+commit-graph write</code> (c.f., <a href="git-commit-graph.html">git-commit-graph(1)</a>).</p>
+</dd>
+<dt class="hdlist1">commitGraph.readChangedPaths</dt>
+<dd>
+<p>If true, then git will use the changed-path Bloom filters in the
+commit-graph file (if it exists, and they are present). Defaults to
+true. See <a href="git-commit-graph.html">git-commit-graph(1)</a> for more information.</p>
+</dd>
+<dt class="hdlist1">completion.commands</dt>
+<dd>
+<p>This is only used by git-completion.bash to add or remove
+commands from the list of completed commands. Normally only
+porcelain commands and a few select others are completed. You
+can add more commands, separated by space, in this
+variable. Prefixing the command with <em>-</em> will remove it from
+the existing list.</p>
 </dd>
 <dt class="hdlist1">core.fileMode</dt>
 <dd>
@@ -2478,6 +3292,7 @@ variable when it is set, and the environment variable
 <code>GIT_EDITOR</code> is not set.  See <a href="git-var.html">git-var(1)</a>.</p>
 </dd>
 <dt class="hdlist1">core.commentChar</dt>
+<dt class="hdlist1">core.commentString</dt>
 <dd>
 <p>Commands such as <code>commit</code> and <code>tag</code> that let you edit
 messages consider a line that begins with this character
@@ -2486,6 +3301,24 @@ commented, and removes them after the editor returns
 <div class="paragraph">
 <p>If set to "auto", <code>git-commit</code> would select a character that is not
 the beginning character of any line in existing commit messages.</p>
+</div>
+<div class="paragraph">
+<p>Note that these two variables are aliases of each other, and in modern
+versions of Git you are free to use a string (e.g., <code>//</code> or <code>⁑⁕⁑</code>) with
+<code>commentChar</code>. Versions of Git prior to v2.45.0 will ignore
+<code>commentString</code> but will reject a value of <code>commentChar</code> that consists
+of more than a single ASCII byte. If you plan to use your config with
+older and newer versions of Git, you may want to specify both:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>[core]
+# single character for older versions
+commentChar = "#"
+# string for newer versions (which will override commentChar
+# because it comes later in the file)
+commentString = "//"</pre>
+</div>
 </div>
 </dd>
 <dt class="hdlist1">core.filesRefLockTimeout</dt>
@@ -2737,7 +3570,7 @@ a delete of the source are used to make sure that object creation
 will not overwrite existing objects.</p>
 <div class="paragraph">
 <p>On some file system/operating system combinations, this is unreliable.
-Set this config setting to <em>rename</em> there; However, This will remove the
+Set this config setting to <em>rename</em> there; however, this will remove the
 check that makes sure that existing object files will not get overwritten.</p>
 </div>
 </dd>
@@ -2809,776 +3642,6 @@ The default value is false. When set to true, Git will set the mode
 bits of the file in the way of wsl, so that the executable flag of
 files can be set or read correctly.</p>
 </dd>
-<dt class="hdlist1">add.ignoreErrors</dt>
-<dt class="hdlist1">add.ignore-errors (deprecated)</dt>
-<dd>
-<p>Tells <em>git add</em> to continue adding files when some files cannot be
-added due to indexing errors. Equivalent to the <code>--ignore-errors</code>
-option of <a href="git-add.html">git-add(1)</a>.  <code>add.ignore-errors</code> is deprecated,
-as it does not follow the usual naming convention for configuration
-variables.</p>
-</dd>
-<dt class="hdlist1">add.interactive.useBuiltin</dt>
-<dd>
-<p>Unused configuration variable. Used in Git versions v2.25.0 to
-v2.36.0 to enable the built-in version of <a href="git-add.html">git-add(1)</a>'s
-interactive mode, which then became the default in Git
-versions v2.37.0 to v2.39.0.</p>
-</dd>
-<dt class="hdlist1">alias.*</dt>
-<dd>
-<p>Command aliases for the <a href="git.html">git(1)</a> command wrapper - e.g.
-after defining <code>alias.last = cat-file commit HEAD</code>, the invocation
-<code>git last</code> is equivalent to <code>git cat-file commit HEAD</code>. To avoid
-confusion and troubles with script usage, aliases that
-hide existing Git commands are ignored. Arguments are split by
-spaces, the usual shell quoting and escaping are supported.
-A quote pair or a backslash can be used to quote them.</p>
-<div class="paragraph">
-<p>Note that the first word of an alias does not necessarily have to be a
-command. It can be a command-line option that will be passed into the
-invocation of <code>git</code>. In particular, this is useful when used with <code>-c</code>
-to pass in one-time configurations or <code>-p</code> to force pagination. For example,
-<code>loud-rebase = -c commit.verbose=true rebase</code> can be defined such that
-running <code>git loud-rebase</code> would be equivalent to
-<code>git -c commit.verbose=true rebase</code>. Also, <code>ps = -p status</code> would be a
-helpful alias since <code>git ps</code> would paginate the output of <code>git status</code>
-where the original command does not.</p>
-</div>
-<div class="paragraph">
-<p>If the alias expansion is prefixed with an exclamation point,
-it will be treated as a shell command.  For example, defining
-<code>alias.new = !gitk --all --not ORIG_HEAD</code>, the invocation
-<code>git new</code> is equivalent to running the shell command
-<code>gitk --all --not ORIG_HEAD</code>.  Note that shell commands will be
-executed from the top-level directory of a repository, which may
-not necessarily be the current directory.
-<code>GIT_PREFIX</code> is set as returned by running <code>git rev-parse --show-prefix</code>
-from the original current directory. See <a href="git-rev-parse.html">git-rev-parse(1)</a>.</p>
-</div>
-</dd>
-<dt class="hdlist1">am.keepcr</dt>
-<dd>
-<p>If true, git-am will call git-mailsplit for patches in mbox format
-with parameter <code>--keep-cr</code>. In this case git-mailsplit will
-not remove <code>\r</code> from lines ending with <code>\r\n</code>. Can be overridden
-by giving <code>--no-keep-cr</code> from the command line.
-See <a href="git-am.html">git-am(1)</a>, <a href="git-mailsplit.html">git-mailsplit(1)</a>.</p>
-</dd>
-<dt class="hdlist1">am.threeWay</dt>
-<dd>
-<p>By default, <code>git am</code> will fail if the patch does not apply cleanly. When
-set to true, this setting tells <code>git am</code> to fall back on 3-way merge if
-the patch records the identity of blobs it is supposed to apply to and
-we have those blobs available locally (equivalent to giving the <code>--3way</code>
-option from the command line). Defaults to <code>false</code>.
-See <a href="git-am.html">git-am(1)</a>.</p>
-</dd>
-<dt class="hdlist1">apply.ignoreWhitespace</dt>
-<dd>
-<p>When set to <em>change</em>, tells <em>git apply</em> to ignore changes in
-whitespace, in the same way as the <code>--ignore-space-change</code>
-option.
-When set to one of: no, none, never, false, it tells <em>git apply</em> to
-respect all whitespace differences.
-See <a href="git-apply.html">git-apply(1)</a>.</p>
-</dd>
-<dt class="hdlist1">apply.whitespace</dt>
-<dd>
-<p>Tells <em>git apply</em> how to handle whitespace, in the same way
-as the <code>--whitespace</code> option. See <a href="git-apply.html">git-apply(1)</a>.</p>
-</dd>
-<dt class="hdlist1">blame.blankBoundary</dt>
-<dd>
-<p>Show blank commit object name for boundary commits in
-<a href="git-blame.html">git-blame(1)</a>. This option defaults to false.</p>
-</dd>
-<dt class="hdlist1">blame.coloring</dt>
-<dd>
-<p>This determines the coloring scheme to be applied to blame
-output. It can be <em>repeatedLines</em>, <em>highlightRecent</em>,
-or <em>none</em> which is the default.</p>
-</dd>
-<dt class="hdlist1">blame.date</dt>
-<dd>
-<p>Specifies the format used to output dates in <a href="git-blame.html">git-blame(1)</a>.
-If unset the iso format is used. For supported values,
-see the discussion of the <code>--date</code> option at <a href="git-log.html">git-log(1)</a>.</p>
-</dd>
-<dt class="hdlist1">blame.showEmail</dt>
-<dd>
-<p>Show the author email instead of author name in <a href="git-blame.html">git-blame(1)</a>.
-This option defaults to false.</p>
-</dd>
-<dt class="hdlist1">blame.showRoot</dt>
-<dd>
-<p>Do not treat root commits as boundaries in <a href="git-blame.html">git-blame(1)</a>.
-This option defaults to false.</p>
-</dd>
-<dt class="hdlist1">blame.ignoreRevsFile</dt>
-<dd>
-<p>Ignore revisions listed in the file, one unabbreviated object name per
-line, in <a href="git-blame.html">git-blame(1)</a>.  Whitespace and comments beginning with
-<code>#</code> are ignored.  This option may be repeated multiple times.  Empty
-file names will reset the list of ignored revisions.  This option will
-be handled before the command line option <code>--ignore-revs-file</code>.</p>
-</dd>
-<dt class="hdlist1">blame.markUnblamableLines</dt>
-<dd>
-<p>Mark lines that were changed by an ignored revision that we could not
-attribute to another commit with a <em>*</em> in the output of
-<a href="git-blame.html">git-blame(1)</a>.</p>
-</dd>
-<dt class="hdlist1">blame.markIgnoredLines</dt>
-<dd>
-<p>Mark lines that were changed by an ignored revision that we attributed to
-another commit with a <em>?</em> in the output of <a href="git-blame.html">git-blame(1)</a>.</p>
-</dd>
-<dt class="hdlist1">branch.autoSetupMerge</dt>
-<dd>
-<p>Tells <em>git branch</em>, <em>git switch</em> and <em>git checkout</em> to set up new branches
-so that <a href="git-pull.html">git-pull(1)</a> will appropriately merge from the
-starting point branch. Note that even if this option is not set,
-this behavior can be chosen per-branch using the <code>--track</code>
-and <code>--no-track</code> options. The valid settings are: <code>false</code>&#8201;&#8212;&#8201;no
-automatic setup is done; <code>true</code>&#8201;&#8212;&#8201;automatic setup is done when the
-starting point is a remote-tracking branch; <code>always</code>&#8201;&#8212;&#8201;automatic setup is done when the starting point is either a
-local branch or remote-tracking branch; <code>inherit</code>&#8201;&#8212;&#8201;if the starting point
-has a tracking configuration, it is copied to the new
-branch; <code>simple</code>&#8201;&#8212;&#8201;automatic setup is done only when the starting point
-is a remote-tracking branch and the new branch has the same name as the
-remote branch. This option defaults to true.</p>
-</dd>
-<dt class="hdlist1">branch.autoSetupRebase</dt>
-<dd>
-<p>When a new branch is created with <em>git branch</em>, <em>git switch</em> or <em>git checkout</em>
-that tracks another branch, this variable tells Git to set
-up pull to rebase instead of merge (see "branch.&lt;name&gt;.rebase").
-When <code>never</code>, rebase is never automatically set to true.
-When <code>local</code>, rebase is set to true for tracked branches of
-other local branches.
-When <code>remote</code>, rebase is set to true for tracked branches of
-remote-tracking branches.
-When <code>always</code>, rebase will be set to true for all tracking
-branches.
-See "branch.autoSetupMerge" for details on how to set up a
-branch to track another branch.
-This option defaults to never.</p>
-</dd>
-<dt class="hdlist1">branch.sort</dt>
-<dd>
-<p>This variable controls the sort ordering of branches when displayed by
-<a href="git-branch.html">git-branch(1)</a>. Without the "--sort=&lt;value&gt;" option provided, the
-value of this variable will be used as the default.
-See <a href="git-for-each-ref.html">git-for-each-ref(1)</a> field names for valid values.</p>
-</dd>
-<dt class="hdlist1">branch.&lt;name&gt;.remote</dt>
-<dd>
-<p>When on branch &lt;name&gt;, it tells <em>git fetch</em> and <em>git push</em>
-which remote to fetch from or push to.  The remote to push to
-may be overridden with <code>remote.pushDefault</code> (for all branches).
-The remote to push to, for the current branch, may be further
-overridden by <code>branch.&lt;name&gt;.pushRemote</code>.  If no remote is
-configured, or if you are not on any branch and there is more than
-one remote defined in the repository, it defaults to <code>origin</code> for
-fetching and <code>remote.pushDefault</code> for pushing.
-Additionally, <code>.</code> (a period) is the current local repository
-(a dot-repository), see <code>branch.&lt;name&gt;.merge</code>'s final note below.</p>
-</dd>
-<dt class="hdlist1">branch.&lt;name&gt;.pushRemote</dt>
-<dd>
-<p>When on branch &lt;name&gt;, it overrides <code>branch.&lt;name&gt;.remote</code> for
-pushing.  It also overrides <code>remote.pushDefault</code> for pushing
-from branch &lt;name&gt;.  When you pull from one place (e.g. your
-upstream) and push to another place (e.g. your own publishing
-repository), you would want to set <code>remote.pushDefault</code> to
-specify the remote to push to for all branches, and use this
-option to override it for a specific branch.</p>
-</dd>
-<dt class="hdlist1">branch.&lt;name&gt;.merge</dt>
-<dd>
-<p>Defines, together with branch.&lt;name&gt;.remote, the upstream branch
-for the given branch. It tells <em>git fetch</em>/<em>git pull</em>/<em>git rebase</em> which
-branch to merge and can also affect <em>git push</em> (see push.default).
-When in branch &lt;name&gt;, it tells <em>git fetch</em> the default
-refspec to be marked for merging in FETCH_HEAD. The value is
-handled like the remote part of a refspec, and must match a
-ref which is fetched from the remote given by
-"branch.&lt;name&gt;.remote".
-The merge information is used by <em>git pull</em> (which first calls
-<em>git fetch</em>) to lookup the default branch for merging. Without
-this option, <em>git pull</em> defaults to merge the first refspec fetched.
-Specify multiple values to get an octopus merge.
-If you wish to setup <em>git pull</em> so that it merges into &lt;name&gt; from
-another branch in the local repository, you can point
-branch.&lt;name&gt;.merge to the desired branch, and use the relative path
-setting <code>.</code> (a period) for branch.&lt;name&gt;.remote.</p>
-</dd>
-<dt class="hdlist1">branch.&lt;name&gt;.mergeOptions</dt>
-<dd>
-<p>Sets default options for merging into branch &lt;name&gt;. The syntax and
-supported options are the same as those of <a href="git-merge.html">git-merge(1)</a>, but
-option values containing whitespace characters are currently not
-supported.</p>
-</dd>
-<dt class="hdlist1">branch.&lt;name&gt;.rebase</dt>
-<dd>
-<p>When true, rebase the branch &lt;name&gt; on top of the fetched branch,
-instead of merging the default branch from the default remote when
-"git pull" is run. See "pull.rebase" for doing this in a non
-branch-specific manner.</p>
-<div class="paragraph">
-<p>When <code>merges</code> (or just <em>m</em>), pass the <code>--rebase-merges</code> option to <em>git rebase</em>
-so that the local merge commits are included in the rebase (see
-<a href="git-rebase.html">git-rebase(1)</a> for details).</p>
-</div>
-<div class="paragraph">
-<p>When the value is <code>interactive</code> (or just <em>i</em>), the rebase is run in interactive
-mode.</p>
-</div>
-<div class="paragraph">
-<p><strong>NOTE</strong>: this is a possibly dangerous operation; do <strong>not</strong> use
-it unless you understand the implications (see <a href="git-rebase.html">git-rebase(1)</a>
-for details).</p>
-</div>
-</dd>
-<dt class="hdlist1">branch.&lt;name&gt;.description</dt>
-<dd>
-<p>Branch description, can be edited with
-<code>git branch --edit-description</code>. Branch description is
-automatically added to the format-patch cover letter or
-request-pull summary.</p>
-</dd>
-<dt class="hdlist1">browser.&lt;tool&gt;.cmd</dt>
-<dd>
-<p>Specify the command to invoke the specified browser. The
-specified command is evaluated in shell with the URLs passed
-as arguments. (See <a href="git-web&#x2d;&#x2d;browse.html">git-web&#x2d;&#x2d;browse(1)</a>.)</p>
-</dd>
-<dt class="hdlist1">browser.&lt;tool&gt;.path</dt>
-<dd>
-<p>Override the path for the given tool that may be used to
-browse HTML help (see <code>-w</code> option in <a href="git-help.html">git-help(1)</a>) or a
-working repository in gitweb (see <a href="git-instaweb.html">git-instaweb(1)</a>).</p>
-</dd>
-<dt class="hdlist1">bundle.*</dt>
-<dd>
-<p>The <code>bundle.*</code> keys may appear in a bundle list file found via the
-<code>git clone --bundle-uri</code> option. These keys currently have no effect
-if placed in a repository config file, though this will change in the
-future. See <a href="technical/bundle-uri.html">the bundle URI design
-document</a> for more details.</p>
-</dd>
-<dt class="hdlist1">bundle.version</dt>
-<dd>
-<p>This integer value advertises the version of the bundle list format
-used by the bundle list. Currently, the only accepted value is <code>1</code>.</p>
-</dd>
-<dt class="hdlist1">bundle.mode</dt>
-<dd>
-<p>This string value should be either <code>all</code> or <code>any</code>. This value describes
-whether all of the advertised bundles are required to unbundle a
-complete understanding of the bundled information (<code>all</code>) or if any one
-of the listed bundle URIs is sufficient (<code>any</code>).</p>
-</dd>
-<dt class="hdlist1">bundle.heuristic</dt>
-<dd>
-<p>If this string-valued key exists, then the bundle list is designed to
-work well with incremental <code>git fetch</code> commands. The heuristic signals
-that there are additional keys available for each bundle that help
-determine which subset of bundles the client should download. The
-only value currently understood is <code>creationToken</code>.</p>
-</dd>
-<dt class="hdlist1">bundle.&lt;id&gt;.*</dt>
-<dd>
-<p>The <code>bundle.&lt;id&gt;.*</code> keys are used to describe a single item in the
-bundle list, grouped under <code>&lt;id&gt;</code> for identification purposes.</p>
-</dd>
-<dt class="hdlist1">bundle.&lt;id&gt;.uri</dt>
-<dd>
-<p>This string value defines the URI by which Git can reach the contents
-of this <code>&lt;id&gt;</code>. This URI may be a bundle file or another bundle list.</p>
-</dd>
-<dt class="hdlist1">checkout.defaultRemote</dt>
-<dd>
-<p>When you run <code>git checkout &lt;something&gt;</code>
-or <code>git switch &lt;something&gt;</code> and only have one
-remote, it may implicitly fall back on checking out and
-tracking e.g. <code>origin/&lt;something&gt;</code>. This stops working as soon
-as you have more than one remote with a <code>&lt;something&gt;</code>
-reference. This setting allows for setting the name of a
-preferred remote that should always win when it comes to
-disambiguation. The typical use-case is to set this to
-<code>origin</code>.</p>
-<div class="paragraph">
-<p>Currently this is used by <a href="git-switch.html">git-switch(1)</a> and
-<a href="git-checkout.html">git-checkout(1)</a> when <code>git checkout &lt;something&gt;</code>
-or <code>git switch &lt;something&gt;</code>
-will checkout the <code>&lt;something&gt;</code> branch on another remote,
-and by <a href="git-worktree.html">git-worktree(1)</a> when <code>git worktree add</code> refers to a
-remote branch. This setting might be used for other checkout-like
-commands or functionality in the future.</p>
-</div>
-</dd>
-<dt class="hdlist1">checkout.guess</dt>
-<dd>
-<p>Provides the default value for the <code>--guess</code> or <code>--no-guess</code>
-option in <code>git checkout</code> and <code>git switch</code>. See
-<a href="git-switch.html">git-switch(1)</a> and <a href="git-checkout.html">git-checkout(1)</a>.</p>
-</dd>
-<dt class="hdlist1">checkout.workers</dt>
-<dd>
-<p>The number of parallel workers to use when updating the working tree.
-The default is one, i.e. sequential execution. If set to a value less
-than one, Git will use as many workers as the number of logical cores
-available. This setting and <code>checkout.thresholdForParallelism</code> affect
-all commands that perform checkout. E.g. checkout, clone, reset,
-sparse-checkout, etc.</p>
-<div class="paragraph">
-<p>Note: Parallel checkout usually delivers better performance for repositories
-located on SSDs or over NFS. For repositories on spinning disks and/or machines
-with a small number of cores, the default sequential checkout often performs
-better. The size and compression level of a repository might also influence how
-well the parallel version performs.</p>
-</div>
-</dd>
-<dt class="hdlist1">checkout.thresholdForParallelism</dt>
-<dd>
-<p>When running parallel checkout with a small number of files, the cost
-of subprocess spawning and inter-process communication might outweigh
-the parallelization gains. This setting allows you to define the minimum
-number of files for which parallel checkout should be attempted. The
-default is 100.</p>
-</dd>
-<dt class="hdlist1">clean.requireForce</dt>
-<dd>
-<p>A boolean to make git-clean do nothing unless given -f,
--i, or -n.  Defaults to true.</p>
-</dd>
-<dt class="hdlist1">clone.defaultRemoteName</dt>
-<dd>
-<p>The name of the remote to create when cloning a repository.  Defaults to
-<code>origin</code>, and can be overridden by passing the <code>--origin</code> command-line
-option to <a href="git-clone.html">git-clone(1)</a>.</p>
-</dd>
-<dt class="hdlist1">clone.rejectShallow</dt>
-<dd>
-<p>Reject cloning a repository if it is a shallow one; this can be overridden by
-passing the <code>--reject-shallow</code> option on the command line. See <a href="git-clone.html">git-clone(1)</a></p>
-</dd>
-<dt class="hdlist1">clone.filterSubmodules</dt>
-<dd>
-<p>If a partial clone filter is provided (see <code>--filter</code> in
-<a href="git-rev-list.html">git-rev-list(1)</a>) and <code>--recurse-submodules</code> is used, also apply
-the filter to submodules.</p>
-</dd>
-<dt class="hdlist1">color.advice</dt>
-<dd>
-<p>A boolean to enable/disable color in hints (e.g. when a push
-failed, see <code>advice.*</code> for a list).  May be set to <code>always</code>,
-<code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which case colors
-are used only when the error output goes to a terminal. If
-unset, then the value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
-</dd>
-<dt class="hdlist1">color.advice.hint</dt>
-<dd>
-<p>Use customized color for hints.</p>
-</dd>
-<dt class="hdlist1">color.blame.highlightRecent</dt>
-<dd>
-<p>Specify the line annotation color for <code>git blame --color-by-age</code>
-depending upon the age of the line.</p>
-<div class="paragraph">
-<p>This setting should be set to a comma-separated list of color and
-date settings, starting and ending with a color, the dates should be
-set from oldest to newest. The metadata will be colored with the
-specified colors if the line was introduced before the given
-timestamp, overwriting older timestamped colors.</p>
-</div>
-<div class="paragraph">
-<p>Instead of an absolute timestamp relative timestamps work as well,
-e.g. <code>2.weeks.ago</code> is valid to address anything older than 2 weeks.</p>
-</div>
-<div class="paragraph">
-<p>It defaults to <code>blue,12 month ago,white,1 month ago,red</code>, which
-colors everything older than one year blue, recent changes between
-one month and one year old are kept white, and lines introduced
-within the last month are colored red.</p>
-</div>
-</dd>
-<dt class="hdlist1">color.blame.repeatedLines</dt>
-<dd>
-<p>Use the specified color to colorize line annotations for
-<code>git blame --color-lines</code>, if they come from the same commit as the
-preceding line. Defaults to cyan.</p>
-</dd>
-<dt class="hdlist1">color.branch</dt>
-<dd>
-<p>A boolean to enable/disable color in the output of
-<a href="git-branch.html">git-branch(1)</a>. May be set to <code>always</code>,
-<code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which case colors are used
-only when the output is to a terminal. If unset, then the
-value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
-</dd>
-<dt class="hdlist1">color.branch.&lt;slot&gt;</dt>
-<dd>
-<p>Use customized color for branch coloration. <code>&lt;slot&gt;</code> is one of
-<code>current</code> (the current branch), <code>local</code> (a local branch),
-<code>remote</code> (a remote-tracking branch in refs/remotes/),
-<code>upstream</code> (upstream tracking branch), <code>plain</code> (other
-refs).</p>
-</dd>
-<dt class="hdlist1">color.diff</dt>
-<dd>
-<p>Whether to use ANSI escape sequences to add color to patches.
-If this is set to <code>always</code>, <a href="git-diff.html">git-diff(1)</a>,
-<a href="git-log.html">git-log(1)</a>, and <a href="git-show.html">git-show(1)</a> will use color
-for all patches.  If it is set to <code>true</code> or <code>auto</code>, those
-commands will only use color when output is to the terminal.
-If unset, then the value of <code>color.ui</code> is used (<code>auto</code> by
-default).</p>
-<div class="paragraph">
-<p>This does not affect <a href="git-format-patch.html">git-format-patch(1)</a> or the
-<em>git-diff-*</em> plumbing commands.  Can be overridden on the
-command line with the <code>--color[=&lt;when&gt;]</code> option.</p>
-</div>
-</dd>
-<dt class="hdlist1">color.diff.&lt;slot&gt;</dt>
-<dd>
-<p>Use customized color for diff colorization.  <code>&lt;slot&gt;</code> specifies
-which part of the patch to use the specified color, and is one
-of <code>context</code> (context text - <code>plain</code> is a historical synonym),
-<code>meta</code> (metainformation), <code>frag</code>
-(hunk header), <em>func</em> (function in hunk header), <code>old</code> (removed lines),
-<code>new</code> (added lines), <code>commit</code> (commit headers), <code>whitespace</code>
-(highlighting whitespace errors), <code>oldMoved</code> (deleted lines),
-<code>newMoved</code> (added lines), <code>oldMovedDimmed</code>, <code>oldMovedAlternative</code>,
-<code>oldMovedAlternativeDimmed</code>, <code>newMovedDimmed</code>, <code>newMovedAlternative</code>
-<code>newMovedAlternativeDimmed</code> (See the <em>&lt;mode&gt;</em>
-setting of <em>--color-moved</em> in <a href="git-diff.html">git-diff(1)</a> for details),
-<code>contextDimmed</code>, <code>oldDimmed</code>, <code>newDimmed</code>, <code>contextBold</code>,
-<code>oldBold</code>, and <code>newBold</code> (see <a href="git-range-diff.html">git-range-diff(1)</a> for details).</p>
-</dd>
-<dt class="hdlist1">color.decorate.&lt;slot&gt;</dt>
-<dd>
-<p>Use customized color for <em>git log --decorate</em> output.  <code>&lt;slot&gt;</code> is one
-of <code>branch</code>, <code>remoteBranch</code>, <code>tag</code>, <code>stash</code> or <code>HEAD</code> for local
-branches, remote-tracking branches, tags, stash and HEAD, respectively
-and <code>grafted</code> for grafted commits.</p>
-</dd>
-<dt class="hdlist1">color.grep</dt>
-<dd>
-<p>When set to <code>always</code>, always highlight matches.  When <code>false</code> (or
-<code>never</code>), never.  When set to <code>true</code> or <code>auto</code>, use color only
-when the output is written to the terminal.  If unset, then the
-value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
-</dd>
-<dt class="hdlist1">color.grep.&lt;slot&gt;</dt>
-<dd>
-<p>Use customized color for grep colorization.  <code>&lt;slot&gt;</code> specifies which
-part of the line to use the specified color, and is one of</p>
-<div class="openblock">
-<div class="content">
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>context</code></dt>
-<dd>
-<p>non-matching text in context lines (when using <code>-A</code>, <code>-B</code>, or <code>-C</code>)</p>
-</dd>
-<dt class="hdlist1"><code>filename</code></dt>
-<dd>
-<p>filename prefix (when not using <code>-h</code>)</p>
-</dd>
-<dt class="hdlist1"><code>function</code></dt>
-<dd>
-<p>function name lines (when using <code>-p</code>)</p>
-</dd>
-<dt class="hdlist1"><code>lineNumber</code></dt>
-<dd>
-<p>line number prefix (when using <code>-n</code>)</p>
-</dd>
-<dt class="hdlist1"><code>column</code></dt>
-<dd>
-<p>column number prefix (when using <code>--column</code>)</p>
-</dd>
-<dt class="hdlist1"><code>match</code></dt>
-<dd>
-<p>matching text (same as setting <code>matchContext</code> and <code>matchSelected</code>)</p>
-</dd>
-<dt class="hdlist1"><code>matchContext</code></dt>
-<dd>
-<p>matching text in context lines</p>
-</dd>
-<dt class="hdlist1"><code>matchSelected</code></dt>
-<dd>
-<p>matching text in selected lines. Also, used to customize the following
-<a href="git-log.html">git-log(1)</a> subcommands: <code>--grep</code>, <code>--author</code>, and <code>--committer</code>.</p>
-</dd>
-<dt class="hdlist1"><code>selected</code></dt>
-<dd>
-<p>non-matching text in selected lines. Also, used to customize the
-following <a href="git-log.html">git-log(1)</a> subcommands: <code>--grep</code>, <code>--author</code> and
-<code>--committer</code>.</p>
-</dd>
-<dt class="hdlist1"><code>separator</code></dt>
-<dd>
-<p>separators between fields on a line (<code>:</code>, <code>-</code>, and <code>=</code>)
-and between hunks (<code>--</code>)</p>
-</dd>
-</dl>
-</div>
-</div>
-</div>
-</dd>
-<dt class="hdlist1">color.interactive</dt>
-<dd>
-<p>When set to <code>always</code>, always use colors for interactive prompts
-and displays (such as those used by "git-add --interactive" and
-"git-clean --interactive"). When false (or <code>never</code>), never.
-When set to <code>true</code> or <code>auto</code>, use colors only when the output is
-to the terminal. If unset, then the value of <code>color.ui</code> is
-used (<code>auto</code> by default).</p>
-</dd>
-<dt class="hdlist1">color.interactive.&lt;slot&gt;</dt>
-<dd>
-<p>Use customized color for <em>git add --interactive</em> and <em>git clean
---interactive</em> output. <code>&lt;slot&gt;</code> may be <code>prompt</code>, <code>header</code>, <code>help</code>
-or <code>error</code>, for four distinct types of normal output from
-interactive commands.</p>
-</dd>
-<dt class="hdlist1">color.pager</dt>
-<dd>
-<p>A boolean to specify whether <code>auto</code> color modes should colorize
-output going to the pager. Defaults to true; set this to false
-if your pager does not understand ANSI color codes.</p>
-</dd>
-<dt class="hdlist1">color.push</dt>
-<dd>
-<p>A boolean to enable/disable color in push errors. May be set to
-<code>always</code>, <code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which
-case colors are used only when the error output goes to a terminal.
-If unset, then the value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
-</dd>
-<dt class="hdlist1">color.push.error</dt>
-<dd>
-<p>Use customized color for push errors.</p>
-</dd>
-<dt class="hdlist1">color.remote</dt>
-<dd>
-<p>If set, keywords at the start of the line are highlighted. The
-keywords are "error", "warning", "hint" and "success", and are
-matched case-insensitively. May be set to <code>always</code>, <code>false</code> (or
-<code>never</code>) or <code>auto</code> (or <code>true</code>). If unset, then the value of
-<code>color.ui</code> is used (<code>auto</code> by default).</p>
-</dd>
-<dt class="hdlist1">color.remote.&lt;slot&gt;</dt>
-<dd>
-<p>Use customized color for each remote keyword. <code>&lt;slot&gt;</code> may be
-<code>hint</code>, <code>warning</code>, <code>success</code> or <code>error</code> which match the
-corresponding keyword.</p>
-</dd>
-<dt class="hdlist1">color.showBranch</dt>
-<dd>
-<p>A boolean to enable/disable color in the output of
-<a href="git-show-branch.html">git-show-branch(1)</a>. May be set to <code>always</code>,
-<code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which case colors are used
-only when the output is to a terminal. If unset, then the
-value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
-</dd>
-<dt class="hdlist1">color.status</dt>
-<dd>
-<p>A boolean to enable/disable color in the output of
-<a href="git-status.html">git-status(1)</a>. May be set to <code>always</code>,
-<code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which case colors are used
-only when the output is to a terminal. If unset, then the
-value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
-</dd>
-<dt class="hdlist1">color.status.&lt;slot&gt;</dt>
-<dd>
-<p>Use customized color for status colorization. <code>&lt;slot&gt;</code> is
-one of <code>header</code> (the header text of the status message),
-<code>added</code> or <code>updated</code> (files which are added but not committed),
-<code>changed</code> (files which are changed but not added in the index),
-<code>untracked</code> (files which are not tracked by Git),
-<code>branch</code> (the current branch),
-<code>nobranch</code> (the color the <em>no branch</em> warning is shown in, defaulting
-to red),
-<code>localBranch</code> or <code>remoteBranch</code> (the local and remote branch names,
-respectively, when branch and tracking information is displayed in the
-status short-format), or
-<code>unmerged</code> (files which have unmerged changes).</p>
-</dd>
-<dt class="hdlist1">color.transport</dt>
-<dd>
-<p>A boolean to enable/disable color when pushes are rejected. May be
-set to <code>always</code>, <code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which
-case colors are used only when the error output goes to a terminal.
-If unset, then the value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
-</dd>
-<dt class="hdlist1">color.transport.rejected</dt>
-<dd>
-<p>Use customized color when a push was rejected.</p>
-</dd>
-<dt class="hdlist1">color.ui</dt>
-<dd>
-<p>This variable determines the default value for variables such
-as <code>color.diff</code> and <code>color.grep</code> that control the use of color
-per command family. Its scope will expand as more commands learn
-configuration to set a default for the <code>--color</code> option.  Set it
-to <code>false</code> or <code>never</code> if you prefer Git commands not to use
-color unless enabled explicitly with some other configuration
-or the <code>--color</code> option. Set it to <code>always</code> if you want all
-output not intended for machine consumption to use color, to
-<code>true</code> or <code>auto</code> (this is the default since Git 1.8.4) if you
-want such output to use color when written to the terminal.</p>
-</dd>
-<dt class="hdlist1">column.ui</dt>
-<dd>
-<p>Specify whether supported commands should output in columns.
-This variable consists of a list of tokens separated by spaces
-or commas:</p>
-<div class="paragraph">
-<p>These options control when the feature should be enabled
-(defaults to <em>never</em>):</p>
-</div>
-<div class="openblock">
-<div class="content">
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>always</code></dt>
-<dd>
-<p>always show in columns</p>
-</dd>
-<dt class="hdlist1"><code>never</code></dt>
-<dd>
-<p>never show in columns</p>
-</dd>
-<dt class="hdlist1"><code>auto</code></dt>
-<dd>
-<p>show in columns if the output is to the terminal</p>
-</dd>
-</dl>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>These options control layout (defaults to <em>column</em>).  Setting any
-of these implies <em>always</em> if none of <em>always</em>, <em>never</em>, or <em>auto</em> are
-specified.</p>
-</div>
-<div class="openblock">
-<div class="content">
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>column</code></dt>
-<dd>
-<p>fill columns before rows</p>
-</dd>
-<dt class="hdlist1"><code>row</code></dt>
-<dd>
-<p>fill rows before columns</p>
-</dd>
-<dt class="hdlist1"><code>plain</code></dt>
-<dd>
-<p>show in one column</p>
-</dd>
-</dl>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>Finally, these options can be combined with a layout option (defaults
-to <em>nodense</em>):</p>
-</div>
-<div class="openblock">
-<div class="content">
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>dense</code></dt>
-<dd>
-<p>make unequal size columns to utilize more space</p>
-</dd>
-<dt class="hdlist1"><code>nodense</code></dt>
-<dd>
-<p>make equal size columns</p>
-</dd>
-</dl>
-</div>
-</div>
-</div>
-</dd>
-<dt class="hdlist1">column.branch</dt>
-<dd>
-<p>Specify whether to output branch listing in <code>git branch</code> in columns.
-See <code>column.ui</code> for details.</p>
-</dd>
-<dt class="hdlist1">column.clean</dt>
-<dd>
-<p>Specify the layout when listing items in <code>git clean -i</code>, which always
-shows files and directories in columns. See <code>column.ui</code> for details.</p>
-</dd>
-<dt class="hdlist1">column.status</dt>
-<dd>
-<p>Specify whether to output untracked files in <code>git status</code> in columns.
-See <code>column.ui</code> for details.</p>
-</dd>
-<dt class="hdlist1">column.tag</dt>
-<dd>
-<p>Specify whether to output tag listings in <code>git tag</code> in columns.
-See <code>column.ui</code> for details.</p>
-</dd>
-<dt class="hdlist1">commit.cleanup</dt>
-<dd>
-<p>This setting overrides the default of the <code>--cleanup</code> option in
-<code>git commit</code>. See <a href="git-commit.html">git-commit(1)</a> for details. Changing the
-default can be useful when you always want to keep lines that begin
-with the comment character <code>#</code> in your log message, in which case you
-would do <code>git config commit.cleanup whitespace</code> (note that you will
-have to remove the help lines that begin with <code>#</code> in the commit log
-template yourself, if you do this).</p>
-</dd>
-<dt class="hdlist1">commit.gpgSign</dt>
-<dd>
-<p>A boolean to specify whether all commits should be GPG signed.
-Use of this option when doing operations such as rebase can
-result in a large number of commits being signed. It may be
-convenient to use an agent to avoid typing your GPG passphrase
-several times.</p>
-</dd>
-<dt class="hdlist1">commit.status</dt>
-<dd>
-<p>A boolean to enable/disable inclusion of status information in the
-commit message template when using an editor to prepare the commit
-message.  Defaults to true.</p>
-</dd>
-<dt class="hdlist1">commit.template</dt>
-<dd>
-<p>Specify the pathname of a file to use as the template for
-new commit messages.</p>
-</dd>
-<dt class="hdlist1">commit.verbose</dt>
-<dd>
-<p>A boolean or int to specify the level of verbosity with <code>git commit</code>.
-See <a href="git-commit.html">git-commit(1)</a>.</p>
-</dd>
-<dt class="hdlist1">commitGraph.generationVersion</dt>
-<dd>
-<p>Specifies the type of generation number version to use when writing
-or reading the commit-graph file. If version 1 is specified, then
-the corrected commit dates will not be written or read. Defaults to
-2.</p>
-</dd>
-<dt class="hdlist1">commitGraph.maxNewFilters</dt>
-<dd>
-<p>Specifies the default value for the <code>--max-new-filters</code> option of <code>git
-commit-graph write</code> (c.f., <a href="git-commit-graph.html">git-commit-graph(1)</a>).</p>
-</dd>
-<dt class="hdlist1">commitGraph.readChangedPaths</dt>
-<dd>
-<p>If true, then git will use the changed-path Bloom filters in the
-commit-graph file (if it exists, and they are present). Defaults to
-true. See <a href="git-commit-graph.html">git-commit-graph(1)</a> for more information.</p>
-</dd>
 <dt class="hdlist1">credential.helper</dt>
 <dd>
 <p>Specify an external helper to be called when a username or
@@ -3622,15 +3685,6 @@ matched.</p>
 when trying to lock the credentials file. A value of 0 means not to retry at
 all; -1 means to try indefinitely. Default is 1000 (i.e., retry for
 1s).</p>
-</dd>
-<dt class="hdlist1">completion.commands</dt>
-<dd>
-<p>This is only used by git-completion.bash to add or remove
-commands from the list of completed commands. Normally only
-porcelain commands and a few select others are completed. You
-can add more commands, separated by space, in this
-variable. Prefixing the command with <em>-</em> will remove it from
-the existing list.</p>
 </dd>
 <dt class="hdlist1">diff.autoRefreshIndex</dt>
 <dd>
@@ -3781,9 +3835,17 @@ the order of the prefixes:</p>
 </dl>
 </div>
 </dd>
-<dt class="hdlist1">diff.noprefix</dt>
+<dt class="hdlist1">diff.noPrefix</dt>
 <dd>
 <p>If set, <em>git diff</em> does not show any source or destination prefix.</p>
+</dd>
+<dt class="hdlist1">diff.srcPrefix</dt>
+<dd>
+<p>If set, <em>git diff</em> uses this source prefix. Defaults to "a/".</p>
+</dd>
+<dt class="hdlist1">diff.dstPrefix</dt>
+<dd>
+<p>If set, <em>git diff</em> uses this destination prefix. Defaults to "b/".</p>
 </dd>
 <dt class="hdlist1">diff.relative</dt>
 <dd>
@@ -4025,8 +4087,8 @@ moved lines are not colored.</p>
 <dt class="hdlist1">diff.colorMovedWS</dt>
 <dd>
 <p>When moved lines are colored using e.g. the <code>diff.colorMoved</code> setting,
-this option controls the <code>&lt;mode&gt;</code> how spaces are treated
-for details of valid modes see <em>--color-moved-ws</em> in <a href="git-diff.html">git-diff(1)</a>.</p>
+this option controls the <code>&lt;mode&gt;</code> how spaces are treated.
+For details of valid modes see <em>--color-moved-ws</em> in <a href="git-diff.html">git-diff(1)</a>.</p>
 </dd>
 <dt class="hdlist1">diff.tool</dt>
 <dd>
@@ -4092,6 +4154,18 @@ this key unless <code>core.repositoryFormatVersion</code> is 1.</p>
 work and will produce hard-to-diagnose issues.</p>
 </div>
 </dd>
+<dt class="hdlist1">extensions.compatObjectFormat</dt>
+<dd>
+<p>Specify a compatitbility hash algorithm to use.  The acceptable values
+are <code>sha1</code> and <code>sha256</code>.  The value specified must be different from the
+value of extensions.objectFormat.  This allows client level
+interoperability between git repositories whose objectFormat matches
+this compatObjectFormat.  In particular when fully implemented the
+pushes and pulls from a repository in whose objectFormat matches
+compatObjectFormat.  As well as being able to use oids encoded in
+compatObjectFormat in addition to oids encoded with objectFormat to
+locally specify objects.</p>
+</dd>
 <dt class="hdlist1">extensions.refStorage</dt>
 <dd>
 <p>Specify the ref storage format to use. The acceptable values are:</p>
@@ -4099,6 +4173,10 @@ work and will produce hard-to-diagnose issues.</p>
 <ul>
 <li>
 <p><code>files</code> for loose files with packed-refs. This is the default.</p>
+</li>
+<li>
+<p><code>reftable</code> for the reftable format. This format is experimental and its
+internals are subject to change.</p>
 <div class="paragraph">
 <p>It is an error to specify this key unless <code>core.repositoryFormatVersion</code> is 1.</p>
 </div>
@@ -4367,6 +4445,18 @@ bundle URI. If you modify the URI at <code>fetch.bundleURI</code>, then be sure 
 remove the value for the <code>fetch.bundleCreationToken</code> value before fetching.</p>
 </div>
 </dd>
+<dt class="hdlist1">filter.&lt;driver&gt;.clean</dt>
+<dd>
+<p>The command which is used to convert the content of a worktree
+file to a blob upon checkin.  See <a href="gitattributes.html">gitattributes(5)</a> for
+details.</p>
+</dd>
+<dt class="hdlist1">filter.&lt;driver&gt;.smudge</dt>
+<dd>
+<p>The command which is used to convert the content of a blob
+object to a worktree file upon checkout.  See
+<a href="gitattributes.html">gitattributes(5)</a> for details.</p>
+</dd>
 <dt class="hdlist1">format.attach</dt>
 <dd>
 <p>Enable multipart/mixed attachments as the default for
@@ -4547,18 +4637,6 @@ This is equivalent to the <code>diff.noprefix</code> option used by <code>git
 diff</code> (but which is not respected by <code>format-patch</code>). Note that
 by setting this, the receiver of any patches you generate will
 have to apply them using the <code>-p0</code> option.</p>
-</dd>
-<dt class="hdlist1">filter.&lt;driver&gt;.clean</dt>
-<dd>
-<p>The command which is used to convert the content of a worktree
-file to a blob upon checkin.  See <a href="gitattributes.html">gitattributes(5)</a> for
-details.</p>
-</dd>
-<dt class="hdlist1">filter.&lt;driver&gt;.smudge</dt>
-<dd>
-<p>The command which is used to convert the content of a blob
-object to a worktree file upon checkout.  See
-<a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </dd>
 <dt class="hdlist1">fsck.&lt;msg-id&gt;</dt>
 <dd>
@@ -4968,42 +5046,6 @@ access method.</p>
 <dd>
 <p>See <a href="gitweb.conf.html">gitweb.conf(5)</a> for description.</p>
 </dd>
-<dt class="hdlist1">grep.lineNumber</dt>
-<dd>
-<p>If set to true, enable <code>-n</code> option by default.</p>
-</dd>
-<dt class="hdlist1">grep.column</dt>
-<dd>
-<p>If set to true, enable the <code>--column</code> option by default.</p>
-</dd>
-<dt class="hdlist1">grep.patternType</dt>
-<dd>
-<p>Set the default matching behavior. Using a value of <em>basic</em>, <em>extended</em>,
-<em>fixed</em>, or <em>perl</em> will enable the <code>--basic-regexp</code>, <code>--extended-regexp</code>,
-<code>--fixed-strings</code>, or <code>--perl-regexp</code> option accordingly, while the
-value <em>default</em> will use the <code>grep.extendedRegexp</code> option to choose
-between <em>basic</em> and <em>extended</em>.</p>
-</dd>
-<dt class="hdlist1">grep.extendedRegexp</dt>
-<dd>
-<p>If set to true, enable <code>--extended-regexp</code> option by default. This
-option is ignored when the <code>grep.patternType</code> option is set to a value
-other than <em>default</em>.</p>
-</dd>
-<dt class="hdlist1">grep.threads</dt>
-<dd>
-<p>Number of grep worker threads to use. If unset (or set to 0), Git will
-use as many threads as the number of logical cores available.</p>
-</dd>
-<dt class="hdlist1">grep.fullName</dt>
-<dd>
-<p>If set to true, enable <code>--full-name</code> option by default.</p>
-</dd>
-<dt class="hdlist1">grep.fallbackToNoIndex</dt>
-<dd>
-<p>If set to true, fall back to git grep --no-index if git grep
-is executed outside of a git repository.  Defaults to false.</p>
-</dd>
 <dt class="hdlist1">gpg.program</dt>
 <dd>
 <p>Use this custom program instead of "<code>gpg</code>" found on <code>$PATH</code> when
@@ -5115,6 +5157,42 @@ signing key without invalidating all previously made signatures.</p>
 See ssh-keygen(1) for details.
 If a public key is found in this file then it will always be treated
 as having trust level "never" and signatures will show as invalid.</p>
+</dd>
+<dt class="hdlist1">grep.lineNumber</dt>
+<dd>
+<p>If set to true, enable <code>-n</code> option by default.</p>
+</dd>
+<dt class="hdlist1">grep.column</dt>
+<dd>
+<p>If set to true, enable the <code>--column</code> option by default.</p>
+</dd>
+<dt class="hdlist1">grep.patternType</dt>
+<dd>
+<p>Set the default matching behavior. Using a value of <em>basic</em>, <em>extended</em>,
+<em>fixed</em>, or <em>perl</em> will enable the <code>--basic-regexp</code>, <code>--extended-regexp</code>,
+<code>--fixed-strings</code>, or <code>--perl-regexp</code> option accordingly, while the
+value <em>default</em> will use the <code>grep.extendedRegexp</code> option to choose
+between <em>basic</em> and <em>extended</em>.</p>
+</dd>
+<dt class="hdlist1">grep.extendedRegexp</dt>
+<dd>
+<p>If set to true, enable <code>--extended-regexp</code> option by default. This
+option is ignored when the <code>grep.patternType</code> option is set to a value
+other than <em>default</em>.</p>
+</dd>
+<dt class="hdlist1">grep.threads</dt>
+<dd>
+<p>Number of grep worker threads to use. If unset (or set to 0), Git will
+use as many threads as the number of logical cores available.</p>
+</dd>
+<dt class="hdlist1">grep.fullName</dt>
+<dd>
+<p>If set to true, enable <code>--full-name</code> option by default.</p>
+</dd>
+<dt class="hdlist1">grep.fallbackToNoIndex</dt>
+<dd>
+<p>If set to true, fall back to <code>git grep --no-index</code> if <code>git grep</code>
+is executed outside of a git repository.  Defaults to false.</p>
 </dd>
 <dt class="hdlist1">gui.commitMsgWidth</dt>
 <dd>
@@ -5858,12 +5936,15 @@ refuse to parse the index and Git clients older than 2.40.0 will report an
 error during <code>git fsck</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">init.templateDir</dt>
+</dl>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>init.templateDir</code></dt>
 <dd>
-<p>Specify the directory from which templates will be copied.
-(See the "TEMPLATE DIRECTORY" section of <a href="git-init.html">git-init(1)</a>.)</p>
+<p>Specify the directory from which templates will be copied. (See the "TEMPLATE DIRECTORY" section of <a href="git-init.html">git-init(1)</a>.)</p>
 </dd>
-<dt class="hdlist1">init.defaultBranch</dt>
+<dt class="hdlist1"><code>init.defaultBranch</code></dt>
 <dd>
 <p>Allows overriding the default branch name e.g. when initializing
 a new repository.</p>
@@ -5901,9 +5982,7 @@ input with a single key (i.e., without hitting enter).
 Currently this is used by the <code>--patch</code> mode of
 <a href="git-add.html">git-add(1)</a>, <a href="git-checkout.html">git-checkout(1)</a>,
 <a href="git-restore.html">git-restore(1)</a>, <a href="git-commit.html">git-commit(1)</a>,
-<a href="git-reset.html">git-reset(1)</a>, and <a href="git-stash.html">git-stash(1)</a>. Note that this
-setting is silently ignored if portable keystroke input
-is not available; requires the Perl module Term::ReadKey.</p>
+<a href="git-reset.html">git-reset(1)</a>, and <a href="git-stash.html">git-stash(1)</a>.</p>
 </dd>
 <dt class="hdlist1">interactive.diffFilter</dt>
 <dd>
@@ -6473,13 +6552,17 @@ is supported and will only use <code>--auto-merge</code> when available.  A
 value of <code>false</code> avoids using <code>--auto-merge</code> altogether, and is the
 default value.</p>
 </dd>
-<dt class="hdlist1">mergetool.vimdiff.layout</dt>
+<dt class="hdlist1">mergetool.&lt;vimdiff variant&gt;.layout</dt>
 <dd>
-<p>The vimdiff backend uses this variable to control how its split
-windows appear. Applies even if you are using Neovim (<code>nvim</code>) or
-gVim (<code>gvim</code>) as the merge tool. See BACKEND SPECIFIC HINTS section
-in <a href="git-mergetool.html">git-mergetool(1)</a>.
-for details.</p>
+<p>Configure the split window layout for vimdiff&#8217;s <code>&lt;variant&gt;</code>, which is any of <code>vimdiff</code>,
+<code>nvimdiff</code>, <code>gvimdiff</code>.
+Upon launching <code>git mergetool</code> with <code>--tool=&lt;variant&gt;</code> (or without <code>--tool</code>
+if <code>merge.tool</code> is configured as <code>&lt;variant&gt;</code>), Git will consult
+<code>mergetool.&lt;variant&gt;.layout</code> to determine the tool&#8217;s layout. If the
+variant-specific configuration is not available, <code>vimdiff</code>'s is used as
+fallback.  If that too is not available, a default layout with 4 windows
+will be used.  To configure the layout, see the <code>BACKEND SPECIFIC HINTS</code>
+section in <a href="git-mergetool.html">git-mergetool(1)</a>.</p>
 </dd>
 <dt class="hdlist1">mergetool.hideResolved</dt>
 <dd>
@@ -6651,14 +6734,11 @@ enabled, pack-objects will try to send parts of the bitmapped
 packfile verbatim. When "multi", and when a multi-pack
 reachability bitmap is available, pack-objects will try to send
 parts of all packs in the MIDX.</p>
-<div class="literalblock">
-<div class="content">
-<pre>If only a single pack bitmap is available, and
-`pack.allowPackReuse` is set to "multi", reuse parts of just the
-bitmapped packfile. This can reduce memory and CPU usage to
-serve fetches, but might result in sending a slightly larger
-pack. Defaults to true.</pre>
-</div>
+<div class="paragraph">
+<p>If only a single pack bitmap is available, and <code>pack.allowPackReuse</code>
+is set to "multi", reuse parts of just the bitmapped packfile. This
+can reduce memory and CPU usage to serve fetches, but might result in
+sending a slightly larger pack. Defaults to true.</p>
 </div>
 </dd>
 <dt class="hdlist1">pack.island</dt>
@@ -7713,7 +7793,7 @@ the value of <code>sendemail.identity</code>.</p>
 <p>See <a href="git-send-email.html">git-send-email(1)</a> for description.  Note that this
 setting is not subject to the <em>identity</em> mechanism.</p>
 </dd>
-<dt class="hdlist1">sendemail.smtpsslcertpath</dt>
+<dt class="hdlist1">sendemail.smtpSSLCertPath</dt>
 <dd>
 <p>Path to ca-certificates (either a directory or a single file).
 Set it to an empty string to disable certificate verification.</p>
@@ -7794,12 +7874,12 @@ recognized by the parser.</p>
 <dt class="hdlist1">sendemail.envelopeSender</dt>
 <dt class="hdlist1">sendemail.from</dt>
 <dt class="hdlist1">sendemail.headerCmd</dt>
-<dt class="hdlist1">sendemail.signedoffbycc</dt>
+<dt class="hdlist1">sendemail.signedOffByCc</dt>
 <dt class="hdlist1">sendemail.smtpPass</dt>
-<dt class="hdlist1">sendemail.suppresscc</dt>
+<dt class="hdlist1">sendemail.suppressCc</dt>
 <dt class="hdlist1">sendemail.suppressFrom</dt>
 <dt class="hdlist1">sendemail.to</dt>
-<dt class="hdlist1">sendemail.tocmd</dt>
+<dt class="hdlist1">sendemail.toCmd</dt>
 <dt class="hdlist1">sendemail.smtpDomain</dt>
 <dt class="hdlist1">sendemail.smtpServer</dt>
 <dt class="hdlist1">sendemail.smtpServerPort</dt>
@@ -7814,9 +7894,9 @@ recognized by the parser.</p>
 <a href="git-send-email.html">git-send-email(1)</a> command-line options. See its
 documentation for details.</p>
 </dd>
-<dt class="hdlist1">sendemail.signedoffcc (deprecated)</dt>
+<dt class="hdlist1">sendemail.signedOffCc (deprecated)</dt>
 <dd>
-<p>Deprecated alias for <code>sendemail.signedoffbycc</code>.</p>
+<p>Deprecated alias for <code>sendemail.signedOffByCc</code>.</p>
 </dd>
 <dt class="hdlist1">sendemail.smtpBatchSize</dt>
 <dd>
@@ -7962,6 +8042,24 @@ follows:</p>
 change as git gains new features.</p>
 </div>
 </dd>
+<dt class="hdlist1">stash.showIncludeUntracked</dt>
+<dd>
+<p>If this is set to true, the <code>git stash show</code> command will show
+the untracked files of a stash entry.  Defaults to false. See
+the description of the <em>show</em> command in <a href="git-stash.html">git-stash(1)</a>.</p>
+</dd>
+<dt class="hdlist1">stash.showPatch</dt>
+<dd>
+<p>If this is set to true, the <code>git stash show</code> command without an
+option will show the stash entry in patch form.  Defaults to false.
+See the description of the <em>show</em> command in <a href="git-stash.html">git-stash(1)</a>.</p>
+</dd>
+<dt class="hdlist1">stash.showStat</dt>
+<dd>
+<p>If this is set to true, the <code>git stash show</code> command without an
+option will show a diffstat of the stash entry.  Defaults to true.
+See the description of the <em>show</em> command in <a href="git-stash.html">git-stash(1)</a>.</p>
+</dd>
 <dt class="hdlist1">status.relativePaths</dt>
 <dd>
 <p>By default, <a href="git-status.html">git-status(1)</a> shows paths relative to the
@@ -8041,6 +8139,8 @@ the untracked files. Possible values are:</p>
 </div>
 <div class="paragraph">
 <p>If this variable is not specified, it defaults to <em>normal</em>.
+All usual spellings for Boolean value <code>true</code> are taken as <code>normal</code>
+and <code>false</code> as <code>no</code>.
 This variable can be overridden with the -u|--untracked-files option
 of <a href="git-status.html">git-status(1)</a> and <a href="git-commit.html">git-commit(1)</a>.</p>
 </div>
@@ -8061,24 +8161,6 @@ also view the summary for ignored submodules you can either use
 the --ignore-submodules=dirty command-line option or the <em>git
 submodule summary</em> command, which shows a similar output but does
 not honor these settings.</p>
-</dd>
-<dt class="hdlist1">stash.showIncludeUntracked</dt>
-<dd>
-<p>If this is set to true, the <code>git stash show</code> command will show
-the untracked files of a stash entry.  Defaults to false. See
-the description of the <em>show</em> command in <a href="git-stash.html">git-stash(1)</a>.</p>
-</dd>
-<dt class="hdlist1">stash.showPatch</dt>
-<dd>
-<p>If this is set to true, the <code>git stash show</code> command without an
-option will show the stash entry in patch form.  Defaults to false.
-See the description of the <em>show</em> command in <a href="git-stash.html">git-stash(1)</a>.</p>
-</dd>
-<dt class="hdlist1">stash.showStat</dt>
-<dd>
-<p>If this is set to true, the <code>git stash show</code> command without an
-option will show a diffstat of the stash entry.  Defaults to true.
-See the description of the <em>show</em> command in <a href="git-stash.html">git-stash(1)</a>.</p>
 </dd>
 <dt class="hdlist1">submodule.&lt;name&gt;.url</dt>
 <dd>
@@ -8511,6 +8593,11 @@ information from the remote server (if advertised) and download
 bundles before continuing the clone through the Git protocol.
 Defaults to <code>false</code>.</p>
 </dd>
+<dt class="hdlist1">transfer.advertiseObjectInfo</dt>
+<dd>
+<p>When <code>true</code>, the <code>object-info</code> capability is advertised by
+servers. Defaults to false.</p>
+</dd>
 <dt class="hdlist1">uploadarchive.allowUnreachable</dt>
 <dd>
 <p>If true, allow clients to use <code>git archive --remote</code> to request
@@ -8807,7 +8894,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-23 20:26:53 UTC
+Last updated 2024-04-19 21:16:23 UTC
 </div>
 </div>
 </body>

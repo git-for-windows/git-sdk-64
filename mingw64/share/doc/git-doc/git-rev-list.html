@@ -862,8 +862,8 @@ and <em>commit1...commit2</em> notations cannot be used).</p>
 <p>With <code>--pretty</code> format other than <code>oneline</code> and <code>reference</code> (for obvious reasons),
 this causes the output to have two extra lines of information
 taken from the reflog.  The reflog designator in the output may be shown
-as <code>ref@{Nth}</code> (where <code>Nth</code> is the reverse-chronological index in the
-reflog) or as <code>ref@{timestamp}</code> (with the timestamp for that entry),
+as <code>ref@{&lt;Nth&gt;}</code> (where <em>&lt;Nth&gt;</em> is the reverse-chronological index in the
+reflog) or as <code>ref@{&lt;timestamp&gt;}</code> (with the <em>&lt;timestamp&gt;</em> for that entry),
 depending on a few rules:</p>
 </div>
 <div class="openblock">
@@ -871,7 +871,7 @@ depending on a few rules:</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>If the starting point is specified as <code>ref@{Nth}</code>, show the index
+<p>If the starting point is specified as <code>ref@{&lt;Nth&gt;}</code>, show the index
 format.</p>
 </li>
 <li>
@@ -901,8 +901,11 @@ See also <a href="git-reflog.html">git-reflog(1)</a>.</p>
 </dd>
 <dt class="hdlist1">--merge</dt>
 <dd>
-<p>After a failed merge, show refs that touch files having a
-conflict and don&#8217;t exist on all heads to merge.</p>
+<p>Show commits touching conflicted paths in the range <code>HEAD...&lt;other&gt;</code>,
+where <code>&lt;other&gt;</code> is the first existing pseudoref in <code>MERGE_HEAD</code>,
+<code>CHERRY_PICK_HEAD</code>, <code>REVERT_HEAD</code> or <code>REBASE_HEAD</code>. Only works
+when the index has unmerged entries. This option can be used to show
+relevant commits when resolving conflicts from a 3-way merge.</p>
 </dd>
 <dt class="hdlist1">--boundary</dt>
 <dd>
@@ -1755,6 +1758,11 @@ Unexpected missing objects will raise an error.</p>
 <div class="paragraph">
 <p>The form <em>--missing=print</em> is like <em>allow-any</em>, but will also print a
 list of the missing objects.  Object IDs are prefixed with a &#8220;?&#8221; character.</p>
+</div>
+<div class="paragraph">
+<p>If some tips passed to the traversal are missing, they will be
+considered as missing too, and the traversal will ignore them. In case
+we cannot get their Object ID though, an error will be raised.</p>
 </div>
 </dd>
 <dt class="hdlist1">--exclude-promisor-objects</dt>
@@ -2707,9 +2715,8 @@ desired it can be disabled with <code>only=false</code>.  E.g.,
 block should be included.</p>
 </li>
 <li>
-<p><em>separator=&lt;sep&gt;</em>: specify a separator inserted between trailer
-lines. When this option is not given each trailer line is
-terminated with a line feed character. The string &lt;sep&gt; may contain
+<p><em>separator=&lt;sep&gt;</em>: specify the separator inserted between trailer
+lines. Defaults to a line feed character. The string &lt;sep&gt; may contain
 the literal formatting codes described above. To use comma as
 separator one must use <code>%x2C</code> as it would otherwise be parsed as
 next option. E.g., <code>%(trailers:key=Ticket,separator=%x2C )</code>
@@ -2728,10 +2735,9 @@ option was given. E.g.,
 <p><em>valueonly[=&lt;bool&gt;]</em>: only show the value part of the trailer.</p>
 </li>
 <li>
-<p><em>key_value_separator=&lt;sep&gt;</em>: specify a separator inserted between
-trailer lines. When this option is not given each trailer key-value
-pair is separated by ": ". Otherwise it shares the same semantics
-as <em>separator=&lt;sep&gt;</em> above.</p>
+<p><em>key_value_separator=&lt;sep&gt;</em>: specify the separator inserted between
+the key and value of each trailer. Defaults to ": ". Otherwise it
+shares the same semantics as <em>separator=&lt;sep&gt;</em> above.</p>
 </li>
 </ul>
 </div>
@@ -2951,7 +2957,7 @@ repository size (taking the size of <code>origin</code> as a baseline).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-23 20:26:53 UTC
+Last updated 2024-04-19 21:16:23 UTC
 </div>
 </div>
 </body>
