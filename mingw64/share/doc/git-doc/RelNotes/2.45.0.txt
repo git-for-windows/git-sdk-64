@@ -77,14 +77,29 @@ UI, Workflows & Features
    skip showing the hunk immediately after it has already been shown, and
    an additional action to explicitly ask to reshow the current hunk.
 
- * "git pack-refs" learned the "--auto" option, which is a useful
-   addition to be triggered from "git gc --auto".
+ * "git pack-refs" learned the "--auto" option, which defers the decision of
+   whether and how to pack to the ref backend. This is used by the reftable
+   backend to avoid repacking of an already-optimal ref database. The new mode
+   is triggered from "git gc --auto".
 
  * "git add -u <pathspec>" and "git commit [-i] <pathspec>" did not
    diagnose a pathspec element that did not match any files in certain
    situations, unlike "git add <pathspec>" did.
 
  * The userdiff patterns for C# has been updated.
+
+ * Git writes a "waiting for your editor" message on an incomplete
+   line after launching an editor, and then append another error
+   message on the same line if the editor errors out.  It now clears
+   the "waiting for..." line before giving the error message.
+
+ * The filename used for rejected hunks "git apply --reject" creates
+   was limited to PATH_MAX, which has been lifted.
+
+ * When "git bisect" reports the commit it determined to be the
+   culprit, we used to show it in a format that does not honor common
+   UI tweaks, like log.date and log.decorate.  The code has been
+   taught to use "git show" to follow more customizations.
 
 
 Performance, Internal Implementation, Development Support etc.
@@ -100,7 +115,7 @@ Performance, Internal Implementation, Development Support etc.
 
  * The way placeholders are to be marked-up in documentation have been
    specified; use "_<placeholder>_" to typeset the word inside a pair
-   of <angle-brakets> emphasized.
+   of <angle-brackets> emphasized.
 
  * "git --no-lazy-fetch cmd" allows to run "cmd" while disabling lazy
    fetching of objects from the promisor remote, which may be handy
@@ -109,9 +124,6 @@ Performance, Internal Implementation, Development Support etc.
  * The implementation in "git clean" that makes "-n" and "-i" ignore
    clean.requireForce has been simplified, together with the
    documentation.
-
- * The code to iterate over refs with the reftable backend has seen
-   some optimization.
 
  * Uses of xwrite() helper have been audited and updated for better
    error checking and simpler code.
@@ -185,6 +197,19 @@ Performance, Internal Implementation, Development Support etc.
    operations accumulate many entries has been improved to avoid
    accumulating too many tables uncollected.
 
+ * The code to iterate over reftable blocks has seen some optimization
+   to reduce memory allocation and deallocation.
+
+ * The way "git fast-import" handles paths described in its input has
+   been tightened up and more clearly documented.
+
+ * The cvsimport tests required that the platform understands
+   traditional timezone notations like CST6CDT, which has been
+   updated to work on those systems as long as they understand
+   POSIX notation with explicit tz transition dates.
+
+ * The code to format trailers have been cleaned up.
+
 
 Fixes since v2.44
 -----------------
@@ -248,7 +273,7 @@ Fixes since v2.44
    This has been corrected.
    (merge 199f44cb2e ps/remote-helper-repo-initialization-fix later to maint).
 
- * Various parts of upload-pack has been updated to bound the resource
+ * Various parts of upload-pack have been updated to bound the resource
    consumption relative to the size of the repository to protect from
    abusive clients.
    (merge 6cd05e768b jk/upload-pack-bounded-resources later to maint).
@@ -295,11 +320,11 @@ Fixes since v2.44
    variable that is no longer used.
    (merge 72a8d3f027 pw/rebase-i-ignore-cherry-pick-help-environment later to maint).
 
- * The code to find the effective end of log message can fall into an
+ * The code to find the effective end of log messages can fall into an
    endless loop, which has been corrected.
    (merge 2541cba2d6 fs/find-end-of-log-message-fix later to maint).
 
- * Mark-ups used in the documentation has been improved for
+ * Mark-up used in the documentation has been improved for
    consistency.
    (merge 45d5ed3e50 ja/doc-markup-fixes later to maint).
 
@@ -393,7 +418,7 @@ Fixes since v2.44
    configuration variable used to leak, which has been corrected.
    (merge 0e0fefb29f jc/unleak-core-excludesfile later to maint).
 
- * vreportf(), which is usede by error() and friends, has been taught
+ * vreportf(), which is used by error() and friends, has been taught
    to give the error message printf-format string when its vsnprintf()
    call fails, instead of showing nothing useful to identify the
    nature of the error.
@@ -401,6 +426,20 @@ Fixes since v2.44
 
  * Adjust to an upcoming changes to GNU make that breaks our Makefiles.
    (merge 227b8fd902 tb/make-indent-conditional-with-non-spaces later to maint).
+
+ * Git 2.44 introduced a regression that makes the updated code to
+   barf in repositories with multi-pack index written by older
+   versions of Git, which has been corrected.
+
+ * When .git/rr-cache/ rerere database gets corrupted or rerere is fed to
+   work on a file with conflicted hunks resolved incompletely, the rerere
+   machinery got confused and segfaulted, which has been corrected.
+   (merge 167395bb47 mr/rerere-crash-fix later to maint).
+
+ * The "receive-pack" program (which responds to "git push") was not
+   converted to run "git maintenance --auto" when other codepaths that
+   used to run "git gc --auto" were updated, which has been corrected.
+   (merge 7bf3057d9c ps/run-auto-maintenance-in-receive-pack later to maint).
 
  * Other code cleanup, docfix, build fix, etc.
    (merge f0e578c69c rs/use-xstrncmpz later to maint).
@@ -432,3 +471,6 @@ Fixes since v2.44
    (merge b4454d5a7b pw/t3428-cleanup later to maint).
    (merge 84a7c33a4b pf/commitish-committish later to maint).
    (merge 8882ee9d68 la/mailmap-entry later to maint).
+   (merge 44bdba2fa6 rs/no-openssl-compilation-fix-on-macos later to maint).
+   (merge f412d72c19 yb/replay-doc-linkfix later to maint).
+   (merge 5da40be8d7 xx/rfc2822-date-format-in-doc later to maint).
