@@ -31,8 +31,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.11
 srcdir=		.
 
-abs_srcdir=	/c/S/B/src/Python-3.11.8
-abs_builddir=	/c/S/B/src/Python-3.11.8
+abs_srcdir=	/c/S/B/src/Python-3.11.9
+abs_builddir=	/c/S/B/src/Python-3.11.9
 
 
 CC=		gcc
@@ -95,7 +95,7 @@ CONFIGURE_LDFLAGS_NODIST=
 # of _bootstrap_python and _freeze_module tools, which don't need LTO.
 CONFIGURE_LDFLAGS_NOLTO=
 CONFIGURE_CPPFLAGS=	
-CONFIGURE_LDFLAGS=	-pipe
+CONFIGURE_LDFLAGS=	
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
 # values.
@@ -108,7 +108,7 @@ PY_CPPFLAGS=	$(BASECPPFLAGS) -I. -I$(srcdir)/Include $(CONFIGURE_CPPFLAGS) $(CPP
 PY_LDFLAGS=	$(CONFIGURE_LDFLAGS) $(LDFLAGS)
 PY_LDFLAGS_NODIST=$(CONFIGURE_LDFLAGS_NODIST) $(LDFLAGS_NODIST)
 PY_LDFLAGS_NOLTO=$(PY_LDFLAGS) $(CONFIGURE_LDFLAGS_NOLTO) $(LDFLAGS_NODIST)
-NO_AS_NEEDED=	
+NO_AS_NEEDED=	-Wl,--no-as-needed
 CCSHARED=	
 # LINKFORSHARED are the flags passed to the $(CC) command that links
 # the python executable -- this is only needed for a few systems
@@ -351,7 +351,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/usr' '--build=x86_64-pc-cygwin' '--host=x86_64-pc-cygwin' '--enable-shared' '--enable-ipv6' '--with-dbmliborder=gdbm' '--with-libc=' '--with-libm=' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--enable-loadable-sqlite-extensions' '--without-ensurepip' 'build_alias=x86_64-pc-cygwin' 'host_alias=x86_64-pc-cygwin' 'PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/lib/pkgconfig' 'CC=gcc' 'CFLAGS=-march=nocona -msahf -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe' 'CPPFLAGS='
+CONFIG_ARGS=	 '--prefix=/usr' '--build=x86_64-pc-cygwin' '--host=x86_64-pc-cygwin' '--enable-shared' '--enable-ipv6' '--with-dbmliborder=gdbm' '--with-libc=' '--with-libm=' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--enable-loadable-sqlite-extensions' '--without-ensurepip' 'build_alias=x86_64-pc-cygwin' 'host_alias=x86_64-pc-cygwin' 'PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/lib/pkgconfig' 'CC=gcc' 'CFLAGS=-march=nocona -msahf -mtune=generic -O2 -pipe' 'LDFLAGS=' 'CPPFLAGS='
 
 
 # Subdirectories with code
@@ -2162,6 +2162,7 @@ TESTSUBDIRS=	ctypes/test \
 		test/test_json \
 		test/test_module \
 		test/test_peg_generator \
+		test/test_pydoc \
 		test/test_sqlite3 \
 		test/test_tomllib \
 		test/test_tomllib/data \
@@ -2196,7 +2197,11 @@ TESTSUBDIRS=	ctypes/test \
 		tkinter/test/test_tkinter \
 		tkinter/test/test_ttk \
 		unittest/test \
-		unittest/test/testmock
+		unittest/test/testmock \
+		test/test_concurrent_futures \
+		test/test_multiprocessing_fork \
+		test/test_multiprocessing_forkserver \
+		test/test_multiprocessing_spawn
 
 TEST_MODULES=yes
 libinstall:	all $(srcdir)/Modules/xxmodule.c
