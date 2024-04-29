@@ -10,13 +10,13 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Tanaka Akira".freeze]
   s.bindir = "exe".freeze
-  s.date = "2023-11-24"
+  s.date = "2024-04-28"
   s.description = "Interface for secure random number generator.".freeze
   s.email = ["akr@fsij.org".freeze]
   s.files = ["securerandom.rb".freeze]
   s.homepage = "https://github.com/ruby/securerandom".freeze
   s.licenses = ["Ruby".freeze, "BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.6.0".freeze)
-  s.rubygems_version = "3.3.26".freeze
+  s.rubygems_version = "3.3.27".freeze
   s.summary = "Interface for secure random number generator.".freeze
 end
