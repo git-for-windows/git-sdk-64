@@ -436,7 +436,7 @@ import_trustdb() {
 	local ret=0
 	for importdir in "$@"; do
 		if [[ -f "${importdir}/trustdb.gpg" ]]; then
-			/bin/gpg --homedir "${importdir}" --export-ownertrust | \
+			/usr/bin/gpg --homedir "${importdir}" --export-ownertrust | \
 				"${GPG_PACMAN[@]}" --import-ownertrust -
 			if (( PIPESTATUS )); then
 				error "$(gettext "%s could not be imported.")" "${importdir}/trustdb.gpg"

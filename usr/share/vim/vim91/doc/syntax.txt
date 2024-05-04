@@ -1,4 +1,4 @@
-*syntax.txt*	For Vim version 9.1.  Last change: 2024 Mar 10
+*syntax.txt*	For Vim version 9.1.  Last change: 2024 Apr 26
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -929,6 +929,21 @@ nasm_loose_syntax	unofficial parser allowed syntax not as Error
 			  (parser dependent; not recommended)
 nasm_ctx_outside_macro	contexts outside macro not as Error
 nasm_no_warn		potentially risky syntax not as ToDo
+
+ASTRO						*astro.vim* *ft-astro-syntax*
+
+Configuration
+
+The following variables control certain syntax highlighting features.
+You can add them to your .vimrc: >
+	let g:astro_typescript = "enable"
+<
+Enables TypeScript and TSX for ".astro" files. Default Value: "disable" >
+	let g:astro_stylus = "enable"
+<
+Enables Stylus for ".astro" files. Default Value: "disable"
+
+NOTE: You need to install an external plugin to support stylus in astro files.
 
 
 ASPPERL and ASPVBS			*ft-aspperl-syntax* *ft-aspvbs-syntax*
@@ -2071,6 +2086,15 @@ To disable syntax highlighting of errors: >
 	let g:vim_json_warnings = 0
 
 
+JQ				*jq.vim* *jq_quote_highlight* *ft-jq-syntax*
+
+To disable numbers having their own color add the following to your vimrc: >
+	hi link jqNumber Normal
+
+If you want quotes to have different highlighting than strings >
+	let g:jq_quote_highlight = 1
+
+
 LACE						*lace.vim* *ft-lace-syntax*
 
 Lace (Language for Assembly of Classes in Eiffel) is case insensitive, but the
@@ -2467,6 +2491,95 @@ by the camlp4 preprocessor.  Setting the variable >
 prevents highlighting of "end" as error, which is useful when sources
 contain very long structures that Vim does not synchronize anymore.
 
+PANDOC						*ft-pandoc-syntax*
+
+By default, markdown files will be detected as filetype "markdown".
+Alternatively, you may want them to be detected as filetype "pandoc" instead.
+To do so, set the following: >
+
+	:let g:markdown_md = 'pandoc'
+
+The pandoc syntax plugin uses |conceal| for pretty highlighting. Default is 1 >
+
+	:let g:pandoc#syntax#conceal#use = 1
+
+To specify elements that should not be concealed, set the following variable: >
+
+	:let g:pandoc#syntax#conceal#blacklist = []
+
+This is a list of the rules wich can be used here:
+
+  - titleblock
+  - image
+  - block
+  - subscript
+  - superscript
+  - strikeout
+  - atx
+  - codeblock_start
+  - codeblock_delim
+  - footnote
+  - definition
+  - list
+  - newline
+  - dashes
+  - ellipses
+  - quotes
+  - inlinecode
+  - inlinemath
+
+You can customize the way concealing works. For example, if you prefer to mark
+footnotes with the `*` symbol: >
+
+	:let g:pandoc#syntax#conceal#cchar_overrides = {"footnote" : "*"}
+
+To conceal the urls in links, use: >
+
+	:let g:pandoc#syntax#conceal#urls = 1
+
+Prevent highlighting specific codeblock types so that they remain Normal.
+Codeblock types include "definition" for codeblocks inside definition blocks
+and "delimited" for delimited codeblocks. Default = [] >
+
+	:let g:pandoc#syntax#codeblocks#ignore = ['definition']
+
+Use embedded highlighting for delimited codeblocks where a language is
+specified. Default = 1 >
+
+	:let g:pandoc#syntax#codeblocks#embeds#use = 1
+
+For specify what languages and using what syntax files to highlight embeds. This is a
+list of language names. When the language pandoc and vim use don't match, you
+can use the "PANDOC=VIM" syntax. For example: >
+
+	:let g:pandoc#syntax#codeblocks#embeds#langs = ["ruby", "bash=sh"]
+
+To use italics and strong in emphases. Default = 1 >
+
+	:let g:pandoc#syntax#style#emphases = 1
+
+"0" will add "block" to g:pandoc#syntax#conceal#blacklist, because otherwise
+you couldn't tell where the styles are applied.
+
+To add underline subscript, superscript and strikeout text styles. Default = 1 >
+
+	:let g:pandoc#syntax#style#underline_special = 1
+
+Detect and highlight definition lists. Disabling this can improve performance.
+Default = 1 (i.e., enabled by default) >
+
+	:let g:pandoc#syntax#style#use_definition_lists = 1
+
+The pandoc syntax script also comes with the following commands: >
+
+	:PandocHighlight LANG
+
+Enables embedded highlighting for language LANG in codeblocks. Uses the
+syntax for items in g:pandoc#syntax#codeblocks#embeds#langs. >
+
+	:PandocUnhighlight LANG
+
+Disables embedded highlighting for language LANG in codeblocks.
 
 PAPP						*papp.vim* *ft-papp-syntax*
 
@@ -2581,8 +2694,8 @@ perl_string_as_statement, it will be highlighted as in the second line.
 The syncing has 3 options.  The first two switch off some triggering of
 synchronization and should only be needed in case it fails to work properly.
 If while scrolling all of a sudden the whole screen changes color completely
-then you should try and switch off one of those.  Let me know if you can
-figure out the line that causes the mistake.
+then you should try and switch off one of those.  Let the developer know if
+you can figure out the line that causes the mistake.
 
 One triggers on "^\s*sub\s*" and the other on "^[$@%]" more or less. >
 
@@ -3675,12 +3788,15 @@ Some folding is now supported with syntax/vim.vim: >
    g:vimsyn_folding == 0 or doesn't exist: no syntax-based folding
    g:vimsyn_folding =~ 'a' : augroups
    g:vimsyn_folding =~ 'f' : fold functions
+   g:vimsyn_folding =~ 'h' : fold heredocs
+   g:vimsyn_folding =~ 'H' : fold Vim9-script legacy headers
    g:vimsyn_folding =~ 'l' : fold lua      script
    g:vimsyn_folding =~ 'm' : fold mzscheme script
    g:vimsyn_folding =~ 'p' : fold perl     script
    g:vimsyn_folding =~ 'P' : fold python   script
    g:vimsyn_folding =~ 'r' : fold ruby     script
    g:vimsyn_folding =~ 't' : fold tcl      script
+let g:vimsyn_folding = 'acfhlmpPrt'
 <
 							*g:vimsyn_noerror*
 Not all error highlighting that syntax/vim.vim does may be correct; Vim script
@@ -4207,7 +4323,9 @@ Whether or not it is actually concealed depends on the value of the
 'conceallevel' option.  The 'concealcursor' option is used to decide whether
 concealable items in the current line are displayed unconcealed to be able to
 edit the line.
-Another way to conceal text is with |matchadd()|.
+
+Another way to conceal text is with |matchadd()|, but internally this works a
+bit differently |syntax-vs-match|.
 
 concealends						*:syn-concealends*
 
@@ -4215,7 +4333,9 @@ When the "concealends" argument is given, the start and end matches of
 the region, but not the contents of the region, are marked as concealable.
 Whether or not they are actually concealed depends on the setting on the
 'conceallevel' option. The ends of a region can only be concealed separately
-in this way when they have their own highlighting via "matchgroup"
+in this way when they have their own highlighting via "matchgroup".  The
+|synconcealed()| function can be used to retrieve information about conealed
+items.
 
 cchar							*:syn-cchar*
 							*E844*
@@ -5496,6 +5616,9 @@ MessageWindow	Messages popup window used by `:echowindow`.  If not defined
 		|hl-WarningMsg| is used.
 							*hl-ModeMsg*
 ModeMsg		'showmode' message (e.g., "-- INSERT --").
+							*hl-MsgArea*
+MsgArea		Command-line area, also used for outputting messages, see also
+		'cmdheight'
 							*hl-MoreMsg*
 MoreMsg		|more-prompt|
 							*hl-NonText*

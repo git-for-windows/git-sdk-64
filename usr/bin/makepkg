@@ -424,7 +424,7 @@ run_function() {
 
 		$pkgfunc &>"$logpipe"
 
-		wait $teepid
+		wait -f $teepid
 		rm "$logpipe"
 	else
 		"$pkgfunc"
