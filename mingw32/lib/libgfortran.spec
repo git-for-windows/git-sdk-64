@@ -5,4 +5,4 @@
 #
 
 %rename lib liborig
-*lib: %{static-libgfortran:--as-needed} %{static-libquadmath:-Bstatic} -lquadmath %{static-libquadmath:-Bdynamic} %{static-libgfortran:--no-as-needed} -lm %(libgcc) %(liborig)
+*lib: %{static-libgfortran:--as-needed} %{static-libquadmath:-Bstatic} -lquadmath %{static-libquadmath:-Bdynamic} %{static-libgfortran:--no-as-needed} -lm %(liborig)
