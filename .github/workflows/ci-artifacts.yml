@@ -55,7 +55,7 @@ jobs:
           set -x
           test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
           test "$(type -p gcc)" = "/mingw64/bin/gcc" || exit 1
-          make -C ../git NO_PERL=1 SKIP_DASHED_BUILT_INS=YesPlease -j8 all strip
+          make -C ../git DEVELOPER=1 NO_PERL=1 SKIP_DASHED_BUILT_INS=YesPlease -j8 all strip
       - name: compress git artifacts
         shell: bash
         run: tar -C .. -czf git-artifacts.tar.gz --exclude '*.a' --exclude '*.o' --exclude .git --exclude .depend git
