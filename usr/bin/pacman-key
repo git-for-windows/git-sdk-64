@@ -3,7 +3,7 @@
 #   pacman-key - manages pacman's keyring
 #                Based on apt-key, from Debian
 #
-#   Copyright (c) 2010-2021 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2010-2024 Pacman Development Team <pacman-dev@lists.archlinux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@
 export TEXTDOMAIN='pacman-scripts'
 export TEXTDOMAINDIR='/usr/share/locale'
 
-declare -r myver="6.0.2"
+declare -r myver="6.1.0"
 
-LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
+MAKEPKG_LIBRARY=${MAKEPKG_LIBRARY:-'/usr/share/makepkg'}
 
 # Import libmakepkg
-source "$LIBRARY"/util/message.sh
-source "$LIBRARY"/util/parseopts.sh
-source "$LIBRARY"/utils_fixed_path.sh
+source "$MAKEPKG_LIBRARY"/util/message.sh
+source "$MAKEPKG_LIBRARY"/util/parseopts.sh
+source "$MAKEPKG_LIBRARY"/utils_fixed_path.sh
 
 # Options
 ADD=0
@@ -85,6 +85,8 @@ usage() {
                             '%s')")\n" "/etc/pacman.conf"
 	printf -- "$(gettext "  --gpgdir <dir>            Set an alternate directory for GnuPG (instead\n\
                             of '%s')")\n" "/etc/pacman.d/gnupg"
+	printf -- "$(gettext "  --populate-from <dir>     Set an alternate directory for --populate (instead\n\
+                            of '%s')")\n" "/usr/share/pacman/keyrings"
 	printf -- "$(gettext "  --keyserver <server-url>  Specify a keyserver to use if necessary")\n"
 	echo
 	printf -- "$(gettext "  -h, --help                Show this help message and exit")\n"
@@ -93,7 +95,7 @@ usage() {
 
 version() {
 	printf "pacman-key (pacman) %s\n" "${myver}"
-	printf -- "Copyright (c) 2010-2021 Pacman Development Team <pacman-dev@archlinux.org>.\n"
+	printf -- "Copyright (c) 2010-2024 Pacman Development Team <pacman-dev@lists.archlinux.org>.\n"
 	printf '\n'
 	printf -- "$(gettext "\
 This is free software; see the source for copying conditions.\n\
@@ -236,7 +238,6 @@ initialize() {
 	chmod 644 "$conffile"
 	add_gpg_conf_option "$conffile" 'no-greeting'
 	add_gpg_conf_option "$conffile" 'no-permission-warning'
-	add_gpg_conf_option "$conffile" 'lock-never'
 	add_gpg_conf_option "$conffile" 'keyserver-options' 'timeout=10'
 	add_gpg_conf_option "$conffile" 'keyserver-options' 'import-clean'
 
@@ -284,7 +285,6 @@ check_keyring() {
 }
 
 populate_keyring() {
-	local KEYRING_IMPORT_DIR='/usr/share/pacman/keyrings'
 
 	local keyring KEYRINGIDS=("$@")
 	local ret=0
@@ -381,7 +381,7 @@ populate_keyring() {
 			key_count=$((key_count+1))
 		done
 		if (( key_count )); then
-			msg2 "$(gettext "Disabled %s keys.")" "${key_count}"
+			msg2 "$(ngettext "Disabled %s key." "Disabled %s keys." "${key_count}")" "${key_count}"
 		fi
 	fi
 }
@@ -509,7 +509,7 @@ lsign_keys() {
 		exit 1
 	fi
 	if (( key_count )); then
-		msg2 "$(gettext "Locally signed %s keys.")" "${key_count}"
+		msg2 "$(ngettext "Locally signed %s key." "Locally signed %s keys." "${key_count}")" "${key_count}"
 	fi
 }
 
@@ -595,10 +595,21 @@ verify_sig() {
 		error "$(gettext "Cannot use armored signatures for packages: %s")" "$sig"
 		exit 1
 	fi
-	if ! "${GPG_PACMAN[@]}" --status-fd 1 --verify "${files[@]}" | grep -qE '^\[GNUPG:\] TRUST_(FULLY|ULTIMATE).*$'; then
-		error "$(gettext "The signature identified by %s could not be verified.")" "$sig"
+
+	"${GPG_PACMAN[@]}" --status-fd 1 --verify "${files[@]}" | grep -qE '^\[GNUPG:\] TRUST_(FULLY|ULTIMATE).*$'
+
+	# return error if GnuPG fails to verify the signature
+	if [[ "${PIPESTATUS[0]}" -ne 0 ]]; then
+		error "$(gettext "The signature verification for %s failed.")" "$sig"
 		ret=1
 	fi
+
+	# return error if the signature is not trusted fully or ultimately
+	if [[ "${PIPESTATUS[1]}" -ne 0 ]]; then
+		error "$(gettext "The signature %s is not trusted.")" "$sig"
+		ret=1
+	fi
+
 	exit $ret
 }
 
@@ -621,10 +632,20 @@ else
 	}
 fi
 
+if ! type ngettext &>/dev/null; then
+	ngettext() {
+		if (( $3 == 1 )); then
+			echo "$1"
+		else
+			echo "$2"
+		fi
+	}
+fi
+
 OPT_SHORT="adefhlruvV"
 OPT_LONG=('add' 'config:' 'delete' 'edit-key' 'export' 'finger' 'gpgdir:'
           'help' 'import' 'import-trustdb' 'init' 'keyserver:' 'list-keys' 'list-sigs'
-          'lsign-key' 'nocolor' 'populate' 'recv-keys' 'refresh-keys' 'updatedb'
+          'lsign-key' 'nocolor' 'populate' 'populate-from:' 'recv-keys' 'refresh-keys' 'updatedb'
           'verbose' 'verify' 'version')
 if ! parseopts "$OPT_SHORT" "${OPT_LONG[@]}" -- "$@"; then
 	exit 1 # E_INVALID_OPTION
@@ -646,6 +667,7 @@ while (( $# )); do
 		-e|--export)      EXPORT=1 ;;
 		-f|--finger)      FINGER=1 ;;
 		--gpgdir)         shift; PACMAN_KEYRING_DIR=$1 ;;
+		--populate-from)  shift; KEYRING_IMPORT_DIR=$1 ;;
 		--import)         IMPORT=1 UPDATEDB=1 ;;
 		--import-trustdb) IMPORT_TRUSTDB=1 UPDATEDB=1 ;;
 		--init)           INIT=1 ;;
@@ -686,6 +708,8 @@ if [[ ! -r "${CONFIG}" ]]; then
 	error "$(gettext "%s configuration file '%s' not found.")" "pacman" "$CONFIG"
 	exit 1
 fi
+
+KEYRING_IMPORT_DIR=${KEYRING_IMPORT_DIR:-"/usr/share/pacman/keyrings"}
 
 # if PACMAN_KEYRING_DIR isn't assigned, try to get it from the config
 # file, falling back on a hard default
