@@ -25,11 +25,12 @@ set -o nounset
 set -o errexit
 
 declare -r myname='pacscripts'
-declare -r myver='1.10.5'
+declare -r myver='1.10.6'
 
 error() {
 	local mesg=$1; shift
-	printf "==> $(/usr/bin/gettext "ERROR:") %s\n ${mesg}" "$@" >&2
+	# shellcheck disable=SC2059
+	printf "==> $(/usr/bin/gettext "ERROR:") ${mesg}\n" "$@" >&2
 }
 
 usage() {

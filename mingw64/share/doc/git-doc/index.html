@@ -2535,6 +2535,43 @@ unmerged version of a file when a merge is in progress.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_security">SECURITY</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Some configuration options and hook files may cause Git to run arbitrary
+shell commands. Because configuration and hooks are not copied using
+<code>git clone</code>, it is generally safe to clone remote repositories with
+untrusted content, inspect them with <code>git log</code>, and so on.</p>
+</div>
+<div class="paragraph">
+<p>However, it is not safe to run Git commands in a <code>.git</code> directory (or
+the working tree that surrounds it) when that <code>.git</code> directory itself
+comes from an untrusted source. The commands in its config and hooks
+are executed in the usual way.</p>
+</div>
+<div class="paragraph">
+<p>By default, Git will refuse to run when the repository is owned by
+someone other than the user running the command. See the entry for
+<code>safe.directory</code> in <a href="git-config.html">git-config(1)</a>. While this can help protect
+you in a multi-user environment, note that you can also acquire
+untrusted repositories that are owned by you (for example, if you
+extract a zip file or tarball from an untrusted source). In such cases,
+you&#8217;d need to "sanitize" the untrusted repository first.</p>
+</div>
+<div class="paragraph">
+<p>If you have an untrusted <code>.git</code> directory, you should first clone it
+with <code>git clone --no-local</code> to obtain a clean copy. Git does restrict
+the set of options and hooks that will be run by <code>upload-pack</code>, which
+handles the server side of a clone or fetch, but beware that the
+surface area for attack against <code>upload-pack</code> is large, so this does
+carry some risk. The safest thing is to serve the repository as an
+unprivileged user (either via <a href="git-daemon.html">git-daemon(1)</a>, ssh, or using
+other tools to change user ids). See the discussion in the <code>SECURITY</code>
+section of <a href="git-upload-pack.html">git-upload-pack(1)</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_further_documentation">FURTHER DOCUMENTATION</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -2619,7 +2656,7 @@ the Git Security mailing list &lt;<a href="mailto:git-security@googlegroups.com"
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-29 20:12:49 UTC
+Last updated 2024-05-02 18:44:52 UTC
 </div>
 </div>
 </body>

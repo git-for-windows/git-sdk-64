@@ -516,7 +516,47 @@ documentation. Also understood by
 admins may need to configure some transports to allow this
 variable to be passed. See the discussion in <a href="git.html">git(1)</a>.</p>
 </dd>
+<dt class="hdlist1"><code>GIT_NO_LAZY_FETCH</code></dt>
+<dd>
+<p>When cloning or fetching from a partial repository (i.e., one
+itself cloned with <code>--filter</code>), the server-side <code>upload-pack</code>
+may need to fetch extra objects from its upstream in order to
+complete the request. By default, <code>upload-pack</code> will refuse to
+perform such a lazy fetch, because <code>git fetch</code> may run arbitrary
+commands specified in configuration and hooks of the source
+repository (and <code>upload-pack</code> tries to be safe to run even in
+untrusted <code>.git</code> directories).</p>
+<div class="paragraph">
+<p>This is implemented by having <code>upload-pack</code> internally set the
+<code>GIT_NO_LAZY_FETCH</code> variable to <code>1</code>. If you want to override it
+(because you are fetching from a partial clone, and you are sure
+you trust it), you can explicitly set <code>GIT_NO_LAZY_FETCH</code> to
+<code>0</code>.</p>
+</div>
+</dd>
 </dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_security">SECURITY</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Most Git commands should not be run in an untrusted <code>.git</code> directory
+(see the section <code>SECURITY</code> in <a href="git.html">git(1)</a>). <code>upload-pack</code> tries to
+avoid any dangerous configuration options or hooks from the repository
+it&#8217;s serving, making it safe to clone an untrusted directory and run
+commands on the resulting clone.</p>
+</div>
+<div class="paragraph">
+<p>For an extra level of safety, you may be able to run <code>upload-pack</code> as an
+alternate user. The details will be platform dependent, but on many
+systems you can run:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>git clone --no-local --upload-pack='sudo -u nobody git-upload-pack' ...</pre>
+</div>
 </div>
 </div>
 </div>
@@ -539,7 +579,7 @@ variable to be passed. See the discussion in <a href="git.html">git(1)</a>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-29 20:12:49 UTC
+Last updated 2024-05-02 18:44:52 UTC
 </div>
 </div>
 </body>
