@@ -371,7 +371,7 @@ enum TreeScope {
     TreeScope_Descendants = 0x04,
     TreeScope_Parent      = 0x08,
     TreeScope_Ancestors   = 0x10,
-    TreeScope_SubTree     = TreeScope_Element | TreeScope_Children | TreeScope_Descendants,
+    TreeScope_Subtree     = TreeScope_Element | TreeScope_Children | TreeScope_Descendants,
 };
 
 enum PropertyConditionFlags {
@@ -537,13 +537,15 @@ void WINAPI UiaRegisterProviderCallback(UiaProviderCallback *pCallback);
 LRESULT WINAPI UiaReturnRawElementProvider(HWND hwnd, WPARAM wParam, LPARAM lParam, IRawElementProviderSimple *elprov);
 WINBOOL WINAPI UiaTextRangeRelease(HUIATEXTRANGE hobj);
 HRESULT WINAPI UiaHostProviderFromHwnd(HWND hwnd, IRawElementProviderSimple **elprov);
-HRESULT WINAPI UiaProviderFromIAccessible(IAccessible *acc, long child_id, DWORD flags, IRawElementProviderSimple **elprov);
+HRESULT WINAPI UiaProviderFromIAccessible(IAccessible *acc, LONG child_id, DWORD flags, IRawElementProviderSimple **elprov);
 HRESULT WINAPI UiaGetPropertyValue(HUIANODE huianode, PROPERTYID prop_id, VARIANT *out_val);
 HRESULT WINAPI UiaNodeFromProvider(IRawElementProviderSimple *elprov, HUIANODE *huianode);
 WINBOOL WINAPI UiaNodeRelease(HUIANODE huianode);
 HRESULT WINAPI UiaGetRuntimeId(HUIANODE huianode, SAFEARRAY **runtime_id);
 HRESULT WINAPI UiaHUiaNodeFromVariant(VARIANT *in_val, HUIANODE *huianode);
 HRESULT WINAPI UiaNodeFromHandle(HWND hwnd, HUIANODE *huianode);
+HRESULT WINAPI UiaGetRootNode(HUIANODE *huianode);
+HRESULT WINAPI UiaNodeFromFocus(struct UiaCacheRequest *cache_req, SAFEARRAY **out_req, BSTR *tree_struct);
 HRESULT WINAPI UiaDisconnectProvider(IRawElementProviderSimple *elprov);
 HRESULT WINAPI UiaGetUpdatedCache(HUIANODE huianode, struct UiaCacheRequest *cache_req, enum NormalizeState normalize_state,
         struct UiaCondition *normalize_cond, SAFEARRAY **out_req, BSTR *tree_struct);
@@ -556,6 +558,8 @@ HRESULT WINAPI UiaAddEvent(HUIANODE huianode, EVENTID event_id, UiaEventCallback
 HRESULT WINAPI UiaRemoveEvent(HUIAEVENT huiaevent);
 HRESULT WINAPI UiaEventAddWindow(HUIAEVENT huiaevent, HWND hwnd);
 HRESULT WINAPI UiaEventRemoveWindow(HUIAEVENT huiaevent, HWND hwnd);
+WINBOOL WINAPI UiaHasServerSideProvider(HWND hwnd);
+WINBOOL WINAPI UiaClientsAreListening(void);
 
 #ifdef __cplusplus
 }

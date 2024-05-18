@@ -4413,7 +4413,11 @@ typedef BYTE SE_SIGNING_LEVEL, *PSE_SIGNING_LEVEL;
       DWORD Flags;
     } JOB_SET_ARRAY,*PJOB_SET_ARRAY;
 
+#if NTDDI_VERSION >= NTDDI_WIN10_19H1
+#define FLS_MAXIMUM_AVAILABLE 4080
+#else
 #define FLS_MAXIMUM_AVAILABLE 128
+#endif
 #define TLS_MINIMUM_AVAILABLE 64
 
 #ifndef __MINGW_EXCPT_DEFINE_PSDK
@@ -5337,7 +5341,8 @@ DEFINE_ENUM_FLAG_OPERATORS(JOB_OBJECT_IO_RATE_CONTROL_FLAGS)
 
     typedef struct _PROCESSOR_RELATIONSHIP {
       BYTE Flags;
-      BYTE Reserved[21];
+      BYTE EfficiencyClass;
+      BYTE Reserved[20];
       WORD GroupCount;
       GROUP_AFFINITY GroupMask[ANYSIZE_ARRAY];
     } PROCESSOR_RELATIONSHIP,*PPROCESSOR_RELATIONSHIP;
@@ -5532,6 +5537,7 @@ DEFINE_ENUM_FLAG_OPERATORS(JOB_OBJECT_IO_RATE_CONTROL_FLAGS)
 #define PF_ERMS_AVAILABLE 42
 #define PF_ARM_V82_DP_INSTRUCTIONS_AVAILABLE 43
 #define PF_ARM_V83_JSCVT_INSTRUCTIONS_AVAILABLE 44
+#define PF_ARM_V83_LRCPC_INSTRUCTIONS_AVAILABLE 45
 
 #define XSTATE_LEGACY_FLOATING_POINT (0)
 #define XSTATE_LEGACY_SSE (1)
@@ -8757,7 +8763,7 @@ DEFINE_ENUM_FLAG_OPERATORS(JOB_OBJECT_IO_RATE_CONTROL_FLAGS)
     NTSYSAPI WORD NTAPI RtlCaptureStackBackTrace (DWORD FramesToSkip, DWORD FramesToCapture, PVOID *BackTrace, PDWORD BackTraceHash);
 #endif
 #if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP)
-    NTSYSAPI VOID NTAPI RtlCaptureContext (PCONTEXT ContextRecord);
+    NTSYSAPI VOID NTAPI __attribute__((__returns_twice__)) RtlCaptureContext (PCONTEXT ContextRecord);
     NTSYSAPI SIZE_T NTAPI RtlCompareMemory (const VOID *Source1, const VOID *Source2, SIZE_T Length);
 #if defined (__x86_64__)
 #if _WIN32_WINNT >= 0x0602
@@ -8768,7 +8774,7 @@ DEFINE_ENUM_FLAG_OPERATORS(JOB_OBJECT_IO_RATE_CONTROL_FLAGS)
     NTSYSAPI BOOLEAN __cdecl RtlAddFunctionTable (PRUNTIME_FUNCTION FunctionTable, DWORD EntryCount, DWORD64 BaseAddress);
     NTSYSAPI BOOLEAN __cdecl RtlDeleteFunctionTable (PRUNTIME_FUNCTION FunctionTable);
     NTSYSAPI BOOLEAN __cdecl RtlInstallFunctionTableCallback (DWORD64 TableIdentifier, DWORD64 BaseAddress, DWORD Length, PGET_RUNTIME_FUNCTION_CALLBACK Callback, PVOID Context, PCWSTR OutOfProcessCallbackDll);
-    NTSYSAPI VOID __cdecl RtlRestoreContext (PCONTEXT ContextRecord, struct _EXCEPTION_RECORD *ExceptionRecord);
+    NTSYSAPI VOID __cdecl __MINGW_ATTRIB_NORETURN RtlRestoreContext (PCONTEXT ContextRecord, struct _EXCEPTION_RECORD *ExceptionRecord);
 #endif
 #if defined (__arm__)
 #if _WIN32_WINNT >= 0x0602
@@ -8928,6 +8934,24 @@ typedef DWORD (WINAPI *PRTL_RUN_ONCE_INIT_FN)(PRTL_RUN_ONCE, PVOID, PVOID *);
 #define HEAP_MAXIMUM_TAG 0x0FFF
 #define HEAP_PSEUDO_TAG_FLAG 0x8000
 #define HEAP_TAG_SHIFT 18
+
+#if (!defined (__CRT__NO_INLINE) || defined(_UCRT)) && !defined (__WIDL__)
+    __forceinline PVOID RtlSecureZeroMemory(PVOID ptr,SIZE_T cnt) {
+      volatile char *vptr =(volatile char *)ptr;
+#ifdef __x86_64
+      __stosb((PBYTE)((DWORD64)vptr),0,cnt);
+#else
+      while(cnt) {
+	*vptr++ = 0;
+	cnt--;
+      }
+#endif /* __x86_64 */
+      return ptr;
+    }
+#else /* intrinsic in kernel32 */
+    PVOID WINAPI RtlSecureZeroMemory(PVOID ptr,SIZE_T cnt);
+#endif /* !__CRT__NO_INLINE // !__WIDL__ */
+
 /* Let this macro fail for non-desktop mode.  AFAIU this should be better an inline-function ... */
 #if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP)
 #define HEAP_MAKE_TAG_FLAGS(b,o) ((DWORD)((b) + ((o) << 18)))
@@ -8982,23 +9006,6 @@ typedef DWORD (WINAPI *PRTL_RUN_ONCE_INIT_FN)(PRTL_RUN_ONCE, PVOID, PVOID *);
 #define RtlCopyMemory(Destination,Source,Length) memcpy((Destination),(Source),(Length))
 #define RtlFillMemory(Destination,Length,Fill) memset((Destination),(Fill),(Length))
 #define RtlZeroMemory(Destination,Length) memset((Destination),0,(Length))
-
-    PVOID WINAPI RtlSecureZeroMemory(PVOID ptr,SIZE_T cnt);
-
-#if !defined (__CRT__NO_INLINE) && !defined (__WIDL__)
-    __CRT_INLINE PVOID WINAPI RtlSecureZeroMemory(PVOID ptr,SIZE_T cnt) {
-      volatile char *vptr =(volatile char *)ptr;
-#ifdef __x86_64
-      __stosb((PBYTE)((DWORD64)vptr),0,cnt);
-#else
-      while(cnt) {
-	*vptr++ = 0;
-	cnt--;
-      }
-#endif /* __x86_64 */
-      return ptr;
-    }
-#endif /* !__CRT__NO_INLINE // !__WIDL__ */
 
     typedef struct _MESSAGE_RESOURCE_ENTRY {
       WORD Length;

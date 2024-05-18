@@ -1346,6 +1346,8 @@ typedef enum FILE_FLUSH_MODE {
 
 #if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP) || _WIN32_WINNT >= _WIN32_WINNT_WIN10
   WINBASEAPI DWORD WINAPI WaitForMultipleObjects (DWORD nCount, CONST HANDLE *lpHandles, WINBOOL bWaitAll, DWORD dwMilliseconds);
+#define HANDLE_FLAG_INHERIT 0x1
+#define HANDLE_FLAG_PROTECT_FROM_CLOSE 0x2
 #endif
 
 #if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP)
@@ -1356,9 +1358,6 @@ typedef enum FILE_FLUSH_MODE {
     DEPPolicyOptOut,
     DEPTotalPolicyCount
   } DEP_SYSTEM_POLICY_TYPE;
-
-#define HANDLE_FLAG_INHERIT 0x1
-#define HANDLE_FLAG_PROTECT_FROM_CLOSE 0x2
 
 #define HINSTANCE_ERROR 32
 
@@ -1449,6 +1448,7 @@ typedef enum FILE_FLUSH_MODE {
 #define FORMAT_MESSAGE_FROM_SYSTEM 0x00001000
 #define FORMAT_MESSAGE_ARGUMENT_ARRAY 0x00002000
 #define FORMAT_MESSAGE_MAX_WIDTH_MASK 0x000000ff
+#define FORMAT_MESSAGE_ALLOCATE_BUFFER 0x00000100
 #endif
 
 #if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP)
@@ -1465,8 +1465,6 @@ typedef enum FILE_FLUSH_MODE {
 #define FILE_USER_DISALLOWED 7
 #define FILE_READ_ONLY 8
 #define FILE_DIR_DISALLOWED 9
-
-#define FORMAT_MESSAGE_ALLOCATE_BUFFER 0x00000100
 
 #define EFS_USE_RECOVERY_KEYS (0x1)
 
@@ -2016,7 +2014,6 @@ typedef enum FILE_FLUSH_MODE {
   WINBASEAPI VOID WINAPI FatalAppExitW (UINT uAction, LPCWSTR lpMessageText);
   WINBASEAPI VOID WINAPI GetStartupInfoA (LPSTARTUPINFOA lpStartupInfo);
   WINBASEAPI HRSRC WINAPI FindResourceA (HMODULE hModule, LPCSTR lpName, LPCSTR lpType);
-  WINBASEAPI HRSRC WINAPI FindResourceW (HMODULE hModule, LPCWSTR lpName, LPCWSTR lpType);
   WINBASEAPI HRSRC WINAPI FindResourceExA (HMODULE hModule, LPCSTR lpType, LPCSTR lpName, WORD wLanguage);
   WINBASEAPI WINBOOL WINAPI EnumResourceTypesA (HMODULE hModule, ENUMRESTYPEPROCA lpEnumFunc, LONG_PTR lParam);
   WINBASEAPI WINBOOL WINAPI EnumResourceTypesW (HMODULE hModule, ENUMRESTYPEPROCW lpEnumFunc, LONG_PTR lParam);
@@ -2083,7 +2080,6 @@ typedef enum FILE_FLUSH_MODE {
 #define FatalAppExit __MINGW_NAME_AW(FatalAppExit)
 #define GetFirmwareEnvironmentVariable __MINGW_NAME_AW(GetFirmwareEnvironmentVariable)
 #define SetFirmwareEnvironmentVariable __MINGW_NAME_AW(SetFirmwareEnvironmentVariable)
-#define FindResource __MINGW_NAME_AW(FindResource)
 #define EnumResourceTypes __MINGW_NAME_AW(EnumResourceTypes)
 #define EnumResourceNames __MINGW_NAME_AW(EnumResourceNames)
 #define EnumResourceLanguages __MINGW_NAME_AW(EnumResourceLanguages)
@@ -2139,8 +2135,6 @@ typedef enum FILE_FLUSH_MODE {
 #define GET_SYSTEM_WOW64_DIRECTORY_NAME_T_T __MINGW_NAME_UAW_EXT(GET_SYSTEM_WOW64_DIRECTORY_NAME,T)
 #endif
 
-  WINBASEAPI WINBOOL WINAPI SetDllDirectoryA (LPCSTR lpPathName);
-  WINBASEAPI WINBOOL WINAPI SetDllDirectoryW (LPCWSTR lpPathName);
   WINBASEAPI DWORD WINAPI GetDllDirectoryA (DWORD nBufferLength, LPSTR lpBuffer);
   WINBASEAPI DWORD WINAPI GetDllDirectoryW (DWORD nBufferLength, LPWSTR lpBuffer);
 
@@ -2169,12 +2163,22 @@ typedef enum FILE_FLUSH_MODE {
 #endif /* WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_APP) */
 
 
-#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP)
+#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP) || NTDDI_VERSION >= NTDDI_WIN10_19H1
+  WINBASEAPI WINBOOL WINAPI SetDllDirectoryA (LPCSTR lpPathName);
+  WINBASEAPI WINBOOL WINAPI SetDllDirectoryW (LPCWSTR lpPathName);
+  WINBASEAPI HRSRC WINAPI FindResourceW (HMODULE hModule, LPCWSTR lpName, LPCWSTR lpType);
+
+#define FindResource __MINGW_NAME_AW(FindResource)
+#endif
+
+#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP) || NTDDI_VERSION >= NTDDI_WIN10_VB
   WINBASEAPI WINBOOL WINAPI CreateDirectoryExA (LPCSTR lpTemplateDirectory, LPCSTR lpNewDirectory, LPSECURITY_ATTRIBUTES lpSecurityAttributes);
   WINBASEAPI WINBOOL WINAPI CreateDirectoryExW (LPCWSTR lpTemplateDirectory, LPCWSTR lpNewDirectory, LPSECURITY_ATTRIBUTES lpSecurityAttributes);
 
 #define CreateDirectoryEx __MINGW_NAME_AW(CreateDirectoryEx)
+#endif
 
+#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP)
 #if _WIN32_WINNT >= 0x0600
   WINBASEAPI WINBOOL WINAPI CreateDirectoryTransactedA (LPCSTR lpTemplateDirectory, LPCSTR lpNewDirectory, LPSECURITY_ATTRIBUTES lpSecurityAttributes, HANDLE hTransaction);
   WINBASEAPI WINBOOL WINAPI CreateDirectoryTransactedW (LPCWSTR lpTemplateDirectory, LPCWSTR lpNewDirectory, LPSECURITY_ATTRIBUTES lpSecurityAttributes, HANDLE hTransaction);
@@ -2464,9 +2468,11 @@ typedef enum FILE_FLUSH_MODE {
   WINBASEAPI WINBOOL WINAPI ReplaceFileA (LPCSTR lpReplacedFileName, LPCSTR lpReplacementFileName, LPCSTR lpBackupFileName, DWORD dwReplaceFlags, LPVOID lpExclude, LPVOID lpReserved);
   WINBASEAPI WINBOOL WINAPI ReplaceFileW (LPCWSTR lpReplacedFileName, LPCWSTR lpReplacementFileName, LPCWSTR lpBackupFileName, DWORD dwReplaceFlags, LPVOID lpExclude, LPVOID lpReserved);
 #endif
+#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP) || NTDDI_VERSION >= NTDDI_WIN10_19H1
+  WINBASEAPI WINBOOL WINAPI CreateHardLinkW (LPCWSTR lpFileName, LPCWSTR lpExistingFileName, LPSECURITY_ATTRIBUTES lpSecurityAttributes);
+#endif
 #if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP)
   WINBASEAPI WINBOOL WINAPI CreateHardLinkA (LPCSTR lpFileName, LPCSTR lpExistingFileName, LPSECURITY_ATTRIBUTES lpSecurityAttributes);
-  WINBASEAPI WINBOOL WINAPI CreateHardLinkW (LPCWSTR lpFileName, LPCWSTR lpExistingFileName, LPSECURITY_ATTRIBUTES lpSecurityAttributes);
 
 #define ReplaceFile __MINGW_NAME_AW(ReplaceFile)
 #define CreateHardLink __MINGW_NAME_AW(CreateHardLink)
