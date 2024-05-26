@@ -255,7 +255,7 @@ use MIME::Decoder;
 #------------------------------
 
 ### The package version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = "5.510";
+$VERSION = "5.515";
 
 ### Boundary counter:
 my $BCount = 0;
@@ -276,7 +276,6 @@ qw(
 ### Fallback preamble and epilogue:
 my $DefPreamble = [ "This is a multi-part message in MIME format..." ];
 my $DefEpilogue = [ ];
-
 
 #==============================
 #
@@ -350,6 +349,37 @@ sub new {
     $self;
 }
 
+=item ambiguous_content
+
+I<Instance method.>
+
+Returns true if this entity I<or any of its parts, recursively> has
+a C<MIME::Head> that indicates ambiguous content.
+
+Note carefully the difference between:
+
+    $entity->head->ambiguous_content();
+
+and
+
+    $entity->ambiguous_content();
+
+The first returns true only if this specific entity's headers indicate
+ambiguity.  The second returns true if this entity
+I<or any of its parts, recursively> has headers that indicate ambiguity.
+
+=cut
+sub ambiguous_content {
+    my ($self) = @_;
+
+    return 1 if $self->head->ambiguous_content;
+    return 0 unless $self->is_multipart;
+
+    foreach my $part ($self->parts) {
+        return 1 if $part->ambiguous_content;
+    }
+    return 0;
+}
 
 ###------------------------------
 

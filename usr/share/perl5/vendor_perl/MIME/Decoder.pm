@@ -126,7 +126,7 @@ use Carp;
 );
 
 ### The package version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = "5.510";
+$VERSION = "5.515";
 
 ### Me:
 my $ME = 'MIME::Decoder';

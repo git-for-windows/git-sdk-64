@@ -28,7 +28,7 @@ $ME = "MIME-tools";
 Exporter::export_ok_tags('config', 'msgs', 'msgtypes', 'utils');
 
 # The TOOLKIT version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = "5.510";
+$VERSION = "5.515";
 
 # Configuration (do NOT alter this directly)...
 # All legal CONFIG vars *must* be in here, even if only to be set to undef:
@@ -961,10 +961,6 @@ Latin-2, or any other 8-bit alphabet).
 
 L<MIME::Parser>, L<MIME::Head>, L<MIME::Body>, L<MIME::Entity>, L<MIME::Decoder>, L<Mail::Header>,
 L<Mail::Internet>
-
-At the time of this writing, the MIME-tools homepage was
-F<http://www.mimedefang.org/static/mime-tools.php>.  Check there for
-updates and support.
 
 The MIME format is documented in RFCs 1521-1522, and more recently
 in RFCs 2045-2049.
