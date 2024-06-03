@@ -1,4 +1,4 @@
-*syntax.txt*	For Vim version 9.1.  Last change: 2024 Apr 26
+*syntax.txt*	For Vim version 9.1.  Last change: 2024 May 24
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -946,7 +946,8 @@ Enables Stylus for ".astro" files. Default Value: "disable"
 NOTE: You need to install an external plugin to support stylus in astro files.
 
 
-ASPPERL and ASPVBS			*ft-aspperl-syntax* *ft-aspvbs-syntax*
+ASPPERL							*ft-aspperl-syntax*
+ASPVBS							*ft-aspvbs-syntax*
 
 *.asp and *.asa files could be either Perl or Visual Basic script.  Since it's
 hard to detect this you can set two global variables to tell Vim what you are
@@ -1482,9 +1483,9 @@ Two syntax highlighting files exist for Euphoria. One for Euphoria
 version 3.1.1, which is the default syntax highlighting file, and one for
 Euphoria version 4.0.5 or later.
 
-Euphoria version 3.1.1 (http://www.rapideuphoria.com/) is still necessary
-for developing applications for the DOS platform, which Euphoria version 4
-(http://www.openeuphoria.org/) does not support.
+Euphoria version 3.1.1 (http://www.rapideuphoria.com/ link seems dead) is
+still necessary for developing applications for the DOS platform, which
+Euphoria version 4 (http://www.openeuphoria.org/) does not support.
 
 The following file extensions are auto-detected as Euphoria file type:
 
@@ -1541,7 +1542,8 @@ Elixir.
 
 FLEXWIKI				*flexwiki.vim* *ft-flexwiki-syntax*
 
-FlexWiki is an ASP.NET-based wiki package available at http://www.flexwiki.com
+FlexWiki is an ASP.NET-based wiki package which used to be available at
+http://www.flexwiki.com
 NOTE: This site currently doesn't work, on Wikipedia is mentioned that
 development stopped in 2009.
 
@@ -2014,15 +2016,25 @@ Function names are not highlighted, as the way to find functions depends on
 how you write Java code.  The syntax file knows two possible ways to highlight
 functions:
 
-If you write function declarations that are always indented by either
-a tab, 8 spaces or 2 spaces you may want to set >
+If you write function declarations that are consistently indented by either
+a tab, or a space . . . or eight space character(s), you may want to set >
 	:let java_highlight_functions="indent"
+	:let java_highlight_functions="indent1"
+	:let java_highlight_functions="indent2"
+	:let java_highlight_functions="indent3"
+	:let java_highlight_functions="indent4"
+	:let java_highlight_functions="indent5"
+	:let java_highlight_functions="indent6"
+	:let java_highlight_functions="indent7"
+	:let java_highlight_functions="indent8"
+Note that in terms of 'shiftwidth', this is the leftmost step of indentation.
 However, if you follow the Java guidelines about how functions and classes are
-supposed to be named (with respect to upper and lowercase), use >
+supposed to be named (with respect to upper- and lowercase) and there is any
+amount of indentation, you may want to set >
 	:let java_highlight_functions="style"
-If both options do not work for you, but you would still want function
-declarations to be highlighted create your own definitions by changing the
-definitions in java.vim or by creating your own java.vim which includes the
+If neither setting does work for you, but you would still want function
+declarations to be highlighted, create your own definitions by changing the
+definitions in java.vim or by creating your own java.vim that includes the
 original one and then adds the code to highlight functions.
 
 In Java 1.1 the functions System.out.println() and System.err.println() should
@@ -3752,6 +3764,19 @@ set "tf_minlines" to the value you desire.  Example: >
 
 	:let tf_minlines = your choice
 <
+TYPESCRIPT				*typescript.vim* *ft-typescript-syntax*
+				*typescriptreact.vim* *ft-typescriptreact-syntax*
+
+There is one option to control the TypeScript syntax highlighting.
+
+						*g:typescript_host_keyword*
+When this variable is set to 1, host-specific APIs such as `addEventListener`
+are highlighted. To disable set it to zero in your .vimrc: >
+
+	let g:typescript_host_keyword = 0
+<
+The default value is 1.
+
 VIM			*vim.vim*		*ft-vim-syntax*
 			*g:vimsyn_minlines*	*g:vimsyn_maxlines*
 There is a trade-off between more accurate syntax highlighting versus screen

@@ -1,4 +1,4 @@
-*builtin.txt*	For Vim version 9.1.  Last change: 2024 Apr 07
+*builtin.txt*	For Vim version 9.1.  Last change: 2024 May 25
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -265,6 +265,8 @@ getreg([{regname} [, 1 [, {list}]]])
 getreginfo([{regname}])		Dict	information about a register
 getregion({pos1}, {pos2} [, {opts}])
 				List	get the text from {pos1} to {pos2}
+getregionpos({pos1}, {pos2} [, {opts}])
+				List	get a list of positions for a region
 getregtype([{regname}])		String	type of a register
 getscriptinfo([{opts}])		List	list of sourced scripts
 gettabinfo([{expr}])		List	list of tab pages
@@ -2544,7 +2546,7 @@ expand({string} [, {nosuf} [, {list}]])				*expand()*
 		not start with '%', '#' or '<', see below.
 
 		For a |:terminal| window '%' expands to a '!' followed by
-		the command or shell that is run |terminal-bufname|
+		the command or shell that is run.  |terminal-bufname|
 
 		When {string} starts with '%', '#' or '<', the expansion is
 		done like for the |cmdline-special| variables with their
@@ -4286,14 +4288,14 @@ getregion({pos1}, {pos2} [, {opts}])			*getregion()*
 		The optional argument {opts} is a Dict and supports the
 		following items:
 
-			type		Specify the region's selection type
-					(default: "v"):
-			    "v"		for |characterwise| mode
-			    "V"		for |linewise| mode
-			    "<CTRL-V>"	for |blockwise-visual| mode
+			type		Specify the region's selection type.
+					See |getregtype()| for possible values,
+					except that the width can be omitted
+					and an empty string cannot be used.
+					(default: "v")
 
 			exclusive	If |TRUE|, use exclusive selection
-					for the end position
+					for the end position.
 					(default: follow 'selection')
 
 		You can get the last selection type by |visualmode()|.
@@ -4326,6 +4328,41 @@ getregion({pos1}, {pos2} [, {opts}])			*getregion()*
 <
 		Can also be used as a |method|: >
 			getpos('.')->getregion(getpos("'a"))
+<
+getregionpos({pos1}, {pos2} [, {opts}])            *getregionpos()*
+		Same as |getregion()|, but returns a list of positions
+		describing the buffer text segments bound by {pos1} and
+		{pos2}.
+		The segments are a pair of positions for every line: >
+			[[{start_pos}, {end_pos}], ...]
+<
+		The position is a |List| with four numbers:
+		    [bufnum, lnum, col, off]
+		"bufnum" is the buffer number.
+		"lnum" and "col" are the position in the buffer.  The first
+		column is 1.
+		If the "off" number of a starting position is non-zero, it is
+		the offset in screen columns from the start of the character.
+		E.g., a position within a <Tab> or after the last character.
+		If the "off" number of an ending position is non-zero, it is
+		the offset of the character's first cell not included in the
+		selection, otherwise all its cells are included.
+
+		Apart from the options supported by |getregion()|, {opts} also
+		supports the following:
+
+			eol		If |TRUE|, indicate positions beyond
+					the end of a line with "col" values
+					one more than the length of the line.
+					If |FALSE|, positions are limited
+					within their lines, and if a line is
+					empty or the selection is entirely
+					beyond the end of a line, a "col"
+					value of 0 is used for both positions.
+					(default: |FALSE|)
+
+		Can also be used as a |method|: >
+			getpos('.')->getregionpos(getpos("'a"))
 <
 getregtype([{regname}])					*getregtype()*
 		The result is a String, which is type of register {regname}.
@@ -4382,7 +4419,7 @@ getscriptinfo([{opts}])					*getscriptinfo()*
 
 		Examples: >
 			:echo getscriptinfo({'name': 'myscript'})
-			:echo getscriptinfo({'sid': 15}).variables
+			:echo getscriptinfo({'sid': 15})[0].variables
 <
 gettabinfo([{tabnr}])					*gettabinfo()*
 		If {tabnr} is not specified, then information about all the
@@ -8969,11 +9006,12 @@ shellescape({string} [, {special}])			*shellescape()*
 		Otherwise it will enclose {string} in single quotes and
 		replace all "'" with "'\''".
 
-		When the {special} argument is present and it's a non-zero
-		Number or a non-empty String (|non-zero-arg|), then special
-		items such as "!", "%", "#" and "<cword>" will be preceded by
-		a backslash.  This backslash will be removed again by the |:!|
-		command.
+		The {special} argument adds additional escaping of keywords
+		used in Vim commands. When it is not omitted and a non-zero
+		number or a non-empty String (|non-zero-arg|), then special
+		items such as "!", "%", "#" and "<cword>" (as listed in
+		|expand()|) will be preceded by a backslash.
+		This backslash will be removed again by the |:!| command.
 
 		The "!" character will be escaped (again with a |non-zero-arg|
 		{special}) when 'shell' contains "csh" in the tail.  That is
@@ -10220,7 +10258,9 @@ tempname()					*tempname()* *temp-file-name*
 		is different for at least 26 consecutive calls.  Example: >
 			:let tmpfile = tempname()
 			:exe "redir > " .. tmpfile
-<		For Unix, the file will be in a private directory |tempfile|.
+<		For Unix, the file will be in a private directory |tempfile|
+		that is recursively deleted when Vim exits, on other systems
+		temporary files are not cleaned up automatically on exit.
 		For MS-Windows forward slashes are used when the 'shellslash'
 		option is set, or when 'shellcmdflag' starts with '-' and
 		'shell' does not contain powershell or pwsh.
