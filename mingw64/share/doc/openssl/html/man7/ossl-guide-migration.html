@@ -223,6 +223,8 @@
 
 <p>To ensure the future compatibility, the engines should be turned to providers. To prefer the provider-based hardware offload, you can specify the default properties to prefer your provider.</p>
 
+<p>Setting engine-based or application-based default low-level crypto method such as <b>RSA_METHOD</b> or <b>EC_KEY_METHOD</b> is still possible and keys inside the default provider will use the engine-based implementation for the crypto operations. However <b>EVP_PKEY</b>s created by decoding by using <b>OSSL_DECODER</b>, <b>PEM_</b> or <b>d2i_</b> APIs will be provider-based. To create a fully legacy <b>EVP_PKEY</b>s <a href="../man3/EVP_PKEY_set1_RSA.html">EVP_PKEY_set1_RSA(3)</a>, <a href="../man3/EVP_PKEY_set1_EC_KEY.html">EVP_PKEY_set1_EC_KEY(3)</a> or similar functions must be used.</p>
+
 <h3 id="Versioning-Scheme">Versioning Scheme</h3>
 
 <p>The OpenSSL versioning scheme has changed with the OpenSSL 3.0 release. The new versioning scheme has this format:</p>
@@ -956,9 +958,14 @@ EVP_MD_CTX_free(md_ctx);</code></pre>
 <p>Use the higher level functions EVP_CipherInit_ex2(), EVP_CipherUpdate() and EVP_CipherFinal_ex() instead. See the &quot;cts_mode&quot; parameter in <a href="../man3/EVP_EncryptInit.html">&quot;Gettable and Settable EVP_CIPHER_CTX parameters&quot; in EVP_EncryptInit(3)</a>. See <a href="../man3/EVP_EncryptInit.html">&quot;EXAMPLES&quot; in EVP_EncryptInit(3)</a> for a AES-256-CBC-CTS example.</p>
 
 </li>
-<li><p>d2i_DHparams(), d2i_DHxparams(), d2i_DSAparams(), d2i_DSAPrivateKey(), d2i_DSAPrivateKey_bio(), d2i_DSAPrivateKey_fp(), d2i_DSA_PUBKEY(), d2i_DSA_PUBKEY_bio(), d2i_DSA_PUBKEY_fp(), d2i_DSAPublicKey(), d2i_ECParameters(), d2i_ECPrivateKey(), d2i_ECPrivateKey_bio(), d2i_ECPrivateKey_fp(), d2i_EC_PUBKEY(), d2i_EC_PUBKEY_bio(), d2i_EC_PUBKEY_fp(), o2i_ECPublicKey(), d2i_RSAPrivateKey(), d2i_RSAPrivateKey_bio(), d2i_RSAPrivateKey_fp(), d2i_RSA_PUBKEY(), d2i_RSA_PUBKEY_bio(), d2i_RSA_PUBKEY_fp(), d2i_RSAPublicKey(), d2i_RSAPublicKey_bio(), d2i_RSAPublicKey_fp()</p>
+<li><p>d2i_DHparams(), d2i_DHxparams(), d2i_DSAparams(), d2i_DSAPrivateKey(), d2i_DSAPrivateKey_bio(), d2i_DSAPrivateKey_fp(), d2i_DSA_PUBKEY(), d2i_DSA_PUBKEY_bio(), d2i_DSA_PUBKEY_fp(), d2i_DSAPublicKey(), d2i_ECParameters(), d2i_ECPrivateKey(), d2i_ECPrivateKey_bio(), d2i_ECPrivateKey_fp(), d2i_EC_PUBKEY(), d2i_EC_PUBKEY_bio(), d2i_EC_PUBKEY_fp(), d2i_RSAPrivateKey(), d2i_RSAPrivateKey_bio(), d2i_RSAPrivateKey_fp(), d2i_RSA_PUBKEY(), d2i_RSA_PUBKEY_bio(), d2i_RSA_PUBKEY_fp(), d2i_RSAPublicKey(), d2i_RSAPublicKey_bio(), d2i_RSAPublicKey_fp()</p>
 
 <p>See <a href="#Deprecated-i2d-and-d2i-functions-for-low-level-key-types">&quot;Deprecated i2d and d2i functions for low-level key types&quot;</a></p>
+
+</li>
+<li><p>o2i_ECPublicKey()</p>
+
+<p>Use <a href="../man3/EVP_PKEY_set1_encoded_public_key.html">EVP_PKEY_set1_encoded_public_key(3)</a>. See <a href="#Deprecated-low-level-key-parameter-setters">&quot;Deprecated low-level key parameter setters&quot;</a></p>
 
 </li>
 <li><p>DES_crypt(), DES_fcrypt(), DES_encrypt1(), DES_encrypt2(), DES_encrypt3(), DES_decrypt3(), DES_ede3_cbc_encrypt(), DES_ede3_cfb64_encrypt(), DES_ede3_cfb_encrypt(),DES_ede3_ofb64_encrypt(), DES_ecb_encrypt(), DES_ecb3_encrypt(), DES_ofb64_encrypt(), DES_ofb_encrypt(), DES_cfb64_encrypt DES_cfb_encrypt(), DES_cbc_encrypt(), DES_ncbc_encrypt(), DES_pcbc_encrypt(), DES_xcbc_encrypt(), DES_cbc_cksum(), DES_quad_cksum(), DES_check_key_parity(), DES_is_weak_key(), DES_key_sched(), DES_options(), DES_random_key(), DES_set_key(), DES_set_key_checked(), DES_set_key_unchecked(), DES_set_odd_parity(), DES_string_to_2keys(), DES_string_to_key()</p>
@@ -1341,9 +1348,14 @@ EVP_MD_CTX_free(md_ctx);</code></pre>
 <p>See <a href="#Deprecated-low-level-key-reading-and-writing-functions">&quot;Deprecated low-level key reading and writing functions&quot;</a> and <a href="../man3/d2i_RSAPrivateKey.html">&quot;Migration&quot; in d2i_RSAPrivateKey(3)</a></p>
 
 </li>
-<li><p>i2d_ECParameters(), i2d_ECPrivateKey(), i2d_ECPrivateKey_bio(), i2d_ECPrivateKey_fp(), i2d_EC_PUBKEY(), i2d_EC_PUBKEY_bio(), i2d_EC_PUBKEY_fp(), i2o_ECPublicKey()</p>
+<li><p>i2d_ECParameters(), i2d_ECPrivateKey(), i2d_ECPrivateKey_bio(), i2d_ECPrivateKey_fp(), i2d_EC_PUBKEY(), i2d_EC_PUBKEY_bio(), i2d_EC_PUBKEY_fp()</p>
 
 <p>See <a href="#Deprecated-low-level-key-reading-and-writing-functions">&quot;Deprecated low-level key reading and writing functions&quot;</a> and <a href="../man3/d2i_RSAPrivateKey.html">&quot;Migration&quot; in d2i_RSAPrivateKey(3)</a></p>
+
+</li>
+<li><p>i2o_ECPublicKey()</p>
+
+<p>Use <a href="../man3/EVP_PKEY_get1_encoded_public_key.html">EVP_PKEY_get1_encoded_public_key(3)</a>. See <a href="#Deprecated-low-level-key-parameter-getters">&quot;Deprecated low-level key parameter getters&quot;</a></p>
 
 </li>
 <li><p>i2d_RSAPrivateKey(), i2d_RSAPrivateKey_bio(), i2d_RSAPrivateKey_fp(), i2d_RSA_PUBKEY(), i2d_RSA_PUBKEY_bio(), i2d_RSA_PUBKEY_fp(), i2d_RSAPublicKey(), i2d_RSAPublicKey_bio(), i2d_RSAPublicKey_fp()</p>
@@ -1720,7 +1732,7 @@ EVP_MD_CTX_free(md_ctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

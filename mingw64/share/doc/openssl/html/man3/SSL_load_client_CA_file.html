@@ -61,7 +61,7 @@ int SSL_add_store_cert_subjects_to_stack(STACK_OF(X509_NAME) *stack,
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>The following return values can occur:</p>
+<p>The following return values can occur for SSL_load_client_CA_file_ex(), and SSL_load_client_CA_file():</p>
 
 <dl>
 
@@ -75,6 +75,24 @@ int SSL_add_store_cert_subjects_to_stack(STACK_OF(X509_NAME) *stack,
 <dd>
 
 <p>Pointer to the subject names of the successfully read certificates.</p>
+
+</dd>
+</dl>
+
+<p>The following return values can occur for SSL_add_file_cert_subjects_to_stack(), SSL_add_dir_cert_subjects_to_stack(), and SSL_add_store_cert_subjects_to_stack():</p>
+
+<dl>
+
+<dt id="Failure">0 (Failure)</dt>
+<dd>
+
+<p>The operation failed.</p>
+
+</dd>
+<dt id="Success">1 (Success)</dt>
+<dd>
+
+<p>The operation succeeded.</p>
 
 </dd>
 </dl>
@@ -104,7 +122,7 @@ else
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

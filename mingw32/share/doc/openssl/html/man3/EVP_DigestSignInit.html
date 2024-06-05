@@ -123,7 +123,7 @@ int EVP_DigestSign(EVP_MD_CTX *ctx, unsigned char *sig,
 
 <p>Unless <i>sig</i> is NULL EVP_DigestSignFinal() signs the data in <i>ctx</i> and places the signature in <i>sig</i>. Otherwise the maximum necessary size of the output buffer is written to the <i>siglen</i> parameter. If <i>sig</i> is not NULL then before the call the <i>siglen</i> parameter should contain the length of the <i>sig</i> buffer. If the call is successful the signature is written to <i>sig</i> and the amount of data written to <i>siglen</i>.</p>
 
-<p>EVP_DigestSign() signs <i>tbslen</i> bytes of data at <i>tbs</i> and places the signature in <i>sig</i> and its length in <i>siglen</i> in a similar way to EVP_DigestSignFinal(). In the event of a failure EVP_DigestSign() cannot be called again without reinitialising the EVP_MD_CTX. If <i>sig</i> is NULL before the call then <i>siglen</i> will be populated with the required size for the <i>sig</i> buffer. If <i>sig</i> is non-NULL before the call then <i>siglen</i> should contain the length of the <i>sig</i> buffer.</p>
+<p>EVP_DigestSign() is similar to a single call to EVP_DigestSignUpdate() and EVP_DigestSignFinal(). Unless <i>sig</i> is NULL, EVP_DigestSign() signs the data <i>tbs</i> of length <i>tbslen</i> bytes and places the signature in a buffer <i>sig</i> of size <i>siglen</i>. If <i>sig</i> is NULL, the maximum necessary size of the signature buffer is written to the <i>siglen</i> parameter.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -147,6 +147,8 @@ int EVP_DigestSign(EVP_MD_CTX *ctx, unsigned char *sig,
 
 <p>EVP_DigestSignInit() and EVP_DigestSignInit_ex() functions can be called multiple times on a context and the parameters set by previous calls should be preserved if the <i>pkey</i> parameter is NULL. The call then just resets the state of the <i>ctx</i>.</p>
 
+<p>EVP_DigestSign() can not be called again, once a signature is generated (by passing <i>sig</i> as non NULL), unless the <b>EVP_MD_CTX</b> is reinitialised by calling EVP_DigestSignInit_ex().</p>
+
 <p>Ignoring failure returns of EVP_DigestSignInit() and EVP_DigestSignInit_ex() functions can lead to subsequent undefined behavior when calling EVP_DigestSignUpdate(), EVP_DigestSignFinal(), or EVP_DigestSign().</p>
 
 <p>The use of EVP_PKEY_get_size() with these functions is discouraged because some signature operations may have a signature length which depends on the parameters set. As a result EVP_PKEY_get_size() would have to return a value which indicates the maximum possible signature for any set of parameters.</p>
@@ -165,7 +167,7 @@ int EVP_DigestSign(EVP_MD_CTX *ctx, unsigned char *sig,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2006-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2006-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -136,9 +136,9 @@ int SSL_CONF_cmd_value_type(SSL_CONF_CTX *ctx, const char *option);</code></pre>
 
 <p>This sets the supported signature algorithms for TLSv1.2 and TLSv1.3. For clients this value is used directly for the supported signature algorithms extension. For servers it is used to determine which signature algorithms to support.</p>
 
-<p>The <b>algs</b> argument should be a colon separated list of signature algorithms in order of decreasing preference of the form <b>algorithm+hash</b> or <b>signature_scheme</b>. <b>algorithm</b> is one of <b>RSA</b>, <b>DSA</b> or <b>ECDSA</b> and <b>hash</b> is a supported algorithm OID short name such as <b>SHA1</b>, <b>SHA224</b>, <b>SHA256</b>, <b>SHA384</b> of <b>SHA512</b>. Note: algorithm and hash names are case sensitive. <b>signature_scheme</b> is one of the signature schemes defined in TLSv1.3, specified using the IETF name, e.g., <b>ecdsa_secp256r1_sha256</b>, <b>ed25519</b>, or <b>rsa_pss_pss_sha256</b>.</p>
+<p>The <b>algs</b> argument should be a colon separated list of signature algorithms in order of decreasing preference of the form <b>algorithm+hash</b> or <b>signature_scheme</b>. For the default providers shipped with OpenSSL, <b>algorithm</b> is one of <b>RSA</b>, <b>DSA</b> or <b>ECDSA</b> and <b>hash</b> is a supported algorithm OID short name such as <b>SHA1</b>, <b>SHA224</b>, <b>SHA256</b>, <b>SHA384</b> or <b>SHA512</b>. Note: algorithm and hash names are case sensitive. <b>signature_scheme</b> is one of the signature schemes defined in TLSv1.3, specified using the IETF name, e.g., <b>ecdsa_secp256r1_sha256</b>, <b>ed25519</b>, or <b>rsa_pss_pss_sha256</b>. Additional providers may make available further algorithms via the TLS_SIGALG capability. See <a href="../man7/provider-base.html">&quot;CAPABILITIES&quot; in provider-base(7)</a>.</p>
 
-<p>If this option is not set then all signature algorithms supported by the OpenSSL library are permissible.</p>
+<p>If this option is not set then all signature algorithms supported by all activated providers are permissible.</p>
 
 <p>Note: algorithms which specify a PKCS#1 v1.5 signature scheme (either by using <b>RSA</b> as the <b>algorithm</b> or by using one of the <b>rsa_pkcs1_*</b> identifiers) are ignored in TLSv1.3 and will not be negotiated.</p>
 
@@ -346,9 +346,9 @@ int SSL_CONF_cmd_value_type(SSL_CONF_CTX *ctx, const char *option);</code></pre>
 
 <p>This sets the supported signature algorithms for TLSv1.2 and TLSv1.3. For clients this value is used directly for the supported signature algorithms extension. For servers it is used to determine which signature algorithms to support.</p>
 
-<p>The <b>value</b> argument should be a colon separated list of signature algorithms in order of decreasing preference of the form <b>algorithm+hash</b> or <b>signature_scheme</b>. <b>algorithm</b> is one of <b>RSA</b>, <b>DSA</b> or <b>ECDSA</b> and <b>hash</b> is a supported algorithm OID short name such as <b>SHA1</b>, <b>SHA224</b>, <b>SHA256</b>, <b>SHA384</b> of <b>SHA512</b>. Note: algorithm and hash names are case sensitive. <b>signature_scheme</b> is one of the signature schemes defined in TLSv1.3, specified using the IETF name, e.g., <b>ecdsa_secp256r1_sha256</b>, <b>ed25519</b>, or <b>rsa_pss_pss_sha256</b>.</p>
+<p>The <b>value</b> argument should be a colon separated list of signature algorithms in order of decreasing preference of the form <b>algorithm+hash</b> or <b>signature_scheme</b>. For the default providers shipped with OpenSSL, <b>algorithm</b> is one of <b>RSA</b>, <b>DSA</b> or <b>ECDSA</b> and <b>hash</b> is a supported algorithm OID short name such as <b>SHA1</b>, <b>SHA224</b>, <b>SHA256</b>, <b>SHA384</b> or <b>SHA512</b>. Note: algorithm and hash names are case sensitive. <b>signature_scheme</b> is one of the signature schemes defined in TLSv1.3, specified using the IETF name, e.g., <b>ecdsa_secp256r1_sha256</b>, <b>ed25519</b>, or <b>rsa_pss_pss_sha256</b>. Additional providers may make available further algorithms via the TLS_SIGALG capability. See <a href="../man7/provider-base.html">&quot;CAPABILITIES&quot; in provider-base(7)</a>.</p>
 
-<p>If this option is not set then all signature algorithms supported by the OpenSSL library are permissible.</p>
+<p>If this option is not set then all signature algorithms supported by all activated providers are permissible.</p>
 
 <p>Note: algorithms which specify a PKCS#1 v1.5 signature scheme (either by using <b>RSA</b> as the <b>algorithm</b> or by using one of the <b>rsa_pkcs1_*</b> identifiers) are ignored in TLSv1.3 and will not be negotiated.</p>
 
@@ -626,7 +626,7 @@ SSL_CONF_cmd(ctx, &quot;MaxProtocol&quot;, &quot;TLSv1.2&quot;);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2012-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2012-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

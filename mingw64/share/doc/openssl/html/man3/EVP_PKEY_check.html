@@ -60,6 +60,8 @@ int EVP_PKEY_pairwise_check(EVP_PKEY_CTX *ctx);</code></pre>
 
 <p>Refer to SP800-56A and SP800-56B for rules relating to when these functions should be called during key establishment. It is not necessary to call these functions after locally calling an approved key generation method, but may be required for assurance purposes when receiving keys from a third party.</p>
 
+<p>The EVP_PKEY_pairwise_check() and EVP_PKEY_private_check() might not be bounded by any key size limits as private keys are not expected to be supplied by attackers. For that reason they might take an unbounded time if run on arbitrarily large keys.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>All functions return 1 for success or others for failure. They return -2 if the operation is not supported for the specific algorithm.</p>
@@ -76,7 +78,7 @@ int EVP_PKEY_pairwise_check(EVP_PKEY_CTX *ctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2006-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2006-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

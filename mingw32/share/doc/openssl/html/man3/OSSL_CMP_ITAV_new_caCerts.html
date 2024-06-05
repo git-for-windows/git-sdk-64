@@ -55,9 +55,9 @@ int OSSL_CMP_ITAV_get0_rootCaKeyUpdate(const OSSL_CMP_ITAV *itav,
 
 <p>OSSL_CMP_ITAV_get0_rootCaCert() requires that <i>itav</i> has type <b>rootCaCert</b>. It assigns NULL to <i>*out</i> if no certificate is included in <i>itav</i>, otherwise the internal pointer to the certificate contained in the infoValue field.</p>
 
-<p>OSSL_CMP_ITAV_new_rootCaKeyUpdate() creates a new <b>OSSL_CMP_ITAV</b> structure of type <b>rootCaKeyUpdate</b> that includes an RootCaKeyUpdateContent structure with the optional <i>newWithNew</i>, <i>newWithOld</i>, and <i>oldWithNew</i> certificates.</p>
+<p>OSSL_CMP_ITAV_new_rootCaKeyUpdate() creates a new <b>OSSL_CMP_ITAV</b> structure of type <b>rootCaKeyUpdate</b> that includes an RootCaKeyUpdateContent structure with the optional <i>newWithNew</i>, <i>newWithOld</i>, and <i>oldWithNew</i> certificates. An RootCaKeyUpdateContent structure is included only if <i>newWithNew</i> is not NULL.</p>
 
-<p>OSSL_CMP_ITAV_get0_rootCaKeyUpdate() requires that <i>itav</i> has infoType <b>rootCaKeyUpdate</b>. If an update of a root CA certificate is included, it assigns to <i>*newWithNew</i> the internal pointer to the certificate contained in the newWithNew infoValue sub-field of <i>itav</i>. If <i>newWithOld</i> is not NULL, it assigns to <i>*newWithOld</i> the internal pointer to the certificate contained in the newWithOld infoValue sub-field of <i>itav</i>. If <i>oldWithNew</i> is not NULL, it assigns to <i>*oldWithNew</i> the internal pointer to the certificate contained in the oldWithNew infoValue sub-field of <i>itav</i>. Each of these pointers will be NULL if the respective sub-field is not set.</p>
+<p>OSSL_CMP_ITAV_get0_rootCaKeyUpdate() requires that <i>itav</i> has infoType <b>rootCaKeyUpdate</b>. If an update of a root CA certificate is included, it assigns to <i>*newWithNew</i> the internal pointer to the certificate contained in the newWithNew infoValue sub-field of <i>itav</i>. If <i>newWithOld</i> is not NULL, it assigns to <i>*newWithOld</i> the internal pointer to the certificate contained in the newWithOld infoValue sub-field of <i>itav</i>. If <i>oldWithNew</i> is not NULL, it assigns to <i>*oldWithNew</i> the internal pointer to the certificate contained in the oldWithNew infoValue sub-field of <i>itav</i>. Each of these pointers will be set to NULL if no root CA certificate update is present or the respective sub-field is not included.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -79,7 +79,7 @@ int OSSL_CMP_ITAV_get0_rootCaKeyUpdate(const OSSL_CMP_ITAV *itav,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2022-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2022-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

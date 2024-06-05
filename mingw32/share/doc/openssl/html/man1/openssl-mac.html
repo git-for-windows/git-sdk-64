@@ -156,15 +156,32 @@
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
-<p>To create a hex-encoded HMAC-SHA1 MAC of a file and write to stdout: \ openssl mac -digest SHA1 \ -macopt hexkey:000102030405060708090A0B0C0D0E0F10111213 \ -in msg.bin HMAC</p>
+<p>To create a hex-encoded HMAC-SHA1 MAC of a file and write to stdout:</p>
 
-<p>To create a SipHash MAC from a file with a binary file output: \ openssl mac -macopt hexkey:000102030405060708090A0B0C0D0E0F \ -in msg.bin -out out.bin -binary SipHash</p>
+<pre><code>openssl mac -digest SHA1 \
+        -macopt hexkey:000102030405060708090A0B0C0D0E0F10111213 \
+        -in msg.bin HMAC</code></pre>
 
-<p>To create a hex-encoded CMAC-AES-128-CBC MAC from a file:\ openssl mac -cipher AES-128-CBC \ -macopt hexkey:77A77FAF290C1FA30C683DF16BA7A77B \ -in msg.bin CMAC</p>
+<p>To create a SipHash MAC from a file with a binary file output:</p>
 
-<p>To create a hex-encoded KMAC128 MAC from a file with a Customisation String &#39;Tag&#39; and output length of 16: \ openssl mac -macopt custom:Tag -macopt hexkey:40414243444546 \ -macopt size:16 -in msg.bin KMAC128</p>
+<pre><code>openssl mac -macopt hexkey:000102030405060708090A0B0C0D0E0F \
+        -in msg.bin -out out.bin -binary SipHash</code></pre>
 
-<p>To create a hex-encoded GMAC-AES-128-GCM with a IV from a file: \ openssl mac -cipher AES-128-GCM -macopt hexiv:E0E00F19FED7BA0136A797F3 \ -macopt hexkey:77A77FAF290C1FA30C683DF16BA7A77B -in msg.bin GMAC</p>
+<p>To create a hex-encoded CMAC-AES-128-CBC MAC from a file:</p>
+
+<pre><code>openssl mac -cipher AES-128-CBC \
+        -macopt hexkey:77A77FAF290C1FA30C683DF16BA7A77B \
+        -in msg.bin CMAC</code></pre>
+
+<p>To create a hex-encoded KMAC128 MAC from a file with a Customisation String &#39;Tag&#39; and output length of 16:</p>
+
+<pre><code>openssl mac -macopt custom:Tag -macopt hexkey:40414243444546 \
+        -macopt size:16 -in msg.bin KMAC128</code></pre>
+
+<p>To create a hex-encoded GMAC-AES-128-GCM with a IV from a file:</p>
+
+<pre><code>openssl mac -cipher AES-128-GCM -macopt hexiv:E0E00F19FED7BA0136A797F3 \
+        -macopt hexkey:77A77FAF290C1FA30C683DF16BA7A77B -in msg.bin GMAC</code></pre>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -176,7 +193,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2018-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2018-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

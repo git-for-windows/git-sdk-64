@@ -456,9 +456,29 @@
 <dt id="string_mask"><b>string_mask</b></dt>
 <dd>
 
-<p>This option masks out the use of certain string types in certain fields. Most users will not need to change this option.</p>
+<p>This option masks out the use of certain string types in certain fields. Most users will not need to change this option. It can be set to several values:</p>
 
-<p>It can be set to several values <b>default</b> which is also the default option uses PrintableStrings, T61Strings and BMPStrings if the <b>pkix</b> value is used then only PrintableStrings and BMPStrings will be used. This follows the PKIX recommendation in RFC2459. If the <b>utf8only</b> option is used then only UTF8Strings will be used: this is the PKIX recommendation in RFC2459 after 2003. Finally the <b>nombstr</b> option just uses PrintableStrings and T61Strings: certain software has problems with BMPStrings and UTF8Strings: in particular Netscape.</p>
+<dl>
+
+<dt id="utf8only---only-UTF8Strings-are-used-this-is-the-default-value"><b>utf8only</b> - only UTF8Strings are used (this is the default value)</dt>
+<dd>
+
+</dd>
+<dt id="pkix---any-string-type-except-T61Strings"><b>pkix</b> - any string type except T61Strings</dt>
+<dd>
+
+</dd>
+<dt id="nombstr---any-string-type-except-BMPStrings-and-UTF8Strings"><b>nombstr</b> - any string type except BMPStrings and UTF8Strings</dt>
+<dd>
+
+</dd>
+<dt id="default---any-kind-of-string-type"><b>default</b> - any kind of string type</dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>Note that <b>utf8only</b> is the PKIX recommendation in RFC2459 after 2003, and the default <b>string_mask</b>; <b>default</b> is not the default option. The <b>nombstr</b> value is a workaround for some software that has problems with variable-sized BMPStrings and UTF8Strings.</p>
 
 </dd>
 <dt id="req_extensions"><b>req_extensions</b></dt>
@@ -686,7 +706,7 @@ problems making Certificate Request</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

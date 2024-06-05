@@ -36,7 +36,7 @@ X509_STORE *SSL_CTX_get_cert_store(const SSL_CTX *ctx);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_CTX_set_cert_store() sets/replaces the certificate verification storage of <b>ctx</b> to/with <b>store</b>. If another X509_STORE object is currently set in <b>ctx</b>, it will be X509_STORE_free()ed.</p>
+<p>SSL_CTX_set_cert_store() sets/replaces the certificate verification storage of <b>ctx</b> to/with <b>store</b>. If another X509_STORE object is currently set in <b>ctx</b>, it will be X509_STORE_free()ed. SSL_CTX_set_cert_store() will take ownership of the <b>store</b>, i.e., the call <code>X509_STORE_free(store)</code> is no longer needed.</p>
 
 <p>SSL_CTX_set1_cert_store() sets/replaces the certificate verification storage of <b>ctx</b> to/with <b>store</b>. The <b>store</b>&#39;s reference count is incremented. If another X509_STORE object is currently set in <b>ctx</b>, it will be X509_STORE_free()ed.</p>
 
@@ -72,7 +72,7 @@ X509_STORE *SSL_CTX_get_cert_store(const SSL_CTX *ctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
