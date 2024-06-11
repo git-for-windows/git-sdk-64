@@ -2,18 +2,18 @@
 
 [[ $OSTYPE == *freebsd* ]] || return 1
 
-_freebsd_update()
+_comp_cmd_freebsd_update()
 {
-    local cur prev words cword
-    _init_completion || return
+    local cur prev words cword comp_args
+    _comp_initialize -- "$@" || return
 
     case $prev in
         -b | -d)
-            _filedir -d
+            _comp_compgen_filedir -d
             return
             ;;
         -f)
-            _filedir
+            _comp_compgen_filedir
             return
             ;;
         -k | -r | -s | -t)
@@ -21,9 +21,8 @@ _freebsd_update()
             ;;
     esac
 
-    COMPREPLY=($(compgen -W "fetch cron upgrade install rollback IDS" -- \
-        $cur))
+    _comp_compgen -- -W 'fetch cron upgrade install rollback IDS'
 } &&
-    complete -F _freebsd_update freebsd-update
+    complete -F _comp_cmd_freebsd_update freebsd-update
 
 # ex: filetype=sh

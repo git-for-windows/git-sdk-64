@@ -2,24 +2,24 @@
 
 [[ $OSTYPE == *freebsd* ]] || return 1
 
-_portsnap()
+_comp_cmd_portsnap()
 {
-    local cur prev words cword
-    _init_completion || return
+    local cur prev words cword comp_args
+    _comp_initialize -- "$@" || return
 
     case $prev in
         -d | -p)
-            _filedir -d
+            _comp_compgen_filedir -d
             return
             ;;
         -l | -f)
-            _filedir
+            _comp_compgen_filedir
             return
             ;;
     esac
 
-    COMPREPLY=($(compgen -W "fetch cron extract update" -- $cur))
+    _comp_compgen -- -W "fetch cron extract update"
 } &&
-    complete -F _portsnap portsnap
+    complete -F _comp_cmd_portsnap portsnap
 
 # ex: filetype=sh

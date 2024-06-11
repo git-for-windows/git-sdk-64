@@ -1,40 +1,42 @@
 # Linux modprobe(8) completion                             -*- shell-script -*-
 
-_modprobe()
+_comp_cmd_modprobe()
 {
-    local cur prev words cword split
-    _init_completion -s || return
+    local cur prev words cword was_split comp_args
+    _comp_initialize -s -- "$@" || return
 
+    local noargopts='!(-*|*[CdtS]*)'
+    # shellcheck disable=SC2254
     case "$prev" in
-        --help | --version | -!(-*)[hV])
+        --help | --version | -${noargopts}[hV])
             return
             ;;
-        --config | -!(-*)C)
-            _filedir
+        --config | -${noargopts}C)
+            _comp_compgen_filedir
             return
             ;;
-        --dirname | --type | -!(-*)[dt])
-            _filedir -d
+        --dirname | --type | -${noargopts}[dt])
+            _comp_compgen_filedir -d
             return
             ;;
-        --set-version | -!(-*)S)
-            _kernel_versions
+        --set-version | -${noargopts}S)
+            _comp_compgen_kernel_versions
             return
             ;;
     esac
 
-    $split && return
+    [[ $was_split ]] && return
 
     if [[ $cur == -* ]]; then
-        COMPREPLY=($(compgen -W '$(_parse_help "$1")' -- "$cur"))
+        _comp_compgen_help
         if [[ ! ${COMPREPLY-} ]]; then
-            COMPREPLY=($(compgen -W '-a --all -b --use-blacklist -C --config
+            _comp_compgen -- -W '-a --all -b --use-blacklist -C --config
                 -c --showconfig --dump-modversions -d --dirname --first-time
                 --force-vermagic --force-modversion -f --force -i
                 --ignore-install --ignore-remove -l --list -n --dry-run -q
                 --quiet -R --resolve-alias -r --remove -S --set-version
                 --show-depends -s --syslog -t --type -V --version -v
-                --verbose' -- "$cur"))
+                --verbose'
         fi
         [[ ${COMPREPLY-} == *= ]] && compopt -o nospace
         return
@@ -42,46 +44,47 @@ _modprobe()
 
     local i mode=insert module="" version=$(uname -r)
     for ((i = 1; i < cword; i++)); do
+        # shellcheck disable=SC2254
         case "${words[i]}" in
-            --remove | -!(-*)r*)
+            --remove | -${noargopts}r*)
                 mode=remove
                 ;;
-            --list | -!(-*)l*)
+            --list | -${noargopts}l*)
                 mode=list
                 ;;
             --dump-modversions)
                 mode="file"
                 ;;
-            --set-version | -!(-*)S)
+            --set-version | -${noargopts}S)
                 version=${words[i + 1]} # -S is not $prev and not $cur
                 ;;
-            --config | --dirname | --type | -!(-*)[Cdt])
+            --config | --dirname | --type | -${noargopts}[Cdt])
                 ((i++)) # skip option and its argument
                 ;;
             -*)
                 # skip all other options
                 ;;
             *)
-                [[ -z $module ]] && module=${words[i]}
+                [[ ! $module ]] && module=${words[i]}
                 ;;
         esac
     done
 
     case $mode in
         remove)
-            _installed_modules "$cur"
+            _comp_compgen_inserted_kernel_modules
             ;;
         list)
             # no completion available
             ;;
         file)
-            _filedir
+            _comp_compgen_filedir
             ;;
         insert)
             # do filename completion if we're giving a path to a module
             if [[ $cur == @(*/|[.~])* ]]; then
-                _filedir '@(?(k)o?(.[gx]z))'
-            elif [[ -n $module ]]; then
+                _comp_compgen_filedir '@(?(k)o?(.[gx]z|.zst))'
+            elif [[ $module ]]; then
                 # do module parameter completion
                 if [[ $cur == *=* ]]; then
                     prev=${cur%%=*}
@@ -90,24 +93,24 @@ _modprobe()
                         command grep -q "^$prev:.*(bool)"; then
                         local choices="on off"
                         [[ $cur ]] && choices="1 0 y Y n N on off"
-                        COMPREPLY=($(compgen -W "$choices" -- "$cur"))
+                        _comp_compgen -- -W "$choices"
                     fi
                 else
-                    COMPREPLY=($(compgen -S = -W "$(PATH="$PATH:/sbin" \
+                    _comp_compgen_split -S = -- "$(PATH="$PATH:/sbin" \
                         modinfo -p "$module" 2>/dev/null |
-                        awk -F: '!/^[ \t]/ { print $1 }')" -- "$cur"))
+                        _comp_awk -F : '!/^[ \t]/ { print $1 }')"
                     [[ ${COMPREPLY-} == *= ]] && compopt -o nospace
                 fi
             else
-                _modules $version
+                _comp_compgen_kernel_modules "$version"
                 if [[ ${COMPREPLY-} ]]; then
                     # filter out already installed modules
                     local -a mods=("${COMPREPLY[@]}")
-                    _installed_modules "$cur"
+                    _comp_compgen_inserted_kernel_modules
                     for i in "${!mods[@]}"; do
                         for module in "${COMPREPLY[@]}"; do
                             if [[ ${mods[i]} == "$module" ]]; then
-                                unset 'mods[i]'
+                                unset -v 'mods[i]'
                                 break
                             fi
                         done
@@ -118,6 +121,6 @@ _modprobe()
             ;;
     esac
 } &&
-    complete -F _modprobe modprobe
+    complete -F _comp_cmd_modprobe modprobe
 
 # ex: filetype=sh

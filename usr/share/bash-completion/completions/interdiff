@@ -1,20 +1,22 @@
 # interdiff(1) completion                                  -*- shell-script -*-
 
-_interdiff()
+_comp_cmd_interdiff()
 {
-    local cur prev words cword split
-    _init_completion -s || return
+    local cur prev words cword was_split comp_args
+    _comp_initialize -s -- "$@" || return
 
+    local noargopts='!(-*|*[Upd]*)'
+    # shellcheck disable=SC2254
     case $prev in
-        --unified | --strip-match | --drop-context | -!(-*)[Upd])
+        --unified | --strip-match | --drop-context | -${noargopts}[Upd])
             return
             ;;
     esac
 
-    $split && return
+    [[ $was_split ]] && return
 
     if [[ $cur == -* ]]; then
-        COMPREPLY=($(compgen -W '$(_parse_help "$1")' -- "$cur"))
+        _comp_compgen_help
         [[ ${COMPREPLY-} == *= ]] && compopt -o nospace
         return
     fi
@@ -26,8 +28,8 @@ _interdiff()
             break
         fi
     done
-    _filedir "$exts"
+    _comp_compgen_filedir "$exts"
 } &&
-    complete -F _interdiff interdiff
+    complete -F _comp_cmd_interdiff interdiff
 
 # ex: filetype=sh
