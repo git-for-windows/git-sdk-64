@@ -80,10 +80,9 @@ if ($type -Match "full system upgrade") {
   if (!$?) { die "Could not re-populate git-for-windows-keyring" }
 }
 
-# A ruby upgrade (or something else) may require a re-install of the
-# `asciidoctor` gem. We only do this for the 64-bit SDK, though, as we require
-# asciidoctor only when building Git, whose 32-bit packages are cross-compiled
-# in from 64-bit.
+# Git for Windows switched to using the regular `asciidoctor` _without_ any
+# of the extensions. So let's ensure that the custom-built package
+# `mingw-w64-asciidoctor-extensions` is no longer installed.
 if (Test-Path var/lib/pacman/local/mingw-w64-*-asciidoctor-extensions-[0-9]* -PathType Container) {
   bash -lc @'
     set -x
@@ -91,8 +90,20 @@ if (Test-Path var/lib/pacman/local/mingw-w64-*-asciidoctor-extensions-[0-9]* -Pa
     do
       test -x /$d/bin/ruby.exe || continue
       export PATH=/$d/bin:$PATH
-      test -n \"$(gem list --local | grep \"^asciidoctor \")\" ||
-      gem install asciidoctor || exit
+      case $d in
+      clangarm64) carch=clang-aarch64;;
+      mingw64) carch=x86_64;;
+      mingw32) carch=i686;;
+      esac
+
+      # Uninstall mingw-w64-asciidoctor-extensions
+      test ! -d /var/lib/pacman/local/mingw-w64-$carch-asciidoctor-extensions-[0-9]* || {
+        pacman -R --noconfirm mingw-w64-$carch-asciidoctor-extensions &&
+        # Uninstall the `asciidoctor` gem and install `mingw-w64-asciidoctor` instead
+        gem uninstall asciidoctor
+      } || exit 1
+
+      pacman -S --noconfirm mingw-w64-$carch-asciidoctor || exit 1
     done
 '@
 	if (!$?) { die "Could not re-install asciidoctor" }
