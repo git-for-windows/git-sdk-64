@@ -6,7 +6,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.4231';
+our $VERSION = '0.4234';
 $VERSION = eval $VERSION;
 
 use Carp;
@@ -1080,7 +1080,7 @@ sub subclass {
   print $fh <<EOF;
 package $opts{class};
 use $pack;
-\@ISA = qw($pack);
+our \@ISA = qw($pack);
 $opts{code}
 1;
 EOF
@@ -1520,7 +1520,11 @@ sub auto_require {
     if ( $self->pureperl_only && $self->allow_pureperl ) {
       $self->needs_compiler( 0 );
     } else {
-      $self->needs_compiler( keys %$xs_files || defined $self->c_source );
+      $self->needs_compiler( keys %$xs_files ||
+        ( defined $self->c_source &&
+          ( ref($self->c_source) ne 'ARRAY' || @{$self->c_source} )
+        )
+      );
     }
   }
   if ($self->needs_compiler) {
@@ -3223,7 +3227,8 @@ sub ACTION_manpages {
 
 sub manify_bin_pods {
   my $self    = shift;
-  my %podman_args = (section =>  1, @_); # binaries go in section 1
+  my $section = $self->config('man1ext');
+  my %podman_args = (section => $section, @_);
 
   my $files   = $self->_find_pods( $self->{properties}{bindoc_dirs},
                                    exclude => [ $self->file_qr('\.bat$') ] );
@@ -3250,7 +3255,8 @@ sub manify_bin_pods {
 
 sub manify_lib_pods {
   my $self    = shift;
-  my %podman_args = (section => 3, @_); # libraries go in section 3
+  my $section = $self->config('man3ext');
+  my %podman_args = (section => $section, @_);
 
   my $files   = $self->_find_pods($self->{properties}{libdoc_dirs});
   return unless keys %$files;
@@ -4946,6 +4952,14 @@ sub make_tarball {
 
   if ($self->{args}{tar}) {
     my $tar_flags = $self->verbose ? 'cvf' : 'cf';
+
+    # See ExtUtils::MM_Darwin
+    # 10.4 wants COPY_EXTENDED_ATTRIBUTES_DISABLE.
+    # 10.5 wants COPYFILE_DISABLE.
+    # So just set both.
+    local $ENV{COPY_EXTENDED_ATTRIBUTES_DISABLE} = 1 if $^O eq 'darwin';
+    local $ENV{COPYFILE_DISABLE}                 = 1 if $^O eq 'darwin';
+
     $self->do_system($self->split_like_shell($self->{args}{tar}), $tar_flags, "$file.tar", $dir);
     $self->do_system($self->split_like_shell($self->{args}{gzip}), "$file.tar") if $self->{args}{gzip};
   } else {

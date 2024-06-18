@@ -22,28 +22,11 @@ extern "C" {
 
 #ifndef __PCTYPE_FUNC
 #define __PCTYPE_FUNC __pctype_func()
-#ifdef _MSVCRT_
-#define __pctype_func()	(_pctype)
-#else
-#ifdef _UCRT
-  _CRTIMP unsigned short* __pctype_func(void);
-#else
-#define __pctype_func()	(* __MINGW_IMP_SYMBOL(_pctype))
-#endif
-#endif
+  _CRTIMP const unsigned short* __pctype_func(void);
 #endif
 
 #ifndef _pctype
-#ifdef _MSVCRT_
-  extern unsigned short *_pctype;
-#else
-#ifdef _UCRT
 #define _pctype (__pctype_func())
-#else
-  extern unsigned short ** __MINGW_IMP_SYMBOL(_pctype);
-#define _pctype (* __MINGW_IMP_SYMBOL(_pctype))
-#endif
-#endif
 #endif
 
 #endif
@@ -53,24 +36,13 @@ extern "C" {
 #define _CRT_WCTYPEDATA_DEFINED
 #ifndef _CTYPE_DISABLE_MACROS
 #if !defined(_wctype) && defined(_CRT_USE_WINAPI_FAMILY_DESKTOP_APP)
-#ifdef _MSVCRT_
-  extern unsigned short *_wctype;
-#else
-  extern unsigned short ** __MINGW_IMP_SYMBOL(_wctype);
+  extern const unsigned short ** __MINGW_IMP_SYMBOL(_wctype);
 #define _wctype (* __MINGW_IMP_SYMBOL(_wctype))
 #endif
-#endif
-#ifdef _MSVCRT_
-#define __pwctype_func() (_pwctype)
+
+  _CRTIMP const wctype_t * __cdecl __pwctype_func(void);
 #ifndef _pwctype
-  extern unsigned short *_pwctype;
-#endif
-#else
-#define __pwctype_func() (* __MINGW_IMP_SYMBOL(_pwctype))
-#ifndef _pwctype
-  extern unsigned short ** __MINGW_IMP_SYMBOL(_pwctype);
-#define _pwctype (* __MINGW_IMP_SYMBOL(_pwctype))
-#endif
+#define _pwctype (__pwctype_func())
 #endif
 #endif
 #endif
@@ -201,15 +173,7 @@ int __cdecl iswblank(wint_t _C);
 #ifndef MB_CUR_MAX
 #define MB_CUR_MAX ___mb_cur_max_func()
 #ifndef __mb_cur_max
-#ifdef _MSVCRT_
-  extern int __mb_cur_max;
-#define __mb_cur_max	__mb_cur_max
-#else
-#ifndef _UCRT
-  extern int * __MINGW_IMP_SYMBOL(__mb_cur_max);
-#endif
 #define __mb_cur_max	(___mb_cur_max_func())
-#endif
 #endif
 _CRTIMP int __cdecl ___mb_cur_max_func(void);
 #endif

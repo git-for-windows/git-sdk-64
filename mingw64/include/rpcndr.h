@@ -4,14 +4,14 @@
  * No warranty is given; refer to the file DISCLAIMER.PD within this package.
  */
 #ifndef __RPCNDR_H_VERSION__
-#define __RPCNDR_H_VERSION__ (475)
+#define __RPCNDR_H_VERSION__ (501)
 #endif
 
 #ifndef __RPCNDR_H__
 #define __RPCNDR_H__
 
 #ifdef __REQUIRED_RPCNDR_H_VERSION__
-#if (475 < __REQUIRED_RPCNDR_H_VERSION__)
+#if (__RPCNDR_H_VERSION__ < __REQUIRED_RPCNDR_H_VERSION__)
 #error incorrect <rpcndr.h> version. Use the header that matches with the MIDL compiler.
 #endif
 #endif
@@ -41,6 +41,36 @@ extern "C" {
 
 #define NDR_LOCAL_DATA_REPRESENTATION __MSABI_LONG(0X00000010U)
 #define NDR_LOCAL_ENDIAN NDR_LITTLE_ENDIAN
+
+#if NTDDI_VERSION >= NTDDI_WIN10_NI
+#define TARGET_IS_NT1012_OR_LATER 1
+#else
+#define TARGET_IS_NT1012_OR_LATER 0
+#endif
+
+#if NTDDI_VERSION >= NTDDI_WIN10_RS1
+#define TARGET_IS_NT102_OR_LATER 1
+#else
+#define TARGET_IS_NT102_OR_LATER 0
+#endif
+
+#if _WIN32_WINNT >= 0x0A00
+#define TARGET_IS_NT100_OR_LATER 1
+#else
+#define TARGET_IS_NT100_OR_LATER 0
+#endif
+
+#if _WIN32_WINNT >= 0x603
+#define TARGET_IS_NT63_OR_LATER 1
+#else
+#define TARGET_IS_NT63_OR_LATER 0
+#endif
+
+#if _WIN32_WINNT >= 0x602
+#define TARGET_IS_NT62_OR_LATER 1
+#else
+#define TARGET_IS_NT62_OR_LATER 0
+#endif
 
 #if _WIN32_WINNT >= 0x601
 #define TARGET_IS_NT61_OR_LATER 1
@@ -259,7 +289,7 @@ typedef unsigned __LONG32 error_status_t;
     struct NDR_POINTER_QUEUE_STATE *pPointerQueueState;
     int IgnoreEmbeddedPointers;
     unsigned char *PointerBufferMark;
-    unsigned char fBufferValid;
+    unsigned char CorrDespIncrement;
     unsigned char uFlags;
     unsigned short UniquePtrCount;
     ULONG_PTR MaxCount;
@@ -277,14 +307,19 @@ typedef unsigned __LONG32 error_status_t;
     unsigned __LONG32 PointerLength;
     int fInDontFree : 1;
     int fDontCallFreeInst : 1;
-    int fInOnlyParam : 1;
+    int fUnused1 : 1;
     int fHasReturn : 1;
     int fHasExtensions : 1;
     int fHasNewCorrDesc : 1;
-    int fIsOicfServer : 1;
+    int fIsIn : 1;
+    int fIsOut : 1;
+    int fIsOicf : 1;
+    int fBufferValid : 1;
     int fHasMemoryValidateCallback : 1;
-    int fUnused : 8;
-    int fUnused2 : 16;
+    int fInFree : 1;
+    int fNeedMCCP : 1;
+    int fUnused2 : 3;
+    int fUnused3 : 16;
     unsigned __LONG32 dwDestContext;
     void *pvDestContext;
     NDR_SCONTEXT *SavedContextHandles;
@@ -310,9 +345,9 @@ typedef unsigned __LONG32 error_status_t;
     INT_PTR Unused;
 #endif
     struct _NDR_PROC_CONTEXT *pContext;
+    void *ContextHandleHash;
     void *pUserMarshalList;
-    INT_PTR Reserved51_2;
-    INT_PTR Reserved51_3;
+    unsigned char *pFullPtrFormat;
     INT_PTR Reserved51_4;
     INT_PTR Reserved51_5;
   } MIDL_STUB_MESSAGE,*PMIDL_STUB_MESSAGE;

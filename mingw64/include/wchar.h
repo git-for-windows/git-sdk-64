@@ -55,19 +55,7 @@ extern "C" {
 
 _CRTIMP FILE *__cdecl __acrt_iob_func(unsigned index);
 #ifndef _STDIO_DEFINED
-#ifdef _WIN64
   _CRTIMP FILE *__cdecl __iob_func(void);
-#define _iob  __iob_func()
-#else
-#ifdef _MSVCRT_
-extern FILE _iob[];	/* A pointer to an array of FILE */
-#define __iob_func()	(_iob)
-#else
-extern FILE (* __MINGW_IMP_SYMBOL(_iob))[];	/* A pointer to an array of FILE */
-#define __iob_func()	(* __MINGW_IMP_SYMBOL(_iob))
-#endif
-#endif
-
 #define _iob __iob_func()
 #endif
 
@@ -166,28 +154,11 @@ extern FILE (* __MINGW_IMP_SYMBOL(_iob))[];	/* A pointer to an array of FILE */
 
 #ifndef __PCTYPE_FUNC
 #define __PCTYPE_FUNC __pctype_func()
-#ifdef _MSVCRT_
-#define __pctype_func() (_pctype)
-#else
-#ifdef _UCRT
-  _CRTIMP unsigned short* __pctype_func(void);
-#else
-#define __pctype_func() (* __MINGW_IMP_SYMBOL(_pctype))
-#endif
-#endif
+  _CRTIMP const unsigned short* __pctype_func(void);
 #endif
 
 #ifndef _pctype
-#ifdef _MSVCRT_
-  extern unsigned short *_pctype;
-#else
-#ifdef _UCRT
 #define _pctype (__pctype_func())
-#else
-  extern unsigned short ** __MINGW_IMP_SYMBOL(_pctype);
-#define _pctype (* __MINGW_IMP_SYMBOL(_pctype))
-#endif
-#endif
 #endif
 #endif
 #endif
@@ -196,27 +167,13 @@ extern FILE (* __MINGW_IMP_SYMBOL(_iob))[];	/* A pointer to an array of FILE */
 #define _CRT_WCTYPEDATA_DEFINED
 #ifndef _CTYPE_DISABLE_MACROS
 #if !defined(_wctype) && defined(_CRT_USE_WINAPI_FAMILY_DESKTOP_APP)
-#ifdef _MSVCRT_
-  extern unsigned short *_wctype;
-#else
-  extern unsigned short ** __MINGW_IMP_SYMBOL(_wctype);
+  extern const unsigned short ** __MINGW_IMP_SYMBOL(_wctype);
 #define _wctype (* __MINGW_IMP_SYMBOL(_wctype))
 #endif
-#endif
 
-#ifdef _MSVCRT_
-#define __pwctype_func() (_pwctype)
-#else
-#define __pwctype_func() (* __MINGW_IMP_SYMBOL(_pwctype))
-#endif
-
+  _CRTIMP const wctype_t * __cdecl __pwctype_func(void);
 #ifndef _pwctype
-#ifdef _MSVCRT_
-  extern unsigned short *_pwctype;
-#else
-  extern unsigned short ** __MINGW_IMP_SYMBOL(_pwctype);
-#define _pwctype (* __MINGW_IMP_SYMBOL(_pwctype))
-#endif
+#define _pwctype (__pwctype_func())
 #endif
 
 #endif

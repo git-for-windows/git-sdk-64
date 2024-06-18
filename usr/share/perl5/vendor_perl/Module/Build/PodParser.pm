@@ -2,7 +2,7 @@ package Module::Build::PodParser;
 
 use strict;
 use warnings;
-our $VERSION = '0.4231';
+our $VERSION = '0.4234';
 $VERSION = eval $VERSION;
 
 sub new {
@@ -24,6 +24,13 @@ sub parse_from_filehandle {
   my ($self, $fh) = @_;
 
   local $_;
+  while (<$fh>) {
+    next unless /^ =encoding \s+ (\S+)/ix;
+    binmode $fh, ":encoding($1)";
+    last;
+  }
+  seek $fh, 0, 0;
+
   while (<$fh>) {
     next unless /^=(?!cut)/ .. /^=cut/;  # in POD
     # Accept Name - abstract or C<Name> - abstract
