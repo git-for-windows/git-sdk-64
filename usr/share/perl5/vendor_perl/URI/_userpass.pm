@@ -5,7 +5,7 @@ use warnings;
 
 use URI::Escape qw(uri_unescape);
 
-our $VERSION = '5.21';
+our $VERSION = '5.28';
 
 sub user
 {

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/bash
 #
 # xmlto - apply an XSL stylesheet to an XML document
 # Copyright (C) 2001, 2002, 2003  Tim Waugh <twaugh@redhat.com>
@@ -17,16 +17,16 @@
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 # Utilities that we need that aren't everywhere
-FIND=find      # This must be GNU find (need -maxdepth)
-MKTEMP=mktemp # See http://www.mktemp.org if missing on your system
-BASH=/bin/sh     # GNU bash, for running the format scripts
-GETOPT=getopt # a getopt that supports --longoptions
-TAIL=/usr/bin/tail     # a tail that supports -n (posix)
-GREP=/usr/bin/grep     # GNU grep, for searching patterns
-SED=/usr/bin/sed       # GNU sed, for modification of patterns
+FIND=find                # This must be GNU find (need -maxdepth)
+MKTEMP=mktemp           # See http://www.mktemp.org if missing on your system
+BASH=/usr/bin/bash    # GNU bash, for running the format scripts
+GETOPT=getopt           # a getopt that supports --longoptions
+TAIL=/usr/bin/tail               # a tail that supports -n (posix)
+GREP=/usr/bin/grep               # GNU grep, for searching patterns
+SED=/usr/bin/sed                 # GNU sed, for modification of patterns
 
 version () {
-  echo "xmlto version 0.0.28"
+  echo "xmlto version 0.0.29"
 }
 
 usage () {
@@ -272,13 +272,13 @@ then
   USE_BACKEND=DEFAULT
 fi
 
-LINKS_PATH=elinks
-W3M_PATH=w3m
-LYNX_PATH=lynx
-GCP_PATH=/usr/bin/cp
-SED_PATH=/usr/bin/sed
-GREP_PATH=/usr/bin/grep
-ZIP_PATH=zip
+LINKS_PATH=$(command -v elinks || command -v links)
+W3M_PATH=$(command -v w3m)
+LYNX_PATH=$(command -v lynx)
+GCP_PATH=$(command -v cp)
+SED_PATH=$(command -v sed)
+GREP_PATH=$(command -v grep)
+ZIP_PATH=$(command -v zip)
 
 # Process any options
 ARGS=$(${GETOPT} \

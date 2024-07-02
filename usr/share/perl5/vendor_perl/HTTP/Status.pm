@@ -3,7 +3,7 @@ package HTTP::Status;
 use strict;
 use warnings;
 
-our $VERSION = '6.45';
+our $VERSION = '6.46';
 
 use Exporter 5.57 'import';
 
@@ -40,6 +40,7 @@ my %StatusCode = (
     303 => 'See Other',
     304 => 'Not Modified',                    # RFC 7232: Conditional Request
     305 => 'Use Proxy',
+    306 => '(Unused)',                        # RFC 9110: Previously used and reserved
     307 => 'Temporary Redirect',
     308 => 'Permanent Redirect',              # RFC 7528: Permanent Redirect
 #   309 .. 399
@@ -56,14 +57,15 @@ my %StatusCode = (
     410 => 'Gone',
     411 => 'Length Required',
     412 => 'Precondition Failed',             # RFC 7232: Conditional Request
-    413 => 'Payload Too Large',
+    413 => 'Content Too Large',
     414 => 'URI Too Long',
     415 => 'Unsupported Media Type',
     416 => 'Range Not Satisfiable',           # RFC 7233: Range Requests
     417 => 'Expectation Failed',
-#   418 .. 420
+    418 => "I'm a teapot",                    # RFC 2324: RFC9110 reserved it
+#   419 .. 420
     421 => 'Misdirected Request',             # RFC 7540: HTTP/2
-    422 => 'Unprocessable Entity',            # RFC 4918: WebDAV
+    422 => 'Unprocessable Content',           # RFC 9110: WebDAV
     423 => 'Locked',                          # RFC 4918: WebDAV
     424 => 'Failed Dependency',               # RFC 4918: WebDAV
     425 => 'Too Early',                       # RFC 8470: Using Early Data in HTTP
@@ -88,21 +90,17 @@ my %StatusCode = (
 #   509
     510 => 'Not Extended',                    # RFC 2774: Extension Framework
     511 => 'Network Authentication Required', # RFC 6585: Additional Codes
-);
 
-my %StatusCodeName;
-
-# keep some unofficial codes that used to be in this distribution
-%StatusCode = (
-    %StatusCode,
-    418 => 'I\'m a teapot',                   # RFC 2324: HTCPC/1.0  1-april
+    # Keep some unofficial codes that used to be in this distribution
     449 => 'Retry with',                      #           microsoft
     509 => 'Bandwidth Limit Exceeded',        #           Apache / cPanel
 );
 
+my %StatusCodeName;
 my $mnemonicCode = '';
 my ($code, $message);
 while (($code, $message) = each %StatusCode) {
+    next if $message eq '(Unused)';
     # create mnemonic subroutines
     $message =~ s/I'm/I am/;
     $message =~ tr/a-z \-/A-Z__/;
@@ -121,7 +119,9 @@ die if $@;
 push(@EXPORT, "RC_MOVED_TEMPORARILY");
 
 my %compat = (
-    REQUEST_ENTITY_TOO_LARGE      => \&HTTP_PAYLOAD_TOO_LARGE,
+    UNPROCESSABLE_ENTITY          => \&HTTP_UNPROCESSABLE_CONTENT,
+    PAYLOAD_TOO_LARGE             => \&HTTP_CONTENT_TOO_LARGE,
+    REQUEST_ENTITY_TOO_LARGE      => \&HTTP_CONTENT_TOO_LARGE,
     REQUEST_URI_TOO_LARGE         => \&HTTP_URI_TOO_LONG,
     REQUEST_RANGE_NOT_SATISFIABLE => \&HTTP_RANGE_NOT_SATISFIABLE,
     NO_CODE                       => \&HTTP_TOO_EARLY,
@@ -183,7 +183,7 @@ HTTP::Status - HTTP Status code processing
 
 =head1 VERSION
 
-version 6.45
+version 6.46
 
 =head1 SYNOPSIS
 
@@ -249,13 +249,13 @@ tag to import them all.
    HTTP_GONE                            (410)
    HTTP_LENGTH_REQUIRED                 (411)
    HTTP_PRECONDITION_FAILED             (412)
-   HTTP_PAYLOAD_TOO_LARGE               (413)
+   HTTP_CONTENT_TOO_LARGE               (413)
    HTTP_URI_TOO_LONG                    (414)
    HTTP_UNSUPPORTED_MEDIA_TYPE          (415)
    HTTP_RANGE_NOT_SATISFIABLE           (416)
    HTTP_EXPECTATION_FAILED              (417)
    HTTP_MISDIRECTED REQUEST             (421)
-   HTTP_UNPROCESSABLE_ENTITY            (422)
+   HTTP_UNPROCESSABLE_CONTENT           (422)
    HTTP_LOCKED                          (423)
    HTTP_FAILED_DEPENDENCY               (424)
    HTTP_TOO_EARLY                       (425)
