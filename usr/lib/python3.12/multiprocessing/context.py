@@ -262,7 +262,7 @@ class DefaultContext(BaseContext):
         if sys.platform == 'win32':
             return ['spawn']
         else:
-            methods = ['spawn', 'fork'] if sys.platform == 'darwin' else ['fork', 'spawn']
+            methods = ['spawn', 'fork'] if (sys.platform == 'darwin' or sys.platform == 'cygwin') else ['fork', 'spawn']
             if reduction.HAVE_SEND_HANDLE:
                 methods.append('forkserver')
             return methods
@@ -320,7 +320,7 @@ if sys.platform != 'win32':
         'spawn': SpawnContext(),
         'forkserver': ForkServerContext(),
     }
-    if sys.platform == 'darwin':
+    if sys.platform == 'darwin' or sys.platform == 'cygwin':
         # bpo-33725: running arbitrary code after fork() is no longer reliable
         # on macOS since macOS 10.14 (Mojave). Use spawn by default instead.
         _default_context = DefaultContext(_concrete_contexts['spawn'])

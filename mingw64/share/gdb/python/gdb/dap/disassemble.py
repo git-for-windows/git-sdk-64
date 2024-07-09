@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Free Software Foundation, Inc.
+# Copyright 2022-2024 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,32 +15,51 @@
 
 import gdb
 
-from .server import request, capability
-from .startup import in_gdb_thread
+from .server import capability, request
+from .sources import make_source
 
 
-@in_gdb_thread
-def _disassemble(pc, skip_insns, count):
-    inf = gdb.selected_inferior()
-    try:
-        arch = gdb.selected_frame().architecture()
-    except gdb.error:
-        # Maybe there was no frame.
-        arch = inf.architecture()
-    result = []
-    total_count = skip_insns + count
-    for elt in arch.disassemble(pc, count=total_count)[skip_insns:]:
-        mem = inf.read_memory(elt["addr"], elt["length"])
-        result.append(
-            {
-                "address": hex(elt["addr"]),
-                "instruction": elt["asm"],
-                "instructionBytes": mem.hex(),
-            }
-        )
-    return {
-        "instructions": result,
-    }
+# This tracks labels associated with a disassembly request and helps
+# with updating individual instructions.
+class _BlockTracker:
+    def __init__(self):
+        # Map from PC to symbol names.  A given PC is assumed to have
+        # just one label -- DAP wouldn't let us return multiple labels
+        # anyway.
+        self.labels = {}
+        # List of blocks that have already been handled.  Note that
+        # blocks aren't hashable so a set is not used.
+        self.blocks = []
+
+    # Add a gdb.Block and its superblocks, ignoring the static and
+    # global block.  BLOCK can also be None, which is ignored.
+    def add_block(self, block):
+        while block is not None:
+            if block.is_static or block.is_global or block in self.blocks:
+                return
+            self.blocks.append(block)
+            if block.function is not None:
+                self.labels[block.start] = block.function.name
+            for sym in block:
+                if sym.addr_class == gdb.SYMBOL_LOC_LABEL:
+                    self.labels[int(sym.value())] = sym.name
+            block = block.superblock
+
+    # Add PC to this tracker.  Update RESULT as appropriate with
+    # information about the source and any label.
+    def add_pc(self, pc, result):
+        self.add_block(gdb.block_for_pc(pc))
+        if pc in self.labels:
+            result["symbol"] = self.labels[pc]
+        sal = gdb.find_pc_line(pc)
+        if sal.symtab is not None:
+            if sal.line != 0:
+                result["line"] = sal.line
+            if sal.symtab.filename is not None:
+                # The spec says this can be omitted in some
+                # situations, but it's a little simpler to just always
+                # supply it.
+                result["location"] = make_source(sal.symtab.filename)
 
 
 @request("disassemble")
@@ -54,4 +73,24 @@ def disassemble(
     **extra
 ):
     pc = int(memoryReference, 0) + offset
-    return _disassemble(pc, instructionOffset, instructionCount)
+    inf = gdb.selected_inferior()
+    try:
+        arch = gdb.selected_frame().architecture()
+    except gdb.error:
+        # Maybe there was no frame.
+        arch = inf.architecture()
+    tracker = _BlockTracker()
+    result = []
+    total_count = instructionOffset + instructionCount
+    for elt in arch.disassemble(pc, count=total_count)[instructionOffset:]:
+        mem = inf.read_memory(elt["addr"], elt["length"])
+        insn = {
+            "address": hex(elt["addr"]),
+            "instruction": elt["asm"],
+            "instructionBytes": mem.hex(),
+        }
+        tracker.add_pc(elt["addr"], insn)
+        result.append(insn)
+    return {
+        "instructions": result,
+    }

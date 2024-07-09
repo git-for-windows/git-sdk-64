@@ -24,7 +24,7 @@ __all__ = ['send_handle', 'recv_handle', 'ForkingPickler', 'register', 'dump']
 HAVE_SEND_HANDLE = (sys.platform == 'win32' or
                     (hasattr(socket, 'CMSG_LEN') and
                      hasattr(socket, 'SCM_RIGHTS') and
-                     hasattr(socket.socket, 'sendmsg')))
+                     hasattr(socket.socket, 'sendmsg'))) and sys.platform != 'cygwin'
 
 #
 # Pickler subclass

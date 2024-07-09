@@ -1,5 +1,5 @@
 # Frame-filter commands.
-# Copyright (C) 2013-2023 Free Software Foundation, Inc.
+# Copyright (C) 2013-2024 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,11 +16,12 @@
 
 """Internal functions for working with frame-filters."""
 
-import gdb
-from gdb.FrameIterator import FrameIterator
-from gdb.FrameDecorator import FrameDecorator, DAPFrameDecorator
-import itertools
 import collections
+import itertools
+
+import gdb
+from gdb.FrameDecorator import DAPFrameDecorator, FrameDecorator
+from gdb.FrameIterator import FrameIterator
 
 
 def get_priority(filter_item):

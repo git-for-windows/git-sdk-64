@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Free Software Foundation, Inc.
+# Copyright 2022-2024 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,26 +14,31 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import gdb
 
 # This must come before other DAP imports.
 from . import startup
 
-# Load modules that define commands.
-from . import breakpoint
-from . import bt
-from . import disassemble
-from . import evaluate
-from . import launch
-from . import locations
-from . import memory
-from . import modules
-from . import next
-from . import pause
-from . import scopes
-from . import sources
-from . import threads
+# isort: split
 
+# Load modules that define commands.  These imports intentionally
+# ignore the unused import warning, as these modules are being loaded
+# for their side effects -- namely, registering DAP commands with the
+# server object.  "F401" is the flake8 "imported but unused" code.
+from . import breakpoint  # noqa: F401
+from . import bt  # noqa: F401
+from . import disassemble  # noqa: F401
+from . import evaluate  # noqa: F401
+from . import launch  # noqa: F401
+from . import locations  # noqa: F401
+from . import memory  # noqa: F401
+from . import modules  # noqa: F401
+from . import next  # noqa: F401
+from . import pause  # noqa: F401
+from . import scopes  # noqa: F401
+from . import sources  # noqa: F401
+from . import threads  # noqa: F401
+
+# isort: split
 from .server import Server
 
 
@@ -69,5 +74,23 @@ def run():
     os.close(wfd)
 
     # Note the inferior output is opened in text mode.
+    global server
     server = Server(open(saved_in, "rb"), open(saved_out, "wb"), open(rfd, "r"))
-    startup.start_dap(server.main_loop)
+
+
+# Whether the interactive session has started.
+session_started = False
+
+
+def pre_command_loop():
+    """DAP's pre_command_loop interpreter hook.  This is called by the GDB DAP
+    interpreter."""
+    global session_started
+    if not session_started:
+        # The pre_command_loop interpreter hook can be called several times.
+        # The first time it's called, it means we're starting an interactive
+        # session.
+        session_started = True
+        startup.thread_log("starting DAP server")
+        global server
+        startup.start_dap(server.main_loop)

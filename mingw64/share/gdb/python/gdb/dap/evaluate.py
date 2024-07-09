@@ -1,4 +1,4 @@
-# Copyright 2022, 2023 Free Software Foundation, Inc.
+# Copyright 2022-2024 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,15 +13,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import gdb
-
 # This is deprecated in 3.9, but required in older versions.
 from typing import Optional
 
+import gdb
+
 from .frames import select_frame
-from .server import capability, request, client_bool_capability
-from .startup import in_gdb_thread
-from .varref import find_variable, VariableReference, apply_format
+from .server import capability, client_bool_capability, request
+from .startup import DAPException, in_gdb_thread, parse_and_eval
+from .varref import VariableReference, apply_format, find_variable
 
 
 class EvaluateResult(VariableReference):
@@ -37,7 +37,7 @@ def _evaluate(expr, frame_id, value_format):
         if frame_id is not None:
             select_frame(frame_id)
             global_context = False
-        val = gdb.parse_and_eval(expr, global_context=global_context)
+        val = parse_and_eval(expr, global_context=global_context)
         ref = EvaluateResult(val)
         return ref.to_object()
 
@@ -55,20 +55,6 @@ def _eval_for_hover(expr, frame_id, value_format):
 class _SetResult(VariableReference):
     def __init__(self, value):
         super().__init__(None, value, "value")
-
-
-# Helper function to perform an assignment.
-@in_gdb_thread
-def _set_expression(expression, value, frame_id, value_format):
-    with apply_format(value_format):
-        global_context = True
-        if frame_id is not None:
-            select_frame(frame_id)
-            global_context = False
-        lhs = gdb.parse_and_eval(expression, global_context=global_context)
-        rhs = gdb.parse_and_eval(value, global_context=global_context)
-        lhs.assign(rhs)
-        return _SetResult(lhs).to_object()
 
 
 # Helper function to evaluate a gdb command in a certain frame.
@@ -103,15 +89,7 @@ def eval_request(
         # Ignore the format for repl evaluation.
         return _repl(expression, frameId)
     else:
-        raise Exception('unknown evaluate context "' + context + '"')
-
-
-@in_gdb_thread
-def _variables(ref, start, count, value_format):
-    with apply_format(value_format):
-        var = find_variable(ref)
-        children = var.fetch_children(start, count)
-        return [x.to_object() for x in children]
+        raise DAPException('unknown evaluate context "' + context + '"')
 
 
 @request("variables")
@@ -125,7 +103,10 @@ def variables(
     if not client_bool_capability("supportsVariablePaging"):
         start = 0
         count = 0
-    return {"variables": _variables(variablesReference, start, count, format)}
+    with apply_format(format):
+        var = find_variable(variablesReference)
+        children = var.fetch_children(start, count)
+        return {"variables": [x.to_object() for x in children]}
 
 
 @capability("supportsSetExpression")
@@ -133,18 +114,15 @@ def variables(
 def set_expression(
     *, expression: str, value: str, frameId: Optional[int] = None, format=None, **args
 ):
-    return _set_expression(expression, value, frameId, format)
-
-
-# Helper function to perform an assignment.
-@in_gdb_thread
-def _set_variable(ref, name, value, value_format):
-    with apply_format(value_format):
-        var = find_variable(ref)
-        lhs = var.find_child_by_name(name)
-        rhs = gdb.parse_and_eval(value)
+    with apply_format(format):
+        global_context = True
+        if frameId is not None:
+            select_frame(frameId)
+            global_context = False
+        lhs = parse_and_eval(expression, global_context=global_context)
+        rhs = parse_and_eval(value, global_context=global_context)
         lhs.assign(rhs)
-        return lhs.to_object()
+        return _SetResult(lhs).to_object()
 
 
 @capability("supportsSetVariable")
@@ -152,4 +130,9 @@ def _set_variable(ref, name, value, value_format):
 def set_variable(
     *, variablesReference: int, name: str, value: str, format=None, **args
 ):
-    return _set_variable(variablesReference, name, value, format)
+    with apply_format(format):
+        var = find_variable(variablesReference)
+        lhs = var.find_child_by_name(name)
+        rhs = parse_and_eval(value)
+        lhs.assign(rhs)
+        return lhs.to_object()
