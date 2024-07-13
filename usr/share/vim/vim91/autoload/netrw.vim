@@ -13,6 +13,9 @@
 "   2024 May 09 by Vim Project: remove hard-coded private.ppk
 "   2024 May 10 by Vim Project: recursively delete directories by default
 "   2024 May 13 by Vim Project: prefer scp over pscp
+"   2024 Jun 04 by Vim Project: set bufhidden if buffer changed, nohidden is set and buffer shall be switched (#14915)
+"   2024 Jun 13 by Vim Project: glob() on Windows fails when a directory name contains [] (#14952)
+"   2024 Jun 23 by Vim Project: save ad restore registers when liststyle = WIDELIST (#15077, #15114)
 " Former Maintainer:	Charles E Campbell
 " GetLatestVimScripts: 1075 1 :AutoInstall: netrw.vim
 " Copyright:    Copyright (C) 2016 Charles E. Campbell {{{1
@@ -4494,7 +4497,15 @@ fun! s:NetrwGetWord()
     call cursor(line("."),filestart+1)
     NetrwKeepj norm! ma
    endif
-   let rega= @a
+
+   let dict={}
+   " save the unnamed register and register 0-9 and a
+   let dict.a=[getreg('a'), getregtype('a')]
+   for i in range(0, 9)
+     let dict[i] = [getreg(i), getregtype(i)]
+   endfor
+   let dict.unnamed = [getreg(''), getregtype('')]
+
    let eofname= filestart + b:netrw_cpf + 1
    if eofname <= col("$")
     call cursor(line("."),filestart+b:netrw_cpf+1)
@@ -4502,8 +4513,10 @@ fun! s:NetrwGetWord()
    else
     NetrwKeepj norm! "ay$
    endif
+
    let dirname = @a
-   let @a      = rega
+   call s:RestoreRegister(dict)
+
 "   call Decho("2: dirname<".dirname.">",'~'.expand("<slnum>"))
    let dirname= substitute(dirname,'\s\+$','','e')
 "   call Decho("3: dirname<".dirname.">",'~'.expand("<slnum>"))
@@ -5571,13 +5584,12 @@ endfun
 " ---------------------------------------------------------------------
 " netrw#BrowseXVis: used by gx in visual mode to select a file for browsing {{{2
 fun! netrw#BrowseXVis()
-"  call Dfunc("netrw#BrowseXVis()")
-  let akeep = @a
+  let dict={}
+  let dict.a=[getreg('a'), getregtype('a')]
   norm! gv"ay
   let gxfile= @a
-  let @a    = akeep
+  call s:RestoreRegister(dict)
   call netrw#BrowseX(gxfile,netrw#CheckIfRemote(gxfile))
-"  call Dret("netrw#BrowseXVis")
 endfun
 
 " ---------------------------------------------------------------------
@@ -5724,6 +5736,9 @@ fun! s:NetrwEditFile(cmd,opt,fname)
    exe "NetrwKeepj keepalt ".a:opt." ".a:cmd." ".fnameescape(a:fname)
   else
 "   call Decho("exe NetrwKeepj ".a:opt." ".a:cmd." ".fnameescape(a:fname))
+    if a:cmd =~# 'e\%[new]!' && !&hidden && getbufvar(bufname('%'), '&modified', 0)
+      call setbufvar(bufname('%'), '&bufhidden', 'hide')
+    endif
    exe "NetrwKeepj ".a:opt." ".a:cmd." ".fnameescape(a:fname)
   endif
 "  call Dret("s:NetrwEditFile")
@@ -5794,16 +5809,20 @@ fun! s:NetrwGlob(direntry,expr,pare)
     let filelist= w:netrw_treedict[a:direntry]
    endif
    let w:netrw_liststyle= keep_liststyle
-  elseif v:version > 704 || (v:version == 704 && has("patch656"))
-   let filelist= glob(s:ComposePath(fnameescape(a:direntry),a:expr),0,1,1)
-   if a:pare
-    let filelist= map(filelist,'substitute(v:val, "^.*/", "", "")')
-   endif
   else
-   let filelist= glob(s:ComposePath(fnameescape(a:direntry),a:expr),0,1)
-   if a:pare
-    let filelist= map(filelist,'substitute(v:val, "^.*/", "", "")')
-   endif
+   let path= s:ComposePath(fnameescape(a:direntry),a:expr) 
+    if has("win32")
+     " escape [ so it is not detected as wildcard character, see :h wildcard
+     let path= substitute(path, '[', '[[]', 'g')
+    endif
+    if v:version > 704 || (v:version == 704 && has("patch656"))
+     let filelist= glob(path,0,1,1)
+    else
+     let filelist= glob(path,0,1)
+    endif
+    if a:pare
+     let filelist= map(filelist,'substitute(v:val, "^.*/", "", "")')
+    endif
   endif
 "  call Dret("s:NetrwGlob ".string(filelist))
   return filelist
@@ -9770,7 +9789,13 @@ fun! s:NetrwWideListing()
    " fpl: filenames per line
    " fpc: filenames per column
    setl ma noro
-   let keepa= @a
+   let dict={}
+   " save the unnamed register and register 0-9 and a
+   let dict.a=[getreg('a'), getregtype('a')]
+   for i in range(0, 9)
+     let dict[i] = [getreg(i), getregtype(i)]
+   endfor
+   let dict.unnamed = [getreg(''), getregtype('')]
 "   call Decho("setl ma noro",'~'.expand("<slnum>"))
    let b:netrw_cpf= 0
    if line("$") >= w:netrw_bannercnt
@@ -9778,7 +9803,8 @@ fun! s:NetrwWideListing()
     exe 'sil NetrwKeepj '.w:netrw_bannercnt.',$g/^./if virtcol("$") > b:netrw_cpf|let b:netrw_cpf= virtcol("$")|endif'
     NetrwKeepj call histdel("/",-1)
    else
-    let @a= keepa
+    " restore stored registers
+    call s:RestoreRegister(dict)
 "    call Dret("NetrwWideListing")
     return
    endif
@@ -9830,7 +9856,7 @@ fun! s:NetrwWideListing()
    exe 'nno <buffer> <silent> b	:call search(''^.\\|\s\s\zs\S'',''bW'')'."\<cr>"
 "   call Decho("NetrwWideListing) setl noma nomod ro",'~'.expand("<slnum>"))
    exe "setl ".g:netrw_bufsettings
-    let @a= keepa
+   call s:RestoreRegister(dict)
 "   call Decho("ro=".&l:ro." ma=".&l:ma." mod=".&l:mod." wrap=".&l:wrap." (filename<".expand("%")."> win#".winnr()." ft<".&ft.">)",'~'.expand("<slnum>"))
 "   call Dret("NetrwWideListing")
    return
@@ -9842,7 +9868,6 @@ fun! s:NetrwWideListing()
     sil! nunmap <buffer> b
    endif
   endif
-
 endfun
 
 " ---------------------------------------------------------------------
@@ -10163,7 +10188,8 @@ fun! s:SetupNetrwStatusLine(statline)
    endif
 
    " set up User9 highlighting as needed
-   let keepa= @a
+  let dict={}
+  let dict.a=[getreg('a'), getregtype('a')]
    redir @a
    try
     hi User9
@@ -10175,7 +10201,7 @@ fun! s:SetupNetrwStatusLine(statline)
     endif
    endtry
    redir END
-   let @a= keepa
+   call s:RestoreRegister(dict)
   endif
 
   " set up status line (may use User9 highlighting)
@@ -11983,6 +12009,16 @@ fun! s:RestoreCursorline()
   endif
 "  call Decho("(s:RestoreCursorline) COMBAK: cuc=".&l:cuc." cul=".&l:cul)
 "  call Dret("s:RestoreCursorline : restored cul=".&l:cursorline." cuc=".&l:cursorcolumn)
+endfun
+
+" s:RestoreRegister: restores all registers given in the dict {{{2
+fun! s:RestoreRegister(dict)
+  for [key, val] in items(a:dict)
+    if key == 'unnamed'
+      let key = ''
+    endif
+    call setreg(key, val[0], val[1])
+  endfor
 endfun
 
 " ---------------------------------------------------------------------
