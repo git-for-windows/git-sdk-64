@@ -53,7 +53,7 @@ ul.no-bullet {list-style: none}
 
 <div class="top" id="Top">
 <span id="SEC_Top"></span>
-<p>This manual documents GNU <code>nano</code>, version 8.0.
+<p>This manual documents GNU <code>nano</code>, version 8.1.
 </p>
 
 
@@ -125,9 +125,6 @@ and to edit several files in a row.
 the line number with a plus sign before the filename, and even
 in a specific column by adding it with a comma.
 Negative numbers count from the end of the file or line.
-The line and column numbers may also be specified by gluing them with colons
-after the filename.  (When a filename contains a colon followed by digits,
-escape the colon by preceding it with a triple backslash.)
 </p>
 <p>The cursor can be put on the first or last occurrence of a specific string
 by specifying that string after <code>+/</code> or <code>+?</code> before the filename.
@@ -186,9 +183,9 @@ file has been modified since it was last saved or opened.
 </p>
 <p>The status bar is the third line from the bottom of the screen.  It
 shows important and informational messages.  Any error messages that
-occur from using the editor will appear on the status bar.  Any questions
-that are asked of the user will be asked on the status bar, and any user
-input (search strings, filenames, etc.) will be input on the status bar.
+occur from using the editor appear on the status bar.  Any questions
+that are asked of the user are asked on the status bar, and any user
+input (search strings, filenames, etc.) is input on the status bar.
 </p>
 <p>The two help lines at the bottom of the screen show some of the most
 essential functions of the editor.
@@ -207,20 +204,20 @@ file being edited.
 <ul>
 <li> For characters with a single-byte code,
 pressing the Esc key twice and then typing a three-digit decimal number
-(from <kbd>000</kbd> to <kbd>255</kbd>) will make <code>nano</code> behave as if you
+(from <kbd>000</kbd> to <kbd>255</kbd>) makes <code>nano</code> behave as if you
 typed the key with that value.
 
 </li><li> For any possible character, pressing <kbd>M-V</kbd> (Alt+V) and then typing a
 series of hexadecimal digits (at most six, or concluded with <kbd>Enter</kbd> or
-<kbd>Space</kbd>) will enter the corresponding Unicode character into the buffer.
+<kbd>Space</kbd>) enters the corresponding Unicode character into the buffer.
 </li></ul>
 
-<p>For example, typing <kbd>Esc Esc 2 3 4</kbd> will enter the character &quot;ê&quot; &mdash;
+<p>For example, typing <kbd>Esc Esc 2 3 4</kbd> enters the character &quot;ê&quot; &mdash;
 useful when writing about a French party.  Typing <kbd>M-V 0 0 2 2 c 4</kbd>
-will enter the symbol &quot;⋄&quot;, a little diamond.
+enters the symbol &quot;⋄&quot;, a little diamond.
 </p>
 <p>Typing <kbd>M-V</kbd> followed by anything other than a hexadecimal digit
-will enter this keystroke verbatim into the buffer, allowing the user
+enters this keystroke verbatim into the buffer, allowing the user
 to insert literal control codes (except <code>^J</code>) or escape sequences.
 </p>
 <hr>
@@ -252,8 +249,8 @@ and then pressing the desired key.
 
 <p>Text can be cut from a file a whole line at a time with <kbd>^K</kbd>.
 The cut line is stored in the cutbuffer.  Consecutive strokes of <kbd>^K</kbd>
-will add each cut line to this buffer, but a <kbd>^K</kbd>
-after any other keystroke will overwrite the entire cutbuffer.
+add each cut line to this buffer, but a <kbd>^K</kbd>
+after any other keystroke overwrites the entire cutbuffer.
 </p>
 <p>The contents of the cutbuffer can be pasted at the current cursor position
 with <kbd>^U</kbd>.
@@ -268,14 +265,14 @@ with <kbd>M-6</kbd>.
 
 <p>Text can be selected by first &rsquo;setting the Mark&rsquo; with <kbd>^6</kbd>
 or <kbd>M-A</kbd> and then moving the cursor to the other end of the portion
-to be selected.  The selected portion of text will be highlighted.
+to be selected.  The selected portion of text is highlighted.
 This selection can now be cut or copied in its entirety with a single
 <kbd>^K</kbd> or <kbd>M-6</kbd>.  Or the selection can be used to limit the scope of
 a search-and-replace (<kbd>^\</kbd>) or spell-checking session (<kbd>^T^T</kbd>).
 </p>
 <p>On some terminals, text can be selected also by holding down <kbd>Shift</kbd>
 while using the cursor keys.  Holding down the <kbd>Ctrl</kbd> or <kbd>Alt</kbd>
-key too will increase the stride.  Such a selection is cancelled
+key too increases the stride.  Such a selection is cancelled
 upon any cursor movement where <kbd>Shift</kbd> isn&rsquo;t held.
 </p>
 <p>Cutting or copying selected text toggles off the mark automatically.
@@ -299,7 +296,7 @@ When a regular expression contains fragments between parentheses,
 the replacement string can refer back to these fragments via
 <code>\1</code> to <code>\9</code>.
 </p>
-<p>For each occurrence of the search string you will be asked whether to
+<p>For each occurrence of the search string you are asked whether to
 replace it.  You can choose Yes (replace it), or No (skip this one),
 or All (replace all remaining occurrences without asking any more),
 or Cancel (stop with replacing, but replacements that have already
@@ -325,7 +322,7 @@ executes the selected shortcut.  To be able to select text with the
 left button, or paste text with the middle button, hold down the
 Shift key during those actions.
 </p>
-<p>The mouse will work in the X Window System, and on the console when gpm
+<p>The mouse works in the X Window System, and on the console when gpm
 is running.
 </p>
 <hr>
@@ -374,7 +371,7 @@ and <kbd>^V</kbd> (Page Down) keys.  <kbd>^X</kbd> exits from the help viewer.
 <span id="The-File-Browser-1"></span><h2 class="chapter">5 The File Browser</h2>
 
 <p>When in the Read-File (<kbd>^R</kbd>) or Write-Out menu (<kbd>^O</kbd>),
-pressing <kbd>^T</kbd> will invoke the file browser.
+pressing <kbd>^T</kbd> invokes the file browser.
 Here, one can navigate directories in a graphical manner in order to
 find the desired file.
 </p>
@@ -383,8 +380,8 @@ other cursor-movement keys.  More targeted movement is accomplished by
 searching, via <kbd>^W</kbd> or <kbd>w</kbd>, or by changing directory, via
 <kbd>^_</kbd> or <kbd>g</kbd>.  The behavior of the <kbd>Enter</kbd> key (or <kbd>s</kbd>)
 varies by what is currently selected.
-If the currently selected object is a directory, the file browser will
-enter and display the contents of the directory.  If the object is a
+If the currently selected object is a directory, the file browser
+enters and displays the contents of the directory.  If the object is a
 file, this filename and path are copied to the status bar, and the file
 browser exits.
 </p>
@@ -400,10 +397,9 @@ browser exits.
 <dt><span><samp>-A</samp></span></dt>
 <dt><span><samp>--smarthome</samp></span></dt>
 <dd><p>Make the Home key smarter.  When Home is pressed anywhere but at the
-very beginning of non-whitespace characters on a line, the cursor will
-jump to that beginning (either forwards or backwards).  If the cursor is
-already at that position, it will jump to the true beginning of the
-line.
+very beginning of non-whitespace characters on a line, the cursor jumps
+to that beginning (either forwards or backwards).  If the cursor is
+already at that position, it jumps to the true beginning of the line.
 </p>
 </dd>
 <dt><span><samp>-B</samp></span></dt>
@@ -421,9 +417,10 @@ The uniquely numbered files are stored in the specified directory.
 </dd>
 <dt><span><samp>-D</samp></span></dt>
 <dt><span><samp>--boldtext</samp></span></dt>
-<dd><p>For the interface, use bold instead of reverse video.  This will be overridden
+<dd><p>For the interface, use bold instead of reverse video.
+This can be overridden for specific elements
 by setting the options <code>titlecolor</code>, <code>statuscolor</code>,
-<code>promptcolor</code>, <code>minicolor</code>, <code>keycolor</code>, <code>functioncolor</code>,
+<code>promptcolor</code>, <code>minicolor</code>, <code>keycolor</code>,
 <code>numbercolor</code>, and/or <code>selectedcolor</code> in your
 nanorc file.  See <a href="#set-keycolor"><code>set keycolor</code></a> for details.
 </p>
@@ -527,7 +524,6 @@ any name beginning with <code>r</code> (e.g. <code>rnano</code>).
 <dd><p>Display over multiple screen rows lines that exceed the screen&rsquo;s width.
 (You can make this soft-wrapping occur at whitespace instead of rudely at
 the screen&rsquo;s edge, by using also <code>--atblanks</code>.)
-(The old short option, <code>-$</code>, is deprecated.)
 </p>
 </dd>
 <dt><span><samp>-T <var>number</var></samp></span></dt>
@@ -652,17 +648,17 @@ position to the end of the line, instead of cutting the entire line.
 <dt><span><samp>-m</samp></span></dt>
 <dt><span><samp>--mouse</samp></span></dt>
 <dd><p>Enable mouse support, if available for your system.  When enabled, mouse
-clicks can be used to place the cursor, set the mark (with a double
-click), and execute shortcuts.  The mouse will work in the X Window
-System, and on the console when gpm is running.  Text can still be
-selected through dragging by holding down the Shift key.
+clicks can be used to place the cursor, set the mark (with two clicks),
+and execute shortcuts.  The mouse works in the X Window System, and on
+the console when gpm is running.  Text can still be selected through
+dragging by holding down the Shift key.
 </p>
 </dd>
 <dt><span><samp>-n</samp></span></dt>
 <dt><span><samp>--noread</samp></span></dt>
 <dd><p>Treat any name given on the command line as a new file.  This allows
-<code>nano</code> to write to named pipes: it will start with a blank buffer,
-and will write to the pipe when the user saves the &quot;file&quot;.  This way
+<code>nano</code> to write to named pipes: it starts with a blank buffer,
+and writes to the pipe when the user saves the &quot;file&quot;.  This way
 <code>nano</code> can be used as an editor in combination with for instance
 <code>gpg</code> without having to write sensitive data to disk first.
 </p>
@@ -675,8 +671,8 @@ similar to a chroot.
 </dd>
 <dt><span><samp>-p</samp></span></dt>
 <dt><span><samp>--preserve</samp></span></dt>
-<dd><p>Preserve the <kbd>^Q</kbd> (XON) and <kbd>^S</kbd> (XOFF) sequences so data being
-sent to the editor can be stopped and started.
+<dd><p>Preserve the <kbd>^S</kbd> (XOFF) and <kbd>^Q</kbd> (XON) sequences so that
+data being sent to the terminal can be stopped and resumed.
 Note that option <samp>-/</samp> (<samp>--modernbindings</samp>) overrides this.
 </p>
 </dd>
@@ -690,7 +686,7 @@ and how much of the buffer is covered by the viewport.
 <dt><span><samp>-r <var>number</var></samp></span></dt>
 <dt><span><samp>--fill=<var>number</var></samp></span></dt>
 <dd><p>Set the target width for justifying and automatic hard-wrapping at this
-<var>number</var> of columns.  If the value is 0 or less, wrapping will occur
+<var>number</var> of columns.  If the value is 0 or less, wrapping occurs
 at the width of the screen minus <var>number</var> columns, allowing the wrap
 point to vary along with the width of the screen if the screen is resized.
 The default value is <tt>-8</tt>.
@@ -753,10 +749,27 @@ disabled to display the help-system navigation keys.
 instead of beginnings.
 </p>
 </dd>
+<dt><span><samp>-z</samp></span></dt>
+<dt><span><samp>--listsyntaxes</samp></span></dt>
+<dd><p>List the names of the available syntaxes and exit.
+</p>
+</dd>
 <dt><span><samp>-!</samp></span></dt>
 <dt><span><samp>--magic</samp></span></dt>
 <dd><p>When neither the file&rsquo;s name nor its first line give a clue,
 try using libmagic to determine the applicable syntax.
+</p>
+</dd>
+<dt><span><samp>-@</samp></span></dt>
+<dt><span><samp>--colonparsing</samp></span></dt>
+<dd><p>When a filename given on the command line ends in a colon plus digits
+and this filename does not exist, then snip the colon plus digits and
+understand the digits as a line number.  If the trimmed filename does
+not exist either, then repeat the process and understand the obtained
+two numbers as line and column number.  But if the doubly trimmed
+filename does not exist either, then forget the trimming and accept
+the original filename as is.  To disable this colon parsing for some
+file, use <code>+1</code> or similar before the relevant filename.
 </p>
 </dd>
 <dt><span><samp>-%</samp></span></dt>
@@ -816,8 +829,7 @@ Note that this overrides option <samp>-p</samp> (<samp>--preserve</samp>).
 </dl>
 
 <br>
-<p>Option <code>-z</code> (<code>--suspendable</code>) has been removed.
-Suspension is enabled by default, reachable via <kbd>^T^Z</kbd>.
+<p>Suspension is enabled by default, reachable via <kbd>^T^Z</kbd>.
 (If you want a plain <kbd>^Z</kbd> to suspend nano, add
 <code>bind ^Z suspend main</code> to your nanorc.)
 </p>
@@ -900,13 +912,13 @@ not the help lines.  The latter are toggled with <kbd>M-X</kbd>.
 <span id="Nanorc-Files-1"></span><h2 class="chapter">8 Nanorc Files</h2>
 
 <p>Nanorc files can be used to configure <code>nano</code> to your liking
-without using command-line options.  During startup <code>nano</code> will
-normally read two files: first the system-wide file, <samp>/etc/nanorc</samp>
+without using command-line options.  During startup <code>nano</code>
+normally reads two files: first the system-wide file, <samp>/etc/nanorc</samp>
 (the exact path may be different on your system), and then the user-specific
 file, either <samp>~/.nanorc</samp> or <samp>$XDG_CONFIG_HOME/nano/nanorc</samp> or
 <samp>.config/nano/nanorc</samp>, whichever exists first.
-However, if <samp>--rcfile</samp> is given, <code>nano</code> will skip the
-above files and will read just the specified settings file.
+However, if <samp>--rcfile</samp> is given, <code>nano</code> skips the
+above files and reads just the specified settings file.
 </p>
 <p>A nanorc file can contain <code>set</code> and <code>unset</code> commands for
 various options (see <a href="#Settings">Settings</a>).  It can also contain commands that
@@ -972,10 +984,11 @@ The uniquely numbered files are stored in the specified directory.
 </p>
 </dd>
 <dt><span><code>set boldtext</code></span></dt>
-<dd><p>Use bold instead of reverse video for the title bar, status bar, key combos,
-function tags, line numbers, and selected text.  This is overridden by
-setting the options <code>titlecolor</code>, <code>statuscolor</code>, <code>keycolor</code>,
-<code>functioncolor</code>, <code>numbercolor</code>, and/or <code>selectedcolor</code>.
+<dd><p>Use bold instead of reverse video for the title bar, status bar,
+prompt bar, mini bar, key combos, line numbers, and selected text.
+This can be overridden by setting the options <code>titlecolor</code>,
+<code>statuscolor</code>, <code>promptcolor</code>, <code>minicolor</code>,
+<code>keycolor</code>, <code>numbercolor</code>, and/or <code>selectedcolor</code>.
 </p>
 </dd>
 <dt><span><code>set bookstyle</code></span></dt>
@@ -999,6 +1012,17 @@ closing brackets, can end sentences.  The default value is
 <dd><p>Do case-sensitive searches by default.
 </p>
 </dd>
+<dt><span><code>set colonparsing</code></span></dt>
+<dd><p>When a filename given on the command line ends in a colon plus digits
+and this filename does not exist, then snip the colon plus digits and
+understand the digits as a line number.  If the trimmed filename does
+not exist either, then repeat the process and understand the obtained
+two numbers as line and column number.  But if the doubly trimmed
+filename does not exist either, then forget the trimming and accept
+the original filename as is.  To disable this colon parsing for some
+file, use <code>+1</code> or similar before the relevant filename.
+</p>
+</dd>
 <dt><span><code>set constantshow</code></span></dt>
 <dd><p>Constantly display the cursor position on the status bar.
 Note that this overrides <samp>quickblank</samp>.
@@ -1020,7 +1044,7 @@ See <a href="#set-keycolor"><code>set keycolor</code></a> for valid color names.
 </dd>
 <dt><span><code>set fill <var>number</var></code></span></dt>
 <dd><p>Set the target width for justifying and automatic hard-wrapping at this
-<var>number</var> of columns.  If the value is 0 or less, wrapping will occur
+<var>number</var> of columns.  If the value is 0 or less, wrapping occurs
 at the width of the screen minus <var>number</var> columns, allowing the wrap
 point to vary along with the width of the screen if the screen is resized.
 The default value is <tt>-8</tt>.
@@ -1136,7 +1160,7 @@ See <a href="#set-keycolor"><code>set keycolor</code></a> for valid color names.
 </dd>
 <dt><span><code>set mouse</code></span></dt>
 <dd><p>Enable mouse support, so that mouse clicks can be used to place the
-cursor, set the mark (with a double click), or execute shortcuts.
+cursor, set the mark (with two clicks), or execute shortcuts.
 </p>
 </dd>
 <dt><span><code>set multibuffer</code></span></dt>
@@ -1167,7 +1191,7 @@ See <a href="#set-keycolor"><code>set keycolor</code></a> for valid color names.
 </p>
 </dd>
 <dt><span><code>set operatingdir &quot;<var>directory</var>&quot;</code></span></dt>
-<dd><p><code>nano</code> will only read and write files inside &quot;directory&quot; and its
+<dd><p><code>nano</code> only reads and writes files inside &quot;directory&quot; and its
 subdirectories.  Also, the current directory is changed to here, so
 files are inserted from this directory.  By default, the operating
 directory feature is turned off.
@@ -1179,7 +1203,8 @@ The cursor position is remembered for the 200 most-recently edited files.
 </p>
 </dd>
 <dt><span><code>set preserve</code></span></dt>
-<dd><p>Preserve the XON and XOFF keys (<kbd>^Q</kbd> and <kbd>^S</kbd>).
+<dd><p>Preserve the XOFF and XON sequences (<kbd>^S</kbd> and <kbd>^Q</kbd>) so that
+they are caught by the terminal (stopping and resuming the output).
 </p>
 </dd>
 <dt><span><code>set promptcolor [bold,][italic,]<var>fgcolor</var>,<var>bgcolor</var></code></span></dt>
@@ -1254,10 +1279,9 @@ poor vision.
 </dd>
 <dt><span><code>set smarthome</code></span></dt>
 <dd><p>Make the Home key smarter.  When Home is pressed anywhere but at the
-very beginning of non-whitespace characters on a line, the cursor will
-jump to that beginning (either forwards or backwards).  If the cursor is
-already at that position, it will jump to the true beginning of the
-line.
+very beginning of non-whitespace characters on a line, the cursor jumps
+to that beginning (either forwards or backwards).  If the cursor is
+already at that position, it jumps to the true beginning of the line.
 </p>
 </dd>
 <dt><span><code>set softwrap</code></span></dt>
@@ -1400,10 +1424,10 @@ via the following commands in a nanorc file:
 <dt><span><code>syntax <var>name</var> [&quot;<var>fileregex</var>&quot; &hellip;]</code></span></dt>
 <dd><p>Start the definition of a syntax with this <var>name</var>.
 All subsequent <code>color</code> and other such commands
-will be added to this syntax, until a new <code>syntax</code>
+are added to this syntax, until a new <code>syntax</code>
 command is encountered.
 </p>
-<p>When <code>nano</code> is run, this syntax will be automatically
+<p>When <code>nano</code> is run, this syntax is automatically
 activated (for the relevant buffer) if the absolute filename
 matches the extended regular expression <var>fileregex</var>.
 Or the syntax can be explicitly activated (for all buffers)
@@ -1427,8 +1451,8 @@ to determine whether this syntax should be used for it.
 either, then compare this <var>regex</var> (or regexes) against the
 result of querying the <code>magic</code> database about the current
 file, to determine whether this syntax should be used for it.
-(This functionality only works when <code>libmagic</code> is installed
-on the system and will be silently ignored otherwise.)
+(This querying is done only when <code>libmagic</code> is actually installed
+on the system and <samp>--magic</samp> or <code>set magic</code> was given.)
 </p>
 </dd>
 <dt><span><code>formatter <var>program</var> [<var>argument</var> &hellip;]</code></span></dt>
@@ -1503,7 +1527,7 @@ which means that later commands can recolor stuff that was colored earlier.
 &quot;fromrx&quot; and whose end matches extended regular expression &quot;torx&quot; with
 the given foreground and background colors, at least one of
 which must be specified.  This means that, after an initial instance of
-&quot;fromrx&quot;, all text until the first instance of &quot;torx&quot; will be colored.
+&quot;fromrx&quot;, all text until the first instance of &quot;torx&quot; is colored.
 This allows syntax highlighting to span multiple lines.
 </p>
 </dd>
@@ -1546,7 +1570,7 @@ nanorc file:
 <dd><p>Makes <code>key</code> produce <code>string</code> in the context of <code>menu</code>
 (or in all menus where the key exists when <code>all</code> is used).
 Besides literal text and/or control codes, the  <code>string</code> may contain
-function names between braces.  These functions will be invoked when the
+function names between braces.  These functions are invoked when the
 key is typed. To include a literal opening brace, use <code>{{}</code>.
 </p>
 </dd>
@@ -1559,10 +1583,10 @@ key is typed. To include a literal opening brace, use <code>{{}</code>.
 
 <p>Note that <code>bind key &quot;{function}&quot; menu</code> is equivalent to
 <code>bind key function menu</code>, except that for the latter form
-<code>nano</code> will check the availability of the <code>function</code>
+<code>nano</code> checks the availability of the <code>function</code>
 in the given <code>menu</code> at startup time (and report an error if
 it does not exist there), whereas for the first form <code>nano</code>
-will check at execution time that the <code>function</code> exists but not
+checks at execution time that the <code>function</code> exists but not
 whether it makes any sense in the current menu. The user has to take
 care that a function name between braces (or any sequence of them)
 is appropriate.  Strange behavior can result when it is not.
@@ -1732,7 +1756,7 @@ the contents of the buffer.)
 <dt><span><code>linter</code></span></dt>
 <dd><p>Invokes a syntax-checking program (if the active syntax defines one).
 If this program produces lines of the form &quot;filename:linenum:charnum:
-some message&quot;, then the cursor will be put at the indicated position
+some message&quot;, then the cursor is put at the indicated position
 in the mentioned file while showing &quot;some message&quot; on the status bar.
 You can move from message to message with <kbd>PgUp</kbd> and <kbd>PgDn</kbd>,
 and leave linting mode with <kbd>^C</kbd> or <kbd>Enter</kbd>.
@@ -1799,7 +1823,12 @@ while keeping the cursor in the same text position, if possible.
 </p>
 </dd>
 <dt><span><code>center</code></span></dt>
-<dd><p>Scrolls the line with the cursor to the middle of the screen.
+<dd><p>Scrolls the line with the cursor to the middle of the viewport.
+</p>
+</dd>
+<dt><span><code>cycle</code></span></dt>
+<dd><p>Scrolls the line with the cursor first to the middle of the viewport,
+then to the top, then to the bottom.
 </p>
 </dd>
 <dt><span><code>prevword</code></span></dt>
@@ -2070,17 +2099,16 @@ is the beginning of a paragraph.
 </p>
 </dd>
 <dt><span><code>cutfromcursor</code></span></dt>
-<dd><p>Toggles whether cutting text will cut the whole line or just from the current cursor
+<dd><p>Toggles whether cutting text cuts the whole line or just from the current cursor
 position to the end of the line.
 </p>
 </dd>
 <dt><span><code>breaklonglines</code></span></dt>
-<dd><p>Toggles whether long lines will be hard-wrapped to the next line.
-(The old name of this function, &rsquo;nowrap&rsquo;, is deprecated.)
+<dd><p>Toggles whether the overlong part of a line is hard-wrapped to the next line.
 </p>
 </dd>
 <dt><span><code>tabstospaces</code></span></dt>
-<dd><p>Toggles whether typed tabs will be converted to spaces.
+<dd><p>Toggles whether typed tabs are converted to spaces.
 </p>
 </dd>
 <dt><span><code>mouse</code></span></dt>
@@ -2185,7 +2213,7 @@ whereas Pico does it at screen width minus six columns. You can make
 </p>
 </dd>
 <dt><span><code>Scrolling</code></span></dt>
-<dd><p>By default, <code>nano</code> will scroll just one line (instead of half
+<dd><p>By default, <code>nano</code> scrolls just one line (instead of half
 a screen) when the cursor is moved to a line that is just out of view.
 And when paging up or down, <code>nano</code> keeps the cursor in the same
 screen position as much as possible, instead of always placing it on the
@@ -2203,8 +2231,8 @@ get it back with the <samp>--emptyline</samp> option.
 </dd>
 <dt><span><code>Interactive Replace</code></span></dt>
 <dd><p>Instead of allowing you to replace either just one occurrence of a search
-string or all of them, <code>nano</code>&rsquo;s replace function is interactive: it
-will pause at each found search string and query whether to replace this
+string or all of them, <code>nano</code>&rsquo;s replace function is interactive:
+it pauses at each found search string and asks whether to replace this
 instance.  You can then choose Yes, or No (skip this one), or All (don&rsquo;t
 ask any more), or Cancel (stop with replacing).
 </p>
@@ -2233,8 +2261,8 @@ but also (between the two) the current column position.
 </dd>
 <dt><span><code>Spell Checking</code></span></dt>
 <dd><p>In the internal spell checker misspelled words are sorted alphabetically
-and trimmed for uniqueness, such that the words &rsquo;apple&rsquo; and &rsquo;Apple&rsquo; will
-be prompted for correction separately.
+and trimmed for uniqueness, such that the strings &rsquo;Aplpe&rsquo; and &rsquo;aplpe&rsquo;
+will be offered for correction separately.
 </p>
 </dd>
 <dt><span><code>Writing Selected Text to Files</code></span></dt>
@@ -2249,8 +2277,8 @@ it can also read the output of a command to be run (<kbd>^X</kbd>).
 </p>
 </dd>
 <dt><span><code>Reading from Working Directory</code></span></dt>
-<dd><p>By default, Pico will read files from the user&rsquo;s home directory (when
-using <kbd>^R</kbd>), but it will write files to the current working directory
+<dd><p>By default, Pico reads files from the user&rsquo;s home directory (when
+using <kbd>^R</kbd>), but it writes files to the current working directory
 (when using <kbd>^O</kbd>).  <code>nano</code> makes this symmetrical: always reading
 from and writing to the current working directory &mdash; the directory
 that <code>nano</code> was started in.
@@ -2408,7 +2436,7 @@ chances are you only want this feature when you&rsquo;re working on the nano sou
 </p>
 </dd>
 <dt><span><code>--disable-nls</code></span></dt>
-<dd><p>Exclude Native Language support.  This will disable the use of any
+<dd><p>Exclude Native Language support.  This disables the use of any
 available GNU <code>nano</code> translations.
 </p>
 </dd>
