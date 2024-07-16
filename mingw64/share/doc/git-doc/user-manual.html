@@ -3536,20 +3536,18 @@ global.  This is presently only <a class="link" href="#def_HEAD">HEAD</a> and an
 that start with <code class="literal">refs/bisect/</code>, but might later include other
 unusual refs.
 </dd><dt><span class="term"><a name="def_pseudoref"></a>pseudoref</span></dt><dd>
-Pseudorefs are a class of files under <code class="literal">$GIT_DIR</code> which behave
-like refs for the purposes of rev-parse, but which are treated
-specially by git.  Pseudorefs both have names that are all-caps,
-and always start with a line consisting of a
-<a class="link" href="#def_SHA1">SHA-1</a> followed by whitespace.  So, HEAD is not a
-pseudoref, because it is sometimes a symbolic ref.  They might
-optionally contain some additional data.  <code class="literal">MERGE_HEAD</code> and
-<code class="literal">CHERRY_PICK_HEAD</code> are examples.  Unlike
-<a class="link" href="#def_per_worktree_ref">per-worktree refs</a>, these files cannot
-be symbolic refs, and never have reflogs.  They also cannot be
-updated through the normal ref update machinery.  Instead,
-they are updated by directly writing to the files.  However,
-they can be read as if they were refs, so <code class="literal">git rev-parse
-MERGE_HEAD</code> will work.
+<p class="simpara">A ref that has different semantics than normal refs. These refs can be
+read via normal Git commands, but cannot be written to by commands like
+<a class="ulink" href="git-update-ref.html" target="_top">git-update-ref(1)</a>.</p>
+<p class="simpara">The following pseudorefs are known to Git:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">FETCH_HEAD</code> is written by <a class="ulink" href="git-fetch.html" target="_top">git-fetch(1)</a> or <a class="ulink" href="git-pull.html" target="_top">git-pull(1)</a>. It
+may refer to multiple object IDs. Each object ID is annotated with metadata
+indicating where it was fetched from and its fetch status.
+</li><li class="listitem">
+<code class="literal">MERGE_HEAD</code> is written by <a class="ulink" href="git-merge.html" target="_top">git-merge(1)</a> when resolving merge
+conflicts. It contains all commit IDs which are being merged.
+</li></ul></div>
 </dd><dt><span class="term"><a name="def_pull"></a>pull</span></dt><dd>
 Pulling a <a class="link" href="#def_branch">branch</a> means to <a class="link" href="#def_fetch">fetch</a> it and
 <a class="link" href="#def_merge">merge</a> it.  See also <a class="ulink" href="git-pull.html" target="_top">git-pull(1)</a>.
@@ -3585,18 +3583,36 @@ To reapply a series of changes from a <a class="link" href="#def_branch">branch<
 different base, and reset the <a class="link" href="#def_head">head</a> of that branch
 to the result.
 </dd><dt><span class="term"><a name="def_ref"></a>ref</span></dt><dd>
-<p class="simpara">A name that begins with <code class="literal">refs/</code> (e.g. <code class="literal">refs/heads/master</code>)
-that points to an <a class="link" href="#def_object_name">object name</a> or another
-ref (the latter is called a <a class="link" href="#def_symref">symbolic ref</a>).
+<p class="simpara">A name that that points to an <a class="link" href="#def_object_name">object name</a> or
+another ref (the latter is called a <a class="link" href="#def_symref">symbolic ref</a>).
 For convenience, a ref can sometimes be abbreviated when used
 as an argument to a Git command; see <a class="ulink" href="gitrevisions.html" target="_top">gitrevisions(7)</a>
 for details.
 Refs are stored in the <a class="link" href="#def_repository">repository</a>.</p>
 <p class="simpara">The ref namespace is hierarchical.
-Different subhierarchies are used for different purposes (e.g. the
-<code class="literal">refs/heads/</code> hierarchy is used to represent local branches).</p>
-<p class="simpara">There are a few special-purpose refs that do not begin with <code class="literal">refs/</code>.
-The most notable example is <code class="literal">HEAD</code>.</p>
+Ref names must either start with <code class="literal">refs/</code> or be located in the root of
+the hierarchy. For the latter, their name must follow these rules:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The name consists of only upper-case characters or underscores.
+</li><li class="listitem">
+<p class="simpara">The name ends with "<code class="literal">_HEAD</code>" or is equal to "<code class="literal">HEAD</code>".</p>
+<p class="simpara">There are some irregular refs in the root of the hierarchy that do not
+match these rules. The following list is exhaustive and shall not be
+extended in the future:</p>
+</li><li class="listitem">
+<code class="literal">AUTO_MERGE</code>
+</li><li class="listitem">
+<code class="literal">BISECT_EXPECTED_REV</code>
+</li><li class="listitem">
+<code class="literal">NOTES_MERGE_PARTIAL</code>
+</li><li class="listitem">
+<code class="literal">NOTES_MERGE_REF</code>
+</li><li class="listitem">
+<p class="simpara"><code class="literal">MERGE_AUTOSTASH</code></p>
+<p class="simpara">Different subhierarchies are used for different purposes. For example,
+the <code class="literal">refs/heads/</code> hierarchy is used to represent local branches whereas
+the <code class="literal">refs/tags/</code> hierarchy is used to represent local tags..</p>
+</li></ul></div>
 </dd><dt><span class="term"><a name="def_reflog"></a>reflog</span></dt><dd>
 A reflog shows the local "history" of a ref.  In other words,
 it can tell you what the 3rd last revision in <span class="emphasis"><em>this</em></span> repository
@@ -3605,7 +3621,8 @@ yesterday 9:14pm.  See <a class="ulink" href="git-reflog.html" target="_top">git
 </dd><dt><span class="term"><a name="def_refspec"></a>refspec</span></dt><dd>
 A "refspec" is used by <a class="link" href="#def_fetch">fetch</a> and
 <a class="link" href="#def_push">push</a> to describe the mapping between remote
-<a class="link" href="#def_ref">ref</a> and local ref.
+<a class="link" href="#def_ref">ref</a> and local ref. See <a class="ulink" href="git-fetch.html" target="_top">git-fetch(1)</a> or
+<a class="ulink" href="git-push.html" target="_top">git-push(1)</a> for details.
 </dd><dt><span class="term"><a name="def_remote"></a>remote repository</span></dt><dd>
 A <a class="link" href="#def_repository">repository</a> which is used to track the same
 project but resides somewhere else. To communicate with remotes,
@@ -3655,19 +3672,6 @@ its history can be later deepened with <a class="ulink" href="git-fetch.html" ta
 </dd><dt><span class="term"><a name="def_stash"></a>stash entry</span></dt><dd>
 An <a class="link" href="#def_object">object</a> used to temporarily store the contents of a
 <a class="link" href="#def_dirty">dirty</a> working directory and the index for future reuse.
-</dd><dt><span class="term"><a name="def_special_ref"></a>special ref</span></dt><dd>
-<p class="simpara">A ref that has different semantics than normal refs. These refs can be
-accessed via normal Git commands but may not behave the same as a
-normal ref in some cases.</p>
-<p class="simpara">The following special refs are known to Git:</p>
-<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-"<code class="literal">FETCH_HEAD</code>" is written by <a class="ulink" href="git-fetch.html" target="_top">git-fetch(1)</a> or <a class="ulink" href="git-pull.html" target="_top">git-pull(1)</a>. It
-may refer to multiple object IDs. Each object ID is annotated with metadata
-indicating where it was fetched from and its fetch status.
-</li><li class="listitem">
-"<code class="literal">MERGE_HEAD</code>" is written by <a class="ulink" href="git-merge.html" target="_top">git-merge(1)</a> when resolving merge
-conflicts. It contains all commit IDs which are being merged.
-</li></ul></div>
 </dd><dt><span class="term"><a name="def_submodule"></a>submodule</span></dt><dd>
 A <a class="link" href="#def_repository">repository</a> that holds the history of a
 separate project inside another repository (the latter of

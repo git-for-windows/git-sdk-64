@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="generator" content="Asciidoctor 2.0.17"/>
+<meta name="generator" content="Asciidoctor 2.0.23"/>
 <title>git-config(1)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
@@ -84,10 +84,10 @@ code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;
 ul,ol,dl{line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
 ul,ol{margin-left:1.5em}
 ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0}
-ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
-ul.square{list-style-type:square}
 ul.circle{list-style-type:circle}
 ul.disc{list-style-type:disc}
+ul.square{list-style-type:square}
+ul.circle ul:not([class]),ul.disc ul:not([class]),ul.square ul:not([class]){list-style:inherit}
 ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
 dl dt{margin-bottom:.3125em;font-weight:bold}
 dl dd{margin-bottom:1.25em}
@@ -140,7 +140,7 @@ p a>code:hover{color:rgba(0,0,0,.9)}
 #content::before{content:none}
 #header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
 #header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
-#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header>h1:only-child{border-bottom:1px solid #dddddf;padding-bottom:8px}
 #header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:flex;flex-flow:row wrap}
 #header .details span:first-child{margin-left:-.125em}
 #header .details span.email a{color:rgba(0,0,0,.85)}
@@ -162,6 +162,7 @@ p a>code:hover{color:rgba(0,0,0,.9)}
 #toctitle{color:#7a2518;font-size:1.2em}
 @media screen and (min-width:768px){#toctitle{font-size:1.375em}
 body.toc2{padding-left:15em;padding-right:0}
+body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
 #toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
 #toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
 #toc.toc2>ul{font-size:.9em;margin-bottom:0}
@@ -208,13 +209,10 @@ table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
 .admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
 .admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
 .exampleblock>.content{border:1px solid #e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;border-radius:4px}
-.exampleblock>.content>:first-child{margin-top:0}
-.exampleblock>.content>:last-child{margin-bottom:0}
 .sidebarblock{border:1px solid #dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;border-radius:4px}
-.sidebarblock>:first-child{margin-top:0}
-.sidebarblock>:last-child{margin-bottom:0}
 .sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
-.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content>:first-child,.sidebarblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child,.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
 .literalblock pre,.listingblock>.content>pre{border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
 @media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
 @media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
@@ -330,7 +328,7 @@ a.image{text-decoration:none;display:inline-block}
 a.image object{pointer-events:none}
 sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
 sup.footnote a,sup.footnoteref a{text-decoration:none}
-sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+sup.footnote a:active,sup.footnoteref a:active,#footnotes .footnote a:first-of-type:active{text-decoration:underline}
 #footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
 #footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
 #footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
@@ -393,7 +391,7 @@ b.conum *{color:inherit!important}
 dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
 h1,h2,p,td.content,span.alt,summary{letter-spacing:-.01em}
 p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
-p,blockquote,dt,td.content,span.alt,summary{font-size:1.0625rem}
+p,blockquote,dt,td.content,td.hdlist1,span.alt,summary{font-size:1.0625rem}
 p{margin-bottom:1.25rem}
 .sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
 .exampleblock>.content{background:#fffef7;border-color:#e0e0dc;box-shadow:0 1px 4px #e0e0dc}
@@ -449,21 +447,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--comment=&lt;message&gt;] [--fixed-value] [--show-origin] [--show-scope] [-z|--null] &lt;name&gt; [&lt;value&gt; [&lt;value-pattern&gt;]]
-<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--comment=&lt;message&gt;] --add &lt;name&gt; &lt;value&gt;
-<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--comment=&lt;message&gt;] [--fixed-value] --replace-all &lt;name&gt; &lt;value&gt; [&lt;value-pattern&gt;]
-<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--show-origin] [--show-scope] [-z|--null] [--fixed-value] --get &lt;name&gt; [&lt;value-pattern&gt;]
-<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--show-origin] [--show-scope] [-z|--null] [--fixed-value] --get-all &lt;name&gt; [&lt;value-pattern&gt;]
-<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--show-origin] [--show-scope] [-z|--null] [--fixed-value] [--name-only] --get-regexp &lt;name-regex&gt; [&lt;value-pattern&gt;]
-<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [-z|--null] --get-urlmatch &lt;name&gt; &lt;URL&gt;
-<em>git config</em> [&lt;file-option&gt;] [--fixed-value] --unset &lt;name&gt; [&lt;value-pattern&gt;]
-<em>git config</em> [&lt;file-option&gt;] [--fixed-value] --unset-all &lt;name&gt; [&lt;value-pattern&gt;]
-<em>git config</em> [&lt;file-option&gt;] --rename-section &lt;old-name&gt; &lt;new-name&gt;
-<em>git config</em> [&lt;file-option&gt;] --remove-section &lt;name&gt;
-<em>git config</em> [&lt;file-option&gt;] [--show-origin] [--show-scope] [-z|--null] [--name-only] -l | --list
-<em>git config</em> [&lt;file-option&gt;] --get-color &lt;name&gt; [&lt;default&gt;]
-<em>git config</em> [&lt;file-option&gt;] --get-colorbool &lt;name&gt; [&lt;stdout-is-tty&gt;]
-<em>git config</em> [&lt;file-option&gt;] -e | --edit</pre>
+<pre class="content"><em>git config list</em> [&lt;file-option&gt;] [&lt;display-option&gt;] [--includes]
+<em>git config get</em> [&lt;file-option&gt;] [&lt;display-option&gt;] [--includes] [--all] [--regexp=&lt;regexp&gt;] [--value=&lt;value&gt;] [--fixed-value] [--default=&lt;default&gt;] &lt;name&gt;
+<em>git config set</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--all] [--value=&lt;value&gt;] [--fixed-value] &lt;name&gt; &lt;value&gt;
+<em>git config unset</em> [&lt;file-option&gt;] [--all] [--value=&lt;value&gt;] [--fixed-value] &lt;name&gt; &lt;value&gt;
+<em>git config rename-section</em> [&lt;file-option&gt;] &lt;old-name&gt; &lt;new-name&gt;
+<em>git config remove-section</em> [&lt;file-option&gt;] &lt;name&gt;
+<em>git config edit</em> [&lt;file-option&gt;]
+<em>git config</em> [&lt;file-option&gt;] --get-colorbool &lt;name&gt; [&lt;stdout-is-tty&gt;]</pre>
 </div>
 </div>
 </div>
@@ -476,7 +467,7 @@ actually the section and the key separated by a dot, and the value will be
 escaped.</p>
 </div>
 <div class="paragraph">
-<p>Multiple lines can be added to an option by using the <code>--add</code> option.
+<p>Multiple lines can be added to an option by using the <code>--append</code> option.
 If you want to update or unset an option which can occur on multiple
 lines, a <code>value-pattern</code> (which is an extended regular expression,
 unless the <code>--fixed-value</code> option is given) needs to be given.  Only the
@@ -545,6 +536,55 @@ codes are:</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_commands">COMMANDS</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">list</dt>
+<dd>
+<p>List all variables set in config file, along with their values.</p>
+</dd>
+<dt class="hdlist1">get</dt>
+<dd>
+<p>Emits the value of the specified key. If key is present multiple times
+in the configuration, emits the last value. If <code>--all</code> is specified,
+emits all values associated with key. Returns error code 1 if key is
+not present.</p>
+</dd>
+<dt class="hdlist1">set</dt>
+<dd>
+<p>Set value for one or more config options. By default, this command
+refuses to write multi-valued config options. Passing <code>--all</code> will
+replace all multi-valued config options with the new value, whereas
+<code>--value=</code> will replace all config options whose values match the given
+pattern.</p>
+</dd>
+<dt class="hdlist1">unset</dt>
+<dd>
+<p>Unset value for one or more config options. By default, this command
+refuses to unset multi-valued keys. Passing <code>--all</code> will unset all
+multi-valued config options, whereas <code>--value</code> will unset all config
+options whose values match the given pattern.</p>
+</dd>
+<dt class="hdlist1">rename-section</dt>
+<dd>
+<p>Rename the given section to a new name.</p>
+</dd>
+<dt class="hdlist1">remove-section</dt>
+<dd>
+<p>Remove the given section from the configuration file.</p>
+</dd>
+<dt class="hdlist1">edit</dt>
+<dd>
+<p>Opens an editor to modify the specified config file; either
+<code>--system</code>, <code>--global</code>, <code>--local</code> (default), <code>--worktree</code>, or
+<code>--file &lt;config-file&gt;</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="OPTIONS">OPTIONS</h2>
 <div class="sectionbody">
 <div class="dlist">
@@ -554,11 +594,10 @@ codes are:</p>
 <p>Default behavior is to replace at most one line. This replaces
 all lines matching the key (and optionally the <code>value-pattern</code>).</p>
 </dd>
-<dt class="hdlist1">--add</dt>
+<dt class="hdlist1">--append</dt>
 <dd>
 <p>Adds a new line to the option without altering any existing
-values.  This is the same as providing <em>^$</em> as the <code>value-pattern</code>
-in <code>--replace-all</code>.</p>
+values. This is the same as providing <em>--value=^$</em> in <code>set</code>.</p>
 </dd>
 <dt class="hdlist1">--comment &lt;message&gt;</dt>
 <dd>
@@ -576,25 +615,18 @@ permitted).</pre>
 </div>
 </div>
 </dd>
-<dt class="hdlist1">--get</dt>
+<dt class="hdlist1">--all</dt>
 <dd>
-<p>Get the value for a given key (optionally filtered by a regex
-matching the value). Returns error code 1 if the key was not
-found and the last value if multiple key values were found.</p>
+<p>With <code>get</code>, return all values for a multi-valued key.</p>
 </dd>
-<dt class="hdlist1">--get-all</dt>
+<dt class="hdlist1">---regexp</dt>
 <dd>
-<p>Like get, but returns all values for a multi-valued key.</p>
+<p>With <code>get</code>, interpret the name as a regular expression. Regular
+expression matching is currently case-sensitive and done against a
+canonicalized version of the key in which section and variable names
+are lowercased, but subsection names are not.</p>
 </dd>
-<dt class="hdlist1">--get-regexp</dt>
-<dd>
-<p>Like --get-all, but interprets the name as a regular expression and
-writes out the key names.  Regular expression matching is currently
-case-sensitive and done against a canonicalized version of the key
-in which section and variable names are lowercased, but subsection
-names are not.</p>
-</dd>
-<dt class="hdlist1">--get-urlmatch &lt;name&gt; &lt;URL&gt;</dt>
+<dt class="hdlist1">--url=&lt;URL&gt;</dt>
 <dd>
 <p>When given a two-part &lt;name&gt; as &lt;section&gt;.&lt;key&gt;, the value for
 &lt;section&gt;.&lt;URL&gt;.&lt;key&gt; whose &lt;URL&gt; part matches the best to the
@@ -673,27 +705,6 @@ you can use <em>master:.gitmodules</em> to read values from the file
 section in <a href="gitrevisions.html">gitrevisions(7)</a> for a more complete list of
 ways to spell blob names.</p>
 </dd>
-<dt class="hdlist1">--remove-section</dt>
-<dd>
-<p>Remove the given section from the configuration file.</p>
-</dd>
-<dt class="hdlist1">--rename-section</dt>
-<dd>
-<p>Rename the given section to a new name.</p>
-</dd>
-<dt class="hdlist1">--unset</dt>
-<dd>
-<p>Remove the line matching the key from config file.</p>
-</dd>
-<dt class="hdlist1">--unset-all</dt>
-<dd>
-<p>Remove all lines matching the key from config file.</p>
-</dd>
-<dt class="hdlist1">-l</dt>
-<dt class="hdlist1">--list</dt>
-<dd>
-<p>List all variables set in config file, along with their values.</p>
-</dd>
 <dt class="hdlist1">--fixed-value</dt>
 <dd>
 <p>When used with the <code>value-pattern</code> argument, treat <code>value-pattern</code> as
@@ -769,8 +780,8 @@ contain line breaks.</p>
 </dd>
 <dt class="hdlist1">--name-only</dt>
 <dd>
-<p>Output only the names of config variables for <code>--list</code> or
-<code>--get-regexp</code>.</p>
+<p>Output only the names of config variables for <code>list</code> or
+<code>get</code>.</p>
 </dd>
 <dt class="hdlist1">--show-origin</dt>
 <dd>
@@ -796,25 +807,6 @@ is to be used, or exits with status 1 otherwise.
 When the color setting for <code>name</code> is undefined, the command uses
 <code>color.ui</code> as fallback.</p>
 </dd>
-<dt class="hdlist1">--get-color &lt;name&gt; [&lt;default&gt;]</dt>
-<dd>
-<p>Find the color configured for <code>name</code> (e.g. <code>color.diff.new</code>) and
-output it as the ANSI color escape sequence to the standard
-output.  The optional <code>default</code> parameter is used instead, if
-there is no color configured for <code>name</code>.</p>
-<div class="paragraph">
-<p><code>--type=color [--default=&lt;default&gt;]</code> is preferred over <code>--get-color</code>
-(but note that <code>--get-color</code> will omit the trailing newline printed by
-<code>--type=color</code>).</p>
-</div>
-</dd>
-<dt class="hdlist1">-e</dt>
-<dt class="hdlist1">--edit</dt>
-<dd>
-<p>Opens an editor to modify the specified config file; either
-<code>--system</code>, <code>--global</code>, <code>--local</code> (default), <code>--worktree</code>, or
-<code>--file &lt;config-file&gt;</code>.</p>
-</dd>
 <dt class="hdlist1">--[no-]includes</dt>
 <dd>
 <p>Respect <code>include.*</code> directives in config files when looking up
@@ -824,8 +816,79 @@ config files.</p>
 </dd>
 <dt class="hdlist1">--default &lt;value&gt;</dt>
 <dd>
-<p>When using <code>--get</code>, and the requested variable is not found, behave as if
+<p>When using <code>get</code>, and the requested variable is not found, behave as if
 &lt;value&gt; were the value assigned to that variable.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deprecated_modes">DEPRECATED MODES</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following modes have been deprecated in favor of subcommands. It is
+recommended to migrate to the new syntax.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>git config &lt;name&gt;</em></dt>
+<dd>
+<p>Replaced by <code>git config get &lt;name&gt;</code>.</p>
+</dd>
+<dt class="hdlist1"><em>git config &lt;name&gt; &lt;value&gt; [&lt;value-pattern&gt;]</em></dt>
+<dd>
+<p>Replaced by <code>git config set [--value=&lt;pattern&gt;] &lt;name&gt; &lt;value&gt;</code>.</p>
+</dd>
+<dt class="hdlist1">-l</dt>
+<dt class="hdlist1">--list</dt>
+<dd>
+<p>Replaced by <code>git config list</code>.</p>
+</dd>
+<dt class="hdlist1">--get &lt;name&gt; [&lt;value-pattern&gt;]</dt>
+<dd>
+<p>Replaced by <code>git config get [--value=&lt;pattern&gt;] &lt;name&gt;</code>.</p>
+</dd>
+<dt class="hdlist1">--get-all &lt;name&gt; [&lt;value-pattern&gt;]</dt>
+<dd>
+<p>Replaced by <code>git config get [--value=&lt;pattern&gt;] --all --show-names &lt;name&gt;</code>.</p>
+</dd>
+<dt class="hdlist1">--get-regexp &lt;name-regexp&gt;</dt>
+<dd>
+<p>Replaced by <code>git config get --all --show-names --regexp &lt;name-regexp&gt;</code>.</p>
+</dd>
+<dt class="hdlist1">--get-urlmatch &lt;name&gt; &lt;URL&gt;</dt>
+<dd>
+<p>Replaced by <code>git config get --all --show-names --url=&lt;URL&gt; &lt;name&gt;</code>.</p>
+</dd>
+<dt class="hdlist1">--get-color &lt;name&gt; [&lt;default&gt;]</dt>
+<dd>
+<p>Replaced by <code>git config get --type=color [--default=&lt;default&gt;] &lt;name&gt;</code>.</p>
+</dd>
+<dt class="hdlist1">--add &lt;name&gt; &lt;value&gt;</dt>
+<dd>
+<p>Replaced by <code>git config set --append &lt;name&gt; &lt;value&gt;</code>.</p>
+</dd>
+<dt class="hdlist1">--unset &lt;name&gt; [&lt;value-pattern&gt;]</dt>
+<dd>
+<p>Replaced by <code>git config unset [--value=&lt;pattern&gt;] &lt;name&gt;</code>.</p>
+</dd>
+<dt class="hdlist1">--unset-all &lt;name&gt; [&lt;value-pattern&gt;]</dt>
+<dd>
+<p>Replaced by <code>git config unset [--value=&lt;pattern&gt;] --all &lt;name&gt;</code>.</p>
+</dd>
+<dt class="hdlist1">--rename-section &lt;old-name&gt; &lt;new-name&gt;</dt>
+<dd>
+<p>Replaced by <code>git config rename-section &lt;old-name&gt; &lt;new-name&gt;</code>.</p>
+</dd>
+<dt class="hdlist1">--remove-section &lt;name&gt;</dt>
+<dd>
+<p>Replaced by <code>git config remove-section &lt;name&gt;</code>.</p>
+</dd>
+<dt class="hdlist1">-e</dt>
+<dt class="hdlist1">--edit</dt>
+<dd>
+<p>Replaced by <code>git config edit</code>.</p>
 </dd>
 </dl>
 </div>
@@ -836,8 +899,8 @@ config files.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p><code>pager.config</code> is only respected when listing configuration, i.e., when
-using <code>--list</code> or any of the <code>--get-*</code> which may return multiple results.
-The default is to use a pager.</p>
+using <code>list</code> or <code>get</code> which may return multiple results. The default is to use
+a pager.</p>
 </div>
 </div>
 </div>
@@ -894,8 +957,8 @@ values of a key from all files will be used.</p>
 </div>
 <div class="paragraph">
 <p>By default, options are only written to the repository specific
-configuration file. Note that this also affects options like <code>--replace-all</code>
-and <code>--unset</code>. <strong><em>git config</em> will only ever change one file at a time</strong>.</p>
+configuration file. Note that this also affects options like <code>set</code>
+and <code>unset</code>. <strong><em>git config</em> will only ever change one file at a time</strong>.</p>
 </div>
 <div class="paragraph">
 <p>You can limit which configuration sources are read from or written to by
@@ -1069,7 +1132,7 @@ instead of the <code>--file</code> option.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>% git config core.filemode true</pre>
+<pre>% git config set core.filemode true</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1079,7 +1142,7 @@ to "ssh".</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>% git config core.gitproxy '"ssh" for kernel.org' 'for kernel.org$'</pre>
+<pre>% git config set --value='for kernel.org$' core.gitproxy '"ssh" for kernel.org'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1090,7 +1153,7 @@ to "ssh".</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>% git config --unset diff.renames</pre>
+<pre>% git config unset diff.renames</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1102,15 +1165,7 @@ you have to provide a regex matching the value of exactly one line.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>% git config --get core.filemode</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>% git config core.filemode</pre>
+<pre>% git config get core.filemode</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1118,7 +1173,7 @@ you have to provide a regex matching the value of exactly one line.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>% git config --get core.gitproxy "for kernel.org$"</pre>
+<pre>% git config get --value="for kernel.org$" core.gitproxy</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1126,7 +1181,7 @@ you have to provide a regex matching the value of exactly one line.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>% git config --get-all core.gitproxy</pre>
+<pre>% git config get --all --show-names core.gitproxy</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1135,7 +1190,7 @@ new one with</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>% git config --replace-all core.gitproxy ssh</pre>
+<pre>% git config set --all core.gitproxy ssh</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1144,7 +1199,7 @@ i.e. the one without a "for &#8230;&#8203;" postfix, do something like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>% git config core.gitproxy ssh '! for '</pre>
+<pre>% git config set --value='! for ' core.gitproxy ssh</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1152,7 +1207,7 @@ i.e. the one without a "for &#8230;&#8203;" postfix, do something like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>% git config section.key value '[!]'</pre>
+<pre>% git config set --value='[!]' section.key value</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1160,7 +1215,7 @@ i.e. the one without a "for &#8230;&#8203;" postfix, do something like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>% git config --add core.gitproxy '"proxy-command" for example.com'</pre>
+<pre>% git config set --append core.gitproxy '"proxy-command" for example.com'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1170,8 +1225,8 @@ script:</p>
 <div class="listingblock">
 <div class="content">
 <pre>#!/bin/sh
-WS=$(git config --get-color color.diff.whitespace "blue reverse")
-RESET=$(git config --get-color "" "reset")
+WS=$(git config get --type=color --default="blue reverse" color.diff.whitespace)
+RESET=$(git config get --type=color --default="reset" "")
 echo "${WS}your whitespace color or blue reverse${RESET}"</pre>
 </div>
 </div>
@@ -1181,11 +1236,11 @@ false, while it is set to <code>true</code> for all others:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>% git config --type=bool --get-urlmatch http.sslverify https://good.example.com
+<pre>% git config get --type=bool --url=https://good.example.com http.sslverify
 true
-% git config --type=bool --get-urlmatch http.sslverify https://weak.example.com
+% git config get --type=bool --url=https://weak.example.com http.sslverify
 false
-% git config --get-urlmatch http https://weak.example.com
+% git config get --url=https://weak.example.com http
 http.cookieFile /tmp/cookie.txt
 http.sslverify false</pre>
 </div>
@@ -1572,7 +1627,8 @@ terminals, this is usually not the same as setting to "white black".</p>
 <p>Colors may also be given as numbers between 0 and 255; these use ANSI
 256-color mode (but note that not all terminals may support this).  If
 your terminal supports it, you may also specify 24-bit RGB values as
-hex, like <code>#ff0ab3</code>.</p>
+hex, like <code>#ff0ab3</code>, or 12-bit RGB values like <code>#f1b</code>, which is
+equivalent to the 24-bit color <code>#ff11bb</code>.</p>
 </div>
 <div class="paragraph">
 <p>The accepted attributes are <code>bold</code>, <code>dim</code>, <code>ul</code>, <code>blink</code>, <code>reverse</code>,
@@ -1647,13 +1703,6 @@ added due to indexing errors. Equivalent to the <code>--ignore-errors</code>
 option of <a href="git-add.html">git-add(1)</a>.  <code>add.ignore-errors</code> is deprecated,
 as it does not follow the usual naming convention for configuration
 variables.</p>
-</dd>
-<dt class="hdlist1">add.interactive.useBuiltin</dt>
-<dd>
-<p>Unused configuration variable. Used in Git versions v2.25.0 to
-v2.36.0 to enable the built-in version of <a href="git-add.html">git-add(1)</a>'s
-interactive mode, which then became the default in Git
-versions v2.37.0 to v2.39.0.</p>
 </dd>
 <dt class="hdlist1">advice.*</dt>
 <dd>
@@ -1807,6 +1856,10 @@ source object.</p>
 <code>pushFetchFirst</code>, <code>pushNeedsForce</code>, and <code>pushRefNeedsUpdate</code>
 simultaneously.</p>
 </dd>
+<dt class="hdlist1">rebaseTodoError</dt>
+<dd>
+<p>Shown when there is an error after editing the rebase todo list.</p>
+</dd>
 <dt class="hdlist1">refSyntax</dt>
 <dd>
 <p>Shown when the user provides an illegal ref name, to
@@ -1932,11 +1985,45 @@ where the original command does not.</p>
 it will be treated as a shell command.  For example, defining
 <code>alias.new = !gitk --all --not ORIG_HEAD</code>, the invocation
 <code>git new</code> is equivalent to running the shell command
-<code>gitk --all --not ORIG_HEAD</code>.  Note that shell commands will be
-executed from the top-level directory of a repository, which may
-not necessarily be the current directory.
-<code>GIT_PREFIX</code> is set as returned by running <code>git rev-parse --show-prefix</code>
+<code>gitk --all --not ORIG_HEAD</code>.  Note:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Shell commands will be executed from the top-level directory of a
+repository, which may not necessarily be the current directory.</p>
+</li>
+<li>
+<p><code>GIT_PREFIX</code> is set as returned by running <code>git rev-parse --show-prefix</code>
 from the original current directory. See <a href="git-rev-parse.html">git-rev-parse(1)</a>.</p>
+</li>
+<li>
+<p>Shell command aliases always receive any extra arguments provided to
+the Git command-line as positional arguments.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Care should be taken if your shell alias is a "one-liner" script
+with multiple commands (e.g. in a pipeline), references multiple
+arguments, or is otherwise not able to handle positional arguments
+added at the end.  For example: <code>alias.cmd = "!echo $1 | grep $2"</code>
+called as <code>git cmd 1 2</code> will be executed as <em>echo $1 | grep $2
+1 2</em>, which is not what you want.</p>
+</li>
+<li>
+<p>A convenient way to deal with this is to write your script
+operations in an inline function that is then called with any
+arguments from the command-line.  For example `alias.cmd = "!c() {
+echo $1 | grep $2 ; }; c" will correctly execute the prior example.</p>
+</li>
+<li>
+<p>Setting <code>GIT_TRACE=1</code> can help you debug the command being run for
+your alias.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
 </div>
 </dd>
 <dt class="hdlist1">am.keepcr</dt>
@@ -1973,11 +2060,132 @@ as the <code>--whitespace</code> option. See <a href="git-apply.html">git-apply(
 <dt class="hdlist1">attr.tree</dt>
 <dd>
 <p>A reference to a tree in the repository from which to read attributes,
-instead of the <code>.gitattributes</code> file in the working tree. In a bare
-repository, this defaults to <code>HEAD:.gitattributes</code>. If the value does
-not resolve to a valid tree object, an empty tree is used instead.
+instead of the <code>.gitattributes</code> file in the working tree. If the value
+does not resolve to a valid tree object, an empty tree is used instead.
 When the <code>GIT_ATTR_SOURCE</code> environment variable or <code>--attr-source</code>
 command line option are used, this configuration variable has no effect.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The configuration options in <code>bitmapPseudoMerge.*</code> are considered
+EXPERIMENTAL and may be subject to change or be removed entirely in the
+future. For more information about the pseudo-merge bitmap feature, see
+the "Pseudo-merge bitmaps" section of <a href="gitpacking.html">gitpacking(7)</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">bitmapPseudoMerge.&lt;name&gt;.pattern</dt>
+<dd>
+<p>Regular expression used to match reference names. Commits
+pointed to by references matching this pattern (and meeting
+the below criteria, like <code>bitmapPseudoMerge.&lt;name&gt;.sampleRate</code>
+and <code>bitmapPseudoMerge.&lt;name&gt;.threshold</code>) will be considered
+for inclusion in a pseudo-merge bitmap.</p>
+<div class="paragraph">
+<p>Commits are grouped into pseudo-merge groups based on whether or not
+any reference(s) that point at a given commit match the pattern, which
+is an extended regular expression.</p>
+</div>
+<div class="paragraph">
+<p>Within a pseudo-merge group, commits may be further grouped into
+sub-groups based on the capture groups in the pattern. These
+sub-groupings are formed from the regular expressions by concatenating
+any capture groups from the regular expression, with a <em>-</em> dash in
+between.</p>
+</div>
+<div class="paragraph">
+<p>For example, if the pattern is <code>refs/tags/</code>, then all tags (provided
+they meet the below criteria) will be considered candidates for the
+same pseudo-merge group. However, if the pattern is instead
+<code>refs/remotes/([0-9])+/tags/</code>, then tags from different remotes will
+be grouped into separate pseudo-merge groups, based on the remote
+number.</p>
+</div>
+</dd>
+<dt class="hdlist1">bitmapPseudoMerge.&lt;name&gt;.decay</dt>
+<dd>
+<p>Determines the rate at which consecutive pseudo-merge bitmap
+groups decrease in size. Must be non-negative. This parameter
+can be thought of as <code>k</code> in the function <code>f(n) = C * n^-k</code>,
+where <code>f(n)</code> is the size of the `n`th group.</p>
+<div class="paragraph">
+<p>Setting the decay rate equal to <code>0</code> will cause all groups to be the
+same size. Setting the decay rate equal to <code>1</code> will cause the <code>n`th
+group to be `1/n</code> the size of the initial group.  Higher values of the
+decay rate cause consecutive groups to shrink at an increasing rate.
+The default is <code>1</code>.</p>
+</div>
+<div class="paragraph">
+<p>If all groups are the same size, it is possible that groups containing
+newer commits will be able to be used less often than earlier groups,
+since it is more likely that the references pointing at newer commits
+will be updated more often than a reference pointing at an old commit.</p>
+</div>
+</dd>
+<dt class="hdlist1">bitmapPseudoMerge.&lt;name&gt;.sampleRate</dt>
+<dd>
+<p>Determines the proportion of non-bitmapped commits (among
+reference tips) which are selected for inclusion in an
+unstable pseudo-merge bitmap. Must be between <code>0</code> and <code>1</code>
+(inclusive). The default is <code>1</code>.</p>
+</dd>
+<dt class="hdlist1">bitmapPseudoMerge.&lt;name&gt;.threshold</dt>
+<dd>
+<p>Determines the minimum age of non-bitmapped commits (among
+reference tips, as above) which are candidates for inclusion
+in an unstable pseudo-merge bitmap. The default is
+<code>1.week.ago</code>.</p>
+</dd>
+<dt class="hdlist1">bitmapPseudoMerge.&lt;name&gt;.maxMerges</dt>
+<dd>
+<p>Determines the maximum number of pseudo-merge commits among
+which commits may be distributed.</p>
+<div class="paragraph">
+<p>For pseudo-merge groups whose pattern does not contain any capture
+groups, this setting is applied for all commits matching the regular
+expression. For patterns that have one or more capture groups, this
+setting is applied for each distinct capture group.</p>
+</div>
+<div class="paragraph">
+<p>For example, if your capture group is <code>refs/tags/</code>, then this setting
+will distribute all tags into a maximum of <code>maxMerges</code> pseudo-merge
+commits. However, if your capture group is, say,
+<code>refs/remotes/([0-9]+)/tags/</code>, then this setting will be applied to
+each remote&#8217;s set of tags individually.</p>
+</div>
+<div class="paragraph">
+<p>Must be non-negative. The default value is 64.</p>
+</div>
+</dd>
+<dt class="hdlist1">bitmapPseudoMerge.&lt;name&gt;.stableThreshold</dt>
+<dd>
+<p>Determines the minimum age of commits (among reference tips,
+as above, however stable commits are still considered
+candidates even when they have been covered by a bitmap) which
+are candidates for a stable a pseudo-merge bitmap. The default
+is <code>1.month.ago</code>.</p>
+<div class="paragraph">
+<p>Setting this threshold to a smaller value (e.g., 1.week.ago) will cause
+more stable groups to be generated (which impose a one-time generation
+cost) but those groups will likely become stale over time. Using a
+larger value incurs the opposite penalty (fewer stable groups which are
+more useful).</p>
+</div>
+</dd>
+<dt class="hdlist1">bitmapPseudoMerge.&lt;name&gt;.stableSize</dt>
+<dd>
+<p>Determines the size (in number of commits) of a stable
+psuedo-merge bitmap. The default is <code>512</code>.</p>
 </dd>
 <dt class="hdlist1">blame.blankBoundary</dt>
 <dd>
@@ -2668,9 +2876,39 @@ commit-graph write</code> (c.f., <a href="git-commit-graph.html">git-commit-grap
 </dd>
 <dt class="hdlist1">commitGraph.readChangedPaths</dt>
 <dd>
-<p>If true, then git will use the changed-path Bloom filters in the
-commit-graph file (if it exists, and they are present). Defaults to
-true. See <a href="git-commit-graph.html">git-commit-graph(1)</a> for more information.</p>
+<p>Deprecated. Equivalent to commitGraph.changedPathsVersion=-1 if true, and
+commitGraph.changedPathsVersion=0 if false. (If commitGraph.changedPathVersion
+is also set, commitGraph.changedPathsVersion takes precedence.)</p>
+</dd>
+<dt class="hdlist1">commitGraph.changedPathsVersion</dt>
+<dd>
+<p>Specifies the version of the changed-path Bloom filters that Git will read and
+write. May be -1, 0, 1, or 2. Note that values greater than 1 may be
+incompatible with older versions of Git which do not yet understand
+those versions. Use caution when operating in a mixed-version
+environment.</p>
+<div class="paragraph">
+<p>Defaults to -1.</p>
+</div>
+<div class="paragraph">
+<p>If -1, Git will use the version of the changed-path Bloom filters in the
+repository, defaulting to 1 if there are none.</p>
+</div>
+<div class="paragraph">
+<p>If 0, Git will not read any Bloom filters, and will write version 1 Bloom
+filters when instructed to write.</p>
+</div>
+<div class="paragraph">
+<p>If 1, Git will only read version 1 Bloom filters, and will write version 1
+Bloom filters.</p>
+</div>
+<div class="paragraph">
+<p>If 2, Git will only read version 2 Bloom filters, and will write version 2
+Bloom filters.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="git-commit-graph.html">git-commit-graph(1)</a> for more information.</p>
+</div>
 </dd>
 <dt class="hdlist1">completion.commands</dt>
 <dd>
@@ -3790,6 +4028,16 @@ as described under "git Diffs" in <a href="git.html">git(1)</a>.  Note: if
 you want to use an external diff program only on a subset of
 your files, you might want to use <a href="gitattributes.html">gitattributes(5)</a> instead.</p>
 </dd>
+<dt class="hdlist1">diff.trustExitCode</dt>
+<dd>
+<p>If this boolean value is set to true then the
+<code>diff.external</code> command is expected to return exit code
+0 if it considers the input files to be equal or 1 if it
+considers them to be different, like <code>diff(1)</code>.
+If it is set to false, which is the default, then the command
+is expected to return exit code 0 regardless of equality.
+Any other exit code causes Git to report a fatal error.</p>
+</dd>
 <dt class="hdlist1">diff.ignoreSubmodules</dt>
 <dd>
 <p>Sets the default value of --ignore-submodules. Note that this
@@ -3901,6 +4149,16 @@ characters are <strong>ignorable</strong> whitespace.</p>
 <dd>
 <p>The custom diff driver command.  See <a href="gitattributes.html">gitattributes(5)</a>
 for details.</p>
+</dd>
+<dt class="hdlist1">diff.&lt;driver&gt;.trustExitCode</dt>
+<dd>
+<p>If this boolean value is set to true then the
+<code>diff.&lt;driver&gt;.command</code> command is expected to return exit code
+0 if it considers the input files to be equal or 1 if it
+considers them to be different, like <code>diff(1)</code>.
+If it is set to false, which is the default, then the command
+is expected to return exit code 0 regardless of equality.
+Any other exit code causes Git to report a fatal error.</p>
 </dd>
 <dt class="hdlist1">diff.&lt;driver&gt;.xfuncname</dt>
 <dd>
@@ -5977,10 +6235,10 @@ is Apache.</p>
 </dd>
 <dt class="hdlist1">interactive.singleKey</dt>
 <dd>
-<p>In interactive commands, allow the user to provide one-letter
-input with a single key (i.e., without hitting enter).
-Currently this is used by the <code>--patch</code> mode of
-<a href="git-add.html">git-add(1)</a>, <a href="git-checkout.html">git-checkout(1)</a>,
+<p>When set to true, allow the user to provide one-letter input
+with a single key (i.e., without hitting the Enter key) in
+interactive commands.  This is currently used by the <code>--patch</code>
+mode of <a href="git-add.html">git-add(1)</a>, <a href="git-checkout.html">git-checkout(1)</a>,
 <a href="git-restore.html">git-restore(1)</a>, <a href="git-commit.html">git-commit(1)</a>,
 <a href="git-reset.html">git-reset(1)</a>, and <a href="git-stash.html">git-stash(1)</a>.</p>
 </dd>
@@ -6954,6 +7212,11 @@ to be equivalent to running <code>git log "--pretty=format:* %H %s"</code>.
 Note that an alias with the same name as a built-in format
 will be silently ignored.</p>
 </dd>
+<dt class="hdlist1">promisor.quiet</dt>
+<dd>
+<p>If set to "true" assume <code>--quiet</code> when fetching additional
+objects for a partial clone.</p>
+</dd>
 <dt class="hdlist1">protocol.allow</dt>
 <dd>
 <p>If set, provide a user defined default policy for all protocols which
@@ -7522,6 +7785,67 @@ after receiving data from git-push and updating refs.</p>
 <p>If set to true, .git/shallow can be updated when new refs
 require new shallow roots. Otherwise those refs are rejected.</p>
 </dd>
+<dt class="hdlist1">reftable.blockSize</dt>
+<dd>
+<p>The size in bytes used by the reftable backend when writing blocks.
+The block size is determined by the writer, and does not have to be a
+power of 2. The block size must be larger than the longest reference
+name or log entry used in the repository, as references cannot span
+blocks.</p>
+<div class="paragraph">
+<p>Powers of two that are friendly to the virtual memory system or
+filesystem (such as 4kB or 8kB) are recommended. Larger sizes (64kB) can
+yield better compression, with a possible increased cost incurred by
+readers during access.</p>
+</div>
+<div class="paragraph">
+<p>The largest block size is <code>16777215</code> bytes (15.99 MiB). The default value is
+<code>4096</code> bytes (4kB). A value of <code>0</code> will use the default value.</p>
+</div>
+</dd>
+<dt class="hdlist1">reftable.restartInterval</dt>
+<dd>
+<p>The interval at which to create restart points. The reftable backend
+determines the restart points at file creation. Every 16 may be
+more suitable for smaller block sizes (4k or 8k), every 64 for larger
+block sizes (64k).</p>
+<div class="paragraph">
+<p>More frequent restart points reduces prefix compression and increases
+space consumed by the restart table, both of which increase file size.</p>
+</div>
+<div class="paragraph">
+<p>Less frequent restart points makes prefix compression more effective,
+decreasing overall file size, with increased penalties for readers
+walking through more records after the binary search step.</p>
+</div>
+<div class="paragraph">
+<p>A maximum of <code>65535</code> restart points per block is supported.</p>
+</div>
+<div class="paragraph">
+<p>The default value is to create restart points every 16 records. A value of <code>0</code>
+will use the default value.</p>
+</div>
+</dd>
+<dt class="hdlist1">reftable.indexObjects</dt>
+<dd>
+<p>Whether the reftable backend shall write object blocks. Object blocks
+are a reverse mapping of object ID to the references pointing to them.</p>
+<div class="paragraph">
+<p>The default value is <code>true</code>.</p>
+</div>
+</dd>
+<dt class="hdlist1">reftable.geometricFactor</dt>
+<dd>
+<p>Whenever the reftable backend appends a new table to the stack, it
+performs auto compaction to ensure that there is only a handful of
+tables. The backend does this by ensuring that tables form a geometric
+sequence regarding the respective sizes of each table.</p>
+<div class="paragraph">
+<p>By default, the geometric sequence uses a factor of 2, meaning that for any
+table, the next-biggest table must at least be twice as big. A maximum factor
+of 256 is supported.</p>
+</div>
+</dd>
 <dt class="hdlist1">remote.pushDefault</dt>
 <dd>
 <p>The remote to push to by default.  Overrides
@@ -7531,11 +7855,20 @@ require new shallow roots. Otherwise those refs are rejected.</p>
 <dt class="hdlist1">remote.&lt;name&gt;.url</dt>
 <dd>
 <p>The URL of a remote repository.  See <a href="git-fetch.html">git-fetch(1)</a> or
-<a href="git-push.html">git-push(1)</a>.</p>
+<a href="git-push.html">git-push(1)</a>. A configured remote can have multiple URLs;
+in this case the first is used for fetching, and all are used
+for pushing (assuming no <code>remote.&lt;name&gt;.pushurl</code> is defined).
+Setting this key to the empty string clears the list of urls,
+allowing you to override earlier config.</p>
 </dd>
 <dt class="hdlist1">remote.&lt;name&gt;.pushurl</dt>
 <dd>
-<p>The push URL of a remote repository.  See <a href="git-push.html">git-push(1)</a>.</p>
+<p>The push URL of a remote repository.  See <a href="git-push.html">git-push(1)</a>.
+If a <code>pushurl</code> option is present in a configured remote, it
+is used for pushing instead of <code>remote.&lt;name&gt;.url</code>. A configured
+remote can have multiple push URLs; in this case a push goes to
+all of them. Setting this key to the empty string clears the
+list of urls, allowing you to override earlier config.</p>
 </dd>
 <dt class="hdlist1">remote.&lt;name&gt;.proxy</dt>
 <dd>
@@ -7763,7 +8096,8 @@ string <code>*</code>. This will allow all repositories to be treated as if thei
 directory was listed in the <code>safe.directory</code> list. If <code>safe.directory=*</code>
 is set in system config and you want to re-enable this protection, then
 initialize your list with an empty value before listing the repositories
-that you deem safe.</p>
+that you deem safe.  Giving a directory with <code>/*</code> appended to it will
+allow access to all repositories under the named directory.</p>
 </div>
 <div class="paragraph">
 <p>As explained, Git only allows you to access repositories owned by
@@ -8894,7 +9228,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-06-03 08:04:30 UTC
+Last updated 2024-07-12 20:38:33 UTC
 </div>
 </div>
 </body>
