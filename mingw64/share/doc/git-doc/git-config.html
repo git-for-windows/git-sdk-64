@@ -433,6 +433,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 #footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
+<style>
+pre>code {
+   display: inline;
+}
+</style>
 </head>
 <body class="manpage">
 <div id="header">
@@ -1889,6 +1894,12 @@ give directions on how to proceed from the current state.</p>
 <dd>
 <p>Shown when <a href="git-rebase.html">git-rebase(1)</a> skips a commit that has already
 been cherry-picked onto the upstream branch.</p>
+</dd>
+<dt class="hdlist1">sparseIndexExpanded</dt>
+<dd>
+<p>Shown when a sparse index is expanded to a full index, which is likely
+due to an unexpected set of files existing outside of the
+sparse-checkout.</p>
 </dd>
 <dt class="hdlist1">statusAheadBehind</dt>
 <dd>
@@ -3871,7 +3882,8 @@ The minimum length is 4.</p>
 <p>The maximum depth Git is willing to recurse while traversing a
 tree (e.g., "a/b/cde/f" has a depth of 4). This is a fail-safe
 to allow Git to abort cleanly, and should not generally need to
-be adjusted. The default is 4096.</p>
+be adjusted. When Git is compiled with MSVC, the default is 512.
+Otherwise, the default is 2048.</p>
 </dd>
 <dt class="hdlist1">core.WSLCompat</dt>
 <dd>
@@ -5638,6 +5650,12 @@ attempt to acquire one in the same way it does for other credentials. See
 <a href="gitcredentials.html">gitcredentials(7)</a> for more information. The syntax thus is
 <em>[protocol://][user[:password]@]proxyhost[:port]</em>. This can be overridden
 on a per-remote basis; see remote.&lt;name&gt;.proxy</p>
+<div class="paragraph">
+<p>Any proxy, however configured, must be completely transparent and must not
+modify, transform, or buffer the request or response in any way.  Proxies which
+are not completely transparent are known to cause various forms of breakage
+with Git.</p>
+</div>
 </dd>
 <dt class="hdlist1">http.proxyAuthMethod</dt>
 <dd>
@@ -5708,6 +5726,40 @@ can be used to attempt GSS-Negotiate authentication without specifying
 a username in the URL, as libcurl normally requires a username for
 authentication.</p>
 </dd>
+<dt class="hdlist1">http.proactiveAuth</dt>
+<dd>
+<p>Attempt authentication without first making an unauthenticated attempt and
+receiving a 401 response. This can be used to ensure that all requests are
+authenticated. If <code>http.emptyAuth</code> is set to true, this value has no effect.</p>
+<div class="paragraph">
+<p>If the credential helper used specifies an authentication scheme (i.e., via the
+<code>authtype</code> field), that value will be used; if a username and password is
+provided without a scheme, then Basic authentication is used.  The value of the
+option determines the scheme requested from the helper. Possible values are:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>basic</code> - Request Basic authentication from the helper.</p>
+</li>
+<li>
+<p><code>auto</code> - Allow the helper to pick an appropriate scheme.</p>
+</li>
+<li>
+<p><code>none</code> - Disable proactive authentication.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that TLS should always be used with this configuration, since otherwise it
+is easy to accidentally expose plaintext credentials if Basic authentication
+is selected.</p>
+</div>
+</dd>
 <dt class="hdlist1">http.delegation</dt>
 <dd>
 <p>Control GSSAPI credential delegation. The delegation is disabled
@@ -5747,13 +5799,17 @@ which should be used
 in the Git http session, if they match the server. The file format
 of the file to read cookies from should be plain HTTP headers or
 the Netscape/Mozilla cookie file format (see <code>curl(1)</code>).
+Set it to an empty string, to accept only new cookies from
+the server and send them back in successive requests within same
+connection.
 NOTE that the file specified with http.cookieFile is used only as
 input unless http.saveCookies is set.</p>
 </dd>
 <dt class="hdlist1">http.saveCookies</dt>
 <dd>
 <p>If set, store cookies received during requests to the file specified by
-http.cookieFile. Has no effect if http.cookieFile is unset.</p>
+http.cookieFile. Has no effect if http.cookieFile is unset, or set to
+an empty string.</p>
 </dd>
 <dt class="hdlist1">http.version</dt>
 <dd>
@@ -9228,7 +9284,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-07-12 20:38:33 UTC
+Last updated 2024-07-18 21:43:06 UTC
 </div>
 </div>
 </body>

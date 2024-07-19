@@ -433,6 +433,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 #footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
+<style>
+pre>code {
+   display: inline;
+}
+</style>
 </head>
 <body class="manpage">
 <div id="header">
@@ -744,16 +749,16 @@ psuedo-merge bitmap. The default is <code>512</code>.</p>
 <p>Suppose that you have a repository with a large number of references,
 and you want a bare-bones configuration of pseudo-merge bitmaps that
 will enhance bitmap coverage of the <code>refs/</code> namespace. You may start
-wiht a configuration like so:</p>
+with a configuration like so:</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>   [bitmapPseudoMerge "all"]
-pattern = "refs/"
-threshold = now
-stableThreshold = never
-sampleRate = 100
-maxMerges = 64</pre>
+<pre>[bitmapPseudoMerge "all"]
+        pattern = "refs/"
+        threshold = now
+        stableThreshold = never
+        sampleRate = 100
+        maxMerges = 64</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -765,10 +770,10 @@ their age, and group them into 64 pseudo-merge commits.</p>
 pseudo-merge commits, you would instead define the pattern with a
 capture group, like so:</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>   [bitmapPseudoMerge "all"]
-pattern = "refs/(heads/tags)/"</pre>
+<pre>[bitmapPseudoMerge "all"]
+        pattern = "refs/(heads/tags)/"</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -778,14 +783,14 @@ each fork specified by some numeric ID, and whose refs reside in
 fork) in the network. In this instance, you may instead write something
 like:</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>   [bitmapPseudoMerge "all"]
-pattern = "refs/virtual/([0-9]+)/(heads|tags)/"
-threshold = now
-stableThreshold = never
-sampleRate = 100
-maxMerges = 64</pre>
+<pre>[bitmapPseudoMerge "all"]
+        pattern = "refs/virtual/([0-9]+)/(heads|tags)/"
+        threshold = now
+        stableThreshold = never
+        sampleRate = 100
+        maxMerges = 64</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -816,7 +821,7 @@ respectively).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-07-12 20:38:33 UTC
+Last updated 2024-07-18 21:43:06 UTC
 </div>
 </div>
 </body>
