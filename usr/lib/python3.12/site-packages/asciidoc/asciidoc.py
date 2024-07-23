@@ -2908,7 +2908,7 @@ class Table(AbstractBlock):
                 self.error('missing section: [tabletags-%s]' % t, halt=True)
         if self.separator:
             # Evaluate escape characters.
-            self.separator = ast.literal_eval('"' + self.separator + '"')
+            self.separator = ast.literal_eval('r"' + self.separator + '"')
         # TODO: Move to class Tables
         # Check global table parameters.
         elif config.pagewidth is None:
