@@ -72,7 +72,7 @@ fi
 # Set up bindings between actual version and WANT_AUTOMAKE;
 # Start with last known versions to speed up lookup process.
 #
-LAST_KNOWN_AUTOMAKE_VER="16"
+LAST_KNOWN_AUTOMAKE_VER="17"
 vers="9999"
 vers="${vers} $(printf '1.%s ' `seq ${LAST_KNOWN_AUTOMAKE_VER} -1 4`)"
 
