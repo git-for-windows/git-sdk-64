@@ -330,7 +330,7 @@ set ::msgcat::header "Project-Id-Version: fr\nReport-Msgid-Bugs-To: \nPO-Revisio
 ::msgcat::mcset fr "Unable to display %s" "Impossible d'afficher %s"
 ::msgcat::mcset fr "Error loading file:" "Erreur lors du chargement du fichier :"
 ::msgcat::mcset fr "Git Repository (subproject)" "D\u00e9p\u00f4t Git (sous projet)"
-::msgcat::mcset fr "* Binary file (not showing content)." "* Fichier binaire (pas d'apper\u00e7u du contenu)."
+::msgcat::mcset fr "* Binary file (not showing content)." "* Fichier binaire (pas d'aper\u00e7u du contenu)."
 ::msgcat::mcset fr "* Untracked file is %d bytes.\n* Showing only first %d bytes.\n" "* Le fichier non suivi fait %d octets.\n* Seuls les %d premiers octets sont montr\u00e9s.\n"
 ::msgcat::mcset fr "\n* Untracked file clipped here by %s.\n* To see the entire file, use an external editor.\n" "\n* Fichier suivi raccourcis ici de %s.\n* Pour voir le fichier entier, utilisez un \u00e9diteur externe.\n"
 ::msgcat::mcset fr "Failed to unstage selected hunk." "\u00c9chec lors de la d\u00e9sindexation de la section s\u00e9lectionn\u00e9e."

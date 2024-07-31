@@ -976,11 +976,12 @@ list(TRANSFORM test-reftable_SOURCES PREPEND "${CMAKE_SOURCE_DIR}/")
 
 #unit-tests
 add_library(unit-test-lib OBJECT ${CMAKE_SOURCE_DIR}/t/unit-tests/test-lib.c)
+add_library(unit-test-lib-oid OBJECT ${CMAKE_SOURCE_DIR}/t/unit-tests/lib-oid.c)
 
 parse_makefile_for_scripts(unit_test_PROGRAMS "UNIT_TEST_PROGRAMS" "")
 foreach(unit_test ${unit_test_PROGRAMS})
 	add_executable("${unit_test}" "${CMAKE_SOURCE_DIR}/t/unit-tests/${unit_test}.c")
-	target_link_libraries("${unit_test}" unit-test-lib common-main)
+	target_link_libraries("${unit_test}" unit-test-lib unit-test-lib-oid common-main)
 	set_target_properties("${unit_test}"
 		PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/t/unit-tests/bin)
 	if(MSVC)
@@ -1005,10 +1006,11 @@ endforeach()
 
 #test-tool
 parse_makefile_for_sources(test-tool_SOURCES "TEST_BUILTINS_OBJS")
+add_library(test-lib OBJECT ${CMAKE_SOURCE_DIR}/t/unit-tests/test-lib.c)
 
 list(TRANSFORM test-tool_SOURCES PREPEND "${CMAKE_SOURCE_DIR}/t/helper/")
 add_executable(test-tool ${CMAKE_SOURCE_DIR}/t/helper/test-tool.c ${test-tool_SOURCES} ${test-reftable_SOURCES})
-target_link_libraries(test-tool common-main)
+target_link_libraries(test-tool test-lib common-main)
 
 set_target_properties(test-fake-ssh test-tool
 			PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/t/helper)
