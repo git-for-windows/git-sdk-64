@@ -1,4 +1,4 @@
-*syntax.txt*	For Vim version 9.1.  Last change: 2024 Jul 03
+*syntax.txt*	For Vim version 9.1.  Last change: 2024 Jul 25
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -958,6 +958,25 @@ For Visual Basic use: >
 	:let g:filetype_asa = "aspvbs"
 	:let g:filetype_asp = "aspvbs"
 
+ASYMPTOTE					*asy.vim* *ft-asy-syntax*
+
+By default, only basic Asymptote keywords are highlighted. To highlight
+extended geometry keywords: >
+
+	:let g:asy_syn_plain = 1
+
+and for highlighting keywords related to 3D constructions: >
+
+	:let g:asy_syn_three = 1
+
+By default, Asymptote-defined colors (e.g: lightblue) are highlighted. To
+highlight TeX-defined colors (e.g: BlueViolet) use: >
+
+	:let g:asy_syn_texcolors = 1
+
+or for Xorg colors (e.g: AliceBlue): >
+
+	:let g:asy_syn_x11colors = 1
 
 BAAN						    *baan.vim* *baan-syntax*
 
@@ -1220,6 +1239,21 @@ tcsh.tcshrc, tcsh.login) will have filetype tcsh.  All other tcsh/csh scripts
 will be classified as tcsh, UNLESS the "filetype_csh" variable exists.  If the
 "filetype_csh" variable exists, the filetype will be set to the value of the
 variable.
+
+CSV							*ft-csv-syntax*
+
+If you change the delimiter of a CSV file, its syntax highlighting will no
+longer match the changed file content. You will need to unlet the following
+variable: >
+
+	:unlet b:csv_delimiter
+
+And afterwards save and reload the file: >
+
+	:w
+	:e
+
+Now the syntax engine should determine the newly changed CSV delimiter.
 
 
 CYNLIB						*cynlib.vim* *ft-cynlib-syntax*
@@ -2012,11 +2046,11 @@ use the following: >
 	:let java_highlight_java_io=1
 Check the javaid.vim file for a list of all the packages that are supported.
 
-Function names are not highlighted, as the way to find functions depends on
-how you write Java code.  The syntax file knows two possible ways to highlight
-headers of function declarations:
+Headers of indented function declarations can be highlighted (along with parts
+of lambda expressions and method reference expressions), but it depends on how
+you write Java code.  Two formats are recognized:
 
-If you write function declarations that are consistently indented by either
+1) If you write function declarations that are consistently indented by either
 a tab, or a space . . . or eight space character(s), you may want to set >
 	:let java_highlight_functions="indent"
 	:let java_highlight_functions="indent1"
@@ -2028,10 +2062,12 @@ a tab, or a space . . . or eight space character(s), you may want to set >
 	:let java_highlight_functions="indent7"
 	:let java_highlight_functions="indent8"
 Note that in terms of 'shiftwidth', this is the leftmost step of indentation.
-However, if you follow the Java guidelines about how functions and classes are
-supposed to be named (with respect to upper- and lowercase) and there is any
-amount of indentation, you may want to set >
+
+2) However, if you follow the Java guidelines about how functions and types
+are supposed to be named (with respect to upper- and lowercase) and there is
+any amount of indentation, you may want to set >
 	:let java_highlight_functions="style"
+
 In addition, you can combine any value of "java_highlight_functions" with >
 	:let java_highlight_signature=1
 to have the name of a function with its parameter list parens distinctly
@@ -2242,7 +2278,7 @@ By default mail.vim synchronises syntax to 100 lines before the first
 displayed line.  If you have a slow machine, and generally deal with emails
 with short headers, you can change this to a smaller value: >
 
-    :let mail_minlines = 30
+	:let mail_minlines = 30
 
 
 MAKE						*make.vim* *ft-make-syntax*
@@ -2252,6 +2288,16 @@ errors.  However, this may be too much coloring for you.  You can turn this
 feature off by using: >
 
 	:let make_no_commands = 1
+
+Comments are also highlighted by default.  You can turn this off by using: >
+
+	:let make_no_comments = 1
+
+Microsoft Makefile handles variable expansion and comments differently
+(backslashes are not used for escape).  If you see any wrong highlights
+because of this, you can try this: >
+
+	:let make_microsoft = 1
 
 
 MAPLE						*maple.vim* *ft-maple-syntax*
@@ -2304,6 +2350,17 @@ have the following in your .vimrc: >
 
 	let filetype_m = "mma"
 
+MEDIAWIKI					*ft-mediawiki-syntax*
+
+Be default, syntax highlighting includes basic HTML tags like style and
+headers |html.vim|. For strict Mediawiki syntax highlighting: >
+
+	let g:html_no_rendering = 1
+
+If HTML highlighting is desired, terminal-based text formatting such as bold
+and italic is possible by: >
+
+	let g:html_style_rendering = 1
 
 MODULA2					*modula2.vim* *ft-modula2-syntax*
 
@@ -3794,6 +3851,15 @@ are highlighted. To disable set it to zero in your .vimrc: >
 	let g:typescript_host_keyword = 0
 <
 The default value is 1.
+
+TYPST						    *ft-typst-syntax*
+
+						*g:typst_embedded_languages*
+Typst files can embed syntax highlighting for other languages by setting the
+|g:typst_embedded_languages| variable. This variable is a list of language
+names whose syntax definitions will be included in Typst files. Example: >
+
+    let g:typst_embedded_languages = ['python', 'r']
 
 VIM			*vim.vim*		*ft-vim-syntax*
 			*g:vimsyn_minlines*	*g:vimsyn_maxlines*

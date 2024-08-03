@@ -1,4 +1,4 @@
-*builtin.txt*	For Vim version 9.1.  Last change: 2024 Jun 23
+*builtin.txt*	For Vim version 9.1.  Last change: 2024 Jul 28
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -68,7 +68,7 @@ balloon_gettext()		String	current text in the balloon
 balloon_show({expr})		none	show {expr} inside the balloon
 balloon_split({msg})		List	split {msg} as used for a balloon
 bindtextdomain({package}, {path})
-				none	bind text domain to specied path
+				Bool	bind text domain to specified path
 blob2list({blob})		List	convert {blob} into a list of numbers
 browse({save}, {title}, {initdir}, {default})
 				String	put up a file requester
@@ -279,8 +279,7 @@ gettabvar({nr}, {varname} [, {def}])
 gettabwinvar({tabnr}, {winnr}, {name} [, {def}])
 				any	{name} in {winnr} in tab page {tabnr}
 gettagstack([{nr}])		Dict	get the tag stack of window {nr}
-gettext({text} [, {package}])
-				String	lookup translation of {text}
+gettext({text} [, {package}])	String	lookup translation of {text}
 getwininfo([{winid}])		List	list of info about each window
 getwinpos([{timeout}])		List	X and Y coord in pixels of Vim window
 getwinposx()			Number	X coord in pixels of the Vim window
@@ -309,6 +308,7 @@ hlget([{name} [, {resolve}]])	List	get highlight group attributes
 hlset({list})			Number	set highlight group attributes
 hostname()			String	name of the machine Vim is running on
 iconv({expr}, {from}, {to})	String	convert encoding of {expr}
+id({item})			String	get unique identity string of item
 indent({lnum})			Number	indent of line {lnum}
 index({object}, {expr} [, {start} [, {ic}]])
 				Number	index in {object} where {expr} appears
@@ -1225,9 +1225,12 @@ bindtextdomain({package}, {path})			*bindtextdomain()*
 		Bind a specific {package} to a {path} so that the
 		|gettext()| function can be used to get language-specific
 		translations for a package.  {path} is the directory name
-		for the translations. See |package-create|.
+		for the translations.  See |package-translation|.
 
-		Return type: none
+		Returns v:true on success and v:false on failure (out of
+		memory).
+
+		Return type: |vim9-boolean|
 
 blob2list({blob})					*blob2list()*
 		Return a List containing the number value of each byte in Blob
@@ -3574,7 +3577,7 @@ garbagecollect([{atexit}])				*garbagecollect()*
 		Return type: |String|
 
 
-get({list}, {idx} [, {default}])			*get()*
+get({list}, {idx} [, {default}])			*get()* *get()-list*
 		Get item {idx} from |List| {list}.  When this item is not
 		available return {default}.  Return zero when {default} is
 		omitted.
@@ -3583,7 +3586,7 @@ get({list}, {idx} [, {default}])			*get()*
 <
 		Return type: any, depending on {list}
 
-get({blob}, {idx} [, {default}])
+get({blob}, {idx} [, {default}])			*get()-blob*
 		Get byte {idx} from |Blob| {blob}.  When this byte is not
 		available return {default}.  Return -1 when {default} is
 		omitted.
@@ -3592,7 +3595,7 @@ get({blob}, {idx} [, {default}])
 <
 		Return type: |Number|
 
-get({dict}, {key} [, {default}])
+get({dict}, {key} [, {default}])			*get()-dict*
 		Get item with key {key} from |Dictionary| {dict}.  When this
 		item is not available return {default}.  Return zero when
 		{default} is omitted.  Useful example: >
@@ -3604,18 +3607,32 @@ get({dict}, {key} [, {default}])
 <
 		Return type: any, depending on {dict}
 
-get({func}, {what})
-		Get item {what} from Funcref {func}.  Possible values for
+get({func}, {what})					*get()-func*
+		Get item {what} from |Funcref| {func}.  Possible values for
 		{what} are:
-			"name"	The function name
-			"func"	The function
-			"dict"	The dictionary
-			"args"	The list with arguments
+		  "name"    The function name
+		  "func"    The function
+		  "dict"    The dictionary
+		  "args"    The list with arguments
+		  "arity"   A dictionary with information about the number of
+			    arguments accepted by the function (minus the
+			    {arglist}) with the following fields:
+				required    the number of positional arguments
+				optional    the number of optional arguments,
+					    in addition to the required ones
+				varargs     |TRUE| if the function accepts a
+					    variable number of arguments |...|
+
+				Note: There is no error, if the {arglist} of
+				the Funcref contains more arguments than the
+				Funcref expects, it's not validated.
+
 		Returns zero on error.
+
 		Preferably used as a |method|: >
 			myfunc->get(what)
 <
-		Return type: any, depending on {func}
+		Return type: any, depending on {func} and {what}
 
 							*getbufinfo()*
 getbufinfo([{buf}])
@@ -4047,6 +4064,7 @@ getcompletion({pat}, {type} [, {filtered}])		*getcompletion()*
 		customlist,{func} custom completion, defined via {func}
 		diff_buffer     |:diffget| and |:diffput| completion
 		dir		directory names
+		dir_in_path	directory names in |'cdpath'|
 		environment	environment variable names
 		event		autocommand events
 		expression	Vim expression
@@ -4785,6 +4803,8 @@ getregion({pos1}, {pos2} [, {opts}])			*getregion()*
 <
 		Can also be used as a |method|: >
 			getpos('.')->getregion(getpos("'a"))
+<
+		Return type: list<string>
 
 <
 getregionpos({pos1}, {pos2} [, {opts}])            *getregionpos()*
@@ -4822,7 +4842,7 @@ getregionpos({pos1}, {pos2} [, {opts}])            *getregionpos()*
 		Can also be used as a |method|: >
 			getpos('.')->getregionpos(getpos("'a"))
 <
-		Return type: list<string>
+		Return type: list<list<list<number>>>
 
 
 getregtype([{regname}])					*getregtype()*
@@ -4990,17 +5010,18 @@ gettagstack([{winnr}])					*gettagstack()*
 
 gettext({text} [, {package}])				*gettext()*
 		Translate String {text} if possible.
-		This is mainly for use in the distributed Vim scripts.  When
-		generating message translations the {text} is extracted by
-		xgettext, the translator can add the translated message in the
-		.po file and Vim will lookup the translation when gettext() is
-		called.
+		This is intended for use in Vim scripts.  When generating
+		message translations the {text} is extracted by `xgettext`,
+		the translator can add translated messages into the .po file
+		and Vim will lookup the translation when gettext() is called.
 		For {text} double quoted strings are preferred, because
-		xgettext does not understand escaping in single quoted
-		strings.
+		`xgettext` does not support single quoted escaped text.
+
 		When the {package} is specified, the translation is looked up
-		for that specific package. You need to specify the path to
-		look for translations with the |bindtextdomain()| function.
+		for that specific package.  This is mainly required for
+		third-party Vim scripts.  You need to specify a path to the
+		translations with the |bindtextdomain()| function before
+		using the gettext() function.
 
 		Return type: |String|
 
@@ -5600,6 +5621,34 @@ iconv({string}, {from}, {to})				*iconv()*
 
 		Can also be used as a |method|: >
 			GetText()->iconv('latin1', 'utf-8')
+<
+		Return type: |String|
+
+
+id({item})							    *id()*
+		The result is a unique String associated with the {item} and
+		not with the {item}'s contents. It is only valid while the
+		{item} exists and is referenced. It is valid only in the
+		instance of vim that produces the result. The whole idea is
+		that `id({item})` does not change if the contents of {item}
+		changes. This is useful as a `key` for creating an identity
+		dictionary, rather than one based on equals.
+
+		This operation does not reference {item} and there is no
+		function to convert the `id` to the {item}. It may be useful to
+		have a map of `id` to {item}. The following >
+		    var referenceMap: dict<any>
+		    var id = item->id()
+		    referenceMap[id] = item
+<		prevents {item} from being garbage collected and provides a
+		way to get the {item} from the `id`.
+
+		{item} may be a List, Dictionary, Object, Job, Channel or
+		Blob. If the item is not a permitted type, or it is a null
+		value, then an empty String is returned.
+
+		Can also be used as a |method|: >
+			GetItem()->id()
 <
 		Return type: |String|
 
@@ -6897,10 +6946,10 @@ matchadd({group}, {pattern} [, {priority} [, {id} [, {dict}]]])
 matchaddpos({group}, {pos} [, {priority} [, {id} [, {dict}]]])
 		Same as |matchadd()|, but requires a list of positions {pos}
 		instead of a pattern. This command is faster than |matchadd()|
-		because it does not require to handle regular expressions and
-		sets buffer line boundaries to redraw screen. It is supposed
-		to be used when fast match additions and deletions are
-		required, for example to highlight matching parentheses.
+		because it does not handle regular expressions and it sets
+		buffer line boundaries to redraw screen. It is supposed to be
+		used when fast match additions and deletions are required, for
+		example to highlight matching parentheses.
 
 		{pos} is a list of positions.  Each position can be one of
 		these:
@@ -8092,7 +8141,7 @@ pyxeval({expr})						*pyxeval()*
 		See also: |pyeval()|, |py3eval()|
 
 		Can also be used as a |method|: >
-	<		GetExpr()->pyxeval()
+			GetExpr()->pyxeval()
 <
 		Return type: any, depending on {expr}
 
@@ -9500,7 +9549,8 @@ setline({lnum}, {text})					*setline()*
 		Set line {lnum} of the current buffer to {text}.  To insert
 		lines use |append()|. To set lines in another buffer use
 		|setbufline()|.
-		Any text properties in {lnum} are cleared |text-prop-cleared|.
+		Any text properties in {lnum} are cleared.  See
+		|text-prop-cleared|
 
 		{lnum} is used like with |getline()|.
 		When {lnum} is just below the last line the {text} will be
@@ -10284,8 +10334,8 @@ spellsuggest({word} [, {max} [, {capital}]])		*spellsuggest()*
 
 split({string} [, {pattern} [, {keepempty}]])			*split()*
 		Make a |List| out of {string}.  When {pattern} is omitted or
-		empty each white-separated sequence of characters becomes an
-		item.
+		empty each white space separated sequence of characters
+		becomes an item.
 		Otherwise the string is split where {pattern} matches,
 		removing the matched characters. 'ignorecase' is not used
 		here, add \c to ignore case. |/\c|
@@ -11053,7 +11103,7 @@ synconcealed({lnum}, {col})				*synconcealed()*
 		Note: Doesn't consider |matchadd()| highlighting items,
 		since syntax and matching highlighting are two different
 		mechanisms |syntax-vs-match|.
-<
+
 		Return type: list<any>
 
 

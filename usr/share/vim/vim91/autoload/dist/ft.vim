@@ -9,6 +9,8 @@ vim9script
 # These functions are moved here from runtime/filetype.vim to make startup
 # faster.
 
+var prolog_pattern = '^\s*\(:-\|%\+\(\s\|$\)\|\/\*\)\|\.\s*$'
+
 export def Check_inp()
   if getline(1) =~ '%%'
     setf tex
@@ -402,17 +404,37 @@ export def FTharedoc()
   endif
 enddef
 
-# Distinguish between HTML, XHTML and Django
+# Distinguish between HTML, XHTML, Django and Angular
 export def FThtml()
   var n = 1
+
+  # Test if the filename follows the Angular component template convention
+  # Disabled for the reasons mentioned here: #13594
+  # if expand('%:t') =~ '^.*\.component\.html$'
+  #   setf htmlangular
+  #   return
+  # endif
+
   while n < 40 && n <= line("$")
+    # Check for Angular
+    if getline(n) =~ '@\(if\|for\|defer\|switch\)\|\*\(ngIf\|ngFor\|ngSwitch\|ngTemplateOutlet\)\|ng-template\|ng-content\|{{.*}}'
+      setf htmlangular
+      return
+    endif
+    # Check for XHTML
     if getline(n) =~ '\<DTD\s\+XHTML\s'
       setf xhtml
       return
     endif
+    # Check for Django
     if getline(n) =~ '{%\s*\(autoescape\|block\|comment\|csrf_token\|cycle\|debug\|extends\|filter\|firstof\|for\|if\|ifchanged\|include\|load\|lorem\|now\|query_string\|regroup\|resetcycle\|spaceless\|templatetag\|url\|verbatim\|widthratio\|with\)\>\|{#\s\+'
       setf htmldjango
       return
+    endif
+    # Check for SuperHTML
+    if getline(n) =~ '<extend\|<super>'
+        setf superhtml
+        return
     endif
     n += 1
   endwhile
@@ -449,7 +471,7 @@ export def ProtoCheck(default: string)
     # recognize Prolog by specific text in the first non-empty line
     # require a blank after the '%' because Perl uses "%list" and "%translate"
     var lnum = getline(nextnonblank(1))
-    if lnum =~ '\<prolog\>' || lnum =~ '^\s*\(%\+\(\s\|$\)\|/\*\)' || lnum =~ ':-'
+    if lnum =~ '\<prolog\>' || lnum =~ prolog_pattern
       setf prolog
     else
       exe 'setf ' .. default
@@ -512,6 +534,25 @@ export def FTm()
     # Default is Matlab
     setf matlab
   endif
+enddef
+
+export def FTmake()
+  # Check if it is a Microsoft Makefile
+  unlet! b:make_microsoft
+  var n = 1
+  while n < 1000 && n <= line('$')
+    var line = getline(n)
+    if line =~? '^\s*!\s*\(ifn\=\(def\)\=\|include\|message\|error\)\>'
+      b:make_microsoft = 1
+      break
+    elseif line =~ '^ *ifn\=\(eq\|def\)\>' || line =~ '^ *[-s]\=include\s'
+      break
+    elseif line =~ '^ *\w\+\s*[!?:+]='
+      break
+    endif
+    n += 1
+  endwhile
+  setf make
 enddef
 
 export def FTmms()
@@ -628,7 +669,7 @@ export def FTpl()
     # recognize Prolog by specific text in the first non-empty line
     # require a blank after the '%' because Perl uses "%list" and "%translate"
     var line = getline(nextnonblank(1))
-    if line =~ '\<prolog\>' || line =~ '^\s*\(%\+\(\s\|$\)\|/\*\)' || line =~ ':-'
+    if line =~ '\<prolog\>' || line =~ prolog_pattern
       setf prolog
     else
       setf perl
