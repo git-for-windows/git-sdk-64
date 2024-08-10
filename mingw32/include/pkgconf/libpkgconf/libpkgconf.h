@@ -81,8 +81,8 @@ typedef struct pkgconf_queue_ pkgconf_queue_t;
 #define PKGCONF_FOREACH_LIST_ENTRY_REVERSE(tail, value) \
 	for ((value) = (tail); (value) != NULL; (value) = (value)->prev)
 
-#define LIBPKGCONF_VERSION	20200
-#define LIBPKGCONF_VERSION_STR	"2.2.0"
+#define LIBPKGCONF_VERSION	20300
+#define LIBPKGCONF_VERSION_STR	"2.3.0"
 
 struct pkgconf_queue_ {
 	pkgconf_node_t iter;
@@ -283,6 +283,7 @@ PKGCONF_API void pkgconf_cross_personality_deinit(pkgconf_cross_personality_t *p
 
 #define PKGCONF_PKG_DEPF_INTERNAL		0x1
 #define PKGCONF_PKG_DEPF_PRIVATE		0x2
+#define PKGCONF_PKG_DEPF_QUERY			0x4
 
 #define PKGCONF_PKG_ERRF_OK			0x0
 #define PKGCONF_PKG_ERRF_PACKAGE_NOT_FOUND	0x1
@@ -366,6 +367,7 @@ typedef struct pkgconf_fragment_render_ops_ {
 
 typedef bool (*pkgconf_fragment_filter_func_t)(const pkgconf_client_t *client, const pkgconf_fragment_t *frag, void *data);
 PKGCONF_API bool pkgconf_fragment_parse(const pkgconf_client_t *client, pkgconf_list_t *list, pkgconf_list_t *vars, const char *value, unsigned int flags);
+PKGCONF_API void pkgconf_fragment_insert(const pkgconf_client_t *client, pkgconf_list_t *list, char type, const char *data, bool tail);
 PKGCONF_API void pkgconf_fragment_add(const pkgconf_client_t *client, pkgconf_list_t *list, const char *string, unsigned int flags);
 PKGCONF_API void pkgconf_fragment_copy(const pkgconf_client_t *client, pkgconf_list_t *list, const pkgconf_fragment_t *base, bool is_private);
 PKGCONF_API void pkgconf_fragment_copy_list(const pkgconf_client_t *client, pkgconf_list_t *list, const pkgconf_list_t *base);
