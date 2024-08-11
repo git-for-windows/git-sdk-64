@@ -10,7 +10,7 @@ build_time_vars = {'ABIFLAGS': '',
  'ANDROID_API_LEVEL': 0,
  'AR': 'ar',
  'ARFLAGS': 'rcs',
- 'BASECFLAGS': '-fno-strict-overflow',
+ 'BASECFLAGS': '-fno-strict-overflow -Wsign-compare',
  'BASECPPFLAGS': '',
  'BASEMODLIBS': '',
  'BINDIR': '/usr/bin',
@@ -25,9 +25,9 @@ build_time_vars = {'ABIFLAGS': '',
  'BYTESTR_DEPS': '\\',
  'CC': 'gcc',
  'CCSHARED': '',
- 'CFLAGS': '-fno-strict-overflow -DNDEBUG -g -O3 -Wall -march=nocona -msahf '
-           '-mtune=generic -O2 -pipe -march=nocona -msahf -mtune=generic -O2 '
-           '-pipe',
+ 'CFLAGS': '-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall '
+           '-march=nocona -msahf -mtune=generic -O2 -pipe -march=nocona -msahf '
+           '-mtune=generic -O2 -pipe',
  'CFLAGSFORSHARED': '',
  'CFLAGS_ALIASING': '',
  'CFLAGS_NODIST': '',
@@ -37,7 +37,10 @@ build_time_vars = {'ABIFLAGS': '',
  'CONFIGFILES': 'configure configure.ac acconfig.h pyconfig.h.in '
                 'Makefile.pre.in',
  'CONFIGURE_CFLAGS': '-march=nocona -msahf -mtune=generic -O2 -pipe',
- 'CONFIGURE_CFLAGS_NODIST': '-std=c11 -Werror=implicit-function-declaration '
+ 'CONFIGURE_CFLAGS_NODIST': '-std=c11 -Wextra -Wno-unused-parameter '
+                            '-Wno-missing-field-initializers '
+                            '-Wstrict-prototypes '
+                            '-Werror=implicit-function-declaration '
                             '-fvisibility=hidden',
  'CONFIGURE_CPPFLAGS': '',
  'CONFIGURE_LDFLAGS': '',
@@ -56,9 +59,9 @@ build_time_vars = {'ABIFLAGS': '',
  'CONFINCLUDEDIR': '/usr/include',
  'CONFINCLUDEPY': '/usr/include/python3.12',
  'COREPYTHONPATH': '',
- 'COVERAGE_INFO': '/c/S/B/src/Python-3.12.4/coverage.info',
+ 'COVERAGE_INFO': '/c/S/B/src/Python-3.12.5/coverage.info',
  'COVERAGE_LCOV_OPTIONS': '--rc lcov_branch_coverage=1',
- 'COVERAGE_REPORT': '/c/S/B/src/Python-3.12.4/lcov-report',
+ 'COVERAGE_REPORT': '/c/S/B/src/Python-3.12.5/lcov-report',
  'COVERAGE_REPORT_OPTIONS': '--rc lcov_branch_coverage=1 --branch-coverage '
                             '--title "CPython 3.12 LCOV report [commit $(shell '
                             ')]"',
@@ -628,17 +631,21 @@ build_time_vars = {'ABIFLAGS': '',
  'LIBDEST': '/usr/lib/python3.12',
  'LIBDIR': '/usr/lib',
  'LIBEXPAT_A': 'Modules/expat/libexpat.a',
- 'LIBEXPAT_CFLAGS': '-fno-strict-overflow -DNDEBUG -g -O3 -Wall -march=nocona '
-                    '-msahf -mtune=generic -O2 -pipe -march=nocona -msahf '
-                    '-mtune=generic -O2 -pipe -std=c11 '
+ 'LIBEXPAT_CFLAGS': '-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall '
+                    '-march=nocona -msahf -mtune=generic -O2 -pipe '
+                    '-march=nocona -msahf -mtune=generic -O2 -pipe -std=c11 '
+                    '-Wextra -Wno-unused-parameter '
+                    '-Wno-missing-field-initializers -Wstrict-prototypes '
                     '-Werror=implicit-function-declaration '
                     '-fvisibility=hidden  -I./Include/internal -I. -I./Include',
  'LIBEXPAT_HEADERS': '\\',
  'LIBEXPAT_OBJS': '\\',
  'LIBHACL_CFLAGS': '-I./Modules/_hacl/include -D_BSD_SOURCE -D_DEFAULT_SOURCE '
-                   '-fno-strict-overflow -DNDEBUG -g -O3 -Wall -march=nocona '
-                   '-msahf -mtune=generic -O2 -pipe -march=nocona -msahf '
-                   '-mtune=generic -O2 -pipe -std=c11 '
+                   '-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall '
+                   '-march=nocona -msahf -mtune=generic -O2 -pipe '
+                   '-march=nocona -msahf -mtune=generic -O2 -pipe -std=c11 '
+                   '-Wextra -Wno-unused-parameter '
+                   '-Wno-missing-field-initializers -Wstrict-prototypes '
                    '-Werror=implicit-function-declaration -fvisibility=hidden  '
                    '-I./Include/internal -I. -I./Include',
  'LIBHACL_HEADERS': '\\',
@@ -648,9 +655,11 @@ build_time_vars = {'ABIFLAGS': '',
  'LIBM': '',
  'LIBMPDEC_A': 'Modules/_decimal/libmpdec/libmpdec.a',
  'LIBMPDEC_CFLAGS': '-DCONFIG_64=1 -DANSI=1 -DHAVE_UINT128_T=1 '
-                    '-fno-strict-overflow -DNDEBUG -g -O3 -Wall -march=nocona '
-                    '-msahf -mtune=generic -O2 -pipe -march=nocona -msahf '
-                    '-mtune=generic -O2 -pipe -std=c11 '
+                    '-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall '
+                    '-march=nocona -msahf -mtune=generic -O2 -pipe '
+                    '-march=nocona -msahf -mtune=generic -O2 -pipe -std=c11 '
+                    '-Wextra -Wno-unused-parameter '
+                    '-Wno-missing-field-initializers -Wstrict-prototypes '
                     '-Werror=implicit-function-declaration '
                     '-fvisibility=hidden  -I./Include/internal -I. -I./Include',
  'LIBMPDEC_HEADERS': '\\',
@@ -1009,21 +1018,28 @@ build_time_vars = {'ABIFLAGS': '',
  'PYTHON_HEADERS': '\\',
  'PYTHON_OBJS': '\\',
  'PY_BUILTIN_HASHLIB_HASHES': '"md5,sha1,sha2,sha3,blake2"',
- 'PY_BUILTIN_MODULE_CFLAGS': '-fno-strict-overflow -DNDEBUG -g -O3 -Wall '
-                             '-march=nocona -msahf -mtune=generic -O2 -pipe '
-                             '-march=nocona -msahf -mtune=generic -O2 -pipe '
-                             '-std=c11 -Werror=implicit-function-declaration '
+ 'PY_BUILTIN_MODULE_CFLAGS': '-fno-strict-overflow -Wsign-compare -DNDEBUG -g '
+                             '-O3 -Wall -march=nocona -msahf -mtune=generic '
+                             '-O2 -pipe -march=nocona -msahf -mtune=generic '
+                             '-O2 -pipe -std=c11 -Wextra -Wno-unused-parameter '
+                             '-Wno-missing-field-initializers '
+                             '-Wstrict-prototypes '
+                             '-Werror=implicit-function-declaration '
                              '-fvisibility=hidden  -I./Include/internal -I. '
                              '-I./Include -DPy_BUILD_CORE_BUILTIN',
- 'PY_CFLAGS': '-fno-strict-overflow -DNDEBUG -g -O3 -Wall -march=nocona -msahf '
-              '-mtune=generic -O2 -pipe -march=nocona -msahf -mtune=generic '
-              '-O2 -pipe',
- 'PY_CFLAGS_NODIST': '-std=c11 -Werror=implicit-function-declaration '
+ 'PY_CFLAGS': '-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall '
+              '-march=nocona -msahf -mtune=generic -O2 -pipe -march=nocona '
+              '-msahf -mtune=generic -O2 -pipe',
+ 'PY_CFLAGS_NODIST': '-std=c11 -Wextra -Wno-unused-parameter '
+                     '-Wno-missing-field-initializers -Wstrict-prototypes '
+                     '-Werror=implicit-function-declaration '
                      '-fvisibility=hidden  -I./Include/internal',
  'PY_COERCE_C_LOCALE': 1,
- 'PY_CORE_CFLAGS': '-fno-strict-overflow -DNDEBUG -g -O3 -Wall -march=nocona '
-                   '-msahf -mtune=generic -O2 -pipe -march=nocona -msahf '
-                   '-mtune=generic -O2 -pipe -std=c11 '
+ 'PY_CORE_CFLAGS': '-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall '
+                   '-march=nocona -msahf -mtune=generic -O2 -pipe '
+                   '-march=nocona -msahf -mtune=generic -O2 -pipe -std=c11 '
+                   '-Wextra -Wno-unused-parameter '
+                   '-Wno-missing-field-initializers -Wstrict-prototypes '
                    '-Werror=implicit-function-declaration -fvisibility=hidden  '
                    '-I./Include/internal -I. -I./Include -DPy_BUILD_CORE',
  'PY_CORE_LDFLAGS': '',
@@ -1037,10 +1053,12 @@ build_time_vars = {'ABIFLAGS': '',
  'PY_SQLITE_HAVE_SERIALIZE': 1,
  'PY_SSL_DEFAULT_CIPHERS': 1,
  'PY_SSL_DEFAULT_CIPHER_STRING': 0,
- 'PY_STDMODULE_CFLAGS': '-fno-strict-overflow -DNDEBUG -g -O3 -Wall '
+ 'PY_STDMODULE_CFLAGS': '-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 '
+                        '-Wall -march=nocona -msahf -mtune=generic -O2 -pipe '
                         '-march=nocona -msahf -mtune=generic -O2 -pipe '
-                        '-march=nocona -msahf -mtune=generic -O2 -pipe '
-                        '-std=c11 -Werror=implicit-function-declaration '
+                        '-std=c11 -Wextra -Wno-unused-parameter '
+                        '-Wno-missing-field-initializers -Wstrict-prototypes '
+                        '-Werror=implicit-function-declaration '
                         '-fvisibility=hidden  -I./Include/internal -I. '
                         '-I./Include',
  'PY_SUPPORT_TIER': 0,
@@ -1205,8 +1223,8 @@ build_time_vars = {'ABIFLAGS': '',
  'WITH_VALGRIND': 0,
  'X87_DOUBLE_ROUNDING': 0,
  'XMLLIBSUBDIRS': 'xml xml/dom xml/etree xml/parsers xml/sax',
- 'abs_builddir': '/c/S/B/src/Python-3.12.4',
- 'abs_srcdir': '/c/S/B/src/Python-3.12.4',
+ 'abs_builddir': '/c/S/B/src/Python-3.12.5',
+ 'abs_srcdir': '/c/S/B/src/Python-3.12.5',
  'datarootdir': '/usr/share',
  'exec_prefix': '/usr',
  'prefix': '/usr',

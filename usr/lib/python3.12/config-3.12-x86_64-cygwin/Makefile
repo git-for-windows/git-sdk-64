@@ -31,8 +31,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.12
 srcdir=		.
 
-abs_srcdir=	/c/S/B/src/Python-3.12.4
-abs_builddir=	/c/S/B/src/Python-3.12.4
+abs_srcdir=	/c/S/B/src/Python-3.12.5
+abs_builddir=	/c/S/B/src/Python-3.12.5
 
 
 CC=		gcc
@@ -81,13 +81,13 @@ MAKESETUP=      $(srcdir)/Modules/makesetup
 
 # Compiler options
 OPT=		-DNDEBUG -g -O3 -Wall
-BASECFLAGS=	 -fno-strict-overflow
+BASECFLAGS=	 -fno-strict-overflow -Wsign-compare
 BASECPPFLAGS=	
 CONFIGURE_CFLAGS=	-march=nocona -msahf -mtune=generic -O2 -pipe
 # CFLAGS_NODIST is used for building the interpreter and stdlib C extensions.
 # Use it when a compiler flag should _not_ be part of the distutils CFLAGS
 # once Python is installed (Issue #21121).
-CONFIGURE_CFLAGS_NODIST= -std=c11 -Werror=implicit-function-declaration -fvisibility=hidden
+CONFIGURE_CFLAGS_NODIST= -std=c11 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wstrict-prototypes -Werror=implicit-function-declaration -fvisibility=hidden
 # LDFLAGS_NODIST is used in the same manner as CFLAGS_NODIST.
 # Use it when a linker flag should _not_ be part of the distutils LDFLAGS
 # once Python is installed (bpo-35257)
@@ -2272,6 +2272,7 @@ LIBSUBDIRS=	asyncio \
 		__phello__
 TESTSUBDIRS=	idlelib/idle_test \
 		test \
+		test/test_ast \
 		test/audiodata \
 		test/certdata \
 		test/certdata/capath \
