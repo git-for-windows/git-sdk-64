@@ -2074,14 +2074,15 @@ typedef enum FILE_FLUSH_MODE {
 
 #ifndef UNICODE
 #define GetStartupInfo GetStartupInfoA
+#define FindResource FindResourceA
 #define FindResourceEx FindResourceExA
+#define EnumResourceNames EnumResourceNamesA
 #endif
 
 #define FatalAppExit __MINGW_NAME_AW(FatalAppExit)
 #define GetFirmwareEnvironmentVariable __MINGW_NAME_AW(GetFirmwareEnvironmentVariable)
 #define SetFirmwareEnvironmentVariable __MINGW_NAME_AW(SetFirmwareEnvironmentVariable)
 #define EnumResourceTypes __MINGW_NAME_AW(EnumResourceTypes)
-#define EnumResourceNames __MINGW_NAME_AW(EnumResourceNames)
 #define EnumResourceLanguages __MINGW_NAME_AW(EnumResourceLanguages)
 #define BeginUpdateResource __MINGW_NAME_AW(BeginUpdateResource)
 #define UpdateResource __MINGW_NAME_AW(UpdateResource)
@@ -2167,8 +2168,6 @@ typedef enum FILE_FLUSH_MODE {
   WINBASEAPI WINBOOL WINAPI SetDllDirectoryA (LPCSTR lpPathName);
   WINBASEAPI WINBOOL WINAPI SetDllDirectoryW (LPCWSTR lpPathName);
   WINBASEAPI HRSRC WINAPI FindResourceW (HMODULE hModule, LPCWSTR lpName, LPCWSTR lpType);
-
-#define FindResource __MINGW_NAME_AW(FindResource)
 #endif
 
 #if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP) || NTDDI_VERSION >= NTDDI_WIN10_VB

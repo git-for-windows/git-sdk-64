@@ -124,7 +124,9 @@ typedef enum WHV_PROCESSOR_VENDOR {
     WHvProcessorVendorArm = 0x0010
 } WHV_PROCESSOR_VENDOR;
 
-typedef union WHV_PROCESSOR_FEATURES {
+#if defined(__x86_64__)
+
+typedef union WHV_X64_PROCESSOR_FEATURES {
     __C89_NAMELESS struct {
         UINT64 Sse3Support : 1;
         UINT64 LahfSahfSupport : 1;
@@ -172,7 +174,7 @@ typedef union WHV_PROCESSOR_FEATURES {
         UINT64 IbrsSupport : 1;
         UINT64 StibpSupport : 1;
         UINT64 IbpbSupport : 1;
-        UINT64 Reserved2 : 1;
+        UINT64 UnrestrictedGuestSupport : 1;
         UINT64 SsbdSupport : 1;
         UINT64 FastShortRepMovSupport : 1;
         UINT64 Reserved3 : 1;
@@ -191,23 +193,24 @@ typedef union WHV_PROCESSOR_FEATURES {
         UINT64 Reserved6 : 1;
     };
     UINT64 AsUINT64;
-} WHV_PROCESSOR_FEATURES;
+} WHV_X64_PROCESSOR_FEATURES, WHV_PROCESSOR_FEATURES;
 
-C_ASSERT(sizeof(WHV_PROCESSOR_FEATURES) == sizeof(UINT64));
+C_ASSERT(sizeof(WHV_X64_PROCESSOR_FEATURES) == sizeof(UINT64));
 
-typedef union WHV_PROCESSOR_FEATURES1 {
+typedef union WHV_X64_PROCESSOR_FEATURES1 {
     __C89_NAMELESS struct {
         UINT64 ACountMCountSupport : 1;
         UINT64 TscInvariantSupport : 1;
         UINT64 ClZeroSupport : 1;
         UINT64 RdpruSupport : 1;
-        UINT64 Reserved2 : 2;
+        UINT64 La57Support : 1;
+        UINT64 MbecSupport : 1;
         UINT64 NestedVirtSupport : 1;
         UINT64 PsfdSupport: 1;
         UINT64 CetSsSupport : 1;
         UINT64 CetIbtSupport : 1;
         UINT64 VmxExceptionInjectSupport : 1;
-        UINT64 Reserved4 : 1;
+        UINT64 Reserved2 : 1;
         UINT64 UmwaitTpauseSupport : 1;
         UINT64 MovdiriSupport : 1;
         UINT64 Movdir64bSupport : 1;
@@ -219,12 +222,106 @@ typedef union WHV_PROCESSOR_FEATURES1 {
         UINT64 FSRepStosb : 1;
         UINT64 FSRepCmpsb : 1;
         UINT64 TsxLdTrkSupport : 1;
-        UINT64 Reserved5 : 41;
+        UINT64 VmxInsOutsExitInfoSupport : 1;
+        UINT64 Reserved3 : 1;
+        UINT64 SbdrSsdpNoSupport : 1;
+        UINT64 FbsdpNoSupport : 1;
+        UINT64 PsdpNoSupport : 1;
+        UINT64 FbClearSupport : 1;
+        UINT64 BtcNoSupport : 1;
+        UINT64 IbpbRsbFlushSupport : 1;
+        UINT64 StibpAlwaysOnSupport : 1;
+        UINT64 PerfGlobalCtrlSupport : 1;
+        UINT64 NptExecuteOnlySupport : 1;
+        UINT64 NptADFlagsSupport : 1;
+        UINT64 Npt1GbPageSupport : 1;
+        UINT64 Reserved4 : 1;
+        UINT64 Reserved5 : 1;
+        UINT64 Reserved6 : 1;
+        UINT64 Reserved7 : 1;
+        UINT64 CmpccxaddSupport : 1;
+        UINT64 Reserved8 : 1;
+        UINT64 Reserved9 : 1;
+        UINT64 Reserved10 : 1;
+        UINT64 Reserved11 : 1;
+        UINT64 PrefetchISupport : 1;
+        UINT64 Sha512Support : 1;
+        UINT64 Reserved12 : 1;
+        UINT64 Reserved13 : 1;
+        UINT64 Reserved14 : 1;
+        UINT64 SM3Support : 1;
+        UINT64 SM4Support : 1;
+        UINT64 Reserved15 : 12;
     };
     UINT64 AsUINT64;
-} WHV_PROCESSOR_FEATURES1;
+} WHV_X64_PROCESSOR_FEATURES1, WHV_PROCESSOR_FEATURES1;
 
-C_ASSERT(sizeof(WHV_PROCESSOR_FEATURES1) == sizeof(UINT64));
+C_ASSERT(sizeof(WHV_X64_PROCESSOR_FEATURES1) == sizeof(UINT64));
+
+#elif defined(__aarch64__)
+
+typedef union WHV_ARM64_PROCESSOR_FEATURES {
+    __C89_NAMELESS struct {
+        UINT64 Asid16 : 1;
+        UINT64 TGran16 : 1;
+        UINT64 TGran64 : 1;
+        UINT64 Haf : 1;
+        UINT64 Hdbs : 1;
+        UINT64 Pan : 1;
+        UINT64 AtS1E1 : 1;
+        UINT64 Uao : 1;
+        UINT64 El0Aarch32 : 1;
+        UINT64 Fp : 1;
+        UINT64 FpHp : 1;
+        UINT64 AdvSimd : 1;
+        UINT64 AdvSimdHp : 1;
+        UINT64 GicV3V4 : 1;
+        UINT64 GicV41 : 1;
+        UINT64 Ras : 1;
+        UINT64 PmuV3 : 1;
+        UINT64 PmuV3ArmV81 : 1;
+        UINT64 PmuV3ArmV84 : 1;
+        UINT64 PmuV3ArmV85 : 1;
+        UINT64 Aes : 1;
+        UINT64 PolyMul : 1;
+        UINT64 Sha1 : 1;
+        UINT64 Sha256 : 1;
+        UINT64 Sha512 : 1;
+        UINT64 Crc32 : 1;
+        UINT64 Atomic : 1;
+        UINT64 Rdm : 1;
+        UINT64 Sha3 : 1;
+        UINT64 Sm3 : 1;
+        UINT64 Sm4 : 1;
+        UINT64 Dp : 1;
+        UINT64 Fhm : 1;
+        UINT64 DcCvap : 1;
+        UINT64 DcCvadp : 1;
+        UINT64 ApaBase : 1;
+        UINT64 ApaEp : 1;
+        UINT64 ApaEp2 : 1;
+        UINT64 ApaEp2Fp : 1;
+        UINT64 ApaEp2Fpc : 1;
+        UINT64 Jscvt : 1;
+        UINT64 Fcma : 1;
+        UINT64 RcpcV83 : 1;
+        UINT64 RcpcV84 : 1;
+        UINT64 Gpa : 1;
+        UINT64 L1ipPipt : 1;
+        UINT64 DzPermitted : 1;
+        UINT64 Reserved : 17;
+    };
+    UINT64 AsUINT64;
+} WHV_ARM64_PROCESSOR_FEATURES, WHV_PROCESSOR_FEATURES;
+
+typedef union WHV_ARM64_PROCESSOR_FEATURES1 {
+    __C89_NAMELESS struct {
+        UINT64 Reserved : 64;
+    };
+    UINT64 AsUINT64;
+} WHV_ARM64_PROCESSOR_FEATURES1, WHV_PROCESSOR_FEATURES1;
+
+#endif /* __x86_64__ || __aarch64__ */
 
 #define WHV_PROCESSOR_FEATURES_BANKS_COUNT 2
 
@@ -244,55 +341,73 @@ C_ASSERT(sizeof(WHV_PROCESSOR_FEATURES_BANKS) == sizeof(UINT64) * (WHV_PROCESSOR
 
 typedef union WHV_SYNTHETIC_PROCESSOR_FEATURES {
     __C89_NAMELESS struct {
-        UINT64 HypervisorPresent:1;
-        UINT64 Hv1:1;
-        UINT64 AccessVpRunTimeReg:1;
-        UINT64 AccessPartitionReferenceCounter:1;
-        UINT64 AccessSynicRegs:1;
-        UINT64 AccessSyntheticTimerRegs:1;
+        UINT64 HypervisorPresent : 1;
+        UINT64 Hv1 : 1;
+        UINT64 AccessVpRunTimeReg : 1;
+        UINT64 AccessPartitionReferenceCounter : 1;
+        UINT64 AccessSynicRegs : 1;
+        UINT64 AccessSyntheticTimerRegs : 1;
+        UINT64 AccessIntrCtrlRegs : 1;
+        UINT64 AccessHypercallRegs : 1;
+        UINT64 AccessVpIndex : 1;
+        UINT64 AccessPartitionReferenceTsc : 1;
 #ifdef __x86_64__
-        UINT64 AccessIntrCtrlRegs:1;
+        UINT64 AccessGuestIdleReg : 1;
+        UINT64 AccessFrequencyRegs : 1;
 #else
-        UINT64 ReservedZ6:1;
+        UINT64 ReservedZ10 : 1;
+        UINT64 ReservedZ11 : 1;
 #endif
-        UINT64 AccessHypercallRegs:1;
-        UINT64 AccessVpIndex:1;
-        UINT64 AccessPartitionReferenceTsc:1;
+        UINT64 ReservedZ12 : 1;
+        UINT64 ReservedZ13 : 1;
+        UINT64 ReservedZ14 : 1;
 #ifdef __x86_64__
-        UINT64 AccessGuestIdleReg:1;
-        UINT64 AccessFrequencyRegs:1;
+        UINT64 EnableExtendedGvaRangesForFlushVirtualAddressList : 1;
 #else
-        UINT64 ReservedZ10:1;
-        UINT64 ReservedZ11:1;
+        UINT64 ReservedZ15 : 1;
 #endif
-        UINT64 ReservedZ12:1;
-        UINT64 ReservedZ13:1;
-        UINT64 ReservedZ14:1;
+        UINT64 ReservedZ16 : 1;
+        UINT64 ReservedZ17 : 1;
+        UINT64 FastHypercallOutput : 1;
+        UINT64 ReservedZ19 : 1;
+        UINT64 ReservedZ20 : 1;
+        UINT64 ReservedZ21 : 1;
+        UINT64 DirectSyntheticTimers : 1;
+        UINT64 ReservedZ23 : 1;
+        UINT64 ExtendedProcessorMasks : 1;
 #ifdef __x86_64__
-        UINT64 EnableExtendedGvaRangesForFlushVirtualAddressList:1;
+        UINT64 TbFlushHypercalls : 1;
 #else
-        UINT64 ReservedZ15:1;
+        UINT64 ReservedZ25 : 1;
 #endif
-        UINT64 ReservedZ16:1;
-        UINT64 ReservedZ17:1;
-        UINT64 FastHypercallOutput:1;
-        UINT64 ReservedZ19:1;
-        UINT64 ReservedZ20:1;
-        UINT64 ReservedZ21:1;
-        UINT64 DirectSyntheticTimers:1;
-        UINT64 ReservedZ23:1;
-        UINT64 ExtendedProcessorMasks:1;
+        UINT64 SyntheticClusterIpi : 1;
+        UINT64 NotifyLongSpinWait : 1;
+        UINT64 QueryNumaDistance : 1;
+        UINT64 SignalEvents : 1;
+        UINT64 RetargetDeviceInterrupt : 1;
 #ifdef __x86_64__
-        UINT64 TbFlushHypercalls:1;
+        UINT64 RestoreTime : 1;
+        UINT64 EnlightenedVmcs : 1;
+        UINT64 NestedDebugCtl : 1;
+        UINT64 SyntheticTimeUnhaltedTimer : 1;
+        UINT64 IdleSpecCtrl : 1;
 #else
-        UINT64 ReservedZ25:1;
+        UINT64 ReservedZ31 : 1;
+        UINT64 ReservedZ32 : 1;
+        UINT64 ReservedZ33 : 1;
+        UINT64 ReservedZ34 : 1;
+        UINT64 ReservedZ35 : 1;
 #endif
-        UINT64 SyntheticClusterIpi:1;
-        UINT64 NotifyLongSpinWait:1;
-        UINT64 QueryNumaDistance:1;
-        UINT64 SignalEvents:1;
-        UINT64 RetargetDeviceInterrupt:1;
-        UINT64 Reserved:33;
+        UINT64 ReservedZ36 : 1;
+        UINT64 WakeVps : 1;
+        UINT64 AccessVpRegs : 1;
+#ifdef __aarch64__
+        UINT64 SyncContext : 1;
+#else
+        UINT64 ReservedZ39 : 1;
+#endif
+        UINT64 ReservedZ40 : 1;
+        UINT64 Reserved : 23;
     };
     UINT64 AsUINT64;
 } WHV_SYNTHETIC_PROCESSOR_FEATURES;

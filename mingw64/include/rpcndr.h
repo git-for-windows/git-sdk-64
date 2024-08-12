@@ -447,6 +447,11 @@ typedef unsigned __LONG32 error_status_t;
     CS_TAG_GETTING_ROUTINE *pTagGettingRoutines;
   } NDR_CS_ROUTINES;
 
+  typedef struct _NDR_EXPR_DESC {
+    const unsigned short *pOffset;
+    PFORMAT_STRING pFormatExpr;
+  } NDR_EXPR_DESC;
+
   typedef struct _MIDL_STUB_DESC {
     void *RpcInterfaceInformation;
     void *(__RPC_API *pfnAllocate)(size_t);
@@ -470,8 +475,8 @@ typedef unsigned __LONG32 error_status_t;
     const NDR_NOTIFY_ROUTINE *NotifyRoutineTable;
     ULONG_PTR mFlags;
     const NDR_CS_ROUTINES *CsRoutineTables;
-    void *Reserved4;
-    ULONG_PTR Reserved5;
+    void *ProxyServerInfo;
+    const NDR_EXPR_DESC *pExprInfo;
   } MIDL_STUB_DESC;
 
   typedef const MIDL_STUB_DESC *PMIDL_STUB_DESC;
@@ -509,6 +514,21 @@ typedef unsigned __LONG32 error_status_t;
 
   typedef MIDL_STUBLESS_PROXY_INFO *PMIDL_STUBLESS_PROXY_INFO;
 
+  typedef struct _MIDL_METHOD_PROPERTY {
+    unsigned __LONG32 Id;
+    ULONG_PTR Value;
+  } MIDL_METHOD_PROPERTY, *PMIDL_METHOD_PROPERTY;
+
+  typedef struct _MIDL_METHOD_PROPERTY_MAP {
+    unsigned __LONG32 Count;
+    const MIDL_METHOD_PROPERTY *Properties;
+  } MIDL_METHOD_PROPERTY_MAP, *PMIDL_METHOD_PROPERTY_MAP;
+
+  typedef struct _MIDL_INTERFACE_METHOD_PROPERTIES {
+    unsigned short MethodCount;
+    const MIDL_METHOD_PROPERTY_MAP *const *MethodProperties;
+  } MIDL_INTERFACE_METHOD_PROPERTIES;
+
   struct _MIDL_SYNTAX_INFO {
     RPC_SYNTAX_IDENTIFIER TransferSyntax;
     RPC_DISPATCH_TABLE *DispatchTable;
@@ -516,7 +536,7 @@ typedef unsigned __LONG32 error_status_t;
     const unsigned short *FmtStringOffset;
     PFORMAT_STRING TypeString;
     const void *aUserMarshalQuadruple;
-    ULONG_PTR pReserved1;
+    const MIDL_INTERFACE_METHOD_PROPERTIES *pMethodProperties;
     ULONG_PTR pReserved2;
   };
 
@@ -553,6 +573,50 @@ typedef unsigned __LONG32 error_status_t;
     unsigned __LONG32 NextRefId;
     XLAT_SIDE XlatSide;
   } FULL_PTR_XLAT_TABLES,*PFULL_PTR_XLAT_TABLES;
+
+  typedef enum _system_handle_t {
+    SYSTEM_HANDLE_FILE = 0,
+    SYSTEM_HANDLE_SEMAPHORE = 1,
+    SYSTEM_HANDLE_EVENT = 2,
+    SYSTEM_HANDLE_MUTEX = 3,
+    SYSTEM_HANDLE_PROCESS = 4,
+    SYSTEM_HANDLE_TOKEN = 5,
+    SYSTEM_HANDLE_SECTION = 6,
+    SYSTEM_HANDLE_REG_KEY = 7,
+    SYSTEM_HANDLE_THREAD = 8,
+    SYSTEM_HANDLE_COMPOSITION_OBJECT = 9,
+    SYSTEM_HANDLE_SOCKET = 10,
+    SYSTEM_HANDLE_JOB = 11,
+    SYSTEM_HANDLE_PIPE = 12,
+    SYSTEM_HANDLE_MAX = 12,
+    SYSTEM_HANDLE_INVALID = 0xff
+  } system_handle_t;
+
+  enum {
+    MidlInterceptionInfoVersionOne = 1
+  };
+
+  enum {
+    MidlWinrtTypeSerializationInfoVersionOne = 1
+  };
+
+#define MIDL_WINRT_TYPE_SERIALIZATION_INFO_CURRENT_VERSION MidlWinrtTypeSerializationInfoVersionOne
+
+  typedef struct _MIDL_INTERCEPTION_INFO {
+    unsigned __LONG32 Version;
+    PFORMAT_STRING ProcString;
+    const unsigned short *ProcFormatOffsetTable;
+    unsigned __LONG32 ProcCount;
+    PFORMAT_STRING TypeString;
+  } MIDL_INTERCEPTION_INFO, *PMIDL_INTERCEPTION_INFO;
+
+  typedef struct _MIDL_WINRT_TYPE_SERIALIZATION_INFO {
+    unsigned __LONG32 Version;
+    PFORMAT_STRING TypeFormatString;
+    unsigned short FormatStringSize;
+    unsigned short TypeOffset;
+    PMIDL_STUB_DESC StubDesc;
+  } MIDL_WINRT_TYPE_SERIALIZATION_INFO, *PMIDL_WINRT_TYPE_SERIALIZATION_INFO;
 
   RPC_STATUS RPC_ENTRY NdrClientGetSupportedSyntaxes(RPC_CLIENT_INTERFACE *pInf,unsigned __LONG32 *pCount,MIDL_SYNTAX_INFO **pArr);
   RPC_STATUS RPC_ENTRY NdrServerGetSupportedSyntaxes(RPC_SERVER_INTERFACE *pInf,unsigned __LONG32 *pCount,MIDL_SYNTAX_INFO **pArr,unsigned __LONG32 *pPreferSyntaxIndex);
