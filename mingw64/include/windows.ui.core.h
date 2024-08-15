@@ -1602,7 +1602,7 @@ namespace ABI {
             namespace Core {
                 struct CoreProximityEvaluation {
                     INT32 Score;
-                    struct Point AdjustedPoint;
+                    ABI::Windows::Foundation::Point AdjustedPoint;
                 };
             }
         }
@@ -2111,7 +2111,7 @@ namespace ABI {
                 IClosestInteractiveBoundsRequestedEventArgs : public IInspectable
                 {
                     virtual HRESULT STDMETHODCALLTYPE get_PointerPosition(
-                        struct Point *value) = 0;
+                        ABI::Windows::Foundation::Point *value) = 0;
 
                     virtual HRESULT STDMETHODCALLTYPE get_SearchBounds(
                         struct Rect *value) = 0;
@@ -2747,7 +2747,7 @@ namespace ABI {
                         ABI::Windows::UI::Core::ICoreCursor *value) = 0;
 
                     virtual HRESULT STDMETHODCALLTYPE get_PointerPosition(
-                        struct Point *value) = 0;
+                        ABI::Windows::Foundation::Point *value) = 0;
 
                     virtual HRESULT STDMETHODCALLTYPE get_Visible(
                         boolean *value) = 0;
@@ -2759,11 +2759,11 @@ namespace ABI {
                         ) = 0;
 
                     virtual HRESULT STDMETHODCALLTYPE GetAsyncKeyState(
-                        enum VirtualKey key,
+                        ABI::Windows::System::VirtualKey key,
                         enum CoreVirtualKeyStates *state) = 0;
 
                     virtual HRESULT STDMETHODCALLTYPE GetKeyState(
-                        enum VirtualKey key,
+                        ABI::Windows::System::VirtualKey key,
                         enum CoreVirtualKeyStates *state) = 0;
 
                     virtual HRESULT STDMETHODCALLTYPE ReleasePointerCapture(
@@ -3491,7 +3491,7 @@ namespace ABI {
                 ICoreWindow2 : public IInspectable
                 {
                     virtual HRESULT STDMETHODCALLTYPE put_PointerPosition(
-                        struct Point value) = 0;
+                        ABI::Windows::Foundation::Point value) = 0;
 
                 };
             }
@@ -4605,7 +4605,7 @@ namespace ABI {
                 IKeyEventArgs : public IInspectable
                 {
                     virtual HRESULT STDMETHODCALLTYPE get_VirtualKey(
-                        enum VirtualKey *value) = 0;
+                        ABI::Windows::System::VirtualKey *value) = 0;
 
                     virtual HRESULT STDMETHODCALLTYPE get_KeyStatus(
                         struct CorePhysicalKeyStatus *value) = 0;
@@ -4876,7 +4876,7 @@ namespace ABI {
                         ABI::Windows::UI::Input::IPointerPoint **value) = 0;
 
                     virtual HRESULT STDMETHODCALLTYPE get_KeyModifiers(
-                        enum VirtualKeyModifiers *value) = 0;
+                        ABI::Windows::System::VirtualKeyModifiers *value) = 0;
 
                     virtual HRESULT STDMETHODCALLTYPE GetIntermediatePoints(
                         ABI::Windows::Foundation::Collections::IVector<ABI::Windows::UI::Input::PointerPoint* > **value) = 0;
@@ -5031,7 +5031,7 @@ namespace ABI {
                         struct CoreProximityEvaluation value) = 0;
 
                     virtual HRESULT STDMETHODCALLTYPE get_Point(
-                        struct Point *value) = 0;
+                        ABI::Windows::Foundation::Point *value) = 0;
 
                     virtual HRESULT STDMETHODCALLTYPE get_BoundingBox(
                         struct Rect *value) = 0;
@@ -5042,7 +5042,7 @@ namespace ABI {
 
                     virtual HRESULT STDMETHODCALLTYPE EvaluateProximityToPolygon(
                         UINT32 vertice_size,
-                        struct Point *vertices,
+                        ABI::Windows::Foundation::Point *vertices,
                         struct CoreProximityEvaluation *evaluation) = 0;
 
                 };

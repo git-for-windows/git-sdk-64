@@ -4916,10 +4916,10 @@ namespace ABI {
                 ICompositionDrawingSurface : public IInspectable
                 {
                     virtual HRESULT STDMETHODCALLTYPE get_AlphaMode(
-                        enum Windows::Graphics::DirectX::DirectXAlphaMode *value) = 0;
+                        Windows::Graphics::DirectX::DirectXAlphaMode *value) = 0;
 
                     virtual HRESULT STDMETHODCALLTYPE get_PixelFormat(
-                        enum Windows::Graphics::DirectX::DirectXPixelFormat *value) = 0;
+                        enum DirectXPixelFormat *value) = 0;
 
                     virtual HRESULT STDMETHODCALLTYPE get_Size(
                         struct Size *value) = 0;
@@ -5704,8 +5704,8 @@ namespace ABI {
                 {
                     virtual HRESULT STDMETHODCALLTYPE CreateDrawingSurface(
                         struct Size pixels,
-                        enum Windows::Graphics::DirectX::DirectXPixelFormat format,
-                        enum Windows::Graphics::DirectX::DirectXAlphaMode mode,
+                        enum DirectXPixelFormat format,
+                        Windows::Graphics::DirectX::DirectXAlphaMode mode,
                         ABI::Windows::UI::Composition::ICompositionDrawingSurface **result) = 0;
 
                     virtual HRESULT STDMETHODCALLTYPE add_RenderingDeviceReplaced(

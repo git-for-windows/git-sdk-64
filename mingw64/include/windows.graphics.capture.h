@@ -902,7 +902,7 @@ namespace ABI {
                 {
                     virtual HRESULT STDMETHODCALLTYPE Recreate(
                         ABI::Windows::Graphics::DirectX::Direct3D11::IDirect3DDevice *device,
-                        enum DirectXPixelFormat pixel_format,
+                        ABI::Windows::Graphics::DirectX::DirectXPixelFormat pixel_format,
                         INT32 number_of_buffers,
                         struct SizeInt32 size) = 0;
 
@@ -1100,7 +1100,7 @@ namespace ABI {
                 {
                     virtual HRESULT STDMETHODCALLTYPE Create(
                         ABI::Windows::Graphics::DirectX::Direct3D11::IDirect3DDevice *device,
-                        enum DirectXPixelFormat pixel_format,
+                        ABI::Windows::Graphics::DirectX::DirectXPixelFormat pixel_format,
                         INT32 number_of_buffers,
                         struct SizeInt32 size,
                         ABI::Windows::Graphics::Capture::IDirect3D11CaptureFramePool **result) = 0;
@@ -1236,7 +1236,7 @@ namespace ABI {
                 {
                     virtual HRESULT STDMETHODCALLTYPE CreateFreeThreaded(
                         ABI::Windows::Graphics::DirectX::Direct3D11::IDirect3DDevice *device,
-                        enum DirectXPixelFormat pixel_format,
+                        ABI::Windows::Graphics::DirectX::DirectXPixelFormat pixel_format,
                         INT32 number_of_buffers,
                         struct SizeInt32 size,
                         ABI::Windows::Graphics::Capture::IDirect3D11CaptureFramePool **result) = 0;
