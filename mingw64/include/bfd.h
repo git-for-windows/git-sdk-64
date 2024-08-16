@@ -1,9 +1,8 @@
 /* DO NOT EDIT!  -*- buffer-read-only: t -*-  This file is automatically
    generated from "bfd-in.h", "libbfd.c", "hash.c", "section.c",
-   "syms.c", "archive.c", "archures.c", "bfd.c", "bfdio.c", "bfdwin.c",
-   "cache.c", "compress.c", "corefile.c", "format.c", "linker.c",
-   "opncls.c", "reloc.c", "simple.c", "stab-syms.c", "stabs.c" and
-   "targets.c".
+   "syms.c", "archive.c", "archures.c", "bfd.c", "bfdio.c", "cache.c",
+   "compress.c", "corefile.c", "format.c", "linker.c", "opncls.c",
+   "reloc.c", "simple.c", "stab-syms.c", "stabs.c" and "targets.c".
    Run "make headers" in your build bfd/ to regenerate.  */
 
 /* Main header file for the bfd library -- portable access to object files.
@@ -44,6 +43,7 @@ extern "C" {
 #include "symcat.h"
 #include <stdint.h>
 #include <stdbool.h>
+#include <time.h>
 #include "diagnostics.h"
 #include <stdarg.h>
 #include <string.h>
@@ -688,6 +688,9 @@ typedef struct bfd_section
   /* Nonzero if this section uses RELA relocations, rather than REL.  */
   unsigned int use_rela_p:1;
 
+  /* Nonzero if this section contents are mmapped, rather than malloced.  */
+  unsigned int mmapped_p:1;
+
   /* Bits used by various backends.  The generic code doesn't touch
      these fields.  */
 
@@ -975,8 +978,8 @@ discarded_section (const asection *sec)
   /* linker_mark, linker_has_input, gc_mark, decompress_status,     */ \
      0,           0,                1,       0,                        \
 								       \
-  /* segment_mark, sec_info_type, use_rela_p,                       */ \
-     0,            0,             0,                                   \
+  /* segment_mark, sec_info_type, use_rela_p, mmapped_p,           */  \
+     0,            0,             0,          0,                       \
 								       \
   /* sec_flg0, sec_flg1, sec_flg2, sec_flg3, sec_flg4, sec_flg5,    */ \
      0,        0,        0,        0,        0,        0,              \
@@ -1087,6 +1090,8 @@ bool bfd_generic_is_group_section (bfd *, const asection *sec);
 const char *bfd_generic_group_name (bfd *, const asection *sec);
 
 bool bfd_generic_discard_group (bfd *abfd, asection *group);
+
+bool bfd_section_size_insane (bfd *abfd, asection *sec);
 
 /* Extracted from syms.c.  */
 typedef struct bfd_symbol
@@ -1951,6 +1956,28 @@ struct bfd_build_id
     bfd_byte data[1];
   };
 
+enum bfd_lto_object_type
+  {
+    lto_non_object,            /* Not an LTO object.  */
+    lto_non_ir_object,         /* An object without LTO IR.  */
+    lto_slim_ir_object,        /* A slim LTO IR object.  */
+    lto_fat_ir_object          /* A fat LTO IR object.  */
+  };
+
+struct bfd_mmapped_entry
+  {
+    void *addr;
+    size_t size;
+  };
+
+struct bfd_mmapped
+  {
+    struct bfd_mmapped *next;
+    unsigned int max_entry;
+    unsigned int next_entry;
+    struct bfd_mmapped_entry entries[1];
+  };
+
 struct bfd
 {
   /* The filename the application opened the BFD with.  */
@@ -2152,12 +2179,18 @@ struct bfd
   /* Set if this is a plugin output file.  */
   unsigned int lto_output : 1;
 
-  /* Set if this is a slim LTO object not loaded with a compiler plugin.  */
-  unsigned int lto_slim_object : 1;
-
   /* Do not attempt to modify this file.  Set when detecting errors
      that BFD is not prepared to handle for objcopy/strip.  */
   unsigned int read_only : 1;
+
+  /* LTO object type.  */
+  ENUM_BITFIELD (bfd_lto_object_type) lto_type : 2;
+
+  /* Set if this BFD is currently being processed by
+     bfd_check_format_matches.  This is checked by the cache to
+     avoid closing the BFD in this case.  This should only be
+     examined or modified while the BFD lock is held.  */
+  unsigned int in_format_matches : 1;
 
   /* Set to dummy BFD created when claimed by a compiler plug-in
      library.  */
@@ -2280,6 +2313,9 @@ struct bfd
 
   /* For input BFDs, the build ID, if the object has one. */
   const struct bfd_build_id *build_id;
+
+  /* For input BFDs, mmapped entries. */
+  struct bfd_mmapped *mmapped;
 };
 
 static inline const char *
@@ -2298,6 +2334,12 @@ static inline enum bfd_format
 bfd_get_format (const bfd *abfd)
 {
   return abfd->format;
+}
+
+static inline enum bfd_lto_object_type
+bfd_get_lto_type (const bfd *abfd)
+{
+  return abfd->lto_type;
 }
 
 static inline flagword
@@ -2557,6 +2599,10 @@ void bfd_perror (const char *message);
 
 typedef void (*bfd_error_handler_type) (const char *, va_list);
 
+typedef int (*bfd_print_callback) (void *, const char *, ...);
+void bfd_print_error (bfd_print_callback print_func,
+    void *stream, const char *fmt, va_list ap);
+
 void _bfd_error_handler (const char *fmt, ...) ATTRIBUTE_PRINTF_1;
 
 bfd_error_handler_type bfd_set_error_handler (bfd_error_handler_type);
@@ -2764,37 +2810,12 @@ ufile_ptr bfd_get_size (bfd *abfd);
 
 ufile_ptr bfd_get_file_size (bfd *abfd);
 
-void *bfd_mmap (bfd *abfd, void *addr, bfd_size_type len,
+void *bfd_mmap (bfd *abfd, void *addr, size_t len,
     int prot, int flags, file_ptr offset,
-    void **map_addr, bfd_size_type *map_len)
+    void **map_addr, size_t *map_len)
 ATTRIBUTE_WARN_UNUSED_RESULT;
 
 time_t bfd_get_current_time (time_t now);
-
-/* Extracted from bfdwin.c.  */
-struct _bfd_window_internal;
-
-typedef struct _bfd_window
-{
-  /* What the user asked for.  */
-  void *data;
-  bfd_size_type size;
-  /* The actual window used by BFD.  Small user-requested read-only
-     regions sharing a page may share a single window into the object
-     file.  Read-write versions shouldn't until I've fixed things to
-     keep track of which portions have been claimed by the
-     application; don't want to give the same region back when the
-     application wants two writable copies!  */
-  struct _bfd_window_internal *i;
-}
-bfd_window;
-
-void bfd_init_window (bfd_window *);
-
-void bfd_free_window (bfd_window *);
-
-bool bfd_get_file_window
-   (bfd *, file_ptr, bfd_size_type, bfd_window *, bool /*writable*/);
 
 /* Extracted from cache.c.  */
 bool bfd_cache_close (bfd *abfd);
@@ -3894,6 +3915,12 @@ enum bfd_reloc_code_real
   BFD_RELOC_X86_64_CODE_4_GOTPCRELX,
   BFD_RELOC_X86_64_CODE_4_GOTTPOFF,
   BFD_RELOC_X86_64_CODE_4_GOTPC32_TLSDESC,
+  BFD_RELOC_X86_64_CODE_5_GOTPCRELX,
+  BFD_RELOC_X86_64_CODE_5_GOTTPOFF,
+  BFD_RELOC_X86_64_CODE_5_GOTPC32_TLSDESC,
+  BFD_RELOC_X86_64_CODE_6_GOTPCRELX,
+  BFD_RELOC_X86_64_CODE_6_GOTTPOFF,
+  BFD_RELOC_X86_64_CODE_6_GOTPC32_TLSDESC,
 
   /* ns32k relocations.  */
   BFD_RELOC_NS32K_IMM_8,
@@ -5410,6 +5437,10 @@ enum bfd_reloc_code_real
   BFD_RELOC_RISCV_TLS_DTPREL64,
   BFD_RELOC_RISCV_TLS_TPREL32,
   BFD_RELOC_RISCV_TLS_TPREL64,
+  BFD_RELOC_RISCV_TLSDESC_HI20,
+  BFD_RELOC_RISCV_TLSDESC_LOAD_LO12,
+  BFD_RELOC_RISCV_TLSDESC_ADD_LO12,
+  BFD_RELOC_RISCV_TLSDESC_CALL,
   BFD_RELOC_RISCV_ALIGN,
   BFD_RELOC_RISCV_RVC_BRANCH,
   BFD_RELOC_RISCV_RVC_JUMP,
@@ -7652,8 +7683,7 @@ typedef struct bfd_target
   NAME##_close_and_cleanup, \
   NAME##_bfd_free_cached_info, \
   NAME##_new_section_hook, \
-  NAME##_get_section_contents, \
-  NAME##_get_section_contents_in_window
+  NAME##_get_section_contents
 
   /* Called when the BFD is being closed to do any necessary cleanup.  */
   bool (*_close_and_cleanup) (bfd *);
@@ -7664,14 +7694,12 @@ typedef struct bfd_target
   /* Read the contents of a section.  */
   bool (*_bfd_get_section_contents) (bfd *, sec_ptr, void *, file_ptr,
 				     bfd_size_type);
-  bool (*_bfd_get_section_contents_in_window) (bfd *, sec_ptr, bfd_window *,
-					       file_ptr, bfd_size_type);
 
   /* Entry points to copy private data.  */
 #define BFD_JUMP_TABLE_COPY(NAME) \
   NAME##_bfd_copy_private_bfd_data, \
   NAME##_bfd_merge_private_bfd_data, \
-  _bfd_generic_init_private_section_data, \
+  NAME##_init_private_section_data, \
   NAME##_bfd_copy_private_section_data, \
   NAME##_bfd_copy_private_symbol_data, \
   NAME##_bfd_copy_private_header_data, \
