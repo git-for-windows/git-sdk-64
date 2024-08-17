@@ -149,6 +149,13 @@ jobs:
           gcc -Wall -g -O2 -shared -o sample.dll dll.c || exit 1
           ls -la
 
+          # #include <shellapi.h> works (needed by clar-test)
+          cat >shellapi-test.c <<-\EOF &&
+          #include <shellapi.h>
+          EOF
+
+          gcc -Wall -g -O2 -c -o shellapi-test.o shellapi-test.c || exit 1
+
           # stat works
           test "stat is /usr/bin/stat" = "$(type stat)" || exit 1
           stat /usr/bin/stat.exe || exit 1
