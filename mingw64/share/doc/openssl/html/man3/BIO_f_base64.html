@@ -39,15 +39,13 @@ const BIO_METHOD *BIO_f_base64(void);</code></pre>
 
 <p>Base64 BIOs do not support BIO_gets() or BIO_puts().</p>
 
-<p>For writing, output is by default divided to lines of length 64 characters and there is always a newline at the end of output.</p>
+<p>For writing, by default output is divided to lines of length 64 characters and there is a newline at the end of output. This behavior can be changed with <b>BIO_FLAGS_BASE64_NO_NL</b> flag.</p>
 
-<p>For reading, first line should be at most 1024 characters long. If it is longer then it is ignored completely. Other input lines can be of any length. There must be a newline at the end of input.</p>
-
-<p>This behavior can be changed with BIO_FLAGS_BASE64_NO_NL flag.</p>
+<p>For reading, first line should be at most 1024 bytes long including newline unless the flag <b>BIO_FLAGS_BASE64_NO_NL</b> is set. Further input lines can be of any length (i.e., newlines may appear anywhere in the input) and a newline at the end of input is not needed.</p>
 
 <p>BIO_flush() on a base64 BIO that is being written through is used to signal that no more data is to be encoded: this is used to flush the final block through the BIO.</p>
 
-<p>The flag BIO_FLAGS_BASE64_NO_NL can be set with BIO_set_flags(). For writing, it causes all data to be written on one line without newline at the end. For reading, it expects the data to be all on one line (with or without a trailing newline).</p>
+<p>The flag <b>BIO_FLAGS_BASE64_NO_NL</b> can be set with BIO_set_flags(). For writing, it causes all data to be written on one line without newline at the end. For reading, it removes all expectations on newlines in the input data.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -90,13 +88,15 @@ BIO_free_all(b64);</code></pre>
 
 <h1 id="BUGS">BUGS</h1>
 
+<p>On decoding, if the flag <b>BIO_FLAGS_BASE64_NO_NL</b> is not set and the first 1024 bytes of input do not include a newline character the first two lines of input are ignored.</p>
+
 <p>The ambiguity of EOF in base64 encoded data can cause additional data following the base64 encoded block to be misinterpreted.</p>
 
 <p>There should be some way of specifying a test that the BIO can perform to reliably determine EOF (for example a MIME boundary).</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

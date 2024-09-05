@@ -68,9 +68,9 @@ size_t CRYPTO_secure_used();</code></pre>
 
 <p>OPENSSL_secure_zalloc() and CRYPTO_secure_zalloc() are like OPENSSL_secure_malloc() and CRYPTO_secure_malloc(), respectively, except that they call memset() to zero the memory before returning.</p>
 
-<p>OPENSSL_secure_free() releases the memory at <code>ptr</code> back to the heap. It must be called with a value previously obtained from OPENSSL_secure_malloc(). If CRYPTO_secure_malloc_init() is not called, this is equivalent to calling OPENSSL_free(). It exists for consistency with OPENSSL_secure_malloc() , and is a macro that expands to CRYPTO_secure_free() and adds the <code>__FILE__</code> and <code>__LINE__</code> parameters..</p>
+<p>OPENSSL_secure_free() releases the memory at <code>ptr</code> back to the heap. It must be called with a value previously obtained from OPENSSL_secure_malloc(). If CRYPTO_secure_malloc_init() is not called, this is equivalent to calling OPENSSL_free(). It exists for consistency with OPENSSL_secure_malloc() , and is a macro that expands to CRYPTO_secure_free() and adds the <code>__FILE__</code> and <code>__LINE__</code> parameters.. If the argument to OPENSSL_secure_free() is NULL, nothing is done.</p>
 
-<p>OPENSSL_secure_clear_free() is similar to OPENSSL_secure_free() except that it has an additional <code>num</code> parameter which is used to clear the memory if it was not allocated from the secure heap. If CRYPTO_secure_malloc_init() is not called, this is equivalent to calling OPENSSL_clear_free().</p>
+<p>OPENSSL_secure_clear_free() is similar to OPENSSL_secure_free() except that it has an additional <code>num</code> parameter which is used to clear the memory if it was not allocated from the secure heap. If CRYPTO_secure_malloc_init() is not called, this is equivalent to calling OPENSSL_clear_free(). If the argument to OPENSSL_secure_clear_free() is NULL, nothing is done.</p>
 
 <p>OPENSSL_secure_actual_size() tells the actual size allocated to the pointer; implementations may allocate more space than initially requested, in order to &quot;round up&quot; and reduce secure heap fragmentation.</p>
 
@@ -104,7 +104,7 @@ size_t CRYPTO_secure_used();</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

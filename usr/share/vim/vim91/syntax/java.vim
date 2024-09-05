@@ -3,7 +3,7 @@
 " Maintainer:		Aliaksei Budavei <0x000c70 AT gmail DOT com>
 " Former Maintainer:	Claudio Fleiner <claudio@fleiner.com>
 " Repository:		https://github.com/zzzyxwvut/java-vim.git
-" Last Change:		2024 Jul 30
+" Last Change:		2024 Aug 26
 
 " Please check :help java.vim for comments on some of the options available.
 
@@ -30,6 +30,10 @@ function! s:ff.RightConstant(x, y) abort
   return a:y
 endfunction
 
+function! s:ff.IsRequestedPreviewFeature(n) abort
+  return exists("g:java_syntax_previews") && index(g:java_syntax_previews, a:n) + 1
+endfunction
+
 if !exists("*s:ReportOnce")
   function s:ReportOnce(message) abort
     echomsg 'syntax/java.vim: ' . a:message
@@ -39,17 +43,27 @@ else
   endfunction
 endif
 
-function! JavaSyntaxFoldTextExpr() abort
-  return getline(v:foldstart) !~ '/\*\+\s*$'
-    \ ? foldtext()
-    \ : printf('+-%s%3d lines: ',
-	  \ v:folddashes,
-	  \ (v:foldend - v:foldstart + 1)) .
-	\ getline(v:foldstart + 1)
-endfunction
+if exists("g:java_foldtext_show_first_or_second_line")
+  function! s:LazyPrefix(prefix, dashes, count) abort
+    return empty(a:prefix)
+      \ ? printf('+-%s%3d lines: ', a:dashes, a:count)
+      \ : a:prefix
+  endfunction
 
-" E120 for "fdt=s:JavaSyntaxFoldTextExpr()" before v8.2.3900.
-setlocal foldtext=JavaSyntaxFoldTextExpr()
+  function! JavaSyntaxFoldTextExpr() abort
+    " Piggyback on NGETTEXT.
+    let summary = foldtext()
+    return getline(v:foldstart) !~ '/\*\+\s*$'
+      \ ? summary
+      \ : s:LazyPrefix(matchstr(summary, '^+-\+\s*\d\+\s.\{-1,}:\s'),
+			\ v:folddashes,
+			\ (v:foldend - v:foldstart + 1)) .
+	  \ getline(v:foldstart + 1)
+  endfunction
+
+  " E120 for "fdt=s:JavaSyntaxFoldTextExpr()" before v8.2.3900.
+  setlocal foldtext=JavaSyntaxFoldTextExpr()
+endif
 
 " Admit the ASCII dollar sign to keyword characters (JLS-17, §3.8):
 try
@@ -357,9 +371,14 @@ syn match   javaSpecialChar	contained "\\\%(u\x\x\x\x\|[0-3]\o\o\|\o\o\=\|[bstnf
 syn region  javaString		start=+"+ end=+"+ end=+$+ contains=javaSpecialChar,javaSpecialError,@Spell
 syn region  javaString		start=+"""[ \t\x0c\r]*$+hs=e+1 end=+"""+he=s-1 contains=javaSpecialChar,javaSpecialError,javaTextBlockError,@Spell
 syn match   javaTextBlockError	+"""\s*"""+
-syn region  javaStrTemplEmbExp	contained matchgroup=javaStrTempl start="\\{" end="}" contains=TOP
-exec 'syn region javaStrTempl start=+\%(\.[[:space:]\n]*\)\@' . s:ff.Peek('80', '') . '<="+ end=+"+ contains=javaStrTemplEmbExp,javaSpecialChar,javaSpecialError,@Spell'
-exec 'syn region javaStrTempl start=+\%(\.[[:space:]\n]*\)\@' . s:ff.Peek('80', '') . '<="""[ \t\x0c\r]*$+hs=e+1 end=+"""+he=s-1 contains=javaStrTemplEmbExp,javaSpecialChar,javaSpecialError,javaTextBlockError,@Spell'
+
+if s:ff.IsRequestedPreviewFeature(430)
+  syn region javaStrTemplEmbExp	contained matchgroup=javaStrTempl start="\\{" end="}" contains=TOP
+  exec 'syn region javaStrTempl start=+\%(\.[[:space:]\n]*\)\@' . s:ff.Peek('80', '') . '<="+ end=+"+ contains=javaStrTemplEmbExp,javaSpecialChar,javaSpecialError,@Spell'
+  exec 'syn region javaStrTempl start=+\%(\.[[:space:]\n]*\)\@' . s:ff.Peek('80', '') . '<="""[ \t\x0c\r]*$+hs=e+1 end=+"""+he=s-1 contains=javaStrTemplEmbExp,javaSpecialChar,javaSpecialError,javaTextBlockError,@Spell'
+  hi def link javaStrTempl	Macro
+endif
+
 syn match   javaCharacter	"'[^']*'" contains=javaSpecialChar,javaSpecialCharError
 syn match   javaCharacter	"'\\''" contains=javaSpecialChar
 syn match   javaCharacter	"'[^\\]'"
@@ -431,11 +450,16 @@ if exists("g:java_highlight_debug")
   syn match   javaDebugSpecial		contained "\\\%(u\x\x\x\x\|[0-3]\o\o\|\o\o\=\|[bstnfr"'\\]\)"
   syn region  javaDebugString		contained start=+"+ end=+"+ contains=javaDebugSpecial
   syn region  javaDebugString		contained start=+"""[ \t\x0c\r]*$+hs=e+1 end=+"""+he=s-1 contains=javaDebugSpecial,javaDebugTextBlockError
-  " The highlight groups of java{StrTempl,Debug{,Paren,StrTempl}}\,
-  " share one colour by default. Do not conflate unrelated parens.
-  syn region  javaDebugStrTemplEmbExp	contained matchgroup=javaDebugStrTempl start="\\{" end="}" contains=javaComment,javaLineComment,javaDebug\%(Paren\)\@!.*
-  exec 'syn region javaDebugStrTempl contained start=+\%(\.[[:space:]\n]*\)\@' . s:ff.Peek('80', '') . '<="+ end=+"+ contains=javaDebugStrTemplEmbExp,javaDebugSpecial'
-  exec 'syn region javaDebugStrTempl contained start=+\%(\.[[:space:]\n]*\)\@' . s:ff.Peek('80', '') . '<="""[ \t\x0c\r]*$+hs=e+1 end=+"""+he=s-1 contains=javaDebugStrTemplEmbExp,javaDebugSpecial,javaDebugTextBlockError'
+
+  if s:ff.IsRequestedPreviewFeature(430)
+    " The highlight groups of java{StrTempl,Debug{,Paren,StrTempl}}\,
+    " share one colour by default. Do not conflate unrelated parens.
+    syn region javaDebugStrTemplEmbExp	contained matchgroup=javaDebugStrTempl start="\\{" end="}" contains=javaComment,javaLineComment,javaDebug\%(Paren\)\@!.*
+    exec 'syn region javaDebugStrTempl contained start=+\%(\.[[:space:]\n]*\)\@' . s:ff.Peek('80', '') . '<="+ end=+"+ contains=javaDebugStrTemplEmbExp,javaDebugSpecial'
+    exec 'syn region javaDebugStrTempl contained start=+\%(\.[[:space:]\n]*\)\@' . s:ff.Peek('80', '') . '<="""[ \t\x0c\r]*$+hs=e+1 end=+"""+he=s-1 contains=javaDebugStrTemplEmbExp,javaDebugSpecial,javaDebugTextBlockError'
+    hi def link javaDebugStrTempl	Macro
+  endif
+
   syn match   javaDebugTextBlockError	contained +"""\s*"""+
   syn match   javaDebugCharacter	contained "'[^\\]'"
   syn match   javaDebugSpecialCharacter contained "'\\.'"
@@ -461,7 +485,6 @@ if exists("g:java_highlight_debug")
 
   hi def link javaDebug			Debug
   hi def link javaDebugString		DebugString
-  hi def link javaDebugStrTempl		Macro
   hi def link javaDebugTextBlockError	Error
   hi def link javaDebugType		DebugType
   hi def link javaDebugBoolean		DebugBoolean
@@ -570,7 +593,6 @@ hi def link javaSpecial			Special
 hi def link javaSpecialError		Error
 hi def link javaSpecialCharError	Error
 hi def link javaString			String
-hi def link javaStrTempl		Macro
 hi def link javaCharacter		Character
 hi def link javaSpecialChar		SpecialChar
 hi def link javaNumber			Number
@@ -624,15 +646,25 @@ if !has("vim9script")
   finish
 endif
 
-def! s:JavaSyntaxFoldTextExpr(): string
-  return getline(v:foldstart) !~ '/\*\+\s*$'
-    ? foldtext()
-    : printf('+-%s%3d lines: ',
-	  v:folddashes,
-	  (v:foldend - v:foldstart + 1)) ..
-	getline(v:foldstart + 1)
-enddef
+if exists("g:java_foldtext_show_first_or_second_line")
+  def! s:LazyPrefix(prefix: string, dashes: string, count: number): string
+    return empty(prefix)
+      ? printf('+-%s%3d lines: ', dashes, count)
+      : prefix
+  enddef
 
-setlocal foldtext=s:JavaSyntaxFoldTextExpr()
-delfunction! g:JavaSyntaxFoldTextExpr
+  def! s:JavaSyntaxFoldTextExpr(): string
+    # Piggyback on NGETTEXT.
+    const summary: string = foldtext()
+    return getline(v:foldstart) !~ '/\*\+\s*$'
+      ? summary
+      : LazyPrefix(matchstr(summary, '^+-\+\s*\d\+\s.\{-1,}:\s'),
+			v:folddashes,
+			(v:foldend - v:foldstart + 1)) ..
+	  getline(v:foldstart + 1)
+  enddef
+
+  setlocal foldtext=s:JavaSyntaxFoldTextExpr()
+  delfunction! g:JavaSyntaxFoldTextExpr
+endif
 " vim: sw=2 ts=8 noet sta

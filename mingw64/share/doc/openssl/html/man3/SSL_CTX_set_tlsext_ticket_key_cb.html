@@ -103,7 +103,7 @@ int SSL_CTX_set_tlsext_ticket_key_evp_cb(SSL_CTX sslctx,
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>Session resumption shortcuts the TLS so that the client certificate negotiation don&#39;t occur. It makes up for this by storing client certificate an all other negotiated state information encrypted within the ticket. In a resumed session the applications will have all this state information available exactly as if a full negotiation had occurred.</p>
+<p>Session resumption shortcuts the TLS handshake so that the client certificate negotiation doesn&#39;t occur. It makes up for this by storing the client certificate and all other negotiated state information encrypted within the ticket. In a resumed session the applications will have all this state information available exactly as if a full negotiation had occurred.</p>
 
 <p>If an attacker can obtain the key used to encrypt a session ticket, they can obtain the master secret for any ticket using that key and decrypt any traffic using that session: even if the cipher suite supports forward secrecy. As a result applications may wish to use multiple keys and avoid using long term keys stored in files.</p>
 
@@ -201,7 +201,7 @@ static int ssl_tlsext_ticket_key_cb(SSL *s, unsigned char key_name[16],
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2014-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2014-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

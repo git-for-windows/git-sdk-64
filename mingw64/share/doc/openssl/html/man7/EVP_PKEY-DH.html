@@ -19,7 +19,7 @@
       <li><a href="#DH-and-DHX-additional-parameters">DH and DHX additional parameters</a></li>
       <li><a href="#DH-additional-domain-parameters">DH additional domain parameters</a></li>
       <li><a href="#DH-and-DHX-domain-parameter-key-generation-parameters">DH and DHX domain parameter / key generation parameters</a></li>
-      <li><a href="#DH-key-validation">DH key validation</a></li>
+      <li><a href="#DH-and-DHX-key-validation">DH and DHX key validation</a></li>
     </ul>
   </li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
@@ -34,15 +34,15 @@
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>For <b>DH</b> FFC key agreement, two classes of domain parameters can be used: &quot;safe&quot; domain parameters that are associated with approved named safe-prime groups, and a class of &quot;FIPS186-type&quot; domain parameters. FIPS186-type domain parameters should only be used for backward compatibility with existing applications that cannot be upgraded to use the approved safe-prime groups.</p>
+<p>For finite field Diffie-Hellman key agreement, two classes of domain parameters can be used: &quot;safe&quot; domain parameters that are associated with approved named safe-prime groups, and a class of &quot;FIPS186-type&quot; domain parameters. FIPS186-type domain parameters should only be used for backward compatibility with existing applications that cannot be upgraded to use the approved safe-prime groups.</p>
 
 <p>See <a href="../man7/EVP_PKEY-FFC.html">EVP_PKEY-FFC(7)</a> for more information about FFC keys.</p>
 
-<p>The <b>DH</b> key type uses PKCS#3 format which saves <i>p</i> and <i>g</i>, but not the <i>q</i> value. The <b>DHX</b> key type uses X9.42 format which saves the value of <i>q</i> and this must be used for FIPS186-4. If key validation is required, users should be aware of the nuances associated with FIPS186-4 style parameters as discussed in <a href="#DH-key-validation">&quot;DH key validation&quot;</a>.</p>
+<p>The <b>DH</b> key type uses PKCS#3 format which saves <i>p</i> and <i>g</i>, but not the <i>q</i> value. The <b>DHX</b> key type uses X9.42 format which saves the value of <i>q</i> and this must be used for FIPS186-4. If key validation is required, users should be aware of the nuances associated with FIPS186-4 style parameters as discussed in <a href="#DH-and-DHX-key-validation">&quot;DH and DHX key validation&quot;</a>.</p>
 
 <h2 id="DH-and-DHX-domain-parameters">DH and DHX domain parameters</h2>
 
-<p>In addition to the common FCC parameters that all FFC keytypes should support (see <a href="../man7/EVP_PKEY-FFC.html">&quot;FFC parameters&quot; in EVP_PKEY-FFC(7)</a>) the <b>DHX</b> and <b>DH</b> keytype implementations support the following:</p>
+<p>In addition to the common FFC parameters that all FFC keytypes should support (see <a href="../man7/EVP_PKEY-FFC.html">&quot;FFC parameters&quot; in EVP_PKEY-FFC(7)</a>) the <b>DHX</b> and <b>DH</b> keytype implementations support the following:</p>
 
 <dl>
 
@@ -144,21 +144,21 @@
 </dd>
 </dl>
 
-<h2 id="DH-key-validation">DH key validation</h2>
+<h2 id="DH-and-DHX-key-validation">DH and DHX key validation</h2>
 
-<p>For <b>DHX</b> that is not a named group the FIPS186-4 standard specifies that the values used for FFC parameter generation are also required for parameter validation. This means that optional FFC domain parameter values for <i>seed</i>, <i>pcounter</i> and <i>gindex</i> or <i>hindex</i> may need to be stored for validation purposes. For <b>DHX</b> the <i>seed</i> and <i>pcounter</i> can be stored in ASN1 data (but the <i>gindex</i> or <i>hindex</i> cannot be stored). It is recommended to use a named safe prime group instead.</p>
+<p>For keys that are not a named group the FIPS186-4 standard specifies that the values used for FFC parameter generation are also required for parameter validation. This means that optional FFC domain parameter values for <i>seed</i>, <i>pcounter</i> and <i>gindex</i> or <i>hindex</i> may need to be stored for validation purposes. For <b>DHX</b> the <i>seed</i> and <i>pcounter</i> can be stored in ASN1 data (but the <i>gindex</i> or <i>hindex</i> cannot be stored). It is recommended to use a <b>DH</b> parameters with named safe prime group instead.</p>
 
-<p>For DH keys, <a href="../man3/EVP_PKEY_param_check.html">EVP_PKEY_param_check(3)</a> behaves in the following way: The OpenSSL FIPS provider tests if the parameters are either an approved safe prime group OR that the FFC parameters conform to FIPS186-4 as defined in SP800-56Ar3 <i>Assurances of Domain-Parameter Validity</i>. The OpenSSL default provider uses simpler checks that allows there to be no <i>q</i> value for backwards compatibility.</p>
+<p>With the OpenSSL FIPS provider, <a href="../man3/EVP_PKEY_param_check.html">EVP_PKEY_param_check(3)</a> and <a href="../man3/EVP_PKEY_param_check_quick.html">EVP_PKEY_param_check_quick(3)</a> behave in the following way: the parameters are tested if they are either an approved safe prime group OR that the FFC parameters conform to FIPS186-4 as defined in SP800-56Ar3 <i>Assurances of Domain-Parameter Validity</i>.</p>
 
-<p>For DH keys, <a href="../man3/EVP_PKEY_param_check_quick.html">EVP_PKEY_param_check_quick(3)</a> is equivalent to <a href="../man3/EVP_PKEY_param_check.html">EVP_PKEY_param_check(3)</a>.</p>
+<p>The OpenSSL default provider uses simpler checks that allows there to be no <i>q</i> value for backwards compatibility, however the <a href="../man3/EVP_PKEY_param_check.html">EVP_PKEY_param_check(3)</a> will test the <i>p</i> value for being a prime (and a safe prime if <i>q</i> is missing) which can take significant time. The <a href="../man3/EVP_PKEY_param_check_quick.html">EVP_PKEY_param_check_quick(3)</a> avoids the prime tests.</p>
 
-<p>For DH keys, <a href="../man3/EVP_PKEY_public_check.html">EVP_PKEY_public_check(3)</a> conforms to SP800-56Ar3 <i>FFC Full Public-Key Validation</i>.</p>
+<p><a href="../man3/EVP_PKEY_public_check.html">EVP_PKEY_public_check(3)</a> conforms to SP800-56Ar3 <i>FFC Full Public-Key Validation</i>.</p>
 
-<p>For DH keys, <a href="../man3/EVP_PKEY_public_check_quick.html">EVP_PKEY_public_check_quick(3)</a> conforms to SP800-56Ar3 <i>FFC Partial Public-Key Validation</i> when the DH key is an approved named safe prime group, otherwise it is the same as <a href="../man3/EVP_PKEY_public_check.html">EVP_PKEY_public_check(3)</a>.</p>
+<p><a href="../man3/EVP_PKEY_public_check_quick.html">EVP_PKEY_public_check_quick(3)</a> conforms to SP800-56Ar3 <i>FFC Partial Public-Key Validation</i> when the key is an approved named safe prime group, otherwise it is the same as <a href="../man3/EVP_PKEY_public_check.html">EVP_PKEY_public_check(3)</a>.</p>
 
-<p>For DH Keys, <a href="../man3/EVP_PKEY_private_check.html">EVP_PKEY_private_check(3)</a> tests that the private key is in the correct range according to SP800-56Ar3. The OpenSSL FIPS provider requires the value of <i>q</i> to be set (note that this is set for named safe prime groups). For backwards compatibility the OpenSSL default provider only requires <i>p</i> to be set.</p>
+<p><a href="../man3/EVP_PKEY_private_check.html">EVP_PKEY_private_check(3)</a> tests that the private key is in the correct range according to SP800-56Ar3. The OpenSSL FIPS provider requires the value of <i>q</i> to be set (note that this is implicitly set for named safe prime groups). For backwards compatibility the OpenSSL default provider only requires <i>p</i> to be set.</p>
 
-<p>For DH keys, <a href="../man3/EVP_PKEY_pairwise_check.html">EVP_PKEY_pairwise_check(3)</a> conforms to SP800-56Ar3 <i>Owner Assurance of Pair-wise Consistency</i>.</p>
+<p><a href="../man3/EVP_PKEY_pairwise_check.html">EVP_PKEY_pairwise_check(3)</a> conforms to SP800-56Ar3 <i>Owner Assurance of Pair-wise Consistency</i>.</p>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
@@ -325,7 +325,7 @@ EVP_PKEY_free(complete_domp);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

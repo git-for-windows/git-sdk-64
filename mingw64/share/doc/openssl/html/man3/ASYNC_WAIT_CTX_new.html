@@ -117,6 +117,8 @@ int ASYNC_WAIT_CTX_get_status(ASYNC_WAIT_CTX *ctx);</code></pre>
 
 <p>An example of the usage of the callback method might be the following. User code would initiate cryptographic operations, and the engine code would dispatch this operation to hardware, and if the dispatch is successful, then the engine code would call ASYNC_pause_job() to return control to the user code. After that, user code can perform other tasks. When the hardware completes the operation, normally it is detected by a polling function or an interrupt, as the user code set a callback by calling ASYNC_WAIT_CTX_set_callback() previously, then the registered callback will be called.</p>
 
+<p>ASYNC_WAIT_CTX_free() frees up a single <b>ASYNC_WAIT_CTX</b> object. If the argument is NULL, nothing is done.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>ASYNC_WAIT_CTX_new() returns a pointer to the newly allocated <b>ASYNC_WAIT_CTX</b> or NULL on error.</p>
@@ -139,7 +141,7 @@ int ASYNC_WAIT_CTX_get_status(ASYNC_WAIT_CTX *ctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -60,26 +60,30 @@
 <dt id="file:pathname"><b>file:</b><i>pathname</i></dt>
 <dd>
 
-<p>The first line of <i>pathname</i> is the password. If the same <i>pathname</i> argument is supplied to <b>-passin</b> and <b>-passout</b> arguments then the first line will be used for the input password and the next line for the output password. <i>pathname</i> need not refer to a regular file: it could for example refer to a device or named pipe.</p>
+<p>Reads the password from the specified file <i>pathname</i>, which can be a regular file, device, or named pipe. Only the first line, up to the newline character, is read from the stream.</p>
+
+<p>If the same <i>pathname</i> argument is supplied to both <b>-passin</b> and <b>-passout</b> arguments, the first line will be used for the input password, and the next line will be used for the output password.</p>
 
 </dd>
 <dt id="fd:number"><b>fd:</b><i>number</i></dt>
 <dd>
 
-<p>Read the password from the file descriptor <i>number</i>. This can be used to send the data via a pipe for example.</p>
+<p>Reads the password from the file descriptor <i>number</i>. This can be useful for sending data via a pipe, for example. The same line handling as described for <b>file:</b> applies to passwords read from file descriptors.</p>
+
+<p><b>fd:</b> is not supported on Windows.</p>
 
 </dd>
 <dt id="stdin"><b>stdin</b></dt>
 <dd>
 
-<p>Read the password from standard input.</p>
+<p>Reads the password from standard input. The same line handling as described for <b>file:</b> applies to passwords read from standard input.</p>
 
 </dd>
 </dl>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

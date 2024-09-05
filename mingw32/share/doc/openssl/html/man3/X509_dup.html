@@ -62,7 +62,7 @@ RSA *RSAPublicKey_dup(const RSA *rsa);</code></pre>
 
 <p><b><i>TYPE</i>_dup</b>() copies an existing object, leaving it untouched. Note, however, that the internal representation of the object may contain (besides the ASN.1 structure) further data, which is not copied. For instance, an <b>X509</b> object usually is augmented by cached information on X.509v3 extensions, etc., and losing it can lead to wrong validation results. To avoid such situations, better use <b><i>TYPE</i>_up_ref</b>() if available. For the case of <b>X509</b> objects, an alternative to using <a href="../man3/X509_up_ref.html">X509_up_ref(3)</a> may be to still call <b><i>TYPE</i>_dup</b>(), e.g., <i>copied_cert = X509_dup(cert)</i>, followed by <i>X509_check_purpose(copied_cert, -1, 0)</i>, which re-builds the cached data.</p>
 
-<p><b><i>TYPE</i>_free</b>() releases the object and all pointers and sub-objects within it.</p>
+<p><b><i>TYPE</i>_free</b>() releases the object and all pointers and sub-objects within it. If the argument is NULL, nothing is done.</p>
 
 <p><b><i>TYPE</i>_print_ctx</b>() prints the object <i>a</i> on the specified BIO <i>out</i>. Each line will be prefixed with <i>indent</i> spaces. The <i>pctx</i> specifies the printing context and is for internal use; use NULL to get the default behavior. If a print function is user-defined, then pass in any <i>pctx</i> down to any nested calls.</p>
 

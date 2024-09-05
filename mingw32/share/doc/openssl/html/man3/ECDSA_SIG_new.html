@@ -43,7 +43,7 @@ int ECDSA_SIG_set0(ECDSA_SIG *sig, BIGNUM *r, BIGNUM *s);</code></pre>
 
 <p>ECDSA_SIG_new() allocates an empty <b>ECDSA_SIG</b> structure. Note: before OpenSSL 1.1.0, the <i>r</i> and <i>s</i> components were initialised.</p>
 
-<p>ECDSA_SIG_free() frees the <b>ECDSA_SIG</b> structure <i>sig</i>.</p>
+<p>ECDSA_SIG_free() frees the <b>ECDSA_SIG</b> structure <i>sig</i>. If the argument is NULL, nothing is done.</p>
 
 <p>ECDSA_SIG_get0() returns internal pointers the <i>r</i> and <i>s</i> values contained in <i>sig</i> and stores them in <i>*pr</i> and <i>*ps</i>, respectively. The pointer <i>pr</i> or <i>ps</i> can be NULL, in which case the corresponding value is not returned.</p>
 
@@ -130,7 +130,7 @@ ECDSA_SIG_free(obj);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2004-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2004-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

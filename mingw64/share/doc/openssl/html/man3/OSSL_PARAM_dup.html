@@ -41,7 +41,7 @@ void OSSL_PARAM_free(OSSL_PARAM *params);</code></pre>
 
 <p>OSSL_PARAM_merge() merges the parameter arrays <i>params</i> and <i>params1</i> into a new parameter array. If <i>params</i> and <i>params1</i> contain values with the same &#39;key&#39; then the value from <i>params1</i> will replace the <i>param</i> value. This function does a shallow copy of the parameters. Either <i>params</i> or <i>params1</i> may be NULL. The behaviour of the merge is unpredictable if <i>params</i> and <i>params1</i> contain the same key, and there are multiple entries within either array that have the same key.</p>
 
-<p>OSSL_PARAM_free() frees the parameter array <i>params</i> that was created using OSSL_PARAM_dup(), OSSL_PARAM_merge() or OSSL_PARAM_BLD_to_param().</p>
+<p>OSSL_PARAM_free() frees the parameter array <i>params</i> that was created using OSSL_PARAM_dup(), OSSL_PARAM_merge() or OSSL_PARAM_BLD_to_param(). If the argument to OSSL_PARAM_free() is NULL, nothing is done.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -57,7 +57,7 @@ void OSSL_PARAM_free(OSSL_PARAM *params);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

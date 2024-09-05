@@ -54,7 +54,7 @@ EVP_PKEY *CTLOG_get0_public_key(const CTLOG *log);</code></pre>
 
 <p>CTLOG_new_from_base64() does the same thing as CTLOG_new_from_base64_ex() except that the default library context and property query string are used.</p>
 
-<p>Regardless of whether CTLOG_new() or CTLOG_new_from_base64() is used, it is the caller&#39;s responsibility to pass the CTLOG to CTLOG_free() once it is no longer needed. This will delete it and, if created by CTLOG_new(), the EVP_PKEY that was passed to it.</p>
+<p>Regardless of whether CTLOG_new() or CTLOG_new_from_base64() is used, it is the caller&#39;s responsibility to pass the CTLOG to CTLOG_free() once it is no longer needed. This will delete it and, if created by CTLOG_new(), the EVP_PKEY that was passed to it. If the argument to CTLOG_free() is NULL, nothing is done.</p>
 
 <p>CTLOG_get0_name() returns the name of the log, as provided when the CTLOG was created. Ownership of the string remains with the CTLOG.</p>
 
@@ -78,7 +78,7 @@ EVP_PKEY *CTLOG_get0_public_key(const CTLOG *log);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

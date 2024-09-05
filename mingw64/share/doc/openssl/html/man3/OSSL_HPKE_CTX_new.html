@@ -265,7 +265,7 @@ size_t OSSL_HPKE_get_recommended_ikmelen(OSSL_HPKE_SUITE suite);</code></pre>
 
 <p>OSSL_HPKE_CTX_new() creates a <b>OSSL_HPKE_CTX</b> context object used for subsequent HPKE operations, given a <i>mode</i> (See <a href="#HPKE-Modes">&quot;HPKE Modes&quot;</a>), <i>suite</i> (see <a href="#OSSL_HPKE_SUITE-Identifiers">&quot;OSSL_HPKE_SUITE Identifiers&quot;</a>) and a <i>role</i> (see <a href="#HPKE-Roles">&quot;HPKE Roles&quot;</a>). The <i>libctx</i> and <i>propq</i> are used when fetching algorithms from providers and may be set to NULL.</p>
 
-<p>OSSL_HPKE_CTX_free() frees the <i>ctx</i> <b>OSSL_HPKE_CTX</b> that was created previously by a call to OSSL_HPKE_CTX_new().</p>
+<p>OSSL_HPKE_CTX_free() frees the <i>ctx</i> <b>OSSL_HPKE_CTX</b> that was created previously by a call to OSSL_HPKE_CTX_new(). If the argument to OSSL_HPKE_CTX_free() is NULL, nothing is done.</p>
 
 <h2 id="Sender-APIs">Sender APIs</h2>
 
@@ -444,7 +444,7 @@ err:
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2022-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2022-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -137,7 +137,7 @@ int OSSL_CMP_CTX_set1_senderNonce(OSSL_CMP_CTX *ctx,
 
 <p>OSSL_CMP_CTX_new() allocates an <b>OSSL_CMP_CTX</b> structure associated with the library context <i>libctx</i> and property query string <i>propq</i>, both of which may be NULL to select the defaults. It initializes the remaining fields to their default values - for instance, the logging verbosity is set to OSSL_CMP_LOG_INFO, the message timeout is set to 120 seconds, and the proof-of-possession method is set to OSSL_CRMF_POPO_SIGNATURE.</p>
 
-<p>OSSL_CMP_CTX_free() deallocates an OSSL_CMP_CTX structure.</p>
+<p>OSSL_CMP_CTX_free() deallocates an OSSL_CMP_CTX structure. If the argument is NULL, nothing is done.</p>
 
 <p>OSSL_CMP_CTX_reinit() prepares the given <i>ctx</i> for a further transaction by clearing the internal CMP transaction (aka session) status, PKIStatusInfo, and any previous results (newCert, newChain, caPubs, and extraCertsIn) from the last executed transaction. It also clears any ITAVs that were added by OSSL_CMP_CTX_push0_genm_ITAV(). All other field values (i.e., CMP options) are retained for potential reuse.</p>
 
@@ -315,7 +315,12 @@ Else, &#39;digitalSignature&#39; must be allowed by CMP signer certificates.</co
 <dd>
 
 <pre><code>Allow retrieving a trust anchor from extraCerts and using that
-to validate the certificate chain of an IP message.</code></pre>
+to validate the certificate chain of an IP message.
+This is a quirk option added to support 3GPP TS 33.310.
+
+Note that using this option is dangerous as the certificate obtained
+this way has not been authenticated (at least not at CMP level).
+Taking it over as a trust anchor implements trust-on-first-use (TOFU).</code></pre>
 
 </dd>
 </dl>
@@ -419,7 +424,7 @@ to validate the certificate chain of an IP message.</code></pre>
 
 <p>OSSL_CMP_CTX_push0_genm_ITAV() adds <i>itav</i> to the stack in the <i>ctx</i> which will be the body of a General Message sent with this context.</p>
 
-<p>OSSL_CMP_certConf_cb() is the default certificate confirmation callback function. If the callback argument is not NULL it must point to a trust store. In this case the function checks that the newly enrolled certificate can be verified using this trust store and untrusted certificates from the <i>ctx</i>, which have been augmented by the list of extraCerts received. During this verification, any certificate status checking is disabled. If the callback argument is NULL the function tries building an approximate chain as far as possible using the same untrusted certificates from the <i>ctx</i>, and if this fails it takes the received extraCerts as fallback. The resulting cert chain can be retrieved using OSSL_CMP_CTX_get1_newChain().</p>
+<p>OSSL_CMP_certConf_cb() is the default certificate confirmation callback function. If the callback argument is not NULL it must point to a trust store. In this case the function checks that the newly enrolled certificate can be verified using this trust store and untrusted certificates from the <i>ctx</i>, which have been augmented by the list of extraCerts received. During this verification, any certificate status checking is disabled. If the callback argument is NULL the function tries building an approximate chain as far as possible using the same untrusted certificates from the <i>ctx</i>, and if this fails it takes the received extraCerts as fallback. The resulting cert chain can be retrieved using OSSL_CMP_CTX_get1_newChain(). This chain excludes the leaf certificate, i.e., the newly enrolled certificate. Also the trust anchor (the root certificate) is not included.</p>
 
 <p>OSSL_CMP_CTX_set_certConf_cb() sets the callback used for evaluating the newly enrolled certificate before the library sends, depending on its result, a positive or negative certConf message to the server. The callback has type</p>
 
@@ -571,7 +576,7 @@ sk_OSSL_CMP_ITAV_pop_free(itavs, OSSL_CMP_ITAV_free);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2007-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2007-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

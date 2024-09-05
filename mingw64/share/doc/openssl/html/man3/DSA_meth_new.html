@@ -109,7 +109,7 @@ int DSA_meth_set_keygen(DSA_METHOD *dsam, int (*keygen)(DSA *));</code></pre>
 
 <p>DSA_meth_dup() creates a duplicate copy of the <b>DSA_METHOD</b> object passed as a parameter. This might be useful for creating a new <b>DSA_METHOD</b> based on an existing one, but with some differences.</p>
 
-<p>DSA_meth_free() destroys a <b>DSA_METHOD</b> structure and frees up any memory associated with it.</p>
+<p>DSA_meth_free() destroys a <b>DSA_METHOD</b> structure and frees up any memory associated with it. If the argument is NULL, nothing is done.</p>
 
 <p>DSA_meth_get0_name() will return a pointer to the name of this DSA_METHOD. This is a pointer to the internal name string and so should not be freed by the caller. DSA_meth_set1_name() sets the name of the DSA_METHOD to <b>name</b>. The string is duplicated and the copy is stored in the DSA_METHOD structure, so the caller remains responsible for freeing the memory associated with the name.</p>
 
@@ -165,7 +165,7 @@ int DSA_meth_set_keygen(DSA_METHOD *dsam, int (*keygen)(DSA *));</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

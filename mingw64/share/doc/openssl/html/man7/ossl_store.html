@@ -62,7 +62,11 @@
 
 <h2 id="A-generic-call">A generic call</h2>
 
-<pre><code>OSSL_STORE_CTX *ctx = OSSL_STORE_open(&quot;file:/foo/bar/data.pem&quot;);
+<pre><code>#include &lt;openssl/ui.h&gt; /* for UI_get_default_method */
+#include &lt;openssl/store.h&gt;
+
+OSSL_STORE_CTX *ctx = OSSL_STORE_open(&quot;file:/foo/bar/data.pem&quot;,
+                       UI_get_default_method(), NULL, NULL, NULL);
 
 /*
  * OSSL_STORE_eof() simulates file semantics for any repository to signal
@@ -83,6 +87,7 @@ while (!OSSL_STORE_eof(ctx)) {
         PEM_write_X509(stdout, OSSL_STORE_INFO_get0_CERT(info));
         break;
     }
+    OSSL_STORE_INFO_free(info);
 }
 
 OSSL_STORE_close(ctx);</code></pre>
@@ -93,7 +98,7 @@ OSSL_STORE_close(ctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

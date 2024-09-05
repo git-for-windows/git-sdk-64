@@ -49,7 +49,7 @@ int BN_rshift1(BIGNUM *r, BIGNUM *a);</code></pre>
 
 <p>BN_is_bit_set() tests if bit <b>n</b> in <b>a</b> is set.</p>
 
-<p>BN_mask_bits() truncates <b>a</b> to an <b>n</b> bit number (<code>a&amp;=~((~0)&lt;&lt;n)</code>). An error occurs if <b>a</b> already is shorter than <b>n</b> bits.</p>
+<p>BN_mask_bits() truncates <b>a</b> to an <b>n</b> bit number (<code>a&amp;=~((~0)&lt;&lt;n)</code>). An error occurs if <b>n</b> is negative. An error is also returned if the internal representation of <b>a</b> is already shorter than <b>n</b> bits. The internal representation depends on the platform&#39;s word size, and this error can be safely ignored. Use <a href="../man3/BN_num_bits.html">BN_num_bits(3)</a> to determine the exact number of bits if needed.</p>
 
 <p>BN_lshift() shifts <b>a</b> left by <b>n</b> bits and places the result in <b>r</b> (<code>r=a*2^n</code>). Note that <b>n</b> must be nonnegative. BN_lshift1() shifts <b>a</b> left by one and places the result in <b>r</b> (<code>r=2*a</code>).</p>
 
@@ -69,7 +69,7 @@ int BN_rshift1(BIGNUM *r, BIGNUM *a);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

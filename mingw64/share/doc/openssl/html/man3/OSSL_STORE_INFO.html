@@ -87,7 +87,7 @@ void *OSSL_STORE_INFO_get0_data(int type, const OSSL_STORE_INFO *info);</code></
 
 <p>OSSL_STORE_INFO_get1_NAME(), OSSL_STORE_INFO_get1_NAME_description(), OSSL_STORE_INFO_get1_PARAMS(), OSSL_STORE_INFO_get1_PUBKEY(), OSSL_STORE_INFO_get1_PKEY(), OSSL_STORE_INFO_get1_CERT() and OSSL_STORE_INFO_get1_CRL() all take a <b>OSSL_STORE_INFO</b> and return a duplicate the object it holds if the <b>OSSL_STORE_INFO</b> type (as returned by OSSL_STORE_INFO_get_type()) matches the function, otherwise NULL.</p>
 
-<p>OSSL_STORE_INFO_free() frees a <b>OSSL_STORE_INFO</b> and its contained type.</p>
+<p>OSSL_STORE_INFO_free() frees a <b>OSSL_STORE_INFO</b> and its contained type. If the argument is NULL, nothing is done.</p>
 
 <p>OSSL_STORE_INFO_new_NAME() , OSSL_STORE_INFO_new_PARAMS(), , OSSL_STORE_INFO_new_PUBKEY(), OSSL_STORE_INFO_new_PKEY(), OSSL_STORE_INFO_new_CERT() and OSSL_STORE_INFO_new_CRL() create a <b>OSSL_STORE_INFO</b> object to hold the given input object. On success the input object is consumed.</p>
 
@@ -175,7 +175,7 @@ void *OSSL_STORE_INFO_get0_data(int type, const OSSL_STORE_INFO *info);</code></
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -317,7 +317,7 @@ void *(*export_to) (const EVP_PKEY *pk, EVP_KEYMGMT *keymgmt);</code></pre>
 
 <p>EVP_PKEY_asn1_copy() copies an <b>EVP_PKEY_ASN1_METHOD</b> object from <b>src</b> to <b>dst</b>. This function is not thread safe, it&#39;s recommended to only use this when initializing the application.</p>
 
-<p>EVP_PKEY_asn1_free() frees an existing <b>EVP_PKEY_ASN1_METHOD</b> pointed by <b>ameth</b>.</p>
+<p>EVP_PKEY_asn1_free() frees an existing <b>EVP_PKEY_ASN1_METHOD</b> pointed by <b>ameth</b>. If the argument is NULL, nothing is done.</p>
 
 <p>EVP_PKEY_asn1_add0() adds <b>ameth</b> to the user defined stack of methods unless another <b>EVP_PKEY_ASN1_METHOD</b> with the same NID is already there. This function is not thread safe, it&#39;s recommended to only use this when initializing the application.</p>
 
@@ -341,7 +341,7 @@ void *(*export_to) (const EVP_PKEY *pk, EVP_KEYMGMT *keymgmt);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2017-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2017-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

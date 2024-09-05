@@ -57,7 +57,9 @@ const BIO_METHOD *BIO_f_zstd(void);</code></pre>
 
 <p>These functions provide compression support for OpenSSL. Compression is used within the OpenSSL library to support TLS record and certificate compression.</p>
 
-<p>COMP_CTX_new() is used to create a new <b>COMP_CTX</b> structure used to compress data. COMP_CTX_free() is used to free the returned <b>COMP_CTX</b>.</p>
+<p>COMP_CTX_new() is used to create a new <b>COMP_CTX</b> structure used to compress data.</p>
+
+<p>COMP_CTX_free() is used to free the returned <b>COMP_CTX</b>. If the argument is NULL, nothing is done.</p>
 
 <p>COMP_CTX_get_method() returns the <b>COMP_METHOD</b> of the given <i>ctx</i>.</p>
 
@@ -137,7 +139,7 @@ const BIO_METHOD *BIO_f_zstd(void);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2022-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

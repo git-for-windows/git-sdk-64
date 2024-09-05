@@ -1,4 +1,4 @@
-*syntax.txt*	For Vim version 9.1.  Last change: 2024 Jul 31
+*syntax.txt*	For Vim version 9.1.  Last change: 2024 Aug 31
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -179,8 +179,7 @@ add a few items or change the highlighting, follow these steps:
 1. Create your user directory from 'runtimepath', see above.
 
 2. Create a directory in there called "after/syntax".  For Unix: >
-	mkdir ~/.vim/after
-	mkdir ~/.vim/after/syntax
+	mkdir -p ~/.vim/after/syntax
 
 3. Write a Vim script that contains the commands you want to use.  For
    example, to change the colors for the C syntax: >
@@ -2135,6 +2134,14 @@ Note that these three variables are maintained in the HTML syntax file.
 Numbers and strings can be recognized in non-Javadoc comments with >
 	:let g:java_comment_strings = 1
 
+When 'foldmethod' is set to "syntax", blocks of code and multi-line comments
+will be folded.  No text is usually written in the first line of a multi-line
+comment, making folded contents of Javadoc comments less informative with the
+default 'foldtext' value; you may opt for showing the contents of a second
+line for any comments written in this way, and showing the contents of a first
+line otherwise, with >
+	:let g:java_foldtext_show_first_or_second_line = 1
+
 Trailing whitespace characters or a run of space characters before a tab
 character can be marked as an error with >
 	:let g:java_space_errors = 1
@@ -2156,8 +2163,25 @@ This will make the syntax synchronization start 50 lines before the first
 displayed line.  The default value is 10.  The disadvantage of using a larger
 number is that redrawing can become slow.
 
+Significant changes to the Java platform are gradually introduced in the form
+of JDK Enhancement Proposals (JEPs) that can be implemented for a release and
+offered as its preview features.  It may take several JEPs and a few release
+cycles for such a feature to become either integrated into the platform or
+withdrawn from this effort.  To cater for early adopters, there is optional
+support in Vim for syntax related preview features that are implemented.  You
+can request it by specifying a list of preview feature numbers as follows: >
+	:let g:java_syntax_previews = [430]
 
-JSON						*json.vim* *ft-json-syntax*
+The supported JEP numbers are to be drawn from this table:
+	`430`: String Templates [JDK 21]
+
+Note that as soon as the particular preview feature will have been integrated
+into the Java platform, its entry will be removed from the table and related
+optionality will be discontinued.
+
+
+JSON			*json.vim* *ft-json-syntax* *g:vim_json_conceal*
+					       *g:vim_json_warnings*
 
 The json syntax file provides syntax highlighting with conceal support by
 default. To disable concealment: >
@@ -2347,7 +2371,8 @@ $VIMRUNTIME/syntax/syntax.vim).
   mv_finance	 mv_logic	mv_powseries
 
 
-MARKDOWN						*ft-markdown-syntax*
+MARKDOWN			*ft-markdown-syntax* *g:markdown_minlines*
+		 *g:markdown_fenced_languages* *g:markdown_syntax_conceal*
 
 If you have long regions there might be wrong highlighting.  At the cost of
 slowing down displaying, you can have the engine look further back to sync on
@@ -2374,7 +2399,7 @@ have the following in your .vimrc: >
 
 MEDIAWIKI					*ft-mediawiki-syntax*
 
-Be default, syntax highlighting includes basic HTML tags like style and
+By default, syntax highlighting includes basic HTML tags like style and
 headers |html.vim|. For strict Mediawiki syntax highlighting: >
 
 	let g:html_no_rendering = 1
@@ -5143,7 +5168,7 @@ matches, nextgroup, etc.  But there are a few differences:
   line (or group of continued lines).
 - When a match with a sync pattern is found, the rest of the line (or group of
   continued lines) is searched for another match.  The last match is used.
-  This is used when a line can contain both the start end the end of a region
+  This is used when a line can contain both the start and the end of a region
   (e.g., in a C-comment like /* this */, the last "*/" is used).
 
 There are two ways how a match with a sync pattern can be used:

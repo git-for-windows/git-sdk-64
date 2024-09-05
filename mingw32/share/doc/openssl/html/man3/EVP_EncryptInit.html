@@ -215,7 +215,7 @@ void EVP_CIPHER_do_all_provided(OSSL_LIB_CTX *libctx,
 <dt id="EVP_CIPHER_free">EVP_CIPHER_free()</dt>
 <dd>
 
-<p>Decrements the reference count for the fetched <b>EVP_CIPHER</b> structure. If the reference count drops to 0 then the structure is freed.</p>
+<p>Decrements the reference count for the fetched <b>EVP_CIPHER</b> structure. If the reference count drops to 0 then the structure is freed. If the argument is NULL, nothing is done.</p>
 
 </dd>
 <dt id="EVP_CIPHER_CTX_new">EVP_CIPHER_CTX_new()</dt>
@@ -227,7 +227,7 @@ void EVP_CIPHER_do_all_provided(OSSL_LIB_CTX *libctx,
 <dt id="EVP_CIPHER_CTX_free">EVP_CIPHER_CTX_free()</dt>
 <dd>
 
-<p>Clears all information from a cipher context and frees any allocated memory associated with it, including <i>ctx</i> itself. This function should be called after all operations using a cipher are complete so sensitive information does not remain in memory.</p>
+<p>Clears all information from a cipher context and frees any allocated memory associated with it, including <i>ctx</i> itself. This function should be called after all operations using a cipher are complete so sensitive information does not remain in memory. If the argument is NULL, nothing is done.</p>
 
 </dd>
 <dt id="EVP_CIPHER_CTX_dup">EVP_CIPHER_CTX_dup()</dt>
@@ -305,7 +305,9 @@ void EVP_CIPHER_do_all_provided(OSSL_LIB_CTX *libctx,
 <dt id="EVP_EncryptUpdate">EVP_EncryptUpdate()</dt>
 <dd>
 
-<p>Encrypts <i>inl</i> bytes from the buffer <i>in</i> and writes the encrypted version to <i>out</i>. The pointers <i>out</i> and <i>in</i> may point to the same location, in which case the encryption will be done in-place. If <i>out</i> and <i>in</i> point to different locations, the two buffers must be disjoint, otherwise the operation might fail or the outcome might be undefined.</p>
+<p>Encrypts <i>inl</i> bytes from the buffer <i>in</i> and writes the encrypted version to <i>out</i>. The pointers <i>out</i> and <i>in</i> may point to the same location, in which case the encryption will be done in-place. However, in-place encryption is guaranteed to work only if the encryption context (<i>ctx</i>) has processed data in multiples of the block size. If the context contains an incomplete data block from previous operations, in-place encryption will fail.</p>
+
+<p>If <i>out</i> and <i>in</i> point to different locations, the two buffers must be disjoint, otherwise the operation might fail or the outcome might be undefined.</p>
 
 <p>This function can be called multiple times to encrypt successive blocks of data. The amount of data written depends on the block alignment of the encrypted data. For most ciphers and modes, the amount of data written can be anything from zero bytes to (inl + cipher_block_size - 1) bytes. For wrap cipher modes, the amount of data written can be anything from zero bytes to (inl + cipher_block_size) bytes. For stream ciphers, the amount of data written can be anything from zero bytes to inl bytes. Thus, the buffer pointed to by <i>out</i> must contain sufficient room for the operation being performed. The actual number of bytes written is placed in <i>outl</i>.</p>
 

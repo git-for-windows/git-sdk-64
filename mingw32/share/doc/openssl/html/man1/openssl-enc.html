@@ -101,6 +101,8 @@
 
 <p>Base64 process the data. This means that if encryption is taking place the data is base64 encoded after encryption. If decryption is set then the input data is base64 decoded before being decrypted.</p>
 
+<p>When the <b>-A</b> option not given, on encoding a newline is inserted after each 64 characters, and on decoding a newline is expected among the first 1024 bytes of input.</p>
+
 </dd>
 <dt id="base64"><b>-base64</b></dt>
 <dd>
@@ -111,7 +113,7 @@
 <dt id="A"><b>-A</b></dt>
 <dd>
 
-<p>If the <b>-a</b> option is set then base64 process the data on one line.</p>
+<p>If the <b>-a</b> option is set then base64 encoding produces output without any newline character, and base64 decoding does not require any newlines. Therefore it can be helpful to use the <b>-A</b> option when decoding unknown input.</p>
 
 </dd>
 <dt id="k-password"><b>-k</b> <i>password</i></dt>
@@ -437,7 +439,7 @@ or
 
 <h1 id="BUGS">BUGS</h1>
 
-<p>The <b>-A</b> option when used with large files doesn&#39;t work properly.</p>
+<p>The <b>-A</b> option when used with large files doesn&#39;t work properly. On the other hand, when base64 decoding without the <b>-A</b> option, if the first 1024 bytes of input do not include a newline character the first two lines of input are ignored.</p>
 
 <p>The <b>openssl enc</b> command only supports a fixed number of algorithms with certain parameters. So if, for example, you want to use RC2 with a 76 bit key or RC4 with an 84 bit key you can&#39;t use this program.</p>
 
@@ -453,7 +455,7 @@ or
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

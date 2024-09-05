@@ -101,7 +101,7 @@ const STACK_OF(X509_EXTENSION) *X509_REVOKED_get0_extensions(const X509_REVOKED 
 
 <p>If <b>X509V3_ADD_SILENT</b> is bitwise ORed with <i>flags</i>: any error returned will not be added to the error queue.</p>
 
-<p>The function X509V3_get_d2i() and its variants will return NULL if the extension is not found, occurs multiple times or cannot be decoded. It is possible to determine the precise reason by checking the value of <i>*crit</i>.</p>
+<p>The function X509V3_get_d2i() and its variants will return NULL if the extension is not found, occurs multiple times or cannot be decoded. It is possible to determine the precise reason by checking the value of <i>*crit</i>. The returned pointer must be explicitly freed.</p>
 
 <p>The function X509V3_add1_i2d() and its variants allocate <b>X509_EXTENSION</b> objects on STACK <i>*x</i> depending on <i>flags</i>. The <b>X509_EXTENSION</b> objects must be explicitly freed using X509_EXTENSION_free().</p>
 
@@ -204,7 +204,7 @@ CT Certificate SCTs                NID_ct_cert_scts</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

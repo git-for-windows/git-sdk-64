@@ -56,7 +56,7 @@ const OSSL_PARAM *EVP_SIGNATURE_settable_ctx_params(const EVP_SIGNATURE *sig);</
 
 <p>The returned value must eventually be freed with EVP_SIGNATURE_free().</p>
 
-<p>EVP_SIGNATURE_free() decrements the reference count for the <b>EVP_SIGNATURE</b> structure. Typically this structure will have been obtained from an earlier call to EVP_SIGNATURE_fetch(). If the reference count drops to 0 then the structure is freed.</p>
+<p>EVP_SIGNATURE_free() decrements the reference count for the <b>EVP_SIGNATURE</b> structure. Typically this structure will have been obtained from an earlier call to EVP_SIGNATURE_fetch(). If the reference count drops to 0 then the structure is freed. If the argument is NULL, nothing is done.</p>
 
 <p>EVP_SIGNATURE_up_ref() increments the reference count for an <b>EVP_SIGNATURE</b> structure.</p>
 
@@ -94,7 +94,7 @@ const OSSL_PARAM *EVP_SIGNATURE_settable_ctx_params(const EVP_SIGNATURE *sig);</
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -96,7 +96,7 @@ int BIO_meth_set_recvmmsg(BIO_METHOD *biom,
 
 <p>The set of standard OpenSSL provided BIO types is provided in <i>&lt;openssl/bio.h&gt;</i>. Some examples include <b>BIO_TYPE_BUFFER</b> and <b>BIO_TYPE_CIPHER</b>. Filter BIOs should have a type which have the &quot;filter&quot; bit set (<b>BIO_TYPE_FILTER</b>). Source/sink BIOs should have the &quot;source/sink&quot; bit set (<b>BIO_TYPE_SOURCE_SINK</b>). File descriptor based BIOs (e.g. socket, fd, connect, accept etc) should additionally have the &quot;descriptor&quot; bit set (<b>BIO_TYPE_DESCRIPTOR</b>). See the <a href="../man3/BIO_find_type.html">BIO_find_type(3)</a> page for more information.</p>
 
-<p>BIO_meth_free() destroys a <b>BIO_METHOD</b> structure and frees up any memory associated with it.</p>
+<p>BIO_meth_free() destroys a <b>BIO_METHOD</b> structure and frees up any memory associated with it. If the argument is NULL, nothing is done.</p>
 
 <p>BIO_meth_get_write_ex() and BIO_meth_set_write_ex() get and set the function used for writing arbitrary length data to the BIO respectively. This function will be called in response to the application calling BIO_write_ex() or BIO_write(). The parameters for the function have the same meaning as for BIO_write_ex(). Older code may call BIO_meth_get_write() and BIO_meth_set_write() instead. Applications should not call both BIO_meth_set_write_ex() and BIO_meth_set_write() or call BIO_meth_get_write() when the function was set with BIO_meth_set_write_ex().</p>
 
@@ -136,7 +136,7 @@ int BIO_meth_set_recvmmsg(BIO_METHOD *biom,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -133,7 +133,7 @@ int BN_is_prime_fasttest_ex(const BIGNUM *p, int nchecks, BN_CTX *ctx,
 
 <p>BN_GENCB_call() calls the callback function held in the <b>BN_GENCB</b> structure and passes the ints <b>a</b> and <b>b</b> as arguments. There are two types of <b>BN_GENCB</b> structure that are supported: &quot;new&quot; style and &quot;old&quot; style. New programs should prefer the &quot;new&quot; style, whilst the &quot;old&quot; style is provided for backwards compatibility purposes.</p>
 
-<p>A <b>BN_GENCB</b> structure should be created through a call to BN_GENCB_new(), and freed through a call to BN_GENCB_free().</p>
+<p>A <b>BN_GENCB</b> structure should be created through a call to BN_GENCB_new(), and freed through a call to BN_GENCB_free(). If the argument is NULL, nothing is done.</p>
 
 <p>For &quot;new&quot; style callbacks a BN_GENCB structure should be initialised with a call to BN_GENCB_set(), where <b>gencb</b> is a <b>BN_GENCB *</b>, <b>callback</b> is of type <b>int (*callback)(int, int, BN_GENCB *)</b> and <b>cb_arg</b> is a <b>void *</b>. &quot;Old&quot; style callbacks are the same except they are initialised with a call to BN_GENCB_set_old() and <b>callback</b> is of type <b>void (*callback)(int, int, void *)</b>.</p>
 
@@ -188,7 +188,7 @@ BN_GENCB_free(callback);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

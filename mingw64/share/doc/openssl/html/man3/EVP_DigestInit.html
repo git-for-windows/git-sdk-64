@@ -159,7 +159,7 @@ void EVP_MD_CTX_set_update_fn(EVP_MD_CTX *ctx,
 <dt id="EVP_MD_free">EVP_MD_free()</dt>
 <dd>
 
-<p>Decrements the reference count for the fetched <b>EVP_MD</b> structure. If the reference count drops to 0 then the structure is freed.</p>
+<p>Decrements the reference count for the fetched <b>EVP_MD</b> structure. If the reference count drops to 0 then the structure is freed. If the argument is NULL, nothing is done.</p>
 
 </dd>
 <dt id="EVP_MD_CTX_new">EVP_MD_CTX_new()</dt>
@@ -177,7 +177,7 @@ void EVP_MD_CTX_set_update_fn(EVP_MD_CTX *ctx,
 <dt id="EVP_MD_CTX_free">EVP_MD_CTX_free()</dt>
 <dd>
 
-<p>Cleans up digest context <i>ctx</i> and frees up the space allocated to it.</p>
+<p>Cleans up digest context <i>ctx</i> and frees up the space allocated to it. If the argument is NULL, nothing is done.</p>
 
 </dd>
 <dt id="EVP_MD_CTX_ctrl">EVP_MD_CTX_ctrl()</dt>
@@ -508,6 +508,18 @@ void EVP_MD_CTX_set_update_fn(EVP_MD_CTX *ctx,
 <dd>
 
 <p>This flag instructs the digest to optimize for one update only, if possible.</p>
+
+</dd>
+<dt id="EVP_MD_CTX_FLAG_CLEANED">EVP_MD_CTX_FLAG_CLEANED</dt>
+<dd>
+
+<p>This flag is for internal use only and <i>must not</i> be used in user code.</p>
+
+</dd>
+<dt id="EVP_MD_CTX_FLAG_REUSE">EVP_MD_CTX_FLAG_REUSE</dt>
+<dd>
+
+<p>This flag is for internal use only and <i>must not</i> be used in user code.</p>
 
 </dd>
 <dt id="EVP_MD_CTX_FLAG_NO_INIT">EVP_MD_CTX_FLAG_NO_INIT</dt>

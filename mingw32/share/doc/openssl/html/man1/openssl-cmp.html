@@ -328,7 +328,9 @@
 <dt id="chainout-filename"><b>-chainout</b> <i>filename</i></dt>
 <dd>
 
-<p>The file where the chain of any newly enrolled certificate should be saved.</p>
+<p>The file where the chain of any newly enrolled certificate should be saved. This chain excludes the leaf certificate, i.e., the newly enrolled certificate. Also the trust anchor (the root certificate) is not included.</p>
+
+<p>If the <b>-certout</b> option is given, too, with equal <i>filename</i> argument, then the file produced contains both outputs concatenated: the newly enrolled certificate followed by its chain.</p>
 
 </dd>
 </dl>
@@ -1213,7 +1215,7 @@ openssl cmp -cmd kur -newkey cl_key_new.pem</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2007-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2007-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

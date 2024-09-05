@@ -48,7 +48,7 @@ void BUF_reverse(unsigned char *out, const unsigned char *in, size_t size);</cod
 
 <p>BUF_MEM_new_ex() allocates a buffer with the specified flags. The flag <b>BUF_MEM_FLAG_SECURE</b> specifies that the <b>data</b> pointer should be allocated on the secure heap; see <a href="../man3/CRYPTO_secure_malloc.html">CRYPTO_secure_malloc(3)</a>.</p>
 
-<p>BUF_MEM_free() frees up an already existing buffer. The data is zeroed before freeing up in case the buffer contains sensitive data.</p>
+<p>BUF_MEM_free() frees up an already existing buffer. The data is zeroed before freeing up in case the buffer contains sensitive data. If the argument is NULL, nothing is done.</p>
 
 <p>BUF_MEM_grow() changes the size of an already existing buffer to <b>len</b>. Any data already in the buffer is preserved if it increases in size.</p>
 
@@ -74,7 +74,7 @@ void BUF_reverse(unsigned char *out, const unsigned char *in, size_t size);</cod
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

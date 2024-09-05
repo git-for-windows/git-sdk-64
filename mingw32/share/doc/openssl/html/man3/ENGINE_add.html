@@ -178,7 +178,7 @@ key-loading - loading public and/or private EVP_PKEY keys</code></pre>
 
 <p>This basic type of reference is used for instantiating new ENGINEs, iterating across OpenSSL&#39;s internal linked-list of loaded ENGINEs, reading information about an ENGINE, etc. Essentially a structural reference is sufficient if you only need to query or manipulate the data of an ENGINE implementation rather than use its functionality.</p>
 
-<p>The ENGINE_new() function returns a structural reference to a new (empty) ENGINE object. There are other ENGINE API functions that return structural references such as; ENGINE_by_id(), ENGINE_get_first(), ENGINE_get_last(), ENGINE_get_next(), ENGINE_get_prev(). All structural references should be released by a corresponding to call to the ENGINE_free() function - the ENGINE object itself will only actually be cleaned up and deallocated when the last structural reference is released.</p>
+<p>The ENGINE_new() function returns a structural reference to a new (empty) ENGINE object. There are other ENGINE API functions that return structural references such as; ENGINE_by_id(), ENGINE_get_first(), ENGINE_get_last(), ENGINE_get_next(), ENGINE_get_prev(). All structural references should be released by a corresponding to call to the ENGINE_free() function - the ENGINE object itself will only actually be cleaned up and deallocated when the last structural reference is released. If the argument to ENGINE_free() is NULL, nothing is done.</p>
 
 <p>It should also be noted that many ENGINE API function calls that accept a structural reference will internally obtain another reference - typically this happens whenever the supplied ENGINE will be needed by OpenSSL after the function has returned. Eg. the function to add a new ENGINE to OpenSSL&#39;s internal list is ENGINE_add() - if this function returns success, then OpenSSL will have stored a new structural reference internally so the caller is still responsible for freeing their own reference with ENGINE_free() when they are finished with it. In a similar way, some functions will automatically release the structural reference passed to it if part of the function&#39;s job is to do so. Eg. the ENGINE_get_next() and ENGINE_get_prev() functions are used for iterating across the internal ENGINE list - they will return a new structural reference to the next (or previous) ENGINE in the list or NULL if at the end (or beginning) of the list, but in either case the structural reference passed to the function is released on behalf of the caller.</p>
 
@@ -414,7 +414,7 @@ ENGINE_CMD_FLAG_INTERNAL</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -46,7 +46,7 @@ int i2d_TYPE_bio(BIO *bp, TYPE *a);</code></pre>
 
 <p>These functions convert OpenSSL objects to and from their ASN.1/DER encoding. Unlike the C structures which can have pointers to sub-objects within, the DER is a serialized encoding, suitable for sending over the network, writing to a file, and so on.</p>
 
-<p><b>d2i_<i>TYPE</i></b>() attempts to decode <i>len</i> bytes at <i>*ppin</i>. If successful a pointer to the <b><i>TYPE</i></b> structure is returned and <i>*ppin</i> is incremented to the byte following the parsed data. If <i>a</i> is not NULL then a pointer to the returned structure is also written to <i>*a</i>. If an error occurred then NULL is returned.</p>
+<p><b>d2i_<i>TYPE</i></b>() attempts to decode <i>len</i> bytes at <i>*ppin</i>. If successful a pointer to the <b><i>TYPE</i></b> structure is returned and <i>*ppin</i> is incremented to the byte following the parsed data. If <i>a</i> is not NULL then a pointer to the returned structure is also written to <i>*a</i>. If an error occurred then NULL is returned. The caller retains ownership of the returned object and needs to free it when it is no longer needed, e.g. using X509_free() for X509 objects or DSA_SIG_free() for DSA_SIG objects.</p>
 
 <p>On a successful return, if <i>*a</i> is not NULL then it is assumed that <i>*a</i> contains a valid <b><i>TYPE</i></b> structure and an attempt is made to reuse it. For <b><i>TYPE</i></b> structures where it matters it is possible to set up a library context on the decoded structure this way (see the <b>EXAMPLES</b> section). However using the &quot;reuse&quot; capability for other purposes is <b>strongly discouraged</b> (see <b>BUGS</b> below, and the discussion in the <b>RETURN VALUES</b> section).</p>
 
@@ -230,7 +230,7 @@ if (d2i_X509(&amp;x, &amp;p, len) == NULL)
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 1998-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 1998-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

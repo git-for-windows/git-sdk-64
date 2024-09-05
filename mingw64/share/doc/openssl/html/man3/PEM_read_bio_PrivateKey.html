@@ -241,7 +241,7 @@ int PEM_write_DHparams(FILE *fp, DH *x);</code></pre>
 
 <p>The <i>fp</i> FILE parameter (if present) specifies the FILE pointer to read from or write to.</p>
 
-<p>The PEM read functions all take an argument <i><b>TYPE</b> **x</i> and return a <i><b>TYPE</b> *</i> pointer. Where <i><b>TYPE</b></i> is whatever structure the function uses. If <i>x</i> is NULL then the parameter is ignored. If <i>x</i> is not NULL but <i>*x</i> is NULL then the structure returned will be written to <i>*x</i>. If neither <i>x</i> nor <i>*x</i> is NULL then an attempt is made to reuse the structure at <i>*x</i> (but see BUGS and EXAMPLES sections). Irrespective of the value of <i>x</i> a pointer to the structure is always returned (or NULL if an error occurred).</p>
+<p>The PEM read functions all take an argument <i><b>TYPE</b> **x</i> and return a <i><b>TYPE</b> *</i> pointer. Where <i><b>TYPE</b></i> is whatever structure the function uses. If <i>x</i> is NULL then the parameter is ignored. If <i>x</i> is not NULL but <i>*x</i> is NULL then the structure returned will be written to <i>*x</i>. If neither <i>x</i> nor <i>*x</i> is NULL then an attempt is made to reuse the structure at <i>*x</i> (but see BUGS and EXAMPLES sections). Irrespective of the value of <i>x</i> a pointer to the structure is always returned (or NULL if an error occurred). The caller retains ownership of the returned object and needs to free it when it is no longer needed, e.g. using X509_free() for X509 objects or EVP_PKEY_free() for EVP_PKEY objects.</p>
 
 <p>The PEM functions which write private keys take an <i>enc</i> parameter which specifies the encryption algorithm to use, encryption is done at the PEM level. If this parameter is set to NULL then the private key is written in unencrypted form.</p>
 
@@ -418,7 +418,7 @@ if (key == NULL)
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

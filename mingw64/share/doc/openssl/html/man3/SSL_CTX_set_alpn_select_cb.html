@@ -67,15 +67,17 @@ void SSL_get0_next_proto_negotiated(const SSL *s, const unsigned char **data,
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_CTX_set_alpn_protos() and SSL_set_alpn_protos() are used by the client to set the list of protocols available to be negotiated. The <b>protos</b> must be in protocol-list format, described below. The length of <b>protos</b> is specified in <b>protos_len</b>.</p>
+<p>SSL_CTX_set_alpn_protos() and SSL_set_alpn_protos() are used by the client to set the list of protocols available to be negotiated. The <b>protos</b> must be in protocol-list format, described below. The length of <b>protos</b> is specified in <b>protos_len</b>. Setting <b>protos_len</b> to 0 clears any existing list of ALPN protocols and no ALPN extension will be sent to the server.</p>
 
 <p>SSL_CTX_set_alpn_select_cb() sets the application callback <b>cb</b> used by a server to select which protocol to use for the incoming connection. When <b>cb</b> is NULL, ALPN is not used. The <b>arg</b> value is a pointer which is passed to the application callback.</p>
 
 <p><b>cb</b> is the application defined callback. The <b>in</b>, <b>inlen</b> parameters are a vector in protocol-list format. The value of the <b>out</b>, <b>outlen</b> vector should be set to the value of a single protocol selected from the <b>in</b>, <b>inlen</b> vector. The <b>out</b> buffer may point directly into <b>in</b>, or to a buffer that outlives the handshake. The <b>arg</b> parameter is the pointer set via SSL_CTX_set_alpn_select_cb().</p>
 
-<p>SSL_select_next_proto() is a helper function used to select protocols. It implements the standard protocol selection. It is expected that this function is called from the application callback <b>cb</b>. The protocol data in <b>server</b>, <b>server_len</b> and <b>client</b>, <b>client_len</b> must be in the protocol-list format described below. The first item in the <b>server</b>, <b>server_len</b> list that matches an item in the <b>client</b>, <b>client_len</b> list is selected, and returned in <b>out</b>, <b>outlen</b>. The <b>out</b> value will point into either <b>server</b> or <b>client</b>, so it should be copied immediately. If no match is found, the first item in <b>client</b>, <b>client_len</b> is returned in <b>out</b>, <b>outlen</b>. This function can also be used in the NPN callback.</p>
+<p>SSL_select_next_proto() is a helper function used to select protocols. It implements the standard protocol selection. It is expected that this function is called from the application callback <b>cb</b>. The protocol data in <b>server</b>, <b>server_len</b> and <b>client</b>, <b>client_len</b> must be in the protocol-list format described below. The first item in the <b>server</b>, <b>server_len</b> list that matches an item in the <b>client</b>, <b>client_len</b> list is selected, and returned in <b>out</b>, <b>outlen</b>. The <b>out</b> value will point into either <b>server</b> or <b>client</b>, so it should be copied immediately. The client list must include at least one valid (nonempty) protocol entry in the list.</p>
 
-<p>SSL_CTX_set_next_proto_select_cb() sets a callback <b>cb</b> that is called when a client needs to select a protocol from the server&#39;s provided list, and a user-defined pointer argument <b>arg</b> which will be passed to this callback. For the callback itself, <b>out</b> must be set to point to the selected protocol (which may be within <b>in</b>). The length of the protocol name must be written into <b>outlen</b>. The server&#39;s advertised protocols are provided in <b>in</b> and <b>inlen</b>. The callback can assume that <b>in</b> is syntactically valid. The client must select a protocol. It is fatal to the connection if this callback returns a value other than <b>SSL_TLSEXT_ERR_OK</b>. The <b>arg</b> parameter is the pointer set via SSL_CTX_set_next_proto_select_cb().</p>
+<p>The SSL_select_next_proto() helper function can be useful from either the ALPN callback or the NPN callback (described below). If no match is found, the first item in <b>client</b>, <b>client_len</b> is returned in <b>out</b>, <b>outlen</b> and <b>OPENSSL_NPN_NO_OVERLAP</b> is returned. This can be useful when implementing the NPN callback. In the ALPN case, the value returned in <b>out</b> and <b>outlen</b> must be ignored if <b>OPENSSL_NPN_NO_OVERLAP</b> has been returned from SSL_select_next_proto().</p>
+
+<p>SSL_CTX_set_next_proto_select_cb() sets a callback <b>cb</b> that is called when a client needs to select a protocol from the server&#39;s provided list, and a user-defined pointer argument <b>arg</b> which will be passed to this callback. For the callback itself, <b>out</b> must be set to point to the selected protocol (which may be within <b>in</b>). The length of the protocol name must be written into <b>outlen</b>. The server&#39;s advertised protocols are provided in <b>in</b> and <b>inlen</b>. The callback can assume that <b>in</b> is syntactically valid. The client must select a protocol (although it may be an empty, zero length protocol). It is fatal to the connection if this callback returns a value other than <b>SSL_TLSEXT_ERR_OK</b> or if the zero length protocol is selected. The <b>arg</b> parameter is the pointer set via SSL_CTX_set_next_proto_select_cb().</p>
 
 <p>SSL_CTX_set_next_protos_advertised_cb() sets a callback <b>cb</b> that is called when a TLS server needs a list of supported protocols for Next Protocol Negotiation. The returned list must be in protocol-list format, described below. The list is returned by setting <b>out</b> to point to it and <b>outlen</b> to its length. This memory will not be modified, but the <b>SSL</b> does keep a reference to it. The callback should return <b>SSL_TLSEXT_ERR_OK</b> if it wishes to advertise. Otherwise, no such extension will be included in the ServerHello.</p>
 
@@ -118,7 +120,7 @@ unsigned int length = sizeof(vector);</code></pre>
 <dt id="OPENSSL_NPN_NO_OVERLAP">OPENSSL_NPN_NO_OVERLAP</dt>
 <dd>
 
-<p>No match was found. The first item in <b>client</b>, <b>client_len</b> is returned in <b>out</b>, <b>outlen</b>.</p>
+<p>No match was found. The first item in <b>client</b>, <b>client_len</b> is returned in <b>out</b>, <b>outlen</b> (or <b>NULL</b> and 0 in the case where the first entry in <b>client</b> is invalid).</p>
 
 </dd>
 </dl>
@@ -157,7 +159,7 @@ unsigned int length = sizeof(vector);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
