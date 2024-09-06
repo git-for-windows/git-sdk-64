@@ -132,6 +132,8 @@ __isl_give isl_qpolynomial *isl_qpolynomial_from_constraint(
 	__isl_take isl_constraint *c, enum isl_dim_type type, unsigned pos);
 __isl_give isl_qpolynomial *isl_qpolynomial_from_term(__isl_take isl_term *term);
 __isl_give isl_qpolynomial *isl_qpolynomial_from_aff(__isl_take isl_aff *aff);
+isl_bool isl_qpolynomial_isa_aff(__isl_keep isl_qpolynomial *qp);
+__isl_give isl_aff *isl_qpolynomial_as_aff(__isl_take isl_qpolynomial *qp);
 __isl_give isl_basic_map *isl_basic_map_from_qpolynomial(
 	__isl_take isl_qpolynomial *qp);
 

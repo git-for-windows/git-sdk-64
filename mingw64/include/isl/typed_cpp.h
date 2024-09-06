@@ -1094,7 +1094,9 @@ struct basic_map<Domain, Range> : public isl::basic_map {
   inline typed::basic_map<Domain, Range> intersect_domain(const typed::point<Domain> &bset) const;
   inline typed::map<Domain, Range> intersect_domain_wrapped_domain(const typed::set<> &domain) const = delete;
   inline typed::union_map<Domain, Range> intersect_domain_wrapped_domain(const typed::union_set<> &domain) const = delete;
+  inline typed::basic_map<Domain, Range> intersect_params(const typed::basic_set<> &bset) const;
   inline typed::map<Domain, Range> intersect_params(const typed::set<> &params) const;
+  inline typed::basic_map<Domain, Range> intersect_params(const typed::point<> &bset) const;
   inline typed::basic_map<Domain, Range> intersect_range(const typed::basic_set<Range> &bset) const;
   inline typed::map<Domain, Range> intersect_range(const typed::set<Range> &set) const;
   inline typed::union_map<Domain, Range> intersect_range(const typed::space<Range> &space) const;
@@ -1309,7 +1311,9 @@ struct basic_map<pair<Domain, Range>, Range2> : public isl::basic_map {
   inline typed::basic_map<pair<Domain, Range>, Range2> intersect_domain(const typed::point<pair<Domain, Range>> &bset) const;
   inline typed::map<pair<Domain, Range>, Range2> intersect_domain_wrapped_domain(const typed::set<Domain> &domain) const;
   inline typed::union_map<pair<Domain, Range>, Range2> intersect_domain_wrapped_domain(const typed::union_set<Domain> &domain) const;
+  inline typed::basic_map<pair<Domain, Range>, Range2> intersect_params(const typed::basic_set<> &bset) const;
   inline typed::map<pair<Domain, Range>, Range2> intersect_params(const typed::set<> &params) const;
+  inline typed::basic_map<pair<Domain, Range>, Range2> intersect_params(const typed::point<> &bset) const;
   inline typed::basic_map<pair<Domain, Range>, Range2> intersect_range(const typed::basic_set<Range2> &bset) const;
   inline typed::map<pair<Domain, Range>, Range2> intersect_range(const typed::set<Range2> &set) const;
   inline typed::union_map<pair<Domain, Range>, Range2> intersect_range(const typed::space<Range2> &space) const;
@@ -1522,7 +1526,9 @@ struct basic_map<Domain, Domain> : public isl::basic_map {
   inline typed::basic_map<Domain, Domain> intersect_domain(const typed::point<Domain> &bset) const;
   inline typed::map<Domain, Domain> intersect_domain_wrapped_domain(const typed::set<> &domain) const = delete;
   inline typed::union_map<Domain, Domain> intersect_domain_wrapped_domain(const typed::union_set<> &domain) const = delete;
+  inline typed::basic_map<Domain, Domain> intersect_params(const typed::basic_set<> &bset) const;
   inline typed::map<Domain, Domain> intersect_params(const typed::set<> &params) const;
+  inline typed::basic_map<Domain, Domain> intersect_params(const typed::point<> &bset) const;
   inline typed::basic_map<Domain, Domain> intersect_range(const typed::basic_set<Domain> &bset) const;
   inline typed::map<Domain, Domain> intersect_range(const typed::set<Domain> &set) const;
   inline typed::union_map<Domain, Domain> intersect_range(const typed::space<Domain> &space) const;
@@ -1741,7 +1747,9 @@ struct basic_map<Domain, pair<Range, Range2>> : public isl::basic_map {
   inline typed::basic_map<Domain, pair<Range, Range2>> intersect_domain(const typed::point<Domain> &bset) const;
   inline typed::map<Domain, pair<Range, Range2>> intersect_domain_wrapped_domain(const typed::set<> &domain) const = delete;
   inline typed::union_map<Domain, pair<Range, Range2>> intersect_domain_wrapped_domain(const typed::union_set<> &domain) const = delete;
+  inline typed::basic_map<Domain, pair<Range, Range2>> intersect_params(const typed::basic_set<> &bset) const;
   inline typed::map<Domain, pair<Range, Range2>> intersect_params(const typed::set<> &params) const;
+  inline typed::basic_map<Domain, pair<Range, Range2>> intersect_params(const typed::point<> &bset) const;
   inline typed::basic_map<Domain, pair<Range, Range2>> intersect_range(const typed::basic_set<pair<Range, Range2>> &bset) const;
   inline typed::map<Domain, pair<Range, Range2>> intersect_range(const typed::set<pair<Range, Range2>> &set) const;
   inline typed::union_map<Domain, pair<Range, Range2>> intersect_range(const typed::space<pair<Range, Range2>> &space) const;
@@ -1955,7 +1963,9 @@ struct basic_map<pair<T1, T2>, pair<T1, T2>> : public isl::basic_map {
   inline typed::basic_map<pair<T1, T2>, pair<T1, T2>> intersect_domain(const typed::point<pair<T1, T2>> &bset) const;
   inline typed::map<pair<T1, T2>, pair<T1, T2>> intersect_domain_wrapped_domain(const typed::set<T1> &domain) const;
   inline typed::union_map<pair<T1, T2>, pair<T1, T2>> intersect_domain_wrapped_domain(const typed::union_set<T1> &domain) const;
+  inline typed::basic_map<pair<T1, T2>, pair<T1, T2>> intersect_params(const typed::basic_set<> &bset) const;
   inline typed::map<pair<T1, T2>, pair<T1, T2>> intersect_params(const typed::set<> &params) const;
+  inline typed::basic_map<pair<T1, T2>, pair<T1, T2>> intersect_params(const typed::point<> &bset) const;
   inline typed::basic_map<pair<T1, T2>, pair<T1, T2>> intersect_range(const typed::basic_set<pair<T1, T2>> &bset) const;
   inline typed::map<pair<T1, T2>, pair<T1, T2>> intersect_range(const typed::set<pair<T1, T2>> &set) const;
   inline typed::union_map<pair<T1, T2>, pair<T1, T2>> intersect_range(const typed::space<pair<T1, T2>> &space) const;
@@ -2171,7 +2181,9 @@ struct basic_map<pair<T1, T2>, pair<Range, Range2>> : public isl::basic_map {
   inline typed::basic_map<pair<T1, T2>, pair<Range, Range2>> intersect_domain(const typed::point<pair<T1, T2>> &bset) const;
   inline typed::map<pair<T1, T2>, pair<Range, Range2>> intersect_domain_wrapped_domain(const typed::set<T1> &domain) const;
   inline typed::union_map<pair<T1, T2>, pair<Range, Range2>> intersect_domain_wrapped_domain(const typed::union_set<T1> &domain) const;
+  inline typed::basic_map<pair<T1, T2>, pair<Range, Range2>> intersect_params(const typed::basic_set<> &bset) const;
   inline typed::map<pair<T1, T2>, pair<Range, Range2>> intersect_params(const typed::set<> &params) const;
+  inline typed::basic_map<pair<T1, T2>, pair<Range, Range2>> intersect_params(const typed::point<> &bset) const;
   inline typed::basic_map<pair<T1, T2>, pair<Range, Range2>> intersect_range(const typed::basic_set<pair<Range, Range2>> &bset) const;
   inline typed::map<pair<T1, T2>, pair<Range, Range2>> intersect_range(const typed::set<pair<Range, Range2>> &set) const;
   inline typed::union_map<pair<T1, T2>, pair<Range, Range2>> intersect_range(const typed::space<pair<Range, Range2>> &space) const;
@@ -17192,10 +17204,24 @@ typed::basic_map<Domain, Range> typed::basic_map<Domain, Range>::intersect_domai
 }
 
 template <typename Domain, typename Range>
+typed::basic_map<Domain, Range> typed::basic_map<Domain, Range>::intersect_params(const typed::basic_set<> &bset) const
+{
+  auto res = isl::basic_map::intersect_params(bset);
+  return typed::basic_map<Domain, Range>(res);
+}
+
+template <typename Domain, typename Range>
 typed::map<Domain, Range> typed::basic_map<Domain, Range>::intersect_params(const typed::set<> &params) const
 {
   auto res = isl::basic_map::intersect_params(params);
   return typed::map<Domain, Range>(res);
+}
+
+template <typename Domain, typename Range>
+typed::basic_map<Domain, Range> typed::basic_map<Domain, Range>::intersect_params(const typed::point<> &bset) const
+{
+  auto res = isl::basic_map::intersect_params(bset);
+  return typed::basic_map<Domain, Range>(res);
 }
 
 template <typename Domain, typename Range>
@@ -17892,10 +17918,24 @@ typed::union_map<pair<Domain, Range>, Range2> typed::basic_map<pair<Domain, Rang
 }
 
 template <typename Domain, typename Range, typename Range2>
+typed::basic_map<pair<Domain, Range>, Range2> typed::basic_map<pair<Domain, Range>, Range2>::intersect_params(const typed::basic_set<> &bset) const
+{
+  auto res = isl::basic_map::intersect_params(bset);
+  return typed::basic_map<pair<Domain, Range>, Range2>(res);
+}
+
+template <typename Domain, typename Range, typename Range2>
 typed::map<pair<Domain, Range>, Range2> typed::basic_map<pair<Domain, Range>, Range2>::intersect_params(const typed::set<> &params) const
 {
   auto res = isl::basic_map::intersect_params(params);
   return typed::map<pair<Domain, Range>, Range2>(res);
+}
+
+template <typename Domain, typename Range, typename Range2>
+typed::basic_map<pair<Domain, Range>, Range2> typed::basic_map<pair<Domain, Range>, Range2>::intersect_params(const typed::point<> &bset) const
+{
+  auto res = isl::basic_map::intersect_params(bset);
+  return typed::basic_map<pair<Domain, Range>, Range2>(res);
 }
 
 template <typename Domain, typename Range, typename Range2>
@@ -18550,10 +18590,24 @@ typed::basic_map<Domain, Domain> typed::basic_map<Domain, Domain>::intersect_dom
 }
 
 template <typename Domain>
+typed::basic_map<Domain, Domain> typed::basic_map<Domain, Domain>::intersect_params(const typed::basic_set<> &bset) const
+{
+  auto res = isl::basic_map::intersect_params(bset);
+  return typed::basic_map<Domain, Domain>(res);
+}
+
+template <typename Domain>
 typed::map<Domain, Domain> typed::basic_map<Domain, Domain>::intersect_params(const typed::set<> &params) const
 {
   auto res = isl::basic_map::intersect_params(params);
   return typed::map<Domain, Domain>(res);
+}
+
+template <typename Domain>
+typed::basic_map<Domain, Domain> typed::basic_map<Domain, Domain>::intersect_params(const typed::point<> &bset) const
+{
+  auto res = isl::basic_map::intersect_params(bset);
+  return typed::basic_map<Domain, Domain>(res);
 }
 
 template <typename Domain>
@@ -19240,10 +19294,24 @@ typed::basic_map<Domain, pair<Range, Range2>> typed::basic_map<Domain, pair<Rang
 }
 
 template <typename Domain, typename Range, typename Range2>
+typed::basic_map<Domain, pair<Range, Range2>> typed::basic_map<Domain, pair<Range, Range2>>::intersect_params(const typed::basic_set<> &bset) const
+{
+  auto res = isl::basic_map::intersect_params(bset);
+  return typed::basic_map<Domain, pair<Range, Range2>>(res);
+}
+
+template <typename Domain, typename Range, typename Range2>
 typed::map<Domain, pair<Range, Range2>> typed::basic_map<Domain, pair<Range, Range2>>::intersect_params(const typed::set<> &params) const
 {
   auto res = isl::basic_map::intersect_params(params);
   return typed::map<Domain, pair<Range, Range2>>(res);
+}
+
+template <typename Domain, typename Range, typename Range2>
+typed::basic_map<Domain, pair<Range, Range2>> typed::basic_map<Domain, pair<Range, Range2>>::intersect_params(const typed::point<> &bset) const
+{
+  auto res = isl::basic_map::intersect_params(bset);
+  return typed::basic_map<Domain, pair<Range, Range2>>(res);
 }
 
 template <typename Domain, typename Range, typename Range2>
@@ -19996,10 +20064,24 @@ typed::union_map<pair<T1, T2>, pair<T1, T2>> typed::basic_map<pair<T1, T2>, pair
 }
 
 template <typename T1, typename T2>
+typed::basic_map<pair<T1, T2>, pair<T1, T2>> typed::basic_map<pair<T1, T2>, pair<T1, T2>>::intersect_params(const typed::basic_set<> &bset) const
+{
+  auto res = isl::basic_map::intersect_params(bset);
+  return typed::basic_map<pair<T1, T2>, pair<T1, T2>>(res);
+}
+
+template <typename T1, typename T2>
 typed::map<pair<T1, T2>, pair<T1, T2>> typed::basic_map<pair<T1, T2>, pair<T1, T2>>::intersect_params(const typed::set<> &params) const
 {
   auto res = isl::basic_map::intersect_params(params);
   return typed::map<pair<T1, T2>, pair<T1, T2>>(res);
+}
+
+template <typename T1, typename T2>
+typed::basic_map<pair<T1, T2>, pair<T1, T2>> typed::basic_map<pair<T1, T2>, pair<T1, T2>>::intersect_params(const typed::point<> &bset) const
+{
+  auto res = isl::basic_map::intersect_params(bset);
+  return typed::basic_map<pair<T1, T2>, pair<T1, T2>>(res);
 }
 
 template <typename T1, typename T2>
@@ -20745,10 +20827,24 @@ typed::union_map<pair<T1, T2>, pair<Range, Range2>> typed::basic_map<pair<T1, T2
 }
 
 template <typename T1, typename T2, typename Range, typename Range2>
+typed::basic_map<pair<T1, T2>, pair<Range, Range2>> typed::basic_map<pair<T1, T2>, pair<Range, Range2>>::intersect_params(const typed::basic_set<> &bset) const
+{
+  auto res = isl::basic_map::intersect_params(bset);
+  return typed::basic_map<pair<T1, T2>, pair<Range, Range2>>(res);
+}
+
+template <typename T1, typename T2, typename Range, typename Range2>
 typed::map<pair<T1, T2>, pair<Range, Range2>> typed::basic_map<pair<T1, T2>, pair<Range, Range2>>::intersect_params(const typed::set<> &params) const
 {
   auto res = isl::basic_map::intersect_params(params);
   return typed::map<pair<T1, T2>, pair<Range, Range2>>(res);
+}
+
+template <typename T1, typename T2, typename Range, typename Range2>
+typed::basic_map<pair<T1, T2>, pair<Range, Range2>> typed::basic_map<pair<T1, T2>, pair<Range, Range2>>::intersect_params(const typed::point<> &bset) const
+{
+  auto res = isl::basic_map::intersect_params(bset);
+  return typed::basic_map<pair<T1, T2>, pair<Range, Range2>>(res);
 }
 
 template <typename T1, typename T2, typename Range, typename Range2>
