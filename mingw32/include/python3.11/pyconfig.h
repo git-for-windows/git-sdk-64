@@ -120,7 +120,7 @@
 /* #undef HAVE_BROKEN_SEM_GETVALUE */
 
 /* Define if 'unsetenv' does not return an int. */
-/* #undef HAVE_BROKEN_UNSETENV */
+#define HAVE_BROKEN_UNSETENV 1
 
 /* Has builtin __atomic_load_n() and __atomic_store_n() functions */
 #define HAVE_BUILTIN_ATOMIC 1

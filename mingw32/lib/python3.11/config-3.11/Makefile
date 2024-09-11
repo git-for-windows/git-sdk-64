@@ -29,9 +29,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.11
-srcdir=		../Python-3.11.9
-VPATH=		../Python-3.11.9
-abs_srcdir=	/c/M/B/src/build-MINGW32/../Python-3.11.9
+srcdir=		../Python-3.11.10
+VPATH=		../Python-3.11.10
+abs_srcdir=	/c/M/B/src/build-MINGW32/../Python-3.11.10
 abs_builddir=	/c/M/B/src/build-MINGW32
 
 
@@ -83,11 +83,11 @@ MAKESETUP=      $(srcdir)/Modules/makesetup
 OPT=		-DNDEBUG -g -fwrapv -O3 -Wall
 BASECFLAGS=	
 BASECPPFLAGS=	-IObjects -IInclude -IPython
-CONFIGURE_CFLAGS=	-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3
+CONFIGURE_CFLAGS=	-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wp,-D__USE_MINGW_ANSI_STDIO=1 -O3
 # CFLAGS_NODIST is used for building the interpreter and stdlib C extensions.
 # Use it when a compiler flag should _not_ be part of the distutils CFLAGS
 # once Python is installed (Issue #21121).
-CONFIGURE_CFLAGS_NODIST= -fno-semantic-interposition -std=c11 -Werror=implicit-function-declaration -fvisibility=hidden -D_WIN32_WINNT=0x0602 -DPY3_DLLNAME='L"libpython$(LDVERSION).dll"' -DMS_DLL_ID='"3.11-32"'
+CONFIGURE_CFLAGS_NODIST= -fno-semantic-interposition -std=c11 -Wno-error=incompatible-pointer-types -Werror=implicit-function-declaration -fvisibility=hidden -D_WIN32_WINNT=0x0602 -DPY3_DLLNAME='L"libpython$(LDVERSION).dll"' -DMS_DLL_ID='"3.11-32"'
 # LDFLAGS_NODIST is used in the same manner as CFLAGS_NODIST.
 # Use it when a linker flag should _not_ be part of the distutils LDFLAGS
 # once Python is installed (bpo-35257)
@@ -95,7 +95,7 @@ CONFIGURE_LDFLAGS_NODIST= -fno-semantic-interposition
 # LDFLAGS_NOLTO is an extra flag to disable lto. It is used to speed up building
 # of _bootstrap_python and _freeze_module tools, which don't need LTO.
 CONFIGURE_LDFLAGS_NOLTO=
-CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -I.
+CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC  -I.
 CONFIGURE_LDFLAGS=	-Wl,--no-seh -Wl,--large-address-aware -Wl,--large-address-aware
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
@@ -125,7 +125,7 @@ PY_CORE_CFLAGS=	$(PY_STDMODULE_CFLAGS) -DPy_BUILD_CORE
 PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 # Strict or non-strict aliasing flags used to compile dtoa.c, see above
 CFLAGS_ALIASING=
-RCFLAGS= -DFIELD3=9150 -O COFF --target=pe-i386
+RCFLAGS= -DFIELD3=10150 -O COFF --target=pe-i386
 
 
 # Machine-dependent subdirectories
@@ -145,8 +145,8 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/M/B/src/Python-3.11.9
-abs_srcdir_b2h=		C:/M/B/src/Python-3.11.9
+srcdir_b2h=		C:/M/B/src/Python-3.11.10
+abs_srcdir_b2h=		C:/M/B/src/Python-3.11.10
 abs_builddir_b2h=	C:/M/B/src/build-MINGW32
 prefix_b2h=		D:/a/msys64/mingw32
 
@@ -367,7 +367,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-loadable-sqlite-extensions' '--with-tzpath=/mingw32/share/zoneinfo' '--enable-optimizations' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -O3' 'LDFLAGS=-Wl,--no-seh -Wl,--large-address-aware -Wl,--large-address-aware' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1'
+CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-loadable-sqlite-extensions' '--with-tzpath=/mingw32/share/zoneinfo' '--enable-optimizations' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig' 'CC=gcc' 'CFLAGS=-march=pentium4 -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wp,-D__USE_MINGW_ANSI_STDIO=1 -O3' 'LDFLAGS=-Wl,--no-seh -Wl,--large-address-aware -Wl,--large-address-aware' 'CPPFLAGS='
 
 
 # Subdirectories with code
@@ -879,10 +879,10 @@ $(BUILDPYTHON):	Programs/python.o $(LINK_PYTHON_DEPS) python_exe.o
 	$(LINKCC) $(PY_CORE_LDFLAGS) $(LINKFORSHARED) -municode -o $@ Programs/python.o $(LINK_PYTHON_OBJS) $(LIBS) $(MODLIBS) $(SYSLIBS) python_exe.o
 
 $(BUILDVENVLAUNCHER): $(BUILDPYTHON) venvlauncher.o  $(srcdir)/PC/launcher.c
-	$(LINKCC) -D_CONSOLE -DVENV_REDIRECT -DPYTHON_EXECUTABLE_WITH_VERSION="L\"python$(LDVERSION)$(EXE)\"" -municode -static -static-libgcc -static-libstdc++ venvlauncher.o $(srcdir)/PC/launcher.c -o $@ -lversion
+	$(LINKCC) -D_CONSOLE -DVENV_REDIRECT -DPYTHON_EXECUTABLE_WITH_VERSION="L\"python$(LDVERSION)$(EXE)\"" $(PY_STDMODULE_CFLAGS) -municode -static -static-libgcc -static-libstdc++ venvlauncher.o $(srcdir)/PC/launcher.c -o $@ -lversion
 
 $(BUILDVENVWLAUNCHER): $(BUILDPYTHONW) venvwlauncher.o  $(srcdir)/PC/launcher.c
-	$(LINKCC) -D_WINDOWS -DVENV_REDIRECT -DPYTHON_EXECUTABLE_WITH_VERSION="L\"pythonw$(LDVERSION)$(EXE)\"" -mwindows -municode -static -static-libgcc -static-libstdc++ venvwlauncher.o $(srcdir)/PC/launcher.c -o $@ -lversion
+	$(LINKCC) -D_WINDOWS -DVENV_REDIRECT -DPYTHON_EXECUTABLE_WITH_VERSION="L\"pythonw$(LDVERSION)$(EXE)\"" $(PY_STDMODULE_CFLAGS) -mwindows -municode -static -static-libgcc -static-libstdc++ venvwlauncher.o $(srcdir)/PC/launcher.c -o $@ -lversion
 
 platform: $(PYTHON_FOR_BUILD_DEPS) pybuilddir.txt
 	$(RUNSHARED) $(PYTHON_FOR_BUILD) -c 'import sys ; from sysconfig import get_platform ; print("%s-%d.%d" % (get_platform(), *sys.version_info[:2]))' >platform

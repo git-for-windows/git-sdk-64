@@ -31,8 +31,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.12
 srcdir=		.
 
-abs_srcdir=	/c/S/B/src/Python-3.12.5
-abs_builddir=	/c/S/B/src/Python-3.12.5
+abs_srcdir=	/c/S/B/src/Python-3.12.6
+abs_builddir=	/c/S/B/src/Python-3.12.6
 
 
 CC=		gcc
@@ -168,7 +168,7 @@ SHLIB_SUFFIX=	.dll
 EXT_SUFFIX=	.cpython-312-x86_64-cygwin.dll
 LDSHARED=	gcc -shared -Wl,--enable-auto-image-base $(PY_LDFLAGS)
 BLDSHARED=	gcc -shared -Wl,--enable-auto-image-base $(PY_CORE_LDFLAGS)
-LDCXXSHARED=	g++ -shared -Wl,--enable-auto-image-base
+LDCXXSHARED=	g++ -shared -Wl,--enable-auto-image-base $(PY_LDFLAGS)
 DESTSHARED=	$(BINLIBDEST)/lib-dynload
 
 # List of exported symbols for AIX
