@@ -31,12 +31,12 @@ jobs:
           cygpath -aw minimal-sdk/usr/bin >>$GITHUB_PATH
       - name: compress artifact
         shell: bash
-        run: (cd minimal-sdk && tar cvf - * .[0-9A-Za-z]*) | gzip -1 >git-sdk-64-minimal.tar.gz
+        run: (cd minimal-sdk && tar cvf - * .[0-9A-Za-z]*) | gzip -1 >git-sdk-x86_64-minimal.tar.gz
       - name: upload minimal-sdk artifact
         uses: actions/upload-artifact@v4
         with:
           name: minimal-sdk
-          path: git-sdk-64-minimal.tar.gz
+          path: git-sdk-x86_64-minimal.tar.gz
       - name: clone git.git's `master`
         run: git clone --depth=1 --branch master https://github.com/git/git ..\git
       - name: build current `master` of git.git
@@ -72,7 +72,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p minimal-sdk &&
-          tar -C minimal-sdk -xzf git-sdk-64-minimal.tar.gz &&
+          tar -C minimal-sdk -xzf git-sdk-x86_64-minimal.tar.gz &&
           cygpath -aw minimal-sdk/usr/bin >>$GITHUB_PATH
       - name: download git artifacts
         uses: actions/download-artifact@v4
@@ -116,7 +116,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p minimal-sdk &&
-          tar -C minimal-sdk -xzf git-sdk-64-minimal.tar.gz &&
+          tar -C minimal-sdk -xzf git-sdk-x86_64-minimal.tar.gz &&
           cygpath -aw minimal-sdk/usr/bin >>$GITHUB_PATH
       - name: run some tests
         shell: bash
