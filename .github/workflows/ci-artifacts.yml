@@ -6,6 +6,10 @@ on:
       - main
   pull_request:
 
+# For the continuous `ci-artifacts` release
+permissions:
+  contents: write
+
 env:
   LC_CTYPE: C.UTF-8
 
@@ -154,3 +158,76 @@ jobs:
           cat unzip-test.out &&
           test "grep is /usr/bin/grep" = "$(type grep)" || exit 1
           grep README unzip-test.out
+  publish-release-assets:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [test-minimal-sdk, assorted-validations]
+    steps:
+      - name: download minimal-sdk artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: minimal-sdk
+          path: ${{github.workspace}}
+      - name: publish release asset
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const req = { owner: context.repo.owner, repo: context.repo.repo }
+            // find or create the GitHub release named `ci-artifacts`
+            const release = await (async () => {
+              try {
+                return await github.rest.repos.getReleaseByTag({ ...req, tag: 'ci-artifacts' });
+              } catch (e) {
+                if (e.status === 404) {
+                  // create the `ci-artifacts` GitHub release based on the current revision
+                  const workflowRunsURL = `${context.serverUrl}/${
+                    process.env.GITHUB_WORKFLOW_REF.replace(/\/\.github\/workflows\/([^@]+).*/, '/actions/workflows/$1')
+                  }`
+                  return await github.rest.repos.createRelease({
+                    ... req,
+                    tag_name: 'ci-artifacts',
+                    body: `Continuous release of \`ci-artifacts\`
+
+            This release is automatically updated by the [ci-artifacts](${workflowRunsURL}) workflow.
+
+            For technical reasons, allow up to a minute for release assets to be missing while they are updated.`,
+                  });
+                }
+                throw e;
+              }
+            })()
+
+            const fs = require('fs')
+            for (const fileName of ['git-sdk-x86_64-minimal.tar.gz']) {
+              console.log(`Uploading ${fileName}`)
+              const uploadReq = {
+                ...req,
+                release_id: release.data.id,
+                name: fileName,
+                headers: {
+                  'content-length': (await fs.promises.stat(fileName)).size,
+                },
+                data: fs.createReadStream(fileName),
+              }
+
+              // if the asset does not yet exist, simply upload it
+              const originalAsset = release.data.assets.filter(asset => asset.name === fileName).pop()
+              if (!originalAsset) {
+                const asset =  await github.rest.repos.uploadReleaseAsset(uploadReq)
+                console.log(`Uploaded to ${asset.data.browser_download_url}`)
+                continue
+              }
+
+              // otherwise upload it using a temporary file name,
+              // then delete the old asset
+              // and then rename the new asset;
+              // this way, the asset is not missing for a long time
+              const asset = await github.rest.repos.uploadReleaseAsset({ ...uploadReq, name: `tmp.${fileName}` })
+              await github.rest.repos.deleteReleaseAsset({ ...req, asset_id: originalAsset.id })
+              const updatedAsset =  await github.rest.repos.updateReleaseAsset({...req,
+                asset_id: asset.data.id,
+                name: fileName,
+                label: fileName,
+              })
+              console.log(`Updated ${updatedAsset.data.browser_download_url}`)
+            }
