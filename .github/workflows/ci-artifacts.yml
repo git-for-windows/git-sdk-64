@@ -231,3 +231,9 @@ jobs:
               })
               console.log(`Updated ${updatedAsset.data.browser_download_url}`)
             }
+
+            await github.rest.git.updateRef({
+              ...req,
+              ref: 'tags/ci-artifacts',
+              sha: process.env.GITHUB_SHA,
+            })
