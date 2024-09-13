@@ -59,6 +59,24 @@ jobs:
         with:
           name: git-artifacts
           path: git-artifacts.tar.gz
+      - name: create zip and 7z SFX variants of the minimal SDK
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          for path in mingw64/bin/7z.exe mingw64/bin/7z.dll mingw64/lib/7zip/7zCon.sfx
+          do
+            git --git-dir=git-sdk-64.git show HEAD:$path >${path##*/}
+          done &&
+          mkdir minimal-sdk-extra &&
+          (cd minimal-sdk && ../7z.exe a -mmt=on -mx9 ../minimal-sdk-extra/git-sdk-x86_64-minimal.zip * .?*) &&
+          (cd minimal-sdk && ../7z.exe a -t7z -mmt=on -m0=lzma -mqs -mlc=8 -mx=9 -md=256M -mfb=273 -ms=256M -sfx../7zCon.sfx \
+            ../minimal-sdk-extra/git-sdk-x86_64-minimal.7z.exe * .?*)
+      - name: upload minimal-sdk-extra artifacts
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: minimal-sdk-extra
+          path: minimal-sdk-extra
   test-minimal-sdk:
     runs-on: windows-latest
     needs: [minimal-sdk-artifact]
@@ -168,6 +186,11 @@ jobs:
         with:
           name: minimal-sdk
           path: ${{github.workspace}}
+      - name: download minimal-sdk artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: minimal-sdk-extra
+          path: ${{github.workspace}}
       - name: publish release asset
         uses: actions/github-script@v7
         with:
@@ -198,7 +221,11 @@ jobs:
             })()
 
             const fs = require('fs')
-            for (const fileName of ['git-sdk-x86_64-minimal.tar.gz']) {
+            for (const fileName of [
+              'git-sdk-x86_64-minimal.tar.gz',
+              'git-sdk-x86_64-minimal.zip',
+              'git-sdk-x86_64-minimal.7z.exe',
+            ]) {
               console.log(`Uploading ${fileName}`)
               const uploadReq = {
                 ...req,
