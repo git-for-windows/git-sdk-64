@@ -6,6 +6,10 @@ on:
       - main
   pull_request:
 
+# For the continuous `ci-artifacts` release
+permissions:
+  contents: write
+
 env:
   LC_CTYPE: C.UTF-8
 
@@ -28,31 +32,22 @@ jobs:
         shell: bash
         run: |
           sh -x ./build-extra/please.sh create-sdk-artifact --sdk=git-sdk-64.git minimal-sdk &&
-          cat <<-\EOF >minimal-sdk/init.sh &&
-          echo MSYSTEM=MINGW64 >>$GITHUB_ENV &&
-          cd "$(dirname "$0")" &&
-          cygpath -aw usr/bin/core_perl >>$GITHUB_PATH &&
-          cygpath -aw usr/bin >>$GITHUB_PATH &&
-          cygpath -aw mingw64/bin >>$GITHUB_PATH ||
-          exit 1
-          EOF
-          minimal-sdk/init.sh
+          cygpath -aw minimal-sdk/usr/bin >>$GITHUB_PATH
       - name: compress artifact
         shell: bash
-        run: (cd minimal-sdk && tar cvf - * .[0-9A-Za-z]*) | gzip -1 >git-sdk-64-minimal.tar.gz
+        run: (cd minimal-sdk && tar cvf - * .[0-9A-Za-z]*) | gzip -1 >git-sdk-x86_64-minimal.tar.gz
       - name: upload minimal-sdk artifact
         uses: actions/upload-artifact@v4
         with:
           name: minimal-sdk
-          path: git-sdk-64-minimal.tar.gz
+          path: git-sdk-x86_64-minimal.tar.gz
       - name: clone git.git's `master`
         run: git clone --depth=1 --branch master https://github.com/git/git ..\git
       - name: build current `master` of git.git
         shell: bash
-        env:
-          PATH: ${{github.workspace}}\minimal-sdk\mingw64\bin;${{github.workspace}}\minimal-sdk\usr\bin;C:\Windows\system32;C:\Windows;C:\Windows\system32\wbem
         run: |
           set -x
+          . /etc/profile
           test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
           test "$(type -p gcc)" = "/mingw64/bin/gcc" || exit 1
           make -C ../git DEVELOPER=1 NO_PERL=1 SKIP_DASHED_BUILT_INS=YesPlease -j8 all strip
@@ -64,6 +59,24 @@ jobs:
         with:
           name: git-artifacts
           path: git-artifacts.tar.gz
+      - name: create zip and 7z SFX variants of the minimal SDK
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          for path in mingw64/bin/7z.exe mingw64/bin/7z.dll mingw64/lib/7zip/7zCon.sfx
+          do
+            git --git-dir=git-sdk-64.git show HEAD:$path >${path##*/}
+          done &&
+          mkdir minimal-sdk-extra &&
+          (cd minimal-sdk && ../7z.exe a -mmt=on -mx9 ../minimal-sdk-extra/git-sdk-x86_64-minimal.zip * .?*) &&
+          (cd minimal-sdk && ../7z.exe a -t7z -mmt=on -m0=lzma -mqs -mlc=8 -mx=9 -md=256M -mfb=273 -ms=256M -sfx../7zCon.sfx \
+            ../minimal-sdk-extra/git-sdk-x86_64-minimal.7z.exe * .?*)
+      - name: upload minimal-sdk-extra artifacts
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: minimal-sdk-extra
+          path: minimal-sdk-extra
   test-minimal-sdk:
     runs-on: windows-latest
     needs: [minimal-sdk-artifact]
@@ -81,8 +94,8 @@ jobs:
         shell: bash
         run: |
           mkdir -p minimal-sdk &&
-          tar -C minimal-sdk -xzf git-sdk-64-minimal.tar.gz &&
-          minimal-sdk/init.sh
+          tar -C minimal-sdk -xzf git-sdk-x86_64-minimal.tar.gz &&
+          cygpath -aw minimal-sdk/usr/bin >>$GITHUB_PATH
       - name: download git artifacts
         uses: actions/download-artifact@v4
         with:
@@ -95,6 +108,7 @@ jobs:
         shell: bash
         run: |
           set -x
+          . /etc/profile
           test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
           cd ../git/t &&
           make T="$(ls -S t[0-9]*.sh | awk '!((NR+${{matrix.nr}})%17)' | tr '\n' \ )" prove || {
@@ -108,7 +122,6 @@ jobs:
             exit 1
           }
         env:
-          PATH: ${{github.workspace}}\minimal-sdk\mingw64\bin;${{github.workspace}}\minimal-sdk\usr\bin;${{github.workspace}}\minimal-sdk\usr\bin\core_perl;C:\Windows\system32;C:\Windows;C:\Windows\system32\wbem
           GIT_TEST_OPTS: --verbose-log -x --no-chain-lint
           GIT_PROVE_OPTS: --timer --jobs 8
           NO_SVN_TESTS: 1
@@ -125,14 +138,13 @@ jobs:
         shell: bash
         run: |
           mkdir -p minimal-sdk &&
-          tar -C minimal-sdk -xzf git-sdk-64-minimal.tar.gz &&
-          minimal-sdk/init.sh
+          tar -C minimal-sdk -xzf git-sdk-x86_64-minimal.tar.gz &&
+          cygpath -aw minimal-sdk/usr/bin >>$GITHUB_PATH
       - name: run some tests
         shell: bash
-        env:
-          PATH: ${{github.workspace}}\minimal-sdk\mingw64\bin;${{github.workspace}}\minimal-sdk\usr\bin;C:\Windows\system32;C:\Windows;C:\Windows\system32\wbem
         run: |
           set -x
+          . /etc/profile
 
           # cygpath works
           test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
@@ -164,3 +176,91 @@ jobs:
           cat unzip-test.out &&
           test "grep is /usr/bin/grep" = "$(type grep)" || exit 1
           grep README unzip-test.out
+  publish-release-assets:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [test-minimal-sdk, assorted-validations]
+    steps:
+      - name: download minimal-sdk artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: minimal-sdk
+          path: ${{github.workspace}}
+      - name: download minimal-sdk artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: minimal-sdk-extra
+          path: ${{github.workspace}}
+      - name: publish release asset
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const req = { owner: context.repo.owner, repo: context.repo.repo }
+            // find or create the GitHub release named `ci-artifacts`
+            const release = await (async () => {
+              try {
+                return await github.rest.repos.getReleaseByTag({ ...req, tag: 'ci-artifacts' });
+              } catch (e) {
+                if (e.status === 404) {
+                  // create the `ci-artifacts` GitHub release based on the current revision
+                  const workflowRunsURL = `${context.serverUrl}/${
+                    process.env.GITHUB_WORKFLOW_REF.replace(/\/\.github\/workflows\/([^@]+).*/, '/actions/workflows/$1')
+                  }`
+                  return await github.rest.repos.createRelease({
+                    ... req,
+                    tag_name: 'ci-artifacts',
+                    body: `Continuous release of \`ci-artifacts\`
+
+            This release is automatically updated by the [ci-artifacts](${workflowRunsURL}) workflow.
+
+            For technical reasons, allow up to a minute for release assets to be missing while they are updated.`,
+                  });
+                }
+                throw e;
+              }
+            })()
+
+            const fs = require('fs')
+            for (const fileName of [
+              'git-sdk-x86_64-minimal.tar.gz',
+              'git-sdk-x86_64-minimal.zip',
+              'git-sdk-x86_64-minimal.7z.exe',
+            ]) {
+              console.log(`Uploading ${fileName}`)
+              const uploadReq = {
+                ...req,
+                release_id: release.data.id,
+                name: fileName,
+                headers: {
+                  'content-length': (await fs.promises.stat(fileName)).size,
+                },
+                data: fs.createReadStream(fileName),
+              }
+
+              // if the asset does not yet exist, simply upload it
+              const originalAsset = release.data.assets.filter(asset => asset.name === fileName).pop()
+              if (!originalAsset) {
+                const asset =  await github.rest.repos.uploadReleaseAsset(uploadReq)
+                console.log(`Uploaded to ${asset.data.browser_download_url}`)
+                continue
+              }
+
+              // otherwise upload it using a temporary file name,
+              // then delete the old asset
+              // and then rename the new asset;
+              // this way, the asset is not missing for a long time
+              const asset = await github.rest.repos.uploadReleaseAsset({ ...uploadReq, name: `tmp.${fileName}` })
+              await github.rest.repos.deleteReleaseAsset({ ...req, asset_id: originalAsset.id })
+              const updatedAsset =  await github.rest.repos.updateReleaseAsset({...req,
+                asset_id: asset.data.id,
+                name: fileName,
+                label: fileName,
+              })
+              console.log(`Updated ${updatedAsset.data.browser_download_url}`)
+            }
+
+            await github.rest.git.updateRef({
+              ...req,
+              ref: 'tags/ci-artifacts',
+              sha: process.env.GITHUB_SHA,
+            })
