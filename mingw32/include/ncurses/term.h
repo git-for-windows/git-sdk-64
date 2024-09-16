@@ -43,7 +43,7 @@
 #define NCURSES_TERM_H_incl 1
 
 #undef  NCURSES_VERSION
-#define NCURSES_VERSION "6.4"
+#define NCURSES_VERSION "6.5"
 
 #include <ncursesw/ncurses_dll.h>
 
@@ -61,7 +61,7 @@ typedef struct screen  SCREEN;
 
 #if 1
 #undef  NCURSES_SP_FUNCS
-#define NCURSES_SP_FUNCS 20231217
+#define NCURSES_SP_FUNCS 20240831
 #undef  NCURSES_SP_NAME
 #define NCURSES_SP_NAME(name) name##_sp
 

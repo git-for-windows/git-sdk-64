@@ -1,7 +1,7 @@
 #!/bin/sh
-# $Id: ncurses-config.in,v 1.52 2022/07/26 21:36:28 tom Exp $
+# $Id: ncurses-config.in,v 1.54 2024/07/13 20:00:52 tom Exp $
 ##############################################################################
-# Copyright 2018-2021,2022 Thomas E. Dickey                                  #
+# Copyright 2018-2022,2024 Thomas E. Dickey                                  #
 # Copyright 2006-2015,2017 Free Software Foundation, Inc.                    #
 #                                                                            #
 # Permission is hereby granted, free of charge, to any person obtaining a    #
@@ -65,6 +65,9 @@ then
 		case "$item" in
 		./*|../*|*/..|*/../*)
 			;;
+		$libdir) # skip standard libdir
+			continue
+			;;
 		*)
 			[ -n "$filtered" ] && filtered="${filtered}:"
 			filtered="${filtered}${item}"
@@ -94,6 +97,24 @@ else
 	LIBS="-l${THIS} -l${TINFO_LIB} $LIBS"
 fi
 
+CFLAGS=" -DNCURSES_WIDECHAR"
+if [ "$includedir" != "/usr/include" ]; then
+	if [ "xno" = xno ]
+	then
+		[ -n "$CFLAGS" ] && CFLAGS="$CFLAGS "
+		CFLAGS="$CFLAGS -I${includesubdir}"
+	fi
+	[ -n "$CFLAGS" ] && CFLAGS="$CFLAGS "
+	CFLAGS="$CFLAGS-I${includedir}"
+	includetop=`echo "$includedir" | sed -e 's,/include/[^/]*$,/include,'`
+	[ "$includetop" = "/usr/include" ] && includetop="$includedir"
+	if [ "x$includetop" != "x$includedir" ]
+	then
+		[ -n "$CFLAGS" ] && CFLAGS="$CFLAGS "
+		CFLAGS="$CFLAGS-I$includetop"
+	fi
+fi
+
 # Ignore -L options which do not correspond to an actual directory, or which
 # are standard library directories (i.e., the linker is supposed to search
 # those directories).
@@ -107,7 +128,7 @@ do
 	-specs*) # ignore linker specs-files which were used to build library
 		continue
 		;;
-	-Wl,-z,*) # ignore flags used to manipulate shared image
+	-Wl,-z*) # ignore flags used to manipulate shared image
 		continue
 		;;
 	-Wl,--dynamic-linker*) # ignore ELF interpreter
@@ -155,9 +176,6 @@ do
 				continue
 			fi
 			;;
-		$libdir) # skip standard libdir
-			continue
-			;;
 		*)
 			found=no
 			for check in $lib_flags
@@ -189,16 +207,57 @@ while [ $# -gt 0 ]; do
 		;;
 	# compile/link
 	--cflags)
-		INCS=" -DNCURSES_WIDECHAR"
-		if [ "xno" = xno ]; then
-			INCS="$INCS -I${includesubdir}"
-		fi
-		if [ "${includedir}" != /usr/include ]; then
-			INCS="$INCS -I${includedir}"
-		fi
-		sed -e 's,^[ ]*,,' -e 's, [ ]*, ,g' -e 's,[ ]*$,,' <<-ENDECHO
-			$INCS
-ENDECHO
+		OPTS=
+		for opt in $CFLAGS
+		do
+			case "x$opt" in
+			x-[OW]*)
+				opt=
+				;;
+			esac
+			if [ -n "$opt" ]
+			then
+				[ -n "$OPTS" ] && OPTS="$OPTS "
+				OPTS="$OPTS$opt"
+			fi
+		done
+		printf "%s\n" "$OPTS"
+		;;
+	--cflags-only-I)
+		OPTS=
+		for opt in $CFLAGS
+		do
+			case "x$opt" in
+			x-[I]*)
+				;;
+			*)
+				opt=
+				;;
+			esac
+			if [ -n "$opt" ]
+			then
+				[ -n "$OPTS" ] && OPTS="$OPTS "
+				OPTS="$OPTS$opt"
+			fi
+		done
+		printf "%s\n" "$OPTS"
+		;;
+	--cflags-only-other)
+		OPTS=
+		for opt in $CFLAGS
+		do
+			case "x$opt" in
+			x-[I]*|x-[OW]*)
+				opt=
+				;;
+			esac
+			if [ -n "$opt" ]
+			then
+				[ -n "$OPTS" ] && OPTS="$OPTS "
+				OPTS="$OPTS$opt"
+			fi
+		done
+		printf "%s\n" "$OPTS"
 		;;
 	--libs)
 		OPTS=
@@ -252,7 +311,7 @@ ENDECHO
 		;;
 	# identification
 	--version)
-		echo "6.4.20231217"
+		echo "6.5.20240831"
 		;;
 	--abi-version)
 		echo "6"
@@ -297,30 +356,32 @@ ENDECHO
 Usage: `basename "$0"` [options]
 
 Options:
-  --prefix           echos the package-prefix of ${THIS}
-  --exec-prefix      echos the executable-prefix of ${THIS}
+  --prefix            echos the package-prefix of ${THIS}
+  --exec-prefix       echos the executable-prefix of ${THIS}
 
-  --cflags           echos the C compiler flags needed to compile with ${THIS}
-  --libs             echos the libraries needed to link with ${THIS}
+  --cflags            echos the C compiler flags needed to compile for ${THIS}
+  --cflags-only-I     echos only -I C compiler flags needed with ${THIS}
+  --cflags-only-other echos only C compiler flags other than -I for ${THIS}
+  --libs              echos the libraries needed to link with ${THIS}
 
-  --libs-only-L      echos -L linker options (search path) for ${THIS}
-  --libs-only-l      echos -l linker options (libraries) for ${THIS}
-  --libs-only-other  echos linker options other than -L/-l
+  --libs-only-L       echos -L linker options (search path) for ${THIS}
+  --libs-only-l       echos -l linker options (libraries) for ${THIS}
+  --libs-only-other   echos linker options other than -L/-l
 
-  --version          echos the release+patchdate version of ${THIS}
-  --abi-version      echos the ABI version of ${THIS}
-  --mouse-version    echos the mouse-interface version of ${THIS}
+  --version           echos the release+patchdate version of ${THIS}
+  --abi-version       echos the ABI version of ${THIS}
+  --mouse-version     echos the mouse-interface version of ${THIS}
 
-  --bindir           echos the directory containing ${THIS} programs
-  --datadir          echos the directory containing ${THIS} data
-  --includedir       echos the directory containing ${THIS} header files
-  --libdir           echos the directory containing ${THIS} libraries
-  --mandir           echos the directory containing ${THIS} manpages
-  --terminfo         echos the \$TERMINFO terminfo database path
-  --terminfo-dirs    echos the \$TERMINFO_DIRS directory list
-  --termpath         echos the \$TERMPATH termcap list
+  --bindir            echos the directory containing ${THIS} programs
+  --datadir           echos the directory containing ${THIS} data
+  --includedir        echos the directory containing ${THIS} header files
+  --libdir            echos the directory containing ${THIS} libraries
+  --mandir            echos the directory containing ${THIS} manpages
+  --terminfo          echos the \$TERMINFO terminfo database path
+  --terminfo-dirs     echos the \$TERMINFO_DIRS directory list
+  --termpath          echos the \$TERMPATH termcap list
 
-  --help             prints this message
+  --help              prints this message
 ENDHELP
 		;;
 	--error|*)
