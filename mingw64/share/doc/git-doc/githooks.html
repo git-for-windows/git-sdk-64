@@ -951,14 +951,14 @@ atomic push is in use.</p>
 <div class="paragraph">
 <p>This hook is invoked by <a href="git-receive-pack.html">git-receive-pack(1)</a> when it reacts to
 <code>git push</code> and updates reference(s) in its repository.
-It executes on the remote repository once after all the refs have
-been updated.</p>
+The hook executes on the remote repository once after all the proposed
+ref updates are processed and if at least one ref is updated as the
+result.</p>
 </div>
 <div class="paragraph">
-<p>This hook executes once for the receive operation.  It takes no
-arguments, but gets the same information as the
-<a href="#pre-receive"><em>pre-receive</em></a>
-hook does on its standard input.</p>
+<p>The hook takes no arguments.  It receives one line on standard input for
+each ref that is successfully updated following the same format as the
+<a href="#pre-receive"><em>pre-receive</em></a> hook.</p>
 </div>
 <div class="paragraph">
 <p>This hook does not affect the outcome of <code>git receive-pack</code>, as it
@@ -989,6 +989,10 @@ If it is negotiated to not use the push options phase, the
 environment variables will not be set. If the client selects
 to use push options, but doesn&#8217;t transmit any, the count variable
 will be set to zero, <code>GIT_PUSH_OPTION_COUNT=0</code>.</p>
+</div>
+<div class="paragraph">
+<p>See the "post-receive" section in <a href="git-receive-pack.html">git-receive-pack(1)</a> for
+additional details.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1396,7 +1400,7 @@ running passing "1", "1" should not be possible.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-07-29 18:18:09 UTC
+Last updated 2024-09-18 08:24:21 UTC
 </div>
 </div>
 </body>

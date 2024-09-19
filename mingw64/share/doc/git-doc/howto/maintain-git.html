@@ -494,7 +494,7 @@ releases, and making announcements.</pre>
 <div class="paragraph">
 <p>The policy on Integration is informally mentioned in "A Note
 from the maintainer" message, which is periodically posted to
-this mailing list after each feature release is made.</p>
+the mailing list after each feature release is made:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -504,18 +504,15 @@ contain bugfixes and enhancements in any area, including
 functionality, performance and usability, without regression.</p>
 </li>
 <li>
-<p>One release cycle for a feature release is expected to last for
-eight to ten weeks.</p>
-</li>
-<li>
-<p>Maintenance releases are numbered as vX.Y.Z and are meant
+<p>Maintenance releases are numbered as vX.Y.Z (0 &lt; Z) and are meant
 to contain only bugfixes for the corresponding vX.Y.0 feature
 release and earlier maintenance releases vX.Y.W (W &lt; Z).</p>
 </li>
 <li>
-<p><em>master</em> branch is used to prepare for the next feature
+<p>The <em>master</em> branch is used to prepare for the next feature
 release. In other words, at some point, the tip of <em>master</em>
-branch is tagged with vX.Y.0.</p>
+branch is tagged as vX.(Y+1).0, when vX.Y.0 is the latest
+feature release.</p>
 </li>
 <li>
 <p><em>maint</em> branch is used to prepare for the next maintenance
@@ -528,12 +525,14 @@ branch is tagged with vX.Y.1, vX.Y.2, and so on.</p>
 <p><em>next</em> branch is used to publish changes (both enhancements
 and fixes) that (1) have worthwhile goal, (2) are in a fairly
 good shape suitable for everyday use, (3) but have not yet
-demonstrated to be regression free.  New changes are tested
-in <em>next</em> before merged to <em>master</em>.</p>
+demonstrated to be regression free.  Reviews from contributors on
+the mailing list help to make the determination.  After a topic
+is merged to <em>next</em>, it is tested for at least 7 calendar days
+before getting merged to <em>master</em>.</p>
 </li>
 <li>
 <p><em>seen</em> branch is used to publish other proposed changes that do
-not yet pass the criteria set for <em>next</em>.</p>
+not yet pass the criteria set for <em>next</em> (see above).</p>
 </li>
 <li>
 <p>The tips of <em>master</em> and <em>maint</em> branches will not be rewound to
@@ -555,6 +554,42 @@ tagged releases, and the users are encouraged to follow it.</p>
 <p>The <em>next</em> branch is where new action takes place, and the
 users are encouraged to test it so that regressions and bugs
 are found before new topics are merged to <em>master</em>.</p>
+</li>
+<li>
+<p>When a problem is found in a topic in <em>next</em>, the topic is marked
+not to be merged to <em>master</em>.  Follow-up patches are discussed on
+the mailing list and applied to the topic after being reviewed and
+then the topic is merged (again) to <em>next</em>.  After going through
+the usual testing in <em>next</em>, the entire (fixed) topic is merged
+to <em>master</em>.</p>
+</li>
+<li>
+<p>One release cycle for a feature release is expected to last for
+eight to ten weeks.  A few "release candidate" releases are
+expected to be tagged about a week apart before the final
+release, and a "preview" release is tagged about a week before
+the first release candidate gets tagged.</p>
+</li>
+<li>
+<p>After the preview release is tagged, topics that were well
+reviewed may be merged to <em>master</em> before spending the usual 7
+calendar days in <em>next</em>, with the expectation that any bugs in
+them can be caught and fixed in the release candidates before
+the final release.</p>
+</li>
+<li>
+<p>After the first release candidate is tagged, the contributors are
+strongly encouraged to focus on finding and fixing new regressions
+introduced during the cycle, over addressing old bugs and any new
+features.  Topics stop getting merged down from <em>next</em> to <em>master</em>,
+and new topics stop getting merged to <em>next</em>. Unless they are fixes
+to new regressions in the cycle, that is.</p>
+</li>
+<li>
+<p>Soon after a feature release is made, the tip of <em>maint</em> gets
+fast-forwarded to point at the release.  Topics that have been
+kept in <em>next</em> are merged down to <em>master</em> and a new development
+cycle starts.</p>
 </li>
 </ul>
 </div>
@@ -651,6 +686,13 @@ $ git diff ORIG_HEAD..   ;# final review
 $ make test              ;# final review</pre>
 </div>
 </div>
+<div class="literalblock">
+<div class="content">
+<pre>If the tip of 'master' is updated, also generate the preformatted
+documentation and push the out result to git-htmldocs and
+git-manpages repositories.</pre>
+</div>
+</div>
 </li>
 <li>
 <p>Handle the remaining patches:</p>
@@ -693,7 +735,7 @@ for commits not in <em>next</em>.</p>
 <div class="literalblock">
 <div class="content">
 <pre>$ git checkout ai/topic ;# or "git checkout -b ai/topic master"
-$ git am -sc3 mailbox</pre>
+$ git am -sc3 --whitespace=warn mailbox</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -704,7 +746,7 @@ $ git am -sc3 mailbox</pre>
 <div class="literalblock">
 <div class="content">
 <pre>$ git checkout master...ai/topic ;# try to reapply to the same base
-$ git am -sc3 mailbox</pre>
+$ git am -sc3 --whitespace=warn mailbox</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -746,39 +788,49 @@ branches to make it usable by other developers for testing.
 These changes are what the maintainer is not 100% committed to
 (trivial typofixes etc. are often squashed directly into the
 patches that need fixing, without being applied as a separate
-"SQUASH???" commit), so that they can be removed easily as needed.</pre>
+"SQUASH???" commit), so that they can be removed easily as needed.
+The expectation is that the original author will make corrections
+in a reroll.</pre>
 </div>
 </div>
 </li>
 <li>
-<p>Merge maint to master as needed:</p>
+<p>By now, new topic branches are created and existing topic
+branches are updated.  The integration branches <em>next</em>, <em>jch</em>,
+and <em>seen</em> need to be updated to contain them.</p>
+</li>
+<li>
+<p>If there are topics that have been merged to <em>master</em> and should
+be merged to <em>maint</em>, merge them to <em>maint</em>, and update the
+release notes to the next maintenance release.</p>
+</li>
+<li>
+<p>Review the latest issue of "What&#8217;s cooking" again.  Are topics
+that have been sufficiently long in <em>next</em> ready to be merged to
+<em>master</em>?  Are topics we saw earlier and are in <em>seen</em> now got
+positive reviews and are ready to be merged to <em>next</em>?</p>
+</li>
+<li>
+<p>If there are topics that have been cooking in <em>next</em> long enough
+and should be merged to <em>master</em>, merge them to <em>master</em>, and
+update the release notes to the next feature release.</p>
+</li>
+<li>
+<p>If there were patches directly made on <em>maint</em>, merge <em>maint</em> to
+<em>master</em>; make sure that the result is what you want.</p>
 <div class="literalblock">
 <div class="content">
 <pre>$ git checkout master
-$ git merge maint
+$ git merge -m "Sync with 'maint'" --no-log maint
+$ git log -p --first-parent ORIG_HEAD..
 $ make test</pre>
 </div>
 </div>
 </li>
 <li>
-<p>Merge master to next as needed:</p>
-<div class="literalblock">
-<div class="content">
-<pre>$ git checkout next
-$ git merge master
-$ make test</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Review the last issue of "What&#8217;s cooking" again and see if topics
-that are ready to be merged to <em>next</em> are still in good shape
-(e.g. has there any new issue identified on the list with the
-series?)</p>
-</li>
-<li>
-<p>Prepare <em>jch</em> branch, which is used to represent somewhere
-between <em>master</em> and <em>seen</em> and often is slightly ahead of <em>next</em>.</p>
+<p>Prepare to update the <em>jch</em> branch, which is used to represent
+somewhere between <em>master</em> and <em>seen</em> and often is slightly ahead
+of <em>next</em>, and the <em>seen</em> branch, which is used to hold the rest.</p>
 <div class="literalblock">
 <div class="content">
 <pre>$ Meta/Reintegrate master..jch &gt;Meta/redo-jch.sh</pre>
@@ -787,17 +839,29 @@ between <em>master</em> and <em>seen</em> and often is slightly ahead of <em>nex
 <div class="literalblock">
 <div class="content">
 <pre>The result is a script that lists topics to be merged in order to
-rebuild 'seen' as the input to Meta/Reintegrate script.  Remove
-later topics that should not be in 'jch' yet.  Add a line that
-consists of '### match next' before the name of the first topic
-in the output that should be in 'jch' but not in 'next' yet.</pre>
+rebuild the current 'jch'.  Do the same for 'seen'.</pre>
 </div>
 </div>
 </li>
 <li>
-<p>Now we are ready to start merging topics to <em>next</em>.  For each
-branch whose tip is not merged to <em>next</em>, one of three things can
-happen:</p>
+<p>Review the Meta/redo-jch.sh and Meta/redo-seen.sh scripts.  The
+former should have a line <em><mark>#</mark> match next</em>---the idea is that
+merging the topics listed before the line on top of <em>master</em>
+should result in a tree identical to that of <em>next</em>.</p>
+</li>
+<li>
+<p>As newly created topics are usually merged near the tip of
+<em>seen</em>, add them to the end of the Meta/redo-seen.sh script.
+Among the topics that were in <em>seen</em>, there may be ones that
+are not quite ready for <em>next</em> but are getting there.  Move
+them from Meta/redo-seen.sh to the end of Meta/redo-jch.sh.
+The expectation is that you&#8217;d use <em>jch</em> as your daily driver
+as the first guinea pig, so you should choose carefully.</p>
+</li>
+<li>
+<p>Now we are ready to start rebuilding <em>jch</em> and merging topics to
+<em>next</em>.  For each branch whose tip is not merged to <em>next</em>, one
+of three things can happen:</p>
 </li>
 <li>
 <p>The commits are all next-worthy; merge the topic to next;</p>
@@ -814,13 +878,18 @@ next-worthy; merge the early parts to next;</p>
 If a topic that was already in 'next' gained a patch, the script
 would list it as "ai/topic~1".  To include the new patch to the
 updated 'next', drop the "~1" part; to keep it excluded, do not
-touch the line.  If a topic that was not in 'next' should be
-merged to 'next', add it at the end of the list.  Then:</pre>
+touch the line.</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ git checkout -B jch master
+<pre>If a topic that was not in 'next' should be merged to 'next', add
+it before the '### match next' line.  Then:</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ git checkout --detach master
 $ sh Meta/redo-jch.sh -c1</pre>
 </div>
 </div>
@@ -838,12 +907,12 @@ conflicts (e.g. a topic renamed a variable, another added a new
 reference to the variable under its old name), in which case
 prepare an appropriate merge-fix first (see appendix), and
 rebuild the 'jch' branch from scratch, starting at the tip of
-'master'.</pre>
+'master', this time without using "-c1" to merge all topics.</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>Then do the same to 'next'</pre>
+<pre>Then do the same to 'next'.</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -856,26 +925,32 @@ $ sh Meta/redo-jch.sh -c1 -e</pre>
 <div class="content">
 <pre>The "-e" option allows the merge message that comes from the
 history of the topic and the comments in the "What's cooking" to
-be edited.  The resulting tree should match 'jch' as the same set
-of topics are merged on 'master'; otherwise there is a mismerge.
-Investigate why and do not proceed until the mismerge is found
-and rectified.</pre>
+be edited.  The resulting tree should match 'jch^{/^### match next'}'
+as the same set of topics are merged on 'master'; otherwise there
+is a mismerge. Investigate why and do not proceed until the mismerge
+is found and rectified.</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ git diff jch next</pre>
+<pre>If 'master' was updated before you started redoing 'next', then</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>Then build the rest of 'jch':</pre>
+<pre>$ git diff 'jch^{/^### match next}' next</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ git checkout jch
-$ sh Meta/redo-jch.sh</pre>
+<pre>would show differences that went into 'master' (which 'jch' has,
+but 'next' does not yet---often it is updates to the release
+notes).  Merge 'master' back to 'next' if that is the case.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ git merge -m "Sync with 'master'" --no-log master</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -897,18 +972,7 @@ add it again to the appropriate place when it happens.</pre>
 </div>
 </li>
 <li>
-<p>Rebuild <em>seen</em>.</p>
-<div class="literalblock">
-<div class="content">
-<pre>$ Meta/Reintegrate jch..seen &gt;Meta/redo-seen.sh</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>Edit the result by adding new topics that are not still in 'seen'
-in the script.  Then</pre>
-</div>
-</div>
+<p>Rebuild <em>seen</em> on top of <em>jch</em>.</p>
 <div class="literalblock">
 <div class="content">
 <pre>$ git checkout -B seen jch
@@ -932,7 +996,7 @@ $ sh Meta/redo-seen.sh</pre>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ git branch --no-merged seen</pre>
+<pre>$ git branch --no-merged seen '??/*'</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -1179,7 +1243,7 @@ $ git update-ref -d $mf/ai/topic</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-07-29 18:18:09 UTC
+Last updated 2024-09-18 08:24:21 UTC
 </div>
 </div>
 </body>
