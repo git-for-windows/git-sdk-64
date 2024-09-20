@@ -3,7 +3,7 @@ package URI;
 use strict;
 use warnings;
 
-our $VERSION = '5.28';
+our $VERSION = '5.29';
 
 # 1=version 5.10 and earlier; 0=version 5.11 and later
 use constant HAS_RESERVED_SQUARE_BRACKETS => $ENV{URI_HAS_RESERVED_SQUARE_BRACKETS} ? 1 : 0;
@@ -1086,6 +1086,13 @@ See I<news> scheme.
 =item B<nntps>:
 
 See I<news> scheme and L<RFC 5538|https://tools.ietf.org/html/rfc5538>.
+
+=item B<otpauth>:
+
+The I<otpauth> URI scheme is specified in L<https://github.com/google/google-authenticator/wiki/Key-Uri-Format>.
+The scheme is used to encode secret keys for use in TOTP or HOTP schemes.
+
+C<URI> objects belonging to the otpauth scheme support the common methods.
 
 =item B<pop>:
 

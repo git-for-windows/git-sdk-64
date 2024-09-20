@@ -8,7 +8,7 @@ use parent qw(URI URI::_query);
 use URI::Escape qw(uri_unescape);
 use Carp ();
 
-our $VERSION = '5.28';
+our $VERSION = '5.29';
 
 my $ACHAR = URI::HAS_RESERVED_SQUARE_BRACKETS ? $URI::uric : $URI::uric4host;  $ACHAR =~ s,\\[/?],,g;
 my $PCHAR = $URI::uric;                                                        $PCHAR =~ s,\\[?],,g;
