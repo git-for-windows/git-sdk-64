@@ -231,29 +231,26 @@ _CRTIMP int __cdecl ___mb_cur_max_func(void);
 #endif
 #endif /* !_POSIX_ */
 
+  _CRTIMP unsigned int *__cdecl __p__osplatform(void);
+  _CRTIMP unsigned int *__cdecl __p__osver(void);
+  _CRTIMP unsigned int *__cdecl __p__winver(void);
+  _CRTIMP unsigned int *__cdecl __p__winmajor(void);
+  _CRTIMP unsigned int *__cdecl __p__winminor(void);
+
 #ifndef _osplatform
-  extern unsigned int * __MINGW_IMP_SYMBOL(_osplatform);
-#define _osplatform (* __MINGW_IMP_SYMBOL(_osplatform))
+#define _osplatform (* __p__osplatform())
 #endif
-
 #ifndef _osver
-  extern unsigned int * __MINGW_IMP_SYMBOL(_osver);
-#define _osver	(* __MINGW_IMP_SYMBOL(_osver))
+#define _osver (* __p__osver())
 #endif
-
 #ifndef _winver
-  extern unsigned int * __MINGW_IMP_SYMBOL(_winver);
-#define _winver	(* __MINGW_IMP_SYMBOL(_winver))
+#define _winver (* __p__winver())
 #endif
-
 #ifndef _winmajor
-  extern unsigned int * __MINGW_IMP_SYMBOL(_winmajor);
-#define _winmajor (* __MINGW_IMP_SYMBOL(_winmajor))
+#define _winmajor (*__p__winmajor())
 #endif
-
 #ifndef _winminor
-  extern unsigned int * __MINGW_IMP_SYMBOL(_winminor);
-#define _winminor (* __MINGW_IMP_SYMBOL(_winminor))
+#define _winminor (*__p__winminor())
 #endif
 
   errno_t __cdecl _get_osplatform(unsigned int *_Value);
