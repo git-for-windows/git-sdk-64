@@ -26,6 +26,12 @@ int     chown (const char *__path, uid_t __owner, gid_t __group);
 int     chroot (const char *__path);
 #endif
 int     close (int __fildes);
+#if defined(__CYGWIN__) && (__BSD_VISIBLE || __GNU_VISIBLE)
+/* Available on FreeBSD (__BSD_VISIBLE) and Linux (__GNU_VISIBLE). */
+int     close_range (unsigned int __firstfd, unsigned int __lastfd, int __flags);
+/*      CLOSE_RANGE_UNSHARE (1 << 1) */ /* Linux-specific, not supported. */
+#define CLOSE_RANGE_CLOEXEC (1 << 2)
+#endif
 #if __POSIX_VISIBLE >= 199209
 size_t	confstr (int __name, char *__buf, size_t __len);
 #endif
@@ -262,6 +268,7 @@ void *  _sbrk (ptrdiff_t __incr);
 int     _unlink (const char *__path);
 _READ_WRITE_RETURN_TYPE _write (int __fd, const void *__buf, size_t __nbyte);
 int     _execve (const char *__path, char * const __argv[], char * const __envp[]);
+int     _getentropy (void *, size_t);
 #endif
 
 #if !defined(__INSIDE_CYGWIN__)
@@ -315,6 +322,10 @@ int	unlinkat (int, const char *, int);
 # define	SEEK_SET	0
 # define	SEEK_CUR	1
 # define	SEEK_END	2
+#if __GNU_VISIBLE
+# define	SEEK_DATA	3
+# define	SEEK_HOLE	4
+#endif
 
 #include <sys/features.h>
 

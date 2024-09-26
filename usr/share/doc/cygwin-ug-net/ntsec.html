@@ -700,7 +700,7 @@ the first schema returns an empty string, it skips to the second, and so
 on.  Schemata only supported on AD are silently skipped for SAM accounts
 and on non-AD machines.
 </p><p>
-Four schemata are predefined, two schemata are variable.  The predefined
+Five schemata are predefined, two schemata are variable.  The predefined
 schemata are the following:
 </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">windows</code></span></dt><dd>Utilizes typical Windows settings.  Supported for AD and SAM
 	      accounts.</dd><dt><span class="term"><code class="literal">cygwin</code></span></dt><dd>Utilizes the cygwinUser AD schema extension.  This schema
@@ -717,14 +717,10 @@ schemata are the following:
 	      </dd><dt><span class="term"><code class="literal">desc</code></span></dt><dd>Utilizes XML-style attributes in the description attribute.
 	      Supported for AD and SAM accounts.
 	      See <a class="xref" href="ntsec.html#ntsec-mapping-nsswitch-desc" title="The desc schema">the section called &#8220;The <code class="literal">desc</code> schema&#8221;</a>
-	      for a more detailed description.</dd><dt><span class="term"><code class="literal">env</code></span></dt><dd>Derives the home directory of the current user from the
-	      environment variable <code class="literal">HOME</code> (falling back to
-	      <code class="literal">HOMEDRIVE\HOMEPATH</code> and
-	      <code class="literal">USERPROFILE</code>, in that order).  This is faster
-	      than the <span style="color: red">&lt;term&gt;<code class="literal">windows</code>&lt;/term&gt;</span> schema at the
-	      expense of determining only the current user's home directory
-	      correctly.  This schema is skipped for any other account.
-	      </dd></dl></div><p>
+	      for a more detailed description.</dd><dt><span class="term"><code class="literal">env</code></span></dt><dd>Utilizes the user's environment.  This schema is only supported
+	      for setting the home directory yet.
+	      See <a class="xref" href="ntsec.html#ntsec-mapping-nsswitch-home" title="The db_home setting">the section called &#8220;The <code class="literal">db_home</code> setting&#8221;</a> for
+	      the description.</dd></dl></div><p>
 The variable schemata are as follows.  Note that the leading characters
 (<code class="literal">@</code> and <code class="literal">/</code>) are an integral part of the
 definition.
@@ -783,7 +779,7 @@ of each schema when used with <code class="literal">db_home:</code>
 	      environment variable <code class="literal">HOME</code> (falling back to
 	      <code class="literal">HOMEDRIVE\HOMEPATH</code> and
 	      <code class="literal">USERPROFILE</code>, in that order).  This is faster
-	      than the <span style="color: red">&lt;term&gt;<code class="literal">windows</code>&lt;/term&gt;</span> schema at the
+	      than the <code class="literal">windows</code> schema at the
 	      expense of determining only the current user's home directory
 	      correctly.  This schema is skipped for any other account.
 	      </dd><dt><span class="term"><code class="literal">@ad_attribute</code></span></dt><dd>AD only: The user's home directory is set to the path given

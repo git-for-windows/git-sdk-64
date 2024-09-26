@@ -28,6 +28,15 @@
 			content indexing service
   'e', 'Encrypted':     file is encrypted
   'C', 'Casesensitive': directory is handled case sensitive
-			(Windows 10 1803 or later, local NTFS only,
-			 WSL must be installed)
-    </pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="using-utils.html">Prev</a>&#160;</td><td width="20%" align="center"><a accesskey="u" href="using-utils.html">Up</a></td><td width="40%" align="right">&#160;<a accesskey="n" href="cygcheck.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Cygwin Utilities&#160;</td><td width="20%" align="center"><a accesskey="h" href="cygwin-ug-net.html">Home</a></td><td width="40%" align="right" valign="top">&#160;cygcheck</td></tr></table></div></body></html>
+    </pre></div><div class="refsect1"><a name="chattr-Cprec"></a><h2>Case-sensitive directories</h2><p>Case-sensitive directories are supported starting with
+        Windows 10 1803.  They are only supported on local NTFS filesystems.
+	</p><p>The system-wide availability of case-sensitive directories
+	depends on the setting of the registry value of type DWORD called
+	HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\NtfsEnableDirCaseSensitivity.  The value 0 disables case-sensitive directories.
+	The value 1 enables case-sensitive directories.  The value 3
+	enables case-sensitive directories, too, with the additional
+	requirement that a directory can only be set to case-sensitive
+	if it's empty.  No other value is supported.</p><p>Removing case-sensitivity on a directory requires that the
+        directory does not contain files only differing by case.</p><p>Trying to access a case-sensitive directory on a remote NTFS leads
+	to all kinds of weird errors and is therefore
+	<span class="emphasis"><em>not</em></span> recommended.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="using-utils.html">Prev</a>&#160;</td><td width="20%" align="center"><a accesskey="u" href="using-utils.html">Up</a></td><td width="40%" align="right">&#160;<a accesskey="n" href="cygcheck.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Cygwin Utilities&#160;</td><td width="20%" align="center"><a accesskey="h" href="cygwin-ug-net.html">Home</a></td><td width="40%" align="right" valign="top">&#160;cygcheck</td></tr></table></div></body></html>

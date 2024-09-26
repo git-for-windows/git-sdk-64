@@ -6,26 +6,30 @@
 -q, --quiet    be quiet while dumping (default)
 -V, --version  output version information and exit
 </pre></div><div class="refsect1"><a name="dumper-desc"></a><h2>Description</h2><p>The <span class="command"><strong>dumper</strong></span> utility can be used to create a core
-      dump of running Windows process. This core dump can be later loaded to
-      <span class="command"><strong>gdb</strong></span> and analyzed. One common way to use
-      <span class="command"><strong>dumper</strong></span> is to plug it into cygwin's Just-In-Time
-      debugging facility by adding
-      </p><pre class="screen">
-error_start=x:\path\to\dumper.exe
-</pre><p> to the
-      <span class="emphasis"><em>CYGWIN</em></span> environment variable. Please note that
-      <code class="literal">x:\path\to\dumper.exe</code> is Windows-style and not cygwin
-      path. If <code class="literal">error_start</code> is set this way, then dumper will
-      be started whenever some program encounters a fatal error. </p><p> <span class="command"><strong>dumper</strong></span> can be also be started from the command
+      dump of running Windows process. This core dump can be later loaded into
+      <span class="command"><strong>gdb</strong></span> and analyzed.
+    </p><p>
+      If the core file size limit is set to unlimited (e.g. <span class="command"><strong>ulimit -c
+      unlimited</strong></span>) and an <code class="literal">error_start</code> executable
+      hasn't been configured in the <code class="literal">CYGWIN</code> environment
+      variable, Cygwin will automatically run <span class="command"><strong>dumper</strong></span> when a
+      fatal error occurs.
+    </p><p> <span class="command"><strong>dumper</strong></span> can be also be started from the command
       line to create a core dump of any running process.</p><p>For historical reasons, unless the <code class="literal">-n</code> option
     is given, after the core dump is created and when the
     <span class="command"><strong>dumper</strong></span> exits, the target process is also
     terminated.</p><p> To save space in the core dump, <span class="command"><strong>dumper</strong></span> doesn't
-      write those portions of the target process's memory space that are loaded
+      write those portions of the target process's memory space that were loaded
       from executable and dll files and are unchanged (e.g. program code).
       Instead, <span class="command"><strong>dumper</strong></span> saves paths to the files which
       contain that data. When a core dump is loaded into gdb, it uses these
       paths to load the appropriate files. That means that if you create a core
       dump on one machine and try to debug it on another, you'll need to place
       identical copies of the executable and dlls in the same directories as on
-      the machine where the core dump was created. </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cygpath.html">Prev</a>&#160;</td><td width="20%" align="center"><a accesskey="u" href="using-utils.html">Up</a></td><td width="40%" align="right">&#160;<a accesskey="n" href="getconf.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">cygpath&#160;</td><td width="20%" align="center"><a accesskey="h" href="cygwin-ug-net.html">Home</a></td><td width="40%" align="right" valign="top">&#160;getconf</td></tr></table></div></body></html>
+      the machine where the core dump was created.
+    </p></div><div class="refsect1"><a name="dumper-notes"></a><h2>Notes</h2><p>
+      A Cygwin "core dump file" is an ELF file containing the mutable parts of
+      the process memory and special note sections which capture the process,
+      thread and loaded module context needed to recreate the process image in a
+      debugger.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cygpath.html">Prev</a>&#160;</td><td width="20%" align="center"><a accesskey="u" href="using-utils.html">Up</a></td><td width="40%" align="right">&#160;<a accesskey="n" href="getconf.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">cygpath&#160;</td><td width="20%" align="center"><a accesskey="h" href="cygwin-ug-net.html">Home</a></td><td width="40%" align="right" valign="top">&#160;getconf</td></tr></table></div></body></html>

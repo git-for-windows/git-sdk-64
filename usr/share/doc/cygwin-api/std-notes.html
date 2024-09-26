@@ -5,7 +5,8 @@ related function calls.  A real chroot functionality is not supported by
 Windows however.</p><p><code class="function">clock_nanosleep</code> currently supports only
 CLOCK_REALTIME and CLOCK_MONOTONIC.  <code class="function">clock_setres</code>,
 <code class="function">clock_settime</code>, and <code class="function">timer_create</code>
-currently support only CLOCK_REALTIME.</p><p>POSIX file locks via <code class="function">fcntl</code> or
+currently support only CLOCK_REALTIME.</p><p><code class="function">close_range</code> does not support the Linux-specific
+flag CLOSE_RANGE_UNSHARE.</p><p>POSIX file locks via <code class="function">fcntl</code> or
 <code class="function">lockf</code>, as well as BSD <code class="function">flock</code> locks
 are advisory locks.  They don't interact with Windows mandatory locks, nor
 do POSIX fcntl locks interfere with BSD flock locks or vice versa.</p><p>BSD file locks created via <code class="function">flock</code> are only
@@ -67,4 +68,10 @@ otherwise returns the result from <code class="function">setdtablesize</code>.
 <code class="function">getrlimit</code>/<code class="function">setrlimit</code> resources
 RLIMIT_CORE and RLIMIT_STACK return the current values and set the requested
 values.
-All other resource arguments return -1 and set EINVAL.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="std-notimpl.html">Prev</a>&#160;</td><td width="20%" align="center"><a accesskey="u" href="compatibility.html">Up</a></td><td width="40%" align="right">&#160;<a accesskey="n" href="cygwin-functions.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">NOT implemented system interfaces from the Single Unix Specification, Volume 7:&#160;</td><td width="20%" align="center"><a accesskey="h" href="cygwin-api.html">Home</a></td><td width="40%" align="right" valign="top">&#160;Chapter&#160;2.&#160;Cygwin Functions</td></tr></table></div></body></html>
+All other resource arguments return -1 and set EINVAL.</p><p><code class="function">fallocate</code> has a few Windows quirks: The
+FALLOC_FL_ZERO_RANGE operation is NOT atomic.  With flags set to 0 and
+FALLOC_FL_KEEP_SIZE, sparse blocks in the given range are re-allocated
+as per the POSIX requirements.  This re-allocation operation isn't
+atomic either.  Over-allocation with FALLOC_FL_KEEP_SIZE is only
+temporary on Windows until the last handle to the file is closed.
+Over-allocation on sparse files is entirely ignored on Windows.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="std-notimpl.html">Prev</a>&#160;</td><td width="20%" align="center"><a accesskey="u" href="compatibility.html">Up</a></td><td width="40%" align="right">&#160;<a accesskey="n" href="cygwin-functions.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">NOT implemented system interfaces from the Single Unix Specification, Volume 7:&#160;</td><td width="20%" align="center"><a accesskey="h" href="cygwin-api.html">Home</a></td><td width="40%" align="right" valign="top">&#160;Chapter&#160;2.&#160;Cygwin Functions</td></tr></table></div></body></html>
