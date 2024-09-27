@@ -1714,7 +1714,14 @@ variables.</p>
 <p>These variables control various optional help messages designed to
 aid new users.  When left unconfigured, Git will give the message
 alongside instructions on how to squelch it.  You can tell Git
-that you do not need the help message by setting these to <code>false</code>:</p>
+that you have understood the issue and no longer need a specific
+help message by setting the corresponding variable to <code>false</code>.</p>
+<div class="paragraph">
+<p>As they are intended to help human users, these messages are output to
+the standard error. When tools that run Git as a subprocess find them
+disruptive, they can set <code>GIT_ADVICE=0</code> in the environment to squelch
+all advice messages.</p>
+</div>
 <div class="openblock">
 <div class="content">
 <div class="dlist">
@@ -4290,6 +4297,10 @@ conversion outputs.  See <a href="gitattributes.html">gitattributes(5)</a> for d
 <dd>
 <p>Use Vim</p>
 </dd>
+<dt class="hdlist1"><code>vscode</code></dt>
+<dd>
+<p>Use Visual Studio Code (requires a graphical session)</p>
+</dd>
 <dt class="hdlist1"><code>winmerge</code></dt>
 <dd>
 <p>Use WinMerge (requires a graphical session)</p>
@@ -4539,6 +4550,11 @@ walking fewer objects.</p>
 <li>
 <p><code>pack.allowPackReuse=multi</code> may improve the time it takes to create a pack by
 reusing objects from multiple packs instead of just one.</p>
+</li>
+<li>
+<p><code>pack.usePathWalk</code> may speed up packfile creation and make the packfiles be
+significantly smaller in the presence of certain filename collisions with Git&#8217;s
+default name-hash.</p>
 </li>
 </ul>
 </div>
@@ -5057,7 +5073,8 @@ use, it&#8217;ll affect how the auto pack limit works.</p>
 <dt class="hdlist1">gc.autoDetach</dt>
 <dd>
 <p>Make <code>git gc --auto</code> return immediately and run in the background
-if the system supports it. Default is true.</p>
+if the system supports it. Default is true. This config variable acts
+as a fallback in case <code>maintenance.autoDetach</code> is not set.</p>
 </dd>
 <dt class="hdlist1">gc.bigPackThreshold</dt>
 <dd>
@@ -5648,8 +5665,8 @@ addition to the syntax understood by curl, it is possible to specify a
 proxy string with a user name but no password, in which case git will
 attempt to acquire one in the same way it does for other credentials. See
 <a href="gitcredentials.html">gitcredentials(7)</a> for more information. The syntax thus is
-<em>[protocol://][user[:password]@]proxyhost[:port]</em>. This can be overridden
-on a per-remote basis; see remote.&lt;name&gt;.proxy</p>
+<em>[protocol://][user[:password]@]proxyhost[:port][/path]</em>. This can be
+overridden on a per-remote basis; see remote.&lt;name&gt;.proxy</p>
 <div class="paragraph">
 <p>Any proxy, however configured, must be completely transparent and must not
 modify, transform, or buffer the request or response in any way.  Proxies which
@@ -6263,6 +6280,20 @@ error during <code>git fsck</code>.</p>
 <p>Allows overriding the default branch name e.g. when initializing
 a new repository.</p>
 </dd>
+<dt class="hdlist1"><code>init.defaultObjectFormat</code></dt>
+<dd>
+<p>Allows overriding the default object format for new repositories. See
+<code>--object-format=</code> in <a href="git-init.html">git-init(1)</a>. Both the command line option
+and the <code>GIT_DEFAULT_HASH</code> environment variable take precedence over
+this config.</p>
+</dd>
+<dt class="hdlist1"><code>init.defaultRefFormat</code></dt>
+<dd>
+<p>Allows overriding the default ref storage format for new repositories.
+See <code>--ref-format=</code> in <a href="git-init.html">git-init(1)</a>. Both the command line
+option and the <code>GIT_DEFAULT_REF_FORMAT</code> environment variable take
+precedence over this config.</p>
+</dd>
 <dt class="hdlist1">instaweb.browser</dt>
 <dd>
 <p>Specify the program that will be used to browse your working
@@ -6426,6 +6457,19 @@ defaults to empty.</p>
 <p>This boolean config option controls whether some commands run
 <code>git maintenance run --auto</code> after doing their normal work. Defaults
 to true.</p>
+</dd>
+<dt class="hdlist1">maintenance.autoDetach</dt>
+<dd>
+<p>Many Git commands trigger automatic maintenance after they have
+written data into the repository. This boolean config option
+controls whether this automatic maintenance shall happen in the
+foreground or whether the maintenance process shall detach and
+continue to run in the background.</p>
+<div class="paragraph">
+<p>If unset, the value of <code>gc.autoDetach</code> is used as a fallback. Defaults
+to true if both are unset, meaning that the maintenance process will
+detach.</p>
+</div>
 </dd>
 <dt class="hdlist1">maintenance.strategy</dt>
 <dd>
@@ -6776,6 +6820,10 @@ corresponding mergetool.&lt;guitool&gt;.cmd variable is defined.</p>
 <dt class="hdlist1"><code>vimdiff3</code></dt>
 <dd>
 <p>Use Vim where only the MERGED file is shown</p>
+</dd>
+<dt class="hdlist1"><code>vscode</code></dt>
+<dd>
+<p>Use Visual Studio Code (requires a graphical session)</p>
 </dd>
 <dt class="hdlist1"><code>winmerge</code></dt>
 <dd>
@@ -7186,6 +7234,15 @@ computing a pack to send a small change. However, it is possible
 that extra objects are added to the pack-file if the included
 commits contain certain types of direct renames. Default is
 <code>true</code>.</p>
+</dd>
+<dt class="hdlist1">pack.usePathWalk</dt>
+<dd>
+<p>When true, git will default to using the <em>--path-walk</em> option in
+<em>git pack-objects</em> when the <em>--revs</em> option is present. This
+algorithm groups objects by path to maximize the ability to
+compute delta chains across historical versions of the same
+object. This may disable other options, such as using bitmaps to
+enumerate objects.</p>
 </dd>
 <dt class="hdlist1">pack.preferBitmapTips</dt>
 <dd>
@@ -8210,6 +8267,24 @@ one of <em>always</em>, <em>never</em>, <em>cc</em>, <em>compose</em>, or <em>au
 in the <a href="git-send-email.html">git-send-email(1)</a> documentation for the meaning of these
 values.</p>
 </dd>
+<dt class="hdlist1">sendemail.mailmap</dt>
+<dd>
+<p>If true, makes <a href="git-send-email.html">git-send-email(1)</a> assume <code>--mailmap</code>,
+otherwise assume <code>--no-mailmap</code>. False by default.</p>
+</dd>
+<dt class="hdlist1">sendemail.mailmap.file</dt>
+<dd>
+<p>The location of a <a href="git-send-email.html">git-send-email(1)</a> specific augmenting
+mailmap file. The default mailmap and <code>mailmap.file</code> are loaded
+first. Thus, entries in this file take precedence over entries in
+the default mailmap locations. See <a href="gitmailmap.html">gitmailmap(5)</a>.</p>
+</dd>
+<dt class="hdlist1">sendemail.mailmap.blob</dt>
+<dd>
+<p>Like <code>sendemail.mailmap.file</code>, but consider the value as a reference
+to a blob in the repository. Entries in <code>sendemail.mailmap.file</code>
+take precedence over entries here. See <a href="gitmailmap.html">gitmailmap(5)</a>.</p>
+</dd>
 <dt class="hdlist1">sendemail.aliasesFile</dt>
 <dd>
 <p>To avoid typing long email addresses, point this to one or more
@@ -8684,6 +8759,33 @@ as computed via <code>submodule.alternateLocation</code>. Possible values are
 <code>ignore</code>, <code>info</code>, <code>die</code>. Default is <code>die</code>. Note that if set to <code>ignore</code>
 or <code>info</code>, and if there is an error with the computed alternate, the
 clone proceeds as if no alternate was specified.</p>
+</dd>
+<dt class="hdlist1">survey.*</dt>
+<dd>
+<p>These variables adjust the default behavior of the <code>git survey</code>
+command. The intention is that this command could be run in the
+background with these options.</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">verbose</dt>
+<dd>
+<p>This boolean value implies the <code>--[no-]verbose</code> option.</p>
+</dd>
+<dt class="hdlist1">progress</dt>
+<dd>
+<p>This boolean value implies the <code>--[no-]progress</code> option.</p>
+</dd>
+<dt class="hdlist1">top</dt>
+<dd>
+<p>This integer value implies <code>--top=&lt;N&gt;</code>, specifying the
+number of entries in the detail tables.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
 </dd>
 <dt class="hdlist1">tag.forceSignAnnotated</dt>
 <dd>
@@ -9285,7 +9387,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-09-24 12:05:03 UTC
+Last updated 2024-09-26 22:51:36 UTC
 </div>
 </div>
 </body>

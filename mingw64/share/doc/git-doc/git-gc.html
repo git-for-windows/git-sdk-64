@@ -452,7 +452,7 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git gc</em> [--aggressive] [--auto] [--quiet] [--prune=&lt;date&gt; | --no-prune] [--force] [--keep-largest-pack]</pre>
+<pre class="content"><em>git gc</em> [--aggressive] [--auto] [--[no-]detach] [--quiet] [--prune=&lt;date&gt; | --no-prune] [--force] [--keep-largest-pack]</pre>
 </div>
 </div>
 </div>
@@ -509,6 +509,11 @@ configuration options such as <code>gc.auto</code> and <code>gc.autoPackLimit</c
 other housekeeping tasks (e.g. rerere, working trees, reflog&#8230;&#8203;) will
 be performed as well.</p>
 </div>
+</dd>
+<dt class="hdlist1">--[no-]detach</dt>
+<dd>
+<p>Run in the background if the system supports it. This option overrides
+the <code>gc.autoDetach</code> config.</p>
 </dd>
 <dt class="hdlist1">--[no-]cruft</dt>
 <dd>
@@ -650,7 +655,8 @@ use, it&#8217;ll affect how the auto pack limit works.</p>
 <dt class="hdlist1">gc.autoDetach</dt>
 <dd>
 <p>Make <code>git gc --auto</code> return immediately and run in the background
-if the system supports it. Default is true.</p>
+if the system supports it. Default is true. This config variable acts
+as a fallback in case <code>maintenance.autoDetach</code> is not set.</p>
 </dd>
 <dt class="hdlist1">gc.bigPackThreshold</dt>
 <dd>
@@ -887,7 +893,7 @@ seems to be low in practice).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-09-24 12:05:03 UTC
+Last updated 2024-09-26 22:51:36 UTC
 </div>
 </div>
 </body>

@@ -767,6 +767,55 @@ otherwise.</p>
 commits ahead and behind, respectively, when comparing the output
 ref to the <code>&lt;committish&gt;</code> specified in the format.</p>
 </dd>
+<dt class="hdlist1">is-base:&lt;committish&gt;</dt>
+<dd>
+<p>In at most one row, <code>(&lt;committish&gt;)</code> will appear to indicate the ref
+that is most likely the ref used as a starting point for the branch
+that produced <code>&lt;committish&gt;</code>. This choice is made using a heuristic:
+choose the ref that minimizes the number of commits in the
+first-parent history of <code>&lt;committish&gt;</code> and not in the first-parent
+history of the ref.</p>
+<div class="paragraph">
+<p>For example, consider the following figure of first-parent histories of
+several refs:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>*--*--*--*--*--* refs/heads/A
+\
+ \
+  *--*--*--* refs/heads/B
+   \     \
+    \     \
+     *     * refs/heads/C
+      \
+       \
+        *--* refs/heads/D</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here, if <code>A</code>, <code>B</code>, and <code>C</code> are the filtered references, and the format
+string is <code>%(refname):%(is-base:D)</code>, then the output would be</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>refs/heads/A:
+refs/heads/B:(D)
+refs/heads/C:</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is because the first-parent history of <code>D</code> has its earliest
+intersection with the first-parent histories of the filtered refs at a
+common first-parent ancestor of <code>B</code> and <code>C</code> and ties are broken by the
+earliest ref in the sorted order.</p>
+</div>
+<div class="paragraph">
+<p>Note that this token will not appear if the first-parent history of
+<code>&lt;committish&gt;</code> does not intersect the first-parent histories of the
+filtered refs.</p>
+</div>
+</dd>
 <dt class="hdlist1">describe[:options]</dt>
 <dd>
 <p>A human-readable name, like <a href="git-describe.html">git-describe(1)</a>;
@@ -1089,7 +1138,7 @@ commits and from none of the <code>--no-merged</code> commits are shown.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-09-24 12:05:03 UTC
+Last updated 2024-09-26 22:51:36 UTC
 </div>
 </div>
 </body>

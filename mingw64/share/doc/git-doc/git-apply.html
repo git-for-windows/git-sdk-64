@@ -452,7 +452,8 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git apply</em> [--stat] [--numstat] [--summary] [--check] [--index | --intent-to-add] [--3way]
+<pre class="content"><em>git apply</em> [--stat] [--numstat] [--summary] [--check]
+          [--index | --intent-to-add] [--3way] [--ours | --theirs | --union]
           [--apply] [--no-add] [--build-fake-ancestor=&lt;file&gt;] [-R | --reverse]
           [--allow-binary-replacement | --binary] [--reject] [-z]
           [-p&lt;n&gt;] [-C&lt;n&gt;] [--inaccurate-eof] [--recount] [--cached]
@@ -553,6 +554,13 @@ resolve.  This option implies the <code>--index</code> option unless the
 <code>--cached</code> option is used, and is incompatible with the <code>--reject</code> option.
 When used with the <code>--cached</code> option, any conflicts are left at higher stages
 in the cache.</p>
+</dd>
+<dt class="hdlist1">--ours</dt>
+<dt class="hdlist1">--theirs</dt>
+<dt class="hdlist1">--union</dt>
+<dd>
+<p>Instead of leaving conflicts in the file, resolve conflicts favouring
+our (or their or both) side of the lines. Requires --3way.</p>
 </dd>
 <dt class="hdlist1">--build-fake-ancestor=&lt;file&gt;</dt>
 <dd>
@@ -836,7 +844,7 @@ subdirectory is checked and (if possible) updated.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-09-24 12:05:03 UTC
+Last updated 2024-09-26 22:51:36 UTC
 </div>
 </div>
 </body>

@@ -1049,15 +1049,15 @@ independently of <em>git svn</em> functions.</p>
 </dd>
 <dt class="hdlist1"><em>create-ignore</em></dt>
 <dd>
-<p>Recursively finds the svn:ignore property on directories and
-creates matching .gitignore files. The resulting files are staged to
-be committed, but are not committed. Use -r/--revision to refer to a
-specific revision.</p>
+<p>Recursively finds the svn:ignore and svn:global-ignores properties
+on directories and creates matching .gitignore files. The resulting
+files are staged to be committed, but are not committed. Use
+-r/--revision to refer to a specific revision.</p>
 </dd>
 <dt class="hdlist1"><em>show-ignore</em></dt>
 <dd>
-<p>Recursively finds and lists the svn:ignore property on
-directories.  The output is suitable for appending to
+<p>Recursively finds and lists the svn:ignore and svn:global-ignores
+properties on directories. The output is suitable for appending to
 the $GIT_DIR/info/exclude file.</p>
 </dd>
 <dt class="hdlist1"><em>mkdirs</em></dt>
@@ -1590,7 +1590,7 @@ for rewriteRoot and rewriteUUID which can be used together.</p>
 # Now commit your changes (that were committed previously using Git) to SVN,
 # as well as automatically updating your working HEAD:
         git svn dcommit
-# Append svn:ignore settings to the default Git exclude file:
+# Append svn:ignore and svn:global-ignores settings to the default Git exclude file:
         git svn show-ignore &gt;&gt; .git/info/exclude</pre>
 </div>
 </div>
@@ -1978,7 +1978,7 @@ and imports all SVN tags as branches, prefixing the tag name with <em>tags/</em>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-09-24 12:05:03 UTC
+Last updated 2024-09-26 22:51:36 UTC
 </div>
 </div>
 </body>

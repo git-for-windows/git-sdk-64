@@ -454,7 +454,7 @@ pre>code {
 <div class="verseblock">
 <pre class="content"><em>git repack</em> [-a] [-A] [-d] [-f] [-F] [-l] [-n] [-q] [-b] [-m]
         [--window=&lt;n&gt;] [--depth=&lt;n&gt;] [--threads=&lt;n&gt;] [--keep-pack=&lt;pack-name&gt;]
-        [--write-midx] [--full-name-hash]</pre>
+        [--write-midx] [--full-name-hash] [--path-walk]</pre>
 </div>
 </div>
 </div>
@@ -736,6 +736,20 @@ pack as the preferred pack for object selection by the MIDX (see
 <p>Write a multi-pack index (see <a href="git-multi-pack-index.html">git-multi-pack-index(1)</a>)
 containing the non-redundant packs.</p>
 </dd>
+<dt class="hdlist1">--path-walk</dt>
+<dd>
+<p>This option passes the <code>--path-walk</code> option to the underlying
+<code>git pack-options</code> process (see <a href="git-pack-objects.html">git-pack-objects(1)</a>).
+By default, <code>git pack-objects</code> walks objects in an order that
+presents trees and blobs in an order unrelated to the path they
+appear relative to a commit&#8217;s root tree. The <code>--path-walk</code> option
+enables a different walking algorithm that organizes trees and
+blobs by path. This has the potential to improve delta compression
+especially in the presence of filenames that cause collisions in
+Git&#8217;s default name-hash algorithm. Due to changing how the objects
+are walked, this option is not compatible with <code>--delta-islands</code>
+or <code>--filter</code>.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -785,7 +799,7 @@ attribute <code>delta</code> set to false.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-09-24 12:05:03 UTC
+Last updated 2024-09-26 22:51:36 UTC
 </div>
 </div>
 </body>
