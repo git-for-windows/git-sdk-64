@@ -3,7 +3,7 @@
 " Maintainer:		Aliaksei Budavei <0x000c70 AT gmail DOT com>
 " Former Maintainer:	Claudio Fleiner <claudio@fleiner.com>
 " Repository:		https://github.com/zzzyxwvut/java-vim.git
-" Last Change:		2024 Aug 26
+" Last Change:		2024 Sep 19
 
 " Please check :help java.vim for comments on some of the options available.
 
@@ -92,6 +92,13 @@ syn keyword javaTypedef		this super
 syn keyword javaOperator	new instanceof
 syn match   javaOperator	"\<var\>\%(\s*(\)\@!"
 
+if s:ff.IsRequestedPreviewFeature(476)
+  " Module imports can be used in any source file.
+  syn match   javaExternal	"\<import\s\+module\>" contains=javaModuleImport
+  syn keyword javaModuleImport	contained module
+  hi def link javaModuleImport	Statement
+endif
+
 " Since the yield statement, which could take a parenthesised operand,
 " and _qualified_ yield methods get along within the switch block
 " (JLS-17, §3.8), it seems futile to make a region definition for this
@@ -157,13 +164,20 @@ endif
 " testing in a project without attendant confusion for IDEs, with the
 " ".java\=" extension used for a production version and an arbitrary
 " extension used for a testing version.
-if fnamemodify(bufname("%"), ":t") =~ '^module-info\%(\.class\>\)\@!'
+if fnamemodify(bufname("%"), ":t") =~ '^module-info\>\%(\.class\>\)\@!'
   syn keyword javaModuleStorageClass	module transitive
   syn keyword javaModuleStmt		open requires exports opens uses provides
   syn keyword javaModuleExternal	to with
   hi def link javaModuleStorageClass	StorageClass
   hi def link javaModuleStmt		Statement
   hi def link javaModuleExternal	Include
+
+  if !exists("g:java_ignore_javadoc") && g:main_syntax != 'jsp'
+    syn match javaDocProvidesTag	contained "@provides\_s\+\S\+" contains=javaDocParam
+    syn match javaDocUsesTag		contained "@uses\_s\+\S\+" contains=javaDocParam
+    hi def link javaDocProvidesTag	Special
+    hi def link javaDocUsesTag		Special
+  endif
 endif
 
 " Fancy parameterised types (JLS-17, §4.5).
@@ -276,19 +290,27 @@ if exists("g:java_space_errors")
 endif
 
 exec 'syn match javaUserLabel "^\s*\<\K\k*\>\%(\<default\>\)\@' . s:ff.Peek('7', '') . '<!\s*::\@!"he=e-1'
-syn region  javaLabelRegion	transparent matchgroup=javaLabel start="\<case\>" matchgroup=NONE end=":\|->" contains=javaLabelCastType,javaLabelNumber,javaCharacter,javaString,javaConstant,@javaClasses,javaGenerics,javaLabelDefault,javaLabelVarType,javaLabelWhenClause
+
+if s:ff.IsRequestedPreviewFeature(455)
+  syn region  javaLabelRegion	transparent matchgroup=javaLabel start="\<case\>" matchgroup=NONE end=":\|->" contains=javaBoolean,javaNumber,javaCharacter,javaString,javaConstant,@javaClasses,javaGenerics,javaType,javaLabelDefault,javaLabelVarType,javaLabelWhenClause
+else
+  syn region  javaLabelRegion	transparent matchgroup=javaLabel start="\<case\>" matchgroup=NONE end=":\|->" contains=javaLabelCastType,javaLabelNumber,javaCharacter,javaString,javaConstant,@javaClasses,javaGenerics,javaLabelDefault,javaLabelVarType,javaLabelWhenClause
+  syn keyword javaLabelCastType	contained char byte short int
+  syn match   javaLabelNumber	contained "\<0\>[lL]\@!"
+  syn match   javaLabelNumber	contained "\<\%(0\%([xX]\x\%(_*\x\)*\|_*\o\%(_*\o\)*\|[bB][01]\%(_*[01]\)*\)\|[1-9]\%(_*\d\)*\)\>[lL]\@!"
+  hi def link javaLabelCastType	javaType
+  hi def link javaLabelNumber	javaNumber
+endif
+
 syn region  javaLabelRegion	transparent matchgroup=javaLabel start="\<default\>\%(\s*\%(:\|->\)\)\@=" matchgroup=NONE end=":\|->" oneline
 " Consider grouped _default_ _case_ labels, i.e.
 " case null, default ->
 " case null: default:
 syn keyword javaLabelDefault	contained default
 syn keyword javaLabelVarType	contained var
-syn keyword javaLabelCastType	contained char byte short int
 " Allow for the contingency of the enclosing region not being able to
 " _keep_ its _end_, e.g. case ':':.
 syn region  javaLabelWhenClause	contained transparent matchgroup=javaLabel start="\<when\>" matchgroup=NONE end=":"me=e-1 end="->"me=e-2 contains=TOP,javaExternal,javaLambdaDef
-syn match   javaLabelNumber	contained "\<0\>[lL]\@!"
-syn match   javaLabelNumber	contained "\<\%(0\%([xX]\x\%(_*\x\)*\|_*\o\%(_*\o\)*\|[bB][01]\%(_*[01]\)*\)\|[1-9]\%(_*\d\)*\)\>[lL]\@!"
 
 " Comments
 syn keyword javaTodo		contained TODO FIXME XXX
@@ -335,29 +357,99 @@ if !exists("g:java_ignore_javadoc") && g:main_syntax != 'jsp'
     call s:ReportOnce(v:exception)
   endtry
 
-  syn region javaDocComment	start="/\*\*" end="\*/" keepend contains=javaCommentTitle,@javaHtml,javaDocTags,javaDocSeeTag,javaDocCodeTag,javaDocSnippetTag,javaTodo,javaCommentError,javaSpaceError,@Spell fold
-  exec 'syn region javaCommentTitle contained matchgroup=javaDocComment start="/\*\*" matchgroup=javaCommentTitle end="\.$" end="\.[ \t\r]\@=" end="\%(^\s*\**\s*\)\@' . s:ff.Peek('80', '') . '<=@"me=s-2,he=s-1 end="\*/"me=s-1,he=s-1 contains=@javaHtml,javaCommentStar,javaTodo,javaCommentError,javaSpaceError,@Spell,javaDocTags,javaDocSeeTag,javaDocCodeTag,javaDocSnippetTag'
-  syn region javaCommentTitle	contained matchgroup=javaDocComment start="/\*\*\s*\r\=\n\=\s*\**\s*\%({@return\>\)\@=" matchgroup=javaCommentTitle end="}\%(\s*\.*\)*" contains=@javaHtml,javaCommentStar,javaTodo,javaCommentError,javaSpaceError,@Spell,javaDocTags,javaDocSeeTag,javaDocCodeTag,javaDocSnippetTag
-  syn region javaDocTags	contained start="{@\%(li\%(teral\|nk\%(plain\)\=\)\|inherit[Dd]oc\|doc[rR]oot\|value\)\>" end="}"
-  syn match  javaDocTags	contained "@\%(param\|exception\|throws\|since\)\s\+\S\+" contains=javaDocParam
-  syn match  javaDocParam	contained "\s\S\+"
-  syn match  javaDocTags	contained "@\%(version\|author\|return\|deprecated\|serial\%(Field\|Data\)\=\)\>"
-  syn region javaDocSeeTag	contained matchgroup=javaDocTags start="@see\s\+" matchgroup=NONE end="\_."re=e-1 contains=javaDocSeeTagParam
-  syn match  javaDocSeeTagParam	contained @"\_[^"]\+"\|<a\s\+\_.\{-}</a>\|\%(\k\|\.\)*\%(#\k\+\%((\_[^)]*)\)\=\)\=@ contains=@javaHtml extend
+  syn region javaDocComment	start="/\*\*" end="\*/" keepend contains=javaCommentTitle,@javaHtml,@javaDocTags,javaTodo,javaCommentError,javaSpaceError,@Spell fold
+  exec 'syn region javaCommentTitle contained matchgroup=javaDocComment start="/\*\*" matchgroup=javaCommentTitle end="\.$" end="\.[ \t\r]\@=" end="\%(^\s*\**\s*\)\@' . s:ff.Peek('80', '') . '<=@"me=s-2,he=s-1 end="\*/"me=s-1,he=s-1 contains=@javaHtml,javaCommentStar,javaTodo,javaCommentError,javaSpaceError,@Spell,@javaDocTags'
+  syn region javaCommentTitle	contained matchgroup=javaDocComment start="/\*\*\s*\r\=\n\=\s*\**\s*\%({@return\>\)\@=" matchgroup=javaCommentTitle end="}\%(\s*\.*\)*" contains=@javaHtml,javaCommentStar,javaTodo,javaCommentError,javaSpaceError,@Spell,@javaDocTags,javaTitleSkipBlock
+  syn region javaCommentTitle	contained matchgroup=javaDocComment start="/\*\*\s*\r\=\n\=\s*\**\s*\%({@summary\>\)\@=" matchgroup=javaCommentTitle end="}" contains=@javaHtml,javaCommentStar,javaTodo,javaCommentError,javaSpaceError,@Spell,@javaDocTags,javaTitleSkipBlock
+  " The members of javaDocTags are sub-grouped according to the Java
+  " version of their introduction, and sub-group members in turn are
+  " arranged in alphabetical order, so that future newer members can
+  " be pre-sorted and appended without disturbing the current member
+  " placement.
+  " Since they only have significance in javaCommentTitle, neither
+  " javaDocSummaryTag nor javaDocReturnTitleTag are defined.
+  syn cluster javaDocTags	contains=javaDocAuthorTag,javaDocDeprecatedTag,javaDocExceptionTag,javaDocParamTag,javaDocReturnTag,javaDocSeeTag,javaDocVersionTag,javaDocSinceTag,javaDocLinkTag,javaDocSerialTag,javaDocSerialDataTag,javaDocSerialFieldTag,javaDocThrowsTag,javaDocDocRootTag,javaDocInheritDocTag,javaDocLinkplainTag,javaDocValueTag,javaDocCodeTag,javaDocLiteralTag,javaDocHiddenTag,javaDocIndexTag,javaDocProvidesTag,javaDocUsesTag,javaDocSystemPropertyTag,javaDocSnippetTag,javaDocSpecTag
+
+  " Anticipate non-standard inline tags in {@return} and {@summary}.
+  syn region javaTitleSkipBlock	contained transparent start="{\%(@\%(return\|summary\)\>\)\@!" end="}"
+  syn match  javaDocDocRootTag	contained "{@docRoot}"
+  syn match  javaDocInheritDocTag contained "{@inheritDoc}"
+  syn region javaIndexSkipBlock	contained transparent start="{\%(@index\>\)\@!" end="}" contains=javaIndexSkipBlock,javaDocIndexTag
+  syn region javaDocIndexTag	contained start="{@index\>" end="}" contains=javaDocIndexTag,javaIndexSkipBlock
+  syn region javaLinkSkipBlock	contained transparent start="{\%(@link\>\)\@!" end="}" contains=javaLinkSkipBlock,javaDocLinkTag
+  syn region javaDocLinkTag	contained start="{@link\>" end="}" contains=javaDocLinkTag,javaLinkSkipBlock
+  syn region javaLinkplainSkipBlock contained transparent start="{\%(@linkplain\>\)\@!" end="}" contains=javaLinkplainSkipBlock,javaDocLinkplainTag
+  syn region javaDocLinkplainTag contained start="{@linkplain\>" end="}" contains=javaDocLinkplainTag,javaLinkplainSkipBlock
+  syn region javaLiteralSkipBlock contained transparent start="{\%(@literal\>\)\@!" end="}" contains=javaLiteralSkipBlock,javaDocLiteralTag
+  syn region javaDocLiteralTag	contained start="{@literal\>" end="}" contains=javaDocLiteralTag,javaLiteralSkipBlock
+  syn region javaSystemPropertySkipBlock contained transparent start="{\%(@systemProperty\>\)\@!" end="}" contains=javaSystemPropertySkipBlock,javaDocSystemPropertyTag
+  syn region javaDocSystemPropertyTag contained start="{@systemProperty\>" end="}" contains=javaDocSystemPropertyTag,javaSystemPropertySkipBlock
+  syn region javaValueSkipBlock	contained transparent start="{\%(@value\>\)\@!" end="}" contains=javaValueSkipBlock,javaDocValueTag
+  syn region javaDocValueTag	contained start="{@value\>" end="}" contains=javaDocValueTag,javaValueSkipBlock
+
+  syn match  javaDocParam	contained "\s\zs\S\+"
+  syn match  javaDocExceptionTag contained "@exception\s\+\S\+" contains=javaDocParam
+  syn match  javaDocParamTag	contained "@param\s\+\S\+" contains=javaDocParam
+  syn match  javaDocSinceTag	contained "@since\s\+\S\+" contains=javaDocParam
+  syn match  javaDocThrowsTag	contained "@throws\s\+\S\+" contains=javaDocParam
+  syn match  javaDocSpecTag	contained "@spec\_s\+\S\+\ze\_s\+\S\+" contains=javaDocParam
+
+  syn match  javaDocAuthorTag	contained "@author\>"
+  syn match  javaDocDeprecatedTag contained "@deprecated\>"
+  syn match  javaDocHiddenTag	contained "@hidden\>"
+  syn match  javaDocReturnTag	contained "@return\>"
+  syn match  javaDocSerialTag	contained "@serial\>"
+  syn match  javaDocSerialDataTag contained "@serialData\>"
+  syn match  javaDocSerialFieldTag contained "@serialField\>"
+  syn match  javaDocVersionTag	contained "@version\>"
+
+  syn match  javaDocSeeTag	contained "@see\>" nextgroup=javaDocSeeTag1,javaDocSeeTag2,javaDocSeeTag3,javaDocSeeTagStar skipwhite skipempty
+  syn match  javaDocSeeTagStar	contained "^\s*\*\+\%(\s*{\=@\|/\|$\)\@!" nextgroup=javaDocSeeTag1,javaDocSeeTag2,javaDocSeeTag3 skipwhite skipempty
+  syn match  javaDocSeeTag1	contained @"\_[^"]\+"@
+  syn match  javaDocSeeTag2	contained @<a\s\+\_.\{-}</a>@ contains=@javaHtml extend
+  syn match  javaDocSeeTag3	contained @["< \t]\@!\%(\k\|[/.]\)*\%(##\=\k\+\%((\_[^)]*)\)\=\)\=@ nextgroup=javaDocSeeTag3Label skipwhite skipempty
+  syn match  javaDocSeeTag3Label contained @\k\%(\k\+\s*\)*$@
+
   syn region javaCodeSkipBlock	contained transparent start="{\%(@code\>\)\@!" end="}" contains=javaCodeSkipBlock,javaDocCodeTag
   syn region javaDocCodeTag	contained start="{@code\>" end="}" contains=javaDocCodeTag,javaCodeSkipBlock
+
   exec 'syn region javaDocSnippetTagAttr contained transparent matchgroup=javaHtmlArg start=/\<\%(class\|file\|id\|lang\|region\)\%(\s*=\)\@=/ matchgroup=javaHtmlString end=/:$/ end=/\%(=\s*\)\@' . s:ff.Peek('80', '') . '<=\%("[^"]\+"\|' . "\x27[^\x27]\\+\x27" . '\|\%([.\\/-]\|\k\)\+\)/ nextgroup=javaDocSnippetTagAttr skipwhite skipnl'
   syn region javaSnippetSkipBlock contained transparent start="{\%(@snippet\>\)\@!" end="}" contains=javaSnippetSkipBlock,javaDocSnippetTag,javaCommentMarkupTag
   syn region javaDocSnippetTag	contained start="{@snippet\>" end="}" contains=javaDocSnippetTag,javaSnippetSkipBlock,javaDocSnippetTagAttr,javaCommentMarkupTag
 
   syntax case match
   hi def link javaDocComment		Comment
+  hi def link javaDocSeeTagStar		javaDocComment
   hi def link javaCommentTitle		SpecialComment
-  hi def link javaDocTags		Special
-  hi def link javaDocCodeTag		Special
-  hi def link javaDocSnippetTag		Special
-  hi def link javaDocSeeTagParam	Function
   hi def link javaDocParam		Function
+
+  hi def link javaDocAuthorTag		Special
+  hi def link javaDocCodeTag		Special
+  hi def link javaDocDeprecatedTag	Special
+  hi def link javaDocDocRootTag		Special
+  hi def link javaDocExceptionTag	Special
+  hi def link javaDocHiddenTag		Special
+  hi def link javaDocIndexTag		Special
+  hi def link javaDocInheritDocTag	Special
+  hi def link javaDocLinkTag		Special
+  hi def link javaDocLinkplainTag	Special
+  hi def link javaDocLiteralTag		Special
+  hi def link javaDocParamTag		Special
+  hi def link javaDocReturnTag		Special
+  hi def link javaDocSeeTag		Special
+  hi def link javaDocSeeTag1		String
+  hi def link javaDocSeeTag2		Special
+  hi def link javaDocSeeTag3		Function
+  hi def link javaDocSerialTag		Special
+  hi def link javaDocSerialDataTag	Special
+  hi def link javaDocSerialFieldTag	Special
+  hi def link javaDocSinceTag		Special
+  hi def link javaDocSnippetTag		Special
+  hi def link javaDocSpecTag		Special
+  hi def link javaDocSystemPropertyTag	Special
+  hi def link javaDocThrowsTag		Special
+  hi def link javaDocValueTag		Special
+  hi def link javaDocVersionTag		Special
 endif
 
 " match the special comment /**/
@@ -586,7 +678,7 @@ hi def link javaStorageClass		StorageClass
 hi def link javaMethodDecl		javaStorageClass
 hi def link javaClassDecl		javaStorageClass
 hi def link javaScopeDecl		javaStorageClass
-hi def link javaConceptKind		NonText
+hi def link javaConceptKind		javaStorageClass
 
 hi def link javaBoolean			Boolean
 hi def link javaSpecial			Special
@@ -615,8 +707,6 @@ hi def link javaUserLabelRef		javaUserLabel
 hi def link javaLabel			Label
 hi def link javaLabelDefault		javaLabel
 hi def link javaLabelVarType		javaOperator
-hi def link javaLabelNumber		javaNumber
-hi def link javaLabelCastType		javaType
 
 hi def link javaComment			Comment
 hi def link javaCommentStar		javaComment
