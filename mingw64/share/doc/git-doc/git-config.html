@@ -3912,6 +3912,15 @@ preceded by <code>!</code>, shell commands.</p>
 for details and examples.</p>
 </div>
 </dd>
+<dt class="hdlist1">credential.interactive</dt>
+<dd>
+<p>By default, Git and any configured credential helpers will ask for
+user input when new credentials are required. Many of these helpers
+will succeed based on stored credentials if those credentials are
+still valid. To avoid the possibility of user interactivity from
+Git, set <code>credential.interactive=false</code>. Some credential helpers
+respect this option as well.</p>
+</dd>
 <dt class="hdlist1">credential.useHttpPath</dt>
 <dd>
 <p>When acquiring credentials, consider the "path" component of an http
@@ -7959,6 +7968,15 @@ table, the next-biggest table must at least be twice as big. A maximum factor
 of 256 is supported.</p>
 </div>
 </dd>
+<dt class="hdlist1">reftable.lockTimeout</dt>
+<dd>
+<p>Whenever the reftable backend appends a new table to the stack, it has
+to lock the central "tables.list" file before updating it. This config
+controls how long the process will wait to acquire the lock in case
+another process has already acquired it. Value 0 means not to retry at
+all; -1 means to try indefinitely. Default is 100 (i.e., retry for
+100ms).</p>
+</dd>
 <dt class="hdlist1">remote.pushDefault</dt>
 <dd>
 <p>The remote to push to by default.  Overrides
@@ -9387,7 +9405,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-09-26 22:51:36 UTC
+Last updated 2024-10-04 12:45:00 UTC
 </div>
 </div>
 </body>
