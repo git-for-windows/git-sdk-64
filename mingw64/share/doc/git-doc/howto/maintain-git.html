@@ -443,7 +443,7 @@ pre>code {
 <div id="header">
 <h1>How to maintain Git</h1>
 <div class="details">
-<span id="revdate">2024-10-04</span>
+<span id="revdate">2024-10-08</span>
 </div>
 </div>
 <div id="content">
@@ -532,7 +532,24 @@ before getting merged to <em>master</em>.</p>
 </li>
 <li>
 <p><em>seen</em> branch is used to publish other proposed changes that do
-not yet pass the criteria set for <em>next</em> (see above).</p>
+not yet pass the criteria set for <em>next</em> (see above), but there
+is no promise that <em>seen</em> will contain everything.  A topic that
+had no reviewer reaction may not be picked up.</p>
+</li>
+<li>
+<p>A new topic will first get merged to <em>seen</em>, unless it is
+trivially correct and clearly urgent, in which case it may be
+directly merged to <em>next</em> or even to <em>master</em>.</p>
+</li>
+<li>
+<p>If a topic that was picked up to <em>seen</em> becomes and stays
+inactive for 3 calendar weeks without having seen a clear
+consensus that it is good enough to be moved to <em>next</em>, the
+topic may be discarded from <em>seen</em>.  Interested parties are
+still free to revive the topic.  For the purpose of this
+guideline, the definition of being "inactive" is that nobody
+has discussed the topic, no new iteration of the topic was
+posted, and no responses to the review comments were given.</p>
 </li>
 <li>
 <p>The tips of <em>master</em> and <em>maint</em> branches will not be rewound to
@@ -1243,7 +1260,7 @@ $ git update-ref -d $mf/ai/topic</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-04 12:45:00 UTC
+Last updated 2024-10-08 08:53:55 UTC
 </div>
 </div>
 </body>
