@@ -31,12 +31,17 @@ namespace Windows.Foundation.Collections {
     interface IPropertySet;
 
     declare {
+        interface Windows.Foundation.Collections.IKeyValuePair<HSTRING, HSTRING>;
         interface Windows.Foundation.Collections.IKeyValuePair<HSTRING, IInspectable *>;
+        interface Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<HSTRING, HSTRING> *>;
         interface Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<HSTRING, IInspectable *> *>;
+        interface Windows.Foundation.Collections.IIterator<Windows.Foundation.Collections.IKeyValuePair<HSTRING, HSTRING> *>;
         interface Windows.Foundation.Collections.IIterator<Windows.Foundation.Collections.IKeyValuePair<HSTRING, IInspectable *> *>;
         interface Windows.Foundation.Collections.IMapChangedEventArgs<HSTRING>;
         interface Windows.Foundation.Collections.MapChangedEventHandler<HSTRING, IInspectable *>;
+        interface Windows.Foundation.Collections.IMap<HSTRING, HSTRING>;
         interface Windows.Foundation.Collections.IMap<HSTRING, IInspectable *>;
+        interface Windows.Foundation.Collections.IMapView<HSTRING, HSTRING>;
         interface Windows.Foundation.Collections.IMapView<HSTRING, IInspectable *>;
         interface Windows.Foundation.Collections.IObservableMap<HSTRING, IInspectable *>;
     }
@@ -50,6 +55,20 @@ namespace Windows.Foundation.Collections {
                  Windows.Foundation.Collections.IMap<HSTRING, IInspectable *>,
                  Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<HSTRING, IInspectable *> *>
     {
+    }
+
+    [
+        activatable(Windows.Foundation.FoundationContract, 1.0),
+        contract(Windows.Foundation.FoundationContract, 1.0),
+        marshaling_behavior(agile),
+        threading(both)
+    ]
+    runtimeclass ValueSet
+    {
+        [default] interface Windows.Foundation.Collections.IPropertySet;
+        interface Windows.Foundation.Collections.IObservableMap<HSTRING, IInspectable *>;
+        interface Windows.Foundation.Collections.IMap<HSTRING, IInspectable *>;
+        interface Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<HSTRING, IInspectable *> *>;
     }
 }
 
@@ -104,16 +123,27 @@ namespace Windows.Foundation {
         interface Windows.Foundation.AsyncOperationCompletedHandler<IInspectable *>;
         interface Windows.Foundation.AsyncOperationCompletedHandler<boolean>;
         interface Windows.Foundation.AsyncOperationCompletedHandler<UINT32>;
+        interface Windows.Foundation.AsyncOperationProgressHandler<UINT32, UINT32>;
+        interface Windows.Foundation.AsyncOperationWithProgressCompletedHandler<UINT32, UINT32>;
         interface Windows.Foundation.IAsyncOperation<IInspectable *>;
         interface Windows.Foundation.IAsyncOperation<boolean>;
         interface Windows.Foundation.IAsyncOperation<UINT32>;
+        interface Windows.Foundation.IAsyncOperationWithProgress<UINT32, UINT32>;
         interface Windows.Foundation.IReference<BYTE>;
-        interface Windows.Foundation.IReference<INT32>;
         interface Windows.Foundation.IReference<DOUBLE>;
         interface Windows.Foundation.IReference<FLOAT>;
+        interface Windows.Foundation.IReference<GUID>;
+        interface Windows.Foundation.IReference<INT16>;
+        interface Windows.Foundation.IReference<INT32>;
+        interface Windows.Foundation.IReference<INT64>;
         interface Windows.Foundation.IReference<UINT32>;
         interface Windows.Foundation.IReference<UINT64>;
         interface Windows.Foundation.IReference<Windows.Foundation.DateTime>;
+        interface Windows.Foundation.IReference<Windows.Foundation.Point>;
+        interface Windows.Foundation.IReference<Windows.Foundation.Rect>;
+        interface Windows.Foundation.IReference<Windows.Foundation.Size>;
+        interface Windows.Foundation.IReference<Windows.Foundation.TimeSpan>;
+        interface Windows.Foundation.IReference<boolean>;
         interface Windows.Foundation.TypedEventHandler<IInspectable *, IInspectable *>;
         interface Windows.Foundation.TypedEventHandler<Windows.Foundation.IMemoryBufferReference *, IInspectable *>;
     }
