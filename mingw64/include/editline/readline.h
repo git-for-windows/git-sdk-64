@@ -5,7 +5,7 @@ readline.h
 is part of:
 
 WinEditLine (formerly MinGWEditLine)
-Copyright 2010-2020 Paolo Tosco <paolo.tosco.mail@gmail.com>
+Copyright 2010-2022 Paolo Tosco <paolo.tosco.mail@gmail.com>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 these defines may be changed
 */
 #define DEFAULT_HISTORY_SIZE    200  /* default number of history entries */
+#define RL_READLINE_VERSION    0x020208  /* 0xMMmmpp where MM is major, mm minor, pp patch version */
 
 #ifdef __cplusplus
 extern "C" {
@@ -108,11 +109,14 @@ extern variables
 extern char *rl_line_buffer;
 extern char *rl_prompt;
 extern int rl_point;
+extern int rl_end;
 extern int rl_attempted_completion_over;
 extern int rl_completion_append_character;
+extern int rl_readline_version;
 extern const char rl_basic_word_break_characters[];
 extern const char *rl_completer_word_break_characters;
 extern const char *rl_readline_name;
+extern const char *rl_library_version;
 extern rl_completion_func_t *rl_attempted_completion_function;
 extern rl_compentry_func_t *rl_completion_entry_function;
 extern rl_compentryfree_func_t *rl_user_completion_entry_free_function;
