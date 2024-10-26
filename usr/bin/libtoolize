@@ -5,7 +5,7 @@
 # Prepare a package to use libtool.
 # Written by Gary V. Vaughan <gary@gnu.org>, 2003
 
-# Copyright (C) 2003-2019, 2021-2022 Free Software Foundation, Inc.
+# Copyright (C) 2003-2019, 2021-2024 Free Software Foundation, Inc.
 # This is free software; see the source for copying conditions.  There is NO
 # warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -67,11 +67,11 @@ scriptversion=2019-02-19.15; # UTC
 # This is free software.  There is NO warranty; not even for
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
-# Copyright (C) 2004-2019, 2021 Bootstrap Authors
+# Copyright (C) 2004-2019, 2021, 2023-2024 Bootstrap Authors
 #
 # This file is dual licensed under the terms of the MIT license
-# <https://opensource.org/license/MIT>, and GPL version 2 or later
-# <http://www.gnu.org/licenses/gpl-2.0.html>.  You must apply one of
+# <https://opensource.org/licenses/MIT>, and GPL version 2 or later
+# <https://www.gnu.org/licenses/gpl-2.0.html>.  You must apply one of
 # these licenses when using or redistributing this software or any of
 # the files within it.  See the URLs above, or the file `LICENSE`
 # included in the Bootstrap distribution for the full license texts.
@@ -138,7 +138,7 @@ nl='
 '
 IFS="$sp	$nl"
 
-# There are apparently some retarded systems that use ';' as a PATH separator!
+# There are apparently some systems that use ';' as a PATH separator!
 if test "${PATH_SEPARATOR+set}" != set; then
   PATH_SEPARATOR=:
   (PATH='/bin;/bin'; FPATH=$PATH; sh -c :) >/dev/null 2>&1 && {
@@ -1531,11 +1531,11 @@ func_lt_ver ()
 # This is free software.  There is NO warranty; not even for
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
-# Copyright (C) 2010-2019, 2021 Bootstrap Authors
+# Copyright (C) 2010-2019, 2021, 2023-2024 Bootstrap Authors
 #
 # This file is dual licensed under the terms of the MIT license
-# <https://opensource.org/license/MIT>, and GPL version 2 or later
-# <http://www.gnu.org/licenses/gpl-2.0.html>.  You must apply one of
+# <https://opensource.org/licenses/MIT>, and GPL version 2 or later
+# <https://www.gnu.org/licenses/gpl-2.0.html>.  You must apply one of
 # these licenses when using or redistributing this software or any of
 # the files within it.  See the URLs above, or the file `LICENSE`
 # included in the Bootstrap distribution for the full license texts.
@@ -2216,11 +2216,11 @@ func_version ()
 # This is free software.  There is NO warranty; not even for
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
-# Copyright (C) 2010-2019, 2021 Bootstrap Authors
+# Copyright (C) 2010-2019, 2021, 2023-2024 Bootstrap Authors
 #
 # This file is dual licensed under the terms of the MIT license
-# <https://opensource.org/license/MIT>, and GPL version 2 or later
-# <http://www.gnu.org/licenses/gpl-2.0.html>.  You must apply one of
+# <https://opensource.org/licenses/MIT>, and GPL version 2 or later
+# <https://www.gnu.org/licenses/gpl-2.0.html>.  You must apply one of
 # these licenses when using or redistributing this software or any of
 # the files within it.  See the URLs above, or the file `LICENSE`
 # included in the Bootstrap distribution for the full license texts.
@@ -2696,7 +2696,7 @@ test extract-trace = "$progname" && func_main "$@"
 # End:
 
 # Set a version string.
-scriptversion='(GNU libtool) 2.4.7'
+scriptversion='(GNU libtool) 2.5.3'
 
 
 ## ---------------- ##
@@ -2754,13 +2754,13 @@ When reporting a bug, please describe a test case to reproduce it and
 include the following information:
 
        host-triplet:   x86_64-pc-msys
-       version:        $progname (GNU libtool) 2.4.7
+       version:        $progname (GNU libtool) 2.5.3
        automake:       `($AUTOMAKE --version) 2>/dev/null |$SED 1q`
        autoconf:       `($AUTOCONF --version) 2>/dev/null |$SED 1q`
 
 Report bugs to <bug-libtool@gnu.org>.
-GNU libtool home page: <http://www.gnu.org/software/libtool/>.
-General help using GNU software: <http://www.gnu.org/gethelp/>."
+GNU libtool home page: <https://www.gnu.org/software/libtool/>.
+General help using GNU software: <https://www.gnu.org/gethelp/>."
     exit 0
 }
 
@@ -3151,7 +3151,7 @@ func_serial_max ()
     my_sed_rest='s/^[0-9][1-9]*\.*//'
     my_sed_digits='s/[^0-9.]//g'
 
-    # Incase they turn out to be the same, we'll set it to empty
+    # In case they turn out to be the same, we'll set it to empty
     func_serial_max_result=
 
     test "X$1$2" = X`$ECHO "$1$2" | $SED "$my_sed_digits"` || {
@@ -3292,6 +3292,8 @@ func_serial_update ()
 
     test -f "$my_srcfile" || func_fatal_error "'$my_srcfile' does not exist."
 
+    my_src_serial=
+    my_dest_serial=
     if test -f "$my_destfile"; then
       my_src_serial=`func_serial "$my_srcfile" "$my_macro_regex"`
       my_dest_serial=`func_serial "$my_destfile" "$my_macro_regex"`
@@ -3317,7 +3319,7 @@ func_serial_update ()
       func_notquiet_hdr "$my_msg_var" "'$my_destfile' is already up to date."
     fi
 
-    # Do this after the copy for hand maintained 'aclocal.m4', incase
+    # Do this after the copy for hand maintained 'aclocal.m4', in case
     # it has 'm4_include([DESTFILE])', so the copy effectively already
     # updated 'aclocal.m4'.
     my_included_files=`func_included_files aclocal.m4`
@@ -3331,7 +3333,7 @@ func_serial_update ()
       # serial tags, so the update message will be correctly given
       # if aclocal.m4 contains an untagged --i.e older-- macro file):
       *)
-        if test -f aclocal.m4; then
+        if test -f aclocal.m4 && test '' != "$my_src_serial"; then
           func_serial_max \
               "$my_src_serial" `func_serial aclocal.m4 "$my_macro_regex"`
           if test "X$my_src_serial" = "X$func_serial_max_result"; then
@@ -3582,7 +3584,15 @@ func_install_pkgltdl_files ()
 	  ;;
 
         config-h.in)
-          test subproject = "$ltdl_mode" || continue
+          test subproject = "$ltdl_mode" && {
+            # Always copy config-h.in, otherwise automake's autoheader rules
+            # will change the destination's timestamp if it is symlinked.
+            ( opt_copy=:
+              func_copy "$file" "$pkgltdldir" "$ltdl_dir" \
+                pkgltdl_header "$my_copy_filter"
+            )
+          }
+          continue
           ;;
 
         configure)

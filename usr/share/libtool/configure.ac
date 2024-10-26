@@ -1,6 +1,6 @@
 # Process this file with autoconf to create configure. -*- autoconf -*-
 #
-#    Copyright (C) 2004-2005, 2007-2008, 2011-2019, 2021-2022 Free
+#    Copyright (C) 2004-2005, 2007-2008, 2011-2019, 2021-2024 Free
 #    Software Foundation, Inc.
 #    Written by Gary V. Vaughan, 2004
 #
@@ -23,10 +23,7 @@
 # GNU Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU LesserGeneral Public
-# License along with GNU Libltdl; see the file COPYING.LIB.  If not, a
-# copy can be downloaded from http://www.gnu.org/licenses/lgpl.html,
-# or obtained by writing to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# License along with GNU Libltdl.  If not, see <https://www.gnu.org/licenses/>.
 ####
 
 # This configure.ac is not used at all by the libtool bootstrap, but
