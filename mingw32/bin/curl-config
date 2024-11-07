@@ -25,13 +25,13 @@
 
 # shellcheck disable=SC2006
 
-prefix="/mingw32"
-# Used in ${exec_prefix}/lib
+prefix='/mingw32'
+# Used in 'libdir'
 # shellcheck disable=SC2034
-exec_prefix=${prefix}
+exec_prefix="${prefix}"
 # shellcheck disable=SC2034
-includedir=${prefix}/include
-cppflag_curl_staticlib=
+includedir="${prefix}/include"
+cppflag_curl_staticlib=''
 
 usage()
 {
@@ -83,36 +83,36 @@ while test "$#" -gt 0; do
     ;;
 
   --feature|--features)
-    for feature in alt-svc AsynchDNS brotli HSTS HTTPS-proxy IDN IPv6 Kerberos Largefile libz NTLM PSL SPNEGO SSL SSPI threadsafe UnixSockets zstd ""; do
+    for feature in alt-svc AsynchDNS brotli HSTS HTTPS-proxy IDN IPv6 Kerberos Largefile libz NTLM PSL SPNEGO SSL SSPI threadsafe UnixSockets zstd ''; do
       test -n "$feature" && echo "$feature"
     done
     ;;
 
   --protocols)
     # shellcheck disable=SC2043
-    for protocol in DICT FILE FTP FTPS GOPHER GOPHERS HTTP HTTPS IMAP IMAPS IPFS IPNS LDAP LDAPS MQTT POP3 POP3S RTSP SCP SFTP SMB SMBS SMTP SMTPS TELNET TFTP; do
+    for protocol in DICT FILE FTP FTPS GOPHER GOPHERS HTTP HTTPS IMAP IMAPS IPFS IPNS LDAP LDAPS MQTT POP3 POP3S RTSP SCP SFTP SMB SMBS SMTP SMTPS TELNET TFTP WS WSS; do
       echo "$protocol"
     done
     ;;
 
   --version)
-    echo 'libcurl 8.10.1'
+    echo 'libcurl 8.11.0'
     exit 0
     ;;
 
   --checkfor)
-    checkfor=$2
+    checkfor="$2"
     cmajor=`echo "$checkfor" | cut -d. -f1`
     cminor=`echo "$checkfor" | cut -d. -f2`
     # when extracting the patch part we strip off everything after a
     # dash as that's used for things like version 1.2.3-pre1
     cpatch=`echo "$checkfor" | cut -d. -f3 | cut -d- -f1`
 
-    vmajor=`echo '8.10.1' | cut -d. -f1`
-    vminor=`echo '8.10.1' | cut -d. -f2`
+    vmajor=`echo '8.11.0' | cut -d. -f1`
+    vminor=`echo '8.11.0' | cut -d. -f2`
     # when extracting the patch part we strip off everything after a
     # dash as that's used for things like version 1.2.3-pre1
-    vpatch=`echo '8.10.1' | cut -d. -f3 | cut -d- -f1`
+    vpatch=`echo '8.11.0' | cut -d. -f3 | cut -d- -f1`
 
     if test "$vmajor" -gt "$cmajor"; then
       exit 0
@@ -128,12 +128,12 @@ while test "$#" -gt 0; do
       fi
     fi
 
-    echo "requested version $checkfor is newer than existing 8.10.1"
+    echo "requested version $checkfor is newer than existing 8.11.0"
     exit 1
     ;;
 
   --vernum)
-    echo '080a01'
+    echo '080b00'
     exit 0
     ;;
 
@@ -142,12 +142,12 @@ while test "$#" -gt 0; do
     ;;
 
   --cflags)
-    if test "X$cppflag_curl_staticlib" = "X-DCURL_STATICLIB"; then
-      CPPFLAG_CURL_STATICLIB="-DCURL_STATICLIB "
+    if test "X$cppflag_curl_staticlib" = 'X-DCURL_STATICLIB'; then
+      CPPFLAG_CURL_STATICLIB='-DCURL_STATICLIB '
     else
-      CPPFLAG_CURL_STATICLIB=""
+      CPPFLAG_CURL_STATICLIB=''
     fi
-    if test "X${prefix}/include" = "X/usr/include"; then
+    if test "X${prefix}/include" = 'X/usr/include'; then
       echo "${CPPFLAG_CURL_STATICLIB}"
     else
       echo "${CPPFLAG_CURL_STATICLIB}-I${prefix}/include"
@@ -155,12 +155,12 @@ while test "$#" -gt 0; do
     ;;
 
   --libs)
-    if test "X${exec_prefix}/lib" != "X/usr/lib" -a "X${exec_prefix}/lib" != "X/usr/lib64"; then
+    if test "X${exec_prefix}/lib" != 'X/usr/lib' -a "X${exec_prefix}/lib" != 'X/usr/lib64'; then
       CURLLIBDIR="-L${exec_prefix}/lib "
     else
-      CURLLIBDIR=""
+      CURLLIBDIR=''
     fi
-    if test "Xyes" = "Xno"; then
+    if test 'Xyes' = 'Xno'; then
       echo "${CURLLIBDIR}-lcurl -lidn2 -lssh2 -lssh2 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lwldap32 -lzstd -lzstd -lbrotlidec -lbrotlidec -lz -lws2_32"
     else
       echo "${CURLLIBDIR}-lcurl"
@@ -172,8 +172,8 @@ while test "$#" -gt 0; do
     ;;
 
   --static-libs)
-    if test "Xno" != "Xno" ; then
-      echo "${exec_prefix}/lib/libcurl.a" -Wl,--no-seh -Wl,--large-address-aware -lidn2 -lssh2 -lssh2 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lwldap32 -lzstd -lzstd -lbrotlidec -lbrotlidec -lz -lws2_32
+    if test 'Xno' != 'Xno'; then
+      echo "${exec_prefix}/lib/libcurl.a -Wl,--no-seh -Wl,--large-address-aware -lidn2 -lssh2 -lssh2 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lwldap32 -lzstd -lzstd -lbrotlidec -lbrotlidec -lz -lws2_32"
     else
       echo 'curl was built with static libraries disabled' >&2
       exit 1
