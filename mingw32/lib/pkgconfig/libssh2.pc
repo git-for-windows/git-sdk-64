@@ -1,5 +1,8 @@
 ###########################################################################
 # libssh2 installation details
+#
+# Copyright (C) The libssh2 project and its contributors.
+# SPDX-License-Identifier: BSD-3-Clause
 ###########################################################################
 
 prefix=/mingw32
@@ -8,10 +11,11 @@ libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
 Name: libssh2
-URL: https://www.libssh2.org/
+URL: https://libssh2.org/
 Description: Library for SSH-based communication
-Version: 1.11.0
+Version: 1.11.1
+Requires: 
 Requires.private: zlib
-Libs: -L${libdir} -lssh2
-Libs.private:  -lws2_32 -lcrypt32 -L/mingw32/lib -lbcrypt
+Libs: -L${libdir} -lssh2 
+Libs.private:  -lws2_32 -lcrypt32 -L/mingw32/lib -lbcrypt -L/mingw32/lib -lz
 Cflags: -I${includedir}
