@@ -1081,15 +1081,16 @@ in <a href="git-fetch.html">git-fetch(1)</a>).</p>
 <div class="paragraph">
 <p>The format of a &lt;refspec&gt; parameter is an optional plus
 <code>+</code>, followed by the source &lt;src&gt;, followed
-by a colon <code>:</code>, followed by the destination ref &lt;dst&gt;.
+by a colon <code>:</code>, followed by the destination &lt;dst&gt;.
 The colon can be omitted when &lt;dst&gt; is empty.  &lt;src&gt; is
-typically a ref, but it can also be a fully spelled hex object
+typically a ref, or a glob pattern with a single <code>*</code> that is used
+to match a set of refs, but it can also be a fully spelled hex object
 name.</p>
 </div>
 <div class="paragraph">
 <p>A &lt;refspec&gt; may contain a <code>*</code> in its &lt;src&gt; to indicate a simple pattern
 match. Such a refspec functions like a glob that matches any ref with the
-same prefix. A pattern &lt;refspec&gt; must have a <code>*</code> in both the &lt;src&gt; and
+pattern. A pattern &lt;refspec&gt; must have one and only one <code>*</code> in both the &lt;src&gt; and
 &lt;dst&gt;. It will map refs to the destination by replacing the <code>*</code> with the
 contents matched from the source.</p>
 </div>
@@ -1871,7 +1872,7 @@ version.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2024-11-25 12:16:31 UTC
 </div>
 </div>
 </body>

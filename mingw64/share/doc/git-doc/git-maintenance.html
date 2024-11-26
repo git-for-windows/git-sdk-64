@@ -728,7 +728,9 @@ on an hourly basis. Each run executes the "hourly" tasks. At midnight,
 that process also executes the "daily" tasks. At midnight on the first day
 of the week, that process also executes the "weekly" tasks. A single
 process iterates over each registered repository, performing the scheduled
-tasks for that frequency. Depending on the number of registered
+tasks for that frequency. The processes are scheduled to a random minute of
+the hour per client to spread out the load that multiple clients might
+generate (e.g. from prefetching). Depending on the number of registered
 repositories and their sizes, this process may take longer than an hour.
 In this case, multiple <code>git maintenance run</code> commands may run on the same
 repository at the same time, colliding on the object database lock. This
@@ -1061,7 +1063,7 @@ of <code>maintenance.incremental-repack.auto</code>. The default value is 10.</p
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2024-11-25 12:16:31 UTC
 </div>
 </div>
 </body>
