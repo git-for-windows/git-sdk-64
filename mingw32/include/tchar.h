@@ -133,7 +133,7 @@ extern "C" {
 #define _tenviron _wenviron
 #define __targv __wargv
 
-#define _tprintf wprintf
+#define _tprintf __ms_wprintf
 #define _tprintf_l _wprintf_l
 #define _tprintf_p _wprintf_p
 #define _tprintf_p_l _wprintf_p_l
@@ -145,11 +145,11 @@ extern "C" {
 #define _vtcprintf_l _vcwprintf_l
 #define _vtcprintf_p _vcwprintf_p
 #define _vtcprintf_p_l _vcwprintf_p_l
-#define _ftprintf fwprintf
+#define _ftprintf __ms_fwprintf
 #define _ftprintf_l _fwprintf_l
 #define _ftprintf_p _fwprintf_p
 #define _ftprintf_p_l _fwprintf_p_l
-#define _stprintf swprintf
+#define _stprintf _swprintf
 #define _stprintf_l __swprintf_l
 #define _stprintf_p _swprintf_p
 #define _stprintf_p_l _swprintf_p_l
@@ -159,15 +159,15 @@ extern "C" {
 #define _sctprintf_p_l _scwprintf_p_l
 #define _sntprintf _snwprintf
 #define _sntprintf_l _snwprintf_l
-#define _vtprintf vwprintf
+#define _vtprintf __ms_vwprintf
 #define _vtprintf_l _vwprintf_l
 #define _vtprintf_p _vwprintf_p
 #define _vtprintf_p_l _vwprintf_p_l
-#define _vftprintf vfwprintf
+#define _vftprintf __ms_vfwprintf
 #define _vftprintf_l _vfwprintf_l
 #define _vftprintf_p _vfwprintf_p
 #define _vftprintf_p_l _vfwprintf_p_l
-#define _vstprintf vswprintf
+#define _vstprintf _vswprintf
 #define _vstprintf_l _vswprintf_l
 #define _vstprintf_p _vswprintf_p
 #define _vstprintf_p_l _vswprintf_p_l
@@ -178,13 +178,13 @@ extern "C" {
 #define _vsntprintf _vsnwprintf
 #define _vsntprintf_l _vsnwprintf_l
 
-#define _tscanf wscanf
+#define _tscanf __ms_wscanf
 #define _tscanf_l _wscanf_l
 #define _tcscanf _cwscanf
 #define _tcscanf_l _cwscanf_l
-#define _ftscanf fwscanf
+#define _ftscanf __ms_fwscanf
 #define _ftscanf_l _fwscanf_l
-#define _stscanf swscanf
+#define _stscanf __ms_swscanf
 #define _stscanf_l _swscanf_l
 #define _sntscanf _snwscanf
 #define _sntscanf_l _snwscanf_l
@@ -268,7 +268,7 @@ extern "C" {
 #define _tcsrchr wcsrchr
 #define _tcsspn wcsspn
 #define _tcsstr wcsstr
-#define _tcstok wcstok
+#define _tcstok _wcstok
 #define _tcstok_l _wcstok_l
 #define _tcserror _wcserror
 #define __tcserror __wcserror
@@ -477,7 +477,7 @@ extern "C" {
 #define _wcsspnp(_cpc1,_cpc2) (!_cpc1 ? NULL : ((*((_cpc1)+wcsspn(_cpc1,_cpc2))) ? ((_cpc1)+wcsspn(_cpc1,_cpc2)) : NULL))
 #define _wcsncpy_l(_Destination,_Source,_Count,_Locale) (wcsncpy(_Destination,_Source,_Count))
 #define _wcsncat_l(_Destination,_Source,_Count,_Locale) (wcsncat(_Destination,_Source,_Count))
-#define _wcstok_l(_String,_Delimiters,_Locale) (wcstok(_String,_Delimiters))
+#define _wcstok_l(_String,_Delimiters,_Locale) (_wcstok(_String,_Delimiters))
 #define _wcsnset_l(_Destination,_Value,_Count,_Locale) (_wcsnset(_Destination,_Value,_Count))
 #define _wcsset_l(_Destination,_Value,_Locale) (_wcsset(_Destination,_Value))
 
@@ -520,7 +520,7 @@ extern "C" {
 #endif
 #define __targv __argv
 
-#define _tprintf printf
+#define _tprintf __ms_printf
 #define _tprintf_l _printf_l
 #define _tprintf_p _printf_p
 #define _tprintf_p_l _printf_p_l
@@ -532,11 +532,11 @@ extern "C" {
 #define _vtcprintf_l _vcprintf_l
 #define _vtcprintf_p _vcprintf_p
 #define _vtcprintf_p_l _vcprintf_p_l
-#define _ftprintf fprintf
+#define _ftprintf __ms_fprintf
 #define _ftprintf_l _fprintf_l
 #define _ftprintf_p _fprintf_p
 #define _ftprintf_p_l _fprintf_p_l
-#define _stprintf sprintf
+#define _stprintf __ms_sprintf
 #define _stprintf_l _sprintf_l
 #define _stprintf_p _sprintf_p
 #define _stprintf_p_l _sprintf_p_l
@@ -546,15 +546,15 @@ extern "C" {
 #define _sctprintf_p_l _scprintf_p_l
 #define _sntprintf _snprintf
 #define _sntprintf_l _snprintf_l
-#define _vtprintf vprintf
+#define _vtprintf __ms_vprintf
 #define _vtprintf_l _vprintf_l
 #define _vtprintf_p _vprintf_p
 #define _vtprintf_p_l _vprintf_p_l
-#define _vftprintf vfprintf
+#define _vftprintf __ms_vfprintf
 #define _vftprintf_l _vfprintf_l
 #define _vftprintf_p _vfprintf_p
 #define _vftprintf_p_l _vfprintf_p_l
-#define _vstprintf vsprintf
+#define _vstprintf __ms_vsprintf
 #define _vstprintf_l _vsprintf_l
 #define _vstprintf_p _vsprintf_p
 #define _vstprintf_p_l _vsprintf_p_l
@@ -565,13 +565,13 @@ extern "C" {
 #define _vsntprintf _vsnprintf
 #define _vsntprintf_l _vsnprintf_l
 
-#define _tscanf scanf
+#define _tscanf __ms_scanf
 #define _tscanf_l _scanf_l
 #define _tcscanf _cscanf
 #define _tcscanf_l _cscanf_l
-#define _ftscanf fscanf
+#define _ftscanf __ms_fscanf
 #define _ftscanf_l _fscanf_l
-#define _stscanf sscanf
+#define _stscanf __ms_sscanf
 #define _stscanf_l _sscanf_l
 #define _sntscanf _snscanf
 #define _sntscanf_l _snscanf_l
