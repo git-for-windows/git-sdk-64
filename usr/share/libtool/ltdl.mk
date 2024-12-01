@@ -35,7 +35,7 @@ AM_CPPFLAGS	       += -DLT_CONFIG_H='<$(LT_CONFIG_H)>' \
 			  -I$(srcdir)/libltdl -Ilibltdl/libltdl \
 			  -I$(srcdir)/libltdl/libltdl
 AM_LDFLAGS	       += -no-undefined
-LTDL_VERSION_INFO	= -version-info 10:2:3
+LTDL_VERSION_INFO	= -version-info 10:3:3
 
 noinst_LTLIBRARIES	+= $(LT_DLLOADERS)
 
@@ -131,7 +131,9 @@ EXTRA_DIST	       += libltdl/COPYING.LIB \
 ## Gnulib Makefile.am snippets ##
 ## --------------------------- ##
 
+if LTARGZH_EXISTS
 BUILT_SOURCES	+= libltdl/libltdl/$(LT_ARGZ_H)
+endif
 EXTRA_DIST	+= libltdl/libltdl/lt__argz_.h \
 		   libltdl/lt__argz.c
 

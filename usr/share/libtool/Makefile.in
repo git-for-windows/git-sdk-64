@@ -96,6 +96,7 @@ host_triplet = @host@
 @INSTALL_LTDL_TRUE@am__append_1 = ltdl.h
 @INSTALL_LTDL_TRUE@am__append_2 = libltdl.la
 @CONVENIENCE_LTDL_TRUE@am__append_3 = libltdlc.la
+@LTARGZH_EXISTS_TRUE@am__append_4 = libltdl/$(LT_ARGZ_H)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../m4/libtool.m4 \
@@ -468,7 +469,7 @@ AUTOMAKE_OPTIONS = foreign
 AM_CPPFLAGS = -DLT_CONFIG_H='<$(LT_CONFIG_H)>' -DLTDL -I. -I$(srcdir) \
 	-Ilibltdl -I$(srcdir)/libltdl
 AM_LDFLAGS = -no-undefined
-BUILT_SOURCES = libltdl/$(LT_ARGZ_H)
+BUILT_SOURCES = $(am__append_4)
 include_HEADERS = $(am__append_1)
 noinst_LTLIBRARIES = $(LT_DLLOADERS) $(am__append_3)
 lib_LTLIBRARIES = $(am__append_2)
@@ -479,7 +480,7 @@ EXTRA_DIST = lt__dirent.c lt__strl.c COPYING.LIB README \
 CLEANFILES = libltdl.la libltdlc.la libdlloader.la $(LIBOBJS) \
 	$(LTLIBOBJS)
 MOSTLYCLEANFILES = libltdl/lt__argz.h libltdl/lt__argz.h-t
-LTDL_VERSION_INFO = -version-info 10:2:3
+LTDL_VERSION_INFO = -version-info 10:3:3
 @INSTALL_LTDL_TRUE@ltdlincludedir = $(includedir)/libltdl
 @INSTALL_LTDL_TRUE@ltdlinclude_HEADERS = libltdl/lt_system.h \
 @INSTALL_LTDL_TRUE@			  libltdl/lt_error.h \

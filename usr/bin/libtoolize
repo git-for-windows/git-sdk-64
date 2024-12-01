@@ -584,7 +584,7 @@ func_require_term_colors ()
 
   # _G_HAVE_PLUSEQ_OP
   # Can be empty, in which case the shell is probed, "yes" if += is
-  # useable or anything else if it does not work.
+  # usable or anything else if it does not work.
   test -z "$_G_HAVE_PLUSEQ_OP" \
     && (eval 'x=a; x+=" b"; test "a b" = "$x"') 2>/dev/null \
     && _G_HAVE_PLUSEQ_OP=yes
@@ -734,7 +734,7 @@ eval 'func_dirname ()
 #             to NONDIR_REPLACEMENT.
 #             value returned in "$func_dirname_result"
 #   basename: Compute filename of FILE.
-#             value retuned in "$func_basename_result"
+#             value returned in "$func_basename_result"
 # For efficiency, we do not delegate to the functions above but instead
 # duplicate the functionality here.
 eval 'func_dirname_and_basename ()
@@ -892,7 +892,7 @@ func_mkdir_p ()
       # While some portion of DIR does not yet exist...
       while test ! -d "$_G_directory_path"; do
         # ...make a list in topmost first order.  Use a colon delimited
-	# list incase some portion of path contains whitespace.
+	# list in case some portion of path contains whitespace.
         _G_dir_list=$_G_directory_path:$_G_dir_list
 
         # If the last portion added has no slash in it, the list is done
@@ -2696,8 +2696,29 @@ test extract-trace = "$progname" && func_main "$@"
 # End:
 
 # Set a version string.
-scriptversion='(GNU libtool) 2.5.3'
+scriptversion='(GNU libtool) 2.5.4'
 
+# func_version
+# ------------
+# Echo version message to standard output and exit.
+func_version ()
+{
+    $debug_cmd
+
+	year=`date +%Y`
+
+	cat <<EOF
+$progname $scriptversion
+Copyright (C) $year Free Software Foundation, Inc.
+License GPLv2+: GNU GPL version 2 or later <https://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by Gary V. Vaughan <gary@gnu.org>, 2003
+EOF
+
+    exit $?
+}
 
 ## ---------------- ##
 ## Options parsing. ##
@@ -2754,7 +2775,7 @@ When reporting a bug, please describe a test case to reproduce it and
 include the following information:
 
        host-triplet:   x86_64-pc-msys
-       version:        $progname (GNU libtool) 2.5.3
+       version:        $progname $scriptversion
        automake:       `($AUTOMAKE --version) 2>/dev/null |$SED 1q`
        autoconf:       `($AUTOCONF --version) 2>/dev/null |$SED 1q`
 
