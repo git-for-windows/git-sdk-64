@@ -705,7 +705,7 @@ while test $[@%:@] != 1; do
 	-lang* | -lcrt*.o | -lc | -lgcc* | -lSystem | -libmil | -little \
 	  |-LANG:=* | -LIST:* | -LNO:* | -link)
 	  ;;
-	-lkernel32 | -lmingw* | -lmoldname)
+	-lkernel32)
 	  # Ignore this library only on Windows-like systems.
 	  case $host_os in
 	  cygwin* | msys* | mingw* | windows*) ;;
