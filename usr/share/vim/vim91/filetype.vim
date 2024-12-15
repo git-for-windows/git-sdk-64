@@ -283,7 +283,7 @@ au BufNewFile,BufRead *.blade.php		setf blade
 au BufNewFile,BufRead *.bl			setf blank
 
 " Bitbake
-au BufNewFile,BufRead *.bb,*.bbappend,*.bbclass,*/build/conf/*.conf,*/meta{-*,}/conf/*.conf	setf bitbake
+au BufNewFile,BufRead *.bb,*.bbappend,*.bbclass,*/build/conf/*.conf,*/meta{-*,}/conf/*.conf,*/project-spec/configs/*.conf	setf bitbake
 
 " Blkid cache file
 au BufNewFile,BufRead */etc/blkid.tab,*/etc/blkid.tab.old   setf xml
@@ -570,6 +570,9 @@ au BufNewFile,BufRead *.dsp				call dist#ft#FTdsp()
 au BufNewFile,BufRead *.xcu,*.xlb,*.xlc,*.xba		setf xml
 au BufNewFile,BufRead psprint.conf,sofficerc		setf dosini
 
+" Libtool files
+au BufNewFile,BufRead *.lo,*.la,*.lai		setf sh
+
 " Lynx config files
 au BufNewFile,BufRead lynx.cfg			setf lynx
 
@@ -751,8 +754,12 @@ au BufNewFile,BufRead *.dsl
 " DTD (Document Type Definition for XML)
 au BufNewFile,BufRead *.dtd			setf dtd
 
-" DTS/DSTI/DTSO (device tree files)
-au BufNewFile,BufRead *.dts,*.dtsi,*.dtso,*.its,*.keymap	setf dts
+" Devicetree (.its for U-Boot Flattened Image Trees, .keymap for ZMK keymap, and
+" .overlay for Zephyr overlay)
+au BufNewFile,BufRead *.dts,*.dtsi,*.dtso	setf dts
+au BufNewFile,BufRead *.its			setf dts
+au BufNewFile,BufRead *.keymap			setf dts
+au BufNewFile,BufRead *.overlay			setf dts
 
 " Earthfile
 au BufNewFile,BufRead Earthfile			setf earthfile
@@ -1126,6 +1133,10 @@ au BufNewFile,BufRead indent.pro		call dist#ft#ProtoCheck('indent')
 " IDL (Interactive Data Language), Prolog, Cproto or zsh module C
 au BufNewFile,BufRead *.pro			call dist#ft#ProtoCheck('idlang')
 
+" Idris2
+au BufNewFile,BufRead *.idr			setf idris2
+au BufNewFile,BufRead *.lidr			setf lidris2
+
 " Indent RC
 au BufNewFile,BufRead indentrc			setf indent
 
@@ -1144,6 +1155,9 @@ au BufRead,BufNewFile usw2kagt.log\c,usw2kagt.*.log\c,*.usw2kagt.log\c	setf usw2
 
 " Ipfilter
 au BufNewFile,BufRead ipf.conf,ipf6.conf,ipf.rules	setf ipfilter
+
+" Ipkg for Idris 2 language
+au BufNewFile,BufRead *.ipkg			setf ipkg
 
 " Informix 4GL (source - canonical, include file, I4GL+M4 preproc.)
 au BufNewFile,BufRead *.4gl,*.4gh,*.m4gl	setf fgl
@@ -1318,6 +1332,9 @@ au BufRead,BufNewFile *.ldg,*.ledger,*.journal			setf ledger
 " lf configuration (lfrc)
 au BufNewFile,BufRead lfrc			setf lf
 
+" Leo
+au BufNewFile,BufRead *.leo			setf leo
+
 " Less
 au BufNewFile,BufRead *.less			setf less
 
@@ -1334,7 +1351,7 @@ au BufNewFile,BufRead */etc/sensors.conf,*/etc/sensors3.conf	setf sensors
 au BufNewFile,BufRead lftp.conf,.lftprc,*lftp/rc	setf lftp
 
 " Lifelines (or Lex for C++!)
-au BufNewFile,BufRead *.ll			setf lifelines
+au BufNewFile,BufRead *.ll			call dist#ft#FTll()
 
 " Lilo: Linux loader
 au BufNewFile,BufRead lilo.conf			setf lilo
@@ -1454,6 +1471,9 @@ au BufNewFile,BufRead *.markdown,*.mdown,*.mkd,*.mkdn,*.mdwn,*.md
 	\ else |
 	\   setf markdown |
 	\ endif
+
+" Org (Emacs' org-mode)
+au BufNewFile,BufRead *.org			setf org
 
 " Mason (it used to include *.comp, are those Mason files?)
 au BufNewFile,BufRead *.mason,*.mhtml	setf mason
@@ -2423,6 +2443,9 @@ au BufNewFile,BufRead *.sml			setf sml
 " Sratus VOS command macro
 au BufNewFile,BufRead *.cm			setf voscm
 
+" Sway (programming language)
+au BufNewFile,BufRead *.sw			setf sway
+
 " Swift
 au BufNewFile,BufRead *.swift,*.swiftinterface	setf swift
 au BufNewFile,BufRead *.swift.gyb		setf swiftgyb
@@ -2578,6 +2601,9 @@ au BufNewFile,BufReadPost *.tsscl		setf tsscl
 
 " TSV Files
 au BufNewFile,BufRead *.tsv			setf tsv
+
+" Tutor mode
+au BufNewFile,BufReadPost *.tutor		setf tutor
 
 " TWIG files
 au BufNewFile,BufReadPost *.twig		setf twig
@@ -2815,7 +2841,7 @@ au BufNewFile,BufRead xorg.conf,xorg.conf-4	let b:xf86conf_xfree86_version = 4 |
 au BufNewFile,BufRead */etc/xinetd.conf		setf xinetd
 
 " Xilinx Vivado/Vitis project files and block design files
-au BufNewFile,BufRead *.xpr,*.xpfm,*.spfm,*.bxml		setf xml
+au BufNewFile,BufRead *.xpr,*.xpfm,*.spfm,*.bxml,*.mmi		setf xml
 au BufNewFile,BufRead *.bd,*.bda,*.xci				setf json
 
 " XS Perl extension interface language
@@ -2896,6 +2922,7 @@ au BufNewFile,BufRead *.y			call dist#ft#FTy()
 
 " Yaml
 au BufNewFile,BufRead *.yaml,*.yml,*.eyaml		setf yaml
+au BufNewFile,BufRead */.kube/config	setf yaml
 
 " Raml
 au BufNewFile,BufRead *.raml			setf raml
