@@ -437,9 +437,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <body class="article">
 <div id="header">
 <h1>Error reporting in git</h1>
-<div class="details">
-<span id="revdate">2018-06-07</span>
-</div>
 </div>
 <div id="content">
 <div id="preamble">
@@ -456,24 +453,24 @@ i.e. a bug in git itself.</p>
 </li>
 <li>
 <p><code>bug</code> (lower-case, not <code>BUG</code>) is supposed to be used like <code>BUG</code> but
-prints a "BUG" message instead of calling <code>abort()</code>.</p>
+prints a "BUG" message instead of calling <code>abort</code>().</p>
 <div class="paragraph">
-<p>A call to <code>bug()</code> will then result in a "real" call to the <code>BUG()</code>
-function, either explicitly by invoking <code>BUG_if_bug()</code> after call(s)
-to <code>bug()</code>, or implicitly at <code>exit()</code> time where we&#8217;ll check if we
-encountered any outstanding <code>bug()</code> invocations.</p>
+<p>A call to <code>bug</code>() will then result in a "real" call to the <code>BUG</code>()
+function, either explicitly by invoking <code>BUG_if_bug</code>() after call(s)
+to <code>bug</code>(), or implicitly at <code>exit</code>() time where we&#8217;ll check if we
+encountered any outstanding <code>bug</code>() invocations.</p>
 </div>
 <div class="paragraph">
-<p>If there were no prior calls to <code>bug()</code> before invoking <code>BUG_if_bug()</code>
-the latter is a NOOP. The <code>BUG_if_bug()</code> function takes the same
-arguments as <code>BUG()</code> itself. Calling <code>BUG_if_bug()</code> explicitly isn&#8217;t
+<p>If there were no prior calls to <code>bug</code>() before invoking <code>BUG_if_bug</code>()
+the latter is a NOOP. The <code>BUG_if_bug</code>() function takes the same
+arguments as <code>BUG</code>() itself. Calling <code>BUG_if_bug</code>() explicitly isn&#8217;t
 necessary, but ensures that we die as soon as possible.</p>
 </div>
 <div class="paragraph">
-<p>If you know you had prior calls to <code>bug()</code> then calling <code>BUG()</code> itself
-is equivalent to calling <code>BUG_if_bug()</code>, the latter being a wrapper
-calling <code>BUG()</code> if we&#8217;ve set a flag indicating that we&#8217;ve called
-<code>bug()</code>.</p>
+<p>If you know you had prior calls to <code>bug</code>() then calling <code>BUG</code>() itself
+is equivalent to calling <code>BUG_if_bug</code>(), the latter being a wrapper
+calling <code>BUG</code>() if we&#8217;ve set a flag indicating that we&#8217;ve called
+<code>bug</code>().</p>
 </div>
 <div class="paragraph">
 <p>This is for the convenience of APIs who&#8217;d like to potentially report
@@ -594,7 +591,7 @@ a message, pass a strbuf that is explicitly ignored:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

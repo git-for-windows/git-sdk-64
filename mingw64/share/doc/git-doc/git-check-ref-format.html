@@ -472,7 +472,7 @@ branch head is stored in the <code>refs/heads</code> hierarchy, while
 a tag is stored in the <code>refs/tags</code> hierarchy of the ref namespace
 (typically in <code>$GIT_DIR/refs/heads</code> and <code>$GIT_DIR/refs/tags</code>
 directories or, as entries in file <code>$GIT_DIR/packed-refs</code>
-if refs are packed by <code>git gc</code>).</p>
+if refs are packed by <code>git</code> <code>gc</code>).</p>
 </div>
 <div class="paragraph">
 <p>Git imposes the following rules on how references are named:</p>
@@ -482,7 +482,7 @@ if refs are packed by <code>git gc</code>).</p>
 <li>
 <p>They can include slash <code>/</code> for hierarchical (directory)
 grouping, but no slash-separated component can begin with a
-dot <code>.</code> or end with the sequence <code>.lock</code>.</p>
+dot . or end with the sequence .<code>lock</code>.</p>
 </li>
 <li>
 <p>They must contain at least one <code>/</code>. This enforces the presence of a
@@ -491,7 +491,7 @@ restricted.  If the <code>--allow-onelevel</code> option is used, this rule
 is waived.</p>
 </li>
 <li>
-<p>They cannot have two consecutive dots <code>..</code> anywhere.</p>
+<p>They cannot have two consecutive dots .. anywhere.</p>
 </li>
 <li>
 <p>They cannot have ASCII control characters (i.e. bytes whose
@@ -499,8 +499,8 @@ values are lower than \040, or \177 <code>DEL</code>), space, tilde <code>~</cod
 caret <code>^</code>, or colon <code>:</code> anywhere.</p>
 </li>
 <li>
-<p>They cannot have question-mark <code>?</code>, asterisk <code>*</code>, or open
-bracket <code>[</code> anywhere.  See the <code>--refspec-pattern</code> option below for
+<p>They cannot have question-mark ?, asterisk *, or open
+bracket [ anywhere.  See the <code>--refspec-pattern</code> option below for
 an exception to this rule.</p>
 </li>
 <li>
@@ -509,16 +509,16 @@ consecutive slashes (see the <code>--normalize</code> option below for an
 exception to this rule).</p>
 </li>
 <li>
-<p>They cannot end with a dot <code>.</code>.</p>
+<p>They cannot end with a dot ..</p>
 </li>
 <li>
-<p>They cannot contain a sequence <code>@{</code>.</p>
+<p>They cannot contain a sequence <code>@</code>{.</p>
 </li>
 <li>
 <p>They cannot be the single character <code>@</code>.</p>
 </li>
 <li>
-<p>They cannot contain a <code>\</code>.</p>
+<p>They cannot contain a \.</p>
 </li>
 </ol>
 </div>
@@ -531,8 +531,8 @@ reference name expressions (see <a href="gitrevisions.html">gitrevisions(7)</a>)
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>A double-dot <code>..</code> is often used as in <code>ref1..ref2</code>, and in some
-contexts this notation means <code>^ref1 ref2</code> (i.e. not in
+<p>A double-dot .. is often used as in <code>ref1</code><code>..</code><code>ref2</code>, and in some
+contexts this notation means <code>^ref1</code> <code>ref2</code> (i.e. not in
 <code>ref1</code> and in <code>ref2</code>).</p>
 </li>
 <li>
@@ -546,7 +546,7 @@ It may also be used to select a specific object such as with
 'git cat-file': "git cat-file blob v1.3.3:refs.c".</p>
 </li>
 <li>
-<p>at-open-brace <code>@{</code> is used as a notation to access a reflog entry.</p>
+<p>at-open-brace <code>@</code>{ is used as a notation to access a reflog entry.</p>
 </li>
 </ol>
 </div>
@@ -555,13 +555,13 @@ It may also be used to select a specific object such as with
 it can be used as a valid branch name (e.g. when creating a new
 branch). But be cautious when using the
 previous checkout syntax that may refer to a detached HEAD state.
-The rule <code>git check-ref-format --branch $name</code> implements
-may be stricter than what <code>git check-ref-format refs/heads/$name</code>
+The rule <code>git</code> <code>check-ref-format</code> <code>--branch</code> <code>$name</code> implements
+may be stricter than what <code>git</code> <code>check-ref-format</code> <code>refs/heads/$name</code>
 says (e.g. a dash may appear at the beginning of a ref component,
 but it is explicitly forbidden at the beginning of a branch name).
 When run with the <code>--branch</code> option in a repository, the input is first
 expanded for the &#8220;previous checkout syntax&#8221;
-<code>@{-n}</code>.  For example, <code>@{-1}</code> is a way to refer the last thing that
+<code>@</code>{-n}.  For example, <code>@</code>{-1} is a way to refer the last thing that
 was checked out using "git switch" or "git checkout" operation.
 This option should be
 used by porcelains to accept this syntax anywhere a branch name is
@@ -587,9 +587,9 @@ components).  The default is <code>--no-allow-onelevel</code>.</p>
 <dd>
 <p>Interpret &lt;refname&gt; as a reference name pattern for a refspec
 (as used with remote repositories).  If this option is
-enabled, &lt;refname&gt; is allowed to contain a single <code>*</code>
-in the refspec (e.g., <code>foo/bar*/baz</code> or <code>foo/bar*baz/</code>
-but not <code>foo/bar*/baz*</code>).</p>
+enabled, &lt;refname&gt; is allowed to contain a single *
+in the refspec (e.g., <code>foo/bar</code>*/baz or <code>foo/bar</code>*baz/
+but not <code>foo/bar</code>*/baz*).</p>
 </dd>
 <dt class="hdlist1">--normalize</dt>
 <dd>
@@ -641,7 +641,7 @@ with a status of 0, otherwise exit with a non-zero status.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

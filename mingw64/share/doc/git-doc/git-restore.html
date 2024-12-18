@@ -469,7 +469,7 @@ source, it will be removed to match the source.</p>
 <div class="paragraph">
 <p>The command can also be used to restore the content in the index with
 <code>--staged</code>, or restore both the working tree and the index with
-<code>--staged --worktree</code>.</p>
+<code>--staged</code> <code>--worktree</code>.</p>
 </div>
 <div class="paragraph">
 <p>By default, if <code>--staged</code> is given, the contents are restored from <code>HEAD</code>,
@@ -500,7 +500,7 @@ commit, branch or tag associated with it.</p>
 given, otherwise from the index.</p>
 </div>
 <div class="paragraph">
-<p>As a special case, you may use <code>"A...B"</code> as a shortcut for the
+<p>As a special case, you may use "A<code>...</code><code>B</code>" as a shortcut for the
 merge base of <code>A</code> and <code>B</code> if there is exactly one merge base. You can
 leave out at most one of <code>A</code> and <code>B</code>, in which case it defaults to <code>HEAD</code>.</p>
 </div>
@@ -547,7 +547,7 @@ stage #2 (<em>ours</em>) or #3 (<em>theirs</em>) for unmerged paths.
 This option cannot be used when checking out paths from a
 tree-ish (i.e. with the <code>--source</code> option).</p>
 <div class="paragraph">
-<p>Note that during <code>git rebase</code> and <code>git pull --rebase</code>, <em>ours</em> and
+<p>Note that during <code>git</code> <code>rebase</code> and <code>git</code> <code>pull</code> <code>--rebase</code>, <em>ours</em> and
 <em>theirs</em> may appear swapped. See the explanation of the same options
 in <a href="git-checkout.html">git-checkout(1)</a> for details.</p>
 </div>
@@ -577,15 +577,15 @@ specified. Unmerged paths on the working tree are left alone.</p>
 <dt class="hdlist1">--ignore-skip-worktree-bits</dt>
 <dd>
 <p>In sparse checkout mode, the default is to only update entries
-matched by <code>&lt;pathspec&gt;</code> and sparse patterns in
+matched by <em>&lt;pathspec&gt;</em> and sparse patterns in
 $GIT_DIR/info/sparse-checkout. This option ignores the sparse
 patterns and unconditionally restores any files in
-<code>&lt;pathspec&gt;</code>.</p>
+<em>&lt;pathspec&gt;</em>.</p>
 </dd>
 <dt class="hdlist1">--recurse-submodules</dt>
 <dt class="hdlist1">--no-recurse-submodules</dt>
 <dd>
-<p>If <code>&lt;pathspec&gt;</code> names an active submodule and the restore location
+<p>If <em>&lt;pathspec&gt;</em> names an active submodule and the restore location
 includes the working tree, the submodule will only be updated if
 this option is given, in which case its working tree will be
 restored to the commit recorded in the superproject, and any local
@@ -600,12 +600,12 @@ not be updated. Just like <a href="git-checkout.html">git-checkout(1)</a>, this 
 <p>In overlay mode, the command never removes files when
 restoring. In no-overlay mode, tracked files that do not
 appear in the <code>--source</code> tree are removed, to make them match
-<code>&lt;tree&gt;</code> exactly. The default is no-overlay mode.</p>
+<em>&lt;tree&gt;</em> exactly. The default is no-overlay mode.</p>
 </dd>
 <dt class="hdlist1">--pathspec-from-file=&lt;file&gt;</dt>
 <dd>
-<p>Pathspec is passed in <code>&lt;file&gt;</code> instead of commandline args. If
-<code>&lt;file&gt;</code> is exactly <code>-</code> then standard input is used. Pathspec
+<p>Pathspec is passed in <em>&lt;file&gt;</em> instead of commandline args. If
+<em>&lt;file&gt;</em> is exactly <code>-</code> then standard input is used. Pathspec
 elements are separated by LF or CR/LF. Pathspec elements can be
 quoted as explained for the configuration variable <code>core.quotePath</code>
 (see <a href="git-config.html">git-config(1)</a>). See also <code>--pathspec-file-nul</code> and
@@ -668,7 +668,7 @@ the index, you can say</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Note the quotes around <code>*.c</code>.  The file <code>hello.c</code> will also be
+<p>Note the quotes around *.<code>c</code>.  The file <code>hello.c</code> will also be
 restored, even though it is no longer in the working tree, because the
 file globbing is used to match entries in the index (not in the
 working tree by the shell).</p>
@@ -738,7 +738,7 @@ as using <a href="git-checkout.html">git-checkout(1)</a>)</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

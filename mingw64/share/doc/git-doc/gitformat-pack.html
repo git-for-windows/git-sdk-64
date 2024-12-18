@@ -1185,15 +1185,15 @@ too.</p>
 </div>
 <div class="paragraph">
 <p>Objects from the MIDX are ordered as follows to string together the
-pseudo-pack. Let <code>pack(o)</code> return the pack from which <code>o</code> was selected
+pseudo-pack. Let <code>pack</code>(<code>o</code>) return the pack from which <code>o</code> was selected
 by the MIDX, and define an ordering of packs based on their numeric ID
-(as stored by the MIDX). Let <code>offset(o)</code> return the object offset of <code>o</code>
-within <code>pack(o)</code>. Then, compare <code>o1</code> and <code>o2</code> as follows:</p>
+(as stored by the MIDX). Let <code>offset</code>(<code>o</code>) return the object offset of <code>o</code>
+within <code>pack</code>(<code>o</code>). Then, compare <code>o1</code> and <code>o2</code> as follows:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>If one of <code>pack(o1)</code> and <code>pack(o2)</code> is preferred and the other
+<p>If one of <code>pack</code>(<code>o1</code>) and <code>pack</code>(<code>o2</code>) is preferred and the other
 is not, then the preferred one sorts first.</p>
 <div class="paragraph">
 <p>(This is a detail that allows the MIDX bitmap to determine which
@@ -1202,13 +1202,13 @@ the MIDX for the pack containing the object at bit position 0).</p>
 </div>
 </li>
 <li>
-<p>If <code>pack(o1) ≠ pack(o2)</code>, then sort the two objects in descending
+<p>If <code>pack</code>(<code>o1</code>) ≠ <code>pack</code>(<code>o2</code>), then sort the two objects in descending
 order based on the pack ID.</p>
 </li>
 <li>
-<p>Otherwise, <code>pack(o1) = pack(o2)</code>, and the objects are sorted in
-pack-order (i.e., <code>o1</code> sorts ahead of <code>o2</code> exactly when <code>offset(o1)
-&lt; offset(o2)</code>).</p>
+<p>Otherwise, <code>pack</code>(<code>o1</code>) <code>=</code> <code>pack</code>(<code>o2</code>), and the objects are sorted in
+pack-order (i.e., <code>o1</code> sorts ahead of <code>o2</code> exactly when <code>offset</code>(<code>o1</code>)
+&lt; <code>offset</code>(<code>o2</code>)).</p>
 </li>
 </ul>
 </div>
@@ -1341,7 +1341,7 @@ same.</p>
 <div class="sect2">
 <h3 id="_background">Background</h3>
 <div class="paragraph">
-<p>To remove unreachable objects from your repository, Git offers <code>git repack -Ad</code>
+<p>To remove unreachable objects from your repository, Git offers <code>git</code> <code>repack</code> <code>-Ad</code>
 (see <a href="git-repack.html">git-repack(1)</a>). Quoting from the documentation:</p>
 </div>
 <div class="listingblock">
@@ -1371,7 +1371,7 @@ freshened at once.</p>
 <div class="paragraph">
 <p>This can lead to undesirable situations when a repository contains many
 unreachable objects which have not yet left the grace period. Having large
-directories in the shards of <code>.git/objects</code> can lead to decreased performance in
+directories in the shards of .<code>git/objects</code> can lead to decreased performance in
 the repository. But given enough unreachable objects, this can lead to inode
 starvation and degrade the performance of the whole system. Since we
 can never pack those objects, these repositories often take up a large amount of
@@ -1387,11 +1387,11 @@ state by including the per-object mtimes in a separate file alongside a single
 pack containing all loose objects.</p>
 </div>
 <div class="paragraph">
-<p>A cruft pack is written by <code>git repack --cruft</code> when generating a new pack.
-<a href="git-pack-objects.html">git-pack-objects(1)</a>'s <code>--cruft</code> option. Note that <code>git repack --cruft</code>
+<p>A cruft pack is written by <code>git</code> <code>repack</code> <code>--cruft</code> when generating a new pack.
+<a href="git-pack-objects.html">git-pack-objects(1)</a>'s <code>--cruft</code> option. Note that <code>git</code> <code>repack</code> <code>--cruft</code>
 is a classic all-into-one repack, meaning that everything in the resulting pack is
 reachable, and everything else is unreachable. Once written, the <code>--cruft</code>
-option instructs <code>git repack</code> to generate another pack containing only objects
+option instructs <code>git</code> <code>repack</code> to generate another pack containing only objects
 not packed in the previous step (which equates to packing all unreachable
 objects together). This progresses as follows:</p>
 </div>
@@ -1407,7 +1407,7 @@ tip.</p>
 step, adding every object along the way to the pack.</p>
 </li>
 <li>
-<p>Write the pack out, along with a <code>.mtimes</code> file that records the per-object
+<p>Write the pack out, along with a .<code>mtimes</code> file that records the per-object
 timestamps.</p>
 </li>
 </ol>
@@ -1419,8 +1419,8 @@ of packs which will not be deleted by the repack; in other words, they contain
 all of the repository&#8217;s reachable objects.</p>
 </div>
 <div class="paragraph">
-<p>When a repository already has a cruft pack, <code>git repack --cruft</code> typically only
-adds objects to it. An exception to this is when <code>git repack</code> is given the
+<p>When a repository already has a cruft pack, <code>git</code> <code>repack</code> <code>--cruft</code> typically only
+adds objects to it. An exception to this is when <code>git</code> <code>repack</code> is given the
 <code>--cruft-expiration</code> option, which allows the generated cruft pack to omit
 expired objects instead of waiting for <a href="git-gc.html">git-gc(1)</a> to expire those objects
 later on.</p>
@@ -1444,9 +1444,9 @@ unreachable objects.</p>
 </div>
 <div class="paragraph">
 <p>On the location of mtime data, a new auxiliary file tied to the pack was chosen
-to avoid complicating the <code>.idx</code> format. If the <code>.idx</code> format were ever to gain
+to avoid complicating the .<code>idx</code> format. If the .<code>idx</code> format were ever to gain
 support for optional chunks of data, it may make sense to consolidate the
-<code>.mtimes</code> format into the <code>.idx</code> itself.</p>
+.<code>mtimes</code> format into the .<code>idx</code> itself.</p>
 </div>
 </div>
 </div>
@@ -1462,7 +1462,7 @@ support for optional chunks of data, it may make sense to consolidate the
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

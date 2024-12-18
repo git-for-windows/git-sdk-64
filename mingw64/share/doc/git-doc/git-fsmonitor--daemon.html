@@ -467,7 +467,7 @@ pre>code {
 changes using platform-specific filesystem notification facilities.</p>
 </div>
 <div class="paragraph">
-<p>This daemon communicates directly with commands like <code>git status</code>
+<p>This daemon communicates directly with commands like <code>git</code> <code>status</code>
 using the <a href="technical/api-simple-ipc.html">simple IPC</a> interface
 instead of the slower <a href="githooks.html">githooks(5)</a> interface.</p>
 </div>
@@ -510,13 +510,13 @@ current working directory.</p>
 <div class="paragraph">
 <p>This daemon is a long running process used to watch a single working
 directory and maintain a list of the recently changed files and
-directories.  Performance of commands such as <code>git status</code> can be
+directories.  Performance of commands such as <code>git</code> <code>status</code> can be
 increased if they just ask for a summary of changes to the working
 directory and can avoid scanning the disk.</p>
 </div>
 <div class="paragraph">
 <p>When <code>core.fsmonitor</code> is set to <code>true</code> (see <a href="git-config.html">git-config(1)</a>)
-commands, such as <code>git status</code>, will ask the daemon for changes and
+commands, such as <code>git</code> <code>status</code>, will ask the daemon for changes and
 automatically start it (if necessary).</p>
 </div>
 <div class="paragraph">
@@ -553,15 +553,15 @@ may or may not have the needed support; the fsmonitor daemon is not guaranteed
 to work with these filesystems and such use is considered experimental.</p>
 </div>
 <div class="paragraph">
-<p>By default, the socket is created in the <code>.git</code> directory.  However, if the
-<code>.git</code> directory is on a network-mounted filesystem, it will instead be
-created at <code>$HOME/.git-fsmonitor-*</code> unless <code>$HOME</code> itself is on a
+<p>By default, the socket is created in the .<code>git</code> directory.  However, if the
+.<code>git</code> directory is on a network-mounted filesystem, it will instead be
+created at <code>$HOME/.git-fsmonitor-</code>* unless <code>$HOME</code> itself is on a
 network-mounted filesystem, in which case you must set the configuration
 variable <code>fsmonitor.socketDir</code> to the path of a directory on a Mac OS native
 filesystem in which to create the socket file.</p>
 </div>
 <div class="paragraph">
-<p>If none of the above directories (<code>.git</code>, <code>$HOME</code>, or <code>fsmonitor.socketDir</code>)
+<p>If none of the above directories (.<code>git</code>, <code>$HOME</code>, or <code>fsmonitor.socketDir</code>)
 is on a native Mac OS file filesystem the fsmonitor daemon will report an
 error that will cause the daemon and the currently running command to exit.</p>
 </div>
@@ -606,7 +606,7 @@ is set to <code>true</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

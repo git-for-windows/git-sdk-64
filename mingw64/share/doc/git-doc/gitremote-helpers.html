@@ -516,10 +516,10 @@ the first argument is <em>&lt;address&gt;</em>, and if it is encountered in a
 configured remote, the first argument is the name of that remote.</p>
 </div>
 <div class="paragraph">
-<p>Additionally, when a configured remote has <code>remote.&lt;name&gt;.vcs</code> set to
+<p>Additionally, when a configured remote has <code>remote.</code><em>&lt;name&gt;</em><code>.vcs</code> set to
 <em>&lt;transport&gt;</em>, Git explicitly invokes <em>git remote-&lt;transport&gt;</em> with
 <em>&lt;name&gt;</em> as the first argument. If set, the second argument is
-<code>remote.&lt;name&gt;.url</code>; otherwise, the second argument is omitted.</p>
+<code>remote.</code><em>&lt;name&gt;</em><code>.url</code>; otherwise, the second argument is omitted.</p>
 </div>
 </div>
 </div>
@@ -691,8 +691,8 @@ It is recommended that all importers providing the <em>import</em>
 capability use this. It&#8217;s mandatory for <em>export</em>.</p>
 <div class="paragraph">
 <p>A helper advertising the capability
-<code>refspec refs/heads/*:refs/svn/origin/branches/*</code>
-is saying that, when it is asked to <code>import refs/heads/topic</code>, the
+<code>refspec</code> <code>refs/heads/</code>*:refs/svn/origin/branches/*
+is saying that, when it is asked to <code>import</code> <code>refs/heads/topic</code>, the
 stream it outputs will update the <code>refs/svn/origin/branches/topic</code>
 ref.</p>
 </div>
@@ -701,7 +701,7 @@ ref.</p>
 applicable refspec takes precedence.  The left-hand of refspecs
 advertised with this capability must cover all refs reported by
 the list command.  If no <em>refspec</em> capability is advertised,
-there is an implied <code>refspec *:*</code>.</p>
+there is an implied <code>refspec</code> *:*.</p>
 </div>
 <div class="paragraph">
 <p>When writing remote-helpers for decentralized version control
@@ -731,13 +731,13 @@ helper&#8217;s stdin.</p>
 <dd>
 <p>This modifies the <em>export</em> capability, instructing Git to dump the
 internal marks table to &lt;file&gt; when complete. For details,
-read up on <code>--export-marks=&lt;file&gt;</code> in <a href="git-fast-export.html">git-fast-export(1)</a>.</p>
+read up on <code>--export-marks=</code><em>&lt;file&gt;</em> in <a href="git-fast-export.html">git-fast-export(1)</a>.</p>
 </dd>
 <dt class="hdlist1"><em>import-marks</em> &lt;file&gt;</dt>
 <dd>
 <p>This modifies the <em>export</em> capability, instructing Git to load the
 marks specified in &lt;file&gt; before processing any input. For details,
-read up on <code>--import-marks=&lt;file&gt;</code> in <a href="git-fast-export.html">git-fast-export(1)</a>.</p>
+read up on <code>--import-marks=</code><em>&lt;file&gt;</em> in <a href="git-fast-export.html">git-fast-export(1)</a>.</p>
 </dd>
 <dt class="hdlist1"><em>signed-tags</em></dt>
 <dd>
@@ -831,11 +831,11 @@ in the output of <em>list</em> with a sha1 may be fetched this way.</p>
 <div class="paragraph">
 <p>Optionally may output a <em>lock &lt;file&gt;</em> line indicating the full path of
 a file under <code>$GIT_DIR/objects/pack</code> which is keeping a pack until
-refs can be suitably updated.  The path must end with <code>.keep</code>. This is
+refs can be suitably updated.  The path must end with .<code>keep</code>. This is
 a mechanism to name a &lt;pack,idx,keep&gt; tuple by giving only the keep
 component.  The kept pack will not be deleted by a concurrent repack,
 even though its objects may not be referenced until the fetch completes.
-The <code>.keep</code> file will be deleted at the conclusion of the fetch.</p>
+The .<code>keep</code> file will be deleted at the conclusion of the fetch.</p>
 </div>
 <div class="paragraph">
 <p>If option <em>check-connectivity</em> is requested, the helper must output
@@ -968,8 +968,8 @@ pairs.  After the connection ends, the remote helper exits.</p>
 </dd>
 <dt class="hdlist1"><em>get</em> &lt;uri&gt; &lt;path&gt;</dt>
 <dd>
-<p>Downloads the file from the given <code>&lt;uri&gt;</code> to the given <code>&lt;path&gt;</code>. If
-<code>&lt;path&gt;.temp</code> exists, then Git assumes that the <code>.temp</code> file is a
+<p>Downloads the file from the given <em>&lt;uri&gt;</em> to the given <em>&lt;path&gt;</em>. If
+<em>&lt;path&gt;</em><code>.temp</code> exists, then Git assumes that the .<code>temp</code> file is a
 partial download from a previous attempt and will resume the
 download from that position.</p>
 </dd>
@@ -1172,7 +1172,7 @@ refs.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

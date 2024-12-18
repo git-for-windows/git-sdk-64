@@ -465,7 +465,7 @@ pre>code {
 commits, mergetags) and transactions (pushes). In every case, the command which
 is about to create an object or transaction determines a payload from that,
 calls an external program to obtain a detached signature for the payload
-(<code>gpg -bsa</code> in the case of PGP signatures), and embeds the signature into the
+(<code>gpg</code> <code>-bsa</code> in the case of PGP signatures), and embeds the signature into the
 object or transaction.</p>
 </div>
 <div class="paragraph">
@@ -477,17 +477,17 @@ which differ depending on signature type (as selected by <code>gpg.format</code>
 <dl>
 <dt class="hdlist1"><code>gpg</code> (PGP)</dt>
 <dd>
-<p><code>-----BEGIN PGP SIGNATURE-----</code> and <code>-----END PGP SIGNATURE-----</code>.
+<p><code>-----BEGIN</code> <code>PGP</code> <code>SIGNATURE-----</code> and <code>-----END</code> <code>PGP</code> <code>SIGNATURE-----</code>.
 Or, if gpg is told to produce RFC1991 signatures,
-<code>-----BEGIN PGP MESSAGE-----</code> and <code>-----END PGP MESSAGE-----</code></p>
+<code>-----BEGIN</code> <code>PGP</code> <code>MESSAGE-----</code> and <code>-----END</code> <code>PGP</code> <code>MESSAGE-----</code></p>
 </dd>
 <dt class="hdlist1"><code>ssh</code> (SSH)</dt>
 <dd>
-<p><code>-----BEGIN SSH SIGNATURE-----</code> and <code>-----END SSH SIGNATURE-----</code></p>
+<p><code>-----BEGIN</code> <code>SSH</code> <code>SIGNATURE-----</code> and <code>-----END</code> <code>SSH</code> <code>SIGNATURE-----</code></p>
 </dd>
 <dt class="hdlist1"><code>x509</code> (X.509)</dt>
 <dd>
-<p><code>-----BEGIN SIGNED MESSAGE-----</code> and <code>-----END SIGNED MESSAGE-----</code></p>
+<p><code>-----BEGIN</code> <code>SIGNED</code> <code>MESSAGE-----</code> and <code>-----END</code> <code>SIGNED</code> <code>MESSAGE-----</code></p>
 </dd>
 </dl>
 </div>
@@ -521,7 +521,7 @@ on the type of the object resp. transaction.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>created by: <code>git tag -s</code></p>
+<p>created by: <code>git</code> <code>tag</code> <code>-s</code></p>
 </li>
 <li>
 <p>payload: annotated tag object</p>
@@ -530,7 +530,7 @@ on the type of the object resp. transaction.</p>
 <p>embedding: append the signature to the unsigned tag object</p>
 </li>
 <li>
-<p>example: tag <code>signedtag</code> with subject <code>signed tag</code></p>
+<p>example: tag <code>signedtag</code> with subject <code>signed</code> <code>tag</code></p>
 </li>
 </ul>
 </div>
@@ -560,7 +560,7 @@ lZyI6HWixKJkWw8lE9aAOD9TmTW9sFJwcVAzmAuFX2kUreDUKMZduGcoRYGpD7E=
 <div class="ulist">
 <ul>
 <li>
-<p>verify with: <code>git verify-tag [-v]</code> or <code>git tag -v</code></p>
+<p>verify with: <code>git</code> <code>verify-tag</code> [<code>-v</code>] or <code>git</code> <code>tag</code> <code>-v</code></p>
 </li>
 </ul>
 </div>
@@ -589,7 +589,7 @@ signed tag message body</pre>
 <div class="ulist">
 <ul>
 <li>
-<p>created by: <code>git commit -S</code></p>
+<p>created by: <code>git</code> <code>commit</code> <code>-S</code></p>
 </li>
 <li>
 <p>payload: commit object</p>
@@ -599,7 +599,7 @@ signed tag message body</pre>
 (content is preceded by a space)</p>
 </li>
 <li>
-<p>example: commit with subject <code>signed commit</code></p>
+<p>example: commit with subject <code>signed</code> <code>commit</code></p>
 </li>
 </ul>
 </div>
@@ -629,7 +629,7 @@ signed commit message body</pre>
 <div class="ulist">
 <ul>
 <li>
-<p>verify with: <code>git verify-commit [-v]</code> (or <code>git show --show-signature</code>)</p>
+<p>verify with: <code>git</code> <code>verify-commit</code> [<code>-v</code>] (or <code>git</code> <code>show</code> <code>--show-signature</code>)</p>
 </li>
 </ul>
 </div>
@@ -658,7 +658,7 @@ signed commit message body</pre>
 <div class="ulist">
 <ul>
 <li>
-<p>created by: <code>git merge</code> on signed tag</p>
+<p>created by: <code>git</code> <code>merge</code> on signed tag</p>
 </li>
 <li>
 <p>payload/embedding: the whole signed tag object is embedded into
@@ -713,7 +713,7 @@ signed tag message body
 <ul>
 <li>
 <p>verify with: verification is embedded in merge commit message by default,
-alternatively with <code>git show --show-signature</code>:</p>
+alternatively with <code>git</code> <code>show</code> <code>--show-signature</code>:</p>
 </li>
 </ul>
 </div>
@@ -756,7 +756,7 @@ Date:   Wed Jun 15 09:13:29 2016 +0000
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

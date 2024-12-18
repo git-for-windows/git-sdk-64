@@ -437,9 +437,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <body class="article">
 <div id="header">
 <h1>Git hash function transition</h1>
-<div class="details">
-<span id="revdate">2018-06-07</span>
-</div>
 </div>
 <div id="content">
 <div class="sect1">
@@ -699,8 +696,8 @@ aware of the hash function the client is using.</p>
 <h3 id="_repository_format_extension">Repository format extension</h3>
 <div class="paragraph">
 <p>A SHA-256 repository uses repository format version <code>1</code> (see
-Documentation/technical/repository-version.txt) with extensions
-<code>objectFormat</code> and <code>compatObjectFormat</code>:</p>
+<a href="../gitrepository-layout.html">gitrepository-layout(5)</a>) with <code>extensions.objectFormat</code> and
+<code>extensions.compatObjectFormat</code> (see <a href="../git-config.html">git-config(1)</a>) set to:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -713,7 +710,7 @@ Documentation/technical/repository-version.txt) with extensions
 </div>
 <div class="paragraph">
 <p>The combination of setting <code>core.repositoryFormatVersion=1</code> and
-populating <code>extensions.*</code> ensures that all versions of Git later than
+populating <code>extensions.</code>* ensures that all versions of Git later than
 <code>v0.99.9l</code> will die instead of trying to operate on the SHA-256
 repository, instead producing an error message.</p>
 </div>
@@ -1808,7 +1805,7 @@ would now be superfluous to the commit log</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

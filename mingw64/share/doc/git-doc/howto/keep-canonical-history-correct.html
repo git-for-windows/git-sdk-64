@@ -442,9 +442,6 @@ pre>code {
 <body class="article">
 <div id="header">
 <h1>Keep authoritative canonical history correct with git pull</h1>
-<div class="details">
-<span id="revdate">2018-06-07</span>
-</div>
 </div>
 <div id="content">
 <div class="paragraph">
@@ -454,7 +451,7 @@ expect. This howto presents a suggested integration workflow for
 maintaining a central repository.</p>
 </div>
 <div class="paragraph">
-<p>Suppose that that central repository has this history:</p>
+<p>Suppose that the central repository has this history:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -486,13 +483,13 @@ central repository:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Now, if you <code>git push</code> at this point, because your history that leads
+<p>Now, if you <code>git</code> <code>push</code> at this point, because your history that leads
 to <code>C</code> lacks <code>X</code>, <code>Y</code> and <code>Z</code>, it will fail.  You need to somehow make
 the tip of your history a descendant of <code>Z</code>.</p>
 </div>
 <div class="paragraph">
 <p>One suggested way to solve the problem is "fetch and then merge", aka
-<code>git pull</code>. When you fetch, your repository will have a history like
+<code>git</code> <code>pull</code>. When you fetch, your repository will have a history like
 this:</p>
 </div>
 <div class="listingblock">
@@ -549,8 +546,8 @@ central repository, you made <code>X-Y-Z</code> a side branch, not on the trunk.
 did <code>X</code> and then <code>Y</code> and then <code>Z</code> and merged a change that consists of
 two commits <code>B</code> and <code>C</code> that achieves a single goal.  You may have
 worked on fixing the bug #12345 with these two patches, and the merge
-<code>M'</code> with swapped parents can say in its log message "Merge
-fix-bug-12345". Having a way to tell <code>git pull</code> to create a merge
+<code>M</code>' with swapped parents can say in its log message "Merge
+fix-bug-12345". Having a way to tell <code>git</code> <code>pull</code> to create a merge
 but record the parents in reverse order may be a way to do so.</p>
 </div>
 <div class="paragraph">
@@ -576,7 +573,7 @@ updated upstream to result in a history of this shape instead:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>with <code>git pull --rebase</code> or something.</p>
+<p>with <code>git</code> <code>pull</code> <code>--rebase</code> or something.</p>
 </div>
 </li>
 <li>
@@ -587,11 +584,11 @@ it is unnecessary.</p>
 </li>
 <li>
 <p>Some projects want each commit on the "trunk" to do one single
-thing.  The output of <code>git log --first-parent</code> in such a project
+thing.  The output of <code>git</code> <code>log</code> <code>--first-parent</code> in such a project
 would show either a merge of a side branch that completes a single
 theme, or a single commit that completes a single theme by itself.
 If your two commits <code>B</code> and <code>C</code> (or they may even be two groups of
-commits) were solving two independent issues, then the merge <code>M'</code>
+commits) were solving two independent issues, then the merge <code>M</code>'
 we made in the earlier example by swapping the merge order is
 still not up to the project standard.  It merges two unrelated
 efforts <code>B</code> and <code>C</code> at the same time.</p>
@@ -674,7 +671,7 @@ branch:</p>
 <div class="paragraph">
 <p>It is very much possible that while you are merging topic-b and
 topic-c, somebody again advanced the history in the central repository
-to put <code>W</code> on top of <code>Z</code>, and make your <code>git push</code> fail.</p>
+to put <code>W</code> on top of <code>Z</code>, and make your <code>git</code> <code>push</code> fail.</p>
 </div>
 <div class="paragraph">
 <p>In such a case, you would rewind to discard <code>M</code> and <code>N</code>, update the
@@ -706,7 +703,7 @@ tip of your <em>master</em> again and redo the two merges:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

@@ -491,7 +491,7 @@ with .pack).</p>
 <dt class="hdlist1">--[no-]rev-index</dt>
 <dd>
 <p>When this flag is provided, generate a reverse index
-(a <code>.rev</code> file) corresponding to the given pack. If
+(a .<code>rev</code> file) corresponding to the given pack. If
 <code>--verify</code> is given, ensure that the existing
 reverse index is correct. Takes precedence over
 <code>pack.writeReverseIndex</code>.</p>
@@ -509,7 +509,7 @@ prevent a race condition between this process and
 </dd>
 <dt class="hdlist1">--fix-thin</dt>
 <dd>
-<p>Fix a "thin" pack produced by <code>git pack-objects --thin</code> (see
+<p>Fix a "thin" pack produced by <code>git</code> <code>pack-objects</code> <code>--thin</code> (see
 <a href="git-pack-objects.html">git-pack-objects(1)</a> for details) by adding the
 excluded objects the deltified objects are based on to the
 pack. This option only makes sense in conjunction with --stdin.</p>
@@ -540,11 +540,11 @@ to force the version for the generated pack index, and to force
 <dt class="hdlist1">--strict[=&lt;msg-id&gt;=&lt;severity&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>Die, if the pack contains broken objects or links. An optional
-comma-separated list of <code>&lt;msg-id&gt;=&lt;severity&gt;</code> can be passed to change
+comma-separated list of <em>&lt;msg-id&gt;</em><code>=</code><em>&lt;severity&gt;</em> can be passed to change
 the severity of some possible issues, e.g.,
- <code>--strict="missingEmail=ignore,badTagName=error"</code>. See the entry for the
-<code>fsck.&lt;msg-id&gt;</code> configuration options in <a href="git-fsck.html">git-fsck(1)</a> for more
-information on the possible values of <code>&lt;msg-id&gt;</code> and <code>&lt;severity&gt;</code>.</p>
+ <code>--strict=</code>"missingEmail=ignore,badTagName=error". See the entry for the
+<code>fsck.</code><em>&lt;msg-id&gt;</em> configuration options in <a href="git-fsck.html">git-fsck(1)</a> for more
+information on the possible values of <em>&lt;msg-id&gt;</em> and <em>&lt;severity&gt;</em>.</p>
 </dd>
 <dt class="hdlist1">--progress-title</dt>
 <dd>
@@ -566,11 +566,11 @@ choke on broken links. If the pack contains a tree pointing to a
 (for the caller to check) after the hash that goes into the name of the
 pack/idx file (see "Notes").</p>
 <div class="paragraph">
-<p>An optional comma-separated list of <code>&lt;msg-id&gt;=&lt;severity&gt;</code> can be passed to
+<p>An optional comma-separated list of <em>&lt;msg-id&gt;</em><code>=</code><em>&lt;severity&gt;</em> can be passed to
 change the severity of some possible issues, e.g.,
-<code>--fsck-objects="missingEmail=ignore,badTagName=ignore"</code>. See the entry for the
-<code>fsck.&lt;msg-id&gt;</code> configuration options in <a href="git-fsck.html">git-fsck(1)</a> for more
-information on the possible values of <code>&lt;msg-id&gt;</code> and <code>&lt;severity&gt;</code>.</p>
+<code>--fsck-objects=</code>"missingEmail=ignore,badTagName=ignore". See the entry for the
+<code>fsck.</code><em>&lt;msg-id&gt;</em> configuration options in <a href="git-fsck.html">git-fsck(1)</a> for more
+information on the possible values of <em>&lt;msg-id&gt;</em> and <em>&lt;severity&gt;</em>.</p>
 </div>
 </dd>
 <dt class="hdlist1">--threads=&lt;n&gt;</dt>
@@ -619,9 +619,18 @@ without data loss.</p>
 <p>Before committing the pack-index, create a .promisor file for this
 pack. Particularly helpful when writing a promisor pack with --fix-thin
 since the name of the pack is not final until the pack has been fully
-written. If a <code>&lt;message&gt;</code> is provided, then that content will be
+written. If a <em>&lt;message&gt;</em> is provided, then that content will be
 written to the .promisor file for future reference. See
 <a href="technical/partial-clone.html">partial clone</a> for more information.</p>
+<div class="paragraph">
+<p>Also, if there are objects in the given pack that references non-promisor
+objects (in the repo), repacks those non-promisor objects into a promisor
+pack. This avoids a situation in which a repo has non-promisor objects that are
+accessible through promisor objects.</p>
+</div>
+<div class="paragraph">
+<p>Requires &lt;pack-file&gt; to not be specified.</p>
+</div>
 </dd>
 </dl>
 </div>
@@ -651,7 +660,7 @@ mentioned above.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

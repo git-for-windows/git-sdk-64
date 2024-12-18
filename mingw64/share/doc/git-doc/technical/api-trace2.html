@@ -437,9 +437,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <body class="article">
 <div id="header">
 <h1>Trace2 API</h1>
-<div class="details">
-<span id="revdate">2018-06-07</span>
-</div>
 </div>
 <div id="content">
 <div id="preamble">
@@ -451,7 +448,7 @@ explicitly enabled by enabling one or more Trace2 Targets.</p>
 </div>
 <div class="paragraph">
 <p>The Trace2 API is intended to replace the existing (Trace1)
-<code>printf()</code>-style tracing provided by the existing <code>GIT_TRACE</code> and
+<code>printf</code>()-style tracing provided by the existing <code>GIT_TRACE</code> and
 <code>GIT_TRACE_PERFORMANCE</code> facilities.  During initial implementation,
 Trace2 and Trace1 may operate in parallel.</p>
 </div>
@@ -472,8 +469,8 @@ formats in the future.  This might be used to define a binary format,
 for example.</p>
 </div>
 <div class="paragraph">
-<p>Trace2 is controlled using <code>trace2.*</code> config values in the system and
-global config files and <code>GIT_TRACE2*</code> environment variables.  Trace2 does
+<p>Trace2 is controlled using <code>trace2.</code>* config values in the system and
+global config files and <code>GIT_TRACE2</code>* environment variables.  Trace2 does
 not read from repo local or worktree config files, nor does it respect
 <code>-c</code> command line config settings.</p>
 </div>
@@ -489,7 +486,7 @@ Format details are given in a later section.</p>
 <div class="sect2">
 <h3 id="_the_normal_format_target">The Normal Format Target</h3>
 <div class="paragraph">
-<p>The normal format target is a traditional <code>printf()</code> format and similar
+<p>The normal format target is a traditional <code>printf</code>() format and similar
 to the <code>GIT_TRACE</code> format.  This format is enabled with the <code>GIT_TRACE2</code>
 environment variable or the <code>trace2.normalTarget</code> system or global
 config setting.</p>
@@ -630,15 +627,15 @@ system or global config value to one of the following:</p>
 <p><code>1</code> or <code>true</code> - Writes to <code>STDERR</code>.</p>
 </li>
 <li>
-<p><code>[2-9]</code> - Writes to the already opened file descriptor.</p>
+<p>[<code>2-9</code>] - Writes to the already opened file descriptor.</p>
 </li>
 <li>
-<p><code>&lt;absolute-pathname&gt;</code> - Writes to the file in append mode. If the target
+<p><em>&lt;absolute-pathname&gt;</em> - Writes to the file in append mode. If the target
 already exists and is a directory, the traces will be written to files (one
 per process) underneath the given directory.</p>
 </li>
 <li>
-<p><code>af_unix:[&lt;socket-type&gt;:]&lt;absolute-pathname&gt;</code> - Write to a
+<p><code>af_unix:</code>[<em>&lt;socket-type&gt;</em><code>:</code>]<em>&lt;absolute-pathname&gt;</em> - Write to a
 Unix DomainSocket (on platforms that support them).  Socket
 type can be either <code>stream</code> or <code>dgram</code>; if omitted Git will
 try both.</p>
@@ -675,16 +672,16 @@ source files in <code>trace2/</code>).</p>
 <div class="sect2">
 <h3 id="_conventions_for_public_functions_and_macros">Conventions for Public Functions and Macros</h3>
 <div class="paragraph">
-<p>Some functions have a <code>_fl()</code> suffix to indicate that they take <code>file</code>
+<p>Some functions have a <code>_fl</code>() suffix to indicate that they take <code>file</code>
 and <code>line-number</code> arguments.</p>
 </div>
 <div class="paragraph">
-<p>Some functions have a <code>_va_fl()</code> suffix to indicate that they also
+<p>Some functions have a <code>_va_fl</code>() suffix to indicate that they also
 take a <code>va_list</code> argument.</p>
 </div>
 <div class="paragraph">
-<p>Some functions have a <code>_printf_fl()</code> suffix to indicate that they also
-take a <code>printf()</code> style format with a variable number of arguments.</p>
+<p>Some functions have a <code>_printf_fl</code>() suffix to indicate that they also
+take a <code>printf</code>() style format with a variable number of arguments.</p>
 </div>
 <div class="paragraph">
 <p>CPP wrapper macros are defined to hide most of these details.</p>
@@ -707,13 +704,13 @@ take a <code>printf()</code> style format with a variable number of arguments.</
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>&lt;event-name&gt;</code></dt>
+<dt class="hdlist1"><em>&lt;event-name&gt;</em></dt>
 <dd>
 <p>is the event name.</p>
 </dd>
-<dt class="hdlist1"><code>&lt;event-message&gt;</code></dt>
+<dt class="hdlist1"><em>&lt;event-message&gt;</em></dt>
 <dd>
-<p>is a free-form <code>printf()</code> message intended for human consumption.</p>
+<p>is a free-form <code>printf</code>() message intended for human consumption.</p>
 <div class="paragraph">
 <p>Note that this may contain embedded LF or CRLF characters that are
 not escaped, so the event may spill across multiple lines.</p>
@@ -752,24 +749,24 @@ data messages, for example.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>&lt;depth&gt;</code></dt>
+<dt class="hdlist1"><em>&lt;depth&gt;</em></dt>
 <dd>
 <p>is the git process depth.  This is the number of parent
 git processes.  A top-level git command has depth value "d0".
 A child of it has depth value "d1".  A second level child
 has depth value "d2" and so on.</p>
 </dd>
-<dt class="hdlist1"><code>&lt;thread-name&gt;</code></dt>
+<dt class="hdlist1"><em>&lt;thread-name&gt;</em></dt>
 <dd>
 <p>is a unique name for the thread.  The primary thread
 is called "main".  Other thread names are of the form "th%d:%s"
 and include a unique number and the name of the thread-proc.</p>
 </dd>
-<dt class="hdlist1"><code>&lt;event-name&gt;</code></dt>
+<dt class="hdlist1"><em>&lt;event-name&gt;</em></dt>
 <dd>
 <p>is the event name.</p>
 </dd>
-<dt class="hdlist1"><code>&lt;repo-id&gt;</code></dt>
+<dt class="hdlist1"><em>&lt;repo-id&gt;</em></dt>
 <dd>
 <p>when present, is a number indicating the repository
 in use.  A <code>def_repo</code> event is emitted when a repository is
@@ -780,25 +777,25 @@ Subsequent repo-specific events will reference this repo-id.</p>
 This field is in anticipation of in-proc submodules in the future.</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>&lt;t_abs&gt;</code></dt>
+<dt class="hdlist1">&lt;t_abs&gt;</dt>
 <dd>
 <p>when present, is the absolute time in seconds since the
 program started.</p>
 </dd>
-<dt class="hdlist1"><code>&lt;t_rel&gt;</code></dt>
+<dt class="hdlist1">&lt;t_rel&gt;</dt>
 <dd>
 <p>when present, is time in seconds relative to the start of
 the current region.  For a thread-exit event, it is the elapsed
 time of the thread.</p>
 </dd>
-<dt class="hdlist1"><code>&lt;category&gt;</code></dt>
+<dt class="hdlist1"><em>&lt;category&gt;</em></dt>
 <dd>
 <p>is present on region and data events and is used to
 indicate a broad category, such as "index" or "status".</p>
 </dd>
-<dt class="hdlist1"><code>&lt;perf-event-message&gt;</code></dt>
+<dt class="hdlist1"><em>&lt;perf-event-message&gt;</em></dt>
 <dd>
-<p>is a free-form <code>printf()</code> message intended for human consumption.</p>
+<p>is a free-form <code>printf</code>() message intended for human consumption.</p>
 </dd>
 </dl>
 </div>
@@ -857,11 +854,11 @@ event-specific.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>"event":&lt;event&gt;</code></dt>
+<dt class="hdlist1">"event":<em>&lt;event&gt;</em></dt>
 <dd>
 <p>is the event name.</p>
 </dd>
-<dt class="hdlist1"><code>"sid":&lt;sid&gt;</code></dt>
+<dt class="hdlist1">"sid":<em>&lt;sid&gt;</em></dt>
 <dd>
 <p>is the session-id.  This is a unique string to identify the
 process instance to allow all events emitted by a process to
@@ -871,23 +868,23 @@ session-id is prepended with the session-id of the parent git
 process to allow parent-child relationships to be identified
 during post-processing.</p>
 </dd>
-<dt class="hdlist1"><code>"thread":&lt;thread&gt;</code></dt>
+<dt class="hdlist1">"thread":<em>&lt;thread&gt;</em></dt>
 <dd>
 <p>is the thread name.</p>
 </dd>
-<dt class="hdlist1"><code>"time":&lt;time&gt;</code></dt>
+<dt class="hdlist1">"time":<em>&lt;time&gt;</em></dt>
 <dd>
 <p>is the UTC time of the event.</p>
 </dd>
-<dt class="hdlist1"><code>"file":&lt;filename&gt;</code></dt>
+<dt class="hdlist1">"file":<em>&lt;filename&gt;</em></dt>
 <dd>
 <p>is source file generating the event.</p>
 </dd>
-<dt class="hdlist1"><code>"line":&lt;line-number&gt;</code></dt>
+<dt class="hdlist1">"line":<em>&lt;line-number&gt;</em></dt>
 <dd>
 <p>is the integer source line number generating the event.</p>
 </dd>
-<dt class="hdlist1"><code>"repo":&lt;repo-id&gt;</code></dt>
+<dt class="hdlist1">"repo":<em>&lt;repo-id&gt;</em></dt>
 <dd>
 <p>when present, is the integer repo-id as described previously.</p>
 </dd>
@@ -903,7 +900,7 @@ only present on the "start" and "atexit" events.</p>
 <h4 id="_event_specific_keyvalue_pairs">Event-Specific Key/Value Pairs</h4>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>"version"</code></dt>
+<dt class="hdlist1">"version"</dt>
 <dd>
 <p>This event gives the version of the executable and the EVENT format. It
 should always be the first event in a trace session. The EVENT format
@@ -923,7 +920,7 @@ to the EVENT format version.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"too_many_files"</code></dt>
+<dt class="hdlist1">"too_many_files"</dt>
 <dd>
 <p>This event is written to the git-trace2-discard sentinel file if there
 are too many files in the target trace directory (see the
@@ -937,7 +934,7 @@ trace2.maxFiles config option).</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"start"</code></dt>
+<dt class="hdlist1">"start"</dt>
 <dd>
 <p>This event contains the complete argv received by main().</p>
 <div class="listingblock">
@@ -951,9 +948,9 @@ trace2.maxFiles config option).</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"exit"</code></dt>
+<dt class="hdlist1">"exit"</dt>
 <dd>
-<p>This event is emitted when git calls <code>exit()</code>.</p>
+<p>This event is emitted when git calls <code>exit</code>().</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
@@ -965,7 +962,7 @@ trace2.maxFiles config option).</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"atexit"</code></dt>
+<dt class="hdlist1">"atexit"</dt>
 <dd>
 <p>This event is emitted by the Trace2 <code>atexit</code> routine during
 final shutdown.  It should be the last event emitted by the
@@ -986,7 +983,7 @@ completed.)</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"signal"</code></dt>
+<dt class="hdlist1">"signal"</dt>
 <dd>
 <p>This event is emitted when the program is terminated by a user
 signal.  Depending on the platform, the signal event may
@@ -1002,10 +999,10 @@ prevent the "atexit" event from being generated.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"error"</code></dt>
+<dt class="hdlist1">"error"</dt>
 <dd>
-<p>This event is emitted when one of the <code>BUG()</code>, <code>bug()</code>, <code>error()</code>,
-<code>die()</code>, <code>warning()</code>, or <code>usage()</code> functions are called.</p>
+<p>This event is emitted when one of the <code>BUG</code>(), <code>bug</code>(), <code>error</code>(),
+<code>die</code>(), <code>warning</code>(), or <code>usage</code>() functions are called.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
@@ -1022,7 +1019,7 @@ allows post-processors to group errors by type without worrying
 about specific error arguments.</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>"cmd_path"</code></dt>
+<dt class="hdlist1">"cmd_path"</dt>
 <dd>
 <p>This event contains the discovered full path of the git
 executable (on platforms that are configured to resolve it).</p>
@@ -1036,7 +1033,7 @@ executable (on platforms that are configured to resolve it).</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"cmd_ancestry"</code></dt>
+<dt class="hdlist1">"cmd_ancestry"</dt>
 <dd>
 <p>This event contains the text command name for the parent (and earlier
 generations of parents) of the current process, in an array ordered from
@@ -1052,7 +1049,7 @@ on all platforms.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"cmd_name"</code></dt>
+<dt class="hdlist1">"cmd_name"</dt>
 <dd>
 <p>This event contains the command name for this git process
 and the hierarchy of commands from parent git processes.</p>
@@ -1081,7 +1078,7 @@ these special values are used:</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"cmd_mode"</code></dt>
+<dt class="hdlist1">"cmd_mode"</dt>
 <dd>
 <p>This event, when present, describes the command variant. This
 event may be emitted more than once.</p>
@@ -1101,7 +1098,7 @@ And these variations typically have different performance
 characteristics that are not comparable.</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>"alias"</code></dt>
+<dt class="hdlist1">"alias"</dt>
 <dd>
 <p>This event is present when an alias is expanded.</p>
 <div class="listingblock">
@@ -1115,7 +1112,7 @@ characteristics that are not comparable.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"child_start"</code></dt>
+<dt class="hdlist1">"child_start"</dt>
 <dd>
 <p>This event describes a child process that is about to be
 spawned.</p>
@@ -1144,10 +1141,10 @@ corresponding child_exit event.</p>
 with "?".</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>"child_exit"</code></dt>
+<dt class="hdlist1">"child_exit"</dt>
 <dd>
 <p>This event is generated after the current process has returned
-from the <code>waitpid()</code> and collected the exit information from the
+from the <code>waitpid</code>() and collected the exit information from the
 child.</p>
 <div class="listingblock">
 <div class="content">
@@ -1170,12 +1167,12 @@ process may be a shell script which doesn&#8217;t have a session-id.)</p>
 <div class="paragraph">
 <p>Note that the <code>t_rel</code> field contains the observed run time in seconds
 for the child process (starting before the fork/exec/spawn and
-stopping after the <code>waitpid()</code> and includes OS process creation overhead).
+stopping after the <code>waitpid</code>() and includes OS process creation overhead).
 So this time will be slightly larger than the atexit time reported by
 the child process itself.</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>"child_ready"</code></dt>
+<dt class="hdlist1">"child_ready"</dt>
 <dd>
 <p>This event is generated after the current process has started
 a background process and released all handles to it.</p>
@@ -1221,9 +1218,9 @@ outlive the parent process.  So the parent&#8217;s child event times should
 not be compared to the child&#8217;s atexit times.</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>"exec"</code></dt>
+<dt class="hdlist1">"exec"</dt>
 <dd>
-<p>This event is generated before git attempts to <code>exec()</code>
+<p>This event is generated before git attempts to <code>exec</code>()
 another command rather than starting a child process.</p>
 <div class="listingblock">
 <div class="content">
@@ -1238,12 +1235,12 @@ another command rather than starting a child process.</p>
 </div>
 <div class="paragraph">
 <p>The "exec_id" field is a command-unique id and is only useful if the
-<code>exec()</code> fails and a corresponding exec_result event is generated.</p>
+<code>exec</code>() fails and a corresponding exec_result event is generated.</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>"exec_result"</code></dt>
+<dt class="hdlist1">"exec_result"</dt>
 <dd>
-<p>This event is generated if the <code>exec()</code> fails and control
+<p>This event is generated if the <code>exec</code>() fails and control
 returns to the current git command.</p>
 <div class="listingblock">
 <div class="content">
@@ -1256,7 +1253,7 @@ returns to the current git command.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"thread_start"</code></dt>
+<dt class="hdlist1">"thread_start"</dt>
 <dd>
 <p>This event is generated when a thread is started.  It is
 generated from <strong>within</strong> the new thread&#8217;s thread-proc (because
@@ -1271,7 +1268,7 @@ it needs to access data in the thread&#8217;s thread-local storage).</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"thread_exit"</code></dt>
+<dt class="hdlist1">"thread_exit"</dt>
 <dd>
 <p>This event is generated when a thread exits.  It is generated
 from <strong>within</strong> the thread&#8217;s thread-proc.</p>
@@ -1286,7 +1283,7 @@ from <strong>within</strong> the thread&#8217;s thread-proc.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"def_param"</code></dt>
+<dt class="hdlist1">"def_param"</dt>
 <dd>
 <p>This event is generated to log a global parameter, such as a config
 setting, command-line flag, or environment variable.</p>
@@ -1302,7 +1299,7 @@ setting, command-line flag, or environment variable.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"def_repo"</code></dt>
+<dt class="hdlist1">"def_repo"</dt>
 <dd>
 <p>This event defines a repo-id and associates it with the root
 of the worktree.</p>
@@ -1323,7 +1320,7 @@ supported, a def_repo event should be emitted for each submodule
 visited.</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>"region_enter"</code></dt>
+<dt class="hdlist1">"region_enter"</dt>
 <dd>
 <p>This event is generated when entering a region.</p>
 <div class="listingblock">
@@ -1348,7 +1345,7 @@ do category-based filtering.</p>
 filter deeply nested regions and data events.  It defaults to "2".</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>"region_leave"</code></dt>
+<dt class="hdlist1">"region_leave"</dt>
 <dd>
 <p>This event is generated when leaving a region.</p>
 <div class="listingblock">
@@ -1366,7 +1363,7 @@ filter deeply nested regions and data events.  It defaults to "2".</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"data"</code></dt>
+<dt class="hdlist1">"data"</dt>
 <dd>
 <p>This event is generated to log a thread- and region-local
 key/value pair.</p>
@@ -1389,7 +1386,7 @@ key/value pair.</p>
 <p>The "value" field may be an integer or a string.</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>"data-json"</code></dt>
+<dt class="hdlist1">"data-json"</dt>
 <dd>
 <p>This event is generated to log a pre-formatted JSON string
 containing structured data.</p>
@@ -1409,7 +1406,7 @@ containing structured data.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"th_timer"</code></dt>
+<dt class="hdlist1">"th_timer"</dt>
 <dd>
 <p>This event logs the amount of time that a stopwatch timer was
 running in the thread.  This event is generated when a thread
@@ -1429,7 +1426,7 @@ exits for timers that requested per-thread events.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"timer"</code></dt>
+<dt class="hdlist1">"timer"</dt>
 <dd>
 <p>This event logs the amount of time that a stopwatch timer was
 running aggregated across all threads.  This event is generated
@@ -1449,7 +1446,7 @@ when the process exits.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"th_counter"</code></dt>
+<dt class="hdlist1">"th_counter"</dt>
 <dd>
 <p>This event logs the value of a counter variable in a thread.
 This event is generated when a thread exits for counters that
@@ -1466,7 +1463,7 @@ requested per-thread events.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"counter"</code></dt>
+<dt class="hdlist1">"counter"</dt>
 <dd>
 <p>This event logs the value of a counter variable across all threads.
 This event is generated when the process exits.  The total value
@@ -1483,7 +1480,7 @@ reported here is the sum across all threads.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1"><code>"printf"</code></dt>
+<dt class="hdlist1">"printf"</dt>
 <dd>
 <p>This event logs a human-readable message with no particular formatting
 guidelines.</p>
@@ -1515,7 +1512,7 @@ usage (without worrying about the actual Git details).</p>
 <dl>
 <dt class="hdlist1">Initialization</dt>
 <dd>
-<p>Initialization happens in <code>main()</code>.  Behind the scenes, an
+<p>Initialization happens in <code>main</code>().  Behind the scenes, an
 <code>atexit</code> and <code>signal</code> handler are registered.</p>
 <div class="listingblock">
 <div class="content">
@@ -2007,7 +2004,7 @@ static int ut_100timer(int argc, const char **argv)
 </div>
 <div class="paragraph">
 <p>In this example, we measure the total time spent in
-<code>expensive_function()</code> regardless of when it is called
+<code>expensive_function</code>() regardless of when it is called
 in the overall flow of the program.</p>
 </div>
 <div class="listingblock">
@@ -2045,11 +2042,11 @@ switch to Trace2.</p>
 <p>Updating existing tests that assume <code>GIT_TRACE</code> format messages.</p>
 </li>
 <li>
-<p>How to best handle custom <code>GIT_TRACE_&lt;key&gt;</code> messages?</p>
+<p>How to best handle custom <code>GIT_TRACE_</code><em>&lt;key&gt;</em> messages?</p>
 <div class="ulist">
 <ul>
 <li>
-<p>The <code>GIT_TRACE_&lt;key&gt;</code> mechanism allows each &lt;key&gt; to write to a
+<p>The <code>GIT_TRACE_</code><em>&lt;key&gt;</em> mechanism allows each &lt;key&gt; to write to a
 different file (in addition to just stderr).</p>
 </li>
 <li>
@@ -2067,7 +2064,7 @@ Trace2 targets (and convert &lt;key&gt; to a "category").</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

@@ -555,7 +555,7 @@ is to add that path.</p>
 <dt class="hdlist1">--prefix=&lt;prefix&gt;</dt>
 <dd>
 <p>Keep the current index contents, and read the contents
-of the named tree-ish under the directory at <code>&lt;prefix&gt;</code>.
+of the named tree-ish under the directory at <em>&lt;prefix&gt;</em>.
 The command will refuse to overwrite entries that already
 existed in the original index file.</p>
 </dd>
@@ -621,8 +621,8 @@ being read, the stat info from the index is used. (In other words, the
 index&#8217;s stat()s take precedence over the merged tree&#8217;s).</p>
 </div>
 <div class="paragraph">
-<p>That means that if you do a <code>git read-tree -m &lt;newtree&gt;</code> followed by a
-<code>git checkout-index -f -u -a</code>, the <em>git checkout-index</em> only checks out
+<p>That means that if you do a <code>git</code> <code>read-tree</code> <code>-m</code> <em>&lt;newtree&gt;</em> followed by a
+<code>git</code> <code>checkout-index</code> <code>-f</code> <code>-u</code> <code>-a</code>, the <em>git checkout-index</em> only checks out
 the stuff that really changed.</p>
 </div>
 <div class="paragraph">
@@ -633,7 +633,7 @@ run after <em>git read-tree</em>.</p>
 <div class="sect2">
 <h3 id="_two_tree_merge">Two Tree Merge</h3>
 <div class="paragraph">
-<p>Typically, this is invoked as <code>git read-tree -m $H $M</code>, where $H
+<p>Typically, this is invoked as <code>git</code> <code>read-tree</code> <code>-m</code> <code>$H</code> <code>$M</code>, where $H
 is the head commit of the current repository, and $M is the head
 of a foreign tree, which is simply ahead of $H (i.e. we are in a
 fast-forward situation).</p>
@@ -654,7 +654,7 @@ the user may have local changes in them since $H.</p>
 </ol>
 </div>
 <div class="paragraph">
-<p>In this case, the <code>git read-tree -m $H $M</code> command makes sure
+<p>In this case, the <code>git</code> <code>read-tree</code> <code>-m</code> <code>$H</code> <code>$M</code> command makes sure
 that no local change is lost as the result of this "merge".
 Here are the "carry forward" rules, where "I" denotes the index,
 "clean" means that index and work tree coincide, and "exists"/"nothing"
@@ -711,13 +711,13 @@ operating under the -u flag.</p>
 <div class="paragraph">
 <p>When this form of <em>git read-tree</em> returns successfully, you can
 see which of the "local changes" that you made were carried forward by running
-<code>git diff-index --cached $M</code>.  Note that this does not
-necessarily match what <code>git diff-index --cached $H</code> would have
+<code>git</code> <code>diff-index</code> <code>--cached</code> <code>$M</code>.  Note that this does not
+necessarily match what <code>git</code> <code>diff-index</code> <code>--cached</code> <code>$H</code> would have
 produced before such a two tree merge.  This is because of cases
 18 and 19&#8201;&#8212;&#8201;if you already had the changes in $M (e.g. maybe
-you picked it up via e-mail in a patch form), <code>git diff-index
---cached $H</code> would have told you about the change before this
-merge, but it would not show in <code>git diff-index --cached $M</code>
+you picked it up via e-mail in a patch form), <code>git</code> <code>diff-index</code>
+<code>--cached</code> <code>$H</code> would have told you about the change before this
+merge, but it would not show in <code>git</code> <code>diff-index</code> <code>--cached</code> <code>$M</code>
 output after the two-tree merge.</p>
 </div>
 <div class="paragraph">
@@ -997,7 +997,7 @@ support.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

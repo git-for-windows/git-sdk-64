@@ -498,7 +498,7 @@ or <a href="https://git-scm.com/docs" class="bare">https://git-scm.com/docs</a>.
 <dd>
 <p>Prints the Git suite version that the <em>git</em> program came from.</p>
 <div class="paragraph">
-<p>This option is internally converted to <code>git version ...</code> and accepts
+<p>This option is internally converted to <code>git</code> <code>version</code> ... and accepts
 the same options as the <a href="git-version.html">git-version(1)</a> command. If <code>--help</code> is
 also given, it takes precedence over <code>--version</code>.</p>
 </div>
@@ -513,16 +513,16 @@ option will bring up the manual page for that command.</p>
 <div class="paragraph">
 <p>Other options are available to control how the manual page is
 displayed. See <a href="git-help.html">git-help(1)</a> for more information,
-because <code>git --help ...</code> is converted internally into <code>git
-help ...</code>.</p>
+because <code>git</code> <code>--help</code> ... is converted internally into <code>git</code>
+<code>help</code> ....</p>
 </div>
 </dd>
 <dt class="hdlist1">-C &lt;path&gt;</dt>
 <dd>
 <p>Run as if git was started in <em>&lt;path&gt;</em> instead of the current working
 directory.  When multiple <code>-C</code> options are given, each subsequent
-non-absolute <code>-C &lt;path&gt;</code> is interpreted relative to the preceding <code>-C
-&lt;path&gt;</code>.  If <em>&lt;path&gt;</em> is present but empty, e.g. <code>-C ""</code>, then the
+non-absolute <code>-C</code> <em>&lt;path&gt;</em> is interpreted relative to the preceding <code>-C</code>
+<em>&lt;path&gt;</em>.  If <em>&lt;path&gt;</em> is present but empty, e.g. <code>-C</code> "", then the
 current working directory is left unchanged.</p>
 <div class="paragraph">
 <p>This option affects options that expect path name like <code>--git-dir</code> and
@@ -544,23 +544,23 @@ given will override values from configuration files.
 The &lt;name&gt; is expected in the same format as listed by
 <em>git config</em> (subkeys separated by dots).</p>
 <div class="paragraph">
-<p>Note that omitting the <code>=</code> in <code>git -c foo.bar ...</code> is allowed and sets
-<code>foo.bar</code> to the boolean true value (just like <code>[foo]bar</code> would in a
-config file). Including the equals but with an empty value (like <code>git -c
-foo.bar= ...</code>) sets <code>foo.bar</code> to the empty string which <code>git config
---type=bool</code> will convert to <code>false</code>.</p>
+<p>Note that omitting the <code>=</code> in <code>git</code> <code>-c</code> <code>foo.bar</code> ... is allowed and sets
+<code>foo.bar</code> to the boolean true value (just like [<code>foo</code>]<code>bar</code> would in a
+config file). Including the equals but with an empty value (like <code>git</code> <code>-c</code>
+<code>foo.bar=</code> ...) sets <code>foo.bar</code> to the empty string which <code>git</code> <code>config</code>
+<code>--type=bool</code> will convert to <code>false</code>.</p>
 </div>
 </dd>
 <dt class="hdlist1">--config-env=&lt;name&gt;=&lt;envvar&gt;</dt>
 <dd>
-<p>Like <code>-c &lt;name&gt;=&lt;value&gt;</code>, give configuration variable
+<p>Like <code>-c</code> <em>&lt;name&gt;</em><code>=</code><em>&lt;value&gt;</em>, give configuration variable
 <em>&lt;name&gt;</em> a value, where &lt;envvar&gt; is the name of an
 environment variable from which to retrieve the value. Unlike
 <code>-c</code> there is no shortcut for directly setting the value to an
 empty string, instead the environment variable itself must be
-set to the empty string.  It is an error if the <code>&lt;envvar&gt;</code> does not exist
-in the environment. <code>&lt;envvar&gt;</code> may not contain an equals sign
-to avoid ambiguity with <code>&lt;name&gt;</code> containing one.</p>
+set to the empty string.  It is an error if the <em>&lt;envvar&gt;</em> does not exist
+in the environment. <em>&lt;envvar&gt;</em> may not contain an equals sign
+to avoid ambiguity with <em>&lt;name&gt;</em> containing one.</p>
 <div class="paragraph">
 <p>This is useful for cases where you want to pass transitory
 configuration options to git, but are doing so on operating systems
@@ -572,7 +572,7 @@ Linux, but may not be on your system.</p>
 <div class="paragraph">
 <p>Note that this might add security for variables such as
 <code>http.extraHeader</code> where the sensitive information is part of
-the value, but not e.g. <code>url.&lt;base&gt;.insteadOf</code> where the
+the value, but not e.g. <code>url.</code><em>&lt;base&gt;</em><code>.insteadOf</code> where the
 sensitive information can be part of the key.</p>
 </div>
 </dd>
@@ -590,7 +590,7 @@ documentation is installed and exit.</p>
 </dd>
 <dt class="hdlist1">--man-path</dt>
 <dd>
-<p>Print the manpath (see <code>man(1)</code>) for the man pages for
+<p>Print the manpath (see <code>man</code>(<code>1</code>)) for the man pages for
 this version of Git and exit.</p>
 </dd>
 <dt class="hdlist1">--info-path</dt>
@@ -602,7 +602,7 @@ version of Git are installed and exit.</p>
 <dt class="hdlist1">--paginate</dt>
 <dd>
 <p>Pipe all output into <em>less</em> (or if set, $PAGER) if standard
-output is a terminal.  This overrides the <code>pager.&lt;cmd&gt;</code>
+output is a terminal.  This overrides the <code>pager.</code><em>&lt;cmd&gt;</em>
 configuration options (see the "Configuration Mechanism" section
 below).</p>
 </dd>
@@ -625,12 +625,12 @@ top-level of the working tree are discovered), and tells Git
 that you are at the top level of the working tree.  If you
 are not at the top-level directory of the working tree, you
 should tell Git where the top-level of the working tree is,
-with the <code>--work-tree=&lt;path&gt;</code> option (or <code>GIT_WORK_TREE</code>
+with the <code>--work-tree=</code><em>&lt;path&gt;</em> option (or <code>GIT_WORK_TREE</code>
 environment variable)</p>
 </div>
 <div class="paragraph">
-<p>If you just want to run git as if it was started in <code>&lt;path&gt;</code> then use
-<code>git -C &lt;path&gt;</code>.</p>
+<p>If you just want to run git as if it was started in <em>&lt;path&gt;</em> then use
+<code>git</code> <code>-C</code> <em>&lt;path&gt;</em>.</p>
 </div>
 </dd>
 <dt class="hdlist1">--work-tree=&lt;path&gt;</dt>
@@ -664,7 +664,7 @@ See <a href="git-replace.html">git-replace(1)</a> for more information.</p>
 <dt class="hdlist1">--no-lazy-fetch</dt>
 <dd>
 <p>Do not fetch missing objects from the promisor remote on
-demand.  Useful together with <code>git cat-file -e &lt;object&gt;</code> to
+demand.  Useful together with <code>git</code> <code>cat-file</code> <code>-e</code> <em>&lt;object&gt;</em> to
 see if the object is locally available.
 This is equivalent to setting the <code>GIT_NO_LAZY_FETCH</code>
 environment variable to <code>1</code>.</p>
@@ -1118,8 +1118,8 @@ people via patch over e-mail.</p>
 <div class="sect2">
 <h3 id="_reset_restore_and_revert">Reset, restore and revert</h3>
 <div class="paragraph">
-<p>There are three commands with similar names: <code>git reset</code>,
-<code>git restore</code> and <code>git revert</code>.</p>
+<p>There are three commands with similar names: <code>git</code> <code>reset</code>,
+<code>git</code> <code>restore</code> and <code>git</code> <code>revert</code>.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1138,8 +1138,8 @@ the index from another commit.</p>
 in order to add or remove commits from the branch. This operation
 changes the commit history.</p>
 <div class="paragraph">
-<p><code>git reset</code> can also be used to restore the index, overlapping with
-<code>git restore</code>.</p>
+<p><code>git</code> <code>reset</code> can also be used to restore the index, overlapping with
+<code>git</code> <code>restore</code>.</p>
 </div>
 </li>
 </ul>
@@ -1763,12 +1763,12 @@ symbolic notation:</p>
 <dt class="hdlist1">&lt;tag&gt;</dt>
 <dd>
 <p>a valid tag <em>name</em>
-(i.e. a <code>refs/tags/&lt;tag&gt;</code> reference).</p>
+(i.e. a <code>refs/tags/</code><em>&lt;tag&gt;</em> reference).</p>
 </dd>
 <dt class="hdlist1">&lt;head&gt;</dt>
 <dd>
 <p>a valid head <em>name</em>
-(i.e. a <code>refs/heads/&lt;head&gt;</code> reference).</p>
+(i.e. a <code>refs/heads/</code><em>&lt;head&gt;</em> reference).</p>
 </dd>
 </dl>
 </div>
@@ -1864,17 +1864,17 @@ specifies a ":" separated (on Windows ";" separated) list
 of Git object directories which can be used to search for Git
 objects. New objects will not be written to these directories.</p>
 <div class="paragraph">
-<p>Entries that begin with <code>"</code> (double-quote) will be interpreted
+<p>Entries that begin with " (double-quote) will be interpreted
 as C-style quoted paths, removing leading and trailing
 double-quotes and respecting backslash escapes. E.g., the value
-<code>"path-with-\"-and-:-in-it":vanilla-path</code> has two paths:
-<code>path-with-"-and-:-in-it</code> and <code>vanilla-path</code>.</p>
+"path-with-\"-and-:-in-it":vanilla-path has two paths:
+<code>path-with-</code>"-and-:-in-it and <code>vanilla-path</code>.</p>
 </div>
 </dd>
 <dt class="hdlist1"><code>GIT_DIR</code></dt>
 <dd>
 <p>If the <code>GIT_DIR</code> environment variable is set then it
-specifies a path to use instead of the default <code>.git</code>
+specifies a path to use instead of the default .<code>git</code>
 for the base of the repository.
 The <code>--git-dir</code> command-line option also sets this value.</p>
 </dd>
@@ -2049,7 +2049,7 @@ parameter, &lt;path&gt;.</p>
 <p>If this Boolean environment variable is set to true then the
 <code>GIT_EXTERNAL_DIFF</code> command is expected to return exit code
 0 if it considers the input files to be equal or 1 if it
-considers them to be different, like <code>diff(1)</code>.
+considers them to be different, like <code>diff</code>(<code>1</code>).
 If it is set to false, which is the default, then the command
 is expected to return exit code 0 regardless of equality.
 Any other exit code causes Git to report a fatal error.</p>
@@ -2119,7 +2119,7 @@ needed).</p>
 </div>
 <div class="paragraph">
 <p>Usually it is easier to configure any desired options through your
-personal <code>.ssh/config</code> file.  Please consult your ssh documentation
+personal .<code>ssh/config</code> file.  Please consult your ssh documentation
 for further details.</p>
 </div>
 </dd>
@@ -2167,7 +2167,7 @@ respective level.</p>
 <dt class="hdlist1"><code>GIT_CONFIG_NOSYSTEM</code></dt>
 <dd>
 <p>Whether to skip reading settings from the system-wide
-<code>$(prefix)/etc/gitconfig</code> file.  This Boolean environment variable can
+<code>$</code>(<code>prefix</code>)<code>/etc/gitconfig</code> file.  This Boolean environment variable can
 be used along with <code>$HOME</code> and <code>$XDG_CONFIG_HOME</code> to create a
 predictable environment for a picky script, or you can set it
 to true to temporarily avoid using a buggy <code>/etc/gitconfig</code> file while
@@ -2308,7 +2308,7 @@ collisions).</p>
 </div>
 <div class="paragraph">
 <p>In addition, if the variable is set to
-<code>af_unix:[&lt;socket-type&gt;:]&lt;absolute-pathname&gt;</code>, Git will try
+<code>af_unix:</code>[<em>&lt;socket-type&gt;</em><code>:</code>]<em>&lt;absolute-pathname&gt;</em>, Git will try
 to open the path as a Unix Domain Socket.  The socket type
 can be either <code>stream</code> or <code>dgram</code>.</p>
 </div>
@@ -2352,11 +2352,11 @@ ignore replacement refs and do not replace Git objects.</p>
 <dd>
 <p>Setting this Boolean environment variable to true will cause Git to treat all
 pathspecs literally, rather than as glob patterns. For example,
-running <code>GIT_LITERAL_PATHSPECS=1 git log -- '*.c'</code> will search
-for commits that touch the path <code>*.c</code>, not any paths that the
-glob <code>*.c</code> matches. You might want this if you are feeding
+running <code>GIT_LITERAL_PATHSPECS=1</code> <code>git</code> <code>log</code> <code>--</code> '*.<code>c</code>' will search
+for commits that touch the path *.<code>c</code>, not any paths that the
+glob *.<code>c</code> matches. You might want this if you are feeding
 literal paths to Git (e.g., paths previously given to you by
-<code>git ls-tree</code>, <code>--raw</code> diff output, etc).</p>
+<code>git</code> <code>ls-tree</code>, <code>--raw</code> diff output, etc).</p>
 </dd>
 <dt class="hdlist1"><code>GIT_GLOB_PATHSPECS</code></dt>
 <dd>
@@ -2419,7 +2419,7 @@ will never be returned from the commit-graph at the cost of performance.</p>
 <dd>
 <p>If set to a colon-separated list of protocols, behave as if
 <code>protocol.allow</code> is set to <code>never</code>, and each of the listed
-protocols has <code>protocol.&lt;name&gt;.allow</code> set to <code>always</code>
+protocols has <code>protocol.</code><em>&lt;name&gt;</em><code>.allow</code> set to <code>always</code>
 (overriding any existing configuration). See the description of
 <code>protocol.allow</code> in <a href="git-config.html">git-config(1)</a> for more details.</p>
 </dd>
@@ -2445,7 +2445,7 @@ well as over the <code>git://</code> protocol. For git-over-http, it should work
 automatically in most configurations, but see the discussion in
 <a href="git-http-backend.html">git-http-backend(1)</a>. For git-over-ssh, the ssh server may need
 to be configured to allow clients to pass this variable (e.g., by using
-<code>AcceptEnv GIT_PROTOCOL</code> with OpenSSH).</p>
+<code>AcceptEnv</code> <code>GIT_PROTOCOL</code> with OpenSSH).</p>
 </div>
 <div class="paragraph">
 <p>This configuration is optional. If the variable is not propagated, then
@@ -2459,7 +2459,7 @@ be in the future).</p>
 <dd>
 <p>If this Boolean environment variable is set to false, Git will complete any requested operation without
 performing any optional sub-operations that require taking a lock.
-For example, this will prevent <code>git status</code> from refreshing the
+For example, this will prevent <code>git</code> <code>status</code> from refreshing the
 index as a side effect. This is useful for processes running in
 the background which do not want to cause lock contention with
 other operations on the repository.  Defaults to <code>1</code>.</p>
@@ -2471,16 +2471,16 @@ other operations on the repository.  Defaults to <code>1</code>.</p>
 <p>Windows-only: allow redirecting the standard input/output/error
 handles to paths specified by the environment variables. This is
 particularly useful in multi-threaded applications where the
-canonical way to pass standard handles via <code>CreateProcess()</code> is
+canonical way to pass standard handles via <code>CreateProcess</code>() is
 not an option because it would require the handles to be marked
 inheritable (and consequently <strong>every</strong> spawned process would
 inherit them, possibly blocking regular Git operations). The
 primary intended use case is to use named pipes for communication
-(e.g. <code>\\.\pipe\my-git-stdin-123</code>).</p>
+(e.g. \\.\pipe\my-git-stdin-123).</p>
 <div class="paragraph">
 <p>Two special values are supported: <code>off</code> will simply close the
 corresponding standard handle, and if <code>GIT_REDIRECT_STDERR</code> is
-<code>2&gt;&amp;1</code>, standard error will be redirected to the same handle as
+<code>2</code>&gt;&amp;1, standard error will be redirected to the same handle as
 standard output.</p>
 </div>
 </dd>
@@ -2499,7 +2499,7 @@ foreseeable future (along with the variable).</p>
 <p>If set to <code>0</code>, then disable all advice messages. These messages are
 intended to provide hints to human users that may help them get out of
 problematic situations or take advantage of new features. Users can
-disable individual messages using the <code>advice.*</code> config keys. These
+disable individual messages using the <code>advice.</code>* config keys. These
 messages may be disruptive to tools that execute Git processes, so this
 variable is available to disable the messages. (The <code>--no-advice</code>
 global option is also available, but old Git versions may fail when
@@ -2582,12 +2582,12 @@ unmerged version of a file when a merge is in progress.</p>
 <div class="paragraph">
 <p>Some configuration options and hook files may cause Git to run arbitrary
 shell commands. Because configuration and hooks are not copied using
-<code>git clone</code>, it is generally safe to clone remote repositories with
-untrusted content, inspect them with <code>git log</code>, and so on.</p>
+<code>git</code> <code>clone</code>, it is generally safe to clone remote repositories with
+untrusted content, inspect them with <code>git</code> <code>log</code>, and so on.</p>
 </div>
 <div class="paragraph">
-<p>However, it is not safe to run Git commands in a <code>.git</code> directory (or
-the working tree that surrounds it) when that <code>.git</code> directory itself
+<p>However, it is not safe to run Git commands in a .<code>git</code> directory (or
+the working tree that surrounds it) when that .<code>git</code> directory itself
 comes from an untrusted source. The commands in its config and hooks
 are executed in the usual way.</p>
 </div>
@@ -2601,8 +2601,8 @@ extract a zip file or tarball from an untrusted source). In such cases,
 you&#8217;d need to "sanitize" the untrusted repository first.</p>
 </div>
 <div class="paragraph">
-<p>If you have an untrusted <code>.git</code> directory, you should first clone it
-with <code>git clone --no-local</code> to obtain a clean copy. Git does restrict
+<p>If you have an untrusted .<code>git</code> directory, you should first clone it
+with <code>git</code> <code>clone</code> <code>--no-local</code> to obtain a clean copy. Git does restrict
 the set of options and hooks that will be run by <code>upload-pack</code>, which
 handles the server side of a clone or fetch, but beware that the
 surface area for attack against <code>upload-pack</code> is large, so this does
@@ -2698,7 +2698,7 @@ the Git Security mailing list &lt;<a href="mailto:git-security@googlegroups.com"
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

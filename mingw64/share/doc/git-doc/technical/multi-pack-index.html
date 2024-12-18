@@ -437,9 +437,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <body class="article">
 <div id="header">
 <h1>Multi-Pack-Index (MIDX) Design Notes</h1>
-<div class="details">
-<span id="revdate">2018-06-07</span>
-</div>
 </div>
 <div id="content">
 <div id="preamble">
@@ -601,13 +598,13 @@ feature, the concept of the pseudo-pack order is extended across each
 layer of the incremental MIDX chain to form a concatenated pseudo-pack
 order. This concatenation takes place in the same order as the chain
 itself (in other words, the concatenated pseudo-pack order for a chain
-<code>{$H1, $H2, $H3}</code> would be the pseudo-pack order for <code>$H1</code>, followed by
+{$H1, <code>$H2,</code> <code>$H3</code>} would be the pseudo-pack order for <code>$H1</code>, followed by
 the pseudo-pack order for <code>$H2</code>, followed by the pseudo-pack order for
 <code>$H3</code>).</p>
 </div>
 <div class="paragraph">
 <p>The layout will then be extended so that each layer of the incremental
-MIDX chain can write a <code>*.bitmap</code>. The objects in each layer&#8217;s bitmap
+MIDX chain can write a *.<code>bitmap</code>. The objects in each layer&#8217;s bitmap
 are offset by the number of objects in the previous layers of the chain.</p>
 </div>
 </li>
@@ -618,7 +615,7 @@ are offset by the number of objects in the previous layers of the chain.</p>
 <h3 id="_file_layout">File layout</h3>
 <div class="paragraph">
 <p>Instead of storing a single <code>multi-pack-index</code> file (with an optional
-<code>.rev</code> and <code>.bitmap</code> extension) in <code>$GIT_DIR/objects/pack</code>, incremental
+.<code>rev</code> and .<code>bitmap</code> extension) in <code>$GIT_DIR/objects/pack</code>, incremental
 MIDXs are stored in the following layout:</p>
 </div>
 <div class="listingblock">
@@ -662,7 +659,7 @@ to objects via their index into a concatenated lexicographic ordering
 among each component in the MIDX chain.</p>
 </div>
 <div class="paragraph">
-<p>If <code>objects_nr()</code> is a function that returns the number of objects in a
+<p>If <code>objects_nr</code>() is a function that returns the number of objects in a
 given MIDX layer, then the index of an object at lexicographic position
 <code>i</code> within, say, $H3 is defined as:</p>
 </div>
@@ -672,8 +669,8 @@ given MIDX layer, then the index of an object at lexicographic position
 </div>
 </div>
 <div class="paragraph">
-<p>(in the C implementation, this is often computed as <code>i +
-m-&gt;num_objects_in_base</code>).</p>
+<p>(in the C implementation, this is often computed as <code>i</code> <code>+</code>
+<code>m-</code>&gt;<code>num_objects_in_base</code>).</p>
 </div>
 </div>
 </div>
@@ -734,7 +731,7 @@ etc.) and use this metadata to help that maintenance.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

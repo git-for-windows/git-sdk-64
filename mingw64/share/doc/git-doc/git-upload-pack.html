@@ -494,7 +494,7 @@ a program may read the request, write a response, and must exit.</p>
 <dt class="hdlist1">--http-backend-info-refs</dt>
 <dd>
 <p>Used by <a href="git-http-backend.html">git-http-backend(1)</a> to serve up
-<code>$GIT_URL/info/refs?service=git-upload-pack</code> requests. See
+<code>$GIT_URL/info/refs</code>?service=git-upload-pack requests. See
 "Smart Clients" in <a href="gitprotocol-http.html">gitprotocol-http(5)</a> and "HTTP
 Transport" in the <a href="gitprotocol-v2.html">gitprotocol-v2(5)</a>
 documentation. Also understood by
@@ -525,10 +525,10 @@ variable to be passed. See the discussion in <a href="git.html">git(1)</a>.</p>
 itself cloned with <code>--filter</code>), the server-side <code>upload-pack</code>
 may need to fetch extra objects from its upstream in order to
 complete the request. By default, <code>upload-pack</code> will refuse to
-perform such a lazy fetch, because <code>git fetch</code> may run arbitrary
+perform such a lazy fetch, because <code>git</code> <code>fetch</code> may run arbitrary
 commands specified in configuration and hooks of the source
 repository (and <code>upload-pack</code> tries to be safe to run even in
-untrusted <code>.git</code> directories).</p>
+untrusted .<code>git</code> directories).</p>
 <div class="paragraph">
 <p>This is implemented by having <code>upload-pack</code> internally set the
 <code>GIT_NO_LAZY_FETCH</code> variable to <code>1</code>. If you want to override it
@@ -545,7 +545,7 @@ you trust it), you can explicitly set <code>GIT_NO_LAZY_FETCH</code> to
 <h2 id="_security">SECURITY</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Most Git commands should not be run in an untrusted <code>.git</code> directory
+<p>Most Git commands should not be run in an untrusted .<code>git</code> directory
 (see the section <code>SECURITY</code> in <a href="git.html">git(1)</a>). <code>upload-pack</code> tries to
 avoid any dangerous configuration options or hooks from the repository
 it&#8217;s serving, making it safe to clone an untrusted directory and run
@@ -582,7 +582,7 @@ systems you can run:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

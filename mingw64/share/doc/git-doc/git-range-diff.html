@@ -468,7 +468,7 @@ pre>code {
 series, or more generally, two commit ranges (ignoring merge commits).</p>
 </div>
 <div class="paragraph">
-<p>In the presence of <code>&lt;path&gt;</code> arguments, these commit ranges are limited
+<p>In the presence of <em>&lt;path&gt;</em> arguments, these commit ranges are limited
 accordingly.</p>
 </div>
 <div class="paragraph">
@@ -489,17 +489,17 @@ all of their ancestors have been shown.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>&lt;range1&gt; &lt;range2&gt;</code>: Either commit range can be of the form
-<code>&lt;base&gt;..&lt;rev&gt;</code>, <code>&lt;rev&gt;^!</code> or <code>&lt;rev&gt;^-&lt;n&gt;</code>. See <code>SPECIFYING RANGES</code>
+<p><em>&lt;range1&gt;</em> <em>&lt;range2&gt;</em>: Either commit range can be of the form
+<em>&lt;base&gt;</em><code>..</code><em>&lt;rev&gt;</em>, <em>&lt;rev&gt;</em><code>^</code>! or <em>&lt;rev&gt;</em><code>^-</code><em>&lt;n&gt;</em>. See <code>SPECIFYING</code> <code>RANGES</code>
 in <a href="gitrevisions.html">gitrevisions(7)</a> for more details.</p>
 </li>
 <li>
-<p><code>&lt;rev1&gt;...&lt;rev2&gt;</code>. This is equivalent to
-<code>&lt;rev2&gt;..&lt;rev1&gt; &lt;rev1&gt;..&lt;rev2&gt;</code>.</p>
+<p><em>&lt;rev1&gt;</em><code>...</code><em>&lt;rev2&gt;</em>. This is equivalent to
+<em>&lt;rev2&gt;</em><code>..</code><em>&lt;rev1&gt;</em> <em>&lt;rev1&gt;</em><code>..</code><em>&lt;rev2&gt;</em>.</p>
 </li>
 <li>
-<p><code>&lt;base&gt; &lt;rev1&gt; &lt;rev2&gt;</code>: This is equivalent to <code>&lt;base&gt;..&lt;rev1&gt;
-&lt;base&gt;..&lt;rev2&gt;</code>.</p>
+<p><em>&lt;base&gt;</em> <em>&lt;rev1&gt;</em> <em>&lt;rev2&gt;</em>: This is equivalent to <em>&lt;base&gt;</em><code>..</code><em>&lt;rev1&gt;</em>
+<em>&lt;base&gt;</em><code>..</code><em>&lt;rev2&gt;</em>.</p>
 </li>
 </ul>
 </div>
@@ -512,17 +512,17 @@ in <a href="gitrevisions.html">gitrevisions(7)</a> for more details.</p>
 <dl>
 <dt class="hdlist1">--no-dual-color</dt>
 <dd>
-<p>When the commit diffs differ, <code>git range-diff</code> recreates the
+<p>When the commit diffs differ, <code>git</code> <code>range-diff</code> recreates the
 original diffs' coloring, and adds outer -/+ diff markers with
 the <strong>background</strong> being red/green to make it easier to see e.g.
 when there was a change in what exact lines were added.</p>
 <div class="paragraph">
 <p>Additionally, the commit diff lines that are only present in the first commit
-range are shown "dimmed" (this can be overridden using the <code>color.diff.&lt;slot&gt;</code>
-config setting where <code>&lt;slot&gt;</code> is one of <code>contextDimmed</code>, <code>oldDimmed</code> and
+range are shown "dimmed" (this can be overridden using the <code>color.diff.</code><em>&lt;slot&gt;</em>
+config setting where <em>&lt;slot&gt;</em> is one of <code>contextDimmed</code>, <code>oldDimmed</code> and
 <code>newDimmed</code>), and the commit diff lines that are only present in the second
 commit range are shown in bold (which can be overridden using the config
-settings <code>color.diff.&lt;slot&gt;</code> with <code>&lt;slot&gt;</code> being one of <code>contextBold</code>,
+settings <code>color.diff.</code><em>&lt;slot&gt;</em> with <em>&lt;slot&gt;</em> being one of <code>contextBold</code>,
 <code>oldBold</code> or <code>newBold</code>).</p>
 </div>
 <div class="paragraph">
@@ -533,8 +533,8 @@ to revert to color all lines according to the outer diff markers
 </dd>
 <dt class="hdlist1">--creation-factor=&lt;percent&gt;</dt>
 <dd>
-<p>Set the creation/deletion cost fudge factor to <code>&lt;percent&gt;</code>.
-Defaults to 60. Try a larger value if <code>git range-diff</code> erroneously
+<p>Set the creation/deletion cost fudge factor to <em>&lt;percent&gt;</em>.
+Defaults to 60. Try a larger value if <code>git</code> <code>range-diff</code> erroneously
 considers a large change a total rewrite (deletion of one commit
 and addition of another), and a smaller one in the reverse case.
 See the ``Algorithm`` section below for an explanation of why this is
@@ -543,44 +543,44 @@ needed.</p>
 <dt class="hdlist1">--left-only</dt>
 <dd>
 <p>Suppress commits that are missing from the first specified range
-(or the "left range" when using the <code>&lt;rev1&gt;...&lt;rev2&gt;</code> format).</p>
+(or the "left range" when using the <em>&lt;rev1&gt;</em><code>...</code><em>&lt;rev2&gt;</em> format).</p>
 </dd>
 <dt class="hdlist1">--right-only</dt>
 <dd>
 <p>Suppress commits that are missing from the second specified range
-(or the "right range" when using the <code>&lt;rev1&gt;...&lt;rev2&gt;</code> format).</p>
+(or the "right range" when using the <em>&lt;rev1&gt;</em><code>...</code><em>&lt;rev2&gt;</em> format).</p>
 </dd>
 <dt class="hdlist1">--[no-]notes[=&lt;ref&gt;]</dt>
 <dd>
-<p>This flag is passed to the <code>git log</code> program
+<p>This flag is passed to the <code>git</code> <code>log</code> program
 (see <a href="git-log.html">git-log(1)</a>) that generates the patches.</p>
 </dd>
 <dt class="hdlist1">&lt;range1&gt; &lt;range2&gt;</dt>
 <dd>
 <p>Compare the commits specified by the two ranges, where
-<code>&lt;range1&gt;</code> is considered an older version of <code>&lt;range2&gt;</code>.</p>
+<em>&lt;range1&gt;</em> is considered an older version of <em>&lt;range2&gt;</em>.</p>
 </dd>
 <dt class="hdlist1">&lt;rev1&gt;&#8230;&#8203;&lt;rev2&gt;</dt>
 <dd>
-<p>Equivalent to passing <code>&lt;rev2&gt;..&lt;rev1&gt;</code> and <code>&lt;rev1&gt;..&lt;rev2&gt;</code>.</p>
+<p>Equivalent to passing <em>&lt;rev2&gt;</em><code>..</code><em>&lt;rev1&gt;</em> and <em>&lt;rev1&gt;</em><code>..</code><em>&lt;rev2&gt;</em>.</p>
 </dd>
 <dt class="hdlist1">&lt;base&gt; &lt;rev1&gt; &lt;rev2&gt;</dt>
 <dd>
-<p>Equivalent to passing <code>&lt;base&gt;..&lt;rev1&gt;</code> and <code>&lt;base&gt;..&lt;rev2&gt;</code>.
-Note that <code>&lt;base&gt;</code> does not need to be the exact branch point
+<p>Equivalent to passing <em>&lt;base&gt;</em><code>..</code><em>&lt;rev1&gt;</em> and <em>&lt;base&gt;</em><code>..</code><em>&lt;rev2&gt;</em>.
+Note that <em>&lt;base&gt;</em> does not need to be the exact branch point
 of the branches. Example: after rebasing a branch <code>my-topic</code>,
-<code>git range-diff my-topic@{u} my-topic@{1} my-topic</code> would
+<code>git</code> <code>range-diff</code> <code>my-topic@</code>{u} <code>my-topic@</code>{1} <code>my-topic</code> would
 show the differences introduced by the rebase.</p>
 </dd>
 </dl>
 </div>
 <div class="paragraph">
-<p><code>git range-diff</code> also accepts the regular diff options (see
-<a href="git-diff.html">git-diff(1)</a>), most notably the <code>--color=[&lt;when&gt;]</code> and
+<p><code>git</code> <code>range-diff</code> also accepts the regular diff options (see
+<a href="git-diff.html">git-diff(1)</a>), most notably the <code>--color=</code>[<em>&lt;when&gt;</em>] and
 <code>--no-color</code> options. These options are used when generating the "diff
 between patches", i.e. to compare the author, commit message and diff of
 corresponding old/new commits. There is currently no means to tweak most of the
-diff options passed to <code>git log</code> when generating those patches.</p>
+diff options passed to <code>git</code> <code>log</code> when generating those patches.</p>
 </div>
 </div>
 </div>
@@ -610,7 +610,7 @@ output which summarizes how the diffstat changed).</p>
 <h2 id="_configuration">CONFIGURATION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This command uses the <code>diff.color.*</code> and <code>pager.range-diff</code> settings
+<p>This command uses the <code>diff.color.</code>* and <code>pager.range-diff</code> settings
 (the latter is on by default).
 See <a href="git-config.html">git-config(1)</a>.</p>
 </div>
@@ -629,7 +629,7 @@ introduced by the rebase directly afterwards using:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>A typical output of <code>git range-diff</code> would look like this:</p>
+<p>A typical output of <code>git</code> <code>range-diff</code> would look like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -659,11 +659,11 @@ commit message of the 2nd commit as well as its diff.</p>
 </div>
 <div class="paragraph">
 <p>When the output goes to a terminal, it is color-coded by default, just
-like regular <code>git diff</code>'s output. In addition, the first line (adding a
+like regular <code>git</code> <code>diff</code>'s output. In addition, the first line (adding a
 commit) is green, the last line (deleting a commit) is red, the second
-line (with a perfect match) is yellow like the commit header of <code>git
-show</code>'s output, and the third line colors the old commit red, the new
-one green and the rest like <code>git show</code>'s commit header.</p>
+line (with a perfect match) is yellow like the commit header of <code>git</code>
+<code>show</code>'s output, and the third line colors the old commit red, the new
+one green and the rest like <code>git</code> <code>show</code>'s commit header.</p>
 </div>
 <div class="paragraph">
 <p>A naive color-coded diff of diffs is actually a bit hard to read,
@@ -814,7 +814,7 @@ found in this case will look like this:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

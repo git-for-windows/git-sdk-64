@@ -479,12 +479,12 @@ precedence, the last matching pattern decides the outcome):</p>
 them.</p>
 </li>
 <li>
-<p>Patterns read from a <code>.gitignore</code> file in the same directory
+<p>Patterns read from a .<code>gitignore</code> file in the same directory
 as the path, or in any parent directory (up to the top-level of the working
 tree), with patterns in the higher level files being overridden by those in
 lower level files down to the directory containing the file. These patterns
-match relative to the location of the <code>.gitignore</code> file.  A project normally
-includes such <code>.gitignore</code> files in its repository, containing patterns for
+match relative to the location of the .<code>gitignore</code> file.  A project normally
+includes such .<code>gitignore</code> files in its repository, containing patterns for
 files generated as part of the project build.</p>
 </li>
 <li>
@@ -505,7 +505,7 @@ be used.</p>
 <li>
 <p>Patterns which should be version-controlled and distributed to
 other repositories via clone (i.e., files that all developers will want
-to ignore) should go into a <code>.gitignore</code> file.</p>
+to ignore) should go into a .<code>gitignore</code> file.</p>
 </li>
 <li>
 <p>Patterns which are
@@ -545,32 +545,32 @@ for readability.</p>
 </li>
 <li>
 <p>A line starting with # serves as a comment.
-Put a backslash ("<code>\</code>") in front of the first hash for patterns
+Put a backslash ("\") in front of the first hash for patterns
 that begin with a hash.</p>
 </li>
 <li>
 <p>Trailing spaces are ignored unless they are quoted with backslash
-("<code>\</code>").</p>
+("\").</p>
 </li>
 <li>
-<p>An optional prefix "<code>!</code>" which negates the pattern; any
+<p>An optional prefix "!" which negates the pattern; any
 matching file excluded by a previous pattern will become
 included again. It is not possible to re-include a file if a parent
 directory of that file is excluded. Git doesn&#8217;t list excluded
 directories for performance reasons, so any patterns on contained
 files have no effect, no matter where they are defined.
-Put a backslash ("<code>\</code>") in front of the first "<code>!</code>" for patterns
-that begin with a literal "<code>!</code>", for example, "<code>\!important!.txt</code>".</p>
+Put a backslash ("\") in front of the first "!" for patterns
+that begin with a literal "!", for example, "\!important!.<code>txt</code>".</p>
 </li>
 <li>
 <p>The slash "<code>/</code>" is used as the directory separator. Separators may
-occur at the beginning, middle or end of the <code>.gitignore</code> search pattern.</p>
+occur at the beginning, middle or end of the .<code>gitignore</code> search pattern.</p>
 </li>
 <li>
 <p>If there is a separator at the beginning or middle (or both) of the
 pattern, then the pattern is relative to the directory level of the
-particular <code>.gitignore</code> file itself. Otherwise the pattern may also
-match at any level below the <code>.gitignore</code> level.</p>
+particular .<code>gitignore</code> file itself. Otherwise the pattern may also
+match at any level below the .<code>gitignore</code> level.</p>
 </li>
 <li>
 <p>If there is a separator at the end of the pattern then the pattern
@@ -581,38 +581,38 @@ files and directories.</p>
 <p>For example, a pattern <code>doc/frotz/</code> matches <code>doc/frotz</code> directory,
 but not <code>a/doc/frotz</code> directory; however <code>frotz/</code> matches <code>frotz</code>
 and <code>a/frotz</code> that is a directory (all paths are relative from
-the <code>.gitignore</code> file).</p>
+the .<code>gitignore</code> file).</p>
 </li>
 <li>
-<p>An asterisk "<code>*</code>" matches anything except a slash.
-The character "<code>?</code>" matches any one character except "<code>/</code>".
-The range notation, e.g. <code>[a-zA-Z]</code>, can be used to match
+<p>An asterisk "*" matches anything except a slash.
+The character "?" matches any one character except "<code>/</code>".
+The range notation, e.g. [<code>a-zA-Z</code>], can be used to match
 one of the characters in a range. See fnmatch(3) and the
 FNM_PATHNAME flag for a more detailed description.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Two consecutive asterisks ("<code>**</code>") in patterns matched against
+<p>Two consecutive asterisks ("**") in patterns matched against
 full pathname may have special meaning:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>A leading "<code>**</code>" followed by a slash means match in all
-directories. For example, "<code>**/foo</code>" matches file or directory
-"<code>foo</code>" anywhere, the same as pattern "<code>foo</code>". "<code>**/foo/bar</code>"
+<p>A leading "**" followed by a slash means match in all
+directories. For example, "**/foo" matches file or directory
+"<code>foo</code>" anywhere, the same as pattern "<code>foo</code>". "**/foo/bar"
 matches file or directory "<code>bar</code>" anywhere that is directly
 under directory "<code>foo</code>".</p>
 </li>
 <li>
-<p>A trailing "<code>/**</code>" matches everything inside. For example,
-"<code>abc/**</code>" matches all files inside directory "<code>abc</code>", relative
-to the location of the <code>.gitignore</code> file, with infinite depth.</p>
+<p>A trailing "<code>/</code>**" matches everything inside. For example,
+"<code>abc/</code>**" matches all files inside directory "<code>abc</code>", relative
+to the location of the .<code>gitignore</code> file, with infinite depth.</p>
 </li>
 <li>
 <p>A slash followed by two consecutive asterisks then a slash
-matches zero or more directories. For example, "<code>a/**/b</code>"
+matches zero or more directories. For example, "<code>a/</code>**/b"
 matches "<code>a/b</code>", "<code>a/x/b</code>", "<code>a/x/y/b</code>" and so on.</p>
 </li>
 <li>
@@ -644,11 +644,11 @@ not tracked by Git remain untracked.</p>
 <div class="paragraph">
 <p>To stop tracking a file that is currently tracked, use
 <em>git rm --cached</em> to remove the file from the index. The filename
-can then be added to the <code>.gitignore</code> file to stop the file from
+can then be added to the .<code>gitignore</code> file to stop the file from
 being reintroduced in later commits.</p>
 </div>
 <div class="paragraph">
-<p>Git does not follow symbolic links when accessing a <code>.gitignore</code> file in
+<p>Git does not follow symbolic links when accessing a .<code>gitignore</code> file in
 the working tree. This keeps behavior consistent when the file is
 accessed from the index or a tree versus from the filesystem.</p>
 </div>
@@ -660,10 +660,10 @@ accessed from the index or a tree versus from the filesystem.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>The pattern <code>hello.*</code> matches any file or directory
+<p>The pattern <code>hello.</code>* matches any file or directory
 whose name begins with <code>hello.</code>. If one wants to restrict
 this only to the directory and not in its subdirectories,
-one can prepend the pattern with a slash, i.e. <code>/hello.*</code>;
+one can prepend the pattern with a slash, i.e. <code>/hello.</code>*;
 the pattern now matches <code>hello.txt</code>, <code>hello.c</code> but not
 <code>a/hello.java</code>.</p>
 </li>
@@ -675,12 +675,12 @@ way how pathspec works in general in Git)</p>
 </li>
 <li>
 <p>The pattern <code>doc/frotz</code> and <code>/doc/frotz</code> have the same effect
-in any <code>.gitignore</code> file. In other words, a leading slash
+in any .<code>gitignore</code> file. In other words, a leading slash
 is not relevant  if there is already a middle slash in
 the pattern.</p>
 </li>
 <li>
-<p>The pattern <code>foo/*</code>, matches <code>foo/test.json</code>
+<p>The pattern <code>foo/</code>*, matches <code>foo/test.json</code>
 (a regular file), <code>foo/bar</code> (a directory), but it does not match
 <code>foo/bar/hello.c</code> (a regular file), as the asterisk in the
 pattern does not match <code>bar/hello.c</code> which has a slash in it.</p>
@@ -733,7 +733,7 @@ pattern does not match <code>bar/hello.c</code> which has a slash in it.</p>
 </div>
 <div class="paragraph">
 <p>Example to exclude everything except a specific directory <code>foo/bar</code>
-(note the <code>/*</code> - without the slash, the wildcard would also exclude
+(note the <code>/</code>* - without the slash, the wildcard would also exclude
 everything within <code>foo/bar</code>):</p>
 </div>
 <div class="listingblock">
@@ -769,7 +769,7 @@ everything within <code>foo/bar</code>):</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

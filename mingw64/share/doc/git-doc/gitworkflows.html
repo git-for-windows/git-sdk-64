@@ -489,8 +489,8 @@ useful for later inspection and analysis, for example with
 beginning. It is always easier to squash a few commits together than
 to split one big commit into several.  Don&#8217;t be afraid of making too
 small or imperfect steps along the way. You can always go back later
-and edit the commits with <code>git rebase --interactive</code> before you
-publish them.  You can use <code>git stash push --keep-index</code> to run the
+and edit the commits with <code>git</code> <code>rebase</code> <code>--interactive</code> before you
+publish them.  You can use <code>git</code> <code>stash</code> <code>push</code> <code>--keep-index</code> to run the
 test suite independent of other uncommitted changes; see the EXAMPLES
 section of <a href="git-stash.html">git-stash(1)</a>.</p>
 </div>
@@ -726,7 +726,7 @@ will therefore not be included in your feature release.</p>
 <div class="title">Recipe: Verify <em>master</em> is a superset of <em>maint</em></div>
 <div class="content">
 <div class="paragraph">
-<p><code>git log master..maint</code></p>
+<p><code>git</code> <code>log</code> <code>master</code><code>..</code><code>maint</code></p>
 </div>
 </div>
 </div>
@@ -742,7 +742,7 @@ tag to the tip of <em>master</em> indicating the release version:</p>
 <div class="title">Recipe: Release tagging</div>
 <div class="content">
 <div class="paragraph">
-<p><code>git tag -s -m "Git X.Y.Z" vX.Y.Z master</code></p>
+<p><code>git</code> <code>tag</code> <code>-s</code> <code>-m</code> "Git <code>X.Y.Z</code>" <code>vX.Y.Z</code> <code>master</code></p>
 </div>
 </div>
 </div>
@@ -778,7 +778,7 @@ where X.Y.Z is the current release).</p>
 <div class="title">Recipe: Copy maint</div>
 <div class="content">
 <div class="paragraph">
-<p><code>git branch maint-X.Y.(Z-1) maint</code></p>
+<p><code>git</code> <code>branch</code> <code>maint-X.Y.</code>(<code>Z-1</code>) <code>maint</code></p>
 </div>
 </div>
 </div>
@@ -792,10 +792,10 @@ code so that maintenance fixes can be tracked for the current release:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>git checkout maint</code></p>
+<p><code>git</code> <code>checkout</code> <code>maint</code></p>
 </li>
 <li>
-<p><code>git merge --ff-only master</code></p>
+<p><code>git</code> <code>merge</code> <code>--ff-only</code> <code>master</code></p>
 </li>
 </ul>
 </div>
@@ -821,13 +821,13 @@ topics on <em>next</em>:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>git switch -C next master</code></p>
+<p><code>git</code> <code>switch</code> <code>-C</code> <code>next</code> <code>master</code></p>
 </li>
 <li>
-<p><code>git merge ai/topic_in_next1</code></p>
+<p><code>git</code> <code>merge</code> <code>ai/topic_in_next1</code></p>
 </li>
 <li>
-<p><code>git merge ai/topic_in_next2</code></p>
+<p><code>git</code> <code>merge</code> <code>ai/topic_in_next2</code></p>
 </li>
 <li>
 <p>&#8230;&#8203;</p>
@@ -915,7 +915,7 @@ to merge the remote branch.</p>
 <div class="title">Recipe: Push/pull: Publishing branches/topics</div>
 <div class="content">
 <div class="paragraph">
-<p><code>git push &lt;remote&gt; &lt;branch&gt;</code> and tell everyone where they can fetch
+<p><code>git</code> <code>push</code> <em>&lt;remote&gt;</em> <em>&lt;branch&gt;</em> and tell everyone where they can fetch
 from.</p>
 </div>
 </div>
@@ -933,7 +933,7 @@ staying up to date is easy too:</p>
 <div class="title">Recipe: Push/pull: Staying up to date</div>
 <div class="content">
 <div class="paragraph">
-<p>Use <code>git fetch &lt;remote&gt;</code> or <code>git remote update</code> to stay up to date.</p>
+<p>Use <code>git</code> <code>fetch</code> <em>&lt;remote&gt;</em> or <code>git</code> <code>remote</code> <code>update</code> to stay up to date.</p>
 </div>
 </div>
 </div>
@@ -960,7 +960,7 @@ follows.</p>
 <div class="title">Recipe: Push/pull: Merging remote topics</div>
 <div class="content">
 <div class="paragraph">
-<p><code>git pull &lt;URL&gt; &lt;branch&gt;</code></p>
+<p><code>git</code> <code>pull</code> <em>&lt;URL&gt;</em> <em>&lt;branch&gt;</em></p>
 </div>
 </div>
 </div>
@@ -987,11 +987,11 @@ maintainer&#8217;s life easier).</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>git format-patch -M upstream..topic</code> to turn them into preformatted
+<p><code>git</code> <code>format-patch</code> <code>-M</code> <code>upstream</code><code>..</code><code>topic</code> to turn them into preformatted
 patch files</p>
 </li>
 <li>
-<p><code>git send-email --to=&lt;recipient&gt; &lt;patches&gt;</code></p>
+<p><code>git</code> <code>send-email</code> <code>--to=</code><em>&lt;recipient&gt;</em> <em>&lt;patches&gt;</em></p>
 </li>
 </ul>
 </div>
@@ -1010,7 +1010,7 @@ merge because you cannot format-patch merges):</p>
 <div class="title">Recipe: format-patch/am: Keeping topics up to date</div>
 <div class="content">
 <div class="paragraph">
-<p><code>git pull --rebase &lt;URL&gt; &lt;branch&gt;</code></p>
+<p><code>git</code> <code>pull</code> <code>--rebase</code> <em>&lt;URL&gt;</em> <em>&lt;branch&gt;</em></p>
 </div>
 </div>
 </div>
@@ -1028,13 +1028,13 @@ create a new topic branch and use <em>git am</em> to import the commits:</p>
 <div class="title">Recipe: format-patch/am: Importing patches</div>
 <div class="content">
 <div class="paragraph">
-<p><code>git am &lt; patch</code></p>
+<p><code>git</code> <code>am</code> &lt; <code>patch</code></p>
 </div>
 </div>
 </div>
 <div class="paragraph">
 <p>One feature worth pointing out is the three-way merge, which can help
-if you get conflicts: <code>git am -3</code> will use index information contained
+if you get conflicts: <code>git</code> <code>am</code> <code>-3</code> will use index information contained
 in patches to figure out the merge base.  See <a href="git-am.html">git-am(1)</a> for
 other options.</p>
 </div>
@@ -1067,7 +1067,7 @@ other options.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

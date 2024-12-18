@@ -484,7 +484,7 @@ will be identical to the worktree.</p>
 <div class="paragraph">
 <p>The <code>scalar</code> command implements various subcommands, and different options
 depending on the subcommand. With the exception of <code>clone</code>, <code>list</code> and
-<code>reconfigure --all</code>, all subcommands expect to be run in an enlistment.</p>
+<code>reconfigure</code> <code>--all</code>, all subcommands expect to be run in an enlistment.</p>
 </div>
 <div class="paragraph">
 <p>The following options can be specified <em>before</em> the subcommand:</p>
@@ -516,22 +516,22 @@ setting. This option imitates the same option of <a href="git.html">git(1)</a>.<
 <dd>
 <p>Clones the specified repository, similar to <a href="git-clone.html">git-clone(1)</a>. By
 default, only commit and tree objects are cloned. Once finished, the
-worktree is located at <code>&lt;enlistment&gt;/src</code>.</p>
+worktree is located at <em>&lt;enlistment&gt;</em><code>/src</code>.</p>
 <div class="paragraph">
 <p>The sparse-checkout feature is enabled (except when run with <code>--full-clone</code>)
 and the only files present are those in the top-level directory. Use
-<code>git sparse-checkout set</code> to expand the set of directories you want to see,
-or <code>git sparse-checkout disable</code> to expand to all files (see
+<code>git</code> <code>sparse-checkout</code> <code>set</code> to expand the set of directories you want to see,
+or <code>git</code> <code>sparse-checkout</code> <code>disable</code> to expand to all files (see
 <a href="git-sparse-checkout.html">git-sparse-checkout(1)</a> for more details). You can explore the
-subdirectories outside your sparse-checkout by using <code>git ls-tree
-HEAD[:&lt;directory&gt;]</code>.</p>
+subdirectories outside your sparse-checkout by using <code>git</code> <code>ls-tree</code>
+<code>HEAD</code>[<code>:</code><em>&lt;directory&gt;</em>].</p>
 </div>
 </dd>
 <dt class="hdlist1">-b &lt;name&gt;</dt>
 <dt class="hdlist1">--branch &lt;name&gt;</dt>
 <dd>
 <p>Instead of checking out the branch pointed to by the cloned
-repository&#8217;s HEAD, check out the <code>&lt;name&gt;</code> branch instead.</p>
+repository&#8217;s HEAD, check out the <em>&lt;name&gt;</em> branch instead.</p>
 </dd>
 <dt class="hdlist1">--[no-]single-branch</dt>
 <dd>
@@ -547,17 +547,17 @@ cloning. If the HEAD at the remote did not point at any branch when
 </dd>
 <dt class="hdlist1">--[no-]src</dt>
 <dd>
-<p>By default, <code>scalar clone</code> places the cloned repository within a
-<code>&lt;entlistment&gt;/src</code> directory. Use <code>--no-src</code> to place the cloned
-repository directly in the <code>&lt;enlistment&gt;</code> directory.</p>
+<p>By default, <code>scalar</code> <code>clone</code> places the cloned repository within a
+<em>&lt;entlistment&gt;</em><code>/src</code> directory. Use <code>--no-src</code> to place the cloned
+repository directly in the <em>&lt;enlistment&gt;</em> directory.</p>
 </dd>
 <dt class="hdlist1">--[no-]tags</dt>
 <dd>
-<p>By default, <code>scalar clone</code> will fetch the tag objects advertised by
-the remote and future <code>git fetch</code> commands will do the same. Use
-<code>--no-tags</code> to avoid fetching tags in <code>scalar clone</code> and to configure
+<p>By default, <code>scalar</code> <code>clone</code> will fetch the tag objects advertised by
+the remote and future <code>git</code> <code>fetch</code> commands will do the same. Use
+<code>--no-tags</code> to avoid fetching tags in <code>scalar</code> <code>clone</code> and to configure
 the repository to avoid fetching tags in the future. To fetch tags after
-cloning with <code>--no-tags</code>, run <code>git fetch --tags</code>.</p>
+cloning with <code>--no-tags</code>, run <code>git</code> <code>fetch</code> <code>--tags</code>.</p>
 </dd>
 <dt class="hdlist1">--[no-]full-clone</dt>
 <dd>
@@ -586,7 +586,7 @@ subcommand does not need to be run inside an enlistment.</p>
 <dt class="hdlist1">register [&lt;enlistment&gt;]</dt>
 <dd>
 <p>Adds the enlistment&#8217;s repository to the list of registered repositories
-and starts background maintenance. If <code>&lt;enlistment&gt;</code> is not provided,
+and starts background maintenance. If <em>&lt;enlistment&gt;</em> is not provided,
 then the enlistment associated with the current working directory is
 registered.</p>
 <div class="paragraph">
@@ -628,7 +628,7 @@ not be necessary to run this subcommand manually.</p>
 <div class="paragraph">
 <p>The <code>config</code> task is specific to Scalar and configures all those
 opinionated default settings that make Git work more efficiently with
-large repositories. As this task is run as part of <code>scalar clone</code>
+large repositories. As this task is run as part of <code>scalar</code> <code>clone</code>
 automatically, explicit invocations of this task are rarely needed.</p>
 </div>
 </dd>
@@ -657,7 +657,7 @@ will be reconfigured. Use this option after each Scalar upgrade.</p>
 information gathered by this command, including logs and certain
 statistics describing the data shape of the current enlistment.</p>
 <div class="paragraph">
-<p>The output of this command is a <code>.zip</code> file that is written into
+<p>The output of this command is a .<code>zip</code> file that is written into
 a directory adjacent to the worktree in the <code>src</code> directory.</p>
 </div>
 </dd>
@@ -697,7 +697,7 @@ local file system, unregistering the repository.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>

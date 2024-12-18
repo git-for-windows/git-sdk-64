@@ -452,15 +452,15 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><code>git clone</code> [<code>--template=</code><em>&lt;template-directory&gt;</em>]
-          [<code>-l</code>] [<code>-s</code>] [<code>--no-hardlinks</code>] [<code>-q</code>] [<code>-n</code>] [<code>--bare</code>] [<code>--mirror</code>]
-          [<code>-o</code> <em>&lt;name&gt;</em>] [<code>-b</code> <em>&lt;name&gt;</em>] [<code>-u</code> <em>&lt;upload-pack&gt;</em>] [<code>--reference</code> <em>&lt;repository&gt;</em>]
-          [<code>--dissociate</code>] [<code>--separate-git-dir</code> <em>&lt;git-dir&gt;</em>]
-          [<code>--depth</code> <em>&lt;depth&gt;</em>] [<code>--</code>[<code>no-</code>]<code>single-branch</code>] [<code>--no-tags</code>]
-          [<code>--recurse-submodules</code>[<code>=</code><em>&lt;pathspec&gt;</em>]] [<code>--</code>[<code>no-</code>]<code>shallow-submodules</code>]
-          [<code>--</code>[<code>no-</code>]<code>remote-submodules</code>] [<code>--jobs</code> <em>&lt;n&gt;</em>] [<code>--sparse</code>] [<code>--</code>[<code>no-</code>]<code>reject-shallow</code>]
-          [<code>--filter=</code><em>&lt;filter-spec&gt;</em>] [<code>--also-filter-submodules</code>]] [<code>--</code>] <em>&lt;repository&gt;</em>
-          [<em>&lt;directory&gt;</em>]</pre>
+<pre class="content"><code>git</code> <code>clone</code> [<code>--template=</code><em>&lt;template-directory&gt;</em>]
+	  [<code>-l</code>] [<code>-s</code>] [<code>--no-hardlinks</code>] [<code>-q</code>] [<code>-n</code>] [<code>--bare</code>] [<code>--mirror</code>]
+	  [<code>-o</code> <em>&lt;name&gt;</em>] [<code>-b</code> <em>&lt;name&gt;</em>] [<code>-u</code> <em>&lt;upload-pack&gt;</em>] [<code>--reference</code> <em>&lt;repository&gt;</em>]
+	  [<code>--dissociate</code>] [<code>--separate-git-dir</code> <em>&lt;git-dir&gt;</em>]
+	  [<code>--depth</code> <em>&lt;depth&gt;</em>] [<code>--</code>[<code>no-</code>]<code>single-branch</code>] [<code>--no-tags</code>]
+	  [<code>--recurse-submodules</code>[<code>=</code><em>&lt;pathspec&gt;</em>]] [<code>--</code>[<code>no-</code>]<code>shallow-submodules</code>]
+	  [<code>--</code>[<code>no-</code>]<code>remote-submodules</code>] [<code>--jobs</code> <em>&lt;n&gt;</em>] [<code>--sparse</code>] [<code>--</code>[<code>no-</code>]<code>reject-shallow</code>]
+	  [<code>--filter=</code><em>&lt;filter-spec&gt;</em>] [<code>--also-filter-submodules</code>]] [<code>--</code>] <em>&lt;repository&gt;</em>
+	  [<em>&lt;directory&gt;</em>]</pre>
 </div>
 </div>
 </div>
@@ -470,13 +470,13 @@ pre>code {
 <div class="paragraph">
 <p>Clones a repository into a newly created directory, creates
 remote-tracking branches for each branch in the cloned repository
-(visible using <code>git branch --remotes</code>), and creates and checks out an
+(visible using <code>git</code> <code>branch</code> <code>--remotes</code>), and creates and checks out an
 initial branch that is forked from the cloned repository&#8217;s
 currently active branch.</p>
 </div>
 <div class="paragraph">
-<p>After the clone, a plain <code>git fetch</code> without arguments will update
-all the remote-tracking branches, and a <code>git pull</code> without
+<p>After the clone, a plain <code>git</code> <code>fetch</code> without arguments will update
+all the remote-tracking branches, and a <code>git</code> <code>pull</code> without
 arguments will in addition merge the remote master branch into the
 current master branch, if any (this is untrue when <code>--single-branch</code>
 is given; see below).</p>
@@ -501,11 +501,11 @@ configuration variables.</p>
 this flag bypasses the normal "Git aware" transport
 mechanism and clones the repository by making a copy of
 <code>HEAD</code> and everything under objects and refs directories.
-The files under <code>.git/objects/</code> directory are hardlinked
+The files under .<code>git/objects/</code> directory are hardlinked
 to save space when possible.</p>
 <div class="paragraph">
 <p>If the repository is specified as a local path (e.g., <code>/path/to/repo</code>),
-this is the default, and --local is essentially a no-op.  If the
+this is the default, and <code>--local</code> is essentially a no-op.  If the
 repository is specified as a URL, then this flag is ignored (and we
 never use the local optimizations).  Specifying <code>--no-local</code> will
 override the default when <code>/path/to/repo</code> is given, using the regular
@@ -518,15 +518,19 @@ prevent the unintentional copying of files by dereferencing the symbolic
 links.</p>
 </div>
 <div class="paragraph">
+<p>This option does not work with repositories owned by other users for security
+reasons, and <code>--no-local</code> must be specified for the clone to succeed.</p>
+</div>
+<div class="paragraph">
 <p><strong>NOTE</strong>: this operation can race with concurrent modification to the
-source repository, similar to running <code>cp -r src dst</code> while modifying
-<code>src</code>.</p>
+source repository, similar to running <code>cp</code> <code>-r</code> <em>&lt;src&gt;</em> <em>&lt;dst&gt;</em> while modifying
+<em>&lt;src&gt;</em>.</p>
 </div>
 </dd>
 <dt class="hdlist1"><code>--no-hardlinks</code></dt>
 <dd>
 <p>Force the cloning process from a repository on a local
-filesystem to copy the files under the <code>.git/objects</code>
+filesystem to copy the files under the .<code>git/objects</code>
 directory instead of using hardlinks. This may be desirable
 if you are trying to make a back-up of your repository.</p>
 </dd>
@@ -535,7 +539,7 @@ if you are trying to make a back-up of your repository.</p>
 <dd>
 <p>When the repository to clone is on the local machine,
 instead of using hard links, automatically setup
-<code>.git/objects/info/alternates</code> to share the objects
+.<code>git/objects/info/alternates</code> to share the objects
 with the source repository.  The resulting repository
 starts out without any object of its own.</p>
 <div class="paragraph">
@@ -544,28 +548,28 @@ it unless you understand what it does. If you clone your
 repository using this option and then delete branches (or use any
 other Git command that makes any existing commit unreferenced) in the
 source repository, some objects may become unreferenced (or dangling).
-These objects may be removed by normal Git operations (such as <code>git commit</code>)
-which automatically call <code>git maintenance run --auto</code>. (See
+These objects may be removed by normal Git operations (such as <code>git</code> <code>commit</code>)
+which automatically call <code>git</code> <code>maintenance</code> <code>run</code> <code>--auto</code>. (See
 <a href="git-maintenance.html">git-maintenance(1)</a>.) If these objects are removed and were referenced
 by the cloned repository, then the cloned repository will become corrupt.</p>
 </div>
 <div class="paragraph">
-<p>Note that running <code>git repack</code> without the <code>--local</code> option in a repository
+<p>Note that running <code>git</code> <code>repack</code> without the <code>--local</code> option in a repository
 cloned with <code>--shared</code> will copy objects from the source repository into a pack
-in the cloned repository, removing the disk space savings of <code>clone --shared</code>.
-It is safe, however, to run <code>git gc</code>, which uses the <code>--local</code> option by
+in the cloned repository, removing the disk space savings of <code>clone</code> <code>--shared</code>.
+It is safe, however, to run <code>git</code> <code>gc</code>, which uses the <code>--local</code> option by
 default.</p>
 </div>
 <div class="paragraph">
 <p>If you want to break the dependency of a repository cloned with <code>--shared</code> on
-its source repository, you can simply run <code>git repack -a</code> to copy all
+its source repository, you can simply run <code>git</code> <code>repack</code> <code>-a</code> to copy all
 objects from the source repository into a pack in the cloned repository.</p>
 </div>
 </dd>
 <dt class="hdlist1"><code>--reference</code>[<code>-if-able</code>] <em>&lt;repository&gt;</em></dt>
 <dd>
 <p>If the reference <em>&lt;repository&gt;</em> is on the local machine,
-automatically setup <code>.git/objects/info/alternates</code> to
+automatically setup .<code>git/objects/info/alternates</code> to
 obtain objects from the reference <em>&lt;repository&gt;</em>.  Using
 an already existing repository as an alternate will
 require fewer objects to be copied from the repository
@@ -616,12 +620,15 @@ protocol version 2.  The given string must not contain a NUL or LF
 character.  The server&#8217;s handling of server options, including
 unknown ones, is server-specific.
 When multiple <code>--server-option=</code><em>&lt;option&gt;</em> are given, they are all
-sent to the other side in the order listed on the command line.</p>
+sent to the other side in the order listed on the command line.
+When no <code>--server-option=</code><em>&lt;option&gt;</em> is given from the command
+line, the values of configuration variable <code>remote.</code><em>&lt;name&gt;</em><code>.serverOption</code>
+are used instead.</p>
 </dd>
 <dt class="hdlist1"><code>-n</code></dt>
 <dt class="hdlist1"><code>--no-checkout</code></dt>
 <dd>
-<p>No checkout of HEAD is performed after the clone is complete.</p>
+<p>No checkout of <code>HEAD</code> is performed after the clone is complete.</p>
 </dd>
 <dt class="hdlist1"><code>--</code>[<code>no-</code>]<code>reject-shallow</code></dt>
 <dd>
@@ -633,7 +640,7 @@ specify the default.</p>
 <dd>
 <p>Make a <em>bare</em> Git repository.  That is, instead of
 creating <em>&lt;directory&gt;</em> and placing the administrative
-files in <em>&lt;directory&gt;</em>`/.git`, make the <em>&lt;directory&gt;</em>
+files in <em>&lt;directory&gt;</em><code>/.git</code>, make the <em>&lt;directory&gt;</em>
 itself the <code>$GIT_DIR</code>. This obviously implies the <code>--no-checkout</code>
 because there is nowhere to check out the working tree.
 Also the branch heads at the remote are copied directly
@@ -672,7 +679,7 @@ default by setting the <code>clone.filterSubmodules</code> config option.</p>
 Compared to <code>--bare</code>, <code>--mirror</code> not only maps local branches of the
 source to local branches of the target, it maps all refs (including
 remote-tracking branches, notes etc.) and sets up a refspec configuration such
-that all these refs are overwritten by a <code>git remote update</code> in the
+that all these refs are overwritten by a <code>git</code> <code>remote</code> <code>update</code> in the
 target repository.</p>
 </dd>
 <dt class="hdlist1"><code>-o</code> <em>&lt;name&gt;</em></dt>
@@ -685,11 +692,11 @@ config.</p>
 <dt class="hdlist1"><code>-b</code> <em>&lt;name&gt;</em></dt>
 <dt class="hdlist1"><code>--branch</code> <em>&lt;name&gt;</em></dt>
 <dd>
-<p>Instead of pointing the newly created HEAD to the branch pointed
-to by the cloned repository&#8217;s HEAD, point to <em>&lt;name&gt;</em> branch
+<p>Instead of pointing the newly created <code>HEAD</code> to the branch pointed
+to by the cloned repository&#8217;s <code>HEAD</code>, point to <em>&lt;name&gt;</em> branch
 instead. In a non-bare repository, this is the branch that will
 be checked out.
-<code>--branch</code> can also take tags and detaches the HEAD at that commit
+<code>--branch</code> can also take tags and detaches the <code>HEAD</code> at that commit
 in the resulting repository.</p>
 </dd>
 <dt class="hdlist1"><code>-u</code> <em>&lt;upload-pack&gt;</em></dt>
@@ -735,7 +742,7 @@ also pass <code>--shallow-submodules</code>.</p>
 <dd>
 <p>Create a shallow clone with a history after the specified time.</p>
 </dd>
-<dt class="hdlist1"><code>--shallow-exclude=</code><em>&lt;revision&gt;</em></dt>
+<dt class="hdlist1"><code>--shallow-exclude=</code><em>&lt;ref&gt;</em></dt>
 <dd>
 <p>Create a shallow clone with a history, excluding commits
 reachable from a specified remote branch or tag.  This option
@@ -755,8 +762,8 @@ branch is created.</p>
 <dt class="hdlist1"><code>--no-tags</code></dt>
 <dd>
 <p>Don&#8217;t clone any tags, and set
-<code>remote.&lt;remote&gt;.tagOpt=--no-tags</code> in the config, ensuring
-that future <code>git pull</code> and <code>git fetch</code> operations won&#8217;t follow
+<code>remote.</code><em>&lt;remote&gt;</em><code>.tagOpt=--no-tags</code> in the config, ensuring
+that future <code>git</code> <code>pull</code> and <code>git</code> <code>fetch</code> operations won&#8217;t follow
 any tags. Subsequent explicit tag fetches will still work,
 (see <a href="git-fetch.html">git-fetch(1)</a>).</p>
 <div class="paragraph">
@@ -769,7 +776,7 @@ branch of some repository for search indexing.</p>
 <dt class="hdlist1"><code>--recurse-submodules</code>[<code>=</code><em>&lt;pathspec&gt;</em>]</dt>
 <dd>
 <p>After the clone is created, initialize and clone submodules
-within based on the provided <em>&lt;pathspec&gt;</em>.  If no <em>=&lt;pathspec&gt;</em> is
+within based on the provided <em>&lt;pathspec&gt;</em>.  If no <code>=</code><em>&lt;pathspec&gt;</em> is
 provided, all submodules are initialized and cloned.
 This option can be given multiple times for pathspecs consisting
 of multiple entries.  The resulting clone has <code>submodule.active</code> set to
@@ -778,7 +785,7 @@ pathspec is provided.</p>
 <div class="paragraph">
 <p>Submodules are initialized and cloned using their default settings. This is
 equivalent to running
-<code>git submodule update --init --recursive &lt;pathspec&gt;</code> immediately after
+<code>git</code> <code>submodule</code> <code>update</code> <code>--init</code> <code>--recursive</code> <em>&lt;pathspec&gt;</em> immediately after
 the clone is finished. This option is ignored if the cloned repository does
 not have a worktree/checkout (i.e. if any of <code>--no-checkout</code>/<code>-n</code>, <code>--bare</code>,
 or <code>--mirror</code> is given)</p>
@@ -793,7 +800,7 @@ or <code>--mirror</code> is given)</p>
 <p>All submodules which are cloned will use the status of the submodule&#8217;s
 remote-tracking branch to update the submodule, rather than the
 superproject&#8217;s recorded SHA-1. Equivalent to passing <code>--remote</code> to
-<code>git submodule update</code>.</p>
+<code>git</code> <code>submodule</code> <code>update</code>.</p>
 </dd>
 <dt class="hdlist1"><code>--separate-git-dir=</code><em>&lt;git-dir&gt;</em></dt>
 <dd>
@@ -842,7 +849,7 @@ is only allowed if the directory is empty.</p>
 <dd>
 <p>Before fetching from the remote, fetch a bundle from the given
 <em>&lt;uri&gt;</em> and unbundle the data into the local repository. The refs
-in the bundle will be stored under the hidden <code>refs/bundle/*</code>
+in the bundle will be stored under the hidden <code>refs/bundle/</code>*
 namespace. This option is incompatible with <code>--depth</code>,
 <code>--shallow-since</code>, and <code>--shallow-exclude</code>.</p>
 </dd>
@@ -865,7 +872,7 @@ and ftps can be used for fetching, but this is inefficient and
 deprecated; do not use them).</p>
 </div>
 <div class="paragraph">
-<p>The native transport (i.e. git:// URL) does no authentication and
+<p>The native transport (i.e. <code>git://</code> URL) does no authentication and
 should be used with caution on unsecured networks.</p>
 </div>
 <div class="paragraph">
@@ -877,7 +884,7 @@ should be used with caution on unsecured networks.</p>
 <p><code>ssh://</code>[<em>&lt;user&gt;</em><code>@</code>]<em>&lt;host&gt;</em>[<code>:</code><em>&lt;port&gt;</em>]<code>/</code><em>&lt;path-to-git-repo&gt;</em></p>
 </li>
 <li>
-<p><code>git://</code><em>&lt;host&gt;</em>[:<em>&lt;port&gt;</em>]<code>/</code><em>&lt;path-to-git-repo&gt;</em></p>
+<p><code>git://</code><em>&lt;host&gt;</em>[<code>:</code><em>&lt;port&gt;</em>]<code>/</code><em>&lt;path-to-git-repo&gt;</em></p>
 </li>
 <li>
 <p><code>http</code>[<code>s</code>]<code>://</code><em>&lt;host&gt;</em>[<code>:</code><em>&lt;port&gt;</em>]<code>/</code><em>&lt;path-to-git-repo&gt;</em></p>
@@ -901,7 +908,7 @@ should be used with caution on unsecured networks.</p>
 <p>This syntax is only recognized if there are no slashes before the
 first colon. This helps differentiate a local path that contains a
 colon. For example the local path <code>foo:bar</code> could be specified as an
-absolute path or <code>./foo:bar</code> to avoid being misinterpreted as an ssh
+absolute path or .<code>/foo:bar</code> to avoid being misinterpreted as an ssh
 url.</p>
 </div>
 <div class="paragraph">
@@ -930,7 +937,7 @@ syntaxes may be used:</p>
 <p><code>/path/to/repo.git/</code></p>
 </li>
 <li>
-<p><code><a href="file:///path/to/repo.git/" class="bare">file:///path/to/repo.git/</a></code></p>
+<p><code>file:///path/to/repo.git/</code></p>
 </li>
 </ul>
 </div>
@@ -939,7 +946,7 @@ syntaxes may be used:</p>
 <code>--local</code> option.</p>
 </div>
 <div class="paragraph">
-<p><code>git clone</code>, <code>git fetch</code> and <code>git pull</code>, but not <code>git push</code>, will also
+<p><code>git</code> <code>clone</code>, <code>git</code> <code>fetch</code> and <code>git</code> <code>pull</code>, but not <code>git</code> <code>push</code>, will also
 accept a suitable bundle file. See <a href="git-bundle.html">git-bundle(1)</a>.</p>
 </div>
 <div class="paragraph">
@@ -951,7 +958,7 @@ may be used:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><em>&lt;transport&gt;</em>::<em>&lt;address&gt;</em></p>
+<p><em>&lt;transport&gt;</em><code>::</code><em>&lt;address&gt;</em></p>
 </li>
 </ul>
 </div>
@@ -1052,6 +1059,14 @@ $ cd my-linux</pre>
 </div>
 </div>
 </li>
+<li>
+<p>Clone a local repository from a different user:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ git clone --no-local /home/otheruser/proj.git /pub/scm/proj.git</pre>
+</div>
+</div>
+</li>
 </ul>
 </div>
 </div>
@@ -1122,7 +1137,7 @@ the filter to submodules.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-25 12:16:31 UTC
+Last updated 2024-12-17 11:48:13 UTC
 </div>
 </div>
 </body>
