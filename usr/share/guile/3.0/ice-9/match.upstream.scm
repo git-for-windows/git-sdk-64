@@ -28,7 +28,7 @@
 
 ;;> @example{(let ((ls (list 1 2 3))) (match ls ((1 2 3) #t)))}
 
-;;> If no patterns match an error is signalled.
+;;> If no patterns match an error is signaled.
 
 ;;> Identifiers will match anything, and make the corresponding
 ;;> binding available in the body.
@@ -261,7 +261,7 @@
 ;;> of the entire @scheme{match}.  If a @var{failure} is provided,
 ;;> then it is bound to a procedure of no arguments which continues,
 ;;> processing at the next @var{pattern}.  If no @var{pattern} matches,
-;;> an error is signalled.
+;;> an error is signaled.
 
 ;; The basic interface.  MATCH just performs some basic syntax
 ;; validation, binds the match expression to a temporary variable `v',

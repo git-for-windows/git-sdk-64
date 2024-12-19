@@ -19,12 +19,7 @@
 ;;; Code:
 
 (define-module (system vm inspect)
-  #:use-module (system base pmatch)
-  #:use-module (system base syntax)
-  #:use-module (system vm vm)
-  #:use-module (system vm frame)
   #:use-module (system vm disassembler)
-  #:use-module (ice-9 rdelim)
   #:use-module (ice-9 pretty-print)
   #:use-module (ice-9 format)
   #:use-module (system vm program)

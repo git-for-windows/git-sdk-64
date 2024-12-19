@@ -31,9 +31,9 @@
 ;; 			    (display-and-exit-proc "Foo version 42.0\n"))
 ;; 		    (option '(#\h "help") #f #f
 ;; 			    (display-and-exit-proc
-;; 			     "Usage: foo scheme-file ..."))))
+;; 			     "Usage: foo scheme-file ...\n"))))
 ;; 	    (lambda (opt name arg)
-;; 	      (error "Unrecognized option `~A'" name))
+;; 	      (error (format #f "Unrecognized option `~A'" name)))
 ;; 	    (lambda (op) (load op) (values)))
 ;;
 ;;; Code:
@@ -84,7 +84,7 @@
 
 (define (build-options-lookup options)
   "Answer an `equal?' Guile hash-table that maps OPTIONS' names back
-to the containing options, signalling an error if a name is
+to the containing options, signaling an error if a name is
 encountered more than once."
   (let ((lookup (make-hash-table (* 2 (length options)))))
     (for-each

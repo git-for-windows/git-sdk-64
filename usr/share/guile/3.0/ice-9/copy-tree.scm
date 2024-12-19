@@ -23,7 +23,6 @@
 
 
 (define-module (ice-9 copy-tree)
-  #:use-module (ice-9 match)
   #:use-module (srfi srfi-11)
   #:replace (copy-tree))
 

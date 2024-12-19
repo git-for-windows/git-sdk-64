@@ -17,7 +17,6 @@
 
 
 (define-module (system xref)
-  #:use-module (system base compile)
   #:use-module (system vm program)
   #:use-module (system vm disassembler)
   #:use-module (ice-9 match)

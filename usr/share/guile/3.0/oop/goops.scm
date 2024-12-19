@@ -542,7 +542,7 @@ followed by its associated value.  If @var{l} does not hold a value for
 ;; Boot definition.
 (define (make class . args)
   (unless (memq <slot> (class-precedence-list class))
-    (error "Unsupported class: ~S" class))
+    (error (format #f "Unsupported class: ~S" class)))
   (make-slot class args))
 
 ;; Boot definition.

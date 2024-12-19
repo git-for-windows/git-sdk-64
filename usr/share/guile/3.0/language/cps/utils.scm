@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2013, 2014, 2015, 2017, 2018, 2019, 2020, 2021 Free Software Foundation, Inc.
+;; Copyright (C) 2013, 2014, 2015, 2017, 2018, 2019, 2020, 2021, 2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-11)
+  #:use-module (system base target)
   #:use-module (language cps)
   #:use-module (language cps intset)
   #:use-module (language cps intmap)
@@ -45,6 +46,7 @@
             compute-idoms
             compute-dom-edges
             compute-defs-and-uses
+            primcall-raw-representations
             compute-var-representations)
   #:re-export (fold1 fold2
                trivial-intset
@@ -344,13 +346,15 @@ by a label, respectively."
                  empty-intset))
         (($ $kargs _ _ ($ $continue k src exp))
          (match exp
-           ((or ($ $const) ($ $const-fun) ($ $code))
+           ((or ($ $const) ($ $const-fun) ($ $code) ($ $prim))
             (return (get-defs k) empty-intset))
            (($ $call proc args)
             (return (get-defs k) (intset-add (vars->intset args) proc)))
            (($ $callk _ proc args)
             (let ((args (vars->intset args)))
               (return (get-defs k) (if proc (intset-add args proc) args))))
+           (($ $calli args callee)
+            (return (get-defs k) (intset-add (vars->intset args) callee)))
            (($ $primcall name param args)
             (return (get-defs k) (vars->intset args)))
            (($ $values args)
@@ -373,7 +377,50 @@ by a label, respectively."
     empty-intmap
     empty-intmap)))
 
-(define (compute-var-representations cps)
+(define (primcall-raw-representations name param)
+  (case name
+    ((scm->f64
+      load-f64 s64->f64
+      f32-ref f64-ref
+      fadd fsub fmul fdiv fsqrt fabs
+      fadd/immediate fmul/immediate
+      ffloor fceiling
+      fsin fcos ftan fasin facos fatan fatan2)
+     '(f64))
+    ((scm->u64
+      scm->u64/truncate load-u64
+      s64->u64
+      assume-u64
+      uadd usub umul
+      ulogand ulogior ulogxor ulogsub ursh ulsh
+      uadd/immediate usub/immediate umul/immediate
+      ursh/immediate ulsh/immediate
+      ulogand/immediate
+      u8-ref u16-ref u32-ref u64-ref
+      word-ref word-ref/immediate
+      untag-char
+      vector-length vtable-size bv-length
+      string-length string-ref
+      symbol-hash)
+     '(u64))
+    ((untag-fixnum
+      assume-s64
+      scm->s64 load-s64 u64->s64
+      sadd ssub smul
+      sadd/immediate ssub/immediate smul/immediate
+      slsh slsh/immediate
+      srsh srsh/immediate
+      s8-ref s16-ref s32-ref s64-ref)
+     '(s64))
+    ((pointer-ref/immediate
+      tail-pointer-ref/immediate)
+     '(ptr))
+    ((bv-contents)
+     '(bv-contents))
+    (else #f)))
+
+(define* (compute-var-representations cps #:key (primcall-raw-representations
+                                                 primcall-raw-representations))
   (define (get-defs k)
     (match (intmap-ref cps k)
       (($ $kargs names vars) vars)
@@ -391,35 +438,14 @@ by a label, respectively."
                           (intmap-ref representations arg)))
              (($ $callk)
               (intmap-add representations var 'scm))
-             (($ $primcall (or 'scm->f64 'load-f64 's64->f64
-                               'f32-ref 'f64-ref
-                               'fadd 'fsub 'fmul 'fdiv 'fsqrt 'fabs
-                               'ffloor 'fceiling
-                               'fsin 'fcos 'ftan 'fasin 'facos 'fatan 'fatan2))
-              (intmap-add representations var 'f64))
-             (($ $primcall (or 'scm->u64 'scm->u64/truncate 'load-u64
-                               's64->u64
-                               'assume-u64
-                               'uadd 'usub 'umul
-                               'ulogand 'ulogior 'ulogxor 'ulogsub 'ursh 'ulsh
-                               'uadd/immediate 'usub/immediate 'umul/immediate
-                               'ursh/immediate 'ulsh/immediate
-                               'u8-ref 'u16-ref 'u32-ref 'u64-ref
-                               'word-ref 'word-ref/immediate
-                               'untag-char))
-              (intmap-add representations var 'u64))
-             (($ $primcall (or 'untag-fixnum
-                               'assume-s64
-                               'scm->s64 'load-s64 'u64->s64
-                               'srsh 'srsh/immediate
-                               's8-ref 's16-ref 's32-ref 's64-ref))
-              (intmap-add representations var 's64))
-             (($ $primcall (or 'pointer-ref/immediate
-                               'tail-pointer-ref/immediate))
-              (intmap-add representations var 'ptr))
+             (($ $primcall name param args)
+              (intmap-add representations var
+                          (match (primcall-raw-representations name param)
+                            (#f 'scm)
+                            ((repr) repr))))
              (($ $code)
-              (intmap-add representations var 'u64))
-             (_
+              (intmap-add representations var 'code))
+             ((or ($ $const) ($ $prim) ($ $const-fun) ($ $callk) ($ $calli))
               (intmap-add representations var 'scm))))
           (vars
            (match exp
@@ -428,7 +454,16 @@ by a label, respectively."
                       (intmap-add representations var
                                   (intmap-ref representations arg)))
                     representations args vars))
-             (($ $callk)
+             (($ $primcall name param args)
+              (match (primcall-raw-representations name param)
+                (#f (error "unknown multi-valued primcall" exp))
+                (reprs
+                 (unless (eqv? (length vars) (length reprs))
+                   (error "wrong number of reprs" exp reprs))
+                 (fold (lambda (var repr representations)
+                         (intmap-add representations var repr))
+                       representations vars reprs))))
+             ((or ($ $callk) ($ $calli))
               (fold1 (lambda (var representations)
                       (intmap-add representations var 'scm))
                      vars representations))))))

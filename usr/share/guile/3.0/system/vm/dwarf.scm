@@ -71,8 +71,6 @@
 
 (define-module (system vm dwarf)
   #:use-module (rnrs bytevectors)
-  #:use-module (system foreign)
-  #:use-module (system base target)
   #:use-module (system vm elf)
   #:use-module ((srfi srfi-1) #:select (fold))
   #:use-module (srfi srfi-9)

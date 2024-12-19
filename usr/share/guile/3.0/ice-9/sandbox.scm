@@ -21,7 +21,6 @@
 ;;; Code:
 
 (define-module (ice-9 sandbox)
-  #:use-module (ice-9 control)
   #:use-module (ice-9 match)
   #:use-module ((ice-9 threads) #:select (current-thread))
   #:use-module (system vm vm)

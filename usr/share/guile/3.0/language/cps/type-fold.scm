@@ -1,5 +1,5 @@
 ;;; Abstract constant folding on CPS
-;;; Copyright (C) 2014-2020 Free Software Foundation, Inc.
+;;; Copyright (C) 2014-2020, 2023 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software: you can redistribute it and/or modify
 ;;; it under the terms of the GNU Lesser General Public License as
@@ -134,30 +134,61 @@
    ((type<=? type &immediate-types) (values #t #f))
    (else (values #f #f))))
 
-(define-unary-branch-folder (heap-number? type min max)
-  (define &types (logior &bignum &flonum &fraction &complex))
-  (cond
-   ((zero? (logand type &types)) (values #t #f))
-   ((type<=? type &types) (values #t #t))
-   (else (values #f #f))))
-
 ;; All the cases that are in compile-bytecode.
-(define-unary-type-predicate-folder fixnum? &fixnum)
 (define-unary-type-predicate-folder bignum? &bignum)
-(define-unary-type-predicate-folder pair? &pair)
-(define-unary-type-predicate-folder symbol? &symbol)
-(define-unary-type-predicate-folder variable? &box)
-(define-unary-type-predicate-folder mutable-vector? &mutable-vector)
-(define-unary-type-predicate-folder immutable-vector? &immutable-vector)
-(define-unary-type-predicate-folder struct? &struct)
-(define-unary-type-predicate-folder string? &string)
-(define-unary-type-predicate-folder number? &number)
+(define-unary-type-predicate-folder bitvector? &bitvector)
+(define-unary-type-predicate-folder bytevector? &bytevector)
 (define-unary-type-predicate-folder char? &char)
+(define-unary-type-predicate-folder compnum? &complex)
+(define-unary-type-predicate-folder fixnum? &fixnum)
+(define-unary-type-predicate-folder flonum? &flonum)
+(define-unary-type-predicate-folder fluid? &fluid)
+(define-unary-type-predicate-folder fracnum? &fraction)
+(define-unary-type-predicate-folder immutable-vector? &immutable-vector)
+(define-unary-type-predicate-folder keyword? &keyword)
+(define-unary-type-predicate-folder mutable-vector? &mutable-vector)
+(define-unary-type-predicate-folder pair? &pair)
+(define-unary-type-predicate-folder pointer? &pointer)
+(define-unary-type-predicate-folder program? &procedure)
+(define-unary-type-predicate-folder string? &string)
+(define-unary-type-predicate-folder struct? &struct)
+(define-unary-type-predicate-folder symbol? &symbol)
+(define-unary-type-predicate-folder syntax? &syntax)
+(define-unary-type-predicate-folder variable? &box)
 
 (define-unary-branch-folder (vector? type min max)
   (cond
    ((zero? (logand type &vector)) (values #t #f))
    ((type<=? type &vector) (values #t #t))
+   (else (values #f #f))))
+
+(define-unary-branch-folder (procedure? type min max)
+  (define applicable-types (logior &procedure &struct &other-heap-object))
+  (cond
+   ((zero? (logand type applicable-types)) (values #t #f))
+   ((= type &procedure) (values #t #t))
+   (else (values #f #f))))
+
+(let ((&heap-number (logior &bignum &flonum &fraction &complex)))
+  (define-unary-type-predicate-folder heap-number? &heap-number))
+(define-unary-type-predicate-folder number? &number)
+(define-unary-type-predicate-folder complex? &number)
+(define-unary-type-predicate-folder real? &real)
+(define-unary-type-predicate-folder exact-integer? &exact-integer)
+(define-unary-type-predicate-folder exact? &exact-number)
+(let ((&inexact (logior &flonum &complex)))
+  (define-unary-type-predicate-folder inexact? &inexact))
+
+(define-unary-branch-folder (rational? type min max)
+  (cond
+   ((zero? (logand type &number)) (values #t #f))
+   ((eqv? type (logand type &exact-number)) (values #t #t))
+   (else (values #f #f))))
+
+(define-unary-branch-folder (integer? type min max)
+  (cond
+   ((zero? (logand type &number)) (values #t #f))
+   ((eqv? type (logand type &exact-integer)) (values #t #t))
    (else (values #f #f))))
 
 (define-binary-branch-folder (eq? type0 min0 max0 type1 min1 max1)
@@ -257,6 +288,19 @@
 (define-syntax-rule (define-branch-reducer op f)
   (hashq-set! *branch-reducers* 'op f))
 
+(define-syntax-rule (define-branch-reducer-aliases def use ...)
+  (let ((proc (or (hashq-ref *branch-reducers* 'def)
+                  (error "not found" 'def))))
+    (define-branch-reducer use proc)
+    ...))
+
+(define-syntax-rule (define-unary-branch-reducer
+                      (op cps kf kt src arg type min max)
+                      body ...)
+  (define-branch-reducer op
+    (lambda (cps kf kt src param arg type min max)
+      body ...)))
+
 (define-syntax-rule (define-binary-branch-reducer
                       (op cps kf kt src
                           arg0 type0 min0 max0
@@ -265,6 +309,256 @@
   (define-branch-reducer op
     (lambda (cps kf kt src param arg0 type0 min0 max0 arg1 type1 min1 max1)
       body ...)))
+
+(define-unary-branch-reducer (number? cps kf kt src arg type min max)
+  (let ((number-types (logand type &number)))
+    (when (or (zero? number-types) (eqv? type number-types))
+      (error "should have folded!"))
+    (define-syntax-rule (define-heap-number-test test &type pred next-test)
+      (define (test cps)
+        (if (logtest type &type)
+            (with-cps cps
+              (let$ kf (next-test))
+              (letk k ($kargs () ()
+                        ($branch kf kt src 'pred #f (arg))))
+              k)
+            (next-test cps))))
+    (define (done cps) (with-cps cps kf))
+    (define-heap-number-test compnum-test &complex compnum? done)
+    (define-heap-number-test fracnum-test &fraction fracnum? compnum-test)
+    (define-heap-number-test bignum-test &bignum bignum? fracnum-test)
+    (define-heap-number-test flonum-test &flonum flonum? bignum-test)
+    (define (heap-number-tests cps) (flonum-test cps))
+    (cond
+     ((eqv? number-types &number)
+      ;; Generic: no reduction.
+      (with-cps cps #f))
+     ((eqv? number-types &fixnum)
+      (with-cps cps
+        (build-term
+          ($branch kf kt src 'fixnum? #f (arg)))))
+     ((logtest type &fixnum)
+      (with-cps cps
+        (let$ ktest (heap-number-tests))
+        (letk kheap ($kargs () ()
+                      ($branch kf ktest src 'heap-object? #f (arg))))
+        (build-term
+          ($branch kheap kt src 'fixnum? #f (arg)))))
+     (else
+      (with-cps cps
+        (let$ ktest (heap-number-tests))
+        (build-term
+          ($branch kf ktest src 'heap-object? #f (arg))))))))
+(define-branch-reducer-aliases number? complex?)
+
+(define-unary-branch-reducer (real? cps kf kt src arg type min max)
+  (let ((real-types (logand type &real)))
+    (when (or (zero? real-types) (eqv? type real-types))
+      (error "should have folded!"))
+    (define-syntax-rule (define-heap-number-test test &type pred next-test)
+      (define (test cps)
+        (if (logtest type &type)
+            (with-cps cps
+              (let$ kf (next-test))
+              (letk k ($kargs () ()
+                        ($branch kf kt src 'pred #f (arg))))
+              k)
+            (next-test cps))))
+    (define (done cps) (with-cps cps kf))
+    (define-heap-number-test fracnum-test &fraction fracnum? done)
+    (define-heap-number-test bignum-test &bignum bignum? fracnum-test)
+    (define-heap-number-test flonum-test &flonum flonum? bignum-test)
+    (define (heap-number-tests cps) (flonum-test cps))
+    (cond
+     ((eqv? real-types &real)
+      ;; Generic: no reduction.
+      (with-cps cps #f))
+     ((eqv? real-types &fixnum)
+      (with-cps cps
+        (build-term
+          ($branch kf kt src 'fixnum? #f (arg)))))
+     ((logtest type &fixnum)
+      (with-cps cps
+        (let$ ktest (heap-number-tests))
+        (letk kheap ($kargs () ()
+                      ($branch kf ktest src 'heap-object? #f (arg))))
+        (build-term
+          ($branch kheap kt src 'fixnum? #f (arg)))))
+     (else
+      (with-cps cps
+        (let$ ktest (heap-number-tests))
+        (build-term
+          ($branch kf ktest src 'heap-object? #f (arg))))))))
+
+(define-unary-branch-reducer (rational? cps kf kt src arg type min max)
+  (let ((number-types (logand type &number)))
+    (when (or (zero? number-types) (eqv? type (logand type &exact-number)))
+      (error "should have folded!"))
+    (define-syntax-rule (define-heap-number-test test &type pred next-test)
+      (define (test cps)
+        (if (logtest type &type)
+            (with-cps cps
+              (let$ kf (next-test))
+              (letk k ($kargs () ()
+                        ($branch kf kt src 'pred #f (arg))))
+              k)
+            (next-test cps))))
+    (define (done cps) (with-cps cps kf))
+    (define-heap-number-test fracnum-test &fraction fracnum? done)
+    (define-heap-number-test bignum-test &bignum bignum? fracnum-test)
+    (define (heap-number-tests cps) (bignum-test cps))
+    (cond
+     ((logtest type (logior &complex &flonum))
+      ;; Too annoying to inline inf / nan tests.
+      (with-cps cps #f))
+     ((eqv? number-types &fixnum)
+      (with-cps cps
+        (build-term
+          ($branch kf kt src 'fixnum? #f (arg)))))
+     ((logtest type &fixnum)
+      (with-cps cps
+        (let$ ktest (heap-number-tests))
+        (letk kheap ($kargs () ()
+                      ($branch kf ktest src 'heap-object? #f (arg))))
+        (build-term
+          ($branch kheap kt src 'fixnum? #f (arg)))))
+     (else
+      (with-cps cps
+        (let$ ktest (heap-number-tests))
+        (build-term
+          ($branch kf ktest src 'heap-object? #f (arg))))))))
+
+(define-unary-branch-reducer (integer? cps kf kt src arg type min max)
+  (define &integer-types (logior &fixnum &bignum &flonum &complex))
+  (let ((integer-types (logand type &integer-types)))
+    (when (or (zero? integer-types) (eqv? type (logand type &exact-integer)))
+      (error "should have folded!"))
+    (define-syntax-rule (define-heap-number-test test &type pred next-test)
+      (define (test cps)
+        (if (logtest type &type)
+            (with-cps cps
+              (let$ kf (next-test))
+              (letk k ($kargs () ()
+                        ($branch kf kt src 'pred #f (arg))))
+              k)
+            (next-test cps))))
+    (define (done cps) (with-cps cps kf))
+    (define-heap-number-test bignum-test &bignum bignum? done)
+    (define (heap-number-tests cps) (bignum-test cps))
+    (cond
+     ((logtest type (logior &complex &flonum))
+      ;; Too annoying to inline integer tests.
+      (with-cps cps #f))
+     ((eqv? integer-types &fixnum)
+      (with-cps cps
+        (build-term
+          ($branch kf kt src 'fixnum? #f (arg)))))
+     ((logtest type &fixnum)
+      (with-cps cps
+        (let$ ktest (heap-number-tests))
+        (letk kheap ($kargs () ()
+                      ($branch kf ktest src 'heap-object? #f (arg))))
+        (build-term
+          ($branch kheap kt src 'fixnum? #f (arg)))))
+     (else
+      (with-cps cps
+        (let$ ktest (heap-number-tests))
+        (build-term
+          ($branch kf ktest src 'heap-object? #f (arg))))))))
+
+(define-unary-branch-reducer (exact-integer? cps kf kt src arg type min max)
+  (let ((integer-types (logand type &exact-integer)))
+    (when (or (zero? integer-types) (eqv? type integer-types))
+      (error "should have folded!"))
+    (cond
+     ((eqv? integer-types &fixnum)
+      (with-cps cps
+        (build-term
+          ($branch kf kt src 'fixnum? #f (arg)))))
+     ((eqv? integer-types &bignum)
+      (with-cps cps
+        (letk kbig? ($kargs () ()
+                      ($branch kf kt src 'bignum? #f (arg))))
+        (build-term
+          ($branch kf kbig? src 'heap-object? #f (arg)))))
+     (else
+      ;; No reduction.
+      (with-cps cps #f)))))
+
+(define-unary-branch-reducer (exact? cps kf kt src arg type min max)
+  (let ((exact-types (logand type &exact-number)))
+    (when (or (zero? exact-types) (eqv? type exact-types))
+      (error "should have folded!"))
+    ;; We have already passed a number? check, so we can assume either
+    ;; fixnum or heap number.
+    (define-syntax-rule (define-number-test test &type pred next-test)
+      (define (test cps)
+        (if (logtest type &type)
+            (with-cps cps
+              (let$ kf (next-test))
+              (letk k ($kargs () ()
+                        ($branch kf kt src 'pred #f (arg))))
+              k)
+            (next-test cps))))
+    (define (done cps) (with-cps cps kf))
+    (define-number-test fracnum-test &fraction fracnum? done)
+    (define-number-test bignum-test &bignum bignum? fracnum-test)
+    (define-number-test fixnum-test &fixnum fixnum? bignum-test)
+    (define (number-tests cps) (fixnum-test cps))
+    (cond
+     ((eqv? exact-types &exact-number)
+      ;; Generic: no reduction.
+      (with-cps cps #f))
+     (else
+      (with-cps cps
+        (let$ ktest (number-tests))
+        (build-term
+          ($continue ktest #f ($values ()))))))))
+
+(define-unary-branch-reducer (inexact? cps kf kt src arg type min max)
+  (define &inexact-number (logior &flonum &complex))
+  (let ((inexact-types (logand type &inexact-number)))
+    (when (or (zero? inexact-types) (eqv? type inexact-types))
+      (error "should have folded!"))
+    ;; We have already passed a number? check, so we can assume either
+    ;; fixnum or heap number.
+    (cond
+     ((eqv? (logand type &exact-number) &fixnum)
+      (with-cps cps
+        (build-term
+          ($branch kt kf src 'fixnum? #f (arg)))))
+     ((logtest type &fixnum)
+      (cond
+       ((eqv? inexact-types &flonum)
+        (with-cps cps
+          (letk kflo ($kargs () ()
+                       ($branch kf kt src 'flonum? #f (arg))))
+          (build-term
+            ($branch kflo kf src 'fixnum? #f (arg)))))
+       ((eqv? inexact-types &complex)
+        (with-cps cps
+          (letk kcomp ($kargs () ()
+                        ($branch kf kt src 'compnum? #f (arg))))
+          (build-term
+            ($branch kcomp kf src 'fixnum? #f (arg)))))
+       (else
+        ;; Generic: no reduction.
+        (with-cps cps #f))))
+     ((eqv? inexact-types &flonum)
+      (with-cps cps
+        (build-term
+          ($branch kf kt src 'flonum? #f (arg)))))
+     ((eqv? inexact-types &complex)
+      (with-cps cps
+        (build-term
+          ($branch kf kt src 'compnum? #f (arg)))))
+     (else
+      ;; Still specialize, as we avoid heap-object?.
+      (with-cps cps
+        (letk kcomp ($kargs () ()
+                      ($branch kf kt src 'compnum? #f (arg))))
+        (build-term
+          ($branch kcomp kt src 'flonum? #f (arg))))))))
 
 (define-binary-branch-reducer (eq? cps kf kt src
                                    arg0 type0 min0 max0
@@ -398,13 +692,9 @@
    ((and (eqv? type1 &fixnum) (eqv? min1 max1) (power-of-two? min1)
          (<= 0 min0))
     (with-cps cps
-      (letv mask)
-      (letk kmask
-            ($kargs ('mask) (mask)
-              ($continue k src
-                ($primcall 'logand #f (arg0 mask)))))
       (build-term
-        ($continue kmask src ($const (1- min1))))))
+        ($continue k src
+          ($primcall 'logand/immediate (1- min1) (arg0))))))
    (else
     (with-cps cps #f))))
 
@@ -416,13 +706,9 @@
     (with-cps cps #f))
    ((and (eqv? type1 &fixnum) (eqv? min1 max1) (power-of-two? min1))
     (with-cps cps
-      (letv mask)
-      (letk kmask
-            ($kargs ('mask) (mask)
-              ($continue k src
-                ($primcall 'logand #f (arg0 mask)))))
       (build-term
-        ($continue kmask src ($const (1- min1))))))
+        ($continue k src
+          ($primcall 'logand/immediate (1- min1) (arg0))))))
    (else
     (with-cps cps #f))))
 
@@ -663,6 +949,17 @@
        (hashq-ref *branch-reducers* op)
        (lambda (reducer)
          (match args
+           ((arg0)
+            (call-with-values (lambda () (lookup-pre-type types label arg0))
+              (lambda (type0 min0 max0)
+                (call-with-values (lambda ()
+                                    (reducer cps kf kt src param
+                                             arg0 type0 min0 max0))
+                  (lambda (cps term)
+                    (and term
+                         (with-cps cps
+                           (setk label
+                                 ($kargs names vars ,term)))))))))
            ((arg0 arg1)
             (call-with-values (lambda () (lookup-pre-type types label arg0))
               (lambda (type0 min0 max0)

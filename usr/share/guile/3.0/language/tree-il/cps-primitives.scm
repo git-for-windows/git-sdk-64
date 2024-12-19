@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2013-2015, 2017-2020 Free Software Foundation, Inc.
+;; Copyright (C) 2013-2015, 2017-2020, 2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,8 @@
   #:use-module (system base types internal)
   #:export (tree-il-primitive->cps-primitive+nargs+nvalues
             branching-primitive?
-            heap-type-predicate?))
+            heap-type-predicate?
+            number-type-predicate?))
 
 (define *primitives* (make-hash-table))
 
@@ -45,7 +46,7 @@
 (define (tree-il-primitive->cps-primitive+nargs+nvalues name)
   (hashq-ref *primitives* name))
 
-(define-cps-primitive box 1 1)
+(define-cps-primitive (make-variable box) 1 1)
 (define-cps-primitive (variable-ref box-ref) 1 1)
 (define-cps-primitive (variable-set! box-set!) 2 0)
 (define-cps-primitive (%variable-ref %box-ref) 1 1)
@@ -68,8 +69,12 @@
 (define-cps-primitive string-ref 2 1)
 (define-cps-primitive string-set! 3 0)
 (define-cps-primitive string->number 1 1)
+
 (define-cps-primitive string->symbol 1 1)
+(define-cps-primitive symbol->string 1 1)
+
 (define-cps-primitive symbol->keyword 1 1)
+(define-cps-primitive keyword->symbol 1 1)
 
 (define-cps-primitive integer->char 1 1)
 (define-cps-primitive char->integer 1 1)
@@ -126,6 +131,9 @@
 
 (define-cps-primitive class-of 1 1)
 
+(define-cps-primitive string-utf8-length 1 1)
+(define-cps-primitive utf8->string 1 1)
+(define-cps-primitive string->utf8 1 1)
 (define-cps-primitive (bytevector-length bv-length) 1 1)
 (define-cps-primitive (bytevector-u8-ref bv-u8-ref) 2 1)
 (define-cps-primitive (bytevector-u16-native-ref bv-u16-ref) 2 1)
@@ -174,6 +182,33 @@
 (visit-immediate-tags define-immediate-type-predicate)
 (visit-heap-tags define-heap-type-predicate)
 
+;; We only need to define those branching primitives that are used as
+;; Tree-IL primitives.  There are others like u64-= which are emitted by
+;; CPS code.
+(define-branching-primitive eq? 2)
+(define-branching-primitive heap-numbers-equal? 2)
+(define-branching-primitive < 2)
+(define-branching-primitive <= 2)
+(define-branching-primitive = 2)
+
+(define-branching-primitive procedure? 1)
+
+(define-branching-primitive number? 1)
+(define-branching-primitive complex? 1)
+(define-branching-primitive real? 1)
+(define-branching-primitive rational? 1)
+(define-branching-primitive integer? 1)
+(define-branching-primitive exact-integer? 1)
+
+(define *number-type-predicates* (make-hash-table))
+(define-syntax-rule (define-number-type-predicate pred nargs)
+  (begin
+    (hashq-set! *number-type-predicates* 'pred #t)
+    (define-branching-primitive pred nargs)))
+
+(define-number-type-predicate exact? 1)
+(define-number-type-predicate inexact? 1)
+
 (define (branching-primitive? name)
   "Is @var{name} a primitive that can only appear in $branch CPS terms?"
   (hashq-ref *branching-primitive-arities* name))
@@ -183,11 +218,8 @@
  before it is lowered to CPS?"
   (hashq-ref *heap-type-predicates* name))
 
-;; We only need to define those branching primitives that are used as
-;; Tree-IL primitives.  There are others like u64-= which are emitted by
-;; CPS code.
-(define-branching-primitive eq? 2)
-(define-branching-primitive heap-numbers-equal? 2)
-(define-branching-primitive < 2)
-(define-branching-primitive <= 2)
-(define-branching-primitive = 2)
+(define (number-type-predicate? name)
+  "Is @var{name} a predicate that needs guarding by @code{number?}
+ before it is lowered to CPS?"
+  (hashq-ref *number-type-predicates* name))
+

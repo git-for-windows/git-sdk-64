@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2020 Free Software Foundation, Inc.
+;; Copyright (C) 2020, 2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -148,8 +148,8 @@ object."
             (hash-table->alist specials)
             (hash-table->sorted-alist symbols
                                       (lambda (s1 s2)
-                                        (< (symbol-hash s1)
-                                           (symbol-hash s2))))
+                                        (string< (symbol->string s1)
+                                                 (symbol->string s2))))
             (hash-table->alist others))))
 
 ;; Leave any chain this long or less as is.
@@ -320,44 +320,39 @@ object."
      ((null? targets)
       (with-cps cps next))
      ((length>? targets *symbol-hash-dispatch-min-length*)
-      ;; Hash dispatch.  Targets already sorted by symbol-hash.  The
-      ;; symbol-hash accessor returns the hash of a symbol, which is the
-      ;; hash of its associated stringbuf.  The high 32 bits of the hash
-      ;; on a 64-bit platform are equivalent to the hash on a 32-bit
-      ;; platform.  The top two bits are zero, to ensure that hash
-      ;; values can be represented as fixnums.  We therefore dispatch on
-      ;; the top N bits, skipping 2 bits, where N <= 30, for the
-      ;; smallest N for which len(targets) <= 2^N.
-      (let* ((nbits (let ((ntargets (length targets)))
+      ;; Hash dispatch.  The value has symbol-hash-bits significant
+      ;; bits.  We dispatch on the bottom N bits of the significant
+      ;; bits, where N <= symbol-hash-bits, for the smallest N for which
+      ;; len(targets) <= 2^N.
+      (let* ((backend (resolve-interface `(language cps ,(target-runtime))))
+             (symbol-hash (module-ref backend 'target-symbol-hash))
+             (symbol-hash-bits (module-ref backend 'target-symbol-hash-bits))
+             (nbits (let ((ntargets (length targets)))
                       (let lp ((nbits 2))
-                        (if (<= ntargets (ash 1 nbits))
-                            nbits
-                            (lp (1+ nbits))))))
-             (host-shift (- (* (with-native-target target-word-size) 8) 2 nbits))
-             (target-shift (- (* (target-word-size) 8) 2 nbits))
+                        (cond
+                         ((= nbits symbol-hash-bits) nbits)
+                         ((<= ntargets (ash 1 nbits)) nbits)
+                         (else (lp (1+ nbits)))))))
              (nbuckets (ash 1 nbits))
              (buckets (make-vector nbuckets '()))
              (kt* (make-vector nbuckets exit)))
-        (define (next-targets targets next-bucket)
-          (let lp ((out '()) (targets targets))
-            (match targets
-              (() (values out targets))
-              (((sym . k) . targets*)
-               (if (< (symbol-hash sym) next-bucket)
-                   (lp (acons sym k out) targets*)
-                   (values out targets))))))
-        (let lp ((cps cps) (i 0) (targets targets))
+        (define (symbol->bucket sym)
+          (logand (1- nbuckets) (symbol-hash (symbol->string sym))))
+        (define (vector-push! v i x)
+          (vector-set! v i (cons x (vector-ref v i))))
+        (for-each (match-lambda
+                    ((and pair (sym . target))
+                     (vector-push! buckets (symbol->bucket sym) pair)))
+                  targets)
+        (let lp ((cps cps) (i 0))
           (cond
            ((< i nbuckets)
             (call-with-values (lambda ()
-                                (next-targets targets (ash (1+ i) host-shift)))
-              (lambda (bucket targets)
-                (call-with-values
-                    (lambda ()
-                      (reify-chain cps var bucket 'eq-constant? exit))
-                  (lambda (cps k)
-                    (vector-set! kt* i k)
-                    (lp cps (1+ i) targets))))))
+                                (reify-chain cps var (vector-ref buckets i)
+                                             'eq-constant? exit))
+              (lambda (cps k)
+                (vector-set! kt* i k)
+                (lp cps (1+ i)))))
            (else
             (with-cps cps
               (letv hash idx)
@@ -367,11 +362,11 @@ object."
               (letk kidx
                     ($kargs ('hash) (hash)
                       ($continue kswitch #f
-                        ($primcall 'ursh/immediate target-shift (hash)))))
+                        ($primcall 'ulogand/immediate (1- nbuckets) (hash)))))
               (letk khash
                     ($kargs () ()
                       ($continue kidx #f
-                        ($primcall 'word-ref/immediate '(symbol . 2) (var)))))
+                        ($primcall 'symbol-hash #f (var)))))
               (letk ksym
                     ($kargs () ()
                       ($branch next khash #f 'symbol? #f (var))))

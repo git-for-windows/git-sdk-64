@@ -131,7 +131,7 @@
 
             ;; Expressions.
             $const $prim $fun $rec $const-fun $code
-            $call $callk $primcall $values
+            $call $callk $calli $primcall $values
 
             ;; Building macros.
             build-cont build-term build-exp
@@ -193,6 +193,7 @@
 (define-cps-type $code label) ; First-order.
 (define-cps-type $call proc args)
 (define-cps-type $callk k proc args) ; First-order.
+(define-cps-type $calli args callee) ; First-order.
 (define-cps-type $primcall name param args)
 (define-cps-type $values args)
 
@@ -247,7 +248,7 @@
 (define-syntax build-exp
   (syntax-rules (unquote
                  $const $prim $fun $rec $const-fun $code
-                 $call $callk $primcall $values)
+                 $call $callk $calli $primcall $values)
     ((_ (unquote exp)) exp)
     ((_ ($const val)) (make-$const val))
     ((_ ($prim name)) (make-$prim name))
@@ -261,6 +262,9 @@
     ((_ ($callk k proc (unquote args))) (make-$callk k proc args))
     ((_ ($callk k proc (arg ...))) (make-$callk k proc (list arg ...)))
     ((_ ($callk k proc args)) (make-$callk k proc args))
+    ((_ ($calli (unquote args) callee)) (make-$calli args callee))
+    ((_ ($calli (arg ...) callee)) (make-$calli (list arg ...) callee))
+    ((_ ($calli args callee)) (make-$calli args callee))
     ((_ ($primcall name param (unquote args))) (make-$primcall name param args))
     ((_ ($primcall name param (arg ...))) (make-$primcall name param (list arg ...)))
     ((_ ($primcall name param args)) (make-$primcall name param args))
@@ -328,6 +332,8 @@
      (build-exp ($call proc arg)))
     (('callk k proc arg ...)
      (build-exp ($callk k proc arg)))
+    (('calli arg ... callee)
+     (build-exp ($calli arg callee)))
     (('primcall name param arg ...)
      (build-exp ($primcall name param arg)))
     (('values arg ...)
@@ -383,6 +389,8 @@
      `(call ,proc ,@args))
     (($ $callk k proc args)
      `(callk ,k ,proc ,@args))
+    (($ $calli args callee)
+     `(callk ,@args ,callee))
     (($ $primcall name param args)
      `(primcall ,name ,param ,@args))
     (($ $values args)

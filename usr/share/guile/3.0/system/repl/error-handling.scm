@@ -20,7 +20,6 @@
 ;;; Code:
 
 (define-module (system repl error-handling)
-  #:use-module (system base pmatch)
   #:use-module (system vm trap-state)
   #:use-module (system repl debug)
   #:use-module (ice-9 format)

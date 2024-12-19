@@ -51,12 +51,10 @@
   #:use-module (system syntax internal)
   #:use-module (language bytecode)
   #:use-module (rnrs bytevectors)
-  #:use-module (rnrs bytevectors gnu)
   #:use-module (ice-9 binary-ports)
   #:use-module (ice-9 vlist)
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
-  #:use-module (srfi srfi-4)
   #:use-module (srfi srfi-9)
   #:use-module (srfi srfi-11)
   #:export (make-assembler
@@ -111,6 +109,7 @@
             emit-throw
             (emit-throw/value* . emit-throw/value)
             (emit-throw/value+data* . emit-throw/value+data)
+            emit-unreachable
 
             emit-pair?
             emit-struct?
@@ -259,6 +258,10 @@
             emit-lookup-bound-private
             emit-define!
             emit-current-module
+            emit-symbol->string
+            emit-string-utf8-length
+            emit-string->utf8
+            emit-utf8->string
 
             ;; Intrinsics for use by the baseline compiler.
             emit-$car
@@ -316,6 +319,7 @@
             emit-usub/immediate
             emit-umul/immediate
             emit-ulogand
+            emit-ulogand/immediate
             emit-ulogior
             emit-ulogxor
             emit-ulogsub
@@ -1573,6 +1577,10 @@ returned instead."
 (define-scm<-scmn-scmn-intrinsic lookup-bound-private)
 (define-scm<-scm-scm-intrinsic define!)
 (define-scm<-thread-intrinsic current-module)
+(define-scm<-scm-intrinsic symbol->string)
+(define-scm<-scm-intrinsic string->utf8)
+(define-scm<-scm-intrinsic utf8->string)
+(define-u64<-scm-intrinsic string-utf8-length)
 
 (define-scm<-scm-intrinsic $car)
 (define-scm<-scm-intrinsic $cdr)
@@ -2314,7 +2322,7 @@ needed."
 
 ;; FIXME: Define these somewhere central, shared with C.
 (define *bytecode-major-version* #x0300)
-(define *bytecode-minor-version* 6)
+(define *bytecode-minor-version* 7)
 
 (define (link-dynamic-section asm text rw rw-init frame-maps)
   "Link the dynamic section for an ELF image with bytecode @var{text},
@@ -2589,7 +2597,7 @@ procedure with label @var{rw-init}.  @var{rw-init} may be false.  If
                         ((f64) 1)
                         ((u64) 2)
                         ((s64) 3)
-                        ((ptr) 4)
+                        ((ptr code) 4)
                         (else (error "what!" representation)))))
              (put-uleb128 names-port (logior (ash slot 3) tag)))
            (lp definitions))))))

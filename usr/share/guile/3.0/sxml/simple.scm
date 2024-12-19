@@ -30,7 +30,6 @@
   #:use-module (sxml ssax)
   #:use-module (sxml transform)
   #:use-module (ice-9 match)
-  #:use-module (srfi srfi-13)
   #:export (xml->sxml sxml->xml sxml->string))
 
 ;; Helpers from upstream/SSAX.scm.

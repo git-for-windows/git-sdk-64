@@ -1,6 +1,6 @@
 ;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2013-2021 Free Software Foundation, Inc.
+;; Copyright (C) 2013-2021,2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -54,7 +54,7 @@
   (slots allocation-slots)
 
   ;; A map of VAR to representation.  A representation is 'scm, 'f64,
-  ;; 'u64, or 's64.
+  ;; 'u64, 's64, 'ptr, 'bv-contents, or 'code.
   ;;
   (representations allocation-representations)
 
@@ -73,8 +73,8 @@
   (call-allocs allocation-call-allocs)
 
   ;; A map of LABEL to /parallel moves/.  Parallel moves shuffle locals
-  ;; into position for a $call, $callk, or $values, or shuffle returned
-  ;; values back into place at a return continuation.
+  ;; into position for a $call, $callk, $calli, or $values, or shuffle
+  ;; returned values back into place for a $kreceive.
   ;;
   ;; A set of moves is expressed as an ordered list of (SRC . DST)
   ;; moves, where SRC and DST are slots.  This may involve a temporary
@@ -237,6 +237,9 @@ is an active call."
                      (let ((args (list->intset args)))
                        (intset-subtract (if proc (intset-add args proc) args)
                                         (intmap-ref live-out label))))
+                    (($ $kargs _ _ ($ $continue _ _ ($ $calli args callee)))
+                     (intset-subtract (list->intset (cons callee args))
+                                      (intmap-ref live-out label)))
                     (($ $kargs _ _ ($ $continue k _($ $values args)))
                      (match (intmap-ref cps k)
                        (($ $ktail) (list->intset args))
@@ -492,6 +495,8 @@ are comparable with eqv?.  A tmp slot may be used."
           (add-call-shuffles label k (cons proc args) shuffles))
          (($ $callk _ proc args)
           (add-call-shuffles label k (if proc (cons proc args) args) shuffles))
+         (($ $calli args callee)
+          (add-call-shuffles label k (append args (list callee)) shuffles))
          (($ $values args)
           (add-values-shuffles label k args shuffles))
          (_ shuffles)))
@@ -538,6 +543,8 @@ are comparable with eqv?.  A tmp slot may be used."
            (($ $continue _ _ ($ $callk _ proc args))
             (let ((nclosure (if proc 1 0)))
               (call-size label (+ nclosure (length args)) size)))
+           (($ $continue _ _ ($ $calli args callee))
+            (call-size label (1+ (length args)) size))
            (($ $continue _ _ ($ $values args))
             (shuffle-size (get-shuffles label) size))
            (($ $prompt)
@@ -624,6 +631,8 @@ are comparable with eqv?.  A tmp slot may be used."
           (allocate-call label (cons proc args) slots))
          (($ $callk _ proc args)
           (allocate-call label (if proc (cons proc args) args) slots))
+         (($ $calli args callee)
+          (allocate-call label (append args (list callee)) slots))
          (($ $values args)
           (allocate-values label k args slots))
          (_ slots)))
@@ -697,8 +706,10 @@ are comparable with eqv?.  A tmp slot may be used."
            (#f slot-map)
            (slot
             (let ((desc (match (intmap-ref representations var)
-                          ((or 'u64 'f64 's64 'ptr) slot-desc-live-raw)
-                          ('scm slot-desc-live-scm))))
+                          ((or 'u64 'f64 's64 'ptr 'bv-contents 'code)
+                           slot-desc-live-raw)
+                          ('scm
+                           slot-desc-live-scm))))
               (logior slot-map (ash desc (* 2 slot)))))))
        live-vars 0))
 
@@ -824,6 +835,9 @@ are comparable with eqv?.  A tmp slot may be used."
               (allocate-call label k (cons proc args) slots call-allocs live))
              (($ $continue k src ($ $callk _ proc args))
               (allocate-call label k (if proc (cons proc args) args)
+                             slots call-allocs live))
+             (($ $continue k src ($ $calli args callee))
+              (allocate-call label k (append args (list callee))
                              slots call-allocs live))
              (($ $continue k src ($ $values args))
               (allocate-values label k args slots call-allocs))

@@ -1,6 +1,6 @@
 ;;; -*- mode: scheme; coding: utf-8; -*-
 
-;;;; Copyright (C) 1995-2014, 2016-2022  Free Software Foundation, Inc.
+;;;; Copyright (C) 1995-2014, 2016-2024  Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -417,10 +417,10 @@ If returning early, return the return value of F."
 (include-from-path "ice-9/quasisyntax")
 
 (define-syntax-rule (when test stmt stmt* ...)
-  (if test (begin stmt stmt* ...)))
+  (if test (let () stmt stmt* ...)))
 
 (define-syntax-rule (unless test stmt stmt* ...)
-  (if (not test) (begin stmt stmt* ...)))
+  (if (not test) (let () stmt stmt* ...)))
 
 (define-syntax else
   (lambda (x)
@@ -461,7 +461,7 @@ If returning early, return the return value of F."
                          ((else e e* ...)
                           (lambda (tail)
                             (if (null? tail)
-                                #'((begin e e* ...))
+                                #'((let () e e* ...))
                                 (bad-clause "else must be the last clause"))))
                          ((else . _) (bad-clause))
                          ((test => receiver)
@@ -488,7 +488,7 @@ If returning early, return the return value of F."
                          ((test e e* ...)
                           (lambda (tail)
                             #`((if test
-                                   (begin e e* ...)
+                                   (let () e e* ...)
                                    #,@tail))))
                          (_ (bad-clause))))
                      #'(clause clauses ...))))))))
@@ -534,7 +534,7 @@ If returning early, return the return value of F."
                                ((=> receiver ...)
                                 (bad-clause
                                  "wrong number of receiver expressions"))
-                               ((e e* ...) #'(begin e e* ...))
+                               ((e e* ...) #'(let () e e* ...))
                                (_ (bad-clause)))))
                          (syntax-case #'test (else)
                            ((datums ...)
@@ -674,7 +674,7 @@ If returning early, return the return value of F."
          #`(let ((fluid-tmp fluid) ...)
              (let ((val-tmp val) ...)
                #,(emit-with-fluids #'((fluid-tmp val-tmp) ...)
-                                   #'(begin exp exp* ...)))))))))
+                                   #'(let () exp exp* ...)))))))))
 
 (define-syntax current-source-location
   (lambda (x)
@@ -1586,8 +1586,7 @@ exception that is an instance of @var{rtd}."
         val))
 
     (define %exception-handler (steal-binding! '%exception-handler))
-    (define %active-exception-handlers
-      (steal-binding! '%active-exception-handlers))
+    (define %exception-epoch (steal-binding! '%exception-epoch))
     (define %init-exceptions! (steal-binding! '%init-exceptions!))
 
     (%init-exceptions! &compound-exception
@@ -1639,13 +1638,6 @@ If @var{continuable?} is true, the handler is invoked in tail position
 relative to the @code{raise-exception} call.  Otherwise if the handler
 returns, a non-continuable exception of type @code{&non-continuable} is
 raised in the same dynamic environment as the handler."
-      (define (capture-current-exception-handlers)
-        ;; FIXME: This is quadratic.
-        (let lp ((depth 0))
-          (let ((h (fluid-ref* %exception-handler depth)))
-            (if h
-                (cons h (lp (1+ depth)))
-                (list fallback-exception-handler)))))
       (define (exception-has-type? exn type)
         (cond
          ((eq? type #t)
@@ -1656,35 +1648,45 @@ raised in the same dynamic environment as the handler."
           (and (exception? exn)
                ((exception-predicate type) exn)))
          (else #f)))
-      (let lp ((handlers (or (fluid-ref %active-exception-handlers)
-                             (capture-current-exception-handlers))))
-        (let ((handler (car handlers))
-              (handlers (cdr handlers)))
-          ;; There are two types of exception handlers: unwinding handlers
-          ;; and pre-unwind handlers.  Although you can implement unwinding
-          ;; handlers with pre-unwind handlers, it's better to separate them
-          ;; because it allows for emergency situations like "stack
-          ;; overflow" or "out of memory" to unwind the stack before calling
-          ;; a handler.
-          (cond
-           ((pair? handler)
-            (let ((prompt-tag (car handler))
-                  (type (cdr handler)))
-              (cond
-               ((exception-has-type? exn type)
-                (abort-to-prompt prompt-tag exn)
-                (error "unreachable"))
-               (else
-                (lp handlers)))))
-           (else
-            (with-fluids ((%active-exception-handlers handlers))
-              (cond
-               (continuable?
-                (handler exn))
-               (else
-                (handler exn)
-                (raise-exception
-                 ((record-constructor &non-continuable)))))))))))
+      (let ((current-epoch (fluid-ref %exception-epoch)))
+        (let lp ((depth 0))
+          ;; FIXME: fluid-ref* takes time proportional to depth, which
+          ;; makes this loop quadratic.
+          (let ((val (fluid-ref* %exception-handler depth)))
+            ;; There are two types of exception handlers: unwinding handlers
+            ;; and pre-unwind handlers.  Although you can implement unwinding
+            ;; handlers with pre-unwind handlers, it's better to separate them
+            ;; because it allows for emergency situations like "stack
+            ;; overflow" or "out of memory" to unwind the stack before calling
+            ;; a handler.
+            (cond
+             ((not val)
+              ;; No exception handlers bound; use fallback.
+              (fallback-exception-handler exn))
+             ((fluid? (car val))
+              (let ((epoch (car val))
+                    (handler (cdr val)))
+                (cond
+                 ((< (fluid-ref epoch) current-epoch)
+                  (with-fluids ((epoch current-epoch))
+                    (cond
+                     (continuable?
+                      (handler exn))
+                     (else
+                      (handler exn)
+                      (raise-exception
+                       ((record-constructor &non-continuable)))))))
+                 (else
+                  (lp (1+ depth))))))
+             (else
+              (let ((prompt-tag (car val))
+                    (type (cdr val)))
+                (cond
+                 ((exception-has-type? exn type)
+                  (abort-to-prompt prompt-tag exn)
+                  (error "unreachable"))
+                 (else
+                  (lp (1+ depth)))))))))))
 
     (define* (with-exception-handler handler thunk #:key (unwind? #f)
                                      (unwind-for-type #t))
@@ -1748,8 +1750,9 @@ exceptions with the given @code{exception-kind} will be handled."
            (lambda (k exn)
              (handler exn)))))
        (else
-        (with-fluids ((%exception-handler handler))
-          (thunk)))))
+        (let ((epoch (make-fluid 0)))
+          (with-fluids ((%exception-handler (cons epoch handler)))
+            (thunk))))))
 
     (define (throw key . args)
       "Invoke the catch form matching @var{key}, passing @var{args} to the
@@ -1771,11 +1774,30 @@ for key @var{k}, then invoke @var{thunk}."
                    "Wrong type argument in position ~a: ~a"
                    (list 1 k) (list k)))
       (define running? (make-fluid))
+      ;; Throw handlers have two semantic oddities.
+      ;;
+      ;; One is that throw handlers are not re-entrant: if one is
+      ;; already active in the current continuation, it won't handle
+      ;; exceptions thrown within that continuation.  It's a restrictive
+      ;; choice, but it does ensure progress.  We ensure this property
+      ;; by having a running? fluid associated with each
+      ;; with-throw-handler.
+      ;;
+      ;; The other oddity is that any exception thrown within a throw
+      ;; handler starts the whole raise-exception dispatch procedure
+      ;; again from the top.  This can have its uses if you want to have
+      ;; handlers for multiple specific keys active at the same time,
+      ;; without specifying an order between them.  But, it's weird.  We
+      ;; ensure this property by having a %exception-epoch fluid and
+      ;; also associating an epoch with each pre-unwind handler; a
+      ;; handler is active if its epoch is less than the current
+      ;; %exception-epoch.  We increment the epoch with the extent of
+      ;; the throw handler.
       (with-exception-handler
        (lambda (exn)
          (when (and (or (eq? k #t) (eq? k (exception-kind exn)))
                     (not (fluid-ref running?)))
-           (with-fluids ((%active-exception-handlers #f)
+           (with-fluids ((%exception-epoch (1+ (fluid-ref %exception-epoch)))
                          (running? #t))
              (apply pre-unwind-handler (exception-kind exn)
                     (exception-args exn))))
@@ -2728,8 +2750,8 @@ are not themselves bound to a defined value."
 
 (define (module-symbol-local-binding m v . opt-val)
   "Return the binding of variable V specified by name within module M,
-signalling an error if the variable is unbound.  If the OPT-VALUE is
-passed, then instead of signalling an error, return OPT-VALUE."
+signaling an error if the variable is unbound.  If the OPT-VALUE is
+passed, then instead of signaling an error, return OPT-VALUE."
   (let ((var (module-local-variable m v)))
     (if (and var (variable-bound? var))
         (variable-ref var)
@@ -2739,8 +2761,8 @@ passed, then instead of signalling an error, return OPT-VALUE."
 
 (define (module-symbol-binding m v . opt-val)
   "Return the binding of variable V specified by name within module M,
-signalling an error if the variable is unbound.  If the OPT-VALUE is
-passed, then instead of signalling an error, return OPT-VALUE."
+signaling an error if the variable is unbound.  If the OPT-VALUE is
+passed, then instead of signaling an error, return OPT-VALUE."
   (let ((var (module-variable m v)))
     (if (and var (variable-bound? var))
         (variable-ref var)
@@ -3330,9 +3352,7 @@ error if selected binding does not exist in the used module."
       (error "no code for module" name))
     (if (and (not select) (null? hide) (eq? renamer identity))
         public-i
-        (let ((selection (or select (module-map (lambda (sym var) sym)
-                                                public-i)))
-              (custom-i (make-module)))
+        (let ((custom-i (make-module)))
           (set-module-kind! custom-i 'custom-interface)
           (set-module-name! custom-i name)
           ;; Check that we are not hiding bindings which don't exist
@@ -3430,7 +3450,7 @@ error if selected binding does not exist in the used module."
        ;; FIXME: Avoid use of `apply'.
        (apply module-autoload! module autoloads)
        (let ((duplicates (or duplicates
-                             ;; Avoid stompling a previously installed
+                             ;; Avoid stomping a previously installed
                              ;; duplicates handlers if possible.
                              (and (not (module-duplicates-handlers module))
                                   ;; Note: If you change this default,
@@ -4586,21 +4606,22 @@ when none is available, reading FILE-NAME with READER."
                                     '-procedure)))
 
     (syntax-case x ()
-      ((_ (name formals ...) body ...)
+      ((_ (name formals ...) body0 body ...)
        (identifier? #'name)
        (with-syntax ((proc-name  (make-procedure-name #'name))
                      ((args ...) (generate-temporaries #'(formals ...))))
          #`(begin
              (define (proc-name formals ...)
+               #((maybe-unused))
                (syntax-parameterize ((name (identifier-syntax proc-name)))
-                 body ...))
+                 body0 body ...))
              (define-syntax-parameter name
                (lambda (x)
                  (syntax-case x ()
                    ((_ args ...)
                     #'((syntax-parameterize ((name (identifier-syntax proc-name)))
                          (lambda (formals ...)
-                           body ...))
+                           body0 body ...))
                        args ...))
                    ((_ a (... ...))
                     (syntax-violation 'name "Wrong number of arguments" x))
@@ -4697,6 +4718,17 @@ R7RS."
 
 ;; FIXME:
 (module-use! the-scm-module (resolve-interface '(srfi srfi-4)))
+
+
+
+;;; make-soft-port in the default environment.  FIXME: Deprecate, make
+;;; callers import (ice-9 soft-port).
+;;;
+
+(define (make-soft-port pv modes)
+  ((module-ref (resolve-interface '(ice-9 soft-ports))
+               'deprecated-make-soft-port)
+   pv modes))
 
 
 

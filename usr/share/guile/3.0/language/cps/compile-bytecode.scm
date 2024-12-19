@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2013-2021 Free Software Foundation, Inc.
+;; Copyright (C) 2013-2021, 2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -238,9 +238,9 @@
          (emit-usub/immediate asm (from-sp dst) (from-sp (slot x)) y))
         (($ $primcall 'umul/immediate y (x))
          (emit-umul/immediate asm (from-sp dst) (from-sp (slot x)) y))
-        (($ $primcall 'rsh (x y))
+        (($ $primcall 'rsh #f (x y))
          (emit-rsh asm (from-sp dst) (from-sp (slot x)) (from-sp (slot y))))
-        (($ $primcall 'lsh (x y))
+        (($ $primcall 'lsh #f (x y))
          (emit-lsh asm (from-sp dst) (from-sp (slot x)) (from-sp (slot y))))
         (($ $primcall 'rsh/immediate y (x))
          (emit-rsh/immediate asm (from-sp dst) (from-sp (slot x)) y))
@@ -252,6 +252,8 @@
          (emit-srsh/immediate asm (from-sp dst) (from-sp (slot x)) y))
         (($ $primcall 'ulsh/immediate y (x))
          (emit-ulsh/immediate asm (from-sp dst) (from-sp (slot x)) y))
+        (($ $primcall 'ulogand/immediate y (x))
+         (emit-ulogand/immediate asm (from-sp dst) (from-sp (slot x)) y))
         (($ $primcall 'builtin-ref idx ())
          (emit-builtin-ref asm (from-sp dst) idx))
         (($ $primcall 'scm->f64 #f (src))
@@ -417,7 +419,9 @@
         (#('throw/value param (val))
          (emit-throw/value asm (from-sp (slot val)) param))
         (#('throw/value+data param (val))
-         (emit-throw/value+data asm (from-sp (slot val)) param))))
+         (emit-throw/value+data asm (from-sp (slot val)) param))
+        (#('unreachable #f ())
+         (emit-unreachable asm))))
 
     (define (compile-prompt label k kh escape? tag)
       (let ((receive-args (gensym "handler"))
@@ -578,6 +582,8 @@
            (compile-call #f proc args))
           (($ $callk kfun proc args)
            (compile-call kfun proc args))
+          (($ $calli args callee)
+           (error "unreachable"))
           (_
            (match cont
              (($ $kargs names vars)

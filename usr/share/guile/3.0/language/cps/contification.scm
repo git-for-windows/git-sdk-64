@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2013-2021 Free Software Foundation, Inc.
+;; Copyright (C) 2013-2021, 2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -206,8 +206,12 @@ $call, and are always called with a compatible arity."
       (match cont
         (($ $kargs _ _ ($ $continue _ _ exp))
          (match exp
-           ((or ($ $const) ($ $prim) ($ $const-fun) ($ $code) ($ $fun) ($ $rec))
+           ((or ($ $const) ($ $prim) ($ $fun) ($ $rec))
             functions)
+           (($ $const-fun kfun)
+            (intmap-remove functions kfun))
+           (($ $code kfun)
+            (intmap-remove functions kfun))
            (($ $values args)
             (exclude-vars functions args))
            (($ $call proc args)
@@ -226,6 +230,10 @@ $call, and are always called with a compatible arity."
               (restrict-arity functions proc (length args))))
            (($ $callk k proc args)
             (exclude-vars functions (if proc (cons proc args) args)))
+           (($ $calli args callee)
+            ;; While callee is a var and not a label, it is a var that
+            ;; holds a code label, not a function value.
+            (exclude-vars functions args))
            (($ $primcall name param args)
             (exclude-vars functions args))))
         (($ $kargs _ _ ($ $branch kf kt src op param args))
@@ -426,20 +434,11 @@ function set."
            (build-term ($continue k src ($const '())))))
         ((v . vals)
          (with-cps cps
-           (letv pair tail)
-           (letk kdone ($kargs () () ($continue k src ($values (pair)))))
-           (letk ktail
-                 ($kargs () ()
-                   ($continue kdone src
-                     ($primcall 'scm-set!/immediate '(pair . 1) (pair tail)))))
-           (letk khead
-                 ($kargs ('pair) (pair)
-                   ($continue ktail src
-                     ($primcall 'scm-set!/immediate '(pair . 0) (pair v)))))
+           (letv tail)
            (letk ktail
                  ($kargs ('tail) (tail)
-                   ($continue khead src
-                     ($primcall 'allocate-words/immediate '(pair . 2) ()))))
+                   ($continue k src
+                     ($primcall 'cons #f (v tail)))))
            ($ (build-list ktail src vals))))))
     (cond
      ((and (not rest) (eqv? (length vals) nreq))
@@ -475,7 +474,7 @@ function set."
           (match (intmap-ref conts k*)
             (($ $kreceive ($ $arity req () rest () #f) kargs)
              (match exp
-               ((or ($ $call) ($ $callk))
+               ((or ($ $call) ($ $callk) ($ $calli))
                 (with-cps cps (build-term ($continue k* src ,exp))))
                ;; We need to punch through the $kreceive; otherwise we'd
                ;; have to rewrite as a call to the 'values primitive.

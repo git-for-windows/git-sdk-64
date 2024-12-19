@@ -419,7 +419,7 @@
                (= (logand u8_2 #xc0) #x80)
                (case u8_0
                  ((#xe0) (>= u8_1 #xa0))
-                 ((#xed) (>= u8_1 #x9f))
+                 ((#xed) (<= u8_1 #x9f))
                  (else #t)))
           (kt (integer->char
                (logior (ash (logand u8_0 #x0f) 12)
@@ -436,7 +436,7 @@
                (= (logand u8_3 #xc0) #x80)
                (case u8_0
                  ((#xf0) (>= u8_1 #x90))
-                 ((#xf4) (>= u8_1 #x8f))
+                 ((#xf4) (<= u8_1 #x8f))
                  (else #t)))
           (kt (integer->char
                (logior (ash (logand u8_0 #x07) 18)
@@ -462,7 +462,7 @@
      ((< buffering 2) 1)
      ((not (= (logand (ref 1) #xc0) #x80)) 1)
      ((and (eq? first-byte #xe0) (< (ref 1) #xa0)) 1)
-     ((and (eq? first-byte #xed) (< (ref 1) #x9f)) 1)
+     ((and (eq? first-byte #xed) (> (ref 1) #x9f)) 1)
      ((< buffering 3) 2)
      ((not (= (logand (ref 2) #xc0) #x80)) 2)
      (else 0)))
@@ -471,7 +471,7 @@
      ((< buffering 2) 1)
      ((not (= (logand (ref 1) #xc0) #x80)) 1)
      ((and (eq? first-byte #xf0) (< (ref 1) #x90)) 1)
-     ((and (eq? first-byte #xf4) (< (ref 1) #x8f)) 1)
+     ((and (eq? first-byte #xf4) (> (ref 1) #x8f)) 1)
      ((< buffering 3) 2)
      ((not (= (logand (ref 2) #xc0) #x80)) 2)
      ((< buffering 4) 3)

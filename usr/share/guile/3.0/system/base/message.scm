@@ -1,6 +1,6 @@
 ;;; User interface messages
 
-;; Copyright (C) 2009-2012,2016,2018,2020-2021 Free Software Foundation, Inc.
+;; Copyright (C) 2009-2012,2016,2018,2020-2021,2023 Free Software Foundation, Inc.
 
 ;;; This library is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU Lesser General Public License as published by
@@ -114,6 +114,15 @@
             ,(lambda (port loc name)
                (emit port "~A: warning: possibly unused local top-level variable `~A'~%"
                      loc name)))
+
+           (unused-module
+            "report unused modules"
+            ,(lambda (port loc name definitely-unused?)
+               (if definitely-unused?
+                   (emit port "~A: warning: unused module ~a~%"
+                         loc name)
+                   (emit port "~A: warning: possibly unused module ~a~%"
+                         loc name))))
 
            (shadowed-toplevel
             "report shadowed top-level variables"

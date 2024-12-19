@@ -115,8 +115,10 @@
        (for-each (lambda (sym)
                    (module-add! iface sym
                                 (or (module-variable mod sym)
-                                    (error "no binding `~A' in module ~A"
-                                           sym mod)))
+                                    (error (format
+                                             #f
+                                             "no binding `~A' in module ~A"
+                                             sym mod))))
                    (when (hashq-ref (module-replacements mod) sym)
                      (hashq-set! (module-replacements iface) sym #t)))
                  (syntax->datum #'(identifier ...)))
@@ -131,7 +133,7 @@
                                  mod)
        (for-each (lambda (sym)
                    (unless (module-local-variable iface sym)
-                     (error "no binding `~A' in module ~A" sym mod))
+                     (error (format #f "no binding `~A' in module ~A" sym mod)))
                    (module-remove! iface sym))
                  (syntax->datum #'(identifier ...)))
        iface))
@@ -167,7 +169,11 @@
                     (replace? (vector-ref v 1))
                     (var (vector-ref v 2)))
                 (when (module-local-variable iface to)
-                  (error "duplicate binding for `~A' in module ~A" to mod))
+                  (error (format
+                           #f
+                           "duplicate binding for `~A' in module ~A"
+                           to
+                           mod)))
                 (module-add! iface to var)
                 (when replace?
                   (hashq-set! replacements to #t))))
@@ -178,7 +184,8 @@
                   (to (cdar in))
                   (var (module-variable mod from))
                   (replace? (hashq-ref replacements from)))
-             (unless var (error "no binding `~A' in module ~A" from mod))
+             (unless var (error
+                           (format #f "no binding `~A' in module ~A" from mod)))
              (module-remove! iface from)
              (hashq-remove! replacements from)
              (lp (cdr in) (cons (vector to replace? var) out))))))))

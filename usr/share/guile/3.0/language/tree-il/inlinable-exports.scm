@@ -1,5 +1,5 @@
 ;;; Attaching inlinable definitions of exported bindings to modules
-;;; Copyright (C) 2021, 2022
+;;; Copyright (C) 2021, 2022, 2024
 ;;;   Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software: you can redistribute it and/or modify
@@ -458,7 +458,7 @@
                                       (map
                                        (match-lambda
                                          ((kw name var)
-                                          (list kw name (assq-ref var bound))))
+                                          (list kw name (assq-ref bound var))))
                                        kws))))
                              (map recur* inits)
                              vars*

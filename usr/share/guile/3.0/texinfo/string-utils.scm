@@ -24,8 +24,6 @@
 ;;; Code:
 
 (define-module (texinfo string-utils)
-  #:use-module (srfi srfi-13)
-  #:use-module (srfi srfi-14)
   #:export (escape-special-chars
             transform-string
             expand-tabs

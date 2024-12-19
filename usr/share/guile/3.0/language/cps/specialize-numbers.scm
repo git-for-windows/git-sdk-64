@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2015-2020 Free Software Foundation, Inc.
+;; Copyright (C) 2015-2021, 2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -116,6 +116,7 @@
     (build-term
       ($continue ks64 src ($primcall 'u64->s64 #f (u64))))))
 (define-simple-primcall scm->u64)
+(define-simple-primcall scm->u64/truncate)
 (define-simple-primcall u64->scm)
 (define-simple-primcall u64->scm/unlikely)
 
@@ -283,18 +284,23 @@
 
 (define significant-bits-handlers (make-hash-table))
 (define-syntax-rule (define-significant-bits-handler
-                      ((primop label types out def ...) arg ...)
+                      ((primop label types out def ...) param arg ...)
                       body ...)
   (hashq-set! significant-bits-handlers 'primop
               (lambda (label types out param args defs)
                 (match args ((arg ...) (match defs ((def ...) body ...)))))))
 
-(define-significant-bits-handler ((logand label types out res) a b)
+(define-significant-bits-handler ((logand label types out res) param a b)
   (let ((sigbits (sigbits-intersect3 (inferred-sigbits types label a)
                                      (inferred-sigbits types label b)
                                      (intmap-ref out res (lambda (_) 0)))))
     (intmap-add (intmap-add out a sigbits sigbits-union)
                 b sigbits sigbits-union)))
+(define-significant-bits-handler ((logand/immediate label types out res) param a)
+  (let ((sigbits (sigbits-intersect3 (inferred-sigbits types label a)
+                                     param
+                                     (intmap-ref out res (lambda (_) 0)))))
+    (intmap-add out a sigbits sigbits-union)))
 
 (define (significant-bits-handler primop)
   (hashq-ref significant-bits-handlers primop))
@@ -361,6 +367,8 @@ BITS indicating the significant bits needed for a variable.  BITS may be
                          (if proc
                              (add-unknown-use out proc)
                              out)))
+                      (($ $calli args callee)
+                       (add-unknown-uses (add-unknown-use out callee) args))
                       (($ $primcall name param args)
                        (let ((h (significant-bits-handler name)))
                          (if h
@@ -457,6 +465,11 @@ BITS indicating the significant bits needed for a variable.  BITS may be
       (<= (target-most-negative-fixnum) min max (target-most-positive-fixnum)))
     (define (unbox-u64 arg)
       (if (fixnum-operand? arg) fixnum->u64 scm->u64))
+    (define (unbox-u64/truncate arg)
+      (cond
+       ((fixnum-operand? arg) fixnum->u64)
+       ((u64-operand? arg) scm->u64)
+       (else scm->u64/truncate)))
     (define (unbox-s64 arg)
       (if (fixnum-operand? arg) untag-fixnum scm->s64))
     (define (rebox-s64 arg)
@@ -547,6 +560,12 @@ BITS indicating the significant bits needed for a variable.  BITS may be
                         ('mul/immediate 'umul/immediate))))
               (specialize-unop cps k src op param a
                                (unbox-u64 a) (box-u64 result))))
+
+           (('logand/immediate (? u64-result? ) param (? u64-operand? a))
+            (specialize-unop cps k src 'ulogand/immediate
+                             (logand param (1- (ash 1 64)))
+                             a
+                             (unbox-u64 a) (box-u64 result)))
 
            (((or 'add/immediate 'sub/immediate 'mul/immediate)
              (? s64-result?) (? s64-parameter?) (? s64-operand? a))
@@ -832,7 +851,7 @@ BITS indicating the significant bits needed for a variable.  BITS may be
       (_ #f)))
 
   (compute-specializable-vars cps body preds defs exp-result-u64?
-                              '(scm->u64 'scm->u64/truncate)))
+                              '(scm->u64 scm->u64/truncate)))
 
 ;; Compute vars whose definitions are all exact integers in the fixnum
 ;; range and whose uses include an untag operation.

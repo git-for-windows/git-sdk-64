@@ -3,7 +3,7 @@ package HTTP::Status;
 use strict;
 use warnings;
 
-our $VERSION = '6.46';
+our $VERSION = '7.00';
 
 use Exporter 5.57 'import';
 
@@ -183,7 +183,7 @@ HTTP::Status - HTTP Status code processing
 
 =head1 VERSION
 
-version 6.46
+version 7.00
 
 =head1 SYNOPSIS
 

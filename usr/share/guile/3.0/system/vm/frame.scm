@@ -19,8 +19,6 @@
 ;;; Code:
 
 (define-module (system vm frame)
-  #:use-module (system base pmatch)
-  #:use-module (system foreign)
   #:use-module (system vm program)
   #:use-module (system vm debug)
   #:use-module (system vm disassembler)

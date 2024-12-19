@@ -20,7 +20,6 @@
 ;;; Code:
 
 (define-module (system repl command)
-  #:use-module (system base syntax)
   #:use-module (system base pmatch)
   #:autoload   (system base compile) (compile-file)
   #:use-module (system repl common)
@@ -31,14 +30,12 @@
   #:use-module (system vm loader)
   #:use-module (system vm program)
   #:use-module (system vm trap-state)
-  #:use-module (system vm vm)
   #:autoload (system base language) (lookup-language language-reader
                                      language-title language-name)
   #:autoload (system vm trace) (call-with-trace)
   #:use-module (ice-9 format)
   #:use-module (ice-9 session)
   #:use-module (ice-9 documentation)
-  #:use-module (ice-9 and-let-star)
   #:use-module (ice-9 rdelim)
   #:use-module (ice-9 control)
   #:use-module ((ice-9 pretty-print) #:select ((pretty-print . pp)))
@@ -169,7 +166,7 @@
 (define (meta-command repl)
   (let ((command (read-command repl)))
     (cond
-     ((eq? command *unspecified*)) ; read error, already signalled; pass.
+     ((eq? command *unspecified*)) ; read error, already signaled; pass.
      ((not (symbol? command))
       (format #t "Meta-command not a symbol: ~s~%" command))
      ((lookup-command command)
@@ -675,7 +672,7 @@ Break on calls to PROCEDURE.
 Starts a recursive prompt when PROCEDURE is called."
   (let ((proc (repl-eval repl (repl-parse repl form))))
     (if (not (procedure? proc))
-        (error "Not a procedure: ~a" proc)
+        (error (format #f "Not a procedure: ~a" proc))
         (let ((idx (add-trap-at-procedure-call! proc)))
           (format #t "Trap ~a: ~a.~%" idx (trap-name idx))))))
 
@@ -786,7 +783,7 @@ A tracepoint will print out the procedure and its arguments, when it is
 called, and its return value(s) when it returns."
   (let ((proc (repl-eval repl (repl-parse repl form))))
     (if (not (procedure? proc))
-        (error "Not a procedure: ~a" proc)
+        (error (format #f "Not a procedure: ~a" proc))
         (let ((idx (add-trace-at-procedure-call! proc)))
           (format #t "Trap ~a: ~a.~%" idx (trap-name idx))))))
 

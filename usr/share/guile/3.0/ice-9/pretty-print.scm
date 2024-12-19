@@ -1,7 +1,7 @@
 ;;;; -*- coding: utf-8; mode: scheme -*-
 ;;;;
 ;;;; 	Copyright (C) 2001, 2004, 2006, 2009, 2010,
-;;;;      2012, 2013, 2014 Free Software Foundation, Inc.
+;;;;      2012, 2013, 2014, 2023 Free Software Foundation, Inc.
 ;;;; 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -21,257 +21,47 @@
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
   #:use-module (rnrs bytevectors)
+  #:use-module (ice-9 soft-ports)
+  #:use-module (ice-9 textual-ports)
   #:export (pretty-print
             truncated-print))
 
+(define* (call-with-truncating-output-string proc success failure #:key
+                                             (initial-column 0)
+                                             (max-column 79)
+                                             (allow-newline? #f))
+  (define length 0)
+  (define strs '())
+  (define tag (make-prompt-tag))
+  (define (write-string str)
+    (set! length (+ length (string-length str)))
+    (set! strs (cons str strs))
+    (when (or (< (- max-column initial-column) length)
+              (and (not allow-newline?)
+                   (not (zero? (port-line port)))))
+      (abort-to-prompt tag)))
+  (define port
+    (make-soft-port #:id "truncating-output-port"
+                    #:write-string write-string))
+  (call-with-prompt
+   tag
+   (lambda ()
+     (proc port)
+     (close port)
+     (success (string-concatenate-reverse strs)))
+   (lambda (_)
+     (failure (string-concatenate-reverse strs)))))
 
-;; From SLIB.
 
-;;"genwrite.scm" generic write used by pretty-print and truncated-print.
+
+
+;; Parts of pretty-print derived from "genwrite.scm", from SLIB.
 ;; Copyright (c) 1991, Marc Feeley
 ;; Author: Marc Feeley (feeley@iro.umontreal.ca)
 ;; Distribution restrictions: none
 
-(define genwrite:newline-str (make-string 1 #\newline))
-
-(define (generic-write
-         obj display? width max-expr-width per-line-prefix output)
-
-  (define (read-macro? l)
-    (define (length1? l) (and (pair? l) (null? (cdr l))))
-    (let ((head (car l)) (tail (cdr l)))
-      (case head
-        ((quote quasiquote unquote unquote-splicing) (length1? tail))
-        (else                                        #f))))
-
-  (define (read-macro-body l)
-    (cadr l))
-
-  (define (read-macro-prefix l)
-    (let ((head (car l)))
-      (case head
-        ((quote)            "'")
-        ((quasiquote)       "`")
-        ((unquote)          ",")
-        ((unquote-splicing) ",@"))))
-
-  (define (out str col)
-    (and col (output str) (+ col (string-length str))))
-
-  (define (wr obj col)
-    (let loop ((obj obj)
-               (col col))
-      (match obj
-        (((or 'quote 'quasiquote 'unquote 'unquote-splicing) body)
-         (wr body (out (read-macro-prefix obj) col)))
-        ((head . (rest ...))
-         ;; A proper list: do our own list printing so as to catch read
-         ;; macros that appear in the middle of the list.
-         (let ((col (loop head (out "(" col))))
-           (out ")"
-                (fold (lambda (i col)
-                        (loop i (out " " col)))
-                      col rest))))
-        (_
-         (out (object->string obj (if display? display write)) col)))))
-
-  (define (pp obj col)
-
-    (define (spaces n col)
-      (if (> n 0)
-        (if (> n 7)
-          (spaces (- n 8) (out "        " col))
-          (out (substring "        " 0 n) col))
-        col))
-
-    (define (indent to col)
-      (and col
-           (if (< to col)
-             (and (out genwrite:newline-str col)
-		  (out per-line-prefix 0)
-		  (spaces to 0))
-             (spaces (- to col) col))))
-
-    (define (pr obj col extra pp-pair)
-      (if (or (pair? obj) (vector? obj)) ; may have to split on multiple lines
-        (let ((result '())
-              (left (min (+ (- (- width col) extra) 1) max-expr-width)))
-          (generic-write obj display? #f max-expr-width ""
-            (lambda (str)
-              (set! result (cons str result))
-              (set! left (- left (string-length str)))
-              (> left 0)))
-          (if (> left 0) ; all can be printed on one line
-            (out (reverse-string-append result) col)
-            (if (pair? obj)
-              (pp-pair obj col extra)
-              (pp-list (vector->list obj) (out "#" col) extra pp-expr))))
-        (wr obj col)))
-
-    (define (pp-expr expr col extra)
-      (if (read-macro? expr)
-        (pr (read-macro-body expr)
-            (out (read-macro-prefix expr) col)
-            extra
-            pp-expr)
-        (let ((head (car expr)))
-          (if (symbol? head)
-            (let ((proc (style head)))
-              (if proc
-                (proc expr col extra)
-                (if (> (string-length (symbol->string head))
-                       max-call-head-width)
-                  (pp-general expr col extra #f #f #f pp-expr)
-                  (pp-call expr col extra pp-expr))))
-            (pp-list expr col extra pp-expr)))))
-
-    ; (head item1
-    ;       item2
-    ;       item3)
-    (define (pp-call expr col extra pp-item)
-      (let ((col* (wr (car expr) (out "(" col))))
-        (and col
-             (pp-down (cdr expr) col* (+ col* 1) extra pp-item))))
-
-    ; (item1
-    ;  item2
-    ;  item3)
-    (define (pp-list l col extra pp-item)
-      (let ((col (out "(" col)))
-        (pp-down l col col extra pp-item)))
-
-    (define (pp-down l col1 col2 extra pp-item)
-      (let loop ((l l) (col col1))
-        (and col
-             (cond ((pair? l)
-                    (let ((rest (cdr l)))
-                      (let ((extra (if (null? rest) (+ extra 1) 0)))
-                        (loop rest
-                              (pr (car l) (indent col2 col) extra pp-item)))))
-                   ((null? l)
-                    (out ")" col))
-                   (else
-                    (out ")"
-                         (pr l
-                             (indent col2 (out "." (indent col2 col)))
-                             (+ extra 1)
-                             pp-item)))))))
-
-    (define (pp-general expr col extra named? pp-1 pp-2 pp-3)
-
-      (define (tail1 rest col1 col2 col3)
-        (if (and pp-1 (pair? rest))
-          (let* ((val1 (car rest))
-                 (rest (cdr rest))
-                 (extra (if (null? rest) (+ extra 1) 0)))
-            (tail2 rest col1 (pr val1 (indent col3 col2) extra pp-1) col3))
-          (tail2 rest col1 col2 col3)))
-
-      (define (tail2 rest col1 col2 col3)
-        (if (and pp-2 (pair? rest))
-          (let* ((val1 (car rest))
-                 (rest (cdr rest))
-                 (extra (if (null? rest) (+ extra 1) 0)))
-            (tail3 rest col1 (pr val1 (indent col3 col2) extra pp-2)))
-          (tail3 rest col1 col2)))
-
-      (define (tail3 rest col1 col2)
-        (pp-down rest col2 col1 extra pp-3))
-
-      (let* ((head (car expr))
-             (rest (cdr expr))
-             (col* (wr head (out "(" col))))
-        (if (and named? (pair? rest))
-          (let* ((name (car rest))
-                 (rest (cdr rest))
-                 (col** (wr name (out " " col*))))
-            (tail1 rest (+ col indent-general) col** (+ col** 1)))
-          (tail1 rest (+ col indent-general) col* (+ col* 1)))))
-
-    (define (pp-expr-list l col extra)
-      (pp-list l col extra pp-expr))
-
-    (define (pp-LAMBDA expr col extra)
-      (pp-general expr col extra #f pp-expr-list #f pp-expr))
-
-    (define (pp-IF expr col extra)
-      (pp-general expr col extra #f pp-expr #f pp-expr))
-
-    (define (pp-COND expr col extra)
-      (pp-call expr col extra pp-expr-list))
-
-    (define (pp-CASE expr col extra)
-      (pp-general expr col extra #f pp-expr #f pp-expr-list))
-
-    (define (pp-AND expr col extra)
-      (pp-call expr col extra pp-expr))
-
-    (define (pp-LET expr col extra)
-      (let* ((rest (cdr expr))
-             (named? (and (pair? rest) (symbol? (car rest)))))
-        (pp-general expr col extra named? pp-expr-list #f pp-expr)))
-
-    (define (pp-BEGIN expr col extra)
-      (pp-general expr col extra #f #f #f pp-expr))
-
-    (define (pp-DO expr col extra)
-      (pp-general expr col extra #f pp-expr-list pp-expr-list pp-expr))
-
-    (define (pp-SYNTAX-CASE expr col extra)
-      (pp-general expr col extra #t pp-expr-list #f pp-expr))
-
-    ; define formatting style (change these to suit your style)
-
-    (define indent-general 2)
-
-    (define max-call-head-width 5)
-
-    (define (style head)
-      (case head
-        ((lambda lambda* let* letrec define define* define-public
-                 define-syntax let-syntax letrec-syntax with-syntax)
-                                     pp-LAMBDA)
-        ((if set!)                   pp-IF)
-        ((cond)                      pp-COND)
-        ((case)                      pp-CASE)
-        ((and or)                    pp-AND)
-        ((let)                       pp-LET)
-        ((begin)                     pp-BEGIN)
-        ((do)                        pp-DO)
-        ((syntax-rules)              pp-LAMBDA)
-        ((syntax-case)               pp-SYNTAX-CASE)
-        (else                        #f)))
-
-    (pr obj col 0 pp-expr))
-
-  (out per-line-prefix 0)
-  (if width
-    (out genwrite:newline-str (pp obj 0))
-    (wr obj 0))
-  ;; Return `unspecified'
-  (if #f #f))
-
-; (reverse-string-append l) = (apply string-append (reverse l))
-
-(define (reverse-string-append l)
-
-  (define (rev-string-append l i)
-    (if (pair? l)
-      (let* ((str (car l))
-             (len (string-length str))
-             (result (rev-string-append (cdr l) (+ i len))))
-        (let loop ((j 0) (k (- (- (string-length result) i) len)))
-          (if (< j len)
-            (begin
-              (string-set! result k (string-ref str j))
-              (loop (+ j 1) (+ k 1)))
-            result)))
-      (make-string i)))
-
-  (rev-string-append l 0))
-
 (define* (pretty-print obj #:optional port*
-                       #:key 
+                       #:key
                        (port (or port* (current-output-port)))
                        (width 79)
                        (max-expr-width 50)
@@ -286,15 +76,239 @@ true, display rather than write representation will be used.
 
 Instead of with a keyword argument, you can also specify the output
 port directly after OBJ, like (pretty-print OBJ PORT)."
-  (generic-write obj display?
-		 (- width (string-length per-line-prefix))
-                 max-expr-width
-		 per-line-prefix
-		 (lambda (s) (display s port) #t)))
+  (define (wr obj port)
+    (define (wr-read-macro prefix x)
+      (put-string port prefix)
+      (wr x port))
+    (match obj
+      (('quote x)            (wr-read-macro "'" x))
+      (('quasiquote x)       (wr-read-macro "`" x))
+      (('unquote x)          (wr-read-macro "," x))
+      (('unquote-splicing x) (wr-read-macro ",@" x))
+      ((head . (rest ...))
+       ;; A proper list: do our own list printing so as to catch read
+       ;; macros that appear in the middle of the list.
+       (put-string port "(")
+       (wr head port)
+       (for-each (lambda (x)
+                   (put-string port " ")
+                   (wr x port))
+                 rest)
+       (put-string port ")"))
+      (_
+       ((if display? display write) obj port))))
+
+                                        ; define formatting style (change these to suit your style)
+  (define indent-general 2)
+  (define max-call-head-width 5)
+
+  (define (spaces n)
+    (when (< 0 n)
+      (put-string port "        " 0 (min 8 n))
+      (when (< 8 n)
+        (spaces (- n 8)))))
+
+  (define (indent to)
+    (let ((col (port-column port)))
+      (cond
+       ((< to col)
+        (put-string port "\n")
+        (put-string port per-line-prefix)
+        (spaces (- to (string-length per-line-prefix))))
+       (else
+        (spaces (- to col))))))
+
+  (define (pr obj pp-pair)
+    (match obj
+      ((? vector?)
+       (put-string port "#")
+       (pr (vector->list obj) pp-pair))
+      ((not (? pair?))
+       (wr obj port))
+      (('quote x)            (put-string port "'") (pr x pp-pair))
+      (('quasiquote x)       (put-string port "`") (pr x pp-pair))
+      (('unquote x)          (put-string port ",") (pr x pp-pair))
+      (('unquote-splicing x) (put-string port ",@") (pr x pp-pair))
+      (_
+       ;; A pair (and possibly a list).  May have to split on multiple
+       ;; lines.
+       (call-with-truncating-output-string
+        (lambda (port) (wr obj port))
+        (lambda (full-str) (put-string port full-str))
+        (lambda (partial-str) (pp-pair obj))
+        #:initial-column (port-column port)
+        #:max-column (- width (string-length per-line-prefix))
+        #:allow-newline? #f))))
+
+  (define (pp-expr expr)
+    (match expr
+      (((or 'quote 'quasiquote 'unquote 'unquote-splicing) _)
+       (pp-quote expr))
+      (('lambda _ _ . _)         (pp-lambda expr))
+      (('lambda* _ _ . _)        (pp-lambda expr))
+      (('let (? symbol?) _ _ . _) (pp-named-let expr))
+      (('let _ _ . _)            (pp-let expr))
+      (('let* _ _ . _)           (pp-let expr))
+      (('letrec _ _ . _)         (pp-let expr))
+      (('letrec* _ _ . _)        (pp-let expr))
+      (('let-syntax _ _ . _)     (pp-let expr))
+      (('letrec-syntax _ _ . _)  (pp-let expr))
+      (('define _ _ . _)         (pp-define expr))
+      (('define* _ _ . _)        (pp-define expr))
+      (('define-public _ _ . _)  (pp-define expr))
+      (('define-syntax _ _ . _)  (pp-define expr))
+      (('if _ _ . (or () (_)))   (pp-if expr))
+      (('cond . _)               (pp-cond expr))
+      (('case _ . _)             (pp-case expr))
+      (('begin . _)              (pp-begin expr))
+      (('do _ _ . _)             (pp-do expr))
+      (('syntax-rules _ . _)     (pp-syntax-rules expr))
+      (('syntax-case _ _ . _)    (pp-syntax-case expr))
+      (((? symbol? head) . _)
+       (if (< max-call-head-width (string-length (symbol->string head)))
+           (pp-list expr pp-expr)
+           (pp-call expr pp-expr)))
+      (_ (pp-list expr pp-expr))))
+
+  (define (pp0 head body)
+    (let ((body-col (+ (port-column port) indent-general)))
+      (put-string port "(")
+      (wr head port)
+      (pp-down body body-col pp-expr)))
+
+  (define (pp1 head param0 body pp-param0)
+    (let ((body-col (+ (port-column port) indent-general)))
+      (put-string port "(")
+      (wr head port)
+      (put-string port " ")
+      (pr param0 pp-param0)
+      (pp-down body body-col pp-expr)))
+
+  (define (pp2 head param0 param1 body pp-param0 pp-param1)
+    (let ((body-col (+ (port-column port) indent-general)))
+      (put-string port "(")
+      (wr head port)
+      (put-string port " ")
+      (pr param0 pp-param0)
+      (put-string port " ")
+      (pr param1 pp-param1)
+      (pp-down body body-col pp-expr)))
+
+  (define (pp-quote expr)
+    (match obj
+      ((head x)
+       (put-string port
+                   (match x
+                     ('quote "'")
+                     ('quasiquote "`")
+                     ('unquote ",")
+                     ('unquote-splicing ",@")))
+       (pr x pp-expr))))
+
+  (define (pp-lambda expr)
+    (match expr
+      ((head args . body)
+       (pp1 head args body pp-expr-list))))
+
+  (define (pp-let expr)
+    (match expr
+      ((head bindings . body)
+       (pp1 head bindings body pp-expr-list))))
+
+  (define (pp-named-let expr)
+    (match expr
+      ((head name bindings . body)
+       (pp2 head name bindings body pp-expr pp-expr-list))))
+
+  (define (pp-define expr)
+    (match expr
+      ((head args . body)
+       (pp1 head args body pp-expr-list))))
+
+  (define (pp-if expr)
+    (match expr
+      ((head test . body)
+       ;; "if" indent is 4.
+       (put-string port "(")
+       (wr head port)
+       (put-string port " ")
+       (let ((body-col (port-column port)))
+         (pr test pp-expr)
+         (pp-down body body-col pp-expr)))))
+
+  (define (pp-cond expr)
+    (match expr
+      ((head . clauses)
+       (pp0 head clauses))))
+
+  (define (pp-case expr)
+    (match expr
+      ((head x . clauses)
+       (pp1 head x clauses pp-expr))))
+
+  (define (pp-begin expr)
+    (match expr
+      ((head . body) (pp0 head body))))
+
+  (define (pp-do expr)
+    (match expr
+      ((head bindings exit . body)
+       (pp2 head bindings exit body pp-expr-list pp-expr-list))))
+
+  (define (pp-syntax-rules expr)
+    (match expr
+      ((head literals . clauses)
+       (pp1 head literals clauses pp-expr-list))))
+
+  (define (pp-syntax-case expr)
+    (match expr
+      ((head stx literals . clauses)
+       (pp2 head stx literals clauses pp-expr pp-expr-list))))
+
+                                        ; (head item1
+                                        ;       item2
+                                        ;       item3)
+  (define (pp-call expr pp-item)
+    (match expr
+      ((head . tail)
+       (put-string port "(")
+       (wr head port)
+       (pp-down tail (+ (port-column port) 1) pp-item))))
+
+                                        ; (item1
+                                        ;  item2
+                                        ;  item3)
+  (define (pp-list l pp-item)
+    (put-string port "(")
+    (pp-down l (port-column port) pp-item))
+
+  (define (pp-down l item-indent pp-item)
+    (let loop ((l l))
+      (match l
+        (() (put-string port ")"))
+        ((head . tail)
+         (indent item-indent)
+         (pr head pp-item)
+         (loop tail))
+        (improper-tail
+         (indent item-indent)
+         (put-string port ".")
+         (indent item-indent)
+         (pr improper-tail pp-item)
+         (put-string port ")")))))
+
+  (define (pp-expr-list l)
+    (pp-list l pp-expr))
+
+  (put-string port per-line-prefix)
+  (pr obj pp-expr)
+  (newline port)
+  ;; Return `unspecified'
+  (if #f #f))
+
 
 
-;; `truncated-print' was written in 2009 by Andy Wingo, and is not from
-;; genwrite.scm.
+
 (define* (truncated-print x #:optional port*
                           #:key
                           (port (or port* (current-output-port)))
@@ -306,7 +320,7 @@ into @var{width} characters. By default, @var{x} will be printed using
 @code{write}, though that behavior can be overriden via the
 @var{display?} keyword argument.
 
-The default behaviour is to print depth-first, meaning that the entire
+The default behavior is to print depth-first, meaning that the entire
 remaining width will be available to each sub-expression of @var{x} --
 e.g., if @var{x} is a vector, each member of @var{x}. One can attempt to
 \"ration\" the available width, trying to allocate it equally to each
@@ -373,30 +387,26 @@ sub-expression, via the @var{breadth-first?} keyword argument."
             (lp (cdr x) (- width 1 (string-length str))))))))
 
     (define (truncate-string str width)
-      ;; width is < (string-length str)
-      (let lp ((fixes '(("#<" . ">")
-                        ("#(" . ")")
-                        ("(" . ")")
-                        ("\"" . "\""))))
-        (cond
-         ((null? fixes)
-          "#")
-         ((and (string-prefix? (caar fixes) str)
-               (string-suffix? (cdar fixes) str)
-               (>= (string-length str)
-                   width
-                   (+ (string-length (caar fixes))
-                      (string-length (cdar fixes))
-                      ellipsis-width)))
-          (format #f "~a~a~a~a"
-                  (caar fixes)
-                  (substring str (string-length (caar fixes))
-                             (- width (string-length (cdar fixes))
-                                ellipsis-width))
-                  ellipsis
-                  (cdar fixes)))
-         (else
-          (lp (cdr fixes))))))
+      (unless (< width (string-length str))
+        (error "precondition failed"))
+      (or (or-map (match-lambda
+                    ((prefix . suffix)
+                     (and (string-prefix? prefix str)
+                          (<= (+ (string-length prefix)
+                                 (string-length suffix)
+                                 ellipsis-width)
+                              width)
+                          (format #f "~a~a~a"
+                                  (substring str 0
+                                             (- width (string-length suffix)
+                                                ellipsis-width))
+                                  ellipsis
+                                  suffix))))
+                  '(("#<" . ">")
+                    ("#(" . ")")
+                    ("(" . ")")
+                    ("\"" . "\"")))
+          "#"))
 
     (define* (print x width #:key inner?)
       (cond
@@ -436,9 +446,9 @@ sub-expression, via the @var{breadth-first?} keyword argument."
          ;; the truncated bitvector would print as #1b(...), so we print by hand.
          ((>= width (+ 2 ellipsis-width))
           (format #t "#*")
-          (array-for-each (lambda (xi) (format #t (if xi "1" "0")))
+          (array-for-each (lambda (xi) (display (if xi "1" "0")))
                           (make-shared-array x list (- width 2 ellipsis-width)))
-          (format #t ellipsis))
+          (display ellipsis))
          (else
           (display "#"))))
        ((and (array? x) (not (string? x)))
@@ -471,12 +481,15 @@ sub-expression, via the @var{breadth-first?} keyword argument."
          (else
           (display "#"))))
        (else
-        (let* ((str (with-output-to-string
-                      (lambda () (if display? (display x) (write x)))))
-               (len (string-length str)))
-          (display (if (<= (string-length str) width)
-                       str
-                       (truncate-string str width)))))))
+        (call-with-truncating-output-string
+         (lambda (port)
+           (if display? (display x port) (write x port)))
+         (lambda (full-str)
+           (display full-str))
+         (lambda (partial-str)
+           (display (truncate-string partial-str width)))
+         #:max-column width
+         #:allow-newline? #f))))
 
     (with-output-to-port port
       (lambda ()

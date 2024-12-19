@@ -1,5 +1,5 @@
 ;;; Diagnostic checker for CPS
-;;; Copyright (C) 2014-2021 Free Software Foundation, Inc.
+;;; Copyright (C) 2014-2021,2023 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software: you can redistribute it and/or modify
 ;;; it under the terms of the GNU Lesser General Public License as
@@ -174,6 +174,10 @@ definitions that are available at LABEL."
          (when proc (check-use proc))
          (for-each check-use args)
          (visit-first-order kfun))
+        (($ $calli args callee)
+         (for-each check-use args)
+         (check-use callee)
+         first-order)
         (($ $primcall name param args)
          (for-each check-use args)
          first-order)))
@@ -211,6 +215,10 @@ definitions that are available at LABEL."
             (when proc (check-use proc))
             (for-each check-use args)
             (visit-first-order kfun))
+           (($ $calli args callee)
+            (for-each check-use args)
+            (check-use callee)
+            first-order)
            (($ $primcall name param args)
             (for-each check-use args)
             first-order)))
@@ -290,7 +298,7 @@ definitions that are available at LABEL."
        (match cont
          ((or ($ $kreceive) ($ $ktail)) #t)
          (_ (error "expected $kreceive or $ktail continuation" cont))))
-      (($ $callk k proc args)
+      ((or ($ $calli) ($ $callk))
        (match cont
          ((or ($ $kargs) ($ $kreceive) ($ $ktail)) #t)
          (_ (error "expected $kargs, $kreceive or $ktail continuation" cont))))

@@ -36,8 +36,6 @@
   #:use-module (system foreign)
   #:use-module (system base target)
   #:use-module (srfi srfi-9)
-  #:use-module (ice-9 receive)
-  #:use-module (ice-9 vlist)
   #:export (has-elf-header?
 
             (make-elf* . make-elf)

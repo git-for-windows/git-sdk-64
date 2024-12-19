@@ -1,5 +1,5 @@
 ;;; Type analysis on CPS
-;;; Copyright (C) 2014-2021 Free Software Foundation, Inc.
+;;; Copyright (C) 2014-2021, 2023 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software: you can redistribute it and/or modify
 ;;; it under the terms of the GNU Lesser General Public License as
@@ -79,7 +79,6 @@
 (define-module (language cps types)
   #:use-module (ice-9 match)
   #:use-module (language cps)
-  #:use-module (language cps utils)
   #:use-module (language cps intmap)
   #:use-module (language cps intset)
   #:use-module (rnrs bytevectors)
@@ -196,6 +195,8 @@
   (identifier-syntax (logior &fixnum &bignum &fraction)))
 (define-syntax &real
   (identifier-syntax (logior &fixnum &bignum &flonum &fraction)))
+(define-syntax &heap-number
+  (identifier-syntax (logior &flonum &bignum &complex &fraction)))
 (define-syntax &number
   (identifier-syntax (logior &fixnum &bignum &flonum &complex &fraction)))
 
@@ -634,13 +635,6 @@ minimum, and maximum."
     (logand &all-types (lognot &immediate-types)))
   (restrict! val (if true? &heap-object-types &immediate-types) -inf.0 +inf.0))
 
-(define-predicate-inferrer (heap-number? val true?)
-  (define &heap-number-types
-    (logior &bignum &flonum &complex &fraction))
-  (define &other-types
-    (logand &all-types (lognot &heap-number-types)))
-  (restrict! val (if true? &heap-number-types &other-types) -inf.0 +inf.0))
-
 (define-predicate-inferrer (fixnum? val true?)
   (cond
    (true?
@@ -675,27 +669,49 @@ minimum, and maximum."
 
 (define-syntax-rule (define-simple-predicate-inferrer predicate type)
   (define-predicate-inferrer (predicate val true?)
-    (let ((type (if true?
-                    type
-                    (logand (&type val) (lognot type)))))
-      (restrict! val type -inf.0 +inf.0))))
+    (restrict! val (if true? type (lognot type)) -inf.0 +inf.0)))
 
-(define-simple-predicate-inferrer pair? &pair)
-(define-simple-predicate-inferrer symbol? &symbol)
-(define-simple-predicate-inferrer variable? &box)
-(define-simple-predicate-inferrer immutable-vector? &immutable-vector)
-(define-simple-predicate-inferrer mutable-vector? &mutable-vector)
-(define-simple-predicate-inferrer struct? &struct)
-(define-simple-predicate-inferrer string? &string)
-(define-simple-predicate-inferrer bytevector? &bytevector)
+(define-simple-predicate-inferrer bignum? &bignum)
 (define-simple-predicate-inferrer bitvector? &bitvector)
-(define-simple-predicate-inferrer keyword? &keyword)
-(define-simple-predicate-inferrer number? &number)
+(define-simple-predicate-inferrer bytevector? &bytevector)
 (define-simple-predicate-inferrer char? &char)
-(define-simple-predicate-inferrer procedure? &procedure)
-(define-simple-predicate-inferrer flonum? &flonum)
 (define-simple-predicate-inferrer compnum? &complex)
+(define-simple-predicate-inferrer flonum? &flonum)
+(define-simple-predicate-inferrer fixnum? &fixnum)
+(define-simple-predicate-inferrer fluid? &fluid)
 (define-simple-predicate-inferrer fracnum? &fraction)
+(define-simple-predicate-inferrer immutable-vector? &immutable-vector)
+(define-simple-predicate-inferrer keyword? &keyword)
+(define-simple-predicate-inferrer mutable-vector? &mutable-vector)
+(define-simple-predicate-inferrer pair? &pair)
+(define-simple-predicate-inferrer pointer? &pointer)
+(define-simple-predicate-inferrer program? &procedure)
+(define-simple-predicate-inferrer string? &string)
+(define-simple-predicate-inferrer struct? &struct)
+(define-simple-predicate-inferrer symbol? &symbol)
+(define-simple-predicate-inferrer syntax? &syntax)
+(define-simple-predicate-inferrer variable? &box)
+
+(define-simple-predicate-inferrer number? &number)
+(define-type-inferrer-aliases number? rational? complex?)
+(define-simple-predicate-inferrer heap-number? &heap-number)
+(define-simple-predicate-inferrer real? &real)
+(let ((&maybe-integer (logior &exact-integer &flonum &complex)))
+  (define-simple-predicate-inferrer integer? &maybe-integer))
+(define-simple-predicate-inferrer exact-integer? &exact-integer)
+(define-simple-predicate-inferrer exact? &exact-number)
+(let ((&inexact-number (logior &flonum &complex)))
+  (define-simple-predicate-inferrer inexact? &inexact-number))
+
+(define-type-inferrer-aliases eq? heap-numbers-equal?)
+
+(define-predicate-inferrer (procedure? val true?)
+  ;; Besides proper procedures, structs and smobs can also be applicable
+  ;; in the guile-vm target.
+  (define applicable-types (logior &procedure &struct &other-heap-object))
+  (when true?
+    (restrict! val (logand (&type val) applicable-types)
+               (&min val) (&max val))))
 
 (define-predicate-inferrer (vector? val true?)
   (define &not-vector (logand &all-types (lognot &vector)))
@@ -731,7 +747,80 @@ minimum, and maximum."
 
 
 ;;;
-;;; Memory.
+;;; High-level object representation.
+;;;
+
+(define-type-inferrer/param (allocate-vector param size result)
+  (define! result &vector (&min/0 size) (&max/scm-size size)))
+(define-type-inferrer/param (allocate-vector/immediate param result)
+  (define size param)
+  (define! result &vector size size))
+(define-type-inferrer (vector-length v result)
+  (define! result &u64 (&min/0 v) (&max/scm-size v)))
+(define-type-inferrer (vector-ref v idx result)
+  (restrict! v &vector (1+ (&min/0 idx)) (target-max-size-t/scm))
+  (define! result &all-types -inf.0 +inf.0))
+(define-type-inferrer/param (vector-ref/immediate param v result)
+  (define idx param)
+  (restrict! v &vector (1+ idx) (target-max-size-t/scm))
+  (define! result &all-types -inf.0 +inf.0))
+(define-type-inferrer (vector-set! v idx val)
+  (restrict! v &vector (1+ (&min/0 idx)) (target-max-size-t/scm)))
+(define-type-inferrer/param (vector-set!/immediate param v val)
+  (define idx param)
+  (restrict! v &vector (1+ param) (target-max-size-t/scm)))
+
+(define-type-inferrer (cons head tail result)
+  (define! result &pair -inf.0 +inf.0))
+(define-type-inferrer (box val result)
+  (define! result &box -inf.0 +inf.0))
+;; No inferrers for pair or box accessors; because type checks dominate
+;; these accessors, they would add no information.
+
+(define-type-inferrer/param (allocate-struct param vtable result)
+  (define nfields param)
+  ;; It would be nice to be able to restrict the vtable-size of vtable,
+  ;; but because vtables are themselves structs which have associated
+  ;; size ranges, there's nowhere to put the vtable-size ranges.  Humm!
+  (define! result &struct nfields nfields))
+(define-type-inferrer (vtable-size vtable result)
+  (define! result &u64 0 (target-max-size-t/scm)))
+;; No predicate inferrers for vtable-has-unboxed-fields? and
+;; vtable-field-boxed?, as there is nowhere to store this info.
+(define-type-inferrer (struct-vtable struct result)
+  (define! result &struct 0 (target-max-size-t/scm)))
+(define-type-inferrer/param (struct-ref param struct result)
+  (define idx param)
+  (restrict! struct &struct (1+ idx) (target-max-size-t/scm))
+  (define! result &all-types -inf.0 +inf.0))
+(define-type-inferrer/param (struct-set! param struct val)
+  (define idx param)
+  (restrict! struct &struct (1+ idx) (target-max-size-t/scm)))
+
+(define-type-inferrer (bv-contents bv result)
+  (define! result &other-heap-object -inf.0 +inf.0))
+(define-type-inferrer (bv-length bv result)
+  (define! result &u64 (&min/0 bv) (&max/size bv)))
+
+(define-type-inferrer (string-length str result)
+  (define! result &u64 (&min/0 str) (&max/size str)))
+(define-type-inferrer (string-ref str idx result)
+  (define! result &u64 0 *max-codepoint*))
+
+(define-type-inferrer (symbol-hash sym result)
+  (define! result &u64 0 &u64-max))
+
+(define-type-inferrer/param (make-closure param code result)
+  (define nfree param)
+  (define! result &procedure nfree nfree))
+;; No information would be provided by closure-ref / closure-set!
+;; inferrers.
+
+
+
+
+;;;
+;;; Low-level object representation.
 ;;;
 
 (define (annotation->type ann)
@@ -745,7 +834,8 @@ minimum, and maximum."
     ('box &box)
     ('closure &procedure)
     ('struct &struct)
-    ('atomic-box &all-types)))
+    ('atomic-box &all-types)
+    ('keyword &keyword)))
 
 (define (annotation->mutable-type ann)
   (match ann
@@ -844,7 +934,21 @@ minimum, and maximum."
 
 
 ;;;
-;;; Threads.  We don't currently track threads as an object type.
+;;; Symbols and keywords
+;;;
+(define-simple-types
+  ((symbol->keyword &symbol) &keyword)
+  ((keyword->symbol &keyword) &symbol)
+  ((symbol->string &symbol) &string)
+  ((string->symbol &string) &symbol)
+  ((string-utf8-length &string) &u64)
+  ((utf8->string &bytevector) &string))
+
+
+
+
+;;;
+;;;  We don't currently track threads as an object type.
 ;;;
 
 (define-simple-types
@@ -1345,16 +1449,6 @@ minimum, and maximum."
    (else
     (define! result &special-immediate &false &true))))
 
-(define-simple-type-checker (exact? &number))
-(define-type-inferrer (exact? val result)
-  (restrict! val &number -inf.0 +inf.0)
-  (define-type-predicate-result val result &exact-number))
-
-(define-simple-type-checker (inexact? &number))
-(define-type-inferrer (inexact? val result)
-  (restrict! val &number -inf.0 +inf.0)
-  (define-type-predicate-result val result (logior &flonum &complex)))
-
 (define-simple-type-checker (inf? &real))
 (define-type-inferrer (inf? val result)
   (restrict! val &real -inf.0 +inf.0)
@@ -1550,10 +1644,24 @@ where (A0 <= A <= A1) and (B0 <= B <= B1)."
     (lambda (min max)
       (define-exact-integer! result min max))))
 
+(define-simple-type-checker (logand/immediate &exact-integer))
+(define-type-inferrer/param (logand/immediate param a result)
+  (restrict! a &exact-integer -inf.0 +inf.0)
+  (call-with-values (lambda ()
+                      (logand-bounds (&min a) (&max a) param param))
+    (lambda (min max)
+      (define-exact-integer! result min max))))
+
 (define-type-inferrer (ulogand a b result)
   (restrict! a &u64 0 &u64-max)
   (restrict! b &u64 0 &u64-max)
   (define! result &u64 0 (min (&max/u64 a) (&max/u64 b))))
+(define-type-inferrer/param (ulogand/immediate param a result)
+  (restrict! a &u64 0 &u64-max)
+  (call-with-values (lambda ()
+                      (logand-bounds (&min a) (&max a) param param))
+    (lambda (min max)
+      (define! result &u64 min max))))
 
 (define (logsub-bounds a0 a1 b0 b1)
   "Return two values: lower and upper bounds for (logsub A B),
@@ -2033,7 +2141,7 @@ maximum, where type is a bitset as a fixnum."
                      (adjoin-var out def (var-type-entry in arg))))))))
          (_
           (propagate1 k types))))
-      ((or ($ $call) ($ $callk))
+      ((or ($ $call) ($ $callk) ($ $calli))
        (propagate1 k types))
       (($ $rec names vars funs)
        (let ((proc-type (make-type-entry &procedure -inf.0 +inf.0)))

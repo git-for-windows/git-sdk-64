@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2013, 2014, 2015, 2017, 2018, 2019, 2020, 2021 Free Software Foundation, Inc.
+;; Copyright (C) 2021,2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -114,11 +114,13 @@
   (define (format-name name) (if name (symbol->string name) "_"))
   (define (format-var var) (format #f "v~a" var))
   (define (format-loc src)
-    (and src
-         (format #f "~a:~a:~a"
-                 (or (assq-ref src 'filename) "<unknown>")
-                 (1+ (assq-ref src 'line))
-                 (assq-ref src 'column))))
+    (match src
+      (#f #f)
+      (#(filename line column)
+       (format #f "~a:~a:~a"
+               (or filename "<unknown>")
+               (1+ line)
+               column))))
   (define (arg-list strs) (string-join strs ", "))
   (define (false-if-empty str) (if (string-null? str) #f str))
   (define (format-arity arity)
@@ -161,6 +163,9 @@
                (arg-list
                 (cons (if proc (format-var proc) "_")
                       (map format-var args)))))
+      (($ $calli args callee)
+       (format #f "calli ~a(~a)"
+               (format-var callee) (arg-list (map format-var args))))
       (($ $primcall name param args)
        (format-primcall name param args))
       (($ $values args)

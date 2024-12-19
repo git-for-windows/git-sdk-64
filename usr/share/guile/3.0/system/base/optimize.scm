@@ -1,6 +1,6 @@
 ;;; Optimization flags
 
-;; Copyright (C) 2018, 2020-2022 Free Software Foundation, Inc.
+;; Copyright (C) 2018,2020-2022,2024 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -32,6 +32,7 @@
        (#:resolve-primitives? 1)
        (#:expand-primitives? 1)
        (#:letrectify? 2)
+       (#:demux-lambda? 2)
        (#:seal-private-bindings? 3)
        (#:partial-eval? 1)
        (#:eta-expand? 2)

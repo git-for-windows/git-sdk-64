@@ -320,7 +320,7 @@
 ;;       (* (remainder current-ms 1000) 10000))))
 
 ;; -- we define it to be the same as TAI.
-;;    A different implemention of current-time-monotonic
+;;    A different implementation of current-time-monotonic
 ;;    will require rewriting all of the time-monotonic converters,
 ;;    of course.
 
@@ -1268,6 +1268,8 @@
               (set! offset (+ offset (* (char->int ch)
                                         60 60))))
             (let ((ch (read-char port)))
+              (if (eqv? ch #\:)
+                  (set! ch (read-char port)))
               (if (eof-object? ch)
                   (time-error 'string->date 'bad-date-template-string
                               (list "Invalid time zone number" ch)))

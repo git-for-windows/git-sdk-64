@@ -21,7 +21,6 @@
 
 (define-module (system repl coop-server)
   #:use-module (ice-9 match)
-  #:use-module (ice-9 receive)
   #:use-module (ice-9 threads)
   #:use-module (ice-9 q)
   #:use-module (srfi srfi-9)
