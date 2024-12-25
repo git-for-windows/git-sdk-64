@@ -110,10 +110,13 @@ typedef struct _pthread_cleanup_handler
 void _pthread_cleanup_push (__pthread_cleanup_handler *handler);
 void _pthread_cleanup_pop (int execute);
 
-#define pthread_cleanup_push(_fn, _arg) { __pthread_cleanup_handler __cleanup_handler = \
-					 { _fn, _arg, NULL }; \
-					 _pthread_cleanup_push( &__cleanup_handler );
-#define pthread_cleanup_pop(_execute) _pthread_cleanup_pop( _execute ); }
+#define pthread_cleanup_push(_fn, _arg) \
+  do { \
+    __pthread_cleanup_handler __cleanup_handler = { _fn, _arg, NULL }; \
+    _pthread_cleanup_push(&__cleanup_handler)
+#define pthread_cleanup_pop(_execute) \
+    _pthread_cleanup_pop(_execute); \
+  } while (0)
 
 /* Condition variables */
 int pthread_cond_broadcast (pthread_cond_t *);
@@ -244,7 +247,7 @@ int pthread_getattr_np (pthread_t, pthread_attr_t *);
 int pthread_getname_np (pthread_t, char *, size_t) __attribute__((__nonnull__(2)));
 int pthread_setaffinity_np (pthread_t, size_t, const cpu_set_t *);
 int pthread_setname_np (pthread_t, const char *) __attribute__((__nonnull__(2)));
-int pthread_sigqueue (pthread_t *, int, const union sigval);
+int pthread_sigqueue (pthread_t, int, const union sigval);
 int pthread_timedjoin_np (pthread_t, void **, const struct timespec *);
 int pthread_tryjoin_np (pthread_t, void **);
 #endif

@@ -29,9 +29,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.12
-srcdir=		../Python-3.12.7
-VPATH=		../Python-3.12.7
-abs_srcdir=	/c/M/B/src/build-MINGW32/../Python-3.12.7
+srcdir=		../Python-3.12.8
+VPATH=		../Python-3.12.8
+abs_srcdir=	/c/M/B/src/build-MINGW32/../Python-3.12.8
 abs_builddir=	/c/M/B/src/build-MINGW32
 
 
@@ -126,7 +126,7 @@ PY_CORE_CFLAGS=	$(PY_STDMODULE_CFLAGS) -DPy_BUILD_CORE
 PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 # Strict or non-strict aliasing flags used to compile dtoa.c, see above
 CFLAGS_ALIASING=
-RCFLAGS= -DFIELD3=7150 -O COFF --target=pe-i386
+RCFLAGS= -DFIELD3=8150 -O COFF --target=pe-i386
 
 
 # Machine-dependent subdirectories
@@ -146,8 +146,8 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/M/B/src/Python-3.12.7
-abs_srcdir_b2h=		C:/M/B/src/Python-3.12.7
+srcdir_b2h=		C:/M/B/src/Python-3.12.8
+abs_srcdir_b2h=		C:/M/B/src/Python-3.12.8
 abs_builddir_b2h=	C:/M/B/src/build-MINGW32
 prefix_b2h=		D:/a/msys64/mingw32
 
@@ -979,10 +979,10 @@ $(BUILDPYTHON):	Programs/python.o $(LINK_PYTHON_DEPS) python_exe.o
 	$(LINKCC) $(PY_CORE_LDFLAGS) $(LINKFORSHARED) -municode -o $@ Programs/python.o $(LINK_PYTHON_OBJS) $(LIBS) $(MODLIBS) $(SYSLIBS) python_exe.o
 
 $(BUILDVENVLAUNCHER): $(BUILDPYTHON) venvlauncher.o  $(srcdir)/PC/launcher.c
-	$(LINKCC) -D_CONSOLE -DVENV_REDIRECT -DPYTHON_EXECUTABLE_WITH_VERSION="L\"python$(LDVERSION)$(EXE)\"" -Wno-error=incompatible-pointer-types -municode -static -static-libgcc -static-libstdc++ venvlauncher.o $(srcdir)/PC/launcher.c -o $@ -lversion
+	$(LINKCC) -D_CONSOLE -DVENV_REDIRECT -DPYTHON_EXECUTABLE_WITH_VERSION="L\"python$(LDVERSION)$(EXE)\"" $(PY_STDMODULE_CFLAGS) -municode -static -static-libgcc -static-libstdc++ venvlauncher.o $(srcdir)/PC/launcher.c -o $@ -lversion
 
 $(BUILDVENVWLAUNCHER): $(BUILDPYTHONW) venvwlauncher.o  $(srcdir)/PC/launcher.c
-	$(LINKCC) -D_WINDOWS -DVENV_REDIRECT -DPYTHON_EXECUTABLE_WITH_VERSION="L\"pythonw$(LDVERSION)$(EXE)\"" -Wno-error=incompatible-pointer-types -mwindows -municode -static -static-libgcc -static-libstdc++ venvwlauncher.o $(srcdir)/PC/launcher.c -o $@ -lversion
+	$(LINKCC) -D_WINDOWS -DVENV_REDIRECT -DPYTHON_EXECUTABLE_WITH_VERSION="L\"pythonw$(LDVERSION)$(EXE)\"" $(PY_STDMODULE_CFLAGS) -mwindows -municode -static -static-libgcc -static-libstdc++ venvwlauncher.o $(srcdir)/PC/launcher.c -o $@ -lversion
 
 platform: $(PYTHON_FOR_BUILD_DEPS) pybuilddir.txt
 	$(RUNSHARED) $(PYTHON_FOR_BUILD) -c 'import sys ; from sysconfig import get_platform ; print("%s-%d.%d" % (get_platform(), *sys.version_info[:2]))' >platform
@@ -2450,6 +2450,7 @@ TESTSUBDIRS=	idlelib/idle_test \
 		test/test_tomllib/data/valid/dates-and-times \
 		test/test_tomllib/data/valid/multiline-basic-str \
 		test/test_tools \
+		test/test_tools/i18n_data \
 		test/test_ttk \
 		test/test_unittest \
 		test/test_unittest/testmock \
@@ -2461,6 +2462,10 @@ TESTSUBDIRS=	idlelib/idle_test \
 		test/test_zoneinfo/data \
 		test/tokenizedata \
 		test/tracedmodules \
+		test/translationdata \
+		test/translationdata/argparse \
+		test/translationdata/getopt \
+		test/translationdata/optparse \
 		test/typinganndata \
 		test/wheeldata \
 		test/xmltestdata \
