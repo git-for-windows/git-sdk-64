@@ -213,8 +213,9 @@ _CRTIMP FILE *__cdecl __acrt_iob_func(unsigned index);
   wint_t __cdecl towupper(wint_t _C);
   wint_t __cdecl towlower(wint_t _C);
   int __cdecl iswctype(wint_t _C,wctype_t _Type);
-#if __MSVCRT_VERSION__ >= 0x800 || (__MSVCRT_VERSION__ == 0x700 && _WIN32_WINNT >= 0x0600)
-  /* These are available since msvcr80.dll, and in msvcrt.dll since Vista. */
+#if __MSVCRT_VERSION__ >= 0x800 || (__MSVCRT_VERSION__ == 0x600 && _WIN32_WINNT >= 0x0600)
+  /* These are available since msvcr80.dll (__MSVCRT_VERSION__ >= 0x800), and in
+   * msvcrt.dll (__MSVCRT_VERSION__ == 0x600) since Vista (_WIN32_WINNT >= 0x0600). */
   _CRTIMP int __cdecl _iswalpha_l(wint_t _C,_locale_t _Locale);
   _CRTIMP int __cdecl _iswupper_l(wint_t _C,_locale_t _Locale);
   _CRTIMP int __cdecl _iswlower_l(wint_t _C,_locale_t _Locale);
@@ -253,10 +254,23 @@ _CRTIMP FILE *__cdecl __acrt_iob_func(unsigned index);
 #ifndef _WDIRECT_DEFINED
 #define _WDIRECT_DEFINED
 
+#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
+#pragma push_macro("_wgetcwd")
+#undef _wgetcwd
+#pragma push_macro("_wgetdcwd")
+#undef _wgetdcwd
+#pragma push_macro("_wgetdcwd_nolock")
+#undef _wgetdcwd_nolock
+#endif
   _CRTIMP wchar_t *__cdecl _wgetcwd(wchar_t *_DstBuf,int _SizeInWords);
   _CRTIMP wchar_t *__cdecl _wgetdcwd(int _Drive,wchar_t *_DstBuf,int _SizeInWords);
 #if __MSVCRT_VERSION__ >= 0x800
   wchar_t *__cdecl _wgetdcwd_nolock(int _Drive,wchar_t *_DstBuf,int _SizeInWords);
+#endif
+#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
+#pragma pop_macro("_wgetcwd")
+#pragma pop_macro("_wgetdcwd")
+#pragma pop_macro("_wgetdcwd_nolock")
 #endif
   _CRTIMP int __cdecl _wchdir(const wchar_t *_Path);
   _CRTIMP int __cdecl _wmkdir(const wchar_t *_Path);
@@ -336,7 +350,7 @@ _CRTIMP FILE *__cdecl __acrt_iob_func(unsigned index);
 #define iswgraph(_c) (iswctype(_c,_PUNCT|_ALPHA|_DIGIT))
 #define iswcntrl(_c) (iswctype(_c,_CONTROL))
 #define iswascii(_c) ((unsigned)(_c) < 0x80)
-#if __MSVCRT_VERSION__ >= 0x800 || (__MSVCRT_VERSION__ == 0x700 && _WIN32_WINNT >= 0x0600)
+#if __MSVCRT_VERSION__ >= 0x800 || (__MSVCRT_VERSION__ == 0x600 && _WIN32_WINNT >= 0x0600)
 # define _iswalpha_l(_c,_p) (_iswctype_l(_c,_ALPHA,_p))
 # define _iswupper_l(_c,_p) (_iswctype_l(_c,_UPPER,_p))
 # define _iswlower_l(_c,_p) (_iswctype_l(_c,_LOWER,_p))
@@ -1117,7 +1131,15 @@ __MINGW_ASM_CALL(__mingw_vsnwprintf);
 #endif
 #endif
 
+#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
+#pragma push_macro("_wtempnam")
+#undef _wtempnam
+#endif
   _CRTIMP wchar_t *__cdecl _wtempnam(const wchar_t *_Directory,const wchar_t *_FilePrefix);
+#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
+#pragma pop_macro("_wtempnam")
+#endif
+
 #ifndef _UCRT
   _CRTIMP int __cdecl _vscwprintf(const wchar_t * __restrict__ _Format,va_list _ArgList);
   _CRTIMP int __cdecl _vscwprintf_l(const wchar_t * __restrict__ _Format,_locale_t _Locale,va_list _ArgList);
@@ -1223,7 +1245,14 @@ __MINGW_ASM_CALL(__mingw_vsnwprintf);
 #ifndef _POSIX_
 #ifndef _WSTDLIBP_DEFINED
 #define _WSTDLIBP_DEFINED
+#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
+#pragma push_macro("_wfullpath")
+#undef _wfullpath
+#endif
   _CRTIMP wchar_t *__cdecl _wfullpath(wchar_t *_FullPath,const wchar_t *_Path,size_t _SizeInWords);
+#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
+#pragma pop_macro("_wfullpath")
+#endif
   _CRTIMP void __cdecl _wmakepath(wchar_t *_ResultPath,const wchar_t *_Drive,const wchar_t *_Dir,const wchar_t *_Filename,const wchar_t *_Ext);
 #ifndef _CRT_WPERROR_DEFINED
 #define _CRT_WPERROR_DEFINED
@@ -1237,7 +1266,14 @@ __MINGW_ASM_CALL(__mingw_vsnwprintf);
 
 #ifndef _WSTRING_DEFINED
 #define _WSTRING_DEFINED
+#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
+#pragma push_macro("_wcsdup")
+#undef _wcsdup
+#endif
   _CRTIMP wchar_t *__cdecl _wcsdup(const wchar_t *_Str);
+#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
+#pragma pop_macro("_wcsdup")
+#endif
   wchar_t *__cdecl wcscat(wchar_t * __restrict__ _Dest,const wchar_t * __restrict__ _Source) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
   _CONST_RETURN wchar_t *__cdecl wcschr(const wchar_t *_Str,wchar_t _Ch);
   int __cdecl wcscmp(const wchar_t *_Str1,const wchar_t *_Str2);
@@ -1286,7 +1322,14 @@ __MINGW_ASM_CALL(__mingw_vsnwprintf);
   _CRTIMP int __cdecl _wcsnicoll_l(const wchar_t *_Str1,const wchar_t *_Str2,size_t _MaxCount,_locale_t _Locale);
 
 #ifndef	NO_OLDNAMES
+#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
+#pragma push_macro("wcsdup")
+#undef wcsdup
+#endif
   wchar_t *__cdecl wcsdup(const wchar_t *_Str) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
+#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
+#pragma pop_macro("wcsdup")
+#endif
 #define wcswcs wcsstr
   int __cdecl wcsicmp(const wchar_t *_Str1,const wchar_t *_Str2) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
   int __cdecl wcsnicmp(const wchar_t *_Str1,const wchar_t *_Str2,size_t _MaxCount) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
