@@ -148,7 +148,8 @@ if ($pacnew.Length -gt 0) {
   }
   bash -lc @"
     set -x &&
-    . /var/lib/pacman/local/mingw-w64-*-git-extra-[0-9]*/install 2>/dev/null &&
+    . /var/lib/pacman/local/mingw-w64-*-git-extra-[0-9]*/install &&
+    cd / &&
     post_upgrade
 "@
 }
