@@ -23,10 +23,10 @@ function die {
 Set-Location $PSScriptRoot
 if (!$?) { die "Could not switch directory to $PSScriptRoot" }
 
-$env:PATH = "$(Get-Location)\usr\bin;" + $env:PATH
+$env:PATH = "$(Get-Location)\mingw64\bin;$(Get-Location)\usr\bin;" + $env:PATH
 
 # Set to MSYS mode
-$env:MSYSTEM = "MSYS"
+$env:MSYSTEM = "MINGW64"
 $env:MSYS2_PATH_TYPE = "minimal"
 
 # Create /var/log/ so that pacman.log is written
@@ -148,7 +148,8 @@ if ($pacnew.Length -gt 0) {
   }
   bash -lc @"
     set -x &&
-    . /var/lib/pacman/local/mingw-w64-*-git-extra-[0-9]*/install 2>/dev/null &&
+    . /var/lib/pacman/local/mingw-w64-*-git-extra-[0-9]*/install &&
+    cd / &&
     post_upgrade
 "@
 }
