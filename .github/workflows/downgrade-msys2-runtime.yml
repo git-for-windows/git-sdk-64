@@ -1,0 +1,65 @@
+name: downgrade-msys2-runtime
+
+on:
+  push:
+    branches:
+    - downgrade-to-msys2-runtime-v3.5.4
+
+env:
+  GIT_CONFIG_PARAMETERS: "'user.name=Git for Windows Build Agent' 'user.email=ci@git-for-windows.build' 'http.sslbackend=schannel' 'core.autocrlf=false' 'checkout.workers=56'"
+  HOME: "${{ github.workspace }}\\home\\git-ci"
+  MSYSTEM: MSYS
+
+jobs:
+  downgrade-msys2-runtime:
+    # We can get away with using x86_64 runners even on Windows/ARM64 because the MSYS2 runtime is actually x86_64
+    runs-on: windows-latest
+    environment: sync
+    permissions:
+      contents: write
+    steps:
+      - name: clone git-sdk-64
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          token: ${{ secrets.PUSH_TOKEN }}
+      - name: use git-sdk-64's Bash and Git for Windows' git.exe
+        run: "usr\\bin\\bash.exe -lc 'cygpath -aw /usr/bin >>$GITHUB_PATH && cygpath -aw /c/Program\\ Files/Git/cmd/ >>$GITHUB_PATH'"
+      - name: download MSYS2 runtime package
+        id: download
+        shell: bash
+        run: |
+          set -ex
+
+          # Only do this unless `msys2-runtime` is already prevented from being upgraded
+          grep '^ *IgnorePkg *= *msys2-runtime' etc/pacman.conf && exit 0
+
+          # Only do this unless `msys2-runtime` is at a known-bad version
+          test -d /var/lib/pacman/local/msys2-runtime-3.5.5-[12] || exit 0
+
+          curl -fsLO https://wingit.blob.core.windows.net/x86-64/msys2-runtime-3.5.4-5-x86_64.pkg.tar.xz
+          curl -fsLO https://wingit.blob.core.windows.net/x86-64/msys2-runtime-3.5.4-5-x86_64.pkg.tar.xz.sig
+          curl -fsLO https://wingit.blob.core.windows.net/x86-64/msys2-runtime-devel-3.5.4-5-x86_64.pkg.tar.xz
+          curl -fsLO https://wingit.blob.core.windows.net/x86-64/msys2-runtime-devel-3.5.4-5-x86_64.pkg.tar.xz.sig
+          echo "result=$(echo msys2-runtime-*.pkg.tar.xz)" >>$GITHUB_OUTPUT
+      - name: give the `/etc/profile.d/` scripts a chance to set things up
+        if: steps.download.outputs.result != ''
+        shell: bash
+        run: |
+          bash -lc 'uname -a'
+      - name: install ${{ steps.download.outputs.result }}
+        if: steps.download.outputs.result != ''
+        shell: pwsh
+        run: pacman -U --noconfirm ${{ steps.download.outputs.result }}
+      - name: commit ${{ steps.download.outputs.result }}
+        if: steps.download.outputs.result != ''
+        shell: bash
+        run: |
+          rm ${{ steps.download.outputs.result }} *.pkg.tar.xz.sig &&
+          git add -A &&
+          git commit -m 'Downgrade MSYS2 runtime to a non-hanging version' &&
+          sed -i 's/^# *\(IgnorePkg *=\).*/\1 msys2-runtime/' etc/pacman.conf &&
+          git commit -m 'Prevent `msys2-runtime` from being upgraded' \
+            -m 'It has been overridden with a version that does not hang Git'\''s test suite' \
+            etc/pacman.conf &&
+          git push origin HEAD
