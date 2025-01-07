@@ -23,4 +23,4 @@ else
   fi
 fi
 
-cp -p ${GETTEXTSRCPODIR-$GETTEXT_TOPSRCDIR/gettext-runtime/po}/remove-potcdate.sin po/remove-potcdate.sin
+cp -p ${GETTEXTSRCPODIR-$GETTEXT_TOPSRCDIR/gettext-runtime/po}/remove-potcdate.sed po/remove-potcdate.sed

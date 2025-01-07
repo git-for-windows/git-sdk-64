@@ -1,6 +1,6 @@
 // * This makes emacs happy -*-Mode: C++;-*-
 /****************************************************************************
- * Copyright 2018-2021,2022 Thomas E. Dickey                                *
+ * Copyright 2018-2022,2024 Thomas E. Dickey                                *
  * Copyright 1998-2012,2017 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
@@ -32,7 +32,7 @@
  *   Author: Juergen Pfeifer, 1997                                          *
  ****************************************************************************/
 
-// $Id: etip.h.in,v 1.50 2022/08/20 20:50:00 tom Exp $
+// $Id: etip.h.in,v 1.51 2024/12/14 19:08:16 tom Exp $
 
 #ifndef NCURSES_ETIP_H_incl
 #define NCURSES_ETIP_H_incl 1
@@ -118,7 +118,9 @@
 #  include <generic.h>
 #endif
 
-#include <ncursesw/curses.h>
+// This used to include <ncursesw/curses.h>, but Apple's configuration as of 2024
+// provides only a broken version of ncurses's header, which interferes
+// with the configure script.
 
 extern "C" {
 #if HAVE_VALUES_H
@@ -128,6 +130,10 @@ extern "C" {
 #include <assert.h>
 #include <ncursesw/eti.h>
 #include <errno.h>
+
+#ifndef HAVE_CONFIG_H
+int endwin(void);	// needed for the configure check
+#endif
 }
 
 // Language features

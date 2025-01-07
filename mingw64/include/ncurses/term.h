@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018-2021,2023 Thomas E. Dickey                                *
+ * Copyright 2018-2023,2024 Thomas E. Dickey                                *
  * Copyright 1998-2013,2017 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
@@ -33,7 +33,7 @@
 /*    and: Thomas E. Dickey                        1995-on                  */
 /****************************************************************************/
 
-/* $Id: MKterm.h.awk.in,v 1.85 2023/04/23 19:15:36 tom Exp $ */
+/* $Id: MKterm.h.awk.in,v 1.87 2024/12/28 21:42:15 tom Exp $ */
 
 /*
 **	term.h -- Definition of struct term
@@ -59,9 +59,10 @@ extern "C" {
 
 typedef struct screen  SCREEN;
 
+/* configured with --enable-sp-funcs? */
 #if 1
 #undef  NCURSES_SP_FUNCS
-#define NCURSES_SP_FUNCS 20240831
+#define NCURSES_SP_FUNCS 20241228
 #undef  NCURSES_SP_NAME
 #define NCURSES_SP_NAME(name) name##_sp
 
@@ -119,6 +120,7 @@ typedef int (*NCURSES_SP_OUTC)(SCREEN*, int);
 #else /* !HAVE_TERMIO_H */
 
 #if (defined(_WIN32) || defined(_WIN64))
+/* configured with --enable-exp-win32? */
 #if 0
 #include <ncursesw/win32_curses.h>
 #define TTY struct winconmode
@@ -139,6 +141,7 @@ typedef int (*NCURSES_SP_OUTC)(SCREEN*, int);
 #ifdef TERMIOS
 #define GET_TTY(fd, buf) tcgetattr(fd, buf)
 #define SET_TTY(fd, buf) tcsetattr(fd, TCSADRAIN, buf)
+/* configured with --enable-exp-win32? */
 #elif 0 && (defined(_WIN32) || defined(_WIN64))
 #define GET_TTY(fd, buf) _nc_console_getmode(_nc_console_fd2handle(fd),buf)
 #define SET_TTY(fd, buf) _nc_console_setmode(_nc_console_fd2handle(fd),buf)
@@ -717,6 +720,7 @@ typedef struct termtype {	/* in-core form of terminfo data */
 #define TERMINAL struct term
 TERMINAL;
 
+/* configured with --enable-ext-colors */
 typedef struct termtype2 {	/* in-core form of terminfo data */
     char  *term_names;		/* str_table offset of term names */
     char  *str_table;		/* pointer to string table */
@@ -746,9 +750,10 @@ typedef struct term {		/* describe an actual terminal */
 
 #endif /* NCURSES_INTERNALS */
 
-
+/* configured with --enable-broken_linker and reentrancy disabled */
 #if 0 && !0
 extern NCURSES_EXPORT_VAR(TERMINAL *) cur_term;
+/* reentrancy enabled */
 #elif 0
 NCURSES_WRAPPED_VAR(TERMINAL *, cur_term);
 #define cur_term   NCURSES_PUBLIC_VAR(cur_term())
@@ -756,6 +761,7 @@ NCURSES_WRAPPED_VAR(TERMINAL *, cur_term);
 extern NCURSES_EXPORT_VAR(TERMINAL *) cur_term;
 #endif
 
+/* configured with --enable-broken_linker or reentrancy enabled */
 #if 0 || 0
 NCURSES_WRAPPED_VAR(NCURSES_CONST char * const *, boolnames);
 NCURSES_WRAPPED_VAR(NCURSES_CONST char * const *, boolcodes);
@@ -826,6 +832,7 @@ extern NCURSES_EXPORT(int) putp (const char *);
 extern NCURSES_EXPORT(int) tigetflag (const char *);
 extern NCURSES_EXPORT(int) tigetnum (const char *);
 
+/* configured without --disable-tparm-varargs? */
 #if 1 /* NCURSES_TPARM_VARARGS */
 extern NCURSES_EXPORT(char *) tparm (const char *, ...);	/* special */
 #else
@@ -858,6 +865,7 @@ extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(putp) (SCREEN*, const char *);
 extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(tigetflag) (SCREEN*, const char *);
 extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(tigetnum) (SCREEN*, const char *);
 
+/* configured without --disable-tparm-varargs? */
 #if 1 /* NCURSES_TPARM_VARARGS */
 extern NCURSES_EXPORT(char *)  NCURSES_SP_NAME(tparm) (SCREEN*, const char *, ...);	/* special */
 #else

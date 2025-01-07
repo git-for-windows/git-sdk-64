@@ -12,17 +12,24 @@ AC_PROG_CXX
 # Try to find compiler option for ISO C++ 20 support.
 cat <<\EOF > conftest.cc
 #include <format>
+#if __cpp_lib_format <= 202106L
 using std::vformat;
 using std::make_format_args;
+#else
+using std::format;
+using std::runtime_format;
+#endif
 EOF
 if ${CXX} ${CXXFLAGS} ${CPPFLAGS} -c conftest.cc 2>/dev/null; then
   :
 elif ${CXX} ${CXXFLAGS} -std=gnu++20 ${CPPFLAGS} -c conftest.cc 2>/dev/null; then
   CXXFLAGS="${CXXFLAGS} -std=gnu++20"
+elif ${CXX} ${CXXFLAGS} -std=gnu++26 ${CPPFLAGS} -c conftest.cc 2>/dev/null; then
+  CXXFLAGS="${CXXFLAGS} -std=gnu++26"
 fi
 
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.22])
+AM_GNU_GETTEXT_VERSION([0.23])
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([m4/Makefile])

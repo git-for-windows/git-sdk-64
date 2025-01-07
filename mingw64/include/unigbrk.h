@@ -28,7 +28,7 @@
 #define _UNIGBRK_H
 
 /* Get bool.  */
-#include <unistring/stdbool.h>
+#include <stdbool.h>
 
 /* Get size_t. */
 #include <stddef.h>

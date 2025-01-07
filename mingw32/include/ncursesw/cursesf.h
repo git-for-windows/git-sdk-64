@@ -1,7 +1,7 @@
 // * This makes emacs happy -*-Mode: C++;-*-
 // vile:cppmode
 /****************************************************************************
- * Copyright 2019-2021,2022 Thomas E. Dickey                                *
+ * Copyright 2019-2022,2024 Thomas E. Dickey                                *
  * Copyright 1998-2012,2014 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
@@ -33,7 +33,7 @@
  *   Author: Juergen Pfeifer, 1997                                          *
  ****************************************************************************/
 
-// $Id: cursesf.h,v 1.39 2022/08/20 20:52:15 tom Exp $
+// $Id: cursesf.h,v 1.40 2024/10/05 22:47:12 tom Exp $
 
 #ifndef NCURSES_CURSESF_H_incl
 #define NCURSES_CURSESF_H_incl 1
@@ -384,7 +384,7 @@ protected:
   }
 
   inline void *get_user() {
-    UserHook* uptr = reinterpret_cast<UserHook*>(::form_userptr (form));
+    const UserHook* uptr = reinterpret_cast<UserHook*>(::form_userptr (form));
     assert (uptr != 0 && uptr->m_back==this && uptr->m_owner==form);
     return uptr->m_user;
   }

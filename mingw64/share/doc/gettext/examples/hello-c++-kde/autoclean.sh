@@ -28,7 +28,7 @@ rm -f m4/nls.m4
 rm -f m4/po.m4
 rm -f m4/progtest.m4
 rm -f po/Makefile.in.in
-rm -f po/remove-potcdate.sin
+rm -f po/remove-potcdate.sed
 rm -f admin/config.rpath
 
 # Generated through admin/cvs.sh.

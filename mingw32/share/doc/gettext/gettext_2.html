@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on February, 21 2024 by texi2html 1.78a -->
+<!-- Created on December, 31 2024 by texi2html 1.78a -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -51,7 +51,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="gettext_21.html#SEC389" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_21.html#SEC400" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 
@@ -151,11 +151,20 @@ prompt, merely execute
 <h3 class="subsection"> <a href="gettext_toc.html#TOC11">2.3.1 Locale Names</a> </h3>
 
 <p>A locale name usually has the form &lsquo;<samp><var>ll</var>_<var>CC</var></samp>&rsquo;.  Here
-&lsquo;<samp><var>ll</var></samp>&rsquo; is an ISO 639 two-letter language code, and
-&lsquo;<samp><var>CC</var></samp>&rsquo; is an ISO 3166 two-letter country code.  For example,
+</p>
+<ul>
+<li>
+&lsquo;<samp><var>ll</var></samp>&rsquo; is an ISO 639 two-letter language code.
+For some languages,
+a two-letter code does not exist, and a three-letter code is used instead.
+</li><li>
+&lsquo;<samp><var>CC</var></samp>&rsquo; is an ISO 3166 two-letter code of a country or territory.
+</li></ul>
+
+<p>For example,
 for German in Germany, <var>ll</var> is <code>de</code>, and <var>CC</var> is <code>DE</code>.
-You find a list of the language codes in appendix <a href="gettext_18.html#SEC373">Language Codes</a> and
-a list of the country codes in appendix <a href="gettext_19.html#SEC376">Country Codes</a>.
+You find a list of the language codes in appendix <a href="gettext_18.html#SEC384">Language Codes</a> and
+a list of the country codes in appendix <a href="gettext_19.html#SEC387">Country Codes</a>.
 </p>
 <p>You might think that the country code specification is redundant.  But in
 fact, some languages have dialects in different countries.  For example,
@@ -186,12 +195,20 @@ or the orthography rules, or similar.
 &lsquo;<samp><var>ll</var></samp>&rsquo;.  You can get the list of locales supported by your system
 for your language by running the command &lsquo;<samp>locale -a | grep '^<var>ll</var>'</samp>&rsquo;.
 </p>
-<p>There is also a special locale, called &lsquo;<samp>C</samp>&rsquo;.
+<p>There are also two special locales:
+</p><ul>
+<li> The locale called &lsquo;<samp>C</samp>&rsquo;.<br>
 When it is used, it disables all localization: in this locale, all programs
 standardized by POSIX use English messages and an unspecified character
 encoding (often US-ASCII, but sometimes also ISO-8859-1 or UTF-8, depending on
 the operating system).
-</p>
+</li><li> The locale called &lsquo;<samp>C.UTF-8</samp>&rsquo;.<br>
+This locale exists on all modern GNU and Unix systems,
+but not on all operating systems.
+When it is used, it disables all localization as well.
+It uses UTF-8 as character encoding.
+</li></ul>
+
 
 <a name="Locale-Environment-Variables"></a>
 <a name="SEC12"></a>
@@ -281,6 +298,18 @@ For example, &lsquo;<samp>de</samp>&rsquo; is equivalent to &lsquo;<samp>de_DE</
 Germany), and &lsquo;<samp>pt</samp>&rsquo; to &lsquo;<samp>pt_PT</samp>&rsquo; (Portuguese as spoken in Portugal)
 in this context.
 </p>
+<p>Special advice for Chinese users:
+Users who want to see translations with Simplified Chinese characters
+should set <code>LANGUAGE</code> to <code>zh_CN</code>,
+whereas users who want to see translations with Traditional Chinese characters
+should set <code>LANGUAGE</code> to <code>zh_TW</code>.
+Chinese users in Singapore will want to set it to <code>zh_SG:zh_CN</code>,
+Chinese users in Hong Kong will want to set it to <code>zh_HK:zh_TW</code>,
+and Chinese users in Macao will want to set it to <code>zh_MO:zh_TW</code>.
+Here <code>zh_CN</code> or <code>zh_TW</code>, respectively, acts as fallback,
+since only few packages have translations
+for <code>zh_SG</code>, <code>zh_HK</code>, or <code>zh_MO</code>.
+</p>
 <p>Note: The variable <code>LANGUAGE</code> is ignored if the locale is set to
 &lsquo;<samp>C</samp>&rsquo;.  In other words, you have to first enable localization, by setting
 <code>LANG</code> (or <code>LC_ALL</code>) to a value other than &lsquo;<samp>C</samp>&rsquo;, before you can
@@ -361,12 +390,12 @@ message translations for the language whose abbreviation of <var>ll</var>.
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="gettext_21.html#SEC389" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_21.html#SEC400" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Bruno Haible</em> on <em>February, 21 2024</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
+  This document was generated by <em>Bruno Haible</em> on <em>December, 31 2024</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
  </font>
  <br>
 

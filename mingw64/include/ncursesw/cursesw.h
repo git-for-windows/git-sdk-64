@@ -1,7 +1,7 @@
 // * This makes emacs happy -*-Mode: C++;-*-
 // vile:cppmode
 /****************************************************************************
- * Copyright 2019-2021,2022 Thomas E. Dickey                                *
+ * Copyright 2019-2022,2024 Thomas E. Dickey                                *
  * Copyright 1998-2014,2017 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
@@ -32,11 +32,9 @@
 #ifndef NCURSES_CURSESW_H_incl
 #define NCURSES_CURSESW_H_incl 1
 
-// $Id: cursesw.h,v 1.59 2022/08/20 20:52:15 tom Exp $
+// $Id: cursesw.h,v 1.61 2024/12/15 16:06:49 tom Exp $
 
-extern "C" {
-#  include   <ncursesw/curses.h>
-}
+#include <ncursesw/curses.h>
 
 #if defined(BUILDING_NCURSES_CXX)
 # define NCURSES_CXX_IMPEXP NCURSES_EXPORT_GENERAL_EXPORT

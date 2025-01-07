@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on February, 21 2024 by texi2html 1.78a -->
+<!-- Created on December, 31 2024 by texi2html 1.78a -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -43,7 +43,7 @@ ul.toc {list-style: none}
 
 <table cellpadding="1" cellspacing="1" border="0">
 <tr><td valign="middle" align="left">[<a href="gettext_3.html#SEC16" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="gettext_5.html#SEC35" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="gettext_5.html#SEC40" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
@@ -51,7 +51,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="gettext_21.html#SEC389" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_21.html#SEC400" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 
@@ -77,7 +77,7 @@ needing translation.
 
 <p>Presuming that your set of programs, or package, has been adjusted
 so all needed GNU <code>gettext</code> files are available, and your
-&lsquo;<tt>Makefile</tt>&rsquo; files are adjusted (see section <a href="gettext_13.html#SEC230">The Maintainer's View</a>), each C module
+&lsquo;<tt>Makefile</tt>&rsquo; files are adjusted (see section <a href="gettext_13.html#SEC238">The Maintainer's View</a>), each C module
 having translated C strings should contain the line:
 </p>
 <a name="IDX116"></a>
@@ -168,9 +168,14 @@ declared in the <code>&lt;string.h&gt;</code> and <code>&lt;stdlib.h&gt;</code> 
 If this is not
 desirable in your application (for example in a compiler's parser),
 you can use a set of substitute functions which hardwire the C locale,
-such as found in the modules &lsquo;<samp>c-ctype</samp>&rsquo;, &lsquo;<samp>c-strcase</samp>&rsquo;,
-&lsquo;<samp>c-strcasestr</samp>&rsquo;, &lsquo;<samp>c-strtod</samp>&rsquo;, &lsquo;<samp>c-strtold</samp>&rsquo; in the GNU gnulib
-source distribution.
+such as found in the modules
+&lsquo;<samp>c-ctype</samp>&rsquo;,
+&lsquo;<samp>c-strcase</samp>&rsquo;,
+&lsquo;<samp>c-strcasestr</samp>&rsquo;,
+&lsquo;<samp>c-snprintf</samp>&rsquo;,
+&lsquo;<samp>c-strtod</samp>&rsquo;, &lsquo;<samp>c-strtold</samp>&rsquo;,
+&lsquo;<samp>c-dtoastr</samp>&rsquo;, &lsquo;<samp>c-ldtoastr</samp>&rsquo;
+in the GNU gnulib source distribution.
 </p>
 <p>It is also possible to switch the locale forth and back between the
 environment dependent locale and the C locale, but this approach is
@@ -216,8 +221,11 @@ Avoid unusual markup and unusual control characters.
 
 <p>Let's look at some examples of these guidelines.
 </p>
+
+
+<a name="Decent-English-style"></a>
 <a name="SEC21"></a>
-<h3 class="subheading"> Decent English style </h3>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC21">4.3.1 Decent English style</a> </h3>
 
 <p>Translatable strings should be in good English style.  If slang language
 with abbreviations and shortcuts is used, often translators will not
@@ -241,8 +249,10 @@ of the objects&quot;?
 <p>In both cases, adding more words to the message will help both the
 translator and the English speaking user.
 </p>
+
+<a name="Entire-sentences"></a>
 <a name="SEC22"></a>
-<h3 class="subheading"> Entire sentences </h3>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC22">4.3.2 Entire sentences</a> </h3>
 
 <p>Translatable strings should be entire sentences.  It is often not possible
 to translate single verbs or adjectives in a substitutable way.
@@ -301,10 +311,12 @@ makes it easier for the translator to understand and translate both.  On
 the other hand, if one of the two messages is a stereotypic one, occurring
 in other places as well, you will do a favour to the translator by not
 merging the two.  (Identical messages occurring in several places are
-combined by xgettext, so the translator has to handle them once only.)
+combined by <code>xgettext</code>, so the translator has to handle them once only.)
 </p>
+
+<a name="Split-at-paragraphs"></a>
 <a name="SEC23"></a>
-<h3 class="subheading"> Split at paragraphs </h3>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC23">4.3.3 Split at paragraphs</a> </h3>
 
 <p>Translatable strings should be limited to one paragraph; don't let a
 single message be longer than ten lines.  The reason is that when the
@@ -323,8 +335,10 @@ such as the input options, the output options, and the informative
 output options.  This will help every user to find the option he is
 looking for.
 </p>
+
+<a name="No-string-concatenation"></a>
 <a name="SEC24"></a>
-<h3 class="subheading"> No string concatenation </h3>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC24">4.3.4 No string concatenation</a> </h3>
 
 <p>Hardcoded string concatenation is sometimes used to construct English
 strings:
@@ -344,7 +358,189 @@ to use a format string:
 <table><tr><td>&nbsp;</td><td><pre class="example">sprintf (s, &quot;Replace %s with %s?&quot;, object1, object2);
 </pre></td></tr></table>
 
+<a name="SEC25"></a>
+<h3 class="subheading"> String concatenation operator </h3>
+
+<p>In many programming languages,
+a particular operator denotes string concatenation
+at runtime (or possibly at compile time, if the compiler supports that).
+</p>
 <a name="IDX128"></a>
+<a name="IDX129"></a>
+<a name="IDX130"></a>
+<a name="IDX131"></a>
+<a name="IDX132"></a>
+<a name="IDX133"></a>
+<a name="IDX134"></a>
+<a name="IDX135"></a>
+<a name="IDX136"></a>
+<a name="IDX137"></a>
+<a name="IDX138"></a>
+<a name="IDX139"></a>
+<ul>
+<li>
+In C++, string concatenation of <code>std::string</code> objects
+is denoted by the &lsquo;<samp>+</samp>&rsquo; operator.
+</li><li>
+In Shell, string concatenation is denoted by mere juxtaposition of strings.
+</li><li>
+In Python, string concatenation is denoted by the &lsquo;<samp>+</samp>&rsquo; operator.
+</li><li>
+In Smalltalk, string concatenation is denoted by the &lsquo;<samp>,</samp>&rsquo; operator.
+</li><li>
+In Java, string concatenation is denoted by the &lsquo;<samp>+</samp>&rsquo; operator.
+</li><li>
+In C#, string concatenation is denoted by the &lsquo;<samp>+</samp>&rsquo; operator.
+</li><li>
+In awk, string concatenation is denoted by mere juxtaposition of strings.
+</li><li>
+In Perl, string concatenation is denoted by the &lsquo;<samp>.</samp>&rsquo; operator.
+</li><li>
+In PHP, string concatenation is denoted by the &lsquo;<samp>.</samp>&rsquo; operator.
+</li><li>
+In Ruby, string concatenation is denoted by the &lsquo;<samp>+</samp>&rsquo; operator.
+</li><li>
+In Lua, string concatenation is denoted by the &lsquo;<samp>..</samp>&rsquo; operator.
+</li><li>
+In JavaScript, string concatenation is denoted by the &lsquo;<samp>+</samp>&rsquo; operator.
+</li><li>
+In Vala, string concatenation is denoted by the &lsquo;<samp>+</samp>&rsquo; operator.
+</li></ul>
+
+<p>So, for example, in Java, you would change
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">System.out.println(&quot;Replace &quot;+object1+&quot; with &quot;+object2+&quot;?&quot;);
+</pre></td></tr></table>
+
+<p>into a statement involving a format string:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">System.out.println(
+    MessageFormat.format(&quot;Replace {0} with {1}?&quot;,
+                         new Object[] { object1, object2 }));
+</pre></td></tr></table>
+
+<p>Similarly, in C#, you would change
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">Console.WriteLine(&quot;Replace &quot;+object1+&quot; with &quot;+object2+&quot;?&quot;);
+</pre></td></tr></table>
+
+<p>into a statement involving a format string:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">Console.WriteLine(
+    String.Format(&quot;Replace {0} with {1}?&quot;, object1, object2));
+</pre></td></tr></table>
+
+<a name="SEC26"></a>
+<h3 class="subheading"> Strings with embedded expressions </h3>
+
+<p>In some programming languages,
+it is possible to have strings with embedded expressions.
+The expressions can refer to variables of the program.
+The value of such an expression is converted to a string
+and inserted in place of the expression;
+but no formatting function is called.
+</p>
+<a name="IDX140"></a>
+<a name="IDX141"></a>
+<a name="IDX142"></a>
+<a name="IDX143"></a>
+<a name="IDX144"></a>
+<a name="IDX145"></a>
+<a name="IDX146"></a>
+<a name="IDX147"></a>
+<ul>
+<li>
+In Shell language, double-quoted strings can contain
+references to variables, along with default values and string operations.
+Such as <code>&quot;Hello, $name!&quot;</code> or <code>&quot;Hello, ${name}!&quot;</code>.
+</li><li>
+In Python, <em>f-strings</em> can contain expressions.
+Such as <code>f&quot;Hello, {name}!&quot;</code>.
+</li><li>
+In C#, since C# 6.0, <em>interpolated strings</em> can contain expressions.
+Such as <code>$&quot;Hello, {name}!&quot;</code>.
+</li><li>
+In Tcl, strings are subject to <em>variable substitution</em>.
+Such as <code>&quot;Hello, $name!&quot;</code>.
+</li><li>
+In Perl, <em>interpolated strings</em> can contain expressions.
+Such as <code>&quot;Hello, $name!&quot;</code>.
+</li><li>
+In PHP, string literals are subject to <em>variable parsing</em>.
+Such as <code>&quot;Hello, $name!&quot;</code>.
+</li><li>
+In Ruby, <em>interpolated strings</em> can contain expressions.
+Such as <code>&quot;Hello, #{name}!&quot;</code>.
+</li><li>
+In JavaScript, since ES6, <em>template literals</em> can contain expressions.
+Such as <code>`Hello, ${name}!`</code>.
+</li></ul>
+
+<p>These cases are effectively string concatenation as well,
+just with a different syntax.
+</p>
+<p>So, for example, in Python, you would change
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">print (f'Replace {object1.name} with {object2.name}?')
+</pre></td></tr></table>
+
+<p>into a statement involving a format string:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">print ('Replace %(name1)s with %(name2)s?'
+       % { 'name1': object1.name, 'name2': object2.name })
+</pre></td></tr></table>
+
+<p>or equivalently
+</p><table><tr><td>&nbsp;</td><td><pre class="example">print ('Replace {name1} with {name2}?'
+       .format(name1 = object1.name, name2 = object2.name))
+</pre></td></tr></table>
+
+<p>And in JavaScript, you would change
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">print (`Replace ${object1.name} with ${object2.name}?`)
+</pre></td></tr></table>
+
+<p>into a statement involving a format string:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">print ('Replace %s with %s?'.format(object1.name, object2.name))
+</pre></td></tr></table>
+
+<p>Specifically in JavaScript,
+an alternative is to use a <em>tagged</em> template literal:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">print (<var>tag</var>`Replace ${object1.name} with ${object2.name}?`)
+</pre></td></tr></table>
+
+<p>and pass an option &lsquo;<samp>--tag=<var>tag</var>:<var>format</var></samp>&rsquo; to <code>xgettext</code>.
+</p>
+<a name="SEC27"></a>
+<h3 class="subheading"> Format strings with embedded named references </h3>
+
+<p>Format strings with embedded named references are different:
+They are suitable for internationalization, because it is possible
+to insert a call to the <code>gettext</code> function (that will return a
+translated format string) <em>before</em> the argument values are
+inserted in place of the placeholders.
+</p>
+<p>The format string types that allow embedded named references are:
+</p>
+<ul>
+<li>
+<a href="gettext_15.html#SEC287">Shell format strings</a>.
+</li><li>
+In Python, those <a href="gettext_15.html#SEC278">Python format strings</a>
+that take a dictionary as argument,
+and the <a href="gettext_15.html#SEC278">Python brace format strings</a>.
+</li><li>
+In Ruby, those <a href="gettext_15.html#SEC286">Ruby format strings</a>
+that take a hash table as argument.
+</li><li>
+In Perl, the <a href="gettext_15.html#SEC298">Perl brace format strings</a>.
+</li></ul>
+
+<a name="SEC28"></a>
+<h3 class="subheading"> The <code>&lt;inttypes.h&gt;</code> macros </h3>
+
 <p>A similar case is compile time concatenation of strings.  The ISO C 99
 include file <code>&lt;inttypes.h&gt;</code> contains a macro <code>PRId64</code> that
 can be used as a formatting directive for outputting an &lsquo;<samp>int64_t</samp>&rsquo;
@@ -382,35 +578,10 @@ of 100 is safe, because all available hardware integer types are limited to
 128 bits, and to print a 128 bit integer one needs at most 54 characters,
 regardless whether in decimal, octal or hexadecimal.
 </p>
-<a name="IDX129"></a>
-<a name="IDX130"></a>
-<p>All this applies to other programming languages as well.  For example, in
-Java and C#, string concatenation is very frequently used, because it is a
-compiler built-in operator.  Like in C, in Java, you would change
-</p>
-<table><tr><td>&nbsp;</td><td><pre class="example">System.out.println(&quot;Replace &quot;+object1+&quot; with &quot;+object2+&quot;?&quot;);
-</pre></td></tr></table>
 
-<p>into a statement involving a format string:
-</p>
-<table><tr><td>&nbsp;</td><td><pre class="example">System.out.println(
-    MessageFormat.format(&quot;Replace {0} with {1}?&quot;,
-                         new Object[] { object1, object2 }));
-</pre></td></tr></table>
-
-<p>Similarly, in C#, you would change
-</p>
-<table><tr><td>&nbsp;</td><td><pre class="example">Console.WriteLine(&quot;Replace &quot;+object1+&quot; with &quot;+object2+&quot;?&quot;);
-</pre></td></tr></table>
-
-<p>into a statement involving a format string:
-</p>
-<table><tr><td>&nbsp;</td><td><pre class="example">Console.WriteLine(
-    String.Format(&quot;Replace {0} with {1}?&quot;, object1, object2));
-</pre></td></tr></table>
-
-<a name="SEC25"></a>
-<h3 class="subheading"> No embedded URLs </h3>
+<a name="No-embedded-URLs"></a>
+<a name="SEC29"></a>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC25">4.3.5 No embedded URLs</a> </h3>
 
 <p>It is good to not embed URLs in translatable strings, for several reasons:
 </p><ul>
@@ -438,8 +609,10 @@ of the string.
          &quot;https://gnu.org/licenses/gpl.html&quot;);
 </pre></td></tr></table>
 
-<a name="SEC26"></a>
-<h3 class="subheading"> No programmer-defined format string directives </h3>
+
+<a name="No-custom-format-directives"></a>
+<a name="SEC30"></a>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC26">4.3.6 No programmer-defined format string directives</a> </h3>
 
 <p>The GNU C Library's <code>&lt;printf.h&gt;</code> facility and the C++ standard library's <code>&lt;format&gt;</code> header file make it possible for the programmer to define their own format string directives.  However, such format directives cannot be used in translatable strings, for two reasons:
 </p><ul>
@@ -476,8 +649,10 @@ free (tmp);
 cout &lt;&lt; format (_(&quot;The contents is: {}&quot;), tmp);
 </pre></td></tr></table>
 
-<a name="SEC27"></a>
-<h3 class="subheading"> No unusual markup </h3>
+
+<a name="No-unusual-markup"></a>
+<a name="SEC31"></a>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC27">4.3.7 No unusual markup</a> </h3>
 
 <p>Unusual markup or control characters should not be used in translatable
 strings.  Translators will likely not understand the particular meaning
@@ -505,8 +680,8 @@ don't verify that the translations are well-formed HTML.
 </p>
 
 <a name="Mark-Keywords"></a>
-<a name="SEC28"></a>
-<h2 class="section"> <a href="gettext_toc.html#TOC21">4.4 How Marks Appear in Sources</a> </h2>
+<a name="SEC32"></a>
+<h2 class="section"> <a href="gettext_toc.html#TOC28">4.4 How Marks Appear in Sources</a> </h2>
 
 <p>All strings requiring translation should be marked in the C sources.  Marking
 is done in such a way that each translatable string appears to be
@@ -528,7 +703,7 @@ return the proper translation, as far as possible or wanted, for the
 argument string.  Most localizable strings are found in executable
 positions, that is, attached to variables or given as parameters to
 functions.  But this is not universal usage, and some translatable
-strings appear in structured initializations.  See section <a href="#SEC31">Special Cases of Translatable Strings</a>.
+strings appear in structured initializations.  See section <a href="#SEC36">Special Cases of Translatable Strings</a>.
 </p>
 <p>The second goal of the marking operation is to help <code>xgettext</code>
 at properly extracting all translatable strings when it scans a set
@@ -547,7 +722,7 @@ are internationalized.  Further, a long keyword has the disadvantage
 of using more horizontal space, forcing more indentation work on
 sources for those trying to keep them within 79 or 80 columns.
 </p>
-<a name="IDX131"></a>
+<a name="IDX148"></a>
 <p>Many packages use &lsquo;<samp>_</samp>&rsquo; (a simple underline) as a keyword,
 and write &lsquo;<samp>_(&quot;Translatable string&quot;)</samp>&rsquo; instead of &lsquo;<samp>gettext
 (&quot;Translatable string&quot;)</samp>&rsquo;.  Further, the coding rule, from GNU standards,
@@ -573,7 +748,7 @@ the marked argument position depend on the total number of arguments of
 the function call; this is useful in C++.  All this is achieved using
 <code>xgettext</code>'s &lsquo;<samp>--keyword</samp>&rsquo; option.  How to pass such an option
 to <code>xgettext</code>, assuming that <code>gettextize</code> is used, is described
-in <a href="gettext_13.html#SEC237">&lsquo;<tt>Makevars</tt>&rsquo; in &lsquo;<tt>po/</tt>&rsquo;</a> and <a href="gettext_13.html#SEC252">AM_XGETTEXT_OPTION in &lsquo;<tt>po.m4</tt>&rsquo;</a>.
+in <a href="gettext_13.html#SEC245">&lsquo;<tt>Makevars</tt>&rsquo; in &lsquo;<tt>po/</tt>&rsquo;</a> and <a href="gettext_13.html#SEC260">AM_XGETTEXT_OPTION in &lsquo;<tt>po.m4</tt>&rsquo;</a>.
 </p>
 <p>Note also that long strings can be split across lines, into multiple
 adjacent string tokens.  Automatic string concatenation is performed
@@ -600,8 +775,8 @@ in English, it's customary to put a space before a colon.
 </p>
 
 <a name="Marking"></a>
-<a name="SEC29"></a>
-<h2 class="section"> <a href="gettext_toc.html#TOC22">4.5 Marking Translatable Strings</a> </h2>
+<a name="SEC33"></a>
+<h2 class="section"> <a href="gettext_toc.html#TOC29">4.5 Marking Translatable Strings</a> </h2>
 
 <p>In PO mode, one set of features is meant more for the programmer than
 for the translator, and allows him to interactively mark which strings,
@@ -614,7 +789,7 @@ like translators, a tool letting them work at marking translatable
 strings in the program sources, while simultaneously producing a set of
 translation in some language, for the package being internationalized.
 </p>
-<a name="IDX132"></a>
+<a name="IDX149"></a>
 <p>The set of program sources, targeted by the PO mode commands describe
 here, should have an Emacs tags table constructed for your project,
 prior to using these PO file commands.  This is easy to do.  In any
@@ -630,7 +805,7 @@ explore all said files and create a &lsquo;<tt>TAGS</tt>&rsquo; file in your roo
 directory, somewhat summarizing the contents using a special file
 format Emacs can understand.
 </p>
-<a name="IDX133"></a>
+<a name="IDX150"></a>
 <p>For packages following the GNU coding standards, there is
 a make goal <code>tags</code> or <code>TAGS</code> which constructs the tag files in
 all directories and for all files containing source code.
@@ -645,18 +820,18 @@ fill in while you mark strings as translatable in your program sources.
 </p>
 <dl compact="compact">
 <dt> <kbd>,</kbd></dt>
-<dd><a name="IDX134"></a>
+<dd><a name="IDX151"></a>
 <p>Search through program sources for a string which looks like a
 candidate for translation (<code>po-tags-search</code>).
 </p>
 </dd>
 <dt> <kbd>M-,</kbd></dt>
-<dd><a name="IDX135"></a>
+<dd><a name="IDX152"></a>
 <p>Mark the last string found with &lsquo;<samp>_()</samp>&rsquo; (<code>po-mark-translatable</code>).
 </p>
 </dd>
 <dt> <kbd>M-.</kbd></dt>
-<dd><a name="IDX136"></a>
+<dd><a name="IDX153"></a>
 <p>Mark the last string found with a keyword taken from a set of possible
 keywords.  This command with a prefix allows some management of these
 keywords (<code>po-select-mark-and-mark</code>).
@@ -664,7 +839,7 @@ keywords (<code>po-select-mark-and-mark</code>).
 </dd>
 </dl>
 
-<a name="IDX137"></a>
+<a name="IDX154"></a>
 <p>The <kbd>,</kbd> (<code>po-tags-search</code>) command searches for the next
 occurrence of a string which looks like a possible candidate for
 translation, and displays the program source in another Emacs window,
@@ -706,8 +881,8 @@ independent <kbd>,</kbd> search sequence.  However, as implemented, the
 prefix) might also reinitialize the regular Emacs tags searching to the
 first tags file, this reinitialization might be considered spurious.
 </p>
-<a name="IDX138"></a>
-<a name="IDX139"></a>
+<a name="IDX155"></a>
+<a name="IDX156"></a>
 <p>The <kbd>M-,</kbd> (<code>po-mark-translatable</code>) command will mark the
 recently found string with the &lsquo;<samp>_</samp>&rsquo; keyword.  The <kbd>M-.</kbd>
 (<code>po-select-mark-and-mark</code>) command will request that you type
@@ -757,9 +932,64 @@ is preferred for the <kbd>M-.</kbd> command.  In fact, this is not useful to
 prefer &lsquo;<samp>_</samp>&rsquo;, as this one is already built in the <kbd>M-,</kbd> command.
 </p>
 
+<a name="Translator-advice"></a>
+<a name="SEC34"></a>
+<h2 class="section"> <a href="gettext_toc.html#TOC30">4.6 Adding advice for translators</a> </h2>
+
+<p>Sometimes you might want to add advice for the translators to a
+particular message.
+For example:
+</p><ul>
+<li>
+The translatable string might be decent English but nevertheless ambiguous.
+</li><li>
+The translatable string refers to something in English culture (such as
+a film's name) that is different in other cultures.
+</li><li>
+The translator should make an adjustment that is specific to her locale.
+</li></ul>
+
+<p>The way to do this is to add comments,
+before the <code>gettext</code> invocation or inside the <code>gettext</code> invocation
+but before the string, that start with the substring &lsquo;<samp>TRANSLATORS:</samp>&rsquo;.
+These comments will be extracted into the POT file, so that translators
+can see them.
+For example, when you write
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">/* TRANSLATORS: This is an English idiom,
+   meaning not to reveal a secret. */
+puts (gettext (&quot;Don't spill the beans!&quot;));
+</pre></td></tr></table>
+
+<p>the POT file will contain:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">#. TRANSLATORS: This is an English idiom,
+#. meaning not to reveal a secret.
+#: source.c:213
+msgid &quot;Don't spill the beans!&quot;
+msgstr &quot;&quot;
+</pre></td></tr></table>
+
+<p>and the translators will be shown the advice
+in a particular place in their translation tool.
+</p>
+<p>Only comments that immediately precede the <code>gettext</code> invocation or
+the translatable string are considered.
+Intervening blank lines are OK,
+but if there is other code between the comment and the translatable string,
+the comment no longer applies.
+</p>
+<p>Note: The string <code>TRANSLATORS:</code> is a convention, enabled by the
+<code>Makefile.in.in</code> file that is part of a package's build system.
+It is not enabled by default in <code>xgettext</code>.
+If you are using <code>xgettext</code>
+without the <code>Makefile.in.in</code> infrastructure,
+you will need to pass the option <code>--add-comments=TRANSLATORS:</code> yourself.
+</p>
+
 <a name="c_002dformat-Flag"></a>
-<a name="SEC30"></a>
-<h2 class="section"> <a href="gettext_toc.html#TOC23">4.6 Special Comments preceding Keywords</a> </h2>
+<a name="SEC35"></a>
+<h2 class="section"> <a href="gettext_toc.html#TOC31">4.7 Special Comments preceding Keywords</a> </h2>
 
 
 <p>In C programs strings are often used within calls of functions from the
@@ -807,8 +1037,8 @@ thinks might be a format string.  There is no absolute rule for this,
 only a heuristic.  In the &lsquo;<tt>.po</tt>&rsquo; file the entry is marked using the
 <code>c-format</code> flag in the <code>#,</code> comment line (see section <a href="gettext_3.html#SEC16">The Format of PO Files</a>).
 </p>
-<a name="IDX140"></a>
-<a name="IDX141"></a>
+<a name="IDX157"></a>
+<a name="IDX158"></a>
 <p>The careful reader now might say that this again can cause problems.
 The heuristic might guess it wrong.  This is true and therefore
 <code>xgettext</code> knows about a special kind of comment which lets
@@ -841,13 +1071,13 @@ to use must contain the string <code>xgettext:no-c-format</code>.
 </p>
 <p>If a string is marked with <code>c-format</code> and this is not correct the
 user can find out who is responsible for the decision.  See
-<a href="gettext_5.html#SEC36">Invoking the <code>xgettext</code> Program</a> to see how the <code>--debug</code> option can be
+<a href="gettext_5.html#SEC41">Invoking the <code>xgettext</code> Program</a> to see how the <code>--debug</code> option can be
 used for solving this problem.
 </p>
 
 <a name="Special-cases"></a>
-<a name="SEC31"></a>
-<h2 class="section"> <a href="gettext_toc.html#TOC24">4.7 Special Cases of Translatable Strings</a> </h2>
+<a name="SEC36"></a>
+<h2 class="section"> <a href="gettext_toc.html#TOC32">4.8 Special Cases of Translatable Strings</a> </h2>
 
 <p>The attentive reader might now point out that it is not always possible
 to mark translatable string with <code>gettext</code> or something like this.
@@ -871,7 +1101,7 @@ Consider the following case:
 <p>While it is no problem to mark the string <code>&quot;a default message&quot;</code> it
 is not possible to mark the string initializers for <code>messages</code>.
 What is to be done?  We have to fulfill two tasks.  First we have to mark the
-strings so that the <code>xgettext</code> program (see section <a href="gettext_5.html#SEC36">Invoking the <code>xgettext</code> Program</a>)
+strings so that the <code>xgettext</code> program (see section <a href="gettext_5.html#SEC41">Invoking the <code>xgettext</code> Program</a>)
 can find them, and second we have to translate the string at runtime
 before printing them.
 </p>
@@ -898,7 +1128,7 @@ from the array.  So one solution can look like this:
 
 <p>Please convince yourself that the string which is written by
 <code>fputs</code> is translated in any case.  How to get <code>xgettext</code> know
-the additional keyword <code>gettext_noop</code> is explained in <a href="gettext_5.html#SEC36">Invoking the <code>xgettext</code> Program</a>.
+the additional keyword <code>gettext_noop</code> is explained in <a href="gettext_5.html#SEC41">Invoking the <code>xgettext</code> Program</a>.
 </p>
 <p>The above is of course not the only solution.  You could also come along
 with the following one:
@@ -931,8 +1161,8 @@ use this second method in this situation.
 </p>
 
 <a name="Bug-Report-Address"></a>
-<a name="SEC32"></a>
-<h2 class="section"> <a href="gettext_toc.html#TOC25">4.8 Letting Users Report Translation Bugs</a> </h2>
+<a name="SEC37"></a>
+<h2 class="section"> <a href="gettext_toc.html#TOC33">4.9 Letting Users Report Translation Bugs</a> </h2>
 
 <p>Code sometimes has bugs, but translations sometimes have bugs too.  The
 users need to be able to report them.  Reporting translation bugs to the
@@ -978,8 +1208,8 @@ msgstr &quot;&quot;
 
 
 <a name="Names"></a>
-<a name="SEC33"></a>
-<h2 class="section"> <a href="gettext_toc.html#TOC26">4.9 Marking Proper Names for Translation</a> </h2>
+<a name="SEC38"></a>
+<h2 class="section"> <a href="gettext_toc.html#TOC34">4.10 Marking Proper Names for Translation</a> </h2>
 
 <p>Should names of persons, cities, locations etc. be marked for translation
 or not?  People who only know languages that can be written with Latin
@@ -1060,8 +1290,8 @@ idea to test your translation before submitting it.
 </p>
 
 <a name="Libraries"></a>
-<a name="SEC34"></a>
-<h2 class="section"> <a href="gettext_toc.html#TOC27">4.10 Preparing Library Sources</a> </h2>
+<a name="SEC39"></a>
+<h2 class="section"> <a href="gettext_toc.html#TOC35">4.11 Preparing Library Sources</a> </h2>
 
 <p>When you are preparing a library, not a program, for the use of
 <code>gettext</code>, only a few details are different.  Here we assume that
@@ -1159,7 +1389,7 @@ Similarly, the <code>dngettext</code> function should be used in place of the
 
 <table cellpadding="1" cellspacing="1" border="0">
 <tr><td valign="middle" align="left">[<a href="#SEC17" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="gettext_5.html#SEC35" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left">[<a href="gettext_5.html#SEC40" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
@@ -1167,12 +1397,12 @@ Similarly, the <code>dngettext</code> function should be used in place of the
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="gettext_21.html#SEC389" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_21.html#SEC400" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Bruno Haible</em> on <em>February, 21 2024</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
+  This document was generated by <em>Bruno Haible</em> on <em>December, 31 2024</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
  </font>
  <br>
 
