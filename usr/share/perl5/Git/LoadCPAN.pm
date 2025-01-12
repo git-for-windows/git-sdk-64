@@ -1,5 +1,5 @@
 package Git::LoadCPAN;
-use 5.008001;
+require v5.26;
 use strict;
 use warnings $ENV{GIT_PERL_FATAL_WARNINGS} ? qw(FATAL all) : ();
 
@@ -31,7 +31,7 @@ C<git.git> repository. Use it for anything else at your peril!
 # Makefile, and allows for detecting whether the module is loaded from
 # perl/Git as opposed to perl/build/Git, which is useful for one-off
 # testing without having Error.pm et al installed.
-use constant NO_PERL_CPAN_FALLBACKS_STR => '@@' . 'NO_PERL_CPAN_FALLBACKS' . '@@';
+use constant NO_PERL_CPAN_FALLBACKS_STR => '@' . 'NO_PERL_CPAN_FALLBACKS' . '@';
 use constant NO_PERL_CPAN_FALLBACKS => (
 	q[] ne ''
 	and
