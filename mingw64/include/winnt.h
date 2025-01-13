@@ -2091,24 +2091,6 @@ extern "C" {
 #define UNW_FLAG_EHANDLER   0x1
 #define UNW_FLAG_UHANDLER   0x2
 
-#define UNWIND_HISTORY_TABLE_SIZE 12
-
-  typedef struct _UNWIND_HISTORY_TABLE_ENTRY {
-    DWORD ImageBase;
-    PRUNTIME_FUNCTION FunctionEntry;
-  } UNWIND_HISTORY_TABLE_ENTRY, *PUNWIND_HISTORY_TABLE_ENTRY;
-
-  typedef struct _UNWIND_HISTORY_TABLE {
-    DWORD Count;
-    BYTE  LocalHint;
-    BYTE  GlobalHint;
-    BYTE  Search;
-    BYTE  Once;
-    DWORD LowAddress;
-    DWORD HighAddress;
-    UNWIND_HISTORY_TABLE_ENTRY Entry[UNWIND_HISTORY_TABLE_SIZE];
-  } UNWIND_HISTORY_TABLE, *PUNWIND_HISTORY_TABLE;
-
   struct _DISPATCHER_CONTEXT;
   typedef struct _DISPATCHER_CONTEXT DISPATCHER_CONTEXT;
   typedef struct _DISPATCHER_CONTEXT *PDISPATCHER_CONTEXT;
@@ -2122,7 +2104,7 @@ extern "C" {
     PCONTEXT ContextRecord;
     PEXCEPTION_ROUTINE LanguageHandler;
     PVOID HandlerData;
-    PUNWIND_HISTORY_TABLE HistoryTable;
+    struct _UNWIND_HISTORY_TABLE *HistoryTable;
     ULONG ScopeIndex;
     BOOLEAN ControlPcIsUnwound;
     PBYTE NonVolatileRegisters;
@@ -2231,28 +2213,46 @@ extern "C" {
 #define EXCEPTION_READ_FAULT    0
 #define EXCEPTION_WRITE_FAULT   1
 #define EXCEPTION_EXECUTE_FAULT 8
+#endif /* defined(_ARM64_) || defined(_ARM64EC_) */
 
 #if !defined(RC_INVOKED)
 
-#define CONTEXT_ARM64           0x400000
-#define CONTEXT_CONTROL         (CONTEXT_ARM64 | 0x00000001)
-#define CONTEXT_INTEGER         (CONTEXT_ARM64 | 0x00000002)
-#define CONTEXT_FLOATING_POINT  (CONTEXT_ARM64 | 0x00000004)
-#define CONTEXT_DEBUG_REGISTERS (CONTEXT_ARM64 | 0x00000008)
+#define CONTEXT_ARM64                 0x400000
+#define CONTEXT_ARM64_CONTROL         (CONTEXT_ARM64 | 0x00000001)
+#define CONTEXT_ARM64_INTEGER         (CONTEXT_ARM64 | 0x00000002)
+#define CONTEXT_ARM64_FLOATING_POINT  (CONTEXT_ARM64 | 0x00000004)
+#define CONTEXT_ARM64_DEBUG_REGISTERS (CONTEXT_ARM64 | 0x00000008)
+#define CONTEXT_ARM64_X18             (CONTEXT_ARM64 | 0x00000010)
 
-#define CONTEXT_FULL (CONTEXT_CONTROL | CONTEXT_INTEGER)
-#define CONTEXT_ALL  (CONTEXT_CONTROL | CONTEXT_INTEGER | CONTEXT_FLOATING_POINT | CONTEXT_DEBUG_REGISTERS)
 
-#define EXCEPTION_READ_FAULT    0
-#define EXCEPTION_WRITE_FAULT   1
-#define EXCEPTION_EXECUTE_FAULT 8
+#define CONTEXT_ARM64_FULL (CONTEXT_ARM64_CONTROL | CONTEXT_ARM64_INTEGER | CONTEXT_ARM64_FLOATING_POINT)
+#define CONTEXT_ARM64_ALL  (CONTEXT_ARM64_CONTROL | CONTEXT_ARM64_INTEGER | CONTEXT_ARM64_FLOATING_POINT | CONTEXT_ARM64_DEBUG_REGISTERS | CONTEXT_ARM64_X18)
+
+#define CONTEXT_ARM64_UNWOUND_TO_CALL 0x20000000
+
+#ifdef _ARM64_
+
+#define CONTEXT_CONTROL         CONTEXT_ARM64_CONTROL
+#define CONTEXT_INTEGER         CONTEXT_ARM64_INTEGER
+#define CONTEXT_FLOATING_POINT  CONTEXT_ARM64_FLOATING_POINT
+#define CONTEXT_DEBUG_REGISTERS CONTEXT_ARM64_DEBUG_REGISTERS
+#define CONTEXT_FULL            CONTEXT_ARM64_FULL
+#define CONTEXT_ALL             CONTEXT_ARM64_ALL
+#define CONTEXT_UNWOUND_TO_CALL CONTEXT_ARM64_UNWOUND_TO_CALL
+
+#define CONTEXT_EXCEPTION_ACTIVE    0x08000000
+#define CONTEXT_SERVICE_ACTIVE      0x10000000
+#define CONTEXT_EXCEPTION_REQUEST   0x40000000
+#define CONTEXT_EXCEPTION_REPORTING 0x80000000
+
+#endif /* _ARM64_ */
+
+#endif /* !defined(RC_INVOKED) */
 
 #define ARM64_MAX_BREAKPOINTS   8
 #define ARM64_MAX_WATCHPOINTS   2
 
-#endif /* !defined(RC_INVOKED) */
-
-  typedef union _NEON128 {
+  typedef union _ARM64_NT_NEON128 {
     struct
     {
         ULONGLONG Low;
@@ -2262,9 +2262,19 @@ extern "C" {
     float S[4];
     WORD  H[8];
     BYTE  B[16];
-  } NEON128, *PNEON128;
+  } ARM64_NT_NEON128, *PARM64_NT_NEON128;
 
-  typedef struct DECLSPEC_ALIGN(16) _CONTEXT {
+#ifdef _ARM64_
+  typedef ARM64_NT_NEON128 NEON128, *PNEON128;
+#endif
+
+  typedef struct DECLSPEC_ALIGN(16)
+#ifdef _ARM64_
+  _CONTEXT
+#else
+  _ARM64_NT_CONTEXT
+#endif
+  {
     ULONG ContextFlags;                 /* 000 */
     /* CONTEXT_INTEGER */
     ULONG Cpsr;                         /* 004 */
@@ -2310,7 +2320,7 @@ extern "C" {
     DWORD64 Sp;                         /* 100 */
     DWORD64 Pc;                         /* 108 */
     /* CONTEXT_FLOATING_POINT */
-    NEON128 V[32];                      /* 110 */
+    ARM64_NT_NEON128 V[32];             /* 110 */
     DWORD Fpcr;                         /* 310 */
     DWORD Fpsr;                         /* 314 */
     /* CONTEXT_DEBUG_REGISTERS */
@@ -2318,53 +2328,152 @@ extern "C" {
     DWORD64 Bvr[ARM64_MAX_BREAKPOINTS]; /* 338 */
     DWORD Wcr[ARM64_MAX_WATCHPOINTS];   /* 378 */
     DWORD64 Wvr[ARM64_MAX_WATCHPOINTS]; /* 380 */
-  } CONTEXT, *PCONTEXT;
+  } ARM64_NT_CONTEXT, *PARM64_NT_CONTEXT;
 
+#ifdef _ARM64_
+  typedef ARM64_NT_CONTEXT CONTEXT, *PCONTEXT;
+#endif
+
+
+  typedef struct DECLSPEC_ALIGN(16) _ARM64EC_NT_CONTEXT
+  {
+    union
+    {
+        struct
+        {
+            DWORD64 AMD64_P1Home;                         /* 000 */
+            DWORD64 AMD64_P2Home;                         /* 008 */
+            DWORD64 AMD64_P3Home;                         /* 010 */
+            DWORD64 AMD64_P4Home;                         /* 018 */
+            DWORD64 AMD64_P5Home;                         /* 020 */
+            DWORD64 AMD64_P6Home;                         /* 028 */
+            DWORD   ContextFlags;                         /* 030 */
+            DWORD   AMD64_MxCsr_copy;                     /* 034 */
+            WORD    AMD64_SegCs;                          /* 038 */
+            WORD    AMD64_SegDs;                          /* 03a */
+            WORD    AMD64_SegEs;                          /* 03c */
+            WORD    AMD64_SegFs;                          /* 03e */
+            WORD    AMD64_SegGs;                          /* 040 */
+            WORD    AMD64_SegSs;                          /* 042 */
+            DWORD   AMD64_EFlags;                         /* 044 */
+            DWORD64 AMD64_Dr0;                            /* 048 */
+            DWORD64 AMD64_Dr1;                            /* 050 */
+            DWORD64 AMD64_Dr2;                            /* 058 */
+            DWORD64 AMD64_Dr3;                            /* 060 */
+            DWORD64 AMD64_Dr6;                            /* 068 */
+            DWORD64 AMD64_Dr7;                            /* 070 */
+            DWORD64 X8;                                   /* 078 (Rax) */
+            DWORD64 X0;                                   /* 080 (Rcx) */
+            DWORD64 X1;                                   /* 088 (Rdx) */
+            DWORD64 X27;                                  /* 090 (Rbx) */
+            DWORD64 Sp;                                   /* 098 (Rsp) */
+            DWORD64 Fp;                                   /* 0a0 (Rbp) */
+            DWORD64 X25;                                  /* 0a8 (Rsi) */
+            DWORD64 X26;                                  /* 0b0 (Rdi) */
+            DWORD64 X2;                                   /* 0b8 (R8)  */
+            DWORD64 X3;                                   /* 0c0 (R9)  */
+            DWORD64 X4;                                   /* 0c8 (R10) */
+            DWORD64 X5;                                   /* 0d0 (R11) */
+            DWORD64 X19;                                  /* 0d8 (R12) */
+            DWORD64 X20;                                  /* 0e0 (R13) */
+            DWORD64 X21;                                  /* 0e8 (R14) */
+            DWORD64 X22;                                  /* 0f0 (R15) */
+            DWORD64 Pc;                                   /* 0f8 (Rip) */
+            struct
+            {
+                WORD    AMD64_ControlWord;                /* 100 */
+                WORD    AMD64_StatusWord;                 /* 102 */
+                BYTE    AMD64_TagWord;                    /* 104 */
+                BYTE    AMD64_Reserved1;                  /* 105 */
+                WORD    AMD64_ErrorOpcode;                /* 106 */
+                DWORD   AMD64_ErrorOffset;                /* 108 */
+                WORD    AMD64_ErrorSelector;              /* 10c */
+                WORD    AMD64_Reserved2;                  /* 10e */
+                DWORD   AMD64_DataOffset;                 /* 110 */
+                WORD    AMD64_DataSelector;               /* 114 */
+                WORD    AMD64_Reserved3;                  /* 116 */
+                DWORD   AMD64_MxCsr;                      /* 118 */
+                DWORD   AMD64_MxCsr_Mask;                 /* 11c */
+                DWORD64 Lr;                               /* 120 (FloatRegisters[0]) */
+                WORD    X16_0;                            /* 128 */
+                WORD    AMD64_St0_Reserved1;              /* 12a */
+                DWORD   AMD64_St0_Reserved2;              /* 12c */
+                DWORD64 X6;                               /* 130 (FloatRegisters[1]) */
+                WORD    X16_1;                            /* 138 */
+                WORD    AMD64_St1_Reserved1;              /* 13a */
+                DWORD   AMD64_St1_Reserved2;              /* 13c */
+                DWORD64 X7;                               /* 140 (FloatRegisters[2]) */
+                WORD    X16_2;                            /* 148 */
+                WORD    AMD64_St2_Reserved1;              /* 14a */
+                DWORD   AMD64_St2_Reserved2;              /* 14c */
+                DWORD64 X9;                               /* 150 (FloatRegisters[3]) */
+                WORD    X16_3;                            /* 158 */
+                WORD    AMD64_St3_Reserved1;              /* 15a */
+                DWORD   AMD64_St3_Reserved2;              /* 15c */
+                DWORD64 X10;                              /* 160 (FloatRegisters[4]) */
+                WORD    X17_0;                            /* 168 */
+                WORD    AMD64_St4_Reserved1;              /* 16a */
+                DWORD   AMD64_St4_Reserved2;              /* 16c */
+                DWORD64 X11;                              /* 170 (FloatRegisters[5]) */
+                WORD    X17_1;                            /* 178 */
+                WORD    AMD64_St5_Reserved1;              /* 17a */
+                DWORD   AMD64_St5_Reserved2;              /* 17c */
+                DWORD64 X12;                              /* 180 (FloatRegisters[6]) */
+                WORD    X17_2;                            /* 188 */
+                WORD    AMD64_St6_Reserved1;              /* 18a */
+                DWORD   AMD64_St6_Reserved2;              /* 18c */
+                DWORD64 X15;                              /* 190 (FloatRegisters[7]) */
+                WORD    X17_3;                            /* 198 */
+                WORD    AMD64_St7_Reserved1;              /* 19a */
+                DWORD   AMD64_St7_Reserved2;              /* 19c */
+                ARM64_NT_NEON128 V[16];                   /* 1a0 (XmmRegisters) */
+                BYTE    AMD64_XSAVE_FORMAT_Reserved4[96]; /* 2a0 */
+            } DUMMYSTRUCTNAME;
+            ARM64_NT_NEON128 AMD64_VectorRegister[26];    /* 300 */
+            DWORD64 AMD64_VectorControl;                  /* 4a0 */
+            DWORD64 AMD64_DebugControl;                   /* 4a8 */
+            DWORD64 AMD64_LastBranchToRip;                /* 4b0 */
+            DWORD64 AMD64_LastBranchFromRip;              /* 4b8 */
+            DWORD64 AMD64_LastExceptionToRip;             /* 4c0 */
+            DWORD64 AMD64_LastExceptionFromRip;           /* 4c8 */
+        } DUMMYSTRUCTNAME;
+#ifdef _ARM64EC_
+        CONTEXT AMD64_Context;
+#endif
+    } DUMMYUNIONNAME;
+  } ARM64EC_NT_CONTEXT, *PARM64EC_NT_CONTEXT;
+
+  typedef struct _IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY ARM64_RUNTIME_FUNCTION, *PARM64_RUNTIME_FUNCTION;
+
+#ifdef _ARM64_
   typedef struct _IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY RUNTIME_FUNCTION, *PRUNTIME_FUNCTION;
   typedef PRUNTIME_FUNCTION (*PGET_RUNTIME_FUNCTION_CALLBACK)(DWORD64 ControlPc,PVOID Context);
+#endif
 
 #define UNW_FLAG_NHANDLER   0x0
 #define UNW_FLAG_EHANDLER   0x1
 #define UNW_FLAG_UHANDLER   0x2
 
-#define UNWIND_HISTORY_TABLE_SIZE 12
-
-  typedef struct _UNWIND_HISTORY_TABLE_ENTRY {
-    DWORD64 ImageBase;
-    PRUNTIME_FUNCTION FunctionEntry;
-  } UNWIND_HISTORY_TABLE_ENTRY, *PUNWIND_HISTORY_TABLE_ENTRY;
-
-  typedef struct _UNWIND_HISTORY_TABLE {
-    DWORD   Count;
-    BYTE    LocalHint;
-    BYTE    GlobalHint;
-    BYTE    Search;
-    BYTE    Once;
-    DWORD64 LowAddress;
-    DWORD64 HighAddress;
-    UNWIND_HISTORY_TABLE_ENTRY Entry[UNWIND_HISTORY_TABLE_SIZE];
-  } UNWIND_HISTORY_TABLE, *PUNWIND_HISTORY_TABLE;
-
-  struct _DISPATCHER_CONTEXT;
-  typedef struct _DISPATCHER_CONTEXT DISPATCHER_CONTEXT;
-  typedef struct _DISPATCHER_CONTEXT *PDISPATCHER_CONTEXT;
-
-  struct _DISPATCHER_CONTEXT {
+  typedef struct _DISPATCHER_CONTEXT_ARM64 {
     ULONG_PTR ControlPc;
     ULONG_PTR ImageBase;
-    PRUNTIME_FUNCTION FunctionEntry;
+    PARM64_RUNTIME_FUNCTION FunctionEntry;
     ULONG_PTR EstablisherFrame;
     ULONG_PTR TargetPc;
-    PCONTEXT ContextRecord;
+    PARM64_NT_CONTEXT ContextRecord;
     PEXCEPTION_ROUTINE LanguageHandler;
     PVOID HandlerData;
-    PUNWIND_HISTORY_TABLE HistoryTable;
+    struct _UNWIND_HISTORY_TABLE *HistoryTable;
     ULONG ScopeIndex;
     BOOLEAN ControlPcIsUnwound;
     PBYTE NonVolatileRegisters;
-  };
+  } DISPATCHER_CONTEXT_ARM64, *PDISPATCHER_CONTEXT_ARM64;
 
-  typedef struct _KNONVOLATILE_CONTEXT_POINTERS {
+#if defined(_ARM64_)
+  typedef DISPATCHER_CONTEXT_ARM64 DISPATCHER_CONTEXT, *PDISPATCHER_CONTEXT;
+#endif
+
+  typedef struct _KNONVOLATILE_CONTEXT_POINTERS_ARM64 {
     PDWORD64 X19;
     PDWORD64 X20;
     PDWORD64 X21;
@@ -2386,12 +2495,13 @@ extern "C" {
     PDWORD64 D13;
     PDWORD64 D14;
     PDWORD64 D15;
-  } KNONVOLATILE_CONTEXT_POINTERS, *PKNONVOLATILE_CONTEXT_POINTERS;
+  } KNONVOLATILE_CONTEXT_POINTERS_ARM64, *PKNONVOLATILE_CONTEXT_POINTERS_ARM64;
+
+#ifdef _ARM64_
+  typedef KNONVOLATILE_CONTEXT_POINTERS_ARM64 KNONVOLATILE_CONTEXT_POINTERS, *PKNONVOLATILE_CONTEXT_POINTERS;
+#endif
 
 #define OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME "OutOfProcessFunctionTableCallback"
-
-#endif /* _ARM64_ */
-
 
 #ifdef _X86_
 
@@ -2964,29 +3074,9 @@ __buildmemorybarrier()
 
 #ifdef __x86_64__
 
-    /* http://msdn.microsoft.com/en-us/library/ms680597(VS.85).aspx */
-
-#define UNWIND_HISTORY_TABLE_SIZE 12
-
-  typedef struct _UNWIND_HISTORY_TABLE_ENTRY {
-    ULONG64 ImageBase;
-    PRUNTIME_FUNCTION FunctionEntry;
-  } UNWIND_HISTORY_TABLE_ENTRY, *PUNWIND_HISTORY_TABLE_ENTRY;
-
 #define UNWIND_HISTORY_TABLE_NONE    0
 #define UNWIND_HISTORY_TABLE_GLOBAL  1
 #define UNWIND_HISTORY_TABLE_LOCAL   2
-
-  typedef struct _UNWIND_HISTORY_TABLE {
-    ULONG Count;
-    BYTE  LocalHint;
-    BYTE  GlobalHint;
-    BYTE  Search;
-    BYTE  Once;
-    ULONG64 LowAddress;
-    ULONG64 HighAddress;
-    UNWIND_HISTORY_TABLE_ENTRY Entry[UNWIND_HISTORY_TABLE_SIZE];
-  } UNWIND_HISTORY_TABLE, *PUNWIND_HISTORY_TABLE;
 
   /* http://msdn.microsoft.com/en-us/library/b6sf5kbd(VS.80).aspx */
 
@@ -3004,10 +3094,30 @@ __buildmemorybarrier()
     PEXCEPTION_ROUTINE LanguageHandler;
     PVOID HandlerData;
     /* http://www.nynaeve.net/?p=99 */
-    PUNWIND_HISTORY_TABLE HistoryTable;
+    struct _UNWIND_HISTORY_TABLE *HistoryTable;
     ULONG ScopeIndex;
     ULONG Fill0;
   };
+
+#ifdef _ARM64EC_
+  typedef struct _DISPATCHER_CONTEXT_ARM64EC {
+    DWORD64 ControlPc;
+    DWORD64 ImageBase;
+    PRUNTIME_FUNCTION FunctionEntry;
+    DWORD64 EstablisherFrame;
+    union {
+        DWORD64 TargetIp;
+        DWORD64 TargetPc;
+    } DUMMYUNIONNAME;
+    PCONTEXT ContextRecord;
+    PEXCEPTION_ROUTINE LanguageHandler;
+    PVOID HandlerData;
+    struct _UNWIND_HISTORY_TABLE *HistoryTable;
+    DWORD ScopeIndex;
+    BOOLEAN ControlPcIsUnwound;
+    PBYTE  NonVolatileRegisters;
+  } DISPATCHER_CONTEXT_ARM64EC, *PDISPATCHER_CONTEXT_ARM64EC;
+#endif /* _ARM64EC_ */
 
   /* http://msdn.microsoft.com/en-us/library/ms680617(VS.85).aspx */
 
@@ -8939,6 +9049,27 @@ DEFINE_ENUM_FLAG_OPERATORS(JOB_OBJECT_IO_RATE_CONTROL_FLAGS)
     } IMAGE_COR20_HEADER,*PIMAGE_COR20_HEADER;
 #endif
 
+#ifndef __i386__
+
+#define UNWIND_HISTORY_TABLE_SIZE 12
+
+  typedef struct _UNWIND_HISTORY_TABLE_ENTRY {
+    ULONG_PTR ImageBase;
+    PRUNTIME_FUNCTION FunctionEntry;
+  } UNWIND_HISTORY_TABLE_ENTRY, *PUNWIND_HISTORY_TABLE_ENTRY;
+
+  typedef struct _UNWIND_HISTORY_TABLE {
+    DWORD     Count;
+    BYTE      LocalHint;
+    BYTE      GlobalHint;
+    BYTE      Search;
+    BYTE      Once;
+    ULONG_PTR LowAddress;
+    ULONG_PTR HighAddress;
+    UNWIND_HISTORY_TABLE_ENTRY Entry[UNWIND_HISTORY_TABLE_SIZE];
+  } UNWIND_HISTORY_TABLE, *PUNWIND_HISTORY_TABLE;
+#endif /* !__i386__ */
+
 #if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_APP)
     NTSYSAPI WORD NTAPI RtlCaptureStackBackTrace (DWORD FramesToSkip, DWORD FramesToCapture, PVOID *BackTrace, PDWORD BackTraceHash);
 #endif
@@ -8992,6 +9123,7 @@ DEFINE_ENUM_FLAG_OPERATORS(JOB_OBJECT_IO_RATE_CONTROL_FLAGS)
     NTSYSAPI PRUNTIME_FUNCTION NTAPI RtlLookupFunctionEntry (DWORD64 ControlPc, PDWORD64 ImageBase, PUNWIND_HISTORY_TABLE HistoryTable);
     NTSYSAPI VOID NTAPI RtlUnwindEx (PVOID TargetFrame, PVOID TargetIp, PEXCEPTION_RECORD ExceptionRecord, PVOID ReturnValue, PCONTEXT ContextRecord, PUNWIND_HISTORY_TABLE HistoryTable);
     NTSYSAPI PEXCEPTION_ROUTINE NTAPI RtlVirtualUnwind (DWORD HandlerType, DWORD64 ImageBase, DWORD64 ControlPc, PRUNTIME_FUNCTION FunctionEntry, PCONTEXT ContextRecord, PVOID *HandlerData, PDWORD64 EstablisherFrame, PKNONVOLATILE_CONTEXT_POINTERS ContextPointers);
+    NTSYSAPI BOOLEAN NTAPI RtlIsEcCode(DWORD64 CodePointer);
 #endif
 #if defined (__arm__)
     NTSYSAPI PRUNTIME_FUNCTION NTAPI RtlLookupFunctionEntry (ULONG_PTR ControlPc, PDWORD ImageBase, PUNWIND_HISTORY_TABLE HistoryTable);
@@ -9705,8 +9837,8 @@ typedef DWORD (WINAPI *PRTL_RUN_ONCE_INIT_FN)(PRTL_RUN_ONCE, PVOID, PVOID *);
 #define VERIFIER_STOP(Code,Msg,P1,S1,P2,S2,P3,S3,P4,S4) { RtlApplicationVerifierStop ((Code),(Msg),(ULONG_PTR)(P1),(S1),(ULONG_PTR)(P2),(S2),(ULONG_PTR)(P3),(S3),(ULONG_PTR)(P4),(S4)); }
 
     VOID NTAPI RtlApplicationVerifierStop(ULONG_PTR Code,PSTR Message,ULONG_PTR Param1,PSTR Description1,ULONG_PTR Param2,PSTR Description2,ULONG_PTR Param3,PSTR Description3,ULONG_PTR Param4,PSTR Description4);
-    NTSYSAPI DWORD NTAPI RtlSetHeapInformation(PVOID HeapHandle,HEAP_INFORMATION_CLASS HeapInformationClass,PVOID HeapInformation,SIZE_T HeapInformationLength);
-    NTSYSAPI DWORD NTAPI RtlQueryHeapInformation(PVOID HeapHandle,HEAP_INFORMATION_CLASS HeapInformationClass,PVOID HeapInformation,SIZE_T HeapInformationLength,PSIZE_T ReturnLength);
+    NTSYSAPI LONG NTAPI RtlSetHeapInformation(PVOID HeapHandle,HEAP_INFORMATION_CLASS HeapInformationClass,PVOID HeapInformation,SIZE_T HeapInformationLength);
+    NTSYSAPI LONG NTAPI RtlQueryHeapInformation(PVOID HeapHandle,HEAP_INFORMATION_CLASS HeapInformationClass,PVOID HeapInformation,SIZE_T HeapInformationLength,PSIZE_T ReturnLength);
     DWORD NTAPI RtlMultipleAllocateHeap(PVOID HeapHandle,DWORD Flags,SIZE_T Size,DWORD Count,PVOID *Array);
     DWORD NTAPI RtlMultipleFreeHeap(PVOID HeapHandle,DWORD Flags,DWORD Count,PVOID *Array);
 
