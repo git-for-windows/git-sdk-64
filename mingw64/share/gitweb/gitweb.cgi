@@ -35,7 +35,7 @@ BEGIN {
 	CGI->compile() if $ENV{'MOD_PERL'};
 }
 
-our $version = "2.48.0.rc2.windows.1";
+our $version = "2.48.0.rc2.windows.1.472.g0c796d3013.20250123145154";
 
 our ($my_url, $my_uri, $base_url, $path_info, $home_link);
 sub evaluate_uri {

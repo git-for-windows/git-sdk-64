@@ -3927,6 +3927,19 @@ respect this option as well.</p>
 or https URL to be important. Defaults to false. See
 <a href="gitcredentials.html">gitcredentials(7)</a> for more information.</p>
 </dd>
+<dt class="hdlist1">credential.sanitizePrompt</dt>
+<dd>
+<p>By default, user names and hosts that are shown as part of the
+password prompt are not allowed to contain control characters (they
+will be URL-encoded by default). Configure this setting to <code>false</code> to
+override that behavior.</p>
+</dd>
+<dt class="hdlist1">credential.protectProtocol</dt>
+<dd>
+<p>By default, Carriage Return characters are not allowed in the protocol
+that is used when Git talks to a credential helper. This setting allows
+users to override this default.</p>
+</dd>
 <dt class="hdlist1">credential.username</dt>
 <dd>
 <p>If no username is set for a network authentication, use this username
@@ -8503,6 +8516,35 @@ When not configured, the default commit message editor is used instead.</p>
 <p>The default set of branches for <a href="git-show-branch.html">git-show-branch(1)</a>.
 See <a href="git-show-branch.html">git-show-branch(1)</a>.</p>
 </dd>
+<dt class="hdlist1">sideband.allowControlCharacters</dt>
+<dd>
+<p>By default, control characters that are delivered via the sideband
+are masked, except ANSI color sequences. This prevents potentially
+unwanted ANSI escape sequences from being sent to the terminal. Use
+this config setting to override this behavior:</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">color</dt>
+<dd>
+<p>Allow ANSI color sequences, line feeds and horizontal tabs,
+but mask all other control characters. This is the default.</p>
+</dd>
+<dt class="hdlist1">false</dt>
+<dd>
+<p>Mask all control characters other than line feeds and
+horizontal tabs.</p>
+</dd>
+<dt class="hdlist1">true</dt>
+<dd>
+<p>Allow all control characters to be sent to the terminal.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</dd>
 <dt class="hdlist1">sparse.expectFilesOutsideOfPatterns</dt>
 <dd>
 <p>Typically with sparse checkouts, files not matching any
@@ -9505,7 +9547,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-01-09 11:56:28 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>
