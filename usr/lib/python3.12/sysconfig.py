@@ -815,20 +815,13 @@ def get_platform():
     elif osname[:3] == "aix":
         from _aix_support import aix_platform
         return aix_platform()
-    elif osname[:6] == "cygwin":
+    elif osname[:6] == "cygwin" or osname[:4] == "msys":
+        # https://github.com/msys2/MSYS2-packages/issues/5143
+        # Various build tools use the platform to derive the wheel tag
+        # and the wheel tag needs to be stable for a specific platform
+        # so we can't include a version here.
         osname = "cygwin"
-        import re
-        rel_re = re.compile(r'[\d.]+')
-        m = rel_re.match(release)
-        if m:
-            release = m.group()
-    elif osname[:4] == "msys":
-        osname = "msys"
-        import re
-        rel_re = re.compile (r'[\d.]+')
-        m = rel_re.match(release)
-        if m:
-            release = m.group()
+        return  f"{osname}-{machine}"
     elif osname[:6] == "darwin":
         import _osx_support
         osname, release, machine = _osx_support.get_platform_osx(
