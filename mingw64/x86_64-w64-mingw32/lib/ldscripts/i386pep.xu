@@ -1,5 +1,5 @@
 /* Script for -Ur */
-/* Copyright (C) 2014-2024 Free Software Foundation, Inc.
+/* Copyright (C) 2014-2025 Free Software Foundation, Inc.
    Copying and distribution of this script, with or without modification,
    are permitted in any medium without royalty provided the copyright
    notice and this notice are preserved.  */
@@ -10,6 +10,23 @@ SECTIONS
   .text  :
   {
     *(.text)
+    . = ALIGN(8);
+  }
+  /* The Cygwin32 library uses a section to avoid copying certain data
+     on fork.  This used to be named ".data".  The linker used
+     to include this between __data_start__ and __data_end__, but that
+     breaks building the cygwin32 dll.  Instead, we name the section
+     ".data_cygwin_nocopy" and explicitly include it after __data_end__. */
+  .data  :
+  {
+    *(.data)
+    KEEP(*(.jcr))
+  }
+  .rdata  :
+  {
+    *(.rdata)
+    . = ALIGN(4);
+    /* .ctors & .dtors */
     . = ALIGN(8);
        /* Note: we always define __CTOR_LIST__ and ___CTOR_LIST__ here,
           we do not PROVIDE them.  This is because the ctors.o startup
@@ -45,21 +62,8 @@ SECTIONS
        KEEP (*(.dtor));
        KEEP (*(SORT_BY_NAME(.dtors.*)));
        LONG (0); LONG (0);
-  }
-  /* The Cygwin32 library uses a section to avoid copying certain data
-     on fork.  This used to be named ".data".  The linker used
-     to include this between __data_start__ and __data_end__, but that
-     breaks building the cygwin32 dll.  Instead, we name the section
-     ".data_cygwin_nocopy" and explicitly include it after __data_end__. */
-  .data  :
-  {
-    *(.data)
-    KEEP(*(.jcr))
-  }
-  .rdata  :
-  {
-    *(.rdata)
-    . = ALIGN(4);
+    /* .CRT */
+    /* ___crt_xl_end__ is defined in the TLS Directory support code */
   }
   .eh_frame  :
   {
@@ -92,10 +96,6 @@ SECTIONS
   {
     /* This cannot currently be handled with grouped sections.
 	See pep.em:sort_sections.  */
-  }
-  .CRT  :
-  {
-    /* ___crt_xl_end__ is defined in the TLS Directory support code */
   }
   /* Windows TLS expects .tls$AAA to be at the start and .tls$ZZZ to be
      at the end of the .tls section.  This is important because _tls_start MUST

@@ -1,5 +1,5 @@
 /* Script for -r */
-/* Copyright (C) 2014-2024 Free Software Foundation, Inc.
+/* Copyright (C) 2014-2025 Free Software Foundation, Inc.
    Copying and distribution of this script, with or without modification,
    are permitted in any medium without royalty provided the copyright
    notice and this notice are preserved.  */
@@ -25,6 +25,9 @@ SECTIONS
   {
     *(.rdata)
     . = ALIGN(4);
+    /* .ctors & .dtors */
+    /* .CRT */
+    /* ___crt_xl_end__ is defined in the TLS Directory support code */
   }
   .eh_frame  :
   {
@@ -53,10 +56,6 @@ SECTIONS
   {
     /* This cannot currently be handled with grouped sections.
 	See pe.em:sort_sections.  */
-  }
-  .CRT  :
-  {
-    /* ___crt_xl_end__ is defined in the TLS Directory support code */
   }
   /* Windows TLS expects .tls$AAA to be at the start and .tls$ZZZ to be
      at the end of section.  This is important because _tls_start MUST
