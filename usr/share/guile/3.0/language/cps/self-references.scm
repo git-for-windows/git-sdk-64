@@ -43,6 +43,8 @@
        ($call (subst proc) ,(map subst args)))
       (($ $callk k proc args)
        ($callk k (and proc (subst proc)) ,(map subst args)))
+      (($ $calli args callee)
+       ($calli ,(map subst args) (subst callee)))
       (($ $primcall name param args)
        ($primcall name param ,(map subst args)))
       (($ $values args)

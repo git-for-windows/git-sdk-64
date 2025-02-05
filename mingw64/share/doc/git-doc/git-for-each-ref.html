@@ -466,10 +466,10 @@ pre>code {
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Iterate over all refs that match <code>&lt;pattern&gt;</code> and show them
-according to the given <code>&lt;format&gt;</code>, after sorting them according
-to the given set of <code>&lt;key&gt;</code>.  If <code>&lt;count&gt;</code> is given, stop after
-showing that many refs.  The interpolated values in <code>&lt;format&gt;</code>
+<p>Iterate over all refs that match <em>&lt;pattern&gt;</em> and show them
+according to the given <em>&lt;format&gt;</em>, after sorting them according
+to the given set of <em>&lt;key&gt;</em>.  If <em>&lt;count&gt;</em> is given, stop after
+showing that many refs.  The interpolated values in <em>&lt;format&gt;</em>
 can optionally be quoted as string literals in the specified
 host language allowing their direct evaluation in that language.</p>
 </div>
@@ -495,7 +495,7 @@ standard input instead of from the argument list.</p>
 <dt class="hdlist1">--count=&lt;count&gt;</dt>
 <dd>
 <p>By default the command shows all refs that match
-<code>&lt;pattern&gt;</code>.  This option makes it stop after showing
+<em>&lt;pattern&gt;</em>.  This option makes it stop after showing
 that many refs.</p>
 </dd>
 <dt class="hdlist1">--sort=&lt;key&gt;</dt>
@@ -508,28 +508,28 @@ key.</p>
 </dd>
 <dt class="hdlist1">--format=&lt;format&gt;</dt>
 <dd>
-<p>A string that interpolates <code>%(fieldname)</code> from a ref being shown and
-the object it points at. In addition, the string literal <code>%%</code>
-renders as <code>%</code> and <code>%xx</code> - where <code>xx</code> are hex digits - renders as
-the character with hex code <code>xx</code>. For example, <code>%00</code> interpolates to
-<code>\0</code> (NUL), <code>%09</code> to <code>\t</code> (TAB), and <code>%0a</code> to <code>\n</code> (LF).</p>
+<p>A string that interpolates %(<code>fieldname</code>) from a ref being shown and
+the object it points at. In addition, the string literal %%
+renders as % and %xx - where <code>xx</code> are hex digits - renders as
+the character with hex code <code>xx</code>. For example, %00 interpolates to
+\0 (NUL), %09 to \t (TAB), and %0a to \n (LF).</p>
 <div class="paragraph">
-<p>When unspecified, <code>&lt;format&gt;</code> defaults to <code>%(objectname) SPC %(objecttype)
-TAB %(refname)</code>.</p>
+<p>When unspecified, <em>&lt;format&gt;</em> defaults to %(<code>objectname</code>) <code>SPC</code> %(<code>objecttype</code>)
+<code>TAB</code> %(<code>refname</code>).</p>
 </div>
 </dd>
 <dt class="hdlist1">--color[=&lt;when&gt;]</dt>
 <dd>
 <p>Respect any colors specified in the <code>--format</code> option. The
-<code>&lt;when&gt;</code> field must be one of <code>always</code>, <code>never</code>, or <code>auto</code> (if
-<code>&lt;when&gt;</code> is absent, behave as if <code>always</code> was given).</p>
+<em>&lt;when&gt;</em> field must be one of <code>always</code>, <code>never</code>, or <code>auto</code> (if
+<em>&lt;when&gt;</em> is absent, behave as if <code>always</code> was given).</p>
 </dd>
 <dt class="hdlist1">--shell</dt>
 <dt class="hdlist1">--perl</dt>
 <dt class="hdlist1">--python</dt>
 <dt class="hdlist1">--tcl</dt>
 <dd>
-<p>If given, strings that substitute <code>%(fieldname)</code>
+<p>If given, strings that substitute %(<code>fieldname</code>)
 placeholders are quoted as string literals suitable for
 the specified host language.  This is meant to produce
 a scriptlet that can directly be `eval`ed.</p>
@@ -571,7 +571,7 @@ to the empty string.</p>
 <dd>
 <p>If one or more patterns are given, only refs which do not match
 any excluded pattern(s) are shown. Matching is done using the
-same rules as <code>&lt;pattern&gt;</code> above.</p>
+same rules as <em>&lt;pattern&gt;</em> above.</p>
 </dd>
 <dt class="hdlist1">--include-root-refs</dt>
 <dd>
@@ -599,14 +599,14 @@ keys.</p>
 <p>The name of the ref (the part after $GIT_DIR/).
 For a non-ambiguous short name of the ref append <code>:short</code>.
 The option core.warnAmbiguousRefs is used to select the strict
-abbreviation mode. If <code>lstrip=&lt;N&gt;</code> (<code>rstrip=&lt;N&gt;</code>) is appended, strips <code>&lt;N&gt;</code>
+abbreviation mode. If <code>lstrip=</code><em>&lt;N&gt;</em> (<code>rstrip=</code><em>&lt;N&gt;</em>) is appended, strips <em>&lt;N&gt;</em>
 slash-separated path components from the front (back) of the refname
-(e.g. <code>%(refname:lstrip=2)</code> turns <code>refs/tags/foo</code> into <code>foo</code> and
-<code>%(refname:rstrip=2)</code> turns <code>refs/tags/foo</code> into <code>refs</code>).
-If <code>&lt;N&gt;</code> is a negative number, strip as many path components as
-necessary from the specified end to leave <code>-&lt;N&gt;</code> path components
-(e.g. <code>%(refname:lstrip=-2)</code> turns
-<code>refs/tags/foo</code> into <code>tags/foo</code> and <code>%(refname:rstrip=-1)</code>
+(e.g. %(<code>refname:lstrip=2</code>) turns <code>refs/tags/foo</code> into <code>foo</code> and
+%(<code>refname:rstrip=2</code>) turns <code>refs/tags/foo</code> into <code>refs</code>).
+If <em>&lt;N&gt;</em> is a negative number, strip as many path components as
+necessary from the specified end to leave <code>-</code><em>&lt;N&gt;</em> path components
+(e.g. %(<code>refname:lstrip=-2</code>) turns
+<code>refs/tags/foo</code> into <code>tags/foo</code> and %(<code>refname:rstrip=-1</code>)
 turns <code>refs/tags/foo</code> into <code>refs</code>). When the ref does not have
 enough components, the result becomes an empty string if
 stripping with positive &lt;N&gt;, or it becomes the full refname if
@@ -630,7 +630,7 @@ disk. See the note about on-disk sizes in the <code>CAVEATS</code> section below
 <p>The object name (aka SHA-1).
 For a non-ambiguous abbreviation of the object name append <code>:short</code>.
 For an abbreviation of the object name with desired length append
-<code>:short=&lt;length&gt;</code>, where the minimum length is MINIMUM_ABBREV. The
+<code>:short=</code><em>&lt;length&gt;</em>, where the minimum length is MINIMUM_ABBREV. The
 length may be exceeded to ensure unique object names.</p>
 </dd>
 <dt class="hdlist1">deltabase</dt>
@@ -651,12 +651,12 @@ also prints "[gone]" whenever unknown upstream ref is
 encountered. Append <code>:track,nobracket</code> to show tracking
 information without brackets (i.e "ahead N, behind M").</p>
 <div class="paragraph">
-<p>For any remote-tracking branch <code>%(upstream)</code>, <code>%(upstream:remotename)</code>
-and <code>%(upstream:remoteref)</code> refer to the name of the remote and the
+<p>For any remote-tracking branch %(<code>upstream</code>), %(<code>upstream:remotename</code>)
+and %(<code>upstream:remoteref</code>) refer to the name of the remote and the
 name of the tracked remote ref, respectively. In other words, the
 remote-tracking branch can be updated explicitly and individually by
-using the refspec <code>%(upstream:remoteref):%(upstream)</code> to fetch from
-<code>%(upstream:remotename)</code>.</p>
+using the refspec %(<code>upstream:remoteref</code>)<code>:</code>%(<code>upstream</code>) to fetch from
+%(<code>upstream:remotename</code>).</p>
 </div>
 <div class="paragraph">
 <p>Has no effect if the ref does not have tracking information associated
@@ -666,10 +666,10 @@ but if used together the last option is selected.</p>
 </dd>
 <dt class="hdlist1">push</dt>
 <dd>
-<p>The name of a local ref which represents the <code>@{push}</code>
+<p>The name of a local ref which represents the <code>@</code>{push}
 location for the displayed ref. Respects <code>:short</code>, <code>:lstrip</code>,
 <code>:rstrip</code>, <code>:track</code>, <code>:trackshort</code>, <code>:remotename</code>, and <code>:remoteref</code>
-options as <code>upstream</code> does. Produces an empty string if no <code>@{push}</code>
+options as <code>upstream</code> does. Produces an empty string if no <code>@</code>{push}
 ref is configured.</p>
 </dd>
 <dt class="hdlist1">HEAD</dt>
@@ -679,22 +679,22 @@ otherwise.</p>
 </dd>
 <dt class="hdlist1">color</dt>
 <dd>
-<p>Change output color. Followed by <code>:&lt;colorname&gt;</code>, where color
+<p>Change output color. Followed by <code>:</code><em>&lt;colorname&gt;</em>, where color
 names are described under Values in the "CONFIGURATION FILE"
 section of <a href="git-config.html">git-config(1)</a>.  For example,
-<code>%(color:bold red)</code>.</p>
+%(<code>color:bold</code> <code>red</code>).</p>
 </dd>
 <dt class="hdlist1">align</dt>
 <dd>
 <p>Left-, middle-, or right-align the content between
 %(align:&#8230;&#8203;) and %(end). The "align:" is followed by
-<code>width=&lt;width&gt;</code> and <code>position=&lt;position&gt;</code> in any order
-separated by a comma, where the <code>&lt;position&gt;</code> is either left,
-right or middle, default being left and <code>&lt;width&gt;</code> is the total
+<code>width=</code><em>&lt;width&gt;</em> and <code>position=</code><em>&lt;position&gt;</em> in any order
+separated by a comma, where the <em>&lt;position&gt;</em> is either left,
+right or middle, default being left and <em>&lt;width&gt;</em> is the total
 length of the content with alignment. For brevity, the
 "width=" and/or "position=" prefixes may be omitted, and bare
 &lt;width&gt; and &lt;position&gt; used instead.  For instance,
-<code>%(align:&lt;width&gt;,&lt;position&gt;)</code>. If the contents length is more
+%(<code>align:</code><em>&lt;width&gt;</em><code>,</code><em>&lt;position&gt;</em>). If the contents length is more
 than the width then no alignment is performed. If used with
 <code>--quote</code> everything in between %(align:&#8230;&#8203;) and %(end) is
 quoted, but if nested then only the topmost level performs
@@ -765,15 +765,15 @@ otherwise.</p>
 <dd>
 <p>Two integers, separated by a space, demonstrating the number of
 commits ahead and behind, respectively, when comparing the output
-ref to the <code>&lt;committish&gt;</code> specified in the format.</p>
+ref to the <em>&lt;committish&gt;</em> specified in the format.</p>
 </dd>
 <dt class="hdlist1">is-base:&lt;committish&gt;</dt>
 <dd>
-<p>In at most one row, <code>(&lt;committish&gt;)</code> will appear to indicate the ref
+<p>In at most one row, (<em>&lt;committish&gt;</em>) will appear to indicate the ref
 that is most likely the ref used as a starting point for the branch
-that produced <code>&lt;committish&gt;</code>. This choice is made using a heuristic:
+that produced <em>&lt;committish&gt;</em>. This choice is made using a heuristic:
 choose the ref that minimizes the number of commits in the
-first-parent history of <code>&lt;committish&gt;</code> and not in the first-parent
+first-parent history of <em>&lt;committish&gt;</em> and not in the first-parent
 history of the ref.</p>
 <div class="paragraph">
 <p>For example, consider the following figure of first-parent histories of
@@ -795,7 +795,7 @@ several refs:</p>
 </div>
 <div class="paragraph">
 <p>Here, if <code>A</code>, <code>B</code>, and <code>C</code> are the filtered references, and the format
-string is <code>%(refname):%(is-base:D)</code>, then the output would be</p>
+string is %(<code>refname</code>)<code>:</code>%(<code>is-base:D</code>), then the output would be</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -812,7 +812,7 @@ earliest ref in the sorted order.</p>
 </div>
 <div class="paragraph">
 <p>Note that this token will not appear if the first-parent history of
-<code>&lt;committish&gt;</code> does not intersect the first-parent histories of the
+<em>&lt;committish&gt;</em> does not intersect the first-parent histories of the
 filtered refs.</p>
 </div>
 </dd>
@@ -838,13 +838,13 @@ option in <a href="git-describe.html">git-describe(1)</a> for details.</p>
 </dd>
 <dt class="hdlist1">match=&lt;pattern&gt;</dt>
 <dd>
-<p>Only consider tags matching the given <code>glob(7)</code> pattern,
+<p>Only consider tags matching the given <code>glob</code>(<code>7</code>) pattern,
 excluding the "refs/tags/" prefix; see the corresponding option
 in <a href="git-describe.html">git-describe(1)</a> for details.</p>
 </dd>
 <dt class="hdlist1">exclude=&lt;pattern&gt;</dt>
 <dd>
-<p>Do not consider tags matching the given <code>glob(7)</code> pattern,
+<p>Do not consider tags matching the given <code>glob</code>(<code>7</code>) pattern,
 excluding the "refs/tags/" prefix; see the corresponding option
 in <a href="git-describe.html">git-describe(1)</a> for details.</p>
 </dd>
@@ -860,7 +860,7 @@ in <a href="git-describe.html">git-describe(1)</a> for details.</p>
 field names (<code>tree</code>, <code>parent</code>, <code>object</code>, <code>type</code>, and <code>tag</code>) can
 be used to specify the value in the header field.
 Fields <code>tree</code> and <code>parent</code> can also be used with modifier <code>:short</code> and
-<code>:short=&lt;length&gt;</code> just like <code>objectname</code>.</p>
+<code>:short=</code><em>&lt;length&gt;</em> just like <code>objectname</code>.</p>
 </div>
 <div class="paragraph">
 <p>For commit and tag objects, the special <code>creatordate</code> and <code>creator</code>
@@ -869,7 +869,7 @@ from the <code>committer</code> or <code>tagger</code> fields depending on the o
 These are intended for working on a mix of annotated and lightweight tags.</p>
 </div>
 <div class="paragraph">
-<p>For tag objects, a <code>fieldname</code> prefixed with an asterisk (<code>*</code>) expands to
+<p>For tag objects, a <code>fieldname</code> prefixed with an asterisk (*) expands to
 the <code>fieldname</code> value of the peeled object, rather than that of the tag
 object itself.</p>
 </div>
@@ -897,13 +897,13 @@ variable (see <a href="gitmailmap.html">gitmailmap(5)</a>).</p>
 </dl>
 </div>
 <div class="paragraph">
-<p>Note that <code>--format=%(raw)</code> can not be used with <code>--python</code>, <code>--shell</code>, <code>--tcl</code>,
+<p>Note that <code>--format=</code>%(<code>raw</code>) can not be used with <code>--python</code>, <code>--shell</code>, <code>--tcl</code>,
 because such language may not support arbitrary binary data in their string
 variable type.</p>
 </div>
 <div class="paragraph">
 <p>The message in a commit or a tag object is <code>contents</code>, from which
-<code>contents:&lt;part&gt;</code> can be used to extract various parts out of:</p>
+<code>contents:</code><em>&lt;part&gt;</em> can be used to extract various parts out of:</p>
 </div>
 <div class="dlist">
 <dl>
@@ -937,8 +937,8 @@ the "subject".</p>
 </div>
 <div class="paragraph">
 <p>Additionally, the trailers as interpreted by <a href="git-interpret-trailers.html">git-interpret-trailers(1)</a>
-are obtained as <code>trailers[:options]</code> (or by using the historical alias
-<code>contents:trailers[:options]</code>). For valid [:option] values see <code>trailers</code>
+are obtained as <code>trailers</code>[<code>:options</code>] (or by using the historical alias
+<code>contents:trailers</code>[<code>:options</code>]). For valid [:option] values see <code>trailers</code>
 section of <a href="git-log.html">git-log(1)</a>.</p>
 </div>
 <div class="paragraph">
@@ -1138,7 +1138,7 @@ commits and from none of the <code>--no-merged</code> commits are shown.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

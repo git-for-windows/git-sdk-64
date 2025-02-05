@@ -286,6 +286,46 @@ AC_DEFUN([_AC_FC_DIALECT_YEAR],
 	 [m4_fatal([unknown Fortran dialect])])])
 
 
+# _AC_FC_COMPILER_GNU
+# ---------------------
+# Check whether the compiler for the current language is GNU.
+#
+# This is similar to _AC_LANG_COMPILER_GNU.  But also considers LLVM Flang
+# a GNU-compatible compiler.  Pay attention to the fact that the position
+# of 'choke me' on the seventh column is intentional: otherwise
+# some Fortran compilers (e.g., SGI) might consider it's a
+# continuation line, and warn instead of reporting an error.
+m4_define([_AC_FC_COMPILER_GNU],
+[AC_CACHE_CHECK([whether the compiler supports GNU _AC_LANG],
+		[ac_cv_[]_AC_LANG_ABBREV[]_compiler_gnu],
+		[_AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[#ifndef __GNUC__
+       choke me
+#endif
+]])],
+		  [ac_compiler_gnu=yes],
+		  [_AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[#ifndef __flang__
+       choke me
+#endif
+]])],
+		    [case `$[]_AC_FC[] $[]_AC_LANG_PREFIX[]FLAGS --print-target-triple < /dev/null 2>&1` in
+		      *mingw*|*-gnu)
+		        ac_compiler_gnu=yes
+		        ;;
+		      *-msvc)
+		        ac_compiler_gnu=no
+		        ;;
+		      *)
+		        ## assume Flang is GNU-compatible by default
+		        ac_compiler_gnu=yes
+		        ;;
+		    esac],
+		    [ac_compiler_gnu=no])])
+ac_cv_[]_AC_LANG_ABBREV[]_compiler_gnu=$ac_compiler_gnu
+])
+ac_compiler_gnu=$ac_cv_[]_AC_LANG_ABBREV[]_compiler_gnu
+])# _AC_FC_COMPILER_GNU
+
+
 # _AC_PROG_FC([DIALECT], [COMPILERS...])
 # --------------------------------------
 # DIALECT is a Fortran dialect, given by Fortran [YY]YY or simply [YY]YY,
@@ -346,7 +386,7 @@ m4_expand_once([_AC_COMPILER_OBJEXT])[]dnl
 # input file.  (Note that this only needs to work for GNU compilers.)
 ac_save_ext=$ac_ext
 ac_ext=F
-_AC_LANG_COMPILER_GNU
+_AC_FC_COMPILER_GNU
 ac_ext=$ac_save_ext
 _AC_PROG_FC_G
 ])# _AC_PROG_FC

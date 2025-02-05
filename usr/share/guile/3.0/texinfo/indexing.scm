@@ -29,7 +29,6 @@
 
 (define-module (texinfo indexing)
   #:use-module (sxml simple)
-  #:use-module (srfi srfi-13)
   #:export (stexi-extract-index))
 
 (define defines

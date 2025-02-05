@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2017-2020 Free Software Foundation, Inc.
+;; Copyright (C) 2017-2021 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -71,6 +71,8 @@
                (add-uses (add-use use-counts proc) args))
               (($ $callk kfun proc args)
                (add-uses (if proc (add-use use-counts proc) use-counts) args))
+              (($ $calli args callee)
+               (add-use (add-uses use-counts args) callee))
               (($ $primcall name param args)
                (add-uses use-counts args))))
            (($ $branch kf kt src op param args)

@@ -1,6 +1,6 @@
 ;;; transformation of top-level bindings into letrec*
 
-;; Copyright (C) 2019-2021 Free Software Foundation, Inc.
+;; Copyright (C) 2019-2021,2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -190,7 +190,7 @@
                     (cons name names) (cons var vars) (cons val vals)
                     tail))
       (_
-       (make-letrec (tree-il-src tail) #t
+       (make-letrec (tree-il-srcv tail) #t
                     (list name) (list var) (list val)
                     tail))))
 

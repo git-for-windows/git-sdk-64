@@ -412,7 +412,7 @@ startup, you may wish to consider starting
 <span class="command"><strong><a class="link" href="using-cygserver.html" title="Cygserver">cygserver</a></strong></span> first in
 order to take advantage of this system-wide caching.  To assure that
 <span class="command"><strong><a class="link" href="using-cygserver.html" title="Cygserver">cygserver</a></strong></span> has started
-prior to starting <span class="command"><strong>sshd</strong></span> or other Cygwin processes, you may
+prior to starting <span class="command"><strong>cygsshd</strong></span> or other Cygwin services, you may
 wish to create service startup dependencies.
 <span class="command"><strong><a class="link" href="using-cygserver.html" title="Cygserver">Cygserver</a></strong></span> should
 probably wait for Windows TCPIP and AFD services before it starts, and then
@@ -430,7 +430,7 @@ shown below.  You will need an administrative prompt to run the
   # Delay sshd until after Cygserver has started
   # Again note the (odd) required space character after "depend="
 
-  sc config sshd depend= cygserver
+  sc config cygsshd depend= cygserver
 
   # View the Cygserver service details
 
@@ -1229,8 +1229,8 @@ description, see
 <a class="ulink" href="https://blogs.msdn.microsoft.com/winsdk/2015/08/28/logon-as-a-user-without-a-password/" target="_top">this blog posting</a>.  Cygwin versions prior
 to 3.0 tried to creat a user token from scratch using an officially
 undocumented function <span class="command"><strong>NtCreateToken</strong></span> which
-is now disabled.</p><p>So we just start the servers which have to switch the user context
-(<span class="command"><strong>sshd</strong></span>, <span class="command"><strong>inetd</strong></span>, <span class="command"><strong>cron</strong></span>,
+is now disabled.</p><p>So we just start the services which have to switch the user context
+(<span class="command"><strong>cygsshd</strong></span>, <span class="command"><strong>inetd</strong></span>, <span class="command"><strong>cron</strong></span>,
 ...) as Windows services under the SYSTEM (or LocalSystem in the GUI)
 account and everything just works.  Unfortunately that's too simple.
 Using <code class="literal">S4U</code> has a drawback.</p><p>Annoyingly, you don't have the usual comfortable access

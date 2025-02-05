@@ -1,4 +1,4 @@
-*builtin.txt*	For Vim version 9.1.  Last change: 2024 Sep 10
+*builtin.txt*	For Vim version 9.1.  Last change: 2025 Jan 06
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -67,6 +67,8 @@ autocmd_get([{opts}])		List	return a list of autocmds
 balloon_gettext()		String	current text in the balloon
 balloon_show({expr})		none	show {expr} inside the balloon
 balloon_split({msg})		List	split {msg} as used for a balloon
+base64_decode({string})		Blob	base64 decode {string} characters
+base64_encode({blob})		String	base64 encode the bytes in {blob}
 bindtextdomain({package}, {path})
 				Bool	bind text domain to specified path
 blob2list({blob})		List	convert {blob} into a list of numbers
@@ -222,6 +224,7 @@ getbufline({buf}, {lnum} [, {end}])
 getbufoneline({buf}, {lnum})	String	line {lnum} of buffer {buf}
 getbufvar({buf}, {varname} [, {def}])
 				any	variable {varname} in buffer {buf}
+getcellpixels()			List	get character cell pixel size
 getcellwidths()			List	get character cell width overrides
 getchangelist([{buf}])		List	list of change list items
 getchar([{expr}])		Number or String
@@ -230,10 +233,13 @@ getcharmod()			Number	modifiers for the last typed character
 getcharpos({expr})		List	position of cursor, mark, etc.
 getcharsearch()			Dict	last character search
 getcharstr([{expr}])		String	get one character from the user
+getcmdcomplpat()		String	return the completion pattern of the
+					current command-line completion
 getcmdcompltype()		String	return the type of the current
 					command-line completion
-getcmdline()			String	return the current command-line
+getcmdline()			String	return the current command-line input
 getcmdpos()			Number	return cursor position in command-line
+getcmdprompt()			String	return the current command-line prompt
 getcmdscreenpos()		Number	return cursor screen position in
 					command-line
 getcmdtype()			String	return current command-line type
@@ -273,6 +279,7 @@ getregionpos({pos1}, {pos2} [, {opts}])
 				List	get a list of positions for a region
 getregtype([{regname}])		String	type of a register
 getscriptinfo([{opts}])		List	list of sourced scripts
+getstacktrace()			List	get current stack trace of Vim scripts
 gettabinfo([{expr}])		List	list of tab pages
 gettabvar({nr}, {varname} [, {def}])
 				any	variable {varname} in tab {nr} or {def}
@@ -464,9 +471,9 @@ prop_type_get({name} [, {props}])
 prop_type_list([{props}])	List	get list of property types
 pum_getpos()			Dict	position and size of pum if visible
 pumvisible()			Number	whether popup menu is visible
-py3eval({expr})			any	evaluate |python3| expression
-pyeval({expr})			any	evaluate |Python| expression
-pyxeval({expr})			any	evaluate |python_x| expression
+py3eval({expr} [, {locals}])	any	evaluate |python3| expression
+pyeval({expr} [, {locals}])	any	evaluate |Python| expression
+pyxeval({expr} [, {locals}])	any	evaluate |python_x| expression
 rand([{expr}])			Number	get pseudo-random number
 range({expr} [, {max} [, {stride}]])
 				List	items from {expr} to {max}
@@ -1221,6 +1228,43 @@ balloon_split({msg})					*balloon_split()*
 
 		Return type: list<any> or list<string>
 
+base64_decode({string})					*base64_decode()*
+		Return a Blob containing the bytes decoded from the base64
+		encoded characters in {string}.
+
+		The {string} argument should contain only base64-encoded
+		characters and should have a length that is a multiple of 4.
+
+		Returns an empty blob on error.
+
+		Examples: >
+		    " Write the decoded contents to a binary file
+		    call writefile(base64_decode(s), 'tools.bmp')
+		    " Decode a base64-encoded string
+		    echo list2str(blob2list(base64_decode(encodedstr)))
+<
+		Can also be used as a |method|: >
+			GetEncodedString()->base64_decode()
+<
+		Return type: |Blob|
+
+
+base64_encode({blob})					*base64_encode()*
+		Return a base64-encoded String representing the bytes in
+		{blob}.  The base64 alphabet defined in RFC 4648 is used.
+
+		Examples: >
+		    " Encode the contents of a binary file
+		    echo base64_encode(readblob('somefile.bin'))
+		    " Encode a string
+		    echo base64_encode(list2blob(str2list(somestr)))
+<
+		Can also be used as a |method|: >
+			GetBinaryData()->base64_encode()
+<
+		Return type: |String|
+
+
 bindtextdomain({package}, {path})			*bindtextdomain()*
 		Bind a specific {package} to a {path} so that the
 		|gettext()| function can be used to get language-specific
@@ -1622,7 +1666,7 @@ charclass({string})					*charclass()*
 		The character class is one of:
 			0	blank
 			1	punctuation
-			2	word character
+			2	word character (depends on 'iskeyword')
 			3	emoji
 			other	specific Unicode class
 		The class is used in patterns and word motions.
@@ -1853,10 +1897,15 @@ complete_info([{what}])				*complete_info()*
 				See |complete_info_mode| for the values.
 		   pum_visible	|TRUE| if popup menu is visible.
 				See |pumvisible()|.
-		   items	List of completion matches.  Each item is a
-				dictionary containing the entries "word",
+		   items	List of all completion candidates. Each item
+				is a dictionary containing the entries "word",
 				"abbr", "menu", "kind", "info" and "user_data".
 				See |complete-items|.
+		   matches	Same as "items", but only returns items that
+				are matching current query. If both "matches"
+				and "items" are in "what", the returned list
+				will still be named "items", but each item
+				will have an additional "match" field.
 		   selected	Selected item index.  First index is zero.
 				Index is -1 if no item is selected (showing
 				typed text only, or the last completion after
@@ -3783,6 +3832,20 @@ getbufvar({buf}, {varname} [, {def}])				*getbufvar()*
 		Return type: any, depending on {varname}
 
 
+getcellpixels()						*getcellpixels()*
+		Returns a |List| of terminal cell pixel size.
+		List format is [xpixel, ypixel].
+
+		Only works on Unix (terminal and gVim) and Windows (gVim only).
+		Returns [] on other systems or on failure.
+		Note that there could be variations across different terminals.
+		On macOS, system Terminal.app returns sizes in points (before
+		Retina scaling), whereas third-party terminals return raw pixel
+		sizes (post Retina scaling).
+
+		Return type: list<any>
+
+
 getcellwidths()						*getcellwidths()*
 		Returns a |List| of cell widths of character ranges overridden
 		by |setcellwidths()|.  The format is equal to the argument of
@@ -3972,27 +4035,37 @@ getcharstr([{expr}])					*getcharstr()*
 
 		Return type: |String|
 
+getcmdcomplpat()					*getcmdcomplpat()*
+		Return completion pattern of the current command-line.
+		Only works when the command line is being edited, thus
+		requires use of |c_CTRL-\_e| or |c_CTRL-R_=|.
+		Also see |getcmdtype()|, |setcmdpos()|, |getcmdline()|,
+		|getcmdprompt()|, |getcmdcompltype()| and |setcmdline()|.
+		Returns an empty string when completion is not defined.
+
+		Return type: |String|
+
 
 getcmdcompltype()					*getcmdcompltype()*
 		Return the type of the current command-line completion.
 		Only works when the command line is being edited, thus
 		requires use of |c_CTRL-\_e| or |c_CTRL-R_=|.
 		See |:command-completion| for the return string.
-		Also see |getcmdtype()|, |setcmdpos()|, |getcmdline()| and
-		|setcmdline()|.
+		Also see |getcmdtype()|, |setcmdpos()|, |getcmdline()|,
+		|getcmdprompt()|, |getcmdcomplpat()| and |setcmdline()|.
 		Returns an empty string when completion is not defined.
 
 		Return type: |String|
 
 
 getcmdline()						*getcmdline()*
-		Return the current command-line.  Only works when the command
-		line is being edited, thus requires use of |c_CTRL-\_e| or
-		|c_CTRL-R_=|.
+		Return the current command-line input.  Only works when the
+		command line is being edited, thus requires use of
+		|c_CTRL-\_e| or |c_CTRL-R_=|.
 		Example: >
 			:cmap <F7> <C-\>eescape(getcmdline(), ' \')<CR>
-<		Also see |getcmdtype()|, |getcmdpos()|, |setcmdpos()| and
-		|setcmdline()|.
+<		Also see |getcmdtype()|, |getcmdpos()|, |setcmdpos()|,
+		|getcmdprompt()| and |setcmdline()|.
 		Returns an empty string when entering a password or using
 		|inputsecret()|.
 
@@ -4005,10 +4078,21 @@ getcmdpos()						*getcmdpos()*
 		Only works when editing the command line, thus requires use of
 		|c_CTRL-\_e| or |c_CTRL-R_=| or an expression mapping.
 		Returns 0 otherwise.
-		Also see |getcmdtype()|, |setcmdpos()|, |getcmdline()| and
-		|setcmdline()|.
+		Also see |getcmdtype()|, |setcmdpos()|, |getcmdline()|,
+		|getcmdprompt()| and |setcmdline()|.
 
 		Return type: |Number|
+
+
+getcmdprompt()						*getcmdprompt()*
+		Return the current command-line prompt when using functions
+		like |input()| or |confirm()|.
+		Only works when the command line is being edited, thus
+		requires use of |c_CTRL-\_e| or |c_CTRL-R_=|.
+		Also see |getcmdtype()|, |getcmdline()|, |getcmdpos()|,
+		|setcmdpos()| and |setcmdline()|.
+
+		Return type: |String|
 
 
 getcmdscreenpos()					*getcmdscreenpos()*
@@ -4067,7 +4151,7 @@ getcompletion({pat}, {type} [, {filtered}])		*getcompletion()*
 		cscope		|:cscope| suboptions
 		custom,{func}	custom completion, defined via {func}
 		customlist,{func} custom completion, defined via {func}
-		diff_buffer     |:diffget| and |:diffput| completion
+		diff_buffer	|:diffget| and |:diffput| completion
 		dir		directory names
 		dir_in_path	directory names in |'cdpath'|
 		environment	environment variable names
@@ -4091,6 +4175,7 @@ getcompletion({pat}, {type} [, {filtered}])		*getcompletion()*
 		runtime		|:runtime| completion
 		scriptnames	sourced script names |:scriptnames|
 		shellcmd	Shell command
+		shellcmdline	Shell command line with filename arguments
 		sign		|:sign| suboptions
 		syntax		syntax file names |'syntax'|
 		syntime		|:syntime| suboptions
@@ -4811,7 +4896,7 @@ getregion({pos1}, {pos2} [, {opts}])			*getregion()*
 <
 		Return type: list<string>
 
-<
+
 getregionpos({pos1}, {pos2} [, {opts}])            *getregionpos()*
 		Same as |getregion()|, but returns a list of positions
 		describing the buffer text segments bound by {pos1} and
@@ -4868,6 +4953,7 @@ getregtype([{regname}])					*getregtype()*
 <
 		Return type: |String|
 
+
 getscriptinfo([{opts}])					*getscriptinfo()*
 		Returns a |List| with information about all the sourced Vim
 		scripts in the order they were sourced, like what
@@ -4909,6 +4995,21 @@ getscriptinfo([{opts}])					*getscriptinfo()*
 			:echo getscriptinfo({'name': 'myscript'})
 			:echo getscriptinfo({'sid': 15})[0].variables
 <
+		Return type: list<dict<any>>
+
+
+getstacktrace()						*getstacktrace()*
+		Returns the current stack trace of Vim scripts.
+		Stack trace is a |List|, of which each item is a |Dictionary|
+		with the following items:
+		    funcref	The funcref if the stack is at a function,
+				otherwise this item is omitted.
+		    event	The string of the event description if the
+				stack is at an autocmd event, otherwise this
+				item is omitted.
+		    lnum	The line number in the script on the stack.
+		    filepath	The file path of the script on the stack.
+
 		Return type: list<dict<any>>
 
 
@@ -5045,6 +5146,8 @@ getwininfo([{winid}])					*getwininfo()*
 			botline		last complete displayed buffer line
 			bufnr		number of buffer in the window
 			height		window height (excluding winbar)
+			leftcol		first column displayed; only used when
+					'wrap' is off
 			loclist		1 if showing a location list
 					{only with the +quickfix feature}
 			quickfix	1 if quickfix or location list window
@@ -5177,7 +5280,7 @@ glob({expr} [, {nosuf} [, {list} [, {alllinks}]]])		*glob()*
 		on {list}
 
 
-glob2regpat({string})					 *glob2regpat()*
+glob2regpat({string})					*glob2regpat()*
 		Convert a file pattern, as used by glob(), into a search
 		pattern.  The result can be used to match with a string that
 		is a file name.  E.g. >
@@ -5630,7 +5733,7 @@ iconv({string}, {from}, {to})				*iconv()*
 		Return type: |String|
 
 
-id({item})							    *id()*
+id({item})							*id()*
 		The result is a unique String associated with the {item} and
 		not with the {item}'s contents. It is only valid while the
 		{item} exists and is referenced. It is valid only in the
@@ -7055,7 +7158,7 @@ matchbufline({buf}, {pat}, {lnum}, {end}, [, {dict}])
 		Return type: list<dict<any>> or list<any>
 
 
-matchdelete({id} [, {win})		       *matchdelete()* *E802* *E803*
+matchdelete({id} [, {win})			*matchdelete()* *E802* *E803*
 		Deletes a match with ID {id} previously defined by |matchadd()|
 		or one of the |:match| commands.  Returns 0 if successful,
 		otherwise -1.  See example for |matchadd()|.  All matches can
@@ -8101,9 +8204,14 @@ pumvisible()						*pumvisible()*
 		Return type: |Number|
 
 
-py3eval({expr})						*py3eval()*
+py3eval({expr} [, {locals}])				*py3eval()*
 		Evaluate Python expression {expr} and return its result
 		converted to Vim data structures.
+		If a {locals} |Dictionary| is given, it defines set of local
+		variables available in the expression. The keys are variable
+		names and the values are the variable values. |Dictionary| and
+		|List| values are referenced, and may be updated by the
+		expression (as if |python-bindeval| was used).
 		Numbers and strings are returned as they are (strings are
 		copied though, Unicode strings are additionally converted to
 		'encoding').
@@ -8115,15 +8223,17 @@ py3eval({expr})						*py3eval()*
 
 		Can also be used as a |method|: >
 			GetExpr()->py3eval()
+			'b",".join(l)'->py3eval({'l': ['a', 'b', 'c']})
 <
 		Return type: any, depending on {expr}
 
 		{only available when compiled with the |+python3| feature}
 
 							*E858* *E859*
-pyeval({expr})						*pyeval()*
+pyeval({expr} [, {locals}])				*pyeval()*
 		Evaluate Python expression {expr} and return its result
 		converted to Vim data structures.
+		For {locals} see |py3eval()|.
 		Numbers and strings are returned as they are (strings are
 		copied though).
 		Lists are represented as Vim |List| type.
@@ -8139,9 +8249,10 @@ pyeval({expr})						*pyeval()*
 
 		{only available when compiled with the |+python| feature}
 
-pyxeval({expr})						*pyxeval()*
+pyxeval({expr} [, {locals}])				*pyxeval()*
 		Evaluate Python expression {expr} and return its result
 		converted to Vim data structures.
+		For {locals} see |py3eval()|.
 		Uses Python 2 or 3, see |python_x| and 'pyxversion'.
 		See also: |pyeval()|, |py3eval()|
 
@@ -8504,10 +8615,10 @@ remote_expr({server}, {string} [, {idvar} [, {timeout}]])
 		string, also see |{server}|.
 
 		The string is sent as an expression and the result is returned
-		after evaluation.  The result must be a String or a |List|.  A
-		|List| is turned into a String by joining the items with a
-		line break in between (not at the end), like with join(expr,
-		"\n").
+		after evaluation.  The result must be a String or a |List|
+		other types will be converted to String.  A |List| is turned
+		into a String by joining the items with a line break in
+		between (not at the end), like with join(expr, "\n").
 
 		If {idvar} is present and not empty, it is taken as the name
 		of a variable and a {serverid} for later use with
@@ -8927,7 +9038,7 @@ search({pattern} [, {flags} [, {stopline} [, {timeout} [, {skip}]]]])
 		's'	Set the ' mark at the previous location of the cursor
 		'w'	Wrap around the end of the file
 		'W'	don't Wrap around the end of the file
-		'z'	start searching at the cursor column instead of zero
+		'z'	start searching at the cursor column instead of Zero
 		If neither 'w' or 'W' is given, the 'wrapscan' option applies.
 
 		If the 's' flag is supplied, the ' mark is set, only if the
@@ -9741,6 +9852,8 @@ setqflist({list} [, {action} [, {what}]])		*setqflist()*
 			clear the list: >
 				:call setqflist([], 'r')
 <
+		'u'	Like 'r', but tries to preserve the current selection
+			in the quickfix list.
 		'f'	All the quickfix lists in the quickfix stack are
 			freed.
 
@@ -11927,7 +12040,7 @@ wildmenumode()					*wildmenumode()*
 		For example to make <c-j> work like <down> in wildmode, use: >
     :cnoremap <expr> <C-j> wildmenumode() ? "\<Down>\<Tab>" : "\<c-j>"
 <
-		(Note, this needs the 'wildcharm' option set appropriately).
+		(Note: this needs the 'wildcharm' option set appropriately).
 
 		Return type: |Number|
 

@@ -36,7 +36,6 @@
   #:use-module (ice-9 binary-ports)
   #:use-module (ice-9 copy-tree)
   #:use-module (ice-9 iconv)
-  #:use-module (ice-9 rdelim)
   #:use-module (web request)
   #:use-module (web response)
   #:use-module (web uri)
@@ -45,8 +44,6 @@
   #:use-module (srfi srfi-9)
   #:use-module (srfi srfi-9 gnu)
   #:use-module (srfi srfi-26)
-  #:use-module ((rnrs io ports)
-                #:prefix rnrs-ports:)
   #:use-module (ice-9 match)
   #:autoload   (ice-9 ftw) (scandir)
   #:export (current-http-proxy

@@ -442,9 +442,6 @@ pre>code {
 <body class="article">
 <div id="header">
 <h1>How to use a signed tag in pull requests</h1>
-<div class="details">
-<span id="revdate">2024-10-22</span>
-</div>
 </div>
 <div id="content">
 <div id="preamble">
@@ -454,7 +451,7 @@ pre>code {
 project, build on it, publish the result to her public repository, and ask
 the "upstream" person (often the owner of the project where she forked
 from) to pull from her public repository. Requesting such a "pull" is made
-easy by the <code>git request-pull</code> command.</p>
+easy by the <code>git</code> <code>request-pull</code> command.</p>
 </div>
 <div class="paragraph">
 <p>Earlier, a typical pull request may have started like this:</p>
@@ -487,7 +484,7 @@ history.</p>
 <div class="paragraph">
 <p>Starting from Git release v1.7.9, a contributor can add a signed tag to
 the commit at the tip of the history and ask the integrator to pull that
-signed tag. When the integrator runs <code>git pull</code>, the signed tag is
+signed tag. When the integrator runs <code>git</code> <code>pull</code>, the signed tag is
 automatically verified to assure that the history is not tampered with.
 In addition, the resulting merge commit records the content of the signed
 tag, so that other people can verify that the branch merged by the
@@ -505,7 +502,7 @@ integrator, using Git v1.7.9 or later.</p>
 <h2 id="_a_contributor_or_a_lieutenant">A contributor or a lieutenant</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After preparing her work to be pulled, the contributor uses <code>git tag -s</code>
+<p>After preparing her work to be pulled, the contributor uses <code>git</code> <code>tag</code> <code>-s</code>
 to create a signed tag:</p>
 </div>
 <div class="listingblock">
@@ -590,7 +587,7 @@ write only a branch name here).</p>
 </div>
 <div class="paragraph">
 <p>followed by a shortlog of the changes and a diffstat.  Comparing this with
-the earlier illustration of the output from the traditional <code>git request-pull</code>
+the earlier illustration of the output from the traditional <code>git</code> <code>request-pull</code>
 command, the reader should notice that:</p>
 </div>
 <div class="olist arabic">
@@ -650,11 +647,11 @@ feature" appears here, and again that is why it is important for the
 contributor to explain her work well when creating the signed tag.</p>
 </div>
 <div class="paragraph">
-<p>As usual, the lines commented with <code>#</code> are stripped out. The resulting
+<p>As usual, the lines commented with # are stripped out. The resulting
 commit records the signed tag used for this validation in a hidden field
 so that it can later be used by others to audit the history. There is no
 need for the integrator to keep a separate copy of the tag in his
-repository (i.e. <code>git tag -l</code> won&#8217;t list the <code>frotz-for-xyzzy</code> tag in the
+repository (i.e. <code>git</code> <code>tag</code> <code>-l</code> won&#8217;t list the <code>frotz-for-xyzzy</code> tag in the
 above example), and there is no need to publish the tag to his public
 repository, either.</p>
 </div>
@@ -675,12 +672,12 @@ of her public repository clean, with:</p>
 <h2 id="_auditors">Auditors</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>--show-signature</code> option can be given to <code>git log</code> or <code>git show</code> and
+<p>The <code>--show-signature</code> option can be given to <code>git</code> <code>log</code> or <code>git</code> <code>show</code> and
 shows the verification status of the embedded signed tag in merge commits
 created when the integrator responded to a pull request of a signed tag.</p>
 </div>
 <div class="paragraph">
-<p>A typical output from <code>git show --show-signature</code> may look like this:</p>
+<p>A typical output from <code>git</code> <code>show</code> <code>--show-signature</code> may look like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -713,7 +710,7 @@ as part of the merge commit.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

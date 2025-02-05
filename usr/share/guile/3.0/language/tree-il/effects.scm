@@ -1,6 +1,6 @@
 ;;; Effects analysis on Tree-IL
 
-;; Copyright (C) 2011, 2012, 2013, 2021 Free Software Foundation, Inc.
+;; Copyright (C) 2011, 2012, 2013, 2021, 2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,9 @@
             effect-free?
             constant?
             depends-on-effects?
-            causes-effects?))
+            causes-effects?
+            add-primcall-effect-analyzer!
+            effect-free-primcall?))
 
 ;;;
 ;;; Hey, it's some effects analysis!  If you invoke
@@ -230,6 +232,37 @@
 (define-inlinable (effects-commute? a b)
   (and (not (causes-effects? a (&depends-on b)))
        (not (causes-effects? b (&depends-on a)))))
+
+(define *primcall-effect-analyzers* (make-hash-table))
+(define (add-primcall-effect-analyzer! name compute-effect-free?)
+  (hashq-set! *primcall-effect-analyzers* name compute-effect-free?))
+(define (primcall-effect-analyzer name)
+  (hashq-ref *primcall-effect-analyzers* name))
+
+(define (effect-free-primcall? name args)
+  "Return #f unless a primcall of @var{name} with @var{args} can be
+replaced with @code{(begin . @var{args})} in an effect context."
+  (match (cons name args)
+    ((or ('values . _)
+         ('list . _)
+         ('vector . _)
+         ('eq? _ _)
+         ('eqv? _ _)
+         ('cons* _ . _)
+         ('acons _ _ _)
+         ((or 'not
+              'pair? 'null? 'nil? 'list?
+              'symbol? 'variable? 'vector? 'struct? 'string?
+              'number? 'char? 'eof-object? 'exact-integer?
+              'bytevector? 'keyword? 'bitvector?
+              'procedure? 'thunk? 'atomic-box?
+              'vector 'make-variable)
+          _))
+     #t)
+    (_
+     (match (primcall-effect-analyzer name)
+       (#f #f)
+       (effect-free? (effect-free? args))))))
 
 (define (make-effects-analyzer assigned-lexical?)
   "Returns a procedure of type EXP -> EFFECTS that analyzes the effects
@@ -465,6 +498,21 @@ of an expression."
                    (cause &type-check)
                    (cause &string)))
 
+          (($ <primcall> _ 'string->utf8 (s))
+           (logior (compute-effects s)
+                   (cause &type-check)
+                   (cause &allocation)
+                   &string))
+          (($ <primcall> _ 'string-utf8-length (s))
+           (logior (compute-effects s)
+                   (cause &type-check)
+                   &string))
+          (($ <primcall> _ 'utf8->string (bv))
+           (logior (compute-effects bv)
+                   (cause &type-check)
+                   (cause &allocation)
+                   &bytevector))
+
           (($ <primcall> _
               (or 'bytevector-u8-ref 'bytevector-s8-ref
                   'bytevector-u16-ref 'bytevector-u16-native-ref
@@ -561,8 +609,17 @@ of an expression."
 
           ;; A call to an unknown procedure can do anything.
           (($ <primcall> _ name args)
-           (logior &all-effects-but-bailout
-                   (cause &all-effects-but-bailout)))
+           (match (primcall-effect-analyzer name)
+             (#f (logior &all-effects-but-bailout
+                         (cause &all-effects-but-bailout)))
+             (compute-effect-free?
+              (if (and (effect-free?
+                        (exclude-effects (accumulate-effects args) &allocation))
+                       (compute-effect-free? args))
+                  &all-effects-but-bailout
+                  (logior &all-effects-but-bailout
+                          (cause &all-effects-but-bailout))))))
+
           (($ <call> _ proc args)
            (logior &all-effects-but-bailout
                    (cause &all-effects-but-bailout)))

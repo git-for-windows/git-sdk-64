@@ -1,6 +1,6 @@
 ;;; Tree-IL partial evaluator
 
-;; Copyright (C) 2011-2014, 2017, 2019, 2020, 2021, 2022 Free Software Foundation, Inc.
+;; Copyright (C) 2011-2014,2017,2019-2024 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -110,7 +110,7 @@
   "Discard all but the first value of X."
   (if (singly-valued-expression? x)
       x
-      (make-primcall (tree-il-src x) 'values (list x))))
+      (make-primcall (tree-il-srcv x) 'values (list x))))
 
 ;; Peval will do a one-pass analysis on the source program to determine
 ;; the set of assigned lexicals, and to identify unreferenced and
@@ -580,14 +580,15 @@ top-level bindings from ENV and return the resulting expression."
     (define (apply-primitive name args)
       ;; todo: further optimize commutative primitives
       (catch #t
-        (lambda ()
-          (call-with-values
-              (lambda ()
-                (apply (module-ref the-scm-module name) args))
-            (lambda results
-              (values #t results))))
-        (lambda _
-          (values #f '()))))
+             (lambda ()
+               (define mod (resolve-interface (primitive-module name)))
+               (call-with-values
+                   (lambda ()
+                     (apply (module-ref mod name) args))
+                 (lambda results
+                   (values #t results))))
+             (lambda _
+               (values #f '()))))
     (define (make-values src values)
       (match values
         ((single) single)               ; 1 value
@@ -1269,14 +1270,9 @@ top-level bindings from ENV and return the resulting expression."
                ;; fixme: introduce logic to fold thunk?
                (make-primcall src 'thunk? (list u))
                (make-call src w '())
-               (make-primcall
-                src 'throw
-                (list
-                 (make-const #f 'wrong-type-arg)
-                 (make-const #f "dynamic-wind")
-                 (make-const #f "Wrong type (expecting thunk): ~S")
-                 (make-primcall #f 'list (list u))
-                 (make-primcall #f 'list (list u)))))
+               (make-primcall src 'raise-type-error
+                              (list (make-const #f #("dynamic-wind" 3 "thunk"))
+                                    u)))
               (make-primcall src 'wind (list w u)))
              (make-begin0 src
                           (make-call src thunk '())
@@ -1310,19 +1306,23 @@ top-level bindings from ENV and return the resulting expression."
                                                   '()))))))))
 
       (($ <primcall> src 'values exps)
-       (cond
-        ((null? exps)
-         (if (eq? ctx 'effect)
-             (make-void #f)
-             exp))
-        (else
-         (let ((vals (map for-value exps)))
-           (if (and (case ctx
-                      ((value test effect) #t)
-                      (else (null? (cdr vals))))
-                    (every singly-valued-expression? vals))
-               (for-tail (list->seq src (append (cdr vals) (list (car vals)))))
-               (make-primcall src 'values vals))))))
+       (match exps
+         (()
+          (case ctx
+            ((effect) (make-void #f))
+            ((values) exp)
+            ;; Zero values returned to continuation expecting a value:
+            ;; ensure that we raise an error.
+            (else (make-primcall src 'values (list exp)))))
+         ((($ <primcall> _ 'values ())) exp)
+         (_
+          (let ((vals (map for-value exps)))
+            (if (and (case ctx
+                       ((value test effect) #t)
+                       (else (null? (cdr vals))))
+                     (every singly-valued-expression? vals))
+                (for-tail (list->seq src (append (cdr vals) (list (car vals)))))
+                (make-primcall src 'values vals))))))
 
       (($ <primcall> src 'apply (proc args ... tail))
        (let lp ((tail* (find-definition tail 1)) (speculative? #t))
@@ -1350,6 +1350,35 @@ top-level bindings from ENV and return the resulting expression."
                   (make-primcall src 'apply
                                  (cons (for-value proc) args))))))))
 
+      (($ <primcall> src 'append (x z))
+       (let ((x (for-value x)))
+         (match x
+           ((or ($ <const> _ ())
+                ($ <primcall> _ 'list ()))
+            (for-value z))
+           ((or ($ <const> _ (_ . _))
+                ($ <primcall> _ 'cons)
+                ($ <primcall> _ 'list))
+            (for-tail
+             (let lp ((x x))
+               (match x
+                 ((or ($ <const> csrc ())
+                      ($ <primcall> csrc 'list ()))
+                  ;; Defer visiting z in value context to for-tail.
+                  z)
+                 (($ <const> csrc (x . y))
+                  (let ((x (make-const csrc x))
+                        (y (make-const csrc y)))
+                    (make-primcall src 'cons (list x (lp y)))))
+                 (($ <primcall> csrc 'cons (x y))
+                  (make-primcall src 'cons (list x (lp y))))
+                 (($ <primcall> csrc 'list (x . y))
+                  (let ((y (make-primcall csrc 'list y)))
+                    (make-primcall src 'cons (list x (lp y)))))
+                 (x (make-primcall src 'append (list x z)))))))
+           (else
+            (make-primcall src 'append (list x (for-value z)))))))
+
       (($ <primcall> src (? constructor-primitive? name) args)
        (cond
         ((and (memq ctx '(effect test))
@@ -1361,12 +1390,11 @@ top-level bindings from ENV and return the resulting expression."
                      ('make-prompt-tag ($ <const> _ (? string?))))
                  #t)
                 (_ #f)))
-         ;; Some expressions can be folded without visiting the
-         ;; arguments for value.
          (let ((res (if (eq? ctx 'effect)
                         (make-void #f)
                         (make-const #f #t))))
-           (for-tail (list->seq src (append args (list res))))))
+           (for-tail (list->seq src (append (map for-value args)
+                                            (list res))))))
         (else
          (match (cons name (map for-value args))
            (('cons x ($ <const> _ (? (cut eq? <> '()))))
@@ -1519,10 +1547,90 @@ top-level bindings from ENV and return the resulting expression."
           (fold-constants src name args ctx))
 
          ((name . args)
-          (make-primcall src name args))))
+          (if (and (eq? ctx 'effect) (effect-free-primcall? name args))
+              (if (null? args)
+                  (make-void src)
+                  (for-tail (list->seq src args)))
+              (make-primcall src name args)))))
 
       (($ <call> src orig-proc orig-args)
-       ;; todo: augment the global env with specialized functions
+       (define (residualize-call)
+         (make-call src (for-call orig-proc) (map for-value orig-args)))
+
+       (define (singly-referenced-lambda? proc)
+         (match proc
+           (($ <lambda>) #t)
+           (($ <lexical-ref> _ _ sym)
+            (and (not (assigned-lexical? sym))
+                 (= (lexical-refcount sym) 1)
+                 (singly-referenced-lambda?
+                  (operand-source (lookup sym)))))
+           (_ #f)))
+
+       (define (attempt-inlining proc names syms vals body)
+         (define inline-key (source-expression proc))
+         (define existing-counter (find-counter inline-key counter))
+         (define inlined-exp (make-let src names syms vals body))
+
+         (cond
+          ((and=> existing-counter counter-recursive?)
+           ;; A recursive call.  Process again in tail context.
+
+           ;; Mark intervening counters as recursive, so we can
+           ;; handle a toplevel counter that recurses mutually with
+           ;; some other procedure.  Otherwise, the next time we see
+           ;; the other procedure, the effort limit would be clamped
+           ;; to 100.
+           (let lp ((counter counter))
+             (unless (eq? counter existing-counter)
+               (set-counter-recursive?! counter #t)
+               (lp (counter-prev counter))))
+
+           (log 'inline-recurse inline-key)
+           (loop inlined-exp env counter ctx))
+          ((singly-referenced-lambda? orig-proc)
+           ;; A lambda in the operator position of the source
+           ;; expression.  Process again in tail context.
+           (log 'inline-beta inline-key)
+           (loop inlined-exp env counter ctx))
+          (else
+           ;; An integration at the top-level, the first
+           ;; recursion of a recursive procedure, or a nested
+           ;; integration of a procedure that hasn't been seen
+           ;; yet.
+           (log 'inline-begin exp)
+           (let/ec k
+             (define (abort)
+               (log 'inline-abort exp)
+               (k (residualize-call)))
+             (define new-counter
+               (cond
+                ;; These first two cases will transfer effort from
+                ;; the current counter into the new counter.
+                (existing-counter
+                 (make-recursive-counter recursive-effort-limit
+                                         operand-size-limit
+                                         existing-counter counter))
+                (counter
+                 (make-nested-counter abort inline-key counter))
+                ;; This case opens a new account, effectively
+                ;; printing money.  It should only do so once for
+                ;; each call site in the source program.
+                (else
+                 (make-top-counter effort-limit operand-size-limit
+                                   abort inline-key))))
+             (define result
+               (loop inlined-exp env new-counter ctx))
+
+             (when counter
+               ;; The nested inlining attempt succeeded.  Deposit the
+               ;; unspent effort and size back into the current
+               ;; counter.
+               (transfer! new-counter counter))
+
+             (log 'inline-end result exp)
+             result))))
+
        (let revisit-proc ((proc (visit orig-proc 'operator)))
          (match proc
            (($ <primitive-ref> _ name)
@@ -1531,143 +1639,193 @@ top-level bindings from ENV and return the resulting expression."
                     (augment-var-table-with-externally-introduced-lexicals
                      exp store))
               (for-tail exp)))
-           (($ <lambda> _ _
-               ($ <lambda-case> _ req opt rest #f inits gensyms body #f))
-            ;; Simple case: no keyword arguments.
-            ;; todo: handle the more complex cases
-            (let* ((nargs (length orig-args))
-                   (nreq (length req))
-                   (opt (or opt '()))
-                   (rest (if rest (list rest) '()))
-                   (nopt (length opt))
-                   (key (source-expression proc)))
-              (define (singly-referenced-lambda? orig-proc)
-                (match orig-proc
-                  (($ <lambda>) #t)
-                  (($ <lexical-ref> _ _ sym)
-                   (and (not (assigned-lexical? sym))
-                        (= (lexical-refcount sym) 1)
-                        (singly-referenced-lambda?
-                         (operand-source (lookup sym)))))
+
+           (($ <lambda> _ _ clause)
+            ;; A lambda.  Attempt to find the matching clause, if
+            ;; possible.
+            (define (inline-clause req opt rest kw inits gensyms body
+                                   arity-mismatch)
+              (define (bind name sym val binds)
+                (cons (vector name sym val) binds))
+              (define (has-binding? binds sym)
+                (match binds
+                  (() #f)
+                  ((#(n s v) . binds)
+                   (or (eq? s sym) (has-binding? binds sym)))))
+
+              ;; The basic idea is that we are going to transform an
+              ;; expression like ((lambda (param ...) body) arg ...)
+              ;; into (let ((param arg) ...) body).  However, we have to
+              ;; consider order of effects and scope: the args are
+              ;; logically parallel, whereas initializer expressions for
+              ;; params that don't have arguments are evaluated in
+              ;; order, after the arguments.  Therefore we have a set of
+              ;; parallel bindings, abbreviated pbinds, which proceed
+              ;; from the call site, and a set of serial bindings, the
+              ;; sbinds, which result from callee initializers.  We
+              ;; collect these in reverse order as we parse arguments.
+              ;; The result is an outer let for the parallel bindings
+              ;; containing a let* of the serial bindings and then the
+              ;; body.
+
+              (define (process-req req syms args pbinds sbinds)
+                (match req
+                  (() (process-opt (or opt '()) syms inits args pbinds sbinds))
+                  ((name . req)
+                   (match syms
+                     ((sym . syms)
+                      (match args
+                        (() (arity-mismatch))
+                        ((arg . args)
+                         (process-req req syms args
+                                      (bind name sym arg pbinds)
+                                      sbinds))))))))
+
+              (define (keyword-arg? exp)
+                (match exp
+                  (($ <const> _ (? keyword?)) #t)
                   (_ #f)))
-              (define (inlined-call)
-                (let ((req-vals (list-head orig-args nreq))
-                      (opt-vals (let lp ((args (drop orig-args nreq))
-                                         (inits inits)
-                                         (out '()))
-                                  (match inits
-                                    (() (reverse out))
-                                    ((init . inits)
-                                     (match args
-                                       (()
-                                        (lp '() inits (cons init out)))
-                                       ((arg . args)
-                                        (lp args inits (cons arg out))))))))
-                      (rest-vals (cond
-                                  ((> nargs (+ nreq nopt))
-                                   (list (make-primcall
-                                          #f 'list
-                                          (drop orig-args (+ nreq nopt)))))
-                                  ((null? rest) '())
-                                  (else (list (make-const #f '()))))))
-                  (if (>= nargs (+ nreq nopt))
-                      (make-let src
-                                (append req opt rest)
-                                gensyms
-                                (append req-vals opt-vals rest-vals)
-                                body)
-                      ;; The default initializers of optional arguments
-                      ;; may refer to earlier arguments, so in the general
-                      ;; case we must expand into a series of nested let
-                      ;; expressions.
-                      ;;
-                      ;; In the generated code, the outermost let
-                      ;; expression will bind all required arguments, as
-                      ;; well as the empty rest argument, if any.  Each
-                      ;; optional argument will be bound within an inner
-                      ;; let.
-                      (make-let src
-                                (append req rest)
-                                (append (list-head gensyms nreq)
-                                        (last-pair gensyms))
-                                (append req-vals rest-vals)
-                                (fold-right (lambda (var gensym val body)
-                                              (make-let src
-                                                        (list var)
-                                                        (list gensym)
-                                                        (list val)
-                                                        body))
-                                            body
-                                            opt
-                                            (list-head (drop gensyms nreq) nopt)
-                                            opt-vals)))))
+              (define (not-keyword-arg? exp)
+                (match exp
+                  ((or ($ <const> _ (not (? keyword?)))
+                       ($ <void>)
+                       ($ <primitive-ref>)
+                       ($ <lambda>))
+                   #t)
+                  (_ #f)))
 
+              (define (process-opt opt syms inits args pbinds sbinds)
+                (match opt
+                  (() (process-rest syms inits args pbinds sbinds))
+                  ((name . opt)
+                   (match inits
+                     ((init . inits)
+                      (match syms
+                        ((sym . syms)
+                         (cond
+                          (kw
+                           (match args
+                             ((or () ((? keyword-arg?) . _))
+                              ;; Optargs and kwargs; stop optarg dispatch at
+                              ;; first keyword.
+                              (process-opt opt syms inits args pbinds
+                                           (bind name sym init sbinds)))
+                             (((? not-keyword-arg? arg) . args)
+                              ;; Arg is definitely not a keyword; it is an
+                              ;; optarg.
+                              (process-opt opt syms inits args
+                                           (bind name sym arg pbinds)
+                                           sbinds))
+                             (_
+                              ;; We can't tell whether the arg is a keyword
+                              ;; or not!  Annoying semantics, this.
+                              (residualize-call))))
+                          (else
+                           ;; No kwargs.
+                           (match args
+                             (()
+                              (process-opt opt syms inits args pbinds
+                                           (bind name sym init sbinds)))
+                             ((arg . args)
+                              (process-opt opt syms inits args
+                                           (bind name sym arg pbinds)
+                                           sbinds))))))))))))
+
+              (define (process-rest syms inits args pbinds sbinds)
+                (match rest
+                  (#f
+                   (match kw
+                     ((#f . kw)
+                      (process-kw kw syms inits args pbinds sbinds))
+                     (#f
+                      (unless (and (null? syms) (null? inits))
+                        (error "internal error"))
+                      (match args
+                        (() (finish pbinds sbinds body))
+                        (_ (arity-mismatch))))))
+                  (rest
+                   (match syms
+                     ((sym . syms)
+                      (let ((rest-val (make-primcall src 'list args)))
+                        (unless (and (null? syms) (null? inits))
+                          (error "internal error"))
+                        (finish pbinds (bind rest sym rest-val sbinds)
+                                body)))))))
+
+              (define (process-kw kw syms inits args pbinds sbinds)
+                ;; Require that the ordered list of the keywords'
+                ;; syms is the same as the remaining gensyms to bind.
+                ;; Psyntax emits tree-il with this property, and it
+                ;; is required by (and checked by) other parts of the
+                ;; compiler, e.g. tree-il-to-cps lowering.
+                (unless (equal? syms (match kw (((k name sym) ...) sym)))
+                  (error "internal error: unexpected kwarg syms" kw syms))
+
+                (define (process-kw-args positional? args pbinds)
+                  (match args
+                    (()
+                     (process-kw-inits kw inits pbinds sbinds))
+                    ((($ <const> _ (? keyword? keyword)) arg . args)
+                     (match (assq keyword kw)
+                       ((keyword name sym)
+                        ;; Because of side effects, we don't
+                        ;; optimize passing the same keyword arg
+                        ;; multiple times.
+                        (if (has-binding? pbinds sym)
+                            (residualize-call)
+                            (process-kw-args #f args
+                                             (bind name sym arg pbinds))))
+                       (#f (residualize-call))))
+                    (((? not-keyword-arg?) . args)
+                     (if positional?
+                         (arity-mismatch)
+                         (residualize-call)))
+                    (_ (residualize-call))))
+
+                (define (process-kw-inits kw inits pbinds sbinds)
+                  (match kw
+                    (()
+                     (unless (null? inits) (error "internal error"))
+                     (finish pbinds sbinds body))
+                    (((keyword name sym) . kw)
+                     (match inits
+                       ((init . inits)
+                        (process-kw-inits kw inits pbinds
+                                          (if (has-binding? pbinds sym)
+                                              sbinds
+                                              (bind name sym init sbinds))))))))
+
+                (process-kw-args #t args pbinds))
+
+              (define (finish pbinds sbinds body)
+                (match sbinds
+                  (()
+                   (match (reverse pbinds)
+                     ((#(name sym val) ...)
+                      (attempt-inlining proc name sym val body))))
+                  ((#(name sym val) . sbinds)
+                   (finish pbinds sbinds
+                           (make-let src (list name) (list sym) (list val)
+                                     body)))))
+
+              ;; Limitations:
+              ;;
+              ;;  - #:key or #:rest, but not both.
+              ;;  - #:allow-other-keys unsupported.
               (cond
-               ((or (< nargs nreq) (and (null? rest) (> nargs (+ nreq nopt))))
-                ;; An error, or effecting arguments.
-                (make-call src (for-call orig-proc) (map for-value orig-args)))
-               ((or (and=> (find-counter key counter) counter-recursive?)
-                    (singly-referenced-lambda? orig-proc))
-                ;; A recursive call, or a lambda in the operator
-                ;; position of the source expression.  Process again in
-                ;; tail context.
-                ;;
-                ;; In the recursive case, mark intervening counters as
-                ;; recursive, so we can handle a toplevel counter that
-                ;; recurses mutually with some other procedure.
-                ;; Otherwise, the next time we see the other procedure,
-                ;; the effort limit would be clamped to 100.
-                ;;
-                (let ((found (find-counter key counter)))
-                  (if (and found (counter-recursive? found))
-                      (let lp ((counter counter))
-                        (if (not (eq? counter found))
-                            (begin
-                              (set-counter-recursive?! counter #t)
-                              (lp (counter-prev counter)))))))
-
-                (log 'inline-recurse key)
-                (loop (inlined-call) env counter ctx))
+               ((and kw (or rest (match kw ((aok? . _) aok?))))
+                (residualize-call))
                (else
-                ;; An integration at the top-level, the first
-                ;; recursion of a recursive procedure, or a nested
-                ;; integration of a procedure that hasn't been seen
-                ;; yet.
-                (log 'inline-begin exp)
-                (let/ec k
-                  (define (abort)
-                    (log 'inline-abort exp)
-                    (k (make-call src (for-call orig-proc)
-                                  (map for-value orig-args))))
-                  (define new-counter
-                    (cond
-                     ;; These first two cases will transfer effort
-                     ;; from the current counter into the new
-                     ;; counter.
-                     ((find-counter key counter)
-                      => (lambda (prev)
-                           (make-recursive-counter recursive-effort-limit
-                                                   operand-size-limit
-                                                   prev counter)))
-                     (counter
-                      (make-nested-counter abort key counter))
-                     ;; This case opens a new account, effectively
-                     ;; printing money.  It should only do so once
-                     ;; for each call site in the source program.
-                     (else
-                      (make-top-counter effort-limit operand-size-limit
-                                        abort key))))
-                  (define result
-                    (loop (inlined-call) env new-counter ctx))
-                      
-                  (if counter
-                      ;; The nested inlining attempt succeeded.
-                      ;; Deposit the unspent effort and size back
-                      ;; into the current counter.
-                      (transfer! new-counter counter))
+                (process-req req gensyms orig-args '() '()))))
 
-                  (log 'inline-end result exp)
-                  result)))))
+            (let lp ((clause clause))
+              (match clause
+                ;; No clause matches.
+                (#f (residualize-call))
+                (($ <lambda-case> src req opt rest kw inits gensyms body alt)
+                 (inline-clause req opt rest kw inits gensyms body
+                                (lambda () (lp alt)))))))
+
            (($ <let> _ _ _ vals _)
             ;; Attempt to inline `let' in the operator position.
             ;;
@@ -1691,10 +1849,10 @@ top-level bindings from ENV and return the resulting expression."
                   ;; traverse through lambdas.  In that case re-visit
                   ;; the procedure.
                   (proc (revisit-proc proc)))
-                (make-call src (for-call orig-proc)
-                           (map for-value orig-args))))
-           (_
-            (make-call src (for-call orig-proc) (map for-value orig-args))))))
+                (residualize-call)))
+
+           (_ (residualize-call)))))
+
       (($ <lambda> src meta body)
        (case ctx
          ((effect) (make-void #f))

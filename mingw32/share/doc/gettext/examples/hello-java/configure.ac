@@ -10,7 +10,7 @@ AM_INIT_AUTOMAKE([1.11])
 dnl Check whether we can execute Java programs.
 gt_JAVAEXEC
 dnl Check whether we can build Java programs.
-gt_JAVACOMP([1.5])
+gt_JAVACOMP([1.8])
 AC_CHECK_PROG([JAR], [jar], [jar])
 if test -n "$HAVE_JAVACOMP" && test -n "$JAR"; then
   BUILDJAVA=yes

@@ -497,8 +497,8 @@ controlled via the <code>blame.showRoot</code> config option.</p>
 or by the function name regex <em>&lt;funcname&gt;</em>.
 May be specified multiple times. Overlapping ranges are allowed.</p>
 <div class="paragraph">
-<p><em>&lt;start&gt;</em> and <em>&lt;end&gt;</em> are optional. <code>-L &lt;start&gt;</code> or <code>-L &lt;start&gt;,</code> spans from
-<em>&lt;start&gt;</em> to end of file. <code>-L ,&lt;end&gt;</code> spans from start of file to <em>&lt;end&gt;</em>.</p>
+<p><em>&lt;start&gt;</em> and <em>&lt;end&gt;</em> are optional. <code>-L</code> <em>&lt;start&gt;</em> or <code>-L</code> <em>&lt;start&gt;</em><code>,</code> spans from
+<em>&lt;start&gt;</em> to end of file. <code>-L</code> <code>,</code><em>&lt;end&gt;</em> spans from start of file to <em>&lt;end&gt;</em>.</p>
 </div>
 <div class="paragraph">
 <p><em>&lt;start&gt;</em> and <em>&lt;end&gt;</em> can take one of these forms:</p>
@@ -533,12 +533,12 @@ of lines before or after the line given by <em>&lt;start&gt;</em>.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>If <code>:&lt;funcname&gt;</code> is given in place of <em>&lt;start&gt;</em> and <em>&lt;end&gt;</em>, it is a
+<p>If <code>:</code><em>&lt;funcname&gt;</em> is given in place of <em>&lt;start&gt;</em> and <em>&lt;end&gt;</em>, it is a
 regular expression that denotes the range from the first funcname line
-that matches <em>&lt;funcname&gt;</em>, up to the next funcname line. <code>:&lt;funcname&gt;</code>
+that matches <em>&lt;funcname&gt;</em>, up to the next funcname line. <code>:</code><em>&lt;funcname&gt;</em>
 searches from the end of the previous <code>-L</code> range, if any, otherwise
-from the start of file. <code>^:&lt;funcname&gt;</code> searches from the start of
-file. The function names are determined in the same way as <code>git diff</code>
+from the start of file. <code>^:</code><em>&lt;funcname&gt;</em> searches from the start of
+file. The function names are determined in the same way as <code>git</code> <code>diff</code>
 works out patch hunk headers (see <em>Defining a custom hunk-header</em>
 in <a href="gitattributes.html">gitattributes(5)</a>).</p>
 </div>
@@ -561,8 +561,8 @@ in <a href="gitattributes.html">gitattributes(5)</a>).</p>
 the revision in which a line appeared, this shows the last
 revision in which a line has existed. This requires a range of
 revision like START..END where the path to blame exists in
-START.  <code>git blame --reverse START</code> is taken as <code>git blame
---reverse START..HEAD</code> for convenience.</p>
+START.  <code>git</code> <code>blame</code> <code>--reverse</code> <code>START</code> is taken as <code>git</code> <code>blame</code>
+<code>--reverse</code> <code>START</code><code>..</code><code>HEAD</code> for convenience.</p>
 </dd>
 <dt class="hdlist1">--first-parent</dt>
 <dd>
@@ -662,7 +662,7 @@ commit will be blamed on the previous commit that changed that line or
 nearby lines.  This option may be specified multiple times to ignore
 more than one revision.  If the <code>blame.markIgnoredLines</code> config option
 is set, then lines that were changed by an ignored commit and attributed to
-another commit will be marked with a <code>?</code> in the blame output.  If the
+another commit will be marked with a ? in the blame output.  If the
 <code>blame.markUnblamableLines</code> config option is set, then those lines touched
 by an ignored commit that we could not attribute to another revision are
 marked with a <em>*</em>.</p>
@@ -672,7 +672,7 @@ marked with a <em>*</em>.</p>
 <p>Ignore revisions listed in <code>file</code>, which must be in the same format as an
 <code>fsck.skipList</code>.  This option may be repeated, and these files will be
 processed after any files specified with the <code>blame.ignoreRevsFile</code> config
-option.  An empty file name, <code>""</code>, will clear the list of revs from
+option.  An empty file name, "", will clear the list of revs from
 previously processed files.</p>
 </dd>
 <dt class="hdlist1">--color-lines</dt>
@@ -715,7 +715,7 @@ each range of age.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

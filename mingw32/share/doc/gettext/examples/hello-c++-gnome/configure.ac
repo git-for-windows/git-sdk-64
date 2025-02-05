@@ -16,7 +16,7 @@ GTKMM_LIBS=`gtkmm-config --libs`
 AC_SUBST([GTKMM_LIBS])
 
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.22])
+AM_GNU_GETTEXT_VERSION([0.23])
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([m4/Makefile])

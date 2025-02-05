@@ -546,7 +546,7 @@ left-to-right."
 
 (define vector-count
   (case-lambda
-    "(vector-count pred? vec1 vec2 ...) -> exact nonnegative integer
+    "(vector-count pred? vec1 vec2 ...) -> exact non-negative integer
 
 Count the number of indices i for which (PRED? VEC1[i] VEC2[i] ...)
 returns true, where i is less than the length of the shortest vector
@@ -586,7 +586,7 @@ passed."
 
 (define vector-index
   (case-lambda
-    "(vector-index pred? vec1 vec2 ...) -> exact nonnegative integer or #f
+    "(vector-index pred? vec1 vec2 ...) -> exact non-negative integer or #f
 
 Find and return the index of the first elements in VEC1 VEC2 ... that
 satisfy PRED?.  If no matching element is found by the end of the
@@ -624,7 +624,7 @@ shortest vector, return #f."
 
 (define vector-index-right
   (case-lambda
-    "(vector-index-right pred? vec1 vec2 ...) -> exact nonnegative integer or #f
+    "(vector-index-right pred? vec1 vec2 ...) -> exact non-negative integer or #f
 
 Find and return the index of the last elements in VEC1 VEC2 ... that
 satisfy PRED?, searching from right-to-left.  If no matching element
@@ -662,7 +662,7 @@ is found before the end of the shortest vector, return #f."
 
 (define vector-skip
   (case-lambda
-    "(vector-skip pred? vec1 vec2 ...) -> exact nonnegative integer or #f
+    "(vector-skip pred? vec1 vec2 ...) -> exact non-negative integer or #f
 
 Find and return the index of the first elements in VEC1 VEC2 ... that
 do not satisfy PRED?.  If no matching element is found by the end of
@@ -700,7 +700,7 @@ the shortest vector, return #f."
 
 (define vector-skip-right
   (case-lambda
-    "(vector-skip-right pred? vec1 vec2 ...) -> exact nonnegative integer or #f
+    "(vector-skip-right pred? vec1 vec2 ...) -> exact non-negative integer or #f
 
 Find and return the index of the last elements in VEC1 VEC2 ... that
 do not satisfy PRED?, searching from right-to-left.  If no matching
@@ -748,7 +748,7 @@ element is found before the end of the shortest vector, return #f."
                      ((positive? c) (loop lo i))
                      ((negative? c) (loop (+ i 1) hi)))))))
     (case-lambda
-      "(vector-binary-search vec value cmp [start [end]]) -> exact nonnegative integer or #f
+      "(vector-binary-search vec value cmp [start [end]]) -> exact non-negative integer or #f
 
 Find and return an index of VEC between START and END whose value is
 VALUE using a binary search.  If no matching element is found, return

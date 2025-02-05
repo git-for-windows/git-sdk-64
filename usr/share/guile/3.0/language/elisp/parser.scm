@@ -37,7 +37,7 @@
 
 ;;; For parsing circular structures, we keep track of definitions in a
 ;;; hash-map that maps the id's to their values.  When defining a new
-;;; id, though, we immediatly fill the slot with a promise before
+;;; id, though, we immediately fill the slot with a promise before
 ;;; parsing and setting the real value, because it must already be
 ;;; available at that time in case of a circular reference.  The promise
 ;;; refers to a local variable that will be set when the real value is

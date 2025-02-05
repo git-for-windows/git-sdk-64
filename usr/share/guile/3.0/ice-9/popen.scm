@@ -19,7 +19,6 @@
 ;;;; 
 
 (define-module (ice-9 popen)
-  #:use-module (rnrs bytevectors)
   #:use-module (ice-9 binary-ports)
   #:use-module (ice-9 threads)
   #:use-module (srfi srfi-1)

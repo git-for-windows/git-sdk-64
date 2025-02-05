@@ -26,7 +26,6 @@
   #:use-module (system vm vm)
   #:use-module (system vm traps)
   #:use-module (system vm trace)
-  #:use-module (system vm frame)
   #:use-module (system vm program)
   #:export (add-trap!
             list-traps

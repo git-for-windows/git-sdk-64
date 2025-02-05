@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on February, 24 2024 by texi2html 1.78a -->
+<!-- Created on October, 16 2024 by texi2html 1.78a -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -1669,6 +1669,9 @@ two contexts of right-joining characters.
 <dt><u>Constant:</u> int <b>UC_JOINING_GROUP_VERTICAL_TAIL</b>
 <a name="IDX534"></a>
 </dt>
+<dt><u>Constant:</u> int <b>UC_JOINING_GROUP_KASHMIRI_YEH</b>
+<a name="IDX535"></a>
+</dt>
 </dl>
 
 <p>The following functions implement the association between a joining group
@@ -1676,14 +1679,14 @@ and its name.
 </p>
 <dl>
 <dt><u>Function:</u> const char * <b>uc_joining_group_name</b><i> (int&nbsp;<var>joining_group</var>)</i>
-<a name="IDX535"></a>
+<a name="IDX536"></a>
 </dt>
 <dd><p>Returns the name of a joining group.
 </p></dd></dl>
 
 <dl>
 <dt><u>Function:</u> int <b>uc_joining_group_byname</b><i> (const&nbsp;char&nbsp;*<var>joining_group_name</var>)</i>
-<a name="IDX536"></a>
+<a name="IDX537"></a>
 </dt>
 <dd><p>Returns the joining group given by name, e.g. <code>&quot;Teh_Marbuta&quot;</code>.
 This lookup ignores spaces, underscores, or hyphens as word separators and is
@@ -1694,7 +1697,7 @@ case-insignificant.
 </p>
 <dl>
 <dt><u>Function:</u> int <b>uc_joining_group</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX537"></a>
+<a name="IDX538"></a>
 </dt>
 <dd><p>Returns the joining group of a Unicode character.
 </p></dd></dl>
@@ -1724,7 +1727,7 @@ low level, a property is merely a function.
 </p>
 <dl>
 <dt><u>Type:</u> <b>uc_property_t</b>
-<a name="IDX538"></a>
+<a name="IDX539"></a>
 </dt>
 <dd><p>This data type denotes a boolean property on Unicode characters. It is an
 immediate type that can be copied by simple assignment, without involving
@@ -1737,37 +1740,37 @@ memory allocation.  It is not an array type.
 </p>
 <dl>
 <dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_WHITE_SPACE</b>
-<a name="IDX539"></a>
-</dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_ALPHABETIC</b>
 <a name="IDX540"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_ALPHABETIC</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_ALPHABETIC</b>
 <a name="IDX541"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_NOT_A_CHARACTER</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_ALPHABETIC</b>
 <a name="IDX542"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_DEFAULT_IGNORABLE_CODE_POINT</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_NOT_A_CHARACTER</b>
 <a name="IDX543"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_DEFAULT_IGNORABLE_CODE_POINT</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_DEFAULT_IGNORABLE_CODE_POINT</b>
 <a name="IDX544"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_DEPRECATED</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_DEFAULT_IGNORABLE_CODE_POINT</b>
 <a name="IDX545"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_LOGICAL_ORDER_EXCEPTION</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_DEPRECATED</b>
 <a name="IDX546"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_VARIATION_SELECTOR</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_LOGICAL_ORDER_EXCEPTION</b>
 <a name="IDX547"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_PRIVATE_USE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_VARIATION_SELECTOR</b>
 <a name="IDX548"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_UNASSIGNED_CODE_VALUE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_PRIVATE_USE</b>
 <a name="IDX549"></a>
+</dt>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_UNASSIGNED_CODE_VALUE</b>
+<a name="IDX550"></a>
 </dt>
 </dl>
 
@@ -1775,43 +1778,43 @@ memory allocation.  It is not an array type.
 </p>
 <dl>
 <dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_UPPERCASE</b>
-<a name="IDX550"></a>
-</dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_UPPERCASE</b>
 <a name="IDX551"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_LOWERCASE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_UPPERCASE</b>
 <a name="IDX552"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_LOWERCASE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_LOWERCASE</b>
 <a name="IDX553"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_TITLECASE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_LOWERCASE</b>
 <a name="IDX554"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CASED</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_TITLECASE</b>
 <a name="IDX555"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CASE_IGNORABLE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CASED</b>
 <a name="IDX556"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CHANGES_WHEN_LOWERCASED</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CASE_IGNORABLE</b>
 <a name="IDX557"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CHANGES_WHEN_UPPERCASED</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CHANGES_WHEN_LOWERCASED</b>
 <a name="IDX558"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CHANGES_WHEN_TITLECASED</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CHANGES_WHEN_UPPERCASED</b>
 <a name="IDX559"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CHANGES_WHEN_CASEFOLDED</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CHANGES_WHEN_TITLECASED</b>
 <a name="IDX560"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CHANGES_WHEN_CASEMAPPED</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CHANGES_WHEN_CASEFOLDED</b>
 <a name="IDX561"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_SOFT_DOTTED</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CHANGES_WHEN_CASEMAPPED</b>
 <a name="IDX562"></a>
+</dt>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_SOFT_DOTTED</b>
+<a name="IDX563"></a>
 </dt>
 </dl>
 
@@ -1819,34 +1822,34 @@ memory allocation.  It is not an array type.
 </p>
 <dl>
 <dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_ID_START</b>
-<a name="IDX563"></a>
-</dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_ID_START</b>
 <a name="IDX564"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_ID_CONTINUE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_ID_START</b>
 <a name="IDX565"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_ID_CONTINUE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_ID_CONTINUE</b>
 <a name="IDX566"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_XID_START</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_ID_CONTINUE</b>
 <a name="IDX567"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_XID_CONTINUE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_XID_START</b>
 <a name="IDX568"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_ID_COMPAT_MATH_START</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_XID_CONTINUE</b>
 <a name="IDX569"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_ID_COMPAT_MATH_CONTINUE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_ID_COMPAT_MATH_START</b>
 <a name="IDX570"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_PATTERN_WHITE_SPACE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_ID_COMPAT_MATH_CONTINUE</b>
 <a name="IDX571"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_PATTERN_SYNTAX</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_PATTERN_WHITE_SPACE</b>
 <a name="IDX572"></a>
+</dt>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_PATTERN_SYNTAX</b>
+<a name="IDX573"></a>
 </dt>
 </dl>
 
@@ -1854,19 +1857,22 @@ memory allocation.  It is not an array type.
 </p>
 <dl>
 <dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_JOIN_CONTROL</b>
-<a name="IDX573"></a>
-</dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_GRAPHEME_BASE</b>
 <a name="IDX574"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_GRAPHEME_EXTEND</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_GRAPHEME_BASE</b>
 <a name="IDX575"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_GRAPHEME_EXTEND</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_GRAPHEME_EXTEND</b>
 <a name="IDX576"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_GRAPHEME_LINK</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_GRAPHEME_EXTEND</b>
 <a name="IDX577"></a>
+</dt>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_GRAPHEME_LINK</b>
+<a name="IDX578"></a>
+</dt>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_MODIFIER_COMBINING_MARK</b>
+<a name="IDX579"></a>
 </dt>
 </dl>
 
@@ -1874,55 +1880,55 @@ memory allocation.  It is not an array type.
 </p>
 <dl>
 <dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_CONTROL</b>
-<a name="IDX578"></a>
-</dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_LEFT_TO_RIGHT</b>
-<a name="IDX579"></a>
-</dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_HEBREW_RIGHT_TO_LEFT</b>
 <a name="IDX580"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_ARABIC_RIGHT_TO_LEFT</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_LEFT_TO_RIGHT</b>
 <a name="IDX581"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_EUROPEAN_DIGIT</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_HEBREW_RIGHT_TO_LEFT</b>
 <a name="IDX582"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_EUR_NUM_SEPARATOR</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_ARABIC_RIGHT_TO_LEFT</b>
 <a name="IDX583"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_EUR_NUM_TERMINATOR</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_EUROPEAN_DIGIT</b>
 <a name="IDX584"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_ARABIC_DIGIT</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_EUR_NUM_SEPARATOR</b>
 <a name="IDX585"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_COMMON_SEPARATOR</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_EUR_NUM_TERMINATOR</b>
 <a name="IDX586"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_BLOCK_SEPARATOR</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_ARABIC_DIGIT</b>
 <a name="IDX587"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_SEGMENT_SEPARATOR</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_COMMON_SEPARATOR</b>
 <a name="IDX588"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_WHITESPACE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_BLOCK_SEPARATOR</b>
 <a name="IDX589"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_NON_SPACING_MARK</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_SEGMENT_SEPARATOR</b>
 <a name="IDX590"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_BOUNDARY_NEUTRAL</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_WHITESPACE</b>
 <a name="IDX591"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_PDF</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_NON_SPACING_MARK</b>
 <a name="IDX592"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_EMBEDDING_OR_OVERRIDE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_BOUNDARY_NEUTRAL</b>
 <a name="IDX593"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_OTHER_NEUTRAL</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_PDF</b>
 <a name="IDX594"></a>
+</dt>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_EMBEDDING_OR_OVERRIDE</b>
+<a name="IDX595"></a>
+</dt>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_BIDI_OTHER_NEUTRAL</b>
+<a name="IDX596"></a>
 </dt>
 </dl>
 
@@ -1930,10 +1936,10 @@ memory allocation.  It is not an array type.
 </p>
 <dl>
 <dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_HEX_DIGIT</b>
-<a name="IDX595"></a>
+<a name="IDX597"></a>
 </dt>
 <dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_ASCII_HEX_DIGIT</b>
-<a name="IDX596"></a>
+<a name="IDX598"></a>
 </dt>
 </dl>
 
@@ -1941,22 +1947,22 @@ memory allocation.  It is not an array type.
 </p>
 <dl>
 <dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_IDEOGRAPHIC</b>
-<a name="IDX597"></a>
-</dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_UNIFIED_IDEOGRAPH</b>
-<a name="IDX598"></a>
-</dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_RADICAL</b>
 <a name="IDX599"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_IDS_UNARY_OPERATOR</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_UNIFIED_IDEOGRAPH</b>
 <a name="IDX600"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_IDS_BINARY_OPERATOR</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_RADICAL</b>
 <a name="IDX601"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_IDS_TRINARY_OPERATOR</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_IDS_UNARY_OPERATOR</b>
 <a name="IDX602"></a>
+</dt>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_IDS_BINARY_OPERATOR</b>
+<a name="IDX603"></a>
+</dt>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_IDS_TRINARY_OPERATOR</b>
+<a name="IDX604"></a>
 </dt>
 </dl>
 
@@ -1964,22 +1970,22 @@ memory allocation.  It is not an array type.
 </p>
 <dl>
 <dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_EMOJI</b>
-<a name="IDX603"></a>
-</dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_EMOJI_PRESENTATION</b>
-<a name="IDX604"></a>
-</dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_EMOJI_MODIFIER</b>
 <a name="IDX605"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_EMOJI_MODIFIER_BASE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_EMOJI_PRESENTATION</b>
 <a name="IDX606"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_EMOJI_COMPONENT</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_EMOJI_MODIFIER</b>
 <a name="IDX607"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_EXTENDED_PICTOGRAPHIC</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_EMOJI_MODIFIER_BASE</b>
 <a name="IDX608"></a>
+</dt>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_EMOJI_COMPONENT</b>
+<a name="IDX609"></a>
+</dt>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_EXTENDED_PICTOGRAPHIC</b>
+<a name="IDX610"></a>
 </dt>
 </dl>
 
@@ -1987,85 +1993,85 @@ memory allocation.  It is not an array type.
 </p>
 <dl>
 <dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_ZERO_WIDTH</b>
-<a name="IDX609"></a>
-</dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_SPACE</b>
-<a name="IDX610"></a>
-</dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_NON_BREAK</b>
 <a name="IDX611"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_ISO_CONTROL</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_SPACE</b>
 <a name="IDX612"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_FORMAT_CONTROL</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_NON_BREAK</b>
 <a name="IDX613"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_PREPENDED_CONCATENATION_MARK</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_ISO_CONTROL</b>
 <a name="IDX614"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_DASH</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_FORMAT_CONTROL</b>
 <a name="IDX615"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_HYPHEN</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_PREPENDED_CONCATENATION_MARK</b>
 <a name="IDX616"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_PUNCTUATION</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_DASH</b>
 <a name="IDX617"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_LINE_SEPARATOR</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_HYPHEN</b>
 <a name="IDX618"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_PARAGRAPH_SEPARATOR</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_PUNCTUATION</b>
 <a name="IDX619"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_QUOTATION_MARK</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_LINE_SEPARATOR</b>
 <a name="IDX620"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_SENTENCE_TERMINAL</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_PARAGRAPH_SEPARATOR</b>
 <a name="IDX621"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_TERMINAL_PUNCTUATION</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_QUOTATION_MARK</b>
 <a name="IDX622"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CURRENCY_SYMBOL</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_SENTENCE_TERMINAL</b>
 <a name="IDX623"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_MATH</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_TERMINAL_PUNCTUATION</b>
 <a name="IDX624"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_MATH</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_CURRENCY_SYMBOL</b>
 <a name="IDX625"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_PAIRED_PUNCTUATION</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_MATH</b>
 <a name="IDX626"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_LEFT_OF_PAIR</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_OTHER_MATH</b>
 <a name="IDX627"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_COMBINING</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_PAIRED_PUNCTUATION</b>
 <a name="IDX628"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_COMPOSITE</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_LEFT_OF_PAIR</b>
 <a name="IDX629"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_DECIMAL_DIGIT</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_COMBINING</b>
 <a name="IDX630"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_NUMERIC</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_COMPOSITE</b>
 <a name="IDX631"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_DIACRITIC</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_DECIMAL_DIGIT</b>
 <a name="IDX632"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_EXTENDER</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_NUMERIC</b>
 <a name="IDX633"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_IGNORABLE_CONTROL</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_DIACRITIC</b>
 <a name="IDX634"></a>
 </dt>
-<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_REGIONAL_INDICATOR</b>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_EXTENDER</b>
 <a name="IDX635"></a>
+</dt>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_IGNORABLE_CONTROL</b>
+<a name="IDX636"></a>
+</dt>
+<dt><u>Constant:</u> uc_property_t <b>UC_PROPERTY_REGIONAL_INDICATOR</b>
+<a name="IDX637"></a>
 </dt>
 </dl>
 
@@ -2073,7 +2079,7 @@ memory allocation.  It is not an array type.
 </p>
 <dl>
 <dt><u>Function:</u> uc_property_t <b>uc_property_byname</b><i> (const&nbsp;char&nbsp;*<var>property_name</var>)</i>
-<a name="IDX636"></a>
+<a name="IDX638"></a>
 </dt>
 <dd><p>Returns the property given by name, e.g. <code>&quot;White space&quot;</code>.  If a property
 with the given name exists, the result will satisfy the
@@ -2091,7 +2097,7 @@ can significantly increase the size of your application.
 
 <dl>
 <dt><u>Function:</u> bool <b>uc_property_is_valid</b><i> (uc_property_t&nbsp;property)</i>
-<a name="IDX637"></a>
+<a name="IDX639"></a>
 </dt>
 <dd><p>Returns <code>true</code> when the given property is valid, or <code>false</code>
 otherwise.
@@ -2101,7 +2107,7 @@ otherwise.
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_property</b><i> (ucs4_t&nbsp;<var>uc</var>, uc_property_t&nbsp;<var>property</var>)</i>
-<a name="IDX638"></a>
+<a name="IDX640"></a>
 </dt>
 <dd><p>Tests whether the Unicode character <var>uc</var> has the given property.
 </p></dd></dl>
@@ -2115,37 +2121,37 @@ otherwise.
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_property_white_space</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX639"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_alphabetic</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX640"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_other_alphabetic</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX641"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_not_a_character</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_alphabetic</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX642"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_default_ignorable_code_point</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_other_alphabetic</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX643"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_other_default_ignorable_code_point</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_not_a_character</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX644"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_deprecated</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_default_ignorable_code_point</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX645"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_logical_order_exception</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_other_default_ignorable_code_point</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX646"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_variation_selector</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_deprecated</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX647"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_private_use</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_logical_order_exception</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX648"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_unassigned_code_value</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_variation_selector</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX649"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_private_use</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX650"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_unassigned_code_value</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX651"></a>
 </dt>
 </dl>
 
@@ -2153,43 +2159,43 @@ otherwise.
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_property_uppercase</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX650"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_other_uppercase</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX651"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_lowercase</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX652"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_other_lowercase</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_other_uppercase</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX653"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_titlecase</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_lowercase</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX654"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_cased</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_other_lowercase</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX655"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_case_ignorable</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_titlecase</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX656"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_changes_when_lowercased</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_cased</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX657"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_changes_when_uppercased</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_case_ignorable</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX658"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_changes_when_titlecased</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_changes_when_lowercased</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX659"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_changes_when_casefolded</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_changes_when_uppercased</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX660"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_changes_when_casemapped</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_changes_when_titlecased</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX661"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_soft_dotted</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_changes_when_casefolded</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX662"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_changes_when_casemapped</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX663"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_soft_dotted</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX664"></a>
 </dt>
 </dl>
 
@@ -2197,34 +2203,34 @@ otherwise.
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_property_id_start</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX663"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_other_id_start</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX664"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_id_continue</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX665"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_other_id_continue</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_other_id_start</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX666"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_xid_start</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_id_continue</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX667"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_xid_continue</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_other_id_continue</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX668"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_id_compat_math_start</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_xid_start</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX669"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_id_compat_math_continue</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_xid_continue</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX670"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_pattern_white_space</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_id_compat_math_start</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX671"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_pattern_syntax</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_id_compat_math_continue</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX672"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_pattern_white_space</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX673"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_pattern_syntax</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX674"></a>
 </dt>
 </dl>
 
@@ -2232,19 +2238,22 @@ otherwise.
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_property_join_control</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX673"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_grapheme_base</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX674"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_grapheme_extend</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX675"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_other_grapheme_extend</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_grapheme_base</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX676"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_grapheme_link</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_grapheme_extend</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX677"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_other_grapheme_extend</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX678"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_grapheme_link</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX679"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_modifier_combining_mark</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX680"></a>
 </dt>
 </dl>
 
@@ -2252,55 +2261,55 @@ otherwise.
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_property_bidi_control</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX678"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_left_to_right</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX679"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_hebrew_right_to_left</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX680"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_arabic_right_to_left</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX681"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_european_digit</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_left_to_right</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX682"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_eur_num_separator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_hebrew_right_to_left</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX683"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_eur_num_terminator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_arabic_right_to_left</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX684"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_arabic_digit</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_european_digit</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX685"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_common_separator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_eur_num_separator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX686"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_block_separator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_eur_num_terminator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX687"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_segment_separator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_arabic_digit</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX688"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_whitespace</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_common_separator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX689"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_non_spacing_mark</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_block_separator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX690"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_boundary_neutral</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_segment_separator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX691"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_pdf</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_whitespace</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX692"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_embedding_or_override</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_non_spacing_mark</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX693"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_bidi_other_neutral</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_boundary_neutral</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX694"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_pdf</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX695"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_embedding_or_override</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX696"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_bidi_other_neutral</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX697"></a>
 </dt>
 </dl>
 
@@ -2308,10 +2317,10 @@ otherwise.
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_property_hex_digit</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX695"></a>
+<a name="IDX698"></a>
 </dt>
 <dt><u>Function:</u> bool <b>uc_is_property_ascii_hex_digit</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX696"></a>
+<a name="IDX699"></a>
 </dt>
 </dl>
 
@@ -2319,22 +2328,22 @@ otherwise.
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_property_ideographic</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX697"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_unified_ideograph</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX698"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_radical</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX699"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_ids_unary_operator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX700"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_ids_binary_operator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_unified_ideograph</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX701"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_ids_trinary_operator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_radical</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX702"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_ids_unary_operator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX703"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_ids_binary_operator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX704"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_ids_trinary_operator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX705"></a>
 </dt>
 </dl>
 
@@ -2342,22 +2351,22 @@ otherwise.
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_property_emoji</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX703"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_emoji_presentation</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX704"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_emoji_modifier</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX705"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_emoji_modifier_base</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX706"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_emoji_component</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_emoji_presentation</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX707"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_extended_pictographic</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_emoji_modifier</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX708"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_emoji_modifier_base</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX709"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_emoji_component</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX710"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_extended_pictographic</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX711"></a>
 </dt>
 </dl>
 
@@ -2365,85 +2374,85 @@ otherwise.
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_property_zero_width</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX709"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_space</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX710"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_non_break</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX711"></a>
-</dt>
-<dt><u>Function:</u> bool <b>uc_is_property_iso_control</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX712"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_format_control</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_space</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX713"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_prepended_concatenation_mark</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_non_break</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX714"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_dash</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_iso_control</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX715"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_hyphen</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_format_control</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX716"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_punctuation</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_prepended_concatenation_mark</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX717"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_line_separator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_dash</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX718"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_paragraph_separator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_hyphen</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX719"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_quotation_mark</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_punctuation</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX720"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_sentence_terminal</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_line_separator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX721"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_terminal_punctuation</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_paragraph_separator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX722"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_currency_symbol</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_quotation_mark</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX723"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_math</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_sentence_terminal</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX724"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_other_math</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_terminal_punctuation</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX725"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_paired_punctuation</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_currency_symbol</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX726"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_left_of_pair</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_math</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX727"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_combining</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_other_math</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX728"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_composite</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_paired_punctuation</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX729"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_decimal_digit</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_left_of_pair</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX730"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_numeric</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_combining</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX731"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_diacritic</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_composite</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX732"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_extender</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_decimal_digit</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX733"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_ignorable_control</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_numeric</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX734"></a>
 </dt>
-<dt><u>Function:</u> bool <b>uc_is_property_regional_indicator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<dt><u>Function:</u> bool <b>uc_is_property_diacritic</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
 <a name="IDX735"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_extender</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX736"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_ignorable_control</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX737"></a>
+</dt>
+<dt><u>Function:</u> bool <b>uc_is_property_regional_indicator</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
+<a name="IDX738"></a>
 </dt>
 </dl>
 
@@ -2467,16 +2476,16 @@ cluster boundary in Indic scripts.
 </p>
 <dl>
 <dt><u>Constant:</u> int <b>UC_INDIC_CONJUNCT_BREAK_NONE</b>
-<a name="IDX736"></a>
+<a name="IDX739"></a>
 </dt>
 <dt><u>Constant:</u> int <b>UC_INDIC_CONJUNCT_BREAK_CONSONANT</b>
-<a name="IDX737"></a>
+<a name="IDX740"></a>
 </dt>
 <dt><u>Constant:</u> int <b>UC_INDIC_CONJUNCT_BREAK_LINKER</b>
-<a name="IDX738"></a>
+<a name="IDX741"></a>
 </dt>
 <dt><u>Constant:</u> int <b>UC_INDIC_CONJUNCT_BREAK_EXTEND</b>
-<a name="IDX739"></a>
+<a name="IDX742"></a>
 </dt>
 </dl>
 
@@ -2485,14 +2494,14 @@ Indic_Conjunct_Break value and its name.
 </p>
 <dl>
 <dt><u>Function:</u> const char * <b>uc_indic_conjunct_break_name</b><i> (int&nbsp;<var>indic_conjunct_break</var>)</i>
-<a name="IDX740"></a>
+<a name="IDX743"></a>
 </dt>
 <dd><p>Returns the name of an Indic_Conjunct_Break value.
 </p></dd></dl>
 
 <dl>
 <dt><u>Function:</u> int <b>uc_indic_conjunct_break_byname</b><i> (const&nbsp;char&nbsp;*<var>indic_conjunct_break_name</var>)</i>
-<a name="IDX741"></a>
+<a name="IDX744"></a>
 </dt>
 <dd><p>Returns the Indic_Conjunct_Break value given by name, e.g. <code>&quot;Consonant&quot;</code>.
 This lookup ignores spaces, underscores, or hyphens as word separators and is
@@ -2504,7 +2513,7 @@ Unicode character.
 </p>
 <dl>
 <dt><u>Function:</u> int <b>uc_indic_conjunct_break</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX742"></a>
+<a name="IDX745"></a>
 </dt>
 <dd><p>Returns the Indic_Conjunct_Break attribute of a Unicode character.
 </p></dd></dl>
@@ -2520,7 +2529,7 @@ Unicode character.
 </p>
 <dl>
 <dt><u>Type:</u> <b>uc_script_t</b>
-<a name="IDX743"></a>
+<a name="IDX746"></a>
 </dt>
 <dd><p>This data type is a structure type that refers to statically allocated
 read-only data.  It contains the following fields:
@@ -2530,12 +2539,12 @@ read-only data.  It contains the following fields:
 <p>The <code>name</code> field contains the name of the script.
 </p></dd></dl>
 
-<a name="IDX744"></a>
+<a name="IDX747"></a>
 <p>The following functions look up a script.
 </p>
 <dl>
 <dt><u>Function:</u> const uc_script_t * <b>uc_script</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX745"></a>
+<a name="IDX748"></a>
 </dt>
 <dd><p>Returns the script of a Unicode character.  Returns NULL if <var>uc</var> does not
 belong to any script.
@@ -2543,7 +2552,7 @@ belong to any script.
 
 <dl>
 <dt><u>Function:</u> const uc_script_t * <b>uc_script_byname</b><i> (const&nbsp;char&nbsp;*<var>script_name</var>)</i>
-<a name="IDX746"></a>
+<a name="IDX749"></a>
 </dt>
 <dd><p>Returns the script given by its name, e.g. <code>&quot;HAN&quot;</code>.  Returns NULL if a
 script with the given name does not exist.
@@ -2553,7 +2562,7 @@ script with the given name does not exist.
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_script</b><i> (ucs4_t&nbsp;<var>uc</var>, const&nbsp;uc_script_t&nbsp;*<var>script</var>)</i>
-<a name="IDX747"></a>
+<a name="IDX750"></a>
 </dt>
 <dd><p>Tests whether a Unicode character belongs to a given script.
 </p></dd></dl>
@@ -2562,7 +2571,7 @@ script with the given name does not exist.
 </p>
 <dl>
 <dt><u>Function:</u> void <b>uc_all_scripts</b><i> (const&nbsp;uc_script_t&nbsp;**<var>scripts</var>, size_t&nbsp;*<var>count</var>)</i>
-<a name="IDX748"></a>
+<a name="IDX751"></a>
 </dt>
 <dd><p>Get the list of all scripts.  Stores a pointer to an array of all scripts in
 <code>*<var>scripts</var></code> and the length of this array in <code>*<var>count</var></code>.
@@ -2580,7 +2589,7 @@ Unicode code points.
 </p>
 <dl>
 <dt><u>Type:</u> <b>uc_block_t</b>
-<a name="IDX749"></a>
+<a name="IDX752"></a>
 </dt>
 <dd><p>This data type is a structure type that refers to statically allocated data.
 It contains the following fields:
@@ -2596,12 +2605,12 @@ const char *name;
 <p>The <code>name</code> field is the name of the block.
 </p></dd></dl>
 
-<a name="IDX750"></a>
+<a name="IDX753"></a>
 <p>The following function looks up a block.
 </p>
 <dl>
 <dt><u>Function:</u> const uc_block_t * <b>uc_block</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX751"></a>
+<a name="IDX754"></a>
 </dt>
 <dd><p>Returns the block a character belongs to.
 </p></dd></dl>
@@ -2610,7 +2619,7 @@ const char *name;
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_block</b><i> (ucs4_t&nbsp;<var>uc</var>, const&nbsp;uc_block_t&nbsp;*<var>block</var>)</i>
-<a name="IDX752"></a>
+<a name="IDX755"></a>
 </dt>
 <dd><p>Tests whether a Unicode character belongs to a given block.
 </p></dd></dl>
@@ -2619,7 +2628,7 @@ const char *name;
 </p>
 <dl>
 <dt><u>Function:</u> void <b>uc_all_blocks</b><i> (const&nbsp;uc_block_t&nbsp;**<var>blocks</var>, size_t&nbsp;*<var>count</var>)</i>
-<a name="IDX753"></a>
+<a name="IDX756"></a>
 </dt>
 <dd><p>Get the list of all blocks.  Stores a pointer to an array of all blocks in
 <code>*<var>blocks</var></code> and the length of this array in <code>*<var>count</var></code>.
@@ -2635,14 +2644,14 @@ language standards are ISO C 99 and Java.
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_c_whitespace</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX754"></a>
+<a name="IDX757"></a>
 </dt>
 <dd><p>Tests whether a Unicode character is considered whitespace in ISO C 99.
 </p></dd></dl>
 
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_java_whitespace</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX755"></a>
+<a name="IDX758"></a>
 </dt>
 <dd><p>Tests whether a Unicode character is considered whitespace in Java.
 </p></dd></dl>
@@ -2652,7 +2661,7 @@ language standards are ISO C 99 and Java.
 </p>
 <dl>
 <dt><u>Constant:</u> int <b>UC_IDENTIFIER_START</b>
-<a name="IDX756"></a>
+<a name="IDX759"></a>
 </dt>
 <dd><p>This return value means that the given character is valid as first or
 subsequent character in an identifier.
@@ -2660,7 +2669,7 @@ subsequent character in an identifier.
 
 <dl>
 <dt><u>Constant:</u> int <b>UC_IDENTIFIER_VALID</b>
-<a name="IDX757"></a>
+<a name="IDX760"></a>
 </dt>
 <dd><p>This return value means that the given character is valid as subsequent
 character only.
@@ -2668,14 +2677,14 @@ character only.
 
 <dl>
 <dt><u>Constant:</u> int <b>UC_IDENTIFIER_INVALID</b>
-<a name="IDX758"></a>
+<a name="IDX761"></a>
 </dt>
 <dd><p>This return value means that the given character is not valid in an identifier.
 </p></dd></dl>
 
 <dl>
 <dt><u>Constant:</u> int <b>UC_IDENTIFIER_IGNORABLE</b>
-<a name="IDX759"></a>
+<a name="IDX762"></a>
 </dt>
 <dd><p>This return value (only for Java) means that the given character is ignorable.
 </p></dd></dl>
@@ -2683,19 +2692,19 @@ character only.
 <p>The following function determine whether a given character can be a constituent
 of an identifier in the given programming language.
 </p>
-<a name="IDX760"></a>
+<a name="IDX763"></a>
 <dl>
 <dt><u>Function:</u> int <b>uc_c_ident_category</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX761"></a>
+<a name="IDX764"></a>
 </dt>
 <dd><p>Returns the categorization of a Unicode character with respect to the ISO C 99
 identifier syntax.
 </p></dd></dl>
 
-<a name="IDX762"></a>
+<a name="IDX765"></a>
 <dl>
 <dt><u>Function:</u> int <b>uc_java_ident_category</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX763"></a>
+<a name="IDX766"></a>
 </dt>
 <dd><p>Returns the categorization of a Unicode character with respect to the Java
 identifier syntax.
@@ -2715,7 +2724,7 @@ APIs to Unicode strings.
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_alnum</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX764"></a>
+<a name="IDX767"></a>
 </dt>
 <dd><p>Tests for any character for which <code>uc_is_alpha</code> or <code>uc_is_digit</code> is
 true.
@@ -2723,7 +2732,7 @@ true.
 
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_alpha</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX765"></a>
+<a name="IDX768"></a>
 </dt>
 <dd><p>Tests for any character for which <code>uc_is_upper</code> or <code>uc_is_lower</code> is
 true, or any character that is one of a locale-specific set of characters for
@@ -2733,21 +2742,21 @@ which none of <code>uc_is_cntrl</code>, <code>uc_is_digit</code>, <code>uc_is_pu
 
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_cntrl</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX766"></a>
+<a name="IDX769"></a>
 </dt>
 <dd><p>Tests for any control character.
 </p></dd></dl>
 
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_digit</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX767"></a>
+<a name="IDX770"></a>
 </dt>
 <dd><p>Tests for any character that corresponds to a decimal-digit character.
 </p></dd></dl>
 
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_graph</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX768"></a>
+<a name="IDX771"></a>
 </dt>
 <dd><p>Tests for any character for which <code>uc_is_print</code> is true and
 <code>uc_is_space</code> is false.
@@ -2755,7 +2764,7 @@ which none of <code>uc_is_cntrl</code>, <code>uc_is_digit</code>, <code>uc_is_pu
 
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_lower</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX769"></a>
+<a name="IDX772"></a>
 </dt>
 <dd><p>Tests for any character that corresponds to a lowercase letter or is one
 of a locale-specific set of characters for which none of <code>uc_is_cntrl</code>,
@@ -2764,14 +2773,14 @@ of a locale-specific set of characters for which none of <code>uc_is_cntrl</code
 
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_print</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX770"></a>
+<a name="IDX773"></a>
 </dt>
 <dd><p>Tests for any printing character.
 </p></dd></dl>
 
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_punct</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX771"></a>
+<a name="IDX774"></a>
 </dt>
 <dd><p>Tests for any printing character that is one of a locale-specific set of
 characters for which neither <code>uc_is_space</code> nor <code>uc_is_alnum</code> is true.
@@ -2779,7 +2788,7 @@ characters for which neither <code>uc_is_space</code> nor <code>uc_is_alnum</cod
 
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_space</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX772"></a>
+<a name="IDX775"></a>
 </dt>
 <dd><p>Test for any character that corresponds to a locale-specific set of characters
 for which none of <code>uc_is_alnum</code>, <code>uc_is_graph</code>, or <code>uc_is_punct</code>
@@ -2788,7 +2797,7 @@ is true.
 
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_upper</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX773"></a>
+<a name="IDX776"></a>
 </dt>
 <dd><p>Tests for any character that corresponds to an uppercase letter or is one
 of a locale-specific set of characters for which none of <code>uc_is_cntrl</code>,
@@ -2797,14 +2806,14 @@ of a locale-specific set of characters for which none of <code>uc_is_cntrl</code
 
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_xdigit</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX774"></a>
+<a name="IDX777"></a>
 </dt>
 <dd><p>Tests for any character that corresponds to a hexadecimal-digit character.
 </p></dd></dl>
 
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_blank</b><i> (ucs4_t&nbsp;<var>uc</var>)</i>
-<a name="IDX775"></a>
+<a name="IDX778"></a>
 </dt>
 <dd><p>Tests for any character that corresponds to a standard blank character or
 a locale-specific set of characters for which <code>uc_is_alnum</code> is false.
@@ -2825,7 +2834,7 @@ a locale-specific set of characters for which <code>uc_is_alnum</code> is false.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Bruno Haible</em> on <em>February, 24 2024</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
+  This document was generated by <em>Bruno Haible</em> on <em>October, 16 2024</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
  </font>
  <br>
 

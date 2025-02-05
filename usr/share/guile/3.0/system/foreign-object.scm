@@ -1,6 +1,6 @@
 ;;; Wrapping foreign objects in Scheme
 
-;;; Copyright (C) 2014, 2015 Free Software Foundation, Inc.
+;;; Copyright (C) 2014, 2015, 2024 Free Software Foundation, Inc.
 ;;; 
 ;;; This library is free software; you can redistribute it and/or
 ;;; modify it under the terms of the GNU Lesser General Public
@@ -46,7 +46,8 @@
     instance))
 
 (define* (make-foreign-object-type name slots #:key finalizer
-                                   (getters (map (const #f) slots)))
+                                   (getters (map (const #f) slots))
+                                   (supers '()))
   (unless (symbol? name)
     (error "type name should be a symbol" name))
   (unless (or (not finalizer) (procedure? finalizer))
@@ -61,11 +62,11 @@
                      slots
                      getters)))
     (if finalizer
-        (make-class '() dslots #:name name
+        (make-class supers dslots #:name name
                     #:finalizer finalizer
                     #:static-slot-allocation? #t
                     #:metaclass <foreign-class-with-finalizer>)
-        (make-class '() dslots #:name name
+        (make-class supers dslots #:name name
                     #:static-slot-allocation? #t
                     #:metaclass <foreign-class>))))
 

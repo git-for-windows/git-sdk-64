@@ -470,11 +470,11 @@ from another object database, which is called an "alternate".</p>
 <dt class="hdlist1"><a id="def_bare_repository"></a>bare repository</dt>
 <dd>
 <p>A bare repository is normally an appropriately
-named <a href="#def_directory">directory</a> with a <code>.git</code> suffix that does not
+named <a href="#def_directory">directory</a> with a .<code>git</code> suffix that does not
 have a locally checked-out copy of any of the files under
 revision control. That is, all of the Git
 administrative and control files that would normally be present in the
-hidden <code>.git</code> sub-directory are directly present in the
+hidden .<code>git</code> sub-directory are directly present in the
 <code>repository.git</code> directory instead,
 and no other files are present and checked out. Usually publishers of
 public repositories make bare repositories available.</p>
@@ -641,11 +641,11 @@ particular branch.  The HEAD in such a state is called
 "detached".</p>
 <div class="paragraph">
 <p>Note that commands that operate on the history of the current branch
-(e.g. <code>git commit</code> to build a new history on top of it) still work
+(e.g. <code>git</code> <code>commit</code> to build a new history on top of it) still work
 while the HEAD is detached. They update the HEAD to point at the tip
 of the updated history without affecting any branch.  Commands that
-update or inquire information <em>about</em> the current branch (e.g. <code>git
-branch --set-upstream-to</code> that sets what remote-tracking branch the
+update or inquire information <em>about</em> the current branch (e.g. <code>git</code>
+<code>branch</code> <code>--set-upstream-to</code> that sets what remote-tracking branch the
 current branch integrates with) obviously do not work, as there is no
 (real) current branch to ask about in this state.</p>
 </div>
@@ -696,7 +696,7 @@ efficiency and speed of Git.</p>
 </dd>
 <dt class="hdlist1"><a id="def_gitfile"></a>gitfile</dt>
 <dd>
-<p>A plain file <code>.git</code> at the root of a working tree that
+<p>A plain file .<code>git</code> at the root of a working tree that
 points at the directory that is the real repository.
 For proper use see <a href="git-worktree.html">git-worktree(1)</a> or <a href="git-submodule.html">git-submodule(1)</a>.
 For syntax see <a href="gitrepository-layout.html">gitrepository-layout(5)</a>.</p>
@@ -707,7 +707,7 @@ For syntax see <a href="gitrepository-layout.html">gitrepository-layout(5)</a>.<
 together by recording fake ancestry information for commits. This way
 you can make Git pretend the set of <a href="#def_parent">parents</a> a <a href="#def_commit">commit</a> has
 is different from what was recorded when the commit was
-created. Configured via the <code>.git/info/grafts</code> file.</p>
+created. Configured via the .<code>git/info/grafts</code> file.</p>
 <div class="paragraph">
 <p>Note that the grafts mechanism is outdated and can lead to problems
 transferring objects between repositories; see <a href="git-replace.html">git-replace(1)</a>
@@ -745,7 +745,7 @@ checking. Typically, the hooks allow for a command to be pre-verified
 and potentially aborted, and allow for a post-notification after the
 operation is done. The hook scripts are found in the
 <code>$GIT_DIR/hooks/</code> directory, and are enabled by simply
-removing the <code>.sample</code> suffix from the filename. In earlier versions
+removing the .<code>sample</code> suffix from the filename. In earlier versions
 of Git you had to make them executable.</p>
 </dd>
 <dt class="hdlist1"><a id="def_index"></a>index</dt>
@@ -841,7 +841,7 @@ at least one upstream project which they track. By default
 <em>origin</em> is used for that purpose. New upstream updates
 will be fetched into <a href="#def_remote_tracking_branch">remote-tracking branches</a> named
 origin/name-of-upstream-branch, which you can see using
-<code>git branch -r</code>.</p>
+<code>git</code> <code>branch</code> <code>-r</code>.</p>
 </dd>
 <dt class="hdlist1"><a id="def_overlay"></a>overlay</dt>
 <dd>
@@ -916,8 +916,8 @@ omitted if the pattern begins with a character that does not belong to
 </div>
 <div class="paragraph">
 <p>In the long form, the leading colon <code>:</code> is followed by an open
-parenthesis <code>(</code>, a comma-separated list of zero or more "magic words",
-and a close parentheses <code>)</code>, and the remainder is the pattern to match
+parenthesis (, a comma-separated list of zero or more "magic words",
+and a close parentheses ), and the remainder is the pattern to match
 against the path.</p>
 </div>
 <div class="paragraph">
@@ -936,7 +936,7 @@ running the command from inside a subdirectory.</p>
 </dd>
 <dt class="hdlist1">literal</dt>
 <dd>
-<p>Wildcards in the pattern such as <code>*</code> or <code>?</code> are treated
+<p>Wildcards in the pattern such as * or ? are treated
 as literal characters.</p>
 </dd>
 <dt class="hdlist1">icase</dt>
@@ -952,26 +952,26 @@ For example, "Documentation/*.html" matches
 "Documentation/git.html" but not "Documentation/ppc/ppc.html"
 or "tools/perf/Documentation/perf.html".</p>
 <div class="paragraph">
-<p>Two consecutive asterisks ("<code>**</code>") in patterns matched against
+<p>Two consecutive asterisks ("**") in patterns matched against
 full pathname may have special meaning:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>A leading "<code>**</code>" followed by a slash means match in all
-directories. For example, "<code>**/foo</code>" matches file or directory
-"<code>foo</code>" anywhere, the same as pattern "<code>foo</code>". "<code>**/foo/bar</code>"
+<p>A leading "**" followed by a slash means match in all
+directories. For example, "**/foo" matches file or directory
+"<code>foo</code>" anywhere, the same as pattern "<code>foo</code>". "**/foo/bar"
 matches file or directory "<code>bar</code>" anywhere that is directly
 under directory "<code>foo</code>".</p>
 </li>
 <li>
-<p>A trailing "<code>/**</code>" matches everything inside. For example,
-"<code>abc/**</code>" matches all files inside directory "abc", relative
-to the location of the <code>.gitignore</code> file, with infinite depth.</p>
+<p>A trailing "<code>/</code>**" matches everything inside. For example,
+"<code>abc/</code>**" matches all files inside directory "abc", relative
+to the location of the .<code>gitignore</code> file, with infinite depth.</p>
 </li>
 <li>
 <p>A slash followed by two consecutive asterisks then a slash
-matches zero or more directories. For example, "<code>a/**/b</code>"
+matches zero or more directories. For example, "<code>a/</code>**/b"
 matches "<code>a/b</code>", "<code>a/x/b</code>", "<code>a/x/y/b</code>" and so on.</p>
 </li>
 <li>
@@ -1007,7 +1007,7 @@ these forms:</p>
 set to the string <code>VALUE</code>.</p>
 </li>
 <li>
-<p>"<code>!ATTR</code>" requires that the attribute <code>ATTR</code> be
+<p>"!ATTR" requires that the attribute <code>ATTR</code> be
 unspecified.</p>
 <div class="paragraph">
 <p>Note that when matching against a tree object, attributes are still
@@ -1020,7 +1020,7 @@ obtained from working tree, not from the given tree object.</p>
 <dt class="hdlist1">exclude</dt>
 <dd>
 <p>After a path matches any non-exclude pathspec, it will be run
-through all exclude pathspecs (magic signature: <code>!</code> or its
+through all exclude pathspecs (magic signature: ! or its
 synonym <code>^</code>). If it matches, the path is ignored.  When there
 is no non-exclude pathspec, the exclusion is applied to the
 result set as if invoked without any pathspec.</p>
@@ -1248,7 +1248,7 @@ In the context of Git used as a synonym for <a href="#def_object_name">object na
 <dd>
 <p>Mostly a synonym to <a href="#def_shallow_repository">shallow repository</a>
 but the phrase makes it more explicit that it was created by
-running <code>git clone --depth=...</code> command.</p>
+running <code>git</code> <code>clone</code> <code>--depth=..</code>. command.</p>
 </dd>
 <dt class="hdlist1"><a id="def_shallow_repository"></a>shallow repository</dt>
 <dd>
@@ -1313,6 +1313,12 @@ identify a conceptual line of development. Since branches are very easy
 and inexpensive, it is often desirable to have several small branches
 that each contain very well defined concepts or small incremental yet
 related changes.</p>
+</dd>
+<dt class="hdlist1"><a id="def_trailer"></a>trailer</dt>
+<dd>
+<p>Key-value metadata.  Trailers are optionally found at the end of
+a commit message.  Might be called "footers" or "tags" in other
+communities.  See <a href="git-interpret-trailers.html">git-interpret-trailers(1)</a>.</p>
 </dd>
 <dt class="hdlist1"><a id="def_tree"></a>tree</dt>
 <dd>
@@ -1413,7 +1419,7 @@ per-worktree refs and per-worktree configuration file).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

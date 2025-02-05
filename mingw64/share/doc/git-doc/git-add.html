@@ -452,11 +452,11 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git add</em> [--verbose | -v] [--dry-run | -n] [--force | -f] [--interactive | -i] [--patch | -p]
-          [--edit | -e] [--[no-]all | -A | --[no-]ignore-removal | [--update | -u]] [--sparse]
-          [--intent-to-add | -N] [--refresh] [--ignore-errors] [--ignore-missing] [--renormalize]
-          [--chmod=(+|-)x] [--pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]]
-          [--] [&lt;pathspec&gt;&#8230;&#8203;]</pre>
+<pre class="content"><code>git</code> <code>add</code> [<code>--verbose</code> | <code>-v</code>] [<code>--dry-run</code> | <code>-n</code>] [<code>--force</code> | <code>-f</code>] [<code>--interactive</code> | <code>-i</code>] [<code>--patch</code> | <code>-p</code>]
+	[<code>--edit</code> | <code>-e</code>] [<code>--</code>[<code>no-</code>]<code>all</code> | <code>-A</code> | <code>--</code>[<code>no-</code>]<code>ignore-removal</code> | [<code>--update</code> | <code>-u</code>]] [<code>--sparse</code>]
+	[<code>--intent-to-add</code> | <code>-N</code>] [<code>--refresh</code>] [<code>--ignore-errors</code>] [<code>--ignore-missing</code>] [<code>--renormalize</code>]
+	[<code>--chmod=</code>(<code>+</code>|<code>-</code>)<code>x</code>] [<code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]]
+	[<code>--</code>] [<em>&lt;pathspec&gt;</em>&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -482,18 +482,18 @@ modified files to the index.</p>
 <p>This command can be performed multiple times before a commit.  It only
 adds the content of the specified file(s) at the time the add command is
 run; if you want subsequent changes included in the next commit, then
-you must run <code>git add</code> again to add the new content to the index.</p>
+you must run <code>git</code> <code>add</code> again to add the new content to the index.</p>
 </div>
 <div class="paragraph">
-<p>The <code>git status</code> command can be used to obtain a summary of which
+<p>The <code>git</code> <code>status</code> command can be used to obtain a summary of which
 files have changes that are staged for the next commit.</p>
 </div>
 <div class="paragraph">
-<p>The <code>git add</code> command will not add ignored files by default.  If any
-ignored files were explicitly specified on the command line, <code>git add</code>
+<p>The <code>git</code> <code>add</code> command will not add ignored files by default.  If any
+ignored files were explicitly specified on the command line, <code>git</code> <code>add</code>
 will fail with a list of ignored files.  Ignored files reached by
 directory recursion or filename globbing performed by Git (quote your
-globs before the shell) will be silently ignored.  The <em>git add</em> command can
+globs before the shell) will be silently ignored.  The <code>git</code> <code>add</code> command can
 be used to add ignored files with the <code>-f</code> (force) option.</p>
 </div>
 <div class="paragraph">
@@ -507,9 +507,9 @@ commit.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">&lt;pathspec&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1"><em>&lt;pathspec&gt;</em>...</dt>
 <dd>
-<p>Files to add content from.  Fileglobs (e.g. <code>*.c</code>) can
+<p>Files to add content from.  Fileglobs (e.g. *.<code>c</code>) can
 be given to add all matching files.  Also a
 leading directory name (e.g. <code>dir</code> to add <code>dir/file1</code>
 and <code>dir/file2</code>) can be given to update the index to
@@ -525,53 +525,53 @@ to add modified or new files but ignore removed ones.</p>
 in <a href="gitglossary.html">gitglossary(7)</a>.</p>
 </div>
 </dd>
-<dt class="hdlist1">-n</dt>
-<dt class="hdlist1">--dry-run</dt>
+<dt class="hdlist1"><code>-n</code></dt>
+<dt class="hdlist1"><code>--dry-run</code></dt>
 <dd>
 <p>Don&#8217;t actually add the file(s), just show if they exist and/or will
 be ignored.</p>
 </dd>
-<dt class="hdlist1">-v</dt>
-<dt class="hdlist1">--verbose</dt>
+<dt class="hdlist1"><code>-v</code></dt>
+<dt class="hdlist1"><code>--verbose</code></dt>
 <dd>
 <p>Be verbose.</p>
 </dd>
-<dt class="hdlist1">-f</dt>
-<dt class="hdlist1">--force</dt>
+<dt class="hdlist1"><code>-f</code></dt>
+<dt class="hdlist1"><code>--force</code></dt>
 <dd>
 <p>Allow adding otherwise ignored files.</p>
 </dd>
-<dt class="hdlist1">--sparse</dt>
+<dt class="hdlist1"><code>--sparse</code></dt>
 <dd>
 <p>Allow updating index entries outside of the sparse-checkout cone.
-Normally, <code>git add</code> refuses to update index entries whose paths do
+Normally, <code>git</code> <code>add</code> refuses to update index entries whose paths do
 not fit within the sparse-checkout cone, since those files might
 be removed from the working tree without warning. See
 <a href="git-sparse-checkout.html">git-sparse-checkout(1)</a> for more details.</p>
 </dd>
-<dt class="hdlist1">-i</dt>
-<dt class="hdlist1">--interactive</dt>
+<dt class="hdlist1"><code>-i</code></dt>
+<dt class="hdlist1"><code>--interactive</code></dt>
 <dd>
 <p>Add modified contents in the working tree interactively to
 the index. Optional path arguments may be supplied to limit
 operation to a subset of the working tree. See &#8220;Interactive
 mode&#8221; for details.</p>
 </dd>
-<dt class="hdlist1">-p</dt>
-<dt class="hdlist1">--patch</dt>
+<dt class="hdlist1"><code>-p</code></dt>
+<dt class="hdlist1"><code>--patch</code></dt>
 <dd>
 <p>Interactively choose hunks of patch between the index and the
 work tree and add them to the index. This gives the user a chance
 to review the difference before adding modified contents to the
 index.</p>
 <div class="paragraph">
-<p>This effectively runs <code>add --interactive</code>, but bypasses the
+<p>This effectively runs <code>add</code> <code>--interactive</code>, but bypasses the
 initial command menu and directly jumps to the <code>patch</code> subcommand.
 See &#8220;Interactive mode&#8221; for details.</p>
 </div>
 </dd>
-<dt class="hdlist1">-e</dt>
-<dt class="hdlist1">--edit</dt>
+<dt class="hdlist1"><code>-e</code></dt>
+<dt class="hdlist1"><code>--edit</code></dt>
 <dd>
 <p>Open the diff vs. the index in an editor and let the user
 edit it.  After the editor was closed, adjust the hunk headers
@@ -584,8 +584,8 @@ However, it is easy to confuse oneself and create a patch that does not
 apply to the index. See EDITING PATCHES below.</p>
 </div>
 </dd>
-<dt class="hdlist1">-u</dt>
-<dt class="hdlist1">--update</dt>
+<dt class="hdlist1"><code>-u</code></dt>
+<dt class="hdlist1"><code>--update</code></dt>
 <dd>
 <p>Update the index just where it already has an entry matching
 <em>&lt;pathspec&gt;</em>.  This removes as well as modifies index entries to
@@ -597,9 +597,9 @@ of Git used to limit the update to the current directory and its
 subdirectories).</p>
 </div>
 </dd>
-<dt class="hdlist1">-A</dt>
-<dt class="hdlist1">--all</dt>
-<dt class="hdlist1">--no-ignore-removal</dt>
+<dt class="hdlist1"><code>-A</code></dt>
+<dt class="hdlist1"><code>--all</code></dt>
+<dt class="hdlist1"><code>--no-ignore-removal</code></dt>
 <dd>
 <p>Update the index not only where the working tree has a file
 matching <em>&lt;pathspec&gt;</em> but also where the index already has an
@@ -612,8 +612,8 @@ of Git used to limit the update to the current directory and its
 subdirectories).</p>
 </div>
 </dd>
-<dt class="hdlist1">--no-all</dt>
-<dt class="hdlist1">--ignore-removal</dt>
+<dt class="hdlist1"><code>--no-all</code></dt>
+<dt class="hdlist1"><code>--ignore-removal</code></dt>
 <dd>
 <p>Update the index by adding new files that are unknown to the
 index and files modified in the working tree, but ignore
@@ -621,25 +621,25 @@ files that have been removed from the working tree.  This
 option is a no-op when no <em>&lt;pathspec&gt;</em> is used.</p>
 <div class="paragraph">
 <p>This option is primarily to help users who are used to older
-versions of Git, whose "git add <em>&lt;pathspec&gt;</em>&#8230;&#8203;" was a synonym
-for "git add --no-all <em>&lt;pathspec&gt;</em>&#8230;&#8203;", i.e. ignored removed files.</p>
+versions of Git, whose <code>git</code> <code>add</code> <em>&lt;pathspec&gt;</em>... was a synonym
+for <code>git</code> <code>add</code> <code>--no-all</code> <em>&lt;pathspec&gt;</em>..., i.e. ignored removed files.</p>
 </div>
 </dd>
-<dt class="hdlist1">-N</dt>
-<dt class="hdlist1">--intent-to-add</dt>
+<dt class="hdlist1"><code>-N</code></dt>
+<dt class="hdlist1"><code>--intent-to-add</code></dt>
 <dd>
 <p>Record only the fact that the path will be added later. An entry
 for the path is placed in the index with no content. This is
 useful for, among other things, showing the unstaged content of
-such files with <code>git diff</code> and committing them with <code>git commit
--a</code>.</p>
+such files with <code>git</code> <code>diff</code> and committing them with <code>git</code> <code>commit</code>
+<code>-a</code>.</p>
 </dd>
-<dt class="hdlist1">--refresh</dt>
+<dt class="hdlist1"><code>--refresh</code></dt>
 <dd>
 <p>Don&#8217;t add the file(s), but only refresh their stat()
 information in the index.</p>
 </dd>
-<dt class="hdlist1">--ignore-errors</dt>
+<dt class="hdlist1"><code>--ignore-errors</code></dt>
 <dd>
 <p>If some files could not be added because of errors indexing
 them, do not abort the operation, but continue adding the
@@ -647,53 +647,53 @@ others. The command shall still exit with non-zero status.
 The configuration variable <code>add.ignoreErrors</code> can be set to
 true to make this the default behaviour.</p>
 </dd>
-<dt class="hdlist1">--ignore-missing</dt>
+<dt class="hdlist1"><code>--ignore-missing</code></dt>
 <dd>
-<p>This option can only be used together with --dry-run. By using
+<p>This option can only be used together with <code>--dry-run</code>. By using
 this option the user can check if any of the given files would
 be ignored, no matter if they are already present in the work
 tree or not.</p>
 </dd>
-<dt class="hdlist1">--no-warn-embedded-repo</dt>
+<dt class="hdlist1"><code>--no-warn-embedded-repo</code></dt>
 <dd>
-<p>By default, <code>git add</code> will warn when adding an embedded
-repository to the index without using <code>git submodule add</code> to
-create an entry in <code>.gitmodules</code>. This option will suppress the
+<p>By default, <code>git</code> <code>add</code> will warn when adding an embedded
+repository to the index without using <code>git</code> <code>submodule</code> <code>add</code> to
+create an entry in .<code>gitmodules</code>. This option will suppress the
 warning (e.g., if you are manually performing operations on
 submodules).</p>
 </dd>
-<dt class="hdlist1">--renormalize</dt>
+<dt class="hdlist1"><code>--renormalize</code></dt>
 <dd>
 <p>Apply the "clean" process freshly to all tracked files to
 forcibly add them again to the index.  This is useful after
 changing <code>core.autocrlf</code> configuration or the <code>text</code> attribute
-in order to correct files added with wrong CRLF/LF line endings.
+in order to correct files added with wrong <em>CRLF/LF</em> line endings.
 This option implies <code>-u</code>. Lone CR characters are untouched, thus
-while a CRLF cleans to LF, a CRCRLF sequence is only partially
-cleaned to CRLF.</p>
+while a <em>CRLF</em> cleans to <em>LF</em>, a <em>CRCRLF</em> sequence is only partially
+cleaned to <em>CRLF</em>.</p>
 </dd>
-<dt class="hdlist1">--chmod=(+|-)x</dt>
+<dt class="hdlist1"><code>--chmod=</code>(<code>+</code>|<code>-</code>)<code>x</code></dt>
 <dd>
 <p>Override the executable bit of the added files.  The executable
 bit is only changed in the index, the files on disk are left
 unchanged.</p>
 </dd>
-<dt class="hdlist1">--pathspec-from-file=&lt;file&gt;</dt>
+<dt class="hdlist1"><code>--pathspec-from-file=</code><em>&lt;file&gt;</em></dt>
 <dd>
 <p>Pathspec is passed in <em>&lt;file&gt;</em> instead of commandline args. If
 <em>&lt;file&gt;</em> is exactly <code>-</code> then standard input is used. Pathspec
-elements are separated by LF or CR/LF. Pathspec elements can be
+elements are separated by <em>LF</em> or <em>CR/LF</em>. Pathspec elements can be
 quoted as explained for the configuration variable <code>core.quotePath</code>
 (see <a href="git-config.html">git-config(1)</a>). See also <code>--pathspec-file-nul</code> and
 global <code>--literal-pathspecs</code>.</p>
 </dd>
-<dt class="hdlist1">--pathspec-file-nul</dt>
+<dt class="hdlist1"><code>--pathspec-file-nul</code></dt>
 <dd>
 <p>Only meaningful with <code>--pathspec-from-file</code>. Pathspec elements are
-separated with NUL character and all other characters are taken
+separated with <em>NUL</em> character and all other characters are taken
 literally (including newlines and quotes).</p>
 </dd>
-<dt class="hdlist1">--</dt>
+<dt class="hdlist1"><code>--</code></dt>
 <dd>
 <p>This option can be used to separate command-line options from
 the list of files, (useful when filenames might be mistaken
@@ -709,7 +709,7 @@ for command-line options).</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Adds content from all <code>*.txt</code> files under <code>Documentation</code> directory
+<p>Adds content from all *.<code>txt</code> files under <code>Documentation</code> directory
 and its subdirectories:</p>
 <div class="listingblock">
 <div class="content">
@@ -717,13 +717,13 @@ and its subdirectories:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Note that the asterisk <code>*</code> is quoted from the shell in this
+<p>Note that the asterisk * is quoted from the shell in this
 example; this lets the command include the files from
 subdirectories of <code>Documentation/</code> directory.</p>
 </div>
 </li>
 <li>
-<p>Considers adding content from all git-*.sh scripts:</p>
+<p>Considers adding content from all <code>git-</code>*.<code>sh</code> scripts:</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ git add git-*.sh</pre>
@@ -772,10 +772,10 @@ choice is unique.</p>
 <dl>
 <dt class="hdlist1">status</dt>
 <dd>
-<p>This shows the change between HEAD and index (i.e. what will be
-committed if you say <code>git commit</code>), and between index and
+<p>This shows the change between <code>HEAD</code> and index (i.e. what will be
+committed if you say <code>git</code> <code>commit</code>), and between index and
 working tree files (i.e. what you could stage further before
-<code>git commit</code> using <code>git add</code>) for each path.  A sample output
+<code>git</code> <code>commit</code> using <code>git</code> <code>add</code>) for each path.  A sample output
 looks like this:</p>
 <div class="listingblock">
 <div class="content">
@@ -785,12 +785,12 @@ looks like this:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>It shows that foo.png has differences from HEAD (but that is
+<p>It shows that <code>foo.png</code> has differences from <code>HEAD</code> (but that is
 binary so line count cannot be shown) and there is no
 difference between indexed copy and the working tree
 version (if the working tree version were also different,
 <em>binary</em> would have been shown in place of <em>nothing</em>).  The
-other file, add-interactive.c, has 403 lines added
+other file, <code>add-interactive.c</code>, has 403 lines added
 and 35 lines deleted if you commit what is in the index, but
 working tree file has further modifications (one addition and
 one deletion).</p>
@@ -879,7 +879,7 @@ variable <code>interactive.singleKey</code> to <code>true</code>.</p>
 <dt class="hdlist1">diff</dt>
 <dd>
 <p>This lets you review what will be committed (i.e. between
-HEAD and index).</p>
+<code>HEAD</code> and index).</p>
 </dd>
 </dl>
 </div>
@@ -889,7 +889,7 @@ HEAD and index).</p>
 <h2 id="_editing_patches">EDITING PATCHES</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Invoking <code>git add -e</code> or selecting <code>e</code> from the interactive hunk
+<p>Invoking <code>git</code> <code>add</code> <code>-e</code> or selecting <code>e</code> from the interactive hunk
 selector will open a patch in your editor; after the editor exits, the
 result is applied to the index. You are free to make arbitrary changes
 to the patch, but note that some changes may have confusing results, or
@@ -929,7 +929,7 @@ likely to introduce confusing changes to the index.</p>
 that because the patch is applied only to the index and not the working
 tree, the working tree will appear to "undo" the change in the index.
 For example, introducing a new line into the index that is in neither
-the HEAD nor the working tree will stage the new line for commit, but
+the <code>HEAD</code> nor the working tree will stage the new line for commit, but
 the line will appear to be reverted in the working tree.</p>
 </div>
 <div class="paragraph">
@@ -993,14 +993,14 @@ as what&#8217;s found there:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">add.ignoreErrors</dt>
-<dt class="hdlist1">add.ignore-errors (deprecated)</dt>
+<dt class="hdlist1"><code>add.ignoreErrors</code></dt>
+<dt class="hdlist1"><code>add.ignore-errors</code> (deprecated)</dt>
 <dd>
-<p>Tells <em>git add</em> to continue adding files when some files cannot be
-added due to indexing errors. Equivalent to the <code>--ignore-errors</code>
-option of <a href="git-add.html">git-add(1)</a>.  <code>add.ignore-errors</code> is deprecated,
-as it does not follow the usual naming convention for configuration
-variables.</p>
+<p>Tells <code>git</code> <code>add</code> to continue adding files when some files cannot be
+added due to indexing errors.
+Equivalent to the <code>--ignore-errors</code> option.
+<code>add.ignore-errors</code> is deprecated, as it does not follow the usual
+naming convention for configuration variables.</p>
 </dd>
 </dl>
 </div>
@@ -1030,7 +1030,7 @@ variables.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

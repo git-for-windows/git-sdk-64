@@ -437,9 +437,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <body class="article">
 <div id="header">
 <h1>Path-Walk API</h1>
-<div class="details">
-<span id="revdate">2024-10-22</span>
-</div>
 </div>
 <div id="content">
 <div id="preamble">
@@ -468,7 +465,7 @@ used in the commit walk in order to visit <code>UNINTERESTING</code> commits.</p
 <div class="sectionbody">
 <div class="paragraph">
 <p>To use the path-walk API, include <code>path-walk.h</code> and call
-<code>walk_objects_by_path()</code> with a customized <code>path_walk_info</code> struct. The
+<code>walk_objects_by_path</code>() with a customized <code>path_walk_info</code> struct. The
 struct is used to set all of the options for how the walk should proceed.
 Let&#8217;s dig into the different options and their use.</p>
 </div>
@@ -488,9 +485,9 @@ this callback function.</p>
 <p>To configure the exact details of the reachable set of objects,
 use the <code>revs</code> member and initialize it using the revision
 machinery in <code>revision.h</code>. Initialize <code>revs</code> using calls such as
-<code>setup_revisions()</code> or <code>parse_revision_opt()</code>. Do not call
-<code>prepare_revision_walk()</code>, as that will be called within
-<code>walk_objects_by_path()</code>.</p>
+<code>setup_revisions</code>() or <code>parse_revision_opt</code>(). Do not call
+<code>prepare_revision_walk</code>(), as that will be called within
+<code>walk_objects_by_path</code>().</p>
 <div class="paragraph">
 <p>It is also important that you do not specify the <code>--objects</code> flag for the
 <code>revs</code> struct. The revision walk should only be used to walk commits, and
@@ -550,7 +547,7 @@ API can prune the set of paths it walks to improve performance.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

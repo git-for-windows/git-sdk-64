@@ -319,7 +319,7 @@ than @code{statprof-stop}, @code{#f} otherwise."
   
 ;; Do not call this from statprof internal functions -- user only.
 (define* (statprof-stop #:optional (state (ensure-profiler-state)))
-  "Stop the profiler.@code{}"
+  "Stop the profiler."
   ;; After some head-scratching, I don't *think* I need to mask/unmask
   ;; signals here, but if I'm wrong, please let me know.
   (set-profile-level! state (- (profile-level state) 1))

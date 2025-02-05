@@ -1,6 +1,6 @@
 ;;; Tree-IL verifier
 
-;; Copyright (C) 2011, 2013, 2019 Free Software Foundation, Inc.
+;; Copyright (C) 2011,2013,2019,2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -244,9 +244,9 @@
        (visit tail env))
       (_
        (error "unexpected tree-il" exp)))
-    (let ((src (tree-il-src exp)))
-      (if (and src (not (and (list? src) (and-map pair? src)
-                             (and-map symbol? (map car src)))))
-          (error "bad src"))
-      ;; Return it, why not.
-      exp)))
+    (match (tree-il-srcv exp)
+      (#f #t)
+      (#((or #f (? string?)) exact-integer? exact-integer?) #t)
+      (src (error "bad src" src)))
+    ;; Return it, why not.
+    exp))

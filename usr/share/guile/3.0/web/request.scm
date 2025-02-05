@@ -23,7 +23,6 @@
   #:use-module (rnrs bytevectors)
   #:use-module (ice-9 binary-ports)
   #:use-module (ice-9 textual-ports)
-  #:use-module (ice-9 rdelim)
   #:use-module (srfi srfi-9)
   #:use-module (web uri)
   #:use-module (web http)

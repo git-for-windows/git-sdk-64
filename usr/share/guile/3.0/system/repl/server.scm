@@ -27,7 +27,6 @@
   #:use-module (ice-9 iconv)
   #:use-module (rnrs bytevectors)
   #:use-module (ice-9 binary-ports)
-  #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-26)           ; cut
   #:export (make-tcp-server-socket
             make-unix-domain-server-socket

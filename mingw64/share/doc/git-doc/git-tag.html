@@ -475,22 +475,22 @@ to delete, list or verify tags.</p>
 <p>Unless <code>-f</code> is given, the named tag must not yet exist.</p>
 </div>
 <div class="paragraph">
-<p>If one of <code>-a</code>, <code>-s</code>, or <code>-u &lt;key-id&gt;</code> is passed, the command
+<p>If one of <code>-a</code>, <code>-s</code>, or <code>-u</code> <em>&lt;key-id&gt;</em> is passed, the command
 creates a <em>tag</em> object, and requires a tag message.  Unless
-<code>-m &lt;msg&gt;</code> or <code>-F &lt;file&gt;</code> is given, an editor is started for the user to type
+<code>-m</code> <em>&lt;msg&gt;</em> or <code>-F</code> <em>&lt;file&gt;</em> is given, an editor is started for the user to type
 in the tag message.</p>
 </div>
 <div class="paragraph">
-<p>If <code>-m &lt;msg&gt;</code> or <code>-F &lt;file&gt;</code> or <code>--trailer &lt;token&gt;[=&lt;value&gt;]</code> is given
-and <code>-a</code>, <code>-s</code>, and <code>-u &lt;key-id&gt;</code> are absent, <code>-a</code> is implied.</p>
+<p>If <code>-m</code> <em>&lt;msg&gt;</em> or <code>-F</code> <em>&lt;file&gt;</em> or <code>--trailer</code> <em>&lt;token&gt;</em>[<code>=</code><em>&lt;value&gt;</em>] is given
+and <code>-a</code>, <code>-s</code>, and <code>-u</code> <em>&lt;key-id&gt;</em> are absent, <code>-a</code> is implied.</p>
 </div>
 <div class="paragraph">
 <p>Otherwise, a tag reference that points directly at the given object
 (i.e., a lightweight tag) is created.</p>
 </div>
 <div class="paragraph">
-<p>A GnuPG signed tag object will be created when <code>-s</code> or <code>-u
-&lt;key-id&gt;</code> is used.  When <code>-u &lt;key-id&gt;</code> is not used, the
+<p>A GnuPG signed tag object will be created when <code>-s</code> or <code>-u</code>
+<em>&lt;key-id&gt;</em> is used.  When <code>-u</code> <em>&lt;key-id&gt;</em> is not used, the
 committer identity for the current user is used to find the
 GnuPG key for signing. 	The configuration variable <code>gpg.program</code>
 is used to specify custom GnuPG binary.</p>
@@ -505,7 +505,7 @@ object).</p>
 <div class="paragraph">
 <p>Annotated tags are meant for release while lightweight tags are meant
 for private or temporary object labels. For this reason, some git
-commands for naming objects (like <code>git describe</code>) will ignore
+commands for naming objects (like <code>git</code> <code>describe</code>) will ignore
 lightweight tags by default.</p>
 </div>
 </div>
@@ -566,8 +566,8 @@ If the tag is not annotated, the commit message is displayed instead.</p>
 <dt class="hdlist1">-l</dt>
 <dt class="hdlist1">--list</dt>
 <dd>
-<p>List tags. With optional <code>&lt;pattern&gt;...</code>, e.g. <code>git tag --list
-'v-*'</code>, list only the tags that match the pattern(s).</p>
+<p>List tags. With optional <em>&lt;pattern&gt;</em>..., e.g. <code>git</code> <code>tag</code> <code>--list</code>
+'v-*', list only the tags that match the pattern(s).</p>
 <div class="paragraph">
 <p>Running "git tag" without arguments also lists all tags. The pattern
 is a shell wildcard (i.e., matched using fnmatch(3)). Multiple
@@ -588,7 +588,7 @@ key. Also supports "version:refname" or "v:refname" (tag
 names are treated as versions). The "version:refname" sort
 order can also be affected by the "versionsort.suffix"
 configuration variable.
-The keys supported are the same as those in <code>git for-each-ref</code>.
+The keys supported are the same as those in <code>git</code> <code>for-each-ref</code>.
 Sort order defaults to the value configured for the <code>tag.sort</code>
 variable if it exists, or lexicographic order otherwise. See
 <a href="git-config.html">git-config(1)</a>.</p>
@@ -596,8 +596,8 @@ variable if it exists, or lexicographic order otherwise. See
 <dt class="hdlist1">--color[=&lt;when&gt;]</dt>
 <dd>
 <p>Respect any colors specified in the <code>--format</code> option. The
-<code>&lt;when&gt;</code> field must be one of <code>always</code>, <code>never</code>, or <code>auto</code> (if
-<code>&lt;when&gt;</code> is absent, behave as if <code>always</code> was given).</p>
+<em>&lt;when&gt;</em> field must be one of <code>always</code>, <code>never</code>, or <code>auto</code> (if
+<em>&lt;when&gt;</em> is absent, behave as if <code>always</code> was given).</p>
 </dd>
 <dt class="hdlist1">-i</dt>
 <dt class="hdlist1">--ignore-case</dt>
@@ -650,7 +650,7 @@ specified). Implies <code>--list</code>.</p>
 <p>Use the given tag message (instead of prompting).
 If multiple <code>-m</code> options are given, their values are
 concatenated as separate paragraphs.
-Implies <code>-a</code> if none of <code>-a</code>, <code>-s</code>, or <code>-u &lt;key-id&gt;</code>
+Implies <code>-a</code> if none of <code>-a</code>, <code>-s</code>, or <code>-u</code> <em>&lt;key-id&gt;</em>
 is given.</p>
 </dd>
 <dt class="hdlist1">-F &lt;file&gt;</dt>
@@ -658,20 +658,20 @@ is given.</p>
 <dd>
 <p>Take the tag message from the given file.  Use <em>-</em> to
 read the message from the standard input.
-Implies <code>-a</code> if none of <code>-a</code>, <code>-s</code>, or <code>-u &lt;key-id&gt;</code>
+Implies <code>-a</code> if none of <code>-a</code>, <code>-s</code>, or <code>-u</code> <em>&lt;key-id&gt;</em>
 is given.</p>
 </dd>
 <dt class="hdlist1">--trailer &lt;token&gt;[(=|:)&lt;value&gt;]</dt>
 <dd>
 <p>Specify a (&lt;token&gt;, &lt;value&gt;) pair that should be applied as a
-trailer. (e.g. <code>git tag --trailer "Custom-Key: value"</code>
+trailer. (e.g. <code>git</code> <code>tag</code> <code>--trailer</code> "Custom-Key: <code>value</code>"
 will add a "Custom-Key" trailer to the tag message.)
-The <code>trailer.*</code> configuration variables
+The <code>trailer.</code>* configuration variables
 (<a href="git-interpret-trailers.html">git-interpret-trailers(1)</a>) can be used to define if
 a duplicated trailer is omitted, where in the run of trailers
 each trailer would appear, and other details.
-The trailers can be extracted in <code>git tag --list</code>, using
-<code>--format="%(trailers)"</code> placeholder.</p>
+The trailers can be extracted in <code>git</code> <code>tag</code> <code>--list</code>, using
+<code>--format=</code>"%(<code>trailers</code>)" placeholder.</p>
 </dd>
 <dt class="hdlist1">-e</dt>
 <dt class="hdlist1">--edit</dt>
@@ -698,10 +698,10 @@ The negated form <code>--no-create-reflog</code> only overrides an earlier
 </dd>
 <dt class="hdlist1">--format=&lt;format&gt;</dt>
 <dd>
-<p>A string that interpolates <code>%(fieldname)</code> from a tag ref being shown
+<p>A string that interpolates %(<code>fieldname</code>) from a tag ref being shown
 and the object it points at.  The format is the same as
 that of <a href="git-for-each-ref.html">git-for-each-ref(1)</a>.  When unspecified,
-defaults to <code>%(refname:strip=2)</code>.</p>
+defaults to %(<code>refname:strip=2</code>).</p>
 </dd>
 <dt class="hdlist1">&lt;tagname&gt;</dt>
 <dd>
@@ -725,7 +725,7 @@ Defaults to HEAD.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>By default, <em>git tag</em> in sign-with-default mode (-s) will use your
-committer identity (of the form <code>Your Name &lt;your@email.address&gt;</code>) to
+committer identity (of the form <code>Your</code> <code>Name</code> &lt;your@email.<code>address</code>&gt;) to
 find a key.  If you want to use a different default key, you can specify
 it in the repository configuration as follows:</p>
 </div>
@@ -928,15 +928,15 @@ support the following date formats:</p>
 <dl>
 <dt class="hdlist1">Git internal format</dt>
 <dd>
-<p>It is <code>&lt;unix-timestamp&gt; &lt;time-zone-offset&gt;</code>, where
-<code>&lt;unix-timestamp&gt;</code> is the number of seconds since the UNIX epoch.
-<code>&lt;time-zone-offset&gt;</code> is a positive or negative offset from UTC.
+<p>It is <em>&lt;unix-timestamp&gt;</em> <em>&lt;time-zone-offset&gt;</em>, where
+<em>&lt;unix-timestamp&gt;</em> is the number of seconds since the UNIX epoch.
+<em>&lt;time-zone-offset&gt;</em> is a positive or negative offset from UTC.
 For example CET (which is 1 hour ahead of UTC) is <code>+0100</code>.</p>
 </dd>
 <dt class="hdlist1">RFC 2822</dt>
 <dd>
 <p>The standard date format as described by RFC 2822, for example
-<code>Thu, 07 Apr 2005 22:13:13 +0200</code>.</p>
+<code>Thu,</code> <code>07</code> <code>Apr</code> <code>2005</code> <code>22:13:13</code> <code>+0200</code>.</p>
 </dd>
 <dt class="hdlist1">ISO 8601</dt>
 <dd>
@@ -971,10 +971,10 @@ In addition, the date part is accepted in the following formats:
 <dt class="hdlist1"><code>$GIT_DIR/TAG_EDITMSG</code></dt>
 <dd>
 <p>This file contains the message of an in-progress annotated
-tag. If <code>git tag</code> exits due to an error before creating an
+tag. If <code>git</code> <code>tag</code> exits due to an error before creating an
 annotated tag then the tag message that has been provided by the
 user in an editor session will be available in this file, but
-may be overwritten by the next invocation of <code>git tag</code>.</p>
+may be overwritten by the next invocation of <code>git</code> <code>tag</code>.</p>
 </dd>
 </dl>
 </div>
@@ -1015,7 +1015,7 @@ commits and from none of the <code>--no-merged</code> commits are shown.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

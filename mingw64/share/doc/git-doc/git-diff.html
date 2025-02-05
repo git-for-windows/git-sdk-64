@@ -452,12 +452,12 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git diff</em> [&lt;options&gt;] [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]
-<em>git diff</em> [&lt;options&gt;] --cached [--merge-base] [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]
-<em>git diff</em> [&lt;options&gt;] [--merge-base] &lt;commit&gt; [&lt;commit&gt;&#8230;&#8203;] &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]
-<em>git diff</em> [&lt;options&gt;] &lt;commit&gt;&#8230;&#8203;&lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]
-<em>git diff</em> [&lt;options&gt;] &lt;blob&gt; &lt;blob&gt;
-<em>git diff</em> [&lt;options&gt;] --no-index [--] &lt;path&gt; &lt;path&gt;</pre>
+<pre class="content"><code>git</code> <code>diff</code> [<em>&lt;options&gt;</em>] [<em>&lt;commit&gt;</em>] [<code>--</code>] [<em>&lt;path&gt;</em>&#8230;&#8203;]
+<code>git</code> <code>diff</code> [<em>&lt;options&gt;</em>] <code>--cached</code> [<code>--merge-base</code>] [<em>&lt;commit&gt;</em>] [<code>--</code>] [<em>&lt;path&gt;</em>&#8230;&#8203;]
+<code>git</code> <code>diff</code> [<em>&lt;options&gt;</em>] [<code>--merge-base</code>] <em>&lt;commit&gt;</em> [<em>&lt;commit&gt;</em>&#8230;&#8203;] <em>&lt;commit&gt;</em> [<code>--</code>] [<em>&lt;path&gt;</em>&#8230;&#8203;]
+<code>git</code> <code>diff</code> [<em>&lt;options&gt;</em>] <em>&lt;commit&gt;</em>`&#8230;&#8203;<code>__</code><em>&lt;commit&gt;</em><code>__</code> [{empty}--{empty}]{empty} [<code>__</code><em>&lt;path&gt;</em><code>__..</code>.]{empty}
+{empty}`git <code>diff</code> [<em>&lt;options&gt;</em>] <em>&lt;blob&gt;</em> <em>&lt;blob&gt;</em>
+<code>git</code> <code>diff</code> [<em>&lt;options&gt;</em>] <code>--no-index</code> [<code>--</code>] <em>&lt;path&gt;</em> <em>&lt;path&gt;</em></pre>
 </div>
 </div>
 </div>
@@ -472,7 +472,7 @@ files on disk.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><code>git</code> <code>diff</code> [<em>&lt;options&gt;</em>] [<code>--</code>] [<em>&lt;path&gt;</em>...]</dt>
 <dd>
 <p>This form is to view the changes you made relative to
 the index (staging area for the next commit).  In other
@@ -480,7 +480,7 @@ words, the differences are what you <em>could</em> tell Git to
 further add to the index but you still haven&#8217;t.  You can
 stage these changes by using <a href="git-add.html">git-add(1)</a>.</p>
 </dd>
-<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] --no-index [--] &lt;path&gt; &lt;path&gt;</dt>
+<dt class="hdlist1"><code>git</code> <code>diff</code> [<em>&lt;options&gt;</em>] <code>--no-index</code> [<code>--</code>] <em>&lt;path&gt;</em> <em>&lt;path&gt;</em></dt>
 <dd>
 <p>This form is to compare the given two paths on the
 filesystem.  You can omit the <code>--no-index</code> option when
@@ -489,91 +489,91 @@ at least one of the paths points outside the working tree,
 or when running the command outside a working tree
 controlled by Git. This form implies <code>--exit-code</code>.</p>
 </dd>
-<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] --cached [--merge-base] [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><code>git</code> <code>diff</code> [<em>&lt;options&gt;</em>] <code>--cached</code> [<code>--merge-base</code>] [<em>&lt;commit&gt;</em>] [<code>--</code>] [<em>&lt;path&gt;</em>...]</dt>
 <dd>
 <p>This form is to view the changes you staged for the next
-commit relative to the named &lt;commit&gt;.  Typically you
+commit relative to the named <em>&lt;commit&gt;</em>.  Typically you
 would want comparison with the latest commit, so if you
-do not give &lt;commit&gt;, it defaults to HEAD.
-If HEAD does not exist (e.g. unborn branches) and
-&lt;commit&gt; is not given, it shows all staged changes.
---staged is a synonym of --cached.</p>
+do not give <em>&lt;commit&gt;</em>, it defaults to <code>HEAD</code>.
+If <code>HEAD</code> does not exist (e.g. unborn branches) and
+<em>&lt;commit&gt;</em> is not given, it shows all staged changes.
+<code>--staged</code> is a synonym of <code>--cached</code>.</p>
 <div class="paragraph">
-<p>If --merge-base is given, instead of using &lt;commit&gt;, use the merge base
-of &lt;commit&gt; and HEAD.  <code>git diff --cached --merge-base A</code> is equivalent to
-<code>git diff --cached $(git merge-base A HEAD)</code>.</p>
+<p>If <code>--merge-base</code> is given, instead of using <em>&lt;commit&gt;</em>, use the merge base
+of <em>&lt;commit&gt;</em> and <code>HEAD</code>.  <code>git</code> <code>diff</code> <code>--cached</code> <code>--merge-base</code> <code>A</code> is equivalent to
+<code>git</code> <code>diff</code> <code>--cached</code> <code>$</code>(<code>git</code> <code>merge-base</code> <code>A</code> <code>HEAD</code>).</p>
 </div>
 </dd>
-<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] [--merge-base] &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><code>git</code> <code>diff</code> [<em>&lt;options&gt;</em>] [<code>--merge-base</code>] <em>&lt;commit&gt;</em> [<code>--</code>] [<em>&lt;path&gt;</em>...]</dt>
 <dd>
 <p>This form is to view the changes you have in your
-working tree relative to the named &lt;commit&gt;.  You can
-use HEAD to compare it with the latest commit, or a
+working tree relative to the named <em>&lt;commit&gt;</em>.  You can
+use <code>HEAD</code> to compare it with the latest commit, or a
 branch name to compare with the tip of a different
 branch.</p>
 <div class="paragraph">
-<p>If --merge-base is given, instead of using &lt;commit&gt;, use the merge base
-of &lt;commit&gt; and HEAD.  <code>git diff --merge-base A</code> is equivalent to
-<code>git diff $(git merge-base A HEAD)</code>.</p>
+<p>If <code>--merge-base</code> is given, instead of using <em>&lt;commit&gt;</em>, use the merge base
+of <em>&lt;commit&gt;</em> and <code>HEAD</code>.  <code>git</code> <code>diff</code> <code>--merge-base</code> <code>A</code> is equivalent to
+<code>git</code> <code>diff</code> <code>$</code>(<code>git</code> <code>merge-base</code> <code>A</code> <code>HEAD</code>).</p>
 </div>
 </dd>
-<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] [--merge-base] &lt;commit&gt; &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><code>git</code> <code>diff</code> [<em>&lt;options&gt;</em>] [<code>--merge-base</code>] <em>&lt;commit&gt;</em> <em>&lt;commit&gt;</em> [<code>--</code>] [<em>&lt;path&gt;</em>...]</dt>
 <dd>
 <p>This is to view the changes between two arbitrary
-&lt;commit&gt;.</p>
+<em>&lt;commit&gt;</em>.</p>
 <div class="paragraph">
-<p>If --merge-base is given, use the merge base of the two commits for the
-"before" side.  <code>git diff --merge-base A B</code> is equivalent to
-<code>git diff $(git merge-base A B) B</code>.</p>
+<p>If <code>--merge-base</code> is given, use the merge base of the two commits for the
+"before" side.  <code>git</code> <code>diff</code> <code>--merge-base</code> <code>A</code> <code>B</code> is equivalent to
+<code>git</code> <code>diff</code> <code>$</code>(<code>git</code> <code>merge-base</code> <code>A</code> <code>B</code>) <code>B</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;commit&gt; &lt;commit&gt;&#8230;&#8203; &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><code>git</code> <code>diff</code> [<em>&lt;options&gt;</em>] <em>&lt;commit&gt;</em> <em>&lt;commit&gt;</em><code>...</code><em>&lt;commit&gt;</em> [<code>--</code>] [<em>&lt;path&gt;</em>...]</dt>
 <dd>
 <p>This form is to view the results of a merge commit.  The first
-listed &lt;commit&gt; must be the merge itself; the remaining two or
+listed <em>&lt;commit&gt;</em> must be the merge itself; the remaining two or
 more commits should be its parents.  Convenient ways to produce
-the desired set of revisions are to use the suffixes <code>^@</code> and
-<code>^!</code>.  If A is a merge commit, then <code>git diff A A^@</code>,
-<code>git diff A^!</code> and <code>git show A</code> all give the same combined diff.</p>
+the desired set of revisions are to use the suffixes <code>@</code> and
+<code>^</code>!.  If <code>A</code> is a merge commit, then <code>git</code> <code>diff</code> <code>A</code> <code>A^@</code>,
+<code>git</code> <code>diff</code> <code>A^</code>! and <code>git</code> <code>show</code> <code>A</code> all give the same combined diff.</p>
 </dd>
-<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;commit&gt;..&lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><code>git</code> <code>diff</code> [<em>&lt;options&gt;</em>] <em>&lt;commit&gt;</em><code>..</code><em>&lt;commit&gt;</em> [<code>--</code>] [<em>&lt;path&gt;</em>...]</dt>
 <dd>
-<p>This is synonymous to the earlier form (without the <code>..</code>) for
-viewing the changes between two arbitrary &lt;commit&gt;.  If &lt;commit&gt; on
+<p>This is synonymous to the earlier form (without the ..) for
+viewing the changes between two arbitrary <em>&lt;commit&gt;</em>.  If <em>&lt;commit&gt;</em> on
 one side is omitted, it will have the same effect as
-using HEAD instead.</p>
+using <code>HEAD</code> instead.</p>
 </dd>
-<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;commit&gt;...&lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><code>git</code> <code>diff</code> [<em>&lt;options&gt;</em>] <em>&lt;commit&gt;</em><code>...</code><em>&lt;commit&gt;</em> [<code>--</code>] [<em>&lt;path&gt;</em>...]</dt>
 <dd>
 <p>This form is to view the changes on the branch containing
-and up to the second &lt;commit&gt;, starting at a common ancestor
-of both &lt;commit&gt;.  <code>git diff A...B</code> is equivalent to
-<code>git diff $(git merge-base A B) B</code>.  You can omit any one
-of &lt;commit&gt;, which has the same effect as using HEAD instead.</p>
+and up to the second <em>&lt;commit&gt;</em>, starting at a common ancestor
+of both <em>&lt;commit&gt;</em>.  <code>git</code> <code>diff</code> <code>A</code><code>...</code><code>B</code> is equivalent to
+<code>git</code> <code>diff</code> <code>$</code>(<code>git</code> <code>merge-base</code> <code>A</code> <code>B</code>) <code>B</code>.  You can omit any one
+of <em>&lt;commit&gt;</em>, which has the same effect as using <code>HEAD</code> instead.</p>
 </dd>
 </dl>
 </div>
 <div class="paragraph">
 <p>Just in case you are doing something exotic, it should be
-noted that all of the &lt;commit&gt; in the above description, except
-in the <code>--merge-base</code> case and in the last two forms that use <code>..</code>
-notations, can be any &lt;tree&gt;. A tree of interest is the one pointed to
-by the ref named <code>AUTO_MERGE</code>, which is written by the <em>ort</em> merge
+noted that all of the <em>&lt;commit&gt;</em> in the above description, except
+in the <code>--merge-base</code> case and in the last two forms that use ..
+notations, can be any <em>&lt;tree&gt;</em>. A tree of interest is the one pointed to
+by the ref named <code>AUTO_MERGE</code>, which is written by the <code>ort</code> merge
 strategy upon hitting merge conflicts (see <a href="git-merge.html">git-merge(1)</a>).
 Comparing the working tree with <code>AUTO_MERGE</code> shows changes you&#8217;ve made
 so far to resolve textual conflicts (see the examples below).</p>
 </div>
 <div class="paragraph">
-<p>For a more complete list of ways to spell &lt;commit&gt;, see
+<p>For a more complete list of ways to spell <em>&lt;commit&gt;</em>, see
 "SPECIFYING REVISIONS" section in <a href="gitrevisions.html">gitrevisions(7)</a>.
-However, "diff" is about comparing two <em>endpoints</em>, not ranges,
-and the range notations (<code>&lt;commit&gt;..&lt;commit&gt;</code> and
-<code>&lt;commit&gt;...&lt;commit&gt;</code>) do not mean a range as defined in the
+However, <code>diff</code> is about comparing two <em>endpoints</em>, not ranges,
+and the range notations (<em>&lt;commit&gt;</em><code>..</code><em>&lt;commit&gt;</em> and <em>&lt;commit&gt;</em><code>...</code><em>&lt;commit&gt;</em>)
+do not mean a range as defined in the
 "SPECIFYING RANGES" section in <a href="gitrevisions.html">gitrevisions(7)</a>.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;blob&gt; &lt;blob&gt;</dt>
+<dt class="hdlist1"><code>git</code> <code>diff</code> [<em>&lt;options&gt;</em>] <em>&lt;blob&gt;</em> <em>&lt;blob&gt;</em></dt>
 <dd>
 <p>This form is to view the differences between the raw
 contents of two blob objects.</p>
@@ -587,71 +587,71 @@ contents of two blob objects.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">-p</dt>
-<dt class="hdlist1">-u</dt>
-<dt class="hdlist1">--patch</dt>
+<dt class="hdlist1"><code>-p</code></dt>
+<dt class="hdlist1"><code>-u</code></dt>
+<dt class="hdlist1"><code>--patch</code></dt>
 <dd>
 <p>Generate patch (see <a href="#generate_patch_text_with_p">Generating patch text with -p</a>).
 This is the default.</p>
 </dd>
-<dt class="hdlist1">-s</dt>
-<dt class="hdlist1">--no-patch</dt>
+<dt class="hdlist1"><code>-s</code></dt>
+<dt class="hdlist1"><code>--no-patch</code></dt>
 <dd>
 <p>Suppress all output from the diff machinery.  Useful for
-commands like <code>git show</code> that show the patch by default to
+commands like <code>git</code> <code>show</code> that show the patch by default to
 squelch their output, or to cancel the effect of options like
 <code>--patch</code>, <code>--stat</code> earlier on the command line in an alias.</p>
 </dd>
-<dt class="hdlist1">-U&lt;n&gt;</dt>
-<dt class="hdlist1">--unified=&lt;n&gt;</dt>
+<dt class="hdlist1"><code>-U</code><em>&lt;n&gt;</em></dt>
+<dt class="hdlist1"><code>--unified=</code><em>&lt;n&gt;</em></dt>
 <dd>
-<p>Generate diffs with &lt;n&gt; lines of context instead of
+<p>Generate diffs with <em>&lt;n&gt;</em> lines of context instead of
 the usual three.
 Implies <code>--patch</code>.</p>
 </dd>
-<dt class="hdlist1">--output=&lt;file&gt;</dt>
+<dt class="hdlist1"><code>--output=</code><em>&lt;file&gt;</em></dt>
 <dd>
 <p>Output to a specific file instead of stdout.</p>
 </dd>
-<dt class="hdlist1">--output-indicator-new=&lt;char&gt;</dt>
-<dt class="hdlist1">--output-indicator-old=&lt;char&gt;</dt>
-<dt class="hdlist1">--output-indicator-context=&lt;char&gt;</dt>
+<dt class="hdlist1"><code>--output-indicator-new=</code><em>&lt;char&gt;</em></dt>
+<dt class="hdlist1"><code>--output-indicator-old=</code><em>&lt;char&gt;</em></dt>
+<dt class="hdlist1"><code>--output-indicator-context=</code><em>&lt;char&gt;</em></dt>
 <dd>
 <p>Specify the character used to indicate new, old or context
-lines in the generated patch. Normally they are <em>+</em>, <em>-</em> and
+lines in the generated patch. Normally they are <code>+</code>, <code>-</code> and
 ' ' respectively.</p>
 </dd>
-<dt class="hdlist1">--raw</dt>
+<dt class="hdlist1"><code>--raw</code></dt>
 <dd>
 <p>Generate the diff in raw format.</p>
 </dd>
-<dt class="hdlist1">--patch-with-raw</dt>
+<dt class="hdlist1"><code>--patch-with-raw</code></dt>
 <dd>
-<p>Synonym for <code>-p --raw</code>.</p>
+<p>Synonym for <code>-p</code> <code>--raw</code>.</p>
 </dd>
-<dt class="hdlist1">--indent-heuristic</dt>
+<dt class="hdlist1"><code>--indent-heuristic</code></dt>
 <dd>
 <p>Enable the heuristic that shifts diff hunk boundaries to make patches
 easier to read. This is the default.</p>
 </dd>
-<dt class="hdlist1">--no-indent-heuristic</dt>
+<dt class="hdlist1"><code>--no-indent-heuristic</code></dt>
 <dd>
 <p>Disable the indent heuristic.</p>
 </dd>
-<dt class="hdlist1">--minimal</dt>
+<dt class="hdlist1"><code>--minimal</code></dt>
 <dd>
 <p>Spend extra time to make sure the smallest possible
 diff is produced.</p>
 </dd>
-<dt class="hdlist1">--patience</dt>
+<dt class="hdlist1"><code>--patience</code></dt>
 <dd>
 <p>Generate a diff using the "patience diff" algorithm.</p>
 </dd>
-<dt class="hdlist1">--histogram</dt>
+<dt class="hdlist1"><code>--histogram</code></dt>
 <dd>
 <p>Generate a diff using the "histogram diff" algorithm.</p>
 </dd>
-<dt class="hdlist1">--anchored=&lt;text&gt;</dt>
+<dt class="hdlist1"><code>--anchored=</code><em>&lt;text&gt;</em></dt>
 <dd>
 <p>Generate a diff using the "anchored diff" algorithm.</p>
 <div class="paragraph">
@@ -659,19 +659,20 @@ diff is produced.</p>
 </div>
 <div class="paragraph">
 <p>If a line exists in both the source and destination, exists only once,
-and starts with this text, this algorithm attempts to prevent it from
+and starts with <em>&lt;text&gt;</em>, this algorithm attempts to prevent it from
 appearing as a deletion or addition in the output. It uses the "patience
 diff" algorithm internally.</p>
 </div>
 </dd>
-<dt class="hdlist1">--diff-algorithm={patience|minimal|histogram|myers}</dt>
+<dt class="hdlist1"><code>--diff-algorithm=</code>(<code>patience</code>|<code>minimal</code>|<code>histogram</code>|<code>myers</code>)</dt>
 <dd>
 <p>Choose a diff algorithm. The variants are as follows:</p>
 <div class="openblock">
 <div class="content">
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>default</code>, <code>myers</code></dt>
+<dt class="hdlist1"><code>default</code></dt>
+<dt class="hdlist1"><code>myers</code></dt>
 <dd>
 <p>The basic greedy diff algorithm. Currently, this is the default.</p>
 </dd>
@@ -699,52 +700,52 @@ non-default value and want to use the default one, then you
 have to use <code>--diff-algorithm=default</code> option.</p>
 </div>
 </dd>
-<dt class="hdlist1">--stat[=&lt;width&gt;[,&lt;name-width&gt;[,&lt;count&gt;]]]</dt>
+<dt class="hdlist1"><code>--stat</code>[<code>=</code><em>&lt;width&gt;</em>[<code>,</code><em>&lt;name-width&gt;</em>[<code>,</code><em>&lt;count&gt;</em>]]]</dt>
 <dd>
 <p>Generate a diffstat. By default, as much space as necessary
 will be used for the filename part, and the rest for the graph
 part. Maximum width defaults to terminal width, or 80 columns
 if not connected to a terminal, and can be overridden by
-<code>&lt;width&gt;</code>. The width of the filename part can be limited by
-giving another width <code>&lt;name-width&gt;</code> after a comma or by setting
-<code>diff.statNameWidth=&lt;width&gt;</code>. The width of the graph part can be
-limited by using <code>--stat-graph-width=&lt;width&gt;</code> or by setting
-<code>diff.statGraphWidth=&lt;width&gt;</code>. Using <code>--stat</code> or
+<em>&lt;width&gt;</em>. The width of the filename part can be limited by
+giving another width <em>&lt;name-width&gt;</em> after a comma or by setting
+<code>diff.statNameWidth=</code><em>&lt;name-width&gt;</em>. The width of the graph part can be
+limited by using <code>--stat-graph-width=</code><em>&lt;graph-width&gt;</em> or by setting
+<code>diff.statGraphWidth=</code><em>&lt;graph-width&gt;</em>. Using <code>--stat</code> or
 <code>--stat-graph-width</code> affects all commands generating a stat graph,
 while setting <code>diff.statNameWidth</code> or <code>diff.statGraphWidth</code>
-does not affect <code>git format-patch</code>.
-By giving a third parameter <code>&lt;count&gt;</code>, you can limit the output to
-the first <code>&lt;count&gt;</code> lines, followed by <code>...</code> if there are more.</p>
+does not affect <code>git</code> <code>format-patch</code>.
+By giving a third parameter <em>&lt;count&gt;</em>, you can limit the output to
+the first <em>&lt;count&gt;</em> lines, followed by ... if there are more.</p>
 <div class="paragraph">
-<p>These parameters can also be set individually with <code>--stat-width=&lt;width&gt;</code>,
-<code>--stat-name-width=&lt;name-width&gt;</code> and <code>--stat-count=&lt;count&gt;</code>.</p>
+<p>These parameters can also be set individually with <code>--stat-width=</code><em>&lt;width&gt;</em>,
+<code>--stat-name-width=</code><em>&lt;name-width&gt;</em> and <code>--stat-count=</code><em>&lt;count&gt;</em>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--compact-summary</dt>
+<dt class="hdlist1"><code>--compact-summary</code></dt>
 <dd>
 <p>Output a condensed summary of extended header information such
-as file creations or deletions ("new" or "gone", optionally "+l"
-if it&#8217;s a symlink) and mode changes ("+x" or "-x" for adding
+as file creations or deletions ("new" or "gone", optionally <code>+l</code>
+if it&#8217;s a symlink) and mode changes (<code>+x</code> or <code>-x</code> for adding
 or removing executable bit respectively) in diffstat. The
 information is put between the filename part and the graph
 part. Implies <code>--stat</code>.</p>
 </dd>
-<dt class="hdlist1">--numstat</dt>
+<dt class="hdlist1"><code>--numstat</code></dt>
 <dd>
 <p>Similar to <code>--stat</code>, but shows number of added and
 deleted lines in decimal notation and pathname without
 abbreviation, to make it more machine friendly.  For
 binary files, outputs two <code>-</code> instead of saying
-<code>0 0</code>.</p>
+<code>0</code> <code>0</code>.</p>
 </dd>
-<dt class="hdlist1">--shortstat</dt>
+<dt class="hdlist1"><code>--shortstat</code></dt>
 <dd>
 <p>Output only the last line of the <code>--stat</code> format containing total
 number of modified files, as well as number of added and deleted
 lines.</p>
 </dd>
-<dt class="hdlist1">-X[&lt;param1,param2,&#8230;&#8203;&gt;]</dt>
-<dt class="hdlist1">--dirstat[=&lt;param1,param2,&#8230;&#8203;&gt;]</dt>
+<dt class="hdlist1"><code>-X</code> [<em>&lt;param&gt;</em><code>,..</code>.]</dt>
+<dt class="hdlist1"><code>--dirstat</code>[<code>=</code><em>&lt;param&gt;</em><code>,..</code>.]</dt>
 <dd>
 <p>Output the distribution of relative amount of changes for each
 sub-directory. The behavior of <code>--dirstat</code> can be customized by
@@ -772,7 +773,7 @@ files, count 64-byte chunks instead, since binary files have no
 natural concept of lines). This is a more expensive <code>--dirstat</code>
 behavior than the <code>changes</code> behavior, but it does count rearranged
 lines within a file as much as other changes. The resulting output
-is consistent with what you get from the other <code>--*stat</code> options.</p>
+is consistent with what you get from the other <code>--</code>*stat options.</p>
 </dd>
 <dt class="hdlist1"><code>files</code></dt>
 <dd>
@@ -788,7 +789,7 @@ Note that when using <code>cumulative</code>, the sum of the percentages
 reported may exceed 100%. The default (non-cumulative) behavior can
 be specified with the <code>noncumulative</code> parameter.</p>
 </dd>
-<dt class="hdlist1">&lt;limit&gt;</dt>
+<dt class="hdlist1"><em>&lt;limit&gt;</em></dt>
 <dd>
 <p>An integer parameter specifies a cut-off percent (3% by default).
 Directories contributing less than this percentage of the changes
@@ -805,24 +806,24 @@ and accumulating child directory counts in the parent directories:
 <code>--dirstat=files,10,cumulative</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--cumulative</dt>
+<dt class="hdlist1"><code>--cumulative</code></dt>
 <dd>
-<p>Synonym for --dirstat=cumulative</p>
+<p>Synonym for <code>--dirstat=cumulative</code>.</p>
 </dd>
-<dt class="hdlist1">--dirstat-by-file[=&lt;param1,param2&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><code>--dirstat-by-file</code>[<code>=</code><em>&lt;param&gt;</em><code>,..</code>.]</dt>
 <dd>
-<p>Synonym for --dirstat=files,&lt;param1&gt;,&lt;param2&gt;&#8230;&#8203;</p>
+<p>Synonym for <code>--dirstat=files,</code><em>&lt;param&gt;</em><code>,..</code>..</p>
 </dd>
-<dt class="hdlist1">--summary</dt>
+<dt class="hdlist1"><code>--summary</code></dt>
 <dd>
 <p>Output a condensed summary of extended header information
 such as creations, renames and mode changes.</p>
 </dd>
-<dt class="hdlist1">--patch-with-stat</dt>
+<dt class="hdlist1"><code>--patch-with-stat</code></dt>
 <dd>
-<p>Synonym for <code>-p --stat</code>.</p>
+<p>Synonym for <code>-p</code> <code>--stat</code>.</p>
 </dd>
-<dt class="hdlist1">-z</dt>
+<dt class="hdlist1"><code>-z</code></dt>
 <dd>
 <p>When <code>--raw</code>, <code>--numstat</code>, <code>--name-only</code> or <code>--name-status</code> has been
 given, do not munge pathnames and use NULs as output field terminators.</p>
@@ -832,92 +833,92 @@ explained for the configuration variable <code>core.quotePath</code> (see
 <a href="git-config.html">git-config(1)</a>).</p>
 </div>
 </dd>
-<dt class="hdlist1">--name-only</dt>
+<dt class="hdlist1"><code>--name-only</code></dt>
 <dd>
 <p>Show only the name of each changed file in the post-image tree.
 The file names are often encoded in UTF-8.
 For more information see the discussion about encoding in the <a href="git-log.html">git-log(1)</a>
 manual page.</p>
 </dd>
-<dt class="hdlist1">--name-status</dt>
+<dt class="hdlist1"><code>--name-status</code></dt>
 <dd>
 <p>Show only the name(s) and status of each changed file. See the description
 of the <code>--diff-filter</code> option on what the status letters mean.
 Just like <code>--name-only</code> the file names are often encoded in UTF-8.</p>
 </dd>
-<dt class="hdlist1">--submodule[=&lt;format&gt;]</dt>
+<dt class="hdlist1"><code>--submodule</code>[<code>=</code><em>&lt;format&gt;</em>]</dt>
 <dd>
 <p>Specify how differences in submodules are shown.  When specifying
-<code>--submodule=short</code> the <em>short</em> format is used.  This format just
+<code>--submodule=short</code> the <code>short</code> format is used.  This format just
 shows the names of the commits at the beginning and end of the range.
-When <code>--submodule</code> or <code>--submodule=log</code> is specified, the <em>log</em>
+When <code>--submodule</code> or <code>--submodule=log</code> is specified, the <code>log</code>
 format is used.  This format lists the commits in the range like
 <a href="git-submodule.html">git-submodule(1)</a> <code>summary</code> does.  When <code>--submodule=diff</code>
-is specified, the <em>diff</em> format is used.  This format shows an
+is specified, the <code>diff</code> format is used.  This format shows an
 inline diff of the changes in the submodule contents between the
-commit range.  Defaults to <code>diff.submodule</code> or the <em>short</em> format
+commit range.  Defaults to <code>diff.submodule</code> or the <code>short</code> format
 if the config option is unset.</p>
 </dd>
-<dt class="hdlist1">--color[=&lt;when&gt;]</dt>
+<dt class="hdlist1"><code>--color</code>[<code>=</code><em>&lt;when&gt;</em>]</dt>
 <dd>
 <p>Show colored diff.
-<code>--color</code> (i.e. without <em>=&lt;when&gt;</em>) is the same as <code>--color=always</code>.
+<code>--color</code> (i.e. without <code>=</code><em>&lt;when&gt;</em>) is the same as <code>--color=always</code>.
 <em>&lt;when&gt;</em> can be one of <code>always</code>, <code>never</code>, or <code>auto</code>.
 It can be changed by the <code>color.ui</code> and <code>color.diff</code>
 configuration settings.</p>
 </dd>
-<dt class="hdlist1">--no-color</dt>
+<dt class="hdlist1"><code>--no-color</code></dt>
 <dd>
 <p>Turn off colored diff.
 This can be used to override configuration settings.
 It is the same as <code>--color=never</code>.</p>
 </dd>
-<dt class="hdlist1">--color-moved[=&lt;mode&gt;]</dt>
+<dt class="hdlist1"><code>--color-moved</code>[<code>=</code><em>&lt;mode&gt;</em>]</dt>
 <dd>
 <p>Moved lines of code are colored differently.
 It can be changed by the <code>diff.colorMoved</code> configuration setting.
-The &lt;mode&gt; defaults to <em>no</em> if the option is not given
-and to <em>zebra</em> if the option with no mode is given.
+The <em>&lt;mode&gt;</em> defaults to <code>no</code> if the option is not given
+and to <code>zebra</code> if the option with no mode is given.
 The mode must be one of:</p>
 <div class="openblock">
 <div class="content">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">no</dt>
+<dt class="hdlist1"><code>no</code></dt>
 <dd>
 <p>Moved lines are not highlighted.</p>
 </dd>
-<dt class="hdlist1">default</dt>
+<dt class="hdlist1"><code>default</code></dt>
 <dd>
 <p>Is a synonym for <code>zebra</code>. This may change to a more sensible mode
 in the future.</p>
 </dd>
-<dt class="hdlist1">plain</dt>
+<dt class="hdlist1"><code>plain</code></dt>
 <dd>
 <p>Any line that is added in one location and was removed
-in another location will be colored with <em>color.diff.newMoved</em>.
-Similarly <em>color.diff.oldMoved</em> will be used for removed lines
+in another location will be colored with <code>color.diff.newMoved</code>.
+Similarly <code>color.diff.oldMoved</code> will be used for removed lines
 that are added somewhere else in the diff. This mode picks up any
 moved line, but it is not very useful in a review to determine
 if a block of code was moved without permutation.</p>
 </dd>
-<dt class="hdlist1">blocks</dt>
+<dt class="hdlist1"><code>blocks</code></dt>
 <dd>
 <p>Blocks of moved text of at least 20 alphanumeric characters
 are detected greedily. The detected blocks are
-painted using either the <em>color.diff.{old,new}Moved</em> color.
+painted using either the <code>color.diff.</code>(<code>old</code>|<code>new</code>)<code>Moved</code> color.
 Adjacent blocks cannot be told apart.</p>
 </dd>
-<dt class="hdlist1">zebra</dt>
+<dt class="hdlist1"><code>zebra</code></dt>
 <dd>
-<p>Blocks of moved text are detected as in <em>blocks</em> mode. The blocks
-are painted using either the <em>color.diff.{old,new}Moved</em> color or
-<em>color.diff.{old,new}MovedAlternative</em>. The change between
+<p>Blocks of moved text are detected as in <code>blocks</code> mode. The blocks
+are painted using either the <code>color.diff.</code>(<code>old</code>|<code>new</code>)<code>Moved</code> color or
+<code>color.diff.</code>(<code>old</code>|<code>new</code>)<code>MovedAlternative</code>. The change between
 the two colors indicates that a new block was detected.</p>
 </dd>
-<dt class="hdlist1">dimmed-zebra</dt>
+<dt class="hdlist1"><code>dimmed-zebra</code></dt>
 <dd>
-<p>Similar to <em>zebra</em>, but additional dimming of uninteresting parts
+<p>Similar to <code>zebra</code>, but additional dimming of uninteresting parts
 of moved code is performed. The bordering lines of two adjacent
 blocks are considered interesting, the rest is uninteresting.
 <code>dimmed_zebra</code> is a deprecated synonym.</p>
@@ -927,12 +928,12 @@ blocks are considered interesting, the rest is uninteresting.
 </div>
 </div>
 </dd>
-<dt class="hdlist1">--no-color-moved</dt>
+<dt class="hdlist1"><code>--no-color-moved</code></dt>
 <dd>
 <p>Turn off move detection. This can be used to override configuration
 settings. It is the same as <code>--color-moved=no</code>.</p>
 </dd>
-<dt class="hdlist1">--color-moved-ws=&lt;modes&gt;</dt>
+<dt class="hdlist1"><code>--color-moved-ws=</code><em>&lt;mode&gt;</em><code>,..</code>.</dt>
 <dd>
 <p>This configures how whitespace is ignored when performing the
 move detection for <code>--color-moved</code>.
@@ -942,26 +943,26 @@ These modes can be given as a comma separated list:</p>
 <div class="content">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">no</dt>
+<dt class="hdlist1"><code>no</code></dt>
 <dd>
 <p>Do not ignore whitespace when performing move detection.</p>
 </dd>
-<dt class="hdlist1">ignore-space-at-eol</dt>
+<dt class="hdlist1"><code>ignore-space-at-eol</code></dt>
 <dd>
 <p>Ignore changes in whitespace at EOL.</p>
 </dd>
-<dt class="hdlist1">ignore-space-change</dt>
+<dt class="hdlist1"><code>ignore-space-change</code></dt>
 <dd>
 <p>Ignore changes in amount of whitespace.  This ignores whitespace
 at line end, and considers all other sequences of one or
 more whitespace characters to be equivalent.</p>
 </dd>
-<dt class="hdlist1">ignore-all-space</dt>
+<dt class="hdlist1"><code>ignore-all-space</code></dt>
 <dd>
 <p>Ignore whitespace when comparing lines. This ignores differences
 even if one line has whitespace where the other line has none.</p>
 </dd>
-<dt class="hdlist1">allow-indentation-change</dt>
+<dt class="hdlist1"><code>allow-indentation-change</code></dt>
 <dd>
 <p>Initially ignore any whitespace in the move detection, then
 group the moved code blocks only into a block if the change in
@@ -973,33 +974,32 @@ other modes.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1">--no-color-moved-ws</dt>
+<dt class="hdlist1"><code>--no-color-moved-ws</code></dt>
 <dd>
 <p>Do not ignore whitespace when performing move detection. This can be
 used to override configuration settings. It is the same as
 <code>--color-moved-ws=no</code>.</p>
 </dd>
-<dt class="hdlist1">--word-diff[=&lt;mode&gt;]</dt>
+<dt class="hdlist1"><code>--word-diff</code>[<code>=</code><em>&lt;mode&gt;</em>]</dt>
 <dd>
-<p>Show a word diff, using the &lt;mode&gt; to delimit changed words.
-By default, words are delimited by whitespace; see
-<code>--word-diff-regex</code> below.  The &lt;mode&gt; defaults to <em>plain</em>, and
+<p>By default, words are delimited by whitespace; see
+<code>--word-diff-regex</code> below.  The <em>&lt;mode&gt;</em> defaults to <code>plain</code>, and
 must be one of:</p>
 <div class="openblock">
 <div class="content">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">color</dt>
+<dt class="hdlist1"><code>color</code></dt>
 <dd>
 <p>Highlight changed words using only colors.  Implies <code>--color</code>.</p>
 </dd>
-<dt class="hdlist1">plain</dt>
+<dt class="hdlist1"><code>plain</code></dt>
 <dd>
-<p>Show words as <code>[-removed-]</code> and <code>{+added+}</code>.  Makes no
+<p>Show words as [<code>-removed-</code>] and {<code>added</code>}.  Makes no
 attempts to escape the delimiters if they appear in the input,
 so the output may be ambiguous.</p>
 </dd>
-<dt class="hdlist1">porcelain</dt>
+<dt class="hdlist1"><code>porcelain</code></dt>
 <dd>
 <p>Use a special line-based format intended for script
 consumption.  Added/removed/unchanged runs are printed in the
@@ -1008,7 +1008,7 @@ character at the beginning of the line and extending to the
 end of the line.  Newlines in the input are represented by a
 tilde <code>~</code> on a line of its own.</p>
 </dd>
-<dt class="hdlist1">none</dt>
+<dt class="hdlist1"><code>none</code></dt>
 <dd>
 <p>Disable word diff again.</p>
 </dd>
@@ -1021,16 +1021,16 @@ tilde <code>~</code> on a line of its own.</p>
 highlight the changed parts in all modes if enabled.</p>
 </div>
 </dd>
-<dt class="hdlist1">--word-diff-regex=&lt;regex&gt;</dt>
+<dt class="hdlist1"><code>--word-diff-regex=</code><em>&lt;regex&gt;</em></dt>
 <dd>
-<p>Use &lt;regex&gt; to decide what a word is, instead of considering
+<p>Use <em>&lt;regex&gt;</em> to decide what a word is, instead of considering
 runs of non-whitespace to be a word.  Also implies
 <code>--word-diff</code> unless it was already enabled.</p>
 <div class="paragraph">
 <p>Every non-overlapping match of the
-&lt;regex&gt; is considered a word.  Anything between these matches is
+<em>&lt;regex&gt;</em> is considered a word.  Anything between these matches is
 considered whitespace and ignored(!) for the purposes of finding
-differences.  You may want to append <code>|[^[:space:]]</code> to your regular
+differences.  You may want to append |[<code>^</code>[<code>:space:</code>]] to your regular
 expression to make sure that it matches all non-whitespace characters.
 A match that contains a newline is silently truncated(!) at the
 newline.</p>
@@ -1046,21 +1046,21 @@ overrides any diff driver or configuration setting.  Diff drivers
 override configuration settings.</p>
 </div>
 </dd>
-<dt class="hdlist1">--color-words[=&lt;regex&gt;]</dt>
+<dt class="hdlist1"><code>--color-words</code>[<code>=</code><em>&lt;regex&gt;</em>]</dt>
 <dd>
 <p>Equivalent to <code>--word-diff=color</code> plus (if a regex was
-specified) <code>--word-diff-regex=&lt;regex&gt;</code>.</p>
+specified) <code>--word-diff-regex=</code><em>&lt;regex&gt;</em>.</p>
 </dd>
-<dt class="hdlist1">--no-renames</dt>
+<dt class="hdlist1"><code>--no-renames</code></dt>
 <dd>
 <p>Turn off rename detection, even when the configuration
 file gives the default to do so.</p>
 </dd>
-<dt class="hdlist1">--[no-]rename-empty</dt>
+<dt class="hdlist1"><code>--</code>[<code>no-</code>]<code>rename-empty</code></dt>
 <dd>
 <p>Whether to use empty blobs as rename source.</p>
 </dd>
-<dt class="hdlist1">--check</dt>
+<dt class="hdlist1"><code>--check</code></dt>
 <dd>
 <p>Warn if changes introduce conflict markers or whitespace errors.
 What are considered whitespace errors is controlled by <code>core.whitespace</code>
@@ -1069,9 +1069,9 @@ lines that consist solely of whitespaces) and a space character
 that is immediately followed by a tab character inside the
 initial indent of the line are considered whitespace errors.
 Exits with non-zero status if problems are found. Not compatible
-with --exit-code.</p>
+with <code>--exit-code</code>.</p>
 </dd>
-<dt class="hdlist1">--ws-error-highlight=&lt;kind&gt;</dt>
+<dt class="hdlist1"><code>--ws-error-highlight=</code><em>&lt;kind&gt;</em></dt>
 <dd>
 <p>Highlight whitespace errors in the <code>context</code>, <code>old</code> or <code>new</code>
 lines of the diff.  Multiple values are separated by comma,
@@ -1082,19 +1082,19 @@ this option is not given, and the configuration variable
 <code>new</code> lines are highlighted. The whitespace errors are colored
 with <code>color.diff.whitespace</code>.</p>
 </dd>
-<dt class="hdlist1">--full-index</dt>
+<dt class="hdlist1"><code>--full-index</code></dt>
 <dd>
 <p>Instead of the first handful of characters, show the full
 pre- and post-image blob object names on the "index"
 line when generating patch format output.</p>
 </dd>
-<dt class="hdlist1">--binary</dt>
+<dt class="hdlist1"><code>--binary</code></dt>
 <dd>
 <p>In addition to <code>--full-index</code>, output a binary diff that
 can be applied with <code>git-apply</code>.
 Implies <code>--patch</code>.</p>
 </dd>
-<dt class="hdlist1">--abbrev[=&lt;n&gt;]</dt>
+<dt class="hdlist1"><code>--abbrev</code>[<code>=</code><em>&lt;n&gt;</em>]</dt>
 <dd>
 <p>Instead of showing the full 40-byte hexadecimal object
 name in diff-raw format output and diff-tree header
@@ -1103,10 +1103,10 @@ hexdigits long that uniquely refers the object.
 In diff-patch output format, <code>--full-index</code> takes higher
 precedence, i.e. if <code>--full-index</code> is specified, full blob
 names will be shown regardless of <code>--abbrev</code>.
-Non default number of digits can be specified with <code>--abbrev=&lt;n&gt;</code>.</p>
+Non default number of digits can be specified with <code>--abbrev=</code><em>&lt;n&gt;</em>.</p>
 </dd>
-<dt class="hdlist1">-B[&lt;n&gt;][/&lt;m&gt;]</dt>
-<dt class="hdlist1">--break-rewrites[=[&lt;n&gt;][/&lt;m&gt;]]</dt>
+<dt class="hdlist1"><code>-B</code>[<em>&lt;n&gt;</em>][<code>/</code><em>&lt;m&gt;</em>]</dt>
+<dt class="hdlist1"><code>--break-rewrites</code>[<code>=</code>[<em>&lt;n&gt;</em>][<code>/</code><em>&lt;m&gt;</em>]]</dt>
 <dd>
 <p>Break complete rewrite changes into pairs of delete and
 create. This serves two purposes:</p>
@@ -1115,43 +1115,43 @@ create. This serves two purposes:</p>
 not as a series of deletion and insertion mixed together with a very
 few lines that happen to match textually as the context, but as a
 single deletion of everything old followed by a single insertion of
-everything new, and the number <code>m</code> controls this aspect of the -B
-option (defaults to 60%). <code>-B/70%</code> specifies that less than 30% of the
+everything new, and the number <em>&lt;m&gt;</em> controls this aspect of the <code>-B</code>
+option (defaults to 60%). <code>-B/70</code>% specifies that less than 30% of the
 original should remain in the result for Git to consider it a total
 rewrite (i.e. otherwise the resulting patch will be a series of
 deletion and insertion mixed together with context lines).</p>
 </div>
 <div class="paragraph">
-<p>When used with -M, a totally-rewritten file is also considered as the
-source of a rename (usually -M only considers a file that disappeared
-as the source of a rename), and the number <code>n</code> controls this aspect of
-the -B option (defaults to 50%). <code>-B20%</code> specifies that a change with
+<p>When used with <code>-M</code>, a totally-rewritten file is also considered as the
+source of a rename (usually <code>-M</code> only considers a file that disappeared
+as the source of a rename), and the number <em>&lt;n&gt;</em> controls this aspect of
+the <code>-B</code> option (defaults to 50%). <code>-B20</code>% specifies that a change with
 addition and deletion compared to 20% or more of the file&#8217;s size are
 eligible for being picked up as a possible source of a rename to
 another file.</p>
 </div>
 </dd>
-<dt class="hdlist1">-M[&lt;n&gt;]</dt>
-<dt class="hdlist1">--find-renames[=&lt;n&gt;]</dt>
+<dt class="hdlist1"><code>-M</code>[<em>&lt;n&gt;</em>]</dt>
+<dt class="hdlist1"><code>--find-renames</code>[<code>=</code><em>&lt;n&gt;</em>]</dt>
 <dd>
 <p>Detect renames.
-If <code>n</code> is specified, it is a threshold on the similarity
+If <em>&lt;n&gt;</em> is specified, it is a threshold on the similarity
 index (i.e. amount of addition/deletions compared to the
-file&#8217;s size). For example, <code>-M90%</code> means Git should consider a
+file&#8217;s size). For example, <code>-M90</code>% means Git should consider a
 delete/add pair to be a rename if more than 90% of the file
-hasn&#8217;t changed.  Without a <code>%</code> sign, the number is to be read as
+hasn&#8217;t changed.  Without a % sign, the number is to be read as
 a fraction, with a decimal point before it.  I.e., <code>-M5</code> becomes
-0.5, and is thus the same as <code>-M50%</code>.  Similarly, <code>-M05</code> is
-the same as <code>-M5%</code>.  To limit detection to exact renames, use
-<code>-M100%</code>.  The default similarity index is 50%.</p>
+0.5, and is thus the same as <code>-M50</code>%.  Similarly, <code>-M05</code> is
+the same as <code>-M5</code>%.  To limit detection to exact renames, use
+<code>-M100</code>%.  The default similarity index is 50%.</p>
 </dd>
-<dt class="hdlist1">-C[&lt;n&gt;]</dt>
-<dt class="hdlist1">--find-copies[=&lt;n&gt;]</dt>
+<dt class="hdlist1"><code>-C</code>[<em>&lt;n&gt;</em>]</dt>
+<dt class="hdlist1"><code>--find-copies</code>[<code>=</code><em>&lt;n&gt;</em>]</dt>
 <dd>
 <p>Detect copies as well as renames.  See also <code>--find-copies-harder</code>.
-If <code>n</code> is specified, it has the same meaning as for <code>-M&lt;n&gt;</code>.</p>
+If <em>&lt;n&gt;</em> is specified, it has the same meaning as for <code>-M</code><em>&lt;n&gt;</em>.</p>
 </dd>
-<dt class="hdlist1">--find-copies-harder</dt>
+<dt class="hdlist1"><code>--find-copies-harder</code></dt>
 <dd>
 <p>For performance reasons, by default, <code>-C</code> option finds copies only
 if the original file of the copy was modified in the same
@@ -1161,12 +1161,12 @@ copy.  This is a very expensive operation for large
 projects, so use it with caution.  Giving more than one
 <code>-C</code> option has the same effect.</p>
 </dd>
-<dt class="hdlist1">-D</dt>
-<dt class="hdlist1">--irreversible-delete</dt>
+<dt class="hdlist1"><code>-D</code></dt>
+<dt class="hdlist1"><code>--irreversible-delete</code></dt>
 <dd>
 <p>Omit the preimage for deletes, i.e. print only the header but not
 the diff between the preimage and <code>/dev/null</code>. The resulting patch
-is not meant to be applied with <code>patch</code> or <code>git apply</code>; this is
+is not meant to be applied with <code>patch</code> or <code>git</code> <code>apply</code>; this is
 solely for people who want to just concentrate on reviewing the
 text after the change. In addition, the output obviously lacks
 enough information to apply such a patch in reverse, even manually,
@@ -1176,7 +1176,7 @@ hence the name of the option.</p>
 of a delete/create pair.</p>
 </div>
 </dd>
-<dt class="hdlist1">-l&lt;num&gt;</dt>
+<dt class="hdlist1"><code>-l</code><em>&lt;num&gt;</em></dt>
 <dd>
 <p>The <code>-M</code> and <code>-C</code> options involve some preliminary steps that
 can detect subsets of renames/copies cheaply, followed by an
@@ -1187,10 +1187,10 @@ original sources are relevant.)  For N sources and
 destinations, this exhaustive check is O(N^2).  This option
 prevents the exhaustive portion of rename/copy detection from
 running if the number of source/destination files involved
-exceeds the specified number.  Defaults to diff.renameLimit.
+exceeds the specified number.  Defaults to <code>diff.renameLimit</code>.
 Note that a value of 0 is treated as unlimited.</p>
 </dd>
-<dt class="hdlist1">--diff-filter=[(A|C|D|M|R|T|U|X|B)&#8230;&#8203;[*]]</dt>
+<dt class="hdlist1"><code>--diff-filter=</code>[(<code>A</code>|<code>C</code>|<code>D</code>|<code>M</code>|<code>R</code>|<code>T</code>|<code>U</code>|<code>X</code>|<code>B</code>)<code>...</code>[*]]</dt>
 <dd>
 <p>Select only files that are Added (<code>A</code>), Copied (<code>C</code>),
 Deleted (<code>D</code>), Modified (<code>M</code>), Renamed (<code>R</code>), have their
@@ -1198,7 +1198,7 @@ type (i.e. regular file, symlink, submodule, &#8230;&#8203;) changed (<code>T</c
 are Unmerged (<code>U</code>), are
 Unknown (<code>X</code>), or have had their pairing Broken (<code>B</code>).
 Any combination of the filter characters (including none) can be used.
-When <code>*</code> (All-or-none) is added to the combination, all
+When * (All-or-none) is added to the combination, all
 paths are selected if there is any file that matches
 other criteria in the comparison; if there is no file
 that matches other criteria, nothing is selected.</p>
@@ -1211,10 +1211,10 @@ that matches other criteria, nothing is selected.</p>
 renamed entries cannot appear if detection for those types is disabled.</p>
 </div>
 </dd>
-<dt class="hdlist1">-S&lt;string&gt;</dt>
+<dt class="hdlist1"><code>-S</code><em>&lt;string&gt;</em></dt>
 <dd>
 <p>Look for differences that change the number of occurrences of
-the specified string (i.e. addition/deletion) in a file.
+the specified <em>&lt;string&gt;</em> (i.e. addition/deletion) in a file.
 Intended for the scripter&#8217;s use.</p>
 <div class="paragraph">
 <p>It is useful when you&#8217;re looking for an exact block of code (like a
@@ -1227,13 +1227,13 @@ very first version of the block.</p>
 <p>Binary files are searched as well.</p>
 </div>
 </dd>
-<dt class="hdlist1">-G&lt;regex&gt;</dt>
+<dt class="hdlist1"><code>-G</code><em>&lt;regex&gt;</em></dt>
 <dd>
 <p>Look for differences whose patch text contains added/removed
-lines that match &lt;regex&gt;.</p>
+lines that match <em>&lt;regex&gt;</em>.</p>
 <div class="paragraph">
-<p>To illustrate the difference between <code>-S&lt;regex&gt; --pickaxe-regex</code> and
-<code>-G&lt;regex&gt;</code>, consider a commit with the following diff in the same
+<p>To illustrate the difference between <code>-S</code><em>&lt;regex&gt;</em> <code>--pickaxe-regex</code> and
+<code>-G</code><em>&lt;regex&gt;</em>, consider a commit with the following diff in the same
 file:</p>
 </div>
 <div class="listingblock">
@@ -1244,8 +1244,8 @@ file:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>While <code>git log -G"frotz\(nitfol"</code> will show this commit, <code>git log
--S"frotz\(nitfol" --pickaxe-regex</code> will not (because the number of
+<p>While <code>git</code> <code>log</code> <code>-G</code>"frotz\(<code>nitfol</code>" will show this commit, <code>git</code> <code>log</code>
+<code>-S</code>"frotz\(<code>nitfol</code>" <code>--pickaxe-regex</code> will not (because the number of
 occurrences of that string did not change).</p>
 </div>
 <div class="paragraph">
@@ -1257,7 +1257,7 @@ filter will be ignored.</p>
 information.</p>
 </div>
 </dd>
-<dt class="hdlist1">--find-object=&lt;object-id&gt;</dt>
+<dt class="hdlist1"><code>--find-object=</code><em>&lt;object-id&gt;</em></dt>
 <dd>
 <p>Look for differences that change the number of occurrences of
 the specified object. Similar to <code>-S</code>, just the argument is different
@@ -1268,18 +1268,18 @@ object id.</p>
 <code>git-log</code> to also find trees.</p>
 </div>
 </dd>
-<dt class="hdlist1">--pickaxe-all</dt>
+<dt class="hdlist1"><code>--pickaxe-all</code></dt>
 <dd>
 <p>When <code>-S</code> or <code>-G</code> finds a change, show all the changes in that
 changeset, not just the files that contain the change
-in &lt;string&gt;.</p>
+in <em>&lt;string&gt;</em>.</p>
 </dd>
-<dt class="hdlist1">--pickaxe-regex</dt>
+<dt class="hdlist1"><code>--pickaxe-regex</code></dt>
 <dd>
-<p>Treat the &lt;string&gt; given to <code>-S</code> as an extended POSIX regular
+<p>Treat the <em>&lt;string&gt;</em> given to <code>-S</code> as an extended POSIX regular
 expression to match.</p>
 </dd>
-<dt class="hdlist1">-O&lt;orderfile&gt;</dt>
+<dt class="hdlist1"><code>-O</code><em>&lt;orderfile&gt;</em></dt>
 <dd>
 <p>Control the order in which files appear in the output.
 This overrides the <code>diff.orderFile</code> configuration variable
@@ -1287,7 +1287,7 @@ This overrides the <code>diff.orderFile</code> configuration variable
 use <code>-O/dev/null</code>.</p>
 <div class="paragraph">
 <p>The output order is determined by the order of glob patterns in
-&lt;orderfile&gt;.
+<em>&lt;orderfile&gt;</em>.
 All files with pathnames that match the first pattern are output
 first, all files with pathnames that match the second pattern (but not
 the first) are output next, and so on.
@@ -1299,7 +1299,7 @@ but no earlier patterns), their output order relative to each other is
 the normal order.</p>
 </div>
 <div class="paragraph">
-<p>&lt;orderfile&gt; is parsed as follows:</p>
+<p><em>&lt;orderfile&gt;</em> is parsed as follows:</p>
 </div>
 <div class="openblock">
 <div class="content">
@@ -1310,8 +1310,8 @@ the normal order.</p>
 readability.</p>
 </li>
 <li>
-<p>Lines starting with a hash ("<code>#</code>") are ignored, so they can be used
-for comments.  Add a backslash ("<code>\</code>") to the beginning of the
+<p>Lines starting with a hash ("#") are ignored, so they can be used
+for comments.  Add a backslash ("\") to the beginning of the
 pattern if it starts with a hash.</p>
 </li>
 <li>
@@ -1323,117 +1323,117 @@ pattern if it starts with a hash.</p>
 </div>
 <div class="paragraph">
 <p>Patterns have the same syntax and semantics as patterns used for
-fnmatch(3) without the FNM_PATHNAME flag, except a pathname also
+<code>fnmatch</code>(3) without the <code>FNM_PATHNAME</code> flag, except a pathname also
 matches a pattern if removing any number of the final pathname
-components matches the pattern.  For example, the pattern "<code>foo*bar</code>"
+components matches the pattern.  For example, the pattern "<code>foo</code>*bar"
 matches "<code>fooasdfbar</code>" and "<code>foo/bar/baz/asdf</code>" but not "<code>foobarx</code>".</p>
 </div>
 </dd>
-<dt class="hdlist1">--skip-to=&lt;file&gt;</dt>
-<dt class="hdlist1">--rotate-to=&lt;file&gt;</dt>
+<dt class="hdlist1"><code>--skip-to=</code><em>&lt;file&gt;</em></dt>
+<dt class="hdlist1"><code>--rotate-to=</code><em>&lt;file&gt;</em></dt>
 <dd>
-<p>Discard the files before the named &lt;file&gt; from the output
+<p>Discard the files before the named <em>&lt;file&gt;</em> from the output
 (i.e. <em>skip to</em>), or move them to the end of the output
 (i.e. <em>rotate to</em>).  These options were invented primarily for the use
-of the <code>git difftool</code> command, and may not be very useful
+of the <code>git</code> <code>difftool</code> command, and may not be very useful
 otherwise.</p>
 </dd>
-<dt class="hdlist1">-R</dt>
+<dt class="hdlist1"><code>-R</code></dt>
 <dd>
 <p>Swap two inputs; that is, show differences from index or
 on-disk file to tree contents.</p>
 </dd>
-<dt class="hdlist1">--relative[=&lt;path&gt;]</dt>
-<dt class="hdlist1">--no-relative</dt>
+<dt class="hdlist1"><code>--relative</code>[<code>=</code><em>&lt;path&gt;</em>]</dt>
+<dt class="hdlist1"><code>--no-relative</code></dt>
 <dd>
 <p>When run from a subdirectory of the project, it can be
 told to exclude changes outside the directory and show
 pathnames relative to it with this option.  When you are
 not in a subdirectory (e.g. in a bare repository), you
 can name which subdirectory to make the output relative
-to by giving a &lt;path&gt; as an argument.
+to by giving a <em>&lt;path&gt;</em> as an argument.
 <code>--no-relative</code> can be used to countermand both <code>diff.relative</code> config
 option and previous <code>--relative</code>.</p>
 </dd>
-<dt class="hdlist1">-a</dt>
-<dt class="hdlist1">--text</dt>
+<dt class="hdlist1"><code>-a</code></dt>
+<dt class="hdlist1"><code>--text</code></dt>
 <dd>
 <p>Treat all files as text.</p>
 </dd>
-<dt class="hdlist1">--ignore-cr-at-eol</dt>
+<dt class="hdlist1"><code>--ignore-cr-at-eol</code></dt>
 <dd>
 <p>Ignore carriage-return at the end of line when doing a comparison.</p>
 </dd>
-<dt class="hdlist1">--ignore-space-at-eol</dt>
+<dt class="hdlist1"><code>--ignore-space-at-eol</code></dt>
 <dd>
 <p>Ignore changes in whitespace at EOL.</p>
 </dd>
-<dt class="hdlist1">-b</dt>
-<dt class="hdlist1">--ignore-space-change</dt>
+<dt class="hdlist1"><code>-b</code></dt>
+<dt class="hdlist1"><code>--ignore-space-change</code></dt>
 <dd>
 <p>Ignore changes in amount of whitespace.  This ignores whitespace
 at line end, and considers all other sequences of one or
 more whitespace characters to be equivalent.</p>
 </dd>
-<dt class="hdlist1">-w</dt>
-<dt class="hdlist1">--ignore-all-space</dt>
+<dt class="hdlist1"><code>-w</code></dt>
+<dt class="hdlist1"><code>--ignore-all-space</code></dt>
 <dd>
 <p>Ignore whitespace when comparing lines.  This ignores
 differences even if one line has whitespace where the other
 line has none.</p>
 </dd>
-<dt class="hdlist1">--ignore-blank-lines</dt>
+<dt class="hdlist1"><code>--ignore-blank-lines</code></dt>
 <dd>
 <p>Ignore changes whose lines are all blank.</p>
 </dd>
-<dt class="hdlist1">-I&lt;regex&gt;</dt>
-<dt class="hdlist1">--ignore-matching-lines=&lt;regex&gt;</dt>
+<dt class="hdlist1"><code>-I</code><em>&lt;regex&gt;</em></dt>
+<dt class="hdlist1"><code>--ignore-matching-lines=</code><em>&lt;regex&gt;</em></dt>
 <dd>
-<p>Ignore changes whose all lines match &lt;regex&gt;.  This option may
+<p>Ignore changes whose all lines match <em>&lt;regex&gt;</em>.  This option may
 be specified more than once.</p>
 </dd>
-<dt class="hdlist1">--inter-hunk-context=&lt;lines&gt;</dt>
+<dt class="hdlist1"><code>--inter-hunk-context=</code><em>&lt;number&gt;</em></dt>
 <dd>
-<p>Show the context between diff hunks, up to the specified number
+<p>Show the context between diff hunks, up to the specified <em>&lt;number&gt;</em>
 of lines, thereby fusing hunks that are close to each other.
 Defaults to <code>diff.interHunkContext</code> or 0 if the config option
 is unset.</p>
 </dd>
-<dt class="hdlist1">-W</dt>
-<dt class="hdlist1">--function-context</dt>
+<dt class="hdlist1"><code>-W</code></dt>
+<dt class="hdlist1"><code>--function-context</code></dt>
 <dd>
 <p>Show whole function as context lines for each change.
 The function names are determined in the same way as
-<code>git diff</code> works out patch hunk headers (see <em>Defining a
-custom hunk-header</em> in <a href="gitattributes.html">gitattributes(5)</a>).</p>
+<code>git</code> <code>diff</code> works out patch hunk headers (see "Defining a
+custom hunk-header" in <a href="gitattributes.html">gitattributes(5)</a>).</p>
 </dd>
-<dt class="hdlist1">--exit-code</dt>
+<dt class="hdlist1"><code>--exit-code</code></dt>
 <dd>
-<p>Make the program exit with codes similar to diff(1).
+<p>Make the program exit with codes similar to <code>diff</code>(1).
 That is, it exits with 1 if there were differences and
 0 means no differences.</p>
 </dd>
-<dt class="hdlist1">--quiet</dt>
+<dt class="hdlist1"><code>--quiet</code></dt>
 <dd>
 <p>Disable all output of the program. Implies <code>--exit-code</code>.
 Disables execution of external diff helpers whose exit code
 is not trusted, i.e. their respective configuration option
-<code>diff.trustExitCode</code> or <code>diff.&lt;driver&gt;.trustExitCode</code> or
+<code>diff.trustExitCode</code> or <code>diff.</code><em>&lt;driver&gt;</em>.<code>trustExitCode</code> or
 environment variable <code>GIT_EXTERNAL_DIFF_TRUST_EXIT_CODE</code> is
 false.</p>
 </dd>
-<dt class="hdlist1">--ext-diff</dt>
+<dt class="hdlist1"><code>--ext-diff</code></dt>
 <dd>
 <p>Allow an external diff helper to be executed. If you set an
 external diff driver with <a href="gitattributes.html">gitattributes(5)</a>, you need
 to use this option with <a href="git-log.html">git-log(1)</a> and friends.</p>
 </dd>
-<dt class="hdlist1">--no-ext-diff</dt>
+<dt class="hdlist1"><code>--no-ext-diff</code></dt>
 <dd>
 <p>Disallow external diff drivers.</p>
 </dd>
-<dt class="hdlist1">--textconv</dt>
-<dt class="hdlist1">--no-textconv</dt>
+<dt class="hdlist1"><code>--textconv</code></dt>
+<dt class="hdlist1"><code>--no-textconv</code></dt>
 <dd>
 <p>Allow (or disallow) external text conversion filters to be run
 when comparing binary files. See <a href="gitattributes.html">gitattributes(5)</a> for
@@ -1444,49 +1444,48 @@ filters are enabled by default only for <a href="git-diff.html">git-diff(1)</a> 
 <a href="git-log.html">git-log(1)</a>, but not for <a href="git-format-patch.html">git-format-patch(1)</a> or
 diff plumbing commands.</p>
 </dd>
-<dt class="hdlist1">--ignore-submodules[=&lt;when&gt;]</dt>
+<dt class="hdlist1"><code>--ignore-submodules</code>[<code>=</code>(<code>none</code>|<code>untracked</code>|<code>dirty</code>|<code>all</code>)]</dt>
 <dd>
-<p>Ignore changes to submodules in the diff generation. &lt;when&gt; can be
-either "none", "untracked", "dirty" or "all", which is the default.
-Using "none" will consider the submodule modified when it either contains
-untracked or modified files or its HEAD differs from the commit recorded
+<p>Ignore changes to submodules in the diff generation. <code>all</code> is the default.
+Using <code>none</code> will consider the submodule modified when it either contains
+untracked or modified files or its <code>HEAD</code> differs from the commit recorded
 in the superproject and can be used to override any settings of the
-<em>ignore</em> option in <a href="git-config.html">git-config(1)</a> or <a href="gitmodules.html">gitmodules(5)</a>. When
-"untracked" is used submodules are not considered dirty when they only
+<code>ignore</code> option in <a href="git-config.html">git-config(1)</a> or <a href="gitmodules.html">gitmodules(5)</a>. When
+<code>untracked</code> is used submodules are not considered dirty when they only
 contain untracked content (but they are still scanned for modified
-content). Using "dirty" ignores all changes to the work tree of submodules,
+content). Using <code>dirty</code> ignores all changes to the work tree of submodules,
 only changes to the commits stored in the superproject are shown (this was
-the behavior until 1.7.0). Using "all" hides all changes to submodules.</p>
+the behavior until 1.7.0). Using <code>all</code> hides all changes to submodules.</p>
 </dd>
-<dt class="hdlist1">--src-prefix=&lt;prefix&gt;</dt>
+<dt class="hdlist1"><code>--src-prefix=</code><em>&lt;prefix&gt;</em></dt>
 <dd>
-<p>Show the given source prefix instead of "a/".</p>
+<p>Show the given source <em>&lt;prefix&gt;</em> instead of "a/".</p>
 </dd>
-<dt class="hdlist1">--dst-prefix=&lt;prefix&gt;</dt>
+<dt class="hdlist1"><code>--dst-prefix=</code><em>&lt;prefix&gt;</em></dt>
 <dd>
-<p>Show the given destination prefix instead of "b/".</p>
+<p>Show the given destination <em>&lt;prefix&gt;</em> instead of "b/".</p>
 </dd>
-<dt class="hdlist1">--no-prefix</dt>
+<dt class="hdlist1"><code>--no-prefix</code></dt>
 <dd>
 <p>Do not show any source or destination prefix.</p>
 </dd>
-<dt class="hdlist1">--default-prefix</dt>
+<dt class="hdlist1"><code>--default-prefix</code></dt>
 <dd>
 <p>Use the default source and destination prefixes ("a/" and "b/").
 This overrides configuration variables such as <code>diff.noprefix</code>,
 <code>diff.srcPrefix</code>, <code>diff.dstPrefix</code>, and <code>diff.mnemonicPrefix</code>
-(see <code>git-config</code>(1)).</p>
+(see <a href="git-config.html">git-config(1)</a>).</p>
 </dd>
-<dt class="hdlist1">--line-prefix=&lt;prefix&gt;</dt>
+<dt class="hdlist1"><code>--line-prefix=</code><em>&lt;prefix&gt;</em></dt>
 <dd>
-<p>Prepend an additional prefix to every line of output.</p>
+<p>Prepend an additional <em>&lt;prefix&gt;</em> to every line of output.</p>
 </dd>
-<dt class="hdlist1">--ita-invisible-in-index</dt>
+<dt class="hdlist1"><code>--ita-invisible-in-index</code></dt>
 <dd>
-<p>By default entries added by "git add -N" appear as an existing
-empty file in "git diff" and a new file in "git diff --cached".
-This option makes the entry appear as a new file in "git diff"
-and non-existent in "git diff --cached". This option could be
+<p>By default entries added by <code>git</code> <code>add</code> <code>-N</code> appear as an existing
+empty file in <code>git</code> <code>diff</code> and a new file in <code>git</code> <code>diff</code> <code>--cached</code>.
+This option makes the entry appear as a new file in <code>git</code> <code>diff</code>
+and non-existent in <code>git</code> <code>diff</code> <code>--cached</code>. This option could be
 reverted with <code>--ita-visible-in-index</code>. Both options are
 experimental and could be removed in future.</p>
 </dd>
@@ -1498,25 +1497,46 @@ experimental and could be removed in future.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">-1 --base</dt>
-<dt class="hdlist1">-2 --ours</dt>
-<dt class="hdlist1">-3 --theirs</dt>
+<dt class="hdlist1"><code>-1</code></dt>
+<dt class="hdlist1"><code>--base</code></dt>
+<dt class="hdlist1"><code>-2</code></dt>
+<dt class="hdlist1"><code>--ours</code></dt>
+<dt class="hdlist1"><code>-3</code></dt>
+<dt class="hdlist1"><code>--theirs</code></dt>
 <dd>
-<p>Compare the working tree with the "base" version (stage #1),
-"our branch" (stage #2) or "their branch" (stage #3).  The
-index contains these stages only for unmerged entries i.e.
+<p>Compare the working tree with</p>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>the "base" version (stage #1) when using <code>-1</code> or <code>--base</code>,</p>
+</li>
+<li>
+<p>"our branch" (stage #2) when using <code>-2</code> or <code>--ours</code>, or</p>
+</li>
+<li>
+<p>"their branch" (stage #3) when using <code>-3</code> or <code>--theirs</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The index contains these stages only for unmerged entries i.e.
 while resolving conflicts.  See <a href="git-read-tree.html">git-read-tree(1)</a>
 section "3-Way Merge" for detailed information.</p>
+</div>
 </dd>
-<dt class="hdlist1">-0</dt>
+<dt class="hdlist1"><code>-0</code></dt>
 <dd>
 <p>Omit diff output for unmerged entries and just show
 "Unmerged".  Can be used only when comparing the working tree
 with the index.</p>
 </dd>
-<dt class="hdlist1">&lt;path&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1"><em>&lt;path&gt;</em>...</dt>
 <dd>
-<p>The &lt;paths&gt; parameters, when given, are used to limit
+<p>The <em>&lt;path&gt;</em> parameters, when given, are used to limit
 the diff to the named paths (you can give directory
 names and get diff for all files under them).</p>
 </dd>
@@ -1528,8 +1548,8 @@ names and get diff for all files under them).</p>
 <h2 id="_raw_output_format">Raw output format</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The raw output format from "git-diff-index", "git-diff-tree",
-"git-diff-files" and "git diff --raw" are very similar.</p>
+<p>The raw output format from <code>git-diff-index</code>, <code>git-diff-tree</code>,
+<code>git-diff-files</code> and <code>git</code> <code>diff</code> <code>--raw</code> are very similar.</p>
 </div>
 <div class="paragraph">
 <p>These commands all compare two sets of things; what is
@@ -1537,26 +1557,26 @@ compared differs:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">git-diff-index &lt;tree-ish&gt;</dt>
+<dt class="hdlist1"><code>git-diff-index</code> <em>&lt;tree-ish&gt;</em></dt>
 <dd>
-<p>compares the &lt;tree-ish&gt; and the files on the filesystem.</p>
+<p>compares the <em>&lt;tree-ish&gt;</em> and the files on the filesystem.</p>
 </dd>
-<dt class="hdlist1">git-diff-index --cached &lt;tree-ish&gt;</dt>
+<dt class="hdlist1"><code>git-diff-index</code> <code>--cached</code> <em>&lt;tree-ish&gt;</em></dt>
 <dd>
-<p>compares the &lt;tree-ish&gt; and the index.</p>
+<p>compares the <em>&lt;tree-ish&gt;</em> and the index.</p>
 </dd>
-<dt class="hdlist1">git-diff-tree [-r] &lt;tree-ish-1&gt; &lt;tree-ish-2&gt; [&lt;pattern&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><code>git-diff-tree</code> [<code>-r</code>] <em>&lt;tree-ish-1&gt;</em> <em>&lt;tree-ish-2&gt;</em> [<em>&lt;pattern&gt;</em>...]</dt>
 <dd>
 <p>compares the trees named by the two arguments.</p>
 </dd>
-<dt class="hdlist1">git-diff-files [&lt;pattern&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><code>git-diff-files</code> [<em>&lt;pattern&gt;</em>...]</dt>
 <dd>
 <p>compares the index and the files on the filesystem.</p>
 </dd>
 </dl>
 </div>
 <div class="paragraph">
-<p>The "git-diff-tree" command begins its output by printing the hash of
+<p>The <code>git-diff-tree</code> command begins its output by printing the hash of
 what is being compared. After that, all the commands print one output
 line per changed file.</p>
 </div>
@@ -1631,36 +1651,36 @@ unmerged       :000000 000000 0000000 0000000 U file6</pre>
 <div class="ulist">
 <ul>
 <li>
-<p>A: addition of a file</p>
+<p><code>A</code>: addition of a file</p>
 </li>
 <li>
-<p>C: copy of a file into a new one</p>
+<p><code>C</code>: copy of a file into a new one</p>
 </li>
 <li>
-<p>D: deletion of a file</p>
+<p><code>D</code>: deletion of a file</p>
 </li>
 <li>
-<p>M: modification of the contents or mode of a file</p>
+<p><code>M</code>: modification of the contents or mode of a file</p>
 </li>
 <li>
-<p>R: renaming of a file</p>
+<p><code>R</code>: renaming of a file</p>
 </li>
 <li>
-<p>T: change in the type of the file (regular file, symbolic link or submodule)</p>
+<p><code>T</code>: change in the type of the file (regular file, symbolic link or submodule)</p>
 </li>
 <li>
-<p>U: file is unmerged (you must complete the merge before it can
+<p><code>U</code>: file is unmerged (you must complete the merge before it can
 be committed)</p>
 </li>
 <li>
-<p>X: "unknown" change type (most probably a bug, please report it)</p>
+<p><code>X</code>: "unknown" change type (most probably a bug, please report it)</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Status letters C and R are always followed by a score (denoting the
+<p>Status letters <code>C</code> and <code>R</code> are always followed by a score (denoting the
 percentage of similarity between the source and target of the move or
-copy).  Status letter M may be followed by a score (denoting the
+copy).  Status letter <code>M</code> may be followed by a score (denoting the
 percentage of dissimilarity) for file rewrites.</p>
 </div>
 <div class="paragraph">
@@ -1687,7 +1707,7 @@ verbatim and the line is terminated by a NUL byte.</p>
 <h2 id="_diff_format_for_merges">diff format for merges</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>"git-diff-tree", "git-diff-files" and "git-diff --raw"
+<p><code>git-diff-tree</code>, <code>git-diff-files</code> and <code>git-diff</code> <code>--raw</code>
 can take <code>-c</code> or <code>--cc</code> option
 to generate diff output also for merge commits.  The output differs
 from the format described above in the following way:</p>
@@ -1760,7 +1780,7 @@ You can customize the creation of patch text via the
 (see <a href="git.html">git(1)</a>), and the <code>diff</code> attribute (see <a href="gitattributes.html">gitattributes(5)</a>).</p>
 </div>
 <div class="paragraph">
-<p>What the -p option produces is slightly different from the traditional
+<p>What the <code>-p</code> option produces is slightly different from the traditional
 diff format:</p>
 </div>
 <div class="olist arabic">
@@ -1785,23 +1805,21 @@ the file that the rename/copy produces, respectively.</p>
 </li>
 <li>
 <p>It is followed by one or more extended header lines:</p>
-<div class="literalblock">
-<div class="content">
-<pre>old mode &lt;mode&gt;
-new mode &lt;mode&gt;
-deleted file mode &lt;mode&gt;
-new file mode &lt;mode&gt;
-copy from &lt;path&gt;
-copy to &lt;path&gt;
-rename from &lt;path&gt;
-rename to &lt;path&gt;
-similarity index &lt;number&gt;
-dissimilarity index &lt;number&gt;
-index &lt;hash&gt;..&lt;hash&gt; &lt;mode&gt;</pre>
-</div>
+<div class="verseblock">
+<pre class="content"><code>old</code> <code>mode</code> <em>&lt;mode&gt;</em>
+<code>new</code> <code>mode</code> <em>&lt;mode&gt;</em>
+<code>deleted</code> <code>file</code> <code>mode</code> <em>&lt;mode&gt;</em>
+<code>new</code> <code>file</code> <code>mode</code> <em>&lt;mode&gt;</em>
+<code>copy</code> <code>from</code> <em>&lt;path&gt;</em>
+<code>copy</code> <code>to</code> <em>&lt;path&gt;</em>
+<code>rename</code> <code>from</code> <em>&lt;path&gt;</em>
+<code>rename</code> <code>to</code> <em>&lt;path&gt;</em>
+<code>similarity</code> <code>index</code> <em>&lt;number&gt;</em>
+<code>dissimilarity</code> <code>index</code> <em>&lt;number&gt;</em>
+<code>index</code> <em>&lt;hash&gt;</em>`..`<em>&lt;hash&gt;</em> <em>&lt;mode&gt;</em></pre>
 </div>
 <div class="paragraph">
-<p>File modes are printed as 6-digit octal numbers including the file type
+<p>File modes <em>&lt;mode&gt;</em> are printed as 6-digit octal numbers including the file type
 and file permission bits.</p>
 </div>
 <div class="paragraph">
@@ -1817,7 +1835,7 @@ file made it into the new one.</p>
 </div>
 <div class="paragraph">
 <p>The index line includes the blob object names before and after the change.
-The &lt;mode&gt; is included if the file mode does not change; otherwise,
+The <em>&lt;mode&gt;</em> is included if the file mode does not change; otherwise,
 separate lines indicate the old and the new mode.</p>
 </div>
 </li>
@@ -1919,20 +1937,18 @@ this (when the <code>-c</code> option is used):</p>
 <li>
 <p>It is followed by one or more extended header lines
 (this example shows a merge with two parents):</p>
-<div class="literalblock">
-<div class="content">
-<pre>index &lt;hash&gt;,&lt;hash&gt;..&lt;hash&gt;
-mode &lt;mode&gt;,&lt;mode&gt;..&lt;mode&gt;
-new file mode &lt;mode&gt;
-deleted file mode &lt;mode&gt;,&lt;mode&gt;</pre>
-</div>
+<div class="verseblock">
+<pre class="content"><code>index</code> <em>&lt;hash&gt;</em><code>,</code><em>&lt;hash&gt;</em>`..<code>__</code><em>&lt;hash&gt;</em><code>__</code>
+{empty}`mode <em>&lt;mode&gt;</em><code>,</code><em>&lt;mode&gt;</em>``..``<em>&lt;mode&gt;</em>
+<code>new</code> <code>file</code> <code>mode</code> <em>&lt;mode&gt;</em>
+<code>deleted</code> <code>file</code> <code>mode</code> <em>&lt;mode&gt;</em><code>,</code><em>&lt;mode&gt;</em></pre>
 </div>
 <div class="paragraph">
-<p>The <code>mode &lt;mode&gt;,&lt;mode&gt;..&lt;mode&gt;</code> line appears only if at least one of
+<p>The <code>mode</code> <em>&lt;mode&gt;</em><code>,</code><em>&lt;mode&gt;</em><code>..</code><em>&lt;mode&gt;</em> line appears only if at least one of
 the &lt;mode&gt; is different from the rest. Extended headers with
 information about detected content movement (renames and
 copying detection) are designed to work with the diff of two
-&lt;tree-ish&gt; and are not used by combined diff format.</p>
+<em>&lt;tree-ish&gt;</em> and are not used by combined diff format.</p>
 </div>
 </li>
 <li>
@@ -1969,7 +1985,7 @@ parents.</p>
 </li>
 <li>
 <p>Chunk header format is modified to prevent people from
-accidentally feeding it to <code>patch -p1</code>. Combined diff format
+accidentally feeding it to <code>patch</code> <code>-p1</code>. Combined diff format
 was created for review of merge commit changes, and was not
 meant to be applied. The change is similar to the change in the
 extended <em>index</em> header:</p>
@@ -1988,7 +2004,7 @@ header for combined diff format.</p>
 <div class="paragraph">
 <p>Unlike the traditional <em>unified</em> diff format, which shows two
 files A and B with a single column that has <code>-</code> (minus&#8201;&#8212;&#8201;appears in A but removed in B), <code>+</code> (plus&#8201;&#8212;&#8201;missing in A but
-added to B), or <code>" "</code> (space&#8201;&#8212;&#8201;unchanged) prefix, this format
+added to B), or " " (space&#8201;&#8212;&#8201;unchanged) prefix, this format
 compares two or more files file1, file2,&#8230;&#8203; with one file X, and
 shows how X differs from each of fileN.  One column for each of
 fileN is prepended to the output line to note how X&#8217;s line is
@@ -2009,9 +2025,9 @@ in either file1 or file2).  Also, eight other lines are the same
 from file1 but do not appear in file2 (hence prefixed with <code>+</code>).</p>
 </div>
 <div class="paragraph">
-<p>When shown by <code>git diff-tree -c</code>, it compares the parents of a
+<p>When shown by <code>git</code> <code>diff-tree</code> <code>-c</code>, it compares the parents of a
 merge commit with the merge result (i.e. file1..fileN are the
-parents).  When shown by <code>git diff-files -c</code>, it compares the
+parents).  When shown by <code>git</code> <code>diff-files</code> <code>-c</code>, it compares the
 two unresolved merge parents with the working tree file
 (i.e. file1 is stage 2 aka "our version", file2 is stage 3 aka
 "their version").</p>
@@ -2023,7 +2039,7 @@ two unresolved merge parents with the working tree file
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <code>--summary</code> option describes newly added, deleted, renamed and
-copied files.  The <code>--stat</code> option adds diffstat(1) graph to the
+copied files.  The <code>--stat</code> option adds <code>diffstat</code>(1) graph to the
 output.  These options can be combined with other options, such as
 <code>-p</code>, and are meant for human consumption.</p>
 </div>
@@ -2148,11 +2164,11 @@ $ git diff AUTO_MERGE <b class="conum">(4)</b></pre>
 </li>
 <li>
 <p>Changes between the index and your last commit; what you
-would be committing if you run <code>git commit</code> without <code>-a</code> option.</p>
+would be committing if you run <code>git</code> <code>commit</code> without <code>-a</code> option.</p>
 </li>
 <li>
 <p>Changes in the working tree since your last commit; what you
-would be committing if you run <code>git commit -a</code></p>
+would be committing if you run <code>git</code> <code>commit</code> <code>-a</code></p>
 </li>
 <li>
 <p>Changes in the working tree you&#8217;ve made to resolve textual
@@ -2270,23 +2286,23 @@ as what&#8217;s found there:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">diff.autoRefreshIndex</dt>
+<dt class="hdlist1"><code>diff.autoRefreshIndex</code></dt>
 <dd>
-<p>When using <em>git diff</em> to compare with work tree
+<p>When using <code>git</code> <code>diff</code> to compare with work tree
 files, do not consider stat-only changes as changed.
-Instead, silently run <code>git update-index --refresh</code> to
+Instead, silently run <code>git</code> <code>update-index</code> <code>--refresh</code> to
 update the cached stat information for paths whose
 contents in the work tree match the contents in the
-index.  This option defaults to true.  Note that this
-affects only <em>git diff</em> Porcelain, and not lower level
-<em>diff</em> commands such as <em>git diff-files</em>.</p>
+index.  This option defaults to <code>true</code>.  Note that this
+affects only <code>git</code> <code>diff</code> Porcelain, and not lower level
+<code>diff</code> commands such as <code>git</code> <code>diff-files</code>.</p>
 </dd>
-<dt class="hdlist1">diff.dirstat</dt>
+<dt class="hdlist1"><code>diff.dirstat</code></dt>
 <dd>
 <p>A comma separated list of <code>--dirstat</code> parameters specifying the
-default behavior of the <code>--dirstat</code> option to <a href="git-diff.html">git-diff(1)</a>
-and friends. The defaults can be overridden on the command line
-(using <code>--dirstat=&lt;param1,param2,...&gt;</code>). The fallback defaults
+default behavior of the <code>--dirstat</code> option to <code>git</code> <code>diff</code> and friends.
+The defaults can be overridden on the command line
+(using <code>--dirstat=</code><em>&lt;param&gt;</em><code>,..</code>.). The fallback defaults
 (when not changed by <code>diff.dirstat</code>) are <code>changes,noncumulative,3</code>.
 The following parameters are available:</p>
 <div class="openblock">
@@ -2309,7 +2325,7 @@ files, count 64-byte chunks instead, since binary files have no
 natural concept of lines). This is a more expensive <code>--dirstat</code>
 behavior than the <code>changes</code> behavior, but it does count rearranged
 lines within a file as much as other changes. The resulting output
-is consistent with what you get from the other <code>--*stat</code> options.</p>
+is consistent with what you get from the other <code>--</code>*stat options.</p>
 </dd>
 <dt class="hdlist1"><code>files</code></dt>
 <dd>
@@ -2325,7 +2341,7 @@ Note that when using <code>cumulative</code>, the sum of the percentages
 reported may exceed 100%. The default (non-cumulative) behavior can
 be specified with the <code>noncumulative</code> parameter.</p>
 </dd>
-<dt class="hdlist1">&lt;limit&gt;</dt>
+<dt class="hdlist1"><em>&lt;limit&gt;</em></dt>
 <dd>
 <p>An integer parameter specifies a cut-off percent (3% by default).
 Directories contributing less than this percentage of the changes
@@ -2342,197 +2358,197 @@ and accumulating child directory counts in the parent directories:
 <code>files,10,cumulative</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">diff.statNameWidth</dt>
+<dt class="hdlist1"><code>diff.statNameWidth</code></dt>
 <dd>
-<p>Limit the width of the filename part in --stat output. If set, applies
-to all commands generating --stat output except format-patch.</p>
+<p>Limit the width of the filename part in <code>--stat</code> output. If set, applies
+to all commands generating <code>--stat</code> output except <code>format-patch</code>.</p>
 </dd>
-<dt class="hdlist1">diff.statGraphWidth</dt>
+<dt class="hdlist1"><code>diff.statGraphWidth</code></dt>
 <dd>
-<p>Limit the width of the graph part in --stat output. If set, applies
-to all commands generating --stat output except format-patch.</p>
+<p>Limit the width of the graph part in <code>--stat</code> output. If set, applies
+to all commands generating <code>--stat</code> output except <code>format-patch</code>.</p>
 </dd>
-<dt class="hdlist1">diff.context</dt>
+<dt class="hdlist1"><code>diff.context</code></dt>
 <dd>
-<p>Generate diffs with &lt;n&gt; lines of context instead of the default
-of 3. This value is overridden by the -U option.</p>
+<p>Generate diffs with <em>&lt;n&gt;</em> lines of context instead of the default
+of 3. This value is overridden by the <code>-U</code> option.</p>
 </dd>
-<dt class="hdlist1">diff.interHunkContext</dt>
+<dt class="hdlist1"><code>diff.interHunkContext</code></dt>
 <dd>
 <p>Show the context between diff hunks, up to the specified number
 of lines, thereby fusing the hunks that are close to each other.
 This value serves as the default for the <code>--inter-hunk-context</code>
 command line option.</p>
 </dd>
-<dt class="hdlist1">diff.external</dt>
+<dt class="hdlist1"><code>diff.external</code></dt>
 <dd>
 <p>If this config variable is set, diff generation is not
 performed using the internal diff machinery, but using the
-given command.  Can be overridden with the &#8216;GIT_EXTERNAL_DIFF&#8217;
+given command.  Can be overridden with the <code>GIT_EXTERNAL_DIFF</code>
 environment variable.  The command is called with parameters
 as described under "git Diffs" in <a href="git.html">git(1)</a>.  Note: if
 you want to use an external diff program only on a subset of
 your files, you might want to use <a href="gitattributes.html">gitattributes(5)</a> instead.</p>
 </dd>
-<dt class="hdlist1">diff.trustExitCode</dt>
+<dt class="hdlist1"><code>diff.trustExitCode</code></dt>
 <dd>
-<p>If this boolean value is set to true then the
+<p>If this boolean value is set to <code>true</code> then the
 <code>diff.external</code> command is expected to return exit code
 0 if it considers the input files to be equal or 1 if it
-considers them to be different, like <code>diff(1)</code>.
-If it is set to false, which is the default, then the command
-is expected to return exit code 0 regardless of equality.
+considers them to be different, like <code>diff</code>(1).
+If it is set to <code>false</code>, which is the default, then the command
+is expected to return exit code <code>0</code> regardless of equality.
 Any other exit code causes Git to report a fatal error.</p>
 </dd>
-<dt class="hdlist1">diff.ignoreSubmodules</dt>
+<dt class="hdlist1"><code>diff.ignoreSubmodules</code></dt>
 <dd>
-<p>Sets the default value of --ignore-submodules. Note that this
-affects only <em>git diff</em> Porcelain, and not lower level <em>diff</em>
-commands such as <em>git diff-files</em>. <em>git checkout</em>
-and <em>git switch</em> also honor
+<p>Sets the default value of <code>--ignore-submodules</code>. Note that this
+affects only <code>git</code> <code>diff</code> Porcelain, and not lower level <code>diff</code>
+commands such as <code>git</code> <code>diff-files</code>. <code>git</code> <code>checkout</code>
+and <code>git</code> <code>switch</code> also honor
 this setting when reporting uncommitted changes. Setting it to
-<em>all</em> disables the submodule summary normally shown by <em>git commit</em>
-and <em>git status</em> when <code>status.submoduleSummary</code> is set unless it is
-overridden by using the --ignore-submodules command-line option.
-The <em>git submodule</em> commands are not affected by this setting.
+<code>all</code> disables the submodule summary normally shown by <code>git</code> <code>commit</code>
+and <code>git</code> <code>status</code> when <code>status.submoduleSummary</code> is set unless it is
+overridden by using the <code>--ignore-submodules</code> command-line option.
+The <code>git</code> <code>submodule</code> commands are not affected by this setting.
 By default this is set to untracked so that any untracked
 submodules are ignored.</p>
 </dd>
-<dt class="hdlist1">diff.mnemonicPrefix</dt>
+<dt class="hdlist1"><code>diff.mnemonicPrefix</code></dt>
 <dd>
-<p>If set, <em>git diff</em> uses a prefix pair that is different from the
-standard "a/" and "b/" depending on what is being compared.  When
+<p>If set, <code>git</code> <code>diff</code> uses a prefix pair that is different from the
+standard <code>a/</code> and <code>b/</code> depending on what is being compared.  When
 this configuration is in effect, reverse diff output also swaps
 the order of the prefixes:</p>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>git diff</code></dt>
+<dt class="hdlist1"><code>git</code> <code>diff</code></dt>
 <dd>
 <p>compares the (i)ndex and the (w)ork tree;</p>
 </dd>
-<dt class="hdlist1"><code>git diff HEAD</code></dt>
+<dt class="hdlist1"><code>git</code> <code>diff</code> <code>HEAD</code></dt>
 <dd>
 <p>compares a (c)ommit and the (w)ork tree;</p>
 </dd>
-<dt class="hdlist1"><code>git diff --cached</code></dt>
+<dt class="hdlist1"><code>git</code> <code>diff</code> <code>--cached</code></dt>
 <dd>
 <p>compares a (c)ommit and the (i)ndex;</p>
 </dd>
-<dt class="hdlist1"><code>git diff HEAD:file1 file2</code></dt>
+<dt class="hdlist1"><code>git</code> <code>diff</code> <code>HEAD:</code><em>&lt;file1&gt;</em> <em>&lt;file2&gt;</em></dt>
 <dd>
 <p>compares an (o)bject and a (w)ork tree entity;</p>
 </dd>
-<dt class="hdlist1"><code>git diff --no-index a b</code></dt>
+<dt class="hdlist1"><code>git</code> <code>diff</code> <code>--no-index</code> <em>&lt;a&gt;</em> <em>&lt;b&gt;</em></dt>
 <dd>
-<p>compares two non-git things (1) and (2).</p>
+<p>compares two non-git things <em>&lt;a&gt;</em> and <em>&lt;b&gt;</em>.</p>
 </dd>
 </dl>
 </div>
 </dd>
-<dt class="hdlist1">diff.noPrefix</dt>
+<dt class="hdlist1"><code>diff.noPrefix</code></dt>
 <dd>
-<p>If set, <em>git diff</em> does not show any source or destination prefix.</p>
+<p>If set, <code>git</code> <code>diff</code> does not show any source or destination prefix.</p>
 </dd>
-<dt class="hdlist1">diff.srcPrefix</dt>
+<dt class="hdlist1"><code>diff.srcPrefix</code></dt>
 <dd>
-<p>If set, <em>git diff</em> uses this source prefix. Defaults to "a/".</p>
+<p>If set, <code>git</code> <code>diff</code> uses this source prefix. Defaults to <code>a/</code>.</p>
 </dd>
-<dt class="hdlist1">diff.dstPrefix</dt>
+<dt class="hdlist1"><code>diff.dstPrefix</code></dt>
 <dd>
-<p>If set, <em>git diff</em> uses this destination prefix. Defaults to "b/".</p>
+<p>If set, <code>git</code> <code>diff</code> uses this destination prefix. Defaults to <code>b/</code>.</p>
 </dd>
-<dt class="hdlist1">diff.relative</dt>
+<dt class="hdlist1"><code>diff.relative</code></dt>
 <dd>
-<p>If set to <em>true</em>, <em>git diff</em> does not show changes outside of the directory
+<p>If set to <code>true</code>, <code>git</code> <code>diff</code> does not show changes outside of the directory
 and show pathnames relative to the current directory.</p>
 </dd>
-<dt class="hdlist1">diff.orderFile</dt>
+<dt class="hdlist1"><code>diff.orderFile</code></dt>
 <dd>
 <p>File indicating how to order files within a diff.
-See the <em>-O</em> option to <a href="git-diff.html">git-diff(1)</a> for details.
+See the <code>-O</code> option for details.
 If <code>diff.orderFile</code> is a relative pathname, it is treated as
 relative to the top of the working tree.</p>
 </dd>
-<dt class="hdlist1">diff.renameLimit</dt>
+<dt class="hdlist1"><code>diff.renameLimit</code></dt>
 <dd>
 <p>The number of files to consider in the exhaustive portion of
-copy/rename detection; equivalent to the <em>git diff</em> option
+copy/rename detection; equivalent to the <code>git</code> <code>diff</code> option
 <code>-l</code>.  If not set, the default value is currently 1000.  This
 setting has no effect if rename detection is turned off.</p>
 </dd>
-<dt class="hdlist1">diff.renames</dt>
+<dt class="hdlist1"><code>diff.renames</code></dt>
 <dd>
-<p>Whether and how Git detects renames.  If set to "false",
-rename detection is disabled. If set to "true", basic rename
-detection is enabled.  If set to "copies" or "copy", Git will
-detect copies, as well.  Defaults to true.  Note that this
-affects only <em>git diff</em> Porcelain like <a href="git-diff.html">git-diff(1)</a> and
+<p>Whether and how Git detects renames.  If set to <code>false</code>,
+rename detection is disabled. If set to <code>true</code>, basic rename
+detection is enabled.  If set to <code>copies</code> or <code>copy</code>, Git will
+detect copies, as well.  Defaults to <code>true</code>.  Note that this
+affects only <code>git</code> <code>diff</code> Porcelain like <a href="git-diff.html">git-diff(1)</a> and
 <a href="git-log.html">git-log(1)</a>, and not lower level commands such as
 <a href="git-diff-files.html">git-diff-files(1)</a>.</p>
 </dd>
-<dt class="hdlist1">diff.suppressBlankEmpty</dt>
+<dt class="hdlist1"><code>diff.suppressBlankEmpty</code></dt>
 <dd>
 <p>A boolean to inhibit the standard behavior of printing a space
-before each empty output line. Defaults to false.</p>
+before each empty output line. Defaults to <code>false</code>.</p>
 </dd>
-<dt class="hdlist1">diff.submodule</dt>
+<dt class="hdlist1"><code>diff.submodule</code></dt>
 <dd>
 <p>Specify the format in which differences in submodules are
-shown.  The "short" format just shows the names of the commits
-at the beginning and end of the range. The "log" format lists
+shown.  The <code>short</code> format just shows the names of the commits
+at the beginning and end of the range. The <code>log</code> format lists
 the commits in the range like <a href="git-submodule.html">git-submodule(1)</a> <code>summary</code>
-does. The "diff" format shows an inline diff of the changed
-contents of the submodule. Defaults to "short".</p>
+does. The <code>diff</code> format shows an inline diff of the changed
+contents of the submodule. Defaults to <code>short</code>.</p>
 </dd>
-<dt class="hdlist1">diff.wordRegex</dt>
+<dt class="hdlist1"><code>diff.wordRegex</code></dt>
 <dd>
 <p>A POSIX Extended Regular Expression used to determine what is a "word"
 when performing word-by-word difference calculations.  Character
 sequences that match the regular expression are "words", all other
 characters are <strong>ignorable</strong> whitespace.</p>
 </dd>
-<dt class="hdlist1">diff.&lt;driver&gt;.command</dt>
+<dt class="hdlist1"><code>diff.</code><em>&lt;driver&gt;</em><code>.command</code></dt>
 <dd>
 <p>The custom diff driver command.  See <a href="gitattributes.html">gitattributes(5)</a>
 for details.</p>
 </dd>
-<dt class="hdlist1">diff.&lt;driver&gt;.trustExitCode</dt>
+<dt class="hdlist1"><code>diff.</code><em>&lt;driver&gt;</em><code>.trustExitCode</code></dt>
 <dd>
-<p>If this boolean value is set to true then the
-<code>diff.&lt;driver&gt;.command</code> command is expected to return exit code
+<p>If this boolean value is set to <code>true</code> then the
+<code>diff.</code><em>&lt;driver&gt;</em><code>.command</code> command is expected to return exit code
 0 if it considers the input files to be equal or 1 if it
-considers them to be different, like <code>diff(1)</code>.
-If it is set to false, which is the default, then the command
+considers them to be different, like <code>diff</code>(1).
+If it is set to <code>false</code>, which is the default, then the command
 is expected to return exit code 0 regardless of equality.
 Any other exit code causes Git to report a fatal error.</p>
 </dd>
-<dt class="hdlist1">diff.&lt;driver&gt;.xfuncname</dt>
+<dt class="hdlist1"><code>diff.</code><em>&lt;driver&gt;</em><code>.xfuncname</code></dt>
 <dd>
 <p>The regular expression that the diff driver should use to
 recognize the hunk header.  A built-in pattern may also be used.
 See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </dd>
-<dt class="hdlist1">diff.&lt;driver&gt;.binary</dt>
+<dt class="hdlist1"><code>diff.</code><em>&lt;driver&gt;</em><code>.binary</code></dt>
 <dd>
-<p>Set this option to true to make the diff driver treat files as
+<p>Set this option to <code>true</code> to make the diff driver treat files as
 binary.  See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </dd>
-<dt class="hdlist1">diff.&lt;driver&gt;.textconv</dt>
+<dt class="hdlist1"><code>diff.</code><em>&lt;driver&gt;</em><code>.textconv</code></dt>
 <dd>
 <p>The command that the diff driver should call to generate the
 text-converted version of a file.  The result of the
 conversion is used to generate a human-readable diff.  See
 <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </dd>
-<dt class="hdlist1">diff.&lt;driver&gt;.wordRegex</dt>
+<dt class="hdlist1"><code>diff.</code><em>&lt;driver&gt;</em><code>.wordRegex</code></dt>
 <dd>
 <p>The regular expression that the diff driver should use to
 split words in a line.  See <a href="gitattributes.html">gitattributes(5)</a> for
 details.</p>
 </dd>
-<dt class="hdlist1">diff.&lt;driver&gt;.cachetextconv</dt>
+<dt class="hdlist1"><code>diff.</code><em>&lt;driver&gt;</em><code>.cachetextconv</code></dt>
 <dd>
-<p>Set this option to true to make the diff driver cache the text
+<p>Set this option to <code>true</code> to make the diff driver cache the text
 conversion outputs.  See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 <div class="dlist">
 <dl>
@@ -2639,19 +2655,20 @@ conversion outputs.  See <a href="gitattributes.html">gitattributes(5)</a> for d
 </dl>
 </div>
 </dd>
-<dt class="hdlist1">diff.indentHeuristic</dt>
+<dt class="hdlist1"><code>diff.indentHeuristic</code></dt>
 <dd>
 <p>Set this option to <code>false</code> to disable the default heuristics
 that shift diff hunk boundaries to make patches easier to read.</p>
 </dd>
-<dt class="hdlist1">diff.algorithm</dt>
+<dt class="hdlist1"><code>diff.algorithm</code></dt>
 <dd>
 <p>Choose a diff algorithm.  The variants are as follows:</p>
 <div class="openblock">
 <div class="content">
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>default</code>, <code>myers</code></dt>
+<dt class="hdlist1"><code>default</code></dt>
+<dt class="hdlist1"><code>myers</code></dt>
 <dd>
 <p>The basic greedy diff algorithm. Currently, this is the default.</p>
 </dd>
@@ -2674,29 +2691,29 @@ low-occurrence common elements".</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1">diff.wsErrorHighlight</dt>
+<dt class="hdlist1"><code>diff.wsErrorHighlight</code></dt>
 <dd>
 <p>Highlight whitespace errors in the <code>context</code>, <code>old</code> or <code>new</code>
 lines of the diff.  Multiple values are separated by comma,
 <code>none</code> resets previous values, <code>default</code> reset the list to
 <code>new</code> and <code>all</code> is a shorthand for <code>old,new,context</code>.  The
 whitespace errors are colored with <code>color.diff.whitespace</code>.
-The command line option <code>--ws-error-highlight=&lt;kind&gt;</code>
+The command line option <code>--ws-error-highlight=</code><em>&lt;kind&gt;</em>
 overrides this setting.</p>
 </dd>
-<dt class="hdlist1">diff.colorMoved</dt>
+<dt class="hdlist1"><code>diff.colorMoved</code></dt>
 <dd>
-<p>If set to either a valid <code>&lt;mode&gt;</code> or a true value, moved lines
-in a diff are colored differently, for details of valid modes
-see <em>--color-moved</em> in <a href="git-diff.html">git-diff(1)</a>. If simply set to
-true the default color mode will be used. When set to false,
-moved lines are not colored.</p>
+<p>If set to either a valid <em>&lt;mode&gt;</em> or a <code>true</code> value, moved lines
+in a diff are colored differently.
+For details of valid modes see <code>--color-moved</code>.
+If simply set to <code>true</code> the default color mode will be used. When
+set to <code>false</code>, moved lines are not colored.</p>
 </dd>
-<dt class="hdlist1">diff.colorMovedWS</dt>
+<dt class="hdlist1"><code>diff.colorMovedWS</code></dt>
 <dd>
 <p>When moved lines are colored using e.g. the <code>diff.colorMoved</code> setting,
-this option controls the <code>&lt;mode&gt;</code> how spaces are treated.
-For details of valid modes see <em>--color-moved-ws</em> in <a href="git-diff.html">git-diff(1)</a>.</p>
+this option controls the mode how spaces are treated.
+For details of valid modes see <code>--color-moved-ws</code> in <a href="git-diff.html">git-diff(1)</a>.</p>
 </dd>
 </dl>
 </div>
@@ -2706,7 +2723,7 @@ For details of valid modes see <em>--color-moved-ws</em> in <a href="git-diff.ht
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>diff(1),
+<p><code>diff</code>(1),
 <a href="git-difftool.html">git-difftool(1)</a>,
 <a href="git-log.html">git-log(1)</a>,
 <a href="gitdiffcore.html">gitdiffcore(7)</a>,
@@ -2727,7 +2744,7 @@ For details of valid modes see <em>--color-moved-ws</em> in <a href="git-diff.ht
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

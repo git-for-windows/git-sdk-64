@@ -1,6 +1,6 @@
 ;;; srfi-9.scm --- define-record-type
 
-;; Copyright (C) 2001-2002, 2006, 2008-2014, 2018-2019
+;; Copyright (C) 2001-2002,2006,2008-2014,2018-2019,2023-2024
 ;;   Free Software Foundation, Inc.
 ;;
 ;; This library is free software; you can redistribute it and/or
@@ -108,20 +108,21 @@
                                     '-procedure)))
 
     (syntax-case x ()
-      ((_ ((key value) ...) (name formals ...) body ...)
+      ((_ ((key value) ...) (name formals ...) body0 body ...)
        (identifier? #'name)
        (with-syntax ((proc-name  (make-procedure-name #'name))
                      ((args ...) (generate-temporaries #'(formals ...))))
          #`(begin
              (define (proc-name formals ...)
-               body ...)
+               #((maybe-unused))
+               body0 body ...)
              (define-syntax name
                (lambda (x)
                  (syntax-case x (%%on-error key ...)
                    ((_ (%%on-error err) key s) #'(ck s 'value)) ...
                    ((_ args ...)
                     #'((lambda (formals ...)
-                         body ...)
+                         body0 body ...)
                        args ...))
                    ((_ a (... ...))
                     (syntax-violation 'name "Wrong number of arguments" x))
@@ -273,11 +274,6 @@
                   field-specs
                   (iota (length field-specs))))
 
-    (define (record-layout immutable? count)
-      ;; Mutability is expressed on the record level; all structs in the
-      ;; future will be mutable.
-      (string-concatenate (make-list count "pw")))
-
     (syntax-case x ()
       ((_ immutable? form type-name constructor-spec predicate-name
           field-spec ...)
@@ -307,7 +303,6 @@
               (getter-ids  (getter-identifiers #'(field-spec ...)))
               (field-count (length field-ids))
               (immutable?  (syntax->datum #'immutable?))
-              (layout      (record-layout immutable? field-count))
               (ctor-name   (syntax-case #'constructor-spec ()
                              ((ctor args ...) #'ctor)))
               (copier-id   (make-copier-id #'type-name)))

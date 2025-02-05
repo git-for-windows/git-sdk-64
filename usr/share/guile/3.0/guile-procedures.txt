@@ -1,4 +1,4 @@
-Produced by GNU Guile 3.0.9 from `./libguile/guile-procedures.texi'.
+Produced by GNU Guile 3.0.10 from `./libguile/guile-procedures.texi'.
 
 acons
 
@@ -1192,6 +1192,13 @@ endianness
 
      Thus, `with-continuation-barrier' returns exactly once.
 
+%make-custom-port
+
+- Scheme Procedure: %make-custom-port input_p output_p stream encoding
+conversion_strategy close_on_gc_p
+%custom-port-data
+
+- Scheme Procedure: %custom-port-data port
 debug-options-interface
 
 - Scheme Procedure: debug-options-interface [setting]
@@ -1817,9 +1824,15 @@ endianness
 
 copy-file
 
-- Scheme Procedure: copy-file oldfile newfile
+- Scheme Procedure: copy-file oldfile newfile .  rest
      Copy the file specified by OLDFILE to NEWFILE.  The return value is
      unspecified.
+
+     `#:copy-on-write' keyword argument determines whether copy-on-write
+     copy should be attempted and the behavior in case of failure.
+     Possible values are `'always' (attempt the copy-on-write, return
+     error if it fails), `'auto' (attempt the copy-on-write, fallback to
+     regular copy if it fails) and `'never' (perform the regular copy).
 
 sendfile
 
@@ -3000,7 +3013,7 @@ keyword_args
 
      The return value is unspecified.
 
-     Unexpected behaviour can result if both ports are subsequently used
+     Unexpected behavior can result if both ports are subsequently used
      and the original and/or duplicate ports are buffered.
 
      This procedure does not have any side effects on other ports or
@@ -3107,7 +3120,7 @@ keyword_args
 append
 
 - Scheme Procedure: append .  args
-     Return a list consisting of the elements the lists passed as
+     Return a list consisting of the elements of the lists passed as
      arguments.
 
           (append '(x) '(y))          ==>  (x y)
@@ -3133,8 +3146,7 @@ keyword_args
 last-pair
 
 - Scheme Procedure: last-pair lst
-     Return the last pair in LST, signalling an error if LST is
-     circular.
+     Return the last pair in LST, signaling an error if LST is circular.
 
 reverse
 
@@ -3406,7 +3418,7 @@ keyword_args
      search paths, one of three things may happen, depending on the
      optional second argument, EXCEPTION_ON_NOT_FOUND.  If it is `#f',
      `#f' will be returned.  If it is a procedure, it will be called
-     with no arguments.  Otherwise an error is signalled.
+     with no arguments.  Otherwise an error is signaled.
 
 make-syntax-transformer
 
@@ -4679,7 +4691,7 @@ keyword_args
 
 unread-string
 
-- Scheme Procedure: unread-string str port
+- Scheme Procedure: unread-string str [port]
      Place the string STR in PORT so that its characters will be read in
      subsequent read operations.  If called multiple times, the unread
      characters will be read again in last-in first-out order.  If PORT
@@ -4841,8 +4853,25 @@ keyword_args
      - Variable: SEEK_END
           Seek from the end of the file.
 
+     On systems that support it, such as GNU/Linux, the following
+     constants can be used for WHENCE to navigate ``holes'' in sparse
+     files:
+
+     - Variable: SEEK_DATA
+          Seek to the next location in the file greater than or equal to
+          OFFSET containing data.  If OFFSET points to data, then the
+          file offset is set to OFFSET.
+
+     - Variable: SEEK_HOLE
+          Seek to the next hole in the file greater than or equal to the
+          OFFSET.  If OFFSET points into the middle of a hole, then the
+          file offset is set to OFFSET.  If there is no hole past
+          OFFSET, then the file offset is adjusted to the end of the
+          file---i.e., there is an implicit hole at the end of any file.
+
      If FD_PORT is a file descriptor, the underlying system call is
-     `lseek'.  PORT may be a string port.
+     `lseek' (see in manual The GNU C Library Reference Manual).  PORT
+     may be a string port.
 
      The value returned is the new position in the file.  This means
      that the current position of a port can be obtained using:
@@ -5100,14 +5129,6 @@ keyword_args
 - Scheme Procedure: open-bytevector-input-port bv [transcoder]
      Return an input port whose contents are drawn from bytevector BV.
 
-make-custom-binary-input-port
-
-- Scheme Procedure: make-custom-binary-input-port id read_proc
-get_position_proc set_position_proc close_proc
-     Return a new custom binary input port whose input is drained by
-     invoking READ_PROC and passing it a bytevector, an index where
-     octets should be written, and an octet count.
-
 get-u8
 
 - Scheme Procedure: get-u8 port
@@ -5149,13 +5170,6 @@ get_position_proc set_position_proc close_proc
      them in BV starting at index START.  Return the number of bytes
      actually read, or an end-of-file object.
 
-get-bytevector-all
-
-- Scheme Procedure: get-bytevector-all port
-     Read from PORT, blocking as necessary, until the end-of-file is
-     reached.  Return either a new bytevector containing the data read
-     or the end-of-file object (if no data were available).
-
 put-u8
 
 - Scheme Procedure: put-u8 port octet
@@ -5179,24 +5193,6 @@ get_position_proc set_position_proc close_proc
      Return two values: an output port and a procedure.  The latter
      should be called with zero arguments to obtain a bytevector
      containing the data accumulated by the port.
-
-make-custom-binary-output-port
-
-- Scheme Procedure: make-custom-binary-output-port id write_proc
-get_position_proc set_position_proc close_proc
-     Return a new custom binary output port whose output is drained by
-     invoking WRITE_PROC and passing it a bytevector, an index where
-     octets should be written, and an octet count.
-
-make-custom-binary-input/output-port
-
-- Scheme Procedure: make-custom-binary-input/output-port id read_proc
-write_proc get_position_proc set_position_proc close_proc
-     Return a new custom binary input/output port.  The port's input is
-     drained by invoking READ_PROC and passing it a bytevector, an index
-     where octets should be written, and an octet count.  The output is
-     drained by invoking WRITE_PROC and passing it a bytevector, an
-     index where octets should be written, and an octet count.
 
 %make-transcoded-port
 
@@ -5450,7 +5446,7 @@ write_proc get_position_proc set_position_proc close_proc
      of variables such as `SIGINT'.
 
      If HANDLER is omitted, `sigaction' returns a pair: the CAR is the
-     current signal hander, which will be either an integer with the
+     current signal handler, which will be either an integer with the
      value `SIG_DFL' (default action) or `SIG_IGN' (ignore), or the
      Scheme procedure which handles the signal, or `#f' if a non-Scheme
      procedure handles the signal.  The CDR contains the current
@@ -6821,7 +6817,7 @@ interval_microseconds value_seconds value_microseconds
      Return a character set containing all characters whose character
      codes lie in the half-open range [LOWER,UPPER).
 
-     If ERROR is a true value, an error is signalled if the specified
+     If ERROR is a true value, an error is signaled if the specified
      range contains characters which are not valid Unicode code points.
      If ERROR is `#f', these characters are silently left out of the
      resulting character set.
@@ -6834,7 +6830,7 @@ interval_microseconds value_seconds value_microseconds
      Return a character set containing all characters whose character
      codes lie in the half-open range [LOWER,UPPER).
 
-     If ERROR is a true value, an error is signalled if the specified
+     If ERROR is a true value, an error is signaled if the specified
      range contains characters which are not contained in the
      implemented character range.  If ERROR is `#f', these characters
      are silently left out of the resulting character set.
@@ -7671,48 +7667,13 @@ interval_microseconds value_seconds value_microseconds
 symbol->string
 
 - Scheme Procedure: symbol->string s
-     Return the name of SYMBOL as a string.  If the symbol was part of
-     an object returned as the value of a literal expression (section
-     see in manual The Revised^5 Report on Scheme) or by a call to the
-     `read' procedure, and its name contains alphabetic characters, then
-     the string returned will contain characters in the implementation's
-     preferred standard case---some implementations will prefer upper
-     case, others lower case.  If the symbol was returned by
-     `string->symbol', the case of characters in the string returned
-     will be the same as the case in the string that was passed to
-     `string->symbol'.  It is an error to apply mutation procedures like
-     `string-set!' to strings returned by this procedure.
-
-     The following examples assume that the implementation's standard
-     case is lower case:
-
-          (symbol->string 'flying-fish)    ==> "flying-fish"
-          (symbol->string 'Martin)         ==>  "martin"
-          (symbol->string
-             (string->symbol "Malvina")) ==> "Malvina"
+     Return the name of SYMBOL as a string.  The resulting string is
+     immutable.
 
 string->symbol
 
 - Scheme Procedure: string->symbol string
-     Return the symbol whose name is STRING.  This procedure can create
-     symbols with names containing special characters or letters in the
-     non-standard case, but it is usually a bad idea to create such
-     symbols because in some implementations of Scheme they cannot be
-     read as themselves.  See `symbol->string'.
-
-     The following examples assume that the implementation's standard
-     case is lower case:
-
-          (eq? 'mISSISSIppi 'mississippi) ==> #t
-          (string->symbol "mISSISSIppi") ==>      the symbol with name "mISSISSIppi"
-          
-          
-          (eq? 'bitBlt (string->symbol "bitBlt")) ==> #f
-          (eq? 'JollyWog
-            (string->symbol (symbol->string 'JollyWog))) ==> #t
-          (string=? "K. Harper, M.D."
-            (symbol->string
-              (string->symbol "K. Harper, M.D."))) ==>#t
+     Return the symbol whose name is STRING.
 
 string-ci->symbol
 
@@ -7811,7 +7772,7 @@ interval_microseconds value_seconds value_microseconds
      Unlocks MUTEX.  The calling thread must already hold the lock on
      MUTEX, unless the mutex was created with the
      `allow-external-unlock' option; otherwise an error will be
-     signalled.
+     signaled.
 
 mutex?
 
@@ -7841,15 +7802,16 @@ interval_microseconds value_seconds value_microseconds
 wait-condition-variable
 
 - Scheme Procedure: wait-condition-variable cond mutex [timeout]
-     Wait until condition variable CV has been signalled.  While
-     waiting, mutex MX is atomically unlocked (as with `unlock-mutex')
-     and is locked again when this function returns.  When T is given,
-     it specifies a point in time where the waiting should be aborted.
-     It can be either a integer as returned by `current-time' or a pair
-     as returned by `gettimeofday'.  When the waiting is aborted the
-     mutex is locked and `#f' is returned.  When the condition variable
-     is in fact signalled, the mutex is also locked and `#t' is
-     returned.
+     Wait until condition variable CV has been signaled.  While waiting,
+     mutex MX is atomically unlocked (as with `unlock-mutex') and is
+     locked again when this function returns.  When T is given, it
+     specifies a point in time where the waiting should be aborted.  It
+     can be either a integer as returned by `current-time' or a pair as
+     returned by `gettimeofday'.  When the waiting is aborted the mutex
+     is locked and `#f' is returned.  After the condition variable is
+     signaled, the mutex is locked and `#t' is returned.  `#t' may also
+     be returned spuriously, so any relevant conditions should be
+     re-checked.
 
 signal-condition-variable
 
@@ -8129,47 +8091,6 @@ interval_microseconds value_seconds value_microseconds
           (minor-version) ==> "6"
           (micro-version) ==> "0"
 
-make-soft-port
-
-- Scheme Procedure: make-soft-port pv modes
-     Return a port capable of receiving or delivering characters as
-     specified by the MODES string (see open-file).  PV must be a vector
-     of length 5 or 6.  Its components are as follows:
-
-     -48. procedure accepting one character for output
-
-     -47. procedure accepting a string for output
-
-     -46. thunk for flushing output
-
-     -45. thunk for getting one character
-
-     -44. thunk for closing port (not by garbage collection)
-
-     -43. (if present and not `#f') thunk for computing the number of
-          characters that can be read from the port without blocking.
-
-     For an output-only port only elements 0, 1, 2, and 4 need be
-     procedures.  For an input-only port only elements 3 and 4 need be
-     procedures.  Thunks 2 and 4 can instead be `#f' if there is no
-     useful operation for them to perform.
-
-     If thunk 3 returns `#f' or an `eof-object' (see eof-object? in
-     manual The Revised^5 Report on Scheme) it indicates that the port
-     has reached end-of-file.  For example:
-
-          (define stdout (current-output-port))
-          (define p (make-soft-port
-                     (vector
-                      (lambda (c) (write c stdout))
-                      (lambda (s) (display s stdout))
-                      (lambda () (display "." stdout))
-                      (lambda () (char-upcase (read-char)))
-                      (lambda () (display "@" stdout)))
-                     "rw"))
-          
-          (write p p) ==> #<input-output: soft 8081e20>
-
 make-weak-key-hash-table
 
 - Scheme Procedure: make-weak-key-hash-table [n]
@@ -8318,7 +8239,7 @@ interval_microseconds value_seconds value_microseconds
 
 - Scheme Procedure: getpw [user]
      Look up an entry in the user database.  USER can be an integer, a
-     string, or omitted, giving the behaviour of `getpwuid', `getpwnam'
+     string, or omitted, giving the behavior of `getpwuid', `getpwnam'
      or `getpwent' respectively.
 
 setpw
@@ -8332,7 +8253,7 @@ interval_microseconds value_seconds value_microseconds
 
 - Scheme Procedure: getgr [name]
      Look up an entry in the group database.  NAME can be an integer, a
-     string, or omitted, giving the behaviour of `getgrgid', `getgrnam'
+     string, or omitted, giving the behavior of `getgrgid', `getgrnam'
      or `getgrent' respectively.
 
 setgr
@@ -8404,7 +8325,7 @@ interval_microseconds value_seconds value_microseconds
      one child process is eligible then one will be chosen by the
      operating system.
 
-     The value of PID determines the behaviour:
+     The value of PID determines the behavior:
 
      PID greater than 0
           Request status information from the specified child process.
@@ -8950,7 +8871,7 @@ interval_microseconds value_seconds value_microseconds
      a network service object.  The PROTOCOL argument specifies the name
      of the desired protocol; if the protocol found in the network
      service database does not match this name, a system error is
-     signalled.
+     signaled.
 
      The `getserv' procedure will take either a service name or number
      as its first argument; if given no arguments, it behaves like
@@ -9148,7 +9069,7 @@ interval_microseconds value_seconds value_microseconds
      A value of zero specifies the default protocol, which is usually
      right.
 
-     A single socket port cannot by used for communication until it has
+     A single socket port cannot be used for communication until it has
      been connected to another socket.
 
 socketpair

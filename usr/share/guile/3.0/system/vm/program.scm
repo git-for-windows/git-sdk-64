@@ -21,7 +21,6 @@
 (define-module (system vm program)
   #:use-module (ice-9 match)
   #:use-module (system vm debug)
-  #:use-module (rnrs bytevectors)
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-26)
   #:export (source:addr source:line source:column source:file

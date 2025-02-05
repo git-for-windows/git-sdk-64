@@ -86,14 +86,14 @@ member, or @code{#f} otherwise."
 (define (invert-bijection map)
   "Assuming the values of @var{map} are integers and are unique, compute
 a map in which each value maps to its key.  If the values are not
-unique, an error will be signalled."
+unique, an error will be signaled."
   (persistent-intmap
    (intmap-fold (lambda (k v out) (intmap-add! out v k)) map empty-intmap)))
 
 (define (invert-partition map)
   "Assuming the values of @var{map} are disjoint intsets, compute a map
 in which each member of each set maps to its key.  If the values are not
-disjoint, an error will be signalled."
+disjoint, an error will be signaled."
   (intmap-fold (lambda (k v* out)
                  (intset-fold (lambda (v out) (intmap-add out v k)) v* out))
                map empty-intmap))

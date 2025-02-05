@@ -1,6 +1,6 @@
 ;;; HTTP messages
 
-;; Copyright (C)  2010-2017 Free Software Foundation, Inc.
+;; Copyright (C)  2010-2017, 2023 Free Software Foundation, Inc.
 
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -30,16 +30,13 @@
 ;;; Code:
 
 (define-module (web http)
-  #:use-module ((srfi srfi-1) #:select (append-map! map!))
   #:use-module (srfi srfi-9)
   #:use-module (srfi srfi-19)
   #:use-module (ice-9 rdelim)
   #:use-module (ice-9 match)
-  #:use-module (ice-9 q)
   #:use-module (ice-9 binary-ports)
   #:use-module (ice-9 textual-ports)
   #:use-module (ice-9 exceptions)
-  #:use-module (rnrs bytevectors)
   #:use-module (web uri)
   #:export (string->header
             header->string
@@ -2035,34 +2032,23 @@ BUFFERING bytes, which defaults to 1200.  Take care to close the port
 when done, as it will output the remaining data, and encode the final
 zero chunk. When the port is closed it will also close PORT, unless
 KEEP-ALIVE? is true."
-  (define (q-for-each f q)
-    (while (not (q-empty? q))
-      (f (deq! q))))
-  (define queue (make-q))
-  (define (%put-char c)
-    (enq! queue c))
-  (define (%put-string s)
-    (string-for-each (lambda (c) (enq! queue c))
-                     s))
-  (define (flush)
-    ;; It is important that we do _not_ write a chunk if the queue is
-    ;; empty, since it will be treated as the final chunk.
-    (unless (q-empty? queue)
-      (let ((len (q-length queue)))
-        (put-string port (number->string len 16))
-        (put-string port "\r\n")
-        (q-for-each (lambda (elem) (put-char port elem))
-                    queue)
-        (put-string port "\r\n"))))
+  (define (write! bv start count)
+    (put-string port (number->string count 16))
+    (put-string port "\r\n")
+    (put-bytevector port bv start count)
+    (put-string port "\r\n")
+    (force-output port)
+    count)
   (define (close)
-    (flush)
     (put-string port "0\r\n\r\n")
     (force-output port)
     (unless keep-alive?
       (close-port port)))
-  (let ((ret (make-soft-port (vector %put-char %put-string flush #f close) "w")))
-    (setvbuf ret 'block buffering)
-    ret))
+  (define ret
+    (make-custom-binary-output-port "chunked http" write! #f #f close))
+  (set-port-encoding! port "UTF-8")
+  (setvbuf ret 'block buffering)
+  ret)
 
 (define %http-proxy-port? (make-object-property))
 (define (http-proxy-port? port) (%http-proxy-port? port))

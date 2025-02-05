@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 ;;
-;;Routines to generare @code{stexi} documentation for objects and
+;;Routines to generate @code{stexi} documentation for objects and
 ;;modules.
 ;;
 ;;Note that in this context, an @dfn{object} is just a value associated
@@ -33,10 +33,8 @@
   #:use-module (oop goops)
   #:use-module (texinfo)
   #:use-module (texinfo plain-text)
-  #:use-module (srfi srfi-13)
   #:use-module (ice-9 session)
   #:use-module (ice-9 documentation)
-  #:use-module (ice-9 optargs)
   #:use-module ((sxml transform) #:select (pre-post-order))
   #:export (module-stexi-documentation
             script-stexi-documentation

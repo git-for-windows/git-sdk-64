@@ -1,5 +1,5 @@
 ;;; Ports
-;;; Copyright (C) 2016,2019,2021 Free Software Foundation, Inc.
+;;; Copyright (C) 2016,2019,2021,2024 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software: you can redistribute it and/or modify
 ;;; it under the terms of the GNU Lesser General Public License as
@@ -152,6 +152,12 @@
                 "scm_init_ice_9_fports")
 (load-extension (string-append "libguile-" (effective-version))
                 "scm_init_ice_9_ioext")
+
+(eval-when (load eval expand)
+  (when (defined? 'SEEK_DATA)
+    (module-export! (current-module) '(SEEK_DATA)))
+  (when (defined? 'SEEK_HOLE)
+    (module-export! (current-module) '(SEEK_HOLE))))
 
 
 
@@ -409,7 +415,7 @@ interpret its input and output."
           file #:key (binary #f) (encoding #f) (guess-encoding #f))
   "Takes a string naming an existing file and returns an input port
 capable of delivering characters from the file.  If the file
-cannot be opened, an error is signalled."
+cannot be opened, an error is signaled."
   (open-file file (if binary "rb" "r")
              #:encoding encoding
              #:guess-encoding guess-encoding))
@@ -417,7 +423,7 @@ cannot be opened, an error is signalled."
 (define* (open-output-file file #:key (binary #f) (encoding #f))
   "Takes a string naming an output file to be created and returns an
 output port capable of writing characters to a new file by that
-name.  If the file cannot be opened, an error is signalled.  If a
+name.  If the file cannot be opened, an error is signaled.  If a
 file with the given name already exists, the effect is unspecified."
   (open-file file (if binary "wb" "w")
              #:encoding encoding))
@@ -442,7 +448,7 @@ string naming a file.  The file must
 already exist. These procedures call PROC
 with one argument: the port obtained by opening the named file for
 input or output.  If the file cannot be opened, an error is
-signalled.  If the procedure returns, then the port is closed
+signaled.  If the procedure returns, then the port is closed
 automatically and the values yielded by the procedure are returned.
 If the procedure does not return, then the port will not be closed
 automatically unless it is possible to prove that the port will
@@ -455,11 +461,11 @@ never again be used for a read or write operation."
 
 (define* (call-with-output-file file proc #:key (binary #f) (encoding #f))
   "PROC should be a procedure of one argument, and FILE should be a
-string naming a file.  The behaviour is unspecified if the file
+string naming a file.  The behavior is unspecified if the file
 already exists. These procedures call PROC
 with one argument: the port obtained by opening the named file for
 input or output.  If the file cannot be opened, an error is
-signalled.  If the procedure returns, then the port is closed
+signaled.  If the procedure returns, then the port is closed
 automatically and the values yielded by the procedure are returned.
 If the procedure does not return, then the port will not be closed
 automatically unless it is possible to prove that the port will

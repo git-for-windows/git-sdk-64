@@ -1,6 +1,6 @@
 # Portability macros for glibc argz.                    -*- Autoconf -*-
 #
-#   Copyright (C) 2004-2007, 2011-2019, 2021-2022 Free Software
+#   Copyright (C) 2004-2007, 2011-2019, 2021-2024 Free Software
 #   Foundation, Inc.
 #   Written by Gary V. Vaughan <gary@gnu.org>
 #
@@ -43,7 +43,7 @@ AS_IF([test -z "$LT_ARGZ_H"],
         [if argz actually works],
         [lt_cv_sys_argz_works],
         [[case $host_os in #(
-	 *cygwin*)
+	 *cygwin* | msys*)
 	   lt_cv_sys_argz_works=no
 	   if test no != "$cross_compiling"; then
 	     lt_cv_sys_argz_works="guessing no"

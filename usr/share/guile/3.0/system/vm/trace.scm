@@ -19,12 +19,9 @@
 ;;; Code:
 
 (define-module (system vm trace)
-  #:use-module (system base syntax)
   #:use-module (system vm vm)
   #:use-module (system vm frame)
-  #:use-module (system vm program)
   #:use-module (system vm traps)
-  #:use-module (rnrs bytevectors)
   #:use-module (ice-9 format)
   #:export (trace-calls-in-procedure
             trace-calls-to-procedure

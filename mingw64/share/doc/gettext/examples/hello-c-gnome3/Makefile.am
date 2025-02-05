@@ -16,8 +16,12 @@ bin_PROGRAMS = hello
 # The source files of the 'hello' program.
 hello_SOURCES = hello.c resources.c
 
-# Define a C macro LOCALEDIR indicating where catalogs will be installed.
-DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
+# Define a C macro LOCALEDIR indicating where catalogs will be installed
+# and a C macro PKGDATADIR indicating a package-specific location.
+DEFS = \
+  -DLOCALEDIR=$(localedir_c_make) \
+  -DPKGDATADIR=$(pkgdatadir_c_make) \
+  @DEFS@
 
 # Make sure the gnome.h include file is found.
 AM_CPPFLAGS = $(GTK_CFLAGS)
@@ -25,16 +29,18 @@ AM_CPPFLAGS = $(GTK_CFLAGS)
 # Link time dependencies.
 LDADD = $(GTK_LIBS) @LIBINTL@
 
-BUILT_SOURCES = gschemas.compiled resources.c
-
 # Compile GSettings schema.
 gschemas.compiled: hello.gschema.xml
-	$(AM_V_GEN) $(GLIB_COMPILE_SCHEMAS) .
+	$(AM_V_GEN) $(GLIB_COMPILE_SCHEMAS) --targetdir=. $(srcdir)
 
 # Compile assets into a C source and link it with the application.
 resources.c: hello.gresource.xml hello.ui
 	$(AM_V_GEN) $(GLIB_COMPILE_RESOURCES) $< --target=$@ \
 		--sourcedir=$(srcdir) --generate-source
+
+# Install the compiled GSettings schema in a package-specific location
+# (so that "make install" works with a --prefix other than /usr).
+pkgdata_DATA = gschemas.compiled
 
 desktopdir = $(datadir)/applications
 desktop_DATA = hello.desktop
@@ -51,12 +57,13 @@ hello.desktop.in: hello.desktop.in.in
 hello.desktop: hello.desktop.in
 	$(AM_V_GEN) sed -e 's|@bindir[@]|$(bindir)|g' $< > $@
 
-CLEANFILES = $(BUILT_SOURCES) hello.desktop $(desktop_DATA)
+BUILT_SOURCES        = gschemas.compiled resources.c hello.desktop
+CLEANFILES           = gschemas.compiled             hello.desktop
+DISTCLEANFILES       =
+MAINTAINERCLEANFILES =                   resources.c hello.desktop.in
 
 # Additional files to be distributed.
 EXTRA_DIST = autogen.sh autoclean.sh hello.ui \
 	hello.desktop.in.in hello.desktop.in \
 	hello.gschema.xml \
 	hello.gresource.xml
-
-MAINTAINERCLEANFILES = hello.desktop.in

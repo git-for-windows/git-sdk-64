@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2013-2021 Free Software Foundation, Inc.
+;; Copyright (C) 2013-2021, 2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -473,6 +473,7 @@ for a label, it isn't known to be constant at that label."
       (($ $code label)                      (cons 'code label))
       (($ $call proc args)                  #f)
       (($ $callk k proc args)               #f)
+      (($ $calli args callee)               #f)
       (($ $primcall name param args)        (cons* name param args))
       (($ $values args)                     #f)))
   (define (compute-term-key term)
@@ -497,10 +498,6 @@ for a label, it isn't known to be constant at that label."
          (match term-key
            (('op arg ...)
             (match defs
-              (#f
-               ;; If the successor is a control-flow join, don't
-               ;; pretend to know the values of its defs.
-               #f)
               ((def) (add-def! (list 'op* arg* ...) aux) ...)))
            (_ (add-definitions . clauses))))
         ((add-definitions
@@ -517,6 +514,21 @@ for a label, it isn't known to be constant at that label."
      ((word-set! p s i x)              (x <- word-ref p s i))
      ((word-set!/immediate p s x)      (x <- word-ref/immediate p s))
      ((pointer-set!/immediate p s x)   (x <- pointer-ref/immediate p s))
+
+     ((p <- cons #f x y)               (x <- car #f p)
+                                       (y <- cdr #f p))
+     ((set-car! #f p x)                (x <- car #f p))
+     ((set-cdr! #f p y)                (y <- cdr #f p))
+
+     ((b <- box #f x)                  (x <- box-ref #f b))
+     ((box-set! #f b x)                (x <- box-ref #f b))
+
+     ((v <- allocate-vector #f n)      (n <- vector-length #f v))
+     ((vector-set!/immediate p v x)    (x <- vector-ref/immediate p v))
+     ((vector-set! #f v i x)           (x <- vector-ref #f v i))
+
+     ((s <- allocate-struct n v)       (v <- struct-vtable #f s))
+     ((struct-set! p s x)              (x <- struct-ref p s))
 
      ((u <- scm->f64 #f s)             (s <- f64->scm #f u))
      ((s <- f64->scm #f u)             (u <- scm->f64 #f s))
@@ -551,6 +563,8 @@ for a label, it isn't known to be constant at that label."
          ($call (subst-var proc) ,(map subst-var args)))
         (($ $callk k proc args)
          ($callk k (and proc (subst-var proc)) ,(map subst-var args)))
+        (($ $calli args callee)
+         ($calli ,(map subst-var args) (subst-var callee)))
         (($ $primcall name param args)
          ($primcall name param ,(map subst-var args)))
         (($ $values args)

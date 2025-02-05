@@ -196,7 +196,7 @@
 ;;
 ;; lambda* creates a procedure that takes optional arguments. These
 ;; are specified by putting them inside brackets at the end of the
-;; paramater list, but before any dotted rest argument. For example,
+;; parameter list, but before any dotted rest argument. For example,
 ;;   (lambda* (a b #:optional c d . e) '())
 ;; creates a procedure with fixed arguments a and b, optional arguments c
 ;; and d, and rest argument e. If the optional arguments are omitted

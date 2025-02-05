@@ -520,7 +520,7 @@ index (i.e. when used with <em>-c</em>), print only those files
 matching an exclude pattern.  When showing "other" files
 (i.e. when used with <em>-o</em>), show only those matched by an
 exclude pattern.  Standard ignore rules are not automatically
-activated; therefore, at least one of the <code>--exclude*</code> options
+activated; therefore, at least one of the <code>--exclude</code>* options
 is required.</p>
 </dd>
 <dt class="hdlist1">-s</dt>
@@ -733,10 +733,10 @@ trailing slash, such as "x/" for a sparse directory "x".</p>
 </dd>
 <dt class="hdlist1">--format=&lt;format&gt;</dt>
 <dd>
-<p>A string that interpolates <code>%(fieldname)</code> from the result being shown.
-It also interpolates <code>%%</code> to <code>%</code>, and <code>%xXX</code> where <code>XX</code> are hex digits
-interpolates to character with hex code <code>XX</code>; for example <code>%x00</code>
-interpolates to <code>\0</code> (NUL), <code>%x09</code> to <code>\t</code> (TAB) and %x0a to <code>\n</code> (LF).
+<p>A string that interpolates %(<code>fieldname</code>) from the result being shown.
+It also interpolates %% to %, and %xXX where <code>XX</code> are hex digits
+interpolates to character with hex code <code>XX</code>; for example %x00
+interpolates to \0 (NUL), %x09 to \t (TAB) and %x0a to \n (LF).
 --format cannot be combined with <code>-s</code>, <code>-o</code>, <code>-k</code>, <code>-t</code>, <code>--resolve-undo</code>
 and <code>--eol</code>.</p>
 </dd>
@@ -789,7 +789,7 @@ verbatim and the line is terminated by a NUL byte.</p>
 <div class="paragraph">
 <p>It is possible to print in a custom format by using the <code>--format</code>
 option, which is able to interpolate different fields using
-a <code>%(fieldname)</code> notation. For example, if you only care about the
+a %(<code>fieldname</code>) notation. For example, if you only care about the
 "objectname" and "path" fields, you can execute with a specific
 "--format" like</p>
 </div>
@@ -805,7 +805,7 @@ a <code>%(fieldname)</code> notation. For example, if you only care about the
 <div class="sectionbody">
 <div class="paragraph">
 <p>The way each path is shown can be customized by using the
-<code>--format=&lt;format&gt;</code> option, where the %(fieldname) in the
+<code>--format=</code><em>&lt;format&gt;</em> option, where the %(fieldname) in the
 &lt;format&gt; string for various aspects of the index entry are
 interpolated.  The following "fieldname" are understood:</p>
 </div>
@@ -880,7 +880,7 @@ in the same order they appear in the file.</p>
 <li>
 <p>The command-line flag --exclude-per-directory=&lt;name&gt; specifies
 a name of the file in each directory <em>git ls-files</em>
-examines, normally <code>.gitignore</code>.  Files in deeper
+examines, normally .<code>gitignore</code>.  Files in deeper
 directories take precedence.  Patterns are ordered in the
 same order they appear in the files.</p>
 </li>
@@ -934,7 +934,7 @@ variable, if exists, or the <code>$XDG_CONFIG_HOME/git/ignore</code> file.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

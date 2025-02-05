@@ -1,6 +1,6 @@
 ;;; transformation of letrec into simpler forms
 
-;; Copyright (C) 2009-2013,2016,2019,2021 Free Software Foundation, Inc.
+;; Copyright (C) 2009-2013,2016,2019,2021,2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,6 @@
 ;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 (define-module (language tree-il fix-letrec)
-  #:use-module (system base syntax)
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-11)
   #:use-module (ice-9 match)
@@ -39,26 +38,22 @@
   (define assigned (make-hash-table))
   ;; Functional hash sets would be nice.
   (fix-fold x
-            (lambda (x)
-              (record-case x
-                ((<lexical-ref> gensym)
-                 (hashq-set! referenced gensym #t)
-                 (values))
-                ((<lexical-set> gensym)
-                 (hashq-set! assigned gensym #t)
-                 (values))
-                (else
-                 (values))))
+            (match-lambda
+             (($ <lexical-ref> src name gensym)
+              (hashq-set! referenced gensym #t)
+              (values))
+             (($ <lexical-set> src name gensym)
+              (hashq-set! assigned gensym #t)
+              (values))
+             (_
+              (values)))
             (lambda (x)
               (values)))
   (values referenced assigned))
 
 (define (make-seq* src head tail)
-  (record-case head
-    ((<lambda>) tail)
-    ((<const>) tail)
-    ((<lexical-ref>) tail)
-    ((<void>) tail)
+  (match head
+    ((or ($ <lambda>) ($ <const>) ($ <lexical-ref>) ($ <void>)) tail)
     (else (make-seq src head tail))))
 
 (define (free-variables expr cache)
@@ -291,16 +286,15 @@
     (define fv-cache (make-hash-table))
     (post-order
      (lambda (x)
-       (record-case x
-
+       (match x
          ;; Sets to unreferenced variables may be replaced by their
          ;; expression, called for effect.
-         ((<lexical-set> gensym exp)
+         (($ <lexical-set> src name gensym exp)
           (if (hashq-ref referenced gensym)
               x
               (make-seq* #f exp (make-void #f))))
-
-         ((<letrec> src in-order? names gensyms vals body)
+         
+         (($ <letrec> src in-order? names gensyms vals body)
           (if in-order?
               (match (reorder-bindings (map vector names gensyms vals))
                 ((#(names gensyms vals) ...)
@@ -309,16 +303,12 @@
               (fix-term src #f names gensyms vals body
                         fv-cache referenced assigned)))
 
-         ((<let> src names gensyms vals body)
+         (($ <let> src names gensyms vals body)
           ;; Apply the same algorithm to <let> that binds <lambda>
           (if (or-map lambda? vals)
               (fix-term src #f names gensyms vals body
                         fv-cache referenced assigned)
               x))
          
-         (else x)))
+         (_ x)))
      x)))
-
-;;; Local Variables:
-;;; eval: (put 'record-case 'scheme-indent-function 1)
-;;; End:

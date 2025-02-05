@@ -201,12 +201,12 @@
 
 (define-macro (getuid-or-false)
   (if (defined? 'getuid)
-      (getuid)
+      '(getuid)
       #f))
 
 (define-macro (getgid-or-false)
   (if (defined? 'getgid)
-      (getgid)
+      '(getgid)
       #f))
 
 (define (directory-files dir)

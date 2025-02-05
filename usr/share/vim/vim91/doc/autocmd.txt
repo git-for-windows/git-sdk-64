@@ -1,4 +1,4 @@
-*autocmd.txt*   For Vim version 9.1.  Last change: 2024 Aug 18
+*autocmd.txt*   For Vim version 9.1.  Last change: 2024 Dec 04
 
 
 		  VIM REFERENCE MANUAL    by Bram Moolenaar
@@ -702,6 +702,12 @@ CompleteDone			After Insert mode completion is done.  Either
 				The |v:completed_item| variable contains
 				information about the completed item.
 
+				Sets these |v:event| keys:
+				    complete_word	The word that was
+							selected, empty if
+							abandoned complete.
+				    complete_type	|complete_info_mode|
+
 							*CursorHold*
 CursorHold			When the user doesn't press a key for the time
 				specified with 'updatetime'.  Not triggered
@@ -1254,10 +1260,19 @@ TerminalWinOpen			Just after a terminal buffer was created, with
 TermResponse			After the response to |t_RV| is received from
 				the terminal.  The value of |v:termresponse|
 				can be used to do things depending on the
-				terminal version.  Note that this event may be
-				triggered halfway executing another event,
-				especially if file I/O, a shell command or
-				anything else that takes time is involved.
+				terminal version.
+				This is used in |defaults.vim| to detect
+				putty terminal and set a dark background: >
+
+				au TermResponse *
+				\ if v:termresponse == "\e[>0;136;0c"
+				\    set bg=dark
+				\ endif
+<
+				Note: that this event may be triggered halfway
+				executing another event, especially if file
+				I/O, a shell command or anything else that
+				takes time is involved.
 							*TermResponseAll*
 TermResponseAll			After the response to |t_RV|, |t_RC|, |t_RS|,
 				|t_RB|, |t_RF|, or |t_u7| are received from

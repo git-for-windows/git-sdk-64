@@ -535,15 +535,15 @@ $ git init</pre>
 </div>
 <div class="paragraph">
 <p>which is just Git&#8217;s way of saying that you haven&#8217;t been doing anything
-strange, and that it will have created a local <code>.git</code> directory setup for
-your new project. You will now have a <code>.git</code> directory, and you can
+strange, and that it will have created a local .<code>git</code> directory setup for
+your new project. You will now have a .<code>git</code> directory, and you can
 inspect that with <em>ls</em>. For your new empty project, it should show you
 three entries, among other things:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>a file called <code>HEAD</code>, that has <code>ref: refs/heads/master</code> in it.
+<p>a file called <code>HEAD</code>, that has <code>ref:</code> <code>refs/heads/master</code> in it.
 This is similar to a symbolic link and points at
 <code>refs/heads/master</code> relative to the <code>HEAD</code> file.</p>
 <div class="paragraph">
@@ -573,7 +573,7 @@ repository.</p>
 </div>
 <div class="paragraph">
 <p>One note: the special <code>master</code> head is the default branch, which is
-why the <code>.git/HEAD</code> file was created points to it even if it
+why the .<code>git/HEAD</code> file was created points to it even if it
 doesn&#8217;t yet exist. Basically, the <code>HEAD</code> link is supposed to always
 point to the branch you are working on right now, and you always
 start out expecting to work on the <code>master</code> branch.</p>
@@ -581,7 +581,7 @@ start out expecting to work on the <code>master</code> branch.</p>
 <div class="paragraph">
 <p>However, this is only a convention, and you can name your branches
 anything you want, and don&#8217;t have to ever even <em>have</em> a <code>master</code>
-branch. A number of the Git tools will assume that <code>.git/HEAD</code> is
+branch. A number of the Git tools will assume that .<code>git/HEAD</code> is
 valid, though.</p>
 </div>
 <div class="admonitionblock note">
@@ -595,7 +595,7 @@ An <em>object</em> is identified by its 160-bit SHA-1 hash, aka <em>object name<
 and a reference to an object is always the 40-byte hex
 representation of that SHA-1 name. The files in the <code>refs</code>
 subdirectory are expected to contain these hex references
-(usually with a final <code>\n</code> at the end), and you should thus
+(usually with a final \n at the end), and you should thus
 expect to see a number of 41-byte files containing these
 references in these <code>refs</code> subdirectories when you actually start
 populating your tree.
@@ -695,8 +695,8 @@ database. If you did exactly the steps above, you should now be able to do</p>
 </div>
 </div>
 <div class="paragraph">
-<p>which correspond with the objects with names of <code>557db...</code> and
-<code>f24c7...</code> respectively.</p>
+<p>which correspond with the objects with names of <code>557db..</code>. and
+<code>f24c7..</code>. respectively.</p>
 </div>
 <div class="paragraph">
 <p>If you want to, you can use <em>git cat-file</em> to look at those objects, but
@@ -759,7 +759,7 @@ actually saved away the contents of your files into the Git object
 database.</p>
 </div>
 <div class="paragraph">
-<p>Updating the index did something else too: it created a <code>.git/index</code>
+<p>Updating the index did something else too: it created a .<code>git/index</code>
 file. This is the index that describes your current working tree, and
 something you should be very aware of. Again, you normally never worry
 about the index file itself, but you should be aware of the fact that
@@ -820,8 +820,8 @@ what is recorded in the index, and what is currently in the working
 tree. That&#8217;s very useful.</p>
 </div>
 <div class="paragraph">
-<p>A common shorthand for <code>git diff-files -p</code> is to just write <code>git
-diff</code>, which will do the same thing.</p>
+<p>A common shorthand for <code>git</code> <code>diff-files</code> <code>-p</code> is to just write <code>git</code>
+<code>diff</code>, which will do the same thing.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -849,7 +849,7 @@ tree was all about, along with information of how we came to that state.</p>
 </div>
 <div class="paragraph">
 <p>Creating a tree object is trivial, and is done with <em>git write-tree</em>.
-There are no options or other input: <code>git write-tree</code> will take the
+There are no options or other input: <code>git</code> <code>write-tree</code> will take the
 current index state, and write an object that describes that whole
 index. In other words, we&#8217;re now tying together all the different
 filenames with their contents (and their permissions), and we&#8217;re
@@ -871,9 +871,9 @@ creating the equivalent of a Git "directory" object:</p>
 </div>
 <div class="paragraph">
 <p>which is another incomprehensible object name. Again, if you want to,
-you can use <code>git cat-file -t 8988d...</code> to see that this time the object
+you can use <code>git</code> <code>cat-file</code> <code>-t</code> <code>8988d..</code>. to see that this time the object
 is not a "blob" object, but a "tree" object (you can also use
-<code>git cat-file</code> to actually output the raw object contents, but you&#8217;ll see
+<code>git</code> <code>cat-file</code> to actually output the raw object contents, but you&#8217;ll see
 mainly a binary mess, so that&#8217;s less interesting).</p>
 </div>
 <div class="paragraph">
@@ -892,7 +892,7 @@ commit message on its standard input, and it will write out the resulting
 object name for the commit to its standard output.</p>
 </div>
 <div class="paragraph">
-<p>And this is where we create the <code>.git/refs/heads/master</code> file
+<p>And this is where we create the .<code>git/refs/heads/master</code> file
 which is pointed at by <code>HEAD</code>. This file is supposed to contain
 the reference to the top-of-tree of the master branch, and since
 that&#8217;s exactly what <em>git commit-tree</em> spits out, we can do this
@@ -912,8 +912,8 @@ all later commits will be parented on top of an earlier commit.</p>
 </div>
 <div class="paragraph">
 <p>Again, normally you&#8217;d never actually do this by hand. There is a
-helpful script called <code>git commit</code> that will do all of this for you. So
-you could have just written <code>git commit</code>
+helpful script called <code>git</code> <code>commit</code> that will do all of this for you. So
+you could have just written <code>git</code> <code>commit</code>
 instead, and it would have done the above magic scripting for you.</p>
 </div>
 </div>
@@ -935,7 +935,7 @@ state in the working tree, and how they don&#8217;t have to match, even
 when we commit things.</p>
 </div>
 <div class="paragraph">
-<p>As before, if we do <code>git diff-files -p</code> in our git-tutorial project,
+<p>As before, if we do <code>git</code> <code>diff-files</code> <code>-p</code> in our git-tutorial project,
 we&#8217;ll still see the same difference we saw last time: the index file
 hasn&#8217;t changed by the act of committing anything. However, now that we
 have committed something, we can also learn to use a new command:
@@ -981,7 +981,7 @@ it with</p>
 working tree, but when given the <code>--cached</code> flag, it is told to
 instead compare against just the index cache contents, and ignore the
 current working tree state entirely. Since we just wrote the index
-file to HEAD, doing <code>git diff-index --cached -p HEAD</code> should thus return
+file to HEAD, doing <code>git</code> <code>diff-index</code> <code>--cached</code> <code>-p</code> <code>HEAD</code> should thus return
 an empty set of differences, and that&#8217;s exactly what it does.</p>
 </div>
 <div class="admonitionblock note">
@@ -1030,8 +1030,8 @@ about the file already).</p>
 </div>
 <div class="paragraph">
 <p>Note what happens to the different <em>git diff-*</em> versions here.
-After we&#8217;ve updated <code>hello</code> in the index, <code>git diff-files -p</code> now shows no
-differences, but <code>git diff-index -p HEAD</code> still <strong>does</strong> show that the
+After we&#8217;ve updated <code>hello</code> in the index, <code>git</code> <code>diff-files</code> <code>-p</code> now shows no
+differences, but <code>git</code> <code>diff-index</code> <code>-p</code> <code>HEAD</code> still <strong>does</strong> show that the
 current state is different from the state we committed. In fact, now
 <em>git diff-index</em> shows the same difference whether we use the <code>--cached</code>
 flag or not, since now the index is coherent with the working tree.</p>
@@ -1039,7 +1039,7 @@ flag or not, since now the index is coherent with the working tree.</p>
 <div class="paragraph">
 <p>Now, since we&#8217;ve updated <code>hello</code> in the index, we can commit the new
 version. We could do it by writing the tree by hand again, and
-committing the tree (this time we&#8217;d have to use the <code>-p HEAD</code> flag to
+committing the tree (this time we&#8217;d have to use the <code>-p</code> <code>HEAD</code> flag to
 tell commit that the HEAD was the <strong>parent</strong> of the new commit, and that
 this wasn&#8217;t an initial commit any more), but you&#8217;ve done that once
 already, so let&#8217;s just use the helpful script this time:</p>
@@ -1058,12 +1058,12 @@ a bit about what you have done.</p>
 will be pruned out, and the rest will be used as the commit message for
 the change. If you decide you don&#8217;t want to commit anything after all at
 this point (you can continue to edit things and update the index), you
-can just leave an empty message. Otherwise <code>git commit</code> will commit
+can just leave an empty message. Otherwise <code>git</code> <code>commit</code> will commit
 the change for you.</p>
 </div>
 <div class="paragraph">
 <p>You&#8217;ve now made your first real Git commit. And if you&#8217;re interested in
-looking at what <code>git commit</code> really does, feel free to investigate:
+looking at what <code>git</code> <code>commit</code> really does, feel free to investigate:
 it&#8217;s a few very simple shell scripts to generate the helpful (?) commit
 message headers, and a few one-liners that actually do the
 commit itself (<em>git commit</em>).</p>
@@ -1151,9 +1151,9 @@ all, but just show the actual commit message.</p>
 <div class="paragraph">
 <p>In fact, together with the <em>git rev-list</em> program (which generates a
 list of revisions), <em>git diff-tree</em> ends up being a veritable fount of
-changes.  You can emulate <code>git log</code>, <code>git log -p</code>, etc. with a trivial
-script that pipes the output of <code>git rev-list</code> to <code>git diff-tree --stdin</code>,
-which was exactly how early versions of <code>git log</code> were implemented.</p>
+changes.  You can emulate <code>git</code> <code>log</code>, <code>git</code> <code>log</code> <code>-p</code>, etc. with a trivial
+script that pipes the output of <code>git</code> <code>rev-list</code> to <code>git</code> <code>diff-tree</code> <code>--stdin</code>,
+which was exactly how early versions of <code>git</code> <code>log</code> were implemented.</p>
 </div>
 </div>
 </div>
@@ -1165,7 +1165,7 @@ which was exactly how early versions of <code>git log</code> were implemented.</
 </div>
 <div class="paragraph">
 <p>A "light" tag is technically nothing more than a branch, except we put
-it in the <code>.git/refs/tags/</code> subdirectory instead of calling it a <code>head</code>.
+it in the .<code>git/refs/tags/</code> subdirectory instead of calling it a <code>head</code>.
 So the simplest form of tag involves nothing more than</p>
 </div>
 <div class="listingblock">
@@ -1174,7 +1174,7 @@ So the simplest form of tag involves nothing more than</p>
 </div>
 </div>
 <div class="paragraph">
-<p>which just writes the current <code>HEAD</code> into the <code>.git/refs/tags/my-first-tag</code>
+<p>which just writes the current <code>HEAD</code> into the .<code>git/refs/tags/my-first-tag</code>
 file, after which point you can then use this symbolic name for that
 particular state. You can, for example, do</p>
 </div>
@@ -1205,7 +1205,7 @@ that tag. You create these annotated tags with either the <code>-a</code> or
 <div class="paragraph">
 <p>which will sign the current <code>HEAD</code> (but you can also give it another
 argument that specifies the thing to tag, e.g., you could have tagged the
-current <code>mybranch</code> point by using <code>git tag &lt;tagname&gt; mybranch</code>).</p>
+current <code>mybranch</code> point by using <code>git</code> <code>tag</code> <em>&lt;tagname&gt;</em> <code>mybranch</code>).</p>
 </div>
 <div class="paragraph">
 <p>You normally only do signed tags for major releases or things
@@ -1223,7 +1223,7 @@ name for the state at that point.</p>
 <p>Git repositories are normally totally self-sufficient and relocatable.
 Unlike CVS, for example, there is no separate notion of
 "repository" and "working tree". A Git repository normally <strong>is</strong> the
-working tree, with the local Git information hidden in the <code>.git</code>
+working tree, with the local Git information hidden in the .<code>git</code>
 subdirectory. There is nothing else. What you see is what you got.</p>
 </div>
 <div class="admonitionblock note">
@@ -1266,12 +1266,12 @@ history outside the project you created.</p>
 is <em>git clone</em> command, but if all you want to do is just to
 create a copy of your repository (with all the full history that
 went along with it), you can do so with a regular
-<code>cp -a git-tutorial new-git-tutorial</code>.</p>
+<code>cp</code> <code>-a</code> <code>git-tutorial</code> <code>new-git-tutorial</code>.</p>
 <div class="paragraph">
 <p>Note that when you&#8217;ve moved or copied a Git repository, your Git index
 file (which caches various information, notably some of the "stat"
 information for the files involved) will likely need to be refreshed.
-So after you do a <code>cp -a</code> to create a new copy, you&#8217;ll want to do</p>
+So after you do a <code>cp</code> <code>-a</code> to create a new copy, you&#8217;ll want to do</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1307,7 +1307,7 @@ $ git update-index --refresh</pre>
 It resets the index contents to <code>HEAD</code>, and then the <em>git update-index</em>
 makes sure to match up all index entries with the checked-out files.
 If the original repository had uncommitted changes in its
-working tree, <code>git update-index --refresh</code> notices them and
+working tree, <code>git</code> <code>update-index</code> <code>--refresh</code> notices them and
 tells you they need to be updated.</p>
 </div>
 <div class="paragraph">
@@ -1320,8 +1320,8 @@ tells you they need to be updated.</p>
 </div>
 <div class="paragraph">
 <p>and in fact a lot of the common Git command combinations can be scripted
-with the <code>git xyz</code> interfaces.  You can learn things by just looking
-at what the various git scripts do.  For example, <code>git reset</code> used to be
+with the <code>git</code> <code>xyz</code> interfaces.  You can learn things by just looking
+at what the various git scripts do.  For example, <code>git</code> <code>reset</code> used to be
 the above two lines implemented in <em>git reset</em>, but some things like
 <em>git status</em> and <em>git commit</em> are slightly more complex scripts around
 the basic Git commands.</p>
@@ -1330,13 +1330,13 @@ the basic Git commands.</p>
 <p>Many (most?) public remote repositories will not contain any of
 the checked out files or even an index file, and will <strong>only</strong> contain the
 actual core Git files. Such a repository usually doesn&#8217;t even have the
-<code>.git</code> subdirectory, but has all the Git files directly in the
+.<code>git</code> subdirectory, but has all the Git files directly in the
 repository.</p>
 </div>
 <div class="paragraph">
 <p>To create your own local live copy of such a "raw" Git repository, you&#8217;d
 first create your own subdirectory for the project, and then copy the
-raw repository contents into the <code>.git</code> directory. For example, to
+raw repository contents into the .<code>git</code> directory. For example, to
 create your own copy of the Git repository, you&#8217;d do the following</p>
 </div>
 <div class="listingblock">
@@ -1397,14 +1397,14 @@ repository, and checked it out.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Branches in Git are really nothing more than pointers into the Git
-object database from within the <code>.git/refs/</code> subdirectory, and as we
+object database from within the .<code>git/refs/</code> subdirectory, and as we
 already discussed, the <code>HEAD</code> branch is nothing but a symlink to one of
 these object pointers.</p>
 </div>
 <div class="paragraph">
 <p>You can at any time create a new branch by just picking an arbitrary
 point in the project history, and just writing the SHA-1 name of that
-object into a file under <code>.git/refs/heads/</code>. You can use any filename you
+object into a file under .<code>git/refs/heads/</code>. You can use any filename you
 want (and indeed, subdirectories), but the convention is that the
 "normal" branch is called <code>master</code>. That&#8217;s just a convention, though,
 and nothing enforces it.</p>
@@ -1476,7 +1476,7 @@ you have, you can say</p>
 </div>
 </div>
 <div class="paragraph">
-<p>which used to be nothing more than a simple script around <code>ls .git/refs/heads</code>.
+<p>which used to be nothing more than a simple script around <code>ls</code> <code>.git/refs/heads</code>.
 There will be an asterisk in front of the branch you are currently on.</p>
 </div>
 <div class="paragraph">
@@ -1515,8 +1515,8 @@ $ git commit -m "Some work." -i hello</pre>
 </div>
 <div class="paragraph">
 <p>Here, we just added another line to <code>hello</code>, and we used a shorthand for
-doing both <code>git update-index hello</code> and <code>git commit</code> by just giving the
-filename directly to <code>git commit</code>, with an <code>-i</code> flag (it tells
+doing both <code>git</code> <code>update-index</code> <code>hello</code> and <code>git</code> <code>commit</code> by just giving the
+filename directly to <code>git</code> <code>commit</code>, with an <code>-i</code> flag (it tells
 Git to <em>include</em> that file in addition to what you have done to
 the index file so far when making the commit).  The <code>-m</code> flag is to give the
 commit log message from the command line.</p>
@@ -1623,7 +1623,7 @@ Work, work, work</pre>
 message about your adventures in <em>git merge</em>-land.</p>
 </div>
 <div class="paragraph">
-<p>After you&#8217;re done, start up <code>gitk --all</code> to see graphically what the
+<p>After you&#8217;re done, start up <code>gitk</code> <code>--all</code> to see graphically what the
 history looks like. Notice that <code>mybranch</code> still exists, and you can
 switch to it, and continue to work with it if you want to. The
 <code>mybranch</code> branch will not contain the merge, but next time you merge it
@@ -1632,7 +1632,7 @@ have to do <em>that</em> merge again.</p>
 </div>
 <div class="paragraph">
 <p>Another useful tool, especially if you do not always work in X-Window
-environment, is <code>git show-branch</code>.</p>
+environment, is <code>git</code> <code>show-branch</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1648,11 +1648,11 @@ environment, is <code>git show-branch</code>.</p>
 <div class="paragraph">
 <p>The first two lines indicate that it is showing the two branches
 with the titles of their top-of-the-tree commits, you are currently on
-<code>master</code> branch (notice the asterisk <code>*</code> character), and the first
+<code>master</code> branch (notice the asterisk * character), and the first
 column for the later output lines is used to show commits contained in the
 <code>master</code> branch, and the second column for the <code>mybranch</code>
 branch. Three commits are shown along with their titles.
-All of them have non blank characters in the first column (<code>*</code>
+All of them have non blank characters in the first column (*
 shows an ordinary commit on the current branch, <code>-</code> is a merge commit), which
 means they are now part of the <code>master</code> branch. Only the "Some
 work" commit has the plus <code>+</code> character in the second column,
@@ -1727,7 +1727,7 @@ the tree of your branch to that of the <code>master</code> branch. This is
 often called <em>fast-forward</em> merge.</p>
 </div>
 <div class="paragraph">
-<p>You can run <code>gitk --all</code> again to see how the commit ancestry
+<p>You can run <code>gitk</code> <code>--all</code> again to see how the commit ancestry
 looks like, or run <em>show-branch</em>, which tells you this.</p>
 </div>
 <div class="listingblock">
@@ -1808,7 +1808,7 @@ lacks and transfers (close to) minimum set of objects.</p>
 first obtains the topmost commit object name from the remote site
 by looking at the specified refname under <code>repo.git/refs/</code> directory,
 and then tries to obtain the
-commit object by downloading from <code>repo.git/objects/xx/xxx...</code>
+commit object by downloading from <code>repo.git/objects/xx/xxx..</code>.
 using the object name of that commit object.  Then it reads the
 commit object to find out its parent commits and the associate
 tree object; it repeats this process until it gets all the
@@ -1832,7 +1832,7 @@ with your current branch.</p>
 </div>
 <div class="paragraph">
 <p>However&#8201;&#8212;&#8201;it&#8217;s such a common thing to <code>fetch</code> and then
-immediately <code>merge</code>, that it&#8217;s called <code>git pull</code>, and you can
+immediately <code>merge</code>, that it&#8217;s called <code>git</code> <code>pull</code>, and you can
 simply do</p>
 </div>
 <div class="listingblock">
@@ -1884,10 +1884,10 @@ like this:</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><code>git pull linus</code></p>
+<p><code>git</code> <code>pull</code> <code>linus</code></p>
 </li>
 <li>
-<p><code>git pull linus tag v0.99.1</code></p>
+<p><code>git</code> <code>pull</code> <code>linus</code> <code>tag</code> <code>v0.99.1</code></p>
 </li>
 </ol>
 </div>
@@ -1897,10 +1897,10 @@ like this:</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><code>git pull http://www.kernel.org/pub/scm/git/git.git/ HEAD</code></p>
+<p><code>git</code> <code>pull</code> <code>http://www.kernel.org/pub/scm/git/git.git/</code> <code>HEAD</code></p>
 </li>
 <li>
-<p><code>git pull http://www.kernel.org/pub/scm/git/git.git/ tag v0.99.1</code></p>
+<p><code>git</code> <code>pull</code> <code>http://www.kernel.org/pub/scm/git/git.git/</code> <code>tag</code> <code>v0.99.1</code></p>
 </li>
 </ol>
 </div>
@@ -1962,7 +1962,7 @@ $ git reset --hard master^</pre>
 <p>Now we are ready to experiment with the merge by hand.</p>
 </div>
 <div class="paragraph">
-<p><code>git merge</code> command, when merging two branches, uses 3-way merge
+<p><code>git</code> <code>merge</code> command, when merging two branches, uses 3-way merge
 algorithm.  First, it finds the common ancestor between them.
 The command it uses is <em>git merge-base</em>:</p>
 </div>
@@ -2060,8 +2060,8 @@ It is a fairly straightforward shell script, and
 eventually calls <em>merge</em> program from RCS suite to perform a
 file-level 3-way merge.  In this case, <em>merge</em> detects
 conflicts, and the merge result with conflict marks is left in
-the working tree..  This can be seen if you run <code>ls-files
---stage</code> again at this point:</p>
+the working tree..  This can be seen if you run <code>ls-files</code>
+<code>--stage</code> again at this point:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2091,7 +2091,7 @@ it?</p>
 </div>
 <div class="paragraph">
 <p>You do your real work in your working tree that has your
-primary repository hanging under it as its <code>.git</code> subdirectory.
+primary repository hanging under it as its .<code>git</code> subdirectory.
 You <strong>could</strong> make that repository accessible remotely and ask
 people to pull from it, but in practice that is not the way
 things are usually done. A recommended way is to have a public
@@ -2142,9 +2142,9 @@ the network internally uses an SSH connection.
 </table>
 </div>
 <div class="paragraph">
-<p>Your private repository&#8217;s Git directory is usually <code>.git</code>, but
+<p>Your private repository&#8217;s Git directory is usually .<code>git</code>, but
 your public repository is often named after the project name,
-i.e. <code>&lt;project&gt;.git</code>. Let&#8217;s create such a public repository for
+i.e. <em>&lt;project&gt;</em><code>.git</code>. Let&#8217;s create such a public repository for
 project <code>my-git</code>. After logging into the remote machine, create
 an empty directory:</p>
 </div>
@@ -2156,7 +2156,7 @@ an empty directory:</p>
 <div class="paragraph">
 <p>Then, make that directory into a Git repository by running
 <em>git init</em>, but this time, since its name is not the usual
-<code>.git</code>, we do things slightly differently:</p>
+.<code>git</code>, we do things slightly differently:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2178,8 +2178,8 @@ program on the <code>$PATH</code>.</p>
 <td class="content">
 Many installations of sshd do not invoke your shell as the login
 shell when you directly run programs; what this means is that if
-your login shell is <em>bash</em>, only <code>.bashrc</code> is read and not
-<code>.bash_profile</code>. As a workaround, make sure <code>.bashrc</code> sets up
+your login shell is <em>bash</em>, only .<code>bashrc</code> is read and not
+.<code>bash_profile</code>. As a workaround, make sure .<code>bashrc</code> sets up
 <code>$PATH</code> so that you can run <em>git-receive-pack</em> program.
 </td>
 </tr>
@@ -2193,10 +2193,10 @@ your login shell is <em>bash</em>, only <code>.bashrc</code> is read and not
 </td>
 <td class="content">
 If you plan to publish this repository to be accessed over http,
-you should do <code>mv my-git.git/hooks/post-update.sample
-my-git.git/hooks/post-update</code> at this point.
+you should do <code>mv</code> <code>my-git.git/hooks/post-update.sample</code>
+<code>my-git.git/hooks/post-update</code> at this point.
 This makes sure that every time you push into this
-repository, <code>git update-server-info</code> is run.
+repository, <code>git</code> <code>update-server-info</code> is run.
 </td>
 </tr>
 </table>
@@ -2232,7 +2232,7 @@ propagation to other publicly visible machines:</p>
 <h2 id="_packing_your_repository">Packing your repository</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Earlier, we saw that one file under <code>.git/objects/??/</code> directory
+<p>Earlier, we saw that one file under .<code>git/objects/</code>??/ directory
 is stored for each Git object you create. This representation
 is efficient to create atomically and safely, but
 not so convenient to transport over the network. Since Git objects are
@@ -2246,9 +2246,9 @@ storage by "packing them together". The command</p>
 </div>
 <div class="paragraph">
 <p>will do it for you. If you followed the tutorial examples, you
-would have accumulated about 17 objects in <code>.git/objects/??/</code>
+would have accumulated about 17 objects in .<code>git/objects/</code>??/
 directories by now. <em>git repack</em> tells you how many objects it
-packed, and stores the packed file in the <code>.git/objects/pack</code>
+packed, and stores the packed file in the .<code>git/objects/pack</code>
 directory.</p>
 </div>
 <div class="admonitionblock note">
@@ -2258,8 +2258,8 @@ directory.</p>
 <div class="title">Note</div>
 </td>
 <td class="content">
-You will see two files, <code>pack-*.pack</code> and <code>pack-*.idx</code>,
-in <code>.git/objects/pack</code> directory. They are closely related to
+You will see two files, <code>pack-</code>*.<code>pack</code> and <code>pack-</code>*.<code>idx</code>,
+in .<code>git/objects/pack</code> directory. They are closely related to
 each other, and if you ever copy them by hand to a different
 repository for whatever reason, you should make sure you copy
 them together. The former holds all the data from the objects
@@ -2287,9 +2287,9 @@ unpacked objects that are contained in the pack file anymore.</p>
 <p>would remove them for you.</p>
 </div>
 <div class="paragraph">
-<p>You can try running <code>find .git/objects -type f</code> before and after
-you run <code>git prune-packed</code> if you are curious.  Also <code>git
-count-objects</code> would tell you how many unpacked objects are in
+<p>You can try running <code>find</code> <code>.git/objects</code> <code>-type</code> <code>f</code> before and after
+you run <code>git</code> <code>prune-packed</code> if you are curious.  Also <code>git</code>
+<code>count-objects</code> would tell you how many unpacked objects are in
 your repository and how much space they are consuming.</p>
 </div>
 <div class="admonitionblock note">
@@ -2299,7 +2299,7 @@ your repository and how much space they are consuming.</p>
 <div class="title">Note</div>
 </td>
 <td class="content">
-<code>git pull</code> is slightly cumbersome for HTTP transport, as a
+<code>git</code> <code>pull</code> is slightly cumbersome for HTTP transport, as a
 packed repository may contain relatively few objects in a
 relatively large pack. If you expect many HTTP pulls from your
 public repository you might want to repack &amp; prune often, or
@@ -2309,17 +2309,17 @@ never.
 </table>
 </div>
 <div class="paragraph">
-<p>If you run <code>git repack</code> again at this point, it will say
+<p>If you run <code>git</code> <code>repack</code> again at this point, it will say
 "Nothing new to pack.". Once you continue your development and
-accumulate the changes, running <code>git repack</code> again will create a
+accumulate the changes, running <code>git</code> <code>repack</code> again will create a
 new pack, that contains objects created since you packed your
 repository the last time. We recommend that you pack your project
 soon after the initial import (unless you are starting your
-project from scratch), and then run <code>git repack</code> every once in a
+project from scratch), and then run <code>git</code> <code>repack</code> every once in a
 while, depending on how active your project is.</p>
 </div>
 <div class="paragraph">
-<p>When a repository is synchronized via <code>git push</code> and <code>git pull</code>
+<p>When a repository is synchronized via <code>git</code> <code>push</code> and <code>git</code> <code>pull</code>
 objects packed in the source repository are usually stored
 unpacked in the destination.
 While this allows you to use different packing strategies on
@@ -2358,11 +2358,11 @@ work is done there.</p>
 <div class="paragraph">
 <p>If other people are pulling from your repository over dumb
 transport protocols (HTTP), you need to keep this repository
-<em>dumb transport friendly</em>.  After <code>git init</code>,
+<em>dumb transport friendly</em>.  After <code>git</code> <code>init</code>,
 <code>$GIT_DIR/hooks/post-update.sample</code> copied from the standard templates
 would contain a call to <em>git update-server-info</em>
 but you need to manually enable the hook with
-<code>mv post-update.sample post-update</code>.  This makes sure
+<code>mv</code> <code>post-update.sample</code> <code>post-update</code>.  This makes sure
 <em>git update-server-info</em> keeps the necessary files up to date.</p>
 </div>
 </li>
@@ -2465,18 +2465,18 @@ configuration variable.</p>
 <p>Do your work in your repository on <em>master</em> branch.</p>
 </li>
 <li>
-<p>Run <code>git fetch origin</code> from the public repository of your
+<p>Run <code>git</code> <code>fetch</code> <code>origin</code> from the public repository of your
 upstream every once in a while. This does only the first
-half of <code>git pull</code> but does not merge. The head of the
-public repository is stored in <code>.git/refs/remotes/origin/master</code>.</p>
+half of <code>git</code> <code>pull</code> but does not merge. The head of the
+public repository is stored in .<code>git/refs/remotes/origin/master</code>.</p>
 </li>
 <li>
-<p>Use <code>git cherry origin</code> to see which ones of your patches
-were accepted, and/or use <code>git rebase origin</code> to port your
+<p>Use <code>git</code> <code>cherry</code> <code>origin</code> to see which ones of your patches
+were accepted, and/or use <code>git</code> <code>rebase</code> <code>origin</code> to port your
 unmerged changes forward to the updated upstream.</p>
 </li>
 <li>
-<p>Use <code>git format-patch origin</code> to prepare patches for e-mail
+<p>Use <code>git</code> <code>format-patch</code> <code>origin</code> to prepare patches for e-mail
 submission to your upstream and send it out. Go back to
 step 2. and continue.</p>
 </li>
@@ -2573,7 +2573,7 @@ branch before these two merges by resetting it to <em>master~2</em>:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>You can make sure <code>git show-branch</code> matches the state before
+<p>You can make sure <code>git</code> <code>show-branch</code> matches the state before
 those two <em>git merge</em> you just did.  Then, instead of running
 two <em>git merge</em> commands in a row, you would merge these two
 branch heads (this is known as <em>making an Octopus</em>):</p>
@@ -2633,7 +2633,7 @@ to follow, not easier.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

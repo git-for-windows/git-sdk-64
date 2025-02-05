@@ -461,63 +461,32 @@ pre>code {
 <div class="sectionbody">
 <div class="paragraph">
 <p>Given two arguments, stores the &lt;new-oid&gt; in the &lt;ref&gt;, possibly
-dereferencing the symbolic refs.  E.g. <code>git update-ref HEAD
-&lt;new-oid&gt;</code> updates the current branch head to the new object.</p>
+dereferencing the symbolic refs.  E.g. <code>git</code> <code>update-ref</code> <code>HEAD</code>
+<em>&lt;new-oid&gt;</em> updates the current branch head to the new object.</p>
 </div>
 <div class="paragraph">
 <p>Given three arguments, stores the &lt;new-oid&gt; in the &lt;ref&gt;,
 possibly dereferencing the symbolic refs, after verifying that
 the current value of the &lt;ref&gt; matches &lt;old-oid&gt;.
-E.g. <code>git update-ref refs/heads/master &lt;new-oid&gt; &lt;old-oid&gt;</code>
+E.g. <code>git</code> <code>update-ref</code> <code>refs/heads/master</code> <em>&lt;new-oid&gt;</em> <em>&lt;old-oid&gt;</em>
 updates the master branch head to &lt;new-oid&gt; only if its current
 value is &lt;old-oid&gt;.  You can specify 40 "0" or an empty string
 as &lt;old-oid&gt; to make sure that the ref you are creating does
 not exist.</p>
 </div>
 <div class="paragraph">
-<p>It also allows a "ref" file to be a symbolic pointer to another
-ref file by starting with the four-byte header sequence of
-"ref:".</p>
-</div>
-<div class="paragraph">
-<p>More importantly, it allows the update of a ref file to follow
-these symbolic pointers, whether they are symlinks or these
-"regular file symbolic refs".  It follows <strong>real</strong> symlinks only
-if they start with "refs/": otherwise it will just try to read
-them and update them as a regular file (i.e. it will allow the
-filesystem to follow them, but will overwrite such a symlink to
-somewhere else with a regular filename).</p>
+<p>The final arguments are object names; this command without any options
+does not support updating a symbolic ref to point to another ref (see
+<a href="git-symbolic-ref.html">git-symbolic-ref(1)</a>).  But <code>git</code> <code>update-ref</code> <code>--stdin</code> does have
+the <code>symref-</code>* commands so that regular refs and symbolic refs can be
+committed in the same transaction.</p>
 </div>
 <div class="paragraph">
 <p>If --no-deref is given, &lt;ref&gt; itself is overwritten, rather than
 the result of following the symbolic pointers.</p>
 </div>
 <div class="paragraph">
-<p>In general, using</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>git update-ref HEAD "$head"</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>should be a <em>lot</em> safer than doing</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>echo "$head" &gt; "$GIT_DIR/HEAD"</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>both from a symlink following standpoint <strong>and</strong> an error checking
-standpoint.  The "refs/" rule for symlinks means that symlinks
-that point to "outside" the tree are safe: they&#8217;ll be followed
-for reading but not for writing (so we&#8217;ll never write through a
-ref symlink to some other tree, if you have copied a whole
-archive by creating a symlink tree).</p>
-</div>
-<div class="paragraph">
-<p>With <code>-d</code> flag, it deletes the named &lt;ref&gt; after verifying it
+<p>With <code>-d</code>, it deletes the named &lt;ref&gt; after verifying that it
 still contains &lt;old-oid&gt;.</p>
 </div>
 <div class="paragraph">
@@ -592,12 +561,12 @@ ref does not exist before the update.</p>
 </dd>
 <dt class="hdlist1">create</dt>
 <dd>
-<p>Create &lt;ref&gt; with &lt;new-oid&gt; after verifying it does not
+<p>Create &lt;ref&gt; with &lt;new-oid&gt; after verifying that it does not
 exist.  The given &lt;new-oid&gt; may not be zero.</p>
 </dd>
 <dt class="hdlist1">delete</dt>
 <dd>
-<p>Delete &lt;ref&gt; after verifying it exists with &lt;old-oid&gt;, if
+<p>Delete &lt;ref&gt; after verifying that it exists with &lt;old-oid&gt;, if
 given.  If given, &lt;old-oid&gt; may not be zero.</p>
 </dd>
 <dt class="hdlist1">symref-update</dt>
@@ -615,14 +584,14 @@ exist before the update.</p>
 </div>
 <div class="paragraph">
 <p>symref-create:
-	Create symbolic ref &lt;ref&gt; with &lt;new-target&gt; after verifying
+	Create symbolic ref &lt;ref&gt; with &lt;new-target&gt; after verifying that
 	it does not exist.</p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">symref-delete</dt>
 <dd>
-<p>Delete &lt;ref&gt; after verifying it exists with &lt;old-target&gt;, if given.</p>
+<p>Delete &lt;ref&gt; after verifying that it exists with &lt;old-target&gt;, if given.</p>
 </dd>
 <dt class="hdlist1">symref-verify</dt>
 <dd>
@@ -677,7 +646,7 @@ still see a subset of the modifications.</p>
 <p>If config parameter "core.logAllRefUpdates" is true and the ref is one
 under "refs/heads/", "refs/remotes/", "refs/notes/", or a pseudoref
 like HEAD or ORIG_HEAD; or the file "$GIT_DIR/logs/&lt;ref&gt;" exists then
-<code>git update-ref</code> will append a line to the log file
+<code>git</code> <code>update-ref</code> will append a line to the log file
 "$GIT_DIR/logs/&lt;ref&gt;" (dereferencing all symbolic refs before creating
 the log name) describing the change in ref value.  Log lines are
 formatted as:</p>
@@ -713,6 +682,29 @@ or does not have committer information available.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_notes">NOTES</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Symbolic refs were initially implemented using symbolic links.  This is
+now deprecated since not all filesystems support symbolic links.</p>
+</div>
+<div class="paragraph">
+<p>This command follows <strong>real</strong> symlinks only if they start with "refs/":
+otherwise it will just try to read them and update them as a regular
+file (i.e. it will allow the filesystem to follow them, but will
+overwrite such a symlink to somewhere else with a regular filename).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_see_also">SEE ALSO</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="git-symbolic-ref.html">git-symbolic-ref(1)</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -723,7 +715,7 @@ or does not have committer information available.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

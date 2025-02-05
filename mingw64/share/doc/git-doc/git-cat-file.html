@@ -497,32 +497,32 @@ the "SPECIFYING REVISIONS" section in <a href="gitrevisions.html">gitrevisions(7
 <dt class="hdlist1">-t</dt>
 <dd>
 <p>Instead of the content, show the object type identified by
-<code>&lt;object&gt;</code>.</p>
+<em>&lt;object&gt;</em>.</p>
 </dd>
 <dt class="hdlist1">-s</dt>
 <dd>
 <p>Instead of the content, show the object size identified by
-<code>&lt;object&gt;</code>. If used with <code>--use-mailmap</code> option, will show
+<em>&lt;object&gt;</em>. If used with <code>--use-mailmap</code> option, will show
 the size of updated object after replacing idents using the
 mailmap mechanism.</p>
 </dd>
 <dt class="hdlist1">-e</dt>
 <dd>
-<p>Exit with zero status if <code>&lt;object&gt;</code> exists and is a valid
-object. If <code>&lt;object&gt;</code> is of an invalid format, exit with non-zero
+<p>Exit with zero status if <em>&lt;object&gt;</em> exists and is a valid
+object. If <em>&lt;object&gt;</em> is of an invalid format, exit with non-zero
 status and emit an error on stderr.</p>
 </dd>
 <dt class="hdlist1">-p</dt>
 <dd>
-<p>Pretty-print the contents of <code>&lt;object&gt;</code> based on its type.</p>
+<p>Pretty-print the contents of <em>&lt;object&gt;</em> based on its type.</p>
 </dd>
 <dt class="hdlist1">&lt;type&gt;</dt>
 <dd>
-<p>Typically this matches the real type of <code>&lt;object&gt;</code> but asking
+<p>Typically this matches the real type of <em>&lt;object&gt;</em> but asking
 for a type that can trivially be dereferenced from the given
-<code>&lt;object&gt;</code> is also permitted.  An example is to ask for a
-"tree" with <code>&lt;object&gt;</code> being a commit object that contains it,
-or to ask for a "blob" with <code>&lt;object&gt;</code> being a tag object that
+<em>&lt;object&gt;</em> is also permitted.  An example is to ask for a
+"tree" with <em>&lt;object&gt;</em> being a commit object that contains it,
+or to ask for a "blob" with <em>&lt;object&gt;</em> being a tag object that
 points at it.</p>
 </dd>
 <dt class="hdlist1">--[no-]mailmap</dt>
@@ -535,16 +535,16 @@ See <a href="git-shortlog.html">git-shortlog(1)</a>.</p>
 <dt class="hdlist1">--textconv</dt>
 <dd>
 <p>Show the content as transformed by a textconv filter. In this case,
-<code>&lt;object&gt;</code> has to be of the form <code>&lt;tree-ish&gt;:&lt;path&gt;</code>, or <code>:&lt;path&gt;</code> in
+<em>&lt;object&gt;</em> has to be of the form <em>&lt;tree-ish&gt;</em><code>:</code><em>&lt;path&gt;</em>, or <code>:</code><em>&lt;path&gt;</em> in
 order to apply the filter to the content recorded in the index at
-<code>&lt;path&gt;</code>.</p>
+<em>&lt;path&gt;</em>.</p>
 </dd>
 <dt class="hdlist1">--filters</dt>
 <dd>
 <p>Show the content as converted by the filters configured in
-the current working tree for the given <code>&lt;path&gt;</code> (i.e. smudge filters,
-end-of-line conversion, etc). In this case, <code>&lt;object&gt;</code> has to be of
-the form <code>&lt;tree-ish&gt;:&lt;path&gt;</code>, or <code>:&lt;path&gt;</code>.</p>
+the current working tree for the given <em>&lt;path&gt;</em> (i.e. smudge filters,
+end-of-line conversion, etc). In this case, <em>&lt;object&gt;</em> has to be of
+the form <em>&lt;tree-ish&gt;</em><code>:</code><em>&lt;path&gt;</em>, or <code>:</code><em>&lt;path&gt;</em>.</p>
 </dd>
 <dt class="hdlist1">--path=&lt;path&gt;</dt>
 <dd>
@@ -565,7 +565,7 @@ except <code>--textconv</code>, <code>--filters</code>, or <code>--use-mailmap</
 <li>
 <p>When used with <code>--textconv</code> or <code>--filters</code>, the input lines
 must specify the path, separated by whitespace. See the section
-<code>BATCH OUTPUT</code> below for details.</p>
+<code>BATCH</code> <code>OUTPUT</code> below for details.</p>
 </li>
 <li>
 <p>When used with <code>--use-mailmap</code>, for commit and tag objects, the
@@ -592,7 +592,7 @@ or <code>--use-mailmap</code>.</p>
 <li>
 <p>When used with <code>--textconv</code> or <code>--filters</code>, the input lines must
 specify the path, separated by whitespace. See the section
-<code>BATCH OUTPUT</code> below for details.</p>
+<code>BATCH</code> <code>OUTPUT</code> below for details.</p>
 </li>
 <li>
 <p>When used with <code>--use-mailmap</code>, for commit and tag objects, the
@@ -617,7 +617,7 @@ only be combined with <code>--buffer</code>, <code>--textconv</code>, <code>--us
 <li>
 <p>When used with <code>--textconv</code> or <code>--filters</code>, the input lines must
 specify the path, separated by whitespace. See the section
-<code>BATCH OUTPUT</code> below for details.</p>
+<code>BATCH</code> <code>OUTPUT</code> below for details.</p>
 </li>
 <li>
 <p>When used with <code>--use-mailmap</code>, for commit and tag objects, the
@@ -639,12 +639,12 @@ identities.</p>
 <dl>
 <dt class="hdlist1">contents &lt;object&gt;</dt>
 <dd>
-<p>Print object contents for object reference <code>&lt;object&gt;</code>. This corresponds to
+<p>Print object contents for object reference <em>&lt;object&gt;</em>. This corresponds to
 the output of <code>--batch</code>.</p>
 </dd>
 <dt class="hdlist1">info &lt;object&gt;</dt>
 <dd>
-<p>Print object info for object reference <code>&lt;object&gt;</code>. This corresponds to the
+<p>Print object info for object reference <em>&lt;object&gt;</em>. This corresponds to the
 output of <code>--batch-check</code>.</p>
 </dd>
 <dt class="hdlist1">flush</dt>
@@ -699,7 +699,7 @@ repository when requesting objects with extended SHA-1
 expressions of the form tree-ish:path-in-tree.  Instead of
 providing output about the link itself, provide output about
 the linked-to object.  If a symlink points outside the
-tree-ish (e.g. a link to <code>/foo</code> or a root-level link to <code>../foo</code>),
+tree-ish (e.g. a link to <code>/foo</code> or a root-level link to <code>..</code><code>/foo</code>),
 the portion of the link which is outside the tree will be
 printed.</p>
 <div class="paragraph">
@@ -728,7 +728,7 @@ alink: a symlink to /etc/passwd</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>For a regular file <code>f</code>, <code>echo HEAD:f | git cat-file --batch</code> would print</p>
+<p>For a regular file <code>f</code>, <code>echo</code> <code>HEAD:f</code> | <code>git</code> <code>cat-file</code> <code>--batch</code> would print</p>
 </div>
 <div class="openblock">
 <div class="content">
@@ -740,7 +740,7 @@ alink: a symlink to /etc/passwd</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>And <code>echo HEAD:link | git cat-file --batch --follow-symlinks</code> would
+<p>And <code>echo</code> <code>HEAD:link</code> | <code>git</code> <code>cat-file</code> <code>--batch</code> <code>--follow-symlinks</code> would
 print the same thing, as would <code>HEAD:dir/link</code>, as they both point at
 <code>HEAD:f</code>.</p>
 </div>
@@ -799,19 +799,19 @@ newline-delimited. This option is deprecated in favor of
 <h2 id="_output">OUTPUT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If <code>-t</code> is specified, one of the <code>&lt;type&gt;</code>.</p>
+<p>If <code>-t</code> is specified, one of the <em>&lt;type&gt;</em>.</p>
 </div>
 <div class="paragraph">
-<p>If <code>-s</code> is specified, the size of the <code>&lt;object&gt;</code> in bytes.</p>
+<p>If <code>-s</code> is specified, the size of the <em>&lt;object&gt;</em> in bytes.</p>
 </div>
 <div class="paragraph">
-<p>If <code>-e</code> is specified, no output, unless the <code>&lt;object&gt;</code> is malformed.</p>
+<p>If <code>-e</code> is specified, no output, unless the <em>&lt;object&gt;</em> is malformed.</p>
 </div>
 <div class="paragraph">
-<p>If <code>-p</code> is specified, the contents of <code>&lt;object&gt;</code> are pretty-printed.</p>
+<p>If <code>-p</code> is specified, the contents of <em>&lt;object&gt;</em> are pretty-printed.</p>
 </div>
 <div class="paragraph">
-<p>If <code>&lt;type&gt;</code> is specified, the raw (though uncompressed) contents of the <code>&lt;object&gt;</code>
+<p>If <em>&lt;type&gt;</em> is specified, the raw (though uncompressed) contents of the <em>&lt;object&gt;</em>
 will be returned.</p>
 </div>
 </div>
@@ -835,8 +835,8 @@ information about the object the same way <code>--batch-check</code> would, and 
 </div>
 <div class="paragraph">
 <p>You can specify the information shown for each object by using a custom
-<code>&lt;format&gt;</code>. The <code>&lt;format&gt;</code> is copied literally to stdout for each
-object, with placeholders of the form <code>%(atom)</code> expanded, followed by a
+<em>&lt;format&gt;</em>. The <em>&lt;format&gt;</em> is copied literally to stdout for each
+object, with placeholders of the form %(<code>atom</code>) expanded, followed by a
 newline. The available atoms are:</p>
 </div>
 <div class="dlist">
@@ -847,11 +847,11 @@ newline. The available atoms are:</p>
 </dd>
 <dt class="hdlist1"><code>objecttype</code></dt>
 <dd>
-<p>The type of the object (the same as <code>cat-file -t</code> reports).</p>
+<p>The type of the object (the same as <code>cat-file</code> <code>-t</code> reports).</p>
 </dd>
 <dt class="hdlist1"><code>objectsize</code></dt>
 <dd>
-<p>The size, in bytes, of the object (the same as <code>cat-file -s</code>
+<p>The size, in bytes, of the object (the same as <code>cat-file</code> <code>-s</code>
 reports).</p>
 </dd>
 <dt class="hdlist1"><code>objectsize:disk</code></dt>
@@ -872,18 +872,18 @@ below.</p>
 at the first whitespace boundary. All characters before that
 whitespace are considered to be the object name; characters
 after that first run of whitespace (i.e., the "rest" of the
-line) are output in place of the <code>%(rest)</code> atom.</p>
+line) are output in place of the %(<code>rest</code>) atom.</p>
 </dd>
 </dl>
 </div>
 <div class="paragraph">
-<p>If no format is specified, the default format is <code>%(objectname)
-%(objecttype) %(objectsize)</code>.</p>
+<p>If no format is specified, the default format is %(<code>objectname</code>)
+%(<code>objecttype</code>) %(<code>objectsize</code>).</p>
 </div>
 <div class="paragraph">
 <p>If <code>--batch</code> is specified, or if <code>--batch-command</code> is used with the <code>contents</code>
 command, the object information is followed by the object contents (consisting
-of <code>%(objectsize)</code> bytes), followed by a newline.</p>
+of %(<code>objectsize</code>) bytes), followed by a newline.</p>
 </div>
 <div class="paragraph">
 <p>For example, <code>--batch</code> without a custom format would produce:</p>
@@ -895,7 +895,7 @@ of <code>%(objectsize)</code> bytes), followed by a newline.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Whereas <code>--batch-check='%(objectname) %(objecttype)'</code> would produce:</p>
+<p>Whereas <code>--batch-check=</code>'%(<code>objectname</code>) %(<code>objecttype</code>)' would produce:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -932,8 +932,8 @@ and print:</p>
 </div>
 <div class="paragraph">
 <p>The symlink will either be absolute (beginning with a <code>/</code>), or relative
-to the tree root.  For instance, if dir/link points to <code>../../foo</code>, then
-<code>&lt;symlink&gt;</code> will be <code>../foo</code>.  <code>&lt;size&gt;</code> is the size of the symlink in bytes.</p>
+to the tree root.  For instance, if dir/link points to <code>..</code><code>/</code><code>..</code><code>/foo</code>, then
+<em>&lt;symlink&gt;</em> will be <code>..</code><code>/foo</code>.  <em>&lt;size&gt;</em> is the size of the symlink in bytes.</p>
 </div>
 <div class="paragraph">
 <p>If <code>--follow-symlinks</code> is used, the following error messages will be
@@ -1014,7 +1014,7 @@ will be reported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

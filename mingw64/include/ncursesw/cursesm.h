@@ -1,6 +1,6 @@
 // * This makes emacs happy -*-Mode: C++;-*-
 /****************************************************************************
- * Copyright 2019-2020,2022 Thomas E. Dickey                                *
+ * Copyright 2019-2022,2024 Thomas E. Dickey                                *
  * Copyright 1998-2012,2014 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
@@ -32,7 +32,7 @@
  *   Author: Juergen Pfeifer, 1997                                          *
  ****************************************************************************/
 
-// $Id: cursesm.h,v 1.35 2022/08/20 20:52:15 tom Exp $
+// $Id: cursesm.h,v 1.36 2024/10/05 22:47:12 tom Exp $
 
 #ifndef NCURSES_CURSESM_H_incl
 #define NCURSES_CURSESM_H_incl 1
@@ -245,7 +245,7 @@ protected:
   }
 
   inline void *get_user() {
-    UserHook* uptr = STATIC_CAST(UserHook*)(::menu_userptr (menu));
+    const UserHook* uptr = STATIC_CAST(UserHook*)(::menu_userptr (menu));
     assert (uptr != 0 && uptr->m_back==this && uptr->m_owner==menu);
     return uptr->m_user;
   }

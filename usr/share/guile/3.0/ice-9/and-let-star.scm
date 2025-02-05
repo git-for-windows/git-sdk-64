@@ -53,12 +53,12 @@
       ((_ orig-form ((var expr)) . body)
        (identifier? #'var)
        #'(let ((var expr))
-           (and var (begin . body))))
+           (and var (let () . body))))
       ((_ orig-form ((expr)) . body)
-       #'(and expr (begin . body)))
+       #'(and expr (let () . body)))
       ((_ orig-form (var) . body)
        (identifier? #'var)
-       #'(and var (begin . body)))
+       #'(and var (let () . body)))
 
       ;; Handle bad clauses.
       ((_ orig-form (bad-clause . rest) . body)

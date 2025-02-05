@@ -482,7 +482,7 @@ one reference (for allow-tip-sha1-in-want).</p>
 <p>Efficient enumeration of an entire namespace, such as <code>refs/tags/</code>.</p>
 </li>
 <li>
-<p>Support atomic push with <code>O(size_of_update)</code> operations.</p>
+<p>Support atomic push with <code>O</code>(<code>size_of_update</code>) operations.</p>
 </li>
 <li>
 <p>Combine reflog storage with ref storage for small transactions.</p>
@@ -785,7 +785,7 @@ specify the alignment with the file header&#8217;s <code>block_size</code> field
 </div>
 <div class="paragraph">
 <p>Block alignment is not required by the file format. Unaligned files must
-set <code>block_size = 0</code> in the file header, and omit <code>padding</code>. Unaligned
+set <code>block_size</code> <code>=</code> <code>0</code> in the file header, and omit <code>padding</code>. Unaligned
 files with more than one ref block must include the <a href="#Ref-index">ref
 index</a> to support fast lookup. Readers must be able to read both aligned
 and non-aligned files.</p>
@@ -811,14 +811,14 @@ uint64( max_update_index )</pre>
 </div>
 <div class="paragraph">
 <p>Aligned files must specify <code>block_size</code> to configure readers with the
-expected block alignment. Unaligned files must set <code>block_size = 0</code>.</p>
+expected block alignment. Unaligned files must set <code>block_size</code> <code>=</code> <code>0</code>.</p>
 </div>
 <div class="paragraph">
 <p>The <code>min_update_index</code> and <code>max_update_index</code> describe bounds for the
 <code>update_index</code> field of all log records in this file. When reftables are
 used in a stack for <a href="#Update-transactions">transactions</a>, these
 fields can order the files such that the prior file&#8217;s
-<code>max_update_index + 1</code> is the next file&#8217;s <code>min_update_index</code>.</p>
+<code>max_update_index</code> <code>+</code> <code>1</code> is the next file&#8217;s <code>min_update_index</code>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -874,7 +874,7 @@ padding?</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Blocks begin with <code>block_type = 'r'</code> and a 3-byte <code>block_len</code> which
+<p>Blocks begin with <code>block_type</code> <code>=</code> 'r' and a 3-byte <code>block_len</code> which
 encodes the number of bytes in the block up to, but not including the
 optional <code>padding</code>. This is always less than or equal to the file&#8217;s
 block size. In the first ref block, <code>block_len</code> includes 24 bytes for
@@ -940,7 +940,7 @@ table at the end of the block.</p>
 <div class="paragraph">
 <p>The <code>update_index</code> that last modified the reference can be obtained by
 adding <code>update_index_delta</code> to the <code>min_update_index</code> from the file
-header: <code>min_update_index + update_index_delta</code>.</p>
+header: <code>min_update_index</code> <code>+</code> <code>update_index_delta</code>.</p>
 </div>
 <div class="paragraph">
 <p>The <code>value</code> follows. Its format is determined by <code>value_type</code>, one of
@@ -958,7 +958,7 @@ the following:</p>
 <p><code>0x2</code>: two object names; value of the ref, peeled target</p>
 </li>
 <li>
-<p><code>0x3</code>: symbolic reference: <code>varint( target_len ) target</code></p>
+<p><code>0x3</code>: symbolic reference: <code>varint</code>( <code>target_len</code> ) <code>target</code></p>
 </li>
 </ul>
 </div>
@@ -967,7 +967,7 @@ the following:</p>
 reference target. No compression is applied to the target name.</p>
 </div>
 <div class="paragraph">
-<p>Types <code>0x4..0x7</code> are reserved for future use.</p>
+<p>Types <code>0x4</code><code>..</code><code>0x7</code> are reserved for future use.</p>
 </div>
 </div>
 </div>
@@ -1019,7 +1019,7 @@ padding?</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The index blocks begin with <code>block_type = 'i'</code> and a 3-byte <code>block_len</code>
+<p>The index blocks begin with <code>block_type</code> <code>=</code> 'i' and a 3-byte <code>block_len</code>
 which encodes the number of bytes in the block, up to but not including
 the optional <code>padding</code>.</p>
 </div>
@@ -1145,7 +1145,7 @@ abbreviation of 5-6 raw bytes, 10-12 hex digits).</p>
 <div class="paragraph">
 <p>Each record contains <code>position_count</code> number of positions for matching
 ref blocks. For 1-7 positions the count is stored in <code>cnt_3</code>. When
-<code>cnt_3 = 0</code> the actual count follows in a varint, <code>cnt_large</code>.</p>
+<code>cnt_3</code> <code>=</code> <code>0</code> the actual count follows in a varint, <code>cnt_large</code>.</p>
 </div>
 <div class="paragraph">
 <p>The use of <code>cnt_3</code> bets most objects are pointed to by only a single
@@ -1153,7 +1153,7 @@ reference, some may be pointed to by a couple of references, and very
 few (if any) are pointed to by more than 7 references.</p>
 </div>
 <div class="paragraph">
-<p>A special case exists when <code>cnt_3 = 0</code> and <code>cnt_large = 0</code>: there are no
+<p>A special case exists when <code>cnt_3</code> <code>=</code> <code>0</code> and <code>cnt_large</code> <code>=</code> <code>0</code>: there are no
 <code>position_delta</code>, but at least one reference starts with this
 abbreviation. A reader that needs exact reference names must scan all
 references to find which specific references have the desired object.
@@ -1179,7 +1179,7 @@ for (j = 1; j &lt; position_count; j++) {
 <div class="paragraph">
 <p>With a position in hand, a reader must linearly scan the ref block,
 starting from the first <code>ref_record</code>, testing each reference&#8217;s object names
-(for <code>value_type = 0x1</code> or <code>0x2</code>) for full equality. Faster searching by
+(for <code>value_type</code> <code>=</code> <code>0x1</code> or <code>0x2</code>) for full equality. Faster searching by
 object name within a single ref block is not supported by the reftable format.
 Smaller block sizes reduce the number of candidates this step must
 consider.</p>
@@ -1211,7 +1211,7 @@ obtain <code>obj_index_position</code>. If not present, the position will be 0.<
 <p>Log blocks are variable in size, and do not match the <code>block_size</code>
 specified in the file header or footer. Writers should choose an
 appropriate buffer size to prepare a log block for deflation, such as
-<code>2 * block_size</code>.</p>
+<code>2</code> * <code>block_size</code>.</p>
 </div>
 <div class="paragraph">
 <p>A log block is written as:</p>
@@ -1228,7 +1228,7 @@ zlib_deflate {
 </div>
 </div>
 <div class="paragraph">
-<p>Log blocks look similar to ref blocks, except <code>block_type = 'g'</code>.</p>
+<p>Log blocks look similar to ref blocks, except <code>block_type</code> <code>=</code> 'g'.</p>
 </div>
 <div class="paragraph">
 <p>The 4-byte block header is followed by the deflated block contents using
@@ -1315,13 +1315,13 @@ key described above.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>The <code>log_type = 0x0</code> is mostly useful for <code>git stash drop</code>, removing an
+<p>The <code>log_type</code> <code>=</code> <code>0x0</code> is mostly useful for <code>git</code> <code>stash</code> <code>drop</code>, removing an
 entry from the reflog of <code>refs/stash</code> in a transaction file (below),
 without needing to rewrite larger files. Readers reading a stack of
 reflogs must treat this as a deletion.</p>
 </div>
 <div class="paragraph">
-<p>For <code>log_type = 0x1</code>, the <code>log_data</code> section follows
+<p>For <code>log_type</code> <code>=</code> <code>0x1</code>, the <code>log_data</code> section follows
 <a href="../git-update-ref.html">git-update-ref(1)</a> logging and includes:</p>
 </div>
 <div class="ulist">
@@ -1349,11 +1349,11 @@ reflogs must treat this as a deletion.</p>
 <div class="paragraph">
 <p><code>tz_offset</code> is the absolute number of minutes from GMT the committer was
 at the time of the update. For example <code>GMT-0800</code> is encoded in reftable
-as <code>sint16(-480)</code> and <code>GMT+0230</code> is <code>sint16(150)</code>.</p>
+as <code>sint16</code>(<code>-480</code>) and <code>GMT+0230</code> is <code>sint16</code>(<code>150</code>).</p>
 </div>
 <div class="paragraph">
-<p>The committer email does not contain <code>&lt;</code> or <code>&gt;</code>, it&#8217;s the value normally
-found between the <code>&lt;&gt;</code> in a git commit object header.</p>
+<p>The committer email does not contain &lt; or &gt;, it&#8217;s the value normally
+found between the &lt;&gt; in a git commit object header.</p>
 </div>
 <div class="paragraph">
 <p>The <code>message_length</code> may be 0, in which case there was no message
@@ -1393,7 +1393,7 @@ own <code>update_index</code> to preserve semantics.</p>
 <h4 id="_log_index">Log index</h4>
 <div class="paragraph">
 <p>The log index stores the log key
-(<code>refname \0 reverse_int64(update_index)</code>) for the last log record of
+(<code>refname</code> \0 <code>reverse_int64</code>(<code>update_index</code>)) for the last log record of
 every log block in the file, supporting bounded-time lookup.</p>
 </div>
 <div class="paragraph">
@@ -1403,7 +1403,7 @@ There is no padding used to align the log index to block alignment.</p>
 </div>
 <div class="paragraph">
 <p>Log index format is identical to ref index, except the keys are 9 bytes
-longer to include <code>'\0'</code> and the 8-byte <code>reverse_int64(update_index)</code>.
+longer to include '\0' and the 8-byte <code>reverse_int64</code>(<code>update_index</code>).
 Records use <code>block_position</code> to refer to the start of a log block.</p>
 </div>
 <div class="sect4">
@@ -1469,8 +1469,8 @@ version 2.</p>
 <h5 id="_reading_the_footer">Reading the footer</h5>
 <div class="paragraph">
 <p>Readers must first read the file start to determine the version
-number. Then they seek to <code>file_length - FOOTER_LENGTH</code> to access the
-footer. A trusted external source (such as <code>stat(2)</code>) is necessary to
+number. Then they seek to <code>file_length</code> <code>-</code> <code>FOOTER_LENGTH</code> to access the
+footer. A trusted external source (such as <code>stat</code>(<code>2</code>)) is necessary to
 obtain <code>file_length</code>. When reading the footer, readers must verify:</p>
 </div>
 <div class="ulist">
@@ -1609,7 +1609,7 @@ be isolated into log-only files.</p>
 <h4 id="_logs_are_read_backwards">Logs are read backwards</h4>
 <div class="paragraph">
 <p>Logs are frequently accessed backwards (most recent N records for master
-to answer <code>master@{4}</code>), so log records are grouped by reference, and
+to answer <code>master@</code>{4}), so log records are grouped by reference, and
 sorted descending by update index.</p>
 </div>
 </div>
@@ -1637,11 +1637,11 @@ sorted descending by update index.</p>
 Their names should have a random element, such that each filename is globally
 unique; this helps avoid spurious failures on Windows, where open files cannot
 be removed or overwritten. It suggested to use
-<code>${min_update_index}-${max_update_index}-${random}.ref</code> as a naming convention.</p>
+<code>$</code>{min_update_index}-${max_update_index}-${random}.<code>ref</code> as a naming convention.</p>
 </div>
 <div class="paragraph">
-<p>Log-only files use the <code>.log</code> extension, while ref-only and mixed ref
-and log files use <code>.ref</code>. extension.</p>
+<p>Log-only files use the .<code>log</code> extension, while ref-only and mixed ref
+and log files use .<code>ref</code>. extension.</p>
 </div>
 <div class="paragraph">
 <p>The stack ordering file is <code>$GIT_DIR/reftable/tables.list</code> and lists the
@@ -1678,13 +1678,13 @@ following dummy files</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>.git/HEAD</code>, a regular file containing <code>ref: refs/heads/.invalid</code>.</p>
+<p>.<code>git/HEAD</code>, a regular file containing <code>ref:</code> <code>refs/heads/.invalid</code>.</p>
 </li>
 <li>
-<p><code>.git/refs/</code>, a directory</p>
+<p>.<code>git/refs/</code>, a directory</p>
 </li>
 <li>
-<p><code>.git/refs/heads</code>, a regular file</p>
+<p>.<code>git/refs/heads</code>, a regular file</p>
 </li>
 </ul>
 </div>
@@ -1728,13 +1728,13 @@ new reftable and atomically appending it to the stack:</p>
 </li>
 <li>
 <p>Select <code>update_index</code> to be most recent file&#8217;s
-<code>max_update_index + 1</code>.</p>
+<code>max_update_index</code> <code>+</code> <code>1</code>.</p>
 </li>
 <li>
 <p>Prepare temp reftable <code>tmp_XXXXXX</code>, including log entries.</p>
 </li>
 <li>
-<p>Rename <code>tmp_XXXXXX</code> to <code>${update_index}-${update_index}-${random}.ref</code>.</p>
+<p>Rename <code>tmp_XXXXXX</code> to <code>$</code>{update_index}-${update_index}-${random}.<code>ref</code>.</p>
 </li>
 <li>
 <p>Copy <code>tables.list</code> to <code>tables.list.lock</code>, appending file from (5).</p>
@@ -1802,7 +1802,7 @@ prevents other processes from trying to compact these files.</p>
 </li>
 <li>
 <p>Compact <code>B</code> and <code>C</code> into a temp file
-<code>${min_update_index}-${max_update_index}_XXXXXX</code>.</p>
+<code>$</code>{min_update_index}-${max_update_index}_XXXXXX.</p>
 </li>
 <li>
 <p>Reacquire lock <code>tables.list.lock</code>.</p>
@@ -1813,8 +1813,8 @@ should always be the case, assuming that other processes are adhering to
 the locking protocol.</p>
 </li>
 <li>
-<p>Rename <code>${min_update_index}-${max_update_index}_XXXXXX</code> to
-<code>${min_update_index}-${max_update_index}-${random}.ref</code>.</p>
+<p>Rename <code>$</code>{min_update_index}-${max_update_index}_XXXXXX to
+<code>$</code>{min_update_index}-${max_update_index}-${random}.<code>ref</code>.</p>
 </li>
 <li>
 <p>Write the new stack to <code>tables.list.lock</code>, replacing <code>B</code> and <code>C</code>
@@ -1862,7 +1862,7 @@ cleanup operation should proceed as follows:</p>
 <p>refresh the reftable stack, by reading <code>tables.list</code></p>
 </li>
 <li>
-<p>for each <code>*.ref</code> file, remove it if</p>
+<p>for each *.<code>ref</code> file, remove it if</p>
 <div class="ulist">
 <ul>
 <li>
@@ -1994,7 +1994,7 @@ impossible.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

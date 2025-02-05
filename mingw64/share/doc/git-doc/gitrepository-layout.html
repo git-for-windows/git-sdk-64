@@ -465,10 +465,10 @@ pre>code {
 <div class="ulist">
 <ul>
 <li>
-<p>a <code>.git</code> directory at the root of the working tree;</p>
+<p>a .<code>git</code> directory at the root of the working tree;</p>
 </li>
 <li>
-<p>a <code>&lt;project&gt;.git</code> directory that is a <em>bare</em> repository
+<p>a <em>&lt;project&gt;</em><code>.git</code> directory that is a <em>bare</em> repository
 (i.e. without its own working tree), that is typically used for
 exchanging histories with others by pushing into it and fetching
 from it.</p>
@@ -476,13 +476,13 @@ from it.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p><strong>Note</strong>: Also you can have a plain text file <code>.git</code> at the root of
-your working tree, containing <code>gitdir: &lt;path&gt;</code> to point at the real
+<p><strong>Note</strong>: Also you can have a plain text file .<code>git</code> at the root of
+your working tree, containing <code>gitdir:</code> <em>&lt;path&gt;</em> to point at the real
 directory that has the repository.
 This mechanism is called a <em>gitfile</em> and is usually managed via the
-<code>git submodule</code> and <code>git worktree</code> commands. It is often used for
+<code>git</code> <code>submodule</code> and <code>git</code> <code>worktree</code> commands. It is often used for
 a working tree of a submodule checkout, to allow you in the
-containing superproject to <code>git checkout</code> a branch that does not
+containing superproject to <code>git</code> <code>checkout</code> a branch that does not
 have the submodule.  The <code>checkout</code> has to remove the entire
 submodule working tree, without losing the submodule repository.</p>
 </div>
@@ -543,7 +543,7 @@ recorded in this directory.</p>
 <dd>
 <p>This file is to help dumb transports discover what packs
 are available in this object store.  Whenever a pack is
-added or removed, <code>git update-server-info</code> should be run
+added or removed, <code>git</code> <code>update-server-info</code> should be run
 to keep this file up to date if the repository is
 published for dumb transports.  <em>git repack</em> does this
 by default.</p>
@@ -590,9 +590,9 @@ object, or a tag object that points at a commit object).</p>
 <p>records tip-of-the-tree commit objects of branches copied
 from a remote repository.</p>
 </dd>
-<dt class="hdlist1">refs/replace/<code>&lt;obj-sha1&gt;</code></dt>
+<dt class="hdlist1">refs/replace/<em>&lt;obj-sha1&gt;</em></dt>
 <dd>
-<p>records the SHA-1 of the object that replaces <code>&lt;obj-sha1&gt;</code>.
+<p>records the SHA-1 of the object that replaces <em>&lt;obj-sha1&gt;</em>.
 This is similar to info/grafts and is internally used and
 maintained by <a href="git-replace.html">git-replace(1)</a>. Such refs can be exchanged
 between repositories while grafts are not.</p>
@@ -639,7 +639,7 @@ working directory in multiple working directory setup (see
 <dd>
 <p>A slightly deprecated way to store shorthands to be used
 to specify a URL to <em>git fetch</em>, <em>git pull</em> and <em>git push</em>.
-A file can be stored as <code>branches/&lt;name&gt;</code> and then
+A file can be stored as <code>branches/</code><em>&lt;name&gt;</em> and then
 <em>name</em> can be given to these commands in place of
 <em>repository</em> argument.  See the REMOTES section in
 <a href="git-fetch.html">git-fetch(1)</a> for details.  This mechanism is legacy
@@ -652,7 +652,7 @@ directory is ignored if $GIT_COMMON_DIR is set and
 <p>Hooks are customization scripts used by various Git
 commands.  A handful of sample hooks are installed when
 <em>git init</em> is run, but all of them are disabled by
-default.  To enable, the <code>.sample</code> suffix has to be
+default.  To enable, the .<code>sample</code> suffix has to be
 removed from the filename by renaming.
 Read <a href="githooks.html">githooks(5)</a> for more details about
 each hook. This directory is ignored if $GIT_COMMON_DIR is set
@@ -709,7 +709,7 @@ for a more flexible and robust system to do the same thing.</p>
 <dt class="hdlist1">info/exclude</dt>
 <dd>
 <p>This file, by convention among Porcelains, stores the
-exclude pattern list. <code>.gitignore</code> is the per-directory
+exclude pattern list. .<code>gitignore</code> is the per-directory
 ignore file.  <em>git status</em>, <em>git add</em>, <em>git rm</em> and
 <em>git clean</em> look at it but the core Git commands do not look
 at it.  See also: <a href="gitignore.html">gitignore(5)</a>.</p>
@@ -717,7 +717,7 @@ at it.  See also: <a href="gitignore.html">gitignore(5)</a>.</p>
 <dt class="hdlist1">info/attributes</dt>
 <dd>
 <p>Defines which attributes to assign to a path, similar to per-directory
-<code>.gitattributes</code> files.   See also: <a href="gitattributes.html">gitattributes(5)</a>.</p>
+.<code>gitattributes</code> files.   See also: <a href="gitattributes.html">gitattributes(5)</a>.</p>
 </dd>
 <dt class="hdlist1">info/sparse-checkout</dt>
 <dd>
@@ -789,8 +789,8 @@ updated every time the linked repository is accessed.</p>
 <dd>
 <p>If this file exists, the linked working tree may be on a
 portable device and not available. The presence of this file
-prevents <code>worktrees/&lt;id&gt;</code> from being pruned either automatically
-or manually by <code>git worktree prune</code>. The file may contain a string
+prevents <code>worktrees/</code><em>&lt;id&gt;</em> from being pruned either automatically
+or manually by <code>git</code> <code>worktree</code> <code>prune</code>. The file may contain a string
 explaining why the repository is locked.</p>
 </dd>
 <dt class="hdlist1">worktrees/&lt;id&gt;/config.worktree</dt>
@@ -878,7 +878,7 @@ configuration keys found in the <code>extensions</code> section of the
 configuration file.</p>
 </li>
 <li>
-<p>If a version-1 repository specifies any <code>extensions.*</code> keys that
+<p>If a version-1 repository specifies any <code>extensions.</code>* keys that
 the running git has not implemented, the operation MUST NOT
 proceed. Similarly, if the value of any known key is not understood
 by the implementation, the operation MUST NOT proceed.</p>
@@ -892,59 +892,9 @@ provides no benefit, and makes the repository incompatible with older
 implementations of git).</p>
 </div>
 <div class="paragraph">
-<p>This document will serve as the master list for extensions. Any
-implementation wishing to define a new extension should make a note of
-it here, in order to claim the name.</p>
-</div>
-<div class="paragraph">
-<p>The defined extensions are:</p>
-</div>
-<div class="sect3">
-<h4 id="_noop"><code>noop</code></h4>
-<div class="paragraph">
-<p>This extension does not change git&#8217;s behavior at all. It is useful only
-for testing format-1 compatibility.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_preciousobjects"><code>preciousObjects</code></h4>
-<div class="paragraph">
-<p>When the config key <code>extensions.preciousObjects</code> is set to <code>true</code>,
-objects in the repository MUST NOT be deleted (e.g., by <code>git-prune</code> or
-<code>git repack -d</code>).</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_partialclone"><code>partialClone</code></h4>
-<div class="paragraph">
-<p>When the config key <code>extensions.partialClone</code> is set, it indicates
-that the repo was created with a partial clone (or later performed
-a partial fetch) and that the remote may have omitted sending
-certain unwanted objects.  Such a remote is called a "promisor remote"
-and it promises that all such omitted objects can be fetched from it
-in the future.</p>
-</div>
-<div class="paragraph">
-<p>The value of this key is the name of the promisor remote.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_worktreeconfig"><code>worktreeConfig</code></h4>
-<div class="paragraph">
-<p>If set, by default "git config" reads from both "config" and
-"config.worktree" files from GIT_DIR in that order. In
-multiple working directory mode, "config" file is shared while
-"config.worktree" is per-working directory (i.e., it&#8217;s in
-GIT_COMMON_DIR/worktrees/&lt;id&gt;/config.worktree)</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_refstorage"><code>refStorage</code></h4>
-<div class="paragraph">
-<p>Specifies the file format for the ref database. The valid values are
-<code>files</code> (loose references with a packed-refs file) and <code>reftable</code> (see
-Documentation/technical/reftable.txt).</p>
-</div>
+<p>The defined extensions are given in the <code>extensions.</code>* section of
+<a href="git-config.html">git-config(1)</a>. Any implementation wishing to define a new
+extension should make a note of it there, in order to claim the name.</p>
 </div>
 </div>
 </div>
@@ -955,6 +905,7 @@ Documentation/technical/reftable.txt).</p>
 <div class="paragraph">
 <p><a href="git-init.html">git-init(1)</a>,
 <a href="git-clone.html">git-clone(1)</a>,
+<a href="git-config.html">git-config(1)</a>,
 <a href="git-fetch.html">git-fetch(1)</a>,
 <a href="git-pack-refs.html">git-pack-refs(1)</a>,
 <a href="git-gc.html">git-gc(1)</a>,
@@ -975,7 +926,7 @@ Documentation/technical/reftable.txt).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

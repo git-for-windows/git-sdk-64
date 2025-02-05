@@ -94,6 +94,8 @@ references."
                            (if proc
                                (add-use proc uses)
                                uses)))
+                        (($ $calli args callee)
+                         (add-uses args (add-use callee uses)))
                         (($ $primcall name param args)
                          (add-uses args uses))))
                      (($ $branch kf kt src op param args)

@@ -53,7 +53,7 @@
     (dynamic-wind
         (lambda ()
           (when entered
-            (error "thunk may only be entered once: ~a" thunk))
+            (error (format #f "thunk may only be entered once: ~a" thunk)))
           (set! entered #t))
         thunk
         (lambda () #t))))

@@ -26,11 +26,8 @@
 ;;; Code:
 
 (define-module (texinfo plain-text)
-  #:use-module (texinfo)
   #:use-module (texinfo string-utils)
-  #:use-module (sxml transform)
   #:use-module (srfi srfi-1)
-  #:use-module (srfi srfi-13)
   #:use-module (ice-9 match)
   #:export (stexi->plain-text
             *line-width*))

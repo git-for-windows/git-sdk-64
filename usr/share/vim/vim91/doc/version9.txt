@@ -1,4 +1,4 @@
-*version9.txt*  For Vim version 9.1.  Last change: 2024 Aug 23
+*version9.txt*  For Vim version 9.1.  Last change: 2025 Jan 02
 
 
 		  VIM REFERENCE MANUAL    by Bram Moolenaar
@@ -31790,7 +31790,7 @@ Changed ~
 - The features |++builtin_terms|, |+cmdline_info|, |+cmdwin|, |+file_in_path|,
   |+float|, |+path_extra|, |+textobjects|, |+wildignore| and |+wildmenu| are
   available in all the builds.
-- Support for Windows-XP is dropped.
+- Support for Windows-XP is dropped (starting with v9.0.0496)
 - Support for VisVim is removed.
 - The "small" and "big" builds are dropped in favor of "tiny" and "huge"
   builds.
@@ -31849,14 +31849,14 @@ Autocommands: ~
 
 Commands: ~
 
-|:abstract|		define a Vim9 abstract class
-|:class|		start of a class specification
+|:abstract|		declare a Vim9 abstract class
+|:class|		start of a class declaration
 |:defer|		call function when current function is done
 |:echowindow|		same as :echomsg, but use a popup window
-|:endinterface|		end of an interface specification
-|:endclass|		end of a class specification
+|:endinterface|		end of an interface declaration
+|:endclass|		end of a class declaration
 |:horizontal|		following window command works horizontally
-|:interface|		start of an interface specification
+|:interface|		start of an interface declaration
 |:public|		prefix for a class or object member
 |:static|		prefix for a class member or function
 |:this|			prefix for an object member
@@ -41577,7 +41577,7 @@ Changed~
 - the default for 'commentstring' contains whitespace padding to have
   automatic comments look nicer |comment-install|
 - 'completeopt' is now a |global-local| option.
-- 'nrformat' accepts the new "blank" suboption, to determine a signed or
+- 'nrformats' accepts the new "blank" suboption, to determine a signed or
   unsigned number based on whitespace in front of a minus sign.
 - allow to specify a priority when defining a new sign |:sign-define|
 - provide information about function arguments using the get(func, "arity")
@@ -41589,6 +41589,8 @@ Changed~
 - allow to complete directories from 'cdpath' for |:cd| and similar commands,
   add the "cd_in_path" completion type for e.g. |:command-complete| and
   |getcompletion()|
+- allow to complete shell commands and files using the new shellcmdline
+  completion type using |:command-complete| and |getcmdcomplpat()|
 - add 'cpoptions' flag "z" |cpo-z|, to disable some (traditional) vi
   behaviour/inconsistency (see |d-special| and |cw|).
 - allow to specify additional attributes in the completion menu (allows to
@@ -41596,6 +41598,33 @@ Changed~
 - the regex engines match correctly case-insensitive multi-byte characters
   (and apply proper case folding)
 - |:keeppatterns| preserves the last substitute pattern when used with |:s|
+- |setqflist()| and |setloclist()| can optionally try to preserve the current
+  selection in the quickfix list with the "u" action.
+- the putty terminal is detected using an |TermResponse| autocommand in
+  |defaults.vim| and Vim switches to a dark background
+- the |help-TOC| package is included to ease navigating the documentation.
+- an interactive tutor plugin has been included |vim-tutor-mode|, can be
+  started via |:Tutor|
+- improve the |vimtutor| and add a second chapter for more advanced tips
+- allow to pass local Vim script variables to python interpreter |py3eval()|
+- |getwininfo()| now also returns the "leftcol" property for a window
+- 'rulerformat' now supports the |stl-%!| item
+- the default 'history' option value has been increased to 200 and removed
+  from |defaults.vim|
+- the default 'backspace' option for Vim has been set to "indent,eol,start"
+  and removed from |defaults.vim|
+- the completed word and completion type are provided when handling the
+  |CompleteDone| autocommand in the |v:event| dictionary
+- the default fontsize for the GTK builds of Vim (Windows and Unix) has been
+  increased to 12pt to accomodate modern high-dpi monitors
+- filetype detection now detects bash scripts as a separate "bash" filetype
+  instead of the "sh" filetype
+- the default value of the 'keyprotocol' option has been updated by support
+  for the ghostty terminal emulator (using kitty protocol)
+- |complete_info()| returns the list of matches shown in the poppu menu via
+  the "matches" key
+- |v:stacktrace| The stack trace of the exception most recently caught and
+  not finished
 
 							*added-9.2*
 Added ~
@@ -41604,12 +41633,18 @@ Various syntax, indent and other plugins were added.
 
 Functions: ~
 
+|base64_decode()|	decode a base64 string into a blob
+|base64_encode()|	encode a blob into a base64 string
 |bindtextdomain()|	set message lookup translation base path
 |diff()|		diff two Lists of strings
 |filecopy()|		copy a file {from} to {to}
 |foreach()|		apply function to List items
+|getcellpixels()|	get List of terminal cell pixel size
+|getcmdcomplpat()|	Shell command line completion
+|getcmdprompt()|	get prompt for input()/confirm()
 |getregion()|		get a region of text from a buffer
 |getregionpos()|	get a list of positions for a region
+|getstacktrace()|	get current stack trace of Vim scripts
 |id()|			get unique identifier for a Dict, List, Object,
 			Channel or Blob variable
 |matchbufline()|	all the matches of a pattern in a buffer
@@ -41619,7 +41654,7 @@ Functions: ~
 
 Autocommands: ~
 
-|CursorMovedC|		after the cursor was moved in the comamnd-line
+|CursorMovedC|		after the cursor was moved in the command-line
 |KeyInputPre|		before processing any key event in any mode
 |SessionWritePost|	after writing the session file |:mksession|
 |TermResponseAll|	after the terminal response to |t_RV| and others is
@@ -41629,6 +41664,7 @@ Autocommands: ~
 
 Highlighting: ~
 
+|hl-ComplMatchIns|	matched text of the currently inserted completion.
 |hl-MsgArea|		highlighting of the Command-line and messages area
 |hl-PmenuMatch|		Popup menu: highlighting of matched text
 |hl-PmenuMatchSel|	Popup menu: highlighting of matched text in selected
@@ -41637,10 +41673,16 @@ Highlighting: ~
 Commands: ~
 
 |[r| and |]r|		to move the cursor to previous/next rare word
-
+|:pbuffer|		Edit buffer [N] from the buffer list in the preview
+			window
 
 Options: ~
 
+'completeitemalign'	Order of |complete-items| in Insert mode completion
+			popup
+'findfunc'		Vim function to obtain the results for a |:find|
+			command
+'messagesopt'		configure |:messages| and |hit-enter| prompt
 'winfixbuf'		Keep buffer focused in a window
 'tabclose'		Which tab page to focus after closing a tab page
 't_xo'			Terminal uses XON/XOFF handshaking (e.g. vt420)
@@ -41690,4 +41732,4 @@ features, but does not include runtime file changes (syntax, indent, ftplugin,
 documentation, etc.)
 
 
- vim:tw=78:ts=8:noet:ft=help:norl:fdm=manual:
+ vim:tw=78:ts=8:noet:ft=help:norl:fdm=manual:nofoldenable

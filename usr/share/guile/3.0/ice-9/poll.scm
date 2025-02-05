@@ -19,7 +19,6 @@
 
 (define-module (ice-9 poll)
   #:use-module (srfi srfi-9)
-  #:use-module (srfi srfi-9 gnu)
   #:use-module (rnrs bytevectors)
   #:export (make-empty-poll-set
             poll-set?

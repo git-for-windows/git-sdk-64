@@ -1,6 +1,6 @@
 ;;; Compilation targets
 
-;; Copyright (C) 2011-2014,2017-2018 Free Software Foundation, Inc.
+;; Copyright (C) 2011-2014,2017-2018,2023-2024 Free Software Foundation, Inc.
 
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,8 @@
 
             target-cpu target-vendor target-os
 
+            target-runtime
+
             target-endianness target-word-size
 
             target-max-size-t
@@ -42,8 +44,16 @@
 ;;; Target types
 ;;;
 
-(define %native-word-size
-  ((@ (system foreign) sizeof) '*))
+;; Hacky way to get native pointer size without having to load (system
+;; foreign).
+(define-syntax %native-word-size
+  (lambda (stx)
+    (syntax-case stx ()
+      (id (identifier? #'id)
+          (cond
+           ((< most-positive-fixnum (ash 1 32)) 4)
+           ((< most-positive-fixnum (ash 1 64)) 8)
+           (else (error "unexpected!" most-positive-fixnum)))))))
 
 (define %target-type (make-fluid %host-type))
 (define %target-endianness (make-fluid (native-endianness)))
@@ -84,7 +94,9 @@
       (cond ((string-match "^i[0-9]86$" cpu)
              (endianness little))
             ((member cpu '("x86_64" "ia64"
-                           "powerpcle" "powerpc64le" "mipsel" "mips64el" "nios2" "sh3" "sh4" "alpha" "arc"))
+                           "powerpcle" "powerpc64le" "mipsel" "mips64el" "nios2"
+                           "sh3" "sh4" "alpha" "arc"
+                           "wasm32" "wasm64"))
              (endianness little))
             ((member cpu '("sparc" "sparc64" "powerpc" "powerpc64" "spu"
                            "mips" "mips64" "m68k" "s390x"))
@@ -157,6 +169,14 @@
   "Return the vendor name of the target platform."
   (triplet-vendor (target-type)))
 
+(define target-runtime
+  (make-parameter
+   'guile-vm
+   (lambda (val)
+     "Determine what kind of virtual machine we are targetting.  Usually this
+is @code{guile-vm} when generating bytecode for Guile's virtual machine."
+     val)))
+
 (define (target-os)
   "Return the operating system name of the target platform."
   (triplet-os (target-type)))
@@ -178,9 +198,7 @@
 (define (target-max-size-t/scm)
   "Return the maximum size_t value of the target platform, in units of
 SCM words."
-  ;; Apply the currently-universal restriction of a maximum 48-bit
-  ;; address space.
-  (/ (target-max-size-t) (target-word-size)))
+  (floor/ (target-max-size-t) (target-word-size)))
 
 (define (target-max-vector-length)
   "Return the maximum vector length of the target platform, in units of

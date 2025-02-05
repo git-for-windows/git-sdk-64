@@ -1,6 +1,6 @@
 ;;; Repl common routines
 
-;; Copyright (C) 2001, 2008-2016, 2019-2022  Free Software Foundation, Inc.
+;; Copyright (C) 2001, 2008-2016, 2019-2022, 2024  Free Software Foundation, Inc.
 
 ;;; This library is free software; you can redistribute it and/or
 ;;; modify it under the terms of the GNU Lesser General Public
@@ -22,8 +22,6 @@
   #:use-module (system base syntax)
   #:use-module (system base compile)
   #:use-module (system base language)
-  #:use-module (system base message)
-  #:use-module (system vm program)
   #:use-module (system vm loader)
   #:use-module (ice-9 control)
   #:use-module (ice-9 copy-tree)
@@ -40,7 +38,7 @@
 
 (define *version*
   (format #f "GNU Guile ~A
-Copyright (C) 1995-2023 Free Software Foundation, Inc.
+Copyright (C) 1995-2024 Free Software Foundation, Inc.
 
 Guile comes with ABSOLUTELY NO WARRANTY; for details type `,show w'.
 This program is free software, and you are welcome to redistribute it
@@ -144,7 +142,12 @@ See <http://www.gnu.org/licenses/lgpl.html>, for more details.")
          (lambda (x)
            (if (memq x vals)
                x
-               (error "Bad on-error value ~a; expected one of ~a" x vals))))))))
+               (error
+                 (format
+                   #f
+                   "Bad on-error value ~a; expected one of ~a"
+                   x
+                   vals)))))))))
 
 (define %make-repl make-repl)
 (define* (make-repl lang #:optional debug)

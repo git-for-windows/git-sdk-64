@@ -1,7 +1,7 @@
 #!/bin/sh
 # Prints the user's email address, with confirmation from the user.
 #
-# Copyright (C) 2001-2003, 2005, 2013 Free Software Foundation, Inc.
+# Copyright (C) 2001-2003, 2005, 2013, 2023 Free Software Foundation, Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,18 +16,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# Prerequisites for using ${exec_prefix}/lib and ${datarootdir}/locale.
+# Prerequisites for using /mingw64/lib and ${datarootdir}/locale.
 prefix="/mingw64"
 exec_prefix="${prefix}"
 datarootdir="${prefix}/share"
 datadir="${datarootdir}"
-# Set variables libdir, localedir.
-libdir="${exec_prefix}/lib"
+# Set variables libexecdir, localedir.
+libexecdir="/mingw64/lib"
 localedir="${datarootdir}/locale"
 
 # Support for relocatability.
 if test "yes" = yes; then
-  orig_installdir="$libdir"/gettext # see Makefile.am's install rule
+  orig_installdir="$libexecdir"/gettext # see Makefile.am's install rule
   # Determine curr_installdir without caring for symlinked callers.
   curr_installdir=`echo "$0" | sed -e 's,/[^/]*$,,'`
   curr_installdir=`cd "$curr_installdir" && pwd`
@@ -46,7 +46,7 @@ if test "yes" = yes; then
     curr_installdir=`echo "$curr_installdir" | sed -e 's,/[^/]*$,,'`
   done
   # Now relocate the directory variables that we use.
-  libdir=`echo "$libdir/" | sed -e "s%^${orig_installdir}/%${curr_installdir}/%" | sed -e 's,/$,,'`
+  libexecdir=`echo "$libexecdir/" | sed -e "s%^${orig_installdir}/%${curr_installdir}/%" | sed -e 's,/$,,'`
   localedir=`echo "$localedir/" | sed -e "s%^${orig_installdir}/%${curr_installdir}/%" | sed -e 's,/$,,'`
 fi
 
@@ -81,10 +81,10 @@ fi
 # hostname on some systems (SVR3.2, old Linux) returns a bogus exit status,
 # so uname gets run too, so we keep only the first line of output.
 #host=`(hostname || uname -n) 2>/dev/null | sed 1q`
-host=`"$libdir"/gettext/hostname --short 2>/dev/null | sed 1q`
+host=`"$libexecdir"/gettext/hostname --short 2>/dev/null | sed 1q`
 
 # Find the hostname.
-hostfqdn=`"$libdir"/gettext/hostname --fqdn 2>/dev/null | sed 1q`
+hostfqdn=`"$libexecdir"/gettext/hostname --fqdn 2>/dev/null | sed 1q`
 
 # Find a list of email addresses from various mailer configuration files.
 # All mailers use configuration files under $HOME. We handle them in a

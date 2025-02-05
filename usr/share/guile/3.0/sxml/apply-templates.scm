@@ -49,9 +49,7 @@
 ;;; Code:
 
 (define-module (sxml apply-templates)
-  #:use-module (sxml ssax)
   #:use-module ((sxml xpath) :hide (filter))
-                         
   #:export (apply-templates))
 
 (define (apply-templates tree templates)

@@ -49,7 +49,8 @@
        ((boolean? destination) (current-output-port)) ; boolean but not false
        ((output-port? destination) destination)
        (else
-        (error "format: bad destination `~a'" destination)))))
+        (error
+          (simple-format #f "format: bad destination `~a'" destination))))))
 
   (define %output-col (or (port-column port) 0))
   (define %flush-output? #f)

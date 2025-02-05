@@ -518,7 +518,7 @@ attribute.</p>
 </div>
 <div class="paragraph">
 <p>The rules by which the pattern matches paths are the same as in
-<code>.gitignore</code> files (see <a href="gitignore.html">gitignore(5)</a>), with a few exceptions:</p>
+.<code>gitignore</code> files (see <a href="gitignore.html">gitignore(5)</a>), with a few exceptions:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -528,24 +528,24 @@ attribute.</p>
 <li>
 <p>patterns that match a directory do not recursively match paths
 inside that directory (so using the trailing-slash <code>path/</code> syntax is
-pointless in an attributes file; use <code>path/**</code> instead)</p>
+pointless in an attributes file; use <code>path/</code>** instead)</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
 <p>When deciding what attributes are assigned to a path, Git
 consults <code>$GIT_DIR/info/attributes</code> file (which has the highest
-precedence), <code>.gitattributes</code> file in the same directory as the
+precedence), .<code>gitattributes</code> file in the same directory as the
 path in question, and its parent directories up to the toplevel of the
-work tree (the further the directory that contains <code>.gitattributes</code>
+work tree (the further the directory that contains .<code>gitattributes</code>
 is from the path in question, the lower its precedence). Finally
 global and system-wide files are considered (they have the lowest
 precedence).</p>
 </div>
 <div class="paragraph">
-<p>When the <code>.gitattributes</code> file is missing from the work tree, the
+<p>When the .<code>gitattributes</code> file is missing from the work tree, the
 path in the index is used as a fall-back.  During checkout process,
-<code>.gitattributes</code> in the index is used and then the file in the
+.<code>gitattributes</code> in the index is used and then the file in the
 working tree is used as a fall-back.</p>
 </div>
 <div class="paragraph">
@@ -555,18 +555,18 @@ one user&#8217;s workflow for that repository), then
 attributes should be placed in the <code>$GIT_DIR/info/attributes</code> file.
 Attributes which should be version-controlled and distributed to other
 repositories (i.e., attributes of interest to all users) should go into
-<code>.gitattributes</code> files. Attributes that should affect all repositories
+.<code>gitattributes</code> files. Attributes that should affect all repositories
 for a single user should be placed in a file specified by the
 <code>core.attributesFile</code> configuration option (see <a href="git-config.html">git-config(1)</a>).
 Its default value is $XDG_CONFIG_HOME/git/attributes. If $XDG_CONFIG_HOME
 is either not set or empty, $HOME/.config/git/attributes is used instead.
 Attributes for all users on a system should be placed in the
-<code>$(prefix)/etc/gitattributes</code> file.</p>
+<code>$</code>(<code>prefix</code>)<code>/etc/gitattributes</code> file.</p>
 </div>
 <div class="paragraph">
 <p>Sometimes you would need to override a setting of an attribute
 for a path to <code>Unspecified</code> state.  This can be done by listing
-the name of the attribute prefixed with an exclamation point <code>!</code>.</p>
+the name of the attribute prefixed with an exclamation point !.</p>
 </div>
 </div>
 </div>
@@ -583,8 +583,8 @@ trigger a warning.</p>
 <div class="paragraph">
 <p>This attribute is for filtering files by their file bit modes (40000,
 120000, 160000, 100755, 100644). e.g. <em>:(attr:builtin_objectmode=160000)</em>.
-You may also check these values with <code>git check-attr builtin_objectmode -- &lt;file&gt;</code>.
-If the object is not in the index <code>git check-attr --cached</code> will return unspecified.</p>
+You may also check these values with <code>git</code> <code>check-attr</code> <code>builtin_objectmode</code> <code>--</code> <em>&lt;file&gt;</em>.
+If the object is not in the index <code>git</code> <code>check-attr</code> <code>--cached</code> will return unspecified.</p>
 </div>
 </div>
 </div>
@@ -851,9 +851,9 @@ attribute. If you decide to use the <code>working-tree-encoding</code> attribute
 in your repository, then it is strongly recommended to ensure that all
 clients working with the repository support it.</p>
 <div class="paragraph">
-<p>For example, Microsoft Visual Studio resources files (<code>*.rc</code>) or
-PowerShell script files (<code>*.ps1</code>) are sometimes encoded in UTF-16.
-If you declare <code>*.ps1</code> as files as UTF-16 and you add <code>foo.ps1</code> with
+<p>For example, Microsoft Visual Studio resources files (*.<code>rc</code>) or
+PowerShell script files (*.<code>ps1</code>) are sometimes encoded in UTF-16.
+If you declare *.<code>ps1</code> as files as UTF-16 and you add <code>foo.ps1</code> with
 a <code>working-tree-encoding</code> enabled Git client, then <code>foo.ps1</code> will be
 stored as UTF-8 internally. A client without <code>working-tree-encoding</code>
 support will checkout <code>foo.ps1</code> as UTF-8 encoded file. This will
@@ -995,7 +995,7 @@ upon checkin. By default these commands process only a single
 blob and terminate. If a long running <code>process</code> filter is used
 in place of <code>clean</code> and/or <code>smudge</code> filters, then Git can process
 all blobs with a single filter command invocation for the entire
-life of a single Git command, for example <code>git add --all</code>. If a
+life of a single Git command, for example <code>git</code> <code>add</code> <code>--all</code>. If a
 long running <code>process</code> filter is configured then it always takes
 precedence over a configured single blob filter. See section
 below for the description of the protocol used to communicate with
@@ -1103,7 +1103,7 @@ content provided to them on standard input.</p>
 <h4 id="_long_running_filter_process">Long Running Filter Process</h4>
 <div class="paragraph">
 <p>If the filter command (a string value) is defined via
-<code>filter.&lt;driver&gt;.process</code> then Git can process all blobs with a
+<code>filter.</code><em>&lt;driver&gt;</em><code>.process</code> then Git can process all blobs with a
 single filter invocation for the entire life of a single Git
 command. This is achieved by using the long-running process protocol
 (described in technical/long-running-process-protocol.txt).</p>
@@ -1208,15 +1208,15 @@ packet:          git&lt; 0000</pre>
 <div class="paragraph">
 <p>Git neither stops nor restarts the filter process in case the
 "error"/"abort" status is set. However, Git sets its exit code
-according to the <code>filter.&lt;driver&gt;.required</code> flag, mimicking the
-behavior of the <code>filter.&lt;driver&gt;.clean</code> / <code>filter.&lt;driver&gt;.smudge</code>
+according to the <code>filter.</code><em>&lt;driver&gt;</em><code>.required</code> flag, mimicking the
+behavior of the <code>filter.</code><em>&lt;driver&gt;</em><code>.clean</code> / <code>filter.</code><em>&lt;driver&gt;</em><code>.smudge</code>
 mechanism.</p>
 </div>
 <div class="paragraph">
 <p>If the filter dies during the communication or does not adhere to
 the protocol then Git will stop the filter process and restart it
 with the next file that needs to be processed. Depending on the
-<code>filter.&lt;driver&gt;.required</code> flag Git will interpret that as error.</p>
+<code>filter.</code><em>&lt;driver&gt;</em><code>.required</code> flag Git will interpret that as error.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1295,8 +1295,8 @@ process then the <code>GIT_TRACE_PACKET</code> environment variables can be
 very helpful for debugging (see <a href="git.html">git(1)</a>).</p>
 </div>
 <div class="paragraph">
-<p>Please note that you cannot use an existing <code>filter.&lt;driver&gt;.clean</code>
-or <code>filter.&lt;driver&gt;.smudge</code> command with <code>filter.&lt;driver&gt;.process</code>
+<p>Please note that you cannot use an existing <code>filter.</code><em>&lt;driver&gt;</em><code>.clean</code>
+or <code>filter.</code><em>&lt;driver&gt;</em><code>.smudge</code> command with <code>filter.</code><em>&lt;driver&gt;</em><code>.process</code>
 because the former two use a different inter process communication
 protocol than the latter one.</p>
 </div>
@@ -1349,7 +1349,7 @@ resolved manually.</p>
 <p>The attribute <code>diff</code> affects how Git generates diffs for particular
 files. It can tell Git whether to generate a textual patch for the path
 or to treat the path as a binary file.  It can also affect what line is
-shown on the hunk header <code>@@ -k,l +n,m @@</code> line, tell Git to use an
+shown on the hunk header <code>@@</code> <code>-k,l</code> <code>+n,m</code> <code>@@</code> line, tell Git to use an
 external command to generate the diff, or ask Git to convert binary
 files to a text format before generating the diff.</p>
 </div>
@@ -1364,7 +1364,7 @@ normally never appear in text files, such as NUL.</p>
 <dt class="hdlist1">Unset</dt>
 <dd>
 <p>A path to which the <code>diff</code> attribute is unset will
-generate <code>Binary files differ</code> (or a binary patch, if
+generate <code>Binary</code> <code>files</code> <code>differ</code> (or a binary patch, if
 binary patches are enabled).</p>
 </dd>
 <dt class="hdlist1">Unspecified</dt>
@@ -1372,7 +1372,7 @@ binary patches are enabled).</p>
 <p>A path to which the <code>diff</code> attribute is unspecified
 first gets its contents inspected, and if it looks like
 text and is smaller than core.bigFileThreshold, it is treated
-as text. Otherwise it would generate <code>Binary files differ</code>.</p>
+as text. Otherwise it would generate <code>Binary</code> <code>files</code> <code>differ</code>.</p>
 </dd>
 <dt class="hdlist1">String</dt>
 <dd>
@@ -1411,7 +1411,7 @@ See <a href="git.html">git(1)</a> for details.</p>
 </div>
 <div class="paragraph">
 <p>If the program is able to ignore certain changes (similar to
-<code>git diff --ignore-space-change</code>), then also set the option
+<code>git</code> <code>diff</code> <code>--ignore-space-change</code>), then also set the option
 <code>trustExitCode</code> to true.  It is then expected to return exit code 1 if
 it finds significant changes and 0 if it doesn&#8217;t.</p>
 </div>
@@ -1426,7 +1426,7 @@ one may want to use the <code>minimal</code> diff algorithm for .json files, and
 through the command line each time.</p>
 </div>
 <div class="paragraph">
-<p>First, in <code>.gitattributes</code>, assign the <code>diff</code> attribute for paths.</p>
+<p>First, in .<code>gitattributes</code>, assign the <code>diff</code> attribute for paths.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1455,9 +1455,9 @@ will not use the diff algorithm set through this method.</p>
 <div class="title">Note</div>
 </td>
 <td class="content">
-If <code>diff.&lt;name&gt;.command</code> is defined for path with the
-<code>diff=&lt;name&gt;</code> attribute, it is executed as an external diff driver
-(see above), and adding <code>diff.&lt;name&gt;.algorithm</code> has no effect, as the
+If <code>diff.</code><em>&lt;name&gt;</em><code>.command</code> is defined for path with the
+<code>diff=</code><em>&lt;name&gt;</em> attribute, it is executed as an external diff driver
+(see above), and adding <code>diff.</code><em>&lt;name&gt;</em><code>.algorithm</code> has no effect, as the
 algorithm is not passed to the external diff driver.
 </td>
 </tr>
@@ -1514,7 +1514,7 @@ backslash, and zero or more occurrences of <code>sub</code> followed by
 <p>There are a few built-in patterns to make this easier, and <code>tex</code>
 is one of them, so you do not have to write the above in your
 configuration file (you still need to enable this with the
-attribute mechanism, via <code>.gitattributes</code>).  The following built in
+attribute mechanism, via .<code>gitattributes</code>).  The following built in
 patterns are available:</p>
 </div>
 <div class="ulist">
@@ -1601,7 +1601,7 @@ Covers a superset of POSIX shell function definitions.</p>
 <div class="sect3">
 <h4 id="_customizing_word_diff">Customizing word diff</h4>
 <div class="paragraph">
-<p>You can customize the rules that <code>git diff --word-diff</code> uses to
+<p>You can customize the rules that <code>git</code> <code>diff</code> <code>--word-diff</code> uses to
 split words in a line, by specifying an appropriate regular expression
 in the "diff.*.wordRegex" configuration variable.  For example, in TeX
 a backslash followed by a sequence of letters forms a command, but
@@ -1659,9 +1659,9 @@ The text conversion is generally a one-way conversion;
 in this example, we lose the actual image contents and focus
 just on the text data. This means that diffs generated by
 textconv are <em>not</em> suitable for applying. For this reason,
-only <code>git diff</code> and the <code>git log</code> family of commands (i.e.,
-log, whatchanged, show) will perform text conversion. <code>git
-format-patch</code> will never generate this output. If you want to
+only <code>git</code> <code>diff</code> and the <code>git</code> <code>log</code> family of commands (i.e.,
+log, whatchanged, show) will perform text conversion. <code>git</code>
+<code>format-patch</code> will never generate this output. If you want to
 send somebody a text-converted diff of a binary file (e.g.,
 because it quickly conveys the changes you have made), you
 should generate it separately and send it as a comment <em>in
@@ -1672,7 +1672,7 @@ addition to</em> the usual binary diff that you might send.
 </div>
 <div class="paragraph">
 <p>Because text conversion can be slow, especially when doing a
-large number of them with <code>git log -p</code>, Git provides a mechanism
+large number of them with <code>git</code> <code>log</code> <code>-p</code>, Git provides a mechanism
 to cache the output and use it in future diffs.  To enable
 caching, set the "cachetextconv" variable in your diff driver&#8217;s
 config. For example:</p>
@@ -1691,7 +1691,7 @@ diff driver, Git will automatically invalidate the cache entries
 and re-run the textconv filter. If you want to invalidate the
 cache manually (e.g., because your version of "exif" was updated
 and now produces better output), you can remove the cache
-manually with <code>git update-ref -d refs/notes/textconv/jpg</code> (where
+manually with <code>git</code> <code>update-ref</code> <code>-d</code> <code>refs/notes/textconv/jpg</code> (where
 "jpg" is the name of the diff driver, as in the example above).</p>
 </div>
 </div>
@@ -1730,7 +1730,7 @@ including colorization, word-diff, and combined diffs for merges.</p>
 </li>
 <li>
 <p>Caching. Textconv caching can speed up repeated diffs, such as those
-you might trigger by running <code>git log -p</code>.</p>
+you might trigger by running <code>git</code> <code>log</code> <code>-p</code>.</p>
 </li>
 </ol>
 </div>
@@ -1748,7 +1748,7 @@ and meaningless diffs.</p>
 </div>
 <div class="paragraph">
 <p>The simplest way to mark a file as binary is to unset the diff
-attribute in the <code>.gitattributes</code> file:</p>
+attribute in the .<code>gitattributes</code> file:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1756,7 +1756,7 @@ attribute in the <code>.gitattributes</code> file:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This will cause Git to generate <code>Binary files differ</code> (or a binary
+<p>This will cause Git to generate <code>Binary</code> <code>files</code> <code>differ</code> (or a binary
 patch, if binary patches are enabled) instead of a regular diff.</p>
 </div>
 <div class="paragraph">
@@ -1764,7 +1764,7 @@ patch, if binary patches are enabled) instead of a regular diff.</p>
 example, you might want to use <code>textconv</code> to convert postscript files to
 an ASCII representation for human viewing, but otherwise treat them as
 binary files. You cannot specify both <code>-diff</code> and <code>diff=ps</code> attributes.
-The solution is to use the <code>diff.*.binary</code> config option:</p>
+The solution is to use the <code>diff.</code>*.<code>binary</code> config option:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1781,8 +1781,8 @@ The solution is to use the <code>diff.*.binary</code> config option:</p>
 <h4 id="_merge"><code>merge</code></h4>
 <div class="paragraph">
 <p>The attribute <code>merge</code> affects how three versions of a file are
-merged when a file-level merge is necessary during <code>git merge</code>,
-and other commands such as <code>git revert</code> and <code>git cherry-pick</code>.</p>
+merged when a file-level merge is necessary during <code>git</code> <code>merge</code>,
+and other commands such as <code>git</code> <code>revert</code> and <code>git</code> <code>cherry-pick</code>.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -1829,8 +1829,8 @@ can be asked for via the <code>merge</code> attribute.</p>
 <dt class="hdlist1">text</dt>
 <dd>
 <p>Usual 3-way file level merge for text files.  Conflicted
-regions are marked with conflict markers <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>,
-<code>=======</code> and <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>.  The version from your branch
+regions are marked with conflict markers &lt;&lt;&lt;&lt;&lt;&lt;&lt;,
+<code>=======</code> and &gt;&gt;&gt;&gt;&gt;&gt;&gt;.  The version from your branch
 appears before the <code>=======</code> marker, and the version
 from the merged branch appears after the <code>=======</code>
 marker.</p>
@@ -1856,7 +1856,7 @@ understand the implications.</p>
 <div class="sect3">
 <h4 id="_defining_a_custom_merge_driver">Defining a custom merge driver</h4>
 <div class="paragraph">
-<p>The definition of a merge driver is done in the <code>.git/config</code>
+<p>The definition of a merge driver is done in the .<code>git/config</code>
 file, not in the <code>gitattributes</code> file, so strictly speaking this
 manual page is a wrong place to talk about it.  However&#8230;&#8203;</p>
 </div>
@@ -1873,21 +1873,21 @@ manual page is a wrong place to talk about it.  However&#8230;&#8203;</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>merge.*.name</code> variable gives the driver a human-readable
+<p>The <code>merge.</code>*.<code>name</code> variable gives the driver a human-readable
 name.</p>
 </div>
 <div class="paragraph">
-<p>The <code>merge.*.driver</code> variable&#8217;s value is used to construct a
-command to run to common ancestor&#8217;s version (<code>%O</code>), current
-version (<code>%A</code>) and the other branches' version (<code>%B</code>).  These
+<p>The <code>merge.</code>*.<code>driver</code> variable&#8217;s value is used to construct a
+command to run to common ancestor&#8217;s version (%O), current
+version (%A) and the other branches' version (%B).  These
 three tokens are replaced with the names of temporary files that
 hold the contents of these versions when the command line is
-built. Additionally, <code>%L</code> will be replaced with the conflict marker
+built. Additionally, %L will be replaced with the conflict marker
 size (see below).</p>
 </div>
 <div class="paragraph">
 <p>The merge driver is expected to leave the result of the merge in
-the file named with <code>%A</code> by overwriting it, and exit with zero
+the file named with %A by overwriting it, and exit with zero
 status if it managed to merge them cleanly, or non-zero if there
 were conflicts.  When the driver crashes (e.g. killed by SEGV),
 it is expected to exit with non-zero status that are higher than
@@ -1895,7 +1895,7 @@ it is expected to exit with non-zero status that are higher than
 different from producing a conflict).</p>
 </div>
 <div class="paragraph">
-<p>The <code>merge.*.recursive</code> variable specifies what other merge
+<p>The <code>merge.</code>*.<code>recursive</code> variable specifies what other merge
 driver to use when the merge driver is called for an internal
 merge between common ancestors, when there are more than one.
 When left unspecified, the driver itself is used for both
@@ -1903,7 +1903,7 @@ internal merge and the final merge.</p>
 </div>
 <div class="paragraph">
 <p>The merge driver can learn the pathname in which the merged result
-will be stored via placeholder <code>%P</code>. The conflict labels to be used
+will be stored via placeholder %P. The conflict labels to be used
 for the common ancestor, local head and other head can be passed by
 using <em>%S</em>, <em>%X</em> and '%Y` respectively.</p>
 </div>
@@ -1916,7 +1916,7 @@ the work tree file during a conflicted merge.  Only a positive
 integer has a meaningful effect.</p>
 </div>
 <div class="paragraph">
-<p>For example, this line in <code>.gitattributes</code> can be used to tell the merge
+<p>For example, this line in .<code>gitattributes</code> can be used to tell the merge
 machinery to leave much longer (instead of the usual 7-character-long)
 conflict markers when merging the file <code>Documentation/git-merge.txt</code>
 results in a conflict.</p>
@@ -1984,8 +1984,8 @@ expansion depends on the availability of a commit ID, i.e., if
 tag then no replacement will be done.  The placeholders are the same
 as those for the option <code>--pretty=format:</code> of <a href="git-log.html">git-log(1)</a>,
 except that they need to be wrapped like this: <code>$Format:PLACEHOLDERS$</code>
-in the file.  E.g. the string <code>$Format:%H$</code> will be replaced by the
-commit hash.  However, only one <code>%(describe)</code> placeholder is expanded
+in the file.  E.g. the string <code>$Format:</code>%H$ will be replaced by the
+commit hash.  However, only one %(<code>describe</code>) placeholder is expanded
 per archive to avoid denial-of-service attacks.</p>
 </div>
 </div>
@@ -2057,9 +2057,9 @@ state.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Custom macro attributes can be defined only in top-level gitattributes
-files (<code>$GIT_DIR/info/attributes</code>, the <code>.gitattributes</code> file at the
+files (<code>$GIT_DIR/info/attributes</code>, the .<code>gitattributes</code> file at the
 top level of the working tree, or the global or system-wide
-gitattributes files), not in <code>.gitattributes</code> files in working tree
+gitattributes files), not in .<code>gitattributes</code> files in working tree
 subdirectories.  The built-in macro attribute "binary" is equivalent
 to:</p>
 </div>
@@ -2074,7 +2074,7 @@ to:</p>
 <h2 id="_notes">NOTES</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Git does not follow symbolic links when accessing a <code>.gitattributes</code>
+<p>Git does not follow symbolic links when accessing a .<code>gitattributes</code>
 file in the working tree. This keeps behavior consistent when the file
 is accessed from the index or a tree versus from the filesystem.</p>
 </div>
@@ -2114,7 +2114,7 @@ the second line matches, and attributes <code>foo</code> and <code>bar</code>
 are unset.</p>
 </li>
 <li>
-<p>Then it examines <code>.gitattributes</code> (which is in the parent
+<p>Then it examines .<code>gitattributes</code> (which is in the parent
 directory), and finds that the first line matches, but
 <code>t/.gitattributes</code> file already decided how <code>merge</code>, <code>foo</code>
 and <code>bar</code> attributes should be given to this path, so it
@@ -2161,7 +2161,7 @@ frotz   unspecified</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

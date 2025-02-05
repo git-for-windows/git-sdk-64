@@ -31,7 +31,6 @@
 
 (define-module (ice-9 threads)
   #:use-module (ice-9 match)
-  #:use-module (ice-9 control)
   ;; These bindings are marked as #:replace because when deprecated code
   ;; is enabled, (ice-9 deprecated) also exports these names.
   ;; (Referencing one of the deprecated names prints a warning directing
@@ -152,7 +151,15 @@ Once @var{thunk} or @var{handler} returns, the return value is made the
                  (lambda ()
                    (lock-mutex mutex)
                    (set! thread (current-thread))
-                   (set! (thread-join-data thread) (cons cv mutex))
+                   ;; Rather than use the 'set!' syntax here, we use the
+                   ;; underlying 'setter' generic function to set the
+                   ;; 'thread-join-data' property on 'thread'.  This is
+                   ;; because 'set!' will try to resolve 'setter' in the
+                   ;; '(guile)' module, which means acquiring the
+                   ;; 'autoload' mutex.  If the calling thread is
+                   ;; already holding that mutex, this will result in
+                   ;; deadlock.  See <https://bugs.gnu.org/62691>.
+                   ((setter thread-join-data) thread (cons cv mutex))
                    (signal-condition-variable cv)
                    (unlock-mutex mutex)
                    (call-with-unblocked-asyncs
@@ -197,7 +204,9 @@ terminates, unless the target @var{thread} has already terminated."
              (wait-condition-variable cv mutex timeout)
              (wait-condition-variable cv mutex))
          (lp))
-        (else timeoutval))))))
+        (else
+         (unlock-mutex mutex)
+         timeoutval))))))
 
 (define* (try-mutex mutex)
   "Try to lock @var{mutex}.  If the mutex is already locked, return

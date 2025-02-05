@@ -21,7 +21,6 @@
 (define-module (ice-9 eval-string)
   #:use-module (system base compile)
   #:use-module (system base language)
-  #:use-module (system vm program)
   #:use-module (system vm loader)
   #:replace (eval-string))
 
@@ -82,7 +81,7 @@
           (if line
               (set-port-line! port line))
           (if column
-              (set-port-column! port line))
+              (set-port-column! port column))
 
           (if (or compile? (not (language-evaluator lang)))
               ((load-thunk-from-memory

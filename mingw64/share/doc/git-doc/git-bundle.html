@@ -470,8 +470,9 @@ sitting on the other side of the network connection.</p>
 </div>
 <div class="paragraph">
 <p>They can be used to create both incremental and full backups of a
-repository, and to relay the state of the references in one repository
-to another.</p>
+repository (see the "full backup" example in "EXAMPLES"), and to relay
+the state of the references in one repository to another (see the second
+example).</p>
 </div>
 <div class="paragraph">
 <p>Git commands that fetch or otherwise "read" via protocols such as
@@ -479,11 +480,8 @@ to another.</p>
 possible <a href="git-clone.html">git-clone(1)</a> a new repository from a bundle, to use
 <a href="git-fetch.html">git-fetch(1)</a> to fetch from one, and to list the references
 contained within it with <a href="git-ls-remote.html">git-ls-remote(1)</a>. There&#8217;s no
-corresponding "write" support, i.e.a <em>git push</em> into a bundle is not
+corresponding "write" support, i.e. a <em>git push</em> into a bundle is not
 supported.</p>
-</div>
-<div class="paragraph">
-<p>See the "EXAMPLES" section below for examples of how to use bundles.</p>
 </div>
 </div>
 </div>
@@ -491,7 +489,7 @@ supported.</p>
 <h2 id="_bundle_format">BUNDLE FORMAT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Bundles are <code>.pack</code> files (see <a href="git-pack-objects.html">git-pack-objects(1)</a>) with a
+<p>Bundles are .<code>pack</code> files (see <a href="git-pack-objects.html">git-pack-objects(1)</a>) with a
 header indicating what references are contained within the bundle.</p>
 </div>
 <div class="paragraph">
@@ -562,7 +560,7 @@ If <em>file</em> is <code>-</code>, the bundle is read from stdin.</p>
 <p>A list of arguments, acceptable to <em>git rev-parse</em> and
 <em>git rev-list</em> (and containing a named ref, see SPECIFYING REFERENCES
 below), that specifies the specific objects and references
-to transport.  For example, <code>master~10..master</code> causes the
+to transport.  For example, <code>master~10</code><code>..</code><code>master</code> causes the
 current master reference to be packaged along with all objects
 added since its 10th ancestor commit.  There is no explicit
 limit to the number of references and objects that may be
@@ -605,7 +603,7 @@ on the standard error stream.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Revisions must be accompanied by reference names to be packaged in a
-bundle.</p>
+bundle.  Alternatively <code>--all</code> can be used to package all refs.</p>
 </div>
 <div class="paragraph">
 <p>More than one reference may be packaged, and more than one set of prerequisite objects can
@@ -614,9 +612,9 @@ union of the prerequisites.</p>
 </div>
 <div class="paragraph">
 <p>The <em>git bundle create</em> command resolves the reference names for you
-using the same rules as <code>git rev-parse --abbrev-ref=loose</code>. Each
+using the same rules as <code>git</code> <code>rev-parse</code> <code>--abbrev-ref=loose</code>. Each
 prerequisite can be specified explicitly (e.g. <code>^master~10</code>), or implicitly
-(e.g. <code>master~10..master</code>, <code>--since=10.days.ago master</code>).</p>
+(e.g. <code>master~10</code><code>..</code><code>master</code>, <code>--since=10.days.ago</code> <code>master</code>).</p>
 </div>
 <div class="paragraph">
 <p>All of these simple cases are OK (assuming we have a "master" and
@@ -663,7 +661,7 @@ as providing negative revisions to exclude objects needed in the
 earlier parts of the history.</p>
 </div>
 <div class="paragraph">
-<p>Feeding a revision such as <code>new</code> to <code>git bundle create</code> will create a
+<p>Feeding a revision such as <code>new</code> to <code>git</code> <code>bundle</code> <code>create</code> will create a
 bundle file that contains all the objects reachable from the revision
 <code>new</code>. That bundle can be unbundled in any repository to obtain a full
 history that leads to the revision <code>new</code>:</p>
@@ -674,7 +672,7 @@ history that leads to the revision <code>new</code>:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>A revision range such as <code>old..new</code> will produce a bundle file that
+<p>A revision range such as <code>old</code><code>..</code><code>new</code> will produce a bundle file that
 will require the revision <code>old</code> (and any objects reachable from it)
 to exist for the bundle to be "unbundle"-able:</p>
 </div>
@@ -686,7 +684,7 @@ to exist for the bundle to be "unbundle"-able:</p>
 <div class="paragraph">
 <p>A self-contained bundle without any prerequisites can be extracted
 into anywhere, even into an empty repository, or be cloned from
-(i.e., <code>new</code>, but not <code>old..new</code>).</p>
+(i.e., <code>new</code>, but not <code>old</code><code>..</code><code>new</code>).</p>
 </div>
 <div class="paragraph">
 <p>It is okay to err on the side of caution, causing the bundle file
@@ -694,11 +692,9 @@ to contain objects already in the destination, as these are ignored
 when unpacking at the destination.</p>
 </div>
 <div class="paragraph">
-<p>If you want to match <code>git clone --mirror</code>, which would include your
-refs such as <code>refs/remotes/*</code>, use <code>--all</code>.
-If you want to provide the same set of refs that a clone directly
-from the source repository would get, use <code>--branches --tags</code> for
-the <code>&lt;git-rev-list-args&gt;</code>.</p>
+<p>If you want to provide the same set of refs that a clone directly
+from the source repository would get, use <code>--branches</code> <code>--tags</code> for
+the <em>&lt;git-rev-list-args&gt;</em>.</p>
 </div>
 <div class="paragraph">
 <p>The <em>git bundle verify</em> command can be used to check whether your
@@ -711,8 +707,47 @@ bundle.</p>
 <h2 id="_examples">EXAMPLES</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Assume you want to transfer the history from a repository R1 on machine A
-to another repository R2 on machine B.
+<p>We&#8217;ll discuss two cases:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Taking a full backup of a repository</p>
+</li>
+<li>
+<p>Transferring the history of a repository to another machine when the
+two machines have no direct connection</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>First let&#8217;s consider a full backup of the repository.  The following
+command will take a full backup of the repository in the sense that all
+refs are included in the bundle:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ git bundle create backup.bundle --all</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>But note again that this is only for the refs, i.e. you will only
+include refs and commits reachable from those refs.  You will not
+include other local state, such as the contents of the index, working
+tree, the stash, per-repository configuration, hooks, etc.</p>
+</div>
+<div class="paragraph">
+<p>You can later recover that repository by using for example
+<a href="git-clone.html">git-clone(1)</a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ git clone backup.bundle &lt;new directory&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For the next example, assume you want to transfer the history from a
+repository R1 on machine A to another repository R2 on machine B.
 For whatever reason, direct connection between A and B is not allowed,
 but we can move data from A to B via some mechanism (CD, email, etc.).
 We want to update R2 with development made on the branch master in R1.</p>
@@ -811,7 +846,7 @@ the <a href="git-log.html">git-log(1)</a> command. Here are more examples:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>You can run <code>git-bundle verify</code> to see if you can extract from a bundle
+<p>You can run <code>git-bundle</code> <code>verify</code> to see if you can extract from a bundle
 that was created with a prerequisite:</p>
 </div>
 <div class="listingblock">
@@ -844,6 +879,29 @@ references when fetching:</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_discussion">DISCUSSION</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A naive way to make a full backup of a repository is to use something to
+the effect of <code>cp</code> <code>-r</code> <em>&lt;repo&gt;</em> <em>&lt;destination&gt;</em>.  This is discouraged since
+the repository could be written to during the copy operation.  In turn
+some files at <em>&lt;destination&gt;</em> could be corrupted.</p>
+</div>
+<div class="paragraph">
+<p>This is why it is recommended to use Git tooling for making repository
+backups, either with this command or with e.g. <a href="git-clone.html">git-clone(1)</a>.
+But keep in mind that these tools will not help you backup state other
+than refs and commits.  In other words they will not help you backup
+contents of the index, working tree, the stash, per-repository
+configuration, hooks, etc.</p>
+</div>
+<div class="paragraph">
+<p>See also <a href="gitfaq.html">gitfaq(7)</a>, section "TRANSFERS" for a discussion of the
+problems associated with file syncing across systems.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_file_format">FILE FORMAT</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -862,7 +920,7 @@ references when fetching:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

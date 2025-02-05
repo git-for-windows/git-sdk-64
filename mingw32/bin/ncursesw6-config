@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: ncurses-config.in,v 1.54 2024/07/13 20:00:52 tom Exp $
+# $Id: ncurses-config.in,v 1.57 2024/09/28 20:18:19 tom Exp $
 ##############################################################################
 # Copyright 2018-2022,2024 Thomas E. Dickey                                  #
 # Copyright 2006-2015,2017 Free Software Foundation, Inc.                    #
@@ -50,8 +50,6 @@ THIS="ncursesw"
 TINFO_LIB="ncursesw"
 RPATH_LIST="${libdir}"
 
-includesubdir="${prefix}/include/${THIS}"
-
 # Ensure that RPATH_LIST contains only absolute pathnames, if it is nonempty.
 # We cannot filter it out within the build-process since the variable is used
 # in some special cases of installation using a relative path.
@@ -64,9 +62,6 @@ then
 	do
 		case "$item" in
 		./*|../*|*/..|*/../*)
-			;;
-		$libdir) # skip standard libdir
-			continue
 			;;
 		*)
 			[ -n "$filtered" ] && filtered="${filtered}:"
@@ -83,11 +78,14 @@ fi
 # the headers to include like this:
 #	<ncursesw/curses.h>
 if [ xno = xno ]; then
+	includesubdir="${prefix}/include/${THIS}"
 	case $includedir in
 	$prefix/include/ncursesw)
 		includedir=`echo "$includedir" | sed -e 's,/[^/]*$,,'`
 		;;
 	esac
+else
+	includesubdir="${prefix}/include"
 fi
 
 LIBS="-lsystre -ltre -lintl -liconv "
@@ -98,20 +96,10 @@ else
 fi
 
 CFLAGS=" -DNCURSES_WIDECHAR"
-if [ "$includedir" != "/usr/include" ]; then
-	if [ "xno" = xno ]
-	then
-		[ -n "$CFLAGS" ] && CFLAGS="$CFLAGS "
-		CFLAGS="$CFLAGS -I${includesubdir}"
-	fi
-	[ -n "$CFLAGS" ] && CFLAGS="$CFLAGS "
-	CFLAGS="$CFLAGS-I${includedir}"
-	includetop=`echo "$includedir" | sed -e 's,/include/[^/]*$,/include,'`
-	[ "$includetop" = "/usr/include" ] && includetop="$includedir"
-	if [ "x$includetop" != "x$includedir" ]
-	then
-		[ -n "$CFLAGS" ] && CFLAGS="$CFLAGS "
-		CFLAGS="$CFLAGS-I$includetop"
+if [ "$includesubdir" != "/usr/include" ]; then
+	CFLAGS="$CFLAGS -I${includesubdir}"
+	if [ "$includedir" != "/usr/include" ]; then
+		[ xno = xno ] && CFLAGS="$CFLAGS -I${includedir}"
 	fi
 fi
 
@@ -144,7 +132,7 @@ do
 		/mingw32/i686-w64-mingw32/lib|/mingw32/lib|/usr/lib) # skip standard libdir
 			if [ "$lib_check" = "$libdir" ]
 			then
-				lib_first=yes
+				lib_first=no
 				IFS_save="$IFS"
 				IFS='|'
 				LIBDIRS="/mingw32/i686-w64-mingw32/lib|/mingw32/lib|/usr/lib"
@@ -152,11 +140,11 @@ do
 				do
 					if [ -d "$lib_check" ]
 					then
-						if [ "$lib_check" != "$libdir" ]
+						if [ "$lib_check" = "$libdir" ]
 						then
-							lib_first=no
+							lib_first=yes
+							break
 						fi
-						break
 					fi
 				done
 				IFS="$IFS_save"
@@ -175,6 +163,9 @@ do
 			else
 				continue
 			fi
+			;;
+		$libdir) # skip standard libdir
+			continue
 			;;
 		*)
 			found=no
@@ -211,7 +202,7 @@ while [ $# -gt 0 ]; do
 		for opt in $CFLAGS
 		do
 			case "x$opt" in
-			x-[OW]*)
+			x-[fgOW]*)
 				opt=
 				;;
 			esac
@@ -247,7 +238,7 @@ while [ $# -gt 0 ]; do
 		for opt in $CFLAGS
 		do
 			case "x$opt" in
-			x-[I]*|x-[OW]*)
+			x-[I]*|x-[fgOW]*)
 				opt=
 				;;
 			esac
@@ -311,7 +302,7 @@ while [ $# -gt 0 ]; do
 		;;
 	# identification
 	--version)
-		echo "6.5.20240831"
+		echo "6.5.20241228"
 		;;
 	--abi-version)
 		echo "6"

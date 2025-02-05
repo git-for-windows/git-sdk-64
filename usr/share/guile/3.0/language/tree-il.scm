@@ -1,4 +1,4 @@
-;;;; 	Copyright (C) 2009-2014, 2017-2020, 2022 Free Software Foundation, Inc.
+;;;; 	Copyright (C) 2009-2014,2017-2020,2022-2023 Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@
   #:use-module (ice-9 match)
   #:use-module (system base syntax)
   #:export ((tree-il-src/ensure-alist . tree-il-src)
+            (tree-il-src . tree-il-srcv)
             <void> void? make-void void-src
             <const> const? make-const const-src const-exp
             <primitive-ref> primitive-ref? make-primitive-ref primitive-ref-src primitive-ref-name

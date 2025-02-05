@@ -33,7 +33,8 @@
             constructor-primitive?
             singly-valued-primitive? equality-primitive?
             bailout-primitive?
-            negate-primitive))
+            negate-primitive
+            primitive-module))
 
 ;; When adding to this, be sure to update *multiply-valued-primitives*
 ;; if appropriate.
@@ -57,6 +58,7 @@
     bytevector? keyword? bitvector?
 
     symbol->string string->symbol
+    keyword->symbol symbol->keyword
 
     procedure? thunk?
 
@@ -67,7 +69,7 @@
 
     integer->char char->integer number->string string->number
 
-    acons cons cons*
+    acons cons cons* append
 
     list vector
 
@@ -84,7 +86,7 @@
     length
 
     make-vector vector-length vector-ref vector-set!
-    variable? variable-ref variable-set!
+    variable? make-variable variable-ref variable-set!
     variable-bound?
 
     current-module define!
@@ -95,9 +97,11 @@
     abort-to-prompt* abort-to-prompt
     make-prompt-tag
 
-    throw error scm-error
+    throw error scm-error raise-exception
 
     string-length string-ref string-set!
+
+    string->utf8 string-utf8-length utf8->string
 
     make-struct/simple struct-vtable struct-ref struct-set!
 
@@ -143,9 +147,10 @@
 
 (define *primitive-constructors*
   ;; Primitives that return a fresh object.
-  '(acons cons cons* list vector make-vector
+  '(acons cons cons* append list vector make-vector
     make-struct/simple
-    make-prompt-tag))
+    make-prompt-tag
+    make-variable))
 
 (define *primitive-accessors*
   ;; Primitives that are pure, but whose result depends on the mutable
@@ -158,6 +163,7 @@
     memq memv
     struct-ref
     string-ref
+    string->utf8 string-utf8-length utf8->string
     bytevector-u8-ref bytevector-s8-ref
     bytevector-u16-ref bytevector-u16-native-ref
     bytevector-s16-ref bytevector-s16-native-ref
@@ -184,6 +190,7 @@
     char<? char<=? char>=? char>?
     integer->char char->integer number->string string->number
     symbol->string string->symbol
+    keyword->symbol symbol->keyword
     struct-vtable
     length string-length vector-length bytevector-length
     ;; These all should get expanded out by expand-primitives.
@@ -205,7 +212,7 @@
     exact-integer?
     bytevector? keyword? bitvector?
     procedure? thunk? atomic-box?
-    acons cons cons* list vector))
+    acons cons cons* list vector make-variable))
 
 ;; Primitives that don't always return one value.
 (define *multiply-valued-primitives* 
@@ -283,24 +290,25 @@
   ;; have the same semantics as the primitives.
   (unless (eq? mod the-root-module)
     (let collect-local-definitions ((x x))
-      (record-case x
-        ((<toplevel-define> name)
+      (match x
+        (($ <toplevel-define> src mod name)
          (hashq-set! local-definitions name #t))
-        ((<seq> head tail)
+        (($ <seq> src head tail)
          (collect-local-definitions head)
          (collect-local-definitions tail))
-        (else #f))))
+        (_ #f))))
   
   (post-order
    (lambda (x)
      (or
-      (record-case x
-        ((<toplevel-ref> src name)
+      (match x
+        ;; FIXME: Use `mod' field?
+        (($ <toplevel-ref> src mod* name)
          (and=> (and (not (hashq-ref local-definitions name))
                      (hashq-ref *interesting-primitive-vars*
                                 (module-variable mod name)))
                 (lambda (name) (make-primitive-ref src name))))
-        ((<module-ref> src mod name public?)
+        (($ <module-ref> src mod name public?)
          ;; for the moment, we're disabling primitive resolution for
          ;; public refs because resolve-interface can raise errors.
          (and=> (and=> (resolve-module mod)
@@ -312,20 +320,67 @@
                                     (module-variable m name))
                          (lambda (name)
                            (make-primitive-ref src name))))))
-        ((<call> src proc args)
+        (($ <call> src proc args)
          (and (primitive-ref? proc)
               (make-primcall src (primitive-ref-name proc) args)))
-        (else #f))
+        (_ #f))
       x))
    x))
+
+
+
+(define (primitive-module name)
+  (case name
+    ((bytevector?
+      bytevector-length
+
+      bytevector-u8-ref bytevector-u8-set!
+      bytevector-s8-ref bytevector-s8-set!
+
+      bytevector-u16-ref bytevector-u16-set!
+      bytevector-u16-native-ref bytevector-u16-native-set!
+      bytevector-s16-ref bytevector-s16-set!
+      bytevector-s16-native-ref bytevector-s16-native-set!
+
+      bytevector-u32-ref bytevector-u32-set!
+      bytevector-u32-native-ref bytevector-u32-native-set!
+      bytevector-s32-ref bytevector-s32-set!
+      bytevector-s32-native-ref bytevector-s32-native-set!
+
+      bytevector-u64-ref bytevector-u64-set!
+      bytevector-u64-native-ref bytevector-u64-native-set!
+      bytevector-s64-ref bytevector-s64-set!
+      bytevector-s64-native-ref bytevector-s64-native-set!
+
+      bytevector-ieee-single-ref bytevector-ieee-single-set!
+      bytevector-ieee-single-native-ref bytevector-ieee-single-native-set!
+      bytevector-ieee-double-ref bytevector-ieee-double-set!
+      bytevector-ieee-double-native-ref bytevector-ieee-double-native-set!
+
+      string->utf8 utf8->string)
+     '(rnrs bytevectors))
+    ((atomic-box?
+      make-atomic-box atomic-box-ref atomic-box-set!
+      atomic-box-swap! atomic-box-compare-and-swap!)
+     '(ice-9 atomic))
+    ((current-thread) '(ice-9 threads))
+    ((class-of) '(oop goops))
+    ((u8vector-ref
+      u8vector-set! s8vector-ref s8vector-set!
+      u16vector-ref u16vector-set! s16vector-ref s16vector-set!
+      u32vector-ref u32vector-set! s32vector-ref s32vector-set!
+      u64vector-ref u64vector-set! s64vector-ref s64vector-set!
+      f32vector-ref f32vector-set! f64vector-ref f64vector-set!)
+     '(srfi srfi-4))
+    (else '(guile))))
 
 
 
 (define *primitive-expand-table* (make-hash-table))
 
 (define (expand-primcall x)
-  (record-case x
-    ((<primcall> src name args)
+  (match x
+    (($ <primcall> src name args)
      (let ((expand (hashq-ref *primitive-expand-table* name)))
        (or (and expand (apply expand src args))
            x)))
@@ -508,6 +563,12 @@
   (x y) (cons x y)
   (x y . rest) (cons x (cons* y . rest)))
 
+(define-primitive-expander append
+  () '()
+  (x) (values x)
+  (x y) (append x y)
+  (x y . rest) (append x (append y . rest)))
+
 (define-primitive-expander acons (x y z)
   (cons (cons x y) z))
 
@@ -672,12 +733,9 @@
                src '() #f 'args #f '() (list args)
                (primcall apply handler (make-lexical-ref #f 'args args))
                #f)))
-            (primcall throw
-                      (const 'wrong-type-arg)
-                      (const "call-with-prompt")
-                      (const "Wrong type (expecting procedure): ~S")
-                      (primcall list handler)
-                      (primcall list handler))))))))
+            (primcall raise-type-error
+                      (const #("call-with-prompt" 3 "procedure"))
+                      handler)))))))
    (else #f)))
 
 (define-primitive-expander! 'abort-to-prompt*

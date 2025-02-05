@@ -1,6 +1,6 @@
 ;;; Lightweight compiler directly from Tree-IL to bytecode
 
-;; Copyright (C) 2020, 2021 Free Software Foundation, Inc.
+;; Copyright (C) 2020-2021,2023 Free Software Foundation, Inc.
 
 ;;; This library is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU Lesser General Public License as published by
@@ -29,6 +29,7 @@
   #:use-module (ice-9 match)
   #:use-module (language bytecode)
   #:use-module (language tree-il)
+  #:use-module ((language tree-il primitives) #:select (primitive-module))
   #:use-module ((srfi srfi-1) #:select (filter-map
                                         fold
                                         lset-adjoin lset-union lset-difference))
@@ -267,6 +268,7 @@
   (string->number   #:nargs 1 #:has-result? #t #:emit emit-string->number)
   (string->symbol   #:nargs 1 #:has-result? #t #:emit emit-string->symbol)
   (symbol->keyword  #:nargs 1 #:has-result? #t #:emit emit-symbol->keyword)
+  (symbol->string   #:nargs 1 #:has-result? #t #:emit emit-symbol->string)
 
   (class-of         #:nargs 1 #:has-result? #t #:emit emit-class-of)
 
@@ -346,49 +348,6 @@
 
 (visit-immediate-tags define-immediate-type-predicate)
 (visit-heap-tags define-heap-type-predicate)
-
-(define (primitive-module name)
-  (case name
-    ((bytevector?
-      bytevector-length
-
-      bytevector-u8-ref bytevector-u8-set!
-      bytevector-s8-ref bytevector-s8-set!
-
-      bytevector-u16-ref bytevector-u16-set!
-      bytevector-u16-native-ref bytevector-u16-native-set!
-      bytevector-s16-ref bytevector-s16-set!
-      bytevector-s16-native-ref bytevector-s16-native-set!
-
-      bytevector-u32-ref bytevector-u32-set!
-      bytevector-u32-native-ref bytevector-u32-native-set!
-      bytevector-s32-ref bytevector-s32-set!
-      bytevector-s32-native-ref bytevector-s32-native-set!
-
-      bytevector-u64-ref bytevector-u64-set!
-      bytevector-u64-native-ref bytevector-u64-native-set!
-      bytevector-s64-ref bytevector-s64-set!
-      bytevector-s64-native-ref bytevector-s64-native-set!
-
-      bytevector-ieee-single-ref bytevector-ieee-single-set!
-      bytevector-ieee-single-native-ref bytevector-ieee-single-native-set!
-      bytevector-ieee-double-ref bytevector-ieee-double-set!
-      bytevector-ieee-double-native-ref bytevector-ieee-double-native-set!)
-     '(rnrs bytevectors))
-    ((atomic-box?
-      make-atomic-box atomic-box-ref atomic-box-set!
-      atomic-box-swap! atomic-box-compare-and-swap!)
-     '(ice-9 atomic))
-    ((current-thread) '(ice-9 threads))
-    ((class-of) '(oop goops))
-    ((u8vector-ref
-      u8vector-set! s8vector-ref s8vector-set!
-      u16vector-ref u16vector-set! s16vector-ref s16vector-set!
-      u32vector-ref u32vector-set! s32vector-ref s32vector-set!
-      u64vector-ref u64vector-set! s64vector-ref s64vector-set!
-      f32vector-ref f32vector-set! f64vector-ref f64vector-set!)
-     '(srfi srfi-4))
-    (else '(guile))))
 
 (define (canonicalize exp)
   (define (reify-primref src name)
@@ -486,6 +445,13 @@
        (($ <primcall> src 'throw (key . args))
         (make-primcall src 'throw
                        (list key (make-primcall #f 'list args))))
+
+       (($ <primcall> src 'raise-type-error (($ <const> _ #(subr pos what)) x))
+        (define msg
+          (format #f "Wrong type argument in position ~a (expecting ~a): ~~S"
+                  pos what))
+        (make-primcall src 'throw/value+data
+                       (list x (make-const #f `#(wrong-type-arg ,subr ,msg)))))
 
        ;; Now that we handled special cases, ensure remaining primcalls
        ;; are understood by the code generator, and if not, reify them
@@ -638,7 +604,7 @@
     (()
      (let ()
        (define x-thunk
-         (let ((src (tree-il-src exp)))
+         (let ((src (tree-il-srcv exp)))
            (make-lambda src '()
                         (make-lambda-case src '() #f #f #f '() '() exp #f))))
        (values (cons (make-closure 'init x-thunk #f '())
@@ -723,6 +689,15 @@ in the frame with for the lambda-case clause @var{clause}."
         (max (visit* inits) ; Prologue.
              (visit body))  ; Body.
         temporary-count)))) ; Temporaries.
+
+(define (sanitize-meta meta)
+  (match meta
+    (() '())
+    (((k . v) . meta)
+     (let ((meta (sanitize-meta meta)))
+       (case k
+         ((maybe-unused) meta)
+         (else (acons k v meta)))))))
 
 (define (compile-closure asm closure assigned? lookup-closure)
   (define-record-type <env>
@@ -1149,7 +1124,7 @@ in the frame with for the lambda-case clause @var{clause}."
               (0 
                (emit-load-static-procedure asm dst label))
               (nfree
-               ;; Stage closure in 0 to avoid stompling captured free
+               ;; Stage closure in 0 to avoid stomping captured free
                ;; vars.
                (emit-allocate-closure asm 0 nfree label 1)
                (init-free-vars 0 free-vars env 1 2)
@@ -1173,7 +1148,7 @@ in the frame with for the lambda-case clause @var{clause}."
                          frame-size)))
 
         (($ <primcall> src (? variadic-constructor? name) args)
-         ;; Stage result in 0 to avoid stompling args.
+         ;; Stage result in 0 to avoid stomping args.
          (let ((args (for-args args env)))
            (maybe-emit-source src)
            (match name
@@ -1375,7 +1350,7 @@ in the frame with for the lambda-case clause @var{clause}."
   (match closure
     (($ <closure> label ($ <lambda> src meta body) module-scope free)
      (when src (emit-source asm src))
-     (emit-begin-program asm label meta)
+     (emit-begin-program asm label (sanitize-meta meta))
      (emit-clause #f body module-scope free)
      (emit-end-program asm))))
 

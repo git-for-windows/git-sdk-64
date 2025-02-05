@@ -489,7 +489,7 @@ in the index file and in your working tree.</p>
 versions, as described in the "TRUE MERGE" section of
 <a href="git-merge.html">git-merge(1)</a>.  The working tree files will include
 a description of the conflict bracketed by the usual
-conflict markers <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> and <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>.</p>
+conflict markers &lt;&lt;&lt;&lt;&lt;&lt;&lt; and &gt;&gt;&gt;&gt;&gt;&gt;&gt;.</p>
 </li>
 <li>
 <p>No other modifications are made.</p>
@@ -602,8 +602,8 @@ be performed.</p>
 <dt class="hdlist1">--allow-empty</dt>
 <dd>
 <p>By default, cherry-picking an empty commit will fail,
-indicating that an explicit invocation of <code>git commit
---allow-empty</code> is required. This option overrides that
+indicating that an explicit invocation of <code>git</code> <code>commit</code>
+<code>--allow-empty</code> is required. This option overrides that
 behavior, allowing empty commits to be preserved automatically
 in a cherry-pick. Note that when "--ff" is in effect, empty
 commits that meet the "fast-forward" requirement will be kept
@@ -676,7 +676,7 @@ tree, allow it to also update the index with the result of
 resolution.  <code>--no-rerere-autoupdate</code> is a good way to
 double-check what <code>rerere</code> did and catch potential
 mismerges, before committing the result to the index with a
-separate <code>git add</code>.</p>
+separate <code>git</code> <code>add</code>.</p>
 </dd>
 </dl>
 </div>
@@ -690,7 +690,7 @@ separate <code>git add</code>.</p>
 <dt class="hdlist1">--continue</dt>
 <dd>
 <p>Continue the operation in progress using the information in
-<code>.git/sequencer</code>.  Can be used to continue after resolving
+.<code>git/sequencer</code>.  Can be used to continue after resolving
 conflicts in a failed cherry-pick or revert.</p>
 </dd>
 <dt class="hdlist1">--skip</dt>
@@ -717,19 +717,19 @@ revert.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>git cherry-pick master</code></dt>
+<dt class="hdlist1"><code>git</code> <code>cherry-pick</code> <code>master</code></dt>
 <dd>
 <p>Apply the change introduced by the commit at the tip of the
 master branch and create a new commit with this change.</p>
 </dd>
-<dt class="hdlist1"><code>git cherry-pick ..master</code></dt>
-<dt class="hdlist1"><code>git cherry-pick ^HEAD master</code></dt>
+<dt class="hdlist1"><code>git</code> <code>cherry-pick</code> <code>..</code><code>master</code></dt>
+<dt class="hdlist1"><code>git</code> <code>cherry-pick</code> <code>^HEAD</code> <code>master</code></dt>
 <dd>
 <p>Apply the changes introduced by all commits that are ancestors
 of master but not of HEAD to produce new commits.</p>
 </dd>
-<dt class="hdlist1"><code>git cherry-pick maint next ^master</code></dt>
-<dt class="hdlist1"><code>git cherry-pick maint master..next</code></dt>
+<dt class="hdlist1"><code>git</code> <code>cherry-pick</code> <code>maint</code> <code>next</code> <code>^master</code></dt>
+<dt class="hdlist1"><code>git</code> <code>cherry-pick</code> <code>maint</code> <code>master</code><code>..</code><code>next</code></dt>
 <dd>
 <p>Apply the changes introduced by all commits that are
 ancestors of maint or next, but not master or any of its
@@ -737,20 +737,20 @@ ancestors.  Note that the latter does not mean <code>maint</code> and
 everything between <code>master</code> and <code>next</code>; specifically,
 <code>maint</code> will not be used if it is included in <code>master</code>.</p>
 </dd>
-<dt class="hdlist1"><code>git cherry-pick master~4 master~2</code></dt>
+<dt class="hdlist1"><code>git</code> <code>cherry-pick</code> <code>master~4</code> <code>master~2</code></dt>
 <dd>
 <p>Apply the changes introduced by the fifth and third last
 commits pointed to by master and create 2 new commits with
 these changes.</p>
 </dd>
-<dt class="hdlist1"><code>git cherry-pick -n master~1 next</code></dt>
+<dt class="hdlist1"><code>git</code> <code>cherry-pick</code> <code>-n</code> <code>master~1</code> <code>next</code></dt>
 <dd>
 <p>Apply to the working tree and the index the changes introduced
 by the second last commit pointed to by master and by the last
 commit pointed to by next, but do not create any commit with
 these changes.</p>
 </dd>
-<dt class="hdlist1"><code>git cherry-pick --ff ..next</code></dt>
+<dt class="hdlist1"><code>git</code> <code>cherry-pick</code> <code>--ff</code> <code>..</code><code>next</code></dt>
 <dd>
 <p>If history is linear and HEAD is an ancestor of next, update
 the working tree and advance the HEAD pointer to match next.
@@ -758,7 +758,7 @@ Otherwise, apply the changes introduced by those commits that
 are in next but not HEAD to the current branch, creating a new
 commit for each new change.</p>
 </dd>
-<dt class="hdlist1"><code>git rev-list --reverse master -- README | git cherry-pick -n --stdin</code></dt>
+<dt class="hdlist1"><code>git</code> <code>rev-list</code> <code>--reverse</code> <code>master</code> <code>--</code> <code>README</code> | <code>git</code> <code>cherry-pick</code> <code>-n</code> <code>--stdin</code></dt>
 <dd>
 <p>Apply the changes introduced by all commits on the master
 branch that touched README to the working tree and index,
@@ -783,7 +783,7 @@ $ git cherry-pick -Xpatience topic^  <b class="conum">(4)</b></pre>
 <div class="colist arabic">
 <ol>
 <li>
-<p>apply the change that would be shown by <code>git show topic^</code>.
+<p>apply the change that would be shown by <code>git</code> <code>show</code> <code>topic^</code>.
 In this example, the patch does not apply cleanly, so
 information about the conflict is written to the index and
 working tree and no new commit results.</p>
@@ -824,7 +824,7 @@ matching context lines.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

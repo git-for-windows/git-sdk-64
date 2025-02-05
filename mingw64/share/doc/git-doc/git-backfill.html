@@ -460,23 +460,23 @@ pre>code {
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Blobless partial clones are created using <code>git clone --filter=blob:none</code>
+<p>Blobless partial clones are created using <code>git</code> <code>clone</code> <code>--filter=blob:none</code>
 and then configure the local repository such that the Git client avoids
 downloading blob objects unless they are required for a local operation.
 This initially means that the clone and later fetches download reachable
 commits and trees but no blobs. Later operations that change the <code>HEAD</code>
-pointer, such as <code>git checkout</code> or <code>git merge</code>, may need to download
+pointer, such as <code>git</code> <code>checkout</code> or <code>git</code> <code>merge</code>, may need to download
 missing blobs in order to complete their operation.</p>
 </div>
 <div class="paragraph">
-<p>In the worst cases, commands that compute blob diffs, such as <code>git blame</code>,
+<p>In the worst cases, commands that compute blob diffs, such as <code>git</code> <code>blame</code>,
 become very slow as they download the missing blobs in single-blob
 requests to satisfy the missing object as the Git command needs it. This
 leads to multiple download requests and no ability for the Git server to
 provide delta compression across those objects.</p>
 </div>
 <div class="paragraph">
-<p>The <code>git backfill</code> command provides a way for the user to request that
+<p>The <code>git</code> <code>backfill</code> command provides a way for the user to request that
 Git downloads the missing blobs (with optional filters) such that the
 missing blobs representing historical versions of files can be downloaded
 in batches. The <code>backfill</code> command attempts to optimize the request by
@@ -484,7 +484,7 @@ grouping blobs that appear at the same path, hopefully leading to good
 delta compression in the packfile sent by the server.</p>
 </div>
 <div class="paragraph">
-<p>By default, <code>git backfill</code> downloads all blobs reachable from the <code>HEAD</code>
+<p>By default, <code>git</code> <code>backfill</code> downloads all blobs reachable from the <code>HEAD</code>
 commit. This set can be restricted or expanded using various options.</p>
 </div>
 </div>
@@ -529,7 +529,7 @@ then <code>--sparse</code> is assumed and can be disabled with <code>--no-sparse
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

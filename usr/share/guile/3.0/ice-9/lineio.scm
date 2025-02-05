@@ -1,6 +1,6 @@
 ;;; installed-scm-file
 
-;;;; 	Copyright (C) 1996, 1998, 2001, 2003, 2006 Free Software Foundation, Inc.
+;;;; 	Copyright (C) 1996, 1998, 2001, 2003, 2006, 2023 Free Software Foundation, Inc.
 ;;;; 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,10 @@
   :use-module (ice-9 rdelim)
   :export (unread-string read-string lineio-port?
 	   make-line-buffering-input-port))
+
+(issue-deprecation-warning
+ "(ice-9 lineio) is deprecated.  Use read-line together with
+unread-string instead.")
 
 
 ;;; {Line Buffering Input Ports}

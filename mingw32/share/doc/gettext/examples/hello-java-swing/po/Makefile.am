@@ -134,7 +134,7 @@ $(srcdir)/stamp-po: $(srcdir)/$(DOMAIN).pot
 # The determination of whether the package xyz is a GNU one is based on the
 # heuristic whether some file in the top level directory mentions "GNU xyz".
 # If GNU 'find' is available, we avoid grepping through monster files.
-$(DOMAIN).pot-update: $(POTFILES_DEPS) remove-potcdate.sed
+$(DOMAIN).pot-update: $(POTFILES_DEPS)
 	package_gnu="$(PACKAGE_GNU)"; \
 	test -n "$$package_gnu" || { \
 	  if { if (LC_ALL=C find --version) 2>/dev/null | grep GNU >/dev/null; then \
@@ -186,8 +186,8 @@ $(DOMAIN).pot-update: $(POTFILES_DEPS) remove-potcdate.sed
 	    || exit 1; \
 	  fi; \
 	  if test -f $(srcdir)/$(DOMAIN).pot; then \
-	    sed -f remove-potcdate.sed < $(srcdir)/$(DOMAIN).pot > $(DOMAIN).1po && \
-	    sed -f remove-potcdate.sed < $(DOMAIN).po > $(DOMAIN).2po && \
+	    sed -f $(srcdir)/remove-potcdate.sed < $(srcdir)/$(DOMAIN).pot > $(DOMAIN).1po && \
+	    sed -f $(srcdir)/remove-potcdate.sed < $(DOMAIN).po > $(DOMAIN).2po && \
 	    if cmp $(DOMAIN).1po $(DOMAIN).2po >/dev/null 2>&1; then \
 	      rm -f $(DOMAIN).1po $(DOMAIN).2po $(DOMAIN).po; \
 	    else \
@@ -232,7 +232,6 @@ $(POFILES): $(srcdir)/$(DOMAIN).pot
 html ID:
 
 MOSTLYCLEANFILES =
-MOSTLYCLEANFILES += remove-potcdate.sed
 MOSTLYCLEANFILES += stamp-poT
 MOSTLYCLEANFILES += core core.* *.stackdump $(DOMAIN).po $(DOMAIN).1po $(DOMAIN).2po *.new.po
 
@@ -240,7 +239,7 @@ MAINTAINERCLEANFILES = \
   $(DOMAIN).pot stamp-po \
   $(DOMAIN).properties $(PROPERTIESFILES) $(CLASSFILES)
 
-EXTRA_DIST = remove-potcdate.sin LINGUAS $(POFILES) $(DOMAIN).properties $(PROPERTIESFILES)
+EXTRA_DIST = remove-potcdate.sed LINGUAS $(POFILES) $(DOMAIN).properties $(PROPERTIESFILES)
 
 # Hidden from automake, but really activated. Works around an automake-1.5 bug.
 #distdir: distdir1

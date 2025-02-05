@@ -470,7 +470,7 @@ the first two chapters of <a href="user-manual.html">The Git User&#8217;s Manual
 </div>
 <div class="paragraph">
 <p>First, note that you can get documentation for a command such as
-<code>git log --graph</code> with:</p>
+<code>git</code> <code>log</code> <code>--graph</code> with:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -526,11 +526,11 @@ $ git init</pre>
 </div>
 <div class="paragraph">
 <p>You&#8217;ve now initialized the working directory&#8212;&#8203;you may notice a new
-directory created, named <code>.git</code>.</p>
+directory created, named .<code>git</code>.</p>
 </div>
 <div class="paragraph">
 <p>Next, tell Git to take a snapshot of the contents of all files under the
-current directory (note the <code>.</code>), with <code>git add</code>:</p>
+current directory (note the .), with <code>git</code> <code>add</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -540,7 +540,7 @@ current directory (note the <code>.</code>), with <code>git add</code>:</p>
 <div class="paragraph">
 <p>This snapshot is now stored in a temporary staging area which Git calls
 the "index".  You can permanently store the contents of the index in the
-repository with <code>git commit</code>:</p>
+repository with <code>git</code> <code>commit</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -566,7 +566,7 @@ version of your project in Git.</p>
 </div>
 <div class="paragraph">
 <p>You are now ready to commit.  You can see what is about to be committed
-using <code>git diff</code> with the <code>--cached</code> option:</p>
+using <code>git</code> <code>diff</code> with the <code>--cached</code> option:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -574,9 +574,9 @@ using <code>git diff</code> with the <code>--cached</code> option:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>(Without <code>--cached</code>, <code>git diff</code> will show you any changes that
+<p>(Without <code>--cached</code>, <code>git</code> <code>diff</code> will show you any changes that
 you&#8217;ve made but not yet added to the index.)  You can also get a brief
-summary of the situation with <code>git status</code>:</p>
+summary of the situation with <code>git</code> <code>status</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -604,7 +604,7 @@ newly modified content to the index.  Finally, commit your changes with:</p>
 record a new version of the project.</p>
 </div>
 <div class="paragraph">
-<p>Alternatively, instead of running <code>git add</code> beforehand, you can use</p>
+<p>Alternatively, instead of running <code>git</code> <code>add</code> beforehand, you can use</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -633,7 +633,7 @@ rest of the commit in the body.</p>
 <div class="paragraph">
 <p>Many revision control systems provide an <code>add</code> command that tells the
 system to start tracking changes to a new file.  Git&#8217;s <code>add</code> command
-does something simpler and more powerful: <code>git add</code> is used both for new
+does something simpler and more powerful: <code>git</code> <code>add</code> is used both for new
 and newly modified files, and in both cases it takes a snapshot of the
 given files and stages that content in the index, ready for inclusion in
 the next commit.</p>
@@ -872,7 +872,7 @@ alice$ git log -p HEAD..FETCH_HEAD</pre>
 </div>
 <div class="paragraph">
 <p>This operation is safe even if Alice has uncommitted local changes.
-The range notation <code>HEAD..FETCH_HEAD</code> means "show everything that is reachable
+The range notation <code>HEAD</code><code>..</code><code>FETCH_HEAD</code> means "show everything that is reachable
 from the <code>FETCH_HEAD</code> but exclude anything that is reachable from <code>HEAD</code>".
 Alice already knows everything that leads to her current state (<code>HEAD</code>),
 and reviews what Bob has in his state (<code>FETCH_HEAD</code>) that she has not
@@ -888,7 +888,7 @@ she can issue the following command:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This uses the same two-dot range notation we saw earlier with <code>git log</code>.</p>
+<p>This uses the same two-dot range notation we saw earlier with <code>git</code> <code>log</code>.</p>
 </div>
 <div class="paragraph">
 <p>Alice may want to view what both of them did since they forked.
@@ -905,7 +905,7 @@ exclude anything that is reachable from both of them".</p>
 </div>
 <div class="paragraph">
 <p>Please note that these range notations can be used with both <code>gitk</code>
-and <code>git log</code>.</p>
+and <code>git</code> <code>log</code>.</p>
 </div>
 <div class="paragraph">
 <p>After inspecting what Bob did, if there is nothing urgent, Alice may
@@ -927,7 +927,7 @@ it easier:</p>
 </div>
 <div class="paragraph">
 <p>With this, Alice can perform the first part of the <code>pull</code> operation
-alone using the <code>git fetch</code> command without merging them with her own
+alone using the <code>git</code> <code>fetch</code> command without merging them with her own
 branch, using:</p>
 </div>
 <div class="listingblock">
@@ -937,7 +937,7 @@ branch, using:</p>
 </div>
 <div class="paragraph">
 <p>Unlike the longhand form, when Alice fetches from Bob using a
-remote repository shorthand set up with <code>git remote</code>, what was
+remote repository shorthand set up with <code>git</code> <code>remote</code>, what was
 fetched is stored in a remote-tracking branch, in this case
 <code>bob/master</code>.  So after this:</p>
 </div>
@@ -993,8 +993,8 @@ used for pulls:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>(The complete configuration created by <code>git clone</code> is visible using
-<code>git config -l</code>, and the <a href="git-config.html">git-config(1)</a> man page
+<p>(The complete configuration created by <code>git</code> <code>clone</code> is visible using
+<code>git</code> <code>config</code> <code>-l</code>, and the <a href="git-config.html">git-config(1)</a> man page
 explains the meaning of each option.)</p>
 </div>
 <div class="paragraph">
@@ -1032,8 +1032,8 @@ that various users push changes to; see <a href="git-push.html">git-push(1)</a> 
 <div class="sectionbody">
 <div class="paragraph">
 <p>Git history is represented as a series of interrelated commits.  We
-have already seen that the <code>git log</code> command can list those commits.
-Note that first line of each <code>git log</code> entry also gives a name for the
+have already seen that the <code>git</code> <code>log</code> command can list those commits.
+Note that first line of each <code>git</code> <code>log</code> entry also gives a name for the
 commit:</p>
 </div>
 <div class="listingblock">
@@ -1047,7 +1047,7 @@ Date:   Tue May 16 17:18:22 2006 -0700
 </div>
 </div>
 <div class="paragraph">
-<p>We can give this name to <code>git show</code> to see the details about this
+<p>We can give this name to <code>git</code> <code>show</code> to see the details about this
 commit.</p>
 </div>
 <div class="listingblock">
@@ -1118,14 +1118,14 @@ $ git reset --hard HEAD^ # reset your current branch and working
 <p>Be careful with that last command: in addition to losing any changes
 in the working directory, it will also remove all later commits from
 this branch.  If this branch is the only branch containing those
-commits, they will be lost.  Also, don&#8217;t use <code>git reset</code> on a
+commits, they will be lost.  Also, don&#8217;t use <code>git</code> <code>reset</code> on a
 publicly-visible branch that other developers pull from, as it will
 force needless merges on other developers to clean up the history.
-If you need to undo changes that you have pushed, use <code>git revert</code>
+If you need to undo changes that you have pushed, use <code>git</code> <code>revert</code>
 instead.</p>
 </div>
 <div class="paragraph">
-<p>The <code>git grep</code> command can search for strings in any version of your
+<p>The <code>git</code> <code>grep</code> command can search for strings in any version of your
 project, so</p>
 </div>
 <div class="listingblock">
@@ -1137,7 +1137,7 @@ project, so</p>
 <p>searches for all occurrences of "hello" in <code>v2.5</code>.</p>
 </div>
 <div class="paragraph">
-<p>If you leave out the commit name, <code>git grep</code> will search any of the
+<p>If you leave out the commit name, <code>git</code> <code>grep</code> will search any of the
 files it manages in your current directory.  So</p>
 </div>
 <div class="listingblock">
@@ -1150,7 +1150,7 @@ files it manages in your current directory.  So</p>
 </div>
 <div class="paragraph">
 <p>Many Git commands also take sets of commits, which can be specified
-in a number of ways.  Here are some examples with <code>git log</code>:</p>
+in a number of ways.  Here are some examples with <code>git</code> <code>log</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1162,7 +1162,7 @@ $ git log v2.5.. Makefile       # commits since v2.5 which modify
 </div>
 </div>
 <div class="paragraph">
-<p>You can also give <code>git log</code> a "range" of commits where the first is not
+<p>You can also give <code>git</code> <code>log</code> a "range" of commits where the first is not
 necessarily an ancestor of the second; for example, if the tips of
 the branches <code>stable</code> and <code>master</code> diverged from a common
 commit some time ago, then</p>
@@ -1186,9 +1186,9 @@ stable branch, while</p>
 the <code>master</code> branch.</p>
 </div>
 <div class="paragraph">
-<p>The <code>git log</code> command has a weakness: it must present commits in a
+<p>The <code>git</code> <code>log</code> command has a weakness: it must present commits in a
 list.  When the history has lines of development that diverged and
-then merged back together, the order in which <code>git log</code> presents
+then merged back together, the order in which <code>git</code> <code>log</code> presents
 those commits is meaningless.</p>
 </div>
 <div class="paragraph">
@@ -1218,7 +1218,7 @@ of the file:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>You can also use <code>git show</code> to see any such file:</p>
+<p>You can also use <code>git</code> <code>show</code> to see any such file:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1270,7 +1270,7 @@ on emailed patches.</p>
 <li>
 <p><a href="git-bisect.html">git-bisect(1)</a>: When there is a regression in your
 project, one way to track down the bug is by searching through
-the history to find the exact commit that&#8217;s to blame.  <code>git bisect</code>
+the history to find the exact commit that&#8217;s to blame.  <code>git</code> <code>bisect</code>
 can help you perform a binary search for that commit.  It is
 smart enough to perform a close-to-optimal search even in the
 case of complex non-linear history with lots of merged branches.</p>
@@ -1315,7 +1315,7 @@ workflows.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

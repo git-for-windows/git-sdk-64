@@ -4,7 +4,7 @@ vim9script
 
 # Author: Bram Moolenaar
 # Copyright: Vim license applies, see ":help license"
-# Last Change: 2024 Jul 04
+# Last Change: 2024 Nov 19
 # Converted to Vim9: Ubaldo Tiberi <ubaldo.tiberi@gmail.com>
 
 # WORK IN PROGRESS - The basics works stable, more to come
@@ -38,6 +38,11 @@ vim9script
 # The communication with gdb uses GDB/MI.  See:
 # https://sourceware.org/gdb/current/onlinedocs/gdb/GDB_002fMI.html
 
+var DEBUG = false
+if exists('g:termdebug_config')
+  DEBUG = get(g:termdebug_config, 'debug', false)
+endif
+
 def Echoerr(msg: string)
   echohl ErrorMsg | echom $'[termdebug] {msg}' | echohl None
 enddef
@@ -49,7 +54,9 @@ enddef
 # Variables to keep their status among multiple instances of Termdebug
 # Avoid to source the script twice.
 if exists('g:termdebug_loaded')
-  Echoerr('Termdebug already loaded.')
+  if DEBUG
+    Echoerr('Termdebug already loaded.')
+  endif
   finish
 endif
 g:termdebug_loaded = true
@@ -121,7 +128,9 @@ var breakpoint_locations: dict<any>
 var BreakpointSigns: list<string>
 
 var evalFromBalloonExpr: bool
-var evalFromBalloonExprResult: string
+var evalInPopup: bool
+var evalPopupId: number
+var evalExprResult: string
 var ignoreEvalError: bool
 var evalexpr: string
 # Remember the old value of 'signcolumn' for each buffer that it's set in, so
@@ -202,7 +211,9 @@ def InitScriptVariables()
   BreakpointSigns = []
 
   evalFromBalloonExpr = false
-  evalFromBalloonExprResult = ''
+  evalInPopup = false
+  evalPopupId = -1
+  evalExprResult = ''
   ignoreEvalError = false
   evalexpr = ''
   # Remember the old value of 'signcolumn' for each buffer that it's set in, so
@@ -1478,10 +1489,23 @@ def SendEval(expr: string)
   evalexpr = exprLHS
 enddef
 
+# Returns whether to evaluate in a popup or not, defaults to false.
+def EvaluateInPopup(): bool
+  if exists('g:termdebug_config')
+    return get(g:termdebug_config, 'evaluate_in_popup', false)
+  endif
+  return false
+enddef
+
 # :Evaluate - evaluate what is specified / under the cursor
 def Evaluate(range: number, arg: string)
   var expr = GetEvaluationExpression(range, arg)
-  echom $"expr: {expr}"
+  if EvaluateInPopup()
+    evalInPopup = true
+    evalExprResult = ''
+  else
+    echomsg $'expr: {expr}'
+  endif
   ignoreEvalError = false
   SendEval(expr)
 enddef
@@ -1541,6 +1565,37 @@ def Balloon_show(expr: string)
   endif
 enddef
 
+def Popup_format(expr: string): list<string>
+  var lines = expr
+    ->substitute('{', '{\n', 'g')
+    ->substitute('}', '\n}', 'g')
+    ->substitute(',', ',\n', 'g')
+    ->split('\n')
+  var indentation = 0
+  var formatted_lines = []
+  for line in lines
+    var stripped = line->substitute('^\s\+', '', '')
+    if stripped =~ '^}'
+      indentation -= 2
+    endif
+    formatted_lines->add(repeat(' ', indentation) .. stripped)
+    if stripped =~ '{$'
+      indentation += 2
+    endif
+  endfor
+  return formatted_lines
+enddef
+
+def Popup_show(expr: string)
+  var formatted = Popup_format(expr)
+  if evalPopupId != -1
+    popup_close(evalPopupId)
+  endif
+  # Specifying the line is necessary, as the winbar seems to cause issues
+  # otherwise. I.e., the popup would be shown one line too high.
+  evalPopupId = popup_atcursor(formatted, {'line': 'cursor-1'})
+enddef
+
 def HandleEvaluate(msg: string)
   var value = msg
     ->substitute('.*value="\(.*\)"', '\1', '')
@@ -1555,13 +1610,12 @@ def HandleEvaluate(msg: string)
     #\ ->substitute('\\0x00', NullRep, 'g')
     #\ ->substitute('\\0x\(\x\x\)', {-> eval('"\x' .. submatch(1) .. '"')}, 'g')
     ->substitute(NullRepl, '\\000', 'g')
-  if evalFromBalloonExpr
-    if empty(evalFromBalloonExprResult)
-      evalFromBalloonExprResult = $'{evalexpr}: {value}'
+  if evalFromBalloonExpr || evalInPopup
+    if empty(evalExprResult)
+      evalExprResult = $'{evalexpr}: {value}'
     else
-      evalFromBalloonExprResult ..= $' = {value}'
+      evalExprResult ..= $' = {value}'
     endif
-    Balloon_show(evalFromBalloonExprResult)
   else
     echomsg $'"{evalexpr}": {value}'
   endif
@@ -1570,8 +1624,12 @@ def HandleEvaluate(msg: string)
     # Looks like a pointer, also display what it points to.
     ignoreEvalError = true
     SendEval($'*{evalexpr}')
-  else
+  elseif evalFromBalloonExpr
+    Balloon_show(evalExprResult)
     evalFromBalloonExpr = false
+  elseif evalInPopup
+    Popup_show(evalExprResult)
+    evalInPopup = false
   endif
 enddef
 
@@ -1588,7 +1646,7 @@ def TermDebugBalloonExpr(): string
     return ''
   endif
   evalFromBalloonExpr = true
-  evalFromBalloonExprResult = ''
+  evalExprResult = ''
   ignoreEvalError = true
   var expr = CleanupExpr(v:beval_text)
   SendEval(expr)
@@ -1861,6 +1919,11 @@ def CreateBreakpoint(id: number, subid: number, enabled: string)
     var label = ''
     if exists('g:termdebug_config') && has_key(g:termdebug_config, 'sign')
       label = g:termdebug_config['sign']
+    elseif exists('g:termdebug_config') && has_key(g:termdebug_config, 'sign_decimal')
+      label = printf('%02d', id)
+      if id > 99
+        label = '9+'
+      endif
     else
       label = printf('%02X', id)
       if id > 255

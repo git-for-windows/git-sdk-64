@@ -452,11 +452,11 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><code>git init</code> [<code>-q</code> | <code>--quiet</code>] [<code>--bare</code>] [<code>--template=</code><em>&lt;template-directory&gt;</em>]
-          [<code>--separate-git-dir</code> <em>&lt;git-dir&gt;</em>] [<code>--object-format=</code><em>&lt;format&gt;</em>]
-          [<code>--ref-format=</code><em>&lt;format&gt;</em>]
-          [<code>-b</code> <em>&lt;branch-name&gt;</em> | <code>--initial-branch=</code><em>&lt;branch-name&gt;</em>]
-          [<code>--shared</code>[<code>=</code><em>&lt;permissions&gt;</em>]] [<em>&lt;directory&gt;</em>]</pre>
+<pre class="content"><code>git</code> <code>init</code> [<code>-q</code> | <code>--quiet</code>] [<code>--bare</code>] [<code>--template=</code><em>&lt;template-directory&gt;</em>]
+	 [<code>--separate-git-dir</code> <em>&lt;git-dir&gt;</em>] [<code>--object-format=</code><em>&lt;format&gt;</em>]
+	 [<code>--ref-format=</code><em>&lt;format&gt;</em>]
+	 [<code>-b</code> <em>&lt;branch-name&gt;</em> | <code>--initial-branch=</code><em>&lt;branch-name&gt;</em>]
+	 [<code>--shared</code>[<code>=</code><em>&lt;permissions&gt;</em>]] [<em>&lt;directory&gt;</em>]</pre>
 </div>
 </div>
 </div>
@@ -464,26 +464,26 @@ pre>code {
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This command creates an empty Git repository - basically a <code>.git</code>
+<p>This command creates an empty Git repository - basically a .<code>git</code>
 directory with subdirectories for <code>objects</code>, <code>refs/heads</code>,
 <code>refs/tags</code>, and template files.  An initial branch without any
 commits will be created (see the <code>--initial-branch</code> option below
 for its name).</p>
 </div>
 <div class="paragraph">
-<p>If the <code>$GIT_DIR</code> environment variable is set then it specifies a path
-to use instead of <code>./.git</code> for the base of the repository.</p>
+<p>If the <code>GIT_DIR</code> environment variable is set then it specifies a path
+to use instead of .<code>/.git</code> for the base of the repository.</p>
 </div>
 <div class="paragraph">
 <p>If the object storage directory is specified via the
-<code>$GIT_OBJECT_DIRECTORY</code> environment variable then the sha1 directories
+<code>GIT_OBJECT_DIRECTORY</code> environment variable then the sha1 directories
 are created underneath; otherwise, the default <code>$GIT_DIR/objects</code>
 directory is used.</p>
 </div>
 <div class="paragraph">
-<p>Running <code>git init</code> in an existing repository is safe. It will not
+<p>Running <code>git</code> <code>init</code> in an existing repository is safe. It will not
 overwrite things that are already there. The primary reason for
-rerunning <code>git init</code> is to pick up newly added templates (or to move
+rerunning <code>git</code> <code>init</code> is to pick up newly added templates (or to move
 the repository to another place if <code>--separate-git-dir</code> is given).</p>
 </div>
 </div>
@@ -547,7 +547,7 @@ DIRECTORY" section below.)</p>
 <dt class="hdlist1"><code>--separate-git-dir=</code><em>&lt;git-dir&gt;</em></dt>
 <dd>
 <p>Instead of initializing the repository as a directory to either <code>$GIT_DIR</code> or
-<code>./.git/</code>, create a text file there containing the path to the actual
+.<code>/.git/</code>, create a text file there containing the path to the actual
 repository.  This file acts as a filesystem-agnostic Git symbolic link to the
 repository.</p>
 <div class="paragraph">
@@ -661,7 +661,7 @@ dot will be copied to the <code>$GIT_DIR</code> after it is created.</p>
 </div>
 <div class="paragraph">
 <p>The sample hooks are all disabled by default. To enable one of the
-sample hooks rename it by removing its <code>.sample</code> suffix.</p>
+sample hooks rename it by removing its .<code>sample</code> suffix.</p>
 </div>
 <div class="paragraph">
 <p>See <a href="githooks.html">githooks(5)</a> for more general info on hook execution.</p>
@@ -749,7 +749,7 @@ precedence over this config.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

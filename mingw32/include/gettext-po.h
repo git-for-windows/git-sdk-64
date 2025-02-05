@@ -28,7 +28,7 @@ extern "C" {
 /* =========================== Meta Information ============================ */
 
 /* Version number: (major<<16) + (minor<<8) + subminor */
-#define LIBGETTEXTPO_VERSION 0x001605
+#define LIBGETTEXTPO_VERSION 0x001701
 extern __declspec (dllimport) int libgettextpo_version;
 
 /* ================================= Types ================================= */
@@ -46,7 +46,7 @@ typedef struct po_message *po_message_t;
 /* A po_filepos_t represents a string's position within a source file.  */
 typedef struct po_filepos *po_filepos_t;
 
-/* A po_error_handler handles error situations.  */
+/* A po_error_handler handles error situations.  No longer used.  */
 struct po_error_handler
 {
   /* Signal an error.  The error message is built from FORMAT and the following
@@ -298,8 +298,11 @@ extern void po_message_set_fuzzy (po_message_t message, int fuzzy);
    type (e.g. "c-format").  */
 extern int po_message_is_format (po_message_t message, const char *format_type);
 
-/* Change the format string mark for a given type of a message.  */
-extern void po_message_set_format (po_message_t message, const char *format_type, /*bool*/int value);
+/* Change the format string mark for a given type of a message.
+   Pass value = 1 to assert the format string mark (e.g. "c-format"),
+   value = 0 to assert the opposite (leading to e.g. "no-c-format"),
+   or value = -1 to remove the format string mark and its opposite.  */
+extern void po_message_set_format (po_message_t message, const char *format_type, int value);
 
 /* If a numeric range of a message is set, return true and store the minimum
    and maximum value in *MINP and *MAXP.  */

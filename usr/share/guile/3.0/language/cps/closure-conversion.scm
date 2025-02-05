@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2013-2021 Free Software Foundation, Inc.
+;; Copyright (C) 2013-2021, 2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -34,11 +34,7 @@
 
 (define-module (language cps closure-conversion)
   #:use-module (ice-9 match)
-  #:use-module ((srfi srfi-1) #:select (fold
-                                        filter-map
-                                        ))
-  #:use-module (srfi srfi-11)
-  #:use-module (system base types internal)
+  #:use-module ((srfi srfi-1) #:select (fold filter-map))
   #:use-module (language cps)
   #:use-module (language cps utils)
   #:use-module (language cps with-cps)
@@ -76,6 +72,8 @@
               (if proc
                   (add-use proc uses)
                   uses)))
+           (($ $calli args callee)
+            (add-uses args (add-use callee uses)))
            (($ $primcall name param args)
             (add-uses args uses))))
         (($ $kargs _ _ ($ $branch kf kt src op param args))
@@ -209,6 +207,8 @@ shared closures to use the appropriate 'self' variable, if possible."
               ((closure . label) ($callk label closure ,args)))))
         (($ $callk label proc args)
          ($callk label (and proc (subst proc)) ,(map subst args)))
+        (($ $calli args callee)
+         ($calli ,(map subst args) (subst callee)))
         (($ $primcall name param args)
          ($primcall name param ,(map subst args)))
         (($ $values args)
@@ -350,6 +350,8 @@ references."
                            (if proc
                                (add-use proc uses)
                                uses)))
+                        (($ $calli args callee)
+                         (add-uses args (add-use callee uses)))
                         (($ $primcall name param args)
                          (add-uses args uses))))
                      (($ $branch kf kt src op param args)
@@ -521,17 +523,22 @@ Otherwise @var{var} is bound, so @var{k} is called with @var{var}."
             (with-cps cps
               ($ (k self)))
             (let* ((idx (intset-find free var))
-                   (param (cond
-                           ((not self-known?) (cons 'closure (+ idx 2)))
-                           ((= nfree 2)       (cons 'pair idx))
-                           (else              (cons 'vector (+ idx 1))))))
+                   (ref (cond
+                         ((not self-known?)
+                          (build-exp
+                            ($primcall 'closure-ref `(,idx . ,nfree) (self))))
+                         ((= nfree 2)
+                          (build-exp
+                            ($primcall (match idx (0 'car) (1 'cdr)) #f
+                                       (self))))
+                         (else
+                          (build-exp
+                            ($primcall 'vector-ref/immediate idx (self)))))))
               (with-cps cps
                 (letv var*)
                 (let$ body (k var*))
                 (letk k* ($kargs (#f) (var*) ,body))
-                (build-term
-                  ($continue k* #f
-                    ($primcall 'scm-ref/immediate param (self))))))))
+                (build-term ($continue k* #f ,ref))))))
        (else
         (with-cps cps
           ($ (k var))))))
@@ -563,28 +570,13 @@ term."
         (#(#f nfree)
          ;; The call sites cannot be enumerated; allocate a closure.
          (with-cps cps
-           (letv closure tag code)
-           (letk k* ($kargs () ()
-                      ($continue k src ($values (closure)))))
-           (letk kinit ($kargs ('code) (code)
-                         ($continue k* src
-                           ($primcall 'word-set!/immediate '(closure . 1)
-                                      (closure code)))))
-           (letk kcode ($kargs () ()
-                         ($continue kinit src ($code label))))
-           (letk ktag1
-                 ($kargs ('tag) (tag)
-                   ($continue kcode src
-                     ($primcall 'word-set!/immediate '(closure . 0)
-                                (closure tag)))))
-           (letk ktag0
-                 ($kargs ('closure) (closure)
-                   ($continue ktag1 src
-                     ($primcall 'load-u64 (+ %tc7-program (ash nfree 16)) ()))))
+           (letv code)
+           (letk kalloc
+                 ($kargs ('code) (code)
+                   ($continue k src
+                     ($primcall 'make-closure nfree (code)))))
            (build-term
-             ($continue ktag0 src
-               ($primcall 'allocate-words/immediate `(closure . ,(+ nfree 2))
-                          ())))))
+             ($continue kalloc src ($code label)))))
         (#(#t 0)
          (with-cps cps
            (build-term ($continue k src ($const #f)))))
@@ -600,33 +592,25 @@ term."
          ;; Well-known closure with two free variables; the closure is a
          ;; pair.
          (with-cps cps
+           (letv false)
+           (letk kalloc
+                 ($kargs ('false) (false)
+                   ($continue k src ($primcall 'cons #f (false false)))))
            (build-term
-             ($continue k src
-               ($primcall 'allocate-words/immediate `(pair . 2) ())))))
+             ($continue kalloc src ($const #f)))))
         ;; Well-known callee with more than two free variables; the closure
         ;; is a vector.
         (#(#t nfree)
          (unless (> nfree 2)
            (error "unexpected well-known nullary, unary, or binary closure"))
          (with-cps cps
-           (letv v w0)
-           (letk k* ($kargs () () ($continue k src ($values (v)))))
-           (letk ktag1
-                 ($kargs ('w0) (w0)
-                   ($continue k* src
-                     ($primcall 'word-set!/immediate '(vector . 0) (v w0)))))
-           (letk ktag0
-                 ($kargs ('v) (v)
-                   ($continue ktag1 src
-                     ($primcall 'load-u64 (+ %tc7-vector (ash nfree 8)) ()))))
            (build-term
-             ($continue ktag0 src
-               ($primcall 'allocate-words/immediate `(vector . ,(1+ nfree))
-                          ())))))))
+             ($continue k src
+               ($primcall 'allocate-vector/immediate nfree ())))))))
 
-    (define (init-closure cps k src var known? free)
+    (define (init-closure cps k src closure known? free)
       "Initialize the free variables @var{closure-free} in a closure
-bound to @var{var}, and continue to @var{k}."
+bound to @var{closure}, and continue to @var{k}."
       (let ((count (intset-count free)))
         (cond
          ((and known? (<= count 1))
@@ -635,15 +619,28 @@ bound to @var{var}, and continue to @var{k}."
           (with-cps cps
             (build-term ($continue k src ($values ())))))
          (else
-          ;; Otherwise residualize a sequence of scm-set!.
-          (let-values (((kind offset)
-                        ;; What are we initializing?  A closure if the
-                        ;; procedure is not well-known; a pair if it has
-                        ;; only 2 free variables; otherwise, a vector.
-                        (cond
-                         ((not known?) (values 'closure 2))
-                         ((= count 2)  (values 'pair 0))
-                         (else         (values 'vector 1)))))
+          ;; Otherwise residualize initializations.
+          (let ((make-init-exp
+                 ;; What are we initializing?  A closure if the
+                 ;; procedure is not well-known; a pair if it has
+                 ;; only 2 free variables; otherwise, a vector.
+                 (cond
+                  ((not known?)
+                   (lambda (idx val)
+                     (build-exp
+                       ($primcall 'closure-set! `(,idx . ,count) (closure val)))))
+                  ((= count 2)
+                   (lambda (idx val)
+                     (match idx
+                       (0 (build-exp
+                            ($primcall 'set-car! #f (closure val))))
+                       (1 (build-exp
+                            ($primcall 'set-cdr! #f (closure val)))))))
+                  (else
+                   (lambda (idx val)
+                     (build-exp
+                       ($primcall 'vector-set!/immediate idx
+                                  (closure val))))))))
             (let lp ((cps cps) (prev #f) (idx 0))
               (match (intset-next free prev)
                 (#f (with-cps cps
@@ -656,9 +653,7 @@ bound to @var{var}, and continue to @var{k}."
                             (with-cps cps
                               (build-term
                                 ($continue k src
-                                  ($primcall 'scm-set!/immediate
-                                             (cons kind (+ offset idx))
-                                             (var v)))))))))))))))))
+                                  ,(make-init-exp idx v))))))))))))))))
 
     (define (make-single-closure cps k src kfun)
       (let ((free (intmap-ref free-vars kfun)))
@@ -796,6 +791,15 @@ bound to @var{var}, and continue to @var{k}."
 
         (($ $continue k src ($ $callk label proc args))
          (convert-known-proc-call cps k src label proc args))
+
+        (($ $continue k src ($ $calli args callee))
+         (convert-args cps args
+           (lambda (cps args)
+             (convert-arg cps callee
+               (lambda (cps callee)
+                 (with-cps cps
+                   (build-term
+                     ($continue k src ($calli args callee)))))))))
 
         (($ $continue k src ($ $primcall name param args))
          (convert-args cps args

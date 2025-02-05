@@ -525,7 +525,7 @@ individual object names.  The revision arguments are processed
 the same way as <em>git rev-list</em> with the <code>--objects</code> flag
 uses its <code>commit</code> arguments to build the list of objects it
 outputs.  The objects on the resulting list are packed.
-Besides revisions, <code>--not</code> or <code>--shallow &lt;SHA-1&gt;</code> lines are
+Besides revisions, <code>--not</code> or <code>--shallow</code> <em>&lt;SHA-1&gt;</em> lines are
 also accepted.</p>
 </dd>
 <dt class="hdlist1">--unpacked</dt>
@@ -562,8 +562,8 @@ objects listed in the excluded packs (beginning with <code>^</code>).</p>
 <dt class="hdlist1">--cruft</dt>
 <dd>
 <p>Packs unreachable objects into a separate "cruft" pack, denoted
-by the existence of a <code>.mtimes</code> file. Typically used by <code>git
-repack --cruft</code>. Callers provide a list of pack names and
+by the existence of a .<code>mtimes</code> file. Typically used by <code>git</code>
+<code>repack</code> <code>--cruft</code>. Callers provide a list of pack names and
 indicate which packs will remain in the repository, along with
 which packs will be deleted (indicated by the <code>-</code> prefix). The
 contents of the cruft pack are all objects not contained in the
@@ -587,7 +587,7 @@ options which imply <code>--revs</code>.</p>
 <dt class="hdlist1">--cruft-expiration=&lt;approxidate&gt;</dt>
 <dd>
 <p>If specified, objects are eliminated from the cruft pack if they
-have an mtime older than <code>&lt;approxidate&gt;</code>. If unspecified (and
+have an mtime older than <em>&lt;approxidate&gt;</em>. If unspecified (and
 given <code>--cruft</code>), then no objects are eliminated.</p>
 </dd>
 <dt class="hdlist1">--window=&lt;n&gt;</dt>
@@ -642,7 +642,7 @@ otherwise been packed.</p>
 <dd>
 <p>This flag causes an object already in the given pack to be
 ignored, even if it would have otherwise been
-packed. <code>&lt;pack-name&gt;</code> is the pack file name without
+packed. <em>&lt;pack-name&gt;</em> is the pack file name without
 leading directory (e.g. <code>pack-123.pack</code>). The option could be
 specified multiple times to keep multiple packs.</p>
 </dd>
@@ -737,7 +737,7 @@ option only makes sense in conjunction with --stdout.</p>
 <div class="paragraph">
 <p>Note: A thin pack violates the packed archive format by omitting
 required objects and is thus unusable by Git without making it
-self-contained. Use <code>git index-pack --fix-thin</code>
+self-contained. Use <code>git</code> <code>index-pack</code> <code>--fix-thin</code>
 (see <a href="git-index-pack.html">git-index-pack(1)</a>) to restore the self-contained property.</p>
 </div>
 </dd>
@@ -759,10 +759,10 @@ compactness.  Depending on the average delta chain
 length, this option typically shrinks the resulting
 packfile by 3-5 per-cent.</p>
 <div class="paragraph">
-<p>Note: Porcelain commands such as <code>git gc</code> (see <a href="git-gc.html">git-gc(1)</a>),
-<code>git repack</code> (see <a href="git-repack.html">git-repack(1)</a>) pass this option by default
+<p>Note: Porcelain commands such as <code>git</code> <code>gc</code> (see <a href="git-gc.html">git-gc(1)</a>),
+<code>git</code> <code>repack</code> (see <a href="git-repack.html">git-repack(1)</a>) pass this option by default
 in modern Git when they put objects in your repository into pack files.
-So does <code>git bundle</code> (see <a href="git-bundle.html">git-bundle(1)</a>) when it creates a bundle.</p>
+So does <code>git</code> <code>bundle</code> (see <a href="git-bundle.html">git-bundle(1)</a>) when it creates a bundle.</p>
 </div>
 </dd>
 <dt class="hdlist1">--threads=&lt;n&gt;</dt>
@@ -791,7 +791,7 @@ nevertheless.</p>
 <dd>
 <p>Omits certain objects (usually blobs) from the resulting
 packfile.  See <a href="git-rev-list.html">git-rev-list(1)</a> for valid
-<code>&lt;filter-spec&gt;</code> forms.</p>
+<em>&lt;filter-spec&gt;</em> forms.</p>
 </dd>
 <dt class="hdlist1">--no-filter</dt>
 <dd>
@@ -850,7 +850,7 @@ below.</p>
 </dd>
 <dt class="hdlist1">--path-walk</dt>
 <dd>
-<p>By default, <code>git pack-objects</code> walks objects in an order that
+<p>By default, <code>git</code> <code>pack-objects</code> walks objects in an order that
 presents trees and blobs in an order unrelated to the path they
 appear relative to a commit&#8217;s root tree. The <code>--path-walk</code> option
 enables a different walking algorithm that organizes trees and
@@ -1007,7 +1007,7 @@ attribute <code>delta</code> set to false.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

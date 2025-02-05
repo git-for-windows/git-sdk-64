@@ -112,7 +112,7 @@ all-local-no:
 # The determination of whether the package xyz is a GNU one is based on the
 # heuristic whether some file in the top level directory mentions "GNU xyz".
 # If GNU 'find' is available, we avoid grepping through monster files.
-$(DOMAIN).pot-update: $(POTFILES_DEPS) remove-potcdate.sed
+$(DOMAIN).pot-update: $(POTFILES_DEPS)
 	package_gnu="$(PACKAGE_GNU)"; \
 	test -n "$$package_gnu" || { \
 	  if { if (LC_ALL=C find --version) 2>/dev/null | grep GNU >/dev/null; then \
@@ -198,9 +198,6 @@ $(POFILES): $(DOMAIN).pot
 	else \
 	  $(MAKE) $${lang}.po-create; \
 	fi
-
-internal-clean::
-	rm -f remove-potcdate.sed
 
 update-po:
 	$(MAKE) $(DOMAIN).pot-update

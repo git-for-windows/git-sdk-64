@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2013-2020 Free Software Foundation, Inc.
+;; Copyright (C) 2013-2021 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -152,8 +152,6 @@
       (($ $kargs names syms ($ $continue k src ($ $code kfun)))
        (maybe-visit-fun kfun labels vars))
       (($ $kargs names syms ($ $continue k src ($ $callk kfun)))
-       ;; Well-known functions never have a $const-fun created for them
-       ;; and are only referenced by their $callk call sites.
        (maybe-visit-fun kfun labels vars))
       (_ (values labels vars))))
   (define (visit-fun kfun labels vars)
@@ -188,6 +186,8 @@
         (($ $callk k proc args)
          ($callk (rename-label k) (and proc (rename-var proc))
                  ,(map rename-var args)))
+        (($ $calli args callee)
+         ($calli ,(map rename-var args) (rename-var callee)))
         (($ $primcall name param args)
          ($primcall name param ,(map rename-var args)))))
     (define (rename-arity arity)

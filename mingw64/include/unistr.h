@@ -27,7 +27,7 @@
 #include <unistring/inline.h>
 
 /* Get bool.  */
-#include <unistring/stdbool.h>
+#include <stdbool.h>
 
 /* Get size_t, ptrdiff_t.  */
 #include <stddef.h>

@@ -24,8 +24,8 @@
 ;; Usage: doc-snarf FILE
 ;;
 ;; This program reads in a Scheme source file and extracts docstrings
-;; in the format specified below.  Additionally, a procedure protoype
-;; is infered from the procedure definition line starting with
+;; in the format specified below.  Additionally, a procedure prototype
+;; is inferred from the procedure definition line starting with
 ;; (define... ).
 ;;
 ;; Currently, two output modi are implemented: texinfo and plaintext.
@@ -33,9 +33,9 @@
 ;; `--texinfo, -t' command line option.
 ;;
 ;; Format: A docstring can span multiple lines and a docstring line
-;; begins with `;; ' (two semicoli and a space). A docstring is ended
+;; begins with `;; ' (two semicolons and a space). A docstring is ended
 ;; by either a line beginning with (define ...) or one or more lines
-;; beginning with `;;-' (two semicoli and a dash). These lines are
+;; beginning with `;;-' (two semicolons and a dash). These lines are
 ;; called `options' and begin with a keyword, followed by a colon and
 ;; a string.
 ;;
@@ -219,7 +219,7 @@ return the standard internal docstring if found.  Return #f if not."
 ;; to be written in language @var{lang}.
 ;;-Author: Martin Grabmueller <mgrabmue@cs.tu-berlin.de>
 ;;-Created: 2001-02-17
-;;-ttn-mod: regluarize lang parm lookup, add "std int doc" snarfing (2 places)
+;;-ttn-mod: regularize lang parm lookup, add "std int doc" snarfing (2 places)
 (define (snarf input-file lang)
   (let* ((i-p (open-input-file input-file))
          (parm-regexp (lambda (parm) (make-regexp (lang-parm lang parm))))

@@ -442,9 +442,6 @@ pre>code {
 <body class="article">
 <div id="header">
 <h1>How to revert a faulty merge</h1>
-<div class="details">
-<span id="revdate">2024-10-22</span>
-</div>
 </div>
 <div id="content">
 <div class="paragraph">
@@ -485,7 +482,7 @@ this:</p>
 merge that brings these premature changes into the mainline, x are changes
 unrelated to what the side branch did and already made on the mainline,
 and W is the "revert of the merge M" (doesn&#8217;t W look M upside down?).
-IOW, <code>"diff W^..W"</code> is similar to <code>"diff -R M^..M"</code>.</p>
+IOW, "diff <code>W^</code><code>..</code><code>W</code>" is similar to "diff <code>-R</code> <code>M^</code><code>..</code><code>M</code>".</p>
 </div>
 <div class="paragraph">
 <p>Such a "revert" of a merge can be made with:</p>
@@ -618,9 +615,9 @@ after the revert, the history would have looked like this:</p>
 </div>
 <div class="paragraph">
 <p>where Y is the revert of W, A' and B' are rerolled A and B, and there may
-also be a further fix-up C' on the side branch.  <code>"diff Y^..Y"</code> is similar
-to <code>"diff -R W^..W"</code> (which in turn means it is similar to <code>"diff M^..M"</code>),
-and <code>"diff A'^..C'"</code> by definition would be similar but different from that,
+also be a further fix-up C' on the side branch.  "diff <code>Y^</code><code>..</code><code>Y</code>" is similar
+to "diff <code>-R</code> <code>W^</code><code>..</code><code>W</code>" (which in turn means it is similar to "diff <code>M^</code><code>..</code><code>M</code>"),
+and "diff <code>A</code>'^<code>..</code><code>C</code>'" by definition would be similar but different from that,
 because it is a rerolled series of the earlier change.  There will be a
 lot of overlapping changes that result in conflicts.  So do not do "revert
 of revert" blindly without thinking..</p>
@@ -830,7 +827,7 @@ P---o---o---M---x---x---W---x---M2
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

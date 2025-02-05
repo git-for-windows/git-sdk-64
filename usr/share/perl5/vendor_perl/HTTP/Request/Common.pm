@@ -3,7 +3,7 @@ package HTTP::Request::Common;
 use strict;
 use warnings;
 
-our $VERSION = '6.46';
+our $VERSION = '7.00';
 
 our $DYNAMIC_FILE_UPLOAD ||= 0;  # make it defined (don't know why)
 our $READ_BUFFER_SIZE      = 8192;
@@ -87,9 +87,6 @@ sub request_type_with_data
 	    my $url = URI->new('http:');
 	    $url->query_form(ref($content) eq "HASH" ? %$content : @$content);
 	    $content = $url->query;
-
-	    # HTML/4.01 says that line breaks are represented as "CR LF" pairs (i.e., `%0D%0A')
-	    $content =~ s/(?<!%0D)%0A/%0D%0A/g if defined($content);
 	}
     }
 
@@ -315,7 +312,7 @@ HTTP::Request::Common - Construct common HTTP::Request objects
 
 =head1 VERSION
 
-version 6.46
+version 7.00
 
 =head1 SYNOPSIS
 

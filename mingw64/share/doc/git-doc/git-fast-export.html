@@ -522,7 +522,7 @@ produced incorrect results if you gave these options.</p>
 <dt class="hdlist1">--export-marks=&lt;file&gt;</dt>
 <dd>
 <p>Dumps the internal marks table to &lt;file&gt; when complete.
-Marks are written one per line as <code>:markid SHA-1</code>. Only marks
+Marks are written one per line as <code>:markid</code> <code>SHA-1</code>. Only marks
 for revisions are dumped; marks for blobs are ignored.
 Backends can use this file to validate imports after they
 have been completed, or to save the marks table across
@@ -590,14 +590,14 @@ the shape of the history and stored tree.  See the section on
 </dd>
 <dt class="hdlist1">--anonymize-map=&lt;from&gt;[:&lt;to&gt;]</dt>
 <dd>
-<p>Convert token <code>&lt;from&gt;</code> to <code>&lt;to&gt;</code> in the anonymized output. If
-<code>&lt;to&gt;</code> is omitted, map <code>&lt;from&gt;</code> to itself (i.e., do not
+<p>Convert token <em>&lt;from&gt;</em> to <em>&lt;to&gt;</em> in the anonymized output. If
+<em>&lt;to&gt;</em> is omitted, map <em>&lt;from&gt;</em> to itself (i.e., do not
 anonymize it). See the section on <code>ANONYMIZING</code> below.</p>
 </dd>
 <dt class="hdlist1">--reference-excluded-parents</dt>
 <dd>
-<p>By default, running a command such as <code>git fast-export
-master~5..master</code> will not include the commit master~5
+<p>By default, running a command such as <code>git</code> <code>fast-export</code>
+<code>master~5</code><code>..</code><code>master</code> will not include the commit master~5
 and will make master~4 no longer have master~5 as
 a parent (though both the old master~4 and new
 master~4 will have all the same files).  Use
@@ -610,7 +610,7 @@ commits.</p>
 <dt class="hdlist1">--show-original-ids</dt>
 <dd>
 <p>Add an extra directive to the output for commits and blobs,
-<code>original-oid &lt;SHA1SUM&gt;</code>.  While such directives will likely be
+<code>original-oid</code> <em>&lt;SHA1SUM&gt;</em>.  While such directives will likely be
 ignored by importers such as git-fast-import, it may be useful
 for intermediary filters (e.g. for rewriting commit messages
 which refer to older commits, or for stripping blobs by id).</p>
@@ -632,7 +632,7 @@ be specified.</p>
 <dd>
 <p>A list of arguments, acceptable to <em>git rev-parse</em> and
 <em>git rev-list</em>, that specifies the specific objects and references
-to export.  For example, <code>master~10..master</code> causes the
+to export.  For example, <code>master~10</code><code>..</code><code>master</code> causes the
 current master reference to be exported along with all objects
 added since its 10th ancestor commit and (unless the
 --reference-excluded-parents option is specified) all files
@@ -742,7 +742,7 @@ no private data in the stream.</p>
 paths, which becomes challenging after refnames and paths have been
 anonymized. You can ask for a particular token to be left as-is or
 mapped to a new value. For example, if you have a bug which reproduces
-with <code>git rev-list sensitive -- secret.c</code>, you can run:</p>
+with <code>git</code> <code>rev-list</code> <code>sensitive</code> <code>--</code> <code>secret.c</code>, you can run:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -753,7 +753,7 @@ with <code>git rev-list sensitive -- secret.c</code>, you can run:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>After importing the stream, you can then run <code>git rev-list foo -- bar.c</code>
+<p>After importing the stream, you can then run <code>git</code> <code>rev-list</code> <code>foo</code> <code>--</code> <code>bar.c</code>
 in the anonymized repository.</p>
 </div>
 <div class="paragraph">
@@ -798,7 +798,7 @@ a tag referencing a tree instead of a commit.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-22 10:19:45 UTC
+Last updated 2025-01-23 14:55:47 UTC
 </div>
 </div>
 </body>

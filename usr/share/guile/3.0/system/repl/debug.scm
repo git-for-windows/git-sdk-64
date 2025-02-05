@@ -1,6 +1,6 @@
 ;;; Guile VM debugging facilities
 
-;;; Copyright (C) 2001, 2009, 2010, 2011, 2013, 2014, 2015 Free Software Foundation, Inc.
+;;; Copyright (C) 2001, 2009-2011, 2013-2015, 2023-2024 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software; you can redistribute it and/or
 ;;; modify it under the terms of the GNU Lesser General Public
@@ -19,22 +19,17 @@
 ;;; Code:
 
 (define-module (system repl debug)
-  #:use-module (system base pmatch)
   #:use-module (system base syntax)
-  #:use-module (system base language)
-  #:use-module (system vm vm)
   #:use-module (system vm frame)
   #:use-module (system vm debug)
   #:use-module (ice-9 format)
   #:use-module (ice-9 match)
-  #:use-module (ice-9 rdelim)
-  #:use-module (ice-9 pretty-print)
-  #:use-module ((system vm inspect) #:select ((inspect . %inspect)))
   #:use-module (system vm program)
   #:export (<debug>
             make-debug debug?
             debug-frames debug-index debug-error-message
             terminal-width
+            default-frame-width
             print-registers print-locals print-frame print-frames
             stack->vector narrow-stack->vector
             frame->stack-vector))
@@ -77,6 +72,14 @@
            (fluid-set! set-width w)
            (error "Expected a column number (a positive integer)" w))))))
 
+(define default-frame-width
+  ;; Maximum number of columns filled by 'print-frames' when writing to
+  ;; a port that is not a terminal.  This is a purposefully large value
+  ;; to avoid losing important debugging info.
+  (make-parameter 500
+                  (lambda (val)
+                    (and (exact-integer? val) (positive? val)
+                         val))))
 
 
 
@@ -145,7 +148,11 @@
 
 (define* (print-frames frames
                        #:optional (port (current-output-port))
-                       #:key (width (terminal-width)) (full? #f)
+                       #:key
+                       (width (if (isatty? port)
+                                  (terminal-width)
+                                  (default-frame-width)))
+                       (full? #f)
                        (forward? #f) count)
   (let* ((len (vector-length frames))
          (lower-idx (if (or (not count) (positive? count))

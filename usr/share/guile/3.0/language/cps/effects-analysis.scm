@@ -1,6 +1,6 @@
 ;;; Effects analysis on CPS
 
-;; Copyright (C) 2011-2015,2017-2021 Free Software Foundation, Inc.
+;; Copyright (C) 2011-2015,2017-2021,2023 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -268,6 +268,7 @@ loads from objects created at known allocation sites."
     (lambda (label fx out)
       (cond
        ((causes-all-effects? fx) out)
+       ((logtest fx &allocation) out)
        ((logtest fx (logior &read &write))
         (match (intmap-ref conts label)
           ;; Assume that instructions which cause a known set of effects
@@ -310,37 +311,75 @@ the LABELS that are clobbered by the effects of LABEL."
                  clobbered-labels
                  (intset-remove clobbered-labels clobbered-label)))))
         clobbered-labels clobbered-labels))))
-  (let ((clobbered-by-write (make-hash-table)))
-    (intmap-fold
-     (lambda (label fx)
-       ;; Unless an expression causes a read, it isn't clobbered by
-       ;; anything.
-       (when (causes-effect? fx &read)
-         (let ((me (intset label)))
-           (define (add! kind field)
-             (let* ((k (logior (ash field &memory-kind-bits) kind))
-                    (clobber (hashv-ref clobbered-by-write k empty-intset)))
-               (hashv-set! clobbered-by-write k (intset-union me clobber))))
-           ;; Clobbered by write to specific field of this memory
-           ;; kind, write to any field of this memory kind, or
-           ;; write to any field of unknown memory kinds.
-           (let* ((loc (ash fx (- &effect-kind-bits)))
-                  (kind (logand loc &memory-kind-mask))
-                  (field (ash loc (- &memory-kind-bits))))
-             (add! kind field)
-             (add! kind -1)
-             (add! &unknown-memory-kinds -1))))
-       (values))
-     effects)
-    (intmap-map (lambda (label fx)
-                  (if (causes-effect? fx &write)
-                      (filter-may-alias
-                       label
-                       (hashv-ref clobbered-by-write
-                                  (ash fx (- &effect-kind-bits))
-                                  empty-intset))
-                      empty-intset))
-                effects)))
+
+  (define (make-clobber-vector) (make-vector &memory-kind-mask empty-intset))
+
+  (define clobbered-by-write-to-unknown empty-intset)
+  (define clobbered-by-write-to-any-field (make-clobber-vector))
+  (define clobbered-by-write-to-all-fields (make-clobber-vector))
+  (define clobbered-by-write-to-specific-field (make-hash-table))
+
+  (define (adjoin-to-clobber-vector! v k id)
+    (vector-set! v k (intset-union (vector-ref v k) (intset id))))
+  (define (add-clobbered-by-write-to-any-field! kind label)
+    (adjoin-to-clobber-vector! clobbered-by-write-to-any-field kind label))
+  (define (add-clobbered-by-write-to-all-fields! kind label)
+    (adjoin-to-clobber-vector! clobbered-by-write-to-all-fields kind label))
+  (define (adjoin-to-clobber-hash! h k id)
+    (hashv-set! h k (intset-union (hashv-ref h k empty-intset) (intset id))))
+  (define (add-clobbered-by-write-to-specific-field! kind+field label)
+    (adjoin-to-clobber-hash! clobbered-by-write-to-specific-field
+                             kind+field label))
+
+  (intmap-fold
+   (lambda (label fx)
+     ;; Unless an expression causes a read, it isn't clobbered by
+     ;; anything.
+     (when (causes-effect? fx &read)
+       (define kind+field (ash fx (- &effect-kind-bits)))
+       (define kind (logand &memory-kind-mask kind+field))
+       (define field (ash kind+field (- &memory-kind-bits)))
+       (cond
+        ((eqv? field -1)
+         ;; A read of the whole object is clobbered by a write to any
+         ;; field.
+         (add-clobbered-by-write-to-all-fields! kind label)
+         (add-clobbered-by-write-to-any-field! kind label))
+        ((negative? field) (error "unexpected field"))
+        (else
+         ;; A read of a specific field is clobbered by a write to that
+         ;; specific field, or a write to all fields.
+         (add-clobbered-by-write-to-all-fields! kind label)
+         (add-clobbered-by-write-to-specific-field! kind+field label)))           
+
+       ;; Also clobbered by write to any field of unknown memory kinds.
+       (add-clobbered-by-write-to-any-field! &unknown-memory-kinds label))
+     (values))
+   effects)
+  (define (lookup-clobbers fx)
+    (define kind+field (ash fx (- &effect-kind-bits)))
+    (define kind (logand &memory-kind-mask kind+field))
+    (define field (ash kind+field (- &memory-kind-bits)))
+    (cond
+     ((eqv? field -1)
+      ;; A write to the whole object.
+      (intset-union
+       (vector-ref clobbered-by-write-to-any-field kind)
+       (vector-ref clobbered-by-write-to-all-fields kind)))
+     ((negative? field) (error "unexpected field"))
+     (else
+      ;; A write to a specific field.  In addition to clobbering reads
+      ;; of this specific field, we clobber reads of the whole object,
+      ;; for example the ones that correspond to the synthesized "car"
+      ;; and "cdr" definitions that are associated with a "cons" expr.
+      (intset-union
+       (vector-ref clobbered-by-write-to-any-field kind)
+       (hashv-ref clobbered-by-write-to-specific-field kind+field)))))
+  (intmap-map (lambda (label fx)
+                (if (causes-effect? fx &write)
+                    (filter-may-alias label (lookup-clobbers fx))
+                    empty-intset))
+              effects))
 
 (define *primitive-effects* (make-hash-table))
 
@@ -366,31 +405,36 @@ the LABELS that are clobbered by the effects of LABEL."
 (define-primitive-effects
   ((eq? x y))
   ((equal? x y))
-  ((fixnum? arg))
-  ((char? arg))
-  ((eq-constant? arg))
-  ((undefined? arg))
-  ((null? arg))
-  ((false? arg))
-  ((nil? arg))
-  ((heap-object? arg))
-  ((pair? arg))
-  ((symbol? arg))
-  ((variable? arg))
-  ((vector? arg))
-  ((struct? arg))
-  ((string? arg))
-  ((number? arg))
-  ((bytevector? arg))
-  ((keyword? arg))
-  ((bitvector? arg))
-  ((procedure? arg))
-  ((thunk? arg))
-  ((heap-number? arg))
   ((bignum? arg))
-  ((flonum? arg))
+  ((bitvector? arg))
+  ((bytevector? arg))
+  ((char? arg))
   ((compnum? arg))
-  ((fracnum? arg)))
+  ((eq-constant? arg))
+  ((false? arg))
+  ((fixnum? arg))
+  ((flonum? arg))
+  ((fluid? arg))
+  ((fracnum? arg))
+  ((heap-number? arg))
+  ((heap-object? arg))
+  ((immutable-vector? arg))
+  ((keyword? arg))
+  ((nil? arg))
+  ((null? arg))
+  ((mutable-vector? arg))
+  ((pair? arg))
+  ((pointer? arg))
+  ((procedure? arg))
+  ((program? arg))
+  ((string? arg))
+  ((struct? arg))
+  ((symbol? arg))
+  ((syntax? arg))
+  ((thunk? arg))
+  ((undefined? arg))
+  ((variable? arg))
+  ((vector? arg)))
 
 ;; Fluids.
 (define-primitive-effects
@@ -400,6 +444,15 @@ the LABELS that are clobbered by the effects of LABEL."
   ((pop-fluid)                     (&write-object &fluid))
   ((push-dynamic-state state)      (&write-object &fluid)      &type-check)
   ((pop-dynamic-state)             (&write-object &fluid)))
+
+(define-primitive-effects
+  ((symbol->string x))             ;; CPS lowering includes symbol? type check.
+  ((symbol->keyword))              ;; Same.
+  ((keyword->symbol))              ;; Same, for keyword?.
+  ((string->symbol)                (&read-object &string)      &type-check)
+  ((string->utf8)                  (&read-object &string))
+  ((utf8->string)                  (&read-object &bytevector)  &type-check)
+  ((string-utf8-length)            (&read-object &string)))
 
 ;; Threads.  Calls cause &all-effects, which reflects the fact that any
 ;; call can capture a partial continuation and reinstate it on another
@@ -413,6 +466,14 @@ the LABELS that are clobbered by the effects of LABEL."
 
 ;; Generic objects.
 (define (annotation->memory-kind* annotation idx)
+  ;; Lowering from Tree-IL to CPS reifies type-specific constructors and
+  ;; accessors.  For these we can treat e.g. vector-length as completely
+  ;; constant as it can commute with any other instruction: the header
+  ;; initialization write of a vector is not visible.
+  ;;
+  ;; However when these instructions are later lowered to allocate-words
+  ;; with explicit initializers, we need to model the header reads and
+  ;; writes as non-commutative.
   (match (cons annotation idx)
     (('vector . 0) &header)
     (('string . (or 0 1 2 3)) &header)
@@ -437,7 +498,52 @@ the LABELS that are clobbered by the effects of LABEL."
     ('box &box)
     ('closure &closure)
     ('struct &struct)
-    ('atomic-box &unknown-memory-kinds)))
+    ('atomic-box &unknown-memory-kinds)
+    ('keyword &unknown-memory-kinds)))
+
+(define-primitive-effects* param
+  ((allocate-vector size)          (&allocate &vector))
+  ((allocate-vector/immediate)     (&allocate &vector))
+  ((vector-length v))
+  ((vector-ref/immediate v)        (&read-field &vector param))
+  ((vector-ref v idx)              (&read-object &vector))
+  ((vector-set!/immediate v val)   (&write-field &vector param))
+  ((vector-set! v idx val)         (&write-object &vector))
+
+  ((cons x y)                      (&allocate &pair))
+  ((car pair)                      (&read-field &pair 0))
+  ((cdr pair)                      (&read-field &pair 1))
+  ((set-car! pair val)             (&write-field &pair 0))
+  ((set-cdr! pair val)             (&write-field &pair 1))
+
+  ((box val)                       (&allocate &box))
+  ((box-ref b)                     (&read-object &box))
+  ((box-set! b val)                (&write-object &box))
+
+  ((allocate-struct vtable)        (&allocate &struct))
+  ((vtable-size x))
+  ((vtable-has-unboxed-fields? x))
+  ((vtable-field-boxed? x))
+  ((struct-vtable x))
+  ((struct-ref x)                  (&read-field &struct param))
+  ((struct-set! x y)               (&write-field &struct param))
+
+  ((bv-contents bv))
+  ((bv-length bv))
+
+  ((string-length str))
+  ((string-ref str idx)            (&read-object &string))
+  ((string-set! str idx cp)        (&write-object &string))
+
+  ((symbol-hash))
+
+  ((make-closure code)             (&allocate &closure))
+  ((closure-ref code)              (match param
+                                     ((idx . nfree)
+                                      (&read-field &closure idx))))
+  ((closure-set! code)             (match param
+                                     ((idx . nfree)
+                                      (&write-field &closure idx)))))
 
 (define-primitive-effects* param
   ((allocate-words size)           (&allocate (annotation->memory-kind param)))
@@ -610,14 +716,15 @@ the LABELS that are clobbered by the effects of LABEL."
   ((mod . _)                       &type-check)
   ((inexact _)                     &type-check)
   ((s64->f64 _))
-  ((complex? _)                    &type-check)
-  ((real? _)                       &type-check)
-  ((rational? _)                   &type-check)
+  ((number? _))
+  ((complex? _))
+  ((real? _))
+  ((rational? _))
+  ((integer? _))
+  ((exact? _))
+  ((inexact? _))
   ((inf? _)                        &type-check)
   ((nan? _)                        &type-check)
-  ((integer? _)                    &type-check)
-  ((exact? _)                      &type-check)
-  ((inexact? _)                    &type-check)
   ((even? _)                       &type-check)
   ((odd? _)                        &type-check)
   ((rsh n m)                       &type-check)
@@ -625,11 +732,13 @@ the LABELS that are clobbered by the effects of LABEL."
   ((rsh/immediate n)               &type-check)
   ((lsh/immediate n)               &type-check)
   ((logand . _)                    &type-check)
+  ((logand/immediate . _)          &type-check)
   ((logior . _)                    &type-check)
   ((logxor . _)                    &type-check)
   ((logsub . _)                    &type-check)
   ((lognot . _)                    &type-check)
   ((ulogand . _))
+  ((ulogand/immediate . _))
   ((ulogior . _))
   ((ulogxor . _))
   ((ulogsub . _))
@@ -687,7 +796,7 @@ the LABELS that are clobbered by the effects of LABEL."
      &no-effects)
     ((or ($ $fun) ($ $rec))
      (&allocate &unknown-memory-kinds))
-    ((or ($ $call) ($ $callk))
+    ((or ($ $call) ($ $callk) ($ $calli))
      &all-effects)
     (($ $primcall name param args)
      (primitive-effects param name args))))

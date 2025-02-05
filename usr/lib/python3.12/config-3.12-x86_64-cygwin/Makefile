@@ -31,8 +31,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.12
 srcdir=		.
 
-abs_srcdir=	/c/S/B/src/Python-3.12.7
-abs_builddir=	/c/S/B/src/Python-3.12.7
+abs_srcdir=	/c/S/B/src/Python-3.12.8
+abs_builddir=	/c/S/B/src/Python-3.12.8
 
 
 CC=		gcc
@@ -2387,6 +2387,7 @@ TESTSUBDIRS=	idlelib/idle_test \
 		test/test_tomllib/data/valid/dates-and-times \
 		test/test_tomllib/data/valid/multiline-basic-str \
 		test/test_tools \
+		test/test_tools/i18n_data \
 		test/test_ttk \
 		test/test_unittest \
 		test/test_unittest/testmock \
@@ -2398,6 +2399,10 @@ TESTSUBDIRS=	idlelib/idle_test \
 		test/test_zoneinfo/data \
 		test/tokenizedata \
 		test/tracedmodules \
+		test/translationdata \
+		test/translationdata/argparse \
+		test/translationdata/getopt \
+		test/translationdata/optparse \
 		test/typinganndata \
 		test/wheeldata \
 		test/xmltestdata \

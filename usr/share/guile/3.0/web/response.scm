@@ -20,10 +20,8 @@
 ;;; Code:
 
 (define-module (web response)
-  #:use-module (rnrs bytevectors)
   #:use-module (ice-9 binary-ports)
   #:use-module (ice-9 textual-ports)
-  #:use-module (ice-9 rdelim)
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-9)
   #:use-module (web http)

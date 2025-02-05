@@ -1,4 +1,4 @@
-*usr_41.txt*	For Vim version 9.1.  Last change: 2024 Jun 09
+*usr_41.txt*	For Vim version 9.1.  Last change: 2025 Jan 02
 
 		     VIM USER MANUAL - by Bram Moolenaar
 
@@ -30,13 +30,13 @@ Table of contents: |usr_toc.txt|
 *41.1*	Introduction				*vim-script-intro* *script*
 
 Let's start with some nomenclature. A Vim script is any file that Vim can
-interpret and execute. This includes files written in Vim's scripting language
+interpret and execute.  This includes files written in Vim's scripting language
 like for example .vim files or configuration files like .vimrc and .gvimrc.
 These scripts may define functions, commands and settings that Vim uses to
 customize and extend its behavior.
 
 With a slight abuse of nomenclature, we will use "Vim script" to refer to the
-Vim scripting language throughout this documentation. This shorthand helps to
+Vim scripting language throughout this documentation.  This shorthand helps to
 streamline explanations and discussions about scripting with Vim.
 
 A Vim plugin is a collection of one or more Vim scripts, along with additional
@@ -778,6 +778,7 @@ String manipulation:					*string-functions*
 	strdisplaywidth()	size of string when displayed, deals with tabs
 	setcellwidths()		set character cell width overrides
 	getcellwidths()		get character cell width overrides
+	getcellpixels()		get character cell pixel size
 	reverse()		reverse the order of characters in a string
 	substitute()		substitute a pattern match with a string
 	submatch()		get a specific match in ":s" and substitute()
@@ -1068,9 +1069,12 @@ Buffers, windows and the argument list:
 	swapname()		get the swap file path of a buffer
 
 Command line:					*command-line-functions*
+	getcmdcomplpat()	get completion pattern of the current command
+				line
 	getcmdcompltype()	get the type of the current command line
 				completion
-	getcmdline()		get the current command line
+	getcmdline()		get the current command line input
+	getcmdprompt()		get the current command line prompt
 	getcmdpos()		get position of the cursor in the command line
 	getcmdscreenpos()	get screen position of the cursor in the
 				command line
@@ -1259,6 +1263,8 @@ Inter-process communication:		    *channel-functions*
 	json_decode()		decode a JSON string to Vim types
 	js_encode()		encode an expression to a JSON string
 	js_decode()		decode a JSON string to Vim types
+	base64_encode()		encode a blob into a base64 string
+	base64_decode()		decode a base64 string into a blob
 	err_teapot()		give error 418 or 503
 
 Jobs:						*job-functions*
@@ -1391,8 +1397,10 @@ Various:					*various-functions*
 	did_filetype()		check if a FileType autocommand was used
 	diff()			diff two Lists of strings
 	eventhandler()		check if invoked by an event handler
+	getcellpixels()		get List of cell pixel size
 	getpid()		get process ID of Vim
-	getscriptinfo()		get list of sourced vim scripts
+	getscriptinfo()		get list of sourced Vim scripts
+	getstacktrace()		get current stack trace of Vim scripts
 	getimstatus()		check if IME status is active
 	interrupt()		interrupt script execution
 	windowsversion()	get MS-Windows version

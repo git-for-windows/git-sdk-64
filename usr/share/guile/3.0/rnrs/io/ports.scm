@@ -1,6 +1,6 @@
 ;;;; ports.scm --- R6RS port API                    -*- coding: utf-8 -*-
 
-;;;; Copyright (C) 2009-2011, 2013, 2019 Free Software Foundation, Inc.
+;;;; Copyright (C) 2009-2011, 2013, 2019, 2023 Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -52,6 +52,7 @@
           open-string-input-port
           open-file-input-port
           make-custom-binary-input-port
+          make-custom-textual-input-port
 
           ;; binary input
           get-u8 lookahead-u8
@@ -72,6 +73,7 @@
           ;; input/output ports
           open-file-input/output-port
           make-custom-binary-input/output-port
+          make-custom-textual-input/output-port
 
           ;; binary output
           put-u8 put-bytevector
@@ -110,6 +112,10 @@
           &i/o-encoding i/o-encoding-error?
           make-i/o-encoding-error i/o-encoding-error-char)
   (import (ice-9 binary-ports)
+          (only (ice-9 textual-ports)
+                make-custom-textual-input-port
+                make-custom-textual-output-port
+                make-custom-textual-input/output-port)
           (only (rnrs base) assertion-violation)
           (only (ice-9 ports internal)
                 port-write-buffer port-buffer-bytevector port-line-buffered?)
@@ -409,18 +415,6 @@ return the characters accumulated in that port."
   (let ((port (open-output-string)))
     (proc port)
     (get-output-string port)))
-
-(define (make-custom-textual-output-port id
-                                         write!
-                                         get-position
-                                         set-position!
-                                         close)
-  (make-soft-port (vector (lambda (c) (write! (string c) 0 1))
-                          (lambda (s) (write! s 0 (string-length s)))
-                          #f ;flush
-                          #f ;read character
-                          close)
-                  "w"))
 
 (define (output-port-buffer-mode port)
   "Return @code{none} if @var{port} is unbuffered, @code{line} if it is
