@@ -2,8 +2,6 @@ name: git-artifacts
 
 on:
   push:
-    branches:
-      - main
 
 env:
   REPOSITORY: git-for-windows/git
@@ -45,7 +43,11 @@ jobs:
           REF: ${{github.ref}}
       - name: clone build-extra
         shell: bash
-        run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
+        run: |
+          git clone --depth=1 --single-branch -b building-mingw-w64-git-should-not-need-to-install-dependencies \
+            https://github.com/dscho/build-extra &&
+          git -C build-extra update-ref refs/remotes/origin/main HEAD &&
+          git -C build-extra switch -C main
       - name: create build-installers artifact
         shell: bash
         run: |
