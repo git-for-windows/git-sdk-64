@@ -1333,6 +1333,9 @@
 /* Define to 1 if you have the <sys/param.h> header file. */
 #define HAVE_SYS_PARAM_H 1
 
+/* Define to 1 if you have the <sys/pidfd.h> header file. */
+/* #undef HAVE_SYS_PIDFD_H */
+
 /* Define to 1 if you have the <sys/poll.h> header file. */
 /* #undef HAVE_SYS_POLL_H */
 
@@ -1436,8 +1439,8 @@
 /* Define to 1 if you have the `truncate' function. */
 /* #undef HAVE_TRUNCATE */
 
-/* Define to 1 if you have the `ttyname' function. */
-/* #undef HAVE_TTYNAME */
+/* Define to 1 if you have the `ttyname_r' function. */
+/* #undef HAVE_TTYNAME_R */
 
 /* Define to 1 if you don't have `tm_zone' but do have the external array
    `tzname'. */
