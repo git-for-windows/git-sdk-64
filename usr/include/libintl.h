@@ -1,5 +1,5 @@
 /* Message catalogs for internationalization.
-   Copyright (C) 1995-1997, 2000-2016, 2018-2023 Free Software Foundation, Inc.
+   Copyright (C) 1995-1997, 2000-2016, 2018-2024 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published by
@@ -54,7 +54,7 @@ extern "C" {
 
 
 /* Version number: (major<<16) + (minor<<8) + subminor */
-#define LIBINTL_VERSION 0x001604
+#define LIBINTL_VERSION 0x001605
 extern int libintl_version;
 
 
@@ -116,6 +116,41 @@ extern int libintl_version;
 #else
 # define _INTL_MAY_RETURN_STRING_ARG(n)
 #endif
+
+/* _INTL_ATTRIBUTE_FORMAT ((ARCHETYPE, STRING-INDEX, FIRST-TO-CHECK))
+   declares that the STRING-INDEXth function argument is a format string of
+   style ARCHETYPE, which is one of:
+     printf, gnu_printf
+     scanf, gnu_scanf,
+     strftime, gnu_strftime,
+     strfmon,
+   or the same thing prefixed and suffixed with '__'.
+   If FIRST-TO-CHECK is not 0, arguments starting at FIRST-TO_CHECK
+   are suitable for the format string.  */
+/* Applies to: functions.  */
+#if (defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 7) > 2) || defined __clang__
+# define _INTL_ATTRIBUTE_FORMAT(spec) __attribute__ ((__format__ spec))
+#else
+# define _INTL_ATTRIBUTE_FORMAT(spec)
+#endif
+
+/* _INTL_ATTRIBUTE_SPEC_PRINTF_STANDARD
+   An __attribute__ __format__ specifier for a function that takes a format
+   string and arguments, where the format string directives are the ones
+   standardized by ISO C99 and POSIX.  */
+/* __gnu_printf__ is supported in GCC >= 4.4.  */
+#if defined __GNUC__ && __GNUC__ + (__GNUC_MINOR__ >= 4) > 4
+# define _INTL_ATTRIBUTE_SPEC_PRINTF_STANDARD __gnu_printf__
+#else
+# define _INTL_ATTRIBUTE_SPEC_PRINTF_STANDARD __printf__
+#endif
+
+/* _INTL_ATTRIBUTE_FORMAT_PRINTF_STANDARD
+   indicates to GCC that the function takes a format string and arguments,
+   where the format string directives are the ones standardized by ISO C99
+   and POSIX.  */
+#define _INTL_ATTRIBUTE_FORMAT_PRINTF_STANDARD(formatstring_parameter, first_argument) \
+  _INTL_ATTRIBUTE_FORMAT ((_INTL_ATTRIBUTE_SPEC_PRINTF_STANDARD, formatstring_parameter, first_argument))
 
 /* Look up MSGID in the current default message catalog for the current
    LC_MESSAGES locale.  If not found, returns MSGID itself (the default
@@ -367,7 +402,8 @@ extern char *bind_textdomain_codeset (const char *__domainname,
 # if !((defined fprintf && defined _GL_STDIO_H) || defined GNULIB_overrides_fprintf) /* don't override gnulib */
 #  undef fprintf
 #  define fprintf libintl_fprintf
-extern int fprintf (FILE *, const char *, ...);
+extern int fprintf (FILE *, const char *, ...)
+  _INTL_ATTRIBUTE_FORMAT_PRINTF_STANDARD (2, 3);
 #  if defined __cplusplus && !defined _INTL_CXX_NO_CLOBBER_STD_NAMESPACE
 namespace std { using ::libintl_fprintf; }
 #  endif
@@ -375,7 +411,8 @@ namespace std { using ::libintl_fprintf; }
 # if !((defined vfprintf && defined _GL_STDIO_H) || defined GNULIB_overrides_vfprintf) /* don't override gnulib */
 #  undef vfprintf
 #  define vfprintf libintl_vfprintf
-extern int vfprintf (FILE *, const char *, va_list);
+extern int vfprintf (FILE *, const char *, va_list)
+  _INTL_ATTRIBUTE_FORMAT_PRINTF_STANDARD (2, 0);
 #  if defined __cplusplus && !defined _INTL_CXX_NO_CLOBBER_STD_NAMESPACE
 namespace std { using ::libintl_vfprintf; }
 #  endif
@@ -396,7 +433,8 @@ namespace std { using ::libintl_vfprintf; }
 #   define libintl_printf __printf__
 #  endif
 #  define printf libintl_printf
-extern int printf (const char *, ...);
+extern int printf (const char *, ...)
+  _INTL_ATTRIBUTE_FORMAT_PRINTF_STANDARD (1, 2);
 #  if defined __cplusplus && !defined _INTL_CXX_NO_CLOBBER_STD_NAMESPACE
 namespace std { using ::libintl_printf; }
 #  endif
@@ -404,7 +442,8 @@ namespace std { using ::libintl_printf; }
 # if !((defined vprintf && defined _GL_STDIO_H) || defined GNULIB_overrides_vprintf) /* don't override gnulib */
 #  undef vprintf
 #  define vprintf libintl_vprintf
-extern int vprintf (const char *, va_list);
+extern int vprintf (const char *, va_list)
+  _INTL_ATTRIBUTE_FORMAT_PRINTF_STANDARD (1, 0);
 #  if defined __cplusplus && !defined _INTL_CXX_NO_CLOBBER_STD_NAMESPACE
 namespace std { using ::libintl_vprintf; }
 #  endif
@@ -413,7 +452,8 @@ namespace std { using ::libintl_vprintf; }
 # if !((defined sprintf && defined _GL_STDIO_H) || defined GNULIB_overrides_sprintf) /* don't override gnulib */
 #  undef sprintf
 #  define sprintf libintl_sprintf
-extern int sprintf (char *, const char *, ...);
+extern int sprintf (char *, const char *, ...)
+  _INTL_ATTRIBUTE_FORMAT_PRINTF_STANDARD (2, 3);
 #  if defined __cplusplus && !defined _INTL_CXX_NO_CLOBBER_STD_NAMESPACE
 namespace std { using ::libintl_sprintf; }
 #  endif
@@ -421,7 +461,8 @@ namespace std { using ::libintl_sprintf; }
 # if !((defined vsprintf && defined _GL_STDIO_H) || defined GNULIB_overrides_vsprintf) /* don't override gnulib */
 #  undef vsprintf
 #  define vsprintf libintl_vsprintf
-extern int vsprintf (char *, const char *, va_list);
+extern int vsprintf (char *, const char *, va_list)
+  _INTL_ATTRIBUTE_FORMAT_PRINTF_STANDARD (2, 0);
 #  if defined __cplusplus && !defined _INTL_CXX_NO_CLOBBER_STD_NAMESPACE
 namespace std { using ::libintl_vsprintf; }
 #  endif
@@ -432,7 +473,8 @@ namespace std { using ::libintl_vsprintf; }
 #  if !((defined snprintf && defined _GL_STDIO_H) || defined GNULIB_overrides_snprintf) /* don't override gnulib */
 #   undef snprintf
 #   define snprintf libintl_snprintf
-extern int snprintf (char *, size_t, const char *, ...);
+extern int snprintf (char *, size_t, const char *, ...)
+  _INTL_ATTRIBUTE_FORMAT_PRINTF_STANDARD (3, 4);
 #   if defined __cplusplus && !defined _INTL_CXX_NO_CLOBBER_STD_NAMESPACE
 namespace std { using ::libintl_snprintf; }
 #   endif
@@ -440,7 +482,8 @@ namespace std { using ::libintl_snprintf; }
 #  if !((defined vsnprintf && defined _GL_STDIO_H) || defined GNULIB_overrides_vsnprintf) /* don't override gnulib */
 #   undef vsnprintf
 #   define vsnprintf libintl_vsnprintf
-extern int vsnprintf (char *, size_t, const char *, va_list);
+extern int vsnprintf (char *, size_t, const char *, va_list)
+  _INTL_ATTRIBUTE_FORMAT_PRINTF_STANDARD (3, 0);
 #   if defined __cplusplus && !defined _INTL_CXX_NO_CLOBBER_STD_NAMESPACE
 namespace std { using ::libintl_vsnprintf; }
 #   endif
@@ -453,7 +496,8 @@ namespace std { using ::libintl_vsnprintf; }
 #  if !((defined asprintf && defined _GL_STDIO_H) || defined GNULIB_overrides_asprintf) /* don't override gnulib */
 #   undef asprintf
 #   define asprintf libintl_asprintf
-extern int asprintf (char **, const char *, ...);
+extern int asprintf (char **, const char *, ...)
+  _INTL_ATTRIBUTE_FORMAT_PRINTF_STANDARD (2, 3);
 #   if defined __cplusplus && !defined _INTL_CXX_NO_CLOBBER_STD_NAMESPACE
 namespace std { using ::libintl_asprintf; }
 #   endif
@@ -461,7 +505,8 @@ namespace std { using ::libintl_asprintf; }
 #  if !((defined vasprintf && defined _GL_STDIO_H) || defined GNULIB_overrides_vasprintf) /* don't override gnulib */
 #   undef vasprintf
 #   define vasprintf libintl_vasprintf
-extern int vasprintf (char **, const char *, va_list);
+extern int vasprintf (char **, const char *, va_list)
+  _INTL_ATTRIBUTE_FORMAT_PRINTF_STANDARD (2, 0);
 #   if defined __cplusplus && !defined _INTL_CXX_NO_CLOBBER_STD_NAMESPACE
 namespace std { using ::libintl_vasprintf; }
 #   endif
