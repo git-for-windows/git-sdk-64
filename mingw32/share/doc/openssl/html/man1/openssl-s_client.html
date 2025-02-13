@@ -18,7 +18,11 @@
   <li><a href="#OPTIONS">OPTIONS</a></li>
   <li><a href="#CONNECTED-COMMANDS-BASIC">CONNECTED COMMANDS (BASIC)</a></li>
   <li><a href="#CONNECTED-COMMANDS-ADVANCED">CONNECTED COMMANDS (ADVANCED)</a></li>
-  <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#NOTES">NOTES</a>
+    <ul>
+      <li><a href="#Note-on-Non-Interactive-Use">Note on Non-Interactive Use</a></li>
+    </ul>
+  </li>
   <li><a href="#BUGS">BUGS</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
@@ -31,7 +35,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>s_client</b> [<b>-help</b>] [<b>-ssl_config</b> <i>section</i>] [<b>-connect</b> <i>host:port</i>] [<b>-host</b> <i>hostname</i>] [<b>-port</b> <i>port</i>] [<b>-bind</b> <i>host:port</i>] [<b>-proxy</b> <i>host:port</i>] [<b>-proxy_user</b> <i>userid</i>] [<b>-proxy_pass</b> <i>arg</i>] [<b>-unix</b> <i>path</i>] [<b>-4</b>] [<b>-6</b>] [<b>-quic</b>] [<b>-servername</b> <i>name</i>] [<b>-noservername</b>] [<b>-verify</b> <i>depth</i>] [<b>-verify_return_error</b>] [<b>-verify_quiet</b>] [<b>-verifyCAfile</b> <i>filename</i>] [<b>-verifyCApath</b> <i>dir</i>] [<b>-verifyCAstore</b> <i>uri</i>] [<b>-cert</b> <i>filename</i>] [<b>-certform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>] [<b>-cert_chain</b> <i>filename</i>] [<b>-build_chain</b>] [<b>-CRL</b> <i>filename</i>] [<b>-CRLform</b> <b>DER</b>|<b>PEM</b>] [<b>-crl_download</b>] [<b>-key</b> <i>filename</i>|<i>uri</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-pass</b> <i>arg</i>] [<b>-chainCAfile</b> <i>filename</i>] [<b>-chainCApath</b> <i>directory</i>] [<b>-chainCAstore</b> <i>uri</i>] [<b>-requestCAfile</b> <i>filename</i>] [<b>-dane_tlsa_domain</b> <i>domain</i>] [<b>-dane_tlsa_rrdata</b> <i>rrdata</i>] [<b>-dane_ee_no_namechecks</b>] [<b>-reconnect</b>] [<b>-showcerts</b>] [<b>-prexit</b>] [<b>-no-interactive</b>] [<b>-debug</b>] [<b>-trace</b>] [<b>-nocommands</b>] [<b>-adv</b>] [<b>-security_debug</b>] [<b>-security_debug_verbose</b>] [<b>-msg</b>] [<b>-timeout</b>] [<b>-mtu</b> <i>size</i>] [<b>-no_etm</b>] [<b>-no_ems</b>] [<b>-keymatexport</b> <i>label</i>] [<b>-keymatexportlen</b> <i>len</i>] [<b>-msgfile</b> <i>filename</i>] [<b>-nbio_test</b>] [<b>-state</b>] [<b>-nbio</b>] [<b>-crlf</b>] [<b>-ign_eof</b>] [<b>-no_ign_eof</b>] [<b>-psk_identity</b> <i>identity</i>] [<b>-psk</b> <i>key</i>] [<b>-psk_session</b> <i>file</i>] [<b>-quiet</b>] [<b>-sctp</b>] [<b>-sctp_label_bug</b>] [<b>-fallback_scsv</b>] [<b>-async</b>] [<b>-maxfraglen</b> <i>len</i>] [<b>-max_send_frag</b>] [<b>-split_send_frag</b>] [<b>-max_pipelines</b>] [<b>-read_buf</b>] [<b>-ignore_unexpected_eof</b>] [<b>-bugs</b>] [<b>-no_tx_cert_comp</b>] [<b>-no_rx_cert_comp</b>] [<b>-comp</b>] [<b>-no_comp</b>] [<b>-brief</b>] [<b>-legacy_server_connect</b>] [<b>-no_legacy_server_connect</b>] [<b>-allow_no_dhe_kex</b>] [<b>-sigalgs</b> <i>sigalglist</i>] [<b>-curves</b> <i>curvelist</i>] [<b>-cipher</b> <i>cipherlist</i>] [<b>-ciphersuites</b> <i>val</i>] [<b>-serverpref</b>] [<b>-starttls</b> <i>protocol</i>] [<b>-name</b> <i>hostname</i>] [<b>-xmpphost</b> <i>hostname</i>] [<b>-name</b> <i>hostname</i>] [<b>-tlsextdebug</b>] [<b>-no_ticket</b>] [<b>-sess_out</b> <i>filename</i>] [<b>-serverinfo</b> <i>types</i>] [<b>-sess_in</b> <i>filename</i>] [<b>-serverinfo</b> <i>types</i>] [<b>-status</b>] [<b>-alpn</b> <i>protocols</i>] [<b>-nextprotoneg</b> <i>protocols</i>] [<b>-ct</b>] [<b>-noct</b>] [<b>-ctlogfile</b>] [<b>-keylogfile</b> <i>file</i>] [<b>-early_data</b> <i>file</i>] [<b>-enable_pha</b>] [<b>-use_srtp</b> <i>value</i>] [<b>-srpuser</b> <i>value</i>] [<b>-srppass</b> <i>value</i>] [<b>-srp_lateuser</b>] [<b>-srp_moregroups</b>] [<b>-srp_strength</b> <i>number</i>] [<b>-ktls</b>] [<b>-tfo</b>] [<b>-nameopt</b> <i>option</i>] [<b>-no_ssl3</b>] [<b>-no_tls1</b>] [<b>-no_tls1_1</b>] [<b>-no_tls1_2</b>] [<b>-no_tls1_3</b>] [<b>-ssl3</b>] [<b>-tls1</b>] [<b>-tls1_1</b>] [<b>-tls1_2</b>] [<b>-tls1_3</b>] [<b>-dtls</b>] [<b>-dtls1</b>] [<b>-dtls1_2</b>] [<b>-xkey</b> <i>infile</i>] [<b>-xcert</b> <i>file</i>] [<b>-xchain</b> <i>file</i>] [<b>-xchain_build</b> <i>file</i>] [<b>-xcertform</b> <b>DER</b>|<b>PEM</b>]&gt; [<b>-xkeyform</b> <b>DER</b>|<b>PEM</b>]&gt; [<b>-CAfile</b> <i>file</i>] [<b>-no-CAfile</b>] [<b>-CApath</b> <i>dir</i>] [<b>-no-CApath</b>] [<b>-CAstore</b> <i>uri</i>] [<b>-no-CAstore</b>] [<b>-bugs</b>] [<b>-no_comp</b>] [<b>-comp</b>] [<b>-no_ticket</b>] [<b>-serverpref</b>] [<b>-client_renegotiation</b>] [<b>-legacy_renegotiation</b>] [<b>-no_renegotiation</b>] [<b>-no_resumption_on_reneg</b>] [<b>-legacy_server_connect</b>] [<b>-no_legacy_server_connect</b>] [<b>-no_etm</b>] [<b>-allow_no_dhe_kex</b>] [<b>-prioritize_chacha</b>] [<b>-strict</b>] [<b>-sigalgs</b> <i>algs</i>] [<b>-client_sigalgs</b> <i>algs</i>] [<b>-groups</b> <i>groups</i>] [<b>-curves</b> <i>curves</i>] [<b>-named_curve</b> <i>curve</i>] [<b>-cipher</b> <i>ciphers</i>] [<b>-ciphersuites</b> <i>1.3ciphers</i>] [<b>-min_protocol</b> <i>minprot</i>] [<b>-max_protocol</b> <i>maxprot</i>] [<b>-record_padding</b> <i>padding</i>] [<b>-debug_broken_protocol</b>] [<b>-no_middlebox</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<b>-engine</b> <i>id</i>] [<b>-ssl_client_engine</b> <i>id</i>] [<b>-allow_proxy_certs</b>] [<b>-attime</b> <i>timestamp</i>] [<b>-no_check_time</b>] [<b>-check_ss_sig</b>] [<b>-crl_check</b>] [<b>-crl_check_all</b>] [<b>-explicit_policy</b>] [<b>-extended_crl</b>] [<b>-ignore_critical</b>] [<b>-inhibit_any</b>] [<b>-inhibit_map</b>] [<b>-partial_chain</b>] [<b>-policy</b> <i>arg</i>] [<b>-policy_check</b>] [<b>-policy_print</b>] [<b>-purpose</b> <i>purpose</i>] [<b>-suiteB_128</b>] [<b>-suiteB_128_only</b>] [<b>-suiteB_192</b>] [<b>-trusted_first</b>] [<b>-no_alt_chains</b>] [<b>-use_deltas</b>] [<b>-auth_level</b> <i>num</i>] [<b>-verify_depth</b> <i>num</i>] [<b>-verify_email</b> <i>email</i>] [<b>-verify_hostname</b> <i>hostname</i>] [<b>-verify_ip</b> <i>ip</i>] [<b>-verify_name</b> <i>name</i>] [<b>-x509_strict</b>] [<b>-issuer_checks</b>] [<b>-enable_server_rpk</b>] [<b>-enable_client_rpk</b>] [<i>host</i>:<i>port</i>]</p>
+<p><b>openssl</b> <b>s_client</b> [<b>-help</b>] [<b>-ssl_config</b> <i>section</i>] [<b>-connect</b> <i>host</i>:<i>port</i>] [<b>-host</b> <i>hostname</i>] [<b>-port</b> <i>port</i>] [<b>-bind</b> <i>host</i>:<i>port</i>] [<b>-proxy</b> <i>host</i>:<i>port</i>] [<b>-proxy_user</b> <i>userid</i>] [<b>-proxy_pass</b> <i>arg</i>] [<b>-unix</b> <i>path</i>] [<b>-4</b>] [<b>-6</b>] [<b>-quic</b>] [<b>-servername</b> <i>name</i>] [<b>-noservername</b>] [<b>-verify</b> <i>depth</i>] [<b>-verify_return_error</b>] [<b>-verify_quiet</b>] [<b>-verifyCAfile</b> <i>filename</i>] [<b>-verifyCApath</b> <i>dir</i>] [<b>-verifyCAstore</b> <i>uri</i>] [<b>-cert</b> <i>filename</i>] [<b>-certform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>] [<b>-cert_chain</b> <i>filename</i>] [<b>-build_chain</b>] [<b>-CRL</b> <i>filename</i>] [<b>-CRLform</b> <b>DER</b>|<b>PEM</b>] [<b>-crl_download</b>] [<b>-key</b> <i>filename</i>|<i>uri</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-pass</b> <i>arg</i>] [<b>-chainCAfile</b> <i>filename</i>] [<b>-chainCApath</b> <i>directory</i>] [<b>-chainCAstore</b> <i>uri</i>] [<b>-requestCAfile</b> <i>filename</i>] [<b>-dane_tlsa_domain</b> <i>domain</i>] [<b>-dane_tlsa_rrdata</b> <i>rrdata</i>] [<b>-dane_ee_no_namechecks</b>] [<b>-reconnect</b>] [<b>-showcerts</b>] [<b>-prexit</b>] [<b>-no-interactive</b>] [<b>-debug</b>] [<b>-trace</b>] [<b>-nocommands</b>] [<b>-adv</b>] [<b>-security_debug</b>] [<b>-security_debug_verbose</b>] [<b>-msg</b>] [<b>-timeout</b>] [<b>-mtu</b> <i>size</i>] [<b>-no_etm</b>] [<b>-no_ems</b>] [<b>-keymatexport</b> <i>label</i>] [<b>-keymatexportlen</b> <i>len</i>] [<b>-msgfile</b> <i>filename</i>] [<b>-nbio_test</b>] [<b>-state</b>] [<b>-nbio</b>] [<b>-crlf</b>] [<b>-ign_eof</b>] [<b>-no_ign_eof</b>] [<b>-psk_identity</b> <i>identity</i>] [<b>-psk</b> <i>key</i>] [<b>-psk_session</b> <i>file</i>] [<b>-quiet</b>] [<b>-sctp</b>] [<b>-sctp_label_bug</b>] [<b>-fallback_scsv</b>] [<b>-async</b>] [<b>-maxfraglen</b> <i>len</i>] [<b>-max_send_frag</b>] [<b>-split_send_frag</b>] [<b>-max_pipelines</b>] [<b>-read_buf</b>] [<b>-ignore_unexpected_eof</b>] [<b>-bugs</b>] [<b>-no_tx_cert_comp</b>] [<b>-no_rx_cert_comp</b>] [<b>-comp</b>] [<b>-no_comp</b>] [<b>-brief</b>] [<b>-legacy_server_connect</b>] [<b>-no_legacy_server_connect</b>] [<b>-allow_no_dhe_kex</b>] [<b>-sigalgs</b> <i>sigalglist</i>] [<b>-curves</b> <i>curvelist</i>] [<b>-cipher</b> <i>cipherlist</i>] [<b>-ciphersuites</b> <i>val</i>] [<b>-serverpref</b>] [<b>-starttls</b> <i>protocol</i>] [<b>-name</b> <i>hostname</i>] [<b>-xmpphost</b> <i>hostname</i>] [<b>-name</b> <i>hostname</i>] [<b>-tlsextdebug</b>] [<b>-no_ticket</b>] [<b>-sess_out</b> <i>filename</i>] [<b>-serverinfo</b> <i>types</i>] [<b>-sess_in</b> <i>filename</i>] [<b>-serverinfo</b> <i>types</i>] [<b>-status</b>] [<b>-alpn</b> <i>protocols</i>] [<b>-nextprotoneg</b> <i>protocols</i>] [<b>-ct</b>] [<b>-noct</b>] [<b>-ctlogfile</b>] [<b>-keylogfile</b> <i>file</i>] [<b>-early_data</b> <i>file</i>] [<b>-enable_pha</b>] [<b>-use_srtp</b> <i>value</i>] [<b>-srpuser</b> <i>value</i>] [<b>-srppass</b> <i>value</i>] [<b>-srp_lateuser</b>] [<b>-srp_moregroups</b>] [<b>-srp_strength</b> <i>number</i>] [<b>-ktls</b>] [<b>-tfo</b>] [<b>-nameopt</b> <i>option</i>] [<b>-no_ssl3</b>] [<b>-no_tls1</b>] [<b>-no_tls1_1</b>] [<b>-no_tls1_2</b>] [<b>-no_tls1_3</b>] [<b>-ssl3</b>] [<b>-tls1</b>] [<b>-tls1_1</b>] [<b>-tls1_2</b>] [<b>-tls1_3</b>] [<b>-dtls</b>] [<b>-dtls1</b>] [<b>-dtls1_2</b>] [<b>-xkey</b> <i>infile</i>] [<b>-xcert</b> <i>file</i>] [<b>-xchain</b> <i>file</i>] [<b>-xchain_build</b> <i>file</i>] [<b>-xcertform</b> <b>DER</b>|<b>PEM</b>]&gt; [<b>-xkeyform</b> <b>DER</b>|<b>PEM</b>]&gt; [<b>-CAfile</b> <i>file</i>] [<b>-no-CAfile</b>] [<b>-CApath</b> <i>dir</i>] [<b>-no-CApath</b>] [<b>-CAstore</b> <i>uri</i>] [<b>-no-CAstore</b>] [<b>-bugs</b>] [<b>-no_comp</b>] [<b>-comp</b>] [<b>-no_ticket</b>] [<b>-serverpref</b>] [<b>-client_renegotiation</b>] [<b>-legacy_renegotiation</b>] [<b>-no_renegotiation</b>] [<b>-no_resumption_on_reneg</b>] [<b>-legacy_server_connect</b>] [<b>-no_legacy_server_connect</b>] [<b>-no_etm</b>] [<b>-allow_no_dhe_kex</b>] [<b>-prioritize_chacha</b>] [<b>-strict</b>] [<b>-sigalgs</b> <i>algs</i>] [<b>-client_sigalgs</b> <i>algs</i>] [<b>-groups</b> <i>groups</i>] [<b>-curves</b> <i>curves</i>] [<b>-named_curve</b> <i>curve</i>] [<b>-cipher</b> <i>ciphers</i>] [<b>-ciphersuites</b> <i>1.3ciphers</i>] [<b>-min_protocol</b> <i>minprot</i>] [<b>-max_protocol</b> <i>maxprot</i>] [<b>-record_padding</b> <i>padding</i>] [<b>-debug_broken_protocol</b>] [<b>-no_middlebox</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<b>-engine</b> <i>id</i>] [<b>-ssl_client_engine</b> <i>id</i>] [<b>-allow_proxy_certs</b>] [<b>-attime</b> <i>timestamp</i>] [<b>-no_check_time</b>] [<b>-check_ss_sig</b>] [<b>-crl_check</b>] [<b>-crl_check_all</b>] [<b>-explicit_policy</b>] [<b>-extended_crl</b>] [<b>-ignore_critical</b>] [<b>-inhibit_any</b>] [<b>-inhibit_map</b>] [<b>-partial_chain</b>] [<b>-policy</b> <i>arg</i>] [<b>-policy_check</b>] [<b>-policy_print</b>] [<b>-purpose</b> <i>purpose</i>] [<b>-suiteB_128</b>] [<b>-suiteB_128_only</b>] [<b>-suiteB_192</b>] [<b>-trusted_first</b>] [<b>-no_alt_chains</b>] [<b>-use_deltas</b>] [<b>-auth_level</b> <i>num</i>] [<b>-verify_depth</b> <i>num</i>] [<b>-verify_email</b> <i>email</i>] [<b>-verify_hostname</b> <i>hostname</i>] [<b>-verify_ip</b> <i>ip</i>] [<b>-verify_name</b> <i>name</i>] [<b>-x509_strict</b>] [<b>-issuer_checks</b>] [<b>-enable_server_rpk</b>] [<b>-enable_client_rpk</b>] [<i>host</i>:<i>port</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -58,7 +62,7 @@
 <dt id="connect-host:port"><b>-connect</b> <i>host</i>:<i>port</i></dt>
 <dd>
 
-<p>This specifies the host and optional port to connect to. It is possible to select the host and port using the optional target positional argument instead. If neither this nor the target positional argument are specified then an attempt is made to connect to the local host on port 4433.</p>
+<p>This specifies the host and optional port to connect to. It is possible to select the host and port using the optional target positional argument instead. If neither this nor the target positional argument are specified then an attempt is made to connect to the local host on port 4433. If the host string is an IPv6 address, it must be enclosed in <code>[</code> and <code>]</code>.</p>
 
 </dd>
 <dt id="host-hostname"><b>-host</b> <i>hostname</i></dt>
@@ -73,16 +77,16 @@
 <p>Connect to the specified port; use <b>-connect</b> instead.</p>
 
 </dd>
-<dt id="bind-host:port"><b>-bind</b> <i>host:port</i></dt>
+<dt id="bind-host:port"><b>-bind</b> <i>host</i>:<i>port</i></dt>
 <dd>
 
-<p>This specifies the host address and or port to bind as the source for the connection. For Unix-domain sockets the port is ignored and the host is used as the source socket address.</p>
+<p>This specifies the host address and or port to bind as the source for the connection. For Unix-domain sockets the port is ignored and the host is used as the source socket address. If the host string is an IPv6 address, it must be enclosed in <code>[</code> and <code>]</code>.</p>
 
 </dd>
-<dt id="proxy-host:port"><b>-proxy</b> <i>host:port</i></dt>
+<dt id="proxy-host:port"><b>-proxy</b> <i>host</i>:<i>port</i></dt>
 <dd>
 
-<p>When used with the <b>-connect</b> flag, the program uses the host and port specified with this flag and issues an HTTP CONNECT command to connect to the desired server.</p>
+<p>When used with the <b>-connect</b> flag, the program uses the host and port specified with this flag and issues an HTTP CONNECT command to connect to the desired server. If the host string is an IPv6 address, it must be enclosed in <code>[</code> and <code>]</code>.</p>
 
 </dd>
 <dt id="proxy_user-userid"><b>-proxy_user</b> <i>userid</i></dt>
@@ -178,7 +182,7 @@
 <dt id="crl_download"><b>-crl_download</b></dt>
 <dd>
 
-<p>Download CRL from distribution points in the certificate.</p>
+<p>Download CRL from distribution points in the certificate. Note that this option is ignored if <b>-crl_check</b> option is not provided. Note that the maximum size of CRL is limited by <a href="../man3/X509_CRL_load_http.html">X509_CRL_load_http(3)</a> function.</p>
 
 </dd>
 <dt id="key-filename-uri"><b>-key</b> <i>filename</i>|<i>uri</i></dt>
@@ -202,13 +206,15 @@
 <dt id="verify-depth"><b>-verify</b> <i>depth</i></dt>
 <dd>
 
-<p>The verify depth to use. This specifies the maximum length of the server certificate chain and turns on server certificate verification. Currently the verify operation continues after errors so all the problems with a certificate chain can be seen. As a side effect the connection will never fail due to a server certificate verify failure.</p>
+<p>The verify depth to use. This specifies the maximum length of the server certificate chain and turns on server certificate verification. Unless the <b>-verify_return_error</b> option is given, the verify operation continues after errors so all the problems with a certificate chain can be seen. As a side effect the connection will never fail due to a server certificate verify failure.</p>
+
+<p>By default, validation of server certificates and their chain is done w.r.t. the (D)TLS Server (<code>sslserver</code>) purpose. For details see <a href="../man1/openssl-verification-options.html">&quot;Certificate Extensions&quot; in openssl-verification-options(1)</a>.</p>
 
 </dd>
 <dt id="verify_return_error"><b>-verify_return_error</b></dt>
 <dd>
 
-<p>Return verification errors instead of continuing. This will typically abort the handshake with a fatal error.</p>
+<p>Turns on server certificate verification, like with <b>-verify</b>, but returns verification errors instead of continuing. This will typically abort the handshake with a fatal error.</p>
 
 </dd>
 <dt id="verify_quiet"><b>-verify_quiet</b></dt>
@@ -823,7 +829,7 @@ DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
 <dt id="host:port"><i>host</i>:<i>port</i></dt>
 <dd>
 
-<p>Rather than providing <b>-connect</b>, the target hostname and optional port may be provided as a single positional argument after all options. If neither this nor <b>-connect</b> are provided, falls back to attempting to connect to <i>localhost</i> on port <i>4433</i>.</p>
+<p>Rather than providing <b>-connect</b>, the target host and optional port may be provided as a single positional argument after all options. If neither this nor <b>-connect</b> are provided, falls back to attempting to connect to <i>localhost</i> on port <i>4433</i>. If the host string is an IPv6 address, it must be enclosed in <code>[</code> and <code>]</code>.</p>
 
 </dd>
 </dl>
@@ -937,6 +943,41 @@ DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
 <p>This command is a test tool and is designed to continue the handshake after any certificate verification errors. As a result it will accept any certificate chain (trusted or not) sent by the peer. Non-test applications should <b>not</b> do this as it makes them vulnerable to a MITM attack. This behaviour can be changed by with the <b>-verify_return_error</b> option: any verify errors are then returned aborting the handshake.</p>
 
 <p>The <b>-bind</b> option may be useful if the server or a firewall requires connections to come from some particular address and or port.</p>
+
+<h2 id="Note-on-Non-Interactive-Use">Note on Non-Interactive Use</h2>
+
+<p>When <b>s_client</b> is run in a non-interactive environment (e.g., a cron job or a script without a valid <i>stdin</i>), it may close the connection prematurely, especially with TLS 1.3. To prevent this, you can use the <b>-ign_eof</b> flag, which keeps <b>s_client</b> running even after reaching EOF from <i>stdin</i>.</p>
+
+<p>For example:</p>
+
+<pre><code>openssl s_client -connect &lt;server address&gt;:443 -tls1_3
+                 -sess_out /path/to/tls_session_params_file
+                 -ign_eof &lt;/dev/null</code></pre>
+
+<p>However, relying solely on <b>-ign_eof</b> can lead to issues if the server keeps the connection open, expecting the client to close first. In such cases, the client may hang indefinitely. This behavior is not uncommon, particularly with protocols where the server waits for a graceful disconnect from the client.</p>
+
+<p>For example, when connecting to an SMTP server, the session may pause if the server expects a QUIT command before closing:</p>
+
+<pre><code>$ openssl s_client -brief -ign_eof -starttls smtp
+                   -connect &lt;server address&gt;:25 &lt;/dev/null
+CONNECTION ESTABLISHED
+Protocol version: TLSv1.3
+Ciphersuite: TLS_AES_256_GCM_SHA384
+...
+250 CHUNKING
+[long pause]</code></pre>
+
+<p>To avoid such hangs, it&#39;s better to use an application-level command to initiate a clean disconnect. For SMTP, you can send a QUIT command:</p>
+
+<pre><code>printf &#39;QUIT\r\n&#39; | openssl s_client -connect &lt;server address&gt;:25
+                                     -starttls smtp -brief -ign_eof</code></pre>
+
+<p>Similarly, for HTTP/1.1 connections, including a `Connection: close` header ensures the server closes the connection after responding:</p>
+
+<pre><code>printf &#39;GET / HTTP/1.1\r\nHost: &lt;server address&gt;\r\nConnection: close\r\n\r\n&#39;
+    | openssl s_client -connect &lt;server address&gt;:443 -brief</code></pre>
+
+<p>These approaches help manage the connection closure gracefully and prevent hangs caused by the server waiting for the client to initiate the disconnect.</p>
 
 <h1 id="BUGS">BUGS</h1>
 

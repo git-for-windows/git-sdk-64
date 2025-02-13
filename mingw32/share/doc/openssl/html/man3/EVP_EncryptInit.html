@@ -1154,6 +1154,10 @@ void EVP_CIPHER_do_all_provided(OSSL_LIB_CTX *libctx,
 
 <p>When decrypting, the return value of EVP_DecryptFinal() or EVP_CipherFinal() indicates whether the operation was successful. If it does not indicate success, the authentication operation has failed and any output data <b>MUST NOT</b> be used as it is corrupted.</p>
 
+<p>Please note that the number of authenticated bytes returned by EVP_CipherUpdate() depends on the cipher used. Stream ciphers, such as ChaCha20 or ciphers in GCM mode, can handle 1 byte at a time, resulting in an effective &quot;block&quot; size of 1. Conversely, ciphers in OCB mode must process data one block at a time, and the block size is returned.</p>
+
+<p>Regardless of the returned size, it is safe to pass unpadded data to an EVP_CipherUpdate() call in a single operation.</p>
+
 <h2 id="GCM-and-OCB-Modes">GCM and OCB Modes</h2>
 
 <p>The following <i>ctrl</i>s are supported in GCM and OCB modes.</p>
@@ -1185,7 +1189,7 @@ void EVP_CIPHER_do_all_provided(OSSL_LIB_CTX *libctx,
 
 <p>For OCB, this call is valid when decrypting data to set the expected tag, and when encrypting to set the desired tag length.</p>
 
-<p>In OCB mode, calling this when encrypting with <code>tag</code> set to <code>NULL</code> sets the tag length. The tag length can only be set before specifying an IV. If this is not called prior to setting the IV during encryption, then a default tag length is used.</p>
+<p>In OCB mode, calling this with <code>tag</code> set to <code>NULL</code> sets the tag length. The tag length can only be set before specifying an IV. If this is not called prior to setting the IV, then a default tag length is used.</p>
 
 <p>For OCB AES, the default tag length is 16 (i.e. 128 bits). It is also the maximum tag length for OCB.</p>
 

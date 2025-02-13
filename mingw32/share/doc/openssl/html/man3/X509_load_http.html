@@ -41,6 +41,8 @@ X509_CRL *X509_CRL_load_http(const char *url, BIO *bio, BIO *rbio, int timeout);
 
 <p>X509_load_http() and X509_CRL_load_http() loads a certificate or a CRL, respectively, in ASN.1 format using HTTP from the given <b>url</b>.</p>
 
+<p>Maximum size of the HTTP response is 100 kB for certificates and 32 MB for CRLs and hard coded in the functions.</p>
+
 <p>If <b>bio</b> is given and <b>rbio</b> is NULL then this BIO is used instead of an internal one for connecting, writing the request, and reading the response. If both <b>bio</b> and <b>rbio</b> are given (which may be memory BIOs, for instance) then no explicit connection is attempted, <b>bio</b> is used for writing the request, and <b>rbio</b> for reading the response.</p>
 
 <p>If the <b>timeout</b> parameter is &gt; 0 this indicates the maximum number of seconds to wait until the transfer is complete. A value of 0 enables waiting indefinitely, while a value &lt; 0 immediately leads to a timeout condition.</p>

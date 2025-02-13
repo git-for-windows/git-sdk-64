@@ -343,7 +343,7 @@ size_t OSSL_HPKE_get_recommended_ikmelen(OSSL_HPKE_SUITE suite);</code></pre>
 
 <p>OSSL_HPKE_get_grease_value() produces values of the appropriate length for a given <i>suite_in</i> value (or a random value if <i>suite_in</i> is NULL) so that a protocol using HPKE can send so-called GREASE (see RFC8701) values that are harder to distinguish from a real use of HPKE. The buffer sizes should be supplied on input. The output <i>enc</i> value will have an appropriate length for <i>suite_out</i> and a random value, and the <i>ct</i> output will be a random value. The relevant sizes for buffers can be found using OSSL_HPKE_get_ciphertext_size() and OSSL_HPKE_get_public_encap_size().</p>
 
-<p>OSSL_HPKE_str2suite() maps input <i>str</i> strings to an <b>OSSL_HPKE_SUITE</b> object. The input <i>str</i> should be a comma-separated string with a KEM, KDF and AEAD name in that order, for example &quot;x25519,hkdf-sha256,aes128gcm&quot;. This can be used by command line tools that accept string form names for HPKE codepoints. Valid (case-insensitive) names are: &quot;p256&quot;, &quot;p384&quot;, &quot;p521&quot;, &quot;x25519&quot; and &quot;x448&quot; for KEM, &quot;hkdf-SHA256&quot;, &quot;hkdf-SHA384&quot; and &quot;hkdf-SHA512&quot; for KDF, and &quot;aes-gcm-128&quot;, &quot;aes-gcm-256&quot; and &quot;chacha20-poly1305&quot; for AEAD. String variants of the numbers listed in <a href="#OSSL_HPKE_SUITE-Identifiers">&quot;OSSL_HPKE_SUITE Identifiers&quot;</a> can also be used.</p>
+<p>OSSL_HPKE_str2suite() maps input <i>str</i> strings to an <b>OSSL_HPKE_SUITE</b> object. The input <i>str</i> should be a comma-separated string with a KEM, KDF and AEAD name in that order, for example &quot;x25519,hkdf-sha256,aes128gcm&quot;. This can be used by command line tools that accept string form names for HPKE codepoints. Valid (case-insensitive) names are: &quot;p-256&quot;, &quot;p-384&quot;, &quot;p-521&quot;, &quot;x25519&quot; and &quot;x448&quot; for KEM, &quot;hkdf-sha256&quot;, &quot;hkdf-sha384&quot; and &quot;hkdf-sha512&quot; for KDF, and &quot;aes-gcm-128&quot;, &quot;aes-gcm-256&quot;, &quot;chacha20-poly1305&quot; and &quot;exporter&quot; for AEAD. String variants of the numbers listed in <a href="#OSSL_HPKE_SUITE-Identifiers">&quot;OSSL_HPKE_SUITE Identifiers&quot;</a> can also be used.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -444,7 +444,7 @@ err:
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2022-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2022-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

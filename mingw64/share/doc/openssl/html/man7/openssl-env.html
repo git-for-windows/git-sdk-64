@@ -69,6 +69,128 @@
 <p>Specifies the directory from which cryptographic providers are loaded. Equivalently, the generic <b>-provider-path</b> command-line option may be used.</p>
 
 </dd>
+<dt id="OPENSSL_TRACE"><b>OPENSSL_TRACE</b></dt>
+<dd>
+
+<p>By default the OpenSSL trace feature is disabled statically. To enable it, OpenSSL must be built with tracing support, which may be configured like this: <code>./config enable-trace</code></p>
+
+<p>Unless OpenSSL tracing support is generally disabled, enable trace output of specific parts of OpenSSL libraries, by name. This output usually makes sense only if you know OpenSSL internals well.</p>
+
+<p>The value of this environment varialble is a comma-separated list of names, with the following available:</p>
+
+<dl>
+
+<dt id="TRACE"><b>TRACE</b></dt>
+<dd>
+
+<p>Traces the OpenSSL trace API itself.</p>
+
+</dd>
+<dt id="INIT"><b>INIT</b></dt>
+<dd>
+
+<p>Traces OpenSSL library initialization and cleanup.</p>
+
+</dd>
+<dt id="TLS"><b>TLS</b></dt>
+<dd>
+
+<p>Traces the TLS/SSL protocol.</p>
+
+</dd>
+<dt id="TLS_CIPHER"><b>TLS_CIPHER</b></dt>
+<dd>
+
+<p>Traces the ciphers used by the TLS/SSL protocol.</p>
+
+</dd>
+<dt id="CONF"><b>CONF</b></dt>
+<dd>
+
+<p>Show details about provider and engine configuration.</p>
+
+</dd>
+<dt id="ENGINE_TABLE"><b>ENGINE_TABLE</b></dt>
+<dd>
+
+<p>The function that is used by RSA, DSA (etc) code to select registered ENGINEs, cache defaults and functional references (etc), will generate debugging summaries.</p>
+
+</dd>
+<dt id="ENGINE_REF_COUNT"><b>ENGINE_REF_COUNT</b></dt>
+<dd>
+
+<p>Reference counts in the ENGINE structure will be monitored with a line of generated for each change.</p>
+
+</dd>
+<dt id="PKCS5V2"><b>PKCS5V2</b></dt>
+<dd>
+
+<p>Traces PKCS#5 v2 key generation.</p>
+
+</dd>
+<dt id="PKCS12_KEYGEN"><b>PKCS12_KEYGEN</b></dt>
+<dd>
+
+<p>Traces PKCS#12 key generation.</p>
+
+</dd>
+<dt id="PKCS12_DECRYPT"><b>PKCS12_DECRYPT</b></dt>
+<dd>
+
+<p>Traces PKCS#12 decryption.</p>
+
+</dd>
+<dt id="X509V3_POLICY"><b>X509V3_POLICY</b></dt>
+<dd>
+
+<p>Generates the complete policy tree at various points during X.509 v3 policy evaluation.</p>
+
+</dd>
+<dt id="BN_CTX"><b>BN_CTX</b></dt>
+<dd>
+
+<p>Traces BIGNUM context operations.</p>
+
+</dd>
+<dt id="CMP"><b>CMP</b></dt>
+<dd>
+
+<p>Traces CMP client and server activity.</p>
+
+</dd>
+<dt id="STORE"><b>STORE</b></dt>
+<dd>
+
+<p>Traces STORE operations.</p>
+
+</dd>
+<dt id="DECODER"><b>DECODER</b></dt>
+<dd>
+
+<p>Traces decoder operations.</p>
+
+</dd>
+<dt id="ENCODER"><b>ENCODER</b></dt>
+<dd>
+
+<p>Traces encoder operations.</p>
+
+</dd>
+<dt id="REF_COUNT"><b>REF_COUNT</b></dt>
+<dd>
+
+<p>Traces decrementing certain ASN.1 structure references.</p>
+
+</dd>
+<dt id="HTTP"><b>HTTP</b></dt>
+<dd>
+
+<p>Traces the HTTP client and server, such as messages being sent and received.</p>
+
+</dd>
+</dl>
+
+</dd>
 <dt id="OPENSSL_WIN32_UTF8"><b>OPENSSL_WIN32_UTF8</b></dt>
 <dd>
 

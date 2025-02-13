@@ -92,7 +92,7 @@ if (OSSL_TRACE_ENABLED(category)) {
 
 <p>OSSL_trace_enabled() can be used to check if tracing for the given <i>category</i> is enabled, i.e., if the tracing facility has been statically enabled (see <a href="#Configure-Tracing">&quot;Configure Tracing&quot;</a> below) and a trace channel has been registered using <a href="../man3/OSSL_trace_set_channel.html">OSSL_trace_set_channel(3)</a> or <a href="../man3/OSSL_trace_set_callback.html">OSSL_trace_set_callback(3)</a>.</p>
 
-<p>OSSL_trace_begin() is used to starts a tracing section, and get the channel for the given <i>category</i> in form of a BIO. This BIO can only be used for output.</p>
+<p>OSSL_trace_begin() is used to start a tracing section, and get the channel for the given <i>category</i> in form of a BIO. This BIO can only be used for output. The pointer returned is NULL if the category is invalid or not enabled.</p>
 
 <p>OSSL_trace_end() is used to end a tracing section.</p>
 
@@ -180,6 +180,8 @@ if (OSSL_TRACE_ENABLED(category)) {
 }</code></pre>
 
 <h1 id="NOTES">NOTES</h1>
+
+<p>It is not needed to guard trace output function calls like <i>OSSL_TRACE(category, ...)</i> by <i>OSSL_TRACE_ENABLED(category)</i>.</p>
 
 <p>If producing the trace output requires carrying out auxiliary calculations, this auxiliary code should be placed inside a conditional block which is executed only if the trace category is enabled.</p>
 

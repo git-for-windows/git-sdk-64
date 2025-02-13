@@ -89,7 +89,7 @@ ASN1_GENERALIZEDTIME *ASN1_GENERALIZEDTIME_dup(const ASN1_GENERALIZEDTIME *t);</
 
 <p>The ASN1_TIME_check(), ASN1_UTCTIME_check() and ASN1_GENERALIZEDTIME_check() functions check the syntax of the time structure <i>s</i>.</p>
 
-<p>The ASN1_TIME_print(), ASN1_UTCTIME_print() and ASN1_GENERALIZEDTIME_print() functions print the time structure <i>s</i> to BIO <i>b</i> in human readable format. It will be of the format MMM DD HH:MM:SS YYYY [GMT], for example &quot;Feb 3 00:55:52 2015 GMT&quot;, which does not include a newline. If the time structure has invalid format it prints out &quot;Bad time value&quot; and returns an error. The output for generalized time may include a fractional part following the second.</p>
+<p>The ASN1_TIME_print(), ASN1_UTCTIME_print() and ASN1_GENERALIZEDTIME_print() functions print the time structure <i>s</i> to BIO <i>b</i> in human readable format. It will be of the format MMM DD HH:MM:SS[.s*] YYYY GMT, for example &quot;Feb  3 00:55:52 2015 GMT&quot;, which does not include a newline. If the time structure has invalid format it prints out &quot;Bad time value&quot; and returns an error. The output for generalized time may include a fractional part following the second.</p>
 
 <p>ASN1_TIME_print_ex() provides <i>flags</i> to specify the output format of the datetime. This can be either <b>ASN1_DTFLGS_RFC822</b> or <b>ASN1_DTFLGS_ISO8601</b>.</p>
 
@@ -120,6 +120,8 @@ ASN1_GENERALIZEDTIME *ASN1_GENERALIZEDTIME_dup(const ASN1_GENERALIZEDTIME *t);</
 <p>ASN1_TIME_adj() may change the type from <b>ASN1_GENERALIZEDTIME</b> to <b>ASN1_UTCTIME</b>, or vice versa, based on the resulting year. ASN1_GENERALIZEDTIME_adj() and ASN1_UTCTIME_adj() will not modify the type of the return structure.</p>
 
 <p>It is recommended that functions starting with <b>ASN1_TIME</b> be used instead of those starting with <b>ASN1_UTCTIME</b> or <b>ASN1_GENERALIZEDTIME</b>. The functions starting with <b>ASN1_UTCTIME</b> and <b>ASN1_GENERALIZEDTIME</b> act only on that specific time format. The functions starting with <b>ASN1_TIME</b> will operate on either format.</p>
+
+<p>Users familiar with RFC822 should note that when specifying the flag <b>ASN1_DTFLGS_RFC822</b> the year will be formatted as documented above, i.e., using 4 digits, not 2 as specified in RFC822.</p>
 
 <h1 id="BUGS">BUGS</h1>
 
@@ -191,7 +193,7 @@ else
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

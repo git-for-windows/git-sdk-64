@@ -43,6 +43,8 @@
 
 <p>This command can be used to perform low-level public key operations using any supported algorithm.</p>
 
+<p>By default the signing operation (see <b>-sign</b> option) is assumed.</p>
+
 <h1 id="OPTIONS">OPTIONS</h1>
 
 <dl>
@@ -62,13 +64,17 @@
 <dt id="rawin"><b>-rawin</b></dt>
 <dd>
 
-<p>This indicates that the input data is raw data, which is not hashed by any message digest algorithm. The user can specify a digest algorithm by using the <b>-digest</b> option. This option can only be used with <b>-sign</b> and <b>-verify</b> and must be used with the Ed25519 and Ed448 algorithms.</p>
+<p>This indicates that the signature or verification input data is raw data, which is not hashed by any message digest algorithm. Except with EdDSA, the user can specify a digest algorithm by using the <b>-digest</b> option. For signature algorithms like RSA, DSA and ECDSA, the default digest algorithm is SHA-256. For SM2, it is SM3.</p>
+
+<p>This option can only be used with <b>-sign</b> and <b>-verify</b>. For EdDSA (the Ed25519 and Ed448 algorithms) this option is required.</p>
 
 </dd>
 <dt id="digest-algorithm"><b>-digest</b> <i>algorithm</i></dt>
 <dd>
 
-<p>This specifies the digest algorithm which is used to hash the input data before signing or verifying it with the input key. This option could be omitted if the signature algorithm does not require one (for instance, EdDSA). If this option is omitted but the signature algorithm requires one, a default value will be used. For signature algorithms like RSA, DSA and ECDSA, SHA-256 will be the default digest algorithm. For SM2, it will be SM3. If this option is present, then the <b>-rawin</b> option must be also specified.</p>
+<p>This option can only be used with <b>-sign</b> and <b>-verify</b>. It specifies the digest algorithm that is used to hash the input data before signing or verifying it with the input key. This option could be omitted if the signature algorithm does not require preprocessing the input through a pluggable hash function before signing (for instance, EdDSA). If this option is omitted but the signature algorithm requires one and the <b>-rawin</b> option is given, a default value will be used (see <b>-rawin</b> for details). If this option is present, then the <b>-rawin</b> option is required.</p>
+
+<p>At this time, HashEdDSA (the ph or &quot;prehash&quot; variant of EdDSA) is not supported, so the <b>-digest</b> option cannot be used with EdDSA.</p>
 
 </dd>
 <dt id="out-filename"><b>-out</b> <i>filename</i></dt>
@@ -80,7 +86,7 @@
 <dt id="sigfile-file"><b>-sigfile</b> <i>file</i></dt>
 <dd>
 
-<p>Signature file, required for <b>-verify</b> operations only</p>
+<p>Signature file, required and allowed for <b>-verify</b> operations only</p>
 
 </dd>
 <dt id="inkey-filename-uri"><b>-inkey</b> <i>filename</i>|<i>uri</i></dt>
@@ -128,25 +134,29 @@
 <dt id="rev"><b>-rev</b></dt>
 <dd>
 
-<p>Reverse the order of the input buffer. This is useful for some libraries (such as CryptoAPI) which represent the buffer in little endian format.</p>
+<p>Reverse the order of the input buffer. This is useful for some libraries (such as CryptoAPI) which represent the buffer in little-endian format. This cannot be used in conjunction with <b>-rawin</b>.</p>
 
 </dd>
 <dt id="sign"><b>-sign</b></dt>
 <dd>
 
-<p>Sign the input data (which must be a hash) and output the signed result. This requires a private key.</p>
+<p>Sign the input data and output the signed result. This requires a private key. Using a message digest operation along with this is recommended, when applicable, see the <b>-rawin</b> and <b>-digest</b> options for details. Otherwise, the input data given with the <b>-in</b> option is assumed to already be a digest, but this may then require an additional <b>-pkeyopt</b> <code>digest:</code><i>md</i> in some cases (e.g., RSA with the default PKCS#1 padding mode). Even for other algorithms like ECDSA, where the additional <b>-pkeyopt</b> option does not affect signature output, it is recommended, as it enables checking that the input length is consistent with the intended digest.</p>
 
 </dd>
 <dt id="verify"><b>-verify</b></dt>
 <dd>
 
-<p>Verify the input data (which must be a hash) against the signature file and indicate if the verification succeeded or failed.</p>
+<p>Verify the input data against the signature given with the <b>-sigfile</b> option and indicate if the verification succeeded or failed. The input data given with the <b>-in</b> option is assumed to be a hash value unless the <b>-rawin</b> option is specified or implied. With raw data, when a digest algorithm is applicable, though it may be inferred from the signature or take a default value, it should also be specified.</p>
 
 </dd>
 <dt id="verifyrecover"><b>-verifyrecover</b></dt>
 <dd>
 
-<p>Verify the input data (which must be a hash) and output the recovered data.</p>
+<p>Verify the given signature and output the recovered data (signature payload). For example, in case of RSA PKCS#1 the recovered data is the <b>EMSA-PKCS-v1_5</b> DER encoding of the digest algorithm OID and value as specified in <a href="https://datatracker.ietf.org/doc/html/rfc8017#section-9.2">RFC8017 Section 9.2</a>.</p>
+
+<p>Note that here the input given with the <b>-in</b> option is not a signature input (as with the <b>-sign</b> and <b>-verify</b> options) but a signature output value, typically produced using the <b>-sign</b> option.</p>
+
+<p>This option is available only for use with RSA keys.</p>
 
 </dd>
 <dt id="encrypt"><b>-encrypt</b></dt>
@@ -200,7 +210,7 @@
 <dt id="asn1parse"><b>-asn1parse</b></dt>
 <dd>
 
-<p>Parse the ASN.1 output data, this is useful when combined with the <b>-verifyrecover</b> option when an ASN1 structure is signed.</p>
+<p>Parse the ASN.1 output data to check its DER encoding and print any errors. When combined with the <b>-verifyrecover</b> option, this may be useful only in case an ASN.1 DER-encoded structure had been signed directly (without hashing it).</p>
 
 </dd>
 <dt id="engine-id"><b>-engine</b> <i>id</i></dt>
@@ -247,7 +257,7 @@
 
 <p>The operations and options supported vary according to the key algorithm and its implementation. The OpenSSL operations and options are indicated below.</p>
 
-<p>Unless otherwise mentioned all algorithms support the <b>digest:</b><i>alg</i> option which specifies the digest in use for sign, verify and verifyrecover operations. The value <i>alg</i> should represent a digest name as used in the EVP_get_digestbyname() function for example <b>sha1</b>. This value is not used to hash the input data. It is used (by some algorithms) for sanity-checking the lengths of data passed in and for creating the structures that make up the signature (e.g. <b>DigestInfo</b> in RSASSA PKCS#1 v1.5 signatures).</p>
+<p>Unless otherwise mentioned, all algorithms support the <b>digest:</b><i>alg</i> option, which specifies the digest in use for the signing and verification operations. The value <i>alg</i> should represent a digest name as used in the EVP_get_digestbyname() function for example <b>sha1</b>. This value is not used to hash the input data. It is used (by some algorithms) for sanity-checking the lengths of data passed in and for creating the structures that make up the signature (e.g. <b>DigestInfo</b> in RSASSA PKCS#1 v1.5 signatures).</p>
 
 <p>This command does not hash the input data (except where -rawin is used) but rather it will use the data directly as input to the signature algorithm. Depending on the key type, signature type, and mode of padding, the maximum acceptable lengths of input data differ. The signed data can&#39;t be longer than the key modulus with RSA. In case of ECDSA and DSA the data shouldn&#39;t be longer than the field size, otherwise it will be silently truncated to the field size. In any event the input size must not be larger than the largest supported digest size.</p>
 

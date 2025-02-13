@@ -545,9 +545,15 @@
 <pre><code>openssl ts -verify -queryfile design2.tsq -in design2.tsr \
       -CAfile cacert.pem</code></pre>
 
-<p>To verify a timestamp token against the original data file: openssl ts -verify -data design2.txt -in design2.tsr \ -CAfile cacert.pem</p>
+<p>To verify a timestamp token against the original data file:</p>
 
-<p>To verify a timestamp token against a message imprint: openssl ts -verify -digest b7e5d3f93198b38379852f2c04e78d73abdd0f4b \ -in design2.tsr -CAfile cacert.pem</p>
+<pre><code>openssl ts -verify -data design2.txt -in design2.tsr \
+      -CAfile cacert.pem</code></pre>
+
+<p>To verify a timestamp token against a message imprint:</p>
+
+<pre><code>openssl ts -verify -digest b7e5d3f93198b38379852f2c04e78d73abdd0f4b \
+       -in design2.tsr -CAfile cacert.pem</code></pre>
 
 <p>You could also look at the &#39;test&#39; directory for more examples.</p>
 

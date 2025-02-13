@@ -44,7 +44,7 @@ int EVP_PKEY_encapsulate(EVP_PKEY_CTX *ctx,
 
 <p>The EVP_PKEY_auth_encapsulate_init() function is similar to EVP_PKEY_encapsulate_init() but also passes an <i>authpriv</i> authentication private key that is used during encapsulation.</p>
 
-<p>The EVP_PKEY_encapsulate() function performs a public key encapsulation operation using <i>ctx</i>. The symmetric secret generated in <i>genkey</i> can be used as key material. The ciphertext in <i>wrappedkey</i> is its encapsulated form, which can be sent to another party, who can use <a href="../man3/EVP_PKEY_decapsulate.html">EVP_PKEY_decapsulate(3)</a> to retrieve it using their private key. If <i>wrappedkey</i> is NULL then the maximum size of the output buffer is written to the <i>*wrappedkeylen</i> parameter unless <i>wrappedkeylen</i> is NULL and the maximum size of the generated key buffer is written to <i>*genkeylen</i> unless <i>genkeylen</i> is NULL. If <i>wrappedkey</i> is not NULL and the call is successful then the internally generated key is written to <i>genkey</i> and its size is written to <i>*genkeylen</i>. The encapsulated version of the generated key is written to <i>wrappedkey</i> and its size is written to <i>*wrappedkeylen</i>.</p>
+<p>The EVP_PKEY_encapsulate() function performs a public key encapsulation operation using <i>ctx</i>. The symmetric secret generated in <i>genkey</i> can be used as key material. The ciphertext in <i>wrappedkey</i> is its encapsulated form, which can be sent to another party, who can use <a href="../man3/EVP_PKEY_decapsulate.html">EVP_PKEY_decapsulate(3)</a> to retrieve it using their private key. If <i>wrappedkey</i> is NULL then the maximum size of the output buffer is written to the <i>*wrappedkeylen</i> parameter unless <i>wrappedkeylen</i> is NULL and the maximum size of the generated key buffer is written to <i>*genkeylen</i> unless <i>genkeylen</i> is NULL. If <i>wrappedkey</i> is not NULL and the call is successful then the internally generated key is written to <i>genkey</i> and its size is written to <i>*genkeylen</i>. The encapsulated version of the generated key is written to <i>wrappedkey</i> and its size is written to <i>*wrappedkeylen</i>. Note that if <i>wrappedlen</i> is not NULL, then the value it points to must initially hold the size of the <i>unwrapped</i> buffer so that its size can be validated by the call, ensuring it is large enough to hold the result written to <i>wrapped</i>.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -69,7 +69,7 @@ size_t secretlen = 0, outlen = 0;
 unsigned char *out = NULL, *secret = NULL;
 
 ctx = EVP_PKEY_CTX_new_from_pkey(libctx, rsa_pub_key, NULL);
-if (ctx = NULL)
+if (ctx == NULL)
     /* Error */
 if (EVP_PKEY_encapsulate_init(ctx, NULL) &lt;= 0)
     /* Error */

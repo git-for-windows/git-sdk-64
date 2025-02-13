@@ -178,7 +178,7 @@ int main(void)
     exit(EXIT_SUCCESS);
 }</code></pre>
 
-<p>Note that this should be one of the first things that you do in your application. If any OpenSSL functions get called that require the use of cryptographic functions before this occurs then, if no provider has yet been loaded, then the default provider will be automatically loaded. If you then later explicitly load the FIPS provider then you will have both the FIPS and the default provider loaded at the same time. It is undefined which implementation of an algorithm will be used if multiple implementations are available and you have not explicitly specified via a property query (see below) which one should be used.</p>
+<p>Note that this should be one of the first things that you do in your application. If any OpenSSL functions get called that require the use of cryptographic functions before this occurs then, if no provider has yet been loaded, then the default provider will be automatically loaded. If you then later explicitly load the FIPS provider then you will have both the FIPS and the default provider loaded at the same time. It is unspecified which implementation of an algorithm will be used if multiple implementations are available and you have not explicitly specified via a property query (see below) which one should be used.</p>
 
 <p>Also note that in this example we have additionally loaded the &quot;base&quot; provider. This loads a sub-set of algorithms that are also available in the default provider - specifically non cryptographic ones which may be used in conjunction with the FIPS provider. For example this contains algorithms for encoding and decoding keys. If you decide not to load the default provider then you will usually want to load the base provider instead.</p>
 
@@ -194,7 +194,7 @@ int main(void)
 
 sha256 = EVP_MD_fetch(NULL, &quot;SHA2-256&quot;, &quot;fips=yes&quot;);</code></pre>
 
-<p>If no property query is specified, or more than one implementation matches the property query then it is undefined which implementation of a particular algorithm will be returned.</p>
+<p>If no property query is specified, or more than one implementation matches the property query then it is unspecified which implementation of a particular algorithm will be returned.</p>
 
 <p>This example shows an explicit request for an implementation of SHA256 from the default provider:</p>
 

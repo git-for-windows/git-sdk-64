@@ -63,7 +63,7 @@ int ECDSA_sign_ex(int type, const unsigned char *dgst, int dgstlen,
 
 <p>ECDSA_size() returns the maximum length of a DER encoded ECDSA signature created with the private EC key <i>eckey</i>. To obtain the actual signature size use <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a> with a NULL <i>sig</i> parameter.</p>
 
-<p>ECDSA_sign() computes a digital signature of the <i>dgstlen</i> bytes hash value <i>dgst</i> using the private EC key <i>eckey</i>. The DER encoded signatures is stored in <i>sig</i> and its length is returned in <i>sig_len</i>. Note: <i>sig</i> must point to ECDSA_size(eckey) bytes of memory. The parameter <i>type</i> is currently ignored. ECDSA_sign() is wrapper function for ECDSA_sign_ex() with <i>kinv</i> and <i>rp</i> set to NULL.</p>
+<p>ECDSA_sign() computes a digital signature of the <i>dgstlen</i> bytes hash value <i>dgst</i> using the private EC key <i>eckey</i>. The DER encoded signatures is stored in <i>sig</i> and its length is returned in <i>siglen</i>. Note: <i>sig</i> must point to ECDSA_size(eckey) bytes of memory. The parameter <i>type</i> is currently ignored. ECDSA_sign() is wrapper function for ECDSA_sign_ex() with <i>kinv</i> and <i>rp</i> set to NULL.</p>
 
 <p>ECDSA_do_sign() is similar to ECDSA_sign() except the signature is returned as a newly allocated <b>ECDSA_SIG</b> structure (or NULL on error). ECDSA_do_sign() is a wrapper function for ECDSA_do_sign_ex() with <i>kinv</i> and <i>rp</i> set to NULL.</p>
 
@@ -75,7 +75,7 @@ int ECDSA_sign_ex(int type, const unsigned char *dgst, int dgstlen,
 
 <p>ECDSA_sign_setup() may be used to precompute parts of the signing operation. <i>eckey</i> is the private EC key and <i>ctx</i> is a pointer to <b>BN_CTX</b> structure (or NULL). The precomputed values or returned in <i>kinv</i> and <i>rp</i> and can be used in a later call to ECDSA_sign_ex() or ECDSA_do_sign_ex().</p>
 
-<p>ECDSA_sign_ex() computes a digital signature of the <i>dgstlen</i> bytes hash value <i>dgst</i> using the private EC key <i>eckey</i> and the optional pre-computed values <i>kinv</i> and <i>rp</i>. The DER encoded signature is stored in <i>sig</i> and its length is returned in <i>sig_len</i>. Note: <i>sig</i> must point to ECDSA_size(eckey) bytes of memory. The parameter <i>type</i> is ignored.</p>
+<p>ECDSA_sign_ex() computes a digital signature of the <i>dgstlen</i> bytes hash value <i>dgst</i> using the private EC key <i>eckey</i> and the optional pre-computed values <i>kinv</i> and <i>rp</i>. The DER encoded signature is stored in <i>sig</i> and its length is returned in <i>siglen</i>. Note: <i>sig</i> must point to ECDSA_size(eckey) bytes of memory. The parameter <i>type</i> is ignored.</p>
 
 <p>ECDSA_do_sign_ex() is similar to ECDSA_sign_ex() except the signature is returned as a newly allocated <b>ECDSA_SIG</b> structure (or NULL on error).</p>
 

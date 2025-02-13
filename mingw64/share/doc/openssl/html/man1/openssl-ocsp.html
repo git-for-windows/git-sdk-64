@@ -41,7 +41,7 @@
 
 <h2 id="OCSP-Client">OCSP Client</h2>
 
-<p><b>openssl</b> <b>ocsp</b> [<b>-help</b>] [<b>-out</b> <i>file</i>] [<b>-issuer</b> <i>file</i>] [<b>-cert</b> <i>file</i>] [<b>-no_certs</b>] [<b>-serial</b> <i>n</i>] [<b>-signer</b> <i>file</i>] [<b>-signkey</b> <i>file</i>] [<b>-sign_other</b> <i>file</i>] [<b>-nonce</b>] [<b>-no_nonce</b>] [<b>-req_text</b>] [<b>-resp_text</b>] [<b>-text</b>] [<b>-reqout</b> <i>file</i>] [<b>-respout</b> <i>file</i>] [<b>-reqin</b> <i>file</i>] [<b>-respin</b> <i>file</i>] [<b>-url</b> <i>URL</i>] [<b>-host</b> <i>host</i>:<i>port</i>] [<b>-path</b> <i>pathname</i>] [<b>-proxy</b> <i>[http[s]://][userinfo@]host[:port][/path]</i>] [<b>-no_proxy</b> <i>addresses</i>] [<b>-header</b>] [<b>-timeout</b> <i>seconds</i>] [<b>-VAfile</b> <i>file</i>] [<b>-validity_period</b> <i>n</i>] [<b>-status_age</b> <i>n</i>] [<b>-noverify</b>] [<b>-verify_other</b> <i>file</i>] [<b>-trust_other</b>] [<b>-no_intern</b>] [<b>-no_signature_verify</b>] [<b>-no_cert_verify</b>] [<b>-no_chain</b>] [<b>-no_cert_checks</b>] [<b>-no_explicit</b>] [<b>-port</b> <i>num</i>] [<b>-ignore_err</b>]</p>
+<p><b>openssl</b> <b>ocsp</b> [<b>-help</b>] [<b>-out</b> <i>file</i>] [<b>-issuer</b> <i>file</i>] [<b>-cert</b> <i>file</i>] [<b>-no_certs</b>] [<b>-serial</b> <i>n</i>] [<b>-signer</b> <i>file</i>] [<b>-signkey</b> <i>file</i>] [<b>-sign_other</b> <i>file</i>] [<b>-nonce</b>] [<b>-no_nonce</b>] [<b>-req_text</b>] [<b>-resp_text</b>] [<b>-text</b>] [<b>-reqout</b> <i>file</i>] [<b>-respout</b> <i>file</i>] [<b>-reqin</b> <i>file</i>] [<b>-respin</b> <i>file</i>] [<b>-url</b> <i>URL</i>] [<b>-host</b> <i>host</i>:<i>port</i>] [<b>-path</b> <i>pathname</i>] [<b>-proxy</b> <i>[http[s]://][userinfo@]host[:port][/path][?query][#fragment]</i>] [<b>-no_proxy</b> <i>addresses</i>] [<b>-header</b>] [<b>-timeout</b> <i>seconds</i>] [<b>-VAfile</b> <i>file</i>] [<b>-validity_period</b> <i>n</i>] [<b>-status_age</b> <i>n</i>] [<b>-noverify</b>] [<b>-verify_other</b> <i>file</i>] [<b>-trust_other</b>] [<b>-no_intern</b>] [<b>-no_signature_verify</b>] [<b>-no_cert_verify</b>] [<b>-no_chain</b>] [<b>-no_cert_checks</b>] [<b>-no_explicit</b>] [<b>-port</b> <i>num</i>] [<b>-ignore_err</b>]</p>
 
 <h2 id="OCSP-Server">OCSP Server</h2>
 
@@ -148,13 +148,15 @@
 <dt id="host-host:port--path-pathname"><b>-host</b> <i>host</i>:<i>port</i>, <b>-path</b> <i>pathname</i></dt>
 <dd>
 
-<p>If the <b>-host</b> option is present then the OCSP request is sent to the host <i>host</i> on port <i>port</i>. The <i>host</i> may be a domain name or an IP (v4 or v6) address, such as <code>127.0.0.1</code> or <code>[::1]</code> for localhost. The <b>-path</b> option specifies the HTTP pathname to use or &quot;/&quot; by default. This is equivalent to specifying <b>-url</b> with scheme http:// and the given <i>host</i>, <i>port</i>, and optional <i>pathname</i>.</p>
+<p>If the <b>-host</b> option is present then the OCSP request is sent to the host <i>host</i> on port <i>port</i>. The <i>host</i> may be a domain name or an IP (v4 or v6) address, such as <code>127.0.0.1</code> or <code>[::1]</code> for localhost. If it is an IPv6 address, it must be enclosed in <code>[</code> and <code>]</code>.</p>
+
+<p>The <b>-path</b> option specifies the HTTP pathname to use or &quot;/&quot; by default. This is equivalent to specifying <b>-url</b> with scheme http:// and the given <i>host</i>, <i>port</i>, and optional <i>pathname</i>.</p>
 
 </dd>
-<dt id="proxy-http-s-:-userinfo-host-:port-path"><b>-proxy</b> <i>[http[s]://][userinfo@]host[:port][/path]</i></dt>
+<dt id="proxy-http-s-:-userinfo-host-:port-path-query-fragment"><b>-proxy</b> <i>[http[s]://][userinfo@]host[:port][/path][?query][#fragment]</i></dt>
 <dd>
 
-<p>The HTTP(S) proxy server to use for reaching the OCSP server unless <b>-no_proxy</b> applies, see below. The proxy port defaults to 80 or 443 if the scheme is <code>https</code>; apart from that the optional <code>http://</code> or <code>https://</code> prefix is ignored, as well as any userinfo and path components. Defaults to the environment variable <code>http_proxy</code> if set, else <code>HTTP_PROXY</code> in case no TLS is used, otherwise <code>https_proxy</code> if set, else <code>HTTPS_PROXY</code>.</p>
+<p>The HTTP(S) proxy server to use for reaching the OCSP server unless <b>-no_proxy</b> applies, see below. If the host string is an IPv6 address, it must be enclosed in <code>[</code> and <code>]</code>. The proxy port defaults to 80 or 443 if the scheme is <code>https</code>; apart from that the optional <code>http://</code> or <code>https://</code> prefix is ignored, as well as any userinfo, path, query, and fragment components. Defaults to the environment variable <code>http_proxy</code> if set, else <code>HTTP_PROXY</code> in case no TLS is used, otherwise <code>https_proxy</code> if set, else <code>HTTPS_PROXY</code>.</p>
 
 </dd>
 <dt id="no_proxy-addresses"><b>-no_proxy</b> <i>addresses</i></dt>

@@ -21,6 +21,8 @@
       <li><a href="#Operations">Operations</a>
         <ul>
           <li><a href="#Algorithm-naming">Algorithm naming</a></li>
+          <li><a href="#Provider-dependencies">Provider dependencies</a></li>
+          <li><a href="#Note-on-naming-clashes">Note on naming clashes</a></li>
         </ul>
       </li>
     </ul>
@@ -192,6 +194,14 @@
 <p>MODE is only present where applicable.</p>
 
 <p>Other aliases may exist for example where standards bodies or common practice use alternative names or names that OpenSSL has used historically.</p>
+
+<h3 id="Provider-dependencies">Provider dependencies</h3>
+
+<p>Providers may depend for their proper operation on the availability of (functionality implemented in) other providers. As there is no mechanism to express such dependencies towards the OpenSSL core, provider authors must take care that such dependencies are either completely avoided or made visible to users, e.g., by documentation and/or defensive programming, e.g., outputting error messages if required external dependencies are not available, e.g., when no provider implementing the required functionality has been activated. In particular, provider initialization should not depend on other providers already having been initialized.</p>
+
+<h3 id="Note-on-naming-clashes">Note on naming clashes</h3>
+
+<p>It is possible to register the same algorithm name from within different providers. Users should note that if no property query is specified, or more than one implementation matches the property query then it is unspecified which implementation of a particular algorithm will be returned. Such naming clashes may also occur if algorithms only differ in capitalization as <a href="#Algorithm-naming">&quot;Algorithm naming&quot;</a> is case insensitive.</p>
 
 <h1 id="OPENSSL-PROVIDERS">OPENSSL PROVIDERS</h1>
 

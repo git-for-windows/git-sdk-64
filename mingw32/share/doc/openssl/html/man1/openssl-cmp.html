@@ -394,7 +394,7 @@
 <dt id="server-http-s-:-userinfo-host-:port-path-query-fragment"><b>-server</b> <i>[http[s]://][userinfo@]host[:port][/path][?query][#fragment]</i></dt>
 <dd>
 
-<p>The <i>host</i> domain name or IP address and optionally <i>port</i> of the CMP server to connect to using HTTP(S). IP address may be for v4 or v6, such as <code>127.0.0.1</code> or <code>[::1]</code> for localhost.</p>
+<p>The <i>host</i> domain name or IP address and optionally <i>port</i> of the CMP server to connect to using HTTP(S). IP address may be for v4 or v6, such as <code>127.0.0.1</code> or <code>[::1]</code> for localhost. If the host string is an IPv6 address, it must be enclosed in <code>[</code> and <code>]</code>.</p>
 
 <p>This option excludes <i>-port</i> and <i>-use_mock_srv</i>. It is ignored if <i>-rspin</i> is given with enough filename arguments.</p>
 
@@ -404,7 +404,7 @@
 <dt id="proxy-http-s-:-userinfo-host-:port-path-query-fragment"><b>-proxy</b> <i>[http[s]://][userinfo@]host[:port][/path][?query][#fragment]</i></dt>
 <dd>
 
-<p>The HTTP(S) proxy server to use for reaching the CMP server unless <b>-no_proxy</b> applies, see below. The proxy port defaults to 80 or 443 if the scheme is <code>https</code>; apart from that the optional <code>http://</code> or <code>https://</code> prefix is ignored (note that using TLS may be required by <b>-tls_used</b> or <b>-server</b> with the prefix <code>https</code>), as well as any path, userinfo, and query, and fragment components. Defaults to the environment variable <code>http_proxy</code> if set, else <code>HTTP_PROXY</code> in case no TLS is used, otherwise <code>https_proxy</code> if set, else <code>HTTPS_PROXY</code>. This option is ignored if <i>-server</i> is not given.</p>
+<p>The HTTP(S) proxy server to use for reaching the CMP server unless <b>-no_proxy</b> applies, see below. If the host string is an IPv6 address, it must be enclosed in <code>[</code> and <code>]</code>. The proxy port defaults to 80 or 443 if the scheme is <code>https</code>; apart from that the optional <code>http://</code> or <code>https://</code> prefix is ignored (note that using TLS may be required by <b>-tls_used</b> or <b>-server</b> with the prefix <code>https</code>), as well as any path, userinfo, and query, and fragment components. Defaults to the environment variable <code>http_proxy</code> if set, else <code>HTTP_PROXY</code> in case no TLS is used, otherwise <code>https_proxy</code> if set, else <code>HTTPS_PROXY</code>. This option is ignored if <i>-server</i> is not given.</p>
 
 </dd>
 <dt id="no_proxy-addresses"><b>-no_proxy</b> <i>addresses</i></dt>
