@@ -9,9 +9,9 @@
 
 /* Package name      : perl5
  * Source directory  : .
- * Configuration time: Fri Dec  1 16:19:30 UTC 2023
+ * Configuration time: Mon Feb 17 20:22:19 UTC 2025
  * Configured by     : runneradmin
- * Target system     : msys_nt-10.0-20348 fv-az534-830 3.4.10-b7ef037e.x86_64 2023-11-29 23:04 utc x86_64 msys 
+ * Target system     : msys_nt-10.0-20348 fv-az1111-857 3.5.7-882031da.x86_64 2025-01-30 11:14 utc x86_64 msys 
  */
 
 #ifndef _config_h_
@@ -1369,7 +1369,7 @@
  *	feature tests from Configure are generally more reliable.
  */
 #define OSNAME "msys"		/**/
-#define OSVERS "3.4.10-b7ef037e.x86_64"		/**/
+#define OSVERS "3.5.7-882031da.x86_64"		/**/
 
 /* CAT2:
  *	This macro concatenates 2 tokens together.
