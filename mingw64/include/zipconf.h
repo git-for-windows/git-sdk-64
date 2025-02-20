@@ -8,15 +8,12 @@
    based on ../cmake-zipconf.h.in.
  */
 
-#define LIBZIP_VERSION "1.11.2"
+#define LIBZIP_VERSION "1.11.3"
 #define LIBZIP_VERSION_MAJOR 1
 #define LIBZIP_VERSION_MINOR 11
-#define LIBZIP_VERSION_MICRO 2
+#define LIBZIP_VERSION_MICRO 3
 
 /* #undef ZIP_STATIC */
-
-#define _Nullable
-#define _Nonnull
 
 #if !defined(__STDC_FORMAT_MACROS)
 #define __STDC_FORMAT_MACROS 1
