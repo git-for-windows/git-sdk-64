@@ -459,7 +459,7 @@ pre>code {
         [--cruft] [--cruft-expiration=&lt;time&gt;]
         [--stdout [--filter=&lt;filter-spec&gt;] | &lt;base-name&gt;]
         [--shallow] [--keep-true-parents] [--[no-]sparse]
-        [--full-name-hash] [--path-walk] &lt; &lt;object-list&gt;</pre>
+        [--name-hash-version=&lt;n&gt;] [--path-walk] &lt; &lt;object-list&gt;</pre>
 </div>
 </div>
 </div>
@@ -848,6 +848,38 @@ removed). This implies <code>--revs</code>.</p>
 <p>Restrict delta matches based on "islands". See DELTA ISLANDS
 below.</p>
 </dd>
+<dt class="hdlist1">--name-hash-version=&lt;n&gt;</dt>
+<dd>
+<p>While performing delta compression, Git groups objects that may be
+similar based on heuristics using the path to that object. While
+grouping objects by an exact path match is good for paths with
+many versions, there are benefits for finding delta pairs across
+different full paths. Git collects objects by type and then by a
+"name hash" of the path and then by size, hoping to group objects
+that will compress well together.</p>
+<div class="paragraph">
+<p>The default name hash version is <code>1</code>, which prioritizes hash locality by
+considering the final bytes of the path as providing the maximum magnitude
+to the hash function. This version excels at distinguishing short paths
+and finding renames across directories. However, the hash function depends
+primarily on the final 16 bytes of the path. If there are many paths in
+the repo that have the same final 16 bytes and differ only by parent
+directory, then this name-hash may lead to too many collisions and cause
+poor results. At the moment, this version is required when writing
+reachability bitmap files with <code>--write-bitmap-index</code>.</p>
+</div>
+<div class="paragraph">
+<p>The name hash version <code>2</code> has similar locality features as version <code>1</code>,
+except it considers each path component separately and overlays the hashes
+with a shift. This still prioritizes the final bytes of the path, but also
+"salts" the lower bits of the hash using the parent directory names. This
+method allows for some of the locality benefits of version <code>1</code> while
+breaking most of the collisions from a similarly-named file appearing in
+many different directories. At the moment, this version is not allowed
+when writing reachability bitmap files with <code>--write-bitmap-index</code> and it
+will be automatically changed to version <code>1</code>.</p>
+</div>
+</dd>
 <dt class="hdlist1">--path-walk</dt>
 <dd>
 <p>By default, <code>git</code> <code>pack-objects</code> walks objects in an order that
@@ -1007,7 +1039,7 @@ attribute <code>delta</code> set to false.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-13 11:00:55 UTC
+Last updated 2025-02-26 21:14:25 UTC
 </div>
 </div>
 </body>

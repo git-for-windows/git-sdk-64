@@ -505,12 +505,19 @@ merge base, creating a virtual merge base by merging the merge bases)</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
+<dt class="hdlist1">--stdin</dt>
+<dd>
+<p>Read the commits to merge from the standard input rather than
+the command-line. See <a href="#INPUT">INPUT FORMAT</a> below for more
+information.  Implies <code>-z</code>.</p>
+</dd>
 <dt class="hdlist1">-z</dt>
 <dd>
 <p>Do not quote filenames in the &lt;Conflicted file info&gt; section,
 and end each filename with a NUL character rather than
 newline.  Also begin the messages section with a NUL character
-instead of a newline.  See <a href="#OUTPUT">OUTPUT</a> below for more information.</p>
+instead of a newline.  See <a href="#OUTPUT">OUTPUT</a> below for more
+information.</p>
 </dd>
 <dt class="hdlist1">--name-only</dt>
 <dd>
@@ -603,10 +610,8 @@ NUL</pre>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>   0: merge had conflicts
-   1: merge was clean
-   &lt;0: something prevented the merge from running (e.g. access to repository
-objects denied by filesystem)</pre>
+<pre>0: merge had conflicts
+1: merge was clean</pre>
 </div>
 </div>
 </div>
@@ -788,7 +793,7 @@ with <a href="git-merge.html">git-merge(1)</a>:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_input_format">INPUT FORMAT</h2>
+<h2 id="INPUT">INPUT FORMAT</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><em>git merge-tree --stdin</em> input format is fully text based. Each line
@@ -909,7 +914,7 @@ large repositories).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-13 11:00:55 UTC
+Last updated 2025-02-26 21:14:25 UTC
 </div>
 </div>
 </body>

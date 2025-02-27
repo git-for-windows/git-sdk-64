@@ -647,6 +647,24 @@ and <code>--no-color</code>.</p>
 </div>
 </div>
 <div class="sect2">
+<h3 id="_options_trump_configuration_and_environment">Options trump configuration and environment</h3>
+<div class="paragraph">
+<p>When there is a configuration variable or an environment variable
+that tweak the behaviour of an aspect of a Git command, and also a
+command line option that tweaks the same, the command line option
+overrides what the configuration and/or environment variable say.</p>
+</div>
+<div class="paragraph">
+<p>For example, the <code>user.name</code> configuration variable is used to
+specify the human-readable name used by the <code>git</code> <code>commit</code> command to
+record the author and the committer name in a newly created commit.
+The <code>GIT_AUTHOR_NAME</code> environment variable, if set, takes precedence
+when deciding what author name to record.  The <code>--author=</code><em>&lt;author&gt;</em>
+command line option of the <code>git</code> <code>commit</code> command, when given, takes
+precedence over these two sources of information.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_aggregating_short_options">Aggregating short options</h3>
 <div class="paragraph">
 <p>Commands that support the enhanced option parser allow you to aggregate short
@@ -771,7 +789,7 @@ on both the index and the working tree.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-13 11:00:55 UTC
+Last updated 2025-02-26 21:14:25 UTC
 </div>
 </div>
 </body>

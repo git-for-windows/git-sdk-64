@@ -452,12 +452,6 @@ blobs reachable via a path <code>my/dir/to/A</code> are visited. When there are
 multiple paths possible to reach the same object, then only one of those
 paths is used to visit the object.</p>
 </div>
-<div class="paragraph">
-<p>When walking a range of commits with some <code>UNINTERESTING</code> objects, the
-objects with the <code>UNINTERESTING</code> flag are included in these batches. In
-order to walk <code>UNINTERESTING</code> objects, the <code>--boundary</code> option must be
-used in the commit walk in order to visit <code>UNINTERESTING</code> commits.</p>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -493,11 +487,6 @@ machinery in <code>revision.h</code>. Initialize <code>revs</code> using calls s
 <code>revs</code> struct. The revision walk should only be used to walk commits, and
 the objects will be walked in a separate way based on those starting
 commits.</p>
-</div>
-<div class="paragraph">
-<p>If you want the path-walk API to emit <code>UNINTERESTING</code> objects based on the
-commit walk&#8217;s boundary, be sure to set <code>revs.boundary</code> so the boundary
-commits are emitted.</p>
 </div>
 </dd>
 <dt class="hdlist1"><code>commits</code>, <code>blobs</code>, <code>trees</code>, <code>tags</code></dt>
@@ -539,7 +528,7 @@ API can prune the set of paths it walks to improve performance.</p>
 <div class="paragraph">
 <p>See example usages in:
 	<code>t/helper/test-path-walk.c</code>,
-	<code>builtin/backfill.c</code>,
+	<code>builtin/backfill.c</code>
 	<code>builtin/pack-objects.c</code></p>
 </div>
 </div>
@@ -547,7 +536,7 @@ API can prune the set of paths it walks to improve performance.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-13 11:00:55 UTC
+Last updated 2025-02-26 21:14:25 UTC
 </div>
 </div>
 </body>

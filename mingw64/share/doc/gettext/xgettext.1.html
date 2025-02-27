@@ -108,11 +108,11 @@ input file language: <br>
 -L</b>, <b>--language</b>=<i>NAME</i></p>
 
 <p style="margin-left:22%;">recognise the specified
-language (C, C++, ObjectiveC, PO, Shell, Python, Lisp,
-EmacsLisp, librep, Scheme, Guile, Smalltalk, Java,
-JavaProperties, C#, awk, YCP, Tcl, Perl, PHP, Ruby,
-GCC-source, NXStringTable, RST, RSJ, Glade, Lua,
-JavaScript, Vala, Desktop)</p>
+language (C, C++, ObjectiveC, PO, Python, Java,
+JavaProperties, C#, JavaScript, Scheme, Guile, Lisp,
+EmacsLisp, librep, Rust, Ruby, Shell, awk, Lua, Smalltalk,
+Vala, Tcl, Perl, PHP, GCC-source, YCP, NXStringTable,
+RST, RSJ, Glade, GSettings, Desktop)</p>
 
 <p style="margin-left:11%;"><b>-C</b>,
 <b>--c</b>++</p>
@@ -183,9 +183,10 @@ specific options: <br>
 -a</b>, <b>--extract-all</b></p>
 
 <p style="margin-left:22%;">extract all strings (only
-languages C, C++, ObjectiveC, Shell, Python, Lisp,
-EmacsLisp, librep, Scheme, Java, C#, awk, Tcl, Perl, PHP,
-GCC-source, Glade, Lua, JavaScript, Vala)</p>
+languages C, C++, ObjectiveC, Python, Java, C#, JavaScript,
+Scheme, Guile, Lisp, EmacsLisp, librep, Rust, Shell, awk,
+Lua, Vala, Tcl, Perl, PHP, GCC-source, Glade,
+GSettings)</p>
 
 <p style="margin-left:11%;"><b>-kWORD</b>,
 <b>--keyword</b>=<i>WORD</i></p>
@@ -197,9 +198,10 @@ keyword</p>
 <b>--keyword</b></p>
 
 <p style="margin-left:22%;">do not to use default keywords
-(only languages C, C++, ObjectiveC, Shell, Python, Lisp,
-EmacsLisp, librep, Scheme, Java, C#, awk, Tcl, Perl, PHP,
-GCC-source, Glade, Lua, JavaScript, Vala, Desktop)</p>
+(only languages C, C++, ObjectiveC, Python, Java, C#,
+JavaScript, Scheme, Guile, Lisp, EmacsLisp, librep, Rust,
+Shell, awk, Lua, Vala, Tcl, Perl, PHP, GCC-source,
+Glade, GSettings, Desktop)</p>
 
 
 <p style="margin-left:11%;"><b>--flag</b>=<i>WORD</i>:ARG:FLAG</p>
@@ -208,11 +210,11 @@ GCC-source, Glade, Lua, JavaScript, Vala, Desktop)</p>
 inside the argument number ARG of keyword WORD</p>
 
 <p style="margin-left:11%;">(only languages C, C++,
-ObjectiveC, Shell,</p>
+ObjectiveC, Python,</p>
 
-<p style="margin-left:22%;">Python, Lisp, EmacsLisp,
-librep, Scheme, Java, C#, awk, YCP, Tcl, Perl, PHP,
-GCC-source, Lua, JavaScript, Vala)</p>
+<p style="margin-left:22%;">Java, C#, JavaScript, Scheme,
+Guile, Lisp, EmacsLisp, librep, Rust, Shell, awk, Lua, Vala,
+Tcl, Perl, PHP, GCC-source, YCP)</p>
 
 
 <p style="margin-left:11%;"><b>--tag</b>=<i>WORD</i>:FORMAT</p>
@@ -413,6 +415,14 @@ output</p>
 <p style="margin-left:22%;">set report address for msgid
 bugs</p>
 
+
+<p style="margin-left:11%;"><b>--reference</b>=<i>FILE</i></p>
+
+<p style="margin-left:22%;">Declares that the output
+depends on the contents of the given FILE. This has an
+influence on the &rsquo;POT-Creation-Date&rsquo;
+field in the output.</p>
+
 <p style="margin-left:11%;"><b>-m[STRING]</b>,
 <b>--msgstr-prefix</b>[=<i>STRING</i>]</p>
 
@@ -466,7 +476,7 @@ email to &lt;bug-gettext@gnu.org&gt;.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">Copyright
-&copy; 1995-2024 Free Software Foundation, Inc.
+&copy; 1995-2025 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later
 &lt;https://gnu.org/licenses/gpl.html&gt; <br>
 This is free software: you are free to change and

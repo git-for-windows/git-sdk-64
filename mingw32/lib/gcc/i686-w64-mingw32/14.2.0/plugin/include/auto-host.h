@@ -2360,7 +2360,7 @@
 
 /* Value to set mingw's _dowildcard to. */
 #ifndef USED_FOR_TARGET
-/* #undef MINGW_DOWILDCARD */
+#define MINGW_DOWILDCARD 1
 #endif
 
 

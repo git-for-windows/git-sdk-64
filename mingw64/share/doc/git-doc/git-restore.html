@@ -452,9 +452,9 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git restore</em> [&lt;options&gt;] [--source=&lt;tree&gt;] [--staged] [--worktree] [--] &lt;pathspec&gt;&#8230;&#8203;
-<em>git restore</em> [&lt;options&gt;] [--source=&lt;tree&gt;] [--staged] [--worktree] --pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]
-<em>git restore</em> (-p|--patch) [&lt;options&gt;] [--source=&lt;tree&gt;] [--staged] [--worktree] [--] [&lt;pathspec&gt;&#8230;&#8203;]</pre>
+<pre class="content"><code>git</code> <code>restore</code> [<em>&lt;options&gt;</em>] [<code>--source=</code><em>&lt;tree&gt;</em>] [<code>--staged</code>] [<code>--worktree</code>] [<code>--</code>] <em>&lt;pathspec&gt;</em>&#8230;&#8203;
+<code>git</code> <code>restore</code> [<em>&lt;options&gt;</em>] [<code>--source=</code><em>&lt;tree&gt;</em>] [<code>--staged</code>] [<code>--worktree</code>] <code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]
+<code>git</code> <code>restore</code> (<code>-p</code>|<code>--patch</code>) [<em>&lt;options&gt;</em>] [<code>--source=</code><em>&lt;tree&gt;</em>] [<code>--staged</code>] [<code>--worktree</code>] [<code>--</code>] [<em>&lt;pathspec&gt;</em>&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -489,8 +489,8 @@ between the three commands.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">-s &lt;tree&gt;</dt>
-<dt class="hdlist1">--source=&lt;tree&gt;</dt>
+<dt class="hdlist1"><code>-s</code> <em>&lt;tree&gt;</em></dt>
+<dt class="hdlist1"><code>--source=</code><em>&lt;tree&gt;</em></dt>
 <dd>
 <p>Restore the working tree files with the content from the given
 tree. It is common to specify the source tree by naming a
@@ -500,90 +500,90 @@ commit, branch or tag associated with it.</p>
 given, otherwise from the index.</p>
 </div>
 <div class="paragraph">
-<p>As a special case, you may use "A<code>...</code><code>B</code>" as a shortcut for the
-merge base of <code>A</code> and <code>B</code> if there is exactly one merge base. You can
-leave out at most one of <code>A</code> and <code>B</code>, in which case it defaults to <code>HEAD</code>.</p>
+<p>As a special case, you may use "<em>&lt;rev-A&gt;</em><code>...</code><em>&lt;rev-B&gt;</em>" as a shortcut for the
+merge base of <em>&lt;rev-A&gt;</em> and <em>&lt;rev-B&gt;</em> if there is exactly one merge base. You can
+leave out at most one of <em>&lt;rev-A&gt;_</em> and <em>&lt;rev-B&gt;</em>, in which case it defaults to <code>HEAD</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">-p</dt>
-<dt class="hdlist1">--patch</dt>
+<dt class="hdlist1"><code>-p</code></dt>
+<dt class="hdlist1"><code>--patch</code></dt>
 <dd>
 <p>Interactively select hunks in the difference between the
-restore source and the restore location. See the &#8220;Interactive
-Mode&#8221; section of <a href="git-add.html">git-add(1)</a> to learn how to operate
+restore source and the restore location. See the "Interactive
+Mode" section of <a href="git-add.html">git-add(1)</a> to learn how to operate
 the <code>--patch</code> mode.</p>
 <div class="paragraph">
 <p>Note that <code>--patch</code> can accept no pathspec and will prompt to restore
 all modified paths.</p>
 </div>
 </dd>
-<dt class="hdlist1">-W</dt>
-<dt class="hdlist1">--worktree</dt>
-<dt class="hdlist1">-S</dt>
-<dt class="hdlist1">--staged</dt>
+<dt class="hdlist1"><code>-W</code></dt>
+<dt class="hdlist1"><code>--worktree</code></dt>
+<dt class="hdlist1"><code>-S</code></dt>
+<dt class="hdlist1"><code>--staged</code></dt>
 <dd>
 <p>Specify the restore location. If neither option is specified,
 by default the working tree is restored. Specifying <code>--staged</code>
 will only restore the index. Specifying both restores both.</p>
 </dd>
-<dt class="hdlist1">-q</dt>
-<dt class="hdlist1">--quiet</dt>
+<dt class="hdlist1"><code>-q</code></dt>
+<dt class="hdlist1"><code>--quiet</code></dt>
 <dd>
 <p>Quiet, suppress feedback messages. Implies <code>--no-progress</code>.</p>
 </dd>
-<dt class="hdlist1">--progress</dt>
-<dt class="hdlist1">--no-progress</dt>
+<dt class="hdlist1"><code>--progress</code></dt>
+<dt class="hdlist1"><code>--no-progress</code></dt>
 <dd>
 <p>Progress status is reported on the standard error stream
 by default when it is attached to a terminal, unless <code>--quiet</code>
 is specified. This flag enables progress reporting even if not
 attached to a terminal, regardless of <code>--quiet</code>.</p>
 </dd>
-<dt class="hdlist1">--ours</dt>
-<dt class="hdlist1">--theirs</dt>
+<dt class="hdlist1"><code>--ours</code></dt>
+<dt class="hdlist1"><code>--theirs</code></dt>
 <dd>
 <p>When restoring files in the working tree from the index, use
-stage #2 (<em>ours</em>) or #3 (<em>theirs</em>) for unmerged paths.
+stage #2 (<code>ours</code>) or #3 (<code>theirs</code>) for unmerged paths.
 This option cannot be used when checking out paths from a
 tree-ish (i.e. with the <code>--source</code> option).</p>
 <div class="paragraph">
-<p>Note that during <code>git</code> <code>rebase</code> and <code>git</code> <code>pull</code> <code>--rebase</code>, <em>ours</em> and
-<em>theirs</em> may appear swapped. See the explanation of the same options
+<p>Note that during <code>git</code> <code>rebase</code> and <code>git</code> <code>pull</code> <code>--rebase</code>, <code>ours</code> and
+<code>theirs</code> may appear swapped. See the explanation of the same options
 in <a href="git-checkout.html">git-checkout(1)</a> for details.</p>
 </div>
 </dd>
-<dt class="hdlist1">-m</dt>
-<dt class="hdlist1">--merge</dt>
+<dt class="hdlist1"><code>-m</code></dt>
+<dt class="hdlist1"><code>--merge</code></dt>
 <dd>
 <p>When restoring files on the working tree from the index,
 recreate the conflicted merge in the unmerged paths.
 This option cannot be used when checking out paths from a
 tree-ish (i.e. with the <code>--source</code> option).</p>
 </dd>
-<dt class="hdlist1">--conflict=&lt;style&gt;</dt>
+<dt class="hdlist1"><code>--conflict=</code><em>&lt;style&gt;</em></dt>
 <dd>
 <p>The same as <code>--merge</code> option above, but changes the way the
 conflicting hunks are presented, overriding the
 <code>merge.conflictStyle</code> configuration variable.  Possible values
-are "merge" (default), "diff3", and "zdiff3".</p>
+are <code>merge</code> (default), <code>diff3</code>, and <code>zdiff3</code>.</p>
 </dd>
-<dt class="hdlist1">--ignore-unmerged</dt>
+<dt class="hdlist1"><code>--ignore-unmerged</code></dt>
 <dd>
 <p>When restoring files on the working tree from the index, do
 not abort the operation if there are unmerged entries and
 neither <code>--ours</code>, <code>--theirs</code>, <code>--merge</code> or <code>--conflict</code> is
 specified. Unmerged paths on the working tree are left alone.</p>
 </dd>
-<dt class="hdlist1">--ignore-skip-worktree-bits</dt>
+<dt class="hdlist1"><code>--ignore-skip-worktree-bits</code></dt>
 <dd>
 <p>In sparse checkout mode, the default is to only update entries
 matched by <em>&lt;pathspec&gt;</em> and sparse patterns in
-$GIT_DIR/info/sparse-checkout. This option ignores the sparse
+<code>$GIT_DIR/info/sparse-checkout</code>. This option ignores the sparse
 patterns and unconditionally restores any files in
 <em>&lt;pathspec&gt;</em>.</p>
 </dd>
-<dt class="hdlist1">--recurse-submodules</dt>
-<dt class="hdlist1">--no-recurse-submodules</dt>
+<dt class="hdlist1"><code>--recurse-submodules</code></dt>
+<dt class="hdlist1"><code>--no-recurse-submodules</code></dt>
 <dd>
 <p>If <em>&lt;pathspec&gt;</em> names an active submodule and the restore location
 includes the working tree, the submodule will only be updated if
@@ -594,34 +594,34 @@ modifications overwritten. If nothing (or
 not be updated. Just like <a href="git-checkout.html">git-checkout(1)</a>, this will detach
 <code>HEAD</code> of the submodule.</p>
 </dd>
-<dt class="hdlist1">--overlay</dt>
-<dt class="hdlist1">--no-overlay</dt>
+<dt class="hdlist1"><code>--overlay</code></dt>
+<dt class="hdlist1"><code>--no-overlay</code></dt>
 <dd>
-<p>In overlay mode, the command never removes files when
-restoring. In no-overlay mode, tracked files that do not
-appear in the <code>--source</code> tree are removed, to make them match
-<em>&lt;tree&gt;</em> exactly. The default is no-overlay mode.</p>
+<p>In overlay mode, never remove files when restoring. In no-overlay mode,
+remove tracked files that do not appear in the <em>&lt;tree&gt;</em> of
+<code>--source=</code><em>&lt;tree&gt;</em>, to make them match <em>&lt;tree&gt;</em> exactly. The default
+is no-overlay mode.</p>
 </dd>
-<dt class="hdlist1">--pathspec-from-file=&lt;file&gt;</dt>
+<dt class="hdlist1"><code>--pathspec-from-file=</code><em>&lt;file&gt;</em></dt>
 <dd>
 <p>Pathspec is passed in <em>&lt;file&gt;</em> instead of commandline args. If
 <em>&lt;file&gt;</em> is exactly <code>-</code> then standard input is used. Pathspec
-elements are separated by LF or CR/LF. Pathspec elements can be
+elements are separated by <em>LF</em> or <em>CR</em>/<em>LF</em>. Pathspec elements can be
 quoted as explained for the configuration variable <code>core.quotePath</code>
 (see <a href="git-config.html">git-config(1)</a>). See also <code>--pathspec-file-nul</code> and
 global <code>--literal-pathspecs</code>.</p>
 </dd>
-<dt class="hdlist1">--pathspec-file-nul</dt>
+<dt class="hdlist1"><code>--pathspec-file-nul</code></dt>
 <dd>
 <p>Only meaningful with <code>--pathspec-from-file</code>. Pathspec elements are
-separated with NUL character and all other characters are taken
+separated with <em>NUL</em> character and all other characters are taken
 literally (including newlines and quotes).</p>
 </dd>
-<dt class="hdlist1">--</dt>
+<dt class="hdlist1"><code>--</code></dt>
 <dd>
 <p>Do not interpret any more arguments as options.</p>
 </dd>
-<dt class="hdlist1">&lt;pathspec&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1"><em>&lt;pathspec&gt;</em>...</dt>
 <dd>
 <p>Limits the paths affected by the operation.</p>
 <div class="paragraph">
@@ -637,7 +637,7 @@ literally (including newlines and quotes).</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The following sequence switches to the <code>master</code> branch, reverts the
-<code>Makefile</code> to two revisions back, deletes hello.c by mistake, and gets
+<code>Makefile</code> to two revisions back, deletes <code>hello.c</code> by mistake, and gets
 it back from the index.</p>
 </div>
 <div class="listingblock">
@@ -654,7 +654,7 @@ $ git restore hello.c                     <b class="conum">(2)</b></pre>
 <p>take a file out of another commit</p>
 </li>
 <li>
-<p>restore hello.c from the index</p>
+<p>restore <code>hello.c</code> from the index</p>
 </li>
 </ol>
 </div>
@@ -738,7 +738,7 @@ as using <a href="git-checkout.html">git-checkout(1)</a>)</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-13 11:00:55 UTC
+Last updated 2025-02-26 21:14:25 UTC
 </div>
 </div>
 </body>

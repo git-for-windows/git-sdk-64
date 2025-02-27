@@ -728,7 +728,9 @@ canonical form.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><em>bool</em>: canonicalize values as either "true" or "false".</p>
+<p><em>bool</em>: canonicalize values <code>true</code>, <code>yes</code>,<code>on</code>, and positive
+numbers as "true", and values <code>false</code>, <code>no</code>, <code>off</code> and <code>0</code> as
+"false".</p>
 </li>
 <li>
 <p><em>int</em>: canonicalize values as simple decimal numbers. An optional suffix of
@@ -2846,17 +2848,21 @@ See <code>column.ui</code> for details.</p>
 <p>Specify whether to output tag listings in <code>git</code> <code>tag</code> in columns.
 See <code>column.ui</code> for details.</p>
 </dd>
-<dt class="hdlist1">commit.cleanup</dt>
+</dl>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>commit.cleanup</code></dt>
 <dd>
 <p>This setting overrides the default of the <code>--cleanup</code> option in
-<code>git</code> <code>commit</code>. See <a href="git-commit.html">git-commit(1)</a> for details. Changing the
-default can be useful when you always want to keep lines that begin
+<code>git</code> <code>commit</code>. See <a href="git-commit.html">git-commit(1)</a> for details. Changing the default can be useful
+when you always want to keep lines that begin
 with the comment character # in your log message, in which case you
 would do <code>git</code> <code>config</code> <code>commit.cleanup</code> <code>whitespace</code> (note that you will
 have to remove the help lines that begin with # in the commit log
 template yourself, if you do this).</p>
 </dd>
-<dt class="hdlist1">commit.gpgSign</dt>
+<dt class="hdlist1"><code>commit.gpgSign</code></dt>
 <dd>
 <p>A boolean to specify whether all commits should be GPG signed.
 Use of this option when doing operations such as rebase can
@@ -2864,21 +2870,21 @@ result in a large number of commits being signed. It may be
 convenient to use an agent to avoid typing your GPG passphrase
 several times.</p>
 </dd>
-<dt class="hdlist1">commit.status</dt>
+<dt class="hdlist1"><code>commit.status</code></dt>
 <dd>
 <p>A boolean to enable/disable inclusion of status information in the
 commit message template when using an editor to prepare the commit
-message.  Defaults to true.</p>
+message.  Defaults to <code>true</code>.</p>
 </dd>
-<dt class="hdlist1">commit.template</dt>
+<dt class="hdlist1"><code>commit.template</code></dt>
 <dd>
 <p>Specify the pathname of a file to use as the template for
 new commit messages.</p>
 </dd>
-<dt class="hdlist1">commit.verbose</dt>
+<dt class="hdlist1"><code>commit.verbose</code></dt>
 <dd>
 <p>A boolean or int to specify the level of verbosity with <code>git</code> <code>commit</code>.
-See <a href="git-commit.html">git-commit(1)</a>.</p>
+See <a href="git-commit.html">git-commit(1)</a> for details.</p>
 </dd>
 <dt class="hdlist1">commitGraph.generationVersion</dt>
 <dd>
@@ -4230,6 +4236,83 @@ details.</p>
 <dd>
 <p>Set this option to <code>true</code> to make the diff driver cache the text
 conversion outputs.  See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
+</dd>
+<dt class="hdlist1"><code>diff.indentHeuristic</code></dt>
+<dd>
+<p>Set this option to <code>false</code> to disable the default heuristics
+that shift diff hunk boundaries to make patches easier to read.</p>
+</dd>
+<dt class="hdlist1"><code>diff.algorithm</code></dt>
+<dd>
+<p>Choose a diff algorithm.  The variants are as follows:</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>default</code></dt>
+<dt class="hdlist1"><code>myers</code></dt>
+<dd>
+<p>The basic greedy diff algorithm. Currently, this is the default.</p>
+</dd>
+<dt class="hdlist1"><code>minimal</code></dt>
+<dd>
+<p>Spend extra time to make sure the smallest possible diff is
+produced.</p>
+</dd>
+<dt class="hdlist1"><code>patience</code></dt>
+<dd>
+<p>Use "patience diff" algorithm when generating patches.</p>
+</dd>
+<dt class="hdlist1"><code>histogram</code></dt>
+<dd>
+<p>This algorithm extends the patience algorithm to "support
+low-occurrence common elements".</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>diff.wsErrorHighlight</code></dt>
+<dd>
+<p>Highlight whitespace errors in the <code>context</code>, <code>old</code> or <code>new</code>
+lines of the diff.  Multiple values are separated by comma,
+<code>none</code> resets previous values, <code>default</code> reset the list to
+<code>new</code> and <code>all</code> is a shorthand for <code>old,new,context</code>.  The
+whitespace errors are colored with <code>color.diff.whitespace</code>.
+The command line option <code>--ws-error-highlight=</code><em>&lt;kind&gt;</em>
+overrides this setting.</p>
+</dd>
+<dt class="hdlist1"><code>diff.colorMoved</code></dt>
+<dd>
+<p>If set to either a valid <em>&lt;mode&gt;</em> or a <code>true</code> value, moved lines
+in a diff are colored differently.
+For details of valid modes see <code>--color-moved</code> in <a href="git-diff.html">git-diff(1)</a>.
+If simply set to <code>true</code> the default color mode will be used. When
+set to <code>false</code>, moved lines are not colored.</p>
+</dd>
+<dt class="hdlist1"><code>diff.colorMovedWS</code></dt>
+<dd>
+<p>When moved lines are colored using e.g. the <code>diff.colorMoved</code> setting,
+this option controls the mode how spaces are treated.
+For details of valid modes see <code>--color-moved-ws</code> in <a href="git-diff.html">git-diff(1)</a>.</p>
+</dd>
+<dt class="hdlist1">diff.tool</dt>
+<dd>
+<p>Controls which diff tool is used by <a href="git-difftool.html">git-difftool(1)</a>.
+This variable overrides the value configured in <code>merge.tool</code>.
+The list below shows the valid built-in values.
+Any other value is treated as a custom diff tool and requires
+that a corresponding difftool.&lt;tool&gt;.cmd variable is defined.</p>
+</dd>
+<dt class="hdlist1">diff.guitool</dt>
+<dd>
+<p>Controls which diff tool is used by <a href="git-difftool.html">git-difftool(1)</a> when
+the -g/--gui flag is specified. This variable overrides the value
+configured in <code>merge.guitool</code>. The list below shows the valid
+built-in values. Any other value is treated as a custom diff tool
+and requires that a corresponding difftool.&lt;guitool&gt;.cmd variable
+is defined.</p>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><code>araxis</code></dt>
@@ -4334,83 +4417,6 @@ conversion outputs.  See <a href="gitattributes.html">gitattributes(5)</a> for d
 </dd>
 </dl>
 </div>
-</dd>
-<dt class="hdlist1"><code>diff.indentHeuristic</code></dt>
-<dd>
-<p>Set this option to <code>false</code> to disable the default heuristics
-that shift diff hunk boundaries to make patches easier to read.</p>
-</dd>
-<dt class="hdlist1"><code>diff.algorithm</code></dt>
-<dd>
-<p>Choose a diff algorithm.  The variants are as follows:</p>
-<div class="openblock">
-<div class="content">
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>default</code></dt>
-<dt class="hdlist1"><code>myers</code></dt>
-<dd>
-<p>The basic greedy diff algorithm. Currently, this is the default.</p>
-</dd>
-<dt class="hdlist1"><code>minimal</code></dt>
-<dd>
-<p>Spend extra time to make sure the smallest possible diff is
-produced.</p>
-</dd>
-<dt class="hdlist1"><code>patience</code></dt>
-<dd>
-<p>Use "patience diff" algorithm when generating patches.</p>
-</dd>
-<dt class="hdlist1"><code>histogram</code></dt>
-<dd>
-<p>This algorithm extends the patience algorithm to "support
-low-occurrence common elements".</p>
-</dd>
-</dl>
-</div>
-</div>
-</div>
-</dd>
-<dt class="hdlist1"><code>diff.wsErrorHighlight</code></dt>
-<dd>
-<p>Highlight whitespace errors in the <code>context</code>, <code>old</code> or <code>new</code>
-lines of the diff.  Multiple values are separated by comma,
-<code>none</code> resets previous values, <code>default</code> reset the list to
-<code>new</code> and <code>all</code> is a shorthand for <code>old,new,context</code>.  The
-whitespace errors are colored with <code>color.diff.whitespace</code>.
-The command line option <code>--ws-error-highlight=</code><em>&lt;kind&gt;</em>
-overrides this setting.</p>
-</dd>
-<dt class="hdlist1"><code>diff.colorMoved</code></dt>
-<dd>
-<p>If set to either a valid <em>&lt;mode&gt;</em> or a <code>true</code> value, moved lines
-in a diff are colored differently.
-For details of valid modes see <code>--color-moved</code> in <a href="git-diff.html">git-diff(1)</a>.
-If simply set to <code>true</code> the default color mode will be used. When
-set to <code>false</code>, moved lines are not colored.</p>
-</dd>
-<dt class="hdlist1"><code>diff.colorMovedWS</code></dt>
-<dd>
-<p>When moved lines are colored using e.g. the <code>diff.colorMoved</code> setting,
-this option controls the mode how spaces are treated.
-For details of valid modes see <code>--color-moved-ws</code> in <a href="git-diff.html">git-diff(1)</a>.</p>
-</dd>
-<dt class="hdlist1">diff.tool</dt>
-<dd>
-<p>Controls which diff tool is used by <a href="git-difftool.html">git-difftool(1)</a>.
-This variable overrides the value configured in <code>merge.tool</code>.
-The list below shows the valid built-in values.
-Any other value is treated as a custom diff tool and requires
-that a corresponding difftool.&lt;tool&gt;.cmd variable is defined.</p>
-</dd>
-<dt class="hdlist1">diff.guitool</dt>
-<dd>
-<p>Controls which diff tool is used by <a href="git-difftool.html">git-difftool(1)</a> when
-the -g/--gui flag is specified. This variable overrides the value
-configured in <code>merge.guitool</code>. The list below shows the valid
-built-in values. Any other value is treated as a custom diff tool
-and requires that a corresponding difftool.&lt;guitool&gt;.cmd variable
-is defined.</p>
 </dd>
 <dt class="hdlist1">difftool.&lt;tool&gt;.cmd</dt>
 <dd>
@@ -5711,21 +5717,22 @@ run the suggestion automatically. Possible config values are:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>0 (default): show the suggested command.</p>
+<p>0, "false", "off", "no", "show": show the suggested command (default).</p>
 </li>
 <li>
-<p>positive number: run the suggested command after specified
+<p>1, "true", "on", "yes", "immediate": run the suggested command
+immediately.</p>
+</li>
+<li>
+<p>positive number &gt; 1: run the suggested command after specified
 deciseconds (0.1 sec).</p>
 </li>
 <li>
-<p>"immediate": run the suggested command immediately.</p>
+<p>"never": don&#8217;t run or show any suggested command.</p>
 </li>
 <li>
 <p>"prompt": show the suggestion and prompt for confirmation to run
 the command.</p>
-</li>
-<li>
-<p>"never": don&#8217;t run or show any suggested command.</p>
 </li>
 </ul>
 </div>
@@ -6048,6 +6055,23 @@ by the <code>GIT_SSL_CAPATH</code> environment variable.</p>
 <p>Name of the SSL backend to use (e.g. "openssl" or "schannel").
 This option is ignored if cURL lacks support for choosing the SSL
 backend at runtime.</p>
+</dd>
+<dt class="hdlist1">http.sslCertType</dt>
+<dd>
+<p>Type of client certificate used when fetching or pushing over HTTPS.
+"PEM", "DER" are supported when using openssl or gnutls backends. "P12"
+is supported on "openssl", "schannel", "securetransport", and gnutls 8.11+.
+See also libcurl <code>CURLOPT_SSLCERTTYPE</code>. Can be overridden by the
+<code>GIT_SSL_CERT_TYPE</code> environment variable.</p>
+</dd>
+<dt class="hdlist1">http.sslKeyType</dt>
+<dd>
+<p>Type of client private key used when fetching or pushing over HTTPS. (e.g.
+"PEM", "DER", or "ENG"). Only applicable when using "openssl" backend. "DER"
+is not supported with openssl. Particularly useful when set to "ENG" for
+authenticating with PKCS#11 tokens, with a PKCS#11 URL in sslCert option.
+See also libcurl <code>CURLOPT_SSLKEYTYPE</code>. Can be overridden by the
+<code>GIT_SSL_KEY_TYPE</code> environment variable.</p>
 </dd>
 <dt class="hdlist1">http.schannelCheckRevoke</dt>
 <dd>
@@ -6740,7 +6764,8 @@ to "conflict".</p>
 <p>Tell Git that canonical representation of files in the
 repository has changed over time (e.g. earlier commits record
 text files with CRLF line endings, but recent ones use LF line
-endings).  In such a repository, Git can convert the data
+endings).  In such a repository, for each file where a
+three-way content merge is needed, Git can convert the data
 recorded in commits to a canonical form before performing a
 merge to reduce unnecessary conflicts.  For more information,
 see section "Merging branches with differing checkin/checkout
@@ -7051,7 +7076,7 @@ or <code>merge.tool</code> depending on the presence of a <code>DISPLAY</code> e
 variable value. The default is <code>false</code>, where the <code>--gui</code> argument
 must be provided explicitly for the <code>merge.guitool</code> to be used.</p>
 </dd>
-<dt class="hdlist1">notes.mergeStrategy</dt>
+<dt class="hdlist1"><code>notes.mergeStrategy</code></dt>
 <dd>
 <p>Which merge strategy to choose by default when resolving notes
 conflicts.  Must be one of <code>manual</code>, <code>ours</code>, <code>theirs</code>, <code>union</code>, or
@@ -7062,19 +7087,19 @@ section of <a href="git-notes.html">git-notes(1)</a> for more information on eac
 <a href="git-notes.html">git-notes(1)</a>.</p>
 </div>
 </dd>
-<dt class="hdlist1">notes.&lt;name&gt;.mergeStrategy</dt>
+<dt class="hdlist1"><code>notes.</code><em>&lt;name&gt;</em><code>.mergeStrategy</code></dt>
 <dd>
 <p>Which merge strategy to choose when doing a notes merge into
-refs/notes/&lt;name&gt;.  This overrides the more general
-"notes.mergeStrategy".  See the "NOTES MERGE STRATEGIES" section in
+<code>refs/notes/</code><em>&lt;name&gt;</em>.  This overrides the more general
+<code>notes.mergeStrategy</code>.  See the "NOTES MERGE STRATEGIES" section in
 <a href="git-notes.html">git-notes(1)</a> for more information on the available strategies.</p>
 </dd>
-<dt class="hdlist1">notes.displayRef</dt>
+<dt class="hdlist1"><code>notes.displayRef</code></dt>
 <dd>
 <p>Which ref (or refs, if a glob or specified more than once), in
 addition to the default set by <code>core.notesRef</code> or
 <code>GIT_NOTES_REF</code>, to read notes from when showing commit
-messages with the <em>git log</em> family of commands.</p>
+messages with the <code>git</code> <code>log</code> family of commands.</p>
 <div class="paragraph">
 <p>This setting can be overridden with the <code>GIT_NOTES_DISPLAY_REF</code>
 environment variable, which must be a colon separated list of refs or
@@ -7085,32 +7110,32 @@ globs.</p>
 but a glob that does not match any refs is silently ignored.</p>
 </div>
 <div class="paragraph">
-<p>This setting can be disabled by the <code>--no-notes</code> option to the <em>git
-log</em> family of commands, or by the <code>--notes=</code><em>&lt;ref&gt;</em> option accepted by
+<p>This setting can be disabled by the <code>--no-notes</code> option to the <a href="git-log.html">git-log(1)</a>
+family of commands, or by the <code>--notes=</code><em>&lt;ref&gt;</em> option accepted by
 those commands.</p>
 </div>
 <div class="paragraph">
-<p>The effective value of "core.notesRef" (possibly overridden by
-GIT_NOTES_REF) is also implicitly added to the list of refs to be
+<p>The effective value of <code>core.notesRef</code> (possibly overridden by
+<code>GIT_NOTES_REF</code>) is also implicitly added to the list of refs to be
 displayed.</p>
 </div>
 </dd>
-<dt class="hdlist1">notes.rewrite.&lt;command&gt;</dt>
+<dt class="hdlist1"><code>notes.rewrite.</code><em>&lt;command&gt;</em></dt>
 <dd>
-<p>When rewriting commits with &lt;command&gt; (currently <code>amend</code> or
+<p>When rewriting commits with <em>&lt;command&gt;</em> (currently <code>amend</code> or
 <code>rebase</code>), if this variable is <code>false</code>, git will not copy
 notes from the original to the rewritten commit.  Defaults to
-<code>true</code>.  See also "<code>notes.rewriteRef</code>" below.</p>
+<code>true</code>.  See also <code>notes.rewriteRef</code> below.</p>
 <div class="paragraph">
 <p>This setting can be overridden with the <code>GIT_NOTES_REWRITE_REF</code>
 environment variable, which must be a colon separated list of refs or
 globs.</p>
 </div>
 </dd>
-<dt class="hdlist1">notes.rewriteMode</dt>
+<dt class="hdlist1"><code>notes.rewriteMode</code></dt>
 <dd>
 <p>When copying notes during a rewrite (see the
-"notes.rewrite.&lt;command&gt;" option), determines what to do if
+<code>notes.rewrite.</code><em>&lt;command&gt;</em> option), determines what to do if
 the target commit already has a note.  Must be one of
 <code>overwrite</code>, <code>concatenate</code>, <code>cat_sort_uniq</code>, or <code>ignore</code>.
 Defaults to <code>concatenate</code>.</p>
@@ -7119,7 +7144,7 @@ Defaults to <code>concatenate</code>.</p>
 environment variable.</p>
 </div>
 </dd>
-<dt class="hdlist1">notes.rewriteRef</dt>
+<dt class="hdlist1"><code>notes.rewriteRef</code></dt>
 <dd>
 <p>When copying notes during a rewrite, specifies the (fully
 qualified) ref whose notes should be copied.  May be a glob,
@@ -9074,6 +9099,175 @@ write additional traces if doing so would exceed this many files. Instead,
 write a sentinel file that will block further tracing to this
 directory. Defaults to 0, which disables this check.</p>
 </dd>
+<dt class="hdlist1">trailer.separators</dt>
+<dd>
+<p>This option tells which characters are recognized as trailer
+separators. By default only <em>:</em> is recognized as a trailer
+separator, except that <em>=</em> is always accepted on the command
+line for compatibility with other git commands.</p>
+<div class="paragraph">
+<p>The first character given by this option will be the default character
+used when another separator is not specified in the config for this
+trailer.</p>
+</div>
+<div class="paragraph">
+<p>For example, if the value for this option is "%=$", then only lines
+using the format <em>&lt;key&gt;&lt;sep&gt;&lt;value&gt;</em> with &lt;sep&gt; containing <em>%</em>, <em>=</em>
+or <em>$</em> and then spaces will be considered trailers. And <em>%</em> will be
+the default separator used, so by default trailers will appear like:
+<em>&lt;key&gt;% &lt;value&gt;</em> (one percent sign and one space will appear between
+the key and the value).</p>
+</div>
+</dd>
+<dt class="hdlist1">trailer.where</dt>
+<dd>
+<p>This option tells where a new trailer will be added.</p>
+<div class="paragraph">
+<p>This can be <code>end</code>, which is the default, <code>start</code>, <code>after</code> or <code>before</code>.</p>
+</div>
+<div class="paragraph">
+<p>If it is <code>end</code>, then each new trailer will appear at the end of the
+existing trailers.</p>
+</div>
+<div class="paragraph">
+<p>If it is <code>start</code>, then each new trailer will appear at the start,
+instead of the end, of the existing trailers.</p>
+</div>
+<div class="paragraph">
+<p>If it is <code>after</code>, then each new trailer will appear just after the
+last trailer with the same &lt;key&gt;.</p>
+</div>
+<div class="paragraph">
+<p>If it is <code>before</code>, then each new trailer will appear just before the
+first trailer with the same &lt;key&gt;.</p>
+</div>
+</dd>
+<dt class="hdlist1">trailer.ifexists</dt>
+<dd>
+<p>This option makes it possible to choose what action will be
+performed when there is already at least one trailer with the
+same &lt;key&gt; in the input.</p>
+<div class="paragraph">
+<p>The valid values for this option are: <code>addIfDifferentNeighbor</code> (this
+is the default), <code>addIfDifferent</code>, <code>add</code>, <code>replace</code> or <code>doNothing</code>.</p>
+</div>
+<div class="paragraph">
+<p>With <code>addIfDifferentNeighbor</code>, a new trailer will be added only if no
+trailer with the same (&lt;key&gt;, &lt;value&gt;) pair is above or below the line
+where the new trailer will be added.</p>
+</div>
+<div class="paragraph">
+<p>With <code>addIfDifferent</code>, a new trailer will be added only if no trailer
+with the same (&lt;key&gt;, &lt;value&gt;) pair is already in the input.</p>
+</div>
+<div class="paragraph">
+<p>With <code>add</code>, a new trailer will be added, even if some trailers with
+the same (&lt;key&gt;, &lt;value&gt;) pair are already in the input.</p>
+</div>
+<div class="paragraph">
+<p>With <code>replace</code>, an existing trailer with the same &lt;key&gt; will be
+deleted and the new trailer will be added. The deleted trailer will be
+the closest one (with the same &lt;key&gt;) to the place where the new one
+will be added.</p>
+</div>
+<div class="paragraph">
+<p>With <code>doNothing</code>, nothing will be done; that is no new trailer will be
+added if there is already one with the same &lt;key&gt; in the input.</p>
+</div>
+</dd>
+<dt class="hdlist1">trailer.ifmissing</dt>
+<dd>
+<p>This option makes it possible to choose what action will be
+performed when there is not yet any trailer with the same
+&lt;key&gt; in the input.</p>
+<div class="paragraph">
+<p>The valid values for this option are: <code>add</code> (this is the default) and
+<code>doNothing</code>.</p>
+</div>
+<div class="paragraph">
+<p>With <code>add</code>, a new trailer will be added.</p>
+</div>
+<div class="paragraph">
+<p>With <code>doNothing</code>, nothing will be done.</p>
+</div>
+</dd>
+<dt class="hdlist1">trailer.&lt;keyAlias&gt;.key</dt>
+<dd>
+<p>Defines a &lt;keyAlias&gt; for the &lt;key&gt;. The &lt;keyAlias&gt; must be a
+prefix (case does not matter) of the &lt;key&gt;. For example, in <code>git</code>
+<code>config</code> <code>trailer.ack.key</code> "Acked-by" the "Acked-by" is the &lt;key&gt; and
+the "ack" is the &lt;keyAlias&gt;. This configuration allows the shorter
+<code>--trailer</code> "ack:<code>...</code>" invocation on the command line using the "ack"
+&lt;keyAlias&gt; instead of the longer <code>--trailer</code> "Acked-by:<code>...</code>".</p>
+<div class="paragraph">
+<p>At the end of the &lt;key&gt;, a separator can appear and then some
+space characters. By default the only valid separator is <em>:</em>,
+but this can be changed using the <code>trailer.separators</code> config
+variable.</p>
+</div>
+<div class="paragraph">
+<p>If there is a separator in the key, then it overrides the default
+separator when adding the trailer.</p>
+</div>
+</dd>
+<dt class="hdlist1">trailer.&lt;keyAlias&gt;.where</dt>
+<dd>
+<p>This option takes the same values as the <em>trailer.where</em>
+configuration variable and it overrides what is specified by
+that option for trailers with the specified &lt;keyAlias&gt;.</p>
+</dd>
+<dt class="hdlist1">trailer.&lt;keyAlias&gt;.ifexists</dt>
+<dd>
+<p>This option takes the same values as the <em>trailer.ifexists</em>
+configuration variable and it overrides what is specified by
+that option for trailers with the specified &lt;keyAlias&gt;.</p>
+</dd>
+<dt class="hdlist1">trailer.&lt;keyAlias&gt;.ifmissing</dt>
+<dd>
+<p>This option takes the same values as the <em>trailer.ifmissing</em>
+configuration variable and it overrides what is specified by
+that option for trailers with the specified &lt;keyAlias&gt;.</p>
+</dd>
+<dt class="hdlist1">trailer.&lt;keyAlias&gt;.command</dt>
+<dd>
+<p>Deprecated in favor of <em>trailer.&lt;keyAlias&gt;.cmd</em>.
+This option behaves in the same way as <em>trailer.&lt;keyAlias&gt;.cmd</em>, except
+that it doesn&#8217;t pass anything as argument to the specified command.
+Instead the first occurrence of substring $ARG is replaced by the
+&lt;value&gt; that would be passed as argument.</p>
+<div class="paragraph">
+<p>Note that $ARG in the user&#8217;s command is
+only replaced once and that the original way of replacing $ARG is not safe.</p>
+</div>
+<div class="paragraph">
+<p>When both <em>trailer.&lt;keyAlias&gt;.cmd</em> and <em>trailer.&lt;keyAlias&gt;.command</em> are given
+for the same &lt;keyAlias&gt;, <em>trailer.&lt;keyAlias&gt;.cmd</em> is used and
+<em>trailer.&lt;keyAlias&gt;.command</em> is ignored.</p>
+</div>
+</dd>
+<dt class="hdlist1">trailer.&lt;keyAlias&gt;.cmd</dt>
+<dd>
+<p>This option can be used to specify a shell command that will be called
+once to automatically add a trailer with the specified &lt;keyAlias&gt;, and then
+called each time a <em>--trailer &lt;keyAlias&gt;=&lt;value&gt;</em> argument is specified to
+modify the &lt;value&gt; of the trailer that this option would produce.</p>
+<div class="paragraph">
+<p>When the specified command is first called to add a trailer
+with the specified &lt;keyAlias&gt;, the behavior is as if a special
+<em>--trailer &lt;keyAlias&gt;=&lt;value&gt;</em> argument was added at the beginning
+of the "git interpret-trailers" command, where &lt;value&gt;
+is taken to be the standard output of the command with any
+leading and trailing whitespace trimmed off.</p>
+</div>
+<div class="paragraph">
+<p>If some <em>--trailer &lt;keyAlias&gt;=&lt;value&gt;</em> arguments are also passed
+on the command line, the command is called again once for each
+of these arguments with the same &lt;keyAlias&gt;. And the &lt;value&gt; part
+of these arguments, if any, will be passed to the command as its
+first argument. This way the command can produce a &lt;value&gt; computed
+from the &lt;value&gt; passed in the <em>--trailer &lt;keyAlias&gt;=&lt;value&gt;</em> argument.</p>
+</div>
+</dd>
 <dt class="hdlist1">transfer.credentialsInUrl</dt>
 <dd>
 <p>A configured URL can contain plaintext credentials in the form
@@ -9547,7 +9741,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-13 11:00:55 UTC
+Last updated 2025-02-26 21:14:25 UTC
 </div>
 </div>
 </body>

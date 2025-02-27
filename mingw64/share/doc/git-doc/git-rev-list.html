@@ -1764,6 +1764,34 @@ Unexpected missing objects will raise an error.</p>
 list of the missing objects.  Object IDs are prefixed with a &#8220;?&#8221; character.</p>
 </div>
 <div class="paragraph">
+<p>The form <em>--missing=print-info</em> is like <em>print</em>, but will also print additional
+information about the missing object inferred from its containing object. The
+information is all printed on the same line with the missing object ID in the
+form: ?<em>&lt;oid&gt;</em> [<em>&lt;token&gt;</em><code>=</code><em>&lt;value&gt;</em>].... The <em>&lt;token&gt;</em><code>=</code><em>&lt;value&gt;</em> pairs containing
+additional information are separated from each other by a SP. The value is
+encoded in a token specific fashion, but SP or LF contained in value are always
+expected to be represented in such a way that the resulting encoded value does
+not have either of these two problematic bytes. Each <em>&lt;token&gt;</em><code>=</code><em>&lt;value&gt;</em> may be
+one of the following:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>path=</code><em>&lt;path&gt;</em> shows the path of the missing object inferred from a
+containing object. A path containing SP or special characters is enclosed in
+double-quotes in the C style as needed.</p>
+</li>
+<li>
+<p>The <code>type=</code><em>&lt;type&gt;</em> shows the type of the missing object inferred from a
+containing object.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
 <p>If some tips passed to the traversal are missing, they will be
 considered as missing too, and the traversal will ignore them. In case
 we cannot get their Object ID though, an error will be raised.</p>
@@ -2769,10 +2797,10 @@ line.
 </table>
 </div>
 <div class="paragraph">
-<p>The boolean options accept an optional value [<code>=</code><em>&lt;bool-value&gt;</em>]. The values
-<code>true</code>, <code>false</code>, <code>on</code>, <code>off</code> etc. are all accepted. See the "boolean"
-sub-section in "EXAMPLES" in <a href="git-config.html">git-config(1)</a>. If a boolean
-option is given with no value, it&#8217;s enabled.</p>
+<p>The boolean options accept an optional value [<code>=</code><em>&lt;bool-value&gt;</em>]. The
+values taken by <code>--type=bool</code> git-config[1], like <code>yes</code> and <code>off</code>,
+are all accepted.  Giving a boolean option without <code>=</code><em>&lt;value&gt;</em> is
+equivalent to giving it with <code>=true</code>.</p>
 </div>
 <div class="paragraph">
 <p>If you add a <code>+</code> (plus sign) after <em>%</em> of a placeholder, a line-feed
@@ -2961,7 +2989,7 @@ repository size (taking the size of <code>origin</code> as a baseline).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-13 11:00:55 UTC
+Last updated 2025-02-26 21:14:25 UTC
 </div>
 </div>
 </body>

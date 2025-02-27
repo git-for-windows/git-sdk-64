@@ -612,8 +612,8 @@ merged. See also <a href="git-fmt-merge-msg.html">git-fmt-merge-msg(1)</a>.</p>
 actual commits being merged.</p>
 </div>
 </dd>
-<dt class="hdlist1">--signoff</dt>
-<dt class="hdlist1">--no-signoff</dt>
+<dt class="hdlist1"><code>--signoff</code></dt>
+<dt class="hdlist1"><code>--no-signoff</code></dt>
 <dd>
 <p>Add a <code>Signed-off-by</code> trailer by the committer at the end of the commit
 log message.  The meaning of a signoff depends on the project
@@ -626,7 +626,7 @@ Linux kernel and Git projects.)  Consult the documentation or
 leadership of the project to which you&#8217;re contributing to
 understand how the signoffs are used in that project.</p>
 <div class="paragraph">
-<p>The --no-signoff option can be used to countermand an earlier --signoff
+<p>The <code>--no-signoff</code> option can be used to countermand an earlier <code>--signoff</code>
 option on the command line.</p>
 </div>
 </dd>
@@ -1231,7 +1231,7 @@ version includes a substantial change, <em>their</em> version is used;</p>
 <dt class="hdlist1">renormalize</dt>
 <dd>
 <p>This runs a virtual check-out and check-in of all three stages
-of a file when resolving a three-way merge.  This option is
+of any file which needs a three-way merge.  This option is
 meant to be used when merging branches with different clean
 filters or end-of-line normalization rules.  See "Merging
 branches with differing checkin/checkout attributes" in
@@ -1476,7 +1476,8 @@ to "conflict".</p>
 <p>Tell Git that canonical representation of files in the
 repository has changed over time (e.g. earlier commits record
 text files with CRLF line endings, but recent ones use LF line
-endings).  In such a repository, Git can convert the data
+endings).  In such a repository, for each file where a
+three-way content merge is needed, Git can convert the data
 recorded in commits to a canonical form before performing a
 merge to reduce unnecessary conflicts.  For more information,
 see section "Merging branches with differing checkin/checkout
@@ -1705,7 +1706,7 @@ See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-13 11:00:55 UTC
+Last updated 2025-02-26 21:14:25 UTC
 </div>
 </div>
 </body>

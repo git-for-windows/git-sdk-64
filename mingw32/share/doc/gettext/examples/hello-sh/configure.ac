@@ -17,7 +17,7 @@ fi
 save_prefix="$prefix"
 prefix="$final_prefix"
 eval "datarootdir=\"${datarootdir}\""
-eval "localedir=\"${datadir}/locale\""
+eval "localedir=\"${datarootdir}/locale\""
 prefix="$save_prefix"
 AC_SUBST([localedir])
 

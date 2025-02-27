@@ -91,21 +91,13 @@ STRINGSFILES = $(foreach lang, $(LINGUAS), $(top_srcdir)/$(NSLOCALE_$(lang)).lpr
 ENSTRINGSFILES = $(foreach lang, $(ENLINGUAS), $(top_srcdir)/$(NSLOCALE_$(lang)).lproj/Localizable.strings)
 CATALOGS = $(STRINGSFILES) $(ENSTRINGSFILES)
 
-.SUFFIXES: .po .sed .sin .nop .po-create .po-update
-
-.sin.sed:
-	sed -e '/^#/d' $< > t-$@
-	mv t-$@ $@
+.SUFFIXES: .po .nop .po-create .po-update
 
 
 internal-all:: all-local-$(USE_NLS)
 
 all-local-yes: $(CATALOGS)
 all-local-no:
-
-# Note: Target 'all' must not depend on target '$(DOMAIN).pot-update',
-# otherwise packages like GCC can not be built if only parts of the source
-# have been downloaded.
 
 # This target rebuilds $(DOMAIN).pot; it is an expensive operation.
 # Note that $(DOMAIN).pot is not touched if it doesn't need to be changed.

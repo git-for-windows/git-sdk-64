@@ -452,7 +452,7 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content">(EXPERIMENTAL) <em>git backfill</em> [--batch-size=&lt;n&gt;] [--[no-]sparse]</pre>
+<pre class="content"><code>git</code> <code>backfill</code> [<code>--min-batch-size=</code><em>&lt;n&gt;</em>] [<code>--</code>[<code>no-</code>]<code>sparse</code>]</pre>
 </div>
 </div>
 </div>
@@ -484,8 +484,19 @@ grouping blobs that appear at the same path, hopefully leading to good
 delta compression in the packfile sent by the server.</p>
 </div>
 <div class="paragraph">
+<p>In this way, <code>git</code> <code>backfill</code> provides a mechanism to break a large clone
+into smaller chunks. Starting with a blobless partial clone with <code>git</code>
+<code>clone</code> <code>--filter=blob:none</code> and then running <code>git</code> <code>backfill</code> in the local
+repository provides a way to download all reachable objects in several
+smaller network calls than downloading the entire repository at clone
+time.</p>
+</div>
+<div class="paragraph">
 <p>By default, <code>git</code> <code>backfill</code> downloads all blobs reachable from the <code>HEAD</code>
 commit. This set can be restricted or expanded using various options.</p>
+</div>
+<div class="paragraph">
+<p>THIS COMMAND IS EXPERIMENTAL. ITS BEHAVIOR MAY CHANGE IN THE FUTURE.</p>
 </div>
 </div>
 </div>
@@ -494,13 +505,14 @@ commit. This set can be restricted or expanded using various options.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--batch-size=&lt;n&gt;</dt>
+<dt class="hdlist1"><code>--min-batch-size=</code><em>&lt;n&gt;</em></dt>
 <dd>
 <p>Specify a minimum size for a batch of missing objects to request
 from the server. This size may be exceeded by the last set of
-blobs seen at a given path. Default batch size is 16,000.</p>
+blobs seen at a given path. The default minimum batch size is
+50,000.</p>
 </dd>
-<dt class="hdlist1">--[no-]sparse</dt>
+<dt class="hdlist1"><code>--</code>[<code>no-</code>]<code>sparse</code></dt>
 <dd>
 <p>Only download objects if they appear at a path that matches the
 current sparse-checkout. If the sparse-checkout feature is enabled,
@@ -529,7 +541,7 @@ then <code>--sparse</code> is assumed and can be disabled with <code>--no-sparse
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-13 11:00:55 UTC
+Last updated 2025-02-26 21:14:25 UTC
 </div>
 </div>
 </body>

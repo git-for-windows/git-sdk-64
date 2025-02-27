@@ -456,7 +456,7 @@ pre>code {
 	  [<code>-l</code>] [<code>-s</code>] [<code>--no-hardlinks</code>] [<code>-q</code>] [<code>-n</code>] [<code>--bare</code>] [<code>--mirror</code>]
 	  [<code>-o</code> <em>&lt;name&gt;</em>] [<code>-b</code> <em>&lt;name&gt;</em>] [<code>-u</code> <em>&lt;upload-pack&gt;</em>] [<code>--reference</code> <em>&lt;repository&gt;</em>]
 	  [<code>--dissociate</code>] [<code>--separate-git-dir</code> <em>&lt;git-dir&gt;</em>]
-	  [<code>--depth</code> <em>&lt;depth&gt;</em>] [<code>--</code>[<code>no-</code>]<code>single-branch</code>] [<code>--no-tags</code>]
+	  [<code>--depth</code> <em>&lt;depth&gt;</em>] [<code>--</code>[<code>no-</code>]<code>single-branch</code>] [<code>--</code>[<code>no-</code>]<code>tags</code>]
 	  [<code>--recurse-submodules</code>[<code>=</code><em>&lt;pathspec&gt;</em>]] [<code>--</code>[<code>no-</code>]<code>shallow-submodules</code>]
 	  [<code>--</code>[<code>no-</code>]<code>remote-submodules</code>] [<code>--jobs</code> <em>&lt;n&gt;</em>] [<code>--sparse</code>] [<code>--</code>[<code>no-</code>]<code>reject-shallow</code>]
 	  [<code>--filter=</code><em>&lt;filter-spec&gt;</em>] [<code>--also-filter-submodules</code>]] [<code>--</code>] <em>&lt;repository&gt;</em>
@@ -699,6 +699,16 @@ be checked out.
 <code>--branch</code> can also take tags and detaches the <code>HEAD</code> at that commit
 in the resulting repository.</p>
 </dd>
+<dt class="hdlist1"><code>--revision=</code><em>&lt;rev&gt;</em></dt>
+<dd>
+<p>Create a new repository, and fetch the history leading to the given
+revision <em>&lt;rev&gt;</em> (and nothing else), without making any remote-tracking
+branch, and without making any local branch, and detach <code>HEAD</code> to
+<em>&lt;rev&gt;</em>. The argument can be a ref name (e.g. <code>refs/heads/main</code> or
+<code>refs/tags/v1.0</code>) that peels down to a commit, or a hexadecimal object
+name.
+This option is incompatible with <code>--branch</code> and <code>--mirror</code>.</p>
+</dd>
 <dt class="hdlist1"><code>-u</code> <em>&lt;upload-pack&gt;</em></dt>
 <dt class="hdlist1"><code>--upload-pack</code> <em>&lt;upload-pack&gt;</em></dt>
 <dd>
@@ -759,13 +769,19 @@ initial cloning.  If the <code>HEAD</code> at the remote did not point at any
 branch when <code>--single-branch</code> clone was made, no remote-tracking
 branch is created.</p>
 </dd>
-<dt class="hdlist1"><code>--no-tags</code></dt>
+<dt class="hdlist1"><code>--</code>[<code>no-</code>]<code>tags</code></dt>
 <dd>
-<p>Don&#8217;t clone any tags, and set
-<code>remote.</code><em>&lt;remote&gt;</em><code>.tagOpt=--no-tags</code> in the config, ensuring
-that future <code>git</code> <code>pull</code> and <code>git</code> <code>fetch</code> operations won&#8217;t follow
-any tags. Subsequent explicit tag fetches will still work,
-(see <a href="git-fetch.html">git-fetch(1)</a>).</p>
+<p>Control whether or not tags will be cloned. When <code>--no-tags</code> is
+given, the option will be become permanent by setting the
+<code>remote.</code><em>&lt;remote&gt;</em><code>.tagOpt=--no-tags</code> configuration. This ensures that
+future <code>git</code> <code>pull</code> and <code>git</code> <code>fetch</code> won&#8217;t follow any tags. Subsequent
+explicit tag fetches will still work (see <a href="git-fetch.html">git-fetch(1)</a>).</p>
+<div class="literalblock">
+<div class="content">
+<pre>By default, tags are cloned and passing `--tags` is thus typically a
+no-op, unless it cancels out a previous `--no-tags`.</pre>
+</div>
+</div>
 <div class="paragraph">
 <p>Can be used in conjunction with <code>--single-branch</code> to clone and
 maintain a branch with no references other than a single cloned
@@ -1137,7 +1153,7 @@ the filter to submodules.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-13 11:00:55 UTC
+Last updated 2025-02-26 21:14:25 UTC
 </div>
 </div>
 </body>

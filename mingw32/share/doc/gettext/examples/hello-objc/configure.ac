@@ -14,7 +14,7 @@ AC_PROG_OBJC([gobjc gcc objcc objc cc CC clang])
 m4_popdef([AC_MSG_FAILURE])
 
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.23])
+AM_GNU_GETTEXT_VERSION([0.24])
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([m4/Makefile])

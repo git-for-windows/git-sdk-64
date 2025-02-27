@@ -65,22 +65,59 @@ MSGCONV = msgconv
 MSGFILTER = msgfilter
 
 # This is computed as $(foreach file, $(POTFILES), $(top_srcdir)/$(file))
-POTFILES_DEPS = @POTFILES_DEPS@
+POTFILES_DEPS != for file in $(POTFILES); do echo $(top_srcdir)/$$file; done
 
-# This is computed as $(foreach lang, $(LINGUAS), $(srcdir)/$(lang).po)
-POFILES = @POFILES@
-# This is computed as $(foreach lang, $(LINGUAS), $(lang).po-update)
-UPDATEPOFILES = @UPDATEPOFILES@
-# This is computed as $(foreach lang, $(LINGUAS), $(lang).nop)
-DUMMYPOFILES = @DUMMYPOFILES@
-# This is computed as $(foreach lang, $(LINGUAS), $(srcdir)/$(frob $(lang)).msg)
-MSGFILES = @MSGFILES@
+# The set of available translations.
+ALL_LINGUAS != if test -f $(srcdir)/LINGUAS; then \
+                 sed -e '/^\#/d' < $(srcdir)/LINGUAS; \
+               else \
+                 echo $(LINGUAS); \
+               fi
+# This is computed as $(foreach lang, $(ALL_LINGUAS), $(srcdir)/$(lang).po)
+POFILES != for lang in $(ALL_LINGUAS); do echo $(srcdir)/$$lang.po; done
+# This is computed as $(foreach lang, $(ALL_LINGUAS), $(lang).po-update)
+UPDATEPOFILES != for lang in $(ALL_LINGUAS); do echo $$lang.po-update; done
+# This is computed as $(foreach lang, $(ALL_LINGUAS), $(lang).nop)
+DUMMYPOFILES != for lang in $(ALL_LINGUAS); do echo $$lang.nop; done
+# This is computed as $(foreach lang, $(ALL_LINGUAS), $(srcdir)/$(frob $(lang)).msg)
+# It also creates the .tcl-rules file.
+MSGFILES != tab=`printf '\t'`; \
+            for lang in $(ALL_LINGUAS); do \
+              frobbedlang=`echo $$lang | sed -e 's/\..*$$//' -e 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/'`; \
+              echo 1>&3 "$$frobbedlang.msg: $$lang.po"; \
+              echo 1>&3 "$${tab}@echo \"\$$(MSGFMT) -c --tcl -d \$$(srcdir) -l $$lang \$$(srcdir)/$$lang.po\"; \\"; \
+              echo 1>&3 "$${tab}\$$(MSGFMT) -c --tcl -d \"\$$(srcdir)\" -l $$lang \$$(srcdir)/$$lang.po || { rm -f \"\$$(srcdir)/$$frobbedlang.msg\"; exit 1; }"; \
+              echo $(srcdir)/$$frobbedlang.msg; \
+            done 3> .tcl-rules
+# Include the generated rules that cannot be formulated as a simple rule.
+-include .tcl-rules
 
-# This is computed as
-# $(foreach lang, user-specified subset of $(LINGUAS), $(frob $(lang)).msg)
-CATALOGS = @TCLCATALOGS@
+# The set of desired translations, as specified by the installer or distributor.
+DESIRED_LINGUAS = @DESIRED_LINGUAS@
+# The set of translations to install. This is computed based on $(ALL_LINGUAS)
+# and $(DESIRED_LINGUAS). It is a subset of $(ALL_LINGUAS).
+# We use the presentlang catalog if desiredlang is
+#   a. equal to presentlang, or
+#   b. a variant of presentlang (because in this case, presentlang can be used
+#      as a fallback for messages which are not translated in the desiredlang
+#      catalog).
+INST_LINGUAS != for presentlang in $(ALL_LINGUAS); do \
+                  useit=false; \
+                  for desiredlang in $(DESIRED_LINGUAS); do \
+                    case "$$desiredlang" in \
+                      "$$presentlang" | "$$presentlang"_* | "$$presentlang".* | "$$presentlang"@*) \
+                        useit=true ;; \
+                    esac; \
+                  done; \
+                  if $$useit; then echo $$presentlang; fi; \
+                done
+# This is computed as $(foreach lang, $(INST_LINGUAS), $(frob $(lang)).msg)
+CATALOGS != for lang in $(INST_LINGUAS); do \
+              frobbedlang=`echo $$lang | sed -e 's/\..*$$//' -e 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/'`; \
+              echo $$frobbedlang.gmo; \
+            done
 
-SUFFIXES = .sed .sin .nop .po-create .po-update
+SUFFIXES = .nop .po-create .po-update
 
 # The .pot file, stamp-po, .po files, and .msg files appear in release tarballs.
 # The GNU Coding Standards say in
@@ -91,10 +128,6 @@ SUFFIXES = .sed .sin .nop .po-create .po-update
 #    So Makefile rules to update them should put the updated files in the
 #    source directory."
 # Therefore we put these files in the source directory, not the build directory.
-
-.sin.sed:
-	sed -e '/^#/d' $< > t-$@
-	mv t-$@ $@
 
 
 all-local: all-local-@USE_NLS@
@@ -124,10 +157,6 @@ $(srcdir)/stamp-po: $(srcdir)/$(DOMAIN).pot
 	  echo timestamp > $(srcdir)/stamp-poT && \
 	  mv $(srcdir)/stamp-poT $(srcdir)/stamp-po; \
 	}
-
-# Note: Target 'all' must not depend on target '$(DOMAIN).pot-update',
-# otherwise packages like GCC can not be built if only parts of the source
-# have been downloaded.
 
 # This target rebuilds $(DOMAIN).pot; it is an expensive operation.
 # Note that $(DOMAIN).pot is not touched if it doesn't need to be changed.
@@ -257,6 +286,8 @@ uninstall-local-yes:
 
 html ID:
 
+DISTCLEANFILES = .tcl-rules
+
 MOSTLYCLEANFILES =
 MOSTLYCLEANFILES += stamp-poT
 MOSTLYCLEANFILES += core core.* *.stackdump $(DOMAIN).po $(DOMAIN).1po $(DOMAIN).2po *.new.po
@@ -334,5 +365,3 @@ $(DUMMYPOFILES):
 
 update-msg: Makefile $(MSGFILES)
 	@:
-# The Makefile rules for $(MSGFILES) are generated by the macro
-# AM_POSTPROCESS_PO_MAKEFILE.

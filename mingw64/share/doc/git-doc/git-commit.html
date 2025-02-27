@@ -452,14 +452,14 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git commit</em> [-a | --interactive | --patch] [-s] [-v] [-u&lt;mode&gt;] [--amend]
-           [--dry-run] [(-c | -C | --squash) &lt;commit&gt; | --fixup [(amend|reword):]&lt;commit&gt;]
-           [-F &lt;file&gt; | -m &lt;msg&gt;] [--reset-author] [--allow-empty]
-           [--allow-empty-message] [--no-verify] [-e] [--author=&lt;author&gt;]
-           [--date=&lt;date&gt;] [--cleanup=&lt;mode&gt;] [--[no-]status]
-           [-i | -o] [--pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]]
-           [(--trailer &lt;token&gt;[(=|:)&lt;value&gt;])&#8230;&#8203;] [-S[&lt;keyid&gt;]]
-           [--] [&lt;pathspec&gt;&#8230;&#8203;]</pre>
+<pre class="content"><code>git</code> <code>commit</code> [<code>-a</code> | <code>--interactive</code> | <code>--patch</code>] [<code>-s</code>] [<code>-v</code>] [<code>-u</code>[<em>&lt;mode&gt;</em>]] [<code>--amend</code>]
+	   [<code>--dry-run</code>] [(<code>-c</code> | <code>-C</code> | <code>--squash</code>) <em>&lt;commit&gt;</em> | <code>--fixup</code> [(<code>amend</code>|<code>reword</code>)<code>:</code>]<em>&lt;commit&gt;</em>]
+	   [<code>-F</code> <em>&lt;file&gt;</em> | <code>-m</code> <em>&lt;msg&gt;</em>] [<code>--reset-author</code>] [<code>--allow-empty</code>]
+	   [<code>--allow-empty-message</code>] [<code>--no-verify</code>] [<code>-e</code>] [<code>--author=</code><em>&lt;author&gt;</em>]
+	   [<code>--date=</code><em>&lt;date&gt;</em>] [<code>--cleanup=</code><em>&lt;mode&gt;</em>] [<code>--</code>[<code>no-</code>]<code>status</code>]
+	   [<code>-i</code> | <code>-o</code>] [<code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]]
+	   [(<code>--trailer</code> <em>&lt;token&gt;</em>[(<code>=</code>|<code>:</code>)<em>&lt;value&gt;</em>])&#8230;&#8203;] [<code>-S</code>[<em>&lt;keyid&gt;</em>]]
+	   [<code>--</code>] [<em>&lt;pathspec&gt;</em>&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -471,7 +471,7 @@ pre>code {
 the given log message describing the changes. The new commit is a
 direct child of HEAD, usually the tip of the current branch, and the
 branch is updated to point to it (unless no branch is associated with
-the working tree, in which case HEAD is "detached" as described in
+the working tree, in which case <code>HEAD</code> is "detached" as described in
 <a href="git-checkout.html">git-checkout(1)</a>).</p>
 </div>
 <div class="paragraph">
@@ -481,29 +481,29 @@ the working tree, in which case HEAD is "detached" as described in
 <ol class="arabic">
 <li>
 <p>by using <a href="git-add.html">git-add(1)</a> to incrementally "add" changes to the
-index before using the <em>commit</em> command (Note: even modified files
+index before using the <code>commit</code> command (Note: even modified files
 must be "added");</p>
 </li>
 <li>
 <p>by using <a href="git-rm.html">git-rm(1)</a> to remove files from the working tree
-and the index, again before using the <em>commit</em> command;</p>
+and the index, again before using the <code>commit</code> command;</p>
 </li>
 <li>
-<p>by listing files as arguments to the <em>commit</em> command
-(without --interactive or --patch switch), in which
+<p>by listing files as arguments to the <code>commit</code> command
+(without <code>--interactive</code> or <code>--patch</code> switch), in which
 case the commit will ignore changes staged in the index, and instead
 record the current content of the listed files (which must already
 be known to Git);</p>
 </li>
 <li>
-<p>by using the -a switch with the <em>commit</em> command to automatically
+<p>by using the <code>-a</code> switch with the <code>commit</code> command to automatically
 "add" changes from all known files (i.e. all files that are already
 listed in the index) and to automatically "rm" files in the index
 that have been removed from the working tree, and then perform the
 actual commit;</p>
 </li>
 <li>
-<p>by using the --interactive or --patch switches with the <em>commit</em> command
+<p>by using the <code>--interactive</code> or <code>--patch</code> switches with the <code>commit</code> command
 to decide one by one which files or hunks should be part of the commit
 in addition to contents in the index,
 before finalizing the operation. See the &#8220;Interactive Mode&#8221; section of
@@ -518,7 +518,7 @@ commit by giving the same set of parameters (options and paths).</p>
 </div>
 <div class="paragraph">
 <p>If you make a commit and then find a mistake immediately after
-that, you can recover from it with <em>git reset</em>.</p>
+that, you can recover from it with <code>git</code> <code>reset</code>.</p>
 </div>
 </div>
 </div>
@@ -527,34 +527,34 @@ that, you can recover from it with <em>git reset</em>.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">-a</dt>
-<dt class="hdlist1">--all</dt>
+<dt class="hdlist1"><code>-a</code></dt>
+<dt class="hdlist1"><code>--all</code></dt>
 <dd>
-<p>Tell the command to automatically stage files that have
+<p>Automatically stage files that have
 been modified and deleted, but new files you have not
 told Git about are not affected.</p>
 </dd>
-<dt class="hdlist1">-p</dt>
-<dt class="hdlist1">--patch</dt>
+<dt class="hdlist1"><code>-p</code></dt>
+<dt class="hdlist1"><code>--patch</code></dt>
 <dd>
 <p>Use the interactive patch selection interface to choose
 which changes to commit. See <a href="git-add.html">git-add(1)</a> for
 details.</p>
 </dd>
-<dt class="hdlist1">-C &lt;commit&gt;</dt>
-<dt class="hdlist1">--reuse-message=&lt;commit&gt;</dt>
+<dt class="hdlist1"><code>-C</code> <em>&lt;commit&gt;</em></dt>
+<dt class="hdlist1"><code>--reuse-message=</code><em>&lt;commit&gt;</em></dt>
 <dd>
-<p>Take an existing commit object, and reuse the log message
+<p>Take an existing <em>&lt;commit&gt;</em> object, and reuse the log message
 and the authorship information (including the timestamp)
 when creating the commit.</p>
 </dd>
-<dt class="hdlist1">-c &lt;commit&gt;</dt>
-<dt class="hdlist1">--reedit-message=&lt;commit&gt;</dt>
+<dt class="hdlist1"><code>-c</code> <em>&lt;commit&gt;</em></dt>
+<dt class="hdlist1"><code>--reedit-message=</code><em>&lt;commit&gt;</em></dt>
 <dd>
-<p>Like <em>-C</em>, but with <code>-c</code> the editor is invoked, so that
+<p>Like <code>-C</code>, but with <code>-c</code> the editor is invoked, so that
 the user can further edit the commit message.</p>
 </dd>
-<dt class="hdlist1">--fixup=[(amend|reword):]&lt;commit&gt;</dt>
+<dt class="hdlist1"><code>--fixup=</code>[(<code>amend</code>|<code>reword</code>)<code>:</code>]<em>&lt;commit&gt;</em></dt>
 <dd>
 <p>Create a new commit which "fixes up" <em>&lt;commit&gt;</em> when applied with
 <code>git</code> <code>rebase</code> <code>--autosquash</code>. Plain <code>--fixup=</code><em>&lt;commit&gt;</em> creates a
@@ -566,8 +566,8 @@ creates an "amend!" commit which also replaces the log message of
 replaces the log message of <em>&lt;commit&gt;</em> with its own log message
 but makes no changes to the content of <em>&lt;commit&gt;</em>.</p>
 <div class="paragraph">
-<p>The commit created by plain <code>--fixup=</code><em>&lt;commit&gt;</em> has a subject
-composed of "fixup!" followed by the subject line from &lt;commit&gt;,
+<p>The commit created by plain <code>--fixup=</code><em>&lt;commit&gt;</em> has a title
+composed of "fixup!" followed by the title of <em>&lt;commit&gt;</em>,
 and is recognized specially by <code>git</code> <code>rebase</code> <code>--autosquash</code>. The <code>-m</code>
 option may be used to supplement the log message of the created
 commit, but the additional commentary will be thrown away once the
@@ -576,8 +576,8 @@ commit, but the additional commentary will be thrown away once the
 </div>
 <div class="paragraph">
 <p>The commit created by <code>--fixup=amend:</code><em>&lt;commit&gt;</em> is similar but its
-subject is instead prefixed with "amend!". The log message of
-&lt;commit&gt; is copied into the log message of the "amend!" commit and
+title is instead prefixed with "amend!". The log message of
+<em>&lt;commit&gt;</em> is copied into the log message of the "amend!" commit and
 opened in an editor so it can be refined. When <code>git</code> <code>rebase</code>
 <code>--autosquash</code> squashes the "amend!" commit into <em>&lt;commit&gt;</em>, the
 log message of <em>&lt;commit&gt;</em> is replaced by the refined log message
@@ -587,7 +587,7 @@ specified.</p>
 </div>
 <div class="paragraph">
 <p><code>--fixup=reword:</code><em>&lt;commit&gt;</em> is shorthand for <code>--fixup=amend:</code><em>&lt;commit&gt;</em>
-<code>--only</code>. It creates an "amend!" commit with only a log message
+ <code>--only</code>. It creates an "amend!" commit with only a log message
 (ignoring any changes staged in the index). When squashed by <code>git</code>
 <code>rebase</code> <code>--autosquash</code>, it replaces the log message of <em>&lt;commit&gt;</em>
 without making any other changes.</p>
@@ -598,84 +598,84 @@ without making any other changes.</p>
 See <a href="git-rebase.html">git-rebase(1)</a> for details.</p>
 </div>
 </dd>
-<dt class="hdlist1">--squash=&lt;commit&gt;</dt>
+<dt class="hdlist1"><code>--squash=</code><em>&lt;commit&gt;</em></dt>
 <dd>
-<p>Construct a commit message for use with <code>rebase</code> <code>--autosquash</code>.
-The commit message subject line is taken from the specified
+<p>Construct a commit message for use with <code>git</code> <code>rebase</code> <code>--autosquash</code>.
+The commit message title is taken from the specified
 commit with a prefix of "squash! ".  Can be used with additional
 commit message options (<code>-m</code>/<code>-c</code>/<code>-C</code>/<code>-F</code>). See
 <a href="git-rebase.html">git-rebase(1)</a> for details.</p>
 </dd>
-<dt class="hdlist1">--reset-author</dt>
+<dt class="hdlist1"><code>--reset-author</code></dt>
 <dd>
-<p>When used with -C/-c/--amend options, or when committing after a
+<p>When used with <code>-C</code>/<code>-c</code>/<code>--amend</code> options, or when committing after a
 conflicting cherry-pick, declare that the authorship of the
 resulting commit now belongs to the committer. This also renews
 the author timestamp.</p>
 </dd>
-<dt class="hdlist1">--short</dt>
+<dt class="hdlist1"><code>--short</code></dt>
 <dd>
 <p>When doing a dry-run, give the output in the short-format. See
 <a href="git-status.html">git-status(1)</a> for details. Implies <code>--dry-run</code>.</p>
 </dd>
-<dt class="hdlist1">--branch</dt>
+<dt class="hdlist1"><code>--branch</code></dt>
 <dd>
 <p>Show the branch and tracking info even in short-format.</p>
 </dd>
-<dt class="hdlist1">--porcelain</dt>
+<dt class="hdlist1"><code>--porcelain</code></dt>
 <dd>
 <p>When doing a dry-run, give the output in a porcelain-ready
 format. See <a href="git-status.html">git-status(1)</a> for details. Implies
 <code>--dry-run</code>.</p>
 </dd>
-<dt class="hdlist1">--long</dt>
+<dt class="hdlist1"><code>--long</code></dt>
 <dd>
 <p>When doing a dry-run, give the output in the long-format.
 Implies <code>--dry-run</code>.</p>
 </dd>
-<dt class="hdlist1">-z</dt>
-<dt class="hdlist1">--null</dt>
+<dt class="hdlist1"><code>-z</code></dt>
+<dt class="hdlist1"><code>--null</code></dt>
 <dd>
 <p>When showing <code>short</code> or <code>porcelain</code> status output, print the
-filename verbatim and terminate the entries with NUL, instead of LF.
+filename verbatim and terminate the entries with <em>NUL</em>, instead of <em>LF</em>.
 If no format is given, implies the <code>--porcelain</code> output format.
 Without the <code>-z</code> option, filenames with "unusual" characters are
 quoted as explained for the configuration variable <code>core.quotePath</code>
 (see <a href="git-config.html">git-config(1)</a>).</p>
 </dd>
-<dt class="hdlist1">-F &lt;file&gt;</dt>
-<dt class="hdlist1">--file=&lt;file&gt;</dt>
+<dt class="hdlist1"><code>-F</code> <em>&lt;file&gt;</em></dt>
+<dt class="hdlist1"><code>--file=</code><em>&lt;file&gt;</em></dt>
 <dd>
-<p>Take the commit message from the given file.  Use <em>-</em> to
+<p>Take the commit message from <em>&lt;file&gt;</em>.  Use <em>-</em> to
 read the message from the standard input.</p>
 </dd>
-<dt class="hdlist1">--author=&lt;author&gt;</dt>
+<dt class="hdlist1"><code>--author=</code><em>&lt;author&gt;</em></dt>
 <dd>
 <p>Override the commit author. Specify an explicit author using the
-standard <code>A</code> <code>U</code> <code>Thor</code> &lt;author@example.<code>com</code>&gt; format. Otherwise &lt;author&gt;
+standard <code>A</code> <code>U</code> <code>Thor</code> &lt;author@example.<code>com</code>&gt; format. Otherwise <em>&lt;author&gt;</em>
 is assumed to be a pattern and is used to search for an existing
-commit by that author (i.e. rev-list --all -i --author=&lt;author&gt;);
+commit by that author (i.e. <code>git</code> <code>rev-list</code> <code>--all</code> <code>-i</code> <code>--author=</code><em>&lt;author&gt;</em>);
 the commit author is then copied from the first such commit found.</p>
 </dd>
-<dt class="hdlist1">--date=&lt;date&gt;</dt>
+<dt class="hdlist1"><code>--date=</code><em>&lt;date&gt;</em></dt>
 <dd>
 <p>Override the author date used in the commit.</p>
 </dd>
-<dt class="hdlist1">-m &lt;msg&gt;</dt>
-<dt class="hdlist1">--message=&lt;msg&gt;</dt>
+<dt class="hdlist1"><code>-m</code> <em>&lt;msg&gt;</em></dt>
+<dt class="hdlist1"><code>--message=</code><em>&lt;msg&gt;</em></dt>
 <dd>
-<p>Use the given &lt;msg&gt; as the commit message.
+<p>Use <em>&lt;msg&gt;</em> as the commit message.
 If multiple <code>-m</code> options are given, their values are
 concatenated as separate paragraphs.</p>
 <div class="paragraph">
 <p>The <code>-m</code> option is mutually exclusive with <code>-c</code>, <code>-C</code>, and <code>-F</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">-t &lt;file&gt;</dt>
-<dt class="hdlist1">--template=&lt;file&gt;</dt>
+<dt class="hdlist1"><code>-t</code> <em>&lt;file&gt;</em></dt>
+<dt class="hdlist1"><code>--template=</code><em>&lt;file&gt;</em></dt>
 <dd>
 <p>When editing the commit message, start the editor with the
-contents in the given file.  The <code>commit.template</code> configuration
+contents in <em>&lt;file&gt;</em>.  The <code>commit.template</code> configuration
 variable is often used to give this option implicitly to the
 command.  This mechanism can be used by projects that want to
 guide participants with some hints on what to write in the message
@@ -683,9 +683,9 @@ in what order.  If the user exits the editor without editing the
 message, the commit is aborted.  This has no effect when a message
 is given by other means, e.g. with the <code>-m</code> or <code>-F</code> options.</p>
 </dd>
-<dt class="hdlist1">-s</dt>
-<dt class="hdlist1">--signoff</dt>
-<dt class="hdlist1">--no-signoff</dt>
+<dt class="hdlist1"><code>-s</code></dt>
+<dt class="hdlist1"><code>--signoff</code></dt>
+<dt class="hdlist1"><code>--no-signoff</code></dt>
 <dd>
 <p>Add a <code>Signed-off-by</code> trailer by the committer at the end of the commit
 log message.  The meaning of a signoff depends on the project
@@ -698,77 +698,75 @@ Linux kernel and Git projects.)  Consult the documentation or
 leadership of the project to which you&#8217;re contributing to
 understand how the signoffs are used in that project.</p>
 <div class="paragraph">
-<p>The --no-signoff option can be used to countermand an earlier --signoff
+<p>The <code>--no-signoff</code> option can be used to countermand an earlier <code>--signoff</code>
 option on the command line.</p>
 </div>
 </dd>
-<dt class="hdlist1">--trailer &lt;token&gt;[(=|:)&lt;value&gt;]</dt>
+<dt class="hdlist1"><code>--trailer</code> <em>&lt;token&gt;</em>[(<code>=</code>|<code>:</code>)<em>&lt;value&gt;</em>]</dt>
 <dd>
-<p>Specify a (&lt;token&gt;, &lt;value&gt;) pair that should be applied as a
+<p>Specify a (<em>&lt;token&gt;</em>, <em>&lt;value&gt;</em>) pair that should be applied as a
 trailer. (e.g. <code>git</code> <code>commit</code> <code>--trailer</code> "Signed-off-by:C <code>O</code> <code>Mitter</code> \
 &lt;committer@example.<code>com</code>&gt;" <code>--trailer</code> "Helped-by:C <code>O</code> <code>Mitter</code> \
-&lt;committer@example.<code>com</code>&gt;" will add the "Signed-off-by" trailer
-and the "Helped-by" trailer to the commit message.)
+&lt;committer@example.<code>com</code>&gt;" will add the <code>Signed-off-by</code> trailer
+and the <code>Helped-by</code> trailer to the commit message.)
 The <code>trailer.</code>* configuration variables
 (<a href="git-interpret-trailers.html">git-interpret-trailers(1)</a>) can be used to define if
 a duplicated trailer is omitted, where in the run of trailers
 each trailer would appear, and other details.</p>
 </dd>
-<dt class="hdlist1">-n</dt>
-<dt class="hdlist1">--[no-]verify</dt>
+<dt class="hdlist1"><code>-n</code></dt>
+<dt class="hdlist1"><code>--</code>[<code>no-</code>]<code>verify</code></dt>
 <dd>
-<p>By default, the pre-commit and commit-msg hooks are run.
-When any of <code>--no-verify</code> or <code>-n</code> is given, these are bypassed.
+<p>Bypass the <code>pre-commit</code> and <code>commit-msg</code> hooks.
 See also <a href="githooks.html">githooks(5)</a>.</p>
 </dd>
-<dt class="hdlist1">--allow-empty</dt>
+<dt class="hdlist1"><code>--allow-empty</code></dt>
 <dd>
 <p>Usually recording a commit that has the exact same tree as its
 sole parent commit is a mistake, and the command prevents you
 from making such a commit.  This option bypasses the safety, and
 is primarily for use by foreign SCM interface scripts.</p>
 </dd>
-<dt class="hdlist1">--allow-empty-message</dt>
+<dt class="hdlist1"><code>--allow-empty-message</code></dt>
 <dd>
-<p>Like --allow-empty this command is primarily for use by foreign
-SCM interface scripts. It allows you to create a commit with an
-empty commit message without using plumbing commands like
-<a href="git-commit-tree.html">git-commit-tree(1)</a>.</p>
+<p>Create a commit with an empty commit message without using plumbing
+commands like <a href="git-commit-tree.html">git-commit-tree(1)</a>. Like <code>--allow-empty</code>, this
+command is primarily for use by foreign SCM interface scripts.</p>
 </dd>
-<dt class="hdlist1">--cleanup=&lt;mode&gt;</dt>
+<dt class="hdlist1"><code>--cleanup=</code><em>&lt;mode&gt;</em></dt>
 <dd>
-<p>This option determines how the supplied commit message should be
+<p>Determine how the supplied commit message should be
 cleaned up before committing.  The <em>&lt;mode&gt;</em> can be <code>strip</code>,
 <code>whitespace</code>, <code>verbatim</code>, <code>scissors</code> or <code>default</code>.</p>
 <div class="openblock">
 <div class="content">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">strip</dt>
+<dt class="hdlist1"><code>strip</code></dt>
 <dd>
 <p>Strip leading and trailing empty lines, trailing whitespace,
 commentary and collapse consecutive empty lines.</p>
 </dd>
-<dt class="hdlist1">whitespace</dt>
+<dt class="hdlist1"><code>whitespace</code></dt>
 <dd>
 <p>Same as <code>strip</code> except #commentary is not removed.</p>
 </dd>
-<dt class="hdlist1">verbatim</dt>
+<dt class="hdlist1"><code>verbatim</code></dt>
 <dd>
 <p>Do not change the message at all.</p>
 </dd>
-<dt class="hdlist1">scissors</dt>
+<dt class="hdlist1"><code>scissors</code></dt>
 <dd>
 <p>Same as <code>whitespace</code> except that everything from (and including)
 the line found below is truncated, if the message is to be edited.
-"#" can be customized with core.commentChar.</p>
+"#" can be customized with <code>core.commentChar</code>.</p>
 <div class="literalblock">
 <div class="content">
 <pre># ------------------------ &gt;8 ------------------------</pre>
 </div>
 </div>
 </dd>
-<dt class="hdlist1">default</dt>
+<dt class="hdlist1"><code>default</code></dt>
 <dd>
 <p>Same as <code>strip</code> if the message is to be edited.
 Otherwise <code>whitespace</code>.</p>
@@ -782,21 +780,20 @@ Otherwise <code>whitespace</code>.</p>
 variable (see <a href="git-config.html">git-config(1)</a>).</p>
 </div>
 </dd>
-<dt class="hdlist1">-e</dt>
-<dt class="hdlist1">--edit</dt>
+<dt class="hdlist1"><code>-e</code></dt>
+<dt class="hdlist1"><code>--edit</code></dt>
 <dd>
-<p>The message taken from file with <code>-F</code>, command line with
-<code>-m</code>, and from commit object with <code>-C</code> are usually used as
-the commit log message unmodified. This option lets you
-further edit the message taken from these sources.</p>
+<p>Let the user further edit the message taken from <em>&lt;file&gt;</em>
+with <code>-F</code> <em>&lt;file&gt;</em>, command line with <code>-m</code> <em>&lt;message&gt;</em>, and
+from <em>&lt;commit&gt;</em> with <code>-C</code> <em>&lt;commit&gt;</em>.</p>
 </dd>
-<dt class="hdlist1">--no-edit</dt>
+<dt class="hdlist1"><code>--no-edit</code></dt>
 <dd>
 <p>Use the selected commit message without launching an editor.
 For example, <code>git</code> <code>commit</code> <code>--amend</code> <code>--no-edit</code> amends a commit
 without changing its commit message.</p>
 </dd>
-<dt class="hdlist1">--amend</dt>
+<dt class="hdlist1"><code>--amend</code></dt>
 <dd>
 <p>Replace the tip of the current branch by creating a new
 commit. The recorded tree is prepared as usual (including
@@ -830,26 +827,26 @@ amend a commit that has already been published.  (See the "RECOVERING
 FROM UPSTREAM REBASE" section in <a href="git-rebase.html">git-rebase(1)</a>.)</p>
 </div>
 </dd>
-<dt class="hdlist1">--no-post-rewrite</dt>
+<dt class="hdlist1"><code>--no-post-rewrite</code></dt>
 <dd>
-<p>Bypass the post-rewrite hook.</p>
+<p>Bypass the <code>post-rewrite</code> hook.</p>
 </dd>
-<dt class="hdlist1">-i</dt>
-<dt class="hdlist1">--include</dt>
+<dt class="hdlist1"><code>-i</code></dt>
+<dt class="hdlist1"><code>--include</code></dt>
 <dd>
 <p>Before making a commit out of staged contents so far,
 stage the contents of paths given on the command line
 as well.  This is usually not what you want unless you
 are concluding a conflicted merge.</p>
 </dd>
-<dt class="hdlist1">-o</dt>
-<dt class="hdlist1">--only</dt>
+<dt class="hdlist1"><code>-o</code></dt>
+<dt class="hdlist1"><code>--only</code></dt>
 <dd>
 <p>Make a commit by taking the updated working tree contents
 of the paths specified on the
 command line, disregarding any contents that have been
 staged for other paths. This is the default mode of operation of
-<em>git commit</em> if any paths are given on the command line,
+<code>git</code> <code>commit</code> if any paths are given on the command line,
 in which case this option can be omitted.
 If this option is specified together with <code>--amend</code>, then
 no paths need to be specified, which can be used to amend
@@ -857,66 +854,69 @@ the last commit without committing changes that have
 already been staged. If used together with <code>--allow-empty</code>
 paths are also not required, and an empty commit will be created.</p>
 </dd>
-<dt class="hdlist1">--pathspec-from-file=&lt;file&gt;</dt>
+<dt class="hdlist1"><code>--pathspec-from-file=</code><em>&lt;file&gt;</em></dt>
 <dd>
-<p>Pathspec is passed in <em>&lt;file&gt;</em> instead of commandline args. If
+<p>Pass pathspec in <em>&lt;file&gt;</em> instead of commandline args. If
 <em>&lt;file&gt;</em> is exactly <code>-</code> then standard input is used. Pathspec
-elements are separated by LF or CR/LF. Pathspec elements can be
+elements are separated by <em>LF</em> or <em>CR</em>/<em>LF</em>. Pathspec elements can be
 quoted as explained for the configuration variable <code>core.quotePath</code>
 (see <a href="git-config.html">git-config(1)</a>). See also <code>--pathspec-file-nul</code> and
 global <code>--literal-pathspecs</code>.</p>
 </dd>
-<dt class="hdlist1">--pathspec-file-nul</dt>
+<dt class="hdlist1"><code>--pathspec-file-nul</code></dt>
 <dd>
 <p>Only meaningful with <code>--pathspec-from-file</code>. Pathspec elements are
-separated with NUL character and all other characters are taken
+separated with <em>NUL</em> character and all other characters are taken
 literally (including newlines and quotes).</p>
 </dd>
-<dt class="hdlist1">-u[&lt;mode&gt;]</dt>
-<dt class="hdlist1">--untracked-files[=&lt;mode&gt;]</dt>
+<dt class="hdlist1"><code>-u</code>[<em>&lt;mode&gt;</em>]</dt>
+<dt class="hdlist1"><code>--untracked-files</code>[<code>=</code><em>&lt;mode&gt;</em>]</dt>
 <dd>
 <p>Show untracked files.</p>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The mode parameter is optional (defaults to <em>all</em>), and is used to
-specify the handling of untracked files; when -u is not used, the
-default is <em>normal</em>, i.e. show untracked files and directories.</p>
+<p>The <em>&lt;mode&gt;</em> parameter is optional (defaults to <code>all</code>), and is used to
+specify the handling of untracked files; when <code>-u</code> is not used, the
+default is <code>normal</code>, i.e. show untracked files and directories.</p>
 </div>
 <div class="paragraph">
 <p>The possible options are:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><em>no</em>     - Show no untracked files</p>
-</li>
-<li>
-<p><em>normal</em> - Shows untracked files and directories</p>
-</li>
-<li>
-<p><em>all</em>    - Also shows individual files in untracked directories.</p>
-</li>
-</ul>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>no</code></dt>
+<dd>
+<p>Show no untracked files</p>
+</dd>
+<dt class="hdlist1"><code>normal</code></dt>
+<dd>
+<p>Shows untracked files and directories</p>
+</dd>
+<dt class="hdlist1"><code>all</code></dt>
+<dd>
+<p>Also shows individual files in untracked directories.</p>
+</dd>
+</dl>
 </div>
 <div class="paragraph">
 <p>All usual spellings for Boolean value <code>true</code> are taken as <code>normal</code>
 and <code>false</code> as <code>no</code>.
-The default can be changed using the status.showUntrackedFiles
+The default can be changed using the <code>status.showUntrackedFiles</code>
 configuration variable documented in <a href="git-config.html">git-config(1)</a>.</p>
 </div>
 </div>
 </div>
 </dd>
-<dt class="hdlist1">-v</dt>
-<dt class="hdlist1">--verbose</dt>
+<dt class="hdlist1"><code>-v</code></dt>
+<dt class="hdlist1"><code>--verbose</code></dt>
 <dd>
-<p>Show unified diff between the HEAD commit and what
+<p>Show unified diff between the <code>HEAD</code> commit and what
 would be committed at the bottom of the commit message
 template to help the user describe the commit by reminding
 what changes the commit has.
 Note that this diff output doesn&#8217;t have its
-lines prefixed with <em>#</em>. This diff will not be a part
+lines prefixed with #. This diff will not be a part
 of the commit message. See the <code>commit.verbose</code> configuration
 variable in <a href="git-config.html">git-config(1)</a>.</p>
 <div class="paragraph">
@@ -925,47 +925,47 @@ what would be committed and the worktree files, i.e. the unstaged
 changes to tracked files.</p>
 </div>
 </dd>
-<dt class="hdlist1">-q</dt>
-<dt class="hdlist1">--quiet</dt>
+<dt class="hdlist1"><code>-q</code></dt>
+<dt class="hdlist1"><code>--quiet</code></dt>
 <dd>
 <p>Suppress commit summary message.</p>
 </dd>
-<dt class="hdlist1">--dry-run</dt>
+<dt class="hdlist1"><code>--dry-run</code></dt>
 <dd>
 <p>Do not create a commit, but show a list of paths that are
 to be committed, paths with local changes that will be left
 uncommitted and paths that are untracked.</p>
 </dd>
-<dt class="hdlist1">--status</dt>
+<dt class="hdlist1"><code>--status</code></dt>
 <dd>
 <p>Include the output of <a href="git-status.html">git-status(1)</a> in the commit
 message template when using an editor to prepare the commit
 message.  Defaults to on, but can be used to override
-configuration variable commit.status.</p>
+configuration variable <code>commit.status</code>.</p>
 </dd>
-<dt class="hdlist1">--no-status</dt>
+<dt class="hdlist1"><code>--no-status</code></dt>
 <dd>
 <p>Do not include the output of <a href="git-status.html">git-status(1)</a> in the
 commit message template when using an editor to prepare the
 default commit message.</p>
 </dd>
-<dt class="hdlist1">-S[&lt;keyid&gt;]</dt>
-<dt class="hdlist1">--gpg-sign[=&lt;keyid&gt;]</dt>
-<dt class="hdlist1">--no-gpg-sign</dt>
+<dt class="hdlist1"><code>-S</code>[<em>&lt;key-id&gt;</em>]</dt>
+<dt class="hdlist1"><code>--gpg-sign</code>[<code>=</code><em>&lt;key-id&gt;</em>]</dt>
+<dt class="hdlist1"><code>--no-gpg-sign</code></dt>
 <dd>
-<p>GPG-sign commits. The <code>keyid</code> argument is optional and
+<p>GPG-sign commits. The <em>&lt;key-id&gt;</em> is optional and
 defaults to the committer identity; if specified, it must be
 stuck to the option without a space. <code>--no-gpg-sign</code> is useful to
 countermand both <code>commit.gpgSign</code> configuration variable, and
 earlier <code>--gpg-sign</code>.</p>
 </dd>
-<dt class="hdlist1">--</dt>
+<dt class="hdlist1"><code>--</code></dt>
 <dd>
 <p>Do not interpret any more arguments as options.</p>
 </dd>
-<dt class="hdlist1">&lt;pathspec&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1"><em>&lt;pathspec&gt;</em>...</dt>
 <dd>
-<p>When pathspec is given on the command line, commit the contents of
+<p>When <em>&lt;pathspec&gt;</em> is given on the command line, commit the contents of
 the files that match the pathspec without recording the changes
 already added to the index. The contents of these files are also
 staged for the next commit on top of what have been staged before.</p>
@@ -983,10 +983,10 @@ staged for the next commit on top of what have been staged before.</p>
 <div class="paragraph">
 <p>When recording your own work, the contents of modified files in
 your working tree are temporarily stored to a staging area
-called the "index" with <em>git add</em>.  A file can be
+called the "index" with <code>git</code> <code>add</code>.  A file can be
 reverted back, only in the index but not in the working tree,
 to that of the last commit with <code>git</code> <code>restore</code> <code>--staged</code> <em>&lt;file&gt;</em>,
-which effectively reverts <em>git add</em> and prevents the changes to
+which effectively reverts <code>git</code> <code>add</code> and prevents the changes to
 this file from participating in the next commit.  After building
 the state to be committed incrementally with these commands,
 <code>git</code> <code>commit</code> (without any pathname parameter) is used to record what
@@ -1018,7 +1018,7 @@ $ git commit -a</pre>
 </div>
 <div class="paragraph">
 <p>The command <code>git</code> <code>commit</code> <code>-a</code> first looks at your working tree,
-notices that you have modified hello.c and removed goodbye.c,
+notices that you have modified <code>hello.c</code> and removed <code>goodbye.c</code>,
 and performs necessary <code>git</code> <code>add</code> and <code>git</code> <code>rm</code> for you.</p>
 </div>
 <div class="paragraph">
@@ -1051,13 +1051,13 @@ sequence, if you do:</p>
 <code>hello.h</code> as expected.</p>
 </div>
 <div class="paragraph">
-<p>After a merge (initiated by <em>git merge</em> or <em>git pull</em>) stops
+<p>After a merge (initiated by <code>git</code> <code>merge</code> or <code>git</code> <code>pull</code>) stops
 because of conflicts, cleanly merged
 paths are already staged to be committed for you, and paths that
 conflicted are left in unmerged state.  You would have to first
-check which paths are conflicting with <em>git status</em>
+check which paths are conflicting with <code>git</code> <code>status</code>
 and after fixing them manually in your working tree, you would
-stage the result as usual with <em>git add</em>:</p>
+stage the result as usual with <code>git</code> <code>add</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1094,15 +1094,27 @@ refuses to run when given pathnames (but see <code>-i</code> option).</p>
 <p>Author and committer information is taken from the following environment
 variables, if set:</p>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>GIT_AUTHOR_NAME
-GIT_AUTHOR_EMAIL
-GIT_AUTHOR_DATE
-GIT_COMMITTER_NAME
-GIT_COMMITTER_EMAIL
-GIT_COMMITTER_DATE</pre>
-</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>GIT_AUTHOR_NAME</code></p>
+</li>
+<li>
+<p><code>GIT_AUTHOR_EMAIL</code></p>
+</li>
+<li>
+<p><code>GIT_AUTHOR_DATE</code></p>
+</li>
+<li>
+<p><code>GIT_COMMITTER_NAME</code></p>
+</li>
+<li>
+<p><code>GIT_COMMITTER_EMAIL</code></p>
+</li>
+<li>
+<p><code>GIT_COMMITTER_DATE</code></p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>(nb "&lt;", "&gt;" and "\n"s are stripped)</p>
@@ -1117,7 +1129,7 @@ that, see the <code>credential.username</code> variable in <a href="git-config.h
 <div class="paragraph">
 <p>In case (some of) these environment variables are not set, the information
 is taken from the configuration items <code>user.name</code> and <code>user.email</code>, or, if not
-present, the environment variable EMAIL, or, if that is not set,
+present, the environment variable <code>EMAIL</code>, or, if that is not set,
 system user name and the hostname used for outgoing mail (taken
 from <code>/etc/mailname</code> and falling back to the fully qualified hostname when
 that file does not exist).</p>
@@ -1245,7 +1257,7 @@ mind.</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><em>git commit</em> and <em>git commit-tree</em> issue
+<p><code>git</code> <code>commit</code> and <code>git</code> <code>commit-tree</code> issue
 a warning if the commit log message given to it does not look
 like a valid UTF-8 string, unless you explicitly say your
 project uses a legacy encoding.  The way to say this is to
@@ -1264,7 +1276,7 @@ implies that the commit log message is encoded in UTF-8.</p>
 </div>
 </li>
 <li>
-<p><em>git log</em>, <em>git show</em>, <em>git blame</em> and friends look at the
+<p><code>git</code> <code>log</code>, <code>git</code> <code>show</code>, <code>git</code> <code>blame</code> and friends look at the
 <code>encoding</code> header of a commit object, and try to re-code the
 log message into UTF-8 unless otherwise specified.  You can
 specify the desired output encoding with
@@ -1295,7 +1307,7 @@ reversible operation.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The editor used to edit the commit log message will be chosen from the
-<code>GIT_EDITOR</code> environment variable, the core.editor configuration variable, the
+<code>GIT_EDITOR</code> environment variable, the <code>core.editor</code> configuration variable, the
 <code>VISUAL</code> environment variable, or the <code>EDITOR</code> environment variable (in that
 order).  See <a href="git-var.html">git-var(1)</a> for details.</p>
 </div>
@@ -1306,17 +1318,17 @@ same as what&#8217;s found there:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">commit.cleanup</dt>
+<dt class="hdlist1"><code>commit.cleanup</code></dt>
 <dd>
 <p>This setting overrides the default of the <code>--cleanup</code> option in
-<code>git</code> <code>commit</code>. See <a href="git-commit.html">git-commit(1)</a> for details. Changing the
-default can be useful when you always want to keep lines that begin
+<code>git</code> <code>commit</code>.  Changing the default can be useful
+when you always want to keep lines that begin
 with the comment character # in your log message, in which case you
 would do <code>git</code> <code>config</code> <code>commit.cleanup</code> <code>whitespace</code> (note that you will
 have to remove the help lines that begin with # in the commit log
 template yourself, if you do this).</p>
 </dd>
-<dt class="hdlist1">commit.gpgSign</dt>
+<dt class="hdlist1"><code>commit.gpgSign</code></dt>
 <dd>
 <p>A boolean to specify whether all commits should be GPG signed.
 Use of this option when doing operations such as rebase can
@@ -1324,21 +1336,21 @@ result in a large number of commits being signed. It may be
 convenient to use an agent to avoid typing your GPG passphrase
 several times.</p>
 </dd>
-<dt class="hdlist1">commit.status</dt>
+<dt class="hdlist1"><code>commit.status</code></dt>
 <dd>
 <p>A boolean to enable/disable inclusion of status information in the
 commit message template when using an editor to prepare the commit
-message.  Defaults to true.</p>
+message.  Defaults to <code>true</code>.</p>
 </dd>
-<dt class="hdlist1">commit.template</dt>
+<dt class="hdlist1"><code>commit.template</code></dt>
 <dd>
 <p>Specify the pathname of a file to use as the template for
 new commit messages.</p>
 </dd>
-<dt class="hdlist1">commit.verbose</dt>
+<dt class="hdlist1"><code>commit.verbose</code></dt>
 <dd>
 <p>A boolean or int to specify the level of verbosity with <code>git</code> <code>commit</code>.
-See <a href="git-commit.html">git-commit(1)</a>.</p>
+</p>
 </dd>
 </dl>
 </div>
@@ -1394,7 +1406,7 @@ overwritten by the next invocation of <code>git</code> <code>commit</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-13 11:00:55 UTC
+Last updated 2025-02-26 21:14:25 UTC
 </div>
 </div>
 </body>
