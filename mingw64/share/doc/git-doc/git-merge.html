@@ -1181,6 +1181,14 @@ detected copies.  The name for this algorithm is an acronym
 was written as a replacement for the previous default
 algorithm, <code>recursive</code>.</p>
 <div class="paragraph">
+<p>In the case where the path is a submodule, if the submodule commit used on
+one side of the merge is a descendant of the submodule commit used on the
+other side of the merge, Git attempts to fast-forward to the
+descendant. Otherwise, Git will treat this case as a conflict, suggesting
+as a resolution a submodule commit that is descendant of the conflicting
+ones, if one exists.</p>
+</div>
+<div class="paragraph">
 <p>The <em>ort</em> strategy can take the following options:</p>
 </div>
 <div class="dlist">
@@ -1278,6 +1286,10 @@ Additionally this can detect and handle merges involving
 renames.  It does not make use of detected copies.  This was
 the default strategy for resolving two heads from Git v0.99.9k
 until v2.33.0.</p>
+<div class="paragraph">
+<p>For a path that is a submodule, the same caution as <em>ort</em> applies to this
+strategy.</p>
+</div>
 <div class="paragraph">
 <p>The <em>recursive</em> strategy takes the same options as <em>ort</em>.  However,
 there are three additional options that <em>ort</em> ignores (not documented
@@ -1706,7 +1718,7 @@ See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-26 21:14:25 UTC
+Last updated 2025-03-05 13:23:02 UTC
 </div>
 </div>
 </body>
