@@ -7428,6 +7428,35 @@ will be silently ignored.</p>
 <p>If set to "true" assume <code>--quiet</code> when fetching additional
 objects for a partial clone.</p>
 </dd>
+<dt class="hdlist1">promisor.advertise</dt>
+<dd>
+<p>If set to "true", a server will use the "promisor-remote"
+capability, see <a href="gitprotocol-v2.html">gitprotocol-v2(5)</a>, to advertise the
+promisor remotes it is using, if it uses some. Default is
+"false", which means the "promisor-remote" capability is not
+advertised.</p>
+</dd>
+<dt class="hdlist1">promisor.acceptFromServer</dt>
+<dd>
+<p>If set to "all", a client will accept all the promisor remotes
+a server might advertise using the "promisor-remote"
+capability. If set to "knownName" the client will accept
+promisor remotes which are already configured on the client
+and have the same name as those advertised by the client. This
+is not very secure, but could be used in a corporate setup
+where servers and clients are trusted to not switch name and
+URLs. If set to "knownUrl", the client will accept promisor
+remotes which have both the same name and the same URL
+configured on the client as the name and URL advertised by the
+server. This is more secure than "all" or "knownName", so it
+should be used if possible instead of those options. Default
+is "none", which means no promisor remote advertised by a
+server will be accepted. By accepting a promisor remote, the
+client agrees that the server might omit objects that are
+lazily fetchable from this promisor remote from its responses
+to "fetch" and "clone" requests from the client. See
+<a href="gitprotocol-v2.html">gitprotocol-v2(5)</a>.</p>
+</dd>
 <dt class="hdlist1">protocol.allow</dt>
 <dd>
 <p>If set, provide a user defined default policy for all protocols which
@@ -9734,7 +9763,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-05 13:23:02 UTC
+Last updated 2025-03-11 07:37:47 UTC
 </div>
 </div>
 </body>

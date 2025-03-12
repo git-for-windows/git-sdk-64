@@ -1517,6 +1517,78 @@ headers of that bundle or bundles.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_promisor_remotepr_infos">promisor-remote=&lt;pr-infos&gt;</h3>
+<div class="paragraph">
+<p>The server may advertise some promisor remotes it is using or knows
+about to a client which may want to use them as its promisor remotes,
+instead of this repository. In this case &lt;pr-infos&gt; should be of the
+form:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>pr-infos = pr-info | pr-infos ";" pr-info</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>pr-info = "name=" pr-name | "name=" pr-name "," "url=" pr-url</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where <code>pr-name</code> is the urlencoded name of a promisor remote, and
+<code>pr-url</code> the urlencoded URL of that promisor remote.</p>
+</div>
+<div class="paragraph">
+<p>In this case, if the client decides to use one or more promisor
+remotes the server advertised, it can reply with
+"promisor-remote=&lt;pr-names&gt;" where &lt;pr-names&gt; should be of the form:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>pr-names = pr-name | pr-names ";" pr-name</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where <code>pr-name</code> is the urlencoded name of a promisor remote the server
+advertised and the client accepts.</p>
+</div>
+<div class="paragraph">
+<p>Note that, everywhere in this document, <code>pr-name</code> MUST be a valid
+remote name, and the <em>;</em> and <em>,</em> characters MUST be encoded if they
+appear in <code>pr-name</code> or <code>pr-url</code>.</p>
+</div>
+<div class="paragraph">
+<p>If the server doesn&#8217;t know any promisor remote that could be good for
+a client to use, or prefers a client not to use any promisor remote it
+uses or knows about, it shouldn&#8217;t advertise the "promisor-remote"
+capability at all.</p>
+</div>
+<div class="paragraph">
+<p>In this case, or if the client doesn&#8217;t want to use any promisor remote
+the server advertised, the client shouldn&#8217;t advertise the
+"promisor-remote" capability at all in its reply.</p>
+</div>
+<div class="paragraph">
+<p>The "promisor.advertise" and "promisor.acceptFromServer" configuration
+options can be used on the server and client side to control what they
+advertise or accept respectively. See the documentation of these
+configuration options for more information.</p>
+</div>
+<div class="paragraph">
+<p>Note that in the future it would be nice if the "promisor-remote"
+protocol capability could be used by the server, when responding to
+<code>git</code> <code>fetch</code> or <code>git</code> <code>clone</code>, to advertise better-connected remotes that
+the client can use as promisor remotes, instead of this repository, so
+that the client can lazily fetch objects from these other
+better-connected remotes. This would require the server to omit in its
+response the objects available on the better-connected remotes that
+the client has accepted. This hasn&#8217;t been implemented yet though. So
+for now this "promisor-remote" capability is useful only when the
+server advertises some promisor remotes it already uses to borrow
+objects from.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1530,7 +1602,7 @@ headers of that bundle or bundles.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-05 13:23:02 UTC
+Last updated 2025-03-11 07:37:47 UTC
 </div>
 </div>
 </body>
