@@ -10,11 +10,9 @@
 # but modified ***significantly***
 
 package Error;
-$Error::VERSION = '0.17029';
+$Error::VERSION = '0.17030';
 use strict;
 use warnings;
-
-use 5.004;
 
 use overload (
     '""'       => 'stringify',
@@ -279,7 +277,7 @@ sub value
 }
 
 package Error::Simple;
-$Error::Simple::VERSION = '0.17029';
+$Error::Simple::VERSION = '0.17030';
 @Error::Simple::ISA = qw(Error);
 
 sub new
@@ -316,7 +314,7 @@ sub stringify
 # Peter Seibel <peter@weblogic.com>
 
 package Error::subs;
-$Error::subs::VERSION = '0.17029';
+$Error::subs::VERSION = '0.17030';
 use Exporter ();
 use vars qw(@EXPORT_OK @ISA %EXPORT_TAGS);
 
@@ -569,7 +567,7 @@ sub otherwise (&;$)
 1;
 
 package Error::WarnDie;
-$Error::WarnDie::VERSION = '0.17029';
+$Error::WarnDie::VERSION = '0.17030';
 sub gen_callstack($)
 {
     my ($start) = @_;
@@ -594,9 +592,9 @@ sub DEATH
 {
     my ($e) = @_;
 
-    local $SIG{__DIE__} = $old_DIE if ( defined $old_DIE );
+    my $die = $old_DIE || sub { die @_ };
 
-    die @_ if $^S;
+    $die->(@_) if $^S;
 
     my ( $etype, $message, $location, @callstack );
     if ( ref($e) && $e->isa("Error") )
@@ -609,7 +607,7 @@ sub DEATH
     else
     {
         # Don't apply subsequent layer of message formatting
-        die $e if ( $e =~ m/^\nUnhandled perl error caught at toplevel:\n\n/ );
+        $die->($e) if ( $e =~ m/^\nUnhandled perl error caught at toplevel:\n\n/ );
         $etype = "perl error";
         my $stackdepth = 0;
         while ( caller($stackdepth) =~ m/^Error(?:$|::)/ )
@@ -638,15 +636,14 @@ sub DEATH
     # Do it this way in case there are no elements; we don't print a spurious \n
     my $callstack = join( "", map { "$_\n" } @callstack );
 
-    die
-"\nUnhandled $etype caught at toplevel:\n\n  $message\n\nThrown from: $location\n\nFull stack trace:\n\n$callstack\n";
+    $die->("\nUnhandled $etype caught at toplevel:\n\n  $message\n\nThrown from: $location\n\nFull stack trace:\n\n$callstack\n");
 }
 
 sub TAXES
 {
     my ($message) = @_;
 
-    local $SIG{__WARN__} = $old_WARN if ( defined $old_WARN );
+    my $warn = $old_WARN || sub { warn @_ };
 
     $message =~ s/ at .*? line \d+\.$//;
     chomp $message;
@@ -660,7 +657,7 @@ sub TAXES
     # Do it this way in case there are no elements; we don't print a spurious \n
     my $callstack = join( "", map { "$_\n" } @callstack );
 
-    warn "$message:\n$callstack";
+    $warn->("$message:\n$callstack");
 }
 
 sub import
@@ -686,7 +683,7 @@ Error - Error/exception handling in an OO-ish way
 
 =head1 VERSION
 
-version 0.17029
+version 0.17030
 
 =head1 SYNOPSIS
 
@@ -1120,27 +1117,11 @@ L<https://metacpan.org/release/Error>
 
 =item *
 
-Search CPAN
-
-The default CPAN search engine, useful to view POD in HTML format.
-
-L<http://search.cpan.org/dist/Error>
-
-=item *
-
 RT: CPAN's Bug Tracker
 
 The RT ( Request Tracker ) website is the default bug/issue tracking system for CPAN.
 
 L<https://rt.cpan.org/Public/Dist/Display.html?Name=Error>
-
-=item *
-
-CPAN Ratings
-
-The CPAN Ratings is a website that allows community ratings and reviews of Perl modules.
-
-L<http://cpanratings.perl.org/d/Error>
 
 =item *
 
@@ -1207,7 +1188,7 @@ feature.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2020 by Shlomi Fish ( http://www.shlomifish.org/ ).
+This software is copyright (c) 2025 by Shlomi Fish ( http://www.shlomifish.org/ ).
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

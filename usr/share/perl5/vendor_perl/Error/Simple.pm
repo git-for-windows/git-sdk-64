@@ -7,7 +7,7 @@
 # licence).
 
 package Error::Simple;
-$Error::Simple::VERSION = '0.17029';
+$Error::Simple::VERSION = '0.17030';
 use strict;
 use warnings;
 
@@ -27,7 +27,7 @@ Error::Simple - the simple error sub-class of Error
 
 =head1 VERSION
 
-version 0.17029
+version 0.17030
 
 =head1 SYNOPSIS
 
@@ -86,27 +86,11 @@ L<https://metacpan.org/release/Error>
 
 =item *
 
-Search CPAN
-
-The default CPAN search engine, useful to view POD in HTML format.
-
-L<http://search.cpan.org/dist/Error>
-
-=item *
-
 RT: CPAN's Bug Tracker
 
 The RT ( Request Tracker ) website is the default bug/issue tracking system for CPAN.
 
 L<https://rt.cpan.org/Public/Dist/Display.html?Name=Error>
-
-=item *
-
-CPAN Ratings
-
-The CPAN Ratings is a website that allows community ratings and reviews of Perl modules.
-
-L<http://cpanratings.perl.org/d/Error>
 
 =item *
 
@@ -173,7 +157,7 @@ feature.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2020 by Shlomi Fish ( http://www.shlomifish.org/ ).
+This software is copyright (c) 2025 by Shlomi Fish ( http://www.shlomifish.org/ ).
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
