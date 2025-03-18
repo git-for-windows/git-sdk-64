@@ -8218,26 +8218,26 @@ database, use the <code>--refetch</code> option of <a href="git-fetch.html">git-
 <p>The default set of server options used when fetching from this remote.
 These server options can be overridden by the <code>--server-option=</code> command
 line arguments.</p>
-</dd>
-<dt class="hdlist1">remote.&lt;name&gt;.followRemoteHEAD</dt>
-<dd>
-<p>How <a href="git-fetch.html">git-fetch(1)</a> should handle updates to <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code>.
-The default value is "create", which will create <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code>
-if it exists on the remote, but not locally, but will not touch an
-already existing local reference. Setting to "warn" will print
-a message if the remote has a different value, than the local one and
-in case there is no local reference, it behaves like "create".
-A variant on "warn" is "warn-if-not-$branch", which behaves like
-"warn", but if <code>HEAD</code> on the remote is <code>$branch</code> it will be silent.
-Setting to "always" will silently update it to the value on the remote.
-Finally, setting it to "never" will never change or create the local
-reference.</p>
 <div class="paragraph">
 <p>This is a multi-valued variable, and an empty value can be used in a higher
 priority configuration file (e.g. .<code>git/config</code> in a repository) to clear
 the values inherited from a lower priority configuration files (e.g.
 <code>$HOME/.gitconfig</code>).</p>
 </div>
+</dd>
+<dt class="hdlist1">remote.&lt;name&gt;.followRemoteHEAD</dt>
+<dd>
+<p>How <a href="git-fetch.html">git-fetch(1)</a> should handle updates to <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code>.
+The default value is "create", which will create <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code>
+if it exists on the remote, but not locally; this will not touch an
+already existing local reference. Setting it to "warn" will print
+a message if the remote has a different value than the local one;
+in case there is no local reference, it behaves like "create".
+A variant on "warn" is "warn-if-not-$branch", which behaves like
+"warn", but if <code>HEAD</code> on the remote is <code>$branch</code> it will be silent.
+Setting it to "always" will silently update <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code> to
+the value on the remote.  Finally, setting it to "never" will never
+change or create the local reference.</p>
 </dd>
 <dt class="hdlist1">remotes.&lt;group&gt;</dt>
 <dd>
@@ -9763,7 +9763,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-11 07:37:47 UTC
+Last updated 2025-03-17 07:09:38 UTC
 </div>
 </div>
 </body>
