@@ -17,6 +17,8 @@ jobs:
   minimal-sdk-artifact:
     if: github.event.repository.fork == false
     runs-on: windows-latest
+    outputs:
+      git-artifacts-extract-location: ${{ steps.git-artifacts-extract-location.outputs.result }}
     steps:
       - name: clone git-sdk-64
         run: |
@@ -59,6 +61,12 @@ jobs:
         with:
           name: git-artifacts
           path: git-artifacts.tar.gz
+      - name: determine where `git-artifacts` want to be extracted
+        id: git-artifacts-extract-location
+        shell: bash
+        run: |
+          cd .. &&
+          echo "result=$(pwd)" >>$GITHUB_OUTPUT
       - name: create zip and 7z SFX variants of the minimal SDK
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         shell: bash
@@ -77,109 +85,19 @@ jobs:
         with:
           name: minimal-sdk-extra
           path: minimal-sdk-extra
+
   test-minimal-sdk:
-    runs-on: windows-latest
-    needs: [minimal-sdk-artifact]
-    strategy:
-      matrix:
-        # 0..16 permuted according to the matrix builds' timings as of git/git@9fadedd63
-        nr: [9, 6, 13, 0, 8, 5, 2, 16, 15, 11, 10, 1, 7, 3, 14, 12, 4]
-    steps:
-      - name: download minimal-sdk artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: minimal-sdk
-          path: ${{github.workspace}}
-      - name: uncompress minimal-sdk
-        shell: bash
-        run: |
-          mkdir -p minimal-sdk &&
-          tar -C minimal-sdk -xzf git-sdk-x86_64-minimal.tar.gz &&
-          cygpath -aw minimal-sdk/usr/bin >>$GITHUB_PATH
-      - name: download git artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: git-artifacts
-          path: ${{github.workspace}}
-      - name: uncompress git-artifacts
-        shell: bash
-        run: tar -C .. -xzf git-artifacts.tar.gz
-      - name: test
-        shell: bash
-        run: |
-          set -x
-          . /etc/profile
-          test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
-          cd ../git/t &&
-          make T="$(ls -S t[0-9]*.sh | awk '!((NR+${{matrix.nr}})%17)' | tr '\n' \ )" prove || {
-            for d in trash*
-            do
-              t=${d#trash directory.}
-              echo ===========================
-              echo Failed: $t.sh
-              cat test-results/$t.out
-            done
-            exit 1
-          }
-        env:
-          GIT_TEST_OPTS: --verbose-log -x --no-chain-lint
-          GIT_PROVE_OPTS: --timer --jobs 8
-          NO_SVN_TESTS: 1
-  assorted-validations:
-    runs-on: windows-latest
-    needs: [minimal-sdk-artifact]
-    steps:
-      - name: download minimal-sdk artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: minimal-sdk
-          path: ${{github.workspace}}
-      - name: uncompress minimal-sdk
-        shell: bash
-        run: |
-          mkdir -p minimal-sdk &&
-          tar -C minimal-sdk -xzf git-sdk-x86_64-minimal.tar.gz &&
-          cygpath -aw minimal-sdk/usr/bin >>$GITHUB_PATH
-      - name: run some tests
-        shell: bash
-        run: |
-          set -x
-          . /etc/profile
+    needs: minimal-sdk-artifact
+    uses: ./.github/workflows/test-ci-artifacts.yml
+    with:
+      git-artifacts-extract-location: ${{ needs.minimal-sdk-artifact.outputs.git-artifacts-extract-location }}
+    permissions:
+      contents: read
 
-          # cygpath works
-          test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
-
-          # comes with GCC and can compile a DLL
-          test "$(type -p gcc)" = "/mingw64/bin/gcc" || exit 1
-          cat >dll.c <<-\EOF &&
-          __attribute__((dllexport)) int increment(int i)
-          {
-              return i + 1;
-          }
-          EOF
-
-          gcc -Wall -g -O2 -shared -o sample.dll dll.c || exit 1
-          ls -la
-
-          # stat works
-          test "stat is /usr/bin/stat" = "$(type stat)" || exit 1
-          stat /usr/bin/stat.exe || exit 1
-
-          # unzip works
-          test "unzip is /usr/bin/unzip" = "$(type unzip)" || exit 1
-          git init unzip-test &&
-          echo TEST >unzip-test/README &&
-          git -C unzip-test add -A &&
-          git -C unzip-test -c user.name=A -c user.email=b@c.d commit -m 'Testing, testing...' &&
-          git --git-dir=unzip-test/.git archive -o test.zip HEAD &&
-          unzip -v test.zip >unzip-test.out &&
-          cat unzip-test.out &&
-          test "grep is /usr/bin/grep" = "$(type grep)" || exit 1
-          grep README unzip-test.out
   publish-release-assets:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    needs: [test-minimal-sdk, assorted-validations]
+    needs: test-minimal-sdk
     steps:
       - name: download minimal-sdk artifact
         uses: actions/download-artifact@v4
