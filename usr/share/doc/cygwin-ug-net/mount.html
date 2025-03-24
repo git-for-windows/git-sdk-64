@@ -22,7 +22,7 @@
       <a class="xref" href="using.html#mount-table" title="The Cygwin Mount Table">the section called &#8220;The Cygwin Mount Table&#8221;</a> for more information on the concepts behind
       the Cygwin POSIX file system and strategies for using mounts. To remove
       mounts temporarily, use <span class="command"><strong>umount</strong></span></p><div class="refsect2"><a name="utils-mount"></a><h3>Using mount</h3><p>If you just type <span class="command"><strong>mount</strong></span> with no parameters, it
-        will display the current mount table for you.</p><div class="example"><a name="utils-mount-ex"></a><p class="title"><b>Example&#160;3.10.&#160;Displaying the current set of mount points</b></p><div class="example-contents"><pre class="screen">
+        will display the current mount table for you.</p><div class="example"><a name="utils-mount-ex"></a><p class="title"><b>Example&#160;3.11.&#160;Displaying the current set of mount points</b></p><div class="example-contents"><pre class="screen">
 <code class="prompt">$</code> <strong class="userinput"><code>mount</code></strong>
 C:/cygwin/bin on /usr/bin type ntfs (binary)
 C:/cygwin/lib on /usr/lib type ntfs (binary)
@@ -37,7 +37,7 @@ D: on /mnt/d type fat (binary,user,noumount)
         adding new mounts to the mount table in memory. The following example
         demonstrates how to mount the directory
         <code class="filename">//pollux/home/joe/data</code> to
-        <code class="filename">/data</code> for the duration of the current session. </p><div class="example"><a name="utils-mount-add-ex"></a><p class="title"><b>Example&#160;3.11.&#160;Adding mount points</b></p><div class="example-contents"><pre class="screen">
+        <code class="filename">/data</code> for the duration of the current session. </p><div class="example"><a name="utils-mount-add-ex"></a><p class="title"><b>Example&#160;3.12.&#160;Adding mount points</b></p><div class="example-contents"><pre class="screen">
 <code class="prompt">$</code> <strong class="userinput"><code>ls /data</code></strong>
 ls: /data: No such file or directory
 <code class="prompt">$</code> <strong class="userinput"><code>mount //pollux/home/joe/data /data</code></strong>
@@ -130,7 +130,7 @@ D: on /d type fat (binary,user,noumount)
         <code class="filename">/cygdrive/z</code>. The <span class="command"><strong>mount</strong></span> utility
         can be used to change this default automount prefix through the use of
         the "--change-cygdrive-prefix" option. In the following example, we
-        will set the automount prefix to <code class="filename">/mnt</code>:</p><div class="example"><a name="utils-cygdrive-ex"></a><p class="title"><b>Example&#160;3.12.&#160;Changing the default prefix</b></p><div class="example-contents"><pre class="screen">
+        will set the automount prefix to <code class="filename">/mnt</code>:</p><div class="example"><a name="utils-cygdrive-ex"></a><p class="title"><b>Example&#160;3.13.&#160;Changing the default prefix</b></p><div class="example-contents"><pre class="screen">
 <code class="prompt">$</code> <strong class="userinput"><code>mount --change-cygdrive-prefix /mnt</code></strong>
 </pre></div></div><br class="example-break"><p>Note that the cygdrive prefix can be set both per-user and
         system-wide, and that as with all mounts, a user-specific mount takes
@@ -140,7 +140,7 @@ D: on /d type fat (binary,user,noumount)
         <code class="literal">-p</code> option. Using the <code class="literal">--options</code>
         flag with <code class="literal">--change-cygdrive-prefix</code> makes all new
         automounted filesystems default to this set of options. For instance
-        (using the short form of the command line flags)</p><div class="example"><a name="utils-cygdrive-ex2"></a><p class="title"><b>Example&#160;3.13.&#160;Changing the default prefix with specific mount options</b></p><div class="example-contents"><pre class="screen">
+        (using the short form of the command line flags)</p><div class="example"><a name="utils-cygdrive-ex2"></a><p class="title"><b>Example&#160;3.14.&#160;Changing the default prefix with specific mount options</b></p><div class="example-contents"><pre class="screen">
 <code class="prompt">$</code> <strong class="userinput"><code>mount -c /mnt -o binary,noacl</code></strong>
 </pre></div></div><br class="example-break"></div><div class="refsect2"><a name="utils-limitations"></a><h3>Limitations</h3><p>Limitations: there is a hard-coded limit of 64 mount points.
         Also, although you can mount to pathnames that do not start with "/",

@@ -29,6 +29,9 @@
 /* EL/IX level */
 /* #undef _ELIX_LEVEL */
 
+/* Define if using malloc for execl, execle and execlp. */
+/* #undef _EXECL_USE_MALLOC */
+
 /* Define if fseek functions support seek optimization. */
 #define _FSEEK_OPTIMIZATION 1
 
@@ -37,6 +40,10 @@
 
 /* Define if compiler supports -fno-tree-loop-distribute-patterns. */
 #define _HAVE_CC_INHIBIT_LOOP_TO_LIBCALL 1
+
+/* Define if hardware has little to no penalty for misaligned memory access.
+   */
+/* #undef _HAVE_HW_MISALIGNED_ACCESS */
 
 /* Define if the linker supports .preinit_array/.init_array/.fini_array
    sections. */

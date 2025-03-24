@@ -98,6 +98,7 @@ the options, including their meaning, follows.</p><pre class="screen">
 	      (default for all other mount points).
   sparse    - Switch on support for sparse files.  This option only makes
               sense on NTFS and then only if you really need sparse files.
+	      This flag is always silently enabled on SSD drives.
 	      Cygwin does not try to create sparse files by default for
 	      performance reasons.
   text      - Files default to CRLF text mode line endings.
@@ -160,12 +161,23 @@ filenames bypasses the mount table.
 session, you can invoke the Cygwin tool <span class="command"><strong>mount</strong></span> without
 arguments:</p><div class="example"><a name="pathnames-mount-ex"></a><p class="title"><b>Example&#160;3.1.&#160;Displaying the current set of mount points</b></p><div class="example-contents"><pre class="screen">
   <code class="prompt">bash$</code> <strong class="userinput"><code>mount</code></strong>
-  f:/cygwin/bin on /usr/bin type ntfs (binary,auto)
-  f:/cygwin/lib on /usr/lib type ntfs (binary,auto)
-  f:/cygwin on / type ntfs (binary,auto)
-  e:/src on /usr/src type vfat (binary)
-  c: on /cygdrive/c type ntfs (binary,posix=0,user,noumount,auto)
-  e: on /cygdrive/e type vfat (binary,posix=0,user,noumount,auto)
+  F:/cygwin/bin on /usr/bin type ntfs (binary,auto)
+  F:/cygwin/lib on /usr/lib type ntfs (binary,auto)
+  F:/cygwin on / type ntfs (binary,auto)
+  E:/src on /usr/src type vfat (binary)
+  C: on /cygdrive/c type ntfs (binary,posix=0,user,noumount,auto)
+  E: on /cygdrive/e type vfat (binary,posix=0,user,noumount,auto)
+</pre></div></div><br class="example-break"><p>Starting with Cygwin 3.6.0, the <code class="function">getmntent(3)</code>
+function exposes Windows mount points of partitions mounted into a directory
+of another drive as if they are cygdrive mounts.  This affects the content
+of <code class="filename">/proc/mounts</code> as well as the output of
+<span class="command"><strong>mount</strong></span>.</p><p>For instance, consider you have two local disks, one containing the
+<code class="filename">C:</code> drive, the other disk has one partition mounted
+into <code class="filename">C:\docs</code>.  The output from mount will now show this
+mount point like this:</p><div class="example"><a name="pathnames-mount-dir"></a><p class="title"><b>Example&#160;3.2.&#160;Displaying Windows mount points as cygdrives</b></p><div class="example-contents"><pre class="screen">
+  <code class="prompt">bash$</code> <strong class="userinput"><code>mount | grep cygdrive</code></strong>
+  C: on /cygdrive/c type ntfs (binary,posix=0,user,noumount,auto)
+  C:/docs on /cygdrive/c/docs type ntfs (binary,posix=0,user,noumount,auto)
 </pre></div></div><br class="example-break"><p>You can also use the <span class="command"><strong>mount</strong></span> command to add
 new mount points, and the <span class="command"><strong>umount</strong></span> to delete
 them.  However, since they are only stored in memory, these mount
@@ -199,20 +211,23 @@ two slashes, unless they are accessed through a mount point.  For instance,
 consider these <code class="filename">/etc/fstab</code> entries:</p><pre class="screen">
   //server/share /mysrv    ntfs     posix=1,acl   0 0
   none           /cygdrive cygdrive posix=0,noacl 0 0
-</pre><p>Assume there's a file <code class="filename">\\server\share\foo</code> on the
-share.  When accessing it as <code class="filename">/mysrv/foo</code>, then the flags
+</pre><p>Consider a file <code class="filename">\\server\share\foo</code>.
+When opening the file as <code class="filename">/mysrv/foo</code>, the flags
 <code class="literal">posix=1,acl</code> of the /mysrv mount point are used.  When
-accessing it as <code class="filename">//server/share/foo</code>, then the flags
-for the cygdrive prefix, <code class="literal">posix=0,noacl</code> are used.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>This only applies to UNC paths using forward slashes.  When
+opening the file as <code class="filename">//server/share/foo</code>, the flags
+<code class="literal">posix=0,noacl</code> for the cygdrive prefix are used.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>This only applies to UNC paths using forward slashes.  When
 using backslashes the flags for native paths are used.  See
-<a class="xref" href="using.html#pathnames-win32" title="Using native Win32 paths">the section called &#8220;Using native Win32 paths&#8221;</a>.</p></div><p>The cygdrive prefix may be changed in the fstab file as outlined above.
-Please note that you must not use the cygdrive prefix for any other mount
-point.  For instance this:</p><pre class="screen">
+<a class="xref" href="using.html#pathnames-win32" title="Using native Win32 paths">the section called &#8220;Using native Win32 paths&#8221;</a>.</p></div><p>The cygdrive prefix may be changed in the fstab file to another path
+and mode:</p><pre class="screen">
+  none /mnt cygdrive posix=1,sparse 0 0
+</pre><p>Please note that you cannot use the cygdrive prefix for any other mount
+point to change modes.  For instance, these mount table entries...</p><pre class="screen">
   none /cygdrive cygdrive binary 0 0
   D:   /cygdrive/d somefs text 0 0
-</pre><p>will not make file access using the /mnt/d path prefix suddenly using
-textmode.  If you want to mount any drive explicitly in another mode than
-the cygdrive prefix, use a distinct path prefix:</p><pre class="screen">
+</pre><p>...will not open files using the <code class="filename">/cygdrive/d</code> path
+prefix in textmode by default, but in binary mode per the cygdrive prefix
+mode.  If you want to mount any drive explicitly in another mode than
+the cygdrive prefix, use a different path prefix:</p><pre class="screen">
   none /cygdrive cygdrive binary 0 0
   D:   /mnt/d somefs text 0 0
 </pre><p>To simplify scripting, Cygwin also provides a

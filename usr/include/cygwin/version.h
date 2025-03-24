@@ -10,8 +10,8 @@ details. */
    the Cygwin shared library".  This version is used to track important
    changes to the DLL and is mainly informative in nature. */
 
-#define CYGWIN_VERSION_DLL_MAJOR 3005
-#define CYGWIN_VERSION_DLL_MINOR 7
+#define CYGWIN_VERSION_DLL_MAJOR 3006
+#define CYGWIN_VERSION_DLL_MINOR 0
 
 /* CYGWIN_VERSION_DLL_COMBINED gives us a single number representing the
    combined DLL major and minor numbers. */
@@ -485,12 +485,20 @@ details. */
   348: Add c8rtomb, mbrtoc.
   349: Add fallocate.
   350: Add close_range.
+  351: Add getlocalename_l.
+  352: Implement dirent.d_reclen.
+  353: Implement fdclosedir.
+  354: Implement posix_getdents.
+  355: Implement setproctitle.
+  356: Export posix_spawn_file_actions_addchdir and
+       posix_spawn_file_actions_addfchdir.
+  357: Export posix_close.
 
   Note that we forgot to bump the api for ualarm, strtoll, strtoull,
   sigaltstack, sethostname. */
 
 #define CYGWIN_VERSION_API_MAJOR 0
-#define CYGWIN_VERSION_API_MINOR 350
+#define CYGWIN_VERSION_API_MINOR 357
 
 /* There is also a compatibity version number associated with the shared memory
    regions.  It is incremented when incompatible changes are made to the shared
