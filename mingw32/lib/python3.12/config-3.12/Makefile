@@ -31,8 +31,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.12
 srcdir=		../Python-3.12.9
 VPATH=		../Python-3.12.9
-abs_srcdir=	/c/M/B/src/build-MINGW32/../Python-3.12.9
-abs_builddir=	/c/M/B/src/build-MINGW32
+abs_srcdir=	/d/M/B/src/build-MINGW32/../Python-3.12.9
+abs_builddir=	/d/M/B/src/build-MINGW32
 
 
 CC=		gcc
@@ -146,9 +146,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/M/B/src/Python-3.12.9
-abs_srcdir_b2h=		C:/M/B/src/Python-3.12.9
-abs_builddir_b2h=	C:/M/B/src/build-MINGW32
+srcdir_b2h=		D:/M/B/src/Python-3.12.9
+abs_srcdir_b2h=		D:/M/B/src/Python-3.12.9
+abs_builddir_b2h=	D:/M/B/src/build-MINGW32
 prefix_b2h=		D:/a/msys64/mingw32
 
 # Expanded directories

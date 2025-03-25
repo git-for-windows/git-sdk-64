@@ -75,9 +75,9 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'CONFINCLUDEDIR': '/mingw64/include',
  'CONFINCLUDEPY': '/mingw64/include/python3.12',
  'COREPYTHONPATH': '',
- 'COVERAGE_INFO': '/c/M/B/src/build-MINGW64/coverage.info',
+ 'COVERAGE_INFO': '/d/M/B/src/build-MINGW64/coverage.info',
  'COVERAGE_LCOV_OPTIONS': '--rc lcov_branch_coverage=1',
- 'COVERAGE_REPORT': '/c/M/B/src/build-MINGW64/lcov-report',
+ 'COVERAGE_REPORT': '/d/M/B/src/build-MINGW64/lcov-report',
  'COVERAGE_REPORT_OPTIONS': '--rc lcov_branch_coverage=1 --branch-coverage '
                             '--title "CPython 3.12 LCOV report [commit $(shell '
                             ')]"',
@@ -1333,16 +1333,16 @@ build_time_vars = {'ABI3DLLLIBRARY': 'libpython3.dll',
  'WITH_VALGRIND': 0,
  'X87_DOUBLE_ROUNDING': 0,
  'XMLLIBSUBDIRS': 'xml xml/dom xml/etree xml/parsers xml/sax',
- 'abs_builddir': 'C:/M/B/src/build-MINGW64',
- 'abs_builddir_b2h': 'C:/M/B/src/build-MINGW64',
- 'abs_srcdir': 'C:/M/B/src/Python-3.12.9',
- 'abs_srcdir_b2h': 'C:/M/B/src/Python-3.12.9',
+ 'abs_builddir': 'D:/M/B/src/build-MINGW64',
+ 'abs_builddir_b2h': 'D:/M/B/src/build-MINGW64',
+ 'abs_srcdir': 'D:/M/B/src/Python-3.12.9',
+ 'abs_srcdir_b2h': 'D:/M/B/src/Python-3.12.9',
  'datarootdir': '/mingw64/share',
  'exec_prefix': '/mingw64',
  'prefix': 'D:/a/msys64/mingw64',
  'prefix_b2h': 'D:/a/msys64/mingw64',
- 'srcdir': 'C:/M/B/src/Python-3.12.9',
- 'srcdir_b2h': 'C:/M/B/src/Python-3.12.9'}
+ 'srcdir': 'D:/M/B/src/Python-3.12.9',
+ 'srcdir_b2h': 'D:/M/B/src/Python-3.12.9'}
 
 
 keys_to_replace = [
