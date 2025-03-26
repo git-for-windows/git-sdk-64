@@ -1,5 +1,5 @@
 /* idn2.h - header file for idn2
-   Copyright (C) 2011-2024 Simon Josefsson
+   Copyright (C) 2011-2025 Simon Josefsson
 
    Libidn2 is free software: you can redistribute it and/or modify it
    under the terms of either:
@@ -116,7 +116,7 @@ extern "C"
  * version number.  Used together with idn2_check_version() to verify
  * header file and run-time library consistency.
  */
-# define IDN2_VERSION "2.3.7"
+# define IDN2_VERSION "2.3.8"
 
 /**
  * IDN2_VERSION_NUMBER
@@ -127,7 +127,7 @@ extern "C"
  * digits are used to enumerate development snapshots, but for all
  * public releases they will be 0000.
  */
-# define IDN2_VERSION_NUMBER 0x02030007
+# define IDN2_VERSION_NUMBER 0x02030008
 
 /**
  * IDN2_VERSION_MAJOR
@@ -151,7 +151,7 @@ extern "C"
  * Pre-processor symbol for the patch level number (decimal).
  * The version scheme is major.minor.patchlevel.
  */
-# define IDN2_VERSION_PATCH 7
+# define IDN2_VERSION_PATCH 8
 
 /**
  * IDN2_LABEL_MAX_LENGTH
