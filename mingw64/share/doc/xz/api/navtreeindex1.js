@@ -1,5 +1,11 @@
 var NAVTREEINDEX1 =
 {
+"structlzma__index__iter.html#a0fc4959fab08e1a6a4902c728c735a99":[0,0,3,13],
+"structlzma__index__iter.html#a115a307dbc778a9de296376dc39c7b23":[0,0,3,1],
+"structlzma__index__iter.html#a223a046bcf09077a6e720967682deeae":[0,0,3,0],
+"structlzma__index__iter.html#a26436e75d4c2b5dd8d1de24140d8003e":[0,0,3,9],
+"structlzma__index__iter.html#a2f3ecf341b5dc043e9673759b8ff47b9":[0,0,3,10],
+"structlzma__index__iter.html#a35a752d344ff5d35d2a858a20bd6e5e8":[0,0,3,11],
 "structlzma__index__iter.html#a426705df8dde4b094a42f91ea20a46ac":[0,0,3,3],
 "structlzma__index__iter.html#a48cfc856f283fe00b0df37402e012818":[0,0,3,7],
 "structlzma__index__iter.html#a578bba553c43dc59a5e4032d4f6c89a3":[0,0,3,12],
