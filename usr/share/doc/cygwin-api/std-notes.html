@@ -6,7 +6,16 @@ Windows however.</p><p><code class="function">clock_nanosleep</code> currently s
 CLOCK_REALTIME and CLOCK_MONOTONIC.  <code class="function">clock_setres</code>,
 <code class="function">clock_settime</code>, and <code class="function">timer_create</code>
 currently support only CLOCK_REALTIME.</p><p><code class="function">close_range</code> does not support the Linux-specific
-flag CLOSE_RANGE_UNSHARE.</p><p>POSIX file locks via <code class="function">fcntl</code> or
+flag CLOSE_RANGE_UNSHARE.</p><p>The Solaris-invented ACL functions <code class="function">acl</code>,
+<code class="function">facl</code>, <code class="function">aclcheck</code>,
+<code class="function">aclfrommode</code>, <code class="function">aclfrompbits</code>,
+<code class="function">aclfromtext</code>, <code class="function">aclsort</code>,
+<code class="function">acltomode</code>, <code class="function">acltopbits</code> and
+<code class="function">acltotext</code> and the belonging macros and datatypes
+are defined in &lt;cygwin/acl.h&gt; since they collide with the
+Linux-compatible POSIX.1e draft macros in &lt;sys/acl.h&gt;.  Just
+include &lt;cygwin/acl.h&gt; if you prefer them over the POSIX.1e
+functions.</p><p>POSIX file locks via <code class="function">fcntl</code> or
 <code class="function">lockf</code>, as well as BSD <code class="function">flock</code> locks
 are advisory locks.  They don't interact with Windows mandatory locks, nor
 do POSIX fcntl locks interfere with BSD flock locks or vice versa.</p><p>BSD file locks created via <code class="function">flock</code> are only
