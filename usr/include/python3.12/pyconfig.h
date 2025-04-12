@@ -101,7 +101,7 @@
 /* #undef HAVE_BROKEN_MBSTOWCS */
 
 /* Define if nice() returns success/failure instead of the new priority. */
-#define HAVE_BROKEN_NICE 1
+/* #undef HAVE_BROKEN_NICE */
 
 /* Define if the system reports an invalid PIPE_BUF value. */
 /* #undef HAVE_BROKEN_PIPE_BUF */

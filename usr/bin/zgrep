@@ -3,7 +3,7 @@
 # zgrep -- a wrapper around a grep program that decompresses files as needed
 # Adapted from a version sent by Charles Levert <charles@comm.polymtl.ca>
 
-# Copyright (C) 1998, 2001-2002, 2006-2007, 2009-2023 Free Software Foundation,
+# Copyright (C) 1998, 2001-2002, 2006-2007, 2009-2025 Free Software Foundation,
 # Inc.
 
 # Copyright (C) 1993 Jean-loup Gailly
@@ -18,15 +18,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-# You should have received a copy of the GNU General Public License along
-# with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 grep='${GREP-'\''/usr/bin/grep'\''}'
 args=
 
-version='zgrep (gzip) 1.13
-Copyright (C) 2023 Free Software Foundation, Inc.
+version='zgrep (gzip) 1.14
+Copyright (C) 2025 Free Software Foundation, Inc.
 This is free software.  You may redistribute copies of it under the terms of
 the GNU General Public License <https://www.gnu.org/licenses/gpl.html>.
 There is NO WARRANTY, to the extent permitted by law.
@@ -143,7 +142,7 @@ while test $# -ne 0; do
         /*) TMPDIR=$TMPDIR/;;
         *) TMPDIR=/tmp/;;
       esac
-      if type mktemp >/dev/null 2>&1; then
+      if command -v mktemp >/dev/null 2>&1; then
         pattmp=$(mktemp "${TMPDIR}zgrepXXXXXXXXX") || exit 2
       else
         set -C
