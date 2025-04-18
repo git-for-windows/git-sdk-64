@@ -13,21 +13,21 @@ typedef int (TclOO_PostCallProc)(void *clientData, Tcl_Interp *interp,
 MODULE_SCOPE int Itcl_NRRunCallbacks(Tcl_Interp *interp, void *rootPtr);
 MODULE_SCOPE void * Itcl_GetCurrentCallbackPtr(Tcl_Interp *interp);
 MODULE_SCOPE Tcl_Method Itcl_NewProcClassMethod(Tcl_Interp *interp, Tcl_Class clsPtr,
-        TclOO_PreCallProc *preCallPtr, TclOO_PostCallProc *postCallPtr,
-        ProcErrorProc *errProc, void *clientData, Tcl_Obj *nameObj,
+	TclOO_PreCallProc *preCallPtr, TclOO_PostCallProc *postCallPtr,
+	ProcErrorProc *errProc, void *clientData, Tcl_Obj *nameObj,
 	Tcl_Obj *argsObj, Tcl_Obj *bodyObj, void **clientData2);
 MODULE_SCOPE Tcl_Method Itcl_NewProcMethod(Tcl_Interp *interp, Tcl_Object oPtr,
-        TclOO_PreCallProc *preCallPtr, TclOO_PostCallProc *postCallPtr,
-        ProcErrorProc *errProc, void *clientData, Tcl_Obj *nameObj,
+	TclOO_PreCallProc *preCallPtr, TclOO_PostCallProc *postCallPtr,
+	ProcErrorProc *errProc, void *clientData, Tcl_Obj *nameObj,
 	Tcl_Obj *argsObj, Tcl_Obj *bodyObj, void **clientData2);
 MODULE_SCOPE int Itcl_PublicObjectCmd(void *clientData, Tcl_Interp *interp,
-        Tcl_Class clsPtr, size_t objc, Tcl_Obj *const *objv);
+	Tcl_Class clsPtr, Tcl_Size objc, Tcl_Obj *const *objv);
 MODULE_SCOPE Tcl_Method Itcl_NewForwardClassMethod(Tcl_Interp *interp,
-        Tcl_Class clsPtr, int flags, Tcl_Obj *nameObj, Tcl_Obj *prefixObj);
+	Tcl_Class clsPtr, int flags, Tcl_Obj *nameObj, Tcl_Obj *prefixObj);
 MODULE_SCOPE int Itcl_SelfCmd(void *clientData, Tcl_Interp *interp,
-        int objc, Tcl_Obj *const *objv);
+	int objc, Tcl_Obj *const *objv);
 MODULE_SCOPE int Itcl_IsMethodCallFrame(Tcl_Interp *interp);
 MODULE_SCOPE int Itcl_InvokeEnsembleMethod(Tcl_Interp *interp, Tcl_Namespace *nsPtr,
-    Tcl_Obj *namePtr, Tcl_Proc *procPtr, size_t objc, Tcl_Obj *const *objv);
+    Tcl_Obj *namePtr, Tcl_Proc *procPtr, Tcl_Size objc, Tcl_Obj *const *objv);
 MODULE_SCOPE int Itcl_InvokeProcedureMethod(void *clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *const *objv);

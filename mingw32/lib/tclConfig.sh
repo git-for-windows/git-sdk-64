@@ -15,7 +15,7 @@ TCL_DLL_FILE="tcl86.dll"
 TCL_VERSION='8.6'
 TCL_MAJOR_VERSION='8'
 TCL_MINOR_VERSION='6'
-TCL_PATCH_LEVEL='.13'
+TCL_PATCH_LEVEL='.16'
 
 # C compiler to use for compilation.
 TCL_CC='gcc'
@@ -42,12 +42,9 @@ TCL_SHARED_BUILD=1
 TCL_LIB_FILE='libtcl86.dll.a'
 
 # Flag to indicate whether shared libraries need export files.
-TCL_NEEDS_EXP_FILE=
+TCL_NEEDS_EXP_FILE=''
 
-# String that can be evaluated to generate the part of the export file
-# name that comes after the "libxxx" (includes version number, if any,
-# extension, and anything else needed).  May depend on the variables
-# VERSION.  On most UNIX systems this is ${VERSION}.exp.
+# Deprecated. Same as TCL_UNSHARED_LIB_SUFFIX
 TCL_EXPORT_FILE_SUFFIX='${NODOT_VERSION}.a'
 
 # Additional libraries to use when linking Tcl.
@@ -90,7 +87,7 @@ TCL_DL_LIBS=''
 
 # Flags to pass to the compiler when linking object files into
 # an executable tclsh or tcltest binary.
-TCL_LD_FLAGS='-pipe -Wl,--no-seh -Wl,--large-address-aware'
+TCL_LD_FLAGS='-Wl,--no-seh -Wl,--large-address-aware'
 
 # Flags to pass to cc/ld, such as "-R /usr/local/tcl/lib", that tell the
 # run-time dynamic linker where to look for shared libraries such as
@@ -125,7 +122,7 @@ TCL_INCLUDE_SPEC='-I/mingw32/include/tcl8.6'
 # ("ok" means it's safe to use switches like -ltcl7.5;  "nodots" means
 # use switches like -ltcl75).  SunOS and FreeBSD require "nodots", for
 # example.
-TCL_LIB_VERSIONS_OK=''
+TCL_LIB_VERSIONS_OK='nodots'
 
 # String that can be evaluated to generate the part of a shared library
 # name that comes after the "libxxx" (includes version number, if any,
@@ -151,7 +148,7 @@ TCL_SRC_DIR='/mingw32/include/tcl8.6/tcl-private'
 # List of standard directories in which to look for packages during
 # "package require" commands.  Contains the "prefix" directory plus also
 # the "exec_prefix" directory, if it is different.
-TCL_PACKAGE_PATH='{/mingw32/lib}'
+TCL_PACKAGE_PATH='/mingw32\lib'
 
 # Tcl supports stub.
 TCL_SUPPORTS_STUBS=1
@@ -179,3 +176,5 @@ TCL_STUB_LIB_PATH='/mingw32/lib/libtclstub86.a'
 # Flag, 1: we built Tcl with threads enabled, 0 we didn't
 TCL_THREADS=1
 
+# Name of the zlib library that extensions should use
+TCL_ZLIB_LIB_NAME='zdll.lib'

@@ -8,7 +8,7 @@
 /* !BEGIN!: Do not edit below this line. */
 
 #define ITCLINT_STUBS_EPOCH 0
-#define ITCLINT_STUBS_REVISION 153
+#define ITCLINT_STUBS_REVISION 152
 
 #ifdef __cplusplus
 extern "C" {

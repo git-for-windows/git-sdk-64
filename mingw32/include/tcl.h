@@ -41,20 +41,25 @@ extern "C" {
  * unix/configure.in	(2 LOC Major, 2 LOC minor, 1 LOC patch)
  * win/configure.in	(as above)
  * win/tcl.m4		(not patchlevel)
- * README		(sections 0 and 2, with and without separator)
+ * README.md		(sections 0 and 2, with and without separator)
  * macosx/Tcl-Common.xcconfig (not patchlevel) 1 LOC
  * win/README		(not patchlevel) (sections 0 and 2)
  * unix/tcl.spec	(1 LOC patch)
  * tools/tcl.hpj.in	(not patchlevel, for windows installer)
  */
 
-#define TCL_MAJOR_VERSION   8
+#if !defined(TCL_MAJOR_VERSION)
+#   define TCL_MAJOR_VERSION   8
+#endif
+#if TCL_MAJOR_VERSION != 8
+#   error "This header-file is for Tcl 8 only"
+#endif
 #define TCL_MINOR_VERSION   6
 #define TCL_RELEASE_LEVEL   TCL_FINAL_RELEASE
-#define TCL_RELEASE_SERIAL  13
+#define TCL_RELEASE_SERIAL  16
 
 #define TCL_VERSION	    "8.6"
-#define TCL_PATCH_LEVEL	    "8.6.13"
+#define TCL_PATCH_LEVEL	    "8.6.16"
 
 /*
  *----------------------------------------------------------------------------
@@ -131,7 +136,7 @@ extern "C" {
  */
 
 #include <stdarg.h>
-#if !defined(TCL_NO_DEPRECATED) && TCL_MAJOR_VERSION < 9
+#if !defined(TCL_NO_DEPRECATED)
 #    define TCL_VARARGS(type, name) (type name, ...)
 #    define TCL_VARARGS_DEF(type, name) (type name, ...)
 #    define TCL_VARARGS_START(type, name, list) (va_start(list, name), name)
@@ -143,20 +148,15 @@ extern "C" {
 #	define TCL_FORMAT_PRINTF(a,b) __attribute__ ((__format__ (__printf__, a, b)))
 #   endif
 #   define TCL_NORETURN __attribute__ ((noreturn))
-#   if defined(BUILD_tcl) || defined(BUILD_tk)
-#	define TCL_NORETURN1 __attribute__ ((noreturn))
-#   else
-#	define TCL_NORETURN1 /* nothing */
-#   endif
 #else
 #   define TCL_FORMAT_PRINTF(a,b)
 #   if defined(_MSC_VER) && (_MSC_VER >= 1310)
-#	define TCL_NORETURN _declspec(noreturn)
+#	define TCL_NORETURN __declspec(noreturn)
 #   else
 #	define TCL_NORETURN /* nothing */
 #   endif
-#   define TCL_NORETURN1 /* nothing */
 #endif
+#define TCL_NORETURN1 /* nothing */
 
 /*
  * Allow a part of Tcl's API to be explicitly marked as deprecated.
@@ -393,7 +393,7 @@ typedef long LONG;
  *
  * Note on converting between Tcl_WideInt and strings. This implementation (in
  * tclObj.c) depends on the function
- * sprintf(...,"%" TCL_LL_MODIFIER "d",...).
+ * snprintf(...,"%" TCL_LL_MODIFIER "d",...).
  */
 
 #if !defined(TCL_WIDE_INT_TYPE)&&!defined(TCL_WIDE_INT_IS_LONG)
@@ -464,20 +464,19 @@ typedef unsigned TCL_WIDE_INT_TYPE	Tcl_WideUInt;
 #   endif /* _MSC_VER < 1400 */
 #elif defined(__CYGWIN__)
     typedef struct {
-	dev_t st_dev;
+	unsigned st_dev;
 	unsigned short st_ino;
 	unsigned short st_mode;
 	short st_nlink;
 	short st_uid;
 	short st_gid;
 	/* Here is a 2-byte gap */
-	dev_t st_rdev;
+	unsigned st_rdev;
 	/* Here is a 4-byte gap */
 	long long st_size;
 	struct {long tv_sec;} st_atim;
 	struct {long tv_sec;} st_mtim;
 	struct {long tv_sec;} st_ctim;
-	/* Here is a 4-byte gap */
     } Tcl_StatBuf;
 #elif defined(HAVE_STRUCT_STAT64) && !defined(__APPLE__)
     typedef struct stat64 Tcl_StatBuf;
@@ -506,7 +505,7 @@ typedef unsigned TCL_WIDE_INT_TYPE	Tcl_WideUInt;
  */
 
 typedef struct Tcl_Interp
-#if !defined(TCL_NO_DEPRECATED) && TCL_MAJOR_VERSION < 9
+#if !defined(TCL_NO_DEPRECATED)
 {
     /* TIP #330: Strongly discourage extensions from using the string
      * result. */
@@ -1135,7 +1134,7 @@ typedef struct Tcl_DString {
  * give the flag)
  */
 
-#if !defined(TCL_NO_DEPRECATED) && TCL_MAJOR_VERSION < 9
+#if !defined(TCL_NO_DEPRECATED)
 #   define TCL_PARSE_PART1	0x400
 #endif /* !TCL_NO_DEPRECATED */
 
@@ -1230,10 +1229,18 @@ struct Tcl_HashEntry {
  * TCL_HASH_KEY_SYSTEM_HASH -	If this flag is set then all memory internally
  *                              allocated for the hash table that is not for an
  *                              entry will use the system heap.
+ * TCL_HASH_KEY_DIRECT_COMPARE -
+ * 	                        Allows fast comparison for hash keys directly
+ *                              by compare of their key.oneWordValue values,
+ *                              before call of compareKeysProc (much slower
+ *                              than a direct compare, so it is speed-up only
+ *                              flag). Don't use it if keys contain values rather
+ *                              than pointers.
  */
 
 #define TCL_HASH_KEY_RANDOMIZE_HASH 0x1
 #define TCL_HASH_KEY_SYSTEM_HASH    0x2
+#define TCL_HASH_KEY_DIRECT_COMPARE 0x4
 
 /*
  * Structure definition for the methods associated with a hash table key type.
@@ -2182,8 +2189,7 @@ typedef struct Tcl_EncodingType {
 
 /*
  * The maximum number of bytes that are necessary to represent a single
- * Unicode character in UTF-8. The valid values should be 3, 4 or 6
- * (or perhaps 1 if we want to support a non-unicode enabled core). If 3 or
+ * Unicode character in UTF-8. The valid values should be 3, 4 or 6. If 3 or
  * 4, then Tcl_UniChar must be 2-bytes in size (UCS-2) (the default). If 6,
  * then Tcl_UniChar must be 4-bytes in size (UCS-4). At this time UCS-2 mode
  * is the default and recommended mode. UCS-4 is experimental and not
@@ -2547,9 +2553,9 @@ EXTERN void		Tcl_GetMemoryInfo(Tcl_DString *dsPtr);
  */
 
 #define Tcl_GetHashValue(h) ((h)->clientData)
-#define Tcl_SetHashValue(h, value) ((h)->clientData = (ClientData) (value))
+#define Tcl_SetHashValue(h, value) ((h)->clientData = (void *)(value))
 #define Tcl_GetHashKey(tablePtr, h) \
-	((void *) (((tablePtr)->keyType == TCL_ONE_WORD_KEYS || \
+	((void *)(((tablePtr)->keyType == TCL_ONE_WORD_KEYS || \
 		    (tablePtr)->keyType == TCL_CUSTOM_PTR_KEYS) \
 		   ? (h)->key.oneWordValue \
 		   : (h)->key.string))

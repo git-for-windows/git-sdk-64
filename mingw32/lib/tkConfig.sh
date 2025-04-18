@@ -17,7 +17,7 @@ TK_DLL_FILE="tk86.dll"
 TK_VERSION='8.6'
 TK_MAJOR_VERSION='8'
 TK_MINOR_VERSION='6'
-TK_PATCH_LEVEL='.13'
+TK_PATCH_LEVEL='.16'
 
 # -D flags for use with the C compiler.
 TK_DEFS='-DPACKAGE_NAME=\"tk\" -DPACKAGE_TARNAME=\"tk\" -DPACKAGE_VERSION=\"8.6\" -DPACKAGE_STRING=\"tk\ 8.6\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DHAVE_STDIO_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_STRINGS_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DTCL_THREADS=1 -DUSE_THREAD_ALLOC=1 -DMODULE_SCOPE=extern -DHAVE_NO_SEH=1 -DHAVE_CAST_TO_UNION=1 -DHAVE_INTPTR_T=1 -DHAVE_UINTPTR_T=1 -DHAVE_UXTHEME_H=1 -DHAVE_VSSYM32_H=1 -DNDEBUG=1 -DTCL_CFG_OPTIMIZED=1'
@@ -34,15 +34,15 @@ TK_LIB_FILE='libtk86.dll.a'
 # Additional libraries to use when linking Tk.
 TK_LIBS='-lnetapi32 -lkernel32 -luser32 -ladvapi32 -luserenv -lws2_32 -lgdi32 -lcomdlg32 -limm32 -lcomctl32 -lshell32 -luuid -lole32 -loleaut32'
 
-# Top-level directory in which Tcl's platform-independent files are
+# Top-level directory in which Tk's platform-independent files are
 # installed.
 TK_PREFIX='/mingw32'
 
-# Top-level directory in which Tcl's platform-specific files (e.g.
+# Top-level directory in which Tk's platform-specific files (e.g.
 # executables) are installed.
 TK_EXEC_PREFIX='/mingw32'
 
-# -l flag to pass to the linker to pick up the Tcl library
+# -l flag to pass to the linker to pick up the Tk library
 TK_LIB_FLAG='-ltk86'
 
 # String to pass to linker to pick up the Tk library from its

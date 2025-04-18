@@ -41,13 +41,13 @@ DLLIMPORT int		Tdbc_Init(Tcl_Interp* interp);
 #endif
 
 #define Tdbc_InitStubs(interp) TdbcInitializeStubs(interp, \
-        TDBC_VERSION, TDBC_STUBS_EPOCH,	TDBC_STUBS_REVISION)
+	TDBC_VERSION, TDBC_STUBS_EPOCH,	TDBC_STUBS_REVISION)
 #if defined(USE_TDBC_STUBS)
     TDBCAPI const char* TdbcInitializeStubs(
-        Tcl_Interp* interp, const char* version, int epoch, int revision);
+	Tcl_Interp* interp, const char* version, int epoch, int revision);
 #else
 #    define TdbcInitializeStubs(interp, version, epoch, revision) \
-        (Tcl_PkgRequire(interp, "tdbc", version))
+	(Tcl_PkgRequire(interp, "tdbc", version))
 #endif
 
 #ifdef __cplusplus
@@ -60,7 +60,7 @@ DLLIMPORT int		Tdbc_Init(Tcl_Interp* interp);
  */
 
 #define	TDBC_VERSION	"1.1"
-#define TDBC_PATCHLEVEL "1.1.5"
+#define TDBC_PATCHLEVEL "1.1.10"
 
 /*
  * Include the Stubs declarations for the public API, generated from

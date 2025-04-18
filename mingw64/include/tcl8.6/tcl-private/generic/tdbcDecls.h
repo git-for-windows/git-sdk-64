@@ -28,12 +28,12 @@ extern "C" {
  */
 
 /* 0 */
-TDBCAPI int		Tdbc_Init_ (Tcl_Interp* interp);
+TDBCAPI int		Tdbc_Init_(Tcl_Interp *interp);
 /* 1 */
-TDBCAPI Tcl_Obj*	Tdbc_TokenizeSql (Tcl_Interp* interp,
-				const char* statement);
+TDBCAPI Tcl_Obj*	Tdbc_TokenizeSql(Tcl_Interp *interp,
+				const char *statement);
 /* 2 */
-TDBCAPI const char*	Tdbc_MapSqlState (const char* sqlstate);
+TDBCAPI const char*	Tdbc_MapSqlState(const char *sqlstate);
 
 typedef struct TdbcStubs {
     int magic;
@@ -41,9 +41,9 @@ typedef struct TdbcStubs {
     int revision;
     void *hooks;
 
-    int (*tdbc_Init_) (Tcl_Interp* interp); /* 0 */
-    Tcl_Obj* (*tdbc_TokenizeSql) (Tcl_Interp* interp, const char* statement); /* 1 */
-    const char* (*tdbc_MapSqlState) (const char* sqlstate); /* 2 */
+    int (*tdbc_Init_) (Tcl_Interp *interp); /* 0 */
+    Tcl_Obj* (*tdbc_TokenizeSql) (Tcl_Interp *interp, const char *statement); /* 1 */
+    const char* (*tdbc_MapSqlState) (const char *sqlstate); /* 2 */
 } TdbcStubs;
 
 extern const TdbcStubs *tdbcStubsPtr;
