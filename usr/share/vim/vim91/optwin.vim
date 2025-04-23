@@ -1,7 +1,7 @@
 " These commands create the option window.
 "
 " Maintainer:	The Vim Project <https://github.com/vim/vim>
-" Last Change:	2024 Dec 07
+" Last Change:	2025 Mar 07
 " Former Maintainer:	Bram Moolenaar <Bram@vim.org>
 
 " If there already is an option window, jump to that one.
@@ -848,6 +848,8 @@ endif
 if has("insert_expand")
   call <SID>AddOption("complete", gettext("specifies how Insert mode completion works for CTRL-N and CTRL-P"))
   call append("$", "\t" .. s:local_to_buffer)
+  call <SID>OptionL("cfc")
+  call <SID>AddOption("completefuzzycollect", gettext("use fuzzy collection for specific completion modes"))
   call <SID>OptionL("cpt")
   call <SID>AddOption("completeopt", gettext("whether to use a popup menu for Insert mode completion"))
   call <SID>OptionL("cot")
@@ -1343,6 +1345,8 @@ call <SID>AddOption("virtualedit", gettext("when to use virtual editing: \"block
 call <SID>OptionG("ve", &ve)
 call <SID>AddOption("eventignore", gettext("list of autocommand events which are to be ignored"))
 call <SID>OptionG("ei", &ei)
+call <SID>AddOption("eventignorewin", gettext("list of autocommand events which are to be ignored in a window"))
+call <SID>OptionG("eiw", &eiw)
 call <SID>AddOption("loadplugins", gettext("load plugin scripts when starting up"))
 call <SID>BinOptionG("lpl", &lpl)
 call <SID>AddOption("exrc", gettext("enable reading .vimrc/.exrc/.gvimrc in the current directory"))

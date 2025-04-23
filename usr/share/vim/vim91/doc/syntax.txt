@@ -1,4 +1,4 @@
-*syntax.txt*	For Vim version 9.1.  Last change: 2025 Jan 11
+*syntax.txt*	For Vim version 9.1.  Last change: 2025 Mar 21
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -1062,6 +1062,7 @@ Variable		Highlight ~
 *c_no_cformat*		don't highlight %-formats in strings
 *c_no_c99*		don't highlight C99 standard items
 *c_no_c11*		don't highlight C11 standard items
+*c_no_c23*		don't highlight C23 standard items
 *c_no_bsd*		don't highlight BSD specific types
 *c_functions*		highlight function calls and definitions
 *c_function_pointers*	highlight function pointers definitions
@@ -1285,6 +1286,21 @@ doesn't work for you, or you don't edit Progress at all, use this in your
 startup vimrc: >
    :let filetype_w = "cweb"
 
+CSHARP							 *cs.vim* *ft-cs-syntax*
+
+C# raw string literals may use any number of quote marks to encapsulate the
+block, and raw interpolated string literals may use any number of braces to
+encapsulate the interpolation, e.g. >
+
+    $$$""""Hello {{{name}}}""""
+<
+By default, Vim highlights 3-8 quote marks, and 1-8 interpolation braces.
+The maximum numbers of quotes and braces recognized can configured using the
+following variables:
+
+    Variable					Default ~
+    g:cs_raw_string_quote_count			8
+    g:cs_raw_string_interpolation_brace_count	8
 
 DART						*dart.vim* *ft-dart-syntax*
 
@@ -2217,6 +2233,16 @@ To disable numbers having their own color add the following to your vimrc: >
 If you want quotes to have different highlighting than strings >
 	let g:jq_quote_highlight = 1
 
+KCONFIG							*ft-kconfig-syntax*
+
+Kconfig syntax highlighting language.  For syntax syncing, you can configure
+the following variable (default: 50): >
+
+	let kconfig_minlines = 50
+
+To configure a bit more (heavier) highlighting, set the following variable: >
+
+	let kconfig_syntax_heavy = 1
 
 LACE						*lace.vim* *ft-lace-syntax*
 
@@ -2332,13 +2358,9 @@ instead, and the name of your source file should be *.pike
 
 LUA						*lua.vim* *ft-lua-syntax*
 
-The Lua syntax file can be used for versions 4.0, 5.0, 5.1 and 5.2 (5.2 is
-the default). You can select one of these versions using the global variables
-lua_version and lua_subversion. For example, to activate Lua
-5.1 syntax highlighting, set the variables like this: >
-
-	:let lua_version = 5
-	:let lua_subversion = 1
+The Lua syntax file can be used for versions 4.0, 5.0+. You can select one of
+these versions using the global variables |g:lua_version| and
+|g:lua_subversion|.
 
 
 MAIL						*mail.vim* *ft-mail.vim*
@@ -3490,25 +3512,25 @@ cases pertain, then the first line of the file is examined (ex. looking for
 /bin/sh  /bin/ksh  /bin/bash).  If the first line specifies a shelltype, then
 that shelltype is used.  However some files (ex. .profile) are known to be
 shell files but the type is not apparent.  Furthermore, on many systems sh is
-symbolically linked to "bash" (Linux, Windows+cygwin) or "ksh" (Posix).
+symbolically linked to "bash" (Linux, Windows+cygwin) or "ksh" (POSIX).
 
 One may specify a global default by instantiating one of the following
 variables in your <.vimrc>:
 
    ksh: >
 	let g:is_kornshell = 1
-<   posix:  (using this is nearly the same as setting g:is_kornshell to 1) >
+<   posix: (default) >
 	let g:is_posix     = 1
 <   bash: >
 	let g:is_bash	   = 1
-<   sh: (default) Bourne shell >
+<   dash: >
+	let g:is_dash	   = 1
+<   sh: Bourne shell >
 	let g:is_sh	   = 1
-
-<   (dash users should use posix)
 
 If there's no "#! ..." line, and the user hasn't availed himself/herself of a
 default sh.vim syntax setting as just shown, then syntax/sh.vim will assume
-the Bourne shell syntax.  No need to quote RFCs or market penetration
+the POSIX shell syntax.  No need to quote RFCs or market penetration
 statistics in error reports, please -- just select the default version of the
 sh your system uses and install the associated "let..." in your <.vimrc>.
 
@@ -4010,7 +4032,29 @@ highlighting is to put the following line in your |vimrc|: >
 
 	let g:vimsyn_noerror = 1
 <
+To suppress only specific errors, define the following variables: >
 
+   g:vimsyn_nobehaveerror = 1        " :behave error
+   g:vimsyn_vimFTError = 1           " :filetype error
+   g:vimsyn_noaugrouperror = 1       " :augroup error
+   g:vimsyn_noopererror = 1          " operator error
+   g:vimsyn_notypealiaserror = 1     " Vim9 type alias error
+   g:vimsyn_novimfunctionerror = 1   " Vim9 method error
+   g:vimsyn_nousercmderror = 1       " :com error
+   g:vimsyn_novimsynerror = 1        " :syn error
+   g:vimsyn_novimsyncaseerror = 1    " :syn case error
+   g:vimsyn_novimsynconcealerror = 1 " :syn conceal error
+   g:vimsyn_novimsynfoldlevelerror = 1 " :syn foldlevel error
+   g:vimsyn_novimsynspellerror = 1   " :syn spell error
+   g:vimsyn_novimsyncerror = 1       " :syn sync error
+   g:vimsyn_novimhictermerror = 1    " :hi error
+   g:vimsyn_vimhikeyerror = 1        " :hi key=arg error
+<
+To force highlighting of Neovim specific Vim script elements (even if not
+using Neovim), set >
+
+	let g:vimsyn_vim_features = ['nvim']
+<
 
 WDL							*wdl.vim* *wdl-syntax*
 
@@ -5421,6 +5465,10 @@ in their own color.
 			See |:highlight-default| for the optional [default]
 			argument.
 
+:hi[ghlight][!] [default] link {from-group} {to-group}
+:hi[ghlight][!] [default] link {from-group} NONE
+			See |:hi-link|.
+
 Normally a highlight group is added once when starting up.  This sets the
 default values for the highlighting.  After that, you can use additional
 highlight commands to change the arguments that you want to set to non-default
@@ -5820,8 +5868,8 @@ CursorLineSign	Like SignColumn when 'cursorline' is set for the cursor line.
 MatchParen	Character under the cursor or just before it, if it
 		is a paired bracket, and its match. |pi_paren.txt|
 							*hl-MessageWindow*
-MessageWindow	Messages popup window used by `:echowindow`.  If not defined
-		|hl-WarningMsg| is used.
+MessageWindow	Messages popup window used by `:echowindow`.  Linked to
+		|hl-WarningMsg| by default.
 							*hl-ModeMsg*
 ModeMsg		'showmode' message (e.g., "-- INSERT --").
 							*hl-MsgArea*
@@ -5861,10 +5909,13 @@ PmenuMatchSel	Popup menu: Matched text in selected item. Applied in
 		combination with |hl-PmenuSel|.
 							*hl-ComplMatchIns*
 ComplMatchIns	Matched text of the currently inserted completion.
+							*hl-PopupSelected*
+PopupSelected	Popup window created with |popup_menu()|.  Linked to
+		|hl-PmenuSel| by default.
 							*hl-PopupNotification*
 PopupNotification
-		Popup window created with |popup_notification()|.  If not
-		defined |hl-WarningMsg| is used.
+		Popup window created with |popup_notification()|.  Linked to
+		|hl-WarningMsg| by default.
 							*hl-Question*
 Question	|hit-enter| prompt and yes/no questions.
 							*hl-QuickFixLine*

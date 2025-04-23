@@ -1,4 +1,4 @@
-# Copyright (C) 2013-2023 Free Software Foundation, Inc.
+# Copyright (C) 2013-2024 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -251,7 +251,6 @@ class SymValueWrapper(object):
 
 
 class FrameVars(object):
-
     """Utility class to fetch and store frame local variables, or
     frame arguments."""
 
@@ -285,6 +284,9 @@ class FrameVars(object):
                     # We use an 'elif' here because is_variable
                     # returns False for arguments as well.  Anyway,
                     # don't include non-variables here.
+                    continue
+                elif sym.is_artificial:
+                    # Skip artificial symbols.
                     continue
                 lvars.append(SymValueWrapper(frame, sym))
 

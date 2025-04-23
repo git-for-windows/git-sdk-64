@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Free Software Foundation, Inc.
+# Copyright 2022-2024 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,16 +13,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import gdb
-import os
-
 # This is deprecated in 3.9, but required in older versions.
 from typing import Optional
+
+import gdb
 
 from .frames import dap_frame_generator
 from .modules import module_id
 from .scopes import symbol_value
-from .server import request, capability
+from .server import capability, export_line, request
 from .sources import make_source
 from .startup import in_gdb_thread
 from .state import set_thread
@@ -87,8 +86,11 @@ def _backtrace(thread_id, levels, startFrame, stack_format):
             }
             line = current_frame.line()
             if line is not None:
-                newframe["line"] = line
+                newframe["line"] = export_line(line)
                 if stack_format["line"]:
+                    # Unclear whether export_line should be called
+                    # here, but since it's just for users we pick the
+                    # gdb representation.
                     name += ", line " + str(line)
             objfile = gdb.current_progspace().objfile_for_address(pc)
             if objfile is not None:
@@ -97,7 +99,7 @@ def _backtrace(thread_id, levels, startFrame, stack_format):
                     name += ", module " + objfile.username
             filename = current_frame.filename()
             if filename is not None:
-                newframe["source"] = make_source(filename, os.path.basename(filename))
+                newframe["source"] = make_source(filename)
             newframe["name"] = name
             frames.append(newframe)
         # Note that we do not calculate totalFrames here.  Its absence

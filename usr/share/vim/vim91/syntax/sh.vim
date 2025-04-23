@@ -6,6 +6,8 @@
 " Last Change:		2024 Mar 04 by Vim Project
 "		2024 Nov 03 by Aliaksei Budavei <0x000c70 AT gmail DOT com> (improved bracket expressions, #15941)
 "		2025 Jan 06 add $PS0 to bashSpecialVariables (#16394)
+"		2025 Jan 18 add bash coproc, remove duplicate syn keywords (#16467)
+"		2025 Mar 21 update shell capability detection (#16939)
 " Version:		208
 " Former URL:		http://www.drchip.org/astronaut/vim/index.html#SYNTAX_SH
 " For options and settings, please use:      :help ft-sh-syntax
@@ -16,6 +18,9 @@ if exists("b:current_syntax")
   finish
 endif
 
+" Ensure this is set unless we find another shell
+let b:is_sh = 1
+
 " If the shell script itself specifies which shell to use, use it
 if getline(1) =~ '\<ksh\>'
  let b:is_kornshell = 1
@@ -23,60 +28,56 @@ elseif getline(1) =~ '\<bash\>'
  let b:is_bash      = 1
 elseif getline(1) =~ '\<dash\>'
  let b:is_dash      = 1
-elseif !exists("g:is_kornshell") && !exists("g:is_bash") && !exists("g:is_posix") && !exists("g:is_sh") && !exists("g:is_dash")
- " user did not specify which shell to use, and 
- " the script itself does not specify which shell to use. FYI: /bin/sh is ambiguous.
- " Assuming /bin/sh is executable, and if its a link, find out what it links to.
- let s:shell = ""
- if executable("/bin/sh")
-  let s:shell = resolve("/bin/sh")
- elseif executable("/usr/bin/sh")
-  let s:shell = resolve("/usr/bin/sh")
- endif
- if     s:shell =~ '\<ksh\>'
-  let b:is_kornshell= 1
- elseif s:shell =~ '\<bash\>'
-  let b:is_bash = 1
- elseif s:shell =~ '\<dash\>'
-  let b:is_dash = 1
- endif
- unlet s:shell
-endif
-
 " handling /bin/sh with is_kornshell/is_sh {{{1
 " b:is_sh will be set when "#! /bin/sh" is found;
 " However, it often is just a masquerade by bash (typically Linux)
 " or kornshell (typically workstations with Posix "sh").
-" So, when the user sets "g:is_bash", "g:is_kornshell",
-" or "g:is_posix", a b:is_sh is converted into b:is_bash/b:is_kornshell,
-" respectively.
-if !exists("b:is_kornshell") && !exists("b:is_bash") && !exists("b:is_dash")
-  if exists("g:is_posix") && !exists("g:is_kornshell")
-   let g:is_kornshell= g:is_posix
+" So, when the user sets "g:is_kornshell", "g:is_bash",
+" "g:is_posix" or "g:is_dash", a b:is_sh is converted into
+" b:is_kornshell/b:is_bash/b:is_posix/b:is_dash, respectively.
+elseif !exists("b:is_kornshell") && !exists("b:is_bash") && !exists("b:is_posix") && !exists("b:is_dash")
+ if exists("g:is_kornshell")
+  let b:is_kornshell= 1
+ elseif exists("g:is_bash")
+  let b:is_bash= 1
+ elseif exists("g:is_dash")
+  let b:is_dash= 1
+ elseif exists("g:is_posix")
+  let b:is_posix= 1
+ elseif exists("g:is_sh")
+  let b:is_sh= 1
+ else
+  " user did not specify which shell to use, and
+  " the script itself does not specify which shell to use. FYI: /bin/sh is ambiguous.
+  " Assuming /bin/sh is executable, and if its a link, find out what it links to.
+  let s:shell = ""
+  if executable("/bin/sh")
+   let s:shell = resolve("/bin/sh")
+  elseif executable("/usr/bin/sh")
+   let s:shell = resolve("/usr/bin/sh")
   endif
-  if exists("g:is_kornshell")
-    let b:is_kornshell= 1
-    if exists("b:is_sh")
-      unlet b:is_sh
-    endif
-  elseif exists("g:is_bash")
-    let b:is_bash= 1
-    if exists("b:is_sh")
-      unlet b:is_sh
-    endif
-  elseif exists("g:is_dash")
-    let b:is_dash= 1
-    if exists("b:is_sh")
-      unlet b:is_sh
-    endif
+  if     s:shell =~ '\<ksh\>'
+   let b:is_kornshell= 1
+  elseif s:shell =~ '\<bash\>'
+   let b:is_bash = 1
+  elseif s:shell =~ '\<dash\>'
+   let b:is_dash = 1
   else
-    let b:is_sh= 1
+   let b:is_posix = 1
   endif
+  unlet s:shell
+ endif
 endif
 
 " if b:is_dash, set b:is_posix too
 if exists("b:is_dash")
  let b:is_posix= 1
+endif
+
+if exists("b:is_kornshell") || exists("b:is_bash")
+ if exists("b:is_sh")
+  unlet b:is_sh
+ endif
 endif
 
 " set up default g:sh_fold_enabled {{{1
@@ -352,7 +353,7 @@ if exists("b:is_bash")
  ShFoldIfDoFor syn region	shCase	contained skipwhite skipnl matchgroup=shSnglCase start="\%(\\.\|[^#$()'" \t]\)\{-}\zs)"  end=";;" end=";&" end=";;&" end="esac"me=s-1	contains=@shCaseList	nextgroup=shCaseStart,shCase,shComment
 elseif exists("b:is_kornshell")
  ShFoldIfDoFor syn region	shCase	contained skipwhite skipnl matchgroup=shSnglCase start="\%(\\.\|[^#$()'" \t]\)\{-}\zs)"  end=";;" end=";&" end="esac"me=s-1	contains=@shCaseList	nextgroup=shCaseStart,shCase,shComment
-else                                                                                                                     
+else
  ShFoldIfDoFor syn region	shCase	contained skipwhite skipnl matchgroup=shSnglCase start="\%(\\.\|[^#$()'" \t]\)\{-}\zs)"  end=";;" end="esac"me=s-1		contains=@shCaseList	nextgroup=shCaseStart,shCase,shComment
 endif
 ShFoldIfDoFor syn region	shCaseEsac	matchgroup=shConditional start="\<case\>" end="\<esac\>"	contains=@shCaseEsacList
@@ -405,7 +406,7 @@ syn region shCmdParenRegion matchgroup=shCmdSubRegion start="((\@!" skip='\\\\\|
 if exists("b:is_bash")
  syn cluster shCommandSubList add=bashSpecialVariables,bashStatement
  syn cluster shCaseList add=bashAdminStatement,bashStatement
- syn keyword bashSpecialVariables contained auto_resume BASH BASH_ALIASES BASH_ALIASES BASH_ARGC BASH_ARGC BASH_ARGV BASH_ARGV BASH_CMDS BASH_CMDS BASH_COMMAND BASH_COMMAND BASH_ENV BASH_EXECUTION_STRING BASH_EXECUTION_STRING BASH_LINENO BASH_LINENO BASHOPTS BASHOPTS BASHPID BASHPID BASH_REMATCH BASH_REMATCH BASH_SOURCE BASH_SOURCE BASH_SUBSHELL BASH_SUBSHELL BASH_VERSINFO BASH_VERSION BASH_XTRACEFD BASH_XTRACEFD CDPATH COLUMNS COLUMNS COMP_CWORD COMP_CWORD COMP_KEY COMP_KEY COMP_LINE COMP_LINE COMP_POINT COMP_POINT COMPREPLY COMPREPLY COMP_TYPE COMP_TYPE COMP_WORDBREAKS COMP_WORDBREAKS COMP_WORDS COMP_WORDS COPROC COPROC DIRSTACK EMACS EMACS ENV ENV EUID FCEDIT FIGNORE FUNCNAME FUNCNAME FUNCNEST FUNCNEST GLOBIGNORE GROUPS histchars HISTCMD HISTCONTROL HISTFILE HISTFILESIZE HISTIGNORE HISTSIZE HISTTIMEFORMAT HISTTIMEFORMAT HOME HOSTFILE HOSTNAME HOSTTYPE IFS IGNOREEOF INPUTRC LANG LC_ALL LC_COLLATE LC_CTYPE LC_CTYPE LC_MESSAGES LC_NUMERIC LC_NUMERIC LINENO LINES LINES MACHTYPE MAIL MAILCHECK MAILPATH MAPFILE MAPFILE OLDPWD OPTARG OPTERR OPTIND OSTYPE PATH PIPESTATUS POSIXLY_CORRECT POSIXLY_CORRECT PPID PROMPT_COMMAND PS0 PS1 PS2 PS3 PS4 PWD RANDOM READLINE_LINE READLINE_LINE READLINE_POINT READLINE_POINT REPLY SECONDS SHELL SHELL SHELLOPTS SHLVL TIMEFORMAT TIMEOUT TMPDIR TMPDIR UID
+ syn keyword bashSpecialVariables contained auto_resume BASH BASH_ALIASES BASH_ARGC BASH_ARGV BASH_CMDS BASH_COMMAND BASH_ENV BASH_EXECUTION_STRING BASH_LINENO BASHOPTS BASHPID BASH_REMATCH BASH_SOURCE BASH_SUBSHELL BASH_VERSINFO BASH_VERSION BASH_XTRACEFD CDPATH COLUMNS COMP_CWORD COMP_KEY COMP_LINE COMP_POINT COMPREPLY COMP_TYPE COMP_WORDBREAKS COMP_WORDS COPROC COPROC_PID DIRSTACK EMACS ENV EUID FCEDIT FIGNORE FUNCNAME FUNCNEST GLOBIGNORE GROUPS histchars HISTCMD HISTCONTROL HISTFILE HISTFILESIZE HISTIGNORE HISTSIZE HISTTIMEFORMAT HOME HOSTFILE HOSTNAME HOSTTYPE IFS IGNOREEOF INPUTRC LANG LC_ALL LC_COLLATE LC_CTYPE LC_MESSAGES LC_NUMERIC LINENO LINES MACHTYPE MAIL MAILCHECK MAILPATH MAPFILE OLDPWD OPTARG OPTERR OPTIND OSTYPE PATH PIPESTATUS POSIXLY_CORRECT PPID PROMPT_COMMAND PS0 PS1 PS2 PS3 PS4 PWD RANDOM READLINE_LINE READLINE_POINT REPLY SECONDS SHELL SHELLOPTS SHLVL TIMEFORMAT TIMEOUT TMPDIR UID
  syn keyword bashStatement chmod clear complete du egrep expr fgrep find gnufind gnugrep grep head less ls mkdir mv rm rmdir rpm sed sleep sort strip tail
  syn keyword bashAdminStatement daemon killall killproc nice reload restart start status stop
  syn keyword bashStatement	command compgen
@@ -540,6 +541,7 @@ if !exists("b:is_posix")
 endif
 
 if exists("b:is_bash")
+ syn keyword shFunctionKey coproc
  ShFoldFunctions syn region shFunctionOne	matchgroup=shFunction start="^\s*[A-Za-z_0-9:][-a-zA-Z_0-9:]*\s*()\_s*{"		end="}"	contains=@shFunctionList		 skipwhite skipnl nextgroup=shFunctionStart,shQuickComment
  ShFoldFunctions syn region shFunctionTwo	matchgroup=shFunction start="\%(do\)\@!\&\<[A-Za-z_0-9:][-a-zA-Z_0-9:]*\>\s*\%(()\)\=\_s*{"	end="}"	contains=shFunctionKey,@shFunctionList contained skipwhite skipnl nextgroup=shFunctionStart,shQuickComment
  ShFoldFunctions syn region shFunctionThree	matchgroup=shFunction start="^\s*[A-Za-z_0-9:][-a-zA-Z_0-9:]*\s*()\_s*("		end=")"	contains=@shFunctionList		 skipwhite skipnl nextgroup=shFunctionStart,shQuickComment
@@ -693,10 +695,10 @@ if exists("b:is_kornshell") || exists("b:is_posix")
 " Additional bash Keywords: {{{1
 " =====================
 elseif exists("b:is_bash")
- syn keyword shStatement bg builtin disown export false fg getopts jobs let printf sleep true unalias
+ syn keyword shStatement bg builtin disown export false fg getopts jobs let printf true unalias
  syn keyword shStatement typeset nextgroup=shSetOption
  syn keyword shStatement fc hash history source suspend times type
- syn keyword shStatement bind builtin caller compopt declare dirs disown enable export help logout local mapfile popd pushd readarray shopt source typeset
+ syn keyword shStatement bind caller compopt declare dirs enable help logout local mapfile popd pushd readarray shopt typeset
 else
  syn keyword shStatement login newgrp
 endif
