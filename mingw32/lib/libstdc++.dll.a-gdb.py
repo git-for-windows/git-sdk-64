@@ -1,5 +1,5 @@
 # -*- python -*-
-# Copyright (C) 2009-2024 Free Software Foundation, Inc.
+# Copyright (C) 2009-2025 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ import gdb
 import os
 import os.path
 
-pythondir = '/mingw32/share/gcc-14.2.0/python'
+pythondir = '/mingw32/share/gcc-15.1.0/python'
 libdir = '/mingw32/lib/../lib'
 
 # This file might be loaded when there is no current objfile.  This
@@ -54,6 +54,11 @@ if gdb.current_objfile () is not None:
 
     if not dir_ in sys.path:
         sys.path.insert(0, dir_)
+
+    gdb.execute('skip -rfu ^std::(move|forward|as_const|(__)?addressof)')
+    gdb.execute('skip -rfu ^std::(shared|unique)_ptr<.*>::(get|operator)')
+    gdb.execute('skip -rfu ^std::(basic_string|vector|array|deque|(forward_)?list|(unordered_|flat_)?(multi)?(map|set)|span)<.*>::(c?r?(begin|end)|front|back|data|size|empty)')
+    gdb.execute('skip -rfu ^std::(basic_string|vector|array|deque|span)<.*>::operator.]')
 
 # Call a function as a plain import would not execute body of the included file
 # on repeated reloads of this object file.
