@@ -22,8 +22,8 @@
 
 progname=$0
 package=gettext-tools
-version=0.24
-archive_version=0.24
+version=0.24.1
+archive_version=0.24.1
 
 # Set variables
 # - gettext_datadir     directory where the data files are stored.
@@ -886,7 +886,7 @@ if test -f "$srcdir/Makefile.am"; then
   for file in $m4filelist; do
     same=no
     if test -f "$srcdir/$m4dir/$file"; then
-      if cmp -s "${datarootdir}/aclocal/$file" "$srcdir/$m4dir/$file"; then
+      if cmp -s "${datarootdir}/gettext/m4/$file" "$srcdir/$m4dir/$file"; then
         same=yes
       fi
     else
@@ -900,7 +900,7 @@ if test -f "$srcdir/Makefile.am"; then
       fi
     fi
     func_backup "$m4dir/$file"
-    func_linkorcopy "${datarootdir}/aclocal/$file" "${datarootdir}/aclocal/$file" "$m4dir/$file"
+    func_linkorcopy "${datarootdir}/gettext/m4/$file" "${datarootdir}/gettext/m4/$file" "$m4dir/$file"
   done
   missing_m4Makefileam=
   if test -n "$added_m4files"; then
@@ -1092,7 +1092,7 @@ else
   please="$please
 Please add the files
 $m4filelist
-from the ${datarootdir}/aclocal directory to your aclocal.m4 file.
+from the ${datarootdir}/gettext/m4 directory to your aclocal.m4 file.
 "
 fi
 

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on February, 25 2025 by texi2html 1.78a -->
+<!-- Created on May, 2 2025 by texi2html 1.78a -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -239,8 +239,8 @@ and could not be done automatically by <code>gettextize</code>.
 
 <p>It can be invoked as follows:
 </p>
-<a name="IDX1117"></a>
 <a name="IDX1118"></a>
+<a name="IDX1119"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">gettextize [ <var>option</var>&hellip; ] [ <var>directory</var> ]
 </pre></td></tr></table>
 
@@ -249,13 +249,13 @@ and could not be done automatically by <code>gettextize</code>.
 <dl compact="compact">
 <dt> &lsquo;<samp>-f</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--force</samp>&rsquo;</dt>
-<dd><a name="IDX1119"></a>
-<a name="IDX1120"></a>
+<dd><a name="IDX1120"></a>
+<a name="IDX1121"></a>
 <p>Force replacement of files which already exist.
 </p>
 </dd>
 <dt> &lsquo;<samp>--po-dir=<var>dir</var></samp>&rsquo;</dt>
-<dd><a name="IDX1121"></a>
+<dd><a name="IDX1122"></a>
 <p>Specify a directory containing PO files.  Such a directory contains the
 translations into various languages of a particular POT file.  This
 option can be specified multiple times, once for each translation domain.
@@ -263,14 +263,14 @@ If it is not specified, the directory named &lsquo;<tt>po/</tt>&rsquo; is update
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-changelog</samp>&rsquo;</dt>
-<dd><a name="IDX1122"></a>
+<dd><a name="IDX1123"></a>
 <p>Don't update or create ChangeLog files.  By default, <code>gettextize</code>
 logs all changes (file additions, modifications and removals) in a
 file called &lsquo;<samp>ChangeLog</samp>&rsquo; in each affected directory.
 </p>
 </dd>
 <dt> &lsquo;<samp>--symlink</samp>&rsquo;</dt>
-<dd><a name="IDX1123"></a>
+<dd><a name="IDX1124"></a>
 <p>Make symbolic links instead of copying the needed files.  This can be
 useful to save a few kilobytes of disk space, but it requires extra
 effort to create self-contained tarballs, it may disturb some mechanism
@@ -280,20 +280,20 @@ bugs when a newer version of <code>gettext</code> is installed on the system.
 </dd>
 <dt> &lsquo;<samp>-n</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--dry-run</samp>&rsquo;</dt>
-<dd><a name="IDX1124"></a>
-<a name="IDX1125"></a>
+<dd><a name="IDX1125"></a>
+<a name="IDX1126"></a>
 <p>Print modifications but don't perform them.  All actions that
 <code>gettextize</code> would normally execute are inhibited and instead only
 listed on standard output.
 </p>
 </dd>
 <dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
-<dd><a name="IDX1126"></a>
+<dd><a name="IDX1127"></a>
 <p>Display this help and exit.
 </p>
 </dd>
 <dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
-<dd><a name="IDX1127"></a>
+<dd><a name="IDX1128"></a>
 <p>Output version information and exit.
 </p>
 </dd>
@@ -395,7 +395,7 @@ changes needed in each.
 </p>
 <p>So, here comes a list of files, each one followed by a description of
 all alterations it needs.  Many examples are taken out from the GNU
-<code>gettext</code> 0.24 distribution itself, or from the GNU
+<code>gettext</code> 0.24.1 distribution itself, or from the GNU
 <code>hello</code> distribution (<a href="https://www.gnu.org/software/hello">https://www.gnu.org/software/hello</a>).
 You may indeed refer to the source code of the GNU <code>gettext</code> and
 GNU <code>hello</code> packages, as they are intended to be good examples for
@@ -506,8 +506,8 @@ the &lsquo;<tt>po/Makefile</tt>&rsquo; when it is created.  They present an oppo
 add rules for special PO files to the Makefile, without needing to mess
 with &lsquo;<tt>po/Makefile.in.in</tt>&rsquo;.
 </p>
-<a name="IDX1128"></a>
 <a name="IDX1129"></a>
+<a name="IDX1130"></a>
 <p>GNU gettext comes with a &lsquo;<tt>Rules-quot</tt>&rsquo; file, containing rules for
 building catalogs &lsquo;<tt>en@quot.po</tt>&rsquo; and &lsquo;<tt>en@boldquot.po</tt>&rsquo;.  The
 effect of &lsquo;<tt>en@quot.po</tt>&rsquo; is that people who set their <code>LANGUAGE</code>
@@ -537,12 +537,12 @@ letters.  See <a href="gettext_9.html#SEC123">Invoking the <code>msgfilter</code
 </p>
 <ol>
 <li> Declare the package and version.
-<a name="IDX1130"></a>
+<a name="IDX1131"></a>
 
 <p>This is done by a set of lines like these:
 </p>
 <table><tr><td>&nbsp;</td><td><pre class="example">PACKAGE=gettext
-VERSION=0.24
+VERSION=0.24.1
 AC_DEFINE_UNQUOTED(PACKAGE, &quot;$PACKAGE&quot;)
 AC_DEFINE_UNQUOTED(VERSION, &quot;$VERSION&quot;)
 AC_SUBST(PACKAGE)
@@ -551,13 +551,13 @@ AC_SUBST(VERSION)
 
 <p>or, if you are using GNU <code>automake</code>, by a line like this:
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">AM_INIT_AUTOMAKE(gettext, 0.24)
+<table><tr><td>&nbsp;</td><td><pre class="example">AM_INIT_AUTOMAKE(gettext, 0.24.1)
 </pre></td></tr></table>
 
 <p>Of course, you replace &lsquo;<samp>gettext</samp>&rsquo; with the name of your package,
-and &lsquo;<samp>0.24</samp>&rsquo; by its version numbers, exactly as they
+and &lsquo;<samp>0.24.1</samp>&rsquo; by its version numbers, exactly as they
 should appear in the packaged <code>tar</code> file name of your distribution
-(&lsquo;<tt>gettext-0.24.tar.gz</tt>&rsquo;, here).
+(&lsquo;<tt>gettext-0.24.1.tar.gz</tt>&rsquo;, here).
 </p>
 </li><li> Check for internationalization support.
 
@@ -634,7 +634,7 @@ the simplest is to concatenate the files &lsquo;<tt>build-to-host.m4</tt>&rsquo;
 &lsquo;<tt>gettext.m4</tt>&rsquo;, &lsquo;<tt>host-cpu-c-abi.m4</tt>&rsquo;, &lsquo;<tt>intlmacosx.m4</tt>&rsquo;,
 &lsquo;<tt>iconv.m4</tt>&rsquo;, &lsquo;<tt>lib-ld.m4</tt>&rsquo;, &lsquo;<tt>lib-link.m4</tt>&rsquo;, &lsquo;<tt>lib-prefix.m4</tt>&rsquo;,
 &lsquo;<tt>nls.m4</tt>&rsquo;, &lsquo;<tt>po.m4</tt>&rsquo;, &lsquo;<tt>progtest.m4</tt>&rsquo; from GNU <code>gettext</code>'s
-&lsquo;<tt>m4/</tt>&rsquo; directory into a single file.
+&lsquo;<tt><var>prefix</var>/share/gettext/m4/</tt>&rsquo; directory into a single file.
 </p>
 <p>If you already have an &lsquo;<tt>aclocal.m4</tt>&rsquo; file, then you will have
 to merge the said macro files into your &lsquo;<tt>aclocal.m4</tt>&rsquo;.  Note that if
@@ -649,7 +649,8 @@ out there.
 to copy the files &lsquo;<tt>build-to-host.m4</tt>&rsquo;, &lsquo;<tt>gettext.m4</tt>&rsquo;,
 &lsquo;<tt>host-cpu-c-abi.m4</tt>&rsquo;, &lsquo;<tt>intlmacosx.m4</tt>&rsquo;, &lsquo;<tt>iconv.m4</tt>&rsquo;,
 &lsquo;<tt>lib-ld.m4</tt>&rsquo;, &lsquo;<tt>lib-link.m4</tt>&rsquo;, &lsquo;<tt>lib-prefix.m4</tt>&rsquo;, &lsquo;<tt>nls.m4</tt>&rsquo;,
-&lsquo;<tt>po.m4</tt>&rsquo;, &lsquo;<tt>progtest.m4</tt>&rsquo; from GNU <code>gettext</code>'s &lsquo;<tt>m4/</tt>&rsquo;
+&lsquo;<tt>po.m4</tt>&rsquo;, &lsquo;<tt>progtest.m4</tt>&rsquo; from GNU <code>gettext</code>'s
+&lsquo;<tt><var>prefix</var>/share/gettext/m4/</tt>&rsquo;
 directory to a subdirectory named &lsquo;<tt>m4/</tt>&rsquo; and add the line
 </p>
 <table><tr><td>&nbsp;</td><td><pre class="example">ACLOCAL_AMFLAGS = -I m4
@@ -657,21 +658,24 @@ directory to a subdirectory named &lsquo;<tt>m4/</tt>&rsquo; and add the line
 
 <p>to your top level &lsquo;<tt>Makefile.am</tt>&rsquo;.
 </p>
-<p>If you are using GNU <code>automake</code> 1.10 or newer, it is even easier:
+<p>If you are using GNU <code>automake</code> 1.12 or newer, it is even easier:
 Add the line
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">ACLOCAL_AMFLAGS = --install -I m4
+<table><tr><td>&nbsp;</td><td><pre class="example">ACLOCAL_AMFLAGS = -I m4
 </pre></td></tr></table>
 
-<p>to your top level &lsquo;<tt>Makefile.am</tt>&rsquo;, and run &lsquo;<samp>aclocal --install -I m4</samp>&rsquo;.
+<p>to your top level &lsquo;<tt>Makefile.am</tt>&rsquo;, and run
+&lsquo;<samp>aclocal --install --system-acdir=<var>prefix</var>/share/gettext/m4 -I m4</samp>&rsquo;.
 This will copy the needed files to the &lsquo;<tt>m4/</tt>&rsquo; subdirectory automatically,
 before updating &lsquo;<tt>aclocal.m4</tt>&rsquo;.
 </p>
+<p>Note: This <code>--system-acdir</code> option should only be used here, once.
+If you were to use it after <code>autopoint</code> has been run,
+it would destroy the consistency that <code>autopoint</code> guarantees
+and lead to all sorts of malfunction at build time.
+</p>
 <p>These macros check for the internationalization support functions
-and related informations.  Hopefully, once stabilized, these macros
-might be integrated in the standard Autoconf set, because this
-piece of <code>m4</code> code will be the same for all projects using GNU
-<code>gettext</code>.
+and related information.
 </p>
 
 <a name="config_002eh_002ein"></a>
@@ -922,7 +926,7 @@ configuration file (usually called &lsquo;<tt>config.h</tt>&rsquo;).  In the two
 situations, however, this macro will not be defined, thus it will evaluate
 to 0 in C preprocessor expressions.
 </p>
-<a name="IDX1131"></a>
+<a name="IDX1132"></a>
 <p>&lsquo;<tt>gettext.h</tt>&rsquo; is a convenience header file for conditional use of
 &lsquo;<tt>&lt;libintl.h&gt;</tt>&rsquo;, depending on the <code>ENABLE_NLS</code> macro.  If
 <code>ENABLE_NLS</code> is set, it includes &lsquo;<tt>&lt;libintl.h&gt;</tt>&rsquo;; otherwise it
@@ -1005,7 +1009,7 @@ to empty and doesn't change <code>CPPFLAGS</code>.
 </p>
 <ul>
 <li>
-<a name="IDX1132"></a>
+<a name="IDX1133"></a>
 Some operating systems have <code>gettext</code> in the C library, for example
 glibc.  Some have it in a separate library <code>libintl</code>.  GNU <code>libintl</code>
 might have been installed as part of the GNU <code>gettext</code> package.
@@ -1150,7 +1154,7 @@ empty and doesn't change <code>CPPFLAGS</code>.
 </p>
 <ul>
 <li>
-<a name="IDX1133"></a>
+<a name="IDX1134"></a>
 Some operating systems have <code>iconv</code> in the C library, for example
 glibc.  Some have it in a separate library <code>libiconv</code>, for example
 OSF/1 or FreeBSD.  Regardless of the operating system, GNU <code>libiconv</code>
@@ -1292,7 +1296,7 @@ all the files that <code>gettextize</code> mentions as &quot;copy&quot;.  Instea
 adds to the &lsquo;<tt>configure.ac</tt>&rsquo; or &lsquo;<tt>configure.in</tt>&rsquo; a line of the
 form
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">AM_GNU_GETTEXT_VERSION(0.23.1)
+<table><tr><td>&nbsp;</td><td><pre class="example">AM_GNU_GETTEXT_VERSION(0.24.1)
 </pre></td></tr></table>
 
 <p>and adds to the package's pre-build script an invocation of
@@ -1381,9 +1385,9 @@ this version into the package.
 <p>To extract the latest available infrastructure which satisfies a version
 requirement, then you can use the form
 <code>AM_GNU_GETTEXT_REQUIRE_VERSION(<var>version</var>)</code> instead.  For
-example, if gettext 0.23.1 is installed on your system
+example, if gettext 0.24.1 is installed on your system
 and <code>0.19.1</code> is requested, then the infrastructure files of version
-0.23.1 will be copied into a source package.
+0.24.1 will be copied into a source package.
 </p>
 
 <a name="SEC267"></a>
@@ -1392,15 +1396,15 @@ and <code>0.19.1</code> is requested, then the infrastructure files of version
 <dl compact="compact">
 <dt> &lsquo;<samp>-f</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--force</samp>&rsquo;</dt>
-<dd><a name="IDX1134"></a>
-<a name="IDX1135"></a>
+<dd><a name="IDX1135"></a>
+<a name="IDX1136"></a>
 <p>Force overwriting of files that already exist.
 </p>
 </dd>
 <dt> &lsquo;<samp>-n</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--dry-run</samp>&rsquo;</dt>
-<dd><a name="IDX1136"></a>
-<a name="IDX1137"></a>
+<dd><a name="IDX1137"></a>
+<a name="IDX1138"></a>
 <p>Print modifications but don't perform them.  All file copying actions that
 <code>autopoint</code> would normally execute are inhibited and instead only
 listed on standard output.
@@ -1414,21 +1418,21 @@ listed on standard output.
 
 <dl compact="compact">
 <dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
-<dd><a name="IDX1138"></a>
+<dd><a name="IDX1139"></a>
 <p>Display this help and exit.
 </p>
 </dd>
 <dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
-<dd><a name="IDX1139"></a>
+<dd><a name="IDX1140"></a>
 <p>Output version information and exit.
 </p>
 </dd>
 </dl>
 
 <p><code>autopoint</code> supports the GNU <code>gettext</code> versions from 0.10.35
-to the current one, 0.23.1.  In order to apply
+to the current one, 0.24.1.  In order to apply
 <code>autopoint</code> to a package using a <code>gettext</code> version newer than
-0.23.1, you need to install this same version of GNU
+0.24.1, you need to install this same version of GNU
 <code>gettext</code> at least.
 </p>
 <p>In packages using GNU <code>automake</code>, an invocation of <code>autopoint</code>
@@ -1476,7 +1480,7 @@ $ make distclean
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Bruno Haible</em> on <em>February, 25 2025</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
+  This document was generated by <em>Bruno Haible</em> on <em>May, 2 2025</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
  </font>
  <br>
 

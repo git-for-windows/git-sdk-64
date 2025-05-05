@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on February, 25 2025 by texi2html 1.78a -->
+<!-- Created on May, 2 2025 by texi2html 1.78a -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -820,8 +820,28 @@ options at different times are guaranteed to produce the same results.
 would not entirely be in ASCII.
 </p>
 </dd>
-<dt> &lsquo;<samp>--copyright-holder=<var>string</var></samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--no-git</samp>&rsquo;</dt>
 <dd><a name="IDX233"></a>
+<p>Don't use the <code>git</code> program
+to produce a reproducible &lsquo;<samp>POT-Creation-Date</samp>&rsquo; field in the output.
+</p>
+<p>Use this option, for speed, if
+your project has a very long <code>Git</code> history
+(hundreds of thousands of commits)
+or you are specifying thousands of input files.
+</p>
+<p>By default, <code>xgettext</code> determines the &lsquo;<samp>POT-Creation-Date</samp>&rsquo; as
+the maximum version-controlled modification time
+among all the given input files.
+With this option, you can specify that it should instead use
+the maximum modification time (time stamp on disk)
+among all the given input files.
+</p>
+<p>By &ldquo;version control&rdquo;, here we mean the <code>Git</code> version control system.
+</p>
+</dd>
+<dt> &lsquo;<samp>--copyright-holder=<var>string</var></samp>&rsquo;</dt>
+<dd><a name="IDX234"></a>
 <p>Set the copyright holder in the output.  <var>string</var> should be the
 copyright holder of the surrounding package.  (Note that the msgstr
 strings, extracted from the package's sources, belong to the copyright
@@ -837,25 +857,25 @@ simply because <code>xgettext</code> was first used in the GNU project.
 </p>
 </dd>
 <dt> &lsquo;<samp>--foreign-user</samp>&rsquo;</dt>
-<dd><a name="IDX234"></a>
+<dd><a name="IDX235"></a>
 <p>Omit FSF copyright in output.  This option is equivalent to
 &lsquo;<samp>--copyright-holder=''</samp>&rsquo;.  It can be useful for packages outside the GNU
 project that want their translations to be in the public domain.
 </p>
 </dd>
 <dt> &lsquo;<samp>--package-name=<var>package</var></samp>&rsquo;</dt>
-<dd><a name="IDX235"></a>
+<dd><a name="IDX236"></a>
 <p>Set the package name in the header of the output.
 </p>
 </dd>
 <dt> &lsquo;<samp>--package-version=<var>version</var></samp>&rsquo;</dt>
-<dd><a name="IDX236"></a>
+<dd><a name="IDX237"></a>
 <p>Set the package version in the header of the output.  This option has an
 effect only if the &lsquo;<samp>--package-name</samp>&rsquo; option is also used.
 </p>
 </dd>
 <dt> &lsquo;<samp>--msgid-bugs-address=<var>email@address</var></samp>&rsquo;</dt>
-<dd><a name="IDX237"></a>
+<dd><a name="IDX238"></a>
 <p>Set the reporting address for msgid bugs.  This is the email address or URL
 to which the translators shall report bugs in the untranslated strings:
 </p>
@@ -880,7 +900,7 @@ Don't forget to specify this option.
 </p>
 </dd>
 <dt> &lsquo;<samp>--reference=<var>file</var></samp>&rsquo;</dt>
-<dd><a name="IDX238"></a>
+<dd><a name="IDX239"></a>
 
 <p>Declares that the output depends on the contents of the given FILE.
 This has an influence on the &lsquo;<samp>POT-Creation-Date</samp>&rsquo; field in the output.
@@ -899,15 +919,15 @@ but instead is generated from one or more files that are under version control.
 </dd>
 <dt> &lsquo;<samp>-m[<var>string</var>]</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--msgstr-prefix[=<var>string</var>]</samp>&rsquo;</dt>
-<dd><a name="IDX239"></a>
-<a name="IDX240"></a>
+<dd><a name="IDX240"></a>
+<a name="IDX241"></a>
 <p>Use <var>string</var> (or &quot;&quot; if not specified) as prefix for msgstr values.
 </p>
 </dd>
 <dt> &lsquo;<samp>-M[<var>string</var>]</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--msgstr-suffix[=<var>string</var>]</samp>&rsquo;</dt>
-<dd><a name="IDX241"></a>
-<a name="IDX242"></a>
+<dd><a name="IDX242"></a>
+<a name="IDX243"></a>
 <p>Use <var>string</var> (or &quot;&quot; if not specified) as suffix for msgstr values.
 </p>
 </dd>
@@ -920,22 +940,22 @@ but instead is generated from one or more files that are under version control.
 <dl compact="compact">
 <dt> &lsquo;<samp>-h</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
-<dd><a name="IDX243"></a>
-<a name="IDX244"></a>
+<dd><a name="IDX244"></a>
+<a name="IDX245"></a>
 <p>Display this help and exit.
 </p>
 </dd>
 <dt> &lsquo;<samp>-V</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
-<dd><a name="IDX245"></a>
-<a name="IDX246"></a>
+<dd><a name="IDX246"></a>
+<a name="IDX247"></a>
 <p>Output version information and exit.
 </p>
 </dd>
 <dt> &lsquo;<samp>-v</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--verbose</samp>&rsquo;</dt>
-<dd><a name="IDX247"></a>
-<a name="IDX248"></a>
+<dd><a name="IDX248"></a>
+<a name="IDX249"></a>
 <p>Increase verbosity level.
 </p>
 </dd>
@@ -968,8 +988,8 @@ for these different parts of the package, the solution is to create
 intermediate PO template files for each of the parts and then combine (merge)
 them together.
 </p>
-<a name="IDX249"></a>
 <a name="IDX250"></a>
+<a name="IDX251"></a>
 <p>For example, assume you have two source files &lsquo;<tt>a.c</tt>&rsquo; and &lsquo;<tt>b.py</tt>&rsquo;,
 and want to extract their translatable strings in separate steps.
 </p>
@@ -1026,7 +1046,7 @@ are to be reviewed and edited by a translator; this is not desired here.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Bruno Haible</em> on <em>February, 25 2025</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
+  This document was generated by <em>Bruno Haible</em> on <em>May, 2 2025</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
  </font>
  <br>
 

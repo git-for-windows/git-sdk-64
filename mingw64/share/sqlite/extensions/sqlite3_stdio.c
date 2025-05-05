@@ -46,6 +46,11 @@
 ** use O_U8TEXT when writing to the Windows console (or anything
 ** else for which _isatty() returns true) and to use O_BINARY or O_TEXT
 ** for all other output channels.
+**
+** The SQLITE_USE_W32_FOR_CONSOLE_IO macro is also available.  If
+** defined, it forces the use of Win32 APIs for all console I/O, both
+** input and output.  This is necessary for some non-Microsoft run-times
+** that implement stdio differently from Microsoft/Visual-Studio.
 */
 #if defined(SQLITE_U8TEXT_ONLY)
 # define UseWtextForOutput(fd) 1
@@ -96,8 +101,8 @@ FILE *sqlite3_fopen(const char *zFilename, const char *zMode){
 
   sz1 = (int)strlen(zFilename);
   sz2 = (int)strlen(zMode);
-  b1 = malloc( (sz1+1)*sizeof(b1[0]) );
-  b2 = malloc( (sz2+1)*sizeof(b1[0]) );
+  b1 = sqlite3_malloc( (sz1+1)*sizeof(b1[0]) );
+  b2 = sqlite3_malloc( (sz2+1)*sizeof(b1[0]) );
   if( b1 && b2 ){
     sz1 = MultiByteToWideChar(CP_UTF8, 0, zFilename, sz1, b1, sz1);
     b1[sz1] = 0;
@@ -105,8 +110,8 @@ FILE *sqlite3_fopen(const char *zFilename, const char *zMode){
     b2[sz2] = 0;
     fp = _wfopen(b1, b2);
   }
-  free(b1);
-  free(b2);
+  sqlite3_free(b1);
+  sqlite3_free(b2);
   simBinaryOther = 0;
   return fp;
 }
@@ -122,8 +127,8 @@ FILE *sqlite3_popen(const char *zCommand, const char *zMode){
 
   sz1 = (int)strlen(zCommand);
   sz2 = (int)strlen(zMode);
-  b1 = malloc( (sz1+1)*sizeof(b1[0]) );
-  b2 = malloc( (sz2+1)*sizeof(b1[0]) );
+  b1 = sqlite3_malloc( (sz1+1)*sizeof(b1[0]) );
+  b2 = sqlite3_malloc( (sz2+1)*sizeof(b1[0]) );
   if( b1 && b2 ){
     sz1 = MultiByteToWideChar(CP_UTF8, 0, zCommand, sz1, b1, sz1);
     b1[sz1] = 0;
@@ -131,8 +136,8 @@ FILE *sqlite3_popen(const char *zCommand, const char *zMode){
     b2[sz2] = 0;
     fp = _wpopen(b1, b2);
   }
-  free(b1);
-  free(b2);
+  sqlite3_free(b1);
+  sqlite3_free(b2);
   return fp;
 }
 
@@ -148,10 +153,20 @@ char *sqlite3_fgets(char *buf, int sz, FILE *in){
     */
     wchar_t *b1 = sqlite3_malloc( sz*sizeof(wchar_t) );
     if( b1==0 ) return 0;
-    _setmode(_fileno(in), IsConsole(in) ? _O_WTEXT : _O_U8TEXT);
-    if( fgetws(b1, sz/4, in)==0 ){
-      sqlite3_free(b1);
-      return 0;
+#ifdef SQLITE_USE_W32_FOR_CONSOLE_IO
+    DWORD nRead = 0;
+    if( IsConsole(in)
+     && ReadConsoleW(GetStdHandle(STD_INPUT_HANDLE), b1, sz-1, &nRead, 0)
+    ){
+      b1[nRead] = 0;
+    }else
+#endif
+    {
+      _setmode(_fileno(in), IsConsole(in) ? _O_WTEXT : _O_U8TEXT);
+      if( fgetws(b1, sz/4, in)==0 ){
+        sqlite3_free(b1);
+        return 0;
+      }
     }
     WideCharToMultiByte(CP_UTF8, 0, b1, -1, buf, sz, 0, 0);
     sqlite3_free(b1);
@@ -207,20 +222,34 @@ int sqlite3_fputs(const char *z, FILE *out){
     ** any translation. */
     return fputs(z, out);
   }else{
-    /* When writing to the command-prompt in Windows, it is necessary
-    ** to use O_U8TEXT to render Unicode U+0080 and greater.  Go ahead
-    ** use O_U8TEXT for everything in text mode.
+    /* One must use UTF16 in order to get unicode support when writing
+    ** to the console on Windows. 
     */
     int sz = (int)strlen(z);
     wchar_t *b1 = sqlite3_malloc( (sz+1)*sizeof(wchar_t) );
     if( b1==0 ) return 0;
     sz = MultiByteToWideChar(CP_UTF8, 0, z, sz, b1, sz);
     b1[sz] = 0;
-    _setmode(_fileno(out), _O_U8TEXT);
-    if( UseBinaryWText(out) ){
-      piecemealOutput(b1, sz, out);
-    }else{
-      fputws(b1, out);
+
+#ifdef SQLITE_USE_W32_FOR_CONSOLE_IO
+    DWORD nWr = 0;
+    if( IsConsole(out)
+      && WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE),b1,sz,&nWr,0)
+    ){
+      /* If writing to the console, then the WriteConsoleW() is all we
+      ** need to do. */
+    }else
+#endif
+    {
+      /* As long as SQLITE_USE_W32_FOR_CONSOLE_IO is not defined, or for
+      ** non-console I/O even if that macro is defined, write using the
+      ** standard library. */
+      _setmode(_fileno(out), _O_U8TEXT);
+      if( UseBinaryWText(out) ){
+        piecemealOutput(b1, sz, out);
+      }else{
+        fputws(b1, out);
+      }
     }
     sqlite3_free(b1);
     return 0;

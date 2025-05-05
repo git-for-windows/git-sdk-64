@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on February, 25 2025 by texi2html 1.78a -->
+<!-- Created on May, 2 2025 by texi2html 1.78a -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -64,8 +64,8 @@ ul.toc {list-style: none}
 performed automatically than by hand.  GNU <code>gettext</code> includes a
 complete set of tools for this purpose.
 </p>
-<a name="IDX508"></a>
 <a name="IDX509"></a>
+<a name="IDX510"></a>
 <p>When merging two packages into a single package, the resulting POT file
 will be the concatenation of the two packages' POT files.  Thus the
 maintainer must concatenate the two existing package translations into
@@ -73,7 +73,7 @@ a single translation catalog, for each language.  This is best performed
 using &lsquo;<samp>msgcat</samp>&rsquo;.  It is then the translators' duty to deal with any
 possible conflicts that arose during the merge.
 </p>
-<a name="IDX510"></a>
+<a name="IDX511"></a>
 <p>When a translator takes over the translation job from another translator,
 but she uses a different character encoding in her locale, she will
 convert the catalog to her character encoding.  This is best done through
@@ -85,8 +85,8 @@ file (and not let the translators do the same job twice).  One way to do
 this is through &lsquo;<samp>msggrep</samp>&rsquo;, another is to create a POT file for
 that source file and use &lsquo;<samp>msgmerge</samp>&rsquo;.
 </p>
-<a name="IDX511"></a>
 <a name="IDX512"></a>
+<a name="IDX513"></a>
 <p>When a translator wants to adjust some translation catalog for a special
 dialect or orthography &mdash; for example, German as written in Switzerland
 versus German as written in Germany &mdash; she needs to apply some text
@@ -99,12 +99,12 @@ like &lsquo;<samp>msgfilter sed -e d | sed -e '/^# /d'</samp>&rsquo;.  Note that
 POT file may have had different comments and different plural message counts,
 that's why it's better to use the original POT file if available.
 </p>
-<a name="IDX513"></a>
+<a name="IDX514"></a>
 <p>When a translator wants to check her translations, for example according
 to orthography rules or using a non-interactive spell checker, she can do
 so using the &lsquo;<samp>msgexec</samp>&rsquo; program.
 </p>
-<a name="IDX514"></a>
+<a name="IDX515"></a>
 <p>When third party tools create PO or POT files, sometimes duplicates cannot
 be avoided.  But the GNU <code>gettext</code> tools give an error when they
 encounter duplicate msgids in the same file and in the same domain.
@@ -116,7 +116,7 @@ duplicates, occurring in different files.
 <p>&lsquo;<samp>msgcmp</samp>&rsquo; can be used to check whether a translation catalog is
 completely translated.
 </p>
-<a name="IDX515"></a>
+<a name="IDX516"></a>
 <p>&lsquo;<samp>msgattrib</samp>&rsquo; can be used to select and extract only the fuzzy
 or untranslated messages of a translation catalog.
 </p>
@@ -137,8 +137,8 @@ write other specialized programs that process PO files.
 <table><tr><td>&nbsp;</td><td><pre class="example">msgcat [<var>option</var>] [<var>inputfile</var>]...
 </pre></td></tr></table>
 
-<a name="IDX516"></a>
 <a name="IDX517"></a>
+<a name="IDX518"></a>
 <p>The <code>msgcat</code> program concatenates and merges the specified PO files.
 It finds messages which are common to two or more of the specified PO files.
 By using the <code>--more-than</code> option, greater commonality may be requested
@@ -164,16 +164,16 @@ POT files.
 </dd>
 <dt> &lsquo;<samp>-f <var>file</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--files-from=<var>file</var></samp>&rsquo;</dt>
-<dd><a name="IDX518"></a>
-<a name="IDX519"></a>
+<dd><a name="IDX519"></a>
+<a name="IDX520"></a>
 <p>Read the names of the input files from <var>file</var> instead of getting
 them from the command line.
 </p>
 </dd>
 <dt> &lsquo;<samp>-D <var>directory</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--directory=<var>directory</var></samp>&rsquo;</dt>
-<dd><a name="IDX520"></a>
-<a name="IDX521"></a>
+<dd><a name="IDX521"></a>
+<a name="IDX522"></a>
 <p>Add <var>directory</var> to the list of directories.  Source files are
 searched relative to this list of directories.  The resulting &lsquo;<tt>.po</tt>&rsquo;
 file will be written relative to the current directory, though.
@@ -190,14 +190,14 @@ file will be written relative to the current directory, though.
 <dl compact="compact">
 <dt> &lsquo;<samp>-o <var>file</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--output-file=<var>file</var></samp>&rsquo;</dt>
-<dd><a name="IDX522"></a>
-<a name="IDX523"></a>
+<dd><a name="IDX523"></a>
+<a name="IDX524"></a>
 <p>Write output to specified file.
 </p>
 </dd>
 </dl>
 
-<a name="IDX524"></a>
+<a name="IDX525"></a>
 <p>The results are written to standard output if no output file is specified
 or if it is &lsquo;<samp>-</samp>&rsquo;.
 </p>
@@ -208,24 +208,24 @@ or if it is &lsquo;<samp>-</samp>&rsquo;.
 <dl compact="compact">
 <dt> &lsquo;<samp>-&lt; <var>number</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--less-than=<var>number</var></samp>&rsquo;</dt>
-<dd><a name="IDX525"></a>
-<a name="IDX526"></a>
+<dd><a name="IDX526"></a>
+<a name="IDX527"></a>
 <p>Print messages with less than <var>number</var> definitions, defaults to infinite
 if not set.
 </p>
 </dd>
 <dt> &lsquo;<samp>-&gt; <var>number</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--more-than=<var>number</var></samp>&rsquo;</dt>
-<dd><a name="IDX527"></a>
-<a name="IDX528"></a>
+<dd><a name="IDX528"></a>
+<a name="IDX529"></a>
 <p>Print messages with more than <var>number</var> definitions, defaults to 0 if not
 set.
 </p>
 </dd>
 <dt> &lsquo;<samp>-u</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--unique</samp>&rsquo;</dt>
-<dd><a name="IDX529"></a>
-<a name="IDX530"></a>
+<dd><a name="IDX530"></a>
+<a name="IDX531"></a>
 <p>Shorthand for &lsquo;<samp>--less-than=2</samp>&rsquo;.  Requests that only unique messages be
 printed.
 </p>
@@ -239,14 +239,14 @@ printed.
 <dl compact="compact">
 <dt> &lsquo;<samp>-P</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-input</samp>&rsquo;</dt>
-<dd><a name="IDX531"></a>
-<a name="IDX532"></a>
+<dd><a name="IDX532"></a>
+<a name="IDX533"></a>
 <p>Assume the input files are Java ResourceBundles in Java <code>.properties</code>
 syntax, not in PO file syntax.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-input</samp>&rsquo;</dt>
-<dd><a name="IDX533"></a>
+<dd><a name="IDX534"></a>
 <p>Assume the input files are NeXTstep/GNUstep localized resource files in
 <code>.strings</code> syntax, not in PO file syntax.
 </p>
@@ -261,19 +261,19 @@ syntax, not in PO file syntax.
 <dl compact="compact">
 <dt> &lsquo;<samp>-t</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--to-code=<var>name</var></samp>&rsquo;</dt>
-<dd><a name="IDX534"></a>
-<a name="IDX535"></a>
+<dd><a name="IDX535"></a>
+<a name="IDX536"></a>
 <p>Specify encoding for output.
 </p>
 </dd>
 <dt> &lsquo;<samp>--use-first</samp>&rsquo;</dt>
-<dd><a name="IDX536"></a>
+<dd><a name="IDX537"></a>
 <p>Use first available translation for each message.  Don't merge several
 translations into one.
 </p>
 </dd>
 <dt> &lsquo;<samp>--lang=<var>catalogname</var></samp>&rsquo;</dt>
-<dd><a name="IDX537"></a>
+<dd><a name="IDX538"></a>
 <p>Specify the &lsquo;<samp>Language</samp>&rsquo; field to be used in the header entry.  See
 <a href="gettext_6.html#SEC60">Filling in the Header Entry</a> for the meaning of this field.  Note: The
 &lsquo;<samp>Language-Team</samp>&rsquo; and &lsquo;<samp>Plural-Forms</samp>&rsquo; fields are left unchanged.
@@ -281,38 +281,38 @@ translations into one.
 </dd>
 <dt> &lsquo;<samp>--color</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--color=<var>when</var></samp>&rsquo;</dt>
-<dd><a name="IDX538"></a>
+<dd><a name="IDX539"></a>
 <p>Specify whether or when to use colors and other text attributes.
 See <a href="#SEC171">The <code>--color</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--style=<var>style_file</var></samp>&rsquo;</dt>
-<dd><a name="IDX539"></a>
+<dd><a name="IDX540"></a>
 <p>Specify the CSS style rule file to use for <code>--color</code>.
 See <a href="#SEC173">The <code>--style</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--force-po</samp>&rsquo;</dt>
-<dd><a name="IDX540"></a>
+<dd><a name="IDX541"></a>
 <p>Always write an output file even if it contains no message.
 </p>
 </dd>
 <dt> &lsquo;<samp>-i</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--indent</samp>&rsquo;</dt>
-<dd><a name="IDX541"></a>
-<a name="IDX542"></a>
+<dd><a name="IDX542"></a>
+<a name="IDX543"></a>
 <p>Write the .po file using indented style.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-location</samp>&rsquo;</dt>
-<dd><a name="IDX543"></a>
+<dd><a name="IDX544"></a>
 <p>Do not write &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines.
 </p>
 </dd>
 <dt> &lsquo;<samp>-n</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--add-location=<var>type</var></samp>&rsquo;</dt>
-<dd><a name="IDX544"></a>
-<a name="IDX545"></a>
+<dd><a name="IDX545"></a>
+<a name="IDX546"></a>
 <p>Generate &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines (default).
 </p>
 <p>The optional <var>type</var> can be either &lsquo;<samp>full</samp>&rsquo;, &lsquo;<samp>file</samp>&rsquo;, or
@@ -323,7 +323,7 @@ suppresses the lines (same as <code>--no-location</code>).
 </p>
 </dd>
 <dt> &lsquo;<samp>--strict</samp>&rsquo;</dt>
-<dd><a name="IDX546"></a>
+<dd><a name="IDX547"></a>
 <p>Write out a strict Uniforum conforming PO file.  Note that this
 Uniforum format should be avoided because it doesn't support the
 GNU extensions.
@@ -331,30 +331,30 @@ GNU extensions.
 </dd>
 <dt> &lsquo;<samp>-p</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-output</samp>&rsquo;</dt>
-<dd><a name="IDX547"></a>
-<a name="IDX548"></a>
+<dd><a name="IDX548"></a>
+<a name="IDX549"></a>
 <p>Write out a Java ResourceBundle in Java <code>.properties</code> syntax.  Note
 that this file format doesn't support plural forms and silently drops
 obsolete messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-output</samp>&rsquo;</dt>
-<dd><a name="IDX549"></a>
+<dd><a name="IDX550"></a>
 <p>Write out a NeXTstep/GNUstep localized resource file in <code>.strings</code> syntax.
 Note that this file format doesn't support plural forms.
 </p>
 </dd>
 <dt> &lsquo;<samp>-w <var>number</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--width=<var>number</var></samp>&rsquo;</dt>
-<dd><a name="IDX550"></a>
-<a name="IDX551"></a>
+<dd><a name="IDX551"></a>
+<a name="IDX552"></a>
 <p>Set the output page width.  Long strings in the output files will be
 split across multiple lines in order to ensure that each line's width
 (= number of screen columns) is less or equal to the given <var>number</var>.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-wrap</samp>&rsquo;</dt>
-<dd><a name="IDX552"></a>
+<dd><a name="IDX553"></a>
 <p>Do not break long message lines.  Message lines whose width exceeds the
 output page width will not be split into several lines.  Only file reference
 lines which are wider than the output page width will be split.
@@ -362,17 +362,17 @@ lines which are wider than the output page width will be split.
 </dd>
 <dt> &lsquo;<samp>-s</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--sort-output</samp>&rsquo;</dt>
-<dd><a name="IDX553"></a>
-<a name="IDX554"></a>
+<dd><a name="IDX554"></a>
 <a name="IDX555"></a>
+<a name="IDX556"></a>
 <p>Generate sorted output.  Note that using this option makes it much harder
 for the translator to understand each message's context.
 </p>
 </dd>
 <dt> &lsquo;<samp>-F</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--sort-by-file</samp>&rsquo;</dt>
-<dd><a name="IDX556"></a>
-<a name="IDX557"></a>
+<dd><a name="IDX557"></a>
+<a name="IDX558"></a>
 <p>Sort output by file location.
 </p>
 </dd>
@@ -385,15 +385,15 @@ for the translator to understand each message's context.
 <dl compact="compact">
 <dt> &lsquo;<samp>-h</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
-<dd><a name="IDX558"></a>
-<a name="IDX559"></a>
+<dd><a name="IDX559"></a>
+<a name="IDX560"></a>
 <p>Display this help and exit.
 </p>
 </dd>
 <dt> &lsquo;<samp>-V</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
-<dd><a name="IDX560"></a>
-<a name="IDX561"></a>
+<dd><a name="IDX561"></a>
+<a name="IDX562"></a>
 <p>Output version information and exit.
 </p>
 </dd>
@@ -408,7 +408,7 @@ for the translator to understand each message's context.
 <table><tr><td>&nbsp;</td><td><pre class="example">msgconv [<var>option</var>] [<var>inputfile</var>]
 </pre></td></tr></table>
 
-<a name="IDX562"></a>
+<a name="IDX563"></a>
 <p>The <code>msgconv</code> program converts a translation catalog to a different
 character encoding.
 </p>
@@ -423,8 +423,8 @@ character encoding.
 </dd>
 <dt> &lsquo;<samp>-D <var>directory</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--directory=<var>directory</var></samp>&rsquo;</dt>
-<dd><a name="IDX563"></a>
-<a name="IDX564"></a>
+<dd><a name="IDX564"></a>
+<a name="IDX565"></a>
 <p>Add <var>directory</var> to the list of directories.  Source files are
 searched relative to this list of directories.  The resulting &lsquo;<tt>.po</tt>&rsquo;
 file will be written relative to the current directory, though.
@@ -441,8 +441,8 @@ file will be written relative to the current directory, though.
 <dl compact="compact">
 <dt> &lsquo;<samp>-o <var>file</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--output-file=<var>file</var></samp>&rsquo;</dt>
-<dd><a name="IDX565"></a>
-<a name="IDX566"></a>
+<dd><a name="IDX566"></a>
+<a name="IDX567"></a>
 <p>Write output to specified file.
 </p>
 </dd>
@@ -458,8 +458,8 @@ or if it is &lsquo;<samp>-</samp>&rsquo;.
 <dl compact="compact">
 <dt> &lsquo;<samp>-t</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--to-code=<var>name</var></samp>&rsquo;</dt>
-<dd><a name="IDX567"></a>
-<a name="IDX568"></a>
+<dd><a name="IDX568"></a>
+<a name="IDX569"></a>
 <p>Specify encoding for output.
 </p>
 </dd>
@@ -474,14 +474,14 @@ or if it is &lsquo;<samp>-</samp>&rsquo;.
 <dl compact="compact">
 <dt> &lsquo;<samp>-P</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-input</samp>&rsquo;</dt>
-<dd><a name="IDX569"></a>
-<a name="IDX570"></a>
+<dd><a name="IDX570"></a>
+<a name="IDX571"></a>
 <p>Assume the input file is a Java ResourceBundle in Java <code>.properties</code>
 syntax, not in PO file syntax.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-input</samp>&rsquo;</dt>
-<dd><a name="IDX571"></a>
+<dd><a name="IDX572"></a>
 <p>Assume the input file is a NeXTstep/GNUstep localized resource file in
 <code>.strings</code> syntax, not in PO file syntax.
 </p>
@@ -496,37 +496,37 @@ syntax, not in PO file syntax.
 <dl compact="compact">
 <dt> &lsquo;<samp>--color</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--color=<var>when</var></samp>&rsquo;</dt>
-<dd><a name="IDX572"></a>
+<dd><a name="IDX573"></a>
 <p>Specify whether or when to use colors and other text attributes.
 See <a href="#SEC171">The <code>--color</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--style=<var>style_file</var></samp>&rsquo;</dt>
-<dd><a name="IDX573"></a>
+<dd><a name="IDX574"></a>
 <p>Specify the CSS style rule file to use for <code>--color</code>.
 See <a href="#SEC173">The <code>--style</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--force-po</samp>&rsquo;</dt>
-<dd><a name="IDX574"></a>
+<dd><a name="IDX575"></a>
 <p>Always write an output file even if it contains no message.
 </p>
 </dd>
 <dt> &lsquo;<samp>-i</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--indent</samp>&rsquo;</dt>
-<dd><a name="IDX575"></a>
-<a name="IDX576"></a>
+<dd><a name="IDX576"></a>
+<a name="IDX577"></a>
 <p>Write the .po file using indented style.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-location</samp>&rsquo;</dt>
-<dd><a name="IDX577"></a>
+<dd><a name="IDX578"></a>
 <p>Do not write &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines.
 </p>
 </dd>
 <dt> &lsquo;<samp>-n</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--add-location=<var>type</var></samp>&rsquo;</dt>
-<dd><a name="IDX578"></a>
+<dd><a name="IDX579"></a>
 <p>Generate &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines (default).
 </p>
 <p>The optional <var>type</var> can be either &lsquo;<samp>full</samp>&rsquo;, &lsquo;<samp>file</samp>&rsquo;, or
@@ -537,7 +537,7 @@ suppresses the lines (same as <code>--no-location</code>).
 </p>
 </dd>
 <dt> &lsquo;<samp>--strict</samp>&rsquo;</dt>
-<dd><a name="IDX579"></a>
+<dd><a name="IDX580"></a>
 <p>Write out a strict Uniforum conforming PO file.  Note that this
 Uniforum format should be avoided because it doesn't support the
 GNU extensions.
@@ -545,30 +545,30 @@ GNU extensions.
 </dd>
 <dt> &lsquo;<samp>-p</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-output</samp>&rsquo;</dt>
-<dd><a name="IDX580"></a>
-<a name="IDX581"></a>
+<dd><a name="IDX581"></a>
+<a name="IDX582"></a>
 <p>Write out a Java ResourceBundle in Java <code>.properties</code> syntax.  Note
 that this file format doesn't support plural forms and silently drops
 obsolete messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-output</samp>&rsquo;</dt>
-<dd><a name="IDX582"></a>
+<dd><a name="IDX583"></a>
 <p>Write out a NeXTstep/GNUstep localized resource file in <code>.strings</code> syntax.
 Note that this file format doesn't support plural forms.
 </p>
 </dd>
 <dt> &lsquo;<samp>-w <var>number</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--width=<var>number</var></samp>&rsquo;</dt>
-<dd><a name="IDX583"></a>
-<a name="IDX584"></a>
+<dd><a name="IDX584"></a>
+<a name="IDX585"></a>
 <p>Set the output page width.  Long strings in the output files will be
 split across multiple lines in order to ensure that each line's width
 (= number of screen columns) is less or equal to the given <var>number</var>.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-wrap</samp>&rsquo;</dt>
-<dd><a name="IDX585"></a>
+<dd><a name="IDX586"></a>
 <p>Do not break long message lines.  Message lines whose width exceeds the
 output page width will not be split into several lines.  Only file reference
 lines which are wider than the output page width will be split.
@@ -576,16 +576,16 @@ lines which are wider than the output page width will be split.
 </dd>
 <dt> &lsquo;<samp>-s</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--sort-output</samp>&rsquo;</dt>
-<dd><a name="IDX586"></a>
-<a name="IDX587"></a>
+<dd><a name="IDX587"></a>
+<a name="IDX588"></a>
 <p>Generate sorted output.  Note that using this option makes it much harder
 for the translator to understand each message's context.
 </p>
 </dd>
 <dt> &lsquo;<samp>-F</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--sort-by-file</samp>&rsquo;</dt>
-<dd><a name="IDX588"></a>
-<a name="IDX589"></a>
+<dd><a name="IDX589"></a>
+<a name="IDX590"></a>
 <p>Sort output by file location.
 </p>
 </dd>
@@ -598,15 +598,15 @@ for the translator to understand each message's context.
 <dl compact="compact">
 <dt> &lsquo;<samp>-h</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
-<dd><a name="IDX590"></a>
-<a name="IDX591"></a>
+<dd><a name="IDX591"></a>
+<a name="IDX592"></a>
 <p>Display this help and exit.
 </p>
 </dd>
 <dt> &lsquo;<samp>-V</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
-<dd><a name="IDX592"></a>
-<a name="IDX593"></a>
+<dd><a name="IDX593"></a>
+<a name="IDX594"></a>
 <p>Output version information and exit.
 </p>
 </dd>
@@ -621,7 +621,7 @@ for the translator to understand each message's context.
 <table><tr><td>&nbsp;</td><td><pre class="example">msggrep [<var>option</var>] [<var>inputfile</var>]
 </pre></td></tr></table>
 
-<a name="IDX594"></a>
+<a name="IDX595"></a>
 <p>The <code>msggrep</code> program extracts all messages of a translation catalog
 that match a given pattern or belong to some given source files.
 </p>
@@ -636,8 +636,8 @@ that match a given pattern or belong to some given source files.
 </dd>
 <dt> &lsquo;<samp>-D <var>directory</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--directory=<var>directory</var></samp>&rsquo;</dt>
-<dd><a name="IDX595"></a>
-<a name="IDX596"></a>
+<dd><a name="IDX596"></a>
+<a name="IDX597"></a>
 <p>Add <var>directory</var> to the list of directories.  Source files are
 searched relative to this list of directories.  The resulting &lsquo;<tt>.po</tt>&rsquo;
 file will be written relative to the current directory, though.
@@ -654,8 +654,8 @@ file will be written relative to the current directory, though.
 <dl compact="compact">
 <dt> &lsquo;<samp>-o <var>file</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--output-file=<var>file</var></samp>&rsquo;</dt>
-<dd><a name="IDX597"></a>
-<a name="IDX598"></a>
+<dd><a name="IDX598"></a>
+<a name="IDX599"></a>
 <p>Write output to specified file.
 </p>
 </dd>
@@ -699,93 +699,93 @@ expressions if -E is given, or fixed strings if -F is given.
 <dl compact="compact">
 <dt> &lsquo;<samp>-N <var>sourcefile</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--location=<var>sourcefile</var></samp>&rsquo;</dt>
-<dd><a name="IDX599"></a>
-<a name="IDX600"></a>
+<dd><a name="IDX600"></a>
+<a name="IDX601"></a>
 <p>Select messages extracted from <var>sourcefile</var>.  <var>sourcefile</var> can be
 either a literal file name or a wildcard pattern.
 </p>
 </dd>
 <dt> &lsquo;<samp>-M <var>domainname</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--domain=<var>domainname</var></samp>&rsquo;</dt>
-<dd><a name="IDX601"></a>
-<a name="IDX602"></a>
+<dd><a name="IDX602"></a>
+<a name="IDX603"></a>
 <p>Select messages belonging to domain <var>domainname</var>.
 </p>
 </dd>
 <dt> &lsquo;<samp>-J</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--msgctxt</samp>&rsquo;</dt>
-<dd><a name="IDX603"></a>
-<a name="IDX604"></a>
+<dd><a name="IDX604"></a>
+<a name="IDX605"></a>
 <p>Start of patterns for the msgctxt.
 </p>
 </dd>
 <dt> &lsquo;<samp>-K</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--msgid</samp>&rsquo;</dt>
-<dd><a name="IDX605"></a>
-<a name="IDX606"></a>
+<dd><a name="IDX606"></a>
+<a name="IDX607"></a>
 <p>Start of patterns for the msgid.
 </p>
 </dd>
 <dt> &lsquo;<samp>-T</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--msgstr</samp>&rsquo;</dt>
-<dd><a name="IDX607"></a>
-<a name="IDX608"></a>
+<dd><a name="IDX608"></a>
+<a name="IDX609"></a>
 <p>Start of patterns for the msgstr.
 </p>
 </dd>
 <dt> &lsquo;<samp>-C</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--comment</samp>&rsquo;</dt>
-<dd><a name="IDX609"></a>
-<a name="IDX610"></a>
+<dd><a name="IDX610"></a>
+<a name="IDX611"></a>
 <p>Start of patterns for the translator's comment.
 </p>
 </dd>
 <dt> &lsquo;<samp>-X</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--extracted-comment</samp>&rsquo;</dt>
-<dd><a name="IDX611"></a>
-<a name="IDX612"></a>
+<dd><a name="IDX612"></a>
+<a name="IDX613"></a>
 <p>Start of patterns for the extracted comments.
 </p>
 </dd>
 <dt> &lsquo;<samp>-E</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--extended-regexp</samp>&rsquo;</dt>
-<dd><a name="IDX613"></a>
-<a name="IDX614"></a>
+<dd><a name="IDX614"></a>
+<a name="IDX615"></a>
 <p>Specify that <var>pattern</var> is an extended regular expression.
 </p>
 </dd>
 <dt> &lsquo;<samp>-F</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--fixed-strings</samp>&rsquo;</dt>
-<dd><a name="IDX615"></a>
-<a name="IDX616"></a>
+<dd><a name="IDX616"></a>
+<a name="IDX617"></a>
 <p>Specify that <var>pattern</var> is a set of newline-separated strings.
 </p>
 </dd>
 <dt> &lsquo;<samp>-e <var>pattern</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--regexp=<var>pattern</var></samp>&rsquo;</dt>
-<dd><a name="IDX617"></a>
-<a name="IDX618"></a>
+<dd><a name="IDX618"></a>
+<a name="IDX619"></a>
 <p>Use <var>pattern</var> as a regular expression.
 </p>
 </dd>
 <dt> &lsquo;<samp>-f <var>file</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--file=<var>file</var></samp>&rsquo;</dt>
-<dd><a name="IDX619"></a>
-<a name="IDX620"></a>
+<dd><a name="IDX620"></a>
+<a name="IDX621"></a>
 <p>Obtain <var>pattern</var> from <var>file</var>.
 </p>
 </dd>
 <dt> &lsquo;<samp>-i</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--ignore-case</samp>&rsquo;</dt>
-<dd><a name="IDX621"></a>
-<a name="IDX622"></a>
+<dd><a name="IDX622"></a>
+<a name="IDX623"></a>
 <p>Ignore case distinctions.
 </p>
 </dd>
 <dt> &lsquo;<samp>-v</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--invert-match</samp>&rsquo;</dt>
-<dd><a name="IDX623"></a>
-<a name="IDX624"></a>
+<dd><a name="IDX624"></a>
+<a name="IDX625"></a>
 <p>Output only the messages that do not match any selection criterion, instead
 of the messages that match a selection criterion.
 </p>
@@ -799,14 +799,14 @@ of the messages that match a selection criterion.
 <dl compact="compact">
 <dt> &lsquo;<samp>-P</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-input</samp>&rsquo;</dt>
-<dd><a name="IDX625"></a>
-<a name="IDX626"></a>
+<dd><a name="IDX626"></a>
+<a name="IDX627"></a>
 <p>Assume the input file is a Java ResourceBundle in Java <code>.properties</code>
 syntax, not in PO file syntax.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-input</samp>&rsquo;</dt>
-<dd><a name="IDX627"></a>
+<dd><a name="IDX628"></a>
 <p>Assume the input file is a NeXTstep/GNUstep localized resource file in
 <code>.strings</code> syntax, not in PO file syntax.
 </p>
@@ -821,35 +821,35 @@ syntax, not in PO file syntax.
 <dl compact="compact">
 <dt> &lsquo;<samp>--color</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--color=<var>when</var></samp>&rsquo;</dt>
-<dd><a name="IDX628"></a>
+<dd><a name="IDX629"></a>
 <p>Specify whether or when to use colors and other text attributes.
 See <a href="#SEC171">The <code>--color</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--style=<var>style_file</var></samp>&rsquo;</dt>
-<dd><a name="IDX629"></a>
+<dd><a name="IDX630"></a>
 <p>Specify the CSS style rule file to use for <code>--color</code>.
 See <a href="#SEC173">The <code>--style</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--force-po</samp>&rsquo;</dt>
-<dd><a name="IDX630"></a>
+<dd><a name="IDX631"></a>
 <p>Always write an output file even if it contains no message.
 </p>
 </dd>
 <dt> &lsquo;<samp>--indent</samp>&rsquo;</dt>
-<dd><a name="IDX631"></a>
+<dd><a name="IDX632"></a>
 <p>Write the .po file using indented style.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-location</samp>&rsquo;</dt>
-<dd><a name="IDX632"></a>
+<dd><a name="IDX633"></a>
 <p>Do not write &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines.
 </p>
 </dd>
 <dt> &lsquo;<samp>-n</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--add-location=<var>type</var></samp>&rsquo;</dt>
-<dd><a name="IDX633"></a>
+<dd><a name="IDX634"></a>
 <p>Generate &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines (default).
 </p>
 <p>The optional <var>type</var> can be either &lsquo;<samp>full</samp>&rsquo;, &lsquo;<samp>file</samp>&rsquo;, or
@@ -860,7 +860,7 @@ suppresses the lines (same as <code>--no-location</code>).
 </p>
 </dd>
 <dt> &lsquo;<samp>--strict</samp>&rsquo;</dt>
-<dd><a name="IDX634"></a>
+<dd><a name="IDX635"></a>
 <p>Write out a strict Uniforum conforming PO file.  Note that this
 Uniforum format should be avoided because it doesn't support the
 GNU extensions.
@@ -868,43 +868,43 @@ GNU extensions.
 </dd>
 <dt> &lsquo;<samp>-p</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-output</samp>&rsquo;</dt>
-<dd><a name="IDX635"></a>
-<a name="IDX636"></a>
+<dd><a name="IDX636"></a>
+<a name="IDX637"></a>
 <p>Write out a Java ResourceBundle in Java <code>.properties</code> syntax.  Note
 that this file format doesn't support plural forms and silently drops
 obsolete messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-output</samp>&rsquo;</dt>
-<dd><a name="IDX637"></a>
+<dd><a name="IDX638"></a>
 <p>Write out a NeXTstep/GNUstep localized resource file in <code>.strings</code> syntax.
 Note that this file format doesn't support plural forms.
 </p>
 </dd>
 <dt> &lsquo;<samp>-w <var>number</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--width=<var>number</var></samp>&rsquo;</dt>
-<dd><a name="IDX638"></a>
-<a name="IDX639"></a>
+<dd><a name="IDX639"></a>
+<a name="IDX640"></a>
 <p>Set the output page width.  Long strings in the output files will be
 split across multiple lines in order to ensure that each line's width
 (= number of screen columns) is less or equal to the given <var>number</var>.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-wrap</samp>&rsquo;</dt>
-<dd><a name="IDX640"></a>
+<dd><a name="IDX641"></a>
 <p>Do not break long message lines.  Message lines whose width exceeds the
 output page width will not be split into several lines.  Only file reference
 lines which are wider than the output page width will be split.
 </p>
 </dd>
 <dt> &lsquo;<samp>--sort-output</samp>&rsquo;</dt>
-<dd><a name="IDX641"></a>
+<dd><a name="IDX642"></a>
 <p>Generate sorted output.  Note that using this option makes it much harder
 for the translator to understand each message's context.
 </p>
 </dd>
 <dt> &lsquo;<samp>--sort-by-file</samp>&rsquo;</dt>
-<dd><a name="IDX642"></a>
+<dd><a name="IDX643"></a>
 <p>Sort output by file location.
 </p>
 </dd>
@@ -917,15 +917,15 @@ for the translator to understand each message's context.
 <dl compact="compact">
 <dt> &lsquo;<samp>-h</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
-<dd><a name="IDX643"></a>
-<a name="IDX644"></a>
+<dd><a name="IDX644"></a>
+<a name="IDX645"></a>
 <p>Display this help and exit.
 </p>
 </dd>
 <dt> &lsquo;<samp>-V</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
-<dd><a name="IDX645"></a>
-<a name="IDX646"></a>
+<dd><a name="IDX646"></a>
+<a name="IDX647"></a>
 <p>Output version information and exit.
 </p>
 </dd>
@@ -968,11 +968,10 @@ file <code>wordlist.txt</code>:
 <table><tr><td>&nbsp;</td><td><pre class="example">msgfilter [<var>option</var>] <var>filter</var> [<var>filter-option</var>]
 </pre></td></tr></table>
 
-<a name="IDX647"></a>
+<a name="IDX648"></a>
 <p>The <code>msgfilter</code> program applies a filter to all translations of a
 translation catalog.
 </p>
-<a name="IDX648"></a>
 <a name="IDX649"></a>
 <a name="IDX650"></a>
 <a name="IDX651"></a>
@@ -980,6 +979,7 @@ translation catalog.
 <a name="IDX653"></a>
 <a name="IDX654"></a>
 <a name="IDX655"></a>
+<a name="IDX656"></a>
 <p>During each <var>filter</var> invocation, the environment variable
 <code>MSGFILTER_MSGID</code> is bound to the message's msgid, and the environment
 variable <code>MSGFILTER_LOCATION</code> is bound to the location in the PO file
@@ -1002,15 +1002,15 @@ the previous msgid_plural.
 <dl compact="compact">
 <dt> &lsquo;<samp>-i <var>inputfile</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--input=<var>inputfile</var></samp>&rsquo;</dt>
-<dd><a name="IDX656"></a>
-<a name="IDX657"></a>
+<dd><a name="IDX657"></a>
+<a name="IDX658"></a>
 <p>Input PO file.
 </p>
 </dd>
 <dt> &lsquo;<samp>-D <var>directory</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--directory=<var>directory</var></samp>&rsquo;</dt>
-<dd><a name="IDX658"></a>
-<a name="IDX659"></a>
+<dd><a name="IDX659"></a>
+<a name="IDX660"></a>
 <p>Add <var>directory</var> to the list of directories.  Source files are
 searched relative to this list of directories.  The resulting &lsquo;<tt>.po</tt>&rsquo;
 file will be written relative to the current directory, though.
@@ -1027,8 +1027,8 @@ file will be written relative to the current directory, though.
 <dl compact="compact">
 <dt> &lsquo;<samp>-o <var>file</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--output-file=<var>file</var></samp>&rsquo;</dt>
-<dd><a name="IDX660"></a>
-<a name="IDX661"></a>
+<dd><a name="IDX661"></a>
+<a name="IDX662"></a>
 <p>Write output to specified file.
 </p>
 </dd>
@@ -1048,14 +1048,14 @@ recognized.
 </p>
 <dl compact="compact">
 <dt> &lsquo;<samp>--newline</samp>&rsquo;</dt>
-<dd><a name="IDX662"></a>
+<dd><a name="IDX663"></a>
 <p>Add newline at the end of each input line and also strip the ending
 newline from the output line.
 </p>
 </dd>
 </dl>
 
-<a name="IDX663"></a>
+<a name="IDX664"></a>
 <p>Note: If the filter is not a built-in filter, you have to care about encodings:
 It is your responsibility to ensure that the <var>filter</var> can cope
 with input encoded in the translation catalog's encoding.  If the
@@ -1067,7 +1067,7 @@ you can first convert the translation catalog to UTF-8 using the
 &lsquo;<samp>msgconv</samp>&rsquo; program and then make &lsquo;<samp>msgfilter</samp>&rsquo; work in an UTF-8
 locale, by using the <code>LC_ALL</code> environment variable.
 </p>
-<a name="IDX664"></a>
+<a name="IDX665"></a>
 <p>Note: Most translations in a translation catalog don't end with a
 newline character.  For this reason, unless the <code>--newline</code>
 option is used, it is important that the <var>filter</var> recognizes its
@@ -1084,24 +1084,24 @@ not have this limitation.
 <dl compact="compact">
 <dt> &lsquo;<samp>-e <var>script</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--expression=<var>script</var></samp>&rsquo;</dt>
-<dd><a name="IDX665"></a>
-<a name="IDX666"></a>
+<dd><a name="IDX666"></a>
+<a name="IDX667"></a>
 <p>Add <var>script</var> to the commands to be executed.
 </p>
 </dd>
 <dt> &lsquo;<samp>-f <var>scriptfile</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--file=<var>scriptfile</var></samp>&rsquo;</dt>
-<dd><a name="IDX667"></a>
-<a name="IDX668"></a>
+<dd><a name="IDX668"></a>
+<a name="IDX669"></a>
 <p>Add the contents of <var>scriptfile</var> to the commands to be executed.
 </p>
 </dd>
 <dt> &lsquo;<samp>-n</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--quiet</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--silent</samp>&rsquo;</dt>
-<dd><a name="IDX669"></a>
-<a name="IDX670"></a>
+<dd><a name="IDX670"></a>
 <a name="IDX671"></a>
+<a name="IDX672"></a>
 <p>Suppress automatic printing of pattern space.
 </p>
 </dd>
@@ -1118,12 +1118,12 @@ The command &lsquo;<samp>msgfilter recode-sr-latin</samp>&rsquo; applies this co
 translations of a PO file.  Thus, it can be used to convert an &lsquo;<tt>sr.po</tt>&rsquo;
 file to an &lsquo;<tt>sr@latin.po</tt>&rsquo; file.
 </p>
-<a name="IDX672"></a>
+<a name="IDX673"></a>
 <p>The filter &lsquo;<samp>quot</samp>&rsquo; is recognized as a built-in filter.
 The command &lsquo;<samp>msgfilter quot</samp>&rsquo; converts any quotations surrounded
 by a pair of &lsquo;<samp>&quot;</samp>&rsquo;, &lsquo;<samp>'</samp>&rsquo;, and &lsquo;<samp>`</samp>&rsquo;.
 </p>
-<a name="IDX673"></a>
+<a name="IDX674"></a>
 <p>The filter &lsquo;<samp>boldquot</samp>&rsquo; is recognized as a built-in filter.
 The command &lsquo;<samp>msgfilter boldquot</samp>&rsquo; converts any quotations
 surrounded by a pair of &lsquo;<samp>&quot;</samp>&rsquo;, &lsquo;<samp>'</samp>&rsquo;, and &lsquo;<samp>`</samp>&rsquo;, also adding the
@@ -1140,14 +1140,14 @@ convert the message catalog to the UTF-8 encoding when needed.
 <dl compact="compact">
 <dt> &lsquo;<samp>-P</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-input</samp>&rsquo;</dt>
-<dd><a name="IDX674"></a>
-<a name="IDX675"></a>
+<dd><a name="IDX675"></a>
+<a name="IDX676"></a>
 <p>Assume the input file is a Java ResourceBundle in Java <code>.properties</code>
 syntax, not in PO file syntax.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-input</samp>&rsquo;</dt>
-<dd><a name="IDX676"></a>
+<dd><a name="IDX677"></a>
 <p>Assume the input file is a NeXTstep/GNUstep localized resource file in
 <code>.strings</code> syntax, not in PO file syntax.
 </p>
@@ -1162,42 +1162,42 @@ syntax, not in PO file syntax.
 <dl compact="compact">
 <dt> &lsquo;<samp>--color</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--color=<var>when</var></samp>&rsquo;</dt>
-<dd><a name="IDX677"></a>
+<dd><a name="IDX678"></a>
 <p>Specify whether or when to use colors and other text attributes.
 See <a href="#SEC171">The <code>--color</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--style=<var>style_file</var></samp>&rsquo;</dt>
-<dd><a name="IDX678"></a>
+<dd><a name="IDX679"></a>
 <p>Specify the CSS style rule file to use for <code>--color</code>.
 See <a href="#SEC173">The <code>--style</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--force-po</samp>&rsquo;</dt>
-<dd><a name="IDX679"></a>
+<dd><a name="IDX680"></a>
 <p>Always write an output file even if it contains no message.
 </p>
 </dd>
 <dt> &lsquo;<samp>--indent</samp>&rsquo;</dt>
-<dd><a name="IDX680"></a>
+<dd><a name="IDX681"></a>
 <p>Write the .po file using indented style.
 </p>
 </dd>
 <dt> &lsquo;<samp>--keep-header</samp>&rsquo;</dt>
-<dd><a name="IDX681"></a>
+<dd><a name="IDX682"></a>
 <p>Keep the header entry, i.e. the message with &lsquo;<samp>msgid &quot;&quot;</samp>&rsquo;, unmodified,
 instead of filtering it.  By default, the header entry is subject to
 filtering like any other message.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-location</samp>&rsquo;</dt>
-<dd><a name="IDX682"></a>
+<dd><a name="IDX683"></a>
 <p>Do not write &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines.
 </p>
 </dd>
 <dt> &lsquo;<samp>-n</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--add-location=<var>type</var></samp>&rsquo;</dt>
-<dd><a name="IDX683"></a>
+<dd><a name="IDX684"></a>
 <p>Generate &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines (default).
 </p>
 <p>The optional <var>type</var> can be either &lsquo;<samp>full</samp>&rsquo;, &lsquo;<samp>file</samp>&rsquo;, or
@@ -1208,7 +1208,7 @@ suppresses the lines (same as <code>--no-location</code>).
 </p>
 </dd>
 <dt> &lsquo;<samp>--strict</samp>&rsquo;</dt>
-<dd><a name="IDX684"></a>
+<dd><a name="IDX685"></a>
 <p>Write out a strict Uniforum conforming PO file.  Note that this
 Uniforum format should be avoided because it doesn't support the
 GNU extensions.
@@ -1216,30 +1216,30 @@ GNU extensions.
 </dd>
 <dt> &lsquo;<samp>-p</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-output</samp>&rsquo;</dt>
-<dd><a name="IDX685"></a>
-<a name="IDX686"></a>
+<dd><a name="IDX686"></a>
+<a name="IDX687"></a>
 <p>Write out a Java ResourceBundle in Java <code>.properties</code> syntax.  Note
 that this file format doesn't support plural forms and silently drops
 obsolete messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-output</samp>&rsquo;</dt>
-<dd><a name="IDX687"></a>
+<dd><a name="IDX688"></a>
 <p>Write out a NeXTstep/GNUstep localized resource file in <code>.strings</code> syntax.
 Note that this file format doesn't support plural forms.
 </p>
 </dd>
 <dt> &lsquo;<samp>-w <var>number</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--width=<var>number</var></samp>&rsquo;</dt>
-<dd><a name="IDX688"></a>
-<a name="IDX689"></a>
+<dd><a name="IDX689"></a>
+<a name="IDX690"></a>
 <p>Set the output page width.  Long strings in the output files will be
 split across multiple lines in order to ensure that each line's width
 (= number of screen columns) is less or equal to the given <var>number</var>.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-wrap</samp>&rsquo;</dt>
-<dd><a name="IDX690"></a>
+<dd><a name="IDX691"></a>
 <p>Do not break long message lines.  Message lines whose width exceeds the
 output page width will not be split into several lines.  Only file reference
 lines which are wider than the output page width will be split.
@@ -1247,16 +1247,16 @@ lines which are wider than the output page width will be split.
 </dd>
 <dt> &lsquo;<samp>-s</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--sort-output</samp>&rsquo;</dt>
-<dd><a name="IDX691"></a>
-<a name="IDX692"></a>
+<dd><a name="IDX692"></a>
+<a name="IDX693"></a>
 <p>Generate sorted output.  Note that using this option makes it much harder
 for the translator to understand each message's context.
 </p>
 </dd>
 <dt> &lsquo;<samp>-F</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--sort-by-file</samp>&rsquo;</dt>
-<dd><a name="IDX693"></a>
-<a name="IDX694"></a>
+<dd><a name="IDX694"></a>
+<a name="IDX695"></a>
 <p>Sort output by file location.
 </p>
 </dd>
@@ -1269,15 +1269,15 @@ for the translator to understand each message's context.
 <dl compact="compact">
 <dt> &lsquo;<samp>-h</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
-<dd><a name="IDX695"></a>
-<a name="IDX696"></a>
+<dd><a name="IDX696"></a>
+<a name="IDX697"></a>
 <p>Display this help and exit.
 </p>
 </dd>
 <dt> &lsquo;<samp>-V</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
-<dd><a name="IDX697"></a>
-<a name="IDX698"></a>
+<dd><a name="IDX698"></a>
+<a name="IDX699"></a>
 <p>Output version information and exit.
 </p>
 </dd>
@@ -1306,8 +1306,8 @@ for the translator to understand each message's context.
 <table><tr><td>&nbsp;</td><td><pre class="example">msguniq [<var>option</var>] [<var>inputfile</var>]
 </pre></td></tr></table>
 
-<a name="IDX699"></a>
 <a name="IDX700"></a>
+<a name="IDX701"></a>
 <p>The <code>msguniq</code> program unifies duplicate translations in a translation
 catalog.  It finds duplicate translations of the same message ID.  Such
 duplicates are invalid input for other programs like <code>msgfmt</code>,
@@ -1330,8 +1330,8 @@ discarded.
 </dd>
 <dt> &lsquo;<samp>-D <var>directory</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--directory=<var>directory</var></samp>&rsquo;</dt>
-<dd><a name="IDX701"></a>
-<a name="IDX702"></a>
+<dd><a name="IDX702"></a>
+<a name="IDX703"></a>
 <p>Add <var>directory</var> to the list of directories.  Source files are
 searched relative to this list of directories.  The resulting &lsquo;<tt>.po</tt>&rsquo;
 file will be written relative to the current directory, though.
@@ -1348,8 +1348,8 @@ file will be written relative to the current directory, though.
 <dl compact="compact">
 <dt> &lsquo;<samp>-o <var>file</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--output-file=<var>file</var></samp>&rsquo;</dt>
-<dd><a name="IDX703"></a>
-<a name="IDX704"></a>
+<dd><a name="IDX704"></a>
+<a name="IDX705"></a>
 <p>Write output to specified file.
 </p>
 </dd>
@@ -1365,15 +1365,15 @@ or if it is &lsquo;<samp>-</samp>&rsquo;.
 <dl compact="compact">
 <dt> &lsquo;<samp>-d</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--repeated</samp>&rsquo;</dt>
-<dd><a name="IDX705"></a>
-<a name="IDX706"></a>
+<dd><a name="IDX706"></a>
+<a name="IDX707"></a>
 <p>Print only duplicates.
 </p>
 </dd>
 <dt> &lsquo;<samp>-u</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--unique</samp>&rsquo;</dt>
-<dd><a name="IDX707"></a>
-<a name="IDX708"></a>
+<dd><a name="IDX708"></a>
+<a name="IDX709"></a>
 <p>Print only unique messages, discard duplicates.
 </p>
 </dd>
@@ -1386,14 +1386,14 @@ or if it is &lsquo;<samp>-</samp>&rsquo;.
 <dl compact="compact">
 <dt> &lsquo;<samp>-P</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-input</samp>&rsquo;</dt>
-<dd><a name="IDX709"></a>
-<a name="IDX710"></a>
+<dd><a name="IDX710"></a>
+<a name="IDX711"></a>
 <p>Assume the input file is a Java ResourceBundle in Java <code>.properties</code>
 syntax, not in PO file syntax.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-input</samp>&rsquo;</dt>
-<dd><a name="IDX711"></a>
+<dd><a name="IDX712"></a>
 <p>Assume the input file is a NeXTstep/GNUstep localized resource file in
 <code>.strings</code> syntax, not in PO file syntax.
 </p>
@@ -1408,51 +1408,51 @@ syntax, not in PO file syntax.
 <dl compact="compact">
 <dt> &lsquo;<samp>-t</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--to-code=<var>name</var></samp>&rsquo;</dt>
-<dd><a name="IDX712"></a>
-<a name="IDX713"></a>
+<dd><a name="IDX713"></a>
+<a name="IDX714"></a>
 <p>Specify encoding for output.
 </p>
 </dd>
 <dt> &lsquo;<samp>--use-first</samp>&rsquo;</dt>
-<dd><a name="IDX714"></a>
+<dd><a name="IDX715"></a>
 <p>Use first available translation for each message.  Don't merge several
 translations into one.
 </p>
 </dd>
 <dt> &lsquo;<samp>--color</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--color=<var>when</var></samp>&rsquo;</dt>
-<dd><a name="IDX715"></a>
+<dd><a name="IDX716"></a>
 <p>Specify whether or when to use colors and other text attributes.
 See <a href="#SEC171">The <code>--color</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--style=<var>style_file</var></samp>&rsquo;</dt>
-<dd><a name="IDX716"></a>
+<dd><a name="IDX717"></a>
 <p>Specify the CSS style rule file to use for <code>--color</code>.
 See <a href="#SEC173">The <code>--style</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--force-po</samp>&rsquo;</dt>
-<dd><a name="IDX717"></a>
+<dd><a name="IDX718"></a>
 <p>Always write an output file even if it contains no message.
 </p>
 </dd>
 <dt> &lsquo;<samp>-i</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--indent</samp>&rsquo;</dt>
-<dd><a name="IDX718"></a>
-<a name="IDX719"></a>
+<dd><a name="IDX719"></a>
+<a name="IDX720"></a>
 <p>Write the .po file using indented style.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-location</samp>&rsquo;</dt>
-<dd><a name="IDX720"></a>
+<dd><a name="IDX721"></a>
 <p>Do not write &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines.
 </p>
 </dd>
 <dt> &lsquo;<samp>-n</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--add-location=<var>type</var></samp>&rsquo;</dt>
-<dd><a name="IDX721"></a>
-<a name="IDX722"></a>
+<dd><a name="IDX722"></a>
+<a name="IDX723"></a>
 <p>Generate &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines (default).
 </p>
 <p>The optional <var>type</var> can be either &lsquo;<samp>full</samp>&rsquo;, &lsquo;<samp>file</samp>&rsquo;, or
@@ -1463,7 +1463,7 @@ suppresses the lines (same as <code>--no-location</code>).
 </p>
 </dd>
 <dt> &lsquo;<samp>--strict</samp>&rsquo;</dt>
-<dd><a name="IDX723"></a>
+<dd><a name="IDX724"></a>
 <p>Write out a strict Uniforum conforming PO file.  Note that this
 Uniforum format should be avoided because it doesn't support the
 GNU extensions.
@@ -1471,30 +1471,30 @@ GNU extensions.
 </dd>
 <dt> &lsquo;<samp>-p</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-output</samp>&rsquo;</dt>
-<dd><a name="IDX724"></a>
-<a name="IDX725"></a>
+<dd><a name="IDX725"></a>
+<a name="IDX726"></a>
 <p>Write out a Java ResourceBundle in Java <code>.properties</code> syntax.  Note
 that this file format doesn't support plural forms and silently drops
 obsolete messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-output</samp>&rsquo;</dt>
-<dd><a name="IDX726"></a>
+<dd><a name="IDX727"></a>
 <p>Write out a NeXTstep/GNUstep localized resource file in <code>.strings</code> syntax.
 Note that this file format doesn't support plural forms.
 </p>
 </dd>
 <dt> &lsquo;<samp>-w <var>number</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--width=<var>number</var></samp>&rsquo;</dt>
-<dd><a name="IDX727"></a>
-<a name="IDX728"></a>
+<dd><a name="IDX728"></a>
+<a name="IDX729"></a>
 <p>Set the output page width.  Long strings in the output files will be
 split across multiple lines in order to ensure that each line's width
 (= number of screen columns) is less or equal to the given <var>number</var>.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-wrap</samp>&rsquo;</dt>
-<dd><a name="IDX729"></a>
+<dd><a name="IDX730"></a>
 <p>Do not break long message lines.  Message lines whose width exceeds the
 output page width will not be split into several lines.  Only file reference
 lines which are wider than the output page width will be split.
@@ -1502,16 +1502,16 @@ lines which are wider than the output page width will be split.
 </dd>
 <dt> &lsquo;<samp>-s</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--sort-output</samp>&rsquo;</dt>
-<dd><a name="IDX730"></a>
-<a name="IDX731"></a>
+<dd><a name="IDX731"></a>
+<a name="IDX732"></a>
 <p>Generate sorted output.  Note that using this option makes it much harder
 for the translator to understand each message's context.
 </p>
 </dd>
 <dt> &lsquo;<samp>-F</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--sort-by-file</samp>&rsquo;</dt>
-<dd><a name="IDX732"></a>
-<a name="IDX733"></a>
+<dd><a name="IDX733"></a>
+<a name="IDX734"></a>
 <p>Sort output by file location.
 </p>
 </dd>
@@ -1524,15 +1524,15 @@ for the translator to understand each message's context.
 <dl compact="compact">
 <dt> &lsquo;<samp>-h</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
-<dd><a name="IDX734"></a>
-<a name="IDX735"></a>
+<dd><a name="IDX735"></a>
+<a name="IDX736"></a>
 <p>Display this help and exit.
 </p>
 </dd>
 <dt> &lsquo;<samp>-V</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
-<dd><a name="IDX736"></a>
-<a name="IDX737"></a>
+<dd><a name="IDX737"></a>
+<a name="IDX738"></a>
 <p>Output version information and exit.
 </p>
 </dd>
@@ -1547,7 +1547,7 @@ for the translator to understand each message's context.
 <table><tr><td>&nbsp;</td><td><pre class="example">msgcomm [<var>option</var>] [<var>inputfile</var>]...
 </pre></td></tr></table>
 
-<a name="IDX738"></a>
+<a name="IDX739"></a>
 <p>The <code>msgcomm</code> program finds messages which are common to two or more
 of the specified PO files.
 By using the <code>--more-than</code> option, greater commonality may be requested
@@ -1569,16 +1569,16 @@ cumulated.
 </dd>
 <dt> &lsquo;<samp>-f <var>file</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--files-from=<var>file</var></samp>&rsquo;</dt>
-<dd><a name="IDX739"></a>
-<a name="IDX740"></a>
+<dd><a name="IDX740"></a>
+<a name="IDX741"></a>
 <p>Read the names of the input files from <var>file</var> instead of getting
 them from the command line.
 </p>
 </dd>
 <dt> &lsquo;<samp>-D <var>directory</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--directory=<var>directory</var></samp>&rsquo;</dt>
-<dd><a name="IDX741"></a>
-<a name="IDX742"></a>
+<dd><a name="IDX742"></a>
+<a name="IDX743"></a>
 <p>Add <var>directory</var> to the list of directories.  Source files are
 searched relative to this list of directories.  The resulting &lsquo;<tt>.po</tt>&rsquo;
 file will be written relative to the current directory, though.
@@ -1595,8 +1595,8 @@ file will be written relative to the current directory, though.
 <dl compact="compact">
 <dt> &lsquo;<samp>-o <var>file</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--output-file=<var>file</var></samp>&rsquo;</dt>
-<dd><a name="IDX743"></a>
-<a name="IDX744"></a>
+<dd><a name="IDX744"></a>
+<a name="IDX745"></a>
 <p>Write output to specified file.
 </p>
 </dd>
@@ -1612,24 +1612,24 @@ or if it is &lsquo;<samp>-</samp>&rsquo;.
 <dl compact="compact">
 <dt> &lsquo;<samp>-&lt; <var>number</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--less-than=<var>number</var></samp>&rsquo;</dt>
-<dd><a name="IDX745"></a>
-<a name="IDX746"></a>
+<dd><a name="IDX746"></a>
+<a name="IDX747"></a>
 <p>Print messages with less than <var>number</var> definitions, defaults to infinite
 if not set.
 </p>
 </dd>
 <dt> &lsquo;<samp>-&gt; <var>number</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--more-than=<var>number</var></samp>&rsquo;</dt>
-<dd><a name="IDX747"></a>
-<a name="IDX748"></a>
+<dd><a name="IDX748"></a>
+<a name="IDX749"></a>
 <p>Print messages with more than <var>number</var> definitions, defaults to 1 if not
 set.
 </p>
 </dd>
 <dt> &lsquo;<samp>-u</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--unique</samp>&rsquo;</dt>
-<dd><a name="IDX749"></a>
-<a name="IDX750"></a>
+<dd><a name="IDX750"></a>
+<a name="IDX751"></a>
 <p>Shorthand for &lsquo;<samp>--less-than=2</samp>&rsquo;.  Requests that only unique messages be
 printed.
 </p>
@@ -1643,14 +1643,14 @@ printed.
 <dl compact="compact">
 <dt> &lsquo;<samp>-P</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-input</samp>&rsquo;</dt>
-<dd><a name="IDX751"></a>
-<a name="IDX752"></a>
+<dd><a name="IDX752"></a>
+<a name="IDX753"></a>
 <p>Assume the input files are Java ResourceBundles in Java <code>.properties</code>
 syntax, not in PO file syntax.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-input</samp>&rsquo;</dt>
-<dd><a name="IDX753"></a>
+<dd><a name="IDX754"></a>
 <p>Assume the input files are NeXTstep/GNUstep localized resource files in
 <code>.strings</code> syntax, not in PO file syntax.
 </p>
@@ -1665,38 +1665,38 @@ syntax, not in PO file syntax.
 <dl compact="compact">
 <dt> &lsquo;<samp>--color</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--color=<var>when</var></samp>&rsquo;</dt>
-<dd><a name="IDX754"></a>
+<dd><a name="IDX755"></a>
 <p>Specify whether or when to use colors and other text attributes.
 See <a href="#SEC171">The <code>--color</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--style=<var>style_file</var></samp>&rsquo;</dt>
-<dd><a name="IDX755"></a>
+<dd><a name="IDX756"></a>
 <p>Specify the CSS style rule file to use for <code>--color</code>.
 See <a href="#SEC173">The <code>--style</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--force-po</samp>&rsquo;</dt>
-<dd><a name="IDX756"></a>
+<dd><a name="IDX757"></a>
 <p>Always write an output file even if it contains no message.
 </p>
 </dd>
 <dt> &lsquo;<samp>-i</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--indent</samp>&rsquo;</dt>
-<dd><a name="IDX757"></a>
-<a name="IDX758"></a>
+<dd><a name="IDX758"></a>
+<a name="IDX759"></a>
 <p>Write the .po file using indented style.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-location</samp>&rsquo;</dt>
-<dd><a name="IDX759"></a>
+<dd><a name="IDX760"></a>
 <p>Do not write &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines.
 </p>
 </dd>
 <dt> &lsquo;<samp>-n</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--add-location=<var>type</var></samp>&rsquo;</dt>
-<dd><a name="IDX760"></a>
-<a name="IDX761"></a>
+<dd><a name="IDX761"></a>
+<a name="IDX762"></a>
 <p>Generate &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines (default).
 </p>
 <p>The optional <var>type</var> can be either &lsquo;<samp>full</samp>&rsquo;, &lsquo;<samp>file</samp>&rsquo;, or
@@ -1707,7 +1707,7 @@ suppresses the lines (same as <code>--no-location</code>).
 </p>
 </dd>
 <dt> &lsquo;<samp>--strict</samp>&rsquo;</dt>
-<dd><a name="IDX762"></a>
+<dd><a name="IDX763"></a>
 <p>Write out a strict Uniforum conforming PO file.  Note that this
 Uniforum format should be avoided because it doesn't support the
 GNU extensions.
@@ -1715,30 +1715,30 @@ GNU extensions.
 </dd>
 <dt> &lsquo;<samp>-p</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-output</samp>&rsquo;</dt>
-<dd><a name="IDX763"></a>
-<a name="IDX764"></a>
+<dd><a name="IDX764"></a>
+<a name="IDX765"></a>
 <p>Write out a Java ResourceBundle in Java <code>.properties</code> syntax.  Note
 that this file format doesn't support plural forms and silently drops
 obsolete messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-output</samp>&rsquo;</dt>
-<dd><a name="IDX765"></a>
+<dd><a name="IDX766"></a>
 <p>Write out a NeXTstep/GNUstep localized resource file in <code>.strings</code> syntax.
 Note that this file format doesn't support plural forms.
 </p>
 </dd>
 <dt> &lsquo;<samp>-w <var>number</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--width=<var>number</var></samp>&rsquo;</dt>
-<dd><a name="IDX766"></a>
-<a name="IDX767"></a>
+<dd><a name="IDX767"></a>
+<a name="IDX768"></a>
 <p>Set the output page width.  Long strings in the output files will be
 split across multiple lines in order to ensure that each line's width
 (= number of screen columns) is less or equal to the given <var>number</var>.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-wrap</samp>&rsquo;</dt>
-<dd><a name="IDX768"></a>
+<dd><a name="IDX769"></a>
 <p>Do not break long message lines.  Message lines whose width exceeds the
 output page width will not be split into several lines.  Only file reference
 lines which are wider than the output page width will be split.
@@ -1746,21 +1746,21 @@ lines which are wider than the output page width will be split.
 </dd>
 <dt> &lsquo;<samp>-s</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--sort-output</samp>&rsquo;</dt>
-<dd><a name="IDX769"></a>
-<a name="IDX770"></a>
+<dd><a name="IDX770"></a>
+<a name="IDX771"></a>
 <p>Generate sorted output.  Note that using this option makes it much harder
 for the translator to understand each message's context.
 </p>
 </dd>
 <dt> &lsquo;<samp>-F</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--sort-by-file</samp>&rsquo;</dt>
-<dd><a name="IDX771"></a>
-<a name="IDX772"></a>
+<dd><a name="IDX772"></a>
+<a name="IDX773"></a>
 <p>Sort output by file location.
 </p>
 </dd>
 <dt> &lsquo;<samp>--omit-header</samp>&rsquo;</dt>
-<dd><a name="IDX773"></a>
+<dd><a name="IDX774"></a>
 <p>Don't write header with &lsquo;<samp>msgid &quot;&quot;</samp>&rsquo; entry.
 Note: Using this option may lead to an error in subsequent operations
 if the output contains non-ASCII characters.
@@ -1775,15 +1775,15 @@ if the output contains non-ASCII characters.
 <dl compact="compact">
 <dt> &lsquo;<samp>-h</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
-<dd><a name="IDX774"></a>
-<a name="IDX775"></a>
+<dd><a name="IDX775"></a>
+<a name="IDX776"></a>
 <p>Display this help and exit.
 </p>
 </dd>
 <dt> &lsquo;<samp>-V</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
-<dd><a name="IDX776"></a>
-<a name="IDX777"></a>
+<dd><a name="IDX777"></a>
+<a name="IDX778"></a>
 <p>Output version information and exit.
 </p>
 </dd>
@@ -1798,7 +1798,7 @@ if the output contains non-ASCII characters.
 <table><tr><td>&nbsp;</td><td><pre class="example">msgcmp [<var>option</var>] <var>def</var>.po <var>ref</var>.pot
 </pre></td></tr></table>
 
-<a name="IDX778"></a>
+<a name="IDX779"></a>
 <p>The <code>msgcmp</code> program compares two Uniforum style .po files to check that
 both contain the same set of msgid strings.  The <var>def</var>.po file is an
 existing PO file with the translations.  The <var>ref</var>.pot file is the last
@@ -1822,8 +1822,8 @@ used to produce better diagnostics.
 </dd>
 <dt> &lsquo;<samp>-D <var>directory</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--directory=<var>directory</var></samp>&rsquo;</dt>
-<dd><a name="IDX779"></a>
-<a name="IDX780"></a>
+<dd><a name="IDX780"></a>
+<a name="IDX781"></a>
 <p>Add <var>directory</var> to the list of directories.  Source files are
 searched relative to this list of directories.
 </p>
@@ -1837,28 +1837,28 @@ searched relative to this list of directories.
 <dl compact="compact">
 <dt> &lsquo;<samp>-m</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--multi-domain</samp>&rsquo;</dt>
-<dd><a name="IDX781"></a>
-<a name="IDX782"></a>
+<dd><a name="IDX782"></a>
+<a name="IDX783"></a>
 <p>Apply <var>ref</var>.pot to each of the domains in <var>def</var>.po.
 </p>
 </dd>
 <dt> &lsquo;<samp>-N</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--no-fuzzy-matching</samp>&rsquo;</dt>
-<dd><a name="IDX783"></a>
-<a name="IDX784"></a>
+<dd><a name="IDX784"></a>
+<a name="IDX785"></a>
 <p>Do not use fuzzy matching when an exact match is not found.  This may speed
 up the operation considerably.
 </p>
 </dd>
 <dt> &lsquo;<samp>--use-fuzzy</samp>&rsquo;</dt>
-<dd><a name="IDX785"></a>
+<dd><a name="IDX786"></a>
 <p>Consider fuzzy messages in the <var>def</var>.po file like translated messages.
 Note that using this option is usually wrong, because fuzzy messages are
 exactly those which have not been validated by a human translator.
 </p>
 </dd>
 <dt> &lsquo;<samp>--use-untranslated</samp>&rsquo;</dt>
-<dd><a name="IDX786"></a>
+<dd><a name="IDX787"></a>
 <p>Consider untranslated messages in the <var>def</var>.po file like translated
 messages.  Note that using this option is usually wrong.
 </p>
@@ -1872,14 +1872,14 @@ messages.  Note that using this option is usually wrong.
 <dl compact="compact">
 <dt> &lsquo;<samp>-P</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-input</samp>&rsquo;</dt>
-<dd><a name="IDX787"></a>
-<a name="IDX788"></a>
+<dd><a name="IDX788"></a>
+<a name="IDX789"></a>
 <p>Assume the input files are Java ResourceBundles in Java <code>.properties</code>
 syntax, not in PO file syntax.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-input</samp>&rsquo;</dt>
-<dd><a name="IDX789"></a>
+<dd><a name="IDX790"></a>
 <p>Assume the input files are NeXTstep/GNUstep localized resource files in
 <code>.strings</code> syntax, not in PO file syntax.
 </p>
@@ -1893,15 +1893,15 @@ syntax, not in PO file syntax.
 <dl compact="compact">
 <dt> &lsquo;<samp>-h</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
-<dd><a name="IDX790"></a>
-<a name="IDX791"></a>
+<dd><a name="IDX791"></a>
+<a name="IDX792"></a>
 <p>Display this help and exit.
 </p>
 </dd>
 <dt> &lsquo;<samp>-V</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
-<dd><a name="IDX792"></a>
-<a name="IDX793"></a>
+<dd><a name="IDX793"></a>
+<a name="IDX794"></a>
 <p>Output version information and exit.
 </p>
 </dd>
@@ -1916,8 +1916,8 @@ syntax, not in PO file syntax.
 <table><tr><td>&nbsp;</td><td><pre class="example">msgattrib [<var>option</var>] [<var>inputfile</var>]
 </pre></td></tr></table>
 
-<a name="IDX794"></a>
 <a name="IDX795"></a>
+<a name="IDX796"></a>
 <p>The <code>msgattrib</code> program filters the messages of a translation catalog
 according to their attributes, and manipulates the attributes.
 </p>
@@ -1932,8 +1932,8 @@ according to their attributes, and manipulates the attributes.
 </dd>
 <dt> &lsquo;<samp>-D <var>directory</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--directory=<var>directory</var></samp>&rsquo;</dt>
-<dd><a name="IDX796"></a>
-<a name="IDX797"></a>
+<dd><a name="IDX797"></a>
+<a name="IDX798"></a>
 <p>Add <var>directory</var> to the list of directories.  Source files are
 searched relative to this list of directories.  The resulting &lsquo;<tt>.po</tt>&rsquo;
 file will be written relative to the current directory, though.
@@ -1950,8 +1950,8 @@ file will be written relative to the current directory, though.
 <dl compact="compact">
 <dt> &lsquo;<samp>-o <var>file</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--output-file=<var>file</var></samp>&rsquo;</dt>
-<dd><a name="IDX798"></a>
-<a name="IDX799"></a>
+<dd><a name="IDX799"></a>
+<a name="IDX800"></a>
 <p>Write output to specified file.
 </p>
 </dd>
@@ -1966,36 +1966,36 @@ or if it is &lsquo;<samp>-</samp>&rsquo;.
 
 <dl compact="compact">
 <dt> &lsquo;<samp>--translated</samp>&rsquo;</dt>
-<dd><a name="IDX800"></a>
+<dd><a name="IDX801"></a>
 <p>Keep translated messages, remove untranslated messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--untranslated</samp>&rsquo;</dt>
-<dd><a name="IDX801"></a>
+<dd><a name="IDX802"></a>
 <p>Keep untranslated messages, remove translated messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-fuzzy</samp>&rsquo;</dt>
-<dd><a name="IDX802"></a>
+<dd><a name="IDX803"></a>
 <p>Remove
 ‘fuzzy’
 marked messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--only-fuzzy</samp>&rsquo;</dt>
-<dd><a name="IDX803"></a>
+<dd><a name="IDX804"></a>
 <p>Keep
 ‘fuzzy’
 marked messages, remove all other messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-obsolete</samp>&rsquo;</dt>
-<dd><a name="IDX804"></a>
+<dd><a name="IDX805"></a>
 <p>Remove obsolete #~ messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--only-obsolete</samp>&rsquo;</dt>
-<dd><a name="IDX805"></a>
+<dd><a name="IDX806"></a>
 <p>Keep obsolete #~ messages, remove all other messages.
 </p>
 </dd>
@@ -2013,60 +2013,60 @@ that are listed in the <var>only-file</var> and not listed in the
 </p>
 <dl compact="compact">
 <dt> &lsquo;<samp>--set-fuzzy</samp>&rsquo;</dt>
-<dd><a name="IDX806"></a>
+<dd><a name="IDX807"></a>
 <p>Set all messages
 ‘fuzzy’.
 </p>
 </dd>
 <dt> &lsquo;<samp>--clear-fuzzy</samp>&rsquo;</dt>
-<dd><a name="IDX807"></a>
+<dd><a name="IDX808"></a>
 <p>Set all messages
 non-‘fuzzy’.
 </p>
 </dd>
 <dt> &lsquo;<samp>--set-obsolete</samp>&rsquo;</dt>
-<dd><a name="IDX808"></a>
+<dd><a name="IDX809"></a>
 <p>Set all messages obsolete.
 </p>
 </dd>
 <dt> &lsquo;<samp>--clear-obsolete</samp>&rsquo;</dt>
-<dd><a name="IDX809"></a>
+<dd><a name="IDX810"></a>
 <p>Set all messages non-obsolete.
 </p>
 </dd>
 <dt> &lsquo;<samp>--previous</samp>&rsquo;</dt>
-<dd><a name="IDX810"></a>
+<dd><a name="IDX811"></a>
 <p>When setting
 ‘fuzzy’
 mark, keep &ldquo;previous msgid&rdquo; of translated messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--clear-previous</samp>&rsquo;</dt>
-<dd><a name="IDX811"></a>
+<dd><a name="IDX812"></a>
 <p>Remove the &ldquo;previous msgid&rdquo; (&lsquo;<samp>#|</samp>&rsquo;) comments from all messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--empty</samp>&rsquo;</dt>
-<dd><a name="IDX812"></a>
+<dd><a name="IDX813"></a>
 <p>When removing
 ‘fuzzy’
 mark, also set msgstr empty.
 </p>
 </dd>
 <dt> &lsquo;<samp>--only-file=<var>file</var></samp>&rsquo;</dt>
-<dd><a name="IDX813"></a>
+<dd><a name="IDX814"></a>
 <p>Limit the attribute changes to entries that are listed in <var>file</var>.
 <var>file</var> should be a PO or POT file.
 </p>
 </dd>
 <dt> &lsquo;<samp>--ignore-file=<var>file</var></samp>&rsquo;</dt>
-<dd><a name="IDX814"></a>
+<dd><a name="IDX815"></a>
 <p>Limit the attribute changes to entries that are not listed in <var>file</var>.
 <var>file</var> should be a PO or POT file.
 </p>
 </dd>
 <dt> &lsquo;<samp>--fuzzy</samp>&rsquo;</dt>
-<dd><a name="IDX815"></a>
+<dd><a name="IDX816"></a>
 <p>Synonym for &lsquo;<samp>--only-fuzzy --clear-fuzzy</samp>&rsquo;: It keeps only the fuzzy
 messages and removes their
 ‘fuzzy’
@@ -2074,7 +2074,7 @@ mark.
 </p>
 </dd>
 <dt> &lsquo;<samp>--obsolete</samp>&rsquo;</dt>
-<dd><a name="IDX816"></a>
+<dd><a name="IDX817"></a>
 <p>Synonym for &lsquo;<samp>--only-obsolete --clear-obsolete</samp>&rsquo;: It keeps only the
 obsolete messages and makes them non-obsolete.
 </p>
@@ -2088,14 +2088,14 @@ obsolete messages and makes them non-obsolete.
 <dl compact="compact">
 <dt> &lsquo;<samp>-P</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-input</samp>&rsquo;</dt>
-<dd><a name="IDX817"></a>
-<a name="IDX818"></a>
+<dd><a name="IDX818"></a>
+<a name="IDX819"></a>
 <p>Assume the input file is a Java ResourceBundle in Java <code>.properties</code>
 syntax, not in PO file syntax.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-input</samp>&rsquo;</dt>
-<dd><a name="IDX819"></a>
+<dd><a name="IDX820"></a>
 <p>Assume the input file is a NeXTstep/GNUstep localized resource file in
 <code>.strings</code> syntax, not in PO file syntax.
 </p>
@@ -2110,38 +2110,38 @@ syntax, not in PO file syntax.
 <dl compact="compact">
 <dt> &lsquo;<samp>--color</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--color=<var>when</var></samp>&rsquo;</dt>
-<dd><a name="IDX820"></a>
+<dd><a name="IDX821"></a>
 <p>Specify whether or when to use colors and other text attributes.
 See <a href="#SEC171">The <code>--color</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--style=<var>style_file</var></samp>&rsquo;</dt>
-<dd><a name="IDX821"></a>
+<dd><a name="IDX822"></a>
 <p>Specify the CSS style rule file to use for <code>--color</code>.
 See <a href="#SEC173">The <code>--style</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--force-po</samp>&rsquo;</dt>
-<dd><a name="IDX822"></a>
+<dd><a name="IDX823"></a>
 <p>Always write an output file even if it contains no message.
 </p>
 </dd>
 <dt> &lsquo;<samp>-i</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--indent</samp>&rsquo;</dt>
-<dd><a name="IDX823"></a>
-<a name="IDX824"></a>
+<dd><a name="IDX824"></a>
+<a name="IDX825"></a>
 <p>Write the .po file using indented style.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-location</samp>&rsquo;</dt>
-<dd><a name="IDX825"></a>
+<dd><a name="IDX826"></a>
 <p>Do not write &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines.
 </p>
 </dd>
 <dt> &lsquo;<samp>-n</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--add-location=<var>type</var></samp>&rsquo;</dt>
-<dd><a name="IDX826"></a>
-<a name="IDX827"></a>
+<dd><a name="IDX827"></a>
+<a name="IDX828"></a>
 <p>Generate &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines (default).
 </p>
 <p>The optional <var>type</var> can be either &lsquo;<samp>full</samp>&rsquo;, &lsquo;<samp>file</samp>&rsquo;, or
@@ -2152,7 +2152,7 @@ suppresses the lines (same as <code>--no-location</code>).
 </p>
 </dd>
 <dt> &lsquo;<samp>--strict</samp>&rsquo;</dt>
-<dd><a name="IDX828"></a>
+<dd><a name="IDX829"></a>
 <p>Write out a strict Uniforum conforming PO file.  Note that this
 Uniforum format should be avoided because it doesn't support the
 GNU extensions.
@@ -2160,30 +2160,30 @@ GNU extensions.
 </dd>
 <dt> &lsquo;<samp>-p</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-output</samp>&rsquo;</dt>
-<dd><a name="IDX829"></a>
-<a name="IDX830"></a>
+<dd><a name="IDX830"></a>
+<a name="IDX831"></a>
 <p>Write out a Java ResourceBundle in Java <code>.properties</code> syntax.  Note
 that this file format doesn't support plural forms and silently drops
 obsolete messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-output</samp>&rsquo;</dt>
-<dd><a name="IDX831"></a>
+<dd><a name="IDX832"></a>
 <p>Write out a NeXTstep/GNUstep localized resource file in <code>.strings</code> syntax.
 Note that this file format doesn't support plural forms.
 </p>
 </dd>
 <dt> &lsquo;<samp>-w <var>number</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--width=<var>number</var></samp>&rsquo;</dt>
-<dd><a name="IDX832"></a>
-<a name="IDX833"></a>
+<dd><a name="IDX833"></a>
+<a name="IDX834"></a>
 <p>Set the output page width.  Long strings in the output files will be
 split across multiple lines in order to ensure that each line's width
 (= number of screen columns) is less or equal to the given <var>number</var>.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-wrap</samp>&rsquo;</dt>
-<dd><a name="IDX834"></a>
+<dd><a name="IDX835"></a>
 <p>Do not break long message lines.  Message lines whose width exceeds the
 output page width will not be split into several lines.  Only file reference
 lines which are wider than the output page width will be split.
@@ -2191,16 +2191,16 @@ lines which are wider than the output page width will be split.
 </dd>
 <dt> &lsquo;<samp>-s</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--sort-output</samp>&rsquo;</dt>
-<dd><a name="IDX835"></a>
-<a name="IDX836"></a>
+<dd><a name="IDX836"></a>
+<a name="IDX837"></a>
 <p>Generate sorted output.  Note that using this option makes it much harder
 for the translator to understand each message's context.
 </p>
 </dd>
 <dt> &lsquo;<samp>-F</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--sort-by-file</samp>&rsquo;</dt>
-<dd><a name="IDX837"></a>
-<a name="IDX838"></a>
+<dd><a name="IDX838"></a>
+<a name="IDX839"></a>
 <p>Sort output by file location.
 </p>
 </dd>
@@ -2213,15 +2213,15 @@ for the translator to understand each message's context.
 <dl compact="compact">
 <dt> &lsquo;<samp>-h</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
-<dd><a name="IDX839"></a>
-<a name="IDX840"></a>
+<dd><a name="IDX840"></a>
+<a name="IDX841"></a>
 <p>Display this help and exit.
 </p>
 </dd>
 <dt> &lsquo;<samp>-V</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
-<dd><a name="IDX841"></a>
-<a name="IDX842"></a>
+<dd><a name="IDX842"></a>
+<a name="IDX843"></a>
 <p>Output version information and exit.
 </p>
 </dd>
@@ -2236,7 +2236,7 @@ for the translator to understand each message's context.
 <table><tr><td>&nbsp;</td><td><pre class="example">msgen [<var>option</var>] <var>inputfile</var>
 </pre></td></tr></table>
 
-<a name="IDX843"></a>
+<a name="IDX844"></a>
 <p>The <code>msgen</code> program creates an English translation catalog.  The
 input file is the last created English PO file, or a PO Template file
 (generally created by xgettext).  Untranslated entries are assigned a
@@ -2257,8 +2257,8 @@ the header entry, whereas <code>msgen</code> doesn't.
 </dd>
 <dt> &lsquo;<samp>-D <var>directory</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--directory=<var>directory</var></samp>&rsquo;</dt>
-<dd><a name="IDX844"></a>
-<a name="IDX845"></a>
+<dd><a name="IDX845"></a>
+<a name="IDX846"></a>
 <p>Add <var>directory</var> to the list of directories.  Source files are
 searched relative to this list of directories.  The resulting &lsquo;<tt>.po</tt>&rsquo;
 file will be written relative to the current directory, though.
@@ -2275,8 +2275,8 @@ file will be written relative to the current directory, though.
 <dl compact="compact">
 <dt> &lsquo;<samp>-o <var>file</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--output-file=<var>file</var></samp>&rsquo;</dt>
-<dd><a name="IDX846"></a>
-<a name="IDX847"></a>
+<dd><a name="IDX847"></a>
+<a name="IDX848"></a>
 <p>Write output to specified file.
 </p>
 </dd>
@@ -2292,14 +2292,14 @@ or if it is &lsquo;<samp>-</samp>&rsquo;.
 <dl compact="compact">
 <dt> &lsquo;<samp>-P</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-input</samp>&rsquo;</dt>
-<dd><a name="IDX848"></a>
-<a name="IDX849"></a>
+<dd><a name="IDX849"></a>
+<a name="IDX850"></a>
 <p>Assume the input file is a Java ResourceBundle in Java <code>.properties</code>
 syntax, not in PO file syntax.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-input</samp>&rsquo;</dt>
-<dd><a name="IDX850"></a>
+<dd><a name="IDX851"></a>
 <p>Assume the input file is a NeXTstep/GNUstep localized resource file in
 <code>.strings</code> syntax, not in PO file syntax.
 </p>
@@ -2313,7 +2313,7 @@ syntax, not in PO file syntax.
 
 <dl compact="compact">
 <dt> &lsquo;<samp>--lang=<var>catalogname</var></samp>&rsquo;</dt>
-<dd><a name="IDX851"></a>
+<dd><a name="IDX852"></a>
 <p>Specify the &lsquo;<samp>Language</samp>&rsquo; field to be used in the header entry.  See
 <a href="gettext_6.html#SEC60">Filling in the Header Entry</a> for the meaning of this field.  Note: The
 &lsquo;<samp>Language-Team</samp>&rsquo; and &lsquo;<samp>Plural-Forms</samp>&rsquo; fields are not set by this
@@ -2322,37 +2322,37 @@ option.
 </dd>
 <dt> &lsquo;<samp>--color</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--color=<var>when</var></samp>&rsquo;</dt>
-<dd><a name="IDX852"></a>
+<dd><a name="IDX853"></a>
 <p>Specify whether or when to use colors and other text attributes.
 See <a href="#SEC171">The <code>--color</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--style=<var>style_file</var></samp>&rsquo;</dt>
-<dd><a name="IDX853"></a>
+<dd><a name="IDX854"></a>
 <p>Specify the CSS style rule file to use for <code>--color</code>.
 See <a href="#SEC173">The <code>--style</code> option</a> for details.
 </p>
 </dd>
 <dt> &lsquo;<samp>--force-po</samp>&rsquo;</dt>
-<dd><a name="IDX854"></a>
+<dd><a name="IDX855"></a>
 <p>Always write an output file even if it contains no message.
 </p>
 </dd>
 <dt> &lsquo;<samp>-i</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--indent</samp>&rsquo;</dt>
-<dd><a name="IDX855"></a>
-<a name="IDX856"></a>
+<dd><a name="IDX856"></a>
+<a name="IDX857"></a>
 <p>Write the .po file using indented style.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-location</samp>&rsquo;</dt>
-<dd><a name="IDX857"></a>
+<dd><a name="IDX858"></a>
 <p>Do not write &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines.
 </p>
 </dd>
 <dt> &lsquo;<samp>-n</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--add-location=<var>type</var></samp>&rsquo;</dt>
-<dd><a name="IDX858"></a>
+<dd><a name="IDX859"></a>
 <p>Generate &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines (default).
 </p>
 <p>The optional <var>type</var> can be either &lsquo;<samp>full</samp>&rsquo;, &lsquo;<samp>file</samp>&rsquo;, or
@@ -2363,7 +2363,7 @@ suppresses the lines (same as <code>--no-location</code>).
 </p>
 </dd>
 <dt> &lsquo;<samp>--strict</samp>&rsquo;</dt>
-<dd><a name="IDX859"></a>
+<dd><a name="IDX860"></a>
 <p>Write out a strict Uniforum conforming PO file.  Note that this
 Uniforum format should be avoided because it doesn't support the
 GNU extensions.
@@ -2371,30 +2371,30 @@ GNU extensions.
 </dd>
 <dt> &lsquo;<samp>-p</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-output</samp>&rsquo;</dt>
-<dd><a name="IDX860"></a>
-<a name="IDX861"></a>
+<dd><a name="IDX861"></a>
+<a name="IDX862"></a>
 <p>Write out a Java ResourceBundle in Java <code>.properties</code> syntax.  Note
 that this file format doesn't support plural forms and silently drops
 obsolete messages.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-output</samp>&rsquo;</dt>
-<dd><a name="IDX862"></a>
+<dd><a name="IDX863"></a>
 <p>Write out a NeXTstep/GNUstep localized resource file in <code>.strings</code> syntax.
 Note that this file format doesn't support plural forms.
 </p>
 </dd>
 <dt> &lsquo;<samp>-w <var>number</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--width=<var>number</var></samp>&rsquo;</dt>
-<dd><a name="IDX863"></a>
-<a name="IDX864"></a>
+<dd><a name="IDX864"></a>
+<a name="IDX865"></a>
 <p>Set the output page width.  Long strings in the output files will be
 split across multiple lines in order to ensure that each line's width
 (= number of screen columns) is less or equal to the given <var>number</var>.
 </p>
 </dd>
 <dt> &lsquo;<samp>--no-wrap</samp>&rsquo;</dt>
-<dd><a name="IDX865"></a>
+<dd><a name="IDX866"></a>
 <p>Do not break long message lines.  Message lines whose width exceeds the
 output page width will not be split into several lines.  Only file reference
 lines which are wider than the output page width will be split.
@@ -2402,16 +2402,16 @@ lines which are wider than the output page width will be split.
 </dd>
 <dt> &lsquo;<samp>-s</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--sort-output</samp>&rsquo;</dt>
-<dd><a name="IDX866"></a>
-<a name="IDX867"></a>
+<dd><a name="IDX867"></a>
+<a name="IDX868"></a>
 <p>Generate sorted output.  Note that using this option makes it much harder
 for the translator to understand each message's context.
 </p>
 </dd>
 <dt> &lsquo;<samp>-F</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--sort-by-file</samp>&rsquo;</dt>
-<dd><a name="IDX868"></a>
-<a name="IDX869"></a>
+<dd><a name="IDX869"></a>
+<a name="IDX870"></a>
 <p>Sort output by file location.
 </p>
 </dd>
@@ -2424,15 +2424,15 @@ for the translator to understand each message's context.
 <dl compact="compact">
 <dt> &lsquo;<samp>-h</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
-<dd><a name="IDX870"></a>
-<a name="IDX871"></a>
+<dd><a name="IDX871"></a>
+<a name="IDX872"></a>
 <p>Display this help and exit.
 </p>
 </dd>
 <dt> &lsquo;<samp>-V</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
-<dd><a name="IDX872"></a>
-<a name="IDX873"></a>
+<dd><a name="IDX873"></a>
+<a name="IDX874"></a>
 <p>Output version information and exit.
 </p>
 </dd>
@@ -2447,7 +2447,7 @@ for the translator to understand each message's context.
 <table><tr><td>&nbsp;</td><td><pre class="example">msgexec [<var>option</var>] <var>command</var> [<var>command-option</var>]
 </pre></td></tr></table>
 
-<a name="IDX874"></a>
+<a name="IDX875"></a>
 <p>The <code>msgexec</code> program applies a command to all translations of a
 translation catalog.
 The <var>command</var> can be any program that reads a translation from standard
@@ -2455,20 +2455,19 @@ input.  It is invoked once for each translation.  Its output becomes
 msgexec's output.  <code>msgexec</code>'s return code is the maximum return code
 across all invocations.
 </p>
-<a name="IDX875"></a>
+<a name="IDX876"></a>
 <p>A special builtin command called &lsquo;<samp>0</samp>&rsquo; outputs the translation, followed
 by a null byte.  The output of &lsquo;<samp>msgexec 0</samp>&rsquo; is suitable as input for
 &lsquo;<samp>xargs -0</samp>&rsquo;.
 </p>
 <dl compact="compact">
 <dt> &lsquo;<samp>--newline</samp>&rsquo;</dt>
-<dd><a name="IDX876"></a>
+<dd><a name="IDX877"></a>
 <p>Add newline at the end of each input line.
 </p>
 </dd>
 </dl>
 
-<a name="IDX877"></a>
 <a name="IDX878"></a>
 <a name="IDX879"></a>
 <a name="IDX880"></a>
@@ -2476,6 +2475,7 @@ by a null byte.  The output of &lsquo;<samp>msgexec 0</samp>&rsquo; is suitable 
 <a name="IDX882"></a>
 <a name="IDX883"></a>
 <a name="IDX884"></a>
+<a name="IDX885"></a>
 <p>During each <var>command</var> invocation, the environment variable
 <code>MSGEXEC_MSGID</code> is bound to the message's msgid, and the environment
 variable <code>MSGEXEC_LOCATION</code> is bound to the location in the PO file
@@ -2491,7 +2491,7 @@ message's previous msgctxt, <code>MSGEXEC_PREV_MSGID</code> is bound to
 the previous msgid, and <code>MSGEXEC_PREV_MSGID_PLURAL</code> is bound to
 the previous msgid_plural.
 </p>
-<a name="IDX885"></a>
+<a name="IDX886"></a>
 <p>Note: It is your responsibility to ensure that the <var>command</var> can cope
 with input encoded in the translation catalog's encoding.  If the
 <var>command</var> wants input in a particular encoding, you can in a first step
@@ -2509,15 +2509,15 @@ locale, by using the <code>LC_ALL</code> environment variable.
 <dl compact="compact">
 <dt> &lsquo;<samp>-i <var>inputfile</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--input=<var>inputfile</var></samp>&rsquo;</dt>
-<dd><a name="IDX886"></a>
-<a name="IDX887"></a>
+<dd><a name="IDX887"></a>
+<a name="IDX888"></a>
 <p>Input PO file.
 </p>
 </dd>
 <dt> &lsquo;<samp>-D <var>directory</var></samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--directory=<var>directory</var></samp>&rsquo;</dt>
-<dd><a name="IDX888"></a>
-<a name="IDX889"></a>
+<dd><a name="IDX889"></a>
+<a name="IDX890"></a>
 <p>Add <var>directory</var> to the list of directories.  Source files are
 searched relative to this list of directories.  The resulting &lsquo;<tt>.po</tt>&rsquo;
 file will be written relative to the current directory, though.
@@ -2534,14 +2534,14 @@ file will be written relative to the current directory, though.
 <dl compact="compact">
 <dt> &lsquo;<samp>-P</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--properties-input</samp>&rsquo;</dt>
-<dd><a name="IDX890"></a>
-<a name="IDX891"></a>
+<dd><a name="IDX891"></a>
+<a name="IDX892"></a>
 <p>Assume the input file is a Java ResourceBundle in Java <code>.properties</code>
 syntax, not in PO file syntax.
 </p>
 </dd>
 <dt> &lsquo;<samp>--stringtable-input</samp>&rsquo;</dt>
-<dd><a name="IDX892"></a>
+<dd><a name="IDX893"></a>
 <p>Assume the input file is a NeXTstep/GNUstep localized resource file in
 <code>.strings</code> syntax, not in PO file syntax.
 </p>
@@ -2555,15 +2555,15 @@ syntax, not in PO file syntax.
 <dl compact="compact">
 <dt> &lsquo;<samp>-h</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
-<dd><a name="IDX893"></a>
-<a name="IDX894"></a>
+<dd><a name="IDX894"></a>
+<a name="IDX895"></a>
 <p>Display this help and exit.
 </p>
 </dd>
 <dt> &lsquo;<samp>-V</samp>&rsquo;</dt>
 <dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
-<dd><a name="IDX895"></a>
-<a name="IDX896"></a>
+<dd><a name="IDX896"></a>
+<a name="IDX897"></a>
 <p>Output version information and exit.
 </p>
 </dd>
@@ -2693,7 +2693,7 @@ reasonable color map.
 when colorizing.  It has an effect only when the <code>--color</code> option is
 effective.
 </p>
-<a name="IDX897"></a>
+<a name="IDX898"></a>
 <p>If the <code>--style</code> option is not specified, the environment variable
 <code>PO_STYLE</code> is considered.  It is meant to point to the user's
 preferred style for PO files.
@@ -3130,7 +3130,7 @@ type:
 </p>
 <dl>
 <dt><u>Data Type:</u> <b>struct</b><i> po_xerror_handler</i>
-<a name="IDX898"></a>
+<a name="IDX899"></a>
 </dt>
 <dd><p>Its pointer is defined as <code>po_xerror_handler_t</code>.  Contains
 two fields, <code>xerror</code> and <code>xerror2</code>, with the following function
@@ -3139,7 +3139,7 @@ signatures.
 
 <dl>
 <dt><u>Function:</u> void <b>xerror</b><i> (int&nbsp;<var>severity</var>, po_message_t&nbsp;<var>message</var>, const&nbsp;char&nbsp;*<var>filename</var>, size_t&nbsp;<var>lineno</var>, size_t&nbsp;<var>column</var>, int&nbsp;<var>multiline_p</var>, const&nbsp;char&nbsp;*<var>message_text</var>)</i>
-<a name="IDX899"></a>
+<a name="IDX900"></a>
 </dt>
 <dd><p>This function is called to signal a problem of the given <var>severity</var>.
 It <em>must not return</em> if <var>severity</var> is
@@ -3168,7 +3168,7 @@ If <var>column</var> is <code>(size_t)(-1)</code>, it should be ignored.
 
 <dl>
 <dt><u>Function:</u> void <b>xerror2</b><i> (int&nbsp;<var>severity</var>, po_message_t&nbsp;<var>message1</var>, const&nbsp;char&nbsp;*<var>filename1</var>, size_t&nbsp;<var>lineno1</var>, size_t&nbsp;<var>column1</var>, int&nbsp;<var>multiline_p1</var>, const&nbsp;char&nbsp;*<var>message_text1</var>, po_message_t&nbsp;<var>message2</var>, const&nbsp;char&nbsp;*<var>filename2</var>, size_t&nbsp;<var>lineno2</var>, size_t&nbsp;<var>column2</var>, int&nbsp;<var>multiline_p2</var>, const&nbsp;char&nbsp;*<var>message_text2</var>)</i>
-<a name="IDX900"></a>
+<a name="IDX901"></a>
 </dt>
 <dd><p>This function is called to signal a problem of the given <var>severity</var>
 that refers to two messages.  It <em>must not return</em> if
@@ -3185,7 +3185,7 @@ appended to <var>message_text1</var> and prepended to <var>message_text2</var>.
 
 <dl>
 <dt><u>Data Type:</u> <b>po_file_t</b>
-<a name="IDX901"></a>
+<a name="IDX902"></a>
 </dt>
 <dd><p>This is a pointer type that refers to the contents of a PO file, after it has
 been read into memory.
@@ -3193,7 +3193,7 @@ been read into memory.
 
 <dl>
 <dt><u>Function:</u> po_file_t <b>po_file_create</b><i> ()</i>
-<a name="IDX902"></a>
+<a name="IDX903"></a>
 </dt>
 <dd><p>The <code>po_file_create</code> function creates an empty PO file representation in
 memory.
@@ -3201,7 +3201,7 @@ memory.
 
 <dl>
 <dt><u>Function:</u> po_file_t <b>po_file_read</b><i> (const&nbsp;char&nbsp;*<var>filename</var>, struct&nbsp;po_xerror_handler&nbsp;*<var>handler</var>)</i>
-<a name="IDX903"></a>
+<a name="IDX904"></a>
 </dt>
 <dd><p>The <code>po_file_read</code> function reads a PO file into memory.  The file name
 is given as argument.  The return value is a handle to the PO file's contents,
@@ -3215,7 +3215,7 @@ defined as <code>po_file_read</code> in C code after the inclusion of
 
 <dl>
 <dt><u>Function:</u> po_file_t <b>po_file_write</b><i> (po_file_t&nbsp;<var>file</var>, const&nbsp;char&nbsp;*<var>filename</var>, struct&nbsp;po_xerror_handler&nbsp;*<var>handler</var>)</i>
-<a name="IDX904"></a>
+<a name="IDX905"></a>
 </dt>
 <dd><p>The <code>po_file_write</code> function writes the contents of the memory
 structure <var>file</var> the <var>filename</var> given.  The return value is
@@ -3229,7 +3229,7 @@ is defined as <code>po_file_write</code> in C code after the inclusion of
 
 <dl>
 <dt><u>Function:</u> void <b>po_file_free</b><i> (po_file_t&nbsp;<var>file</var>)</i>
-<a name="IDX905"></a>
+<a name="IDX906"></a>
 </dt>
 <dd><p>The <code>po_file_free</code> function frees a PO file's contents from memory,
 including all messages that are only implicitly accessible through iterators.
@@ -3237,7 +3237,7 @@ including all messages that are only implicitly accessible through iterators.
 
 <dl>
 <dt><u>Function:</u> const char * const * <b>po_file_domains</b><i> (po_file_t&nbsp;<var>file</var>)</i>
-<a name="IDX906"></a>
+<a name="IDX907"></a>
 </dt>
 <dd><p>The <code>po_file_domains</code> function returns the domains for which the given
 PO file has messages.  The return value is a <code>NULL</code> terminated array
@@ -3253,7 +3253,7 @@ namely the default domain <code>&quot;messages&quot;</code>.
 
 <dl>
 <dt><u>Data Type:</u> <b>po_message_iterator_t</b>
-<a name="IDX907"></a>
+<a name="IDX908"></a>
 </dt>
 <dd><p>This is a pointer type that refers to an iterator that produces a sequence of
 messages.
@@ -3261,7 +3261,7 @@ messages.
 
 <dl>
 <dt><u>Function:</u> po_message_iterator_t <b>po_message_iterator</b><i> (po_file_t&nbsp;<var>file</var>, const&nbsp;char&nbsp;*<var>domain</var>)</i>
-<a name="IDX908"></a>
+<a name="IDX909"></a>
 </dt>
 <dd><p>The <code>po_message_iterator</code> returns an iterator that will produce the
 messages of <var>file</var> that belong to the given <var>domain</var>.  If <var>domain</var>
@@ -3271,7 +3271,7 @@ use the function <code>po_next_message</code> repeatedly.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_iterator_free</b><i> (po_message_iterator_t&nbsp;<var>iterator</var>)</i>
-<a name="IDX909"></a>
+<a name="IDX910"></a>
 </dt>
 <dd><p>The <code>po_message_iterator_free</code> function frees an iterator previously
 allocated through the <code>po_message_iterator</code> function.
@@ -3279,7 +3279,7 @@ allocated through the <code>po_message_iterator</code> function.
 
 <dl>
 <dt><u>Function:</u> po_message_t <b>po_next_message</b><i> (po_message_iterator_t&nbsp;<var>iterator</var>)</i>
-<a name="IDX910"></a>
+<a name="IDX911"></a>
 </dt>
 <dd><p>The <code>po_next_message</code> function returns the next message from
 <var>iterator</var> and advances the iterator.  It returns <code>NULL</code> when the
@@ -3293,7 +3293,7 @@ iterator has reached the end of its message list.
 
 <dl>
 <dt><u>Data Type:</u> <b>po_message_t</b>
-<a name="IDX911"></a>
+<a name="IDX912"></a>
 </dt>
 <dd><p>This is a pointer type that refers to a message of a PO file, including its
 translation.
@@ -3301,7 +3301,7 @@ translation.
 
 <dl>
 <dt><u>Function:</u> po_message_t <b>po_message_create</b><i> (void)</i>
-<a name="IDX912"></a>
+<a name="IDX913"></a>
 </dt>
 <dd><p>Returns a freshly constructed message.  To finish initializing the
 message, you must set the <code>msgid</code> and <code>msgstr</code>.  It <em>must</em> be
@@ -3314,7 +3314,7 @@ that the results are valid as long as the <var>file</var> handle is valid.
 </p>
 <dl>
 <dt><u>Function:</u> const char * <b>po_message_msgctxt</b><i> (po_message_t&nbsp;<var>message</var>)</i>
-<a name="IDX913"></a>
+<a name="IDX914"></a>
 </dt>
 <dd><p>The <code>po_message_msgctxt</code> function returns the <code>msgctxt</code>, the
 context of <var>message</var>.  Returns <code>NULL</code> for a message not restricted
@@ -3323,7 +3323,7 @@ to a context.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_set_msgctxt</b><i> (po_message_t&nbsp;<var>message</var>, const&nbsp;char&nbsp;*<var>msgctxt</var>)</i>
-<a name="IDX914"></a>
+<a name="IDX915"></a>
 </dt>
 <dd><p>The <code>po_message_set_msgctxt</code> function changes the <code>msgctxt</code>,
 the context of the message, to the value provided through
@@ -3332,7 +3332,7 @@ the context of the message, to the value provided through
 
 <dl>
 <dt><u>Function:</u> const char * <b>po_message_msgid</b><i> (po_message_t&nbsp;<var>message</var>)</i>
-<a name="IDX915"></a>
+<a name="IDX916"></a>
 </dt>
 <dd><p>The <code>po_message_msgid</code> function returns the <code>msgid</code> (untranslated
 English string) of <var>message</var>.  This is guaranteed to be non-<code>NULL</code>.
@@ -3340,7 +3340,7 @@ English string) of <var>message</var>.  This is guaranteed to be non-<code>NULL<
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_set_msgid</b><i> (po_message_t&nbsp;<var>message</var>, const&nbsp;char&nbsp;*<var>msgid</var>)</i>
-<a name="IDX916"></a>
+<a name="IDX917"></a>
 </dt>
 <dd><p>The <code>po_message_set_msgid</code> function changes the <code>msgid</code>
 (untranslated English string) of <var>message</var> to the value provided through
@@ -3349,7 +3349,7 @@ English string) of <var>message</var>.  This is guaranteed to be non-<code>NULL<
 
 <dl>
 <dt><u>Function:</u> const char * <b>po_message_msgid_plural</b><i> (po_message_t&nbsp;<var>message</var>)</i>
-<a name="IDX917"></a>
+<a name="IDX918"></a>
 </dt>
 <dd><p>The <code>po_message_msgid_plural</code> function returns the <code>msgid_plural</code>
 (untranslated English plural string) of <var>message</var>, a message with plurals,
@@ -3358,7 +3358,7 @@ or <code>NULL</code> for a message without plural.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_set_msgid_plural</b><i> (po_message_t&nbsp;<var>message</var>, const&nbsp;char&nbsp;*<var>msgid_plural</var>)</i>
-<a name="IDX918"></a>
+<a name="IDX919"></a>
 </dt>
 <dd><p>The <code>po_message_set_msgid_plural</code> function changes the
 <code>msgid_plural</code> (untranslated English plural string) of a message to
@@ -3368,7 +3368,7 @@ the value provided through <var>msgid_plural</var>, or removes the plurals if
 
 <dl>
 <dt><u>Function:</u> const char * <b>po_message_msgstr</b><i> (po_message_t&nbsp;<var>message</var>)</i>
-<a name="IDX919"></a>
+<a name="IDX920"></a>
 </dt>
 <dd><p>The <code>po_message_msgstr</code> function returns the <code>msgstr</code> (translation)
 of <var>message</var>.  For an untranslated message, the return value is an empty
@@ -3377,7 +3377,7 @@ string.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_set_msgstr</b><i> (po_message_t&nbsp;<var>message</var>, const&nbsp;char&nbsp;*<var>msgstr</var>)</i>
-<a name="IDX920"></a>
+<a name="IDX921"></a>
 </dt>
 <dd><p>The <code>po_message_set_msgstr</code> function changes the <code>msgstr</code>
 (translation) of <var>message</var> to the value provided through <var>msgstr</var>, a
@@ -3386,7 +3386,7 @@ non-<code>NULL</code> string.
 
 <dl>
 <dt><u>Function:</u> const char * <b>po_message_msgstr_plural</b><i> (po_message_t&nbsp;<var>message</var>, int&nbsp;<var>index</var>)</i>
-<a name="IDX921"></a>
+<a name="IDX922"></a>
 </dt>
 <dd><p>The <code>po_message_msgstr_plural</code> function returns the
 <code>msgstr[<var>index</var>]</code> of <var>message</var>, a message with plurals, or
@@ -3396,7 +3396,7 @@ plural.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_set_msgstr_plural</b><i> (po_message_t&nbsp;<var>message</var>, int&nbsp;<var>index</var>, const&nbsp;char&nbsp;*<var>msgstr_plural</var>)</i>
-<a name="IDX922"></a>
+<a name="IDX923"></a>
 </dt>
 <dd><p>The <code>po_message_set_msgstr_plural</code> function changes the
 <code>msgstr[<var>index</var>]</code> of <var>message</var>, a message with plurals, to
@@ -3409,7 +3409,7 @@ forms.
 
 <dl>
 <dt><u>Function:</u> const char * <b>po_message_comments</b><i> (po_message_t&nbsp;<var>message</var>)</i>
-<a name="IDX923"></a>
+<a name="IDX924"></a>
 </dt>
 <dd><p>The <code>po_message_comments</code> function returns the comments of <var>message</var>,
 a multiline string, ending in a newline, or a non-<code>NULL</code> empty string.
@@ -3417,7 +3417,7 @@ a multiline string, ending in a newline, or a non-<code>NULL</code> empty string
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_set_comments</b><i> (po_message_t&nbsp;<var>message</var>, const&nbsp;char&nbsp;*<var>comments</var>)</i>
-<a name="IDX924"></a>
+<a name="IDX925"></a>
 </dt>
 <dd><p>The <code>po_message_set_comments</code> function changes the comments of
 <var>message</var> to the value <var>comments</var>, a multiline string, ending in a
@@ -3426,7 +3426,7 @@ newline, or a non-<code>NULL</code> empty string.
 
 <dl>
 <dt><u>Function:</u> const char * <b>po_message_extracted_comments</b><i> (po_message_t&nbsp;<var>message</var>)</i>
-<a name="IDX925"></a>
+<a name="IDX926"></a>
 </dt>
 <dd><p>The <code>po_message_extracted_comments</code> function returns the extracted
 comments of <var>message</var>, a multiline string, ending in a newline, or a
@@ -3435,7 +3435,7 @@ non-<code>NULL</code> empty string.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_set_extracted_comments</b><i> (po_message_t&nbsp;<var>message</var>, const&nbsp;char&nbsp;*<var>extracted_comments</var>)</i>
-<a name="IDX926"></a>
+<a name="IDX927"></a>
 </dt>
 <dd><p>The <code>po_message_set_extracted_comments</code> function changes the
 comments of <var>message</var> to the value <var>extracted_comments</var>, a multiline
@@ -3444,7 +3444,7 @@ string, ending in a newline, or a non-<code>NULL</code> empty string.
 
 <dl>
 <dt><u>Function:</u> const char * <b>po_message_prev_msgctxt</b><i> (po_message_t&nbsp;<var>message</var>)</i>
-<a name="IDX927"></a>
+<a name="IDX928"></a>
 </dt>
 <dd><p>The <code>po_message_prev_msgctxt</code> function returns the previous
 <code>msgctxt</code>, the previous context of <var>message</var>.  Return
@@ -3453,7 +3453,7 @@ string, ending in a newline, or a non-<code>NULL</code> empty string.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_set_prev_msgctxt</b><i> (po_message_t&nbsp;<var>message</var>, const&nbsp;char&nbsp;*<var>prev_msgctxt</var>)</i>
-<a name="IDX928"></a>
+<a name="IDX929"></a>
 </dt>
 <dd><p>The <code>po_message_set_prev_msgctxt</code> function changes the previous
 <code>msgctxt</code>, the context of the message, to the value provided
@@ -3463,7 +3463,7 @@ previous msgctxt.
 
 <dl>
 <dt><u>Function:</u> const char * <b>po_message_prev_msgid</b><i> (po_message_t&nbsp;<var>message</var>)</i>
-<a name="IDX929"></a>
+<a name="IDX930"></a>
 </dt>
 <dd><p>The <code>po_message_prev_msgid</code> function returns the previous
 <code>msgid</code> (untranslated English string) of <var>message</var>, or
@@ -3472,7 +3472,7 @@ previous msgctxt.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_set_prev_msgid</b><i> (po_message_t&nbsp;<var>message</var>, const&nbsp;char&nbsp;*<var>prev_msgid</var>)</i>
-<a name="IDX930"></a>
+<a name="IDX931"></a>
 </dt>
 <dd><p>The <code>po_message_set_prev_msgid</code> function changes the previous
 <code>msgid</code> (untranslated English string) of <var>message</var> to the value
@@ -3482,7 +3482,7 @@ provided through <var>prev_msgid</var>, or removes the message when it is
 
 <dl>
 <dt><u>Function:</u> const char * <b>po_message_prev_msgid_plural</b><i> (po_message_t&nbsp;<var>message</var>)</i>
-<a name="IDX931"></a>
+<a name="IDX932"></a>
 </dt>
 <dd><p>The <code>po_message_prev_msgid_plural</code> function returns the previous
 <code>msgid_plural</code> (untranslated English plural string) of
@@ -3492,7 +3492,7 @@ without plural without any stored previous <code>msgid_plural</code>.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_set_prev_msgid_plural</b><i> (po_message_t&nbsp;<var>message</var>, const&nbsp;char&nbsp;*<var>prev_msgid_plural</var>)</i>
-<a name="IDX932"></a>
+<a name="IDX933"></a>
 </dt>
 <dd><p>The <code>po_message_set_prev_msgid_plural</code> function changes the
 previous <code>msgid_plural</code> (untranslated English plural string) of a
@@ -3503,7 +3503,7 @@ provided as <var>prev_msgid_plural</var>.
 
 <dl>
 <dt><u>Function:</u> int <b>po_message_is_obsolete</b><i> (po_message_t&nbsp;<var>message</var>)</i>
-<a name="IDX933"></a>
+<a name="IDX934"></a>
 </dt>
 <dd><p>The <code>po_message_is_obsolete</code> function returns true when <var>message</var>
 is marked as obsolete.
@@ -3511,7 +3511,7 @@ is marked as obsolete.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_set_obsolete</b><i> (po_message_t&nbsp;<var>message</var>, int&nbsp;<var>obsolete</var>)</i>
-<a name="IDX934"></a>
+<a name="IDX935"></a>
 </dt>
 <dd><p>The <code>po_message_set_obsolete</code> function changes the obsolete mark of
 <var>message</var>.
@@ -3519,7 +3519,7 @@ is marked as obsolete.
 
 <dl>
 <dt><u>Function:</u> int <b>po_message_is_fuzzy</b><i> (po_message_t&nbsp;<var>message</var>)</i>
-<a name="IDX935"></a>
+<a name="IDX936"></a>
 </dt>
 <dd><p>The <code>po_message_is_fuzzy</code> function returns true when <var>message</var>
 is marked as fuzzy.
@@ -3527,7 +3527,7 @@ is marked as fuzzy.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_set_fuzzy</b><i> (po_message_t&nbsp;<var>message</var>, int&nbsp;<var>fuzzy</var>)</i>
-<a name="IDX936"></a>
+<a name="IDX937"></a>
 </dt>
 <dd><p>The <code>po_message_set_fuzzy</code> function changes the fuzzy mark of
 <var>message</var>.
@@ -3535,7 +3535,7 @@ is marked as fuzzy.
 
 <dl>
 <dt><u>Function:</u> int <b>po_message_is_format</b><i> (po_message_t&nbsp;<var>message</var>, const&nbsp;char&nbsp;*<var>format_type</var>)</i>
-<a name="IDX937"></a>
+<a name="IDX938"></a>
 </dt>
 <dd><p>The <code>po_message_is_format</code> function returns true when the message
 is marked as being a format string of <var>format_type</var>.
@@ -3543,7 +3543,7 @@ is marked as being a format string of <var>format_type</var>.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_set_format</b><i> (po_message_t&nbsp;<var>message</var>, const&nbsp;char&nbsp;*<var>format_type</var>, int&nbsp;<var>value</var>)</i>
-<a name="IDX938"></a>
+<a name="IDX939"></a>
 </dt>
 <dd><p>The <code>po_message_set_format</code> function changes
 the format string mark of the message for the <var>format_type</var> provided.
@@ -3557,7 +3557,7 @@ to remove the format string mark and its opposite.
 
 <dl>
 <dt><u>Function:</u> int <b>po_message_is_range</b><i> (po_message_t&nbsp;<var>message</var>, int&nbsp;*<var>minp</var>, int&nbsp;*<var>maxp</var>)</i>
-<a name="IDX939"></a>
+<a name="IDX940"></a>
 </dt>
 <dd><p>The <code>po_message_is_range</code> function returns true when the message
 has a numeric range set, and stores the minimum and maximum value in the
@@ -3566,7 +3566,7 @@ locations pointed by <var>minp</var> and <var>maxp</var> respectively.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_set_range</b><i> (po_message_t&nbsp;<var>message</var>, int&nbsp;<var>min</var>, int&nbsp;<var>max</var>)</i>
-<a name="IDX940"></a>
+<a name="IDX941"></a>
 </dt>
 <dd><p>The <code>po_message_set_range</code> function changes the numeric range of
 the message. <var>min</var> and <var>max</var> must be non-negative, with
@@ -3586,7 +3586,7 @@ the empty string as <code>msgid</code>.
 </p>
 <dl>
 <dt><u>Function:</u> const char * <b>po_file_domain_header</b><i> (po_file_t&nbsp;<var>file</var>, const&nbsp;char&nbsp;*<var>domain</var>)</i>
-<a name="IDX941"></a>
+<a name="IDX942"></a>
 </dt>
 <dd><p>Returns the header entry of a domain from <var>file</var>, a PO file loaded in
 memory.  The value <code>NULL</code> provided as <var>domain</var> denotes the
@@ -3595,7 +3595,7 @@ default domain.  Returns <code>NULL</code> if there is no header entry.
 
 <dl>
 <dt><u>Function:</u> char * <b>po_header_field</b><i> (const&nbsp;char&nbsp;*<var>header</var>, const&nbsp;char&nbsp;*<var>field</var>)</i>
-<a name="IDX942"></a>
+<a name="IDX943"></a>
 </dt>
 <dd><p>Returns the value of <var>field</var> in the <var>header</var> entry.  The return
 value is either a freshly allocated string, to be freed by the caller,
@@ -3604,7 +3604,7 @@ or <code>NULL</code>.
 
 <dl>
 <dt><u>Function:</u> char * <b>po_header_set_field</b><i> (const&nbsp;char&nbsp;*<var>header</var>, const&nbsp;char&nbsp;*<var>field</var>, const&nbsp;char&nbsp;*<var>value</var>)</i>
-<a name="IDX943"></a>
+<a name="IDX944"></a>
 </dt>
 <dd><p>Returns a freshly allocated string which contains the entry from
 <var>header</var> with <var>field</var> set to <var>value</var>.  The field is added if
@@ -3618,7 +3618,7 @@ necessary.
 
 <dl>
 <dt><u>Data Type:</u> <b>po_filepos_t</b>
-<a name="IDX944"></a>
+<a name="IDX945"></a>
 </dt>
 <dd><p>This is a pointer type that refers to a string's position within a
 source file.
@@ -3629,7 +3629,7 @@ these references.
 </p>
 <dl>
 <dt><u>Function:</u> po_filepos_t <b>po_message_filepos</b><i> (po_message_t&nbsp;<var>message</var>, int&nbsp;<var>index</var>)</i>
-<a name="IDX945"></a>
+<a name="IDX946"></a>
 </dt>
 <dd><p>Returns the file reference in position <var>index</var> from the message.  If
 <var>index</var> is out of range, returns <code>NULL</code>.
@@ -3637,7 +3637,7 @@ these references.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_remove_filepos</b><i> (po_message_t&nbsp;<var>message</var>, int&nbsp;<var>index</var>)</i>
-<a name="IDX946"></a>
+<a name="IDX947"></a>
 </dt>
 <dd><p>Removes the file reference in position <var>index</var> from the message.  It
 moves all references following <var>index</var> one position backwards.
@@ -3645,7 +3645,7 @@ moves all references following <var>index</var> one position backwards.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_add_filepos</b><i> (po_message_t&nbsp;<var>message</var>, const&nbsp;char&nbsp;*<var>file</var>, size_t&nbsp;<var>start_line</var>)</i>
-<a name="IDX947"></a>
+<a name="IDX948"></a>
 </dt>
 <dd><p>Adds a reference to the string from <var>file</var> starting at
 <var>start_line</var>, if it is not already present for the message.  The
@@ -3660,14 +3660,14 @@ number is not available.
 
 <dl>
 <dt><u>Function:</u> const char * const * <b>po_format_list</b><i> (void)</i>
-<a name="IDX948"></a>
+<a name="IDX949"></a>
 </dt>
 <dd><p>Returns a <code>NULL</code> terminated array of the supported format types.
 </p></dd></dl>
 
 <dl>
 <dt><u>Function:</u> const char * <b>po_format_pretty_name</b><i> (const&nbsp;char&nbsp;*<var>format_type</var>)</i>
-<a name="IDX949"></a>
+<a name="IDX950"></a>
 </dt>
 <dd><p>Returns the pretty name associated with <var>format_type</var>.  For example,
 it returns &ldquo;C#&rdquo; when <var>format_type</var> is &ldquo;csharp_format&rdquo;.
@@ -3681,7 +3681,7 @@ Return <code>NULL</code> if <var>format_type</var> is not a supported format typ
 
 <dl>
 <dt><u>Function:</u> void <b>po_file_check_all</b><i> (po_file_t&nbsp;<var>file</var>, po_xerror_handler_t&nbsp;<var>handler</var>)</i>
-<a name="IDX950"></a>
+<a name="IDX951"></a>
 </dt>
 <dd><p>Tests whether the entire <var>file</var> is valid, like <code>msgfmt</code> does it.  If it
 is invalid, passes the reasons to <var>handler</var>.
@@ -3689,7 +3689,7 @@ is invalid, passes the reasons to <var>handler</var>.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_check_all</b><i> (po_message_t&nbsp;<var>message</var>, po_message_iterator_t&nbsp;<var>iterator</var>, po_xerror_handler_t&nbsp;<var>handler</var>)</i>
-<a name="IDX951"></a>
+<a name="IDX952"></a>
 </dt>
 <dd><p>Tests <var>message</var>, to be inserted at <var>iterator</var> in a PO file in memory,
 like <code>msgfmt</code> does it.  If it is invalid, passes the reasons to
@@ -3699,7 +3699,7 @@ specifies the file and the domain.
 
 <dl>
 <dt><u>Function:</u> void <b>po_message_check_format</b><i> (po_message_t&nbsp;<var>message</var>, po_xerror_handler_t&nbsp;<var>handler</var>)</i>
-<a name="IDX952"></a>
+<a name="IDX953"></a>
 </dt>
 <dd><p>Tests whether the message translation from <var>message</var> is a valid
 format string if the message is marked as being a format string.  If it
@@ -3726,7 +3726,7 @@ the inclusion of &lsquo;<samp>&lt;gettext-po.h&gt;</samp>&rsquo;.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Bruno Haible</em> on <em>February, 25 2025</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
+  This document was generated by <em>Bruno Haible</em> on <em>May, 2 2025</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
  </font>
  <br>
 

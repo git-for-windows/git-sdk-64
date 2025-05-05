@@ -28,7 +28,7 @@ extern "C" {
 
 
 /* Version number: (major<<16) + (minor<<8) + subminor. */
-#define _LIBTEXTSTYLE_VERSION 0x001800
+#define _LIBTEXTSTYLE_VERSION 0x001801
 extern LIBTEXTSTYLE_DLL_VARIABLE const int _libtextstyle_version; /* Likewise */
 
 
