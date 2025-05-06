@@ -3,7 +3,7 @@
 # it and/or modify it under the same terms as Perl itself.
 
 package Authen::SASL::Perl::GSSAPI;
-$Authen::SASL::Perl::GSSAPI::VERSION = '2.1700';
+$Authen::SASL::Perl::GSSAPI::VERSION = '2.1800';
 use strict;
 use warnings;
 
@@ -228,7 +228,7 @@ Authen::SASL::Perl::GSSAPI - GSSAPI (Kerberosv5) Authentication class
 
 =head1 VERSION
 
-version 2.1700
+version 2.1800
 
 =head1 SYNOPSIS
 

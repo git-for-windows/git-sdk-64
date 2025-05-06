@@ -3,7 +3,7 @@
 # modify it under the same terms as Perl itself.
 
 package Authen::SASL;
-$Authen::SASL::VERSION = '2.1700';
+$Authen::SASL::VERSION = '2.1800';
 use strict;
 use warnings;
 use vars qw(@Plugins);

@@ -3,7 +3,7 @@
 # modify it under the same terms as Perl itself.
 
 package Authen::SASL::Perl::PLAIN;
-$Authen::SASL::Perl::PLAIN::VERSION = '2.1700';
+$Authen::SASL::Perl::PLAIN::VERSION = '2.1800';
 use strict;
 use warnings;
 use vars qw(@ISA);
@@ -104,7 +104,7 @@ Authen::SASL::Perl::PLAIN - Plain Login Authentication class
 
 =head1 VERSION
 
-version 2.1700
+version 2.1800
 
 =head1 SYNOPSIS
 

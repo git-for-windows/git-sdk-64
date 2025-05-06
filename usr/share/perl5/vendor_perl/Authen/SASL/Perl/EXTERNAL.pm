@@ -4,7 +4,7 @@
 # same terms as Perl itself.
 
 package Authen::SASL::Perl::EXTERNAL;
-$Authen::SASL::Perl::EXTERNAL::VERSION = '2.1700';
+$Authen::SASL::Perl::EXTERNAL::VERSION = '2.1800';
 use strict;
 use warnings;
 use vars qw(@ISA);
@@ -45,7 +45,7 @@ Authen::SASL::Perl::EXTERNAL - External Authentication class
 
 =head1 VERSION
 
-version 2.1700
+version 2.1800
 
 =head1 SYNOPSIS
 

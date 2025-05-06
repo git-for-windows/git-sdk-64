@@ -3,7 +3,7 @@
 " Maintainer:		Aliaksei Budavei <0x000c70 AT gmail DOT com>
 " Former Maintainer:	Claudio Fleiner <claudio@fleiner.com>
 " Repository:		https://github.com/zzzyxwvut/java-vim.git
-" Last Change:		2025 Jan 02
+" Last Change:		2025 Apr 28
 
 " Please check ":help java.vim" for comments on some of the options
 " available.
@@ -46,8 +46,10 @@ function! s:ff.RightConstant(x, y) abort
   return a:y
 endfunction
 
-function! s:ff.IsRequestedPreviewFeature(n) abort
-  return exists("g:java_syntax_previews") && index(g:java_syntax_previews, a:n) + 1
+function! s:ff.IsAnyRequestedPreviewFeatureOf(ns) abort
+  return exists("g:java_syntax_previews") &&
+    \ !empty(filter(a:ns, printf('index(%s, v:val) + 1',
+			    \ string(g:java_syntax_previews))))
 endfunction
 
 if !exists("*s:ReportOnce")
@@ -108,7 +110,7 @@ syn keyword javaTypedef		this super
 syn keyword javaOperator	new instanceof
 syn match   javaOperator	"\<var\>\%(\s*(\)\@!"
 
-if s:ff.IsRequestedPreviewFeature(476)
+if s:ff.IsAnyRequestedPreviewFeatureOf([476, 494])
   " Module imports can be used in any source file.
   syn match   javaExternal	"\<import\s\+module\>" contains=javaModuleImport
   syn keyword javaModuleImport	contained module
@@ -262,8 +264,12 @@ if exists("g:java_highlight_all") || exists("g:java_highlight_java") || exists("
     syn keyword javaC_JavaLang Class InheritableThreadLocal ThreadLocal Enum ClassValue
   endif
 
-  " As of JDK 21, java.lang.Compiler is no more (deprecated in JDK 9).
-  syn keyword javaLangDeprecated Compiler
+  " As of JDK 24, SecurityManager is rendered non-functional
+  "	(JDK-8338625).
+  "	(Note that SecurityException and RuntimePermission are still
+  "	not deprecated.)
+  " As of JDK 21, Compiler is no more (JDK-8205129).
+  syn keyword javaLangDeprecated Compiler SecurityManager
   syn cluster javaClasses add=javaC_JavaLang
   hi def link javaC_JavaLang javaC_Java
   syn keyword javaE_JavaLang AbstractMethodError ClassCircularityError ClassFormatError Error IllegalAccessError IncompatibleClassChangeError InstantiationError InternalError LinkageError NoClassDefFoundError NoSuchFieldError NoSuchMethodError OutOfMemoryError StackOverflowError ThreadDeath UnknownError UnsatisfiedLinkError VerifyError VirtualMachineError ExceptionInInitializerError UnsupportedClassVersionError AssertionError BootstrapMethodError
@@ -311,7 +317,7 @@ endif
 
 exec 'syn match javaUserLabel "^\s*\<\K\k*\>\%(\<default\>\)\@' . s:ff.Peek('7', '') . '<!\s*::\@!"he=e-1'
 
-if s:ff.IsRequestedPreviewFeature(455)
+if s:ff.IsAnyRequestedPreviewFeatureOf([455, 488])
   syn region  javaLabelRegion	transparent matchgroup=javaLabel start="\<case\>" matchgroup=NONE end=":\|->" contains=javaBoolean,javaNumber,javaCharacter,javaString,javaConstant,@javaClasses,javaGenerics,javaType,javaLabelDefault,javaLabelVarType,javaLabelWhenClause
 else
   syn region  javaLabelRegion	transparent matchgroup=javaLabel start="\<case\>" matchgroup=NONE end=":\|->" contains=javaLabelCastType,javaLabelNumber,javaCharacter,javaString,javaConstant,@javaClasses,javaGenerics,javaLabelDefault,javaLabelVarType,javaLabelWhenClause
@@ -381,15 +387,30 @@ if !exists("g:java_ignore_javadoc") && (s:with_html || s:with_markdown) && g:mai
   " Include HTML syntax coloring for Javadoc comments.
   if s:with_html
     try
+      if exists("g:html_syntax_folding") && !exists("g:java_consent_to_html_syntax_folding")
+	let s:html_syntax_folding_copy = g:html_syntax_folding
+	unlet g:html_syntax_folding
+      endif
+
       syntax include @javaHtml syntax/html.vim
     finally
       unlet! b:current_syntax
+
+      if exists("s:html_syntax_folding_copy")
+	let g:html_syntax_folding = s:html_syntax_folding_copy
+	unlet s:html_syntax_folding_copy
+      endif
     endtry
   endif
 
   " Include Markdown syntax coloring (v7.2.437) for Javadoc comments.
   if s:with_markdown
     try
+      if exists("g:html_syntax_folding") && !exists("g:java_consent_to_html_syntax_folding")
+	let s:html_syntax_folding_copy = g:html_syntax_folding
+	unlet g:html_syntax_folding
+      endif
+
       syntax include @javaMarkdown syntax/markdown.vim
 
       try
@@ -406,6 +427,11 @@ if !exists("g:java_ignore_javadoc") && (s:with_html || s:with_markdown) && g:mai
       let s:no_support = 1
     finally
       unlet! b:current_syntax
+
+      if exists("s:html_syntax_folding_copy")
+	let g:html_syntax_folding = s:html_syntax_folding_copy
+	unlet s:html_syntax_folding_copy
+      endif
 
       if exists("s:no_support")
 	unlet s:no_support
@@ -609,7 +635,7 @@ syn region  javaString		start=+"+ end=+"+ end=+$+ contains=javaSpecialChar,javaS
 syn region  javaString		start=+"""[ \t\x0c\r]*$+hs=e+1 end=+"""+he=s-1 contains=javaSpecialChar,javaSpecialError,javaTextBlockError,@Spell
 syn match   javaTextBlockError	+"""\s*"""+
 
-if s:ff.IsRequestedPreviewFeature(430)
+if s:ff.IsAnyRequestedPreviewFeatureOf([430])
   syn region javaStrTemplEmbExp	contained matchgroup=javaStrTempl start="\\{" end="}" contains=TOP
   exec 'syn region javaStrTempl start=+\%(\.[[:space:]\n]*\)\@' . s:ff.Peek('80', '') . '<="+ end=+"+ contains=javaStrTemplEmbExp,javaSpecialChar,javaSpecialError,@Spell'
   exec 'syn region javaStrTempl start=+\%(\.[[:space:]\n]*\)\@' . s:ff.Peek('80', '') . '<="""[ \t\x0c\r]*$+hs=e+1 end=+"""+he=s-1 contains=javaStrTemplEmbExp,javaSpecialChar,javaSpecialError,javaTextBlockError,@Spell'
@@ -688,7 +714,7 @@ if exists("g:java_highlight_debug")
   syn region  javaDebugString		contained start=+"+ end=+"+ contains=javaDebugSpecial
   syn region  javaDebugString		contained start=+"""[ \t\x0c\r]*$+hs=e+1 end=+"""+he=s-1 contains=javaDebugSpecial,javaDebugTextBlockError
 
-  if s:ff.IsRequestedPreviewFeature(430)
+  if s:ff.IsAnyRequestedPreviewFeatureOf([430])
     " The highlight groups of java{StrTempl,Debug{,Paren,StrTempl}}\,
     " share one colour by default. Do not conflate unrelated parens.
     syn region javaDebugStrTemplEmbExp	contained matchgroup=javaDebugStrTempl start="\\{" end="}" contains=javaComment,javaLineComment,javaDebug\%(Paren\)\@!.*
