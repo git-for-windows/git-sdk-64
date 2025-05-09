@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on May, 2 2025 by texi2html 1.78a -->
+<!-- Created on May, 7 2025 by texi2html 1.78a -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -51,7 +51,7 @@ ul.toc {list-style: none}
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="gettext_21.html#SEC402" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_21.html#SEC410" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 
@@ -80,7 +80,7 @@ so all needed GNU <code>gettext</code> files are available, and your
 &lsquo;<tt>Makefile</tt>&rsquo; files are adjusted (see section <a href="gettext_13.html#SEC238">The Maintainer's View</a>), each C module
 having translated C strings should contain the line:
 </p>
-<a name="IDX118"></a>
+<a name="IDX124"></a>
 <table><tr><td>&nbsp;</td><td><pre class="example">#include &lt;libintl.h&gt;
 </pre></td></tr></table>
 
@@ -114,8 +114,8 @@ main (int argc, char *argv[])
 &lsquo;<tt>config.h</tt>&rsquo; or by the Makefile.  For now consult the <code>gettext</code>
 or <code>hello</code> sources for more information.
 </p>
-<a name="IDX119"></a>
-<a name="IDX120"></a>
+<a name="IDX125"></a>
+<a name="IDX126"></a>
 <p>The use of <code>LC_ALL</code> might not be appropriate for you.
 <code>LC_ALL</code> includes all locale categories and especially
 <code>LC_CTYPE</code>.  This latter category is responsible for determining
@@ -148,13 +148,13 @@ code above by a sequence of <code>setlocale</code> lines
 }
 </pre></td></tr></table>
 
-<a name="IDX121"></a>
-<a name="IDX122"></a>
-<a name="IDX123"></a>
-<a name="IDX124"></a>
-<a name="IDX125"></a>
-<a name="IDX126"></a>
 <a name="IDX127"></a>
+<a name="IDX128"></a>
+<a name="IDX129"></a>
+<a name="IDX130"></a>
+<a name="IDX131"></a>
+<a name="IDX132"></a>
+<a name="IDX133"></a>
 <p>On all POSIX conformant systems the locale categories <code>LC_CTYPE</code>,
 <code>LC_MESSAGES</code>, <code>LC_COLLATE</code>, <code>LC_MONETARY</code>,
 <code>LC_NUMERIC</code>, and <code>LC_TIME</code> are available.  On some systems
@@ -245,7 +245,7 @@ attempting to set something on fire? Does it mean &quot;The given object does
 not match the template&quot;? Does it mean &quot;The template does not fit for any
 of the objects&quot;?
 </p>
-<a name="IDX128"></a>
+<a name="IDX134"></a>
 <p>In both cases, adding more words to the message will help both the
 translator and the English speaking user.
 </p>
@@ -326,7 +326,7 @@ have changed in the English string, but the translator doesn't see that
 (with the current translation tools), therefore she has to proofread
 the entire message.
 </p>
-<a name="IDX129"></a>
+<a name="IDX135"></a>
 <p>Many GNU programs have a &lsquo;<samp>--help</samp>&rsquo; output that extends over several
 screen pages.  It is a courtesy towards the translators to split such a
 message into several ones of five to ten lines each.  While doing that,
@@ -365,18 +365,22 @@ to use a format string:
 a particular operator denotes string concatenation
 at runtime (or possibly at compile time, if the compiler supports that).
 </p>
-<a name="IDX130"></a>
-<a name="IDX131"></a>
-<a name="IDX132"></a>
-<a name="IDX133"></a>
-<a name="IDX134"></a>
-<a name="IDX135"></a>
 <a name="IDX136"></a>
 <a name="IDX137"></a>
 <a name="IDX138"></a>
 <a name="IDX139"></a>
 <a name="IDX140"></a>
 <a name="IDX141"></a>
+<a name="IDX142"></a>
+<a name="IDX143"></a>
+<a name="IDX144"></a>
+<a name="IDX145"></a>
+<a name="IDX146"></a>
+<a name="IDX147"></a>
+<a name="IDX148"></a>
+<a name="IDX149"></a>
+<a name="IDX150"></a>
+<a name="IDX151"></a>
 <ul>
 <li>
 In C++, string concatenation of <code>std::string</code> objects
@@ -388,7 +392,10 @@ In Java, string concatenation is denoted by the &lsquo;<samp>+</samp>&rsquo; ope
 </li><li>
 In C#, string concatenation is denoted by the &lsquo;<samp>+</samp>&rsquo; operator.
 </li><li>
-In JavaScript, string concatenation is denoted by the &lsquo;<samp>+</samp>&rsquo; operator.
+In JavaScript and TypeScript,
+string concatenation is denoted by the &lsquo;<samp>+</samp>&rsquo; operator.
+</li><li>
+In Go, string concatenation is denoted by the &lsquo;<samp>+</samp>&rsquo; operator.
 </li><li>
 In Ruby, string concatenation is denoted by the &lsquo;<samp>+</samp>&rsquo; operator.
 </li><li>
@@ -397,6 +404,10 @@ In Shell, string concatenation is denoted by mere juxtaposition of strings.
 In awk, string concatenation is denoted by mere juxtaposition of strings.
 </li><li>
 In Lua, string concatenation is denoted by the &lsquo;<samp>..</samp>&rsquo; operator.
+</li><li>
+In Modula-2, string concatenation is denoted by the &lsquo;<samp>+</samp>&rsquo; operator.
+</li><li>
+In D, string concatenation is denoted by the &lsquo;<samp>~</samp>&rsquo; operator.
 </li><li>
 In Smalltalk, string concatenation is denoted by the &lsquo;<samp>,</samp>&rsquo; operator.
 </li><li>
@@ -440,14 +451,16 @@ The value of such an expression is converted to a string
 and inserted in place of the expression;
 but no formatting function is called.
 </p>
-<a name="IDX142"></a>
-<a name="IDX143"></a>
-<a name="IDX144"></a>
-<a name="IDX145"></a>
-<a name="IDX146"></a>
-<a name="IDX147"></a>
-<a name="IDX148"></a>
-<a name="IDX149"></a>
+<a name="IDX152"></a>
+<a name="IDX153"></a>
+<a name="IDX154"></a>
+<a name="IDX155"></a>
+<a name="IDX156"></a>
+<a name="IDX157"></a>
+<a name="IDX158"></a>
+<a name="IDX159"></a>
+<a name="IDX160"></a>
+<a name="IDX161"></a>
 <ul>
 <li>
 In Python, <em>f-strings</em> can contain expressions.
@@ -456,7 +469,8 @@ Such as <code>f&quot;Hello, {name}!&quot;</code>.
 In C#, since C# 6.0, <em>interpolated strings</em> can contain expressions.
 Such as <code>$&quot;Hello, {name}!&quot;</code>.
 </li><li>
-In JavaScript, since ES6, <em>template literals</em> can contain expressions.
+In JavaScript, since ES6, and in TypeScript,
+<em>template literals</em> can contain expressions.
 Such as <code>`Hello, ${name}!`</code>.
 </li><li>
 In Ruby, <em>interpolated strings</em> can contain expressions.
@@ -465,6 +479,9 @@ Such as <code>&quot;Hello, #{name}!&quot;</code>.
 In Shell language, double-quoted strings can contain
 references to variables, along with default values and string operations.
 Such as <code>&quot;Hello, $name!&quot;</code> or <code>&quot;Hello, ${name}!&quot;</code>.
+</li><li>
+In D, <em>interpolation expression sequences</em> can contain expressions.
+Such as <code>i&quot;Hello, $(name)!&quot;</code>.
 </li><li>
 In Tcl, strings are subject to <em>variable substitution</em>.
 Such as <code>&quot;Hello, $name!&quot;</code>.
@@ -526,16 +543,16 @@ inserted in place of the placeholders.
 </p>
 <ul>
 <li>
-<a href="gettext_15.html#SEC288">Shell format strings</a>.
+<a href="gettext_15.html#SEC289">Shell format strings</a>.
 </li><li>
 In Python, those <a href="gettext_15.html#SEC278">Python format strings</a>
 that take a dictionary as argument,
 and the <a href="gettext_15.html#SEC278">Python brace format strings</a>.
 </li><li>
-In Ruby, those <a href="gettext_15.html#SEC287">Ruby format strings</a>
+In Ruby, those <a href="gettext_15.html#SEC288">Ruby format strings</a>
 that take a hash table as argument.
 </li><li>
-In Perl, the <a href="gettext_15.html#SEC299">Perl brace format strings</a>.
+In Perl, the <a href="gettext_15.html#SEC302">Perl brace format strings</a>.
 </li></ul>
 
 <a name="SEC28"></a>
@@ -722,7 +739,7 @@ are internationalized.  Further, a long keyword has the disadvantage
 of using more horizontal space, forcing more indentation work on
 sources for those trying to keep them within 79 or 80 columns.
 </p>
-<a name="IDX150"></a>
+<a name="IDX162"></a>
 <p>Many packages use &lsquo;<samp>_</samp>&rsquo; (a simple underline) as a keyword,
 and write &lsquo;<samp>_(&quot;Translatable string&quot;)</samp>&rsquo; instead of &lsquo;<samp>gettext
 (&quot;Translatable string&quot;)</samp>&rsquo;.  Further, the coding rule, from GNU standards,
@@ -789,7 +806,7 @@ like translators, a tool letting them work at marking translatable
 strings in the program sources, while simultaneously producing a set of
 translation in some language, for the package being internationalized.
 </p>
-<a name="IDX151"></a>
+<a name="IDX163"></a>
 <p>The set of program sources, targeted by the PO mode commands describe
 here, should have an Emacs tags table constructed for your project,
 prior to using these PO file commands.  This is easy to do.  In any
@@ -805,7 +822,7 @@ explore all said files and create a &lsquo;<tt>TAGS</tt>&rsquo; file in your roo
 directory, somewhat summarizing the contents using a special file
 format Emacs can understand.
 </p>
-<a name="IDX152"></a>
+<a name="IDX164"></a>
 <p>For packages following the GNU coding standards, there is
 a make goal <code>tags</code> or <code>TAGS</code> which constructs the tag files in
 all directories and for all files containing source code.
@@ -820,18 +837,18 @@ fill in while you mark strings as translatable in your program sources.
 </p>
 <dl compact="compact">
 <dt> <kbd>,</kbd></dt>
-<dd><a name="IDX153"></a>
+<dd><a name="IDX165"></a>
 <p>Search through program sources for a string which looks like a
 candidate for translation (<code>po-tags-search</code>).
 </p>
 </dd>
 <dt> <kbd>M-,</kbd></dt>
-<dd><a name="IDX154"></a>
+<dd><a name="IDX166"></a>
 <p>Mark the last string found with &lsquo;<samp>_()</samp>&rsquo; (<code>po-mark-translatable</code>).
 </p>
 </dd>
 <dt> <kbd>M-.</kbd></dt>
-<dd><a name="IDX155"></a>
+<dd><a name="IDX167"></a>
 <p>Mark the last string found with a keyword taken from a set of possible
 keywords.  This command with a prefix allows some management of these
 keywords (<code>po-select-mark-and-mark</code>).
@@ -839,7 +856,7 @@ keywords (<code>po-select-mark-and-mark</code>).
 </dd>
 </dl>
 
-<a name="IDX156"></a>
+<a name="IDX168"></a>
 <p>The <kbd>,</kbd> (<code>po-tags-search</code>) command searches for the next
 occurrence of a string which looks like a possible candidate for
 translation, and displays the program source in another Emacs window,
@@ -881,8 +898,8 @@ independent <kbd>,</kbd> search sequence.  However, as implemented, the
 prefix) might also reinitialize the regular Emacs tags searching to the
 first tags file, this reinitialization might be considered spurious.
 </p>
-<a name="IDX157"></a>
-<a name="IDX158"></a>
+<a name="IDX169"></a>
+<a name="IDX170"></a>
 <p>The <kbd>M-,</kbd> (<code>po-mark-translatable</code>) command will mark the
 recently found string with the &lsquo;<samp>_</samp>&rsquo; keyword.  The <kbd>M-.</kbd>
 (<code>po-select-mark-and-mark</code>) command will request that you type
@@ -1037,8 +1054,8 @@ thinks might be a format string.  There is no absolute rule for this,
 only a heuristic.  In the &lsquo;<tt>.po</tt>&rsquo; file the entry is marked using the
 <code>c-format</code> flag in the <code>#,</code> comment line (see section <a href="gettext_3.html#SEC16">The Format of PO Files</a>).
 </p>
-<a name="IDX159"></a>
-<a name="IDX160"></a>
+<a name="IDX171"></a>
+<a name="IDX172"></a>
 <p>The careful reader now might say that this again can cause problems.
 The heuristic might guess it wrong.  This is true and therefore
 <code>xgettext</code> knows about a special kind of comment which lets
@@ -1397,12 +1414,12 @@ Similarly, the <code>dngettext</code> function should be used in place of the
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="gettext_21.html#SEC402" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_21.html#SEC410" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="gettext_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Bruno Haible</em> on <em>May, 2 2025</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
+  This document was generated by <em>Bruno Haible</em> on <em>May, 7 2025</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
  </font>
  <br>
 

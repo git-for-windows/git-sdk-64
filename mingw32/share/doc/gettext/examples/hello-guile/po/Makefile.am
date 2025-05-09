@@ -15,7 +15,7 @@ XGETTEXT_OPTIONS = --keyword=_ --flag=_:1:pass-scheme-format
 
 # This is the copyright holder that gets inserted into the header of the
 # $(DOMAIN).pot file.  Set this to the copyright holder of the surrounding
-# package.  (Note that the msgstr strings, extracted from the package's
+# package.  (Note that the msgid strings, extracted from the package's
 # sources, belong to the copyright holder of the package.)  Translators are
 # expected to transfer the copyright for their translations to this person
 # or entity, or to disclaim their copyright.  The empty string stands for
