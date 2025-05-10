@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Stefan Krah. All rights reserved.
+ * Copyright (c) 2020-2025 Stefan Krah. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

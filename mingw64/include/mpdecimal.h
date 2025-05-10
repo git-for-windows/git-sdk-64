@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2024 Stefan Krah. All rights reserved.
+ * Copyright (c) 2008-2025 Stefan Krah. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,9 +65,9 @@ extern "C" {
 
 #define MPD_MAJOR_VERSION 4
 #define MPD_MINOR_VERSION 0
-#define MPD_MICRO_VERSION 0
+#define MPD_MICRO_VERSION 1
 
-#define MPD_VERSION "4.0.0"
+#define MPD_VERSION "4.0.1"
 
 #define MPD_VERSION_HEX ((MPD_MAJOR_VERSION << 24) | \
                          (MPD_MINOR_VERSION << 16) | \
