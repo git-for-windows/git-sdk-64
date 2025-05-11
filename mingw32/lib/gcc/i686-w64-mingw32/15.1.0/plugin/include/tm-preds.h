@@ -1,4 +1,4 @@
-/* Generated automatically by the program 'D:\M\B\src\build-MINGW32\gcc\build\genpreds.exe'
+/* Generated automatically by the program 'C:\M\B\src\build-MINGW32\gcc\build\genpreds.exe'
    from the machine description file '../../gcc-15.1.0/gcc/config/i386/i386.md'.  */
 
 #ifndef GCC_TM_PREDS_H
