@@ -8,10 +8,10 @@
    based on ../cmake-zipconf.h.in.
  */
 
-#define LIBZIP_VERSION "1.11.3"
+#define LIBZIP_VERSION "1.11.4"
 #define LIBZIP_VERSION_MAJOR 1
 #define LIBZIP_VERSION_MINOR 11
-#define LIBZIP_VERSION_MICRO 3
+#define LIBZIP_VERSION_MICRO 4
 
 /* #undef ZIP_STATIC */
 
