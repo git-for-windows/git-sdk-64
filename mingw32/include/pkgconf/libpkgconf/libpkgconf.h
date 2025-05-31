@@ -81,12 +81,14 @@ typedef struct pkgconf_queue_ pkgconf_queue_t;
 #define PKGCONF_FOREACH_LIST_ENTRY_REVERSE(tail, value) \
 	for ((value) = (tail); (value) != NULL; (value) = (value)->prev)
 
-#define LIBPKGCONF_VERSION	20300
-#define LIBPKGCONF_VERSION_STR	"2.3.0"
+#define LIBPKGCONF_VERSION	20403
+#define LIBPKGCONF_VERSION_STR	"2.4.3"
 
 struct pkgconf_queue_ {
 	pkgconf_node_t iter;
 	char *package;
+
+	unsigned int flags;
 };
 
 struct pkgconf_fragment_ {
@@ -95,8 +97,11 @@ struct pkgconf_fragment_ {
 	char type;
 	char *data;
 
-	bool merged;
+	pkgconf_list_t children;
+	unsigned int flags;
 };
+
+#define PKGCONF_PKG_FRAGF_TERMINATED		0x1
 
 struct pkgconf_dependency_ {
 	pkgconf_node_t iter;
@@ -130,6 +135,8 @@ struct pkgconf_path_ {
 	char *path;
 	void *handle_path;
 	void *handle_device;
+
+	unsigned int flags;
 };
 
 #define PKGCONF_PKG_PROPF_NONE			0x00
@@ -379,9 +386,6 @@ PKGCONF_API void pkgconf_fragment_render_buf(const pkgconf_list_t *list, char *b
 PKGCONF_API char *pkgconf_fragment_render(const pkgconf_list_t *list, bool escape, const pkgconf_fragment_render_ops_t *ops);
 PKGCONF_API bool pkgconf_fragment_has_system_dir(const pkgconf_client_t *client, const pkgconf_fragment_t *frag);
 
-/* fileio.c */
-PKGCONF_API char *pkgconf_fgetline(char *line, size_t size, FILE *stream);
-
 /* tuple.c */
 PKGCONF_API pkgconf_tuple_t *pkgconf_tuple_add(const pkgconf_client_t *client, pkgconf_list_t *parent, const char *key, const char *value, bool parse, unsigned int flags);
 PKGCONF_API char *pkgconf_tuple_find(const pkgconf_client_t *client, pkgconf_list_t *list, const char *key);
@@ -422,6 +426,41 @@ PKGCONF_API bool pkgconf_path_match_list(const char *path, const pkgconf_list_t 
 PKGCONF_API void pkgconf_path_free(pkgconf_list_t *dirlist);
 PKGCONF_API bool pkgconf_path_relocate(char *buf, size_t buflen);
 PKGCONF_API void pkgconf_path_copy_list(pkgconf_list_t *dst, const pkgconf_list_t *src);
+
+/* buffer.c */
+typedef struct pkgconf_buffer_ {
+	char *base;
+	char *end;
+} pkgconf_buffer_t;
+
+PKGCONF_API void pkgconf_buffer_append(pkgconf_buffer_t *buffer, const char *text);
+PKGCONF_API void pkgconf_buffer_push_byte(pkgconf_buffer_t *buffer, char byte);
+PKGCONF_API void pkgconf_buffer_trim_byte(pkgconf_buffer_t *buffer);
+PKGCONF_API void pkgconf_buffer_finalize(pkgconf_buffer_t *buffer);
+static inline const char *pkgconf_buffer_str(const pkgconf_buffer_t *buffer) {
+	return buffer->base;
+}
+
+static inline size_t pkgconf_buffer_len(const pkgconf_buffer_t *buffer) {
+	return (size_t)(ptrdiff_t)(buffer->end - buffer->base);
+}
+
+static inline char pkgconf_buffer_lastc(const pkgconf_buffer_t *buffer) {
+	if (buffer->base == buffer->end)
+		return '\0';
+
+	return *(buffer->end - 1);
+}
+
+#define PKGCONF_BUFFER_INITIALIZER { NULL, NULL }
+
+static inline void pkgconf_buffer_reset(pkgconf_buffer_t *buffer) {
+	pkgconf_buffer_finalize(buffer);
+	buffer->base = buffer->end = NULL;
+}
+
+/* fileio.c */
+PKGCONF_API bool pkgconf_fgetline(pkgconf_buffer_t *buffer, FILE *stream);
 
 #ifdef __cplusplus
 }
