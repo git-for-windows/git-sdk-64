@@ -95,7 +95,7 @@ while test "$#" -gt 0; do
     ;;
 
   --version)
-    echo 'libcurl 8.14.0'
+    echo 'libcurl 8.14.1'
     exit 0
     ;;
 
@@ -107,11 +107,11 @@ while test "$#" -gt 0; do
     # dash as that's used for things like version 1.2.3-pre1
     cpatch=`echo "$checkfor" | cut -d. -f3 | cut -d- -f1`
 
-    vmajor=`echo '8.14.0' | cut -d. -f1`
-    vminor=`echo '8.14.0' | cut -d. -f2`
+    vmajor=`echo '8.14.1' | cut -d. -f1`
+    vminor=`echo '8.14.1' | cut -d. -f2`
     # when extracting the patch part we strip off everything after a
     # dash as that's used for things like version 1.2.3-pre1
-    vpatch=`echo '8.14.0' | cut -d. -f3 | cut -d- -f1`
+    vpatch=`echo '8.14.1' | cut -d. -f3 | cut -d- -f1`
 
     if test "$vmajor" -gt "$cmajor"; then
       exit 0
@@ -127,12 +127,12 @@ while test "$#" -gt 0; do
       fi
     fi
 
-    echo "requested version $checkfor is newer than existing 8.14.0"
+    echo "requested version $checkfor is newer than existing 8.14.1"
     exit 1
     ;;
 
   --vernum)
-    echo '080e00'
+    echo '080e01'
     exit 0
     ;;
 
