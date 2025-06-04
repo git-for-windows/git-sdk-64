@@ -694,7 +694,8 @@ is set, then lines that were changed by an ignored commit and attributed to
 another commit will be marked with a ? in the blame output.  If the
 <code>blame.markUnblamableLines</code> config option is set, then those lines touched
 by an ignored commit that we could not attribute to another revision are
-marked with a <em>*</em>.</p>
+marked with a <em>*</em>. In the porcelain modes, we print <em>ignored</em> and
+<em>unblamable</em> on a newline respectively.</p>
 </dd>
 <dt class="hdlist1">--ignore-revs-file &lt;file&gt;</dt>
 <dd>
@@ -854,10 +855,11 @@ header elements later.</p>
 <p>The porcelain format generally suppresses commit information that has
 already been seen. For example, two lines that are blamed to the same
 commit will both be shown, but the details for that commit will be shown
-only once. This is more efficient, but may require more state be kept by
-the reader. The <code>--line-porcelain</code> option can be used to output full
-commit information for each line, allowing simpler (but less efficient)
-usage like:</p>
+only once. Information which is specific to individual lines will not be
+grouped together, like revs to be marked <em>ignored</em> or <em>unblamable</em>. This
+is more efficient, but may require more state be kept by the reader. The
+<code>--line-porcelain</code> option can be used to output full commit information
+for each line, allowing simpler (but less efficient) usage like:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1097,7 +1099,7 @@ another commit with a <em>?</em> in the output of <a href="git-blame.html">git-b
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

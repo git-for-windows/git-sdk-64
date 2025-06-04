@@ -537,15 +537,19 @@ Only useful with <code>--cruft</code> <code>-d</code>.</p>
 </dd>
 <dt class="hdlist1">--max-cruft-size=&lt;n&gt;</dt>
 <dd>
-<p>Repack cruft objects into packs as large as <em>&lt;n&gt;</em> bytes before
-creating new packs. As long as there are enough cruft packs
-smaller than <em>&lt;n&gt;</em>, repacking will cause a new cruft pack to
-be created containing objects from any combined cruft packs,
-along with any new unreachable objects. Cruft packs larger than
-<em>&lt;n&gt;</em> will not be modified. When the new cruft pack is larger
-than <em>&lt;n&gt;</em> bytes, it will be split into multiple packs, all of
-which are guaranteed to be at most <em>&lt;n&gt;</em> bytes in size. Only
-useful with <code>--cruft</code> <code>-d</code>.</p>
+<p>Overrides <code>--max-pack-size</code> for cruft packs. Inherits the value of
+<code>--max-pack-size</code> (if any) by default. See the documentation for
+<code>--max-pack-size</code> for more details.</p>
+</dd>
+<dt class="hdlist1">--combine-cruft-below-size=&lt;n&gt;</dt>
+<dd>
+<p>When generating cruft packs without pruning, only repack
+existing cruft packs whose size is strictly less than <em>&lt;n&gt;</em>,
+where <em>&lt;n&gt;</em> represents a number of bytes, which can optionally
+be suffixed with "k", "m", or "g". Cruft packs whose size is
+greater than or equal to <em>&lt;n&gt;</em> are left as-is and not repacked.
+Useful when you want to avoid repacking large cruft pack(s) in
+repositories that have many and/or large unreachable objects.</p>
 </dd>
 <dt class="hdlist1">--expire-to=&lt;dir&gt;</dt>
 <dd>
@@ -804,7 +808,7 @@ attribute <code>delta</code> set to false.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

@@ -613,13 +613,19 @@ commands, it follows a two-step process. First, it deletes any loose
 objects that already exist in a pack-file; concurrent Git processes
 will examine the pack-file for the object data instead of the loose
 object. Second, it creates a new pack-file (starting with "loose-")
-containing a batch of loose objects. The batch size is limited to 50
-thousand objects to prevent the job from taking too long on a
-repository with many loose objects. The <code>gc</code> task writes unreachable
-objects as loose objects to be cleaned up by a later step only if
-they are not re-added to a pack-file; for this reason it is not
-advisable to enable both the <code>loose-objects</code> and <code>gc</code> tasks at the
-same time.</p>
+containing a batch of loose objects.</p>
+<div class="paragraph">
+<p>The batch size defaults to fifty thousand objects to prevent the job from
+taking too long on a repository with many loose objects. Use the
+<code>maintenance.loose-objects.batchSize</code> config option to adjust this size,
+including a value of <code>0</code> to remove the limit.</p>
+</div>
+<div class="paragraph">
+<p>The <code>gc</code> task writes unreachable objects as loose objects to be cleaned up
+by a later step only if they are not re-added to a pack-file; for this
+reason it is not advisable to enable both the <code>loose-objects</code> and <code>gc</code>
+tasks at the same time.</p>
+</div>
 </dd>
 <dt class="hdlist1">incremental-repack</dt>
 <dd>
@@ -646,6 +652,21 @@ into a single pack-file.</p>
 collects them into a single file. This speeds up operations that
 need to iterate across many references. See <a href="git-pack-refs.html">git-pack-refs(1)</a>
 for more information.</p>
+</dd>
+<dt class="hdlist1">reflog-expire</dt>
+<dd>
+<p>The <code>reflog-expire</code> task deletes any entries in the reflog older than the
+expiry threshold. See <a href="git-reflog.html">git-reflog(1)</a> for more information.</p>
+</dd>
+<dt class="hdlist1">rerere-gc</dt>
+<dd>
+<p>The <code>rerere-gc</code> task invokes garbage collection for stale entries in
+the rerere cache. See <a href="git-rerere.html">git-rerere(1)</a> for more information.</p>
+</dd>
+<dt class="hdlist1">worktree-prune</dt>
+<dd>
+<p>The <code>worktree-prune</code> task deletes stale or broken worktrees. See
+linkit:git-worktree[1] for more information.</p>
 </dd>
 </dl>
 </div>
@@ -1038,6 +1059,12 @@ positive value implies the command should run when the number of
 loose objects is at least the value of <code>maintenance.loose-objects.auto</code>.
 The default value is 100.</p>
 </dd>
+<dt class="hdlist1">maintenance.loose-objects.batchSize</dt>
+<dd>
+<p>This integer config option controls the maximum number of loose objects
+written into a packfile during the <code>loose-objects</code> task. The default is
+fifty thousand. Use value <code>0</code> to indicate no limit.</p>
+</dd>
 <dt class="hdlist1">maintenance.incremental-repack.auto</dt>
 <dd>
 <p>This integer config option controls how often the <code>incremental-repack</code>
@@ -1047,6 +1074,35 @@ option. A negative value will force the task to run every time.
 Otherwise, a positive value implies the command should run when the
 number of pack-files not in the multi-pack-index is at least the value
 of <code>maintenance.incremental-repack.auto</code>. The default value is 10.</p>
+</dd>
+<dt class="hdlist1">maintenance.reflog-expire.auto</dt>
+<dd>
+<p>This integer config option controls how often the <code>reflog-expire</code> task
+should be run as part of <code>git</code> <code>maintenance</code> <code>run</code> <code>--auto</code>. If zero, then
+the <code>reflog-expire</code> task will not run with the <code>--auto</code> option. A
+negative value will force the task to run every time. Otherwise, a
+positive value implies the command should run when the number of
+expired reflog entries in the "HEAD" reflog is at least the value of
+<code>maintenance.loose-objects.auto</code>. The default value is 100.</p>
+</dd>
+<dt class="hdlist1">maintenance.rerere-gc.auto</dt>
+<dd>
+<p>This integer config option controls how often the <code>rerere-gc</code> task
+should be run as part of <code>git</code> <code>maintenance</code> <code>run</code> <code>--auto</code>. If zero, then
+the <code>rerere-gc</code> task will not run with the <code>--auto</code> option. A negative
+value will force the task to run every time. Otherwise, any positive
+value implies the command will run when the "rr-cache" directory exists
+and has at least one entry, regardless of whether it is stale or not.
+This heuristic may be refined in the future. The default value is 1.</p>
+</dd>
+<dt class="hdlist1">maintenance.worktree-prune.auto</dt>
+<dd>
+<p>This integer config option controls how often the <code>worktree-prune</code> task
+should be run as part of <code>git</code> <code>maintenance</code> <code>run</code> <code>--auto</code>. If zero, then
+the <code>worktree-prune</code> task will not run with the <code>--auto</code> option. A
+negative value will force the task to run every time. Otherwise, a
+positive value implies the command should run when the number of
+prunable worktrees exceeds the value. The default value is 1.</p>
 </dd>
 </dl>
 </div>
@@ -1063,7 +1119,7 @@ of <code>maintenance.incremental-repack.auto</code>. The default value is 10.</p
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

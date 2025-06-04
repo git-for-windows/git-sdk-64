@@ -455,7 +455,7 @@ pre>code {
 <pre class="content"><em>git fsck</em> [--tags] [--root] [--unreachable] [--cache] [--no-reflogs]
          [--[no-]full] [--strict] [--verbose] [--lost-found]
          [--[no-]dangling] [--[no-]progress] [--connectivity-only]
-         [--[no-]name-objects] [&lt;object&gt;&#8230;&#8203;]</pre>
+         [--[no-]name-objects] [--[no-]references] [&lt;object&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -572,6 +572,12 @@ default when it is attached to a terminal, unless
 progress status even if the standard error stream is not
 directed to a terminal.</p>
 </dd>
+<dt class="hdlist1">--[no-]references</dt>
+<dd>
+<p>Control whether to check the references database consistency
+via <em>git refs verify</em>. See <a href="git-refs.html">git-refs(1)</a> for details.
+The default is to check the references database.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -599,9 +605,9 @@ to accept pushes of such data set <code>receive.fsck.</code><em>&lt;msg-id&gt;</
 to clone or fetch it set <code>fetch.fsck.</code><em>&lt;msg-id&gt;</em>.</p>
 </div>
 <div class="paragraph">
-<p>The rest of the documentation discusses <code>fsck.</code>* for brevity, but the
-same applies for the corresponding <code>receive.fsck.</code>* and
-<code>fetch.fsck.</code>*. variables.</p>
+<p>The rest of the documentation discusses <code>fsck.*</code> for brevity, but the
+same applies for the corresponding <code>receive.fsck.*</code> and
+<code>fetch.fsck.*</code>. variables.</p>
 </div>
 <div class="paragraph">
 <p>Unlike variables like <code>color.ui</code> and <code>core.editor</code>, the
@@ -765,6 +771,15 @@ by setting the corresponding <code>fsck.</code><em>&lt;msg-id&gt;</em> configura
 <dd>
 <p>(ERROR) An object has a bad sha1.</p>
 </dd>
+<dt class="hdlist1"><code>badPackedRefEntry</code></dt>
+<dd>
+<p>(ERROR) The "packed-refs" file contains an invalid entry.</p>
+</dd>
+<dt class="hdlist1"><code>badPackedRefHeader</code></dt>
+<dd>
+<p>(ERROR) The "packed-refs" file contains an invalid
+header.</p>
+</dd>
 <dt class="hdlist1"><code>badParentSha1</code></dt>
 <dd>
 <p>(ERROR) A commit object has a bad parent sha1.</p>
@@ -812,6 +827,13 @@ by setting the corresponding <code>fsck.</code><em>&lt;msg-id&gt;</em> configura
 <dt class="hdlist1"><code>emptyName</code></dt>
 <dd>
 <p>(WARN) A path contains an empty name.</p>
+</dd>
+<dt class="hdlist1"><code>emptyPackedRefsFile</code></dt>
+<dd>
+<p>(INFO) "packed-refs" file is empty. Report to the
+<a href="mailto:git@vger.kernel.org">git@vger.kernel.org</a> mailing list if you see this error. As only
+very early versions of Git would create such an empty
+"packed_refs" file, we might tighten this rule in the future.</p>
 </dd>
 <dt class="hdlist1"><code>extraHeaderEntry</code></dt>
 <dd>
@@ -895,7 +917,7 @@ by setting the corresponding <code>fsck.</code><em>&lt;msg-id&gt;</em> configura
 </dd>
 <dt class="hdlist1"><code>hasDotdot</code></dt>
 <dd>
-<p>(WARN) A tree contains an entry named ...</p>
+<p>(WARN) A tree contains an entry named <code>..</code>.</p>
 </dd>
 <dt class="hdlist1"><code>hasDotgit</code></dt>
 <dd>
@@ -980,6 +1002,15 @@ default value is 4096.</p>
 <dt class="hdlist1"><code>nullSha1</code></dt>
 <dd>
 <p>(WARN) Tree contains entries pointing to a null sha1.</p>
+</dd>
+<dt class="hdlist1"><code>packedRefEntryNotTerminated</code></dt>
+<dd>
+<p>(ERROR) The "packed-refs" file contains an entry that is
+not terminated by a newline.</p>
+</dd>
+<dt class="hdlist1"><code>packedRefUnsorted</code></dt>
+<dd>
+<p>(ERROR) The "packed-refs" file is not sorted.</p>
 </dd>
 <dt class="hdlist1"><code>refMissingNewline</code></dt>
 <dd>
@@ -1070,7 +1101,7 @@ created such a file.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

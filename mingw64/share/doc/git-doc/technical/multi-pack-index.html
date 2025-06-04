@@ -604,7 +604,7 @@ the pseudo-pack order for <code>$H2</code>, followed by the pseudo-pack order fo
 </div>
 <div class="paragraph">
 <p>The layout will then be extended so that each layer of the incremental
-MIDX chain can write a *.<code>bitmap</code>. The objects in each layer&#8217;s bitmap
+MIDX chain can write a <code>*.bitmap</code>. The objects in each layer&#8217;s bitmap
 are offset by the number of objects in the previous layers of the chain.</p>
 </div>
 </li>
@@ -673,6 +673,99 @@ given MIDX layer, then the index of an object at lexicographic position
 <code>m-</code>&gt;<code>num_objects_in_base</code>).</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_pseudo_pack_order_for_incremental_midxs">Pseudo-pack order for incremental MIDXs</h3>
+<div class="paragraph">
+<p>The original implementation of multi-pack reachability bitmaps defined
+the pseudo-pack order in <a href="../gitformat-pack.html">gitformat-pack(5)</a> (see the section
+titled "multi-pack-index reverse indexes") roughly as follows:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>In short, a MIDX&#8217;s pseudo-pack is the de-duplicated concatenation of
+objects in packs stored by the MIDX, laid out in pack order, and the
+packs arranged in MIDX order (with the preferred pack coming first).</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>In the incremental MIDX design, we extend this definition to include
+objects from multiple layers of the MIDX chain. The pseudo-pack order
+for incremental MIDXs is determined by concatenating the pseudo-pack
+ordering for each layer of the MIDX chain in order. Formally two objects
+<code>o1</code> and <code>o2</code> are compared as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>If <code>o1</code> appears in an earlier layer of the MIDX chain than <code>o2</code>, then
+<code>o1</code> sorts ahead of <code>o2</code>.</p>
+</li>
+<li>
+<p>Otherwise, if <code>o1</code> and <code>o2</code> appear in the same MIDX layer, and that
+MIDX layer has no base, then if one of <code>pack</code>(<code>o1</code>) and <code>pack</code>(<code>o2</code>) is
+preferred and the other is not, then the preferred one sorts ahead of
+the non-preferred one. If there is a base layer (i.e. the MIDX layer
+is not the first layer in the chain), then if <code>pack</code>(<code>o1</code>) appears
+earlier in that MIDX layer&#8217;s pack order, then <code>o1</code> sorts ahead of
+<code>o2</code>. Likewise if <code>pack</code>(<code>o2</code>) appears earlier, then the opposite is
+true.</p>
+</li>
+<li>
+<p>Otherwise, <code>o1</code> and <code>o2</code> appear in the same pack, and thus in the
+same MIDX layer. Sort <code>o1</code> and <code>o2</code> by their offset within their
+containing packfile.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Note that the preferred pack is a property of the MIDX chain, not the
+individual layers themselves. Fundamentally we could introduce a
+per-layer preferred pack, but this is less relevant now that we can
+perform multi-pack reuse across the set of packs in a MIDX.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reachability_bitmaps_and_incremental_midxs">Reachability bitmaps and incremental MIDXs</h3>
+<div class="paragraph">
+<p>Each layer of an incremental MIDX chain may have its objects (and the
+objects from any previous layer in the same MIDX chain) represented in
+its own <code>*.bitmap</code> file.</p>
+</div>
+<div class="paragraph">
+<p>The structure of a <code>*.bitmap</code> file belonging to an incremental MIDX
+chain is identical to that of a non-incremental MIDX bitmap, or a
+classic single-pack bitmap. Since objects are added to the end of the
+incremental MIDX&#8217;s pseudo-pack order (see above), it is possible to
+extend a bitmap when appending to the end of a MIDX chain.</p>
+</div>
+<div class="paragraph">
+<p>(Note: it is possible likewise to compress a contiguous sequence of MIDX
+incremental layers, and their <code>*.bitmap</code> files into a single layer and
+<code>*.bitmap</code>, but this is not yet implemented.)</p>
+</div>
+<div class="paragraph">
+<p>The object positions used are global within the pseudo-pack order, so
+subsequent layers will have, for example, <code>m-</code>&gt;<code>num_objects_in_base</code>
+number of <code>0</code> bits in each of their four type bitmaps. This follows from
+the fact that we only write type bitmap entries for objects present in
+the layer immediately corresponding to the bitmap).</p>
+</div>
+<div class="paragraph">
+<p>Note also that only the bitmap pertaining to the most recent layer in an
+incremental MIDX chain is used to store reachability information about
+the interesting and uninteresting objects in a reachability query.
+Earlier bitmap layers are only used to look up commit and pseudo-merge
+bitmaps from that layer, as well as the type-level bitmaps for objects
+in that layer.</p>
+</div>
+<div class="paragraph">
+<p>To simplify the implementation, type-level bitmaps are iterated
+simultaneously, and their results are OR&#8217;d together to avoid recursively
+calling internal bitmap functions.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -680,17 +773,6 @@ given MIDX layer, then the index of an object at lexicographic position
 <div class="sectionbody">
 <div class="ulist">
 <ul>
-<li>
-<p>The multi-pack-index allows many packfiles, especially in a context
-where repacking is expensive (such as a very large repo), or
-unexpected maintenance time is unacceptable (such as a high-demand
-build machine). However, the multi-pack-index needs to be rewritten
-in full every time. We can extend the format to be incremental, so
-writes are fast. By storing a small "tip" multi-pack-index that
-points to large "base" MIDX files, we can keep writes fast while
-still reducing the number of binary searches required for object
-lookups.</p>
-</li>
 <li>
 <p>If the multi-pack-index is extended to store a "stable object order"
 (a function Order(hash) = integer that is constant for a given hash,
@@ -731,7 +813,7 @@ etc.) and use this metadata to help that maintenance.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

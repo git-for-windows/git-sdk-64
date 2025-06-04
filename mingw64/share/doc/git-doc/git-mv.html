@@ -452,7 +452,8 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git mv</em> [&lt;options&gt;] &lt;source&gt;&#8230;&#8203; &lt;destination&gt;</pre>
+<pre class="content"><code>git</code> <code>mv</code> [<code>-v</code>] [<code>-f</code>] [<code>-n</code>] [<code>-k</code>] <em>&lt;source&gt;</em> <em>&lt;destination&gt;</em>
+<code>git</code> <code>mv</code> [<code>-v</code>] [<code>-f</code>] [<code>-n</code>] [<code>-k</code>] <em>&lt;source&gt;</em>&#8230;&#8203; <em>&lt;destination-directory&gt;</em></pre>
 </div>
 </div>
 </div>
@@ -462,16 +463,10 @@ pre>code {
 <div class="paragraph">
 <p>Move or rename a file, directory, or symlink.</p>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>git mv [-v] [-f] [-n] [-k] &lt;source&gt; &lt;destination&gt;
-git mv [-v] [-f] [-n] [-k] &lt;source&gt; ... &lt;destination-directory&gt;</pre>
-</div>
-</div>
 <div class="paragraph">
-<p>In the first form, it renames &lt;source&gt;, which must exist and be either
-a file, symlink or directory, to &lt;destination&gt;.
-In the second form, the last argument has to be an existing
+<p>In the first form, it renames <em>&lt;source&gt;</em>, which must exist and be either
+a file, symlink or directory, to <em>&lt;destination&gt;</em>.
+In the second form, <em>&lt;destination-directory&gt;</em> has to be an existing
 directory; the given sources will be moved into this directory.</p>
 </div>
 <div class="paragraph">
@@ -485,25 +480,25 @@ committed.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">-f</dt>
-<dt class="hdlist1">--force</dt>
+<dt class="hdlist1"><code>-f</code></dt>
+<dt class="hdlist1"><code>--force</code></dt>
 <dd>
 <p>Force renaming or moving of a file even if the &lt;destination&gt; exists.</p>
 </dd>
-<dt class="hdlist1">-k</dt>
+<dt class="hdlist1"><code>-k</code></dt>
 <dd>
 <p>Skip move or rename actions which would lead to an error
 condition. An error happens when a source is neither existing nor
 controlled by Git, or when it would overwrite an existing
 file unless <code>-f</code> is given.</p>
 </dd>
-<dt class="hdlist1">-n</dt>
-<dt class="hdlist1">--dry-run</dt>
+<dt class="hdlist1"><code>-n</code></dt>
+<dt class="hdlist1"><code>--dry-run</code></dt>
 <dd>
 <p>Do nothing; only show what would happen</p>
 </dd>
-<dt class="hdlist1">-v</dt>
-<dt class="hdlist1">--verbose</dt>
+<dt class="hdlist1"><code>-v</code></dt>
+<dt class="hdlist1"><code>--verbose</code></dt>
 <dd>
 <p>Report the names of files as they are moved.</p>
 </dd>
@@ -518,8 +513,8 @@ file unless <code>-f</code> is given.</p>
 <p>Moving a submodule using a gitfile (which means they were cloned
 with a Git version 1.7.8 or newer) will update the gitfile and
 core.worktree setting to make the submodule work in the new location.
-It also will attempt to update the submodule.&lt;name&gt;.path setting in
-the <a href="gitmodules.html">gitmodules(5)</a> file and stage that file (unless -n is used).</p>
+It also will attempt to update the <code>submodule.</code><em>&lt;name&gt;</em><code>.path</code> setting in
+the <a href="gitmodules.html">gitmodules(5)</a> file and stage that file (unless <code>-n</code> is used).</p>
 </div>
 </div>
 </div>
@@ -550,7 +545,7 @@ been implemented.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

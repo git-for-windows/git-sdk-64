@@ -586,7 +586,7 @@ static int try_zlib(unsigned char *buf, int len)
 {
         /* make this absurdly large so we don't have to loop */
         static unsigned char out[1024*1024];
-        z_stream z;
+        struct z_stream_s z;
         int ret;
 
         memset(&amp;z, 0, sizeof(z));
@@ -679,7 +679,7 @@ which reported the sha1 of the broken object. Success!</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The \xc7 comes from the replacement byte our "munge" program found.
+<p>The <code>\xc7</code> comes from the replacement byte our "munge" program found.
 The offset 51659518 is derived by taking the original object offset
 (51653873), adding the replacement offset found by "munge" (5642), and
 then adding back in the 3 bytes of git header we stripped.</p>
@@ -758,7 +758,7 @@ int main(int argc, char **argv)
         static unsigned char buf[25 * 1024 * 1024];
         static unsigned char out[25 * 1024 * 1024];
         int len;
-        z_stream z;
+        struct z_stream_s z;
         int ret;
 
         len = read(0, buf, sizeof(buf));
@@ -965,7 +965,7 @@ int main(int argc, char **argv)
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

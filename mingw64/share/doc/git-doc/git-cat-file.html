@@ -453,8 +453,7 @@ pre>code {
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git cat-file</em> &lt;type&gt; &lt;object&gt;
-<em>git cat-file</em> (-e | -p) &lt;object&gt;
-<em>git cat-file</em> (-t | -s) [--allow-unknown-type] &lt;object&gt;
+<em>git cat-file</em> (-e | -p | -t | -s) &lt;object&gt;
 <em>git cat-file</em> (--textconv | --filters)
              [&lt;rev&gt;:&lt;path|tree-ish&gt; | --path=&lt;path|tree-ish&gt; &lt;rev&gt;]
 <em>git cat-file</em> (--batch | --batch-check | --batch-command) [--batch-all-objects]
@@ -545,6 +544,29 @@ order to apply the filter to the content recorded in the index at
 the current working tree for the given <em>&lt;path&gt;</em> (i.e. smudge filters,
 end-of-line conversion, etc). In this case, <em>&lt;object&gt;</em> has to be of
 the form <em>&lt;tree-ish&gt;</em><code>:</code><em>&lt;path&gt;</em>, or <code>:</code><em>&lt;path&gt;</em>.</p>
+</dd>
+<dt class="hdlist1">--filter=&lt;filter-spec&gt;</dt>
+<dt class="hdlist1">--no-filter</dt>
+<dd>
+<p>Omit objects from the list of printed objects. This can only be used in
+combination with one of the batched modes. Excluded objects that have
+been explicitly requested via any of the batch modes that read objects
+via standard input (<code>--batch</code>, <code>--batch-check</code>) will be reported as
+"filtered". Excluded objects in <code>--batch-all-objects</code> mode will not be
+printed at all. The <em>&lt;filter-spec&gt;</em> may be one of the following:</p>
+<div class="paragraph">
+<p>The form <em>--filter=blob:none</em> omits all blobs.</p>
+</div>
+<div class="paragraph">
+<p>The form <em>--filter=blob:limit=&lt;n&gt;[kmg]</em> omits blobs of size at least n
+bytes or units.  n may be zero.  The suffixes k, m, and g can be used to name
+units in KiB, MiB, or GiB.  For example, <em>blob:limit=1k</em> is the same as
+<em>blob:limit=1024</em>.</p>
+</div>
+<div class="paragraph">
+<p>The form <em>--filter=object:type=(tag|commit|tree|blob)</em> omits all objects which
+are not of the requested type.</p>
+</div>
 </dd>
 <dt class="hdlist1">--path=&lt;path&gt;</dt>
 <dd>
@@ -687,10 +709,6 @@ should generally result in faster output, especially with
 <code>--batch</code>.  Note that <code>cat-file</code> will still show each object
 only once, even if it is stored multiple times in the
 repository.</p>
-</dd>
-<dt class="hdlist1">--allow-unknown-type</dt>
-<dd>
-<p>Allow <code>-s</code> or <code>-t</code> to query broken/corrupt objects of unknown type.</p>
 </dd>
 <dt class="hdlist1">--follow-symlinks</dt>
 <dd>
@@ -912,6 +930,15 @@ the repository, then <code>cat-file</code> will ignore any custom format and pri
 </div>
 </div>
 <div class="paragraph">
+<p>If a name is specified on stdin that is filtered out via <code>--filter=</code>,
+then <code>cat-file</code> will ignore any custom format and print:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>&lt;object&gt; SP excluded LF</pre>
+</div>
+</div>
+<div class="paragraph">
 <p>If a name is specified that might refer to more than one object (an ambiguous short sha), then <code>cat-file</code> will ignore any custom format and print:</p>
 </div>
 <div class="listingblock">
@@ -1014,7 +1041,7 @@ will be reported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

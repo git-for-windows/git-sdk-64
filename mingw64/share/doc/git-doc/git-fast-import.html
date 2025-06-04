@@ -998,7 +998,8 @@ change to the project.</p>
         original-oid?
         ('author' (SP &lt;name&gt;)? SP LT &lt;email&gt; GT SP &lt;when&gt; LF)?
         'committer' (SP &lt;name&gt;)? SP LT &lt;email&gt; GT SP &lt;when&gt; LF
-        ('encoding' SP &lt;encoding&gt;)?
+        ('gpgsig' SP &lt;alg&gt; LF data)?
+        ('encoding' SP &lt;encoding&gt; LF)?
         data
         ('from' SP &lt;commit-ish&gt; LF)?
         ('merge' SP &lt;commit-ish&gt; LF)*
@@ -1075,6 +1076,17 @@ of bytes, except <code>LT</code>, <code>GT</code> and <code>LF</code>.  <em>&lt;
 that was selected by the --date-format=&lt;fmt&gt; command-line option.
 See &#8220;Date Formats&#8221; above for the set of supported formats, and
 their syntax.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_gpgsig"><code>gpgsig</code></h4>
+<div class="paragraph">
+<p>The optional <code>gpgsig</code> command is used to include a PGP/GPG signature
+that signs the commit data.</p>
+</div>
+<div class="paragraph">
+<p>Here &lt;alg&gt; specifies which hashing algorithm is used for this
+signature, either <code>sha1</code> or <code>sha256</code>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1269,12 +1281,12 @@ must be quoted if it contains SP.</p>
 <p>When a <em>&lt;path&gt;</em> starts with a double quote ("), it is a C-style quoted
 string, where the complete filename is enclosed in a pair of double
 quotes and escape sequences are used. Certain characters must be escaped
-by preceding them with a backslash: <code>LF</code> is written as \n, backslash
-as \\, and double quote as \". Some characters may optionally be
-written with escape sequences: \a for bell, \b for backspace, \f
-for form feed, \n for line feed, \r for carriage return, \t for
-horizontal tab, and \v for vertical tab. Any byte can be written with
-3-digit octal codes (e.g., \033). All filenames can be represented as
+by preceding them with a backslash: <code>LF</code> is written as <code>\n</code>, backslash
+as <code>\\</code>, and double quote as <code>\</code>". Some characters may optionally be
+written with escape sequences: <code>\a</code> for bell, <code>\b</code> for backspace, <code>\f</code>
+for form feed, <code>\n</code> for line feed, <code>\r</code> for carriage return, <code>\t</code> for
+horizontal tab, and <code>\v</code> for vertical tab. Any byte can be written with
+3-digit octal codes (e.g., <code>\033</code>). All filenames can be represented as
 quoted strings.</p>
 </div>
 <div class="paragraph">
@@ -1293,7 +1305,7 @@ and its value must be in canonical form. That is it must not:</p>
 <p>start with a directory separator (e.g. <code>/foo</code> is invalid),</p>
 </li>
 <li>
-<p>contain the special component . or .. (e.g. <code>foo/./bar</code> and
+<p>contain the special component . or <code>..</code> (e.g. <code>foo/./bar</code> and
 <code>foo/</code><code>..</code><code>/bar</code> are invalid).</p>
 </li>
 </ul>
@@ -1302,7 +1314,7 @@ and its value must be in canonical form. That is it must not:</p>
 <p>The root of the tree can be represented by an empty string as <em>&lt;path&gt;</em>.</p>
 </div>
 <div class="paragraph">
-<p><em>&lt;path&gt;</em> cannot contain NUL, either literally or escaped as \000.
+<p><em>&lt;path&gt;</em> cannot contain NUL, either literally or escaped as <code>\000</code>.
 It is recommended that <em>&lt;path&gt;</em> always be encoded using UTF-8.</p>
 </div>
 </div>
@@ -2547,7 +2559,7 @@ not set, the value of <code>transfer.unpackLimit</code> is used instead.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

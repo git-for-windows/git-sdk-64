@@ -452,7 +452,7 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git verify-pack</em> [-v | --verbose] [-s | --stat-only] [--] &lt;pack&gt;.idx&#8230;&#8203;</pre>
+<pre class="content"><code>git</code> <code>verify-pack</code> [<code>-v</code> | <code>--verbose</code>] [<code>-s</code> | <code>--stat-only</code>] [<code>--</code>] <em>&lt;pack&gt;</em>.idx&#8230;&#8203;</pre>
 </div>
 </div>
 </div>
@@ -460,9 +460,8 @@ pre>code {
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Reads given idx file for packed Git archive created with the
-<em>git pack-objects</em> command and verifies the idx file and the
-corresponding pack file.</p>
+<p>Read each idx file for packed Git archive given on the command line,
+and verify the idx file and the corresponding pack file.</p>
 </div>
 </div>
 </div>
@@ -471,23 +470,19 @@ corresponding pack file.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">&lt;pack&gt;.idx &#8230;&#8203;</dt>
-<dd>
-<p>The idx files to verify.</p>
-</dd>
-<dt class="hdlist1">-v</dt>
-<dt class="hdlist1">--verbose</dt>
+<dt class="hdlist1"><code>-v</code></dt>
+<dt class="hdlist1"><code>--verbose</code></dt>
 <dd>
 <p>After verifying the pack, show the list of objects contained
 in the pack and a histogram of delta chain length.</p>
 </dd>
-<dt class="hdlist1">-s</dt>
-<dt class="hdlist1">--stat-only</dt>
+<dt class="hdlist1"><code>-s</code></dt>
+<dt class="hdlist1"><code>--stat-only</code></dt>
 <dd>
 <p>Do not verify the pack contents; only show the histogram of delta
 chain length.  With <code>--verbose</code>, the list of objects is also shown.</p>
 </dd>
-<dt class="hdlist1">--</dt>
+<dt class="hdlist1"><code>--</code></dt>
 <dd>
 <p>Do not interpret any more arguments as options.</p>
 </dd>
@@ -499,11 +494,11 @@ chain length.  With <code>--verbose</code>, the list of objects is also shown.</
 <h2 id="_output_format">OUTPUT FORMAT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When specifying the -v option the format used is:</p>
+<p>When specifying the <code>-v</code> option the format used is:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>SHA-1 type size size-in-packfile offset-in-packfile</pre>
+<pre>object-name type size size-in-packfile offset-in-packfile</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -511,7 +506,7 @@ chain length.  With <code>--verbose</code>, the list of objects is also shown.</
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>SHA-1 type size size-in-packfile offset-in-packfile depth base-SHA-1</pre>
+<pre>object-name type size size-in-packfile offset-in-packfile depth base-object-name</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -530,7 +525,7 @@ chain length.  With <code>--verbose</code>, the list of objects is also shown.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

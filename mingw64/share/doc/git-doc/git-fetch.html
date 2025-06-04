@@ -586,7 +586,7 @@ configuration variables documented in <a href="git-config.html">git-config(1)</a
 <dt class="hdlist1">--negotiate-only</dt>
 <dd>
 <p>Do not fetch anything from the server, and instead print the
-ancestors of the provided <code>--negotiation-tip=</code>* arguments,
+ancestors of the provided <code>--negotiation-tip=*</code> arguments,
 which we have in common with the server.</p>
 <div class="paragraph">
 <p>This is incompatible with <code>--recurse-submodules=</code>[<code>yes</code>|<code>on-demand</code>].
@@ -703,7 +703,7 @@ object database pack consolidation to remove any duplicate objects.</p>
 <p>When fetching refs listed on the command line, use the
 specified refspec (can be given more than once) to map the
 refs to remote-tracking branches, instead of the values of
-<code>remote.</code>*.<code>fetch</code> configuration variables for the remote
+<code>remote.*.fetch</code> configuration variables for the remote
 repository.  Providing an empty <em>&lt;refspec&gt;</em> to the
 <code>--refmap</code> option causes Git to ignore the configured
 refspecs and rely entirely on the refspecs supplied as
@@ -714,7 +714,7 @@ Branches" for details.</p>
 <dt class="hdlist1">--tags</dt>
 <dd>
 <p>Fetch all tags from the remote (i.e., fetch remote tags
-<code>refs/tags/</code>* into local tags with the same name), in addition
+<code>refs/tags/*</code> into local tags with the same name), in addition
 to whatever else would otherwise be fetched.  Using this
 option alone does not subject tags to pruning, even if --prune
 is used (though tags may be pruned anyway if they are also the
@@ -884,15 +884,15 @@ are read from <code>remote.</code><em>&lt;repository&gt;</em><code>.fetch</code>
 <code>+</code>, followed by the source &lt;src&gt;, followed
 by a colon <code>:</code>, followed by the destination &lt;dst&gt;.
 The colon can be omitted when &lt;dst&gt; is empty.  &lt;src&gt; is
-typically a ref, or a glob pattern with a single * that is used
+typically a ref, or a glob pattern with a single <code>*</code> that is used
 to match a set of refs, but it can also be a fully spelled hex object
 name.</p>
 </div>
 <div class="paragraph">
-<p>A &lt;refspec&gt; may contain a * in its &lt;src&gt; to indicate a simple pattern
+<p>A &lt;refspec&gt; may contain a <code>*</code> in its &lt;src&gt; to indicate a simple pattern
 match. Such a refspec functions like a glob that matches any ref with the
-pattern. A pattern &lt;refspec&gt; must have one and only one * in both the &lt;src&gt; and
-&lt;dst&gt;. It will map refs to the destination by replacing the * with the
+pattern. A pattern &lt;refspec&gt; must have one and only one <code>*</code> in both the &lt;src&gt; and
+&lt;dst&gt;. It will map refs to the destination by replacing the <code>*</code> with the
 contents matched from the source.</p>
 </div>
 <div class="paragraph">
@@ -925,10 +925,10 @@ rules particular to <em>git fetch</em> are noted below.</p>
 </div>
 <div class="paragraph">
 <p>Until Git version 2.20, and unlike when pushing with
-<a href="git-push.html">git-push(1)</a>, any updates to <code>refs/tags/</code>* would be accepted
+<a href="git-push.html">git-push(1)</a>, any updates to <code>refs/tags/*</code> would be accepted
 without <code>+</code> in the refspec (or <code>--force</code>). When fetching, we promiscuously
 considered all tag updates from a remote to be forced fetches.  Since
-Git version 2.20, fetching to update <code>refs/tags/</code>* works the same way
+Git version 2.20, fetching to update <code>refs/tags/*</code> works the same way
 as when pushing. I.e. any updates will be rejected without <code>+</code> in the
 refspec (or <code>--force</code>).</p>
 </div>
@@ -949,7 +949,7 @@ configuration which&#8217;ll amend these rules, and nothing like a
 above about what&#8217;s not allowed as an update can be overridden by
 adding an optional leading <code>+</code> to a refspec (or using the <code>--force</code>
 command line option). The only exception to this is that no amount of
-forcing will make the <code>refs/heads/</code>* namespace accept a non-commit
+forcing will make the <code>refs/heads/*</code> namespace accept a non-commit
 object.</p>
 </div>
 <div class="admonitionblock note">
@@ -1288,8 +1288,8 @@ or <code>git</code> <code>fetch</code>, <code>remote.</code><em>&lt;repository&g
 the refspecs&#8212;&#8203;they specify which refs to fetch and which local refs
 to update.  The example above will fetch
 all branches that exist in the <code>origin</code> (i.e. any ref that matches
-the left-hand side of the value, <code>refs/heads/</code>*) and update the
-corresponding remote-tracking branches in the <code>refs/remotes/origin/</code>*
+the left-hand side of the value, <code>refs/heads/*</code>) and update the
+corresponding remote-tracking branches in the <code>refs/remotes/origin/*</code>
 hierarchy.</p>
 </li>
 <li>
@@ -1361,7 +1361,7 @@ remote-references as a function of the refspec of the remote (see
 </div>
 <div class="paragraph">
 <p>Therefore if the refspec for the remote includes
-e.g. <code>refs/tags/</code>*:refs/tags/*, or you manually run e.g. <code>git</code> <code>fetch</code>
+e.g. <code>refs/tags/*:refs/tags/*</code>, or you manually run e.g. <code>git</code> <code>fetch</code>
 <code>--prune</code> <em>&lt;name&gt;</em> "refs/tags/*:refs/tags/*" it won&#8217;t be stale remote
 tracking branches that are deleted, but any local tag that doesn&#8217;t
 exist on the remote.</p>
@@ -1374,7 +1374,7 @@ come from the <em>&lt;name&gt;</em> remote in the first place.</p>
 </div>
 <div class="paragraph">
 <p>So be careful when using this with a refspec like
-<code>refs/tags/</code>*:refs/tags/*, or any other refspec which might map
+<code>refs/tags/*:refs/tags/*</code>, or any other refspec which might map
 references from multiple remotes to the same local namespace.</p>
 </div>
 <div class="paragraph">
@@ -1387,7 +1387,7 @@ with <code>fetch.pruneTags</code> or <code>remote.</code><em>&lt;name&gt;</em><c
 </div>
 <div class="paragraph">
 <p>The <code>--prune-tags</code> option is equivalent to having
-<code>refs/tags/</code>*:refs/tags/* declared in the refspecs of the remote. This
+<code>refs/tags/*:refs/tags/*</code> declared in the refspecs of the remote. This
 can lead to some seemingly strange interactions:</p>
 </div>
 <div class="listingblock">
@@ -1459,8 +1459,8 @@ used.</p>
 <div class="paragraph">
 <p>In compact output mode, specified with configuration variable
 fetch.output, if either entire <em>&lt;from&gt;</em> or <em>&lt;to&gt;</em> is found in the
-other string, it will be substituted with * in the other string. For
-example, <code>master</code> <code>-</code>&gt; <code>origin/master</code> becomes <code>master</code> <code>-</code>&gt; <code>origin/</code>*.</p>
+other string, it will be substituted with <code>*</code> in the other string. For
+example, <code>master</code> <code>-</code>&gt; <code>origin/master</code> becomes <code>master</code> <code>-</code>&gt; <code>origin/*</code>.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -1485,7 +1485,7 @@ example, <code>master</code> <code>-</code>&gt; <code>origin/master</code> becom
 <dd>
 <p>for a successful tag update;</p>
 </dd>
-<dt class="hdlist1">*</dt>
+<dt class="hdlist1"><code>*</code></dt>
 <dd>
 <p>for a successfully fetched new ref;</p>
 </dd>
@@ -1690,7 +1690,7 @@ and the PRUNING section of <a href="git-fetch.html">git-fetch(1)</a>.</p>
 <dt class="hdlist1">fetch.pruneTags</dt>
 <dd>
 <p>If true, fetch will automatically behave as if the
-<code>refs/tags/</code>*:refs/tags/* refspec was provided when pruning,
+<code>refs/tags/*:refs/tags/*</code> refspec was provided when pruning,
 if not set already. This allows for setting both this option
 and <code>fetch.prune</code> to maintain a 1=1 mapping to upstream
 refs. See also <code>remote.</code><em>&lt;name&gt;</em><code>.pruneTags</code> and the PRUNING
@@ -1820,7 +1820,7 @@ submodule, that submodule cannot be fetched until it is cloned e.g. by <code>git
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

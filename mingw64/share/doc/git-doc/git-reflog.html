@@ -459,6 +459,7 @@ pre>code {
         [--dry-run | -n] [--verbose] [--all [--single-worktree] | &lt;refs&gt;&#8230;&#8203;]
 <em>git reflog delete</em> [--rewrite] [--updateref]
         [--dry-run | -n] [--verbose] &lt;ref&gt;@{&lt;specifier&gt;}&#8230;&#8203;
+<em>git reflog drop</em> [--all [--single-worktree] | &lt;refs&gt;&#8230;&#8203;]
 <em>git reflog exists</em> &lt;ref&gt;</pre>
 </div>
 </div>
@@ -501,10 +502,15 @@ This is typically not used directly by end users&#8201;&#8212;&#8201;instead, se
 <a href="git-gc.html">git-gc(1)</a>.</p>
 </div>
 <div class="paragraph">
-<p>The "delete" subcommand deletes single entries from the reflog. Its
-argument must be an <em>exact</em> entry (e.g. "<code>git</code> <code>reflog</code> <code>delete</code>
-<code>master@</code>{2}"). This subcommand is also typically not used directly by
-end users.</p>
+<p>The "delete" subcommand deletes single entries from the reflog, but
+not the reflog itself. Its argument must be an <em>exact</em> entry (e.g. "<code>git</code>
+<code>reflog</code> <code>delete</code> <code>master@</code>{2}"). This subcommand is also typically not used
+directly by end users.</p>
+</div>
+<div class="paragraph">
+<p>The "drop" subcommand completely removes the reflog for the specified
+references. This is in contrast to "expire" and "delete", both of which
+can be used to delete reflog entries, but not the reflog itself.</p>
 </div>
 <div class="paragraph">
 <p>The "exists" subcommand checks whether a ref has a reflog.  It exits
@@ -602,6 +608,23 @@ been pruned.</p>
 used with <code>expire</code>.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_options_for_drop">Options for <code>drop</code></h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">--all</dt>
+<dd>
+<p>Drop the reflogs of all references from all worktrees.</p>
+</dd>
+<dt class="hdlist1">--single-worktree</dt>
+<dd>
+<p>By default when <code>--all</code> is specified, reflogs from all working
+trees are dropped. This option limits the processing to reflogs
+from the current working tree only.</p>
+</dd>
+</dl>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -615,7 +638,7 @@ used with <code>expire</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

@@ -926,6 +926,35 @@ trees and blobs will not have their associated path printed.</p>
 <p>Show progress reports on stderr as objects are considered. The
 <em>&lt;header&gt;</em> text will be printed with each progress update.</p>
 </dd>
+<dt class="hdlist1">-z</dt>
+<dd>
+<p>Instead of being newline-delimited, each outputted object and its
+accompanying metadata is delimited using NUL bytes. Output is printed
+in the following form:</p>
+<div class="listingblock">
+<div class="content">
+<pre>&lt;OID&gt; NUL [&lt;token&gt;=&lt;value&gt; NUL]...</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Additional object metadata, such as object paths or boundary objects, is
+printed using the <em>&lt;token&gt;</em><code>=</code><em>&lt;value&gt;</em> form. Token values are printed as-is
+without any encoding/truncation. An OID entry never contains a <em>=</em> character
+and thus is used to signal the start of a new object record. Examples:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>&lt;OID&gt; NUL
+&lt;OID&gt; NUL path=&lt;path&gt; NUL
+&lt;OID&gt; NUL boundary=yes NUL
+&lt;OID&gt; NUL missing=yes NUL [&lt;token&gt;=&lt;value&gt; NUL]...</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This mode is only compatible with the <code>--objects</code>, <code>--boundary</code>, and
+<code>--missing</code> output options.</p>
+</div>
+</dd>
 </dl>
 </div>
 </div>
@@ -1304,7 +1333,7 @@ commits affected by that topic, we may only want to view the subset of
 <div class="content">
 <pre>                E
                  \
-                  G---H---I---J
+              C---G---H---I---J
                                \
                                 L--M</pre>
 </div>
@@ -1493,7 +1522,7 @@ commits are marked as TREESAME (subject to be simplified away).</p>
 <p>Limit output to the one commit object which is roughly halfway between
 included and excluded commits. Note that the bad bisection ref
 <code>refs/bisect/bad</code> is added to the included commits (if it
-exists) and the good bisection refs <code>refs/bisect/good-</code>* are
+exists) and the good bisection refs <code>refs/bisect/good-*</code> are
 added to the excluded commits (if they exist). Thus, supposing there
 are no refs in <code>refs/bisect/</code>, if</p>
 <div class="listingblock">
@@ -1668,7 +1697,7 @@ the output to be more easily parsed by commands such as
 </dd>
 <dt class="hdlist1">--filter=&lt;filter-spec&gt;</dt>
 <dd>
-<p>Only useful with one of the <code>--objects</code>*; omits objects (usually
+<p>Only useful with one of the <code>--objects*</code>; omits objects (usually
 blobs) from the list of printed objects.  The <em>&lt;filter-spec&gt;</em>
 may be one of the following:</p>
 <div class="paragraph">
@@ -1979,7 +2008,7 @@ omitted.</p>
 has no effect.</p>
 </div>
 <div class="paragraph">
-<p><code>--date=format:..</code>. feeds the format ... to your system <code>strftime</code>,
+<p><code>--date=format:..</code>. feeds the format <code>...</code> to your system <code>strftime</code>,
 except for %s, %z, and %Z, which are handled internally.
 Use <code>--date=format:</code>%c to show the date in your system locale&#8217;s
 preferred format.  See the <code>strftime</code> manual for a complete list of
@@ -2989,7 +3018,7 @@ repository size (taking the size of <code>origin</code> as a baseline).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

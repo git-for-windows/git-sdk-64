@@ -1649,6 +1649,29 @@ See also <a href="git-diff.html">git-diff(1)</a> <code>--find-renames</code>.</p
 <dd>
 <p>Deprecated synonym for <code>find-renames=</code><em>&lt;n&gt;</em>.</p>
 </dd>
+<dt class="hdlist1">no-renames</dt>
+<dd>
+<p>Turn off rename detection. This overrides the <code>merge.renames</code>
+configuration variable.
+See also <a href="git-diff.html">git-diff(1)</a> <code>--no-renames</code>.</p>
+</dd>
+<dt class="hdlist1">histogram</dt>
+<dd>
+<p>Deprecated synonym for <code>diff-algorithm=histogram</code>.</p>
+</dd>
+<dt class="hdlist1">patience</dt>
+<dd>
+<p>Deprecated synonym for <code>diff-algorithm=patience</code>.</p>
+</dd>
+<dt class="hdlist1">diff-algorithm=[histogram|minimal|myers|patience]</dt>
+<dd>
+<p>Use a different diff algorithm while merging, which can help
+avoid mismerges that occur due to unimportant matching lines
+(such as braces from distinct functions).  See also
+<a href="git-diff.html">git-diff(1)</a> <code>--diff-algorithm</code>.  Note that <code>ort</code>
+defaults to <code>diff-algorithm=histogram</code>, while regular diffs
+currently default to the <code>diff.algorithm</code> config setting.</p>
+</dd>
 <dt class="hdlist1">subtree[=&lt;path&gt;]</dt>
 <dd>
 <p>This option is a more advanced form of <em>subtree</em> strategy, where
@@ -1662,50 +1685,11 @@ two trees to match.</p>
 </dd>
 <dt class="hdlist1">recursive</dt>
 <dd>
-<p>This can only resolve two heads using a 3-way merge
-algorithm.  When there is more than one common
-ancestor that can be used for 3-way merge, it creates a
-merged tree of the common ancestors and uses that as
-the reference tree for the 3-way merge.  This has been
-reported to result in fewer merge conflicts without
-causing mismerges by tests done on actual merge commits
-taken from Linux 2.6 kernel development history.
-Additionally this can detect and handle merges involving
-renames.  It does not make use of detected copies.  This was
-the default strategy for resolving two heads from Git v0.99.9k
-until v2.33.0.</p>
-<div class="paragraph">
-<p>For a path that is a submodule, the same caution as <em>ort</em> applies to this
-strategy.</p>
-</div>
-<div class="paragraph">
-<p>The <em>recursive</em> strategy takes the same options as <em>ort</em>.  However,
-there are three additional options that <em>ort</em> ignores (not documented
-above) that are potentially useful with the <em>recursive</em> strategy:</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">patience</dt>
-<dd>
-<p>Deprecated synonym for <code>diff-algorithm=patience</code>.</p>
-</dd>
-<dt class="hdlist1">diff-algorithm=[patience|minimal|histogram|myers]</dt>
-<dd>
-<p>Use a different diff algorithm while merging, which can help
-avoid mismerges that occur due to unimportant matching lines
-(such as braces from distinct functions).  See also
-<a href="git-diff.html">git-diff(1)</a> <code>--diff-algorithm</code>.  Note that <code>ort</code>
-specifically uses <code>diff-algorithm=histogram</code>, while <code>recursive</code>
-defaults to the <code>diff.algorithm</code> config setting.</p>
-</dd>
-<dt class="hdlist1">no-renames</dt>
-<dd>
-<p>Turn off rename detection. This overrides the <code>merge.renames</code>
-configuration variable.
-See also <a href="git-diff.html">git-diff(1)</a> <code>--no-renames</code>.</p>
-</dd>
-</dl>
-</div>
+<p>This is now a synonym for <code>ort</code>.  It was an alternative
+implementation until v2.49.0, but was redirected to mean <code>ort</code>
+in v2.50.0.  The previous recursive strategy was the default
+strategy for resolving two heads from Git v0.99.9k until
+v2.33.0.</p>
 </dd>
 <dt class="hdlist1">resolve</dt>
 <dd>
@@ -1729,7 +1713,7 @@ merge is always that of the current branch head, effectively
 ignoring all changes from all other branches.  It is meant to
 be used to supersede old development history of side
 branches.  Note that this is different from the -Xours option to
-the <em>recursive</em> merge strategy.</p>
+the <em>ort</em> merge strategy.</p>
 </dd>
 <dt class="hdlist1">subtree</dt>
 <dd>
@@ -2496,7 +2480,7 @@ When not configured, the default commit message editor is used instead.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

@@ -453,12 +453,12 @@ pre>code {
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content">scalar clone [--single-branch] [--branch &lt;main-branch&gt;] [--full-clone]
-        [--[no-]src] &lt;url&gt; [&lt;enlistment&gt;]
+        [--[no-]src] [--[no-]tags] [--[no-]maintenance] &lt;url&gt; [&lt;enlistment&gt;]
 scalar list
-scalar register [&lt;enlistment&gt;]
+scalar register [--[no-]maintenance] [&lt;enlistment&gt;]
 scalar unregister [&lt;enlistment&gt;]
 scalar run ( all | config | commit-graph | fetch | loose-objects | pack-files ) [&lt;enlistment&gt;]
-scalar reconfigure [ --all | &lt;enlistment&gt; ]
+scalar reconfigure [--maintenance=(enable|disable|keep)] [ --all | &lt;enlistment&gt; ]
 scalar diagnose [&lt;enlistment&gt;]
 scalar delete &lt;enlistment&gt;</pre>
 </div>
@@ -564,6 +564,12 @@ cloning with <code>--no-tags</code>, run <code>git</code> <code>fetch</code> <co
 <p>A sparse-checkout is initialized by default. This behavior can be
 turned off via <code>--full-clone</code>.</p>
 </dd>
+<dt class="hdlist1">--[no-]maintenance</dt>
+<dd>
+<p>By default, <code>scalar</code> <code>clone</code> configures the enlistment to use Git&#8217;s
+background maintenance feature. Use the <code>--no-maintenance</code> to skip
+this configuration.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -594,6 +600,13 @@ registered.</p>
 parent directory is considered to be the Scalar enlistment. If the worktree is
 <em>not</em> called <code>src/</code>, it itself will be considered to be the Scalar enlistment.</p>
 </div>
+</dd>
+<dt class="hdlist1">--[no-]maintenance</dt>
+<dd>
+<p>By default, <code>scalar</code> <code>register</code> configures the enlistment to use Git&#8217;s
+background maintenance feature. Use the <code>--no-maintenance</code> to skip
+this configuration. This does not disable any maintenance that may
+already be enabled in other ways.</p>
 </dd>
 </dl>
 </div>
@@ -642,9 +655,24 @@ automatically, explicit invocations of this task are rarely needed.</p>
 was somehow corrupted or changed by mistake, this subcommand allows to
 reconfigure the enlistment.</p>
 </div>
-<div class="paragraph">
-<p>With the <code>--all</code> option, all enlistments currently registered with Scalar
-will be reconfigured. Use this option after each Scalar upgrade.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">--all</dt>
+<dd>
+<p>When <code>--all</code> is specified, reconfigure all enlistments currently
+registered with Scalar by the <code>scalar.repo</code> config key. Use this
+option after each upgrade to get the latest features.</p>
+</dd>
+<dt class="hdlist1">--maintenance=(enable|disable|keep)</dt>
+<dd>
+<p>By default, Scalar configures the enlistment to use Git&#8217;s
+background maintenance feature; this is the same as using the
+<code>enable</code> value for this option. Use the	<code>disable</code> value to
+remove each considered enlistment from background maintenance.
+Use &#8216;keep&#8217; to leave the background maintenance configuration
+untouched for these repositories.</p>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -697,7 +725,7 @@ local file system, unregistering the repository.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

@@ -495,16 +495,6 @@ available to view in a browser.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_git_mentoringgooglegroups_com"><a class="anchor" href="#_git_mentoringgooglegroups_com"></a><a href="https://groups.google.com/forum/#!forum/git-mentoring">git-mentoring@googlegroups.com</a></h4>
-<div class="paragraph">
-<p>This mailing list is targeted to new contributors and was created as a place to
-post questions and receive answers outside of the public eye of the main list.
-Veteran contributors who are especially interested in helping mentor newcomers
-are present on the list. In order to avoid search indexers, group membership is
-required to view messages; anyone can join and no approval is required.</p>
-</div>
-</div>
-<div class="sect3">
 <h4 id="_git_devel_on_libera_chat"><a class="anchor" href="#_git_devel_on_libera_chat"></a><a href="https://web.libera.chat/#git-devel">#git-devel</a> on Libera Chat</h4>
 <div class="paragraph">
 <p>This IRC channel is for conversations between Git contributors. If someone is
@@ -642,8 +632,32 @@ point for your command in a function matching the style and signature:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>int cmd_psuh(int argc, const char **argv, const char *prefix)</pre>
+<pre>int cmd_psuh(int argc UNUSED, const char **argv UNUSED,
+             const char *prefix UNUSED, struct repository *repo UNUSED)</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>A few things to note:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A subcommand implementation takes its command line arguments
+in <code>int</code> <code>argc</code> + <code>const</code> <code>char</code> <code>**argv</code>, like <code>main</code>() would.</p>
+</li>
+<li>
+<p>It also takes two extra parameters, <code>prefix</code> and <code>repo</code>. What
+they mean will not be discussed until much later.</p>
+</li>
+<li>
+<p>Because this first example will not use any of the parameters,
+your compiler will give warnings on unused parameters. As the
+list of these four parameters is mandated by the API to add
+new built-in commands, you cannot omit them. Instead, you add
+<code>UNUSED</code> to each of them to tell the compiler that you <strong>know</strong>
+you are not (yet) using it.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>We&#8217;ll also need to add the declaration of psuh; open up <code>builtin.h</code>, find the
@@ -652,7 +666,7 @@ in order to keep the declarations alphabetically sorted:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>int cmd_psuh(int argc, const char **argv, const char *prefix);</pre>
+<pre>int cmd_psuh(int argc, const char **argv, const char *prefix, struct repository *repo);</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -681,7 +695,8 @@ should also do so when writing your user-facing commands in the future.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>int cmd_psuh(int argc, const char **argv, const char *prefix)
+<pre>int cmd_psuh(int argc UNUSED, const char **argv UNUSED,
+             const char *prefix UNUSED, struct repository *repo UNUSED)
 {
         printf(_("Pony saying hello goes here.\n"));
         return 0;
@@ -822,8 +837,9 @@ on the reference implementation linked at the top of this document.</p>
 Let&#8217;s start by having a look at everything we get.</p>
 </div>
 <div class="paragraph">
-<p>Modify your <code>cmd_psuh</code> implementation to dump the args you&#8217;re passed, keeping
-existing <code>printf</code>() calls in place:</p>
+<p>Modify your <code>cmd_psuh</code> implementation to dump the args you&#8217;re passed,
+keeping existing <code>printf</code>() calls in place; because the args are now
+used, remove the <code>UNUSED</code> macro from them:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -849,7 +865,8 @@ for you, try <code>cd</code> <code>Documentation/</code> &amp;&amp; <code>..</co
 helpful. So what other context can we get?</p>
 </div>
 <div class="paragraph">
-<p>Add a line to #include "config.<code>h</code>". Then, add the following bits to the
+<p>Add a line to #include "config.<code>h</code>" and #include "repository.<code>h</code>".
+Then, add the following bits to the function body:
 function body:</p>
 </div>
 <div class="listingblock">
@@ -858,19 +875,19 @@ function body:</p>
 
 ...
 
-        git_config(git_default_config, NULL);
-        if (git_config_get_string_tmp("user.name", &amp;cfg_name) &gt; 0)
+        repo_config(repo, git_default_config, NULL);
+        if (repo_config_get_string_tmp(repo, "user.name", &amp;cfg_name))
                 printf(_("No name is found in config\n"));
         else
                 printf(_("Your name: %s\n"), cfg_name);</pre>
 </div>
 </div>
 <div class="paragraph">
-<p><code>git_config</code>() will grab the configuration from config files known to Git and
-apply standard precedence rules. <code>git_config_get_string_tmp</code>() will look up
+<p><code>repo_config</code>() will grab the configuration from config files known to Git and
+apply standard precedence rules. <code>repo_config_get_string_tmp</code>() will look up
 a specific key ("user.name") and give you the value. There are a number of
 single-key lookup functions like this one; you can see them all (and more info
-about how to use <code>git_config</code>()) in <code>Documentation/technical/api-config.adoc</code>.</p>
+about how to use <code>repo_config</code>()) in <code>Documentation/technical/api-config.adoc</code>.</p>
 </div>
 <div class="paragraph">
 <p>You should see that the name printed matches the one you see when you run:</p>
@@ -921,7 +938,7 @@ Looking at that implementation we see the status config being populated like so:
 </div>
 <div class="paragraph">
 <p>But as we drill down, we can find that <code>status_init_config</code>() wraps a call
-to <code>git_config</code>(). Let&#8217;s modify the code we wrote in the previous commit.</p>
+to <code>repo_config</code>(). Let&#8217;s modify the code we wrote in the previous commit.</p>
 </div>
 <div class="paragraph">
 <p>Be sure to include the header to allow you to use <code>struct</code> <code>wt_status</code>:</p>
@@ -941,8 +958,8 @@ prepare it, and print its contents:</p>
 
 ...
 
-        wt_status_prepare(the_repository, &amp;status);
-        git_config(git_default_config, &amp;status);
+        wt_status_prepare(repo, &amp;status);
+        repo_config(repo, git_default_config, &amp;status);
 
 ...
 
@@ -999,9 +1016,9 @@ the declarations and the logic, respectively.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>struct</code> <code>strbuf</code> provides some safety belts to your basic <code>char</code>*, one of
+<p>The <code>struct</code> <code>strbuf</code> provides some safety belts to your basic <code>char*</code>, one of
 which is a length member to prevent buffer overruns. It needs to be initialized
-nicely with <code>STRBUF_INIT</code>. Keep it in mind when you need to pass around <code>char</code>*.</p>
+nicely with <code>STRBUF_INIT</code>. Keep it in mind when you need to pass around <code>char*</code>.</p>
 </div>
 <div class="paragraph">
 <p><code>lookup_commit_reference_by_name</code> resolves the name you pass it, so you can play
@@ -1041,7 +1058,7 @@ following:</p>
 <p>Your new command is undocumented! Let&#8217;s fix that.</p>
 </div>
 <div class="paragraph">
-<p>Take a look at <code>Documentation/git-</code>*.<code>adoc</code>. These are the manpages for the
+<p>Take a look at <code>Documentation/git-*.adoc</code>. These are the manpages for the
 subcommands that Git knows about. You can open these up and take a look to get
 acquainted with the format, but then go ahead and make a new file
 <code>Documentation/git-psuh.adoc</code>. Like with most of the documentation in the Git
@@ -1897,7 +1914,7 @@ valuable, such as changing the Reply-to address or adding more CC and BCC lines.
 <td class="content">
 If you&#8217;re not sure whom to CC, running <code>contrib/contacts/git-contacts</code> can
 list potential reviewers. In addition, you can do <code>git</code> <code>send-email</code>
-<code>--cc-cmd=</code>'perl <code>contrib/contacts/git-contacts</code>' <code>feature/</code>*.<code>patch</code><sup class="footnote" id="_footnote_contrib-scripts">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> to
+<code>--cc-cmd=</code>'perl <code>contrib/contacts/git-contacts</code>' <code>feature/*.patch</code><sup class="footnote" id="_footnote_contrib-scripts">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> to
 automatically pass this list of emails to <code>send-email</code>.
 </td>
 </tr>
@@ -1973,7 +1990,7 @@ and your range-diff will be prefaced with "Range-diff against v1".</p>
 directory, alongside the v1 patches. Using a single directory makes it easy to
 refer to the old v1 patches while proofreading the v2 patches, but you will need
 to be careful to send out only the v2 patches. We will use a pattern like
-<code>psuh/v2-</code>*.<code>patch</code> (not <code>psuh/</code>*.<code>patch</code>, which would match v1 and v2 patches).</p>
+<code>psuh/v2-*.patch</code> (not <code>psuh/*.patch</code>, which would match v1 and v2 patches).</p>
 </div>
 <div class="paragraph">
 <p>Edit your cover letter again. Now is a good time to mention what&#8217;s different
@@ -2239,7 +2256,7 @@ should generate your diffs from <em>&lt;topic&gt;</em><code>..</code><em>&lt;myb
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

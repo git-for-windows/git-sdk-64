@@ -452,20 +452,20 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git daemon</em> [--verbose] [--syslog] [--export-all]
-             [--timeout=&lt;n&gt;] [--init-timeout=&lt;n&gt;] [--max-connections=&lt;n&gt;]
-             [--strict-paths] [--base-path=&lt;path&gt;] [--base-path-relaxed]
-             [--user-path | --user-path=&lt;path&gt;]
-             [--interpolated-path=&lt;pathtemplate&gt;]
-             [--reuseaddr] [--detach] [--pid-file=&lt;file&gt;]
-             [--enable=&lt;service&gt;] [--disable=&lt;service&gt;]
-             [--allow-override=&lt;service&gt;] [--forbid-override=&lt;service&gt;]
-             [--access-hook=&lt;path&gt;] [--[no-]informative-errors]
-             [--inetd |
-              [--listen=&lt;host-or-ipaddr&gt;] [--port=&lt;n&gt;]
-              [--user=&lt;user&gt; [--group=&lt;group&gt;]]]
-             [--log-destination=(stderr|syslog|none)]
-             [&lt;directory&gt;&#8230;&#8203;]</pre>
+<pre class="content"><code>git</code> <code>daemon</code> [<code>--verbose</code>] [<code>--syslog</code>] [<code>--export-all</code>]
+	   [<code>--timeout=</code><em>&lt;n&gt;</em>] [<code>--init-timeout=</code><em>&lt;n&gt;</em>] [<code>--max-connections=</code><em>&lt;n&gt;</em>]
+	   [<code>--strict-paths</code>] [<code>--base-path=</code><em>&lt;path&gt;</em>] [<code>--base-path-relaxed</code>]
+	   [<code>--user-path</code> | <code>--user-path=</code><em>&lt;path&gt;</em>]
+	   [<code>--interpolated-path=</code><em>&lt;pathtemplate&gt;</em>]
+	   [<code>--reuseaddr</code>] [<code>--detach</code>] [<code>--pid-file=</code><em>&lt;file&gt;</em>]
+	   [<code>--enable=</code><em>&lt;service&gt;</em>] [<code>--disable=</code><em>&lt;service&gt;</em>]
+	   [<code>--allow-override=</code><em>&lt;service&gt;</em>] [<code>--forbid-override=</code><em>&lt;service&gt;</em>]
+	   [<code>--access-hook=</code><em>&lt;path&gt;</em>] [<code>--</code>[<code>no-</code>]<code>informative-errors</code>]
+	   [<code>--inetd</code> |
+	     [<code>--listen=</code><em>&lt;host-or-ipaddr&gt;</em>] [<code>--port=</code><em>&lt;n&gt;</em>]
+	     [<code>--user=</code><em>&lt;user&gt;</em> [<code>--group=</code><em>&lt;group&gt;</em>]]]
+	   [<code>--log-destination=</code>(<code>stderr</code>|<code>syslog</code>|<code>none</code>)]
+	   [<em>&lt;directory&gt;</em>&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -481,20 +481,20 @@ that service if it is enabled.</p>
 <p>It verifies that the directory has the magic file "git-daemon-export-ok", and
 it will refuse to export any Git directory that hasn&#8217;t explicitly been marked
 for export this way (unless the <code>--export-all</code> parameter is specified). If you
-pass some directory paths as <em>git daemon</em> arguments, the offers are limited to
+pass some directory paths as <code>git</code> <code>daemon</code> arguments, the offers are limited to
 repositories within those directories.</p>
 </div>
 <div class="paragraph">
 <p>By default, only <code>upload-pack</code> service is enabled, which serves
-<em>git fetch-pack</em> and <em>git ls-remote</em> clients, which are invoked
-from <em>git fetch</em>, <em>git pull</em>, and <em>git clone</em>.</p>
+<code>git</code> <code>fetch-pack</code> and <code>git</code> <code>ls-remote</code> clients, which are invoked
+from <code>git</code> <code>fetch</code>, <code>git</code> <code>pull</code>, and <code>git</code> <code>clone</code>.</p>
 </div>
 <div class="paragraph">
 <p>This is ideally suited for read-only updates, i.e., pulling from
 Git repositories.</p>
 </div>
 <div class="paragraph">
-<p>An <code>upload-archive</code> also exists to serve <em>git archive</em>.</p>
+<p>An <code>upload-archive</code> also exists to serve <code>git</code> <code>archive</code>.</p>
 </div>
 </div>
 </div>
@@ -503,29 +503,29 @@ Git repositories.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--strict-paths</dt>
+<dt class="hdlist1"><code>--strict-paths</code></dt>
 <dd>
 <p>Match paths exactly (i.e. don&#8217;t allow "/foo/repo" when the real path is
 "/foo/repo.git" or "/foo/repo/.git") and don&#8217;t do user-relative paths.
-<em>git daemon</em> will refuse to start when this option is enabled and no
+<code>git</code> <code>daemon</code> will refuse to start when this option is enabled and no
 directory arguments are provided.</p>
 </dd>
-<dt class="hdlist1">--base-path=&lt;path&gt;</dt>
+<dt class="hdlist1"><code>--base-path=</code><em>&lt;path&gt;</em></dt>
 <dd>
 <p>Remap all the path requests as relative to the given path.
-This is sort of "Git root" - if you run <em>git daemon</em> with
-<em>--base-path=/srv/git</em> on example.com, then if you later try to pull
-<em>git://example.com/hello.git</em>, <em>git daemon</em> will interpret the path
-as <code>/srv/git/hello.git</code>.</p>
+This is sort of "Git root" - if you run <code>git</code> <code>daemon</code> with
+<code>--base-path=/srv/git</code> on <code>example.com</code>, then if you later try
+to pull from <code>git://example.com/hello.git</code>, <code>git</code> <code>daemon</code> will
+interpret the path as <code>/srv/git/hello.git</code>.</p>
 </dd>
-<dt class="hdlist1">--base-path-relaxed</dt>
+<dt class="hdlist1"><code>--base-path-relaxed</code></dt>
 <dd>
-<p>If --base-path is enabled and repo lookup fails, with this option
-<em>git daemon</em> will attempt to lookup without prefixing the base path.
-This is useful for switching to --base-path usage, while still
+<p>If <code>--base-path</code> is enabled and repo lookup fails, with this option
+<code>git</code> <code>daemon</code> will attempt to lookup without prefixing the base path.
+This is useful for switching to <code>--base-path</code> usage, while still
 allowing the old paths.</p>
 </dd>
-<dt class="hdlist1">--interpolated-path=&lt;pathtemplate&gt;</dt>
+<dt class="hdlist1"><code>--interpolated-path=</code><em>&lt;pathtemplate&gt;</em></dt>
 <dd>
 <p>To support virtual hosting, an interpolated path template can be
 used to dynamically construct alternate paths.  The template
@@ -536,75 +536,75 @@ and %D for the absolute path of the named repository.
 After interpolation, the path is validated against the directory
 list.</p>
 </dd>
-<dt class="hdlist1">--export-all</dt>
+<dt class="hdlist1"><code>--export-all</code></dt>
 <dd>
 <p>Allow pulling from all directories that look like Git repositories
 (have the <em>objects</em> and <em>refs</em> subdirectories), even if they
-do not have the <em>git-daemon-export-ok</em> file.</p>
+do not have the <code>git-daemon-export-ok</code> file.</p>
 </dd>
-<dt class="hdlist1">--inetd</dt>
+<dt class="hdlist1"><code>--inetd</code></dt>
 <dd>
-<p>Have the server run as an inetd service. Implies --syslog (may be
-overridden with <code>--log-destination=</code>).
-Incompatible with --detach, --port, --listen, --user and --group
-options.</p>
+<p>Have the server run as an inetd service. Implies <code>--syslog</code> (may
+be overridden with <code>--log-destination=</code>).
+Incompatible with <code>--detach</code>, <code>--port</code>, <code>--listen</code>, <code>--user</code> and
+<code>--group</code> options.</p>
 </dd>
-<dt class="hdlist1">--listen=&lt;host-or-ipaddr&gt;</dt>
+<dt class="hdlist1"><code>--listen=</code><em>&lt;host-or-ipaddr&gt;</em></dt>
 <dd>
 <p>Listen on a specific IP address or hostname.  IP addresses can
 be either an IPv4 address or an IPv6 address if supported.  If IPv6
-is not supported, then --listen=&lt;hostname&gt; is also not supported and
---listen must be given an IPv4 address.
+is not supported, then <code>--listen=</code><em>&lt;hostname&gt;</em> is also not supported
+and <code>--listen</code> must be given an IPv4 address.
 Can be given more than once.
 Incompatible with <code>--inetd</code> option.</p>
 </dd>
-<dt class="hdlist1">--port=&lt;n&gt;</dt>
+<dt class="hdlist1"><code>--port=</code><em>&lt;n&gt;</em></dt>
 <dd>
 <p>Listen on an alternative port.  Incompatible with <code>--inetd</code> option.</p>
 </dd>
-<dt class="hdlist1">--init-timeout=&lt;n&gt;</dt>
+<dt class="hdlist1"><code>--init-timeout=</code><em>&lt;n&gt;</em></dt>
 <dd>
 <p>Timeout (in seconds) between the moment the connection is established
 and the client request is received (typically a rather low value, since
 that should be basically immediate).</p>
 </dd>
-<dt class="hdlist1">--timeout=&lt;n&gt;</dt>
+<dt class="hdlist1"><code>--timeout=</code><em>&lt;n&gt;</em></dt>
 <dd>
 <p>Timeout (in seconds) for specific client sub-requests. This includes
 the time it takes for the server to process the sub-request and the
 time spent waiting for the next client&#8217;s request.</p>
 </dd>
-<dt class="hdlist1">--max-connections=&lt;n&gt;</dt>
+<dt class="hdlist1"><code>--max-connections=</code><em>&lt;n&gt;</em></dt>
 <dd>
 <p>Maximum number of concurrent clients, defaults to 32.  Set it to
 zero for no limit.</p>
 </dd>
-<dt class="hdlist1">--syslog</dt>
+<dt class="hdlist1"><code>--syslog</code></dt>
 <dd>
 <p>Short for <code>--log-destination=syslog</code>.</p>
 </dd>
-<dt class="hdlist1">--log-destination=&lt;destination&gt;</dt>
+<dt class="hdlist1"><code>--log-destination=</code><em>&lt;destination&gt;</em></dt>
 <dd>
 <p>Send log messages to the specified destination.
-Note that this option does not imply --verbose,
+Note that this option does not imply <code>--verbose</code>,
 thus by default only error conditions will be logged.
-The &lt;destination&gt; must be one of:</p>
+The <em>&lt;destination&gt;</em> must be one of:</p>
 <div class="openblock">
 <div class="content">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">stderr</dt>
+<dt class="hdlist1"><code>stderr</code></dt>
 <dd>
 <p>Write to standard error.
 Note that if <code>--detach</code> is specified,
 the process disconnects from the real standard error,
 making this destination effectively equivalent to <code>none</code>.</p>
 </dd>
-<dt class="hdlist1">syslog</dt>
+<dt class="hdlist1"><code>syslog</code></dt>
 <dd>
 <p>Write to syslog, using the <code>git-daemon</code> identifier.</p>
 </dd>
-<dt class="hdlist1">none</dt>
+<dt class="hdlist1"><code>none</code></dt>
 <dd>
 <p>Disable all logging.</p>
 </dd>
@@ -617,8 +617,8 @@ making this destination effectively equivalent to <code>none</code>.</p>
 otherwise <code>stderr</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--user-path</dt>
-<dt class="hdlist1">--user-path=&lt;path&gt;</dt>
+<dt class="hdlist1"><code>--user-path</code></dt>
+<dt class="hdlist1"><code>--user-path=</code><em>&lt;path&gt;</em></dt>
 <dd>
 <p>Allow ~user notation to be used in requests.  When
 specified with no parameter, a request to
@@ -628,27 +628,27 @@ If <code>--user-path=</code><em>&lt;path&gt;</em> is specified, the same request
 taken as a request to access <em>&lt;path&gt;</em><code>/foo</code> repository in
 the home directory of user <code>alice</code>.</p>
 </dd>
-<dt class="hdlist1">--verbose</dt>
+<dt class="hdlist1"><code>--verbose</code></dt>
 <dd>
 <p>Log details about the incoming connections and requested files.</p>
 </dd>
-<dt class="hdlist1">--reuseaddr</dt>
+<dt class="hdlist1"><code>--reuseaddr</code></dt>
 <dd>
-<p>Use SO_REUSEADDR when binding the listening socket.
+<p>Use <code>SO_REUSEADDR</code> when binding the listening socket.
 This allows the server to restart without waiting for
 old connections to time out.</p>
 </dd>
-<dt class="hdlist1">--detach</dt>
+<dt class="hdlist1"><code>--detach</code></dt>
 <dd>
-<p>Detach from the shell. Implies --syslog.</p>
+<p>Detach from the shell. Implies <code>--syslog</code>.</p>
 </dd>
-<dt class="hdlist1">--pid-file=&lt;file&gt;</dt>
+<dt class="hdlist1"><code>--pid-file=</code><em>&lt;file&gt;</em></dt>
 <dd>
-<p>Save the process id in <em>file</em>.  Ignored when the daemon
+<p>Save the process id in <em>&lt;file&gt;</em>.  Ignored when the daemon
 is run under <code>--inetd</code>.</p>
 </dd>
-<dt class="hdlist1">--user=&lt;user&gt;</dt>
-<dt class="hdlist1">--group=&lt;group&gt;</dt>
+<dt class="hdlist1"><code>--user=</code><em>&lt;user&gt;</em></dt>
+<dt class="hdlist1"><code>--group=</code><em>&lt;group&gt;</em></dt>
 <dd>
 <p>Change daemon&#8217;s uid and gid before entering the service loop.
 When only <code>--user</code> is given without <code>--group</code>, the
@@ -658,19 +658,19 @@ and numeric IDs are not supported.</p>
 <div class="paragraph">
 <p>Giving these options is an error when used with <code>--inetd</code>; use
 the facility of inet daemon to achieve the same before spawning
-<em>git daemon</em> if needed.</p>
+<code>git</code> <code>daemon</code> if needed.</p>
 </div>
 <div class="paragraph">
 <p>Like many programs that switch user id, the daemon does not reset
-environment variables such as <code>$HOME</code> when it runs git programs,
+environment variables such as <code>HOME</code> when it runs git programs,
 e.g. <code>upload-pack</code> and <code>receive-pack</code>. When using this option, you
 may also want to set and export <code>HOME</code> to point at the home
 directory of <em>&lt;user&gt;</em> before starting the daemon, and make sure any
 Git configuration files in that directory are readable by <em>&lt;user&gt;</em>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--enable=&lt;service&gt;</dt>
-<dt class="hdlist1">--disable=&lt;service&gt;</dt>
+<dt class="hdlist1"><code>--enable=</code><em>&lt;service&gt;</em></dt>
+<dt class="hdlist1"><code>--disable=</code><em>&lt;service&gt;</em></dt>
 <dd>
 <p>Enable/disable the service site-wide per default.  Note
 that a service disabled site-wide can still be enabled
@@ -678,14 +678,15 @@ per repository if it is marked overridable and the
 repository enables the service with a configuration
 item.</p>
 </dd>
-<dt class="hdlist1">--allow-override=&lt;service&gt;</dt>
-<dt class="hdlist1">--forbid-override=&lt;service&gt;</dt>
+<dt class="hdlist1"><code>--allow-override=</code><em>&lt;service&gt;</em></dt>
+<dt class="hdlist1"><code>--forbid-override=</code><em>&lt;service&gt;</em></dt>
 <dd>
 <p>Allow/forbid overriding the site-wide default with per
 repository configuration.  By default, all the services
 may be overridden.</p>
 </dd>
-<dt class="hdlist1">--[no-]informative-errors</dt>
+<dt class="hdlist1"><code>--informative-errors</code></dt>
+<dt class="hdlist1"><code>--no-informative-errors</code></dt>
 <dd>
 <p>When informative errors are turned on, git-daemon will report
 more verbose errors to the client, differentiating conditions
@@ -693,9 +694,9 @@ like "no such repository" from "repository not exported". This
 is more convenient for clients, but may leak information about
 the existence of unexported repositories.  When informative
 errors are not enabled, all errors report "access denied" to the
-client. The default is --no-informative-errors.</p>
+client. The default is <code>--no-informative-errors</code>.</p>
 </dd>
-<dt class="hdlist1">--access-hook=&lt;path&gt;</dt>
+<dt class="hdlist1"><code>--access-hook=</code><em>&lt;path&gt;</em></dt>
 <dd>
 <p>Every time a client connects, first run an external command
 specified by the &lt;path&gt; with service name (e.g. "upload-pack"),
@@ -712,7 +713,7 @@ standard output to be sent to the requestor as an error message when
 it declines the service.</p>
 </div>
 </dd>
-<dt class="hdlist1">&lt;directory&gt;</dt>
+<dt class="hdlist1"><em>&lt;directory&gt;</em></dt>
 <dd>
 <p>The remaining arguments provide a list of directories. If any
 directories are specified, then the <code>git-daemon</code> process will
@@ -730,7 +731,7 @@ requested directory must match one of these directories exactly.</p>
 <div class="paragraph">
 <p>These services can be globally enabled/disabled using the
 command-line options of this command.  If finer-grained
-control is desired (e.g. to allow <em>git archive</em> to be run
+control is desired (e.g. to allow <code>git</code> <code>archive</code> to be run
 against only in a few selected repositories the daemon serves),
 the per-repository configuration file can be used to enable or
 disable them.</p>
@@ -739,20 +740,20 @@ disable them.</p>
 <dl>
 <dt class="hdlist1">upload-pack</dt>
 <dd>
-<p>This serves <em>git fetch-pack</em> and <em>git ls-remote</em>
+<p>This serves <code>git</code> <code>fetch-pack</code> and <code>git</code> <code>ls-remote</code>
 clients.  It is enabled by default, but a repository can
 disable it by setting <code>daemon.uploadpack</code> configuration
 item to <code>false</code>.</p>
 </dd>
 <dt class="hdlist1">upload-archive</dt>
 <dd>
-<p>This serves <em>git archive --remote</em>.  It is disabled by
+<p>This serves <code>git</code> <code>archive</code> <code>--remote</code>.  It is disabled by
 default, but a repository can enable it by setting
 <code>daemon.uploadarch</code> configuration item to <code>true</code>.</p>
 </dd>
 <dt class="hdlist1">receive-pack</dt>
 <dd>
-<p>This serves <em>git send-pack</em> clients, allowing anonymous
+<p>This serves <code>git</code> <code>send-pack</code> clients, allowing anonymous
 push.  It is disabled by default, as there is <em>no</em>
 authentication in the protocol (in other words, anybody
 can push anything into the repository, including removal
@@ -819,7 +820,7 @@ default repository could be made as well.</p>
 </dd>
 <dt class="hdlist1"><em>git daemon</em> as regular daemon for virtual hosts</dt>
 <dd>
-<p>To set up <em>git daemon</em> as a regular, non-inetd service that
+<p>To set up <code>git</code> <code>daemon</code> as a regular, non-inetd service that
 handles repositories for multiple virtual hosts based on
 their IP addresses, start the daemon like this:</p>
 <div class="listingblock">
@@ -839,7 +840,7 @@ they correspond to these IP addresses.</p>
 </dd>
 <dt class="hdlist1">selectively enable/disable services per repository</dt>
 <dd>
-<p>To enable <em>git archive --remote</em> and disable <em>git fetch</em> against
+<p>To enable <code>git</code> <code>archive</code> <code>--remote</code> and disable <code>git</code> <code>fetch</code> against
 a repository, have the following in the configuration file in the
 repository (that is the file <em>config</em> next to <code>HEAD</code>, <em>refs</em> and
 <em>objects</em>).</p>
@@ -859,8 +860,8 @@ repository (that is the file <em>config</em> next to <code>HEAD</code>, <em>refs
 <h2 id="_environment">ENVIRONMENT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>git daemon</em> will set REMOTE_ADDR to the IP address of the client
-that connected to it, if the IP address is available. REMOTE_ADDR will
+<p><code>git</code> <code>daemon</code> will set <code>REMOTE_ADDR</code> to the IP address of the client
+that connected to it, if the IP address is available. <code>REMOTE_ADDR</code> will
 be available in the environment of hooks called when
 services are performed.</p>
 </div>
@@ -877,7 +878,7 @@ services are performed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

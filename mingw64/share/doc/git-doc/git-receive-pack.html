@@ -505,6 +505,19 @@ its behavior, see <a href="git-config.html">git-config(1)</a>.</p>
 <code>$GIT_URL/info/refs</code>?service=git-receive-pack requests. See
 <code>--http-backend-info-refs</code> in <a href="git-upload-pack.html">git-upload-pack(1)</a>.</p>
 </dd>
+<dt class="hdlist1">--skip-connectivity-check</dt>
+<dd>
+<p>Bypasses the connectivity checks that validate the existence of all
+objects in the transitive closure of reachable objects. This option is
+intended for server operators that want to implement their own object
+connectivity validation outside of Git. This is useful in such cases
+where the server-side knows additional information about how Git is
+being used and thus can rely on certain guarantees to more efficiently
+compute object connectivity that Git itself cannot make. Usage of this
+option without a reliable external mechanism to ensure full reachable
+object connectivity risks corrupting the repository and should not be
+used in the general case.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -677,7 +690,7 @@ the update.  Refs that were created will have sha1-old equal to
 the repository.</p>
 </div>
 <div class="paragraph">
-<p>The <code>GIT_PUSH_CERT</code>* environment variables can be inspected, just as
+<p>The <code>GIT_PUSH_CERT*</code> environment variables can be inspected, just as
 in <code>pre-receive</code> hook, after accepting a signed push.</p>
 </div>
 <div class="paragraph">
@@ -809,7 +822,7 @@ from within <code>pre-receive</code> are automatically rejected.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

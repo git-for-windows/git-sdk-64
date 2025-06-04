@@ -475,14 +475,14 @@ documentation for <a href="git-receive-pack.html">git-receive-pack(1)</a>.</p>
 </div>
 <div class="paragraph">
 <p>When the command line does not specify where to push with the
-<em>&lt;repository&gt;</em> argument, <code>branch.</code>*.<code>remote</code> configuration for the
+<em>&lt;repository&gt;</em> argument, <code>branch.*.remote</code> configuration for the
 current branch is consulted to determine where to push.  If the
 configuration is missing, it defaults to <em>origin</em>.</p>
 </div>
 <div class="paragraph">
 <p>When the command line does not specify what to push with <em>&lt;refspec&gt;</em>...
 arguments or <code>--all</code>, <code>--mirror</code>, <code>--tags</code> options, the command finds
-the default <em>&lt;refspec&gt;</em> by consulting <code>remote.</code>*.<code>push</code> configuration,
+the default <em>&lt;refspec&gt;</em> by consulting <code>remote.*.push</code> configuration,
 and if it is not found, honors <code>push.default</code> configuration to decide
 what to push (See <a href="git-config.html">git-config(1)</a> for the meaning of <code>push.default</code>).</p>
 </div>
@@ -532,7 +532,7 @@ without any <em>&lt;refspec&gt;</em> on the command line.  Otherwise, missing
 </div>
 <div class="paragraph">
 <p>If &lt;dst&gt; doesn&#8217;t start with <code>refs/</code> (e.g. <code>refs/heads/master</code>) we will
-try to infer where in <code>refs/</code>* on the destination &lt;repository&gt; it
+try to infer where in <code>refs/*</code> on the destination &lt;repository&gt; it
 belongs based on the type of &lt;src&gt; being pushed and whether &lt;dst&gt;
 is ambiguous.</p>
 </div>
@@ -562,23 +562,23 @@ namespace you may have wanted to push to.</p>
 <div class="paragraph">
 <p>The object referenced by &lt;src&gt; is used to update the &lt;dst&gt; reference
 on the remote side. Whether this is allowed depends on where in
-<code>refs/</code>* the &lt;dst&gt; reference lives as described in detail below, in
+<code>refs/*</code> the &lt;dst&gt; reference lives as described in detail below, in
 those sections "update" means any modifications except deletes, which
 as noted after the next few sections are treated differently.</p>
 </div>
 <div class="paragraph">
-<p>The <code>refs/heads/</code>* namespace will only accept commit objects, and
+<p>The <code>refs/heads/*</code> namespace will only accept commit objects, and
 updates only if they can be fast-forwarded.</p>
 </div>
 <div class="paragraph">
-<p>The <code>refs/tags/</code>* namespace will accept any kind of object (as
+<p>The <code>refs/tags/*</code> namespace will accept any kind of object (as
 commits, trees and blobs can be tagged), and any updates to them will
 be rejected.</p>
 </div>
 <div class="paragraph">
 <p>It&#8217;s possible to push any type of object to any namespace outside of
 <code>refs/</code>{tags,heads}/*. In the case of tags and commits, these will be
-treated as if they were the commits inside <code>refs/heads/</code>* for the
+treated as if they were the commits inside <code>refs/heads/*</code> for the
 purposes of whether the update is allowed.</p>
 </div>
 <div class="paragraph">
@@ -593,14 +593,14 @@ new tag object which an existing commit points to.</p>
 </div>
 <div class="paragraph">
 <p>Tree and blob objects outside of <code>refs/</code>{tags,heads}/* will be treated
-the same way as if they were inside <code>refs/tags/</code>*, any update of them
+the same way as if they were inside <code>refs/tags/*</code>, any update of them
 will be rejected.</p>
 </div>
 <div class="paragraph">
 <p>All of the rules described above about what&#8217;s not allowed as an update
 can be overridden by adding an the optional leading <code>+</code> to a refspec
 (or using <code>--force</code> command line option). The only exception to this
-is that no amount of forcing will make the <code>refs/heads/</code>* namespace
+is that no amount of forcing will make the <code>refs/heads/*</code> namespace
 accept a non-commit object. Hooks and configuration can also override
 or amend these rules, see e.g. <code>receive.denyNonFastForwards</code> in
 <a href="git-config.html">git-config(1)</a> and <code>pre-receive</code> and <code>update</code> in
@@ -634,7 +634,7 @@ used with other &lt;refspec&gt;.</p>
 <p>Remove remote branches that don&#8217;t have a local counterpart. For example
 a remote branch <code>tmp</code> will be removed if a local branch with the same
 name doesn&#8217;t exist any more. This also respects refspecs, e.g.
-<code>git</code> <code>push</code> <code>--prune</code> <code>remote</code> <code>refs/heads/</code>*:refs/tmp/* would
+<code>git</code> <code>push</code> <code>--prune</code> <code>remote</code> <code>refs/heads/*:refs/tmp/*</code> would
 make sure that remote <code>refs/tmp/foo</code> will be removed if <code>refs/heads/foo</code>
 doesn&#8217;t exist.</p>
 </dd>
@@ -859,7 +859,7 @@ to lose commits; use it with care.</p>
 <div class="paragraph">
 <p>Note that <code>--force</code> applies to all the refs that are pushed, hence
 using it with <code>push.default</code> set to <code>matching</code> or with multiple push
-destinations configured with <code>remote.</code>*.<code>push</code> may overwrite refs
+destinations configured with <code>remote.*.push</code> may overwrite refs
 other than the current branch (including local refs that are
 strictly behind their remote counterpart).  To force a push to only
 one branch, use a <code>+</code> in front of the refspec to push (e.g <code>git</code> <code>push</code>
@@ -1291,7 +1291,7 @@ option is used.</p>
 <dd>
 <p>for a successfully deleted ref;</p>
 </dd>
-<dt class="hdlist1">*</dt>
+<dt class="hdlist1"><code>*</code></dt>
 <dd>
 <p>for a successfully pushed new ref;</p>
 </dd>
@@ -1814,7 +1814,7 @@ from using bitmaps. Default is true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

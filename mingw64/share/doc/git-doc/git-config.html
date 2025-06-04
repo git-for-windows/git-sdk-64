@@ -816,7 +816,7 @@ When the color setting for <code>name</code> is undefined, the command uses
 </dd>
 <dt class="hdlist1">--[no-]includes</dt>
 <dd>
-<p>Respect <code>include.</code>* directives in config files when looking up
+<p>Respect <code>include.*</code> directives in config files when looking up
 values. Defaults to <code>off</code> when a specific file is given (e.g.,
 using <code>--file</code>, <code>--global</code>, etc) and <code>on</code> when searching all
 config files.</p>
@@ -1306,9 +1306,9 @@ in the section header, like in the example below:</p>
 <div class="paragraph">
 <p>Subsection names are case sensitive and can contain any characters except
 newline and the null byte. Doublequote " and backslash can be included
-by escaping them as \" and \\, respectively. Backslashes preceding
-other characters are dropped when reading; for example, \t is read as
-<code>t</code> and \0 is read as <code>0</code>. Section headers cannot span multiple lines.
+by escaping them as <code>\</code>" and <code>\\</code>, respectively. Backslashes preceding
+other characters are dropped when reading; for example, <code>\t</code> is read as
+<code>t</code> and <code>\0</code> is read as <code>0</code>. Section headers cannot span multiple lines.
 Variables may belong directly to a section or to a given subsection. You
 can have [<code>section</code>] if you have [<code>section</code> "subsection"], but you don&#8217;t
 need to.</p>
@@ -1332,19 +1332,19 @@ and <code>-</code>, and must start with an alphabetic character.</p>
 Internal whitespace characters within <em>value</em> are retained verbatim.
 Comments starting with either # or ; and extending to the end of line
 are discarded.  A line that defines a value can be continued to the next
-line by ending it with a backslash (\);  the backslash and the end-of-line
+line by ending it with a backslash (<code>\</code>);  the backslash and the end-of-line
 characters are discarded.</p>
 </div>
 <div class="paragraph">
 <p>If <code>value</code> needs to contain leading or trailing whitespace characters,
 it must be enclosed in double quotation marks (").  Inside double quotation
-marks, double quote (") and backslash (\) characters must be escaped:
-use \" for " and \\ for \.</p>
+marks, double quote (") and backslash (<code>\</code>) characters must be escaped:
+use <code>\</code>" for " and <code>\\</code> for <code>\</code>.</p>
 </div>
 <div class="paragraph">
-<p>The following escape sequences (beside \" and \\) are recognized:
-\n for newline character (NL), \t for horizontal tabulation (HT, TAB)
-and \b for backspace (BS).  Other char escape sequences (including octal
+<p>The following escape sequences (beside <code>\</code>" and <code>\\</code>) are recognized:
+<code>\n</code> for newline character (NL), <code>\t</code> for horizontal tabulation (HT, TAB)
+and <code>\b</code> for backspace (BS).  Other char escape sequences (including octal
 escape sequences) are invalid.</p>
 </div>
 </div>
@@ -1359,7 +1359,7 @@ below.</p>
 </div>
 <div class="paragraph">
 <p>You can include a config file from another by setting the special
-<code>include.path</code> (or <code>includeIf.</code>*.<code>path</code>) variable to the name of the file
+<code>include.path</code> (or <code>includeIf.*.path</code>) variable to the name of the file
 to be included. The variable takes a pathname as its value, and is
 subject to tilde expansion. These variables can be given multiple times.</p>
 </div>
@@ -1399,7 +1399,7 @@ would be the final location where the .git directory is, not where the
 </div>
 <div class="paragraph">
 <p>The pattern can contain standard globbing wildcards and two additional
-ones, **/ and <code>/</code>**, that can match multiple path components. Please
+ones, <code>**/</code> and <code>/**</code>, that can match multiple path components. Please
 refer to <a href="gitignore.html">gitignore(5)</a> for details. For convenience:</p>
 </div>
 <div class="ulist">
@@ -1413,13 +1413,13 @@ content of the environment variable <code>HOME</code>.</p>
 containing the current config file.</p>
 </li>
 <li>
-<p>If the pattern does not start with either <code>~/</code>, .<code>/</code> or <code>/</code>, **/
+<p>If the pattern does not start with either <code>~/</code>, .<code>/</code> or <code>/</code>, <code>**/</code>
 will be automatically prepended. For example, the pattern <code>foo/bar</code>
-becomes **/foo/bar and would match <code>/any/path/to/foo/bar</code>.</p>
+becomes <code>**/foo/bar</code> and would match <code>/any/path/to/foo/bar</code>.</p>
 </li>
 <li>
-<p>If the pattern ends with <code>/</code>, ** will be automatically added. For
-example, the pattern <code>foo/</code> becomes <code>foo/</code>**. In other words, it
+<p>If the pattern ends with <code>/</code>, <code>**</code> will be automatically added. For
+example, the pattern <code>foo/</code> becomes <code>foo/**</code>. In other words, it
 matches "foo" and everything inside, recursively.</p>
 </li>
 </ul>
@@ -1434,23 +1434,23 @@ case-insensitively (e.g. on case-insensitive file systems)</p>
 <dd>
 <p>The data that follows the keyword <code>onbranch:</code> is taken to be a
 pattern with standard globbing wildcards and two additional
-ones, **/ and <code>/</code>**, that can match multiple path components.
+ones, <code>**/</code> and <code>/**</code>, that can match multiple path components.
 If we are in a worktree where the name of the branch that is
 currently checked out matches the pattern, the include condition
 is met.</p>
 <div class="paragraph">
-<p>If the pattern ends with <code>/</code>, ** will be automatically added. For
-example, the pattern <code>foo/</code> becomes <code>foo/</code>**. In other words, it matches
+<p>If the pattern ends with <code>/</code>, <code>**</code> will be automatically added. For
+example, the pattern <code>foo/</code> becomes <code>foo/**</code>. In other words, it matches
 all branches that begin with <code>foo/</code>. This is useful if your branches are
 organized hierarchically and you would like to apply a configuration to
 all the branches in that hierarchy.</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>hasconfig:remote.</code>*.<code>url:</code></dt>
+<dt class="hdlist1"><code>hasconfig:remote.*.url:</code></dt>
 <dd>
 <p>The data that follows this keyword is taken to
 be a pattern with standard globbing wildcards and two
-additional ones, **/ and <code>/</code>**, that can match multiple
+additional ones, <code>**/</code> and <code>/**</code>, that can match multiple
 components. The first time this keyword is seen, the rest of
 the config files will be scanned for remote URLs (without
 applying any values). If there exists at least one remote URL
@@ -1860,7 +1860,7 @@ do not have locally.</p>
 guess based on the source and destination refs what
 remote ref namespace the source belongs in, but where
 we can still suggest that the user push to either
-<code>refs/heads/</code>* or <code>refs/tags/</code>* based on the type of the
+<code>refs/heads/*</code> or <code>refs/tags/*</code> based on the type of the
 source object.</p>
 </dd>
 <dt class="hdlist1">pushUpdateRejected</dt>
@@ -2050,7 +2050,7 @@ your alias.</p>
 <dd>
 <p>If true, git-am will call git-mailsplit for patches in mbox format
 with parameter <code>--keep-cr</code>. In this case git-mailsplit will
-not remove \r from lines ending with \r\n. Can be overridden
+not remove <code>\r</code> from lines ending with <code>\r\n</code>. Can be overridden
 by giving <code>--no-keep-cr</code> from the command line.
 See <a href="git-am.html">git-am(1)</a>, <a href="git-mailsplit.html">git-mailsplit(1)</a>.</p>
 </dd>
@@ -2094,7 +2094,7 @@ command line option are used, this configuration variable has no effect.</p>
 <div class="title">Note</div>
 </td>
 <td class="content">
-The configuration options in <code>bitmapPseudoMerge.</code>* are considered
+The configuration options in <code>bitmapPseudoMerge.*</code> are considered
 EXPERIMENTAL and may be subject to change or be removed entirely in the
 future. For more information about the pseudo-merge bitmap feature, see
 the "Pseudo-merge bitmaps" section of <a href="gitpacking.html">gitpacking(7)</a>.
@@ -2136,7 +2136,7 @@ number.</p>
 <dd>
 <p>Determines the rate at which consecutive pseudo-merge bitmap
 groups decrease in size. Must be non-negative. This parameter
-can be thought of as <code>k</code> in the function <code>f</code>(<code>n</code>) <code>=</code> <code>C</code> * <code>n^-k</code>,
+can be thought of as <code>k</code> in the function <code>f</code>(<code>n</code>) <code>=</code> <code>C</code> <code>*</code> <code>n^-k</code>,
 where <code>f</code>(<code>n</code>) is the size of the `n`th group.</p>
 <div class="paragraph">
 <p>Setting the decay rate equal to <code>0</code> will cause all groups to be the
@@ -2253,47 +2253,84 @@ attribute to another commit with a <em>*</em> in the output of
 <p>Mark lines that were changed by an ignored revision that we attributed to
 another commit with a <em>?</em> in the output of <a href="git-blame.html">git-blame(1)</a>.</p>
 </dd>
-<dt class="hdlist1">branch.autoSetupMerge</dt>
+<dt class="hdlist1"><code>branch.autoSetupMerge</code></dt>
 <dd>
-<p>Tells <em>git branch</em>, <em>git switch</em> and <em>git checkout</em> to set up new branches
+<p>Tells <code>git</code> <code>branch</code>, <code>git</code> <code>switch</code> and <code>git</code> <code>checkout</code> to set up new branches
 so that <a href="git-pull.html">git-pull(1)</a> will appropriately merge from the
 starting point branch. Note that even if this option is not set,
 this behavior can be chosen per-branch using the <code>--track</code>
-and <code>--no-track</code> options. The valid settings are: <code>false</code>&#8201;&#8212;&#8201;no
-automatic setup is done; <code>true</code>&#8201;&#8212;&#8201;automatic setup is done when the
-starting point is a remote-tracking branch; <code>always</code>&#8201;&#8212;&#8201;automatic setup is done when the starting point is either a
-local branch or remote-tracking branch; <code>inherit</code>&#8201;&#8212;&#8201;if the starting point
-has a tracking configuration, it is copied to the new
-branch; <code>simple</code>&#8201;&#8212;&#8201;automatic setup is done only when the starting point
-is a remote-tracking branch and the new branch has the same name as the
-remote branch. This option defaults to true.</p>
-</dd>
-<dt class="hdlist1">branch.autoSetupRebase</dt>
+and <code>--no-track</code> options.  This option defaults to <code>true</code>. The valid settings
+are:</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>false</code></dt>
 <dd>
-<p>When a new branch is created with <em>git branch</em>, <em>git switch</em> or <em>git checkout</em>
-that tracks another branch, this variable tells Git to set
-up pull to rebase instead of merge (see "branch.&lt;name&gt;.rebase").
-When <code>never</code>, rebase is never automatically set to true.
-When <code>local</code>, rebase is set to true for tracked branches of
-other local branches.
-When <code>remote</code>, rebase is set to true for tracked branches of
-remote-tracking branches.
-When <code>always</code>, rebase will be set to true for all tracking
-branches.
-See "branch.autoSetupMerge" for details on how to set up a
-branch to track another branch.
-This option defaults to never.</p>
+<p>no automatic setup is done</p>
 </dd>
-<dt class="hdlist1">branch.sort</dt>
+<dt class="hdlist1"><code>true</code></dt>
+<dd>
+<p>automatic setup is done when the starting point is a remote-tracking branch</p>
+</dd>
+<dt class="hdlist1"><code>always</code></dt>
+<dd>
+<p>automatic setup is done when the starting point is either a
+local branch or remote-tracking branch</p>
+</dd>
+<dt class="hdlist1"><code>inherit</code></dt>
+<dd>
+<p>if the starting point has a tracking configuration, it is copied to the new
+branch</p>
+</dd>
+<dt class="hdlist1"><code>simple</code></dt>
+<dd>
+<p>automatic setup is done only when the starting point
+is a remote-tracking branch and the new branch has the same name as the
+remote branch.</p>
+</dd>
+</dl>
+</div>
+</dd>
+<dt class="hdlist1"><code>branch.autoSetupRebase</code></dt>
+<dd>
+<p>When a new branch is created with <code>git</code> <code>branch</code>, <code>git</code> <code>switch</code> or <code>git</code> <code>checkout</code>
+that tracks another branch, this variable tells Git to set
+up pull to rebase instead of merge (see <code>branch.</code><em>&lt;name&gt;</em><code>.rebase</code>).
+The valid settings are:</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>never</code></dt>
+<dd>
+<p>rebase is never automatically set to true.</p>
+</dd>
+<dt class="hdlist1"><code>local</code></dt>
+<dd>
+<p>rebase is set to true for tracked branches of other local branches.</p>
+</dd>
+<dt class="hdlist1"><code>remote</code></dt>
+<dd>
+<p>rebase is set to true for tracked branches of remote-tracking branches.</p>
+</dd>
+<dt class="hdlist1"><code>always</code></dt>
+<dd>
+<p>rebase will be set to true for all tracking branches.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>See <code>branch.autoSetupMerge</code> for details on how to set up a branch to track another branch.
+This option defaults to <code>never</code>.</p>
+</div>
+</dd>
+<dt class="hdlist1"><code>branch.sort</code></dt>
 <dd>
 <p>This variable controls the sort ordering of branches when displayed by
-<a href="git-branch.html">git-branch(1)</a>. Without the "--sort=&lt;value&gt;" option provided, the
+<a href="git-branch.html">git-branch(1)</a>. Without the <code>--sort=</code><em>&lt;value&gt;</em> option provided, the
 value of this variable will be used as the default.
 See <a href="git-for-each-ref.html">git-for-each-ref(1)</a> field names for valid values.</p>
 </dd>
-<dt class="hdlist1">branch.&lt;name&gt;.remote</dt>
+<dt class="hdlist1"><code>branch.</code><em>&lt;name&gt;</em><code>.remote</code></dt>
 <dd>
-<p>When on branch &lt;name&gt;, it tells <em>git fetch</em> and <em>git push</em>
+<p>When on branch <em>&lt;name&gt;</em>, it tells <code>git</code> <code>fetch</code> and <code>git</code> <code>push</code>
 which remote to fetch from or push to.  The remote to push to
 may be overridden with <code>remote.pushDefault</code> (for all branches).
 The remote to push to, for the current branch, may be further
@@ -2304,55 +2341,55 @@ fetching and <code>remote.pushDefault</code> for pushing.
 Additionally, . (a period) is the current local repository
 (a dot-repository), see <code>branch.</code><em>&lt;name&gt;</em><code>.merge</code>'s final note below.</p>
 </dd>
-<dt class="hdlist1">branch.&lt;name&gt;.pushRemote</dt>
+<dt class="hdlist1"><code>branch.</code><em>&lt;name&gt;</em><code>.pushRemote</code></dt>
 <dd>
-<p>When on branch &lt;name&gt;, it overrides <code>branch.</code><em>&lt;name&gt;</em><code>.remote</code> for
+<p>When on branch <em>&lt;name&gt;</em>, it overrides <code>branch.</code><em>&lt;name&gt;</em><code>.remote</code> for
 pushing.  It also overrides <code>remote.pushDefault</code> for pushing
-from branch &lt;name&gt;.  When you pull from one place (e.g. your
+from branch <em>&lt;name&gt;</em>.  When you pull from one place (e.g. your
 upstream) and push to another place (e.g. your own publishing
 repository), you would want to set <code>remote.pushDefault</code> to
 specify the remote to push to for all branches, and use this
 option to override it for a specific branch.</p>
 </dd>
-<dt class="hdlist1">branch.&lt;name&gt;.merge</dt>
+<dt class="hdlist1"><code>branch.</code><em>&lt;name&gt;</em><code>.merge</code></dt>
 <dd>
-<p>Defines, together with branch.&lt;name&gt;.remote, the upstream branch
-for the given branch. It tells <em>git fetch</em>/<em>git pull</em>/<em>git rebase</em> which
-branch to merge and can also affect <em>git push</em> (see push.default).
-When in branch &lt;name&gt;, it tells <em>git fetch</em> the default
-refspec to be marked for merging in FETCH_HEAD. The value is
+<p>Defines, together with <code>branch.</code><em>&lt;name&gt;</em><code>.remote</code>, the upstream branch
+for the given branch. It tells <code>git</code> <code>fetch</code>/<code>git</code> <code>pull</code>/<code>git</code> <code>rebase</code> which
+branch to merge and can also affect <code>git</code> <code>push</code> (see <code>push.default</code>).
+When in branch <em>&lt;name&gt;</em>, it tells <code>git</code> <code>fetch</code> the default
+refspec to be marked for merging in <code>FETCH_HEAD</code>. The value is
 handled like the remote part of a refspec, and must match a
 ref which is fetched from the remote given by
-"branch.&lt;name&gt;.remote".
-The merge information is used by <em>git pull</em> (which first calls
-<em>git fetch</em>) to lookup the default branch for merging. Without
-this option, <em>git pull</em> defaults to merge the first refspec fetched.
+<code>branch.</code><em>&lt;name&gt;</em><code>.remote</code>.
+The merge information is used by <code>git</code> <code>pull</code> (which first calls
+<code>git</code> <code>fetch</code>) to lookup the default branch for merging. Without
+this option, <code>git</code> <code>pull</code> defaults to merge the first refspec fetched.
 Specify multiple values to get an octopus merge.
-If you wish to setup <em>git pull</em> so that it merges into &lt;name&gt; from
+If you wish to setup <code>git</code> <code>pull</code> so that it merges into &lt;name&gt; from
 another branch in the local repository, you can point
 branch.&lt;name&gt;.merge to the desired branch, and use the relative path
-setting . (a period) for branch.&lt;name&gt;.remote.</p>
+setting . (a period) for <code>branch.</code><em>&lt;name&gt;</em><code>.remote</code>.</p>
 </dd>
-<dt class="hdlist1">branch.&lt;name&gt;.mergeOptions</dt>
+<dt class="hdlist1"><code>branch.</code><em>&lt;name&gt;</em><code>.mergeOptions</code></dt>
 <dd>
-<p>Sets default options for merging into branch &lt;name&gt;. The syntax and
+<p>Sets default options for merging into branch <em>&lt;name&gt;</em>. The syntax and
 supported options are the same as those of <a href="git-merge.html">git-merge(1)</a>, but
 option values containing whitespace characters are currently not
 supported.</p>
 </dd>
-<dt class="hdlist1">branch.&lt;name&gt;.rebase</dt>
+<dt class="hdlist1"><code>branch.</code><em>&lt;name&gt;</em><code>.rebase</code></dt>
 <dd>
-<p>When true, rebase the branch &lt;name&gt; on top of the fetched branch,
+<p>When true, rebase the branch <em>&lt;name&gt;</em> on top of the fetched branch,
 instead of merging the default branch from the default remote when
-"git pull" is run. See "pull.rebase" for doing this in a non
+<code>git</code> <code>pull</code> is run. See <code>pull.rebase</code> for doing this in a non
 branch-specific manner.</p>
 <div class="paragraph">
-<p>When <code>merges</code> (or just <em>m</em>), pass the <code>--rebase-merges</code> option to <em>git rebase</em>
+<p>When <code>merges</code> (or just <code>m</code>), pass the <code>--rebase-merges</code> option to <code>git</code> <code>rebase</code>
 so that the local merge commits are included in the rebase (see
 <a href="git-rebase.html">git-rebase(1)</a> for details).</p>
 </div>
 <div class="paragraph">
-<p>When the value is <code>interactive</code> (or just <em>i</em>), the rebase is run in interactive
+<p>When the value is <code>interactive</code> (or just <code>i</code>), the rebase is run in interactive
 mode.</p>
 </div>
 <div class="paragraph">
@@ -2361,12 +2398,12 @@ it unless you understand the implications (see <a href="git-rebase.html">git-reb
 for details).</p>
 </div>
 </dd>
-<dt class="hdlist1">branch.&lt;name&gt;.description</dt>
+<dt class="hdlist1"><code>branch.</code><em>&lt;name&gt;</em><code>.description</code></dt>
 <dd>
 <p>Branch description, can be edited with
 <code>git</code> <code>branch</code> <code>--edit-description</code>. Branch description is
-automatically added to the format-patch cover letter or
-request-pull summary.</p>
+automatically added to the <code>format-patch</code> cover letter or
+<code>request-pull</code> summary.</p>
 </dd>
 <dt class="hdlist1">browser.&lt;tool&gt;.cmd</dt>
 <dd>
@@ -2382,7 +2419,7 @@ working repository in gitweb (see <a href="git-instaweb.html">git-instaweb(1)</a
 </dd>
 <dt class="hdlist1">bundle.*</dt>
 <dd>
-<p>The <code>bundle.</code>* keys may appear in a bundle list file found via the
+<p>The <code>bundle.*</code> keys may appear in a bundle list file found via the
 <code>git</code> <code>clone</code> <code>--bundle-uri</code> option. These keys currently have no effect
 if placed in a repository config file, though this will change in the
 future. See <a href="technical/bundle-uri.html">the bundle URI design
@@ -2410,7 +2447,7 @@ only value currently understood is <code>creationToken</code>.</p>
 </dd>
 <dt class="hdlist1">bundle.&lt;id&gt;.*</dt>
 <dd>
-<p>The <code>bundle.</code><em>&lt;id&gt;</em>.* keys are used to describe a single item in the
+<p>The <code>bundle.</code><em>&lt;id&gt;</em><code>.*</code> keys are used to describe a single item in the
 bundle list, grouped under <em>&lt;id&gt;</em> for identification purposes.</p>
 </dd>
 <dt class="hdlist1">bundle.&lt;id&gt;.uri</dt>
@@ -2496,7 +2533,7 @@ the filter to submodules.</p>
 <dt class="hdlist1">color.advice</dt>
 <dd>
 <p>A boolean to enable/disable color in hints (e.g. when a push
-failed, see <code>advice.</code>* for a list).  May be set to <code>always</code>,
+failed, see <code>advice.*</code> for a list).  May be set to <code>always</code>,
 <code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which case colors
 are used only when the error output goes to a terminal. If
 unset, then the value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
@@ -3127,8 +3164,8 @@ same repository is used by these other systems at the same time.</p>
 quote "unusual" characters in the pathname by enclosing the
 pathname in double-quotes and escaping those characters with
 backslashes in the same way C escapes control characters (e.g.
-\t for TAB, \n for LF, \\ for backslash) or bytes with
-values larger than 0x80 (e.g. octal \302\265 for "micro" in
+<code>\t</code> for TAB, <code>\n</code> for LF, <code>\\</code> for backslash) or bytes with
+values larger than 0x80 (e.g. octal <code>\302\265</code> for "micro" in
 UTF-8).  If this variable is set to false, bytes higher than
 0x80 are not considered "unusual" any more. Double-quotes,
 backslash and control characters are always escaped regardless
@@ -3544,6 +3581,12 @@ centrally configure your Git hooks instead of configuring them on a
 per-repository basis, or as a more flexible and centralized
 alternative to having an <code>init.templateDir</code> where you&#8217;ve changed
 default hooks.</p>
+</div>
+<div class="paragraph">
+<p>You can also disable all hooks entirely by setting <code>core.hooksPath</code>
+to <code>/dev/null</code>. This is usually only advisable for expert users and
+on a per-command basis using configuration parameters of the form
+<code>git</code> <code>-c</code> <code>core.hooksPath=/dev/null</code> ....</p>
 </div>
 </dd>
 <dt class="hdlist1">core.editor</dt>
@@ -4004,7 +4047,7 @@ files, count 64-byte chunks instead, since binary files have no
 natural concept of lines). This is a more expensive <code>--dirstat</code>
 behavior than the <code>changes</code> behavior, but it does count rearranged
 lines within a file as much as other changes. The resulting output
-is consistent with what you get from the other <code>--</code>*stat options.</p>
+is consistent with what you get from the other <code>--*stat</code> options.</p>
 </dd>
 <dt class="hdlist1"><code>files</code></dt>
 <dd>
@@ -4714,7 +4757,7 @@ and the PRUNING section of <a href="git-fetch.html">git-fetch(1)</a>.</p>
 <dt class="hdlist1">fetch.pruneTags</dt>
 <dd>
 <p>If true, fetch will automatically behave as if the
-<code>refs/tags/</code>*:refs/tags/* refspec was provided when pruning,
+<code>refs/tags/*:refs/tags/*</code> refspec was provided when pruning,
 if not set already. This allows for setting both this option
 and <code>fetch.prune</code> to maintain a 1=1 mapping to upstream
 refs. See also <code>remote.</code><em>&lt;name&gt;</em><code>.pruneTags</code> and the PRUNING
@@ -5016,9 +5059,9 @@ to accept pushes of such data set <code>receive.fsck.</code><em>&lt;msg-id&gt;</
 to clone or fetch it set <code>fetch.fsck.</code><em>&lt;msg-id&gt;</em>.</p>
 </div>
 <div class="paragraph">
-<p>The rest of the documentation discusses <code>fsck.</code>* for brevity, but the
-same applies for the corresponding <code>receive.fsck.</code>* and
-<code>fetch.fsck.</code>*. variables.</p>
+<p>The rest of the documentation discusses <code>fsck.*</code> for brevity, but the
+same applies for the corresponding <code>receive.fsck.*</code> and
+<code>fetch.fsck.*</code>. variables.</p>
 </div>
 <div class="paragraph">
 <p>Unlike variables like <code>color.ui</code> and <code>core.editor</code>, the
@@ -5140,7 +5183,7 @@ otherwise use to determine if there&#8217;s work to do, such as
 <dt class="hdlist1">gc.autoPackLimit</dt>
 <dd>
 <p>When there are more than this many packs that are not
-marked with *.<code>keep</code> file in the repository, <code>git</code> <code>gc</code>
+marked with <code>*.keep</code> file in the repository, <code>git</code> <code>gc</code>
 <code>--auto</code> consolidates them into one larger pack.  The
 default value is 50.  Setting this to 0 disables it.
 Setting <code>gc.auto</code> to 0 will also disable this.</p>
@@ -6148,6 +6191,27 @@ the transfer is aborted.
 Can be overridden by the <code>GIT_HTTP_LOW_SPEED_LIMIT</code> and
 <code>GIT_HTTP_LOW_SPEED_TIME</code> environment variables.</p>
 </dd>
+<dt class="hdlist1">http.keepAliveIdle</dt>
+<dd>
+<p>Specifies how long in seconds to wait on an idle connection
+before sending TCP keepalive probes (if supported by the OS). If
+unset, curl&#8217;s default value is used. Can be overridden by the
+<code>GIT_HTTP_KEEPALIVE_IDLE</code> environment variable.</p>
+</dd>
+<dt class="hdlist1">http.keepAliveInterval</dt>
+<dd>
+<p>Specifies how long in seconds to wait between TCP keepalive
+probes (if supported by the OS). If unset, curl&#8217;s default value
+is used. Can be overridden by the <code>GIT_HTTP_KEEPALIVE_INTERVAL</code>
+environment variable.</p>
+</dd>
+<dt class="hdlist1">http.keepAliveCount</dt>
+<dd>
+<p>Specifies how many TCP keepalive probes to send before giving up
+and terminating the connection (if supported by the OS). If
+unset, curl&#8217;s default value is used. Can be overridden by the
+<code>GIT_HTTP_KEEPALIVE_COUNT</code> environment variable.</p>
+</dd>
 <dt class="hdlist1">http.noEPSV</dt>
 <dd>
 <p>A boolean which disables using of EPSV ftp command by curl.
@@ -6192,8 +6256,8 @@ must match exactly between the config key and the URL.</p>
 <li>
 <p>Host/domain name (e.g., <code>example.com</code> in <code>https://example.com/</code>).
 This field must match between the config key and the URL. It is
-possible to specify a * as part of the host name to match all subdomains
-at this level. <code>https://</code>*.<code>example.com/</code> for example would match
+possible to specify a <code>*</code> as part of the host name to match all subdomains
+at this level. <code>https://*.example.com/</code> for example would match
 <code>https://foo.example.com/</code>, but not <code>https://foo.bar.example.com/</code>.</p>
 </li>
 <li>
@@ -6627,6 +6691,12 @@ positive value implies the command should run when the number of
 loose objects is at least the value of <code>maintenance.loose-objects.auto</code>.
 The default value is 100.</p>
 </dd>
+<dt class="hdlist1">maintenance.loose-objects.batchSize</dt>
+<dd>
+<p>This integer config option controls the maximum number of loose objects
+written into a packfile during the <code>loose-objects</code> task. The default is
+fifty thousand. Use value <code>0</code> to indicate no limit.</p>
+</dd>
 <dt class="hdlist1">maintenance.incremental-repack.auto</dt>
 <dd>
 <p>This integer config option controls how often the <code>incremental-repack</code>
@@ -6636,6 +6706,35 @@ option. A negative value will force the task to run every time.
 Otherwise, a positive value implies the command should run when the
 number of pack-files not in the multi-pack-index is at least the value
 of <code>maintenance.incremental-repack.auto</code>. The default value is 10.</p>
+</dd>
+<dt class="hdlist1">maintenance.reflog-expire.auto</dt>
+<dd>
+<p>This integer config option controls how often the <code>reflog-expire</code> task
+should be run as part of <code>git</code> <code>maintenance</code> <code>run</code> <code>--auto</code>. If zero, then
+the <code>reflog-expire</code> task will not run with the <code>--auto</code> option. A
+negative value will force the task to run every time. Otherwise, a
+positive value implies the command should run when the number of
+expired reflog entries in the "HEAD" reflog is at least the value of
+<code>maintenance.loose-objects.auto</code>. The default value is 100.</p>
+</dd>
+<dt class="hdlist1">maintenance.rerere-gc.auto</dt>
+<dd>
+<p>This integer config option controls how often the <code>rerere-gc</code> task
+should be run as part of <code>git</code> <code>maintenance</code> <code>run</code> <code>--auto</code>. If zero, then
+the <code>rerere-gc</code> task will not run with the <code>--auto</code> option. A negative
+value will force the task to run every time. Otherwise, any positive
+value implies the command will run when the "rr-cache" directory exists
+and has at least one entry, regardless of whether it is stale or not.
+This heuristic may be refined in the future. The default value is 1.</p>
+</dd>
+<dt class="hdlist1">maintenance.worktree-prune.auto</dt>
+<dd>
+<p>This integer config option controls how often the <code>worktree-prune</code> task
+should be run as part of <code>git</code> <code>maintenance</code> <code>run</code> <code>--auto</code>. If zero, then
+the <code>worktree-prune</code> task will not run with the <code>--auto</code> option. A
+negative value will force the task to run every time. Otherwise, a
+positive value implies the command should run when the number of
+prunable worktrees exceeds the value. The default value is 1.</p>
 </dd>
 <dt class="hdlist1">man.viewer</dt>
 <dd>
@@ -7259,13 +7358,13 @@ packs.  Version 2 is the default.  Note that version 2 is enforced
 and this config option is ignored whenever the corresponding pack is
 larger than 2 GB.</p>
 <div class="paragraph">
-<p>If you have an old Git that does not understand the version 2 *.<code>idx</code> file,
+<p>If you have an old Git that does not understand the version 2 <code>*.idx</code> file,
 cloning or fetching over a non-native protocol (e.g. "http")
-that will copy both *.<code>pack</code> file and corresponding *.<code>idx</code> file from the
+that will copy both <code>*.pack</code> file and corresponding <code>*.idx</code> file from the
 other side may give you a repository that cannot be accessed with your
-older version of Git. If the *.<code>pack</code> file is smaller than 2 GB, however,
+older version of Git. If the <code>*.pack</code> file is smaller than 2 GB, however,
 you can use <a href="git-index-pack.html">git-index-pack(1)</a> on the *.pack file to regenerate
-the *.<code>idx</code> file.</p>
+the <code>*.idx</code> file.</p>
 </div>
 </dd>
 <dt class="hdlist1">pack.packSizeLimit</dt>
@@ -7454,8 +7553,8 @@ is "none", which means no promisor remote advertised by a
 server will be accepted. By accepting a promisor remote, the
 client agrees that the server might omit objects that are
 lazily fetchable from this promisor remote from its responses
-to "fetch" and "clone" requests from the client. See
-<a href="gitprotocol-v2.html">gitprotocol-v2(5)</a>.</p>
+to "fetch" and "clone" requests from the client. Name and URL
+comparisons are case sensitive. See <a href="gitprotocol-v2.html">gitprotocol-v2(5)</a>.</p>
 </dd>
 <dt class="hdlist1">protocol.allow</dt>
 <dd>
@@ -8227,7 +8326,8 @@ the values inherited from a lower priority configuration files (e.g.
 </dd>
 <dt class="hdlist1">remote.&lt;name&gt;.followRemoteHEAD</dt>
 <dd>
-<p>How <a href="git-fetch.html">git-fetch(1)</a> should handle updates to <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code>.
+<p>How <a href="git-fetch.html">git-fetch(1)</a> should handle updates to <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code>
+when fetching using the configured refspecs of a remote.
 The default value is "create", which will create <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code>
 if it exists on the remote, but not locally; this will not touch an
 already existing local reference. Setting it to "warn" will print
@@ -8289,7 +8389,7 @@ when true by the <code>-n</code> option of <a href="git-repack.html">git-repack(
 <dd>
 <p>Parameters used by <a href="git-pack-objects.html">git-pack-objects(1)</a> when generating
 a cruft pack and the respective parameters are not given over
-the command line. See similarly named <code>pack.</code>* configuration
+the command line. See similarly named <code>pack.*</code> configuration
 variables for defaults and meaning.</p>
 </dd>
 <dt class="hdlist1">rerere.autoUpdate</dt>
@@ -8368,11 +8468,11 @@ path relative to Git&#8217;s (runtime) prefix.</p>
 </div>
 <div class="paragraph">
 <p>To completely opt-out of this security check, set <code>safe.directory</code> to the
-string *. This will allow all repositories to be treated as if their
-directory was listed in the <code>safe.directory</code> list. If <code>safe.directory=</code>*
+string <code>*</code>. This will allow all repositories to be treated as if their
+directory was listed in the <code>safe.directory</code> list. If <code>safe.directory=*</code>
 is set in system config and you want to re-enable this protection, then
 initialize your list with an empty value before listing the repositories
-that you deem safe.  Giving a directory with <code>/</code>* appended to it will
+that you deem safe.  Giving a directory with <code>/*</code> appended to it will
 allow access to all repositories under the named directory.</p>
 </div>
 <div class="paragraph">
@@ -9091,7 +9191,7 @@ environment variable.  Defaults to 2.</p>
 <dd>
 <p>A comma-separated list of patterns of "important" config
 settings that should be recorded in the trace2 output.
-For example, <code>core.</code>*,remote.*.<code>url</code> would cause the trace2
+For example, <code>core.*,remote.*.url</code> would cause the trace2
 output to contain events listing each configured remote.
 May be overridden by the <code>GIT_TRACE2_CONFIG_PARAMS</code> environment
 variable.  Unset by default.</p>
@@ -9574,7 +9674,7 @@ insteadOf strings match a given URL, the longest match is used.</p>
 <div class="paragraph">
 <p>Note that any protocol restrictions will be applied to the rewritten
 URL. If the rewrite changes the URL to use a custom protocol or remote
-helper, you may need to adjust the <code>protocol.</code>*.<code>allow</code> config to permit
+helper, you may need to adjust the <code>protocol.*.allow</code> config to permit
 the request.  In particular, protocols you expect to use for submodules
 must be set to <code>always</code> rather than the default of <code>user</code>. See the
 description of <code>protocol.allow</code> above.</p>
@@ -9763,7 +9863,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

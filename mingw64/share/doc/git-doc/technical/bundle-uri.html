@@ -755,13 +755,13 @@ inspects the bundle headers to check that the prerequisite commit OIDs
 are present in the client repository. If some are missing, then the
 client delays unbundling until other bundles have been unbundled,
 making those OIDs present. When all required OIDs are present, the
-client unbundles that data using a refspec. The default refspec is
-<code>+refs/heads/</code>*:refs/bundles/*, but this can be configured. These refs
-are stored so that later <code>git</code> <code>fetch</code> negotiations can communicate each
-bundled ref as a <code>have</code>, reducing the size of the fetch over the Git
-protocol. To allow pruning refs from this ref namespace, Git may
-introduce a numbered namespace (such as <code>refs/bundles/</code><em>&lt;i&gt;</em><code>/</code>*) such that
-stale bundle refs can be deleted.</p>
+client unbundles that data using a refspec. The refspec used is
+<code>+refs/*:refs/bundles/*</code>. These refs are stored so that later
+<code>git</code> <code>fetch</code> negotiations can communicate each bundled ref as a <code>have</code>,
+reducing the size of the fetch over the Git protocol. To allow pruning
+refs from this ref namespace, Git may introduce a numbered namespace
+(such as <code>refs/bundles/</code><em>&lt;i&gt;</em><code>/*</code>) such that stale bundle refs can be
+deleted.</p>
 </li>
 <li>
 <p>If the file is instead a bundle list, then the client inspects the
@@ -892,7 +892,7 @@ error conditions:</p>
 <p>The downloaded bundles contain more information than is requested by
 the clone or fetch request. A primary example is if the user requests
 a clone with <code>--single-branch</code> but downloads bundles that store every
-reachable commit from all <code>refs/heads/</code>* references. This might be
+reachable commit from all <code>refs/heads/*</code> references. This might be
 initially wasteful, but perhaps these objects will become reachable by
 a later ref update that the client cares about.</p>
 </li>
@@ -1218,7 +1218,7 @@ would cause these on-demand downloads to be too aggressive.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

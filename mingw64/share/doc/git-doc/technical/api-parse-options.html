@@ -565,7 +565,7 @@ flag and that dashless argument doesn&#8217;t match any subcommands, leaving
 </li>
 <li>
 <p>define a NULL-terminated
-<code>static</code> <code>const</code> <code>char</code> * <code>const</code> <code>builtin_foo_usage</code>[] array
+<code>static</code> <code>const</code> <code>char</code> <code>*</code> <code>const</code> <code>builtin_foo_usage</code>[] array
 containing alternative usage strings</p>
 </li>
 <li>
@@ -573,7 +573,7 @@ containing alternative usage strings</p>
 in section <em>Data Structure</em>.</p>
 </li>
 <li>
-<p>in <code>cmd_foo</code>(<code>int</code> <code>argc,</code> <code>const</code> <code>char</code> **argv, <code>const</code> <code>char</code> *prefix)
+<p>in <code>cmd_foo</code>(<code>int</code> <code>argc,</code> <code>const</code> <code>char</code> <code>**argv,</code> <code>const</code> <code>char</code> <code>*prefix</code>)
 call</p>
 <div class="literalblock">
 <div class="content">
@@ -735,12 +735,14 @@ Use of <code>--no-option</code> will clear the list of preceding values.</p>
 </dd>
 <dt class="hdlist1"><code>OPT_INTEGER</code>(<code>short,</code> <code>long,</code> &amp;int_var, <code>description</code>)</dt>
 <dd>
-<p>Introduce an option with integer argument.
-The integer is put into <code>int_var</code>.</p>
+<p>Introduce an option with integer argument. The argument must be a
+integer and may include a suffix of <em>k</em>, <em>m</em> or <em>g</em> to
+scale the provided value by 1024, 1024^2 or 1024^3 respectively.
+The scaled value is put into <code>int_var</code>.</p>
 </dd>
-<dt class="hdlist1"><code>OPT_MAGNITUDE</code>(<code>short,</code> <code>long,</code> &amp;unsigned_long_var, <code>description</code>)</dt>
+<dt class="hdlist1"><code>OPT_UNSIGNED</code>(<code>short,</code> <code>long,</code> &amp;unsigned_long_var, <code>description</code>)</dt>
 <dd>
-<p>Introduce an option with a size argument. The argument must be a
+<p>Introduce an option with an unsigned integer argument. The argument must be a
 non-negative integer and may include a suffix of <em>k</em>, <em>m</em> or <em>g</em> to
 scale the provided value by 1024, 1024^2 or 1024^3 respectively.
 The scaled value is put into <code>unsigned_long_var</code>.</p>
@@ -839,12 +841,12 @@ this subcommand is used.</p>
 <p><code>int_var</code> is an integer variable,</p>
 </li>
 <li>
-<p><code>str_var</code> is a string variable (<code>char</code> *),</p>
+<p><code>str_var</code> is a string variable (<code>char</code> <code>*</code>),</p>
 </li>
 <li>
 <p><code>arg_str</code> is the string that is shown as argument
 (e.g. "branch" will result in <em>&lt;branch&gt;</em>).
-If set to <code>NULL</code>, three dots (...) will be displayed.</p>
+If set to <code>NULL</code>, three dots (<code>...</code>) will be displayed.</p>
 </li>
 <li>
 <p><code>description</code> is a short string to describe the effect of the option.
@@ -874,9 +876,9 @@ omitted at the end.</p>
 <li>
 <p>Inside <code>func</code>, the only interesting member of the structure
 given by <code>opt</code> is the void pointer <code>opt-</code>&gt;<code>value</code>.
-*opt-&gt;<code>value</code> will be the value that is saved into <code>var</code>, if you
+<code>*opt-</code>&gt;<code>value</code> will be the value that is saved into <code>var</code>, if you
 use <code>OPT_CALLBACK</code>().
-For example, do *(<code>unsigned</code> <code>long</code> *)<code>opt-</code>&gt;<code>value</code> <code>=</code> <code>42</code>; to get 42
+For example, do <code>*</code>(<code>unsigned</code> <code>long</code> <code>*</code>)<code>opt-</code>&gt;<code>value</code> <code>=</code> <code>42</code>; to get 42
 into an <code>unsigned</code> <code>long</code> variable.</p>
 </li>
 <li>
@@ -923,7 +925,7 @@ for real-world examples.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

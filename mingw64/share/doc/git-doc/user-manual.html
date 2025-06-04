@@ -549,7 +549,7 @@ routes.  You could compare the object names:</p>
 e05db0fd4f31dde7005f075a84f96b360d05984b
 $ git rev-list master
 e05db0fd4f31dde7005f075a84f96b360d05984b</pre>
-<p>Or you could recall that the ... operator selects all commits
+<p>Or you could recall that the <code class="literal">...</code> operator selects all commits
 reachable from either one reference or the other but not
 both; so</p>
 <pre class="screen">$ git log origin...master</pre>
@@ -1199,7 +1199,7 @@ origin repository.  So often you can
 accomplish the above with just a simple</p>
 <pre class="screen">$ git pull</pre>
 <p>This command will fetch changes from the remote branches to your
-remote-tracking branches <code class="literal">origin/</code>*, and merge the default branch into
+remote-tracking branches <code class="literal">origin/*</code>, and merge the default branch into
 the current branch.</p>
 <p>More generally, a branch that is created from a remote-tracking branch
 will pull
@@ -2990,7 +2990,7 @@ and to avoid code duplication.</p>
 structures in <code class="literal">read-cache-ll.h</code>), and that there are just a couple of
 object types (blobs, trees, commits and tags) which inherit their
 common structure from <code class="literal">struct</code> <code class="literal">object</code>, which is their first member
-(and thus, you can cast e.g.  (<code class="literal">struct</code> <code class="literal">object</code> *)<code class="literal">commit</code> to achieve the
+(and thus, you can cast e.g.  (<code class="literal">struct</code> <code class="literal">object</code> <code class="literal">*</code>)<code class="literal">commit</code> to achieve the
 <span class="emphasis"><em>same</em></span> as &amp;commit-&gt;<code class="literal">object</code>, i.e.  get at the object name and flags).</p>
 <p>Now is a good point to take a break to let this information sink in.</p>
 <p>Next step: get familiar with the object naming.  Read <a class="xref" href="#naming-commits" title="Naming commits">the section called “Naming commits”</a>.
@@ -3076,11 +3076,11 @@ Git hackers, but there is a long tradition in UNIX to return different
 negative numbers in case of different errors—​and 0 on success.
 </li><li class="listitem">
 the variable <code class="literal">sha1</code> in the function signature of <code class="literal">get_sha1</code>() is <code class="literal">unsigned</code>
-<code class="literal">char</code> *, but is actually expected to be a pointer to <code class="literal">unsigned</code>
+<code class="literal">char</code> <code class="literal">*</code>, but is actually expected to be a pointer to <code class="literal">unsigned</code>
 <code class="literal">char</code>[<code class="literal">20</code>].  This variable will contain the 160-bit SHA-1 of the given
-commit.  Note that whenever a SHA-1 is passed as <code class="literal">unsigned</code> <code class="literal">char</code> *, it
+commit.  Note that whenever a SHA-1 is passed as <code class="literal">unsigned</code> <code class="literal">char</code> <code class="literal">*</code>, it
 is the binary representation, as opposed to the ASCII representation in
-hex characters, which is passed as <code class="literal">char</code> *.
+hex characters, which is passed as <code class="literal">char</code> <code class="literal">*</code>.
 </li></ul></div>
 <p>You will see both of these things throughout the code.</p>
 <p>Now, for the meat:</p>
@@ -3451,7 +3451,7 @@ The magic word <code class="literal">top</code> (magic signature: <code class="l
 match from the root of the working tree, even when you are
 running the command from inside a subdirectory.
 </dd><dt><span class="term">literal</span></dt><dd>
-Wildcards in the pattern such as * or ? are treated
+Wildcards in the pattern such as <code class="literal">*</code> or ? are treated
 as literal characters.
 </dd><dt><span class="term">icase</span></dt><dd>
 Case insensitive match.
@@ -3462,21 +3462,21 @@ wildcards in the pattern will not match a / in the pathname.
 For example, "Documentation/*.html" matches
 "Documentation/git.html" but not "Documentation/ppc/ppc.html"
 or "tools/perf/Documentation/perf.html".</p>
-<p class="simpara">Two consecutive asterisks ("**") in patterns matched against
+<p class="simpara">Two consecutive asterisks ("<code class="literal">**</code>") in patterns matched against
 full pathname may have special meaning:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-A leading "**" followed by a slash means match in all
-directories. For example, "**/foo" matches file or directory
-"<code class="literal">foo</code>" anywhere, the same as pattern "<code class="literal">foo</code>". "**/foo/bar"
+A leading "<code class="literal">**</code>" followed by a slash means match in all
+directories. For example, "<code class="literal">**/foo</code>" matches file or directory
+"<code class="literal">foo</code>" anywhere, the same as pattern "<code class="literal">foo</code>". "<code class="literal">**/foo/bar</code>"
 matches file or directory "<code class="literal">bar</code>" anywhere that is directly
 under directory "<code class="literal">foo</code>".
 </li><li class="listitem">
-A trailing "<code class="literal">/</code>**" matches everything inside. For example,
-"<code class="literal">abc/</code>**" matches all files inside directory "abc", relative
+A trailing "<code class="literal">/**</code>" matches everything inside. For example,
+"<code class="literal">abc/**</code>" matches all files inside directory "abc", relative
 to the location of the .<code class="literal">gitignore</code> file, with infinite depth.
 </li><li class="listitem">
 A slash followed by two consecutive asterisks then a slash
-matches zero or more directories. For example, "<code class="literal">a/</code>**/b"
+matches zero or more directories. For example, "<code class="literal">a/**/b</code>"
 matches "<code class="literal">a/b</code>", "<code class="literal">a/x/b</code>", "<code class="literal">a/x/y/b</code>" and so on.
 </li><li class="listitem">
 <p class="simpara">Other consecutive asterisks are considered invalid.</p>

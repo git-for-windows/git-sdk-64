@@ -601,7 +601,7 @@ limited by using <code>--stat-graph-width=</code><em>&lt;graph-width&gt;</em> or
 while setting <code>diff.statNameWidth</code> or <code>diff.statGraphWidth</code>
 does not affect <code>git</code> <code>format-patch</code>.
 By giving a third parameter <em>&lt;count&gt;</em>, you can limit the output to
-the first <em>&lt;count&gt;</em> lines, followed by ... if there are more.</p>
+the first <em>&lt;count&gt;</em> lines, followed by <code>...</code> if there are more.</p>
 <div class="paragraph">
 <p>These parameters can also be set individually with <code>--stat-width=</code><em>&lt;width&gt;</em>,
 <code>--stat-name-width=</code><em>&lt;name-width&gt;</em> and <code>--stat-count=</code><em>&lt;count&gt;</em>.</p>
@@ -659,7 +659,7 @@ files, count 64-byte chunks instead, since binary files have no
 natural concept of lines). This is a more expensive <code>--dirstat</code>
 behavior than the <code>changes</code> behavior, but it does count rearranged
 lines within a file as much as other changes. The resulting output
-is consistent with what you get from the other <code>--</code>*stat options.</p>
+is consistent with what you get from the other <code>--*stat</code> options.</p>
 </dd>
 <dt class="hdlist1"><code>files</code></dt>
 <dd>
@@ -1071,7 +1071,7 @@ running if the number of source/destination files involved
 exceeds the specified number.  Defaults to <code>diff.renameLimit</code>.
 Note that a value of 0 is treated as unlimited.</p>
 </dd>
-<dt class="hdlist1"><code>--diff-filter=</code>[(<code>A</code>|<code>C</code>|<code>D</code>|<code>M</code>|<code>R</code>|<code>T</code>|<code>U</code>|<code>X</code>|<code>B</code>)<code>...</code>[*]]</dt>
+<dt class="hdlist1"><code>--diff-filter=</code>[(<code>A</code>|<code>C</code>|<code>D</code>|<code>M</code>|<code>R</code>|<code>T</code>|<code>U</code>|<code>X</code>|<code>B</code>)<code>...</code>[<code>*</code>]]</dt>
 <dd>
 <p>Select only files that are Added (<code>A</code>), Copied (<code>C</code>),
 Deleted (<code>D</code>), Modified (<code>M</code>), Renamed (<code>R</code>), have their
@@ -1079,7 +1079,7 @@ type (i.e. regular file, symlink, submodule, &#8230;&#8203;) changed (<code>T</c
 are Unmerged (<code>U</code>), are
 Unknown (<code>X</code>), or have had their pairing Broken (<code>B</code>).
 Any combination of the filter characters (including none) can be used.
-When * (All-or-none) is added to the combination, all
+When <code>*</code> (All-or-none) is added to the combination, all
 paths are selected if there is any file that matches
 other criteria in the comparison; if there is no file
 that matches other criteria, nothing is selected.</p>
@@ -1192,7 +1192,7 @@ readability.</p>
 </li>
 <li>
 <p>Lines starting with a hash ("#") are ignored, so they can be used
-for comments.  Add a backslash ("\") to the beginning of the
+for comments.  Add a backslash ("<code>\</code>") to the beginning of the
 pattern if it starts with a hash.</p>
 </li>
 <li>
@@ -1206,7 +1206,7 @@ pattern if it starts with a hash.</p>
 <p>Patterns have the same syntax and semantics as patterns used for
 <code>fnmatch</code>(3) without the <code>FNM_PATHNAME</code> flag, except a pathname also
 matches a pattern if removing any number of the final pathname
-components matches the pattern.  For example, the pattern "<code>foo</code>*bar"
+components matches the pattern.  For example, the pattern "<code>foo*bar</code>"
 matches "<code>fooasdfbar</code>" and "<code>foo/bar/baz/asdf</code>" but not "<code>foobarx</code>".</p>
 </div>
 </dd>
@@ -1675,7 +1675,7 @@ the file that the rename/copy produces, respectively.</p>
 <code>rename</code> <code>to</code> <em>&lt;path&gt;</em>
 <code>similarity</code> <code>index</code> <em>&lt;number&gt;</em>
 <code>dissimilarity</code> <code>index</code> <em>&lt;number&gt;</em>
-<code>index</code> <em>&lt;hash&gt;</em>`..`<em>&lt;hash&gt;</em> <em>&lt;mode&gt;</em></pre>
+<code>index</code> <em>&lt;hash&gt;</em><code>..</code><em>&lt;hash&gt;</em> <em>&lt;mode&gt;</em></pre>
 </div>
 <div class="paragraph">
 <p>File modes <em>&lt;mode&gt;</em> are printed as 6-digit octal numbers including the file type
@@ -1797,9 +1797,9 @@ this (when the <code>-c</code> option is used):</p>
 <p>It is followed by one or more extended header lines
 (this example shows a merge with two parents):</p>
 <div class="verseblock">
-<pre class="content"><code>index</code> <em>&lt;hash&gt;</em><code>,</code><em>&lt;hash&gt;</em>`..<code>__</code><em>&lt;hash&gt;</em><code>__</code>
-{empty}`mode <em>&lt;mode&gt;</em><code>,</code><em>&lt;mode&gt;</em>``..``<em>&lt;mode&gt;</em>
-<code>new</code> <code>file</code> <code>mode</code> <em>&lt;mode&gt;</em>
+<pre class="content"><code>index</code> <em>&lt;hash&gt;</em><code>,</code><em>&lt;hash&gt;</em><code>..</code><em>&lt;hash&gt;</em>
+<code>mode</code> <em>&lt;mode&gt;</em><code>,</code><em>&lt;mode&gt;</em>`<code>..</code><code>__</code><em>&lt;mode&gt;</em><code>__</code>
+{empty}`new <code>file</code> <code>mode</code> <em>&lt;mode&gt;</em>
 <code>deleted</code> <code>file</code> <code>mode</code> <em>&lt;mode&gt;</em><code>,</code><em>&lt;mode&gt;</em></pre>
 </div>
 <div class="paragraph">
@@ -2147,7 +2147,7 @@ always have the special all-zero sha1.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

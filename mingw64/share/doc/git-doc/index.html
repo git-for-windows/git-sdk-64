@@ -1279,6 +1279,10 @@ repositories.</p>
 <dd>
 <p>Compare a tree to the working tree or index.</p>
 </dd>
+<dt class="hdlist1"><a href="git-diff-pairs.html">git-diff-pairs(1)</a></dt>
+<dd>
+<p>Compare the content and mode of provided blob pairs.</p>
+</dd>
 <dt class="hdlist1"><a href="git-diff-tree.html">git-diff-tree(1)</a></dt>
 <dd>
 <p>Compares the content and mode of blobs found via two tree objects.</p>
@@ -2354,8 +2358,8 @@ ignore replacement refs and do not replace Git objects.</p>
 <p>Setting this Boolean environment variable to true will cause Git to treat all
 pathspecs literally, rather than as glob patterns. For example,
 running <code>GIT_LITERAL_PATHSPECS=1</code> <code>git</code> <code>log</code> <code>--</code> '*.<code>c</code>' will search
-for commits that touch the path *.<code>c</code>, not any paths that the
-glob *.<code>c</code> matches. You might want this if you are feeding
+for commits that touch the path <code>*.c</code>, not any paths that the
+glob <code>*.c</code> matches. You might want this if you are feeding
 literal paths to Git (e.g., paths previously given to you by
 <code>git</code> <code>ls-tree</code>, <code>--raw</code> diff output, etc).</p>
 </dd>
@@ -2477,7 +2481,7 @@ not an option because it would require the handles to be marked
 inheritable (and consequently <strong>every</strong> spawned process would
 inherit them, possibly blocking regular Git operations). The
 primary intended use case is to use named pipes for communication
-(e.g. \\.\pipe\my-git-stdin-123).</p>
+(e.g. <code>\\.\pipe\my-git-stdin-123</code>).</p>
 <div class="paragraph">
 <p>Two special values are supported: <code>off</code> will simply close the
 corresponding standard handle, and if <code>GIT_REDIRECT_STDERR</code> is
@@ -2500,7 +2504,7 @@ foreseeable future (along with the variable).</p>
 <p>If set to <code>0</code>, then disable all advice messages. These messages are
 intended to provide hints to human users that may help them get out of
 problematic situations or take advantage of new features. Users can
-disable individual messages using the <code>advice.</code>* config keys. These
+disable individual messages using the <code>advice.*</code> config keys. These
 messages may be disruptive to tools that execute Git processes, so this
 variable is available to disable the messages. (The <code>--no-advice</code>
 global option is also available, but old Git versions may fail when
@@ -2699,7 +2703,7 @@ the Git Security mailing list &lt;<a href="mailto:git-security@googlegroups.com"
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

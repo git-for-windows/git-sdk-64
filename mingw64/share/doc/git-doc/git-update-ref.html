@@ -452,7 +452,9 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git update-ref</em> [-m &lt;reason&gt;] [--no-deref] (-d &lt;ref&gt; [&lt;old-oid&gt;] | [--create-reflog] &lt;ref&gt; &lt;new-oid&gt; [&lt;old-oid&gt;] | --stdin [-z])</pre>
+<pre class="content"><code>git</code> <code>update-ref</code> [<code>-m</code> <em>&lt;reason&gt;</em>] [<code>--no-deref</code>] <code>-d</code> <em>&lt;ref&gt;</em> [<em>&lt;old-oid&gt;</em>]
+<code>git</code> <code>update-ref</code> [<code>-m</code> <em>&lt;reason&gt;</em>] [<code>--no-deref</code>] [<code>--create-reflog</code>] <em>&lt;ref&gt;</em> <em>&lt;new-oid&gt;</em> [<em>&lt;old-oid&gt;</em>]
+<code>git</code> <code>update-ref</code> [<code>-m</code> <em>&lt;reason&gt;</em>] [<code>--no-deref</code>] <code>--stdin</code> [<code>-z</code>] [<code>--batch-updates</code>]</pre>
 </div>
 </div>
 </div>
@@ -478,7 +480,7 @@ not exist.</p>
 <p>The final arguments are object names; this command without any options
 does not support updating a symbolic ref to point to another ref (see
 <a href="git-symbolic-ref.html">git-symbolic-ref(1)</a>).  But <code>git</code> <code>update-ref</code> <code>--stdin</code> does have
-the <code>symref-</code>* commands so that regular refs and symbolic refs can be
+the <code>symref-*</code> commands so that regular refs and symbolic refs can be
 committed in the same transaction.</p>
 </div>
 <div class="paragraph">
@@ -513,6 +515,18 @@ abort LF</pre>
 <div class="paragraph">
 <p>With <code>--create-reflog</code>, update-ref will create a reflog for each ref
 even if one would not ordinarily be created.</p>
+</div>
+<div class="paragraph">
+<p>With <code>--batch-updates</code>, update-ref executes the updates in a batch but allows
+individual updates to fail due to invalid or incorrect user input, applying only
+the successful updates. However, system-related errors—such as I/O failures or
+memory issues—will result in a full failure of all batched updates. Any failed
+updates will be reported in the following format:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>rejected SP (&lt;old-oid&gt; | &lt;old-target&gt;) SP (&lt;new-oid&gt; | &lt;new-target&gt;) SP &lt;rejection-reason&gt; LF</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>Quote fields containing whitespace as if they were strings in C source
@@ -715,7 +729,7 @@ overwrite such a symlink to somewhere else with a regular filename).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>

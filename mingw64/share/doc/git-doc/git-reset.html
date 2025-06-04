@@ -452,11 +452,11 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git reset</em> [-q] [&lt;tree-ish&gt;] [--] &lt;pathspec&gt;&#8230;&#8203;
-<em>git reset</em> [-q] [--pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]] [&lt;tree-ish&gt;]
-<em>git reset</em> (--patch | -p) [&lt;tree-ish&gt;] [--] [&lt;pathspec&gt;&#8230;&#8203;]
-<em>git reset</em> [--soft | --mixed [-N] | --hard | --merge | --keep] [-q] [&lt;commit&gt;]
-DEPRECATED: <em>git reset</em> [-q] [--stdin [-z]] [&lt;tree-ish&gt;]</pre>
+<pre class="content"><code>git</code> <code>reset</code> [<code>-q</code>] [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] <em>&lt;pathspec&gt;</em>&#8230;&#8203;
+<code>git</code> <code>reset</code> [<code>-q</code>] [<code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]] [<em>&lt;tree-ish&gt;</em>]
+<code>git</code> <code>reset</code> (<code>--patch</code> | <code>-p</code>) [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] [<em>&lt;pathspec&gt;</em>&#8230;&#8203;]
+<code>git</code> <code>reset</code> [<code>--soft</code> | <code>--mixed</code> [<code>-N</code>] | <code>--hard</code> | <code>--merge</code> | <code>--keep</code>] [<code>-q</code>] [<em>&lt;commit&gt;</em>]
+<code>DEPRECATED:</code> <code>git</code> <code>reset</code> [<code>-q</code>] [<code>--stdin</code> [<code>-z</code>]] [<em>&lt;tree-ish&gt;</em>]</pre>
 </div>
 </div>
 </div>
@@ -471,8 +471,8 @@ The <em>&lt;tree-ish&gt;</em>/<em>&lt;commit&gt;</em> defaults to <code>HEAD</co
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><em>git reset</em> [-q] [&lt;tree-ish&gt;] [--] &lt;pathspec&gt;&#8230;&#8203;</dt>
-<dt class="hdlist1"><em>git reset</em> [-q] [--pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]] [&lt;tree-ish&gt;]</dt>
+<dt class="hdlist1"><code>git</code> <code>reset</code> [<code>-q</code>] [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] <em>&lt;pathspec&gt;</em>...</dt>
+<dt class="hdlist1"><code>git</code> <code>reset</code> [<code>-q</code>] [<code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]] [<em>&lt;tree-ish&gt;</em>]</dt>
 <dd>
 <p>These forms reset the index entries for all paths that match the
 <em>&lt;pathspec&gt;</em> to their state at <em>&lt;tree-ish&gt;</em>.  (It does not affect
@@ -491,18 +491,18 @@ can copy the contents of a path out of a commit to the index and to the
 working tree in one go.</p>
 </div>
 </dd>
-<dt class="hdlist1"><em>git reset</em> (--patch | -p) [&lt;tree-ish&gt;] [--] [&lt;pathspec&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><code>git</code> <code>reset</code> (<code>--patch</code> | <code>-p</code>) [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] [<em>&lt;pathspec&gt;</em>...]</dt>
 <dd>
 <p>Interactively select hunks in the difference between the index
 and <em>&lt;tree-ish&gt;</em> (defaults to <code>HEAD</code>).  The chosen hunks are applied
 in reverse to the index.</p>
 <div class="paragraph">
 <p>This means that <code>git</code> <code>reset</code> <code>-p</code> is the opposite of <code>git</code> <code>add</code> <code>-p</code>, i.e.
-you can use it to selectively reset hunks. See the &#8220;Interactive Mode&#8221;
+you can use it to selectively reset hunks. See the "Interactive Mode"
 section of <a href="git-add.html">git-add(1)</a> to learn how to operate the <code>--patch</code> mode.</p>
 </div>
 </dd>
-<dt class="hdlist1"><em>git reset</em> [&lt;mode&gt;] [&lt;commit&gt;]</dt>
+<dt class="hdlist1"><code>git</code> <code>reset</code> [<em>&lt;mode&gt;</em>] [<em>&lt;commit&gt;</em>]</dt>
 <dd>
 <p>This form resets the current branch head to <em>&lt;commit&gt;</em> and
 possibly updates the index (resetting it to the tree of <em>&lt;commit&gt;</em>) and
@@ -513,14 +513,14 @@ defaults to <code>--mixed</code>. The <em>&lt;mode&gt;</em> must be one of the f
 <div class="content">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--soft</dt>
+<dt class="hdlist1"><code>--soft</code></dt>
 <dd>
 <p>Does not touch the index file or the working tree at all (but
 resets the head to <em>&lt;commit&gt;</em>, just like all modes do). This leaves
 all your changed files "Changes to be committed", as <code>git</code> <code>status</code>
 would put it.</p>
 </dd>
-<dt class="hdlist1">--mixed</dt>
+<dt class="hdlist1"><code>--mixed</code></dt>
 <dd>
 <p>Resets the index but not the working tree (i.e., the changed files
 are preserved but not marked for commit) and reports what has not
@@ -530,13 +530,13 @@ been updated. This is the default action.</p>
 <a href="git-add.html">git-add(1)</a>).</p>
 </div>
 </dd>
-<dt class="hdlist1">--hard</dt>
+<dt class="hdlist1"><code>--hard</code></dt>
 <dd>
 <p>Resets the index and working tree. Any changes to tracked files in the
 working tree since <em>&lt;commit&gt;</em> are discarded.  Any untracked files or
 directories in the way of writing any tracked files are simply deleted.</p>
 </dd>
-<dt class="hdlist1">--merge</dt>
+<dt class="hdlist1"><code>--merge</code></dt>
 <dd>
 <p>Resets the index and updates the files in the working tree that are
 different between <em>&lt;commit&gt;</em> and <code>HEAD</code>, but keeps those which are
@@ -549,19 +549,19 @@ unstaged changes, reset is aborted.</p>
 but carries forward unmerged index entries.</p>
 </div>
 </dd>
-<dt class="hdlist1">--keep</dt>
+<dt class="hdlist1"><code>--keep</code></dt>
 <dd>
 <p>Resets index entries and updates files in the working tree that are
 different between <em>&lt;commit&gt;</em> and <code>HEAD</code>.
 If a file that is different between <em>&lt;commit&gt;</em> and <code>HEAD</code> has local
 changes, reset is aborted.</p>
 </dd>
-<dt class="hdlist1">--[no-]recurse-submodules</dt>
+<dt class="hdlist1"><code>--</code>[<code>no-</code>]<code>recurse-submodules</code></dt>
 <dd>
-<p>When the working tree is updated, using --recurse-submodules will
+<p>When the working tree is updated, using <code>--recurse-submodules</code> will
 also recursively reset the working tree of all active submodules
 according to the commit recorded in the superproject, also setting
-the submodules' HEAD to be detached at that commit.</p>
+the submodules' <code>HEAD</code> to be detached at that commit.</p>
 </dd>
 </dl>
 </div>
@@ -581,36 +581,36 @@ between the three commands.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">-q</dt>
-<dt class="hdlist1">--quiet</dt>
+<dt class="hdlist1"><code>-q</code></dt>
+<dt class="hdlist1"><code>--quiet</code></dt>
 <dd>
 <p>Be quiet, only report errors.</p>
 </dd>
-<dt class="hdlist1">--refresh</dt>
-<dt class="hdlist1">--no-refresh</dt>
+<dt class="hdlist1"><code>--refresh</code></dt>
+<dt class="hdlist1"><code>--no-refresh</code></dt>
 <dd>
 <p>Refresh the index after a mixed reset. Enabled by default.</p>
 </dd>
-<dt class="hdlist1">--pathspec-from-file=&lt;file&gt;</dt>
+<dt class="hdlist1"><code>--pathspec-from-file=</code><em>&lt;file&gt;</em></dt>
 <dd>
 <p>Pathspec is passed in <em>&lt;file&gt;</em> instead of commandline args. If
 <em>&lt;file&gt;</em> is exactly <code>-</code> then standard input is used. Pathspec
-elements are separated by LF or CR/LF. Pathspec elements can be
+elements are separated by <em>LF</em> or <em>CR</em>/<em>LF</em>. Pathspec elements can be
 quoted as explained for the configuration variable <code>core.quotePath</code>
 (see <a href="git-config.html">git-config(1)</a>). See also <code>--pathspec-file-nul</code> and
 global <code>--literal-pathspecs</code>.</p>
 </dd>
-<dt class="hdlist1">--pathspec-file-nul</dt>
+<dt class="hdlist1"><code>--pathspec-file-nul</code></dt>
 <dd>
 <p>Only meaningful with <code>--pathspec-from-file</code>. Pathspec elements are
-separated with NUL character and all other characters are taken
+separated with <em>NUL</em> character and all other characters are taken
 literally (including newlines and quotes).</p>
 </dd>
-<dt class="hdlist1">--</dt>
+<dt class="hdlist1"><code>--</code></dt>
 <dd>
 <p>Do not interpret any more arguments as options.</p>
 </dd>
-<dt class="hdlist1">&lt;pathspec&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1"><em>&lt;pathspec&gt;</em>...</dt>
 <dd>
 <p>Limits the paths affected by the operation.</p>
 <div class="paragraph">
@@ -956,7 +956,7 @@ $ git commit ...                            <b class="conum">(8)</b></pre>
 <ol>
 <li>
 <p>First, reset the history back one commit so that we remove the original
-commit, but leave the working tree with all the changes. The -N ensures
+commit, but leave the working tree with all the changes. The <code>-N</code> ensures
 that any new files added with <code>HEAD</code> are still marked so that <code>git</code> <code>add</code> <code>-p</code>
 will find them.</p>
 </li>
@@ -1097,7 +1097,7 @@ in state <code>D</code>).</p>
 </div>
 </div>
 <div class="paragraph">
-<p><code>reset</code> <code>--merge</code> is meant to be used when resetting out of a conflicted
+<p><code>git</code> <code>reset</code> <code>--merge</code> is meant to be used when resetting out of a conflicted
 merge. Any mergy operation guarantees that the working tree file that is
 involved in the merge does not have a local change with respect to the index
 before it starts, and that it writes the result out to the working tree. So if
@@ -1107,7 +1107,7 @@ resetting out from a state that a mergy operation left after failing
 with a conflict. That is why we disallow <code>--merge</code> option in this case.</p>
 </div>
 <div class="paragraph">
-<p><code>reset</code> <code>--keep</code> is meant to be used when removing some of the last
+<p><code>git</code> <code>reset</code> <code>--keep</code> is meant to be used when removing some of the last
 commits in the current branch while keeping changes in the working
 tree. If there could be conflicts between the changes in the commit we
 want to remove and the changes in the working tree we want to keep,
@@ -1158,7 +1158,7 @@ entries:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-17 07:09:38 UTC
+Last updated 2025-06-03 12:03:52 UTC
 </div>
 </div>
 </body>
