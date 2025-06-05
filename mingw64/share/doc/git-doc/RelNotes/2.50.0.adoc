@@ -89,6 +89,8 @@ UI, Workflows & Features
    check, which can be useful when the repository arranges to ensure
    connectivity by some other means.
 
+ * "git notes --help" documentation updates.
+
 
 Performance, Internal Implementation, Development Support etc.
 --------------------------------------------------------------
@@ -100,7 +102,9 @@ Performance, Internal Implementation, Development Support etc.
  * "git fsck" becomes more careful when checking the refs.
 
  * "git fast-export | git fast-import" learns to deal with commit and
-   tag objects with embedded signatures a bit better.
+   tag objects with embedded signatures a bit better.  This is highly
+   experimental and the format of the data stream may change in the
+   future without compatibility guarantees.
 
  * The code paths to check whether a refname X is available (by seeing
    if another ref X/Y exists, etc.) have been optimized.
@@ -192,6 +196,10 @@ Performance, Internal Implementation, Development Support etc.
  * Remove the leftover hints to the test framework to mark tests that
    do not pass the leak checker tests, as they should no longer be
    needed.
+
+ * When a stale .midx file refers to .pack files that no longer exist,
+   we ended up checking for these non-existent files repeatedly, which
+   has been optimized by memoizing the non-existence.
 
 
 Fixes since v2.49
@@ -292,7 +300,7 @@ Fixes since v2.49
    (merge e7ef4be7c2 mh/left-right-limited later to maint).
 
  * Document the convention to disable hooks altogether by setting the
-   hooksPath configuration variable to /dev/nulll
+   hooksPath configuration variable to /dev/null.
    (merge 1b2eee94f1 ds/doc-disable-hooks later to maint).
 
  * Make sure outage of third-party sites that supply P4, Git-LFS, and
@@ -310,6 +318,7 @@ Fixes since v2.49
 
  * Update to arm64 Windows port.
    (merge 436a42215e js/windows-arm64 later to maint).
+
  * hashmap API clean-up to ensure hashmap_clear() leaves a cleared map
    in a reusable state.
    (merge 9481877de3 en/hashmap-clear-fix later to maint).
@@ -343,7 +352,7 @@ Fixes since v2.49
    (merge 5dbaec628d pw/sequencer-reflog-use-after-free later to maint).
 
  * win+Meson CI pipeline, unlike other pipelines for Windows,
-   used to build artifacts in develper mode, which has been changed to
+   used to build artifacts in developer mode, which has been changed to
    build them in release mode for consistency.
    (merge 184abdcf05 js/ci-build-win-in-release-mode later to maint).
 
@@ -354,6 +363,31 @@ Fixes since v2.49
  * "git apply" and "git add -i/-p" code paths no longer unnecessarily
    expand sparse-index while working.
    (merge ecf9ba20e3 ds/sparse-apply-add-p later to maint).
+
+ * Avoid adding directory path to a sparse-index tree entries to the
+   name-hash, since they would bloat the hashtable without anybody
+   querying for them.  This was done already for a single threaded
+   part of the code, but now the multi-threaded code also does the
+   same.
+   (merge 2e60aabc75 am/sparse-index-name-hash-fix later to maint).
+
+ * Recent versions of Perl started warning against "! A =~ /pattern/"
+   which does not negate the result of the matching.  As it turns out
+   that the problematic function is not even called, it was removed.
+   (merge 67cae845d2 op/cvsserver-perl-warning later to maint).
+
+ * "git apply --index/--cached" when applying a deletion patch in
+   reverse failed to give the mode bits of the path "removed" by the
+   patch to the file it creates, which has been corrected.
+
+ * "git verify-refs" (and hence "git fsck --reference") started
+   erroring out in a repository in which secondary worktrees were
+   prepared with Git 2.43 or lower.
+   (merge d5b3c38b8a sj/ref-contents-check-fix later to maint).
+
+ * Update total_ram() functrion on BSD variants.
+
+ * Update online_cpus() functrion on BSD variants.
 
  * Other code cleanup, docfix, build fix, etc.
    (merge 227c4f33a0 ja/doc-block-delimiter-markup-fix later to maint).
@@ -387,3 +421,4 @@ Fixes since v2.49
    (merge 91db6c735d ly/reftable-writer-leakfix later to maint).
    (merge 20e4e9ad0b jc/doc-synopsis-option-markup later to maint).
    (merge cddcee7f64 es/meson-configure-build-options-fix later to maint).
+   (merge cea9f55f00 wk/sparse-checkout-doc-fix later to maint).

@@ -452,15 +452,15 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git checkout</em> [-q] [-f] [-m] [&lt;branch&gt;]
-<em>git checkout</em> [-q] [-f] [-m] --detach [&lt;branch&gt;]
-<em>git checkout</em> [-q] [-f] [-m] [--detach] &lt;commit&gt;
-<em>git checkout</em> [-q] [-f] [-m] [[-b|-B|--orphan] &lt;new-branch&gt;] [&lt;start-point&gt;]
-<em>git checkout</em> [-f] &lt;tree-ish&gt; [--] &lt;pathspec&gt;&#8230;&#8203;
-<em>git checkout</em> [-f] &lt;tree-ish&gt; --pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]
-<em>git checkout</em> [-f|--ours|--theirs|-m|--conflict=&lt;style&gt;] [--] &lt;pathspec&gt;&#8230;&#8203;
-<em>git checkout</em> [-f|--ours|--theirs|-m|--conflict=&lt;style&gt;] --pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]
-<em>git checkout</em> (-p|--patch) [&lt;tree-ish&gt;] [--] [&lt;pathspec&gt;&#8230;&#8203;]</pre>
+<pre class="content"><code>git</code> <code>checkout</code> [<code>-q</code>] [<code>-f</code>] [<code>-m</code>] [<em>&lt;branch&gt;</em>]
+<code>git</code> <code>checkout</code> [<code>-q</code>] [<code>-f</code>] [<code>-m</code>] <code>--detach</code> [<em>&lt;branch&gt;</em>]
+<code>git</code> <code>checkout</code> [<code>-q</code>] [<code>-f</code>] [<code>-m</code>] [<code>--detach</code>] <em>&lt;commit&gt;</em>
+<code>git</code> <code>checkout</code> [<code>-q</code>] [<code>-f</code>] [<code>-m</code>] [[<code>-b</code>|<code>-B</code>|<code>--orphan</code>] <em>&lt;new-branch&gt;</em>] [<em>&lt;start-point&gt;</em>]
+<code>git</code> <code>checkout</code> [<code>-f</code>] <em>&lt;tree-ish&gt;</em> [<code>--</code>] <em>&lt;pathspec&gt;</em>&#8230;&#8203;
+<code>git</code> <code>checkout</code> [<code>-f</code>] <em>&lt;tree-ish&gt;</em> <code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]
+<code>git</code> <code>checkout</code> [<code>-f</code>|<code>--ours</code>|<code>--theirs</code>|<code>-m</code>|<code>--conflict=</code><em>&lt;style&gt;</em>] [<code>--</code>] <em>&lt;pathspec&gt;</em>&#8230;&#8203;
+<code>git</code> <code>checkout</code> [<code>-f</code>|<code>--ours</code>|<code>--theirs</code>|<code>-m</code>|<code>--conflict=</code><em>&lt;style&gt;</em>] <code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]
+<code>git</code> <code>checkout</code> (<code>-p</code>|<code>--patch</code>) [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] [<em>&lt;pathspec&gt;</em>&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -469,13 +469,13 @@ pre>code {
 <div class="sectionbody">
 <div class="paragraph">
 <p>Updates files in the working tree to match the version in the index
-or the specified tree.  If no pathspec was given, <em>git checkout</em> will
+or the specified tree.  If no pathspec was given, <code>git</code> <code>checkout</code> will
 also update <code>HEAD</code> to set the specified branch as the current
 branch.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><em>git checkout</em> [&lt;branch&gt;]</dt>
+<dt class="hdlist1"><code>git</code> <code>checkout</code> [<em>&lt;branch&gt;</em>]</dt>
 <dd>
 <p>To prepare for working on <em>&lt;branch&gt;</em>, switch to it by updating
 the index and the files in the working tree, and by pointing
@@ -499,12 +499,12 @@ rather expensive side-effects to show only the tracking information,
 if it exists, for the current branch.</p>
 </div>
 </dd>
-<dt class="hdlist1"><em>git checkout</em> -b|-B &lt;new-branch&gt; [&lt;start-point&gt;]</dt>
+<dt class="hdlist1"><code>git</code> <code>checkout</code> (<code>-b</code>|<code>-B</code>) <em>&lt;new-branch&gt;</em> [<em>&lt;start-point&gt;</em>]</dt>
 <dd>
 <p>Specifying <code>-b</code> causes a new branch to be created as if
 <a href="git-branch.html">git-branch(1)</a> were called and then checked out.  In
 this case you can use the <code>--track</code> or <code>--no-track</code> options,
-which will be passed to <em>git branch</em>.  As a convenience,
+which will be passed to <code>git</code> <code>branch</code>.  As a convenience,
 <code>--track</code> without <code>-b</code> implies branch creation; see the
 description of <code>--track</code> below.</p>
 <div class="paragraph">
@@ -524,8 +524,8 @@ just the current branch stays the same, but the branch is not reset to
 the start-point, either).</p>
 </div>
 </dd>
-<dt class="hdlist1"><em>git checkout</em> --detach [&lt;branch&gt;]</dt>
-<dt class="hdlist1"><em>git checkout</em> [--detach] &lt;commit&gt;</dt>
+<dt class="hdlist1"><code>git</code> <code>checkout</code> <code>--detach</code> [<em>&lt;branch&gt;</em>]</dt>
+<dt class="hdlist1"><code>git</code> <code>checkout</code> [<code>--detach</code>] <em>&lt;commit&gt;</em></dt>
 <dd>
 <p>Prepare to work on top of <em>&lt;commit&gt;</em>, by detaching <code>HEAD</code> at it
 (see "DETACHED HEAD" section), and updating the index and the
@@ -542,8 +542,8 @@ be used to detach <code>HEAD</code> at the tip of the branch (<code>git</code> <
 <p>Omitting <em>&lt;branch&gt;</em> detaches <code>HEAD</code> at the tip of the current branch.</p>
 </div>
 </dd>
-<dt class="hdlist1"><em>git checkout</em> [-f|--ours|--theirs|-m|--conflict=&lt;style&gt;] [&lt;tree-ish&gt;] [--] &lt;pathspec&gt;&#8230;&#8203;</dt>
-<dt class="hdlist1"><em>git checkout</em> [-f|--ours|--theirs|-m|--conflict=&lt;style&gt;] [&lt;tree-ish&gt;] --pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]</dt>
+<dt class="hdlist1"><code>git</code> <code>checkout</code> [<code>-f</code>|<code>--ours</code>|<code>--theirs</code>|<code>-m</code>|<code>--conflict=</code><em>&lt;style&gt;</em>] [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] <em>&lt;pathspec&gt;</em>...</dt>
+<dt class="hdlist1"><code>git</code> <code>checkout</code> [<code>-f</code>|<code>--ours</code>|<code>--theirs</code>|<code>-m</code>|<code>--conflict=</code><em>&lt;style&gt;</em>] [<em>&lt;tree-ish&gt;</em>] <code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]</dt>
 <dd>
 <p>Overwrite the contents of the files that match the pathspec.
 When the <em>&lt;tree-ish&gt;</em> (most often a commit) is not given,
@@ -560,7 +560,7 @@ using <code>--ours</code> or <code>--theirs</code>.  With <code>-m</code>, chang
 file can be discarded to re-create the original conflicted merge result.</p>
 </div>
 </dd>
-<dt class="hdlist1"><em>git checkout</em> (-p|--patch) [&lt;tree-ish&gt;] [--] [&lt;pathspec&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><code>git</code> <code>checkout</code> (<code>-p</code>|<code>--patch</code>) [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] [<em>&lt;pathspec&gt;</em>...]</dt>
 <dd>
 <p>This is similar to the previous mode, but lets you use the
 interactive interface to show the "diff" output and choose which
@@ -576,21 +576,21 @@ hunks to use in the result.  See below for the description of
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">-q</dt>
-<dt class="hdlist1">--quiet</dt>
+<dt class="hdlist1"><code>-q</code></dt>
+<dt class="hdlist1"><code>--quiet</code></dt>
 <dd>
 <p>Quiet, suppress feedback messages.</p>
 </dd>
-<dt class="hdlist1">--progress</dt>
-<dt class="hdlist1">--no-progress</dt>
+<dt class="hdlist1"><code>--progress</code></dt>
+<dt class="hdlist1"><code>--no-progress</code></dt>
 <dd>
 <p>Progress status is reported on the standard error stream
 by default when it is attached to a terminal, unless <code>--quiet</code>
 is specified. This flag enables progress reporting even if not
 attached to a terminal, regardless of <code>--quiet</code>.</p>
 </dd>
-<dt class="hdlist1">-f</dt>
-<dt class="hdlist1">--force</dt>
+<dt class="hdlist1"><code>-f</code></dt>
+<dt class="hdlist1"><code>--force</code></dt>
 <dd>
 <p>When switching branches, proceed even if the index or the
 working tree differs from <code>HEAD</code>, and even if there are untracked
@@ -601,14 +601,14 @@ any untracked files or directories that are in the way.</p>
 entries; instead, unmerged entries are ignored.</p>
 </div>
 </dd>
-<dt class="hdlist1">--ours</dt>
-<dt class="hdlist1">--theirs</dt>
+<dt class="hdlist1"><code>--ours</code></dt>
+<dt class="hdlist1"><code>--theirs</code></dt>
 <dd>
 <p>When checking out paths from the index, check out stage #2
-(<em>ours</em>) or #3 (<em>theirs</em>) for unmerged paths.</p>
+(<code>ours</code>) or #3 (<code>theirs</code>) for unmerged paths.</p>
 <div class="paragraph">
-<p>Note that during <code>git</code> <code>rebase</code> and <code>git</code> <code>pull</code> <code>--rebase</code>, <em>ours</em> and
-<em>theirs</em> may appear swapped; <code>--ours</code> gives the version from the
+<p>Note that during <code>git</code> <code>rebase</code> and <code>git</code> <code>pull</code> <code>--rebase</code>, <code>ours</code> and
+<code>theirs</code> may appear swapped; <code>--ours</code> gives the version from the
 branch the changes are rebased onto, while <code>--theirs</code> gives the
 version from the branch that holds your work that is being rebased.</p>
 </div>
@@ -624,25 +624,25 @@ on your side branch as <code>theirs</code> (i.e. "one contributor&#8217;s work o
 of it").</p>
 </div>
 </dd>
-<dt class="hdlist1">-b &lt;new-branch&gt;</dt>
+<dt class="hdlist1"><code>-b</code> <em>&lt;new-branch&gt;</em></dt>
 <dd>
 <p>Create a new branch named <em>&lt;new-branch&gt;</em>, start it at
 <em>&lt;start-point&gt;</em>, and check the resulting branch out;
 see <a href="git-branch.html">git-branch(1)</a> for details.</p>
 </dd>
-<dt class="hdlist1">-B &lt;new-branch&gt;</dt>
+<dt class="hdlist1"><code>-B</code> <em>&lt;new-branch&gt;</em></dt>
 <dd>
 <p>Creates the branch <em>&lt;new-branch&gt;</em>, start it at <em>&lt;start-point&gt;</em>;
 if it already exists, then reset it to <em>&lt;start-point&gt;</em>. And then
 check the resulting branch out.  This is equivalent to running
-"git branch" with "-f" followed by "git checkout" of that branch;
+<code>git</code> <code>branch</code> with <code>-f</code> followed by <code>git</code> <code>checkout</code> of that branch;
 see <a href="git-branch.html">git-branch(1)</a> for details.</p>
 </dd>
-<dt class="hdlist1">-t</dt>
-<dt class="hdlist1">--track[=(direct|inherit)]</dt>
+<dt class="hdlist1"><code>-t</code></dt>
+<dt class="hdlist1"><code>--track</code>[<code>=</code>(<code>direct</code>|<code>inherit</code>)]</dt>
 <dd>
 <p>When creating a new branch, set up "upstream" configuration. See
-"--track" in <a href="git-branch.html">git-branch(1)</a> for details.</p>
+<code>--track</code> in <a href="git-branch.html">git-branch(1)</a> for details.</p>
 <div class="paragraph">
 <p>If no <code>-b</code> option is given, the name of the new branch will be
 derived from the remote-tracking branch, by looking at the local part of
@@ -655,13 +655,13 @@ guessing results in an empty name, the guessing is aborted.  You can
 explicitly give a name with <code>-b</code> in such a case.</p>
 </div>
 </dd>
-<dt class="hdlist1">--no-track</dt>
+<dt class="hdlist1"><code>--no-track</code></dt>
 <dd>
 <p>Do not set up "upstream" configuration, even if the
 <code>branch.autoSetupMerge</code> configuration variable is true.</p>
 </dd>
-<dt class="hdlist1">--guess</dt>
-<dt class="hdlist1">--no-guess</dt>
+<dt class="hdlist1"><code>--guess</code></dt>
+<dt class="hdlist1"><code>--no-guess</code></dt>
 <dd>
 <p>If <em>&lt;branch&gt;</em> is not found but there does exist a tracking
 branch in exactly one remote (call it <em>&lt;remote&gt;</em>) with a
@@ -689,13 +689,13 @@ branches from there if <em>&lt;branch&gt;</em> is ambiguous but exists on the
 variable.</p>
 </div>
 </dd>
-<dt class="hdlist1">-l</dt>
+<dt class="hdlist1"><code>-l</code></dt>
 <dd>
 <p>Create the new branch&#8217;s reflog; see <a href="git-branch.html">git-branch(1)</a> for
 details.</p>
 </dd>
-<dt class="hdlist1">-d</dt>
-<dt class="hdlist1">--detach</dt>
+<dt class="hdlist1"><code>-d</code></dt>
+<dt class="hdlist1"><code>--detach</code></dt>
 <dd>
 <p>Rather than checking out a branch to work on it, check out a
 commit for inspection and discardable experiments.
@@ -703,7 +703,7 @@ This is the default behavior of <code>git</code> <code>checkout</code> <em>&lt;c
 <em>&lt;commit&gt;</em> is not a branch name.  See the "DETACHED HEAD" section
 below for details.</p>
 </dd>
-<dt class="hdlist1">--orphan &lt;new-branch&gt;</dt>
+<dt class="hdlist1"><code>--orphan</code> <em>&lt;new-branch&gt;</em></dt>
 <dd>
 <p>Create a new unborn branch, named <em>&lt;new-branch&gt;</em>, started from
 <em>&lt;start-point&gt;</em> and switch to it.  The first commit made on this
@@ -732,15 +732,15 @@ Afterwards you will be ready to prepare your new files, repopulating the
 working tree, by copying them from elsewhere, extracting a tarball, etc.</p>
 </div>
 </dd>
-<dt class="hdlist1">--ignore-skip-worktree-bits</dt>
+<dt class="hdlist1"><code>--ignore-skip-worktree-bits</code></dt>
 <dd>
-<p>In sparse checkout mode, <code>git</code> <code>checkout</code> <code>--</code> <em>&lt;paths&gt;</em> would
+<p>In sparse checkout mode, <code>git</code> <code>checkout</code> <code>--</code> <em>&lt;path&gt;</em>... would
 update only entries matched by <em>&lt;paths&gt;</em> and sparse patterns
 in <code>$GIT_DIR/info/sparse-checkout</code>. This option ignores
-the sparse patterns and adds back any files in <em>&lt;paths&gt;</em>.</p>
+the sparse patterns and adds back any files in <em>&lt;path&gt;</em>....</p>
 </dd>
-<dt class="hdlist1">-m</dt>
-<dt class="hdlist1">--merge</dt>
+<dt class="hdlist1"><code>-m</code></dt>
+<dt class="hdlist1"><code>--merge</code></dt>
 <dd>
 <p>When switching branches,
 if you have local modifications to one or more files that
@@ -765,15 +765,15 @@ used when checking out paths from a tree-ish.</p>
 <p>When switching branches with <code>--merge</code>, staged changes may be lost.</p>
 </div>
 </dd>
-<dt class="hdlist1">--conflict=&lt;style&gt;</dt>
+<dt class="hdlist1"><code>--conflict=</code><em>&lt;style&gt;</em></dt>
 <dd>
 <p>The same as <code>--merge</code> option above, but changes the way the
 conflicting hunks are presented, overriding the
 <code>merge.conflictStyle</code> configuration variable.  Possible values are
-"merge" (default), "diff3", and "zdiff3".</p>
+<code>merge</code> (default), <code>diff3</code>, and <code>zdiff3</code>.</p>
 </dd>
-<dt class="hdlist1">-p</dt>
-<dt class="hdlist1">--patch</dt>
+<dt class="hdlist1"><code>-p</code></dt>
+<dt class="hdlist1"><code>--patch</code></dt>
 <dd>
 <p>Interactively select hunks in the difference between the
 <em>&lt;tree-ish&gt;</em> (or the index, if unspecified) and the working
@@ -781,7 +781,7 @@ tree.  The chosen hunks are then applied in reverse to the
 working tree (and if a <em>&lt;tree-ish&gt;</em> was specified, the index).</p>
 <div class="paragraph">
 <p>This means that you can use <code>git</code> <code>checkout</code> <code>-p</code> to selectively discard
-edits from your current working tree. See the &#8220;Interactive Mode&#8221;
+edits from your current working tree. See the "Interactive Mode"
 section of <a href="git-add.html">git-add(1)</a> to learn how to operate the <code>--patch</code> mode.</p>
 </div>
 <div class="paragraph">
@@ -789,22 +789,22 @@ section of <a href="git-add.html">git-add(1)</a> to learn how to operate the <co
 <code>--overlay</code>), and currently doesn&#8217;t support overlay mode.</p>
 </div>
 </dd>
-<dt class="hdlist1">--ignore-other-worktrees</dt>
+<dt class="hdlist1"><code>--ignore-other-worktrees</code></dt>
 <dd>
 <p><code>git</code> <code>checkout</code> refuses when the wanted branch is already checked
 out or otherwise in use by another worktree. This option makes
 it check the branch out anyway. In other words, the branch can
 be in use by more than one worktree.</p>
 </dd>
-<dt class="hdlist1">--overwrite-ignore</dt>
-<dt class="hdlist1">--no-overwrite-ignore</dt>
+<dt class="hdlist1"><code>--overwrite-ignore</code></dt>
+<dt class="hdlist1"><code>--no-overwrite-ignore</code></dt>
 <dd>
 <p>Silently overwrite ignored files when switching branches. This
 is the default behavior. Use <code>--no-overwrite-ignore</code> to abort
 the operation when the new branch contains ignored files.</p>
 </dd>
-<dt class="hdlist1">--recurse-submodules</dt>
-<dt class="hdlist1">--no-recurse-submodules</dt>
+<dt class="hdlist1"><code>--recurse-submodules</code></dt>
+<dt class="hdlist1"><code>--no-recurse-submodules</code></dt>
 <dd>
 <p>Using <code>--recurse-submodules</code> will update the content of all active
 submodules according to the commit recorded in the superproject. If
@@ -814,8 +814,8 @@ is used, submodules working trees will not be updated.
 Just like <a href="git-submodule.html">git-submodule(1)</a>, this will detach <code>HEAD</code> of the
 submodule.</p>
 </dd>
-<dt class="hdlist1">--overlay</dt>
-<dt class="hdlist1">--no-overlay</dt>
+<dt class="hdlist1"><code>--overlay</code></dt>
+<dt class="hdlist1"><code>--no-overlay</code></dt>
 <dd>
 <p>In the default overlay mode, <code>git</code> <code>checkout</code> never
 removes files from the index or the working tree.  When
@@ -823,19 +823,19 @@ specifying <code>--no-overlay</code>, files that appear in the index and
 working tree, but not in <em>&lt;tree-ish&gt;</em> are removed, to make them
 match <em>&lt;tree-ish&gt;</em> exactly.</p>
 </dd>
-<dt class="hdlist1">--pathspec-from-file=&lt;file&gt;</dt>
+<dt class="hdlist1"><code>--pathspec-from-file=</code><em>&lt;file&gt;</em></dt>
 <dd>
 <p>Pathspec is passed in <em>&lt;file&gt;</em> instead of commandline args. If
 <em>&lt;file&gt;</em> is exactly <code>-</code> then standard input is used. Pathspec
-elements are separated by LF or CR/LF. Pathspec elements can be
+elements are separated by <em>LF</em> or <em>CR</em>/<em>LF</em>. Pathspec elements can be
 quoted as explained for the configuration variable <code>core.quotePath</code>
 (see <a href="git-config.html">git-config(1)</a>). See also <code>--pathspec-file-nul</code> and
 global <code>--literal-pathspecs</code>.</p>
 </dd>
-<dt class="hdlist1">--pathspec-file-nul</dt>
+<dt class="hdlist1"><code>--pathspec-file-nul</code></dt>
 <dd>
 <p>Only meaningful with <code>--pathspec-from-file</code>. Pathspec elements are
-separated with NUL character and all other characters are taken
+separated with <em>NUL</em> character and all other characters are taken
 literally (including newlines and quotes).</p>
 </dd>
 <dt class="hdlist1">&lt;branch&gt;</dt>
@@ -851,40 +851,40 @@ branch/commit checked out using "git checkout" operation. You may
 also specify <code>-</code> which is synonymous to <code>@</code>{-1}.</p>
 </div>
 <div class="paragraph">
-<p>As a special case, you may use <code>A</code><code>...</code><code>B</code> as a shortcut for the
-merge base of <code>A</code> and <code>B</code> if there is exactly one merge base. You can
-leave out at most one of <code>A</code> and <code>B</code>, in which case it defaults to <code>HEAD</code>.</p>
+<p>As a special case, you may use <em>&lt;rev-a&gt;</em><code>...</code><em>&lt;rev-b&gt;</em> as a shortcut for the
+merge base of <em>&lt;rev-a&gt;</em> and <em>&lt;rev-b&gt;</em> if there is exactly one merge base. You can
+leave out at most one of <em>&lt;rev-a&gt;</em> and <em>&lt;rev-b&gt;</em>, in which case it defaults to <code>HEAD</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">&lt;new-branch&gt;</dt>
+<dt class="hdlist1"><em>&lt;new-branch&gt;</em></dt>
 <dd>
 <p>Name for the new branch.</p>
 </dd>
-<dt class="hdlist1">&lt;start-point&gt;</dt>
+<dt class="hdlist1"><em>&lt;start-point&gt;</em></dt>
 <dd>
 <p>The name of a commit at which to start the new branch; see
 <a href="git-branch.html">git-branch(1)</a> for details. Defaults to <code>HEAD</code>.</p>
 <div class="paragraph">
-<p>As a special case, you may use "A<code>...</code><code>B</code>" as a shortcut for the
-merge base of <code>A</code> and <code>B</code> if there is exactly one merge base. You can
-leave out at most one of <code>A</code> and <code>B</code>, in which case it defaults to <code>HEAD</code>.</p>
+<p>As a special case, you may use <em>&lt;rev-a&gt;</em><code>...</code><em>&lt;rev-b&gt;</em> as a shortcut for the
+merge base of <em>&lt;rev-a&gt;</em> and <em>&lt;rev-b&gt;</em> if there is exactly one merge base. You can
+leave out at most one of <em>&lt;rev-a&gt;</em> and <em>&lt;rev-b&gt;</em>, in which case it defaults to <code>HEAD</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">&lt;tree-ish&gt;</dt>
+<dt class="hdlist1"><em>&lt;tree-ish&gt;</em></dt>
 <dd>
 <p>Tree to checkout from (when paths are given). If not specified,
 the index will be used.</p>
 <div class="paragraph">
-<p>As a special case, you may use "A<code>...</code><code>B</code>" as a shortcut for the
-merge base of <code>A</code> and <code>B</code> if there is exactly one merge base. You can
-leave out at most one of <code>A</code> and <code>B</code>, in which case it defaults to <code>HEAD</code>.</p>
+<p>As a special case, you may use <em>&lt;rev-a&gt;</em><code>...</code><em>&lt;rev-b&gt;</em> as a shortcut for the
+merge base of <em>&lt;rev-a&gt;</em> and <em>&lt;rev-b&gt;</em> if there is exactly one merge base. You can
+leave out at most one of <em>&lt;rev-a&gt;</em> and <em>&lt;rev-b&gt;</em>, in which case it defaults to <code>HEAD</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--</dt>
+<dt class="hdlist1"><code>--</code></dt>
 <dd>
 <p>Do not interpret any more arguments as options.</p>
 </dd>
-<dt class="hdlist1">&lt;pathspec&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1"><em>&lt;pathspec&gt;</em>...</dt>
 <dd>
 <p>Limits the paths affected by the operation.</p>
 <div class="paragraph">
@@ -916,7 +916,7 @@ a---b---c  branch 'master' (refers to commit 'c')
 </div>
 <div class="paragraph">
 <p>When a commit is created in this state, the branch is updated to refer to
-the new commit. Specifically, <em>git commit</em> creates a new commit <code>d</code>, whose
+the new commit. Specifically, <code>git</code> <code>commit</code> creates a new commit <code>d</code>, whose
 parent is commit <code>c</code>, and then updates branch <code>master</code> to refer to new
 commit <code>d</code>. <code>HEAD</code> still refers to branch <code>master</code> and so indirectly now refers
 to commit <code>d</code>:</p>
@@ -1205,7 +1205,7 @@ as what&#8217;s found there:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">checkout.defaultRemote</dt>
+<dt class="hdlist1"><code>checkout.defaultRemote</code></dt>
 <dd>
 <p>When you run <code>git</code> <code>checkout</code> <em>&lt;something&gt;</em>
 or <code>git</code> <code>switch</code> <em>&lt;something&gt;</em> and only have one
@@ -1226,13 +1226,13 @@ remote branch. This setting might be used for other checkout-like
 commands or functionality in the future.</p>
 </div>
 </dd>
-<dt class="hdlist1">checkout.guess</dt>
+<dt class="hdlist1"><code>checkout.guess</code></dt>
 <dd>
 <p>Provides the default value for the <code>--guess</code> or <code>--no-guess</code>
 option in <code>git</code> <code>checkout</code> and <code>git</code> <code>switch</code>. See
 <a href="git-switch.html">git-switch(1)</a> and <a href="git-checkout.html">git-checkout(1)</a>.</p>
 </dd>
-<dt class="hdlist1">checkout.workers</dt>
+<dt class="hdlist1"><code>checkout.workers</code></dt>
 <dd>
 <p>The number of parallel workers to use when updating the working tree.
 The default is one, i.e. sequential execution. If set to a value less
@@ -1240,15 +1240,24 @@ than one, Git will use as many workers as the number of logical cores
 available. This setting and <code>checkout.thresholdForParallelism</code> affect
 all commands that perform checkout. E.g. checkout, clone, reset,
 sparse-checkout, etc.</p>
-<div class="paragraph">
-<p>Note: Parallel checkout usually delivers better performance for repositories
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Parallel checkout usually delivers better performance for repositories
 located on SSDs or over NFS. For repositories on spinning disks and/or machines
 with a small number of cores, the default sequential checkout often performs
 better. The size and compression level of a repository might also influence how
-well the parallel version performs.</p>
+well the parallel version performs.
+</td>
+</tr>
+</table>
 </div>
 </dd>
-<dt class="hdlist1">checkout.thresholdForParallelism</dt>
+<dt class="hdlist1"><code>checkout.thresholdForParallelism</code></dt>
 <dd>
 <p>When running parallel checkout with a small number of files, the cost
 of subprocess spawning and inter-process communication might outweigh
@@ -1280,7 +1289,7 @@ default is 100.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-06-03 12:03:52 UTC
+Last updated 2025-06-04 18:24:05 UTC
 </div>
 </div>
 </body>

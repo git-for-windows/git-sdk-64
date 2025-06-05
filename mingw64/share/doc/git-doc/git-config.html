@@ -2455,7 +2455,7 @@ bundle list, grouped under <em>&lt;id&gt;</em> for identification purposes.</p>
 <p>This string value defines the URI by which Git can reach the contents
 of this <em>&lt;id&gt;</em>. This URI may be a bundle file or another bundle list.</p>
 </dd>
-<dt class="hdlist1">checkout.defaultRemote</dt>
+<dt class="hdlist1"><code>checkout.defaultRemote</code></dt>
 <dd>
 <p>When you run <code>git</code> <code>checkout</code> <em>&lt;something&gt;</em>
 or <code>git</code> <code>switch</code> <em>&lt;something&gt;</em> and only have one
@@ -2476,13 +2476,13 @@ remote branch. This setting might be used for other checkout-like
 commands or functionality in the future.</p>
 </div>
 </dd>
-<dt class="hdlist1">checkout.guess</dt>
+<dt class="hdlist1"><code>checkout.guess</code></dt>
 <dd>
 <p>Provides the default value for the <code>--guess</code> or <code>--no-guess</code>
 option in <code>git</code> <code>checkout</code> and <code>git</code> <code>switch</code>. See
 <a href="git-switch.html">git-switch(1)</a> and <a href="git-checkout.html">git-checkout(1)</a>.</p>
 </dd>
-<dt class="hdlist1">checkout.workers</dt>
+<dt class="hdlist1"><code>checkout.workers</code></dt>
 <dd>
 <p>The number of parallel workers to use when updating the working tree.
 The default is one, i.e. sequential execution. If set to a value less
@@ -2490,15 +2490,24 @@ than one, Git will use as many workers as the number of logical cores
 available. This setting and <code>checkout.thresholdForParallelism</code> affect
 all commands that perform checkout. E.g. checkout, clone, reset,
 sparse-checkout, etc.</p>
-<div class="paragraph">
-<p>Note: Parallel checkout usually delivers better performance for repositories
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Parallel checkout usually delivers better performance for repositories
 located on SSDs or over NFS. For repositories on spinning disks and/or machines
 with a small number of cores, the default sequential checkout often performs
 better. The size and compression level of a repository might also influence how
-well the parallel version performs.</p>
+well the parallel version performs.
+</td>
+</tr>
+</table>
 </div>
 </dd>
-<dt class="hdlist1">checkout.thresholdForParallelism</dt>
+<dt class="hdlist1"><code>checkout.thresholdForParallelism</code></dt>
 <dd>
 <p>When running parallel checkout with a small number of files, the cost
 of subprocess spawning and inter-process communication might outweigh
@@ -2894,10 +2903,11 @@ See <code>column.ui</code> for details.</p>
 <p>This setting overrides the default of the <code>--cleanup</code> option in
 <code>git</code> <code>commit</code>. See <a href="git-commit.html">git-commit(1)</a> for details. Changing the default can be useful
 when you always want to keep lines that begin
-with the comment character # in your log message, in which case you
+with the comment character (<code>core.commentChar</code>, default #)
+in your log message, in which case you
 would do <code>git</code> <code>config</code> <code>commit.cleanup</code> <code>whitespace</code> (note that you will
-have to remove the help lines that begin with # in the commit log
-template yourself, if you do this).</p>
+have to remove the help lines that begin with the comment character
+in the commit log template yourself, if you do this).</p>
 </dd>
 <dt class="hdlist1"><code>commit.gpgSign</code></dt>
 <dd>
@@ -6752,7 +6762,7 @@ passed as an argument. (See <a href="git-help.html">git-help(1)</a>.)</p>
 <p>Override the path for the given tool that may be used to
 display help in the <em>man</em> format. See <a href="git-help.html">git-help(1)</a>.</p>
 </dd>
-<dt class="hdlist1">merge.conflictStyle</dt>
+<dt class="hdlist1"><code>merge.conflictStyle</code></dt>
 <dd>
 <p>Specify the style in which conflicted hunks are written out to
 working tree files upon merge.  The default is "merge", which
@@ -6768,18 +6778,18 @@ similar to diff3 but removes matching lines on the two sides from
 the conflict region when those matching lines appear near either
 the beginning or end of a conflict region.</p>
 </dd>
-<dt class="hdlist1">merge.defaultToUpstream</dt>
+<dt class="hdlist1"><code>merge.defaultToUpstream</code></dt>
 <dd>
 <p>If merge is called without any commit argument, merge the upstream
 branches configured for the current branch by using their last
 observed values stored in their remote-tracking branches.
 The values of the <code>branch.</code>&lt;current <code>branch</code>&gt;<code>.merge</code> that name the
-branches at the remote named by <code>branch.</code>&lt;current <code>branch</code>&gt;<code>.remote</code>
+branches at the remote named by <code>branch.</code><em>&lt;current-branch&gt;</em><code>.remote</code>
 are consulted, and then they are mapped via <code>remote.</code><em>&lt;remote&gt;</em><code>.fetch</code>
 to their corresponding remote-tracking branches, and the tips of
 these tracking branches are merged. Defaults to true.</p>
 </dd>
-<dt class="hdlist1">merge.ff</dt>
+<dt class="hdlist1"><code>merge.ff</code></dt>
 <dd>
 <p>By default, Git does not create an extra merge commit when merging
 a commit that is a descendant of the current commit. Instead, the
@@ -6790,30 +6800,30 @@ line). When set to <code>only</code>, only such fast-forward merges are
 allowed (equivalent to giving the <code>--ff-only</code> option from the
 command line).</p>
 </dd>
-<dt class="hdlist1">merge.verifySignatures</dt>
+<dt class="hdlist1"><code>merge.verifySignatures</code></dt>
 <dd>
-<p>If true, this is equivalent to the --verify-signatures command
+<p>If true, this is equivalent to the <code>--verify-signatures</code> command
 line option. See <a href="git-merge.html">git-merge(1)</a> for details.</p>
 </dd>
-<dt class="hdlist1">merge.branchdesc</dt>
+<dt class="hdlist1"><code>merge.branchdesc</code></dt>
 <dd>
 <p>In addition to branch names, populate the log message with
 the branch description text associated with them.  Defaults
 to false.</p>
 </dd>
-<dt class="hdlist1">merge.log</dt>
+<dt class="hdlist1"><code>merge.log</code></dt>
 <dd>
 <p>In addition to branch names, populate the log message with at
 most the specified number of one-line descriptions from the
 actual commits that are being merged.  Defaults to false, and
 true is a synonym for 20.</p>
 </dd>
-<dt class="hdlist1">merge.suppressDest</dt>
+<dt class="hdlist1"><code>merge.suppressDest</code></dt>
 <dd>
 <p>By adding a glob that matches the names of integration
 branches to this multi-valued configuration variable, the
 default merge message computed for merges into these
-integration branches will omit "into &lt;branch name&gt;" from
+integration branches will omit "into <em>&lt;branch-name&gt;</em>" from
 its title.</p>
 <div class="paragraph">
 <p>An element with an empty value can be used to clear the list
@@ -6822,40 +6832,59 @@ When there is no <code>merge.suppressDest</code> variable defined, the
 default value of <code>master</code> is used for backward compatibility.</p>
 </div>
 </dd>
-<dt class="hdlist1">merge.renameLimit</dt>
+<dt class="hdlist1"><code>merge.renameLimit</code></dt>
 <dd>
 <p>The number of files to consider in the exhaustive portion of
 rename detection during a merge.  If not specified, defaults
-to the value of diff.renameLimit.  If neither
-merge.renameLimit nor diff.renameLimit are specified,
+to the value of <code>diff.renameLimit</code>.  If neither
+<code>merge.renameLimit</code> nor <code>diff.renameLimit</code> are specified,
 currently defaults to 7000.  This setting has no effect if
 rename detection is turned off.</p>
 </dd>
-<dt class="hdlist1">merge.renames</dt>
+<dt class="hdlist1"><code>merge.renames</code></dt>
 <dd>
-<p>Whether Git detects renames.  If set to "false", rename detection
-is disabled. If set to "true", basic rename detection is enabled.
+<p>Whether Git detects renames.  If set to <code>false</code>, rename detection
+is disabled. If set to <code>true</code>, basic rename detection is enabled.
 Defaults to the value of diff.renames.</p>
 </dd>
-<dt class="hdlist1">merge.directoryRenames</dt>
+<dt class="hdlist1"><code>merge.directoryRenames</code></dt>
 <dd>
 <p>Whether Git detects directory renames, affecting what happens at
 merge time to new files added to a directory on one side of
 history when that directory was renamed on the other side of
-history.  If merge.directoryRenames is set to "false", directory
-rename detection is disabled, meaning that such new files will be
-left behind in the old directory.  If set to "true", directory
-rename detection is enabled, meaning that such new files will be
-moved into the new directory.  If set to "conflict", a conflict
-will be reported for such paths.  If merge.renames is false,
-merge.directoryRenames is ignored and treated as false.  Defaults
-to "conflict".</p>
+history. Possible values are:</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>false</code></dt>
+<dd>
+<p>Directory rename detection is disabled, meaning that such new files will be
+left behind in the old directory.</p>
 </dd>
-<dt class="hdlist1">merge.renormalize</dt>
+<dt class="hdlist1"><code>true</code></dt>
+<dd>
+<p>Directory rename detection is enabled, meaning that such new files will be
+moved into the new directory.</p>
+</dd>
+<dt class="hdlist1"><code>conflict</code></dt>
+<dd>
+<p>A conflict will be reported for such paths.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If <code>merge.renames</code> is <code>false</code>, <code>merge.directoryRenames</code> is ignored and treated
+as <code>false</code>. Defaults to <code>conflict</code>.</p>
+</div>
+</dd>
+<dt class="hdlist1"><code>merge.renormalize</code></dt>
 <dd>
 <p>Tell Git that canonical representation of files in the
 repository has changed over time (e.g. earlier commits record
-text files with CRLF line endings, but recent ones use LF line
+text files with <em>CRLF</em> line endings, but recent ones use <em>LF</em> line
 endings).  In such a repository, for each file where a
 three-way content merge is needed, Git can convert the data
 recorded in commits to a canonical form before performing a
@@ -6863,35 +6892,35 @@ merge to reduce unnecessary conflicts.  For more information,
 see section "Merging branches with differing checkin/checkout
 attributes" in <a href="gitattributes.html">gitattributes(5)</a>.</p>
 </dd>
-<dt class="hdlist1">merge.stat</dt>
+<dt class="hdlist1"><code>merge.stat</code></dt>
 <dd>
-<p>Whether to print the diffstat between ORIG_HEAD and the merge result
+<p>Whether to print the diffstat between <code>ORIG_HEAD</code> and the merge result
 at the end of the merge.  True by default.</p>
 </dd>
-<dt class="hdlist1">merge.autoStash</dt>
+<dt class="hdlist1"><code>merge.autoStash</code></dt>
 <dd>
-<p>When set to true, automatically create a temporary stash entry
+<p>When set to <code>true</code>, automatically create a temporary stash entry
 before the operation begins, and apply it after the operation
 ends.  This means that you can run merge on a dirty worktree.
 However, use with care: the final stash application after a
 successful merge might result in non-trivial conflicts.
 This option can be overridden by the <code>--no-autostash</code> and
 <code>--autostash</code> options of <a href="git-merge.html">git-merge(1)</a>.
-Defaults to false.</p>
+Defaults to <code>false</code>.</p>
 </dd>
-<dt class="hdlist1">merge.tool</dt>
+<dt class="hdlist1"><code>merge.tool</code></dt>
 <dd>
 <p>Controls which merge tool is used by <a href="git-mergetool.html">git-mergetool(1)</a>.
 The list below shows the valid built-in values.
 Any other value is treated as a custom merge tool and requires
-that a corresponding mergetool.&lt;tool&gt;.cmd variable is defined.</p>
+that a corresponding <code>mergetool.</code><em>&lt;tool&gt;</em><code>.cmd</code> variable is defined.</p>
 </dd>
-<dt class="hdlist1">merge.guitool</dt>
+<dt class="hdlist1"><code>merge.guitool</code></dt>
 <dd>
 <p>Controls which merge tool is used by <a href="git-mergetool.html">git-mergetool(1)</a> when the
--g/--gui flag is specified. The list below shows the valid built-in values.
+<code>-g</code>/<code>--gui</code> flag is specified. The list below shows the valid built-in values.
 Any other value is treated as a custom merge tool and requires that a
-corresponding mergetool.&lt;guitool&gt;.cmd variable is defined.</p>
+corresponding <code>mergetool.</code><em>&lt;guitool&gt;</em><code>.cmd</code> variable is defined.</p>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><code>araxis</code></dt>
@@ -7033,7 +7062,7 @@ corresponding mergetool.&lt;guitool&gt;.cmd variable is defined.</p>
 </dl>
 </div>
 </dd>
-<dt class="hdlist1">merge.verbosity</dt>
+<dt class="hdlist1"><code>merge.verbosity</code></dt>
 <dd>
 <p>Controls the amount of output shown by the recursive merge
 strategy.  Level 0 outputs nothing except a final error
@@ -7042,46 +7071,46 @@ conflicts, 2 outputs conflicts and file changes.  Level 5 and
 above outputs debugging information.  The default is level 2.
 Can be overridden by the <code>GIT_MERGE_VERBOSITY</code> environment variable.</p>
 </dd>
-<dt class="hdlist1">merge.&lt;driver&gt;.name</dt>
+<dt class="hdlist1"><code>merge.</code><em>&lt;driver&gt;</em><code>.name</code></dt>
 <dd>
 <p>Defines a human-readable name for a custom low-level
 merge driver.  See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </dd>
-<dt class="hdlist1">merge.&lt;driver&gt;.driver</dt>
+<dt class="hdlist1"><code>merge.</code><em>&lt;driver&gt;</em><code>.driver</code></dt>
 <dd>
 <p>Defines the command that implements a custom low-level
 merge driver.  See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </dd>
-<dt class="hdlist1">merge.&lt;driver&gt;.recursive</dt>
+<dt class="hdlist1"><code>merge.</code><em>&lt;driver&gt;</em><code>.recursive</code></dt>
 <dd>
 <p>Names a low-level merge driver to be used when
 performing an internal merge between common ancestors.
 See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </dd>
-<dt class="hdlist1">mergetool.&lt;tool&gt;.path</dt>
+<dt class="hdlist1"><code>mergetool.</code><em>&lt;tool&gt;</em><code>.path</code></dt>
 <dd>
 <p>Override the path for the given tool.  This is useful in case
-your tool is not in the PATH.</p>
+your tool is not in the <code>$PATH</code>.</p>
 </dd>
-<dt class="hdlist1">mergetool.&lt;tool&gt;.cmd</dt>
+<dt class="hdlist1"><code>mergetool.</code><em>&lt;tool&gt;</em><code>.cmd</code></dt>
 <dd>
 <p>Specify the command to invoke the specified merge tool.  The
 specified command is evaluated in shell with the following
-variables available: <em>BASE</em> is the name of a temporary file
+variables available: <code>BASE</code> is the name of a temporary file
 containing the common base of the files to be merged, if available;
-<em>LOCAL</em> is the name of a temporary file containing the contents of
-the file on the current branch; <em>REMOTE</em> is the name of a temporary
+<code>LOCAL</code> is the name of a temporary file containing the contents of
+the file on the current branch; <code>REMOTE</code> is the name of a temporary
 file containing the contents of the file from the branch being
-merged; <em>MERGED</em> contains the name of the file to which the merge
+merged; <code>MERGED</code> contains the name of the file to which the merge
 tool should write the results of a successful merge.</p>
 </dd>
-<dt class="hdlist1">mergetool.&lt;tool&gt;.hideResolved</dt>
+<dt class="hdlist1"><code>mergetool.</code><em>&lt;tool&gt;</em><code>.hideResolved</code></dt>
 <dd>
 <p>Allows the user to override the global <code>mergetool.hideResolved</code> value
 for a specific tool. See <code>mergetool.hideResolved</code> for the full
 description.</p>
 </dd>
-<dt class="hdlist1">mergetool.&lt;tool&gt;.trustExitCode</dt>
+<dt class="hdlist1"><code>mergetool.</code><em>&lt;tool&gt;</em><code>.trustExitCode</code></dt>
 <dd>
 <p>For a custom merge command, specify whether the exit code of
 the merge command can be used to determine whether the merge was
@@ -7090,7 +7119,7 @@ timestamp is checked, and the merge is assumed to have been successful
 if the file has been updated; otherwise, the user is prompted to
 indicate the success of the merge.</p>
 </dd>
-<dt class="hdlist1">mergetool.meld.hasOutput</dt>
+<dt class="hdlist1"><code>mergetool.meld.hasOutput</code></dt>
 <dd>
 <p>Older versions of <code>meld</code> do not support the <code>--output</code> option.
 Git will attempt to detect whether <code>meld</code> supports <code>--output</code>
@@ -7100,7 +7129,7 @@ use the configured value instead.  Setting <code>mergetool.meld.hasOutput</code>
 to <code>true</code> tells Git to unconditionally use the <code>--output</code> option,
 and <code>false</code> avoids using <code>--output</code>.</p>
 </dd>
-<dt class="hdlist1">mergetool.meld.useAutoMerge</dt>
+<dt class="hdlist1"><code>mergetool.meld.useAutoMerge</code></dt>
 <dd>
 <p>When the <code>--auto-merge</code> is given, meld will merge all non-conflicting
 parts automatically, highlight the conflicting parts, and wait for
@@ -7111,37 +7140,37 @@ is supported and will only use <code>--auto-merge</code> when available.  A
 value of <code>false</code> avoids using <code>--auto-merge</code> altogether, and is the
 default value.</p>
 </dd>
-<dt class="hdlist1">mergetool.&lt;vimdiff variant&gt;.layout</dt>
+<dt class="hdlist1"><code>mergetool.</code><em>&lt;variant&gt;</em><code>.layout</code></dt>
 <dd>
 <p>Configure the split window layout for vimdiff&#8217;s <em>&lt;variant&gt;</em>, which is any of <code>vimdiff</code>,
 <code>nvimdiff</code>, <code>gvimdiff</code>.
 Upon launching <code>git</code> <code>mergetool</code> with <code>--tool=</code><em>&lt;variant&gt;</em> (or without <code>--tool</code>
 if <code>merge.tool</code> is configured as <em>&lt;variant&gt;</em>), Git will consult
 <code>mergetool.</code><em>&lt;variant&gt;</em><code>.layout</code> to determine the tool&#8217;s layout. If the
-variant-specific configuration is not available, <code>vimdiff</code>'s is used as
+variant-specific configuration is not available, <code>vimdiff</code> ' s is used as
 fallback.  If that too is not available, a default layout with 4 windows
-will be used.  To configure the layout, see the <code>BACKEND</code> <code>SPECIFIC</code> <code>HINTS</code>
+will be used.  To configure the layout, see the <em>BACKEND SPECIFIC HINTS</em>
 section in <a href="git-mergetool.html">git-mergetool(1)</a>.</p>
 </dd>
-<dt class="hdlist1">mergetool.hideResolved</dt>
+<dt class="hdlist1"><code>mergetool.hideResolved</code></dt>
 <dd>
 <p>During a merge, Git will automatically resolve as many conflicts as
-possible and write the <em>MERGED</em> file containing conflict markers around
-any conflicts that it cannot resolve; <em>LOCAL</em> and <em>REMOTE</em> normally
-represent the versions of the file from before Git&#8217;s conflict
-resolution. This flag causes <em>LOCAL</em> and <em>REMOTE</em> to be overwritten so
+possible and write the <code>$MERGED</code> file containing conflict markers around
+any conflicts that it cannot resolve; <code>$LOCAL</code> and <code>$REMOTE</code> normally
+are the versions of the file from before Git`s conflict
+resolution. This flag causes <code>$LOCAL</code> and <code>$REMOTE</code> to be overwritten so
 that only the unresolved conflicts are presented to the merge tool. Can
 be configured per-tool via the <code>mergetool.</code><em>&lt;tool&gt;</em><code>.hideResolved</code>
 configuration variable. Defaults to <code>false</code>.</p>
 </dd>
-<dt class="hdlist1">mergetool.keepBackup</dt>
+<dt class="hdlist1"><code>mergetool.keepBackup</code></dt>
 <dd>
 <p>After performing a merge, the original file with conflict markers
 can be saved as a file with a .<code>orig</code> extension.  If this variable
 is set to <code>false</code> then this file is not preserved.  Defaults to
 <code>true</code> (i.e. keep the backup files).</p>
 </dd>
-<dt class="hdlist1">mergetool.keepTemporaries</dt>
+<dt class="hdlist1"><code>mergetool.keepTemporaries</code></dt>
 <dd>
 <p>When invoking a custom merge tool, Git uses a set of temporary
 files to pass to the tool. If the tool returns an error and this
@@ -7149,18 +7178,18 @@ variable is set to <code>true</code>, then these temporary files will be
 preserved; otherwise, they will be removed after the tool has
 exited. Defaults to <code>false</code>.</p>
 </dd>
-<dt class="hdlist1">mergetool.writeToTemp</dt>
+<dt class="hdlist1"><code>mergetool.writeToTemp</code></dt>
 <dd>
-<p>Git writes temporary <em>BASE</em>, <em>LOCAL</em>, and <em>REMOTE</em> versions of
+<p>Git writes temporary <code>BASE</code>, <code>LOCAL</code>, and <code>REMOTE</code> versions of
 conflicting files in the worktree by default.  Git will attempt
 to use a temporary directory for these files when set <code>true</code>.
 Defaults to <code>false</code>.</p>
 </dd>
-<dt class="hdlist1">mergetool.prompt</dt>
+<dt class="hdlist1"><code>mergetool.prompt</code></dt>
 <dd>
 <p>Prompt before each invocation of the merge resolution program.</p>
 </dd>
-<dt class="hdlist1">mergetool.guiDefault</dt>
+<dt class="hdlist1"><code>mergetool.guiDefault</code></dt>
 <dd>
 <p>Set <code>true</code> to use the <code>merge.guitool</code> by default (equivalent to
 specifying the <code>--gui</code> argument), or <code>auto</code> to select <code>merge.guitool</code>
@@ -9863,7 +9892,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-06-03 12:03:52 UTC
+Last updated 2025-06-04 18:24:05 UTC
 </div>
 </div>
 </body>

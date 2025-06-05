@@ -503,14 +503,21 @@ resulting tag will have an invalid signature.</p>
 <dt class="hdlist1">--signed-commits=(verbatim|warn-verbatim|warn-strip|strip|abort)</dt>
 <dd>
 <p>Specify how to handle signed commits.  Behaves exactly as
-<em>--signed-tags</em>, but for commits.  Default is <em>abort</em>.</p>
-<div class="paragraph">
-<p>Earlier versions this command that did not have <em>--signed-commits</em>
-behaved as if <em>--signed-commits=strip</em>.  As an escape hatch for users
-of tools that call <em>git fast-export</em> but do not yet support
-<em>--signed-commits</em>, you may set the environment variable
-<em>FAST_EXPORT_SIGNED_COMMITS_NOABORT=1</em> in order to change the default
-from <em>abort</em> to <em>warn-strip</em>.</p>
+<em>--signed-tags</em>, but for commits.  Default is <em>strip</em>, which
+is the same as how earlier versions of this command without
+this option behaved.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This is highly experimental and the format of the data stream may
+change in the future without compatibility guarantees.
+</td>
+</tr>
+</table>
 </div>
 </dd>
 <dt class="hdlist1">--tag-of-filtered-object=(abort|drop|rewrite)</dt>
@@ -816,7 +823,7 @@ a tag referencing a tree instead of a commit.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-06-03 12:03:52 UTC
+Last updated 2025-06-04 18:24:05 UTC
 </div>
 </div>
 </body>

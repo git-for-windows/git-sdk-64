@@ -548,6 +548,10 @@ second object). This subcommand is equivalent to:
 corresponding <em>&lt;to-object&gt;</em>.  (The optional <em>&lt;rest&gt;</em> is ignored so that
 the command can read the input given to the <code>post-rewrite</code> hook.)</p>
 </div>
+<div class="paragraph">
+<p><code>--stdin</code> cannot be combined with object names given on the command
+line.</p>
+</div>
 </dd>
 <dt class="hdlist1"><code>append</code></dt>
 <dd>
@@ -591,6 +595,11 @@ When done, the user can either finalize the merge with
 giving zero or one object from the command line, this is
 equivalent to specifying an empty note message to
 the <code>edit</code> subcommand.</p>
+<div class="paragraph">
+<p>In <code>--stdin</code> mode, also remove the object names given on standard
+input. In other words, <code>--stdin</code> can be combined with object names from
+the command line.</p>
+</div>
 </dd>
 <dt class="hdlist1"><code>prune</code></dt>
 <dd>
@@ -621,29 +630,21 @@ overwrite the existing notes (instead of aborting).</p>
 <dd>
 <p>Use the given note message (instead of prompting).
 If multiple <code>-m</code> options are given, their values
-are concatenated as separate paragraphs.
-Lines starting with # and empty lines other than a
-single line between paragraphs will be stripped out.
-If you wish to keep them verbatim, use <code>--no-stripspace</code>.</p>
+are concatenated as separate paragraphs.</p>
 </dd>
 <dt class="hdlist1"><code>-F</code> <em>&lt;file&gt;</em></dt>
 <dt class="hdlist1"><code>--file=</code><em>&lt;file&gt;</em></dt>
 <dd>
 <p>Take the note message from the given file.  Use <code>-</code> to
-read the note message from the standard input.
-Lines starting with # and empty lines other than a
-single line between paragraphs will be stripped out.
-If you wish to keep them verbatim, use <code>--no-stripspace</code>.</p>
+read the note message from the standard input.</p>
 </dd>
 <dt class="hdlist1"><code>-C</code> <em>&lt;object&gt;</em></dt>
 <dt class="hdlist1"><code>--reuse-message=</code><em>&lt;object&gt;</em></dt>
 <dd>
 <p>Take the given blob object (for example, another note) as the
 note message. (Use <code>git</code> <code>notes</code> <code>copy</code> <em>&lt;object&gt;</em> instead to
-copy notes between objects.).  By default, message will be
-copied verbatim, but if you wish to strip out the lines
-starting with # and empty lines other than a single line
-between paragraphs, use with <code>--stripspace</code> option.</p>
+copy notes between objects.)  Implies <code>--no-stripspace</code> since
+the default behavior is to copy the message verbatim.</p>
 </dd>
 <dt class="hdlist1"><code>-c</code> <em>&lt;object&gt;</em></dt>
 <dt class="hdlist1"><code>--reedit-message=</code><em>&lt;object&gt;</em></dt>
@@ -656,23 +657,50 @@ the user can further edit the note message.</p>
 <p>Allow an empty note object to be stored. The default behavior is
 to automatically remove empty notes.</p>
 </dd>
-<dt class="hdlist1"><code>--</code>[<code>no-</code>]<code>separator</code></dt>
 <dt class="hdlist1"><code>--separator=</code><em>&lt;paragraph-break&gt;</em></dt>
+<dt class="hdlist1"><code>--separator</code></dt>
+<dt class="hdlist1"><code>--no-separator</code></dt>
 <dd>
 <p>Specify a string used as a custom inter-paragraph separator
 (a newline is added at the end as needed). If <code>--no-separator</code>, no
 separators will be added between paragraphs.  Defaults to a blank
 line.</p>
 </dd>
-<dt class="hdlist1"><code>--</code>[<code>no-</code>]<code>stripspace</code></dt>
+<dt class="hdlist1"><code>--stripspace</code></dt>
+<dt class="hdlist1"><code>--no-stripspace</code></dt>
 <dd>
-<p>Strip leading and trailing whitespace from the note message.
-Also strip out empty lines other than a single line between
-paragraphs. Lines starting with # will be stripped out
-in non-editor cases like <code>-m</code>, <code>-F</code> and <code>-C</code>, but not in
-editor case like <code>git</code> <code>notes</code> <code>edit</code>, <code>-c</code>, etc.</p>
+<p>Clean up whitespace. Specifically (see
+<a href="git-stripspace.html">git-stripspace(1)</a>):</p>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>remove trailing whitespace from all lines</p>
+</li>
+<li>
+<p>collapse multiple consecutive empty lines into one empty line</p>
+</li>
+<li>
+<p>remove empty lines from the beginning and end of the input</p>
+</li>
+<li>
+<p>add a missing <code>\n</code> to the last line if necessary.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p><code>--stripspace</code> is the default except for
+<code>-C</code>/<code>--reuse-message</code>. However, keep in mind that this depends on the
+order of similar options. For example, for <code>-C</code> <em>&lt;object&gt;</em> <code>-m</code><em>&lt;message&gt;</em>,
+<code>--stripspace</code> will be used because the default for <code>-m</code> overrides the
+previous <code>-C</code>. This is a known limitation that may be fixed in the
+future.</p>
+</div>
 </dd>
-<dt class="hdlist1"><code>--ref</code> <em>&lt;ref&gt;</em></dt>
+<dt class="hdlist1"><code>--ref=</code><em>&lt;ref&gt;</em></dt>
 <dd>
 <p>Manipulate the notes tree in <em>&lt;ref&gt;</em>.  This overrides
 <code>GIT_NOTES_REF</code> and the <code>core.notesRef</code> configuration.  The ref
@@ -687,9 +715,7 @@ object that does not have notes attached to it.</p>
 </dd>
 <dt class="hdlist1"><code>--stdin</code></dt>
 <dd>
-<p>Also read the object names to remove notes from the standard
-input (there is no reason you cannot combine this with object
-names from the command line).</p>
+<p>Only valid for <code>remove</code> and <code>copy</code>. See the respective subcommands.</p>
 </dd>
 <dt class="hdlist1"><code>-n</code></dt>
 <dt class="hdlist1"><code>--dry-run</code></dt>
@@ -1015,7 +1041,7 @@ on the <code>notes.rewrite.</code><em>&lt;command&gt;</em> and <code>notes.rewri
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-06-03 12:03:52 UTC
+Last updated 2025-06-04 18:24:05 UTC
 </div>
 </div>
 </body>
