@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 NAME="autoconf"
@@ -129,7 +129,7 @@ if [ -z "${binary}" ] && [ -n "${WANT_AUTOCONF}" ] ; then
 fi
 
 if [ -z "${binary}" ] ; then
-	err "Unable to locate any usuable version of ${NAME}.\n" \
+	err "Unable to locate any usable version of ${NAME}.\n" \
 	    "\tI tried these versions:${all_vers}\n" \
 	    "\tWith a base name of '${full_argv0}'."
 fi
