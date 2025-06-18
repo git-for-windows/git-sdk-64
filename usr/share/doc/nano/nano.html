@@ -53,7 +53,7 @@ ul.no-bullet {list-style: none}
 
 <div class="top" id="Top">
 <span id="SEC_Top"></span>
-<p>This manual documents GNU <code>nano</code>, version 8.4.
+<p>This manual documents GNU <code>nano</code>, version 8.5.
 </p>
 
 
@@ -330,18 +330,22 @@ is running.
 <div class="section" id="Anchors">
 <span id="Anchors-1"></span><h3 class="section">3.8 Anchors</h3>
 
-<p>With <kbd>M-Ins</kbd> you can place an anchor (a kind of temporary bookmark)
-at the current line.  With <kbd>M-PgUp</kbd> and <kbd>M-PgDn</kbd> you can jump
+<p>With <kbd>M-Ins</kbd> you can place an anchor (a kind of bookmark) at
+the current line.  With <kbd>M-PgUp</kbd> and <kbd>M-PgDn</kbd> you can jump
 to an anchor in the backward/forward direction.  This jumping wraps
 around at the top and bottom.
 </p>
-<p>When a line with an anchor is removed, the line where the cursor ends up
-inherits the anchor.  After performing an operation on the entire buffer
-(like formatting it, piping it through a command, or doing an external
-spell check on it), any anchors that were present are gone.  And when
-you close the buffer, all its anchors simply disappear; they are not saved.
+<p>When an operation removes a line with an anchor, the new line with the
+cursor inherits the anchor.  But after performing an operation on the
+entire buffer (like formatting it, piping it through a command, or
+doing an external spell check on it), any anchors that were present
+are gone.
 </p>
-<p>Anchors are visualized in the margin when line numbers are activated.
+<p>When <samp>--positionlog</samp> or <code>set positionlog</code> is active, anchors
+are saved when the file is closed, and restored when the file is reopened.
+</p>
+<p>Anchors are visualized in the left margin if line numbers are active,
+and are always visualized (on the right-hand side) in the mini bar.
 </p>
 <hr>
 </div>
@@ -497,6 +501,7 @@ beginning of a paragraph (unless auto-indenting is on).
 <dt><span><samp>--positionlog</samp></span></dt>
 <dd><p>For the 200 most recent files, log the last position of the cursor,
 and place it at that position again upon reopening such a file.
+Also save and restore the positions of any anchors.
 </p>
 </dd>
 <dt><span><samp>-Q &quot;<var>regex</var>&quot;</samp></span></dt>
@@ -665,8 +670,8 @@ and writes to the pipe when the user saves the &quot;file&quot;.  This way
 </dd>
 <dt><span><samp>-o <var>directory</var></samp></span></dt>
 <dt><span><samp>--operatingdir=<var>directory</var></samp></span></dt>
-<dd><p>Set the operating directory.  This makes <code>nano</code> set up something
-similar to a chroot.
+<dd><p>Change to the given <var>directory</var>, and allow reading and writing
+files only in this directory and its subdirectories.
 </p>
 </dd>
 <dt><span><samp>-p</samp></span></dt>
@@ -1191,15 +1196,13 @@ See <a href="#set-keycolor"><code>set keycolor</code></a> for valid color names.
 </p>
 </dd>
 <dt><span><code>set operatingdir &quot;<var>directory</var>&quot;</code></span></dt>
-<dd><p><code>nano</code> only reads and writes files inside &quot;directory&quot; and its
-subdirectories.  Also, the current directory is changed to here, so
-files are inserted from this directory.  By default, the operating
-directory feature is turned off.
+<dd><p>At startup, make <code>nano</code> change to the given <var>directory</var>, and
+allow reading and writing files only in this directory and its subdirectories.
 </p>
 </dd>
 <dt><span><code>set positionlog</code></span></dt>
-<dd><p>Save the cursor position of files between editing sessions.
-The cursor position is remembered for the 200 most-recently edited files.
+<dd><p>Save the positions of cursor and anchors between editing sessions.
+These positions are remembered for the 200 most-recently edited files.
 </p>
 </dd>
 <dt><span><code>set preserve</code></span></dt>
@@ -1524,10 +1527,10 @@ which means that later commands can recolor stuff that was colored earlier.
 </dd>
 <dt><span><code>color [bold,][italic,]<var>fgcolor</var>,<var>bgcolor</var> start=&quot;<var>fromrx</var>&quot; end=&quot;<var>torx</var>&quot;</code></span></dt>
 <dd><p>Paint all pieces of text whose start matches extended regular expression
-&quot;fromrx&quot; and whose end matches extended regular expression &quot;torx&quot; with
-the given foreground and background colors, at least one of
+<var>fromrx</var> and whose end matches extended regular expression <var>torx</var>
+with the given foreground and background colors, at least one of
 which must be specified.  This means that, after an initial instance of
-&quot;fromrx&quot;, all text until the first instance of &quot;torx&quot; is colored.
+<var>fromrx</var>, all text until the first instance of <var>torx</var> is colored.
 This allows syntax highlighting to span multiple lines.
 </p>
 </dd>
@@ -1536,8 +1539,8 @@ This allows syntax highlighting to span multiple lines.
 </p>
 </dd>
 <dt><span><code>include &quot;<var>syntaxfile</var>&quot;</code></span></dt>
-<dd><p>Read in self-contained color syntaxes from &quot;syntaxfile&quot;.  Note that
-&quot;syntaxfile&quot; may contain only the above commands, from <code>syntax</code>
+<dd><p>Read in self-contained color syntaxes from <var>syntaxfile</var>.  Note that
+such a syntax file may contain only the above commands, from <code>syntax</code>
 to <code>icolor</code>.
 </p>
 </dd>

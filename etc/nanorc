@@ -126,7 +126,7 @@
 ## string means the operating-directory feature is turned off.
 # set operatingdir ""
 
-## Remember the cursor position in each file for the next editing session.
+## Remember the position of cursor and anchors for the next editing session.
 # set positionlog
 
 ## Preserve the XON and XOFF keys (^Q and ^S).
@@ -301,6 +301,9 @@ include /usr/share/nano/*.nanorc
 
 ## For normalizing Unicode to precomposed characters:
 # bind Sh-M-N "{execute}| uconv -x nfc {enter}" main
+
+## For wiping all anchors in a buffer:
+# bind Sh-M-W "{execute}| cat {enter}" main
 
 ## For snipping trailing blanks when you save a file:
 # bind ^S "{execute}| sed 's/\s\+$//' {enter}{savefile}" main
