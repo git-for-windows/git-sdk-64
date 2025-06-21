@@ -25,13 +25,22 @@
 #include <string.h>
 #include <sys/types.h>
 #include <stdint.h>
+#include <errno.h>
 
 #ifdef _WIN32
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
 # include <malloc.h>
 # define PATH_DEV_NULL	"nul"
-# define SIZE_FMT_SPECIFIER	"%zu"
+# ifdef _WIN64
+#  ifndef __MINGW32__
+#   define SIZE_FMT_SPECIFIER	"%I64u"
+#  else
+#   define SIZE_FMT_SPECIFIER	"%llu"
+#  endif
+# else
+#  define SIZE_FMT_SPECIFIER	"%u"
+# endif
 # ifndef ssize_t
 # ifndef __MINGW32__
 #  include <BaseTsd.h>

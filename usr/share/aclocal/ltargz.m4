@@ -43,7 +43,7 @@ AS_IF([test -z "$LT_ARGZ_H"],
         [if argz actually works],
         [lt_cv_sys_argz_works],
         [[case $host_os in #(
-	 *cygwin* | msys*)
+	 *cygwin*)
 	   lt_cv_sys_argz_works=no
 	   if test no != "$cross_compiling"; then
 	     lt_cv_sys_argz_works="guessing no"
