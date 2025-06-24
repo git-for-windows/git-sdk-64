@@ -3,7 +3,7 @@ package URI;
 use strict;
 use warnings;
 
-our $VERSION = '5.31';
+our $VERSION = '5.32';
 
 # 1=version 5.10 and earlier; 0=version 5.11 and later
 use constant HAS_RESERVED_SQUARE_BRACKETS => $ENV{URI_HAS_RESERVED_SQUARE_BRACKETS} ? 1 : 0;
@@ -1152,6 +1152,13 @@ I<sip> parameters: $uri->params_form and $uri->params.
 
 See I<sip> scheme.  Its syntax is the same as sip, but the default
 port is different.
+
+=item B<smb>:
+
+C<URI> objects belonging to the smb scheme support the common,
+generic and server methods. In addition, they provide methods to
+access the userinfo sub-components ($uri->user and $uri->password)
+as well as $uri->authdomain and $uri->sharename methods.
 
 =item B<snews>:
 

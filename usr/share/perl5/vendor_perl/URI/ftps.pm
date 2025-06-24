@@ -3,7 +3,7 @@ package URI::ftps;
 use strict;
 use warnings;
 
-our $VERSION = '5.31';
+our $VERSION = '5.32';
 
 use parent 'URI::ftp';
 
