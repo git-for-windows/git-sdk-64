@@ -22,8 +22,8 @@
 
 progname=$0
 package=gettext-tools
-version=0.25
-archive_version=0.25
+version=0.25.1
+archive_version=0.25.1
 
 # Set variables
 # - gettext_datadir     directory where the data files are stored.
@@ -159,11 +159,13 @@ m4_pushdef([m4_esyscmd])
 
 # func_trace_sed macro configure.ac
 # traces an Autoconf macro call and outputs the arguments to stdout,
-# using sed.
+# using sed. For a macro call without arguments, print just a blank line.
 func_trace_sed ()
 {
   sed_extract_arguments='
-s,#.*$,,; s,^dnl .*$,,; s, dnl .*$,,;
+s,#.*$,,
+s,^dnl .*$,,
+s, dnl .*$,,
 /'"$1"'(/ {
   ta
   :a
@@ -175,6 +177,8 @@ s,#.*$,,; s,^dnl .*$,,; s, dnl .*$,,;
   :b
   s,^.*'"$1"'([[ ]*\([^]"$`\\)]*\).*$,\1,p
 }
+/'"$1"'[^A-Za-z0-9_(]/ s,^.*$,,p
+/'"$1"'$/ s,^.*$,,p
 d'
   sed -e "$sed_extract_arguments" "$2"
 }
@@ -374,7 +378,12 @@ else
 fi
 
 if test -z "$ver"; then
-  func_fatal_error "Missing version: please specify in $configure_in through a line 'AM_GNU_GETTEXT_VERSION(x.yy.zz)' the gettext version the package is using"
+  # The $configure_in does not specify an AM_GNU_GETTEXT_VERSION.
+  # This is OK in two cases:
+  #   - The package uses an old gettext infrastructure (from 2024 or earlier).
+  #   - The package merely uses AM_ICONV, not AM_GNU_GETTEXT.
+  # Use the last version whose po.m4 is nearly identical to the older ones.
+  ver=0.23.1
 fi
 
 # Check whether the version number is supported.
@@ -392,9 +401,9 @@ case "$ver" in
   0.20 | 0.20.2 | \
   0.21 | 0.21.1 | \
   0.22 | 0.22.1 | 0.22.2 | 0.22.3 | 0.22.4 | 0.22.5 | \
-  0.23 | 0.23.1 | \
-  0.24 | 0.24.1 | \
-  0.25 )
+  0.23 | 0.23.1 | 0.23.2 | \
+  0.24 | 0.24.1 | 0.24.2 | \
+  0.25 | 0.25.1 )
     ;;
   *)
     func_fatal_error "The AM_GNU_GETTEXT_VERSION declaration in your $configure_in
@@ -446,15 +455,20 @@ fi
 omitintl=
 # Need to use func_trace_sed instead of $func_trace, since
 # AM_GNU_GETTEXT is not a standard Autoconf trace.
-xargs=`func_trace_sed AM_GNU_GETTEXT "$configure_in"`
-save_IFS="$IFS"; IFS=:
-for arg in $xargs; do
-  if test 'external' = "$arg"; then
-    omitintl=yes
-    break
-  fi
-done
-IFS="$save_IFS"
+if test `func_trace_sed AM_GNU_GETTEXT "$configure_in" | wc -l` = 0; then
+  # No AM_GNU_GETTEXT invocation.
+  omitintl=yes
+else
+  xargs=`func_trace_sed AM_GNU_GETTEXT "$configure_in"`
+  save_IFS="$IFS"; IFS=:
+  for arg in $xargs; do
+    if test 'external' = "$arg"; then
+      omitintl=yes
+      break
+    fi
+  done
+  IFS="$save_IFS"
+fi
 
 if test -z "$omitintl"; then
   case "$ver" in
