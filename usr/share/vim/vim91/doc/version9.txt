@@ -1,4 +1,4 @@
-*version9.txt*  For Vim version 9.1.  Last change: 2025 Apr 24
+*version9.txt*  For Vim version 9.1.  Last change: 2025 Jun 28
 
 
 		  VIM REFERENCE MANUAL    by Bram Moolenaar
@@ -41571,7 +41571,7 @@ Other new features ~
 The new packages |package-comment|, |package-nohlsearch| and |package-hlyank|
 are included.
 
-Support for Wayland UI.
+Support for Wayland UI and support for the Wayland clipboard
 
 Support for the XDG Desktop Specification |xdg-base-dir|
 
@@ -41583,6 +41583,11 @@ completion and command-line completion in |ins-completion-menu|, see
 |complete-items|
 
 Support for the |Tuple| data type in Vim script and Vim9 script.
+
+Support for a vertical |tabpanel| window similar to the 'tabline'.
+
+New Insert-mode completion: |i_CTRL-X_CTRL-R| to complete words from
+registers.
 
 							*changed-9.2*
 Changed~
@@ -41619,28 +41624,34 @@ Completion: ~
 - New option value for 'wildmode':
 	"noselect"	- do not auto select an entry in the wildmenu
 - New flags for 'complete':
-	"f{func}"	- complete using given function
-	"f"		- complete using 'completefunc'
+	"F{func}"	- complete using given function
+	"F"		- complete using 'completefunc'
 	"o"		- complete using 'omnifunc'
 - allow to limit matches for the 'complete' sources by using the
   "{flag}^<limit>" notation
 - add ":filetype" command completion
 - add "filetypecmd" completion type for |getcompletion()|
+- 'smartcase' applies to completion filtering
+- 'wildchar' enables completion in search contexts using |/|, |?|, |:g|, |:v|
+  and |:vimgrep| commands
 
 Options: ~
 - the default for 'commentstring' contains whitespace padding to have
   automatic comments look nicer |comment-install|
 - 'completeopt' is now a |global-local| option.
-- 'nrformats' accepts the new "blank" suboption, to determine a signed or
-  unsigned number based on whitespace in front of a minus sign.
 - add 'cpoptions' flag "z" |cpo-z|, to disable some (traditional) vi
   behaviour/inconsistency (see |d-special| and |cw|).
+- new option values for 'fillchars':
+	"trunc"		- configure truncation indicator, 'pummaxwidth'
+	"truncrl"	- like "trunc" but in 'rl' mode, 'pummaxwidth'
+	"tpl_vert"	- separators for the 'tabpanel'
+- 'grepformat' is now a |global-local| option.
+- adjust for GTK3 dropping some mouse cursors 'mouseshape'
+- 'nrformats' accepts the new "blank" suboption, to determine a signed or
+  unsigned number based on whitespace in front of a minus sign.
 - 'rulerformat' now supports the |stl-%!| item
 - use 'smoothscroll' logic for CTRL-F / CTRL-B for pagewise scrolling
   and CTRL-D / CTRL-U for half-pagewise scrolling
-- New option value for 'fillchars':
-	"trunc"		- configure truncation indicator, 'pummaxwidth'
-	"truncrl"	- like "trunc" but in 'rl' mode, 'pummaxwidth'
 
 Ex commands: ~
 - allow to specify a priority when defining a new sign |:sign-define|
@@ -41675,6 +41686,9 @@ Others: ~
   and decouple it from |netrw|
 - new digraph "APPROACHES THE LIMIT" using ".="
 - |CTRL-C| always closes the active |popup-window|.
+- the configure script will favor using GTK3 over GTK2 when auto-detecting the
+  gui toolkit
+- |gv| works in operator pending mode and does not abort
 
 							*added-9.2*
 Added ~
@@ -41730,6 +41744,9 @@ Highlighting: ~
 |hl-PmenuMatch|		Popup menu: highlighting of matched text
 |hl-PmenuMatchSel|	Popup menu: highlighting of matched text in selected
 			line
+|hl-TabPanel|		|tabpanel|: not active tab page label
+|hl-TabPanelFill|	|tabpanel|: filler space
+|hl-TabPanelSel|	|tabpanel|: active tab page label
 
 Commands: ~
 
@@ -41740,6 +41757,8 @@ Ex-Commands: ~
 |:iput|			like |:put| but adjust indent
 |:pbuffer|		Edit buffer [N] from the buffer list in the preview
 			window
+|:redrawtabpanel|	Force updating the 'tabpanel'.
+|:uniq|			Deduplicate text in the current buffer.
 
 Options: ~
 
@@ -41755,7 +41774,11 @@ Options: ~
 'lhistory'		Size of the location list stack |quickfix-stack|.
 'messagesopt'		configure |:messages| and |hit-enter| prompt
 'pummaxwidth'		maximum width for the completion popup menu
+'showtabpanel'		When to show the |tabpanel|
 'tabclose'		Which tab page to focus after closing a tab page
+'tabpanel'		Optional vertical panel for displaying tabpages
+			|tabpanel|
+'tabpanelopt'		Optional settings for the |tabpanel|
 't_xo'			Terminal uses XON/XOFF handshaking (e.g. vt420)
 't_CF'			Support for alternate font highlighting terminal code
 'winfixbuf'		Keep buffer focused in a window

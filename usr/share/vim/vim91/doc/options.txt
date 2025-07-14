@@ -1,4 +1,4 @@
-*options.txt*	For Vim version 9.1.  Last change: 2025 Apr 30
+*options.txt*	For Vim version 9.1.  Last change: 2025 Jun 28
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -1785,7 +1785,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 						  for X-windows, "" otherwise)
 			global
 			{only in GUI versions or when the |+xterm_clipboard|
-			feature is included}
+			or |+wayland_clipboard| features are included}
 	This option is a list of comma-separated names.
 	Note: if one of the items is "exclude:", then you can't add an item
 	after that.  Therefore do not append an item with += but use ^= to
@@ -1810,12 +1810,14 @@ A jump table for the options with a short description can be found at |Q_op|.
 			register '*' for all yank, delete, change and put
 			operations which would normally go to the unnamed
 			register.  When "unnamed" is also included to the
-			option, yank operations (but not delete, change or
-			put) will additionally copy the text into register
-			'*'.
-			Only available with the |+X11| feature.
-			Availability can be checked with: >
-				if has('unnamedplus')
+			option, yank operations (but not delete, change or put)
+			will additionally copy the text into register '*'.  If
+			wayland is being used and the compositor does not
+			support the primary-selection-unstable-v1 protocol,
+			then the regular selection is used in its place.  Only
+			available with the |+X11| or |+wayland_clipboard|
+			feature.  Availability can be checked with: >
+			if has('unnamedplus')
 <
 						*clipboard-autoselect*
 	autoselect	Works like the 'a' flag in 'guioptions': If present,
@@ -1852,23 +1854,53 @@ A jump table for the options with a short description can be found at |Q_op|.
 	exclude:{pattern}
 			Defines a pattern that is matched against the name of
 			the terminal 'term'.  If there is a match, no
-			connection will be made to the X server.  This is
-			useful in this situation:
+			connection will be made to the X server or wayland
+			compositor.  This is useful in this situation:
 			- Running Vim in a console.
-			- $DISPLAY is set to start applications on another
-			  display.
-			- You do not want to connect to the X server in the
-			  console, but do want this in a terminal emulator.
-			To never connect to the X server use: >
+			- $DISPLAY/$WAYLAND_DISPLAY is set to start
+			  applications on another display.
+			- You do not want to connect to the X server/Wayland
+			  compositor in the console, but do want this in a
+			  terminal emulator.
+			To never connect to the X server/Wayland compositor
+			use: >
 				exclude:.*
-<			This has the same effect as using the |-X| argument.
+<			This has the same effect as using the |-X| or |-Y|
+			argument.
 			Note that when there is no connection to the X server
 			the window title won't be restored and the clipboard
-			cannot be accessed.
+			cannot be accessed.  This is the same for Wayland,
+			except there is no title restoring.
 			The value of 'magic' is ignored, {pattern} is
 			interpreted as if 'magic' was on.
 			The rest of the option value will be used for
 			{pattern}, this must be the last entry.
+
+						*'clipmethod'* *'cpm'*
+'clipmethod' 'cpm'	string	(default for Unix: "wayland,x11",
+				 for VMS: "x11",
+				 otherwise: "")
+			global
+			{only when the |+xterm_clipboard| or
+			|+wayland_clipboard| features are included}
+	Specifies which method of accessing the system clipboard is used,
+	depending on which method works first or is available.  Supported
+	methods are:
+		wayland		Wayland selections
+		x11		X11 selections
+
+	Note: This option is ignored when either the GUI is running or if Vim
+	is run on a system without wayland or X11 support, such as Windows or
+	macOS.  The GUI or system way of accessing the clipboard is always
+	used instead.
+
+	The option value is a list of comma separated items.  The list is
+	parsed left to right in order, and the first method that Vim
+	determines is available or is working is used as the actual method for
+	accessing the clipboard.
+
+	The current method that is being used can be found in the |v:clipmethod|
+	variable.
 
 						*'cmdheight'* *'ch'*
 'cmdheight' 'ch'	number	(default 1)
@@ -2043,7 +2075,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	'smartcase'	+ off		no automatic ignore case switch
 	'smartindent'	+ off		no smart indentation
 	'smarttab'	+ off		no smart tab size
-	'softtabstop'	+ 0		tabs are always 'tabstop' positions
+	'softtabstop'	+ 0		no soft tab stops
 	'startofline'	+ on		goto startofline with some commands
 	'tagcase'	& "followic"	'ignorecase' when searching tags file
 	'tagrelative'	& off		tag file names are not relative
@@ -2085,7 +2117,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 		|i_CTRL-X_CTRL-D|
 	]	tag completion
 	t	same as "]"
-	f{func}	call the function {func}.  Multiple "f" flags may be specified.
+	F{func}	call the function {func}.  Multiple "F" flags may be specified.
 		Refer to |complete-functions| for details on how the function
 		is invoked and what it should return.  The value can be the
 		name of a function or a |Funcref|.  For |Funcref| values,
@@ -2103,9 +2135,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 		If generating matches is potentially slow, |complete_check()|
 		should be used to avoid blocking and preserve editor
 		responsiveness.
-	f	equivalent to using "f{func}", where the function is taken from
+	F	equivalent to using "F{func}", where the function is taken from
 		the 'completefunc' option.
-	o	equivalent to using "f{func}", where the function is taken from
+	o	equivalent to using "F{func}", where the function is taken from
 		the 'omnifunc' option.
 
 	Unloaded buffers are not loaded, thus their autocmds |:autocmd| are
@@ -2248,6 +2280,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 	   preview  Show extra information about the currently selected
 		    completion in the preview window.  Only works in
 		    combination with "menu" or "menuone".
+
+	This option does not apply to |cmdline-completion|. See 'wildoptions'
+	for that.
 
 					*'completepopup'* *'cpp'*
 'completepopup' 'cpp'	string (default empty)
@@ -3377,12 +3412,82 @@ A jump table for the options with a short description can be found at |Q_op|.
 	Otherwise this is a comma-separated list of event names.  Example: >
 	    :set ei=WinEnter,WinLeave
 <
+	To ignore all but some events, a "-" prefix can be used: >
+	    :set ei=all,-WinLeave
+<
 						*'eventignorewin'* *'eiw'*
 'eventignorewin' 'eiw'	string	(default "")
 			window-local
 	Similar to 'eventignore' but applies to a particular window and its
 	buffers, for which window and buffer related autocommands can be
 	ignored indefinitely without affecting the global 'eventignore'.
+
+	Note: The following events are considered to happen outside of a
+	window context and thus cannot be ignored by 'eventignorewin':
+
+		|CmdlineChanged|,
+		|CmdlineEnter|,
+		|CmdlineLeave|,
+		|CmdlineLeavePre|,
+		|CmdUndefined|,
+		|CmdwinEnter|,
+		|CmdwinLeave|,
+		|ColorScheme|,
+		|ColorSchemePre|,
+		|CompleteChanged|,
+		|CompleteDone|,
+		|CompleteDonePre|,
+		|DiffUpdated|,
+		|DirChanged|,
+		|DirChangedPre|,
+		|EncodingChanged|,
+		|ExitPre|,
+		|FocusGained|,
+		|FocusLost|,
+		|FuncUndefined|,
+		|GUIEnter|,
+		|GUIFailed|,
+		|KeyInputPre|,
+		|MenuPopup|,
+		|ModeChanged|,
+		|OptionSet|,
+		|QuickFixCmdPost|,
+		|QuickFixCmdPre|,
+		|QuitPre|,
+		|RemoteReply|,
+		|SafeState|,
+		|SafeStateAgain|,
+		|SessionLoadPost|,
+		|SessionWritePost|,
+		|ShellCmdPost|,
+		|SigUSR1|,
+		|SourceCmd|,
+		|SourcePost|,
+		|SourcePre|,
+		|SpellFileMissing|,
+		|StdinReadPost|,
+		|StdinReadPre|,
+		|SwapExists|,
+		|Syntax|,
+		|TabClosed|,
+		|TabClosedPre|,
+		|TabEnter|,
+		|TabLeave|,
+		|TabNew|,
+		|TermChanged|,
+		|TerminalOpen|,
+		|TerminalWinOpen|,
+		|TermResponse|,
+		|TermResponseAll|,
+		|User|,
+		|VimEnter|,
+		|VimLeave|,
+		|VimLeavePre|,
+		|VimResized|,
+		|VimResume|,
+		|VimSuspend|,
+		|WinNew|,
+		|WinNewPre|
 
 				 *'expandtab'* *'et'* *'noexpandtab'* *'noet'*
 'expandtab' 'et'	boolean	(default off)
@@ -3633,7 +3738,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	one dot may appear.
 	This option is not copied to another buffer, independent of the 's' or
 	'S' flag in 'cpoptions'.
-	Only alphanumeric characters, '-' and '_' can be used.
+	Only alphanumeric characters, '-' and '_' can be used (and a '.' is
+	allowed as delimiter when combining different filetypes).
 
 						*'fillchars'* *'fcs'*
 'fillchars' 'fcs'	string	(default "vert:|,fold:-,eob:~,lastline:@")
@@ -3657,15 +3763,15 @@ A jump table for the options with a short description can be found at |Q_op|.
 	  trunc		'>'		truncated text in the
 					|ins-completion-menu|.
 	  truncrl	'<'		same as "trunc" in 'rightleft' mode
+	  tpl_vert	'|'		vertical separators of 'tabpanel'
 
 	Any one that is omitted will fall back to the default.
 
 	Example: >
-	    :set fillchars=stl:\ ,stlnc:\ ,vert:\|,fold:-,diff:-
+	    :set fillchars=stl:\ ,stlnc:\ ,vert:\|,fold:-,diff:-,tpl_vert:\|
 <
-	For the "stl", "stlnc", "foldopen", "foldclose" and "foldsep" items
-	single-byte and multibyte characters are supported.  But double-width
-	characters are not supported. |E1512|
+	All items support single-byte and multibyte characters.  But
+	double-width characters are not supported. |E1512|
 
 	The highlighting used for these items:
 	  item name	highlight group ~
@@ -4062,7 +4168,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 
 						*'grepformat'* *'gfm'*
 'grepformat' 'gfm'	string	(default "%f:%l:%m,%f:%l%m,%f  %l%m")
-			global
+			global or local to buffer |global-local|
 	Format to recognize for the ":grep" command output.
 	This is a scanf-like string that uses the same format as the
 	'errorformat' option: see |errorformat|.
@@ -4491,7 +4597,6 @@ A jump table for the options with a short description can be found at |Q_op|.
 	|hl-Directory|	 d  directories in CTRL-D listing and other special
 			    things in listings
 	|hl-ErrorMsg|	 e  error messages
-			 h  (obsolete, ignored)
 	|hl-IncSearch|	 i  'incsearch' highlighting
 	|hl-CurSearch|	 y  current instance of last search pattern
 	|hl-Search|	 l  last search pattern highlighting (see 'hlsearch')
@@ -4513,9 +4618,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 	|hl-Title|	 t  Titles for output from ":set all", ":autocmd" etc.
 	|hl-VertSplit|	 c  column used to separate vertically split windows
 	|hl-Visual|	 v  Visual mode
-	|hl-VisualNOS|	 V  Visual mode when Vim does is "Not Owning the
-			    Selection" Only X11 Gui's |gui-x11| and
-			    |xterm-clipboard|.
+	|hl-VisualNOS|	 V  Visual mode when Vim is "Not Owning the
+			    Selection" Only X11 Gui's |gui-x11|,
+			    |xterm-clipboard| and |wayland-selections|
 	|hl-WarningMsg|	 w  warning messages
 	|hl-WildMenu|	 W  wildcard matches displayed for 'wildmenu'
 	|hl-Folded|	 f  line used for closed folds
@@ -4658,7 +4763,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 'ignorecase' 'ic'	boolean	(default off)
 			global
 	Ignore case in search patterns, |cmdline-completion|, when
-	searching in the tags file, and non-|Vim9| |expr-==|.
+	searching in the tags file, non-|Vim9| |expr-==| and for Insert-mode
+	completion |ins-completion|.
 	Also see 'smartcase' and 'tagcase'.
 	Can be overruled by using "\c" or "\C" in the pattern, see
 	|/ignorecase|.
@@ -5717,6 +5823,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	Maximum value is 6.
 	Even when this option is set to 2 you can still edit text with more
 	combining characters, you just can't see them.  Use |g8| or |ga|.
+	When set to 0, you will not be able to see any combining characters.
 	See |mbyte-combining|.
 
 						*'maxfuncdepth'* *'mfd'*
@@ -6038,7 +6145,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 			feature}
 	This option tells Vim what the mouse pointer should look like in
 	different modes.  The option is a comma-separated list of parts, much
-	like used for 'guicursor'.  Each part consist of a mode/location-list
+	like used for 'guicursor'.  Each part consists of a mode/location-list
 	and an argument-list:
 		mode-list:shape,mode-list:shape,..
 	The mode-list is a dash separated list of these modes/locations:
@@ -6066,26 +6173,26 @@ A jump table for the options with a short description can be found at |Q_op|.
 
 	The shape is one of the following:
 	avail	name		looks like ~
-	w x	arrow		Normal mouse pointer
-	w x	blank		no pointer at all (use with care!)
-	w x	beam		I-beam
-	w x	updown		up-down sizing arrows
-	w x	leftright	left-right sizing arrows
-	w x	busy		The system's usual busy pointer
-	w x	no		The system's usual 'no input' pointer
-	  x	udsizing	indicates up-down resizing
-	  x	lrsizing	indicates left-right resizing
-	  x	crosshair	like a big thin +
-	  x	hand1		black hand
-	  x	hand2		white hand
-	  x	pencil		what you write with
-	  x	question	big ?
-	  x	rightup-arrow	arrow pointing right-up
-	w x	up-arrow	arrow pointing up
+	w x g   arrow		Normal mouse pointer
+	w x     blank		no pointer at all (use with care!)
+	w x g   beam		I-beam
+	w x g	updown		up-down sizing arrows
+	w x g	leftright	left-right sizing arrows
+	w x g	busy		The system's usual busy pointer
+	w x g	no		The system's usual 'no input' pointer
+	  x g	udsizing	indicates up-down resizing
+	  x g	lrsizing	indicates left-right resizing
+	  x g	crosshair	like a big thin +
+	  x g   hand1		black hand
+	  x g	hand2		white hand
+	  x     pencil		what you write with
+	  x g	question	big ?
+	  x     rightup-arrow	arrow pointing right-up
+	w x     up-arrow	arrow pointing up
 	  x	<number>	any X11 pointer number (see X11/cursorfont.h)
 
 	The "avail" column contains a 'w' if the shape is available for Win32,
-	x for X11.
+	x for X11 (including GTK+ 2), g for GTK+ 3.
 	Any modes not specified or shapes not available use the normal mouse
 	pointer.
 
@@ -7193,9 +7300,14 @@ A jump table for the options with a short description can be found at |Q_op|.
 	the end of line the line break still isn't included.
 	When "exclusive" is used, cursor position in visual mode will be
 	adjusted for inclusive motions |inclusive-motion-selection-exclusive|.
-	Note that when "exclusive" is used and selecting from the end
-	backwards, you cannot include the last character of a line, when
-	starting in Normal mode and 'virtualedit' empty.
+
+	Note:
+	- When "exclusive" is used and selecting from the end backwards, you
+	  cannot include the last character of a line, when starting in Normal
+	  mode and 'virtualedit' empty.
+	- when "exclusive" is used with a single character visual selection,
+	  Vim will behave as if the 'selection' is inclusive (in other words,
+	  you cannot visually select an empty region).
 
 	The 'selection' option is set by the |:behave| command.
 
@@ -7493,10 +7605,10 @@ A jump table for the options with a short description can be found at |Q_op|.
 						*'shiftwidth'* *'sw'*
 'shiftwidth' 'sw'	number	(default 8)
 			local to buffer
-	Number of spaces to use for each step of (auto)indent.  Used for
-	|'cindent'|, |>>|, |<<|, etc.
-	When zero the 'tabstop' value will be used.  Use the |shiftwidth()|
-	function to get the effective shiftwidth value.
+	Number of columns that make up one level of (auto)indentation.  Used
+	by |'cindent'|, |<<|, |>>|, etc.
+	If set to 0, Vim uses the current 'tabstop' value.  Use |shiftwidth()|
+	to obtain the effective value in scripts.
 
 						*'shortmess'* *'shm'*
 'shortmess' 'shm'	string	(Vim default "filnxtToOS", Vi default: "S",
@@ -7690,6 +7802,18 @@ A jump table for the options with a short description can be found at |Q_op|.
 	line.
 	See |tab-page| for more information about tab pages.
 
+						*'showtabpanel'* *'stpl'*
+'showtabpanel' 'stpl'	number	(default 0)
+			global
+			{not available when compiled without the |+tabpanel|
+			feature}
+	The value of this option specifies when the |tabpanel| with tab page
+	labels will be displayed:
+		0: never
+		1: only if there are at least two tab pages
+		2: always
+	See |tab-page| for more information about tab page labels.
+
 						*'sidescroll'* *'ss'*
 'sidescroll' 'ss'	number	(default 0)
 			global
@@ -7742,9 +7866,11 @@ A jump table for the options with a short description can be found at |Q_op|.
 	Override the 'ignorecase' option if the search pattern contains upper
 	case characters.  Only used when the search pattern is typed and
 	'ignorecase' option is on.  Used for the commands "/", "?", "n", "N",
-	":g" and ":s".  Not used for "*", "#", "gd", tag search, etc.  After
-	"*" and "#" you can make 'smartcase' used by doing a "/" command,
-	recalling the search pattern from history and hitting <Enter>.
+	":g" and ":s" and when filtering matches for the completion menu
+	|compl-states|.
+	Not used for "*", "#", "gd", tag search, etc.  After "*" and "#" you
+	can make 'smartcase' used by doing a "/" command, recalling the search
+	pattern from history and hitting <Enter>.
 	NOTE: This option is reset when 'compatible' is set.
 
 			     *'smartindent'* *'si'* *'nosmartindent'* *'nosi'*
@@ -7776,19 +7902,16 @@ A jump table for the options with a short description can be found at |Q_op|.
 				 *'smarttab'* *'sta'* *'nosmarttab'* *'nosta'*
 'smarttab' 'sta'	boolean	(default off)
 			global
-	When on, a <Tab> in front of a line inserts blanks according to
-	'shiftwidth'.  'tabstop' or 'softtabstop' is used in other places.  A
-	<BS> will delete a 'shiftwidth' worth of space at the start of the
-	line.
-	When off, a <Tab> always inserts blanks according to 'tabstop' or
-	'softtabstop'.  'shiftwidth' is only used for shifting text left or
-	right |shift-left-right|.
-	What gets inserted (a <Tab> or spaces) depends on the 'expandtab'
-	option.  Also see |ins-expandtab|.  When 'expandtab' is not set, the
-	number of spaces is minimized by using <Tab>s.
-	This option is reset when 'paste' is set and restored when 'paste' is
-	reset.
-	NOTE: This option is reset when 'compatible' is set.
+	When enabled, the <Tab> key will indent by 'shiftwidth' if the cursor
+	is in leading whitespace.  The <BS> key has the opposite effect.
+	In leading whitespace, this has the same effect as setting
+	'softtabstop' to the value of 'shiftwidth'.
+	This option is reset when 'compatible' is set; it is temporarily
+	disabled when 'paste' is enabled, and restored when 'paste' is turned
+	off.
+	NOTE: in most cases, using 'softtabstop' is a better option.  Have a
+	look at section |30.5| of the user guide for detailed
+	explanations on how Vim works with tabs and spaces.
 
 			*'smoothscroll'* *'sms'* *'nosmoothscroll'* *'nosms'*
 'smoothscroll' 'sms'	boolean  (default off)
@@ -7804,21 +7927,24 @@ A jump table for the options with a short description can be found at |Q_op|.
 					*'softtabstop'* *'sts'*
 'softtabstop' 'sts'	number	(default 0)
 			local to buffer
-	Number of spaces that a <Tab> counts for while performing editing
-	operations, like inserting a <Tab> or using <BS>.  It "feels" like
-	<Tab>s are being inserted, while in fact a mix of spaces and <Tab>s is
-	used.  This is useful to keep the 'ts' setting at its standard value
-	of 8, while being able to edit like it is set to 'sts'.  However,
-	commands like "x" still work on the actual characters.
-	When 'sts' is zero, this feature is off.
-	When 'sts' is negative, the value of 'shiftwidth' is used.
-	'softtabstop' is set to 0 when the 'paste' option is set and restored
-	when 'paste' is reset.
-	See also |ins-expandtab|.  When 'expandtab' is not set, the number of
-	spaces is minimized by using <Tab>s.
-	The 'L' flag in 'cpoptions' changes how tabs are used when 'list' is
-	set.
-	NOTE: This option is set to 0 when 'compatible' is set.
+	Create soft tab stops, separated by 'softtabstop' number of columns.
+	In Insert mode, pressing the <Tab> key will move the cursor to the
+	next soft tab stop, instead of inserting a literal tab.  <BS> behaves
+	similarly in reverse.  Vim inserts a minimal mix of tab and space
+	characters to produce the visual effect.
+
+	This setting does not affect the display of existing tab characters.
+
+	A value of 0 disables this behaviour.  A negative value makes Vim use
+	'shiftwidth'.  If you plan to use 'sts' and 'shiftwidth' with
+	different values, you might consider setting 'smarttab'.
+
+	'softtabstop' is temporarily set to 0 when 'paste' is on and reset
+	when it is turned off.  It is also reset when 'compatible' is set.
+
+	The 'L' flag in 'cpoptions' alters tab behavior when 'list' is
+	enabled.  See also |ins-expandtab| ans user manual section |30.5| for
+	in-depth explanations.
 
 	If Vim is compiled with the |+vartabs| feature then the value of
 	'softtabstop' will be ignored if |'varsofttabstop'| is set to
@@ -8407,49 +8533,78 @@ A jump table for the options with a short description can be found at |Q_op|.
 	Maximum number of tab pages to be opened by the |-p| command line
 	argument or the ":tab all" command. |tabpage|
 
+				*'tabpanel'* *'tpl'* *g:actual_curtabpage*
+'tabpanel' 'tpl'	string	(default empty)
+			global
+	When non-empty, this option determines the content of the |tabpanel|.
+	The option consists of printf style '%' items interspersed with
+	normal text, similar to the 'statusline' or 'tabline'.
+
+	When changing something that is used in 'tabpanel' that does not
+	trigger it to be updated, use |:redrawtabpanel|.
+	This option cannot be set in a modeline when 'modelineexpr' is off.
+
+	You can use |g:actual_curtabpage| within a function assigned to
+	tabpanel. |g:actual_curtabpage| represents current tab's label number.
+	The option value can contain line breaks: >
+
+		set tabpanel=%!TabPanel()
+		function! TabPanel() abort
+		  return printf("(%2d)\n  %%f", g:actual_curtabpage)
+		endfunction
+<
+	The result is:
+>
+	+-----------+---------------------------------
+	|(1)        |
+	|  ~/aaa.txt|
+	|(2)        |
+	|  ~/.vimrc |
+	|           |
+	|           |
+	|           |
+<
+					*'tabpanelopt'* *'tplo'*
+'tabpanelopt' 'tplo'	string	(default "")
+			global
+	Optional settings for the |tabpanel|,  It can consist of the following
+	items.  Items must be separated by a comma.
+
+		align:{text}	Specifies the position of the tabpanel.
+				Currently supported positions are:
+
+				left	left-side
+				right	right-side
+
+				(default "left")
+
+		columns:{n}	Number of columns of the tabpanel.
+				If this value is 0 or less than 'columns', the
+				tab panel will not be displayed.
+				(default 20)
+
+		vert		Use a vertical separator for tabpanel.
+				The vertical separator character is taken from
+				"tpl_vert" in 'fillchars'.
+				(default off)
+
+	Examples: >
+		:set tabpanelopt=columns:16,align:right
+		:set tabpanelopt=
+		:set tabpanelopt=vert,align:right
+		:set tabpanelopt=columns:16
+<
 						*'tabstop'* *'ts'*
 'tabstop' 'ts'		number	(default 8)
 			local to buffer
-	Number of spaces that a <Tab> in the file counts for.  Also see
-	the |:retab| command, and the 'softtabstop' option.
+	Defines the column multiple used to display the Horizontal Tab
+	character (ASCII 9); a Horizontal Tab always advances to the next tab
+	stop.
+	The value must be at least 1 and at most 9999.
+	If Vim was compiled with |+vartabs| and |'vartabstop'| is set, this
+	option is ignored.
+	Leave it at 8 unless you have a strong reason (see usr |30.5|).
 
-	Note: Setting 'tabstop' to any other value than 8 can make your file
-	appear wrong in many places, e.g., when printing it.
-	The value must be more than 0 and less than 10000.
-
-	There are five main ways to use tabs in Vim:
-	1. Always keep 'tabstop' at 8, set 'softtabstop' and 'shiftwidth' to 4
-	   (or 3 or whatever you prefer) and use 'noexpandtab'.  Then Vim
-	   will use a mix of tabs and spaces, but typing <Tab> and <BS> will
-	   behave like a tab appears every 4 (or 3) characters.
-	   This is the recommended way, the file will look the same with other
-	   tools and when listing it in a terminal.
-	2. Set 'softtabstop' and 'shiftwidth' to whatever you prefer and use
-	   'expandtab'.  This way you will always insert spaces.  The
-	   formatting will never be messed up when 'tabstop' is changed (leave
-	   it at 8 just in case).  The file will be a bit larger.
-	   You do need to check if no Tabs exist in the file.  You can get rid
-	   of them by first setting 'expandtab' and using `%retab!`, making
-	   sure the value of 'tabstop' is set correctly.
-	3. Set 'tabstop' and 'shiftwidth' to whatever you prefer and use
-	   'expandtab'.  This way you will always insert spaces.  The
-	   formatting will never be messed up when 'tabstop' is changed.
-	   You do need to check if no Tabs exist in the file, just like in the
-	   item just above.
-	4. Set 'tabstop' and 'shiftwidth' to whatever you prefer and use a
-	   |modeline| to set these values when editing the file again.  Only
-	   works when using Vim to edit the file, other tools assume a tabstop
-	   is worth 8 spaces.
-	5. Always set 'tabstop' and 'shiftwidth' to the same value, and
-	   'noexpandtab'.  This should then work (for initial indents only)
-	   for any tabstop setting that people use.  It might be nice to have
-	   tabs after the first non-blank inserted as spaces if you do this
-	   though.  Otherwise aligned comments will be wrong when 'tabstop' is
-	   changed.
-
-	If Vim is compiled with the |+vartabs| feature then the value of
-	'tabstop' will be ignored if |'vartabstop'| is set to anything other
-	than an empty string.
 
 			*'tagbsearch'* *'tbs'* *'notagbsearch'* *'notbs'*
 'tagbsearch' 'tbs'	boolean	(default on)
@@ -9233,36 +9388,40 @@ A jump table for the options with a short description can be found at |Q_op|.
 			local to buffer
 			{only available when compiled with the |+vartabs|
 			feature}
-	A list of the number of spaces that a <Tab> counts for while editing,
-	such as inserting a <Tab> or using <BS>.  It "feels" like variable-
-	width <Tab>s are being inserted, while in fact a mixture of spaces
-	and <Tab>s is used.  Tab widths are separated with commas, with the
-	final value applying to all subsequent tabs.
+	Defines variable-width soft tab stops.  The value is a comma-separated
+	list of widths in columns.  Each width defines the number of columns
+	before the next soft tab stop.  The last value repeats indefinitely.
 
 	For example, when editing assembly language files where statements
 	start in the 9th column and comments in the 41st, it may be useful
 	to use the following: >
 		:set varsofttabstop=8,32,8
-<	This will set soft tabstops with 8 and 8 + 32 spaces, and 8 more
-	for every column thereafter.
+<	This sets soft tab stops at column 8, then at column 40 (8 + 32), and
+	every 8 columns thereafter.
 
-	Note that the value of |'softtabstop'| will be ignored while
-	'varsofttabstop' is set.
+	Note: this setting overrides 'softtabstop'.
+	See section |30.5| of the user manual for detailed explanations on how
+	Vim works with tabs and spaces.
 
 						*'vartabstop'* *'vts'*
 'vartabstop' 'vts'	string	(default "")
 			local to buffer
 			{only available when compiled with the |+vartabs|
 			feature}
-	A list of the number of spaces that a <Tab> in the file counts for,
-	separated by commas.  Each value corresponds to one tab, with the
-	final value applying to all subsequent tabs. For example: >
-		:set vartabstop=4,20,10,8
-<	This will make the first tab 4 spaces wide, the second 20 spaces,
-	the third 10 spaces, and all following tabs 8 spaces.
+	Defines variable-width tab stops. The value is a comma-separated list
+	of widths in columns.  Each width defines the number of columns
+	before the next tab stop; the last value repeats indefinitely.
 
-	Note that the value of |'tabstop'| will be ignored while 'vartabstop'
-	is set.
+	For example: >
+		:set vartabstop=4,8
+<	This places the first tab stop 4 columns from the start of the line
+	and each subsequent tab stop 8 columns apart.
+
+	Note: this setting overrides 'tabstop'.
+	On UNIX, it is recommended to keep the default tabstop value of 8.
+	Consider setting 'varsofttabstop' instead.
+	See section |30.5| of the user manual for detailed explanations on how
+	Vim works with tabs and spaces.
 
 						*'verbose'* *'vbs'*
 'verbose' 'vbs'		number	(default 0)
@@ -9593,7 +9752,10 @@ A jump table for the options with a short description can be found at |Q_op|.
 		:set wc=X
 		:set wc=^I
 		:set wc=<Tab>
-<	NOTE: This option is set to the Vi default value when 'compatible' is
+<	'wildchar' also enables completion in search pattern contexts such as
+	|/|, |?|, |:s|, |:g|, |:v|, and |:vim|.  To insert a literal <Tab>
+	instead of triggering completion, type <C-V><Tab> or "\t".
+	NOTE: This option is set to the Vi default value when 'compatible' is
 	set and to the Vim default value when 'compatible' is reset.
 
 						*'wildcharm'* *'wcm'*
@@ -9758,6 +9920,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 'wildoptions' 'wop'	string	(default "")
 			global
 	A list of words that change how |cmdline-completion| is done.
+
 	The following values are supported:
 	  fuzzy		Use |fuzzy-matching| to find completion matches. When
 			this value is specified, wildcard expansion will not
@@ -9774,6 +9937,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 			is displayed per line.  Often used tag kinds are:
 				d	#define
 				f	function
+
+	This option does not apply to |ins-completion|. See 'completeopt' for
+	that.
 
 						*'winaltkeys'* *'wak'*
 'winaltkeys' 'wak'	string	(default "menu")
@@ -9815,7 +9981,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	Note: Do not confuse this with the height of the Vim window, use
 	'lines' for that.
 
-						*'winfixbuf'*
+						*'winfixbuf'* *'wfb'*
 'winfixbuf' 'wfb'	boolean	(default off)
 			local to window
 	If enabled, the window and the buffer it is displaying are paired.
@@ -9911,6 +10077,40 @@ A jump table for the options with a short description can be found at |Q_op|.
 	width of the current window.
 	'winwidth' applies to the current window.  Use 'winminwidth' to set
 	the minimal width for other windows.
+
+						*'wlseat'* *'wse'*
+'wlseat' 'wse'		string	(default "")
+			global
+			{only when the |+wayland| feature is included}
+	Specifies the Wayland seat to use for Wayland functionality,
+	specifically the clipboard.  If the seat does not exist, then the
+	option will still be set to the new value, with the Wayland clipboard
+	being unavailable as a result.  If an empty value is passed then Vim
+	will attempt to use the value of $XDG_SEAT if it exists, if not then
+	it resorts to using the first seat found available.  Updating this
+	option will also update |v:clipmethod|.
+
+				*'wlsteal'* *'wst'* *'nowlsteal'* *'nowst'*
+'wlsteal' 'wst'		boolean  (default off)
+			global
+			{only when the |+wayland_clipboard| feature is included}
+	When enabled, then allow Vim to steal focus by creating a temporary
+	surface, in order to access the clipboard.  For more information see
+	|wayland-focus-steal|.
+
+						*'wltimeoutlen'* *'wtm'*
+'wltimeoutlen' 'wtm'	number	(default 500)
+			global
+			{only when the |+wayland| feature is included}
+	The timeout in milliseconds before Vim gives up on waiting for the
+	Wayland compositor.  While Vim waits on the compositor, it is
+	unresponsive to input and does not update the screen.  Therefore
+	setting this to a lower value may make Vim feel more responsive in
+	some cases.  On the other hand, it may also mean you receive errors
+	when the compositor takes more time to respond than usual.
+
+	Additionally, this option is also used as the maximum timeout when
+	waiting for a surface to gain focus, see |wayland-focus-steal|.
 
 						*'wrap'* *'nowrap'*
 'wrap'			boolean	(default on)

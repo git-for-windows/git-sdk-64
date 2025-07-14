@@ -1,4 +1,4 @@
-*builtin.txt*	For Vim version 9.1.  Last change: 2025 Apr 27
+*builtin.txt*	For Vim version 9.1.  Last change: 2025 Jun 28
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -194,9 +194,8 @@ filter({expr1}, {expr2})	List/Dict/Blob/String
 					remove items from {expr1} where
 					{expr2} is 0
 finddir({name} [, {path} [, {count}]])
-				String	find directory {name} in {path}
 findfile({name} [, {path} [, {count}]])
-				String	find file {name} in {path}
+				String/List find dir/file {name} in {path}
 flatten({list} [, {maxdepth}])	List	flatten {list} up to {maxdepth} levels
 flattennew({list} [, {maxdepth}])
 				List	flatten a copy of {list}
@@ -2008,6 +2007,7 @@ complete_info([{what}])				*complete_info()*
 		   "omni"	     Omni completion |i_CTRL-X_CTRL-O|
 		   "spell"	     Spelling suggestions |i_CTRL-X_s|
 		   "eval"	     |complete()| completion
+		   "register"	     Words from registers |i_CTRL-X_CTRL-R|
 		   "unknown"	     Other internal modes
 
 		If the optional {what} list argument is supplied, then only
@@ -2047,8 +2047,8 @@ complete_match([{lnum}, {col}])			*complete_match()*
 		  or empty string if no match was found or when using the
 		  default 'iskeyword' pattern.
 
-		When 'isexpand' is empty, uses the 'iskeyword' pattern
-		"\k\+$" to find the start of the current keyword.
+		When 'isexpand' is empty, uses the 'iskeyword' pattern "\k\+$"
+		to find the start of the current keyword.
 
 		Examples: >
 	set isexpand=.,->,/,/*,abc
@@ -3167,7 +3167,7 @@ feedkeys({string} [, {mode}])				*feedkeys()*
 		Can also be used as a |method|: >
 			GetInput()->feedkeys()
 <
-		Return type: |String| or list<string> depending on {list}
+		Return type: |Number|
 
 
 filecopy({from}, {to})					*filecopy()*
@@ -4728,8 +4728,9 @@ getmousepos()						*getmousepos()*
 					start of the clicked char
 		All numbers are 1-based.
 
-		If not over a window, e.g. when in the command line, then only
-		"screenrow" and "screencol" are valid, the others are zero.
+		If not over a window, e.g. when in the command line or within
+		|tabpanel|, then only "screenrow" and "screencol" are valid,
+		the others are zero.
 
 		When on the status line below a window or the vertical
 		separator right of a window, the "line" and "column" values
@@ -4962,7 +4963,7 @@ getreg([{regname} [, 1 [, {list}]]])			*getreg()*
 		Can also be used as a |method|: >
 			GetRegname()->getreg()
 <
-		Return type: |String|
+		Return type: |String| or list<string> depending on {list}
 
 
 getreginfo([{regname}])					*getreginfo()*
@@ -5041,6 +5042,10 @@ getregion({pos1}, {pos2} [, {opts}])			*getregion()*
 		- It is evaluated in current window context, which makes a
 		  difference if the buffer is displayed in a window with
 		  different 'virtualedit' or 'list' values.
+		- When specifying an exclusive selection and {pos1} and {pos2}
+		  are equal, the returned list contains a single character as
+		  if selection is inclusive, to match the behavior of an empty
+		  exclusive selection in Visual mode.
 
 		Examples: >
 			:xnoremap <CR>
@@ -9828,6 +9833,7 @@ setcursorcharpos({list})
 		Can also be used as a |method|: >
 			GetCursorPos()->setcursorcharpos()
 <
+		Returns 0 when the position could be set, -1 otherwise.
 		Return type: |Number|
 
 
@@ -12137,6 +12143,7 @@ uniq({list} [, {func} [, {dict}]])			*uniq()* *E882*
 			:let newlist = uniq(copy(mylist))
 <		The default compare function uses the string representation of
 		each item.  For the use of {func} and {dict} see |sort()|.
+		For deduplicating text in the current buffer see |:uniq|.
 
 		Returns zero if {list} is not a |List|.
 
@@ -13031,6 +13038,8 @@ vms			VMS version of Vim.
 vreplace		Compiled with |gR| and |gr| commands. (always true)
 vtp			Compiled for vcon support |+vtp| (check vcon to find
 			out if it works in the current console).
+wayland			Compiled with Wayland protocol support.
+wayland_clipboard	Compiled with support for Wayland selections/clipboard
 wildignore		Compiled with 'wildignore' option.
 wildmenu		Compiled with 'wildmenu' option.
 win16			old version for MS-Windows 3.1 (always false)
