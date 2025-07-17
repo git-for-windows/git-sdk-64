@@ -244,7 +244,13 @@ handle the information.  <span class="bold"><strong>Writing</strong></span> to a
 mass storage device you should only do if you
 <span class="bold"><strong>really</strong></span> know what you're doing and are aware
 of the fact that any mistake can destroy important information, for the
-device, and for you.  So, please, handle this ability with care.
+device, and for you.  So, please, handle this ability with care.</p><p><span class="bold"><strong>Important:</strong></span> Windows may allow raw read
+<span class="bold"><strong>and write</strong></span> access to partitions (for example
+<code class="filename">/dev/sda2</code>) even from unprivileged processes.  This is
+usually the case for partitions on "removable" drives like USB flash drives
+or regular SATA/NVMe drives behind USB docking stations.  If
+<span class="command"><strong>chkdsk X:</strong></span> works, raw access to the same partition is
+possible from the same user account.
 <span class="bold"><strong>You have been warned.</strong></span></p></div><p>
 Last but not least, the mapping from POSIX /dev namespace to internal
 NT namespace is as follows:
