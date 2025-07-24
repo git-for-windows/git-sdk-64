@@ -5,7 +5,7 @@
 
 # List of files which contain translatable strings.
 POTFILES = \
-  hello.sh
+  hello-1.sh hello-2.sh hello-3.sh
 
 # Usually the message domain is the same as the package name.
 DOMAIN = $(PACKAGE)

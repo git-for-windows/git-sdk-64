@@ -9,7 +9,7 @@ AM_INIT_AUTOMAKE([1.11])
 
 AC_PROG_CC
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.25])
+AM_GNU_GETTEXT_VERSION([0.26])
 
 dnl Define localedir_c and localedir_c_make.
 gl_BUILD_TO_HOST_LOCALEDIR

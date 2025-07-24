@@ -40,7 +40,7 @@ prefix="$save_prefix"
 AC_SUBST([localedir])
 
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.25])
+AM_GNU_GETTEXT_VERSION([0.26])
 
 AC_CONFIG_FILES([Makefile hello.d])
 AC_CONFIG_FILES([dcomp.sh])
