@@ -1,7 +1,7 @@
 " These commands create the option window.
 "
 " Maintainer:	The Vim Project <https://github.com/vim/vim>
-" Last Change:	2025 Jun 16
+" Last Change:	2025 Jul 16
 " Former Maintainer:	Bram Moolenaar <Bram@vim.org>
 
 " If there already is an option window, jump to that one.
@@ -283,6 +283,8 @@ call <SID>AddOption("ignorecase", gettext("ignore case when using a search patte
 call <SID>BinOptionG("ic", &ic)
 call <SID>AddOption("smartcase", gettext("override 'ignorecase' when pattern has upper case characters"))
 call <SID>BinOptionG("scs", &scs)
+call <SID>AddOption("maxsearchcount", gettext("maximum number for the search count feature"))
+call <SID>OptionG("msc", &msc)
 call <SID>AddOption("casemap", gettext("what method to use for changing case of letters"))
 call <SID>OptionG("cmp", &cmp)
 call <SID>AddOption("maxmempattern", gettext("maximum amount of memory in Kbyte used for pattern matching"))
@@ -684,6 +686,8 @@ if has("gui")
     endif
     call <SID>AddOption("guiheadroom", gettext("room (in pixels) left above/below the window"))
     call append("$", " \tset ghr=" . &ghr)
+  endif
+  if has("gui_gtk") || has("gui_win32")
     call <SID>AddOption("guiligatures", gettext("list of ASCII characters that can be combined into complex shapes"))
     call <SID>OptionG("gli", &gli)
   endif
@@ -1052,6 +1056,9 @@ if has("diff")
   call <SID>OptionG("dip", &dip)
   call <SID>AddOption("diffexpr", gettext("expression used to obtain a diff file"))
   call <SID>OptionG("dex", &dex)
+  call <SID>AddOption("diffanchors", gettext("list of addresses for anchoring a diff"))
+  call append("$", "\t" .. s:global_or_local)
+  call <SID>OptionG("dia", &dia)
   call <SID>AddOption("patchexpr", gettext("expression used to patch a file"))
   call <SID>OptionG("pex", &pex)
 endif
@@ -1470,8 +1477,11 @@ if exists("&mzschemedll")
 endif
 if has("tabpanel")
   call <SID>AddOption("showtabpanel", gettext("0, 1 or 2; when to use the tabpanel"))
+  call <SID>OptionG("showtabpanel", &showtabpanel)
   call <SID>AddOption("tabpanel", gettext("custom tab pages in tabpanel"))
+  call <SID>OptionG("tabpanel", &tabpanel)
   call <SID>AddOption("tabpanelopt", gettext("options for using tabpanel"))
+  call <SID>OptionG("tabpanelopt", &tabpanelopt)
 endif
 
 set cpo&vim

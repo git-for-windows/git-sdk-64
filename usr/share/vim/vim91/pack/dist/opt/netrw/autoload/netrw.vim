@@ -19,7 +19,7 @@ if &cp || exists("g:loaded_netrw")
     finish
 endif
 
-let g:loaded_netrw = "v181"
+let g:loaded_netrw = "v183"
 
 if !has("patch-9.1.1054") && !has('nvim')
     echoerr 'netrw needs Vim v9.1.1054'
@@ -7602,6 +7602,8 @@ function s:PerformListing(islocal)
     if a:islocal
         let filelist = s:NetrwLocalListingList(b:netrw_curdir, 1)
         call append(w:netrw_bannercnt - 1, filelist)
+        silent! NetrwKeepj g/^$/d
+        silent! NetrwKeepj %s/\r$//e
         execute printf("setl ts=%d", g:netrw_maxfilenamelen + 1)
     else " remote
         NetrwKeepj let badresult= s:NetrwRemoteListing()

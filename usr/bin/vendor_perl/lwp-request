@@ -82,6 +82,9 @@ Send this HTTP header with each request. You can specify several, e.g.:
 	-H 'Host: somehost' \
 	http://this.url/
 
+If the header name is prefixed with a colon it will not be canonicalized
+(See "NON-CANONICALIZED FIELD NAMES" in HTTP::Headers).
+
 =item -C <username>:<password>
 
 Provide credentials for documents that are protected by Basic
@@ -404,7 +407,7 @@ else {
 my $request = HTTP::Request->new($method);
 $request->header('If-Modified-Since', $options{'i'}) if defined $options{'i'};
 for my $user_header (@{$options{'H'} || []}) {
-    my ($header_name, $header_value) = split /\s*:\s*/, $user_header, 2;
+    my ($header_name, $header_value) =  split /\s*(?<!^):\s*/, $user_header, 2;
     $header_name =~ s/^\s+//;
     if (lc($header_name) eq "user-agent") {
         $header_value .= $ua->agent if $header_value =~ /\s\z/;
