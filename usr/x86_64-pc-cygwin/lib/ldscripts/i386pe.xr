@@ -25,6 +25,9 @@ SECTIONS
   {
     *(.rdata)
     . = ALIGN(4);
+    /* read-only parts of .didat */
+    /* This cannot currently be handled with grouped sections.
+	See pe.em:sort_sections.  */
     /* .ctors & .dtors */
     /* .CRT */
     /* ___crt_xl_end__ is defined in the TLS Directory support code */
@@ -53,6 +56,11 @@ SECTIONS
     *(.debug$F)
   }
   .idata  :
+  {
+    /* This cannot currently be handled with grouped sections.
+	See pe.em:sort_sections.  */
+  }
+  .didat  :
   {
     /* This cannot currently be handled with grouped sections.
 	See pe.em:sort_sections.  */

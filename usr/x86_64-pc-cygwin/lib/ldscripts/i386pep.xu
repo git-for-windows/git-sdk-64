@@ -26,6 +26,9 @@ SECTIONS
   {
     *(.rdata)
     . = ALIGN(4);
+    /* read-only parts of .didat */
+    /* This cannot currently be handled with grouped sections.
+	See pe.em:sort_sections.  */
     /* .ctors & .dtors */
     . = ALIGN(8);
        /* Note: we always define __CTOR_LIST__ and ___CTOR_LIST__ here,
@@ -93,6 +96,11 @@ SECTIONS
     *(.debug$F)
   }
   .idata  :
+  {
+    /* This cannot currently be handled with grouped sections.
+	See pep.em:sort_sections.  */
+  }
+  .didat  :
   {
     /* This cannot currently be handled with grouped sections.
 	See pep.em:sort_sections.  */

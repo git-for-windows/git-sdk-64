@@ -50,6 +50,18 @@ SECTIONS
     __rt_psrelocs_start = .;
     KEEP(*(.rdata_runtime_pseudo_reloc))
     __rt_psrelocs_end = .;
+    /* read-only parts of .didat */
+    /* This cannot currently be handled with grouped sections.
+	See pe.em:sort_sections.  */
+    __DELAY_IMPORT_DIRECTORY_start__ = .;
+    KEEP (SORT(*)(.didat$2))
+    KEEP (SORT(*)(.didat$3))
+    __DELAY_IMPORT_DIRECTORY_end__ = .;
+    /* These zeroes mark the end of the import list.  */
+    . += (__DELAY_IMPORT_DIRECTORY_end__ - __DELAY_IMPORT_DIRECTORY_start__) ? 8*4 : 0;
+    KEEP (SORT(*)(.didat$4))
+    KEEP (SORT(*)(.didat$6))
+    KEEP (SORT(*)(.didat$7))
     /* .ctors & .dtors */
        /* Note: we always define __CTOR_LIST__ and ___CTOR_LIST__ here,
           we do not PROVIDE them.  This is because the ctors.o startup
@@ -152,6 +164,12 @@ SECTIONS
     __IAT_end__ = .;
     KEEP (SORT(*)(.idata$6))
     KEEP (SORT(*)(.idata$7))
+  }
+  .didat BLOCK(__section_alignment__) :
+  {
+    /* This cannot currently be handled with grouped sections.
+	See pe.em:sort_sections.  */
+    KEEP (SORT(*)(.didat$5))
   }
   /* Windows TLS expects .tls$AAA to be at the start and .tls$ZZZ to be
      at the end of section.  This is important because _tls_start MUST
