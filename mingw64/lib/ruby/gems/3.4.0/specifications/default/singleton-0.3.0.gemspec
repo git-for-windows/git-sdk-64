@@ -10,12 +10,12 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yukihiro Matsumoto".freeze]
   s.bindir = "exe".freeze
-  s.date = "2024-12-25"
+  s.date = "2025-07-16"
   s.description = "The Singleton module implements the Singleton pattern.".freeze
   s.email = ["matz@ruby-lang.org".freeze]
   s.files = ["singleton.rb".freeze]
   s.homepage = "https://github.com/ruby/singleton".freeze
   s.licenses = ["Ruby".freeze, "BSD-2-Clause".freeze]
-  s.rubygems_version = "3.6.2".freeze
+  s.rubygems_version = "3.6.9".freeze
   s.summary = "The Singleton module implements the Singleton pattern.".freeze
 end

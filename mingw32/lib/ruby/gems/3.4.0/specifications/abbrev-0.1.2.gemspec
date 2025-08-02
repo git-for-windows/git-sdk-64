@@ -10,14 +10,14 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Akinori MUSHA".freeze]
   s.bindir = "exe".freeze
-  s.date = "2024-12-25"
+  s.date = "2025-07-16"
   s.description = "Calculates a set of unique abbreviations for a given set of strings".freeze
   s.email = ["knu@idaemons.org".freeze]
   s.homepage = "https://github.com/ruby/abbrev".freeze
   s.licenses = ["Ruby".freeze, "BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.3.0".freeze)
-  s.rubygems_version = "3.6.2".freeze
+  s.rubygems_version = "3.6.9".freeze
   s.summary = "Calculates a set of unique abbreviations for a given set of strings".freeze
 
-  s.installed_by_version = "3.6.2".freeze
+  s.installed_by_version = "3.6.9".freeze
 end

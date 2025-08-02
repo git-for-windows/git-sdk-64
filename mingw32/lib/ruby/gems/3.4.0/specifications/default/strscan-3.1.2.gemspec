@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
   s.authors = ["Minero Aoki".freeze, "Sutou Kouhei".freeze, "Charles Oliver Nutter".freeze]
-  s.date = "2024-12-25"
+  s.date = "2025-07-16"
   s.description = "Provides lexical scanning operations on a String.".freeze
   s.email = [nil, "kou@cozmixng.org".freeze, "headius@headius.com".freeze]
   s.extensions = ["ext/strscan/extconf.rb".freeze]
@@ -19,6 +19,6 @@ Gem::Specification.new do |s|
   s.licenses = ["Ruby".freeze, "BSD-2-Clause".freeze]
   s.rdoc_options = ["-idoc".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.4.0".freeze)
-  s.rubygems_version = "3.6.2".freeze
+  s.rubygems_version = "3.6.9".freeze
   s.summary = "Provides lexical scanning operations on a String.".freeze
 end

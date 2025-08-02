@@ -9,16 +9,16 @@ Gem::Specification.new do |s|
   s.metadata = { "homepage_uri" => "https://github.com/ruby/net-ftp", "source_code_uri" => "https://github.com/ruby/net-ftp" } if s.respond_to? :metadata=
   s.require_paths = ["lib".freeze]
   s.authors = ["Shugo Maeda".freeze]
-  s.date = "2024-12-25"
+  s.date = "2025-07-16"
   s.description = "Support for the File Transfer Protocol.".freeze
   s.email = ["shugo@ruby-lang.org".freeze]
   s.homepage = "https://github.com/ruby/net-ftp".freeze
   s.licenses = ["Ruby".freeze, "BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.6.0".freeze)
-  s.rubygems_version = "3.6.2".freeze
+  s.rubygems_version = "3.6.9".freeze
   s.summary = "Support for the File Transfer Protocol.".freeze
 
-  s.installed_by_version = "3.6.2".freeze
+  s.installed_by_version = "3.6.9".freeze
 
   s.specification_version = 4
 

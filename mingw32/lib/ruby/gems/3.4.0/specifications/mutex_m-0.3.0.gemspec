@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.metadata = { "bug_tracker_uri" => "https://github.com/ruby/mutex_m/issues", "source_code_uri" => "https://github.com/ruby/mutex_m" } if s.respond_to? :metadata=
   s.require_paths = ["lib".freeze]
   s.authors = ["Keiju ISHITSUKA".freeze]
-  s.date = "2024-12-25"
+  s.date = "2025-07-16"
   s.description = "Mixin to extend objects to be handled like a Mutex.".freeze
   s.email = ["keiju@ruby-lang.org".freeze]
   s.homepage = "https://github.com/ruby/mutex_m".freeze
@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
   s.rubygems_version = "3.4.20".freeze
   s.summary = "Mixin to extend objects to be handled like a Mutex.".freeze
 
-  s.installed_by_version = "3.6.2".freeze
+  s.installed_by_version = "3.6.9".freeze
 end

@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yusuke Endoh".freeze]
   s.bindir = "exe".freeze
-  s.date = "2024-12-25"
+  s.date = "2025-07-16"
   s.description = "Support for encoding and decoding binary data using a Base64 representation.".freeze
   s.email = ["mame@ruby-lang.org".freeze]
   s.homepage = "https://github.com/ruby/base64".freeze
@@ -19,5 +19,5 @@ Gem::Specification.new do |s|
   s.rubygems_version = "3.4.20".freeze
   s.summary = "Support for encoding and decoding binary data using a Base64 representation.".freeze
 
-  s.installed_by_version = "3.6.2".freeze
+  s.installed_by_version = "3.6.9".freeze
 end

@@ -58,6 +58,87 @@ module Gem
     end
   end
 
+  require "rubygems/platform"
+
+  class Platform
+    JAVA  = Gem::Platform.new("java")
+    MSWIN = Gem::Platform.new("mswin32")
+    MSWIN64 = Gem::Platform.new("mswin64")
+    MINGW = Gem::Platform.new("x86-mingw32")
+    X64_MINGW = [Gem::Platform.new("x64-mingw32"),
+                 Gem::Platform.new("x64-mingw-ucrt")].freeze
+    UNIVERSAL_MINGW = Gem::Platform.new("universal-mingw")
+    WINDOWS = [MSWIN, MSWIN64, UNIVERSAL_MINGW].flatten.freeze
+    X64_LINUX = Gem::Platform.new("x86_64-linux")
+    X64_LINUX_MUSL = Gem::Platform.new("x86_64-linux-musl")
+
+    if X64_LINUX === X64_LINUX_MUSL
+      remove_method :===
+
+      def ===(other)
+        return nil unless Gem::Platform === other
+
+        # universal-mingw32 matches x64-mingw-ucrt
+        return true if (@cpu == "universal" || other.cpu == "universal") &&
+                       @os.start_with?("mingw") && other.os.start_with?("mingw")
+
+        # cpu
+        ([nil,"universal"].include?(@cpu) || [nil, "universal"].include?(other.cpu) || @cpu == other.cpu ||
+        (@cpu == "arm" && other.cpu.start_with?("armv"))) &&
+
+          # os
+          @os == other.os &&
+
+          # version
+          (
+            (@os != "linux" && (@version.nil? || other.version.nil?)) ||
+            (@os == "linux" && (normalized_linux_version_ext == other.normalized_linux_version_ext || ["musl#{@version}", "musleabi#{@version}", "musleabihf#{@version}"].include?(other.version))) ||
+            @version == other.version
+          )
+      end
+
+      # This is a copy of RubyGems 3.3.23 or higher `normalized_linux_method`.
+      # Once only 3.3.23 is supported, we can use the method in RubyGems.
+      def normalized_linux_version_ext
+        return nil unless @version
+
+        without_gnu_nor_abi_modifiers = @version.sub(/\Agnu/, "").sub(/eabi(hf)?\Z/, "")
+        return nil if without_gnu_nor_abi_modifiers.empty?
+
+        without_gnu_nor_abi_modifiers
+      end
+    end
+  end
+
+  Platform.singleton_class.module_eval do
+    unless Platform.singleton_methods.include?(:match_spec?)
+      def match_spec?(spec)
+        match_gem?(spec.platform, spec.name)
+      end
+
+      def match_gem?(platform, gem_name)
+        match_platforms?(platform, Gem.platforms)
+      end
+    end
+
+    match_platforms_defined = Gem::Platform.respond_to?(:match_platforms?, true)
+
+    if !match_platforms_defined || Gem::Platform.send(:match_platforms?, Gem::Platform::X64_LINUX_MUSL, [Gem::Platform::X64_LINUX])
+
+      private
+
+      remove_method :match_platforms? if match_platforms_defined
+
+      def match_platforms?(platform, platforms)
+        platforms.any? do |local_platform|
+          platform.nil? ||
+            local_platform == platform ||
+            (local_platform != Gem::Platform::RUBY && platform =~ local_platform)
+        end
+      end
+    end
+  end
+
   require "rubygems/specification"
 
   # Can be removed once RubyGems 3.5.14 support is dropped
@@ -177,8 +258,12 @@ module Gem
       dependencies - development_dependencies
     end
 
-    def deleted_gem?
+    def installation_missing?
       !default_gem? && !File.directory?(full_gem_path)
+    end
+
+    def lock_name
+      @lock_name ||= name_tuple.lock_name
     end
 
     unless VALIDATES_FOR_RESOLUTION
@@ -288,86 +373,6 @@ module Gem
     end
   end
 
-  require "rubygems/platform"
-
-  class Platform
-    JAVA  = Gem::Platform.new("java")
-    MSWIN = Gem::Platform.new("mswin32")
-    MSWIN64 = Gem::Platform.new("mswin64")
-    MINGW = Gem::Platform.new("x86-mingw32")
-    X64_MINGW = [Gem::Platform.new("x64-mingw32"),
-                 Gem::Platform.new("x64-mingw-ucrt")].freeze
-    WINDOWS = [MSWIN, MSWIN64, MINGW, X64_MINGW].flatten.freeze
-    X64_LINUX = Gem::Platform.new("x86_64-linux")
-    X64_LINUX_MUSL = Gem::Platform.new("x86_64-linux-musl")
-
-    if X64_LINUX === X64_LINUX_MUSL
-      remove_method :===
-
-      def ===(other)
-        return nil unless Gem::Platform === other
-
-        # universal-mingw32 matches x64-mingw-ucrt
-        return true if (@cpu == "universal" || other.cpu == "universal") &&
-                       @os.start_with?("mingw") && other.os.start_with?("mingw")
-
-        # cpu
-        ([nil,"universal"].include?(@cpu) || [nil, "universal"].include?(other.cpu) || @cpu == other.cpu ||
-        (@cpu == "arm" && other.cpu.start_with?("armv"))) &&
-
-          # os
-          @os == other.os &&
-
-          # version
-          (
-            (@os != "linux" && (@version.nil? || other.version.nil?)) ||
-            (@os == "linux" && (normalized_linux_version_ext == other.normalized_linux_version_ext || ["musl#{@version}", "musleabi#{@version}", "musleabihf#{@version}"].include?(other.version))) ||
-            @version == other.version
-          )
-      end
-
-      # This is a copy of RubyGems 3.3.23 or higher `normalized_linux_method`.
-      # Once only 3.3.23 is supported, we can use the method in RubyGems.
-      def normalized_linux_version_ext
-        return nil unless @version
-
-        without_gnu_nor_abi_modifiers = @version.sub(/\Agnu/, "").sub(/eabi(hf)?\Z/, "")
-        return nil if without_gnu_nor_abi_modifiers.empty?
-
-        without_gnu_nor_abi_modifiers
-      end
-    end
-  end
-
-  Platform.singleton_class.module_eval do
-    unless Platform.singleton_methods.include?(:match_spec?)
-      def match_spec?(spec)
-        match_gem?(spec.platform, spec.name)
-      end
-
-      def match_gem?(platform, gem_name)
-        match_platforms?(platform, Gem.platforms)
-      end
-    end
-
-    match_platforms_defined = Gem::Platform.respond_to?(:match_platforms?, true)
-
-    if !match_platforms_defined || Gem::Platform.send(:match_platforms?, Gem::Platform::X64_LINUX_MUSL, [Gem::Platform::X64_LINUX])
-
-      private
-
-      remove_method :match_platforms? if match_platforms_defined
-
-      def match_platforms?(platform, platforms)
-        platforms.any? do |local_platform|
-          platform.nil? ||
-            local_platform == platform ||
-            (local_platform != Gem::Platform::RUBY && platform =~ local_platform)
-        end
-      end
-    end
-  end
-
   # On universal Rubies, resolve the "universal" arch to the real CPU arch, without changing the extension directory.
   class BasicSpecification
     if /^universal\.(?<arch>.*?)-/ =~ (CROSS_COMPILING || RUBY_PLATFORM)
@@ -440,6 +445,17 @@ module Gem
         end
       end
     end
+  end
+
+  unless Gem.rubygems_version >= Gem::Version.new("3.6.7")
+    module UnfreezeCompactIndexParsedResponse
+      def parse(line)
+        version, platform, dependencies, requirements = super
+        [version, platform, dependencies.frozen? ? dependencies.dup : dependencies, requirements.frozen? ? requirements.dup : requirements]
+      end
+    end
+
+    Resolver::APISet::GemParser.prepend(UnfreezeCompactIndexParsedResponse)
   end
 
   if Gem.rubygems_version < Gem::Version.new("3.6.0")

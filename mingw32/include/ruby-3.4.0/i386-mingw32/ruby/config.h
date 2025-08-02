@@ -39,7 +39,6 @@
 #define HAVE__WFREOPEN_S 1
 #define HAVE_DIRENT_H 1
 #define HAVE__BOOL 1
-#define HAVE_STDBOOL_H 1
 #define HAVE_AFUNIX_H 1
 #define HAVE_DIRECT_H 1
 #define HAVE_FCNTL_H 1

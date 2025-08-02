@@ -10,13 +10,13 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["U.Nakamura".freeze]
   s.bindir = "exe".freeze
-  s.date = "2024-12-25"
+  s.date = "2025-07-16"
   s.description = "Provides an interface to the Windows Registry in Ruby".freeze
   s.email = ["usa@garbagecollect.jp".freeze]
   s.files = ["win32/registry.rb".freeze, "win32/resolv.rb".freeze]
   s.homepage = "https://github.com/ruby/win32-registry".freeze
   s.required_ruby_version = Gem::Requirement.new(">= 2.6.0".freeze)
-  s.rubygems_version = "3.6.2".freeze
+  s.rubygems_version = "3.6.9".freeze
   s.summary = "Provides an interface to the Windows Registry in Ruby".freeze
 
   s.specification_version = 4
