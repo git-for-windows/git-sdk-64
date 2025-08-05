@@ -23,7 +23,7 @@
 # bugs to <bug-automake@gnu.org> or send patches to
 # <automake-patches@gnu.org>.
 
-scriptversion=2025-05-03.16; # UTC
+scriptversion=2025-06-18.21; # UTC
 
 # Make unconditional expansion of undefined variables an error.  This
 # helps a lot in preventing typo-related bugs.
@@ -737,7 +737,7 @@ test $? -eq 0 || fatal "I/O or internal error"
 # eval: (add-hook 'before-save-hook 'time-stamp nil t)
 # time-stamp-line-limit: 50
 # time-stamp-start: "scriptversion="
-# time-stamp-format: "%:y-%02m-%02d.%02H"
+# time-stamp-format: "%Y-%02m-%02d.%02H"
 # time-stamp-time-zone: "UTC0"
 # time-stamp-end: "; # UTC"
 # End:

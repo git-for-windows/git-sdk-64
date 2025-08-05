@@ -30,7 +30,7 @@ our @EXPORT = qw ($APIVERSION $PACKAGE $PACKAGE_BUGREPORT $VERSION
 our $APIVERSION = '1.18';
 our $PACKAGE = 'automake';
 our $PACKAGE_BUGREPORT = 'bug-automake@gnu.org';
-our $VERSION = '1.18';
+our $VERSION = '1.18.1';
 our $RELEASE_YEAR = '2025';
 our $libdir = $ENV{"AUTOMAKE_LIBDIR"} || '/usr/share/automake-1.18';
 

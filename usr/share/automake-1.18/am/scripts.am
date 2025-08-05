@@ -117,11 +117,26 @@ installcheck-%DIR%SCRIPTS: $(%DIR%_SCRIPTS)
 ## Insert the directory back if nobase_ is used.
 ?!BASE?	  f=`echo "$$p" | sed 's|[^/]*$$||'`"$$f"; \
 	  for opt in --help --version; do \
-	    if "$(DESTDIR)$(%NDIR%dir)/$$f" $$opt >c$${pid}_.out \
-	         2>c$${pid}_.err </dev/null \
-		 && test -n "`cat c$${pid}_.out`" \
-		 && test -z "`cat c$${pid}_.err`"; then :; \
-	    else echo "$$f does not support $$opt" 1>&2; bad=1; fi; \
+	    "$(DESTDIR)$(%NDIR%dir)/$$f" $$opt \
+	      >c$${pid}_.out 2>c$${pid}_.err </dev/null; \
+	    xc=$$?; \
+	    if test -n "`cat c$${pid}_.err`"; then \
+	      echo "$$f does not support $$opt: error output" 1>&2; \
+	      cat c$${pid}_.err 1>&2; \
+	      bad=1; \
+	    else \
+	      if test -z "`cat c$${pid}_.out`"; then \
+	        echo "$$f does not support $$opt: no output" 1>&2; \
+	        bad=1; \
+	      else \
+	        if test $$xc != 0; then \
+	          echo "$$f does not support $$opt: exit code $$xc" 1>&2; \
+	          bad=1; \
+	        else \
+	          :; \
+	        fi; \
+	      fi; \
+	    fi; \
 	  done; \
 	done; rm -f c$${pid}_.???; exit $$bad
 endif %?CK-OPTS%
