@@ -452,13 +452,13 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git for-each-ref</em> [--count=&lt;count&gt;] [--shell|--perl|--python|--tcl]
-                   [(--sort=&lt;key&gt;)&#8230;&#8203;] [--format=&lt;format&gt;]
-                   [--include-root-refs] [ --stdin | &lt;pattern&gt;&#8230;&#8203; ]
-                   [--points-at=&lt;object&gt;]
-                   [--merged[=&lt;object&gt;]] [--no-merged[=&lt;object&gt;]]
-                   [--contains[=&lt;object&gt;]] [--no-contains[=&lt;object&gt;]]
-                   [--exclude=&lt;pattern&gt; &#8230;&#8203;]</pre>
+<pre class="content"><code>git</code> <code>for-each-ref</code> [<code>--count=</code><em>&lt;count&gt;</em>] [<code>--shell</code>|<code>--perl</code>|<code>--python</code>|<code>--tcl</code>]
+		   [(<code>--sort=</code><em>&lt;key&gt;</em>)&#8230;&#8203;] [<code>--format=</code><em>&lt;format&gt;</em>]
+		   [<code>--include-root-refs</code>] [<code>--points-at=</code><em>&lt;object&gt;</em>]
+		   [<code>--merged</code>[<code>=</code><em>&lt;object&gt;</em>]] [<code>--no-merged</code>[<code>=</code><em>&lt;object&gt;</em>]]
+		   [<code>--contains</code>[<code>=</code><em>&lt;object&gt;</em>]] [<code>--no-contains</code>[<code>=</code><em>&lt;object&gt;</em>]]
+		   [(<code>--exclude=</code><em>&lt;pattern&gt;</em>)&#8230;&#8203;] [<code>--start-after=</code><em>&lt;marker&gt;</em>]
+		   [ <code>--stdin</code> | <em>&lt;pattern&gt;</em>&#8230;&#8203; ]</pre>
 </div>
 </div>
 </div>
@@ -508,14 +508,14 @@ key.</p>
 </dd>
 <dt class="hdlist1">--format=&lt;format&gt;</dt>
 <dd>
-<p>A string that interpolates %(<code>fieldname</code>) from a ref being shown and
-the object it points at. In addition, the string literal %%
-renders as % and %xx - where <code>xx</code> are hex digits - renders as
-the character with hex code <code>xx</code>. For example, %00 interpolates to
-<code>\0</code> (NUL), %09 to <code>\t</code> (TAB), and %0a to <code>\n</code> (LF).</p>
+<p>A string that interpolates <code>%</code>(<code>fieldname</code>) from a ref being shown and
+the object it points at. In addition, the string literal <code>%%</code>
+renders as <code>%</code> and <code>%xx</code> - where <code>xx</code> are hex digits - renders as
+the character with hex code <code>xx</code>. For example, <code>%00</code> interpolates to
+<code>\0</code> (NUL), <code>%09</code> to <code>\t</code> (TAB), and <code>%0a</code> to <code>\n</code> (LF).</p>
 <div class="paragraph">
-<p>When unspecified, <em>&lt;format&gt;</em> defaults to %(<code>objectname</code>) <code>SPC</code> %(<code>objecttype</code>)
-<code>TAB</code> %(<code>refname</code>).</p>
+<p>When unspecified, <em>&lt;format&gt;</em> defaults to <code>%</code>(<code>objectname</code>) <code>SPC</code> <code>%</code>(<code>objecttype</code>)
+<code>TAB</code> <code>%</code>(<code>refname</code>).</p>
 </div>
 </dd>
 <dt class="hdlist1">--color[=&lt;when&gt;]</dt>
@@ -529,7 +529,7 @@ the character with hex code <code>xx</code>. For example, %00 interpolates to
 <dt class="hdlist1">--python</dt>
 <dt class="hdlist1">--tcl</dt>
 <dd>
-<p>If given, strings that substitute %(<code>fieldname</code>)
+<p>If given, strings that substitute <code>%</code>(<code>fieldname</code>)
 placeholders are quoted as string literals suitable for
 the specified host language.  This is meant to produce
 a scriptlet that can directly be `eval`ed.</p>
@@ -577,6 +577,16 @@ same rules as <em>&lt;pattern&gt;</em> above.</p>
 <dd>
 <p>List root refs (HEAD and pseudorefs) apart from regular refs.</p>
 </dd>
+<dt class="hdlist1">--start-after=&lt;marker&gt;</dt>
+<dd>
+<p>Allows paginating the output by skipping references up to and including the
+specified marker. When paging, it should be noted that references may be
+deleted, modified or added between invocations. Output will only yield those
+references which follow the marker lexicographically. Output begins from the
+first reference that would come after the marker alphabetically. Cannot be
+used with <code>--sort=</code><em>&lt;key&gt;</em> or <code>--stdin</code> options, or the <em>&lt;pattern&gt;</em> argument(s)
+to limit the refs.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -601,12 +611,12 @@ For a non-ambiguous short name of the ref append <code>:short</code>.
 The option core.warnAmbiguousRefs is used to select the strict
 abbreviation mode. If <code>lstrip=</code><em>&lt;N&gt;</em> (<code>rstrip=</code><em>&lt;N&gt;</em>) is appended, strips <em>&lt;N&gt;</em>
 slash-separated path components from the front (back) of the refname
-(e.g. %(<code>refname:lstrip=2</code>) turns <code>refs/tags/foo</code> into <code>foo</code> and
-%(<code>refname:rstrip=2</code>) turns <code>refs/tags/foo</code> into <code>refs</code>).
+(e.g. <code>%</code>(<code>refname:lstrip=2</code>) turns <code>refs/tags/foo</code> into <code>foo</code> and
+<code>%</code>(<code>refname:rstrip=2</code>) turns <code>refs/tags/foo</code> into <code>refs</code>).
 If <em>&lt;N&gt;</em> is a negative number, strip as many path components as
 necessary from the specified end to leave <code>-</code><em>&lt;N&gt;</em> path components
-(e.g. %(<code>refname:lstrip=-2</code>) turns
-<code>refs/tags/foo</code> into <code>tags/foo</code> and %(<code>refname:rstrip=-1</code>)
+(e.g. <code>%</code>(<code>refname:lstrip=-2</code>) turns
+<code>refs/tags/foo</code> into <code>tags/foo</code> and <code>%</code>(<code>refname:rstrip=-1</code>)
 turns <code>refs/tags/foo</code> into <code>refs</code>). When the ref does not have
 enough components, the result becomes an empty string if
 stripping with positive &lt;N&gt;, or it becomes the full refname if
@@ -651,12 +661,12 @@ also prints "[gone]" whenever unknown upstream ref is
 encountered. Append <code>:track,nobracket</code> to show tracking
 information without brackets (i.e "ahead N, behind M").</p>
 <div class="paragraph">
-<p>For any remote-tracking branch %(<code>upstream</code>), %(<code>upstream:remotename</code>)
-and %(<code>upstream:remoteref</code>) refer to the name of the remote and the
+<p>For any remote-tracking branch <code>%</code>(<code>upstream</code>), <code>%</code>(<code>upstream:remotename</code>)
+and <code>%</code>(<code>upstream:remoteref</code>) refer to the name of the remote and the
 name of the tracked remote ref, respectively. In other words, the
 remote-tracking branch can be updated explicitly and individually by
-using the refspec %(<code>upstream:remoteref</code>)<code>:</code>%(<code>upstream</code>) to fetch from
-%(<code>upstream:remotename</code>).</p>
+using the refspec <code>%</code>(<code>upstream:remoteref</code>)<code>:%</code>(<code>upstream</code>) to fetch from
+<code>%</code>(<code>upstream:remotename</code>).</p>
 </div>
 <div class="paragraph">
 <p>Has no effect if the ref does not have tracking information associated
@@ -682,7 +692,7 @@ otherwise.</p>
 <p>Change output color. Followed by <code>:</code><em>&lt;colorname&gt;</em>, where color
 names are described under Values in the "CONFIGURATION FILE"
 section of <a href="git-config.html">git-config(1)</a>.  For example,
-%(<code>color:bold</code> <code>red</code>).</p>
+<code>%</code>(<code>color:bold</code> <code>red</code>).</p>
 </dd>
 <dt class="hdlist1">align</dt>
 <dd>
@@ -694,7 +704,7 @@ right or middle, default being left and <em>&lt;width&gt;</em> is the total
 length of the content with alignment. For brevity, the
 "width=" and/or "position=" prefixes may be omitted, and bare
 &lt;width&gt; and &lt;position&gt; used instead.  For instance,
-%(<code>align:</code><em>&lt;width&gt;</em><code>,</code><em>&lt;position&gt;</em>). If the contents length is more
+<code>%</code>(<code>align:</code><em>&lt;width&gt;</em><code>,</code><em>&lt;position&gt;</em>). If the contents length is more
 than the width then no alignment is performed. If used with
 <code>--quote</code> everything in between %(align:&#8230;&#8203;) and %(end) is
 quoted, but if nested then only the topmost level performs
@@ -795,7 +805,7 @@ several refs:</p>
 </div>
 <div class="paragraph">
 <p>Here, if <code>A</code>, <code>B</code>, and <code>C</code> are the filtered references, and the format
-string is %(<code>refname</code>)<code>:</code>%(<code>is-base:D</code>), then the output would be</p>
+string is <code>%</code>(<code>refname</code>)<code>:%</code>(<code>is-base:D</code>), then the output would be</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -897,7 +907,7 @@ variable (see <a href="gitmailmap.html">gitmailmap(5)</a>).</p>
 </dl>
 </div>
 <div class="paragraph">
-<p>Note that <code>--format=</code>%(<code>raw</code>) can not be used with <code>--python</code>, <code>--shell</code>, <code>--tcl</code>,
+<p>Note that <code>--format=%</code>(<code>raw</code>) can not be used with <code>--python</code>, <code>--shell</code>, <code>--tcl</code>,
 because such language may not support arbitrary binary data in their string
 variable type.</p>
 </div>
@@ -1138,7 +1148,7 @@ commits and from none of the <code>--no-merged</code> commits are shown.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-07-02 10:46:59 UTC
+Last updated 2025-08-05 07:47:00 UTC
 </div>
 </div>
 </body>

@@ -453,9 +453,9 @@ pre>code {
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git config list</em> [&lt;file-option&gt;] [&lt;display-option&gt;] [--includes]
-<em>git config get</em> [&lt;file-option&gt;] [&lt;display-option&gt;] [--includes] [--all] [--regexp] [--value=&lt;value&gt;] [--fixed-value] [--default=&lt;default&gt;] &lt;name&gt;
-<em>git config set</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--all] [--value=&lt;value&gt;] [--fixed-value] &lt;name&gt; &lt;value&gt;
-<em>git config unset</em> [&lt;file-option&gt;] [--all] [--value=&lt;value&gt;] [--fixed-value] &lt;name&gt;
+<em>git config get</em> [&lt;file-option&gt;] [&lt;display-option&gt;] [--includes] [--all] [--regexp] [--value=&lt;pattern&gt;] [--fixed-value] [--default=&lt;default&gt;] [--url=&lt;url&gt;] &lt;name&gt;
+<em>git config set</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--all] [--value=&lt;pattern&gt;] [--fixed-value] &lt;name&gt; &lt;value&gt;
+<em>git config unset</em> [&lt;file-option&gt;] [--all] [--value=&lt;pattern&gt;] [--fixed-value] &lt;name&gt;
 <em>git config rename-section</em> [&lt;file-option&gt;] &lt;old-name&gt; &lt;new-name&gt;
 <em>git config remove-section</em> [&lt;file-option&gt;] &lt;name&gt;
 <em>git config edit</em> [&lt;file-option&gt;]
@@ -474,7 +474,7 @@ escaped.</p>
 <div class="paragraph">
 <p>Multiple lines can be added to an option by using the <code>--append</code> option.
 If you want to update or unset an option which can occur on multiple
-lines, a <code>value-pattern</code> (which is an extended regular expression,
+lines, <code>--value=</code><em>&lt;pattern&gt;</em> (which is an extended regular expression,
 unless the <code>--fixed-value</code> option is given) needs to be given.  Only the
 existing values that match the pattern are updated or unset.  If
 you want to handle the lines that do <strong>not</strong> match the pattern, just
@@ -597,7 +597,7 @@ options whose values match the given pattern.</p>
 <dt class="hdlist1">--replace-all</dt>
 <dd>
 <p>Default behavior is to replace at most one line. This replaces
-all lines matching the key (and optionally the <code>value-pattern</code>).</p>
+all lines matching the key (and optionally <code>--value=</code><em>&lt;pattern&gt;</em>).</p>
 </dd>
 <dt class="hdlist1">--append</dt>
 <dd>
@@ -710,12 +710,22 @@ you can use <em>master:.gitmodules</em> to read values from the file
 section in <a href="gitrevisions.html">gitrevisions(7)</a> for a more complete list of
 ways to spell blob names.</p>
 </dd>
+<dt class="hdlist1"><code>--value=</code><em>&lt;pattern&gt;</em></dt>
+<dt class="hdlist1"><code>--no-value</code></dt>
+<dd>
+<p>With <code>get</code>, <code>set</code>, and <code>unset</code>, match only against
+<em>&lt;pattern&gt;</em>. The pattern is an extended regular expression unless
+<code>--fixed-value</code> is given.</p>
+<div class="paragraph">
+<p>Use <code>--no-value</code> to unset <em>&lt;pattern&gt;</em>.</p>
+</div>
+</dd>
 <dt class="hdlist1">--fixed-value</dt>
 <dd>
-<p>When used with the <code>value-pattern</code> argument, treat <code>value-pattern</code> as
+<p>When used with <code>--value=</code><em>&lt;pattern&gt;</em>, treat <em>&lt;pattern&gt;</em> as
 an exact string instead of a regular expression. This will restrict
 the name/value pairs that are matched to only those where the value
-is exactly equal to the <code>value-pattern</code>.</p>
+is exactly equal to <em>&lt;pattern&gt;</em>.</p>
 </dd>
 <dt class="hdlist1">--type &lt;type&gt;</dt>
 <dd>
@@ -789,6 +799,13 @@ contain line breaks.</p>
 <dd>
 <p>Output only the names of config variables for <code>list</code> or
 <code>get</code>.</p>
+</dd>
+<dt class="hdlist1"><code>--show-names</code></dt>
+<dt class="hdlist1"><code>--no-show-names</code></dt>
+<dd>
+<p>With <code>get</code>, show config keys in addition to their values. The
+default is <code>--no-show-names</code> unless <code>--url</code> is given and there
+are no subsections in <em>&lt;name&gt;</em>.</p>
 </dd>
 <dt class="hdlist1">--show-origin</dt>
 <dd>
@@ -1674,14 +1691,14 @@ tilde expansion happens to such a string: <code>~/</code>
 is expanded to the value of <code>$HOME</code>, and <code>~user/</code> to the
 specified user&#8217;s home directory.</p>
 <div class="paragraph">
-<p>If a path starts with %(<code>prefix</code>)<code>/</code>, the remainder is interpreted as a
+<p>If a path starts with <code>%</code>(<code>prefix</code>)<code>/</code>, the remainder is interpreted as a
 path relative to Git&#8217;s "runtime prefix", i.e. relative to the location
-where Git itself was installed. For example, %(<code>prefix</code>)<code>/bin/</code> refers to
+where Git itself was installed. For example, <code>%</code>(<code>prefix</code>)<code>/bin/</code> refers to
 the directory in which the Git executable itself lives. If Git was
 compiled without runtime prefix support, the compiled-in prefix will be
 substituted instead. In the unlikely event that a literal path needs to
 be specified that should <em>not</em> be expanded, it needs to be prefixed by
-.<code>/</code>, like so: .<code>/</code>%(<code>prefix</code>)<code>/bin</code>.</p>
+.<code>/</code>, like so: .<code>/%</code>(<code>prefix</code>)<code>/bin</code>.</p>
 </div>
 </dd>
 </dl>
@@ -2365,9 +2382,9 @@ The merge information is used by <code>git</code> <code>pull</code> (which first
 <code>git</code> <code>fetch</code>) to lookup the default branch for merging. Without
 this option, <code>git</code> <code>pull</code> defaults to merge the first refspec fetched.
 Specify multiple values to get an octopus merge.
-If you wish to setup <code>git</code> <code>pull</code> so that it merges into &lt;name&gt; from
+If you wish to setup <code>git</code> <code>pull</code> so that it merges into <em>&lt;name&gt;</em> from
 another branch in the local repository, you can point
-branch.&lt;name&gt;.merge to the desired branch, and use the relative path
+<code>branch.</code><em>&lt;name&gt;</em><code>.merge</code> to the desired branch, and use the relative path
 setting . (a period) for <code>branch.</code><em>&lt;name&gt;</em><code>.remote</code>.</p>
 </dd>
 <dt class="hdlist1"><code>branch.</code><em>&lt;name&gt;</em><code>.mergeOptions</code></dt>
@@ -4688,6 +4705,13 @@ reusing objects from multiple packs instead of just one.</p>
 significantly smaller in the presence of certain filename collisions with Git&#8217;s
 default name-hash.</p>
 </li>
+<li>
+<p><code>init.defaultRefFormat=reftable</code> causes newly initialized repositories to use
+the reftable format for storing references. This new format solves issues with
+case-insensitive filesystems, compresses better and performs significantly
+better with many use cases. Refer to Documentation/technical/reftable.adoc for
+more information on this new storage format.</p>
+</li>
 </ul>
 </div>
 </dd>
@@ -5468,7 +5492,7 @@ access method.</p>
 </dd>
 <dt class="hdlist1">gpg.program</dt>
 <dd>
-<p>Use this custom program instead of "<code>gpg</code>" found on <code>$PATH</code> when
+<p>Pathname of the program to use instead of "<code>gpg</code>" when
 making or verifying a PGP signature. The program must support the
 same command-line interface as GPG, namely, to verify a detached
 signature, "<code>gpg</code> <code>--verify</code> <code>$signature</code> <code>-</code> &lt;$file" is run, and the
@@ -6330,8 +6354,10 @@ running <em>git log</em> and friends.</p>
 <dt class="hdlist1">imap.folder</dt>
 <dd>
 <p>The folder to drop the mails into, which is typically the Drafts
-folder. For example: "INBOX.Drafts", "INBOX/Drafts" or
-"[Gmail]/Drafts". Required.</p>
+folder. For example: <code>INBOX.Drafts</code>, <code>INBOX/Drafts</code> or
+[<code>Gmail</code>]<code>/Drafts</code>. The IMAP folder to interact with MUST be specified;
+the value of this configuration variable is used as the fallback
+default value when the <code>--folder</code> option is not given.</p>
 </dd>
 <dt class="hdlist1">imap.tunnel</dt>
 <dd>
@@ -6378,8 +6404,9 @@ format=fixed email.  Default is <code>false</code>.</p>
 <p>Specify the authentication method for authenticating with the IMAP server.
 If Git was built with the NO_CURL option, or if your curl version is older
 than 7.34.0, or if you&#8217;re running git-imap-send with the <code>--no-curl</code>
-option, the only supported method is <em>CRAM-MD5</em>. If this is not set
-then <em>git imap-send</em> uses the basic IMAP plaintext LOGIN command.</p>
+option, the only supported methods are <code>PLAIN</code>, <code>CRAM-MD5</code>, <code>OAUTHBEARER</code>
+and <code>XOAUTH2</code>. If this is not set then <code>git</code> <code>imap-send</code> uses the basic IMAP
+plaintext <code>LOGIN</code> command.</p>
 </dd>
 <dt class="hdlist1">include.path</dt>
 <dt class="hdlist1">includeIf.&lt;condition&gt;.path</dt>
@@ -6511,16 +6538,18 @@ mark up the diff further for human consumption, provided that it
 retains a one-to-one correspondence with the lines in the
 original diff. Defaults to disabled (no filtering).</p>
 </dd>
-<dt class="hdlist1">log.abbrevCommit</dt>
+<dt class="hdlist1"><code>log.abbrevCommit</code></dt>
 <dd>
-<p>If true, makes <a href="git-log.html">git-log(1)</a>, <a href="git-show.html">git-show(1)</a>, and
-<a href="git-whatchanged.html">git-whatchanged(1)</a> assume <code>--abbrev-commit</code>. You may
+<p>If <code>true</code>, make
+<a href="git-log.html">git-log(1)</a>, <a href="git-show.html">git-show(1)</a>, and
+<a href="git-whatchanged.html">git-whatchanged(1)</a>
+assume <code>--abbrev-commit</code>. You may
 override this option with <code>--no-abbrev-commit</code>.</p>
 </dd>
-<dt class="hdlist1">log.date</dt>
+<dt class="hdlist1"><code>log.date</code></dt>
 <dd>
-<p>Set the default date-time mode for the <em>log</em> command.
-Setting a value for log.date is similar to using <em>git log</em>'s
+<p>Set the default date-time mode for the <code>log</code> command.
+Setting a value for log.date is similar to using <code>git</code> <code>log</code>'s
 <code>--date</code> option.  See <a href="git-log.html">git-log(1)</a> for details.</p>
 <div class="paragraph">
 <p>If the format is set to "auto:foo" and the pager is in use, format
@@ -6528,61 +6557,68 @@ Setting a value for log.date is similar to using <em>git log</em>'s
 be used.</p>
 </div>
 </dd>
-<dt class="hdlist1">log.decorate</dt>
+<dt class="hdlist1"><code>log.decorate</code></dt>
 <dd>
 <p>Print out the ref names of any commits that are shown by the log
-command. If <em>short</em> is specified, the ref name prefixes <em>refs/heads/</em>,
-<em>refs/tags/</em> and <em>refs/remotes/</em> will not be printed. If <em>full</em> is
-specified, the full ref name (including prefix) will be printed.
-If <em>auto</em> is specified, then if the output is going to a terminal,
-the ref names are shown as if <em>short</em> were given, otherwise no ref
-names are shown. This is the same as the <code>--decorate</code> option
-of the <code>git</code> <code>log</code>.</p>
+command. Possible values are:</p>
+<div class="listingblock">
+<div class="content">
+<pre>`short`;; the ref name prefixes `refs/heads/`, `refs/tags/` and
+        `refs/remotes/` are not printed.
+`full`;; the full ref name (including prefix) are printed.
+`auto`;; if the output is going to a terminal,
+        the ref names are shown as if `short` were given, otherwise no ref
+        names are shown.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is the same as the <code>--decorate</code> option of the <code>git</code> <code>log</code>.</p>
+</div>
 </dd>
-<dt class="hdlist1">log.initialDecorationSet</dt>
+<dt class="hdlist1"><code>log.initialDecorationSet</code></dt>
 <dd>
 <p>By default, <code>git</code> <code>log</code> only shows decorations for certain known ref
 namespaces. If <em>all</em> is specified, then show all refs as
 decorations.</p>
 </dd>
-<dt class="hdlist1">log.excludeDecoration</dt>
+<dt class="hdlist1"><code>log.excludeDecoration</code></dt>
 <dd>
 <p>Exclude the specified patterns from the log decorations. This is
 similar to the <code>--decorate-refs-exclude</code> command-line option, but
 the config option can be overridden by the <code>--decorate-refs</code>
 option.</p>
 </dd>
-<dt class="hdlist1">log.diffMerges</dt>
+<dt class="hdlist1"><code>log.diffMerges</code></dt>
 <dd>
 <p>Set diff format to be used when <code>--diff-merges=on</code> is
 specified, see <code>--diff-merges</code> in <a href="git-log.html">git-log(1)</a> for
 details. Defaults to <code>separate</code>.</p>
 </dd>
-<dt class="hdlist1">log.follow</dt>
+<dt class="hdlist1"><code>log.follow</code></dt>
 <dd>
 <p>If <code>true</code>, <code>git</code> <code>log</code> will act as if the <code>--follow</code> option was used when
 a single &lt;path&gt; is given.  This has the same limitations as <code>--follow</code>,
 i.e. it cannot be used to follow multiple files and does not work well
 on non-linear history.</p>
 </dd>
-<dt class="hdlist1">log.graphColors</dt>
+<dt class="hdlist1"><code>log.graphColors</code></dt>
 <dd>
 <p>A list of colors, separated by commas, that can be used to draw
 history lines in <code>git</code> <code>log</code> <code>--graph</code>.</p>
 </dd>
-<dt class="hdlist1">log.showRoot</dt>
+<dt class="hdlist1"><code>log.showRoot</code></dt>
 <dd>
 <p>If true, the initial commit will be shown as a big creation event.
 This is equivalent to a diff against an empty tree.
 Tools like <a href="git-log.html">git-log(1)</a> or <a href="git-whatchanged.html">git-whatchanged(1)</a>, which
 normally hide the root commit will now show it. True by default.</p>
 </dd>
-<dt class="hdlist1">log.showSignature</dt>
+<dt class="hdlist1"><code>log.showSignature</code></dt>
 <dd>
 <p>If true, makes <a href="git-log.html">git-log(1)</a>, <a href="git-show.html">git-show(1)</a>, and
 <a href="git-whatchanged.html">git-whatchanged(1)</a> assume <code>--show-signature</code>.</p>
 </dd>
-<dt class="hdlist1">log.mailmap</dt>
+<dt class="hdlist1"><code>log.mailmap</code></dt>
 <dd>
 <p>If true, makes <a href="git-log.html">git-log(1)</a>, <a href="git-show.html">git-show(1)</a>, and
 <a href="git-whatchanged.html">git-whatchanged(1)</a> assume <code>--use-mailmap</code>, otherwise
@@ -6896,8 +6932,33 @@ attributes" in <a href="gitattributes.html">gitattributes(5)</a>.</p>
 </dd>
 <dt class="hdlist1"><code>merge.stat</code></dt>
 <dd>
-<p>Whether to print the diffstat between <code>ORIG_HEAD</code> and the merge result
-at the end of the merge.  True by default.</p>
+<p>What, if anything, to print between <code>ORIG_HEAD</code> and the merge result
+at the end of the merge.  Possible values are:</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>false</code></dt>
+<dd>
+<p>Show nothing.</p>
+</dd>
+<dt class="hdlist1"><code>true</code></dt>
+<dd>
+<p>Show <code>git</code> <code>diff</code> <code>--diffstat</code> <code>--summary</code> <code>ORIG_HEAD</code>.</p>
+</dd>
+<dt class="hdlist1"><code>compact</code></dt>
+<dd>
+<p>Show <code>git</code> <code>diff</code> <code>--compact-summary</code> <code>ORIG_HEAD</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>but any unrecognised value (e.g., a value added by a future version of
+Git) is taken as <code>true</code> instead of triggering an error.  Defaults to
+<code>true</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1"><code>merge.autoStash</code></dt>
 <dd>
@@ -7465,12 +7526,8 @@ commits contain certain types of direct renames. Default is
 </dd>
 <dt class="hdlist1">pack.usePathWalk</dt>
 <dd>
-<p>When true, git will default to using the <em>--path-walk</em> option in
-<em>git pack-objects</em> when the <em>--revs</em> option is present. This
-algorithm groups objects by path to maximize the ability to
-compute delta chains across historical versions of the same
-object. This may disable other options, such as using bitmaps to
-enumerate objects.</p>
+<p>Enable the <code>--path-walk</code> option by default for <code>git</code> <code>pack-objects</code>
+processes. See <a href="git-pack-objects.html">git-pack-objects(1)</a> for full details.</p>
 </dd>
 <dt class="hdlist1">pack.preferBitmapTips</dt>
 <dd>
@@ -7547,9 +7604,9 @@ commands, set <code>core.pager</code> or <code>GIT_PAGER</code> to <code>cat</co
 <p>Alias for a --pretty= format string, as specified in
 <a href="git-log.html">git-log(1)</a>. Any aliases defined here can be used just
 as the built-in pretty formats could. For example,
-running <code>git</code> <code>config</code> <code>pretty.changelog</code> "format:* %H %s"
+running <code>git</code> <code>config</code> <code>pretty.changelog</code> "format:* <code>%H</code> <code>%s</code>"
 would cause the invocation <code>git</code> <code>log</code> <code>--pretty=changelog</code>
-to be equivalent to running <code>git</code> <code>log</code> "--pretty=format:* %H %s".
+to be equivalent to running <code>git</code> <code>log</code> "--pretty=format:* <code>%H</code> <code>%s</code>".
 Note that an alias with the same name as a built-in format
 will be silently ignored.</p>
 </dd>
@@ -7716,6 +7773,24 @@ for details).</p>
 <dd>
 <p>The default merge strategy to use when pulling multiple branches
 at once.</p>
+</dd>
+<dt class="hdlist1">pull.autoStash</dt>
+<dd>
+<p>When set to true, automatically create a temporary stash entry
+to record the local changes before the operation begins, and
+restore them after the operation completes.  When your "git
+pull" rebases (instead of merges), this may be convenient, since
+unlike merging pull that tolerates local changes that do not
+interfere with the merge, rebasing pull refuses to work with any
+local changes.</p>
+<div class="paragraph">
+<p>If <code>pull.autostash</code> is set (either to true or false),
+<code>merge.autostash</code> and <code>rebase.autostash</code> are ignored.  If
+<code>pull.autostash</code> is not set at all, depending on the value of
+<code>pull.rebase</code>, <code>merge.autostash</code> or <code>rebase.autostash</code> is used
+instead.  Can be overridden by the <code>--</code>[<code>no-</code>]<code>autostash</code> command line
+option.</p>
+</div>
 </dd>
 <dt class="hdlist1">pull.twohead</dt>
 <dd>
@@ -8423,6 +8498,14 @@ a cruft pack and the respective parameters are not given over
 the command line. See similarly named <code>pack.*</code> configuration
 variables for defaults and meaning.</p>
 </dd>
+<dt class="hdlist1">repack.midxMustContainCruft</dt>
+<dd>
+<p>When set to true, <a href="git-repack.html">git-repack(1)</a> will unconditionally include
+cruft pack(s), if any, in the multi-pack index when invoked with
+<code>--write-midx</code>. When false, cruft packs are only included in the MIDX
+when necessary (e.g., because they might be required to form a
+reachability closure with MIDX bitmaps). Defaults to true.</p>
+</dd>
 <dt class="hdlist1">rerere.autoUpdate</dt>
 <dd>
 <p>When set to true, <code>git-rerere</code> updates the index with the
@@ -8494,7 +8577,7 @@ value.</p>
 </div>
 <div class="paragraph">
 <p>The value of this setting is interpolated, i.e. <code>~/</code><em>&lt;path&gt;</em> expands to a
-path relative to the home directory and %(<code>prefix</code>)<code>/</code><em>&lt;path&gt;</em> expands to a
+path relative to the home directory and <code>%</code>(<code>prefix</code>)<code>/</code><em>&lt;path&gt;</em> expands to a
 path relative to Git&#8217;s (runtime) prefix.</p>
 </div>
 <div class="paragraph">
@@ -8525,14 +8608,14 @@ the <code>SUDO_UID</code> variable from root&#8217;s environment before invoking
 <dt class="hdlist1">sendemail.identity</dt>
 <dd>
 <p>A configuration identity. When given, causes values in the
-<em>sendemail.&lt;identity&gt;</em> subsection to take precedence over
-values in the <em>sendemail</em> section. The default identity is
+<code>sendemail.</code><em>&lt;identity&gt;</em> subsection to take precedence over
+values in the <code>sendemail</code> section. The default identity is
 the value of <code>sendemail.identity</code>.</p>
 </dd>
 <dt class="hdlist1">sendemail.smtpEncryption</dt>
 <dd>
 <p>See <a href="git-send-email.html">git-send-email(1)</a> for description.  Note that this
-setting is not subject to the <em>identity</em> mechanism.</p>
+setting is not subject to the <code>identity</code> mechanism.</p>
 </dd>
 <dt class="hdlist1">sendemail.smtpSSLCertPath</dt>
 <dd>
@@ -8541,29 +8624,29 @@ Set it to an empty string to disable certificate verification.</p>
 </dd>
 <dt class="hdlist1">sendemail.&lt;identity&gt;.*</dt>
 <dd>
-<p>Identity-specific versions of the <em>sendemail.*</em> parameters
+<p>Identity-specific versions of the <code>sendemail.*</code> parameters
 found below, taking precedence over those when this
 identity is selected, through either the command-line or
 <code>sendemail.identity</code>.</p>
 </dd>
 <dt class="hdlist1">sendemail.multiEdit</dt>
 <dd>
-<p>If true (default), a single editor instance will be spawned to edit
+<p>If <code>true</code> (default), a single editor instance will be spawned to edit
 files you have to edit (patches when <code>--annotate</code> is used, and the
-summary when <code>--compose</code> is used). If false, files will be edited one
+summary when <code>--compose</code> is used). If <code>false</code>, files will be edited one
 after the other, spawning a new editor each time.</p>
 </dd>
 <dt class="hdlist1">sendemail.confirm</dt>
 <dd>
 <p>Sets the default for whether to confirm before sending. Must be
-one of <em>always</em>, <em>never</em>, <em>cc</em>, <em>compose</em>, or <em>auto</em>. See <code>--confirm</code>
+one of <code>always</code>, <code>never</code>, <code>cc</code>, <code>compose</code>, or <code>auto</code>. See <code>--confirm</code>
 in the <a href="git-send-email.html">git-send-email(1)</a> documentation for the meaning of these
 values.</p>
 </dd>
 <dt class="hdlist1">sendemail.mailmap</dt>
 <dd>
-<p>If true, makes <a href="git-send-email.html">git-send-email(1)</a> assume <code>--mailmap</code>,
-otherwise assume <code>--no-mailmap</code>. False by default.</p>
+<p>If <code>true</code>, makes <a href="git-send-email.html">git-send-email(1)</a> assume <code>--mailmap</code>,
+otherwise assume <code>--no-mailmap</code>. <code>False</code> by default.</p>
 </dd>
 <dt class="hdlist1">sendemail.mailmap.file</dt>
 <dd>
@@ -8586,7 +8669,7 @@ email aliases files.  You must also supply <code>sendemail.aliasFileType</code>.
 <dt class="hdlist1">sendemail.aliasFileType</dt>
 <dd>
 <p>Format of the file(s) specified in sendemail.aliasesFile. Must be
-one of <em>mutt</em>, <em>mailrc</em>, <em>pine</em>, <em>elm</em>, <em>gnus</em>, or <em>sendmail</em>.</p>
+one of <code>mutt</code>, <code>mailrc</code>, <code>pine</code>, <code>elm</code>, <code>gnus</code>, or <code>sendmail</code>.</p>
 <div class="paragraph">
 <p>What an alias file in each format looks like can be found in
 the documentation of the email program of the same name. The
@@ -8653,6 +8736,12 @@ recognized by the parser.</p>
 <a href="git-send-email.html">git-send-email(1)</a> command-line options. See its
 documentation for details.</p>
 </dd>
+<dt class="hdlist1">sendemail.outlookidfix</dt>
+<dd>
+<p>If <code>true</code>, makes <a href="git-send-email.html">git-send-email(1)</a> assume <code>--outlook-id-fix</code>,
+and if <code>false</code> assume <code>--no-outlook-id-fix</code>. If not specified, it will
+behave the same way as if <code>--outlook-id-fix</code> is not specified.</p>
+</dd>
 <dt class="hdlist1">sendemail.signedOffCc (deprecated)</dt>
 <dd>
 <p>Deprecated alias for <code>sendemail.signedOffByCc</code>.</p>
@@ -8660,7 +8749,7 @@ documentation for details.</p>
 <dt class="hdlist1">sendemail.smtpBatchSize</dt>
 <dd>
 <p>Number of messages to be sent per connection, after that a relogin
-will happen.  If the value is 0 or undefined, send all messages in
+will happen.  If the value is <code>0</code> or undefined, send all messages in
 one connection.
 See also the <code>--batch-size</code> option of <a href="git-send-email.html">git-send-email(1)</a>.</p>
 </dd>
@@ -8672,7 +8761,7 @@ See also the <code>--relogin-delay</code> option of <a href="git-send-email.html
 <dt class="hdlist1">sendemail.forbidSendmailVariables</dt>
 <dd>
 <p>To avoid common misconfiguration mistakes, <a href="git-send-email.html">git-send-email(1)</a>
-will abort with a warning if any configuration options for "sendmail"
+will abort with a warning if any configuration options for <code>sendmail</code>
 exist. Set this variable to bypass the check.</p>
 </dd>
 <dt class="hdlist1">sendpack.sideband</dt>
@@ -9894,7 +9983,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-07-02 10:46:59 UTC
+Last updated 2025-08-05 07:47:00 UTC
 </div>
 </div>
 </body>

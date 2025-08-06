@@ -452,7 +452,8 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git imap-send</em> [-v] [-q] [--[no-]curl]</pre>
+<pre class="content"><em>git imap-send</em> [-v] [-q] [--[no-]curl] [(--folder|-f) &lt;folder&gt;]
+<em>git imap-send</em> --list</pre>
 </div>
 </div>
 </div>
@@ -460,18 +461,20 @@ pre>code {
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This command uploads a mailbox generated with <em>git format-patch</em>
+<p>This command uploads a mailbox generated with <code>git</code> <code>format-patch</code>
 into an IMAP drafts folder.  This allows patches to be sent as
 other email is when using mail clients that cannot read mailbox
 files directly. The command also works with any general mailbox
-in which emails have the fields "From", "Date", and "Subject" in
+in which emails have the fields <code>From</code>, <code>Date</code>, and <code>Subject</code> in
 that order.</p>
 </div>
 <div class="paragraph">
 <p>Typical usage is something like:</p>
 </div>
-<div class="paragraph">
-<p>git format-patch --signoff --stdout --attach origin | git imap-send</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ git format-patch --signoff --stdout --attach origin | git imap-send</pre>
+</div>
 </div>
 </div>
 </div>
@@ -490,6 +493,12 @@ that order.</p>
 <dd>
 <p>Be quiet.</p>
 </dd>
+<dt class="hdlist1">-f &lt;folder&gt;</dt>
+<dt class="hdlist1">--folder=&lt;folder&gt;</dt>
+<dd>
+<p>Specify the folder in which the emails have to saved.
+For example: <code>--folder=</code>[<code>Gmail</code>]<code>/Drafts</code> or <code>-f</code> <code>INBOX/Drafts</code>.</p>
+</dd>
 <dt class="hdlist1">--curl</dt>
 <dd>
 <p>Use libcurl to communicate with the IMAP server, unless tunneling
@@ -501,6 +510,10 @@ option set.</p>
 <p>Talk to the IMAP server using git&#8217;s own IMAP routines instead of
 using libcurl.  Ignored if Git was built with the NO_OPENSSL option
 set.</p>
+</dd>
+<dt class="hdlist1">--list</dt>
+<dd>
+<p>Run the IMAP LIST command to output a list of all the folders present.</p>
 </dd>
 </dl>
 </div>
@@ -523,8 +536,10 @@ same as what&#8217;s found there:</p>
 <dt class="hdlist1">imap.folder</dt>
 <dd>
 <p>The folder to drop the mails into, which is typically the Drafts
-folder. For example: "INBOX.Drafts", "INBOX/Drafts" or
-"[Gmail]/Drafts". Required.</p>
+folder. For example: <code>INBOX.Drafts</code>, <code>INBOX/Drafts</code> or
+[<code>Gmail</code>]<code>/Drafts</code>. The IMAP folder to interact with MUST be specified;
+the value of this configuration variable is used as the fallback
+default value when the <code>--folder</code> option is not given.</p>
 </dd>
 <dt class="hdlist1">imap.tunnel</dt>
 <dd>
@@ -571,10 +586,45 @@ format=fixed email.  Default is <code>false</code>.</p>
 <p>Specify the authentication method for authenticating with the IMAP server.
 If Git was built with the NO_CURL option, or if your curl version is older
 than 7.34.0, or if you&#8217;re running git-imap-send with the <code>--no-curl</code>
-option, the only supported method is <em>CRAM-MD5</em>. If this is not set
-then <em>git imap-send</em> uses the basic IMAP plaintext LOGIN command.</p>
+option, the only supported methods are <code>PLAIN</code>, <code>CRAM-MD5</code>, <code>OAUTHBEARER</code>
+and <code>XOAUTH2</code>. If this is not set then <code>git</code> <code>imap-send</code> uses the basic IMAP
+plaintext <code>LOGIN</code> command.</p>
 </dd>
 </dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_getting_a_list_of_available_folders">GETTING A LIST OF AVAILABLE FOLDERS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In order to send an email to a specific folder, you need to know the correct name of
+intended folder in your mailbox. The names like "Junk", "Trash" etc. displayed by
+various email clients need not be the actual names of the folders stored in the mail
+server of your email provider.</p>
+</div>
+<div class="paragraph">
+<p>In order to get the correct folder name to be used with <code>git</code> <code>imap-send</code>, you can run
+<code>git</code> <code>imap-send</code> <code>--list</code>. This will display a list of valid folder names. An example
+of such an output when run on a Gmail account is:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>* LIST (\HasNoChildren) "/" "INBOX"
+* LIST (\HasChildren \Noselect) "/" "[Gmail]"
+* LIST (\All \HasNoChildren) "/" "[Gmail]/All Mail"
+* LIST (\Drafts \HasNoChildren) "/" "[Gmail]/Drafts"
+* LIST (\HasNoChildren \Important) "/" "[Gmail]/Important"
+* LIST (\HasNoChildren \Sent) "/" "[Gmail]/Sent Mail"
+* LIST (\HasNoChildren \Junk) "/" "[Gmail]/Spam"
+* LIST (\Flagged \HasNoChildren) "/" "[Gmail]/Starred"
+* LIST (\HasNoChildren \Trash) "/" "[Gmail]/Trash"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here, you can observe that the correct name for the "Junk" folder is [<code>Gmail</code>]<code>/Spam</code>
+and for the "Trash" folder is [<code>Gmail</code>]<code>/Trash</code>. Similar logic can be used to determine
+other folders as well.</p>
 </div>
 </div>
 </div>
@@ -639,11 +689,18 @@ have set up) may not be verified correctly.
 <div class="listingblock">
 <div class="content">
 <pre>[imap]
-        folder = "[Gmail]/Drafts"
-        host = imaps://imap.gmail.com
-        user = user@gmail.com
-        port = 993</pre>
+    folder = "[Gmail]/Drafts"
+    host = imaps://imap.gmail.com
+    user = user@gmail.com
+    port = 993</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Gmail does not allow using your regular password for <code>git</code> <code>imap-send</code>.
+If you have multi-factor authentication set up on your Gmail account, you
+can generate an app-specific password for use with <code>git</code> <code>imap-send</code>.
+Visit <a href="https://security.google.com/settings/security/apppasswords" class="bare">https://security.google.com/settings/security/apppasswords</a> to create
+it. Alternatively, use OAuth2.0 authentication as described below.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -653,7 +710,8 @@ have set up) may not be verified correctly.
 </td>
 <td class="content">
 You might need to instead use: <code>folder</code> <code>=</code> "[<code>Google</code> <code>Mail</code>]<code>/Drafts</code>" if you get an error
-that the "Folder doesn&#8217;t exist".
+that the "Folder doesn&#8217;t exist". You can also run <code>git</code> <code>imap-send</code> <code>--list</code> to get a
+list of available folders.
 </td>
 </tr>
 </table>
@@ -672,6 +730,40 @@ folder will be localized.
 </table>
 </div>
 <div class="paragraph">
+<p>If you want to use OAuth2.0 based authentication, you can specify
+<code>OAUTHBEARER</code> or <code>XOAUTH2</code> mechanism in your config. It is more secure
+than using app-specific passwords, and also does not enforce the need of
+having multi-factor authentication. You will have to use an OAuth2.0
+access token in place of your password when using this authentication.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[imap]
+    folder = "[Gmail]/Drafts"
+    host = imaps://imap.gmail.com
+    user = user@gmail.com
+    port = 993
+    authmethod = OAUTHBEARER</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Using Outlook&#8217;s IMAP interface:</p>
+</div>
+<div class="paragraph">
+<p>Unlike Gmail, Outlook only supports OAuth2.0 based authentication. Also, it
+supports only <code>XOAUTH2</code> as the mechanism.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[imap]
+    folder = "Drafts"
+    host = imaps://outlook.office365.com
+    user = user@outlook.com
+    port = 993
+    authmethod = XOAUTH2</pre>
+</div>
+</div>
+<div class="paragraph">
 <p>Once the commits are ready to be sent, run the following command:</p>
 </div>
 <div class="literalblock">
@@ -683,6 +775,11 @@ folder will be localized.
 <p>Just make sure to disable line wrapping in the email client (Gmail&#8217;s web
 interface will wrap lines no matter what, so you need to use a real
 IMAP client).</p>
+</div>
+<div class="paragraph">
+<p>In case you are using OAuth2.0 authentication, it is easier to use credential
+helpers to generate tokens. Credential helpers suggested in
+<a href="git-send-email.html">git-send-email(1)</a> can be used for <code>git</code> <code>imap-send</code> as well.</p>
 </div>
 </div>
 </div>
@@ -723,7 +820,7 @@ users may wish to visit this web page for more information:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-07-02 10:46:59 UTC
+Last updated 2025-08-05 07:47:00 UTC
 </div>
 </div>
 </body>

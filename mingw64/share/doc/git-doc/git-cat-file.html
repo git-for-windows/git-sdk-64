@@ -854,7 +854,7 @@ information about the object the same way <code>--batch-check</code> would, and 
 <div class="paragraph">
 <p>You can specify the information shown for each object by using a custom
 <em>&lt;format&gt;</em>. The <em>&lt;format&gt;</em> is copied literally to stdout for each
-object, with placeholders of the form %(<code>atom</code>) expanded, followed by a
+object, with placeholders of the form <code>%</code>(<code>atom</code>) expanded, followed by a
 newline. The available atoms are:</p>
 </div>
 <div class="dlist">
@@ -866,6 +866,12 @@ newline. The available atoms are:</p>
 <dt class="hdlist1"><code>objecttype</code></dt>
 <dd>
 <p>The type of the object (the same as <code>cat-file</code> <code>-t</code> reports).</p>
+</dd>
+<dt class="hdlist1"><code>objectmode</code></dt>
+<dd>
+<p>If the specified object has mode information (such as a tree or
+index entry), the mode expressed as an octal integer. Otherwise,
+empty string.</p>
 </dd>
 <dt class="hdlist1"><code>objectsize</code></dt>
 <dd>
@@ -890,18 +896,18 @@ below.</p>
 at the first whitespace boundary. All characters before that
 whitespace are considered to be the object name; characters
 after that first run of whitespace (i.e., the "rest" of the
-line) are output in place of the %(<code>rest</code>) atom.</p>
+line) are output in place of the <code>%</code>(<code>rest</code>) atom.</p>
 </dd>
 </dl>
 </div>
 <div class="paragraph">
-<p>If no format is specified, the default format is %(<code>objectname</code>)
-%(<code>objecttype</code>) %(<code>objectsize</code>).</p>
+<p>If no format is specified, the default format is <code>%</code>(<code>objectname</code>)
+<code>%</code>(<code>objecttype</code>) <code>%</code>(<code>objectsize</code>).</p>
 </div>
 <div class="paragraph">
 <p>If <code>--batch</code> is specified, or if <code>--batch-command</code> is used with the <code>contents</code>
 command, the object information is followed by the object contents (consisting
-of %(<code>objectsize</code>) bytes), followed by a newline.</p>
+of <code>%</code>(<code>objectsize</code>) bytes), followed by a newline.</p>
 </div>
 <div class="paragraph">
 <p>For example, <code>--batch</code> without a custom format would produce:</p>
@@ -913,7 +919,7 @@ of %(<code>objectsize</code>) bytes), followed by a newline.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Whereas <code>--batch-check=</code>'%(<code>objectname</code>) %(<code>objecttype</code>)' would produce:</p>
+<p>Whereas <code>--batch-check=</code>'%(<code>objectname</code>) <code>%</code>(<code>objecttype</code>)' would produce:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -944,6 +950,16 @@ then <code>cat-file</code> will ignore any custom format and print:</p>
 <div class="listingblock">
 <div class="content">
 <pre>&lt;object&gt; SP ambiguous LF</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If a name is specified that refers to a submodule entry in a tree and the
+target object does not exist in the repository, then <code>cat-file</code> will ignore
+any custom format and print (with the object ID of the submodule):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>&lt;oid&gt; SP submodule LF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1041,7 +1057,7 @@ will be reported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-07-02 10:46:59 UTC
+Last updated 2025-08-05 07:47:00 UTC
 </div>
 </div>
 </body>

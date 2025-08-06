@@ -509,6 +509,15 @@ interested in paths where all included objects are marked with the
 the revision walk so that the walk emits commits marked with the
 <code>UNINTERESTING</code> flag.</p>
 </dd>
+<dt class="hdlist1"><code>edge_aggressive</code></dt>
+<dd>
+<p>For performance reasons, usually only the boundary commits are
+explored to find UNINTERESTING objects. However, in the case of
+shallow clones it can be helpful to mark all trees and blobs
+reachable from UNINTERESTING tip commits as UNINTERESTING. This
+matches the behavior of <code>--objects-edge-aggressive</code> in the
+revision API.</p>
+</dd>
 <dt class="hdlist1"><code>pl</code></dt>
 <dd>
 <p>This pattern list pointer allows focusing the path-walk search to
@@ -528,15 +537,15 @@ API can prune the set of paths it walks to improve performance.</p>
 <div class="paragraph">
 <p>See example usages in:
 	<code>t/helper/test-path-walk.c</code>,
-	<code>builtin/backfill.c</code>
-	<code>builtin/pack-objects.c</code></p>
+	<code>builtin/pack-objects.c</code>,
+	<code>builtin/backfill.c</code></p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-07-02 10:46:59 UTC
+Last updated 2025-08-05 07:47:00 UTC
 </div>
 </div>
 </body>

@@ -466,7 +466,9 @@ pre>code {
              [-u | --include-untracked] [-a | --all] [&lt;message&gt;]
 <em>git stash</em> clear
 <em>git stash</em> create [&lt;message&gt;]
-<em>git stash</em> store [(-m | --message) &lt;message&gt;] [-q | --quiet] &lt;commit&gt;</pre>
+<em>git stash</em> store [(-m | --message) &lt;message&gt;] [-q | --quiet] &lt;commit&gt;
+<em>git stash</em> export (--print | --to-ref &lt;ref&gt;) [&lt;stash&gt;&#8230;&#8203;]
+<em>git stash</em> import &lt;commit&gt;</pre>
 </div>
 </div>
 </div>
@@ -613,6 +615,18 @@ dangling merge commit) in the stash ref, updating the stash
 reflog.  This is intended to be useful for scripts.  It is
 probably not the command you want to use; see "push" above.</p>
 </dd>
+<dt class="hdlist1">export ( --print | --to-ref &lt;ref&gt; ) [&lt;stash&gt;&#8230;&#8203;]</dt>
+<dd>
+<p>Export the specified stashes, or all of them if none are specified, to
+a chain of commits which can be transferred using the normal fetch and
+push mechanisms, then imported using the <code>import</code> subcommand.</p>
+</dd>
+<dt class="hdlist1">import &lt;commit&gt;</dt>
+<dd>
+<p>Import the specified stashes from the specified commit, which must have been
+created by <code>export</code>, and add them to the list of stashes.  To replace the
+existing stashes, use <code>clear</code> first.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -687,6 +701,19 @@ to learn how to operate the <code>--patch</code> mode.</p>
 <code>--no-keep-index</code> to override this.</p>
 </div>
 </dd>
+<dt class="hdlist1"><code>-U</code><em>&lt;n&gt;</em></dt>
+<dt class="hdlist1"><code>--unified=</code><em>&lt;n&gt;</em></dt>
+<dd>
+<p>Generate diffs with <em>&lt;n&gt;</em> lines of context. Defaults to <code>diff.context</code>
+or 3 if the config option is unset.</p>
+</dd>
+<dt class="hdlist1"><code>--inter-hunk-context=</code><em>&lt;n&gt;</em></dt>
+<dd>
+<p>Show the context between diff hunks, up to the specified <em>&lt;number&gt;</em>
+of lines, thereby fusing hunks that are close to each other.
+Defaults to <code>diff.interHunkContext</code> or 0 if the config option
+is unset.</p>
+</dd>
 <dt class="hdlist1">-S</dt>
 <dt class="hdlist1">--staged</dt>
 <dd>
@@ -730,6 +757,23 @@ literally (including newlines and quotes).</p>
 <p>Quiet, suppress feedback messages.</p>
 </div>
 </dd>
+<dt class="hdlist1">--print</dt>
+<dd>
+<p>This option is only valid for the <code>export</code> command.</p>
+<div class="paragraph">
+<p>Create the chain of commits representing the exported stashes without
+storing it anywhere in the ref namespace and print the object ID to
+standard output.  This is designed for scripts.</p>
+</div>
+</dd>
+<dt class="hdlist1">--to-ref</dt>
+<dd>
+<p>This option is only valid for the <code>export</code> command.</p>
+<div class="paragraph">
+<p>Create the chain of commits representing the exported stashes and store
+it to the specified ref.</p>
+</div>
+</dd>
 <dt class="hdlist1">--</dt>
 <dd>
 <p>This option is only valid for <code>push</code> command.</p>
@@ -753,7 +797,7 @@ too, leaving files that do not match the pathspec intact.</p>
 <dt class="hdlist1">&lt;stash&gt;</dt>
 <dd>
 <p>This option is only valid for <code>apply</code>, <code>branch</code>, <code>drop</code>, <code>pop</code>,
-<code>show</code> commands.</p>
+<code>show</code>, and <code>export</code> commands.</p>
 <div class="paragraph">
 <p>A reference of the form <code>stash@</code>{<em>&lt;revision&gt;</em>}. When no <em>&lt;stash&gt;</em> is
 given, the latest stash is assumed (that is, <code>stash@</code>{0}).</p>
@@ -959,7 +1003,7 @@ See the description of the <em>show</em> command in <a href="git-stash.html">git
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-07-02 10:46:59 UTC
+Last updated 2025-08-05 07:47:00 UTC
 </div>
 </div>
 </body>

@@ -3037,7 +3037,7 @@ an entry in the <code class="literal">commands</code>[] array in <code class="li
 an entry in <code class="literal">BUILTIN_OBJECTS</code> in the <code class="literal">Makefile</code>.
 </li></ul></div>
 <p>Sometimes, more than one builtin is contained in one source file.  For
-example, <code class="literal">cmd_whatchanged</code>() and <code class="literal">cmd_log</code>() both reside in <code class="literal">builtin/log.c</code>,
+example, <code class="literal">cmd_show</code>() and <code class="literal">cmd_log</code>() both reside in <code class="literal">builtin/log.c</code>,
 since they share quite a bit of code.  In that case, the commands which are
 <span class="emphasis"><em>not</em></span> named like the .<code class="literal">c</code> file in which they live have to be listed in
 <code class="literal">BUILT_INS</code> in the <code class="literal">Makefile</code>.</p>
@@ -3060,7 +3060,7 @@ when made a builtin, and then saw less than 10 versions).
 </li></ul></div>
 <p>So, look into <code class="literal">builtin/cat-file.c</code>, search for <code class="literal">cmd_cat_file</code>() and look what
 it does.</p>
-<pre class="screen">        git_config(git_default_config);
+<pre class="screen">        repo_config(the_repository, git_default_config);
         if (argc != 3)
                 usage("git cat-file [-t|-s|-e|-p|&lt;type&gt;] &lt;sha1&gt;");
         if (get_sha1(argv[2], sha1))
@@ -3085,9 +3085,9 @@ hex characters, which is passed as <code class="literal">char</code> <code class
 <p>You will see both of these things throughout the code.</p>
 <p>Now, for the meat:</p>
 <pre class="screen">        case 0:
-                buf = read_object_with_reference(sha1, argv[1], &amp;size, NULL);</pre>
+                buf = odb_read_object_peeled(r-&gt;objects, sha1, argv[1], &amp;size, NULL);</pre>
 <p>This is how you read a blob (actually, not only a blob, but any type of
-object).  To know how the function <code class="literal">read_object_with_reference</code>() actually
+object).  To know how the function <code class="literal">odb_read_object_peeled</code>() actually
 works, find the source code for it (something like <code class="literal">git</code> <code class="literal">grep</code>
 <code class="literal">read_object_with</code> | <code class="literal">grep</code> ":[<code class="literal">a-z</code>]" in the Git repository), and read
 the source.</p>
@@ -3467,9 +3467,8 @@ full pathname may have special meaning:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 A leading "<code class="literal">**</code>" followed by a slash means match in all
 directories. For example, "<code class="literal">**/foo</code>" matches file or directory
-"<code class="literal">foo</code>" anywhere, the same as pattern "<code class="literal">foo</code>". "<code class="literal">**/foo/bar</code>"
-matches file or directory "<code class="literal">bar</code>" anywhere that is directly
-under directory "<code class="literal">foo</code>".
+"<code class="literal">foo</code>" anywhere. "<code class="literal">**/foo/bar</code>" matches file or directory "<code class="literal">bar</code>"
+anywhere that is directly under directory "<code class="literal">foo</code>".
 </li><li class="listitem">
 A trailing "<code class="literal">/**</code>" matches everything inside. For example,
 "<code class="literal">abc/**</code>" matches all files inside directory "abc", relative

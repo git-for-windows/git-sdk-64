@@ -452,7 +452,7 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><code>git</code> <code>merge</code> [<code>-n</code>] [<code>--stat</code>] [<code>--no-commit</code>] [<code>--squash</code>] [<code>--</code>[<code>no-</code>]<code>edit</code>]
+<pre class="content"><code>git</code> <code>merge</code> [<code>-n</code>] [<code>--stat</code>] [<code>--compact-summary</code>] [<code>--no-commit</code>] [<code>--squash</code>] [<code>--</code>[<code>no-</code>]<code>edit</code>]
 	[<code>--no-verify</code>] [<code>-s</code> <em>&lt;strategy&gt;</em>] [<code>-X</code> <em>&lt;strategy-option&gt;</em>] [<code>-S</code>[<em>&lt;keyid&gt;</em>]]
 	[<code>--</code>[<code>no-</code>]<code>allow-unrelated-histories</code>]
 	[<code>--</code>[<code>no-</code>]<code>rerere-autoupdate</code>] [<code>-m</code> <em>&lt;msg&gt;</em>] [<code>-F</code> <em>&lt;file&gt;</em>]
@@ -488,7 +488,7 @@ from one branch into another.</p>
 its current commit (<code>C</code>) on top of <code>master</code>, and record the result
 in a new commit along with the names of the two parent commits and
 a log message from the user describing the changes. Before the operation,
-<code>ORIG_HEAD</code> is set to the tip of the current branch (<code>C</code>).</p>
+<code>ORIG_HEAD</code> is set to the tip of the current branch (<code>G</code>).</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -649,6 +649,10 @@ controlled by the configuration option merge.stat.</p>
 <p>With <code>-n</code> or <code>--no-stat</code> do not show a diffstat at the end of the
 merge.</p>
 </div>
+</dd>
+<dt class="hdlist1"><code>--compact-summary</code></dt>
+<dd>
+<p>Show a compact-summary at the end of the merge.</p>
 </dd>
 <dt class="hdlist1"><code>--squash</code></dt>
 <dt class="hdlist1"><code>--no-squash</code></dt>
@@ -1509,8 +1513,33 @@ attributes" in <a href="gitattributes.html">gitattributes(5)</a>.</p>
 </dd>
 <dt class="hdlist1"><code>merge.stat</code></dt>
 <dd>
-<p>Whether to print the diffstat between <code>ORIG_HEAD</code> and the merge result
-at the end of the merge.  True by default.</p>
+<p>What, if anything, to print between <code>ORIG_HEAD</code> and the merge result
+at the end of the merge.  Possible values are:</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>false</code></dt>
+<dd>
+<p>Show nothing.</p>
+</dd>
+<dt class="hdlist1"><code>true</code></dt>
+<dd>
+<p>Show <code>git</code> <code>diff</code> <code>--diffstat</code> <code>--summary</code> <code>ORIG_HEAD</code>.</p>
+</dd>
+<dt class="hdlist1"><code>compact</code></dt>
+<dd>
+<p>Show <code>git</code> <code>diff</code> <code>--compact-summary</code> <code>ORIG_HEAD</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>but any unrecognised value (e.g., a value added by a future version of
+Git) is taken as <code>true</code> instead of triggering an error.  Defaults to
+<code>true</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1"><code>merge.autoStash</code></dt>
 <dd>
@@ -1730,7 +1759,7 @@ See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-07-02 10:46:59 UTC
+Last updated 2025-08-05 07:47:00 UTC
 </div>
 </div>
 </body>

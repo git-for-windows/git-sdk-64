@@ -447,14 +447,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; add &lt;local-commit&gt;
-<em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; add &lt;repository&gt; &lt;remote-ref&gt;
-<em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; merge &lt;local-commit&gt; [&lt;repository&gt;]
-<em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; split [&lt;local-commit&gt;]</pre>
+<pre class="content"><em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; [-S[&lt;keyid&gt;]] add &lt;local-commit&gt;
+<em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; [-S[&lt;keyid&gt;]] add &lt;repository&gt; &lt;remote-ref&gt;
+<em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; [-S[&lt;keyid&gt;]] merge &lt;local-commit&gt; [&lt;repository&gt;]
+<em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; [-S[&lt;keyid&gt;]] split [&lt;local-commit&gt;]</pre>
 </div>
 <div class="verseblock">
-<pre class="content"><em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; pull &lt;repository&gt; &lt;remote-ref&gt;
-<em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; push &lt;repository&gt; &lt;refspec&gt;</pre>
+<pre class="content"><em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; [-S[&lt;keyid&gt;]] pull &lt;repository&gt; &lt;remote-ref&gt;
+<em>git subtree</em> [&lt;options&gt;] -P &lt;prefix&gt; [-S[&lt;keyid&gt;]] push &lt;repository&gt; &lt;refspec&gt;</pre>
 </div>
 </div>
 </div>
@@ -627,6 +627,14 @@ used.  The optional leading <em>+</em> is ignored.</p>
 <p>Specify the path in the repository to the subtree you
 want to manipulate.  This option is mandatory
 for all commands.</p>
+</dd>
+<dt class="hdlist1">-S[&lt;keyid&gt;]</dt>
+<dt class="hdlist1">--gpg-sign[=&lt;keyid&gt;]</dt>
+<dt class="hdlist1">--no-gpg-sign</dt>
+<dd>
+<p>GPG-sign commits. The <code>keyid</code> argument is optional and
+defaults to the committer identity; <code>--no-gpg-sign</code> is useful to
+countermand a <code>--gpg-sign</code> option given earlier on the command line.</p>
 </dd>
 </dl>
 </div>
@@ -941,7 +949,7 @@ $ git init --bare</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-07-02 10:46:59 UTC
+Last updated 2025-08-05 07:47:00 UTC
 </div>
 </div>
 </body>

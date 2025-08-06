@@ -507,7 +507,7 @@ Open up a new file <code>builtin/walken.c</code> and set up the command handler:
 #include "builtin.h"
 #include "trace.h"
 
-int cmd_walken(int argc, const char **argv, const char *prefix)
+int cmd_walken(int argc, const char **argv, const char *prefix, struct repository *repo)
 {
         trace_printf(_("cmd_walken incoming...\n"));
         return 0;
@@ -560,15 +560,15 @@ int cmd_walken(int argc, const char **argv, const char *prefix)
 </div>
 </div>
 <div class="paragraph">
-<p>Also add the relevant line in <code>builtin.h</code> near <code>cmd_whatchanged</code>():</p>
+<p>Also add the relevant line in <code>builtin.h</code> near <code>cmd_version</code>():</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>int cmd_walken(int argc, const char **argv, const char *prefix);</pre>
+<pre>int cmd_walken(int argc, const char **argv, const char *prefix, struct repository *repo);</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Include the command in <code>git.c</code> in <code>commands</code>[] near the entry for <code>whatchanged</code>,
+<p>Include the command in <code>git.c</code> in <code>commands</code>[] near the entry for <code>version</code>,
 maintaining alphabetical ordering:</p>
 </div>
 <div class="listingblock">
@@ -577,11 +577,37 @@ maintaining alphabetical ordering:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Add it to the <code>Makefile</code> near the line for <code>builtin/worktree.o</code>:</p>
+<p>Add an entry for the new command in the both the Make and Meson build system,
+before the entry for <code>worktree</code>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>In the <code>Makefile</code>:</p>
+</li>
+</ul>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>BUILTIN_OBJS += builtin/walken.o</pre>
+<pre>...
+BUILTIN_OBJS += builtin/walken.o
+...</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>In the <code>meson.build</code> file:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>builtin_sources = [
+   ...
+  'builtin/walken.c',
+   ...
+]</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -734,7 +760,7 @@ initialization functions.</p>
 <div class="paragraph">
 <p>Next, we should have a look at any relevant configuration settings (i.e.,
 settings readable and settable from <code>git</code> <code>config</code>). This is done by providing a
-callback to <code>git_config</code>(); within that callback, you can also invoke methods
+callback to <code>repo_config</code>(); within that callback, you can also invoke methods
 from other components you may need that need to intercept these options. Your
 callback will be invoked once per each configuration value which Git knows about
 (global, local, worktree, etc.).</p>
@@ -766,15 +792,15 @@ static int git_walken_config(const char *var, const char *value,
 </div>
 </div>
 <div class="paragraph">
-<p>Make sure to invoke <code>git_config</code>() with it in your <code>cmd_walken</code>():</p>
+<p>Make sure to invoke <code>repo_config</code>() with it in your <code>cmd_walken</code>():</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>int cmd_walken(int argc, const char **argv, const char *prefix)
+<pre>int cmd_walken(int argc, const char **argv, const char *prefix, struct repository *repo)
 {
         ...
 
-        git_config(git_walken_config, NULL);
+        repo_config(repo, git_walken_config, NULL);
 
         ...
 }</pre>
@@ -800,14 +826,14 @@ We&#8217;ll also need to include the <code>revision.h</code> header:</p>
 
 ...
 
-int cmd_walken(int argc, const char **argv, const char *prefix)
+int cmd_walken(int argc, const char **argv, const char *prefix, struct repository *repo)
 {
         /* This can go wherever you like in your declarations.*/
         struct rev_info rev;
         ...
 
-        /* This should go after the git_config() call. */
-        repo_init_revisions(the_repository, &amp;rev, prefix);
+        /* This should go after the repo_config() call. */
+        repo_init_revisions(repo, &amp;rev, prefix);
 
         ...
 }</pre>
@@ -871,7 +897,7 @@ point.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>int cmd_walken(int argc, const char **argv, const char *prefix)
+<pre>int cmd_walken(int argc, const char **argv, const char *prefix, struct repository *repo)
 {
         ...
 
@@ -1675,7 +1701,7 @@ initial commit, <code>e83c5163</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-07-02 10:46:59 UTC
+Last updated 2025-08-05 07:47:00 UTC
 </div>
 </div>
 </body>
