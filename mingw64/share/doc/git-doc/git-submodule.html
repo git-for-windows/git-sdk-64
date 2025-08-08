@@ -833,6 +833,13 @@ option is not specified, it defaults to the remote <em>HEAD</em>.</p>
 <dd>
 <p>This option is only valid for add, deinit and update commands.
 When running add, allow adding an otherwise ignored submodule path.
+This option is also used to bypass a check that the submodule&#8217;s name
+is not already in use. By default, <em>git submodule add</em> will fail if
+the proposed name (which is derived from the path) is already registered
+for another submodule in the repository. Using <em>--force</em> allows the command
+to proceed by automatically generating a unique name by appending a number
+to the conflicting name (e.g., if a submodule named <em>child</em> exists, it will
+try <em>child1</em>, and so on).
 When running deinit the submodule working trees will be removed even
 if they contain local changes.
 When running update (only effective with the checkout procedure),
@@ -1040,7 +1047,7 @@ for details.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-08-05 07:47:00 UTC
+Last updated 2025-08-07 17:58:12 UTC
 </div>
 </div>
 </body>
