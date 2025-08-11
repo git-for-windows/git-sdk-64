@@ -19,7 +19,7 @@ jobs:
         nr: [9, 6, 13, 0, 8, 5, 2, 16, 15, 11, 10, 1, 7, 3, 14, 12, 4]
     steps:
       - name: download minimal-sdk artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: minimal-sdk
           path: ${{github.workspace}}
@@ -30,7 +30,7 @@ jobs:
           tar -C minimal-sdk -xzf git-sdk-x86_64-minimal.tar.gz &&
           cygpath -aw minimal-sdk/usr/bin >>$GITHUB_PATH
       - name: download git artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: git-artifacts
           path: ${{github.workspace}}
@@ -67,7 +67,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: download minimal-sdk artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: minimal-sdk
           path: ${{github.workspace}}
