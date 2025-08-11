@@ -2,8 +2,8 @@
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 
-package Authen::SASL::Perl::LOGIN;
-$Authen::SASL::Perl::LOGIN::VERSION = '2.1800';
+package Authen::SASL::Perl::LOGIN 2.1900;
+
 use strict;
 use warnings;
 use vars qw(@ISA);
@@ -137,7 +137,7 @@ Authen::SASL::Perl::LOGIN - Login Authentication class
 
 =head1 VERSION
 
-version 2.1800
+version 2.1900
 
 =head1 SYNOPSIS
 

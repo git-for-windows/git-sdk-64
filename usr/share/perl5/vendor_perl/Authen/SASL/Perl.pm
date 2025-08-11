@@ -2,8 +2,8 @@
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 
-package Authen::SASL::Perl;
-$Authen::SASL::Perl::VERSION = '2.1800';
+package Authen::SASL::Perl 2.1900;
+
 use strict;
 use warnings;
 use Carp;

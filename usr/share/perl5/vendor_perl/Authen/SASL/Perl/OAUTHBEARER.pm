@@ -4,8 +4,8 @@
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 
-package Authen::SASL::Perl::OAUTHBEARER;
-$Authen::SASL::Perl::OAUTHBEARER::VERSION = '2.1800';
+package Authen::SASL::Perl::OAUTHBEARER 2.1900;
+
 use strict;
 use vars qw(@ISA);
 use JSON::PP;
@@ -69,7 +69,7 @@ Authen::SASL::Perl::OAUTHBEARER - OAUTHBEARER Authentication class
 
 =head1 VERSION
 
-version 2.1800
+version 2.1900
 
 =head1 SYNOPSIS
 
@@ -118,7 +118,9 @@ Written by Aditya Garg and Julian Swagemakers.
 =head1 COPYRIGHT
 
 Copyright (c) 2025 Aditya Garg.
+
 Copyright (c) 2025 Julian Swagemakers.
+
 All rights reserved. This program is free software; you can redistribute 
 it and/or modify it under the same terms as Perl itself.
 =cut

@@ -2,14 +2,19 @@
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 
-package Authen::SASL::Perl::CRAM_MD5;
-$Authen::SASL::Perl::CRAM_MD5::VERSION = '2.1800';
+package Authen::SASL::Perl::CRAM_MD5 2.1900;
+
 use strict;
 use warnings;
 use vars qw(@ISA);
 use Digest::HMAC_MD5 qw(hmac_md5_hex);
 
-@ISA	 = qw(Authen::SASL::Perl);
+warnings::warnif(
+    'deprecated',
+    'The CRAM-MD5 SASL mechanism is effectively deprecated by RFC8314 and should no longer be used'
+    );
+
+@ISA     = qw(Authen::SASL::Perl);
 
 my %secflags = (
 	noplaintext => 1,
@@ -44,11 +49,11 @@ __END__
 
 =head1 NAME
 
-Authen::SASL::Perl::CRAM_MD5 - CRAM MD5 Authentication class
+Authen::SASL::Perl::CRAM_MD5 - (DEPRECATED) CRAM MD5 Authentication class
 
 =head1 VERSION
 
-version 2.1800
+version 2.1900
 
 =head1 SYNOPSIS
 
@@ -66,6 +71,11 @@ version 2.1800
 
 This method implements the client part of the CRAM-MD5 SASL algorithm,
 as described in RFC 2195 resp. in IETF Draft draft-ietf-sasl-crammd5-XX.txt.
+
+Please note that this mechanism has been moved to the "LIMITED" use section of
+the L<mechanism registry|https://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml>
+and is effectively deprecated per L<RFC8314|https://www.rfc-editor.org/rfc/rfc8314.html> (see
+section 5; security considerations).
 
 =head2 CALLBACK
 
