@@ -347,6 +347,7 @@ MODULE__SSL_LDFLAGS=  -lssl -lcrypto -lws2_32
 MODULE__HASHLIB_STATE=yes
 MODULE__HASHLIB_CFLAGS=
 MODULE__HASHLIB_LDFLAGS=   -lcrypto
+MODULE_WINREG_STATE=yes
 MODULE_MSVCRT_STATE=yes
 MODULE__WINAPI_STATE=yes
 MODULE__MSI_STATE=yes
@@ -2326,7 +2327,7 @@ LIBSUBDIRS=	asyncio \
 		msilib \
 		unittest \
 		urllib \
-		venv venv/scripts venv/scripts/common venv/scripts/posix \
+		venv venv/scripts venv/scripts/common venv/scripts/nt venv/scripts/posix \
 		wsgiref \
 		$(XMLLIBSUBDIRS) \
 		xmlrpc \
