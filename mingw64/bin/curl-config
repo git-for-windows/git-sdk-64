@@ -95,7 +95,7 @@ while test "$#" -gt 0; do
     ;;
 
   --version)
-    echo 'libcurl 8.15.0'
+    echo 'libcurl 8.16.0'
     exit 0
     ;;
 
@@ -107,11 +107,11 @@ while test "$#" -gt 0; do
     # dash as that's used for things like version 1.2.3-pre1
     cpatch=`echo "$checkfor" | cut -d. -f3 | cut -d- -f1`
 
-    vmajor=`echo '8.15.0' | cut -d. -f1`
-    vminor=`echo '8.15.0' | cut -d. -f2`
+    vmajor=`echo '8.16.0' | cut -d. -f1`
+    vminor=`echo '8.16.0' | cut -d. -f2`
     # when extracting the patch part we strip off everything after a
     # dash as that's used for things like version 1.2.3-pre1
-    vpatch=`echo '8.15.0' | cut -d. -f3 | cut -d- -f1`
+    vpatch=`echo '8.16.0' | cut -d. -f3 | cut -d- -f1`
 
     if test "$vmajor" -gt "$cmajor"; then
       exit 0
@@ -127,12 +127,12 @@ while test "$#" -gt 0; do
       fi
     fi
 
-    echo "requested version $checkfor is newer than existing 8.15.0"
+    echo "requested version $checkfor is newer than existing 8.16.0"
     exit 1
     ;;
 
   --vernum)
-    echo '080f00'
+    echo '081000'
     exit 0
     ;;
 
@@ -141,7 +141,7 @@ while test "$#" -gt 0; do
     ;;
 
   --cflags)
-    if test "X${prefix}/include" = 'X/usr/include'; then
+    if test "${prefix}/include" = '/usr/include'; then
       echo ''
     else
       echo " -I${prefix}/include"
@@ -149,12 +149,12 @@ while test "$#" -gt 0; do
     ;;
 
   --libs)
-    if test "X${exec_prefix}/lib" != 'X/usr/lib' -a "X${exec_prefix}/lib" != 'X/usr/lib64'; then
+    if test "${exec_prefix}/lib" != '/usr/lib' -a "${exec_prefix}/lib" != '/usr/lib64'; then
       curllibdir="-L${exec_prefix}/lib "
     else
       curllibdir=''
     fi
-    if test 'Xyes' = 'Xno'; then
+    if test 'yes' = 'no'; then
       echo "${curllibdir}-lcurl -lsecur32 -lidn2 -lwldap32 -lssh2 -lssh2 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lzstd -lzstd -lbrotlidec -lbrotlidec -lbrotlicommon -lz -lws2_32 -liphlpapi"
     else
       echo "${curllibdir}-lcurl"
@@ -166,7 +166,7 @@ while test "$#" -gt 0; do
     ;;
 
   --static-libs)
-    if test 'Xno' != 'Xno'; then
+    if test 'no' != 'no'; then
       echo "${exec_prefix}/lib/libcurl.a  -lsecur32 -lidn2 -lwldap32 -lssh2 -lssh2 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lzstd -lzstd -lbrotlidec -lbrotlidec -lbrotlicommon -lz -lws2_32 -liphlpapi"
     else
       echo 'curl was built with static libraries disabled' >&2
