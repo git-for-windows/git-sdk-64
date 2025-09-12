@@ -42,11 +42,23 @@
  * to that here.
  */
 #ifdef CRYPTOKI_GNU
-typedef ck_rv_t CK_RV;
+typedef ck_attribute_type_t CK_ATTRIBUTE_TYPE;
 typedef ck_object_handle_t CK_OBJECT_HANDLE;
-typedef unsigned long int CK_ULONG;
-typedef struct ck_function_list* CK_FUNCTION_LIST_PTR;
+typedef ck_rv_t CK_RV;
+typedef ck_session_handle_t CK_SESSION_HANDLE;
+typedef ck_slot_id_t CK_SLOT_ID;
+typedef struct ck_attribute *CK_ATTRIBUTE_PTR;
+typedef struct ck_attribute CK_ATTRIBUTE;
 typedef struct ck_function_list CK_FUNCTION_LIST;
+typedef struct ck_function_list* CK_FUNCTION_LIST_PTR;
+typedef struct ck_info *CK_INFO_PTR;
+typedef struct ck_info CK_INFO;
+typedef struct ck_slot_info *CK_SLOT_INFO_PTR;
+typedef struct ck_slot_info CK_SLOT_INFO;
+typedef struct ck_token_info *CK_TOKEN_INFO_PTR;
+typedef struct ck_token_info CK_TOKEN_INFO;
+typedef unsigned char CK_BBOOL;
+typedef unsigned long int CK_ULONG;
 #endif
 
 #include "p11-kit/deprecated.h"

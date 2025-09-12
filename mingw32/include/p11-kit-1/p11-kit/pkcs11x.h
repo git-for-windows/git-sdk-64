@@ -187,7 +187,19 @@ typedef CK_ULONG                        CK_TRUST;
 
 #define CKK_IBM_PQC_DILITHIUM    CKK_VENDOR_DEFINED + 0x10023
 
+/* Secure key tokens store the secure key blob in attribute CKA_IBM_OPAQUE
+in their key object. During an HSM master key change, the secure key blob
+is being re-enciphered with the new master key. This re-enciphered secure
+key blob is stored in attribute CKA_IBM_OPAQUE_REENC while the HSM master
+key change operation is active.
+
+When a HSM master key change operation is finalized, the secure key blob
+enciphered with the old master key is backed up into attribute CKA_IBM_OPAQUE_OLD,
+and the re-enciphered secure key blob from CKA_IBM_OPAQUE_REENC becomes
+the current one in CKA_IBM_OPAQUE. */
 #define CKA_IBM_OPAQUE                         (CKA_VENDOR_DEFINED + 1)
+#define CKA_IBM_OPAQUE_REENC                   (CKA_VENDOR_DEFINED + 3)
+#define CKA_IBM_OPAQUE_OLD                     (CKA_VENDOR_DEFINED + 4)
 #define CKA_IBM_RESTRICTABLE                   (CKA_VENDOR_DEFINED + 0x10001)
 #define CKA_IBM_NEVER_MODIFIABLE               (CKA_VENDOR_DEFINED + 0x10002)
 #define CKA_IBM_RETAINKEY                      (CKA_VENDOR_DEFINED + 0x10003)
@@ -208,7 +220,13 @@ typedef CK_ULONG                        CK_TRUST;
 #define CKA_IBM_DILITHIUM_S2                   (CKA_VENDOR_DEFINED + 0xd0006)
 #define CKA_IBM_DILITHIUM_T0                   (CKA_VENDOR_DEFINED + 0xd0007)
 #define CKA_IBM_DILITHIUM_T1                   (CKA_VENDOR_DEFINED + 0xd0008)
+#define CKA_IBM_DILITHIUM_MODE                 (CKA_VENDOR_DEFINED + 0x00010)
+#define CKA_IBM_CCA_AES_KEY_MODE               (CKA_VENDOR_DEFINED + 0xd0101)
 #define CKA_IBM_OPAQUE_PKEY                    (CKA_VENDOR_DEFINED + 0xd0100)
+#define CKA_IBM_KYBER_MODE                     (CKA_VENDOR_DEFINED + 0x0000E)
+#define CKA_IBM_KYBER_KEYFORM                  (CKA_VENDOR_DEFINED + 0xd0009)
+#define CKA_IBM_KYBER_PK                       (CKA_VENDOR_DEFINED + 0xd000A)
+#define CKA_IBM_KYBER_SK                       (CKA_VENDOR_DEFINED + 0xd000B)
 
 #define CKM_IBM_SHA3_224                       (CKM_VENDOR_DEFINED + 0x10001)
 #define CKM_IBM_SHA3_256                       (CKM_VENDOR_DEFINED + 0x10002)
@@ -220,19 +238,95 @@ typedef CK_ULONG                        CK_TRUST;
 #define CKM_IBM_EC_X448                        (CKM_VENDOR_DEFINED + 0x1001e)
 #define CKM_IBM_ED448_SHA3                     (CKM_VENDOR_DEFINED + 0x1001f)
 #define CKM_IBM_DILITHIUM                      (CKM_VENDOR_DEFINED + 0x10023)
+#define CKM_IBM_KYBER                          (CKM_VENDOR_DEFINED + 0x10024)
 #define CKM_IBM_SHA3_224_HMAC                  (CKM_VENDOR_DEFINED + 0x10025)
 #define CKM_IBM_SHA3_256_HMAC                  (CKM_VENDOR_DEFINED + 0x10026)
 #define CKM_IBM_SHA3_384_HMAC                  (CKM_VENDOR_DEFINED + 0x10027)
 #define CKM_IBM_SHA3_512_HMAC                  (CKM_VENDOR_DEFINED + 0x10028)
+#define CKM_IBM_ECDSA_OTHER                    (CKM_VENDOR_DEFINED + 0x10031)
 #define CKM_IBM_ATTRIBUTEBOUND_WRAP            (CKM_VENDOR_DEFINED + 0x20004)
+#define CKM_IBM_BTC_DERIVE                     (CKM_VENDOR_DEFINED + 0x70001)
 
 /*
  * If the caller is using the PKCS#11 GNU calling convention, then we cater
  * to that here.
  */
 #ifdef CRYPTOKI_GNU
+#define CK_BYTE_PTR unsigned char *
+#define CK_BYTE unsigned char
+
+#define childKeyIndex child_key_index
+#define pChainCode p_chain_code
+#define ulChainCodeLen ul_cahin_code_len
+
+#define ulVersion ul_version
+#define bPrepend b_prepend
+#define pCipher p_cipher
+#define ulCipherLen ul_cipher_len
+#define pSharedData p_shared_data
+#define hSecret h_secret
+
 #define hSignVerifyKey h_sign_verify_key
 #endif
+
+#define CKM_IBM_ECSDSA_RAND                3
+#define CKM_IBM_ECSDSA_COMPR_MULTI         5
+
+struct ck_ibm_ecdsa_other {
+	CK_ULONG submechanism;
+};
+
+typedef struct ck_ibm_ecdsa_other CK_IBM_ECDSA_OTHER_PARAMS;
+
+struct ck_ibm_btc_derive_params {
+    CK_ULONG type;
+    CK_ULONG childKeyIndex;
+    CK_BYTE_PTR pChainCode;
+    CK_ULONG ulChainCodeLen;
+    CK_ULONG version;
+};
+
+typedef struct ck_ibm_btc_derive_params CK_IBM_BTC_DERIVE_PARAMS;
+
+#define CK_IBM_BIP0032_HARDENED 0x80000000 // key index flag
+
+#define CK_IBM_BIP0032_PRV2PRV 1
+#define CK_IBM_BIP0032_PRV2PUB 2
+#define CK_IBM_BIP0032_PUB2PUB 3
+#define CK_IBM_BIP0032_MASTERK 4
+#define CK_IBM_SLIP0010_PRV2PRV 5
+#define CK_IBM_SLIP0010_PRV2PUB 6
+#define CK_IBM_SLIP0010_PUB2PUB 7
+#define CK_IBM_SLIP0010_MASTERK 8
+
+#define CK_IBM_BTC_CHAINCODE_LENGTH 32
+
+#define CK_IBM_BTC_DERIVE_PARAMS_VERSION_1 1
+
+#define CK_IBM_KYBER_KEYFORM_ROUND2_768    1
+#define CK_IBM_KYBER_KEYFORM_ROUND2_1024   2
+
+#define CK_IBM_KYBER_KEM_VERSION           0
+
+typedef CK_ULONG CK_IBM_KYBER_KDF_TYPE;
+typedef CK_ULONG CK_IBM_KYBER_KEM_MODE;
+
+#define CK_IBM_KYBER_KEM_ENCAPSULATE       1
+#define CK_IBM_KYBER_KEM_DECAPSULATE       2
+
+struct ck_ibm_kyber_params {
+    CK_ULONG                ulVersion;
+    CK_IBM_KYBER_KEM_MODE   mode;
+    CK_IBM_KYBER_KDF_TYPE   kdf;
+    CK_BBOOL                bPrepend;
+    CK_BYTE                 *pCipher;
+    CK_ULONG                ulCipherLen;
+    CK_BYTE                 *pSharedData;
+    CK_ULONG                ulSharedDataLen;
+    CK_OBJECT_HANDLE        hSecret;
+};
+
+typedef struct ck_ibm_kyber_params CK_IBM_KYBER_PARAMS;
 
 struct ck_ibm_attributebound_wrap {
 	CK_OBJECT_HANDLE hSignVerifyKey;
@@ -241,6 +335,20 @@ struct ck_ibm_attributebound_wrap {
 typedef struct ck_ibm_attributebound_wrap CK_IBM_ATTRIBUTEBOUND_WRAP_PARAMS;
 
 #ifdef CRYPTOKI_GNU
+#undef CK_BYTE_PTR
+#undef CK_BYTE
+
+#undef childKeyIndex
+#undef pChainCode
+#undef ulChainCodeLen
+
+#undef ulVersion
+#undef bPrepend
+#undef pCipher
+#undef ulCipherLen
+#undef pSharedData
+#undef hSecret
+
 #undef hSignVerifyKey
 #endif
 
