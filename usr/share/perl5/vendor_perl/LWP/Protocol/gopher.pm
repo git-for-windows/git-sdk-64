@@ -9,7 +9,7 @@ package LWP::Protocol::gopher;
 
 use strict;
 
-our $VERSION = '6.79';
+our $VERSION = '6.80';
 
 require HTTP::Response;
 require HTTP::Status;

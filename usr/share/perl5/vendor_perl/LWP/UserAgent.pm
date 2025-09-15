@@ -18,7 +18,7 @@ use Module::Load qw( load );
 use Scalar::Util qw(blessed openhandle);
 use Try::Tiny qw(try catch);
 
-our $VERSION = '6.79';
+our $VERSION = '6.80';
 
 sub new
 {
@@ -602,7 +602,7 @@ sub is_online {
 }
 
 
-my @ANI = qw(- \ | /);
+my @ANI = ('-', '\\', '|', '/');
 
 sub progress {
     my($self, $status, $m) = @_;
