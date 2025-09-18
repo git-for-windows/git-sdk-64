@@ -44,7 +44,7 @@ int SSL_get_max_proto_version(SSL *ssl);</code></pre>
 
 <p>The functions get or set the minimum and maximum supported protocol versions for the <b>ctx</b> or <b>ssl</b>. This works in combination with the options set via <a href="../man3/SSL_CTX_set_options.html">SSL_CTX_set_options(3)</a> that also make it possible to disable specific protocol versions. Use these functions instead of disabling specific protocol versions.</p>
 
-<p>Setting the minimum or maximum version to 0, will enable protocol versions down to the lowest version, or up to the highest version supported by the library, respectively.</p>
+<p>Setting the minimum or maximum version to 0 (default), will enable protocol versions down to the lowest version, or up to the highest version supported by the library, respectively. The supported versions might be controlled by system configuration.</p>
 
 <p>Getters return 0 in case <b>ctx</b> or <b>ssl</b> have been configured to automatically use the lowest or highest version supported by the library.</p>
 
@@ -70,7 +70,7 @@ int SSL_get_max_proto_version(SSL *ssl);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -208,6 +208,12 @@
 <p>The RSA &quot;e&quot; value. The value may be any odd number greater than or equal to 65537. The default value is 65537. For legacy reasons a value of 3 is currently accepted but is deprecated.</p>
 
 </dd>
+<dt id="rsa-derive-from-pq-OSSL_PKEY_PARAM_RSA_DERIVE_FROM_PQ-unsigned-integer">&quot;rsa-derive-from-pq&quot; (<b>OSSL_PKEY_PARAM_RSA_DERIVE_FROM_PQ</b>) &lt;unsigned integer&gt;</dt>
+<dd>
+
+<p>Indicate that missing parameters not passed in the parameter list should be derived if not provided. Setting a nonzero value will cause all needed exponents and coefficients to be derived if not available. Setting this option requires at least OSSL_PARAM_RSA_FACTOR1, OSSL_PARAM_RSA_FACTOR2, and OSSL_PARAM_RSA_N to be provided. This option is ignored if OSSL_KEYMGMT_SELECT_PRIVATE_KEY is not set in the selection parameter.</p>
+
+</dd>
 </dl>
 
 <h2 id="RSA-key-generation-parameters-for-FIPS-module-testing">RSA key generation parameters for FIPS module testing</h2>
@@ -346,7 +352,7 @@ EVP_PKEY_CTX_free(pctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

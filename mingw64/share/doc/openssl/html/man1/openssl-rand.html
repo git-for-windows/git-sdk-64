@@ -27,11 +27,13 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl rand</b> [<b>-help</b>] [<b>-out</b> <i>file</i>] [<b>-base64</b>] [<b>-hex</b>] [<b>-engine</b> <i>id</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] <i>num</i></p>
+<p><b>openssl rand</b> [<b>-help</b>] [<b>-out</b> <i>file</i>] [<b>-base64</b>] [<b>-hex</b>] [<b>-engine</b> <i>id</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>] <i>num</i>[K|M|G|T]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>This command generates <i>num</i> random bytes using a cryptographically secure pseudo random number generator (CSPRNG).</p>
+<p>This command generates <i>num</i> random bytes using a cryptographically secure pseudo random number generator (CSPRNG). A suffix [K|M|G|T] may be appended to the num value to indicate the requested value be scaled as a multiple of KiB/MiB/GiB/TiB respectively. Note that suffixes are case sensitive, and that the suffixes represent binary multiples (K = 1024 bytes, M = 1024*1024 bytes, etc).</p>
+
+<p>The string &#39;max&#39; may be substituted for a numerical value in num, to request the maximum number of bytes the CSPRNG can produce per instantiation. Currently, this is restricted to 2^61 bytes as per NIST SP 800-90C.</p>
 
 <p>The random bytes are generated using the <a href="../man3/RAND_bytes.html">RAND_bytes(3)</a> function, which provides a security level of 256 bits, provided it managed to seed itself successfully from a trusted operating system entropy source. Otherwise, the command will fail with a nonzero error code. For more details, see <a href="../man3/RAND_bytes.html">RAND_bytes(3)</a>, <a href="../man7/RAND.html">RAND(7)</a>, and <a href="../man7/EVP_RAND.html">EVP_RAND(7)</a>.</p>
 
@@ -80,6 +82,10 @@
 
 </dd>
 <dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="provparam-name:-key-value"><b>-provparam</b> <i>[name:]key=value</i></dt>
 <dd>
 
 </dd>

@@ -34,7 +34,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>EVP_MAC, EVP_MAC_fetch, EVP_MAC_up_ref, EVP_MAC_free, EVP_MAC_is_a, EVP_MAC_get0_name, EVP_MAC_names_do_all, EVP_MAC_get0_description, EVP_MAC_get0_provider, EVP_MAC_get_params, EVP_MAC_gettable_params, EVP_MAC_CTX, EVP_MAC_CTX_new, EVP_MAC_CTX_free, EVP_MAC_CTX_dup, EVP_MAC_CTX_get0_mac, EVP_MAC_CTX_get_params, EVP_MAC_CTX_set_params, EVP_MAC_CTX_get_mac_size, EVP_MAC_CTX_get_block_size, EVP_Q_mac, EVP_MAC_init, EVP_MAC_update, EVP_MAC_final, EVP_MAC_finalXOF, EVP_MAC_gettable_ctx_params, EVP_MAC_settable_ctx_params, EVP_MAC_CTX_gettable_params, EVP_MAC_CTX_settable_params, EVP_MAC_do_all_provided - EVP MAC routines</p>
+<p>EVP_MAC, EVP_MAC_fetch, EVP_MAC_up_ref, EVP_MAC_free, EVP_MAC_is_a, EVP_MAC_get0_name, EVP_MAC_names_do_all, EVP_MAC_get0_description, EVP_MAC_get0_provider, EVP_MAC_get_params, EVP_MAC_gettable_params, EVP_MAC_CTX, EVP_MAC_CTX_new, EVP_MAC_CTX_free, EVP_MAC_CTX_dup, EVP_MAC_CTX_get0_mac, EVP_MAC_CTX_get_params, EVP_MAC_CTX_set_params, EVP_MAC_CTX_get_mac_size, EVP_MAC_CTX_get_block_size, EVP_Q_mac, EVP_MAC_init, EVP_MAC_init_SKEY, EVP_MAC_update, EVP_MAC_final, EVP_MAC_finalXOF, EVP_MAC_gettable_ctx_params, EVP_MAC_settable_ctx_params, EVP_MAC_CTX_gettable_params, EVP_MAC_CTX_settable_params, EVP_MAC_do_all_provided - EVP MAC routines</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -72,6 +72,7 @@ unsigned char *EVP_Q_mac(OSSL_LIB_CTX *libctx, const char *name, const char *pro
                          unsigned char *out, size_t outsize, size_t *outlen);
 int EVP_MAC_init(EVP_MAC_CTX *ctx, const unsigned char *key, size_t keylen,
                  const OSSL_PARAM params[]);
+int EVP_MAC_init_SKEY(EVP_MAC_CTX *ctx, EVP_SKEY *skey, const OSSL_PARAM params[]);
 int EVP_MAC_update(EVP_MAC_CTX *ctx, const unsigned char *data, size_t datalen);
 int EVP_MAC_final(EVP_MAC_CTX *ctx,
                   unsigned char *out, size_t *outl, size_t outsize);
@@ -130,6 +131,8 @@ void EVP_MAC_do_all_provided(OSSL_LIB_CTX *libctx,
 <p>EVP_MAC_init() sets up the underlying context <i>ctx</i> with information given via the <i>key</i> and <i>params</i> arguments. The MAC <i>key</i> has a length of <i>keylen</i> and the parameters in <i>params</i> are processed before setting the key. If <i>key</i> is NULL, the key must be set via <i>params</i> either as part of this call or separately using EVP_MAC_CTX_set_params(). Providing non-NULL <i>params</i> to this function is equivalent to calling EVP_MAC_CTX_set_params() with those <i>params</i> for the same <i>ctx</i> beforehand. Note: There are additional requirements for some MAC algorithms during re-initalization (i.e. calling EVP_MAC_init() on an EVP_MAC after EVP_MAC_final() has been called on the same object). See the NOTES section below.</p>
 
 <p>EVP_MAC_init() should be called before EVP_MAC_update() and EVP_MAC_final().</p>
+
+<p>EVP_MAC_init_SKEY() is similar to EVP_MAC_init() but it accepts an opaque <b>EVP_SKEY</b> object as a key.</p>
 
 <p>EVP_MAC_update() adds <i>datalen</i> bytes from <i>data</i> to the MAC input.</p>
 
@@ -214,7 +217,7 @@ void EVP_MAC_do_all_provided(OSSL_LIB_CTX *libctx,
 
 <p>A simple flag to set the MAC digest to not initialise the implementation specific data. The value 0 or 1 is expected.</p>
 
-<p>This option is used by HMAC.</p>
+<p>This option is deprecated and will be removed in a future release. The option may be set, but is ignored.</p>
 
 </dd>
 <dt id="digest-oneshot-OSSL_MAC_PARAM_DIGEST_ONESHOT-integer">&quot;digest-oneshot&quot; (<b>OSSL_MAC_PARAM_DIGEST_ONESHOT</b>) &lt;integer&gt;</dt>
@@ -222,7 +225,7 @@ void EVP_MAC_do_all_provided(OSSL_LIB_CTX *libctx,
 
 <p>A simple flag to set the MAC digest to be a oneshot operation. The value 0 or 1 is expected.</p>
 
-<p>This option is used by HMAC.</p>
+<p>This option is deprecated and will be removed in a future release. The option may be set, but is ignored.</p>
 
 </dd>
 <dt id="properties-OSSL_MAC_PARAM_PROPERTIES-UTF8-string">&quot;properties&quot; (<b>OSSL_MAC_PARAM_PROPERTIES</b>) &lt;UTF8 string&gt;</dt>
@@ -293,7 +296,7 @@ void EVP_MAC_do_all_provided(OSSL_LIB_CTX *libctx,
 
 <p>EVP_Q_mac() returns a pointer to the computed MAC value, or NULL on error.</p>
 
-<p>EVP_MAC_init(), EVP_MAC_update(), EVP_MAC_final(), and EVP_MAC_finalXOF() return 1 on success, 0 on error.</p>
+<p>EVP_MAC_init(), EVP_MAC_init_SKEY(), EVP_MAC_update(), EVP_MAC_final(), and EVP_MAC_finalXOF() return 1 on success, 0 on error.</p>
 
 <p>EVP_MAC_CTX_get_mac_size() returns the expected output size, or 0 if it isn&#39;t set. If it isn&#39;t set, a call to EVP_MAC_init() will set it.</p>
 
@@ -385,9 +388,11 @@ Result: C5C06683CD9DDEF904D754505C560A4E</code></pre>
 
 <p>These functions were added in OpenSSL 3.0.</p>
 
+<p>The EVP_MAC_init_SKEY() function was added in OpenSSL 3.5.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2018-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2018-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

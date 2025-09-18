@@ -30,7 +30,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl list</b> [<b>-help</b>] [<b>-verbose</b>] [<b>-select</b> <i>name</i>] [<b>-1</b>] [<b>-all-algorithms</b>] [<b>-commands</b>] [<b>-standard-commands</b>] [<b>-digest-algorithms</b>] [<b>-digest-commands</b>] [<b>-kdf-algorithms</b>] [<b>-mac-algorithms</b>] [<b>-random-instances</b>] [<b>-random-generators</b>] [<b>-cipher-algorithms</b>] [<b>-cipher-commands</b>] [<b>-encoders</b>] [<b>-decoders</b>] [<b>-key-managers</b>] [<b>-key-exchange-algorithms</b>] [<b>-kem-algorithms</b>] [<b>-signature-algorithms</b>] [<b>-asymcipher-algorithms</b>] [<b>-public-key-algorithms</b>] [<b>-public-key-methods</b>] [<b>-store-loaders</b>] [<b>-providers</b>] [<b>-engines</b>] [<b>-disabled</b>] [<b>-objects</b>] [<b>-options</b> <i>command</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>]</p>
+<p><b>openssl list</b> [<b>-help</b>] [<b>-verbose</b>] [<b>-select</b> <i>name</i>] [<b>-1</b>] [<b>-all-algorithms</b>] [<b>-commands</b>] [<b>-standard-commands</b>] [<b>-digest-algorithms</b>] [<b>-digest-commands</b>] [<b>-kdf-algorithms</b>] [<b>-mac-algorithms</b>] [<b>-random-instances</b>] [<b>-random-generators</b>] [<b>-cipher-algorithms</b>] [<b>-cipher-commands</b>] [<b>-encoders</b>] [<b>-decoders</b>] [<b>-key-managers</b>] [<b>-skey-managers</b>] [<b>-key-exchange-algorithms</b>] [<b>-kem-algorithms</b>] [<b>-tls-groups</b>] [<b>-all-tls-groups</b>] [<b>-tls1_2</b>] [<b>-tls1_3</b>] [<b>-signature-algorithms</b>] [<b>-tls-signature-algorithms</b>] [<b>-asymcipher-algorithms</b>] [<b>-public-key-algorithms</b>] [<b>-public-key-methods</b>] [<b>-store-loaders</b>] [<b>-providers</b>] [<b>-engines</b>] [<b>-disabled</b>] [<b>-objects</b>] [<b>-options</b> <i>command</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -100,6 +100,10 @@
 
 </dd>
 <dt id="Key-managers">Key managers</dt>
+<dd>
+
+</dd>
+<dt id="Symmetric-key-managers">Symmetric key managers</dt>
 <dd>
 
 </dd>
@@ -208,6 +212,12 @@
 <p>Display a list of key managers.</p>
 
 </dd>
+<dt id="skey-managers"><b>-skey-managers</b></dt>
+<dd>
+
+<p>Display a list of symmetric key managers.</p>
+
+</dd>
 <dt id="key-exchange-algorithms"><b>-key-exchange-algorithms</b></dt>
 <dd>
 
@@ -220,10 +230,40 @@
 <p>Display a list of key encapsulation algorithms.</p>
 
 </dd>
+<dt id="tls-groups"><b>-tls-groups</b></dt>
+<dd>
+
+<p>Display a list of the IANA names of all available (implemented) TLS groups. By default the listed groups are those compatible with TLS 1.3.</p>
+
+</dd>
+<dt id="all-tls-groups"><b>-all-tls-groups</b></dt>
+<dd>
+
+<p>Display a list of the names of all available (implemented) TLS groups, including any aliases. Some groups are known under multiple names, for example, <b>secp256r1</b> is also known as <b>P-256</b>. By default the listed groups are those compatible with TLS 1.3.</p>
+
+</dd>
+<dt id="tls1_2"><b>-tls1_2</b></dt>
+<dd>
+
+<p>When listing TLS groups, list those compatible with TLS 1.2</p>
+
+</dd>
+<dt id="tls1_3"><b>-tls1_3</b></dt>
+<dd>
+
+<p>When listing TLS groups, output those compatible with TLS 1.3. TLS 1.3 is the current default protocol version, but the default version is subject to change, so best to specify the version explicitly.</p>
+
+</dd>
 <dt id="signature-algorithms"><b>-signature-algorithms</b></dt>
 <dd>
 
 <p>Display a list of signature algorithms.</p>
+
+</dd>
+<dt id="tls-signature-algorithms"><b>-tls-signature-algorithms</b></dt>
+<dd>
+
+<p>Display the list of signature algorithms available for TLS handshakes made available by all currently active providers. The output format is colon delimited in a form directly usable in <a href="../man3/SSL_CONF_cmd.html">SSL_CONF_cmd(3)</a> specifying SignatureAlgorithms.</p>
 
 </dd>
 <dt id="asymcipher-algorithms"><b>-asymcipher-algorithms</b></dt>
@@ -280,6 +320,10 @@
 <dd>
 
 </dd>
+<dt id="provparam-name:-key-value"><b>-provparam</b> <i>[name:]key=value</i></dt>
+<dd>
+
+</dd>
 <dt id="propquery-propq"><b>-propquery</b> <i>propq</i></dt>
 <dd>
 
@@ -320,9 +364,11 @@
 
 <p>The <b>-engines</b>, <b>-digest-commands</b>, and <b>-cipher-commands</b> options were deprecated in OpenSSL 3.0.</p>
 
+<p>The <b>-skey-managers</b> option was added in OpenSSL 3.5.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

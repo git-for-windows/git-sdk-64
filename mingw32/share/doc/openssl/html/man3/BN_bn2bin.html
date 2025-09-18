@@ -17,6 +17,7 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -57,13 +58,13 @@ BIGNUM *BN_mpi2bn(unsigned char *s, int len, BIGNUM *ret);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>BN_bn2bin() converts the absolute value of <b>a</b> into big-endian form and stores it at <b>to</b>. <b>to</b> must point to BN_num_bytes(<b>a</b>) bytes of memory.</p>
+<p>BN_bn2bin() converts the absolute value of <b>a</b> into big-endian form and stores it at <b>to</b>. <b>to</b> must point to BN_num_bytes(<b>a</b>) bytes of memory. <b>a</b> and <b>to</b> <b>MUST NOT</b> be NULL.</p>
 
 <p>BN_bn2binpad() also converts the absolute value of <b>a</b> into big-endian form and stores it at <b>to</b>. <b>tolen</b> indicates the length of the output buffer <b>to</b>. The result is padded with zeros if necessary. If <b>tolen</b> is less than BN_num_bytes(<b>a</b>) an error is returned.</p>
 
 <p>BN_signed_bn2bin() converts the value of <b>a</b> into big-endian signed 2&#39;s complements form and stores it at <b>to</b>. <b>tolen</b> indicates the length of the output buffer <b>to</b>. The result is signed extended (padded with 0x00 for positive numbers or with 0xff for negative numbers) if necessary. If <b>tolen</b> is smaller than the necessary size (which may be <code>&lt;BN_num_bytes(<b>a</b>) + 1</code>&gt;), an error is returned.</p>
 
-<p>BN_bin2bn() converts the positive integer in big-endian form of length <b>len</b> at <b>s</b> into a <b>BIGNUM</b> and places it in <b>ret</b>. If <b>ret</b> is NULL, a new <b>BIGNUM</b> is created.</p>
+<p>BN_bin2bn() converts the positive integer in big-endian form of length <b>len</b> at <b>s</b> into a <b>BIGNUM</b> and places it in <b>ret</b>. If <b>ret</b> is NULL, a new <b>BIGNUM</b> is created. <b>s</b> <b>MUST NOT</b> be NULL.</p>
 
 <p>BN_signed_bin2bn() converts the integer in big-endian signed 2&#39;s complement form of length <b>len</b> at <b>s</b> into a <b>BIGNUM</b> and places it in <b>ret</b>. If <b>ret</b> is NULL, a new <b>BIGNUM</b> is created.</p>
 
@@ -101,9 +102,13 @@ BIGNUM *BN_mpi2bn(unsigned char *s, int len, BIGNUM *ret);</code></pre>
 
 <p><a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>, <a href="../man3/BN_zero.html">BN_zero(3)</a>, <a href="../man3/ASN1_INTEGER_to_BN.html">ASN1_INTEGER_to_BN(3)</a>, <a href="../man3/BN_num_bytes.html">BN_num_bytes(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>The functions BN_signed_bin2bn(), BN_signed_bn2bin(), BN_signed_lebin2bn(), BN_signed_bn2lebin(), BN_signed_native2bn(), BN_signed_bn2native() were added in OpenSSL 3.2.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

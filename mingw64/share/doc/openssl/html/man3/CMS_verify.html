@@ -44,7 +44,7 @@ STACK_OF(X509) *CMS_get0_signers(CMS_ContentInfo *cms);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>CMS_verify() is very similar to <a href="../man3/PKCS7_verify.html">PKCS7_verify(3)</a>. It verifies a <b>CMS SignedData</b> structure contained in a structure of type <b>CMS_ContentInfo</b>. <i>cms</i> points to the <b>CMS_ContentInfo</b> structure to verify. The optional <i>certs</i> parameter refers to a set of certificates in which to search for signing certificates. <i>cms</i> may contain extra untrusted CA certificates that may be used for chain building as well as CRLs that may be used for certificate validation. <i>store</i> may be NULL or point to the trusted certificate store to use for chain verification. <i>detached_data</i> refers to the signed data if the content is detached from <i>cms</i>. Otherwise <i>detached_data</i> should be NULL and the signed data must be in <i>cms</i>. The content is written to the BIO <i>out</i> unless it is NULL. <i>flags</i> is an optional set of flags, which can be used to modify the operation.</p>
+<p>CMS_verify() is very similar to <a href="../man3/PKCS7_verify.html">PKCS7_verify(3)</a>. It verifies a <b>CMS SignedData</b> structure contained in a structure of type <b>CMS_ContentInfo</b>. <i>cms</i> points to the <b>CMS_ContentInfo</b> structure to verify. The optional <i>certs</i> parameter refers to a set of certificates in which to search for signing certificates. It is also used as a source of untrusted intermediate CA certificates for chain building. <i>cms</i> may contain extra untrusted CA certificates that may be used for chain building as well as CRLs that may be used for certificate validation. <i>store</i> may be NULL or point to the trusted certificate store to use for chain verification. <i>detached_data</i> refers to the signed data if the content is detached from <i>cms</i>. Otherwise <i>detached_data</i> should be NULL and the signed data must be in <i>cms</i>. The content is written to the BIO <i>out</i> unless it is NULL. <i>flags</i> is an optional set of flags, which can be used to modify the operation.</p>
 
 <p>CMS_SignedData_verify() is like CMS_verify() except that it operates on <b>CMS SignedData</b> input in the <i>sd</i> argument, it has some additional parameters described next, and on success it returns the verified content as a memory BIO. The optional <i>extra</i> parameter may be used to provide untrusted CA certificates that may be helpful for chain building in certificate validation. This list of certificates must not contain duplicates. The optional <i>crls</i> parameter may be used to provide extra CRLs. Also the list of CRLs must not contain duplicates. The optional parameters library context <i>libctx</i> and property query <i>propq</i> are used when retrieving algorithms from providers.</p>
 
@@ -116,7 +116,7 @@ STACK_OF(X509) *CMS_get0_signers(CMS_ContentInfo *cms);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2008-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2008-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

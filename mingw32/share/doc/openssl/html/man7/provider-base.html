@@ -183,6 +183,10 @@ core_get_libctx                OSSL_FUNC_CORE_GET_LIBCTX
 core_new_error                 OSSL_FUNC_CORE_NEW_ERROR
 core_set_error_debug           OSSL_FUNC_CORE_SET_ERROR_DEBUG
 core_vset_error                OSSL_FUNC_CORE_VSET_ERROR
+core_set_error_mark            OSSL_FUNC_CORE_SET_ERROR_MARK
+core_clear_last_error_mark     OSSL_FUNC_CORE_CLEAR_LAST_ERROR_MARK
+core_pop_error_to_mark         OSSL_FUNC_CORE_POP_ERROR_TO_MARK
+core_count_to_mark             OSSL_FUNC_CORE_COUNT_TO_MARK
 core_obj_add_sigid             OSSL_FUNC_CORE_OBJ_ADD_SIGID
 core_obj_create                OSSL_FUNC_CORE_OBJ_CREATE
 CRYPTO_malloc                  OSSL_FUNC_CRYPTO_MALLOC
@@ -272,6 +276,38 @@ provider_self_test             OSSL_FUNC_PROVIDER_SELF_TEST</code></pre>
 <p>sets the <i>reason</i> for the error, along with any addition data. The <i>reason</i> is a number defined by the provider and used to index the reason strings table that&#39;s returned by provider_get_reason_strings(). The additional data is given as a format string <i>fmt</i> and a set of arguments <i>args</i>, which are treated in the same manner as with BIO_vsnprintf(). <i>file</i> and <i>line</i> may also be passed to indicate exactly where the error occurred or was reported.</p>
 
 <p>This corresponds to the OpenSSL function <a href="../man3/ERR_vset_error.html">ERR_vset_error(3)</a>.</p>
+
+</dd>
+<dt id="core_set_error_mark">core_set_error_mark()</dt>
+<dd>
+
+<p>sets a mark on the current topmost error record if there is one.</p>
+
+<p>This corresponds to the OpenSSL function <a href="../man3/ERR_set_mark.html">ERR_set_mark(3)</a>.</p>
+
+</dd>
+<dt id="core_clear_last_error_mark">core_clear_last_error_mark()</dt>
+<dd>
+
+<p>removes the last mark added if there is one.</p>
+
+<p>This corresponds to the OpenSSL function <a href="../man3/ERR_clear_last_mark.html">ERR_clear_last_mark(3)</a>.</p>
+
+</dd>
+<dt id="core_pop_error_to_mark">core_pop_error_to_mark()</dt>
+<dd>
+
+<p>pops the top of the error stack until a mark is found. The mark is then removed. If there is no mark, the whole stack is removed.</p>
+
+<p>This corresponds to the OpenSSL function <a href="../man3/ERR_pop_to_mark.html">ERR_pop_to_mark(3)</a>.</p>
+
+</dd>
+<dt id="core_count_to_mark">core_count_to_mark()</dt>
+<dd>
+
+<p>returns the number of entries on the error stack above the most recently marked entry, not including that entry. If there is no mark in the error stack, the number of entries in the error stack is returned.</p>
+
+<p>This corresponds to the OpenSSL function <a href="../man3/ERR_count_to_mark.html">ERR_count_to_mark(3)</a>.</p>
 
 </dd>
 </dl>
@@ -613,7 +649,15 @@ data3 = foo,bar</code></pre>
 <dt id="tls-max-tls-OSSL_CAPABILITY_TLS_SIGALG_MAX_TLS-integer">&quot;tls-max-tls&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_MAX_TLS</b>) &lt;integer&gt;</dt>
 <dd>
 
-<p>These parameters can be used to describe the minimum and maximum TLS versions supported by the signature algorithm. The values equate to the on-the-wire encoding of the various TLS versions. For example TLSv1.3 is 0x0304 (772 decimal), and TLSv1.2 is 0x0303 (771 decimal). A 0 indicates that there is no defined minimum or maximum. A -1 indicates that the signature algorithm should not be used in that protocol. Presently values representing anything other than TLS1.3 mean that the complete algorithm is ignored.</p>
+</dd>
+<dt id="tls-min-dtls-OSSL_CAPABILITY_TLS_SIGALG_MIN_DTLS-integer">&quot;tls-min-dtls&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_MIN_DTLS</b>) &lt;integer&gt;</dt>
+<dd>
+
+</dd>
+<dt id="tls-max-dtls-OSSL_CAPABILITY_TLS_SIGALG_MAX_DTLS-integer">&quot;tls-max-dtls&quot; (<b>OSSL_CAPABILITY_TLS_SIGALG_MAX_DTLS</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>These parameters can be used to describe the minimum and maximum TLS and DTLS versions supported by the signature algorithm. The values equate to the on-the-wire encoding of the various TLS versions. For example TLSv1.3 is 0x0304 (772 decimal), and TLSv1.2 is 0x0303 (771 decimal). A 0 indicates that there is no defined minimum or maximum. A -1 in either the min or max field indicates that the signature algorithm should not be used in that protocol. Presently, provider signature algorithms are used only with TLS 1.3, if that&#39;s enclosed in the specified range.</p>
 
 </dd>
 </dl>
@@ -816,9 +860,11 @@ static ossl_inline OSSL_FUNC_bar_final(const OSSL_DISPATCH *opf)
 
 <p>The concept of providers and everything surrounding them was introduced in OpenSSL 3.0.</p>
 
+<p>Definitions for <b>OSSL_CAPABILITY_TLS_SIGALG_MIN_DTLS</b> and <b>OSSL_CAPABILITY_TLS_SIGALG_MAX_DTLS</b> were added in OpenSSL 3.5.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

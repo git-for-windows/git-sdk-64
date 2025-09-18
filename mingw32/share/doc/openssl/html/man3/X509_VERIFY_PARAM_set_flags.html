@@ -28,7 +28,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>X509_VERIFY_PARAM_set_flags, X509_VERIFY_PARAM_clear_flags, X509_VERIFY_PARAM_get_flags, X509_VERIFY_PARAM_set_purpose, X509_VERIFY_PARAM_get_inh_flags, X509_VERIFY_PARAM_set_inh_flags, X509_VERIFY_PARAM_set_trust, X509_VERIFY_PARAM_set_depth, X509_VERIFY_PARAM_get_depth, X509_VERIFY_PARAM_set_auth_level, X509_VERIFY_PARAM_get_auth_level, X509_VERIFY_PARAM_set_time, X509_VERIFY_PARAM_get_time, X509_VERIFY_PARAM_add0_policy, X509_VERIFY_PARAM_set1_policies, X509_VERIFY_PARAM_get0_host, X509_VERIFY_PARAM_set1_host, X509_VERIFY_PARAM_add1_host, X509_VERIFY_PARAM_set_hostflags, X509_VERIFY_PARAM_get_hostflags, X509_VERIFY_PARAM_get0_peername, X509_VERIFY_PARAM_get0_email, X509_VERIFY_PARAM_set1_email, X509_VERIFY_PARAM_set1_ip, X509_VERIFY_PARAM_get1_ip_asc, X509_VERIFY_PARAM_set1_ip_asc - X509 verification parameters</p>
+<p>X509_VERIFY_PARAM_set_flags, X509_VERIFY_PARAM_clear_flags, X509_VERIFY_PARAM_get_flags, X509_VERIFY_PARAM_set_purpose, X509_VERIFY_PARAM_get_purpose, X509_VERIFY_PARAM_get_inh_flags, X509_VERIFY_PARAM_set_inh_flags, X509_VERIFY_PARAM_set_trust, X509_VERIFY_PARAM_set_depth, X509_VERIFY_PARAM_get_depth, X509_VERIFY_PARAM_set_auth_level, X509_VERIFY_PARAM_get_auth_level, X509_VERIFY_PARAM_set_time, X509_VERIFY_PARAM_get_time, X509_VERIFY_PARAM_add0_policy, X509_VERIFY_PARAM_set1_policies, X509_VERIFY_PARAM_get0_host, X509_VERIFY_PARAM_set1_host, X509_VERIFY_PARAM_add1_host, X509_VERIFY_PARAM_set_hostflags, X509_VERIFY_PARAM_get_hostflags, X509_VERIFY_PARAM_get0_peername, X509_VERIFY_PARAM_get0_email, X509_VERIFY_PARAM_set1_email, X509_VERIFY_PARAM_set1_ip, X509_VERIFY_PARAM_get1_ip_asc, X509_VERIFY_PARAM_set1_ip_asc - X509 verification parameters</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -45,6 +45,7 @@ int X509_VERIFY_PARAM_set_inh_flags(X509_VERIFY_PARAM *param,
 uint32_t X509_VERIFY_PARAM_get_inh_flags(const X509_VERIFY_PARAM *param);
 
 int X509_VERIFY_PARAM_set_purpose(X509_VERIFY_PARAM *param, int purpose);
+int X509_VERIFY_PARAM_get_purpose(X509_VERIFY_PARAM *param);
 int X509_VERIFY_PARAM_set_trust(X509_VERIFY_PARAM *param, int trust);
 
 void X509_VERIFY_PARAM_set_time(X509_VERIFY_PARAM *param, time_t t);
@@ -91,7 +92,9 @@ int X509_VERIFY_PARAM_set1_ip_asc(X509_VERIFY_PARAM *param, const char *ipasc);<
 
 <p>X509_VERIFY_PARAM_clear_flags() clears the flags <b>flags</b> in <b>param</b>.</p>
 
-<p>X509_VERIFY_PARAM_set_purpose() sets the verification purpose in <b>param</b> to <b>purpose</b>. This determines the acceptable purpose of the certificate chain, for example <b>X509_PURPOSE_SSL_CLIENT</b>. The purpose requirement is cleared if <b>purpose</b> is 0.</p>
+<p>X509_VERIFY_PARAM_set_purpose() sets the verification purpose in <b>param</b> to <b>purpose</b>. This determines the acceptable purpose of the certificate chain, for example <b>X509_PURPOSE_SSL_CLIENT</b>. The purpose requirement is cleared if <b>purpose</b> is X509_PURPOSE_DEFAULT_ANY.</p>
+
+<p>X509_VERIFY_PARAM_get_purpose() returns the purpose in <b>param</b>.</p>
 
 <p>X509_VERIFY_PARAM_set_trust() sets the trust setting in <b>param</b> to <b>trust</b>.</p>
 
@@ -149,13 +152,15 @@ int X509_VERIFY_PARAM_set1_ip_asc(X509_VERIFY_PARAM *param, const char *ipasc);<
 
 <p>X509_VERIFY_PARAM_get_auth_level() returns the current authentication security level.</p>
 
+<p>X509_VERIFY_PARAM_get_purpose() returns the current purpose, which may be <b>X509_PURPOSE_DEFAULT_ANY</b> if unset.</p>
+
 <h1 id="VERIFICATION-FLAGS">VERIFICATION FLAGS</h1>
 
 <p>The verification flags consists of zero or more of the following flags ored together.</p>
 
 <p><b>X509_V_FLAG_CRL_CHECK</b> enables CRL checking for the certificate chain leaf certificate. An error occurs if a suitable CRL cannot be found.</p>
 
-<p><b>X509_V_FLAG_CRL_CHECK_ALL</b> enables CRL checking for the entire certificate chain.</p>
+<p><b>X509_V_FLAG_CRL_CHECK_ALL</b> expands CRL checking to the entire certificate chain if <b>X509_V_FLAG_CRL_CHECK</b> has also been enabled, and is otherwise ignored.</p>
 
 <p><b>X509_V_FLAG_IGNORE_CRITICAL</b> disables critical extension checking. By default any unhandled critical extensions in certificates or (if checked) CRLs result in a fatal error. If this flag is set unhandled critical extensions are ignored. <b>WARNING</b> setting this option for anything other than debugging purposes can be a security risk. Finer control over which extensions are supported can be performed in the verification callback.</p>
 
@@ -232,9 +237,11 @@ X509_VERIFY_PARAM_free(param);</code></pre>
 
 <p>The function X509_VERIFY_PARAM_add0_policy() was historically documented as enabling policy checking however the implementation has never done this. The documentation was changed to align with the implementation.</p>
 
+<p>The X509_VERIFY_PARAM_get_purpose() function was added in OpenSSL 3.5.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2009-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2009-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

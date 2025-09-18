@@ -66,7 +66,7 @@ PKCS7 *PKCS7_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 <p>Several functions including SMIME_write_PKCS7(), i2d_PKCS7_bio_stream(), PEM_write_bio_PKCS7_stream() finalize the structure. Alternatively finalization can be performed by obtaining the streaming ASN1 <b>BIO</b> directly using BIO_new_PKCS7().</p>
 
-<p>If a signer is specified it will use the default digest for the signing algorithm. This is <b>SHA1</b> for both RSA and DSA keys.</p>
+<p>If a signer is specified it will use the default digest for the signing algorithm. This is <b>SHA256</b> for both RSA and DSA keys.</p>
 
 <p>The <i>certs</i>, <i>signcert</i> and <i>pkey</i> parameters can all be NULL if the <b>PKCS7_PARTIAL</b> flag is set. One or more signers can be added using the function PKCS7_sign_add_signer(). PKCS7_final() must also be called to finalize the structure if streaming is not enabled. Alternative signing digests can also be specified using this method.</p>
 
@@ -98,7 +98,7 @@ PKCS7 *PKCS7_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

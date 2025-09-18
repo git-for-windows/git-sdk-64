@@ -49,7 +49,7 @@
 
 <p>The general description of these parameters can be found in <a href="../man3/EVP_MAC.html">&quot;PARAMETERS&quot; in EVP_MAC(3)</a>.</p>
 
-<p>The following parameter can be set with EVP_MAC_CTX_set_params():</p>
+<p>The following parameters can be set with EVP_MAC_CTX_set_params():</p>
 
 <dl>
 
@@ -74,22 +74,28 @@
 <dt id="digest-noinit-OSSL_MAC_PARAM_DIGEST_NOINIT-integer">&quot;digest-noinit&quot; (<b>OSSL_MAC_PARAM_DIGEST_NOINIT</b>) &lt;integer&gt;</dt>
 <dd>
 
-<p>A flag to set the MAC digest to not initialise the implementation specific data. The value 0 or 1 is expected.</p>
+<p>A flag to set the MAC digest to not initialise the implementation specific data. The value 0 or 1 is expected. This option is deprecated and will be removed in a future release. It may be set but is currently ignored</p>
 
 </dd>
 <dt id="digest-oneshot-OSSL_MAC_PARAM_DIGEST_ONESHOT-integer">&quot;digest-oneshot&quot; (<b>OSSL_MAC_PARAM_DIGEST_ONESHOT</b>) &lt;integer&gt;</dt>
 <dd>
 
-<p>A flag to set the MAC digest to be a one-shot operation. The value 0 or 1 is expected.</p>
+<p>A flag to set the MAC digest to be a one-shot operation. The value 0 or 1 is expected. This option is deprecated and will be removed in a future release. It may be set but is currently ignored.</p>
 
 </dd>
 <dt id="tls-data-size-OSSL_MAC_PARAM_TLS_DATA_SIZE-unsigned-integer">&quot;tls-data-size&quot; (<b>OSSL_MAC_PARAM_TLS_DATA_SIZE</b>) &lt;unsigned integer&gt;</dt>
 <dd>
 
 </dd>
+<dt id="key-check-OSSL_MAC_PARAM_FIPS_KEY_CHECK-integer">&quot;key-check&quot; (<b>OSSL_MAC_PARAM_FIPS_KEY_CHECK</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>See <a href="../man7/provider-mac.html">&quot;Mac Parameters&quot; in provider-mac(7)</a>.</p>
+
+</dd>
 </dl>
 
-<p>The following parameter can be retrieved with EVP_MAC_CTX_get_params():</p>
+<p>The following parameters can be retrieved with EVP_MAC_CTX_get_params():</p>
 
 <dl>
 
@@ -99,14 +105,16 @@
 <p>The &quot;size&quot; parameter can also be retrieved with EVP_MAC_CTX_get_mac_size(). The length of the &quot;size&quot; parameter is equal to that of an <b>unsigned int</b>.</p>
 
 </dd>
-</dl>
-
-<dl>
-
 <dt id="block-size-OSSL_MAC_PARAM_BLOCK_SIZE-unsigned-integer">&quot;block-size&quot; (<b>OSSL_MAC_PARAM_BLOCK_SIZE</b>) &lt;unsigned integer&gt;</dt>
 <dd>
 
 <p>Gets the MAC block size. The &quot;block-size&quot; parameter can also be retrieved with EVP_MAC_CTX_get_block_size().</p>
+
+</dd>
+<dt id="fips-indicator-OSSL_KDF_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_KDF_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>See <a href="../man7/provider-mac.html">&quot;Mac Parameters&quot; in provider-mac(7)</a>.</p>
 
 </dd>
 </dl>
@@ -117,7 +125,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2018-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2018-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

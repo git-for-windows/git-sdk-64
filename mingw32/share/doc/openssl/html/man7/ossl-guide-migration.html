@@ -351,7 +351,7 @@
 
 <h4 id="Key-validation-updates">Key validation updates</h4>
 
-<p><a href="../man3/EVP_PKEY_public_check.html">EVP_PKEY_public_check(3)</a> and <a href="../man3/EVP_PKEY_param_check.html">EVP_PKEY_param_check(3)</a> now work for more key types. This includes RSA, DSA, ED25519, X25519, ED448 and X448. Previously (in 1.1.1) they would return -2. For key types that do not have parameters then <a href="../man3/EVP_PKEY_param_check.html">EVP_PKEY_param_check(3)</a> will always return 1.</p>
+<p><a href="../man3/EVP_PKEY_public_check.html">EVP_PKEY_public_check(3)</a> and <a href="../man3/EVP_PKEY_param_check.html">EVP_PKEY_param_check(3)</a> now work for more key types. This includes RSA, DSA, ED25519, X25519, ED448 and X448. Previously (in 1.1.1) they would return -2. For key types that do not have parameters <a href="../man3/EVP_PKEY_param_check.html">EVP_PKEY_param_check(3)</a> will always return 1.</p>
 
 <h3 id="Other-notable-deprecations-and-changes">Other notable deprecations and changes</h3>
 
@@ -391,7 +391,7 @@
 
 <p>EC EVP_PKEYs with the SM2 curve have been reworked to automatically become EVP_PKEY_SM2 rather than EVP_PKEY_EC.</p>
 
-<p>Unlike in previous OpenSSL versions, this means that applications cannot call <code>EVP_PKEY_set_alias_type(pkey, EVP_PKEY_SM2)</code> to get SM2 computations.</p>
+<p>Unlike in previous OpenSSL versions, this means that applications cannot call <b>EVP_PKEY_set_alias_type(pkey, EVP_PKEY_SM2)</b> to get SM2 computations.</p>
 
 <p>Parameter and key generation is also reworked to make it possible to generate EVP_PKEY_SM2 parameters and keys. Applications must now generate SM2 keys directly and must not create an EVP_PKEY_EC key first. It is no longer possible to import an SM2 key with domain parameters other than the SM2 elliptic curve ones.</p>
 
@@ -508,12 +508,12 @@ EVP_MD_CTX_free(md_ctx);</code></pre>
 </li>
 <li><p>Support for TLSv1.3 has been added.</p>
 
-<p>This has a number of implications for SSL/TLS applications. See the <a href="https://wiki.openssl.org/index.php/TLS1.3">TLS1.3 page</a> for further details.</p>
+<p>This has a number of implications for SSL/TLS applications. See the <a href="https://github.com/openssl/openssl/wiki/TLS1.3">TLS1.3 page</a> for further details.</p>
 
 </li>
 </ol>
 
-<p>More details about the breaking changes between OpenSSL versions 1.0.2 and 1.1.0 can be found on the <a href="https://wiki.openssl.org/index.php/OpenSSL_1.1.0_Changes">OpenSSL 1.1.0 Changes page</a>.</p>
+<p>More details about the breaking changes between OpenSSL versions 1.0.2 and 1.1.0 can be found on the <a href="https://github.com/openssl/openssl/wiki/OpenSSL_1.1.0_Changes">OpenSSL 1.1.0 Changes page</a>.</p>
 
 <h3 id="Upgrading-from-the-OpenSSL-2.0-FIPS-Object-Module">Upgrading from the OpenSSL 2.0 FIPS Object Module</h3>
 
@@ -812,7 +812,7 @@ EVP_MD_CTX_free(md_ctx);</code></pre>
 
 <h4 id="Deprecated-low-level-key-parameter-getters">Deprecated low-level key parameter getters</h4>
 
-<p>Functions that access low-level objects directly such as <a href="../man3/RSA_get0_n.html">RSA_get0_n(3)</a> are now deprecated. Applications should use one of <a href="../man3/EVP_PKEY_get_bn_param.html">EVP_PKEY_get_bn_param(3)</a>, <a href="../man3/EVP_PKEY_get_int_param.html">EVP_PKEY_get_int_param(3)</a>, l&lt;EVP_PKEY_get_size_t_param(3)&gt;, <a href="../man3/EVP_PKEY_get_utf8_string_param.html">EVP_PKEY_get_utf8_string_param(3)</a>, <a href="../man3/EVP_PKEY_get_octet_string_param.html">EVP_PKEY_get_octet_string_param(3)</a> or <a href="../man3/EVP_PKEY_get_params.html">EVP_PKEY_get_params(3)</a> to access fields from an EVP_PKEY. Gettable parameters are listed in <a href="../man7/EVP_PKEY-RSA.html">&quot;Common RSA parameters&quot; in EVP_PKEY-RSA(7)</a>, <a href="../man7/EVP_PKEY-DH.html">&quot;DH parameters&quot; in EVP_PKEY-DH(7)</a>, <a href="../man7/EVP_PKEY-DSA.html">&quot;DSA parameters&quot; in EVP_PKEY-DSA(7)</a>, <a href="../man7/EVP_PKEY-FFC.html">&quot;FFC parameters&quot; in EVP_PKEY-FFC(7)</a>, <a href="../man7/EVP_PKEY-EC.html">&quot;Common EC parameters&quot; in EVP_PKEY-EC(7)</a> and <a href="../man7/EVP_PKEY-X25519.html">&quot;Common X25519, X448, ED25519 and ED448 parameters&quot; in EVP_PKEY-X25519(7)</a>. Applications may also use <a href="../man3/EVP_PKEY_todata.html">EVP_PKEY_todata(3)</a> to return all fields.</p>
+<p>Functions that access low-level objects directly such as <a href="../man3/RSA_get0_n.html">RSA_get0_n(3)</a> are now deprecated. Applications should use one of: <a href="../man3/EVP_PKEY_get_bn_param.html">EVP_PKEY_get_bn_param(3)</a>, <a href="../man3/EVP_PKEY_get_int_param.html">EVP_PKEY_get_int_param(3)</a>, <a href="../man3/EVP_PKEY_get_size_t_param.html">EVP_PKEY_get_size_t_param(3)</a>, <a href="../man3/EVP_PKEY_get_utf8_string_param.html">EVP_PKEY_get_utf8_string_param(3)</a>, <a href="../man3/EVP_PKEY_get_octet_string_param.html">EVP_PKEY_get_octet_string_param(3)</a>, or <a href="../man3/EVP_PKEY_get_params.html">EVP_PKEY_get_params(3)</a>, to access fields from an EVP_PKEY. Gettable parameters are listed in: <a href="../man7/EVP_PKEY-RSA.html">&quot;Common RSA parameters&quot; in EVP_PKEY-RSA(7)</a>, <a href="../man7/EVP_PKEY-EC.html">&quot;Common EC parameters&quot; in EVP_PKEY-EC(7)</a>, <a href="../man7/EVP_PKEY-DSA.html">&quot;DSA parameters&quot; in EVP_PKEY-DSA(7)</a>, <a href="../man7/EVP_PKEY-DH.html">&quot;DH parameters&quot; in EVP_PKEY-DH(7)</a>, <a href="../man7/EVP_PKEY-FFC.html">&quot;FFC parameters&quot; in EVP_PKEY-FFC(7)</a>, <a href="../man7/EVP_PKEY-X25519.html">&quot;Common X25519, X448, ED25519 and ED448 parameters&quot; in EVP_PKEY-X25519(7)</a>, <a href="../man7/EVP_PKEY-ML-DSA.html">&quot;Common parameters&quot; in EVP_PKEY-ML-DSA(7)</a>, and <a href="../man7/EVP_PKEY-ML-KEM.html">&quot;Common parameters&quot; in EVP_PKEY-ML-KEM(7)</a>. Applications may also use <a href="../man3/EVP_PKEY_todata.html">EVP_PKEY_todata(3)</a> to return all fields.</p>
 
 <h4 id="Deprecated-low-level-key-parameter-setters">Deprecated low-level key parameter setters</h4>
 
@@ -830,7 +830,7 @@ EVP_MD_CTX_free(md_ctx);</code></pre>
 
 <h4 id="Deprecated-low-level-digest-functions">Deprecated low-level digest functions</h4>
 
-<p>Use of low-level digest functions such as <a href="../man3/SHA1_Init.html">SHA1_Init(3)</a> have been informally discouraged from use for a long time. Applications should instead use the the high level EVP APIs <a href="../man3/EVP_DigestInit_ex.html">EVP_DigestInit_ex(3)</a>, <a href="../man3/EVP_DigestUpdate.html">EVP_DigestUpdate(3)</a> and <a href="../man3/EVP_DigestFinal_ex.html">EVP_DigestFinal_ex(3)</a>, or the quick one-shot <a href="../man3/EVP_Q_digest.html">EVP_Q_digest(3)</a>.</p>
+<p>Use of low-level digest functions such as <a href="../man3/SHA1_Init.html">SHA1_Init(3)</a> have been informally discouraged from use for a long time. Applications should instead use the high level EVP APIs <a href="../man3/EVP_DigestInit_ex.html">EVP_DigestInit_ex(3)</a>, <a href="../man3/EVP_DigestUpdate.html">EVP_DigestUpdate(3)</a> and <a href="../man3/EVP_DigestFinal_ex.html">EVP_DigestFinal_ex(3)</a>, or the quick one-shot <a href="../man3/EVP_Q_digest.html">EVP_Q_digest(3)</a>.</p>
 
 <p>Note that the functions <a href="../man3/SHA1.html">SHA1(3)</a>, <a href="../man3/SHA224.html">SHA224(3)</a>, <a href="../man3/SHA256.html">SHA256(3)</a>, <a href="../man3/SHA384.html">SHA384(3)</a> and <a href="../man3/SHA512.html">SHA512(3)</a> have changed to macros that use <a href="../man3/EVP_Q_digest.html">EVP_Q_digest(3)</a>.</p>
 
@@ -1732,7 +1732,7 @@ EVP_MD_CTX_free(md_ctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

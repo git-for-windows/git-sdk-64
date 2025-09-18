@@ -51,6 +51,7 @@ void *OSSL_FUNC_mac_dupctx(void *src);
 /* Encryption/decryption */
 int OSSL_FUNC_mac_init(void *mctx, unsigned char *key, size_t keylen,
                        const OSSL_PARAM params[]);
+int OSSL_FUNC_mac_init_skey(void *mctx, const void *key, const OSSL_PARAM params[]);
 int OSSL_FUNC_mac_update(void *mctx, const unsigned char *in, size_t inl);
 int OSSL_FUNC_mac_final(void *mctx, unsigned char *out, size_t *outl, size_t outsize);
 
@@ -85,6 +86,7 @@ OSSL_FUNC_mac_freectx              OSSL_FUNC_MAC_FREECTX
 OSSL_FUNC_mac_dupctx               OSSL_FUNC_MAC_DUPCTX
 
 OSSL_FUNC_mac_init                 OSSL_FUNC_MAC_INIT
+OSSL_FUNC_mac_init_skey            OSSL_FUNC_MAC_INIT_SKEY
 OSSL_FUNC_mac_update               OSSL_FUNC_MAC_UPDATE
 OSSL_FUNC_mac_final                OSSL_FUNC_MAC_FINAL
 
@@ -96,7 +98,7 @@ OSSL_FUNC_mac_gettable_params      OSSL_FUNC_MAC_GETTABLE_PARAMS
 OSSL_FUNC_mac_gettable_ctx_params  OSSL_FUNC_MAC_GETTABLE_CTX_PARAMS
 OSSL_FUNC_mac_settable_ctx_params  OSSL_FUNC_MAC_SETTABLE_CTX_PARAMS</code></pre>
 
-<p>A mac algorithm implementation may not implement all of these functions. In order to be a consistent set of functions, at least the following functions must be implemented: OSSL_FUNC_mac_newctx(), OSSL_FUNC_mac_freectx(), OSSL_FUNC_mac_init(), OSSL_FUNC_mac_update(), OSSL_FUNC_mac_final(). All other functions are optional.</p>
+<p>A mac algorithm implementation may not implement all of these functions. In order to be a consistent set of functions, at least the following functions must be implemented: OSSL_FUNC_mac_newctx(), OSSL_FUNC_mac_freectx(), at least one of OSSL_FUNC_mac_init() or OSSL_FUNC_mac_init_skey(), OSSL_FUNC_mac_update(), OSSL_FUNC_mac_final(). All other functions are optional.</p>
 
 <h2 id="Context-Management-Functions">Context Management Functions</h2>
 
@@ -109,6 +111,8 @@ OSSL_FUNC_mac_settable_ctx_params  OSSL_FUNC_MAC_SETTABLE_CTX_PARAMS</code></pre
 <h2 id="Encryption-Decryption-Functions">Encryption/Decryption Functions</h2>
 
 <p>OSSL_FUNC_mac_init() initialises a mac operation given a newly created provider side mac context in the <i>mctx</i> parameter. The <i>params</i> are set before setting the MAC <i>key</i> of <i>keylen</i> bytes.</p>
+
+<p>OSSL_FUNC_mac_init_skey() is similar but uses an opaque provider-specific object to initialize the MAC context.</p>
 
 <p>OSSL_FUNC_mac_update() is called to supply data for MAC computation of a previously initialised mac operation. The <i>mctx</i> parameter contains a pointer to a previously initialised provider side context. OSSL_FUNC_mac_update() may be called multiple times for a single mac operation.</p>
 
@@ -172,6 +176,30 @@ OSSL_FUNC_mac_settable_ctx_params  OSSL_FUNC_MAC_SETTABLE_CTX_PARAMS</code></pre
 </dd>
 </dl>
 
+<p>The OpenSSL FIPS provider may support the following parameters:</p>
+
+<dl>
+
+<dt id="fips-indicator-OSSL_MAC_PARAM_FIPS_APPROVED_INDICATOR-int">&quot;fips-indicator&quot; (<b>OSSL_MAC_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;int&gt;</dt>
+<dd>
+
+<p>A getter that returns 1 if the operation is FIPS approved, or 0 otherwise. This may be used after calling the final function. It may return 0 if either &quot;no-short-mac&quot; or &quot;key-check&quot; are set to 0.</p>
+
+</dd>
+<dt id="no-short-mac-OSSL_MAC_PARAM_FIPS_NO_SHORT_MAC-integer">&quot;no-short-mac&quot; (<b>OSSL_MAC_PARAM_FIPS_NO_SHORT_MAC</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>If required this parameter should be set early via an init function. The default value of 1 causes an error when too short MAC output is asked for. Setting this to 0 will ignore the error and set the approved &quot;fips-indicator&quot; to 0. This option breaks FIPS compliance if it causes the approved &quot;fips-indicator&quot; to return 0.</p>
+
+</dd>
+<dt id="key-check-OSSL_MAC_PARAM_FIPS_KEY_CHECK-integer">&quot;key-check&quot; (<b>OSSL_MAC_PARAM_FIPS_KEY_CHECK</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>If required this parameter should be set before OSSL_FUNC_mac_init. The default value of 1 causes an error when small key sizes are asked for. Setting this to 0 will ignore the error and set the approved &quot;fips-indicator&quot; to 0. This option breaks FIPS compliance if it causes the approved &quot;fips-indicator&quot; to return 0.</p>
+
+</dd>
+</dl>
+
 <h1 id="NOTES">NOTES</h1>
 
 <p>The MAC life-cycle is described in <a href="../man7/life_cycle-rand.html">life_cycle-rand(7)</a>. Providers should ensure that the various transitions listed there are supported. At some point the EVP layer will begin enforcing the listed transitions.</p>
@@ -180,7 +208,7 @@ OSSL_FUNC_mac_settable_ctx_params  OSSL_FUNC_MAC_SETTABLE_CTX_PARAMS</code></pre
 
 <p>OSSL_FUNC_mac_newctx() and OSSL_FUNC_mac_dupctx() should return the newly created provider side mac context, or NULL on failure.</p>
 
-<p>OSSL_FUNC_mac_init(), OSSL_FUNC_mac_update(), OSSL_FUNC_mac_final(), OSSL_FUNC_mac_get_params(), OSSL_FUNC_mac_get_ctx_params() and OSSL_FUNC_mac_set_ctx_params() should return 1 for success or 0 on error.</p>
+<p>OSSL_FUNC_mac_init(), OSSL_FUNC_mac_init_skey(), OSSL_FUNC_mac_update(), OSSL_FUNC_mac_final(), OSSL_FUNC_mac_get_params(), OSSL_FUNC_mac_get_ctx_params() and OSSL_FUNC_mac_set_ctx_params() should return 1 for success or 0 on error.</p>
 
 <p>OSSL_FUNC_mac_gettable_params(), OSSL_FUNC_mac_gettable_ctx_params() and OSSL_FUNC_mac_settable_ctx_params() should return a constant <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a> array, or NULL if none is offered.</p>
 
@@ -190,11 +218,13 @@ OSSL_FUNC_mac_settable_ctx_params  OSSL_FUNC_MAC_SETTABLE_CTX_PARAMS</code></pre
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The provider MAC interface was introduced in OpenSSL 3.0.</p>
+<p>The provider MAC interface was introduced in OpenSSL 3.0. The parameters &quot;no-short-mac&quot; and &quot;fips-indicator&quot; were added in OpenSSL 3.4.</p>
+
+<p>The function OSSL_FUNC_mac_init_skey() was introduced in OpenSSL 3.5.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

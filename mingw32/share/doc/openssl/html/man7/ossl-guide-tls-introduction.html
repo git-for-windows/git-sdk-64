@@ -57,7 +57,7 @@
 
 <h1 id="CERTIFICATES">CERTIFICATES</h1>
 
-<p>In order for a client to establish a connection to a server it must authenticate the identify of that server, i.e. it needs to confirm that the server is really the server that it claims to be and not some imposter. In order to do this the server will send to the client a digital certificate (also commonly referred to as an X.509 certificate). The certificate contains various information about the server including its full DNS hostname. Also within the certificate is the server&#39;s public key. The server operator will have a private key which is linked to the public key and must not be published.</p>
+<p>In order for a client to establish a connection to a server it must authenticate the identity of that server, i.e. it needs to confirm that the server is really the server that it claims to be and not some imposter. In order to do this the server will send to the client a digital certificate (also commonly referred to as an X.509 certificate). The certificate contains various information about the server including its full DNS hostname. Also within the certificate is the server&#39;s public key. The server operator will have a private key which is linked to the public key and must not be published.</p>
 
 <p>Along with the certificate the server will also send to the client proof that it knows the private key associated with the public key in the certificate. It does this by digitally signing a message to the client using that private key. The client can verify the signature using the public key from the certificate. If the signature verifies successfully then the client knows that the server is in possession of the correct private key.</p>
 
@@ -119,7 +119,7 @@ Verification error: unable to get local issuer certificate</code></pre>
 
 <p>Each <b>SSL</b> object is also associated with two <b>BIO</b> objects. A <b>BIO</b> object is used for sending or receiving data from the underlying transport layer. For example you might create a <b>BIO</b> to represent a TCP socket. The <b>SSL</b> object uses one <b>BIO</b> for reading data and one <b>BIO</b> for writing data. In most cases you would use the same <b>BIO</b> for each direction but there could be some circumstances where you want them to be different.</p>
 
-<p>It is up to the application programmer to create the <b>BIO</b> objects that are needed and supply them to the <b>SSL</b> object. See <a href="../man7/ossl-guide-tls-client-block.html">ossl-guide-tls-client-block(7)</a> for further information.</p>
+<p>It is up to the application programmer to create the <b>BIO</b> objects that are needed and supply them to the <b>SSL</b> object. See <a href="../man7/ossl-guide-tls-client-block.html">ossl-guide-tls-client-block(7)</a> and <a href="../man7/ossl-guide-tls-server-block.html">ossl-guide-tls-server-block(7)</a> for usage examples.</p>
 
 <p>Finally, an endpoint can establish a &quot;session&quot; with its peer. The session holds various TLS parameters about the connection between the client and the server. The session details can then be reused in a subsequent connection attempt to speed up the process of connecting. This is known as &quot;resumption&quot;. Sessions are represented in OpenSSL by the <b>SSL_SESSION</b> object. In TLSv1.2 there is always exactly one session per connection. In TLSv1.3 there can be any number per connection including none.</p>
 
@@ -143,15 +143,15 @@ Verification error: unable to get local issuer certificate</code></pre>
 
 <h1 id="FURTHER-READING">FURTHER READING</h1>
 
-<p>See <a href="../man7/ossl-guide-tls-client-block.html">ossl-guide-tls-client-block(7)</a> to see an example of applying these concepts in order to write a simple TLS client based on a blocking socket. See <a href="../man7/ossl-guide-quic-introduction.html">ossl-guide-quic-introduction(7)</a> for an introduction to QUIC in OpenSSL.</p>
+<p>See <a href="../man7/ossl-guide-tls-client-block.html">ossl-guide-tls-client-block(7)</a> for an example of how to apply these concepts in order to write a simple TLS client based on a blocking socket. See <a href="../man7/ossl-guide-tls-server-block.html">ossl-guide-tls-server-block(7)</a> for an example of how to apply these concepts in order to write a simple TLS server handling one client at a time over a blocking socket. See <a href="../man7/ossl-guide-quic-introduction.html">ossl-guide-quic-introduction(7)</a> for an introduction to QUIC in OpenSSL.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/ossl-guide-introduction.html">ossl-guide-introduction(7)</a>, <a href="../man7/ossl-guide-libraries-introduction.html">ossl-guide-libraries-introduction(7)</a>, <a href="../man7/ossl-guide-libssl-introduction.html">ossl-guide-libssl-introduction(7)</a>, <a href="../man7/ossl-guide-tls-client-block.html">ossl-guide-tls-client-block(7)</a>, <a href="../man7/ossl-guide-quic-introduction.html">ossl-guide-quic-introduction(7)</a></p>
+<p><a href="../man7/ossl-guide-introduction.html">ossl-guide-introduction(7)</a>, <a href="../man7/ossl-guide-libraries-introduction.html">ossl-guide-libraries-introduction(7)</a>, <a href="../man7/ossl-guide-libssl-introduction.html">ossl-guide-libssl-introduction(7)</a>, <a href="../man7/ossl-guide-tls-client-block.html">ossl-guide-tls-client-block(7)</a>, <a href="../man7/ossl-guide-tls-server-block.html">ossl-guide-tls-server-block(7)</a>, <a href="../man7/ossl-guide-quic-introduction.html">ossl-guide-quic-introduction(7)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2023-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

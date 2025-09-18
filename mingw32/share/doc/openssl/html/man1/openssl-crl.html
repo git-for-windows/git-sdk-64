@@ -19,6 +19,7 @@
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#BUGS">BUGS</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -28,7 +29,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>crl</b> [<b>-help</b>] [<b>-inform</b> <b>DER</b>|<b>PEM</b>] [<b>-outform</b> <b>DER</b>|<b>PEM</b>] [<b>-key</b> <i>filename</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>] [<b>-dateopt</b>] [<b>-text</b>] [<b>-in</b> <i>filename</i>] [<b>-out</b> <i>filename</i>] [<b>-gendelta</b> <i>filename</i>] [<b>-badsig</b>] [<b>-verify</b>] [<b>-noout</b>] [<b>-hash</b>] [<b>-hash_old</b>] [<b>-fingerprint</b>] [<b>-crlnumber</b>] [<b>-issuer</b>] [<b>-lastupdate</b>] [<b>-nextupdate</b>] [<b>-nameopt</b> <i>option</i>] [<b>-CAfile</b> <i>file</i>] [<b>-no-CAfile</b>] [<b>-CApath</b> <i>dir</i>] [<b>-no-CApath</b>] [<b>-CAstore</b> <i>uri</i>] [<b>-no-CAstore</b>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>]</p>
+<p><b>openssl</b> <b>crl</b> [<b>-help</b>] [<b>-inform</b> <b>DER</b>|<b>PEM</b>] [<b>-outform</b> <b>DER</b>|<b>PEM</b>] [<b>-key</b> <i>filename</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>] [<b>-dateopt</b>] [<b>-text</b>] [<b>-in</b> <i>filename</i>] [<b>-out</b> <i>filename</i>] [<b>-gendelta</b> <i>filename</i>] [<b>-badsig</b>] [<b>-verify</b>] [<b>-noout</b>] [<b>-hash</b>] [<b>-hash_old</b>] [<b>-fingerprint</b>] [<b>-crlnumber</b>] [<b>-issuer</b>] [<b>-lastupdate</b>] [<b>-nextupdate</b>] [<b>-nameopt</b> <i>option</i>] [<b>-CAfile</b> <i>file</i>] [<b>-no-CAfile</b>] [<b>-CApath</b> <i>dir</i>] [<b>-no-CApath</b>] [<b>-CAstore</b> <i>uri</i>] [<b>-no-CAstore</b>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -107,7 +108,7 @@
 <dt id="verify"><b>-verify</b></dt>
 <dd>
 
-<p>Verify the signature in the CRL.</p>
+<p>Verify the signature in the CRL. If the verification fails, the program will immediately exit, i.e. further option processing (e.g. <b>-gendelta</b>) is skipped.</p>
 
 <p>This option is implicitly enabled if any of <b>-CApath</b>, <b>-CAfile</b> or <b>-CAstore</b> is specified.</p>
 
@@ -180,6 +181,10 @@
 <dd>
 
 </dd>
+<dt id="provparam-name:-key-value"><b>-provparam</b> <i>[name:]key=value</i></dt>
+<dd>
+
+</dd>
 <dt id="propquery-propq"><b>-propquery</b> <i>propq</i></dt>
 <dd>
 
@@ -205,6 +210,10 @@
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man1/openssl.html">openssl(1)</a>, <a href="../man1/openssl-crl2pkcs7.html">openssl-crl2pkcs7(1)</a>, <a href="../man1/openssl-ca.html">openssl-ca(1)</a>, <a href="../man1/openssl-x509.html">openssl-x509(1)</a>, <a href="../man7/ossl_store-file.html">ossl_store-file(7)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>Since OpenSSL 3.3, the <b>-verify</b> option will exit with 1 on failure.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

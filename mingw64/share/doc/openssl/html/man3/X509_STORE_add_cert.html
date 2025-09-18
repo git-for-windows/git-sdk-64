@@ -69,7 +69,7 @@ int X509_STORE_load_locations(X509_STORE *xs,
 
 <p>X509_STORE_add_cert() and X509_STORE_add_crl() add the respective object to the <b>X509_STORE</b>&#39;s local storage. Untrusted objects should not be added in this way. The added object&#39;s reference count is incremented by one, hence the caller retains ownership of the object and needs to free it when it is no longer needed.</p>
 
-<p>X509_STORE_set_depth(), X509_STORE_set_flags(), X509_STORE_set_purpose(), X509_STORE_set_trust(), and X509_STORE_set1_param() set the default values for the corresponding values used in certificate chain validation. Their behavior is documented in the corresponding <b>X509_VERIFY_PARAM</b> manual pages, e.g., <a href="../man3/X509_VERIFY_PARAM_set_depth.html">X509_VERIFY_PARAM_set_depth(3)</a>.</p>
+<p>X509_STORE_set_depth(), X509_STORE_set_flags(), X509_STORE_set_purpose(), X509_STORE_set_trust(), and X509_STORE_set1_param() set the default values for the corresponding values used in certificate chain validation. Their behavior is documented in the corresponding <b>X509_VERIFY_PARAM</b> manual pages, e.g., <a href="../man3/X509_VERIFY_PARAM_set_depth.html">X509_VERIFY_PARAM_set_depth(3)</a>. The <b>X509_STORE</b> <b>MUST NOT</b> be NULL.</p>
 
 <p>X509_STORE_add_lookup() finds or creates a <a href="../man3/X509_LOOKUP.html">X509_LOOKUP(3)</a> with the <a href="../man3/X509_LOOKUP_METHOD.html">X509_LOOKUP_METHOD(3)</a> <i>meth</i> and adds it to the <b>X509_STORE</b> <i>store</i>. This also associates the <b>X509_STORE</b> with the lookup, so <b>X509_LOOKUP</b> functions can look up objects in that store.</p>
 

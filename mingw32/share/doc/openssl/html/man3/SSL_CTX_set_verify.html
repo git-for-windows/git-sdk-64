@@ -47,7 +47,7 @@ void SSL_set_post_handshake_auth(SSL *ssl, int val);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_CTX_set_verify() sets the verification flags for <b>ctx</b> to be <b>mode</b> and specifies the <b>verify_callback</b> function to be used. If no callback function shall be specified, the NULL pointer can be used for <b>verify_callback</b>.</p>
+<p>SSL_CTX_set_verify() sets the verification flags for <b>ctx</b> to be <b>mode</b> and specifies the <b>verify_callback</b> function to be used. If no callback function shall be specified, the NULL pointer can be used for <b>verify_callback</b>. <b>ctx</b> <b>MUST NOT</b> be NULL.</p>
 
 <p>SSL_set_verify() sets the verification flags for <b>ssl</b> to be <b>mode</b> and specifies the <b>verify_callback</b> function to be used. If no callback function shall be specified, the NULL pointer can be used for <b>verify_callback</b>. In this case last <b>verify_callback</b> set specifically for this <b>ssl</b> remains. If no special <b>callback</b> was set before, the default callback for the underlying <b>ctx</b> is used, that was valid at the time <b>ssl</b> was created with <a href="../man3/SSL_new.html">SSL_new(3)</a>. Within the callback function, <b>SSL_get_ex_data_X509_STORE_CTX_idx</b> can be called to get the data index of the current SSL object that is doing the verification.</p>
 

@@ -24,7 +24,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>X509_sign, X509_sign_ctx, X509_REQ_sign, X509_REQ_sign_ctx, X509_CRL_sign, X509_CRL_sign_ctx - sign certificate, certificate request, or CRL signature</p>
+<p>X509_sign, X509_sign_ctx, X509_REQ_sign, X509_REQ_sign_ctx, X509_ACERT_sign, X509_ACERT_sign_ctx, X509_CRL_sign, X509_CRL_sign_ctx - sign certificate, certificate request, or CRL signature</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -37,13 +37,18 @@ int X509_REQ_sign(X509_REQ *x, EVP_PKEY *pkey, const EVP_MD *md);
 int X509_REQ_sign_ctx(X509_REQ *x, EVP_MD_CTX *ctx);
 
 int X509_CRL_sign(X509_CRL *x, EVP_PKEY *pkey, const EVP_MD *md);
-int X509_CRL_sign_ctx(X509_CRL *x, EVP_MD_CTX *ctx);</code></pre>
+int X509_CRL_sign_ctx(X509_CRL *x, EVP_MD_CTX *ctx);
+
+#include &lt;openssl/x509_acert.h&gt;
+
+int X509_ACERT_sign(X509_ACERT *x, EVP_PKEY *pkey, const EVP_MD *md);
+int X509_ACERT_sign_ctx(X509_ACERT *x, EVP_MD_CTX *ctx);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>X509_sign() signs certificate <i>x</i> using private key <i>pkey</i> and message digest <i>md</i> and sets the signature in <i>x</i>. X509_sign_ctx() also signs certificate <i>x</i> but uses the parameters contained in digest context <i>ctx</i>. If the certificate information includes X.509 extensions, these two functions make sure that the certificate bears X.509 version 3.</p>
 
-<p>X509_REQ_sign(), X509_REQ_sign_ctx(), X509_CRL_sign(), and X509_CRL_sign_ctx() sign certificate requests and CRLs, respectively.</p>
+<p>X509_REQ_sign(), X509_REQ_sign_ctx(), X509_ACERT_sign(), X509_ACERT_sign_ctx(), X509_CRL_sign(), and X509_CRL_sign_ctx() sign certificate requests and CRLs, respectively.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -65,9 +70,11 @@ int X509_CRL_sign_ctx(X509_CRL *x, EVP_MD_CTX *ctx);</code></pre>
 
 <p>The X509_sign_ctx(), X509_REQ_sign_ctx() and X509_CRL_sign_ctx() functions were added in OpenSSL 1.0.1.</p>
 
+<p>The X509_ACERT_sign() and X509_ACERT_sign_ctx() functions were added in OpenSSL 3.4.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

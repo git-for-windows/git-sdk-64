@@ -62,7 +62,7 @@
 
 <p>Keys and password options:</p>
 
-<p>[<b>-pwri_password</b> <i>password</i>] [<b>-secretkey</b> <i>key</i>] [<b>-secretkeyid</b> <i>id</i>] [<b>-inkey</b> <i>filename</i>|<i>uri</i>] [<b>-passin</b> <i>arg</i>] [<b>-keyopt</b> <i>name</i>:<i>parameter</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>]</p>
+<p>[<b>-pwri_password</b> <i>password</i>] [<b>-secretkey</b> <i>key</i>] [<b>-secretkeyid</b> <i>id</i>] [<b>-inkey</b> <i>filename</i>|<i>uri</i>] [<b>-passin</b> <i>arg</i>] [<b>-keyopt</b> <i>name</i>:<i>parameter</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>]</p>
 
 <p>Encryption options:</p>
 
@@ -70,7 +70,7 @@
 
 <p>Signing options:</p>
 
-<p>[<b>-md</b> <i>digest</i>] [<b>-signer</b> <i>file</i>] [<b>-certfile</b> <i>file</i>] [<b>-cades</b>] [<b>-nodetach</b>] [<b>-nocerts</b>] [<b>-noattr</b>] [<b>-nosmimecap</b>] [<b>-receipt_request_all</b>] [<b>-receipt_request_first</b>] [<b>-receipt_request_from</b> <i>emailaddress</i>] [<b>-receipt_request_to</b> <i>emailaddress</i>]</p>
+<p>[<b>-md</b> <i>digest</i>] [<b>-signer</b> <i>file</i>] [<b>-certfile</b> <i>file</i>] [<b>-cades</b>] [<b>-nodetach</b>] [<b>-nocerts</b>] [<b>-noattr</b>] [<b>-nosmimecap</b>] [<b>-no_signing_time</b>] [<b>-receipt_request_all</b>] [<b>-receipt_request_first</b>] [<b>-receipt_request_from</b> <i>emailaddress</i>] [<b>-receipt_request_to</b> <i>emailaddress</i>]</p>
 
 <p>Verification options:</p>
 
@@ -358,6 +358,10 @@
 <dd>
 
 </dd>
+<dt id="provparam-name:-key-value"><b>-provparam</b> <i>[name:]key=value</i></dt>
+<dd>
+
+</dd>
 <dt id="propquery-propq"><b>-propquery</b> <i>propq</i></dt>
 <dd>
 
@@ -401,11 +405,11 @@
 <dt id="cipher"><b>-<i>cipher</i></b></dt>
 <dd>
 
-<p>The encryption algorithm to use. For example triple DES (168 bits) - <b>-des3</b> or 256 bit AES - <b>-aes256</b>. Any standard algorithm name (as used by the EVP_get_cipherbyname() function) can also be used preceded by a dash, for example <b>-aes-128-cbc</b>. See <a href="../man1/openssl-enc.html">openssl-enc(1)</a> for a list of ciphers supported by your version of OpenSSL.</p>
+<p>The encryption algorithm to use. For example, AES (256 bits) - <b>-aes256</b> or triple DES (168 bits) - <b>-des3</b>. Any standard algorithm name (as used by the EVP_get_cipherbyname() function) can also be used preceded by a dash, for example <b>-aes-128-cbc</b>. See <a href="../man1/openssl-enc.html">openssl-enc(1)</a> for a list of ciphers supported by your version of OpenSSL.</p>
 
-<p>Currently the AES variants with GCM mode are the only supported AEAD algorithms.</p>
+<p>Currently, the AES variants with GCM mode are the only supported AEAD algorithms.</p>
 
-<p>If not specified triple DES is used. Only used with <b>-encrypt</b> and <b>-EncryptedData_create</b> commands.</p>
+<p>If not specified, AES-256-CBC is used as the default. Only used with <b>-encrypt</b> and <b>-EncryptedData_create</b> commands.</p>
 
 </dd>
 <dt id="wrap-cipher"><b>-wrap</b> <i>cipher</i></dt>
@@ -447,7 +451,9 @@
 <dt id="certfile-file"><b>-certfile</b> <i>file</i></dt>
 <dd>
 
-<p>Allows additional certificates to be specified. When signing these will be included with the message. When verifying these will be searched for the signers certificates. The input can be in PEM, DER, or PKCS#12 format.</p>
+<p>Allows additional certificates to be specified. When signing these will be included with the message. When verifying, these will be searched for signer certificates and will be used for chain building.</p>
+
+<p>The input can be in PEM, DER, or PKCS#12 format.</p>
 
 </dd>
 <dt id="cades"><b>-cades</b></dt>
@@ -477,7 +483,13 @@
 <dt id="nosmimecap"><b>-nosmimecap</b></dt>
 <dd>
 
-<p>Exclude the list of supported algorithms from signed attributes, other options such as signing time and content type are still included.</p>
+<p>Exclude the list of supported algorithms from signed attributes, other options such as content type and (optionally) signing time are still included.</p>
+
+</dd>
+<dt id="no_signing_time"><b>-no_signing_time</b></dt>
+<dd>
+
+<p>Exclude the signing time from signed attributes, other options such as content type are still included.</p>
 
 </dd>
 <dt id="receipt_request_all--receipt_request_first"><b>-receipt_request_all</b>, <b>-receipt_request_first</b></dt>
@@ -859,6 +871,8 @@
 <p><a href="../man7/ossl_store-file.html">ossl_store-file(7)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
+
+<p>The default encryption cipher was changed from 3DES to AES-256 in OpenSSL 3.5.</p>
 
 <p>The use of multiple <b>-signer</b> options and the <b>-resign</b> command were first added in OpenSSL 1.0.0.</p>
 

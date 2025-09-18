@@ -168,6 +168,30 @@ OSSL_FUNC_keyexch_gettable_ctx_params   OSSL_FUNC_KEYEXCH_GETTABLE_CTX_PARAMS</c
 </dd>
 </dl>
 
+<p>The OpenSSL FIPS provider also supports the following parameters:</p>
+
+<dl>
+
+<dt id="fips-indicator-OSSL_EXCHANGE_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_EXCHANGE_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>A getter that returns 1 if the operation is FIPS approved, or 0 otherwise. This may be used after calling OSSL_FUNC_keyexch_derive(). It may return 0 if either the &quot;digest-check&quot; or the &quot;key-check&quot; are set to 0.</p>
+
+</dd>
+<dt id="key-check-OSSL_EXCHANGE_PARAM_FIPS_KEY_CHECK-integer">&quot;key-check&quot; (<b>OSSL_EXCHANGE_PARAM_FIPS_KEY_CHECK</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>If required this parameter should be set using OSSL_FUNC_keyexch_init(). The default value of 1 causes an error during the init if the key is not FIPS approved (e.g. The key has a security strength of less than 112 bits). Setting this to 0 will ignore the error and set the approved &quot;fips-indicator&quot; to 0. This option breaks FIPS compliance if it causes the approved &quot;fips-indicator&quot; to return 0.</p>
+
+</dd>
+<dt id="digest-check-OSSL_EXCHANGE_PARAM_FIPS_DIGEST_CHECK-integer">&quot;digest-check&quot; (<b>OSSL_EXCHANGE_PARAM_FIPS_DIGEST_CHECK</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>If required this parameter should be set before any optional digest is set. The default value of 1 causes an error when the digest is set if the digest is not FIPS approved. Setting this to 0 will ignore the error and set the approved &quot;fips-indicator&quot; to 0. This option breaks FIPS compliance if it causes the approved &quot;fips-indicator&quot; to return 0.</p>
+
+</dd>
+</dl>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>OSSL_FUNC_keyexch_newctx() and OSSL_FUNC_keyexch_dupctx() should return the newly created provider side key exchange context, or NULL on failure.</p>
@@ -184,9 +208,11 @@ OSSL_FUNC_keyexch_gettable_ctx_params   OSSL_FUNC_KEYEXCH_GETTABLE_CTX_PARAMS</c
 
 <p>The provider KEYEXCH interface was introduced in OpenSSL 3.0.</p>
 
+<p>The Key Exchange Parameters &quot;fips-indicator&quot;, &quot;key-check&quot; and &quot;digest-check&quot; were added in OpenSSL 3.4.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

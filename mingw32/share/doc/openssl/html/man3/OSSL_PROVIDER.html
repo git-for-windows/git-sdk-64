@@ -28,7 +28,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>OSSL_PROVIDER_set_default_search_path, OSSL_PROVIDER_get0_default_search_path, OSSL_PROVIDER, OSSL_PROVIDER_load, OSSL_PROVIDER_try_load, OSSL_PROVIDER_unload, OSSL_PROVIDER_load_ex, OSSL_PROVIDER_try_load_ex, OSSL_PROVIDER_available, OSSL_PROVIDER_do_all, OSSL_PROVIDER_gettable_params, OSSL_PROVIDER_get_params, OSSL_PROVIDER_query_operation, OSSL_PROVIDER_unquery_operation, OSSL_PROVIDER_get0_provider_ctx, OSSL_PROVIDER_get0_dispatch, OSSL_PROVIDER_add_builtin, OSSL_PROVIDER_get0_name, OSSL_PROVIDER_get_capabilities, OSSL_PROVIDER_self_test - provider routines</p>
+<p>OSSL_PROVIDER_set_default_search_path, OSSL_PROVIDER_get0_default_search_path, OSSL_PROVIDER, OSSL_PROVIDER_load, OSSL_PROVIDER_try_load, OSSL_PROVIDER_unload, OSSL_PROVIDER_load_ex, OSSL_PROVIDER_try_load_ex, OSSL_PROVIDER_available, OSSL_PROVIDER_do_all, OSSL_PROVIDER_gettable_params, OSSL_PROVIDER_get_params, OSSL_PROVIDER_query_operation, OSSL_PROVIDER_unquery_operation, OSSL_PROVIDER_get0_provider_ctx, OSSL_PROVIDER_get0_dispatch, OSSL_PROVIDER_add_builtin, OSSL_PROVIDER_get0_name, OSSL_PROVIDER_get_capabilities, OSSL_PROVIDER_add_conf_parameter, OSSL_PROVIDER_get_conf_parameters, OSSL_PROVIDER_conf_get_bool, OSSL_PROVIDER_self_test - provider routines</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -75,6 +75,12 @@ int OSSL_PROVIDER_get_capabilities(const OSSL_PROVIDER *prov,
                                    const char *capability,
                                    OSSL_CALLBACK *cb,
                                    void *arg);
+int OSSL_PROVIDER_add_conf_parameter(OSSL_PROVIDER *prov, const char *name,
+                                     const char *value);
+int OSSL_PROVIDER_get_conf_parameters(OSSL_PROVIDER *prov,
+                                      OSSL_PARAM params[]);
+int OSSL_PROVIDER_conf_get_bool(const OSSL_PROVIDER *prov,
+                                const char *name, int defval);
 int OSSL_PROVIDER_self_test(const OSSL_PROVIDER *prov);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
@@ -107,6 +113,12 @@ int OSSL_PROVIDER_self_test(const OSSL_PROVIDER *prov);</code></pre>
 
 <p>OSSL_PROVIDER_get_params() is used to get provider parameter values. The caller must prepare the <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a> array before calling this function, and the variables acting as buffers for this parameter array should be filled with data when it returns successfully.</p>
 
+<p>OSSL_PROVIDER_add_conf_parameter() sets the provider configuration parameter <i>name</i> to <i>value</i>. Provider configuration parameters are managed by the OpenSSL core and normally set in the configuration file, but can also be set early in the main program before a provider is in use by multiple threads. Parameters that only affect provider initialisation must, for now, be set in the configuration file, only parameters that are also queried later have any affect when set via this interface. Only text parameters can be given, and it&#39;s up to the provider to interpret them.</p>
+
+<p>OSSL_PROVIDER_get_conf_parameters() retrieves global configuration parameters associated with <i>prov</i>. These configuration parameters are stored for each provider by the OpenSSL core, not the provider itself, parameters managed by the provider are queried via <b>OSSL_PROVIDER_get_params()</b> described above. The parameters are returned by reference, not as copies, and so the elements of the <i>param</i> array must have <b>OSSL_PARAM_UTF8_PTR</b> as their <b>data_type</b>.</p>
+
+<p>OSSL_PROVIDER_conf_get_bool() parses the global configuration parameter <i>name</i> associated with provider <i>prov</i> as a boolean value, returning a default value <i>defval</i> when unable to retrieve or parse the parameter. Parameter values equal (case-insensitively) to <code>1</code>, <code>on</code>, <code>yes</code>, or <code>true</code> yield a true (nonzero) result. Parameter values equal (case-insensitively) to <code>0</code>, <code>off</code>, <code>no</code>, or <code>false</code> yield a false (zero) result.</p>
+
 <p>OSSL_PROVIDER_self_test() is used to run a provider&#39;s self tests on demand. If the self tests fail then the provider will fail to provide any further services and algorithms. <a href="../man3/OSSL_SELF_TEST_set_callback.html">OSSL_SELF_TEST_set_callback(3)</a> may be called beforehand in order to display diagnostics for the running self tests.</p>
 
 <p>OSSL_PROVIDER_query_operation() calls the provider&#39;s <i>query_operation</i> function (see <a href="../man7/provider.html">provider(7)</a>), if the provider has one. It returns an array of <i>OSSL_ALGORITHM</i> for the given <i>operation_id</i> terminated by an all NULL OSSL_ALGORITHM entry. This is considered a low-level function that most applications should not need to call.</p>
@@ -125,7 +137,7 @@ int OSSL_PROVIDER_self_test(const OSSL_PROVIDER *prov);</code></pre>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>OSSL_PROVIDER_set_default_search_path(), OSSL_PROVIDER_add(), OSSL_PROVIDER_unload(), OSSL_PROVIDER_get_params() and OSSL_PROVIDER_get_capabilities() return 1 on success, or 0 on error.</p>
+<p>OSSL_PROVIDER_set_default_search_path(), OSSL_PROVIDER_add(), OSSL_PROVIDER_unload(), OSSL_PROVIDER_get_params(), OSSL_PROVIDER_add_conf_parameter(), OSSL_PROVIDER_get_conf_parameters() and OSSL_PROVIDER_get_capabilities() return 1 on success, or 0 on error.</p>
 
 <p>OSSL_PROVIDER_get0_default_search_path() returns a pointer to a path on success, or NULL on error or if the path has not previously been set.</p>
 
@@ -174,9 +186,11 @@ else
 
 <p>The <i>OSSL_PROVIDER_load_ex</i> and <i>OSSL_PROVIDER_try_load_ex</i> functions were added in OpenSSL 3.2.</p>
 
+<p>The <i>OSSL_PROVIDER_add_conf_parameter</i>, <i>OSSL_PROVIDER_get_conf_parameters</i>, and <i>OSSL_PROVIDER_conf_get_bool</i> functions were added in OpenSSL 3.5.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

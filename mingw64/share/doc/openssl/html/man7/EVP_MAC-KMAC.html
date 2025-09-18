@@ -86,9 +86,27 @@
 <p>The &quot;xof&quot; parameter value is expected to be 1 or 0. Use 1 to enable XOF mode. The default value is 0.</p>
 
 </dd>
+<dt id="fips-indicator-OSSL_MAC_PARAM_FIPS_APPROVED_INDICATOR-int">&quot;fips-indicator&quot; (<b>OSSL_MAC_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;int&gt;</dt>
+<dd>
+
+<p>This settable parameter is described in <a href="../man7/provider-mac.html">provider-mac(7)</a>.</p>
+
+</dd>
+<dt id="no-short-mac-OSSL_MAC_PARAM_FIPS_NO_SHORT_MAC-integer">&quot;no-short-mac&quot; (<b>OSSL_MAC_PARAM_FIPS_NO_SHORT_MAC</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>This settable parameter is described in <a href="../man7/provider-mac.html">provider-mac(7)</a>. It is used by the OpenSSL FIPS provider and the minimum length output for KMAC is defined by NIST&#39;s SP 800-185 8.4.2.</p>
+
+</dd>
+<dt id="key-check-OSSL_MAC_PARAM_FIPS_KEY_CHECK-integer">&quot;key-check&quot; (<b>OSSL_MAC_PARAM_FIPS_KEY_CHECK</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>This settable parameter is described in <a href="../man7/provider-mac.html">provider-mac(7)</a>.</p>
+
+</dd>
 </dl>
 
-<p>The &quot;custom&quot; parameter must be set as part of or before the EVP_MAC_init() call. The &quot;xof&quot; and &quot;size&quot; parameters can be set at any time before EVP_MAC_final(). The &quot;key&quot; parameter is set as part of the EVP_MAC_init() call, but can be set before it instead.</p>
+<p>The &quot;custom&quot; and &quot;no-short-mac&quot; parameters must be set as part of or before the EVP_MAC_init() call. The &quot;xof&quot; and &quot;size&quot; parameters can be set at any time before EVP_MAC_final(). The &quot;key&quot; parameter is set as part of the EVP_MAC_init() call, but can be set before it instead.</p>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
@@ -157,11 +175,11 @@ err:
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/EVP_MAC_CTX_get_params.html">EVP_MAC_CTX_get_params(3)</a>, <a href="../man3/EVP_MAC_CTX_set_params.html">EVP_MAC_CTX_set_params(3)</a>, <a href="../man3/EVP_MAC.html">&quot;PARAMETERS&quot; in EVP_MAC(3)</a>, <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a></p>
+<p><a href="../man3/EVP_MAC_CTX_get_params.html">EVP_MAC_CTX_get_params(3)</a>, <a href="../man3/EVP_MAC_CTX_set_params.html">EVP_MAC_CTX_set_params(3)</a>, <a href="../man3/EVP_MAC.html">&quot;PARAMETERS&quot; in EVP_MAC(3)</a>, <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a>, <a href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-185.pdf">SP 800-185 8.4.2</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2018-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2018-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

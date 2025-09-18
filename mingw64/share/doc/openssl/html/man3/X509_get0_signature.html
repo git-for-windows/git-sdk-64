@@ -14,7 +14,6 @@
 <ul id="index">
   <li><a href="#NAME">NAME</a></li>
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
-  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
@@ -24,39 +23,47 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>X509_get0_signature, X509_REQ_set0_signature, X509_REQ_set1_signature_algo, X509_get_signature_nid, X509_get0_tbs_sigalg, X509_REQ_get0_signature, X509_REQ_get_signature_nid, X509_CRL_get0_signature, X509_CRL_get_signature_nid, X509_get_signature_info, X509_SIG_INFO_get, X509_SIG_INFO_set - signature information</p>
+<p>X509_get0_signature, X509_REQ_set0_signature, X509_REQ_set1_signature_algo, X509_get_signature_nid, X509_get0_tbs_sigalg, X509_REQ_get0_signature, X509_REQ_get_signature_nid, X509_CRL_get0_signature, X509_CRL_get_signature_nid, X509_ACERT_get0_signature, X509_ACERT_get0_info_sigalg, X509_ACERT_get_signature_nid, X509_get_signature_info, X509_SIG_INFO_get, X509_SIG_INFO_set - signature information</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/x509.h&gt;
+<pre><code> #include &lt;openssl/x509.h&gt;
 
-void X509_get0_signature(const ASN1_BIT_STRING **psig,
-                         const X509_ALGOR **palg,
-                         const X509 *x);
-void X509_REQ_set0_signature(X509_REQ *req, ASN1_BIT_STRING *psig);
-int X509_REQ_set1_signature_algo(X509_REQ *req, X509_ALGOR *palg);
-int X509_get_signature_nid(const X509 *x);
-const X509_ALGOR *X509_get0_tbs_sigalg(const X509 *x);
+ void X509_get0_signature(const ASN1_BIT_STRING **psig,
+                          const X509_ALGOR **palg,
+                          const X509 *x);
+ void X509_REQ_set0_signature(X509_REQ *req, ASN1_BIT_STRING *psig);
+ int X509_REQ_set1_signature_algo(X509_REQ *req, X509_ALGOR *palg);
+ int X509_get_signature_nid(const X509 *x);
+ const X509_ALGOR *X509_get0_tbs_sigalg(const X509 *x);
 
-void X509_REQ_get0_signature(const X509_REQ *crl,
-                             const ASN1_BIT_STRING **psig,
-                             const X509_ALGOR **palg);
-int X509_REQ_get_signature_nid(const X509_REQ *crl);
+ void X509_REQ_get0_signature(const X509_REQ *crl,
+                              const ASN1_BIT_STRING **psig,
+                              const X509_ALGOR **palg);
+ int X509_REQ_get_signature_nid(const X509_REQ *crl);
 
-void X509_CRL_get0_signature(const X509_CRL *crl,
-                             const ASN1_BIT_STRING **psig,
-                             const X509_ALGOR **palg);
-int X509_CRL_get_signature_nid(const X509_CRL *crl);
+ const X509_ALGOR *X509_ACERT_get0_info_sigalg(const X509_ACERT *x);
 
-int X509_get_signature_info(X509 *x, int *mdnid, int *pknid, int *secbits,
-                            uint32_t *flags);
+ void X509_CRL_get0_signature(const X509_CRL *crl,
+                              const ASN1_BIT_STRING **psig,
+                              const X509_ALGOR **palg);
+ int X509_CRL_get_signature_nid(const X509_CRL *crl);
 
-int X509_SIG_INFO_get(const X509_SIG_INFO *siginf, int *mdnid, int *pknid,
-                     int *secbits, uint32_t *flags);
-void X509_SIG_INFO_set(X509_SIG_INFO *siginf, int mdnid, int pknid,
-                       int secbits, uint32_t flags);</code></pre>
+ int X509_get_signature_info(X509 *x, int *mdnid, int *pknid, int *secbits,
+                             uint32_t *flags);
 
-<h1 id="DESCRIPTION">DESCRIPTION</h1>
+ int X509_SIG_INFO_get(const X509_SIG_INFO *siginf, int *mdnid, int *pknid,
+                      int *secbits, uint32_t *flags);
+ void X509_SIG_INFO_set(X509_SIG_INFO *siginf, int mdnid, int pknid,
+                        int secbits, uint32_t flags);
+
+ #include &lt;openssl/x509_acert.h&gt;
+
+ void X509_ACERT_get0_signature(const X509_ACERT *x,
+                                const ASN1_BIT_STRING **psig,
+                                const X509_ALGOR **palg);
+ int X509_ACERT_get_signature_nid(const X509_ACERT *x);
+=head1 DESCRIPTION</code></pre>
 
 <p>X509_get0_signature() sets <b>*psig</b> to the signature of <b>x</b> and <b>*palg</b> to the signature algorithm of <b>x</b>. The values returned are internal pointers which <b>MUST NOT</b> be freed up after the call.</p>
 
@@ -67,6 +74,8 @@ void X509_SIG_INFO_set(X509_SIG_INFO *siginf, int mdnid, int pknid,
 <p>X509_get_signature_nid() returns the NID corresponding to the signature algorithm of <b>x</b>.</p>
 
 <p>X509_REQ_get0_signature(), X509_REQ_get_signature_nid() X509_CRL_get0_signature() and X509_CRL_get_signature_nid() perform the same function for certificate requests and CRLs.</p>
+
+<p>X509_ACERT_get0_signature(), X509_ACERT_get_signature_nid() and X509_ACERT_get0_info_sigalg() perform the same function for attribute certificates.</p>
 
 <p>X509_get_signature_info() retrieves information about the signature of certificate <b>x</b>. The NID of the signing digest is written to <b>*mdnid</b>, the public key algorithm to <b>*pknid</b>, the effective security bits to <b>*secbits</b> and flag details to <b>*flags</b>. Any of the parameters can be set to <b>NULL</b> if the information is not required.</p>
 
@@ -100,9 +109,11 @@ void X509_SIG_INFO_set(X509_SIG_INFO *siginf, int mdnid, int pknid,
 
 <p>The X509_REQ_set0_signature() and X509_REQ_set1_signature_algo() were added in OpenSSL 1.1.1e.</p>
 
+<p>The X509_ACERT_get0_signature(), X509_ACERT_get0_info_sigalg() and X509_ACERT_get_signature_nid() functions were added in OpenSSL 3.4.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

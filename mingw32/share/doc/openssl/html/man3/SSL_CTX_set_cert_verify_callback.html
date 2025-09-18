@@ -41,7 +41,7 @@ void SSL_CTX_set_cert_verify_callback(SSL_CTX *ctx,
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>When a peer certificate has been received during a SSL/TLS handshake, a verification function is called regardless of the verification mode. If the application does not explicitly specify a verification callback function, the built-in verification function is used. If a verification callback <i>callback</i> is specified via SSL_CTX_set_cert_verify_callback(), the supplied callback function is called instead with the arguments callback(X509_STORE_CTX *x509_store_ctx, void *arg). The argument <i>arg</i> is specified by the application when setting <i>callback</i>. By setting <i>callback</i> to NULL, the default behaviour is restored.</p>
+<p>When a peer certificate has been received during an SSL/TLS handshake, a verification function is called regardless of the verification mode. If the application does not explicitly specify a verification callback function, the built-in verification function is used. If a verification callback <i>callback</i> is specified via SSL_CTX_set_cert_verify_callback(), the supplied callback function is called instead with the arguments callback(X509_STORE_CTX *x509_store_ctx, void *arg). The argument <i>arg</i> is specified by the application when setting <i>callback</i>. By setting <i>callback</i> to NULL, the default behaviour is restored.</p>
 
 <p><i>callback</i> should return 1 to indicate verification success and 0 to indicate verification failure. In server mode, a return value of 0 leads to handshake failure. In client mode, the behaviour is as follows. All values, including 0, are ignored if the verification mode is <b>SSL_VERIFY_NONE</b>. Otherwise, when the return value is less than or equal to 0, the handshake will fail.</p>
 

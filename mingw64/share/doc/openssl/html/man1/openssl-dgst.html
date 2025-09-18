@@ -29,7 +29,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>dgst</b>|<i>digest</i> [<b>-<i>digest</i></b>] [<b>-list</b>] [<b>-help</b>] [<b>-c</b>] [<b>-d</b>] [<b>-debug</b>] [<b>-hex</b>] [<b>-binary</b>] [<b>-xoflen</b> <i>length</i>] [<b>-r</b>] [<b>-out</b> <i>filename</i>] [<b>-sign</b> <i>filename</i>|<i>uri</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-passin</b> <i>arg</i>] [<b>-verify</b> <i>filename</i>] [<b>-prverify</b> <i>filename</i>] [<b>-signature</b> <i>filename</i>] [<b>-sigopt</b> <i>nm</i>:<i>v</i>] [<b>-hmac</b> <i>key</i>] [<b>-mac</b> <i>alg</i>] [<b>-macopt</b> <i>nm</i>:<i>v</i>] [<b>-fips-fingerprint</b>] [<b>-engine</b> <i>id</i>] [<b>-engine_impl</b> <i>id</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<i>file</i> ...]</p>
+<p><b>openssl</b> <b>dgst</b>|<i>digest</i> [<b>-<i>digest</i></b>] [<b>-list</b>] [<b>-help</b>] [<b>-c</b>] [<b>-d</b>] [<b>-debug</b>] [<b>-hex</b>] [<b>-binary</b>] [<b>-xoflen</b> <i>length</i>] [<b>-r</b>] [<b>-out</b> <i>filename</i>] [<b>-sign</b> <i>filename</i>|<i>uri</i>] [<b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-passin</b> <i>arg</i>] [<b>-verify</b> <i>filename</i>] [<b>-prverify</b> <i>filename</i>] [<b>-signature</b> <i>filename</i>] [<b>-sigopt</b> <i>nm</i>:<i>v</i>] [<b>-hmac</b> <i>key</i>] [<b>-mac</b> <i>alg</i>] [<b>-macopt</b> <i>nm</i>:<i>v</i>] [<b>-fips-fingerprint</b>] [<b>-engine</b> <i>id</i>] [<b>-engine_impl</b> <i>id</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>] [<i>file</i> ...]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -88,11 +88,11 @@
 
 <p>Set the output length for XOF algorithms, such as <b>shake128</b> and <b>shake256</b>. This option is not supported for signing operations.</p>
 
-<p>For OpenSSL providers it is recommended to set this value for shake algorithms, since the default values are set to only supply half of the maximum security strength.</p>
+<p>For OpenSSL providers it is required to set this value for shake algorithms, since the previous default values were only set to supply half of the maximum security strength.</p>
 
-<p>For backwards compatibility reasons the default xoflen length for <b>shake128</b> is 16 (bytes) which results in a security strength of only 64 bits. To ensure the maximum security strength of 128 bits, the xoflen should be set to at least 32.</p>
+<p>To ensure the maximum security strength of 128 bits, the xoflen for <b>shake128</b> should be set to at least 32 (bytes). For compatibility with previous versions of OpenSSL, it may be set to 16, resulting in a security strength of only 64 bits.</p>
 
-<p>For backwards compatibility reasons the default xoflen length for <b>shake256</b> is 32 (bytes) which results in a security strength of only 128 bits. To ensure the maximum security strength of 256 bits, the xoflen should be set to at least 64.</p>
+<p>To ensure the maximum security strength of 256 bits, the xoflen for <b>shake256</b> should be set to at least 64 (bytes). For compatibility with previous versions of OpenSSL, it may be set to 32, resulting in a security strength of only 128 bits.</p>
 
 </dd>
 <dt id="r"><b>-r</b></dt>
@@ -110,7 +110,9 @@
 <dt id="sign-filename-uri"><b>-sign</b> <i>filename</i>|<i>uri</i></dt>
 <dd>
 
-<p>Digitally sign the digest using the given private key. Note this option does not support Ed25519 or Ed448 private keys. Use the <a href="../man1/openssl-pkeyutl.html">openssl-pkeyutl(1)</a> command instead for this.</p>
+<p>Digitally sign the digest using the given private key.</p>
+
+<p>Note that for algorithms that only support one-shot signing (such as Ed25519, ED448, ML-DSA-44, ML-DSA-65 andML-DSA-87) the digest must not be set. For these algorithms the input is buffered (and not digested) before signing. For these algorithms, if the input is larger than 16MB an error will occur.</p>
 
 </dd>
 <dt id="keyform-DER-PEM-P12-ENGINE"><b>-keyform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b></dt>
@@ -223,6 +225,10 @@
 <dd>
 
 </dd>
+<dt id="provparam-name:-key-value"><b>-provparam</b> <i>[name:]key=value</i></dt>
+<dd>
+
+</dd>
 <dt id="propquery-propq"><b>-propquery</b> <i>propq</i></dt>
 <dd>
 
@@ -285,7 +291,7 @@ file.txt</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

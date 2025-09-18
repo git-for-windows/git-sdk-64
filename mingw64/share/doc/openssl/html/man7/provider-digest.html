@@ -47,6 +47,7 @@
 void *OSSL_FUNC_digest_newctx(void *provctx);
 void OSSL_FUNC_digest_freectx(void *dctx);
 void *OSSL_FUNC_digest_dupctx(void *dctx);
+void OSSL_FUNC_digest_copyctx(void *voutctx, void *vinctx);
 
 /* Digest generation */
 int OSSL_FUNC_digest_init(void *dctx, const OSSL_PARAM params[]);
@@ -91,6 +92,7 @@ static ossl_inline OSSL_FUNC_digest_newctx_fn
 <pre><code>OSSL_FUNC_digest_newctx               OSSL_FUNC_DIGEST_NEWCTX
 OSSL_FUNC_digest_freectx              OSSL_FUNC_DIGEST_FREECTX
 OSSL_FUNC_digest_dupctx               OSSL_FUNC_DIGEST_DUPCTX
+OSSL_FUNC_digest_copyctx              OSSL_FUNC_DIGEST_COPYCTX
 
 OSSL_FUNC_digest_init                 OSSL_FUNC_DIGEST_INIT
 OSSL_FUNC_digest_update               OSSL_FUNC_DIGEST_UPDATE
@@ -105,7 +107,7 @@ OSSL_FUNC_digest_gettable_params      OSSL_FUNC_DIGEST_GETTABLE_PARAMS
 OSSL_FUNC_digest_gettable_ctx_params  OSSL_FUNC_DIGEST_GETTABLE_CTX_PARAMS
 OSSL_FUNC_digest_settable_ctx_params  OSSL_FUNC_DIGEST_SETTABLE_CTX_PARAMS</code></pre>
 
-<p>A digest algorithm implementation may not implement all of these functions. In order to be usable all or none of OSSL_FUNC_digest_newctx, OSSL_FUNC_digest_freectx, OSSL_FUNC_digest_init, OSSL_FUNC_digest_update and OSSL_FUNC_digest_final should be implemented. All other functions are optional.</p>
+<p>A digest algorithm implementation may not implement all of these functions. In order to be usable all or none of OSSL_FUNC_digest_newctx, OSSL_FUNC_digest_freectx, OSSL_FUNC_digest_init, OSSL_FUNC_digest_update, OSSL_FUNC_digest_final and OSSL_FUNC_digest_get_params should be implemented. All other functions are optional.</p>
 
 <h2 id="Context-Management-Functions">Context Management Functions</h2>
 
@@ -114,6 +116,8 @@ OSSL_FUNC_digest_settable_ctx_params  OSSL_FUNC_DIGEST_SETTABLE_CTX_PARAMS</code
 <p>OSSL_FUNC_digest_freectx() is passed a pointer to the provider side digest context in the <i>dctx</i> parameter. This function should free any resources associated with that context.</p>
 
 <p>OSSL_FUNC_digest_dupctx() should duplicate the provider side digest context in the <i>dctx</i> parameter and return the duplicate copy.</p>
+
+<p>OSSL_FUNC_digest_copyctx() should copy the provider side digest context in the <i>vinctx</i> parameter to the <i>voutctx</i> parameter which is the another provider side context. The OSSL_FUNC_digest_copyctx function is used in the EVP_MD_CTX_copy_ex function to speed up HMAC operations in the PBKDF2. This function is optional, and dupctx will be used if there is no EVP_MD_CTX_copy_ex function.</p>
 
 <h2 id="Digest-Generation-Functions">Digest Generation Functions</h2>
 
@@ -171,7 +175,7 @@ OSSL_FUNC_digest_settable_ctx_params  OSSL_FUNC_DIGEST_SETTABLE_CTX_PARAMS</code
 <dt id="EVP_MD_FLAG_XOF"><b>EVP_MD_FLAG_XOF</b></dt>
 <dd>
 
-<p>This digest method is an extensible-output function (XOF) and supports setting the <b>OSSL_DIGEST_PARAM_XOFLEN</b> parameter.</p>
+<p>This digest method is an extensible-output function (XOF).</p>
 
 </dd>
 <dt id="EVP_MD_FLAG_DIGALGID_NULL"><b>EVP_MD_FLAG_DIGALGID_NULL</b></dt>
@@ -225,11 +229,11 @@ OSSL_FUNC_digest_settable_ctx_params  OSSL_FUNC_DIGEST_SETTABLE_CTX_PARAMS</code
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The provider DIGEST interface was introduced in OpenSSL 3.0.</p>
+<p>The provider DIGEST interface was introduced in OpenSSL 3.0. OSSL_FUNC_digest_copyctx() was added in 3.5 version.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -24,7 +24,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>SSL_CTX_set_record_padding_callback, SSL_set_record_padding_callback, SSL_CTX_set_record_padding_callback_arg, SSL_set_record_padding_callback_arg, SSL_CTX_get_record_padding_callback_arg, SSL_get_record_padding_callback_arg, SSL_CTX_set_block_padding, SSL_set_block_padding - install callback to specify TLS 1.3 record padding</p>
+<p>SSL_CTX_set_record_padding_callback, SSL_set_record_padding_callback, SSL_CTX_set_record_padding_callback_arg, SSL_set_record_padding_callback_arg, SSL_CTX_get_record_padding_callback_arg, SSL_get_record_padding_callback_arg, SSL_CTX_set_block_padding, SSL_CTX_set_block_padding_ex, SSL_set_block_padding, SSL_set_block_padding_ex - install callback to specify TLS 1.3 record padding</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -40,7 +40,9 @@ void SSL_set_record_padding_callback_arg(SSL *ssl, void *arg);
 void *SSL_get_record_padding_callback_arg(const SSL *ssl);
 
 int SSL_CTX_set_block_padding(SSL_CTX *ctx, size_t block_size);
-int SSL_set_block_padding(SSL *ssl, size_t block_size);</code></pre>
+int SSL_set_block_padding(SSL *ssl, size_t block_size);
+int SSL_CTX_set_block_padding_ex(SSL_CTX *ctx, size_t app_block_size, size_t hs_block_size);
+int SSL_set_block_padding_ex(SSL *ssl, size_t app_block_size, size_t hs_block_size);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -51,6 +53,8 @@ int SSL_set_block_padding(SSL *ssl, size_t block_size);</code></pre>
 <p>SSL_CTX_get_record_padding_callback_arg() and SSL_get_record_padding_callback_arg() retrieve the <b>arg</b> value that is passed to the callback.</p>
 
 <p>SSL_CTX_set_block_padding() and SSL_set_block_padding() pads the record to a multiple of the <b>block_size</b>. A <b>block_size</b> of 0 or 1 disables block padding. The limit of <b>block_size</b> is SSL3_RT_MAX_PLAIN_LENGTH.</p>
+
+<p>SSL_CTX_set_block_padding_ex() and SSL_set_block_padding_ex() do similarly but allow the caller to separately specify the padding block size to be applied to handshake and application data messages.</p>
 
 <p>The callback is invoked for every record before encryption. The <b>type</b> parameter is the TLS record type that is being processed; may be one of SSL3_RT_APPLICATION_DATA, SSL3_RT_HANDSHAKE, or SSL3_RT_ALERT. The <b>len</b> parameter is the current plaintext length of the record before encryption. The <b>arg</b> parameter is the value set via SSL_CTX_set_record_padding_callback_arg() or SSL_set_record_padding_callback_arg().</p>
 
@@ -86,9 +90,11 @@ int SSL_set_block_padding(SSL *ssl, size_t block_size);</code></pre>
 
 <p>The return type of SSL_CTX_set_record_padding_callback() function was changed to int in OpenSSL 3.0.</p>
 
+<p>The functions SSL_set_block_padding_ex() and SSL_CTX_set_block_padding_ex() were added in OpenSSL 3.4.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2017-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2017-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

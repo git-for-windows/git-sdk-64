@@ -29,7 +29,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl fipsinstall</b> [<b>-help</b>] [<b>-in</b> <i>configfilename</i>] [<b>-out</b> <i>configfilename</i>] [<b>-module</b> <i>modulefilename</i>] [<b>-provider_name</b> <i>providername</i>] [<b>-section_name</b> <i>sectionname</i>] [<b>-verify</b>] [<b>-mac_name</b> <i>macname</i>] [<b>-macopt</b> <i>nm</i>:<i>v</i>] [<b>-noout</b>] [<b>-quiet</b>] [<b>-pedantic</b>] [<b>-no_conditional_errors</b>] [<b>-no_security_checks</b>] [<b>-ems_check</b>] [<b>-no_drbg_truncated_digests</b>] [<b>-self_test_onload</b>] [<b>-self_test_oninstall</b>] [<b>-corrupt_desc</b> <i>selftest_description</i>] [<b>-corrupt_type</b> <i>selftest_type</i>] [<b>-config</b> <i>parent_config</i>]</p>
+<p><b>openssl fipsinstall</b> [<b>-help</b>] [<b>-in</b> <i>configfilename</i>] [<b>-out</b> <i>configfilename</i>] [<b>-module</b> <i>modulefilename</i>] [<b>-provider_name</b> <i>providername</i>] [<b>-section_name</b> <i>sectionname</i>] [<b>-verify</b>] [<b>-mac_name</b> <i>macname</i>] [<b>-macopt</b> <i>nm</i>:<i>v</i>] [<b>-noout</b>] [<b>-quiet</b>] [<b>-pedantic</b>] [<b>-no_conditional_errors</b>] [<b>-no_security_checks</b>] [<b>-hmac_key_check</b>] [<b>-kmac_key_check</b>] [<b>-ems_check</b>] [<b>-no_drbg_truncated_digests</b>] [<b>-signature_digest_check</b>] [<b>-hkdf_digest_check</b>] [<b>-tls13_kdf_digest_check</b>] [<b>-tls1_prf_digest_check</b>] [<b>-sshkdf_digest_check</b>] [<b>-sskdf_digest_check</b>] [<b>-x963kdf_digest_check</b>] [<b>-dsa_sign_disabled</b>] [<b>-no_pbkdf2_lower_bound_check</b>] [<b>-no_short_mac</b>] [<b>-tdes_encrypt_disabled</b>] [<b>-rsa_pkcs15_padding_disabled</b>] [<b>-rsa_pss_saltlen_check</b>] [<b>-rsa_sign_x931_disabled</b>] [<b>-hkdf_key_check</b>] [<b>-kbkdf_key_check</b>] [<b>-tls13_kdf_key_check</b>] [<b>-tls1_prf_key_check</b>] [<b>-sshkdf_key_check</b>] [<b>-sskdf_key_check</b>] [<b>-x963kdf_key_check</b>] [<b>-x942kdf_key_check</b>] [<b>-ecdh_cofactor_check</b>] [<b>-self_test_onload</b>] [<b>-self_test_oninstall</b>] [<b>-corrupt_desc</b> <i>selftest_description</i>] [<b>-corrupt_type</b> <i>selftest_type</i>] [<b>-config</b> <i>parent_config</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -181,24 +181,172 @@
 <p>Configure the module to enable a run-time Extended Master Secret (EMS) check when using the TLS1_PRF KDF algorithm. This check is disabled by default. See RFC 7627 for information related to EMS.</p>
 
 </dd>
+<dt id="no_short_mac"><b>-no_short_mac</b></dt>
+<dd>
+
+<p>Configure the module to not allow short MAC outputs. See SP 800-185 8.4.2 and FIPS 140-3 ID C.D for details.</p>
+
+</dd>
+<dt id="hmac_key_check"><b>-hmac_key_check</b></dt>
+<dd>
+
+<p>Configure the module to not allow small keys sizes when using HMAC. See SP 800-131Ar2 for details.</p>
+
+</dd>
+<dt id="kmac_key_check"><b>-kmac_key_check</b></dt>
+<dd>
+
+<p>Configure the module to not allow small keys sizes when using KMAC. See SP 800-131Ar2 for details.</p>
+
+</dd>
 <dt id="no_drbg_truncated_digests"><b>-no_drbg_truncated_digests</b></dt>
 <dd>
 
 <p>Configure the module to not allow truncated digests to be used with Hash and HMAC DRBGs. See FIPS 140-3 IG D.R for details.</p>
 
 </dd>
+<dt id="signature_digest_check"><b>-signature_digest_check</b></dt>
+<dd>
+
+<p>Configure the module to enforce signature algorithms to use digests that are explicitly permitted by the various standards.</p>
+
+</dd>
+<dt id="hkdf_digest_check"><b>-hkdf_digest_check</b></dt>
+<dd>
+
+<p>This option is deprecated.</p>
+
+</dd>
+<dt id="tls13_kdf_digest_check"><b>-tls13_kdf_digest_check</b></dt>
+<dd>
+
+<p>Configure the module to enable a run-time digest check when deriving a key by TLS13 KDF. See RFC 8446 for details.</p>
+
+</dd>
+<dt id="tls1_prf_digest_check"><b>-tls1_prf_digest_check</b></dt>
+<dd>
+
+<p>Configure the module to enable a run-time digest check when deriving a key by TLS_PRF. See NIST SP 800-135r1 for details.</p>
+
+</dd>
+<dt id="sshkdf_digest_check"><b>-sshkdf_digest_check</b></dt>
+<dd>
+
+<p>Configure the module to enable a run-time digest check when deriving a key by SSHKDF. See NIST SP 800-135r1 for details.</p>
+
+</dd>
+<dt id="sskdf_digest_check"><b>-sskdf_digest_check</b></dt>
+<dd>
+
+<p>This option is deprecated.</p>
+
+</dd>
+<dt id="x963kdf_digest_check"><b>-x963kdf_digest_check</b></dt>
+<dd>
+
+<p>Configure the module to enable a run-time digest check when deriving a key by X963KDF. See NIST SP 800-131Ar2 for details.</p>
+
+</dd>
+<dt id="dsa_sign_disabled"><b>-dsa_sign_disabled</b></dt>
+<dd>
+
+<p>Configure the module to not allow DSA signing (DSA signature verification is still allowed). See FIPS 140-3 IG C.K for details.</p>
+
+</dd>
+<dt id="tdes_encrypt_disabled"><b>-tdes_encrypt_disabled</b></dt>
+<dd>
+
+<p>Configure the module to not allow Triple-DES encryption. Triple-DES decryption is still allowed for legacy purposes. See SP800-131Ar2 for details.</p>
+
+</dd>
+<dt id="rsa_pkcs15_padding_disabled"><b>-rsa_pkcs15_padding_disabled</b></dt>
+<dd>
+
+<p>Configure the module to not allow PKCS#1 version 1.5 padding to be used with RSA for key transport and key agreement. See NIST&#39;s SP 800-131A Revision 2 for details.</p>
+
+</dd>
+<dt id="rsa_pss_saltlen_check"><b>-rsa_pss_saltlen_check</b></dt>
+<dd>
+
+<p>Configure the module to enable a run-time salt length check when generating or verifying a RSA-PSS signature. See FIPS 186-5 5.4 (g) for details.</p>
+
+</dd>
+<dt id="rsa_sign_x931_disabled"><b>-rsa_sign_x931_disabled</b></dt>
+<dd>
+
+<p>Configure the module to not allow X9.31 padding to be used when signing with RSA. See FIPS 140-3 IG C.K for details.</p>
+
+</dd>
+<dt id="hkdf_key_check"><b>-hkdf_key_check</b></dt>
+<dd>
+
+<p>Configure the module to enable a run-time short key-derivation key check when deriving a key by HKDF. See NIST SP 800-131Ar2 for details.</p>
+
+</dd>
+<dt id="kbkdf_key_check"><b>-kbkdf_key_check</b></dt>
+<dd>
+
+<p>Configure the module to enable a run-time short key-derivation key check when deriving a key by KBKDF. See NIST SP 800-131Ar2 for details.</p>
+
+</dd>
+<dt id="tls13_kdf_key_check"><b>-tls13_kdf_key_check</b></dt>
+<dd>
+
+<p>Configure the module to enable a run-time short key-derivation key check when deriving a key by TLS13 KDF. See NIST SP 800-131Ar2 for details.</p>
+
+</dd>
+<dt id="tls1_prf_key_check"><b>-tls1_prf_key_check</b></dt>
+<dd>
+
+<p>Configure the module to enable a run-time short key-derivation key check when deriving a key by TLS_PRF. See NIST SP 800-131Ar2 for details.</p>
+
+</dd>
+<dt id="sshkdf_key_check"><b>-sshkdf_key_check</b></dt>
+<dd>
+
+<p>Configure the module to enable a run-time short key-derivation key check when deriving a key by SSHKDF. See NIST SP 800-131Ar2 for details.</p>
+
+</dd>
+<dt id="sskdf_key_check"><b>-sskdf_key_check</b></dt>
+<dd>
+
+<p>Configure the module to enable a run-time short key-derivation key check when deriving a key by SSKDF. See NIST SP 800-131Ar2 for details.</p>
+
+</dd>
+<dt id="x963kdf_key_check"><b>-x963kdf_key_check</b></dt>
+<dd>
+
+<p>Configure the module to enable a run-time short key-derivation key check when deriving a key by X963KDF. See NIST SP 800-131Ar2 for details.</p>
+
+</dd>
+<dt id="x942kdf_key_check"><b>-x942kdf_key_check</b></dt>
+<dd>
+
+<p>Configure the module to enable a run-time short key-derivation key check when deriving a key by X942KDF. See NIST SP 800-131Ar2 for details.</p>
+
+</dd>
+<dt id="no_pbkdf2_lower_bound_check"><b>-no_pbkdf2_lower_bound_check</b></dt>
+<dd>
+
+<p>Configure the module to not perform run-time lower bound check for PBKDF2. See NIST SP 800-132 for details.</p>
+
+</dd>
+<dt id="ecdh_cofactor_check"><b>-ecdh_cofactor_check</b></dt>
+<dd>
+
+<p>Configure the module to enable a run-time check that ECDH uses the EC curves cofactor value when deriving a key. This only affects the &#39;B&#39; and &#39;K&#39; curves. See SP 800-56A r3 Section 5.7.1.2 for details.</p>
+
+</dd>
 <dt id="self_test_onload"><b>-self_test_onload</b></dt>
 <dd>
 
-<p>Do not write the two fields related to the &quot;test status indicator&quot; and &quot;MAC status indicator&quot; to the output configuration file. Without these fields the self tests KATS will run each time the module is loaded. This option could be used for cross compiling, since the self tests need to run at least once on each target machine. Once the self tests have run on the target machine the user could possibly then add the 2 fields into the configuration using some other mechanism.</p>
-
-<p>This is the default.</p>
+<p>Do not write the two fields related to the &quot;test status indicator&quot; and &quot;MAC status indicator&quot; to the output configuration file. Without these fields the self tests KATS will run each time the module is loaded. This option could be used for cross compiling, since the self tests need to run at least once on each target machine. Once the self tests have run on the target machine the user could possibly then add the 2 fields into the configuration using some other mechanism. This option defaults to 0 for any OpenSSL FIPS 140-2 provider (OpenSSL 3.0.X). and is not relevant for an OpenSSL FIPS 140-3 provider, since this is no longer allowed.</p>
 
 </dd>
 <dt id="self_test_oninstall"><b>-self_test_oninstall</b></dt>
 <dd>
 
-<p>The converse of <b>-self_test_oninstall</b>. The two fields related to the &quot;test status indicator&quot; and &quot;MAC status indicator&quot; are written to the output configuration file.</p>
+<p>The converse of <b>-self_test_oninstall</b>. The two fields related to the &quot;test status indicator&quot; and &quot;MAC status indicator&quot; are written to the output configuration file. This field is not relevant for an OpenSSL FIPS 140-3 provider, since this is no longer allowed.</p>
 
 </dd>
 <dt id="quiet"><b>-quiet</b></dt>
@@ -266,9 +414,13 @@ openssl fipsinstall -config&#39; &#39;default.cnf&#39;</code></pre>
 
 <p><b>-pedantic</b>, <b>-no_drbg_truncated_digests</b></p>
 
+<p>The following options were added in OpenSSL 3.4:</p>
+
+<p><b>-hmac_key_check</b>, <b>-kmac_key_check</b>, <b>-signature_digest_check</b>, <b>-hkdf_digest_check</b>, <b>-tls13_kdf_digest_check</b>, <b>-tls1_prf_digest_check</b>, <b>-sshkdf_digest_check</b>, <b>-sskdf_digest_check</b>, <b>-x963kdf_digest_check</b>, <b>-dsa_sign_disabled</b>, <b>-no_pbkdf2_lower_bound_check</b>, <b>-no_short_mac</b>, <b>-tdes_encrypt_disabled</b>, <b>-rsa_pkcs15_padding_disabled</b>, <b>-rsa_pss_saltlen_check</b>, <b>-rsa_sign_x931_disabled</b>, <b>-hkdf_key_check</b>, <b>-kbkdf_key_check</b>, <b>-tls13_kdf_key_check</b>, <b>-tls1_prf_key_check</b>, <b>-sshkdf_key_check</b>, <b>-sskdf_key_check</b>, <b>-x963kdf_key_check</b>, <b>-x942kdf_key_check</b>, <b>-ecdh_cofactor_check</b></p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

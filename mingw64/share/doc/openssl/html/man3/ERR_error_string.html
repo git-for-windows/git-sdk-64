@@ -43,7 +43,7 @@ const char *ERR_reason_error_string(unsigned long e);</code></pre>
 
 <p>ERR_error_string() generates a human-readable string representing the error code <i>e</i>, and places it at <i>buf</i>. <i>buf</i> must be at least 256 bytes long. If <i>buf</i> is <b>NULL</b>, the error string is placed in a static buffer. Note that this function is not thread-safe and does no checks on the size of the buffer; use ERR_error_string_n() instead.</p>
 
-<p>ERR_error_string_n() is a variant of ERR_error_string() that writes at most <i>len</i> characters (including the terminating 0) and truncates the string if necessary. For ERR_error_string_n(), <i>buf</i> may not be <b>NULL</b>.</p>
+<p>ERR_error_string_n() is a variant of ERR_error_string() that writes at most <i>len</i> characters (including the terminating 0) and truncates the string if necessary. For ERR_error_string_n(), <i>buf</i> <b>MUST NOT</b> be NULL.</p>
 
 <p>The string will have the following format:</p>
 

@@ -213,7 +213,11 @@ identity = my_fips_module</code></pre>
 <dt id="activate"><b>activate</b></dt>
 <dd>
 
-<p>If present, the module is activated. The value assigned to this name is not significant.</p>
+<p>If present and set to one of the values yes, on, true or 1, then the associated provider will be activated. Conversely, setting this value to no, off, false, or 0 will prevent the provider from being activated. Settings can be given in lower or uppercase. Setting activate to any other setting, or omitting a setting value will result in an error.</p>
+
+<p>= item <b>soft_load</b></p>
+
+<p>If enabled, informs the library to clear the error stack on failure to activate requested provider. A value of 1, yes, true or on (in lower or uppercase) will activate this setting, while a value of 0, no, false, or off (again in lower or uppercase) will disable this setting. Any other value will produce an error. Note this setting defaults to off if not provided</p>
 
 </dd>
 </dl>
@@ -397,6 +401,12 @@ random = CTR-DRBG</code></pre>
 <p>This sets the property query used when fetching the randomness source.</p>
 
 </dd>
+<dt id="random_provider"><b>random_provider</b></dt>
+<dd>
+
+<p>This sets the provider to use for the <a href="../man3/RAND_bytes.html">RAND_bytes(3)</a> calls instead of the built-in entropy sources. It defaults to &quot;fips&quot;. If the named provider is not loaded, the built-in entropy sources will be used.</p>
+
+</dd>
 </dl>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
@@ -481,11 +491,11 @@ default_properties = &quot;fips=yes&quot;</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man1/openssl-x509.html">openssl-x509(1)</a>, <a href="../man1/openssl-req.html">openssl-req(1)</a>, <a href="../man1/openssl-ca.html">openssl-ca(1)</a>, <a href="../man1/openssl-fipsinstall.html">openssl-fipsinstall(1)</a>, <a href="../man3/ASN1_generate_nconf.html">ASN1_generate_nconf(3)</a>, <a href="../man3/EVP_set_default_properties.html">EVP_set_default_properties(3)</a>, <a href="../man3/CONF_modules_load.html">CONF_modules_load(3)</a>, <a href="../man3/CONF_modules_load_file.html">CONF_modules_load_file(3)</a>, <a href="../man5/fips_config.html">fips_config(5)</a>, and <a href="../man5/x509v3_config.html">x509v3_config(5)</a>.</p>
+<p><a href="../man1/openssl-x509.html">openssl-x509(1)</a>, <a href="../man1/openssl-req.html">openssl-req(1)</a>, <a href="../man1/openssl-ca.html">openssl-ca(1)</a>, <a href="../man1/openssl-fipsinstall.html">openssl-fipsinstall(1)</a>, <a href="../man3/ASN1_generate_nconf.html">ASN1_generate_nconf(3)</a>, <a href="../man3/EVP_set_default_properties.html">EVP_set_default_properties(3)</a>, <a href="../man3/CONF_modules_load.html">CONF_modules_load(3)</a>, <a href="../man3/CONF_modules_load_file.html">CONF_modules_load_file(3)</a>, <a href="../man3/RAND_bytes.html">RAND_bytes(3)</a>, <a href="../man5/fips_config.html">fips_config(5)</a>, and <a href="../man5/x509v3_config.html">x509v3_config(5)</a>.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

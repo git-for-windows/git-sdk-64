@@ -23,7 +23,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>X509_get_serialNumber, X509_get0_serialNumber, X509_set_serialNumber - get or set certificate serial number</p>
+<p>X509_get_serialNumber, X509_get0_serialNumber, X509_set_serialNumber, X509_ACERT_get0_serialNumber, X509_ACERT_set1_serialNumber - get or set certificate serial number</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -31,7 +31,12 @@
 
 ASN1_INTEGER *X509_get_serialNumber(X509 *x);
 const ASN1_INTEGER *X509_get0_serialNumber(const X509 *x);
-int X509_set_serialNumber(X509 *x, ASN1_INTEGER *serial);</code></pre>
+int X509_set_serialNumber(X509 *x, ASN1_INTEGER *serial);
+
+#include &lt;openssl/x509_acert.h&gt;
+
+ASN1_INTEGER *X509_ACERT_get0_serialNumber(X509_ACERT *x);
+int X509_ACERT_set1_serialNumber(X509_ACERT *x, ASN1_INTEGER *serial);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -41,11 +46,15 @@ int X509_set_serialNumber(X509 *x, ASN1_INTEGER *serial);</code></pre>
 
 <p>X509_set_serialNumber() sets the serial number of certificate <b>x</b> to <b>serial</b>. A copy of the serial number is used internally so <b>serial</b> should be freed up after use.</p>
 
+<p>X509_ACERT_get0_serialNumber() performs the same operation as X509_get_serialNumber() for attribute certificates.</p>
+
+<p>X509_ACERT_set1_serialNumber() performs the same operation as X509_set_serialNumber() for attribute certificates.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>X509_get_serialNumber() and X509_get0_serialNumber() return an <b>ASN1_INTEGER</b> structure.</p>
+<p>X509_get_serialNumber(), X509_get0_serialNumber() and X509_ACERT_get0_serialNumber() return a pointer to an <b>ASN1_INTEGER</b> structure.</p>
 
-<p>X509_set_serialNumber() returns 1 for success and 0 for failure.</p>
+<p>X509_set_serialNumber() and X509_ACERT_set1_serialNumber() return 1 for success and 0 for failure.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -53,11 +62,11 @@ int X509_set_serialNumber(X509 *x, ASN1_INTEGER *serial);</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The X509_get_serialNumber() and X509_set_serialNumber() functions are available in all versions of OpenSSL. The X509_get0_serialNumber() function was added in OpenSSL 1.1.0.</p>
+<p>The X509_get_serialNumber() and X509_set_serialNumber() functions are available in all versions of OpenSSL. The X509_get0_serialNumber() function was added in OpenSSL 1.1.0. The X509_ACERT_get0_serialNumber() and X509_ACERT_set1_serialNumber() functions were added in OpenSSL 3.4.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

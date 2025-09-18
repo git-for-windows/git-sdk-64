@@ -20,6 +20,7 @@
   <li><a href="#SUPPORTED-CIPHERS">SUPPORTED CIPHERS</a></li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
@@ -30,7 +31,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>enc</b>|<i>cipher</i> [<b>-<i>cipher</i></b>] [<b>-help</b>] [<b>-list</b>] [<b>-ciphers</b>] [<b>-in</b> <i>filename</i>] [<b>-out</b> <i>filename</i>] [<b>-pass</b> <i>arg</i>] [<b>-e</b>] [<b>-d</b>] [<b>-a</b>] [<b>-base64</b>] [<b>-A</b>] [<b>-k</b> <i>password</i>] [<b>-kfile</b> <i>filename</i>] [<b>-K</b> <i>key</i>] [<b>-iv</b> <i>IV</i>] [<b>-S</b> <i>salt</i>] [<b>-salt</b>] [<b>-nosalt</b>] [<b>-z</b>] [<b>-md</b> <i>digest</i>] [<b>-iter</b> <i>count</i>] [<b>-pbkdf2</b>] [<b>-saltlen</b> <i>size</i>] [<b>-p</b>] [<b>-P</b>] [<b>-bufsize</b> <i>number</i>] [<b>-nopad</b>] [<b>-v</b>] [<b>-debug</b>] [<b>-none</b>] [<b>-engine</b> <i>id</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>]</p>
+<p><b>openssl</b> <b>enc</b>|<i>cipher</i> [<b>-<i>cipher</i></b>] [<b>-help</b>] [<b>-list</b>] [<b>-ciphers</b>] [<b>-in</b> <i>filename</i>] [<b>-out</b> <i>filename</i>] [<b>-pass</b> <i>arg</i>] [<b>-e</b>] [<b>-d</b>] [<b>-a</b>] [<b>-base64</b>] [<b>-A</b>] [<b>-k</b> <i>password</i>] [<b>-kfile</b> <i>filename</i>] [<b>-K</b> <i>key</i>] [<b>-iv</b> <i>IV</i>] [<b>-S</b> <i>salt</i>] [<b>-salt</b>] [<b>-nosalt</b>] [<b>-z</b>] [<b>-md</b> <i>digest</i>] [<b>-iter</b> <i>count</i>] [<b>-pbkdf2</b>] [<b>-saltlen</b> <i>size</i>] [<b>-p</b>] [<b>-P</b>] [<b>-bufsize</b> <i>number</i>] [<b>-nopad</b>] [<b>-v</b>] [<b>-debug</b>] [<b>-none</b>] [<b>-skeymgmt</b> <i>skeymgmt</i>] [<b>-skeyopt</b> <i>opt</i>:<i>value</i>] [<b>-engine</b> <i>id</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
 
 <p><b>openssl</b> <i>cipher</i> [<b>...</b>]</p>
 
@@ -194,10 +195,10 @@
 <p>Print out the key and IV used then immediately exit: don&#39;t do any encryption or decryption.</p>
 
 </dd>
-<dt id="bufsize-number"><b>-bufsize</b> <i>number</i></dt>
+<dt id="bufsize-number-k"><b>-bufsize</b> <i>number</i>[<b>k</b>]</dt>
 <dd>
 
-<p>Set the buffer size for I/O.</p>
+<p>Set the buffer size for I/O. The maximum size that can be specified is <b>2^31-1</b> (2147483647) bytes. The <b>k</b> suffix can be specified to indicate that <i>number</i> is provided in kibibytes (multiples of 1024 bytes).</p>
 
 </dd>
 <dt id="nopad"><b>-nopad</b></dt>
@@ -230,6 +231,20 @@
 <p>Use NULL cipher (no encryption or decryption of input).</p>
 
 </dd>
+<dt id="skeymgmt-skeymgmt"><b>-skeymgmt</b> <i>skeymgmt</i></dt>
+<dd>
+
+<p>Some providers may support opaque symmetric keys objects. To use them, we need to know the name of the <b>EVP_SKEYMGMT</b> to be used. If not specified, the name of the cipher will be used.</p>
+
+<p>To find out the name of the suitable symmetric key management, please refer to the output of the <code>openssl list -skey-managers</code> command.</p>
+
+</dd>
+<dt id="skeyopt-opt:value"><b>-skeyopt</b> <i>opt</i>:<i>value</i></dt>
+<dd>
+
+<p>To obtain an existing opaque symmetric key or generate a new one, key options are specified as opt:value. These options can&#39;t be used together with any options implying raw key directly or indirectly.</p>
+
+</dd>
 <dt id="rand-files--writerand-file"><b>-rand</b> <i>files</i>, <b>-writerand</b> <i>file</i></dt>
 <dd>
 
@@ -241,6 +256,10 @@
 
 </dd>
 <dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="provparam-name:-key-value"><b>-provparam</b> <i>[name:]key=value</i></dt>
 <dd>
 
 </dd>
@@ -276,7 +295,7 @@
 
 <p>Some of the ciphers do not have large keys and others have security implications if not used correctly. A beginner is advised to just use a strong block cipher, such as AES, in CBC mode.</p>
 
-<p>All the block ciphers normally use PKCS#5 padding, also known as standard block padding. This allows a rudimentary integrity or password check to be performed. However, since the chance of random data passing the test is better than 1 in 256 it isn&#39;t a very good test.</p>
+<p>All the block ciphers normally use PKCS#7 padding, also known as standard block padding. This allows a rudimentary integrity or password check to be performed. However, since the chance of random data passing the test is better than 1 in 256 it isn&#39;t a very good test.</p>
 
 <p>If padding is disabled then the input data must be a multiple of the cipher block length.</p>
 
@@ -443,6 +462,10 @@ or
 
 <p>The <b>openssl enc</b> command only supports a fixed number of algorithms with certain parameters. So if, for example, you want to use RC2 with a 76 bit key or RC4 with an 84 bit key you can&#39;t use this program.</p>
 
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man1/openssl-list.html">openssl-list(1)</a>, <a href="../man3/EVP_SKEY.html">EVP_SKEY(3)</a></p>
+
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>The default digest was changed from MD5 to SHA256 in OpenSSL 1.1.0.</p>
@@ -453,9 +476,11 @@ or
 
 <p>The <b>-saltlen</b> option was added in OpenSSL 3.2.</p>
 
+<p>The <b>-skeymgmt</b> and <b>-skeyopt</b> options were added in OpenSSL 3.5.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

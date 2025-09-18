@@ -61,7 +61,13 @@
 <dt id="finaled">finaled</dt>
 <dd>
 
-<p>This state represents the MD when it has generated output.</p>
+<p>This state represents the MD when it has generated output. For an XOF digest, this state represents the MD when it has generated a single-shot output.</p>
+
+</dd>
+<dt id="squeezed">squeezed</dt>
+<dd>
+
+<p>For an XOF digest, this state represents the MD when it has generated output. It can be called multiple times to generate more output. The output length is variable for each call.</p>
 
 </dd>
 <dt id="freed">freed</dt>
@@ -91,9 +97,11 @@
     <th style="border:1px solid" align="center">initialised</th>
     <th style="border:1px solid" align="center">updated</th>
     <th style="border:1px solid" align="center">finaled</th>
+    <th style="border:1px solid" align="center">squeezed</th>
     <th style="border:1px solid" align="center">freed</th></tr>
 <tr><th style="border:1px solid" align="left">EVP_MD_CTX_new</th>
     <td style="border:1px solid" align="center">newed</td>
+    <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td>
@@ -105,12 +113,14 @@
     <td style="border:1px solid" align="center">initialised</td>
     <td style="border:1px solid" align="center">initialised</td>
     <td style="border:1px solid" align="center">initialised</td>
+    <td style="border:1px solid" align="center">initialised</td>
     <td style="border:1px solid" align="center"></td></tr>
 <tr><th style="border:1px solid" align="left">EVP_DigestUpdate</th>
     <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center">updated</td>
     <td style="border:1px solid" align="center">updated</td>
+    <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td></tr>
 <tr><th style="border:1px solid" align="left">EVP_DigestFinal</th>
@@ -119,12 +129,22 @@
     <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center">finaled</td>
     <td style="border:1px solid" align="center"></td>
+    <td style="border:1px solid" align="center"></td>
+    <td style="border:1px solid" align="center"></td></tr>
+<tr><th style="border:1px solid" align="left">EVP_DigestSqueeze</th>
+    <td style="border:1px solid" align="center"></td>
+    <td style="border:1px solid" align="center"></td>
+    <td style="border:1px solid" align="center"></td>
+    <td style="border:1px solid" align="center">squeezed</td>
+    <td style="border:1px solid" align="center"></td>
+    <td style="border:1px solid" align="center">squeezed</td>
     <td style="border:1px solid" align="center"></td></tr>
 <tr><th style="border:1px solid" align="left">EVP_DigestFinalXOF</th>
     <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center">finaled</td>
+    <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td></tr>
 <tr><th style="border:1px solid" align="left">EVP_MD_CTX_free</th>
@@ -133,6 +153,7 @@
     <td style="border:1px solid" align="center">freed</td>
     <td style="border:1px solid" align="center">freed</td>
     <td style="border:1px solid" align="center">freed</td>
+    <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td></tr>
 <tr><th style="border:1px solid" align="left">EVP_MD_CTX_reset</th>
     <td style="border:1px solid" align="center"></td>
@@ -140,12 +161,14 @@
     <td style="border:1px solid" align="center">newed</td>
     <td style="border:1px solid" align="center">newed</td>
     <td style="border:1px solid" align="center">newed</td>
+    <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td></tr>
 <tr><th style="border:1px solid" align="left">EVP_MD_CTX_get_params</th>
     <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center">newed</td>
     <td style="border:1px solid" align="center">initialised</td>
     <td style="border:1px solid" align="center">updated</td>
+    <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td></tr>
 <tr><th style="border:1px solid" align="left">EVP_MD_CTX_set_params</th>
@@ -154,12 +177,14 @@
     <td style="border:1px solid" align="center">initialised</td>
     <td style="border:1px solid" align="center">updated</td>
     <td style="border:1px solid" align="center"></td>
+    <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td></tr>
 <tr><th style="border:1px solid" align="left">EVP_MD_CTX_gettable_params</th>
     <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center">newed</td>
     <td style="border:1px solid" align="center">initialised</td>
     <td style="border:1px solid" align="center">updated</td>
+    <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td>
     <td style="border:1px solid" align="center"></td></tr>
 <tr><th style="border:1px solid" align="left">EVP_MD_CTX_settable_params</th>
@@ -168,6 +193,15 @@
     <td style="border:1px solid" align="center">initialised</td>
     <td style="border:1px solid" align="center">updated</td>
     <td style="border:1px solid" align="center"></td>
+    <td style="border:1px solid" align="center"></td>
+    <td style="border:1px solid" align="center"></td></tr>
+<tr><th style="border:1px solid" align="left">EVP_MD_CTX_copy_ex</th>
+    <td style="border:1px solid" align="center"></td>
+    <td style="border:1px solid" align="center">newed</td>
+    <td style="border:1px solid" align="center">initialised</td>
+    <td style="border:1px solid" align="center">updated</td>
+    <td style="border:1px solid" align="center"></td>
+    <td style="border:1px solid" align="center">squeezed</td>
     <td style="border:1px solid" align="center"></td></tr>
 </table>
 
@@ -181,7 +215,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

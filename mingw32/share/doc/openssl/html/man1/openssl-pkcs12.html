@@ -34,7 +34,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>pkcs12</b> [<b>-help</b>] [<b>-passin</b> <i>arg</i>] [<b>-passout</b> <i>arg</i>] [<b>-password</b> <i>arg</i>] [<b>-twopass</b>] [<b>-in</b> <i>filename</i>|<i>uri</i>] [<b>-out</b> <i>filename</i>] [<b>-nokeys</b>] [<b>-nocerts</b>] [<b>-noout</b>] [<b>-legacy</b>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>]</p>
+<p><b>openssl</b> <b>pkcs12</b> [<b>-help</b>] [<b>-passin</b> <i>arg</i>] [<b>-passout</b> <i>arg</i>] [<b>-password</b> <i>arg</i>] [<b>-twopass</b>] [<b>-in</b> <i>filename</i>|<i>uri</i>] [<b>-out</b> <i>filename</i>] [<b>-nokeys</b>] [<b>-nocerts</b>] [<b>-noout</b>] [<b>-legacy</b>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>]</p>
 
 <p>PKCS#12 input (parsing) options: [<b>-info</b>] [<b>-nomacver</b>] [<b>-clcerts</b>] [<b>-cacerts</b>]</p>
 
@@ -42,7 +42,7 @@
 
 <p>PKCS#12 output (export) options:</p>
 
-<p>[<b>-export</b>] [<b>-inkey</b> <i>filename</i>|<i>uri</i>] [<b>-certfile</b> <i>filename</i>] [<b>-passcerts</b> <i>arg</i>] [<b>-chain</b>] [<b>-untrusted</b> <i>filename</i>] [<b>-CAfile</b> <i>file</i>] [<b>-no-CAfile</b>] [<b>-CApath</b> <i>dir</i>] [<b>-no-CApath</b>] [<b>-CAstore</b> <i>uri</i>] [<b>-no-CAstore</b>] [<b>-name</b> <i>name</i>] [<b>-caname</b> <i>name</i>] [<b>-CSP</b> <i>name</i>] [<b>-LMK</b>] [<b>-keyex</b>] [<b>-keysig</b>] [<b>-keypbe</b> <i>cipher</i>] [<b>-certpbe</b> <i>cipher</i>] [<b>-descert</b>] [<b>-macalg</b> <i>digest</i>] [<b>-iter</b> <i>count</i>] [<b>-noiter</b>] [<b>-nomaciter</b>] [<b>-maciter</b>] [<b>-macsaltlen</b>] [<b>-nomac</b>] [<b>-jdktrust</b> <i>usage</i>]</p>
+<p>[<b>-export</b>] [<b>-inkey</b> <i>filename</i>|<i>uri</i>] [<b>-certfile</b> <i>filename</i>] [<b>-passcerts</b> <i>arg</i>] [<b>-chain</b>] [<b>-untrusted</b> <i>filename</i>] [<b>-CAfile</b> <i>file</i>] [<b>-no-CAfile</b>] [<b>-CApath</b> <i>dir</i>] [<b>-no-CApath</b>] [<b>-CAstore</b> <i>uri</i>] [<b>-no-CAstore</b>] [<b>-name</b> <i>name</i>] [<b>-caname</b> <i>name</i>] [<b>-CSP</b> <i>name</i>] [<b>-LMK</b>] [<b>-keyex</b>] [<b>-keysig</b>] [<b>-keypbe</b> <i>cipher</i>] [<b>-certpbe</b> <i>cipher</i>] [<b>-descert</b>] [<b>-macalg</b> <i>digest</i>] [<b>-pbmac1_pbkdf2</b>] [<b>-pbmac1_pbkdf2_md</b> <i>digest</i>] [<b>-iter</b> <i>count</i>] [<b>-noiter</b>] [<b>-nomaciter</b>] [<b>-maciter</b>] [<b>-macsaltlen</b>] [<b>-nomac</b>] [<b>-jdktrust</b> <i>usage</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -125,6 +125,10 @@
 
 </dd>
 <dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="provparam-name:-key-value"><b>-provparam</b> <i>[name:]key=value</i></dt>
 <dd>
 
 </dd>
@@ -340,6 +344,18 @@
 <p>Specify the MAC digest algorithm. If not included SHA256 will be used.</p>
 
 </dd>
+<dt id="pbmac1_pbkdf2"><b>-pbmac1_pbkdf2</b></dt>
+<dd>
+
+<p>Use PBMAC1 with PBKDF2 for MAC protection of the PKCS#12 file.</p>
+
+</dd>
+<dt id="pbmac1_pbkdf2_md-digest"><b>-pbmac1_pbkdf2_md</b> <i>digest</i></dt>
+<dd>
+
+<p>Specify the PBKDF2 KDF digest algorithm. If not specified, SHA256 will be used. Unless <code>-pbmac1_pbkdf2</code> is specified, this parameter is ignored.</p>
+
+</dd>
 <dt id="iter-count"><b>-iter</b> <i>count</i></dt>
 <dd>
 
@@ -435,7 +451,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

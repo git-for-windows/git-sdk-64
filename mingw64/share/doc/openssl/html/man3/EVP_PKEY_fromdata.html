@@ -56,7 +56,7 @@ const OSSL_PARAM *EVP_PKEY_fromdata_settable(EVP_PKEY_CTX *ctx, int selection);<
 
 <p>EVP_PKEY_fromdata_init() initializes a public key algorithm context for creating a key or key parameters from user data.</p>
 
-<p>EVP_PKEY_fromdata() creates the structure to store a key or key parameters, given data from <i>params</i>, <i>selection</i> and a context that&#39;s been initialized with EVP_PKEY_fromdata_init(). The result is written to <i>*ppkey</i>. <i>selection</i> is described in <a href="#Selections">&quot;Selections&quot;</a>. The parameters that can be used for various types of key are as described by the diverse &quot;Common parameters&quot; sections of the <a href="../man7/EVP_PKEY-RSA.html"><b>EVP_PKEY-RSA</b>(7)</a>, <a href="../man7/EVP_PKEY-DSA.html"><b>EVP_PKEY-DSA</b>(7)</a>, <a href="../man7/EVP_PKEY-DH.html"><b>EVP_PKEY-DH</b>(7)</a>, <a href="../man7/EVP_PKEY-EC.html"><b>EVP_PKEY-EC</b>(7)</a>, <a href="../man7/EVP_PKEY-ED448.html"><b>EVP_PKEY-ED448</b>(7)</a>, <a href="../man7/EVP_PKEY-X25519.html"><b>EVP_PKEY-X25519</b>(7)</a>, <a href="../man7/EVP_PKEY-X448.html"><b>EVP_PKEY-X448</b>(7)</a>, and <a href="../man7/EVP_PKEY-ED25519.html"><b>EVP_PKEY-ED25519</b>(7)</a> pages.</p>
+<p>EVP_PKEY_fromdata() creates the structure to store a key or key parameters, given data from <i>params</i>, <i>selection</i> and a context that&#39;s been initialized with EVP_PKEY_fromdata_init(). The result is written to <i>*ppkey</i>. <i>selection</i> is described in <a href="#Selections">&quot;Selections&quot;</a>. The parameters that can be used for various types of key are as described by the various &quot;Common parameters&quot; sections of the <a href="../man7/EVP_PKEY-RSA.html"><b>EVP_PKEY-RSA</b>(7)</a>, <a href="../man7/EVP_PKEY-DSA.html"><b>EVP_PKEY-DSA</b>(7)</a>, <a href="../man7/EVP_PKEY-DH.html"><b>EVP_PKEY-DH</b>(7)</a>, <a href="../man7/EVP_PKEY-EC.html"><b>EVP_PKEY-EC</b>(7)</a>, <a href="../man7/EVP_PKEY-ED448.html"><b>EVP_PKEY-ED448</b>(7)</a>, <a href="../man7/EVP_PKEY-X25519.html"><b>EVP_PKEY-X25519</b>(7)</a>, <a href="../man7/EVP_PKEY-X448.html"><b>EVP_PKEY-X448</b>(7)</a>, <a href="../man7/EVP_PKEY-ED25519.html"><b>EVP_PKEY-ED25519</b>(7)</a>, <a href="../man7/EVP_PKEY-ML-DSA.html"><b>EVP_PKEY-ML-DSA(7)</b></a> and <a href="../man7/EVP_PKEY-ML-KEM.html"><b>EVP_PKEY-ML-KEM(7)</b></a> pages.</p>
 
 <p>EVP_PKEY_fromdata_settable() gets a constant <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a> array that describes the settable parameters that can be used with EVP_PKEY_fromdata(). <i>selection</i> is described in <a href="#Selections">&quot;Selections&quot;</a>.</p>
 
@@ -252,15 +252,17 @@ int main(int argc, char *argv[])
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a>, <a href="../man7/provider.html">provider(7)</a>, <a href="../man3/EVP_PKEY_gettable_params.html">EVP_PKEY_gettable_params(3)</a>, <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a>, <a href="../man3/EVP_PKEY_todata.html">EVP_PKEY_todata(3)</a>, <a href="../man7/EVP_PKEY-RSA.html">EVP_PKEY-RSA(7)</a>, <a href="../man7/EVP_PKEY-DSA.html">EVP_PKEY-DSA(7)</a>, <a href="../man7/EVP_PKEY-DH.html">EVP_PKEY-DH(7)</a>, <a href="../man7/EVP_PKEY-EC.html">EVP_PKEY-EC(7)</a>, <a href="../man7/EVP_PKEY-ED448.html">EVP_PKEY-ED448(7)</a>, <a href="../man7/EVP_PKEY-X25519.html">EVP_PKEY-X25519(7)</a>, <a href="../man7/EVP_PKEY-X448.html">EVP_PKEY-X448(7)</a>, <a href="../man7/EVP_PKEY-ED25519.html">EVP_PKEY-ED25519(7)</a></p>
+<p><a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a>, <a href="../man3/EVP_PKEY_todata.html">EVP_PKEY_todata(3)</a>, <a href="../man3/EVP_PKEY_gettable_params.html">EVP_PKEY_gettable_params(3)</a>, <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a>, <a href="../man7/provider.html">provider(7)</a>, <a href="../man7/EVP_PKEY-RSA.html">EVP_PKEY-RSA(7)</a>, <a href="../man7/EVP_PKEY-EC.html">EVP_PKEY-EC(7)</a>, <a href="../man7/EVP_PKEY-ED25519.html">EVP_PKEY-ED25519(7)</a>, <a href="../man7/EVP_PKEY-ED448.html">EVP_PKEY-ED448(7)</a>, <a href="../man7/EVP_PKEY-DSA.html">EVP_PKEY-DSA(7)</a>, <a href="../man7/EVP_PKEY-DH.html">EVP_PKEY-DH(7)</a>, <a href="../man7/EVP_PKEY-X25519.html">EVP_PKEY-X25519(7)</a>, <a href="../man7/EVP_PKEY-X448.html">EVP_PKEY-X448(7)</a>, <a href="../man7/EVP_PKEY-ML-DSA.html">EVP_PKEY-ML-DSA(7)</a>, <a href="../man7/EVP_PKEY-ML-KEM.html">EVP_PKEY-ML-KEM(7)</a>, <a href="../man7/EVP_PKEY-SLH-DSA.html">EVP_PKEY-SLH-DSA(7)</a>.</p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>These functions were added in OpenSSL 3.0.</p>
 
+<p>Support for <b>ML-DSA</b>, <b>ML-KEM</b> and <b>SLH-DSA</b> was added in OpenSSL 3.5.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

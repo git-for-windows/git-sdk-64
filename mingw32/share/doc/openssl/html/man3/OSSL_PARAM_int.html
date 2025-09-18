@@ -21,6 +21,7 @@
     <ul>
       <li><a href="#Example-1">Example 1</a></li>
       <li><a href="#Example-2">Example 2</a></li>
+      <li><a href="#Example-3">Example 3</a></li>
     </ul>
   </li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
@@ -266,6 +267,24 @@ if ((p = OSSL_PARAM_locate(params, &quot;bar&quot;)) != NULL)
 if ((p = OSSL_PARAM_locate(params, &quot;cookie&quot;)) != NULL)
     OSSL_PARAM_set_utf8_ptr(p, &quot;cookie value&quot;);</code></pre>
 
+<h2 id="Example-3">Example 3</h2>
+
+<p>This example shows a special case where <i>-Wincompatible-pointer-types-discards-qualifiers</i> may be set during compilation. The value for <i>buf</i> cannot be a <i>const char *</i> type string. An alternative in this case would be to use <b>OSSL_PARAM</b> macro abbreviated calls rather than the specific callers which allows you to define the sha1 argument as a standard character array (<i>char[]</i>).</p>
+
+<p>For example, this code:</p>
+
+<pre><code>OSSL_PARAM params[2];
+params[0] = OSSL_PARAM_construct_utf8_string(&quot;digest&quot;, &quot;SHA1&quot;, 0);
+params[1] = OSSL_PARAM_construct_end();</code></pre>
+
+<p>Can be made compatible with the following version:</p>
+
+<pre><code>char sha1[] = &quot;SHA1&quot;; /* sha1 is defined as char[] in this case */
+OSSL_PARAM params[2];
+
+params[0] = OSSL_PARAM_construct_utf8_string(&quot;digest&quot;, sha1, 0);
+params[1] = OSSL_PARAM_construct_end();</code></pre>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man7/openssl-core.h.html">openssl-core.h(7)</a>, <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a></p>
@@ -276,7 +295,7 @@ if ((p = OSSL_PARAM_locate(params, &quot;cookie&quot;)) != NULL)
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

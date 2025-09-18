@@ -71,6 +71,14 @@
 <p>Sets the properties to be queried when trying to fetch the underlying cipher. This must be given together with the cipher naming parameter to be considered valid.</p>
 
 </dd>
+<dt id="encrypt-check-OSSL_CIPHER_PARAM_FIPS_ENCRYPT_CHECK-integer">&quot;encrypt-check&quot; (<b>OSSL_CIPHER_PARAM_FIPS_ENCRYPT_CHECK</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>This option is used by the OpenSSL FIPS provider. If required this parameter should be set before EVP_MAC_init()</p>
+
+<p>The default value of 1 causes an error when a unapproved Triple-DES encryption operation is triggered. Setting this to 0 will ignore the error and set the approved &quot;fips-indicator&quot; to 0. This option breaks FIPS compliance if it causes the approved &quot;fips-indicator&quot; to return 0.</p>
+
+</dd>
 </dl>
 
 <p>The following parameters can be retrieved with EVP_MAC_CTX_get_params():</p>
@@ -83,14 +91,18 @@
 <p>The &quot;size&quot; parameter can also be retrieved with with EVP_MAC_CTX_get_mac_size(). The length of the &quot;size&quot; parameter is equal to that of an <b>unsigned int</b>.</p>
 
 </dd>
-</dl>
-
-<dl>
-
 <dt id="block-size-OSSL_MAC_PARAM_BLOCK_SIZE-unsigned-integer">&quot;block-size&quot; (<b>OSSL_MAC_PARAM_BLOCK_SIZE</b>) &lt;unsigned integer&gt;</dt>
 <dd>
 
 <p>Gets the MAC block size. The &quot;block-size&quot; parameter can also be retrieved with EVP_MAC_CTX_get_block_size().</p>
+
+</dd>
+<dt id="fips-indicator-OSSL_CIPHER_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_CIPHER_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>This option is used by the OpenSSL FIPS provider.</p>
+
+<p>A getter that returns 1 if the operation is FIPS approved, or 0 otherwise. This may be used after calling EVP_MAC_final(). It may return 0 if the &quot;encrypt-check&quot; option is set to 0.</p>
 
 </dd>
 </dl>
@@ -101,7 +113,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2018-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2018-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

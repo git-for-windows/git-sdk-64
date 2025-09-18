@@ -228,6 +228,8 @@ while ((ret = SSL_connect(ssl)) != 1) {
 
 <p>As with the blocking QUIC client demo we use the <a href="../man3/SSL_write_ex.html">SSL_write_ex(3)</a> function to send data to the server. As with <a href="../man3/SSL_connect.html">SSL_connect(3)</a> above, because we are using a nonblocking <b>SSL</b> object, this call could fail with a non-fatal error. In that case we should retry exactly the same <a href="../man3/SSL_write_ex.html">SSL_write_ex(3)</a> call again. Note that the parameters must be <i>exactly</i> the same, i.e. the same pointer to the buffer to write with the same length. You must not attempt to send different data on a retry. An optional mode does exist (<b>SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER</b>) which will configure OpenSSL to allow the buffer being written to change from one retry to the next. However, in this case, you must still retry exactly the same data - even though the buffer that contains that data may change location. See <a href="../man3/SSL_CTX_set_mode.html">SSL_CTX_set_mode(3)</a> for further details. As in the TLS tutorials (<a href="../man7/ossl-guide-tls-client-block.html">ossl-guide-tls-client-block(7)</a>) we write the request in three chunks.</p>
 
+<p>First, we write the entire request to the stream. We also must make sure to signal to the server that we have finished writing. This can be done by passing the SSL_WRITE_FLAG_CONCLUDE flag to <a href="../man3/SSL_write_ex2.html">SSL_write_ex2(3)</a> or by calling <a href="../man3/SSL_stream_conclude.html">SSL_stream_conclude(3)</a>. Since the first way is more efficient, we choose to do that.</p>
+
 <pre><code>/* Write an HTTP GET request to the peer */
 while (!SSL_write_ex(ssl, request_start, strlen(request_start), &amp;written)) {
     if (handle_io_failure(ssl, 0) == 1)
@@ -241,7 +243,8 @@ while (!SSL_write_ex(ssl, hostname, strlen(hostname), &amp;written)) {
     printf(&quot;Failed to write hostname in HTTP request\n&quot;);
     goto end; /* Cannot retry: error */
 }
-while (!SSL_write_ex(ssl, request_end, strlen(request_end), &amp;written)) {
+while (!SSL_write_ex2(ssl, request_end, strlen(request_end),
+       SSL_WRITE_FLAG_CONCLUDE, &amp;written)) {
     if (handle_io_failure(ssl, 0) == 1)
         continue; /* Retry */
     printf(&quot;Failed to write end of HTTP request\n&quot;);
@@ -318,7 +321,7 @@ while ((ret = SSL_shutdown(ssl)) != 1) {
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2023-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

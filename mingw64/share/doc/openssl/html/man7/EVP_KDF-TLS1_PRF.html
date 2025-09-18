@@ -75,6 +75,38 @@
 </dd>
 </dl>
 
+<p>The OpenSSL FIPS provider also supports the following parameters:</p>
+
+<dl>
+
+<dt id="fips-indicator-OSSL_KDF_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_KDF_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>A getter that returns 1 if the operation is FIPS approved, or 0 otherwise. This may be used after calling EVP_KDF_derive. It returns 0 if any &quot;***-check&quot; related parameter is set to 0 and the check fails.</p>
+
+</dd>
+<dt id="ems_check-OSSL_KDF_PARAM_FIPS_EMS_CHECK-integer">&quot;ems_check&quot; (<b>OSSL_KDF_PARAM_FIPS_EMS_CHECK</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>The default value of 1 causes an error during EVP_KDF_derive() if &quot;master secret&quot; is used instead of &quot;extended master secret&quot; Setting this to zero will ignore the error and set the approved &quot;fips-indicator&quot; to 0. This option breaks FIPS compliance if it causes the approved &quot;fips-indicator&quot; to return 0.</p>
+
+</dd>
+<dt id="digest-check-OSSL_KDF_PARAM_FIPS_DIGEST_CHECK-integer">&quot;digest-check&quot; (<b>OSSL_KDF_PARAM_FIPS_DIGEST_CHECK</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>The default value of 1 causes an error during EVP_KDF_CTX_set_params() if used digest is not approved. Setting this to zero will ignore the error and set the approved &quot;fips-indicator&quot; to 0. This option breaks FIPS compliance if it causes the approved &quot;fips-indicator&quot; to return 0.</p>
+
+<p>According to SP 800-135r1, the following are approved digest algorithms: SHA2-256, SHA2-384, SHA2-512.</p>
+
+</dd>
+<dt id="key-check-OSSL_KDF_PARAM_FIPS_KEY_CHECK-integer">&quot;key-check&quot; (<b>OSSL_KDF_PARAM_FIPS_KEY_CHECK</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>The default value of 1 causes an error during EVP_KDF_CTX_set_params() if the length of used key-derivation key (<b>OSSL_KDF_PARAM_SECRET</b>) is shorter than 112 bits. Setting this to zero will ignore the error and set the approved &quot;fips-indicator&quot; to 0. This option breaks FIPS compliance if it causes the approved &quot;fips-indicator&quot; to return 0.</p>
+
+</dd>
+</dl>
+
 <h1 id="NOTES">NOTES</h1>
 
 <p>A context for the TLS PRF can be obtained by calling:</p>
@@ -125,7 +157,7 @@ EVP_KDF_CTX_free(kctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2018-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2018-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

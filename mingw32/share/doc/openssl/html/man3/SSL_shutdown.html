@@ -62,7 +62,7 @@ __owur int SSL_shutdown_ex(SSL *ssl, uint64_t flags,
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_shutdown() shuts down an active connection represented by an SSL object.</p>
+<p>SSL_shutdown() shuts down an active connection represented by an SSL object. <i>ssl</i> <b>MUST NOT</b> be NULL.</p>
 
 <p>SSL_shutdown_ex() is an extended version of SSL_shutdown(). If non-NULL, <i>args</i> must point to a <b>SSL_SHUTDOWN_EX_ARGS</b> structure and <i>args_len</i> must be set to <code>sizeof(SSL_SHUTDOWN_EX_ARGS)</code>. The <b>SSL_SHUTDOWN_EX_ARGS</b> structure must be zero-initialized. If <i>args</i> is NULL, the behaviour is the same as passing a zero-initialised <b>SSL_SHUTDOWN_EX_ARGS</b> structure. Currently, all extended arguments relate to usage with QUIC, therefore this call functions identically to SSL_shutdown() when not being used with QUIC.</p>
 
@@ -90,7 +90,7 @@ __owur int SSL_shutdown_ex(SSL *ssl, uint64_t flags,
 
 <h2 id="Locally-Initiated-Shutdown">Locally-Initiated Shutdown</h2>
 
-<p>Calling SSL_shutdown() on a SSL/TLS or DTLS SSL object initiates the shutdown process and causes OpenSSL to try to send a close_notify shutdown alert to the peer. The shutdown process will then be considered completed once the peer responds in turn with a close_notify shutdown alert message.</p>
+<p>Calling SSL_shutdown() on an SSL/TLS or DTLS SSL object initiates the shutdown process and causes OpenSSL to try to send a close_notify shutdown alert to the peer. The shutdown process will then be considered completed once the peer responds in turn with a close_notify shutdown alert message.</p>
 
 <p>Calling SSL_shutdown() only closes the write direction of the connection; the read direction is closed by the peer. Once SSL_shutdown() is called, <a href="../man3/SSL_write.html">SSL_write(3)</a> can no longer be used, but <a href="../man3/SSL_read.html">SSL_read(3)</a> may still be used until the peer decides to close the connection in turn. The peer might continue sending data for some period of time before handling the local application&#39;s shutdown indication.</p>
 
@@ -146,7 +146,7 @@ __owur int SSL_shutdown_ex(SSL *ssl, uint64_t flags,
 
 <h2 id="Session-Ticket-Handling">Session Ticket Handling</h2>
 
-<p>If a client application only writes to a SSL/TLS or DTLS connection and never reads, OpenSSL may never process new SSL/TLS session tickets sent by the server. This is because OpenSSL ordinarily processes handshake messages received from a peer during calls to <a href="../man3/SSL_read.html">SSL_read(3)</a> by the application.</p>
+<p>If a client application only writes to an SSL/TLS or DTLS connection and never reads, OpenSSL may never process new SSL/TLS session tickets sent by the server. This is because OpenSSL ordinarily processes handshake messages received from a peer during calls to <a href="../man3/SSL_read.html">SSL_read(3)</a> by the application.</p>
 
 <p>Therefore, client applications which only write and do not read but which wish to benefit from session resumption are advised to perform a complete shutdown procedure by calling SSL_shutdown() until it returns 1, as described above. This will ensure there is an opportunity for SSL/TLS session ticket messages to be received and processed by OpenSSL.</p>
 

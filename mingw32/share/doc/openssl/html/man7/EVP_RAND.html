@@ -174,7 +174,9 @@
 
 <h2 id="Configuring-the-Random-Seed-Source">Configuring the Random Seed Source</h2>
 
-<p>In most cases OpenSSL will automatically choose a suitable seed source for automatically seeding and reseeding its &lt;primary&gt; DRBG. In some cases however, it will be necessary to explicitly specify a seed source during configuration, using the --with-rand-seed option. For more information, see the INSTALL instructions. There are also operating systems where no seed source is available and automatic reseeding is disabled by default.</p>
+<p>In most cases OpenSSL will automatically choose a suitable seed source for automatically seeding and reseeding its &lt;primary&gt; DRBG. The default seed source can be configured when OpenSSL is compiled by setting <b>-DOPENSSL_DEFAULT_SEED_SRC=SEED-SRC</b>. If not set then &quot;SEED-SRC&quot; is used. One can specify a third-party provider seed-source, or <b>-DOPENSSL_DEFAULT_SEED_SRC=JITTER</b> if available.</p>
+
+<p>In some cases however, it will be necessary to explicitly specify a seed source used by &quot;SEED-SRC&quot; during configuration, using the --with-rand-seed option. For more information, see the INSTALL instructions. There are also operating systems where no seed source is available and automatic reseeding is disabled by default.</p>
 
 <p>The following two sections describe the reseeding process of the primary DRBG, depending on whether automatic reseeding is available or not.</p>
 
@@ -220,7 +222,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2017-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2017-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

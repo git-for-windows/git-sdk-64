@@ -29,7 +29,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>pkeyparam</b> [<b>-help</b>] [<b>-in</b> <i>filename</i>] [<b>-out</b> <i>filename</i>] [<b>-text</b>] [<b>-noout</b>] [<b>-check</b>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>]</p>
+<p><b>openssl</b> <b>pkeyparam</b> [<b>-help</b>] [<b>-in</b> <i>filename</i>] [<b>-out</b> <i>filename</i>] [<b>-text</b>] [<b>-noout</b>] [<b>-check</b>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -48,13 +48,13 @@
 <dt id="in-filename"><b>-in</b> <i>filename</i></dt>
 <dd>
 
-<p>This specifies the input filename to read parameters from or standard input if this option is not specified.</p>
+<p>This specifies the input file to read parameters from or standard input if this option is not specified.</p>
 
 </dd>
 <dt id="out-filename"><b>-out</b> <i>filename</i></dt>
 <dd>
 
-<p>This specifies the output filename to write parameters to or standard output if this option is not specified.</p>
+<p>This specifies the output filename to write parameters to or standard output if this option is not specified. The output filename can be the same as the input filename, which leads to replacing the file contents. Note that file I/O is not atomic. The output file is truncated and then written.</p>
 
 </dd>
 <dt id="text"><b>-text</b></dt>
@@ -86,6 +86,10 @@
 
 </dd>
 <dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="provparam-name:-key-value"><b>-provparam</b> <i>[name:]key=value</i></dt>
 <dd>
 
 </dd>

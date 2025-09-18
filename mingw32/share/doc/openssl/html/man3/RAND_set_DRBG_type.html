@@ -17,6 +17,7 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
@@ -51,7 +52,13 @@ int RAND_set_seed_source_type(OSSL_LIB_CTX *ctx, const char *seed,
 
 <p>The default DRBG is &quot;CTR-DRBG&quot; using the &quot;AES-256-CTR&quot; cipher.</p>
 
-<p>The default seed source is &quot;SEED-SRC&quot;.</p>
+<p>The default seed source can be configured when OpenSSL is compiled by setting <b>-DOPENSSL_DEFAULT_SEED_SRC=SEED-SRC</b>. If not set then &quot;SEED-SRC&quot; is used.</p>
+
+<h1 id="EXAMPLES">EXAMPLES</h1>
+
+<pre><code>unsigned char bytes[100];
+RAND_set_seed_source_type(NULL, &quot;JITTER&quot;, NULL);
+RAND_bytes(bytes, 100);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

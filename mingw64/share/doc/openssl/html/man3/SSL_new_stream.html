@@ -62,6 +62,8 @@ SSL *SSL_new_stream(SSL *ssl, uint64_t flags);</code></pre>
 
 <p>This function fails if called on a QUIC stream SSL object or on a non-QUIC SSL object.</p>
 
+<p>SSL_new_stream() may also fail if the underlying connection has reached the maximum stream count, based on the <b>max_streams_bidi</b> or <b>max_streams_uni</b> transport parameter values negotiated with the peer. In this event the NULL return will be accompanied by an error on the error stack (obtainable via ERR_get_error()), which will contain a reason code of <b>SSL_R_STREAM_COUNT_LIMITED</b>. When this error is encountered, the operation may be retried. It is recommended that, prior to retry, the error stack be cleared via a call to ERR_clear_error(), and that the TLS state machine be activated via a call to SSL_handle_events() to process any potential updates from the server allowing additional streams to be created.</p>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man3/SSL_accept_stream.html">SSL_accept_stream(3)</a>, <a href="../man3/SSL_free.html">SSL_free(3)</a></p>
@@ -72,7 +74,7 @@ SSL *SSL_new_stream(SSL *ssl, uint64_t flags);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

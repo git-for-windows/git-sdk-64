@@ -52,6 +52,8 @@
 <dt id="pkcs1-OSSL_PKEY_RSA_PAD_MODE_PKCSV15">&quot;pkcs1&quot; (<b>OSSL_PKEY_RSA_PAD_MODE_PKCSV15</b>)</dt>
 <dd>
 
+<p>This padding mode is no longer supported by the FIPS provider for key agreement and key transport. (This is a FIPS 140-3 requirement). See <a href="../man1/openssl-fipsinstall.html">&quot;OPTIONS&quot; in openssl-fipsinstall(1)</a> <b>-rsa_pkcs15_pad_disabled</b>.</p>
+
 </dd>
 <dt id="x931-OSSL_PKEY_RSA_PAD_MODE_X931">&quot;x931&quot; (<b>OSSL_PKEY_RSA_PAD_MODE_X931</b>)</dt>
 <dd>
@@ -69,6 +71,8 @@
 
 <dt id="RSA_PKCS1_PADDING">1 (<b>RSA_PKCS1_PADDING</b>)</dt>
 <dd>
+
+<p>This padding mode is no longer supported by the FIPS provider for key agreement and key transport. (This is a FIPS 140-3 requirement)</p>
 
 </dd>
 <dt id="RSA_NO_PADDING">3 (<b>RSA_NO_PADDING</b>)</dt>
@@ -124,13 +128,35 @@
 </dd>
 </dl>
 
+<p>The OpenSSL FIPS provider also supports the following parameters:</p>
+
+<dl>
+
+<dt id="fips-indicator-OSSL_ASYM_CIPHER_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_ASYM_CIPHER_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+</dd>
+<dt id="key-check-OSSL_ASYM_CIPHER_PARAM_FIPS_KEY_CHECK-integer">&quot;key-check&quot; (<b>OSSL_ASYM_CIPHER_PARAM_FIPS_KEY_CHECK</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>See <a href="../man7/provider-asym_cipher.html">&quot;Asymmetric Cipher Parameters&quot; in provider-asym_cipher(7)</a> for more information.</p>
+
+</dd>
+<dt id="pkcs15-pad-disabled-OSSL_ASYM_CIPHER_PARAM_FIPS_RSA_PKCS15_PAD_DISABLED-integer">&quot;pkcs15-pad-disabled&quot; (<b>OSSL_ASYM_CIPHER_PARAM_FIPS_RSA_PKCS15_PAD_DISABLED</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>The default value of 1 causes an error during encryption if the RSA padding mode is set to &quot;pkcs1&quot;. Setting this to zero will ignore the error and set the approved &quot;fips-indicator&quot; to 0. This option breaks FIPS compliance if it causes the approved &quot;fips-indicator&quot; to return 0.</p>
+
+</dd>
+</dl>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man7/EVP_PKEY-RSA.html">EVP_PKEY-RSA(7)</a>, <a href="../man3/EVP_PKEY.html">EVP_PKEY(3)</a>, <a href="../man7/provider-asym_cipher.html">provider-asym_cipher(7)</a>, <a href="../man7/provider-keymgmt.html">provider-keymgmt(7)</a>, <a href="../man7/OSSL_PROVIDER-default.html">OSSL_PROVIDER-default(7)</a> <a href="../man7/OSSL_PROVIDER-FIPS.html">OSSL_PROVIDER-FIPS(7)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2022-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

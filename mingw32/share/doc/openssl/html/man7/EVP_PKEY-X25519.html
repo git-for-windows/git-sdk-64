@@ -41,9 +41,15 @@
 <dt id="dhkem-ikm-OSSL_PKEY_PARAM_DHKEM_IKM-octet-string">&quot;dhkem-ikm&quot; (<b>OSSL_PKEY_PARAM_DHKEM_IKM</b>) &lt;octet string&gt;</dt>
 <dd>
 
-<p>DHKEM requires the generation of a keypair using an input key material (seed). Use this to specify the key material used for generation of the private key. This value should not be reused for other purposes. It should have a length of at least 32 for X25519, and 56 for X448.</p>
+<p>DHKEM requires the generation of a keypair using an input key material (seed). Use this to specify the key material used for generation of the private key. This value should not be reused for other purposes. It should have a length of at least 32 for X25519, and 56 for X448. This is only supported by X25519 and X448.</p>
 
-<p>This is only supported by X25519 and X448.</p>
+</dd>
+<dt id="fips-indicator-OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>This getter is only supported by X25519 and X448 for the FIPS provider. Since X25519 and X448 are unapproved in FIPS 140-3 this getter return 0.</p>
+
+<p>See <a href="../man7/provider-keymgmt.html">&quot;Common Information Parameters&quot; in provider-keymgmt(7)</a> for further information.</p>
 
 </dd>
 </dl>
@@ -136,7 +142,7 @@ EVP_PKEY_CTX *pctx =
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

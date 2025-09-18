@@ -28,7 +28,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl ecparam</b> [<b>-help</b>] [<b>-inform</b> <b>DER</b>|<b>PEM</b>] [<b>-outform</b> <b>DER</b>|<b>PEM</b>] [<b>-in</b> <i>filename</i>] [<b>-out</b> <i>filename</i>] [<b>-noout</b>] [<b>-text</b>] [<b>-check</b>] [<b>-check_named</b>] [<b>-name</b> <i>arg</i>] [<b>-list_curves</b>] [<b>-conv_form</b> <i>arg</i>] [<b>-param_enc</b> <i>arg</i>] [<b>-no_seed</b>] [<b>-genkey</b>] [<b>-engine</b> <i>id</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>]</p>
+<p><b>openssl ecparam</b> [<b>-help</b>] [<b>-inform</b> <b>DER</b>|<b>PEM</b>] [<b>-outform</b> <b>DER</b>|<b>PEM</b>] [<b>-in</b> <i>filename</i>] [<b>-out</b> <i>filename</i>] [<b>-noout</b>] [<b>-text</b>] [<b>-check</b>] [<b>-check_named</b>] [<b>-name</b> <i>arg</i>] [<b>-list_curves</b>] [<b>-conv_form</b> <i>arg</i>] [<b>-param_enc</b> <i>arg</i>] [<b>-no_seed</b>] [<b>-genkey</b>] [<b>-engine</b> <i>id</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -63,13 +63,13 @@
 <dt id="in-filename"><b>-in</b> <i>filename</i></dt>
 <dd>
 
-<p>This specifies the input filename to read parameters from or standard input if this option is not specified.</p>
+<p>This specifies the input file to read parameters from or standard input if this option is not specified.</p>
 
 </dd>
 <dt id="out-filename"><b>-out</b> <i>filename</i></dt>
 <dd>
 
-<p>This specifies the output filename parameters to. Standard output is used if this option is not present. The output filename should <b>not</b> be the same as the input filename.</p>
+<p>This specifies the output filename parameters to. Standard output is used if this option is not present. The output filename can be the same as the input filename, which leads to replacing the file contents. Note that file I/O is not atomic. The output file is truncated and then written.</p>
 
 </dd>
 <dt id="noout"><b>-noout</b></dt>
@@ -149,6 +149,10 @@
 
 </dd>
 <dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="provparam-name:-key-value"><b>-provparam</b> <i>[name:]key=value</i></dt>
 <dd>
 
 </dd>

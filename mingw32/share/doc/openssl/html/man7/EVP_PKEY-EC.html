@@ -36,7 +36,7 @@
 
 <p>The normal way of specifying domain parameters for an EC curve is via the curve name &quot;group&quot;. For curves with no curve name, explicit parameters can be used that specify &quot;field-type&quot;, &quot;p&quot;, &quot;a&quot;, &quot;b&quot;, &quot;generator&quot; and &quot;order&quot;. Explicit parameters are supported for backwards compatibility reasons, but they are not compliant with multiple standards (including RFC5915) which only allow named curves.</p>
 
-<p>The following KeyGen/Gettable/Import/Export types are available for the built-in EC algorithm:</p>
+<p>The following Key generation/Gettable/Import/Export types are available for the built-in EC algorithm:</p>
 
 <dl>
 
@@ -210,6 +210,30 @@
 </dd>
 </dl>
 
+<p>The following key generation settable parameter is also available for the OpenSSL FIPS provider&#39;s EC algorithm:</p>
+
+<dl>
+
+<dt id="key-check-OSSL_PKEY_PARAM_FIPS_KEY_CHECK-integer">&quot;key-check&quot; (<b>OSSL_PKEY_PARAM_FIPS_KEY_CHECK</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>See <a href="../man7/provider-keymgmt.html">&quot;Common Information Parameters&quot; in provider-keymgmt(7)</a> for further information.</p>
+
+</dd>
+</dl>
+
+<p>The following key generation Gettable parameter is available for the OpenSSL FIPS provider&#39;s EC algorithm:</p>
+
+<dl>
+
+<dt id="fips-indicator-OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>See <a href="../man7/provider-keymgmt.html">&quot;Common Information Parameters&quot; in provider-keymgmt(7)</a> for further information.</p>
+
+</dd>
+</dl>
+
 <h2 id="EC-key-validation">EC key validation</h2>
 
 <p>For EC keys, <a href="../man3/EVP_PKEY_param_check.html">EVP_PKEY_param_check(3)</a> behaves in the following way: For the OpenSSL default provider it uses either <a href="../man3/EC_GROUP_check.html">EC_GROUP_check(3)</a> or <a href="../man3/EC_GROUP_check_named_curve.html">EC_GROUP_check_named_curve(3)</a> depending on the flag EC_FLAG_CHECK_NAMED_GROUP. The OpenSSL FIPS provider uses <a href="../man3/EC_GROUP_check_named_curve.html">EC_GROUP_check_named_curve(3)</a> in order to conform to SP800-56Ar3 <i>Assurances of Domain-Parameter Validity</i>.</p>
@@ -286,7 +310,7 @@ EVP_PKEY_CTX_free(gctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -46,11 +46,11 @@ int SSL_CTX_load_verify_locations(SSL_CTX *ctx, const char *CAfile,
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_CTX_load_verify_locations(), SSL_CTX_load_verify_dir(), SSL_CTX_load_verify_file(), SSL_CTX_load_verify_store() specifies the locations for <b>ctx</b>, at which CA certificates for verification purposes are located. The certificates available via <b>CAfile</b>, <b>CApath</b> and <b>CAstore</b> are trusted.</p>
+<p>SSL_CTX_load_verify_locations(), SSL_CTX_load_verify_dir(), SSL_CTX_load_verify_file(), SSL_CTX_load_verify_store() specifies the locations for <b>ctx</b>, at which CA certificates for verification purposes are located. The certificates available via <b>CAfile</b>, <b>CApath</b> and <b>CAstore</b> are trusted. <b>ctx</b> <b>MUST NOT</b> be NULL</p>
 
 <p>Details of the certificate verification and chain checking process are described in <a href="../man1/openssl-verification-options.html">&quot;Certification Path Validation&quot; in openssl-verification-options(1)</a>.</p>
 
-<p>SSL_CTX_set_default_verify_paths() specifies that the default locations from which CA certificates are loaded should be used. There is one default directory, one default file and one default store. The default CA certificates directory is called <i>certs</i> in the default OpenSSL directory, and this is also the default store. Alternatively the <b>SSL_CERT_DIR</b> environment variable can be defined to override this location. The default CA certificates file is called <i>cert.pem</i> in the default OpenSSL directory. Alternatively the <b>SSL_CERT_FILE</b> environment variable can be defined to override this location.</p>
+<p>SSL_CTX_set_default_verify_paths() specifies that the default locations from which CA certificates are loaded should be used. There is one default directory, one default file and one default store. The default CA certificates directory is called <i>certs</i> in the default OpenSSL directory, and this is also the default store. Alternatively the <b>SSL_CERT_DIR</b> environment variable can be defined to override this location. The default CA certificates file is called <i>cert.pem</i> in the default OpenSSL directory. Alternatively the <b>SSL_CERT_FILE</b> environment variable can be defined to override this location. <b>ctx</b> <b>MUST NOT</b> be NULL.</p>
 
 <p>SSL_CTX_set_default_verify_dir() is similar to SSL_CTX_set_default_verify_paths() except that just the default directory is used.</p>
 

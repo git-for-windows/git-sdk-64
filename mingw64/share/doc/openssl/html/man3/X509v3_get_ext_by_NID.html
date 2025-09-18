@@ -18,12 +18,13 @@
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>X509v3_get_ext_count, X509v3_get_ext, X509v3_get_ext_by_NID, X509v3_get_ext_by_OBJ, X509v3_get_ext_by_critical, X509v3_delete_ext, X509v3_add_ext, X509_get_ext_count, X509_get_ext, X509_get_ext_by_NID, X509_get_ext_by_OBJ, X509_get_ext_by_critical, X509_delete_ext, X509_add_ext, X509_CRL_get_ext_count, X509_CRL_get_ext, X509_CRL_get_ext_by_NID, X509_CRL_get_ext_by_OBJ, X509_CRL_get_ext_by_critical, X509_CRL_delete_ext, X509_CRL_add_ext, X509_REVOKED_get_ext_count, X509_REVOKED_get_ext, X509_REVOKED_get_ext_by_NID, X509_REVOKED_get_ext_by_OBJ, X509_REVOKED_get_ext_by_critical, X509_REVOKED_delete_ext, X509_REVOKED_add_ext - extension stack utility functions</p>
+<p>X509v3_get_ext_count, X509v3_get_ext, X509v3_get_ext_by_NID, X509v3_get_ext_by_OBJ, X509v3_get_ext_by_critical, X509v3_delete_ext, X509v3_add_ext, X509v3_add_extensions, X509_get_ext_count, X509_get_ext, X509_get_ext_by_NID, X509_get_ext_by_OBJ, X509_get_ext_by_critical, X509_delete_ext, X509_add_ext, X509_CRL_get_ext_count, X509_CRL_get_ext, X509_CRL_get_ext_by_NID, X509_CRL_get_ext_by_OBJ, X509_CRL_get_ext_by_critical, X509_CRL_delete_ext, X509_CRL_add_ext, X509_REVOKED_get_ext_count, X509_REVOKED_get_ext, X509_REVOKED_get_ext_by_NID, X509_REVOKED_get_ext_by_OBJ, X509_REVOKED_get_ext_by_critical, X509_REVOKED_delete_ext, X509_REVOKED_add_ext - extension stack utility functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -41,6 +42,9 @@ int X509v3_get_ext_by_critical(const STACK_OF(X509_EXTENSION) *x,
 X509_EXTENSION *X509v3_delete_ext(STACK_OF(X509_EXTENSION) *x, int loc);
 STACK_OF(X509_EXTENSION) *X509v3_add_ext(STACK_OF(X509_EXTENSION) **x,
                                          X509_EXTENSION *ex, int loc);
+STACK_OF(X509_EXTENSION)
+     *X509v3_add_extensions(STACK_OF(X509_EXTENSION) **target,
+                            const STACK_OF(X509_EXTENSION) *exts);
 
 int X509_get_ext_count(const X509 *x);
 X509_EXTENSION *X509_get_ext(const X509 *x, int loc);
@@ -80,7 +84,9 @@ int X509_REVOKED_add_ext(X509_REVOKED *x, X509_EXTENSION *ex, int loc);</code></
 
 <p>X509v3_delete_ext() deletes the extension with index <i>loc</i> from <i>x</i>. The deleted extension is returned and must be freed by the caller. If <i>loc</i> is an invalid index value, NULL is returned.</p>
 
-<p>X509v3_add_ext() adds extension <i>ex</i> to STACK <i>*x</i> at position <i>loc</i>. If <i>loc</i> is -1, the new extension is added to the end. If <i>*x</i> is NULL, a new STACK will be allocated. The passed extension <i>ex</i> is duplicated internally so it must be freed after use.</p>
+<p>X509v3_add_ext() inserts extension <i>ex</i> to STACK <i>*x</i> at position <i>loc</i>. If <i>loc</i> is -1, the new extension is added to the end. A new STACK is allocated if <i>*x</i> is NULL. The passed extension <i>ex</i> is duplicated so it must be freed after use.</p>
+
+<p>X509v3_add_extensions() adds the list of extensions <i>exts</i> to STACK <i>*target</i>. The STACK <i>*target</i> is returned unchanged if <i>exts</i> is NULL or an empty list. Otherwise a new stack is allocated if <i>*target</i> is NULL. An extension to be added that has the same OID as a pre-existing one replaces this earlier one.</p>
 
 <p>X509_get_ext_count(), X509_get_ext(), X509_get_ext_by_NID(), X509_get_ext_by_OBJ(), X509_get_ext_by_critical(), X509_delete_ext() and X509_add_ext() operate on the extensions of certificate <i>x</i>. They are otherwise identical to the X509v3 functions.</p>
 
@@ -108,15 +114,21 @@ int X509_REVOKED_add_ext(X509_REVOKED *x, X509_EXTENSION *ex, int loc);</code></
 
 <p>X509v3_add_ext() returns a STACK of extensions or NULL on error.</p>
 
+<p>X509v3_add_extensions() returns a STACK of extensions or NULL on error or if <i>*target</i> is NULL and <i>exts</i> is NULL or an empty list.</p>
+
 <p>X509_add_ext() returns 1 on success and 0 on error.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man3/X509V3_get_d2i.html">X509V3_get_d2i(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>X509v3_add_extensions() was added in OpenSSL 3.4.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

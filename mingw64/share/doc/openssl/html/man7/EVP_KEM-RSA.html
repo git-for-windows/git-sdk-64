@@ -39,7 +39,7 @@
 <dt id="operation-OSSL_KEM_PARAM_OPERATION-UTF8-string">&quot;operation&quot; (<b>OSSL_KEM_PARAM_OPERATION</b>) &lt;UTF8 string&gt;</dt>
 <dd>
 
-<p>The OpenSSL RSA Key Encapsulation Mechanism only currently supports the following operation</p>
+<p>The OpenSSL RSA Key Encapsulation Mechanism only currently supports the following default operation (operating mode):</p>
 
 <dl>
 
@@ -52,6 +52,16 @@
 </dl>
 
 <p>This can be set using EVP_PKEY_CTX_set_kem_op().</p>
+
+</dd>
+<dt id="fips-indicator-OSSL_KEM_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_KEM_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+</dd>
+<dt id="key-check-OSSL_KEM_PARAM_FIPS_KEY_CHECK-integer">&quot;key-check&quot; (<b>OSSL_KEM_PARAM_FIPS_KEY_CHECK</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>These parameters are described in <a href="../man7/provider-kem.html">provider-kem(7)</a>.</p>
 
 </dd>
 </dl>
@@ -76,9 +86,11 @@
 
 <p>This functionality was added in OpenSSL 3.0.</p>
 
+<p>The <code>operation</code> (operating mode) was a required parameter prior to OpenSSL 3.5. As of OpenSSL 3.5, <code>RSASVE</code> is the default operating mode, and no explicit value need be specified.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

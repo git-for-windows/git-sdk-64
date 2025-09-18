@@ -16,6 +16,7 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
@@ -35,64 +36,72 @@ BIO_METHOD *BIO_meth_new(int type, const char *name);
 
 void BIO_meth_free(BIO_METHOD *biom);
 
-int (*BIO_meth_get_write_ex(const BIO_METHOD *biom))(BIO *, const char *, size_t,
-                                               size_t *);
-int (*BIO_meth_get_write(const BIO_METHOD *biom))(BIO *, const char *, int);
 int BIO_meth_set_write_ex(BIO_METHOD *biom,
                           int (*bwrite)(BIO *, const char *, size_t, size_t *));
 int BIO_meth_set_write(BIO_METHOD *biom,
                        int (*write)(BIO *, const char *, int));
 
-int (*BIO_meth_get_read_ex(const BIO_METHOD *biom))(BIO *, char *, size_t, size_t *);
-int (*BIO_meth_get_read(const BIO_METHOD *biom))(BIO *, char *, int);
 int BIO_meth_set_read_ex(BIO_METHOD *biom,
                          int (*bread)(BIO *, char *, size_t, size_t *));
 int BIO_meth_set_read(BIO_METHOD *biom, int (*read)(BIO *, char *, int));
 
-int (*BIO_meth_get_puts(const BIO_METHOD *biom))(BIO *, const char *);
 int BIO_meth_set_puts(BIO_METHOD *biom, int (*puts)(BIO *, const char *));
-
-int (*BIO_meth_get_gets(const BIO_METHOD *biom))(BIO *, char *, int);
 int BIO_meth_set_gets(BIO_METHOD *biom,
                       int (*gets)(BIO *, char *, int));
 
-long (*BIO_meth_get_ctrl(const BIO_METHOD *biom))(BIO *, int, long, void *);
 int BIO_meth_set_ctrl(BIO_METHOD *biom,
                       long (*ctrl)(BIO *, int, long, void *));
 
-int (*BIO_meth_get_create(const BIO_METHOD *bion))(BIO *);
 int BIO_meth_set_create(BIO_METHOD *biom, int (*create)(BIO *));
-
-int (*BIO_meth_get_destroy(const BIO_METHOD *biom))(BIO *);
 int BIO_meth_set_destroy(BIO_METHOD *biom, int (*destroy)(BIO *));
 
-long (*BIO_meth_get_callback_ctrl(const BIO_METHOD *biom))(BIO *, int, BIO_info_cb *);
 int BIO_meth_set_callback_ctrl(BIO_METHOD *biom,
                                long (*callback_ctrl)(BIO *, int, BIO_info_cb *));
+
+int BIO_meth_set_sendmmsg(BIO_METHOD *biom,
+                          ossl_ssize_t (*f) (BIO *, BIO_MSG *, size_t,
+                                             size_t, uint64_t));
+int BIO_meth_set_recvmmsg(BIO_METHOD *biom,
+                          ossl_ssize_t (*f) (BIO *, BIO_MSG *, size_t,
+                                             size_t, uint64_t));</code></pre>
+
+<p>The following functions have been deprecated since OpenSSL 3.5:</p>
+
+<pre><code>int (*BIO_meth_get_write_ex(const BIO_METHOD *biom))(BIO *, const char *, size_t,
+                                               size_t *);
+int (*BIO_meth_get_write(const BIO_METHOD *biom))(BIO *, const char *, int);
+
+int (*BIO_meth_get_read_ex(const BIO_METHOD *biom))(BIO *, char *, size_t, size_t *);
+int (*BIO_meth_get_read(const BIO_METHOD *biom))(BIO *, char *, int);
+
+int (*BIO_meth_get_puts(const BIO_METHOD *biom))(BIO *, const char *);
+int (*BIO_meth_get_gets(const BIO_METHOD *biom))(BIO *, char *, int);
+
+long (*BIO_meth_get_ctrl(const BIO_METHOD *biom))(BIO *, int, long, void *);
+
+int (*BIO_meth_get_create(const BIO_METHOD *bion))(BIO *);
+int (*BIO_meth_get_destroy(const BIO_METHOD *biom))(BIO *);
+
+long (*BIO_meth_get_callback_ctrl(const BIO_METHOD *biom))(BIO *, int, BIO_info_cb *);
 
 ossl_ssize_t (*BIO_meth_get_sendmmsg(const BIO_METHOD *biom))(BIO *,
                                                               BIO_MSG *,
                                                               size_t,
                                                               size_t,
                                                               uint64_t);
-int BIO_meth_set_sendmmsg(BIO_METHOD *biom,
-                          ossl_ssize_t (*f) (BIO *, BIO_MSG *, size_t,
-                                             size_t, uint64_t));
-
 ossl_ssize_t (*BIO_meth_get_recvmmsg(const BIO_METHOD *biom))(BIO *,
                                                               BIO_MSG *,
                                                               size_t,
                                                               size_t,
-                                                              uint64_t);
-int BIO_meth_set_recvmmsg(BIO_METHOD *biom,
-                          ossl_ssize_t (*f) (BIO *, BIO_MSG *, size_t,
-                                             size_t, uint64_t));</code></pre>
+                                                              uint64_t);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>The <b>BIO_METHOD</b> type is a structure used for the implementation of new BIO types. It provides a set of functions used by OpenSSL for the implementation of the various BIO capabilities. See the <a href="../man7/bio.html">bio(7)</a> page for more information.</p>
 
-<p>BIO_meth_new() creates a new <b>BIO_METHOD</b> structure. It should be given a unique integer <b>type</b> and a string that represents its <b>name</b>. Use BIO_get_new_index() to get the value for <b>type</b>.</p>
+<p>BIO_meth_new() creates a new <b>BIO_METHOD</b> structure that contains a type identifier <i>type</i> and a string that represents its <b>name</b>. <b>type</b> can be set to either <b>BIO_TYPE_NONE</b> or via BIO_get_new_index() if a unique type is required for searching (See <a href="../man3/BIO_find_type.html">BIO_find_type(3)</a>)</p>
+
+<p>Note that BIO_get_new_index() can only be used 127 times before it returns an error.</p>
 
 <p>The set of standard OpenSSL provided BIO types is provided in <i>&lt;openssl/bio.h&gt;</i>. Some examples include <b>BIO_TYPE_BUFFER</b> and <b>BIO_TYPE_CIPHER</b>. Filter BIOs should have a type which have the &quot;filter&quot; bit set (<b>BIO_TYPE_FILTER</b>). Source/sink BIOs should have the &quot;source/sink&quot; bit set (<b>BIO_TYPE_SOURCE_SINK</b>). File descriptor based BIOs (e.g. socket, fd, connect, accept etc) should additionally have the &quot;descriptor&quot; bit set (<b>BIO_TYPE_DESCRIPTOR</b>). See the <a href="../man3/BIO_find_type.html">BIO_find_type(3)</a> page for more information.</p>
 
@@ -126,13 +135,23 @@ int BIO_meth_set_recvmmsg(BIO_METHOD *biom,
 
 <p>The <b>BIO_meth_get</b> functions return the corresponding function pointers.</p>
 
+<h1 id="BUGS">BUGS</h1>
+
+<p>It is not safe to use <code>BIO_meth_get_</code> functions to reuse the <b>BIO</b> implementation of <b>BIO</b>s implemented by OpenSSL itself with application-implemented <b>BIO</b>s. Instead either the applications ought to implement these functions themselves or they should implement a filter BIO.</p>
+
+<p>For more details please see <a href="https://github.com/openssl/openssl/issues/26047">https://github.com/openssl/openssl/issues/26047</a>.</p>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man7/bio.html">bio(7)</a>, <a href="../man3/BIO_find_type.html">BIO_find_type(3)</a>, <a href="../man3/BIO_ctrl.html">BIO_ctrl(3)</a>, <a href="../man3/BIO_read_ex.html">BIO_read_ex(3)</a>, <a href="../man3/BIO_new.html">BIO_new(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The functions described here were added in OpenSSL 1.1.0.</p>
+<p>The functions BIO_meth_get_sendmmsg(), BIO_meth_set_sendmmsg(), BIO_meth_get_recvmmsg() and BIO_meth_set_recvmmsg() were added in OpenSSL 3.2.</p>
+
+<p>All the other functions described here were added in OpenSSL 1.1.0.</p>
+
+<p>The functions BIO_meth_get_read_ex(), BIO_meth_get_write_ex(), BIO_meth_get_write(), BIO_meth_get_read(), BIO_meth_get_puts(), BIO_meth_get_gets(), BIO_meth_get_ctrl(), BIO_meth_get_create(), BIO_meth_get_destroy(), BIO_meth_get_callback_ctrl(), BIO_meth_get_sendmmsg() and BIO_meth_get_recvmmsg() are deprecated since OpenSSL 3.5.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

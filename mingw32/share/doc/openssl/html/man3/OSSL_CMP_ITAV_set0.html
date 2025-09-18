@@ -25,7 +25,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>OSSL_CMP_ITAV_create, OSSL_CMP_ITAV_set0, OSSL_CMP_ITAV_get0_type, OSSL_CMP_ITAV_get0_value, OSSL_CMP_ITAV_push0_stack_item - OSSL_CMP_ITAV utility functions</p>
+<p>OSSL_CMP_ITAV_create, OSSL_CMP_ITAV_set0, OSSL_CMP_ITAV_get0_type, OSSL_CMP_ITAV_get0_value, OSSL_CMP_ITAV_push0_stack_item, OSSL_CMP_ITAV_new0_certProfile, OSSL_CMP_ITAV_get0_certProfile - OSSL_CMP_ITAV utility functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -37,7 +37,11 @@ void OSSL_CMP_ITAV_set0(OSSL_CMP_ITAV *itav, ASN1_OBJECT *type,
 ASN1_OBJECT *OSSL_CMP_ITAV_get0_type(const OSSL_CMP_ITAV *itav);
 ASN1_TYPE *OSSL_CMP_ITAV_get0_value(const OSSL_CMP_ITAV *itav);
 int OSSL_CMP_ITAV_push0_stack_item(STACK_OF(OSSL_CMP_ITAV) **itav_sk_p,
-                                   OSSL_CMP_ITAV *itav);</code></pre>
+                                   OSSL_CMP_ITAV *itav);
+OSSL_CMP_ITAV
+*OSSL_CMP_ITAV_new0_certProfile(STACK_OF(ASN1_UTF8STRING) *certProfile);
+int OSSL_CMP_ITAV_get0_certProfile(const OSSL_CMP_ITAV *itav,
+                                   STACK_OF(ASN1_UTF8STRING) **out);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -53,19 +57,25 @@ int OSSL_CMP_ITAV_push0_stack_item(STACK_OF(OSSL_CMP_ITAV) **itav_sk_p,
 
 <p>OSSL_CMP_ITAV_push0_stack_item() pushes <i>itav</i> to the stack pointed to by <i>*itav_sk_p</i>. It creates a new stack if <i>*itav_sk_p</i> points to NULL.</p>
 
+<p>OSSL_CMP_ITAV_new0_certProfile() creates a new <b>OSSL_CMP_ITAV</b> structure of type <b>certProfile</b> that includes the optionally given list of profile names. On success, ownership of the list is with the new <b>OSSL_CMP_ITAV</b> structure.</p>
+
+<p>OSSL_CMP_ITAV_get0_certProfile() on success assigns to <i>*out</i> an internal pointer to the list of certificate profile names contained in the infoValue field of <i>itav</i>. The pointer may be NULL if no profile name is included. It is an error if the infoType of <i>itav</i> is not <b>certProfile</b>.</p>
+
 <h1 id="NOTES">NOTES</h1>
 
-<p>CMP is defined in RFC 4210 (and CRMF in RFC 4211).</p>
+<p>CMP is defined in RFC 4210 and RFC 9480 (and CRMF in RFC 4211).</p>
+
+<p>OIDs to use as types in <b>OSSL_CMP_ITAV</b> can be found at <a href="https://datatracker.ietf.org/doc/html/rfc9480#section-4.2.2">https://datatracker.ietf.org/doc/html/rfc9480#section-4.2.2</a>. The respective OpenSSL NIDs, such as <b>NID_id_it_certProfile</b>, are defined in the <i>&lt;openssl/obj_mac.h&gt;</i> header file.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>OSSL_CMP_ITAV_create() returns a pointer to the ITAV structure on success, or NULL on error.</p>
+<p>OSSL_CMP_ITAV_create() and OSSL_CMP_ITAV_new0_certProfile() return a pointer to an ITAV structure on success, or NULL on error.</p>
 
 <p>OSSL_CMP_ITAV_set0() does not return a value.</p>
 
 <p>OSSL_CMP_ITAV_get0_type() and OSSL_CMP_ITAV_get0_value() return the respective pointer or NULL if their input is NULL.</p>
 
-<p>OSSL_CMP_ITAV_push0_stack_item() returns 1 on success, 0 on error.</p>
+<p>OSSL_CMP_ITAV_push0_stack_item() and OSSL_CMP_ITAV_get0_certProfile() return 1 on success, 0 on error.</p>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
@@ -100,6 +110,8 @@ OSSL_CMP_CTX_free(ctx); /* also frees itav */</code></pre>
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>The OpenSSL CMP support was added in OpenSSL 3.0.</p>
+
+<p>OSSL_CMP_ITAV_new0_certProfile() and OSSL_CMP_ITAV_get0_certProfile() were added in OpenSSL 3.3.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

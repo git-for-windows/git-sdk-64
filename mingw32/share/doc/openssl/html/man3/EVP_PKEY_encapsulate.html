@@ -44,11 +44,19 @@ int EVP_PKEY_encapsulate(EVP_PKEY_CTX *ctx,
 
 <p>The EVP_PKEY_auth_encapsulate_init() function is similar to EVP_PKEY_encapsulate_init() but also passes an <i>authpriv</i> authentication private key that is used during encapsulation.</p>
 
-<p>The EVP_PKEY_encapsulate() function performs a public key encapsulation operation using <i>ctx</i>. The symmetric secret generated in <i>genkey</i> can be used as key material. The ciphertext in <i>wrappedkey</i> is its encapsulated form, which can be sent to another party, who can use <a href="../man3/EVP_PKEY_decapsulate.html">EVP_PKEY_decapsulate(3)</a> to retrieve it using their private key. If <i>wrappedkey</i> is NULL then the maximum size of the output buffer is written to the <i>*wrappedkeylen</i> parameter unless <i>wrappedkeylen</i> is NULL and the maximum size of the generated key buffer is written to <i>*genkeylen</i> unless <i>genkeylen</i> is NULL. If <i>wrappedkey</i> is not NULL and the call is successful then the internally generated key is written to <i>genkey</i> and its size is written to <i>*genkeylen</i>. The encapsulated version of the generated key is written to <i>wrappedkey</i> and its size is written to <i>*wrappedkeylen</i>. Note that if <i>wrappedlen</i> is not NULL, then the value it points to must initially hold the size of the <i>unwrapped</i> buffer so that its size can be validated by the call, ensuring it is large enough to hold the result written to <i>wrapped</i>.</p>
+<p>The EVP_PKEY_encapsulate() function performs a public key encapsulation operation using <i>ctx</i>. The shared secret written to <i>genkey</i> can be used as an input for key derivation, typically for various symmetric algorithms. Its size is written to <i>genkeylen</i>, which must be initialised to the size of the provided buffer.</p>
+
+<p>The ciphertext written to <i>wrappedkey</i> is an encapsulated form, which is expected to be only usable by the holder of the private key corresponding to the public key associated with <i>ctx</i>. This ciphertext is then communicated to the private-key holder, who can use <a href="../man3/EVP_PKEY_decapsulate.html">EVP_PKEY_decapsulate(3)</a> to securely recover the same shared secret.</p>
+
+<p>If <i>wrappedkey</i> is NULL then the maximum size of the output buffer is written to the <i>*wrappedkeylen</i> parameter unless <i>wrappedkeylen</i> is NULL and the maximum size of the generated key buffer is written to <i>*genkeylen</i> unless <i>genkeylen</i> is NULL.</p>
+
+<p>If <i>wrappedkey</i> is not NULL and the call is successful then the generated shared secret is written to <i>genkey</i> and its size is written to <i>*genkeylen</i> (which must be non-NULL). The encapsulated ciphertext is written to <i>wrappedkey</i> and its size is written to <i>*wrappedkeylen</i> (must also be non-NULL), The value pointed to by <i>wrappedlen</i> initially hold the size of the <i>unwrapped</i> buffer so that its size can be validated by the call, ensuring it is large enough to hold the result written to <i>wrapped</i>.</p>
+
+<p>Absent detailed prior knowledge of the internals of the specific KEM algorithm, callers SHOULD NOT assume that the returned shared secret and ciphertext are necessarily of the maximum possible length. The lengths returned via <i>*wrappedkeylen</i> and <i>*genkeylen</i> SHOULD be used to determine the actual lengths of the outputs.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>After the call to EVP_PKEY_encapsulate_init() algorithm-specific parameters for the operation may be set or modified using <a href="../man3/EVP_PKEY_CTX_set_params.html">EVP_PKEY_CTX_set_params(3)</a>.</p>
+<p>After the call to EVP_PKEY_encapsulate_init(), algorithm-specific parameters for the operation may be set or modified using <a href="../man3/EVP_PKEY_CTX_set_params.html">EVP_PKEY_CTX_set_params(3)</a>.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -96,15 +104,17 @@ if (EVP_PKEY_encapsulate(ctx, out, &amp;outlen, secret, &amp;secretlen) &lt;= 0)
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/EVP_PKEY_CTX_new_from_pkey.html">EVP_PKEY_CTX_new_from_pkey(3)</a>, <a href="../man3/EVP_PKEY_decapsulate.html">EVP_PKEY_decapsulate(3)</a>, <a href="../man7/EVP_KEM-RSA.html">EVP_KEM-RSA(7)</a>, <a href="../man7/EVP_KEM-X25519.html">EVP_KEM-X25519(7)</a>, <a href="../man7/EVP_KEM-EC.html">EVP_KEM-EC(7)</a></p>
+<p><a href="../man3/EVP_PKEY_CTX_new_from_pkey.html">EVP_PKEY_CTX_new_from_pkey(3)</a>, <a href="../man3/EVP_PKEY_decapsulate.html">EVP_PKEY_decapsulate(3)</a>, <a href="../man7/EVP_KEM-RSA.html">EVP_KEM-RSA(7)</a>, <a href="../man7/EVP_KEM-X25519.html">EVP_KEM-X25519(7)</a>, <a href="../man7/EVP_KEM-EC.html">EVP_KEM-EC(7)</a>, <a href="../man7/EVP_KEM-ML-KEM-512.html">EVP_KEM-ML-KEM-512(7)</a>, <a href="../man7/EVP_KEM-ML-KEM-768.html">EVP_KEM-ML-KEM-768(7)</a>, <a href="../man7/EVP_KEM-ML-KEM-1024.html">EVP_KEM-ML-KEM-1024(7)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>These functions EVP_PKEY_encapsulate_init() and EVP_PKEY_encapsulate() were added in OpenSSL 3.0. The function EVP_PKEY_auth_encapsulate_init() was added in OpenSSL 3.2.</p>
+<p>The functions EVP_PKEY_encapsulate_init() and EVP_PKEY_encapsulate() were added in OpenSSL 3.0. The function EVP_PKEY_auth_encapsulate_init() was added in OpenSSL 3.2.</p>
+
+<p>Support for <b>ML-KEM</b> was added in OpenSSL 3.5.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

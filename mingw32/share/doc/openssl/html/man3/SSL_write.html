@@ -25,13 +25,18 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>SSL_write_ex, SSL_write, SSL_sendfile - write bytes to a TLS/SSL connection</p>
+<p>SSL_write_ex2, SSL_write_ex, SSL_write, SSL_sendfile, SSL_WRITE_FLAG_CONCLUDE - write bytes to a TLS/SSL connection</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/ssl.h&gt;
 
+#define SSL_WRITE_FLAG_CONCLUDE
+
 ossl_ssize_t SSL_sendfile(SSL *s, int fd, off_t offset, size_t size, int flags);
+int SSL_write_ex2(SSL *s, const void *buf, size_t num,
+                  uint64_t flags,
+                  size_t *written);
 int SSL_write_ex(SSL *s, const void *buf, size_t num, size_t *written);
 int SSL_write(SSL *ssl, const void *buf, int num);</code></pre>
 
@@ -39,7 +44,29 @@ int SSL_write(SSL *ssl, const void *buf, int num);</code></pre>
 
 <p>SSL_write_ex() and SSL_write() write <b>num</b> bytes from the buffer <b>buf</b> into the specified <b>ssl</b> connection. On success SSL_write_ex() will store the number of bytes written in <b>*written</b>.</p>
 
+<p>SSL_write_ex2() functions similarly to SSL_write_ex() but can also accept optional flags which modify its behaviour. Calling SSL_write_ex2() with a <i>flags</i> argument of 0 is exactly equivalent to calling SSL_write_ex().</p>
+
 <p>SSL_sendfile() writes <b>size</b> bytes from offset <b>offset</b> in the file descriptor <b>fd</b> to the specified SSL connection <b>s</b>. This function provides efficient zero-copy semantics. SSL_sendfile() is available only when Kernel TLS is enabled, which can be checked by calling BIO_get_ktls_send(). It is provided here to allow users to maintain the same interface. The meaning of <b>flags</b> is platform dependent. Currently, under Linux it is ignored.</p>
+
+<p>The <i>flags</i> argument to SSL_write_ex2() can accept zero or more of the following flags. Note that which flags are supported will depend on the kind of SSL object and underlying protocol being used:</p>
+
+<dl>
+
+<dt id="SSL_WRITE_FLAG_CONCLUDE"><b>SSL_WRITE_FLAG_CONCLUDE</b></dt>
+<dd>
+
+<p>This flag is only supported on QUIC stream SSL objects (or QUIC connection SSL objects with a default stream attached).</p>
+
+<p>If this flag is set, and the call to SSL_write_ex2() succeeds, and all of the data passed to the call is written (meaning that <code>*written == num</code>), the relevant QUIC stream&#39;s send part is concluded automatically as though <a href="../man3/SSL_stream_conclude.html">SSL_stream_conclude(3)</a> was called (causing transmission of a FIN for the stream).</p>
+
+<p>While using this flag is semantically equivalent to calling <a href="../man3/SSL_stream_conclude.html">SSL_stream_conclude(3)</a> after a successful call to this function, using this flag enables greater efficiency than making these two API calls separately, as it enables the written stream data and the FIN flag indicating the end of the stream to be scheduled as part of the same QUIC STREAM frame and QUIC packet.</p>
+
+<p>Setting this flag does not cause a stream&#39;s send part to be concluded if not all of the data passed to the call was consumed.</p>
+
+</dd>
+</dl>
+
+<p>A call to SSL_write_ex2() fails if a flag is passed which is not supported or understood by the given SSL object. An application should determine if a flag is supported (for example, for <b>SSL_WRITE_FLAG_CONCLUDE</b>, that a QUIC stream SSL object is being used) before attempting to use it.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -65,7 +92,7 @@ int SSL_write(SSL *ssl, const void *buf, int num);</code></pre>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>SSL_write_ex() will return 1 for success or 0 for failure. Success means that all requested application data bytes have been written to the SSL connection or, if SSL_MODE_ENABLE_PARTIAL_WRITE is in use, at least 1 application data byte has been written to the SSL connection. Failure means that not all the requested bytes have been written yet (if SSL_MODE_ENABLE_PARTIAL_WRITE is not in use) or no bytes could be written to the SSL connection (if SSL_MODE_ENABLE_PARTIAL_WRITE is in use). Failures can be retryable (e.g. the network write buffer has temporarily filled up) or non-retryable (e.g. a fatal network error). In the event of a failure call <a href="../man3/SSL_get_error.html">SSL_get_error(3)</a> to find out the reason which indicates whether the call is retryable or not.</p>
+<p>SSL_write_ex() and SSL_write_ex2() return 1 for success or 0 for failure. Success means that all requested application data bytes have been written to the SSL connection or, if SSL_MODE_ENABLE_PARTIAL_WRITE is in use, at least 1 application data byte has been written to the SSL connection. Failure means that not all the requested bytes have been written yet (if SSL_MODE_ENABLE_PARTIAL_WRITE is not in use) or no bytes could be written to the SSL connection (if SSL_MODE_ENABLE_PARTIAL_WRITE is in use). Failures can be retryable (e.g. the network write buffer has temporarily filled up) or non-retryable (e.g. a fatal network error). In the event of a failure call <a href="../man3/SSL_get_error.html">SSL_get_error(3)</a> to find out the reason which indicates whether the call is retryable or not.</p>
 
 <p>For SSL_write() the following return values can occur:</p>
 
@@ -111,11 +138,11 @@ int SSL_write(SSL *ssl, const void *buf, int num);</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The SSL_write_ex() function was added in OpenSSL 1.1.1. The SSL_sendfile() function was added in OpenSSL 3.0.</p>
+<p>The SSL_write_ex() function was added in OpenSSL 1.1.1. The SSL_sendfile() function was added in OpenSSL 3.0. The SSL_write_ex2() function was added in OpenSSL 3.3.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

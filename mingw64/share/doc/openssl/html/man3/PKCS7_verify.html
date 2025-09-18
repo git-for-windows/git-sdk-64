@@ -38,7 +38,7 @@ STACK_OF(X509) *PKCS7_get0_signers(PKCS7 *p7, STACK_OF(X509) *certs, int flags);
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>PKCS7_verify() is very similar to <a href="../man3/CMS_verify.html">CMS_verify(3)</a>. It verifies a PKCS#7 signedData structure given in <i>p7</i>. The optional <i>certs</i> parameter refers to a set of certificates in which to search for signer&#39;s certificates. <i>p7</i> may contain extra untrusted CA certificates that may be used for chain building as well as CRLs that may be used for certificate validation. <i>store</i> may be NULL or point to the trusted certificate store to use for chain verification. <i>indata</i> refers to the signed data if the content is detached from <i>p7</i>. Otherwise <i>indata</i> should be NULL, and then the signed data must be in <i>p7</i>. The content is written to the BIO <i>out</i> unless it is NULL. <i>flags</i> is an optional set of flags, which can be used to modify the operation.</p>
+<p>PKCS7_verify() is very similar to <a href="../man3/CMS_verify.html">CMS_verify(3)</a>. It verifies a PKCS#7 signedData structure given in <i>p7</i>. The optional <i>certs</i> parameter refers to a set of certificates in which to search for signer&#39;s certificates. It is also used as a source of untrusted intermediate CA certificates for chain building. <i>p7</i> may contain extra untrusted CA certificates that may be used for chain building as well as CRLs that may be used for certificate validation. <i>store</i> may be NULL or point to the trusted certificate store to use for chain verification. <i>indata</i> refers to the signed data if the content is detached from <i>p7</i>. Otherwise <i>indata</i> should be NULL, and then the signed data must be in <i>p7</i>. The content is written to the BIO <i>out</i> unless it is NULL. <i>flags</i> is an optional set of flags, which can be used to modify the operation.</p>
 
 <p>PKCS7_get0_signers() retrieves the signer&#39;s certificates from <i>p7</i>, it does <b>not</b> check their validity or whether any signatures are valid. The <i>certs</i> and <i>flags</i> parameters have the same meanings as in PKCS7_verify().</p>
 
@@ -98,7 +98,7 @@ STACK_OF(X509) *PKCS7_get0_signers(PKCS7 *p7, STACK_OF(X509) *certs, int flags);
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -172,7 +172,7 @@ const TYPE *sk_FUNCNAME_value(STACK_OF(TYPE) *sk, int idx);</code></pre>
 
 <p><b>sk_<i>TYPE</i>_pop</b>(), <b>sk_<i>TYPE</i>_shift</b>(), <b>sk_<i>TYPE</i>_delete</b>() and <b>sk_<i>TYPE</i>_delete_ptr</b>() return a pointer to the deleted element or NULL on error.</p>
 
-<p><b>sk_<i>TYPE</i>_insert</b>(), <b>sk_<i>TYPE</i>_push</b>() and <b>sk_<i>TYPE</i>_unshift</b>() return the total number of elements in the stack and 0 if an error occurred. <b>sk_<i>TYPE</i>_push</b>() further returns -1 if <i>sk</i> is NULL.</p>
+<p><b>sk_<i>TYPE</i>_insert</b>(), <b>sk_<i>TYPE</i>_push</b>() and <b>sk_<i>TYPE</i>_unshift</b>() return the total number of elements in the stack and 0 if an error occurred.</p>
 
 <p><b>sk_<i>TYPE</i>_set</b>() returns a pointer to the replacement element or NULL on error.</p>
 
@@ -189,6 +189,8 @@ const TYPE *sk_FUNCNAME_value(STACK_OF(TYPE) *sk, int idx);</code></pre>
 <p><b>sk_<i>TYPE</i>_reserve</b>() and <b>sk_<i>TYPE</i>_new_reserve</b>() were added in OpenSSL 1.1.1.</p>
 
 <p>From OpenSSL 3.2.0, the <b>sk_<i>TYPE</i>_find</b>(), <b>sk_<i>TYPE</i>_find_ex</b>() and <b>sk_<i>TYPE</i>_find_all</b>() calls are read-only and do not sort the stack. To avoid any performance implications this change introduces, <b>sk_<i>TYPE</i>_sort</b>() should be called before these find operations.</p>
+
+<p>Before OpenSSL 3.3.0 <b>sk_<i>TYPE</i>_push</b>() returned -1 if <i>sk</i> was NULL. It was changed to return 0 in this condition as for other errors.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

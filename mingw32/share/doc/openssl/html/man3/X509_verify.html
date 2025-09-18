@@ -23,7 +23,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>X509_verify, X509_self_signed, X509_REQ_verify_ex, X509_REQ_verify, X509_CRL_verify - verify certificate, certificate request, or CRL signature</p>
+<p>X509_verify, X509_self_signed, X509_REQ_verify_ex, X509_REQ_verify, X509_CRL_verify, X509_ACERT_verify - verify certificate, certificate request, or CRL signature</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -35,7 +35,10 @@ int X509_self_signed(X509 *cert, int verify_signature);
 int X509_REQ_verify_ex(X509_REQ *a, EVP_PKEY *pkey, OSSL_LIB_CTX *libctx,
                        const char *propq);
 int X509_REQ_verify(X509_REQ *a, EVP_PKEY *r);
-int X509_CRL_verify(X509_CRL *a, EVP_PKEY *r);</code></pre>
+int X509_CRL_verify(X509_CRL *a, EVP_PKEY *r);
+
+#include &lt;openssl/x509_acert.h&gt;
+int X509_ACERT_verify(X509_CRL *a, EVP_PKEY *r);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -43,7 +46,7 @@ int X509_CRL_verify(X509_CRL *a, EVP_PKEY *r);</code></pre>
 
 <p>X509_self_signed() checks whether certificate <i>cert</i> is self-signed. For success the issuer and subject names must match, the components of the authority key identifier (if present) must match the subject key identifier etc. The signature itself is actually verified only if <b>verify_signature</b> is 1, as for explicitly trusted certificates this verification is not worth the effort.</p>
 
-<p>X509_REQ_verify_ex(), X509_REQ_verify() and X509_CRL_verify() verify the signatures of certificate requests and CRLs, respectively.</p>
+<p>X509_REQ_verify_ex(), X509_REQ_verify(), X509_CRL_verify() and X509_ACERT_verify() verify the signatures of certificate requests, CRLs and attribute certificates respectively.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -61,9 +64,11 @@ int X509_CRL_verify(X509_CRL *a, EVP_PKEY *r);</code></pre>
 
 <p>X509_REQ_verify_ex(), and X509_self_signed() were added in OpenSSL 3.0.</p>
 
+<p>X509_ACERT_verify() was added in OpenSSL 3.4.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

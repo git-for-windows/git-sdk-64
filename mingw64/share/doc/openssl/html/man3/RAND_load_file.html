@@ -36,7 +36,7 @@ const char *RAND_file_name(char *buf, size_t num);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>RAND_load_file() reads a number of bytes from file <b>filename</b> and adds them to the PRNG. If <b>max_bytes</b> is nonnegative, up to <b>max_bytes</b> are read; if <b>max_bytes</b> is -1, the complete file is read. Do not load the same file multiple times unless its contents have been updated by RAND_write_file() between reads. Also, note that <b>filename</b> should be adequately protected so that an attacker cannot replace or examine the contents. If <b>filename</b> is not a regular file, then user is considered to be responsible for any side effects, e.g. non-anticipated blocking or capture of controlling terminal.</p>
+<p>RAND_load_file() reads a number of bytes from file <b>filename</b> and adds them to the PRNG. If <b>max_bytes</b> is nonnegative, up to <b>max_bytes</b> are read; if <b>max_bytes</b> is -1, the complete file is read (unless the file is not a regular file, in that case a fixed number of bytes, 256 in the current implementation, is attempted to be read). RAND_load_file() can read less than the complete file or the requested number of bytes if it doesn&#39;t fit in the return value type. Do not load the same file multiple times unless its contents have been updated by RAND_write_file() between reads. Also, note that <b>filename</b> should be adequately protected so that an attacker cannot replace or examine the contents. If <b>filename</b> is not a regular file, then user is considered to be responsible for any side effects, e.g. non-anticipated blocking or capture of controlling terminal.</p>
 
 <p>RAND_write_file() writes a number of random bytes (currently 128) to file <b>filename</b> which can be used to initialize the PRNG by calling RAND_load_file() in a later session.</p>
 
@@ -82,7 +82,7 @@ const char *RAND_file_name(char *buf, size_t num);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -24,7 +24,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>OSSL_CMP_MSG_get0_header, OSSL_CMP_MSG_get_bodytype, OSSL_CMP_MSG_update_transactionID, OSSL_CMP_MSG_update_recipNonce, OSSL_CMP_CTX_setup_CRM, OSSL_CMP_MSG_read, OSSL_CMP_MSG_write, d2i_OSSL_CMP_MSG_bio, i2d_OSSL_CMP_MSG_bio - function(s) manipulating CMP messages</p>
+<p>OSSL_CMP_MSG_get0_header, OSSL_CMP_MSG_get_bodytype, OSSL_CMP_MSG_get0_certreq_publickey, OSSL_CMP_MSG_update_transactionID, OSSL_CMP_MSG_update_recipNonce, OSSL_CMP_CTX_setup_CRM, OSSL_CMP_MSG_read, OSSL_CMP_MSG_write, d2i_OSSL_CMP_MSG_bio, i2d_OSSL_CMP_MSG_bio - function(s) manipulating CMP messages</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -32,6 +32,7 @@
 
 OSSL_CMP_PKIHEADER *OSSL_CMP_MSG_get0_header(const OSSL_CMP_MSG *msg);
 int OSSL_CMP_MSG_get_bodytype(const OSSL_CMP_MSG *msg);
+X509_PUBKEY *OSSL_CMP_MSG_get0_certreq_publickey(const OSSL_CMP_MSG *msg);
 int OSSL_CMP_MSG_update_transactionID(OSSL_CMP_CTX *ctx, OSSL_CMP_MSG *msg);
 int OSSL_CMP_MSG_update_recipNonce(OSSL_CMP_CTX *ctx, OSSL_CMP_MSG *msg);
 OSSL_CRMF_MSG *OSSL_CMP_CTX_setup_CRM(OSSL_CMP_CTX *ctx, int for_KUR, int rid);
@@ -45,6 +46,8 @@ int i2d_OSSL_CMP_MSG_bio(BIO *bio, const OSSL_CMP_MSG *msg);</code></pre>
 <p>OSSL_CMP_MSG_get0_header() returns the header of the given CMP message.</p>
 
 <p>OSSL_CMP_MSG_get_bodytype() returns the body type of the given CMP message.</p>
+
+<p>OSSL_CMP_MSG_get0_certreq_publickey() expects that <i>msg</i> is a certificate request message and returns the public key in its certificate template if present.</p>
 
 <p>OSSL_CMP_MSG_update_transactionID() updates the transactionID field in the header of the given message according to the CMP_CTX. If <i>ctx</i> does not contain a transaction ID, a fresh one is created before. The message gets re-protected (if protecting requests is required).</p>
 
@@ -114,6 +117,8 @@ int i2d_OSSL_CMP_MSG_bio(BIO *bio, const OSSL_CMP_MSG *msg);</code></pre>
 
 <p>OSSL_CMP_MSG_get_bodytype() returns the body type or -1 on error.</p>
 
+<p>OSSL_CMP_MSG_get0_certreq_publickey() returns a public key or NULL on error.</p>
+
 <p>OSSL_CMP_CTX_setup_CRM() returns a pointer to a <b>OSSL_CRMF_MSG</b> on success, NULL on error.</p>
 
 <p>d2i_OSSL_CMP_MSG_bio() returns the parsed message or NULL on error.</p>
@@ -134,9 +139,11 @@ int i2d_OSSL_CMP_MSG_bio(BIO *bio, const OSSL_CMP_MSG *msg);</code></pre>
 
 <p>OSSL_CMP_MSG_update_recipNonce() was added in OpenSSL 3.0.9.</p>
 
+<p>OSSL_CMP_MSG_get0_certreq_publickey() was added in OpenSSL 3.3.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2007-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2007-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

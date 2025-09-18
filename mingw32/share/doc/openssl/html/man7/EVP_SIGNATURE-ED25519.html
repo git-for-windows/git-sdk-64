@@ -31,7 +31,7 @@
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The <b>Ed25519</b> and <b>Ed448</b> EVP_PKEY implementation supports key generation, one-shot digest-sign and digest-verify using the EdDSA signature scheme described in RFC 8032. It has associated private and public key formats compatible with RFC 8410.</p>
+<p>The <b>Ed25519</b> and <b>Ed448</b> EVP_PKEY implementation supports key generation, one-shot digest-sign and digest-verify using the EdDSA signature schemes described in RFC 8032. It has associated private and public key formats compatible with RFC 8410.</p>
 
 <h2 id="EdDSA-Instances">EdDSA Instances</h2>
 
@@ -42,6 +42,10 @@
 <p>The instances Ed25519ph, Ed448ph are referred to as <b>HashEdDSA</b> schemes. For these two instances, the sign and verify procedures do not require access to the complete message; they operate on a hash of the message. For Ed25519ph, the hash function is SHA512. For Ed448ph, the hash function is SHAKE256 with an output length of 512 bits.</p>
 
 <p>The instances Ed25519ctx, Ed25519ph, Ed448, Ed448ph accept an optional <b>context-string</b> as input to sign and verify operations (and for Ed25519ctx, the context-string must be nonempty). For the Ed25519 instance, a nonempty context-string is not permitted.</p>
+
+<p>These instances can be specified as signature parameters when using <a href="../man3/EVP_DigestSignInit.html">EVP_DigestSignInit(3)</a> and <a href="../man3/EVP_DigestVerifyInit.html">EVP_DigestVerifyInit(3)</a>, see <a href="#ED25519-and-ED448-Signature-Parameters">&quot;ED25519 and ED448 Signature Parameters&quot;</a> below.</p>
+
+<p>These instances are also explicitly fetchable as algorithms using <a href="../man3/EVP_SIGNATURE_fetch.html">EVP_SIGNATURE_fetch(3)</a>, which can be used with <a href="../man3/EVP_PKEY_sign_init_ex2.html">EVP_PKEY_sign_init_ex2(3)</a>, <a href="../man3/EVP_PKEY_verify_init_ex2.html">EVP_PKEY_verify_init_ex2(3)</a>, <a href="../man3/EVP_PKEY_sign_message_init.html">EVP_PKEY_sign_message_init(3)</a> and <a href="../man3/EVP_PKEY_verify_message_init.html">EVP_PKEY_verify_message_init(3)</a>.</p>
 
 <h2 id="ED25519-and-ED448-Signature-Parameters">ED25519 and ED448 Signature Parameters</h2>
 
@@ -67,11 +71,13 @@
 
 <p>Both of these parameters are optional.</p>
 
-<p>If the instance name is not specified, then the default &quot;Ed25519&quot; or &quot;Ed448&quot; is used.</p>
-
-<p>If a context-string is not specified, then an empty context-string is used.</p>
+<p>When using <a href="../man3/EVP_DigestSignInit.html">EVP_DigestSignInit(3)</a> or <a href="../man3/EVP_DigestVerifyInit.html">EVP_DigestVerifyInit(3)</a>, the signature algorithm is derived from the key type name. The key type name (&quot;Ed25519&quot; or &quot;Ed448&quot;) is also the default for the instance, but this can be changed with the &quot;instance&quot; parameter.</p>
 
 <p>Note that a message digest name must <b>NOT</b> be specified when signing or verifying.</p>
+
+<p>When using <a href="../man3/EVP_PKEY_sign_init_ex2.html">EVP_PKEY_sign_init_ex2(3)</a>, <a href="../man3/EVP_PKEY_verify_init_ex2.html">EVP_PKEY_verify_init_ex2(3)</a>, <a href="../man3/EVP_PKEY_sign_message_init.html">EVP_PKEY_sign_message_init(3)</a> or <a href="../man3/EVP_PKEY_verify_message_init.html">EVP_PKEY_verify_message_init(3)</a>, the instance is the explicit signature algorithm name, and may not be changed (trying to give one with the &quot;instance&quot; parameter is therefore an error).</p>
+
+<p>If a context-string is not specified, then an empty context-string is used.</p>
 
 <p>See <a href="../man7/EVP_PKEY-X25519.html">EVP_PKEY-X25519(7)</a> for information related to <b>X25519</b> and <b>X448</b> keys.</p>
 
@@ -143,7 +149,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2017-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2017-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

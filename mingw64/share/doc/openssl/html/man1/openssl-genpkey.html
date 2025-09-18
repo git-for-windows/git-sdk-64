@@ -21,6 +21,8 @@
       <li><a href="#RSA-Key-Generation-Options">RSA Key Generation Options</a></li>
       <li><a href="#RSA-PSS-Key-Generation-Options">RSA-PSS Key Generation Options</a></li>
       <li><a href="#EC-Key-Generation-Options">EC Key Generation Options</a></li>
+      <li><a href="#ML-DSA-Key-Generation-Options">ML-DSA Key Generation Options</a></li>
+      <li><a href="#ML-KEM-Key-Generation-Options">ML-KEM Key Generation Options</a></li>
       <li><a href="#DH-Key-Generation-Options">DH Key Generation Options</a></li>
     </ul>
   </li>
@@ -43,7 +45,9 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>genpkey</b> [<b>-help</b>] [<b>-out</b> <i>filename</i>] [<b>-outpubkey</b> <i>filename</i>] [<b>-outform</b> <b>DER</b>|<b>PEM</b>] [<b>-verbose</b>] [<b>-quiet</b>] [<b>-pass</b> <i>arg</i>] [<b>-<i>cipher</i></b>] [<b>-paramfile</b> <i>file</i>] [<b>-algorithm</b> <i>alg</i>] [<b>-pkeyopt</b> <i>opt</i>:<i>value</i>] [<b>-genparam</b>] [<b>-text</b>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>] [<b>-config</b> <i>configfile</i>]</p>
+<p><b>openssl</b> <b>genpkey</b> [<b>-help</b>] [<b>-out</b> <i>filename</i>] [<b>-outpubkey</b> <i>filename</i>] [<b>-outform</b> <b>DER</b>|<b>PEM</b>] [<b>-verbose</b>] [<b>-quiet</b>] [<b>-pass</b> <i>arg</i>] [<b>-<i>cipher</i></b>] [<b>-paramfile</b> <i>file</i>] [<b>-algorithm</b> <i>alg</i>] [<b>-pkeyopt</b> <i>opt</i>:<i>value</i>] [<b>-genparam</b>] [<b>-text</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-engine</b> <i>id</i>]</p>
+
+<p>[<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>] [<b>-config</b> <i>configfile</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -108,7 +112,7 @@
 
 <p>Public key algorithm to use such as RSA, DSA, DH or DHX. If used this option must precede any <b>-pkeyopt</b> options. The options <b>-paramfile</b> and <b>-algorithm</b> are mutually exclusive. Engines or providers may add algorithms in addition to the standard built-in ones.</p>
 
-<p>Valid built-in algorithm names for private key generation are RSA, RSA-PSS, EC, X25519, X448, ED25519 and ED448.</p>
+<p>Valid built-in algorithm names for private key generation are RSA, RSA-PSS, EC, X25519, X448, ED25519, ED448, ML-DSA and ML-KEM.</p>
 
 <p>Valid built-in algorithm names for parameter generation (see the <b>-genparam</b> option) are DH, DSA and EC.</p>
 
@@ -141,6 +145,12 @@
 <p>Print an (unencrypted) text representation of private and public keys and parameters along with the PEM or DER structure.</p>
 
 </dd>
+<dt id="rand-files--writerand-file"><b>-rand</b> <i>files</i>, <b>-writerand</b> <i>file</i></dt>
+<dd>
+
+<p>See <a href="../man1/openssl.html">&quot;Random State Options&quot; in openssl(1)</a> for details.</p>
+
+</dd>
 <dt id="engine-id"><b>-engine</b> <i>id</i></dt>
 <dd>
 
@@ -152,6 +162,10 @@
 
 </dd>
 <dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="provparam-name:-key-value"><b>-provparam</b> <i>[name:]key=value</i></dt>
 <dd>
 
 </dd>
@@ -249,6 +263,34 @@
 </dd>
 </dl>
 
+<h2 id="ML-DSA-Key-Generation-Options">ML-DSA Key Generation Options</h2>
+
+<dl>
+
+<dt id="hexseed:seed"><b>hexseed</b>:<i>seed</i></dt>
+<dd>
+
+<p>This specifies the optional ML-DSA <i>seed</i> in hexadecimal form. The seed is 32 bytes, giving 64 hexadecimal digits. When generated from an explicit seed the key is completely determined by the seed value. If other users can see the command-line arguments of the running process, this option may compromise the secret key, it is best avoided, tests-aside.</p>
+
+<p>See <a href="../man7/EVP_PKEY-ML-DSA.html">EVP_PKEY-ML-DSA(7)</a> for more detail.</p>
+
+</dd>
+</dl>
+
+<h2 id="ML-KEM-Key-Generation-Options">ML-KEM Key Generation Options</h2>
+
+<dl>
+
+<dt id="hexseed:seed1"><b>hexseed</b>:<i>seed</i></dt>
+<dd>
+
+<p>This specifies the optional ML-KEM <i>seed</i> in hexadecimal form. The seed is 64 bytes, giving 128 hexadecimal digits. When generated from an explicit seed the key is completely determined by the seed value. If other users can see the command-line arguments of the running process, this option may compromise the secret key, it is best avoided, tests-aside.</p>
+
+<p>See <a href="../man7/EVP_PKEY-ML-KEM.html">EVP_PKEY-ML-KEM(7)</a> for more detail.</p>
+
+</dd>
+</dl>
+
 <h2 id="DH-Key-Generation-Options">DH Key Generation Options</h2>
 
 <dl>
@@ -313,7 +355,7 @@
 <p>The index to use for canonical generation and verification of the generator g. Set this to a positive value ranging from 0..255 to use this mode. Larger values will only use the bottom byte. This <i>index</i> must then be reused during key validation to verify the value of g. If this value is not set then g is not verifiable. The default value is -1.</p>
 
 </dd>
-<dt id="hexseed:seed"><b>hexseed</b>:<i>seed</i></dt>
+<dt id="hexseed:seed2"><b>hexseed</b>:<i>seed</i></dt>
 <dd>
 
 <p>The seed <i>seed</i> data to use instead of generating a random seed internally. This should be used for testing purposes only. This will either produced fixed values for the generated parameters OR it will fail if the seed did not generate valid primes.</p>
@@ -441,7 +483,7 @@
 <p>The index to use for canonical generation and verification of the generator g. Set this to a positive value ranging from 0..255 to use this mode. Larger values will only use the bottom byte. This <i>index</i> must then be reused during key validation to verify the value of g. If this value is not set then g is not verifiable. The default value is -1. This is only used by &quot;fips186_4&quot; and &quot;fips186_2&quot; key generation.</p>
 
 </dd>
-<dt id="hexseed:seed1"><b>hexseed</b>:<i>seed</i></dt>
+<dt id="hexseed:seed3"><b>hexseed</b>:<i>seed</i></dt>
 <dd>
 
 <p>The seed <i>seed</i> data to use instead of generating a random seed internally. This should be used for testing purposes only. This will either produced fixed values for the generated parameters OR it will fail if the seed did not generate valid primes. This is only used by &quot;fips186_4&quot; and &quot;fips186_2&quot; key generation.</p>
@@ -548,15 +590,25 @@
 
 <pre><code>openssl genpkey -algorithm ED448 -out xkey.pem</code></pre>
 
+<p>Generate an ML-DSA-65 private key:</p>
+
+<pre><code>openssl genpkey -algorithm ML-DSA-65 -out ml-dsa-key.pem</code></pre>
+
+<p>Generate an ML-KEM-768 private key:</p>
+
+<pre><code>openssl genpkey -algorithm ML-KEM-768 -out ml-kem-key.pem</code></pre>
+
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>The ability to use NIST curve names, and to generate an EC key directly, were added in OpenSSL 1.0.2. The ability to generate X25519 keys was added in OpenSSL 1.1.0. The ability to generate X448, ED25519 and ED448 keys was added in OpenSSL 1.1.1.</p>
 
 <p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
 
+<p>Support for <b>ML-DSA</b> and <b>ML-KEM</b> was added in OpenSSL 3.5.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2006-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2006-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

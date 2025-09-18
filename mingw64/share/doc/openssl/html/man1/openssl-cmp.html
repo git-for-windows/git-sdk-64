@@ -27,7 +27,7 @@
       <li><a href="#Provider-options">Provider options</a></li>
       <li><a href="#Random-state-options">Random state options</a></li>
       <li><a href="#TLS-connection-options">TLS connection options</a></li>
-      <li><a href="#Client-side-debugging-options">Client-side debugging options</a></li>
+      <li><a href="#Client-side-options-for-debugging-and-offline-scenarios">Client-side options for debugging and offline scenarios</a></li>
       <li><a href="#Mock-server-options">Mock server options</a></li>
       <li><a href="#Certificate-verification-options-for-both-CMP-and-TLS">Certificate verification options, for both CMP and TLS</a></li>
     </ul>
@@ -57,11 +57,11 @@
 
 <p>Generic message options:</p>
 
-<p>[<b>-cmd</b> <i>ir|cr|kur|p10cr|rr|genm</i>] [<b>-infotype</b> <i>name</i>] [<b>-geninfo</b> <i>OID:int:N</i>]</p>
+<p>[<b>-cmd</b> <i>ir|cr|kur|p10cr|rr|genm</i>] [<b>-infotype</b> <i>name</i>] [<b>-profile</b> <i>name</i>] [<b>-geninfo</b> <i>values</i>] [<b>-template</b> <i>filename</i>] [<b>-keyspec</b> <i>filename</i>]</p>
 
 <p>Certificate enrollment options:</p>
 
-<p>[<b>-newkey</b> <i>filename</i>|<i>uri</i>] [<b>-newkeypass</b> <i>arg</i>] [<b>-subject</b> <i>name</i>] [<b>-days</b> <i>number</i>] [<b>-reqexts</b> <i>name</i>] [<b>-sans</b> <i>spec</i>] [<b>-san_nodefault</b>] [<b>-policies</b> <i>name</i>] [<b>-policy_oids</b> <i>names</i>] [<b>-policy_oids_critical</b>] [<b>-popo</b> <i>number</i>] [<b>-csr</b> <i>filename</i>] [<b>-out_trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-implicit_confirm</b>] [<b>-disable_confirm</b>] [<b>-certout</b> <i>filename</i>] [<b>-chainout</b> <i>filename</i>]</p>
+<p>[<b>-newkey</b> <i>filename</i>|<i>uri</i>] [<b>-newkeypass</b> <i>arg</i>] [<b>-centralkeygen</b> [<b>-newkeyout</b> <i>filename</i>] [<b>-subject</b> <i>name</i>] [<b>-days</b> <i>number</i>] [<b>-reqexts</b> <i>name</i>] [<b>-sans</b> <i>spec</i>] [<b>-san_nodefault</b>] [<b>-policies</b> <i>name</i>] [<b>-policy_oids</b> <i>names</i>] [<b>-policy_oids_critical</b>] [<b>-popo</b> <i>number</i>] [<b>-csr</b> <i>filename</i>] [<b>-out_trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-implicit_confirm</b>] [<b>-disable_confirm</b>] [<b>-certout</b> <i>filename</i>] [<b>-chainout</b> <i>filename</i>]</p>
 
 <p>Certificate enrollment and revocation options:</p>
 
@@ -73,7 +73,7 @@
 
 <p>Server authentication options:</p>
 
-<p>[<b>-trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-untrusted</b> <i>filenames</i>|<i>uris</i>] [<b>-srvcert</b> <i>filename</i>|<i>uri</i>] [<b>-expect_sender</b> <i>name</i>] [<b>-ignore_keyusage</b>] [<b>-unprotected_errors</b>] [<b>-srvcertout</b> <i>filename</i>] [<b>-extracertsout</b> <i>filename</i>] [<b>-cacertsout</b> <i>filename</i>] [<b>-oldwithold</b> <i>filename</i>] [<b>-newwithnew</b> <i>filename</i>] [<b>-newwithold</b> <i>filename</i>] [<b>-oldwithnew</b> <i>filename</i>]</p>
+<p>[<b>-trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-untrusted</b> <i>filenames</i>|<i>uris</i>] [<b>-srvcert</b> <i>filename</i>|<i>uri</i>] [<b>-expect_sender</b> <i>name</i>] [<b>-ignore_keyusage</b>] [<b>-unprotected_errors</b>] [<b>-no_cache_extracerts</b>] [<b>-srvcertout</b> <i>filename</i>] [<b>-extracertsout</b> <i>filename</i>] [<b>-cacertsout</b> <i>filename</i>] [<b>-oldwithold</b> <i>filename</i>] [<b>-newwithnew</b> <i>filename</i>] [<b>-newwithold</b> <i>filename</i>] [<b>-oldwithnew</b> <i>filename</i>] [<b>-crlcert</b> <i>filename</i>] [<b>-oldcrl</b> <i>filename</i>] [<b>-crlout</b> <i>filename</i>]</p>
 
 <p>Client authentication and protection options:</p>
 
@@ -81,7 +81,7 @@
 
 <p>Credentials format options:</p>
 
-<p>[<b>-certform</b> <i>PEM|DER</i>] [<b>-keyform</b> <i>PEM|DER|P12|ENGINE</i>] [<b>-otherpass</b> <i>arg</i>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-propquery</b> <i>propq</i>]</p>
+<p>[<b>-certform</b> <i>PEM|DER</i>] [<b>-crlform</b> <i>PEM|DER</i>] [<b>-keyform</b> <i>PEM|DER|P12|ENGINE</i>] [<b>-otherpass</b> <i>arg</i>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
 
 <p>Random state options:</p>
 
@@ -93,11 +93,11 @@
 
 <p>Client-side debugging options:</p>
 
-<p>[<b>-batch</b>] [<b>-repeat</b> <i>number</i>] [<b>-reqin</b> <i>filenames</i>] [<b>-reqin_new_tid</b>] [<b>-reqout</b> <i>filenames</i>] [<b>-rspin</b> <i>filenames</i>] [<b>-rspout</b> <i>filenames</i>] [<b>-use_mock_srv</b>]</p>
+<p>[<b>-batch</b>] [<b>-repeat</b> <i>number</i>] [<b>-reqin</b> <i>filenames</i>] [<b>-reqin_new_tid</b>] [<b>-reqout</b> <i>filenames</i>] [<b>-reqout_only</b> <i>filename</i>] [<b>-rspin</b> <i>filenames</i>] [<b>-rspout</b> <i>filenames</i>] [<b>-use_mock_srv</b>]</p>
 
 <p>Mock server options:</p>
 
-<p>[<b>-port</b> <i>number</i>] [<b>-max_msgs</b> <i>number</i>] [<b>-srv_ref</b> <i>value</i>] [<b>-srv_secret</b> <i>arg</i>] [<b>-srv_cert</b> <i>filename</i>|<i>uri</i>] [<b>-srv_key</b> <i>filename</i>|<i>uri</i>] [<b>-srv_keypass</b> <i>arg</i>] [<b>-srv_trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-srv_untrusted</b> <i>filenames</i>|<i>uris</i>] [<b>-ref_cert</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_cert</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_extracerts</b> <i>filenames</i>|<i>uris</i>] [<b>-rsp_capubs</b> <i>filenames</i>|<i>uris</i>] [<b>-rsp_newwithnew</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_newwithold</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_oldwithnew</b> <i>filename</i>|<i>uri</i>] [<b>-poll_count</b> <i>number</i>] [<b>-check_after</b> <i>number</i>] [<b>-grant_implicitconf</b>] [<b>-pkistatus</b> <i>number</i>] [<b>-failure</b> <i>number</i>] [<b>-failurebits</b> <i>number</i>] [<b>-statusstring</b> <i>arg</i>] [<b>-send_error</b>] [<b>-send_unprotected</b>] [<b>-send_unprot_err</b>] [<b>-accept_unprotected</b>] [<b>-accept_unprot_err</b>] [<b>-accept_raverified</b>]</p>
+<p>[<b>-port</b> <i>number</i>] [<b>-max_msgs</b> <i>number</i>] [<b>-srv_ref</b> <i>value</i>] [<b>-srv_secret</b> <i>arg</i>] [<b>-srv_cert</b> <i>filename</i>|<i>uri</i>] [<b>-srv_key</b> <i>filename</i>|<i>uri</i>] [<b>-srv_keypass</b> <i>arg</i>] [<b>-srv_trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-srv_untrusted</b> <i>filenames</i>|<i>uris</i>] [<b>-ref_cert</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_cert</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_key</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_keypass</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_crl</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_extracerts</b> <i>filenames</i>|<i>uris</i>] [<b>-rsp_capubs</b> <i>filenames</i>|<i>uris</i>] [<b>-rsp_newwithnew</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_newwithold</b> <i>filename</i>|<i>uri</i>] [<b>-rsp_oldwithnew</b> <i>filename</i>|<i>uri</i>] [<b>-poll_count</b> <i>number</i>] [<b>-check_after</b> <i>number</i>] [<b>-grant_implicitconf</b>] [<b>-pkistatus</b> <i>number</i>] [<b>-failure</b> <i>number</i>] [<b>-failurebits</b> <i>number</i>] [<b>-statusstring</b> <i>arg</i>] [<b>-send_error</b>] [<b>-send_unprotected</b>] [<b>-send_unprot_err</b>] [<b>-accept_unprotected</b>] [<b>-accept_unprot_err</b>] [<b>-accept_raverified</b>]</p>
 
 <p>Certificate verification options, for both CMP and TLS:</p>
 
@@ -192,13 +192,33 @@
 <dt id="infotype-name"><b>-infotype</b> <i>name</i></dt>
 <dd>
 
-<p>Set InfoType name to use for requesting specific info in <b>genm</b>, e.g., <code>signKeyPairTypes</code>. So far, there is specific support for <code>caCerts</code> and <code>rootCaCert</code>.</p>
+<p>Set InfoType name to use for requesting specific info in <b>genm</b>, e.g., <code>signKeyPairTypes</code>. There is specific support for <code>caCerts</code>, <code>rootCaCert</code>, <code>certReqTemplate</code>, and <code>crlStatusList</code> (CRL update retrieval).</p>
 
 </dd>
-<dt id="geninfo-OID:int:N"><b>-geninfo</b> <i>OID:int:N</i></dt>
+<dt id="profile-name"><b>-profile</b> <i>name</i></dt>
 <dd>
 
-<p>generalInfo integer values to place in request PKIHeader with given OID, e.g., <code>1.2.3.4:int:56789</code>.</p>
+<p>Name of a certificate profile to place in the PKIHeader generalInfo field of request messages.</p>
+
+</dd>
+<dt id="geninfo-values"><b>-geninfo</b> <i>values</i></dt>
+<dd>
+
+<p>A comma-separated list of InfoTypeAndValue to place in the generalInfo field of the PKIHeader of requests messages. Each InfoTypeAndValue gives an OID and an integer or string value of the form <i>OID</i>:int:<i>number</i> or <i>OID</i>:str:<i>text</i>, e.g., <code>&#39;1.2.3.4:int:56789, id-kp:str:name&#39;</code>.</p>
+
+</dd>
+<dt id="template-filename"><b>-template</b> <i>filename</i></dt>
+<dd>
+
+<p>The file to save any CRMF certTemplate in DER format received in a genp message with id-it-certReqTemplate.</p>
+
+</dd>
+<dt id="keyspec-filename"><b>-keyspec</b> <i>filename</i></dt>
+<dd>
+
+<p>It is optional and used to specify the file to save any keySpec if present in a genp message with id-it-keyGenParameters.</p>
+
+<p>Note: any keySpec field contents received are logged as INFO.</p>
 
 </dd>
 </dl>
@@ -223,6 +243,18 @@
 <p>Pass phrase source for the key given with the <b>-newkey</b> option. If not given here, the password will be prompted for if needed.</p>
 
 <p>For more information about the format of <i>arg</i> see <a href="../man1/openssl-passphrase-options.html">openssl-passphrase-options(1)</a>.</p>
+
+</dd>
+<dt id="centralkeygen"><b>-centralkeygen</b></dt>
+<dd>
+
+<p>Request central key generation for certificate enrollment. This applies to <b>-cmd</b> <i>ir|cr|kur|p10cr</i>.</p>
+
+</dd>
+<dt id="newkeyout-filename"><b>-newkeyout</b> <i>filename</i></dt>
+<dd>
+
+<p>File to save centrally generated private key, in PEM format.</p>
 
 </dd>
 <dt id="subject-name"><b>-subject</b> <i>name</i></dt>
@@ -282,7 +314,7 @@
 <dt id="popo-number"><b>-popo</b> <i>number</i></dt>
 <dd>
 
-<p>Proof-of-possession (POPO) method to use for IR/CR/KUR; values: <code>-1</code>..&lt;2&gt; where <code>-1</code> = NONE, <code>0</code> = RAVERIFIED, <code>1</code> = SIGNATURE (default), <code>2</code> = KEYENC.</p>
+<p>Proof-of-possession (POPO) method to use for IR/CR/KUR; values: <code>-1</code>..&lt;2&gt; where <code>-1</code> = NONE, which implies central key generation, <code>0</code> = RAVERIFIED, <code>1</code> = SIGNATURE (default), <code>2</code> = KEYENC.</p>
 
 <p>Note that a signature-based POPO can only be produced if a private key is provided via the <b>-newkey</b> or <b>-key</b> options.</p>
 
@@ -350,7 +382,7 @@
 <dt id="issuer-name"><b>-issuer</b> <i>name</i></dt>
 <dd>
 
-<p>X.509 Distinguished Name (DN) use as issuer field in the requested certificate template in IR/CR/KUR/RR messages. If the NULL-DN (<code>/</code>) is given then no issuer is placed in the template.</p>
+<p>X.509 Distinguished Name (DN) to place as the issuer field in the requested certificate template in IR/CR/KUR/RR messages. If the NULL-DN (<code>/</code>) is given then no issuer is placed in the template.</p>
 
 <p>If provided and neither <b>-recipient</b> nor <b>-srvcert</b> is given, the issuer DN is used as fallback recipient of outgoing CMP messages.</p>
 
@@ -494,7 +526,7 @@
 <dt id="ignore_keyusage"><b>-ignore_keyusage</b></dt>
 <dd>
 
-<p>Ignore key usage restrictions in CMP signer certificates when validating signature-based protection of incoming CMP messages. By default, <code>digitalSignature</code> must be allowed by CMP signer certificates.</p>
+<p>Ignore key usage restrictions in CMP signer certificates when validating signature-based protection of incoming CMP messages. By default, <code>digitalSignature</code> must be allowed by CMP signer certificates. This option applies to both CMP clients and the mock server.</p>
 
 </dd>
 <dt id="unprotected_errors"><b>-unprotected_errors</b></dt>
@@ -532,6 +564,12 @@
 
 </li>
 </ul>
+
+</dd>
+<dt id="no_cache_extracerts"><b>-no_cache_extracerts</b></dt>
+<dd>
+
+<p>Do not cache certificates in the extraCerts field of CMP messages received. By default, they are kept as they may be helful for validating further messages. This option applies to both CMP clients and the mock server.</p>
 
 </dd>
 <dt id="srvcertout-filename"><b>-srvcertout</b> <i>filename</i></dt>
@@ -578,6 +616,24 @@
 <dd>
 
 <p>The file to save any oldWithNew certificate received in a genp message of infoType <code>rootCaKeyUpdate</code>. If on success no such cert was received, this is indicated by deleting the file.</p>
+
+</dd>
+<dt id="crlcert-filename"><b>-crlcert</b> <i>filename</i></dt>
+<dd>
+
+<p>Certificate to derive CRL issuer data for the source field when obtaining a CRL in a genm request with infoType <code>crlStatusList</code>. Any available distribution point name is preferred over issuer names.</p>
+
+</dd>
+<dt id="oldcrl-filename"><b>-oldcrl</b> <i>filename</i></dt>
+<dd>
+
+<p>The CRL to obtain an update for in a genm request with infoType <code>crlStatusList</code>. Unless the <b>-crlcert</b> option is provided as well, the given CRL is used for deriving CRL issuer data for the source field. Any available distribution point name is preferred over issuer names. If the CRL contains a thisUpdate field, its value is copied to the request.</p>
+
+</dd>
+<dt id="crlout-filename"><b>-crlout</b> <i>filename</i></dt>
+<dd>
+
+<p>The file to save any CRL received in a genp message of infoType <code>crls</code>. If on success no such CRL was received, this is indicated by deleting the file.</p>
 
 </dd>
 </dl>
@@ -682,6 +738,12 @@
 <p>File format to use when saving a certificate to a file. Default value is PEM.</p>
 
 </dd>
+<dt id="crlform-PEM-DER"><b>-crlform</b> <i>PEM|DER</i></dt>
+<dd>
+
+<p>File format to use when saving a CRL to a file. Default value is DER. DER format is preferred because it enables more efficient storage of large CRLs.</p>
+
+</dd>
 <dt id="keyform-PEM-DER-P12-ENGINE"><b>-keyform</b> <i>PEM|DER|P12|ENGINE</i></dt>
 <dd>
 
@@ -691,7 +753,7 @@
 <dt id="otherpass-arg"><b>-otherpass</b> <i>arg</i></dt>
 <dd>
 
-<p>Pass phrase source for certificate given with the <b>-trusted</b>, <b>-untrusted</b>, <b>-own_trusted</b>, <b>-srvcert</b>, <b>-out_trusted</b>, <b>-extracerts</b>, <b>-srv_trusted</b>, <b>-srv_untrusted</b>, <b>-ref_cert</b>, <b>-rsp_cert</b>, <b>-rsp_extracerts</b>, <b>-rsp_capubs</b>, <b>-rsp_newwithnew</b>, <b>-rsp_newwithold</b>, <b>-rsp_oldwithnew</b>, <b>-tls_extra</b>, and <b>-tls_trusted</b> options. If not given here, the password will be prompted for if needed.</p>
+<p>Pass phrase source for certificate given with the <b>-trusted</b>, <b>-untrusted</b>, <b>-own_trusted</b>, <b>-srvcert</b>, <b>-crlcert</b>, <b>-out_trusted</b>, <b>-extracerts</b>, <b>-srv_trusted</b>, <b>-srv_untrusted</b>, <b>-ref_cert</b>, <b>-rsp_extracerts</b>, <b>-rsp_capubs</b>, <b>-rsp_newwithnew</b>, <b>-rsp_newwithold</b>, <b>-rsp_oldwithnew</b>, <b>-tls_extra</b>, and <b>-tls_trusted</b> options. If not given here, the password will be prompted for if needed.</p>
 
 <p>For more information about the format of <i>arg</i> see <a href="../man1/openssl-passphrase-options.html">openssl-passphrase-options(1)</a>.</p>
 
@@ -723,6 +785,10 @@
 
 </dd>
 <dt id="provider-path-path"><b>-provider-path</b> <i>path</i></dt>
+<dd>
+
+</dd>
+<dt id="provparam-name:-key-value"><b>-provparam</b> <i>[name:]key=value</i></dt>
 <dd>
 
 </dd>
@@ -802,7 +868,7 @@
 </dd>
 </dl>
 
-<h2 id="Client-side-debugging-options">Client-side debugging options</h2>
+<h2 id="Client-side-options-for-debugging-and-offline-scenarios">Client-side options for debugging and offline scenarios</h2>
 
 <dl>
 
@@ -823,7 +889,15 @@
 
 <p>Take the sequence of CMP requests to send to the server from the given file(s) rather than from the sequence of requests produced internally.</p>
 
+<p>This option is useful for supporting offline scenarios where the certificate request (or any other CMP request) is produced beforehand and sent out later.</p>
+
 <p>This option is ignored if the <b>-rspin</b> option is given because in the latter case no requests are actually sent.</p>
+
+<p>Note that in any case the client produces internally its sequence of CMP request messages. Thus, all options required for doing this (such as <b>-cmd</b> and all options providing the required parameters) need to be given also when the <b>-reqin</b> option is present.</p>
+
+<p>If the <b>-reqin</b> option is given for a certificate request and no <b>-newkey</b>, <b>-key</b>, <b>-oldcert</b>, or <b>-csr</b> option is given, a fallback public key is taken from the request message file (if it is included in the certificate template).</p>
+
+<p>Hint: In case the <b>-reqin</b> option is given for a certificate request, there are situations where the client has access to the public key to be certified but not to the private key that by default will be needed for proof of possession. In this case the POPO is not actually needed (because the internally produced certificate request message will not be sent), and its generation can be disabled using the options <b>-popo</b> <i>-1</i> or <b>-popo</b> <i>0</i>.</p>
 
 <p>Multiple filenames may be given, separated by commas and/or whitespace (where in the latter case the whole argument must be enclosed in &quot;...&quot;).</p>
 
@@ -846,6 +920,14 @@
 <p>Multiple filenames may be given, separated by commas and/or whitespace.</p>
 
 <p>Files are written as far as needed to save the transaction and filenames have been provided. If the transaction contains more requests, the remaining ones are not saved.</p>
+
+</dd>
+<dt id="reqout_only-filename"><b>-reqout_only</b> <i>filename</i></dt>
+<dd>
+
+<p>Save the first CMP requests created by the client to the given file and exit. Any options related to CMP servers and their responses are ignored.</p>
+
+<p>This option is useful for supporting offline scenarios where the certificate request (or any other CMP request) is produced beforehand and sent out later.</p>
 
 </dd>
 <dt id="rspin-filenames"><b>-rspin</b> <i>filenames</i></dt>
@@ -946,6 +1028,24 @@
 <dd>
 
 <p>Certificate to be returned as mock enrollment result.</p>
+
+</dd>
+<dt id="rsp_key-filename-uri"><b>-rsp_key</b> <i>filename</i>|<i>uri</i></dt>
+<dd>
+
+<p>Private key to be returned as central key generation result.</p>
+
+</dd>
+<dt id="rsp_keypass-arg"><b>-rsp_keypass</b> <i>arg</i></dt>
+<dd>
+
+<p>Pass phrase source for <b>rsp_cert</b> and <b>rsp_key</b>.</p>
+
+</dd>
+<dt id="rsp_crl-filename-uri"><b>-rsp_crl</b> <i>filename</i>|<i>uri</i></dt>
+<dd>
+
+<p>CRL to be returned in genp of type <code>crls</code>.</p>
 
 </dd>
 <dt id="rsp_extracerts-filenames-uris"><b>-rsp_extracerts</b> <i>filenames</i>|<i>uris</i></dt>
@@ -1115,13 +1215,9 @@ openssl cmp -section insta</code></pre>
 
 <p>In order to update the enrolled certificate one may call</p>
 
-<pre><code>openssl cmp -section insta,kur</code></pre>
-
-<p>using with MAC-based protection with PBM or</p>
-
 <pre><code>openssl cmp -section insta,kur,signature</code></pre>
 
-<p>using signature-based protection.</p>
+<p>using signature-based protection with the certificate that is to be updated. For certificate updates, MAC-based protection should generally not be used.</p>
 
 <p>In a similar way any previously enrolled certificate may be revoked by</p>
 
@@ -1211,11 +1307,19 @@ openssl cmp -cmd kur -newkey cl_key_new.pem</code></pre>
 
 <p>The <b>cmp</b> application was added in OpenSSL 3.0.</p>
 
-<p>The <b>-engine option</b> was deprecated in OpenSSL 3.0.</p>
+<p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
+
+<p>The <b>-oldwithold</b>, <b>-newwithnew</b>, <b>-newwithold</b>, <b>-oldwithnew</b>, The <b>-srvcertout</b>, and <b>-serial</b> option were added in OpenSSL 3.2, as well as an extension of <b>-cacertsout</b> to use when getting CA certificates. Since then, the <b>-issuer</b> may be used also for certificates to be revoked.</p>
+
+<p>The <b>-profile</b> and <b>-no_cache_extracerts</b> options were added in OpenSSL 3.3, as well as support for delayed delivery of all types of response messages.</p>
+
+<p>The <b>-template</b>, <b>-crlcert</b>, <b>-oldcrl</b>, <b>-crlout</b>, <b>-crlform</b> and <b>-rsp_crl</b> options were added in OpenSSL 3.4.</p>
+
+<p><b>-centralkeygen</b>, b&lt;-newkeyout&gt;, <b>-rsp_key</b> and <b>-rsp_keypass</b> were added in OpenSSL 3.5.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2007-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2007-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

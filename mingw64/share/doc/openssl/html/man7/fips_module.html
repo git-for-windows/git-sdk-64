@@ -24,6 +24,7 @@
       <li><a href="#Using-Encoders-and-Decoders-with-the-FIPS-module">Using Encoders and Decoders with the FIPS module</a></li>
       <li><a href="#Using-the-FIPS-module-in-SSL-TLS">Using the FIPS module in SSL/TLS</a></li>
       <li><a href="#Confirming-that-an-algorithm-is-being-provided-by-the-FIPS-module">Confirming that an algorithm is being provided by the FIPS module</a></li>
+      <li><a href="#FIPS-indicators">FIPS indicators</a></li>
     </ul>
   </li>
   <li><a href="#NOTES">NOTES</a></li>
@@ -354,27 +355,131 @@ SSL_CTX *non_fips_ssl_ctx = SSL_CTX_new_ex(NULL, &quot;provider!=fips&quot;,
 
 <p>To go from an <b>EVP_MD_CTX</b> to an <b>EVP_MD</b>, use <a href="../man3/EVP_MD_CTX_md.html">EVP_MD_CTX_md(3)</a> . To go from the <b>EVP_MD</b> to its <b>OSSL_PROVIDER</b>, use <a href="../man3/EVP_MD_get0_provider.html">EVP_MD_get0_provider(3)</a>. To extract the name from the <b>OSSL_PROVIDER</b>, use <a href="../man3/OSSL_PROVIDER_get0_name.html">OSSL_PROVIDER_get0_name(3)</a>.</p>
 
-<h1 id="NOTES">NOTES</h1>
+<h2 id="FIPS-indicators">FIPS indicators</h2>
 
-<p>Some released versions of OpenSSL do not include a validated FIPS provider. To determine which versions have undergone the validation process, please refer to the <a href="https://www.openssl.org/source/">OpenSSL Downloads page</a>. If you require FIPS-approved functionality, it is essential to build your FIPS provider using one of the validated versions listed there. Normally, it is possible to utilize a FIPS provider constructed from one of the validated versions alongside <i>libcrypto</i> and <i>libssl</i> compiled from any release within the same major release series. This flexibility enables you to address bug fixes and CVEs that fall outside the FIPS boundary.</p>
+<p>FIPS indicators have been added to the FIPS provider in OpenSSL 3.4. FIPS 140-3 requires indicators to be used if the FIPS provider allows non approved algorithms. An algorithm is approved if it passes all required checks such as minimum key size. By default an error will occur if any check fails. For backwards compatibility individual algorithms may override the checks by using either an option in the FIPS configuration (See <a href="../man5/fips_config.html">&quot;FIPS indicator options&quot; in fips_config(5)</a>) OR in code using an algorithm context setter. Overriding the check means that the algorithm is not FIPS compliant. <a href="../man3/OSSL_INDICATOR_set_callback.html">OSSL_INDICATOR_set_callback(3)</a> can be called to register a callback to log unapproved algorithms. At the end of any algorithm operation the approved status can be queried using an algorithm context getter to retrieve the indicator (e.g. &quot;fips-indicator&quot;). An example of an algorithm context setter is &quot;key-check&quot; in <a href="../man7/EVP_KDF-HKDF.html">&quot;Supported parameters&quot; in EVP_KDF-HKDF(7)</a>.</p>
 
-<p>The FIPS provider in OpenSSL 3.1 includes some non-FIPS validated algorithms, consequently the property query <code>fips=yes</code> is mandatory for applications that want to operate in a FIPS approved manner. The algorithms are:</p>
+<p>The following algorithms use &quot;fips-indicator&quot; to query if the algorithm is approved:</p>
 
 <dl>
 
-<dt id="Triple-DES-ECB">Triple DES ECB</dt>
+<dt id="DSA-Key-generation">DSA Key generation</dt>
 <dd>
 
-</dd>
-<dt id="Triple-DES-CBC">Triple DES CBC</dt>
-<dd>
+<p>DSA Key generation is no longer approved. See <a href="../man7/EVP_PKEY-DSA.html">&quot;DSA parameters&quot; in EVP_PKEY-DSA(7)</a></p>
 
 </dd>
-<dt id="EdDSA">EdDSA</dt>
+<dt id="DSA-Signatures">DSA Signatures</dt>
+<dd>
+
+<p>DSA Signature generation is no longer approved. See <a href="../man7/EVP_SIGNATURE-DSA.html">&quot;Signature Parameters&quot; in EVP_SIGNATURE-DSA(7)</a></p>
+
+</dd>
+<dt id="ECDSA-Signatures">ECDSA Signatures</dt>
+<dd>
+
+<p>See <a href="../man7/EVP_SIGNATURE-ECDSA.html">&quot;ECDSA Signature Parameters&quot; in EVP_SIGNATURE-ECDSA(7)</a></p>
+
+</dd>
+<dt id="EC-Key-Generation">EC Key Generation</dt>
+<dd>
+
+<p>See <a href="../man7/EVP_PKEY-EC.html">&quot;Common EC parameters&quot; in EVP_PKEY-EC(7)</a></p>
+
+</dd>
+<dt id="RSA-Encryption">RSA Encryption</dt>
+<dd>
+
+<p>&quot;pkcs1&quot; padding is no longer approved.</p>
+
+<p>See <a href="../man7/EVP_ASYM_CIPHER-RSA.html">&quot;RSA Asymmetric Cipher parameters&quot; in EVP_ASYM_CIPHER-RSA(7)</a> and <a href="../man7/EVP_KEM-RSA.html">&quot;RSA KEM parameters&quot; in EVP_KEM-RSA(7)</a></p>
+
+</dd>
+<dt id="RSA-Signatures">RSA Signatures</dt>
+<dd>
+
+<p>See <a href="../man7/EVP_SIGNATURE-RSA.html">&quot;Signature Parameters&quot; in EVP_SIGNATURE-RSA(7)</a></p>
+
+</dd>
+<dt id="DRBGS">DRBGS</dt>
+<dd>
+
+<p>See <a href="../man7/EVP_RAND-HASH-DRBG.html">&quot;Supported parameters&quot; in EVP_RAND-HASH-DRBG(7)</a> and EVP_RAND-HMAC-DRBG(7)/Supported parameters&gt;</p>
+
+</dd>
+<dt id="DES">DES</dt>
+<dd>
+
+<p>Triple-DES is not longer approved for encryption. See <a href="../man7/EVP_CIPHER-DES.html">&quot;Parameters&quot; in EVP_CIPHER-DES(7)</a></p>
+
+</dd>
+<dt id="DH">DH</dt>
+<dd>
+
+<p>See <a href="../man7/EVP_KEYEXCH-DH.html">&quot;DH and DHX key exchange parameters&quot; in EVP_KEYEXCH-DH(7)</a></p>
+
+</dd>
+<dt id="ECDH">ECDH</dt>
+<dd>
+
+<p>See <a href="../man7/EVP_KEYEXCH-ECDH.html">&quot;ECDH Key Exchange parameters&quot; in EVP_KEYEXCH-ECDH(7)</a></p>
+
+</dd>
+<dt id="KDFS">KDFS</dt>
+<dd>
+
+<p>See relevant KDF documentation e.g. <a href="../man7/EVP_KDF-HKDF.html">&quot;Supported parameters&quot; in EVP_KDF-HKDF(7)</a></p>
+
+</dd>
+<dt id="CMAC-and-KMAC">CMAC and KMAC</dt>
+<dd>
+
+<p>See <a href="../man7/EVP_MAC-CMAC.html">&quot;Supported parameters&quot; in EVP_MAC-CMAC(7)</a> and <a href="../man7/EVP_MAC-KMAC.html">&quot;Supported parameters&quot; in EVP_MAC-KMAC(7)</a></p>
+
+</dd>
+</dl>
+
+<p>The following FIPS algorithms are unapproved and use the &quot;fips-indicator&quot;.</p>
+
+<dl>
+
+<dt id="RAND-TEST-RAND">RAND-TEST-RAND</dt>
+<dd>
+
+<p>See <a href="../man7/EVP_RAND-TEST-RAND.html">&quot;Supported parameters&quot; in EVP_RAND-TEST-RAND(7)</a> The indicator callback is NOT triggered for this algorithm since it is used internally for non security purposes.</p>
+
+</dd>
+<dt id="X25519-and-X448-Key-Generation-and-Key-Exchange">X25519 and X448 Key Generation and Key Exchange</dt>
 <dd>
 
 </dd>
 </dl>
+
+<p>The unapproved (non FIPS validated) algorithms have a property query value of &quot;fips=no&quot;.</p>
+
+<p>The following algorithms use a unique indicator and do not trigger the indicator callback.</p>
+
+<dl>
+
+<dt id="AES-GCM-ciphers-support-the-indicator-iv-generated">AES-GCM ciphers support the indicator &quot;iv-generated&quot;</dt>
+<dd>
+
+<p>See <a href="../man3/EVP_EncryptInit.html">&quot;PARAMETERS&quot; in EVP_EncryptInit(3)</a> for further information.</p>
+
+</dd>
+<dt id="ECDSA-and-RSA-Signatures-support-the-indicator-verify-message">ECDSA and RSA Signatures support the indicator &quot;verify-message&quot;.</dt>
+<dd>
+
+<p>See <a href="../man7/EVP_SIGNATURE-ECDSA.html">&quot;ECDSA Signature Parameters&quot; in EVP_SIGNATURE-ECDSA(7)</a> and <a href="../man7/EVP_SIGNATURE-RSA.html">&quot;Signature Parameters&quot; in EVP_SIGNATURE-RSA(7)</a> /for further information.</p>
+
+</dd>
+</dl>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>Some released versions of OpenSSL do not include a validated FIPS provider. To determine which versions have undergone the validation process, please refer to the <a href="https://www.openssl.org/source/">OpenSSL Downloads page</a>. If you require FIPS-approved functionality, it is essential to build your FIPS provider using one of the validated versions listed there. Normally, it is possible to utilize a FIPS provider constructed from one of the validated versions alongside <i>libcrypto</i> and <i>libssl</i> compiled from any release within the same major release series. This flexibility enables you to address bug fixes and CVEs that fall outside the FIPS boundary.</p>
+
+<p>As the FIPS provider still supports non-FIPS validated algorithms, The property query <code>fips=yes</code> is mandatory for applications that want to operate in a FIPS approved manner.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -382,11 +487,11 @@ SSL_CTX *non_fips_ssl_ctx = SSL_CTX_new_ex(NULL, &quot;provider!=fips&quot;,
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The FIPS module guide was created for use with the new FIPS provider in OpenSSL 3.0.</p>
+<p>The FIPS module guide was created for use with the new FIPS provider in OpenSSL 3.0. FIPS indicators were added in OpenSSL 3.4.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

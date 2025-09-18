@@ -23,6 +23,7 @@
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#CONFORMING-TO">CONFORMING TO</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -32,11 +33,29 @@
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>For <b>DSA</b> the FIPS186-4 standard specifies that the values used for FFC parameter generation are also required for parameter validation. This means that optional FFC domain parameter values for <i>seed</i>, <i>pcounter</i> and <i>gindex</i> may need to be stored for validation purposes. For <b>DSA</b> these fields are not stored in the ASN1 data so they need to be stored externally if validation is required.</p>
+<p>For <b>DSA</b> the FIPS 186-4 standard specifies that the values used for FFC parameter generation are also required for parameter validation. This means that optional FFC domain parameter values for <i>seed</i>, <i>pcounter</i> and <i>gindex</i> may need to be stored for validation purposes. For <b>DSA</b> these fields are not stored in the ASN1 data so they need to be stored externally if validation is required.</p>
+
+<p>As part of FIPS 140-3 DSA is not longer FIPS approved for key generation and signature validation, but is still allowed for signature verification.</p>
 
 <h2 id="DSA-parameters">DSA parameters</h2>
 
 <p>The <b>DSA</b> key type supports the FFC parameters (see <a href="../man7/EVP_PKEY-FFC.html">&quot;FFC parameters&quot; in EVP_PKEY-FFC(7)</a>).</p>
+
+<p>It also supports the following parameters:</p>
+
+<dl>
+
+<dt id="sign-check-OSSL_PKEY_PARAM_FIPS_SIGN_CHECK-integer">&quot;sign-check&quot; (<b>OSSL_PKEY_PARAM_FIPS_SIGN_CHECK</b>) &lt;integer</dt>
+<dd>
+
+</dd>
+<dt id="fips-indicator-OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>See <a href="../man7/provider-keymgmt.html">&quot;Common Information Parameters&quot; in provider-keymgmt(7)</a> for more information.</p>
+
+</dd>
+</dl>
 
 <h2 id="DSA-key-generation-parameters">DSA key generation parameters</h2>
 
@@ -117,11 +136,15 @@ EVP_PKEY_print_private(bio_out, key, 0, NULL);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/EVP_PKEY-FFC.html">EVP_PKEY-FFC(7)</a>, <a href="../man7/EVP_SIGNATURE-DSA.html">EVP_SIGNATURE-DSA(7)</a> <a href="../man3/EVP_PKEY.html">EVP_PKEY(3)</a>, <a href="../man7/provider-keymgmt.html">provider-keymgmt(7)</a>, <a href="../man3/EVP_KEYMGMT.html">EVP_KEYMGMT(3)</a>, <a href="../man7/OSSL_PROVIDER-default.html">OSSL_PROVIDER-default(7)</a>, <a href="../man7/OSSL_PROVIDER-FIPS.html">OSSL_PROVIDER-FIPS(7)</a></p>
+<p><a href="../man7/EVP_PKEY-FFC.html">EVP_PKEY-FFC(7)</a>, <a href="../man7/EVP_SIGNATURE-DSA.html">EVP_SIGNATURE-DSA(7)</a>, <a href="../man3/EVP_PKEY.html">EVP_PKEY(3)</a>, <a href="../man7/provider-keymgmt.html">provider-keymgmt(7)</a>, <a href="../man3/EVP_KEYMGMT.html">EVP_KEYMGMT(3)</a>, <a href="../man7/OSSL_PROVIDER-default.html">OSSL_PROVIDER-default(7)</a>, <a href="../man7/OSSL_PROVIDER-FIPS.html">OSSL_PROVIDER-FIPS(7)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>DSA Key generation and signature generation are no longer FIPS approved in OpenSSL 3.4. See <a href="../man7/fips_module.html">&quot;FIPS indicators&quot; in fips_module(7)</a> for more information.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

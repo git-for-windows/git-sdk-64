@@ -78,9 +78,9 @@ void *ENGINE_get_ex_data(ENGINE *type, int idx);</code></pre>
 
 <p>TYPE_get_ex_new_index() is a macro that calls CRYPTO_get_ex_new_index() with the correct <b>index</b> value.</p>
 
-<p>TYPE_set_ex_data() is a function that calls CRYPTO_set_ex_data() with an offset into the opaque exdata part of the TYPE object.</p>
+<p>TYPE_set_ex_data() is a function that calls CRYPTO_set_ex_data() with an offset into the opaque exdata part of the TYPE object. <i>d</i> <b>MUST NOT</b> be NULL.</p>
 
-<p>TYPE_get_ex_data() is a function that calls CRYPTO_get_ex_data() with an offset into the opaque exdata part of the TYPE object.</p>
+<p>TYPE_get_ex_data() is a function that calls CRYPTO_get_ex_data() with an offset into the opaque exdata part of the TYPE object. <i>d</i> <b>MUST NOT</b> be NULL.</p>
 
 <p>For compatibility with previous releases, the exdata index of zero is reserved for &quot;application data.&quot; There are two convenience functions for this. TYPE_set_app_data() is a macro that invokes TYPE_set_ex_data() with <b>idx</b> set to zero. TYPE_get_app_data() is a macro that invokes TYPE_get_ex_data() with <b>idx</b> set to zero.</p>
 

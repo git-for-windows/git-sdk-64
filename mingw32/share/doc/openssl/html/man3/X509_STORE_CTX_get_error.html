@@ -47,11 +47,11 @@ const char *X509_verify_cert_error_string(long n);</code></pre>
 
 <p>These functions are typically called after certificate or chain verification using <a href="../man3/X509_verify_cert.html">X509_verify_cert(3)</a> or <a href="../man3/X509_STORE_CTX_verify.html">X509_STORE_CTX_verify(3)</a> has indicated an error or in a verification callback to determine the nature of an error.</p>
 
-<p>X509_STORE_CTX_get_error() returns the error code of <i>ctx</i>. See the <a href="#ERROR-CODES">&quot;ERROR CODES&quot;</a> section for a full description of all error codes. It may return a code != X509_V_OK even if X509_verify_cert() did not indicate an error, likely because a verification callback function has waived the error.</p>
+<p>X509_STORE_CTX_get_error() returns the error code of <i>ctx</i>. <i>ctx</i> <b>MUST NOT</b> be NULL. See the <a href="#ERROR-CODES">&quot;ERROR CODES&quot;</a> section for a full description of all error codes. It may return a code != X509_V_OK even if X509_verify_cert() did not indicate an error, likely because a verification callback function has waived the error.</p>
 
-<p>X509_STORE_CTX_set_error() sets the error code of <i>ctx</i> to <i>s</i>. For example it might be used in a verification callback to set an error based on additional checks.</p>
+<p>X509_STORE_CTX_set_error() sets the error code of <i>ctx</i> to <i>s</i>. For example it might be used in a verification callback to set an error based on additional checks. <i>ctx</i> <b>MUST NOT</b> be NULL.</p>
 
-<p>X509_STORE_CTX_get_error_depth() returns the <i>depth</i> of the error. This is a nonnegative integer representing where in the certificate chain the error occurred. If it is zero it occurred in the end entity certificate, one if it is the certificate which signed the end entity certificate and so on.</p>
+<p>X509_STORE_CTX_get_error_depth() returns the <i>depth</i> of the error. This is a nonnegative integer representing where in the certificate chain the error occurred. If it is zero it occurred in the end entity certificate, one if it is the certificate which signed the end entity certificate and so on. <i>ctx</i> <b>MUST NOT</b> be NULL.</p>
 
 <p>X509_STORE_CTX_set_error_depth() sets the error <i>depth</i>. This can be used in combination with X509_STORE_CTX_set_error() to set the depth at which an error condition was detected.</p>
 

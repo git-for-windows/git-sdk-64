@@ -76,7 +76,7 @@ void *EVP_PKEY_CTX_get_app_data(EVP_PKEY_CTX *ctx);</code></pre>
 
 <p>The functions EVP_PKEY_CTX_set_app_data() and EVP_PKEY_CTX_get_app_data() set and retrieve an opaque pointer. This can be used to set some application defined value which can be retrieved in the callback: for example a handle which is used to update a &quot;progress dialog&quot;.</p>
 
-<p>EVP_PKEY_Q_keygen() abstracts from the explicit use of <b>EVP_PKEY_CTX</b> while providing a &#39;quick&#39; but limited way of generating a new asymmetric key pair. It provides shorthands for simple and common cases of key generation. As usual, the library context <i>libctx</i> and property query <i>propq</i> can be given for fetching algorithms from providers. If <i>type</i> is <code>RSA</code>, a <b>size_t</b> parameter must be given to specify the size of the RSA key. If <i>type</i> is <code>EC</code>, a string parameter must be given to specify the name of the EC curve. If <i>type</i> is <code>X25519</code>, <code>X448</code>, <code>ED25519</code>, <code>ED448</code>, or <code>SM2</code> no further parameter is needed.</p>
+<p>EVP_PKEY_Q_keygen() abstracts from the explicit use of <b>EVP_PKEY_CTX</b> while providing a &#39;quick&#39; but limited way of generating a new asymmetric key pair. It provides shorthands for simple and common cases of key generation. As usual, the library context <i>libctx</i> and property query <i>propq</i> can be given for fetching algorithms from providers. If <i>type</i> is <code>RSA</code>, a <b>size_t</b> parameter must be given to specify the size of the RSA key. If <i>type</i> is <code>EC</code>, a string parameter must be given to specify the name of the EC curve. If <i>type</i> is: <code>ED25519</code>, <code>ED448</code>, <code>SM2</code>, <code>X25519</code>, <code>X448</code>, <code>ML-DSA-44</code>, <code>ML-DSA-65</code>, <code>ML-DSA-87</code>, <code>ML-KEM-512</code>, <code>ML-KEM-768</code>, or <code>ML-KEM-1024</code> no further parameters are needed. Other key types may be possible if they are supplied by the loaded providers. EVP_PKEY_Q_keygen() may be usable with such key types as long as they do not require further parameters.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -175,7 +175,7 @@ static int genpkey_cb(EVP_PKEY_CTX *ctx)
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2006-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2006-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

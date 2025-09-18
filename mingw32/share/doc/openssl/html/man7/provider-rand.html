@@ -159,6 +159,12 @@ int OSSL_FUNC_rand_set_ctx_params(void *ctx, const OSSL_PARAM params[]);</code><
 <p>Returns the bit strength of the random number generator.</p>
 
 </dd>
+<dt id="fips-indicator-OSSL_RAND_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_RAND_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>A getter that returns 1 if the operation is FIPS approved, or 0 otherwise. This option is used by the OpenSSL FIPS provider and is not supported by all EVP_RAND sources.</p>
+
+</dd>
 </dl>
 
 <p>For rands that are also deterministic random bit generators (DRBGs), these additional parameters are recognised. Not all parameters are relevant to, or are understood by all DRBG rands:</p>
@@ -241,6 +247,24 @@ int OSSL_FUNC_rand_set_ctx_params(void *ctx, const OSSL_PARAM params[]);</code><
 </dd>
 </dl>
 
+<p>The OpenSSL FIPS provider also supports the following parameters:</p>
+
+<dl>
+
+<dt id="fips-indicator-OSSL_DRBG_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_DRBG_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>A getter that returns 1 if the operation is FIPS approved, or 0 otherwise. This may be used after calling OSSL_FUNC_rand_generate(). It may return 0 if the &quot;digest-check&quot; is set to 0.</p>
+
+</dd>
+<dt id="digest-check-OSSL_DRBG_PARAM_FIPS_DIGEST_CHECK-integer">&quot;digest-check&quot; (<b>OSSL_DRBG_PARAM_FIPS_DIGEST_CHECK</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>If required this parameter should be set before the digest is set. The default value of 1 causes an error when the digest is set if the digest is not FIPS approved (e.g. truncated digests). Setting this to 0 will ignore the error and set the approved &quot;fips-indicator&quot; to 0. This option breaks FIPS compliance if it causes the approved &quot;fips-indicator&quot; to return 0.</p>
+
+</dd>
+</dl>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>OSSL_FUNC_rand_newctx() should return the newly created provider side rand context, or NULL on failure.</p>
@@ -263,11 +287,11 @@ int OSSL_FUNC_rand_set_ctx_params(void *ctx, const OSSL_PARAM params[]);</code><
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The provider RAND interface was introduced in OpenSSL 3.0.</p>
+<p>The provider RAND interface was introduced in OpenSSL 3.0. The Rand Parameters &quot;fips-indicator&quot; and &quot;digest-check&quot; were added in OpenSSL 3.4.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
