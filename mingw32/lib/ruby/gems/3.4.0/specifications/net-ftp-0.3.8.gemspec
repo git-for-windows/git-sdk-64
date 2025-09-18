@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.metadata = { "homepage_uri" => "https://github.com/ruby/net-ftp", "source_code_uri" => "https://github.com/ruby/net-ftp" } if s.respond_to? :metadata=
   s.require_paths = ["lib".freeze]
   s.authors = ["Shugo Maeda".freeze]
-  s.date = "2025-07-16"
+  s.date = "2025-09-16"
   s.description = "Support for the File Transfer Protocol.".freeze
   s.email = ["shugo@ruby-lang.org".freeze]
   s.homepage = "https://github.com/ruby/net-ftp".freeze

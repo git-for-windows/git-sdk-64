@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Akira Yamada".freeze]
   s.bindir = "exe".freeze
-  s.date = "2025-07-16"
+  s.date = "2025-09-16"
   s.description = "URI is a module providing classes to handle Uniform Resource Identifiers".freeze
   s.email = ["akira@ruby-lang.org".freeze]
   s.files = ["uri.rb".freeze, "uri/common.rb".freeze, "uri/file.rb".freeze, "uri/ftp.rb".freeze, "uri/generic.rb".freeze, "uri/http.rb".freeze, "uri/https.rb".freeze, "uri/ldap.rb".freeze, "uri/ldaps.rb".freeze, "uri/mailto.rb".freeze, "uri/rfc2396_parser.rb".freeze, "uri/rfc3986_parser.rb".freeze, "uri/version.rb".freeze, "uri/ws.rb".freeze, "uri/wss.rb".freeze]

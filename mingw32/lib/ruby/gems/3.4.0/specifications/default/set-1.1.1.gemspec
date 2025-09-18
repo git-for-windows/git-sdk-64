@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.metadata = { "changelog_uri" => "https://github.com/ruby/set/blob/v1.1.1/CHANGELOG.md", "homepage_uri" => "https://github.com/ruby/set", "source_code_uri" => "https://github.com/ruby/set" } if s.respond_to? :metadata=
   s.require_paths = ["lib".freeze]
   s.authors = ["Akinori MUSHA".freeze]
-  s.date = "2025-07-16"
+  s.date = "2025-09-16"
   s.description = "Provides a class to deal with collections of unordered, unique values".freeze
   s.email = ["knu@idaemons.org".freeze]
   s.files = ["set.rb".freeze, "set/sorted_set.rb".freeze]
