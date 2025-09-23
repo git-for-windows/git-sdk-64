@@ -9752,7 +9752,7 @@ func_mode_link ()
 		      # libraries is allowed, but linking other static libraries is
 		      # non-portable.
 		      case $potlib in
-		        */libFortran*.$libext)
+		        */libFortran*.$libext | */libflang_rt*.$libext)
 		          func_append newdeplibs " $potlib"
 		          a_deplib=
 		          ;;
