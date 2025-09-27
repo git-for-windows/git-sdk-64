@@ -43,7 +43,7 @@ method _connect {pipe_fd} {
 			if {$s_prog eq {aspell}
 				&& [regexp -nocase {^Usage: } $err]
 				&& ![catch {
-						set pipe_fd [open [list | $s_prog -v] r]
+						set pipe_fd [open [list | [exec cygpath --windows --absolute {/usr/bin/aspell}] -v] r]
 						gets $pipe_fd s_version
 						close $pipe_fd
 				}]
@@ -124,7 +124,7 @@ method _connect {pipe_fd} {
 method lang {{n {}}} {
 	if {$n ne {} && $s_lang ne $n && !$s_failed} {
 		set spell_cmd [list |]
-		lappend spell_cmd aspell
+		lappend spell_cmd [exec cygpath --windows --absolute {/usr/bin/aspell}]
 		lappend spell_cmd --master=$n
 		lappend spell_cmd --mode=none
 		lappend spell_cmd --encoding=UTF-8
@@ -401,7 +401,7 @@ method _read {} {
 proc available_langs {} {
 	set langs [list]
 	catch {
-		set fd [open [list | aspell dump dicts] r]
+		set fd [open [list | [exec cygpath --windows --absolute {/usr/bin/aspell}] dump dicts] r]
 		while {[gets $fd line] >= 0} {
 			if {$line eq {}} continue
 			lappend langs $line

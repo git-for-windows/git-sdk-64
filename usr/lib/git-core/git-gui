@@ -3936,7 +3936,7 @@ if {[winfo exists $ui_comm]} {
 	#
 	set spell_cmd [list |]
 	set spell_dict [get_config gui.spellingdictionary]
-	lappend spell_cmd aspell
+	lappend spell_cmd [exec cygpath --windows --absolute {/usr/bin/aspell}]
 	if {$spell_dict ne {}} {
 		lappend spell_cmd --master=$spell_dict
 	}
