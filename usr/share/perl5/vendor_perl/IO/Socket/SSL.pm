@@ -13,7 +13,7 @@
 
 package IO::Socket::SSL;
 
-our $VERSION = '2.094';
+our $VERSION = '2.095';
 
 use IO::Socket;
 use Net::SSLeay 1.46;
@@ -1209,6 +1209,12 @@ sub _generic_read {
 	return;
     }
 
+    $$buffer = '' if !defined $$buffer;
+    $offset ||= 0;
+    if ($offset>length($$buffer)) {
+	$$buffer.="\0" x ($offset-length($$buffer));  #mimic behavior of read
+    }
+
     $length = length($data);
     if (!$length && !$justpeek) {
 	my $status = Net::SSLeay::get_shutdown($ssl);
@@ -1233,12 +1239,6 @@ sub _generic_read {
 	    }
 	}
 	return 0;
-    }
-
-    $$buffer = '' if !defined $$buffer;
-    $offset ||= 0;
-    if ($offset>length($$buffer)) {
-	$$buffer.="\0" x ($offset-length($$buffer));  #mimic behavior of read
     }
 
     substr($$buffer, $offset, length($$buffer), $data);

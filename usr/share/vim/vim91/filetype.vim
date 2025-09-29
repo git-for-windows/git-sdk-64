@@ -630,6 +630,9 @@ au BufNewFile,BufRead lynx.cfg			setf lynx
 " LyRiCs
 au BufNewFile,BufRead *.lrc			setf lyrics
 
+" Mamba configuration file
+au BufNewFile,BufRead .mambarc,mambarc		setf yaml
+
 " MLIR
 au BufNewFile,BufRead *.mlir			setf mlir
 
@@ -1190,6 +1193,7 @@ au BufNewFile,BufRead */.i3/config		setf i3config
 
 " sway
 au BufNewFile,BufRead */sway/config		setf swayconfig
+au BufNewFile,BufRead */sway/config.d/*		setf swayconfig
 au BufNewFile,BufRead */.sway/config		setf swayconfig
 
 " Icon

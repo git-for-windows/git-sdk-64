@@ -7,6 +7,8 @@
 " 2025 Aug 22 by Vim Project netrw#Explore handle terminal correctly #18069
 " 2025 Sep 05 by Vim Project ensure netrw#fs#Dirname() returns trailing slash #18199
 " 2025 Sep 11 by Vim Project only keep cursor position in tree mode #18275
+" 2025 Sep 17 by Vim Project tighten the regex to handle remote compressed archives #18318
+" 2025 Sep 18 by Vim Project 'equalalways' not always respected #18358
 " Copyright:  Copyright (C) 2016 Charles E. Campbell {{{1
 "             Permission is hereby granted to use and distribute this code,
 "             with or without modifications, provided that this copyright
@@ -3048,12 +3050,12 @@ function s:NetrwBrowse(islocal,dirname)
             exe "sil! NetrwKeepj keepalt doau BufReadPre ".fnameescape(s:fname)
             sil call netrw#NetRead(2,url)
             " netrw.vim and tar.vim have already handled decompression of the tarball; avoiding gzip.vim error
-            if s:path =~ '.bz2'
+            if s:path =~ '\.bz2$'
                 exe "sil NetrwKeepj keepalt doau BufReadPost ".fnameescape(substitute(s:fname,'\.bz2$','',''))
-            elseif s:path =~ '.gz'
+            elseif s:path =~ '\.gz$'
                 exe "sil NetrwKeepj keepalt doau BufReadPost ".fnameescape(substitute(s:fname,'\.gz$','',''))
-            elseif s:path =~ '.gz'
-                exe "sil NetrwKeepj keepalt doau BufReadPost ".fnameescape(substitute(s:fname,'\.txz$','',''))
+            elseif s:path =~ '\.xz$'
+                exe "sil NetrwKeepj keepalt doau BufReadPost ".fnameescape(substitute(s:fname,'\.xz$','',''))
             else
                 exe "sil NetrwKeepj keepalt doau BufReadPost ".fnameescape(s:fname)
             endif
@@ -3837,6 +3839,8 @@ function s:NetrwBrowseChgDir(islocal, newdir, cursor, ...)
                     exe "keepalt ".(g:netrw_alto? "bel " : "abo ").winsz."wincmd s"
                     if !&ea
                         keepalt wincmd _
+                    else
+                        exe "keepalt wincmd ="
                     endif
                     call s:SetRexDir(a:islocal,curdir)
 
@@ -3846,6 +3850,8 @@ function s:NetrwBrowseChgDir(islocal, newdir, cursor, ...)
                     exe "keepalt ".(g:netrw_alto? "top " : "bot ")."vert ".winsz."wincmd s"
                     if !&ea
                         keepalt wincmd |
+                    else
+                        exe "keepalt wincmd ="
                     endif
                     call s:SetRexDir(a:islocal,curdir)
 
@@ -7015,6 +7021,9 @@ function s:NetrwSplit(mode)
         NetrwKeepj call s:RestoreWinVars()
         NetrwKeepj call netrw#LocalBrowseCheck(s:NetrwBrowseChgDir(1,s:NetrwGetWord(),1))
         unlet s:didsplit
+        if &ea
+            exe "keepalt wincmd ="
+        endif
 
     elseif a:mode == 4
         " local and t
@@ -7052,6 +7061,9 @@ function s:NetrwSplit(mode)
         NetrwKeepj call s:RestoreWinVars()
         NetrwKeepj call netrw#LocalBrowseCheck(s:NetrwBrowseChgDir(1,s:NetrwGetWord(),1))
         unlet s:didsplit
+        if &ea
+            exe "keepalt wincmd ="
+        endif
 
     else
         call netrw#msg#Notify('ERROR', '(NetrwSplit) unsupported mode='.a:mode)
