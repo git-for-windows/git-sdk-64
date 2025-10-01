@@ -128,7 +128,7 @@ const TYPE *sk_FUNCNAME_value(STACK_OF(TYPE) *sk, int idx);</code></pre>
 
 <p><b>sk_<i>TYPE</i>_set</b>() sets element <i>idx</i> of <i>sk</i> to <i>ptr</i> replacing the current element. The new element value is returned or NULL if an error occurred: this will only happen if <i>sk</i> is NULL or <i>idx</i> is out of range.</p>
 
-<p><b>sk_<i>TYPE</i>_find</b>() searches <i>sk</i> for the element <i>ptr</i>. In the case where no comparison function has been specified, the function performs a linear search for a pointer equal to <i>ptr</i>. The index of the first matching element is returned or <b>-1</b> if there is no match. In the case where a comparison function has been specified, <i>sk</i> is sorted and <b>sk_<i>TYPE</i>_find</b>() returns the index of a matching element or <b>-1</b> if there is no match. Note that, in this case the comparison function will usually compare the values pointed to rather than the pointers themselves and the order of elements in <i>sk</i> can change.</p>
+<p><b>sk_<i>TYPE</i>_find</b>() searches <i>sk</i> for the element <i>ptr</i>. In the case where no comparison function has been specified, the function performs a linear search for a pointer equal to <i>ptr</i>. In the case where a comparison function has been specified, the function performs a search for a element that the comparison function indicates is a match. If the stack is sorted, a binary search is used, otherwise, a linear search is used. <b>sk_<i>TYPE</i>_find</b>() returns the index of a matching element or <b>-1</b> if there is no match.</p>
 
 <p><b>sk_<i>TYPE</i>_find_ex</b>() operates like <b>sk_<i>TYPE</i>_find</b>() except when a comparison function has been specified and no matching element is found. Instead of returning <b>-1</b>, <b>sk_<i>TYPE</i>_find_ex</b>() returns the index of the element either before or after the location where <i>ptr</i> would be if it were present in <i>sk</i>. The function also does not guarantee that the first matching element in the sorted stack is returned.</p>
 
@@ -194,7 +194,7 @@ const TYPE *sk_FUNCNAME_value(STACK_OF(TYPE) *sk, int idx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

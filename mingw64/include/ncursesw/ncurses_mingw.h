@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018-2020,2021 Thomas E. Dickey                                *
+ * Copyright 2018-2021,2025 Thomas E. Dickey                                *
  * Copyright 2008-2014,2017 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
@@ -31,17 +31,19 @@
  * Author: Juergen Pfeifer, 2008-on                                         *
  ****************************************************************************/
 
-/* $Id: ncurses_mingw.h,v 1.7 2021/06/17 21:26:02 tom Exp $ */
+/* $Id: ncurses_mingw.h,v 1.8 2025/08/09 13:30:46 tom Exp $ */
 
 /*
  * This is a placeholder up to now and describes what needs to be implemented
  * to support I/O to external terminals with ncurses on the Windows OS.
  */
 
-#ifdef _WIN32
-#ifndef _NC_MINGWH
-#define _NC_MINGWH
+#ifndef _NCURSES_MINGW_H
+#define _NCURSES_MINGW_H
 
+#include <ncursesw/term.h>
+
+#ifdef _WIN32
 #define USE_CONSOLE_DRIVER 1
 
 #undef  TERMIOS
@@ -78,5 +80,6 @@ extern NCURSES_EXPORT(int)  _nc_mingw_tcflush(
     int queue);
 extern NCURSES_EXPORT(void) _nc_set_term_driver(void* term);
 
-#endif /* _NC_MINGWH */
 #endif /* _WIN32 */
+
+#endif /* _NCURSES_MINGW_H */

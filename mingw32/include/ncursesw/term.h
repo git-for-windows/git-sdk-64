@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018-2023,2024 Thomas E. Dickey                                *
+ * Copyright 2018-2024,2025 Thomas E. Dickey                                *
  * Copyright 1998-2013,2017 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
@@ -33,7 +33,7 @@
 /*    and: Thomas E. Dickey                        1995-on                  */
 /****************************************************************************/
 
-/* $Id: MKterm.h.awk.in,v 1.87 2024/12/28 21:42:15 tom Exp $ */
+/* $Id: MKterm.h.awk.in,v 1.89 2025/08/23 15:44:22 tom Exp $ */
 
 /*
 **	term.h -- Definition of struct term
@@ -62,7 +62,7 @@ typedef struct screen  SCREEN;
 /* configured with --enable-sp-funcs? */
 #if 1
 #undef  NCURSES_SP_FUNCS
-#define NCURSES_SP_FUNCS 20241228
+#define NCURSES_SP_FUNCS 20250927
 #undef  NCURSES_SP_NAME
 #define NCURSES_SP_NAME(name) name##_sp
 
@@ -89,52 +89,50 @@ typedef int (*NCURSES_SP_OUTC)(SCREEN*, int);
 #undef  NCURSES_XNAMES
 #define NCURSES_XNAMES 1
 
-/* We will use these symbols to hide differences between
+/* TTY, SET_TTY and GET_TTY are used internally */
+#ifdef NCURSES_INTERNALS
+
+/* We use these symbols to hide differences between
  * termios/termio/sgttyb interfaces.
  */
 #undef  TTY
 #undef  SET_TTY
 #undef  GET_TTY
 
-/* Assume POSIX termio if we have the header and function */
-/* #if HAVE_TERMIOS_H && HAVE_TCGETATTR */
-#if 0 && 0
+#if 0 && 0	/* #if HAVE_TERMIOS_H && HAVE_TCGETATTR */
 
 #undef  TERMIOS
 #define TERMIOS 1
-
 #include <termios.h>
 #define TTY struct termios
 
-#else /* !HAVE_TERMIOS_H */
-
-/* #if HAVE_TERMIO_H */
-#if 0
+#elif 0	/* HAVE_TERMIO_H */
 
 #undef  TERMIOS
 #define TERMIOS 1
-
 #include <termio.h>
 #define TTY struct termio
 
-#else /* !HAVE_TERMIO_H */
+#elif (defined(_WIN32) || defined(_WIN64))
 
-#if (defined(_WIN32) || defined(_WIN64))
-/* configured with --enable-exp-win32? */
-#if 0
+#if 0	/* EXP_WIN32_DRIVER */
 #include <ncursesw/win32_curses.h>
 #define TTY struct winconmode
-#else
+#else	/* MINGW32 */
 #include <ncursesw/ncurses_mingw.h>
 #define TTY struct termios
 #endif
-#else
+
+#elif 0	/* HAVE_SGTTY_H */
+
 #undef TERMIOS
 #include <sgtty.h>
 #include <sys/ioctl.h>
 #define TTY struct sgttyb
-#endif /* MINGW32 */
-#endif /* HAVE_TERMIO_H */
+
+#else
+
+#error no termio/termios/sgtty found
 
 #endif /* HAVE_TERMIOS_H */
 
@@ -145,10 +143,12 @@ typedef int (*NCURSES_SP_OUTC)(SCREEN*, int);
 #elif 0 && (defined(_WIN32) || defined(_WIN64))
 #define GET_TTY(fd, buf) _nc_console_getmode(_nc_console_fd2handle(fd),buf)
 #define SET_TTY(fd, buf) _nc_console_setmode(_nc_console_fd2handle(fd),buf)
-#else
+#elif 0	/* HAVE_SGTTY_H */
 #define GET_TTY(fd, buf) gtty(fd, buf)
 #define SET_TTY(fd, buf) stty(fd, buf)
 #endif
+
+#endif /* NCURSES_INTERNALS */
 
 #ifndef	GCC_NORETURN
 #define	GCC_NORETURN /* nothing */

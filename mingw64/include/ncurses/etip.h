@@ -1,6 +1,6 @@
 // * This makes emacs happy -*-Mode: C++;-*-
 /****************************************************************************
- * Copyright 2018-2022,2024 Thomas E. Dickey                                *
+ * Copyright 2018-2024,2025 Thomas E. Dickey                                *
  * Copyright 1998-2012,2017 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
@@ -32,7 +32,7 @@
  *   Author: Juergen Pfeifer, 1997                                          *
  ****************************************************************************/
 
-// $Id: etip.h.in,v 1.51 2024/12/14 19:08:16 tom Exp $
+// $Id: etip.h.in,v 1.55 2025/02/08 23:39:52 tom Exp $
 
 #ifndef NCURSES_ETIP_H_incl
 #define NCURSES_ETIP_H_incl 1
@@ -40,6 +40,10 @@
 // These are substituted at configure/build time
 #ifndef HAVE_BUILTIN_H
 #define HAVE_BUILTIN_H 0
+#endif
+
+#ifndef HAVE_EXCEPTION
+#define HAVE_EXCEPTION 1
 #endif
 
 #ifndef HAVE_GXX_BUILTIN_H
@@ -52,6 +56,10 @@
 
 #ifndef HAVE_IOSTREAM
 #define HAVE_IOSTREAM 1
+#endif
+
+#ifndef HAVE_NEW
+#define HAVE_NEW 1
 #endif
 
 #ifndef HAVE_TYPEINFO
@@ -94,6 +102,8 @@
 #  endif
 #endif
 
+#include <exception>
+
 #if defined(__GNUG__)
 #  if HAVE_BUILTIN_H || HAVE_GXX_BUILTIN_H || HAVE_GPP_BUILTIN_H
 #    if ETIP_NEEDS_MATH_H
@@ -116,6 +126,13 @@
 #  endif
 #elif defined (__SUNPRO_CC)
 #  include <generic.h>
+#endif
+
+#if HAVE_EXCEPTION
+# include <exception>
+#endif
+#if HAVE_NEW
+# include <new>
 #endif
 
 // This used to include <ncursesw/curses.h>, but Apple's configuration as of 2024
@@ -206,7 +223,7 @@ public:
 
   NCursesPanelException (const char *msg, int err) :
     NCursesException (msg, err),
-    p (0)
+    p (NULL)
     {};
 
   NCursesPanelException (const NCursesPanel* panel,
@@ -218,7 +235,7 @@ public:
 
   explicit NCursesPanelException (int err) :
     NCursesException ("panel library error", err),
-    p (0)
+    p (NULL)
     {};
 
   NCursesPanelException (const NCursesPanel* panel,
@@ -257,7 +274,7 @@ public:
 
   NCursesMenuException (const char *msg, int err) :
     NCursesException (msg, err),
-    m (0)
+    m (NULL)
     {};
 
   NCursesMenuException (const NCursesMenu* menu,
@@ -269,7 +286,7 @@ public:
 
   explicit NCursesMenuException (int err) :
     NCursesException ("menu library error", err),
-    m (0)
+    m (NULL)
     {};
 
   NCursesMenuException (const NCursesMenu* menu,
@@ -308,7 +325,7 @@ public:
 
   NCursesFormException (const char *msg, int err) :
     NCursesException (msg, err),
-    f (0)
+    f (NULL)
     {};
 
   NCursesFormException (const NCursesForm* form,
@@ -320,7 +337,7 @@ public:
 
   explicit NCursesFormException (int err) :
     NCursesException ("form library error", err),
-    f (0)
+    f (NULL)
     {};
 
   NCursesFormException (const NCursesForm* form,
