@@ -550,11 +550,18 @@ check and make the merge proceed anyway.</p>
 <dt class="hdlist1">--merge-base=&lt;tree-ish&gt;</dt>
 <dd>
 <p>Instead of finding the merge-bases for &lt;branch1&gt; and &lt;branch2&gt;,
-specify a merge-base for the merge, and specifying multiple bases is
-currently not supported. This option is incompatible with <code>--stdin</code>.</p>
+specify a merge-base for the merge.  This option is incompatible with
+<code>--stdin</code>.</p>
 <div class="paragraph">
-<p>As the merge-base is provided directly, &lt;branch1&gt; and &lt;branch2&gt; do not need
-to specify commits; trees are enough.</p>
+<p>Specifying multiple bases is currently not supported, which means that when
+merging two branches with more than one merge-base, using this option may
+cause merge results to differ from what <code>git</code> <code>merge</code> would compute.  This
+can include potentially losing some changes made on one side of the history
+in the resulting merge.</p>
+</div>
+<div class="paragraph">
+<p>With this option, since the merge-base is provided directly, &lt;branch1&gt; and
+&lt;branch2&gt; do not need to specify commits; trees are enough.</p>
 </div>
 </dd>
 <dt class="hdlist1">-X&lt;option&gt;</dt>
@@ -921,7 +928,7 @@ large repositories).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-09-29 21:50:42 UTC
+Last updated 2025-10-17 13:08:50 UTC
 </div>
 </div>
 </body>

@@ -1404,7 +1404,7 @@ are:</p>
 <dl>
 <dt class="hdlist1"><code>gitdir</code></dt>
 <dd>
-<p>The data that follows the keyword <code>gitdir:</code> is used as a glob
+<p>The data that follows the keyword <code>gitdir</code> and a colon is used as a glob
 pattern. If the location of the .git directory matches the
 pattern, the include condition is met.</p>
 <div class="paragraph">
@@ -1449,7 +1449,7 @@ case-insensitively (e.g. on case-insensitive file systems)</p>
 </dd>
 <dt class="hdlist1"><code>onbranch</code></dt>
 <dd>
-<p>The data that follows the keyword <code>onbranch:</code> is taken to be a
+<p>The data that follows the keyword <code>onbranch</code> and a colon is taken to be a
 pattern with standard globbing wildcards and two additional
 ones, <code>**/</code> and <code>/**</code>, that can match multiple path components.
 If we are in a worktree where the name of the branch that is
@@ -1463,9 +1463,9 @@ organized hierarchically and you would like to apply a configuration to
 all the branches in that hierarchy.</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>hasconfig:remote.*.url:</code></dt>
+<dt class="hdlist1"><code>hasconfig:remote.*.url</code></dt>
 <dd>
-<p>The data that follows this keyword is taken to
+<p>The data that follows this keyword and a colon is taken to
 be a pattern with standard globbing wildcards and two
 additional ones, <code>**/</code> and <code>/**</code>, that can match multiple
 components. The first time this keyword is seen, the rest of
@@ -2003,7 +2003,8 @@ setting is in use.</p>
 after defining <code>alias.last</code> <code>=</code> <code>cat-file</code> <code>commit</code> <code>HEAD</code>, the invocation
 <code>git</code> <code>last</code> is equivalent to <code>git</code> <code>cat-file</code> <code>commit</code> <code>HEAD</code>. To avoid
 confusion and troubles with script usage, aliases that
-hide existing Git commands are ignored. Arguments are split by
+hide existing Git commands are ignored except for deprecated
+commands.  Arguments are split by
 spaces, the usual shell quoting and escaping are supported.
 A quote pair or a backslash can be used to quote them.</p>
 <div class="paragraph">
@@ -2050,8 +2051,8 @@ called as <code>git</code> <code>cmd</code> <code>1</code> <code>2</code> will b
 <li>
 <p>A convenient way to deal with this is to write your script
 operations in an inline function that is then called with any
-arguments from the command-line.  For example `alias.cmd = "!c() {
-echo $1 | grep $2 ; }; c" will correctly execute the prior example.</p>
+arguments from the command-line.  For example <code>alias.cmd</code> <code>=</code> "!c() {
+<code>echo</code> <code>$1</code> | <code>grep</code> <code>$2</code> ; }; <code>c</code>" will correctly execute the prior example.</p>
 </li>
 <li>
 <p>Setting <code>GIT_TRACE=1</code> can help you debug the command being run for
@@ -4522,8 +4523,6 @@ explicitly for the <code>diff.guitool</code> to be used.</p>
 <p>Unless otherwise stated, is an error to specify an extension if
 <code>core.repositoryFormatVersion</code> is not <code>1</code>. See
 <a href="gitrepository-layout.html">gitrepository-layout(5)</a>.</p>
-<div class="openblock">
-<div class="content">
 <div class="dlist">
 <dl>
 <dt class="hdlist1">compatObjectFormat</dt>
@@ -4537,6 +4536,11 @@ pushes and pulls from a repository in whose objectFormat matches
 compatObjectFormat.  As well as being able to use oids encoded in
 compatObjectFormat in addition to oids encoded with objectFormat to
 locally specify objects.</p>
+<div class="paragraph">
+<p>Note that the functionality enabled by this extension is incomplete and subject
+to change.  It currently exists only to allow development and testing of
+the underlying feature and is not designed to be enabled by end users.</p>
+</div>
 </dd>
 <dt class="hdlist1">noop</dt>
 <dd>
@@ -4589,6 +4593,8 @@ be fetched from it in the future.</p>
 <dt class="hdlist1">refStorage</dt>
 <dd>
 <p>Specify the ref storage format to use. The acceptable values are:</p>
+<div class="openblock">
+<div class="content">
 <div class="ulist">
 <ul>
 <li>
@@ -4599,6 +4605,8 @@ be fetched from it in the future.</p>
 internals are subject to change.</p>
 </li>
 </ul>
+</div>
+</div>
 </div>
 <div class="paragraph">
 <p>Note that this setting should only be set by <a href="git-init.html">git-init(1)</a> or
@@ -4628,6 +4636,8 @@ config files.</p>
 certain values from the common config file to the main working tree&#8217;s
 <code>config.worktree</code> file, if present:</p>
 </div>
+<div class="openblock">
+<div class="content">
 <div class="ulist">
 <ul>
 <li>
@@ -4640,6 +4650,8 @@ to <code>$GIT_COMMON_DIR/config.worktree</code>.</p>
 </li>
 </ul>
 </div>
+</div>
+</div>
 <div class="paragraph">
 <p>It may also be beneficial to adjust the locations of <code>core.sparseCheckout</code>
 and <code>core.sparseCheckoutCone</code> depending on your desire for customizable
@@ -4651,14 +4663,11 @@ worktree independently. See <a href="git-sparse-checkout.html">git-sparse-checko
 details.</p>
 </div>
 <div class="paragraph">
-<p>+
-For historical reasons, this extension is respected regardless of the
+<p>For historical reasons, this extension is respected regardless of the
 <code>core.repositoryFormatVersion</code> setting.</p>
 </div>
 </dd>
 </dl>
-</div>
-</div>
 </div>
 </dd>
 <dt class="hdlist1">fastimport.unpackLimit</dt>
@@ -6561,14 +6570,27 @@ be used.</p>
 <dd>
 <p>Print out the ref names of any commits that are shown by the log
 command. Possible values are:</p>
-<div class="listingblock">
+<div class="openblock">
 <div class="content">
-<pre>`short`;; the ref name prefixes `refs/heads/`, `refs/tags/` and
-        `refs/remotes/` are not printed.
-`full`;; the full ref name (including prefix) are printed.
-`auto`;; if the output is going to a terminal,
-        the ref names are shown as if `short` were given, otherwise no ref
-        names are shown.</pre>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>short</code></dt>
+<dd>
+<p>the ref name prefixes <code>refs/heads/</code>, <code>refs/tags/</code> and
+<code>refs/remotes/</code> are not printed.</p>
+</dd>
+<dt class="hdlist1"><code>full</code></dt>
+<dd>
+<p>the full ref name (including prefix) are printed.</p>
+</dd>
+<dt class="hdlist1"><code>auto</code></dt>
+<dd>
+<p>if the output is going to a terminal,
+the ref names are shown as if <code>short</code> were given, otherwise no ref
+names are shown.</p>
+</dd>
+</dl>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -7220,7 +7242,7 @@ section in <a href="git-mergetool.html">git-mergetool(1)</a>.</p>
 <p>During a merge, Git will automatically resolve as many conflicts as
 possible and write the <code>$MERGED</code> file containing conflict markers around
 any conflicts that it cannot resolve; <code>$LOCAL</code> and <code>$REMOTE</code> normally
-are the versions of the file from before Git`s conflict
+are the versions of the file from before Git&#8217;s conflict
 resolution. This flag causes <code>$LOCAL</code> and <code>$REMOTE</code> to be overwritten so
 that only the unresolved conflicts are presented to the merge tool. Can
 be configured per-tool via the <code>mergetool.</code><em>&lt;tool&gt;</em><code>.hideResolved</code>
@@ -9936,7 +9958,7 @@ where the repository and worktrees may be moved between
 different locations or environments. Defaults to "false".</p>
 <div class="paragraph">
 <p>Note that setting <code>worktree.useRelativePaths</code> to "true" implies enabling the
-<code>extension.relativeWorktrees</code> config (see <a href="git-config.html">git-config(1)</a>),
+<code>extensions.relativeWorktrees</code> config (see <a href="git-config.html">git-config(1)</a>),
 thus making it incompatible with older versions of Git.</p>
 </div>
 </dd>
@@ -9983,7 +10005,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-09-29 21:50:42 UTC
+Last updated 2025-10-17 13:08:50 UTC
 </div>
 </div>
 </body>

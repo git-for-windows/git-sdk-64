@@ -2468,7 +2468,7 @@ parentheses (<code>%x29</code>), due to their role in the option syntax.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>prefix=</code><em>&lt;value&gt;</em>: Shown before the list of ref names.  Defaults to "&#160;+(+".</p>
+<p><code>prefix=</code><em>&lt;value&gt;</em>: Shown before the list of ref names.  Defaults to "&#160;(".</p>
 </li>
 <li>
 <p><code>suffix=</code><em>&lt;value&gt;</em>: Shown after the list of ref names.  Defaults to ")".</p>
@@ -2478,7 +2478,7 @@ parentheses (<code>%x29</code>), due to their role in the option syntax.</p>
 </li>
 <li>
 <p><code>pointer=</code><em>&lt;value&gt;</em>: Shown between HEAD and the branch it points to, if any.
-Defaults to "&#160;+&#8594;+&#160;".</p>
+Defaults to "&#160;<code>-</code>&gt;&#160;".</p>
 </li>
 <li>
 <p><code>tag=</code><em>&lt;value&gt;</em>: Shown before tag names. Defaults to "<code>tag:</code>&#160;".</p>
@@ -2491,13 +2491,16 @@ Defaults to "&#160;+&#8594;+&#160;".</p>
 </li>
 </ul>
 </div>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
 <p>For example, to produce decorations with no wrapping
 or tag annotations, and spaces as separators:</p>
 </div>
 <div class="paragraph">
-<p>+
-<code>%</code>(<code>decorate:prefix=,suffix=,tag=,separator=</code> )</p>
+<p><code>%</code>(<code>decorate:prefix=,suffix=,tag=,separator=</code> )</p>
+</div>
+</div>
 </div>
 <div class="dlist">
 <dl>
@@ -4279,14 +4282,27 @@ be used.</p>
 <dd>
 <p>Print out the ref names of any commits that are shown by the log
 command. Possible values are:</p>
-<div class="listingblock">
+<div class="openblock">
 <div class="content">
-<pre>`short`;; the ref name prefixes `refs/heads/`, `refs/tags/` and
-        `refs/remotes/` are not printed.
-`full`;; the full ref name (including prefix) are printed.
-`auto`;; if the output is going to a terminal,
-        the ref names are shown as if `short` were given, otherwise no ref
-        names are shown.</pre>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>short</code></dt>
+<dd>
+<p>the ref name prefixes <code>refs/heads/</code>, <code>refs/tags/</code> and
+<code>refs/remotes/</code> are not printed.</p>
+</dd>
+<dt class="hdlist1"><code>full</code></dt>
+<dd>
+<p>the full ref name (including prefix) are printed.</p>
+</dd>
+<dt class="hdlist1"><code>auto</code></dt>
+<dd>
+<p>if the output is going to a terminal,
+the ref names are shown as if <code>short</code> were given, otherwise no ref
+names are shown.</p>
+</dd>
+</dl>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -4441,7 +4457,7 @@ See <code>notes.rewrite.</code><em>&lt;command&gt;</em> above for a further desc
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-09-29 21:50:42 UTC
+Last updated 2025-10-17 13:08:50 UTC
 </div>
 </div>
 </body>
