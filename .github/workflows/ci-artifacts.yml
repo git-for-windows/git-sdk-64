@@ -39,7 +39,7 @@ jobs:
         shell: bash
         run: (cd minimal-sdk && tar cvf - * .[0-9A-Za-z]*) | gzip -1 >git-sdk-x86_64-minimal.tar.gz
       - name: upload minimal-sdk artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: minimal-sdk
           path: git-sdk-x86_64-minimal.tar.gz
@@ -57,7 +57,7 @@ jobs:
         shell: bash
         run: tar -C .. -czf git-artifacts.tar.gz --exclude '*.a' --exclude '*.o' --exclude .git --exclude .depend git
       - name: upload git artifacts for testing
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: git-artifacts
           path: git-artifacts.tar.gz
@@ -81,7 +81,7 @@ jobs:
             ../minimal-sdk-extra/git-sdk-x86_64-minimal.7z.exe * .?*)
       - name: upload minimal-sdk-extra artifacts
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: minimal-sdk-extra
           path: minimal-sdk-extra

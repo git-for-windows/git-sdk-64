@@ -80,7 +80,7 @@ jobs:
           sh -x /usr/src/build-extra/please.sh mention feature "Snapshot of $(git show -s  --pretty='tformat:%h (%s, %ad)' --date=short FETCH_HEAD)" &&
           git -C /usr/src/build-extra bundle create "$PWD/bundle-artifacts/build-extra.bundle" origin/main..main
       - name: 'Publish bundle-artifacts'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: bundle-artifacts
           path: bundle-artifacts
@@ -127,7 +127,7 @@ jobs:
 
           sh -x /usr/src/build-extra/please.sh build-mingw-w64-git --only-32-bit -o artifacts HEAD
       - name: Publish mingw-w64-${{env.ARCH_NAME}}-git
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: pkg-${{env.ARCH_NAME}}
           path: artifacts
@@ -138,7 +138,7 @@ jobs:
         run: |
           tar czf build-installers.tgz build-installers/
       - name: Publish build-installers.tgz
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: build-installers.tgz
           path: build-installers.tgz
@@ -195,7 +195,7 @@ jobs:
           cp "$p"/*-pdb* cached-source-packages/ &&
           GIT_CONFIG_PARAMETERS="'windows.sdk${{env.ARCH_BITNESS}}.path='" ./please.sh bundle_pdbs --arch=${{env.ARCH_NAME}} --directory="$a" installer/package-versions.txt)
       - name: Publish ${{matrix.artifact}}-${{env.ARCH_NAME}}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{matrix.artifact}}-${{env.ARCH_NAME}}
           path: artifacts
@@ -216,7 +216,7 @@ jobs:
           "$env:ProgramFiles\Git\mingw${{env.ARCH_BITNESS}}\bin" | Out-File -Encoding ascii -Append $env:GITHUB_PATH
       - name: Publish installer log
         if: matrix.artifact == 'installer' && (failure() || success())
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: installer.log
           path: installer.log
