@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:		Vim help file
 " Maintainer:		Doug Kearns <dougkearns@gmail.com>
-" Last Change:		2025 Sep 27
+" Last Change:		2025 Oct 19
 " Former Maintainer:	Bram Moolenaar <Bram@vim.org>
 
 " Quit when a (custom) syntax file was already loaded
@@ -53,6 +53,29 @@ for [s:lang, s:syntax] in g:help_example_languages->items()
 endfor
 unlet! s:lang s:syntax
 
+if has_key(g:help_example_languages, "vim9")
+  " for example at :help vim9-mix
+  syn region vim9LegacyHeader_HelpExample
+	\ start=+" legacy Vim script comments may go here+
+	\ end="^\ze\s*vim9s\%[cript]\>"
+	\ contains=@vimLegacyTop,vimComment,vimLineComment
+  syn cluster helpExampleHighlight_vim9 add=vim9LegacyHeader_HelpExample
+endif
+
+" builtin.txt
+syn region helpReturnType
+      \ start="^\t\tReturn type: "
+      \ end="^$"
+      \ contains=@vimType,helpHyperTextJump,helpSpecial
+      \ transparent
+syn match helpSpecial		contained "{type}" containedin=vimCompoundType
+
+" various.txt
+syn region helpExCommand_Version
+      \ start="^:ve\[rsion]\t\t"
+      \ end="\n\ze\n:ve\[rsion] {nr}"
+      \ contains=helpHyperTextEntry,helpHyperTextJump,helpOption
+
 if has("ebcdic")
   syn match helpHyperTextJump	"\\\@<!|[^"*|]\+|" contains=helpBar
   syn match helpHyperTextEntry	"\*[^"*|]\+\*\s"he=e-1 contains=helpStar
@@ -75,7 +98,9 @@ syn match helpNormal		"|.*====*|"
 syn match helpNormal		"|||"
 syn match helpNormal		":|vim:|"	" for :help modeline
 syn match helpVim		"\<Vim version [0-9][0-9.a-z]*"
-syn match helpVim		"VIM REFERENCE.*"
+syn match helpVim		"^\s\+\zsVIM - main help file$"
+syn region helpVim		start="^\s\+VIM REFERENCE" end="^$"
+syn region helpVim		start="^\s\+VIM USER MANUAL" end="^$"
 syn match helpOption		"'[a-z]\{2,\}'"
 syn match helpOption		"'t_..'"
 syn match helpNormal		"'ab'"

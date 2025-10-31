@@ -9,6 +9,9 @@
 " 2025 Sep 11 by Vim Project only keep cursor position in tree mode #18275
 " 2025 Sep 17 by Vim Project tighten the regex to handle remote compressed archives #18318
 " 2025 Sep 18 by Vim Project 'equalalways' not always respected #18358
+" 2025 Oct 01 by Vim Project fix navigate to parent folder #18464
+" 2025 Oct 26 by Vim Project fix parsing of remote user names #18611
+" 2025 Oct 27 by Vim Project align comment after #18611
 " Copyright:  Copyright (C) 2016 Charles E. Campbell {{{1
 "             Permission is hereby granted to use and distribute this code,
 "             with or without modifications, provided that this copyright
@@ -3950,7 +3953,8 @@ function s:NetrwBrowseChgDir(islocal, newdir, cursor, ...)
         " NetrwBrowseChgDir: go up one directory {{{3
         " --------------------------------------
 
-        let dirname = netrw#fs#Dirname(dirname)
+        " The following regexps expect '/' as path separator
+        let dirname = substitute(netrw#fs#AbsPath(dirname), '\\', '/', 'ge') . '/'
 
         if w:netrw_liststyle == s:TREELIST && exists("w:netrw_treedict")
             " force a refresh
@@ -9309,8 +9313,8 @@ endfunction
 " s:RemotePathAnalysis: {{{2
 function s:RemotePathAnalysis(dirname)
 
-    "                method   ://    user  @      machine      :port            /path
-    let dirpat  = '^\(\w\{-}\)://\(\(\w\+\)@\)\=\([^/:#]\+\)\%([:#]\(\d\+\)\)\=/\(.*\)$'
+    "                method   ://    user    @      machine      :port           /path
+    let dirpat  = '^\(\w\{-}\)://\(\([^@]\+\)@\)\=\([^/:#]\+\)\%([:#]\(\d\+\)\)\=/\(.*\)$'
     let s:method  = substitute(a:dirname,dirpat,'\1','')
     let s:user    = substitute(a:dirname,dirpat,'\3','')
     let s:machine = substitute(a:dirname,dirpat,'\4','')
@@ -9654,5 +9658,4 @@ let &cpo= s:keepcpo
 unlet s:keepcpo
 
 " }}}
-
 " vim:ts=8 sts=4 sw=4 et fdm=marker

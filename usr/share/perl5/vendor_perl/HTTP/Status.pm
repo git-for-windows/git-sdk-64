@@ -3,7 +3,7 @@ package HTTP::Status;
 use strict;
 use warnings;
 
-our $VERSION = '7.00';
+our $VERSION = '7.01';
 
 use Exporter 5.57 'import';
 
@@ -84,7 +84,7 @@ my %StatusCode = (
     503 => 'Service Unavailable',
     504 => 'Gateway Timeout',
     505 => 'HTTP Version Not Supported',
-    506 => 'Variant Also Negotiates',         # RFC 2295: Transparant Ngttn
+    506 => 'Variant Also Negotiates',         # RFC 2295: Transparent Ngttn
     507 => 'Insufficient Storage',            # RFC 4918: WebDAV
     508 => 'Loop Detected',                   # RFC 5842: WebDAV bindings
 #   509
@@ -183,7 +183,7 @@ HTTP::Status - HTTP Status code processing
 
 =head1 VERSION
 
-version 7.00
+version 7.01
 
 =head1 SYNOPSIS
 

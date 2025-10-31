@@ -3,7 +3,7 @@ package HTTP::Response;
 use strict;
 use warnings;
 
-our $VERSION = '7.00';
+our $VERSION = '7.01';
 
 use parent 'HTTP::Message';
 
@@ -194,7 +194,7 @@ sub as_string
     my $proto = $self->protocol;
     $status_line = "$proto $status_line" if $proto;
 
-    return join($eol, $status_line, $self->SUPER::as_string(@_));
+    return join($eol, $status_line, $self->SUPER::as_string($eol));
 }
 
 
@@ -350,7 +350,7 @@ HTTP::Response - HTTP style response message
 
 =head1 VERSION
 
-version 7.00
+version 7.01
 
 =head1 SYNOPSIS
 

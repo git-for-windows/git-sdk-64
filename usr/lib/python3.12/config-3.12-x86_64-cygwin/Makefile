@@ -396,6 +396,8 @@ LIBRARY_DEPS=	$(LIBRARY) $(LDLIBRARY) $(PY3LIBRARY) $(EXPORTSYMS)
 LINK_PYTHON_DEPS=$(LIBRARY_DEPS)
 PY_ENABLE_SHARED=	1
 STATIC_LIBPYTHON=	1
+ABI3DLLLIBRARY= msys-python3.dll
+ABI3LDLIBRARY=  libpython3.dll.a
 
 
 LIBS=		-lintl -ldl 
@@ -761,7 +763,7 @@ all:		build_all
 
 .PHONY: build_all
 build_all:	check-clean-src $(BUILDPYTHON) platform sharedmods \
-		gdbhooks Programs/_testembed scripts checksharedmods rundsymutil
+		gdbhooks Programs/_testembed scripts checksharedmods rundsymutil $(ABI3DLLLIBRARY) $(ABI3LDLIBRARY)
 
 .PHONY: build_wasm
 build_wasm: check-clean-src $(BUILDPYTHON) platform sharedmods \
@@ -1028,6 +1030,10 @@ $(DLLLIBRARY) libpython$(LDVERSION).dll.a: $(LIBRARY_OBJS)
 		fi; \
 	else true; \
 	fi
+
+$(ABI3DLLLIBRARY) $(ABI3LDLIBRARY):
+	$(LDSHARED) -DPYTHON_DLL_NAME=\"$(DLLLIBRARY)\" $(srcdir)/PC/cyg-python3dll.c -Wl,--out-implib=$(ABI3LDLIBRARY) -o $(ABI3DLLLIBRARY) \
+		$(LDFLAGS_NODIST);
 
 # wasm32-emscripten browser build
 # wasm assets directory is relative to current build dir, e.g. "./usr/local".
@@ -2129,6 +2135,7 @@ altbininstall: $(BUILDPYTHON)
 			if test -n "$(DLLLIBRARY)" ; then \
 				$(INSTALL_SHARED) $(DLLLIBRARY) $(DESTDIR)$(BINDIR); \
 				$(INSTALL_DATA) $(LDLIBRARY) $(DESTDIR)$(LIBDIR); \
+				$(INSTALL_SHARED) $(ABI3DLLLIBRARY) $(DESTDIR)$(BINDIR); \
 			else \
 				$(INSTALL_SHARED) $(LDLIBRARY) $(DESTDIR)$(LIBDIR)/$(INSTSONAME); \
 				if test $(LDLIBRARY) != $(INSTSONAME); then \
@@ -2605,6 +2612,7 @@ libainstall: all scripts
 			if test "$(PYTHONFRAMEWORKDIR)" = no-framework; then \
 				if test "$(SHLIB_SUFFIX)" = .dll; then \
 					$(INSTALL_DATA) $(LDLIBRARY) $(DESTDIR)$(LIBPL) ; \
+					$(INSTALL_DATA) $(ABI3LDLIBRARY) $(DESTDIR)$(LIBDIR) ; \
 				else \
 					$(INSTALL_DATA) $(LIBRARY) $(DESTDIR)$(LIBPL)/$(LIBRARY) ; \
 				fi; \
@@ -2858,7 +2866,7 @@ clean: clean-retain-profile clean-bolt
 
 .PHONY: clobber
 clobber: clean
-	-rm -f $(BUILDPYTHON) $(LIBRARY) $(LDLIBRARY) $(DLLLIBRARY) \
+	-rm -f $(BUILDPYTHON) $(LIBRARY) $(LDLIBRARY) $(DLLLIBRARY) $(ABI3LDLIBRARY) $(ABI3DLLLIBRARY) \
 		tags TAGS \
 		config.cache config.log pyconfig.h Modules/config.c
 	-rm -rf build platform

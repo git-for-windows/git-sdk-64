@@ -3,7 +3,7 @@ package HTTP::Headers;
 use strict;
 use warnings;
 
-our $VERSION = '7.00';
+our $VERSION = '7.01';
 
 use Clone qw(clone);
 use Carp ();
@@ -463,7 +463,7 @@ HTTP::Headers - Class encapsulating HTTP Message headers
 
 =head1 VERSION
 
-version 7.00
+version 7.01
 
 =head1 SYNOPSIS
 

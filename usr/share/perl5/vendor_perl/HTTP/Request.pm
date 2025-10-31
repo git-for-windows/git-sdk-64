@@ -3,7 +3,7 @@ package HTTP::Request;
 use strict;
 use warnings;
 
-our $VERSION = '7.00';
+our $VERSION = '7.01';
 
 use parent 'HTTP::Message';
 
@@ -125,7 +125,7 @@ sub as_string
     my $proto = $self->protocol;
     $req_line .= " $proto" if $proto;
 
-    return join($eol, $req_line, $self->SUPER::as_string(@_));
+    return join($eol, $req_line, $self->SUPER::as_string($eol));
 }
 
 sub dump
@@ -155,7 +155,7 @@ HTTP::Request - HTTP style request message
 
 =head1 VERSION
 
-version 7.00
+version 7.01
 
 =head1 SYNOPSIS
 
