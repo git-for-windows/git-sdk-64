@@ -110,9 +110,9 @@ _comp_cmd_make()
     elif [[ $cur == *=* ]]; then
         prev=${cur%%=*}
         cur=${cur#*=}
-        local diropt
+        local diropt=""
         [[ ${prev,,} == *dir?(ectory) ]] && diropt=-d
-        _comp_compgen_filedir $diropt
+        _comp_compgen_filedir ${diropt:+"$diropt"}
     else
         # before we check for makefiles, see if a path was specified
         # with -C/--directory
@@ -121,7 +121,7 @@ _comp_cmd_make()
                 # Expand tilde expansion
                 local REPLY
                 _comp_dequote "${words[i + 1]-}" &&
-                    [[ -d ${REPLY-} ]] &&
+                    [[ -d $REPLY ]] &&
                     makef_dir=(-C "$REPLY")
                 break
             fi
@@ -134,7 +134,7 @@ _comp_cmd_make()
                 # Expand tilde expansion
                 local REPLY
                 _comp_dequote "${words[i + 1]-}" &&
-                    [[ -f ${REPLY-} ]] &&
+                    [[ -f $REPLY ]] &&
                     makef=(-f "$REPLY")
                 break
             fi
