@@ -1,5 +1,5 @@
 README file for PCRE2 (Perl-compatible regular expression library)
-------------------------------------------------------------------
+==================================================================
 
 PCRE2 is a re-working of the original PCRE1 library to provide an entirely new
 API. Since its initial release in 2015, there has been further development of
@@ -88,15 +88,17 @@ Building PCRE2 on non-Unix-like systems
 
 For a non-Unix-like system, please read the file NON-AUTOTOOLS-BUILD, though if
 your system supports the use of "configure" and "make" you may be able to build
-PCRE2 using autotools in the same way as for many Unix-like systems.
+PCRE2 using autotools in the same way as for many Unix-like systems. This file
+also contains useful information on building for some unusual Unix environments
+(such as EBCDIC mainframes).
 
 PCRE2 can also be configured using CMake, which can be run in various ways
 (command line, GUI, etc). This creates Makefiles, solution files, etc. The file
 NON-AUTOTOOLS-BUILD has information about CMake.
 
 PCRE2 has been compiled on many different operating systems. It should be
-straightforward to build PCRE2 on any system that has a Standard C compiler and
-library, because it uses only Standard C functions.
+straightforward to build PCRE2 on any system that has a C99 or later compiler
+and library.
 
 
 Building PCRE2 without using autotools
@@ -168,6 +170,9 @@ library. They are also documented in the pcre2build man page.
   Note the two hyphens in --static. Of course, this works only if static
   versions of all the relevant libraries are available for linking. See also
   "Shared libraries" below.
+
+  Shared libraries are compiled with symbol versioning enabled on platforms that
+  support this, but this can be disabled by adding --disable-symvers.
 
 . By default, only the 8-bit library is built. If you add --enable-pcre2-16 to
   the "configure" command, the 16-bit library is also built. If you add
@@ -309,11 +314,22 @@ library. They are also documented in the pcre2build man page.
 
   --enable-ebcdic --disable-unicode
 
-  This automatically implies --enable-rebuild-chartables (see above). However,
-  when PCRE2 is built this way, it always operates in EBCDIC. It cannot support
-  both EBCDIC and UTF-8/16/32. There is a second option, --enable-ebcdic-nl25,
-  which specifies that the code value for the EBCDIC NL character is 0x25
-  instead of the default 0x15.
+  This automatically implies --enable-rebuild-chartables (see above), in order
+  to ensure that you have the correct default character tables for your system's
+  codepage. There is an exception when you set --enable-ebcdic-ignoring-compiler
+  (see below), which allows using a default set of EBCDIC 1047 character tables
+  rather than forcing use of --enable-rebuild-chartables.
+
+  When PCRE2 is built with EBCDIC support, it always operates in EBCDIC. It
+  cannot support both EBCDIC and ASCII or UTF-8/16/32.
+
+  There is a second option, --enable-ebcdic-nl25, which specifies that the code
+  value for the EBCDIC NL character is 0x25 instead of the default 0x15.
+
+  There is a third option, --enable-ebcdic-ignoring-compiler, which disregards
+  the compiler's codepage for determining the numeric value of C character
+  constants such as 'z', and instead forces PCRE2 to use numeric constants for
+  the EBCDIC 1047 codepage instead.
 
 . If you specify --enable-debug, additional debugging code is included in the
   build. This option is intended for use by the PCRE2 maintainers.
@@ -607,7 +623,7 @@ zip formats. The command "make distcheck" does the same, but then does a trial
 build of the new distribution to ensure that it works.
 
 If you have modified any of the man page sources in the doc directory, you
-should first run the maint/PrepareRelease script before making a distribution.
+should first run the maint/UpdateAlways script before making a distribution.
 This script creates the .txt and HTML forms of the documentation from the man
 pages.
 
@@ -626,9 +642,9 @@ NON-AUTOTOOLS-BUILD.
 The RunTest script runs the pcre2test test program (which is documented in its
 own man page) on each of the relevant testinput files in the testdata
 directory, and compares the output with the contents of the corresponding
-testoutput files. RunTest uses a file called testtry to hold the main output
-from pcre2test. Other files whose names begin with "test" are used as working
-files in some tests.
+testoutput files. RunTest places its output in directories
+testoutput{8,16,32}{,-jit,-dfa}. Other files whose names begin with "test" are
+used as working files in some tests.
 
 Some tests are relevant only when certain build-time options were selected. For
 example, the tests for UTF-8/16/32 features are run only when Unicode support
@@ -744,8 +760,16 @@ and with UTF support, respectively. Test 23 tests \C when it is locked out.
 Tests 24 and 25 test the experimental pattern conversion functions, without and
 with UTF support, respectively.
 
-Test 26 checks Unicode property support using tests that are generated
-automatically from the Unicode data tables.
+Test 26 checks Unicode property support using tests that were generated
+automatically from the Unicode data tables. These are the archived version of
+the tests from Unicode 15.
+
+Test 27 checks Unicode property support using tests that are generated
+automatically from the currently-used Unicode data tables.
+
+Test 28 tests EBCDIC support, and is only run when PCRE2 is specifically
+compiled for EBCDIC. Test 29 tests EBCDIC when NL has been configured to be
+0x25.
 
 
 Character tables
@@ -822,11 +846,16 @@ The distribution should contain the files listed below.
   src/pcre2_chartables.c.dist  a default set of character tables that assume
                            ASCII coding; unless --enable-rebuild-chartables is
                            specified, used by copying to pcre2_chartables.c
+  src/pcre2_chartables.c.ebcdic-1047-{nl15,nl25}  a default set of character
+                           tables for EBCDIC 1047; used if
+                           --enable-ebcdic-ignoring-compiler is specified
+                           without --enable-rebuild-chartables
 
   src/pcre2posix.c           )
   src/pcre2_auto_possess.c   )
   src/pcre2_chkdint.c        )
   src/pcre2_compile.c        )
+  src/pcre2_compile_cgroup.c )
   src/pcre2_compile_class.c  )
   src/pcre2_config.c         )
   src/pcre2_context.c        )
@@ -836,11 +865,10 @@ The distribution should contain the files listed below.
   src/pcre2_extuni.c         )
   src/pcre2_find_bracket.c   )
   src/pcre2_jit_compile.c    )
-  src/pcre2_jit_match.c      ) sources for the functions in the library,
-  src/pcre2_jit_misc.c       )   and some internal functions that they use
-  src/pcre2_maketables.c     )
-  src/pcre2_match.c          )
+  src/pcre2_maketables.c     ) sources for the functions in the library,
+  src/pcre2_match.c          )   and some internal functions that they use
   src/pcre2_match_data.c     )
+  src/pcre2_match_next.c     )
   src/pcre2_newline.c        )
   src/pcre2_ord2utf.c        )
   src/pcre2_pattern_info.c   )
@@ -852,11 +880,9 @@ The distribution should contain the files listed below.
   src/pcre2_substring.c      )
   src/pcre2_tables.c         )
   src/pcre2_ucd.c            )
-  src/pcre2_ucptables.c      )
   src/pcre2_valid_utf.c      )
   src/pcre2_xclass.c         )
 
-  src/pcre2_printint.c     debugging function that is used by pcre2test,
   src/pcre2_fuzzsupport.c  function for (optional) fuzzing support
 
   src/config.h.in          template for config.h, when built by "configure"
@@ -866,9 +892,12 @@ The distribution should contain the files listed below.
   src/pcre2_internal.h     header for internal use
   src/pcre2_intmodedep.h   a mode-specific internal header
   src/pcre2_jit_char_inc.h header used by JIT
-  src/pcre2_jit_neon_inc.h header used by JIT
+  src/pcre2_jit_match_inc.h header used by JIT
+  src/pcre2_jit_misc_inc.h header used by JIT
   src/pcre2_jit_simd_inc.h header used by JIT
+  src/pcre2_printint_inc.h debugging function that is used by pcre2test
   src/pcre2_ucp.h          header for Unicode property handling
+  src/pcre2_ucptables_inc.h header with Unicode data tables
   src/pcre2_util.h         header for internal utils
 
   deps/sljit/sljit_src/*   source files for the JIT compiler
@@ -878,6 +907,7 @@ The distribution should contain the files listed below.
   src/pcre2demo.c          simple demonstration of coding calls to PCRE2
   src/pcre2grep.c          source of a grep utility that uses PCRE2
   src/pcre2test.c          comprehensive test program
+  src/pcre2test_inc.h      header used by pcre2test
   src/pcre2_jit_test.c     JIT test program
   src/pcre2posix_test.c    POSIX wrapper API test program
 
@@ -932,16 +962,22 @@ The distribution should contain the files listed below.
   testdata/testoutput*     expected test results
   testdata/grep*           input and output for pcre2grep tests
   testdata/*               other supporting test files
+  src/libpcre2-8.sym       )
+  src/libpcre2-16.sym      ) symbol version scripts for the GNU and Sun linkers
+  src/libpcre2-32.sym      )
+  src/libpcre2-posix.sym   )
 
 (D) Auxiliary files for CMake support
 
   cmake/COPYING-CMAKE-SCRIPTS
   cmake/FindEditline.cmake
   cmake/FindReadline.cmake
-  cmake/pcre2-config-version.cmake.in
   cmake/pcre2-config.cmake.in
+  cmake/PCRE2CheckVscript.cmake
+  cmake/PCRE2UseSystemExtensions.cmake
+  cmake/PCRE2WarningAsError.cmake
+  src/config-cmake.h.in
   CMakeLists.txt
-  config-cmake.h.in
 
 (E) Auxiliary files for building PCRE2 "by hand"
 
@@ -952,9 +988,8 @@ The distribution should contain the files listed below.
 
 (F) Auxiliary files for building PCRE2 using other build systems
 
-  BUILD.bazel             )
-  MODULE.bazel            ) files used by the Bazel build system
-  WORKSPACE.bazel         )
+  BUILD.bazel             ) files used by the Bazel
+  MODULE.bazel            )   build system
   build.zig               file used by zig's build system
 
 (G) Auxiliary files for building PCRE2 under OpenVMS
@@ -964,7 +999,7 @@ The distribution should contain the files listed below.
   vms/pcre2.h_patch       )
   vms/stdint.h            )
 
-==============================
-Last updated: 18 December 2024
-==============================
+=============================
+Last updated: 15 October 2025
+=============================
 
