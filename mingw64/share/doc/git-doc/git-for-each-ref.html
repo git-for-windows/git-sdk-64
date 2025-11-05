@@ -458,7 +458,7 @@ pre>code {
 		   [<code>--merged</code>[<code>=</code><em>&lt;object&gt;</em>]] [<code>--no-merged</code>[<code>=</code><em>&lt;object&gt;</em>]]
 		   [<code>--contains</code>[<code>=</code><em>&lt;object&gt;</em>]] [<code>--no-contains</code>[<code>=</code><em>&lt;object&gt;</em>]]
 		   [(<code>--exclude=</code><em>&lt;pattern&gt;</em>)&#8230;&#8203;] [<code>--start-after=</code><em>&lt;marker&gt;</em>]
-		   [ <code>--stdin</code> | <em>&lt;pattern&gt;</em>&#8230;&#8203; ]</pre>
+		   [ <code>--stdin</code> | (<em>&lt;pattern&gt;</em><code>...</code>)]</pre>
 </div>
 </div>
 </div>
@@ -480,104 +480,105 @@ host language allowing their direct evaluation in that language.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">&lt;pattern&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1"><em>&lt;pattern&gt;</em>...</dt>
 <dd>
-<p>If one or more patterns are given, only refs are shown that
-match against at least one pattern, either using fnmatch(3) or
+<p>If one or more <em>&lt;pattern&gt;</em> parameters are given, only refs are shown that
+match against at least one pattern, either using <code>fnmatch</code>(3) or
 literally, in the latter case matching completely or from the
 beginning up to a slash.</p>
 </dd>
-<dt class="hdlist1">--stdin</dt>
+<dt class="hdlist1"><code>--stdin</code></dt>
 <dd>
-<p>If <code>--stdin</code> is supplied, then the list of patterns is read from
-standard input instead of from the argument list.</p>
+<p>The list of patterns is read from standard input instead of from
+the argument list.</p>
 </dd>
-<dt class="hdlist1">--count=&lt;count&gt;</dt>
+<dt class="hdlist1"><code>--count=</code><em>&lt;count&gt;</em></dt>
 <dd>
-<p>By default the command shows all refs that match
-<em>&lt;pattern&gt;</em>.  This option makes it stop after showing
-that many refs.</p>
+<p>Stop after showing <em>&lt;count&gt;</em> refs.</p>
 </dd>
-<dt class="hdlist1">--sort=&lt;key&gt;</dt>
+<dt class="hdlist1"><code>--sort=</code><em>&lt;key&gt;</em></dt>
 <dd>
-<p>A field name to sort on.  Prefix <code>-</code> to sort in
+<p>Sort on the field name <em>&lt;key&gt;</em>.  Prefix <code>-</code> to sort in
 descending order of the value.  When unspecified,
-<code>refname</code> is used.  You may use the --sort=&lt;key&gt; option
+<code>refname</code> is used.  You may use the <code>--sort=</code><em>&lt;key&gt;</em> option
 multiple times, in which case the last key becomes the primary
 key.</p>
 </dd>
-<dt class="hdlist1">--format=&lt;format&gt;</dt>
+<dt class="hdlist1"><code>--format</code>[<code>=</code><em>&lt;format&gt;</em>]</dt>
 <dd>
 <p>A string that interpolates <code>%</code>(<code>fieldname</code>) from a ref being shown and
 the object it points at. In addition, the string literal <code>%%</code>
 renders as <code>%</code> and <code>%xx</code> - where <code>xx</code> are hex digits - renders as
 the character with hex code <code>xx</code>. For example, <code>%00</code> interpolates to
-<code>\0</code> (NUL), <code>%09</code> to <code>\t</code> (TAB), and <code>%0a</code> to <code>\n</code> (LF).</p>
+<code>\0</code> (<em>NUL</em>), <code>%09</code> to <code>\t</code> (<em>TAB</em>), and <code>%0a</code> to <code>\n</code> (<em>LF</em>).</p>
+</dd>
+</dl>
+</div>
 <div class="paragraph">
 <p>When unspecified, <em>&lt;format&gt;</em> defaults to <code>%</code>(<code>objectname</code>) <code>SPC</code> <code>%</code>(<code>objecttype</code>)
 <code>TAB</code> <code>%</code>(<code>refname</code>).</p>
 </div>
-</dd>
-<dt class="hdlist1">--color[=&lt;when&gt;]</dt>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>--color</code>[<code>=</code><em>&lt;when&gt;</em>]</dt>
 <dd>
 <p>Respect any colors specified in the <code>--format</code> option. The
-<em>&lt;when&gt;</em> field must be one of <code>always</code>, <code>never</code>, or <code>auto</code> (if
+<em>&lt;when_</em> field must be one of <code>always</code>, <code>never</code>, or <code>auto</code> (if
 <em>&lt;when&gt;</em> is absent, behave as if <code>always</code> was given).</p>
 </dd>
-<dt class="hdlist1">--shell</dt>
-<dt class="hdlist1">--perl</dt>
-<dt class="hdlist1">--python</dt>
-<dt class="hdlist1">--tcl</dt>
+<dt class="hdlist1"><code>--shell</code></dt>
+<dt class="hdlist1"><code>--perl</code></dt>
+<dt class="hdlist1"><code>--python</code></dt>
+<dt class="hdlist1"><code>--tcl</code></dt>
 <dd>
 <p>If given, strings that substitute <code>%</code>(<code>fieldname</code>)
 placeholders are quoted as string literals suitable for
 the specified host language.  This is meant to produce
-a scriptlet that can directly be `eval`ed.</p>
+a scriptlet that can directly be "eval"ed.</p>
 </dd>
-<dt class="hdlist1">--points-at=&lt;object&gt;</dt>
+<dt class="hdlist1"><code>--points-at=</code><em>&lt;object&gt;</em></dt>
 <dd>
 <p>Only list refs which points at the given object.</p>
 </dd>
-<dt class="hdlist1">--merged[=&lt;object&gt;]</dt>
+<dt class="hdlist1"><code>--merged</code>[<code>=</code><em>&lt;object&gt;</em>]</dt>
 <dd>
 <p>Only list refs whose tips are reachable from the
-specified commit (HEAD if not specified).</p>
+specified commit (<code>HEAD</code> if not specified).</p>
 </dd>
-<dt class="hdlist1">--no-merged[=&lt;object&gt;]</dt>
+<dt class="hdlist1"><code>--no-merged</code>[<code>=</code><em>&lt;object&gt;</em>]</dt>
 <dd>
-<p>Only list refs whose tips are not reachable from the
-specified commit (HEAD if not specified).</p>
-</dd>
-<dt class="hdlist1">--contains[=&lt;object&gt;]</dt>
-<dd>
-<p>Only list refs which contain the specified commit (HEAD if not
+<p>Only list refs whose tips are not reachable from <em>&lt;object&gt;</em>(<code>HEAD</code> if not
 specified).</p>
 </dd>
-<dt class="hdlist1">--no-contains[=&lt;object&gt;]</dt>
+<dt class="hdlist1"><code>--contains</code>[<code>=</code><em>&lt;object&gt;</em>]</dt>
 <dd>
-<p>Only list refs which don&#8217;t contain the specified commit (HEAD
+<p>Only list refs which contain <em>&lt;object&gt;</em>(<code>HEAD</code> if not specified).</p>
+</dd>
+<dt class="hdlist1"><code>--no-contains</code>[<code>=</code><em>&lt;object&gt;</em>]</dt>
+<dd>
+<p>Only list refs which don&#8217;t contain <em>&lt;object&gt;</em> (<code>HEAD</code>
 if not specified).</p>
 </dd>
-<dt class="hdlist1">--ignore-case</dt>
+<dt class="hdlist1"><code>--ignore-case</code></dt>
 <dd>
 <p>Sorting and filtering refs are case insensitive.</p>
 </dd>
-<dt class="hdlist1">--omit-empty</dt>
+<dt class="hdlist1"><code>--omit-empty</code></dt>
 <dd>
 <p>Do not print a newline after formatted refs where the format expands
 to the empty string.</p>
 </dd>
-<dt class="hdlist1">--exclude=&lt;pattern&gt;</dt>
+<dt class="hdlist1"><code>--exclude=</code><em>&lt;excluded-pattern&gt;</em></dt>
 <dd>
-<p>If one or more patterns are given, only refs which do not match
-any excluded pattern(s) are shown. Matching is done using the
-same rules as <em>&lt;pattern&gt;</em> above.</p>
+<p>If one or more <code>--exclude</code> options are given, only refs which do not
+match any <em>&lt;excluded-pattern&gt;</em> parameters are shown. Matching is done
+using the same rules as <em>&lt;pattern&gt;</em> above.</p>
 </dd>
-<dt class="hdlist1">--include-root-refs</dt>
+<dt class="hdlist1"><code>--include-root-refs</code></dt>
 <dd>
-<p>List root refs (HEAD and pseudorefs) apart from regular refs.</p>
+<p>List root refs (<code>HEAD</code> and pseudorefs) apart from regular refs.</p>
 </dd>
-<dt class="hdlist1">--start-after=&lt;marker&gt;</dt>
+<dt class="hdlist1"><code>--start-after=</code><em>&lt;marker&gt;</em></dt>
 <dd>
 <p>Allows paginating the output by skipping references up to and including the
 specified marker. When paging, it should be noted that references may be
@@ -604,52 +605,52 @@ keys.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">refname</dt>
+<dt class="hdlist1"><code>refname</code></dt>
 <dd>
-<p>The name of the ref (the part after $GIT_DIR/).
+<p>The name of the ref (the part after <code>$GIT_DIR/</code>).
 For a non-ambiguous short name of the ref append <code>:short</code>.
-The option core.warnAmbiguousRefs is used to select the strict
-abbreviation mode. If <code>lstrip=</code><em>&lt;N&gt;</em> (<code>rstrip=</code><em>&lt;N&gt;</em>) is appended, strips <em>&lt;N&gt;</em>
+The option <code>core.warnAmbiguousRefs</code> is used to select the strict
+abbreviation mode. If <code>lstrip=</code><em>&lt;n&gt;</em> (<code>rstrip=</code><em>&lt;n&gt;</em>) is appended, strip <em>&lt;n&gt;</em>
 slash-separated path components from the front (back) of the refname
 (e.g. <code>%</code>(<code>refname:lstrip=2</code>) turns <code>refs/tags/foo</code> into <code>foo</code> and
 <code>%</code>(<code>refname:rstrip=2</code>) turns <code>refs/tags/foo</code> into <code>refs</code>).
-If <em>&lt;N&gt;</em> is a negative number, strip as many path components as
-necessary from the specified end to leave <code>-</code><em>&lt;N&gt;</em> path components
+If <em>&lt;n&gt;</em> is a negative number, strip as many path components as
+necessary from the specified end to leave <code>-</code><em>&lt;n&gt;</em> path components
 (e.g. <code>%</code>(<code>refname:lstrip=-2</code>) turns
 <code>refs/tags/foo</code> into <code>tags/foo</code> and <code>%</code>(<code>refname:rstrip=-1</code>)
 turns <code>refs/tags/foo</code> into <code>refs</code>). When the ref does not have
 enough components, the result becomes an empty string if
-stripping with positive &lt;N&gt;, or it becomes the full refname if
-stripping with negative &lt;N&gt;.  Neither is an error.</p>
+stripping with positive <em>&lt;n&gt;</em>, or it becomes the full refname if
+stripping with negative <em>&lt;N&gt;</em>.  Neither is an error.</p>
 <div class="paragraph">
 <p><code>strip</code> can be used as a synonym to <code>lstrip</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">objecttype</dt>
+<dt class="hdlist1"><code>objecttype</code></dt>
 <dd>
 <p>The type of the object (<code>blob</code>, <code>tree</code>, <code>commit</code>, <code>tag</code>).</p>
 </dd>
-<dt class="hdlist1">objectsize</dt>
+<dt class="hdlist1"><code>objectsize</code></dt>
 <dd>
 <p>The size of the object (the same as <em>git cat-file -s</em> reports).
 Append <code>:disk</code> to get the size, in bytes, that the object takes up on
-disk. See the note about on-disk sizes in the <code>CAVEATS</code> section below.</p>
+disk. See the note about on-disk sizes in the <em>CAVEATS</em> section below.</p>
 </dd>
-<dt class="hdlist1">objectname</dt>
+<dt class="hdlist1"><code>objectname</code></dt>
 <dd>
 <p>The object name (aka SHA-1).
 For a non-ambiguous abbreviation of the object name append <code>:short</code>.
 For an abbreviation of the object name with desired length append
-<code>:short=</code><em>&lt;length&gt;</em>, where the minimum length is MINIMUM_ABBREV. The
+<code>:short=</code><em>&lt;length&gt;</em>, where the minimum length is <code>MINIMUM_ABBREV</code>. The
 length may be exceeded to ensure unique object names.</p>
 </dd>
-<dt class="hdlist1">deltabase</dt>
+<dt class="hdlist1"><code>deltabase</code></dt>
 <dd>
 <p>This expands to the object name of the delta base for the
 given object, if it is stored as a delta.  Otherwise it
 expands to the null object name (all zeroes).</p>
 </dd>
-<dt class="hdlist1">upstream</dt>
+<dt class="hdlist1"><code>upstream</code></dt>
 <dd>
 <p>The name of a local ref which can be considered &#8220;upstream&#8221;
 from the displayed ref. Respects <code>:short</code>, <code>:lstrip</code> and
@@ -674,7 +675,7 @@ with it.  All the options apart from <code>nobracket</code> are mutually exclusi
 but if used together the last option is selected.</p>
 </div>
 </dd>
-<dt class="hdlist1">push</dt>
+<dt class="hdlist1"><code>push</code></dt>
 <dd>
 <p>The name of a local ref which represents the <code>@</code>{push}
 location for the displayed ref. Respects <code>:short</code>, <code>:lstrip</code>,
@@ -682,108 +683,139 @@ location for the displayed ref. Respects <code>:short</code>, <code>:lstrip</cod
 options as <code>upstream</code> does. Produces an empty string if no <code>@</code>{push}
 ref is configured.</p>
 </dd>
-<dt class="hdlist1">HEAD</dt>
+<dt class="hdlist1"><code>HEAD</code></dt>
 <dd>
-<p><em>*</em> if HEAD matches current ref (the checked out branch), ' '
+<p><code>*</code> if <code>HEAD</code> matches current ref (the checked out branch), ' '
 otherwise.</p>
 </dd>
-<dt class="hdlist1">color</dt>
+<dt class="hdlist1"><code>color</code></dt>
 <dd>
 <p>Change output color. Followed by <code>:</code><em>&lt;colorname&gt;</em>, where color
 names are described under Values in the "CONFIGURATION FILE"
 section of <a href="git-config.html">git-config(1)</a>.  For example,
 <code>%</code>(<code>color:bold</code> <code>red</code>).</p>
 </dd>
-<dt class="hdlist1">align</dt>
+<dt class="hdlist1"><code>align</code></dt>
 <dd>
 <p>Left-, middle-, or right-align the content between
-%(align:&#8230;&#8203;) and %(end). The "align:" is followed by
+<code>%</code>(<code>align:</code><code>...</code>) and <code>%</code>(<code>end</code>). The "<code>align:</code>" is followed by
 <code>width=</code><em>&lt;width&gt;</em> and <code>position=</code><em>&lt;position&gt;</em> in any order
-separated by a comma, where the <em>&lt;position&gt;</em> is either left,
-right or middle, default being left and <em>&lt;width&gt;</em> is the total
+separated by a comma, where the <em>&lt;position&gt;</em> is either <code>left</code>,
+<code>right</code> or <code>middle</code>, default being <code>left</code> and <em>&lt;width&gt;</em> is the total
 length of the content with alignment. For brevity, the
 "width=" and/or "position=" prefixes may be omitted, and bare
-&lt;width&gt; and &lt;position&gt; used instead.  For instance,
+<em>&lt;width&gt;</em> and <em>&lt;position&gt;</em> used instead.  For instance,
 <code>%</code>(<code>align:</code><em>&lt;width&gt;</em><code>,</code><em>&lt;position&gt;</em>). If the contents length is more
 than the width then no alignment is performed. If used with
-<code>--quote</code> everything in between %(align:&#8230;&#8203;) and %(end) is
+<code>--quote</code> everything in between <code>%</code>(<code>align:</code><code>...</code>) and <code>%</code>(<code>end</code>) is
 quoted, but if nested then only the topmost level performs
 quoting.</p>
 </dd>
-<dt class="hdlist1">if</dt>
+<dt class="hdlist1"><code>if</code></dt>
 <dd>
-<p>Used as %(if)&#8230;&#8203;%(then)&#8230;&#8203;%(end) or
-%(if)&#8230;&#8203;%(then)&#8230;&#8203;%(else)&#8230;&#8203;%(end).  If there is an atom with
-value or string literal after the %(if) then everything after
-the %(then) is printed, else if the %(else) atom is used, then
+<p>Used as <code>%</code>(<code>if</code>)<code>...</code><code>%</code>(<code>then</code>)<code>...</code><code>%</code>(<code>end</code>) or
+<code>%</code>(<code>if</code>)<code>...</code><code>%</code>(<code>then</code>)<code>...</code><code>%</code>(<code>else</code>)<code>...</code><code>%</code>(<code>end</code>).  If there is an atom with
+value or string literal after the <code>%</code>(<code>if</code>) then everything after
+the <code>%</code>(<code>then</code>) is printed, else if the <code>%</code>(<code>else</code>) atom is used, then
 everything after %(else) is printed. We ignore space when
-evaluating the string before %(then), this is useful when we
-use the %(HEAD) atom which prints either "*" or " " and we
-want to apply the <em>if</em> condition only on the <em>HEAD</em> ref.
-Append ":equals=&lt;string&gt;" or ":notequals=&lt;string&gt;" to compare
-the value between the %(if:&#8230;&#8203;) and %(then) atoms with the
+evaluating the string before <code>%</code>(<code>then</code>), this is useful when we
+use the <code>%</code>(<code>HEAD</code>) atom which prints either "<code>*</code>" or " " and we
+want to apply the <em>if</em> condition only on the <code>HEAD</code> ref.
+Append "<code>:equals=</code><em>&lt;string&gt;</em>" or "<code>:notequals=</code><em>&lt;string&gt;</em>" to compare
+the value between the <code>%</code>(<code>if:</code><code>...</code>) and <code>%</code>(<code>then</code>) atoms with the
 given string.</p>
 </dd>
-<dt class="hdlist1">symref</dt>
+<dt class="hdlist1"><code>symref</code></dt>
 <dd>
 <p>The ref which the given symbolic ref refers to. If not a
 symbolic ref, nothing is printed. Respects the <code>:short</code>,
 <code>:lstrip</code> and <code>:rstrip</code> options in the same way as <code>refname</code>
 above.</p>
 </dd>
-<dt class="hdlist1">signature</dt>
+<dt class="hdlist1"><code>signature</code></dt>
 <dd>
 <p>The GPG signature of a commit.</p>
 </dd>
-<dt class="hdlist1">signature:grade</dt>
+<dt class="hdlist1"><code>signature:grade</code></dt>
 <dd>
-<p>Show "G" for a good (valid) signature, "B" for a bad
-signature, "U" for a good signature with unknown validity, "X"
-for a good signature that has expired, "Y" for a good
-signature made by an expired key, "R" for a good signature
-made by a revoked key, "E" if the signature cannot be
-checked (e.g. missing key) and "N" for no signature.</p>
+<p>Show</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>G</code></dt>
+<dd>
+<p>for a good (valid) signature</p>
 </dd>
-<dt class="hdlist1">signature:signer</dt>
+<dt class="hdlist1"><code>B</code></dt>
+<dd>
+<p>for a bad signature</p>
+</dd>
+<dt class="hdlist1"><code>U</code></dt>
+<dd>
+<p>for a good signature with unknown validity</p>
+</dd>
+<dt class="hdlist1"><code>X</code></dt>
+<dd>
+<p>for a good signature that has expired</p>
+</dd>
+<dt class="hdlist1"><code>Y</code></dt>
+<dd>
+<p>for a good signature made by an expired key</p>
+</dd>
+<dt class="hdlist1"><code>R</code></dt>
+<dd>
+<p>for a good signature made by a revoked key</p>
+</dd>
+<dt class="hdlist1"><code>E</code></dt>
+<dd>
+<p>if the signature cannot be checked (e.g. missing key)</p>
+</dd>
+<dt class="hdlist1"><code>N</code></dt>
+<dd>
+<p>for no signature.</p>
+</dd>
+</dl>
+</div>
+</dd>
+<dt class="hdlist1"><code>signature:signer</code></dt>
 <dd>
 <p>The signer of the GPG signature of a commit.</p>
 </dd>
-<dt class="hdlist1">signature:key</dt>
+<dt class="hdlist1"><code>signature:key</code></dt>
 <dd>
 <p>The key of the GPG signature of a commit.</p>
 </dd>
-<dt class="hdlist1">signature:fingerprint</dt>
+<dt class="hdlist1"><code>signature:fingerprint</code></dt>
 <dd>
 <p>The fingerprint of the GPG signature of a commit.</p>
 </dd>
-<dt class="hdlist1">signature:primarykeyfingerprint</dt>
+<dt class="hdlist1"><code>signature:primarykeyfingerprint</code></dt>
 <dd>
 <p>The primary key fingerprint of the GPG signature of a commit.</p>
 </dd>
-<dt class="hdlist1">signature:trustlevel</dt>
+<dt class="hdlist1"><code>signature:trustlevel</code></dt>
 <dd>
 <p>The trust level of the GPG signature of a commit. Possible
 outputs are <code>ultimate</code>, <code>fully</code>, <code>marginal</code>, <code>never</code> and <code>undefined</code>.</p>
 </dd>
-<dt class="hdlist1">worktreepath</dt>
+<dt class="hdlist1"><code>worktreepath</code></dt>
 <dd>
 <p>The absolute path to the worktree in which the ref is checked
 out, if it is checked out in any linked worktree. Empty string
 otherwise.</p>
 </dd>
-<dt class="hdlist1">ahead-behind:&lt;committish&gt;</dt>
+<dt class="hdlist1"><code>ahead-behind:</code><em>&lt;commit-ish&gt;</em></dt>
 <dd>
 <p>Two integers, separated by a space, demonstrating the number of
 commits ahead and behind, respectively, when comparing the output
 ref to the <em>&lt;committish&gt;</em> specified in the format.</p>
 </dd>
-<dt class="hdlist1">is-base:&lt;committish&gt;</dt>
+<dt class="hdlist1"><code>is-base:</code><em>&lt;commit-ish&gt;</em></dt>
 <dd>
-<p>In at most one row, (<em>&lt;committish&gt;</em>) will appear to indicate the ref
+<p>In at most one row, (<em>&lt;commit-ish&gt;</em>) will appear to indicate the ref
 that is most likely the ref used as a starting point for the branch
-that produced <em>&lt;committish&gt;</em>. This choice is made using a heuristic:
+that produced <em>&lt;commit-ish&gt;</em>. This choice is made using a heuristic:
 choose the ref that minimizes the number of commits in the
-first-parent history of <em>&lt;committish&gt;</em> and not in the first-parent
+first-parent history of <em>&lt;commit-ish&gt;</em> and not in the first-parent
 history of the ref.</p>
 <div class="paragraph">
 <p>For example, consider the following figure of first-parent histories of
@@ -822,11 +854,11 @@ earliest ref in the sorted order.</p>
 </div>
 <div class="paragraph">
 <p>Note that this token will not appear if the first-parent history of
-<em>&lt;committish&gt;</em> does not intersect the first-parent histories of the
+<em>&lt;commit-ish&gt;</em> does not intersect the first-parent histories of the
 filtered refs.</p>
 </div>
 </dd>
-<dt class="hdlist1">describe[:options]</dt>
+<dt class="hdlist1"><code>describe</code>[<code>:</code><em>&lt;option&gt;</em><code>,..</code>.]</dt>
 <dd>
 <p>A human-readable name, like <a href="git-describe.html">git-describe(1)</a>;
 empty string for undescribable commits. The <code>describe</code> string may
@@ -835,27 +867,27 @@ be followed by a colon and one or more comma-separated options.</p>
 <div class="content">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">tags=&lt;bool-value&gt;</dt>
+<dt class="hdlist1"><code>tags=</code><em>&lt;bool-value&gt;</em></dt>
 <dd>
 <p>Instead of only considering annotated tags, consider
 lightweight tags as well; see the corresponding option in
 <a href="git-describe.html">git-describe(1)</a> for details.</p>
 </dd>
-<dt class="hdlist1">abbrev=&lt;number&gt;</dt>
+<dt class="hdlist1"><code>abbrev=</code><em>&lt;number&gt;</em></dt>
 <dd>
-<p>Use at least &lt;number&gt; hexadecimal digits; see the corresponding
+<p>Use at least <em>&lt;number&gt;</em> hexadecimal digits; see the corresponding
 option in <a href="git-describe.html">git-describe(1)</a> for details.</p>
 </dd>
-<dt class="hdlist1">match=&lt;pattern&gt;</dt>
+<dt class="hdlist1"><code>match=</code><em>&lt;pattern&gt;</em></dt>
 <dd>
-<p>Only consider tags matching the given <code>glob</code>(<code>7</code>) pattern,
-excluding the "refs/tags/" prefix; see the corresponding option
+<p>Only consider tags matching the <code>glob</code>(7) <em>&lt;pattern&gt;</em>,
+excluding the <code>refs/tags/</code> prefix; see the corresponding option
 in <a href="git-describe.html">git-describe(1)</a> for details.</p>
 </dd>
-<dt class="hdlist1">exclude=&lt;pattern&gt;</dt>
+<dt class="hdlist1"><code>exclude=</code><em>&lt;pattern&gt;</em></dt>
 <dd>
-<p>Do not consider tags matching the given <code>glob</code>(<code>7</code>) pattern,
-excluding the "refs/tags/" prefix; see the corresponding option
+<p>Do not consider tags matching the <code>glob</code>(7) <em>&lt;pattern&gt;</em>,
+excluding the <code>refs/tags/</code> prefix; see the corresponding option
 in <a href="git-describe.html">git-describe(1)</a> for details.</p>
 </dd>
 </dl>
@@ -900,7 +932,7 @@ variable (see <a href="gitmailmap.html">gitmailmap(5)</a>).</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">raw:size</dt>
+<dt class="hdlist1"><code>raw:size</code></dt>
 <dd>
 <p>The raw data size of the object.</p>
 </dd>
@@ -917,11 +949,11 @@ variable type.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">contents:size</dt>
+<dt class="hdlist1"><code>contents:size</code></dt>
 <dd>
 <p>The size in bytes of the commit or tag message.</p>
 </dd>
-<dt class="hdlist1">contents:subject</dt>
+<dt class="hdlist1"><code>contents:subject</code></dt>
 <dd>
 <p>The first paragraph of the message, which typically is a
 single line, is taken as the "subject" of the commit or the
@@ -930,25 +962,25 @@ Instead of <code>contents:subject</code>, field <code>subject</code> can also be
 obtain same results. <code>:sanitize</code> can be appended to <code>subject</code> for
 subject line suitable for filename.</p>
 </dd>
-<dt class="hdlist1">contents:body</dt>
+<dt class="hdlist1"><code>contents:body</code></dt>
 <dd>
 <p>The remainder of the commit or the tag message that follows
 the "subject".</p>
 </dd>
-<dt class="hdlist1">contents:signature</dt>
+<dt class="hdlist1"><code>contents:signature</code></dt>
 <dd>
 <p>The optional GPG signature of the tag.</p>
 </dd>
-<dt class="hdlist1">contents:lines=N</dt>
+<dt class="hdlist1"><code>contents:lines=</code><em>&lt;n&gt;</em></dt>
 <dd>
-<p>The first <code>N</code> lines of the message.</p>
+<p>The first <em>&lt;n&gt;</em> lines of the message.</p>
 </dd>
 </dl>
 </div>
 <div class="paragraph">
 <p>Additionally, the trailers as interpreted by <a href="git-interpret-trailers.html">git-interpret-trailers(1)</a>
-are obtained as <code>trailers</code>[<code>:options</code>] (or by using the historical alias
-<code>contents:trailers</code>[<code>:options</code>]). For valid [:option] values see <code>trailers</code>
+are obtained as <code>trailers</code>[<code>:</code><em>&lt;option&gt;</em><code>,..</code>.] (or by using the historical alias
+<code>contents:trailers</code>[<code>:</code><em>&lt;option&gt;</em><code>,..</code>.]). For valid <em>&lt;option&gt;</em> values see <code>trailers</code>
 section of <a href="git-log.html">git-log(1)</a>.</p>
 </div>
 <div class="paragraph">
@@ -973,8 +1005,8 @@ a <code>--sort</code> key, references will be sorted according to the byte-value
 formatted string rather than the numeric value of the underlying timestamp.</p>
 </div>
 <div class="paragraph">
-<p>Some atoms like %(align) and %(if) always require a matching %(end).
-We call them "opening atoms" and sometimes denote them as %($open).</p>
+<p>Some atoms like <code>%</code>(<code>align</code>) and <code>%</code>(<code>if</code>) always require a matching <code>%</code>(<code>end</code>).
+We call them "opening atoms" and sometimes denote them as <code>%</code>(<code>$open</code>).</p>
 </div>
 <div class="paragraph">
 <p>When a scripting language specific quoting is in effect, everything
@@ -996,7 +1028,7 @@ from the top-level is quoted.</p>
 <pre>#!/bin/sh
 
 git for-each-ref --count=3 --sort='-*authordate' \
---format='From: %(*authorname) %(*authoremail)
+`--format='From: %(*authorname) %(*authoremail)
 Subject: %(*subject)
 Date: %(*authordate)
 Ref: %(*refname)
@@ -1007,7 +1039,7 @@ Ref: %(*refname)
 </div>
 <div class="paragraph">
 <p>A simple example showing the use of shell eval on the output,
-demonstrating the use of --shell.  List the prefixes of all heads:</p>
+demonstrating the use of <code>--shell</code>.  List the prefixes of all heads:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1077,7 +1109,7 @@ eval "$eval"</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>An example to show the usage of %(if)&#8230;&#8203;%(then)&#8230;&#8203;%(else)&#8230;&#8203;%(end).
+<p>An example to show the usage of <code>%</code>(<code>if</code>)<code>...</code><code>%</code>(<code>then</code>)<code>...</code><code>%</code>(<code>else</code>)<code>...</code><code>%</code>(<code>end</code>).
 This prefixes the current branch with a star.</p>
 </div>
 <div class="listingblock">
@@ -1086,7 +1118,7 @@ This prefixes the current branch with a star.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>An example to show the usage of %(if)&#8230;&#8203;%(then)&#8230;&#8203;%(end).
+<p>An example to show the usage of <code>%</code>(<code>if</code>)<code>...</code><code>%</code>(<code>then</code>)<code>...</code><code>%</code>(<code>end</code>).
 This prints the authorname, if present.</p>
 </div>
 <div class="listingblock">
@@ -1148,7 +1180,7 @@ commits and from none of the <code>--no-merged</code> commits are shown.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-28 11:27:20 UTC
+Last updated 2025-11-04 15:37:34 UTC
 </div>
 </div>
 </body>

@@ -465,34 +465,49 @@ pre>code {
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Updates remote refs using local refs, while sending objects
-necessary to complete the given refs.</p>
+<p>Updates one or more branches, tags, or other references in a remote
+repository from your local repository, and sends all necessary data
+that isn&#8217;t already on the remote.</p>
+</div>
+<div class="paragraph">
+<p>The simplest way to push is <code>git</code> <code>push</code> <em>&lt;remote&gt;</em> <em>&lt;branch&gt;</em>.
+<code>git</code> <code>push</code> <code>origin</code> <code>main</code> will push the local <code>main</code> branch to the <code>main</code>
+branch on the remote named <code>origin</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <em>&lt;repository&gt;</em> argument defaults to the upstream for the current branch,
+or <code>origin</code> if there&#8217;s no configured upstream.</p>
+</div>
+<div class="paragraph">
+<p>To decide which branches, tags, or other refs to push, Git uses
+(in order of precedence):</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The <em>&lt;refspec&gt;</em> argument(s) (for example <code>main</code> in <code>git</code> <code>push</code> <code>origin</code> <code>main</code>)
+or the <code>--all</code>, <code>--mirror</code>, or <code>--tags</code> options</p>
+</li>
+<li>
+<p>The <code>remote.*.push</code> configuration for the repository being pushed to</p>
+</li>
+<li>
+<p>The <code>push.default</code> configuration. The default is <code>push.default=simple</code>,
+which will push to a branch with the same name as the current branch.
+See the <a href="#CONFIGURATION">CONFIGURATION</a> section below for more on <code>push.default</code>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><code>git</code> <code>push</code> may fail if you haven&#8217;t set an upstream for the current branch,
+depending on what <code>push.default</code> is set to.
+See the <a href="#UPSTREAM-BRANCHES">UPSTREAM BRANCHES</a> section below for more
+on how to set and use upstreams.</p>
 </div>
 <div class="paragraph">
 <p>You can make interesting things happen to a repository
 every time you push into it, by setting up <em>hooks</em> there.  See
 documentation for <a href="git-receive-pack.html">git-receive-pack(1)</a>.</p>
-</div>
-<div class="paragraph">
-<p>When the command line does not specify where to push with the
-<em>&lt;repository&gt;</em> argument, <code>branch.*.remote</code> configuration for the
-current branch is consulted to determine where to push.  If the
-configuration is missing, it defaults to <em>origin</em>.</p>
-</div>
-<div class="paragraph">
-<p>When the command line does not specify what to push with <em>&lt;refspec&gt;</em>...
-arguments or <code>--all</code>, <code>--mirror</code>, <code>--tags</code> options, the command finds
-the default <em>&lt;refspec&gt;</em> by consulting <code>remote.*.push</code> configuration,
-and if it is not found, honors <code>push.default</code> configuration to decide
-what to push (See <a href="git-config.html">git-config(1)</a> for the meaning of <code>push.default</code>).</p>
-</div>
-<div class="paragraph">
-<p>When neither the command-line nor the configuration specifies what to
-push, the default behavior is used, which corresponds to the <code>simple</code>
-value for <code>push.default</code>: the current branch is pushed to the
-corresponding upstream branch, but as a safety measure, the push is
-aborted if the upstream branch does not have the same name as the
-local one.</p>
 </div>
 </div>
 </div>
@@ -510,119 +525,99 @@ of a remote (see the section <a href="#REMOTES">REMOTES</a> below).</p>
 </dd>
 <dt class="hdlist1">&lt;refspec&gt;&#8230;&#8203;</dt>
 <dd>
-<p>Specify what destination ref to update with what source object.
-The format of a &lt;refspec&gt; parameter is an optional plus
-<code>+</code>, followed by the source object &lt;src&gt;, followed
-by a colon <code>:</code>, followed by the destination ref &lt;dst&gt;.</p>
+<p>Specify what destination ref to update with what source object.</p>
 <div class="paragraph">
-<p>The &lt;src&gt; is often the name of the branch you would want to push, but
-it can be any arbitrary "SHA-1 expression", such as <code>master~4</code> or
-<code>HEAD</code> (see <a href="gitrevisions.html">gitrevisions(7)</a>).</p>
+<p>The format for a refspec is [+]&lt;src&gt;[:&lt;dst&gt;], for example <code>main</code>,
+<code>main:other</code>, or <code>HEAD^:refs/heads/main</code>.</p>
 </div>
 <div class="paragraph">
-<p>The &lt;dst&gt; tells which ref on the remote side is updated with this
-push. Arbitrary expressions cannot be used here, an actual ref must
-be named.
-If <code>git</code> <code>push</code> [<em>&lt;repository&gt;</em>] without any <em>&lt;refspec&gt;</em> argument is set to
-update some ref at the destination with <em>&lt;src&gt;</em> with
-<code>remote.</code><em>&lt;repository&gt;</em><code>.push</code> configuration variable, <code>:</code><em>&lt;dst&gt;</em> part can
-be omitted&#8212;&#8203;such a push will update a ref that <em>&lt;src&gt;</em> normally updates
-without any <em>&lt;refspec&gt;</em> on the command line.  Otherwise, missing
-<code>:</code><em>&lt;dst&gt;</em> means to update the same ref as the <em>&lt;src&gt;</em>.</p>
+<p>The <em>&lt;src&gt;</em> is often the name of the local branch to push, but it can be
+any arbitrary "SHA-1 expression" (see <a href="gitrevisions.html">gitrevisions(7)</a>).</p>
 </div>
 <div class="paragraph">
-<p>If &lt;dst&gt; doesn&#8217;t start with <code>refs/</code> (e.g. <code>refs/heads/master</code>) we will
-try to infer where in <code>refs/*</code> on the destination &lt;repository&gt; it
-belongs based on the type of &lt;src&gt; being pushed and whether &lt;dst&gt;
-is ambiguous.</p>
+<p>The <em>&lt;dst&gt;</em> determines what ref to update on the remote side. It must be the
+name of a branch, tag, or other ref, not an arbitrary expression.</p>
 </div>
-<div class="openblock">
-<div class="content">
+<div class="paragraph">
+<p>The <code>+</code> is optional and does the same thing as <code>--force</code>.</p>
+</div>
+<div class="paragraph">
+<p>You can write a refspec using the fully expanded form (for
+example <code>refs/heads/main:refs/heads/main</code>) which specifies the exact source
+and destination, or with a shorter form (for example <code>main</code> or
+<code>main:other</code>). Here are the rules for how refspecs are expanded,
+as well as various other special refspec forms:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p>If &lt;dst&gt; unambiguously refers to a ref on the &lt;repository&gt; remote,
-then push to that ref.</p>
+<p><em>&lt;src&gt;</em> without a <code>:</code><em>&lt;dst&gt;</em> means to update the same ref as the
+<em>&lt;src&gt;</em>, unless the <code>remote.</code><em>&lt;repository&gt;</em><code>.push</code> configuration specifies a
+different &lt;dst&gt;. For example, if <code>main</code> is a branch, then the refspec
+<code>main</code> expands to <code>main:refs/heads/main</code>.</p>
 </li>
 <li>
-<p>If &lt;src&gt; resolves to a ref starting with refs/heads/ or refs/tags/,
-then prepend that to &lt;dst&gt;.</p>
+<p>If <em>&lt;dst&gt;</em> unambiguously refers to a ref on the &lt;repository&gt; remote,
+then expand it to that ref. For example, if <code>v1.0</code> is a tag on the
+remote, then <code>HEAD:v1.0</code> expands to <code>HEAD:refs/tags/v1.0</code>.</p>
 </li>
 <li>
-<p>Other ambiguity resolutions might be added in the future, but for
-now any other cases will error out with an error indicating what we
-tried, and depending on the <code>advice.pushUnqualifiedRefname</code>
-configuration (see <a href="git-config.html">git-config(1)</a>) suggest what refs/
-namespace you may have wanted to push to.</p>
+<p>If <em>&lt;src&gt;</em> resolves to a ref starting with <code>refs/heads/</code> or <code>refs/tags/</code>,
+then prepend that to &lt;dst&gt;. For example, if <code>main</code> is a branch, then
+<code>main:other</code> expands to <code>main:refs/heads/other</code></p>
 </li>
-</ul>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>The object referenced by &lt;src&gt; is used to update the &lt;dst&gt; reference
-on the remote side. Whether this is allowed depends on where in
-<code>refs/*</code> the &lt;dst&gt; reference lives as described in detail below, in
-those sections "update" means any modifications except deletes, which
-as noted after the next few sections are treated differently.</p>
-</div>
-<div class="paragraph">
-<p>The <code>refs/heads/*</code> namespace will only accept commit objects, and
-updates only if they can be fast-forwarded.</p>
-</div>
-<div class="paragraph">
-<p>The <code>refs/tags/*</code> namespace will accept any kind of object (as
-commits, trees and blobs can be tagged), and any updates to them will
-be rejected.</p>
-</div>
-<div class="paragraph">
-<p>It&#8217;s possible to push any type of object to any namespace outside of
-<code>refs/</code>{tags,heads}/*. In the case of tags and commits, these will be
-treated as if they were the commits inside <code>refs/heads/*</code> for the
-purposes of whether the update is allowed.</p>
-</div>
-<div class="paragraph">
-<p>I.e. a fast-forward of commits and tags outside <code>refs/</code>{tags,heads}/*
-is allowed, even in cases where what&#8217;s being fast-forwarded is not a
-commit, but a tag object which happens to point to a new commit which
-is a fast-forward of the commit the last tag (or commit) it&#8217;s
-replacing. Replacing a tag with an entirely different tag is also
-allowed, if it points to the same commit, as well as pushing a peeled
-tag, i.e. pushing the commit that existing tag object points to, or a
-new tag object which an existing commit points to.</p>
-</div>
-<div class="paragraph">
-<p>Tree and blob objects outside of <code>refs/</code>{tags,heads}/* will be treated
-the same way as if they were inside <code>refs/tags/*</code>, any update of them
-will be rejected.</p>
-</div>
-<div class="paragraph">
-<p>All of the rules described above about what&#8217;s not allowed as an update
-can be overridden by adding an the optional leading <code>+</code> to a refspec
-(or using <code>--force</code> command line option). The only exception to this
-is that no amount of forcing will make the <code>refs/heads/*</code> namespace
-accept a non-commit object. Hooks and configuration can also override
-or amend these rules, see e.g. <code>receive.denyNonFastForwards</code> in
-<a href="git-config.html">git-config(1)</a> and <code>pre-receive</code> and <code>update</code> in
-<a href="githooks.html">githooks(5)</a>.</p>
-</div>
-<div class="paragraph">
-<p>Pushing an empty &lt;src&gt; allows you to delete the &lt;dst&gt; ref from the
-remote repository. Deletions are always accepted without a leading <code>+</code>
-in the refspec (or <code>--force</code>), except when forbidden by configuration
-or hooks. See <code>receive.denyDeletes</code> in <a href="git-config.html">git-config(1)</a> and
-<code>pre-receive</code> and <code>update</code> in <a href="githooks.html">githooks(5)</a>.</p>
-</div>
-<div class="paragraph">
+<li>
 <p>The special refspec <code>:</code> (or <code>+:</code> to allow non-fast-forward updates)
 directs Git to push "matching" branches: for every branch that exists on
 the local side, the remote side is updated if a branch of the same name
 already exists on the remote side.</p>
-</div>
-<div class="paragraph">
-<p><code>tag</code> <em>&lt;tag&gt;</em> means the same as <code>refs/tags/</code><em>&lt;tag&gt;</em><code>:refs/tags/</code><em>&lt;tag&gt;</em>.</p>
+</li>
+<li>
+<p>&lt;src&gt; may contain a * to indicate a simple pattern match.
+This works like a glob that matches any ref matching the pattern.
+There must be only one * in both the <em>&lt;src&gt;</em> and <em>&lt;dst&gt;</em>.
+It will map refs to the destination by replacing the * with the
+contents matched from the source. For example, <code>refs/heads/*:refs/heads/*</code>
+will push all branches.</p>
+</li>
+<li>
+<p>A refspec starting with <code>^</code> is a negative refspec.
+This specifies refs to exclude. A ref will be considered to
+match if it matches at least one positive refspec, and does not
+match any negative refspec. Negative refspecs can be pattern refspecs.
+They must only contain a <em>&lt;src&gt;</em>.
+Fully spelled out hex object names are also not supported.
+For example, <code>git</code> <code>push</code> <code>origin</code> 'refs/heads/*' '^refs/heads/dev-*'
+will push all branches except for those starting with <code>dev-</code></p>
+</li>
+<li>
+<p>If <em>&lt;src&gt;</em> is empty, it deletes the <em>&lt;dst&gt;</em> ref from the remote
+repository. For example, <code>git</code> <code>push</code> <code>origin</code> <code>:dev</code> will
+delete the <code>dev</code> branch.</p>
+</li>
+<li>
+<p><code>tag</code> <em>&lt;tag&gt;</em> expands to <code>refs/tags/</code><em>&lt;tag&gt;</em><code>:refs/tags/</code><em>&lt;tag&gt;</em>.
+This is technically a special syntax for <code>git</code> <code>push</code> and not a refspec,
+since in <code>git</code> <code>push</code> <code>origin</code> <code>tag</code> <code>v1.0</code> the arguments <code>tag</code> and <code>v1.0</code>
+are separate.</p>
+</li>
+<li>
+<p>If the refspec can&#8217;t be expanded unambiguously, error out
+with an error indicating what was tried, and depending
+on the <code>advice.pushUnqualifiedRefname</code> configuration (see
+<a href="git-config.html">git-config(1)</a>) suggest what refs/ namespace you may have
+wanted to push to.</p>
+</li>
+</ul>
 </div>
 </dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Not all updates are allowed: see PUSH RULES below for the details.</p>
+</div>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">--all</dt>
 <dt class="hdlist1">--branches</dt>
 <dd>
@@ -682,7 +677,8 @@ reachable from the refs being pushed.  This can also be specified
 with configuration variable <code>push.followTags</code>.  For more
 information, see <code>push.followTags</code> in <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--[no-]signed</dt>
+<dt class="hdlist1">--signed</dt>
+<dt class="hdlist1">--no-signed</dt>
 <dt class="hdlist1">--signed=(true|false|if-asked)</dt>
 <dd>
 <p>GPG-sign the push request to update refs on the receiving
@@ -694,7 +690,8 @@ sign if and only if the server supports signed pushes.  The push
 will also fail if the actual call to <code>gpg</code> <code>--sign</code> fails.  See
 <a href="git-receive-pack.html">git-receive-pack(1)</a> for the details on the receiving end.</p>
 </dd>
-<dt class="hdlist1">--[no-]atomic</dt>
+<dt class="hdlist1">--atomic</dt>
+<dt class="hdlist1">--no-atomic</dt>
 <dd>
 <p>Use an atomic transaction on the remote side if available.
 Either all refs are updated, or on error, no refs are updated.
@@ -721,7 +718,8 @@ end.  Sometimes useful when pushing to a remote
 repository over ssh, and you do not have the program in
 a directory on the default $PATH.</p>
 </dd>
-<dt class="hdlist1">--[no-]force-with-lease</dt>
+<dt class="hdlist1">--force-with-lease</dt>
+<dt class="hdlist1">--no-force-with-lease</dt>
 <dt class="hdlist1">--force-with-lease=&lt;refname&gt;</dt>
 <dt class="hdlist1">--force-with-lease=&lt;refname&gt;:&lt;expect&gt;</dt>
 <dd>
@@ -847,14 +845,12 @@ allowing a forced update.</p>
 <dt class="hdlist1">-f</dt>
 <dt class="hdlist1">--force</dt>
 <dd>
-<p>Usually, the command refuses to update a remote ref that is
-not an ancestor of the local ref used to overwrite it.
-Also, when <code>--force-with-lease</code> option is used, the command refuses
-to update a remote ref whose current value does not match
-what is expected.</p>
+<p>Usually, <code>git</code> <code>push</code> will refuse to update a branch that is not an
+ancestor of the commit being pushed.</p>
 <div class="paragraph">
-<p>This flag disables these checks, and can cause the remote repository
-to lose commits; use it with care.</p>
+<p>This flag disables that check, the other safety checks in PUSH RULES
+below, and the checks in --force-with-lease. It can cause the remote
+repository to lose commits; use it with care.</p>
 </div>
 <div class="paragraph">
 <p>Note that <code>--force</code> applies to all the refs that are pushed, hence
@@ -867,7 +863,8 @@ one branch, use a <code>+</code> in front of the refspec to push (e.g <code>git<
 <em>&lt;refspec&gt;</em>... section above for details.</p>
 </div>
 </dd>
-<dt class="hdlist1">--[no-]force-if-includes</dt>
+<dt class="hdlist1">--force-if-includes</dt>
+<dt class="hdlist1">--no-force-if-includes</dt>
 <dd>
 <p>Force an update only if the tip of the remote-tracking ref
 has been integrated locally.</p>
@@ -900,7 +897,8 @@ upstream (tracking) reference, used by argument-less
 <a href="git-pull.html">git-pull(1)</a> and other commands. For more information,
 see <code>branch.</code><em>&lt;name&gt;</em><code>.merge</code> in <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--[no-]thin</dt>
+<dt class="hdlist1">--thin</dt>
+<dt class="hdlist1">--no-thin</dt>
 <dd>
 <p>These options are passed to <a href="git-send-pack.html">git-send-pack(1)</a>. A thin transfer
 significantly reduces the amount of sent data when the sender and
@@ -948,7 +946,8 @@ submodule recursion is required.</p>
 further recursion will occur. In this case, "only" is treated as "on-demand".</p>
 </div>
 </dd>
-<dt class="hdlist1">--[no-]verify</dt>
+<dt class="hdlist1">--verify</dt>
+<dt class="hdlist1">--no-verify</dt>
 <dd>
 <p>Toggle the pre-push hook (see <a href="githooks.html">githooks(5)</a>).  The
 default is --verify, giving the hook a chance to prevent the
@@ -1244,6 +1243,83 @@ refspecs, if you don&#8217;t provide one on the command line.
 </div>
 </div>
 <div class="sect1">
+<h2 id="UPSTREAM-BRANCHES">UPSTREAM BRANCHES</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Branches in Git can optionally have an upstream remote branch.
+Git defaults to using the upstream branch for remote operations, for example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>It&#8217;s the default for <code>git</code> <code>pull</code> or <code>git</code> <code>fetch</code> with no arguments.</p>
+</li>
+<li>
+<p>It&#8217;s the default for <code>git</code> <code>push</code> with no arguments, with some exceptions.
+For example, you can use the <code>branch.</code><em>&lt;name&gt;</em><code>.pushRemote</code> option to push
+to a different remote than you pull from, and by default with
+<code>push.default=simple</code> the upstream branch you configure must have
+the same name.</p>
+</li>
+<li>
+<p>Various commands, including <code>git</code> <code>checkout</code> and <code>git</code> <code>status</code>, will
+show you how many commits have been added to your current branch and
+the upstream since you forked from it, for example "Your branch and
+<em>origin/main</em> have diverged, and have 2 and 3 different commits each
+respectively".</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The upstream is stored in .<code>git/config</code>, in the "remote" and "merge"
+fields. For example, if <code>main</code>'s upstream is <code>origin/main</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[branch "main"]
+   remote = origin
+   merge = refs/heads/main</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can set an upstream branch explicitly with
+<code>git</code> <code>push</code> <code>--set-upstream</code> <em>&lt;remote&gt;</em> <em>&lt;branch&gt;</em>
+but Git will often automatically set the upstream for you, for example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>When you clone a repository, Git will automatically set the upstream
+for the default branch.</p>
+</li>
+<li>
+<p>If you have the <code>push.autoSetupRemote</code> configuration option set,
+<code>git</code> <code>push</code> will automatically set the upstream the first time you push
+a branch.</p>
+</li>
+<li>
+<p>Checking out a remote-tracking branch with <code>git</code> <code>checkout</code> <em>&lt;branch&gt;</em>
+will automatically create a local branch with that name and set
+the upstream to the remote branch.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Upstream branches are sometimes referred to as "tracking information",
+as in "set the branch&#8217;s tracking information".
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_output">OUTPUT</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1363,6 +1439,68 @@ refs, no explanation is needed. For a failed ref, the reason for
 failure is described.</p>
 </dd>
 </dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_push_rules">PUSH RULES</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As a safety feature, the <code>git</code> <code>push</code> command only allows certain kinds of
+updates to prevent you from accidentally losing data on the remote.</p>
+</div>
+<div class="paragraph">
+<p>Because branches and tags are intended to be used differently, the
+safety rules for pushing to a branch are different from the rules
+for pushing to a tag. In the following rules "update" means any
+modifications except deletions and creations. Deletions and creations
+are always allowed, except when forbidden by configuration or hooks.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>If the push destination is a <strong>branch</strong> (<code>refs/heads/*</code>): only
+fast-forward updates are allowed, which means the destination must be
+an ancestor of the source commit. The source must be a commit.</p>
+</li>
+<li>
+<p>If the push destination is a <strong>tag</strong> (<code>refs/tags/*</code>): all updates will
+be rejected. The source can be any object.</p>
+</li>
+<li>
+<p>If the push destination is not a branch or tag:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If the source is a tree or blob object, any updates will be rejected</p>
+</li>
+<li>
+<p>If the source is a tag or commit object, any fast-forward update
+is allowed, even in cases where what&#8217;s being fast-forwarded is not a
+commit, but a tag object which happens to point to a new commit which
+is a fast-forward of the commit the last tag (or commit) it&#8217;s
+replacing. Replacing a tag with an entirely different tag is also
+allowed, if it points to the same commit, as well as pushing a peeled
+tag, i.e. pushing the commit that existing tag object points to, or a
+new tag object which an existing commit points to.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You can override these rules by passing <code>--force</code> or by adding the
+optional leading <code>+</code> to a refspec. The only exceptions are that no
+amount of forcing will make a branch accept a non-commit object,
+and forcing won&#8217;t make the remote repository accept a push that it&#8217;s
+configured to deny.</p>
+</div>
+<div class="paragraph">
+<p>Hooks and configuration can also override or amend these rules,
+see e.g. <code>receive.denyNonFastForwards</code> and <code>receive.denyDeletes</code>
+in <a href="git-config.html">git-config(1)</a> and <code>pre-receive</code> and <code>update</code> in
+<a href="githooks.html">githooks(5)</a>.</p>
 </div>
 </div>
 </div>
@@ -1632,7 +1770,7 @@ The delta reveals regions of X that are similar to Y to the attacker.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_configuration">CONFIGURATION</h2>
+<h2 id="CONFIGURATION">CONFIGURATION</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Everything below this line in this section is selectively included
@@ -1814,7 +1952,7 @@ from using bitmaps. Default is true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-28 11:27:20 UTC
+Last updated 2025-11-04 15:37:34 UTC
 </div>
 </div>
 </body>

@@ -444,7 +444,7 @@ pre>code {
 <h1>git-tag(1) Manual Page</h1>
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<p>git-tag - Create, list, delete or verify a tag object signed with GPG</p>
+<p>git-tag - Create, list, delete or verify tags</p>
 </div>
 </div>
 <div id="content">
@@ -452,15 +452,15 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git tag</em> [-a | -s | -u &lt;key-id&gt;] [-f] [-m &lt;msg&gt; | -F &lt;file&gt;] [-e]
-        [(--trailer &lt;token&gt;[(=|:)&lt;value&gt;])&#8230;&#8203;]
-        &lt;tagname&gt; [&lt;commit&gt; | &lt;object&gt;]
-<em>git tag</em> -d &lt;tagname&gt;&#8230;&#8203;
-<em>git tag</em> [-n[&lt;num&gt;]] -l [--contains &lt;commit&gt;] [--no-contains &lt;commit&gt;]
-        [--points-at &lt;object&gt;] [--column[=&lt;options&gt;] | --no-column]
-        [--create-reflog] [--sort=&lt;key&gt;] [--format=&lt;format&gt;]
-        [--merged &lt;commit&gt;] [--no-merged &lt;commit&gt;] [&lt;pattern&gt;&#8230;&#8203;]
-<em>git tag</em> -v [--format=&lt;format&gt;] &lt;tagname&gt;&#8230;&#8203;</pre>
+<pre class="content"><code>git</code> <code>tag</code> [<code>-a</code> | <code>-s</code> | <code>-u</code> <em>&lt;key-id&gt;</em>] [<code>-f</code>] [<code>-m</code> <em>&lt;msg&gt;</em> | <code>-F</code> <em>&lt;file&gt;</em>] [<code>-e</code>]
+	[(<code>--trailer</code> <em>&lt;token&gt;</em>[(<code>=</code>|<code>:</code>)<em>&lt;value&gt;</em>])&#8230;&#8203;]
+	<em>&lt;tagname&gt;</em> [<em>&lt;commit&gt;</em> | <em>&lt;object&gt;</em>]
+<code>git</code> <code>tag</code> <code>-d</code> <em>&lt;tagname&gt;</em>&#8230;&#8203;
+<code>git</code> <code>tag</code> [<code>-n</code>[<em>&lt;num&gt;</em>]] <code>-l</code> [<code>--contains</code> <em>&lt;commit&gt;</em>] [<code>--no-contains</code> <em>&lt;commit&gt;</em>]
+	[<code>--points-at</code> <em>&lt;object&gt;</em>] [<code>--column</code>[<code>=</code><em>&lt;options&gt;</em>] | <code>--no-column</code>]
+	[<code>--create-reflog</code>] [<code>--sort=</code><em>&lt;key&gt;</em>] [<code>--format=</code><em>&lt;format&gt;</em>]
+	[<code>--merged</code> <em>&lt;commit&gt;</em>] [<code>--no-merged</code> <em>&lt;commit&gt;</em>] [<em>&lt;pattern&gt;</em>&#8230;&#8203;]
+<code>git</code> <code>tag</code> <code>-v</code> [<code>--format=</code><em>&lt;format&gt;</em>] <em>&lt;tagname&gt;</em>&#8230;&#8203;</pre>
 </div>
 </div>
 </div>
@@ -468,7 +468,7 @@ pre>code {
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Add a tag reference in <code>refs/tags/</code>, unless <code>-d/-l/-v</code> is given
+<p>Add a tag reference in <code>refs/tags/</code>, unless <code>-d</code>/<code>-l</code>/<code>-v</code> is given
 to delete, list or verify tags.</p>
 </div>
 <div class="paragraph">
@@ -489,16 +489,18 @@ and <code>-a</code>, <code>-s</code>, and <code>-u</code> <em>&lt;key-id&gt;</em
 (i.e., a lightweight tag) is created.</p>
 </div>
 <div class="paragraph">
-<p>A GnuPG signed tag object will be created when <code>-s</code> or <code>-u</code>
-<em>&lt;key-id&gt;</em> is used.  When <code>-u</code> <em>&lt;key-id&gt;</em> is not used, the
-committer identity for the current user is used to find the
-GnuPG key for signing. 	The configuration variable <code>gpg.program</code>
-is used to specify custom GnuPG binary.</p>
+<p>A cryptographically signed tag object will be created when <code>-s</code> or
+<code>-u</code> <em>&lt;key-id&gt;</em> is used. The signing backend (GPG, X.509, SSH, etc.) is
+controlled by the <code>gpg.format</code> configuration variable, defaulting to
+OpenPGP. When <code>-u</code> <em>&lt;key-id&gt;</em> is not used, the committer identity for
+the current user is used to find the key for signing. The
+configuration variable <code>gpg.program</code> is used to specify a custom
+signing binary.</p>
 </div>
 <div class="paragraph">
 <p>Tag objects (created with <code>-a</code>, <code>-s</code>, or <code>-u</code>) are called "annotated"
 tags; they contain a creation date, the tagger name and e-mail, a
-tagging message, and an optional GnuPG signature. Whereas a
+tagging message, and an optional cryptographic signature. Whereas a
 "lightweight" tag is simply a name for an object (usually a commit
 object).</p>
 </div>
@@ -515,62 +517,67 @@ lightweight tags by default.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">-a</dt>
-<dt class="hdlist1">--annotate</dt>
+<dt class="hdlist1"><code>-a</code></dt>
+<dt class="hdlist1"><code>--annotate</code></dt>
 <dd>
 <p>Make an unsigned, annotated tag object</p>
 </dd>
-<dt class="hdlist1">-s</dt>
-<dt class="hdlist1">--sign</dt>
+<dt class="hdlist1"><code>-s</code></dt>
+<dt class="hdlist1"><code>--sign</code></dt>
 <dd>
-<p>Make a GPG-signed tag, using the default e-mail address&#8217;s key.
-The default behavior of tag GPG-signing is controlled by <code>tag.gpgSign</code>
-configuration variable if it exists, or disabled otherwise.
-See <a href="git-config.html">git-config(1)</a>.</p>
+<p>Make a cryptographically signed tag, using the default signing
+key. The signing backend used depends on the <code>gpg.format</code>
+configuration variable. The default key is determined by the
+backend. For GPG, it&#8217;s based on the committer&#8217;s email address,
+while for SSH it may be a specific key file or agent
+identity. See <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--no-sign</dt>
+<dt class="hdlist1"><code>--no-sign</code></dt>
 <dd>
 <p>Override <code>tag.gpgSign</code> configuration variable that is
 set to force each and every tag to be signed.</p>
 </dd>
-<dt class="hdlist1">-u &lt;key-id&gt;</dt>
-<dt class="hdlist1">--local-user=&lt;key-id&gt;</dt>
+<dt class="hdlist1"><code>-u</code> <em>&lt;key-id&gt;</em></dt>
+<dt class="hdlist1"><code>--local-user=</code><em>&lt;key-id&gt;</em></dt>
 <dd>
-<p>Make a GPG-signed tag, using the given key.</p>
+<p>Make a cryptographically signed tag using the given key. The
+format of the &lt;key-id&gt; and the backend used depend on the
+<code>gpg.format</code> configuration variable. See
+<a href="git-config.html">git-config(1)</a>.</p>
 </dd>
-<dt class="hdlist1">-f</dt>
-<dt class="hdlist1">--force</dt>
+<dt class="hdlist1"><code>-f</code></dt>
+<dt class="hdlist1"><code>--force</code></dt>
 <dd>
 <p>Replace an existing tag with the given name (instead of failing)</p>
 </dd>
-<dt class="hdlist1">-d</dt>
-<dt class="hdlist1">--delete</dt>
+<dt class="hdlist1"><code>-d</code></dt>
+<dt class="hdlist1"><code>--delete</code></dt>
 <dd>
 <p>Delete existing tags with the given names.</p>
 </dd>
-<dt class="hdlist1">-v</dt>
-<dt class="hdlist1">--verify</dt>
+<dt class="hdlist1"><code>-v</code></dt>
+<dt class="hdlist1"><code>--verify</code></dt>
 <dd>
-<p>Verify the GPG signature of the given tag names.</p>
+<p>Verify the cryptographic signature of the given tags.</p>
 </dd>
-<dt class="hdlist1">-n&lt;num&gt;</dt>
+<dt class="hdlist1"><code>-n</code><em>&lt;num&gt;</em></dt>
 <dd>
-<p>&lt;num&gt; specifies how many lines from the annotation, if any,
-are printed when using -l. Implies <code>--list</code>.</p>
+<p><em>&lt;num&gt;</em> specifies how many lines from the annotation, if any,
+are printed when using <code>-l</code>. Implies <code>--list</code>.</p>
 <div class="paragraph">
 <p>The default is not to print any annotation lines.
 If no number is given to <code>-n</code>, only the first line is printed.
 If the tag is not annotated, the commit message is displayed instead.</p>
 </div>
 </dd>
-<dt class="hdlist1">-l</dt>
-<dt class="hdlist1">--list</dt>
+<dt class="hdlist1"><code>-l</code></dt>
+<dt class="hdlist1"><code>--list</code></dt>
 <dd>
 <p>List tags. With optional <em>&lt;pattern&gt;</em>..., e.g. <code>git</code> <code>tag</code> <code>--list</code>
 'v-*', list only the tags that match the pattern(s).</p>
 <div class="paragraph">
-<p>Running "git tag" without arguments also lists all tags. The pattern
-is a shell wildcard (i.e., matched using fnmatch(3)). Multiple
+<p>Running <code>git</code> <code>tag</code> without arguments also lists all tags. The pattern
+is a shell wildcard (i.e., matched using <code>fnmatch</code>(3)). Multiple
 patterns may be given; if any of them matches, the tag is shown.</p>
 </div>
 <div class="paragraph">
@@ -579,91 +586,91 @@ as <code>--contains</code> is provided. See the documentation for each of those
 options for details.</p>
 </div>
 </dd>
-<dt class="hdlist1">--sort=&lt;key&gt;</dt>
+<dt class="hdlist1"><code>--sort=</code><em>&lt;key&gt;</em></dt>
 <dd>
 <p>Sort based on the key given.  Prefix <code>-</code> to sort in
-descending order of the value. You may use the --sort=&lt;key&gt; option
-multiple times, in which case the last key becomes the primary
-key. Also supports "version:refname" or "v:refname" (tag
-names are treated as versions). The "version:refname" sort
-order can also be affected by the "versionsort.suffix"
+descending order of the value. You may use the <code>--sort=</code><em>&lt;key&gt;</em> option
+multiple times, in which case the last <em>&lt;key&gt;</em> becomes the primary
+key. Also supports "<code>version:refname</code>" or "<code>v:refname</code>" (tag
+names are treated as versions). The "<code>version:refname</code>" sort
+order can also be affected by the "<code>versionsort.suffix</code>"
 configuration variable.
 The keys supported are the same as those in <code>git</code> <code>for-each-ref</code>.
 Sort order defaults to the value configured for the <code>tag.sort</code>
 variable if it exists, or lexicographic order otherwise. See
 <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--color[=&lt;when&gt;]</dt>
+<dt class="hdlist1"><code>--color</code>[<code>=</code><em>&lt;when&gt;</em>]</dt>
 <dd>
 <p>Respect any colors specified in the <code>--format</code> option. The
 <em>&lt;when&gt;</em> field must be one of <code>always</code>, <code>never</code>, or <code>auto</code> (if
 <em>&lt;when&gt;</em> is absent, behave as if <code>always</code> was given).</p>
 </dd>
-<dt class="hdlist1">-i</dt>
-<dt class="hdlist1">--ignore-case</dt>
+<dt class="hdlist1"><code>-i</code></dt>
+<dt class="hdlist1"><code>--ignore-case</code></dt>
 <dd>
 <p>Sorting and filtering tags are case insensitive.</p>
 </dd>
-<dt class="hdlist1">--omit-empty</dt>
+<dt class="hdlist1"><code>--omit-empty</code></dt>
 <dd>
 <p>Do not print a newline after formatted refs where the format expands
 to the empty string.</p>
 </dd>
-<dt class="hdlist1">--column[=&lt;options&gt;]</dt>
-<dt class="hdlist1">--no-column</dt>
+<dt class="hdlist1"><code>--column</code>[<code>=</code><em>&lt;options&gt;</em>]</dt>
+<dt class="hdlist1"><code>--no-column</code></dt>
 <dd>
 <p>Display tag listing in columns. See configuration variable
 <code>column.tag</code> for option syntax. <code>--column</code> and <code>--no-column</code>
-without options are equivalent to <em>always</em> and <em>never</em> respectively.</p>
+without options are equivalent to <code>always</code> and <code>never</code> respectively.</p>
 <div class="paragraph">
 <p>This option is only applicable when listing tags without annotation lines.</p>
 </div>
 </dd>
-<dt class="hdlist1">--contains [&lt;commit&gt;]</dt>
+<dt class="hdlist1"><code>--contains</code> [<em>&lt;commit&gt;</em>]</dt>
 <dd>
-<p>Only list tags which contain the specified commit (HEAD if not
+<p>Only list tags which contain <em>&lt;commit&gt;</em> (<code>HEAD</code> if not
 specified). Implies <code>--list</code>.</p>
 </dd>
-<dt class="hdlist1">--no-contains [&lt;commit&gt;]</dt>
+<dt class="hdlist1"><code>--no-contains</code> [<em>&lt;commit&gt;</em>]</dt>
 <dd>
-<p>Only list tags which don&#8217;t contain the specified commit (HEAD if
+<p>Only list tags which don&#8217;t contain <em>&lt;commit&gt;</em> (<code>HEAD</code> if
 not specified). Implies <code>--list</code>.</p>
 </dd>
-<dt class="hdlist1">--merged [&lt;commit&gt;]</dt>
+<dt class="hdlist1"><code>--merged</code> [<em>&lt;commit&gt;</em>]</dt>
 <dd>
-<p>Only list tags whose commits are reachable from the specified
-commit (<code>HEAD</code> if not specified).</p>
+<p>Only list tags whose commits are reachable from
+<em>&lt;commit&gt;</em> (<code>HEAD</code> if not specified).</p>
 </dd>
-<dt class="hdlist1">--no-merged [&lt;commit&gt;]</dt>
+<dt class="hdlist1"><code>--no-merged</code> [<em>&lt;commit&gt;</em>]</dt>
 <dd>
-<p>Only list tags whose commits are not reachable from the specified
-commit (<code>HEAD</code> if not specified).</p>
+<p>Only list tags whose commits are not reachable from
+<em>&lt;commit&gt;</em> (<code>HEAD</code> if not specified).</p>
 </dd>
-<dt class="hdlist1">--points-at &lt;object&gt;</dt>
+<dt class="hdlist1"><code>--points-at</code> [<em>&lt;object&gt;</em>]</dt>
 <dd>
-<p>Only list tags of the given object (HEAD if not
+<p>Only list tags of <em>&lt;object&gt;</em> (<code>HEAD</code> if not
 specified). Implies <code>--list</code>.</p>
 </dd>
-<dt class="hdlist1">-m &lt;msg&gt;</dt>
-<dt class="hdlist1">--message=&lt;msg&gt;</dt>
+<dt class="hdlist1"><code>-m</code> <em>&lt;msg&gt;</em></dt>
+<dt class="hdlist1"><code>--message=</code><em>&lt;msg&gt;</em></dt>
 <dd>
-<p>Use the given tag message (instead of prompting).
+<p>Use <em>&lt;msg&gt;</em> (instead of prompting).
 If multiple <code>-m</code> options are given, their values are
 concatenated as separate paragraphs.
 Implies <code>-a</code> if none of <code>-a</code>, <code>-s</code>, or <code>-u</code> <em>&lt;key-id&gt;</em>
 is given.</p>
 </dd>
-<dt class="hdlist1">-F &lt;file&gt;</dt>
-<dt class="hdlist1">--file=&lt;file&gt;</dt>
+<dt class="hdlist1"><code>-F</code> <em>&lt;file&gt;</em></dt>
+<dt class="hdlist1"><code>--file=</code><em>&lt;file&gt;</em></dt>
 <dd>
-<p>Take the tag message from the given file.  Use <em>-</em> to
+<p>Take the tag message from <em>&lt;file&gt;</em>.  Use <code>-</code> to
 read the message from the standard input.
 Implies <code>-a</code> if none of <code>-a</code>, <code>-s</code>, or <code>-u</code> <em>&lt;key-id&gt;</em>
 is given.</p>
 </dd>
-<dt class="hdlist1">--trailer &lt;token&gt;[(=|:)&lt;value&gt;]</dt>
+<dt class="hdlist1"><code>--trailer</code> <em>&lt;token&gt;</em>[(<code>=</code>|<code>:</code>)<em>&lt;value&gt;</em>]</dt>
 <dd>
-<p>Specify a (&lt;token&gt;, &lt;value&gt;) pair that should be applied as a
+<p>Specify a (<em>&lt;token&gt;</em>, <em>&lt;value&gt;</em>) pair that should be applied as a
 trailer. (e.g. <code>git</code> <code>tag</code> <code>--trailer</code> "Custom-Key: <code>value</code>"
 will add a "Custom-Key" trailer to the tag message.)
 The <code>trailer.*</code> configuration variables
@@ -673,22 +680,21 @@ each trailer would appear, and other details.
 The trailers can be extracted in <code>git</code> <code>tag</code> <code>--list</code>, using
 <code>--format=</code>"%(<code>trailers</code>)" placeholder.</p>
 </dd>
-<dt class="hdlist1">-e</dt>
-<dt class="hdlist1">--edit</dt>
+<dt class="hdlist1"><code>-e</code></dt>
+<dt class="hdlist1"><code>--edit</code></dt>
 <dd>
-<p>The message taken from file with <code>-F</code> and command line with
-<code>-m</code> are usually used as the tag message unmodified.
-This option lets you further edit the message taken from these sources.</p>
+<p>Let further edit the message taken from file with <code>-F</code> and command line with
+<code>-m</code>.</p>
 </dd>
-<dt class="hdlist1">--cleanup=&lt;mode&gt;</dt>
+<dt class="hdlist1"><code>--cleanup=</code><em>&lt;mode&gt;</em></dt>
 <dd>
-<p>This option sets how the tag message is cleaned up.
-The  <em>&lt;mode&gt;</em> can be one of <em>verbatim</em>, <em>whitespace</em> and <em>strip</em>.  The
-<em>strip</em> mode is default. The <em>verbatim</em> mode does not change message at
-all, <em>whitespace</em> removes just leading/trailing whitespace lines and
-<em>strip</em> removes both whitespace and commentary.</p>
+<p>Set how the tag message is cleaned up.
+The  <em>&lt;mode&gt;</em> can be one of <code>verbatim</code>, <code>whitespace</code> and <code>strip</code>.  The
+<code>strip</code> mode is default. The <code>verbatim</code> mode does not change message at
+all, <code>whitespace</code> removes just leading/trailing whitespace lines and
+<code>strip</code> removes both whitespace and commentary.</p>
 </dd>
-<dt class="hdlist1">--create-reflog</dt>
+<dt class="hdlist1"><code>--create-reflog</code></dt>
 <dd>
 <p>Create a reflog for the tag. To globally enable reflogs for tags, see
 <code>core.logAllRefUpdates</code> in <a href="git-config.html">git-config(1)</a>.
@@ -696,25 +702,25 @@ The negated form <code>--no-create-reflog</code> only overrides an earlier
 <code>--create-reflog</code>, but currently does not negate the setting of
 <code>core.logAllRefUpdates</code>.</p>
 </dd>
-<dt class="hdlist1">--format=&lt;format&gt;</dt>
+<dt class="hdlist1"><code>--format=</code><em>&lt;format&gt;</em></dt>
 <dd>
 <p>A string that interpolates <code>%</code>(<code>fieldname</code>) from a tag ref being shown
 and the object it points at.  The format is the same as
 that of <a href="git-for-each-ref.html">git-for-each-ref(1)</a>.  When unspecified,
 defaults to <code>%</code>(<code>refname:strip=2</code>).</p>
 </dd>
-<dt class="hdlist1">&lt;tagname&gt;</dt>
+<dt class="hdlist1"><em>&lt;tagname&gt;</em></dt>
 <dd>
 <p>The name of the tag to create, delete, or describe.
 The new tag name must pass all checks defined by
 <a href="git-check-ref-format.html">git-check-ref-format(1)</a>.  Some of these checks
 may restrict the characters allowed in a tag name.</p>
 </dd>
-<dt class="hdlist1">&lt;commit&gt;</dt>
-<dt class="hdlist1">&lt;object&gt;</dt>
+<dt class="hdlist1"><em>&lt;commit&gt;</em></dt>
+<dt class="hdlist1"><em>&lt;object&gt;</em></dt>
 <dd>
 <p>The object that the new tag will refer to, usually a commit.
-Defaults to HEAD.</p>
+Defaults to <code>HEAD</code>.</p>
 </dd>
 </dl>
 </div>
@@ -724,7 +730,7 @@ Defaults to HEAD.</p>
 <h2 id="_configuration">CONFIGURATION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>By default, <em>git tag</em> in sign-with-default mode (-s) will use your
+<p>By default, <code>git</code> <code>tag</code> in sign-with-default mode (<code>-s</code>) will use your
 committer identity (of the form <code>Your</code> <code>Name</code> &lt;your@email.<code>address</code>&gt;) to
 find a key.  If you want to use a different default key, you can specify
 it in the repository configuration as follows:</p>
@@ -732,13 +738,27 @@ it in the repository configuration as follows:</p>
 <div class="listingblock">
 <div class="content">
 <pre>[user]
-    signingKey = &lt;gpg-key-id&gt;</pre>
+    signingKey = &lt;key-id&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
+<p>The signing backend can be chosen via the <code>gpg.format</code> configuration
+variable, which defaults to <code>openpgp</code>. See <a href="git-config.html">git-config(1)</a>
+for a list of other supported formats.</p>
+</div>
+<div class="paragraph">
+<p>The path to the program used for each signing backend can be specified
+with the <code>gpg.</code><em>&lt;format&gt;</em><code>.program</code> configuration variable. For the
+<code>openpgp</code> backend, <code>gpg.program</code> can be used as a synonym for
+<code>gpg.openpgp.program</code>. See <a href="git-config.html">git-config(1)</a> for details.</p>
+</div>
+<div class="paragraph">
 <p><code>pager.tag</code> is only respected when listing tags, i.e., when <code>-l</code> is
-used or implied. The default is to use a pager.
-See <a href="git-config.html">git-config(1)</a>.</p>
+used or implied. The default is to use a pager.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="git-config.html">git-config(1)</a> for more details and other configuration
+variables.</p>
 </div>
 </div>
 </div>
@@ -752,7 +772,7 @@ See <a href="git-config.html">git-config(1)</a>.</p>
 want to re-tag?</p>
 </div>
 <div class="paragraph">
-<p>If you never pushed anything out, just re-tag it. Use "-f" to
+<p>If you never pushed anything out, just re-tag it. Use <code>-f</code> to
 replace the old one. And you&#8217;re done.</p>
 </div>
 <div class="paragraph">
@@ -773,7 +793,7 @@ and be done with it.</p>
 <li>
 <p>The insane thing.
 You really want to call the new version "X" too, <em>even though</em>
-others have already seen the old one. So just use <em>git tag -f</em>
+others have already seen the old one. So just use <code>git</code> <code>tag</code> <code>-f</code>
 again, as if you hadn&#8217;t already published the old one.</p>
 </li>
 </ol>
@@ -781,7 +801,7 @@ again, as if you hadn&#8217;t already published the old one.</p>
 <div class="paragraph">
 <p>However, Git does <strong>not</strong> (and it should not) change tags behind
 users back. So if somebody already got the old tag, doing a
-<em>git pull</em> on your tree shouldn&#8217;t just make them overwrite the old
+<code>git</code> <code>pull</code> on your tree shouldn&#8217;t just make them overwrite the old
 one.</p>
 </div>
 <div class="paragraph">
@@ -838,7 +858,7 @@ private anchor point tags from the other person.</p>
 <div class="paragraph">
 <p>Often, "please pull" messages on the mailing list just provide
 two pieces of information: a repo URL and a branch name; this
-is designed to be easily cut&amp;pasted at the end of a <em>git fetch</em>
+is designed to be easily cut&amp;pasted at the end of a <code>git</code> <code>fetch</code>
 command line:</p>
 </div>
 <div class="listingblock">
@@ -981,6 +1001,41 @@ may be overwritten by the next invocation of <code>git</code> <code>tag</code>.<
 </div>
 </div>
 <div class="sect1">
+<h2 id="_configuration_2">CONFIGURATION</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Everything below this line in this section is selectively included
+from the <a href="git-config.html">git-config(1)</a> documentation. The content is the same
+as what&#8217;s found there:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>tag.forceSignAnnotated</code></dt>
+<dd>
+<p>A boolean to specify whether annotated tags created should be GPG signed.
+If <code>--annotate</code> is specified on the command line, it takes
+precedence over this option.</p>
+</dd>
+<dt class="hdlist1"><code>tag.sort</code></dt>
+<dd>
+<p>This variable controls the sort ordering of tags when displayed by <code>git-tag</code>.
+Without the <code>--sort=</code><em>&lt;value&gt;</em> option provided, the value of this variable will
+be used as the default.</p>
+</dd>
+<dt class="hdlist1"><code>tag.gpgSign</code></dt>
+<dd>
+<p>A boolean to specify whether all tags should be GPG signed.
+Use of this option when running in an automated script can
+result in a large number of tags being signed. It is therefore
+convenient to use an agent to avoid typing your GPG passphrase
+several times. Note that this option doesn&#8217;t affect tag signing
+behavior enabled by <code>-u</code> <em>&lt;keyid&gt;</em> or <code>--local-user=</code><em>&lt;keyid&gt;</em> options.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_notes">NOTES</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1015,7 +1070,7 @@ commits and from none of the <code>--no-merged</code> commits are shown.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-28 11:27:20 UTC
+Last updated 2025-11-04 15:37:34 UTC
 </div>
 </div>
 </body>

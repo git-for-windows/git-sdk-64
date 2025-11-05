@@ -1003,23 +1003,47 @@ detach.</p>
 <dt class="hdlist1">maintenance.strategy</dt>
 <dd>
 <p>This string config option provides a way to specify one of a few
-recommended schedules for background maintenance. This only affects
-which tasks are run during <code>git</code> <code>maintenance</code> <code>run</code> <code>--schedule=X</code>
-commands, provided no <code>--task=</code><em>&lt;task&gt;</em> arguments are provided.
-Further, if a <code>maintenance.</code><em>&lt;task&gt;</em><code>.schedule</code> config value is set,
-then that value is used instead of the one provided by
-<code>maintenance.strategy</code>. The possible strategy strings are:</p>
+recommended strategies for repository maintenance. This affects
+which tasks are run during <code>git</code> <code>maintenance</code> <code>run</code>, provided no
+<code>--task=</code><em>&lt;task&gt;</em> arguments are provided. This setting impacts manual
+maintenance, auto-maintenance as well as scheduled maintenance. The
+tasks that run may be different depending on the maintenance type.</p>
+<div class="paragraph">
+<p>The maintenance strategy can be further tweaked by setting
+<code>maintenance.</code><em>&lt;task&gt;</em><code>.enabled</code> and <code>maintenance.</code><em>&lt;task&gt;</em><code>.schedule</code>. If set, these
+values are used instead of the defaults provided by <code>maintenance.strategy</code>.</p>
+</div>
+<div class="paragraph">
+<p>The possible strategies are:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>none</code>: This default setting implies no tasks are run at any schedule.</p>
+<p><code>none</code>: This strategy implies no tasks are run at all. This is the default
+strategy for scheduled maintenance.</p>
+</li>
+<li>
+<p><code>gc</code>: This strategy runs the <code>gc</code> task. This is the default strategy for
+manual maintenance.</p>
+</li>
+<li>
+<p><code>geometric</code>: This strategy performs geometric repacking of packfiles and
+keeps auxiliary data structures up-to-date. The strategy expires data in the
+reflog and removes worktrees that cannot be located anymore. When the
+geometric repacking strategy would decide to do an all-into-one repack, then
+the strategy generates a cruft pack for all unreachable objects. Objects that
+are already part of a cruft pack will be expired.</p>
+<div class="paragraph">
+<p>This repacking strategy is a full replacement for the <code>gc</code> strategy and is
+recommended for large repositories.</p>
+</div>
 </li>
 <li>
 <p><code>incremental</code>: This setting optimizes for performing small maintenance
 activities that do not delete any data. This does not schedule the <code>gc</code>
 task, but runs the <code>prefetch</code> and <code>commit-graph</code> tasks hourly, the
 <code>loose-objects</code> and <code>incremental-repack</code> tasks daily, and the <code>pack-refs</code>
-task weekly.</p>
+task weekly. Manual repository maintenance uses the <code>gc</code> task.</p>
 </li>
 </ul>
 </div>
@@ -1075,6 +1099,24 @@ Otherwise, a positive value implies the command should run when the
 number of pack-files not in the multi-pack-index is at least the value
 of <code>maintenance.incremental-repack.auto</code>. The default value is 10.</p>
 </dd>
+<dt class="hdlist1">maintenance.geometric-repack.auto</dt>
+<dd>
+<p>This integer config option controls how often the <code>geometric-repack</code>
+task should be run as part of <code>git</code> <code>maintenance</code> <code>run</code> <code>--auto</code>. If zero,
+then the <code>geometric-repack</code> task will not run with the <code>--auto</code>
+option. A negative value will force the task to run every time.
+Otherwise, a positive value implies the command should run either when
+there are packfiles that need to be merged together to retain the
+geometric progression, or when there are at least this many loose
+objects that would be written into a new packfile. The default value is
+100.</p>
+</dd>
+<dt class="hdlist1">maintenance.geometric-repack.splitFactor</dt>
+<dd>
+<p>This integer config option controls the factor used for the geometric
+sequence. See the <code>--geometric=</code> option in <a href="git-repack.html">git-repack(1)</a> for
+more details. Defaults to <code>2</code>.</p>
+</dd>
 <dt class="hdlist1">maintenance.reflog-expire.auto</dt>
 <dd>
 <p>This integer config option controls how often the <code>reflog-expire</code> task
@@ -1119,7 +1161,7 @@ prunable worktrees exceeds the value. The default value is 1.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-28 11:27:20 UTC
+Last updated 2025-11-04 15:37:34 UTC
 </div>
 </div>
 </body>

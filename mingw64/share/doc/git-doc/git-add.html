@@ -464,19 +464,23 @@ pre>code {
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This command updates the index using the current content found in
-the working tree, to prepare the content staged for the next commit.
-It typically adds the current content of existing paths as a whole,
-but with some options it can also be used to add content with
-only part of the changes made to the working tree files applied, or
-remove paths that do not exist in the working tree anymore.</p>
+<p>Add contents of new or changed files to the index. The "index" (also
+known as the "staging area") is what you use to prepare the contents of
+the next commit.</p>
 </div>
 <div class="paragraph">
-<p>The "index" holds a snapshot of the content of the working tree, and it
-is this snapshot that is taken as the contents of the next commit.  Thus
-after making any changes to the working tree, and before running
-the commit command, you must use the <code>add</code> command to add any new or
-modified files to the index.</p>
+<p>When you run <code>git</code> <code>commit</code> without any other arguments, it will only
+commit staged changes. For example, if you&#8217;ve edited <code>file.c</code> and want
+to commit your changes to that file, you can run:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>git add file.c
+git commit</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also add only part of your changes to a file with <code>git</code> <code>add</code> <code>-p</code>.</p>
 </div>
 <div class="paragraph">
 <p>This command can be performed multiple times before a commit.  It only
@@ -489,12 +493,10 @@ you must run <code>git</code> <code>add</code> again to add the new content to t
 files have changes that are staged for the next commit.</p>
 </div>
 <div class="paragraph">
-<p>The <code>git</code> <code>add</code> command will not add ignored files by default.  If any
-ignored files were explicitly specified on the command line, <code>git</code> <code>add</code>
-will fail with a list of ignored files.  Ignored files reached by
-directory recursion or filename globbing performed by Git (quote your
-globs before the shell) will be silently ignored.  The <code>git</code> <code>add</code> command can
-be used to add ignored files with the <code>-f</code> (force) option.</p>
+<p>The <code>git</code> <code>add</code> command will not add ignored files by default. You can
+use the <code>--force</code> option to add ignored files. If you specify the exact
+filename of an ignored file, <code>git</code> <code>add</code> will fail with a list of ignored
+files. Otherwise it will silently ignore the file.</p>
 </div>
 <div class="paragraph">
 <p>Please see <a href="git-commit.html">git-commit(1)</a> for alternative ways to add content to a
@@ -870,13 +872,14 @@ a - stage this hunk and all later hunks in the file
 d - do not stage this hunk or any of the later hunks in the file
 g - select a hunk to go to
 / - search for a hunk matching the given regex
-j - leave this hunk undecided, see next undecided hunk
-J - leave this hunk undecided, see next hunk
-k - leave this hunk undecided, see previous undecided hunk
-K - leave this hunk undecided, see previous hunk
+j - go to the next undecided hunk, roll over at the bottom
+J - go to the next hunk, roll over at the bottom
+k - go to the previous undecided hunk, roll over at the top
+K - go to the previous hunk, roll over at the top
 s - split the current hunk into smaller hunks
 e - manually edit the current hunk
 p - print the current hunk
+P - print the current hunk using the pager
 ? - print help</pre>
 </div>
 </div>
@@ -1043,7 +1046,7 @@ naming convention for configuration variables.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-28 11:27:20 UTC
+Last updated 2025-11-04 15:37:34 UTC
 </div>
 </div>
 </body>

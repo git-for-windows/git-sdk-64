@@ -456,8 +456,8 @@ pre>code {
 <code>git</code> <code>checkout</code> [<code>-q</code>] [<code>-f</code>] [<code>-m</code>] <code>--detach</code> [<em>&lt;branch&gt;</em>]
 <code>git</code> <code>checkout</code> [<code>-q</code>] [<code>-f</code>] [<code>-m</code>] [<code>--detach</code>] <em>&lt;commit&gt;</em>
 <code>git</code> <code>checkout</code> [<code>-q</code>] [<code>-f</code>] [<code>-m</code>] [[<code>-b</code>|<code>-B</code>|<code>--orphan</code>] <em>&lt;new-branch&gt;</em>] [<em>&lt;start-point&gt;</em>]
-<code>git</code> <code>checkout</code> [<code>-f</code>] <em>&lt;tree-ish&gt;</em> [<code>--</code>] <em>&lt;pathspec&gt;</em>&#8230;&#8203;
-<code>git</code> <code>checkout</code> [<code>-f</code>] <em>&lt;tree-ish&gt;</em> <code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]
+<code>git</code> <code>checkout</code> <em>&lt;tree-ish&gt;</em> [<code>--</code>] <em>&lt;pathspec&gt;</em>&#8230;&#8203;
+<code>git</code> <code>checkout</code> <em>&lt;tree-ish&gt;</em> <code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]
 <code>git</code> <code>checkout</code> [<code>-f</code>|<code>--ours</code>|<code>--theirs</code>|<code>-m</code>|<code>--conflict=</code><em>&lt;style&gt;</em>] [<code>--</code>] <em>&lt;pathspec&gt;</em>&#8230;&#8203;
 <code>git</code> <code>checkout</code> [<code>-f</code>|<code>--ours</code>|<code>--theirs</code>|<code>-m</code>|<code>--conflict=</code><em>&lt;style&gt;</em>] <code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]
 <code>git</code> <code>checkout</code> (<code>-p</code>|<code>--patch</code>) [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] [<em>&lt;pathspec&gt;</em>&#8230;&#8203;]</pre>
@@ -468,20 +468,31 @@ pre>code {
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Updates files in the working tree to match the version in the index
-or the specified tree.  If no pathspec was given, <code>git</code> <code>checkout</code> will
-also update <code>HEAD</code> to set the specified branch as the current
-branch.</p>
+<p><code>git</code> <code>checkout</code> has two main modes:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Switch branches</strong>, with <code>git</code> <code>checkout</code> <em>&lt;branch&gt;</em></p>
+</li>
+<li>
+<p><strong>Restore a different version of a file</strong>, for example with
+<code>git</code> <code>checkout</code> <em>&lt;commit&gt;</em> <em>&lt;filename&gt;</em> or <code>git</code> <code>checkout</code> <em>&lt;filename&gt;</em></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>See ARGUMENT DISAMBIGUATION below for how Git decides which one to do.</p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><code>git</code> <code>checkout</code> [<em>&lt;branch&gt;</em>]</dt>
 <dd>
-<p>To prepare for working on <em>&lt;branch&gt;</em>, switch to it by updating
-the index and the files in the working tree, and by pointing
-<code>HEAD</code> at the branch. Local modifications to the files in the
-working tree are kept, so that they can be committed to the
-<em>&lt;branch&gt;</em>.</p>
+<p>Switch to <em>&lt;branch&gt;</em>. This sets the current branch to <em>&lt;branch&gt;</em> and
+updates the files in your working directory. The checkout will fail
+if there are uncommitted changes to any files where <em>&lt;branch&gt;</em> and
+your current commit have different content. Uncommitted changes will
+otherwise be kept.</p>
 <div class="paragraph">
 <p>If <em>&lt;branch&gt;</em> is not found but there does exist a tracking branch in
 exactly one remote (call it <em>&lt;remote&gt;</em>) with a matching name and
@@ -493,76 +504,70 @@ exactly one remote (call it <em>&lt;remote&gt;</em>) with a matching name and
 </div>
 </div>
 <div class="paragraph">
-<p>You could omit <em>&lt;branch&gt;</em>, in which case the command degenerates to
-"check out the current branch", which is a glorified no-op with
-rather expensive side-effects to show only the tracking information,
-if it exists, for the current branch.</p>
+<p>Running <code>git</code> <code>checkout</code> without specifying a branch has no effect except
+to print out the tracking information for the current branch.</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>git</code> <code>checkout</code> (<code>-b</code>|<code>-B</code>) <em>&lt;new-branch&gt;</em> [<em>&lt;start-point&gt;</em>]</dt>
+<dt class="hdlist1"><code>git</code> <code>checkout</code> <code>-b</code> <em>&lt;new-branch&gt;</em> [<em>&lt;start-point&gt;</em>]</dt>
 <dd>
-<p>Specifying <code>-b</code> causes a new branch to be created as if
-<a href="git-branch.html">git-branch(1)</a> were called and then checked out.  In
-this case you can use the <code>--track</code> or <code>--no-track</code> options,
-which will be passed to <code>git</code> <code>branch</code>.  As a convenience,
-<code>--track</code> without <code>-b</code> implies branch creation; see the
-description of <code>--track</code> below.</p>
+<p>Create a new branch named <em>&lt;new-branch&gt;</em>, start it at <em>&lt;start-point&gt;</em>
+(defaults to the current commit), and check out the new branch.
+You can use the <code>--track</code> or <code>--no-track</code> options to set the branch&#8217;s
+upstream tracking information.</p>
 <div class="paragraph">
-<p>If <code>-B</code> is given, <em>&lt;new-branch&gt;</em> is created if it doesn&#8217;t exist; otherwise, it
-is reset. This is the transactional equivalent of</p>
+<p>This will fail if there&#8217;s an error checking out <em>&lt;new-branch&gt;</em>, for
+example if checking out the <em>&lt;start-point&gt;</em> commit would overwrite your
+uncommitted changes.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>$ git branch -f &lt;branch&gt; [&lt;start-point&gt;]
-$ git checkout &lt;branch&gt;</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>that is to say, the branch is not reset/created unless "git checkout" is
-successful (e.g., when the branch is in use in another worktree, not
-just the current branch stays the same, but the branch is not reset to
-the start-point, either).</p>
-</div>
+</dd>
+<dt class="hdlist1"><code>git</code> <code>checkout</code> <code>-B</code> <em>&lt;branch&gt;</em> [<em>&lt;start-point&gt;</em>]</dt>
+<dd>
+<p>The same as <code>-b</code>, except that if the branch already exists it
+resets <code>_</code><em>&lt;branch&gt;</em><code>_</code> to the start point instead of failing.</p>
 </dd>
 <dt class="hdlist1"><code>git</code> <code>checkout</code> <code>--detach</code> [<em>&lt;branch&gt;</em>]</dt>
 <dt class="hdlist1"><code>git</code> <code>checkout</code> [<code>--detach</code>] <em>&lt;commit&gt;</em></dt>
 <dd>
-<p>Prepare to work on top of <em>&lt;commit&gt;</em>, by detaching <code>HEAD</code> at it
-(see "DETACHED HEAD" section), and updating the index and the
-files in the working tree.  Local modifications to the files
-in the working tree are kept, so that the resulting working
-tree will be the state recorded in the commit plus the local
-modifications.</p>
-<div class="paragraph">
-<p>When the <em>&lt;commit&gt;</em> argument is a branch name, the <code>--detach</code> option can
-be used to detach <code>HEAD</code> at the tip of the branch (<code>git</code> <code>checkout</code>
-<em>&lt;branch&gt;</em> would check out that branch without detaching <code>HEAD</code>).</p>
-</div>
+<p>The same as <code>git</code> <code>checkout</code> <em>&lt;branch&gt;</em>, except that instead of pointing
+<code>HEAD</code> at the branch, it points <code>HEAD</code> at the commit ID.
+See the "DETACHED HEAD" section below for more.</p>
 <div class="paragraph">
 <p>Omitting <em>&lt;branch&gt;</em> detaches <code>HEAD</code> at the tip of the current branch.</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>git</code> <code>checkout</code> [<code>-f</code>|<code>--ours</code>|<code>--theirs</code>|<code>-m</code>|<code>--conflict=</code><em>&lt;style&gt;</em>] [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] <em>&lt;pathspec&gt;</em>...</dt>
-<dt class="hdlist1"><code>git</code> <code>checkout</code> [<code>-f</code>|<code>--ours</code>|<code>--theirs</code>|<code>-m</code>|<code>--conflict=</code><em>&lt;style&gt;</em>] [<em>&lt;tree-ish&gt;</em>] <code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]</dt>
+<dt class="hdlist1"><code>git</code> <code>checkout</code> <em>&lt;tree-ish&gt;</em> [<code>--</code>] <em>&lt;pathspec&gt;</em>...</dt>
+<dt class="hdlist1"><code>git</code> <code>checkout</code> <em>&lt;tree-ish&gt;</em> <code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]</dt>
 <dd>
-<p>Overwrite the contents of the files that match the pathspec.
-When the <em>&lt;tree-ish&gt;</em> (most often a commit) is not given,
-overwrite working tree with the contents in the index.
-When the <em>&lt;tree-ish&gt;</em> is given, overwrite both the index and
-the working tree with the contents at the <em>&lt;tree-ish&gt;</em>.</p>
+<p>Replace the specified files and/or directories with the version from
+the given commit or tree and add them to the index
+(also known as "staging area").</p>
 <div class="paragraph">
-<p>The index may contain unmerged entries because of a previous failed merge.
-By default, if you try to check out such an entry from the index, the
-checkout operation will fail and nothing will be checked out.
-Using <code>-f</code> will ignore these unmerged entries.  The contents from a
-specific side of the merge can be checked out of the index by
-using <code>--ours</code> or <code>--theirs</code>.  With <code>-m</code>, changes made to the working tree
-file can be discarded to re-create the original conflicted merge result.</p>
+<p>For example, <code>git</code> <code>checkout</code> <code>main</code> <code>file.txt</code> will replace <code>file.txt</code>
+with the version from <code>main</code>.</p>
+</div>
+</dd>
+<dt class="hdlist1"><code>git</code> <code>checkout</code> [<code>-f</code>|<code>--ours</code>|<code>--theirs</code>|<code>-m</code>|<code>--conflict=</code><em>&lt;style&gt;</em>] [<code>--</code>] <em>&lt;pathspec&gt;</em>...</dt>
+<dt class="hdlist1"><code>git</code> <code>checkout</code> [<code>-f</code>|<code>--ours</code>|<code>--theirs</code>|<code>-m</code>|<code>--conflict=</code><em>&lt;style&gt;</em>] <code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]</dt>
+<dd>
+<p>Replace the specified files and/or directories with the version from
+the index.</p>
+<div class="paragraph">
+<p>For example, if you check out a commit, edit <code>file.txt</code>, and then
+decide those changes were a mistake, <code>git</code> <code>checkout</code> <code>file.txt</code> will
+discard any unstaged changes to <code>file.txt</code>.</p>
+</div>
+<div class="paragraph">
+<p>This will fail if the file has a merge conflict and you haven&#8217;t yet run
+<code>git</code> <code>add</code> <code>file.txt</code> (or something equivalent) to mark it as resolved.
+You can use <code>-f</code> to ignore the unmerged files instead of failing, use
+<code>--ours</code> or <code>--theirs</code> to replace them with the version from a specific
+side of the merge, or use <code>-m</code> to replace them with the original
+conflicted merge result.</p>
 </div>
 </dd>
 <dt class="hdlist1"><code>git</code> <code>checkout</code> (<code>-p</code>|<code>--patch</code>) [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] [<em>&lt;pathspec&gt;</em>...]</dt>
 <dd>
-<p>This is similar to the previous mode, but lets you use the
+<p>This is similar to the previous two modes, but lets you use the
 interactive interface to show the "diff" output and choose which
 hunks to use in the result.  See below for the description of
 <code>--patch</code> option.</p>
@@ -632,17 +637,15 @@ see <a href="git-branch.html">git-branch(1)</a> for details.</p>
 </dd>
 <dt class="hdlist1"><code>-B</code> <em>&lt;new-branch&gt;</em></dt>
 <dd>
-<p>Creates the branch <em>&lt;new-branch&gt;</em>, start it at <em>&lt;start-point&gt;</em>;
-if it already exists, then reset it to <em>&lt;start-point&gt;</em>. And then
-check the resulting branch out.  This is equivalent to running
-<code>git</code> <code>branch</code> with <code>-f</code> followed by <code>git</code> <code>checkout</code> of that branch;
-see <a href="git-branch.html">git-branch(1)</a> for details.</p>
+<p>The same as <code>-b</code>, except that if the branch already exists it
+resets <code>_</code><em>&lt;branch&gt;</em><code>_</code> to the start point instead of failing.</p>
 </dd>
 <dt class="hdlist1"><code>-t</code></dt>
 <dt class="hdlist1"><code>--track</code>[<code>=</code>(<code>direct</code>|<code>inherit</code>)]</dt>
 <dd>
 <p>When creating a new branch, set up "upstream" configuration. See
-<code>--track</code> in <a href="git-branch.html">git-branch(1)</a> for details.</p>
+<code>--track</code> in <a href="git-branch.html">git-branch(1)</a> for details. As a convenience,
+--track without -b implies branch creation.</p>
 <div class="paragraph">
 <p>If no <code>-b</code> option is given, the name of the new branch will be
 derived from the remote-tracking branch, by looking at the local part of
@@ -851,7 +854,7 @@ global <code>--literal-pathspecs</code>.</p>
 separated with <em>NUL</em> character and all other characters are taken
 literally (including newlines and quotes).</p>
 </dd>
-<dt class="hdlist1">&lt;branch&gt;</dt>
+<dt class="hdlist1"><em>&lt;branch&gt;</em></dt>
 <dd>
 <p>Branch to checkout; if it refers to a branch (i.e., a name that,
 when prepended with "refs/heads/", is a valid ref), then that
@@ -1073,14 +1076,20 @@ $ git log -g -2 HEAD</pre>
 <h2 id="_argument_disambiguation">ARGUMENT DISAMBIGUATION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When there is only one argument given and it is not <code>--</code> (e.g. <code>git</code>
-<code>checkout</code> <code>abc</code>), and when the argument is both a valid <em>&lt;tree-ish&gt;</em>
-(e.g. a branch <code>abc</code> exists) and a valid <em>&lt;pathspec&gt;</em> (e.g. a file
-or a directory whose name is "abc" exists), Git would usually ask
-you to disambiguate.  Because checking out a branch is so common an
-operation, however, <code>git</code> <code>checkout</code> <code>abc</code> takes "abc" as a <em>&lt;tree-ish&gt;</em>
-in such a situation.  Use <code>git</code> <code>checkout</code> <code>--</code> <em>&lt;pathspec&gt;</em> if you want
-to checkout these paths out of the index.</p>
+<p>When you run <code>git</code> <code>checkout</code> <em>&lt;something&gt;</em>, Git tries to guess whether
+<em>&lt;something&gt;</em> is intended to be a branch, a commit, or a set of file(s),
+and then either switches to that branch or commit, or restores the
+specified files.</p>
+</div>
+<div class="paragraph">
+<p>If there&#8217;s any ambiguity, Git will treat <em>&lt;something&gt;</em> as a branch or
+commit, but you can use the double dash <code>--</code> to force Git to treat the
+parameter as a list of files and/or directories, like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>git checkout -- file.txt</pre>
+</div>
 </div>
 </div>
 </div>
@@ -1302,7 +1311,7 @@ default is 100.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-28 11:27:20 UTC
+Last updated 2025-11-04 15:37:34 UTC
 </div>
 </div>
 </body>

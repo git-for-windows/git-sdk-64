@@ -484,7 +484,8 @@ could not be made into an absolute path, or does not match any known
 object directory, <code>git</code> <code>commit-graph</code> ... will exit with non-zero
 status.</p>
 </dd>
-<dt class="hdlist1">--[no-]progress</dt>
+<dt class="hdlist1">--progress</dt>
+<dt class="hdlist1">--no-progress</dt>
 <dd>
 <p>Turn progress on/off explicitly. If neither is specified, progress is
 shown if standard error is connected to a terminal.</p>
@@ -532,7 +533,7 @@ take a while on large repositories. It provides significant performance gains
 for getting history of a directory or a file with <code>git</code> <code>log</code> <code>--</code> <em>&lt;path&gt;</em>. If
 this option is given, future commit-graph writes will automatically assume
 that this option was intended. Use <code>--no-changed-paths</code> to stop storing this
-data.</p>
+data. <code>--changed-paths</code> is implied by config <code>commitGraph.changedPaths=true</code>.</p>
 </div>
 <div class="paragraph">
 <p>With the <code>--max-new-filters=</code><em>&lt;n&gt;</em> option, generate at most <code>n</code> new Bloom
@@ -658,6 +659,18 @@ the corrected commit dates will not be written or read. Defaults to
 <p>Specifies the default value for the <code>--max-new-filters</code> option of <code>git</code>
 <code>commit-graph</code> <code>write</code> (c.f., <a href="git-commit-graph.html">git-commit-graph(1)</a>).</p>
 </dd>
+<dt class="hdlist1">commitGraph.changedPaths</dt>
+<dd>
+<p>If true, then <code>git</code> <code>commit-graph</code> <code>write</code> will compute and write
+changed-path Bloom filters by default, equivalent to passing
+<code>--changed-paths</code>. If false or unset, changed-paths Bloom filters will
+be written during <code>git</code> <code>commit-graph</code> <code>write</code> only if the filters already
+exist in the current commit-graph file. This matches the default
+behavior of <code>git</code> <code>commit-graph</code> <code>write</code> without any <code>--</code>[<code>no-</code>]<code>changed-paths</code>
+option. To rewrite a commit-graph file without any filters, use the
+<code>--no-changed-paths</code> option. Command-line option <code>--</code>[<code>no-</code>]<code>changed-paths</code>
+always takes precedence over this configuration. Defaults to unset.</p>
+</dd>
 <dt class="hdlist1">commitGraph.readChangedPaths</dt>
 <dd>
 <p>Deprecated. Equivalent to commitGraph.changedPathsVersion=-1 if true, and
@@ -717,7 +730,7 @@ Bloom filters.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-28 11:27:20 UTC
+Last updated 2025-11-04 15:37:34 UTC
 </div>
 </div>
 </body>

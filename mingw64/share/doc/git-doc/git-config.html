@@ -829,7 +829,8 @@ is to be used, or exits with status 1 otherwise.
 When the color setting for <code>name</code> is undefined, the command uses
 <code>color.ui</code> as fallback.</p>
 </dd>
-<dt class="hdlist1">--[no-]includes</dt>
+<dt class="hdlist1">--includes</dt>
+<dt class="hdlist1">--no-includes</dt>
 <dd>
 <p>Respect <code>include.*</code> directives in config files when looking up
 values. Defaults to <code>off</code> when a specific file is given (e.g.,
@@ -1697,6 +1698,10 @@ compiled without runtime prefix support, the compiled-in prefix will be
 substituted instead. In the unlikely event that a literal path needs to
 be specified that should <em>not</em> be expanded, it needs to be prefixed by
 .<code>/</code>, like so: .<code>/%</code>(<code>prefix</code>)<code>/bin</code>.</p>
+</div>
+<div class="paragraph">
+<p>If prefixed with <code>:</code>(<code>optional</code>), the configuration variable is treated
+as if it does not exist, if the named path does not exist.</p>
 </div>
 </dd>
 </dl>
@@ -2961,6 +2966,18 @@ the corrected commit dates will not be written or read. Defaults to
 <p>Specifies the default value for the <code>--max-new-filters</code> option of <code>git</code>
 <code>commit-graph</code> <code>write</code> (c.f., <a href="git-commit-graph.html">git-commit-graph(1)</a>).</p>
 </dd>
+<dt class="hdlist1">commitGraph.changedPaths</dt>
+<dd>
+<p>If true, then <code>git</code> <code>commit-graph</code> <code>write</code> will compute and write
+changed-path Bloom filters by default, equivalent to passing
+<code>--changed-paths</code>. If false or unset, changed-paths Bloom filters will
+be written during <code>git</code> <code>commit-graph</code> <code>write</code> only if the filters already
+exist in the current commit-graph file. This matches the default
+behavior of <code>git</code> <code>commit-graph</code> <code>write</code> without any <code>--</code>[<code>no-</code>]<code>changed-paths</code>
+option. To rewrite a commit-graph file without any filters, use the
+<code>--no-changed-paths</code> option. Command-line option <code>--</code>[<code>no-</code>]<code>changed-paths</code>
+always takes precedence over this configuration. Defaults to unset.</p>
+</dd>
 <dt class="hdlist1">commitGraph.readChangedPaths</dt>
 <dd>
 <p>Deprecated. Equivalent to commitGraph.changedPathsVersion=-1 if true, and
@@ -3343,6 +3360,10 @@ CIFS/Microsoft Windows.</p>
 and other symbolic reference files, use symbolic links.
 This is sometimes needed to work with old scripts that
 expect HEAD to be a symbolic link.</p>
+<div class="paragraph">
+<p>This configuration is deprecated and will be removed in Git 3.0. Symbolic refs
+will always be written as textual symrefs.</p>
+</div>
 </dd>
 <dt class="hdlist1">core.alternateRefsCommand</dt>
 <dd>
@@ -3628,8 +3649,35 @@ messages consider a line that begins with this character
 commented, and removes them after the editor returns
 (default <em>#</em>).</p>
 <div class="paragraph">
-<p>If set to "auto", <code>git-commit</code> would select a character that is not
-the beginning character of any line in existing commit messages.</p>
+<p>If set to "auto", <code>git-commit</code> will select a character that is not
+the beginning character of any line in existing commit messages.
+Support for this value is deprecated and will be removed in Git 3.0
+due to the following limitations:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>It is incompatible with adding comments in a commit message
+template. This includes the conflicts comments added to
+the commit message by <code>cherry-pick</code>, <code>merge</code>, <code>rebase</code> and
+<code>revert</code>.</p>
+</li>
+<li>
+<p>It is incompatible with adding comments to the commit message
+in the <code>prepare-commit-msg</code> hook.</p>
+</li>
+<li>
+<p>It is incompatible with the <code>fixup</code> and <code>squash</code> commands when
+rebasing,</p>
+</li>
+<li>
+<p>It is not respected by <code>git</code> <code>notes</code></p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="paragraph">
 <p>Note that these two variables are aliases of each other, and in modern
@@ -6701,23 +6749,47 @@ detach.</p>
 <dt class="hdlist1">maintenance.strategy</dt>
 <dd>
 <p>This string config option provides a way to specify one of a few
-recommended schedules for background maintenance. This only affects
-which tasks are run during <code>git</code> <code>maintenance</code> <code>run</code> <code>--schedule=X</code>
-commands, provided no <code>--task=</code><em>&lt;task&gt;</em> arguments are provided.
-Further, if a <code>maintenance.</code><em>&lt;task&gt;</em><code>.schedule</code> config value is set,
-then that value is used instead of the one provided by
-<code>maintenance.strategy</code>. The possible strategy strings are:</p>
+recommended strategies for repository maintenance. This affects
+which tasks are run during <code>git</code> <code>maintenance</code> <code>run</code>, provided no
+<code>--task=</code><em>&lt;task&gt;</em> arguments are provided. This setting impacts manual
+maintenance, auto-maintenance as well as scheduled maintenance. The
+tasks that run may be different depending on the maintenance type.</p>
+<div class="paragraph">
+<p>The maintenance strategy can be further tweaked by setting
+<code>maintenance.</code><em>&lt;task&gt;</em><code>.enabled</code> and <code>maintenance.</code><em>&lt;task&gt;</em><code>.schedule</code>. If set, these
+values are used instead of the defaults provided by <code>maintenance.strategy</code>.</p>
+</div>
+<div class="paragraph">
+<p>The possible strategies are:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>none</code>: This default setting implies no tasks are run at any schedule.</p>
+<p><code>none</code>: This strategy implies no tasks are run at all. This is the default
+strategy for scheduled maintenance.</p>
+</li>
+<li>
+<p><code>gc</code>: This strategy runs the <code>gc</code> task. This is the default strategy for
+manual maintenance.</p>
+</li>
+<li>
+<p><code>geometric</code>: This strategy performs geometric repacking of packfiles and
+keeps auxiliary data structures up-to-date. The strategy expires data in the
+reflog and removes worktrees that cannot be located anymore. When the
+geometric repacking strategy would decide to do an all-into-one repack, then
+the strategy generates a cruft pack for all unreachable objects. Objects that
+are already part of a cruft pack will be expired.</p>
+<div class="paragraph">
+<p>This repacking strategy is a full replacement for the <code>gc</code> strategy and is
+recommended for large repositories.</p>
+</div>
 </li>
 <li>
 <p><code>incremental</code>: This setting optimizes for performing small maintenance
 activities that do not delete any data. This does not schedule the <code>gc</code>
 task, but runs the <code>prefetch</code> and <code>commit-graph</code> tasks hourly, the
 <code>loose-objects</code> and <code>incremental-repack</code> tasks daily, and the <code>pack-refs</code>
-task weekly.</p>
+task weekly. Manual repository maintenance uses the <code>gc</code> task.</p>
 </li>
 </ul>
 </div>
@@ -6772,6 +6844,24 @@ option. A negative value will force the task to run every time.
 Otherwise, a positive value implies the command should run when the
 number of pack-files not in the multi-pack-index is at least the value
 of <code>maintenance.incremental-repack.auto</code>. The default value is 10.</p>
+</dd>
+<dt class="hdlist1">maintenance.geometric-repack.auto</dt>
+<dd>
+<p>This integer config option controls how often the <code>geometric-repack</code>
+task should be run as part of <code>git</code> <code>maintenance</code> <code>run</code> <code>--auto</code>. If zero,
+then the <code>geometric-repack</code> task will not run with the <code>--auto</code>
+option. A negative value will force the task to run every time.
+Otherwise, a positive value implies the command should run either when
+there are packfiles that need to be merged together to retain the
+geometric progression, or when there are at least this many loose
+objects that would be written into a new packfile. The default value is
+100.</p>
+</dd>
+<dt class="hdlist1">maintenance.geometric-repack.splitFactor</dt>
+<dd>
+<p>This integer config option controls the factor used for the geometric
+sequence. See the <code>--geometric=</code> option in <a href="git-repack.html">git-repack(1)</a> for
+more details. Defaults to <code>2</code>.</p>
 </dd>
 <dt class="hdlist1">maintenance.reflog-expire.auto</dt>
 <dd>
@@ -7641,6 +7731,35 @@ promisor remotes it is using, if it uses some. Default is
 "false", which means the "promisor-remote" capability is not
 advertised.</p>
 </dd>
+<dt class="hdlist1">promisor.sendFields</dt>
+<dd>
+<p>A comma or space separated list of additional remote related
+field names. A server sends these field names and the
+associated field values from its configuration when
+advertising its promisor remotes using the "promisor-remote"
+capability, see <a href="gitprotocol-v2.html">gitprotocol-v2(5)</a>. Currently, only the
+"partialCloneFilter" and "token" field names are supported.</p>
+</dd>
+<dt class="hdlist1"><code>partialCloneFilter</code></dt>
+<dd>
+<p>contains the partial clone filter
+used for the remote.</p>
+</dd>
+<dt class="hdlist1"><code>token</code></dt>
+<dd>
+<p>contains an authentication token for the remote.</p>
+<div class="paragraph">
+<p>When a field name is part of this list and a corresponding
+"remote.foo.&lt;field-name&gt;" config variable is set on the server to a
+non-empty value, then the field name and value are sent when
+advertising the promisor remote "foo".</p>
+</div>
+<div class="paragraph">
+<p>This list has no effect unless the "promisor.advertise" config
+variable is set to "true", and the "name" and "url" fields are always
+advertised regardless of this setting.</p>
+</div>
+</dd>
 <dt class="hdlist1">promisor.acceptFromServer</dt>
 <dd>
 <p>If set to "all", a client will accept all the promisor remotes
@@ -7661,6 +7780,61 @@ client agrees that the server might omit objects that are
 lazily fetchable from this promisor remote from its responses
 to "fetch" and "clone" requests from the client. Name and URL
 comparisons are case sensitive. See <a href="gitprotocol-v2.html">gitprotocol-v2(5)</a>.</p>
+</dd>
+<dt class="hdlist1">promisor.checkFields</dt>
+<dd>
+<p>A comma or space separated list of additional remote related
+field names. A client checks if the values of these fields
+transmitted by a server correspond to the values of these
+fields in its own configuration before accepting a promisor
+remote. Currently, "partialCloneFilter" and "token" are the
+only supported field names.</p>
+<div class="paragraph">
+<p>If one of these field names (e.g., "token") is being checked for an
+advertised promisor remote (e.g., "foo"), three conditions must be met
+for the check of this specific field to pass:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The corresponding local configuration (e.g., <code>remote.foo.token</code>)
+must be set.</p>
+</li>
+<li>
+<p>The server must advertise the "token" field for remote "foo".</p>
+</li>
+<li>
+<p>The value of the locally configured <code>remote.foo.token</code> must exactly
+match the value advertised by the server for the "token" field.</p>
+<div class="paragraph">
+<p>If any of these conditions is not met for any field name listed in
+<code>promisor.checkFields</code>, the advertised remote "foo" is rejected.</p>
+</div>
+<div class="paragraph">
+<p>For the "partialCloneFilter" field, this allows the client to ensure
+that the server&#8217;s filter matches what it expects locally, preventing
+inconsistencies in filtering behavior. For the "token" field, this can
+be used to verify that authentication credentials match expected
+values.</p>
+</div>
+<div class="paragraph">
+<p>Field values are compared case-sensitively.</p>
+</div>
+<div class="paragraph">
+<p>The "name" and "url" fields are always checked according to the
+<code>promisor.acceptFromServer</code> policy, independently of this setting.</p>
+</div>
+<div class="paragraph">
+<p>The field names and values should be passed by the server through the
+"promisor-remote" capability by using the <code>promisor.sendFields</code> config
+variable. The fields are checked only if the
+<code>promisor.acceptFromServer</code> config variable is not set to "None". If
+set to "None", this config variable has no effect. See
+<a href="gitprotocol-v2.html">gitprotocol-v2(5)</a>.</p>
+</div>
+</li>
+</ol>
+</div>
 </dd>
 <dt class="hdlist1">protocol.allow</dt>
 <dd>
@@ -8745,6 +8919,8 @@ recognized by the parser.</p>
 <dt class="hdlist1">sendemail.smtpServerPort</dt>
 <dt class="hdlist1">sendemail.smtpServerOption</dt>
 <dt class="hdlist1">sendemail.smtpUser</dt>
+<dt class="hdlist1">sendemail.imapSentFolder</dt>
+<dt class="hdlist1">sendemail.useImapOnly</dt>
 <dt class="hdlist1">sendemail.thread</dt>
 <dt class="hdlist1">sendemail.transferEncoding</dt>
 <dt class="hdlist1">sendemail.validate</dt>
@@ -8937,23 +9113,37 @@ follows:</p>
 change as git gains new features.</p>
 </div>
 </dd>
-<dt class="hdlist1">stash.showIncludeUntracked</dt>
+</dl>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>stash.index</code></dt>
+<dd>
+<p>	If this is set to true, <code>git</code> <code>stash</code> <code>apply</code> and <code>git</code> <code>stash</code> <code>pop</code> will
+	behave as if <code>--index</code> was supplied. Defaults to false.
+See the descriptions in <a href="git-stash.html">git-stash(1)</a>.</p>
+<div class="paragraph">
+<p>This also affects invocations of <a href="git-stash.html">git-stash(1)</a> via <code>--autostash</code> from
+commands like <a href="git-merge.html">git-merge(1)</a>, <a href="git-rebase.html">git-rebase(1)</a>, and
+<a href="git-pull.html">git-pull(1)</a>.</p>
+</div>
+</dd>
+<dt class="hdlist1"><code>stash.showIncludeUntracked</code></dt>
 <dd>
 <p>If this is set to true, the <code>git</code> <code>stash</code> <code>show</code> command will show
-the untracked files of a stash entry.  Defaults to false. See
-the description of the <em>show</em> command in <a href="git-stash.html">git-stash(1)</a>.</p>
+the untracked files of a stash entry. Defaults to false. See the description of the 'show' command in <a href="git-stash.html">git-stash(1)</a>.</p>
 </dd>
-<dt class="hdlist1">stash.showPatch</dt>
+<dt class="hdlist1"><code>stash.showPatch</code></dt>
 <dd>
 <p>If this is set to true, the <code>git</code> <code>stash</code> <code>show</code> command without an
 option will show the stash entry in patch form.  Defaults to false.
-See the description of the <em>show</em> command in <a href="git-stash.html">git-stash(1)</a>.</p>
+See the description of the 'show' command in <a href="git-stash.html">git-stash(1)</a>.</p>
 </dd>
-<dt class="hdlist1">stash.showStat</dt>
+<dt class="hdlist1"><code>stash.showStat</code></dt>
 <dd>
 <p>If this is set to true, the <code>git</code> <code>stash</code> <code>show</code> command without an
 option will show a diffstat of the stash entry.  Defaults to true.
-See the description of the <em>show</em> command in <a href="git-stash.html">git-stash(1)</a>.</p>
+See the description of the 'show' command in <a href="git-stash.html">git-stash(1)</a>.</p>
 </dd>
 <dt class="hdlist1">status.relativePaths</dt>
 <dd>
@@ -9216,26 +9406,27 @@ number of entries in the detail tables.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1">tag.forceSignAnnotated</dt>
+<dt class="hdlist1"><code>tag.forceSignAnnotated</code></dt>
 <dd>
 <p>A boolean to specify whether annotated tags created should be GPG signed.
 If <code>--annotate</code> is specified on the command line, it takes
 precedence over this option.</p>
 </dd>
-<dt class="hdlist1">tag.sort</dt>
+<dt class="hdlist1"><code>tag.sort</code></dt>
 <dd>
 <p>This variable controls the sort ordering of tags when displayed by
-<a href="git-tag.html">git-tag(1)</a>. Without the "--sort=&lt;value&gt;" option provided, the
-value of this variable will be used as the default.</p>
+<a href="git-tag.html">git-tag(1)</a>.
+Without the <code>--sort=</code><em>&lt;value&gt;</em> option provided, the value of this variable will
+be used as the default.</p>
 </dd>
-<dt class="hdlist1">tag.gpgSign</dt>
+<dt class="hdlist1"><code>tag.gpgSign</code></dt>
 <dd>
 <p>A boolean to specify whether all tags should be GPG signed.
 Use of this option when running in an automated script can
 result in a large number of tags being signed. It is therefore
-convenient to use an agent to avoid typing your gpg passphrase
+convenient to use an agent to avoid typing your GPG passphrase
 several times. Note that this option doesn&#8217;t affect tag signing
-behavior enabled by "-u &lt;keyid&gt;" or "--local-user=&lt;keyid&gt;" options.</p>
+behavior enabled by <code>-u</code> <em>&lt;keyid&gt;</em> or <code>--local-user=</code><em>&lt;keyid&gt;</em> options.</p>
 </dd>
 <dt class="hdlist1">tar.umask</dt>
 <dd>
@@ -9935,7 +10126,7 @@ may use it.</p>
 local disk files, if you&#8217;re working on a network file system, you should
 set it false to turn it off.</p>
 </dd>
-<dt class="hdlist1">worktree.guessRemote</dt>
+<dt class="hdlist1"><code>worktree.guessRemote</code></dt>
 <dd>
 <p>If no branch is specified and neither <code>-b</code> nor <code>-B</code> nor
 <code>--detach</code> is used, then <code>git</code> <code>worktree</code> <code>add</code> defaults to
@@ -9944,16 +10135,16 @@ set to true, <code>worktree</code> <code>add</code> tries to find a remote-track
 branch whose name uniquely matches the new branch name.  If
 such a branch exists, it is checked out and set as "upstream"
 for the new branch.  If no such match can be found, it falls
-back to creating a new branch from the current HEAD.</p>
+back to creating a new branch from the current <code>HEAD</code>.</p>
 </dd>
-<dt class="hdlist1">worktree.useRelativePaths</dt>
+<dt class="hdlist1"><code>worktree.useRelativePaths</code></dt>
 <dd>
-<p>Link worktrees using relative paths (when "true") or absolute
-paths (when "false"). This is particularly useful for setups
+<p>Link worktrees using relative paths (when "<code>true</code>") or absolute
+paths (when "<code>false</code>"). This is particularly useful for setups
 where the repository and worktrees may be moved between
-different locations or environments. Defaults to "false".</p>
+different locations or environments. Defaults to "<code>false</code>".</p>
 <div class="paragraph">
-<p>Note that setting <code>worktree.useRelativePaths</code> to "true" implies enabling the
+<p>Note that setting <code>worktree.useRelativePaths</code> to "<code>true</code>" implies enabling the
 <code>extensions.relativeWorktrees</code> config (see <a href="git-config.html">git-config(1)</a>),
 thus making it incompatible with older versions of Git.</p>
 </div>
@@ -10001,7 +10192,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-28 11:27:20 UTC
+Last updated 2025-11-04 15:37:34 UTC
 </div>
 </div>
 </body>

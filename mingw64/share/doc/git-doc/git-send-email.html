@@ -590,7 +590,8 @@ illustration below where [<code>PATCH</code> <code>v2</code> <code>0/3</code>] i
 is not set, this will be prompted for.</p>
 </div>
 </dd>
-<dt class="hdlist1">--[no-]outlook-id-fix</dt>
+<dt class="hdlist1">--outlook-id-fix</dt>
+<dt class="hdlist1">--no-outlook-id-fix</dt>
 <dd>
 <p>Microsoft Outlook SMTP servers discard the Message-ID sent via email and
 assign a new random Message-ID, thus breaking threads.</p>
@@ -809,6 +810,35 @@ then authentication is not attempted.</p>
 commands and replies will be printed. Useful to debug TLS
 connection and authentication problems.</p>
 </dd>
+<dt class="hdlist1">--imap-sent-folder=&lt;folder&gt;</dt>
+<dd>
+<p>Some email providers (e.g. iCloud) do not send a copy of the emails sent
+using SMTP to the <code>Sent</code> folder or similar in your mailbox. Use this option
+to use <code>git</code> <code>imap-send</code> to send a copy of the emails to the folder specified
+using this option. You can run <code>git</code> <code>imap-send</code> <code>--list</code> to get a list of
+valid folder names, including the correct name of the <code>Sent</code> folder in
+your mailbox. You can also use this option to send emails to a dedicated
+IMAP folder of your choice.</p>
+<div class="paragraph">
+<p>This feature requires setting up <code>git</code> <code>imap-send</code>. See <a href="git-imap-send.html">git-imap-send(1)</a>
+for instructions.</p>
+</div>
+</dd>
+<dt class="hdlist1">--use-imap-only</dt>
+<dt class="hdlist1">--no-use-imap-only</dt>
+<dd>
+<p>If this is set, all emails will only be copied to the IMAP folder specified
+with <code>--imap-sent-folder</code> or <code>sendemail.imapSentFolder</code> and will not be sent
+to the recipients. Useful if you just want to create a draft of the emails
+and use another email client to send them.
+If disabled with <code>--no-use-imap-only</code>, the emails will be sent like usual.
+Disabled by default, but the <code>sendemail.useImapOnly</code> configuration
+variable can be used to enable it.</p>
+<div class="paragraph">
+<p>This feature requires setting up <code>git</code> <code>imap-send</code>. See <a href="git-imap-send.html">git-imap-send(1)</a>
+for instructions.</p>
+</div>
+</dd>
 <dt class="hdlist1">--batch-size=&lt;num&gt;</dt>
 <dd>
 <p>Some email servers (e.g. <em>smtp.163.com</em>) limit the number of emails to be
@@ -872,7 +902,8 @@ at the command line, its value takes precedence over the
 <dd>
 <p>Disable any header command in use.</p>
 </dd>
-<dt class="hdlist1">--[no-]chain-reply-to</dt>
+<dt class="hdlist1">--chain-reply-to</dt>
+<dt class="hdlist1">--no-chain-reply-to</dt>
 <dd>
 <p>If this is set, each email will be sent as a reply to the previous
 email sent.  If disabled with <code>--no-chain-reply-to</code>, all emails after
@@ -888,21 +919,24 @@ configuration variable can be used to enable it.</p>
 values in the <code>sendemail</code> section. The default identity is
 the value of <code>sendemail.identity</code>.</p>
 </dd>
-<dt class="hdlist1">--[no-]signed-off-by-cc</dt>
+<dt class="hdlist1">--signed-off-by-cc</dt>
+<dt class="hdlist1">--no-signed-off-by-cc</dt>
 <dd>
 <p>If this is set, add emails found in the <code>Signed-off-by</code> trailer or <code>Cc:</code>
 lines to the cc list. Default is the value of <code>sendemail.signedOffByCc</code>
 configuration value; if that is unspecified, default to
 <code>--signed-off-by-cc</code>.</p>
 </dd>
-<dt class="hdlist1">--[no-]cc-cover</dt>
+<dt class="hdlist1">--cc-cover</dt>
+<dt class="hdlist1">--no-cc-cover</dt>
 <dd>
 <p>If this is set, emails found in <code>Cc:</code> headers in the first patch of
 the series (typically the cover letter) are added to the cc list
 for each email set. Default is the value of <code>sendemail.ccCover</code>
 configuration value; if that is unspecified, default to <code>--no-cc-cover</code>.</p>
 </dd>
-<dt class="hdlist1">--[no-]to-cover</dt>
+<dt class="hdlist1">--to-cover</dt>
+<dt class="hdlist1">--no-to-cover</dt>
 <dd>
 <p>If this is set, emails found in <code>To:</code> headers in the first patch of
 the series (typically the cover letter) are added to the to list
@@ -959,13 +993,15 @@ that is unspecified, default to <code>self</code> if <code>--suppress-from</code
 specified, as well as <code>body</code> if <code>--no-signed-off-cc</code> is specified.</p>
 </div>
 </dd>
-<dt class="hdlist1">--[no-]suppress-from</dt>
+<dt class="hdlist1">--suppress-from</dt>
+<dt class="hdlist1">--no-suppress-from</dt>
 <dd>
 <p>If this is set, do not add the <code>From:</code> address to the <code>Cc:</code> list.
 Default is the value of <code>sendemail.suppressFrom</code> configuration
 value; if that is unspecified, default to <code>--no-suppress-from</code>.</p>
 </dd>
-<dt class="hdlist1">--[no-]thread</dt>
+<dt class="hdlist1">--thread</dt>
+<dt class="hdlist1">--no-thread</dt>
 <dd>
 <p>If this is set, the <code>In-Reply-To</code> and <code>References</code> headers will be
 added to each email sent.  Whether each mail refers to the
@@ -986,7 +1022,8 @@ Failure to do so may not produce the expected result in the
 recipient&#8217;s MUA.</p>
 </div>
 </dd>
-<dt class="hdlist1">--[no-]mailmap</dt>
+<dt class="hdlist1">--mailmap</dt>
+<dt class="hdlist1">--no-mailmap</dt>
 <dd>
 <p>Use the mailmap file (see <a href="gitmailmap.html">gitmailmap(5)</a>) to map all
 addresses to their canonical real name and email address. Additional
@@ -1038,7 +1075,8 @@ have been specified, in which case default to <code>compose</code>.</p>
 <dd>
 <p>Do everything except actually send the emails.</p>
 </dd>
-<dt class="hdlist1">--[no-]format-patch</dt>
+<dt class="hdlist1">--format-patch</dt>
+<dt class="hdlist1">--no-format-patch</dt>
 <dd>
 <p>When an argument may be understood either as a reference or as a file name,
 choose to understand it as a format-patch argument (<code>--format-patch</code>)
@@ -1050,7 +1088,8 @@ occurs, <code>git</code> <code>send-email</code> will fail.</p>
 <p>Make <code>git</code> <code>send-email</code> less verbose.  One line per email should be
 all that is output.</p>
 </dd>
-<dt class="hdlist1">--[no-]validate</dt>
+<dt class="hdlist1">--validate</dt>
+<dt class="hdlist1">--no-validate</dt>
 <dd>
 <p>Perform sanity checks on patches.
 Currently, validation means the following:</p>
@@ -1240,6 +1279,8 @@ recognized by the parser.</p>
 <dt class="hdlist1">sendemail.smtpServerPort</dt>
 <dt class="hdlist1">sendemail.smtpServerOption</dt>
 <dt class="hdlist1">sendemail.smtpUser</dt>
+<dt class="hdlist1">sendemail.imapSentFolder</dt>
+<dt class="hdlist1">sendemail.useImapOnly</dt>
 <dt class="hdlist1">sendemail.thread</dt>
 <dt class="hdlist1">sendemail.transferEncoding</dt>
 <dt class="hdlist1">sendemail.validate</dt>
@@ -1494,7 +1535,7 @@ to instruct <code>git-send-email</code> to use it for sending emails.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-28 11:27:20 UTC
+Last updated 2025-11-04 15:37:34 UTC
 </div>
 </div>
 </body>

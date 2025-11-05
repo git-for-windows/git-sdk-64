@@ -452,23 +452,23 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git stash</em> list [&lt;log-options&gt;]
-<em>git stash</em> show [-u | --include-untracked | --only-untracked] [&lt;diff-options&gt;] [&lt;stash&gt;]
-<em>git stash</em> drop [-q | --quiet] [&lt;stash&gt;]
-<em>git stash</em> pop [--index] [-q | --quiet] [&lt;stash&gt;]
-<em>git stash</em> apply [--index] [-q | --quiet] [&lt;stash&gt;]
-<em>git stash</em> branch &lt;branchname&gt; [&lt;stash&gt;]
-<em>git stash</em> [push [-p | --patch] [-S | --staged] [-k | --[no-]keep-index] [-q | --quiet]
-             [-u | --include-untracked] [-a | --all] [(-m | --message) &lt;message&gt;]
-             [--pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]]
-             [--] [&lt;pathspec&gt;&#8230;&#8203;]]
-<em>git stash</em> save [-p | --patch] [-S | --staged] [-k | --[no-]keep-index] [-q | --quiet]
-             [-u | --include-untracked] [-a | --all] [&lt;message&gt;]
-<em>git stash</em> clear
-<em>git stash</em> create [&lt;message&gt;]
-<em>git stash</em> store [(-m | --message) &lt;message&gt;] [-q | --quiet] &lt;commit&gt;
-<em>git stash</em> export (--print | --to-ref &lt;ref&gt;) [&lt;stash&gt;&#8230;&#8203;]
-<em>git stash</em> import &lt;commit&gt;</pre>
+<pre class="content"><code>git</code> <code>stash</code> <code>list</code> [<em>&lt;log-options&gt;</em>]
+<code>git</code> <code>stash</code> <code>show</code> [<code>-u</code> | <code>--include-untracked</code> | <code>--only-untracked</code>] [<em>&lt;diff-options&gt;</em>] [<em>&lt;stash&gt;</em>]
+<code>git</code> <code>stash</code> <code>drop</code> [<code>-q</code> | <code>--quiet</code>] [<em>&lt;stash&gt;</em>]
+<code>git</code> <code>stash</code> <code>pop</code> [<code>--index</code>] [<code>-q</code> | <code>--quiet</code>] [<em>&lt;stash&gt;</em>]
+<code>git</code> <code>stash</code> <code>apply</code> [<code>--index</code>] [<code>-q</code> | <code>--quiet</code>] [<em>&lt;stash&gt;</em>]
+<code>git</code> <code>stash</code> <code>branch</code> <em>&lt;branchname&gt;</em> [<em>&lt;stash&gt;</em>]
+<code>git</code> <code>stash</code> [<code>push</code> [<code>-p</code> | <code>--patch</code>] [<code>-S</code> | <code>--staged</code>] [<code>-k</code> | <code>--</code>[<code>no-</code>]<code>keep-index</code>] [<code>-q</code> | <code>--quiet</code>]
+	     [<code>-u</code> | <code>--include-untracked</code>] [<code>-a</code> | <code>--all</code>] [(<code>-m</code> | <code>--message</code>) <em>&lt;message&gt;</em>]
+	     [<code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]]
+	     [<code>--</code>] [<em>&lt;pathspec&gt;</em>&#8230;&#8203;]]
+<code>git</code> <code>stash</code> <code>save</code> [<code>-p</code> | <code>--patch</code>] [<code>-S</code> | <code>--staged</code>] [<code>-k</code> | <code>--</code>[<code>no-</code>]<code>keep-index</code>] [<code>-q</code> | <code>--quiet</code>]
+           [<code>-u</code> | <code>--include-untracked</code>] [<code>-a</code> | <code>--all</code>] [<em>&lt;message&gt;</em>]
+<code>git</code> <code>stash</code> <code>clear</code>
+<code>git</code> <code>stash</code> <code>create</code> [<em>&lt;message&gt;</em>]
+<code>git</code> <code>stash</code> <code>store</code> [(<code>-m</code> | <code>--message</code>) <em>&lt;message&gt;</em>] [<code>-q</code> | <code>--quiet</code>] <em>&lt;commit&gt;</em>
+<code>git</code> <code>stash</code> <code>export</code> (<code>--print</code> | <code>--to-ref</code> <em>&lt;ref&gt;</em>) [<em>&lt;stash&gt;</em>&#8230;&#8203;]
+<code>git</code> <code>stash</code> <code>import</code> <em>&lt;commit&gt;</em></pre>
 </div>
 </div>
 </div>
@@ -486,7 +486,7 @@ and reverts the working directory to match the <code>HEAD</code> commit.</p>
 <code>git</code> <code>stash</code> <code>list</code>, inspected with <code>git</code> <code>stash</code> <code>show</code>, and restored
 (potentially on top of a different commit) with <code>git</code> <code>stash</code> <code>apply</code>.
 Calling <code>git</code> <code>stash</code> without any arguments is equivalent to <code>git</code> <code>stash</code> <code>push</code>.
-A stash is by default listed as "WIP on <em>branchname</em> &#8230;&#8203;", but
+A stash is by default listed as "WIP on <em>&lt;branchname&gt;</em> &#8230;&#8203;", but
 you can give a more descriptive message on the command line when
 you create one.</p>
 </div>
@@ -496,7 +496,7 @@ stashes are found in the reflog of this reference and can be named using
 the usual reflog syntax (e.g. <code>stash@</code>{0} is the most recently
 created stash, <code>stash@</code>{1} is the one before it, <code>stash@</code>{2.<code>hours.ago</code>}
 is also possible). Stashes may also be referenced by specifying just the
-stash index (e.g. the integer <code>n</code> is equivalent to <code>stash@</code>{n}).</p>
+stash index (e.g. the integer <em>&lt;n&gt;</em> is equivalent to <code>stash@</code>{<em>&lt;n&gt;</em>}).</p>
 </div>
 </div>
 </div>
@@ -505,11 +505,11 @@ stash index (e.g. the integer <code>n</code> is equivalent to <code>stash@</code
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">push [-p|--patch] [-S|--staged] [-k|--[no-]keep-index] [-u|--include-untracked] [-a|--all] [-q|--quiet] [(-m|--message) &lt;message&gt;] [--pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]] [--] [&lt;pathspec&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><code>push</code> [<code>-p</code> | <code>--patch</code>] [<code>-S</code> | <code>--staged</code>] [<code>-k</code> | <code>--</code>[<code>no-</code>]<code>keep-index</code>] [<code>-u</code> | <code>--include-untracked</code>] [ <code>-a</code> | <code>--all</code>] [<code>-q</code> | <code>--quiet</code>] [(<code>-m</code>|<code>--message</code>) <em>&lt;message&gt;</em>] [<code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]] [<code>--</code>] [<em>&lt;pathspec&gt;</em>...]</dt>
 <dd>
 <p>Save your local modifications to a new <em>stash entry</em> and roll them
-back to HEAD (in the working tree and in the index).
-The &lt;message&gt; part is optional and gives
+back to <code>HEAD</code> (in the working tree and in the index).
+The <em>&lt;message&gt;</em> part is optional and gives
 the description along with the stashed state.</p>
 <div class="paragraph">
 <p>For quickly making a snapshot, you can omit "push".  In this mode,
@@ -519,14 +519,14 @@ are <code>stash</code> <code>-p</code> which acts as alias for <code>stash</code
 which are allowed after a double hyphen <code>--</code> for disambiguation.</p>
 </div>
 </dd>
-<dt class="hdlist1">save [-p|--patch] [-S|--staged] [-k|--[no-]keep-index] [-u|--include-untracked] [-a|--all] [-q|--quiet] [&lt;message&gt;]</dt>
+<dt class="hdlist1"><code>save</code> [<code>-p</code> | <code>--patch</code>] [<code>-S</code> | <code>--staged</code>] [<code>-k</code> | <code>--</code>[<code>no-</code>]<code>keep-index</code>] [<code>-u</code> | <code>--include-untracked</code>] [<code>-a</code> | <code>--all</code>] [<code>-q</code> | <code>--quiet</code>] [<em>&lt;message&gt;</em>]</dt>
 <dd>
 <p>This option is deprecated in favour of <em>git stash push</em>.  It
 differs from "stash push" in that it cannot take pathspec.
 Instead, all non-option arguments are concatenated to form the stash
 message.</p>
 </dd>
-<dt class="hdlist1">list [&lt;log-options&gt;]</dt>
+<dt class="hdlist1"><code>list</code> [<em>&lt;log-options&gt;</em>]</dt>
 <dd>
 <p>List the stash entries that you currently have.  Each <em>stash entry</em> is
 listed with its name (e.g. <code>stash@</code>{0} is the latest entry, <code>stash@</code>{1} is
@@ -544,7 +544,7 @@ stash@{1}: On master: 9cc0589... Add git-stash</pre>
 command to control what is shown and how. See <a href="git-log.html">git-log(1)</a>.</p>
 </div>
 </dd>
-<dt class="hdlist1">show [-u|--include-untracked|--only-untracked] [&lt;diff-options&gt;] [&lt;stash&gt;]</dt>
+<dt class="hdlist1"><code>show</code> [<code>-u</code> | <code>--include-untracked</code> | <code>--only-untracked</code>] [<em>&lt;diff-options&gt;</em>] [<em>&lt;stash&gt;</em>]</dt>
 <dd>
 <p>Show the changes recorded in the stash entry as a diff between the
 stashed contents and the commit back when the stash entry was first
@@ -557,7 +557,7 @@ by the <code>stash.showStat</code>, and <code>stash.showPatch</code> config vari
 can also use <code>stash.showIncludeUntracked</code> to set whether
 <code>--include-untracked</code> is enabled by default.</p>
 </dd>
-<dt class="hdlist1">pop [--index] [-q|--quiet] [&lt;stash&gt;]</dt>
+<dt class="hdlist1"><code>pop</code> [<code>--index</code>] [<code>-q</code> | <code>--quiet</code>] [<em>&lt;stash&gt;</em>]</dt>
 <dd>
 <p>Remove a single stashed state from the stash list and apply it
 on top of the current working tree state, i.e., do the inverse
@@ -569,13 +569,13 @@ removed from the stash list. You need to resolve the conflicts by hand
 and call <code>git</code> <code>stash</code> <code>drop</code> manually afterwards.</p>
 </div>
 </dd>
-<dt class="hdlist1">apply [--index] [-q|--quiet] [&lt;stash&gt;]</dt>
+<dt class="hdlist1"><code>apply</code> [<code>--index</code>] [<code>-q</code> | <code>--quiet</code>] [<em>&lt;stash&gt;</em>]</dt>
 <dd>
 <p>Like <code>pop</code>, but do not remove the state from the stash list. Unlike <code>pop</code>,
 <em>&lt;stash&gt;</em> may be any commit that looks like a commit created by
 <code>stash</code> <code>push</code> or <code>stash</code> <code>create</code>.</p>
 </dd>
-<dt class="hdlist1">branch &lt;branchname&gt; [&lt;stash&gt;]</dt>
+<dt class="hdlist1"><code>branch</code> <em>&lt;branchname&gt;</em> [<em>&lt;stash&gt;</em>]</dt>
 <dd>
 <p>Creates and checks out a new branch named <em>&lt;branchname&gt;</em> starting from
 the commit at which the <em>&lt;stash&gt;</em> was originally created, applies the
@@ -590,17 +590,17 @@ time <code>git</code> <code>stash</code> was run, it restores the originally sta
 with no conflicts.</p>
 </div>
 </dd>
-<dt class="hdlist1">clear</dt>
+<dt class="hdlist1"><code>clear</code></dt>
 <dd>
 <p>Remove all the stash entries. Note that those entries will then
 be subject to pruning, and may be impossible to recover (see
-<em>Examples</em> below for a possible strategy).</p>
+<em>EXAMPLES</em> below for a possible strategy).</p>
 </dd>
-<dt class="hdlist1">drop [-q|--quiet] [&lt;stash&gt;]</dt>
+<dt class="hdlist1"><code>drop</code> [<code>-q</code> | <code>--quiet</code>] [<em>&lt;stash&gt;</em>]</dt>
 <dd>
 <p>Remove a single stash entry from the list of stash entries.</p>
 </dd>
-<dt class="hdlist1">create</dt>
+<dt class="hdlist1"><code>create</code></dt>
 <dd>
 <p>Create a stash entry (which is a regular commit object) and
 return its object name, without storing it anywhere in the ref
@@ -608,20 +608,20 @@ namespace.
 This is intended to be useful for scripts.  It is probably not
 the command you want to use; see "push" above.</p>
 </dd>
-<dt class="hdlist1">store</dt>
+<dt class="hdlist1"><code>store</code></dt>
 <dd>
 <p>Store a given stash created via <em>git stash create</em> (which is a
 dangling merge commit) in the stash ref, updating the stash
 reflog.  This is intended to be useful for scripts.  It is
 probably not the command you want to use; see "push" above.</p>
 </dd>
-<dt class="hdlist1">export ( --print | --to-ref &lt;ref&gt; ) [&lt;stash&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><code>export</code> ( <code>--print</code> | <code>--to-ref</code> <em>&lt;ref&gt;</em> ) [<em>&lt;stash&gt;</em>...]</dt>
 <dd>
 <p>Export the specified stashes, or all of them if none are specified, to
 a chain of commits which can be transferred using the normal fetch and
 push mechanisms, then imported using the <code>import</code> subcommand.</p>
 </dd>
-<dt class="hdlist1">import &lt;commit&gt;</dt>
+<dt class="hdlist1"><code>import</code> <em>&lt;commit&gt;</em></dt>
 <dd>
 <p>Import the specified stashes from the specified commit, which must have been
 created by <code>export</code>, and add them to the list of stashes.  To replace the
@@ -636,8 +636,8 @@ existing stashes, use <code>clear</code> first.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">-a</dt>
-<dt class="hdlist1">--all</dt>
+<dt class="hdlist1"><code>-a</code></dt>
+<dt class="hdlist1"><code>--all</code></dt>
 <dd>
 <p>This option is only valid for <code>push</code> and <code>save</code> commands.</p>
 <div class="paragraph">
@@ -645,9 +645,9 @@ existing stashes, use <code>clear</code> first.</p>
 up with <code>git</code> <code>clean</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">-u</dt>
-<dt class="hdlist1">--include-untracked</dt>
-<dt class="hdlist1">--no-include-untracked</dt>
+<dt class="hdlist1"><code>-u</code></dt>
+<dt class="hdlist1"><code>--include-untracked</code></dt>
+<dt class="hdlist1"><code>--no-include-untracked</code></dt>
 <dd>
 <p>When used with the <code>push</code> and <code>save</code> commands,
 all untracked files are also stashed and then cleaned up with
@@ -657,14 +657,14 @@ all untracked files are also stashed and then cleaned up with
 entry as part of the diff.</p>
 </div>
 </dd>
-<dt class="hdlist1">--only-untracked</dt>
+<dt class="hdlist1"><code>--only-untracked</code></dt>
 <dd>
 <p>This option is only valid for the <code>show</code> command.</p>
 <div class="paragraph">
 <p>Show only the untracked files in the stash entry as part of the diff.</p>
 </div>
 </dd>
-<dt class="hdlist1">--index</dt>
+<dt class="hdlist1"><code>--index</code></dt>
 <dd>
 <p>This option is only valid for <code>pop</code> and <code>apply</code> commands.</p>
 <div class="paragraph">
@@ -674,17 +674,17 @@ the index&#8217;s ones. However, this can fail, when you have conflicts
 apply the changes as they were originally).</p>
 </div>
 </dd>
-<dt class="hdlist1">-k</dt>
-<dt class="hdlist1">--keep-index</dt>
-<dt class="hdlist1">--no-keep-index</dt>
+<dt class="hdlist1"><code>-k</code></dt>
+<dt class="hdlist1"><code>--keep-index</code></dt>
+<dt class="hdlist1"><code>--no-keep-index</code></dt>
 <dd>
 <p>This option is only valid for <code>push</code> and <code>save</code> commands.</p>
 <div class="paragraph">
 <p>All changes already added to the index are left intact.</p>
 </div>
 </dd>
-<dt class="hdlist1">-p</dt>
-<dt class="hdlist1">--patch</dt>
+<dt class="hdlist1"><code>-p</code></dt>
+<dt class="hdlist1"><code>--patch</code></dt>
 <dd>
 <p>This option is only valid for <code>push</code> and <code>save</code> commands.</p>
 <div class="paragraph">
@@ -714,8 +714,8 @@ of lines, thereby fusing hunks that are close to each other.
 Defaults to <code>diff.interHunkContext</code> or 0 if the config option
 is unset.</p>
 </dd>
-<dt class="hdlist1">-S</dt>
-<dt class="hdlist1">--staged</dt>
+<dt class="hdlist1"><code>-S</code></dt>
+<dt class="hdlist1"><code>--staged</code></dt>
 <dd>
 <p>This option is only valid for <code>push</code> and <code>save</code> commands.</p>
 <div class="paragraph">
@@ -727,7 +727,7 @@ of current branch.</p>
 <p>The <code>--patch</code> option has priority over this one.</p>
 </div>
 </dd>
-<dt class="hdlist1">--pathspec-from-file=&lt;file&gt;</dt>
+<dt class="hdlist1"><code>--pathspec-from-file=</code><em>&lt;file&gt;</em></dt>
 <dd>
 <p>This option is only valid for <code>push</code> command.</p>
 <div class="paragraph">
@@ -739,7 +739,7 @@ quoted as explained for the configuration variable <code>core.quotePath</code>
 global <code>--literal-pathspecs</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--pathspec-file-nul</dt>
+<dt class="hdlist1"><code>--pathspec-file-nul</code></dt>
 <dd>
 <p>This option is only valid for <code>push</code> command.</p>
 <div class="paragraph">
@@ -748,8 +748,8 @@ separated with NUL character and all other characters are taken
 literally (including newlines and quotes).</p>
 </div>
 </dd>
-<dt class="hdlist1">-q</dt>
-<dt class="hdlist1">--quiet</dt>
+<dt class="hdlist1"><code>-q</code></dt>
+<dt class="hdlist1"><code>--quiet</code></dt>
 <dd>
 <p>This option is only valid for <code>apply</code>, <code>drop</code>, <code>pop</code>, <code>push</code>,
 <code>save</code>, <code>store</code> commands.</p>
@@ -757,7 +757,7 @@ literally (including newlines and quotes).</p>
 <p>Quiet, suppress feedback messages.</p>
 </div>
 </dd>
-<dt class="hdlist1">--print</dt>
+<dt class="hdlist1"><code>--print</code></dt>
 <dd>
 <p>This option is only valid for the <code>export</code> command.</p>
 <div class="paragraph">
@@ -766,7 +766,7 @@ storing it anywhere in the ref namespace and print the object ID to
 standard output.  This is designed for scripts.</p>
 </div>
 </dd>
-<dt class="hdlist1">--to-ref</dt>
+<dt class="hdlist1"><code>--to-ref</code></dt>
 <dd>
 <p>This option is only valid for the <code>export</code> command.</p>
 <div class="paragraph">
@@ -774,14 +774,14 @@ standard output.  This is designed for scripts.</p>
 it to the specified ref.</p>
 </div>
 </dd>
-<dt class="hdlist1">--</dt>
+<dt class="hdlist1"><code>--</code></dt>
 <dd>
 <p>This option is only valid for <code>push</code> command.</p>
 <div class="paragraph">
 <p>Separates pathspec from options for disambiguation purposes.</p>
 </div>
 </dd>
-<dt class="hdlist1">&lt;pathspec&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1"><em>&lt;pathspec&gt;</em>...</dt>
 <dd>
 <p>This option is only valid for <code>push</code> command.</p>
 <div class="paragraph">
@@ -794,7 +794,7 @@ too, leaving files that do not match the pathspec intact.</p>
 <p>For more details, see the <em>pathspec</em> entry in <a href="gitglossary.html">gitglossary(7)</a>.</p>
 </div>
 </dd>
-<dt class="hdlist1">&lt;stash&gt;</dt>
+<dt class="hdlist1"><em>&lt;stash&gt;</em></dt>
 <dd>
 <p>This option is only valid for <code>apply</code>, <code>branch</code>, <code>drop</code>, <code>pop</code>,
 <code>show</code>, and <code>export</code> commands.</p>
@@ -958,23 +958,27 @@ as what&#8217;s found there:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">stash.showIncludeUntracked</dt>
+<dt class="hdlist1"><code>stash.index</code></dt>
+<dd>
+<p>If this is set to true, <code>git</code> <code>stash</code> <code>apply</code> and <code>git</code> <code>stash</code> <code>pop</code> will
+behave as if <code>--index</code> was supplied. Defaults to false.</p>
+</dd>
+<dt class="hdlist1"><code>stash.showIncludeUntracked</code></dt>
 <dd>
 <p>If this is set to true, the <code>git</code> <code>stash</code> <code>show</code> command will show
-the untracked files of a stash entry.  Defaults to false. See
-the description of the <em>show</em> command in <a href="git-stash.html">git-stash(1)</a>.</p>
+the untracked files of a stash entry. Defaults to false. </p>
 </dd>
-<dt class="hdlist1">stash.showPatch</dt>
+<dt class="hdlist1"><code>stash.showPatch</code></dt>
 <dd>
 <p>If this is set to true, the <code>git</code> <code>stash</code> <code>show</code> command without an
 option will show the stash entry in patch form.  Defaults to false.
-See the description of the <em>show</em> command in <a href="git-stash.html">git-stash(1)</a>.</p>
+</p>
 </dd>
-<dt class="hdlist1">stash.showStat</dt>
+<dt class="hdlist1"><code>stash.showStat</code></dt>
 <dd>
 <p>If this is set to true, the <code>git</code> <code>stash</code> <code>show</code> command without an
 option will show a diffstat of the stash entry.  Defaults to true.
-See the description of the <em>show</em> command in <a href="git-stash.html">git-stash(1)</a>.</p>
+</p>
 </dd>
 </dl>
 </div>
@@ -1003,7 +1007,7 @@ See the description of the <em>show</em> command in <a href="git-stash.html">git
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-28 11:27:20 UTC
+Last updated 2025-11-04 15:37:34 UTC
 </div>
 </div>
 </body>

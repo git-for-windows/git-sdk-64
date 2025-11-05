@@ -453,7 +453,16 @@ pre>code {
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><code>git</code> <code>refs</code> <code>migrate</code> <code>--ref-format=</code><em>&lt;format&gt;</em> [<code>--no-reflog</code>] [<code>--dry-run</code>]
-<code>git</code> <code>refs</code> <code>verify</code> [<code>--strict</code>] [<code>--verbose</code>]</pre>
+<code>git</code> <code>refs</code> <code>verify</code> [<code>--strict</code>] [<code>--verbose</code>]
+<code>git</code> <code>refs</code> <code>list</code> [<code>--count=</code><em>&lt;count&gt;</em>] [<code>--shell</code>|<code>--perl</code>|<code>--python</code>|<code>--tcl</code>]
+		   [(<code>--sort=</code><em>&lt;key&gt;</em>)&#8230;&#8203;] [<code>--format=</code><em>&lt;format&gt;</em>]
+		   [<code>--include-root-refs</code>] [<code>--points-at=</code><em>&lt;object&gt;</em>]
+		   [<code>--merged</code>[<code>=</code><em>&lt;object&gt;</em>]] [<code>--no-merged</code>[<code>=</code><em>&lt;object&gt;</em>]]
+		   [<code>--contains</code>[<code>=</code><em>&lt;object&gt;</em>]] [<code>--no-contains</code>[<code>=</code><em>&lt;object&gt;</em>]]
+		   [(<code>--exclude=</code><em>&lt;pattern&gt;</em>)&#8230;&#8203;] [<code>--start-after=</code><em>&lt;marker&gt;</em>]
+		   [ <code>--stdin</code> | (<em>&lt;pattern&gt;</em><code>...</code>)]
+<code>git</code> <code>refs</code> <code>exists</code> <em>&lt;ref&gt;</em>
+<code>git</code> <code>refs</code> <code>optimize</code> [<code>--all</code>] [<code>--no-prune</code>] [<code>--auto</code>] [<code>--include</code> <em>&lt;pattern&gt;</em>] [<code>--exclude</code> <em>&lt;pattern&gt;</em>]</pre>
 </div>
 </div>
 </div>
@@ -470,13 +479,32 @@ pre>code {
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">migrate</dt>
+<dt class="hdlist1"><code>migrate</code></dt>
 <dd>
 <p>Migrate ref store between different formats.</p>
 </dd>
-<dt class="hdlist1">verify</dt>
+<dt class="hdlist1"><code>verify</code></dt>
 <dd>
 <p>Verify reference database consistency.</p>
+</dd>
+<dt class="hdlist1">list</dt>
+<dd>
+<p>List references in the repository with support for filtering,
+formatting, and sorting. This subcommand is an alias for
+<a href="git-for-each-ref.html">git-for-each-ref(1)</a> and offers identical functionality.</p>
+</dd>
+<dt class="hdlist1">exists</dt>
+<dd>
+<p>Check whether the given reference exists. Returns an exit code of 0 if
+it does, 2 if it is missing, and 1 in case looking up the reference
+failed with an error other than the reference being missing. This does
+not verify whether the reference resolves to an actual object.</p>
+</dd>
+<dt class="hdlist1">optimize</dt>
+<dd>
+<p>Optimizes references to improve repository performance and reduce disk
+usage. This subcommand is an alias for <a href="git-pack-refs.html">git-pack-refs(1)</a> and
+offers identical functionality.</p>
 </dd>
 </dl>
 </div>
@@ -486,11 +514,11 @@ pre>code {
 <h2 id="_options">OPTIONS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The following options are specific to <em>git refs migrate</em>:</p>
+<p>The following options are specific to <code>git</code> <code>refs</code> <code>migrate</code>:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--ref-format=&lt;format&gt;</dt>
+<dt class="hdlist1"><code>--ref-format=</code><em>&lt;format&gt;</em></dt>
 <dd>
 <p>The ref format to migrate the ref store to. Can be one of:</p>
 <div class="ulist">
@@ -505,7 +533,7 @@ internals are subject to change.</p>
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">--dry-run</dt>
+<dt class="hdlist1"><code>--dry-run</code></dt>
 <dd>
 <p>Perform the migration, but do not modify the repository. The migrated
 refs will be written into a separate directory that can be inspected
@@ -513,8 +541,8 @@ separately. The name of the directory will be reported on stdout. This
 can be used to double check that the migration works as expected before
 performing the actual migration.</p>
 </dd>
-<dt class="hdlist1">--reflog</dt>
-<dt class="hdlist1">--no-reflog</dt>
+<dt class="hdlist1"><code>--reflog</code></dt>
+<dt class="hdlist1"><code>--no-reflog</code></dt>
 <dd>
 <p>Choose between migrating the reflog data to the new backend,
 and discarding them.  The default is "--reflog", to migrate.</p>
@@ -522,18 +550,201 @@ and discarding them.  The default is "--reflog", to migrate.</p>
 </dl>
 </div>
 <div class="paragraph">
-<p>The following options are specific to <em>git refs verify</em>:</p>
+<p>The following options are specific to <code>git</code> <code>refs</code> <code>verify</code>:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--strict</dt>
+<dt class="hdlist1"><code>--strict</code></dt>
 <dd>
 <p>Enable stricter error checking. This will cause warnings to be
 reported as errors. See <a href="git-fsck.html">git-fsck(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--verbose</dt>
+<dt class="hdlist1"><code>--verbose</code></dt>
 <dd>
 <p>When verifying the reference database consistency, be chatty.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The following options are specific to <em>git refs list</em>:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>&lt;pattern&gt;</em>...</dt>
+<dd>
+<p>If one or more <em>&lt;pattern&gt;</em> parameters are given, only refs are shown that
+match against at least one pattern, either using <code>fnmatch</code>(3) or
+literally, in the latter case matching completely or from the
+beginning up to a slash.</p>
+</dd>
+<dt class="hdlist1"><code>--stdin</code></dt>
+<dd>
+<p>The list of patterns is read from standard input instead of from
+the argument list.</p>
+</dd>
+<dt class="hdlist1"><code>--count=</code><em>&lt;count&gt;</em></dt>
+<dd>
+<p>Stop after showing <em>&lt;count&gt;</em> refs.</p>
+</dd>
+<dt class="hdlist1"><code>--sort=</code><em>&lt;key&gt;</em></dt>
+<dd>
+<p>Sort on the field name <em>&lt;key&gt;</em>.  Prefix <code>-</code> to sort in
+descending order of the value.  When unspecified,
+<code>refname</code> is used.  You may use the <code>--sort=</code><em>&lt;key&gt;</em> option
+multiple times, in which case the last key becomes the primary
+key.</p>
+</dd>
+<dt class="hdlist1"><code>--format</code>[<code>=</code><em>&lt;format&gt;</em>]</dt>
+<dd>
+<p>A string that interpolates <code>%</code>(<code>fieldname</code>) from a ref being shown and
+the object it points at. In addition, the string literal <code>%%</code>
+renders as <code>%</code> and <code>%xx</code> - where <code>xx</code> are hex digits - renders as
+the character with hex code <code>xx</code>. For example, <code>%00</code> interpolates to
+<code>\0</code> (<em>NUL</em>), <code>%09</code> to <code>\t</code> (<em>TAB</em>), and <code>%0a</code> to <code>\n</code> (<em>LF</em>).</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>When unspecified, <em>&lt;format&gt;</em> defaults to <code>%</code>(<code>objectname</code>) <code>SPC</code> <code>%</code>(<code>objecttype</code>)
+<code>TAB</code> <code>%</code>(<code>refname</code>).</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>--color</code>[<code>=</code><em>&lt;when&gt;</em>]</dt>
+<dd>
+<p>Respect any colors specified in the <code>--format</code> option. The
+<em>&lt;when_</em> field must be one of <code>always</code>, <code>never</code>, or <code>auto</code> (if
+<em>&lt;when&gt;</em> is absent, behave as if <code>always</code> was given).</p>
+</dd>
+<dt class="hdlist1"><code>--shell</code></dt>
+<dt class="hdlist1"><code>--perl</code></dt>
+<dt class="hdlist1"><code>--python</code></dt>
+<dt class="hdlist1"><code>--tcl</code></dt>
+<dd>
+<p>If given, strings that substitute <code>%</code>(<code>fieldname</code>)
+placeholders are quoted as string literals suitable for
+the specified host language.  This is meant to produce
+a scriptlet that can directly be "eval"ed.</p>
+</dd>
+<dt class="hdlist1"><code>--points-at=</code><em>&lt;object&gt;</em></dt>
+<dd>
+<p>Only list refs which points at the given object.</p>
+</dd>
+<dt class="hdlist1"><code>--merged</code>[<code>=</code><em>&lt;object&gt;</em>]</dt>
+<dd>
+<p>Only list refs whose tips are reachable from the
+specified commit (<code>HEAD</code> if not specified).</p>
+</dd>
+<dt class="hdlist1"><code>--no-merged</code>[<code>=</code><em>&lt;object&gt;</em>]</dt>
+<dd>
+<p>Only list refs whose tips are not reachable from <em>&lt;object&gt;</em>(<code>HEAD</code> if not
+specified).</p>
+</dd>
+<dt class="hdlist1"><code>--contains</code>[<code>=</code><em>&lt;object&gt;</em>]</dt>
+<dd>
+<p>Only list refs which contain <em>&lt;object&gt;</em>(<code>HEAD</code> if not specified).</p>
+</dd>
+<dt class="hdlist1"><code>--no-contains</code>[<code>=</code><em>&lt;object&gt;</em>]</dt>
+<dd>
+<p>Only list refs which don&#8217;t contain <em>&lt;object&gt;</em> (<code>HEAD</code>
+if not specified).</p>
+</dd>
+<dt class="hdlist1"><code>--ignore-case</code></dt>
+<dd>
+<p>Sorting and filtering refs are case insensitive.</p>
+</dd>
+<dt class="hdlist1"><code>--omit-empty</code></dt>
+<dd>
+<p>Do not print a newline after formatted refs where the format expands
+to the empty string.</p>
+</dd>
+<dt class="hdlist1"><code>--exclude=</code><em>&lt;excluded-pattern&gt;</em></dt>
+<dd>
+<p>If one or more <code>--exclude</code> options are given, only refs which do not
+match any <em>&lt;excluded-pattern&gt;</em> parameters are shown. Matching is done
+using the same rules as <em>&lt;pattern&gt;</em> above.</p>
+</dd>
+<dt class="hdlist1"><code>--include-root-refs</code></dt>
+<dd>
+<p>List root refs (<code>HEAD</code> and pseudorefs) apart from regular refs.</p>
+</dd>
+<dt class="hdlist1"><code>--start-after=</code><em>&lt;marker&gt;</em></dt>
+<dd>
+<p>Allows paginating the output by skipping references up to and including the
+specified marker. When paging, it should be noted that references may be
+deleted, modified or added between invocations. Output will only yield those
+references which follow the marker lexicographically. Output begins from the
+first reference that would come after the marker alphabetically. Cannot be
+used with <code>--sort=</code><em>&lt;key&gt;</em> or <code>--stdin</code> options, or the <em>&lt;pattern&gt;</em> argument(s)
+to limit the refs.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The following options are specific to <em>git refs optimize</em>:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">--all</dt>
+<dd>
+<p>The command by default packs all tags and refs that are already
+packed, and leaves other refs
+alone.  This is because branches are expected to be actively
+developed and packing their tips does not help performance.
+This option causes all refs to be packed as well, with the exception
+of hidden refs, broken refs, and symbolic refs. Useful for a repository
+with many branches of historical interests.</p>
+</dd>
+<dt class="hdlist1">--no-prune</dt>
+<dd>
+<p>The command usually removes loose refs under <code>$GIT_DIR/refs</code>
+hierarchy after packing them.  This option tells it not to.</p>
+</dd>
+<dt class="hdlist1">--auto</dt>
+<dd>
+<p>Pack refs as needed depending on the current state of the ref database. The
+behavior depends on the ref format used by the repository and may change in the
+future.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>"files": Loose references are packed into the <code>packed-refs</code> file
+based on the ratio of loose references to the size of the
+<code>packed-refs</code> file. The bigger the <code>packed-refs</code> file, the more loose
+references need to exist before we repack.</p>
+</li>
+<li>
+<p>"reftable": Tables are compacted such that they form a geometric
+sequence. For two tables N and N+1, where N+1 is newer, this
+maintains the property that N is at least twice as big as N+1. Only
+tables that violate this property are compacted.</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">--include &lt;pattern&gt;</dt>
+<dd>
+<p>Pack refs based on a <code>glob</code>(<code>7</code>) pattern. Repetitions of this option
+accumulate inclusion patterns. If a ref is both included in <code>--include</code> and
+<code>--exclude</code>, <code>--exclude</code> takes precedence. Using <code>--include</code> will preclude all
+tags from being included by default. Symbolic refs and broken refs will never
+be packed. When used with <code>--all</code>, it will be a noop. Use <code>--no-include</code> to clear
+and reset the list of patterns.</p>
+</dd>
+<dt class="hdlist1">--exclude &lt;pattern&gt;</dt>
+<dd>
+<p>Do not pack refs matching the given <code>glob</code>(<code>7</code>) pattern. Repetitions of this option
+accumulate exclusion patterns. Use <code>--no-exclude</code> to clear and reset the list of
+patterns. If a ref is already packed, including it with <code>--exclude</code> will not
+unpack it.</p>
+<div class="paragraph">
+<p>When used with <code>--all</code>, pack only loose refs which do not match any of
+the provided <code>--exclude</code> patterns.</p>
+</div>
+<div class="paragraph">
+<p>When used with <code>--include</code>, refs provided to <code>--include</code>, minus refs that are
+provided to <code>--exclude</code> will be packed.</p>
+</div>
 </dd>
 </dl>
 </div>
@@ -575,7 +786,7 @@ unregister it first with git-maintenance(1).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-28 11:27:20 UTC
+Last updated 2025-11-04 15:37:34 UTC
 </div>
 </div>
 </body>

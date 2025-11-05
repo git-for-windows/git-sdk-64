@@ -486,7 +486,8 @@ index file, all SHA-1 references in the <code>refs</code> namespace, and all ref
 <p>Print out objects that exist but that aren&#8217;t reachable from any
 of the reference nodes.</p>
 </dd>
-<dt class="hdlist1">--[no-]dangling</dt>
+<dt class="hdlist1">--dangling</dt>
+<dt class="hdlist1">--no-dangling</dt>
 <dd>
 <p>Print objects that exist but that are never <em>directly</em> used (default).
 <code>--no-dangling</code> can be used to omit this information from the output.</p>
@@ -564,7 +565,8 @@ SHA-1 also display a name that describes <strong>how</strong> they are reachable
 compatible with <a href="git-rev-parse.html">git-rev-parse(1)</a>, e.g.
 <code>HEAD@</code>{1234567890}~25^2:src/.</p>
 </dd>
-<dt class="hdlist1">--[no-]progress</dt>
+<dt class="hdlist1">--progress</dt>
+<dt class="hdlist1">--no-progress</dt>
 <dd>
 <p>Progress status is reported on the standard error stream by
 default when it is attached to a terminal, unless
@@ -572,7 +574,8 @@ default when it is attached to a terminal, unless
 progress status even if the standard error stream is not
 directed to a terminal.</p>
 </dd>
-<dt class="hdlist1">--[no-]references</dt>
+<dt class="hdlist1">--references</dt>
+<dt class="hdlist1">--no-references</dt>
 <dd>
 <p>Control whether to check the references database consistency
 via <em>git refs verify</em>. See <a href="git-refs.html">git-refs(1)</a> for details.
@@ -763,6 +766,14 @@ by setting the corresponding <code>fsck.</code><em>&lt;msg-id&gt;</em> configura
 <dd>
 <p>(INFO) A tree contains a bad filemode entry.</p>
 </dd>
+<dt class="hdlist1"><code>badGpgsig</code></dt>
+<dd>
+<p>(ERROR) A tag contains a bad (truncated) signature (e.g., <code>gpgsig</code>) header.</p>
+</dd>
+<dt class="hdlist1"><code>badHeaderContinuation</code></dt>
+<dd>
+<p>(ERROR) A continuation header (such as for <code>gpgsig</code>) is unexpectedly truncated.</p>
+</dd>
 <dt class="hdlist1"><code>badName</code></dt>
 <dd>
 <p>(ERROR) An author/committer name is empty.</p>
@@ -799,6 +810,10 @@ header.</p>
 <dt class="hdlist1"><code>badReferentName</code></dt>
 <dd>
 <p>(ERROR) The referent name of a symref is invalid.</p>
+</dd>
+<dt class="hdlist1"><code>badReftableTableName</code></dt>
+<dd>
+<p>(WARN) A reftable table has an invalid name.</p>
 </dd>
 <dt class="hdlist1"><code>badTagName</code></dt>
 <dd>
@@ -887,14 +902,6 @@ very early versions of Git would create such an empty
 <dd>
 <p>(INFO) Could not parse .<code>gitmodules</code> blob.</p>
 </dd>
-</dl>
-</div>
-<div class="paragraph">
-<p><code>gitmodulesLarge</code>;
-	(ERROR) .<code>gitmodules</code> blob is too large to parse.</p>
-</div>
-<div class="dlist">
-<dl>
 <dt class="hdlist1"><code>gitmodulesPath</code></dt>
 <dd>
 <p>(ERROR) .<code>gitmodules</code> path is invalid.</p>
@@ -1101,7 +1108,7 @@ created such a file.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-28 11:27:20 UTC
+Last updated 2025-11-04 15:37:34 UTC
 </div>
 </div>
 </body>

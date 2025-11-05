@@ -464,64 +464,13 @@ pre>code {
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If <em>&lt;branch&gt;</em> is specified, <code>git</code> <code>rebase</code> will perform an automatic
-<code>git</code> <code>switch</code> <em>&lt;branch&gt;</em> before doing anything else.  Otherwise
-it remains on the current branch.</p>
+<p>Transplant a series of commits onto a different starting point.
+You can also use <code>git</code> <code>rebase</code> to reorder or combine commits: see INTERACTIVE
+MODE below for how to do that.</p>
 </div>
 <div class="paragraph">
-<p>If <em>&lt;upstream&gt;</em> is not specified, the upstream configured in
-<code>branch.</code><em>&lt;name&gt;</em><code>.remote</code> and <code>branch.</code><em>&lt;name&gt;</em><code>.merge</code> options will be used (see
-<a href="git-config.html">git-config(1)</a> for details) and the <code>--fork-point</code> option is
-assumed.  If you are currently not on any branch or if the current
-branch does not have a configured upstream, the rebase will abort.</p>
-</div>
-<div class="paragraph">
-<p>All changes made by commits in the current branch but that are not
-in <em>&lt;upstream&gt;</em> are saved to a temporary area.  This is the same set
-of commits that would be shown by <code>git</code> <code>log</code> <em>&lt;upstream&gt;</em><code>..</code><code>HEAD</code>; or by
-<code>git</code> <code>log</code> 'fork_point'<code>..</code><code>HEAD</code>, if <code>--fork-point</code> is active (see the
-description on <code>--fork-point</code> below); or by <code>git</code> <code>log</code> <code>HEAD</code>, if the
-<code>--root</code> option is specified.</p>
-</div>
-<div class="paragraph">
-<p>The current branch is reset to <em>&lt;upstream&gt;</em> or <em>&lt;newbase&gt;</em> if the
-<code>--onto</code> option was supplied.  This has the exact same effect as
-<code>git</code> <code>reset</code> <code>--hard</code> <em>&lt;upstream&gt;</em> (or <em>&lt;newbase&gt;</em>). <code>ORIG_HEAD</code> is set
-to point at the tip of the branch before the reset.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-<code>ORIG_HEAD</code> is not guaranteed to still point to the previous branch tip
-at the end of the rebase if other commands that write that pseudo-ref
-(e.g. <code>git</code> <code>reset</code>) are used during the rebase. The previous branch tip,
-however, is accessible using the reflog of the current branch
-(i.e. <code>@</code>{1}, see <a href="gitrevisions.html">gitrevisions(7)</a>).
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The commits that were previously saved into the temporary area are
-then reapplied to the current branch, one by one, in order. Note that
-any commits in <code>HEAD</code> which introduce the same textual changes as a commit
-in <code>HEAD</code><code>..</code><em>&lt;upstream&gt;</em> are omitted (i.e., a patch already accepted upstream
-with a different commit message or timestamp will be skipped).</p>
-</div>
-<div class="paragraph">
-<p>It is possible that a merge failure will prevent this process from being
-completely automatic.  You will have to resolve any such merge failure
-and run <code>git</code> <code>rebase</code> <code>--continue</code>.  Another option is to bypass the commit
-that caused the merge failure with <code>git</code> <code>rebase</code> <code>--skip</code>.  To check out the
-original <em>&lt;branch&gt;</em> and remove the .<code>git/rebase-apply</code> working files, use
-the command <code>git</code> <code>rebase</code> <code>--abort</code> instead.</p>
-</div>
-<div class="paragraph">
-<p>Assume the following history exists and the current branch is "topic":</p>
+<p>For example, imagine that you have been working on the <code>topic</code> branch in this
+history, and you want to "catch up" to the work done on the <code>master</code> branch.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -531,16 +480,11 @@ the command <code>git</code> <code>rebase</code> <code>--abort</code> instead.</
 </div>
 </div>
 <div class="paragraph">
-<p>From this point, the result of either of the following commands:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>git rebase master
-git rebase master topic</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>would be:</p>
+<p>You want to transplant the commits you made on <code>topic</code> since it diverged from
+<code>master</code> (i.e. A, B, and C), on top of the current <code>master</code>.  You can do this
+by running <code>git</code> <code>rebase</code> <code>master</code> while the <code>topic</code> branch is checked out.  If you
+want to rebase <code>topic</code> while on another branch, <code>git</code> <code>rebase</code> <code>master</code> <code>topic</code> is a
+shortcut for <code>git</code> <code>checkout</code> <code>topic</code> &amp;&amp; <code>git</code> <code>rebase</code> <code>master</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -550,35 +494,96 @@ git rebase master topic</pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>NOTE:</strong> The latter form is just a short-hand of <code>git</code> <code>checkout</code> <code>topic</code>
-followed by <code>git</code> <code>rebase</code> <code>master</code>. When rebase exits <code>topic</code> will
-remain the checked-out branch.</p>
+<p>If there is a merge conflict during this process, <code>git</code> <code>rebase</code> will stop at the
+first problematic commit and leave conflict markers. If this happens, you can do
+one of these things:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Resolve the conflict. You can use <code>git</code> <code>diff</code> to find the markers (&lt;&lt;&lt;&lt;&lt;&lt;)
+and make edits to resolve the conflict. For each file you edit, you need to
+tell Git that the conflict has been resolved. You can mark the conflict as
+resolved with  <code>git</code> <code>add</code> <em>&lt;filename&gt;</em>. After resolving all of the conflicts,
+you can continue the rebasing process with</p>
+<div class="literalblock">
+<div class="content">
+<pre>git rebase --continue</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Stop the <code>git</code> <code>rebase</code> and return your branch to its original state with</p>
+<div class="literalblock">
+<div class="content">
+<pre>git rebase --abort</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Skip the commit that caused the merge conflict with</p>
+<div class="literalblock">
+<div class="content">
+<pre>git rebase --skip</pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>If the upstream branch already contains a change you have made (e.g.,
-because you mailed a patch which was applied upstream), then that commit
-will be skipped and warnings will be issued (if the <em>merge</em> backend is
-used).  For example, running <code>git</code> <code>rebase</code> <code>master</code> on the following
-history (in which <code>A</code>' and <code>A</code> introduce the same set of changes, but
-have different committer information):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>          A---B---C topic
-         /
-    D---E---A'---F master</pre>
-</div>
+<p>If you don&#8217;t specify an <em>&lt;upstream&gt;</em> to rebase onto, the upstream configured in
+<code>branch.</code><em>&lt;name&gt;</em><code>.remote</code> and <code>branch.</code><em>&lt;name&gt;</em><code>.merge</code> options will be used (see
+<a href="git-config.html">git-config(1)</a> for details) and the <code>--fork-point</code> option is
+assumed.  If you are currently not on any branch or if the current
+branch does not have a configured upstream, the rebase will abort.</p>
 </div>
 <div class="paragraph">
-<p>will result in:</p>
+<p>Here is a simplified description of what <code>git</code> <code>rebase</code> <em>&lt;upstream&gt;</em> does:</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>                   B'---C' topic
-                  /
-    D---E---A'---F master</pre>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Make a list of all commits on your current branch since it branched
+off from <em>&lt;upstream&gt;</em> that do not have an equivalent commit in
+<em>&lt;upstream&gt;</em>.</p>
+</li>
+<li>
+<p>Check out <em>&lt;upstream&gt;</em> with the equivalent of
+<code>git</code> <code>checkout</code> <code>--detach</code> <em>&lt;upstream&gt;</em>.</p>
+</li>
+<li>
+<p>Replay the commits, one by one, in order. This is similar to running
+<code>git</code> <code>cherry-pick</code> <em>&lt;commit&gt;</em> for each commit. See REBASING MERGES for how merges
+are handled.</p>
+</li>
+<li>
+<p>Update your branch to point to the final commit with the equivalent
+of <code>git</code> <code>checkout</code> <code>-B</code> <em>&lt;branch&gt;</em>.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+When starting the rebase, <code>ORIG_HEAD</code> is set to point to the commit at the tip
+of the to-be-rebased branch. However, <code>ORIG_HEAD</code> is not guaranteed to still
+point to that commit at the end of the rebase if other commands that change
+<code>ORIG_HEAD</code> (like <code>git</code> <code>reset</code>) are used during the rebase. The previous branch
+tip, however, is accessible using the reflog of the current branch (i.e. <code>@</code>{1},
+see <a href="gitrevisions.html">gitrevisions(7)</a>.
+</td>
+</tr>
+</table>
 </div>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_transplanting_a_topic_branch_with_onto">TRANSPLANTING A TOPIC BRANCH WITH --ONTO</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Here is how you would transplant a topic branch based on one
 branch to another, to pretend that you forked the topic branch
@@ -686,35 +691,6 @@ the following situation:</p>
 part of topicA.  Note that the argument to <code>--onto</code> and the <em>&lt;upstream&gt;</em>
 parameter can be any valid commit-ish.</p>
 </div>
-<div class="paragraph">
-<p>In case of conflict, <code>git</code> <code>rebase</code> will stop at the first problematic commit
-and leave conflict markers in the tree.  You can use <code>git</code> <code>diff</code> to locate
-the markers (&lt;&lt;&lt;&lt;&lt;&lt;) and make edits to resolve the conflict.  For each
-file you edit, you need to tell Git that the conflict has been resolved,
-typically this would be done with</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>git add &lt;filename&gt;</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>After resolving the conflict manually and updating the index with the
-desired resolution, you can continue the rebasing process with</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>git rebase --continue</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Alternatively, you can undo the <em>git rebase</em> with</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>git rebase --abort</pre>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -780,6 +756,13 @@ merge base of A and B if there is exactly one merge base. You can
 leave out at most one of A and B, in which case it defaults to HEAD.</p>
 </div>
 </dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>See TRANSPLANTING A TOPIC BRANCH WITH --ONTO above for examples.</p>
+</div>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">--keep-base</dt>
 <dd>
 <p>Set the starting point at which to create the new commits to the
@@ -2480,7 +2463,7 @@ When not configured, the default commit message editor is used instead.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-28 11:27:20 UTC
+Last updated 2025-11-04 15:37:34 UTC
 </div>
 </div>
 </body>

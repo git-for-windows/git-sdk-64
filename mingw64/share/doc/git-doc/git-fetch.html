@@ -499,7 +499,8 @@ may be used by scripts or other git commands, such as <a href="git-pull.html">gi
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--[no-]all</dt>
+<dt class="hdlist1">--all</dt>
+<dt class="hdlist1">--no-all</dt>
 <dd>
 <p>Fetch all remotes, except for the ones that has the
 <code>remote.</code><em>&lt;name&gt;</em><code>.skipFetchAll</code> configuration variable set.
@@ -607,7 +608,8 @@ scripts. See section OUTPUT in <a href="git-fetch.html">git-fetch(1)</a> for det
 precedence over the <code>fetch.output</code> config option.</p>
 </div>
 </dd>
-<dt class="hdlist1">--[no-]write-fetch-head</dt>
+<dt class="hdlist1">--write-fetch-head</dt>
+<dt class="hdlist1">--no-write-fetch-head</dt>
 <dd>
 <p>Write the list of remote refs fetched in the <code>FETCH_HEAD</code>
 file directly under <code>$GIT_DIR</code>.  This is the default.
@@ -633,14 +635,17 @@ This option overrides that check.</p>
 <p>Allow several &lt;repository&gt; and &lt;group&gt; arguments to be
 specified. No &lt;refspec&gt;s may be specified.</p>
 </dd>
-<dt class="hdlist1">--[no-]auto-maintenance</dt>
-<dt class="hdlist1">--[no-]auto-gc</dt>
+<dt class="hdlist1">--auto-maintenance</dt>
+<dt class="hdlist1">--no-auto-maintenance</dt>
+<dt class="hdlist1">--auto-gc</dt>
+<dt class="hdlist1">--no-auto-gc</dt>
 <dd>
 <p>Run <code>git</code> <code>maintenance</code> <code>run</code> <code>--auto</code> at the end to perform automatic
 repository maintenance if needed. (<code>--</code>[<code>no-</code>]<code>auto-gc</code> is a synonym.)
 This is enabled by default.</p>
 </dd>
-<dt class="hdlist1">--[no-]write-commit-graph</dt>
+<dt class="hdlist1">--write-commit-graph</dt>
+<dt class="hdlist1">--no-write-commit-graph</dt>
 <dd>
 <p>Write a commit-graph after fetching. This overrides the config
 setting <code>fetch.writeCommitGraph</code>.</p>
@@ -873,6 +878,10 @@ of a remote (see the section <a href="#REMOTES">REMOTES</a> below).</p>
 of remotes.&lt;group&gt; in the configuration file.
 (See <a href="git-config.html">git-config(1)</a>).</p>
 </dd>
+</dl>
+</div>
+<div id="fetch-refspec" class="dlist">
+<dl>
 <dt class="hdlist1">&lt;refspec&gt;</dt>
 <dd>
 <p>Specifies which refs to fetch and which local refs to update.
@@ -1255,6 +1264,83 @@ refspecs, if you don&#8217;t provide one on the command line.
 <pre>        HEAD:refs/heads/&lt;head&gt;</pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="UPSTREAM-BRANCHES">UPSTREAM BRANCHES</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Branches in Git can optionally have an upstream remote branch.
+Git defaults to using the upstream branch for remote operations, for example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>It&#8217;s the default for <code>git</code> <code>pull</code> or <code>git</code> <code>fetch</code> with no arguments.</p>
+</li>
+<li>
+<p>It&#8217;s the default for <code>git</code> <code>push</code> with no arguments, with some exceptions.
+For example, you can use the <code>branch.</code><em>&lt;name&gt;</em><code>.pushRemote</code> option to push
+to a different remote than you pull from, and by default with
+<code>push.default=simple</code> the upstream branch you configure must have
+the same name.</p>
+</li>
+<li>
+<p>Various commands, including <code>git</code> <code>checkout</code> and <code>git</code> <code>status</code>, will
+show you how many commits have been added to your current branch and
+the upstream since you forked from it, for example "Your branch and
+<em>origin/main</em> have diverged, and have 2 and 3 different commits each
+respectively".</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The upstream is stored in .<code>git/config</code>, in the "remote" and "merge"
+fields. For example, if <code>main</code>'s upstream is <code>origin/main</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[branch "main"]
+   remote = origin
+   merge = refs/heads/main</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can set an upstream branch explicitly with
+<code>git</code> <code>push</code> <code>--set-upstream</code> <em>&lt;remote&gt;</em> <em>&lt;branch&gt;</em>
+but Git will often automatically set the upstream for you, for example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>When you clone a repository, Git will automatically set the upstream
+for the default branch.</p>
+</li>
+<li>
+<p>If you have the <code>push.autoSetupRemote</code> configuration option set,
+<code>git</code> <code>push</code> will automatically set the upstream the first time you push
+a branch.</p>
+</li>
+<li>
+<p>Checking out a remote-tracking branch with <code>git</code> <code>checkout</code> <em>&lt;branch&gt;</em>
+will automatically create a local branch with that name and set
+the upstream to the remote branch.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Upstream branches are sometimes referred to as "tracking information",
+as in "set the branch&#8217;s tracking information".
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -1820,7 +1906,7 @@ submodule, that submodule cannot be fetched until it is cloned e.g. by <code>git
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-28 11:27:20 UTC
+Last updated 2025-11-04 15:37:34 UTC
 </div>
 </div>
 </body>
