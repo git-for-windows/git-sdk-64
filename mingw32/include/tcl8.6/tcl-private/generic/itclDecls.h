@@ -15,11 +15,14 @@ ITCLAPI const char *Itcl_InitStubs(
 
 #endif
 
+#if (TCL_MAJOR_VERSION < 9) && defined(TCL_MINOR_VERSION) && (TCL_MINOR_VERSION < 7)
+# define Tcl_ObjCmdProc2 Tcl_ObjCmdProc
+#endif
 
 /* !BEGIN!: Do not edit below this line. */
 
 #define ITCL_STUBS_EPOCH 0
-#define ITCL_STUBS_REVISION 152
+#define ITCL_STUBS_REVISION 157
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,8 +32,15 @@ extern "C" {
  * Exported function declarations:
  */
 
-/* Slot 0 is reserved */
-/* Slot 1 is reserved */
+/* 0 */
+ITCLAPI int		Itcl_RegisterObjC2(Tcl_Interp *interp,
+				const char *name, Tcl_ObjCmdProc2 *proc,
+				void *clientData,
+				Tcl_CmdDeleteProc *deleteProc);
+/* 1 */
+ITCLAPI int		Itcl_FindC2(Tcl_Interp *interp, const char *name,
+				Tcl_ObjCmdProc2 **objProcPtr,
+				void **cDataPtr);
 /* 2 */
 ITCLAPI int		Itcl_RegisterC(Tcl_Interp *interp, const char *name,
 				Tcl_CmdProc *proc, void *clientData,
@@ -102,8 +112,8 @@ typedef struct ItclStubs {
     int revision;
     const ItclStubHooks *hooks;
 
-    void (*reserved0)(void);
-    void (*reserved1)(void);
+    int (*itcl_RegisterObjC2) (Tcl_Interp *interp, const char *name, Tcl_ObjCmdProc2 *proc, void *clientData, Tcl_CmdDeleteProc *deleteProc); /* 0 */
+    int (*itcl_FindC2) (Tcl_Interp *interp, const char *name, Tcl_ObjCmdProc2 **objProcPtr, void **cDataPtr); /* 1 */
     int (*itcl_RegisterC) (Tcl_Interp *interp, const char *name, Tcl_CmdProc *proc, void *clientData, Tcl_CmdDeleteProc *deleteProc); /* 2 */
     int (*itcl_RegisterObjC) (Tcl_Interp *interp, const char *name, Tcl_ObjCmdProc *proc, void *clientData, Tcl_CmdDeleteProc *deleteProc); /* 3 */
     int (*itcl_FindC) (Tcl_Interp *interp, const char *name, Tcl_CmdProc **argProcPtr, Tcl_ObjCmdProc **objProcPtr, void **cDataPtr); /* 4 */
@@ -144,8 +154,10 @@ extern const ItclStubs *itclStubsPtr;
  * Inline function declarations:
  */
 
-/* Slot 0 is reserved */
-/* Slot 1 is reserved */
+#define Itcl_RegisterObjC2 \
+	(itclStubsPtr->itcl_RegisterObjC2) /* 0 */
+#define Itcl_FindC2 \
+	(itclStubsPtr->itcl_FindC2) /* 1 */
 #define Itcl_RegisterC \
 	(itclStubsPtr->itcl_RegisterC) /* 2 */
 #define Itcl_RegisterObjC \
@@ -202,5 +214,16 @@ extern const ItclStubs *itclStubsPtr;
 #endif /* defined(USE_ITCL_STUBS) */
 
 /* !END!: Do not edit above this line. */
+
+#if (TCL_MAJOR_VERSION < 9)
+# if defined(TCL_MINOR_VERSION) && (TCL_MINOR_VERSION < 7)
+#   undef Tcl_ObjCmdProc2
+# endif
+# undef Itcl_RegisterObjC2
+# define Itcl_RegisterObjC2 Itcl_RegisterObjC
+# undef Itcl_FindC2
+# define Itcl_FindC2(interp, name, objProcPtr, cDataPtr) \
+	Itcl_FindC(interp, name, NULL, objProcPtr, cDataPtr)
+#endif
 
 #endif /* _ITCLDECLS */

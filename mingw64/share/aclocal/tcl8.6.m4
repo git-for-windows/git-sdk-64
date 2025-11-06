@@ -649,7 +649,7 @@ AC_DEFUN([SC_CONFIG_CFLAGS], [
 	if test "$ac_cv_win32" != "yes"; then
 	    AC_MSG_ERROR([${CC} cannot produce win32 executables.])
 	fi
-	if test "$do64bit" != "arm64"; then
+	if test "$do64bit" != "arm64" -a "$do64bit" != "aarch64"; then
 	    extra_cflags="$extra_cflags -DHAVE_CPUID=1"
 	fi
 
@@ -682,12 +682,21 @@ AC_DEFUN([SC_CONFIG_CFLAGS], [
 	else
 	    CFLAGS_NOLTO=""
 	fi
+
+	AC_CACHE_CHECK([if the linker understands --disable-high-entropy-va],
+	    tcl_cv_ld_high_entropy, [
+	    hold_cflags=$CFLAGS; CFLAGS="$CFLAGS  -Wl,--disable-high-entropy-va"
+	    AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[tcl_cv_ld_high_entropy=yes],[tcl_cv_ld_high_entropy=no])
+	    CFLAGS=$hold_cflags])
+	if test $tcl_cv_ld_high_entropy = yes; then
+	    extra_ldflags="$extra_ldflags -Wl,--disable-high-entropy-va"
+	fi
     fi
 
     hold_cflags=$CFLAGS; CFLAGS="$CFLAGS -Wl,--enable-auto-image-base"
     AC_CACHE_CHECK(for working --enable-auto-image-base,
 	ac_cv_enable_auto_image_base,
-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
 	[ac_cv_enable_auto_image_base=yes],
 	[ac_cv_enable_auto_image_base=no])
     )
@@ -837,7 +846,7 @@ AC_DEFUN([SC_CONFIG_CFLAGS], [
 	    EXESUFFIX="\${DBGX}.exe"
 	    case "x`echo \${VisualStudioVersion}`" in
 		x1[[4-9]]*)
-		    lflags="${lflags} -nodefaultlib:libucrt.lib"
+		    lflags="${lflags} -nodefaultlib:ucrt.lib"
 		    ;;
 		*)
 		    ;;

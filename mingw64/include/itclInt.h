@@ -80,10 +80,8 @@
 #   endif
 #endif
 
-#if TCL_MAJOR_VERSION == 8
-#   define ITCL_Z_MODIFIER ""
-#else
-#   define ITCL_Z_MODIFIER TCL_Z_MODIFIER
+#if TCL_MAJOR_VERSION == 8 && defined(TCL_MINOR_VERSION) && TCL_MINOR_VERSION < 7
+# define TCL_SIZE_MODIFIER ""
 #endif
 
 /*
@@ -157,11 +155,11 @@ struct ItclDelegatedFunction;
 typedef struct ItclObjectInfo {
     Tcl_Interp *interp;             /* interpreter that manages this info */
     Tcl_HashTable objects;          /* list of all known objects key is
-                                     * ioPtr */
+				     * ioPtr */
     Tcl_HashTable objectCmds;       /* list of known objects using accessCmd */
     Tcl_HashTable unused5;          /* list of known objects using namePtr */
     Tcl_HashTable classes;          /* list of all known classes,
-                                     * key is iclsPtr */
+				     * key is iclsPtr */
     Tcl_HashTable nameClasses;      /* maps from fullNamePtr to iclsPtr */
     Tcl_HashTable namespaceClasses; /* maps from nsPtr to iclsPtr */
     Tcl_HashTable procMethods;      /* maps from procPtr to mFunc */
@@ -169,49 +167,49 @@ typedef struct ItclObjectInfo {
     Tcl_HashTable unused8;          /* maps from ioPtr to instanceNumber */
     Tcl_HashTable frameContext;     /* maps frame to context stack */
     Tcl_HashTable classTypes;       /* maps from class type i.e. "widget"
-                                     * to define value i.e. ITCL_WIDGET */
+				     * to define value i.e. ITCL_WIDGET */
     int protection;                 /* protection level currently in effect */
     int useOldResolvers;            /* whether to use the "old" style
-                                     * resolvers or the CallFrame resolvers */
+				     * resolvers or the CallFrame resolvers */
     Itcl_Stack clsStack;            /* stack of class definitions currently
-                                     * being parsed */
+				     * being parsed */
     Itcl_Stack unused;              /* Removed */
     Itcl_Stack unused6;		    /* obsolete field */
     struct ItclObject *currIoPtr;   /* object currently being constructed
-                                     * set only during calling of constructors
+				     * set only during calling of constructors
 				     * otherwise NULL */
     Tcl_ObjectMetadataType *class_meta_type;
-                                    /* type for getting the Itcl class info
-                                     * from a TclOO Tcl_Object */
+				    /* type for getting the Itcl class info
+				     * from a TclOO Tcl_Object */
     const Tcl_ObjectMetadataType *object_meta_type;
-                                    /* type for getting the Itcl object info
-                                     * from a TclOO Tcl_Object */
+				    /* type for getting the Itcl object info
+				     * from a TclOO Tcl_Object */
     Tcl_Object clazzObjectPtr;      /* the root object of Itcl */
     Tcl_Class clazzClassPtr;        /* the root class of Itcl */
     struct EnsembleInfo *ensembleInfo;
     struct ItclClass *currContextIclsPtr;
-                                    /* context class for delegated option
-                                     * handling */
+				    /* context class for delegated option
+				     * handling */
     int currClassFlags;             /* flags for the class just in creation */
     int buildingWidget;             /* set if in construction of a widget */
     Tcl_Size unparsedObjc;         /* number options not parsed by
-                                       ItclExtendedConfigure/-Cget function */
+				       ItclExtendedConfigure/-Cget function */
     Tcl_Obj **unparsedObjv;         /* options not parsed by
-                                       ItclExtendedConfigure/-Cget function */
+				       ItclExtendedConfigure/-Cget function */
     int functionFlags;              /* used for creating of ItclMemberCode */
     int unused7;
     struct ItclDelegatedOption *currIdoPtr;
-                                    /* the current delegated option info */
+				    /* the current delegated option info */
     int inOptionHandling;           /* used to indicate for type/widget ...
-                                     * that there is an option processing
+				     * that there is an option processing
 				     * and methods are allowed to be called */
-            /* these are the Tcl_Obj Ptrs for the clazz unknown procedure */
+	    /* these are the Tcl_Obj Ptrs for the clazz unknown procedure */
 	    /* need to store them to be able to free them at the end */
     int itclWidgetInitted;          /* set to 1 if itclWidget.tcl has already
-                                     * been called
+				     * been called
 				     */
     int itclHullCmdsInitted;        /* set to 1 if itclHullCmds.tcl has already
-                                     * been called
+				     * been called
 				     */
     Tcl_Obj *unused2;
     Tcl_Obj *unused3;
@@ -266,58 +264,58 @@ typedef struct ItclClass {
     Tcl_Command thisCmd;          /* needed for deletion of class */
 
     struct ItclObjectInfo *infoPtr;
-                                  /* info about all known objects
+				  /* info about all known objects
 				   * and other stuff like stacks */
     Itcl_List bases;              /* list of base classes */
     Itcl_List derived;            /* list of all derived classes */
     Tcl_HashTable heritage;       /* table of all base classes.  Look up
-                                   * by pointer to class definition.  This
-                                   * provides fast lookup for inheritance
-                                   * tests. */
+				   * by pointer to class definition.  This
+				   * provides fast lookup for inheritance
+				   * tests. */
     Tcl_Obj *initCode;            /* initialization code for new objs */
     Tcl_HashTable variables;      /* definitions for all data members
-                                     in this class.  Look up simple string
-                                     names and get back ItclVariable* ptrs */
+				     in this class.  Look up simple string
+				     names and get back ItclVariable* ptrs */
     Tcl_HashTable options;        /* definitions for all option members
-                                     in this class.  Look up simple string
-                                     names and get back ItclOption* ptrs */
+				     in this class.  Look up simple string
+				     names and get back ItclOption* ptrs */
     Tcl_HashTable components;     /* definitions for all component members
-                                     in this class.  Look up simple string
-                                     names and get back ItclComponent* ptrs */
+				     in this class.  Look up simple string
+				     names and get back ItclComponent* ptrs */
     Tcl_HashTable functions;      /* definitions for all member functions
-                                     in this class.  Look up simple string
-                                     names and get back ItclMemberFunc* ptrs */
+				     in this class.  Look up simple string
+				     names and get back ItclMemberFunc* ptrs */
     Tcl_HashTable delegatedOptions; /* definitions for all delegated options
-                                     in this class.  Look up simple string
-                                     names and get back
+				     in this class.  Look up simple string
+				     names and get back
 				     ItclDelegatedOption * ptrs */
     Tcl_HashTable delegatedFunctions; /* definitions for all delegated methods
-                                     or procs in this class.  Look up simple
+				     or procs in this class.  Look up simple
 				     string names and get back
 				     ItclDelegatedFunction * ptrs */
     Tcl_HashTable methodVariables; /* definitions for all methodvariable members
-                                     in this class.  Look up simple string
-                                     names and get back
+				     in this class.  Look up simple string
+				     names and get back
 				     ItclMethodVariable* ptrs */
     Tcl_Size numInstanceVars;    /* number of instance vars in variables
-                                     table */
+				     table */
     Tcl_HashTable classCommons;   /* used for storing variable namespace
-                                   * string for Tcl_Resolve */
+				   * string for Tcl_Resolve */
     Tcl_HashTable resolveVars;    /* all possible names for variables in
-                                   * this class (e.g., x, foo::x, etc.) */
+				   * this class (e.g., x, foo::x, etc.) */
     Tcl_HashTable resolveCmds;    /* all possible names for functions in
-                                   * this class (e.g., x, foo::x, etc.) */
+				   * this class (e.g., x, foo::x, etc.) */
     Tcl_HashTable contextCache;   /* cache for function contexts */
     struct ItclMemberFunc *unused2;
-                                  /* the class constructor or NULL */
+				  /* the class constructor or NULL */
     struct ItclMemberFunc *unused3;
-                                  /* the class destructor or NULL */
+				  /* the class destructor or NULL */
     struct ItclMemberFunc *unused1;
     Tcl_Resolve *resolvePtr;
     Tcl_Obj *widgetClassPtr;      /* class name for widget if class is a
-                                   * ::itcl::widget */
+				   * ::itcl::widget */
     Tcl_Obj *hullTypePtr;         /* hulltype name for widget if class is a
-                                   * ::itcl::widget */
+				   * ::itcl::widget */
     Tcl_Object oPtr;		  /* TclOO class object */
     Tcl_Class  clsPtr;            /* TclOO class */
     Tcl_Size numCommons;         /* number of commons in this class */
@@ -356,27 +354,27 @@ typedef struct ItclObject {
     Tcl_HashTable *constructed;  /* temp storage used during construction */
     Tcl_HashTable *destructed;   /* temp storage used during destruction */
     Tcl_HashTable objectVariables;
-                                 /* used for storing Tcl_Var entries for
+				 /* used for storing Tcl_Var entries for
 				  * variable resolving, key is ivPtr of
 				  * variable, value is varPtr */
     Tcl_HashTable objectOptions; /* definitions for all option members
-                                     in this object. Look up option namePtr
-                                     names and get back ItclOption* ptrs */
+				     in this object. Look up option namePtr
+				     names and get back ItclOption* ptrs */
     Tcl_HashTable objectComponents; /* definitions for all component members
-                                     in this object. Look up component namePtr
-                                     names and get back ItclComponent* ptrs */
+				     in this object. Look up component namePtr
+				     names and get back ItclComponent* ptrs */
     Tcl_HashTable objectMethodVariables;
-                                 /* definitions for all methodvariable members
-                                     in this object. Look up methodvariable
+				 /* definitions for all methodvariable members
+				     in this object. Look up methodvariable
 				     namePtr names and get back
 				     ItclMethodVariable* ptrs */
     Tcl_HashTable objectDelegatedOptions;
-                                  /* definitions for all delegated option
+				  /* definitions for all delegated option
 				     members in this object. Look up option
 				     namePtr names and get back
 				     ItclOption* ptrs */
     Tcl_HashTable objectDelegatedFunctions;
-                                  /* definitions for all delegated function
+				  /* definitions for all delegated function
 				     members in this object. Look up function
 				     namePtr names and get back
 				     ItclMemberFunc * ptrs */
@@ -384,7 +382,7 @@ typedef struct ItclObject {
     Tcl_Obj *namePtr;
     Tcl_Obj *origNamePtr;         /* the original name before any rename */
     Tcl_Obj *createNamePtr;       /* the temp name before any rename
-                                   * mostly used for widgetadaptor
+				   * mostly used for widgetadaptor
 				   * because that hijackes the name
 				   * often when installing the hull */
     Tcl_Interp *interp;
@@ -395,11 +393,11 @@ typedef struct ItclObject {
     int flags;
     Tcl_Size callRefCount;       /* prevent deleting of object if refcount > 1 */
     Tcl_Obj *hullWindowNamePtr;   /* the window path name for the hull
-                                   * (before renaming in installhull) */
+				   * (before renaming in installhull) */
     int destructorHasBeenCalled;  /* is set when the destructor is called
-                                   * to avoid callin destructor twice */
+				   * to avoid callin destructor twice */
     int noComponentTrace;         /* don't call component traces if
-                                   * setting components in DelegationInstall */
+				   * setting components in DelegationInstall */
     int hadConstructorError;      /* needed for multiple calls of CallItclObjectCmd */
 } ItclObject;
 
@@ -426,8 +424,8 @@ typedef struct ItclMemberCode {
     Tcl_Obj *bodyPtr;           /* the function body */
     ItclArgList *argListPtr;    /* the parsed arguments */
     union {
-        Tcl_CmdProc *argCmd;    /* (argc,argv) C implementation */
-        Tcl_ObjCmdProc *objCmd; /* (objc,objv) C implementation */
+	Tcl_CmdProc *argCmd;    /* (argc,argv) C implementation */
+	Tcl_ObjCmdProc *objCmd; /* (objc,objv) C implementation */
     } cfunc;
     void *clientData;           /* client data for C implementations */
 } ItclMemberCode;
@@ -448,7 +446,7 @@ typedef struct ItclMemberCode {
  *  Flag bits for ItclMember: functions and variables
  */
 #define ITCL_COMMON            0x010  /* non-zero => is a "proc" or common
-                                       * variable */
+				       * variable */
 
 /*
  *  Flag bits for ItclMember: functions
@@ -467,16 +465,16 @@ typedef struct ItclMemberCode {
  */
 #define ITCL_THIS_VAR          0x20   /* non-zero => built-in "this" variable */
 #define ITCL_OPTIONS_VAR       0x40   /* non-zero => built-in "itcl_options"
-                                       * variable */
+				       * variable */
 #define ITCL_TYPE_VAR          0x80   /* non-zero => built-in "type" variable */
-                                      /* no longer used ??? */
+				      /* no longer used ??? */
 #define ITCL_SELF_VAR          0x100  /* non-zero => built-in "self" variable */
 #define ITCL_SELFNS_VAR        0x200  /* non-zero => built-in "selfns"
-                                       * variable */
+				       * variable */
 #define ITCL_WIN_VAR           0x400  /* non-zero => built-in "win" variable */
 #define ITCL_COMPONENT_VAR     0x800  /* non-zero => component variable */
 #define ITCL_HULL_VAR          0x1000 /* non-zero => built-in "itcl_hull"
-                                       * variable */
+				       * variable */
 #define ITCL_OPTION_READONLY   0x2000 /* non-zero => readonly */
 #define ITCL_VARIABLE          0x4000 /* non-zero => normal variable */
 #define ITCL_TYPE_VARIABLE     0x8000 /* non-zero => typevariable */
@@ -530,7 +528,7 @@ typedef struct ItclMemberFunc {
     ItclClass *declaringClassPtr; /* the class which declared the method/proc */
     void *tmPtr;                /* TclOO methodPtr */
     ItclDelegatedFunction *idmPtr;
-                                /* if the function is delegated != NULL */
+				/* if the function is delegated != NULL */
 } ItclMemberFunc;
 
 /*
@@ -547,7 +545,7 @@ typedef struct ItclVariable {
     int protection;             /* protection level */
     int flags;                  /* flags describing member (see below) */
     int initted;                /* is set when first time initted, to check
-                                 * for example itcl_hull var, which can be only
+				 * for example itcl_hull var, which can be only
 				 * initialized once */
 } ItclVariable;
 
@@ -560,7 +558,7 @@ typedef struct ItclDelegatedOption {
     Tcl_Obj *classNamePtr;
     struct ItclOption *ioptPtr;  /* the option name or null for "*" */
     ItclComponent *icPtr;        /* the component where the delegation goes
-                                  * to */
+				  * to */
     Tcl_Obj *asPtr;
     Tcl_HashTable exceptions;    /* exceptions from delegation */
 } ItclDelegatedOption;
@@ -569,7 +567,7 @@ typedef struct ItclDelegatedOption {
  *  Instance options.
  */
 typedef struct ItclOption {
-                                /* within a class hierarchy there must be only
+				/* within a class hierarchy there must be only
 				 * one option with the same name !! */
     Tcl_Obj *namePtr;           /* member name */
     Tcl_Obj *fullNamePtr;       /* member name with "class::" qualifier */
@@ -587,7 +585,7 @@ typedef struct ItclOption {
     Tcl_Obj *validateMethodPtr;
     Tcl_Obj *validateMethodVarPtr;
     ItclDelegatedOption *idoPtr;
-                                /* if the option is delegated != NULL */
+				/* if the option is delegated != NULL */
 } ItclOption;
 
 /*
@@ -603,11 +601,11 @@ typedef struct ItclMethodVariable {
     Tcl_Obj *callbackPtr;
 } ItclMethodVariable;
 
-#define VAR_TYPE_VARIABLE 	1
-#define VAR_TYPE_COMMON 	2
+#define VAR_TYPE_VARIABLE	1
+#define VAR_TYPE_COMMON	2
 
-#define CMD_TYPE_METHOD 	1
-#define CMD_TYPE_PROC 		2
+#define CMD_TYPE_METHOD	1
+#define CMD_TYPE_PROC		2
 
 typedef struct ItclClassCmdInfo {
     int type;
@@ -626,11 +624,11 @@ typedef struct ItclVarLookup {
     ItclVariable* ivPtr;      /* variable definition */
     int usage;                /* number of uses for this record */
     int accessible;           /* non-zero => accessible from class with
-                               * this lookup record in its resolveVars */
+			       * this lookup record in its resolveVars */
     char *leastQualName;      /* simplist name for this variable, with
-                               * the fewest qualifiers.  This string is
-                               * taken from the resolveVars table, so
-                               * it shouldn't be freed. */
+			       * the fewest qualifiers.  This string is
+			       * taken from the resolveVars table, so
+			       * it shouldn't be freed. */
     Tcl_Size varNum;
     Tcl_Var varPtr;
 } ItclVarLookup;

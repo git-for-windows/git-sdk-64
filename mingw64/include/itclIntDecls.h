@@ -8,7 +8,11 @@
 /* !BEGIN!: Do not edit below this line. */
 
 #define ITCLINT_STUBS_EPOCH 0
-#define ITCLINT_STUBS_REVISION 152
+#define ITCLINT_STUBS_REVISION 157
+
+#if (TCL_MAJOR_VERSION < 9) && defined(TCL_MINOR_VERSION) && (TCL_MINOR_VERSION < 7)
+# define Tcl_ObjCmdProc2 Tcl_ObjCmdProc
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -193,8 +197,13 @@ ITCLAPI int		Itcl_EvalMemberCode(Tcl_Interp *interp,
 				ItclMemberFunc *mfunc,
 				ItclObject *contextObj, Tcl_Size objc,
 				Tcl_Obj *const objv[]);
-/* Slot 62 is reserved */
-/* Slot 63 is reserved */
+/* 62 */
+ITCLAPI int		Itcl_ExecMethod2(void *clientData,
+				Tcl_Interp *interp, Tcl_Size objc,
+				Tcl_Obj *const objv[]);
+/* 63 */
+ITCLAPI int		Itcl_ExecProc2(void *clientData, Tcl_Interp *interp,
+				Tcl_Size objc, Tcl_Obj *const objv[]);
 /* Slot 64 is reserved */
 /* Slot 65 is reserved */
 /* Slot 66 is reserved */
@@ -358,7 +367,12 @@ ITCLAPI int		Itcl_IsObjectCmd(void *clientData,
 /* 117 */
 ITCLAPI int		Itcl_IsClassCmd(void *clientData, Tcl_Interp *interp,
 				int objc, Tcl_Obj *const objv[]);
-/* Slot 118 is reserved */
+/* 118 */
+ITCLAPI int		Itcl_AddEnsemblePart2(Tcl_Interp *interp,
+				const char *ensName, const char *partName,
+				const char *usageInfo,
+				Tcl_ObjCmdProc2 *objProc, void *clientData,
+				Tcl_CmdDeleteProc *deleteProc);
 /* Slot 119 is reserved */
 /* Slot 120 is reserved */
 /* Slot 121 is reserved */
@@ -572,8 +586,8 @@ typedef struct ItclIntStubs {
     int (*itcl_GetMemberCode) (Tcl_Interp *interp, ItclMemberFunc *mfunc); /* 59 */
     void (*reserved60)(void);
     int (*itcl_EvalMemberCode) (Tcl_Interp *interp, ItclMemberFunc *mfunc, ItclObject *contextObj, Tcl_Size objc, Tcl_Obj *const objv[]); /* 61 */
-    void (*reserved62)(void);
-    void (*reserved63)(void);
+    int (*itcl_ExecMethod2) (void *clientData, Tcl_Interp *interp, Tcl_Size objc, Tcl_Obj *const objv[]); /* 62 */
+    int (*itcl_ExecProc2) (void *clientData, Tcl_Interp *interp, Tcl_Size objc, Tcl_Obj *const objv[]); /* 63 */
     void (*reserved64)(void);
     void (*reserved65)(void);
     void (*reserved66)(void);
@@ -628,7 +642,7 @@ typedef struct ItclIntStubs {
     void (*itcl_Assert) (const char *testExpr, const char *fileName, int lineNum); /* 115 */
     int (*itcl_IsObjectCmd) (void *clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]); /* 116 */
     int (*itcl_IsClassCmd) (void *clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]); /* 117 */
-    void (*reserved118)(void);
+    int (*itcl_AddEnsemblePart2) (Tcl_Interp *interp, const char *ensName, const char *partName, const char *usageInfo, Tcl_ObjCmdProc2 *objProc, void *clientData, Tcl_CmdDeleteProc *deleteProc); /* 118 */
     void (*reserved119)(void);
     void (*reserved120)(void);
     void (*reserved121)(void);
@@ -821,8 +835,10 @@ extern const ItclIntStubs *itclIntStubsPtr;
 /* Slot 60 is reserved */
 #define Itcl_EvalMemberCode \
 	(itclIntStubsPtr->itcl_EvalMemberCode) /* 61 */
-/* Slot 62 is reserved */
-/* Slot 63 is reserved */
+#define Itcl_ExecMethod2 \
+	(itclIntStubsPtr->itcl_ExecMethod2) /* 62 */
+#define Itcl_ExecProc2 \
+	(itclIntStubsPtr->itcl_ExecProc2) /* 63 */
 /* Slot 64 is reserved */
 /* Slot 65 is reserved */
 /* Slot 66 is reserved */
@@ -920,7 +936,8 @@ extern const ItclIntStubs *itclIntStubsPtr;
 	(itclIntStubsPtr->itcl_IsObjectCmd) /* 116 */
 #define Itcl_IsClassCmd \
 	(itclIntStubsPtr->itcl_IsClassCmd) /* 117 */
-/* Slot 118 is reserved */
+#define Itcl_AddEnsemblePart2 \
+	(itclIntStubsPtr->itcl_AddEnsemblePart2) /* 118 */
 /* Slot 119 is reserved */
 /* Slot 120 is reserved */
 /* Slot 121 is reserved */
@@ -1024,5 +1041,17 @@ extern const ItclIntStubs *itclIntStubsPtr;
 #endif /* defined(USE_ITCL_STUBS) */
 
 /* !END!: Do not edit above this line. */
+
+#if (TCL_MAJOR_VERSION < 9)
+# if defined(TCL_MINOR_VERSION) && (TCL_MINOR_VERSION < 7)
+#   undef Tcl_ObjCmdProc2
+# endif
+# undef Itcl_AddEnsemblePart2
+# define Itcl_AddEnsemblePart2 Itcl_AddEnsemblePart
+# undef Itcl_ExecMethod2
+# define Itcl_ExecMethod2 Itcl_ExecMethod
+# undef Itcl_ExecProc2
+# define Itcl_ExecProc2 Itcl_ExecProc
+#endif
 
 #endif /* _ITCLINTDECLS */

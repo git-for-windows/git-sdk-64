@@ -56,10 +56,10 @@ extern "C" {
 #endif
 #define TCL_MINOR_VERSION   6
 #define TCL_RELEASE_LEVEL   TCL_FINAL_RELEASE
-#define TCL_RELEASE_SERIAL  16
+#define TCL_RELEASE_SERIAL  17
 
 #define TCL_VERSION	    "8.6"
-#define TCL_PATCH_LEVEL	    "8.6.16"
+#define TCL_PATCH_LEVEL	    "8.6.17"
 
 /*
  *----------------------------------------------------------------------------
@@ -147,7 +147,7 @@ extern "C" {
 #   else
 #	define TCL_FORMAT_PRINTF(a,b) __attribute__ ((__format__ (__printf__, a, b)))
 #   endif
-#   define TCL_NORETURN __attribute__ ((noreturn))
+#   define TCL_NORETURN __attribute__ ((__noreturn__))
 #else
 #   define TCL_FORMAT_PRINTF(a,b)
 #   if defined(_MSC_VER) && (_MSC_VER >= 1310)
