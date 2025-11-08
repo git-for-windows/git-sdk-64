@@ -1,35 +1,434 @@
-# interdiff(1) completion                                  -*- shell-script -*-
+# Bash completion for patchutils commands
+# Generated for patchutils package
 
-_comp_cmd_interdiff()
-{
-    local cur prev words cword was_split comp_args
-    _comp_initialize -s -- "$@" || return
+# Common options used across multiple commands
+_patchutils_common_opts() {
+    echo "--help --version"
+}
 
-    local noargopts='!(-*|*[Upd]*)'
-    # shellcheck disable=SC2254
-    case $prev in
-        --unified | --strip-match | --drop-context | -${noargopts}[Upd])
-            return
+_patchutils_filter_opts() {
+    echo "--exclude -x --exclude-from-file -X --include -i --include-from-file -I --hunks -# --lines --files -F --annotate --as-numbered-lines --format --remove-timestamps --clean --in-place --decompress -z --strip-match -p --strip --addprefix --addoldprefix --addnewprefix"
+}
+
+_patchutils_list_opts() {
+    echo "--line-number -n --number-files -N --with-filename -H --no-filename -h --status -s --empty-files-as-absent -E"
+}
+
+_patchutils_grep_opts() {
+    echo "--output-matching --only-match --extended-regexp -E --file -f"
+}
+
+_patchutils_interdiff_opts() {
+    echo "--unified -U --ignore-case -i --ignore-all-space -w --ignore-space-change -b --ignore-blank-lines -B --color --quiet -q --drop-context -d --decompress -z --strip-match -p --interpolate --combine --flip --no-revert-omitted --in-place"
+}
+
+# File completion helper
+_patchutils_files() {
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    COMPREPLY=($(compgen -f -- "$cur"))
+}
+
+# Completion for filterdiff
+_filterdiff() {
+    local cur prev opts
+    COMP_WORDBREAKS=${COMP_WORDBREAKS//=}
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="$(_patchutils_common_opts) $(_patchutils_filter_opts) $(_patchutils_list_opts) --verbose -v --filter --grep --list"
+
+    case "${prev}" in
+        --exclude|-x|--include|-i)
+            # Pattern completion - no specific completion
+            return 0
+            ;;
+        --exclude-from-file|-X|--include-from-file|-I|--file|-f)
+            _patchutils_files
+            return 0
+            ;;
+        --hunks|-#|--lines|--files|-F)
+            # Range completion - no specific completion
+            return 0
+            ;;
+        --as-numbered-lines)
+            COMPREPLY=($(compgen -W "before after original-before original-after" -- "$cur"))
+            return 0
+            ;;
+        --format)
+            COMPREPLY=($(compgen -W "context unified" -- "$cur"))
+            return 0
+            ;;
+        --output-matching)
+            COMPREPLY=($(compgen -W "hunk file" -- "$cur"))
+            return 0
+            ;;
+        --only-match)
+            COMPREPLY=($(compgen -W "rem removals add additions mod modifications all" -- "$cur"))
+            return 0
+            ;;
+        --strip-match|-p|--strip)
+            # Number completion - no specific completion
+            return 0
+            ;;
+        --addprefix|--addoldprefix|--addnewprefix)
+            # Prefix completion - no specific completion
+            return 0
             ;;
     esac
 
-    [[ $was_split ]] && return
-
-    if [[ $cur == -* ]]; then
-        _comp_compgen_help
-        [[ ${COMPREPLY-} == *= ]] && compopt -o nospace
-        return
+    if [[ ${cur} == -* ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
     fi
 
-    local exts='@(?(d)patch|dif?(f))' word
-    for word in "${words[@]}"; do
-        if [[ $word == -@(z|-decompress) ]]; then
-            exts+='?(.@(gz|bz2))'
-            break
-        fi
-    done
-    _comp_compgen_filedir "$exts"
-} &&
-    complete -F _comp_cmd_interdiff interdiff
+    _patchutils_files
+}
 
-# ex: filetype=sh
+# Completion for lsdiff (same as filterdiff with --list mode)
+_lsdiff() {
+    local cur prev opts
+    COMP_WORDBREAKS=${COMP_WORDBREAKS//=}
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="$(_patchutils_common_opts) $(_patchutils_filter_opts) $(_patchutils_list_opts) --verbose -v --filter --grep"
+
+    case "${prev}" in
+        --exclude|-x|--include|-i)
+            return 0
+            ;;
+        --exclude-from-file|-X|--include-from-file|-I)
+            _patchutils_files
+            return 0
+            ;;
+        --hunks|-#|--lines|--files|-F)
+            return 0
+            ;;
+        --strip-match|-p|--strip)
+            return 0
+            ;;
+        --addprefix|--addoldprefix|--addnewprefix)
+            return 0
+            ;;
+    esac
+
+    if [[ ${cur} == -* ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
+    fi
+
+    _patchutils_files
+}
+
+# Completion for grepdiff
+_grepdiff() {
+    local cur prev opts
+    COMP_WORDBREAKS=${COMP_WORDBREAKS//=}
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="$(_patchutils_common_opts) $(_patchutils_filter_opts) $(_patchutils_list_opts) $(_patchutils_grep_opts) --verbose -v --filter --list"
+
+    case "${prev}" in
+        --exclude|-x|--include|-i)
+            return 0
+            ;;
+        --exclude-from-file|-X|--include-from-file|-I|--file|-f)
+            _patchutils_files
+            return 0
+            ;;
+        --hunks|-#|--lines|--files|-F)
+            return 0
+            ;;
+        --as-numbered-lines)
+            COMPREPLY=($(compgen -W "before after original-before original-after" -- "$cur"))
+            return 0
+            ;;
+        --format)
+            COMPREPLY=($(compgen -W "context unified" -- "$cur"))
+            return 0
+            ;;
+        --output-matching)
+            COMPREPLY=($(compgen -W "hunk file" -- "$cur"))
+            return 0
+            ;;
+        --only-match)
+            COMPREPLY=($(compgen -W "rem removals add additions mod modifications all" -- "$cur"))
+            return 0
+            ;;
+        --strip-match|-p|--strip)
+            return 0
+            ;;
+        --addprefix|--addoldprefix|--addnewprefix)
+            return 0
+            ;;
+    esac
+
+    if [[ ${cur} == -* ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
+    fi
+
+    _patchutils_files
+}
+
+# Completion for interdiff, combinediff, flipdiff
+_interdiff() {
+    local cur prev opts
+    COMP_WORDBREAKS=${COMP_WORDBREAKS//=}
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="$(_patchutils_common_opts) $(_patchutils_interdiff_opts)"
+
+    case "${prev}" in
+        --unified|-U)
+            # Number completion
+            return 0
+            ;;
+        --drop-context|-d)
+            # Pattern completion
+            return 0
+            ;;
+        --strip-match|-p)
+            # Number completion
+            return 0
+            ;;
+        --color)
+            COMPREPLY=($(compgen -W "never always auto" -- "$cur"))
+            return 0
+            ;;
+    esac
+
+    if [[ ${cur} == -* ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
+    fi
+
+    _patchutils_files
+}
+
+# Completion for rediff
+_rediff() {
+    local cur prev opts
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--help --version --in-place"
+
+    if [[ ${cur} == -* ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
+    fi
+
+    _patchutils_files
+}
+
+# Completion for splitdiff
+_splitdiff() {
+    local cur prev opts
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--help --version -a -p -d -D -E"
+
+    case "${prev}" in
+        -p)
+            # Number completion
+            return 0
+            ;;
+        -D)
+            # Directory completion
+            COMPREPLY=($(compgen -d -- "$cur"))
+            return 0
+            ;;
+    esac
+
+    if [[ ${cur} == -* ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
+    fi
+
+    _patchutils_files
+}
+
+# Completion for recountdiff
+_recountdiff() {
+    local cur prev opts
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--help --version"
+
+    if [[ ${cur} == -* ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
+    fi
+
+    _patchutils_files
+}
+
+# Completion for unwrapdiff
+_unwrapdiff() {
+    local cur prev opts
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--help --version"
+
+    if [[ ${cur} == -* ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
+    fi
+
+    _patchutils_files
+}
+
+# Completion for dehtmldiff
+_dehtmldiff() {
+    local cur prev opts
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--help --version"
+
+    if [[ ${cur} == -* ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
+    fi
+
+    _patchutils_files
+}
+
+# Completion for editdiff
+_editdiff() {
+    local cur prev opts
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--help --version"
+
+    if [[ ${cur} == -* ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
+    fi
+
+    _patchutils_files
+}
+
+# Completion for espdiff
+_espdiff() {
+    local cur prev opts
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--help --version"
+
+    if [[ ${cur} == -* ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
+    fi
+
+    _patchutils_files
+}
+
+# Completion for fixcvsdiff
+_fixcvsdiff() {
+    local cur prev opts
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--help --version -p -b"
+
+    if [[ ${cur} == -* ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
+    fi
+
+    _patchutils_files
+}
+
+# Completion for patchview
+_patchview() {
+    local cur prev opts
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    # patchview is a wrapper around filterdiff, so use similar completion
+    opts="$(_patchutils_common_opts) $(_patchutils_filter_opts) --verbose -v --filter --grep"
+
+    case "${prev}" in
+        --exclude|-x|--include|-i)
+            return 0
+            ;;
+        --exclude-from-file|-X|--include-from-file|-I)
+            _patchutils_files
+            return 0
+            ;;
+        --hunks|-#|--lines|--files|-F)
+            return 0
+            ;;
+        --strip-match|-p|--strip)
+            return 0
+            ;;
+        --addprefix|--addoldprefix|--addnewprefix)
+            return 0
+            ;;
+    esac
+
+    if [[ ${cur} == -* ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
+    fi
+
+    _patchutils_files
+}
+
+# Simple completion for git/svn diff wrappers
+_gitdiff() {
+    local cur prev opts
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    # These are wrappers that pass arguments to filterdiff
+    opts="$(_patchutils_filter_opts)"
+
+    if [[ ${cur} == -* ]]; then
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
+    fi
+
+    return 0
+}
+
+_svndiff() {
+    _gitdiff
+}
+
+_gitdiffview() {
+    _gitdiff
+}
+
+_svndiffview() {
+    _gitdiff
+}
+
+# Register completions for all patchutils commands
+complete -F _filterdiff filterdiff
+complete -F _lsdiff lsdiff
+complete -F _grepdiff grepdiff
+complete -F _interdiff interdiff
+complete -F _interdiff combinediff
+complete -F _interdiff flipdiff
+complete -F _rediff rediff
+complete -F _splitdiff splitdiff
+complete -F _recountdiff recountdiff
+complete -F _unwrapdiff unwrapdiff
+complete -F _dehtmldiff dehtmldiff
+complete -F _editdiff editdiff
+complete -F _espdiff espdiff
+complete -F _fixcvsdiff fixcvsdiff
+complete -F _patchview patchview
+complete -F _gitdiff gitdiff
+complete -F _svndiff svndiff
+complete -F _gitdiffview gitdiffview
+complete -F _svndiffview svndiffview

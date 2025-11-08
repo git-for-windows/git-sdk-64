@@ -21,7 +21,7 @@
 use Getopt::Std;
 getopts('-:', \%opts);
 if ($opts{'-'} && $opts{'-'} eq 'version') {
-    print "recountdiff - patchutils version 0.4.2\n";
+    print "recountdiff - patchutils version 0.4.3\n";
     exit 0;
 }
 if ($opts{'-'} && $opts{'-'} eq 'help') {
@@ -77,6 +77,10 @@ while ($i < $#line) {
 	my $spit = 0;
 	if (/^\s/ or /^$/) { $orig++; $new++; }
 	elsif (/^\+/) { $new++; }
+	elsif (/^-- $/) {
+	    # Git signature line - end of patch content
+	    $spit = 1;
+	}
 	elsif (/^-/) {
 	    # Look out for new file changes.
 	    if (/^--- /) {
@@ -125,17 +129,33 @@ foreach (@off_lines) {
 	next;
     }
     $line[$_] =~ /^@@ -(\d+),?(\d+)? \+(\d+),?(\d+)? @@(.*)$/;
-    ($ooff,$oc,$nc,$misc) = ($1,$2,$4,$5);
-    $oc = 1 unless defined($oc);
+    ($ooff,$oc,$noff_orig,$nc,$misc) = ($1,$2,$3,$4,$5);
+
+    # Check for new file before applying defaults
+    $is_new_file = ($ooff == 0 && defined($oc) && $oc == 0);
+
+    # For new files, preserve oc=0; otherwise apply default
+    if (!$is_new_file) {
+        $oc = 1 unless defined($oc);
+    }
     $nc = 1 unless defined($nc);
-    $noff = $ooff + $offset;
-    $noff++ if ($oc == 0);
-    $noff-- if ($nc == 0);
+
+    # For new files (ooff=0, original oc=0), preserve the original new offset
+    if ($is_new_file) {
+        $noff = $noff_orig + $offset;
+    } else {
+        $noff = $ooff + $offset;
+        # Don't adjust offset for new files (when ooff is 0 and oc is 0)
+        $noff++ if ($oc == 0 && $ooff != 0);
+        $noff-- if ($nc == 0);
+    }
     $line[$_] = "@@ -$ooff";
     $line[$_] .= ",$oc" if ($oc != 1);
     $line[$_] .= " +$noff";
     $line[$_] .= ",$nc" if ($nc != 1);
     $line[$_] .= " @@" . "$misc\n";
+
+
     $offset += $nc - $oc;
 }
 
