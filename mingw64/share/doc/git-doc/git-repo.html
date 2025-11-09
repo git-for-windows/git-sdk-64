@@ -452,7 +452,8 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><code>git</code> <code>repo</code> <code>info</code> [<code>--format=</code>(<code>keyvalue</code>|<code>nul</code>)] [<code>-z</code>] [<em>&lt;key&gt;</em>&#8230;&#8203;]</pre>
+<pre class="content"><code>git</code> <code>repo</code> <code>info</code> [<code>--format=</code>(<code>keyvalue</code>|<code>nul</code>)] [<code>-z</code>] [<em>&lt;key&gt;</em>&#8230;&#8203;]
+<code>git</code> <code>repo</code> <code>structure</code> [<code>--format=</code>(<code>table</code>|<code>keyvalue</code>|<code>nul</code>)]</pre>
 </div>
 </div>
 </div>
@@ -503,6 +504,53 @@ This format is better suited for being parsed by another applications than
 <div class="paragraph">
 <p><code>-z</code> is an alias for <code>--format=nul</code>.</p>
 </div>
+</dd>
+</dl>
+</div>
+</dd>
+<dt class="hdlist1"><code>structure</code> [<code>--format=</code>(<code>table</code>|<code>keyvalue</code>|<code>nul</code>)]</dt>
+<dd>
+<p>Retrieve statistics about the current repository structure. The
+following kinds of information are reported:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Reference counts categorized by type</p>
+</li>
+<li>
+<p>Reachable object counts categorized by type</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The output format can be chosen through the flag <code>--format</code>. Three formats are
+supported:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>table</code></dt>
+<dd>
+<p>Outputs repository stats in a human-friendly table. This format may
+change and is not intended for machine parsing. This is the default
+format.</p>
+</dd>
+<dt class="hdlist1"><code>keyvalue</code></dt>
+<dd>
+<p>Each line of output contains a key-value pair for a repository stat.
+The <em>=</em> character is used to delimit between the key and the value.
+Values containing "unusual" characters are quoted as explained for the
+configuration variable <code>core.quotePath</code> (see <a href="git-config.html">git-config(1)</a>).</p>
+</dd>
+<dt class="hdlist1"><code>nul</code></dt>
+<dd>
+<p>Similar to <code>keyvalue</code>, but uses a NUL character to delimit between
+key-value pairs instead of a newline. Also uses a newline character as
+the delimiter between the key and value instead of <em>=</em>. Unlike the
+<code>keyvalue</code> format, values containing "unusual" characters are never
+quoted.</p>
 </dd>
 </dl>
 </div>
@@ -597,7 +645,7 @@ using the <code>nul</code> format:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-04 15:37:34 UTC
+Last updated 2025-11-07 09:33:53 UTC
 </div>
 </div>
 </body>
