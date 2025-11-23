@@ -180,8 +180,8 @@ jobs:
             --version=$(cat pkg-${{env.ARCH_NAME}}/ver) \
             -o artifacts \
             --${{matrix.artifact}} \
-            --pkg=pkg-${{env.ARCH_NAME}}/mingw-w64-${{env.ARCH_NAME}}-git-[0-9]*.tar.xz \
-            --pkg=pkg-${{env.ARCH_NAME}}/mingw-w64-${{env.ARCH_NAME}}-git-doc-html-[0-9]*.tar.xz
+            $(ls pkg-$ARCHITECTURE/$MINGW_PACKAGE_PREFIX-*.tar.* |
+              sed '/\.sig$/d;/archimport/d;/cvs/d;/p4/d;/gitweb/d;/doc-man/d;s/^/--pkg=/')
       - name: Copy package-versions and pdbs
         if: matrix.artifact == 'installer'
         shell: bash
