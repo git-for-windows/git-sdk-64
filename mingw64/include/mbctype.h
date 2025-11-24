@@ -48,22 +48,32 @@ extern "C" {
 #define _MB_CP_OEM -2
 #define _MB_CP_ANSI -3
 #define _MB_CP_LOCALE -4
+#ifdef _UCRT
+#define _MB_CP_UTF8 65001
+#endif
 
 #ifndef _MBCTYPE_DEFINED
 #define _MBCTYPE_DEFINED
-
+#if __MSVCRT_VERSION__ >= 0x0200
   _CRTIMP int __cdecl _setmbcp(int _CodePage);
   _CRTIMP int __cdecl _getmbcp(void);
+#endif
   _CRTIMP int __cdecl _ismbbkalnum(unsigned int _C);
   _CRTIMP int __cdecl _ismbbkalnum_l(unsigned int _C,_locale_t _Locale);
   _CRTIMP int __cdecl _ismbbkana(unsigned int _C);
   _CRTIMP int __cdecl _ismbbkana_l(unsigned int _C,_locale_t _Locale);
   _CRTIMP int __cdecl _ismbbkpunct(unsigned int _C);
   _CRTIMP int __cdecl _ismbbkpunct_l(unsigned int _C,_locale_t _Locale);
+#if __MSVCRT_VERSION__ >= 0x0200
   _CRTIMP int __cdecl _ismbbkprint(unsigned int _C);
   _CRTIMP int __cdecl _ismbbkprint_l(unsigned int _C,_locale_t _Locale);
+#endif
   _CRTIMP int __cdecl _ismbbalpha(unsigned int _C);
   _CRTIMP int __cdecl _ismbbalpha_l(unsigned int _C,_locale_t _Locale);
+#if __MSVCRT_VERSION__ >= 0x0C00
+  _CRTIMP int __cdecl _ismbbblank(unsigned int _C);
+  _CRTIMP int __cdecl _ismbbblank_l(unsigned int _C,_locale_t _Locale);
+#endif
   _CRTIMP int __cdecl _ismbbpunct(unsigned int _C);
   _CRTIMP int __cdecl _ismbbpunct_l(unsigned int _C,_locale_t _Locale);
   _CRTIMP int __cdecl _ismbbalnum(unsigned int _C);
